@@ -799,14 +799,6 @@ void ICQProtocol::deserializeContact(KopeteMetaContact *metaContact,
 	QString accountId=serializedData["accountId"];
 	QString displayName=serializedData["displayName"];
 
-	if(accountId.isNull())
-	{
-		//Kopete 0.6.x contactlist
-		KGlobal::config()->setGroup("ICQ");
-		// Set the account ID to whatever the old single account used to be
-		accountId = KGlobal::config()->readEntry("UIN", "");
-	}
-
 	// Get the account it belongs to
 	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts(this);
 	KopeteAccount *account = accounts[accountId];

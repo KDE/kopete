@@ -33,6 +33,11 @@ QString autoConnect;
 QString protocol;
 QMap<QString, QString> pluginData;
 
+// Global vars to hold separate IRC vars until we have read all of them
+QString ircNick;
+QString ircServer;
+QString ircPort;
+
 /*
  * Function for (en/de)crypting strings for config file, taken from KMail
  * Author: Stefan Taferner <taferner@alpin.or.at>
@@ -49,7 +54,8 @@ QString cryptStr(const QString &aStr)
 void parseGroup( const QString &group, const QString &rawLine )
 {
 	// Groups that are converted can almost certainly be removed entirely
-	if ( group == "MSN" || group == "ICQ" || group == "Oscar" /* || .... */ )
+
+	if ( group == "MSN" || group == "ICQ" || group == "Oscar" || group == "Gadu" || group == "Jabber" || group == "IRC" )
 	{
 		accountId = "EMPTY";
 		autoConnect = "false";
@@ -75,6 +81,7 @@ void parseGroup( const QString &group, const QString &rawLine )
 
 void parseKey( const QString &group, const QString &key, const QString &value, const QString &rawLine )
 {
+	//qcerr << "*** group='" << group << "'" << endl;
 	if ( group == "MSN" )
 	{
 		if ( key == "UserID" )
@@ -89,50 +96,76 @@ void parseKey( const QString &group, const QString &key, const QString &value, c
 		// All other keys are ignored for MSN, as these apply to stuff that's
 		// now in libkopete (and the main app) instead.
 	}
-
-	if ( group == "ICQ" )
+	else if ( group == "ICQ" )
 	{
 		if ( key == "UIN" )
 			accountId = value;
-		if ( key == "Password" )
+		else if ( key == "Password" )
 			password = value;
-		if ( key == "AutoConnect" )
+		else if ( key == "AutoConnect" )
 			autoConnect = value;
-		if ( key == "Nick" )
-			pluginData[ "displayName" ] = value;
+		else if ( key == "Nick" )
+			pluginData[ "NickName" ] = value;
+		else if ( key == "Server" )
+			pluginData[ key ] = value;
+		else if ( key == "Port" )
+			pluginData[ key ] = value;
 	}
-
-	if ( group == "Oscar" )
+	else if ( group == "Oscar" )
 	{
 		if ( key == "ScreenName" )
 			accountId = value;
-		if ( key == "Password" )
+		else if ( key == "Password" )
 			password = value;
+		else if ( key == "Server" )
+			pluginData[ key ] = value;
+		else if ( key == "Port" )
+			pluginData[ key ] = value;
  	}
-
-	if ( group == "Jabber" )
+	else if ( group == "Jabber" )
 	{
 		if ( key == "UserID" )
 			accountId = value;
-		if ( key == "Password" )
+		else if ( key == "Password" )
 			password = value;
+		if ( key == "Server" ||
+			 key == "Port" || key == "UseSSL" || key == "Resource" )
+			pluginData[ key ] = value;
 	}
-
-	if ( group == "Gadu" )
+	else if ( group == "Gadu" )
 	{
 		if ( key == "UIN" )
 			accountId = value;
-		if ( key == "Password" )
+		else if ( key == "Password" )
 			password = value;
-		if ( key == "Nick" )
+		else if ( key == "Nick" )
 			pluginData[ "displayName" ] = value;
 	}
+	else if ( group == "IRC" )
+	{
+		if ( key == "Nickname" )
+			ircNick = value;
+		if ( key == "Server" )
+			ircServer = value;
+		if ( key == "Port" )
+			ircPort = value;
+		if ( accountId == "EMPTY" &&
+			 !ircNick.isEmpty( ) && !ircServer.isEmpty() &&
+			 !ircPort.isEmpty() )
+		{
+#if QT_VERSION < 0x030200
+			accountId = QString::fromLatin1( "%1@%2:%3" ).arg( ircNick ).arg( ircServer ).arg( ircPort );
+#else
+			accountId = QString::fromLatin1( "%1@%2:%3" ).arg( ircNick, ircServer, ircPort );
+#endif
+		}
+	}
 	/*
-		FIXME: Insert all other plugins here - Martijn
+		fixme: insert all other plugins here - martijn
 	*/
 	else
 	{
-		// Groups we don't convert. Output the raw line instead.
+		// groups we don't convert. output the raw line instead.
 		qcout << rawLine << endl;
 	}
 }
@@ -154,13 +187,16 @@ int main()
 
 		if ( commentRegExp.exactMatch( line ) )
 		{
+			// We found a comment, leave unchanged
 			qcout << line << endl;
 		}
 		else if ( groupRegExp.exactMatch( line ) )
 		{
+			// We found the start of a group, parse it
 			if ( needFlush )
 			{
-				// Flush existing group first
+				// ... but we were already working on a group, so finish what
+				// we were doing - flush existing group first
 				qcout << "[Account_" << protocol << "_" << accountId << "]" << endl;
 				qcout << "Protocol=" << protocol << endl;
 				qcout << "AccountId=" << accountId << endl;
@@ -179,6 +215,7 @@ int main()
 		}
 		else if ( keyRegExp.exactMatch( line ) )
 		{
+			// We found the a key line
 			parseKey( curGroup, keyRegExp.capturedTexts()[ 1 ], keyRegExp.capturedTexts()[ 2 ], line );
 		}
 		else

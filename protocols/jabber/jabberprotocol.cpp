@@ -140,13 +140,6 @@ void JabberProtocol::deserializeContact (KopeteMetaContact * metaContact,
 	QString displayName = serializedData["displayName"];
 	QString accountId = serializedData["accountId"];
 
-	if (accountId.isNull ())
-	{
-		//Kopete 0.6.x contactlist
-		// FIXME: This should be in a KConfUpdate - Martijn
-		accountId = serializedData["identityId"];
-	}
-
 	QDict < KopeteAccount > accounts = KopeteAccountManager::manager ()->accounts (this);
 	KopeteAccount *account = accounts[accountId];
 

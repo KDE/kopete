@@ -70,22 +70,8 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	 */
 	//new IRCPreferences("irc_protocol", this);
 
-	KConfig *cfg = KGlobal::config();
-        cfg->setGroup("IRC");
 
 	addAddressBookField("messaging/irc", KopetePlugin::MakeIndexField);
-
-	//Migration code
-	if( cfg->hasKey("Nickname") )
-	{
-		createNewAccount( cfg->readEntry("Nickname") + "@" + cfg->readEntry("Server") + ":" + cfg->readEntry("Port") );
-
-		cfg->deleteEntry("Nickname");
-		cfg->deleteEntry("Server");
-		cfg->deleteEntry("Port");
-		cfg->deleteEntry("AutoConnect");
-		cfg->sync();
-	}
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("list"),
 		SLOT( slotListCommand( const QString &, KopeteMessageManager*) ),

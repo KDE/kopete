@@ -104,13 +104,6 @@ void SMSProtocol::deserializeContact(KopeteMetaContact *metaContact, const QMap<
 
 	QDict<KopeteAccount> accounts=KopeteAccountManager::manager()->accounts(this);
 
-	if (accountId.isNull() && !accounts.count()) // FIXME: Is this the right way?
-	{
-		// FIXME import the old one correct (KConfUpdate)
-		KGlobal::config()->setGroup("SMS");
-		accountId=KGlobal::config()->readEntry("serviceName");
-	}
-
 	KopeteAccount *account = accounts[accountId];
 	if (!account)
 	{
