@@ -364,6 +364,11 @@ void KopeteContact::setDirectConnectState( bool newState )
 	mDirectlyConnected = newState;
 }
 
+bool KopeteContact::isDirectConnected() const
+{
+	return mDirectlyConnected;
+}
+
 
 #include "kopetecontact.moc"
 
