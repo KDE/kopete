@@ -28,12 +28,13 @@
 
 K_EXPORT_COMPONENT_FACTORY( kopete_texteffect, KGenericFactory<TextEffectPlugin> );
 
-TextEffectPlugin::TextEffectPlugin( QObject *parent, const char *name, const QStringList &/*args*/ ) :  KopetePlugin( parent, name ) 
+TextEffectPlugin::TextEffectPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
+	: KopetePlugin( parent, name )
 {
 	if( !pluginStatic_ )
 		pluginStatic_=this;
-	
-	m_prefs = new TextEffectPreferences ( "color", this );
+
+	m_prefs = new TextEffectPreferences ( "texteffect", this );
 
 	connect( KopeteMessageManagerFactory::factory(),
 		SIGNAL( aboutToSend( KopeteMessage & ) ),

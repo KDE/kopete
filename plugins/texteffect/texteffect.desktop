@@ -1,8 +1,13 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
-Icon=color
+Icon=texteffect
 Name=Text Effect
+Name[es]=Efecto de Texto 
+Name[fr]=Effets de texte
+Name[pt]=Efeito de Texto
+Name[pt_BR]=Efeito para Texto
+Name[sv]=Texteffekter
 ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_texteffect
 X-Kopete-Plugin-Id=texteffect
@@ -10,4 +15,9 @@ X-Kopete-Author=Olivier Goffart
 X-Kopete-Site=http://kopete.kde.org
 X-Kopete-Email=ogoffart@tiscalinet.be
 X-Kopete-License=GPL
-Comment=Add nice effect at your messages
+Comment=Add nice effects to your messages
+Comment[es]=Añada bonitos efectos a sus mensajes.
+Comment[fr]=Ajoutez des effets à vos messages
+Comment[pt]=Adicione um efeito giro às suas mensagens
+Comment[pt_BR]=Adicione belos efeitos às suas mensagens
+Comment[sv]=Lägg till trevliga effekter i dina meddelanden

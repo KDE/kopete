@@ -44,7 +44,6 @@ HighlightPlugin::HighlightPlugin( QObject *parent, const char *name, const QStri
 
 	load();
 
-	//TODO: found a pixmap
 	m_prefs = new HighlightPreferences ( "highlight", this );
 
 }

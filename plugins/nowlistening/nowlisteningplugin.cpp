@@ -57,7 +57,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char *name, const
 
 	// initialise preferences
 	
-	m_prefs = new NowListeningPreferences( "", this );
+	m_prefs = new NowListeningPreferences( pluginIcon(), this );
 	connect ( m_prefs, SIGNAL( saved() ), this, SLOT( slotSettingsChanged() ) );
 	// get a pointer to the dcop client
 	
