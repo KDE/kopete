@@ -79,7 +79,7 @@ void WebPresencePlugin::slotWriteFile()
 	bool error = false;
 	// generate the (temporary) XML file representing the current contactlist
 	KTempFile* xml = generateFile();
-	xml->setAutoDelete( false );
+	xml->setAutoDelete( true );
 
 	kdDebug(14309) << "WebPresencePlugin::slotWriteFile() : " << xml->name() 
 		<< endl;
