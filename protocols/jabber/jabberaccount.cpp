@@ -136,7 +136,7 @@ KopeteContact *JabberAccount::myself() const {
 	return myContact;
 }
 
-void JabberAccount::setAway(bool) {
+void JabberAccount::setAway(bool, const QString &) {
 }
 
 void JabberAccount::initActions() {

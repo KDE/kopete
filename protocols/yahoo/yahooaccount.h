@@ -45,7 +45,7 @@ public:
 	YahooContact *contact(const QString &id);			// returns a contact of name "id"
 	virtual KActionMenu* actionMenu() { return theActionMenu; }
 
-	virtual void setAway(bool);					// set away status
+	virtual void setAway(bool, const QString &);					// set away status
 
 	YahooSession *yahooSession();					// the session
 
@@ -68,9 +68,11 @@ protected slots:
 	void slotConnected();
 	void slotGoOnline();
 	void slotGoOffline();
+
 	void slotGoStatus(int status);
 
 	void slotLoginResponse(int succ, const QString &url);
+
 	void slotGotBuddies(const YList * buds);
 	void slotGotBuddy(const QString &userid, const QString &alias, const QString &group);
 	void slotGotIgnore(const QStringList &);
@@ -112,13 +114,12 @@ private:
 	QMap<QString, QPair<QString, QString> > IDs;
 		// This should be kept in sync with server - if a buddy is removed, this should be changed accordingly.
 	bool theHaveContactList;	// Do we have the full server-side contact list yet?
-
 	int m_sessionId;			// The Yahoo session descriptor
+
 	YahooPreferences *m_prefs;	// Preferences Object
 	YahooSession *m_session;	// Connection Object
 	YahooContact *m_myself;		// Ourself
 	int stateOnConnection;		// The state to change to on connection
-
 	void initActions();			// Load Status Actions
 	KActionMenu *theActionMenu;	// Statusbar Popup
 };
@@ -140,13 +141,13 @@ private:
 //	void setPublicName( const QString &name );
 
 //public slots:
-	
+
 //protected slots:
-	
+
 //protected:
-	
+
 //private slots:  /** Actions related **/
-	/********************/	
+	/********************/
 	/** add contact ui **/
 //	void slotBlockContact( QString passport ) ;
 //	void slotAddContact( const QString &userName );
@@ -156,13 +157,13 @@ private:
 //	KActionMenu *m_actionMenu;
 //	KAction *m_openInboxAction;
 //	int m_menuTitleId;
-	
+
 //	YahooNotifySocket *m_notifySocket;
-	
-		
+
+
 	/** the status which will be using for connecting **/
 //	YahooProtocol::Status m_connectstatus;
-	
+
 //	QString m_msgHandle;
 
 //public: //FIXME: should be private
@@ -175,7 +176,7 @@ private:
 //	void addGroup( const QString &groupName,
 //		const QString &contactToAdd = QString::null );
 //	KopeteMetaContact *m_addWizard_metaContact;
-	
+
 
 
 //};

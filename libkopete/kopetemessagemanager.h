@@ -62,11 +62,6 @@ public:
 	~KopeteMessageManager();
 
 	/**
-	 * true if logging is turned on
-	 */
-	bool logging() const;
-
-	/**
 	 * Get a list of all contacts in the session
 	 * Sorry, had to change this to members(), it was conflicting with
 	 * kxContact
@@ -165,11 +160,6 @@ public slots:
 	 * KopeteContact
 	 */
 	void receivedTypingMsg( const QString &contactId, bool isTyping = true );
-
-	/**
-	 * Enables/disables logging
-	 */
-	void setLogging( bool on );
 
 	/**
 	 * Append a message to the queue

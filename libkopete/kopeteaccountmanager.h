@@ -93,7 +93,7 @@ public slots:
 	 * Set all accounts to away at once.
 	 * This is a slot, so you can connect directly to it from e.g. a KAction.
 	 */
-	void setAwayAll();
+	void setAwayAll( const QString &awayReason = QString::null );
 
 	/**
 	 * Remove the away status from all accounts at once.

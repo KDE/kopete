@@ -88,7 +88,7 @@ public:
 	 * this will be called if main-kopete wants
 	 * the plugin to set the user's mode to away
 	 */
-	virtual void setAway(bool) = 0;
+	virtual void setAway( bool isAway, const QString &awayMessage = QString::null ) = 0;
 
 	/**
 	 * Indicate whether the account is connected at all.

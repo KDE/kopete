@@ -48,12 +48,14 @@ IRCUserContact::IRCUserContact(IRCAccount *account, const QString &nickname, Kop
 	actionModeMenu->setEnabled( false );
 
 	actionKick = new KAction(i18n("&Kick"), 0, this, SLOT(slotKick()), mCustomActions);
+	actionKick->setEnabled( false );
 
 	actionBanMenu = new KActionMenu(i18n("&Ban"), 0, mCustomActions, "actionBanMenu");
 	actionBanMenu->insert( new KAction(i18n("Ban *!*@*.host"), 0, this, SLOT(slotBanHost()), this ) );
 	actionBanMenu->insert( new KAction(i18n("Ban *!*@domain"), 0, this, SLOT(slotBanDomain()), this ) );
 	actionBanMenu->insert( new KAction(i18n("Ban *!*user@*.host"), 0, this, SLOT(slotBanUserHost()), this ) );
 	actionBanMenu->insert( new KAction(i18n("Ban *!*user@domain"), 0, this, SLOT(slotBanUserDomain()), this ) );
+	actionBanMenu->setEnabled( false );
 
 	mOnlineTimer = new QTimer( this );
 	connect( mOnlineTimer, SIGNAL(timeout()), this, SLOT( slotUserOffline() ) );

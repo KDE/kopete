@@ -106,9 +106,13 @@ void IRCAccount::disconnect()
  	engine()->quitIRC("Kopete IRC [http://kopete.kde.org]");
 }
 
-void IRCAccount::setAway(bool)
+void IRCAccount::setAway( bool isAway, const QString &awayMessage )
 {
-
+	if( isAway )
+		mySelf()->setOnlineStatus( IRCProtocol::IRCUserAway() );
+	else
+		mySelf()->setOnlineStatus( IRCProtocol::IRCUserOnline() );
+	engine()->setAway( isAway, awayMessage );
 }
 
 bool IRCAccount::isConnected()

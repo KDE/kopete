@@ -51,7 +51,7 @@ KopeteAwayDialog::KopeteAwayDialog(QWidget *parent, const char *name)
 	mLastUserAwayMessage = "";
 
 	// Set the extended away type
-	mExtendedAwayType = "";
+	mExtendedAwayType = 0;
 
 	// Call the init method
 	init();
@@ -76,7 +76,7 @@ void KopeteAwayDialog::show()
 {
 	// When this show is called, set the
 	// mExtendedAwayType to the empty string
-	mExtendedAwayType = "";
+	mExtendedAwayType = 0;
 
 	// Reinit the GUI
 	init();
@@ -87,17 +87,17 @@ void KopeteAwayDialog::show()
 	KopeteAwayBase::show();
 }
 
-void KopeteAwayDialog::show(QString status)
+void KopeteAwayDialog::show(int awayType)
 {
 	// Save the away message
-	mExtendedAwayType = status;
+	mExtendedAwayType = awayType;
 
 	// Reinit the GUI to set it up correctly
 	init();
 
 	// Print a debug statement telling what's going on
 	kdDebug(14011) << "[KopeteAwayDialog] Showing Dialog with "
-		<< "extended away type " << status << endl;
+		<< "extended away type " << awayType << endl;
 
 	// Call the parent class' show method
 	KopeteAwayBase::show();

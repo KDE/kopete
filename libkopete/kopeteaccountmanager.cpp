@@ -105,14 +105,14 @@ void KopeteAccountManager::disconnectAll()
 		}
 }
 
-void KopeteAccountManager::setAwayAll()
+void KopeteAccountManager::setAwayAll( const QString &awayReason )
 {
 	KopeteAway::setGlobalAway( true );
-	
+
 	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
 	{
 		if(i->isConnected() && !i->isAway())
-			i->setAway(true);
+			i->setAway(true, awayReason);
 	}
 
 
@@ -138,7 +138,7 @@ void KopeteAccountManager::setAwayAll()
 void KopeteAccountManager::setAvailableAll()
 {
 	KopeteAway::setGlobalAway( false );
-	
+
 	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
 	{
 		if(i->isConnected() && i->isAway())
@@ -258,7 +258,7 @@ void KopeteAccountManager::load()
 	QString filename = locateLocal( "appdata", QString::fromLatin1( "accounts.xml" ) );
 	if( filename.isEmpty() )
 		return ;
-		
+
 	kdDebug(14010) << k_funcinfo <<endl;
 
 	m_accountList = QDomDocument( QString::fromLatin1( "kopete-accounts" ) );
@@ -268,7 +268,7 @@ void KopeteAccountManager::load()
 	m_accountList.setContent( &file );
 
 	file.close();
-	
+
 	connect( LibraryLoader::pluginLoader(), SIGNAL( pluginLoaded(KopetePlugin*) ),
 		this, SLOT( loadProtocol(KopetePlugin*) ) );
 

@@ -31,12 +31,12 @@
 
 class OscarChangeStatus : public KopeteAwayDialog {
     Q_OBJECT
-public: 
+public:
     OscarChangeStatus(OscarSocket *engine,
 		      QWidget *parent=0, const char *name=0);
 
 protected slots:
-    virtual void setAway(QString awayType);
+    virtual void setAway(int awayType);
 private:
     OscarSocket *mEngine;
 };

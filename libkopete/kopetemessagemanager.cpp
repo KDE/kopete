@@ -41,7 +41,6 @@ struct KMMPrivate
 	QMap<const KopeteContact *, KopeteOnlineStatus> contactStatus;
 	KopeteProtocol *mProtocol;
 	int mId;
-	bool mLog;
 	bool isEmpty;
 	bool mCanBeDeleted;
 	QString displayName;
@@ -58,24 +57,12 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	d->mUser = user;
 	d->mProtocol = protocol;
 	d->mId = id;
-	d->mLog = true;
 	d->isEmpty= others.isEmpty();
 	d->mCanBeDeleted = false;
 	d->view=0L;
 
 	for( KopeteContact *c = others.first(); c; c = others.next() )
 		c->setConversations( c->conversations() + 1 );
-
-	// Replace '.', '/' and '~' in the user id with '-' to avoid possible
-	// directory traversal, although appending '.log' and the rest of the
-	// code should really make overwriting files possible anyway.
-	KopeteContact *c = others.first();
-	QString logFileName = QString::fromLatin1( "kopete/" ) + c->protocol()->pluginId() +
-		QString::fromLatin1( "/" ) + c->contactId().replace( QRegExp( QString::fromLatin1( "[./~]" ) ),
-		QString::fromLatin1( "-" ) ) + QString::fromLatin1( ".log" );
-	d->mLogger = new KopeteMessageLog( logFileName, this );
-
-//	connect(protocol, SIGNAL(destroyed()), this, SLOT(slotProtocolUnloading()));
 
 	kdDebug(14010) << k_funcinfo << endl;
 }
@@ -114,17 +101,6 @@ void KopeteMessageManager::customEvent( QCustomEvent * e )
 		ContactAddedEvent* ce = (ContactAddedEvent*)e;
 		addContact( static_cast<KopeteContact*>( ce->data() ), true );
 	}
-}
-
-
-void KopeteMessageManager::setLogging( bool on )
-{
-	d->mLog = on;
-}
-
-bool KopeteMessageManager::logging() const
-{
-	return d->mLog;
 }
 
 const QString KopeteMessageManager::displayName()
@@ -234,8 +210,7 @@ void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 
 	emit messageAppended( msg, this );
 
-	if( d->mLogger && d->mLog )
-		d->mLogger->append( msg );
+	KopeteMessageLog::logMessage( msg );
 }
 
 void KopeteMessageManager::addContact( const KopeteContact *c, bool surpress )

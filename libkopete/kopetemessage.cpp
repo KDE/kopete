@@ -185,6 +185,8 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 	messageNode.setAttribute( QString::fromLatin1("subject"), subject );
 	messageNode.setAttribute( QString::fromLatin1("direction"), direction );
 	messageNode.setAttribute( QString::fromLatin1("importance"), d->importance );
+	if( from )
+		messageNode.setAttribute( QString::fromLatin1("contactId"), (direction == Inbound) ? from->contactId() : d->to.first()->contactId() );
 	d->xmlDoc.appendChild( messageNode );
 
 	if( from )

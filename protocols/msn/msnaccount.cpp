@@ -113,7 +113,7 @@ void MSNAccount::loaded()
 	m_allowList=QStringList::split(',' ,pluginData(protocol(),QString::fromLatin1("allowList")) );
 }
 
-void MSNAccount::setAway( bool away )
+void MSNAccount::setAway( bool away, const QString & /*awayReason*/ )
 {
 	if( away )
 		setOnlineStatus( MSNProtocol::protocol()->IDL );
@@ -635,7 +635,7 @@ void MSNAccount::slotKopeteGroupRemoved(KopeteGroup *g)
 
 			return;
 		}
-		
+
 		if(m_notifySocket)
 		{
 			//if contact are contains only in the group we are removing, move it from the group 0
@@ -687,11 +687,11 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 		{
 			// Contact exists, update data.
 			// Merging difference between server contact list and KopeteContact's contact list into MetaContact's contact-list
-			// FIXME: everytime we move a metaContact, syncGroups is called.here, the contact can change in the server, when 
+			// FIXME: everytime we move a metaContact, syncGroups is called.here, the contact can change in the server, when
 			//        the new serverGroups are not yet set in the metacontact (Olivier)
 			MSNContact *c = static_cast<MSNContact*>( metaContact->findContact( protocol()->pluginId(), accountId(), handle ) );
 			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
-			c->setDisplayName( publicName ); 
+			c->setDisplayName( publicName );
 
 			const QMap<uint, KopeteGroup *>serverGroups = c->serverGroups();
 			for( QStringList::ConstIterator it = contactGroups.begin(); it != contactGroups.end(); ++it )
@@ -721,7 +721,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 		else
 		{
 			metaContact = new KopeteMetaContact();
-	
+
 			MSNContact *msnContact = new MSNContact( this, handle, publicName, metaContact );
 			msnContact->setOnlineStatus( MSNProtocol::protocol()->FLN );
 
@@ -740,7 +740,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 		//FIXME: merge theses two method
 		slotContactAdded(handle , publicName , list , 0  );
 	}
-	
+
 }
 
 void MSNAccount::slotContactAdded( const QString& handle, const QString& publicName,
@@ -904,7 +904,7 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 	const QString& handle_, const QString&  publicName  )
 {
 	QString handle = handle_.lower();
-	
+
 	if(handle.isEmpty())
 	{
 		//we have lost the handle?
@@ -932,14 +932,14 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 			c->manager()->appendMessage(tmpMsg);
 		}
 	}
-	
-	m_msgHandle=QString::null; 
+
+	m_msgHandle=QString::null;
 }
 
 void MSNAccount::slotStartChatSession( const QString& handle )
 {
 	//FIXME: raise the manager if it does exist
-	
+
 	// First create a message manager, because we might get an existing
 	// manager back, in which case we likely also have an active switchboard
 	// connection to reuse...
@@ -972,7 +972,7 @@ void MSNAccount::slotStartChatSession( const QString& handle )
 }
 
 //--------
-void MSNAccount::slotBlockContact( const QString& handle ) 
+void MSNAccount::slotBlockContact( const QString& handle )
 {
 	if(m_notifySocket)
 	{
@@ -993,7 +993,7 @@ void MSNAccount::slotAddContact( const QString &userName , const QString &displa
 
 bool MSNAccount::addContactToMetaContact( const QString &contactId, const QString &displayName, KopeteMetaContact *metaContact )
 {
-	if( m_notifySocket ) 
+	if( m_notifySocket )
 	{
 		if( !metaContact->isTemporary() )
 		{
@@ -1023,7 +1023,7 @@ bool MSNAccount::addContactToMetaContact( const QString &contactId, const QStrin
 			{	//only on top-level, or in no groups (add it to the default group)
 				m_notifySocket->addContact( contactId, displayName, 0, MSNProtocol::FL );
 			}
-			
+
 			//TODO: Find out if this contact was reallt added or not!
 			return true;
 		}
@@ -1034,7 +1034,7 @@ bool MSNAccount::addContactToMetaContact( const QString &contactId, const QStrin
 			MSNContact *newContact = new MSNContact( this, contactId, contactId, metaContact );
 			return (newContact != 0L);
 		}
-	} 
+	}
 //	else //We aren't connected! Can't add a contact
 	//TODO: add contact whan offline, and sync with server
 	return false;

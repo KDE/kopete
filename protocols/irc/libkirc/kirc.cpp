@@ -523,6 +523,11 @@ void KIRC::slotReadyRead()
 					emit incomingHostedClients(message);
 					break;
 				}
+				case 301:
+				{
+					emit incomingUserIsAway( line.section(' ', 0, 0), line.section(':', 1) );
+					break;
+				}
 				case 311:
 				{
 					/*
@@ -776,13 +781,24 @@ void KIRC::sendCtcpVersion(const QString &target)
 {
 	if (loggedIn)
 		writeString( QString::fromLatin1("PRIVMSG %1 :%2VERSION").arg( target ).arg( QChar(0x01) ).append( QChar(0x01) ) );
-
 }
 
 void KIRC::changeMode(const QString &target, const QString &mode)
 {
 	if (loggedIn)
 		writeString( QString::fromLatin1("MODE %1 %2").arg( target ).arg( mode ) );
+}
+
+void KIRC::setAway( bool isAway, const QString &awayMessage )
+{
+	kdDebug(14120) << k_funcinfo << "Set away: " << isAway << "; Message: " << awayMessage << endl;
+	if(loggedIn)
+	{
+		if( isAway )
+			writeString( QString::fromLatin1("AWAY \"%1\"").arg(awayMessage) );
+		else
+			writeString( QString::fromLatin1("AWAY") );
+	}
 }
 
 void KIRC::partChannel(const QString &name, const QString &reason)

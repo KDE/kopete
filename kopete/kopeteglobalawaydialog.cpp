@@ -2,7 +2,7 @@
   kopeteglobalawaydialog.cpp  -  Kopete Global Away Dialog
 
   Copyright (c) 2002 by Christopher TenHarmsel <tenharmsel@users.sourceforge.net>
-  
+
   Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
@@ -26,15 +26,14 @@ KopeteGlobalAwayDialog::KopeteGlobalAwayDialog(QWidget *parent, const char *name
 	// We don't do anything specific..oh well
 }
 
-void KopeteGlobalAwayDialog::setAway(QString/* type*/)
+void KopeteGlobalAwayDialog::setAway( int /*awayType*/ )
 {
 	kdDebug(14012) << "[GLOBAL AWAY DIALOG] Setting all protocols away " << endl;
 	// Set the global away message
-	awayInstance->setGlobalAwayMessage(
-		getSelectedAwayMessage());
+	awayInstance->setGlobalAwayMessage( getSelectedAwayMessage() );
 
 	// Tell all the protocols to set themselves away.
-	KopeteAccountManager::manager()->setAwayAll();
+	KopeteAccountManager::manager()->setAwayAll( getSelectedAwayMessage() );
 }
 
 #include "kopeteglobalawaydialog.moc"

@@ -42,7 +42,7 @@ public:
 	 * this will be called if main-kopete wants
 	 * the plugin to set the user's mode to away
 	 */
-	virtual void setAway(bool);
+	virtual void setAway(bool, const QString & = QString::null);
 
 	/**
 	 * Function has to be reimplemented in every single protocol
@@ -87,7 +87,7 @@ private:
 
 	/* Set up our actions for the status menu. */
 	void initActions();
-	
+
 	/* Actions for the menu. */
         KAction *actionGoOnline;
         KAction *actionGoChatty;

@@ -54,7 +54,7 @@ class OscarAccount : public KopeteAccount
 		void disconnect();
 
 		/** Sets the account away */
-		virtual void setAway( bool away );
+		virtual void setAway( bool away, const QString &awayMessage = QString::null );
 
 		/** Accessor method for this account's contact */
 		virtual KopeteContact* myself() const;
@@ -222,11 +222,10 @@ class OscarAccount : public KopeteAccount
 		/** Our debug dialog */
 		OscarDebugDialog *m_debugDialog;
 
-		/** Random new buddy number for the engine */
-		int m_randomNewBuddyNum;
-
 		/** Random new group number for the engine */
 		int m_randomNewGroupNum;
+
+		int m_randomNewBuddyNum;
 
 		/** Idleness manager */
 		XAutoLock m_idleMgr;

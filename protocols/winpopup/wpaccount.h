@@ -59,15 +59,15 @@ public:
 
 	virtual KopeteContact *myself() const {	return (KopeteContact *)theMyself; } 					// Return the user's contact object
 	virtual KActionMenu* actionMenu();	// Per-protocol actions for the systray and the status bar
-	virtual void setAway(bool status);	// Set user away
+	virtual void setAway(bool status, const QString &);	// Set user away
 	virtual const QString protocolIcon() { return "wp_available"; }
 
 public slots:
 	virtual void connect();						// Connect to server
 	virtual void disconnect();					// Disconnect from server
-	
-	void goAvailable() { setAway(false); }		// Two convenience slots 
-	void goAway() { setAway(true); }			// for available and away
+
+	void goAvailable() { setAway(false, QString::null); }		// Two convenience slots
+	void goAway() { setAway(true, QString::null); }			// for available and away
 
 // Stuff used internally & by colleague classes
 public:
@@ -89,14 +89,14 @@ public slots:
 
 protected:
 	virtual bool addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact);
-	
+
 private slots:
 	/**
 	 * Called when a new message arrives with the message's data.
 	 */
 	void slotGotNewMessage(const QString &Body, const QDateTime &Arrival, const QString &From);
 	void updateAccountId();
-	
+
 private:
 	void initActions();				// Load Status Actions
 	KActionMenu *theActionMenu;		// Statusbar Popup

@@ -61,10 +61,10 @@ WPAccount::WPAccount(WPProtocol *parent, const QString &accountID, const char *n
 
 	// Create the interface...
 	theInterface = parent->createInterface(theHostName);
-	
+
 	// we need this before initActions
 	theMyself = new WPContact(this, theHostName, theHostName, 0);
-	
+
 	// Load Status Actions
 	initActions();
 
@@ -102,13 +102,13 @@ bool WPAccount::addContactToMetaContact(const QString &contactId, const QString 
 	kdDebug(14180) << "[WPAccount::addContactToMetaContact] contactId: " << contactId << endl;
 
 	if(!contacts()[contactId])
-	{	
+	{
 		WPContact *newContact = new WPContact(this, contactId, displayName, parentContact);
 		return newContact != 0;
 	}
 	else
 		kdDebug(14180) << "[WPAccount::addContact] Contact already exists" << endl;
-	
+
 	return false;
 }
 
@@ -129,7 +129,7 @@ void WPAccount::slotGotNewMessage(const QString &Body, const QDateTime &Arrival,
 		}
 	}
 	else
-	{	
+	{
 		DEBUG(WPDINFO, "WinPopup: That's strange - we got a message while offline! Ignoring.");
 	}
 }
@@ -157,7 +157,7 @@ void WPAccount::updateAccountId()
 	theMyself = new WPContact(this, accountId(), accountId(), 0);
 }
 
-void WPAccount::setAway(bool status)
+void WPAccount::setAway(bool status, const QString &)
 {
 	DEBUG(WPDMETHOD, "WPAccount::setAway()");
 

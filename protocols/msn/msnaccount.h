@@ -43,7 +43,7 @@ public:
 	MSNAccount( MSNProtocol *parent, const QString &accountID, const char *name = 0L );
 	~MSNAccount();
 
-	virtual void setAway( bool away );
+	virtual void setAway( bool away, const QString & );
 	virtual KopeteContact* myself() const;
 
 	/*
@@ -146,7 +146,7 @@ private slots:
 	 **/
 	void slotKopeteGroupRemoved( KopeteGroup* );
 
-	/********************/	
+	/********************/
 	/** add contact ui **/
 	void slotBlockContact( const QString& passport ) ;
 	void slotAddContact( const QString &userName , const QString& displayName);
@@ -163,7 +163,7 @@ private:
 	KopeteOnlineStatus m_connectstatus;
 
 	QString m_msgHandle;
-	
+
 	bool m_badpassword;
 
 public: //FIXME: should be private

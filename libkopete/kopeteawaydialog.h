@@ -24,7 +24,7 @@ class QKeyEvent;
 
 #include <qstring.h>
 #include "kopeteawaydialogbase.h"
-   
+
 /**
  * KopeteAwayDialog is a base class used for implementing
  * Away Message selection dialogs in Kopete.  It presents
@@ -92,7 +92,7 @@ class KopeteAwayDialog : public KopeteAwayBase
 				* will need to compare it to an enum that you declare
 				* in your subclass.
 		*/
-		virtual void setAway(QString /*awayType*/){}
+		virtual void setAway( int/*awayType*/ ) = 0;
 
 		/**
 		* This method is called when the user clicks
@@ -106,7 +106,7 @@ class KopeteAwayDialog : public KopeteAwayBase
 		* if show was called with a parameter, if show() was called
 		* instead, this parameter will be the empty string.
 		*/
-		virtual void cancelAway(QString /*awayType*/){}
+		virtual void cancelAway( int/*awayType*/ ){};
 
 	private:
 		/**
@@ -137,7 +137,7 @@ class KopeteAwayDialog : public KopeteAwayBase
 		* This is used to store the type of away that we're
 		* going to go.
 		*/
-		QString mExtendedAwayType;
+		int mExtendedAwayType;
 
 	public slots:
 		/**
@@ -158,7 +158,7 @@ class KopeteAwayDialog : public KopeteAwayBase
 		*
 		* @param status The type of "away" you want to set.
 		*/
-		void show(QString status);
+		void show( int awayType );
 
 	protected slots:
 		/**

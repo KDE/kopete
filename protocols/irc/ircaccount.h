@@ -92,7 +92,7 @@ public:
 
 	virtual KopeteContact *myself() const { return (KopeteContact*)mMySelf; }
 
-	virtual void setAway(bool);
+	virtual void setAway( bool isAway, const QString &awayMessage = QString::null );
 
 	virtual bool isConnected();
 
@@ -122,6 +122,7 @@ private:
 	QMap<QString, IRCUserContact * > mUsers;
 	KAction *actionOnline;
 	KAction *actionOffline;
+	KAction *actionAway;
 
 };
 

@@ -30,7 +30,8 @@
 #include "kopeteprotocol.h"
 #include "pluginloader.h"
 #include "kopeteview.h"
-
+#include "kopeteaccountmanager.h"
+#include "kopeteaccount.h"
 #include "kopetecommandhandler.h"
 
 typedef QMap<QObject*, CommandList> PluginCommandMap;
@@ -68,6 +69,12 @@ KopeteCommandHandler::KopeteCommandHandler() : QObject( qApp )
 
 	registerCommand( this, QString::fromLatin1("me"), SLOT( slotMeCommand( const QString &, KopeteMessageManager * ) ),
 		i18n("USAGE: /me <text> - Formats message as in \"<nickname> went to the store\".") );
+
+	registerCommand( this, QString::fromLatin1("away"), SLOT( slotAwayCommand( const QString &, KopeteMessageManager * ) ),
+		i18n("USAGE: /away [<reason>] - Sets you away/back in the current account only.") );
+
+	registerCommand( this, QString::fromLatin1("awayall"), SLOT( slotAwayAllCommand( const QString &, KopeteMessageManager * ) ),
+		i18n("USAGE: /awayall [<reason>] - Sets you away/back in all accounts.") );
 
 	registerCommand( this, QString::fromLatin1("exec"), SLOT( slotExecCommand( const QString &, KopeteMessageManager * ) ),
 		i18n("USAGE: /exec [-o] <command> - Executes the specified command and displays output in the chat buffer. If"
@@ -211,6 +218,45 @@ void KopeteCommandHandler::slotClearCommand( const QString &, KopeteMessageManag
 void KopeteCommandHandler::slotPartCommand( const QString &, KopeteMessageManager *manager )
 {
 	manager->view()->closeView();
+}
+
+void KopeteCommandHandler::slotAwayCommand( const QString &args, KopeteMessageManager *manager )
+{
+	bool goAway = !manager->account()->isAway();
+	KopeteMessage msg(manager->user(), manager->members(), QString::null, KopeteMessage::Internal, KopeteMessage::PlainText);
+
+	if( args.isEmpty() )
+		manager->account()->setAway( goAway );
+	else
+		manager->account()->setAway( goAway, args );
+
+	if( goAway )
+		msg.setBody( i18n("%1 has been marked as away.").arg(manager->user()->displayName()), KopeteMessage::PlainText );
+	else
+		msg.setBody( i18n("%1 is no longer marked as away.").arg(manager->user()->displayName()), KopeteMessage::PlainText );
+
+	manager->sendMessage( msg );
+}
+
+void KopeteCommandHandler::slotAwayAllCommand( const QString &args, KopeteMessageManager *manager )
+{
+	KopeteMessage msg(manager->user(), manager->members(), QString::null, KopeteMessage::Internal, KopeteMessage::PlainText);
+
+	if( manager->account()->isAway() )
+	{
+		KopeteAccountManager::manager()->setAvailableAll();
+		msg.setBody( i18n("You have been marked as away in all accounts."), KopeteMessage::PlainText );
+	}
+	else
+	{
+		if( args.isEmpty() )
+			KopeteAccountManager::manager()->setAwayAll();
+		else
+			KopeteAccountManager::manager()->setAwayAll( args );
+		msg.setBody( i18n("You are no longaer marked as away in all accounts."), KopeteMessage::PlainText );
+	}
+
+	manager->appendMessage( msg );
 }
 
 void KopeteCommandHandler::slotCloseCommand( const QString &, KopeteMessageManager *manager )

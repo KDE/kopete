@@ -104,6 +104,8 @@ class KopeteCommandHandler : public QObject
 		void slotCloseCommand( const QString & args, KopeteMessageManager *manager );
 		void slotMeCommand( const QString & args, KopeteMessageManager *manager );
 		void slotExecCommand( const QString & args, KopeteMessageManager *manager );
+		void slotAwayCommand( const QString & args, KopeteMessageManager *manager );
+		void slotAwayAllCommand( const QString & args, KopeteMessageManager *manager );
 
 	private:
 		/**

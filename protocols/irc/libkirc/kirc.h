@@ -40,6 +40,7 @@ public:
 	void joinChannel(const QString &);
 	void messageContact(const QString &contact, const QString &message);
 	void actionContact(const QString &contact, const QString &message);
+	void setAway( bool isAway, const QString &awayMessage );
 	const QString &nickName() { return mNickname; };
 	const QString &host() { return mHost; };
 	Q_UINT16 port() { return mPort; }
@@ -129,6 +130,7 @@ signals:
 	void incomingNotice(const QString &originating, const QString &message);
 	void incomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 	void incomingChannelMode( const QString &channel, const QString &mode, const QString &params);
+	void incomingUserIsAway( const QString &nick, const QString &awayMessage );
 	void userOnline( const QString &nick );
 
 private:

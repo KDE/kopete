@@ -13,7 +13,7 @@ SMSAccount::~SMSAccount()
 
 }
 
-void SMSAccount::setAway( bool /*away*/)
+void SMSAccount::setAway( bool /*away*/, const QString &)
 {
 
 }

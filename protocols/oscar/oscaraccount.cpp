@@ -150,23 +150,14 @@ void OscarAccount::disconnect()
 	}
 }
 
-void OscarAccount::setAway( bool away )
+void OscarAccount::setAway( bool away, const QString &awayReason )
 {
 	kdDebug(14150) << "[OscarAccount: " << accountId() << "] setAway()" << endl;
 
 	if( away )
-	{ // Set away
-		QString msg;
-		msg = KopeteAway::getInstance()->message();
-		if (msg.isEmpty())
-			msg=" ";
-		// FIXME: Chris check this
-		m_engine->sendAway(true, msg);
-	}
+		m_engine->sendAway(true, awayReason);
 	else
-	{ // Set back from away
-		m_engine->sendAway(false, "");
-	}
+		m_engine->sendAway(false, QString::null);
 }
 
 KopeteContact* OscarAccount::myself() const

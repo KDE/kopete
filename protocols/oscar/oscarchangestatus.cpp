@@ -32,7 +32,7 @@ OscarChangeStatus::OscarChangeStatus(OscarSocket *engine, QWidget *parent, const
 	setCaption(i18n("Select Away Message")); // Set our caption (from KDialog)
 }
 
-void OscarChangeStatus::setAway(QString awayType)
+void OscarChangeStatus::setAway(int awayType)
 {
 	// We don't really have away types, so we'll
 	// ignore it

@@ -2,7 +2,7 @@
   kopeteglobalawaydialog.h  -  Kopete Global Away Dialog
 
   Copyright (c) 2002 by Christopher TenHarmsel <tenharmsel@users.sourceforge.net>
-  
+
   Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
@@ -28,18 +28,18 @@
  * @author Christopher TenHarmsel <tenharmsel@users.sourceforge.net>
  */
 class KopeteGlobalAwayDialog : public KopeteAwayDialog {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    /** Constructor */
-    KopeteGlobalAwayDialog(QWidget *parent=0, const char *name=0);
+	public:
+		/** Constructor */
+		KopeteGlobalAwayDialog(QWidget *parent=0, const char *name=0);
 
-protected:
-    /**
-     * Sets the user away, called when the user
-     * clicks on OK
-     */
-    virtual void setAway(QString type);
+	protected:
+		/**
+		* Sets the user away, called when the user
+		* clicks on OK
+		*/
+		virtual void setAway( int /*awayType*/ );
 };
 #endif
 

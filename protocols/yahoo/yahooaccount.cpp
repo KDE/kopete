@@ -46,7 +46,6 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, cons
 	// first things first - initialise internals
 	theHaveContactList = false;
 	stateOnConnection = 0;
-
 	// we need this quite early (before initActions at least)
 	kdDebug(14180) << "Yahoo: Creating myself with name = " << accountId() << endl;
 	m_myself = new YahooContact(this, accountId(), accountId(), 0);
@@ -103,7 +102,7 @@ void YahooAccount::connect()
 
 	QString server = static_cast<YahooProtocol *>(protocol())->server();
 	int port = static_cast<YahooProtocol *>(protocol())->port();
-
+	// TODO: do something with them! :-)
 	kdDebug(14180) << "YahooAccount::connect()" << endl;
 
 	if(!isConnected())
@@ -170,10 +169,10 @@ void YahooAccount::disconnect()
 		kdDebug(14180) << "Ignoring disconnect request (not connected)." << endl;
 }
 
-void YahooAccount::setAway(bool status)
+void YahooAccount::setAway(bool status, const QString &awayMessage)
 {
-	kdDebug(14180) << "YahooAccount::setAway(" << status << ")" << endl;
-	slotGoStatus(status ? 2 : 0);	// or SteppedOut?
+	kdDebug(14180) << "YahooAccount::setAway(" << status << ")" << awayMessage << endl;
+	// TODO: make it work!
 }
 
 void YahooAccount::slotConnected()
@@ -217,8 +216,9 @@ void YahooAccount::initActions()
 //	TODO: uncomment when connect as invisible is sorted
 //	theActionMenu->insert(new KAction(i18n("Invisible"), "yahoo_offline", 0, this, SLOT(slotGoStatus012()), this, "actionYahooGoStatus012");
 
-/*
-	// TODO: do something(?!) with them
+/*	// TODO: connect with invisible on
+	theActionMenu->insert(new KAction(i18n("Invisible"), "yahoo_offline", 0, this, SLOT(goStatus012()), this, "actionYahooGoStatus012");
+
 	actionGoStatus099 = new KAction(i18n("Custom"), "yahoo_online",
 				0, this, SLOT(connect()), this, "actionYahooConnect"); // XXX Get some dialogbox
 	actionGoStatus999 = new KAction(i18n(YSTIdle), "yahoo_idle",

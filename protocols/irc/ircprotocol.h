@@ -74,6 +74,7 @@ public:
 	static KopeteOnlineStatus IRCUserOffline() { return m_UserOffline; };
 	static KopeteOnlineStatus IRCUserOp() { return m_UserOp; };
 	static KopeteOnlineStatus IRCUserVoice() { return m_UserVoice; };
+	static KopeteOnlineStatus IRCUserAway() { return m_UserAway; };
 
 private slots:
 	void slotMessageFilter( KopeteMessage &msg );
@@ -106,6 +107,7 @@ private:
 	static KopeteOnlineStatus m_UserOp;
 	static KopeteOnlineStatus m_UserVoice;
 	static KopeteOnlineStatus m_UserOffline;
+	static KopeteOnlineStatus m_UserAway;
 
 	KActionCollection *mActions;
 

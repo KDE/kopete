@@ -23,7 +23,7 @@ public:
 	SMSAccount( SMSProtocol *parent, const QString &accountID, const char *name = 0L );
 	~SMSAccount();
 
-	virtual void setAway( bool away );
+	virtual void setAway( bool away, const QString & );
 	virtual KopeteContact* myself() const;
 
 public slots:
