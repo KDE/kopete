@@ -934,7 +934,8 @@ void MSNProtocol::slotMessageReceived( const KopeteMessage &msg )
 
 	if ( msg.direction() == KopeteMessage::Inbound )
 	{
-		kdDebug() << "MSNProtocol::slotMessageReceived: Looking for session (Inbound)";
+		kdDebug() << "MSNProtocol::slotMessageReceived: Looking for "
+			<< "session (Inbound)" << endl;
 		chatmembers.append( msg.from() );
 		m_manager = kopeteapp->sessionFactory()->create( m_myself,
 		chatmembers, this );
@@ -945,7 +946,8 @@ void MSNProtocol::slotMessageReceived( const KopeteMessage &msg )
 	}
 	else if ( msg.direction() == KopeteMessage::Outbound )
     {
-		kdDebug() << "MSNProtocol::slotMessageReceived: Looking for session (Outbound)";
+		kdDebug() << "MSNProtocol::slotMessageReceived: Looking for "
+			<< "session (Outbound)" << endl;
 		chatmembers = msg.to();
 		m_manager = kopeteapp->sessionFactory()->create( m_myself,
 		chatmembers, this );
