@@ -86,7 +86,7 @@ bool MSNContact::isReachable()
 	if ( account()->isConnected() && isOnline() && account()->myself()->onlineStatus() != MSNProtocol::protocol()->HDN )
 		return true;
 
-	MSNChatSession *kmm=dynamic_cast<MSNChatSession*>(manager(Kopete::Contact::CanCreate));
+	MSNChatSession *kmm=dynamic_cast<MSNChatSession*>(manager(Kopete::Contact::CannotCreate));
 	if( kmm && kmm->service() )  //the chat socket is open.  than mean message will be sent
 		return true;
 
