@@ -62,16 +62,9 @@ public:
 	GroupWiseProtocol * protocol();
 
 	/**
-	 * Generates a contact by parsing the supplied field list,
-	 *  and adding it to the supplied KopeteAccount and KopeteMetaContact.
+	 * Update the contact's status and metadata from the supplied fields
 	 */
-	static GroupWiseContact* contactFromFields( KopeteAccount* account, KopeteMetaContact *parent, 
-		const Field::MultiField & contact );
-		
-	/**
-	 * Updates the contact's metadata from the supplied field list
-	 */
-    void updateDetailsFromFields( const Field::MultiField & details );
+	void updateDetails( const ContactDetails & details );
 	
 	virtual bool isReachable();
 	/**
@@ -103,10 +96,6 @@ public slots:
 	void receivedMessage( const QString &message );
 
 protected:
-	/**
-	 * Update the contact's status and metadata from the supplied fields
-	 */
-	void updateDetailsFromFields( const Field::FieldList & fields );
 	
 protected slots:
 	/**
@@ -126,7 +115,6 @@ protected:
 	int m_objectId;
 	int m_parentId;
 	int m_sequence;
-	QString m_dn;
 	
 	KAction* m_actionPrefs;
 };

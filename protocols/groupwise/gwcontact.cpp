@@ -33,31 +33,7 @@
 
 #include "gwcontact.h"
 
-GroupWiseContact* GroupWiseContact::contactFromFields( KopeteAccount* account, KopeteMetaContact *parent, const Field::MultiField & contact )
-{
-	if ( contact.tag() != NM_A_FA_CONTACT )
-		return 0;
-
-	Field::FieldList fields = contact.fields();
-	Field::FieldBase* current = 0;
-	int objectId, parentId, sequence;
-	QString displayName, dn;
-	// sequence number, object and parent IDs are a numeric values but are stored as strings...
-	Field::FieldListIterator it;
-	Field::FieldListIterator end = fields.end();
-	if ( ( it = fields.find ( NM_A_SZ_OBJECT_ID ) ) != end )
-		objectId = static_cast<Field::SingleField*>( *it )->value().toString().toInt();
-	if ( ( it = fields.find ( NM_A_SZ_PARENT_ID ) ) != end )
-		parentId = static_cast<Field::SingleField*>( *it )->value().toString().toInt();
-	if ( ( it = fields.find ( NM_A_SZ_SEQUENCE_NUMBER ) ) != end )
-		sequence = static_cast<Field::SingleField*>( *it )->value().toString().toInt();
-	if ( ( it = fields.find ( NM_A_SZ_DISPLAY_NAME ) ) != end )
-		displayName = static_cast<Field::SingleField*>( *it )->value().toString();
-	if ( ( it = fields.find ( NM_A_SZ_DN ) ) != end )
-		dn = static_cast<Field::SingleField*>( *it )->value().toString();
-
-	return new GroupWiseContact( account, dn, parent, displayName, objectId, parentId, sequence );
-}
+using namespace GroupWise;
 
 GroupWiseContact::GroupWiseContact( KopeteAccount* account, const QString &dn, 
 			KopeteMetaContact *parent, 
@@ -73,40 +49,27 @@ GroupWiseContact::~GroupWiseContact()
 {
 }
 
-void GroupWiseContact::updateDetailsFromFields( const Field::MultiField & details )
+void GroupWiseContact::updateDetails( const ContactDetails & details )
 {
-	// read the supplied fields, set metadata and status.
-	if ( details.tag() != NM_A_FA_USER_DETAILS )
-		return;
-	Field::FieldList fields = details.fields();
-	Field::FieldBase* current = 0;
-	QString cn, dn, givenName, surname, fullName, awayMessage, authAttribute;
-	int status;
-	Field::FieldListIterator it;
-	Field::FieldListIterator end = fields.end();
-	// TODO: not sure what this means, ask Mike
-	if ( ( it = fields.find ( NM_A_SZ_AUTH_ATTRIBUTE ) ) != end )
-		authAttribute = static_cast<Field::SingleField*>( *it )->value().toString();
-	if ( ( it = fields.find ( NM_A_SZ_DN ) ) != end )
-		dn = static_cast<Field::SingleField*>( *it )->value().toString();
-	if ( ( it = fields.find ( "CN" ) ) != end )
-		cn = static_cast<Field::SingleField*>( *it )->value().toString();
-	if ( ( it = fields.find ( "Given Name" ) ) != end )
-		givenName = static_cast<Field::SingleField*>( *it )->value().toString();
-	if ( ( it = fields.find ( "Surname" ) ) != end )
-		surname = static_cast<Field::SingleField*>( *it )->value().toString();
-	if ( ( it = fields.find ( "Full Name" ) ) != end )
-		fullName = static_cast<Field::SingleField*>( *it )->value().toString();
-	if ( ( it = fields.find ( NM_A_SZ_STATUS ) ) != end )
-		status = static_cast<Field::SingleField*>( *it )->value().toString().toInt();
-	if ( ( it = fields.find ( NM_A_SZ_MESSAGE_BODY ) ) != end )
-		awayMessage = static_cast<Field::SingleField*>( *it )->value().toString();
-	
-	setProperty( protocol()->propCN, cn );
-	setProperty( protocol()->propGivenName, givenName );
-	setProperty( protocol()->propLastName, surname );
-	setProperty( protocol()->propFullName, fullName );
-	setProperty( protocol()->propAwayMessage, awayMessage );
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	if ( !details.cn.isNull() )
+		setProperty( protocol()->propCN, details.cn );
+	if ( !details.givenName.isNull() )
+		setProperty( protocol()->propGivenName, details.givenName );
+	if ( !details.surname.isNull() )
+		setProperty( protocol()->propLastName, details.surname );
+	if ( !details.fullName.isNull() )
+		setProperty( protocol()->propFullName, details.fullName );
+	//if ( !details.awayMessage.isNull() )
+		//setProperty( protocol()->propAwayMessage, details.awayMessage );
+	if ( details.status != GroupWise::Invalid )
+	{	
+		KopeteOnlineStatus status = protocol()->gwStatusToKOS( details.status );
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "setting initial status to " << status.description() << endl;
+		setOnlineStatus( status );
+	}
+	else 
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "initial status is, not setting " << details.status << endl; 
 }
 
 GroupWiseProtocol *GroupWiseContact::protocol()
@@ -116,6 +79,7 @@ GroupWiseProtocol *GroupWiseContact::protocol()
 
 bool GroupWiseContact::isReachable()
 {
+	//TODO: use status to determine reachability
     return true;
 }
 
