@@ -62,10 +62,9 @@ class KOPETE_EXPORT MetaContact : public ContactListElement, public NotifyDataOb
 	Q_PROPERTY( QString statusIcon READ statusIcon )
 	Q_PROPERTY( bool isOnline READ isOnline )
 	Q_PROPERTY( bool isReachable READ isReachable )
-	Q_PROPERTY( bool isTopLevel READ isTopLevel )
 	Q_PROPERTY( bool isTemporary READ isTemporary )
 	Q_PROPERTY( bool canAcceptFiles READ canAcceptFiles )
-	Q_PROPERTY( ulong idleTime READ idleTime )
+	//Q_PROPERTY( ulong idleTime READ idleTime )
 	Q_PROPERTY( QString metaContactId READ metaContactId WRITE setMetaContactId )
 	Q_PROPERTY( bool photoSyncedWithKABC READ isPhotoSyncedWithKABC WRITE setPhotoSyncedWithKABC )
 
@@ -245,7 +244,7 @@ public:
 	/**
 	 * return the time in second the contact is idle.
 	 */
-	unsigned long int idleTime() const;
+	unsigned long idleTime() const;
 
 	/**
 	 * Return a XML representation of the metacontact

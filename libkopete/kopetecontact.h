@@ -61,12 +61,12 @@ class KOPETE_EXPORT Contact : public QObject
 	Q_PROPERTY( bool isOnline READ isOnline )
 	Q_PROPERTY( bool fileCapable READ isFileCapable WRITE setFileCapable )
 	Q_PROPERTY( bool canAcceptFiles READ canAcceptFiles )
-	Q_PROPERTY( bool isReachable READ isReachable )
+	//Q_PROPERTY( bool isReachable READ isReachable )
 	Q_PROPERTY( QString contactId READ contactId )
 	Q_PROPERTY( QString icon READ icon WRITE setIcon )
 	Q_PROPERTY( QString toolTip READ toolTip )
 	Q_PROPERTY( QString nickName READ nickName WRITE setNickName )
-	Q_PROPERTY( ulong idleTime READ idleTime WRITE setIdleTime )
+	//Q_PROPERTY( unsigned long idleTime READ idleTime WRITE setIdleTime )
 
 public:
 	/**
@@ -158,8 +158,9 @@ public:
 	//        isReachable() accessor that checks for account->isConnected()
 	//        and then calls a new virtual method that does the
 	//        protocol-specific work, like 'doIsUnreachable' or so - Martijn
+	//
+	//FIXME: Can this be made const please? - JK
 	virtual bool isReachable();
-
 
 	/**
 	 * @brief Serialize the contact for storage in the contact list.
@@ -304,6 +305,9 @@ public:
 	 * It will return the time set in @ref setIdleTime() with an addition of the time
 	 * since you set this last time
 	 * @return time this contact has been idle for, in seconds
+	 //
+         // FIXME: Can we make this just 'unsigned long' ? QT Properties can't handle
+         // 'unsigned long int'
 	 */
 	virtual unsigned long int idleTime() const;
 
@@ -311,6 +315,9 @@ public:
 	 * \brief Set the current idle time in seconds.
 	 * Kopete will automatically calculate the time in @ref idleTime
 	 * except if you set 0.
+	 // 
+	 // FIXME: Can we make this just 'unsigned long' ? QT Properties can't handle
+	 // 'unsigned long int'
 	 */
 	void setIdleTime(unsigned long int);
 
