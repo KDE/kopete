@@ -35,6 +35,8 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kapplication.h>
+#include <kaboutdata.h>
 
 #include "kopetemessage.h"
 #include "msncontact.h"
@@ -315,11 +317,11 @@ int MSNSwitchBoardSocket::sendMsg( const KopeteMessage &msg )
 		return -1;
 	}
 
-	//kdDebug(14140) << "MSNSwitchBoardSocket::slotSendMsg" << endl;
-
+	// User-Agent is not a official flag, but GAIM has it
 	QString head =
 		"MIME-Version: 1.0\r\n"
 		"Content-Type: text/plain; charset=UTF-8\r\n"
+		"User-Agent: Kopete/"+escape(kapp->aboutData()->version())+"\r\n"
 		"X-MMS-IM-Format: ";
 
 	if(msg.font() != QFont() )
