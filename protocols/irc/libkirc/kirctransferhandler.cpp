@@ -52,13 +52,13 @@ KIRCTransfer *KIRCTransferHandler::createClient(
 	KIRC *engine, QString nick,// QString nick_peer_adress,
 	QHostAddress peer_address, Q_UINT16 peer_port,
 	KIRCTransfer::Type type,
-	QString file, Q_UINT32 fileSize )
+	QString fileName, Q_UINT32 fileSize )
 {
 	KIRCTransfer *client = new KIRCTransfer(
 		engine, nick,// QString nick_peer_adress,
 		peer_address, peer_port,
 		type,
-		file, fileSize,
+		fileName, fileSize,
 		this );
 	transferCreated( client );
 	return client;
