@@ -87,6 +87,7 @@ JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : Kop
 
 	// set initial state to disconnected, don't create the current contact
 	mIsConnected = false;
+	mIsInvisible = false;
 	doRegister = false;
 	
 
@@ -200,12 +201,15 @@ void JabberProtocol::Connect()
 		// call slot for connecting, this will update the status bar
 		slotConnecting();
 	}
-	else
-		if (isAway())
-			// the user is connected but currently away, update status
+	else if (isAway())		// the user is connected but currently away, update status
 			slotGoOnline();
-		else
-			// user is connected and not away, ignore
+	
+	else if (mIsInvisible) { // the user is conncted but currently invisible,update status
+			mIsInvisible = false;
+			slotGoOnline();
+	}
+			
+	else					// user is connected and not away, ignore
 			kdDebug() << "[JabberProtocol] Ignoring connect request (already connected)." << endl;
 			
 }
@@ -536,6 +540,7 @@ void JabberProtocol::initActions()
 	actionGoAway = new KAction(i18n("Away"), "jabber_away", 0, this, SLOT(slotSetAway()), this, "actionJabberway");
 	actionGoXA = new KAction(i18n("Extended Away"), "jabber_away", 0, this, SLOT(slotSetXA()), this, "actionJabberXA");
 	actionGoDND = new KAction(i18n("Do Not Disturb"), "jabber_na", 0, this, SLOT(slotSetDND()), this, "actionJabberDND");
+	actionGoInvisible = new KAction(i18n("Invisible"), "jabber_offline", 0, this, SLOT(slotSetInvisible()), this, "actionJabberInvisible");
 	actionGoOffline = new KAction(i18n("Offline"), "jabber_offline", 0, this, SLOT(slotDisconnect()), this, "actionJabberDisconnect");
 	actionSendRaw = new KAction(i18n("Send raw packet to Server"), "filenew", 0, this, SLOT(slotSendRaw()), this, "actionJabberSendRaw");
 	actionEditVCard = new KAction(i18n("Edit User Info"), "identity", 0, this, SLOT(slotEditVCard()), this, "actionEditVCard");
@@ -549,6 +554,7 @@ void JabberProtocol::initActions()
 	actionStatusMenu->insert(actionGoAway);
 	actionStatusMenu->insert(actionGoXA);
 	actionStatusMenu->insert(actionGoDND);
+	actionStatusMenu->insert(actionGoInvisible);
 	actionStatusMenu->insert(actionGoOffline);
 	
 	actionStatusMenu->popupMenu()->insertSeparator();
@@ -607,6 +613,15 @@ void JabberProtocol::slotSetAway()
 	
 	reasonDialog = new dlgJabberStatus(this, STATUS_AWAY, kopeteapp->mainWindow());
 	
+}
+
+void JabberProtocol::slotSetInvisible()
+{
+
+	kdDebug() << "Jabber plugin: Setting invisible mode." << endl;
+	
+	setPresence(STATUS_INVISIBLE, "");
+	mIsInvisible = true;
 }
 
 /*
@@ -694,8 +709,6 @@ void JabberProtocol::setPresence(int status, QString reason, int priority)
 	
 	if (mIsConnected)
 	{
-		mProtocol->setPresence(status, reason, priority);
-		
 		switch(status)
 		{
 			case STATUS_AWAY:
@@ -711,6 +724,11 @@ void JabberProtocol::setPresence(int status, QString reason, int priority)
 						statusBarIcon->setPixmap(onlineIcon);
 						mProtocol->setPresence(status, reason, priority);
 						break;
+			case STATUS_INVISIBLE:
+						statusBarIcon->setPixmap(offlineIcon); 
+						mProtocol->insertXml("<presence type=\"invisible\"/>");
+						break;
+
 			default:
 						kdDebug() << "[JabberProtocol] Unknown presence status, ignoring (status == " << status << ")" << endl;
 						break;

@@ -29,3 +29,4 @@ TODO for Jabber:
 - BUG: make sure that unsubscriptions from other users actually update the roster!
 - find out about Jabber server-side filtering components and if they can be
   integrated into the Kopete filtering API
+- an icon for STATUS_INVISIBLE ?

@@ -115,6 +115,7 @@ public slots:
 	void slotGoOnline();
 	void slotGoOffline();
 	void slotSetAway();
+	void slotSetInvisible();
 	void slotSetXA();
 	void slotSetDND();
 	void slotSendRaw();
@@ -153,6 +154,7 @@ private:
 	void initIcons();
 	void initActions();
 	bool mIsConnected;
+	bool mIsInvisible;
 
 	StatusBarIcon *statusBarIcon;
 
@@ -166,6 +168,7 @@ private:
 	KAction *actionGoAway;
 	KAction *actionGoXA;
 	KAction *actionGoDND;
+	KAction *actionGoInvisible;
 	KAction *actionGoOffline;
 	KAction *actionSendRaw;
 	KAction *actionEditVCard;
