@@ -10,31 +10,38 @@
 #ifndef AliasPREFERENCES_H
 #define AliasPREFERENCES_H
 
-#include "kcautoconfigmodule.h"
+#include "kcmodule.h"
+
+typedef QValueList<KopeteProtocol*> ProtocolList;
 
 class AliasDialogBase;
+class KopeteProtocol;
+class ProtocolItem;
 
-class AliasPreferences : public KCAutoConfigModule
+class AliasPreferences : public KCModule
 {
 	Q_OBJECT
 
-public:
-	AliasPreferences( QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList() );
-	~AliasPreferences();
-
-	virtual void save();
-	virtual void load();
-
-private slots:
-	void slotAddAlias();
-	void slotEditAlias();
-	void slotDeleteAliases();
-	void slotCheckAliasSelected();
+	public:
+		AliasPreferences( QWidget *parent = 0, const char *name = 0, 
+			const QStringList &args = QStringList() );
+		~AliasPreferences();
 	
-private:
-	AliasDialogBase * preferencesDialog;
-	void addAlias( QString &alias, QString &command );
-
+		virtual void save();
+		virtual void load();
+	
+	private slots:
+		void slotAddAlias();
+		void slotEditAlias();
+		void slotDeleteAliases();
+		void slotCheckAliasSelected();
+		
+	private:
+		AliasDialogBase * preferencesDialog;
+		void addAlias( QString &alias, QString &command, const ProtocolList &p, uint id = 0 );
+		void loadProtocols( AliasDialog *dialog );
+		const ProtocolList selectedProtocols( AliasDialog *dialog );
+		QMap<KopeteProtocol*,ProtocolItem*> itemMap;
 };
 
 #endif

@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>602</width>
-            <height>420</height>
+            <height>424</height>
         </rect>
     </property>
     <property name="caption">
@@ -42,6 +42,17 @@
                     <bool>true</bool>
                 </property>
             </column>
+            <column>
+                <property name="text">
+                    <string>Protocols</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
             <property name="name">
                 <cstring>aliasList</cstring>
             </property>
@@ -52,7 +63,7 @@
                 <bool>true</bool>
             </property>
             <property name="fullWidth">
-                <bool>true</bool>
+                <bool>false</bool>
             </property>
             <property name="itemsMovable">
                 <bool>false</bool>
