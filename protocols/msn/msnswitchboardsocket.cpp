@@ -82,8 +82,9 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 			QString msg = i18n( "MSN error code 216 (in response to  transaction ID %1).\n"
 			"This error seems appear when you try to talk with an on-line contact which would have blocked you\n"
 			"Please check and mail kopete-devel@kde.org if it is not the case" ).arg( id );
-			disconnect();
 			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+			slotSocketClosed( 0 ); // emit signal to get ourselves removed...
+			break;
 		}
 		case 217:
 		{

@@ -105,6 +105,8 @@ public:
 	virtual void addToGroup( const QString &group );
 	virtual void removeFromGroup( const QString &group );
 	virtual void moveToGroup( const QString &from, const QString &to );
+	
+	virtual void addThisTemporaryContact();
 
 	virtual bool isReachable() { return false; };
 

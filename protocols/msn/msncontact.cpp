@@ -431,6 +431,10 @@ void MSNContact::removedFromGroup(QString group)
 	m_groups.remove(group);
 }
 
+void MSNContact::addThisTemporaryContact()
+{
+	MSNProtocol::protocol()->addContact( m_msnId );
+}
 
 #include "msncontact.moc"
 

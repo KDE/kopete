@@ -201,15 +201,17 @@ public:
 	 
 	 /**
 	 * Show a context menu of actions pertaining to this contact
-	 * I hate having the group parameter, but its used for when
-	 * a contact can be in multiple groups and you have to move
-	 * a specific instance from one group to another.
-	 * OBSOLETE
 	 */
-	void showContextMenu( const QPoint& p, const QString& group );
+	void showContextMenu( const QPoint& p );
 
 
 	void moveToMetaContact(KopeteMetaContact *m);
+
+	/**
+	 * Add this contact to the contact-list if this is a temporary contact.
+	 * If the protocol has a contact-list server-side, it is needed to derive this fontction.  
+	 */
+	virtual void addThisTemporaryContact();
 
 
 public slots:

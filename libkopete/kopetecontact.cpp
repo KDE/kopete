@@ -179,13 +179,15 @@ void KopeteContact::initActions()
 	actionChangeAlias = KopeteStdAction::changeAlias( this, SLOT(slotChangeDisplayName()), this, "actionChangeAlias" );
 }
 
-void KopeteContact::showContextMenu(const QPoint& p, const QString&){
+void KopeteContact::showContextMenu(const QPoint& p)
+{
 	/* Build the menu */	
 	contextMenu = new KPopupMenu();
 	contextMenu->insertTitle( QString("%1 <%2> (%3)").arg(displayName()).arg(id()).arg(statusText()) ); // Name (status)
 	actionSendMessage->plug( contextMenu );
 	actionViewHistory->plug( contextMenu );
 	contextMenu->insertSeparator();
+	actionChangeMetaContact->setEnabled( !m_metaContact->isTemporary() );
 	actionChangeMetaContact->plug( contextMenu );
 	actionUserInfo->plug( contextMenu );
 	actionChangeAlias->plug( contextMenu );
@@ -214,6 +216,12 @@ void KopeteContact::slotChangeDisplayName(){
 	if(okClicked){
 		setDisplayName( newName );
 	}	
+}
+
+void KopeteContact::addThisTemporaryContact()
+{
+	if(m_metaContact->isTemporary())
+		m_metaContact->setTemporary(false);
 }
 
 void KopeteContact::slotChangeMetaContact()
