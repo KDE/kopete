@@ -22,6 +22,8 @@
 #include <kstaticdeleter.h>
 #include <kwallet.h>
 
+#include <qtimer.h>
+
 struct KopeteWalletManager::KopeteWalletManagerPrivate
 {
 	KopeteWalletManagerPrivate() : wallet(0) {}
@@ -54,28 +56,87 @@ KopeteWalletManager *KopeteWalletManager::self()
 	return s_self;
 }
 
-KWallet::Wallet *KopeteWalletManager::wallet( KopeteWalletManager::ShouldCreate create )
+void KopeteWalletManager::openWallet()
 {
-	if ( !KWallet::Wallet::isEnabled() ) return 0;
-
-	if ( d->wallet ) return d->wallet;
-
-	d->wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(),
-		/* FIXME: put a real wId here */ 0, KWallet::Wallet::Synchronous );
-
+	// do we already have a wallet?
 	if ( d->wallet )
 	{
-		QObject::connect( d->wallet, SIGNAL( walletClosed() ), this, SLOT( closeWallet() ) );
+		// if the wallet isn't open yet, we're pending a slotWalletChangedStatus
+		// anyway, so we don't set up a single shot.
+		if ( d->wallet->isOpen() )
+			QTimer::singleShot( 0, this, SLOT( slotGiveExistingWallet() ) );
+		return;
+	}
 
-		if ( !d->wallet->hasFolder( QString::fromLatin1( "Kopete" ) ) && create == CreateFolder )
+	// we have no wallet: ask for one.
+	d->wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(),
+	            /* FIXME: put a real wId here */ 0, KWallet::Wallet::Asynchronous );
+
+	connect( d->wallet, SIGNAL( walletOpened(bool) ), this, SLOT( slotWalletChangedStatus() ) );
+}
+
+void KopeteWalletManager::slotWalletChangedStatus()
+{
+	if( d->wallet->isOpen() )
+	{
+		if ( !d->wallet->hasFolder( QString::fromLatin1( "Kopete" ) ) )
 			d->wallet->createFolder( QString::fromLatin1( "Kopete" ) );
 
-		if ( !d->wallet->setFolder( QString::fromLatin1( "Kopete" ) ) )
+		if ( d->wallet->setFolder( QString::fromLatin1( "Kopete" ) ) )
 		{
+			// success!
+			QObject::connect( d->wallet, SIGNAL( walletClosed() ), this, SLOT( closeWallet() ) );
+		}
+		else
+		{
+			// opened OK, but we can't use it
 			delete d->wallet;
 			d->wallet = 0;
 		}
 	}
+	else
+	{
+		// failed to open
+		delete d->wallet;
+		d->wallet = 0;
+	}
+
+	emit walletOpened( d->wallet );
+}
+
+void KopeteWalletManager::slotGiveExistingWallet()
+{
+	if ( d->wallet )
+	{
+		// the wallet was already open
+		if ( d->wallet->isOpen() )
+			emit walletOpened( d->wallet );
+		// if the wallet was not open, but d->wallet is not 0,
+		// then we're waiting for it to open, and will be told
+		// when it's done: do nothing.
+	}
+	else
+	{
+		// the wallet was lost between us trying to open it and
+		// getting called back. try to reopen it.
+		openWallet();
+	}
+}
+
+KWallet::Wallet *KopeteWalletManager::wallet()
+{
+	if ( !KWallet::Wallet::isEnabled() )
+		return 0;
+
+	if ( d->wallet && d->wallet->isOpen() )
+		return d->wallet;
+	
+	delete d->wallet;
+	d->wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(),
+	            /* FIXME: put a real wId here */ 0, KWallet::Wallet::Synchronous );
+
+	if ( d->wallet )
+		slotWalletChangedStatus();
 
 	return d->wallet;
 }
@@ -84,11 +145,12 @@ void KopeteWalletManager::closeWallet()
 {
 	if ( !d->wallet ) return;
 
-	emit walletLost();
-
 	delete d->wallet;
 	d->wallet = 0L;
+
+	emit walletLost();
 }
+
 
 #include "kopetewalletmanager.moc"
 

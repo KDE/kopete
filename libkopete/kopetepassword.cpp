@@ -115,7 +115,7 @@ QString KopetePassword::retrieve( const QPixmap &image, const QString &prompt, b
 	if ( !error )
 	{
 #if KDE_IS_VERSION( 3, 1, 90 )
-		if( KWallet::Wallet *wallet = KopeteWalletManager::self()->wallet( KopeteWalletManager::DoNotCreateFolder ) )
+		if( KWallet::Wallet *wallet = KopeteWalletManager::self()->wallet() )
 		{
 			// Before trying to read from the wallet, check if the config file holds a password.
 			// If so, remove it from the config and set it through KWallet instead.

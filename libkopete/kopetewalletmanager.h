@@ -19,6 +19,8 @@
 
 #include <qobject.h>
 
+#include <kdemacros.h>
+
 namespace KWallet { class Wallet; }
 
 /**
@@ -38,8 +40,17 @@ public:
 	static KopeteWalletManager *self();
 	~KopeteWalletManager();
 
-	enum ShouldCreate { CreateFolder, DoNotCreateFolder };
-
+	/**
+	 * @brief Attempt to open the KWallet asyncronously.
+	 *
+	 * After calling this function, connect the walletOpened signal to one
+	 * of your slots to recieve notification of the wallet being opened.
+	 *
+	 * For simplicity of client code, it is guaranteed that walletOpened
+	 * will not be emitted during a call to this function.
+	 */
+	void openWallet();
+	
 	/**
 	 * Get a KWallet instance, possibly prompting the user for his
 	 * passphrase if necessary. The returned wallet will already be set to
@@ -48,14 +59,11 @@ public:
 	 * You may store the wallet object returned from this function, but note
 	 * that it will be deleted after the closeWallet signal is emitted.
 	 *
-	 * @param create If set to CreateFolder, the Kopete folder will be created
-	 *        if it does not exist; if set to DoNotCreateFolder, the folder
-	 *        will not be created. If the folder does not exist or could not
-	 *        be created, this function will return NULL.
 	 * @return The network KWallet to use for storing Kopete data, or NULL if
-	 *        the wallet was inaccessible.
+	 *         the wallet or Kopete folder was inaccessible.
+	 * @deprecated Use openWallet instead to avoid blocking the GUI.
 	 */
-	KWallet::Wallet *wallet( ShouldCreate create = CreateFolder );
+	KWallet::Wallet *wallet() KDE_DEPRECATED;
 
 public slots:
 	/**
@@ -65,9 +73,32 @@ public slots:
 
 signals:
 	/**
+	 * Emitted when an asyncronous openWallet call ends
+	 * @param wallet The wallet that was opened if the call succeeded, or
+	 *        NULL if the wallet failed to open or the Kopete folder was
+	 *        inaccessible.
+	 */
+	void walletOpened( KWallet::Wallet *wallet );
+
+	/**
 	 * Emitted when the connection to the wallet is lost.
 	 */
 	void walletLost();
+
+private slots:
+	/**
+	 * Called by the stored wallet pointer when it is successfully opened or
+	 * when it fails.
+	 *
+	 * Causes walletOpened to be emitted.
+	 */
+	void slotWalletChangedStatus();
+	
+	/**
+	 * Called by a singleShot timer in the event that we are asked for a
+	 * wallet when we already have one open and ready.
+	 */
+	void slotGiveExistingWallet();
 
 private:
 	struct KopeteWalletManagerPrivate;
