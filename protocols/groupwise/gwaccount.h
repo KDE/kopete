@@ -163,14 +163,6 @@ signals:
 	
 protected slots:
 	/**
-	 * Change the account's status.  Called by KActions and internally.
-	 */
-	void slotGoOnline();
-	void slotGoAway( const QString & reason );
-	void slotGoOffline();
-	void slotGoBusy( const QString & reason );
-	void slotGoAppearOffline();
-	/**
 	 * Set an auto reply message for use when the account is away
 	 * TODO: Extend Kopete::AwayAction so you can set multiple ones there.
 	 */
@@ -296,7 +288,7 @@ protected:
 	/**
 	 * Sends a status message to the server - called by the status specific slotGoAway etc
 	 */
-	void setStatus( GroupWise::Status status, const QString & reason = QString::null );
+	//void setStatus( GroupWise::Status status, const QString & reason = QString::null );
 
 	/**
 	* Received a message from the server.
@@ -311,6 +303,10 @@ protected:
 	 */
 	void cleanup();
 private:
+	// action menu and its actions
+	KActionMenu * m_actionMenu;
+	KAction * m_actionAutoReply;
+	KAction * m_actionManagePrivacy;
 	// current auto reply message
 	QString m_autoReply;
 	// Network code

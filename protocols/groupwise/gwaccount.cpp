@@ -82,6 +82,11 @@ GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& ac
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( groupRemoved( Kopete::Group * ) ),
 			SLOT( slotKopeteGroupRemoved( Kopete::Group * ) ) );
 
+	m_actionAutoReply = new KAction ( i18n( "&Set Auto-Reply..." ), QString::null, 0, this,
+			SLOT( slotSetAutoReply() ), this, "actionSetAutoReply");
+	m_actionManagePrivacy = new KAction ( i18n( "&Manage Privacy..." ), QString::null, 0, this,
+			SLOT( slotPrivacy() ), this, "actionPrivacy");
+
 	m_connector = 0;
 	m_QCATLS = 0;
 	m_tlsHandler = 0;
@@ -97,37 +102,20 @@ GroupWiseAccount::~GroupWiseAccount()
 
 KActionMenu* GroupWiseAccount::actionMenu()
 {
-	KActionMenu *theActionMenu = new KActionMenu(accountId(), myself()->onlineStatus().iconFor(this) , this);
-	theActionMenu->popupMenu()->insertTitle(myself()->icon(), i18n("GroupWise (%1)").arg(accountId()));
+	KActionMenu *m_actionMenu=Kopete::Account::actionMenu();
 
-	theActionMenu->insert( new KAction( i18n( "&Online" ),
-		GroupWiseProtocol::protocol()->groupwiseAvailable.iconFor(this), 0, this, SLOT ( slotGoOnline() ), this,
-		"actionGroupWiseConnect") );
-	theActionMenu->insert( new Kopete::AwayAction ( i18n( "&Away" ),
-		GroupWiseProtocol::protocol()->groupwiseAway.iconFor(this), 0, this, SLOT ( slotGoAway( const QString & ) ), this,
-		"actionGroupWiseAway") );
-	theActionMenu->insert( new Kopete::AwayAction ( i18n( "&Busy" ),
-		GroupWiseProtocol::protocol()->groupwiseBusy.iconFor(this), 0, this, SLOT ( slotGoBusy( const QString & ) ), this,
-		"actionGroupWiseBusy") );
-	theActionMenu->insert( new KAction( i18n( "A&ppear Offline" ), "groupwise_invisible", 0, this,
-		SLOT( slotGoAppearOffline() ), this,
-		"actionGroupWiseAppearOffline") ) ;
-	theActionMenu->insert( new KAction ( i18n( "O&ffline" ),
-		GroupWiseProtocol::protocol()->groupwiseOffline.iconFor(this), 0, this, SLOT ( slotGoOffline() ), this,
-		"actionGroupWiseOfflineDisconnect") );
-	KAction * autoReply = new KAction ( i18n( "&Set Auto-Reply..." ), QString::null, 0, this,
-		SLOT( slotSetAutoReply() ), this, "actionSetAutoReply");
-	autoReply->setEnabled( isConnected() );
-	theActionMenu->insert( autoReply );
-	KAction * managePrivacy = new KAction ( i18n( "&Manage Privacy..." ), QString::null, 0, this,
-		SLOT( slotPrivacy() ), this, "actionPrivacy");
-	managePrivacy->setEnabled( isConnected() );
-	theActionMenu->insert( managePrivacy );
-/// 	theActionMenu->insert( new KAction ( "Test rtfize()", QString::null, 0, this,
-// 		SLOT( slotTestRTFize() ), this,
-// 		"actionTestRTFize") );
+	m_actionAutoReply->setEnabled( isConnected() );
+	m_actionManagePrivacy->setEnabled( isConnected() );
 
-	return theActionMenu;
+	m_actionMenu->insert( m_actionAutoReply );
+	m_actionMenu->insert( m_actionManagePrivacy );
+	/* Used for debugging */
+	/*
+	theActionMenu->insert( new KAction ( "Test rtfize()", QString::null, 0, this,
+		SLOT( slotTestRTFize() ), this,
+		"actionTestRTFize") );
+	*/
+	return m_actionMenu;
 }
 
 const int GroupWiseAccount::port() const
@@ -232,12 +220,12 @@ void GroupWiseAccount::setAway( bool away, const QString & reason )
 	if ( away )
 	{
 		if ( Kopete::Away::getInstance()->idleTime() > 10 ) // don't go AwayIdle unless the user has actually been idle this long
-			setStatus( GroupWise::AwayIdle, QString::null );
+			setOnlineStatus( protocol()->groupwiseAwayIdle, QString::null );
 		else
-			setStatus( GroupWise::Away, reason );
+			setOnlineStatus( protocol()->groupwiseAway, reason );
 	}
 	else
-		setStatus( GroupWise::Available );
+		setOnlineStatus( protocol()->groupwiseAvailable );
 }
 
 void GroupWiseAccount::connectWithPassword( const QString &password )
@@ -365,9 +353,42 @@ void GroupWiseAccount::disconnected ( Kopete::Account::DisconnectReason reason )
 	Kopete::Account::disconnected( reason );
 }
 
-void GroupWiseAccount::setOnlineStatus ( const Kopete::OnlineStatus& status  , const QString &reason)
+void GroupWiseAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const QString &reason )
 {
-	myself()->setOnlineStatus( status );
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	if ( status == protocol()->groupwiseUnknown
+			|| status == protocol()->groupwiseConnecting 
+			|| status == protocol()->groupwiseInvalid
+			|| status == protocol()->groupwiseAwayIdle )
+	{
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " called with invalid status \"" 
+				<< status.description() << "\"" << endl;
+	}
+	// going offline
+	else if ( status == protocol()->groupwiseOffline )
+	{
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " DISCONNECTING" << endl;
+		disconnected( Kopete::Account::Manual );
+	}
+	// changing status
+	else if ( isConnected() )
+	{
+		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "changing status to \"" << status.description() << "\"" << endl;
+		// Appear Offline is achieved by explicitly setting the status to offline, 
+		// rather than disconnecting as when really going offline.
+		if ( status == protocol()->groupwiseAppearOffline )
+			m_client->setStatus( GroupWise::Offline, reason, m_autoReply );
+		else
+			m_client->setStatus( ( GroupWise::Status )status.internalStatus(), reason, m_autoReply );
+	}
+	// going online
+	else
+	{
+		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Must be connected before changing status" << endl;
+		m_initialStatus = ( GroupWise::Status )status.internalStatus();
+		m_initialReason = reason;
+		connect();
+	}
 }
 
 void GroupWiseAccount::disconnect()
@@ -414,25 +435,6 @@ void GroupWiseAccount::cleanup()
 	m_client = 0;
 }
 
-void GroupWiseAccount::setStatus( GroupWise::Status status, const QString & reason )
-{
-	if ( !(myself()->onlineStatus() == protocol()->groupwiseConnecting ) )
-	{
-		if ( isConnected() )
-		{
-			m_client->setStatus( status, reason, m_autoReply );
-			//myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAway );
-		}
-		else
-		{
-			kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Must be connected before changing status" << endl;
-			m_initialStatus = status;
-			m_initialReason = reason;
-			connect();
-		}
-	}
-}
-
 void GroupWiseAccount::createConference( const int clientId, const QStringList& invitees )
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
@@ -451,36 +453,6 @@ void GroupWiseAccount::sendInvitation( const GroupWise::ConferenceGuid & guid, c
 		msg.message = message;
 		m_client->sendInvitation( guid, dn, msg );
 	}
-}
-
-void GroupWiseAccount::slotGoOnline()
-{
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	setStatus( GroupWise::Available );
-}
-
-void GroupWiseAccount::slotGoAway( const QString & reason )
-{
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	setStatus( GroupWise::Away, reason );
-}
-
-void GroupWiseAccount::slotGoBusy( const QString & reason )
-{
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	setStatus( GroupWise::Busy, reason );
-}
-
-void GroupWiseAccount::slotGoAppearOffline()
-{
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	setStatus( GroupWise::Offline );
-}
-
-void GroupWiseAccount::slotGoOffline()
-{
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	disconnected ( Kopete::Account::Manual );
 }
 
 void GroupWiseAccount::slotLoggedIn()
