@@ -540,7 +540,7 @@ void KopeteMetaContactLVI::slotAddToNewGroup()
 		i18n( "New Group" ), i18n( "Please enter the name for the new group:" ) );
 
 	if ( !groupName.isEmpty() )
-		m_metaContact->addToGroup( Kopete::ContactList::self()->getGroup( groupName ) );
+		m_metaContact->addToGroup( Kopete::ContactList::self()->findGroup( groupName ) );
 }
 
 void KopeteMetaContactLVI::slotConfigChanged()

@@ -421,7 +421,7 @@ void OscarAccount::slotGotServerBuddyList()
 		{ //active contact on SSI
 			kdDebug(14150) << k_funcinfo << "Adding SSI group '" <<
 				git.current()->name << "' to kopete contact list" << endl;
-			Kopete::ContactList::self()->getGroup( git.current()->name );
+			Kopete::ContactList::self()->findGroup( git.current()->name );
 		}
 	}
 

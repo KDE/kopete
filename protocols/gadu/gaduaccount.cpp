@@ -810,7 +810,7 @@ GaduAccount::userlist( const QString& contactsListString )
 			// put him in all desired groups:
 			groups = QStringList::split( ",", contactsList[i].group );
 			for ( QStringList::Iterator groupsIterator = groups.begin(); groupsIterator != groups.end(); ++groupsIterator ) {
-				metaContact->addToGroup( Kopete::ContactList::self ()->getGroup ( *groupsIterator) );
+				metaContact->addToGroup( Kopete::ContactList::self ()->findGroup ( *groupsIterator) );
 			}
 		}
 	}

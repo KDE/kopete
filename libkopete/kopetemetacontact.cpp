@@ -739,9 +739,9 @@ bool Kopete::MetaContact::fromXML( const QDomElement& element )
 				{
 					QString strGroupId = groupElement.attribute( QString::fromLatin1("id") );
 					if( !strGroupId.isEmpty() )
-						addToGroup( Kopete::ContactList::self()->getGroup( strGroupId.toUInt() ) );
+						addToGroup( Kopete::ContactList::self()->group( strGroupId.toUInt() ) );
 					else //kopete 0.6 contactlist
-						addToGroup( Kopete::ContactList::self()->getGroup( groupElement.text() ) );
+						addToGroup( Kopete::ContactList::self()->findGroup( groupElement.text() ) );
 				}
 				else if( groupElement.tagName() == QString::fromLatin1( "top-level" ) ) //kopete 0.6 contactlist
 					addToGroup( Kopete::Group::topLevel() );
@@ -1050,9 +1050,14 @@ bool Kopete::MetaContact::syncWithKABC()
 						QDictIterator<Kopete::Account> acs(accounts);
 						Kopete::MetaContact *mc = 0;
 						for ( acs.toFirst(); acs.current(); ++acs )
-							if ( ( mc = Kopete::ContactList::self()->findContact(
-									proto->pluginId(), acs.current()->accountId(), *it ) ) )
+						{
+							Kopete::Contact *c= acs.current()->contacts()[*it];
+							if(c)
+							{
+								mc=c->metaContact();
 								break;
+							}
+						}
 
 						if ( mc ) // Is it in another metacontact?
 						{

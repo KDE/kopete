@@ -572,7 +572,7 @@ void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, co
 	if ( !contact( userid ) )
 	{
 		kdDebug(14180) << "SS Contact " << userid << " is not in the contact list. Adding..." << endl;
-		Kopete::Group *g=Kopete::ContactList::self()->getGroup(group);
+		Kopete::Group *g=Kopete::ContactList::self()->findGroup(group);
 		addMetaContact(userid, alias.isEmpty() ? userid : alias, g, Kopete::Account::ChangeKABC);
 	}
 

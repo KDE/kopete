@@ -268,7 +268,7 @@ void AddContactWizard::accept()
 			if(m_groupItems.contains(check))
 				metaContact->addToGroup(m_groupItems[check]);
 			else //it's a new group
-				metaContact->addToGroup( Kopete::ContactList::self()->getGroup( check->text() ) );
+				metaContact->addToGroup( Kopete::ContactList::self()->findGroup( check->text() ) );
 			topLevel = false;
 		}
 	}

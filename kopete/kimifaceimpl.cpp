@@ -34,6 +34,7 @@
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
 #include "kopeteuiglobal.h"
+#include "kopetecontact.h"
 
 #include <kdebug.h>
 
@@ -229,9 +230,12 @@ Kopete::MetaContact * KIMIfaceImpl::locateProtocolContact( const QString & conta
 		QDictIterator<Kopete::Account> it( accounts );
 		for( ; it.current(); ++it )
 		{
-			mc = Kopete::ContactList::self()->findContact( protocolId, it.currentKey(), contactId  );
-			if (mc)
+			Kopete::Contact *c = Kopete::ContactList::self()->findContact( protocolId, it.currentKey(), contactId  );
+			if (c)
+			{
+				mc=c->metaContact();
 				break;
+			}
 		}
 	}
 	return mc;

@@ -1344,7 +1344,8 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 		 */
 		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << jid.full () << " is asking for authorization to subscribe." << endl;
 
-		Kopete::MetaContact *metaContact;
+		Kopete::MetaContact *metaContact=0L;
+		Kopete::Contact *contact;
 		XMPP::JT_Presence *task;
 
 		switch (KMessageBox::questionYesNoCancel (Kopete::UI::Global::mainWidget (),
@@ -1374,7 +1375,9 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 				task->go ( true );
 
 				// Is the user already in our contact list?
-				metaContact = Kopete::ContactList::self ()->findContact (protocol ()->pluginId (), accountId (), jid.full().lower () );
+				contact = Kopete::ContactList::self ()->findContact (protocol ()->pluginId (), accountId (), jid.full().lower () );
+				if(contact)
+					metaContact=contact->metaContact();
 
 				// If it is not, ask the user if he wants to subscribe in return.
 				if ( ( !metaContact || metaContact->isTemporary() ) &&
@@ -1485,9 +1488,9 @@ void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 	/*
 	 * See if the contact is already on our contact list
 	 */
-	Kopete::MetaContact *metaContact = Kopete::ContactList::self()->findContact ( protocol()->pluginId (), accountId (), item.jid().full().lower () );
-
-	if ( !metaContact )
+	Kopete::MetaContact *metaContact;
+	Kopete::Contact *c= Kopete::ContactList::self()->findContact ( protocol()->pluginId (), accountId (), item.jid().full().lower () ) ;
+	if ( !c  )
 	{
 		/*
 		 * No metacontact has been found which contains a contact with this ID,
@@ -1498,10 +1501,14 @@ void JabberAccount::slotNewContact (const XMPP::RosterItem & item)
 
 		// add this metacontact to all groups the contact is a member of
 		for (QStringList::Iterator it = groups.begin (); it != groups.end (); ++it)
-			metaContact->addToGroup (Kopete::ContactList::self ()->getGroup (*it));
+			metaContact->addToGroup (Kopete::ContactList::self ()->findGroup (*it));
 
 		// put it onto contact list
 		Kopete::ContactList::self ()->addMetaContact ( metaContact );
+	}
+	else
+	{
+		metaContact=c->metaContact();
 	}
 
 	/*

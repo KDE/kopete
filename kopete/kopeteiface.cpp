@@ -143,7 +143,7 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 			contactName = displayName;
 
 		if ( !groupName.isEmpty() )
-			realGroup=Kopete::ContactList::self()->getGroup( groupName );
+			realGroup=Kopete::ContactList::self()->findGroup( groupName );
 
 		// Confirm with the user before we add the contact
 		// FIXME: This is completely bogus since the user may not

@@ -888,37 +888,22 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 		bool new_contact = false;
 		if ( !contacts()[ handle ] )
 		{
-			// FIXME: findContact() only works if the account id is an existing account - see Kopete::AccountManager::findAccount() for the reason
-			Kopete::MetaContact *m = Kopete::ContactList::self()->findContact( protocol()->pluginId(), QString::null, handle );
-			if ( m )
+			new_contact = true;
+
+			Kopete::MetaContact *m= m_addWizard_metaContact ? m_addWizard_metaContact :  new Kopete::MetaContact();
+
+			MSNContact *c = new MSNContact( this, handle, m );
+			c->contactAddedToGroup( group, m_groupList[ group ] );
+			c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName);
+
+			if ( !m_addWizard_metaContact )
 			{
-				kdDebug( 14140 ) << k_funcinfo
-					<< "Warning: the contact was found in the contactlist but not referenced in the protocol" << endl;
-				MSNContact *c = static_cast<MSNContact *>( m->findContact( protocol()->pluginId(), QString::null, handle ) );
-				c->contactAddedToGroup( group, m_groupList[ group ] );
+				m->addToGroup( m_groupList[ group ] );
+				Kopete::ContactList::self()->addMetaContact( m );
 			}
-			else
-			{
-				new_contact = true;
+			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
 
-				if ( m_addWizard_metaContact )
-					m = m_addWizard_metaContact;
-				else
-					m = new Kopete::MetaContact();
-
-				MSNContact *c = new MSNContact( this, handle, m );
-				c->contactAddedToGroup( group, m_groupList[ group ] );
-				c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName);
-
-				if ( !m_addWizard_metaContact )
-				{
-					m->addToGroup( m_groupList[ group ] );
-					Kopete::ContactList::self()->addMetaContact( m );
-				}
-				c->setOnlineStatus( MSNProtocol::protocol()->FLN );
-
-				m_addWizard_metaContact = 0L;
-			}
+			m_addWizard_metaContact = 0L;
 		}
 		if ( !new_contact )
 		{

@@ -597,7 +597,7 @@ void KopeteContactListView::addGroup()
 
 void KopeteContactListView::addGroup( const QString &groupName )
 {
-	d->viewStrategy->addGroup( Kopete::ContactList::self()->getGroup(groupName) );
+	d->viewStrategy->addGroup( Kopete::ContactList::self()->findGroup(groupName) );
 }
 
 void KopeteContactListView::slotGroupAdded( Kopete::Group *group )
@@ -1385,7 +1385,7 @@ void KopeteContactListView::slotMoveToGroup()
 
 	//FIXME What if two groups have the same name?
 	Kopete::Group *to = actionMove->currentItem() ?
-		Kopete::ContactList::self()->getGroup( actionMove->currentText() ) :
+		Kopete::ContactList::self()->findGroup( actionMove->currentText() ) :
 		Kopete::Group::topLevel();
 
 	if( !to || to->type() == Kopete::Group::Temporary )
@@ -1427,7 +1427,7 @@ void KopeteContactListView::slotCopyToGroup()
 
 	//FIXME! what if two groups have the same name?
 	Kopete::Group *to = actionCopy->currentItem() ?
-		Kopete::ContactList::self()->getGroup( actionCopy->currentText() ) :
+		Kopete::ContactList::self()->findGroup( actionCopy->currentText() ) :
 		Kopete::Group::topLevel();
 
 	if( !to || to->type() == Kopete::Group::Temporary )
@@ -1766,10 +1766,7 @@ void KopeteContactListView::slotUndo()
 		 }
 		 case UndoItem::MetaContactChange:
 		 {
-		 	Kopete::Contact *c=0;
-			Kopete::MetaContact *m0=Kopete::ContactList::self()->findContact(m_undo->args[0] , m_undo->args[1], m_undo->args[2] ) ;
-			if(m0)
-				c=m0->findContact(m_undo->args[0] , m_undo->args[1], m_undo->args[2] );
+		 	Kopete::Contact *c=Kopete::ContactList::self()->findContact(m_undo->args[0] , m_undo->args[1], m_undo->args[2] ) ;
 			if(c)
 			{
 				success=true;
@@ -1783,16 +1780,13 @@ void KopeteContactListView::slotUndo()
 					c->setMetaContact(m);
 					Kopete::ContactList::self()->addMetaContact(m);
 				}
-				m_undo->metacontact=m0; //for the redo
+				m_undo->metacontact=c->metaContact(); //for the redo
 			}
 			break;
 		 }
 		 case UndoItem::ContactAdd:
 		 {
-			Kopete::Contact *c=0;
-			Kopete::MetaContact *m0=Kopete::ContactList::self()->findContact(m_undo->args[0] , m_undo->args[1], m_undo->args[2] ) ;
-			if(m0)
-				c=m0->findContact(m_undo->args[0] , m_undo->args[1], m_undo->args[2] );
+			Kopete::Contact *c=Kopete::ContactList::self()->findContact(m_undo->args[0] , m_undo->args[1], m_undo->args[2] ) ;
 			if(c)
 			{
 				success=true;
@@ -1800,7 +1794,7 @@ void KopeteContactListView::slotUndo()
 				m->setTemporary(true);
 				c->setMetaContact(m);
 				Kopete::ContactList::self()->addMetaContact(m);
-				m_undo->metacontact=m0;
+				m_undo->metacontact=c->metaContact();
 			}
 			break;
 		 }
@@ -1898,15 +1892,12 @@ void KopeteContactListView::slotRedo()
 		 case UndoItem::MetaContactChange:
 		 case UndoItem::ContactAdd:
 		 {
-		 	Kopete::Contact *c=0;
-			Kopete::MetaContact *m0=Kopete::ContactList::self()->findContact(m_redo->args[0] , m_redo->args[1], m_redo->args[2] ) ;
-			if(m0)
-				c=m0->findContact(m_redo->args[0] , m_redo->args[1], m_redo->args[2] );
+		 	Kopete::Contact *c=Kopete::ContactList::self()->findContact(m_redo->args[0] , m_redo->args[1], m_redo->args[2] ) ;
 			if(c && m_redo->metacontact)
 			{
 				success=true;
 				c->setMetaContact(m_redo->metacontact);
-				m_redo->metacontact=m0;
+				m_redo->metacontact=c->metaContact();
 			}
 			break;
 		 }
