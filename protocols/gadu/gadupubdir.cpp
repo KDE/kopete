@@ -117,7 +117,7 @@ void GaduPublicDir::slotSearchResult( const searchResult& result )
 	for ( i = result.count()  ; i-- ; ){
 		kdDebug(14100) << "adding" << (*r)->uin << endl;
 		sl= new QListViewItem(
-					list, QString::fromLatin1(""),
+					list, QString::fromAscii(""),
 					(*r)->firstname,
 					(*r)->nickname,
 					(*r)->age,

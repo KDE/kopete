@@ -28,6 +28,7 @@
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
+#include "kopetegroup.h"
 
 #include <kpassdlg.h>
 #include <kconfig.h>
@@ -51,6 +52,8 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
 	KGlobal::config()->setGroup( "Gadu" );
 	isUsingTls = false;
 	myself_ = new GaduContact(  accountId().toInt(), accountId(), this, new KopeteMetaContact() );
+	lastStatus = GG_STATUS_AVAIL;
+	lastDescription = QString::null;
 
 	initActions();
 	initConnections();
@@ -70,14 +73,16 @@ GaduAccount::initConnections()
 {
 	QObject::connect( session_, SIGNAL( error( const QString&, const QString& ) ),
 				SLOT( error( const QString&, const QString& ) ) );
+	QObject::connect( session_, SIGNAL( loginPasswordIncorrect( ) ),
+				SLOT( loginPasswordFailed( ) ) );
 	QObject::connect( session_, SIGNAL( messageReceived( struct gg_event* ) ),
 				SLOT( messageReceived( struct gg_event*) )  );
 	QObject::connect( session_, SIGNAL( notify( struct gg_event* ) ),
 				SLOT( notify( struct gg_event* ) ) );
 	QObject::connect( session_, SIGNAL( statusChanged( struct gg_event* ) ),
 				SLOT( statusChanged( struct gg_event* ) ) );
-	QObject::connect( session_, SIGNAL( connectionFailed( struct gg_event* )),
-				SLOT( connectionFailed( struct gg_event* ) ) );
+	QObject::connect( session_, SIGNAL( connectionFailed( const QString& )),
+				SLOT( connectionFailed( const QString& ) ) );
 	QObject::connect( session_, SIGNAL( connectionSucceed( struct gg_event* ) ),
 				SLOT( connectionSucceed( struct gg_event* ) ) );
 	QObject::connect( session_, SIGNAL( disconnect() ),
@@ -93,8 +98,8 @@ GaduAccount::initConnections()
 void GaduAccount::loaded()
 {
 	QString nick;
-	nick	= pluginData( protocol(), QString::fromLatin1( "nickName" ) );
-	isUsingTls	= (bool) ( pluginData( protocol(), QString::fromLatin1( "useEncryptedConnection" ) ).toInt() );
+	nick	= pluginData( protocol(), QString::fromAscii( "nickName" ) );
+	isUsingTls	= (bool) ( pluginData( protocol(), QString::fromAscii( "useEncryptedConnection" ) ).toInt() );
 
 	if ( !nick.isNull() ) {
 		myself_->rename( nick );
@@ -237,13 +242,32 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 	}
 }
 
-void
-GaduAccount::slotLogin( int status, const QString& dscr  )
+void 
+GaduAccount::loginPasswordFailed()
 {
+	slotLogin( lastStatus, lastDescription, true );
+}
+
+void
+GaduAccount::slotLogin( int status, const QString& dscr, bool lastAttemptFailed )
+{
+	QString pass;
+
+	lastStatus		= status;
+	lastDescription	= dscr;
 
 	myself_->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ), dscr );
-	if ( !session_->isConnected() ) {
-		session_->login( accountId().toInt(), password(), isUsingTls, status, dscr );
+
+	if ( !session_->isConnected() || lastAttemptFailed ) {
+		pass = password( lastAttemptFailed );
+		if ( pass.isEmpty() ){
+			slotCommandDone( QString::null, i18n( "Please set password, empty passwords are not supported by Gadu-Gadu"  ) );
+		}
+		if ( pass.isNull() && lastAttemptFailed ){
+			// user pressed CANCEL
+			return;
+		}
+		session_->login( accountId().toInt(), pass, isUsingTls, status, dscr );
 	}
 	else {
 		session_->changeStatus( status );
@@ -321,9 +345,9 @@ GaduAccount::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 
 	if ( session_->isConnected() ) {
 		sendMsg = msg;
-		sendMsg.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "\r\n" ) );
+		sendMsg.replace( QString::fromAscii( "\n" ), QString::fromAscii( "\r\n" ) );
 		cpMsg = textcodec_->fromUnicode( sendMsg );
-		session_->sendMessage( recipient, (unsigned char*)( cpMsg.latin1() ), msgClass );
+		session_->sendMessage( recipient, (unsigned char *)cpMsg.ascii(), msgClass );
 	}
 }
 
@@ -456,11 +480,11 @@ GaduAccount::pong()
 }
 
 void
-GaduAccount::connectionFailed( struct gg_event* /*e*/ )
+GaduAccount::connectionFailed( const QString& fReason )
 {
 	status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
 	myself_->setOnlineStatus( status_ );
-	KMessageBox::error( qApp->mainWidget(), i18n( "Plugin unable to connect to the Gadu-Gadu server." ),
+	KMessageBox::error( qApp->mainWidget(), i18n( "unable to connect to the Gadu-Gadu server(\"%1\")." ).arg( fReason ),
 					i18n( "Connection Error" ) );
 }
 
@@ -743,7 +767,7 @@ bool GaduAccount::isConnectionEncrypted()
 void GaduAccount::useTls( bool ut )
 {
 	isUsingTls = ut;
-	setPluginData( protocol(), QString::fromLatin1( "useEncryptedConnection" ), QString::number( ut ) );
+	setPluginData( protocol(), QString::fromAscii( "useEncryptedConnection" ), QString::number( ut ) );
 }
 
 #include "gaduaccount.moc"

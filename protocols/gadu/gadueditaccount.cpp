@@ -182,7 +182,7 @@ KopeteAccount* GaduEditAccount::apply()
 
 	m_account->setAutoLogin( autoLoginCheck_->isChecked() );
 
-	if( rememberCheck_->isChecked() ) {
+	if( rememberCheck_->isChecked() && passwordEdit_->text().length() ) {
 		m_account->setPassword( passwordEdit_->text() );
 	}
 	else {
@@ -192,7 +192,7 @@ KopeteAccount* GaduEditAccount::apply()
 	m_account->myself()->rename( nickName->text() );
 
 	// this is changed only here, so i won't add any proper handling now
-	m_account->setPluginData( m_account->protocol(),  QString::fromLatin1( "nickName" ), nickName->text() );
+	m_account->setPluginData( m_account->protocol(),  QString::fromAscii( "nickName" ), nickName->text() );
 
 	m_account->setAutoLogin( autoLoginCheck_->isChecked() );
 	( static_cast<GaduAccount*> (m_account) )->useTls( useTls_->isChecked() );

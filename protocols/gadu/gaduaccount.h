@@ -63,7 +63,8 @@ public slots:
 	//}
 
 	void changeStatus( const KopeteOnlineStatus& status, const QString& descr = QString::null );
-	void slotLogin( int status = GG_STATUS_AVAIL, const QString& dscr = QString::null );
+	void slotLogin( int status = GG_STATUS_AVAIL, 
+			const QString& dscr = QString::null, bool lastAttemptFailed = false );
 	void slotLogoff();
 	void slotGoOnline();
 	void slotGoOffline();
@@ -80,6 +81,9 @@ public slots:
 
 	void sendMessage( uin_t recipient, const QString& msg,
 			int msgClass = GG_CLASS_CHAT );
+
+	// call when password was incorrect, and you want to ask user again
+	void loginPasswordFailed();
 
 	void error( const QString& title, const QString& message );
 
@@ -123,7 +127,7 @@ private slots:
 	void userlist( const QString& contacts );
 	gaduContactsList* userlist();
 
-	void connectionFailed( struct gg_event* /*e*/ );
+	void connectionFailed( const QString& );
 	void connectionSucceed( struct gg_event* /*e*/ );
 
 	void slotChangePassword();
@@ -156,6 +160,9 @@ private:
 	KAction*			listputAction;
 
 	bool				isUsingTls;
+
+	int				lastStatus;
+	QString			lastDescription;
 };
 
 #endif

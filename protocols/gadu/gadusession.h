@@ -69,6 +69,7 @@ public:
 	bool	isConnected() const;
 	int	status() const;
 	bool	stringToContacts( gaduContactsList& , const QString& );
+	const QString failureDescription( gg_failure_t );
 
 public slots:
 	void login( struct gg_login_params* );
@@ -112,8 +113,9 @@ signals:
 	void notify( struct gg_event* );
 	void statusChanged( struct gg_event* );
 	void pong();
-	void connectionFailed( struct gg_event* );
+	void connectionFailed( const QString& );
 	void connectionSucceed( struct gg_event* );
+	void loginPasswordIncorrect();
 	void disconnect();
 	void pubDirSearchResult( const searchResult& );
 	void userListRecieved( const QString& );

@@ -54,7 +54,6 @@ signals:
 	void socketReady();
 
 protected:
-	char* qstrToChar( const QString& );
 	void checkSocket( int, int );
 	void enableNotifiers( int );
 	void disableNotifiers();

@@ -52,12 +52,6 @@ GaduCommand::done() const
 	return done_;
 }
 
-char*
-GaduCommand::qstrToChar( const QString& str )
-{
-	return ( str.isEmpty() ? NULL:( char* )( str.latin1() ) );
-}
-
 void
 GaduCommand::checkSocket( int fd, int checkWhat )
 {
@@ -136,7 +130,7 @@ RegisterCommand::setUserinfo( const QString& email, const QString& password )
 void
 RegisterCommand::execute()
 {
-	session_ = gg_register( email_.local8Bit(), password_.local8Bit(), 1 );
+	session_ = gg_register( email_.ascii(), password_.ascii(), 1 );
 	connect( this, SIGNAL( socketReady() ), SLOT( watcher() ) );
 	checkSocket( session_->fd, session_->check );
 }
@@ -283,10 +277,10 @@ void
 ChangePasswordCommand::execute()
 {
 	session_ = gg_change_passwd2( uin_,
-							passwd_.latin1(),
-							newpasswd_.latin1(),
-							newemail_.latin1(),
-							newemail_.latin1(), 1 );
+							passwd_.ascii(),
+							newpasswd_.ascii(),
+							newemail_.ascii(),
+							newemail_.ascii(), 1 );
 	connect( this, SIGNAL( socketReady() ), SLOT( watcher() ) );
 	checkSocket( session_->fd, session_->check );
 }
@@ -340,22 +334,25 @@ ChangeInfoCommand::setInfo( uin_t uin, const QString& passwd,
 						const QString& nickname, const QString& email,
 						int born, int gender, const QString& city )
 {
+// XXX: update for 6.0 and add support in plugin
+/*
 	memset( &info_, 0, sizeof( struct gg_change_info_request ) );
 	uin_			= uin;
 	passwd_		= passwd;
-	info_.first_name	= firstName.local8Bit().data();
-	info_.last_name	= lastName.local8Bit().data();
-	info_.nickname	= nickname.local8Bit().data();
-	info_.email		= email.local8Bit().data();
+	info_.first_name	= firstName.ascii();
+	info_.last_name	= lastName.ascii();
+	info_.nickname	= nickname.ascii();
+	info_.email		= email.ascii();
 	info_.born		= born;
 	info_.gender	= gender;
-	info_.city		= city.local8Bit().data();
+	info_.city		= city.ascii();
+*/
 }
 
 void
 ChangeInfoCommand::execute()
 {
-	session_ = gg_change_info( uin_, passwd_.local8Bit(), &info_, 1 );
+	session_ = gg_change_info( uin_, passwd_.ascii(), &info_, 1 );
 	connect( this, SIGNAL( socketReady() ), SLOT( watcher() ) );
 	checkSocket( session_->fd, session_->check );
 }

@@ -68,11 +68,17 @@ void
 GaduSession::login( struct gg_login_params* p )
 {
 	if ( !isConnected() ) {
+
+// turn on in case you have any problems, and  you want 
+// to report it better. libgadu needs to be recompiled with debug enabled
+//		gg_debug_level=GG_DEBUG_MISC;	
+
 		kdDebug(14100) << "Login" << endl;
+
 		if ( !(session_ = gg_login( p ) ) ) {
 			gg_free_session( session_ );
 			session_ = 0;
-			emit connectionFailed( 0L );
+			emit connectionFailed( i18n( "Internal gg_login error.Please contact author." ) );
 			return;
 		}
 
@@ -115,12 +121,14 @@ GaduSession::login( uin_t uin, const QString& password, bool useTls,
 					int status, const QString& statusDescr )
 {
 	memset( &params_, 0, sizeof(params_) );
+
 	params_.uin = uin;
-	params_.password = const_cast<char*>( password.latin1() );
+	params_.password = (char *)password.ascii();
 	params_.status = status;
-	params_.status_descr = statusDescr.local8Bit().data();
+	params_.status_descr = (char *)statusDescr.ascii();
 	params_.async = 1;
 	params_.tls = useTls;
+
 	login( &params_ );
 }
 
@@ -207,7 +215,7 @@ GaduSession::sendMessageCtcp( uin_t recipient, const QString& msg, int msgClass 
 {
 	if ( isConnected() ) {
 		return gg_send_message_ctcp( session_, msgClass, recipient,
-							reinterpret_cast<const unsigned char*>( msg.local8Bit().data() ),
+							reinterpret_cast<const unsigned char*>( msg.ascii() ),
 							 msg.length() );
 	}
 	else {
@@ -239,7 +247,7 @@ GaduSession::changeStatusDescription( int status, const QString& descr )
 	ndescr= textcodec->fromUnicode(descr);
 
 	if ( isConnected() ) {
-		return gg_change_status_descr( session_, status, ndescr.latin1() );
+		return gg_change_status_descr( session_, status, ndescr.ascii() );
 	}
 	else {
 		emit error( i18n("Not Connected"), i18n("You have to be connected to the server to change your status!") );
@@ -343,10 +351,10 @@ GaduSession::pubDirSearch(QString& name, QString& surname, QString& nick, int UI
 	}
 	// otherwise we are looking only for one fellow with this nice UIN
 	else{
-		gg_pubdir50_add( searchRequest_, GG_PUBDIR50_UIN, QString::number( UIN ).latin1() );
+		gg_pubdir50_add( searchRequest_, GG_PUBDIR50_UIN, QString::number( UIN ).ascii() );
 	}
 
-	gg_pubdir50_add( searchRequest_, GG_PUBDIR50_START, QString::number(searchSeqNr_).latin1() );
+	gg_pubdir50_add( searchRequest_, GG_PUBDIR50_START, QString::number(searchSeqNr_).ascii() );
 
 	gg_pubdir50( session_, searchRequest_ );
 
@@ -432,7 +440,7 @@ GaduSession::exportContacts( gaduContactsList* u )
 
 	plist = textcodec->fromUnicode( contacts );
 
-	if ( gg_userlist_request( session_, GG_USERLIST_PUT, plist.latin1() ) == -1 ) {
+	if ( gg_userlist_request( session_, GG_USERLIST_PUT, plist.ascii() ) == -1 ) {
 		kdDebug( 14100 ) << "export contact list failed " << endl;
 		return;
 	}
@@ -553,6 +561,40 @@ GaduSession::handleUserlist( gg_event* e )
 	}
 }
 
+const
+QString
+GaduSession::failureDescription( gg_failure_t f )
+{
+	switch( f ) {
+		case GG_FAILURE_RESOLVING:
+			return i18n( "Unable to resolve server address. DNS failure." );
+			break;
+		case GG_FAILURE_CONNECTING:
+			return i18n( "Unable to connect to server." );
+			break;
+		case GG_FAILURE_INVALID:
+			return i18n( "Server send incorrect data. Protocol error." );
+			break;
+		case GG_FAILURE_READING:
+			return i18n( "Problem reading data from server." );
+			break;
+		case GG_FAILURE_WRITING:
+			return i18n( "Problem sending data to server." );
+			break;
+		case GG_FAILURE_PASSWORD:
+			return i18n( "Incorrect password." );
+			break;
+		case GG_FAILURE_404:
+			return QString::fromAscii( "404." );
+			break;
+		case GG_FAILURE_TLS:
+			return i18n( "Unable to connect over encrypted channel.\nTry to turn off encryption support in Gadu account settings and reconnect." );
+			break;
+	}
+	
+	return i18n( "Unknown error number %1." ).arg( QString::number( (unsigned int)f ) );	
+}
+
 void
 GaduSession::checkDescriptor()
 {
@@ -591,11 +633,17 @@ GaduSession::checkDescriptor()
 			emit connectionSucceed( e );
 		break;
 		case GG_EVENT_CONN_FAILED:
-			kdDebug(14100)<<"event connectionFailed"<<endl;
+			kdDebug(14100) << "event connectionFailed" << endl;
 			destroySession();
-			kdDebug(14100)<<"emit connection failed signal"<<endl;
-			emit connectionFailed( NULL );
-		break;
+			if ( e->event.failure == GG_FAILURE_PASSWORD ) {
+				kdDebug(14100) << "incorrect passwd, retrying" << endl;
+				emit loginPasswordIncorrect();
+			}
+			else {
+				kdDebug(14100) << "emit connection failed signal" << endl;
+				emit connectionFailed( failureDescription( (gg_failure_t)e->event.failure ) );
+			}
+			break;
 		case GG_EVENT_DISCONNECT:
 			kdDebug(14100)<<"event Disconnected"<<endl;
 			logoff();
