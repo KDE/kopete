@@ -91,6 +91,7 @@ QString KopeteGroupViewItem::key( int, bool ) const
 void KopeteGroupViewItem::startRename( int col )
 {
 	refreshDisplayName();
+	setText(0,m_renameText);
 	QListViewItem::startRename(col);
 }
 
