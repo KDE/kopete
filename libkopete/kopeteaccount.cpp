@@ -105,7 +105,8 @@ void KopeteAccount::disconnect( DisconnectReason reason )
 {
 	//reconnect if needed
 	if ( KopetePrefs::prefs()->reconnectOnDisconnect() == true && reason != Manual )
-		connect();
+		//use a timer to allow the plugins to clean up after return
+		QTimer::singleShot(0, this, SLOT(connect()));
 }
 
 KopeteProtocol *KopeteAccount::protocol() const
