@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2004 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
 //
-// gadurichtextformat.cpp
+// gadudcctransaction.cpp
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -44,7 +44,7 @@
 #include "libgadu.h"
 
 GaduDCCTransaction::GaduDCCTransaction( gg_dcc* socket, GaduDCC* parent, const char* name )
-:QObject( parent, name ), read_( NULL ), write_( NULL ), account( NULL ), contact( NULL ), transfer_( NULL ) 
+:QObject( parent, name ), read_( NULL ), write_( NULL ), account( NULL ), contact( NULL ), transfer_( NULL )
 {
 	dccSock_ = socket;
 	gaduDCC_ = parent;
@@ -80,7 +80,7 @@ GaduDCCTransaction::peerUIN()
 	return 0;
 }
 
-bool 
+bool
 GaduDCCTransaction::setupIncoming( unsigned int p )
 {
 	if ( dccSock_ == NULL ){
@@ -168,16 +168,14 @@ GaduDCCTransaction::disableNotifiers()
 		write_->setEnabled( false );
 	}
 }
-void 
+void
 GaduDCCTransaction::slotIncomingTransferAccepted ( KopeteTransfer* transfer, const QString& fileName )
 {
 
 	if ( (long)transfer->info().transferId () != transferId_ ) {
 		return;
 	}
-	
-	// to string fools, strings used here are from jabber protocol
-	
+
 	transfer_ = transfer;
 	localFile_.setName( fileName );
 
@@ -202,7 +200,7 @@ GaduDCCTransaction::slotIncomingTransferAccepted ( KopeteTransfer* transfer, con
 				}
 			break;
 
-			default:					// cancel
+			default:			// cancel
 				closeDCC();
 				deleteLater();
 				return;
@@ -211,7 +209,7 @@ GaduDCCTransaction::slotIncomingTransferAccepted ( KopeteTransfer* transfer, con
 		if ( localFile_.handle() < 1 ) {
 			closeDCC();
 			deleteLater();
-			return;								
+			return;
 		}
 	}
 	else {
@@ -225,7 +223,7 @@ GaduDCCTransaction::slotIncomingTransferAccepted ( KopeteTransfer* transfer, con
 		dccSock_->offset  = 0;
 		dccSock_->file_fd = localFile_.handle();
 	}
-	
+
 	connect ( transfer, SIGNAL( result( KIO::Job * ) ), this, SLOT( slotTransferResult() ) );
 
 	// reenable notifiers
@@ -245,7 +243,7 @@ GaduDCCTransaction::slotTransferResult()
 	}
 }
 
-void 
+void
 GaduDCCTransaction::slotTransferRefused ( const KopeteFileTransferInfo&  transfer )
 {
 	if ( (long)transfer.transferId () != transferId_ )
@@ -257,7 +255,7 @@ GaduDCCTransaction::slotTransferRefused ( const KopeteFileTransferInfo&  transfe
 void
 GaduDCCTransaction::askIncommingTransfer()
 {
-	
+
 	transferId_ = KopeteTransferManager::transferManager()->askIncomingTransfer ( contact,
 		QString( (const char*)dccSock_->file_info.filename ),  dccSock_->file_info.size );
 
@@ -280,9 +278,8 @@ GaduDCCTransaction::watcher() {
 		case GG_EVENT_DCC_CLIENT_ACCEPT:
 			kdDebug(14100) << " GG_EVENT_DCC_CLIENT_ACCEPT " << endl;
 			// check dccsock->peer_uin, if unknown, fuck it;
-			
-			// is it for us ?
 
+			// is it for us ?
 			account = gaduDCC_->account( dccSock_->uin );
 			if ( !account ) {
 				kdDebug( 14100 ) << " this dcc transaction is for uin " << dccSock_->uin << ", which is not quite for me... closing"  << endl;
@@ -292,14 +289,14 @@ GaduDCCTransaction::watcher() {
 				deleteLater();
 				return;
 			}
-			
+
 			if ( !peer ) {
 				contact = static_cast<GaduContact*> (account->contacts()[ QString::number( dccSock_->peer_uin ) ]);
 			}
 			else {
 				contact = static_cast<GaduContact*> (account->contacts()[ QString::number( peer ) ]);
 			}
-			
+
 			if ( contact == NULL ) {
 				// refusing, contact on the list
 				kdDebug(14100) << " dcc connection from " << dccSock_->peer_uin << " refused, UIN not on the list " <<endl;
@@ -308,7 +305,7 @@ GaduDCCTransaction::watcher() {
 				// emit error
 				deleteLater();
 				return;
-			} 
+			}
 			else {
 				// ask user to accept that transfer
 				kdDebug(14100) <<  " dcc accepted from " << dccSock_->peer_uin << endl;
@@ -322,27 +319,27 @@ GaduDCCTransaction::watcher() {
 			}
 			// update gui with progress
 			break;
-		
+
 		case GG_EVENT_DCC_NEED_FILE_ACK:
 			kdDebug(14100) << " GG_EVENT_DCC_NEED_FILE_ACK " << endl;
 			gg_free_event( dccEvent );
 			askIncommingTransfer();
 			return;
 			break;
-		
+
 		case GG_EVENT_DCC_ERROR:
 			kdDebug(14100) << " GG_EVENT_DCC_ERROR :" << dccEvent->event.dcc_error  << endl;
 			if ( transfer_ ) {
 				switch( dccEvent->event.dcc_error ) {
-					
+
 					case GG_ERROR_DCC_REFUSED:
 						transfer_->setError( KopeteTransfer::Refused );
 					break;
-					
+
 					case GG_ERROR_DCC_EOF:
 						transfer_->setError( KopeteTransfer::CanceledRemote );
 					break;
-					
+
 					case GG_ERROR_DCC_HANDSHAKE:
 					case GG_ERROR_DCC_FILE:
 					case GG_ERROR_DCC_NET:
@@ -355,7 +352,7 @@ GaduDCCTransaction::watcher() {
 			closeDCC();
 			deleteLater();
 			return;
-			
+
 		case GG_EVENT_DCC_DONE:
 			if ( transfer_ ) {
 				transfer_->slotComplete();
@@ -363,7 +360,7 @@ GaduDCCTransaction::watcher() {
 			closeDCC();
 			deleteLater();
 			return;
-			
+
 		default:
 			kdDebug(14100) << "unknown/unhandled DCC EVENT: " << dccEvent->type << endl;
 			break;
