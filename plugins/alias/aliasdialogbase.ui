@@ -74,7 +74,7 @@
                 <cstring>addButton</cstring>
             </property>
             <property name="text">
-                <string>&amp;Add New Alias</string>
+                <string>&amp;Add New Alias...</string>
             </property>
         </widget>
         <widget class="KPushButton" row="1" column="2">
@@ -90,7 +90,7 @@
                 <cstring>editButton</cstring>
             </property>
             <property name="text">
-                <string>Edit Alias</string>
+                <string>Edit Alias...</string>
             </property>
         </widget>
     </grid>

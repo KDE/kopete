@@ -403,11 +403,11 @@ KActionMenu *IRCAccount::actionMenu()
 	mActionMenu->popupMenu()->insertSeparator();
 	mActionMenu->insert( new KAction ( i18n("Join Channel..."), "", 0, this, SLOT(slotJoinChannel()), mActionMenu ) );
 	mActionMenu->insert( new KAction ( i18n("Search Channels..."), "", 0, this, SLOT(slotSearchChannels()), mActionMenu ) );
-	mActionMenu->insert( new KAction ( i18n("Show Server Window..."), "", 0, this, SLOT(slotShowServerWindow()), mActionMenu ) );
+	mActionMenu->insert( new KAction ( i18n("Show Server Window"), "", 0, this, SLOT(slotShowServerWindow()), mActionMenu ) );
 
 	if( m_engine->isConnected() && m_engine->useSSL() )
 	{
-		mActionMenu->insert( new KAction ( i18n("Show Security Information..."), "", 0, m_engine,
+		mActionMenu->insert( new KAction ( i18n("Show Security Information"), "", 0, m_engine,
 			SLOT(showInfoDialog()), mActionMenu ) );
 	}
 
@@ -501,7 +501,7 @@ void IRCAccount::slotSearchChannels()
 	if( !m_channelList )
 	{
 		m_channelList = new ChannelListDialog( m_engine,
-			i18n("Channel list for %1").arg( m_engine->currentHost() ), this,
+			i18n("Channel List for %1").arg( m_engine->currentHost() ), this,
 			SLOT( slotJoinNamedChannel( const QString & ) ) );
 	}
 	else

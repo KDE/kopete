@@ -193,7 +193,7 @@
                         </sizepolicy>
                     </property>
                     <property name="text">
-                        <string>&amp;New</string>
+                        <string>&amp;New...</string>
                     </property>
                 </widget>
                 <spacer row="6" column="0" rowspan="1" colspan="2">
@@ -319,7 +319,7 @@
                 <cstring>renameNetwork</cstring>
             </property>
             <property name="text">
-                <string>Rena&amp;me</string>
+                <string>Rena&amp;me...</string>
             </property>
         </widget>
         <widget class="QPushButton" row="3" column="2">

@@ -155,9 +155,9 @@ GaduAccount::initActions()
 							this, SLOT( slotSearch() ), this, "actionSearch" );
 	p->listputAction		= new KAction( i18n( "Export Contacts to Server" ), "", 0,
 							this, SLOT( slotExportContactsList() ), this, "actionListput" );
-	p->listToFileAction	= new KAction( i18n( "Export Contacts to File" ), "", 0,
+	p->listToFileAction	= new KAction( i18n( "Export Contacts to File..." ), "", 0,
 							this, SLOT( slotExportContactsListToFile() ), this, "actionListputFile" );
-	p->listFromFileAction	= new KAction( i18n( "Import Contacts From File" ), "", 0,
+	p->listFromFileAction	= new KAction( i18n( "Import Contacts From File..." ), "", 0,
 							this, SLOT( slotImportContactsFromFile() ), this, "actionListgetFile" );
 	p->friendsModeAction	= new KToggleAction( i18n( "Only for Friends" ), "", 0,
 							this, SLOT( slotFriendsMode() ), this,
@@ -272,7 +272,7 @@ GaduAccount::actionMenu()
 	p->actionMenu_->insert( new KAction( i18n( "Go &Offline" ),
 			GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ).iconFor( this ),
 			0, this, SLOT( slotGoOffline() ), this, "actionGaduConnect" ) );
-	p->actionMenu_->insert( new KAction( i18n( "Set &Description" ),
+	p->actionMenu_->insert( new KAction( i18n( "Set &Description..." ),
 			"info",
 			0, this, SLOT( slotDescription() ), this, "actionGaduDescription" ) );
 
