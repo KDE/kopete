@@ -78,6 +78,7 @@ void KWinPopup::goOnline()
 	if(online) return;
 	checkForMessages.start(myMessageCheckFrequency * 1000, false);
 	updateData.start(myHostCheckFrequency * 1000, false);
+	updateInBackground();
 	online = true;
 }
 
@@ -218,7 +219,7 @@ QPair<stringMap, stringMap> KWinPopup::grabData(const QString &Host, QString *th
 	}
 
 	int Phase = 0;
-	QRegExp pair("^\\t([^\\s]+)\\s+([^\\s].*)$"), base("^\\t([^\\s]+)\\s*$"), sep("^\\t-{9}"), info("^Domain=\\[([^\\]]+)\\] OS=\\[([^\\]]+)\\] Server=\\[([^\\]]+)\\]");
+	QRegExp pair("^\\t([^\\s]+)(\\s+([^\\s].*))?$"), base("^\\t([^\\s]+)\\s*$"), sep("^\\t-{9}"), info("^Domain=\\[([^\\]]+)\\] OS=\\[([^\\]]+)\\] Server=\\[([^\\]]+)\\]");
 
 	stringMap hosts, groups;
 
@@ -232,11 +233,11 @@ QPair<stringMap, stringMap> KWinPopup::grabData(const QString &Host, QString *th
 			if(theSoftware) *theSoftware = info.cap(3);
 		}
 		if(Phase == 4 && pair.search(Line) != -1)
-			hosts[pair.cap(1)] = pair.cap(2);
+			hosts[pair.cap(1)] = pair.cap(3);
 		if(Phase == 4 && base.search(Line) != -1)
 			hosts[base.cap(1)] = "";
 		if(Phase == 6 && pair.search(Line) != -1)
-			groups[pair.cap(1)] = pair.cap(2);
+			groups[pair.cap(1)] = pair.cap(3);
 		if(sep.search(Line) != -1 || Line.isEmpty()) Phase++;
 	}
 

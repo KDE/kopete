@@ -28,6 +28,7 @@
 // KDE Includes
 
 class WPProtocol;
+class WPAccount;
 class WPAddContactBase;
 class KopeteMetaContact;
 
@@ -37,10 +38,11 @@ class WPAddContact: public AddContactPage
 
 private:
 	WPProtocol *theProtocol;
+	WPAccount *theAccount;
 	WPAddContactBase *theDialog;
 
 public:
-	WPAddContact(WPProtocol *owner, QWidget *parent = 0, const char *name = 0);
+	WPAddContact(WPProtocol *owner, WPAccount *newAccount, QWidget *parent = 0, const char *name = 0);
 	~WPAddContact();
 
 	virtual bool validateData();

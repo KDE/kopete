@@ -39,6 +39,12 @@
                     <bold>1</bold>
                 </font>
             </property>
+            <property name="frameShape">
+                <enum>NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Plain</enum>
+            </property>
             <property name="text">
                 <string>System Information</string>
             </property>
@@ -277,6 +283,20 @@
         </spacer>
     </vbox>
 </widget>
+<connections>
+    <connection>
+        <sender>mMessageCheckFrequency</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>WPPreferencesBase</receiver>
+        <slot>doRefreshDisplay()</slot>
+    </connection>
+    <connection>
+        <sender>mHostCheckFrequency</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>WPPreferencesBase</receiver>
+        <slot>doRefreshDisplay()</slot>
+    </connection>
+</connections>
 <includes>
     <include location="local" impldecl="in implementation">wppreferences.h</include>
     <include location="local" impldecl="in implementation">wppreferencesbase.ui.h</include>

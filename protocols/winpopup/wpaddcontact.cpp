@@ -17,16 +17,6 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-
-// Local Includes
-#include "wpaddcontactbase.h"
-#include "wpprotocol.h"
-#include "wpdebug.h"
-#include "wpaddcontact.h"
-
-// Kopete Includes
-#include <addcontactpage.h>
-
 // QT Includes
 #include <qwidget.h>
 #include <qlayout.h>
@@ -43,9 +33,19 @@
 #include <klocale.h>
 #include <kurlrequester.h>
 
-WPAddContact::WPAddContact(WPProtocol *owner, QWidget *parent, const char *name): AddContactPage(parent, name)
+// Kopete Includes
+#include <addcontactpage.h>
+
+// Local Includes
+#include "wpaddcontactbase.h"
+#include "wpprotocol.h"
+#include "wpaccount.h"
+#include "wpdebug.h"
+#include "wpaddcontact.h"
+
+WPAddContact::WPAddContact(WPProtocol *owner, WPAccount *newAccount, QWidget *parent, const char *name): AddContactPage(parent, name)
 {
-	DEBUG(WPDMETHOD, "WPAddContact::WPAddContact(<owner>, <parent>, " << name << ")");
+	DEBUG(WPDMETHOD, "WPAddContact::WPAddContact(<owner>, " << newAccount << ", <parent>, " << name << ")");
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	theDialog = new WPAddContactBase(this);
@@ -53,6 +53,7 @@ WPAddContact::WPAddContact(WPProtocol *owner, QWidget *parent, const char *name)
 	connect(theDialog->mRefresh, SIGNAL(clicked()), this, SLOT(slotUpdateGroups()));
 	theDialog->show();
 	theProtocol = owner;
+	theAccount = newAccount;
 
 	slotUpdateGroups();
 	slotSelected(theDialog->mHostGroup->currentText());
@@ -67,29 +68,27 @@ void WPAddContact::slotUpdateGroups()
 {
 	DEBUG(WPDMETHOD, "WPAddContact::slotUpdateGroups()");
 
-/*	theDialog->HostGroup->clear();
-    QStringList Groups = theProtocol->getGroups();
+	theDialog->mHostGroup->clear();
+    QStringList Groups = theAccount->getGroups();
 	for(QStringList::Iterator i = Groups.begin(); i != Groups.end(); i++)
-		theDialog->HostGroup->insertItem(SmallIcon("network"), *i);
-	slotSelected(theDialog->HostGroup->currentText());
-*/
+		theDialog->mHostGroup->insertItem(SmallIcon("network"), *i);
+	slotSelected(theDialog->mHostGroup->currentText());
 }
 
 void WPAddContact::slotSelected(const QString &Group)
 {
 	DEBUG(WPDMETHOD, "WPAddContact::slotSelected(" << Group << ")");
 
-/*	theDialog->HostName->clear();
-	QStringList Hosts = theProtocol->getHosts(Group);
+	theDialog->mHostName->clear();
+	QStringList Hosts = theAccount->getHosts(Group);
 	for(QStringList::Iterator i = Hosts.begin(); i != Hosts.end(); i++)
-		theDialog->HostName->insertItem(SmallIcon("personal"), *i);
-*/
+		theDialog->mHostName->insertItem(SmallIcon("personal"), *i);
 }
 
 bool WPAddContact::validateData()
 {
 	DEBUG(WPDMETHOD, "WPAddContact::validateData()");
-    
+
 	return !theDialog->mHostName->currentText().isEmpty();
 }
 

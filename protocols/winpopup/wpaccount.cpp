@@ -89,11 +89,13 @@ KopeteContact *WPAccount::myself() const
 
 const QStringList WPAccount::getGroups()
 {
+	kdDebug(14180) << "[WPAccount::getGroups] this: " << this << ", theInterface: " << theInterface << endl;
 	return theInterface->getGroups();
 }
 
 const QStringList WPAccount::getHosts(const QString &Group)
 {
+	kdDebug(14180) << "[WPAccount::getHosts] this: " << this << ", theInterface: " << theInterface << endl;
 	return theInterface->getHosts(Group);
 }
 

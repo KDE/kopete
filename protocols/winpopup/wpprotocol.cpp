@@ -49,6 +49,7 @@
 #include "wpaddcontact.h"
 #include "wppreferences.h"
 #include "wpeditaccount.h"
+#include "wpaccount.h"
 
 class KPopupMenu;
 
@@ -58,12 +59,12 @@ K_EXPORT_COMPONENT_FACTORY(kopete_wp, KGenericFactory<WPProtocol>);
 
 // WP Protocol
 WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProtocol(parent, name),
-	WPOnline(  KopeteOnlineStatus::Online,  25, this, 0,  "wp_online",    i18n( "Go O&nline" ),   i18n( "Online" ) ),
+	WPOnline(  KopeteOnlineStatus::Online,  25, this, 0,  "wp_protocol",    i18n( "Go O&nline" ),   i18n( "Online" ) ),
 	WPAway(    KopeteOnlineStatus::Away,    20, this, 1,  "wp_away",      i18n( "Go &Away" ),     i18n( "Away" ) ),
-	WPOffline( KopeteOnlineStatus::Offline, 0,  this, 2,  "wp_offline",   i18n( "Go O&ffline" ),  i18n( "Offline" ) )
+	WPOffline( KopeteOnlineStatus::Offline, 0,  this, 2,  "",   i18n( "Go O&ffline" ),  i18n( "Offline" ) )
 {
 	DEBUG(WPDMETHOD, "WPProtocol::WPProtocol()");
-	
+
 	sProtocol = this;
 
 	// Load Status Actions
@@ -82,7 +83,7 @@ WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProto
 	KGlobal::config()->writeEntry("MessageCheckFrequency", theMessageCheckFrequency);
 
 	// Create preferences menu
-	mPrefs = new WPPreferences("wp_icon", this);
+	mPrefs = new WPPreferences("wp_protocol", this);
 	QObject::connect(mPrefs, SIGNAL(saved(void)), this, SLOT(slotSettingsChanged(void)));
 
 	// Call slotSettingsChanged() to get it all registered.
@@ -95,8 +96,15 @@ WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProto
 WPProtocol::~WPProtocol()
 {
 	DEBUG(WPDMETHOD, "WPProtocol::~WPProtocol()");
-	
+
 	sProtocol = 0L;
+}
+
+AddContactPage *WPProtocol::createAddContactWidget(QWidget *parent, KopeteAccount *theAccount)
+{
+	DEBUG(WPDMETHOD, "WPProtocol::~createAddContactWidget(<parent>, " << theAccount << ")");
+
+	return new WPAddContact(this, dynamic_cast<WPAccount *>(theAccount), parent);
 }
 
 KopeteWinPopup *WPProtocol::createInterface(const QString &theHostName)
@@ -128,7 +136,7 @@ void WPProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<
 	{	DEBUG(WPDINFO, "Account " << accountId << " not found");
 		return;
 	}
-	
+
 	if(theAccount->contacts()[contactId])
 	{	DEBUG(WPDINFO, "User " << contactId << " already in contacts map");
 		return;

@@ -47,8 +47,6 @@ class KAction;
 class KListAction;
 class KopeteMetaContact;
 
-class WPProtocol;
-
 class WPContact: public KopeteContact
 {
 	Q_OBJECT

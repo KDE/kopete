@@ -36,14 +36,14 @@
 // Local Includes
 #include "wppreferences.h"
 #include "libwinpopup.h"
-#include "wpcontact.h"
 #include "wpaddcontact.h"
-#include "wpaccount.h"
 
+class KopeteAccount;
 class KPopupMenu;
 class KActionMenu;
 class KAction;
 class WPContact;
+class WPAccount;
 
 /**
  * This is a subclass of the KWinPopup class needed in order to use the virtual
@@ -79,14 +79,14 @@ public:
 	WPProtocol(QObject *parent, QString name, QStringList);
 	~WPProtocol();
 
-	virtual AddContactPage *createAddContactWidget(QWidget *parent) { return new WPAddContact(this, parent); }
+	virtual AddContactPage *createAddContactWidget(QWidget *parent, KopeteAccount *theAccount);
 	virtual EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
 	virtual KopeteAccount *createNewAccount(const QString &accountId);
 
 // KopetePlugin overloading
 public:
 	virtual void deserializeContact(KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData);
-		
+
 // Stuff used internally & by colleague classes
 public:
 	static WPProtocol *protocol() { return sProtocol; }
