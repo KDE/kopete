@@ -79,10 +79,6 @@ void
 GaduRegisterAccount::validateInput()
 {
 	// FIXME: These need to use KDE default text color instead of hardcoded black.
-	ui->labelEmailAddress->unsetPalette();
-	ui->labelPassword->unsetPalette();
-	ui->labelPasswordVerify->unsetPalette();
-	ui->labelVerificationSequence->unsetPalette();
 	if ( emailRegexp->exactMatch( ui->valueEmailAddress->text() ) &&
 		ui->valuePassword->text() == ui->valuePasswordVerify->text()  && !ui->valuePassword->text().isEmpty() && !ui->valuePasswordVerify->text().isEmpty() &&
 		!ui->valueVerificationSequence->text().isEmpty() )
@@ -94,21 +90,15 @@ GaduRegisterAccount::validateInput()
 		if ( !emailRegexp->exactMatch( ui->valueEmailAddress->text() ) )
 		{
 			updateStatus( i18n( "Please enter a valid E-Mail Address." ) );
-			ui->labelEmailAddress->setPaletteForegroundColor( QColor( 0, 0, 255 ) );
 		} else if ( ( ui->valuePassword->text().isEmpty() ) || ( ui->valuePasswordVerify->text().isEmpty() ) )
 		{
 			updateStatus( i18n( "Please enter the same password twice." ) );
-			ui->labelPassword->setPaletteForegroundColor( QColor( 0, 0, 255 ) );
-			ui->labelPasswordVerify->setPaletteForegroundColor( QColor( 0, 0, 255 ) );
 		} else if ( ui->valuePassword->text() != ui->valuePasswordVerify->text() )
 		{
 			updateStatus( i18n( "Password entries do not match." ) );
-			ui->labelPassword->setPaletteForegroundColor( QColor( 255, 0, 0 ) );
-			ui->labelPasswordVerify->setPaletteForegroundColor( QColor( 255, 0, 0 ) );
 		} else if ( ui->valueVerificationSequence->text().isEmpty() )
 		{
 			updateStatus( i18n( "Please enter the verification sequence." ) );
-			ui->labelVerificationSequence->setPaletteForegroundColor( QColor( 0, 0, 255 ) );
 		}
 		enableButton( User1, false );
 	}
