@@ -575,13 +575,10 @@ JabberResource *JabberContact::bestResource()
 
 void JabberContact::slotResourceAvailable(const Jabber::Jid &jid, const Jabber::Resource &resource)
 {
-	QString theirJID = QString("%1@%2").arg(jid.user(), 1).arg(jid.host(), 2);
 
-	// safety check: don't process resources of other users
-	if (theirJID != userId())
-		return;
-
-	kdDebug() << "[JabberContact] Adding new resource '" << resource.name() << "' for " << userId() << endl;
+	kdDebug() << "[JabberContact] Adding new resource '" << resource.name() << "' for "
+			  << userId() << ", name [" << resource.name() << "], priority "
+			  << resource.priority() << ", status [" << resource.status().status() << endl;
 
 	/*
 	 * if the new resource already exists, remove the current
@@ -636,11 +633,6 @@ void JabberContact::slotResourceAvailable(const Jabber::Jid &jid, const Jabber::
 void JabberContact::slotResourceUnavailable(const Jabber::Jid &jid, const Jabber::Resource &resource)
 {
 	JabberResource *tmpResource;
-	QString theirJID = QString("%1@%2").arg(jid.user(), 1).arg(jid.host(), 2);
-
-	// safety check: don't process resources of other users
-	if (theirJID != userId())
-		return;
 
 	kdDebug() << "[JabberContact] Removing resource '" << jid.resource() << "' for " << userId() << endl;
 
