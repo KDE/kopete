@@ -66,29 +66,28 @@ QString KopetePluginDataObject::pluginData( KopetePlugin *p, const QString &key 
 
 const QValueList<QDomElement> KopetePluginDataObject::toXML()
 {
+	QDomDocument pluginData;
 	QValueList<QDomElement> pluginNodes;
+	pluginData.appendChild( pluginData.createElement( QString::fromLatin1("plugin-data")) );
 
 	if( !m_pluginData.isEmpty() )
 	{
 		QMap<QString, QMap<QString, QString> >::ConstIterator pluginIt;
 		for( pluginIt = m_pluginData.begin(); pluginIt != m_pluginData.end(); ++pluginIt )
 		{
-			QDomElement pluginElement;
-			pluginElement.setTagName( QString::fromLatin1("plugin-data") );
+			QDomElement pluginElement = pluginData.createElement( QString::fromLatin1("plugin-data") );
 			pluginElement.setAttribute( QString::fromLatin1("plugin-id"), pluginIt.key()  );
 
 			QMap<QString, QString>::ConstIterator it;
 			for( it = pluginIt.data().begin(); it != pluginIt.data().end(); ++it )
 			{
-				QDomElement pluginDataField;
-				pluginDataField.setTagName( QString::fromLatin1("plugin-data-field") );
+				QDomElement pluginDataField = pluginData.createElement( QString::fromLatin1("plugin-data-field") );
 				pluginDataField.setAttribute( QString::fromLatin1("key"), it.key()  );
-				QDomText pluginDataValue;
-				pluginDataValue.setData( it.data() );
-				pluginDataField.appendChild( pluginDataValue );
+				pluginDataField.appendChild( pluginData.createTextNode(  it.data()  ) );
 				pluginElement.appendChild( pluginDataField );
 			}
 
+			pluginData.documentElement().appendChild( pluginElement );
 			pluginNodes.append( pluginElement );
 		}
 	}
