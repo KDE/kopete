@@ -1,9 +1,9 @@
 METASOURCES = AUTO
 if include_libggcopy
 LIBGADU_COPY=libgadu
-LIBGG_INCLUDES=-I./libgadu
-LIBGG_LIBS=$(top_builddir)/kopete/protocols/gadu/libgadu/libgadu_copy.la \
-	   $(LIBPTHREAD)
+#LIBGG_INCLUDES=-I./libgadu
+#LIBGG_LIBS=$(top_builddir)/kopete/protocols/gadu/libgadu/libgadu_copy.la \
+#	   $(LIBPTHREAD)
 endif
 
 
