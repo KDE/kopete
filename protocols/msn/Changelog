@@ -1,5 +1,9 @@
 Changes since Kopete 0.4
 - Added block/unblock user
+- Don't show contacts from the allow list if they are not also in the
+  friend list (like deleted contacts). Small problem: there already was
+  a need to have a gui for manipulating blocked/allowed contacts, with
+  this change this is even a bit more urgent...
 
 CHANGELOG FOR THE MSN PLUGIN IN KOPETE 0.4
 
