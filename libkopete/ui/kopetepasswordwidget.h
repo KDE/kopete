@@ -36,11 +36,14 @@ public:
 	void load( KopetePassword *source );
 	void save( KopetePassword *target );
 
-	bool validate( int maxLength );
+	bool validate( int maxLength = 0 );
 
 public slots:
 	/** @internal */
 	void receivePassword( const QString & );
+
+private slots:
+	void slotRememberChanged();
 
 private:
 	struct KopetePasswordWidgetPrivate;

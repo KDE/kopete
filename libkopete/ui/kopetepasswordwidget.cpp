@@ -51,17 +51,27 @@ void KopetePasswordWidget::load( KopetePassword *source )
 		mRemembered->setTristate( false );
 		mRemembered->setChecked( false );
 	}
+	mPassword->setEnabled( false );
+	connect( mRemembered, SIGNAL( stateChanged( int ) ), SLOT( slotRememberChanged() ) );
+}
+
+void KopetePasswordWidget::slotRememberChanged()
+{
+	mRemembered->setTristate( false );
+	mPassword->setEnabled( mRemembered->isChecked() );
 }
 
 void KopetePasswordWidget::receivePassword( const QString &pwd )
 {
 	// pwd == null could mean user declined to open wallet
 	// don't uncheck the remembered field in this case.
-	if ( !pwd.isNull() )
+	if ( !pwd.isNull() && mRemembered->state() == QButton::NoChange )
 	{
 		mRemembered->setTristate( false );
 		mRemembered->setChecked( true );
-		mPassword->setText( pwd );
+		mPassword->clear();
+		mPassword->insert( pwd );
+		mPassword->setEnabled( true );
 	}
 }
 
