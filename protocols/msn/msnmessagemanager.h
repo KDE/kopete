@@ -50,6 +50,8 @@ public:
 	 * append an invitation in the invitation map, and send the first invitation message
 	 */
 	void initInvitation(MSNInvitation* invitation);
+	
+	virtual void inviteContact(const QString& );
 
 public slots:
 	void slotCloseSession();

@@ -100,6 +100,8 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 	}
 
 	setXMLFile("msnchatui.rc");
+	
+	setMayInvite( true );
 }
 
 MSNMessageManager::~MSNMessageManager()
@@ -302,12 +304,17 @@ void MSNMessageManager::slotCloseSession()
 
 void MSNMessageManager::slotInviteContact( KopeteContact *contact )
 {
-	if( m_chatService )
-		m_chatService->slotInviteContact( contact->contactId() );
-	else
-		static_cast<MSNAccount*>( user()->account() )->slotStartChatSession( contact->contactId() );
+	if(contact)
+		inviteContact( contact->contactId() );
 }
 
+void MSNMessageManager::inviteContact(const QString &contactId)
+{
+	if( m_chatService )
+		m_chatService->slotInviteContact( contactId );
+	else
+		static_cast<MSNAccount*>( user()->account() )->slotStartChatSession( contactId );
+}
 
 void MSNMessageManager::slotInviteOtherContact()
 {
@@ -325,10 +332,7 @@ void MSNMessageManager::slotInviteOtherContact()
 			return;
 	}
 
-	if( m_chatService )
-		m_chatService->slotInviteContact( handle );
-	else
-		static_cast<MSNAccount*>( user()->account() )->slotStartChatSession( handle );
+	inviteContact(handle);
 }
 
 
