@@ -211,7 +211,7 @@ QMap<QString, QString> KopeteEmoticons::emoticonAndPicList()
 	return retVal;
 }
 
-QString KopeteEmoticons::parseEmoticons( QString message )
+QString KopeteEmoticons::parseEmoticons( QString message, QStringList* nicks )
 {
 	// if emoticons are disabled, we do nothing
 	if ( !KopetePrefs::prefs()->useEmoticons() )
@@ -267,6 +267,20 @@ QString KopeteEmoticons::parseEmoticons( QString message )
 			// Such fields include: URLs, Contact IDs, Display Aliases,
 			// Metacontact names, Status/system messages, HTML tags/entities.
 			// - Casey
+		}
+	}
+	if( nicks )
+	{
+		QStringList::iterator it = nicks->begin();
+		
+		for( ; it != nicks->end() ; ++it )
+		{
+			QString parsed_nick = parseEmoticons( *it );
+			
+			if( parsed_nick.compare( *it ) )
+			{
+				message.replace( parsed_nick, *it );
+			}
 		}
 	}
 

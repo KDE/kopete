@@ -31,6 +31,7 @@
 #include "kopeteemoticons.h"
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
+#include "kopetemessagemanager.h"
 
 class Kopete::Message::Private
 {
@@ -304,7 +305,15 @@ QString Kopete::Message::parsedBody() const
 	}
 	else
 	{
-		return KopeteEmoticons::parseEmoticons(parseLinks(escapedBody(), d->format));
+		QStringList member_nicks;
+		ContactPtrList members = manager()->members();
+		
+		for( Kopete::Contact* c = members.first() ; c ; c = members.next() )
+		{
+			member_nicks += c->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+		}
+		member_nicks += manager()->user()->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+		return KopeteEmoticons::parseEmoticons(parseLinks(escapedBody(), d->format), &member_nicks);
 	}
 }
 

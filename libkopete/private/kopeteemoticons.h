@@ -46,8 +46,10 @@ public:
 	 * There is a special class that abstract a chat view
 	 * and uses emoticons parser.
 	 * This function will use the selected emoticon theme.
+	 * If nicks is provided, they will not be parsed if they 
+	 * exist in message.
 	 */
-	static QString parseEmoticons ( QString );
+	static QString parseEmoticons ( QString message, QStringList* nicks = 0 );
 
 	/**
 	 * returns the path to an animation or pixmap
