@@ -198,10 +198,12 @@ default_presentation=16
 
 [kopete_status_change]
 Name=Status Change
+Name[es]=Stado Cambio
 Name[pt]=Mudança de Estado
 Name[pt_BR]=Mudança de Estado
 Name[sv]=Statusändring
 Comment=User changed his online status
+Comment[es]=El usuario cambió su estado en línea 
 Comment[pt]=Utilizador mudou o seu estado de ligação
 Comment[pt_BR]=Utilizador mudou o seu estado de ligação
 Comment[sv]=Användaren ändrade uppkopplingsstatus
