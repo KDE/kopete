@@ -34,15 +34,16 @@
 class KAction;
 class KActionMenu;
 
-class MSNSwitchBoardSocket;
-class MSNNotifySocket;
-class KopeteContact;
-class KopeteMetaContact;
-class KopeteMessage;
-class KopeteMessageManager;
 class MSNContact;
 class MSNIdentity;
 class MSNPreferences;
+class MSNNotifySocket;
+class MSNSwitchBoardSocket;
+class KopeteMessageManager;
+class KopeteMetaContact;
+class KopeteContact;
+class KopeteMessage;
+class KopeteGroup;
 
 /**
  * @author duncan
@@ -89,12 +90,6 @@ public:
 		SyncBoth       = 0x03
 	};
 
-	/**
-	 * Get group by number. The reverse method is used only internally and
-	 * private.
-	 * Returns QString::null if the group was not found
-	 */
-	QString groupName( uint number ) const;
 
 	// Plugin reimplementation
 	void init();
@@ -140,8 +135,6 @@ public:
 
 	void addGroup( const QString &groupName,
 		const QString &contactToAdd = QString::null );
-	void renameGroup( const QString &oldGroup, const QString &newGroup );
-	void removeGroup( const QString &groupName );
 
 	KopeteContact *myself() const;
 
@@ -151,7 +144,7 @@ public:
 	static Status convertStatus( QString status );
 	Status status() const;
 
-	QStringList groups() const;
+//	QStringList groups() const;
 
 	QString publicName() const { return m_publicName; }
 	/**
@@ -170,12 +163,6 @@ public:
 	KActionCollection * customChatActions(KopeteMessageManager * );
 
 	MSNNotifySocket *notifySocket() { return m_notifySocket; };
-
-	/**
-	 * Get group by name.
-	 * Returns -1 if the group was not found.
-	 */
-	int groupNumber( const QString &groupName ) const;
 
 	virtual KActionMenu* protocolActions();
 
@@ -226,26 +213,26 @@ private slots:
 	/**
 	 * A kopetegroup is renamed, just call renameGroup
 	 **/
-	void groupRenamed(KopeteGroup *g,const QString& oldname);
+	void slotKopeteGroupRenamed(KopeteGroup *g);
 
 	/**
-	 * The group has successful renamed
-	 * groupName: is new new group name
-	 * search the old groupName in the groupList with (uint group)
-	 */
-	void slotGroupRenamed( QString groupName, uint serial, uint group );
+	 * A kopetegroup is removed, remove the group in the server
+	 **/
+	void slotKopeteGroupRemoved( KopeteGroup* );
+
 	/**
-	 * A new group was created on the server
+	 * The group has successful renamed in the server
+	 * groupName: is new new group name
 	 */
-	void slotGroupAdded( QString groupName, uint serial, uint group );
+	void slotGroupRenamed( QString groupName, uint group );
+	/**
+	 * A new group was created on the server (or recieved durring an LSG command)
+	 */
+	void slotGroupAdded( QString groupName, uint groupNumber );
 	/**
 	 * Group was removed from the list
 	 */
-	void slotGroupRemoved( uint serial, uint group );
-	/**
-	 * Group name received during an LSG ( 'list groups' ) command
-	 */
-	void slotGroupListed( QString groupName, uint group );
+	void slotGroupRemoved( uint group );
 
 	/**
 	 * Contact was removed from the list
@@ -300,19 +287,11 @@ private slots:
 	void slotPreferencesSaved();
 
 private:
-	/**
-	 * Add contact to contact list and maintain a list of currently active
-	 * contacts. This way MSNContact doesn't need to do 'delete this' every
-	 * time, which is very dangerous
-	 */
-	void initIcons();
 	void initActions();
 
 	bool mIsConnected;
 
 	MSNPreferences *mPrefs;
-
-	QMovie connectingIcon;
 
 	// Actions we use
 	KAction* actionGoOnline;
@@ -339,7 +318,7 @@ private:
 
 	ContactList m_contacts;
 
-	QMap<uint, QString> m_groupList;
+	QMap<unsigned int, KopeteGroup*> m_groupList;
 
 	static MSNProtocol *s_protocol;
 	Status m_status;

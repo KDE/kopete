@@ -158,10 +158,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "NLN" )
 	{
-/*		// handle, publicName, status
-		emit contactStatusChanged( data.section( ' ', 1, 1 ),
-			unescape( data.section( ' ', 2, 2 ) ),
-			MSNProtocol::convertStatus( data.section( ' ', 0, 0 ) ) );*/
+		// handle, publicName, status
 
 		MSNContact *c=MSNProtocol::protocol()->contact(data.section( ' ', 1, 1 ));
 		if( c )
@@ -185,7 +182,6 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "FLN" )
 	{
-//		emit contactStatusChanged(data.section( ' ', 0, 0 ) ,QString::null, MSNProtocol::FLN );
 		MSNContact *c=MSNProtocol::protocol()->contact(data.section( ' ', 0, 0 ));
 		if( c )
 			c->setMsnStatus( MSNProtocol::FLN );
@@ -193,12 +189,13 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	else if( cmd == "ILN" )
 	{
 		// handle, publicName, Status
-//		emit contactStatus( data.section( ' ', 1, 1 ), unescape( data.section( ' ', 2, 2 ) ), data.section( ' ', 0, 0 ) );
 		MSNContact *c=MSNProtocol::protocol()->contact(data.section( ' ', 1, 1 ));
 		if( c )
 		{
 			c->setMsnStatus( MSNProtocol::convertStatus(data.section( ' ', 0, 0 )));
-			c->setDisplayName(unescape( data.section( ' ', 2, 2 ) ) );
+			QString publicName=unescape( data.section( ' ', 2, 2 ) );
+			if (publicName!=c->displayName())
+				changePublicName(publicName,c->contactId());
 		}
 	}
 	else if( cmd == "XFR" )
@@ -267,27 +264,26 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "LSG" )
 	{
-		emit groupName( unescape( data.section( ' ', 4, 4 ) ),
-		data.section( ' ', 3, 3 ).toUInt() );
+		emit groupListed( unescape( data.section( ' ', 4, 4 ) ), data.section( ' ', 3, 3 ).toUInt() );
 	}
 	else if( cmd == "ADG" )
 	{
-		// groupName, serial, group
+		// groupName, group , serial
 		emit groupAdded( unescape( data.section( ' ', 1, 1 ) ),
-			data.section( ' ', 0, 0 ).toUInt(),
-			data.section( ' ', 2, 2 ).toUInt() );
+			data.section( ' ', 2, 2 ).toUInt(),
+			data.section( ' ', 0, 0 ).toUInt() );
 	}
 	else if( cmd == "REG" )
 	{
-		// groupName, serial, group
+		// groupName, group , serial
 		emit groupRenamed( unescape( data.section( ' ', 2, 2 ) ),
-			data.section( ' ', 0, 0 ).toUInt(),
-			data.section( ' ', 1, 1 ).toUInt() );
+			data.section( ' ', 1, 1 ).toUInt(),
+			data.section( ' ', 0, 0 ).toUInt() );
 	}
 	else if( cmd == "RMG" )
 	{
-		emit groupRemoved( data.section( ' ', 0, 0 ).toUInt(),
-			data.section( ' ', 1, 1 ).toUInt() );
+		// group , serial
+		emit groupRemoved( data.section( ' ', 1, 1 ).toUInt() , data.section( ' ', 0, 0 ).toUInt());
 	}
 	else if( cmd  == "CHL" )
 	{
@@ -463,8 +459,7 @@ void MSNNotifySocket::removeGroup( uint group )
 	sendCommand( "RMG", QString::number( group ) );
 }
 
-void MSNNotifySocket::addContact( const QString &handle,
-	QString publicName, uint group, int list )
+void MSNNotifySocket::addContact( const QString &handle, QString publicName, uint group, int list )
 {
 	QString args;
 	switch( list )
@@ -486,8 +481,7 @@ void MSNNotifySocket::addContact( const QString &handle,
 	sendCommand( "ADD", args );
 }
 
-void MSNNotifySocket::removeContact( const QString &handle, uint group,
-	int list )
+void MSNNotifySocket::removeContact( const QString &handle, uint group,	int list )
 {
 	QString args;
 	switch( list )

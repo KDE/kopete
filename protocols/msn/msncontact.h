@@ -36,8 +36,7 @@ class MSNContact : public KopeteContact
 
 public:
 	MSNContact( const QString &msnId,
-		const QString &displayName, const QString &group,
-		KopeteMetaContact *parent );
+		const QString &displayName, KopeteMetaContact *parent );
 	~MSNContact();
 
 	virtual QString contactId() const;
@@ -95,14 +94,10 @@ public:
 	 */
 	void setInfo(QString type, QString data);
 
-
-	
 	/**
-	 * The groups in which the user is located.
-	 * Not the whole API supports multi-group membership yet, be careful
-	 * relying on this for now!
+	 * The groups in which the user is located on the server.
 	 */
-	virtual QStringList groups();
+	QValueList<unsigned int> groups();
 
 	/**
 	 * The contact's MSN specific status, this is NOT the ContactStatus!
@@ -124,8 +119,8 @@ public slots:
 	virtual void execute();
 	virtual void slotSendFile(QString fileName);
 
-	void removedFromGroup(QString group);
-	void addedToGroup(QString group);
+	void slotRemovedFromGroup(unsigned int);
+	void slotAddedToGroup(unsigned int);
 
 	/**
 	 * Add/Remove user to/from a group
@@ -144,7 +139,7 @@ private slots:
 
 private:
 	QString m_msnId;
-	QStringList m_groups;
+	QValueList<unsigned int> m_groups;
 
 	bool m_blocked;
 	bool m_allowed;

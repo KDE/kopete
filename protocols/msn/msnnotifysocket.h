@@ -62,9 +62,9 @@ signals:
 	void contactAdded(QString, QString, QString, uint, uint);
 	void contactRemoved(QString, QString, uint, uint);
 
-	void groupName(QString, uint);
-	void groupAdded( QString, uint, uint);
-	void groupRenamed( QString, uint, uint);
+	void groupListed(QString, uint group);
+	void groupAdded( QString, uint group, uint serial);
+	void groupRenamed( QString, uint group, uint serial);
 	void groupRemoved( uint, uint);
 
 	void invitedToChat(QString, QString, QString, QString, QString );
