@@ -119,10 +119,10 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 209:
 	{
-		QString msg = i18n( "You are trying to change the display name of an user who has not "
+		/*QString msg = i18n( "You are trying to change the display name of an user who has not "
 			"confirmed his or her e-mail address.\n"
 			"The contact was not renamed on the server." );
-		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );*/
 		break;
 	}
 	case 215:
