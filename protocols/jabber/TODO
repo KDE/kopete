@@ -1,15 +1,16 @@
 TODO for Jabber:
 
+- support for public channels
+- support for public directories
+- implement forms support
 - implement support for transports/agents
-  (waiting for libpsi support)
+- support for file transfers (waiting for libpsi)
 - make sure that messages sent via a gateway from a non-subscribed contact
   are actually displayed
 - allow synchronization of offline changes / online changes
 - find out about Jabber server-side filtering components and if they can be
   integrated into the Kopete filtering API
-- implement support for registration forms etc
 - support all message types (chat/ticker/etc)
-- set correct timestamps for messages
 - do a std translation of resource.status().show() to JabberProtocol::Presence
 - JabberProtocol and JabberContact are now friends. Move all methods that only
   relate to the API between them to private
