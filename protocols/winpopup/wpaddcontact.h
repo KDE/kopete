@@ -29,6 +29,7 @@
 
 class WPProtocol;
 class WPAddContactBase;
+class KopeteMetaContact;
 
 class WPAddContact: public AddContactPage
 {
@@ -45,7 +46,7 @@ public:
 	virtual bool validateData();
 	
 public slots:
-	virtual void slotFinish();
+	virtual void slotFinish(KopeteMetaContact *theMetaContact);
 	void slotSelected(const QString &Group);
 	void slotUpdateGroups();
 };

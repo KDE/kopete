@@ -18,8 +18,18 @@
 #ifndef __WPCONTACT_H
 #define __WPCONTACT_H
 
-// Local Includes
-#include "wpprotocol.h"
+// KDE Includes
+#include <kaction.h>
+
+// Qt Includes
+#include <qvaluestack.h>
+#include <qdatetime.h>
+#include <qlabel.h>
+#include <qlineedit.h>
+#include <qcursor.h>
+#include <qptrlist.h>
+#include <qtimer.h>
+#include <qstringlist.h>
 
 // Kopete Includes
 #include "kopetecontact.h"
@@ -30,16 +40,8 @@
 #include "kopetehistorydialog.h"
 #include "kopetemessage.h"
 
-// Qt Includes
-#include <qvaluestack.h>
-#include <qdatetime.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qcursor.h>
-#include <qptrlist.h>
-#include <qtimer.h>
-
-// KDE Includes
+// Local Includes
+#include "wpprotocol.h"
 
 class QTimer;
 class QPixmap;
@@ -57,7 +59,7 @@ class WPContact: public KopeteContact
 	Q_OBJECT
 private:
 	WPProtocol *mProtocol;
-	QString mUserID, mGroup;
+	QString mUserID;
 	enum
 	{
 		STATUS_OFFLINE = 0,
@@ -65,6 +67,8 @@ private:
 		STATUS_AWAY
 	};
 	int mStatus;
+
+	KopeteMetaContact *myMetaContact;
 
 	QTimer checkStatus;
 	KPopupMenu *popup;
@@ -80,7 +84,7 @@ private:
 	void initActions();
 
 public:
-	WPContact(const QString &userID, const QString &name, const QString &group, WPProtocol *protocol, KopeteMetaContact *parent );
+	WPContact(const QString &userID, WPProtocol *protocol, KopeteMetaContact *parent );
 
 	ContactStatus status() const;
 	QString statusText() const;
@@ -89,10 +93,18 @@ public:
 	int importance() const;
 	void execute();
 
-	QString group() const { return mGroup; }
 	QString userID() const { return mUserID; }
 
-	virtual void showContextMenu(const QPoint&, const QString&);
+//	virtual void showContextMenu(const QPoint&, const QString&);
+	KActionCollection *myActionCollection;
+	KActionCollection *customContextMenuActions() { if(myActionCollection) delete myActionCollection; return myActionCollection = new KActionCollection(this); }
+
+	/**
+	 * Return whether or not this contact is REACHABLE.
+	 * Useful in determining if the contact is able to
+	 * recieve messages even if offline, etc.
+	 */
+	bool isReachable() { return mStatus != STATUS_OFFLINE; }
 
 	virtual QString id() const;
 	virtual QString data() const;
@@ -101,15 +113,25 @@ public slots:
 	void slotNewMessage(const QString &Body, const QDateTime &Arrival);
 	void slotSendMsgKEW(const KopeteMessage&);
 	void slotSendMsgKCW(const KopeteMessage&);
-	void slotRemoveFromGroup();
+
+	void moveToGroup(const QString &from, const QString &to);
+
+	/**
+	 * Method to delete a contact from the contact list,
+	 * should be implemented by protocol plugin to handle
+	 * protocol-specific actions required to delete a contact
+	 * (ie. messages to the server, etc)
+	 */
+	void slotDeleteContact();
+
+	/**
+	 * Method to retrieve user information.  Should be implemented by
+	 * the protocols, and popup some sort of dialog box
+	 */
+	void slotUserInfo();
 
 private slots:
 	void slotUpdateContact(QString, int);
-	void slotDeleteMySelf(bool);
-	void slotRemoveThisUser();
-	void slotRenameContact();
-	void slotDoRenameContact();
-	void slotMoveThisUser();
 	void slotChatThisUser();
 	void slotEmailUser();
 

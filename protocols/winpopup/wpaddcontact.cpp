@@ -94,11 +94,11 @@ bool WPAddContact::validateData()
 	return theDialog->HostName->currentText() != "";
 }
 
-void WPAddContact::slotFinish()
+void WPAddContact::slotFinish(KopeteMetaContact *theMetaContact)
 {
 	DEBUG(WPDMETHOD, "WPAddContact::slotFinish()");
 
-	theProtocol->addContact(theDialog->HostName->currentText());
+	theProtocol->getContact(theDialog->HostName->currentText(), theMetaContact);
 }
 
 #include "wpaddcontact.moc"

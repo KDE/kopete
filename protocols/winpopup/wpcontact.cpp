@@ -31,24 +31,24 @@
 #include "kopetemessage.h"
 #include "kopetemessagemanager.h"
 #include "kopetecontactlist.h"
+#include "kopetemetacontact.h"
 
 // Local Includes
 #include "wpcontact.h"
 #include "wpprotocol.h"
 #include "wpdebug.h"
 
-WPContact::WPContact( const QString &userID, const QString &displayName, const QString &group, WPProtocol *protocol, KopeteMetaContact *parent )
-: KopeteContact( protocol->id(), parent )
+WPContact::WPContact( const QString &userID, WPProtocol *protocol, KopeteMetaContact *parent ) : KopeteContact( protocol->id(), parent )
 {
-	DEBUG(WPDMETHOD, "WPContact::WPContact(" << userID << ", " << displayName << ", " << group << ", <protocol>)");
+	DEBUG(WPDMETHOD, "WPContact::WPContact(" << userID << ", <protocol>, <parent>)");
 
-	setDisplayName(displayName.isNull() ? userID : displayName);
+	setDisplayName(userID);
 	mProtocol = protocol;
-	mGroup = group;
 	mUserID = userID;
+	myMetaContact = parent;
 
-//	connect(mProtocol, SIGNAL(contactUpdated(QString, QString, int, QString)), this, SLOT(slotUpdateContact(QString, QString, int, QString)));
-//	connect(mProtocol, SIGNAL(nukeContacts(bool)), this, SLOT(slotDeleteMySelf(bool)));
+	connect(mProtocol, SIGNAL(contactUpdated(QString, QString, int, QString)), this, SLOT(slotUpdateContact(QString, QString, int, QString)));
+	connect(mProtocol, SIGNAL(nukeContacts(bool)), this, SLOT(slotDeleteContact()));
 	connect(&checkStatus, SIGNAL(timeout()), this, SLOT(slotCheckStatus()));
 	checkStatus.start(1000, false);
 
@@ -57,19 +57,40 @@ WPContact::WPContact( const QString &userID, const QString &displayName, const Q
 	mMsgManagerKEW = 0;
 	mMsgManagerKCW = 0;
 	historyDialog = 0;
+
+	myActionCollection = 0;	// ughhhhhhh
 }
 
 void WPContact::slotCheckStatus()
 {
+//	DEBUG(WPDMETHOD, "WPContact::slotCheckStatus()");
+
 	int oldStatus = mStatus;
 	mStatus = mProtocol->checkHost(mUserID) ? STATUS_ONLINE : STATUS_OFFLINE;
 	if(oldStatus != mStatus)
 		emit statusChanged();
 }
 
+void WPContact::moveToGroup(const QString &from, const QString &to)
+{
+	DEBUG(WPDMETHOD, "WPContact::moveToGroup(" << from << ", " << to << ")");
+}
+
+void WPContact::slotDeleteContact()
+{
+	DEBUG(WPDMETHOD, "WPContact::slotDeleteContact()");
+
+	delete this;
+}
+
+void WPContact::slotUserInfo()
+{
+	DEBUG(WPDMETHOD, "WPContact::slotUserInfo()");
+}
+
 KopeteMessageManager *WPContact::msgManagerKEW()
 {
-	DEBUG(WPDMETHOD, "WPContact::msgManager()");
+	DEBUG(WPDMETHOD, "WPContact::msgManagerKEW()");
 
 	if(!mMsgManagerKEW)
 	{	QPtrList<KopeteContact> singleContact;
@@ -83,7 +104,7 @@ KopeteMessageManager *WPContact::msgManagerKEW()
 
 KopeteMessageManager *WPContact::msgManagerKCW()
 {
-	DEBUG(WPDMETHOD, "WPContact::msgManager()");
+	DEBUG(WPDMETHOD, "WPContact::msgManagerKCW()");
 
 	if(!mMsgManagerKCW)
 	{	QPtrList<KopeteContact> singleContact;
@@ -99,21 +120,20 @@ void WPContact::initActions()
 {
 	DEBUG(WPDMETHOD, "WPContact::initActions()");
 
-	actionChat = KopeteStdAction::sendMessage(this, SLOT(slotChatThisUser()), this, "actionChat");
+/*	actionChat = KopeteStdAction::sendMessage(this, SLOT(slotChatThisUser()), this, "actionChat");
 	actionMessage = new KAction(i18n("Send Email Message"), "mail_generic", 0, this, SLOT(slotEmailUser()), this, "actionMessage");
 	actionRemoveFromGroup = new KAction(i18n("Remove From Group"), "edittrash", 0, this, SLOT(slotRemoveFromGroup()), this, "actionRemove");
 	actionRemove = KopeteStdAction::deleteContact(this, SLOT(slotRemoveThisUser()), this, "actionDelete");
-//	actionContactMove = KopeteStdAction::moveContact(this, SLOT(slotMoveThisUser()), this, "actionMove");
-	actionHistory = KopeteStdAction::viewHistory(this, SLOT(slotViewHistory()), this, "actionHistory");
-//	actionRedisplayName() = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");
+	actionHistory = KopeteStdAction::viewHistory(this, SLOT(slotViewHistory()), this, "actionHistory");*/
 }
 
-void WPContact::showContextMenu(const QPoint& position, const QString& group)
+/*void WPContact::showContextMenu(const QPoint& position, const QString& group)
 {
 	DEBUG(WPDMETHOD, "WPContact::showContextMenu(<position>, " << group << ")");
 
 	popup = new KPopupMenu();	// XXX: Needs deleting at some time?
 	popup->insertTitle(mUserID);
+
 	KGlobal::config()->setGroup("WinPopup");
 	if (KGlobal::config()->readBoolEntry("EmailDefault", false))
 	{
@@ -129,12 +149,9 @@ void WPContact::showContextMenu(const QPoint& position, const QString& group)
 	actionHistory->plug(popup);
 	popup->insertSeparator();
 
-//	actionRename->plug(popup);
-//	actionContactMove->plug(popup);
-	actionRemoveFromGroup->plug(popup);
-	actionRemove->plug(popup);
-	popup->popup(position);//QCursor::pos());
-}
+	popup->popup(position);
+
+}*/
 
 void WPContact::slotUpdateContact(QString handle, int status)
 {
@@ -147,42 +164,9 @@ void WPContact::slotUpdateContact(QString handle, int status)
     emit statusChanged();
 }
 
-void WPContact::slotRenameContact()
-{
-	DEBUG(WPDMETHOD, "WPContact::slotRenameContact()");
-
-/*	kdDebug() << "WP contact: Renaming contact." << endl;
-    dlgRename = new dlgWPRename;
-    dlgRename->lblUserID->setText(userID());
-    dlgRename->leNickname->setText(displayName());
-    connect(dlgRename->btnRename, SIGNAL(clicked()), this,
-	    SLOT(slotDoRenameContact()));
-    dlgRename->show();
-*/
-}
-
-void WPContact::slotDoRenameContact()
-{
-	DEBUG(WPDMETHOD, "WPContact::slotDoRenameContact()");
-/*	QString name = dlgRename->leNickname->text();
-	if ( name.isEmpty() ) { hasLocalName = false; name = mUserID; }
-	else { hasLocalName = true; }
-	setDisplayName( name );
-
-	delete dlgRename;
-	mProtocol->renameContact(userID(), hasLocalName ? name : QString(""), hasLocalGroup ? mGroup : QString(""));
-*/
-}
-
-void WPContact::slotDeleteMySelf(bool)
-{
-	DEBUG(WPDMETHOD, "WPContact::slotDeleteMyself()");
-	delete this;
-}
-
 WPContact::ContactStatus WPContact::status() const
 {
-	DEBUG(WPDMETHOD, "WPContact::status()");
+//	DEBUG(WPDMETHOD, "WPContact::status()");
 	if(mStatus == STATUS_ONLINE)
 		return Online;
 	if(mStatus == STATUS_AWAY)
@@ -192,7 +176,7 @@ WPContact::ContactStatus WPContact::status() const
 
 QString WPContact::statusText() const
 {
-	DEBUG(WPDMETHOD, "WPContact::statusText()");
+//	DEBUG(WPDMETHOD, "WPContact::statusText()");
 
 	if(mStatus == STATUS_ONLINE)
 		return "Online";
@@ -203,39 +187,13 @@ QString WPContact::statusText() const
 
 QString WPContact::statusIcon() const
 {
-	DEBUG(WPDMETHOD, "WPContact::statusIcon()");
+//	DEBUG(WPDMETHOD, "WPContact::statusIcon()");
 
 	if(mStatus == STATUS_ONLINE)
 		return "wp_available";
 	if(mStatus == STATUS_AWAY)
 		return "wp_away";
 	return "wp_offline";
-}
-
-void WPContact::slotRemoveThisUser()
-{
-	DEBUG(WPDMETHOD, "WPContact::slotRemoveThisUser()");
-//	mProtocol->removeUser(mUserID);
-//	delete this;	// use one-shot timer instead?
-}
-
-void WPContact::slotRemoveFromGroup()
-{
-	DEBUG(WPDMETHOD, "WPContact::slotRemoveFromGroup()");
-//	mProtocol->moveUser(mUserID, mGroup = QString(""), displayName()(), this);
-}
-
-void WPContact::slotMoveThisUser()
-{
-	DEBUG(WPDMETHOD, "WPContact::slotMoveThisUser()");
-/*	if (!(mGroup = actionContactMove->currentText())) {
-		hasLocalGroup = false;
-	}
-	else {
-		hasLocalGroup = true;
-	}
-	mProtocol->moveUser(userID(), mGroup, displayName()(), this);
-*/
 }
 
 int WPContact::importance() const

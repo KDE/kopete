@@ -22,19 +22,19 @@
 #define __WPPROTOCOL_H
 
 
-// Local Includes
-#include "wppreferences.h"
-#include "libwinpopup.h"
-#include "wpcontact.h"
-
-// Kopete Includes
-
 // QT Includes
 #include <qpixmap.h>
 
 // KDE Includes
-#include "kopeteprotocol.h"
 
+// Kopete Includes
+#include <kopetemetacontact.h>
+#include <kopeteprotocol.h>
+
+// Local Includes
+#include "wppreferences.h"
+#include "libwinpopup.h"
+#include "wpcontact.h"
 
 class StatusBarIcon;	// libkopete::ui::statusbaricon
 class KPopupMenu;
@@ -68,22 +68,36 @@ class WPProtocol : public KopeteProtocol
 public:
 	WPProtocol(QObject *parent, QString name, QStringList);		// Constructor
 	~WPProtocol();		// Destructor
+
+	KopeteContact *myself() const;	// Return the user's contact object
+
 	bool unload();		// Unload statusbar icon
 
-	WPContact *addContact(const QString &Name);	// Return the contact named "Name", adding one if neccessary
-	KopeteContact *myself() const;	// Return the user's contact object
+	// Creates a contact from the serialised data
+//	KopeteContact *createContact(KopeteMetaContact *parent, const QString &serializedData);
+
+	// Returns a WP contact under the given MetaContact for Name. If theMetaContact is invalid, returns 0.
+	// If Name already exists, returns that. If Name doesn't exist, creates a new contact.
+	// *** USE FOR SAFELY CREATING CONTACTS UNDER AN EXISTING METACONTACT ***
+	// OBSELETE
+//	WPContact *addContact(const QString &Name, KopeteMetaContact* theMetaContact);
+
+	// Returns either the existing contact for Name, or creates a new one of not existant.
+	// Creates a new metacontact with Name, if one doesn't already exist.
+	// *** USE FOR SAFELY CREATING CONTACTS WITHOUT NECESSARILY HAVING A METACONTACT ***
+	WPContact *getContact(const QString &Name, KopeteMetaContact* theMetaContact = 0);
+
 	bool checkHost(const QString &Name) { return theInterface->checkHost(Name); }
 
 	const QStringList getGroups() { return theInterface->getGroups(); }
 	const QStringList getHosts(const QString &Group) { return theInterface->getHosts(Group); }
 
-	static const WPProtocol *protocol();
+	static WPProtocol *protocol() { return sProtocol; }
 
-	/**
-	 * Reimplemented pure virtual from KopeteProtocol
-	 */
-	virtual KopeteContact* createContact( KopeteMetaContact *parent,
-		const QString &serializedData );
+	QStringList addressBookFields() const;
+
+	bool serialize(KopeteMetaContact *metaContact, QStringList &strList) const;
+	void deserialize(KopeteMetaContact *metaContact, const QStringList &strList);
 
 public slots:
 	void Connect();			// Connect to server
@@ -104,8 +118,8 @@ public slots:
 							// CallBack when clicking on statusbar icon
 	void slotSettingsChanged(void);
 							// Callback when settings changed
-	void slotNewContact(const QString &userID, const QString &name, const QString &group = "");
-							// XXX ?
+//	void slotNewContact(const QString &userID, const QStringList &groups = QStringList());
+							// XXX ? ?????????????????????????????????????????????????????????????????????????
 	void slotSendMessage(const QString &Body, const QString &Destination);
 							// Send a message (Body) to a machine (Destination)
 
@@ -123,7 +137,7 @@ private:
 	QMap<QString, WPContact *> contactList;	// Master contact list
 	KopeteWinPopup *theInterface;
 	WPContact *theMyself;
-	static const WPProtocol *sProtocol;
+	static WPProtocol *sProtocol;
 
 	QPixmap iconAway;				// Icons
 	QPixmap iconAvailable;

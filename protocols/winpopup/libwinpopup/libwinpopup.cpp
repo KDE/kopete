@@ -125,6 +125,7 @@ void KWinPopup::doCheck()
 
 void KWinPopup::update(bool Wait)
 {
+//	qDebug("Starting update(%d)", Wait);
 	if(updating.tryAccess(1))
 	{	doUpdate();
 		updating--;
@@ -134,6 +135,7 @@ void KWinPopup::update(bool Wait)
 		{	updating++;
 			updating--;
 		}
+//	qDebug("Leaving update");
 }
 
 void KWinPopup::doUpdate()
@@ -179,6 +181,7 @@ void KWinPopup::doUpdate()
 	reading++;
 	theGroups = newGroups;
 	reading--;
+//	qDebug("Leaving doUpdate.");
 }
 
 QPair<stringMap, stringMap> KWinPopup::grabData(const QString &Host, QString *theGroup, QString *theOS, QString *theSoftware)	// populates theGroup!
@@ -188,6 +191,7 @@ QPair<stringMap, stringMap> KWinPopup::grabData(const QString &Host, QString *th
 	sender.addArgument("-L");
 	sender.addArgument(Host);
 	sender.addArgument("-N");
+	connect(&sender, SIGNAL(destroyed()), &sender, SLOT(kill()));
 	if(!sender.launch(""))
 	{	qDebug("Couldn't launch smbclient!");
 		return QPair<stringMap, stringMap>();
@@ -200,7 +204,7 @@ QPair<stringMap, stringMap> KWinPopup::grabData(const QString &Host, QString *th
 
 	while(sender.isRunning() || sender.canReadLineStdout())
 	{
-		while(!sender.canReadLineStdout());
+		while(!sender.canReadLineStdout() && sender.isRunning());
 		QString Line = sender.readLineStdout();
 		if(Phase == 0 && info.search(Line) != -1)
 		{	if(theGroup) *theGroup = info.cap(1);
