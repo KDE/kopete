@@ -125,6 +125,8 @@ void KIRCTransfer::slotError( int error )
 
 bool KIRCTransfer::initiate()
 {
+	QTimer *timer = 0;
+
 	if(m_initiated)
 	{
 		kdDebug(14121) << k_funcinfo << "Transfer allready initiated" << endl;
@@ -163,7 +165,10 @@ bool KIRCTransfer::initiate()
 		m_file.open(IO_ReadOnly);
 		connect(m_socket, SIGNAL(readyRead()),
 			this, SLOT(readyReadFileOutgoing()));
-//		QSignal for sending data
+		timer = new QTimer(this);
+		connect(timer, SIGNAL(timeout()),
+			this, SLOT(writeFileOutgoing()));
+		timer->start(1000, false);
 		break;
 	default:
 		kdDebug(14121) << k_funcinfo << "Closing transfer: Unknown extra initiation for type:" << m_type << endl;
@@ -182,11 +187,12 @@ bool KIRCTransfer::initiate()
 	m_socketDataStream.setDevice(m_socket);
 
 	// I wonder if calling this is really necessary
-	// As far as I understand, buffer (socket butffer at least) should be flushed while event-looping.
+	// As far as I understand, buffer (socket buffer at least) should be flushed while event-looping.
 	// But I'm not really sure of this, so I force the flush.
-	QTimer *timer = new QTimer( this );
-	connect( timer, SIGNAL(timeout()), this, SLOT(flush()) );
-	timer->start( 1000, FALSE ); // flush the streams at every seconds
+	timer = new QTimer(this);
+	connect(timer, SIGNAL(timeout()),
+		this, SLOT(flush()));
+	timer->start(1000, FALSE); // flush the streams at every seconds
 
 	return true;
 }
@@ -277,6 +283,7 @@ void KIRCTransfer::readyReadLine()
 void KIRCTransfer::readyReadFileIncoming()
 {
 	m_bufferLength = m_socket->readBlock(m_buffer, sizeof(m_buffer));
+
 	if(m_bufferLength > 0)
 	{
 		int written = m_file.writeBlock(m_buffer, m_bufferLength);
@@ -292,33 +299,34 @@ void KIRCTransfer::readyReadFileIncoming()
 			// Something bad happened while writting.
 			abort(m_file.errorString());
 	}
-
-	if(m_bufferLength == -1)
-	{
-		abort("Error while reading socket");
-	}
+	else if(m_bufferLength == -1)
+		abort("Error while reading socket.");
 }
 
 void KIRCTransfer::writeFileOutgoing()
 {
-	// should check m_filesize_ack == m_file_size_cur
-//	if (m_file_size_ack < m_file_size)
-//	{
-//		m_buffer_length = m_file->readBlock(m_buffer, sizeof(m_buffer));
-//		if (m_buffer_length != -1)
-//		{
-//			Q_LONG m_socket->writeBlock(m_buffer, m_buffer_length);
+	if (m_fileSizeAck < m_fileSize)
+	{
+		m_bufferLength = m_file.readBlock(m_buffer, sizeof(m_buffer));
+		if (m_bufferLength > 0)
+		{
+			Q_UINT32 read = m_socket->writeBlock(m_buffer, m_bufferLength); // should check written == read
+
+//			if(read != m_buffer_length)
+//				buffer is not cleared still
+
+			m_fileSizeCur += read;
 //			m_socket->flush(); // Should think on using this
-//			emit fileSizeCurrent( m_fileSizeCur );
-//		}
-//	}
-//	else if (m_file_size_ack > m_file_size)
-//		abort( "" );
+			emit fileSizeCurrent( m_fileSizeCur );
+		}
+		else if(m_bufferLength == -1)
+			abort("Error while reading file.");
+	}
 }
 
 void KIRCTransfer::readyReadFileOutgoing()
 {
-//	if(m_socket->canread(sizeof(m_file_size_ack)))
+	if(m_socket->bytesAvailable() >= sizeof(m_fileSizeAck))
 	{
 		m_socketDataStream >> m_fileSizeAck;
 		checkFileTransferEnd(m_fileSizeAck);
@@ -331,7 +339,7 @@ void KIRCTransfer::checkFileTransferEnd( Q_UINT32 fileSizeAck )
 	emit fileSizeAcknowledge(m_fileSizeAck);
 
 	if(m_fileSizeAck > m_fileSize)
-		abort(i18n("Acknowledge size greater then expected file size"));
+		abort(i18n("Acknowledge size is greater then the expected file size"));
 
 	if(m_fileSizeAck == m_fileSize)
 		emit complete();
