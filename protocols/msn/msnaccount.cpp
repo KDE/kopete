@@ -510,10 +510,14 @@ void MSNAccount::slotStatusChanged( const Kopete::OnlineStatus &status )
 			{
 				if(c->serverGroups().isEmpty())
 				{ //the contact is new, add it on the server
+					c->setOnlineStatus( MSNProtocol::protocol()->FLN );
 					addContactServerside( c->contactId() , c->metaContact()->groups() );
 				}
 				else //the contact had been deleted, give him the unknown status
+				{
+					c->clearServerGroups();
 					c->setOnlineStatus( MSNProtocol::protocol()->UNK );
+				}
 			}
 		}
 	}
