@@ -42,7 +42,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>B&amp;asic Setup</string>
+                    <string>Basic &amp;Setup</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -325,7 +325,7 @@
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Connection</string>
+                    <string>Connec&amp;tion</string>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -377,7 +377,7 @@
                                     <cstring>textLabel1_2_2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Default &amp;charset:</string>
+                                    <string>Default cha&amp;rset:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
                                     <cstring>charset</cstring>
@@ -393,7 +393,7 @@
                                     <cstring>autoConnect</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Connect automatically at &amp;startup</string>
+                                    <string>Connect a&amp;utomatically at startup</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="3">
@@ -425,7 +425,7 @@
                                     <cstring>textLabel1_3</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;Network:</string>
+                                    <string>Net&amp;work:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
                                     <cstring>network</cstring>
@@ -499,7 +499,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>A&amp;dvanced Configuration</string>
+                    <string>&amp;Advanced Configuration</string>
                 </attribute>
                 <vbox>
                     <property name="name">
@@ -865,8 +865,6 @@
         </widget>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>mRememberPassword</sender>
@@ -886,8 +884,13 @@
     <tabstop>mNickName</tabstop>
     <tabstop>mAltNickname</tabstop>
     <tabstop>mUserName</tabstop>
-    <tabstop>mPassword</tabstop>
     <tabstop>mRememberPassword</tabstop>
+    <tabstop>mPassword</tabstop>
+    <tabstop>network</tabstop>
+    <tabstop>editButton</tabstop>
+    <tabstop>preferSSL</tabstop>
+    <tabstop>autoConnect</tabstop>
+    <tabstop>charset</tabstop>
     <tabstop>partMessage</tabstop>
     <tabstop>quitMessage</tabstop>
     <tabstop>ctcpList</tabstop>
@@ -897,11 +900,6 @@
     <tabstop>commandList</tabstop>
     <tabstop>commandEdit</tabstop>
     <tabstop>addButton</tabstop>
-    <tabstop>network</tabstop>
-    <tabstop>charset</tabstop>
-    <tabstop>autoConnect</tabstop>
-    <tabstop>preferSSL</tabstop>
-    <tabstop>editButton</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
