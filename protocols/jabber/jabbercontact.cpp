@@ -426,6 +426,11 @@ void JabberContact::slotReceivedMessage (const Jabber::Message & message)
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
 
+	// FIXME: bugfix for current libxmpp which reports typing events
+	// as regular message
+	if (message.type().isEmpty() && message.body().isEmpty())
+		return;
+
 	// determine message type
 	if (message.type () == "chat")
 		type = KopeteMessage::Chat;
