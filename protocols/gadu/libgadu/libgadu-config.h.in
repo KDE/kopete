@@ -25,6 +25,6 @@
 #undef __GG_LIBGADU_HAVE_OPENSSL
 
 /* Include file containing uintXX_t declarations. */
-#include <stdint.h>
+#include <inttypes.h>
 
 #endif /* __GG_LIBGADU_CONFIG_H */

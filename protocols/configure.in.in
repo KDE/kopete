@@ -2,7 +2,7 @@ AC_DEFUN([AC_LIBGADU_DEFINE],
 [
 sed -e "s/#undef __GG_LIBGADU_$1/#define __GG_LIBGADU_$1/" \
 ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h > ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h.1
-mv ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h{.1,}
+mv ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h.1 ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h
 ])
 	 
 LIBGG_INCLUDES=""
@@ -67,13 +67,13 @@ AC_MSG_CHECKING([libgadu version 1.4rc2, 1.4, 1.5(rcX) with pthread support])
 	AC_SUBST(COMPILE_GADU)
 	use_libgadu_copy=no
 	], [
-	if test "$LIBPTHREAD" != "" ; then
+	if test "$kde_use_threading" = "yes" ; then
 	AC_MSG_RESULT([no, falling back on supplied libgadu-copy])
 	use_libgadu_copy=yes
 	COMPILE_GADU=true
 	else
 	use_libgadu_copy=no
-	AC_MSG_RESULT([no, cannot fall back on libgadu-copy (no pthread)])
+	AC_MSG_RESULT([no, cannot fall back on libgadu-copy (no threads)])
 	COMPILE_GADU=	
 	use_libgadu_copy=no
 	fi
@@ -86,7 +86,8 @@ LIBS="$ac_save_LIBS"
 CXXFLAGS="$ac_save_CXXFLAGS"
 
 if test "$use_libgadu_copy" = "yes"; then
-	cp ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h{.in,}
+	cp ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h.in \
+	${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h
 	if test "$ac_cv_c_bigendian" = "yes"; then
 		AC_LIBGADU_DEFINE([BIGENDIAN])	
 	fi
