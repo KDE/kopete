@@ -132,19 +132,6 @@ public slots:
 	 */
 	void loadAllPlugins();
 
-	/**
-	 * Unload all plugins on Kopete quit. This slot is called when the
-	 * main window is closed in Kopete::quitKopete() to asynchronously
-	 * unload plugins.
-	 *
-	 * After 3 seconds all plugins should be removed; what's still left
-	 * by then is unloaded through a hard delete instead.
-	 *
-	 * Note that this call also derefs the plugin manager from the event
-	 * loop, so do NOT call this method when not terminating Kopete!
-	 */
-	void unloadAllPlugins();
-
 signals:
 	/**
 	 * @brief Signals a new plugin has just been loaded.
@@ -163,6 +150,19 @@ private slots:
 	 * manager's destruction
 	 */
 	void slotUnloadAllPluginsTimeout();
+
+	/**
+	 * Unload all plugins on Kopete quit. This slot is called when the
+	 * main window is closed in Kopete::quitKopete() to asynchronously
+	 * unload plugins.
+	 *
+	 * After 3 seconds all plugins should be removed; what's still left
+	 * by then is unloaded through a hard delete instead.
+	 *
+	 * Note that this call also derefs the plugin manager from the event
+	 * loop, so do NOT call this method when not terminating Kopete!
+	 */
+	void unloadAllPlugins();
 
 private:
 	KopetePluginManager();
