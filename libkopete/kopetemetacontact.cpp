@@ -21,6 +21,7 @@
 #include <qdom.h>
 #include <qptrlist.h>
 #include <qstylesheet.h>
+#include <qregexp.h>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -509,10 +510,14 @@ QString KopeteMetaContact::toXML()
 	QPtrList<KopetePlugin> ps = kopeteapp->libraryLoader()->plugins();
 	for( KopetePlugin *p = ps.first() ; p != 0L; p = ps.next() )
 	{
-		//++pluginIt;
 		QStringList strList;
 		if ( p->serialize( this, strList ) && !strList.empty() )
 		{
+			for ( QStringList::iterator it = strList.begin(); it != strList.end(); ++it )
+			{
+				//escape '||' I don't like this but it is needed
+				(*it)=(*it).replace(QRegExp("\\\\"),"\\\\").replace(QRegExp("\\|"),"\\|;");
+			}
 			QString data = QStyleSheet::escape( strList.join( "||" ) );
 //			kdDebug() << "KopeteMetaContact::toXML: plugin-data = " << data <<endl;
 			xml += "    <plugin-data plugin-id=\"" +
@@ -607,12 +612,19 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 	QMap<QString, QString>::ConstIterator it;
 	for( it = m_pluginData.begin(); it != m_pluginData.end(); ++it )
 	{
-		QStringList strList = QStringList::split( "||", it.data() );
-		KopetePlugin *plugin = kopeteapp->libraryLoader()->searchByID(
-			it.key() );
-
+		KopetePlugin *plugin = kopeteapp->libraryLoader()->searchByID( it.key() );
 		if( plugin )
+		{
+			QStringList strList = QStringList::split( "||", it.data() );
+	
+			for ( QStringList::iterator it2 = strList.begin(); it2 != strList.end(); ++it2 )
+			{
+				//unescape '||' 
+				(*it2)=(*it2).replace(QRegExp("\\\\\\|;"),"|").replace(QRegExp("\\\\\\\\"),"\\");
+			}
+
 			plugin->deserialize( this, strList );
+		}
 	}
 
 	// If a plugin is loaded, load data cached
@@ -695,6 +707,12 @@ void KopeteMetaContact::slotPluginLoaded( KopetePlugin *p )
 		if( p->id() == it.key() )
 		{
 			QStringList strList = QStringList::split( "||", it.data() );
+			for ( QStringList::iterator it2 = strList.begin(); it2 != strList.end(); ++it2 )
+			{
+				//unescape '||'
+				(*it2)=(*it2).replace(QRegExp("\\\\\\|;"),"|").replace(QRegExp("\\\\\\\\"),"\\");
+			}
+
 			p->deserialize( this, strList );
 		}
 	}
