@@ -24,7 +24,7 @@ AC_ARG_ENABLE(smpppd, [  --enable-smpppd       enable support for smpppd],
 ])
 AM_CONDITIONAL(include_smpppdcs, test -n "$COMPILESMPPPDCS")
 
-KDE_FIND_PATH(xml2-config, XML_CONFIG, [${prefix}/bin ${exec_prefix}/bin /usr/local/bin /opt/local/bin /usr/bin], [
+KDE_FIND_PATH(xml2-config, XML_CONFIG, [${exec_prefix}/bin ${prefix}/bin], [
   AC_MSG_WARN([libxml2 not found anywhere, check ftp://xmlsoft.org/ for libxml >= 2.4.8. ])
 ])
 
