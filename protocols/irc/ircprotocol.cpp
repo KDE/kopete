@@ -16,6 +16,7 @@
  ***************************************************************************/
 #include <kdebug.h>
 #include <kconfig.h>
+#include <kgenericfactory.h>
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
@@ -41,7 +42,11 @@
 //           Constructor & Destructor
 ///////////////////////////////////////////////////
 
-IRCProtocol::IRCProtocol(): KopeteProtocol( 0, "IRC" )
+K_EXPORT_COMPONENT_FACTORY( kopete_irc, KGenericFactory<IRCProtocol> );
+
+IRCProtocol::IRCProtocol( QObject *parent, const char *name,
+	const QStringList & /* args */ )
+: KopeteProtocol( parent, name )
 {
 	kdDebug() << "\nIRC Plugin Loading\n";
 	// Load all ICQ icons from KDE standard dirs

@@ -41,7 +41,7 @@ class IRCProtocol : public KopeteProtocol
 	Q_OBJECT
 
 public:
-	IRCProtocol();
+	IRCProtocol( QObject *parent, const char *name, const QStringList &args );
 	~IRCProtocol();
 	/* Plugin reimplementation */
 	void init();
