@@ -6,7 +6,7 @@
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Nick Betcher <nbetcher@usinternet.com>
     Copyright (c) 2002      by Stefan Gehn <metz AT gehn.net>
-    Copyright (c) 2002-2003 by Olivier Goffart <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart <ogoffart @ tiscalinet.be>
     Copyright (c) 2004      by Richard Smith <kde@metafoo.co.uk>
 
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
@@ -30,6 +30,8 @@
 #include <qptrlist.h>
 #include <qstringlist.h>
 #include <qrect.h>
+#include <qtimer.h>
+#include <qguardedptr.h>
 
 class KopeteContact;
 class KopeteMetaContact;
@@ -157,6 +159,10 @@ private slots:
 	void slotAddContact();
 	void slotAddTemporaryContact();
 	void slotProperties();
+	void slotUndo();
+	void slotRedo();
+	
+	void slotTimeout();
 
 private:
 	bool mShowAsTree;
@@ -185,14 +191,44 @@ private:
 	KAction *actionRemoveFromGroup;
 	KAction *actionAddTemporaryContact;
 	KAction *actionProperties;
+	KAction *actionUndo;
+	KAction *actionRedo;
 
 	KopeteContactListViewPrivate *d;
+
+public:	
+	struct UndoItem;
+	UndoItem *m_undo;
+	UndoItem *m_redo;
+	void insertUndoItem(UndoItem *u);
+	QTimer undoTimer;
 
 public:
 	// This is public so the chatwinodw can handle sub actions
 	// FIXME: do we not believe in accessor functions any more?
 	KActionMenu *actionAddContact;
 };
+
+struct KopeteContactListView::UndoItem
+{
+	enum Type { MetaContactAdd, MetaContactRemove , MetaContactCopy , MetaContactRename, MetaContactChange, ContactAdd, GroupRename } type;
+	QStringList args;
+	QGuardedPtr<KopeteMetaContact> metacontact;
+	QGuardedPtr<KopeteGroup> group;
+	UndoItem *next;
+	bool isStep;
+	
+	UndoItem() : isStep(true) {}
+	UndoItem(Type t, KopeteMetaContact *m=0L ,KopeteGroup *g=0L)
+	{
+		isStep=true;
+		type=t;
+		metacontact=m;
+		group=g;
+		next=0L;
+	}
+};
+
 
 #endif
 // vim: set noet ts=4 sts=4 sw=4:
