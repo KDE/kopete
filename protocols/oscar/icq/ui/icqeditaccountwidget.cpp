@@ -121,8 +121,10 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 			mAccountSettings->edtPassword->setText(mAccount->password(false, 0L, 16));
 
 		mAccountSettings->edtAccountId->setText(mAccount->accountId());
-		//Remove me after we can change Account IDs (Matt)
+
+		// TODO: Remove me after we can change Account IDs (Matt)
 		mAccountSettings->edtAccountId->setDisabled(true);
+
 		mAccountSettings->chkAutoLogin->setChecked(mAccount->autoLogin());
 		mAccountSettings->edtServerAddress->setText(mAccount->pluginData(mProtocol, "Server"));
 		mAccountSettings->edtServerPort->setValue(mAccount->pluginData(mProtocol, "Port").toInt());
