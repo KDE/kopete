@@ -56,6 +56,11 @@
 	#include <qtoolbutton.h>
 #endif
 
+#if KDE_IS_VERSION( 3, 1, 90 )
+	#include <kactionclasses.h>
+#endif
+
+
 typedef QMap<KopeteAccount*,KopeteChatWindow*> AccountMap;
 typedef QMap<KopeteGroup*,KopeteChatWindow*> GroupMap;
 typedef QMap<KopeteMetaContact*,KopeteChatWindow*> MetaContactMap;
