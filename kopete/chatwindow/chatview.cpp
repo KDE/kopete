@@ -578,7 +578,7 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 
 	if( membersStatus == Smart && membersDock )
 	{
-		bool shouldShowMembers = ( m_manager->members().count() > 2 );
+		bool shouldShowMembers = ( m_manager->members().count() > 1);
 		if( shouldShowMembers != d->visibleMembers )
 		{
 			d->visibleMembers = shouldShowMembers;
