@@ -12,6 +12,7 @@
 #include "tasks/leaveconferencetask.h"
 #include "tasks/logintask.h"
 #include "tasks/rejectinvitetask.h"
+#include "tasks/sendinvitetask.h"
 #include "tasks/sendmessagetask.h"
 #include "tasks/setstatustask.h"
 #include "tasks/statustask.h"
@@ -257,6 +258,15 @@ void Client::leaveConference( const QString & guid )
 	lct->leave( guid );
 	//connect( lct, SIGNAL( finished() ), SLOT( lct_leftConference() ) );
 	lct->go( true );
+}
+
+void Client::sendInvitation( const QString & guid, const QString & dn, const GroupWise::OutgoingMessage & message )
+{
+	qDebug( "Client::sendInvitation()" );
+	SendInviteTask * sit = new SendInviteTask( d->root );
+	QStringList invitees( dn );
+	sit->invite( guid, dn, message );
+	sit->go();
 }
 
 // SLOTS //

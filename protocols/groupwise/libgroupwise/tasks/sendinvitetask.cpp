@@ -27,6 +27,7 @@ void SendInviteTask::invite( const QString & guid, const QStringList & invitees,
 	QValueListConstIterator<QString> end = invitees.end();
 	for ( QValueListConstIterator<QString> it = invitees.begin(); it != end; ++it )
 		lst.append( new Field::SingleField( NM_A_SZ_DN, 0, NMFIELD_TYPE_DN, *it ) );
-	lst.append( new Field::SingleField( NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, /*substitute*/ msg.rtfMessage ) );
+	if ( !msg.rtfMessage.isEmpty() )
+		lst.append( new Field::SingleField( NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, msg.rtfMessage ) );
 	createTransfer( "sendinvite", lst );
 }

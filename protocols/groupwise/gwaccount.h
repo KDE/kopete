@@ -181,11 +181,11 @@ protected slots:
 	/**
 	 * Someone joined a conference, add them to the appropriate message manager
 	 */
-// 	void receiveConferenceJoinNotify( const ConferenceEvent & );
+ 	void receiveConferenceJoinNotify( const ConferenceEvent & );
 	/**
 	 * Someone left a conference, remove them from the message manager
 	 */
-// 	void receiveConferenceLeft( const ConferenceEvent & );
+ 	void receiveConferenceLeft( const ConferenceEvent & );
 	/**
 	 * The user was invited to join a conference
 	 */

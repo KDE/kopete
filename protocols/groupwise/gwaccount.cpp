@@ -212,6 +212,8 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	QObject::connect( m_client, SIGNAL( conferenceCreated( const int, const QString & ) ), SIGNAL( conferenceCreated( const int, const QString & ) ) );
 	QObject::connect( m_client, SIGNAL( conferenceCreationFailed( const int,  const int ) ), SIGNAL( conferenceCreationFailed( const int,  const int ) ) );
 	QObject::connect( m_client, SIGNAL( invitationReceived( const ConferenceEvent & ) ), SLOT( receiveInvitation( const ConferenceEvent & ) ) );
+	QObject::connect( m_client, SIGNAL( conferenceLeft( const ConferenceEvent & ) ), SLOT( receiveConferenceLeft( const ConferenceEvent & ) ) );
+	QObject::connect( m_client, SIGNAL( conferenceJoinNotifyReceived( const ConferenceEvent & ) ), SLOT( receiveConferenceJoinNotify( const ConferenceEvent & ) ) );
 	QObject::connect( m_client, SIGNAL( conferenceJoined( const QString &, const QStringList & ) ), SLOT( receiveConferenceJoin( const QString &, const QStringList & ) ) );
 
 	// typing events
@@ -679,6 +681,45 @@ void GroupWiseAccount::receiveConferenceJoin( const QString & guid, const QStrin
 			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a contact for DN: " << *it << endl;
 	}
 	mgr->view( true );
+}
+
+void GroupWiseAccount::receiveConferenceJoinNotify( const ConferenceEvent & event )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	GroupWiseMessageManager * mgr = m_managers[ event.guid ];
+	if ( mgr )
+	{
+		GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts()[ event.user ] );
+		if ( c )
+		{
+			mgr->addContact( c );
+			c->joinConference( event.guid );
+		}
+		else 
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a contact for DN: " << event.user << endl;
+	}
+	else
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a GWMM for conference: " << event.guid << endl;
+}
+
+void GroupWiseAccount::receiveConferenceLeft( const ConferenceEvent & event )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	GroupWiseMessageManager * mgr = m_managers[ event.guid ];
+	if ( mgr )
+	{
+		GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts()[ event.user ] );
+		if ( c )
+		{
+			mgr->removeContact( c );
+			c->leaveConference( event.guid );
+		}
+		else 
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a contact for DN: " << event.user << endl;
+	}
+	else
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a GWMM for conference: " << event.guid << endl;
+
 }
 
 void GroupWiseAccount::slotMessageManagerDestroyed( QObject * obj )

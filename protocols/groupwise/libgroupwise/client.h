@@ -131,8 +131,15 @@ Q_OBJECT
 		
 		/**
 		 * Leave a conference, notifying 
+		 * Protocol action P6
 		 */
 		void leaveConference( const QString & guid ); 
+		
+		/**
+		 * Send an invitation to join a conference
+		 * Protocol action P9
+		 */
+		void sendInvitation( const QString & guid, const QString & dn, const GroupWise::OutgoingMessage & message );
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
