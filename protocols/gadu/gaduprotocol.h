@@ -88,6 +88,7 @@ private:
 	GaduAccount*		defaultAccount_;
 	GaduPreferences*	prefs_;
 
+	const KopeteOnlineStatus gaduStatusBlocked_;
 	const KopeteOnlineStatus gaduStatusOffline_;
 	const KopeteOnlineStatus gaduStatusOfflineDescr_;
 	const KopeteOnlineStatus gaduStatusBusy_;

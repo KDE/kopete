@@ -45,6 +45,8 @@ GaduProtocol* GaduProtocol::protocolStatic_ = 0L;
 
 GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList& )
 :KopeteProtocol( GaduProtocolFactory::instance(), parent, name ),
+			gaduStatusBlocked_( KopeteOnlineStatus::Away, 0, this, GG_STATUS_BLOCKED,
+				"gg_ignored", "", i18n( "Blocked" ) ),
 			gaduStatusOffline_( KopeteOnlineStatus::Offline, 0, this, GG_STATUS_NOT_AVAIL,
 				"gg_offline", i18n( "Go O&ffline" ), i18n( "Offline" ) ),
 			gaduStatusOfflineDescr_( KopeteOnlineStatus::Away, 2, this, GG_STATUS_NOT_AVAIL_DESCR,
