@@ -299,44 +299,47 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 
 void YahooAccount::connectWithPassword( const QString &passwd )
 {
+	if ( isAway() )
+	{
+		slotGoOnline();
+		return;
+	}
+
+	if ( isConnected() || 
+	     myself()->onlineStatus() == m_protocol->Connecting )
+	{
+		kdDebug(14180) << "Yahoo plugin: Ignoring connect request (already connected)." <<endl;
+		return;
+	
+	}
+
 	if ( passwd.isNull() )
 	{ //cancel the connection attempt
 		static_cast<YahooContact*>( myself() )->setOnlineStatus( m_protocol->Offline );
 		return;
 	}
-
 	
 	QString server = "scs.msg.yahoo.com";
 	int port = 5050;
 
 	YahooSessionManager::manager()->setPager( server, port );
-
 	m_session = YahooSessionManager::manager()->createSession( accountId(), passwd );
-	if(!isConnected() && myself()->onlineStatus() != m_protocol->Connecting)
+	kdDebug(14180) << "Attempting to connect to Yahoo on <" << server << ":" 
+		<< port << ">. user <" << accountId() << ">" << endl;
+	
+	static_cast<YahooContact*>( myself() )->setOnlineStatus( m_protocol->Connecting );
+	if ( m_session && m_session->sessionId() > 0 )
 	{
-		kdDebug(14180) << "Attempting to connect to Yahoo on <" << server << ":" << port << ">. user <" << accountId() << ">" << endl;
-
-		static_cast<YahooContact*>( myself() )->setOnlineStatus( m_protocol->Connecting );
-		if ( m_session && m_session->sessionId() > 0 )
-		{
-
-			initConnectionSignals( MakeConnections );
-			kdDebug(14180) << "Starting the login connection" << endl;
-			m_session->login( initialStatus().internalStatus() );
-
-		}
-		else
-		{
-			kdDebug(14180) << "Couldn't connect!" << endl;
+		initConnectionSignals( MakeConnections );
+		kdDebug(14180) << "Starting the login connection" << endl;
+		m_session->login( initialStatus().internalStatus() );
+	}
+	else
+	{
+		kdDebug(14180) << "Couldn't connect!" << endl;
 			// TODO: message box saying can't connect?
-		}
 	}
-	else if ( isAway() )
-	{	// They're really away, and they want to un-away.
-		slotGoOnline();
-	}
-	else	// ignore
-		kdDebug(14180) << "Yahoo plugin: Ignoring connect request (already connected)." <<endl;
+	
 }
 
 void YahooAccount::disconnect()
@@ -751,4 +754,4 @@ void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const Q
 #include "yahooaccount.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-
+//kate: indent-mode csands; tab-width 4;
