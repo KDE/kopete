@@ -21,6 +21,9 @@
 #include <libxml/globals.h>
 #include <libxml/parser.h>
 #include <libxslt/xsltInternals.h>
+
+// transform.h _HAS_ to be after xsltInternals.h or it will break the compile,
+// so unfortunately we can't sort these includes alphabetically
 #include <libxslt/transform.h>
 #include <libxslt/xsltconfig.h>
 
