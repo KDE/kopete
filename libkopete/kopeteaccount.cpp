@@ -55,8 +55,9 @@ QString cryptStr( const QString &aStr )
 	return result;
 }
 
-struct KopeteAccountPrivate
+class KopeteAccountPrivate
 {
+public:
 	KopeteProtocol *protocol;
 	QString id;
 	QString password;
@@ -64,6 +65,8 @@ struct KopeteAccountPrivate
 	bool rememberPassword;
 	QDict<KopeteContact> contacts;
 	QColor color;
+	KopeteContact *myself;
+
 #if KDE_IS_VERSION( 3, 1, 90 )
 	KWallet::Wallet *wallet;
 #endif
@@ -77,6 +80,7 @@ KopeteAccount::KopeteAccount( KopeteProtocol *parent, const QString &accountId, 
 	d->id = accountId;
 	d->autologin = false;
 	d->rememberPassword = false;
+	d->myself = 0L;
 
 #if KDE_IS_VERSION( 3, 1, 90 )
 	d->wallet = 0L;
@@ -500,12 +504,22 @@ KActionMenu * KopeteAccount::actionMenu()
 
 bool KopeteAccount::isConnected() const
 {
-	return myself()->onlineStatus().status() != KopeteOnlineStatus::Offline;
+	return d->myself ? ( d->myself->onlineStatus().status() != KopeteOnlineStatus::Offline ) : false;
 }
 
 bool KopeteAccount::isAway() const
 {
-	return myself()->onlineStatus().status() == KopeteOnlineStatus::Away;
+	return d->myself->onlineStatus().status() == KopeteOnlineStatus::Away;
+}
+
+KopeteContact * KopeteAccount::myself() const
+{
+	return d->myself;
+}
+
+void KopeteAccount::setMyself( KopeteContact *myself )
+{
+	d->myself = myself;
 }
 
 #include "kopeteaccount.moc"

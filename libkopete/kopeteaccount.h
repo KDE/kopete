@@ -179,18 +179,13 @@ public:
 	bool isAway() const;
 
 	/**
-	 * This function has to be reimplemented in every single protocol
-	 * and should return the KopeteContact associated with the 'home' user.
-	 * the myself contact MUST be created in the account constructor!
-	 * The myself contact Can't de deleted when kopete if this account still
-	 * exist. The myself contact is used in each KMM,
-	 * The myself contactId should be the accountID, his onlineStatus
-	 * represent the current user's status. the statusbar icon is connected
-	 * to myself.onlineStatusChanged to update the icon.
+	 * Retrieve the 'myself' contact.
 	 *
-	 * @return contact associated with the currently logged in user
+	 * Returns 0L if myself is not initialized yet.
+	 *
+	 * See also @ref setMyself().
 	 */
-	virtual KopeteContact* myself() const = 0;
+	KopeteContact * myself() const;
 
 	/**
 	 * @brief Return the menu for this account
@@ -238,6 +233,20 @@ public:
 	QString configGroup() const;
 
 protected:
+	/**
+	 * Set the 'myself' contact. This contact HAS to be defined for every
+	 * account, because it holds the online status of an account!
+	 *
+	 * The myself contact can't be deleted as long as the account still
+	 * exists. The myself contact is used in each KMM, the myself contactId
+	 * should be the accountID, the onlineStatus should represent the
+	 * current user's status. The statusbar icon is connected to
+	 * @ref myself.onlineStatusChanged() to update the icon.
+	 *
+	 * @return contact associated with the currently logged in user
+	 */
+	void setMyself( KopeteContact *myself );
+
 	/**
 	 * Create a new contact in the specified metacontact
 	 *
