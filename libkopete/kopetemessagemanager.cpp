@@ -33,14 +33,9 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteCon
 	mUser = user;
 	mChatWindow = 0L;
 	mUnreadMessageEvent = 0L;
-	if ( kopeteapp->appearance()->useQueue() )
-	{
-		mReadMode = Queued;
-	}
-	else
-	{
-		mReadMode = Popup;
-	}
+
+	readModeChanged();
+	connect( kopeteapp->appearance(), SIGNAL(queueChanged()), this, SLOT(readModeChanged()) );
 	
 	if (!logFile.isEmpty())
 	{
@@ -180,3 +175,14 @@ void KopeteMessageManager::removeContact( const KopeteContact *c )
 	mContactList.take( mContactList.find(c) );
 }
 
+void KopeteMessageManager::readModeChanged()
+{
+	if ( kopeteapp->appearance()->useQueue() )
+	{
+		mReadMode = Queued;
+	}
+        else
+	{
+                mReadMode = Popup;
+	}
+}

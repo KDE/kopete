@@ -99,6 +99,9 @@ signals:
 	void messageSent( const KopeteMessage msg );
 	void dying( KopeteMessageManager *);
 
+public slots:
+	void readModeChanged();
+	
 protected slots:
 	void cancelUnreadMessageEvent();
     void chatWindowClosing();
