@@ -167,7 +167,9 @@ void IRCContact::slotIncomingMotd(const QString &motd)
 
 void IRCContact::joinNow()
 {
+	
 	mChatViewContainer = new QFrame(mContact->mWindow->mChannelsTabCtl);
+	mChatViewContainer->resize(300,300);
 	kdDebug() << "FUCK PART 1" << endl;
 	(new QVBoxLayout(mChatViewContainer, KDialog::marginHint(), KDialog::spacingHint()))->setAutoAdd(true);
 	(void)new QLabel(i18n("<b>Test :-):</b>"),mChatViewContainer );	
@@ -175,7 +177,10 @@ void IRCContact::joinNow()
 	chatView = new IRCChatView(mServer, mTarget, this, mChatViewContainer);
 	kdDebug() << "FUCK PART 3" << endl;
 	mContact->mWindow->mChannelsTabCtl->addTab(mChatViewContainer, mTarget);
-
+    mContact->mWindow->adjustSize();
+	mContact->mWindow->show();
+	mChatViewContainer->show();
+	chatView->show();
 	kdDebug() << "FUCK PART 4" << endl;
 	QObject::connect(mContact->engine, SIGNAL(userJoinedChannel(const QString &, const QString &)), chatView, SLOT(userJoinedChannel(const QString &, const QString &)));
 	QObject::connect(mContact->engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), chatView, SLOT(incomingMessage(const QString &, const QString &, const QString &)));

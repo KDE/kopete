@@ -31,7 +31,7 @@ IRCServerContact::IRCServerContact(const QString &server, const QString &nicknam
 	mManager = manager;
 	mNickname = nickname;
 	mServer = server;
-	mWindow = new IRCChatWindow;
+	mWindow = new IRCChatWindow(mServer);
 	QString title = nickname;
 	title.append("@");
 	title.append(server);
