@@ -244,23 +244,6 @@ void JabberAccount::connect ()
 	jabberClient->setClientVersion (kapp->aboutData ()->version ());
 	jabberClient->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2));
 
-	if (accountId().isEmpty ())
-	{
-		int r = KMessageBox::warningContinueCancel (qApp->mainWidget (),
-													i18n
-													("<qt>You have not yet specified your Jabber username. "
-													 "You can specify your Jabber settings in the Kopete "
-													 "configuration dialog<br>" "Do you want to configure Jabber now?</qt>"),
-													i18n ("Jabber Plugin Not Configured Yet"),
-													KGuiItem (i18n ("C&onfigure..."),
-															  "configure"));
-
-		//if (r != KMessageBox::Cancel)
-		//   preferences->activate();
-		return;
-	}
-
-
 	/* Check if we are capable of using SSL if requested. */
 	if (pluginData (protocol (), "UseSSL") == "true")
 	{
