@@ -122,3 +122,4 @@ void HistoryGUIClient::slotNext()
 	disconnect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));*/
 }
 
+#include "historyguiclient.moc"
