@@ -157,17 +157,17 @@ private slots:
 	void slotPluginDestroyed( QObject *plugin );
 
 	/**
-	 * unloadAllPlugins() starts a timer, when it fires we force all plugins
+	 * shutdown() starts a timer, when it fires we force all plugins
 	 * to be unloaded here by deref()-ing the event loop to trigger the plugin
 	 * manager's destruction
 	 */
-	void slotUnloadAllPluginsTimeout();
+	void slotShutdownTimeout();
 
 	/**
 	 * Common entry point to deref() the KApplication. Used both by the clean
-	 * shutdown and the timeout condition of slotUnloadAllPluginsTimeout()
+	 * shutdown and the timeout condition of slotShutdownTimeout()
 	 */
-	void slotUnloadAllPluginsDone();
+	void slotShutdownDone();
 
 	/**
 	 * Emitted by a KopetePlugin when it's ready for unload

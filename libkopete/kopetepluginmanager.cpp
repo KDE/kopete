@@ -80,7 +80,6 @@ KopetePluginManager::KopetePluginManager()
 	// This way we can unload plugins asynchronously, which is more
 	// robust if they are still doing processing.
 	kapp->ref();
-	connect( kapp, SIGNAL( lastWindowClosed() ), this, SLOT( unloadAllPlugins() ) );
 	d->shutdownMode = KopetePluginManagerPrivate::Running;
 
 	KSettings::Dispatcher::self()->registerInstance( KGlobal::instance(), this, SLOT( loadAllPlugins() ) );
@@ -155,7 +154,7 @@ void KopetePluginManager::shutdown()
 		it = nextIt;
 	}
 
-	QTimer::singleShot( 3000, this, SLOT( slotUnloadAllPluginsTimeout() ) );
+	QTimer::singleShot( 3000, this, SLOT( slotShutdownTimeout() ) );
 }
 
 void KopetePluginManager::slotPluginReadyForUnload()
@@ -173,15 +172,15 @@ void KopetePluginManager::slotPluginReadyForUnload()
 	plugin->deleteLater();
 }
 
-void KopetePluginManager::slotUnloadAllPluginsTimeout()
+void KopetePluginManager::slotShutdownTimeout()
 {
 	kdWarning( 14010 ) << k_funcinfo << "Some plugins didn't shutdown in time!" << endl
 		<< "Forcing Kopete shutdown now." << endl;
 
-	slotUnloadAllPluginsDone();
+	slotShutdownDone();
 }
 
-void KopetePluginManager::slotUnloadAllPluginsDone()
+void KopetePluginManager::slotShutdownDone()
 {
 	kdDebug( 14010 ) << k_funcinfo << endl;
 
@@ -349,7 +348,7 @@ void KopetePluginManager::slotPluginDestroyed( QObject *plugin )
 	{
 		// Use a timer to make sure any pending deleteLater() calls have
 		// been handled first
-		QTimer::singleShot( 0, this, SLOT( slotUnloadAllPluginsDone() ) );
+		QTimer::singleShot( 0, this, SLOT( slotShutdownDone() ) );
 	}
 }
 
