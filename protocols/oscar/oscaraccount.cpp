@@ -514,7 +514,7 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 
 	//screennames are case insensitive and formatting which server
 	//pushes might be different
-	if(myself()->contactId().contains(buddy->screenname(), false))
+	if(myself()->contactId().contains(tocNormalize(buddy->screenname()), false))
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"EEEK! Cannot have yourself on your own list! Aborting" << endl;
