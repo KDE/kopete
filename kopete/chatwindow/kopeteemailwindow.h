@@ -84,7 +84,6 @@ private slots:
 	void slotReplySendClicked();
 	void slotReadNext();
 	void slotReadPrev();
-	void slotOpenURLRequest( const KURL &url, const KParts::URLArgs &args );
 	void slotTextChanged();
 	void slotCloseView();
 
@@ -98,11 +97,9 @@ private slots:
 	void slotViewMenuBar();
 	void slotViewToolBar();
 
-	void slotConfKeys();
 	void slotConfToolbar();
 
 	void slotMarkMessageRead();
-	void slotRefreshAppearance();
 
 private:
 	KopeteEmailWindowPrivate *d;

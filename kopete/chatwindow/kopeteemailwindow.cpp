@@ -35,7 +35,6 @@
 #include <kedittoolbar.h>
 #include <kfontdialog.h>
 #include <kglobalsettings.h>
-#include <khtml_part.h>
 #include <khtmlview.h>
 #include <kiconloader.h>
 #include <kkeydialog.h>
@@ -48,6 +47,7 @@
 #include <ktextedit.h>
 #include <kwin.h>
 
+#include "chatmessagepart.h"
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
 #include "kopeteemoticonaction.h"
@@ -55,6 +55,7 @@
 #include "kopeteplugin.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprefs.h"
+#include "kopetestdaction.h"
 #include "kopetexsl.h"
 
 
@@ -74,8 +75,7 @@ public:
 	KPushButton *btnReadPrev;
 	QTextEdit *txtEntry;
 	QSplitter *split;
-	KHTMLView *htmlView;
-	KHTMLPart *htmlPart;
+	ChatMessagePart *messagePart;
 	KopeteEmailWindow::WindowMode mode;
 	KAction *chatSend;
 	QLabel *anim;
@@ -95,8 +95,6 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, bool foreign
 {
 	d = new KopeteEmailWindowPrivate;
 
-	d->xsltParser = new Kopete::XSLT( KopetePrefs::prefs()->styleContents(), this );
-
 	QVBox *v = new QVBox( this );
 	setCentralWidget( v );
 
@@ -105,23 +103,15 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, bool foreign
 	d->split = new QSplitter( v );
 	d->split->setOrientation( QSplitter::Vertical );
 
-	d->htmlPart = new KHTMLPart( d->split );
+	d->messagePart = new ChatMessagePart( manager, d->split, "messagePart" );
 
-	//Security settings, we don't need this stuff
-	d->htmlPart->setJScriptEnabled( false ) ;
-	d->htmlPart->setJavaEnabled( false );
-	d->htmlPart->setPluginsEnabled( false );
-	d->htmlPart->setMetaRefreshEnabled( false );
-
-	d->htmlView = d->htmlPart->view();
-	d->htmlView->setMarginWidth( 4 );
-	d->htmlView->setMarginHeight( 4 );
-	d->htmlView->setMinimumSize( QSize( 75, 20 ) );
-	connect ( d->htmlPart->browserExtension(), SIGNAL( openURLRequestDelayed( const KURL &, const KParts::URLArgs & ) ),
-		SLOT( slotOpenURLRequest( const KURL &, const KParts::URLArgs & ) ) );
-	d->htmlView->setFocusPolicy( NoFocus );
+	// FIXME: should this be in ChatView too? maybe move to ChatMessagePart?
+	d->messagePart->view()->setMarginWidth( 4 );
+	d->messagePart->view()->setMarginHeight( 4 );
+	d->messagePart->view()->setMinimumSize( QSize( 75, 20 ) );
 
 	d->editpart = 0L;
+	//FIXME: use KopeteRichTextEditPart here!
 	if(KopetePrefs::prefs()->richText())
 	{
 		KLibFactory *factory = KLibLoader::self()->factory("libkrichtexteditpart");
@@ -198,8 +188,6 @@ KopeteEmailWindow::KopeteEmailWindow( Kopete::ChatSession *manager, bool foreign
 	tmpColor = KGlobalSettings::baseColor();
 	slotSetBgColor( config->readColorEntry ( QString::fromLatin1("BackgroundColor"), &tmpColor) );
 
-	connect( KopetePrefs::prefs(), SIGNAL(messageAppearanceChanged()), this, SLOT( slotRefreshAppearance() ) );
-
 	d->sendInProgress = false;
 
 	toolBar()->alignItemRight( 99 );
@@ -258,21 +246,18 @@ void KopeteEmailWindow::initActions(void)
 	new KAction( i18n( "Set &Background Color..." ), QString::fromLatin1( "fill" ), 0,
 		this, SLOT( slotSetBgColor() ), coll, "format_bgcolor" );
 
-/*
-	// FIXME: This code was marked as KDE < 3.1 specific. Can we remove it?
-	//        Commented out for now, see if (and if so, where) it breaks - Martijn
 	KStdAction::showMenubar( this, SLOT( slotViewMenuBar() ), coll );
 	KStdAction::showToolbar( this, SLOT( slotViewToolBar() ), coll );
-*/
 
 	d->actionSmileyMenu = new KopeteEmoticonAction( coll, "format_smiley" );
 	d->actionSmileyMenu->setDelayed( false );
 	connect(d->actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
 
 	// add configure key bindings menu item
-	KStdAction::keyBindings(this, SLOT(slotConfKeys()), coll);
+	KStdAction::keyBindings( guiFactory(), SLOT( configureShortcuts() ), coll );
 	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), coll);
-
+	KopeteStdAction::preferences( coll , "settings_prefs" );
+	setStandardToolBarMenuEnabled( true );
 
 	// The animated toolbarbutton
 	d->normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
@@ -289,7 +274,7 @@ void KopeteEmailWindow::initActions(void)
 	//toolBar()->insertWidget( 99, d->anim->width(), d->anim );
 	new KWidgetAction( d->anim , i18n("Toolbar Animation") , 0, 0 , 0 , coll , "toolbar_animation");
 
-	setXMLFile( QString::fromLatin1( "kopetechatwindow.rc" ) );
+	setXMLFile( QString::fromLatin1( "kopeteemailwindow.rc" ) );
 	createGUI( d->editpart );
 	//createGUI( QString::fromLatin1( "kopeteemailwindow.rc" ) );
 	guiFactory()->addClient(m_manager);
@@ -359,19 +344,14 @@ void KopeteEmailWindow::slotSmileyActivated(const QString &sm )
 		d->txtEntry->insert( sm );
 }
 
-void KopeteEmailWindow::slotConfKeys()
-{
-	KKeyDialog::configure(actionCollection(), this, true);
-}
-
 void KopeteEmailWindow::slotConfToolbar()
 {
-	saveMainWindowSettings(KGlobal::config(), QString::fromLatin1( "KopeteChatWindow" ));
-	KEditToolbar *dlg = new KEditToolbar(actionCollection(), QString::fromLatin1("kopetechatwindow.rc") );
+	saveMainWindowSettings(KGlobal::config(), QString::fromLatin1( "KopeteEmailWindow" ));
+	KEditToolbar *dlg = new KEditToolbar(actionCollection(), QString::fromLatin1("kopeteemailwindow.rc") );
 	if (dlg->exec())
 	{
 		createGUI( d->editpart );
-		applyMainWindowSettings(KGlobal::config(), QString::fromLatin1( "KopeteChatWindow" ));
+		applyMainWindowSettings(KGlobal::config(), QString::fromLatin1( "KopeteEmailWindow" ));
 	}
 	delete dlg;
 }
@@ -434,8 +414,8 @@ void KopeteEmailWindow::slotCopy()
 {
 //	kdDebug(14010) << k_funcinfo << endl;
 
-	if ( d->htmlPart->hasSelection() )
-		QApplication::clipboard()->setText( d->htmlPart->selectedText() );
+	if ( d->messagePart->hasSelection() )
+		d->messagePart->copy();
 	else
 		d->txtEntry->copy();
 }
@@ -524,31 +504,10 @@ void KopeteEmailWindow::slotReadPrev()
 	updateNextButton();
 }
 
-void KopeteEmailWindow::slotRefreshAppearance()
-{
-	Kopete::Message m = currentMessage();
-	writeMessage( m );
-}
-
 void KopeteEmailWindow::writeMessage( Kopete::Message &msg )
 {
-	QString dir = ( QApplication::reverseLayout() ? QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
-	d->htmlPart->begin();
-	//FIXME: this should use multi-argument version of .arg!
-	d->htmlPart->write( QString::fromLatin1( "<html><head><style>body {font-family:%1; font-size:%2pt; color:%3} td {font-family:%4; font-size:%5pt; color:%6}</style></head>" )
-		.arg( KopetePrefs::prefs()->fontFace().family() )
-		.arg( KopetePrefs::prefs()->fontFace().pointSize() )
-		.arg( KopetePrefs::prefs()->textColor().name() )
-		.arg( KopetePrefs::prefs()->fontFace().family() )
-		.arg( KopetePrefs::prefs()->fontFace().pointSize() )
-		.arg( KopetePrefs::prefs()->textColor().name() ) );
-	d->htmlPart->write( QString::fromLatin1( "<body style=\"background-repeat:no-repeat; background-attachment:fixed\" bgcolor=\"%1\" vlink=\"%2\" link=\"%3\" %4>%5</body></html>" )
-		.arg( KopetePrefs::prefs()->bgColor().name() )
-		.arg( KopetePrefs::prefs()->linkColor().name() )
-		.arg( KopetePrefs::prefs()->linkColor().name() )
-		.arg( dir )
-		.arg( d->xsltParser->transform( msg.asXML().toString() ) ) );
-	d->htmlPart->end();
+	d->messagePart->clear();
+	d->messagePart->appendMessage( msg );
 }
 
 void KopeteEmailWindow::sendMessage()
@@ -627,7 +586,7 @@ void KopeteEmailWindow::toggleMode( WindowMode newMode )
 			d->btnReplySend->setText( i18n( "Send" ) );
 			slotTextChanged();
 			d->txtEntry->show();
-			d->htmlView->hide();
+			d->messagePart->view()->hide();
 			d->btnReadNext->hide();
 			d->btnReadPrev->hide();
 			break;
@@ -635,7 +594,7 @@ void KopeteEmailWindow::toggleMode( WindowMode newMode )
 			d->btnReplySend->setText( i18n( "Reply" ) );
 			d->btnReplySend->setEnabled( true );
 			d->txtEntry->hide();
-			d->htmlView->show();
+			d->messagePart->view()->show();
 			d->btnReadNext->show();
 			d->btnReadPrev->show();
 			break;
@@ -646,7 +605,7 @@ void KopeteEmailWindow::toggleMode( WindowMode newMode )
 			d->btnReplySend->setText( i18n( "Send" ) );
 			slotTextChanged();
 			d->txtEntry->show();
-			d->htmlView->show();
+			d->messagePart->view()->show();
 			d->btnReadNext->show();
 			d->btnReadPrev->show();
 			d->split->setSizes( splitPercent );
@@ -721,17 +680,6 @@ Kopete::Message KopeteEmailWindow::currentMessage()
 void KopeteEmailWindow::setCurrentMessage( const Kopete::Message &newMessage )
 {
 	d->txtEntry->setText( newMessage.plainBody() );
-}
-
-void KopeteEmailWindow::slotOpenURLRequest(const KURL &url, const KParts::URLArgs & /* args */ )
-{
-	kdDebug(14010) << k_funcinfo << "url=" << url.url() << endl;
-
-	// FIXME: Doesn't KRun do the mime type check automagically for us? - Martijn
-	if( url.protocol() == QString::fromLatin1( "mailto" ) )
-		kapp->invokeMailer( url );
-	else
-		kapp->invokeBrowser( url.url() );
 }
 
 QTextEdit * KopeteEmailWindow::editWidget()
