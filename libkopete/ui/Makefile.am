@@ -9,9 +9,10 @@ libkopeteui_la_SOURCES = kopetecontactaction.cpp addcontactpage.cpp \
 	kopeteawaydialogbase.ui kopetefileconfirmdialog.cpp \
 	fileconfirmbase.ui userinfodialog.cpp kopeteview.cpp kopetepasswordwidgetbase.ui \
 	kopetepasswordwidget.cpp accountselector.cpp kopeteviewplugin.cpp addresseeitem.cpp addressbookselectorwidget_base.ui addressbookselectordialog.cpp \
-	addressbookselectorwidget.cpp
+	addressbookselectorwidget.cpp metacontactselectorwidget_base.ui \
+	metacontactselectorwidget.cpp kopetelistview.cpp kopetelistviewitem.cpp kopetelistviewsearchline.cpp
 
-libkopeteui_la_LDFLAGS = $(all_libraries)
+libkopeteui_la_LDFLAGS = $(all_libraries) -lkabc
 libkopeteui_la_LIBADD = ../private/libkopeteprivate.la $(LIB_KHTML) $(LIBXML_LIBS) $(LIBXSLT_LIBS)
 
 kopeteincludedir = $(includedir)/kopete/ui
@@ -19,7 +20,7 @@ kopeteinclude_HEADERS = accountselector.h fileconfirmbase.h kopetefileconfirmdia
 	kopetepasswordwidget.h kopeteview.h addcontactpage.h kopeteawaydialogbase.h  \
 	kopetepasswordwidgetbase.h kopeteviewplugin.h \
 	editaccountwidget.h kopetecontactaction.h kopetepassworddialog.h kopetestdaction.h \
-	userinfodialog.h addressbookselectordialog.h addressbookselectorwidget.h
+	userinfodialog.h addressbookselectordialog.h addressbookselectorwidget.h kopetelistview.h kopetelistviewitem.h kopetelistviewsearchline.h
 
 noinst_HEADERS= addresseeitem.h
 
