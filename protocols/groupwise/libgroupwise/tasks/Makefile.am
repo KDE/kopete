@@ -6,7 +6,8 @@ noinst_LTLIBRARIES = libgroupwise_tasks.la
 
 libgroupwise_tasks_la_LDFLAGS = $(all_libraries)
 libgroupwise_tasks_la_SOURCES = gwtasklogin.cpp requesttask.cpp eventtask.cpp \
-			logintask.cpp setstatustask.cpp statustask.cpp conferencetask.cpp
+			logintask.cpp setstatustask.cpp statustask.cpp conferencetask.cpp \
+	createconferencetask.cpp
 noinst_HEADERS = gwtasklogin.h requesttask.h eventtask.h logintask.h \
-		setstatustask.h statustask.h conferencetask.h
+		setstatustask.h statustask.h conferencetask.h createconferencetask.h
 SUBDIRS = tests
