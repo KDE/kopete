@@ -138,6 +138,11 @@ void SMSClient::slotSendFinished(KProcess* p)
 	}
 }
 
+int SMSClient::maxSize()
+{
+	return -1;
+}
+
 #include "smsclient.moc"
 /*
  * Local variables:

@@ -151,6 +151,16 @@ void SMSSend::changeOption(QListViewItem* i)
 		i->setText(1, text);
 }
 
+int SMSSend::maxSize()
+{
+	QString pName = SMSGlobal::readConfig("SMSSend", "ProviderName", m_contact);
+	QString prefix = SMSGlobal::readConfig("SMSSend", "Prefix", m_contact);
+	if (prefix == QString::null)
+		prefix = "/usr";
+	SMSSendProvider* s = new SMSSendProvider(pName, prefix, m_contact, this);
+	return s->maxSize();
+}
+
 
 #include "smssend.moc"
 /*

@@ -195,8 +195,8 @@ void SMSSendProvider::slotOptionsFinished(KProcess* p)
 			QRegExp max("\\(Max size ([^)]*)\\)");
 
 			max.search(r.cap(2));
-			m_maxSize = QString(max.cap(1)).toInt();
-
+			if (max.cap(1) != QString::null)
+				m_maxSize = QString(max.cap(1)).toInt();
 		}
 	}
 
@@ -232,6 +232,9 @@ void SMSSendProvider::slotReceivedOutput(KProcess*, char  *buffer, int  buflen)
 
 int SMSSendProvider::maxSize()
 {
+	while ( ! optionsLoaded )
+		;
+
 	return m_maxSize;
 }
 

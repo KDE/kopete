@@ -17,6 +17,8 @@ public:
 
 	virtual void send(const KopeteMessage& msg) = 0;
 	virtual QWidget* configureWidget(QWidget* parent) = 0;
+
+	virtual int maxSize() = 0;
 public slots:
 	virtual void savePreferences() = 0;
 signals:

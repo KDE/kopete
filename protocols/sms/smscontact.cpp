@@ -90,7 +90,32 @@ void SMSContact::slotSendMessage(const KopeteMessage &msg)
 	connect ( s, SIGNAL(messageSent(const KopeteMessage&)),
 		this, SLOT(messageSent(const KopeteMessage&)));
 
-	s->send(msg);
+	int msgLength = msg.plainBody().length();
+
+	if (s->maxSize() == -1)
+		s->send(msg);
+	else if (s->maxSize() < msgLength)
+	{
+		int res = KMessageBox::questionYesNo( 0L, i18n(QString("This message is longer than the maximum length (%1). Should it be divided to %2 messages?").arg(s->maxSize()).arg(msgLength/(s->maxSize())+1)), i18n("Message too long") );
+		switch (res)
+		{
+		case KMessageBox::Yes:
+			for (int i=0; i < (msgLength/(s->maxSize())+1); i++)
+			{
+				QString text = msg.plainBody();
+				text = text.mid( (s->maxSize())*i, s->maxSize() );
+				KopeteMessage m( msg.from(), msg.to(), text, KopeteMessage::Outbound);
+				s->send(m);
+			}
+			break;
+		case KMessageBox::No:
+			break;
+		default:
+			break;
+		}
+	}
+	else
+		s->send(msg);
 
 	delete s;
 }

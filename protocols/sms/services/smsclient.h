@@ -22,6 +22,8 @@ public:
 	void send(const KopeteMessage& msg);
 	QWidget* configureWidget(QWidget* parent);
 
+	int maxSize();
+
 public slots:
 	void savePreferences();
 
