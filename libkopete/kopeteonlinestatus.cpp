@@ -272,6 +272,10 @@ QPixmap* KopeteOnlineStatus::renderIcon( const QString& baseIcon, const int size
 {
 	// create an icon suiting the status from the base icon
 	// use reasonable defaults if not provided or protocol not set
+
+	if ( baseIcon == d->overlayIcon )
+		kdWarning( 14010 ) << "Base and overlay icons are the same - icon effects will not be visible." << endl;
+	
 	QPixmap* basis = new QPixmap();
 
 	if ( baseIcon.isNull() )
