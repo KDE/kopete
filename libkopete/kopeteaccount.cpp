@@ -140,6 +140,7 @@ void KopeteAccount::setAccountId( const QString &accountId )
 
 QPixmap KopeteAccount::accountIcon(const int size) const
 {
+	// FIXME: this code is duplicated with KopeteOnlineStatus, can we merge it somehow?
 	QPixmap base = KGlobal::instance()->iconLoader()->loadIcon(
 		d->protocol->pluginIcon(), KIcon::Small, size );
 

@@ -301,11 +301,33 @@ void KIMIfaceImpl::slotContactStatusChanged( KopeteMetaContact *mc )
 {
 	if ( !mc->metaContactId().isNull() )
 	{
+		int p = -1;
+		KopeteOnlineStatus status = mc->status();
+		switch ( status.status() )
+		{
+			case KopeteOnlineStatus::Unknown:
+				p = 0;
+			break;
+			case KopeteOnlineStatus::Offline:
+				p = 1;
+			break;
+			case KopeteOnlineStatus::Connecting:
+				p = 2;
+			break;
+			case KopeteOnlineStatus::Away:
+				p = 3;
+			break;
+			case KopeteOnlineStatus::Online:
+				p = 4;
+			break;
+		}
 		// tell anyone who's listening over DCOP
 		QByteArray params;
 		QDataStream stream(params, IO_WriteOnly);
 		stream << mc->metaContactId();
-		kapp->dcopClient()->emitDCOPSignal( "contactStatusChanged(QString)", params );
+		stream << kapp->name();
+		stream << p;
+		kapp->dcopClient()->emitDCOPSignal( "contactPresenceChanged( QString, QCString, int )", params );
 	}
 }
 

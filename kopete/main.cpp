@@ -94,6 +94,7 @@ int main( int argc, char *argv[] )
 
 	KopeteApplication kopete;
 	new KIMIfaceImpl();
+	kapp->dcopClient()->registerAs( "kopete", false );
 	kapp->dcopClient()->setDefaultObject( (new KopeteIface())->objId() ); // Has to be called before exec
 	
 	kopete.exec();
