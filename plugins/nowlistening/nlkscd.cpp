@@ -108,7 +108,7 @@ void NLKscd::update()
 //			<< m_track << endl;
 
 	}
-	else
+//	else
 //		kdDebug(14307) << "NLKscd::update() - kscd not found" << endl;
 }
 
