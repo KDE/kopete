@@ -24,8 +24,8 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 
-#include "jabberprotocol.h"
 #include "jabberaccount.h"
+#include "jabberprotocol.h"
 #include "jabberformtranslator.h"
 #include "dlgjabberbrowse.h"
 

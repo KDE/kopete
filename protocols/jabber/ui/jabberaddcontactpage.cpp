@@ -17,12 +17,19 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "jabberaddcontactpage.h"
+
 #include <qlayout.h>
 #include <klineedit.h>
-
 #include <klocale.h>
+#include <kopeteaccount.h>
+#include <qlabel.h>
+#include <kopetegroup.h>
+#include <kopetemetacontact.h>
 
-#include "jabberaddcontactpage.h"
+#include "dlgaddcontact.h"
+#include "jabberaccount.h"
+#include "xmpp_tasks.h"
 
 JabberAddContactPage::JabberAddContactPage (KopeteAccount * owner, QWidget * parent, const char *name):AddContactPage (parent, name)
 {
@@ -54,12 +61,44 @@ bool JabberAddContactPage::validateData ()
 }
 
 
-bool JabberAddContactPage::apply (KopeteAccount * i, KopeteMetaContact * m)
+bool JabberAddContactPage::apply ( KopeteAccount *account, KopeteMetaContact *parentContact )
 {
 
-	if(canadd)
-		if (validateData ())
-			return static_cast<JabberAccount *>(i)->addContact(jabData->addID->text(), jabData->addID->text(), m, KopeteAccount::ChangeKABC );
+	if( canadd && validateData () )
+	{
+		QString contactId = jabData->addID->text ();
+		QString displayName = jabData->addID->text ();
+
+		// collect all group names
+		QStringList groupNames;
+		KopeteGroupList groupList = parentContact->groups();
+		for(KopeteGroup *group = groupList.first(); group; group = groupList.next())
+			groupNames += group->displayName();
+
+		if ( account->addContact ( jabData->addID->text (), jabData->addID->text (), parentContact, KopeteAccount::ChangeKABC ) )
+		{
+			XMPP::RosterItem item;
+			XMPP::Jid jid ( contactId );
+
+			item.setJid ( jid );
+			item.setName ( contactId );
+			item.setGroups ( groupNames );
+
+			// add the new contact to our roster.
+			XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( static_cast<JabberAccount *>(account)->client()->rootTask () );
+
+			rosterTask->set ( item.jid(), item.name(), item.groups() );
+			rosterTask->go ( true );
+
+			// send a subscription request.
+			XMPP::JT_Presence *presenceTask = new XMPP::JT_Presence ( static_cast<JabberAccount *>(account)->client()->rootTask () );
+
+			presenceTask->sub ( jid, "subscribe" );
+			presenceTask->go ( true );
+
+			return true;
+		}
+	}
 
 	return false;
 }

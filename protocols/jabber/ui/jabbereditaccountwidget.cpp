@@ -50,6 +50,7 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (mID, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 	connect (mPass, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 	connect (mResource, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
+	connect (mPriority, SIGNAL (valueChanged (const QString &)), this, SLOT (configChanged ()));
 	connect (mServer, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 	connect (mPort, SIGNAL (valueChanged (int)), this, SLOT (configChanged ()));
 
@@ -94,6 +95,7 @@ void JabberEditAccountWidget::reopen ()
 	mID->setText (account()->accountId ());
 	mPass->setText (account()->password ());
 	mResource->setText (account()->pluginData (m_protocol, "Resource"));
+	mPriority->setValue (account()->pluginData (m_protocol, "Priority").toInt ());
 	mServer->setText (account()->pluginData (m_protocol, "Server"));
 
 	cbUseSSL->setChecked (account()->pluginData (m_protocol, "UseSSL") == QString::fromLatin1("true"));
@@ -197,9 +199,9 @@ void JabberEditAccountWidget::writeConfig ()
 	else
 		account()->setPluginData (m_protocol, "AllowPlainTextPassword", "false");
 
-
 	account()->setPluginData (m_protocol, "Server", mServer->text ());
 	account()->setPluginData (m_protocol, "Resource", mResource->text ());
+	account()->setPluginData (m_protocol, "Priority", QString::number (mPriority->value ()));
 	account()->setPluginData (m_protocol, "Port", QString::number (mPort->value ()));
 
 	account()->setAutoLogin(cbAutoConnect->isChecked());

@@ -20,17 +20,14 @@
 #ifndef JABBERADDCONTACTPAGE_H
 #define JABBERADDCONTACTPAGE_H
 
-#include <qwidget.h>
 #include <addcontactpage.h>
-#include <qlabel.h>
-#include "jabberaccount.h"
-#include "dlgaddcontact.h"
 
 /**
   *@author Daniel Stone
   */
 class dlgAddContact;
 class JabberAccount;
+class QLabel;
 
 class JabberAddContactPage:public AddContactPage
 {

@@ -1,11 +1,10 @@
  /*
   * jabberresource.cpp
   *
-  * Maintained by Till Gerken <till@tantalo.net>
-  * Copyright (c) 2002 by Daniel Stone <dstone@kde.org>
-  * 
+  * Copyright (c) 2004 by Till Gerken <till@tantalo.net>
+  *
   * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
-  * 
+  *
   * *************************************************************************
   * *                                                                       *
   * * This program is free software; you can redistribute it and/or modify  *
@@ -19,50 +18,37 @@
 #include <kdebug.h>
 #include "jabberresource.h"
 
-JabberResource::JabberResource ()
+JabberResource::JabberResource (const XMPP::Jid &jid, const XMPP::Resource &resource)
 {
-	kdDebug (14130) << "Jabber resource: New Jabber resource (no params)." << endl;
+
+	mJid = jid;
+	mResource = resource;
 
 }
 
-JabberResource::JabberResource (const QString & resource, const int &priority,
-								const QDateTime & timestamp, const KopeteOnlineStatus & status, const QString & reason)
+JabberResource::~JabberResource ()
 {
-	kdDebug (14130) <<
-		QString ("Jabber resource: New Jabber resource (resource %1, priority %2, timestamp %3).").
-		arg (resource, 1).arg (priority, 2).arg (timestamp.toString ("yyyyMMddhhmmss"), 3) << endl;
+}
+
+const XMPP::Jid &JabberResource::jid () const
+{
+
+	return mJid;
+
+}
+
+const XMPP::Resource &JabberResource::resource () const
+{
+
+	return mResource;
+
+}
+
+void JabberResource::setResource ( const XMPP::Resource &resource )
+{
 
 	mResource = resource;
-	mPriority = priority;
-	mTimestamp = timestamp;
-	mStatus = status;
-	mReason = reason;
 
-}
-
-QString JabberResource::resource () const
-{
-	return mResource;
-}
-
-int JabberResource::priority () const
-{
-	return mPriority;
-}
-
-QDateTime JabberResource::timestamp () const
-{
-	return mTimestamp;
-}
-
-KopeteOnlineStatus JabberResource::status () const
-{
-	return mStatus;
-}
-
-QString JabberResource::reason () const
-{
-	return mReason;
 }
 
 #include "jabberresource.moc"
