@@ -50,10 +50,8 @@ bool UserSearchTask::forMe( const Transfer* t ) const
 	const_cast<UserSearchTask*>(this)->parseInitialData( buf );
 	
 	if ( requestType() == 0x07da && ( requestSubType() == 0x01a4 || requestSubType() == 0x01ae ) )
-	{
-		if ( st->snacRequest() == m_seq )
-			return true;
-	}
+		return true;
+
 	return false;
 }
 
@@ -75,7 +73,6 @@ bool UserSearchTask::take( Transfer* t )
 			return false;
 			
 		ICQSearchResult result;
-			
 		buffer->getLEWord(); // data chunk size
 		DWORD receiverUin = buffer->getLEDWord(); // target uin
 		buffer->getLEWord(); // request type
@@ -109,9 +106,11 @@ void UserSearchTask::searchUserByUIN( const QString& uin )
 	SNAC s = { 0x0015, 0x0002, 0x0000, client()->snacSequence() };
 	
 	setRequestType( 0x07D0 ); //meta-information request
-	setRequestSubType( 0x051F ); //subtype: META_SEARCH_BY_UIN
+	setRequestSubType( 0x0569 ); //subtype: META_SEARCH_BY_UIN
 	setSequence( f.sequence );
 	Buffer* tlvdata = new Buffer();
+	tlvdata->addLEWord( 0x0136 ); //tlv of type 0x0136 with length 4. all little endian
+	tlvdata->addLEWord( 0x0004 );
 	tlvdata->addLEDWord( uin.toULong() );
 	Buffer* buf = addInitialData( tlvdata );
 	delete tlvdata;

@@ -169,7 +169,7 @@ ICQSearchResult::ICQSearchResult()
 
 void ICQSearchResult::fill( Buffer* buffer )
 {
-	WORD datalen = buffer->getLEWord(); // data length
+	//buffer->getLEWord(); // data length
 	
 	WORD len;
 	uin = buffer->getLEDWord();
@@ -181,7 +181,7 @@ void ICQSearchResult::fill( Buffer* buffer )
 	lastName = QString( buffer->getBlock( len ) );
 	len = buffer->getLEWord();
 	email = QString( buffer->getBlock( len ) );
-	auth = buffer->getByte();
+	auth = buffer->getByte() == 0x01;
 	online = ( buffer->getLEWord() == 0x0001 );
 	switch ( buffer->getByte() )
 	{
