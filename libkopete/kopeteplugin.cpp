@@ -42,7 +42,7 @@ Kopete::Plugin::~Plugin()
 
 KPluginInfo *Kopete::Plugin::pluginInfo() const
 {
-	return static_cast<Kopete::PluginManagerBackdoorForPlugin*>(Kopete::PluginManager::self())->pluginInfo( this );
+	return PluginManager::self()->pluginInfo( this );
 }
 
 QString Kopete::Plugin::pluginId() const

@@ -35,20 +35,10 @@ class Plugin;
 typedef QValueList<Plugin*> PluginList;
 
 /**
- * Private parts of Kopete::PluginManager that Kopete::Plugin may play with
- */
-struct PluginManagerBackdoorForPlugin
-{
-	friend class Plugin;
-protected:
-	virtual KPluginInfo *pluginInfo( const Kopete::Plugin *plugin ) const = 0;
-};
-
-/**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  * @author Martijn Klingens <klingens@kde.org>
  */
-class PluginManager : public QObject, public PluginManagerBackdoorForPlugin
+class PluginManager : public QObject
 {
 	Q_OBJECT
 	Q_ENUMS( PluginLoadMode )
@@ -93,6 +83,12 @@ public:
 	Plugin *plugin( const QString &pluginName ) const;
 	
 	/**
+	 * @return the KPluginInfo for the specified plugin
+	 */
+	KPluginInfo *pluginInfo( const Kopete::Plugin *plugin ) const;
+
+	
+	/**
 	 * Shuts down the plugin manager on Kopete shutdown, but first
 	 * unloads all plugins asynchronously.
 	 *
@@ -119,7 +115,7 @@ public:
 	 * Returns false when no appropriate plugin can be found.
 	 */
 	bool setPluginEnabled( const QString &name, bool enabled = true );
-
+	
 	/**
 	 * Plugin loading mode. Used by @loadPlugin. Code that doesn't want to block
 	 * the GUI and/or lot a lot of plugins at once should use Async loading.
@@ -208,15 +204,6 @@ private slots:
 	 */
 	void slotLoadNextPlugin();
 	
-protected:
-	/**
-	 * @internal
-	 *
-	 * From PluginManagerBackdoorForPlugin
-	 * Used by Kopete::Plugin to grab the information about this plugin
-	 */
-	KPluginInfo *pluginInfo( const Kopete::Plugin *plugin ) const;
-	
 private:
 	/**
 	 * @internal
@@ -240,6 +227,7 @@ private:
 
 	class Private;
 	Private *d;
+	static PluginManager *s_self;
 };
 
 }
