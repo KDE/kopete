@@ -111,6 +111,7 @@ namespace GroupWise
 				awayMessage, 
 				authAttribute;
 		int status;
+		bool archive;
 		QMap< QString, QString > properties;
 	};
 

@@ -56,7 +56,7 @@ GroupWiseContact::GroupWiseContact( KopeteAccount* account, const QString &dn,
 			KopeteMetaContact *parent, 
 			const int objectId, const int parentId, const int sequence )
 : KopeteContact( account, GroupWiseProtocol::dnToDotted( dn ), parent ), m_objectId( objectId ), m_parentId( parentId ),
-  m_sequence( sequence ), m_actionBlock( 0 )
+  m_sequence( sequence ), m_actionBlock( 0 ), m_archiving( false )
 {
 	//kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " id supplied: " << dn << endl;
 	if ( dn.find( '=' ) != -1 )
@@ -95,6 +95,7 @@ void GroupWiseContact::updateDetails( const ContactDetails & details )
 		setProperty( protocol()->propLastName, details.surname );
 	if ( !details.fullName.isNull() )
 		setProperty( protocol()->propFullName, details.fullName );
+	m_archiving = details.archive;
 	//if ( !details.awayMessage.isNull() )
 		//setProperty( protocol()->propAwayMessage, details.awayMessage );
 	
@@ -523,6 +524,11 @@ void GroupWiseContact::setOnlineStatus( const KopeteOnlineStatus& status )
 	}
 	if ( idleChanged )
 		emit idleStateChanged( this );
+}
+
+bool GroupWiseContact::archiving()
+{
+	return m_archiving;
 }
 
 #include "gwcontact.moc"

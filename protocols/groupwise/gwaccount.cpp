@@ -158,11 +158,7 @@ GroupWiseMessageManager * GroupWiseAccount::messageManager( const KopeteContact*
 		// we will receive a conferenceCreated signal back from the correct manager
 		// and insert the guid into the map 
 		if ( !guid.isEmpty() )
-		{
 			m_managers.insert( guid, mgr );
-			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " dumping managers " << endl;
-			dumpManagers();
-		}
 		QObject::connect( mgr, SIGNAL( destroyed( QObject * ) ), SLOT( slotMessageManagerDestroyed( QObject * ) ) );
 		QObject::connect( mgr, SIGNAL( conferenceCreated() ), SLOT( slotMessageManagerGotGuid() ) );
 
@@ -805,7 +801,7 @@ bool GroupWiseAccount::addContactToMetaContact( const QString& contactId, const 
 	// we gave it earlier and a list of ContactListInstances, and create the GroupWiseContact
 	// and make sure the contact was successfully created.
 	// 
-	// Since addContactToMetaContact expects synchronous contact creation 
+	// Since ToMetaContact expects synchronous contact creation 
 	// we have to create the contact optimistically.
 	/*GroupWiseContact * c = */new GroupWiseContact( this, contactId, parentContact, 0, 0, 0 );
 
@@ -955,8 +951,6 @@ void GroupWiseAccount::slotMessageManagerGotGuid()
 	GroupWiseMessageManager * mgr = ( GroupWiseMessageManager * )sender();
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "registering message manager" << mgr->guid() << endl;
 	m_managers.insert( mgr->guid(), mgr );
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " dumping managers " << endl;
-	dumpManagers();
 }
 
 void GroupWiseAccount::slotMessageManagerDestroyed( QObject * obj )
@@ -967,8 +961,6 @@ void GroupWiseAccount::slotMessageManagerDestroyed( QObject * obj )
 	// leave the conference
 	m_client->leaveConference( mgr->guid() );
 	m_managers.remove( mgr->guid() );
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " dumping managers " << endl;
-	dumpManagers();
 }
 
 void GroupWiseAccount::slotSetAutoReply()

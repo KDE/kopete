@@ -65,6 +65,7 @@ ContactDetails GetDetailsTask::extractUserDetails(Field::MultiField * details )
 {
 	ContactDetails cd;
 	cd.status = GroupWise::Invalid;
+	cd.archive = false;
 	Field::FieldList fields = details->fields();
 	// TODO: not sure what this means, ask Mike
 	Field::SingleField * sf;
@@ -78,6 +79,8 @@ ContactDetails GetDetailsTask::extractUserDetails(Field::MultiField * details )
 		cd.givenName = sf->value().toString();
 	if ( ( sf = fields.findSingleField ( "Surname" ) ) )
 		cd.surname = sf->value().toString();
+	if ( ( sf = fields.findSingleField ( "nnmArchive" ) ) )
+		cd.archive = ( sf->value().toInt() == 1 );
 	if ( ( sf = fields.findSingleField ( "Full Name" ) ) )
 		cd.fullName = sf->value().toString();
 	if ( ( sf = fields.findSingleField ( NM_A_SZ_STATUS ) ) )

@@ -102,6 +102,7 @@ GroupWise::ContactDetails PollSearchResultsTask::extractUserDetails( Field::Fiel
 {
 	ContactDetails cd;
 	cd.status = GroupWise::Invalid;
+	cd.archive = false;
 	// read the supplied fields, set metadata and status.
 	Field::SingleField * sf;
 	if ( ( sf = fields.findSingleField ( NM_A_SZ_AUTH_ATTRIBUTE ) ) )
@@ -116,6 +117,8 @@ GroupWise::ContactDetails PollSearchResultsTask::extractUserDetails( Field::Fiel
 		cd.surname = sf->value().toString();
 	if ( ( sf = fields.findSingleField ( "Full Name" ) ) )
 		cd.fullName = sf->value().toString();
+	if ( ( sf = fields.findSingleField ( "nnmArchive" ) ) )
+		cd.archive = ( sf->value().toInt() == 1 );
 	if ( ( sf = fields.findSingleField ( NM_A_SZ_STATUS ) ) )
 		cd.status = sf->value().toInt();
 	if ( ( sf = fields.findSingleField ( NM_A_SZ_MESSAGE_BODY ) ) )

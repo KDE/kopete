@@ -18,6 +18,7 @@
 #include <kinputdialog.h>
 #include <klocale.h>
 #include <kmainwindow.h>
+#include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <kshortcut.h>
 
@@ -60,14 +61,14 @@ GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, Kope
 	m_actionInvite = new KActionMenu( i18n( "&Invite" ), actionCollection() , "gwInvite" );
 	connect( m_actionInvite->popupMenu(), SIGNAL( aboutToShow() ), this, SLOT(slotActionInviteAboutToShow() ) ) ;
 	
-	m_secure = new KAction( i18n( "Security Status" ), "encrypted", 0, this, 0, actionCollection(), "gwSecureChat" );
+	m_secure = new KAction( i18n( "Security Status" ), "encrypted", KShortcut(), this, SLOT( slotShowSecurity() ), actionCollection(), "gwSecureChat" );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
-	m_logging = new KAction( i18n( " Archiving Status" ), "logchat", 0, this, 0, actionCollection(), "gwLoggingChat" );
-	m_logging->setToolTip( i18n( "Conversation is not being administratively logged" ) );
-
+	
+	m_logging = new KAction( i18n( " Archiving Status" ), "logchat", KShortcut(), this, SLOT( slotShowArchiving() ), actionCollection(), "gwLoggingChat" );
+	updateArchiving();
+	
 	setXMLFile("gwchatui.rc");
 
-	updateDisplayName();
 	m_invitees.setAutoDelete( true );
 }
 
@@ -122,11 +123,6 @@ void GroupWiseMessageManager::setSecure( bool secure )
 		m_flags = m_flags & !GroupWise::Secure;
 }
 
-void GroupWiseMessageManager::updateDisplayName()
-{
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "NOT IMPLEMENTED" << endl;
-}
-
 GroupWiseAccount *  GroupWiseMessageManager::account()
 {
 	return static_cast<GroupWiseAccount *>( KopeteMessageManager::account() );
@@ -162,6 +158,18 @@ void GroupWiseMessageManager::receiveGuid( const int newMmId, const QString & gu
 		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got GUID from server" << endl;
 		m_memberCount = members().count();
 		setGuid( guid );
+		// re-add all the members.  This is because when the last member leaves the conference, 
+		// they are removed from the chat member list GUI.  By re-adding them here, we guarantee they appear
+		// in the UI again, at the price of a debug message when starting up a new chatwindow
+		
+		QPtrListIterator< KopeteContact > it( members() );
+		KopeteContact * contact;
+		while ( ( contact = it.current() ) )
+		{
+			++it;
+			addContact( contact, true );
+		}
+		
 		// notify the contact(s) using this message manager that it's been instantiated on the server
 		emit conferenceCreated();
 		// TODO: send invitations if we're not inviting in the conf create...
@@ -214,10 +222,8 @@ void GroupWiseMessageManager::slotMessageSent( KopeteMessage & message, KopeteMe
 				// if there are still invitees, the conference is instantiated, and there are only 
 				if ( m_invitees.count() )
 				{
-					KopeteMessage failureNotify = KopeteMessage( user(), members(), 
-							i18n("Your message could not be sent. All the other participants have left, and other invitations are still pending. "), 
-							KopeteMessage::Internal, KopeteMessage::PlainText );
-					appendMessage( failureNotify );
+					// the message won't go anywhere, as there's noone there except invitees, but we warn the user
+					// when the last participant leaves.
 					messageSucceeded();
 				}
 				else
@@ -354,6 +360,8 @@ void GroupWiseMessageManager::addInvitee( const KopeteContact * c )
 	KopeteMetaContact * inviteeMC = new KopeteMetaContact();
 	inviteeMC->setDisplayName( c->metaContact()->displayName() + pending );
 	GroupWiseContact * invitee = new GroupWiseContact( account(), c->contactId() + " " + pending, inviteeMC, 0, 0, 0 );
+	invitee->setOnlineStatus( c->onlineStatus() );
+	// TODO: we could set all the placeholder's properties etc here too
 	addContact( invitee, true );
 	m_invitees.append( invitee );
 }
@@ -374,7 +382,11 @@ void GroupWiseMessageManager::joined( GroupWiseContact * c )
 	m_invitees.remove( pending );
 
 	addContact( c );
+
 	c->joinConference( m_guid );
+	
+	updateArchiving();
+	
 	++m_memberCount;
 }
 
@@ -382,7 +394,22 @@ void GroupWiseMessageManager::left( GroupWiseContact * c )
 {
 	removeContact( c );
 	c->leaveConference( m_guid );
-	--m_memberCount;
+	--m_memberCount;		
+	
+	updateArchiving();
+	
+	if ( m_memberCount == 0 )
+	{
+		if ( m_invitees.count() )
+		{
+			KopeteMessage failureNotify = KopeteMessage( user(), members(), 
+						i18n("All the other participants have left, and other invitations are still pending. Your messages will not be delivered until someone else joins the chat."), 
+						KopeteMessage::Internal, KopeteMessage::PlainText );
+			appendMessage( failureNotify );
+		}
+		else
+			setClosed();
+	}
 }
 
 void GroupWiseMessageManager::inviteDeclined( GroupWiseContact * c )
@@ -405,6 +432,46 @@ void GroupWiseMessageManager::inviteDeclined( GroupWiseContact * c )
 				i18n("%1 has rejected an invitation to join this conversation.").arg( from ), 
 				KopeteMessage::Internal, KopeteMessage::PlainText );
 	appendMessage( declined );
+}
+
+void GroupWiseMessageManager::updateArchiving()
+{
+	bool archiving = false;
+	QPtrListIterator< KopeteContact > it( members() );
+	GroupWiseContact * contact;
+	while ( ( contact = static_cast<GroupWiseContact*>( it.current() ) ) )
+	{
+		++it;
+		if ( contact->archiving() )
+		{
+			archiving = true;
+			break;
+		}
+	}
+	if ( archiving )
+	{
+		m_logging->setEnabled( true );
+		m_logging->setToolTip( i18n( "Conversation is being administratively logged" ) );
+	}
+	else
+	{
+		m_logging->setEnabled( false );
+		m_logging->setToolTip( i18n( "Conversation is not being administratively logged" ) );
+	}
+}
+
+void GroupWiseMessageManager::slotShowSecurity()
+{
+	QWidget * w = ( view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) :
+				Kopete::UI::Global::mainWidget() ); 
+	KMessageBox::queuedMessageBox( w, KMessageBox::Information, i18n( "This conversation is secured with SSL security." ), i18n("Security Status" ) );
+}
+
+void GroupWiseMessageManager::slotShowArchiving()
+{
+	QWidget * w = ( view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) :
+				Kopete::UI::Global::mainWidget() ); 
+	KMessageBox::queuedMessageBox( w, KMessageBox::Information, i18n( "This conversation is being logged administratively." ), i18n("Archiving Status" ) );
 }
 
 #include "gwmessagemanager.moc"

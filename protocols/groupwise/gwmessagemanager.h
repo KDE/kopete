@@ -47,10 +47,6 @@ public:
 	 */
 	void setGuid( const QString & guid );
 	/**
-	 * Regenerate the display name (window title), to cope with group chat membership changes.
-	 */
-	void updateDisplayName();
-	/**
 	 * Utility account access
 	 */
 	GroupWiseAccount * account();
@@ -79,7 +75,10 @@ public:
 	 * An invitation was declined
 	 */
 	void inviteDeclined( GroupWiseContact * );
-	
+	/**
+	 * Check whether the conversation being administratively logged and update the UI to indicate this
+	 */
+	void updateArchiving();
 signals:
 	/**
 	 * Tell the contact we got a GUID so it can route incoming messages here.
@@ -132,6 +131,9 @@ protected slots:
 	 * Process the response from the search dialog; send the actual invitation
 	 */
 	void slotSearchedForUsers();
+	
+	void slotShowSecurity();
+	void slotShowArchiving();
 private:
 	
 	GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const QString & guid, int id = 0, const char* name = 0);
