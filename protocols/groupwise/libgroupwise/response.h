@@ -21,9 +21,12 @@
 class Response: public UserTransfer
 {
 public:
-	Response( int transactionId, Field::FieldList fields );
+	Response( int transactionId, int resultCode, Field::FieldList fields );
 	~Response( ) {}
 	TransferType type() { return Transfer::ResponseTransfer; }
+	int resultCode() const;
+private:
+	int m_resultCode;
 };
 
 #endif

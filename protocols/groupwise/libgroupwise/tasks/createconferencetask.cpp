@@ -50,9 +50,7 @@ bool CreateConferenceTask::take( Transfer * transfer )
 	
 	// if the createconf was successful, read the GUID and store it
 	Field::FieldList responseFields = response->fields();
-	Field::SingleField * resultCodeField = responseFields.findSingleField( NM_A_SZ_RESULT_CODE );
-	int resultCode = resultCodeField->value().toInt();
-	if ( resultCode == GroupWise::None )
+	if ( response->resultCode() == GroupWise::None )
 	{
 		Field::MultiField * listField = responseFields.findMultiField( NM_A_FA_CONVERSATION );
 		Field::FieldList guidList = listField->fields();
@@ -61,7 +59,7 @@ bool CreateConferenceTask::take( Transfer * transfer )
 		setSuccess();
 	}
 	else
-		setError( resultCode );
+		setError( response->resultCode() );
 	return true;
 	
 }

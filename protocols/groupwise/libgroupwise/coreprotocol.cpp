@@ -486,6 +486,7 @@ bool CoreProtocol::readResponse()
 		return false;
 	// find transaction id field and create Response object if nonzero
 	int tId = 0;
+	int resultCode = 0;
 	Field::FieldListIterator it;
 	Field::FieldListIterator end = m_collatingFields.end();
 	Field::FieldBase* field;
@@ -500,23 +501,30 @@ bool CoreProtocol::readResponse()
 			m_collatingFields.remove( it );
 		}
 	}
+	it = m_collatingFields.find( NM_A_SZ_RESULT_CODE );
+	if ( it != end )
+	{
+		Field::SingleField * sf = dynamic_cast<Field::SingleField*>( *it );
+		if ( sf )
+		{
+			resultCode = sf->value().toInt();
+			qDebug( "CoreProtocol::readResponse() - result code is %i", resultCode );
+			m_collatingFields.remove( it );
+		}
+	}
 	// append to inQueue
 	if ( tId )
 	{
 		qDebug( "CoreProtocol::readResponse() - setting state Available" );
-		m_inTransfer = new Response( tId, m_collatingFields );
+		m_inTransfer = new Response( tId, resultCode, m_collatingFields );
 		m_collatingFields.clear();
 		packetState = Available;
 	}
 	else
+	{
 		qDebug( "- WARNING - NO TRANSACTION ID FOUND!" );
-	// TODO - handle broken responses..
-	// didn't find an 0 - Response is in multiple packets...
-		// Gaim doesn't handle this case yet
-		// Reconstruction - if we are just reading top level fields, read next packet until 0
-		// if we were reading a subarray, we know how long it should be, 
-		// store the partial request, partial MultiField and count of total number of fields in the protocol to await next packet
-		
+		m_state = ProtocolError;
+	}
 	return ( packetState == Available );
 }
 

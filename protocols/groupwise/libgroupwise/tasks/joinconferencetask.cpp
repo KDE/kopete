@@ -41,10 +41,8 @@ bool JoinConferenceTask::take( Transfer * transfer )
 		qDebug( "JoinConferenceTask::take()" );
 		Response * response = dynamic_cast<Response *>( transfer );
 		Field::FieldList responseFields = response->fields();
-		Field::SingleField * resultCodeField = responseFields.findSingleField( NM_A_SZ_RESULT_CODE );
-		int resultCode = resultCodeField->value().toInt();
 		// if the request was successful
-		if ( resultCode == GroupWise::None )
+		if ( response->resultCode() == GroupWise::None )
 		{
 			// extract the list of participants and store them
 			Field::MultiField * participants = responseFields.findMultiField( NM_A_FA_CONTACT_LIST );
@@ -85,7 +83,7 @@ bool JoinConferenceTask::take( Transfer * transfer )
 				setError( GroupWise::Protocol );
 		}
 		else
-			setError( resultCode );
+			setError( response->resultCode() );
 		return true;
 	}
 	else

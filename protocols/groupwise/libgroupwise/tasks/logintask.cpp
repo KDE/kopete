@@ -44,10 +44,16 @@ bool LoginTask::take( Transfer * transfer )
 	Response * response = dynamic_cast<Response *>( transfer );
 	if ( !response )
 		return false;
+	if ( response->resultCode() )
+	{
+		setError( response->resultCode() );
+		return true;
+	}
 	response->fields().dump( true );
 	
 	// read in myself()'s metadata fields and emit signal
 	Field::FieldList loginResponseFields = response->fields();
+	
 	ContactDetails cd = extractUserDetails( loginResponseFields );
 	emit gotMyself( cd );
 	
