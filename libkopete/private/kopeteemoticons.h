@@ -14,30 +14,14 @@
     *************************************************************************
 */
 
-#ifndef __kopeteemoticons_h__
-#define __kopeteemoticons_h__
+#ifndef kopeteemoticons_h__
+#define kopeteemoticons_h__
 
 #include <qobject.h>
 #include <qvaluelist.h>
 #include <qregexp.h>
 
 #include <kopete_export.h>
-
-struct Emoticon
-{
-	Emoticon();
-	Emoticon( const QString &filename, const QString &matchText );
-	void parse( QString &message ) const;
-	QString filename() const { return m_filename; }
-	QString matchText() const { return m_matchText; }
-private:
-	QString m_filename;
-	QString m_matchText;
-	QString m_matchTextEscaped;
-	QRegExp m_regExp;
-	QString m_replacement;
-};
-typedef QValueList<Emoticon> EmoticonList;
 
 class KOPETE_EXPORT KopeteEmoticons : public QObject
 {
@@ -50,6 +34,8 @@ public:
 	 * For that one use the singleton stuff
 	 **/
 	KopeteEmoticons( const QString &theme = QString::null );
+
+	~KopeteEmoticons(  );
 
 	/**
 	 * The emoticons container-class by default is a singleton object.
@@ -75,28 +61,25 @@ public:
 	 * that should be used to replace the given emoticon
 	 * if the emoticon has no corresponding pixmap
 	 * a null-QString is returned
+	 *
+	 * (This is only used by the chatwindow to provide the icon of the emoticon button   (it's used with ':)' )
 	 **/
 	QString emoticonToPicPath ( const QString& em );
 
-	/**
-	 *  returns a list of emoticons represented by the given pixmap-path
-	 *  Usually used in conjunction with the QStringList
-	 *  picList() provides.
-	 **/
-	QStringList picPathToEmoticon ( const QString& path );
-
-	/**
-	 * creates a list of all emoticons that can be
-	 * mapped to an animation/pixmap
-	 **/
-	QStringList emoticonList ();
 
 	/**
 	 * creates a list of all animation/pixmap paths
 	 * that are used to replace emoticons
+	 *
+	 * used in AppearanceConfig::slotSelectedEmoticonsThemeChanged
+	 * @todo deprecated it and use emoticonAndPicList instead
 	 **/
 	QStringList picList ();
 
+	/**
+	 * Return all emoticons and the corresponding icon.
+	 * (only one emoticon per image)
+	 */
 	QMap<QString, QString> emoticonAndPicList();
 
 
@@ -105,11 +88,6 @@ private:
 	 * Our instance
 	 **/
 	static KopeteEmoticons *s_instance;
-
-	/**
-	 * Our data, the heart of this class
-	 **/
-	EmoticonList m_emoticons;
 
 	/**
 	 * The current icon theme from KopetePrefs
@@ -122,6 +100,9 @@ private:
 	 **/
 	void addIfPossible( const QString& filenameNoExt, const QStringList &emoticons );
 
+	struct Emoticon;
+	class Private;
+	Private *d;
 private slots:
 
 	/**
