@@ -313,8 +313,10 @@ void IRCServerContact::forceDisconnect()
 	tryingQuit = true;
 	engine->close();
 	slotQuitServer();
-	mWindow->mToolBar->removeItem(1);
-	mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(slotConnectNow()));
+	if (mWindow) { //slotQuitServer may delete mWindow!
+		mWindow->mToolBar->removeItem(1);
+		mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(slotConnectNow()));
+	}
 }
 
 void IRCServerContact::slotQuitServer()
