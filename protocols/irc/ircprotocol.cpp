@@ -262,7 +262,7 @@ void IRCProtocol::slotRawCommand( const QString &args, KopeteMessageManager *man
 {
 	if( !args.isEmpty() )
 	{
-		static_cast<IRCAccount*>( manager->account() )->engine()->writeRawMessage( args );
+		static_cast<IRCAccount*>( manager->account() )->engine()->writeRawMessage( args, false );
 	}
 	else
 	{
@@ -275,7 +275,7 @@ void IRCProtocol::slotQuoteCommand( const QString &args, KopeteMessageManager *m
 {
 	if( !args.isEmpty() )
 	{
-		static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage( args );
+		static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage( args, false );
 	}
 	else
 	{
