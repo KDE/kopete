@@ -43,8 +43,9 @@ HighlightConfig::~HighlightConfig()
 
 void HighlightConfig::removeFilter(Filter *f)
 {
+    //m_filters is "autodelete (true) so when we use remove(...) it deleted f
+    //so don't use (delete (f) after otherwise ot crash
 	m_filters.remove(f);
-	delete f;
 }
 
 void HighlightConfig::appendFilter(Filter *f)
