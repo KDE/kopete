@@ -287,25 +287,29 @@ void KopeteMetaLVIProps::slotHasAddressbookEntryToggled( bool on )
 
 void KopeteMetaLVIProps::slotSelectAddresseeClicked()
 {
-	 KABC::Addressee a = KABC::AddresseeDialog::getAddressee(this);
-	 if ( a.isEmpty() )
-	 {
-	 	mainWidget->edtAddressee->setText( QString::null ) ;
+	KABC::AddresseeDialog dialog(this);
+	if ( dialog.exec() == QDialog::Rejected )
+		return;
+	
+	KABC::Addressee a = dialog.addressee();
+	if ( a.isEmpty() )
+	{
+		mainWidget->edtAddressee->setText( QString::null ) ;
 		mainWidget->btnMerge->setEnabled( false );
 		mFromKABC->setEnabled( false );
-	 }
-	 else
-	 {
+	}
+	else
+	{
 		mSound = a.sound();
 		mFromKABC->setEnabled( !( mSound.isIntern() || mSound.url().isEmpty() ) );
-	 	mainWidget->btnMerge->setEnabled( true );
+		mainWidget->btnMerge->setEnabled( true );
 		// set the lineedit to the Addressee's name
 		mainWidget->edtAddressee->setText( a.realName() );
 		// set/update the MC's addressee uin field
 		item->metaContact()->setMetaContactId( a.uid() );
 		delete mExport;
 		mExport = new KopeteAddressBookExport( this, item->metaContact() );
-	 }
+	}
 }
 
 void KopeteMetaLVIProps::slotMergeClicked()
