@@ -40,7 +40,7 @@ GaduRichTextFormat::~GaduRichTextFormat()
 QString
 GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, void* formatStructure)
 {
-	QString tmp;
+	QString tmp, nb;
 	gg_msg_richtext_format *format;
 	char *pointer = (char*) formatStructure;
 
@@ -52,7 +52,7 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 	if ( formatStructure == NULL || formats == 0 ) {
 		tmp = msg;
 		escapeBody( tmp );
-		kdDebug(14100) << "no rtf structure, plain message" << endl;
+		kdDebug(14100) << "no rtf structure, plain message\n----------------------\n" << tmp << "\n----------------------"  << endl;
 		return tmp;
 	}
 
@@ -72,11 +72,8 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 			tmp += "<b>[this should be a picture, not yet implemented]</b>";
 		}
 		else {
-			QString nb;
-
 			nb = msg.mid( j, position - j );
-			escapeBody( nb );
-			tmp += nb;
+			tmp += escapeBody( nb );
 
 			j = position;
 
@@ -106,6 +103,8 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 			}
 			style += QString(" color: rgb( %1, %2, %3 ); ").arg( r ).arg( g ).arg( b );
 
+			kdDebug(14100) << "escape and add: \n----------------------\n" << nb << "\n----------------------" << endl;
+
 			tmp += formatOpeningTag( QString::fromLatin1("span"), QString::fromLatin1("style=\"%1\"").arg( style ) );
 			opened = true;
 
@@ -116,7 +115,8 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 		i += sizeof( gg_msg_richtext_format );
 	}
 
-	tmp += msg.mid( j, msg.length() );
+	nb = msg.mid( j, msg.length() );
+	tmp += escapeBody( nb );
 	if ( opened ) {
 		tmp += formatClosingTag("span");
 	}
@@ -302,5 +302,7 @@ GaduRichTextFormat::escapeBody( QString& input )
 	input.replace( '\n', QString::fromLatin1( "<br />" ) );
 	input.replace( '\t', QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
 	input.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( " &nbsp;" ) );
+	input.replace( '<', QString::fromLatin1("&lt;") );
+	input.replace( '>', QString::fromLatin1("&gt;") );
 	return input;
 }
