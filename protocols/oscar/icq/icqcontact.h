@@ -95,6 +95,9 @@ class ICQContact : public OscarContact
 		ICQMoreUserInfo moreInfo;
 		QString aboutInfo;
 		ICQMailList emailInfo;
+		ICQInfoItemList interestInfo;
+		ICQInfoItemList currentBackground;
+		ICQInfoItemList pastBackground;
 
 		int userinfoRequestSequence;
 		unsigned int userinfoReplyCount;
@@ -118,6 +121,8 @@ class ICQContact : public OscarContact
 		void slotUpdMoreUserInfo(const int, const ICQMoreUserInfo &);
 		void slotUpdAboutUserInfo(const int, const QString &);
 		void slotUpdEmailUserInfo(const int, const ICQMailList &);
+		void slotUpdInterestUserInfo(const int, const ICQInfoItemList& );
+		void slotUpdBackgroundUserInfo( const int seq, const ICQInfoItemList &curr, const ICQInfoItemList &past );
 };
 
 #endif

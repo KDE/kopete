@@ -475,6 +475,7 @@ void ICQProtocol::contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *w
 {
 	QString homepage;
 
+	// General tab
 	if(!editMode) // no idea how to get ip for ourselves
 	{
 		QHostAddress mIP(ntohl(c->localIP()));
@@ -503,6 +504,7 @@ void ICQProtocol::contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *w
 	widget->rwFirstName->setText(c->generalInfo.firstName);
 	widget->rwLastName->setText(c->generalInfo.lastName);
 
+	// Private details tab
 	QString email = c->generalInfo.eMail;
 	if (editMode)
 		widget->prsEmailEdit->setText(email);
@@ -687,11 +689,96 @@ void ICQProtocol::contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *w
 		widget->lstEmails->insertItem(it.key());
 	}
 
+	// USER INTERESTS ==========================================================
+	// set all widgets to None/disabled
+
+	int i = 0;
+	for ( ICQInfoItemList::iterator it = c->interestInfo.begin(); it != c->interestInfo.end(); ++it )
+	{
+		// fill in any interests we know about
+		// set interest categories and populate combo boxes
+		const int INTEREST_OFFSET = 99;
+		switch (i)
+		{
+			case 0:
+				widget->intrCategoryCombo1->setCurrentItem( (*it).category - INTEREST_OFFSET );
+				widget->intrDescText1->setText( (*it).description );
+				break;
+			case 1:
+				widget->intrCategoryCombo2->setCurrentItem( (*it).category - INTEREST_OFFSET );
+				widget->intrDescText2->setText( (*it).description );
+				break;
+			case 2:
+				widget->intrCategoryCombo3->setCurrentItem( (*it).category - INTEREST_OFFSET );
+				widget->intrDescText3->setText( (*it).description );
+				break;
+			case 3:
+				widget->intrCategoryCombo4->setCurrentItem( (*it).category - INTEREST_OFFSET );
+				widget->intrDescText4->setText( (*it).description );
+				break;
+			default:
+				break;
+		}
+		i++;
+	}
+
+	// USER BACKGROUND - CURRENT MEMBERSHIPS====================================
+	i = 0;
+	for ( ICQInfoItemList::iterator it = c->currentBackground.begin(); it != c->currentBackground.end(); ++it )
+	{
+		// fill in any interests we know about
+		// set interest categories and populate combo boxes
+		const int ORGANISATION_OFFSET = 199;
+		switch (i)
+		{
+			case 0:
+				widget->bgrdCurrOrgCombo1->setCurrentItem( (*it).category - ORGANISATION_OFFSET );
+				widget->bgrdCurrOrgText1->setText( (*it).description );
+				break;
+			case 1:
+				widget->bgrdCurrOrgCombo2->setCurrentItem( (*it).category - ORGANISATION_OFFSET );
+				widget->bgrdCurrOrgText2->setText( (*it).description );
+				break;
+			case 2:
+				widget->bgrdCurrOrgCombo3->setCurrentItem( (*it).category - ORGANISATION_OFFSET );
+				widget->bgrdCurrOrgText3->setText( (*it).description );
+				break;
+			default:
+				break;
+		}
+		i++;
+	}
+
+	// USER BACKGROUND - PREVIOUS AFFILIATIONS==================================
+	i = 0;
+	for ( ICQInfoItemList::iterator it = c->pastBackground.begin(); it != c->pastBackground.end(); ++it )
+	{
+		// fill in any interests we know about
+		// set interest categories and populate combo boxes
+		const int ORGANISATION_OFFSET = 299;
+		switch (i)
+		{
+			case 0:
+				widget->bgrdPastOrgCombo1->setCurrentItem( (*it).category - ORGANISATION_OFFSET );
+				widget->bgrdPastOrgText1->setText( (*it).description );
+				break;
+			case 1:
+				widget->bgrdPastOrgCombo2->setCurrentItem( (*it).category - ORGANISATION_OFFSET );
+				widget->bgrdPastOrgText2->setText( (*it).description );
+				break;
+			case 2:
+				widget->bgrdPastOrgCombo3->setCurrentItem( (*it).category - ORGANISATION_OFFSET );
+				widget->bgrdPastOrgText3->setText( (*it).description );
+				break;
+			default:
+				break;
+		}
+		i++;
+	}
+
+
 
 }
-
-
-
 
 // Called when we want to return the active instance of the protocol
 ICQProtocol *ICQProtocol::protocol()

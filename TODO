@@ -72,7 +72,7 @@ OSCAR ICQ/AIM TODO ITEMS (generously added by mETz *g*)
 	  sure if mixing icq-specific values and plain numbers is a good idea
 	  (although possible, we have an isICQ() function anyway)
 
-	- finish icq userinfo dialog and sending your own icq userinfo to the server,
+	- support sending your own icq userinfo to the server,
 	  it's easy to do for me but because of the mass of items takes lots of time
 	  and is extremely boring.
 

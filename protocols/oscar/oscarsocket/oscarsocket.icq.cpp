@@ -109,7 +109,7 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 	TLV *tlv = findTLV(tl,0x0001);
 	if (!tlv)
 	{
-		kdDebug(140150) << k_funcinfo <<  "Bad SNAC(21,3), no TLV(1) found!" << endl;
+		kdDebug(14150) << k_funcinfo <<  "Bad SNAC(21,3), no TLV(1) found!" << endl;
 		return;
 	}
 
@@ -121,7 +121,7 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 	WORD commandlength = fromicqsrv.getLEWord();
 	DWORD ourUIN = fromicqsrv.getLEDWord();
-	WORD subcmd = fromicqsrv.getLEWord();
+	WORD subcmd = fromicqsrv.getLEWord();  // AKA 'data type' in the docs at iserverd1.khstu.ru
 	WORD sequence = fromicqsrv.getLEWord();
 
 
@@ -455,14 +455,34 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 				case 240:
 				{
 					kdDebug(14150) << k_funcinfo <<
-						"TODO: SRV_METAINTEREST subtype=" << type << endl;
+						"RECV (SRV_METAINTEREST)" << type << endl;
+// 					kdDebug(14151) << k_funcinfo <<
+// 						"*** Buffer of length: " << fromicqsrv.length() <<
+// 						" and result: " << result <<
+// 						" contains: " << fromicqsrv.toString() << endl;
+
+					ICQInfoItemList interests = extractICQItemList( fromicqsrv );
+
+					emit gotICQInfoItemList( sequence, interests );
 					break;
 				}
 
 				case 250:
 				{
 					kdDebug(14150) << k_funcinfo <<
-						"TODO: SRV_METABACKGROUND subtype=" << type << endl;
+						"RECV (SRV_METABACKGROUND)" << type << endl;
+// 					kdDebug(14151) << k_funcinfo <<
+// 						"*** Buffer of length: " << fromicqsrv.length() <<
+// 						" and result: " << result <<
+// 						" contains: " << fromicqsrv.toString() << endl;
+
+					// Get past affiliations
+					ICQInfoItemList past = extractICQItemList( fromicqsrv );
+					// Now get current organisation memberships
+					ICQInfoItemList current = extractICQItemList( fromicqsrv );
+
+					// Tell anything that's interested
+					emit gotICQInfoItemList(sequence, current, past);
 					break;
 				}
 
@@ -495,6 +515,36 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 //	kdDebug(14150) << k_funcinfo << "END" << endl;
 } // END OscarSocket::parseSRV_FROMICQSRV()
+
+ICQInfoItemList OscarSocket::extractICQItemList( Buffer& theBuffer )
+{
+	ICQInfoItemList theList;
+	//get the number of items to read
+	BYTE numItems = theBuffer.getLEByte();
+// 	kdDebug(14150) << k_funcinfo <<
+// 		numItems << " items received." << endl;
+	if ( numItems > 0 )
+	{
+		WORD topic;				// Identifies the topic of the interest
+		char* tmptxt; 			// Description of the interest (raw)
+		for ( int i = 0; i < numItems; i++ )
+		{
+			topic = theBuffer.getLEWord();
+			tmptxt = theBuffer.getLELNTS();
+			ICQInfoItem thisItem;
+			thisItem.category = topic;
+			// TODO: What if the description is encoded differently?
+			// Do we know what encoding the contact prefers?
+			thisItem.description = QString::fromLocal8Bit( tmptxt );
+/*			kdDebug(14150) << k_funcinfo <<
+				"interest type:" << thisItem.category <<
+				", description=" << thisItem.description << endl;*/
+			theList.append( thisItem );
+			delete [] tmptxt;
+		}
+	}
+	return theList;
+}
 
 void OscarSocket::sendICQStatus(unsigned long status)
 {

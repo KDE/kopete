@@ -31,7 +31,7 @@
 #include "kopetemessagemanagerfactory.h"
 
 #include "icquserinfo.h"
-const unsigned int supportedInfoItems = 5;
+static const unsigned int SUPPORTED_INFO_ITEMS = 7;
 
 ICQContact::ICQContact(const QString name, const QString displayName,
 	ICQAccount *acc, KopeteMetaContact *parent)
@@ -107,6 +107,12 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 	QObject::connect(
 		acc->engine(), SIGNAL(gotICQEmailUserInfo(const int, const ICQMailList &)),
 		this, SLOT(slotUpdEmailUserInfo(const int, const ICQMailList &)));
+	QObject::connect(
+		acc->engine(), SIGNAL(gotICQInfoItemList(const int, const ICQInfoItemList &)),
+		this, SLOT(slotUpdInterestUserInfo(const int, const ICQInfoItemList &)));
+	QObject::connect(
+		acc->engine(), SIGNAL(gotICQInfoItemList(const int, const ICQInfoItemList &, const ICQInfoItemList & )),
+		this, SLOT(slotUpdBackgroundUserInfo(const int, const ICQInfoItemList &, const ICQInfoItemList & ) ) );
 }
 
 ICQContact::~ICQContact()
@@ -305,7 +311,7 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 	generalInfo = inf;
 
 	userinfoReplyCount++;
-	if (userinfoReplyCount >= supportedInfoItems)
+	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
 		emit updatedUserInfo();
 }
 
@@ -321,7 +327,7 @@ void ICQContact::slotUpdWorkInfo(const int seq, const ICQWorkUserInfo &inf)
 	workInfo = inf;
 
 	userinfoReplyCount++;
-	if (userinfoReplyCount >= supportedInfoItems)
+	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
 		emit updatedUserInfo();
 }
 
@@ -337,7 +343,7 @@ void ICQContact::slotUpdMoreUserInfo(const int seq, const ICQMoreUserInfo &inf)
 	moreInfo = inf;
 
 	userinfoReplyCount++;
-	if (userinfoReplyCount >= supportedInfoItems)
+	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
 		emit updatedUserInfo();
 }
 
@@ -353,7 +359,7 @@ void ICQContact::slotUpdAboutUserInfo(const int seq, const QString &inf)
 	aboutInfo = inf;
 
 	userinfoReplyCount++;
-	if (userinfoReplyCount >= supportedInfoItems)
+	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
 		emit updatedUserInfo();
 }
 
@@ -369,8 +375,45 @@ void ICQContact::slotUpdEmailUserInfo(const int seq, const ICQMailList &inf)
 	emailInfo = inf;
 
 	userinfoReplyCount++;
-	if (userinfoReplyCount >= supportedInfoItems)
+	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
 		emit updatedUserInfo();
+}
+
+/**
+ * Store the interest user info for this contact and see if we have
+ * received all the info we support.
+ */
+void ICQContact::slotUpdInterestUserInfo( const int seq, const ICQInfoItemList &inf )
+{
+	// compare reply's sequence with the one we sent with our last request
+	if(seq != userinfoRequestSequence)
+		return;
+
+	interestInfo = inf;
+
+	userinfoReplyCount++;
+	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
+		emit updatedUserInfo();
+
+}
+
+/**
+ * Store the background user info for this contact and see if we have
+ * received all the info we support
+  */
+void ICQContact::slotUpdBackgroundUserInfo( const int seq, const ICQInfoItemList &curr, const ICQInfoItemList &past )
+{
+	// compare reply's sequence with the one we sent with our last request
+	if(seq != userinfoRequestSequence)
+		return;
+
+	currentBackground = curr;
+	pastBackground = past;
+	
+	userinfoReplyCount++;
+	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
+		emit updatedUserInfo();
+
 }
 
 #include "icqcontact.moc"

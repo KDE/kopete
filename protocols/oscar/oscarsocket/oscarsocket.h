@@ -154,7 +154,9 @@ class ICQSearchResult
 		unsigned int status; // 0=offline, 1=online, 2=not webaware
 };
 
-
+/**
+ * Classes encapsulating user data retrieved from the server
+ */
 class ICQGeneralUserInfo
 {
 	public:
@@ -205,14 +207,22 @@ class ICQMoreUserInfo
 		unsigned int lang3;
 };
 
+class ICQInfoItem
+{
+	public:
+		int category;
+		QString description;
+};
+
+
 typedef QMap<QString, bool> ICQMailList;
+typedef QValueList<ICQInfoItem> ICQInfoItemList;
 
 /*
  * Implements the actual communication with the oscar server
  * @author Tom Linsky
  * @author Stefan Gehn
 */
-
 class OscarSocket : public OscarConnection
 {
 	Q_OBJECT
@@ -233,7 +243,14 @@ class OscarSocket : public OscarConnection
 		*/
 		QCString encodePasswordXOR();
 
-		/** Logs in the user! */
+		/**
+		 * Logs in the user!
+		 *
+		 * @param host		The login server.
+		 * @param port		login port.
+		 * @param s			Screen name
+		 * @param password 	password
+		 */
 		void doLogin(const QString &host, int port, const QString &s, const QString &password);
 		/** Gets the rate info from the server */
 		void sendRateInfoRequest();
@@ -578,7 +595,7 @@ class OscarSocket : public OscarConnection
 	/*
 	 * send a CLI_TOICQSRV with subcommand and DATA supplied in data
 	 * returns the sequence sent out with the packet
-	 * incoming server replies will have the same sequence!
+		* incoming server replies will have the same sequence!
 	 */
 	WORD sendCLI_TOICQSRV(const WORD subcommand, Buffer &data);
 
@@ -663,9 +680,12 @@ class OscarSocket : public OscarConnection
 	void gotICQMoreUserInfo(const int, const ICQMoreUserInfo &);
 	void gotICQAboutUserInfo(const int, const QString &);
 	void gotICQEmailUserInfo(const int, const ICQMailList &);
-/*	void gotICQInterestUserInfo(const int, const ICQInterestUserInfo &);
-	void gotICQBackgroundUserInfo(const int, const ICQBackgroundUserInfo &);
-*/
+	// TODO: Will - make these signals mean something
+	void gotICQInfoItemList(const int, const ICQInfoItemList &);
+	void gotICQInfoItemList(const int, const ICQInfoItemList &, const ICQInfoItemList &);
+
+	protected:
+		ICQInfoItemList extractICQItemList( Buffer& theBuffer );
 
 	private:
 		/** The OscarAccount we're assocated with */
