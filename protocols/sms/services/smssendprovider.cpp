@@ -1,7 +1,10 @@
 #include "smssendprovider.h"
 #include "smsglobal.h"
 
-#include <kprocio.h>
+#include <kdeversion.h>
+#if KDE_VERSION > 305
+	#include <kprocio.h>
+#endif
 #include <qregexp.h>
 #include <klistview.h>
 #include <kmessagebox.h>
@@ -21,8 +24,13 @@ SMSSendProvider::SMSSendProvider(QString providerName, QString prefixValue, QStr
 
 	QString group = QString("SMSSend-%1").arg(provider);
 
+#if KDE_VERSION > 305
 	KProcIO* p = new KProcIO;
 	p->setUseShell(true);
+#else
+	KMessageBox::error(0L, "Can't send messages in KDE 3.0 yet", "Could not send message");
+	return;
+#endif
 	*p << QString("%1/bin/smssend").arg(prefix) << provider << "-help";
 	p->start(KProcess::Block);
 
@@ -116,8 +124,13 @@ bool SMSSendProvider::send(QString nr, QString message)
 
 	QString args = "\"" + values.join("\" \"") + "\"";
 
+#if KDE_VERSION > 305
 	KProcIO* p = new KProcIO;
 	p->setUseShell(true);
+#else
+	KMessageBox::error(0L, "Can't send messages in KDE 3.0 yet", "Could not send message");
+	return false;
+#endif
 	*p << QString("%1/bin/smssend").arg(prefix) << provider << args;
 	p->start(KProcess::Block);
 	if (p->normalExit())
