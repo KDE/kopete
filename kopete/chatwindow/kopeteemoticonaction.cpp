@@ -1,72 +1,82 @@
+/*
+    kopeteemoticonaction.cpp
 
+    KAction to show the emoticon selector
+
+    Copyright (c) 2002      by Stefan Gehn            <metz AT gehn.net>
+    Copyright (c) 2003      by Martijn Klingens       <klingens@kde.org>
+
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #include "kopeteemoticonaction.h"
 
-#include <assert.h>
 #include <math.h>
+
+#include <qwhatsthis.h>
 
 #include <kapplication.h>
 #include <kdebug.h>
+#include <klocale.h>
 #include <kmenubar.h>
 #include <kpopupmenu.h>
 #include <ktoolbar.h>
 #include <ktoolbarbutton.h>
-//#include <kopeteprefs.h>
-#include <qwhatsthis.h>
 
 #include "emoticonselector.h"
+#include "kopeteemoticons.h"
 
 class KopeteEmoticonAction::KopeteEmoticonActionPrivate
 {
-	public:
-		KopeteEmoticonActionPrivate()
-		{
-			m_delayed = true;
-			m_stickyMenu = true;
-			m_popup = new KPopupMenu(0L,"KopeteEmoticonActionPrivate::m_popup");
-			emoticonSelector = new EmoticonSelector(
-				m_popup, "KopeteEmoticonActionPrivate::emoticonSelector");
-			m_popup->insertItem( emoticonSelector );
-			// TODO: Maybe connect to kopeteprefs and redo list only on config changes
-			connect(
-				m_popup, SIGNAL(aboutToShow()),
-				emoticonSelector, SLOT(prepareList()) );
-		}
-		~KopeteEmoticonActionPrivate()
-		{
-			delete m_popup; m_popup = 0;
-		}
-		KPopupMenu *m_popup;
-		EmoticonSelector *emoticonSelector;
-		bool m_delayed;
-		bool m_stickyMenu;
+public:
+	KopeteEmoticonActionPrivate()
+	{
+		m_delayed = true;
+		m_stickyMenu = true;
+		m_popup = new KPopupMenu(0L,"KopeteEmoticonActionPrivate::m_popup");
+		emoticonSelector = new EmoticonSelector( m_popup, "KopeteEmoticonActionPrivate::emoticonSelector");
+		m_popup->insertItem( emoticonSelector );
+		// TODO: Maybe connect to kopeteprefs and redo list only on config changes
+		connect( m_popup, SIGNAL( aboutToShow() ), emoticonSelector, SLOT( prepareList() ) );
+	}
+
+	~KopeteEmoticonActionPrivate()
+	{
+		delete m_popup;
+		m_popup = 0;
+	}
+
+	KPopupMenu *m_popup;
+	EmoticonSelector *emoticonSelector;
+	bool m_delayed;
+	bool m_stickyMenu;
 };
 
 KopeteEmoticonAction::KopeteEmoticonAction( QObject* parent, const char* name )
-  : KAction( parent, name )
+  : KAction( i18n( "Add Smiley" ), 0, parent, name )
 {
-	init();
-}
+	d = new KopeteEmoticonActionPrivate;
 
-KopeteEmoticonAction::KopeteEmoticonAction( const QString& text, QObject* parent,
-                          const char* name )
-  : KAction( text, 0, parent, name )
-{
-	init();
-}
+	// Try to load the icon for our current emoticon theme, when it fails
+	// fall back to our own default
+	QString icon = KopeteEmoticons::emoticons()->emoticonToPicPath( ":)" );
+	if ( icon.isNull() )
+		setIcon( "emoticon" );
+	else
+		setIconSet( QIconSet( icon ) );
 
-KopeteEmoticonAction::KopeteEmoticonAction( const QString& text, const QIconSet& icon,
-                          QObject* parent, const char* name )
-  : KAction( text, icon, 0, parent, name )
-{
-	init();
-}
-
-KopeteEmoticonAction::KopeteEmoticonAction( const QString& text, const QString& icon,
-                          QObject* parent, const char* name )
-  : KAction( text, icon, 0, parent, name )
-{
-	init();
+	setShortcutConfigurable( false );
+	connect( d->emoticonSelector, SIGNAL( ItemSelected( const QString & ) ),
+		this, SIGNAL( activated( const QString & ) ) );
 }
 
 KopeteEmoticonAction::~KopeteEmoticonAction()
@@ -75,17 +85,6 @@ KopeteEmoticonAction::~KopeteEmoticonAction()
 //	kdDebug(14010) << "KopeteEmoticonAction::~KopeteEmoticonAction()" << endl;
 	delete d;
 	d = 0;
-}
-
-void KopeteEmoticonAction::init()
-{
-//	kdDebug(14010) << k_funcinfo << "called." << endl;
-	d = new KopeteEmoticonActionPrivate;
-	setShortcutConfigurable( false );
-	connect(
-		d->emoticonSelector, SIGNAL(ItemSelected(const QString &)),
-		this, SIGNAL(activated(const QString &))
-		);
 }
 
 void KopeteEmoticonAction::popup( const QPoint& global )
@@ -210,3 +209,6 @@ int KopeteEmoticonAction::plug( QWidget* widget, int index )
 }
 
 #include "kopeteemoticonaction.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:
+

@@ -367,7 +367,7 @@ void KopeteChatWindow::initActions(void)
 		this, SLOT( slotToggleViewMembers() ), coll, "options_togglemembers" );
 	//toggleMembers->setChecked( true );
 
-	actionSmileyMenu = new KopeteEmoticonAction( i18n( "Add Smiley" ), QString::fromLatin1( "emoticon" ), coll, "format_smiley" );
+	actionSmileyMenu = new KopeteEmoticonAction( coll, "format_smiley" );
 	actionSmileyMenu->setDelayed( false );
 	connect(actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
 
@@ -390,7 +390,7 @@ void KopeteChatWindow::initActions(void)
 	animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::User);
 
 	// we can't set the tool bar as parent, if we do, it will be deleted when we configure toolbars
-	anim = new QLabel( /*toolBar()*/ this , "kde toolbar widget" );
+	anim = new QLabel( QString::null, this ,"kde toolbar widget" );
 	anim->setMargin(5);
 	anim->setPixmap( normalIcon );
 

@@ -4,7 +4,9 @@
     a button that pops up a list of all emoticons and returns
     the emoticon-string if one is selected in the list
 
-    Copyright (c) 2002 by Stefan Gehn            <metz AT gehn.net>
+    Copyright (c) 2002      by Stefan Gehn            <metz AT gehn.net>
+    Copyright (c) 2003      by Martijn Klingens       <klingens@kde.org>
+
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -99,4 +101,6 @@ void EmoticonSelector::emoticonClicked(const QString &str)
 }
 
 #include "emoticonselector.moc"
+
 // vim: set noet ts=4 sts=4 sw=4:
+

@@ -255,7 +255,7 @@ void KopeteEmailWindow::initActions(void)
 	KStdAction::showToolbar( this, SLOT( slotViewToolBar() ), coll );
 */
 
-	d->actionSmileyMenu = new KopeteEmoticonAction( i18n( "Add Smiley" ), QString::fromLatin1( "emoticon" ), coll, "format_smiley" );
+	d->actionSmileyMenu = new KopeteEmoticonAction( coll, "format_smiley" );
 	d->actionSmileyMenu->setDelayed( false );
 	connect(d->actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
 
