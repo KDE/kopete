@@ -79,8 +79,11 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 
 	mCurrentPenaltyTime = 0;
 
+	// create metacontact for myself()
+	KopeteMetaContact *metaContact = new KopeteMetaContact;
+
 	// add our own contact to the pool
-	JabberContact *myContact = contactPool()->addContact ( XMPP::RosterItem ( accountId ), 0L, false );
+	JabberContact *myContact = contactPool()->addContact ( XMPP::RosterItem ( accountId ), metaContact, false );
 	setMyself( myContact );
 
 	initialPresence = XMPP::Status ( "", "", 5, true );
