@@ -641,14 +641,14 @@ bool IRCAccount::isConnected()
 	return ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline );
 }
 
-void IRCAccount::setOnlineStatus( const Kopete::OnlineStatus& status )
+void IRCAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason )
 {
 	if ( status.status() == Kopete::OnlineStatus::Online && myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
 		connect();
 	else if ( status.status() == Kopete::OnlineStatus::Offline )
 		disconnect();
 	else if ( status.status() == Kopete::OnlineStatus::Away )
-		slotGoAway( QString::null );
+		slotGoAway( reason );
 }
 
 

@@ -303,7 +303,7 @@ void GroupWiseAccount::disconnected ( Kopete::Account::DisconnectReason reason )
 	Kopete::Account::disconnected( reason );
 }
 
-void GroupWiseAccount::setOnlineStatus ( const Kopete::OnlineStatus& status )
+void GroupWiseAccount::setOnlineStatus ( const Kopete::OnlineStatus& status  , const QString &reason)
 {
 	myself()->setOnlineStatus( status );
 }

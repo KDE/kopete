@@ -50,7 +50,7 @@ public:
 public slots:
 	void loadConfig();
 
-	void setOnlineStatus( const Kopete::OnlineStatus& status );
+	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
 public slots:
 	virtual void connect(const Kopete::OnlineStatus& initial= Kopete::OnlineStatus());
 	virtual void disconnect();

@@ -308,10 +308,10 @@ GaduAccount::disconnect( DisconnectReason reason )
 }
 
 void
-GaduAccount::setOnlineStatus( const Kopete::OnlineStatus& status )
+GaduAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason )
 {
 	kdDebug(14100) << k_funcinfo << "Called" << endl;
-	changeStatus( status, QString::null );
+	changeStatus( status, reason);
 }
 
 bool

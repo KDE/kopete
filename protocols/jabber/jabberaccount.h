@@ -136,7 +136,7 @@ public slots:
 	void disconnect ( Kopete::Account::DisconnectReason reason );
 
 	/* Reimplemented from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus& status );
+	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
 
 protected:
 	/**

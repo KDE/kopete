@@ -91,7 +91,7 @@ public:
 public slots:
 	virtual void connectWithPassword( const QString &password ) ;
 	virtual void disconnect() ;
-	virtual void setOnlineStatus( const Kopete::OnlineStatus &status );
+	virtual void setOnlineStatus( const Kopete::OnlineStatus &status , const QString &reason = QString::null);
 
 	/**
 	 * Ask to the account to create a new chat session

@@ -72,7 +72,7 @@ public slots:
     void slotServerDead();
 
     /** Reimplemented from Kopete::Account */
-    void setOnlineStatus( const Kopete::OnlineStatus& status );
+	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
 
 private:
     void initServer();

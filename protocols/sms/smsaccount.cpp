@@ -102,14 +102,14 @@ bool SMSAccount::createContact( const QString &contactId,
 		return false;
 }
 
-void SMSAccount::setOnlineStatus( const Kopete::OnlineStatus & status )
+void SMSAccount::setOnlineStatus( const Kopete::OnlineStatus & status , const QString &reason)
 {
 	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Online )
 		connect();
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Offline )
 		disconnect();
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Away )
-		setAway( true, QString::null );
+		setAway( true, reason );
 }
 
 #include "smsaccount.moc"

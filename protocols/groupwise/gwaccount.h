@@ -152,7 +152,7 @@ public slots:
 	virtual void disconnected( Kopete::Account::DisconnectReason reason );
 	
 	/** Set the online status for the account. Reimplemented from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus& status );
+	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
 signals:
 	void conferenceCreated( const int mmId, const GroupWise::ConferenceGuid & guid );
 	void conferenceCreationFailed( const int mmId, const int statusCode );

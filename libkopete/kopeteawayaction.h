@@ -27,6 +27,8 @@
 namespace Kopete
 {
 
+class OnlineStatus;
+
 /**
  * @class Kopete::AwayAction
  *
@@ -45,8 +47,19 @@ class KOPETE_EXPORT AwayAction : public KSelectAction
 		 * @p name are all handled by KSelectAction.
 		 **/
 		AwayAction(const QString &text, const QIconSet &pix,
-			const KShortcut &cut, const QObject *receiver, const char *slot,
-			QObject *parent, const char *name = 0);
+				   const KShortcut &cut, const QObject *receiver, const char *slot,
+				   QObject *parent, const char *name = 0);
+
+		/**
+		 * Constructor
+		 * @param status the OnlineStatus that appears in the signal
+		 * @param slot must have the following signature:  ( const OnlineStatus &, const QString & )
+		 * @p text, @p pix, @p cut, @p receiver, @p slot, @p parent and
+		 * @p name are all handled by KSelectAction.
+		 **/
+		AwayAction(const OnlineStatus &status, const QString &text, const QIconSet &pix,
+				   const KShortcut &cut, const QObject *receiver, const char *slot,
+				   QObject *parent, const char *name = 0);
 
 	signals:
 		/**
@@ -54,12 +67,18 @@ class KOPETE_EXPORT AwayAction : public KSelectAction
 		*/
 		void awayMessageSelected( const QString & );
 
+		 /**
+		  * same as above, but with the saved status
+		  */
+		void awayMessageSelected( const Kopete::OnlineStatus& , const QString & );
+
 	private slots:
 		void slotAwayChanged();
 		void slotSelectAway( int index );
 
 	private:
-		int reasonCount;
+		class Private;
+		Private *d;
 };
 
 }

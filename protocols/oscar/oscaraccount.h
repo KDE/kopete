@@ -97,7 +97,7 @@ public slots:
 	 */
 	void slotGoOffline();
 
-	void setOnlineStatus( const Kopete::OnlineStatus& status );
+	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
 
 protected slots:
 	/** Called when we get disconnected */

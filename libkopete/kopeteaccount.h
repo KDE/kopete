@@ -418,9 +418,11 @@ public slots:
 
 	/**
 	 * Reimplement this function to set the online status
+	 * @param status is the new status
+	 * @param reason is the away message to set.
 	 * @note If needed, you need to connect.  if the offline status is given, you should disconnect
 	 */
-	virtual void setOnlineStatus( const Kopete::OnlineStatus& ) = 0;
+	virtual void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null ) = 0;
 
 	/**
 	 * Display the edit account widget of the account

@@ -102,7 +102,7 @@ public slots:
 	virtual void disconnect();
 
 	/** Reimplemented from Kopete::Account */
-	void setOnlineStatus( const Kopete::OnlineStatus& );
+	void setOnlineStatus( const Kopete::OnlineStatus&, const QString &reason = QString::null);
 
 
 signals:

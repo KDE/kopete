@@ -300,9 +300,9 @@ void MSNAccount::slotGoInvisible()
 	setOnlineStatus( MSNProtocol::protocol()->HDN );
 }
 
-void MSNAccount::setOnlineStatus( const Kopete::OnlineStatus &status )
+void MSNAccount::setOnlineStatus( const Kopete::OnlineStatus &status , const QString &reason)
 {
-	m_awayReason = QString::null;
+	m_awayReason = reason;
 	if(status.status()== Kopete::OnlineStatus::Offline)
 		disconnect();
 	else if ( m_notifySocket )

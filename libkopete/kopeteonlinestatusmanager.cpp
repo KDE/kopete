@@ -17,6 +17,7 @@
 */
 
 #include "kopeteonlinestatusmanager.h"
+#include "kopeteawayaction.h"
 
 #include <qpainter.h>
 #include <qbitmap.h>
@@ -35,8 +36,18 @@ namespace Kopete {
 
 class OnlineStatusManager::Private
 {public:
+
+	struct RegisteredStatusStruct
+	{
+		QString caption;
+		unsigned int categories;
+		unsigned int options;
+	};
+
+	typedef QMap< OnlineStatus , RegisteredStatusStruct >  ProtocolMap ;
+		
 	QPixmap *nullPixmap;
-	QMap<Protocol* , QMap< OnlineStatus , QPair<QString, unsigned int> > > registeredStatus;
+	QMap<Protocol* , ProtocolMap > registeredStatus;
 	QDict< QPixmap > iconCache;
 };
 
@@ -72,8 +83,11 @@ void OnlineStatusManager::slotIconsChanged()
 
 void OnlineStatusManager::registerOnlineStatus( const OnlineStatus &status, const QString & caption, unsigned int categories, unsigned int options)
 {
-	//TODO: use options
-	d->registeredStatus[status.protocol()].insert(status, qMakePair(caption, categories)  );
+	Private::RegisteredStatusStruct s;
+	s.caption=caption;
+	s.categories=categories;
+	s.options=options;
+	d->registeredStatus[status.protocol()].insert(status, s );
 }
 
 QString OnlineStatusManager::fingerprint( const OnlineStatus &statusFor, const QString& icon, int size, QColor color, bool idle)
@@ -182,14 +196,30 @@ QPixmap* OnlineStatusManager::renderIcon( const OnlineStatus &statusFor, const Q
 
 void OnlineStatusManager::createAccountStatusActions( Account *account , KActionMenu *parent)
 {
-	QMap< OnlineStatus , QPair<QString, unsigned int> > protocolMap=d->registeredStatus[account->protocol()];
-	QMap< OnlineStatus , QPair<QString, unsigned int> >::Iterator it;
+	Private::ProtocolMap protocolMap=d->registeredStatus[account->protocol()];
+	Private::ProtocolMap::Iterator it;
 	for ( it = --protocolMap.end(); it != protocolMap.end(); --it )
 	{
+		unsigned int options=it.data().options;
+		if(options & OnlineStatusManager::HideFromMenu)
+			continue;
+		
 		OnlineStatus status=it.key();
-		QString caption=it.data().first;
-		OnlineStatusAction *action=new OnlineStatusAction( status, caption, status.iconFor(account) , parent  );
-		connect(action,SIGNAL(activated(const Kopete::OnlineStatus&)) , account, SLOT(setOnlineStatus(const Kopete::OnlineStatus&)));
+		QString caption=it.data().caption;
+		KAction *action;
+		if(options & OnlineStatusManager::HasAwayMessage)
+		{
+			action=new AwayAction( status, caption, status.iconFor(account) , 0, account,  SLOT(setOnlineStatus(const Kopete::OnlineStatus&)) ,  parent);
+		}
+		else
+		{
+			action=new OnlineStatusAction( status, caption, status.iconFor(account) , parent  );
+			connect(action,SIGNAL(activated(const Kopete::OnlineStatus&)) , account, SLOT(setOnlineStatus(const Kopete::OnlineStatus&, const QString&)));
+		}
+
+		if(options & OnlineStatusManager::DisabledIfOffline  && !account->isConnected())
+			action->setEnabled(false);
+		
 		if(parent)
 			parent->insert(action);
 		

@@ -691,14 +691,14 @@ void JabberAccount::slotIncomingFileTransfer ()
 
 }
 
-void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status )
+void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status  , const QString &reason)
 {
 	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Online )
 		connect( status );
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Offline )
 		disconnect( Kopete::Account::Manual );
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Away )
-		setAway( true, QString::null );
+		setAway( true, reason );
 }
 
 void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )

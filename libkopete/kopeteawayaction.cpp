@@ -22,10 +22,23 @@
 
 #include "kopeteawayaction.h"
 #include "kopeteaway.h"
+#include "kopeteonlinestatus.h"
 
-Kopete::AwayAction::AwayAction(const QString &text, const QIconSet &pix, const KShortcut &cut,
-	const QObject *receiver, const char *slot, QObject *parent, const char *name ) :
-	KSelectAction(text, pix, cut, parent, name )
+
+namespace Kopete {
+
+class AwayAction::Private
+{
+public:
+	Private(const OnlineStatus& s) : reasonCount(0) , status(s) {};
+	int reasonCount;
+	OnlineStatus status;
+};
+
+
+AwayAction::AwayAction(const QString &text, const QIconSet &pix, const KShortcut &cut,
+	const QObject *receiver, const char *slot, QObject *parent, const char *name )
+	: KSelectAction(text, pix, cut, parent, name ) , d(new Private( OnlineStatus() ) )
 {
 	QObject::connect( Kopete::Away::getInstance(), SIGNAL( messagesChanged() ),
 		this, SLOT( slotAwayChanged() ) );
@@ -36,12 +49,26 @@ Kopete::AwayAction::AwayAction(const QString &text, const QIconSet &pix, const K
 	QObject::connect( this, SIGNAL( activated( int ) ),
 		this, SLOT( slotSelectAway( int ) ) );
 
-	reasonCount = 0;
+	slotAwayChanged();
+}
+
+AwayAction::AwayAction( const OnlineStatus& status, const QString &text, const QIconSet &pix, const KShortcut &cut,
+					   const QObject *receiver, const char *slot, QObject *parent, const char *name )
+	: KSelectAction(text, pix, cut, parent, name ) , d(new Private( status ) )
+{
+	QObject::connect( Kopete::Away::getInstance(), SIGNAL( messagesChanged() ),
+					  this, SLOT( slotAwayChanged() ) );
+
+	QObject::connect( this, SIGNAL( awayMessageSelected( const OnlineStatus &, const QString & ) ),
+					  receiver, slot );
+
+	QObject::connect( this, SIGNAL( activated( int ) ),
+					  this, SLOT( slotSelectAway( int ) ) );
 
 	slotAwayChanged();
 }
 
-void Kopete::AwayAction::slotAwayChanged()
+void AwayAction::slotAwayChanged()
 {
 	QStringList awayMessages = Kopete::Away::getInstance()->getMessages();
 	for( QStringList::iterator it = awayMessages.begin(); it != awayMessages.end(); ++it )
@@ -49,13 +76,13 @@ void Kopete::AwayAction::slotAwayChanged()
 		(*it) = KStringHandler::rsqueeze( *it );
 	}
 
-	reasonCount = awayMessages.count();
+	d->reasonCount = awayMessages.count();
 	awayMessages.append( i18n( "New Message..." ) );
 	setItems( awayMessages );
 	setCurrentItem( -1 );
 }
 
-void Kopete::AwayAction::slotSelectAway( int index )
+void AwayAction::slotSelectAway( int index )
 {
 	Kopete::Away *mAway = Kopete::Away::getInstance();
 	QString awayReason;
@@ -65,7 +92,7 @@ void Kopete::AwayAction::slotSelectAway( int index )
 	if( index == -1 )
 		index = 0;
 	
-	if( index < reasonCount )
+	if( index < d->reasonCount )
 	{
 		awayReason = mAway->getMessage( index );
 	}
@@ -82,10 +109,13 @@ void Kopete::AwayAction::slotSelectAway( int index )
 
 	if( !awayReason.isEmpty() )
 	{
-		emit( awayMessageSelected( awayReason ) );
+		emit awayMessageSelected( awayReason ) ;
+		emit awayMessageSelected( d->status, awayReason );
 		setCurrentItem( -1 );
 	}
 }
+
+} //END namespace Kopete
 
 #include "kopeteawayaction.moc"
 

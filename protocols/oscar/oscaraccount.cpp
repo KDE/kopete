@@ -748,9 +748,9 @@ void OscarAccount::setIgnoreUnknownContacts(bool b)
 	d->ignoreUnknownContacts = b;
 }
 
-void OscarAccount::setOnlineStatus( const Kopete::OnlineStatus & status )
+void OscarAccount::setOnlineStatus( const Kopete::OnlineStatus & status , const QString &reason)
 {
-	setStatus( status.internalStatus() );
+	setStatus( status.internalStatus() , reason );
 }
 
 #include "oscaraccount.moc"

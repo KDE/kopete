@@ -57,14 +57,25 @@ public:
 		Offline=0x01,
 		Online=0x02,
 		Away=0x04,
-		Idle=0x10, /** Status used for auto away  */
+		Idle=0x10, /**< Status used for auto away  */
 		Busy=0x20,
 		Invisible=0x40
 	};
-	
+
+	/**
+	 * @see registerOnlineStatus
+	 */
 	enum Options
 	{
-		HasAwayMessage = 0x01  /** The user may set away messages for this online status   */
+		/// The user may set away messages for this online status   
+		HasAwayMessage = 0x01,  
+		/// The action of the status will be disabled if the account is offline.
+		/// use it if your protocol doesn't support connecting with the status as initial status.
+		/// You praticaly shouldn't abuse of that, and automaticaly set status after connecting if possible
+		DisabledIfOffline = 0x02,
+		///  The status will not appears in the action menu. Used if you want to register the status for e.g. autoaway,
+		///  without letting the user set itself that status  
+		HideFromMenu = 0x04
 	};
 	
 	/**

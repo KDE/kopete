@@ -694,14 +694,14 @@ void YahooAccount::slotRemoveHandler( int /* fd */ )
 //	kdDebug(14180) << k_funcinfo << endl;
 }
 
-void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status )
+void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason)
 {
 	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Online )
 		connect( status );
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Offline )
 		disconnect();
 	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Away )
-		slotGoStatus( status.internalStatus(), QString::null );
+		slotGoStatus( status.internalStatus(), reason );
 }
 
 #include "yahooaccount.moc"
