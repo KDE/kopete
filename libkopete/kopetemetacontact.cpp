@@ -75,7 +75,7 @@ void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups 
 		// Generally, if the groups are explicitly set by the user they
 		// should not be overridden. Until then manage them automatically.
 		// For now just assume an empty group list means override
-
+        /*
 		if( m_groups.isEmpty() )
 		{
 			m_groups = groups;
@@ -109,6 +109,7 @@ void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups 
 					new KopeteMetaContactLVI( this, groupLVI ) );
 			}
 		}
+		*/
 	}
 }
 

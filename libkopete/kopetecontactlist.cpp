@@ -89,9 +89,8 @@ void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 
 	if ( groups.isEmpty() )
 	{
-		kdDebug() << "KopeteContactList::addMetaContact: "
-			<< "adding metacontact with no groups" << endl;
-		groups.append( "" );
+		kdDebug() << "KopeteContactList::addMetaContact : adding metacontact with no groups" <<endl;
+		kopeteapp->contactList()->addContact(new KopeteMetaContactLVI( mc, kopeteapp->contactList() ) );
 	}
 	else
 	{
