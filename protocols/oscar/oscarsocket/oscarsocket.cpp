@@ -137,7 +137,7 @@ void OscarSocket::slotConnected()
 	//emit connectionChanged(1, QString("Connected to %2, port %1").arg(peerPort()).arg(peerName()));
 }
 
-void OscarSocket::slotConnectionClosed(const QString &connName, bool expected)
+void OscarSocket::slotConnectionClosed(const QString & /*connName */, bool expected)
 {
 	kdDebug(14150) << k_funcinfo << "Connection for account '" <<
 		mAccount->accountId() << "' closed, expected = " << expected << endl;

@@ -187,7 +187,13 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 #endif
 
 	if (blmBuddies.size() > 0)
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"Adding WAITAUTH contacts to BLM, list: " <<
+			blmBuddies.join(",") << endl;
+
 		sendBuddylistAdd(blmBuddies);
+	}
 
 	// If the server list is splited on more than one packet, only the last one has timestamp != 0
 	if (timestamp > 0)

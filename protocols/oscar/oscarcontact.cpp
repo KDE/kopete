@@ -203,8 +203,8 @@ void OscarContact::slotGotMiniType(const QString &name,
 	if(mMsgManager == 0L)
 		return;
 
-	kdDebug(14190) << k_funcinfo <<
-		"Got minitype notification for " << contactName() << endl;
+	/*kdDebug(14190) << k_funcinfo <<
+		"Got minitype notification for " << contactName() << endl;*/
 
 	switch(type)
 	{
@@ -273,17 +273,18 @@ void OscarContact::slotDeleteContact()
 // Called when the metacontact owning this contact has changed groups
 void OscarContact::syncGroups()
 {
+	if (!metaContact() || !this->serverSide())
+		return;
+
 	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() <<
 		"' (" << contactId() << ")" << endl;
 
-	if (!metaContact())
-		return;
 	// Get the (kopete) group that we belong to
 	KopeteGroupList groups = metaContact()->groups();
 	if(groups.count() == 0)
 	{
 		kdDebug(14150) << k_funcinfo <<
-			"Contact is in no Group in Kopete Contactlist, aborting" << endl;
+			"Contact is in no group in Kopete contactlist, aborting!" << endl;
 		return;
 	}
 
@@ -302,17 +303,22 @@ void OscarContact::syncGroups()
 		return;
 	}
 
-	kdDebug(14150) << k_funcinfo << "SSI Data before change of group" << endl;
-	mAccount->engine()->ssiData().print();
+	/*kdDebug(14150) << k_funcinfo << "SSI Data before change of group" << endl;
+	mAccount->engine()->ssiData().print();*/
 
 	if (!mAccount->engine()->ssiData().findGroup(firstKopeteGroup->displayName()))
 	{
 		//We don't have the group in SSI yet. Add it.
-		kdDebug(14150) << "Adding missing group " << firstKopeteGroup->displayName() << endl;
-		mAccount->engine()->sendAddGroup( firstKopeteGroup->displayName() );
+		kdDebug(14150) << k_funcinfo << "Adding missing group '" <<
+			firstKopeteGroup->displayName() << "'" << endl;
+		mAccount->engine()->sendAddGroup(firstKopeteGroup->displayName());
 	}
 	else
-		kdDebug(14150) << "New group found in SSI already" << endl;
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"New group '" << firstKopeteGroup->displayName() <<
+			" 'found in SSI already" << endl;
+	}
 
 	/*
 	 * Another possibility is moving a buddy in the blm, but in that case, we don't need
@@ -332,11 +338,12 @@ void OscarContact::syncGroups()
 	}
 	else
 	{
-		kdDebug(14150) << "Contact must be in BLM. Doing nothing" << endl;
+		kdDebug(14150) << k_funcinfo <<
+			"Contact must be in BLM. Doing nothing" << endl;
 	}
 
-	kdDebug(14150) << k_funcinfo << "SSI Data after change of group" << endl;
-	mAccount->engine()->ssiData().print();
+	/*kdDebug(14150) << k_funcinfo << "SSI Data after change of group" << endl;
+	mAccount->engine()->ssiData().print();*/
 }
 
 

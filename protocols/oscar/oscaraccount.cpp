@@ -56,12 +56,6 @@ public:
 	OscarSocket *engine;
 
 	/*
-	 * Random new group/contact number for the engine
-	 */
-	//int randomNewGroupNum;
-	//int randomNewBuddyNum;
-
-	/*
 	 * This flag is used internally to keep track
 	 * of if we're idle or not
 	 */
@@ -98,9 +92,6 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 	d = new OscarAccountPrivate;
 
 	d->engine = 0L;
-	// Set our random new numbers
-	//d->randomNewBuddyNum = 0;
-	//d->randomNewGroupNum = 0;
 	d->ignoreUnknownContacts = false;
 	d->isIdle = false;
 	d->lastIdleValue = 0;
@@ -407,23 +398,33 @@ void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
 void OscarAccount::slotGotServerBuddyList()
 {
 	kdDebug(14150) << k_funcinfo << "account='" << accountId() << "'" << endl;
+	KopeteContactList* kcl = KopeteContactList::contactList();
+
+	//disconnect, otherwise groups attempted to get added again after
+	//disconnecting and reconnecting. I could use blockSignals() here,
+	//but I don't want to block all signals, just this one
+	QObject::disconnect(kcl, SIGNAL(groupAdded(KopeteGroup *)),
+		this, SLOT(slotGroupAdded(KopeteGroup *)));
 
 	//If we get mysterious results (or crashes) here, it's because the SSIData object
 	//was mysteriously destroyed and since engine()->ssiData() returns a reference
 	//we'll need to start saving the result of engine()->ssiData() so that we
 	//make sure it lives long enough.
+
+	// FIRST add groups, THEN add contacts. Makes sure all groups are
+	// present on kopete contactlist before adding contacts to such a group
 	QPtrListIterator<SSI> git(engine()->ssiData());
 	for ( ; git.current(); ++git )
 	{
 		if (git.current()->type == ROSTER_GROUP && !git.current()->name.isEmpty())
 		{ //active contact on SSI
-			kdDebug(14150) << k_funcinfo << "Adding group '" <<
-				git.current()->name << "' to contact list" << endl;
-			addGroup( git.current()->name );
+			kdDebug(14150) << k_funcinfo << "Adding SSI group '" <<
+				git.current()->name << "' to kopete contact list" << endl;
+			KopeteContactList::contactList()->getGroup( git.current()->name );
 		}
 	}
 
-	//groups are added. Add the contacts
+
 	QPtrListIterator<SSI> bit(engine()->ssiData());
 	QString groupName;
 	OscarContact* contact = 0;
@@ -444,21 +445,24 @@ void OscarAccount::slotGotServerBuddyList()
 				else
 				{
 					/*kdDebug(14150) << k_funcinfo <<
-						"ssiGroup is valid using group name = '" << ssiGroup->name << "'" << endl;
-					*/
+						"ssiGroup is valid using group name = '" <<
+						ssiGroup->name << "'" << endl;*/
 					groupName = ssiGroup->name;
 				}
 
 				contact = static_cast<OscarContact*> (contacts()[tocNormalize(bit.current()->name)]);
 				if (contact == 0)
 				{
-					kdDebug(14150) << k_funcinfo "Adding SSI contact '" <<
-						bit.current()->name << "' to contact list" << endl;
+					kdDebug(14150) << k_funcinfo << "Adding SSI contact '" <<
+						bit.current()->name << "' to kopete contact list" << endl;
+
 					addContact(tocNormalize(bit.current()->name),
 						bit.current()->name, 0L,
 						DontChangeKABC, groupName, false);
-					//make sure we set the contact to be on the SSI
-					//contact->setServerSide( true );
+				}
+				else  //make sure we set the contact to be on the SSI
+				{
+					contact->setServerSide(true);
 				}
 				break;
 			}
@@ -504,33 +508,46 @@ void OscarAccount::slotGotServerBuddyList()
 	}
 
 	//Get a list of contacts, if they're not on the SSI, move them to a new
-	//metacontact, and then move that new metacontact to the temp group
-	//so they're gone on kopete exit
-	/*
+	//metacontact, and then move that new metacontact to a special group
+	//so they're visible to be "broken"
+
 	QDictIterator<KopeteContact> it(contacts());
 	for (; it.current(); ++it)
 	{
 		OscarContact* c = static_cast<OscarContact*>((*it));
 		//get the metacontact so we can remove it if it's empty
-		KopeteMetaContact *oldContact = c->metaContact();
-		if ( c->metaContact() && !c->serverSide())
+		KopeteMetaContact *oldMetaContact = c->metaContact();
+		if (oldMetaContact && !c->serverSide())
 		{
-			kdDebug(14150) << "Moving '" << c->displayName() << "' to temporary" << endl;
-			c->metaContact()->removeContact(c);
-			KopeteMetaContact* kmc = new KopeteMetaContact;
-			c->setMetaContact(kmc);
-			kmc->setTemporary(true);
-			KopeteContactList::contactList()->addMetaContact( kmc );
-
-			if (oldContact->contacts().isEmpty())
+			KopeteGroup *notOnSSIgroup = kcl->getGroup(i18n("Not on Server"));
+			KopeteGroupList groups = oldMetaContact->groups();
+			if ((groups.count() > 0) && (groups.first() == notOnSSIgroup))
 			{
-				KopeteContactList::contactList()->removeMetaContact(oldContact);
-				delete oldContact;
+				// contact already on temporary group, aborting
+				continue;
+			}
+			else
+			{
+				kdDebug(14150) << "Contact not on SSI, moving '" <<
+					c->displayName() << "' to temporary group." << endl;
+
+				oldMetaContact->removeContact(c);
+				KopeteMetaContact* kmc = new KopeteMetaContact;
+				c->setMetaContact(kmc);
+				kmc->addToGroup(notOnSSIgroup);
+				kcl->addMetaContact(kmc);
+
+				if (oldMetaContact->contacts().isEmpty())
+				{
+					kcl->removeMetaContact(oldMetaContact);
+					delete oldMetaContact;
+				}
 			}
 		}
-	}*/
+	} // END for()
 
-	QObject::connect(KopeteContactList::contactList(), SIGNAL(groupAdded(KopeteGroup *)),
+	//reconnect the signal here so new stuff gets added
+	QObject::connect(kcl, SIGNAL(groupAdded(KopeteGroup *)),
 		this, SLOT(slotGroupAdded(KopeteGroup *)));
 }
 
@@ -540,79 +557,14 @@ void OscarAccount::slotLoggedIn()
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
 
 	d->passwordWrong = false;
-
-	// Only call sync if we received a list on connect, does not happen on @mac AIM-accounts
-#if 0
-	if ( engine()->ssiData().isEmpty() )
-	{
-		QTimer::singleShot(2000, this, SLOT(slotDelayedListSync()));
-	}
-#endif
-
 	d->idleTimer->start(10 * 1000);
 }
 
 
 #if 0
-void OscarAccount::slotDelayedListSync()
-{
-	kdDebug(14150) << k_funcinfo << "Called ==============================================" << endl;
-
-	syncLocalWithServerBuddyList ();
-}
-
-//
-// Since the icq_new transition, I have lots of contacts, that are not in the serverside
-// contact list. So we compare the two lists and add all local contacts that are not
-// in the server side list.
-//
-
-void OscarAccount::syncLocalWithServerBuddyList()
-{
-	kdDebug(14150) << k_funcinfo << "Called but DISABLED =========================================" << endl;
-	//FIXME: Does not work [mETz]
-	const QDict<KopeteContact>& contactList = contacts();
-	QDictIterator<KopeteContact> it( contactList );
-
-	for(; it.current(); ++it)
-	{
-		QString contactId = static_cast<OscarContact*>( it.current() )->contactName();
-		QString displayName = static_cast<OscarContact*>( it.current() )->displayName();
-
-		AIMBuddy *buddy = d->loginContactlist->findBuddy( contactId );
-
-		if(!buddy && it.current() != myself())
-		{
-			kdDebug(14150) << "###### Serverside list doesn't contain local buddy: " << contactId << endl;
-			kdDebug(14150) << "-> creating server side contact for it." << endl;
-			// Add the buddy to the server's list
-			const KopeteGroupList& groups = it.current()->metaContact()->groups();
-
-			AIMGroup *group = findOrCreateGroup( groups.isEmpty() ? QString::null : groups.getFirst()->displayName() );
-
-			// Create a new internal buddy for this contact
-			AIMBuddy *newBuddy =
-				new AIMBuddy(d->randomNewBuddyNum++, group->ID(), tocNormalize(contactId));
-
-			// Check if it has an alias
-			if((displayName != QString::null) && (displayName != contactId))
-				newBuddy->setAlias(displayName);
-
-			// Add the buddy to the internal buddy list
-			addBuddy( newBuddy );
-
-			// Add the buddy to the server's list, with the group,
-			// need to normalize the contact name
-			engine()->sendAddBuddy(tocNormalize(contactId), group->name());
-		}
-	}
-}
-#endif
-
-#if 0
 void OscarAccount::slotGotDirectIMRequest(QString sn)
 {
-	//FIXME: This is a stupid question, ICQ always accepts
+	// This is a stupid question, ICQ always accepts
 	// these as long as you allow direct connections in general
 
 	QString title = i18n("Direct IM session request");
@@ -671,23 +623,12 @@ void OscarAccount::slotIdleTimeout()
 }
 
 
-/*int OscarAccount::randomNewBuddyNum()
-{
-	return d->randomNewBuddyNum++;
-}
-
-
-int OscarAccount::randomNewGroupNum()
-{
-	return d->randomNewGroupNum++;
-}*/
-
-
 void OscarAccount::setServerAddress(const QString &server)
 {
 	kdDebug(14150) << k_funcinfo << "Called, server=" << server << endl;
 	setPluginData(protocol(), "Server", server);
 }
+
 
 void OscarAccount::setServerPort(int port)
 {
@@ -696,81 +637,10 @@ void OscarAccount::setServerPort(int port)
 		setPluginData(protocol(), "Port", QString::number(port));
 }
 
-void OscarAccount::addGroup( const QString& groupName )
-{
-	KopeteGroup* group = KopeteContactList::contactList()->getGroup( groupName );
-	Q_UNUSED( group );
-}
-
-
-#if 0
-void OscarAccount::addOldContact( SSI* ssiItem, KopeteMetaContact* meta )
-{
-	bool temporary = false;
-	SSI* group = engine()->ssiData().findGroup( ssiItem->gid );
-
-	if ( !group )
-	{	// group not yet found
-		kdDebug(14150) << k_funcinfo << "Adding '" << group->name << "' to groupQueue "
-			<< "to add later when group is received" << endl;
-		d->groupQueue.append( ssiItem );
-		return;
-	}
-
-	KopeteMetaContact* m = KopeteContactList::contactList()->findContact(
-		protocol()->pluginId(), accountId(), ssiItem->name);
-
-	if ( m && m->isTemporary() )
-	{
-		m->setTemporary( false );
-		//m->moveToGroup( KopeteGroup::topLevel(), KopeteContactList::contactList()->getGroup( group->name ) );
-	}
-	else
-	{
-		//New Contact
-		kdDebug(14150) << k_funcinfo << "Adding old contact '" <<
-			ssiItem->name << "'" << endl;
-
-		if ( meta )
-			m = meta;
-		else
-		{
-			m = new KopeteMetaContact();
-			m->addToGroup( KopeteContactList::contactList()->getGroup( group->name ) );
-		}
-
-		if ( temporary )
-			m->setTemporary( true );
-
-		createNewContact( tocNormalize(ssiItem->name), ssiItem->name, m);
-
-		if ( !meta )
-			KopeteContactList::contactList()->addMetaContact( m );
-	}
-}
-#endif
-
 
 bool OscarAccount::addContactToMetaContact(const QString &contactId,
 	const QString &displayName, KopeteMetaContact *parentContact)
 {
-	/*
-	 * This method is called in three situations.
-	 * The first one is when the user, through the GUI
-	 * adds a buddy and it happens to be from this account.
-	 * In this situation, we need to create a new group if
-	 * necessary and add the contact to the server
-	 *
-	 * The second situation is where we are loading a server-
-	 * side contact list through the method addServerContact
-	 * which calls addContact, which in turn calls this method.
-	 * To cope with this situation we need to first check if
-	 * the contact already exists in the internal list.
-	 *
-	 *
-	 * The third situation is when somebody new messages you
-	 */
-
 	/* We're not even online or connecting
 	 * (when getting server contacts), so don't bother
 	 */
@@ -840,10 +710,6 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			// NOTE: sendAddBuddy autocreates a group named groupName if it's not on SSI
 			engine()->sendAddBuddy(tocNormalize(contactId), groupName, false);
 
-			// Increase these counters, I'm not sure what this does
-			//d->randomNewGroupNum++;
-			//d->randomNewBuddyNum++;
-
 			// Create the actual contact, which adds it to the metacontact
 			return(createNewContact(contactId, displayName, parentContact, true));
 		}
@@ -883,6 +749,7 @@ void OscarAccount::slotOurStatusChanged(const unsigned int newStatus)
 		d->idleTimer->stop();
 }
 
+
 void OscarAccount::setAwayMessage(const QString &msg)
 {
 	static_cast<OscarContact *>(myself())->setAwayMessage(msg);
@@ -893,17 +760,16 @@ const QString OscarAccount::awayMessage()
 	return (static_cast<OscarContact *>(myself())->awayMessage());
 }
 
+
 bool OscarAccount::ignoreUnknownContacts() const
 {
 	return d->ignoreUnknownContacts;
 }
 
-void OscarAccount::setIgnoreUnknownContacts( bool b )
+void OscarAccount::setIgnoreUnknownContacts(bool b)
 {
 	d->ignoreUnknownContacts = b;
 }
 
 #include "oscaraccount.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
-
