@@ -71,10 +71,10 @@ KopeteGVIProps::KopeteGVIProps(KopeteGroupViewItem *gvi, QWidget *parent, const 
 	mainWidget->edtDisplayName->setText( item->group()->displayName() );
 	mainWidget->chkUseCustomIcons->setChecked( item->group()->useCustomIcon() );
 
-	QString openName = item->group()->icon( Kopete::PluginDataObject::Open );
+	QString openName = item->group()->icon( Kopete::ContactListElement::Open );
 	if(openName.isEmpty())
 		openName = KOPETE_GROUP_DEFAULT_OPEN_ICON;
-	QString closeName = item->group()->icon( Kopete::PluginDataObject::Closed );
+	QString closeName = item->group()->icon( Kopete::ContactListElement::Closed );
 	if(closeName.isEmpty())
 		closeName = KOPETE_GROUP_DEFAULT_CLOSED_ICON;
 	mainWidget->icnbOpen->setIcon( openName );
@@ -108,10 +108,10 @@ void KopeteGVIProps::slotOkClicked()
 	if( m_dirty )
 	{
 		item->group()->setIcon( mainWidget->icnbOpen->icon(),
-			 Kopete::PluginDataObject::Open );
+			 Kopete::ContactListElement::Open );
 
 		item->group()->setIcon( mainWidget->icnbClosed->icon(),
-			Kopete::PluginDataObject::Closed );
+			Kopete::ContactListElement::Closed );
 	}
 	
 	mNotificationProps->storeCurrentCustoms();
@@ -163,19 +163,19 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 
 	mainWidget->chkUseCustomIcons->setChecked( item->metaContact()->useCustomIcon() );
 
-	QString offlineName = item->metaContact()->icon( Kopete::PluginDataObject::Offline );
+	QString offlineName = item->metaContact()->icon( Kopete::ContactListElement::Offline );
 	if(offlineName.isEmpty())
 		offlineName = QString::fromLatin1(MC_OFF); // Default
 
-	QString onlineName = item->metaContact()->icon( Kopete::PluginDataObject::Online );
+	QString onlineName = item->metaContact()->icon( Kopete::ContactListElement::Online );
 	if(onlineName.isEmpty())
 		onlineName = QString::fromLatin1(MC_ON); // Default
 
-	QString awayName = item->metaContact()->icon( Kopete::PluginDataObject::Away );
+	QString awayName = item->metaContact()->icon( Kopete::ContactListElement::Away );
 	if(awayName.isEmpty())
 		awayName = QString::fromLatin1(MC_AW); // Default
 
-	QString unknownName = item->metaContact()->icon( Kopete::PluginDataObject::Unknown );
+	QString unknownName = item->metaContact()->icon( Kopete::ContactListElement::Unknown );
 	if(unknownName.isEmpty())
 		unknownName = QString::fromLatin1(MC_UNK); // Default
 
@@ -244,16 +244,16 @@ void KopeteMetaLVIProps::slotOkClicked()
 		mainWidget->icnbUnknown->icon() != MC_UNK )
 	{
 		item->metaContact()->setIcon( mainWidget->icnbOffline->icon(),
-			 Kopete::PluginDataObject::Offline );
+			 Kopete::ContactListElement::Offline );
 
 		item->metaContact()->setIcon( mainWidget->icnbOnline->icon(),
-			Kopete::PluginDataObject::Online );
+			Kopete::ContactListElement::Online );
 
 		item->metaContact()->setIcon( mainWidget->icnbAway->icon(),
-			Kopete::PluginDataObject::Away );
+			Kopete::ContactListElement::Away );
 
 		item->metaContact()->setIcon( mainWidget->icnbUnknown->icon(),
-			Kopete::PluginDataObject::Unknown );
+			Kopete::ContactListElement::Unknown );
 	}
 	// if no kabc link, remove any existing link
 	if ( !mainWidget->chkHasAddressbookEntry->isChecked() )

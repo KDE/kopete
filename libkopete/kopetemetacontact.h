@@ -31,7 +31,7 @@
 #include "kopetecontact.h"
 #include "kopetenotifydataobject.h"
 #include "kopeteonlinestatus.h"
-#include "kopeteplugindataobject.h"
+#include "kopetecontactlistelement.h"
 
 class QDomNode;
 
@@ -51,9 +51,9 @@ namespace Kopete
  * A metacontact represent a person. This is a kind of entry to
  * the contactlist. All information of a contact is contained in
  * the metacontact. Plugins can store data in it with all
- * @ref Kopete::PluginDataObject methods
+ * @ref Kopete::ContactListElement methods
  */
-class MetaContact : public PluginDataObject, public NotifyDataObject
+class MetaContact : public ContactListElement, public NotifyDataObject
 {
 	Q_OBJECT
 

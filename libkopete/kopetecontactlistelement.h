@@ -1,7 +1,7 @@
 /*
     kopeteplugindataobject.h - Kopete Plugin Data Object
 
-    Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2004 by Olivier Goffart       <ogoffart@ tiscalinet.be>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
     Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -20,43 +20,44 @@
 #define KOPETEPLUGINDATAOBJECT_H
 
 #include <qobject.h>
-#include <qmap.h>
 #include <qdom.h>
 
-class QDomElement;
 
-class KopetePluginDataObjectPrivate;
 
-namespace Kopete
-{
+namespace Kopete {
 
 class Plugin;
 
+
 /**
- * @author Olivier Goffart  <ogoffart@tiscalinet.be>
+ * @author Olivier Goffart  <ogoffart@ tiscalinet.be>
  *
- * this class handles the saving of the plugin data to xml files.
- * Kopete::MetaContact, Kopete::Group, and Kopete::Account inherits from it
+ * This is the base class for  base elements of the contactlist.
+ * His purpose is to share the code between @ref Group and @ref MetaContact
+ *
+ * It handle the saving and loading of plugin data from the contactlist.
+ * Plugins may set custom datas to metaocntacts or groups by calling @ref setPluginData
+ * and may retreive them with @ref pluginData
  *
  * It also allow to store an icon for this element.
- * Note than the icon support is not availiable  for Kopete::Account
  */
-
-class PluginDataObject : public QObject
+class ContactListElement : public QObject  /* public KopeteNotifyDataObject */
 {
 	Q_OBJECT
 
-public:
-	PluginDataObject( QObject *parent = 0L, const char *name = 0L );
+protected:
+	ContactListElement( QObject *parent = 0L, const char *name = 0L );
+	~ContactListElement();
 
-	~PluginDataObject();
+
+public:
 
 	/**
 	 * Set the plugin-specific data.
 	 * The data in the provided QMap is a set of key/value pairs.
 	 * Note that protocol plugins usually shouldn't use this method, but
-	 * reimplement @ref Kopete::Contact::serialize() instead. This method
-	 * is called by @ref Kopete::Protocol for those classes.
+	 * reimplement @ref Contact::serialize() instead. This method
+	 * is called by @ref Protocol for those classes.
 	 *
 	 * WARNING: This erases all old data stored for this object!
 	 *          You may want to consider the @ref setPluginData() overload
@@ -68,7 +69,7 @@ public:
 	 * Convenience method to store or change only a single field of the
 	 * plugin data. As with the other @ref setPluginData() method, protocols
 	 * are advised not to use this method and reimplement
-	 * @ref Kopete::Contact::serialize() instead.
+	 * @ref Contact::serialize() instead.
 	 *
 	 * Note that you should save the file after adding data or it will get lost.
 	 */
@@ -78,7 +79,7 @@ public:
 	 * Get the settings as stored previously by calls to @ref setPluginData()
 	 *
 	 * Note that calling this method for protocol plugins that use the
-	 * @ref Kopete::Contact::serialize() API may yield unexpected results.
+	 * @ref Contact::serialize() API may yield unexpected results.
 	 */
 	QMap<QString, QString> pluginData( Plugin *plugin ) const;
 
@@ -96,10 +97,6 @@ public:
 	 * The various icon states. Some state are reserved for Groups,
 	 * other for metacontact.
 	 * 'None' is the default icon.
-	 *
-	 * FIXME: This icon stuff looks far too specialized to me for
-	 *        Kopete::PluginDataObject, it should be made a lot more generic
-	 *        remain here - Martijn
 	 */
 	enum IconState { None, Open, Closed, Online, Away, Offline, Unknown };
 
@@ -137,7 +134,7 @@ signals:
 	/**
 	 * The icon to use for some state has changed
 	 */
-	void iconChanged( Kopete::PluginDataObject::IconState, const QString & );
+	void iconChanged( Kopete::ContactListElement::IconState, const QString & );
 
 	/**
 	 * The visual appearance of some of our icons has changed
@@ -156,11 +153,6 @@ protected:
 	const QValueList<QDomElement> toXML();
 
 	/**
-	 * Write the plugin data to KConfig
-	 */
-	void writeConfig( const QString &configGroup ) const;
-
-	/**
 	 * Load plugin data from one Dom Element:
 	 * It should be a <plugin-data> element or a <custom-icons> element. if not, nothing will happen
 	 * @return true if something has ben loaded. false if the element was not a fine
@@ -168,10 +160,11 @@ protected:
 	bool fromXML( const QDomElement &element );
 
 private:
-	KopetePluginDataObjectPrivate *d;
+	class Private;
+	Private *d;
 };
 
-}
+} //END namespace Kopete
 
 #endif
 

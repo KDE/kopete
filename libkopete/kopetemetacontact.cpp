@@ -82,7 +82,7 @@ QString unionContents( QString arg1, QString arg2 )
 }
 
 Kopete::MetaContact::MetaContact()
-: Kopete::PluginDataObject( Kopete::ContactList::self() ), Kopete::NotifyDataObject()
+: Kopete::ContactListElement( Kopete::ContactList::self() ), Kopete::NotifyDataObject()
 {
 	d = new KopeteMetaContactPrivate;
 
@@ -92,7 +92,7 @@ Kopete::MetaContact::MetaContact()
 	d->onlineStatus = Kopete::OnlineStatus::Offline;
 
 	connect( this, SIGNAL( pluginDataChanged() ), SLOT( emitPersistentDataChanged() ) );
-	connect( this, SIGNAL( iconChanged( Kopete::PluginDataObject::IconState, const QString & ) ), SLOT( emitPersistentDataChanged() ) );
+	connect( this, SIGNAL( iconChanged( Kopete::ContactListElement::IconState, const QString & ) ), SLOT( emitPersistentDataChanged() ) );
 	connect( this, SIGNAL( useCustomIconChanged( bool ) ), SLOT( emitPersistentDataChanged() ) );
 	connect( this, SIGNAL( displayNameChanged( const QString &, const QString & ) ), SLOT( emitPersistentDataChanged() ) );
 	connect( this, SIGNAL( movedToGroup( Kopete::MetaContact *, Kopete::Group *, Kopete::Group * ) ), SLOT( emitPersistentDataChanged() ) );
@@ -394,26 +394,26 @@ QString Kopete::MetaContact::statusIcon() const
 	{
 		case Kopete::OnlineStatus::Online:
 			if( useCustomIcon() )
-				return icon( Kopete::PluginDataObject::Online );
+				return icon( Kopete::ContactListElement::Online );
 			else
 				return QString::fromLatin1( "metacontact_online" );
 
 		case Kopete::OnlineStatus::Away:
 			if( useCustomIcon() )
-				return icon( Kopete::PluginDataObject::Away );
+				return icon( Kopete::ContactListElement::Away );
 			else
 				return QString::fromLatin1( "metacontact_away" );
 
 		case Kopete::OnlineStatus::Unknown:
 			if( useCustomIcon() )
-				return icon( Kopete::PluginDataObject::Unknown );
+				return icon( Kopete::ContactListElement::Unknown );
 			else
 				return QString::fromLatin1( "metacontact_unknown" );
 
 		case Kopete::OnlineStatus::Offline:
 		default:
 			if( useCustomIcon() )
-				return icon( Kopete::PluginDataObject::Offline );
+				return icon( Kopete::ContactListElement::Offline );
 			else
 				return QString::fromLatin1( "metacontact_offline" );
 	}
@@ -695,7 +695,7 @@ const QDomElement Kopete::MetaContact::toXML()
 	}
 
 	// Store other plugin data
-	QValueList<QDomElement> pluginData = Kopete::PluginDataObject::toXML();
+	QValueList<QDomElement> pluginData = Kopete::ContactListElement::toXML();
 	for( QValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
 		metaContact.documentElement().appendChild( metaContact.importNode( *it, true ) );
 
@@ -762,7 +762,7 @@ bool Kopete::MetaContact::fromXML( const QDomElement& element )
 		}
 		else //if( groupElement.tagName() == QString::fromLatin1( "plugin-data" ) || groupElement.tagName() == QString::fromLatin1("custom-icons" ))
 		{
-			Kopete::PluginDataObject::fromXML(contactElement);
+			Kopete::ContactListElement::fromXML(contactElement);
 		}
 		contactElement = contactElement.nextSibling().toElement();
 	}

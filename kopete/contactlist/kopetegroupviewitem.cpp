@@ -234,8 +234,8 @@ void KopeteGroupViewItem::updateIcon()
 	// TODO: clever caching
 	if ( isOpen() )
 	{
-		if ( group()->useCustomIcon() && !group()->icon( Kopete::PluginDataObject::Open ).isEmpty() )
-			open = SmallIcon( group()->icon( Kopete::PluginDataObject::Open ) );
+		if ( group()->useCustomIcon() && !group()->icon( Kopete::ContactListElement::Open ).isEmpty() )
+			open = SmallIcon( group()->icon( Kopete::ContactListElement::Open ) );
 		else
 			open = SmallIcon( KOPETE_GROUP_DEFAULT_OPEN_ICON );
 
@@ -243,8 +243,8 @@ void KopeteGroupViewItem::updateIcon()
 	}
 	else
 	{
-		if ( group()->useCustomIcon() && !group()->icon( Kopete::PluginDataObject::Closed ).isEmpty() )
-			closed = SmallIcon( group()->icon( Kopete::PluginDataObject::Closed ) );
+		if ( group()->useCustomIcon() && !group()->icon( Kopete::ContactListElement::Closed ).isEmpty() )
+			closed = SmallIcon( group()->icon( Kopete::ContactListElement::Closed ) );
 		else
 			closed = SmallIcon( KOPETE_GROUP_DEFAULT_CLOSED_ICON );
 

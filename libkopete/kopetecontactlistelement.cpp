@@ -1,7 +1,7 @@
 /*
     kopeteplugindataobject.cpp - Kopete Plugin Data Object
 
-    Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2004 by Olivier Goffart       <ogoffart @tiscalinet.be>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
     Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -16,8 +16,7 @@
     *************************************************************************
 */
 
-#include "kopeteplugindataobject.h"
-#include "kopeteonlinestatus.h"
+#include "kopetecontactlistelement.h"
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -25,30 +24,33 @@
 
 #include "kopeteplugin.h"
 
-class KopetePluginDataObjectPrivate
+namespace Kopete {
+
+class ContactListElement::Private
 {
 public:
 	QMap<QString, QMap<QString, QString> > pluginData;
-	QMap<Kopete::PluginDataObject::IconState, QString> icons;
+	QMap<ContactListElement::IconState, QString> icons;
 	bool useCustomIcon;
 };
 
-Kopete::PluginDataObject::PluginDataObject( QObject *parent, const char *name )
+ContactListElement::ContactListElement( QObject *parent, const char *name )
 : QObject( parent, name )
 {
-	d = new KopetePluginDataObjectPrivate;
+	d = new Private;
 
 	d->useCustomIcon = false;
-
+#if 0  //TODO
 	connect( Kopete::Global::onlineStatusIconCache(), SIGNAL( iconsChanged() ), SIGNAL( iconAppearanceChanged() ) );
+#endif
 }
 
-Kopete::PluginDataObject::~PluginDataObject()
+ContactListElement::~ContactListElement()
 {
 	delete d;
 }
 
-void Kopete::PluginDataObject::setPluginData( Kopete::Plugin *plugin, const QMap<QString, QString> &pluginData )
+void ContactListElement::setPluginData( Plugin *plugin, const QMap<QString, QString> &pluginData )
 {
 	if ( pluginData.isEmpty() )
 	{
@@ -61,14 +63,14 @@ void Kopete::PluginDataObject::setPluginData( Kopete::Plugin *plugin, const QMap
 	emit pluginDataChanged();
 }
 
-void Kopete::PluginDataObject::setPluginData( Kopete::Plugin *p, const QString &key, const QString &value )
+void ContactListElement::setPluginData( Plugin *p, const QString &key, const QString &value )
 {
 	d->pluginData[ p->pluginId() ][ key ] = value;
 
 	emit pluginDataChanged();
 }
 
-QMap<QString, QString> Kopete::PluginDataObject::pluginData( Kopete::Plugin *plugin ) const
+QMap<QString, QString> ContactListElement::pluginData( Plugin *plugin ) const
 {
 	if ( !d->pluginData.contains( plugin->pluginId() ) )
 		return QMap<QString, QString>();
@@ -76,7 +78,7 @@ QMap<QString, QString> Kopete::PluginDataObject::pluginData( Kopete::Plugin *plu
 	return d->pluginData[ plugin->pluginId() ];
 }
 
-QString Kopete::PluginDataObject::pluginData( Kopete::Plugin *plugin, const QString &key ) const
+QString ContactListElement::pluginData( Plugin *plugin, const QString &key ) const
 {
 	if ( !d->pluginData.contains( plugin->pluginId() ) || !d->pluginData[ plugin->pluginId() ].contains( key ) )
 		return QString::null;
@@ -84,27 +86,7 @@ QString Kopete::PluginDataObject::pluginData( Kopete::Plugin *plugin, const QStr
 	return d->pluginData[ plugin->pluginId() ][ key ];
 }
 
-void Kopete::PluginDataObject::writeConfig( const QString &configGroup ) const
-{
-	KConfig *config = KGlobal::config();
-	config->setGroup( configGroup );
-
-	if ( !d->pluginData.isEmpty() )
-	{
-		QMap<QString, QMap<QString, QString> >::ConstIterator pluginIt;
-		for ( pluginIt = d->pluginData.begin(); pluginIt != d->pluginData.end(); ++pluginIt )
-		{
-			QMap<QString, QString>::ConstIterator it;
-			for ( it = pluginIt.data().begin(); it != pluginIt.data().end(); ++it )
-				config->writeEntry( QString::fromLatin1( "PluginData_%1_%2" ).arg( pluginIt.key(), it.key() ), it.data() );
-		}
-	}
-
-	// Sync all changes to disk
-	config->sync();
-}
-
-const QValueList<QDomElement> Kopete::PluginDataObject::toXML()
+const QValueList<QDomElement> ContactListElement::toXML()
 {
 	QDomDocument pluginData;
 	QValueList<QDomElement> pluginNodes;
@@ -175,7 +157,7 @@ const QValueList<QDomElement> Kopete::PluginDataObject::toXML()
 	return pluginNodes;
 }
 
-bool Kopete::PluginDataObject::fromXML( const QDomElement& element )
+bool ContactListElement::fromXML( const QDomElement& element )
 {
 	if ( element.tagName() == QString::fromLatin1( "plugin-data" ) )
 	{
@@ -238,7 +220,7 @@ bool Kopete::PluginDataObject::fromXML( const QDomElement& element )
 	return true;
 }
 
-QString Kopete::PluginDataObject::icon( Kopete::PluginDataObject::IconState state ) const
+QString ContactListElement::icon( ContactListElement::IconState state ) const
 {
 	if ( d->icons.contains( state ) )
 		return d->icons[state];
@@ -246,7 +228,7 @@ QString Kopete::PluginDataObject::icon( Kopete::PluginDataObject::IconState stat
 	return d->icons[ None ];
 }
 
-void Kopete::PluginDataObject::setIcon( const QString& icon , Kopete::PluginDataObject::IconState state )
+void ContactListElement::setIcon( const QString& icon , ContactListElement::IconState state )
 {
 	if ( icon.isNull() )
 		d->icons.remove( state );
@@ -257,12 +239,12 @@ void Kopete::PluginDataObject::setIcon( const QString& icon , Kopete::PluginData
 	emit iconAppearanceChanged();
 }
 
-bool Kopete::PluginDataObject::useCustomIcon() const
+bool ContactListElement::useCustomIcon() const
 {
 	return d->useCustomIcon;
 }
 
-void Kopete::PluginDataObject::setUseCustomIcon( bool useCustomIcon )
+void ContactListElement::setUseCustomIcon( bool useCustomIcon )
 {
 	if ( d->useCustomIcon != useCustomIcon )
 	{
@@ -271,7 +253,9 @@ void Kopete::PluginDataObject::setUseCustomIcon( bool useCustomIcon )
 	}
 }
 
-#include "kopeteplugindataobject.moc"
+} //END namespace Kopete
 
-// vim: set noet ts=4 sts=4 sw=4:
+#include "kopetecontactlistelement.moc"
+
+
 

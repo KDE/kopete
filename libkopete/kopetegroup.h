@@ -20,7 +20,7 @@
 #define KOPETEGROUP_H
 
 #include "kopetenotifydataobject.h"
-#include "kopeteplugindataobject.h"
+#include "kopetecontactlistelement.h"
 #include "kopetemessage.h"
 #include "kopetemessagemanager.h"
 
@@ -41,7 +41,7 @@ typedef QPtrList<Group> GroupList;
 /**
  * @author Olivier Goffart
  */
-class Group : public PluginDataObject, public NotifyDataObject
+class Group : public ContactListElement, public NotifyDataObject
 {
 	Q_PROPERTY( QString displayName READ displayName WRITE setDisplayName )
 	Q_PROPERTY( uint groupId READ groupId )

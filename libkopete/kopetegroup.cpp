@@ -63,7 +63,7 @@ Kopete::Group * Kopete::Group::temporary()
 uint KopeteGroupPrivate::uniqueGroupId = 0;
 
 Kopete::Group::Group( const QString &_name, GroupType _type )
-: Kopete::PluginDataObject( Kopete::ContactList::self() )
+: Kopete::ContactListElement( Kopete::ContactList::self() )
 {
 	d = new KopeteGroupPrivate;
 	d->displayName = _name;
@@ -74,7 +74,7 @@ Kopete::Group::Group( const QString &_name, GroupType _type )
 }
 
 Kopete::Group::Group()
-: Kopete::PluginDataObject( Kopete::ContactList::self() )
+: Kopete::ContactListElement( Kopete::ContactList::self() )
 {
 	d = new KopeteGroupPrivate;
 	d->expanded = true;
@@ -145,7 +145,7 @@ const QDomElement Kopete::Group::toXML()
 	group.documentElement().appendChild( displayName );
 
 	// Store other plugin data
-	QValueList<QDomElement> pluginData = Kopete::PluginDataObject::toXML();
+	QValueList<QDomElement> pluginData = Kopete::ContactListElement::toXML();
 	for ( QValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
 		group.documentElement().appendChild( group.importNode( *it, true ) );
 
@@ -212,7 +212,7 @@ bool Kopete::Group::fromXML( const QDomElement &data )
 		}
 		else
 		{
-			Kopete::PluginDataObject::fromXML( groupElement );
+			Kopete::ContactListElement::fromXML( groupElement );
 		}
 
 		groupData = groupData.nextSibling();

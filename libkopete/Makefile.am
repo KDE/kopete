@@ -22,7 +22,7 @@ libkopete_la_SOURCES = kopeteonlinestatus.cpp kopeteprotocol.cpp \
 	kopetecontact.cpp kopetepluginmanager.cpp kopeteplugin.cpp kopetemessage.cpp \
 	kopetemessagemanager.cpp kopetemessagemanagerfactory.cpp kopetecontactlist.cpp \
 	kopetemetacontact.cpp kopeteawaydialog.cpp kopetetransfermanager.cpp kopetegroup.cpp \
-	kcautoconfigmodule.cpp kopeteaccountmanager.cpp kopeteaccount.cpp kopeteplugindataobject.cpp \
+	kcautoconfigmodule.cpp kopeteaccountmanager.cpp kopeteaccount.cpp kopetecontactlistelement.cpp \
 	kopetecommandhandler.cpp kopetenotifyclient.cpp kopeteaway.cpp kopeteawayaction.cpp \
 	kautoconfig.cpp kopetewalletmanager.cpp kopetecontactproperty.cpp kopetepassword.cpp \
 	kopeteglobal.cpp kopeteuiglobal.cpp kopetepasswordedaccount.cpp \

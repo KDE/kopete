@@ -56,7 +56,7 @@ class KopeteEditAccountWidgetPrivate;
  *   @ref Kopete::Account::setAutoConnect() to get/set this flag.
  *
  * You may add other custom fields, e.g. the nickname. To save or retrieve these settings use
- * @ref Kopete::PluginDataObject::pluginData() with your protocol as plugin.
+ * @ref Kopete::ContactListElement::pluginData() with your protocol as plugin.
  */
 class KopeteEditAccountWidget
 {
