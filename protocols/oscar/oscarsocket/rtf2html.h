@@ -24,6 +24,7 @@
 #include <qtextcodec.h>
 #include <qcolor.h>
 #include <qregexp.h>
+#include <kdebug.h>
 
 #include <vector>
 #include <stack>
@@ -56,7 +57,7 @@ enum TagEnum
 class ParStyle
 {
 public:
-    ParStyle() { dir = DirLTR; }	
+    ParStyle() { dir = DirLTR; }
     void clearFormatting();
 
 public:
@@ -103,7 +104,7 @@ protected:
 
     // Marks the position in m_tags where this level begun.
     unsigned m_nTagsStartPos;
-    
+
     // True when parsing the fonts table
     bool m_bFontTbl;
     // True when parsing the colors table.
@@ -112,7 +113,7 @@ protected:
     bool m_bFontName;
     // False until we get the tagged font name.
     bool m_bTaggedFontNameOk;
-    
+
     unsigned char m_nRed;
     unsigned char m_nGreen;
     unsigned char m_nBlue;
@@ -147,7 +148,7 @@ class RTF2HTML
     friend class Level;
 
 public:
-    RTF2HTML() : rtf_ptr(NULL), cur_level(this) {}
+    RTF2HTML();
     QString Parse(const char *rtf, const char *encoding);
 
     // Paragraph-specific functions:

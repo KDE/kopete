@@ -461,8 +461,8 @@ int rtf_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *rtftext;
-#line 1 "/home/stefan/src/kde-cvs/kdenetwork/kopete/protocols/oscar/oscarsocket/rtf.ll"
-#line 2 "/home/stefan/src/kde-cvs/kdenetwork/kopete/protocols/oscar/oscarsocket/rtf.ll"
+#line 1 "rtf.ll"
+#line 2 "rtf.ll"
 /*
     rtf.ll  -  A simple RTF Parser (Flex code)
 
@@ -478,9 +478,15 @@ char *rtftext;
     * (at your option) any later version.                                   *
     *                                                                       *
     *************************************************************************
+
+update rtf.cc:
+flex -olex.yy.c  `test -f rtf.ll || echo './'`rtf.ll
+sed '/^#/ s|lex.yy\.c|rtf.cc|' lex.yy.c >rtf.cc
+rm -f lex.yy.c
+
 */
 
-#define UP			1	
+#define UP			1
 #define DOWN			2
 #define CMD			3
 #define TXT			4
@@ -493,9 +499,9 @@ char *rtftext;
 
 #define YY_NEVER_INTERACTIVE	1
 #define YY_ALWAYS_INTERACTIVE	0
-#define YY_MAIN			0	
+#define YY_MAIN			0
 
-#line 499 "rtf.cc"
+#line 505 "rtf.cc"
 
 #define INITIAL 0
 
@@ -644,10 +650,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 40 "/home/stefan/src/kde-cvs/kdenetwork/kopete/protocols/oscar/oscarsocket/rtf.ll"
+#line 46 "rtf.ll"
 
 
-#line 651 "rtf.cc"
+#line 657 "rtf.cc"
 
 	if ( (yy_init) )
 		{
@@ -732,57 +738,57 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 42 "/home/stefan/src/kde-cvs/kdenetwork/kopete/protocols/oscar/oscarsocket/rtf.ll"
+#line 48 "rtf.ll"
 { return UP; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 43 "/home/stefan/src/kde-cvs/kdenetwork/kopete/protocols/oscar/oscarsocket/rtf.ll"
+#line 49 "rtf.ll"
 { return DOWN; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 44 "/home/stefan/src/kde-cvs/kdenetwork/kopete/protocols/oscar/oscarsocket/rtf.ll"
+#line 50 "rtf.ll"
 { return SLASH; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 45 "/home/stefan/src/kde-cvs/kdenetwork/kopete/protocols/oscar/oscarsocket/rtf.ll"
+#line 51 "rtf.ll"
 { return UNICODE_CHAR; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 46 "/home/stefan/src/kde-cvs/kdenetwork/kopete/protocols/oscar/oscarsocket/rtf.ll"
+#line 52 "rtf.ll"
 { return CMD; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 47 "/home/stefan/src/kde-cvs/kdenetwork/kopete/protocols/oscar/oscarsocket/rtf.ll"
+#line 53 "rtf.ll"
 { return HEX; }
 	YY_BREAK
 case 7:
 /* rule 7 can match eol */
 YY_RULE_SETUP
-#line 48 "/home/stefan/src/kde-cvs/kdenetwork/kopete/protocols/oscar/oscarsocket/rtf.ll"
+#line 54 "rtf.ll"
 { return IMG; }
 	YY_BREAK
 case 8:
 /* rule 8 can match eol */
 YY_RULE_SETUP
-#line 49 "/home/stefan/src/kde-cvs/kdenetwork/kopete/protocols/oscar/oscarsocket/rtf.ll"
+#line 55 "rtf.ll"
 { return TXT; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 50 "/home/stefan/src/kde-cvs/kdenetwork/kopete/protocols/oscar/oscarsocket/rtf.ll"
+#line 56 "rtf.ll"
 { return TXT; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 51 "/home/stefan/src/kde-cvs/kdenetwork/kopete/protocols/oscar/oscarsocket/rtf.ll"
+#line 57 "rtf.ll"
 ECHO;
 	YY_BREAK
-#line 786 "rtf.cc"
+#line 792 "rtf.cc"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1711,7 +1717,7 @@ void rtffree (void * ptr )
 #undef YY_DECL_IS_OURS
 #undef YY_DECL
 #endif
-#line 51 "/home/stefan/src/kde-cvs/kdenetwork/kopete/protocols/oscar/oscarsocket/rtf.ll"
+#line 57 "rtf.ll"
 
 
 
@@ -1758,6 +1764,13 @@ QString RTF2HTML::quoteString(const QString &_str, quoteMode mode)
     return str;
 }
 
+RTF2HTML::RTF2HTML()
+    : cur_level(this)
+{
+    rtf_ptr = NULL;
+    bExplicitParagraph = false;
+}
+
 OutTag* RTF2HTML::getTopOutTag(TagEnum tagType)
 {
     vector<OutTag>::iterator it, it_end;
@@ -1777,6 +1790,8 @@ void RTF2HTML::FlushOutTags()
         case TAG_FONT_COLOR:
             {
                // RTF colors are 1-based; colors[] is a 0-based array.
+               if (t.param > colors.size())
+                   break;
                QColor &c = colors[t.param-1];
                PrintUnquoted("<span style=\"color:#%02X%02X%02X\">", c.red(), c.green(), c.blue());
             }
@@ -1792,6 +1807,8 @@ void RTF2HTML::FlushOutTags()
             }
             break;
         case TAG_BG_COLOR:{
+               if (t.param > colors.size())
+                   break;
                 QColor &c = colors[t.param];
                 PrintUnquoted("<span style=\"background-color:#%02X%02X%02X;\">", c.red(), c.green(), c.blue());
                 break;
@@ -1820,9 +1837,9 @@ void Level::resetTag(TagEnum tag)
     // A stack which'll keep tags we had to close in order to reach 'tag'.
     // After we close 'tag', we will reopen them.
     stack<TagEnum> s;
-    
+
     while (p->tags.size() > m_nTagsStartPos){ // Don't go further than the point where this level starts.
- 
+
         TagEnum nTag = p->tags.top();
 
         /* A tag will be located in oTags if it still wasn't printed out.
@@ -1831,6 +1848,7 @@ void Level::resetTag(TagEnum tag)
            Thus, for each tag we remove from the actual tag stack, we also
            try to remove a yet-to-be-printed tag, and only if there are no
            yet-to-be-printed tags left, we start closing the tags we pop.
+           The tags have one space - needed for umlaute (צהü) and .utf8()
         */
         if (p->oTags.empty()){
             switch (nTag){
@@ -1838,16 +1856,16 @@ void Level::resetTag(TagEnum tag)
             case TAG_FONT_SIZE:
             case TAG_BG_COLOR:
             case TAG_FONT_FAMILY:
-                p->PrintUnquoted("</span>");
+                p->PrintUnquoted(" </span>");
                 break;
             case TAG_BOLD:
-                p->PrintUnquoted("</b>");
+                p->PrintUnquoted(" </b>");
                 break;
             case TAG_ITALIC:
-                p->PrintUnquoted("</i>");
+                p->PrintUnquoted(" </i>");
                 break;
             case TAG_UNDERLINE:
-                p->PrintUnquoted("</u>");
+                p->PrintUnquoted(" </u>");
                 break;
             default:
                 break;
@@ -1860,7 +1878,7 @@ void Level::resetTag(TagEnum tag)
         if (nTag == tag) break; // if we reached the tag we were looking to close.
         s.push(nTag); // remember to reopen this tag
     }
-    
+
     if (tag == TAG_ALL) return;
 
     while (!s.empty()){
@@ -1980,7 +1998,7 @@ void RTF2HTML::FlushParagraph()
     s += sParagraph;
     s += "</p>";
     */
-	
+
     s += sParagraph;
     s += "<br>";
 
@@ -1996,7 +2014,8 @@ void Level::setFont(unsigned nFont)
 
     if (m_bFontTbl){
         if (nFont > p->fonts.size() +1){
-	  //log(L_WARN, "Invalid font index (%u) while parsing font table.", nFont);
+				kdDebug(14200) << "Invalid font index (" <<
+					nFont << ") while parsing font table." << endl;
             return;
         }
         if (nFont > p->fonts.size()){
@@ -2010,7 +2029,8 @@ void Level::setFont(unsigned nFont)
     {
         if (nFont > p->fonts.size())
         {
-	  //log(L_WARN, "Invalid font index (%u).");
+				kdDebug(14200) << "Invalid font index (" <<
+					nFont << ")." << endl;
            return;
         }
         if (m_nFont == nFont)
@@ -2120,7 +2140,7 @@ void Level::startParagraph()
 
     // Mark this new paragraph as an explicit one (from \par etc.).
     p->bExplicitParagraph = true;
-    
+
     // Restore character formatting
     p->oTags.push_back(OutTag(TAG_FONT_SIZE, m_nFontSize));
     p->PutTag(TAG_FONT_SIZE);
@@ -2142,7 +2162,7 @@ void Level::startParagraph()
     {
        p->PutTag(TAG_ITALIC);
        p->oTags.push_back(OutTag(TAG_ITALIC, 0));
-    }    
+    }
     if (m_bUnderline)
     {
        p->oTags.push_back(OutTag(TAG_UNDERLINE, 0));
@@ -2177,7 +2197,7 @@ void Level::setParagraphDirLTR()
 void Level::setParagraphDirRTL()
 {
     // implicitly start a paragraph
-    if (!isParagraphOpen()) 
+    if (!isParagraphOpen())
       startParagraph();
     p->parStyle.dir = ParStyle::DirRTL;
 }
@@ -2210,16 +2230,16 @@ void Level::setText(const char *str)
     {
         if ((m_nFont <= 0) || (m_nFont > p->fonts.size()))
            return;
-           
+
         FontDef& def = p->fonts[m_nFont-1];
-           
+
         char *pp = strchr(str, ';');
         unsigned size;
         if (pp != NULL)
            size = (pp - str);
         else
            size = strlen(str);
-        
+
         if (m_bFontName)
         {
             def.nonTaggedName.append(str, size);
@@ -2247,6 +2267,7 @@ void Level::setText(const char *str)
 void Level::flush()
 {
     if (text.length() == 0) return;
+	 // TODO: Make encoding work in Kopete
     /*
     const char *encoding = NULL;
     if (m_nEncoding){
@@ -2373,10 +2394,10 @@ QString RTF2HTML::Parse(const char *rtf, const char *_encoding)
                         }
                         break;
                     }
-					if (n < 16)
+					if (n < 26)
 						PrintUnquoted("<img src=\"icon:smile%X\">", n);
                 }else{
-		  //log(L_WARN, "Unknown image %s", rtftext);
+						kdDebug(14200) << "Unknown image " << rtftext << endl;
                 }
                 break;
             }

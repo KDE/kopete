@@ -14,6 +14,12 @@
     * (at your option) any later version.                                   *
     *                                                                       *
     *************************************************************************
+
+update rtf.cc:
+flex -olex.yy.c  `test -f rtf.ll || echo './'`rtf.ll
+sed '/^#/ s|lex.yy\.c|rtf.cc|' lex.yy.c >rtf.cc
+rm -f lex.yy.c
+
 */
 
 #define UP			1
@@ -93,6 +99,13 @@ QString RTF2HTML::quoteString(const QString &_str, quoteMode mode)
     return str;
 }
 
+RTF2HTML::RTF2HTML()
+    : cur_level(this)
+{
+    rtf_ptr = NULL;
+    bExplicitParagraph = false;
+}
+
 OutTag* RTF2HTML::getTopOutTag(TagEnum tagType)
 {
     vector<OutTag>::iterator it, it_end;
@@ -112,6 +125,8 @@ void RTF2HTML::FlushOutTags()
         case TAG_FONT_COLOR:
             {
                // RTF colors are 1-based; colors[] is a 0-based array.
+               if (t.param > colors.size())
+                   break;
                QColor &c = colors[t.param-1];
                PrintUnquoted("<span style=\"color:#%02X%02X%02X\">", c.red(), c.green(), c.blue());
             }
@@ -127,6 +142,8 @@ void RTF2HTML::FlushOutTags()
             }
             break;
         case TAG_BG_COLOR:{
+               if (t.param > colors.size())
+                   break;
                 QColor &c = colors[t.param];
                 PrintUnquoted("<span style=\"background-color:#%02X%02X%02X;\">", c.red(), c.green(), c.blue());
                 break;
@@ -332,7 +349,8 @@ void Level::setFont(unsigned nFont)
 
     if (m_bFontTbl){
         if (nFont > p->fonts.size() +1){
-	  //log(L_WARN, "Invalid font index (%u) while parsing font table.", nFont);
+				kdDebug(14200) << "Invalid font index (" <<
+					nFont << ") while parsing font table." << endl;
             return;
         }
         if (nFont > p->fonts.size()){
@@ -346,7 +364,8 @@ void Level::setFont(unsigned nFont)
     {
         if (nFont > p->fonts.size())
         {
-	  //log(L_WARN, "Invalid font index (%u).");
+				kdDebug(14200) << "Invalid font index (" <<
+					nFont << ")." << endl;
            return;
         }
         if (m_nFont == nFont)
@@ -710,10 +729,10 @@ QString RTF2HTML::Parse(const char *rtf, const char *_encoding)
                         }
                         break;
                     }
-					if (n < 16)
+					if (n < 26)
 						PrintUnquoted("<img src=\"icon:smile%X\">", n);
                 }else{
-		  //log(L_WARN, "Unknown image %s", yytext);
+						kdDebug(14200) << "Unknown image " << yytext << endl;
                 }
                 break;
             }
