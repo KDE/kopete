@@ -335,7 +335,7 @@ void OscarSocket::OnRead(void)
 		};
 		break;
 	    default: //unknown family
-		kdDebug() << "[OSCAR] Error: unknown family " << s.family << "/" s.subtype << endl;
+		kdDebug() << "[OSCAR] Error: unknown family " << s.family << "/" << s.subtype << endl;
 	    };
 	    break;
 	    //		case 0x03: //FLAP error channel
@@ -343,7 +343,7 @@ void OscarSocket::OnRead(void)
 	    //		case 0x04: //close connection negotiation channel
 	    //			break;
 	default: //oh, crap, something's wrong
-	    kdDebug() << "[OSCAR] Error: channel " << fl.chanel << " does not exist" << endl;
+	    kdDebug() << "[OSCAR] Error: channel " << fl.channel << " does not exist" << endl;
 	    kdDebug() << "Input: " << endl;
 	    inbuf.print();
 	}
@@ -1156,7 +1156,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 			    //Error code
 			    else if (cur->type == 0x000b)
 				{
-				    kdDebug() << "[OSCAR] ICBM ch 2 error code " <<  (cur->data[1] << 8) | cur->data[0] << endl;
+				    kdDebug() << "[OSCAR] ICBM ch 2 error code " <<  ((cur->data[1] << 8) | cur->data[0]) << endl;
 				    emit protocolError(QString("Rendezvous with buddy failed.  Error code %1.\n").arg((cur->data[1] << 8) | cur->data[0]));
 				}
 			    //Invitation message/ chat description
