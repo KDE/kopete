@@ -14,10 +14,12 @@
     *************************************************************************
 */
 
+
 #include <kapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
+#include <qptrlist.h>
 #include "kopetenotifyclient.h"
 
 #include "kopeteprefs.h"
@@ -37,12 +39,12 @@ K_EXPORT_COMPONENT_FACTORY( kopete_chatwindow, ViewManagerFactory( "kopete_chatw
 
 
 typedef QMap<KopeteMessageManager*,KopeteView*> ManagerMap;
-typedef QMap<KopeteMessageManager*,KopeteEvent*> EventMap;
+typedef QPtrList<KopeteEvent> EventList;
 
 struct KopeteViewManagerPrivate
 {
 	ManagerMap managerMap;
-	EventMap eventMap;
+	EventList eventList;
 	KopeteView *activeView;
 
 	bool useQueue;
@@ -83,7 +85,7 @@ KopeteViewManager::KopeteViewManager (QObject *parent, const char *name, const Q
 
 KopeteViewManager::~KopeteViewManager()
 {
-//	kdDebug( 14000) << k_funcinfo << endl;
+	kdDebug(14000) << k_funcinfo << endl;
 
 	//delete all open chatwindow.
 	ManagerMap::Iterator it;
@@ -106,7 +108,7 @@ KopeteView *KopeteViewManager::view( KopeteMessageManager* manager, bool /*forei
 		d->eventMap[ manager ]->deleteLater();
 		d->eventMap.remove( manager );
 	}*/
-
+	kdDebug(14000) << k_funcinfo << endl;
 	if( d->managerMap.contains( manager ) && d->managerMap[ manager ] )
 	{
 		return d->managerMap[ manager ];
@@ -152,7 +154,7 @@ KopeteView *KopeteViewManager::view( KopeteMessageManager* manager, bool /*forei
 
 void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManager *manager)
 {
-//	kdDebug( 14000 ) << k_funcinfo << endl;
+	kdDebug(14000) << k_funcinfo << endl;
 
 	bool outgoingMessage = ( msg.direction() == KopeteMessage::Outbound );
 
@@ -163,11 +165,11 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 
 		if ( d->useQueue && !view( manager, outgoingMessage )->isVisible()  )
 		{
-			if (!outgoingMessage && !d->eventMap.contains( manager ))
+			if ( !outgoingMessage )
 			{
-				//FIXME: currently there are maximum only one event per kmm.
+			
 				KopeteEvent *event=new KopeteEvent(msg,manager);
-				d->eventMap.insert( manager, event );
+				d->eventList.append( event );
 				connect(event, SIGNAL(done(KopeteEvent *)), this, SLOT(slotEventDeleted(KopeteEvent *)));
 				KopeteMessageManagerFactory::factory()->postNewEvent(event);
 			}
@@ -222,7 +224,7 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 
 void KopeteViewManager::readMessages( KopeteMessageManager *manager, bool outgoingMessage )
 {
-//	kdDebug( 14000 ) << k_funcinfo << endl;
+	kdDebug( 14000 ) << k_funcinfo << endl;
 	d->foreignMessage=!outgoingMessage;
 	KopeteView *thisView = manager->view( true );
  	if( ( outgoingMessage && !thisView->isVisible() ) || d->raiseWindow )
@@ -231,60 +233,68 @@ void KopeteViewManager::readMessages( KopeteMessageManager *manager, bool outgoi
 	else if( !thisView->isVisible() )
 		thisView->makeVisible();
 
-	if(d->eventMap.contains(manager))
-		d->eventMap[manager]->apply();
+	QPtrListIterator<KopeteEvent> it( d->eventList );
+	KopeteEvent* event;
+	while ( ( event = it.current() ) != 0 )
+	{
+		++it;
+		if ( event->message().manager() == manager )
+			event->apply();
+	}
 }
 
 void KopeteViewManager::slotEventDeleted( KopeteEvent *event )
 {
+	kdDebug(14000) << k_funcinfo << endl;
 	KopeteMessageManager *kmm=event->message().manager();
 	if(!kmm)
 		return;
-	if(d->eventMap.contains(kmm) && d->eventMap[kmm]==event)
+	
+	if ( event->state()==KopeteEvent::Applied )
 	{
-		if(event->state()==KopeteEvent::Applied)
-		{
-			readMessages( kmm, false );
-		}
-		else if(event->state()==KopeteEvent::Ignored)
-		{
-			if(kmm->view(false))
-				kmm->view()->closeView(true);
-		}
-
-		d->eventMap.remove(kmm);
+		readMessages( kmm, false );
 	}
+	else if ( event->state() == KopeteEvent::Ignored ) 
+	{
+		if ( kmm->view( false ) )
+			kmm->view()->closeView( true );
+	}
+
+	d->eventList.remove( event );
 }
 
 void KopeteViewManager::nextEvent()
 {
-//	kdDebug( 14000 ) << k_funcinfo << endl;
+	kdDebug( 14000 ) << k_funcinfo << endl;
 
-	if( d->eventMap.isEmpty() )
+	if( d->eventList.isEmpty() )
 		return;
 
-	KopeteEvent *e= *(d->eventMap.begin());
+	KopeteEvent* event = d->eventList.first();
 
-	if(e)
-		e->apply();
+	if ( event )
+		event->apply();
 }
 
 void KopeteViewManager::slotViewActivated( KopeteView *view )
 {
-//	kdDebug( 14000 ) << k_funcinfo << endl;
+	kdDebug( 14000 ) << k_funcinfo << endl;
 	d->activeView = view;
-	if(d->eventMap.contains(view->msgManager()))
-	{
-		KopeteEvent *e=d->eventMap[view->msgManager()];
-		if(e)
-			e->deleteLater();
-	}
 
+	QPtrListIterator<KopeteEvent> it ( d->eventList );
+	KopeteEvent* event;
+	while ( ( event = it.current() ) != 0 )
+	{
+		++it;
+		if ( event->message().manager() == view->msgManager() )
+			event->deleteLater();
+	}
+	
 }
 
 void KopeteViewManager::slotViewDestroyed( KopeteView *closingView )
 {
-//	kdDebug( 14000 ) << k_funcinfo << endl;
+	kdDebug( 14000 ) << k_funcinfo << endl;
 
 	if( d->managerMap.contains( closingView->msgManager() ) )
 	{
@@ -298,7 +308,7 @@ void KopeteViewManager::slotViewDestroyed( KopeteView *closingView )
 
 void KopeteViewManager::slotMessageManagerDestroyed( KopeteMessageManager *manager )
 {
-//	kdDebug( 14000 ) << k_funcinfo << endl;
+	kdDebug( 14000 ) << k_funcinfo << endl;
 
 	if( d->managerMap.contains( manager ) )
 	{
