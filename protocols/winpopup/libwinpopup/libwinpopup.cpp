@@ -138,18 +138,23 @@ void KWinPopup::update(bool Wait)
 
 void KWinPopup::doUpdate()
 {	
-	QMap<QString, WorkGroup> newGroups;
+//	qDebug("Got initial search host: %s", myInitialSearchHost.latin1());
 
 	// get our domain master
 	QString theGroup;
 	QString theMaster = grabData(myInitialSearchHost, &theGroup).second[theGroup];
 
+//	qDebug("Got master: %s", theMaster.latin1());
+
 	QStringList done, todo;	// contain servers, _not_ groups
 	todo += theMaster;
 
 	// get groups & our hosts
+	QMap<QString, WorkGroup> newGroups;
 	while(todo.count())
 	{
+//		qDebug("Searching server: %s", todo[0].latin1());
+	
 		// move one item from the todo to done.
 		QString thisServer = todo[0], thisGroup;
 		todo.remove(thisServer);
@@ -194,7 +199,9 @@ QPair<stringMap, stringMap> KWinPopup::grabData(const QString &Host, QString *th
 	stringMap hosts, groups;
 
 	while(sender.isRunning() || sender.canReadLineStdout())
-	{	QString Line = sender.readLineStdout();
+	{
+		while(!sender.canReadLineStdout());
+		QString Line = sender.readLineStdout();
 		if(Phase == 0 && info.search(Line) != -1)
 		{	if(theGroup) *theGroup = info.cap(1);
 			if(theOS) *theOS = info.cap(2);

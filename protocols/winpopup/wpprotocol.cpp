@@ -63,7 +63,7 @@ K_EXPORT_COMPONENT_FACTORY(kopete_wp, KGenericFactory<WPProtocol>);
 WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProtocol(parent, name)
 {
 	DEBUG(WPDMETHOD, "WPProtocol::WPProtocol()");
-
+	
 	if(!sProtocol) sProtocol = this;
 
 	DEBUG(WPDINFO, "Loading WinPopup Plugin...");
@@ -416,8 +416,7 @@ void WPProtocol::installSamba()
 	KApplication::kdeinitExecWait("kdesu", args);
 }
 
-KopeteContact* WPProtocol::createContact( KopeteMetaContact *parent,
-	const QString &serializedData )
+KopeteContact* WPProtocol::createContact( KopeteMetaContact *parent, const QString &serializedData )
 {
 	// FIXME: serializedData contains much more than just the screen name,
 	// but for now it hopefully suffices.

@@ -42,6 +42,8 @@ public:
 	WPAddContact(WPProtocol *owner, QWidget *parent = 0, const char *name = 0);
 	~WPAddContact();
 
+	virtual bool validateData();
+	
 public slots:
 	virtual void slotFinish();
 	void slotSelected(const QString &Group);

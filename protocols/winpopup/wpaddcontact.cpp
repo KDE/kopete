@@ -71,7 +71,7 @@ void WPAddContact::slotUpdateGroups()
 	DEBUG(WPDMETHOD, "WPAddContact::slotUpdateGroups()");
 
 	theDialog->HostGroup->clear();
-	QStringList Groups = theProtocol->getGroups();
+    QStringList Groups = theProtocol->getGroups();
 	for(QStringList::Iterator i = Groups.begin(); i != Groups.end(); i++)
 		theDialog->HostGroup->insertItem(SmallIcon("network"), *i);
 	slotSelected(theDialog->HostGroup->currentText());
@@ -84,7 +84,14 @@ void WPAddContact::slotSelected(const QString &Group)
 	theDialog->HostName->clear();
 	QStringList Hosts = theProtocol->getHosts(Group);
 	for(QStringList::Iterator i = Hosts.begin(); i != Hosts.end(); i++)
-		theDialog->HostName->insertItem(SmallIcon("kuser"), *i);
+		theDialog->HostName->insertItem(SmallIcon("personal"), *i);
+}
+
+bool WPAddContact::validateData()
+{
+	DEBUG(WPDMETHOD, "WPAddContact::validateData()");
+    
+	return theDialog->HostName->currentText() != "";
 }
 
 void WPAddContact::slotFinish()
