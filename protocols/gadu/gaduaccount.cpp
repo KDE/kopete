@@ -118,7 +118,7 @@ static const char* const servers_ip[ NUM_SERVERS ] = {
 
 	setMyself( new GaduContact(  accountId().toInt(), accountId(), this, new Kopete::MetaContact() ) );
 
-	p->status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL );
+	p->status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
 	p->lastDescription = QString::null;
 
 	for ( int i = 0; i < NUM_SERVERS; i++ ) {
@@ -348,6 +348,12 @@ GaduAccount::changeStatus( const Kopete::OnlineStatus& status, const QString& de
 	}
 	else {
 		if ( !p->session_->isConnected() ) {
+			if ( password().cachedValue().isEmpty() ) {
+				// FIXME: when status string added to connect(), use it here
+				connect( status/*, descr*/ );
+				return;
+			}
+			
 			if ( useTls() != TLS_no ) {
 				p->connectWithSSL = true;
 			}
@@ -596,7 +602,7 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 			// user pressed CANCEL
 			p->status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
 			myself()->setOnlineStatus( p->status_ );
-			connect();
+			disconnected( BadUserName );
 			return;
 		default:
 			if ( p->connectWithSSL ) {
@@ -632,6 +638,7 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 				i18n( "Connection Error" ) );
 		p->status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
 		myself()->setOnlineStatus( p->status_ );
+		disconnected( InvalidHost );
 	}
 }
 
@@ -733,15 +740,11 @@ GaduAccount::slotSessionDisconnect( Kopete::Account::DisconnectReason reason )
 	if (p->pingTimer_) {
 		p->pingTimer_->stop();
 	}
-	QDictIterator<Kopete::Contact> it( contacts() );
 
-	for ( ; it.current() ; ++it ) {
-		static_cast<GaduContact*>((*it))->setOnlineStatus(
-				GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
-	}
+	setAllContactsStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
 
 	status = myself()->onlineStatus().internalStatus();
-	if ( status != GG_STATUS_NOT_AVAIL || status!= GG_STATUS_NOT_AVAIL_DESCR ) {
+	if ( status != GG_STATUS_NOT_AVAIL || status != GG_STATUS_NOT_AVAIL_DESCR ) {
 		myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
 	}
 	GaduAccount::disconnect( reason );
