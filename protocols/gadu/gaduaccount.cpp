@@ -61,7 +61,7 @@ GaduAccount::initActions()
 	actionMenu_->insert( onlineAction );
 	actionMenu_->insert( busyAction );
 	actionMenu_->insert( invisibleAction );
-  actionMenu_->insert( offlineAction );
+	actionMenu_->insert( offlineAction );
 	actionMenu_->insert( descrAction );
 
   actionMenu_->popupMenu()->insertSeparator();
@@ -97,11 +97,16 @@ GaduAccount::initConnections()
 
 void GaduAccount::setAway( bool isAway, const QString& awayMessage )
 {
-
-  if ( isAway ) {
-    uint status = (awayMessage.isEmpty()) ? GG_STATUS_BUSY : GG_STATUS_BUSY_DESCR;
-    changeStatus( GaduProtocol::protocol()->convertStatus( status ), awayMessage  );
-  }
+    uint status;
+    
+    if ( isAway ) {
+	status = (awayMessage.isEmpty()) ? GG_STATUS_BUSY : GG_STATUS_BUSY_DESCR;
+	changeStatus( GaduProtocol::protocol()->convertStatus( status ), awayMessage );
+    }
+    else{
+	status = (awayMessage.isEmpty()) ? GG_STATUS_AVAIL : GG_STATUS_AVAIL_DESCR;
+	changeStatus( GaduProtocol::protocol()->convertStatus( status ), awayMessage );
+    }
 }
 
 KopeteContact* GaduAccount::myself() const

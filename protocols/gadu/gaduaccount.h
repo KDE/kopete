@@ -107,7 +107,6 @@ private:
 	QTimer	*pingTimer_;
 
 	GaduContact* myself_;
-//	Q_UINT32 userUin_;
 	KopeteOnlineStatus status_;
 	QString	nick_;
 };
