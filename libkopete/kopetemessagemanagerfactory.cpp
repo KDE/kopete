@@ -89,7 +89,7 @@ KopeteMessageManager *KopeteMessageManagerFactory::create(
 			}
 
 		} else {
-			kdDebug() << "[KopeteMessageManagerFactory] User doesnt match, trying next session" << endl;
+			kdDebug() << "[KopeteMessageManagerFactory] User doesn't match, trying next session" << endl;
 		}
 
 	}

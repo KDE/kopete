@@ -2,7 +2,7 @@
 <class>KopeteAwayBase</class>
 <widget class="QDialog">
     <property name="name">
-        <cstring>KopeteAwaytBase</cstring>
+        <cstring>KopeteAwayBase</cstring>
     </property>
     <property name="geometry">
         <rect>
