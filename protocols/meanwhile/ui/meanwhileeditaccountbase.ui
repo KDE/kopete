@@ -70,10 +70,10 @@
                                             <cstring>mScreenName</cstring>
                                         </property>
                                         <property name="toolTip" stdset="0">
-                                            <string>Your sametime userid.</string>
+                                            <string>Your Sametime userid</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>Your sametime userid.</string>
+                                            <string>Your Sametime userid</string>
                                         </property>
                                     </widget>
                                     <widget class="QLineEdit">
@@ -81,10 +81,10 @@
                                             <cstring>mScreenName</cstring>
                                         </property>
                                         <property name="toolTip" stdset="0">
-                                            <string>Your sametime userid.</string>
+                                            <string>Your Sametime userid</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>Your sametime userid.</string>
+                                            <string>Your Sametime userid</string>
                                         </property>
                                     </widget>
                                 </hbox>
@@ -308,7 +308,7 @@
                                                     <string>The port on the Sametime server that you would like to connect to.</string>
                                                 </property>
                                                 <property name="whatsThis" stdset="0">
-                                                    <string>The port on the Sametime server that you would like to connect to.  Normally this is 1533.</string>
+                                                    <string>The port on the Sametime server that you would like to connect to.  Usually this is 1533.</string>
                                                 </property>
                                             </widget>
                                             <widget class="QSpinBox">
@@ -328,7 +328,7 @@
                                                     <string>The port on the Sametime server that you would like to connect to.</string>
                                                 </property>
                                                 <property name="whatsThis" stdset="0">
-                                                    <string>The port on the Sametime server that you would like to connect to.  Normally this is 1533.</string>
+                                                    <string>The port on the Sametime server that you would like to connect to.  Usually this is 1533.</string>
                                                 </property>
                                             </widget>
                                         </hbox>

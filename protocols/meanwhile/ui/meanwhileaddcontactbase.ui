@@ -69,10 +69,10 @@
                         <string>&amp;Find</string>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Find Userid.</string>
+                        <string>Find Userid</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Find Userid.</string>
+                        <string>Find Userid</string>
                     </property>
                 </widget>
             </hbox>

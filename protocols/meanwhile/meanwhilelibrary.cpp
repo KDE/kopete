@@ -489,7 +489,7 @@ HERE
     {
         KMessageBox::queuedMessageBox( 
                         0, KMessageBox::Error , 
-                        i18n( "couldnot connect to server"),
+                        i18n( "Could not connect to server"),
                         i18n( "Meanwhile Plugin" ), 
                         KMessageBox::Notify );
         delete sock;

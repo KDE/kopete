@@ -350,7 +350,7 @@ void MeanwhileAccount::slotServerNotification(const QString &mesg)
     KMessageBox::queuedMessageBox( 
                         0, KMessageBox::Error , 
                         mesg,
-                        i18n( "Meanwhile Plugin: Mesage from server" ), 
+                        i18n( "Meanwhile Plugin: Message from server" ), 
                         KMessageBox::Notify );
 }
 
