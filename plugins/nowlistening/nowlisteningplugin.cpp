@@ -43,8 +43,8 @@
 typedef KGenericFactory<NowListeningPlugin> NowListeningPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_nowlistening, NowListeningPluginFactory( "kopete_nowlistening" )  );
 
-NowListeningPlugin::NowListeningPlugin( QObject *parent, const char *name, const QStringList & /*args*/ )
-: KopetePlugin( NowListeningPlugin::instance(), parent, name )
+NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const QStringList& /*args*/ )
+: KopetePlugin( NowListeningPluginFactory::instance(), parent, name )
 {
 	if ( pluginStatic_ )
 		kdDebug(14307)<<"####"<<"Now Listening already initialized"<<endl;
@@ -120,10 +120,10 @@ void NowListeningPlugin::slotOutgoingMessage( KopeteMessage& msg )
 		if ( originalBody.startsWith( "/media" ) )
 		{
 			// replace it with media advert
-			QString newBody = allPlayerAdvert() + originalBody.right( 
+			QString newBody = allPlayerAdvert() + originalBody.right(
 					originalBody.length() - 6 );
 			msg.setBody( newBody, KopeteMessage::RichText );
-		}	
+		}
 		return;
 	}
 }
@@ -133,7 +133,7 @@ QString NowListeningPlugin::allPlayerAdvert() const
 	// generate message for all players
 	QString message = "";
 	QString perTrack = m_prefs->perTrack();
-	
+
 	for ( NLMediaPlayer* i = m_mediaPlayer->first(); i; i = m_mediaPlayer->next() )
 	{
 		i->update();
@@ -142,7 +142,7 @@ QString NowListeningPlugin::allPlayerAdvert() const
 			kdDebug(14307) << k_funcinfo << i->name() << " is playing" << endl;
 			if ( message.isEmpty() )
 				message = m_prefs->header();
-				
+
 			if (  message != m_prefs->header() ) // > 1 track playing!
 				message = message + m_prefs->conjunction();
 			message = message + substDepthFirst( i, perTrack, false );
@@ -159,7 +159,7 @@ QString NowListeningPlugin::substDepthFirst( NLMediaPlayer *player,
 	QString artist = player->artist();
 	QString album = player->album();
 	QString playerName = player->name();
-	
+
 	for ( unsigned int i = 0; i < in.length(); i++ )
 	{
 		QChar c = in.at( i );
