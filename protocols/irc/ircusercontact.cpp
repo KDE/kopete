@@ -30,6 +30,7 @@
 #include "ircprotocol.h"
 #include "kcodecaction.h"
 #include "kopetemetacontact.h"
+#include "kopeteview.h"
 
 IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString &nickname, KopeteMetaContact *m )
 	: IRCContact(contactManager, nickname, m ),
@@ -140,8 +141,13 @@ void IRCUserContact::slotUserOnline( const QString &nick )
 	if( nick.lower() == m_nickName.lower() )
 	{
 		m_isOnline = true;
-		mOnlineTimer->start( 40000, true );
+		mOnlineTimer->start( 45000, true );
 		updateStatus();
+		if( mInfo.lastUpdate.isNull() || mInfo.lastUpdate.secsTo( QTime::currentTime() ) > 45 )
+		{
+			m_engine->writeMessage( QString::fromLatin1("WHO %1").arg(m_nickName) );
+			mInfo.lastUpdate = QTime::currentTime();
+		}
 	}
 }
 
@@ -264,30 +270,35 @@ void IRCUserContact::slotWhoIsComplete(const QString &nickname)
 	{
 		updateInfo();
 
-		//User info
-		QString msg = i18n("%1 is (%2@%3): %4\n")
-			.arg(nickname)
-			.arg(mInfo.userName)
-			.arg(mInfo.hostName)
-			.arg(mInfo.realName);
+		if( m_protocol->commandInProgress() )
+		{
+			//User info
+			QString msg = i18n("%1 is (%2@%3): %4\n")
+				.arg(nickname)
+				.arg(mInfo.userName)
+				.arg(mInfo.hostName)
+				.arg(mInfo.realName);
 
-		if( mInfo.isOperator )
-			msg += i18n("%1 is an IRC operator\n").arg(nickname);
+			if( mInfo.isOperator )
+				msg += i18n("%1 is an IRC operator\n").arg(nickname);
 
-		//Channels
-		msg += i18n("on channels %1\n").arg(mInfo.channels.join(" ; "));
+			//Channels
+			msg += i18n("on channels %1\n").arg(mInfo.channels.join(" ; "));
 
-		//Server
-		msg += i18n("on IRC via server %1 ( %2 )\n").arg(mInfo.serverName).arg(mInfo.serverInfo);
+			//Server
+			msg += i18n("on IRC via server %1 ( %2 )\n").arg(mInfo.serverName).arg(mInfo.serverInfo);
 
-		//Idle
-		msg += i18n("idle: %2\n").arg( QString::number(mInfo.idle) );
+			//Idle
+			QString idleTime = formattedIdleTime();
+			msg += i18n("idle: %2\n").arg( idleTime.isEmpty() ? QString::number(0) : idleTime );
 
-		//End
-		KopeteMessage m( m_account->myServer(), mMyself, msg, KopeteMessage::Internal,
-			KopeteMessage::PlainText, KopeteMessage::Chat );
+			//End
+			KopeteMessage m( m_account->myServer(), mMyself, msg, KopeteMessage::Internal,
+				KopeteMessage::PlainText, KopeteMessage::Chat );
 
-		appendMessage(m);
+			KopeteMessageManagerFactory::factory()->activeView()->appendMessage(m);
+			m_protocol->setCommandInProgress(false);
+		}
 	}
 }
 
@@ -328,6 +339,11 @@ void IRCUserContact::slotNewWhoReply( const QString &channel, const QString &use
 		setAway(away);
 
 		updateInfo();
+
+		if( m_protocol->commandInProgress() )
+		{
+			m_protocol->setCommandInProgress(false);
+		}
 	}
 }
 

@@ -109,6 +109,10 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		SLOT( slotWhoisCommand( const QString &, KopeteMessageManager*) ),
 		i18n("USAGE: /whois <nickname> - Display whois info on this user."), 1, 1 );
 
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("who"),
+		SLOT( slotWhoCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /who <nickname|channel> - Display who info on this user/channel."), 1, 1 );
+
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("query"),
 		SLOT( slotQueryCommand( const QString &, KopeteMessageManager*) ),
 		i18n("USAGE: /query <nickname> [<message>] - Open a private chat with this user."), 1 );
@@ -179,6 +183,8 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView* ) ),
 		this, SLOT( slotViewCreated( KopeteView* ) ) );
+
+	m_commandInProgress = false;
 }
 
 IRCProtocol * IRCProtocol::protocol()
@@ -457,6 +463,18 @@ void IRCProtocol::slotWhoisCommand( const QString &args, KopeteMessageManager *m
 	{
 		QStringList argsList = KopeteCommandHandler::parseArguments( args );
 		static_cast<IRCAccount*>( manager->account() )->engine()->whoisUser( argsList.first() );
+		m_commandInProgress = true;
+	}
+}
+
+void IRCProtocol::slotWhoCommand( const QString &args, KopeteMessageManager *manager )
+{
+	if( !args.isEmpty() )
+	{
+		QStringList argsList = KopeteCommandHandler::parseArguments( args );
+		static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage(
+			QString::fromLatin1("WHO %1").arg( argsList.first() ) );
+		m_commandInProgress = true;
 	}
 }
 

@@ -45,6 +45,7 @@ struct IRCUserInfo
 	bool isOperator;
 	bool away;
 	uint hops;
+	QTime lastUpdate;
 };
 
 /**

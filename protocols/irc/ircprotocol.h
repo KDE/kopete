@@ -83,6 +83,9 @@ public:
 
 	const KopeteOnlineStatus m_StatusUnknown;
 
+	bool commandInProgress(){ return m_commandInProgress; }
+	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }
+
 private slots:
 	void slotMessageFilter( KopeteMessage &msg );
 
@@ -97,6 +100,7 @@ private slots:
 	void slotJoinCommand( const QString &args, KopeteMessageManager *manager);
 	void slotNickCommand( const QString &args, KopeteMessageManager *manager);
 	void slotWhoisCommand( const QString &args, KopeteMessageManager *manager);
+	void slotWhoCommand( const QString &args, KopeteMessageManager *manager);
 	void slotMeCommand( const QString &args, KopeteMessageManager *manager);
 	void slotModeCommand( const QString &args, KopeteMessageManager *manager);
 	void slotQueryCommand( const QString &args, KopeteMessageManager *manager);
@@ -120,6 +124,8 @@ private:
 
 	DOM::Node activeNode;
 	IRCAccount *activeAccount;
+
+	bool m_commandInProgress;
 };
 
 #endif
