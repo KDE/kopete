@@ -15,12 +15,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qlayout.h>
 #include <qpushbutton.h>
 
 #include <klineedit.h>
 #include <kgenericfactory.h>
-#include <kautoconfig.h>
 
 #include "cryptographyprefsbase.h"
 #include "cryptographypreferences.h"
@@ -30,35 +28,12 @@ typedef KGenericFactory<CryptographyPreferences> CryptographyPreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_cryptography, CryptographyPreferencesFactory("kcm_kopete_cryptography"))
 
 CryptographyPreferences::CryptographyPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
-							: KCModule(CryptographyPreferencesFactory::instance(), parent, args)
+							: KCAutoConfigModule(CryptographyPreferencesFactory::instance(), parent, args)
 {
 	// Add actuall widget generated from ui file.
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	preferencesDialog = new CryptographyPrefsUI(this);
-	connect (preferencesDialog->m_selectOwnKey , SIGNAL(pressed()) ,
-			this , SLOT(slotSelectPressed()));
-
-	// KAutoConfig stuff
-	kautoconfig = new KAutoConfig(KGlobal::config(), this, "kautoconfig");
-	connect(kautoconfig, SIGNAL(widgetModified()), SLOT(widgetModified()));
-	connect(kautoconfig, SIGNAL(settingsChanged()), SLOT(widgetModified()));
-	kautoconfig->addWidget(preferencesDialog, "Cryptography Plugin");
-	kautoconfig->retrieveSettings(true);
-}
-
-void CryptographyPreferences::widgetModified()
-{
-	setChanged(kautoconfig->hasChanged());
-}
-
-void CryptographyPreferences::save()
-{
-	kautoconfig->saveSettings();
-}
-
-void CryptographyPreferences::defaults ()
-{
-	kautoconfig->resetSettings();
+	connect (preferencesDialog->m_selectOwnKey , SIGNAL(pressed()) , this , SLOT(slotSelectPressed()));
+	setMainWidget( preferencesDialog ,"Cryptography Plugin");
 }
 
 void CryptographyPreferences::slotSelectPressed()

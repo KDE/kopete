@@ -18,7 +18,7 @@
 #ifndef CryptographyPREFERENCES_H
 #define CryptographyPREFERENCES_H
 
-#include "kcmodule.h"
+#include "kcautoconfigmodule.h"
 
 class CryptographyPrefsUI;
 class KAutoConfig;
@@ -27,23 +27,14 @@ class KAutoConfig;
  * Preference widget for the Cryptography plugin
  * @author Olivier Goffart
  */
-class CryptographyPreferences : public KCModule  {
+class CryptographyPreferences : public KCAutoConfigModule  {
    Q_OBJECT
-
 public:
 	CryptographyPreferences(QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList());
-
-	virtual void save();
-	virtual void defaults();
-
 private:
 	CryptographyPrefsUI *preferencesDialog;
-	KAutoConfig *kautoconfig;
-
 private slots: // Public slots
 	void slotSelectPressed();
-	void widgetModified();
-
 };
 
 #endif
