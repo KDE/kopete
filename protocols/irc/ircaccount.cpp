@@ -146,7 +146,10 @@ IRCAccount::~IRCAccount()
 		engine()->quitIRC(i18n("Plugin Unloaded"), true);
 
 	delete m_contactManager;
+	m_contactManager = 0;
+
 	delete m_engine;
+	m_engine = 0;
 
 	if( m_channelList )
 		m_channelList->delayedDestruct();
@@ -497,7 +500,8 @@ void IRCAccount::slotDisconnected()
 {
 	triedAltNick = false;
 	mySelf()->setOnlineStatus( m_protocol->m_UserStatusOffline );
-	m_contactManager->removeFromNotifyList( m_engine->nickName() );
+	if (m_contactManager)
+		m_contactManager->removeFromNotifyList( m_engine->nickName() );
 
 	if( !autoConnect.isNull() )
 		KopeteAccountManager::manager()->removeAccount( this );
