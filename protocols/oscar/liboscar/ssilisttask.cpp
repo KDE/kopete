@@ -110,6 +110,9 @@ void SSIListTask::handleSSIListReply()
 			tlvList.append( t );
 		}
 		
+		if ( itemType == ROSTER_CONTACT )
+			itemName = Oscar::normalize( itemName );
+		
 		Oscar::SSI s( itemName, groupId, itemId, itemType, tlvList );
 		s.setTLVListLength( tlvLength );
 		
