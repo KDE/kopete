@@ -265,12 +265,14 @@ void JabberProtocol::initActions() {
 	actionGoXA = new KAction(i18n("Extended Away"), "jabber_away", 0, this, SLOT(slotSetXA()), this, "actionJabberXA");
 	actionGoDND = new KAction(i18n("Do Not Disturb"), "jabber_na", 0, this, SLOT(slotSetDND()), this, "actionJabberDND");
 	actionGoOffline = new KAction(i18n("Offline"), "jabber_offline", 0, this, SLOT(slotDisconnect()), this, "actionJabberDisconnect");
+	actionSendRaw = new KAction(i18n("Send raw packet"), "jabber_offline", 0, this, SLOT(slotSendRaw()), this, "actionJabberSendRaw");
 	actionStatusMenu = new KActionMenu("Jabber", this);
 	actionStatusMenu->insert(actionGoOnline);
 	actionStatusMenu->insert(actionGoAway);
 	actionStatusMenu->insert(actionGoXA);
 	actionStatusMenu->insert(actionGoDND);
 	actionStatusMenu->insert(actionGoOffline);
+	actionStatusMenu->insert(actionSendRaw);
 	actionStatusMenu->plug(kopeteapp->systemTray()->contextMenu(), 1);
 }
 
@@ -315,6 +317,13 @@ void JabberProtocol::slotSetDND() {
 	reasonDialog = new dlgJabberStatus(this, STATUS_DND, kopeteapp->mainWindow());
 }
 
+void JabberProtocol::slotSendRaw()
+{
+
+	kdDebug() << "Sending raw message" << endl;
+
+}
+
 void JabberProtocol::setPresence(int status, QString reason, int priority) {
 	if (mIsConnected) {
 		mProtocol->setPresence(status, reason, priority);
@@ -339,6 +348,7 @@ void JabberProtocol::slotIconRightClicked(const QPoint&) {
 	actionGoAway->plug(popup);
 	actionGoXA->plug(popup);
 	actionGoDND->plug(popup);
+	actionSendRaw->plug(popup);
 	popup->popup(QCursor::pos());
 }
 

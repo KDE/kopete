@@ -98,6 +98,7 @@ public slots:
 	void slotSetAway();
 	void slotSetXA();
 	void slotSetDND();
+	void slotSendRaw();
 	void setPresence(int, QString, int = 0);
 
 	void slotIconRightClicked(const QPoint&);
@@ -136,6 +137,7 @@ private:
 	KAction *actionGoXA;
 	KAction *actionGoDND;
 	KAction *actionGoOffline;
+	KAction *actionSendRaw;
 	KPopupMenu *popup;
 	KActionMenu *actionStatusMenu;
 
