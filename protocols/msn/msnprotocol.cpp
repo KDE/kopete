@@ -687,8 +687,10 @@ void MSNProtocol::slotBlockContact( QString handle ) const
 
 void MSNProtocol::blockContact( QString handle ) const
 {
-	m_notifySocket->removeContact( handle, 0, AL);
-	m_notifySocket->addContact( handle, handle, 0, BL );
+	if(m_allowList.contains(handle))
+		m_notifySocket->removeContact( handle, 0, AL);
+	if(!m_blockList.contains(handle))
+		m_notifySocket->addContact( handle, handle, 0, BL );
 }
 
 void MSNProtocol::addContact( const QString &userID , KopeteMetaContact *m) 
@@ -755,17 +757,24 @@ void MSNProtocol::removeContact(MSNContact *c )
 {
 	if( isConnected() )
 	{
-		const QString id = c->msnId();
+		QString id = c->msnId();
 		if( !m_contacts.contains( id ) )
 				return;
 
 		QStringList list = m_contacts[ id ]->groups();
 
+		if(list.isEmpty())
+		{
+			kdDebug() << "MSNProtocol::removeContact : ohoh, contact already removed from server, just delete it" <<endl;
+			slotContactRemoved(id,"00",0,0);
+			return;
+		}
+		
+		kdDebug() << "MSNProtocol::removeContact" <<endl;
 		for( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
 		{
 			m_notifySocket->removeContact( id, groupNumber( (*it).latin1() ), FL );
 		}
-
 		//No needed to unblock contact
 		/*if( m_contacts[ id ]->isBlocked() )
 			m_notifySocket->removeContact( id, 0, BL );*/
@@ -987,7 +996,8 @@ void MSNProtocol::slotContactStatusChanged( const QString &handle,
 	if( m_contacts.contains( handle ) )
 	{
 		m_contacts[ handle ]->setMsnStatus( status );
-		if(publicName)  m_contacts[ handle ]->setDisplayName( publicName );
+		if(publicName)
+			m_contacts[ handle ]->setDisplayName( publicName );
 
 		if( status == FLN )
 		{
@@ -1092,6 +1102,9 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 	{
 		if( !m_allowList.contains( handle ) )
 			m_allowList.append( handle );
+		if( m_contacts.contains( handle ) )
+			m_contacts[ handle ]->setAllowed( true );
+
 	}
 	else if( list == "RL" )
 	{
@@ -1120,6 +1133,16 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list,
 	if( gn.isNull() )
 		gn = i18n( "Unknown" );
 
+	if( list == "BL" )
+	{
+		m_blockList.remove(handle);
+	}
+	if( list == "AL" )
+	{
+		m_allowList.remove(handle);
+	}
+
+
 	if( m_contacts.contains( handle ) )
 	{
 		if( list == "RL" )
@@ -1144,12 +1167,21 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list,
 			// Contact is removed from the FL list, remove it from the group
 			m_contacts[ handle ]->removedFromGroup( gn );
 		}
+		else	if( list == "BL" )
+		{
+			m_contacts[ handle ]->setBlocked(false);
+		}
+		else	if( list == "AL" )
+		{
+			m_contacts[ handle ]->setAllowed(false);
+		}
 
 		if( m_contacts[ handle ]->groups().isEmpty()  && !m_contacts[ handle ]->isMoving())
 		{
 			kdDebug() << "MSNProtocol::slotContactRemoved : contact removed from each group, delete contact" << endl;
-			m_contacts.remove( handle );
 			delete m_contacts[ handle ];
+			m_contacts.remove( handle );
+
 		} 
 	}
 }
@@ -1426,8 +1458,10 @@ void MSNProtocol::slotStartChatSession( QString handle )
 
 void MSNProtocol::contactUnBlock( QString handle ) const
 {
-	m_notifySocket->removeContact( handle, 0, BL );
-	m_notifySocket->addContact( handle, handle, 0, AL );
+	if(m_blockList.contains(handle))
+		m_notifySocket->removeContact( handle, 0, BL );
+	if(!m_allowList.contains(handle))
+		m_notifySocket->addContact( handle, handle, 0, AL );
 }
 
 void MSNProtocol::slotChangePublicName()
@@ -1506,7 +1540,7 @@ void MSNProtocol::slotSwitchBoardClosed( MSNSwitchBoardSocket *switchboard)
 
 void MSNProtocol::slotContactDestroyed( KopeteContact *c )
 {
-	kdDebug() << "MSNProtocol::slotContactDestroyed " << endl;
+	//kdDebug() << "MSNProtocol::slotContactDestroyed " << endl;
 	//m_metaContacts.remove( c->metaContact() );
 	for ( QMap<QString,MSNContact*>::iterator it = m_contacts.begin(); it!=m_contacts.end(); ++it  )
 	{

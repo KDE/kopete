@@ -58,7 +58,7 @@ MSNContact::MSNContact( QString &protocolId, const QString &msnId,
 
 MSNContact::~MSNContact()
 {
-	kdDebug() << "MSNContact::~MSNContact" << endl;
+//	kdDebug() << "MSNContact::~MSNContact" << endl;
 }
 
 KActionCollection *MSNContact::customContextMenuActions()
@@ -146,10 +146,12 @@ void MSNContact::slotUserInfo()
 
 void MSNContact::slotDeleteContact()
 {
+	kdDebug() << "MSNContact::slotDeleteContact" << endl;
+	m_moving=false;
 	MSNProtocol::protocol()->removeContact( this );
 }
 
-MSNContact::ContactStatus MSNContact::status() const
+KopeteContact::ContactStatus MSNContact::status() const
 {
 	switch ( m_status )
 	{
@@ -168,7 +170,7 @@ MSNContact::ContactStatus MSNContact::status() const
 			return Away;
 			break;
 		}
-
+		case MSNProtocol::FLN: // Offline
 		default:
 		{
 			return Offline;
@@ -179,54 +181,57 @@ MSNContact::ContactStatus MSNContact::status() const
 
 QString MSNContact::statusText() const
 {
+	QString statusText="";
 	switch ( m_status )
 	{
-		case MSNProtocol::BLO: // blocked
+		case MSNProtocol::BLO: // blocked -- not used
 		{
 			return i18n("Blocked");
 			break;
 		}
 		case MSNProtocol::NLN: // Online
 		{
-			return i18n("Online");
+			statusText= i18n("Online");
 			break;
 		}
 		case MSNProtocol::BSY: // Busy
 		{
-			return i18n("Busy");
+			statusText= i18n("Busy");
 			break;
 		}
 		case MSNProtocol::IDL: // Idle
 		{
-			return i18n("Idle");
+			statusText= i18n("Idle");
 			break;
 		}
 		case MSNProtocol::AWY: // Away from computer
 		{
-			return i18n("Away From Computer");
+			statusText= i18n("Away From Computer");
 			break;
 		}
 		case MSNProtocol::PHN: // On the phone
 		{
-			return i18n("On the Phone");
+			statusText= i18n("On the Phone");
 			break;
 		}
 		case MSNProtocol::BRB: // Be right back
 		{
-			return i18n("Be Right Back");
+			statusText= i18n("Be Right Back");
 			break;
 		}
 		case MSNProtocol::LUN: // Out to lunch
 		{
-			return i18n("Out to Lunch");
+			statusText= i18n("Out to Lunch");
 			break;
 		}
-
 		default:
 		{
-			return i18n("Offline");
+			statusText= i18n("Offline");
 		}
 	}
+	if(isBlocked())
+		statusText += i18n("|Blocked");
+	return statusText;
 }
 
 QString MSNContact::statusIcon() const
@@ -324,16 +329,17 @@ MSNProtocol::Status MSNContact::msnStatus() const
 	return m_status;
 }
 
-void MSNContact::setMsnStatus( MSNProtocol::Status status )
+void MSNContact::setMsnStatus( MSNProtocol::Status _status )
 {
-	if( m_status == status )
+	if( m_status == _status )
 		return;
 
 	kdDebug() << "MSNContact::setMsnStatus: Setting status for " << m_msnId <<
-		" to " << status << endl;
-	m_status = status;
+		" to " << _status << endl;
+	m_status = _status;
 
-	emit statusChanged( this, MSNContact::status() );
+	emit statusChanged( this, status() );
+	emit statusChanged(  );
 }
 
 bool MSNContact::isBlocked() const
