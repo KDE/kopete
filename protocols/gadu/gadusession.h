@@ -41,6 +41,7 @@ struct contactLine {
 	QString nickname;
 	QString phonenr;
 	QString email;
+	bool 	ignored;
 };
 
 typedef QPtrList<contactLine> gaduContactsList;

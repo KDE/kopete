@@ -494,23 +494,46 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactsList , const QStrin
 		kdDebug(14100)<<"\""<< cline << "\"" << endl;
 
 		strList  = QStringList::split( QChar( ';' ), cline, true );
+
+		stringIterator = strList.begin();
+
+		if ( cl == NULL ) {
+			cl = new contactLine;
+		}
+		
+		// ignored contact
+		if ( strList.count() == 7 ) {
+			 // well, this is probably it - you're d00med d\/de :-)
+			if ( (*stringIterator) == QString( "i" ) ) {
+				cl->ignored	= true;
+				cl->uin		= strList[6];
+				kdDebug(14100) << " ignored :\"" << cl->uin << "\"" << endl;	
+				++lni;
+				continue;
+			}
+			else {
+				kdDebug(14100) << "This line of contacts is incorrect, send it to me if you think it is ok:" << strList.count() << " LINE:\"" << cline << "\"" << endl;
+				++lni;
+				continue;
+			}
+		} 
 		
 		if ( strList.count() == 12 ) {
 			email = true;
 		}
 		else {
 			email = false;
+			if ( strList.count() != 8 ) {
+				kdDebug(14100) << "This line of contacts is incorrect, send it to me if you think it is ok:" <<strList.count() << " LINE:\"" << cline << "\"" << endl;
+				++lni;
+				continue;
+			}
 		}
 		
-		if ( strList.count() != 8 && email == false ) {
-			kdDebug(14100)<< "fishy, maybe contact format was changed. Contact author/update software"<<endl;
-			kdDebug(14100)<<"nr of elements should be 8 or 12, but is "<<strList.count() << " LINE:" << cline <<endl;
-			++lni;
-			continue;
-		}
+
+//each line ((firstname);(secondname);(nickname).;(displayname);(tel);(group);(uin);
 
 		stringIterator = strList.begin();
-//each line ((firstname);(secondname);(nickname).;(displayname);(tel);(group);(uin);
 
 		if ( cl == NULL ) {
 			cl = new contactLine;
