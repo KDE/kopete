@@ -1,10 +1,10 @@
 /*
     msnaccount.h - Manages a single MSN account
 
-    Copyright (c) 2003-2004 by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2005 by Olivier Goffart       <ogoffart@ kde.org>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -968,12 +968,16 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 
 void MSNAccount::slotContactRemoved( const QString& handle, const QString& list, uint group )
 {
+	MSNContact *c=static_cast<MSNContact *>( contacts()[ handle ] );
 	if ( list == "BL" )
 	{
 		m_blockList.remove( handle );
 		configGroup()->writeEntry( "blockList" , m_blockList ) ;
 		if ( !m_allowList.contains( handle ) )
 			notifySocket()->addContact( handle, handle, 0, MSNProtocol::AL );
+
+		if(c)
+			c->setBlocked( false );
 	}
 	else if ( list == "AL" )
 	{
@@ -981,22 +985,21 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 		configGroup()->writeEntry( "allowList" , m_allowList ) ;
 		if ( !m_blockList.contains( handle ) )
 			notifySocket()->addContact( handle, handle, 0, MSNProtocol::BL );
+
+		if(c)
+			c->setAllowed( false );
 	}
 	else if ( list == "RL" )
 	{
 		m_reverseList.remove( handle );
 		configGroup()->writeEntry( "reversekList" , m_reverseList ) ;
-	}
 
-	MSNContact *c = static_cast<MSNContact *>( contacts()[ handle ] );
-	if ( c )
-	{
-		if ( list == "RL" )
+		if ( c )
 		{
 			// Contact is removed from the reverse list
 			// only MSN can do this, so this is currently not supported
 			c->setReversed( false );
-/*
+		/*
 			InfoWidget *info = new InfoWidget( 0 );
 			info->title->setText( "<b>" + i18n( "Contact removed!" ) +"</b>" );
 			QString dummy;
@@ -1006,39 +1009,32 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 			info->infoText->setText( dummy );
 			info->setCaption( "KMerlin - Info" );
 			info->show();
-*/
+		*/
 		}
-		else if ( list == "FL" )
-		{
-			// Contact is removed from the FL list, remove it from the group
+	}
+	else if ( list == "FL" )
+	{
+		// Contact is removed from the FL list, remove it from the group
+		if(c)
 			c->contactRemovedFromGroup( group );
-
-			//check if the group is now empty to remove it
-			if ( m_notifySocket )
-			{
-				bool still_have_contact=false;
+		
+		//check if the group is now empty to remove it
+		if ( group != 0 && m_notifySocket )
+		{
+			bool still_have_contact=false;
 				// if contact are contains only in the group we are removing, abort the 
-				QDictIterator<Kopete::Contact> it( contacts() );
-				for ( ; it.current(); ++it )
+			QDictIterator<Kopete::Contact> it( contacts() );
+			for ( ; it.current(); ++it )
+			{
+				MSNContact *c2 = static_cast<MSNContact *>( it.current() );
+				if ( c2->serverGroups().contains( group ) )
 				{
-					MSNContact *c = static_cast<MSNContact *>( it.current() );
-					if ( c->serverGroups().contains( group )  )
-					{
-						still_have_contact=true;
-						break;
-					}
+					still_have_contact=true;
+					break;
 				}
-				if(!still_have_contact)
-					m_notifySocket->removeGroup( group );
 			}
-		}
-		else if ( list == "BL" )
-		{
-			c->setBlocked( false );
-		}
-		else if ( list == "AL" )
-		{
-			c->setAllowed( false );
+			if(!still_have_contact)
+				m_notifySocket->removeGroup( group );
 		}
 	}
 }
