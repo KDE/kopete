@@ -182,9 +182,14 @@ void KopeteContact::showContextMenu(const QPoint& p)
 	/* Build the menu */	
 	contextMenu = new KPopupMenu();
 	contextMenu->insertTitle( displayName()+" <"+id()+"> ("+statusText()+")" );   
+	
 	actionSendMessage->plug( contextMenu );
+	actionSendMessage->setEnabled( isReachable() );
+
 	actionViewHistory->plug( contextMenu );
+
 	contextMenu->insertSeparator();
+
 	actionChangeMetaContact->setEnabled( !m_metaContact->isTemporary() );
 	actionChangeMetaContact->plug( contextMenu );
 	actionUserInfo->plug( contextMenu );
@@ -195,10 +200,13 @@ void KopeteContact::showContextMenu(const QPoint& p)
 	 */
 	/* Get the custom actions from the protocols (pure virtual function) */
 	KActionCollection *customActions = customContextMenuActions();
-	if(customActions != 0L){
+	if(customActions != 0L)
+	{
 		if ( !customActions->isEmpty() )
 			contextMenu->insertSeparator();
-		for(unsigned int i = 0; i < customActions->count(); i++){
+			
+		for(unsigned int i = 0; i < customActions->count(); i++)
+		{
 			customActions->action(i)->plug( contextMenu );
 		}
 	}
