@@ -327,11 +327,6 @@ private slots:
 	void slotMessageManagerDeleted(KopeteMessageManager *manager);
 
 	/*
-	 * Cleans up when a contact is destroyed
-	 */
-	void slotContactDestroyed(KopeteContact *c);
-
-	/*
 	 * Incoming subscription request
 	 */
 	void slotSubscription(const Jid &jid, const QString &type);
