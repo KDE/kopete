@@ -41,18 +41,21 @@ IRCContactManager::IRCContactManager(const QString &nickName, const QString &ser
 
 	QObject::connect(m_engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewMessage(const QString &, const QString &, const QString &)));
-	
+
 	QObject::connect(m_engine, SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewPrivMessage(const QString &, const QString &, const QString &)));
 
 	QObject::connect(m_engine, SIGNAL(incomingAction(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewAction(const QString &, const QString &, const QString &)));
-	
+
 	QObject::connect(m_engine, SIGNAL(incomingPrivAction(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewPrivAction(const QString &, const QString &, const QString &)));
-			
+
 	QObject::connect(m_engine, SIGNAL(incomingNickChange(const QString &, const QString &)),
 			this, SLOT( slotNewNickChange(const QString&, const QString&)));
+
+	QObject::connect(m_engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)),
+			this, SLOT( slotNewNickChange(const QString &, const QString &)));
 
 	m_NotifyTimer = new QTimer(this);
 	QObject::connect(m_NotifyTimer, SIGNAL(timeout()),
