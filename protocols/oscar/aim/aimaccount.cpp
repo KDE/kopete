@@ -42,7 +42,7 @@ AIMAccount::~AIMAccount()
 OscarContact *AIMAccount::createNewContact( const QString &contactId,
 		const QString &displayName, KopeteMetaContact *parentContact )
 {
-	return new AIMContact( contactId, displayName, this, parentContact );
+	return new AIMContact(contactId, displayName, this, parentContact);
 }
 
 KActionMenu* AIMAccount::actionMenu()
@@ -82,14 +82,6 @@ KActionMenu* AIMAccount::actionMenu()
 	mActionMenu->insert(
 		KopeteStdAction::contactInfo(this, SLOT(slotEditInfo()),
 			mActionMenu, "AIMAccount::mActionEditInfo"));
-
-	mActionMenu->popupMenu()->insertSeparator();
-
-	// DEBUG ACTION TO BE REMOVED!
-	mActionMenu->insert(
-		new KAction(i18n("Fast add a Contact"), "", 0, this,
-					SLOT(slotFastAddContact()), mActionMenu,
-					"AIMAccount::actionFastAddContact"));
 
 	return mActionMenu;
 }

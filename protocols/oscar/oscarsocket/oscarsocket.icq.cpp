@@ -102,8 +102,6 @@ void OscarSocket::sendLoginICQ()
 // Parses all SNAC(15,3) Packets, these are only for ICQ!
 void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 {
-//	kdDebug(14150) << k_funcinfo << "START" << endl;
-
 	QPtrList<TLV> tl = inbuf.getTLVList();
 	tl.setAutoDelete(true);
 	TLV *tlv = findTLV(tl,0x0001);
@@ -112,8 +110,6 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 		kdDebug(140150) << k_funcinfo <<  "Bad SNAC(21,3), no TLV(1) found!" << endl;
 		return;
 	}
-
-//	kdDebug(14150) << k_funcinfo << "Got SNAC(21,3) containing TLV(1) of length=" << tlv->length << endl;
 
 	Buffer fromicqsrv(tlv->data, tlv->length);
 
@@ -127,14 +123,13 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 	WORD sequence = fromicqsrv.getLEWord();
 
 	kdDebug(14150) << k_funcinfo << "commandlength=" << commandlength <<
-		", ourUIN=" << ourUIN << ", subcmd=" << subcmd << ", sequence=" << sequence << endl;
+		", ourUIN='" << ourUIN << "', subcmd=" << subcmd << ", sequence=" << sequence << endl;
 
 	switch(subcmd)
 	{
 		case 0x0041: //SRV_OFFLINEMSG
 		{
 //			kdDebug(14150) << k_funcinfo << "RECV (SRV_OFFLINEMSG), got an offline message" << endl;
-
 			DWORD UIN = fromicqsrv.getLEDWord();
 			/*WORD year =*/ fromicqsrv.getLEWord();
 			/*BYTE month =*/ fromicqsrv.getLEByte();
@@ -165,9 +160,6 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 		{
 			WORD type = fromicqsrv.getLEWord();
 			BYTE result = fromicqsrv.getLEByte();
-
-			kdDebug(14150) << k_funcinfo << "RECV (SRV_META), subtype=" << type <<
-				 ", result=" << (int)result << endl;
 
 			switch(type)
 			{
@@ -214,7 +206,7 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					// STATUS; 0 = Offline, 1 = Online, 2 = not webaware.
 					searchResult.status = fromicqsrv.getLEWord();
 
-					// said to be the last searchresult
+					// FIXME: said to be the last searchresult
 					// unfortunately I still get some results afterwards
 					if (type==0x01ae)
 					{
@@ -226,15 +218,6 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					}
 					else
 					{
-						/*if(fromicqsrv.getLength() >=3)
-						{
-							kdDebug(14150) << "EXTRA INFO, SEX AND AGE!" << endl;
-							// The user's gender. 1 = female, 2 = male, 0 = not specified.
-							BYTE sex = fromicqsrv.getLEByte();
-							searchResult.sex = (int)sex;
-
-							searchResult.age = fromicqsrv.getLEWord();
-						}*/
 						emit gotSearchResult(searchResult,-1);
 					}
 					break;
@@ -321,12 +304,11 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 					res.countryCode = fromicqsrv.getLEWord();
 					res.timezoneCode = fromicqsrv.getLEByte(); // UTC+(tzcode * 30min)
-					kdDebug(14150) << k_funcinfo << "timezoneCode=" <<
-						res.timezoneCode << endl;
+// 					kdDebug(14150) << k_funcinfo << "timezoneCode=" <<
+// 						res.timezoneCode << endl;
 					res.publishEmail = (fromicqsrv.getLEByte()==0x01);
 					res.showOnWeb = (fromicqsrv.getLEWord()==0x0001);
 
-					kdDebug(14150) << k_funcinfo << "emitting gotICQGeneralUserInfo()" << endl;
 					emit gotICQGeneralUserInfo(sequence, res);
 					break;
 				} // END SRV_METAGENERAL (200)
@@ -381,14 +363,13 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					res.homepage = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
-					kdDebug(14150) << k_funcinfo << "emitting gotICQWorkUserInfo()" << endl;
 					emit gotICQWorkUserInfo(sequence, res);
 					break;
 				} // END SRV_METAWORK (210)
 
-				case 220:
+				case 220: // SRV_METAMORE
 				{
-					kdDebug(14150) << k_funcinfo << "RECV (SRV_METAWORK)" << endl;
+					kdDebug(14150) << k_funcinfo << "RECV (SRV_METAMORE)" << endl;
 					char *tmptxt;
 					ICQMoreUserInfo res;
 
@@ -402,8 +383,6 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					WORD y = fromicqsrv.getLEWord();
 					BYTE m = fromicqsrv.getLEByte();
 					BYTE d = fromicqsrv.getLEByte();
-// 					kdDebug(14150) << k_funcinfo <<
-// 						"birtday, y=" << y << ", m=" << (int)m << ", d=" << (int)d << endl;
 					if (y==0 && m==0 && d==0) // stops QDate from spewing out errors
 						res.birthday = QDate();
 					else
@@ -417,14 +396,13 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					kdDebug(14150) << k_funcinfo <<
 						"unknown last word=" << unknown << endl;
 
-					kdDebug(14150) << k_funcinfo << "emitting gotICQMoreUserInfo()" << endl;
 					emit gotICQMoreUserInfo(sequence, res);
 					break;
-				}
+				} // END SRV_METAMORE
 
 				case 230: // SRV_METAABOUT
 				{
-					kdDebug(14150) << k_funcinfo << "RECV (SRV_METAWORK)" << endl;
+					kdDebug(14150) << k_funcinfo << "RECV (SRV_METAABOUT)" << endl;
 					char *tmptxt;
 					QString res;
 
@@ -432,11 +410,9 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					res = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
-					kdDebug(14150) << k_funcinfo << "emitting gotICQAboutUserInfo()" << endl;
-
 					emit gotICQAboutUserInfo(sequence, res);
 					break;
-				}
+				} // END SRV_METAABOUT
 
 				case 235:
 				{
@@ -468,8 +444,8 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 				default:
 				{
-					kdDebug(14150) << k_funcinfo <<
-						"SRV_META subtype UNHANDLED!" << endl;
+		 			kdDebug(14150) << k_funcinfo << "RECV (SRV_META), UNHANDLED, subtype=" <<
+						type << ", result=" << (int)result << endl;
 					break;
 				}
 			} // END switch(type)
@@ -546,6 +522,30 @@ void OscarSocket::sendICQStatus(unsigned long status)
 		emit statusChanged(OSCAR_ONLINE);
 	}
 } // END OscarSocket::sendStatus
+/*
+void OscarSocket::fillDirectInfo(Buffer &directInfo)
+{
+	kdDebug(14150) << k_funcinfo << "IP=" << mDirectIMMgr->address().toString() <<
+		", Port=" << mDirectIMMgr->port() << endl;
+
+	directInfo.addDWord(htonl(mDirectIMMgr->address().ip4Addr())); // IP
+	directInfo.addWord(0x0000);
+	directInfo.addWord(mDirectIMMgr->port()); // Port
+
+	directInfo.addByte(0x01) // Mode
+	directInfo.addWord(ICQ_TCP_VERSION); // icq tcp protocol version, v8 currently
+
+	directInfo.addDWord(0) ; // TODO: DC cookie!
+	directInfo.addWord(0x0000);
+	directInfo.addWord(0x0050);
+	directInfo.addWord(0x0000);
+	directInfo.addWord(0x0003);
+	directInfo.addDWord(0x00000000); //InfoUpdateTime
+	directInfo.addDWord(0x00000000); //PhoneStatusTime
+	directInfo.addDWord(0x00000000); //PhoneBookTime
+	directInfo.addWord(0x0000);
+}*/
+
 
 void OscarSocket::sendKeepalive()
 {
@@ -611,7 +611,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 				if (ackType==0x0000) // normal message
 				{
 					// ERROR
-					QPtrList<TLV> lst = type2.getTLVList();
+					QPtrList<TLV> lst = buf.getTLVList(); //type2.getTLVList();
 					lst.setAutoDelete(TRUE);
 
 					TLV *messageTLV = findTLV(lst,0x2711); //TLV(10001)

@@ -127,8 +127,6 @@ protected slots:
 	/** Displays an error dialog with the given text */
 	void slotError(QString errmsg, int errorCode);
 
-	void slotFastAddContact();
-
 	/**
 	 * Having received a new server side group, try
 	 * to find queued buddies that are members of

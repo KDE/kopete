@@ -18,7 +18,7 @@
 #include "icqaccount.h"
 #include "icqcontact.h"
 #include "icqprotocol.h"
-
+#include "icqchangestatus.h"
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -28,19 +28,20 @@
 
 #include <oscarcontact.h>
 
-#include "icqchangestatus.h"
-//#include "icquserinfo.h"
-
-//	OscarAccount(KopeteProtocol *parent, QString accountID, const char *name=0L, bool isICQ=false);
-
 ICQAccount::ICQAccount(KopeteProtocol *parent, QString accountID, const char *name)
 	: OscarAccount(parent, accountID, name, true)
 {
-	// Init the myself contact
-	mMyself = new ICQContact( accountID, accountID, this , 0L );
-
-	mAwayDialog = new ICQChangeStatus(getEngine());
+	mMyself=0;
+	mAwayDialog=new ICQChangeStatus(getEngine());
 }
+
+void ICQAccount::loaded()
+{
+	// TODO use plugindata here
+	mMyself=new ICQContact(accountId(),
+		accountId()/*pluginData(protocol(), "nickname")*/, this, 0L);
+}
+
 ICQAccount::~ICQAccount()
 {
 //	kdDebug(14200) << k_funcinfo << "[" << accountId() << "] deleted" << endl;
@@ -85,13 +86,6 @@ KActionMenu* ICQAccount::actionMenu()
 		p->statusFFC.iconFor(this), 0,
 		this, SLOT(slotGoFFC()), this, "ICQAccount::mActionFFC");
 
-//	mActionEditInfo = 0L; // TODO: can't send/retrieve info yet so no menuitem
-
-	// DEBUG ACTION TO BE REMOVED!
-	KAction* mActionFastAddContact = new KAction(i18n("Fast add a Contact"), "", 0,
-		this, SLOT(slotFastAddContact()), this, "ICQAccount::actionFastAddContact");
-
-
 	mActionMenu->popupMenu()->insertTitle(
 		mMyself->onlineStatus().iconFor(mMyself),
 		i18n("%2 <%1>").arg(accountId()).arg(mMyself->displayName()));
@@ -107,7 +101,6 @@ KActionMenu* ICQAccount::actionMenu()
 	mActionMenu->insert(
 		KopeteStdAction::contactInfo(myself(), SLOT(slotUserInfo()),
 			mActionMenu, "ICQAccount::mActionEditInfo"));
-	mActionMenu->insert(mActionFastAddContact); // DEBUG ACTION
 
 	return mActionMenu;
 }
@@ -165,9 +158,18 @@ void ICQAccount::setAway(bool away, const QString &awayReason)
 	kdDebug(14200) << k_funcinfo << " " << accountId() << endl;
 // TODO: Make use of away message as well
 	if(away)
-		mEngine->sendStatus(ICQ_STATUS_AWAY);
+	{
+		if((myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
+			(myself()->onlineStatus().status() == KopeteOnlineStatus::Away))
+		{
+			mEngine->sendStatus(ICQ_STATUS_AWAY);
+		}
+	}
 	else
-		mEngine->sendStatus(ICQ_STATUS_ONLINE);
+	{
+		if(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
+			mEngine->sendStatus(ICQ_STATUS_ONLINE);
+	}
 }
 
 OscarContact *ICQAccount::createNewContact(
@@ -175,6 +177,8 @@ OscarContact *ICQAccount::createNewContact(
 	const QString &displayName,
 	KopeteMetaContact *parentContact)
 {
+	kdDebug(14200) << k_funcinfo << "contactId='" << contactId << "', displayName='" <<
+		displayName << "', ptr parentContact=" << parentContact << endl;
 	return new ICQContact(contactId,displayName,this,parentContact);
 }
 

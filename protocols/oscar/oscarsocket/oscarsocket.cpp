@@ -846,10 +846,9 @@ void OscarSocket::parseMyUserInfo(Buffer &inbuf)
 		sendInfo();
 }
 
-/** parse the server's authorization response (which hopefully contains the cookie) */
 void OscarSocket::parseAuthResponse(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo <<  endl;
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
 
 	QPtrList<TLV> lst = inbuf.getTLVList();
 	lst.setAutoDelete(TRUE);
@@ -1969,8 +1968,8 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 	static const char deffeatures[] = { 0x01 };
 
 	Buffer outbuf;
-	outbuf.addSnac(0x0004,0x0006,0x0000,0x00000000);
-
+	outbuf.addSnac(0x0004,0x0006,0x0000, toicqsrv_seq);
+	toicqsrv_seq++;
 
 	for (int i=0;i<8;i++) //generate random message cookie (MID, message ID)
 		outbuf.addByte( (BYTE) rand());
@@ -1983,37 +1982,29 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 	outbuf.addByte(dest.length()); //dest sn length
 	outbuf.addString(dest.latin1(),dest.length()); //dest sn
 
-	outbuf.addWord(0x0002); //message TLV(2)
+	// ---------------------------------------------------
+	Buffer tlv2;
+	tlv2.addWord(0x0501); // add TLV(0x0501) also known as TLV(1281)
+	tlv2.addWord(sizeof(deffeatures)); // add TLV length
+	tlv2.addString(deffeatures, sizeof(deffeatures)); //add deffeatures
 
-	int tlvlen = 0;
-	tlvlen += 2; // 0501
-	tlvlen += 2 + sizeof(deffeatures);
-	tlvlen += 2; // 0101
-	tlvlen += 2; // block length
-	tlvlen += 4; //charset
-	tlvlen += message.length();
+	tlv2.addWord(0x0101); //add TLV(0x0101) also known as TLV(257)
+	tlv2.addWord(message.length() + 0x04); // add TLV length
+	tlv2.addDWord(0x00000000); // normal char set
+	QCString tmp = message.local8Bit();
+	tlv2.addString(tmp, tmp.length()); // the actual message
+	// ---------------------------------------------------
 
-	outbuf.addWord(tlvlen); // add TLV(2) length
+	outbuf.addTLV(0x0002, tlv2.getLength(), tlv2.getBuf());
 
-	outbuf.addWord(0x0501); // add TLV(0x0501) also known as TLV(1281)
-	outbuf.addWord(sizeof(deffeatures)); // add TLV length
-	outbuf.addString(deffeatures, sizeof(deffeatures)); //add deffeatures
-
-	outbuf.addWord(0x0101); //add TLV(0x0101) also known as TLV(257)
-	outbuf.addWord(message.length() + 0x04); // add TLV length
-	outbuf.addDWord(0x00000000); // normal char set
-	outbuf.addString(message.local8Bit(),message.length()); // the actual message
-
-	// TODO:
-	// There are a lot of other options that can go here
-	// IMPLEMENT THEM!
-	if(isAuto)
+	if(isAuto) // No clue about this stuff, mETz
 	{
 		outbuf.addWord(0x0004);
 		outbuf.addWord(0x0000);
 	}
+	outbuf.addWord(0x0006);
+	outbuf.addWord(0x0000); // always empty TLV(6)
 
-	outbuf.addDWord(0x00060000); // always empty TLV(6)
 	sendBuf(outbuf,0x02);
 }
 
@@ -2748,8 +2739,6 @@ void OscarSocket::parseMissedMessage(Buffer &inbuf)
 	}
 }
 
-
-/** Sends a 0x0013,0x0002 (requests SSI rights information) */
 void OscarSocket::sendSSIRightsRequest()
 {
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_REQLISTS)" << endl;
@@ -2758,7 +2747,6 @@ void OscarSocket::sendSSIRightsRequest()
 	sendBuf(outbuf,0x02);
 }
 
-/** Sends a 0x0013,0x0004 (requests SSI data?) */
 void OscarSocket::sendSSIRequest(void)
 {
 	kdDebug(14150) << "SEND (CLI_REQROSTER), requesting serverside contactlist for the FIRST time" << endl;
@@ -2767,7 +2755,6 @@ void OscarSocket::sendSSIRequest(void)
 	sendBuf(outbuf,0x02);
 }
 
-/** Parses a 0x0013,0x0003 (SSI rights) from the server */
 void OscarSocket::parseSSIRights(Buffer &/*inbuf*/)
 {
 	kdDebug(14150) << k_funcinfo << "RECV (SRV_REPLYLISTS)" << endl;
@@ -2783,8 +2770,7 @@ void OscarSocket::parseSSIRights(Buffer &/*inbuf*/)
 		sendInfo();
 }
 
-// Sends the server lots of information about the currently logged in user
-void OscarSocket::sendInfo(void)
+void OscarSocket::sendInfo()
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	gotAllRights=0;
@@ -3010,14 +2996,12 @@ void OscarSocket::OnDirectIMReady(QString name)
 	emit connectionReady(name);
 }
 
-// Initiate a transfer of the given file to the given sn
 void OscarSocket::sendFileSendRequest(const QString &sn, const KFileItem &finfo)
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	sendRendezvous(sn, 0x0000, AIM_CAPS_SENDFILE, &finfo);
 }
 
-// Accepts a file transfer from sn
 OscarConnection * OscarSocket::sendFileSendAccept(const QString &sn, const QString &fileName)
 {
 	sendRendezvous(sn, 0x0001, AIM_CAPS_SENDFILE);
@@ -3027,13 +3011,11 @@ OscarConnection * OscarSocket::sendFileSendAccept(const QString &sn, const QStri
 	return mFileTransferMgr->establishOutgoingConnection(sn);
 }
 
-/** Sends a file transfer deny to @sn */
 void OscarSocket::sendFileSendDeny(const QString &sn)
 {
 	sendRendezvous(sn, 0x0002, AIM_CAPS_SENDFILE);
 }
 
-/** Called when a file transfer begins */
 void OscarSocket::OnFileTransferBegun(OscarConnection *con, const QString& file,
 	const unsigned long size, const QString &recipient)
 {
@@ -3041,7 +3023,6 @@ void OscarSocket::OnFileTransferBegun(OscarConnection *con, const QString& file,
 	emit transferBegun(con, file, size, recipient);
 }
 
-/** Returns the appropriate server socket, based on the capability flag it is passed. */
 OncomingSocket *OscarSocket::serverSocket(DWORD capflag)
 {
 	if ( capflag & AIM_CAPS_IMIMAGE ) //direct im

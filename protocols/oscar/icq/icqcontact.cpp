@@ -20,7 +20,7 @@
 #include "icqprotocol.h"
 #include "icqaccount.h"
 
-#include <time.h>
+//#include <time.h>
 
 #include <qapplication.h>
 
@@ -37,7 +37,9 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 	: OscarContact(name, displayName, acc, parent)
 {
 	mProtocol = static_cast<ICQProtocol *>(protocol());
+
 	setOnlineStatus(mProtocol->statusOffline);
+
 	infoDialog = 0L;
 	userinfoRequestSequence=0;
 	userinfoReplyCount = 0;
@@ -122,15 +124,13 @@ void ICQContact::slotOffgoingBuddy(QString sender)
 	if(sender != contactname())
 		return;
 
-//	mListContact->setStatus(mProtocol->getOnlineStatus(OSCAR_OFFLINE));
 	setOnlineStatus(mProtocol->statusOffline);
 	slotUpdateBuddy();
 }
 
 void ICQContact::slotIMReceived(QString message, QString sender, bool /*isAuto*/)
 {
-	// Check if we're the one who sent the message
-	if(sender!=contactname())
+	if(sender != contactname())
 		return;
 
 	// Build a KopeteMessage and set the body as Rich Text
@@ -248,15 +248,14 @@ void ICQContact::requestUserInfo()
 		account()->getEngine()->sendReqInfo(contactname().toULong());
 }
 
-
 void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf)
 {
 	// compare reply's sequence with the one we sent with our last request
 	if(seq != userinfoRequestSequence)
 		return;
 
-	kdDebug(14200) << k_funcinfo << "called; seq=" << seq << ", last saved seq=" <<
-		userinfoRequestSequence << endl;
+// 	kdDebug(14200) << k_funcinfo << "called; seq=" << seq << ", last saved seq=" <<
+// 		userinfoRequestSequence << endl;
 
 	generalInfo = inf;
 

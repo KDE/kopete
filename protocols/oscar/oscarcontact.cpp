@@ -534,7 +534,14 @@ void OscarContact::slotParseUserInfo(const UserInfo &u)
 	mPort = u.port;
 	mFwType = u.fwType;
 	mTcpVersion = u.version;
-	mIdle = u.idletime;
+	if (mIdle != u.idletime)
+	{
+		mIdle = u.idletime;
+		if(mIdle > 0)
+			setIdleState(Idle);
+		else // we are not idling anymore
+			setIdleState(Active);
+	}
 	mSignonTime.setTime_t(u.onlinesince);
 }
 

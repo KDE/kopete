@@ -54,10 +54,20 @@ class ICQProtocol : public KopeteProtocol
 		const KopeteOnlineStatus statusOCC;
 		const KopeteOnlineStatus statusConnecting;
 
+		const QMap<int, QString> &genders() { return mGenders; }
+		const QMap<int, QString> &countries() { return mCountries; }
+		const QMap<int, QString> &languages() { return mLanguages; }
+
+	private:
+		void initGenders();
+		void initLang();
+		void initCountries();
+
 	private:
 		static ICQProtocol *protocolStatic_;
-
+		QMap<int, QString> mGenders;
+		QMap<int, QString> mCountries;
+		QMap<int, QString> mLanguages;
 };
-
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

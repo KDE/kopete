@@ -57,21 +57,14 @@ class ICQUserInfo : public KDialogBase
 	private:
 		// TODO: move these somewhere else so it only gets
 		// set ONCE and not on every userinfo dialog
-		void fillCombo(QComboBox *box, QMap<int, QString> &map);
-		void setCombo(QComboBox *box, QMap<int, QString> &map, int value);
-		void initGenders();
-		void initLang();
-		void initCountries();
+		void fillCombo(QComboBox *, const QMap<int, QString> &);
+		void setCombo(QComboBox *, const QMap<int, QString> &, int);
 
 	private:
 		ICQAccount *mAccount;
 		ICQContact *mContact;
 		bool mEditable;
 		ICQUserInfoWidget *mMainWidget;
-
-		QMap<int, QString> genders;
-		QMap<int, QString> countries;
-		QMap<int, QString> languages;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

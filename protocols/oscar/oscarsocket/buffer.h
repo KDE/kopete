@@ -52,8 +52,12 @@ class Buffer : public QObject
 		Buffer(QObject *parent=0, const char *name=0);
 		Buffer(char *b, Q_ULONG len, QObject *parent=0, const char *name=0);
 		~Buffer();
+
 		/** returns the actual buffer */
 		inline char *getBuf() const { return buf; };
+		/** returns the length of the buffer */
+		inline int getLength() const { return length; };
+
 		/** adds the given string to the buffer (make sure it's NULL-terminated) */
 		int addString(const char *, const DWORD);
 		int addLEString(const char *, const DWORD);
@@ -73,8 +77,6 @@ class Buffer : public QObject
 		*/
 		int addLEDWord(const DWORD dw);
 
-		/** returns the length of the buffer */
-		inline int getLength() const { return length; };
 
 		/** adds the given byte to the buffer */
 		int addByte(const BYTE);

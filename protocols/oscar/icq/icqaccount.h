@@ -48,6 +48,10 @@ class ICQAccount : public OscarAccount
 		void slotGoFFC();
 		void slotGoDND();
 
+	protected slots:
+		// called after XML is read in, cannot access pluginData in constructor
+		virtual void loaded();
+
 	protected:
 		virtual OscarContact *createNewContact(const QString &contactId,
 			const QString &displayName, KopeteMetaContact *parentContact);

@@ -61,14 +61,14 @@ class OscarContact : public KopeteContact
 
 		virtual KopeteMessageManager *manager( bool canCreate = false );
 
-		const QString contactname() { return mName; };
+		const QString &contactname() { return mName; };
 		OscarAccount *account() { return mAccount; };
 
-		/**
+		/*
 		 * Convert between internal status representation
 		 * and Oscar implementing protocols' own KOS
 		 */
-		 virtual void setStatus(const unsigned int newStatus)=0;
+		virtual void setStatus(const unsigned int newStatus)=0;
 
 		/*
 		 * Returns the idle time
