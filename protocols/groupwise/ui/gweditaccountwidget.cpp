@@ -22,9 +22,12 @@
 #include <qlayout.h>
 #include <qlineedit.h>
 #include <qspinbox.h>
+
+#include <kapplication.h>
 #include <kdebug.h>
-#include <kmessagebox.h>
+#include <kconfig.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 
 #include "kopetepasswordedaccount.h"
 #include "kopetepasswordwidget.h"
@@ -43,10 +46,18 @@ GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, KopeteA
 	m_layout = new QVBoxLayout( this );
 	m_preferencesDialog = new GroupWiseAccountPreferences( this );
 	m_layout->addWidget( m_preferencesDialog );
-	connect( m_preferencesDialog->m_server, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
-	connect( m_preferencesDialog->m_port, SIGNAL (valueChanged (int)), this, SLOT (configChanged ()));
+	connect( m_preferencesDialog->m_server, SIGNAL( textChanged( const QString & ) ), this, SLOT( configChanged() ) );
+	connect( m_preferencesDialog->m_port, SIGNAL( valueChanged( int ) ), this, SLOT( configChanged() ) );
 	if ( account() )
 		reOpen();
+	else
+	{
+		// look for a default server and port setting
+		KConfig *config = kapp->config();
+		config->setGroup("GroupWise Messenger");
+		m_preferencesDialog->m_server->setText( config->readEntry( "DefaultServer" ) );
+		m_preferencesDialog->m_port->setValue( config->readNumEntry( "DefaultPort", 8300 ) );
+	}
 }
 
 GroupWiseEditAccountWidget::~GroupWiseEditAccountWidget()
@@ -61,6 +72,8 @@ GroupWiseAccount *GroupWiseEditAccountWidget::account ()
 void GroupWiseEditAccountWidget::reOpen()
 {
 	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
+	
+	
 	// Kopete at least <=0.90 doesn't support changing account IDs
 	m_preferencesDialog->m_userId->setDisabled( true );
 	m_preferencesDialog->m_userId->setText( account()->accountId() );
@@ -68,6 +81,7 @@ void GroupWiseEditAccountWidget::reOpen()
 	m_preferencesDialog->m_server->setText( account()->pluginData( GroupWiseProtocol::protocol(), "Server") );
 	m_preferencesDialog->m_port->setValue( account()->pluginData( GroupWiseProtocol::protocol(), "Port" ).toInt() );
 	m_preferencesDialog->m_autoConnect->setChecked( account()->autoLogin() );
+	
 }
 
 KopeteAccount* GroupWiseEditAccountWidget::apply()
