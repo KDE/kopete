@@ -150,3 +150,4 @@ void PerlScriptPreferences::save()
 	
 	config->sync();
 }
+#include "perlscriptprefs.moc"

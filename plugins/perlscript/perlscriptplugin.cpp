@@ -364,3 +364,4 @@ void PerlScript::load()
 	}
 }
 
+#include "perlscriptplugin.moc"
