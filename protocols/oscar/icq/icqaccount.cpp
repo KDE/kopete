@@ -32,7 +32,7 @@ ICQAccount::ICQAccount(KopeteProtocol *parent, QString accountID, const char *na
 	: OscarAccount(parent, accountID, name, true)
 {
 	//myself has to be created in constructor
-	mMyself = new ICQContact(accountId(), accountId(), this, 0L);
+	mMyself = new ICQContact(accountId(), "FUCK KOPETE", this, 0L);
 	mAwayDialog = new ICQChangeStatus(getEngine());
 }
 
