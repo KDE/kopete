@@ -336,6 +336,24 @@ void JabberAccount::connect ()
 		cleanup ();
 	}
 
+	/**
+	 * Try to cache password before attempting to connect
+	 */
+	bool okPressed;
+	cachedPassword = password( false, &okPressed );
+	if ( !okPressed )
+	{
+		// user canceled connection request, abort
+		return;
+	}
+
+	if ( cachedPassword.isEmpty () )
+	{
+		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Information,
+								i18n("Passwordless logins are not supported. Please provide a password."), i18n("Jabber requires password"));
+		return;
+	}
+
 	/*
 	 * Setup authentication layer
 	 */
@@ -512,11 +530,6 @@ void JabberAccount::connect ()
 
 	setPresence( XMPP::Status ("connecting", "", 0, true) );
 
-	/**
-	 * Try to cache password before attempting to connect
-	 */
-	cachedPassword = password();
-
 	jabberClient->connectToServer (jabberClientStream,
 				       XMPP::Jid(accountId() + QString("/") + pluginData( protocol (), "Resource")),
 				       true);
@@ -647,9 +660,6 @@ void JabberAccount::slotCSNeedAuthParams (bool user, bool pass, bool realm)
 
 	if(pass)
 	{
-		if(cachedPassword.isEmpty())
-			cachedPassword = password();
-
 		jabberClientStream->setPassword(cachedPassword);
 
 		cachedPassword = QString::null;
