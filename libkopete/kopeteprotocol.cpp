@@ -133,8 +133,8 @@ void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact 
 	}
 
 	// Pass all returned fields to the contact list
-	if( !serializedData.isEmpty() )
-		metaContact->setPluginData( this, serializedData );
+	//if( !serializedData.isEmpty() ) //even if we are empty, that mean there are no contact, so remove old value
+	metaContact->setPluginData( this, serializedData );
 
 	for( it = addressBookData.begin(); it != addressBookData.end(); ++it )
 	{
