@@ -429,21 +429,24 @@ void AppearanceConfig::slotStyleSelected()
 void AppearanceConfig::slotImportStyle()
 {
 	KURL chosenStyle = KURLRequesterDlg::getURL( QString::null, this, i18n("Choose Stylesheet") );
-	QString stylePath;
-	if( KIO::NetAccess::download(chosenStyle, stylePath ) )
+	if( !chosenStyle.isEmpty() )
 	{
-		QString xslString = fileContents( stylePath );
-		if( KopeteXSL::isValid( xslString ) )
+		QString stylePath;
+		if( KIO::NetAccess::download(chosenStyle, stylePath ) )
 		{
-			QFileInfo fi( stylePath );
-			addStyle( fi.fileName().section('.',0,0), xslString );
+			QString xslString = fileContents( stylePath );
+			if( KopeteXSL::isValid( xslString ) )
+			{
+				QFileInfo fi( stylePath );
+				addStyle( fi.fileName().section('.',0,0), xslString );
+			}
+			else
+				KMessageBox::error( this, i18n("\"%1\" is not a valid XSL document. Import canceled.").arg(chosenStyle.path()), i18n("Invalid Style") );
 		}
 		else
-			KMessageBox::error( this, i18n("\"%1\" is not a valid XSL document. Import canceled.").arg(chosenStyle.path()), i18n("Invalid Style") );
-	}
-	else
-	{
-		KMessageBox::error( this, i18n("Could not import \"%1\". Check access permissions / network connection.").arg( chosenStyle.path() ), i18n("Import Error") );
+		{
+			KMessageBox::error( this, i18n("Could not import \"%1\". Check access permissions / network connection.").arg( chosenStyle.path() ), i18n("Import Error") );
+		}
 	}
 }
 
