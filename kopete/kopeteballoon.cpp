@@ -56,7 +56,7 @@ KopeteBalloon::KopeteBalloon( const QString &text, const QString &pix )
 	Layout2->addItem( spacer );
 
 	QPushButton *viewButton = new QPushButton( this, "m_reject" );
-	viewButton->setText( i18n( "&View" ) );
+	viewButton->setText( i18n( "View" ) );
 	Layout2->addWidget( viewButton );
 	QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
 	Layout2->addItem( spacer_2 );
