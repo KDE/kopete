@@ -71,6 +71,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 		SLOT( slotStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
 	connect( this, SIGNAL( contactChanged() ), this, SLOT( slotUpdateDisplayName() ) );
+	slotUpdateDisplayName();
 }
 
 KopeteMessageManager::~KopeteMessageManager()
@@ -260,7 +261,7 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool suppress )
 		connect (c, SIGNAL(contactDestroyed(KopeteContact*)) , this , SLOT(slotContactDestroyed(KopeteContact*)));
 	}
 	d->isEmpty=false;
-	slotUpdateDisplayName();
+	emit contactChanged();
 }
 
 void KopeteMessageManager::removeContact( const KopeteContact *c, const QString& raison )
@@ -284,7 +285,7 @@ void KopeteMessageManager::removeContact( const KopeteContact *c, const QString&
 		//c->setConversations( c->conversations() - 1 );
 	}
 	emit contactRemoved(c, raison);
-	slotUpdateDisplayName();
+	emit contactChanged();
 }
 
 void KopeteMessageManager::receivedTypingMsg( const KopeteContact *c , bool t )
