@@ -406,6 +406,7 @@ private slots:
 	void numericReply_317(KIRC::Message &msg);
 	void numericReply_318(KIRC::Message &msg);
 	void numericReply_319(KIRC::Message &msg);
+	void numericReply_320(KIRC::Message &msg);
 	void numericReply_322(KIRC::Message &msg);
 	void numericReply_324(KIRC::Message &msg);
 	void numericReply_328(KIRC::Message &msg);

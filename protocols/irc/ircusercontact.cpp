@@ -295,7 +295,7 @@ void IRCUserContact::whoIsComplete()
 			msg += i18n("%1 is an IRC operator<br/>").arg(m_nickName);
 
 		//Channels
-		msg += i18n("on channels %1\n").arg(mInfo.channels.join(" ; "));
+		msg += i18n("on channels %1<br/>").arg(mInfo.channels.join(" ; "));
 
 		//Server
 		msg += i18n("on IRC via server %1 ( %2 )<br/>").arg(mInfo.serverName).arg(mInfo.serverInfo);

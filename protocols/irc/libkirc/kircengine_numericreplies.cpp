@@ -61,7 +61,7 @@ void Engine::bindNumericReplies()
 	bind(317, this, SLOT(numericReply_317(KIRC::Message &)), 3, 4);
 	bind(318, this, SLOT(numericReply_318(KIRC::Message &)), 2, 2); // incomingEndOfWhois
 	bind(319, this, SLOT(numericReply_319(KIRC::Message &)), 2, 2);
-//	bind(320, this, SLOT(numericReply_320(KIRC::Message &)), 2, 2); // incomingWhoIsIdentified
+	bind(320, this, SLOT(numericReply_320(KIRC::Message &)), 2, 2); // incomingWhoIsIdentified
 //	bind(321, Engine::IgnoreMethod );
 	bind(322, this, SLOT(numericReply_322(KIRC::Message &)), 3, 3);
 //	bind(323, this, SLOT(numericReply_323(KIRC::Message &)), 1, 1); // incomingEndOfList
@@ -324,6 +324,10 @@ void Engine::numericReply_319(Message &msg)
 /* 320:
  * Indicates that this user is identified with NICSERV on FREENODE.
  */
+void Engine::numericReply_320(Message &msg)
+{
+	emit incomingWhoIsIdentified(Kopete::Message::unescape(msg.arg(1)));
+}
 
 /* 321: "<channel> :Users  Name" ("Channel :Users  Name")
  * RFC1459: Declared.
@@ -337,7 +341,7 @@ void Engine::numericReply_322(Message &msg)
 {
 	//kdDebug(14120) << k_funcinfo << "Listed " << msg.arg(1) << endl;
 
-	emit incomingListedChan(Kopete::Message::unescape(Kopete::Message::unescape(msg.arg(1))), msg.arg(2).toUInt(), msg.suffix());
+	emit incomingListedChan(Kopete::Message::unescape(msg.arg(1)), msg.arg(2).toUInt(), msg.suffix());
 }
 
 /* 323: ":End of LIST"
