@@ -26,7 +26,7 @@ Q_OBJECT
 		virtual void onGo();
 	protected:
 		bool forMe( Transfer * transfer ) const;
-		void setTransfer( Transfer * transfer );
+		void createTransfer( const QString & command, const Field::FieldList & fields );
 	private:
 		int m_transactionId;
 };

@@ -9,12 +9,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "client.h"
 // included for the event code for typing - FIXME: rationalise numeric constants
 #include "eventtransfer.h"
-#include "gwfield.h"
-#include "request.h"
-#include "requestfactory.h"
 
 #include "typingtask.h"
 
@@ -31,13 +27,10 @@ void TypingTask::typing( const QString & conferenceGuid, const bool typing )
 {
 	Field::FieldList typingNotification, outgoingList;
 	typingNotification.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, conferenceGuid ) );
-	typingNotification.append( new Field::SingleField( NM_A_SZ_TYPE, 0, NMFIELD_TYPE_UTF8, QString::number( typing ? EventTransfer::UserTyping : EventTransfer::UserNotTyping ) ) );
+	typingNotification.append( new Field::SingleField( NM_A_SZ_TYPE, 0, NMFIELD_TYPE_UTF8, 
+				QString::number( typing ? EventTransfer::UserTyping : EventTransfer::UserNotTyping ) ) );
 	outgoingList.append( new Field::MultiField( NM_A_FA_CONVERSATION, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, typingNotification ) );
-	QCString command = "sendtyping";
-	Request * typingRequest = client()->requestFactory()->request( command );
-	typingRequest->setFields( outgoingList );
-
-	setTransfer( typingRequest );
+	createTransfer( "sendtyping", outgoingList );
 }
 
 #include "typingtask.moc"

@@ -28,8 +28,6 @@ public:
 	bool take( Transfer * transfer );
 signals:
 	void gotStatus( const QString & contactId, Q_UINT16 status, const QString & statusText );
-protected:
-	void onGo();
 private:
 	QString m_userDN;
 };

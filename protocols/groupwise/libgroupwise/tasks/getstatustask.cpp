@@ -9,9 +9,6 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "client.h"
-#include "request.h"
-#include "requestfactory.h"
 #include "response.h"
 
 #include "getstatustask.h"
@@ -28,19 +25,9 @@ void GetStatusTask::userDN( const QString & dn )
 {
 	m_userDN = dn;
 	// set up Transfer
-	Request * getDetailsRequest = client()->requestFactory()->request( "getstatus" );
 	Field::FieldList lst;
-	
 	lst.append( new Field::SingleField( NM_A_SZ_USERID, 0, NMFIELD_TYPE_UTF8, m_userDN ) );
-	
-	getDetailsRequest->setFields( lst );
-	setTransfer( getDetailsRequest );
-}
-
-void GetStatusTask::onGo()
-{	
-	qDebug( "GetStatusTask::onGo() - sending getstatus field for user: %s", m_userDN.ascii() );
-	send( static_cast<Request *>( transfer() ) );
+	createTransfer( "getstatus", lst );
 }
 
 bool GetStatusTask::take( Transfer * transfer )

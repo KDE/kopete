@@ -10,8 +10,6 @@
 //
 //
 #include "client.h"
-#include "request.h"
-#include "requestfactory.h"
 #include "response.h"
 
 #include "logintask.h"
@@ -29,15 +27,13 @@ void LoginTask::initialise()
 {
 	QString command = QString::fromLatin1("login:%1:%2").arg( client()->host() ).arg( client()->port() );
 	
-	Request * loginRequest = client()->requestFactory()->request( command );
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( NM_A_SZ_USERID, 0, NMFIELD_TYPE_UTF8, client()->userId() ) );
 	lst.append( new Field::SingleField( NM_A_SZ_CREDENTIALS, 0, NMFIELD_TYPE_UTF8, client()->password() ) );
 	lst.append( new Field::SingleField( NM_A_SZ_USER_AGENT, 0, NMFIELD_TYPE_UTF8, client()->userAgent() ) );
 	lst.append( new Field::SingleField( NM_A_UD_BUILD, 0, NMFIELD_TYPE_UDWORD, 2 ) );
 	lst.append( new Field::SingleField( NM_A_IP_ADDRESS, 0, NMFIELD_TYPE_UTF8, client()->ipAddress() ) );
-	loginRequest->setFields( lst );
-	setTransfer( loginRequest );
+	createTransfer( command, lst );
 }
 
 bool LoginTask::take( Transfer * transfer )

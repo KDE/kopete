@@ -10,11 +10,6 @@
 //
 //
 
-#include "client.h"
-#include "gwerror.h"
-#include "request.h"
-#include "requestfactory.h"
-
 #include "setstatustask.h"
 
 using namespace GroupWise; 
@@ -39,15 +34,13 @@ void SetStatusTask::status( Status newStatus, const QString &awayMessage, const 
 	m_awayMessage = awayMessage;
 	m_autoReply = autoReply;
 	
-	Request * setStatus = client()->requestFactory()->request( "setstatus" );
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( NM_A_SZ_STATUS, 0, NMFIELD_TYPE_UTF8, QString::number( newStatus ) ) );
 	if ( !awayMessage.isNull() )
 		lst.append( new Field::SingleField( NM_A_SZ_STATUS_TEXT, 0, NMFIELD_TYPE_UTF8, awayMessage ) );
 	if ( !autoReply.isNull() )
 		lst.append( new Field::SingleField( NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, autoReply ) );
-	setStatus->setFields( lst );
-	setTransfer( setStatus );
+	createTransfer( "setstatus", lst );
 }
 
 Status SetStatusTask::requestedStatus() const

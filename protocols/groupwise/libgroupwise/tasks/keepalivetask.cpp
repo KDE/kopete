@@ -9,8 +9,6 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include <iostream.h>
-
 #include <qtimer.h>
 
 #include "client.h"
@@ -36,15 +34,8 @@ KeepAliveTask::~KeepAliveTask()
 
 void KeepAliveTask::slotSendKeepAlive()
 {
-	QCString command = "ping";
-	setTransfer( client()->requestFactory()->request( command ) );
-	go();
-}
-
-void KeepAliveTask::onGo()
-{
-	cout << "KeepAliveTask::onGo() - sending keepalive/ping" << endl;
-	send( static_cast<Request *>( transfer() ) );
+	Field::FieldList lst;
+	createTransfer( "ping", lst );
 }
 
 #include "keepalivetask.moc"

@@ -12,6 +12,7 @@
 #ifndef GETDETAILSTASK_H
 #define GETDETAILSTASK_H
 
+#include "gwerror.h"
 #include "requesttask.h"
 
 /**
@@ -28,9 +29,9 @@ public:
 	bool take( Transfer * transfer );
 	void userDNs( const QStringList & userDNs );
 signals:
-	void gotContactUserDetails( const ContactDetails & );
+	void gotContactUserDetails( const GroupWise::ContactDetails & );
 protected:
-	ContactDetails extractUserDetails(Field::MultiField * details );
+	GroupWise::ContactDetails extractUserDetails( Field::MultiField * details );
 
 };
 

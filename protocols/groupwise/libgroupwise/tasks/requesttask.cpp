@@ -11,8 +11,10 @@
 //
 
 #include "gwfield.h"
+#include "client.h"
 #include "request.h"
 #include "response.h"
+#include "requestfactory.h"
 
 #include "requesttask.h"
 
@@ -28,11 +30,12 @@ bool RequestTask::forMe( Transfer * transfer ) const
 	return (theResponse && theResponse->transactionId() == m_transactionId );
 }
 
-
-void RequestTask::setTransfer( Transfer * transfer )
+void RequestTask::createTransfer( const QString & command, const Field::FieldList & fields )
 {
-	m_transactionId = static_cast<Request *>(transfer)->transactionId();
-	Task::setTransfer( transfer );
+	Request * request = client()->requestFactory()->request( command );
+	m_transactionId = request->transactionId();
+	request->setFields( fields );
+	Task::setTransfer( request );
 }
 
 void RequestTask::onGo()

@@ -11,8 +11,6 @@
 //
 
 #include "client.h"
-#include "request.h"
-#include "requestfactory.h"
 #include "response.h"
 
 
@@ -30,7 +28,6 @@ CreateConferenceTask::~CreateConferenceTask()
 void CreateConferenceTask::conference( const int confId, const QStringList &participants )
 {
 	m_confId = confId;
-	Request * createConfRequest = client()->requestFactory()->request( "createconf" );
 	Field::FieldList lst, tmp;
 	// list containing blank GUID
 	tmp.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, m_guid ) );
@@ -40,8 +37,7 @@ void CreateConferenceTask::conference( const int confId, const QStringList &part
 	for ( QValueListConstIterator<QString> it = participants.begin(); it != end; ++it )
 		lst.append( new Field::SingleField( NM_A_SZ_DN, 0, NMFIELD_TYPE_DN, *it ) );
 	lst.append( new Field::SingleField( NM_A_SZ_DN, 0, NMFIELD_TYPE_DN, client()->userDN() ) );
-	createConfRequest->setFields( lst );
-	setTransfer( createConfRequest );
+	createTransfer( "createconf", lst );
 }
 
 bool CreateConferenceTask::take( Transfer * transfer )

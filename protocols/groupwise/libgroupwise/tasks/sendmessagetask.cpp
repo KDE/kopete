@@ -9,9 +9,6 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "request.h"
-#include "requestfactory.h"
-
 #include "sendmessagetask.h"
 
 SendMessageTask::SendMessageTask(Task* parent): RequestTask(parent)
@@ -26,7 +23,6 @@ SendMessageTask::~SendMessageTask()
 void SendMessageTask::message( const QStringList & recipientDNList, const OutgoingMessage & msg )
 {
 	// Assumes the conference is instantiated, unlike Gaim's nm_send_message
-	Request * sendRequest = client()->requestFactory()->request( "sendmessage" );
 	Field::FieldList lst, tmp, msgBodies;
 	// list containing GUID
 	tmp.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, msg.guid ) );
@@ -44,6 +40,5 @@ void SendMessageTask::message( const QStringList & recipientDNList, const Outgoi
 	QValueListConstIterator<QString> end = recipientDNList.end();
 	for ( QValueListConstIterator<QString> it = recipientDNList.begin(); it != end; ++it )
 		lst.append( new Field::SingleField( NM_A_SZ_DN, 0, NMFIELD_TYPE_DN, *it ) );
-	sendRequest->setFields( lst );
-	setTransfer( sendRequest );
+	createTransfer( "sendmessage", lst );
 }

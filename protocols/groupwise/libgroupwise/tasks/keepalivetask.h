@@ -25,7 +25,6 @@ Q_OBJECT
 public:
 	KeepAliveTask(Task* parent);
 	~KeepAliveTask();
-	void onGo();
 protected slots:
 	void slotSendKeepAlive();
 private:
