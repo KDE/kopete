@@ -64,6 +64,8 @@ IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, K
 	QObject::connect(identity->engine(), SIGNAL(userOnline( const QString & )), this, SLOT(slotUserOnline(const QString &)));
 
 	isConnected = false;
+
+	setOnlineStatus( IRCProtocol::IRCUserOffline() );
 }
 
 IRCUserContact::~IRCUserContact()

@@ -64,7 +64,7 @@ public:
 	static IRCProtocol *protocol();
 
 	static KopeteOnlineStatus IRCChannelOnline() { return m_ChannelOnline; };
-	static KopeteOnlineStatus IRCUserOnline() { return m_UserOnline;; };
+	static KopeteOnlineStatus IRCUserOnline() { return m_UserOnline; };
 	static KopeteOnlineStatus IRCChannelOffline() { return m_ChannelOffline; };
 	static KopeteOnlineStatus IRCUserOffline() { return m_UserOffline; };
 

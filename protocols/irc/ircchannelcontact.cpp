@@ -74,6 +74,8 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 	QObject::connect( this, SIGNAL( endSession() ), this, SLOT( slotPart() ) );
 
 	isConnected = false;
+
+	setOnlineStatus( IRCProtocol::IRCChannelOffline() );
 }
 
 IRCChannelContact::~IRCChannelContact()
