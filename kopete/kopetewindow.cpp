@@ -109,6 +109,10 @@ void KopeteWindow::initActions ( void )
 
 	actionPrefs = KStdAction::preferences(kopeteapp, SLOT(slotPreferences()), actionCollection());
 
+	actionSave = new KAction( i18n("Save &ContactList"), "filesave", 0 ,
+							KopeteContactList::contactList(), SLOT(save()),
+							actionCollection(), "save_contactlist" );
+
 //	actionQuit = KStdAction::quit(kopeteapp, SLOT(slotExit()), actionCollection());
 	KStdAction::quit(this, SLOT(slotQuit()), actionCollection());
 

@@ -69,6 +69,7 @@ public:
 	
 	KAction* actionPrefs;
 	KAction* actionQuit;
+	KAction* actionSave;
 	KToggleAction *toolbarAction;
 	KAction *actionShowTransfers;
 

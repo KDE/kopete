@@ -84,14 +84,6 @@ public:
 	QStringList contactStatuses() const;
 
 	/**
-	 * Load the contact list
-	 *
-	 * FIXME: Use a better way, without exposing the XML backend, though.
-	 */
-	void load() { loadXML(); }
-	void save() { saveXML(); }
-
-	/**
 	 * Return all available groups
 	 */
 	KopeteGroupList groups() const;
@@ -124,6 +116,15 @@ public:
 
 public slots:
 //	void slotRemovedFromGroup( KopeteMetaContact *mc, const QString &from );
+
+	/**
+	 * Load the contact list
+	 *
+	 * FIXME: Use a better way, without exposing the XML backend, though.
+	 */
+	void load() { loadXML(); }
+	void save() { saveXML(); }
+
 
 signals:
 	/**

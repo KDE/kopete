@@ -8,6 +8,7 @@
 			<Separator lineSeparator="true"/>
 			<Action name="AddContact"/>
 			<Separator lineSeparator="true"/>
+			<Action name="save_contactlist"/>
 			<Action name="file_quit"/>
 		</Menu>
 		<Menu name="settings" noMerge="1"><text>&amp;Settings</text>
