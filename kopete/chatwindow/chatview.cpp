@@ -933,7 +933,7 @@ void ChatView::addChatMessage( KopeteMessage &m )
 		m.setBgOverride( bgOverride );
 
 	messageMap.insert( ++messageId, m );
- QDomDocument message = m.asXML();
+	QDomDocument message = m.asXML();
 	message.documentElement().setAttribute( QString::fromLatin1("id"), QString::number(messageId) );
 	QString resultHTML = KopeteXSL::xsltTransform( message.toString(), KopetePrefs::prefs()->styleContents() );
 	HTMLElement newNode = chatView->document().createElement( QString::fromLatin1("span") );
