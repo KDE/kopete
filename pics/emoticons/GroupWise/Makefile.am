@@ -1,4 +1,4 @@
-icondir = $(kde_datadir)/kopete/pics/emoticons/GroupWise
+icondir = $(datadir)/emoticons/GroupWise
 icon_DATA = emoticons.xml
 
 #smile.png

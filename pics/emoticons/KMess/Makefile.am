@@ -1,4 +1,4 @@
-icondir = $(kde_datadir)/kopete/pics/emoticons/KMess
+icondir = $(datadir)/emoticons/KMess
 icon_DATA = emoticons.xml \
 angel.png angry.png bat.png \
 beer.png boy.png cake.png \
