@@ -14,6 +14,8 @@
 #include "kopetemessage.h"
 #include "kopeteplugin.h"
 
+#include <kjs/object.h>
+
 class KopeteContact;
 class KopeteMessageManager;
 class Message;
@@ -58,6 +60,7 @@ class JavaScriptPlugin : public KopetePlugin
 		JavaScriptConfig *config;
 		KJSEmbed::KJSEmbedPart *jsEngine;
 		KJSEmbed::JSOpaqueProxy *messageProxy;
+		KJS::Object contactList;
 };
 
 #endif
