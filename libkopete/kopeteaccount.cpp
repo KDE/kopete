@@ -91,6 +91,8 @@ Account::Account( Protocol *parent, const QString &accountId, const char *name )
 
 Account::~Account()
 {
+	d->contacts.remove( d->myself->contactId() );
+	
 	// Delete all registered child contacts first
 	while ( !d->contacts.isEmpty() )
 		delete *QDictIterator<Contact>( d->contacts );
@@ -371,7 +373,7 @@ void Account::setMyself( Contact *myself )
 
 	d->myself = myself;
 
-	d->contacts.remove( myself->contactId() );
+//	d->contacts.remove( myself->contactId() );
 	
 	QObject::connect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 		this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
