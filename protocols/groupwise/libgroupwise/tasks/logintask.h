@@ -41,10 +41,10 @@ public:
 protected:
 	void extractFolder( Field::MultiField * folderContainer );
 	void extractContact( Field::MultiField * contactContainer );
-	ContactDetails extractUserDetails(Field::MultiField * details );
+	ContactDetails extractUserDetails( Field::FieldList & fields );
 
 signals:
-	void gotMyself( const ContactItem & );
+	void gotMyself( const ContactDetails & );
 	void gotFolder( const FolderItem & );
 	void gotContact( const ContactItem & );
 	void gotContactUserDetails( const ContactDetails & );

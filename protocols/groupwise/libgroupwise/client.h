@@ -177,7 +177,7 @@ Q_OBJECT
 		/**
 		 * We've just got the user's own details from the server.
 		 */
-		void accountDataReceived( const ContactItem & );
+		void accountDetailsReceived( const ContactDetails & );
 		/** 
 		 * We've just found out about a folder from the server.
 		 */

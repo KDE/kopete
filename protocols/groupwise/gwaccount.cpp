@@ -195,7 +195,7 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	// typing events
 	QObject::connect( m_client, SIGNAL( contactTyping( const ConferenceEvent & ) ), SIGNAL( contactTyping( const ConferenceEvent & ) ) );
 	QObject::connect( m_client, SIGNAL( contactNotTyping( const ConferenceEvent & ) ), SIGNAL( contactNotTyping( const ConferenceEvent & ) ) );
-
+	QObject::connect( m_client, SIGNAL( accountDetailsReceived( const ContactDetails &) ), SLOT( receiveAccountDetails( const ContactDetails & ) ) );
 	QObject::connect( m_client, SIGNAL( connectedElsewhere() ), SLOT( slotConnectedElsewhere() ) );
 	
 	struct utsname utsBuf;
@@ -215,10 +215,38 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	m_client->connectToServer( m_clientStream, dn, true ); 
 }
 
+void GroupWiseAccount::disconnect ( KopeteAccount::DisconnectReason reason )
+{
+	// FIXME: this ugly sequence is a libkopete requirement
+	disconnect();
+	KopeteAccount::disconnect( reason );
+}
+
+
 void GroupWiseAccount::disconnect()
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	
+	if( isConnected () )
+	{
+		kdDebug (GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << "Still connected, closing connection..." << endl;
+		/* Tell backend class to disconnect. */
+		m_client->close ();
+	}
+
+	// make sure that the connection animation gets stopped if we're still
+	// in the process of connecting
 	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
+
+	/* FIXME:
+	 * We should delete the XMPP::Client instance here,
+	 * but active timers in psi prevent us from doing so.
+	 * (in a failed connection attempt, these timers will
+	 * try to access an already deleted object).
+	 * Instead, the instance will lurk until the next
+	 * connection attempt.
+	 */
+	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << "Disconnected." << endl;
 }
 
 void GroupWiseAccount::setStatus( GroupWise::Status status, const QString & reason )
@@ -273,8 +301,8 @@ void GroupWiseAccount::slotGoAppearOffline()
 
 void GroupWiseAccount::slotGoOffline()
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "NOT IMPLEMENTED" << endl;
-	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	disconnect ( KopeteAccount::Manual );
 }
 
 void GroupWiseAccount::slotLoggedIn()
@@ -370,37 +398,6 @@ void GroupWiseAccount::receiveMessage( const ConferenceEvent & event )
 	}
 }
 
-void GroupWiseAccount::slotGotMyDetails( Field::FieldList & fields )
-{
-/*	Field::FieldBase* current = 0;
-	QString cn, dn, givenName, surname, fullName, awayMessage, authAttribute;
-	int status;
-	Field::FieldListIterator it;
-	Field::FieldListIterator end = fields.end();
-	if ( ( it = fields.find ( NM_A_SZ_AUTH_ATTRIBUTE ) ) != end )
-		authAttribute = static_cast<Field::SingleField*>( *it )->value().toString();
-	if ( ( it = fields.find ( NM_A_SZ_DN ) ) != end )
-		dn = static_cast<Field::SingleField*>( *it )->value().toString();
-	if ( ( it = fields.find ( "CN" ) ) != end )
-		cn = static_cast<Field::SingleField*>( *it )->value().toString();
-	if ( ( it = fields.find ( "Given Name" ) ) != end )
-		givenName = static_cast<Field::SingleField*>( *it )->value().toString();
-	if ( ( it = fields.find ( "Surname" ) ) != end )
-		surname = static_cast<Field::SingleField*>( *it )->value().toString();
-	if ( ( it = fields.find ( "Full Name" ) ) != end )
-		fullName = static_cast<Field::SingleField*>( *it )->value().toString();
-	if ( ( it = fields.find ( NM_A_SZ_STATUS ) ) != end )
-		status = static_cast<Field::SingleField*>( *it )->value().toString().toInt();
-	if ( ( it = fields.find ( NM_A_SZ_MESSAGE_BODY ) ) != end )
-		awayMessage = static_cast<Field::SingleField*>( *it )->value().toString();
-	
-	myself()->setProperty( GroupWiseProtocol::protocol()->propCN, cn );
-	myself()->setProperty( GroupWiseProtocol::protocol()->propGivenName, givenName );
-	myself()->setProperty( GroupWiseProtocol::protocol()->propLastName, surname );
-	myself()->setProperty( GroupWiseProtocol::protocol()->propFullName, fullName );
-	myself()->setProperty( GroupWiseProtocol::protocol()->propAwayMessage, awayMessage );*/
-}
-
 void GroupWiseAccount::receiveFolder( const FolderItem & folder )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo 
@@ -482,6 +479,25 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 	}
 }
 
+
+void GroupWiseAccount::receiveAccountDetails( const ContactDetails & details )
+{
+	if ( details.cn == accountId() )
+	{
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " - got our details in contact list, updating them" << endl;
+		GroupWiseContact * detailsOwner= static_cast<GroupWiseContact *>( myself() );
+		detailsOwner->updateDetails( details );
+		// Very important, without knowing our DN we can't do much else
+		Q_ASSERT( !details.dn.isEmpty() );
+		m_client->setUserDN( details.dn );
+		return;
+	}
+	else
+	{
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " - passed someone else's details in contact list!" << endl;
+	}
+}
+
 void GroupWiseAccount::receiveContactUserDetails( const ContactDetails & details )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo 
@@ -497,6 +513,7 @@ void GroupWiseAccount::receiveContactUserDetails( const ContactDetails & details
 	// HACK: lowercased DN 
 	if ( !details.dn.isNull() )
 	{
+		// are the details for someone in our contact list?
 		GroupWiseContact * detailsOwner= static_cast<GroupWiseContact *>( contacts()[ details.dn ] );
 		if( detailsOwner )
 		{
@@ -505,6 +522,7 @@ void GroupWiseAccount::receiveContactUserDetails( const ContactDetails & details
 		}
 		else
 		{
+			// they must be for a temporary contact we requested details for.
 			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - got details for " << details.dn << ", now creating a temporary contact and delivering any pending messages" << endl;
 			// we asked for the user's details because we got a message from them out of the blue
 			// look for any events from this user, add the user and deliver the event(s)

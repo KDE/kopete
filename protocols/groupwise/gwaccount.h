@@ -110,7 +110,8 @@ public slots:
 	virtual void connectWithPassword ( const QString &password );
 
 	/* Disconnects from the server. */
-	virtual void disconnect ();
+	virtual void disconnect();
+	virtual void disconnect( KopeteAccount::DisconnectReason reason );
 signals: 
 	void conferenceCreated( const int mmId, const QString & guid );
 	void conferenceCreationFailed( const int mmId, const int statusCode );
@@ -194,7 +195,7 @@ protected slots:
 	/**
 	 * Update the local user's metadata
 	 */
-	void slotGotMyDetails( Field::FieldList & fields );
+	void receiveAccountDetails( const ContactDetails & details );
 	/**
 	 * The TLS handshake has happened, check the result
 	 */

@@ -97,8 +97,8 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 	
 	LoginTask * login = new LoginTask( d->root );
 	
-	connect( login, SIGNAL( gotMyself( const ContactItem &  ) ), 
-			this, SIGNAL( accountDataReceived( const ContactItem & ) ) );
+	connect( login, SIGNAL( gotMyself( const ContactDetails &  ) ), 
+			this, SIGNAL( accountDetailsReceived( const ContactDetails & ) ) );
 			
 	connect( login, SIGNAL( gotFolder( const FolderItem & ) ), 
 			this, SIGNAL( folderReceived( const FolderItem & ) ) );

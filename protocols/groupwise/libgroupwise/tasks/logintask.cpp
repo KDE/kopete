@@ -51,7 +51,8 @@ bool LoginTask::take( Transfer * transfer )
 	
 	// read in myself()'s metadata fields and emit signal
 	Field::FieldList loginResponseFields = response->fields();
-	//emit gotMyself( loginResponseFields );
+	ContactDetails cd = extractUserDetails( loginResponseFields );
+	emit gotMyself( cd );
 	
 	// CREATE CONTACT LIST
 	// locate contact list
@@ -124,38 +125,34 @@ void LoginTask::extractContact( Field::MultiField * contactContainer )
 	contact.dn = current->value().toString();
 	emit gotContact( contact );
 	Field::MultiField * details = fl.findMultiField( NM_A_FA_USER_DETAILS );
-	ContactDetails cd = extractUserDetails( details );
+	Field::FieldList detailsFields = details->fields();
+	ContactDetails cd = extractUserDetails( detailsFields );
 	cd.dn = contact.dn.lower(); // HACK: lowercased DN
 	emit gotContactUserDetails( cd );
 }
 
-ContactDetails LoginTask::extractUserDetails(Field::MultiField * details )
+ContactDetails LoginTask::extractUserDetails( Field::FieldList & fields )
 {
 	ContactDetails cd;
 	cd.status = GroupWise::Invalid;
 	// read the supplied fields, set metadata and status.
-	if ( details->tag() == NM_A_FA_USER_DETAILS )
-	{
-		Field::FieldList fields = details->fields();
-		// TODO: not sure what this means, ask Mike
-		Field::SingleField * sf;
-		if ( ( sf = fields.findSingleField ( NM_A_SZ_AUTH_ATTRIBUTE ) ) )
-			cd.authAttribute = sf->value().toString();
-		if ( ( sf = fields.findSingleField ( NM_A_SZ_DN ) ) )
-			cd.dn =sf->value().toString().lower(); // HACK: lowercased DN
-		if ( ( sf = fields.findSingleField ( "CN" ) ) )
-			cd.cn = sf->value().toString();
-		if ( ( sf = fields.findSingleField ( "Given Name" ) ) )
-			cd.givenName = sf->value().toString();
-		if ( ( sf = fields.findSingleField ( "Surname" ) ) )
-			cd.surname = sf->value().toString();
-		if ( ( sf = fields.findSingleField ( "Full Name" ) ) )
-			cd.fullName = sf->value().toString();
-		if ( ( sf = fields.findSingleField ( NM_A_SZ_STATUS ) ) )
-			cd.status = sf->value().toInt();
-		if ( ( sf = fields.findSingleField ( NM_A_SZ_MESSAGE_BODY ) ) )
-			cd.awayMessage = sf->value().toString();
-	}
+	Field::SingleField * sf;
+	if ( ( sf = fields.findSingleField ( NM_A_SZ_AUTH_ATTRIBUTE ) ) )
+		cd.authAttribute = sf->value().toString();
+	if ( ( sf = fields.findSingleField ( NM_A_SZ_DN ) ) )
+		cd.dn =sf->value().toString().lower(); // HACK: lowercased DN
+	if ( ( sf = fields.findSingleField ( "CN" ) ) )
+		cd.cn = sf->value().toString();
+	if ( ( sf = fields.findSingleField ( "Given Name" ) ) )
+		cd.givenName = sf->value().toString();
+	if ( ( sf = fields.findSingleField ( "Surname" ) ) )
+		cd.surname = sf->value().toString();
+	if ( ( sf = fields.findSingleField ( "Full Name" ) ) )
+		cd.fullName = sf->value().toString();
+	if ( ( sf = fields.findSingleField ( NM_A_SZ_STATUS ) ) )
+		cd.status = sf->value().toInt();
+	if ( ( sf = fields.findSingleField ( NM_A_SZ_MESSAGE_BODY ) ) )
+		cd.awayMessage = sf->value().toString();
 	return cd;
 }
 

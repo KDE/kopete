@@ -15,13 +15,12 @@ SendInviteTask::SendInviteTask(Task* parent): RequestTask(parent)
 {
 }
 
-void SendInviteTask::invite()
-{
-
-}
-
 SendInviteTask::~SendInviteTask()
 {
 }
 
+void SendInviteTask::invite()
+{
+
+}
 

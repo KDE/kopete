@@ -282,7 +282,6 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 			fieldsToWire( mField->fields(), depth + 1 );
 		}
 		//cout << " - field done" << endl;
-		
 	}
 	if ( depth == 0 ) // this call to the function was not recursive, so the entire request has been sent at this point
 	{

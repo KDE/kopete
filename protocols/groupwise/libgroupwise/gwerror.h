@@ -44,9 +44,9 @@ namespace GroupWise
 					FolderExists
 				};
 	
-	enum ConferenceFlags { 	Logged = 0x00000001,
-							Secure = 0x00000002,
-							Closed = 0x10000000
+	enum ConferenceFlags { 	Logging = 0x00000001,
+							Secure  = 0x00000002,
+							Closed  = 0x10000000
 						 };
 	
 	// helpful structs used to pass data between the client library and the application using it

@@ -11,6 +11,8 @@
 //
 
 #include <kdebug.h>
+#include <klocale.h>
+
 #include <kopetecontact.h>
 #include <kopetemessagemanagerfactory.h>
 #include <kopeteprotocol.h>
@@ -53,6 +55,42 @@ void GroupWiseMessageManager::setGuid( const QString & guid )
 	}
 	else
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "attempted to change the conference's GUID when already set!" << endl;
+}
+
+bool GroupWiseMessageManager::closed()
+{
+	return m_flags & GroupWise::Closed;
+}
+
+bool GroupWiseMessageManager::logging()
+{
+	return m_flags & GroupWise::Logging;
+}
+
+bool GroupWiseMessageManager::secure()
+{
+	return m_flags & GroupWise::Secure;
+}
+
+void GroupWiseMessageManager::setClosed()
+{
+	m_flags = m_flags | GroupWise::Closed;
+}
+
+void GroupWiseMessageManager::setLogging( bool logging )
+{
+	if ( logging )
+		m_flags = m_flags | GroupWise::Logging;
+	else
+		m_flags = m_flags & !GroupWise::Logging;
+}
+
+void GroupWiseMessageManager::setSecure( bool secure )
+{
+	if ( secure )
+		m_flags = m_flags | GroupWise::Secure;
+	else
+		m_flags = m_flags & !GroupWise::Secure;
 }
 
 void GroupWiseMessageManager::updateDisplayName()
@@ -107,14 +145,17 @@ void GroupWiseMessageManager::slotCreationFailed( const int failedId, const int 
 	{
 		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't start a chat, no GUID.\n" << endl;
 		//emit creationFailed();
-		KopeteMessage failureNotify = KopeteMessage(/*m_manager->user(),  m_manager->members()*/ 0L,0L, QString::fromLatin1("An error occurred when trying to start a chat: %1").arg( statusCode ), KopeteMessage::Internal, KopeteMessage::PlainText);
+		KopeteMessage failureNotify = KopeteMessage(/*m_manager->user(),  m_manager->members()*/ user(), members(), i18n("An error occurred when trying to start a chat: %1").arg( statusCode ), KopeteMessage::Internal, KopeteMessage::PlainText);
+		appendMessage( failureNotify );
+		setClosed();
 	}
 }
 
 void GroupWiseMessageManager::slotSendTypingNotification( bool typing )
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	account()->client()->sendTyping( guid(), typing );
+	if ( !m_guid.isEmpty() )
+		account()->client()->sendTyping( guid(), typing );
 }
 
 void GroupWiseMessageManager::slotMessageSent( KopeteMessage & message, KopeteMessageManager * )
@@ -122,20 +163,29 @@ void GroupWiseMessageManager::slotMessageSent( KopeteMessage & message, KopeteMe
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	if( account()->isConnected() )
 	{
-		if ( m_guid.isEmpty() )
+		if ( closed() )
 		{
-			kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "waiting for server to create a conference, queuing message" << endl;
-			// the conference hasn't been instantiated on the server yet, so queue the message
-			m_pendingOutgoingMessages.append( message );
-		}
-		else 
-		{
-			kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "sending message" << endl;
-			account()->sendMessage( guid(), message );
-			// we could wait until the server acks our send, 
-			// but we'd need a UID for outgoing messages and a list to track them
-			appendMessage( message );
+			KopeteMessage failureNotify = KopeteMessage(/*m_manager->user(),  m_manager->members()*/ user(), members(), i18n("Your message could not be sent. This conversation has been closed by the server, because all the other participants left or declined invitations. "), KopeteMessage::Internal, KopeteMessage::PlainText);
+			appendMessage( failureNotify );
 			messageSucceeded();
+		}
+		else
+		{
+			if ( m_guid.isEmpty() )
+			{
+				kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "waiting for server to create a conference, queuing message" << endl;
+				// the conference hasn't been instantiated on the server yet, so queue the message
+				m_pendingOutgoingMessages.append( message );
+			}
+			else 
+			{
+				kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "sending message" << endl;
+				account()->sendMessage( guid(), message );
+				// we could wait until the server acks our send, 
+				// but we'd need a UID for outgoing messages and a list to track them
+				appendMessage( message );
+				messageSucceeded();
+			}
 		}
 	}
 }

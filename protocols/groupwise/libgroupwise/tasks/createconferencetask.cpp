@@ -39,7 +39,6 @@ void CreateConferenceTask::conference( const int confId, const QStringList &part
 	QValueListConstIterator<QString> end = participants.end();
 	for ( QValueListConstIterator<QString> it = participants.begin(); it != end; ++it )
 		lst.append( new Field::SingleField( NM_A_SZ_DN, 0, NMFIELD_TYPE_DN, *it ) );
-		
 	lst.append( new Field::SingleField( NM_A_SZ_DN, 0, NMFIELD_TYPE_DN, client()->userDN() ) );
 	createConfRequest->setFields( lst );
 	setTransfer( createConfRequest );

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>404</width>
-            <height>452</height>
+            <width>366</width>
+            <height>404</height>
         </rect>
     </property>
     <property name="caption">
@@ -111,32 +111,20 @@
                                     <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
                                 </property>
                             </widget>
-                        </vbox>
-                    </widget>
-                </vbox>
-            </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>TabPage</cstring>
-                </property>
-                <attribute name="title">
-                    <string>Connec&amp;tion</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>groupBox66</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Connection Preferences</string>
-                        </property>
-                        <vbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
+                            <widget class="Line">
+                                <property name="name">
+                                    <cstring>line1</cstring>
+                                </property>
+                                <property name="frameShape">
+                                    <enum>HLine</enum>
+                                </property>
+                                <property name="frameShadow">
+                                    <enum>Sunken</enum>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                            </widget>
                             <widget class="QLayoutWidget">
                                 <property name="name">
                                     <cstring>layout66</cstring>

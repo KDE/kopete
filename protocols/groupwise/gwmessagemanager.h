@@ -43,6 +43,15 @@ public:
 	 * Utility account access
 	 */
 	GroupWiseAccount * account();
+	/**
+	 * Accessors and mutators for secure chat, logged chat, and closed conference flags
+	 */
+	void setSecure( bool secure );
+	void setLogging( bool logged );
+	void setClosed();
+	bool secure();
+	bool logging();
+	bool closed();
 signals:
 	/**
 	 * Tell the contact we got a GUID so it can route incoming messages here.
@@ -82,6 +91,7 @@ protected slots:
 private:
 	QString m_guid; // The conference's globally unique identifier, which is given to it by the server
 	int m_flags; // flags for secure connections, central logging and "conference closed" as given by the server
+	
 	QValueList< KopeteMessage > m_pendingOutgoingMessages; // messages queued while we wait for the server to tell us the conference is created.
 };
 
