@@ -17,7 +17,6 @@
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <kmessagebox.h>
 #include <qregexp.h>
 #include <qtextcodec.h>
 
@@ -315,25 +314,18 @@ void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 	}
 
 	QStringList messages = QStringList::split( '\n', KopeteMessage::unescape( htmlString ) );
-
-	if( messages.count() < 5 || KMessageBox::warningContinueCancel(
-		0L, i18n("This multi-line message will be split into %1 individual messages by Kopete. Sending "
-		"large numbers of messages at once can cause you to be disconnected from some IRC servers. Are you sure "
-		"you want to continue?").arg(messages.count()), i18n("Multiple Messages") ) == KMessageBox::Continue )
+	for( QStringList::Iterator it = messages.begin(); it != messages.end(); ++it )
 	{
-		for( QStringList::Iterator it = messages.begin(); it != messages.end(); ++it )
-		{
-			KopeteMessage msg(message.from(), message.to(), htmlString, message.direction(),
-				KopeteMessage::RichText, message.type() );
+		KopeteMessage msg(message.from(), message.to(), htmlString, message.direction(),
+			KopeteMessage::RichText, message.type() );
 
-			m_engine->messageContact(m_nickName, *it );
+		m_engine->messageContact(m_nickName, *it );
 
-			msg.setBg( QColor() );
-			msg.setFg( QColor() );
+		msg.setBg( QColor() );
+		msg.setFg( QColor() );
 
-			appendMessage(msg);
-			manager()->messageSucceeded();
-		}
+		appendMessage(msg);
+		manager()->messageSucceeded();
 	}
 }
 
