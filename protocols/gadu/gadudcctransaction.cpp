@@ -88,7 +88,7 @@ GaduDCCTransaction::setupOutgoing( GaduContact* peerContact )
 
 	me = static_cast<GaduContact*>( peerContact->account()->myself() );
 
-	unsigned int aaa =  htonl( peerContact->contactIp().ip4Addr() );
+	QString aaa =  peerContact->contactIp().toString();
 	kdDebug( 14100 ) << "slotOutgoin for UIN: " << peerContact->uin() << " port " << peerContact->contactPort() << " ip " <<aaa<<  endl;
 
 	if ( peerContact->contactPort() >= 10 ) {
@@ -110,8 +110,10 @@ GaduDCCTransaction::setupIncoming( const unsigned int uin, GaduContact* peerCont
 		kdDebug( 14100 ) << "setupIncoming called with peerContact == NULL " << endl;
 	}
 
-	peer = peerContact->uin();
+	QString aaa =  peerContact->contactIp().toString();
+	kdDebug( 14100 ) << "setupIncoming for UIN: " << uin << " port " << peerContact->contactPort() << " ip " <<aaa<<  endl;
 
+	int peer = peerContact->uin();
 	dccSock_ = gg_dcc_get_file( htonl( peerContact->contactIp().ip4Addr() ), peerContact->contactPort(), uin, peer );
 
 	contact = peerContact;
