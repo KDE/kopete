@@ -94,12 +94,19 @@ void Engine::setUseSSL( bool useSSL )
 
 		m_useSSL = useSSL;
 
+
 		if( m_useSSL )
 		{
+		#ifdef KIRC_SSL_SUPPORT
 			m_sock = new KSSLSocket;
 			m_sock->setSocketFlags( KExtendedSocket::inetSocket );
 		}
 		else
+		#else
+			kdWarning(14120) << "You tried to use SSL, but this version of Kopete was"
+				" not compiled with IRC SSL support. A normal IRC connection will be attempted." << endl; 
+		}
+		#endif
 		{
 			m_sock = new KExtendedSocket;
 			m_sock->setSocketFlags( KExtendedSocket::inputBufferedSocket | KExtendedSocket::inetSocket );

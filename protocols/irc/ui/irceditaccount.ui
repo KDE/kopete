@@ -26,6 +26,9 @@
             <height>575</height>
         </size>
     </property>
+    <property name="caption">
+        <string>IRCEditAccountBase</string>
+    </property>
     <hbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -378,8 +381,14 @@
                                 <property name="name">
                                     <cstring>preferSSL</cstring>
                                 </property>
+                                <property name="enabled">
+                                    <bool>false</bool>
+                                </property>
                                 <property name="text">
                                     <string>&amp;Prefer SSL-based connections</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+P</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox">
@@ -543,9 +552,9 @@
                                 <property name="text">
                                     <string>Auto-show anonymous windows</string>
                                 </property>
-				<property name="disabled">
-				    <bool>true</bool>
-				</property>
+                                <property name="disabled" stdset="0">
+                                    <bool>true</bool>
+                                </property>
                             </widget>
                             <widget class="QCheckBox" row="1" column="0">
                                 <property name="name">
