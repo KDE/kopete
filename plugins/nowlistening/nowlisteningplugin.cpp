@@ -33,7 +33,7 @@
 #include "nlmediaplayer.h"
 #include "nlkscd.h"
 #include "nlnoatun.h"
-#include "nlxmms.h"
+#include "nljuk.h"
 #include "nowlisteningguiclient.h"
 
 #ifdef HAVE_XMMS
@@ -78,6 +78,8 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char *name, const
 	m_mediaPlayer->setAutoDelete( true );
 	m_mediaPlayer->append( new NLKscd( m_client ) );
 	m_mediaPlayer->append( new NLNoatun( m_client ) );
+	m_mediaPlayer->append( new NLJuk( m_client ) );
+
 #ifdef HAVE_XMMS
 	m_mediaPlayer->append( new NLXmms() );
 #endif
