@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1"" stdsetdef="1">
 <class>aimEditAccountUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>371</width>
-            <height>349</height>
+            <width>463</width>
+            <height>516</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -28,54 +28,23 @@
             <cstring>unnamed</cstring>
         </property>
         <property name="margin">
-            <number>6</number>
+            <number>0</number>
         </property>
         <property name="spacing">
             <number>6</number>
         </property>
         <widget class="QGroupBox">
             <property name="name">
-                <cstring>groupBox5</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>3</hsizetype>
-                    <vsizetype>1</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
-            </property>
-            <property name="lineWidth">
-                <number>1</number>
+                <cstring>groupBox72</cstring>
             </property>
             <property name="title">
                 <string>Account Information</string>
             </property>
-            <grid>
+            <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QCheckBox" row="1" column="0">
-                    <property name="name">
-                        <cstring>mSavePassword</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Remember &amp;password</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+P</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Check to save your password.</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
-                    </property>
-                </widget>
-                <widget class="QLayoutWidget" row="0" column="0">
+                <widget class="QLayoutWidget">
                     <property name="name">
                         <cstring>layout42</cstring>
                     </property>
@@ -113,7 +82,24 @@
                         </widget>
                     </hbox>
                 </widget>
-                <widget class="QLayoutWidget" row="2" column="0">
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mSavePassword</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Remember &amp;password</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+P</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Check to save your password.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget">
                     <property name="name">
                         <cstring>layout55</cstring>
                     </property>
@@ -171,22 +157,14 @@
                         </widget>
                     </hbox>
                 </widget>
-            </grid>
+            </vbox>
         </widget>
         <widget class="QGroupBox">
             <property name="name">
-                <cstring>groupBox6</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>3</hsizetype>
-                    <vsizetype>1</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
+                <cstring>groupBox73</cstring>
             </property>
             <property name="title">
-                <string>Connection Preferences</string>
+                <string>Account Preferences</string>
             </property>
             <vbox>
                 <property name="name">
@@ -360,8 +338,6 @@
         </widget>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
 <tabstops>
     <tabstop>edtAccountId</tabstop>
     <tabstop>mSavePassword</tabstop>

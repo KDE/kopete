@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1"" stdsetdef="1">
 <class>IRCEditAccountBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>462</width>
-            <height>512</height>
+            <height>514</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -19,6 +19,9 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
         </sizepolicy>
+    </property>
+    <property name="caption">
+        <string>IRCEditAccountBase</string>
     </property>
     <vbox>
         <property name="name">
@@ -30,98 +33,197 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QLabel">
+        <widget class="QGroupBox">
             <property name="name">
-                <cstring>textLabel2</cstring>
+                <cstring>groupBox59</cstring>
             </property>
-            <property name="text">
+            <property name="title">
                 <string>Account Information</string>
             </property>
-        </widget>
-        <widget class="Line">
-            <property name="name">
-                <cstring>line3</cstring>
-            </property>
-            <property name="frameShape">
-                <enum>HLine</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-        </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout142</cstring>
-            </property>
-            <hbox>
+            <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
                 <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>layout139</cstring>
+                        <cstring>layout142</cstring>
                     </property>
-                    <vbox>
+                    <hbox>
                         <property name="name">
                             <cstring>unnamed</cstring>
                         </property>
-                        <widget class="QLabel">
+                        <widget class="QLayoutWidget">
                             <property name="name">
-                                <cstring>textLabel4</cstring>
+                                <cstring>layout139</cstring>
                             </property>
-                            <property name="text">
-                                <string>N&amp;ickname:</string>
-                            </property>
-                            <property name="buddy" stdset="0">
-                                <cstring>mNickName</cstring>
-                            </property>
+                            <vbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <widget class="QLabel">
+                                    <property name="name">
+                                        <cstring>textLabel4</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>N&amp;ickname:</string>
+                                    </property>
+                                    <property name="buddy" stdset="0">
+                                        <cstring>mNickName</cstring>
+                                    </property>
+                                </widget>
+                                <widget class="QLabel">
+                                    <property name="name">
+                                        <cstring>textLabel5</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>&amp;Username:</string>
+                                    </property>
+                                    <property name="buddy" stdset="0">
+                                        <cstring>mUserName</cstring>
+                                    </property>
+                                </widget>
+                            </vbox>
                         </widget>
-                        <widget class="QLabel">
+                        <widget class="QLayoutWidget">
                             <property name="name">
-                                <cstring>textLabel5</cstring>
+                                <cstring>layout135</cstring>
                             </property>
-                            <property name="text">
-                                <string>&amp;Username:</string>
-                            </property>
-                            <property name="buddy" stdset="0">
-                                <cstring>mUserName</cstring>
-                            </property>
+                            <vbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <widget class="QLineEdit">
+                                    <property name="name">
+                                        <cstring>mNickName</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>7</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>The alias you would like to use on IRC.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>The alias you would like to use on IRC.  You may change this once online with the /nick command.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QLineEdit">
+                                    <property name="name">
+                                        <cstring>mUserName</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>7</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                    <property name="echoMode">
+                                        <enum>Normal</enum>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>The username you would prefer to use on IRC.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>The username you would prefer to use on IRC.  Leave blank to use your system account name.</string>
+                                    </property>
+                                </widget>
+                            </vbox>
                         </widget>
-                    </vbox>
+                    </hbox>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mRememberPassword</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>Remember &amp;password</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+P</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Check to save your password.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
+                    </property>
                 </widget>
                 <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>layout135</cstring>
+                        <cstring>layout34</cstring>
                     </property>
-                    <vbox>
+                    <hbox>
                         <property name="name">
                             <cstring>unnamed</cstring>
                         </property>
-                        <widget class="QLineEdit">
+                        <spacer>
                             <property name="name">
-                                <cstring>mNickName</cstring>
+                                <cstring>spacer69</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Fixed</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>17</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel1</cstring>
                             </property>
                             <property name="sizePolicy">
                                 <sizepolicy>
-                                    <hsizetype>7</hsizetype>
+                                    <hsizetype>0</hsizetype>
                                     <vsizetype>0</vsizetype>
                                     <horstretch>0</horstretch>
                                     <verstretch>0</verstretch>
                                 </sizepolicy>
                             </property>
+                            <property name="frameShape">
+                                <enum>NoFrame</enum>
+                            </property>
+                            <property name="frameShadow">
+                                <enum>Plain</enum>
+                            </property>
+                            <property name="text">
+                                <string>Server Pass&amp;word:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>mPassword</cstring>
+                            </property>
                             <property name="toolTip" stdset="0">
-                                <string>The alias you would like to use on IRC.</string>
+                                <string>If the IRC server requires a password, you may enter it here.</string>
                             </property>
                             <property name="whatsThis" stdset="0">
-                                <string>The alias you would like to use on IRC.  You may change this once online with the /nick command.</string>
+                                <string>If the IRC server requires a password, you may enter it here.  Normally, you may leave this field blank.</string>
                             </property>
                         </widget>
                         <widget class="QLineEdit">
                             <property name="name">
-                                <cstring>mUserName</cstring>
+                                <cstring>mPassword</cstring>
                             </property>
                             <property name="sizePolicy">
                                 <sizepolicy>
@@ -132,351 +234,186 @@
                                 </sizepolicy>
                             </property>
                             <property name="echoMode">
-                                <enum>Normal</enum>
+                                <enum>Password</enum>
                             </property>
                             <property name="toolTip" stdset="0">
-                                <string>The username you would prefer to use on IRC.</string>
+                                <string>If the IRC server requires a password, you may enter it here.</string>
                             </property>
                             <property name="whatsThis" stdset="0">
-                                <string>The username you would prefer to use on IRC.  Leave blank to use your system account name.</string>
+                                <string>If the IRC server requires a password, you may enter it here.  Normally, you may leave this field blank.</string>
                             </property>
                         </widget>
-                    </vbox>
+                    </hbox>
                 </widget>
-            </hbox>
+            </vbox>
         </widget>
-        <widget class="QCheckBox">
+        <widget class="QGroupBox">
             <property name="name">
-                <cstring>mRememberPassword</cstring>
+                <cstring>groupBox60</cstring>
             </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>3</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="text">
-                <string>Remember &amp;password</string>
-            </property>
-            <property name="accel">
-                <string>Alt+P</string>
-            </property>
-            <property name="checked">
-                <bool>true</bool>
-            </property>
-            <property name="toolTip" stdset="0">
-                <string>Check to save your password.</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
-            </property>
-        </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout34</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer69</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Fixed</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>17</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>textLabel1</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>0</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="frameShape">
-                        <enum>NoFrame</enum>
-                    </property>
-                    <property name="frameShadow">
-                        <enum>Plain</enum>
-                    </property>
-                    <property name="text">
-                        <string>Server Pass&amp;word:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>mPassword</cstring>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>If the IRC server requires a password, you may enter it here.</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>If the IRC server requires a password, you may enter it here.  Normally, you may leave this field blank.</string>
-                    </property>
-                </widget>
-                <widget class="QLineEdit">
-                    <property name="name">
-                        <cstring>mPassword</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>7</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="echoMode">
-                        <enum>Password</enum>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>If the IRC server requires a password, you may enter it here.</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>If the IRC server requires a password, you may enter it here.  Normally, you may leave this field blank.</string>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
-        <spacer>
-            <property name="name">
-                <cstring>spacer18</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Fixed</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>16</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel1_2</cstring>
-            </property>
-            <property name="text">
+            <property name="title">
                 <string>Connection Preferences</string>
             </property>
-        </widget>
-        <widget class="Line">
-            <property name="name">
-                <cstring>line1</cstring>
-            </property>
-            <property name="frameShape">
-                <enum>HLine</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-        </widget>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>mAutoConnect</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>3</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="text">
-                <string>Connect automatically at &amp;startup</string>
-            </property>
-            <property name="accel">
-                <string>Alt+S</string>
-            </property>
-            <property name="toolTip" stdset="0">
-                <string>Check to connect automatically when Kopete is started.</string>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
-            </property>
-        </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout111</cstring>
-            </property>
-            <hbox>
+            <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mAutoConnect</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>Connect automatically at &amp;startup</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+S</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Check to connect automatically when Kopete is started.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
+                    </property>
+                </widget>
                 <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>layout35</cstring>
+                        <cstring>layout111</cstring>
                     </property>
                     <hbox>
                         <property name="name">
                             <cstring>unnamed</cstring>
                         </property>
-                        <widget class="QLabel">
+                        <widget class="QLayoutWidget">
                             <property name="name">
-                                <cstring>TextLabel6</cstring>
+                                <cstring>layout35</cstring>
                             </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>5</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="text">
-                                <string>Ser&amp;ver:</string>
-                            </property>
-                            <property name="buddy" stdset="0">
-                                <cstring>mServer</cstring>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>The IP address or hostname of the IRC server you would like to connect to.</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>The IP address or hostname of the IRC server you would like to connect to (for example, irc.kde.org).</string>
-                            </property>
+                            <hbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <widget class="QLabel">
+                                    <property name="name">
+                                        <cstring>TextLabel6</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>5</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                    <property name="text">
+                                        <string>Ser&amp;ver:</string>
+                                    </property>
+                                    <property name="buddy" stdset="0">
+                                        <cstring>mServer</cstring>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>The IP address or hostname of the IRC server you would like to connect to.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>The IP address or hostname of the IRC server you would like to connect to (for example, irc.kde.org).</string>
+                                    </property>
+                                </widget>
+                                <widget class="QLineEdit">
+                                    <property name="name">
+                                        <cstring>mServer</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>true</bool>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>7</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>The IP address or hostname of the IRC server you would like to connect to.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>The IP address or hostname of the IRC server you would like to connect to (for example, irc.kde.org).</string>
+                                    </property>
+                                </widget>
+                            </hbox>
                         </widget>
-                        <widget class="QLineEdit">
+                        <widget class="QLayoutWidget">
                             <property name="name">
-                                <cstring>mServer</cstring>
+                                <cstring>layout12</cstring>
                             </property>
-                            <property name="enabled">
-                                <bool>true</bool>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>7</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>The IP address or hostname of the IRC server you would like to connect to.</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>The IP address or hostname of the IRC server you would like to connect to (for example, irc.kde.org).</string>
-                            </property>
+                            <hbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <widget class="QLabel">
+                                    <property name="name">
+                                        <cstring>TextLabel7</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>5</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                    <property name="text">
+                                        <string>Po&amp;rt:</string>
+                                    </property>
+                                    <property name="buddy" stdset="0">
+                                        <cstring>mPort</cstring>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>The port on the IRC server that you would like to connect to.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>The port on the IRC server that you would like to connect to.  Normally this is a value between 6667 and 6669, inclusive.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QSpinBox">
+                                    <property name="name">
+                                        <cstring>mPort</cstring>
+                                    </property>
+                                    <property name="sizePolicy">
+                                        <sizepolicy>
+                                            <hsizetype>0</hsizetype>
+                                            <vsizetype>0</vsizetype>
+                                            <horstretch>0</horstretch>
+                                            <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                    </property>
+                                    <property name="maxValue">
+                                        <number>65535</number>
+                                    </property>
+                                    <property name="minValue">
+                                        <number>1024</number>
+                                    </property>
+                                    <property name="value">
+                                        <number>6667</number>
+                                    </property>
+                                    <property name="toolTip" stdset="0">
+                                        <string>The port on the IRC server that you would like to connect to.</string>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>The port on the IRC server that you would like to connect to.  Normally this is a value between 6667 and 6669, inclusive.</string>
+                                    </property>
+                                </widget>
+                            </hbox>
                         </widget>
                     </hbox>
                 </widget>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>layout12</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>TextLabel7</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>5</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="text">
-                                <string>Po&amp;rt:</string>
-                            </property>
-                            <property name="buddy" stdset="0">
-                                <cstring>mPort</cstring>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>The port on the IRC server that you would like to connect to.</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>The port on the IRC server that you would like to connect to.  Normally this is a value between 6667 and 6669, inclusive.</string>
-                            </property>
-                        </widget>
-                        <widget class="QSpinBox">
-                            <property name="name">
-                                <cstring>mPort</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>0</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="maxValue">
-                                <number>65535</number>
-                            </property>
-                            <property name="minValue">
-                                <number>1024</number>
-                            </property>
-                            <property name="value">
-                                <number>6667</number>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>The port on the IRC server that you would like to connect to.</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>The port on the IRC server that you would like to connect to.  Normally this is a value between 6667 and 6669, inclusive.</string>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-            </hbox>
-        </widget>
-        <spacer>
-            <property name="name">
-                <cstring>spacer18_2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Fixed</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>16</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="Line">
-            <property name="name">
-                <cstring>line26</cstring>
-            </property>
-            <property name="frameShape">
-                <enum>HLine</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
+            </vbox>
         </widget>
         <widget class="QLabel">
             <property name="name">

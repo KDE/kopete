@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1"" stdsetdef="1">
 <class>ICQEditAccountUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>462</width>
-            <height>510</height>
+            <height>518</height>
         </rect>
     </property>
     <property name="caption">
@@ -20,31 +20,17 @@
             <cstring>unnamed</cstring>
         </property>
         <property name="margin">
-            <number>6</number>
+            <number>0</number>
         </property>
         <property name="spacing">
             <number>6</number>
         </property>
         <widget class="QGroupBox">
             <property name="name">
-                <cstring>groupBox5</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>3</hsizetype>
-                    <vsizetype>1</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="frameShape">
-                <enum>GroupBoxPanel</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
+                <cstring>groupBox3</cstring>
             </property>
             <property name="title">
-                <string>Account Information</string>
+                <string>Account Preferences</string>
             </property>
             <vbox>
                 <property name="name">
@@ -83,7 +69,7 @@
                                 <string>The user ID of your ICQ account.</string>
                             </property>
                             <property name="whatsThis" stdset="0">
-                                <string>The user ID of the ICQ contact you would like to add.  This should be in the form of a number (no decimals, no spaces).</string>
+                                <string>The user ID of your ICQ account.  This should be in the form of a number (no decimals, no spaces).</string>
                             </property>
                         </widget>
                     </hbox>
@@ -167,15 +153,7 @@
         </widget>
         <widget class="QGroupBox">
             <property name="name">
-                <cstring>groupBox6</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>3</hsizetype>
-                    <vsizetype>1</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
+                <cstring>groupBox2</cstring>
             </property>
             <property name="title">
                 <string>Connection Preferences</string>
@@ -317,7 +295,7 @@
         </widget>
         <widget class="QGroupBox">
             <property name="name">
-                <cstring>groupBox41</cstring>
+                <cstring>groupBox1</cstring>
             </property>
             <property name="title">
                 <string>Account Preferences</string>
