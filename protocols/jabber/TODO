@@ -46,9 +46,5 @@ TODO for Jabber:
 - make sure Jabber account editor also calls validateJID() when adding a
   new contact (integrate it into validateData())
 - support advanced auth methods
-- allow certificate checking
 - subclass TLS to make use of KDE classes
-- make proxy types match those in Iris (when adding HTTP poll make sure
-  to adjust poll times after logon procedure)
 - allow SSL fallback with setOptProbe
-- convert "use plain/digest" auth to "allow plain auth"

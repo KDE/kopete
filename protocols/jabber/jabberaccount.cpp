@@ -254,8 +254,17 @@ void JabberAccount::connect ()
 	}
 	else
 	{
-		if ((proxyTypeStr == QString ("SOCKS4")) || (proxyTypeStr == QString ("SOCKS5")))
+		if (proxyTypeStr == QString ("SOCKS"))
+		{
 			proxyType = XMPP::AdvancedConnector::Proxy::Socks;
+		}
+		else
+		{
+			if (proxyTypeStr == QString ("HTTPPoll"))
+			{
+				proxyType = XMPP::AdvancedConnector::Proxy::HttpPoll;
+			}
+		}
 	}
 
 	XMPP::AdvancedConnector::Proxy proxy;
@@ -265,9 +274,16 @@ void JabberAccount::connect ()
 		case XMPP::AdvancedConnector::Proxy::None:
 			// no proxy
 			break;
+
 		case XMPP::AdvancedConnector::Proxy::HttpConnect:
 			// use HTTP
 			proxy.setHttpConnect( pluginData (protocol (), "ProxyName"), pluginData (protocol (), "ProxyPort").toInt () );
+			break;
+
+		case XMPP::AdvancedConnector::Proxy::HttpPoll:
+			// use HTTP polling
+			proxy.setHttpPoll ( pluginData (protocol (), "ProxyName"), pluginData (protocol (), "ProxyPort").toInt (), pluginData (protocol (), "ProxyUrl") );
+			proxy.setPollInterval (2);
 			break;
 
 		case XMPP::AdvancedConnector::Proxy::Socks:
@@ -521,6 +537,9 @@ void JabberAccount::slotCSNeedAuthParams (bool user, bool pass, bool realm)
 void JabberAccount::slotCSAuthenticated ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Connected to Jabber server." << endl;
+
+	/* slow down the polling interval for HTTP Poll proxies */
+	jabberClientConnector->changePollInterval (10);
 
 	/* start the client operation */
 	XMPP::Jid jid(accountId());

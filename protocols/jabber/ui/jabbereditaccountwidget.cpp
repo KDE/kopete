@@ -48,6 +48,7 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (cbProxyType, SIGNAL (activated (int)), this, SLOT (configChanged ()));
 	connect (leProxyName, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 	connect (spbProxyPort, SIGNAL (valueChanged (int)), this, SLOT (configChanged ()));
+	connect (leProxyUrl, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 
 	connect (cbProxyAuth, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
 	connect (leProxyUser, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
@@ -103,6 +104,7 @@ void JabberEditAccountWidget::reopen ()
 
 	leProxyName->setText (account()->pluginData (m_protocol, "ProxyName"));
 	spbProxyPort->setValue (account()->pluginData (m_protocol, "ProxyPort").toInt ());
+	leProxyUrl->setText (account()->pluginData (m_protocol, "ProxyUrl"));
 	cbProxyAuth->setChecked (account()->pluginData (m_protocol, "ProxyAuth") == QString::fromLatin1 ("true"));
 	leProxyUser->setText (account()->pluginData (m_protocol, "ProxyUser"));
 	leProxyPass->setText (account()->pluginData (m_protocol, "ProxyPass"));
@@ -193,6 +195,7 @@ void JabberEditAccountWidget::writeConfig ()
 
 	account()->setPluginData (m_protocol, "ProxyName", leProxyName->text ());
 	account()->setPluginData (m_protocol, "ProxyPort", QString::number (spbProxyPort->value ()));
+	account()->setPluginData (m_protocol, "ProxyUrl", leProxyUrl->text ());
 
 	if (cbProxyAuth->isChecked ())
 		account()->setPluginData (m_protocol, "ProxyAuth", "true");

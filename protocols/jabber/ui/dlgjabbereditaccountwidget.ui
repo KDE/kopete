@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>640</width>
-            <height>482</height>
+            <height>484</height>
         </rect>
     </property>
     <property name="caption">
@@ -19,7 +19,7 @@
     <property name="whatsThis" stdset="0">
         <string></string>
     </property>
-    <vbox>
+    <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
@@ -29,7 +29,7 @@
         <property name="spacing">
             <number>0</number>
         </property>
-        <widget class="QTabWidget">
+        <widget class="QTabWidget" row="0" column="0">
             <property name="name">
                 <cstring>tabWidget10</cstring>
             </property>
@@ -318,11 +318,11 @@
                 <attribute name="title">
                     <string>Connection</string>
                 </attribute>
-                <vbox>
+                <grid>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QGroupBox">
+                    <widget class="QGroupBox" row="0" column="0">
                         <property name="name">
                             <cstring>groupBox66</cstring>
                         </property>
@@ -502,204 +502,35 @@
                             </widget>
                         </grid>
                     </widget>
-                    <widget class="QGroupBox">
+                    <spacer row="2" column="0">
+                        <property name="name">
+                            <cstring>spacer43</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>40</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QGroupBox" row="1" column="0">
                         <property name="name">
                             <cstring>groupBox58</cstring>
                         </property>
                         <property name="title">
                             <string>Proxy Server</string>
                         </property>
-                        <vbox>
+                        <grid>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout196</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout195</cstring>
-                                        </property>
-                                        <vbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>lblProxyType</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Proxy t&amp;ype:</string>
-                                                </property>
-                                                <property name="buddy" stdset="0">
-                                                    <cstring>cbProxyType</cstring>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>If you need to use a proxy server, indicate the type from this dropdown.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>Normally you do not need to use a proxy, but in some situations this is necessary to connect.  If you need to use a proxy server, indicate the type from this dropdown.</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>TextLabel6_2</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Ser&amp;ver:</string>
-                                                </property>
-                                                <property name="buddy" stdset="0">
-                                                    <cstring>leProxyName</cstring>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>The IP address or hostname of your proxy server.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>The IP address or hostname of your proxy server.</string>
-                                                </property>
-                                            </widget>
-                                        </vbox>
-                                    </widget>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout194</cstring>
-                                        </property>
-                                        <vbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QComboBox">
-                                                <item>
-                                                    <property name="text">
-                                                        <string>None</string>
-                                                    </property>
-                                                </item>
-                                                <item>
-                                                    <property name="text">
-                                                        <string>HTTPS</string>
-                                                    </property>
-                                                </item>
-                                                <item>
-                                                    <property name="text">
-                                                        <string>SOCKS 4</string>
-                                                    </property>
-                                                </item>
-                                                <item>
-                                                    <property name="text">
-                                                        <string>SOCKS 5</string>
-                                                    </property>
-                                                </item>
-                                                <property name="name">
-                                                    <cstring>cbProxyType</cstring>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>If you need to use a proxy server, indicate the type from this dropdown.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>Normally you do not need to use a proxy, but in some situations this is necessary to connect.  If you need to use a proxy server, indicate the type from this dropdown.</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLayoutWidget">
-                                                <property name="name">
-                                                    <cstring>layout193</cstring>
-                                                </property>
-                                                <hbox>
-                                                    <property name="name">
-                                                        <cstring>unnamed</cstring>
-                                                    </property>
-                                                    <widget class="QLineEdit">
-                                                        <property name="name">
-                                                            <cstring>leProxyName</cstring>
-                                                        </property>
-                                                        <property name="text">
-                                                            <string></string>
-                                                        </property>
-                                                        <property name="toolTip" stdset="0">
-                                                            <string>The IP address or hostname of your proxy server.</string>
-                                                        </property>
-                                                        <property name="whatsThis" stdset="0">
-                                                            <string>The IP address or hostname of your proxy server.</string>
-                                                        </property>
-                                                    </widget>
-                                                    <widget class="QLayoutWidget">
-                                                        <property name="name">
-                                                            <cstring>layout22</cstring>
-                                                        </property>
-                                                        <hbox>
-                                                            <property name="name">
-                                                                <cstring>unnamed</cstring>
-                                                            </property>
-                                                            <widget class="QLabel">
-                                                                <property name="name">
-                                                                    <cstring>TextLabel7_2</cstring>
-                                                                </property>
-                                                                <property name="text">
-                                                                    <string>Po&amp;rt:</string>
-                                                                </property>
-                                                                <property name="buddy" stdset="0">
-                                                                    <cstring>spbProxyPort</cstring>
-                                                                </property>
-                                                                <property name="toolTip" stdset="0">
-                                                                    <string>The port to connect to on your proxy server.</string>
-                                                                </property>
-                                                                <property name="whatsThis" stdset="0">
-                                                                    <string>The port to connect to on your proxy server.</string>
-                                                                </property>
-                                                            </widget>
-                                                            <widget class="QSpinBox">
-                                                                <property name="name">
-                                                                    <cstring>spbProxyPort</cstring>
-                                                                </property>
-                                                                <property name="buttonSymbols">
-                                                                    <enum>UpDownArrows</enum>
-                                                                </property>
-                                                                <property name="maxValue">
-                                                                    <number>65535</number>
-                                                                </property>
-                                                                <property name="minValue">
-                                                                    <number>1</number>
-                                                                </property>
-                                                                <property name="value">
-                                                                    <number>8080</number>
-                                                                </property>
-                                                                <property name="toolTip" stdset="0">
-                                                                    <string>The port to connect to on your proxy server.</string>
-                                                                </property>
-                                                                <property name="whatsThis" stdset="0">
-                                                                    <string>The port to connect to on your proxy server.</string>
-                                                                </property>
-                                                            </widget>
-                                                        </hbox>
-                                                    </widget>
-                                                </hbox>
-                                            </widget>
-                                        </vbox>
-                                    </widget>
-                                </hbox>
-                            </widget>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>cbProxyAuth</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Re&amp;quires authentication</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+Q</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Check this box if your proxy server requires authentication, and enter the login credentials below.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Check this box if your proxy server requires authentication, and enter the login credentials below.</string>
-                                </property>
-                            </widget>
-                            <widget class="QLayoutWidget">
+                            <widget class="QLayoutWidget" row="2" column="0">
                                 <property name="name">
                                     <cstring>layout189</cstring>
                                 </property>
@@ -817,29 +648,211 @@
                                     </widget>
                                 </hbox>
                             </widget>
-                        </vbox>
+                            <widget class="QLayoutWidget" row="0" column="0">
+                                <property name="name">
+                                    <cstring>layout18</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLayoutWidget">
+                                        <property name="name">
+                                            <cstring>layout15</cstring>
+                                        </property>
+                                        <vbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>lblProxyType</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Proxy t&amp;ype:</string>
+                                                </property>
+                                                <property name="buddy" stdset="0">
+                                                    <cstring>cbProxyType</cstring>
+                                                </property>
+                                                <property name="toolTip" stdset="0">
+                                                    <string>If you need to use a proxy server, indicate the type from this dropdown.</string>
+                                                </property>
+                                                <property name="whatsThis" stdset="0">
+                                                    <string>Normally you do not need to use a proxy, but in some situations this is necessary to connect.  If you need to use a proxy server, indicate the type from this dropdown.</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>TextLabel6_2</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Ser&amp;ver:</string>
+                                                </property>
+                                                <property name="buddy" stdset="0">
+                                                    <cstring>leProxyName</cstring>
+                                                </property>
+                                                <property name="toolTip" stdset="0">
+                                                    <string>The IP address or hostname of your proxy server.</string>
+                                                </property>
+                                                <property name="whatsThis" stdset="0">
+                                                    <string>The IP address or hostname of your proxy server.</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>textLabel1</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Url:</string>
+                                                </property>
+                                            </widget>
+                                        </vbox>
+                                    </widget>
+                                    <widget class="QLayoutWidget">
+                                        <property name="name">
+                                            <cstring>layout17</cstring>
+                                        </property>
+                                        <vbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QComboBox">
+                                                <item>
+                                                    <property name="text">
+                                                        <string>None</string>
+                                                    </property>
+                                                </item>
+                                                <item>
+                                                    <property name="text">
+                                                        <string>HTTPS</string>
+                                                    </property>
+                                                </item>
+                                                <item>
+                                                    <property name="text">
+                                                        <string>HTTP Poll</string>
+                                                    </property>
+                                                </item>
+                                                <item>
+                                                    <property name="text">
+                                                        <string>SOCKS</string>
+                                                    </property>
+                                                </item>
+                                                <property name="name">
+                                                    <cstring>cbProxyType</cstring>
+                                                </property>
+                                                <property name="toolTip" stdset="0">
+                                                    <string>If you need to use a proxy server, indicate the type from this dropdown.</string>
+                                                </property>
+                                                <property name="whatsThis" stdset="0">
+                                                    <string>Normally you do not need to use a proxy, but in some situations this is necessary to connect.  If you need to use a proxy server, indicate the type from this dropdown.</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLayoutWidget">
+                                                <property name="name">
+                                                    <cstring>layout193</cstring>
+                                                </property>
+                                                <hbox>
+                                                    <property name="name">
+                                                        <cstring>unnamed</cstring>
+                                                    </property>
+                                                    <widget class="QLineEdit">
+                                                        <property name="name">
+                                                            <cstring>leProxyName</cstring>
+                                                        </property>
+                                                        <property name="text">
+                                                            <string></string>
+                                                        </property>
+                                                        <property name="toolTip" stdset="0">
+                                                            <string>The IP address or hostname of your proxy server.</string>
+                                                        </property>
+                                                        <property name="whatsThis" stdset="0">
+                                                            <string>The IP address or hostname of your proxy server.</string>
+                                                        </property>
+                                                    </widget>
+                                                    <widget class="QLayoutWidget">
+                                                        <property name="name">
+                                                            <cstring>layout22</cstring>
+                                                        </property>
+                                                        <hbox>
+                                                            <property name="name">
+                                                                <cstring>unnamed</cstring>
+                                                            </property>
+                                                            <widget class="QLabel">
+                                                                <property name="name">
+                                                                    <cstring>TextLabel7_2</cstring>
+                                                                </property>
+                                                                <property name="text">
+                                                                    <string>Po&amp;rt:</string>
+                                                                </property>
+                                                                <property name="buddy" stdset="0">
+                                                                    <cstring>spbProxyPort</cstring>
+                                                                </property>
+                                                                <property name="toolTip" stdset="0">
+                                                                    <string>The port to connect to on your proxy server.</string>
+                                                                </property>
+                                                                <property name="whatsThis" stdset="0">
+                                                                    <string>The port to connect to on your proxy server.</string>
+                                                                </property>
+                                                            </widget>
+                                                            <widget class="QSpinBox">
+                                                                <property name="name">
+                                                                    <cstring>spbProxyPort</cstring>
+                                                                </property>
+                                                                <property name="buttonSymbols">
+                                                                    <enum>UpDownArrows</enum>
+                                                                </property>
+                                                                <property name="maxValue">
+                                                                    <number>65535</number>
+                                                                </property>
+                                                                <property name="minValue">
+                                                                    <number>1</number>
+                                                                </property>
+                                                                <property name="value">
+                                                                    <number>8080</number>
+                                                                </property>
+                                                                <property name="toolTip" stdset="0">
+                                                                    <string>The port to connect to on your proxy server.</string>
+                                                                </property>
+                                                                <property name="whatsThis" stdset="0">
+                                                                    <string>The port to connect to on your proxy server.</string>
+                                                                </property>
+                                                            </widget>
+                                                        </hbox>
+                                                    </widget>
+                                                </hbox>
+                                            </widget>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>leProxyUrl</cstring>
+                                                </property>
+                                            </widget>
+                                        </vbox>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                            <widget class="QCheckBox" row="1" column="0">
+                                <property name="name">
+                                    <cstring>cbProxyAuth</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Re&amp;quires authentication</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+Q</string>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Check this box if your proxy server requires authentication, and enter the login credentials below.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Check this box if your proxy server requires authentication, and enter the login credentials below.</string>
+                                </property>
+                            </widget>
+                        </grid>
                     </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer43</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>100</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </vbox>
+                </grid>
             </widget>
         </widget>
-    </vbox>
+    </grid>
 </widget>
 <customwidgets>
 </customwidgets>
