@@ -23,8 +23,10 @@
 #include <qstringlist.h>
 #include <qmovie.h>
 #include <qlist.h>
+#include <qptrlist.h>
 
 #include "msnpreferences.h"
+#include <msnmessage.h>
 #include <statusbaricon.h>
 #include <addcontactpage.h>
 #include <improtocol.h>
@@ -33,6 +35,9 @@
 #include <kpopupmenu.h>
 #include <kaction.h>
 #include <ksimpleconfig.h>
+#include <kdialogbase.h>
+#include <kurllabel.h>
+#include <qlabel.h>
 /**
   *@author duncan
   */
@@ -49,6 +54,8 @@ struct MSNGroupStruct
 	bool isdeleted;
 	bool isnew;
 };
+
+class MSNMessage;
 
 class MSNProtocol : public QObject, public IMProtocol
 {
@@ -80,29 +87,39 @@ public:
 	/* The main msn popup */
 	KPopupMenu *popup;
 	/* Actions we use */
-  	
 	KAction* actionGoOnline;
 	KAction* actionGoOffline;
 	KAction* actionGoAway;
 	//KSelectAction* actionStatus;
 	
-    KActionMenu *actionStatusMenu;
+  KActionMenu *actionStatusMenu;
 	KAction* actionConnect;
 	KAction* actionDisconnect;
 	KAction* actionPrefs;
 	KAction* actionUnload;
 
+	QPtrList<MSNMessage> mChatWindows;
+
     /* Files to store contacts locally */
     KSimpleConfig *mContactsFile;
 	KSimpleConfig *mGroupsFile;
 private:
+	
+	KDialogBase *mEmptyConfig;
+	KURLLabel *mPassportURL;
+	QLabel *mEmptyMsg;
+	/*
 	QList<MSNContactStruct> contactList;
 	QList<MSNGroupStruct> groupList;
+  */
 
 	void initIcons();
 	void initActions();
 public slots: // Public slots
-   	void slotSyncContactList();
+	void slotMessageBoxClosing(QString);
+	void slotIncomingChat(KMSNChatService *, QString);
+
+	void slotSyncContactList();
     /** No descriptions */
 	void slotConnected();
 	void slotDisconnected();
@@ -128,6 +145,7 @@ public slots: // Public slots
 	/* Group slots */
 	void slotGroupAdded(const QString);
 	void slotDeletingGroup(const QString);
+	void slotGoURL(const QString);
 signals:
 	void userStateChange (QString, QString, QString);
 	void protocolUnloading();	

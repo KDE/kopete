@@ -26,6 +26,7 @@
 #include <kmsnchatservice.h>
 
 /* Constructor for no-groups */
+
 MSNContact::MSNContact(QString userid, const QString name, MSNProtocol *protocol)
 	: IMContact(kopeteapp->contactList())
 {
@@ -36,6 +37,7 @@ MSNContact::MSNContact(QString userid, const QString name, MSNProtocol *protocol
 	initContact(userid, name, protocol);
 	
 }
+
 
 MSNContact::MSNContact(QListViewItem *parent, QString userid, const QString name, MSNProtocol *protocol)
 	: IMContact(parent)
@@ -56,7 +58,6 @@ void MSNContact::initContact(QString userid, const QString name, MSNProtocol *pr
 	isMessageIcon = false;
 	// We connect this signal so that we can tell when a user's status changes
 	QObject::connect(protocol->engine, SIGNAL(updateContact(QString, uint)), this, SLOT(slotUpdateContact (QString, uint) ));
-	QObject::connect(protocol->engine, SIGNAL(startChat(KMSNChatService *, QString)), this, SLOT(slotIncomingChat (KMSNChatService *, QString) ));
 	QObject::connect(protocol->engine, SIGNAL(contactRemoved(QString, QString)), this, SLOT(slotContactRemoved (QString, QString) ));
 	
 	QObject::connect(this, SIGNAL(chatToUser(QString)), protocol->engine, SLOT( slotStartChatSession(QString)) );
@@ -74,7 +75,7 @@ void MSNContact::initContact(QString userid, const QString name, MSNProtocol *pr
 
 void MSNContact::initActions()
 {
-	actionChat = new KAction ( i18n("Start Chat"), "idea", 0, this, SLOT(slotChat()), this, "actionChat" );
+	actionChat = new KAction ( i18n("Start Chat"), "idea", 0, this, SLOT(slotChatThisUser()), this, "actionChat" );
 	actionRemove = new KAction ( i18n("Delete contact"), "edittrash", 0, this, SLOT(slotRemoveThisUser()), this, "actionRemove" );
 	actionGroupList = new KListAction ( i18n("Move contact"), "editcut", 0, this, SLOT(slotMoveThisUser()), this, "actionMove" );	
 }
@@ -100,36 +101,6 @@ void MSNContact::leftButtonDoubleClicked()
 void MSNContact::slotChatThisUser()
 {
 	emit chatToUser( mUserID );
-}
-
-void MSNContact::slotIncomingChat(KMSNChatService *newboard, QString reqUserID)
-{
-	if ( reqUserID == mUserID )
-	{
- 		if (messageBoxInited == true && messageBox->isVisible() == true)
- 		{
- 			kdDebug() << "MSN Plugin: Incoming chat but Window opened for " << reqUserID <<"\n";
-			messageBox->mBoard = newboard;
-			connect(newboard,SIGNAL(msgReceived(QString,QString,QString)),messageBox,SLOT(slotMsgReceived(QString,QString,QString)));
-					
-			messageBox->raise();
- 			return;
- 		}
- 		kdDebug() << "MSN Plugin: Incoming chat , no window, creating window for " << reqUserID <<"\n";
-		messageBox = new MSNMessage(this, mUserID, mName, mStatus, newboard,mProtocol);
- 		QObject::connect(this, SIGNAL(userStateChanged(QString)), messageBox, SLOT(slotUserStateChanged(QString)));
-		messageBoxInited = true;
- 		messageBox->show();
-	}
-}
-
-void MSNContact::slotMessageBoxClosing()
-{
-	if (messageBoxInited == true && messageBox->isVisible() == true)
-	{
-		messageBoxInited = false;
-		delete messageBox;
-	}
 }
 
 void MSNContact::slotRemoveThisUser()

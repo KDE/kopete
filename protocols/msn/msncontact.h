@@ -28,9 +28,8 @@
 #include <kiconloader.h>
 #include <kpopupmenu.h>
 #include <qtimer.h>
-#include "kopete.h"
+#include <kopete.h>
 #include "msnprotocol.h"
-#include "msnmessage.h"
 #include <contactlist.h>
 #include <kmsnchatservice.h>
 
@@ -42,10 +41,10 @@ struct MSNMessageStruct
 };
 
 class MSNMessage;
+class MSNProtocol;
 
 class MSNContact : public IMContact
 {
-	
 	Q_OBJECT
 	public:
 		MSNContact(QString userid, const QString name, MSNProtocol *protocol);
@@ -59,8 +58,7 @@ class MSNContact : public IMContact
 		bool hasLocalGroup;
 		QListViewItem *parentGroup;
 	public slots:
-		void slotMessageBoxClosing();
-		void slotIncomingChat(KMSNChatService *, QString);
+		
 		void slotContactRemoved(QString, QString);
 		void slotChatThisUser();
 	private slots:
@@ -83,8 +81,6 @@ class MSNContact : public IMContact
 		MSNProtocol *mProtocol;
 		QValueStack<MSNMessageStruct> *messageQueue;
 		QTimer *messageTimer;
-		MSNMessage *messageBox;
-		bool messageBoxInited;
 		KPopupMenu *popup;
 		KAction* actionRemove;
 		KAction* actionChat;

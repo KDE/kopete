@@ -28,6 +28,7 @@
 #include <systemtray.h>
 #include <msnaddcontactpage.h>
 #include <qcursor.h>
+#include <qlayout.h>
 
 
 ///////////////////////////////////////////////////
@@ -68,7 +69,7 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSN"), IMProtocol()
 	connect(engine, SIGNAL(connectedToService(bool)), this, SLOT(slotConnectedToMSN(bool)));
 	connect(engine, SIGNAL(contactStatusChanged(QString, QString, int)), this, SIGNAL(userStateChange (QString, QString, int) ) );
 	connect(engine, SIGNAL(statusChanged( uint)), this, SLOT(slotStateChanged ( uint) ) );
-
+  QObject::connect(engine, SIGNAL(startChat(KMSNChatService *, QString)), this, SLOT(slotIncomingChat (KMSNChatService *, QString) ));
 	connect(engine, SIGNAL( newContact(QString) ), this, SLOT(slotAuthenticate(QString) ) );
 
 	connect(kopeteapp->contactList(), SIGNAL( groupAdded(QString) ), this, SLOT(slotGroupAdded(QString) ) );
@@ -76,6 +77,13 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSN"), IMProtocol()
 		
 	KGlobal::config()->setGroup("MSN");
 
+	if ( (KGlobal::config()->readEntry("UserID", "") == "" ) || (KGlobal::config()->readEntry("Password", "") == "" ) )
+	{
+		QString emptyText = "<qt>If you have a <a href=\"http://www.passport.com\">MSN account</a>, please configure it in the Kopete Settings. Get a MSN account <a href=\"http://login.hotmail.passport.com/cgi-bin/register/en/default.asp\">here</a>.</qt>";
+		QString emptyCaption = "No MSN Configuration found!";
+		
+		KMessageBox::error(kopeteapp->mainWindow(), emptyText,emptyCaption );
+	}
 	/** Autoconnect if is selected in config */
 	if ( KGlobal::config()->readBoolEntry("AutoConnect", "0") )
 	{
@@ -331,6 +339,54 @@ void MSNProtocol::slotConnected()
  	}
 }
 
+
+void MSNProtocol::slotIncomingChat(KMSNChatService *newboard, QString reqUserID)
+{
+		MSNMessage *messagebox;
+		/* May be we have a copy of us in another group */
+		bool hascopyinitedthechat = false;
+    for ( messagebox =  mChatWindows.first() ; messagebox; messagebox = mChatWindows.next() )
+ 		{
+			if ( messagebox->getUserID() == reqUserID )
+			{
+				hascopyinitedthechat = true;
+				break;
+			}
+		}	
+		if (hascopyinitedthechat == true && messagebox->isVisible() == true)
+ 		{
+ 			kdDebug() << "MSN Plugin: Incoming chat but Window opened for " << reqUserID <<"\n";
+			messagebox->mBoard = newboard;
+			connect(newboard,SIGNAL(msgReceived(QString,QString,QString)),messagebox,SLOT(slotMsgReceived(QString,QString,QString)));		
+			messagebox->raise();
+ 			return;
+ 		}
+ 		kdDebug() << "MSN Plugin: Incoming chat , no window, creating window for " << reqUserID <<"\n";
+		QString tmpnick = engine->getPublicName( reqUserID );
+		#warning FIXME MSN MESSAGEBOX NEEDS STATUS
+		messagebox = new MSNMessage(reqUserID, tmpnick, "NLN" , newboard,this);
+ 		//QObject::connect(this, SIGNAL(userStateChanged(QString)), messagebox, SLOT(slotUserStateChanged(QString)));
+		QObject::connect(messagebox, SIGNAL(closing(QString)), this, SLOT(slotMessageBoxClosing(QString)));
+		
+		mChatWindows.append( messagebox);
+ 		messagebox->show();
+	
+}
+
+void MSNProtocol::slotMessageBoxClosing(QString handle)
+{
+		mChatWindows.setAutoDelete(true);
+		MSNMessage *messagebox;
+		for ( messagebox = mChatWindows.first() ; messagebox; messagebox = mChatWindows.next() )
+ 		{
+			if ( messagebox->getUserID() == handle )
+			{
+				mChatWindows.remove(messagebox);	
+			}
+		}	
+}
+
+
 void MSNProtocol::slotDisconnected()
 {
 		mIsConnected = false;
@@ -496,4 +552,9 @@ void MSNProtocol::slotGroupAdded( QString handle)
 void MSNProtocol::slotDeletingGroup( QString handle)
 {
 
-}		
+}
+
+void MSNProtocol::slotGoURL( QString url)
+{
+	kapp->invokeBrowser( url );
+}				

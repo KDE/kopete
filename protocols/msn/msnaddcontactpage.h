@@ -4,6 +4,7 @@
 
 #include <qwidget.h>
 #include <addcontactpage.h>
+#include <qlabel.h>
 
 /**
   *@author duncan
@@ -19,6 +20,9 @@ public:
 	~MSNAddContactPage();
 	msnAddUI *msndata;
 	MSNProtocol *plugin;
+	QLabel *noaddMsg1;
+	QLabel *noaddMsg2;
+	bool canadd;
 public slots: // Public slots
   /** No descriptions */
   virtual void slotFinish();

@@ -164,7 +164,7 @@ email=duncan@tarro
 kdevprj_version=1.3
 lfv_open_groups=
 make_options=\s-j1
-makefiles=./Makefile.am,po/Makefile.am,kopete/Makefile.am,kopete/templates/Makefile.am,kopete/protocols/Makefile.am,kopete/protocols/msn/Makefile.am,kopete/protocols/msn/libkmsn/Makefile.am,kopete/protocols/icq/Makefile.am,kopete/protocols/icq/kxengine/Makefile.am,kopete/pixmaps/Makefile.am,kopete/pixmaps/.pics/Makefile.am,kopete/pixmaps/.pics/small/Makefile.am,kopete/library/Makefile.am,kopete/library/ui/Makefile.am,kopete/gui/Makefile.am,doc-api/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,admin/Makefile.am,kopete/protocols/irc/Makefile.am,kopete/protocols/irc/libkirc/Makefile.am,kopete/protocols/aim/Makefile.am
+makefiles=./Makefile.am,po/Makefile.am,kopete/Makefile.am,kopete/templates/Makefile.am,kopete/protocols/Makefile.am,kopete/protocols/msn/Makefile.am,kopete/protocols/msn/libkmsn/Makefile.am,kopete/protocols/icq/Makefile.am,kopete/protocols/icq/kxengine/Makefile.am,kopete/pixmaps/Makefile.am,kopete/pixmaps/.pics/Makefile.am,kopete/pixmaps/.pics/small/Makefile.am,kopete/library/Makefile.am,kopete/library/ui/Makefile.am,kopete/gui/Makefile.am,doc-api/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,admin/Makefile.am,kopete/protocols/irc/Makefile.am,kopete/protocols/irc/libkirc/Makefile.am,kopete/protocols/aim/Makefile.am,kopete/protocols/msn/ui/Makefile.am
 modifyMakefiles=false
 project_name=kopete
 project_type=normal_empty
@@ -1081,7 +1081,7 @@ type=SOURCE
 
 [kopete/protocols/msn/Makefile.am]
 files=kopete/protocols/msn/msnprotocol.cpp,kopete/protocols/msn/msnprotocol.h,kopete/protocols/msn/protocol.cpp,kopete/protocols/msn/msnaddcontactpage.cpp,kopete/protocols/msn/msnaddcontactpage.h,kopete/protocols/msn/msnpreferences.cpp,kopete/protocols/msn/msnpreferences.h,kopete/protocols/msn/msncontact.cpp,kopete/protocols/msn/msncontact.h,kopete/protocols/msn/msnmessage.cpp,kopete/protocols/msn/msnmessage.h
-sub_dirs=libkmsn,
+sub_dirs=libkmsn,ui
 type=static_library
 
 [kopete/protocols/msn/libkmsn/Makefile.am]
@@ -1216,6 +1216,25 @@ install_location=
 type=HEADER
 
 [kopete/protocols/msn/protocol.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/msn/ui/Makefile.am]
+files=kopete/protocols/msn/ui/msnadd.ui,kopete/protocols/msn/ui/msnprefs.ui
+sharedlib_LDFLAGS=-version-info 0:0:0
+sharedlib_rootname=ui
+sub_dirs=
+type=static_library
+
+[kopete/protocols/msn/ui/msnadd.ui]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/msn/ui/msnprefs.ui]
 dist=true
 install=false
 install_location=
