@@ -16,9 +16,7 @@
  ***************************************************************************/
 
 #include <qlayout.h>
-#include <qpushbutton.h>
 
-#include <klineedit.h>
 #include <kgenericfactory.h>
 #include <kautoconfig.h>
 

@@ -3,10 +3,13 @@ Encoding=UTF-8
 Type=Service
 Icon=html
 ServiceTypes=KCModule
+
 X-KDE-ModuleType=Library
+X-KDE-Library=kopete_webpresence
 X-KDE-FactoryName=WebPrecencePreferencesFactory
 X-KDE-ParentApp=kopete_webpresence
 X-KDE-ParentComponents=kopete_webpresence
+
 Comment=Show the status of (parts of) your contactlist on a webpage
 Comment[ca]=Mostra l'estatus de (parts de) la vostra llista de contactes a una pàgina web
 Comment[da]=Vis status for (dele af) din kontaktliste på en netside

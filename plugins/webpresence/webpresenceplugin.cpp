@@ -49,7 +49,6 @@
 #include "kopeteaccount.h"
 
 #include "webpresenceplugin.h"
-#include <kplugininfo.h>
 
 typedef KGenericFactory<WebPresencePlugin> WebPresencePluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_webpresence, WebPresencePluginFactory( "kopete_webpresence" )  );

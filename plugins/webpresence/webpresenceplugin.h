@@ -20,14 +20,11 @@
 #ifndef WEBPRESENCEPLUGIN_H
 #define WEBPRESENCEPLUGIN_H
 
-#include <qptrlist.h>
 #include <qvaluestack.h>
 
 #include <kio/job.h>
 
 #include "kopetecontact.h"
-#include "kopeteplugin.h"
-#include "kopeteonlinestatus.h"
 
 class QTimer;
 class KTempFile;
