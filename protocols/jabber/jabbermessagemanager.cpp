@@ -19,8 +19,10 @@
 
 #include <qptrlist.h>
 #include <kconfig.h>
+#include <kdebug.h>
 #include <klocale.h>
 #include "kopetemessagemanagerfactory.h"
+#include "kopeteviewplugin.h"
 #include "kopeteview.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
@@ -198,13 +200,16 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
         }
 
 		// determine type of the widget and set message type accordingly
-        if ( view()->viewType () == Kopete::Message::Chat)
-		{
-			jabberMessage.setType ( "chat" );
-		}
-        else
+		// "kopete_emailwindow" is the default email Kopete::ViewPlugin.  If other email plugins
+		// become available, either jabber will have to provide its own selector or libkopete will need
+		// a better way of categorising view plugins.
+		if ( view()->plugin()->pluginId() == "kopete_emailwindow" )
 		{
 			jabberMessage.setType ( "normal" );
+		}
+		else
+		{
+			jabberMessage.setType ( "chat" );
 		}
 
 		// send the message

@@ -111,7 +111,8 @@ Kopete::ChatSession *JabberGroupContact::manager ( Kopete::Contact::CanCreateFla
 
 void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 {
-	Kopete::Message::ViewType type;
+	// message type is always chat in a groupchat
+	QString viewType = "kopete_chatwindow";
 	Kopete::Message *newMessage = 0L;
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
@@ -123,9 +124,6 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 	if ( message.body().isEmpty () )
 		return;
 
-	// message type is always chat in a groupchat
-	type = Kopete::Message::Chat;
-
 	Kopete::ContactPtrList contactList;
 	contactList.append ( mManager->user () );
 
@@ -135,7 +133,7 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 		newMessage = new Kopete::Message( message.timeStamp (), this, contactList,
 										i18n("Your message could not be delivered: \"%1\", Reason: \"%2\"").
 										arg ( message.body () ).arg ( message.error().text ),
-										message.subject(), Kopete::Message::Inbound, Kopete::Message::PlainText, type );
+										message.subject(), Kopete::Message::Inbound, Kopete::Message::PlainText, viewType );
 	}
 	else
 	{
@@ -164,7 +162,7 @@ void JabberGroupContact::handleIncomingMessage (const XMPP::Message & message)
 		// convert XMPP::Message into Kopete::Message
 		newMessage = new Kopete::Message ( message.timeStamp (), subContact, contactList, body,
 										 message.subject (), Kopete::Message::Inbound,
-										 Kopete::Message::PlainText, type );
+										 Kopete::Message::PlainText, viewType );
 	}
 
 	// append message to manager

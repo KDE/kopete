@@ -273,7 +273,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 		{
 			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList, body,
 											 message.subject (), Kopete::Message::Inbound,
-											 Kopete::Message::PlainText, type );
+											 Kopete::Message::PlainText, viewPlugin );
 		}
 	}
 
@@ -302,7 +302,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 			newMessage = new Kopete::Message ( message.timeStamp (), this, contactList,
 											 QString ( "<a href=\"%1\">%2</a>" ).arg ( url ).arg ( description ),
 											 message.subject (), Kopete::Message::Inbound,
-											 Kopete::Message::RichText, type );
+											 Kopete::Message::RichText, viewPlugin );
 
 			mManager->appendMessage ( *newMessage, message.from().resource () );
 

@@ -33,6 +33,7 @@
 #include <qregexp.h>
 #include <qtimer.h>
 
+#include <kconfig.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <klocale.h>

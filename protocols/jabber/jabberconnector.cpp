@@ -17,6 +17,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <kdebug.h>
 #include "jabberconnector.h"
 #include "jabberbytestream.h"
 #include "jabberprotocol.h"

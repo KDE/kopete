@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include <qobject.h>
+#include <kdebug.h>
 #include "jabberbytestream.h"
 #include <kbufferedsocket.h>
 #include <kresolver.h>

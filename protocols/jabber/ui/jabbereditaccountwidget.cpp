@@ -25,6 +25,7 @@
 #include <qcombobox.h>
 #include <qlabel.h>
 
+#include <kconfig.h>
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kpassdlg.h>
