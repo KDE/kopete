@@ -372,10 +372,11 @@ void MSNSocket::sendCommand( const QString &cmd, const QString &args,
 }
 
 void MSNSocket::sendCommand( const QString &cmd, const QString &args,
-			     bool addId, const QString &body )
+			     bool, const QString &)
 {
         kdDebug() << "MSNSocket::sendCommand: Forgot to utf8 convert the body " << cmd <<
 	  ": '" << args << "'" << endl;
+	exit(2);
 }
 
 QString MSNSocket::escape( const QString &str )
