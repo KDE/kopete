@@ -471,7 +471,7 @@ a conversation</string>
                                     <cstring>useCustomEmoticons</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Download and show c&amp;ustom emoticons (experimental)</string>
+                                    <string>Download and show c&amp;ustom emoticons</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox">
