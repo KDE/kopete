@@ -475,21 +475,17 @@ bool KopeteMetaContact::trackChildNameChanges() const
 	return d->trackChildNameChanges;
 }
 
-void KopeteMetaContact::setTrackChildNameChanges( bool /* track */ )
+void KopeteMetaContact::setTrackChildNameChanges( bool  track  )
 {
-/*
 	if (track && (d->contacts.count() == 1))
 	{
-		kdDebug(14010) << "[KopeteMetaContact] setTrackChildNameChanges(); ENABLING TrackChildNameChanges" << endl;
 		setDisplayName( (d->contacts.first())->displayName() );
 		d->trackChildNameChanges = true;
 	}
 	else
 	{
-		kdDebug(14010) << "[KopeteMetaContact] setTrackChildNameChanges(); DISABLING TrackChildNameChanges" << endl;
 		d->trackChildNameChanges = false;
 	}
-*/
 }
 
 void KopeteMetaContact::slotContactNameChanged( const QString &/*oldName*/, const QString &newName )
@@ -502,10 +498,6 @@ void KopeteMetaContact::slotContactNameChanged( const QString &/*oldName*/, cons
 		setDisplayName( newName );
 		//because d->trackChildNameChanges is set to false in setDisplayName
 		d->trackChildNameChanges = true;
-	}
-	else
-	{
-//		kdDebug( 14010 ) << k_funcinfo << "Tracking is off and we already have a display name, ignored KopeteContact name change" << endl;
 	}
 }
 
@@ -660,13 +652,9 @@ bool KopeteMetaContact::fromXML( const QDomElement& element )
 				return false;
 			d->displayName = contactElement.text();
 
-			//TODO: d->trackChildNameChanges is currently used only when contact creation
-			//later, we will add a GUI to make it configurable
-
-			/*d->trackChildNameChanges =
+			d->trackChildNameChanges =
 				( contactElement.attribute( QString::fromLatin1( "trackChildNameChanges" ),
-				QString::fromLatin1( "1" ) ) == QString::fromLatin1( "1" ) );*/
-			d->trackChildNameChanges = false;
+				QString::fromLatin1( "0" ) ) == QString::fromLatin1( "1" ) );
 		}
 		else if( contactElement.tagName() == QString::fromLatin1( "groups" ) )
 		{
