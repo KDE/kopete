@@ -168,7 +168,14 @@ namespace Field
 	class SingleField : public FieldBase
 	{
 	public:
+		/** 
+		 * Single field constructor
+		 */
 		SingleField( QCString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, QVariant value );
+		/** 
+		 * Convenience constructor for NMFIELD_METHOD_VALID fields
+		 */
+		SingleField( QCString tag, Q_UINT8 flags, Q_UINT8 type, QVariant value );
 		~SingleField();
 		void setValue( const QVariant v );
 		QVariant value() const;

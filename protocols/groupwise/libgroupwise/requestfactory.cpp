@@ -14,8 +14,9 @@
 
 #include "requestfactory.h"
 
+#define GW_REQUESTFACTORY_FIRST_TID 1
 RequestFactory::RequestFactory()
-: m_nextTransaction( 0 )
+: m_nextTransaction( GW_REQUESTFACTORY_FIRST_TID )
 {
 }
 

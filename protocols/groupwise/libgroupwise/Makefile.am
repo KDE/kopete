@@ -20,7 +20,7 @@ libgwtest_la_SOURCES = coreprotocol.cpp eventtransfer.cpp \
 	safedelete.cpp gwclientstream.cpp qcatlshandler.cpp
 libgwtest_la_LIBADD = -lqt-mt
 libgwtest_la_LDFLAGS = $(all_libraries)
-libgroupwise_la_LIBADD = -lqt-mt qca/src/libqca.la
+libgroupwise_la_LIBADD = -lqt-mt qca/src/libqca.la -lkdecore
 
 libgroupwise_la_COMPILE_FIRST = securestream.moc
 

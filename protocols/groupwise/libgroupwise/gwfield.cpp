@@ -64,6 +64,11 @@ SingleField::SingleField( QCString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 t
 {
 }
 
+SingleField::SingleField( QCString tag, Q_UINT8 flags, Q_UINT8 type, QVariant value )
+: FieldBase( tag, NMFIELD_METHOD_VALID, flags, type ), m_value( value )
+{
+}
+
 SingleField::~SingleField()
 {
 }

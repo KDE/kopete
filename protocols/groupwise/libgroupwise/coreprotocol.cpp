@@ -10,6 +10,61 @@
 
 #include "coreprotocol.h"
 
+#define NO_ESCAPE(ch) ((ch == 0x20) || (ch >= 0x30 && ch <= 0x39) || \
+					(ch >= 0x41 && ch <= 0x5a) || (ch >= 0x61 && ch <= 0x7a))
+
+static char *
+url_escape_string( const char *src)
+{
+	uint escape = 0;
+	const char *p;
+	char *q;
+	char *encoded = NULL;
+	int ch;
+
+	static const char hex_table[17] = "0123456789abcdef";
+
+	if (src == NULL) {
+		return NULL;
+	}
+
+	/* Find number of chars to escape */
+	for (p = src; *p != '\0'; p++) {
+		ch = (uchar) *p;
+		if (!NO_ESCAPE(ch)) {
+			escape++;
+		}
+	}
+
+	encoded = (char*)malloc((p - src) + (escape * 2) + 1);
+
+	/* Escape the string */
+	for (p = src, q = encoded; *p != '\0'; p++) {
+		ch = (uchar) * p;
+		if (NO_ESCAPE(ch)) {
+			if (ch != 0x20) {
+				*q = ch;
+				q++;
+			} else {
+				*q = '+';
+				q++;
+			}
+		} else {
+			*q = '%';
+			q++;
+
+			*q = hex_table[ch >> 4];
+			q++;
+
+			*q = hex_table[ch & 15];
+			q++;
+		}
+	}
+	*q = '\0';
+
+	return encoded;
+}
+
 CoreProtocol::CoreProtocol() : QObject()
 {
 	// debug
@@ -33,7 +88,7 @@ Transfer * CoreProtocol::incomingTransfer()
 	return 0;
 }
 
-void CoreProtocol::outgoingTransfer( Transfer * outgoing )
+void CoreProtocol::outgoingTransfer( Request* outgoing )
 {
 	// Convert the outgoing data into wire format
 	Request * request = dynamic_cast<Request *>( outgoing );
@@ -44,8 +99,8 @@ void CoreProtocol::outgoingTransfer( Transfer * outgoing )
 		m_error = NMERR_BAD_PARM;
 		return;
 	}
-	// Prepend field containing transaction id
-	fields.prepend( new Field::SingleField( NM_A_SZ_TRANSACTION_ID, NMFIELD_METHOD_VALID, 
+	// Append field containing transaction id
+	fields.append( new Field::SingleField( NM_A_SZ_TRANSACTION_ID, NMFIELD_METHOD_VALID, 
 					0, NMFIELD_TYPE_UTF8, request->transactionId() ) );
 	
 	// convert to QByteArray
@@ -61,7 +116,7 @@ void CoreProtocol::outgoingTransfer( Transfer * outgoing )
 	{
 		bout += "Host: ";
 		bout += "reiser.suse.de"; //FIXME: Get this from somewhere else!!
-		bout += ":8300\r\n";
+		bout += ":8300\r\n\r\n";
 	}
 	else
 		bout += "\r\n";
@@ -69,9 +124,19 @@ void CoreProtocol::outgoingTransfer( Transfer * outgoing )
 	emit outgoingData( bout );
 	// now convert 
 	fieldsToWire( fields );
+	return;
 }
 
-void CoreProtocol::fieldsToWire( Field::FieldList fields )
+void CoreProtocol::wireToTransfer( const QByteArray& wire )
+{
+	// processing incoming data and reassembling it into transfers
+	// may be an event or a response
+	// may be incomplete!!
+	// going to need some state to track incomplete transfers :/
+	// store it in the buffer inQueue when complete
+}
+
+void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 {
 	cout << "CoreProtocol::fieldsToWire" << endl;
 	int subFieldCount = 0;
@@ -109,10 +174,12 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields )
 			{
 				//cout << " - it's a single string" << endl;
 				const Field::SingleField *sField = static_cast<const Field::SingleField*>( field );
-//				QString encoded = KURL::encode_string( sField->value().toString(), 106 /* UTF-8 */);
-//				encoded.replace( "%20", "+" );
-//				bout += encoded.ascii();
-				bout += sField->value().toString().ascii();
+// 				QString encoded = KURL::encode_string( sField->value().toString(), 106 /* UTF-8 */);
+// 				encoded.replace( "%20", "+" );
+// 				bout += encoded.ascii();
+
+				bout += url_escape_string( sField->value().toString().utf8() );
+				//bout += sField->value().toString().ascii();
 				break;
 			}
 			case NMFIELD_TYPE_ARRAY:	// Field contains a field array
@@ -146,9 +213,15 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields )
 				( field->type() == NMFIELD_TYPE_ARRAY || field->type() == NMFIELD_TYPE_MV ) )
 		{
 			const Field::MultiField *mField = static_cast<const Field::MultiField*>( field );
-			fieldsToWire( mField->fields() );
+			fieldsToWire( mField->fields(), ++depth );
 		}
 		//cout << " - field done" << endl;
+		
+	}
+	if ( depth == 0 ) // this call to the function was not recursive, so the entire request has been sent at this point
+	{
+		emit outgoingData( QCString( "\r\n" ) );
+		cout << " - request sent." << endl;
 	}
 	cout << " - method done" << endl;
 }

@@ -121,7 +121,7 @@ public:
 	void close();
 	
 	/**
-	 * Is are there any messages waiting to be read
+	 * Are there any messages waiting to be read
 	 */
 	bool fieldsAvailable() const;	// adapt to messages
 	/**
@@ -146,7 +146,7 @@ signals:
 	void connected();
 	void securityLayerActivated(int);
 	//void needAuthParams(bool user, bool pass, bool realm);
-	void authenticated();
+	void authenticated(); // this signal is ordinarily emitted in processNext
 	void warning(int);
 // #	void incomingXml(const QString &s); // signals emitted in processNext but don't seem to go anywhere...
 // #	void outgoingXml(const QString &s); //

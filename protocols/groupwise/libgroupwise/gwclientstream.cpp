@@ -404,6 +404,7 @@ void ClientStream::write( Request *request )
 void ClientStream::cp_outgoingData( const QCString & outgoingBytes )
 {
 	// take formatted bytes from CoreProtocol and put them on the wire
+	qDebug( "ClientStream::cp_outgoingData: %s", outgoingBytes.data() );
 	d->ss->write( outgoingBytes );
 }
 
@@ -445,6 +446,7 @@ void ClientStream::cr_connected()
 
 	// immediate SSL?
 	if(d->conn->useSSL()) {
+		qDebug("CLIENTSTREAM: cr_connected(), starting TLS");
 		d->using_tls = true;
 		d->ss->startTLSClient(d->tlsHandler, d->server, spare);
 	}
@@ -481,10 +483,10 @@ void ClientStream::ss_readyRead()
 {
 	QByteArray a = d->ss->read();
 
-#ifdef LIBGW_DEBUG
+//#ifdef LIBGW_DEBUG
 	QCString cs(a.data(), a.size()+1);
-	fprintf(stderr, "ClientStream: recv: %d [%s]\n", a.size(), cs.data());
-#endif
+	qDebug("ClientStream: recv: %d [%s]\n", a.size(), cs.data());
+//#endif
 
 	d->client.addIncomingData(a);
 /*	if(d->notify & CoreProtocol::NRecv) { */
@@ -496,6 +498,7 @@ void ClientStream::ss_readyRead()
 
 void ClientStream::ss_bytesWritten(int bytes)
 {
+	qDebug( "CLIENTSTREAM::ss_bytesWritten: %i bytes written", bytes );
 /*	if(d->mode == Client)
 		d->client.outgoingDataWritten(bytes);
 	else
@@ -520,12 +523,14 @@ void ClientStream::ss_tlsHandshaken()
 
 void ClientStream::ss_tlsClosed()
 {
+	qDebug( "ClientStream::ss_tlsClosed()" );
 	reset();
 	emit connectionClosed();
 }
 
 void ClientStream::ss_error(int x)
 {
+	qDebug( "ClientStream::ss_error() x=%i ", x );
 	if(x == SecureStream::ErrTLS) {
 		reset();
 		d->errCond = TLSFail;
@@ -557,7 +562,7 @@ void ClientStream::ss_error(int x)
 // 		//d->srv.sasl_step = stepData;
 // 
 // 	processNext();
-// }
+// }tlsHandshaken
 // 
 // void ClientStream::sasl_needParams(bool user, bool authzid, bool pass, bool realm)
 // {
