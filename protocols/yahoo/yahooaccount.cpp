@@ -45,20 +45,39 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, cons
 
 	// first things first - initialise internals
 	theHaveContactList = false;
-	
+	stateOnConnection = 0;
+
 	// we need this quite early (before initActions at least)
 	kdDebug(14180) << "Yahoo: Creating myself with name = " << accountId() << endl;
 	m_myself = new YahooContact(this, accountId(), accountId(), 0);
 	m_myself->setYahooStatus(YahooStatus::Offline, "", 0);
-	
+
 	// now initialise the menu actions
 	initActions();
-	
+
 	if(autoLogin()) connect();
 }
 
 YahooAccount::~YahooAccount()
 {
+}
+
+void YahooAccount::slotGoStatus(int status)
+{
+	kdDebug(14180) << "YahooAccount::slotGoStatus(" << status << ")" << endl;
+
+	if(!isConnected())
+	{	if(status == 12)
+			// must connect as invisible
+			connect();
+		else
+			connect();
+		stateOnConnection = status;
+	}
+	else
+	{	m_session->setAway(yahoo_status(status), "", 1);
+		m_myself->setYahooStatus(YahooStatus::fromLibYahoo2(status));
+	}
 }
 
 void YahooAccount::loaded()
@@ -81,11 +100,11 @@ KopeteContact *YahooAccount::myself() const
 void YahooAccount::connect()
 {
 	YahooSession *session_ = 0;
-	
+
 	QString server = static_cast<YahooProtocol *>(protocol())->server();
 	int port = static_cast<YahooProtocol *>(protocol())->port();
 	// TODO: do something with them! :-)
-	
+
 	kdDebug(14180) << "YahooAccount::connect()" << endl;
 
 	if(!isConnected())
@@ -102,7 +121,7 @@ void YahooAccount::connect()
 				/* We have a session, time to connect its signals to our plugin slots */
 				QObject::connect( session_ , SIGNAL(loginResponse( int,  const QString &)), this , SLOT(slotLoginResponse( int, const QString &)) );
 				QObject::connect( session_ , SIGNAL(gotBuddy(const QString &, const QString &, const QString &)), this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
-//				QObject::connect( session_ , SIGNAL(gotIgnore( const QStringList & )), this , SLOT(void slotGotIgnore( const QStringList & )) );			
+				QObject::connect( session_ , SIGNAL(gotIgnore( const QStringList & )), this , SLOT(void slotGotIgnore( const QStringList & )) );
 				QObject::connect( session_ , SIGNAL(statusChanged( const QString &, int, const QString &, int)), this , SLOT(slotStatusChanged( const QString &, int , const QString &, int )) );
 				QObject::connect( session_ , SIGNAL(gotIm( const QString &, const QString &, long, int )), this , SLOT(slotGotIm( const QString &, const QString &, long, int)) );
 				QObject::connect( session_ , SIGNAL(gotConfInvite( const QString &, const QString &, const QString &, const QStringList &)), this , SLOT(slotGotConfInvite( const QString &, const QString &, const QString &, const QStringList &)) );
@@ -156,7 +175,7 @@ void YahooAccount::setAway(bool status)
 {
 	kdDebug(14180) << "YahooAccount::setAway(" << status << ")" << endl;
 	// TODO: make it work!
-	
+
 }
 
 void YahooAccount::slotConnected()
@@ -166,15 +185,18 @@ void YahooAccount::slotConnected()
 
 void YahooAccount::slotGoOnline()
 {
-	if(isConnected())
-		;// TODO: Do something!
-	else
+	if(!isConnected())
 		connect();
+	else
+		m_myself->setYahooStatus(YahooStatus::Available);
 }
 
 void YahooAccount::slotGoOffline()
 {
-	disconnect();
+	if(isConnected())
+		disconnect();
+	else
+		m_myself->setYahooStatus(YahooStatus::Offline);
 }
 
 void YahooAccount::initActions()
@@ -183,55 +205,36 @@ void YahooAccount::initActions()
 
 	theActionMenu = new KActionMenu("Yahoo", this);
 	theActionMenu->popupMenu()->insertTitle(m_myself->icon(), "Yahoo ("+m_myself->displayName()+")");
-	theActionMenu->insert(new KAction(i18n(YSTAvailable), "yahoo_online", 0, this, SLOT(connect()), this, "actionYahooConnect"));
-	theActionMenu->insert(new KAction(i18n("Offline"), "yahoo_offline", 0, this, SLOT(disconnect()), this, "actionYahooDisconnect"));
-	// TODO: change the "yahoo_busy"s to proper pictures.
-	theActionMenu->insert(new KAction(i18n(YSTBeRightBack), "yahoo_busy", 0, this, SLOT(goStatus001()), this, "actionYahooGoStatus001"));
-	theActionMenu->insert(new KAction(i18n(YSTBusy), "yahoo_busy", 0, this, SLOT(goStatus002()), this, "actionYahooGoStatus002"));
-	theActionMenu->insert(new KAction(i18n(YSTNotAtHome), "yahoo_busy", 0, this, SLOT(goStatus003()), this, "actionYahooGoStatus003"));
-	theActionMenu->insert(new KAction(i18n(YSTNotAtMyDesk), "yahoo_busy", 0, this, SLOT(goStatus004()), this, "actionYahooGoStatus004"));
-	theActionMenu->insert(new KAction(i18n(YSTNotInTheOffice), "yahoo_busy", 0, this, SLOT(goStatus005()), this, "actionYahooGoStatus005"));
-	theActionMenu->insert(new KAction(i18n(YSTOnThePhone), "yahoo_busy", 0, this, SLOT(goStatus006()), this, "actionYahooGoStatus006"));
-	theActionMenu->insert(new KAction(i18n(YSTOnVacation), "yahoo_busy", 0, this, SLOT(goStatus007()), this, "actionYahooGoStatus007"));
-	theActionMenu->insert(new KAction(i18n(YSTOutToLunch), "yahoo_busy", 0, this, SLOT(goStatus008()), this, "actionYahooGoStatus008"));
-	theActionMenu->insert(new KAction(i18n(YSTSteppedOut), "yahoo_busy", 0, this, SLOT(goStatus009()), this, "actionYahooGoStatus009"));
+	theActionMenu->insert(new KAction(i18n(YSTAvailable), "yahoo_online", 0, this, SLOT(slotGoOnline()), this, "actionYahooGoOnline"));
+	theActionMenu->insert(new KAction(i18n("Offline"), "yahoo_offline", 0, this, SLOT(slotGoOffline()), this, "actionYahooGoOffline"));
+	theActionMenu->insert(new KAction(i18n(YSTBeRightBack), "yahoo_away", 0, this, SLOT(slotGoStatus001()), this, "actionYahooGoStatus001"));
+	theActionMenu->insert(new KAction(i18n(YSTBusy), "yahoo_busy", 0, this, SLOT(slotGoStatus002()), this, "actionYahooGoStatus002"));
+	theActionMenu->insert(new KAction(i18n(YSTNotAtHome), "yahoo_away", 0, this, SLOT(slotGoStatus003()), this, "actionYahooGoStatus003"));
+	theActionMenu->insert(new KAction(i18n(YSTNotAtMyDesk), "yahoo_away", 0, this, SLOT(slotGoStatus004()), this, "actionYahooGoStatus004"));
+	theActionMenu->insert(new KAction(i18n(YSTNotInTheOffice), "yahoo_away", 0, this, SLOT(slotGoStatus005()), this, "actionYahooGoStatus005"));
+	theActionMenu->insert(new KAction(i18n(YSTOnThePhone), "yahoo_mobile", 0, this, SLOT(slotGoStatus006()), this, "actionYahooGoStatus006"));
+	theActionMenu->insert(new KAction(i18n(YSTOnVacation), "yahoo_away", 0, this, SLOT(slotGoStatus007()), this, "actionYahooGoStatus007"));
+	theActionMenu->insert(new KAction(i18n(YSTOutToLunch), "yahoo_away", 0, this, SLOT(slotGoStatus008()), this, "actionYahooGoStatus008"));
+	theActionMenu->insert(new KAction(i18n(YSTSteppedOut), "yahoo_away", 0, this, SLOT(slotGoStatus009()), this, "actionYahooGoStatus009"));
+//	TODO: uncomment when connect as invisible is sorted
+//	theActionMenu->insert(new KAction(i18n("Invisible"), "yahoo_offline", 0, this, SLOT(slotGoStatus012()), this, "actionYahooGoStatus012");
 
-/*	// TODO: connect with invisible on
-	theActionMenu->insert(new KAction(i18n("Invisible"), "yahoo_offline", 0, this, SLOT(goStatus012()), this, "actionYahooGoStatus012");
-
-	// TODO: do something(?!) with them				
+/*
+	// TODO: do something(?!) with them
 	actionGoStatus099 = new KAction(i18n("Custom"), "yahoo_online",
 				0, this, SLOT(connect()), this, "actionYahooConnect"); // XXX Get some dialogbox
 	actionGoStatus999 = new KAction(i18n(YSTIdle), "yahoo_idle",
-				0, this, SLOT(connect()), this, "actionYahooConnect");
+				0, this, SLOT(connect()), this, "actionYahooConnect"); // should this even be an option?
 */
+}
 
-/*	theActionMenu->insert(actionGoStatus001);
-	theActionMenu->insert(actionGoStatus002);
-	theActionMenu->insert(actionGoStatus003);
-	theActionMenu->insert(actionGoStatus004);
-	theActionMenu->insert(actionGoStatus005);
-	theActionMenu->insert(actionGoStatus006);
-	theActionMenu->insert(actionGoStatus007);
-	theActionMenu->insert(actionGoStatus008);
-	theActionMenu->insert(actionGoStatus009);
-	theActionMenu->insert(actionGoStatus012);
-	theActionMenu->insert(actionGoStatus099);
-	theActionMenu->insert(actionGoStatus999);
-*/
-}
-/*
-void YahooAccount::slotGotBuddiesTimeout()
-{
-}
-*/
 void YahooAccount::slotGotBuddies( const YList */*theList*/ )
 {
 	kdDebug(14180) << "[YahooAccount::slotGotBuddies()]" << endl;
 	theHaveContactList = true;
 	KGlobal::config()->setGroup("Yahoo");
 	YahooProtocol *theProtocol = static_cast<YahooProtocol *>(protocol());
-	
+
 	// Serverside -> local
 	for(QMap<QString, QPair<QString, QString> >::iterator i = IDs.begin(); i != IDs.end(); i++)
 		if(!contacts()[i.key()] && theProtocol->importContacts())		// TODO: make importYahooContacts a configuration option.
@@ -239,7 +242,7 @@ void YahooAccount::slotGotBuddies( const YList */*theList*/ )
 			QString groupName = theProtocol->useGroupNames() ? i.data().first : QString("Imported Yahoo Contacts");	// TODO: make importYahooGroups a config option.
 			addContact(i.key(), i.data().second == "" || i.data().second.isNull() ? i.key() : i.data().second, 0, groupName);
 		}
-		
+
 	// Local -> serverside
 	for(QDictIterator<KopeteContact> i(contacts()); i.current(); ++i)
 		if(i.currentKey() != accountId())
@@ -256,13 +259,12 @@ bool YahooAccount::addContactToMetaContact(const QString &contactId, const QStri
 	kdDebug(14180) << "[YahooAccount::addContactToMetaContact] contactId: " << contactId << endl;
 
 	if(!contact(contactId))
-	{	//No server side stuff for this protocol yet, just create the guy and go
-		YahooContact *newContact = new YahooContact( this, contactId, displayName, parentContact);
+	{	YahooContact *newContact = new YahooContact( this, contactId, displayName, parentContact);
 		return newContact != 0;
 	}
 	else
 		kdDebug(14180) << "[YahooAccount::addContact] Contact already exists" << endl;
-	
+
 	return false;
 }
 
@@ -276,6 +278,11 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 {
 	kdDebug(14180) << "[YahooAccount::slotLoginResponse(" << succ << ", " << url << ")]" << endl;
 	slotGotBuddies(yahooSession()->getLegacyBuddyList());
+	if(stateOnConnection)
+	{	m_session->setAway(yahoo_status(stateOnConnection), "", 0);
+		m_myself->setYahooStatus(YahooStatus::fromLibYahoo2(stateOnConnection));
+		stateOnConnection = 0;
+	}
 }
 
 void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, const QString &group )
@@ -283,7 +290,8 @@ void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, co
 	kdDebug(14180) << "[YahooAccount::slotGotBuddy]" << endl;
 	IDs[userid] = QPair<QString, QString>(group, alias);
 }
-void YahooAccount::slotGotIgnore( YList * /* igns */ )
+
+void YahooAccount::slotGotIgnore( const QStringList & /* igns */ )
 {
 	kdDebug(14180) << "[YahooAccount::slotGotIgnore]" << endl;
 }
@@ -306,7 +314,7 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 
 	if(!contact(who))
 		addContact( who, who, 0L, QString::null, true );
-	
+
 	KopeteMessageManager *mm = contact(who)->manager();
 
 	// Tell the message manager that the buddy is done typing

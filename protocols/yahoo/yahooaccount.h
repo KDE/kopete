@@ -40,15 +40,15 @@ class YahooAccount : public KopeteAccount
 public:
 	YahooAccount(YahooProtocol *parent,const QString& accountID, const char *name = 0L);
 	~YahooAccount();
-	
+
 	virtual KopeteContact *myself() const;				// returns our yahoo contact
 	YahooContact *contact(const QString &id);			// returns a contact of name "id"
 	virtual KActionMenu* actionMenu() { return theActionMenu; }
 
 	virtual void setAway(bool);					// set away status
-	
+
 	YahooSession *yahooSession();					// the session
-	
+
 	bool isOnServer(const QString &id) { return IDs.contains(id); }	// returns true is contact id is on SS contact list
 	bool haveContactList() { return theHaveContactList; }		// returns true if we have the SS contact list
 
@@ -64,35 +64,33 @@ protected:
 
 protected slots:
 	virtual void loaded();
-//	void slotGotBuddiesTimeout();				// timeout for reception of buddies list
-		
-	//void slotConnect();
+
 	void slotConnected();
 	void slotGoOnline();
 	void slotGoOffline();
-	void slotGoStatus(int status) { if(!isConnected()) connect(); m_session->setAway(yahoo_status(status), "", 1); }
-	
-	void slotLoginResponse( int succ, const QString &url);
+	void slotGoStatus(int status);
+
+	void slotLoginResponse(int succ, const QString &url);
 	void slotGotBuddies(const YList * buds);
 	void slotGotBuddy(const QString &userid, const QString &alias, const QString &group);
-	void slotGotIgnore( YList * igns);
-	void slotGotIdentities( const QStringList &);
-	void slotStatusChanged( const QString &who, int stat, const QString &msg, int away);
-	void slotGotIm( const QString &who, const QString &msg, long tm, int stat);
-	void slotGotConfInvite( const QString &who, const QString &room, const QString &msg, const QStringList &members);
-	void slotConfUserDecline( const QString &who, const QString &room, const QString &msg);
-	void slotConfUserJoin( const QString &who, const QString &room);
-	void slotConfUserLeave( const QString &who, const QString &room);
-	void slotConfMessage( const QString &who, const QString &room, const QString &msg);
-	void slotGotFile( const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize);
-	void slotContactAdded( const QString &myid, const QString &who, const QString &msg);
-	void slotRejected( const QString &, const QString &);
-	void slotTypingNotify( const QString &, int );
-	void slotGameNotify( const QString &, int);
-	void slotMailNotify( const QString &, const QString &, int);
-	void slotSystemMessage( const QString &);
-	void slotError( const QString &, int);
-	void slotRemoveHandler( int fd);
+	void slotGotIgnore(const QStringList &);
+	void slotGotIdentities(const QStringList &);
+	void slotStatusChanged(const QString &who, int stat, const QString &msg, int away);
+	void slotGotIm(const QString &who, const QString &msg, long tm, int stat);
+	void slotGotConfInvite(const QString &who, const QString &room, const QString &msg, const QStringList &members);
+	void slotConfUserDecline(const QString &who, const QString &room, const QString &msg);
+	void slotConfUserJoin(const QString &who, const QString &room);
+	void slotConfUserLeave(const QString &who, const QString &room);
+	void slotConfMessage(const QString &who, const QString &room, const QString &msg);
+	void slotGotFile(const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize);
+	void slotContactAdded(const QString &myid, const QString &who, const QString &msg);
+	void slotRejected(const QString &, const QString &);
+	void slotTypingNotify(const QString &, int );
+	void slotGameNotify(const QString &, int);
+	void slotMailNotify(const QString &, const QString &, int);
+	void slotSystemMessage(const QString &);
+	void slotError(const QString &, int);
+	void slotRemoveHandler(int fd);
 	//void slotHostConnect(const QString &host, int port);
 
 private slots:
@@ -109,17 +107,18 @@ private slots:
 	void slotGoStatus012() { slotGoStatus(12); } // Invisible
 	void slotGoStatus099() { slotGoStatus(99); } // Custom
 	void slotGoStatus999() { slotGoStatus(999); } // Idle
-	
+
 private:
 	QMap<QString, QPair<QString, QString> > IDs;
 		// This should be kept in sync with server - if a buddy is removed, this should be changed accordingly.
 	bool theHaveContactList;	// Do we have the full server-side contact list yet?
-	
-	int m_sessionId;		// The Yahoo session descriptor
+
+	int m_sessionId;			// The Yahoo session descriptor
 	YahooPreferences *m_prefs;	// Preferences Object
 	YahooSession *m_session;	// Connection Object
 	YahooContact *m_myself;		// Ourself
-	
+	int stateOnConnection;		// The state to change to on connection
+
 	void initActions();			// Load Status Actions
 	KActionMenu *theActionMenu;	// Statusbar Popup
 };
@@ -128,7 +127,7 @@ private:
 
 //********************************************************
 //public:
-	
+
 
 	//------ internal functions
 	/*

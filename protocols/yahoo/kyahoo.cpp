@@ -204,7 +204,9 @@ void YahooSession::sendTyping( const QString &from, const QString &who, int typ)
 
 void YahooSession::setAway( enum yahoo_status state, const QString &msg, int away)
 {
-	yahoo_set_away(m_connId,state, msg.local8Bit() , away);
+	kdDebug(14180)<<"[YahooSession::setAway" << state << ", " << msg << ", " << away << "]" << m_connId << endl;
+
+	yahoo_set_away(m_connId, state, msg.local8Bit(), away);
 }
 
 void YahooSession::addBuddy( const QString &who, const QString &group)

@@ -972,7 +972,7 @@ static void yahoo_process_auth(struct yahoo_data *yd, struct yahoo_packet *pkt)
 	 * The new clients use this authentication method.  I warn you in 
 	 * advance, it's bizzare, convoluted, inordinately complicated.  
 	 * It's also no more secure than crypt() was.  The only purpose this 
-	 * scheme could serve is to prevent third part clients from connecting 
+	 * scheme could serve is to prevent third part clients from connecting
 	 * to their servers.
 	 *
 	 * Sorry, Yahoo.
@@ -992,7 +992,7 @@ static void yahoo_process_auth(struct yahoo_data *yd, struct yahoo_packet *pkt)
 	char checksum;
 	
 	int sv;
-	
+
 	unsigned char *result6 = malloc(25);
 	unsigned char *result96 = malloc(25);
 
@@ -1620,6 +1620,8 @@ void yahoo_send_typing(int id, const char *from, const char *who, int typ)
 
 void yahoo_set_away(int id, enum yahoo_status state, const char *msg, int away)
 {
+	printf("libyahoo2: set_away(%d, %d, %s, %d)\n", id, state, msg, away);
+
 	struct yahoo_data *yd = find_conn_by_id(id);
 	struct yahoo_packet *pkt = NULL;
 	int service;
@@ -1646,7 +1648,9 @@ void yahoo_set_away(int id, enum yahoo_status state, const char *msg, int away)
 		yahoo_packet_hash(pkt, 47, away?"1":"0");
 	}
 
+	printf("libyahoo2: sending away packet...\n", id, state, msg, away);
 	yahoo_send_packet(yd, pkt, 0);
+	printf("libyahoo2: done.\n", id, state, msg, away);
 	yahoo_packet_free(pkt);
 }
 
