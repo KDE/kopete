@@ -575,6 +575,12 @@ unsigned int HistoryLogger::getFirstMonth(const KopeteContact *c)
 		{
 			rx.search(fi->fileName());
 			int result = 12*(QDate::currentDate().year() - rx.cap(1).toUInt()) +QDate::currentDate().month() - rx.cap(2).toUInt();
+			
+			if(result < 0)
+			{
+				kdWarning(14310) << k_funcinfo << "Kopete only found log file from Kopete 0.7.x made in the future. Check your date!" << endl;
+				break;
+			}
 			return result;
 		}
 		++it1;
@@ -599,6 +605,11 @@ unsigned int HistoryLogger::getFirstMonth(const KopeteContact *c)
 		{
 			rx.search(fi->fileName());
 			int result = 12*(QDate::currentDate().year() - rx.cap(1).toUInt()) +QDate::currentDate().month() - rx.cap(2).toUInt();
+			if(result < 0)
+			{
+				kdWarning(14310) << k_funcinfo << "Kopete only found log file made in the future. Check your date!" << endl;
+				break;
+			}
 			return result;
 		}
 		++it;
