@@ -76,13 +76,13 @@ KIRCMessage::~KIRCMessage()
 	if(m_ctcpMessage) delete m_ctcpMessage;
 }
 
-KIRCMessage KIRCMessage::writeRawMessage(QIODevice *dev, const QString &message, QTextCodec *codec)
+KIRCMessage KIRCMessage::writeRawMessage(QIODevice *dev, const QString &message, const QTextCodec *codec)
 {
 	QCString s;
 	QString txt = message + QString::fromLatin1("\r\n");
 
-	if( !codec ) // FIXME: Per-convo. Codec selector
-		codec = QTextCodec::codecForName("utf8");
+	if( !codec )
+		codec = QTextCodec::codecForMib(4);
 
 	s = codec->fromUnicode(txt);
 
@@ -92,14 +92,14 @@ KIRCMessage KIRCMessage::writeRawMessage(QIODevice *dev, const QString &message,
 	return parse(message);
 }
 
-KIRCMessage KIRCMessage::writeMessage(QIODevice *dev, const QString &message, QTextCodec *codec)
+KIRCMessage KIRCMessage::writeMessage(QIODevice *dev, const QString &message, const QTextCodec *codec)
 {
 	return writeRawMessage(dev, quote(message), codec);
 }
 
 KIRCMessage KIRCMessage::writeMessage(QIODevice *dev,
 		const QString &command, const QString &arg, const QString &suffix,
-		QTextCodec *codec)
+		const QTextCodec *codec)
 {
 	QString msg = command;
 	if (!arg.isNull())
@@ -112,7 +112,7 @@ KIRCMessage KIRCMessage::writeMessage(QIODevice *dev,
 
 KIRCMessage KIRCMessage::writeMessage(QIODevice *dev,
 		const QString &command, const QStringList &args, const QString &suffix,
-		QTextCodec *codec)
+		const QTextCodec *codec)
 {
 	return writeMessage(dev, command, args.join(QChar(' ')), suffix, codec);
 }
@@ -120,7 +120,7 @@ KIRCMessage KIRCMessage::writeMessage(QIODevice *dev,
 KIRCMessage KIRCMessage::writeCtcpMessage(QIODevice *dev,
 		const QString &command, const QString &to /*prefix*/, const QString &suffix,
 		const QString &ctcpMessage,
-		QTextCodec *codec)
+		const QTextCodec *codec)
 {
 	return writeMessage(dev, command, to, suffix + QChar(0x01) + ctcpQuote(ctcpMessage) + QChar(0x01), codec);
 }
@@ -128,7 +128,7 @@ KIRCMessage KIRCMessage::writeCtcpMessage(QIODevice *dev,
 KIRCMessage KIRCMessage::writeCtcpMessage(QIODevice *dev,
 		const QString &command, const QString &to /*prefix*/, const QString &suffix,
 		const QString &ctcpCommand, const QString &ctcpArg, const QString &ctcpSuffix,
-		QTextCodec *codec)
+		const QTextCodec *codec)
 {
 	QString ctcpMsg = ctcpCommand;
 	if (!ctcpArg.isNull())
@@ -142,13 +142,13 @@ KIRCMessage KIRCMessage::writeCtcpMessage(QIODevice *dev,
 KIRCMessage KIRCMessage::writeCtcpMessage(QIODevice *dev,
 		const QString &command, const QString &to /*prefix*/, const QString &suffix,
 		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix,
-		QTextCodec *codec)
+		const QTextCodec *codec)
 {
 	return writeCtcpMessage(dev, command, to, suffix, ctcpCommand, ctcpArgs.join(QChar(' ')), ctcpSuffix, codec);
 }
 
 // if codec==0 => autodetect
-KIRCMessage KIRCMessage::parse(KBufferedIO *dev, bool *parseSuccess, QTextCodec *codec)
+KIRCMessage KIRCMessage::parse(KBufferedIO *dev, bool *parseSuccess, const QTextCodec *codec)
 {
 	if(parseSuccess)
 	*parseSuccess=false;
@@ -168,8 +168,8 @@ KIRCMessage KIRCMessage::parse(KBufferedIO *dev, bool *parseSuccess, QTextCodec 
 			int idx = raw.findRev( QCString(QChar(001)) + ":" );
 			kdDebug(14121) << "idx: " << idx << endl;
 
-			if( !codec ) // FIXME: Per-convo. Codec selector
-				codec = QTextCodec::codecForName("utf8");
+			if( !codec )
+				codec = QTextCodec::codecForMib(4);
 
 			line = codec->toUnicode(raw);
 

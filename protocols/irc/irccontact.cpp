@@ -126,7 +126,7 @@ const QTextCodec *IRCContact::codec()
 {
 	QString codecName = metaContact()->pluginData( m_protocol, QString::fromLatin1("Codec") );
 	if( codecName.isEmpty() )
-		return QTextCodec::codecForName( "utf8" );
+		return QTextCodec::codecForMib( 4 );
 	else
 		return QTextCodec::codecForName( codecName.latin1() );
 }

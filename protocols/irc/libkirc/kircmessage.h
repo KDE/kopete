@@ -39,34 +39,34 @@ public:
 
 	~KIRCMessage();
 
-	static KIRCMessage writeRawMessage(QIODevice *dev, const QString &str, QTextCodec *codec=0);
-	static KIRCMessage writeMessage(QIODevice *dev, const QString &str, QTextCodec *codec=0);
+	static KIRCMessage writeRawMessage(QIODevice *dev, const QString &str, const QTextCodec *codec );
+	static KIRCMessage writeMessage(QIODevice *dev, const QString &str, const QTextCodec *codec );
 
 	static KIRCMessage writeMessage(QIODevice *dev,
 			const QString &command, const QString &arg, const QString &suffix,
-			QTextCodec *codec=0);
+			const QTextCodec *code0);
 	static KIRCMessage writeMessage(QIODevice *dev,
 			const QString &command, const QStringList &args, const QString &suffix,
-			QTextCodec *codec=0);
+			const QTextCodec *codec);
 
 	static KIRCMessage writeCtcpMessage(QIODevice *dev,
 			const QString &command, const QString &to /*prefix*/, const QString &suffix,
 			const QString &ctcpMessage,
-			QTextCodec *codec=0);
+			const QTextCodec *codec);
 	static KIRCMessage writeCtcpMessage(QIODevice *dev,
 			const QString &command, const QString &to /*prefix*/, const QString &suffix,
 			const QString &ctcpCommand, const QString &ctcpArg, const QString &ctcpSuffix,
-			QTextCodec *codec=0);
+			const QTextCodec *codec);
 	static KIRCMessage writeCtcpMessage(QIODevice *dev,
 			const QString &command, const QString &to /*prefix*/, const QString &suffix,
 			const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix,
-			QTextCodec *codec=0);
+			const QTextCodec *codec);
 
 	// FIXME: short term solution move me to the the KIRCUser class
 	inline static QString getNickFromPrefix(const QString &prefix)
 		{ return prefix.section('!', 0, 0); }
 
-	static KIRCMessage parse(KBufferedIO *dev, bool *parseSuccess=0, QTextCodec *codec=0);
+	static KIRCMessage parse(KBufferedIO *dev, bool *parseSuccess, const QTextCodec *codec );
 
 	QString toString() const;
 

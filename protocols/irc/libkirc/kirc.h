@@ -97,6 +97,8 @@ public:
 		codecs.replace( nick, codec );
 	}
 
+	const QTextCodec *codecForNick( const QString &nick ) const;
+
 	QString &customCtcp( const QString &s ) { return customCtcpMap[s];  }
 	void addCustomCtcp( const QString &ctcp, const QString &reply ) {
 	kdDebug(14120) << "Adding cusotm CTCP reply: " << ctcp << " = " << reply << endl;
@@ -407,8 +409,9 @@ protected:
 	QString m_Realname;
 	QString m_Nickname;
 	QString m_Passwd;
-	bool	m_ReqsPasswd;
+	bool m_ReqsPasswd;
 	bool m_FailedNickOnLogin;
+	int connectTimeout;
 
 	QString m_VersionString;
 	QString m_UserString;
@@ -417,11 +420,11 @@ protected:
 	QStringList m_motdBuffer;
 
 	QDict<KIRCMethodFunctorCall> m_IrcMethods;
-
 	QDict<KIRCMethodFunctorCall> m_IrcCTCPQueryMethods;
 	QDict<KIRCMethodFunctorCall> m_IrcCTCPReplyMethods;
 	QMap<QString, QString> customCtcpMap;
 	QDict<QTextCodec> codecs;
+	QTextCodec *defaultCodec;
 
 private slots:
 	void slotHostFound();
