@@ -141,15 +141,16 @@ GaduContact::contactPort()
 }
 
 KopeteMessageManager*
-GaduContact::manager( bool canCreate )
+GaduContact::manager( bool /* canCreate */ )
 {
-	if ( !msgManager_ && canCreate ) {
+	if ( !msgManager_ ) {
 		msgManager_ = KopeteMessageManagerFactory::factory()->create( account_->myself(), thisContact_, GaduProtocol::protocol() );
 		connect( msgManager_, SIGNAL( messageSent( KopeteMessage&, KopeteMessageManager*) ),
 			 this, SLOT( messageSend( KopeteMessage&, KopeteMessageManager*) ) );
 		connect( msgManager_, SIGNAL( destroyed() ),  this, SLOT( slotMessageManagerDestroyed() ) );
 
 	}
+	kdDebug(14100) << "GaduContact::manager returning:  " << msgManager_ << endl;
 	return msgManager_;
 }
 
