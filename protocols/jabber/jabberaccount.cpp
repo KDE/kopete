@@ -268,12 +268,12 @@ void JabberAccount::connect ()
 	 * have to delete the psi backend altogether here for safety if it still
 	 * exists. */
 	if (jabberClient)
-	  {
+	{
 		  jabberClient->close ();
 		  delete jabberClient;
 
 		  jabberClient = 0L;
-	  }
+	}
 
 	jabberClient = new Jabber::Client (this);
 
@@ -286,6 +286,7 @@ void JabberAccount::connect ()
 	using namespace Jabber;
 
 	QObject::connect (jabberClient, SIGNAL (handshaken ()), this, SLOT (slotHandshaken ()));
+
 	QObject::connect (jabberClient, SIGNAL (authFinished (bool, int, const QString &)), this, SLOT (slotConnected (bool, int, const QString &)));
 
 	QObject::connect (jabberClient, SIGNAL (closeFinished ()), this, SLOT (slotDisconnected ()));
@@ -298,11 +299,9 @@ void JabberAccount::connect ()
 
 	QObject::connect (jabberClient, SIGNAL (rosterItemRemoved (const RosterItem &)), this, SLOT (slotContactDeleted (const RosterItem &)));
 
-	QObject::connect (jabberClient,
-					  SIGNAL (resourceAvailable (const Jid &, const Resource &)), this, SLOT (slotResourceAvailable (const Jid &, const Resource &)));
+	QObject::connect (jabberClient, SIGNAL (resourceAvailable (const Jid &, const Resource &)), this, SLOT (slotResourceAvailable (const Jid &, const Resource &)));
 
-	QObject::connect (jabberClient,
-					  SIGNAL (resourceUnavailable (const Jid &, const Resource &)), this, SLOT (slotResourceUnavailable (const Jid &, const Resource &)));
+	QObject::connect (jabberClient, SIGNAL (resourceUnavailable (const Jid &, const Resource &)), this, SLOT (slotResourceUnavailable (const Jid &, const Resource &)));
 
 	QObject::connect (jabberClient, SIGNAL (messageReceived (const Message &)), this, SLOT (slotReceivedMessage (const Message &)));
 
@@ -312,14 +311,13 @@ void JabberAccount::connect ()
 
 	QObject::connect (jabberClient, SIGNAL (groupChatPresence (const Jid &, const Status &)), this, SLOT (slotGroupChatPresence (const Jid &, const Status &)));
 
-	QObject::connect (jabberClient,
-					  SIGNAL (groupChatError (const Jid &, int, const QString &)), this, SLOT (slotGroupChatError (const Jid &, int, const QString &)));
+	QObject::connect (jabberClient, SIGNAL (groupChatError (const Jid &, int, const QString &)), this, SLOT (slotGroupChatError (const Jid &, int, const QString &)));
 
 	QObject::connect (jabberClient, SIGNAL (error (const StreamError &)), this, SLOT (slotError (const StreamError &)));
 
 	QObject::connect (jabberClient, SIGNAL (debugText (const QString &)), this, SLOT (slotPsiDebug (const QString &)));
-	utsname utsBuf;
 
+	utsname utsBuf;
 	uname (&utsBuf);
 
 	jabberClient->setClientName ("Kopete (using libpsi)");
@@ -364,16 +362,16 @@ void JabberAccount::connect ()
 	if (proxyTypeStr == QString ("HTTPS"))
 		proxyType = Jabber::StreamProxy::HTTPS;
 	else
-	  {
+	{
 		  if (proxyTypeStr == QString ("SOCKS4"))
 			  proxyType = Jabber::StreamProxy::SOCKS4;
 		  else if (proxyTypeStr == QString ("SOCKS5"))
 			  proxyType = Jabber::StreamProxy::SOCKS5;
-	  }
+	}
 
 	Jabber::StreamProxy proxy (proxyType, pluginData (protocol (), "ProxyName"), pluginData (protocol (), "ProxyPort").toInt ());
 
-	proxy.setUseAuth (pluginData (protocol (), "ProxyAuth")==QString::fromLatin1("true"));
+	proxy.setUseAuth (pluginData (protocol (), "ProxyAuth") == QString::fromLatin1("true"));
 	proxy.setUser (pluginData (protocol (), "ProxyUser"));
 	proxy.setPass (pluginData (protocol (), "ProxyPass"));
 
@@ -391,10 +389,7 @@ void JabberAccount::connect ()
 	/* Set the title according to the new changes. */
 	actionStatusMenu->popupMenu ()->changeTitle (menuTitleId, accountId ());
 
-
-	/* Now connect. */
-	//QString  jidDomain = userID.section("@", userID.find("@")) + "@" + server;
-	QString jidDomain = accountId ();
+	QString jidDomain = accountId().section("@", 1);
 
 	password = getPassword ();
 
@@ -415,20 +410,20 @@ void JabberAccount::slotHandshaken ()
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Performing login..." << endl;
 
 	if (registerFlag)
-	  {
+	{
 		  Jabber::JT_Register * task = new Jabber::JT_Register (jabberClient->rootTask ());
 		  QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotRegisterUserDone ()));
 		  task->reg (userID, password);
 		  task->go (true);
-	  }
+	}
 	else
-	  {
+	{
 		  if (pluginData (protocol (), "AuthType") == QString ("digest"))
 			  jabberClient->authDigest (userID, password, resource);
 		  else
 			  jabberClient->authPlain (userID, password, resource);
 
-	  }
+	}
 
 }
 
