@@ -54,6 +54,8 @@ bool LoginTask::take( Transfer * transfer )
 	Response * response = dynamic_cast<Response *>( transfer );
 	if ( !response )
 		return false;
+	response->fields().dump( true );
+	return true;
 	
 	// read in myself()'s metadata fields and emit signal
 	Field::FieldList loginResponseFields = response->fields();
@@ -63,34 +65,31 @@ bool LoginTask::take( Transfer * transfer )
 	// locate contact list
 	Field::MultiField * contactList = static_cast<Field::MultiField *>( 
 			*( loginResponseFields.find( NM_A_FA_CONTACT_LIST ) ) );
-	// extract folder fields 
+	// extract wellfolder fields 
 	// find a field in the contact list containing a folder
-	Field::FieldListIterator it = contactList->fields().find( NM_A_FA_FOLDER );
-	// get the field
-	Field::MultiField * folderContainer = static_cast<Field::MultiField *>( *it );
-	while ( folderContainer )
+	//Field::FieldListIterator it = contactList->fields().find( NM_A_FA_FOLDER );
+	//Field::FieldListIterator end = contactList->fields().end();
+	// get the field and bump the iterator
+	Field::MultiField * folderContainer;
+
+	for ( Field::FieldListIterator it = contactList->fields().find( NM_A_FA_FOLDER );
+		  it != contactList->fields().end();
+		  it = contactList->fields().find( ++it, NM_A_FA_FOLDER ) )
 	{
-		GWFolderItem folder;
-		// object id
-		Field::FieldListIterator currentIt = folderContainer->fields().find( NM_A_SZ_OBJECT_ID );
-		Field::SingleField * current = static_cast<Field::SingleField * >( *currentIt );
-		folder.id = current->value().toInt();
-		// sequence number
-		currentIt = folderContainer->fields().find( NM_A_SZ_SEQUENCE_NUMBER );
-		current = static_cast<Field::SingleField * >( *currentIt );
-		folder.sequence = current->value().toInt();
-		// name 
-		currentIt = folderContainer->fields().find( NM_A_SZ_DISPLAY_NAME );
-		current = static_cast<Field::SingleField * >( *currentIt );
-		folder.name = current->value().toString();
-		cout << "Got folder: " << folder.name.ascii() << ", obj: " << folder.id << ", seq:" << folder.sequence << endl;
-		// tell the world about it
-		emit gotFolder( folder );
-		// and look for the next folder
-		it = contactList->fields().find( it, NM_A_FA_FOLDER );
-		folderContainer = static_cast<Field::MultiField *>( *( ++it ) );
-		// THIS LINE IS NOT SAFE - WE'RE OFF THE END OF THE FIELD LIST OR SOMETHING
+		cout << " found a folder!" << endl;
 	}
+		  
+/*	while ( folderContainer = dynamic_cast<Field::MultiField *>( *it ) )
+	{
+		//Q_ASSERT( it != end );
+		// and look for the next folder
+		extractFolder( folderContainer );
+		// THIS LINE IS NOT SAFE - WE'RE OFF THE END OF THE FIELD LIST OR SOMETHING
+		it = contactList->fields().find( ++it, NM_A_FA_FOLDER );
+		cout << "- it now points to " << ios::hex << *it << endl;
+		folderContainer = dynamic_cast<Field::MultiField *>( *it );
+		
+	}*/
 	// extract contact fields 
 /*	while ( findContact() )
 	{
@@ -102,6 +101,26 @@ bool LoginTask::take( Transfer * transfer )
 	// create privacy list
 	*/
 	return true;
+}
+
+void LoginTask::extractFolder( Field::MultiField * folderContainer )
+{
+	GWFolderItem folder;
+	// object id
+	Field::FieldListIterator currentIt = folderContainer->fields().find( NM_A_SZ_OBJECT_ID );
+	Field::SingleField * current = static_cast<Field::SingleField * >( *currentIt );
+	folder.id = current->value().toInt();
+	// sequence number
+	currentIt = folderContainer->fields().find( NM_A_SZ_SEQUENCE_NUMBER );
+	current = static_cast<Field::SingleField * >( *currentIt );
+	folder.sequence = current->value().toInt();
+	// name 
+	currentIt = folderContainer->fields().find( NM_A_SZ_DISPLAY_NAME );
+	current = static_cast<Field::SingleField * >( *currentIt );
+	folder.name = current->value().toString();
+	cout << "Got folder: " << folder.name.ascii() << ", obj: " << folder.id << ", seq:" << folder.sequence << endl;
+	// tell the world about it
+	emit gotFolder( folder );
 }
 
 #include "logintask.moc"

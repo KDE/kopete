@@ -193,11 +193,15 @@ namespace Field
 			 * @param it An iterator within the list, to start searching from.
 			 * @return An iterator pointing to the first occurrence found, or end() if none was found.
 			 */
-			FieldListIterator find( FieldListIterator it, QCString tag );
+			FieldListIterator find( FieldListIterator &it, QCString tag );
 			/**
 			 * Get the index of the first occurrence of tag, or -1 if not found
 			 */
 			int findIndex( QCString tag );
+			/** 
+			 * Debug function, dumps to stdout
+			 */
+			void dump( bool recursive = false, int offset = 0 );
 	};
 
 	/** 

@@ -39,7 +39,8 @@ public:
 	 * Only accepts the contactlist that comes back from the server, 
 	 * processes it and notifies the client of the contactlist
 	 */
-	bool LoginTask::take( Transfer * transfer );
+	bool take( Transfer * transfer );
+	void extractFolder( Field::MultiField * folderContainer );
 	
 signals:
 	void gotMyself( Field::FieldList & );

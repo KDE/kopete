@@ -42,7 +42,7 @@ FieldListIterator FieldList::find( QCString tag )
 	return find( it, tag );
 }
 
-FieldListIterator FieldList::find( FieldListIterator it, QCString tag )
+FieldListIterator FieldList::find( FieldListIterator &it, QCString tag )
 {
 	FieldListIterator theEnd = end();
 	cout << "FieldList::find() looking for " << tag.data() << endl;
@@ -66,6 +66,52 @@ int FieldList::findIndex( QCString tag )
 			
 	return -1;
 }
+
+void FieldList::dump( bool recursive, int offset )
+{
+	const FieldListIterator myEnd = end();
+	if ( !offset )
+		cout << "FieldList::dump()" << ( recursive ? ", recursively" : ", non-recursive" ) << endl;
+	for( FieldListIterator it = begin(); it != myEnd; ++it )
+	{
+		for ( int i = 0; i < offset; i ++ )
+			cout << "  ";
+		cout << (*it)->tag() << endl;
+		if ( recursive )
+		{
+			MultiField * mf;
+			if ( ( mf = dynamic_cast<MultiField*>( *it ) ) )
+				mf->fields().dump( recursive, offset+1 );
+		}
+	}
+}
+// THIS IS AN ATTEMPT TO HIDE THE POLYMORPHISM INSIDE THE LIST
+// HOWEVER IT FAILS BECAUSE WE NEED BOTH THE ITERATOR AND THE CASTED Single|MultiField it points to
+//
+// SingleField * FieldList::findSingleField( QCString tag )
+// {
+// 	FieldListIterator it = begin();
+// 	return findSingleField( it, tag );
+// }
+// 
+// SingleField * FieldList::findSingleField( FieldListIterator &it, QCString tag )
+// {
+// 	FieldListIterator it = find( it, tag );
+// 	return dynamic_cast<SingleField *>( *it );
+// }
+// 
+// MultiField * FieldList::findMultiField( QCString tag )
+// {
+// 	FieldListIterator it = begin();
+// 	return findMultiField( it, tag );
+// }
+// 
+// MultiField * FieldList::findMultiField( FieldListIterator &it, QCString tag )
+// {
+// 	FieldListIterator it = find( it, tag );
+// 	return dynamic_cast<MultiField *>( *it );
+// }
+// 
 
 /* === FieldBase ========================================================= */
 
