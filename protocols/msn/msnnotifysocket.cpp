@@ -45,6 +45,12 @@ void KMSNServiceSocket::connect( const QString &pwd )
 		SIGNAL( receivedNotificationServer( const QString &, uint ) ),
 		this,
 		SLOT( slotReceivedServer( const QString &, uint ) ) );
+
+	QObject::connect( m_dispatchSocket,
+		SIGNAL( connectionFailed( ) ),
+		this,
+		SLOT( slotDispatchFailed( ) ) );
+
 	m_dispatchSocket->connect();
 }
 
@@ -420,6 +426,11 @@ QString KMSNServiceSocket::statusToString( int status ) const
 			"WARNING! Unknown status " << status << "!" << endl;
 		return QString::null;
 	}
+}
+
+void KMSNServiceSocket::slotDispatchFailed()
+{
+	emit( onlineStatusChanged( Disconnected ) );
 }
 
 #include "kmsnservicesocket.moc"

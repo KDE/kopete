@@ -61,6 +61,8 @@ void MSNSocket::connect( const QString &server, uint port )
 	m_lastId = 0;
 	m_waitBlockSize = 0L;
 
+	m_lookupStatus = Processing;
+
 	m_sendQueue.clear();
 
 	m_server = server;
@@ -70,14 +72,17 @@ void MSNSocket::connect( const QString &server, uint port )
 
 	QObject::connect( m_socket, SIGNAL( readyRead() ),
 		this, SLOT( slotDataReceived() ) );
+	QObject::connect( m_socket, SIGNAL( connectionSuccess() ),
+		this, SLOT( slotConnectionSuccess() ) );
 
-	// This is only for async connect!
-	//connect( socket, SIGNAL( connectionFailed( int ) ),
-	//	this, SLOT( slotSocketError( int ) ) );
+	QObject::connect( m_socket, SIGNAL( connectionFailed( int ) ),
+		this, SLOT( slotSocketError( int ) ) );
+
+	QObject::connect( m_socket, SIGNAL( lookupFinished ( int ) ),
+		this, SLOT( slotLookupFinished( int ) ) );
 
 	aboutToConnect();
-	m_socket->connect();
-	doneConnect();
+	m_socket->startAsyncConnect();
 }
 
 void MSNSocket::disconnect()
@@ -107,41 +112,35 @@ void MSNSocket::doneDisconnect()
 
 void MSNSocket::setOnlineStatus( MSNSocket::OnlineStatus status )
 {
-	// wah, dunno if this is good, but otherwise the connecting animation
-	// just keeps on going...
-	if( m_onlineStatus == status && status != Disconnected)
+	if( m_onlineStatus == status )
 		return;
 
 	m_onlineStatus = status;
 	emit( onlineStatusChanged( status ) );
 }
 
-/*void MSNSocket::slotSocketError(int error)
+void MSNSocket::slotSocketError( int error )
 {
-	if(!_silent)
-	{
-		switch(error)
-		{
-			case 0:
-			{
-				KMessageBox::error(0,i18n("Connection refused"));
-				break;
-			}
-			case 1:
-			{
-				KMessageBox::error(0,i18n("Host not found"));
-				break;
-			}
-			default:
-			{
-				KMessageBox::error(0,i18n("Socket error"));
-			}
-		}
-	}
-	emit connected(false);
-	isConnected = false;
-	kdDebug() << "Socket error: " << error << endl;
-}*/
+	m_socket->cancelAsyncConnect();
+	kdDebug() << "MSNSocket::slotSocketError: error: " << error << endl;
+
+	QString errormsg = i18n( "There was an error while connecting to the MSN server.\nError message:\n" );
+
+	if ( m_lookupStatus == Failed )
+		errormsg += i18n( "Unable to lookup %1" ).arg( m_socket->host() );
+	else
+		errormsg += KExtendedSocket::strError( error, m_socket->systemError() );
+
+	KMessageBox::error( 0, errormsg, i18n( "MSN Plugin - Kopete" ) );
+
+	// Emit the signal even if we still were disconnected.
+	if ( onlineStatus() == Disconnected )
+		emit( onlineStatusChanged( Disconnected ) );
+
+	setOnlineStatus( Disconnected );
+
+	emit connectionFailed();
+}
 
 void MSNSocket::slotDataReceived()
 {
@@ -156,6 +155,10 @@ void MSNSocket::slotDataReceived()
 			"Trying to read 4kb blocks instead, but be prepared for problems!"
 			<< endl;
 		toRead = 4096;
+	}
+	else if ( avail == -1 )
+	{
+		// error!
 	}
 
 	// incoming data
@@ -368,6 +371,20 @@ QString MSNSocket::escape( const QString &str )
 QString MSNSocket::unescape( const QString &str )
 {
 	return ( KURL::decode_string(str) );
+}
+
+void MSNSocket::slotConnectionSuccess()
+{
+	kdDebug() << "MSNSocket::slotConnectionSuccess" << endl;
+	doneConnect();
+}
+
+void MSNSocket::slotLookupFinished( int count )
+{
+	if ( count == 0 )
+		m_lookupStatus = Failed;
+	else
+		m_lookupStatus = Success;
 }
 
 #include "msnsocket.moc"

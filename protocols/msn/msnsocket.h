@@ -62,6 +62,7 @@ public:
 	 * handshake likely has to follow first.
 	 */
 	enum OnlineStatus { Connecting, Connected, Disconnecting, Disconnected };
+	enum LookupStatus { Processing, Success, Failed };
 
 	void connect( const QString &server, uint port );
 	virtual void disconnect();
@@ -88,6 +89,11 @@ signals:
 	 * The online status has changed
 	 */
 	void onlineStatusChanged( MSNSocket::OnlineStatus status );
+	
+	/**
+	 * The connection failed
+	 */
+	void connectionFailed();
 
 protected:
 	/**
@@ -147,7 +153,21 @@ protected:
 
 private slots:
 	void slotDataReceived();
-	//void slotSocketError(int error);
+	/**
+	 * If the socket emits a connectionFailed() then this slot is called
+	 * to handle the error.
+	 */
+	void slotSocketError( int error );
+
+	/*
+	 * Calls connectDone() when connection is successfully established.
+	 */
+	void slotConnectionSuccess();
+
+	/**
+	 * Sets m_lookupProgress to 'Finished' if count > 0 or 'Failed' if count = 0.
+	 */
+	void slotLookupFinished( int count );
 
 	/**
 	 * Check if new lines of data are available and process the first line
@@ -193,6 +213,11 @@ private:
 	QCString m_buffer;
 	QString m_server;
 	uint m_port;
+
+	/**
+	 * Contains the status of the Lookup process.
+	 */
+	LookupStatus m_lookupStatus;
 
 	/**
 	 * The size of the requested block for block-based reads

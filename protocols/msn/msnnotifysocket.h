@@ -94,6 +94,8 @@ private slots:
 	 * instead of cr/lf line-based text.
 	 */
 	void slotReadMessage( const QString &msg );
+	
+	void slotDispatchFailed();
 
 private:
 //	uint mailCount;
@@ -110,4 +112,3 @@ private:
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-
