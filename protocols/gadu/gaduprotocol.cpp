@@ -20,7 +20,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 
-#include <libgadu.h>
+//#include <libgadu.h>
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
