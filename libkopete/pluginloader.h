@@ -66,15 +66,12 @@ public:
 
 	~LibraryLoader();
 
-	/**
-	 * FIXME: These 6 methods are only used internally and by
-	 *        pluginconfig. Fix that code and remove them or
-	 *        make them private.
-	 *
-	 * This is needed for the Plugin-List-View
-	 * to see what plugins are required to show
-	 * (when required by another noatun-plugin)
-	 */
+	 // FIXME: These 6 methods are only used internally and by
+	 //        pluginconfig. Fix that code and remove them or
+	 //        make them private.
+	 // This is needed for the Plugin-List-View
+	 // to see what plugins are required to show
+	 // (when required by another kopete-plugin)
 	KopeteLibraryInfo getInfo(const QString &spec) const;
 	QValueList<KopeteLibraryInfo> available() const;
 	QValueList<KopeteLibraryInfo> loaded() const;

@@ -38,7 +38,8 @@ typedef QValueList<KopeteMessage>      KopeteMessageList;
 typedef QIntDict<KopeteMessageManager> KopeteMessageManagerDict;
 
 /**
- * @author Duncan Mac-Vicar Prett
+ * @author Duncan Mac-Vicar Prett <duncan@kde.org>
+ *
  * KopeteMessageManagerFactory is responsible for creating and tracking KopeteMessageManager
  * instances for each chat.
  */

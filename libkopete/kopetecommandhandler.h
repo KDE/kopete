@@ -28,6 +28,11 @@ struct CommandHandlerPrivate;
 
 typedef QDict<KopeteCommand> CommandList;
 
+/**
+ * @author Jason Keirstead   <jason@keirstead.org>
+ *
+ * The KopeteCommandHandler can handle /action like messages
+ */
 class KopeteCommandHandler : public QObject
 {
 	friend class my_best_friend;
