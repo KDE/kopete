@@ -137,13 +137,6 @@ void WPProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<
 	theAccount->addContact(contactId, serializedData["displayName"], metaContact, serializedData["group"]);
 }
 
-const QString WPProtocol::protocolIcon()
-{
-	DEBUG(WPDMETHOD, "WPProtocol::protocolIcon()");
-
-	return "wp_available";
-}
-
 EditAccountWidget *WPProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
 {
 	return new WPEditAccount(this, account, parent);
