@@ -226,7 +226,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("devoice"),
 		SLOT( slotDevoiceCommand( const QString &, KopeteMessageManager*) ),
-		i18n("USAGE: /devoice <nickanme> [<nickname 2> <...>]- Remove channel voice status from someone (Requires operator status)."), 1 );
+		i18n("USAGE: /devoice <nickname> [<nickname 2> <...>]- Remove channel voice status from someone (Requires operator status)."), 1 );
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("quit"),
 		SLOT( slotQuitCommand( const QString &, KopeteMessageManager*) ),
