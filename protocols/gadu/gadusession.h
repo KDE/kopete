@@ -96,7 +96,6 @@ signals:
 	void messageReceived( struct gg_event* );
 	void ackReceived( struct gg_event* );
 	void notify( struct gg_event* );
-	void notifyDescription( struct gg_event* );
 	void statusChanged( struct gg_event* );
 	void pong();
 	void connectionFailed( struct gg_event* );

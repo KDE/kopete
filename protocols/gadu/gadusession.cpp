@@ -413,19 +413,24 @@ GaduSession::checkDescriptor()
 
 	switch( e->type ) {
 	case GG_EVENT_MSG:
-		emit messageReceived( e );
+		if (e->event.msg.msgclass == GG_CLASS_CTCP){
+			// TODO: DCC CONNECTION
+		}
+		else{
+			emit messageReceived( e );
+		}
 		break;
 	case GG_EVENT_ACK:
 		emit ackReceived( e );
 		break;
 	case GG_EVENT_STATUS:
+		kdDebug(14100)<<"event status < 60, i should not get it boy"<<endl;
+		break;
+	case GG_EVENT_STATUS60:
 		emit statusChanged( e );
 		break;
-	case GG_EVENT_NOTIFY:
+	case GG_EVENT_NOTIFY60:
 		emit notify( e );
-		break;
-	case GG_EVENT_NOTIFY_DESCR:
-		emit notifyDescription( e );
 		break;
 	case GG_EVENT_CONN_SUCCESS:
 		emit connectionSucceed( e );
@@ -464,14 +469,16 @@ GaduSession::checkDescriptor()
 	case GG_EVENT_PUBDIR50_READ:
 		sendResult( e->event.pubdir50 );
 	        break;
+	case GG_EVENT_USERLIST:
+		// XXX ADD 6.0 userlist event
+		break;
   default:
-//		emit error( i18n("Unknown Event"),
-//		i18n("Can't handle an event. Please report this to zack@kde.org") );
-		kdDebug(14100)<<"GaduGadu Event = "<<e->type<<endl;
+		kdDebug(14100)<<"Unprocessed GaduGadu Event = "<<e->type<<endl;
 		break;
 	}
 
-	if ( e ) gg_free_event( e );
+	if ( e ) 
+		gg_free_event( e );
 
 	if ( session_ )
 		enableNotifiers( session_->check );

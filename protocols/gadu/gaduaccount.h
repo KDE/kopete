@@ -101,7 +101,6 @@ private slots:
 	void messageReceived( struct gg_event* e );
 	void ackReceived( struct gg_event* /* e */ );
 	void notify( struct gg_event* e );
-	void notifyDescription( struct gg_event* e );
 	void statusChanged( struct gg_event* e );
 	void slotSessionDisconnect();
 	void userlist( const gaduContactsList& );
