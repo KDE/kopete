@@ -42,9 +42,6 @@
 KopeteContact::KopeteContact( KopeteProtocol *protocol, KopeteMetaContact *parent )
 	: QObject( parent )
 {
-	connect( this, SIGNAL( incomingEvent( KopeteEvent * ) ),
-		qApp, SLOT( notifyEvent( KopeteEvent * ) ) );
-
 	m_metaContact = parent;
 	m_protocol = protocol;
 	m_cachedSize = 0;

@@ -19,25 +19,17 @@
 
 #include "kopete.h"
 
-#include <qglobal.h>
-#include <qregexp.h>
 #include <qtimer.h>
-#include <qstylesheet.h>
 
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kiconloader.h>
 #include <klocale.h>
 #include <kcmdlineargs.h>
 
 #include "appearanceconfig.h"
-#include "kopeteaway.h"
 #include "kopetecontactlist.h"
-#include "kopeteemoticons.h"
 #include "kopetemessagemanagerfactory.h"
-#include "kopetenotifier.h"
 #include "kopeteprefs.h"
-#include "kopeteprotocol.h"
 #include "kopetetransfermanager.h"
 #include "kopeteuserpreferences.h"
 #include "kopetewindow.h"
@@ -47,16 +39,16 @@
 Kopete::Kopete()
 : KUniqueApplication( true, true, true )
 {
-	mPluginsModule = new Plugins(this);
+	// Create the plugin preferences module
+	new Plugins( this );
 
 	KopeteWindow *mainWindow = new KopeteWindow( 0, "mainWindow" );
 	setMainWidget( mainWindow );
 
-	mAppearance = new AppearanceConfig( mainWindow );
-	mUserPreferencesConfig = new KopeteUserPreferencesConfig( mainWindow );
+	new AppearanceConfig( mainWindow );
+	new KopeteUserPreferencesConfig( mainWindow );
 
 	connect( KopetePrefs::prefs() , SIGNAL(saved()), this, SIGNAL(signalSettingsChanged()));
-	mNotifier = new KopeteNotifier(this, "mNotifier");
 	connect( KopeteMessageManagerFactory::factory(),
 		SIGNAL( messageReceived( KopeteMessage & ) ),
 		SIGNAL( aboutToDisplay( KopeteMessage & ) ) );
@@ -148,20 +140,6 @@ void Kopete::slotLoadPlugins()
 	config->writeEntry("Modules", modules);
 
 	LibraryLoader::pluginLoader()->loadAll();
-}
-
-/** Add a Event for notify */
-void Kopete::notifyEvent( KopeteEvent *event)
-{
-	/* See KopeteNotifier and KopeteEvent class */
-	mNotifier->notifyEvent( event );
-}
-
-/** Cancel an event */
-void Kopete::cancelEvent( KopeteEvent *event)
-{
-	/* deleted events are removed automaticly */
-	delete event;
 }
 
 void Kopete::slotShowTransfers()

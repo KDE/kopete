@@ -333,12 +333,6 @@ signals:
 	void displayNameChanged(const QString &name);
 
 	/**
-	 * This gets emitted usually when you receive a message from
-	 * this contact.
-	 */
-	void incomingEvent(KopeteEvent *);
-
-	/**
 	 * The contact is about to be destroyed.
 	 * Called when entering the destructor. Useful for cleanup, since
 	 * metaContact() is still accessible at this point.

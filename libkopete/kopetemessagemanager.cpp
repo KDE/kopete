@@ -15,13 +15,13 @@
     *************************************************************************
 */
 
-#include "kopete.h"
 #include "kopeteaway.h"
 #include "kopetechatwindow.h"
 #include "kopeteemailwindow.h"
 #include "kopeteevent.h"
 #include "kopetemessagelog.h"
 #include "kopetemessagemanager.h"
+#include "kopetenotifier.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 
@@ -455,7 +455,7 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 									       "kopete/pics/newmsg.png", this, SLOT(slotReadMessages()));
 				connect(d->mUnreadMessageEvent, SIGNAL(done(KopeteEvent *)),
 					this, SLOT(slotEventDeleted(KopeteEvent *)));
-				kopeteapp->notifyEvent( d->mUnreadMessageEvent );
+				KopeteNotifier::notifier()->notifyEvent( d->mUnreadMessageEvent );
 			}
 		}
 	}

@@ -28,14 +28,6 @@
 
 #include "kopetemessage.h"
 
-class AppearanceConfig;
-class KopeteEvent;
-class KopeteNotifier;
-class KopeteUserPreferencesConfig;
-class KopeteWindow;
-class Plugins;
-class PreferencesDialog;
-
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  */
@@ -46,20 +38,6 @@ class Kopete : public KUniqueApplication
 public:
 	Kopete();
 	~Kopete();
-
-public slots:
-	/**
-	 * Only use notify event for system-wide messages
-	 * and things like online notification
-	 * Messages from specific contacts should use KopeteContact's
-	 * incomingEvent signal
-	 */
-	void notifyEvent( KopeteEvent * );
-
-	/**
-	 * Cancel an event.
-	 */
-	void cancelEvent( KopeteEvent * );
 
 signals:
 	/**
@@ -88,16 +66,6 @@ private slots:
 	 * Load all plugins
 	 */
 	void slotLoadPlugins();
-
-private:
-	Plugins *mPluginsModule;
-
-	KopeteWindow *m_mainWindow;
-	AppearanceConfig *mAppearance;
-
-	//User preferences config module
-	KopeteUserPreferencesConfig *mUserPreferencesConfig;
-	KopeteNotifier *mNotifier;
 };
 
 #define kopeteapp (static_cast<Kopete*>(kapp))
