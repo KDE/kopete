@@ -325,12 +325,12 @@ void JabberProtocol::connect()
 						this, SLOT(slotGroupChatLeft(const Jid &)));
 
 		QObject::connect(jabberClient,
-						SIGNAL(groupChatPresence(const Jid &)),
-						this, SLOT(slotGroupChatPresence(const Jid &)));
+						SIGNAL(groupChatPresence(const Jid &, const Status &)),
+						this, SLOT(slotGroupChatPresence(const Jid &, const Status &)));
 
 		QObject::connect(jabberClient,
-						SIGNAL(groupChatError(const Jid &, int, QString &)),
-						this, SLOT(slotGroupChatError(const Jid &, int, QString &)));
+						SIGNAL(groupChatError(const Jid &, int, const QString &)),
+						this, SLOT(slotGroupChatError(const Jid &, int, const QString &)));
 
 		QObject::connect(jabberClient, SIGNAL(error(const StreamError &)),
 						this, SLOT(slotError(const StreamError &)));
