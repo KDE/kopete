@@ -106,17 +106,17 @@ public slots:
     void slotContactUpdated(JabRosterEntry *);
     void slotUserWantsAuth(const Jid &);
     void slotSettingsChanged(void);
+	void slotResourceAvailable(const Jid &, const JabResource &);
+	void slotResourceUnavailable(const Jid &);
 
     void slotSendMsg(JabMessage);
     void slotNewMessage(const JabMessage &);
+	
+	void slotSnarfVCard (QString &);
+	void slotGotVCard(JabTask *);
 
   signals:
 	void protocolUnloading();
-    void contactUpdated(QString, QString, int, QString);
-    void nukeContacts(bool);
-    void newMessage(const JabMessage &);
-	void resourceAvailable(const Jid &, const JabResource &);
-	void resourceUnavailable(const Jid &);
 
   private:
     void initIcons();

@@ -11,7 +11,7 @@ noinst_LTLIBRARIES = libkopetejabberui.la
 
 libkopetejabberui_la_SOURCES = dlgrename.ui dlgaddcontact.ui \
 	dlgpreferences.ui dlgjabberprefs.cpp jabberaddcontactpage.cpp \
-	dlgstatus.ui dlgjabberstatus.cpp empty.cpp
+	dlgstatus.ui dlgjabberstatus.cpp dlgjabbervcard.cpp empty.cpp
 
 EXTRA_DIST = dlgrename.ui dlgaddcontact.ui dlgpreferences.ui
 

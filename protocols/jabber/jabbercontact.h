@@ -34,8 +34,10 @@
 #include "kopetemessagemanagerfactory.h"
 
 #include "dlgrename.h"
+#include "dlgjabbervcard.h"
 #include "jabberprotocol.h"
 #include "jabcommon.h"
+#include "jabtasks.h"
 
 class QListView;
 class QListViewItem;
@@ -54,7 +56,7 @@ class JabberContact:public KopeteContact {
   public:
     JabberContact( QString userid, QString name, QString group,
 		  JabberProtocol *protocol, KopeteMetaContact *mc);
-    void initContact(QString userID, QString name, QString group);
+    void initContact(QString &userID, QString &name, QString &group);
 
 
 	// Reimplementations of the (uninteresting)
@@ -88,9 +90,10 @@ class JabberContact:public KopeteContact {
     void slotResourceUnavailable(const Jid &);
     void slotRemoveFromGroup();
     void slotSelectResource();
+    void slotGotVCard(JT_VCard *);
+    void slotUpdateContact(QString, int, QString);
 
   private slots:
-    void slotUpdateContact(QString, QString, int, QString);
     void slotDeleteMySelf(bool);
     void slotRemoveThisUser();
     void slotRenameContact();
@@ -98,6 +101,7 @@ class JabberContact:public KopeteContact {
     void slotMoveThisUser();
     void slotChatThisUser();
     void slotEmailUser();
+    void slotSnarfVCard();
 
   signals:
 //    void statusChanged();
@@ -117,11 +121,12 @@ class JabberContact:public KopeteContact {
     int mStatus;
     
     KPopupMenu *popup;
-    KAction *actionMessage, *actionRemove, *actionRemoveFromGroup, *actionChat, *actionInfo, *actionHistory, *actionRename;
+    KAction *actionMessage, *actionRemove, *actionRemoveFromGroup, *actionChat, *actionInfo, *actionHistory, *actionRename, *actionSnarfVCard;
     KListAction *actionContactMove;
     KSelectAction *actionSelectResource;
     
     dlgJabberRename *dlgRename;
+    dlgJabberVCard *dlgVCard;
     KopeteMessageManager *mMsgManagerKCW, *mMsgManagerKEW;
     KopeteMessageManager *msgManagerKCW(), *msgManagerKEW();
 

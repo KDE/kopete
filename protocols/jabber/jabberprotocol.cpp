@@ -44,13 +44,15 @@
 #include "jabcommon.h"
 #include "statusbaricon.h"
 #include "dlgjabberstatus.h"
+#include "jabio.h"
+#include "jabtasks.h"
 
 const JabberProtocol * JabberProtocol::sProtocol = 0;
 
 K_EXPORT_COMPONENT_FACTORY(kopete_jabber, KGenericFactory<JabberProtocol>);
 
 JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : KopeteProtocol(parent, name) {
-    kdDebug() << "Jabber plugin: Loading ..." << endl;
+    kdDebug() << "[JabberProtocol] Loading ..." << endl;
 
 	if (sProtocol)
 		kdDebug() << "[JabberProtocol] Warning: sProtocol already exists! Not redefining." << endl;
@@ -68,20 +70,11 @@ JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : Kop
     statusBarIcon->setPixmap(offlineIcon);
 
     mPrefs = new JabberPreferences("jabber_protocol_32", this);
-    connect ( mPrefs, SIGNAL(saved()), this, SLOT(slotSettingsChanged()) );
+    connect (mPrefs, SIGNAL(saved()), this, SLOT(slotSettingsChanged()));
 
     KGlobal::config()->setGroup("Jabber");
-	if ( (KGlobal::config()->readEntry("UserID", "") == "")
-	     || (KGlobal::config()->readEntry("Password", "") == "") )
-	{
-		KMessageBox::error(
-			kopeteapp->mainWindow(),
-			i18n("<qt>If you have a Jabber account, please \
-			configure it in the Kopete Settings. If you don't, you can register \
-			in the settings.</qt>"),
-			i18n("No Jabber Configuration Found!")
-			);
-	}
+	if ((KGlobal::config()->readEntry("UserID", "") == "") || (KGlobal::config()->readEntry("Password", "") == ""))
+		KMessageBox::error(kopeteapp->mainWindow(), i18n("<qt>If you have a Jabber account, please configure it in the Kopete Settings. If you don't, you can register in the settings.</qt>"),	i18n("No Jabber Configuration Found!"));
 
 	mIsConnected = false;
 	doRegister = false;
@@ -101,8 +94,7 @@ void JabberProtocol::init() {
 
 bool JabberProtocol::unload() {
 	kdDebug() << "[JabberProtocol] Unload..." << endl;
-	if (kopeteapp->statusBar())
-	{
+	if (kopeteapp->statusBar())	{
 		kopeteapp->statusBar()->removeWidget(statusBarIcon);
 		delete statusBarIcon;
 	}
@@ -113,8 +105,7 @@ bool JabberProtocol::unload() {
 
 void JabberProtocol::Connect() {
 	kdDebug() << "[JabberProtocol] Connect()" << endl;
-	if ( !isConnected() )
-	{
+	if (!isConnected()) {
 		if (!mStatus)
 			mStatus = STATUS_ONLINE;
 		
@@ -123,8 +114,8 @@ void JabberProtocol::Connect() {
 		connect(mProtocol, SIGNAL(disconnected()), this, SLOT(slotDisconnected()));
 		connect(mProtocol, SIGNAL(contactNew(JabRosterEntry *)), this, SLOT(slotNewContact(JabRosterEntry *)));
 		connect(mProtocol, SIGNAL(contactChanged(JabRosterEntry *)), this, SLOT(slotContactUpdated(JabRosterEntry *)));
-		connect(mProtocol, SIGNAL(resourceAvailable(const Jid &, const JabResource &)), this, SIGNAL(resourceAvailable(const Jid &, const JabResource &)));
-		connect(mProtocol, SIGNAL(resourceUnavailable(const Jid &)), this, SIGNAL(resourceUnavailable(const Jid &)));
+		connect(mProtocol, SIGNAL(resourceAvailable(const Jid &, const JabResource &)), this, SLOT(slotResourceAvailable(const Jid &, const JabResource &)));
+		connect(mProtocol, SIGNAL(resourceUnavailable(const Jid &)), this, SLOT(slotResourceUnavailable(const Jid &)));
 		connect(mProtocol, SIGNAL(authRequest(const Jid &)), this, SLOT(slotUserWantsAuth(const Jid &)));
 		connect(mProtocol, SIGNAL(messageReceived(const JabMessage &)), this, SLOT(slotNewMessage(const JabMessage &)));
 		connect(mProtocol, SIGNAL(error(JabError *)), this, SLOT(slotError(JabError *)));
@@ -137,26 +128,20 @@ void JabberProtocol::Connect() {
 		mProtocol->setAccount(mUsername, mPassword, mResource);
 		mProtocol->setSSLEnabled(KGlobal::config()->readBoolEntry("UseSSL", "0"));
 		
-		if (doRegister)
-		{
+		if (doRegister) {
 			kdDebug() << "[JabberProtocol] Registering user" << endl;
 			mProtocol->accRegister();
 		}
-		else
-		{
+		else {
 			kdDebug() << "[JabberProtocol] Already registered, performing normal login." << endl;
 			mProtocol->login(mStatus, "", 1, true);
 		}
 		slotConnecting();
     } 
-	else if ( isAway() )
-	{	/* They're really away, and they want to un-away. */
+	else if (isAway()) /* They're really away, and they want to un-away. */
 		slotGoOnline();
-	} 
-	else
-	{	/* Nope, just your regular crack junky. */
+	else /* Nope, just your regular crack junky. */
 		kdDebug() << "[JabberProtocol] Ignoring connect request (already connected)." << endl;
-	}
 }
 
 const JabberProtocol *JabberProtocol::protocol() {
@@ -164,8 +149,7 @@ const JabberProtocol *JabberProtocol::protocol() {
 }
 
 void JabberProtocol::Disconnect() {
-	if (isConnected())
-	{
+	if (isConnected()) {
 		mProtocol->disc();
 		delete mProtocol;
 		kdDebug() << "[JabberProtocol] Disconnected." << endl;
@@ -174,15 +158,10 @@ void JabberProtocol::Disconnect() {
 		
 		QMap<QString, JabberContact*>::Iterator it;
 		for (it = contactList.begin(); it != contactList.end(); ++it)
-		{
-			kdDebug() << "[JabberProtocol] deleting contact " << it.key() << endl;
 			delete it.data();
-			it.data() = NULL;
-		}
 	} 
-	else
-	{			/* Again, what's with the crack? Sheez. */
-		kdDebug() << "Jabber plugin: Ignoring disconnect request (not connected)." << endl;
+	else { /* Again, what's with the crack? Sheez. */
+		kdDebug() << "[JabberProtocol] Ignoring disconnect request (not connected)." << endl;
 	}
 }
 
@@ -200,28 +179,25 @@ void JabberProtocol::slotConnecting() {
 
 void JabberProtocol::slotConnected() {
 	mIsConnected = true;
-	kdDebug() << "Jabber plugin: Connected to Jabber server." << endl;
+	kdDebug() << "[JabberProtocol] Connected to Jabber server." << endl;
 	
 	if (mStatus == STATUS_AWAY || mStatus == STATUS_XA)
-	{
 		statusBarIcon->setPixmap(awayIcon);
-	}
 	else if (mStatus == STATUS_DND)
-	{
 		statusBarIcon->setPixmap(naIcon);
-	}
 	else
-	{
 		statusBarIcon->setPixmap(onlineIcon);
-	}
+	
 	myContact = new JabberContact(QString("%1@%2").arg(mUsername, 1).arg(mServer, 2), mUsername, i18n("Unknown"), this, 0L);
 }
 
 void JabberProtocol::slotDisconnected() {
 	mIsConnected = false;
-	kdDebug() << "Jabber plugin: Disconnected from Jabber server." << endl;
+	kdDebug() << "[JabberProtocol] Disconnected from Jabber server." << endl;
 	statusBarIcon->setPixmap(offlineIcon);
-	emit nukeContacts(false);
+	QMap<QString, JabberContact*>::Iterator it;
+	for (it = contactList.begin(); it != contactList.end(); ++it)
+		delete it.data();
 }
 
 void JabberProtocol::slotError(JabError *error) { /* "Bugger." */
@@ -234,7 +210,7 @@ void JabberProtocol::slotError(JabError *error) { /* "Bugger." */
 		case JABERR_CREATE: /* Isn't red-on-orange just so PRETTY? */
 		default: /* o/~ cause i'm that fool who broke the key/i'm unlockable so don't check me/
 					    i got weight on my shoulders and things on my mind/ the sky is falling, and i'm falling behind */
-			KMessageBox::error(kopeteapp->mainWindow(), i18n("Sorry, but you were disconnected for an unspecified reason (%1).").arg(error->type, 1), i18n("Disconnected From Jabber Server")); /* (But were they really disconnected, or are they just on speed? */
+			KMessageBox::error(kopeteapp->mainWindow(), i18n("Sorry, but you were disconnected for an unspecified reason (%1).").arg(error->type, 1), i18n("Disconnected from Jabber Server")); /* (But were they really disconnected, or are they just on speed? */
 	}
 }
 
@@ -279,21 +255,11 @@ void JabberProtocol::initIcons() {
 }
 
 void JabberProtocol::initActions() {
-	actionGoOnline =
-	new KAction(i18n("Online"), "jabber_online", 0, this,
-			SLOT(slotConnect()), this, "actionJabberConnect");
-	actionGoAway =
-	new KAction(i18n("Away"), "jabber_away", 0, this,
-			SLOT(slotSetAway()), this, "actionJabberway");
-	actionGoXA =
-	new KAction(i18n("Extended Away"), "jabber_away", 0, this,
-			SLOT(slotSetXA()), this, "actionJabberXA");
-	actionGoDND =
-	new KAction(i18n("Do Not Disturb"), "jabber_na", 0, this,
-			SLOT(slotSetDND()), this, "actionJabberDND");
-	actionGoOffline =
-	new KAction(i18n("Offline"), "jabber_offline", 0, this,
-			SLOT(slotDisconnect()), this, "actionJabberDisconnect");
+	actionGoOnline = new KAction(i18n("Online"), "jabber_online", 0, this, SLOT(slotConnect()), this, "actionJabberConnect");
+	actionGoAway = new KAction(i18n("Away"), "jabber_away", 0, this, SLOT(slotSetAway()), this, "actionJabberway");
+	actionGoXA = new KAction(i18n("Extended Away"), "jabber_away", 0, this, SLOT(slotSetXA()), this, "actionJabberXA");
+	actionGoDND = new KAction(i18n("Do Not Disturb"), "jabber_na", 0, this, SLOT(slotSetDND()), this, "actionJabberDND");
+	actionGoOffline = new KAction(i18n("Offline"), "jabber_offline", 0, this, SLOT(slotDisconnect()), this, "actionJabberDisconnect");
 	actionStatusMenu = new KActionMenu("Jabber", this);
 	actionStatusMenu->insert(actionGoOnline);
 	actionStatusMenu->insert(actionGoAway);
@@ -307,70 +273,59 @@ void JabberProtocol::slotGoOnline()
 {
     kdDebug() << "[JabberProtocol] Going online!" << endl;
 
-	if (!isConnected())
-	{
+	if (!isConnected()) {
 		mStatus = STATUS_ONLINE;
 		Connect();
 	}
 	else
-	{
 		setPresence(STATUS_ONLINE, "");
-	}
+	
 	statusBarIcon->setPixmap(onlineIcon);
 }
 
 void JabberProtocol::slotGoOffline() {
-    kdDebug() << "Jabber plugin: Going offline." << endl;
+    kdDebug() << "[JabberProtocol] Going offline." << endl;
     Disconnect();
     statusBarIcon->setPixmap(offlineIcon);
 }
 
-void JabberProtocol::slotSetAway()
-{
-	kdDebug() << "Jabber plugin: Setting away mode." << endl;
+void JabberProtocol::slotSetAway() {
+	kdDebug() << "[JabberProtocol] Setting away mode." << endl;
 	if (reasonDialog != 0L)
-	{
 		delete reasonDialog;
-	}
 	reasonDialog = new dlgJabberStatus(this, STATUS_AWAY, kopeteapp->mainWindow());
 }
 
 void JabberProtocol::slotSetXA() {
     kdDebug() << "Jabber plugin: Setting extended away mode." << endl;
-	if (reasonDialog != 0L) {
+	if (reasonDialog != 0L)
 		delete reasonDialog;
-	}
 	reasonDialog = new dlgJabberStatus(this, STATUS_XA, kopeteapp->mainWindow());
 }
 
 void JabberProtocol::slotSetDND() {
     kdDebug() << "Jabber plugin: Setting do not disturb mode." << endl;
-	if (reasonDialog != 0L) {
+	if (reasonDialog != 0L)
 		delete reasonDialog;
-	}
 	reasonDialog = new dlgJabberStatus(this, STATUS_DND, kopeteapp->mainWindow());
 }
 
-void JabberProtocol::setPresence(int status, QString reason, int priority)
-{
-	if (mIsConnected)
-	{ 
+void JabberProtocol::setPresence(int status, QString reason, int priority) {
+	if (mIsConnected) { 
 		mProtocol->setPresence(status, reason, priority);
 		if (status == STATUS_AWAY || status == STATUS_XA) { statusBarIcon->setPixmap(awayIcon); }
 		else if (status == STATUS_DND) { statusBarIcon->setPixmap(naIcon); }
 		else if (status == STATUS_ONLINE) { statusBarIcon->setPixmap(onlineIcon); }
-		else
-		{ /* What You Say!! */
-			kdDebug() << "Jabber plugin: setPresence as confused as a virgin in a brothel (status == " << status << ")!!" << endl;
+		else { /* Eek, I can't believe I had an AYB quote here. Removed now; someone please ream me with a fencepost. */
+			kdDebug() << "[JabberProtocol] setPresence as confused as a virgin in a brothel (status == " << status << ")!!" << endl;
 			mProtocol->setPresence(STATUS_ONLINE, "", priority);
-			kdDebug() << "Jabber plugin: Took corrective measures - went online. Someone needs a good LARTing." << endl;
+			kdDebug() << "[JabberProtocol] Took corrective measures - went online. Someone needs a good LARTing." << endl;
 			statusBarIcon->setPixmap(onlineIcon);
 		}
 	}
 }
 
-void JabberProtocol::slotIconRightClicked(const QPoint)
-{
+void JabberProtocol::slotIconRightClicked(const QPoint) {
 	QString handle = mUsername + "@" + mServer;
 	popup = new KPopupMenu(statusBarIcon);
 	popup->insertTitle(handle);
@@ -384,18 +339,16 @@ void JabberProtocol::slotIconRightClicked(const QPoint)
 
 void JabberProtocol::removeUser(QString userID) {
 	if (mIsConnected) { 
-		kdDebug() << "Jabber plugin: Protocol removing user " << userID << endl;
+		kdDebug() << "[JabberProtocol] Protocol removing user " << userID << endl;
 	    mProtocol->unsubscribed(userID);
 		mProtocol->unsubscribe(userID);
-		kdDebug() << "Jabber plugin: I'M A SOLDAR" << endl;
 		contactList[userID] = 0L;
-		kdDebug() << "Jabber plugin: I'M A LOITNUNT" << endl;
 	}
 }
 
 void JabberProtocol::renameContact(QString userID, QString name, QString group) {
     if (mIsConnected) {
-		kdDebug() << "Jabber plugin: Protocol renaming user " << userID << " to " << name << endl;
+		kdDebug() << "[JabberProtocol] Protocol renaming user " << userID << " to " << name << endl;
 	    mProtocol->setRoster(userID, name, group);
 	}
 }
@@ -404,7 +357,7 @@ void JabberProtocol::moveUser(QString userID, QString group, QString name, Jabbe
 	if (mIsConnected) {
 		QString localGroup;
 		if (group == QString("")) { 
-			kdDebug() << "Jabber plugin: Protocol moving user " << userID << " out of a group." << endl;
+			kdDebug() << "[JabberProtocol] Protocol moving user " << userID << " out of a group." << endl;
 			localGroup = i18n("Unknown");
 		}
 		else { 
@@ -426,17 +379,15 @@ void JabberProtocol::addContact(QString userID) {
 void JabberProtocol::slotUserWantsAuth(const Jid &jid) {
 	QString userID = QString("%1@%2").arg(jid.user(), 1).arg(jid.host(), 2);
 	kdDebug() << "[JabberProtocol] " << userID << " wants auth!" << endl;
-	if (authContact->
-		questionYesNo(kopeteapp->mainWindow(), i18n("The Jabber user ") + userID +
-	    i18n(" wants to add you to your contact list. Do you want to \
-			   authorize them?"),
-		i18n("Authorize Jabber User?")) == 3) {
+	if (authContact->questionYesNo(kopeteapp->mainWindow(), i18n("The Jabber user %1 wants to add you to your contact list. Do you want to authorize them?").arg(userID, 1), i18n("Authorize Jabber user?")) == 3)
 			mProtocol->subscribed(userID);
-    }
 }
 
 void JabberProtocol::slotContactUpdated(JabRosterEntry *contact) {
-    emit contactUpdated(contact->jid.latin1(), contact->nick.latin1(), contact->localStatus(), contact->unavailableStatusString.latin1());
+	JabberContact *tmpContact;
+	if (!(tmpContact = contactList[contact->jid.latin1()])) /* Eep! */
+		return;
+    tmpContact->slotUpdateContact(contact->nick.latin1(), contact->localStatus(), contact->unavailableStatusString.latin1());
 }
 
 void JabberProtocol::slotNewContact(JabRosterEntry *contact) {
@@ -455,7 +406,9 @@ void JabberProtocol::slotNewContact(JabRosterEntry *contact) {
 	if (c) {
 		/* Existing contact, update data. */
 		// !FIXME! seems b0rked to update the data
-		//c->initContact(contact->nick, group ? group : QString(""));
+		/* YOU'RE ON SPEED!! IT'S OK! */
+		QString &tmpGroup = group ? group : QString("");
+		((JabberContact *)c)->initContact(contact->jid, contact->nick, tmpGroup);
 	}
 	else {
 		kdDebug() << "[JabberProtocol] Adding contact " << contact->jid << " ..." << endl;
@@ -477,7 +430,7 @@ KopeteContact *JabberProtocol::createContact(KopeteMetaContact *parent, const QS
 		return(NULL);
 	}
 	contactList[data] = new JabberContact(data, "", QString(""), this, parent);
-	return contactList[data]; /* o/~ superstylin */
+	return contactList[data]; /* o/~ superstylin' */
 }
 
 void JabberProtocol::slotSettingsChanged() {
@@ -488,7 +441,7 @@ void JabberProtocol::slotSettingsChanged() {
 	mPort = KGlobal::config()->readNumEntry("Port", 5222);
 }
 
-void JabberProtocol::slotSendMsg(JabMessage message){
+void JabberProtocol::slotSendMsg(JabMessage message) {
 	if (mIsConnected)
 		mProtocol->sendMessage(message);
 }
@@ -497,14 +450,13 @@ void JabberProtocol::slotNewMessage(const JabMessage &message) {
 	QString jid = QString("%1@%2").arg(message.from.user(), 1).arg(message.from.host(), 2);
 	if (message.from.user() == QString("")) {
 		kdDebug() << "[JabberProtocol] New server message for us!" << endl;
-		KMessageBox::information(kopeteapp->mainWindow(), message.body, i18n("Jabber: Server Message"));
+		KMessageBox::information(kopeteapp->mainWindow(), message.body, i18n("Jabber: Server message"));
 	}
 	else
 	{
 		kdDebug() << "[JabberProtocol] New message from '" << jid << "'" << endl;
 		JabberContact *ourContact = contactList[jid];
-		if (!ourContact)
-		{
+		if (!ourContact) {
 			kdDebug() << "[JabberProtocol] Crap! No contact, gack." << endl;
 			return;
 		}
@@ -512,6 +464,47 @@ void JabberProtocol::slotNewMessage(const JabMessage &message) {
 	}
 }
 
+void JabberProtocol::slotResourceAvailable(const Jid &jid, const JabResource &resource) {
+	JabberContact *tmpContact;
+	if (!(tmpContact = contactList[QString("%1@%2").arg(jid.user(), 1).arg(jid.host(),2).latin1()])) {
+		kdDebug() << "[JabberProtocol] sRA couldn't find an entry for " << QString("%1@%2").arg(jid.user(), 1).arg(jid.host(),2).latin1() << "!" << endl;
+		return;
+	}
+	tmpContact->slotResourceAvailable(jid, resource);
+}
+
+void JabberProtocol::slotResourceUnavailable(const Jid &jid) {
+	JabberContact *tmpContact;
+	if (!(tmpContact = contactList[QString("%1@%2").arg(jid.user(), 1).arg(jid.host(),2).latin1()])) {
+		kdDebug() << "[JabberProtocol] sRU couldn't find an entry for " << QString("%1@%2").arg(jid.user(), 1).arg(jid.host(),2).latin1() << "!" << endl;
+		return;
+	}
+	tmpContact->slotResourceUnavailable(jid);
+}
+
+void JabberProtocol::slotSnarfVCard(QString &userID) {
+	JabTask *psiIOTask = mProtocol->ioUser();
+	JT_VCard *tmpVCard = new JT_VCard(psiIOTask);
+	connect(tmpVCard, SIGNAL(finished(JabTask *)), this, SLOT(slotGotVCard(JabTask *)));
+	tmpVCard->get(userID);
+	tmpVCard->go();
+}
+
+void JabberProtocol::slotGotVCard(JabTask *task) {
+	JT_VCard *vCard = (JT_VCard *) task;
+	if (!(vCard->success() && !vCard->vcard.isIncomplete())) {
+		/* Unsuccessful, or incomplete. */
+		return;
+	}
+
+	JabberContact *tmpContact;
+	if (!(tmpContact = contactList[vCard->jid])) { /* Eep! */
+		kdDebug() << "[JabberProtocol] slotGotVCard couldn't find JID " << vCard->jid << " in the list!" << endl;
+		return;
+	}
+	tmpContact->slotGotVCard(vCard);
+}
+	
 void JabberProtocol::registerUser() {
 	mPrefs->save();
 	doRegister = true;

@@ -32,15 +32,10 @@ JabberContact::JabberContact(QString userID, QString nickname, QString group, Ja
 	hasResource = false;
 	historyDialog = 0L;
 	
-    connect(mProtocol, SIGNAL(contactUpdated(QString, QString, int, QString)), this, SLOT(slotUpdateContact(QString, QString, int, QString)));
-    connect(mProtocol, SIGNAL(nukeContacts(bool)), this, SLOT(slotDeleteMySelf(bool)));
-	connect(mProtocol, SIGNAL(resourceAvailable(const Jid &, const JabResource &)), this, SLOT(slotResourceAvailable(const Jid &, const JabResource &)));
-	connect(mProtocol, SIGNAL(resourceUnavailable(const Jid &)), this, SLOT(slotResourceUnavailable(const Jid &)));
-
     initContact(userID, nickname, group);
 }
 
-void JabberContact::initContact(QString userID, QString nickname, QString group) {
+void JabberContact::initContact(QString &userID, QString &nickname, QString &group) {
     if (nickname.isNull()) { nickname = userID; hasLocalName = false; }
     setDisplayName(nickname);
     mGroup = group;
@@ -48,7 +43,7 @@ void JabberContact::initContact(QString userID, QString nickname, QString group)
 	if (mGroup == QString("")) { hasLocalGroup = false; }
 	else { hasLocalGroup = true; }
     initActions();
-    slotUpdateContact(mUserID, "", STATUS_OFFLINE, "");
+    slotUpdateContact("", STATUS_OFFLINE, "");
 	theContacts.append(this);
 	mMsgManagerKCW = 0L;
 	mMsgManagerKEW = 0L;
@@ -83,6 +78,7 @@ void JabberContact::initActions() {
     actionHistory = KopeteStdAction::viewHistory(this, SLOT(slotViewHistory()), this, "actionHistory");
     actionRename = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");
 	actionSelectResource = new KSelectAction(i18n("Select Resource"), "selectresource", 0, this, SLOT(slotSelectResource()), this, "actionSelectResource");
+	actionSnarfVCard = new KAction(i18n("Get VCard"), "identity", 0, this, SLOT(slotSnarfVCard()), this, "actionSnarfVCard");
 }
 
 void JabberContact::showContextMenu(QPoint, QString)
@@ -112,11 +108,9 @@ void JabberContact::showContextMenu(QPoint, QString)
 		int i = 1;
 		for (JabberResource *tmpResource = resources.first(); tmpResource; tmpResource = resources.next(), i++)
 		{                                    
-			if ( tmpResource != tmpBestResource )
+			if (tmpResource != tmpBestResource)
 				items.append(tmpResource->resource());
-			
-			if ( hasResource && (tmpResource->resource() == activeResource->resource()) )
-			{
+			if (hasResource && (tmpResource->resource() == activeResource->resource())) {
 				kdDebug() << "[JabberContact] Woot woot, it's the same resource, activating(ish) item " << i << endl;
 				activeItem = i;
 			}
@@ -132,6 +126,7 @@ void JabberContact::showContextMenu(QPoint, QString)
 		actionSelectResource->plug(popup);
 	}
 	popup->insertSeparator();
+	actionSnarfVCard->plug(popup);
     actionHistory->plug(popup);
     popup->insertSeparator();
     actionRename->plug(popup);
@@ -141,12 +136,8 @@ void JabberContact::showContextMenu(QPoint, QString)
     popup->popup(QCursor::pos());
 }
 
-void JabberContact::slotUpdateContact(QString handle, QString resource, int newStatus, QString reason)
-{
-	if (handle != userID())
-		return;
-
-	kdDebug() << "[JabberContact] Updating Contact " << handle << " to " << newStatus << endl;
+void JabberContact::slotUpdateContact(QString resource, int newStatus, QString reason) {
+	kdDebug() << "[JabberContact] Updating contact " << mUserID << "  to " << newStatus << endl;
 
 	if (newStatus != -1)
 		mStatus = newStatus;
@@ -157,8 +148,8 @@ void JabberContact::slotUpdateContact(QString handle, QString resource, int newS
 	if (reason != QString(""))
 		mReason = reason;
 
-	emit statusChanged();
-	emit statusChanged( this, status() );
+	emit statusChanged();					/* GARRRRRRRRRRRRRRRRRRRRRRRRRR */
+	emit statusChanged(this, status());
 }
 
 void JabberContact::slotRenameContact() {
@@ -185,20 +176,13 @@ void JabberContact::slotDeleteMySelf(bool) {
 }
 
 
-JabberContact::ContactStatus JabberContact::status() const
-{
+JabberContact::ContactStatus JabberContact::status() const {
 	if (mStatus == STATUS_ONLINE)
-	{
 		return Online;
-    }
     if (mStatus == STATUS_AWAY || mStatus == STATUS_XA || mStatus == STATUS_DND)
-	{
 		return Away;
-    }
 	else
-	{
 		return Offline;
-	}
 }
 
 QString JabberContact::statusText() const
@@ -393,7 +377,7 @@ void JabberContact::slotResourceAvailable(const Jid &jid, const JabResource &res
 	resources.append(newResource);
 	JabberResource *tmpBestResource = bestResource();
 	kdDebug() << "[JabberContact] Best resource is now " << tmpBestResource->resource() << "." << endl;
-	slotUpdateContact(theirJID, tmpBestResource->resource(), tmpBestResource->status(), tmpBestResource->reason());
+	slotUpdateContact(tmpBestResource->resource(), tmpBestResource->status(), tmpBestResource->reason());
 //	msgManager()->addResource(this, tmpBestResource->resource());
 	for (JabberResource *tmpResource = resources.first(); tmpResource; tmpResource = resources.next())
 	{
@@ -429,11 +413,11 @@ void JabberContact::slotResourceUnavailable(const Jid &jid) {
 	JabberResource *newResource = bestResource();
 	if (!newResource) {
 		kdDebug() << "[JabberContact] No best resource! User is offline." << endl;
-		slotUpdateContact(theirJID, "", STATUS_OFFLINE, "");
+		slotUpdateContact("", STATUS_OFFLINE, "");
 	}
 	else {
 		kdDebug() << "[JabberContact] Best resource is now " << newResource->resource() << "." << endl;
-		slotUpdateContact(theirJID, newResource->resource(), newResource->status(), newResource->reason());
+		slotUpdateContact(newResource->resource(), newResource->status(), newResource->reason());
 	}
 	if (hasResource == false || activeResource == resource) {
 		/* No good sending to a deleted resource. */
@@ -461,6 +445,20 @@ void JabberContact::slotSelectResource() {
 			}
 		}
 	}
+}
+
+void JabberContact::slotSnarfVCard() {
+	mProtocol->slotSnarfVCard(mUserID);
+}
+
+void JabberContact::slotGotVCard(JT_VCard *vCard) {
+	kdDebug() << "[JabberContact] Got vCard for user " << vCard->jid << ", displaying." << endl;
+	dlgVCard = new dlgJabberVCard(kopeteapp->mainWindow(), "dlgJabberVCard");
+	dlgVCard->JabberIDLabel->setText(vCard->jid);
+	dlgVCard->nickNameLE->setText(vCard->vcard.field[vNickname]);
+	dlgVCard->firstNameLabel->setText(vCard->vcard.field[vFullname]);
+	dlgVCard->show();
+	dlgVCard->raise();
 }
 
 JabberResource *JabberContact::bestResource() {
@@ -492,19 +490,9 @@ void JabberContact::slotRemoveFromGroup() {
 	hasLocalGroup = false;
 }
 
-QString JabberContact::id() const
-{
+QString JabberContact::id() const {	return mUserID; }
 
-	return mUserID;
-
-}
-
-QString JabberContact::data() const
-{
-
-	return mUserID;
-
-}
+QString JabberContact::data() const { return mUserID; }
 
 JabberResource::JabberResource() { 
 	kdDebug() << "Jabber resource: New Jabber resource (no params)." << endl;
