@@ -168,7 +168,10 @@ void MSNFileTransferSocket::setKopeteTransfer(KopeteTransfer *kt)
 {
 	m_kopeteTransfer=kt;
 	if(kt)
+	{
 		QObject::connect(kt , SIGNAL(transferCanceled()), this, SLOT(abort()));
+		QObject::connect(kt,  SIGNAL(destroyed()) , this , SLOT(slotKopeteTransferDestroyed()));
+	}
 }
 
 void MSNFileTransferSocket::listen(int port)
@@ -435,6 +438,10 @@ void MSNFileTransferSocket::slotFileTransferRefused(const KopeteFileTransferInfo
 	emit done(this);
 }
 
+void MSNFileTransferSocket::slotKopeteTransferDestroyed()
+{
+	m_kopeteTransfer=0L;
+}
 
 
 #include "msnfiletransfersocket.moc"

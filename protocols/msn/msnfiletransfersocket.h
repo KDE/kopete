@@ -91,6 +91,8 @@ private slots:
 
 	void slotFileTransferRefused( const KopeteFileTransferInfo &info );
 	void slotFileTransferAccepted( KopeteTransfer *trans, const QString& fileName );
+	/* the KopeteTransfer has been deleted */
+	void slotKopeteTransferDestroyed();
 
 
 private:
