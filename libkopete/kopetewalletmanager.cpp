@@ -178,7 +178,7 @@ KWallet::Wallet *Kopete::WalletManager::wallet()
 	delete d->wallet;
 
 	d->wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(),
-	            mainWindowID(), KWallet::Wallet::Asynchronous );
+	            mainWindowID(), KWallet::Wallet::Synchronous );
 
 	// if we got a wallet, prepare it, and tell everyone who cares either way
 	if ( d->wallet )
