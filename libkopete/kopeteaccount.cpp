@@ -22,6 +22,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kdeversion.h>
+#include <kdialogbase.h>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kiconeffect.h>
@@ -79,7 +80,7 @@ Account::Account( Protocol *parent, const QString &accountId, const char *name )
 	d->autoconnect = d->configGroup->readBoolEntry( "AutoConnect", true );
 	d->color = d->configGroup->readColorEntry( "Color", &d->color );
 	d->priority = d->configGroup->readNumEntry( "Priority", 0 );
-
+	
 	QObject::connect( &d->suppressStatusTimer, SIGNAL( timeout() ),
 		this, SLOT( slotStopSuppression() ) );
 }
@@ -102,8 +103,10 @@ void Account::disconnected( DisconnectReason reason )
 {
 	//reconnect if needed
 	if ( KopetePrefs::prefs()->reconnectOnDisconnect() == true && reason > Manual )
+	{
 		//use a timer to allow the plugins to clean up after return
 		QTimer::singleShot(0, this, SLOT(connect()));
+	}
 }
 
 Protocol *Account::protocol() const
@@ -292,7 +295,7 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 		return false; //(the contact is not in the correct metacontact, so false)
 	}
 
-	bool success= createContact(contactId, parent);
+	bool success = createContact(contactId, parent);
 
 	if ( success && mode == ChangeKABC )
 	{
@@ -320,7 +323,7 @@ KActionMenu * Account::actionMenu()
 
 bool Account::isConnected() const
 {
-	return d->myself && ( d->myself->onlineStatus().status() != Kopete::OnlineStatus::Offline ) ;
+	return myself() && myself()->isOnline();
 }
 
 bool Account::isAway() const
@@ -335,18 +338,30 @@ Contact * Account::myself() const
 
 void Account::setMyself( Contact *myself )
 {
+	bool wasConnected = isConnected();
+
+	if ( d->myself )
+	{
+		QObject::disconnect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
+			this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
+	}
+	
 	d->myself = myself;
 
-	QObject::connect( myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
+	QObject::connect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 		this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
+	
+	if ( isConnected() != wasConnected )
+		emit isConnectedChanged();
 }
 
 void Account::slotOnlineStatusChanged( Contact * /* contact */,
 	const OnlineStatus &newStatus, const OnlineStatus &oldStatus )
 {
-	if ( oldStatus.status() == OnlineStatus::Offline ||
-		oldStatus.status() == OnlineStatus::Connecting ||
-		newStatus.status() == OnlineStatus::Offline )
+	bool wasOffline = oldStatus.status() == OnlineStatus::Offline || oldStatus.status() == OnlineStatus::Connecting;
+	bool isOffline  = newStatus.status() == OnlineStatus::Offline || newStatus.status() == OnlineStatus::Connecting;
+	
+	if ( wasOffline || newStatus.status() == OnlineStatus::Offline )
 	{
 		// Wait for five seconds until we treat status notifications for contacts
 		// as unrelated to our own status change.
@@ -357,6 +372,16 @@ void Account::slotOnlineStatusChanged( Contact * /* contact */,
 		d->suppressStatusNotification = true;
 		d->suppressStatusTimer.start( 5000, true );
 	}
+	
+	if ( wasOffline != isOffline )
+		emit isConnectedChanged();
+}
+
+void Account::setAllContactsStatus( const Kopete::OnlineStatus &status )
+{
+	for ( QDictIterator<Contact> it( d->contacts ); it.current(); ++it )
+		if ( it.current() != d->myself )
+			it.current()->setOnlineStatus( status );
 }
 
 void Account::slotStopSuppression()
@@ -425,8 +450,19 @@ void Account::editAccount(QWidget *parent)
 	editDialog->deleteLater();
 }
 
+void Account::setPluginData( Plugin* /*plugin*/, const QString &key, const QString &value )
+{
+	configGroup()->writeEntry(key,value);
+}
+
+QString Account::pluginData( Plugin* /*plugin*/, const QString &key ) const
+{
+	return configGroup()->readEntry(key);
+}
+
 void Account::virtual_hook( uint /*id*/, void* /*data*/)
- {}
+{
+}
 
 
 } //END namespace Kopete

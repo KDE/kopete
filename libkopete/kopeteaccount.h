@@ -19,20 +19,16 @@
 #ifndef KOPETEACCOUNT_H
 #define KOPETEACCOUNT_H
 
-#include <qobject.h>
-#include <kdemacros.h>
-#include <qdict.h>
-
 #include "kopeteonlinestatus.h"
 
+#include <kdemacros.h>
 
-#include <kconfig.h> //TODO: remove
-#include <kinputdialog.h> //TODO: remove
+#include <qobject.h>
+#include <qdict.h>
 
 class QDomNode;
 class KActionMenu;
 class KConfigGroup;
-
 
 namespace Kopete
 {
@@ -265,6 +261,8 @@ public:
 	 *
 	 * This is a convenience method that queries @ref Contact::onlineStatus()
 	 * on @ref myself()
+	 *
+	 * @see @ref isConnectedChanged()
 	 */
 	bool isConnected() const;
 
@@ -340,17 +338,32 @@ protected:
 	 * @return false if the creation of the contact failed.  libkopete may delete the parent Contact in that case
 	 */
 	virtual bool createContact( const QString &contactId, MetaContact *parentContact ) =0;
-
+	
 protected slots:
-
 	/**
-	 * \brief the service has been disconnected
+	 * \brief The service has been disconnected
 	 *
-	 * You have to call this method when you are disconnected.
-	 * @param reason if the reason is positive, Kopete will try to reconnect the account
+	 * You have to call this method when you are disconnected. Depending on the value of
+	 * @p reason, this function may attempt auto-reconnect.
+	 *
+	 * @param reason the reason for the disconnection.
 	 */
 	virtual void disconnected( DisconnectReason reason );
 
+
+	/**
+	 * @brief Sets the online status of all contacts in this account to the same value
+	 *
+	 * Some protocols do not provide status-changed events for all contacts when an account
+	 * becomes connected or disconnected. For such protocols, this function may be useful
+	 * to set all contacts Offline.
+	 *
+	 * Calls @ref Kopete::Contact::setOnlineStatus on all contacts of this account (except the
+	 * @ref myself() contact), passing @p status as the status.
+	 *
+	 * @param status the status to set all contacts of this account except @ref myself() to.
+	 */
+	void setAllContactsStatus( const Kopete::OnlineStatus &status );
 
 signals:
 
@@ -365,6 +378,10 @@ signals:
 	 */
 	void accountDestroyed( const Kopete::Account* );
 
+	/**
+	 * Emitted whenever @ref isConnected() changes.
+	 */
+	void isConnectedChanged();
 
 private:
 
@@ -481,24 +498,17 @@ protected:
 
 
 public:
-//MOC_SKIP_BEGIN//
-//(moc doesn't like the KDE_DEPRECATED macro)
+	/**
+	 * @todo remove
+	 * @deprecated  use configGroup
+	 */
+	void setPluginData( Plugin* /*plugin*/, const QString &key, const QString &value ) KDE_DEPRECATED;
 
 	/**
 	 * @todo remove
 	 * @deprecated  use configGroup
 	 */
-	KDE_DEPRECATED void setPluginData( Plugin* /*plugin*/, const QString &key, const QString &value )
-		{  configGroup()->writeEntry(key,value);  }
-
-
-	/**
-	 * @todo remove
-	 * @deprecated  use configGroup
-	 */
-	KDE_DEPRECATED QString pluginData( Plugin* /*plugin*/, const QString &key ) const
-		{ return configGroup()->readEntry(key); }
-//MOC_SKIP_END//
+	QString pluginData( Plugin* /*plugin*/, const QString &key ) const KDE_DEPRECATED;
 };
 
 } //END namespace Kopete
