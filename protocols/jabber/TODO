@@ -32,3 +32,6 @@ TODO for Jabber:
 - on a failed connection attempt, the animation does not stop
 - going offline does not stop the animation after a failed connection attempt
 - empty hostname makes Jabber crash (faulty NDNS)
+- port dialogs to KDialogBase
+- <your_account@here> in the default account creation window needs to be deleted,
+  better add a text label instead
