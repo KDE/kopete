@@ -1,3 +1,4 @@
+// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 #include <klocale.h>
 #include <kdebug.h>
 
@@ -13,7 +14,7 @@ using Kopete::UserInfoDialog;
 #include "gaducontact.h"
 
 GaduContact::GaduContact( uin_t uin, const QString& name, GaduAccount *account,
-                          KopeteMetaContact* parent )
+													KopeteMetaContact* parent )
 	: KopeteContact( account, QString::number( uin ), parent )
 {
 	msgManager_ = 0L;
@@ -138,7 +139,7 @@ GaduContact::slotDeleteContact()
 
 void GaduContact::messageAck()
 {
-  manager()->messageSucceeded();
+	manager()->messageSucceeded();
 }
 
 #include "gaducontact.moc"

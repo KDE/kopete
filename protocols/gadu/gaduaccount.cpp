@@ -1,7 +1,9 @@
+// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 #include "gaduaccount.h"
 #include "gadusession.h"
 #include "gaducontact.h"
 #include "gaduprotocol.h"
+#include "gaduaway.h"
 
 #include "kopetemetacontact.h"
 
@@ -14,6 +16,7 @@
 #include <kmessagebox.h>
 
 #include <qapplication.h>
+#include <qdialog.h>
 #include <qtimer.h>
 
 
@@ -46,6 +49,8 @@ GaduAccount::initActions()
                                           SLOT(slotGoBusy()), this, "actionGaduConnect" );
 	KAction* invisibleAction = new KAction( i18n("Set &Invisible"), "gg_invi", 0, this,
                                           SLOT(slotGoInvisible()), this, "actionGaduConnect" );
+	KAction* descrAction     = new KAction( i18n("Set &Description"), "info", 0, this,
+																					SLOT(slotDescription()), this, "actionGaduDescription" );
 
 	actionMenu_ = new KActionMenu( "Gadu-Gadu", this );
 
@@ -55,6 +60,7 @@ GaduAccount::initActions()
 	actionMenu_->insert( busyAction );
 	actionMenu_->insert( invisibleAction );
   actionMenu_->insert( offlineAction );
+	actionMenu_->insert( descrAction );
 
   actionMenu_->popupMenu()->insertSeparator();
 
@@ -172,6 +178,8 @@ GaduAccount::slotLogoff()
 	if ( session_->isConnected() ) {
 		status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
 		changeStatus( status_ );
+    session_->logoff();
+
 	}
 }
 
@@ -254,13 +262,14 @@ GaduAccount::messageReceived( struct gg_event* e )
 
 	if ( e->event.msg.sender == 0 ) {
 		//system message, display them or not?
-    KMessageBox::information( qApp->mainWidget(), reinterpret_cast<const char*>( e->event.msg.message ),
-                              i18n("Message from the Gadu-Gadu server") );
 		kdDebug(14100)<<"####"<<" System Message "<< (const char*)e->event.msg.message << endl;
 		return;
 	}
 
-	GaduContact *c = contactsMap_.find( e->event.msg.sender ).data();
+  kdDebug(14100)<<"Message from " << e->event.msg.sender <<" = "<< (const char*)e->event.msg.message << endl;
+	GaduContact *c = 0;
+  if ( contactsMap_.contains( e->event.msg.sender ) )
+    c = contactsMap_[ e->event.msg.sender ];
 	if ( c ) {
 		KopeteContactPtrList tmp;
 		tmp.append( myself_ );
@@ -268,7 +277,7 @@ GaduAccount::messageReceived( struct gg_event* e )
 		c->messageReceived( msg );
 	} else {
 		addContact( QString::number(e->event.msg.sender), QString::number(e->event.msg.sender) );
-		GaduContact *c = contactsMap_.find( e->event.msg.sender ).data();
+		c = contactsMap_.find( e->event.msg.sender ).data();
 		KopeteContactPtrList tmp;
 		tmp.append( myself_ );
 		KopeteMessage msg( c, tmp, (const char*)e->event.msg.message, KopeteMessage::Inbound );
@@ -296,15 +305,18 @@ GaduAccount::notify( struct gg_event* e )
 	struct gg_notify_reply *n = e->event.notify;
 
 	while( n && n->uin ) {
-		kdDebug(14100)<<"### NOTIFY "<<n->uin<<endl;
+		kdDebug(14100)<<"### NOTIFY "<<n->uin<< " " << n->status << endl;
 		if ( !(c=contactsMap_.find(n->uin).data()) ) {
-      kdDebug(14001)<<"Notify not in the list "<< n->uin << endl;
-      session_->removeNotify( n->uin );
+			kdDebug(14100)<<"Notify not in the list "<< n->uin << endl;
+			session_->removeNotify( n->uin );
 			++n;
 			continue;
 		}
-		if ( c->onlineStatus() == GaduProtocol::protocol()->convertStatus( n->status ) )
+		if ( c->onlineStatus() == GaduProtocol::protocol()->convertStatus( n->status ) ) {
+			kdDebug(14100)<<"### " << c->displayName()<<" is INVISIBLE"<<endl;
+			++n;
 			continue;
+		}
 		c->setOnlineStatus(  GaduProtocol::protocol()->convertStatus( n->status ) );
 		++n;
 	}
@@ -358,9 +370,9 @@ void
 GaduAccount::connectionSucceed( struct gg_event* /*e*/ )
 {
 	kdDebug(14100)<<"#### Gadu-Gadu connected! "<<endl;
-  status_ =  GaduProtocol::protocol()->convertStatus( session_->status() );
-  myself_->setOnlineStatus( status_ );
-  startNotify();
+	status_ =  GaduProtocol::protocol()->convertStatus( session_->status() );
+	myself_->setOnlineStatus( status_ );
+	startNotify();
 	UserlistGetCommand *cmd = new UserlistGetCommand( this );
 	cmd->setInfo( userUin_, getPassword() );
 	QObject::connect( cmd, SIGNAL(done(const QStringList&)),
@@ -377,19 +389,19 @@ GaduAccount::connectionSucceed( struct gg_event* /*e*/ )
 void
 GaduAccount::startNotify()
 {
-  int i = 0;
-  QValueList<uin_t> l = contactsMap_.keys();
+	int i = 0;
+	QValueList<uin_t> l = contactsMap_.keys();
 
-  QValueList<uin_t>::iterator it;
-  uin_t *userlist = 0;
-  if ( !contactsMap_.empty() ) {
-    userlist = new uin_t[contactsMap_.count()];
+	QValueList<uin_t>::iterator it;
+	uin_t *userlist = 0;
+	if ( !contactsMap_.empty() ) {
+		userlist = new uin_t[contactsMap_.count()];
 
-    for( it = l.begin(); it != l.end(); ++it, ++i ) {
-      userlist[i] = (*it);
-    }
-  }
-  session_->notify( userlist, contactsMap_.count() );
+		for( it = l.begin(); it != l.end(); ++it, ++i ) {
+			userlist[i] = (*it);
+		}
+	}
+	session_->notify( userlist, contactsMap_.count() );
 }
 
 void
@@ -418,13 +430,8 @@ GaduAccount::userlist( const QStringList& u )
 			}
 		}
 		//kdDebug(14100)<<"uin = "<< uin << "; name = "<< name << "; group = " << group <<endl;
-    //if not in the userlist -add it (addContact also add the notify) else just add the notify
 		if ( ! contactsMap_.contains( uin.toUInt() ) )
 			addContact( uin, name, 0L, group );
-    else {
-      kdDebug()<<"Adding notify for "<<uin<<endl;
-      addNotify( uin.toUInt() );
-    }
 	}
 }
 
@@ -460,6 +467,18 @@ void
 GaduAccount::slotCommandError(const QString& title, const QString& what )
 {
 	KMessageBox::error( qApp->mainWidget(), title, what );
+}
+
+void
+GaduAccount::slotDescription()
+{
+	GaduAway *away = new GaduAway( this );
+
+	if( away->exec() == QDialog::Accepted ) {
+		changeStatus( GaduProtocol::protocol()->convertStatus( away->status() ),
+									away->awayText() );
+	}
+	delete away;
 }
 
 #include "gaduaccount.moc"

@@ -1,3 +1,4 @@
+// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 // gadusession.h
 //
 // Copyright (C)  2002  Zack Rusin <zack@kde.org>

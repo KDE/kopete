@@ -1,6 +1,7 @@
+// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 // gaduaccount.h
 //
-// Copyright (C)  2003  Zack Rusin <zack@kde.org>
+// Copyright (C)	2003	Zack Rusin <zack@kde.org>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -9,7 +10,7 @@
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
@@ -38,7 +39,7 @@ class KActionMenu;
 
 class GaduAccount : public KopeteAccount
 {
-  Q_OBJECT
+	Q_OBJECT
 public:
 	typedef QMap< uin_t, GaduContact* > ContactsMap;
 	GaduAccount( KopeteProtocol* parent, const QString& accountID,
@@ -46,30 +47,31 @@ public:
 	//{
 	void setAway( bool isAway, const QString& awayMessage = QString::null );
 	KopeteContact* myself() const;
-	KActionMenu*   actionMenu();
+	KActionMenu*	 actionMenu();
 	//}
 public slots:
-  //{
-  void connect();
+	//{
+	void connect();
 	void disconnect();
-  //}
+	//}
 
-  void changeStatus( const KopeteOnlineStatus& status, const QString& descr=QString::null );
-  void slotLogin();
-  void slotLogoff();
+	void changeStatus( const KopeteOnlineStatus& status, const QString& descr=QString::null );
+	void slotLogin();
+	void slotLogoff();
 	void slotGoOnline();
 	void slotGoOffline();
 	void slotGoInvisible();
 	void slotGoBusy();
+  void slotDescription();
 
-  void removeContact( const GaduContact* c );
+	void removeContact( const GaduContact* c );
 
-  void addNotify( uin_t uin );
-  void notify( uin_t* userlist, int count );
-  void sendMessage( uin_t recipient, const QString& msg, int msgClass=GG_CLASS_CHAT );
-  void error( const QString& title, const QString& message );
-  void pong();
-  void pingServer();
+	void addNotify( uin_t uin );
+	void notify( uin_t* userlist, int count );
+	void sendMessage( uin_t recipient, const QString& msg, int msgClass=GG_CLASS_CHAT );
+	void error( const QString& title, const QString& message );
+	void pong();
+	void pingServer();
 
 protected:
 	//{
@@ -78,37 +80,37 @@ protected:
 	//}
 
 private slots:
-  void startNotify();
-  void messageReceived( struct gg_event* e );
-  void ackReceived( struct gg_event* /* e */ );
-  void notify( struct gg_event* e );
-  void notifyDescription( struct gg_event* e );
-  void statusChanged( struct gg_event* e );
-  void slotSessionDisconnect();
-  void userlist( const QStringList& u );
-  void connectionFailed( struct gg_event* /*e*/ );
-  void connectionSucceed( struct gg_event* /*e*/ );
+	void startNotify();
+	void messageReceived( struct gg_event* e );
+	void ackReceived( struct gg_event* /* e */ );
+	void notify( struct gg_event* e );
+	void notifyDescription( struct gg_event* e );
+	void statusChanged( struct gg_event* e );
+	void slotSessionDisconnect();
+	void userlist( const QStringList& u );
+	void connectionFailed( struct gg_event* /*e*/ );
+	void connectionSucceed( struct gg_event* /*e*/ );
 
-  void slotChangePassword();
+	void slotChangePassword();
 
-  void slotCommandDone( const QString&, const QString& );
-  void slotCommandError( const QString&, const QString& );
+	void slotCommandDone( const QString&, const QString& );
+	void slotCommandError( const QString&, const QString& );
 private:
 	void initConnections();
 	void initActions();
 
-	GaduSession*           session_;
-	QPtrList<GaduCommand>  commandList_;
-	ContactsMap            contactsMap_;
+	GaduSession*					 session_;
+	QPtrList<GaduCommand>	 commandList_;
+	ContactsMap						 contactsMap_;
 
 	KActionMenu *actionMenu_;
 
-	QTimer  *pingTimer_;
+	QTimer	*pingTimer_;
 
-	GaduContact         *myself_;
-	Q_UINT32             userUin_;
-	KopeteOnlineStatus   status_;
-	QString              nick_;
+	GaduContact					*myself_;
+	Q_UINT32						 userUin_;
+	KopeteOnlineStatus	 status_;
+	QString							 nick_;
 };
 
 #endif

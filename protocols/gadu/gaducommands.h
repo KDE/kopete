@@ -1,3 +1,4 @@
+// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 // gaducommands.h - all basic, and not-session dependent commands
 //                  (meaning you don't have to be logged in for any
 //                   of these). These delete themselves, meaning you don't

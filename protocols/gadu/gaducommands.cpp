@@ -1,3 +1,4 @@
+// -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 #include "gaducommands.h"
 #include <qsocketnotifier.h>
 #include <klocale.h>
@@ -87,8 +88,8 @@ SearchCommand::~SearchCommand()
 
 void
 SearchCommand::searchMode0( const QString& nickname, const QString& firstName,
-                            const QString& lastName, const QString& city,
-                            int gender, int min_birth, int max_birth, int active, int start )
+														const QString& lastName, const QString& city,
+														int gender, int min_birth, int max_birth, int active, int start )
 {
 	request_ = gg_search_request_mode_0( qstrToChar(nickname),
 																			 qstrToChar(firstName),
@@ -327,7 +328,7 @@ ChangePasswordCommand::~ChangePasswordCommand()
 
 void
 ChangePasswordCommand::setInfo( uin_t uin, const QString& passwd, const QString& newpasswd,
-                                const QString& newemail )
+																const QString& newemail )
 {
 	uin_ = uin;
 	passwd_ = passwd;
@@ -339,7 +340,7 @@ void
 ChangePasswordCommand::execute()
 {
 	session_ = gg_change_passwd2( uin_, passwd_.latin1(), newpasswd_.latin1(), newemail_, newemail_, 1 );
-  connect( this, SIGNAL(socketReady()), SLOT(watcher()) );
+	connect( this, SIGNAL(socketReady()), SLOT(watcher()) );
 	checkSocket( session_->fd, session_->check );
 }
 
@@ -388,9 +389,9 @@ ChangeInfoCommand::~ChangeInfoCommand()
 
 void
 ChangeInfoCommand::setInfo( uin_t uin, const QString& passwd,
-                            const QString& firstName, const QString& lastName,
-                            const QString& nickname, const QString& email,
-                            int born, int gender, const QString& city )
+														const QString& firstName, const QString& lastName,
+														const QString& nickname, const QString& email,
+														int born, int gender, const QString& city )
 {
 	memset( &info_, 0, sizeof(struct gg_change_info_request) );
 	uin_ = uin;
@@ -451,7 +452,7 @@ UserlistPutCommand::UserlistPutCommand( QObject* parent, const char* name )
 }
 
 UserlistPutCommand::UserlistPutCommand( uin_t uin, const QString& password, const QStringList& contacts,
-                                        QObject* parent, const char* name )
+																				QObject* parent, const char* name )
 	:GaduCommand( parent, name ), session_(0), uin_(uin), password_(password), contacts_(contacts)
 {
 }

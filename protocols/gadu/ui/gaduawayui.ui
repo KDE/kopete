@@ -1,0 +1,97 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>GaduAwayUI</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>GaduAwayUI</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>314</width>
+            <height>175</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Away Dialog</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout2</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QButtonGroup">
+                    <property name="name">
+                        <cstring>statusGroup_</cstring>
+                    </property>
+                    <property name="title">
+                        <string>Status</string>
+                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QRadioButton">
+                            <property name="name">
+                                <cstring>onlineButton_</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Online</string>
+                            </property>
+                            <property name="buttonGroupId">
+                                <number>4</number>
+                            </property>
+                        </widget>
+                        <widget class="QRadioButton">
+                            <property name="name">
+                                <cstring>awayButton_</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Busy</string>
+                            </property>
+                            <property name="buttonGroupId">
+                                <number>5</number>
+                            </property>
+                        </widget>
+                        <widget class="QRadioButton">
+                            <property name="name">
+                                <cstring>invisibleButton_</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Invisible</string>
+                            </property>
+                            <property name="buttonGroupId">
+                                <number>22</number>
+                            </property>
+                        </widget>
+                        <widget class="QRadioButton">
+                            <property name="name">
+                                <cstring>offlineButton_</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Offline</string>
+                            </property>
+                            <property name="buttonGroupId">
+                                <number>21</number>
+                            </property>
+                        </widget>
+                    </vbox>
+                </widget>
+                <widget class="KTextEdit">
+                    <property name="name">
+                        <cstring>textEdit_</cstring>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+    </vbox>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
