@@ -439,7 +439,7 @@ default_presentation=65
 
 [kopete_lowpriority]
 Name=Low priority messages
-Comment=A message marqued with a low priority has been received
+Comment=A message marked with a low priority has been received
 default_presentation=0
 
 

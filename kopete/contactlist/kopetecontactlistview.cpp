@@ -1572,7 +1572,7 @@ void KopeteContactListView::slotSendFile()
 			KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "This contact was not found in the KDE Address Book. Check that a contact is selected in the Properties dialog." ), i18n( "Not Found in Address Book" ) );
 	}
 	else
-		KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "This contact is not associated with a KDE Address Book entry, where the email address is stored.  Check that a contact is selected in the Properties dialog." ), i18n( "Not Found in Address Book" ) );
+		KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "This contact is not associated with a KDE Address Book entry, where the email address is stored. Check that a contact is selected in the Properties dialog." ), i18n( "Not Found in Address Book" ) );
 }
 
 void KopeteContactListView::slotMoveToGroup()
