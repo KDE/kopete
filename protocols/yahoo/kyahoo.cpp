@@ -995,27 +995,6 @@ void YahooSession::removeHandler( int /*fd*/ )
 int YahooSessionManager::_hostConnectReceiver( char* /*host*/, int /*port*/ )
 {
 	kdDebug(14181) << k_funcinfo << endl;
-	/*
-	kdDebug(14181) << k_funcinfo << endl;
-	KExtendedSocket *_socket;
-	_socket = new KExtendedSocket( host, port );
-
-	if (! _socket->connect() )
-	{
-		kdDebug(14181) << k_funcinfo << " Connected! fd "<< _socket->fd() << endl;
-
-		kdDebug(14181) << k_funcinfo << " Adding socket " << _socket->fd() << " to map" << endl;
-		m_socketsMap[_socket->fd()] =_socket;
-
-		return _socket->fd();
-	}
-	else
-	{
-		kdDebug(14181) << k_funcinfo << " Failed!" << endl;
-		return -1;
-	}
-	*/
-
 	return 0;
 }
 
