@@ -33,13 +33,13 @@ class NowListeningPreferences : public ConfigModule
 Q_OBJECT
 public:
 	NowListeningPreferences(const QString &pixmap,QObject *parent=0);
-	~NowListeningPreferences();
+	virtual ~NowListeningPreferences();
 	virtual void save();
 
-	int pollFrequency();
-	QString header();
-	QString perTrack();
-	QString conjunction();
+	int pollFrequency() const;
+	QString header() const;
+	QString perTrack() const;
+	QString conjunction() const;
 
 signals:
 	void saved();

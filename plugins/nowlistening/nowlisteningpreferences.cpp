@@ -55,22 +55,22 @@ NowListeningPreferences::~NowListeningPreferences( )
 {
 }
 
-int NowListeningPreferences::pollFrequency()
+int NowListeningPreferences::pollFrequency() const
 {
 	return preferencesDialog->m_freq->value(); 
 }
 
-QString NowListeningPreferences::header()
+QString NowListeningPreferences::header() const
 {
 	return preferencesDialog->m_header->text();
 }
 
-QString NowListeningPreferences::perTrack()
+QString NowListeningPreferences::perTrack() const
 {
 	return preferencesDialog->m_perTrack->text();
 }
 
-QString NowListeningPreferences::conjunction()
+QString NowListeningPreferences::conjunction() const
 {
 	return preferencesDialog->m_conjunction->text();
 }
