@@ -110,7 +110,7 @@ public:
 	/**
 	 * \returns the main (most used) status of the contact at date (not time) dt. return false if dt is invalid.
 	 */
-	QString mainStatusDate(QDate date);
+	QString mainStatusDate(const QDate& date);
 	/*
 	 * Prevision methods
 	 */

@@ -1,7 +1,7 @@
 /*
     statisticsdialog.cpp - Kopete History Dialog
 
-    
+    Copyright (c) 2003-2004 by Marc Cramdal        <marc.cramdal@gmail.com>
 
     *************************************************************************
     *                                                                       *
@@ -280,7 +280,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 		 */
 		 
 		// Number of hours between dateTime1 and dateTime2
-		uint nbHours = qRound((double)dateTime1.secsTo(dateTime2)/3600.);
+		int nbHours = (double)dateTime1.secsTo(dateTime2)/3600.;
 		
 		uint tempHour = 
 			dateTime1.time().hour() == dateTime2.time().hour()
@@ -295,7 +295,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 		else if (Kopete::OnlineStatus::statusStringToType(values[i]) == Kopete::OnlineStatus::Offline) 
 			hoursOffline[dateTime1.time().hour()] += tempHour;
 		
-		for (uint j= dateTime1.time().hour()+1; j < dateTime1.time().hour() + nbHours - 1; j++)
+		for (int j= dateTime1.time().hour()+1; j < dateTime1.time().hour() + nbHours - 1; j++)
 		{
 			hours[j%24] += 3600;
 			if (Kopete::OnlineStatus::statusStringToType(values[i]) == Kopete::OnlineStatus::Online) 
@@ -347,7 +347,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 		listViewDT2.setTime_t(values[i+2].toInt());
 		new KListViewItem(mainWidget->listView, values[i], values[i+1], values[i+2], listViewDT1.toString(), listViewDT2.toString());
 	}
-	
+
 	
 	todayString.append("</table></div>");
 	
@@ -401,16 +401,16 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 				 +m_contact->metaContact()->displayName()
 				 +i18n(" online or away\">Last time contact was present :</b> %1").arg(m_contact->lastPresent().toString()));
 		 generalHTMLPart->write(QString("</div>"));
-		 
+
 		 generalHTMLPart->write(QString("<div class=\"statgroup\">"));
 		 generalHTMLPart->write(QString("<b title=\"")
 				 +m_contact->metaContact()->displayName()
 				 +i18n(" use to set his status online at these hours (EXPERIMENTAL)\">Main online events :</b><br>"));
 		 QValueList<QTime> mainEvents = m_contact->mainEvents(Kopete::OnlineStatus::Online);
 		 for (uint i=0; i<mainEvents.count(); i++)
-			 generalHTMLPart->write(QString("%1<br>").arg(mainEvents[i].toString()));
+			generalHTMLPart->write(QString("%1<br>").arg(mainEvents[i].toString()));
 		 generalHTMLPart->write(QString("</div>"));
-		 
+	 	 
 		 generalHTMLPart->write(QString("<div title=\"Current status\" class=\"statgroup\">"));
 	 	generalHTMLPart->write(i18n("Is <b>%1</b> since <b>%2</b>").arg(
 				Kopete::OnlineStatus::statusTypeToString(m_contact->oldStatus()),m_contact->oldStatusDateTime().toString()));

@@ -224,7 +224,7 @@ QString StatisticsContact::statusAt(QDateTime dt)
 	else return "";
 }
 
-QString StatisticsContact::mainStatusDate(QDate date)
+QString StatisticsContact::mainStatusDate(const QDate& date)
 {
 	QDateTime dt1(date, QTime(0,0,0));
 	QDateTime dt2(date.addDays(1), QTime(0,0,0));
