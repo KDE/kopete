@@ -32,6 +32,7 @@ class LibraryLoader
 {
 	friend class Plugin;
 	friend class IMProtocol;
+	friend class AddWizardImpl;
 	struct PluginLibrary
 	{
 		Plugin *plugin;

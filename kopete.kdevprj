@@ -447,7 +447,7 @@ install_location=
 type=HEADER
 
 [kopete/library/ui/Makefile.am]
-files=kopete/library/ui/aboutplugins.cpp,kopete/library/ui/aboutplugins.h,kopete/library/ui/configmodule.cpp,kopete/library/ui/configmodule.h,kopete/library/ui/kopetewindow.cpp,kopete/library/ui/kopetewindow.h,kopete/library/ui/preferencesdialog.cpp,kopete/library/ui/preferencesdialog.h,kopete/library/ui/connectionlabel.cpp,kopete/library/ui/connectionlabel.h,kopete/library/ui/pluginmodule.cpp,kopete/library/ui/pluginmodule.h,kopete/library/ui/kopetelistview.h,kopete/library/ui/statusbaricon.cpp,kopete/library/ui/statusbaricon.h,kopete/library/ui/addwizardimpl.cpp,kopete/library/ui/addwizardimpl.h
+files=kopete/library/ui/aboutplugins.cpp,kopete/library/ui/aboutplugins.h,kopete/library/ui/configmodule.cpp,kopete/library/ui/configmodule.h,kopete/library/ui/kopetewindow.cpp,kopete/library/ui/kopetewindow.h,kopete/library/ui/preferencesdialog.cpp,kopete/library/ui/preferencesdialog.h,kopete/library/ui/connectionlabel.cpp,kopete/library/ui/connectionlabel.h,kopete/library/ui/pluginmodule.cpp,kopete/library/ui/pluginmodule.h,kopete/library/ui/kopetelistview.h,kopete/library/ui/statusbaricon.cpp,kopete/library/ui/statusbaricon.h,kopete/library/ui/addwizardimpl.cpp,kopete/library/ui/addwizardimpl.h,kopete/library/ui/protocolboxitem.cpp,kopete/library/ui/protocolboxitem.h
 sub_dirs=
 type=static_library
 
@@ -536,6 +536,18 @@ install_location=
 type=SOURCE
 
 [kopete/library/ui/preferencesdialog.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/library/ui/protocolboxitem.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/library/ui/protocolboxitem.h]
 dist=true
 install=false
 install_location=
