@@ -50,22 +50,22 @@
 #include "compat.h"
 #include "libgadu.h"
 
-int gg_debug_level = 0;
+int gg_debug_level;
 void (*gg_debug_handler)(int level, const char *format, va_list ap) = NULL;
 
-int gg_dcc_port = 0;
-unsigned long gg_dcc_ip = 0;
+int gg_dcc_port;
+unsigned long gg_dcc_ip;
 
-unsigned long gg_local_ip = 0;
+unsigned long gg_local_ip;
 /*
  * zmienne opisuj±ce parametry proxy http.
  */
-char *gg_proxy_host = NULL;
-int gg_proxy_port = 0;
-int gg_proxy_enabled = 0;
-int gg_proxy_http_only = 0;
-char *gg_proxy_username = NULL;
-char *gg_proxy_password = NULL;
+char *gg_proxy_host;
+int gg_proxy_port;
+int gg_proxy_enabled;
+int gg_proxy_http_only;
+char *gg_proxy_username;
+char *gg_proxy_password;
 
 #ifndef lint 
 static char rcsid[]
