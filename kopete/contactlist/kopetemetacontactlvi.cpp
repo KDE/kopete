@@ -3,7 +3,7 @@
 
     Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
     Copyright (c) 2002-2004 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
     Copyright (c) 2002      by Duncan Mac-Vicar P     <duncan@kde.org>
 
     Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
@@ -281,15 +281,14 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 			KNotifyClient::event( winId,  "kopete_contact_online", text, m_metaContact, i18n( "Chat" ), this, SLOT( execute() ) );
 		else
 			KNotifyClient::event( winId , "kopete_contact_offline", text, m_metaContact, i18n( "Offline" ), 0, 0 );
-
-
-		if ( !mBlinkTimer->isActive() && ( m_metaContact->statusIcon() != m_oldStatusIcon ) )
-		{
-			mIsBlinkIcon = false;
-			m_blinkLeft = 5;
-			mBlinkTimer->start( 400, false );
-		}
 	}
+	if ( !mBlinkTimer->isActive() && ( m_metaContact->statusIcon() != m_oldStatusIcon ) )
+	{
+		mIsBlinkIcon = false;
+		m_blinkLeft = 5;
+		mBlinkTimer->start( 400, false );
+	}
+
 }
 
 void KopeteMetaContactLVI::slotUpdateIcons()
@@ -510,7 +509,7 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 
 void KopeteMetaContactLVI::updateVisibility()
 {
-	if ( KopetePrefs::prefs()->showOffline() /*|| mEventCount */ )
+	if ( KopetePrefs::prefs()->showOffline() || m_event  )
 		setTargetVisibility( true );
 	else if ( !m_metaContact->isOnline() && !mBlinkTimer->isActive() )
 		setTargetVisibility( false );
@@ -706,7 +705,10 @@ void KopeteMetaContactLVI::catchEvent( KopeteEvent *event )
 	m_oldStatusIcon = m_metaContact->statusIcon();
 
 	mBlinkTimer->start( 500, false );
-}
+	
+	//show the contact if it was hidden because offline.
+	updateVisibility();
+ }
 
 void KopeteMetaContactLVI::slotBlink()
 {

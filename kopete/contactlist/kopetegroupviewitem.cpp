@@ -1,10 +1,10 @@
 /*
     kopeteonlinestatus.cpp - Kopete Online Status
 
-    Copyright (c) 2002-2003 by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart       <ogoffart@tiscalinet.be>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -172,6 +172,9 @@ void KopeteGroupViewItem::cancelRename( int col )
 
 void KopeteGroupViewItem::updateVisibility()
 {
+	//FIXME: A contact can ve visible if he has a unknwon status (it's not online) 
+	//       or if he has an event (blinking icon).  If such as contact is not with
+	//       others inline contact in the group. the group will stay hidden.
 	int visibleUsers = onlineMemberCount;
 	if ( KopetePrefs::prefs()->showOffline() )
 		visibleUsers = totalMemberCount;
