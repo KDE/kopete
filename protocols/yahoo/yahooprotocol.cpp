@@ -34,6 +34,7 @@
 
 // KDE Includes
 #include <kdebug.h>
+#include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <kstandarddirs.h>
 #include <ksimpleconfig.h>
@@ -41,9 +42,12 @@
 
 class KPopupMenu;
 
-
 // Yahoo Protocol
-YahooProtocol::YahooProtocol() : QObject(0, "YahooProtocol"), KopeteProtocol()
+K_EXPORT_COMPONENT_FACTORY( kopete_yahoo, KGenericFactory<YahooProtocol> );
+
+YahooProtocol::YahooProtocol( QObject *parent, const char *name,
+	const QStringList & /* args */ )
+: KopeteProtocol( parent, name )
 {
 	DEBUG(YDMETHOD, "YahooProtocol::YahooProtocol()");
 
