@@ -143,7 +143,7 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 	// append to inQueue
 	if ( tId )
 	{
-		qDebug( "CoreProtocol::readResponse() - setting state Available, got %i fields in base array", m_collatingFields.count() );
+		qDebug( "CoreProtocol::readResponse() - setting state Available, got %u fields in base array", (uint)m_collatingFields.count() );
 		packetState = Available;
 		bytes = m_bytes;
 		m_din.unsetDevice();
