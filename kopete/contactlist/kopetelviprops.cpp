@@ -144,18 +144,14 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 
 	mNotificationProps = new CustomNotificationProps( this, lvi->metaContact() );
 	// add a button to the notification props to get the sound from KABC
-	// the widget's vert box layout
+	// the widget's vert box layout, horiz box layout containing button, spacer, followed by a spacer
 	QBoxLayout * vb = static_cast<QVBoxLayout*>( mNotificationProps->widget()->layout() );
-	// horiz box layout containing button, spacer
+
 	QHBoxLayout* hb = new QHBoxLayout( vb, -1, "soundFromKABClayout" );
 	mFromKABC = new QPushButton( i18n( "Sync KABC..." ), mNotificationProps->widget(), "getSoundFromKABC" );
-	hb->addWidget( mFromKABC );
+	hb->addWidget( mFromKABC ); // [ [Button] <-xxxxx-> ]
 	hb->addStretch();
-	//QSpacerItem h_spacer = 
-// 	hb->addItem( new QSpacerItem( 1, 1 ) );
-	//vb->addLayout( hb );
-	//vb->addItem( new QSpacerItem( 1, 1 ) );
-	vb->addStretch();
+	vb->addStretch(); // vert spacer keeps the rest snug
 	
 	mainWidget->tabWidget->addTab( mNotificationProps->widget(), i18n( "Custom &Notifications" ) );
 	setMainWidget( mainWidget );
@@ -222,7 +218,7 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	connect( mFromKABC, SIGNAL( clicked() ),
 		this, SLOT( slotFromKABCClicked() ) );
     connect( mNotificationProps->widget()->customSound, SIGNAL( openFileDialog( KURLRequester * )),
-             SLOT( openSoundDialog( KURLRequester * )));
+             SLOT( slotOpenSoundDialog( KURLRequester * )));
 	slotUseCustomIconsToggled( mainWidget->chkUseCustomIcons->isChecked() );
 }
 
@@ -328,7 +324,7 @@ void KopeteMetaLVIProps::slotOpenSoundDialog( KURLRequester *requester )
 	// taken from kdelibs/kio/kfile/knotifydialog.cpp
 	// only need to init this once
 	requester->disconnect( SIGNAL( openFileDialog( KURLRequester * )),
-						this, SLOT( openSoundDialog( KURLRequester * )));
+						this, SLOT( slotOpenSoundDialog( KURLRequester * )));
 
 	KFileDialog *fileDialog = requester->fileDialog();
 	//fileDialog->setCaption( i18n("Select Sound File") );
