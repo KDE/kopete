@@ -3,6 +3,7 @@
 
     Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
     Copyright (c) 2003-2004 by Martijn Klingens      <klingens@kde.org>
+    Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
     Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
@@ -31,8 +32,6 @@ class KopeteMetaContact;
 class KopeteOnlineStatus;
 
 struct KopeteAccountPrivate;
-
-QString cryptStr(const QString &aStr);
 
 /**
  * @author Olivier Goffart  <ogoffart@tiscalinet.be>
@@ -346,11 +345,6 @@ private slots:
 	void slotAccountReady();
 
 	/**
-	 * Called when the wallet is closed externally.
-	 */
-	void walletClosed();
-
-	/**
 	 * Our online status changed.
 	 *
 	 * Currently this slot is used to set a timer that allows suppressing online status
@@ -364,6 +358,7 @@ private slots:
 	void slotStopSuppression();
 
 private:
+	
 	KopeteAccountPrivate *d;
 };
 
