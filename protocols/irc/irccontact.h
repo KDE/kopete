@@ -1,11 +1,11 @@
 /*
     irccontact.h - IRC Contact
 
-    Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
+    Copyright (c) 2003-2004 by Michel Hermier <michel.hermier@wanadoo.fr>
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
-    Copyright (c) 2003      by Jason Keirstead <michel.hermier@wanadoo.fr>
+    Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -28,14 +28,19 @@
 
 #define MYACCOUNT ((IRCAccount*)account())
 
-class QTextCodec;
-namespace Kopete { class MessageManager; }
-namespace Kopete { class MetaContact; }
-class KopeteView;
-
 class IRCProtocol;
 class IRCAccount;
 class IRCContactManager;
+
+namespace Kopete
+{
+class MessageManager;
+class MetaContact;
+}
+
+class KopeteView;
+
+class QTextCodec;
 
 /**
  * @author Jason Keirstead <jason@keirstead.org>
@@ -45,80 +50,82 @@ class IRCContactManager;
  * Common routines and signal connections that are required for both types of
  * contacts reside here, to avoid code duplication between these two classes.
  */
-class IRCContact : public Kopete::Contact
+class IRCContact
+	: public Kopete::Contact
 {
 	Q_OBJECT
 
-	public:
-		IRCContact(IRCContactManager *contactManager, const QString &nick, Kopete::MetaContact *metac, const QString& icon = QString::null);
-		~IRCContact();
+public:
+	IRCContact(IRCContactManager *contactManager, const QString &nick, Kopete::MetaContact *metac, const QString& icon = QString::null);
+	~IRCContact();
 
-		/**
-		* Sets the nickname of this contact. The nickname is distinct from the displayName
-		* in case trackNameChanges is disabled.
-		*/
-		void setNickName(const QString &nickname);
+	/**
+	 * Sets the nickname of this contact. The nickname is distinct from the displayName
+	 * in case trackNameChanges is disabled.
+	 */
+	void setNickName(const QString &nickname);
 
-		/**
-		* Returns the nickname / channel name
-		*/
-		const QString &nickName() const { return m_nickName; }
+	/**
+	 * Returns the nickname / channel name
+	 */
+	const QString &nickName() const { return m_nickName; }
 
-		/**
-		* This function attempts to find the nickname specified within the current chat
-		* session. Returns a pointer to that IRCUserContact, or 0L if the user does not
-		* exist in this session. More useful for channels. Calling IRCChannelContact::locateUser()
-		* for example tells you if a user is in a certain channel.
-		*/
-		Kopete::Contact *locateUser( const QString &nickName );
+	/**
+	 * This function attempts to find the nickname specified within the current chat
+	 * session. Returns a pointer to that IRCUserContact, or 0L if the user does not
+	 * exist in this session. More useful for channels. Calling IRCChannelContact::locateUser()
+	 * for example tells you if a user is in a certain channel.
+	 */
+	Kopete::Contact *locateUser( const QString &nickName );
 
-		virtual bool isReachable();
+	virtual bool isReachable();
 
-		/**
-		* return true if the contact is in a chat. false if the contact is in no chats
-		* that loop over all manager, and checks the presence of the user
-		*/
-		bool isChatting( Kopete::MessageManager *avoid = 0L ) const;
+	/**
+	 * return true if the contact is in a chat. false if the contact is in no chats
+	 * that loop over all manager, and checks the presence of the user
+	 */
+	bool isChatting( Kopete::MessageManager *avoid = 0L ) const;
 
-		virtual const QString caption() const = 0;
+	virtual const QString caption() const = 0;
+//	virtual const QString formatedName() const;
 
-		virtual Kopete::MessageManager *manager(bool canCreate = true);
+	virtual Kopete::MessageManager *manager(bool canCreate = true);
 
-		virtual void appendMessage( Kopete::Message & );
+	virtual void appendMessage( Kopete::Message & );
 
-		const QTextCodec *codec();
+	const QTextCodec *codec();
 
-		KopeteView *view();
+	KopeteView *view();
 
-		/**
-		 * We serialise the contactId and the server group in 'contactId'
-		 * so that other IRC programs reading this from KAddressBook have a chance of figuring
-		 * which server the contact relates to
-		 */
-		virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
+	/**
+	 * We serialise the contactId and the server group in 'contactId'
+	 * so that other IRC programs reading this from KAddressBook have a chance of figuring
+	 * which server the contact relates to
+	 */
+	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
-	public slots:
-		void setCodec( const QTextCodec *codec );
+public slots:
+	void setCodec( const QTextCodec *codec );
 
-	protected slots:
-		virtual void slotSendMsg(Kopete::Message &message, Kopete::MessageManager *);
+protected slots:
+	virtual void slotSendMsg(Kopete::Message &message, Kopete::MessageManager *);
 
-		virtual void messageManagerDestroyed();
+	virtual void messageManagerDestroyed();
 
-		void slotNewNickChange( const QString &oldnickname, const QString &newnickname);
-		void slotUserDisconnected( const QString &nickname, const QString &reason);
+	void slotNewNickChange( const QString &oldnickname, const QString &newnickname);
+	void slotUserDisconnected( const QString &nickname, const QString &reason);
 
-		virtual void slotDeleteContact();
-		virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
-		virtual void updateStatus() = 0;
-		virtual void initConversation() {};
+	virtual void slotDeleteContact();
+	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
+	virtual void updateStatus() = 0;
+	virtual void initConversation() {};
 
-	protected:
-		QString m_nickName;
-		Kopete::MessageManager *m_msgManager;
+protected:
+	QString m_nickName;
+	Kopete::MessageManager *m_msgManager;
 
-		QPtrList<Kopete::Contact> mMyself;
-		Kopete::Message::MessageDirection execDir;
+	QPtrList<Kopete::Contact> mMyself;
+	Kopete::Message::MessageDirection execDir;
 };
 
 #endif

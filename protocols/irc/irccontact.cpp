@@ -231,7 +231,7 @@ void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::MessageManager *)
 			Kopete::Message msg(message.from(), message.to(), *it, message.direction(),
 			                    Kopete::Message::RichText, message.viewType(), message.type());
 
-			MYACCOUNT->engine()->messageContact(m_nickName, *it );
+			MYACCOUNT->engine()->privmsg(m_nickName, *it );
 
 			msg.setBg(QColor());
 			msg.setFg(QColor());
@@ -242,7 +242,7 @@ void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::MessageManager *)
 	}
 	else
 	{
-		MYACCOUNT->engine()->messageContact(m_nickName, htmlString );
+		MYACCOUNT->engine()->privmsg(m_nickName, htmlString );
 
 		message.setBg( QColor() );
 		message.setFg( QColor() );

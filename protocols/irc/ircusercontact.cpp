@@ -210,20 +210,20 @@ void IRCUserContact::slotBanUserDomain()
 void IRCUserContact::slotKick()
 {
 	Kopete::ContactPtrList members = mActiveManager->members();
-	QString channelName = static_cast<IRCContact*>( members.first() )->nickName();
-	MYACCOUNT->engine()->kickUser(m_nickName, channelName, QString::null);
+	QString channelName = static_cast<IRCContact*>(members.first())->nickName();
+	MYACCOUNT->engine()->kick(m_nickName, channelName, QString::null);
 }
 
-void IRCUserContact::contactMode( const QString &mode )
+void IRCUserContact::contactMode(const QString &mode)
 {
 	Kopete::ContactPtrList members = mActiveManager->members();
-	QString channelName = static_cast<IRCContact*>( members.first() )->nickName();
-	MYACCOUNT->engine()->changeMode( channelName, QString::fromLatin1("%1 %2").arg(mode).arg(m_nickName) );
+	QString channelName = static_cast<IRCContact*>(members.first())->nickName();
+	MYACCOUNT->engine()->mode(channelName, QString::fromLatin1("%1 %2").arg(mode).arg(m_nickName));
 }
 
 void IRCUserContact::slotCtcpPing()
 {
-	MYACCOUNT->engine()->CtcpRequest_pingPong(m_nickName);
+	MYACCOUNT->engine()->CtcpRequest_ping(m_nickName);
 }
 
 void IRCUserContact::slotCtcpVersion()

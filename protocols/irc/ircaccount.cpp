@@ -147,7 +147,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 IRCAccount::~IRCAccount()
 {
 	if (m_engine->isConnected())
-		m_engine->quitIRC(i18n("Plugin Unloaded"), true);
+		m_engine->quit(i18n("Plugin Unloaded"), true);
 }
 
 void IRCAccount::loaded()
@@ -232,15 +232,15 @@ void IRCAccount::slotNickInUse( const QString &nick )
 	QString altNickName = altNick();
 	if( triedAltNick || altNickName.isEmpty() )
 	{
-		QString newNick = KLineEditDlg::getText( i18n( "IRC Plugin" ),
-			i18n( "The nickname %1 is already in use. Please enter an alternate nickname:" ).arg( nick ), nick );
+		QString newNick = KLineEditDlg::getText(i18n( "IRC Plugin"),
+			i18n("The nickname %1 is already in use. Please enter an alternate nickname:").arg(nick), nick);
 
-		m_engine->changeNickname( newNick );
+		m_engine->nick(newNick);
 	}
 	else
 	{
 		triedAltNick = true;
-		m_engine->changeNickname( altNickName );
+		m_engine->nick(altNickName);
 	}
 }
 
@@ -536,18 +536,18 @@ void IRCAccount::quit( const QString &quitMessage )
 	kdDebug(14120) << "Quitting IRC: " << quitMessage << endl;
 
 	if( quitMessage.isNull() || quitMessage.isEmpty() )
-		m_engine->quitIRC( defaultQuit() );
+		m_engine->quit( defaultQuit() );
 	else
-		m_engine->quitIRC( quitMessage );
+		m_engine->quit( quitMessage );
 }
 
-void IRCAccount::setAway( bool isAway, const QString &awayMessage )
+void IRCAccount::setAway(bool isAway, const QString &awayMessage)
 {
 	kdDebug(14120) << k_funcinfo << isAway << " " << awayMessage << endl;
 	if(m_engine->isConnected())
 	{
 		static_cast<IRCUserContact *>( myself() )->setAway( isAway );
-		engine()->setAway( isAway, awayMessage );
+		engine()->away(isAway, awayMessage);
 	}
 }
 

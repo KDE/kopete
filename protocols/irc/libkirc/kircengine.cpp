@@ -1,10 +1,10 @@
 /*
     kirc.cpp - IRC Client
 
-    Copyright (c) 2003      by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2003-2004 by Michel Hermier <michel.hermier@wanadoo.fr>
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -21,7 +21,6 @@
 #endif
 
 #include "kircengine.h"
-#include "kircfunctors.h"
 #include "ksslsocket.h"
 
 #include <kconfig.h>
@@ -45,28 +44,22 @@ using namespace KIRC;
  */
 const QRegExp Engine::m_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
 
-KIRCMethodFunctorCall *Engine::IgnoreMethod( new KIRCMethodFunctor_Ignore() );
-
 Engine::Engine(QObject *parent, const char *name)
-	: QObject(parent, name),
+	: QObject(parent, QString::fromLatin1("[KIRC::Engine]%1").arg(name).latin1()),
 	  m_status(Disconnected),
 	  m_FailedNickOnLogin(false),
 	  m_useSSL(false),
-	  m_IrcMethods(17, false),
-	  m_IrcNumericMethods(101),
-	  m_IrcCTCPQueryMethods(17, false),
-	  m_IrcCTCPReplyMethods(17, false),
+	  m_commands(101, false),
+//	  m_numericCommands(101),
+	  m_ctcpQueries(17, false),
+	  m_ctcpReplies(17, false),
 	  codecs(577,false)
 {
-	m_IrcMethods.setAutoDelete(true);
-	m_IrcCTCPQueryMethods.setAutoDelete(true);
-	m_IrcCTCPReplyMethods.setAutoDelete(true);
-
 	setUserName(QString::null);
 
-	registerCommands();
-	registerNumericReplies();
-	registerCtcp();
+	bindCommands();
+	bindNumericReplies();
+	bindCtcp();
 
 	m_VersionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
 	m_UserString = QString::fromLatin1("Response not supplied by user.");
@@ -92,7 +85,7 @@ Engine::Engine(QObject *parent, const char *name)
 Engine::~Engine()
 {
 	kdDebug(14120) << k_funcinfo << m_Host << endl;
-	quitIRC("KIRC Deleted", true);
+	quit("KIRC Deleted", true);
 	if( m_sock )
 		delete m_sock;
 }
@@ -192,8 +185,8 @@ void Engine::slotConnected()
 	if (!(password()).isEmpty())
 		writeMessage("PASS", password() , m_Realname, false);
 
-	changeUser(m_Username, 0, QString::fromLatin1("Kopete User"));
-	changeNickname(m_Nickname);
+	user(m_Username, 0, QString::fromLatin1("Kopete User"));
+	nick(m_Nickname);
 
 	//If we don't get a reply within 15 seconds, give up
 	m_connectTimer->start( connectTimeout );
@@ -248,26 +241,52 @@ void Engine::setUserName(const QString &newName)
 	m_Username.remove(m_RemoveLinefeeds);
 }
 
-void Engine::addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str, KIRCMethodFunctorCall *method)
+bool Engine::_bind(QDict<KIRC::MessageRedirector> &dict,
+		QString command, QObject *object, const char *member,
+		int minArgs, int maxArgs, const QString &helpMessage)
 {
-	map.replace( QString::fromLatin1(str), method);
+//	FIXME: Force upper case.
+//	FIXME: Force number format.
+
+	MessageRedirector *mr = dict[command];
+
+	if (!mr)
+	{
+		mr = new MessageRedirector(this, minArgs, maxArgs, helpMessage);
+		dict.replace(command, mr);
+	}
+//	else
+//		mr->setArgs();
+
+	return mr->connect(object, member);
 }
 
-void Engine::addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str, pIrcMethod method,
-			int argsSize_min, int argsSize_max, const char *helpMessage)
+bool Engine::bind(const QString &command, QObject *object, const char *member,
+	int minArgs, int maxArgs, const QString &helpMessage)
 {
-	addIrcMethod(map, str, new KIRCMethodFunctor_Forward<Engine>(this, method, argsSize_min, argsSize_max, helpMessage));
+	return _bind(m_commands, command, object, member,
+		minArgs, maxArgs, helpMessage);
 }
 
-void Engine::addNumericIrcMethod(int id, KIRCMethodFunctorCall *method)
+bool Engine::bind(int id, QObject *object, const char *member,
+		int minArgs, int maxArgs, const QString &helpMessage)
 {
-	m_IrcNumericMethods.replace(id, method);
+	return _bind(m_commands, QString::number(id), object, member,
+		     minArgs, maxArgs, helpMessage);
 }
 
-void Engine::addNumericIrcMethod(int id, pIrcMethod method,
-			int argsSize_min, int argsSize_max, const char *helpMessage)
+bool Engine::bindCtcpQuery(const QString &command, QObject *object, const char *member,
+	int minArgs, int maxArgs, const QString &helpMessage)
 {
-	addNumericIrcMethod(id, new KIRCMethodFunctor_Forward<Engine>(this, method, argsSize_min, argsSize_max, helpMessage) );
+	return _bind(m_ctcpQueries, command, object, member,
+		minArgs, maxArgs, helpMessage);
+}
+
+bool Engine::bindCtcpReply(const QString &command, QObject *object, const char *member,
+	int minArgs, int maxArgs, const QString &helpMessage)
+{
+	return _bind(m_ctcpReplies, command, object, member,
+		minArgs, maxArgs, helpMessage);
 }
 
 bool Engine::canSend( bool mustBeConnected ) const
@@ -329,37 +348,22 @@ void Engine::slotReadyRead()
 		Message msg = Message::parse(this, defaultCodec, &parseSuccess);
 		if(parseSuccess)
 		{
-			KIRCMethodFunctorCall *method;
-			if( msg.isNumeric() )
-				method = m_IrcNumericMethods[ msg.command().toInt() ];
-			else
-				method = m_IrcMethods[ msg.command() ];
+			emit receivedMessage(msg);
 
-			if(method && method->isValid())
+			KIRC::MessageRedirector *mr;
+//			if( msg.isNumeric() )
+//				mr = m_numericCommands[ msg.command().toInt() ];
+//			else
+				mr = m_commands[ msg.command() ];
+
+			if (mr)
 			{
-				if( method->checkMsgValidity(msg) &&
-					!msg.isNumeric() ||
-					(
-						msg.argsSize() > 0 &&
-						(
-							msg.arg(0) == m_Nickname ||
-							msg.arg(0) == m_PendingNick ||
-							msg.arg(0) == QString::fromLatin1("*")
-						)
-					)
-				)
+				QStringList errors = mr->operator()(&msg);
+
+				if (!errors.isEmpty())
 				{
-					emit receivedMessage(msg);
-					if (!method->operator()(msg))
-					{
-						kdDebug(14120) << "Method error for line:" << msg.raw() << endl;
-						emit internalError(MethodFailed, msg);
-					}
-				}
-				else
-				{
-					kdDebug(14120) << "Args are invalid for line:" << msg.raw() << endl;
-					emit internalError(InvalidNumberOfArguments, msg);
+					kdDebug(14120) << "Method error for line:" << msg.raw() << endl;
+					emit internalError(MethodFailed, msg);
 				}
 			}
 			else if (msg.isNumeric())
@@ -382,7 +386,7 @@ void Engine::slotReadyRead()
 		QTimer::singleShot( 0, this, SLOT( slotReadyRead() ) );
 	}
 
-	if(m_sock->socketStatus()!=KExtendedSocket::connected)
+	if(m_sock->socketStatus() != KExtendedSocket::connected)
 		error();
 }
 
@@ -413,32 +417,23 @@ void Engine::showInfoDialog()
  * (Only missing the \n\r final characters)
  * So applying the same parsing rules to the messages.
  */
-bool Engine::invokeCtcpCommandOfMessage(const Message &msg, const QDict<KIRCMethodFunctorCall> &map)
+bool Engine::invokeCtcpCommandOfMessage(const QDict<MessageRedirector> &map, const Message &msg)
 {
 	if(msg.hasCtcpMessage() && msg.ctcpMessage().isValid())
 	{
 		const Message &ctcpMsg = msg.ctcpMessage();
 
-		KIRCMethodFunctorCall *method = map[ctcpMsg.command()];
-		if(method && method->isValid())
+		MessageRedirector *mr = map[ctcpMsg.command()];
+		if (mr)
 		{
-			if (method->checkMsgValidity(ctcpMsg))
-			{
-				if(method->operator()(msg))
-				{
-					return true;
-				}
-				else
-				{
-					kdDebug(14120) << "Method error for line:" << ctcpMsg.raw();
-					writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(), "Internal error");
-				}
-			}
-			else
-			{
-				kdDebug(14120) << "Args are invalid for line:" << ctcpMsg.raw();
-				writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(), "Invalid number of arguments");
-			}
+			QStringList errors = mr->operator()(&msg);
+
+			if (errors.isEmpty())
+				return true;
+
+			kdDebug(14120) << "Method error for line:" << ctcpMsg.raw();
+			writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(),
+				QString::fromLatin1("%1 internal error(s)").arg(errors.size()));
 		}
 		else
 		{
@@ -456,4 +451,3 @@ bool Engine::invokeCtcpCommandOfMessage(const Message &msg, const QDict<KIRCMeth
 }
 
 #include "kircengine.moc"
-

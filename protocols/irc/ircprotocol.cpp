@@ -407,8 +407,8 @@ void IRCProtocol::slotMotdCommand( const QString &args, Kopete::MessageManager *
 
 void IRCProtocol::slotPingCommand( const QString &args, Kopete::MessageManager *manager )
 {
-	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
-	static_cast<IRCAccount*>( manager->account() )->engine()->CtcpRequest_pingPong(argsList.front());
+	QStringList argsList = Kopete::CommandHandler::parseArguments(args);
+	static_cast<IRCAccount*>( manager->account() )->engine()->CtcpRequest_ping(argsList.front());
 }
 
 void IRCProtocol::slotListCommand( const QString &/*args*/, Kopete::MessageManager *manager )
@@ -548,17 +548,17 @@ void IRCProtocol::slotQuitCommand( const QString &args, Kopete::MessageManager *
 void IRCProtocol::slotNickCommand( const QString &args, Kopete::MessageManager *manager )
 {
 	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
-	static_cast<IRCAccount*>( manager->account() )->engine()->changeNickname( argsList.front() );
+	static_cast<IRCAccount*>( manager->account() )->engine()->nick( argsList.front() );
 }
 
-void IRCProtocol::slotModeCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotModeCommand(const QString &args, Kopete::MessageManager *manager)
 {
 	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
-	static_cast<IRCAccount*>( manager->account() )->engine()->changeMode( argsList.front(),
+	static_cast<IRCAccount*>( manager->account() )->engine()->mode( argsList.front(),
 		args.section( QRegExp(QString::fromLatin1("\\s+")), 1 ) );
 }
 
-void IRCProtocol::slotMeCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotMeCommand(const QString &args, Kopete::MessageManager *manager)
 {
 	Kopete::ContactPtrList members = manager->members();
 	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
@@ -566,17 +566,17 @@ void IRCProtocol::slotMeCommand( const QString &args, Kopete::MessageManager *ma
 		static_cast<const IRCContact*>(members.first())->nickName(), args );
 }
 
-void IRCProtocol::slotKickCommand( const QString &args, Kopete::MessageManager *manager )
+void IRCProtocol::slotKickCommand(const QString &args, Kopete::MessageManager *manager)
 {
-	if( manager->contactOnlineStatus( manager->user() ) == m_UserStatusOp )
+	if (manager->contactOnlineStatus( manager->user() ) == m_UserStatusOp)
 	{
 		QRegExp spaces(QString::fromLatin1("\\s+"));
 		QString nick = args.section( spaces, 0, 0);
 		QString reason = args.section( spaces, 1);
 		Kopete::ContactPtrList members = manager->members();
 		QString channel = static_cast<IRCContact*>( members.first() )->nickName();
-		if( KIRC::Entity::isChannel(channel) )
-			static_cast<IRCAccount*>( manager->account() )->engine()->kickUser( nick, channel, reason );
+		if (KIRC::Entity::isChannel(channel))
+			static_cast<IRCAccount*>(manager->account())->engine()->kick(nick, channel, reason);
 	}
 	else
 	{
@@ -604,14 +604,14 @@ void IRCProtocol::slotBanCommand( const QString &args, Kopete::MessageManager *m
 
 void IRCProtocol::slotPartCommand( const QString &args, Kopete::MessageManager *manager )
 {
-	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
+	QStringList argsList = Kopete::CommandHandler::parseArguments(args);
 	Kopete::ContactPtrList members = manager->members();
-	IRCChannelContact *chan = static_cast<IRCChannelContact*>( members.first() );
+	IRCChannelContact *chan = static_cast<IRCChannelContact*>(members.first());
 
-	if( chan )
+	if (chan)
 	{
-		if( !args.isEmpty() )
-			static_cast<IRCAccount*>( manager->account() )->engine()->partChannel(chan->nickName(), args);
+		if(!args.isEmpty())
+			static_cast<IRCAccount*>(manager->account())->engine()->part(chan->nickName(), args);
 		else
 			chan->part();
 		manager->view()->closeView();

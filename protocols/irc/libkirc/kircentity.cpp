@@ -15,6 +15,7 @@
     *************************************************************************
 */
 
+#include "kircengine.h"
 #include "kircentity.h"
 
 #include <kdebug.h>
@@ -22,8 +23,99 @@
 using namespace KIRC;
 using namespace KNetwork;
 
+/**
+ * Match a possible user definition:
+ * nick!user@host
+ * where user and host are optionnal.
+ * NOTE: If changes are done to the regexp string, update also the sm_userStrictRegExp regexp string.
+ */
 const QRegExp Entity::sm_userRegExp(QString::fromLatin1("^([^\\s,:!@]+)(?:(?:!([^\\s,:!@]+))?(?:@([^\\s,!@]+)))?$"));
+
+/**
+ * Regexp to match strictly the complete user definition:
+ * nick!user@host
+ * NOTE: If changes are done to the regexp string, update also the sm_userRegExp regexp string.
+ */
+const QRegExp Entity::sm_userStrictRegExp(QString::fromLatin1("^([^\\s,:!@]+)!([^\\s,:!@]+)@([^\\s,:!@]+)$"));
+
 const QRegExp Entity::sm_channelRegExp( QString::fromLatin1("^[#!+&][^\\s,:]+$") );
+
+Entity::Entity(Engine *engine,const QString &name, const Type type)
+		: QObject(engine),
+//		  m_engine(engine),
+		  m_type(type)
+{
+//	rename(name, type);
+}
+
+QString Entity::name() const
+{
+	return m_name;
+}
+
+QString Entity::host() const
+{
+	switch(m_type)
+	{
+//	case Unknown:
+	case Server:
+		return m_name;
+//	case Channel:
+	case Service:
+	case User:
+		return userHost();
+	default:
+		kdDebug(14121) << k_funcinfo << "No host defined for type:" << m_type;
+		return QString::null;
+	}
+}
+
+KIRC::Entity::Type Entity::type() const
+{
+	return m_type;
+}
+
+KIRC::Entity::Type Entity::guessType()
+{
+	m_type = guessType(m_name);
+	return m_type;
+}
+
+// FIXME: Implement me
+KIRC::Entity::Type Entity::guessType(const QString &name)
+{
+	return Unknown;
+}
+
+QString Entity::userNick() const
+{
+	return userNick(m_name);
+}
+
+QString Entity::userNick(const QString &s)
+{
+	return userInfo(s, 1);
+}
+
+QString Entity::userName() const
+{
+	return userName(m_name);
+}
+
+QString Entity::userName(const QString &s)
+{
+	return userInfo(s, 2);
+}
+
+QString Entity::userHost() const
+{
+	return userHost(m_name);
+}
+
+QString Entity::userHost(const QString &s)
+{
+	return userInfo(s, 3);
+}
 
 QString Entity::userInfo(const QString &s, int num)
 {
@@ -31,6 +123,14 @@ QString Entity::userInfo(const QString &s, int num)
 	userRegExp.search(s);
 	return userRegExp.cap(num);
 }
+
+
+
+
+
+
+
+
 
 KResolverResults Entity::resolve(bool *success)
 {
@@ -54,7 +154,7 @@ void Entity::resolveAsync()
 	case KResolver::Success:
 		break;
 	default:
-		kdDebug(14120) << k_funcinfo << "Resolver not started(" << resolver->status() << ")" << endl;
+		kdDebug(14121) << k_funcinfo << "Resolver not started(" << resolver->status() << ")" << endl;
 	}
 }
 
@@ -62,7 +162,7 @@ KResolver *Entity::getResolver()
 {
 	if (!m_resolver)
 	{
-		m_resolver = new KResolver(userHost(), QString::null, this);
+		m_resolver = new KResolver(host(), QString::null, this);
 //		m_resolver->setFlags(flags);
 //		m_resolver->setFamily(families)
 		connect(m_resolver, SIGNAL(finished(KResolverResults)),

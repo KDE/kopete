@@ -142,14 +142,14 @@ void IRCChannelContact::messageManagerDestroyed()
 
 void IRCChannelContact::initConversation()
 {
-	MYACCOUNT->engine()->joinChannel(m_nickName, password());
+	MYACCOUNT->engine()->join(m_nickName, password());
 }
 
 void IRCChannelContact::slotConnectedToServer()
 {
 	setOnlineStatus( m_protocol->m_ChannelStatusOnline );
 	if( manager(false) )
-		MYACCOUNT->engine()->joinChannel(m_nickName, password());
+		MYACCOUNT->engine()->join(m_nickName, password());
 }
 
 void IRCChannelContact::namesList(const QStringList &nicknames)
@@ -226,8 +226,8 @@ void IRCChannelContact::join()
 
 void IRCChannelContact::part()
 {
-	if( manager(false) )
-		MYACCOUNT->engine()->partChannel( m_nickName, MYACCOUNT->defaultPart() );
+	if (manager(false))
+		MYACCOUNT->engine()->part(m_nickName, MYACCOUNT->defaultPart());
 }
 
 void IRCChannelContact::slotIncomingUserIsAway( const QString &nick, const QString & )
@@ -341,7 +341,7 @@ void IRCChannelContact::setTopic(const QString &topic)
 			if( okPressed )
 			{
 				mTopic = newTopic;
-				MYACCOUNT->engine()->setTopic( m_nickName, newTopic );
+				MYACCOUNT->engine()->topic(m_nickName, newTopic);
 			}
 		}
 		else
@@ -420,10 +420,10 @@ void IRCChannelContact::incomingChannelMode( const QString &mode,
 	}
 }
 
-void IRCChannelContact::setMode( const QString &mode )
+void IRCChannelContact::setMode(const QString &mode)
 {
-	if( manager(false) )
-		MYACCOUNT->engine()->changeMode( m_nickName, mode );
+	if (manager(false))
+		MYACCOUNT->engine()->mode(m_nickName, mode);
 }
 
 void IRCChannelContact::slotModeChanged()
@@ -471,7 +471,7 @@ void IRCChannelContact::failedChankey()
 	else
 	{
 		setPassword(diaPassword);
-		MYACCOUNT->engine()->joinChannel(m_nickName, password());
+		MYACCOUNT->engine()->join(m_nickName, password());
 	}
 }
 

@@ -240,7 +240,7 @@ void IRCContactManager::checkOnlineNotifyList()
 	if( m_account->engine()->isConnected() )
 	{
 		isonRecieved = false;
-		m_account->engine()->isOn( m_NotifyList );
+		m_account->engine()->ison( m_NotifyList );
 		//QTimer::singleShot( socketTimeout, this, SLOT( slotIsonTimeout() ) );
 	}
 }
@@ -253,7 +253,7 @@ void IRCContactManager::slotIsonRecieved()
 void IRCContactManager::slotIsonTimeout()
 {
 	if( !isonRecieved )
-		m_account->engine()->quitIRC("", true);
+		m_account->engine()->quit("", true);
 }
 
 #include "irccontactmanager.moc"

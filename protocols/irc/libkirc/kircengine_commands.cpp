@@ -18,7 +18,6 @@
 */
 
 #include "kircengine.h"
-#include "kircfunctors.h"
 
 #include <kextsock.h>
 
@@ -26,43 +25,113 @@
 
 using namespace KIRC;
 
-void Engine::registerCommands()
+void Engine::bindCommands()
 {
-//	The following order is based on the RFC2812.
-
-//	Connection Registration
-	addIrcMethod("NICK",	&Engine::nickChange,	0,	0);
-	addIrcMethod("QUIT",	new KIRCMethodFunctor_SS_PrefixSuffix<Engine>(this, &Engine::incomingQuitIRC,	0,	0));
-//	addIrcMethod("SQUIT",	new KIRCMethodFunctor_SS_PrefixSuffix<Engine>(this, &Engine::incomingServerQuitIRC,	1,	1));
-
-//	Channel operations
-	addIrcMethod("JOIN",	&Engine::joinChannel,	0,	1);
-	addIrcMethod("PART",	&Engine::partChannel,	1,	1);
-	addIrcMethod("MODE",	&Engine::modeChange,	1,	1);
-	addIrcMethod("TOPIC",	&Engine::topicChange,	1,	1);
-	addIrcMethod("KICK",	&Engine::kick,		2,	2);
-
-//	Sending messages
-	addIrcMethod("PRIVMSG",	&Engine::privateMessage,	1,	1);
-	addIrcMethod("NOTICE",	&Engine::notice,		1,	1);
-
-//	Miscellaneous messages
-	addIrcMethod("PING",	&Engine::ping,	0,	0);
-	addIrcMethod("PONG",	&Engine::pong,	0,	0);
+	bind("JOIN",	this, SLOT(join(const KIRC::Message &)),	0, 1);
+	bind("KICK",	this, SLOT(kick(const KIRC::Message &)),	2, 2);
+	bind("NICK",	this, SLOT(nick(const KIRC::Message &)),	0, 0);
+	bind("MODE",	this, SLOT(mode(const KIRC::Message &)),	1, 1);
+	bind("NOTICE",	this, SLOT(notice(const KIRC::Message &)),	1, 1);
+	bind("PART",	this, SLOT(part(const KIRC::Message &)),	1, 1);
+	bind("PING",	this, SLOT(ping(const KIRC::Message &)),	0, 0);
+	bind("PONG",	this, SLOT(pong(const KIRC::Message &)),	0, 0);
+	bind("PRIVMSG",	this, SLOT(privmsg(const KIRC::Message &)),	1, 1);
+	bind("QUIT",	this, SLOT(quit(const KIRC::Message &)),	0, 0);
+//	bind("SQUIT",	this, SLOT(squit(const KIRC::Message &)),	1, 1);
+	bind("TOPIC",	this, SLOT(topic(const KIRC::Message &)),	1, 1);
 }
 
-// Normal order for a command:
-// Request_*
-// Query_*
-// Reply_* (if any)
+void Engine::away(bool isAway, const QString &awayMessage)
+{
+	if(isAway)
+		if( !awayMessage.isEmpty() )
+			writeMessage("AWAY", QString::null, awayMessage);
+	else
+		writeMessage("AWAY", QString::null, QString::fromLatin1("I'm away."));
+	else
+		writeMessage("AWAY", QString::null);
+}
 
-void Engine::changeNickname(const QString &newNickname)
+void Engine::ison(const QStringList &nickList)
+{
+	if (!nickList.isEmpty())
+	{
+		QString statement = QString::fromLatin1("ISON");
+		for (QStringList::ConstIterator it = nickList.begin(); it != nickList.end(); ++it)
+		{
+			if ((statement.length()+(*it).length())>509) // 512(max buf)-2("\r\n")-1(<space separator>)
+			{
+				writeMessage(statement);
+				statement = QString::fromLatin1("ISON ") +  (*it);
+			}
+			else
+				statement.append(QChar(' ') + (*it));
+		}
+		writeMessage(statement);
+	}
+}
+
+void Engine::join(const QString &name, const QString &key)
+{
+	QStringList args(name);
+	if ( !key.isNull() )
+		args << key;
+
+	writeMessage("JOIN", args);
+}
+
+void Engine::join(const Message &msg)
+{
+	/* RFC say: "( <channel> *( "," <channel> ) [ <key> *( "," <key> ) ] ) / "0""
+	* suspected: ":<channel> *(" "/"," <channel>)"
+	* assumed ":<channel>"
+	* This is the response of someone joining a channel.
+	* Remember that this will be emitted when *you* /join a room for the first time */
+
+	if (msg.argsSize()==1)
+		emit incomingJoinedChannel(msg.arg(0), msg.nickFromPrefix());
+	else
+		emit incomingJoinedChannel(msg.suffix(), msg.nickFromPrefix());
+}
+
+void Engine::kick(const QString &user, const QString &channel, const QString &reason)
+{
+	writeMessage("KICK", QStringList(channel) << user << reason);
+}
+
+void Engine::kick(const Message &msg)
+{
+	/* The given user is kicked.
+	* "<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]"
+	*/
+	emit incomingKick( msg.arg(0), msg.nickFromPrefix(), msg.arg(1), msg.suffix());
+}
+
+void Engine::mode(const QString &target, const QString &mode)
+{
+	writeMessage("MODE", QStringList(target) << mode);
+}
+
+void Engine::mode(const Message &msg)
+{
+	/* Change the mode of a user.
+	* "<nickname> *( ( "+" / "-" ) *( "i" / "w" / "o" / "O" / "r" ) )"
+	*/
+	QStringList args = msg.args();
+	args.pop_front();
+	if( Entity::isChannel( msg.arg(0) ) )
+		emit incomingChannelModeChange( msg.arg(0), msg.nickFromPrefix(), args.join(" "));
+	else
+		emit incomingUserModeChange( msg.nickFromPrefix(), args.join(" "));
+}
+
+void Engine::nick(const QString &newNickname)
 {
 	m_PendingNick = newNickname;
 	writeMessage("NICK", newNickname, QString::null, false);
 }
 
-bool Engine::nickChange(const Message &msg)
+void Engine::nick(const Message &msg)
 {
 	/* Nick name of a user changed
 	 * "<nickname>" */
@@ -83,36 +152,34 @@ bool Engine::nickChange(const Message &msg)
 	}
 	else
 		emit incomingNickChange(oldNick, msg.suffix());
-
-	return true;
 }
 
-void Engine::changeUser(const QString &newUsername, const QString &hostname, const QString &newRealname)
+void Engine::part(const QString &channel, const QString &reason)
 {
-	/* RFC1459: "<username> <hostname> <servername> <realname>"
-	 * The USER command is used at the beginning of connection to specify
-	 * the username, hostname and realname of a new user.
-	 * hostname is usualy set to "127.0.0.1" */
-	m_Username = newUsername;
-	m_Realname = newRealname;
-
-	writeMessage("USER", join( m_Username, hostname, m_Host ), m_Realname, false);
+	/* This will part a channel with 'reason' as the reason for parting
+	*/
+	writeMessage("PART", channel, reason);
 }
 
-void Engine::changeUser(const QString &newUsername, Q_UINT8 mode, const QString &newRealname)
+void Engine::part(const Message &msg)
 {
-	/* RFC2812: "<user> <mode> <unused> <realname>"
-	 * mode is a numeric value (from a bit mask).
-	 * 0x00 normal
-	 * 0x04 request +w
-	 * 0x08 request +i */
-	m_Username = newUsername;
-	m_Realname = newRealname;
-
-	writeMessage("USER", join(m_Username, QString::number(mode), QChar('*') ), m_Realname, false);
+	/* This signal emits when a user parts a channel
+	* "<channel> *( "," <channel> ) [ <Part Message> ]"
+	*/
+	kdDebug(14120) << "User parting" << endl;
+	emit incomingPartedChannel(msg.arg(0), msg.nickFromPrefix(), msg.suffix());
 }
 
-void Engine::quitIRC(const QString &reason, bool now)
+void Engine::ping(const Message &msg)
+{
+	writeMessage("PONG", msg.arg(0), msg.suffix(), false);
+}
+
+void Engine::pong(const Message &/*msg*/)
+{
+}
+
+void Engine::quit(const QString &reason, bool now)
 {
 	kdDebug(14120) << k_funcinfo << reason << endl;
 
@@ -145,87 +212,50 @@ void Engine::quitTimeout()
 	}
 }
 
-bool Engine::quitIRC(const Message &msg)
+void Engine::quit(const Message &msg)
 {
 	/* This signal emits when a user quits irc.
 	 */
 	kdDebug(14120) << "User quiting" << endl;
 	emit incomingQuitIRC(msg.prefix(), msg.suffix());
-	return true;
 }
 
-void Engine::joinChannel(const QString &name, const QString &key)
+void Engine::user(const QString &newUsername, const QString &hostname, const QString &newRealname)
 {
-	if ( !key.isNull() )
-		writeMessage("JOIN", join( name, key ) );
-	else
-		writeMessage("JOIN", name);
+	/* RFC1459: "<username> <hostname> <servername> <realname>"
+	* The USER command is used at the beginning of connection to specify
+	* the username, hostname and realname of a new user.
+	* hostname is usualy set to "127.0.0.1" */
+	m_Username = newUsername;
+	m_Realname = newRealname;
+
+	writeMessage("USER", QStringList(m_Username) << hostname << m_Host, m_Realname, false);
 }
 
-bool Engine::joinChannel(const Message &msg)
+void Engine::user(const QString &newUsername, Q_UINT8 mode, const QString &newRealname)
 {
-	/* RFC say: "( <channel> *( "," <channel> ) [ <key> *( "," <key> ) ] ) / "0""
-	 * suspected: ":<channel> *(" "/"," <channel>)"
-	 * assumed ":<channel>"
-	 * This is the response of someone joining a channel.
-	 * Remember that this will be emitted when *you* /join a room for the first time */
+	/* RFC2812: "<user> <mode> <unused> <realname>"
+	* mode is a numeric value (from a bit mask).
+	* 0x00 normal
+	* 0x04 request +w
+	* 0x08 request +i */
+	m_Username = newUsername;
+	m_Realname = newRealname;
 
-	if (msg.argsSize()==1)
-		emit incomingJoinedChannel(msg.arg(0), msg.nickFromPrefix());
-	else
-		emit incomingJoinedChannel(msg.suffix(), msg.nickFromPrefix());
-
-	return true;
+	writeMessage("USER", QStringList(m_Username) << QString::number(mode) << QChar('*'), m_Realname, false);
 }
 
-void Engine::partChannel(const QString &channel, const QString &reason)
-{
-	/* This will part a channel with 'reason' as the reason for parting
-	 */
-	writeMessage("PART", channel, reason);
-}
-
-bool Engine::partChannel(const Message &msg)
-{
-	/* This signal emits when a user parts a channel
-	 * "<channel> *( "," <channel> ) [ <Part Message> ]"
-	 */
-	kdDebug(14120) << "User parting" << endl;
-	emit incomingPartedChannel(msg.arg(0), msg.nickFromPrefix(), msg.suffix());
-	return true;
-}
-
-void Engine::changeMode(const QString &target, const QString &mode)
-{
-	writeMessage("MODE", join( target, mode ) );
-}
-
-bool Engine::modeChange(const Message &msg)
-{
-	/* Change the mode of a user.
-	 * "<nickname> *( ( "+" / "-" ) *( "i" / "w" / "o" / "O" / "r" ) )"
-	 */
-	QStringList args = msg.args();
-	args.pop_front();
-	if( Entity::isChannel( msg.arg(0) ) )
-		emit incomingChannelModeChange( msg.arg(0), msg.nickFromPrefix(), args.join(" "));
-	else
-		emit incomingUserModeChange( msg.nickFromPrefix(), args.join(" "));
-	return true;
-}
-
-void Engine::setTopic(const QString &channel, const QString &topic)
+void Engine::topic(const QString &channel, const QString &topic)
 {
 	writeMessage("TOPIC", channel, topic);
 }
 
-bool Engine::topicChange(const Message &msg)
+void Engine::topic(const Message &msg)
 {
 	/* The topic of a channel changed. emit the channel, new topic, and the person who changed it.
 	 * "<channel> [ <topic> ]"
 	 */
 	emit incomingTopicChange(msg.arg(0), msg.nickFromPrefix(), msg.suffix());
-	return true;
 }
 
 void Engine::list()
@@ -238,27 +268,13 @@ void Engine::motd(const QString &server)
 	writeMessage("MOTD", server);
 }
 
-void Engine::kickUser(const QString &user, const QString &channel, const QString &reason)
-{
-	writeMessage("KICK", join( channel, user, reason ) );
-}
-
-bool Engine::kick(const Message &msg)
-{
-	/* The given user is kicked.
-	 * "<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]"
-	 */
-	emit incomingKick( msg.arg(0), msg.nickFromPrefix(), msg.arg(1), msg.suffix());
-	return true;
-}
-
 //void Engine::sendPrivateMessage(const QString &contact, const QString &message)
-void Engine::messageContact(const QString &contact, const QString &message)
+void Engine::privmsg(const QString &contact, const QString &message)
 {
 	writeMessage("PRIVMSG", contact, message);
 }
 
-bool Engine::privateMessage(const Message &msg)
+void Engine::privmsg(const Message &msg)
 {
 	/* This is a signal that indicates there is a new message.
 	 * This can be either from a channel or from a specific user. */
@@ -276,70 +292,25 @@ bool Engine::privateMessage(const Message &msg)
 
 	if( msg.hasCtcpMessage() )
 	{
-		invokeCtcpCommandOfMessage(msg, m_IrcCTCPQueryMethods);
+		invokeCtcpCommandOfMessage(m_ctcpQueries, msg);
 	}
-
-	return true;
 }
 
-void Engine::sendNotice(const QString &target, const QString &message)
+void Engine::notice(const QString &target, const QString &message)
 {
 	writeMessage("NOTICE", target, message);
 }
 
-bool Engine::notice(const Message &msg)
+void Engine::notice(const Message &msg)
 {
 	if(!msg.suffix().isEmpty())
 		emit incomingNotice(msg.prefix(), msg.suffix());
 
 	if(msg.hasCtcpMessage())
-		invokeCtcpCommandOfMessage(msg, m_IrcCTCPReplyMethods);
-
-	return true;
+		invokeCtcpCommandOfMessage(m_ctcpReplies, msg);
 }
 
 void Engine::whoisUser(const QString &user)
 {
 	writeMessage("WHOIS", user);
-}
-
-bool Engine::ping(const Message &msg)
-{
-	writeMessage("PONG", msg.arg(0), msg.suffix(), false);
-	return true;
-}
-
-bool Engine::pong(const Message &/*msg*/)
-{
-	return true;
-}
-
-void Engine::setAway(bool isAway, const QString &awayMessage)
-{
-	if(isAway)
-		if( !awayMessage.isEmpty() )
-			writeMessage("AWAY", QString::null, awayMessage);
-		else
-			writeMessage("AWAY", QString::null, QString::fromLatin1("I'm away."));
-	else
-		writeMessage("AWAY", QString::null);
-}
-
-void Engine::isOn(const QStringList &nickList)
-{
-	if (!nickList.isEmpty())
-	{
-		QString statement = QString::fromLatin1("ISON");
-		for (QStringList::ConstIterator it = nickList.begin(); it != nickList.end(); ++it)
-		{
-			if ((statement.length()+(*it).length())>509) // 512(max buf)-2("\r\n")-1(<space separator>)
-			{
-				writeMessage(statement);
-				statement = QString::fromLatin1("ISON ") +  (*it);
-			}
-			else
-				statement.append(QChar(' ') + (*it));
-		}
-		writeMessage(statement);
-	}
 }

@@ -28,52 +28,51 @@
 namespace KIRC
 {
 
+class Engine;
+
 class Entity
 	: public QObject
 {
 	Q_OBJECT
 
 public:
-/*
-	enum Type
+	typedef enum Type
 	{
 		Unknown,
 		Server,
 		Channel,
+		Service,
 		User
 	};
-*/
 
-	Entity( const QString &name )
-		: m_name(name)
-		{  }
+	Entity(KIRC::Engine *engine,const QString &name, const Type type = Unknown);
 
-	inline QString name() const
-		{ return m_name; }
+	QString name() const;
+	QString host() const;
 
-	inline QString userNick() const
-		{ return userNick(m_name); }
-	static QString userNick(const QString &s)
-		{ return userInfo(s, 1); }
+	KIRC::Entity::Type type() const;
+	KIRC::Entity::Type guessType();
+	static KIRC::Entity::Type guessType(const QString &name);
 
-	inline QString userName() const
-		{ return userName(m_name); }
-	inline static QString userName(const QString &s)
-		{ return userInfo(s, 2); }
-
-	inline QString userHost() const
-		{ return userHost(m_name); }
-	inline static QString userHost(const QString &s)
-		{ return userInfo(s, 3); }
-
+	// FIXME: Remove these is* functions ... They are duplicate with the ::guessType(const QString&)
 	inline static bool isUser( const QString &s )
 		{ return sm_userRegExp.exactMatch(s); };
-
 	inline bool isChannel()
 		{ return isChannel(m_name); };
-
 	inline static bool isChannel( const QString &s )
 		{ return sm_channelRegExp.exactMatch(s); };
+
+	QString userNick() const;
+	static QString userNick(const QString &s);
+
+	QString userName() const;
+	static QString userName(const QString &s);
+
+	QString userHost() const;
+	static QString userHost(const QString &s);
+
+
+
 
 	inline KNetwork::KResolver::StatusCodes resolverStatus()
 		{ return (KNetwork::KResolver::StatusCodes)getResolver()->status(); }
@@ -86,14 +85,16 @@ public:
 signals:
 	void resolverResults(KNetwork::KResolverResults);
 
-protected:
-	static QString userInfo(const QString &s, int num_cap);
+private:
 	KNetwork::KResolver *getResolver();
 
-private:
+	static QString userInfo(const QString &s, int num_cap);
+
 	static const QRegExp sm_userRegExp;
+	static const QRegExp sm_userStrictRegExp;
 	static const QRegExp sm_channelRegExp;
 
+	KIRC::Entity::Type m_type;
 	QString	m_name;
 
 	// peer ip address if the entity is a User.
