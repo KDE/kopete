@@ -15,6 +15,7 @@
 GaduPreferences::GaduPreferences( const QString& pixmap, QObject* parent )
     : ConfigModule( i18n("Gadu Plugin"), i18n("Gadu Gadu"), pixmap, parent )
 {
+    uin_ = 0;
     ( new QVBoxLayout( this ) )->setAutoAdd( true );
     prefDialog_ = new gaduPrefsUI( this );
 
@@ -38,6 +39,9 @@ GaduPreferences::save()
     config->writeEntry("Password", prefDialog_->passwordEdit_->text());
     config->writeEntry("Nick", prefDialog_->nicknameEdit_->text());
     config->sync();
+    
+    uin_ = prefDialog_->uinEdit_->text().toUInt();
+    password_ = prefDialog_->passwordEdit_->text();
 
     emit saved();
 }

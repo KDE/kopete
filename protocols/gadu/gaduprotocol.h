@@ -95,9 +95,6 @@ public slots:
     void slotGoAway();
     void slotGoBusy();
 
-signals:
-    void settingsChanged();
-
 protected slots:
     void error( const QString& title, const QString& message );
     void messageReceived( struct gg_event* );
@@ -112,6 +109,9 @@ protected slots:
     void userlist( const QStringList& );
     void pingServer();
 
+private slots:
+    void settingsChanged();
+    
 private:
     void initConnections();
     void initIcons();

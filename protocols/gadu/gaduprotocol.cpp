@@ -54,7 +54,7 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
 
     statusBarIcon_ = new StatusBarIcon();
     prefs_ = new GaduPreferences( "gadu_protocol", this );
-    connect( prefs_, SIGNAL(saved()), this, SIGNAL(settingsChanged()) );
+    connect( prefs_, SIGNAL(saved()), this, SLOT(settingsChanged()) );
 
     initIcons();
     initActions();
@@ -135,6 +135,11 @@ GaduProtocol::initConnections()
 
 }
 
+void GaduProtocol::settingsChanged()
+{
+    userUin_ = prefs_->uin();
+    password_ = prefs_->password();
+}
 
 GaduProtocol*
 GaduProtocol::protocol()

@@ -34,10 +34,14 @@ public:
     ~GaduPreferences();
 
     virtual void save();
+    const QString password() { return password_; };
+    const Q_UINT32 uin() { return uin_; };
 signals:
     void saved();
 private:
     gaduPrefsUI *prefDialog_;
+    QString password_;
+    Q_UINT32 uin_;
 };
 
 
