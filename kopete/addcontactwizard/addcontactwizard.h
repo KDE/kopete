@@ -71,7 +71,7 @@ protected slots:
 	 * Utility function, populates the addressee list
 	 */
 	void slotLoadAddressees();
-	void slotDataValid(bool bOn);
+	void slotDataValid( AddContactPage *onPage, bool bOn);
 };
 
 #endif

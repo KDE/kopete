@@ -53,7 +53,7 @@ signals:
 	/**
 	 * New incarnation of validateData, emit it everytime you think the current data is valid/invalid
 	 */
-	void dataValid(bool);
+	void dataValid( AddContactPage *, bool);
 };
 
 #endif

@@ -321,7 +321,7 @@ void ICQAddContactPage::slotSelectionChanged()
 	{
 		valid = false;
 	}
-	emit dataValid(valid);
+	emit dataValid( this, valid);
 }
 
 #include "icqaddcontactpage.moc"

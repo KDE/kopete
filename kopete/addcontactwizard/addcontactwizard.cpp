@@ -140,15 +140,9 @@ void AddContactWizard::slotLoadAddressees()
 void AddContactWizard::slotAddAddresseeClicked()
 {
 	// Pop up add addressee dialog
-#if KDE_IS_VERSION (3,1,90)
 	QString addresseeName = KInputDialog::getText( i18n( "New Address Book Entry" ),
 												   i18n( "Name the new entry:" ),
 												   QString::null, 0, this );
-#else
-	QString addresseeName = KLineEditDlg::getText( i18n( "New Address Book Entry" ),
-												   i18n( "Name the new entry:" ),
-												   QString::null, 0, this );
-#endif
 
 	if ( !addresseeName.isEmpty() )
 	{
@@ -227,7 +221,7 @@ void AddContactWizard::slotProtocolListClicked( QListViewItem *)
 			break;
 		}
 	}
-
+	kdDebug( 0 ) << k_funcinfo << "setting next enabled: " << oneIsChecked << endl;
 	setNextEnabled(selectService, oneIsChecked);
 }
 
@@ -325,8 +319,9 @@ void AddContactWizard::next()
 				if (!addPage)
 					continue;
 
-				connect(addPage, SIGNAL(dataValid(bool)),
-					this, SLOT(slotDataValid(bool)));
+				connect(addPage, SIGNAL(dataValid( AddContactPage *, bool )),
+					this, SLOT( slotDataValid( AddContactPage *, bool )));
+				kdDebug( 14000 ) << k_funcinfo << "Connected slotDataValid" << endl;
 				addPage->show();
 
 				insertPage( addPage, i18n( "The account name is prepended here",
@@ -335,6 +330,7 @@ void AddContactWizard::next()
 			}
 		}
 		QWizard::next();
+		kdDebug( 14000 ) << k_funcinfo << "On next page after selectService" << endl;
 		return;
 	}
 
@@ -358,6 +354,8 @@ void AddContactWizard::showPage( QWidget *page )
 {
 	if ( page == intro )
 	{
+		// make sure the first page's Next is always enabled
+		setNextEnabled( page, true);
 		if ( chkAddressee->isChecked() && addresseeListView->firstChild() == 0 ) // We must check this as we might be showing this page because the back button was pressed
 		{
 			// Get a reference to the address book
@@ -374,9 +372,11 @@ void AddContactWizard::showPage( QWidget *page )
 	QWizard::showPage( page );
 }
 
-void AddContactWizard::slotDataValid(bool bOn)
+void AddContactWizard::slotDataValid(AddContactPage *onPage, bool bOn)
 {
-	setNextEnabled(currentPage(), bOn);
+	// some plugins emit dataValid when they are not visible.
+	// so we need to enable the page which is signalling, not just the current page
+	setNextEnabled( onPage, bOn);
 }
 
 

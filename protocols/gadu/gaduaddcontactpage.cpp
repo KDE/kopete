@@ -64,7 +64,7 @@ GaduAddContactPage::showEvent( QShowEvent* e )
 void
 GaduAddContactPage::slotUinChanged( const QString & )
 {
-	emit dataValid( validateData() );
+	emit dataValid( this, validateData() );
 }
 
 bool
