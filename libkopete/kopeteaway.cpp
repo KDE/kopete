@@ -134,10 +134,11 @@ Kopete::Away::Away() : QObject( kapp , "Kopete::Away")
 	/* Load the saved away messages */
 	config->setGroup("Away Messages");
 
-	/*
-	* Old config format
-	*/
-	if(config->hasKey("Titles"))
+	if(config->hasKey("Messages"))
+	{
+		d->awayMessageList = config->readListEntry("Messages");
+	}
+	else if(config->hasKey("Titles"))  // Old config format
 	{
 		QStringList titles = config->readListEntry("Titles");  // Get the titles
 		for(QStringList::iterator i = titles.begin(); i != titles.end(); ++i)
@@ -147,10 +148,6 @@ Kopete::Away::Away() : QObject( kapp , "Kopete::Away")
 
 		/* Save this list to disk */
 		save();
-	}
-	else if(config->hasKey("Messages"))
-	{
-		d->awayMessageList = config->readListEntry("Messages");
 	}
 	else
 	{
