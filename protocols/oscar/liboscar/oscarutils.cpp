@@ -17,6 +17,7 @@
 */
 
 #include "oscarutils.h"
+#include <qhostaddress.h>
 #include <kapplication.h>
 #include <kdebug.h>
 
@@ -251,40 +252,24 @@ const QString Oscar::capName( int capNumber )
 
 DWORD Oscar::getNumericalIP(const QString &address)
 {
-	QString a=address.simplifyWhiteSpace();
+        QHostAddress addr;
 	
-	QStringList ipv4Addr=QStringList::split(".", a, FALSE);
-	if (ipv4Addr.count() == 4)
+	if (addr.setAddress(address)==false)
 	{
-		unsigned long newAddr=0;
-		int i=0;
-		bool ok=true;
-		while (ok && i < 4)
-		{
-			unsigned long value=ipv4Addr[i].toUInt(&ok);
-			if (value > 255)
-				ok=false;
-			if (ok)
-				newAddr=newAddr * 256 + value;
-			i++;
-		}
-		if (ok)
-			return newAddr;
+		return 0;
 	}
-	return 0;
+
+	return (DWORD)addr.toIPv4Address();
+
 }
 
 QString Oscar::getDottedDecimal( DWORD address )
 {
-	QString a;
-	a = QString::number( (address & 0xff000000) >> 24 );
-	a += ".";
-	a += QString::number( ( address & 0x00FF0000 ) >> 16 );
-	a += ".";
-	a += QString::number( ( address & 0x0000FF00 ) >> 8);
-	a += ".";
-	a += QString::number( address & 0x000000FF );
-	return a;
+	QHostAddress addr;
+
+	addr.setAddress((Q_UINT32)address);
+	
+	return addr.toString();
 }
 
 	
