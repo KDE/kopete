@@ -54,9 +54,6 @@ public:
 	// a plugin
 	QMap<KPluginInfo *, Kopete::Plugin *> loadedPlugins;
 
-	// The list of all address book keys used by each plugin
-	QMap<Kopete::Plugin *, QStringList> addressBookFields;
-
 	// The plugin manager's mode. The mode is StartingUp until loadAllPlugins()
 	// has finished loading the plugins, after which it is set to Running.
 	// ShuttingDown and DoneShutdown are used during Kopete shutdown by the
@@ -327,8 +324,6 @@ Kopete::Plugin *Kopete::PluginManager::loadPluginInternal( const QString &plugin
 		connect( plugin, SIGNAL( destroyed( QObject * ) ), this, SLOT( slotPluginDestroyed( QObject * ) ) );
 		connect( plugin, SIGNAL( readyForUnload() ), this, SLOT( slotPluginReadyForUnload() ) );
 
-		d->addressBookFields.insert( plugin, plugin->addressBookFields() );
-
 		kdDebug( 14010 ) << k_funcinfo << "Successfully loaded plugin '" << pluginId << "'" << endl;
 
 		emit pluginLoaded( plugin );
@@ -385,8 +380,6 @@ bool Kopete::PluginManager::unloadPlugin( const QString &spec )
 
 void Kopete::PluginManager::slotPluginDestroyed( QObject *plugin )
 {
-	d->addressBookFields.remove( static_cast<Kopete::Plugin *>( plugin ) );
-
 	QMap<KPluginInfo *, Kopete::Plugin *>::Iterator it;
 	for ( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
 	{
@@ -403,14 +396,6 @@ void Kopete::PluginManager::slotPluginDestroyed( QObject *plugin )
 		// been handled first
 		QTimer::singleShot( 0, this, SLOT( slotShutdownDone() ) );
 	}
-}
-
-QStringList Kopete::PluginManager::addressBookFields( Kopete::Plugin *p ) const
-{
-	if ( d->addressBookFields.contains( p ) )
-		return d->addressBookFields[ p ];
-	else
-		return QStringList();
 }
 
 Kopete::Plugin* Kopete::PluginManager::plugin( const QString &_pluginId ) const

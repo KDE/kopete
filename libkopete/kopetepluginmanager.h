@@ -106,15 +106,6 @@ public:
 	bool unloadPlugin( const QString &pluginName );
 
 	/**
-	 * @brief Retrieve all registered address book fields for a given plugin.
-	 *
-	 * @return A QStringList object containing all the address book fields
-	 * available to the plugin.
-	 * @return An empty QStringList if the plugin is invalid.
-	 */
-	QStringList addressBookFields( Plugin *p ) const;
-
-	/**
 	 * @brief Retrieve the name of the icon for a @ref Kopete::Plugin.
 	 *
 	 * @return An empty string if the given plugin is not loaded
