@@ -523,16 +523,14 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 		if ( !photoImg.isNull() && (photoImg.width() > 0) &&  (photoImg.height() > 0) )
 		{
 			int photoSize = d->photoSize;
-			float ratio = float(photoImg.width())/float(photoImg.height());
-			int newsize =int(float(photoSize*ratio));
 			
 			if ( photoImg.width() > photoImg.height() )
 			{
-				photoImg = photoImg.smoothScale( photoSize, newsize );
+				photoImg = photoImg.smoothScale( photoSize, photoSize * photoImg.height() / photoImg.width() ) ;
 			}
 			else
 			{
-				photoImg = photoImg.smoothScale( newsize, photoSize );
+				photoImg = photoImg.smoothScale( photoSize *  photoImg.width() / photoImg.height() , photoSize );
 			}
 			
 			KImageEffect *effect = 0L;
