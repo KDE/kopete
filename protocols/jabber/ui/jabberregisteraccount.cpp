@@ -121,7 +121,7 @@ void JabberRegisterAccount::validateData ()
 
 	if ( mMainWidget->leServer->text().isEmpty () )
 	{
-		mMainWidget->lblStatusMessage->setText ( i18n ( "Please enter a server name." ) );
+		mMainWidget->lblStatusMessage->setText ( i18n ( "Please enter a server name, or click Choose." ) );
 		mMainWidget->pixServer->setPixmap ( hintPixmap );
 		valid = false;
 	}
@@ -187,7 +187,7 @@ void JabberRegisterAccount::slotJIDInformation ()
 		 ( mMainWidget->leJID->text().section ( "@", 1 ) != mMainWidget->leServer->text () ) ) )
 	{
 		mMainWidget->lblJIDInformation->setText ( i18n ( "Unless you know what you are doing, your JID should be of the form "
-														 "\"user@server.com\", in your case for example \"user@%1\"." ).
+														 "\"<i>username</i>@server.com\".  In your case for example \"<i>username</i>@%1\"." ).
 													arg ( mMainWidget->leServer->text () ) );
 	}
 	else
@@ -453,6 +453,13 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 		mMainWidget->lePasswordVerify->setEnabled ( false );
 		mMainWidget->sbPort->setEnabled ( false );
 		mMainWidget->cbUseSSL->setEnabled ( false );
+
+		// disable input widget labels
+		mMainWidget->lblServer->setEnabled ( false );
+		mMainWidget->lblJID->setEnabled ( false );
+		mMainWidget->lblPassword->setEnabled ( false );
+		mMainWidget->lblPasswordVerify->setEnabled ( false );
+		mMainWidget->lblPort->setEnabled ( false );
 
 		mSuccess = true;
 
