@@ -351,6 +351,10 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 		if( currentGroups.contains( group ) && !newGroups.contains( group ) )
 			removeFromGroup( group );
 	}
+
+	//the aboutToSave signal is disconnected from "old" , but it still contains
+	//cached data in it, then, i serialize the old contact for removing old data
+	protocol()->slotMetaContactAboutToSave(old);
 }
 
 KopeteContact::MetaContactListViewItem::MetaContactListViewItem(KopeteMetaContact *m, QListView *p)
