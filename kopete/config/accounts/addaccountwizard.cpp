@@ -65,6 +65,8 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 		m_protocolItems.insert( pluginItem, ( *it ) );
 	}
 
+	m_protocolItems.setAutoDelete( TRUE );
+
 	if ( protocols.count() == 1 )
 	{
 		pluginItem->setSelected( true );
@@ -85,6 +87,10 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 
 AddAccountWizard::~AddAccountWizard()
 {
+	delete m_intro;
+	delete m_selectService;
+	delete m_finish;
+
 	//kdDebug( 14100 ) << k_funcinfo << endl;
 }
 
@@ -118,6 +124,8 @@ void AddAccountWizard::accept()
 	}
 
 	KWizard::accept();
+	
+	deleteLater();
 }
 
 void AddAccountWizard::reject()
@@ -133,6 +141,8 @@ void AddAccountWizard::reject()
 	}
 
 	KWizard::reject();
+
+	deleteLater();
 }
 
 void AddAccountWizard::back()
