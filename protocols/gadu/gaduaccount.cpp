@@ -685,37 +685,6 @@ GaduAccount::userlist( const QString& contactsListString )
 		}
 		else {
 			contactName = GaduContact::findBestContactName( &contactsList[i] );
-			/*
-			if ( contactsList[i].displayname.length() ) {
-				contactName = contactsList[i].displayname;
-			}
-			else {
-				// no name either
-				if ( contactsList[i].nickname.isNull() ) {
-					// maybe we can use fistname + surname ?
-					if ( contactsList[i].firstname.isNull() && contactsList[i].surname.isNull() ) {
-						contactName = contactsList[i].uin;
-					}
-					// what a shame, i have to use UIN than :/
-					else {
-						if ( contactsList[i].firstname.isNull() ) {
-							contactName = contactsList[i].surname;
-						}
-						else {
-							if ( contactsList[i].surname.isNull() ) {
-								contactName = contactsList[i].firstname;
-							}
-							else {
-								contactName = contactsList[i].firstname+" "+contactsList[i].surname;
-							}
-						}
-					}
-				}
-				else {
-					contactName = contactsList[i].nickname;
-				}
-			}
-*/
 			bool s = addContact( contactsList[i].uin, contactName, 0L, KopeteAccount::DontChangeKABC, QString::null, false );
 			if ( s == false ) {
 				kdDebug(14100) << "There was a problem adding UIN "<< contactsList[i].uin << "to users list" << endl;
