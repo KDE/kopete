@@ -168,6 +168,10 @@ void JabberContact::rename ( const QString &newName )
 		return;
 	}
 
+	// we can't rename a contact without meta contact (FIXME! libkopete issue)
+	if ( !metaContact() )
+		return;
+
 	// only forward change if this is not a temporary contact
 	if ( !metaContact()->isTemporary () )
 	{
@@ -324,7 +328,7 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Updating vCard for " << contactId () << endl;
 
 	// update vCard cache timestamp if this is not a temporary contact
-	if ( !metaContact()->isTemporary () )
+	if ( metaContact() && !metaContact()->isTemporary () )
 	{
 		setProperty ( protocol()->propVCardCacheTimeStamp, QDateTime::currentDateTime().toString ( Qt::ISODate ) );
 	}
@@ -336,7 +340,7 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 	 */
 	if ( !vCard.nickName().isEmpty () )
 	{
-		if ( metaContact()->displayName () == contactId () )
+		if ( metaContact() && metaContact()->displayName () == contactId () )
 		{
 			/*
 			 * Set the alias to the nick, as no alias

@@ -4,8 +4,6 @@ TODO for Jabber:
 - support all message types (chat/ticker/etc)
 - add a button for server defaults
 - port dialogs to KDialogBase
-- in slotGotVCard() there's a change nickname method, check that it does not
-  collide with "rename contact" (change alias) -> disabled for now
 - support different icons for contacts from servers with broken connections etc.
 - show (i.e. with a QToolTip) the subscription status: both, to, from
 - add "querying..." feedback while waiting for vCard

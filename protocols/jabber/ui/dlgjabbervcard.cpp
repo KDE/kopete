@@ -39,7 +39,9 @@
 #include "xmpp_tasks.h"
 
 #include "jabberprotocol.h"
+#include "jabbercontact.h"
 #include "jabberaccount.h"
+#include "jabbercontactpool.h"
 #include "jabberbasecontact.h"
 #include "dlgvcard.h"
 
@@ -109,6 +111,13 @@ void dlgJabberVCard::slotGotVCard()
 	}
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Got vCard for user " << vCard->jid ().userHost () << ", displaying." << endl;
+
+	// update the contact first
+	JabberContact *contact = dynamic_cast<JabberContact *> ( m_account->contactPool()->findExactMatch ( XMPP::Jid ( m_jid ) ) );
+	if ( contact )
+	{
+		contact->setPropertiesFromVCard ( vCard->vcard () );
+	}
 
 	assignVCard(vCard->vcard());
 
@@ -226,7 +235,7 @@ void dlgJabberVCard::assignVCard (const XMPP::VCard &vCard)
 void dlgJabberVCard::slotSaveNickname ()
 {
 
-	JabberBaseContact *jc = static_cast<JabberBaseContact *>(m_account->contacts()[m_jid]);
+	JabberBaseContact *jc = m_account->contactPool()->findExactMatch ( XMPP::Jid ( m_jid ) );
 
 	if(!jc)
 	{
