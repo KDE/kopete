@@ -281,10 +281,13 @@ void KopeteAccountManager::slotPluginLoaded( KopetePlugin *plugin )
 
 void KopeteAccountManager::autoConnect()
 {
-	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
+	QPtrListIterator<KopeteAccount> it( m_accounts );
+	KopeteAccount *account;
+	while ( ( account = it.current() ) != 0 )
 	{
-		if(i->autoLogin())
-			i->connect();
+		++it;
+		if( account->autoLogin() )
+			account->connect();
 	}
 }
 
