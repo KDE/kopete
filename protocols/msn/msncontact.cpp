@@ -85,10 +85,14 @@ bool MSNContact::isReachable()
 {
 	// When we are invisible we can't start a chat with others, make isReachable return false
 	// (This is an MSN limitation, not a problem in Kopete)
-	if ( account()->isConnected() && isOnline() && account()->myself()->onlineStatus() != MSNProtocol::protocol()->HDN )
+/*	if ( account()->isConnected() && isOnline() && account()->myself()->onlineStatus() != MSNProtocol::protocol()->HDN )
 		return true;
 	else
-		return false;
+		return false;*/
+		
+		
+	//fuck stupid restriction.  we can't know if a contact is not reachable without try to start a chat.
+	return true;
 }
 
 KopeteMessageManager *MSNContact::manager( bool canCreate )
