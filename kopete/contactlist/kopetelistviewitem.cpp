@@ -586,7 +586,12 @@ public:
 	static const int visibilityFadeSteps = 0;
 #endif
 	static const int visibilityStepsTotal = visibilityFoldSteps + visibilityFadeSteps;
+	static bool animateChanges;
+	static bool fadeVisibility;
 };
+
+bool Item::Private::animateChanges = true;
+bool Item::Private::fadeVisibility = true;
 
 Item::Item( QListViewItem *parent, QObject *owner, const char *name )
  : QObject( owner, name ), KListViewItem( parent ), d( new Private )
@@ -603,6 +608,12 @@ Item::Item( QListView *parent, QObject *owner, const char *name )
 Item::~Item()
 {
 	delete d;
+}
+
+void Item::setEffects( bool animation, bool fading )
+{
+	Private::animateChanges = animation;
+	Private::fadeVisibility = fading;
 }
 
 void Item::initLVI()
@@ -647,15 +658,15 @@ void Item::slotLayoutItems()
 		//kdDebug(14000) << k_funcinfo << "Component " << n << " is " << width << " x " << height << endl;
 	}
 
-	setHeight(0);
-	repaint();
-
-	if ( !d->layoutAnimateTimer.isActive() )
-		d->layoutAnimateTimer.start( 10 );
-	d->layoutAnimateSteps = -1;
-	if ( !d->animateLayout )
+	if ( Private::animateChanges && d->animateLayout )
 	{
-		d->layoutAnimateSteps += Private::layoutAnimateStepsTotal;
+		if ( !d->layoutAnimateTimer.isActive() )
+			d->layoutAnimateTimer.start( 10 );
+		d->layoutAnimateSteps = -1;
+	}
+	else
+	{
+		d->layoutAnimateSteps = Private::layoutAnimateStepsTotal;
 		d->animateLayout = true;
 	}
 	slotLayoutAnimateItems();
@@ -663,11 +674,11 @@ void Item::slotLayoutItems()
 
 void Item::slotLayoutAnimateItems()
 {
-	if ( ++d->layoutAnimateSteps == Private::layoutAnimateStepsTotal )
+	if ( ++d->layoutAnimateSteps >= Private::layoutAnimateStepsTotal )
 		d->layoutAnimateTimer.stop();
 
 	const int s = Private::layoutAnimateStepsTotal;
-	const int p = d->layoutAnimateSteps;
+	const int p = QMIN( d->layoutAnimateSteps, s );
 
 	updateAnimationPosition( p, s );
 	setHeight(0);
@@ -693,6 +704,13 @@ bool Item::targetVisibility()
 
 void Item::setTargetVisibility( bool vis )
 {
+	// disable if user wants it disabled
+	if ( !Private::fadeVisibility )
+	{
+		setVisible( vis );
+		return;
+	}
+
 	if ( d->visibilityTarget == vis )
 	{
 		// in case we're getting called because our parent was shown and

@@ -267,6 +267,13 @@ public:
 	bool targetVisibility();
 	void setTargetVisibility( bool vis );
 
+	/**
+	 * Turn on and off certain visual effects for all Items.
+	 * @param animation whether changes to items should be animated.
+	 * @param fading whether requests to setTargetVisibility should be honoured.
+	 */
+	static void setEffects( bool animation, bool fading );
+
 protected:
 	void componentAdded( Component *component );
 	void componentRemoved( Component *component );
