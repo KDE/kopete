@@ -511,7 +511,6 @@ QDomElement Message::contactNode( QDomDocument doc, const Contact *contact )
 		{
 			d->photoFile = KTempFile( locateLocal("tmp", QString::fromLatin1("tmpimage-")), QString::fromLatin1("png") );
 			d->photoFile.setAutoDelete( true );
-			d->photoFile.close();
 			photo.save ( d->photoFile.name(), "PNG" );
 			contactNode.setAttribute( QString::fromLatin1("userPhoto"), QStyleSheet::escape( d->photoFile.name() ) );
 		}
