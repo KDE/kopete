@@ -27,7 +27,7 @@
  *
  * @class KopeteAwayConfigUI kopeteawayconfigui.h
  *
- * This class represents the interface in the User Preference ConfigModule
+ * This class represents the interface in the User Preference KCM
  * for configuring Away Messages
  */
 class KopeteAwayConfigUI : public KopeteAwayConfigBaseUI
