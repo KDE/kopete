@@ -104,18 +104,28 @@ void Kopete::slotLoadPlugins()
 	KopeteContactList::contactList()->load();
 
 	KConfig *config = KGlobal::config();
-	config->setGroup( "" );
 
 	// Parse command-line arguments
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
 	bool showConfigDialog = false;
 
+	// --noplugins specified?
+	if ( !args->isSet( "plugins" ) )
+	{
+		config->deleteGroup( "Plugins", true );
+	}
+	else if( !config->hasGroup( "Plugins" ) )
+	{
+		showConfigDialog = true;
+	}
+
+	config->setGroup( "Plugins" );
+
 	// Listen to arguments
 	if ( args->count() > 0 )
 	{
-		config->setGroup( "Plugins" );
-
+		showConfigDialog = false;
 		for ( int i = 0; i < args->count(); i++ )
 		{
 			QString argument = args->arg(i);
@@ -130,6 +140,7 @@ void Kopete::slotLoadPlugins()
 	QCStringList disableArgs = args->getOptionList( "disable" );
 	for ( QCStringList::ConstIterator i = disableArgs.begin(); i != disableArgs.end(); ++i )
 	{
+		showConfigDialog = false;
 		QString argument = QString::fromLatin1( *i );
 		if ( !argument.startsWith( "kopete_" ) )
 			argument.prepend( "kopete_" );
@@ -137,29 +148,7 @@ void Kopete::slotLoadPlugins()
 		config->writeEntry( argument + "Enabled", false );
 	}
 
-	// --noplugins specified?
-	if ( !args->isSet( "plugins" ) )
-	{
-		config->deleteGroup( "Plugins", true );
-	}
-	else if( !config->hasGroup( "Plugins" ) )
-	{
-		// No plugins specified. Show the config dialog.
-		// FIXME: Although it's a bit stupid it is theoretically possible that a user
-		//        explicitly configured Kopete to not load plugins on startup. In this
-		//        case we don't want this dialog. We need some other config setting
-		//        like a bool hasRunKopeteBefore or so to trigger the loading of the
-		//        wizard. Maybe using the last run version number is more useful even
-		//        as it also allows for other features. - Martijn
-		// FIXME: Of course this is not a too-good GUI because a first-timer would need
-		//        some kind of "welcome" dialog or wizard. But for now it's better than
-		//        nothing at all. - Martijn
-		// FIXME: Possibly we need to influence the showConfigDialog bool based on the
-		//        command line arguments processed below. But how exactly? - Martijn
-		showConfigDialog = true;
-	}
-
-	config->sync();
+ 	config->sync();
 
 	KopetePluginManager::self()->loadAllPlugins();
 
@@ -207,9 +196,22 @@ void Kopete::slotLoadPlugins()
 		}
 	}
 
-
 	if( showConfigDialog )
+	{
+		// No plugins specified. Show the config dialog.
+		// FIXME: Although it's a bit stupid it is theoretically possible that a user
+		//        explicitly configured Kopete to not load plugins on startup. In this
+		//        case we don't want this dialog. We need some other config setting
+		//        like a bool hasRunKopeteBefore or so to trigger the loading of the
+		//        wizard. Maybe using the last run version number is more useful even
+		//        as it also allows for other features. - Martijn
+		// FIXME: Of course this is not a too-good GUI because a first-timer would need
+		//        some kind of "welcome" dialog or wizard. But for now it's better than
+		//        nothing at all. - Martijn
+		// FIXME: Possibly we need to influence the showConfigDialog bool based on the
+		//        command line arguments processed below. But how exactly? - Martijn
 		PreferencesDialog::preferencesDialog()->show();
+	}
 }
 
 void Kopete::slotMainWindowDestroyed()
