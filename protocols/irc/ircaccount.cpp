@@ -94,7 +94,7 @@ const QString IRCAccount::CONFIG_USERNAME = QString::fromLatin1("UserName");
 const QString IRCAccount::CONFIG_REALNAME = QString::fromLatin1("RealName");
 
 IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QString &autoChan )
-	: Kopete::PasswordedAccount(protocol, accountId, 0, true), autoConnect( autoChan )
+	: Kopete::PasswordedAccount(protocol, accountId, 0, true), autoConnect( autoChan ), commandSource(0)
 {
 	m_manager = 0L;
 	m_channelList = 0L;
@@ -747,6 +747,16 @@ bool IRCAccount::createContact( const QString &contactId, Kopete::MetaContact *m
 void IRCAccount::slotJoinNamedChannel(const QString &chan)
 {
 	contactManager()->findChannel(chan)->startChat();
+}
+
+void IRCAccount::setCurrentCommandSource( Kopete::ChatSession *session )
+{
+	commandSource = session;
+}
+
+Kopete::ChatSession *IRCAccount::currentCommandSource()
+{
+	return commandSource;
 }
 
 void IRCAccount::slotJoinChannel()

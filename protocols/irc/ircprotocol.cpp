@@ -113,12 +113,12 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	m_ChannelStatusOnline(Kopete::OnlineStatus::Online, 80, this, OnlineChannel, QString::null, i18n("Online")),
 	m_ChannelStatusOffline(Kopete::OnlineStatus::Offline, 70, this, OfflineChannel, QString::null, i18n("Offline")),
 
-	m_UserStatusOpVoice(Kopete::OnlineStatus::Online, 60, this, Operator | Voiced, "irc_op", i18n("Op")),
-	m_UserStatusOpVoiceAway(Kopete::OnlineStatus::Away, 55, this, Operator | Voiced | Away, "irc_away", i18n("Away")),
+	m_UserStatusOpVoice(Kopete::OnlineStatus::Online, 60, this, Operator | Voiced, QStringList::split(' ',"irc_voice irc_op"), i18n("Op")),
+	m_UserStatusOpVoiceAway(Kopete::OnlineStatus::Away, 55, this, Operator | Voiced | Away, QStringList::split(' ',"irc_voice irc_op irc_away"), i18n("Away")),
 	m_UserStatusOp(Kopete::OnlineStatus::Online, 50, this, Operator, "irc_op", i18n("Op")),
-	m_UserStatusOpAway(Kopete::OnlineStatus::Away, 45, this, Operator | Away, "irc_away", i18n("Away")),
+	m_UserStatusOpAway(Kopete::OnlineStatus::Away, 45, this, Operator | Away, QStringList::split(' ',"irc_op irc_away"), i18n("Away")),
 	m_UserStatusVoice(Kopete::OnlineStatus::Online, 30, this, Voiced, "irc_voice", i18n("Voice")),
-	m_UserStatusVoiceAway(Kopete::OnlineStatus::Away, 35, this, Voiced | Away, "irc_away",  i18n("Away")),
+	m_UserStatusVoiceAway(Kopete::OnlineStatus::Away, 35, this, Voiced | Away, QStringList::split(' ',"irc_voice irc_away"),  i18n("Away")),
 	m_UserStatusOnline(Kopete::OnlineStatus::Online, 25, this, Online, QString::null, i18n("Online"), i18n("Online"), Kopete::OnlineStatusManager::Online),
 	m_UserStatusAway(Kopete::OnlineStatus::Away, 2, this, Away, "irc_away", i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away),
 	m_UserStatusConnecting(Kopete::OnlineStatus::Connecting, 1, this, Connecting, "irc_connecting", i18n("Connecting")),
@@ -270,8 +270,6 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		this, SLOT( slotViewCreated( KopeteView* ) ) );
 
 	setCapabilities( Kopete::Protocol::RichBFormatting | Kopete::Protocol::RichUFormatting | Kopete::Protocol::RichColor );
-
-	m_commandInProgress = false;
 
 	netConf = 0L;
 
@@ -578,7 +576,7 @@ void IRCProtocol::slotQueryCommand( const QString &args, Kopete::ChatSession *ma
 void IRCProtocol::slotWhoisCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	static_cast<IRCAccount*>( manager->account() )->engine()->whoisUser( args );
-	m_commandInProgress = true;
+	static_cast<IRCAccount*>( manager->account() )->setCurrentCommandSource( manager );
 }
 
 void IRCProtocol::slotWhoCommand( const QString &args, Kopete::ChatSession *manager )
@@ -586,7 +584,7 @@ void IRCProtocol::slotWhoCommand( const QString &args, Kopete::ChatSession *mana
 	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
 	static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage(
 		QString::fromLatin1("WHO %1").arg( argsList.first() ) );
-	m_commandInProgress = true;
+	static_cast<IRCAccount*>( manager->account() )->setCurrentCommandSource( manager );
 }
 
 void IRCProtocol::slotWhoWasCommand( const QString &args, Kopete::ChatSession *manager )
@@ -594,7 +592,7 @@ void IRCProtocol::slotWhoWasCommand( const QString &args, Kopete::ChatSession *m
 	QStringList argsList = Kopete::CommandHandler::parseArguments( args );
 	static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage(
 		QString::fromLatin1("WHOWAS %1").arg( argsList.first() ) );
-	m_commandInProgress = true;
+	static_cast<IRCAccount*>( manager->account() )->setCurrentCommandSource( manager );
 }
 
 void IRCProtocol::slotQuitCommand( const QString &args, Kopete::ChatSession *manager )
