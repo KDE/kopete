@@ -117,7 +117,7 @@ private:
 	void initIcons();
 	void initActions();
 public slots: // Public slots
-	void slotMessageBoxClosing(QString);
+	void slotMessageDialogClosing(QString);
 	void slotIncomingChat(KMSNChatService *, QString);
 
 	void slotSyncContactList();

@@ -407,18 +407,18 @@ void MSNProtocol::slotIncomingChat(KMSNChatService *newboard, QString reqUserID)
 		//QObject::connect( this, SIGNAL(userStateChanged(QString)),
 		//				  messageDialog, SLOT(slotUserStateChanged(QString)) );
 		QObject::connect( messageDialog, SIGNAL(closing(QString)),
-						  this, SLOT(slotmessageDialogClosing(QString)) );
+						  this, SLOT(slotMessageDialogClosing(QString)) );
 
 		mChatWindows.append( messageDialog );
 		messageDialog->show();
 	}
 }
 
-void MSNProtocol::slotMessageBoxClosing(QString handle)
+void MSNProtocol::slotMessageDialogClosing(QString handle)
 {
 	mChatWindows.setAutoDelete(true);
-	MSNMessageDialog *messageDialog;
-	for ( messageDialog = mChatWindows.first() ; messageDialog; messageDialog = mChatWindows.next() )
+	MSNMessageDialog *messageDialog = mChatWindows.first();
+	for ( ; messageDialog; messageDialog = mChatWindows.next() )
 	{
 		if ( messageDialog->user()->userID() == handle )
 		{
