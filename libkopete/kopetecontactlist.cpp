@@ -2,6 +2,7 @@
     kopetecontactlist.cpp - Kopete's Contact List backend
 
     Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
+	Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
     Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -101,7 +102,8 @@ void KopeteContactList::loadXML()
 {
 	QString xml_filename;
 
-	m_dom = new QDomDocument("ContactList");
+	QDomDocument domdoc("ContactList");
+
 	xml_filename = locateLocal("data","kopete/contacts.xml");
 
     /* No contacts */
@@ -110,9 +112,9 @@ void KopeteContactList::loadXML()
 
 	QFile xml_file(xml_filename);
 	xml_file.open(IO_ReadWrite);
-	m_dom->setContent(&xml_file);
+	domdoc.setContent(&xml_file);
 
-	QDomElement list = m_dom->documentElement();
+	QDomElement list = domdoc.documentElement();
 
 	QDomNode nodel1;
 	nodel1 = list.firstChild();
@@ -276,8 +278,25 @@ QStringList KopeteContactList::onlineContacts() const
 
 QStringList KopeteContactList::groups() const
 {
-	// FIXME: having this in a GUI class is horrible to put it mildly...
-	return kopeteapp->contactList()->groups();
+    QStringList groups;
+
+	QPtrListIterator<KopeteMetaContact> it( KopeteContactList::contactList()->m_contacts );
+	for( ; it.current(); ++it )
+	{
+		QStringList thisgroups;
+
+		/* We get groups for this metacontact */
+		thisgroups = it.current()->groups();
+
+		for( QStringList::ConstIterator it = thisgroups.begin(); it != thisgroups.end(); ++it )
+		{
+            /* We add the group only if it is not already there */
+            if ( ! groups.contains( *it ) )
+				groups.append( *it );
+		}
+	}
+
+	return groups;
 }
 
 #include "kopetecontactlist.moc"

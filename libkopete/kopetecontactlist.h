@@ -135,14 +135,6 @@ private:
 	 */
 	static KopeteContactList *s_contactList;
 
-	/**
-	 * The DOM representation of the contact list
-	 *
-	 * FIXME: Why do we keep the DOM tree in memory anyway? Shouldn't we
-	 *        just create one on load and save, but use the much faster and
-	 *        efficient C++ API internally??? - Martijn
-	 */
-	QDomDocument *m_dom;
 };
 
 #endif
