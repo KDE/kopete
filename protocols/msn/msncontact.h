@@ -122,7 +122,7 @@ public slots:
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
 	virtual void execute();
-	virtual void slotSendFile();
+	virtual void slotSendFile(QString fileName);
 
 	void removedFromGroup(QString group);
 	void addedToGroup(QString group);

@@ -42,6 +42,16 @@ QStringList KopeteIface::contactsStatus()
 	return KopeteContactList::contactList()->contactStatuses();
 }
 
+QStringList KopeteIface::fileTransferContacts()
+{
+	return KopeteContactList::contactList()->fileTransferContacts();
+}
+
+void KopeteIface::sendFile(QString displayName, QString fileName)
+{
+	return KopeteContactList::contactList()->sendFile(displayName, fileName);
+}
+
 
 
 /*

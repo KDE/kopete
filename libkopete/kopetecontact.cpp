@@ -200,7 +200,7 @@ void KopeteContact::slotHistoryDialogDestroyed()
 	m_historyDialog = 0L;
 }
 
-void KopeteContact::slotSendFile()
+void KopeteContact::slotSendFile(QString fileName = QString::null)
 {
 	kdDebug() << "[KopeteContact] Opps, the plugin hasn't implemented file sending, yet it was turned on! :(" << endl;
 }

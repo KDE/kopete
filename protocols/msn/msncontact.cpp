@@ -50,7 +50,6 @@ MSNContact::MSNContact( const QString &msnId,
 	m_allowed = false;
 	m_blocked = false;
 	m_reversed = false;
-
 	m_moving=false;
 
 	m_msnId = msnId;
@@ -638,10 +637,13 @@ void MSNContact::slotMoved(KopeteMetaContact* from)
 
 }
 
-void MSNContact::slotSendFile()
+void MSNContact::slotSendFile(QString fileName = QString::null )
 {
-	QString fileName = KFileDialog::getOpenFileName( QString::null , "*.*",
-		0L, i18n( "Kopete File Transfer" ) );
+        if(fileName.isNull())
+               fileName = KFileDialog::getOpenFileName( QString::null ,"*.*", 0l  , i18n( "Kopete File Transfer" ));
+
+        kdDebug() << "File chosen to send:" << fileName.ascii() << "\n";
+
 	if ( !fileName.isNull() )
 	{
 		KopeteContactPtrList chatmembers;

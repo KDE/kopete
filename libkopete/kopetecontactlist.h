@@ -76,6 +76,13 @@ public:
 	QStringList onlineContacts() const;
 
 	/**
+	 * Returns all contacts which can accept file transfers
+	 */
+	QStringList fileTransferContacts() const;
+	
+	void sendFile(QString displayName, QString fileName);
+	
+	/**
 	 * Return all meta contacts with their current status
 	 *
 	 * FIXME: Do we *need* this one? Sounds error prone to me, because

@@ -338,6 +338,35 @@ bool KopeteMetaContact::isReachable() const
 	return false;
 }
 
+bool KopeteMetaContact::canAcceptFiles() const
+{
+	if( !isOnline() )
+		return false;
+
+	QPtrListIterator<KopeteContact> it( m_contacts );
+	for( ; it.current(); ++it )
+	{
+		if( it.current()->canAcceptFiles() )
+			return true;
+	}
+	return false;
+}
+
+void KopeteMetaContact::sendFile( QString fileName = QString::null )
+{
+	if( m_contacts.isEmpty() || !canAcceptFiles() )
+		return;
+
+	KopeteContact *c=m_contacts.first();
+	for(QPtrListIterator<KopeteContact> it( m_contacts ) ; it.current(); ++it )
+	{
+		if( (*it)->importance() > c->importance())
+			c=*it;
+	}
+	
+	c->slotSendFile( fileName );
+}
+
 void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 	KopeteContact::ContactStatus  s  )
 {

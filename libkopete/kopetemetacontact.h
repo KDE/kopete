@@ -82,7 +82,11 @@ public:
 	 *        protocols
 	 */
 	bool isOnline() const;
-
+	
+	/**
+	 * Returns weather this contact can accept files
+	 */
+	bool canAcceptFiles() const;
 	/**
 	 * Contact's status
 	 */
@@ -219,6 +223,8 @@ public slots:
 	 * ICQ the only true difference is the GUI shown to the user.
 	 */
 	void startChat();
+	
+	void sendFile(QString fileName = QString::null);
 
 signals:
 	/**
