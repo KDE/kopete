@@ -33,6 +33,8 @@
 #include "ksettings/dispatcher.h"
 #include "ksettings/componentsdialog.h"
 
+#include <kdeversion.h>
+
 namespace KSettings
 {
 
@@ -274,8 +276,10 @@ void Dialog::createDialogFromServices()
 	else
 		d->dlg = new KCMultiDialog( KJanusWidget::IconList, i18n( "Preferences" ), d->parentwidget );
 
+#if KDE_IS_VERSION( 3, 1, 90 )
 	if( ! d->staticlistview )
 		d->dlg->addButtonBelowList( i18n( "Configure..." ), this, SLOT( configureTree() ) );
+#endif
 
 	connect( d->dlg, SIGNAL( okClicked() ), Dispatcher::self(), SLOT( syncConfiguration() ) );
 	connect( d->dlg, SIGNAL( applyClicked() ), Dispatcher::self(), SLOT( syncConfiguration() ) );
