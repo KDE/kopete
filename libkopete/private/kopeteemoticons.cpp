@@ -235,6 +235,14 @@ QString KopeteEmoticons::parseEmoticons( QString message )
 	 * Show the trailing emoticon
 	 *		funny:-)
 	 *
+	 *  Does not include some html escaped code in the emoticon
+	 *		>)       &)       )        ( &nbsp;) )
+	 *
+	 * Parse bigger emoticons first
+	 *		>:-)
+	 *
+	 * Do not parse emiticons if they are in a html tag:
+	 *		<img src="..." title=">:-)" />
 	 */
 	for ( QStringList::Iterator it = emoticons.begin(); it != emoticons.end(); ++it )
 	{
