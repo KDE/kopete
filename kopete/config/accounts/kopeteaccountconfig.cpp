@@ -62,6 +62,7 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const char * /* name 
 
 	setButtons( Help );
 	load();
+	
 }
 
 void KopeteAccountConfig::save()
@@ -143,6 +144,7 @@ void KopeteAccountConfig::slotAccountUp()
 	KopeteAccountManager::manager()->moveAccount( m_accountItems[ itemSelected ] , KopeteAccountManager::Up );
 
 	slotItemSelected();
+	setChanged(true);
 }
 
 void KopeteAccountConfig::slotAccountDown()
@@ -156,6 +158,7 @@ void KopeteAccountConfig::slotAccountDown()
 	KopeteAccountManager::manager()->moveAccount( m_accountItems[ itemSelected ] , KopeteAccountManager::Down );
 
 	slotItemSelected();
+	setChanged(true);
 }
 
 void KopeteAccountConfig::slotAddAccount()
