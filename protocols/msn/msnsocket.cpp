@@ -438,12 +438,13 @@ int MSNSocket::sendCommand( const QString &cmd, const QString &args, bool addId,
 	}
 	else
 	{
-		QByteArray data2( data.length() + body.size() );
+		const int dataLength = data.length();
+		QByteArray data2( dataLength + body.size() );
 		// FIXME: Why not use QByteArray::copy() for the first loop? - Martijn
-		for ( uint f = 0; f < data.length(); f++ )
+		for ( uint f = 0; f < dataLength; f++ )
 			data2[ f ] = data[ f ];
 		for ( uint f = 0; f < body.size(); f++ )
-			data2[ data.length() + f ] = body[ f ];
+			data2[ dataLength + f ] = body[ f ];
 
 		sendBytes( data2 ) ;
 
