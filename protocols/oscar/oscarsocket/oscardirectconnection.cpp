@@ -29,6 +29,8 @@ OscarDirectConnection::OscarDirectConnection(OscarSocket *serverconn, const QStr
 	else
 		kdDebug() << "[OscarDirectConnection] serverconn is NULL!!!  BAD!" << endl;
 	connect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
+	connect(this, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
+	setSN(mMainConn->getSN());
 }
 
 OscarDirectConnection::~OscarDirectConnection()
@@ -44,11 +46,11 @@ void OscarDirectConnection::slotRead(void)
 
 	if (bytesAvailable() < fl.length)
 	{
-		//while (waitForMore(500) < fl.length)
-		//	kdDebug() << "[OSCAR][OnRead()] not enough data read yet... waiting" << endl;
+		while (waitForMore(500) < fl.length)
+			kdDebug() << "[OSCAR][OnRead()] not enough data read yet... waiting" << endl;
 	}
 
-	int bytesread = readBlock(buf,bytesAvailable());
+	int bytesread = readBlock(buf,fl.length);
 	if (bytesAvailable())
 	{
 		emit readyRead(); //there is another packet waiting to be read
@@ -64,11 +66,23 @@ void OscarDirectConnection::slotRead(void)
 	fl.message = inbuf.getBlock(fl.length);
 
 	if ( inbuf.getLength() )
-		kdDebug() << "[OscarDirectConnection] slotread (" << connectionName() << "): inbuf not empty" << endl;
+		kdDebug() << "[OscarDirectConnection] slotread (" << connectionName() << "): inbuf not empty" << inbuf.toString() << endl;
 
+	if (fl.type == 0x000e) // started typing
+	{
+		emit gotMiniTypeNotification(fl.sn, 2);
+	}
+	else if (fl.type == 0x0002) //finished typing
+	{
+		emit gotMiniTypeNotification(fl.sn, 0);
+	}
+	else
+	{
+		emit gotMiniTypeNotification(fl.sn, 1);
+	}
 	if ( (fl.length > 0) && fl.message && fl.sn)
 		emit gotIM(fl.message, fl.sn, false);
-			
+		
   if (fl.sn)
   	delete fl.sn;
   if (fl.cookie)
@@ -124,19 +138,19 @@ ODC2 OscarDirectConnection::getODC2(void)
 		//get the 8 byte cookie
 		odc.cookie = inbuf.getBlock(8);
 
-		for (int i=0;i<8;i++)
-			mCookie[i] = odc.cookie[i];
+		//for (int i=0;i<8;i++)
+		//	mCookie[i] = odc.cookie[i];
 
 		// 10 bytes of 0
 		if (inbuf.getDWord() != 0x00000000)
 			kdDebug() << "[OscarDirectConnection] getODC2: 3: expected a 0x00000000, didn't get it" << endl;
 		if (inbuf.getDWord() != 0x00000000)
 			kdDebug() << "[OscarDirectConnection] getODC2: 4: expected a 0x00000000, didn't get it" << endl;
-		if (inbuf.getWord() != 0x0000)
-			kdDebug() << "[OscarDirectConnection] getODC2: 5: expected a 0x0000, didn't get it" << endl;
+		//if (inbuf.getWord() != 0x0000)
+		//	kdDebug() << "[OscarDirectConnection] getODC2: 5: expected a 0x0000, didn't get it" << endl;
 
 		// message length
-		odc.length = inbuf.getWord();
+		odc.length = inbuf.getDWord();
 
     // 6 bytes of 0
 		if (inbuf.getDWord() != 0x00000000)
@@ -178,6 +192,18 @@ void OscarDirectConnection::slotConnected(void)
 	// Got IM
 	QObject::connect(this, SIGNAL(gotIM(QString, QString, bool)),
 			mMainConn, SLOT(OnDirectIMReceived(QString,QString,bool)));
+	// Disconnected
+	QObject::connect(this, SIGNAL(connectionClosed(OscarDirectConnection *)),
+			mMainConn, SLOT(OnDirectIMConnectionClosed(OscarDirectConnection *)));
+	// Typing notification
+	QObject::connect(this, SIGNAL(gotMiniTypeNotification(QString,int)),
+			mMainConn, SLOT(OnDirectMiniTypeNotification(QString, int)));
+	// Ready signal
+	QObject::connect(this, SIGNAL(directIMReady(QString)),
+			mMainConn, SLOT(OnDirectIMReady(QString)));
+
+	// Announce that we are ready for use!
+	emit directIMReady(connectionName());
 }
 
 /** Sets the socket to use socket, state() to connected, and emit connected() */
@@ -188,7 +214,40 @@ void OscarDirectConnection::setSocket( int socket )
 }
 
 /** Sends the direct IM message to buddy */
-void OscarDirectConnection::sendIM(const QString &message, const QString &/*dest*/, bool /*isAuto*/)
+void OscarDirectConnection::sendIM(const QString &message, bool /*isAuto*/)
+{
+	sendODC2Block(message, 0x0000); // 0x0000 means message
+}
+
+/** Called when the connection is closed */
+void OscarDirectConnection::slotConnectionClosed(void)
+{
+	kdDebug() << "[OscarDirectConnection] connection with " << connectionName() << "lost." << endl;
+	emit protocolError(QString("Connection with %1 lost").arg(connectionName()), 0);
+	emit connectionClosed(this);
+}
+
+/** Sends a typing notification to the server
+		@param notifyType Type of notify to send
+	 */
+void OscarDirectConnection::sendTypingNotify(TypingNotify notifyType)
+{
+	switch (notifyType)
+	{
+		case TypingBegun:
+			sendODC2Block(QString::null, 0x000e);
+			break;
+		case TypingFinished:
+			sendODC2Block(QString::null, 0x0002);
+			break;
+		case TextTyped:  //we will say TextTyped means the user has finished typing, for now
+			sendODC2Block(QString::null, 0x0002);
+			break;
+	}
+}
+
+/** Prepares and sends a block with the given message and typing notify flag attached */
+void OscarDirectConnection::sendODC2Block(const QString &message, WORD typingnotify)
 {
 	Buffer outbuf;
 	outbuf.addDWord(0x4f444332); // "ODC2"
@@ -200,15 +259,25 @@ void OscarDirectConnection::sendIM(const QString &message, const QString &/*dest
 	outbuf.addDWord(0x00000000);
 	outbuf.addDWord(0x00000000);
 	outbuf.addWord(0x0000);
-	outbuf.addWord(message.length());
+	if (typingnotify == 0x0000)
+		outbuf.addWord(message.length());
+	else
+		outbuf.addWord(0x0000);
   outbuf.addDWord(0x00000000);
   outbuf.addWord(0x0000);
-  outbuf.addWord(0x0000); // this is 0 because we are sending a message
+  outbuf.addWord(typingnotify);
   outbuf.addDWord(0x00000000);
-  outbuf.addString(connectionName().latin1(),connectionName().length());
+  outbuf.addString(getSN().latin1(),getSN().length());
   while (outbuf.getLength() < 0x004c)
   	outbuf.addByte(0x00);
-  kdDebug() << "Sending Direct IM!" << endl;
+  if (typingnotify == 0x0000)
+	  outbuf.addString(message.latin1(), message.length());
+  kdDebug() << "Sending ODC2 block, message: " << message << "typingnotify: " << typingnotify << endl;
   outbuf.print();
+
+ 	if(hasDebugDialog()){
+			debugDialog()->addMessageFromClient(outbuf.toString(),connectionName());
+	}
+
   writeBlock(outbuf.getBuf(),outbuf.getLength());
 }

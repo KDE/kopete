@@ -30,10 +30,10 @@ Buffer::Buffer(QObject *parent, const char *name)
 	connect(this, SIGNAL(bufError(QString)), this, SLOT(OnBufError(QString)));
 }
 
-Buffer::Buffer(const Buffer &b, QObject *parent, const char *name)
+Buffer::Buffer(char *b, Q_ULONG len, QObject *parent, const char *name)
 	: QObject(parent,name)
 {
-	setBuf(b.getBuf(),b.getLength());
+	setBuf(b, len);
 	connect(this, SIGNAL(bufError(QString)), this, SLOT(OnBufError(QString)));
 }
 

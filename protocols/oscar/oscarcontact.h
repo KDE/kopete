@@ -143,6 +143,10 @@ private slots: // Private slots
   void slotBlock(void);
   /** Called when we want to connect directly to this contact */
   void slotDirectConnect();
+  /** Called when we become directly connected to the contact */
+  void slotDirectIMReady(QString name);
+  /** Called when the direct connection to name has been terminated */
+  void slotDirectIMConnectionClosed(QString name);
 };
 
 #endif

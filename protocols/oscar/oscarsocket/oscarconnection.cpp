@@ -63,8 +63,8 @@ void OscarConnection::setDebugDialog(OscarDebugDialog *dialog)
 		}
 }
 
-/** Sends an IM */
-void OscarConnection::sendIM(const QString &message, const QString &dest, bool isAuto)
+/** Sets the currently logged in user's screen name */
+void OscarConnection::setSN(const QString &newSN)
 {
-	kdDebug() << "SendIM() called in OscarConnection, this is not good" << endl;
+	mSN = newSN;
 }

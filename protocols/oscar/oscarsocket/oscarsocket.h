@@ -98,12 +98,6 @@ public:
 	OscarSocket(const QString &connName, QObject *parent=0, const char *name=0);
 	~OscarSocket();
 
-	/** Enum for typing notifications */
-	enum TypingNotify
-		{
-			TypingFinished, TextTyped, TypingBegun
-		};
-	
   /** Sends an authorization request to the server */
   void sendLoginRequest(void);
   /** encodes a password, outputs to the 3rd parameter */
@@ -294,7 +288,7 @@ private: // Private methods
   /** Sends parameters for ICBM messages */
   void sendMsgParams(void);
   /** looks for a connection named thename.  If such a connection exists, return it, otherwise, return NULL */
-  OscarConnection * findConnection(const QString &thename);
+  OscarDirectConnection * findConnection(const QString &thename);
 private slots: // Private slots
   /** Called when a connection has been closed */
   void OnConnectionClosed(void);
@@ -310,6 +304,12 @@ private slots: // Private slots
   void OnDirectIMReceived(QString, QString, bool);
   /** Called when a direct IM connection suffers an error */
   void OnDirectIMError(QString, int);
+  /** Called when a direct IM connection bites the dust */
+  void OnDirectIMConnectionClosed(OscarDirectConnection *);
+  /** Called whenever a direct IM connection gets a typing notification */
+  void OnDirectMiniTypeNotification(QString screenName, int notify);
+  /** Called when a direct connection is set up and ready for use */
+  void OnDirectIMReady(QString name);
 signals: // Signals
   /** The server has sent the key with which to encrypt the password */
   void keyReceived(void);
@@ -340,8 +340,6 @@ signals: // Signals
 private: // Private attributes
   /** The key used to encrypt the password */
   char * key;
-  /** The user's screen name */
-  QString sn;
   /** The user's password */
   QString pass;
   /** The authorization cookie */
@@ -357,7 +355,7 @@ private: // Private attributes
   /** tells whether we are idle */
   bool idle;
   /** A collections of the sockets we are connected with */
-  QPtrList<OscarConnection> sockets;
+  QPtrList<OscarDirectConnection> sockets;
   /** Socket for direct connections */
   OncomingSocket *serverSocket;
   /** SSI server stored data */
@@ -382,7 +380,8 @@ signals: // Signals
   void denyRemoved(QString);
  /** Tells when the connection ack has been recieved on channel 1 */
   void connAckReceived(void);
-
+  /** emitted when a direct connection has been terminated */
+  void directIMConnectionClosed(QString name);
 };
 
 #endif

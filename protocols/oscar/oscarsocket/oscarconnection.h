@@ -38,6 +38,12 @@ public:
 	OscarConnection(const QString &connName, int type, QObject *parent=0, const char *name=0);
 	~OscarConnection();
 
+	/** Enum for typing notifications */
+	enum TypingNotify
+	{
+		TypingFinished, TextTyped, TypingBegun
+	};
+
 	/** Sets the pointer to the debug dialog */
 	void setDebugDialog(OscarDebugDialog *dialog);
 	/** Returns true if we have a debug dialog, false otherwise */
@@ -49,7 +55,11 @@ public:
   /** Returns the type of this connection */
   inline int connectionType(void) const { return mConnType; };
   /** Sends an IM */
-  virtual void sendIM(const QString &message, const QString &dest, bool isAuto);
+  //virtual void sendIM(const QString &message, const QString &dest, bool isAuto);
+  /** Gets the currently logged in user's screen name */
+  inline QString getSN(void) const { return mSN; };
+  /** Sets the currently logged in user's screen name */
+  void setSN(const QString &newSN);
 
 signals: // Signals
 	/** Emitted when an IM comes in */
@@ -64,6 +74,8 @@ signals: // Signals
 	 * 2: Begun (is typing)
 	 */
 	void gotMiniTypeNotification(QString, int);
+	/** Emitted when we are ready to Direct IM! */
+	void directIMReady(QString name);
 
 	
 protected slots: // Private slots
@@ -88,6 +100,9 @@ private: //private attributes
 	OscarDebugDialog *mDebugDialog;
 	/** Bool indicating whether or not we have a debug dialog */
 	bool mHaveDebugDialog;
+  /** The user's screen name */
+  QString mSN;
+
 };
 
 #endif

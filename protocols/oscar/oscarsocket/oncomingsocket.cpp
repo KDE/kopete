@@ -26,7 +26,7 @@ OncomingSocket::OncomingSocket(QObject *parent, const char *name )
 {
 }
 
-OncomingSocket::OncomingSocket(OscarSocket *server, QList<OscarConnection> *socketz, const QHostAddress &address,
+OncomingSocket::OncomingSocket(OscarSocket *server, QList<OscarDirectConnection> *socketz, const QHostAddress &address,
 	Q_UINT16 port, int backlog, QObject *parent, const char *name)
 : QServerSocket(address,port,backlog,parent,name)
 {

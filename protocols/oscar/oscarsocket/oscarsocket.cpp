@@ -237,7 +237,7 @@ void OscarSocket::slotRead(void)
 	if (bytesAvailable() < fl.length)
 	{
 		while (waitForMore(500) < fl.length)
-			kdDebug() << "[OSCAR][OnRead()] not enough data read yet... waiting" << endl;
+			kdDebug() << "[OSCAR][slotRead()] not enough data read yet... waiting" << endl;
 	}
 
 	int bytesread = readBlock(buf,fl.length);
@@ -427,9 +427,9 @@ void OscarSocket::sendLoginRequest(void)
 {
     Buffer outbuf;
     outbuf.addSnac(0x0017,0x0006,0x0000,0x00000000);
-    outbuf.addTLV(0x0001,sn.length(),sn.latin1());
+    outbuf.addTLV(0x0001,getSN().length(),getSN().latin1());
     sendBuf(outbuf,0x02);
-    emit connectionChanged(2,QString("Requesting login for " + sn + "..."));
+    emit connectionChanged(2,QString("Requesting login for " + getSN() + "..."));
 }
 
 /** encodes a password, outputs to the 3rd parameter */
@@ -477,9 +477,9 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 
 		//kdDebug() << "[OSCAR] Output: " << endl;
 		//outbuf.print();
-		if(hasDebugDialog()){
-				debugDialog()->addMessageFromClient(outbuf.toString(), connectionName());
-		}
+		//if(hasDebugDialog()){
+		//		debugDialog()->addMessageFromClient(outbuf.toString(), connectionName());
+		//}
 		
 		outbuf.addFlap(chan);
 		writeBlock(outbuf.getBuf(),outbuf.getLength());
@@ -493,7 +493,7 @@ void OscarSocket::doLogin(const QString &host, int port, const QString &s, const
     connect(this, SIGNAL(connAckReceived()), this, SLOT(OnConnAckReceived()));
     disconnect(this, SIGNAL(connected()), this, SLOT(OnBosConnect()));
     connect(this, SIGNAL(connected()), this, SLOT(OnConnect()));
-    sn = s;
+    setSN(s);
     pass = password;
     kdDebug() << "[OSCAR] Connecting to " << host << ", port " << port << endl;
     connectToHost(host,port);
@@ -519,7 +519,7 @@ void OscarSocket::sendLogin(void)
     digest[16] = '\0';  //do this so that addTLV sees a NULL-terminator
     Buffer outbuf;
     outbuf.addSnac(0x0017,0x0002,0x0000,0x00000000);
-    outbuf.addTLV(0x0001,sn.length(),sn.latin1());
+    outbuf.addTLV(0x0001,getSN().length(),getSN().latin1());
     encodePassword(digest);
     outbuf.addTLV(0x0025,16,(char *)digest);
     outbuf.addTLV(0x0003,0x32,AIM_CLIENTSTRING);
@@ -1444,10 +1444,10 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAuto)
 {
 	//check to see if we have a direct connection to the contact
-	OscarConnection *dc = findConnection(dest);
+	OscarDirectConnection *dc = findConnection(dest);
 	if (dc)
 	{
-		dc->sendIM(message,dest,isAuto);
+		dc->sendIM(message,isAuto);
 		return;
 	}
     kdDebug() << "[OSCAR] Sending " << message << " to " << dest << endl;
@@ -1705,7 +1705,8 @@ void OscarSocket::parseRedirect(Buffer &inbuf)
 	  delete tmp->data;
 	}
 	tl.clear();
-	sockets.append(servsock);
+	//sockets.append(servsock);
+	delete servsock;
 	kdDebug() << "[OSCAR] Socket added to connection list!" << endl;
 }
 
@@ -2214,10 +2215,20 @@ FLAP OscarSocket::getFLAP(void)
     return fl;
 }
 
-void OscarSocket::sendMiniTypingNotify(QString screenName,TypingNotify notifyType ){
+void OscarSocket::sendMiniTypingNotify(QString screenName,TypingNotify notifyType )
+{
 		//BLARG
 		kdDebug() << "[OSCAR] Sending Typing notify " << endl;
 
+		//look for direct connection before sending through server
+		OscarDirectConnection *dc = findConnection(screenName);
+		if ( dc )
+		{
+			kdDebug() << "[OSCAR] Found direct connection, sending typing notify directly" << endl;
+			dc->sendTypingNotify(notifyType);
+			return;
+		}
+		
 		// Build the buffer
 		Buffer outbuf;
 		// This is header stuff for the SNAC
@@ -2263,10 +2274,17 @@ void OscarSocket::OnDirectIMError(QString errmsg, int num)
 	emit protocolError(errmsg, num);
 }
 
-/** looks for a connection named thename.  If such a connection exists, return it, otherwise, return NULL */
-OscarConnection * OscarSocket::findConnection(const QString &thename)
+/** Called whenever a direct IM connection gets a typing notification */
+void OscarSocket::OnDirectMiniTypeNotification(QString screenName, int notify)
 {
-	OscarConnection *tmp;
+ //for now, just emit a regular typing notification
+ emit gotMiniTypeNotification(screenName, notify);
+}
+
+/** looks for a connection named thename.  If such a connection exists, return it, otherwise, return NULL */
+OscarDirectConnection * OscarSocket::findConnection(const QString &thename)
+{
+	OscarDirectConnection *tmp;
 	for (tmp = sockets.first(); tmp; tmp = sockets.next())
 	{
 		if ( !thename.compare(tmp->connectionName()) )
@@ -2277,6 +2295,20 @@ OscarConnection * OscarSocket::findConnection(const QString &thename)
 	return 0L;
 }
 
+/** Called when a direct IM connection bites the dust */
+void OscarSocket::OnDirectIMConnectionClosed(OscarDirectConnection *theconn)
+{
+	kdDebug() << "[OscarSocket] Deleting closed connection!" << endl;
+	QString sn = theconn->connectionName();
+	sockets.remove(theconn);
+	emit directIMConnectionClosed(sn);
+}
+
+/** Called when a direct connection is set up and ready for use */
+void OscarSocket::OnDirectIMReady(QString name)
+{
+	emit directIMReady(name);
+}
 
 /*
  * Local variables:

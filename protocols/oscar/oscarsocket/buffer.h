@@ -46,7 +46,7 @@ class Buffer : public QObject {
 	Q_OBJECT
 public: 
 	Buffer(QObject *parent=0, const char *name=0);
-	Buffer(const Buffer &b, QObject *parent=0, const char *name=0);
+	Buffer(char *b, Q_ULONG len, QObject *parent=0, const char *name=0);
 	~Buffer();
 	/** returns the actual buffer */
 	inline char *getBuf(void) const { return buf; };

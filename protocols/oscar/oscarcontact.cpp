@@ -70,7 +70,12 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	// Incoming minitype notification
 	QObject::connect(mProtocol->engine, SIGNAL(gotMiniTypeNotification(QString, int)),
 					this, SLOT(slotGotMiniType(QString, int)));
-
+  // New direct connection
+  QObject::connect(mProtocol->engine, SIGNAL(directIMReady(QString)),
+  	this, SLOT(slotDirectIMReady(QString)));
+  // Direct connection closed
+  QObject::connect(mProtocol->engine, SIGNAL(directIMConnectionClosed(QString)),
+  	this, SLOT(slotDirectIMConnectionClosed(QString)));
 	// Set up the mTypingTimer
 	QObject::connect(mTypingTimer, SIGNAL(timeout()),
 					this, SLOT(slotTextEntered()));
@@ -263,7 +268,7 @@ void OscarContact::initActions(void)
 
 	actionWarn = new KAction(i18n("&Warn"), 0, this, SLOT(slotWarn()), this, "actionWarn");
 	actionBlock = new KAction(i18n("&Block"), 0, this, SLOT(slotBlock()), this, "actionBlock");
-	actionDirectConnect = new KAction(i18n("&Connect"), 0, this, SLOT(slotDirectConnect()), this, "actionDirectConnect");
+	actionDirectConnect = new KAction(i18n("&Direct IM"), 0, this, SLOT(slotDirectConnect()), this, "actionDirectConnect");
 }
 
 /** Returns the status icon of the contact */
@@ -307,15 +312,15 @@ void OscarContact::slotBuddyChanged(UserInfo u)
 void OscarContact::slotGotMiniType(QString screenName, int type){
 		//TODO
 		// Check to see if it's us
-		kdDebug() << "[OSCAR] Minitype: Comparing "
-							<< tocNormalize(screenName) << " and "
-							<< tocNormalize(mName) << endl;
+		//kdDebug() << "[OSCAR] Minitype: Comparing "
+		//					<< tocNormalize(screenName) << " and "
+		//					<< tocNormalize(mName) << endl;
 		
 		if(tocNormalize(screenName) != tocNormalize(mName)){
 				return;
 		}
 		
-		kdDebug() << "[OSCAR] OscarContact got minitype notification" << endl;
+		kdDebug() << "[OSCAR] OscarContact got minitype notification for " << mName << endl;
 		
 		// If we already have a message manager
 		if(mMsgManager){
@@ -684,7 +689,40 @@ void OscarContact::slotBlock(void)
 void OscarContact::slotDirectConnect(void)
 {
 	kdDebug() << "[OscarContact] Requesting direct IM with " << mName << endl;
-	mProtocol->engine->sendDirectIMRequest(mName);
+	QString message = i18n( "<qt>Are you sure you want to establish a direct connection to %1? \
+	This will allow %2 to know your IP address, which can be dangerous if you do not trust this contact</qt>" ).arg(mName).arg(mName);
+	QString title = i18n("Request Direct IM with %1?").arg(mName);
+	int result = KMessageBox::questionYesNo(qApp->mainWidget(), message, title);
+	if ( result == KMessageBox::Yes )
+	{
+		mProtocol->engine->sendDirectIMRequest(mName);
+	}
+}
+
+/** Called when we become directly connected to the contact */
+void OscarContact::slotDirectIMReady(QString name)
+{
+	// Check if we're the one who is directly connected
+	if ( tocNormalize(name) != tocNormalize(mName) )
+		return;
+
+	kdDebug() << "[OscarContact] Setting direct connect state for " << mName << " to true." << endl;
+	setDirectConnectState(true);
+	execute();
+	KopeteMessage m;
+	m.setBody(i18n("Direct connection to %1 established").arg(mName), KopeteMessage::PlainText );
+	msgManager()->appendMessage(m);
+}
+
+/** Called when the direct connection to contact @name has been terminated */
+void OscarContact::slotDirectIMConnectionClosed(QString name)
+{
+	// Check if we're the one who is directly connected
+	if ( tocNormalize(name) != tocNormalize(mName) )
+		return;
+
+	kdDebug() << "[OscarContact] Setting direct connect state for " << mName << " to false." << endl;
+	setDirectConnectState(false);
 }
 
 /*

@@ -33,12 +33,12 @@ class OncomingSocket : public QServerSocket  {
    Q_OBJECT
 public: 
 	OncomingSocket(QObject *parent=0, const char *name=0);
-	OncomingSocket(OscarSocket *server, QList<OscarConnection> *socketz, const QHostAddress &address, Q_UINT16 port=4443,
+	OncomingSocket(OscarSocket *server, QList<OscarDirectConnection> *socketz, const QHostAddress &address, Q_UINT16 port=4443,
 		int backlog=5, QObject *parent=0, const char *name=0);
 	~OncomingSocket();
   /** Called when someone connects to the serversocket */
   virtual void newConnection( int socket );
-  QList<OscarConnection> *conns;
+  QList<OscarDirectConnection> *conns;
 private:
 	OscarSocket *mServer;
 };

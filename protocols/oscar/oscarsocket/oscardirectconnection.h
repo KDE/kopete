@@ -28,7 +28,7 @@ struct ODC2 { //direct connect header
 	WORD headerLength;
   char *cookie;
   WORD type;
-  WORD length;
+  DWORD length;
   char *sn;
   char *message;	
 };
@@ -43,7 +43,11 @@ public:
   /** Sets the socket to use socket, state() to connected, and emit connected() */
   virtual void setSocket( int socket );
   /** Sends the direct IM message to buddy */
-  void sendIM(const QString &message, const QString &dest, bool isAuto);
+  void sendIM(const QString &message, bool isAuto);
+  /** Sends a typing notification to the server
+			@param notifyType Type of notify to send
+	 */
+  void sendTypingNotify(TypingNotify notifyType);
 	
 protected slots: // Protected slots
   /** Called when there is data to be read from peer */
@@ -52,16 +56,24 @@ protected slots: // Protected slots
 private: // Private methods
   /** Gets an ODC2 header */
   ODC2 getODC2(void);
+  /** Prepares and sends a block with the given message and typing notify flag attached */
+  void sendODC2Block(const QString &message, WORD typingnotify);
   
 private slots: // Private slots
   /** Called when we have established a connection */
   void slotConnected(void);
+  /** Called when the connection is closed */
+  void slotConnectionClosed(void);
 
 private: //private members
 	/** The main oscar connection */
 	OscarSocket *mMainConn;
 	/** the message cookie */
 	char mCookie[8];
+
+signals:
+  /** Emitted when the connection is closed */
+  void connectionClosed(OscarDirectConnection *conn);
 };
 
 #endif
