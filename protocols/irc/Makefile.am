@@ -1,3 +1,5 @@
+METASOURCES = AUTO
+
 SUBDIRS = ui icons libkirc
 AM_CPPFLAGS = -I$(srcdir)/ui $(KOPETE_INCLUDES) \
 		-I./ui \
@@ -10,7 +12,6 @@ kopete_irc_la_SOURCES = ircaddcontactpage.cpp ircchannelcontact.cpp \
 	ircprotocol.cpp ircservercontact.cpp ircusercontact.cpp \
 	irccontactmanager.cpp ksparser.cpp
 
-kopete_irc_la_METASOURCES = AUTO
 kopete_irc_la_LDFLAGS     = -module $(KDE_PLUGIN) $(all_libraries)
 kopete_irc_la_LIBADD      = ../../libkopete/libkopete.la \
 		./ui/libkopeteircui.la \
