@@ -1,0 +1,191 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>jabberChooseServer</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>jabberChooseServer</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>437</width>
+            <height>423</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Choose Server - Jabber</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="KListView">
+            <column>
+                <property name="text">
+                    <string>Server</string>
+                </property>
+                <property name="pixmap">
+                    <pixmap>image0</pixmap>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Description</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+        <item>
+            <property name="text">
+                <string>DONT_TRANSLATE</string>
+            </property>
+            <property name="text">
+                <string>DO_NOT_TRANSLATE</string>
+            </property>
+            <property name="pixmap">
+                <pixmap></pixmap>
+            </property>
+            <property name="pixmap">
+                <pixmap></pixmap>
+            </property>
+        </item>
+            <property name="name">
+                <cstring>listServers</cstring>
+            </property>
+            <property name="fullWidth">
+                <bool>true</bool>
+            </property>
+            <property name="itemsMovable">
+                <bool>false</bool>
+            </property>
+        </widget>
+        <widget class="KActiveLabel">
+            <property name="name">
+                <cstring>linkServerDetails</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>3</hsizetype>
+                    <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>&lt;center&gt;&lt;a href="http://www.jabber.org/user/publicservers.php"&gt;Details about free public Jabber servers&lt;/a&gt;&lt;/center&gt;</string>
+            </property>
+        </widget>
+        <widget class="Line">
+            <property name="name">
+                <cstring>lineButtonSeparator</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layoutButtons</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacerButtonsLeft</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>buttonSelect</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Select</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+S</string>
+                    </property>
+                    <property name="default">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>buttonCancel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Cancel</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+C</string>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacerButtonsRight</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+            </hbox>
+        </widget>
+    </vbox>
+</widget>
+<images>
+    <image name="image0">
+        <data format="PNG" length="683">89504e470d0a1a0a0000000d49484452000000100000001008060000001ff3ff610000027249444154789c8d92cd6f4c6114c67ff7bdf7bef78e32a525888f8a8f12896862d18888ae2a76161676ea3f500b6141c3ca4234b1a95d6b458918896043e233687c44438ba1a5d254b5cc303a77e6beef3d36a6693a5d7856e724e7f7e4c939c71111001cc701a0789b2677716b875ad4bcb7fcf30ef1af27b889e43c2b19493899dac33040854344a69b4286b6f853a724361253cc4a349191ef4f57c8b787a18cdfd3f2eb96924286b6999ce29ff2bdb4f89b3bbbddd50749e2516c344062be122c6e4505014e1810d586c4bedb9defa5a5c24d1b48b0a1d35bb31fb179dca00147b988790fce0fbc541d4a6b94d698ba14d6381d15ceab14d68d9b4ce1016ed848623489fd82d82c928ce0f806a534622c8952d8b05c9dc0ca38536347880bd749cafd88e9479c2f28bf88d21e4afb28ede3ea10fc7954253063714e6f340bcdd425445e22c947944e001fb12e622da23cd04b89265fe4aa12c4dfe3f6625f0ec73588bc47690737d0281de0864bf1525bf06ab613bd2e501efddd5ee19c997f903da10e858db59df57b56e106eb507e239046acc5960c13376fe6a2772fdad79f4a7ae6fc0380fea37edbe0b985529cdc267179b758d325d18f2ec99edf31d47fcc6b9abeda3f6e7a0715355f6dcbecdb347e60a7312dc6f7f856b84bfef314f7fb6a2f3c7f6e5ecd9eaf3258bb7a49d3e1d3c75b36ad5fc6db812c17afdca0efc3330626925db367e734482f98471c1b5ce5e04889f9ba889f4c22369c8baf36181bcf0d779cbd36bc3235b4e64fe127838383644785c86ba88a0f33ce58d1a7c76786ef3e1ab850bfbc91743a8d318652a9888cf4b4ff970140a96c7aba2ebf793592afa39cda4aa9a6b967cefcc05fdc5c3ecd789ac5590000000049454e44ae426082</data>
+    </image>
+</images>
+<connections>
+    <connection>
+        <sender>buttonCancel</sender>
+        <signal>clicked()</signal>
+        <receiver>jabberChooseServer</receiver>
+        <slot>close()</slot>
+    </connection>
+</connections>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>klistview.h</includehint>
+    <includehint>kactivelabel.h</includehint>
+</includehints>
+</UI>
