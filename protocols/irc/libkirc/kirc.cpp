@@ -288,6 +288,16 @@ void KIRC::slotReadyRead()
 					emit incomingHostedClients(message);
 					break;
 				}
+				case 311:
+				{
+					/*
+					Show info about a user (part of a /whois) in the form of:
+					"<nick> <user> <host> * :<real name>"
+					*/
+					QString realName = line.section(' ', 7,7);
+					realName.remove(0, 1);
+					emit incomingWhoIsUser(line.section(' ', 3, 3), line.section(' ', 4, 4), line.section(' ', 5, 5), realName);
+				}
 				case 332:
 				{
 					/*
@@ -348,6 +358,21 @@ void KIRC::slotReadyRead()
 					emit incomingEndOfNames(line.section(' ', 3, 3));
 					break;
 				}
+				case 401:
+				{
+					/*
+					Gives a signal to indicate that the command issued failed because the person not being on IRC in the for of:
+					"<nickname> :No such nick/channel"
+					- Used to indicate the nickname parameter supplied to a
+					command is currently unused.
+					*/
+					emit incomingNoNickChan(line.section(' ', 3, 3));
+				}
+				case 406:
+					/*
+					Like case 401, but when there *was* no such nickname
+					*/
+					emit incomingWasNoNick(line.section(' ', 3, 3));
 				case 433:
 				{
 					/*

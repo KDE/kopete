@@ -33,6 +33,7 @@ class IMContact;
 class QVBox;
 class IRCConsoleView;
 class KPopupMenu;
+class QStringList;
 
 class IRCServerContact : public IMContact
 {
@@ -51,6 +52,7 @@ public:
 	virtual void rightButtonPressed(const QPoint &);
 	virtual void leftButtonDoubleClicked();
 	QString mQuitMessage;
+	QStringList activeQueries;
 private:
 	bool tryingQuit;
 	QVBox *mTabView;
@@ -64,6 +66,8 @@ private slots:
 	void forceDisconnect();
 	void disconnectNow();
 	void updateToolbar();
+	void incomingMessage(const QString &, const QString &, const QString &);
+	void incomingAction(const QString &, const QString &, const QString &);
 public slots:
 	void slotQuitServer();
 	void connectNow();

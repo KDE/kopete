@@ -32,11 +32,16 @@
 #include "ircchatview.h"
 #include "kirc.h"
 
+class IRCQueryView;
+class QVBox;
+class QStringList;
+
 class IRCContact : public IMContact
 {
 	Q_OBJECT
 public:
 	IRCContact(QListViewItem *parent, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact);
+	IRCContact(QListViewItem *parent, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, const QStringList pengingMessages);
 	virtual void rightButtonPressed(const QPoint &);
 	virtual void leftButtonDoubleClicked();
 	KIRC *engine;
@@ -44,6 +49,9 @@ public:
 	bool requestedQuit;
 	void unloading();
 	IRCServerContact *mContact;
+	QVBox *tabPage() { return mTabPage; };
+	IRCChatView *getChatView() { return chatView; };
+	QStringList mPendingMessage;
 private:
 	QString mServer;
 	QString mTarget;
@@ -54,6 +62,8 @@ private:
 	IRCChatView *chatView;
 	KPopupMenu *popup;
 	QVBox *mTabPage;
+	IRCQueryView *queryView;
+	void init();
 private slots:
 	void slotIncomingMotd(const QString &);
 	void slotConnectedToHost();
@@ -61,11 +71,12 @@ private slots:
 	void slotNamesList(const QString &, const QString &, int);
 	void joinNow();
 	void slotQuitServer();
-	void slotRemoveThis();
 	void slotHop();
 	void slotPartedChannel(const QString &, const QString &, const QString &);
 	void slotServerIsQuitting();
 	void slotServerHasQuit();
+	void slotRemoveThis();
+	void slotServerQuit();
 public slots:
 	void slotPart();
 };

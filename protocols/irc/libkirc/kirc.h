@@ -85,6 +85,9 @@ signals:
 	void incomingTopicChange(const QString &, const QString &, const QString &);
 	void incomingExistingTopic(const QString &, const QString &);
 	void successfulQuit();
+	void incomingNoNickChan(const QString &);
+	void incomingWasNoNick(const QString &);
+	void incomingWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
 private:
 	bool waitingFinishMotd;
 	bool loggedIn;

@@ -28,6 +28,7 @@
 #include <qsocket.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
+#include <qstringlist.h>
 #include "kirc.h"
 #include "imcontact.h"
 #include "irccontact.h"
@@ -42,6 +43,8 @@ IRCServerContact::IRCServerContact(const QString &server, const QString &nicknam
 	QObject::connect(engine, SIGNAL(incomingFailedNickOnLogin(const QString &)), this, SLOT(nickInUseOnLogin(const QString &)));
 	QObject::connect(engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)), this, SLOT(slotChangedNick(const QString &, const QString &)));
 	QObject::connect(engine, SIGNAL(successfulQuit()), this, SLOT(slotServerHasQuit()));
+	QObject::connect(engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), this, SLOT(incomingMessage(const QString &, const QString &, const QString &)));
+	QObject::connect(engine, SIGNAL(incomingAction(const QString &, const QString &, const QString &)), this, SLOT(incomingAction(const QString &, const QString &, const QString &)));
 	mManager = manager;
 	mNickname = nickname;
 	mServer = server;
@@ -101,6 +104,44 @@ void IRCServerContact::disconnectNow()
 		slotQuitServer();
 	} else {
 		forceDisconnect();
+	}
+}
+
+void IRCServerContact::incomingMessage(const QString &originating, const QString &target, const QString &message)
+{
+	if (target[0] == '#' || target[0] == '!' || target[0] == '&')
+	{
+		return;
+	}
+	QString queryName = originating.section('!', 0, 0);
+	if (queryName.lower() == engine->nickName().lower())
+	{
+		return;
+	}
+	if (activeQueries.find(queryName.lower()) == activeQueries.end())
+	{
+		QStringList pendingMessage;
+		pendingMessage << "message" << originating << target << message;
+		IRCContact *contact = new IRCContact(this, mServer, queryName, 6667, true, this, pendingMessage);
+	}
+}
+
+void IRCServerContact::incomingAction(const QString &originating, const QString &target, const QString &message)
+{
+	if (target[0] == '#' || target[0] == '!' || target[0] == '&')
+	{
+		return;
+	}
+	QString queryName = originating.section('!', 0, 0);
+	if (queryName.lower() == engine->nickName().lower())
+	{
+		return;
+	}
+	if (activeQueries.find(queryName.lower()) == activeQueries.end())
+	{
+		QStringList pendingMessage;
+		pendingMessage << "action" << originating << target << message;
+		IRCContact *contact = new IRCContact(this, mServer, queryName, 6667, true, this, pendingMessage);
 	}
 }
 
