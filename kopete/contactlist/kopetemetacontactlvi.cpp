@@ -73,33 +73,37 @@ public:
 	}
 	QString operator()( ComponentBase *, const QPoint &, QRect & )
 	{
-		QString toolTip = QString::fromLatin1("<qt>");
-		toolTip += QString::fromLatin1("<table>");
+
+		// We begin with the meta contact display name at the top of the tooltip
+		QString toolTip = QString::fromLatin1("<qt><table cellpadding=\"0\" cellspacing=\"1\">");
+		
+        toolTip += QString::fromLatin1("<tr><td>");
+
 		if ( ! metaContact->photo().isNull() )
-		{
+        {
 			QString photoName = QString::fromLatin1("kopete-metacontact-photo:%1").arg( KURL::encode_string( metaContact->metaContactId() ));
 			//QMimeSourceFactory::defaultFactory()->setImage( "contactimg", metaContact->photo() );
-			toolTip += QString::fromLatin1("<tr><td><img src=\"%1\"></td></tr>").arg( photoName );
-			
-		}
-		else
-		{
+			toolTip += QString::fromLatin1("<img src=\"%1\">").arg( photoName );
+        }
+        else
+        {
 			kdDebug( 14010 ) << k_funcinfo << "null picture" << endl; 
-		}
-		toolTip += QString::fromLatin1("<tr><td>%1</td></tr>").arg(metaContact->displayName());
-		toolTip += QString::fromLatin1("</table>");
+        }
 		
-		QPtrList<Contact> contacts = metaContact->contacts();
-		if( contacts.count() == 1 )
+		toolTip += QString::fromLatin1("</td><td>");
+		toolTip += QString::fromLatin1("<b><font size=\"+1\">%1</font></b><br><br>").arg(metaContact->displayName());
+		
+		QPtrList<Contact> contacts = metaContact->contacts();		
+		if ( contacts.count() == 1 )
 		{
-			return toolTip + contacts.first()->toolTip();
+			return toolTip + contacts.first()->toolTip() + QString::fromLatin1("</td></tr></table></qt>");
 		}
-		// We are over a metacontact with > 1 child contacts, and not over a specific contact
-		// Iterate through children and display a summary tooltip
-		
-		
+
 		toolTip += QString::fromLatin1("<table>");
-		for(Contact *c = contacts.first(); c; c = contacts.next())
+
+        // We are over a metacontact with > 1 child contacts, and not over a specific contact
+        // Iterate through children and display a summary tooltip
+        for(Contact *c = contacts.first(); c; c = contacts.next())
 		{
 			QString iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
 			.arg( KURL::encode_string( c->protocol()->pluginId() ),
@@ -108,11 +112,11 @@ public:
 				);
 
 			toolTip += i18n("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
-								"<tr><td><img src=\"%1\">&nbsp;<b>%2</b>&nbsp;(%3)</td><td align=\"right\">%4</td></tr>")
+							"<tr><td><img src=\"%1\">&nbsp;<nobr><b>%2</b></nobr>&nbsp;<nobr>(%3)</nobr></td><td align=\"right\"><nobr>%4</nobr></td></tr>")
 						.arg( iconName, c->property(Kopete::Global::Properties::self()->nickName()).value().toString() , c->contactId(), c->onlineStatus().description() );
 		}
 
-		return toolTip + QString::fromLatin1("</table></qt>");
+		return toolTip + QString::fromLatin1("</table></td></tr></table></qt>");
 	}
 private:
 	MetaContact *metaContact;
