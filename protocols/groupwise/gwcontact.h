@@ -112,8 +112,9 @@ public:
 	/**
 	 * Received a message from the server.
 	 * Find the conversation that this message belongs to, and display it there.
+	 * @param autoReply Indicates that the message is an auto reply - doesn't contain any RTF.
 	 */
-	void handleIncomingMessage( const ConferenceEvent & event );
+	void handleIncomingMessage( const ConferenceEvent & event, bool autoReply );
 	
 	/**
 	 * Add this contact to a conference

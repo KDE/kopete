@@ -67,9 +67,11 @@ fd		 * @param password
 		/** 
 		 * Set the user's presence on the server
 		 * Protocol action P2
-		 * @param status class containing status, away message.
+		 * @param status status enum
+		 * @param reason custom status name for away statuses
+		 * @param autoReply auto reply message for use in this status
 		 */
-		void setStatus( GroupWise::Status status, const QString & reason );
+		void setStatus( GroupWise::Status status, const QString & reason, const QString & autoReply );
 
 		/**
 		 * Send a message 
@@ -243,6 +245,10 @@ fd		 * @param password
 		 * Notify that we've just received a message.  Sender may not be on our contact list
 		 */
 		void messageReceived( const ConferenceEvent & );
+		/**
+		 * Notify that we've received an auto reply.  This Event does not contain any rtf, unlike a normal message.
+		 */
+		void autoReplyReceived( const ConferenceEvent & );
 		/** 
 		 * A conference was successfully created on the server
 		 */

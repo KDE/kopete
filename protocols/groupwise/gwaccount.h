@@ -139,6 +139,11 @@ protected slots:
 	void slotGoOffline();
 	void slotGoBusy( const QString & reason );
 	void slotGoAppearOffline();
+	/**
+	 * Set an auto reply message for use when the account is away
+	 * TODO: Extend KopeteAwayAction so you can set multiple ones there.
+	 */
+	void slotSetAutoReply();
 	// SERVER SIDE CONTACT LIST PROCESSING
 	/**
 	 * Called when we receive a FOLDER from the server side contact list
@@ -167,6 +172,7 @@ protected slots:
 	 * in order to locate the MessageManager and finally pass to the GUI.
 	 */
 	void receiveMessage( const ConferenceEvent & event );
+	void receiveAutoReply( const ConferenceEvent & event );
 	/**
 	 * A contact changed status
 	 */
@@ -264,6 +270,8 @@ protected:
 	 */
 	void setStatus( GroupWise::Status status, const QString & reason = QString::null );
 private:
+	// current auto reply message
+	QString m_autoReply;
 	// Network code 
 	KNetworkConnector * m_connector;
 	QCA::TLS * m_QCATLS;

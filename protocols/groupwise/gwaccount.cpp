@@ -28,7 +28,7 @@
 #include <kaction.h>
 #include <kapplication.h>
 #include <kdebug.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -99,6 +99,9 @@ KActionMenu* GroupWiseAccount::actionMenu()
 	theActionMenu->insert( new KAction (GroupWiseProtocol::protocol()->groupwiseOffline.caption(),
 		GroupWiseProtocol::protocol()->groupwiseOffline.iconFor(this), 0, this, SLOT ( slotGoOffline() ), this,
 		"actionGroupWiseOfflineDisconnect") );
+	theActionMenu->insert( new KAction ( "&Set Auto-Reply", QString::null, 0, this,
+		SLOT( slotSetAutoReply() ), this,
+		"actionSetAutoReply") );
 	theActionMenu->insert( new KAction ( "Test rtfize()", QString::null, 0, this,
 		SLOT( slotTestRTFize() ), this,
 		"actionTestRTFize") );
@@ -212,6 +215,8 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	QObject::connect( m_client, SIGNAL( statusReceived( const QString &, Q_UINT16, const QString & ) ), SLOT( receiveStatus( const QString &, Q_UINT16 , const QString & ) ) );
 	// incoming message
 	QObject::connect( m_client, SIGNAL( messageReceived( const ConferenceEvent & ) ), SLOT( receiveMessage( const ConferenceEvent & ) ) );
+	// auto reply to one of our messages because the recipient is away
+	QObject::connect( m_client, SIGNAL( autoReplyReceived( const ConferenceEvent & ) ), SLOT( receiveAutoReply( const ConferenceEvent & ) ) );
 	
 	QObject::connect( m_client, SIGNAL( ourStatusChanged( GroupWise::Status, const QString &, const QString & ) ), SLOT( changeOurStatus( GroupWise::Status, const QString &, const QString & ) ) );
 	// conference events
@@ -292,7 +297,7 @@ void GroupWiseAccount::setStatus( GroupWise::Status status, const QString & reas
 	{
 		if ( isConnected() )
 		{
-			m_client->setStatus( status, reason );
+			m_client->setStatus( status, reason, m_autoReply );
 			//myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAway );
 		}
 		else
@@ -438,7 +443,16 @@ void GroupWiseAccount::receiveMessage( const ConferenceEvent & event )
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got a message in conference: " << event.guid << ",  from: " << event.user << ", message is: " << event.message << endl;
 	GroupWiseContact * contactFrom = static_cast<GroupWiseContact *>( contacts()[ event.user ] );
 	Q_ASSERT( contactFrom );
-	contactFrom->handleIncomingMessage( event );
+	contactFrom->handleIncomingMessage( event, false );
+}
+
+void GroupWiseAccount::receiveAutoReply( const ConferenceEvent & event )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got an auto reply in conference: " << event.guid << ",  from: " << event.user << ", message is: " << event.message << endl;
+	GroupWiseContact * contactFrom = static_cast<GroupWiseContact *>( contacts()[ event.user ] );
+	Q_ASSERT( contactFrom );
+	contactFrom->handleIncomingMessage( event, true );
+}
 /*	else
 	{
 		kdDebug (GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << event.user << " is unknown to us, requesting details so we can create a temporary contact." << endl;
@@ -450,7 +464,7 @@ void GroupWiseAccount::receiveMessage( const ConferenceEvent & event )
 		// and we'll add a temporary contact in receiveContactUserDetails, before coming back to this method
 		m_client->requestDetails( userDNsList );
 	}*/
-}
+
 
 void GroupWiseAccount::receiveFolder( const FolderItem & folder )
 {
@@ -854,6 +868,16 @@ void GroupWiseAccount::slotMessageManagerDestroyed( QObject * obj )
 	m_managers.remove( mgr->guid() );
 }
 
+void GroupWiseAccount::slotSetAutoReply()
+{
+	bool ok;
+	QString newAutoReply = KInputDialog::getText( i18n( "Enter Auto-Reply Message" ),
+			 i18n( "Please enter an Auto-Reply message that will be shown to users who message you while Away or Busy" ), m_autoReply,
+			 &ok, Kopete::UI::Global::mainWidget() );
+	if ( ok )
+		m_autoReply = newAutoReply;
+}
+
 void GroupWiseAccount::slotTestRTFize()
 {
 /*	bool ok;
@@ -863,8 +887,8 @@ void GroupWiseAccount::slotTestRTFize()
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Converted text is: '" << protocol()->rtfizeText( testText ) << "'" << endl;*/
 	
 	bool ok;
-	const QString query = QString::fromLatin1("Enter a contactId:");
-	QString testText = KLineEditDlg::getText( query, QString::null, &ok, Kopete::UI::Global::mainWidget() );
+	const QString query = i18n("Enter a contactId:");
+	QString testText = KInputDialog::getText( query, i18n("This is a test dialog and will not be in the final product!" ), QString::null, &ok, Kopete::UI::Global::mainWidget() );
 	if ( !ok )
 		return;
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Trying to add contact: '" << protocol()->rtfizeText( testText ) << "'" << endl;

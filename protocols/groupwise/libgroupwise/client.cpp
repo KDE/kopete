@@ -172,18 +172,18 @@ void Client::initialiseEventTasks()
 	connect( ct, SIGNAL( otherInvited( const ConferenceEvent & ) ), SIGNAL( inviteNotifyReceived( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( invitationDeclined( const ConferenceEvent & ) ), SIGNAL( invitationDeclined( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( closed( const ConferenceEvent & ) ), SIGNAL( conferenceClosed( const ConferenceEvent & ) ) );
+	connect( ct, SIGNAL( autoReply( const ConferenceEvent & ) ), SIGNAL( autoReplyReceived( const ConferenceEvent & ) ) );
 	connect( d->userDetailsMgr, SIGNAL( temporaryContact( const ContactDetails & ) ), SIGNAL( tempContactReceived( const ContactDetails & ) ) );
-	// TODO: connect autoreply
 	// The ConnectionTask handles incoming connection events
 	ConnectionTask* cont = new ConnectionTask( d->root );
 	connect( cont, SIGNAL( connectedElsewhere() ), SIGNAL( connectedElsewhere() ) );
 }
 
-void Client::setStatus( GroupWise::Status status, const QString & reason )
+void Client::setStatus( GroupWise::Status status, const QString & reason, const QString & autoReply )
 {
 	qDebug( "Setting status to %i", status );
 	SetStatusTask * sst = new SetStatusTask( d->root );
-	sst->status( status, reason, QString::null );
+	sst->status( status, reason, autoReply );
 	connect( sst, SIGNAL( finished() ), this, SLOT( sst_statusChanged() ) );
 	sst->go( true );
 	// TODO: set status change in progress flag

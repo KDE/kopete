@@ -23,6 +23,7 @@
 #include <klocale.h>
 
 #include "kopeteaccount.h"
+#include "kopeteglobal.h"
 #include "kopetemessage.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
@@ -255,16 +256,24 @@ void GroupWiseContact::slotMessageManagerDeleted( QObject *sender )
 	m_msgManagers.remove( manager->guid() );
 }
 
-void GroupWiseContact::handleIncomingMessage( const ConferenceEvent & message )
+void GroupWiseContact::handleIncomingMessage( const ConferenceEvent & message, bool autoReply )
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Got a message for conference: " << message.guid << ", message: " << message.message << endl; 
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Got a " << ( autoReply ? "auto-reply" : "message" ) << " for conference: " << message.guid << ", message: " << message.message << endl;
 	KopeteContactPtrList contactList;
 	contactList.append ( account()->myself () );
 	GroupWiseMessageManager *mgr = manager( message.guid, true );
-	// strip RTF using protocol's utility function
-	KopeteMessage * newMessage = new KopeteMessage ( message.timeStamp, this, contactList, message.message,
+
+	// add an auto-reply indicator if needed
+	QString messageMunged = message.message;
+	if ( autoReply )
+	{
+		QString autoReplyPrefix = i18n("Prefix used for automatically generated auto-reply messages when the contact is Away, contains contact's name",
+									   "Auto reply from %1: " ).arg( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
+		messageMunged = autoReplyPrefix + message.message;
+	}
+	KopeteMessage * newMessage = new KopeteMessage ( message.timeStamp, this, contactList, messageMunged, 
 									KopeteMessage::Inbound,
-									KopeteMessage::RichText );
+									autoReply ? KopeteMessage::PlainText : KopeteMessage::RichText );
 	Q_ASSERT( mgr );
 	mgr->appendMessage( *newMessage );
 	delete newMessage;
