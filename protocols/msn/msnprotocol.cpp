@@ -1139,7 +1139,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 
 	if ( c && m_myself )
 	{
-		static_cast<MSNMessageManager*>( c->manager() )->createChat( handle, address, auth, ID );
+		static_cast<MSNMessageManager*>( c->manager(true) )->createChat( handle, address, auth, ID );
 	}
 }
 
@@ -1153,7 +1153,7 @@ void MSNProtocol::slotStartChatSession( QString handle )
 	{
 		KopeteContactPtrList chatmembers;
 
-		if(!static_cast<MSNMessageManager*>( c->manager() )->service())
+		if(!c->manager() || !static_cast<MSNMessageManager*>( c->manager() )->service())
 		{
 			kdDebug(14140) << "MSNProtocol::slotStartChatSession: "
 				<< "Creating new switchboard connection" << endl;
