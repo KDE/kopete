@@ -32,8 +32,8 @@ if test -n "$XML_CONFIG"; then
      for args in $LIBXML_LIBS; do
 	  case $args in
 	    -L*)
-  	       LIBXML_RPATH="$LIBXML_RPATH $args"
- 	       ;;
+	       LIBXML_RPATH="$LIBXML_RPATH $args"
+	       ;;
           esac
      done
      LIBXML_RPATH=`echo $LIBXML_RPATH | sed -e "s/-L/-R/g"`
@@ -77,11 +77,11 @@ if test ! "$USE_RPATH" = "yes"; then
   LIBXML_RPATH=
 fi
 
-if test -n "x$XML_CONFIG"; then
+if test -z "$XML_CONFIG"; then
   DO_NOT_COMPILE="$DO_NOT_COMPILE kopete"
 fi
 
-if test -n "x$XSLT_CONFIG"; then
+if test -z "$XSLT_CONFIG"; then
   DO_NOT_COMPILE="$DO_NOT_COMPILE kopete"
 fi
 AC_SUBST(LIBXSLT_LIBS)
