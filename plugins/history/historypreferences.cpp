@@ -53,7 +53,7 @@ void HistoryPreferences::reopen()
 	m_widget->nbNewView->setValue(KGlobal::config()->readNumEntry( "Number Auto chatwindow" , 7) );
 	m_widget->nbChatWindow->setValue(KGlobal::config()->readNumEntry( "Number ChatWindow", 20) );
 	QColor defaultcolor("dimgrey");
-	m_widget->m_color->setColor(KGlobal::config()->readColorEntry( "Number ChatWindow", &defaultcolor));
+	m_widget->m_color->setColor(KGlobal::config()->readColorEntry( "History Color", &defaultcolor));
 }
 
 void HistoryPreferences::save()
