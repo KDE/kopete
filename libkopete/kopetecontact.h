@@ -27,7 +27,7 @@
 class KPopupMenu;
 class KAction;
 
-#include "kopeteaccount.h"  //TODO remove  (this is just for KOS
+#include "kopeteonlinestatus.h"
 
 namespace Kopete {
 

@@ -23,6 +23,8 @@
 #include <kdemacros.h>
 #include <qdict.h>
 
+#include "kopeteonlinestatus.h"
+
 class QDomNode;
 class KActionMenu;
 class KConfigGroup;
@@ -37,11 +39,6 @@ class Protocol;
 class MetaContact;
 class Group;
 class OnlineStatus;
-
-
-//TODO this is temporary
-class OnlineStatus { };
-
 
 
 /**

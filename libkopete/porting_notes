@@ -61,9 +61,12 @@ Porting from Kopete 0.9 to Kopete 0.10
 	.) renamed() signal has been renamed into displayNameChanged()  for consistancy
 	.) internalName has been removed
 
-*) KopetePluginDataObject has been renamed Kopete::ContactListElement
+*) KopetePluginDataObject has been replaced Kopete::ContactListElement
 
+*) KopeteOnlineStatus has been renamed Kopete::OnlineStatus
+	.) caption has been removed   (moved to OnlineStatusManager
 
+*) OnlineStatusIconCache has been replaced by OnlineStatusManager
 
 
 

@@ -28,7 +28,7 @@
 #include <kdemacros.h>
 
 
-#include "kopeteaccount.h"  //TODO remove  (this is just for KOS
+#include "kopeteonlinestatus.h"  
 
 
 class QDomNode;
@@ -38,7 +38,6 @@ class KURL;
 namespace Kopete {
 
 
-//TODO:  temporary
 class Plugin;
 class Group;
 
