@@ -34,12 +34,12 @@ class IRCUserContact : public IRCContact
 
 	public:
 		// This class provides a KopeteContact for each user on the channel.
-		IRCUserContact(IRCIdentity *, const QString &nickname, KIRC::UserClass, KopeteMetaContact * = 0L);
+		IRCUserContact(IRCIdentity *, const QString &nickname,KopeteMetaContact * = 0L);
 		~IRCUserContact();
 
 		// Userclass stuff
-		void setUserclass(KIRC::UserClass userclass) { mUserclass = userclass; }
-		KIRC::UserClass userclass() { return mUserclass; }
+		void setUserclass(const QString &channel, KIRC::UserClass userclass) { mUserClassMap[channel.lower()] = userclass; }
+		const KIRC::UserClass userclass( const QString &channel ) const { return  mUserClassMap[channel.lower()]; }
 
 		// KopeteContact stuff
 		virtual QString statusIcon() const;
@@ -54,7 +54,6 @@ class IRCUserContact : public IRCContact
 	private slots:
 		void slotMessageManagerDestroyed();
 		virtual void slotUserInfo();
-		void slotAboutToShowModeMenu();
 		void slotOp();
 		void slotDeop();
 		void slotVoice();
@@ -67,8 +66,6 @@ class IRCUserContact : public IRCContact
 		void slotUserOnline( const QString &nick );
 
 	private:
-		KIRC::UserClass mUserclass;
-
 		KActionCollection *mCustomActions;
 		KActionMenu *actionModeMenu;
 		KAction *actionOp;
@@ -82,6 +79,7 @@ class IRCUserContact : public IRCContact
 		KActionMenu *actionBan;
 		QTimer *mOnlineTimer;
 		QStringList mChannels;
+		QMap<QString,KIRC::UserClass> mUserClassMap;
 
 		void contactMode( const QString &mode );
 };

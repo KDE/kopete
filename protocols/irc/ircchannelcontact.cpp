@@ -141,8 +141,9 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QStringList 
 				userclass = KIRC::Normal;
 
 			IRCUserContact *user = mIdentity->findUser( *it );
-			user->setUserclass( userclass );
+			user->setUserclass( mNickName, userclass );
 			user->setOnlineStatus( KopeteContact::Online );
+			user->addChannel( mNickName );
 			manager()->addContact( static_cast<KopeteContact*>(user), true );
 		}
 	}
@@ -191,6 +192,7 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 		{
 			IRCUserContact *contact = mIdentity->findUser( nickname );
 			contact->setOnlineStatus( KopeteContact::Online );
+			contact->addChannel( mNickName );
 			manager()->addContact((KopeteContact *)contact, true);
 
 			KopeteMessage msg((KopeteContact *)this, mContact,
@@ -210,6 +212,7 @@ void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString
 		if ( c )
 		{
 			manager()->removeContact( c, true );
+			static_cast<IRCUserContact*>(c)->removeChannel( mNickName );
 			mIdentity->unregisterUser( nickname );
 		}
 		KopeteMessage msg((KopeteContact *)this, mContact,
@@ -353,7 +356,7 @@ bool IRCChannelContact::modeEnabled( QChar mode, QString *value )
 
 KActionCollection *IRCChannelContact::customContextMenuActions()
 {
-	bool isOperator = (mIdentity->mySelf()->userclass() == KIRC::Operator);
+	bool isOperator = (mIdentity->mySelf()->userclass( mNickName ) == KIRC::Operator);
 	bool amOnline = (onlineStatus() == KopeteContact::Online || onlineStatus() == KopeteContact::Away );
 
 	actionJoin->setEnabled( !isConnected && amOnline );

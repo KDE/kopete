@@ -16,6 +16,7 @@
 */
 
 #include "ircusercontact.h"
+#include "ircchannelcontact.h"
 #include "ircidentity.h"
 #include "kopetemessagemanager.h"
 #include "kopeteviewmanager.h"
@@ -26,13 +27,11 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kaction.h>
-#include <kpopupmenu.h>
 #include <qtimer.h>
 
-IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, KIRC::UserClass userclass, KopeteMetaContact *m)
+IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, KopeteMetaContact *m)
 	: IRCContact( identity, nickname, m )
 {
-	mUserclass = userclass;
 	mNickName = nickname;
 
 	mCustomActions = new KActionCollection(this);
@@ -45,7 +44,6 @@ IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, K
 	mCustomActions->insert( actionCtcpMenu );
 
 	actionModeMenu = new KActionMenu(i18n("&Modes"), 0, this, "actionModeMenu");
-	QObject::connect( actionModeMenu->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(slotAboutToShowModeMenu()));
 	actionOp = new KAction(i18n("&Op"), 0, this, SLOT(slotOp()), this, "actionOp");
 	actionDeop = new KAction(i18n("&Deop"), 0, this, SLOT(slotDeop()), this, "actionDeop");
 	actionVoice = new KAction(i18n("&Voice"), 0, this, SLOT(slotVoice()), this, "actionVoice");
@@ -108,11 +106,11 @@ void IRCUserContact::slotUserOffline()
 
 QString IRCUserContact::statusIcon() const
 {
-	if (mUserclass == KIRC::Operator)
+	/*if (mUserclass == KIRC::Operator)
 		return "irc_op";
 
 	if (mUserclass == KIRC::Voiced)
-		return "irc_voice";
+		return "irc_voice";*/
 
 	return "irc_normal";
 }
@@ -181,11 +179,6 @@ void IRCUserContact::slotCtcpVersion()
 	mEngine->sendCtcpVersion(mNickName);
 }
 
-void IRCUserContact::slotAboutToShowModeMenu()
-{
-	actionModeMenu->setEnabled( mIdentity->mySelf()->userclass() == KIRC::Operator );
-}
-
 void IRCUserContact::slotIncomingModeChange( const QString &, const QString &channel, const QString &mode )
 {
 	if( mChannels.contains( channel.lower() ) )
@@ -195,16 +188,16 @@ void IRCUserContact::slotIncomingModeChange( const QString &, const QString &cha
 		{
 			QString modeChange = mode.section(' ', 0, 0);
 			if(modeChange == QString::fromLatin1("+o"))
-				mUserclass = KIRC::Operator;
+				mUserClassMap[channel.lower()] = KIRC::Operator;
 			else if(modeChange == QString::fromLatin1("-o"))
-				mUserclass = KIRC::Normal;
+				mUserClassMap[channel.lower()] = KIRC::Normal;
 			else if(modeChange == QString::fromLatin1("+v"))
-				mUserclass = KIRC::Voiced;
+				mUserClassMap[channel.lower()] = KIRC::Voiced;
 			else if(modeChange == QString::fromLatin1("-v"))
-				mUserclass = KIRC::Normal;
-
-			emit( onlineStatusChanged( static_cast<KopeteContact*>(this), onlineStatus() ) );
+				mUserClassMap[channel.lower()] = KIRC::Normal;
 		}
+
+		actionModeMenu->setEnabled( mIdentity->mySelf()->userclass(channel) == KIRC::Operator );
 	}
 }
 
