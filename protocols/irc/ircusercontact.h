@@ -43,18 +43,6 @@ public:
 	// This class provides a KopeteContact for each user on the channel.
 	IRCUserContact(IRCAccount *, const QString &nickname,KopeteMetaContact *mc  );
 
-	/**
-	 * This sets this UserClass of the contact, to either Op, Voiced, or Normal.
-	 * This setting invluences menu options of the KopeteAccount::myself() user, as well
-	 * as alters the user icons in the chat members display.
-	 */
-	void setUserclass(const QString &channel, KIRC::UserClass userclass) { mUserClassMap[channel.lower()] = userclass; }
-
-	/**
-	 * Returns the user class of this contact
-	 */
-	const KIRC::UserClass userclass( const QString &channel ) const { return  mUserClassMap[channel.lower()]; }
-
 	// KopeteContact stuff
 	virtual KActionCollection *customContextMenuActions() { return mCustomActions; };
 	virtual const QString caption() const;
@@ -86,7 +74,6 @@ private:
 	KAction *actionKick;
 	KActionMenu *actionBanMenu;
 	QTimer *mOnlineTimer;
-	QMap<QString,KIRC::UserClass> mUserClassMap;
 
 	void contactMode( const QString &mode );
 };

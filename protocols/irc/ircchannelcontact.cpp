@@ -83,7 +83,7 @@ KopeteMessageManager* IRCChannelContact::manager(bool)
 {
 	if ( !mMsgManager && mEngine->isLoggedIn() )
 	{
-		mMsgManager = KopeteMessageManagerFactory::factory()->create( (KopeteContact *)mAccount->mySelf(), mMyself, (KopeteProtocol *)mAccount->protocol());
+		mMsgManager = KopeteMessageManagerFactory::factory()->create( mAccount->myself(), mMyself, (KopeteProtocol *)mAccount->protocol());
 		mMsgManager->setDisplayName( caption() );
 		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
 		QObject::connect( mMsgManager, SIGNAL(closing(KopeteMessageManager*)), this, SLOT(slotMessageManagerDestroyed()));
@@ -133,22 +133,17 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QStringList 
 			if ((*it).lower() == mNickName.lower())
 				continue;
 
-			if ( (*it)[0] == '@' )
-			{
+			QChar firstChar = (*it)[0];
+			if( firstChar == '@' || firstChar == '+' )
 				(*it) = (*it).remove(0, 1);
-				userclass = KIRC::Operator;
-			}
-			else if( (*it)[0] == '+')
-			{
-				(*it) = (*it).remove(0, 1);
-				userclass = KIRC::Voiced;
-			}
-			else
-				userclass = KIRC::Normal;
 
-			IRCUserContact *user = mAccount->findUser( *it );
-			user->setUserclass( mNickName, userclass );
+			IRCContact *user = mAccount->findUser( *it );
 			user->setOnlineStatus( IRCProtocol::IRCUserOnline() );
+
+			if ( firstChar == '@' )
+				manager()->setContactOnlineStatus( static_cast<KopeteContact*>(user), IRCProtocol::IRCUserOp() );
+			else if( firstChar == '+')
+				manager()->setContactOnlineStatus( static_cast<KopeteContact*>(user), IRCProtocol::IRCUserVoice() );
 
 			//Post the event so we don't block the UI
 			ContactAddedEvent *ce = new ContactAddedEvent( static_cast<KopeteContact*>(user) );
@@ -365,7 +360,7 @@ bool IRCChannelContact::modeEnabled( QChar mode, QString *value )
 
 KActionCollection *IRCChannelContact::customContextMenuActions()
 {
-	bool isOperator = (mAccount->mySelf()->userclass( mNickName ) == KIRC::Operator);
+	bool isOperator = ( manager()->contactOnlineStatus( mAccount->mySelf() ) == IRCProtocol::IRCUserOp() );
 	bool amOnline = onlineStatus().status() == KopeteOnlineStatus::Online || onlineStatus().status() == KopeteOnlineStatus::Away;
 
 	actionJoin->setEnabled( !isConnected && amOnline );

@@ -25,6 +25,7 @@
 
 #include "kopetemessage.h"
 #include "kopetecontact.h"
+#include "kopeteonlinestatus.h"
 
 class KopeteContact;
 class KopeteMessageManager;
@@ -96,8 +97,11 @@ public:
 
 	void setDisplayName( const QString & );
 
-
 	void setCurrentMessage( const KopeteMessage &message );
+
+	void setContactOnlineStatus( const KopeteContact*, const KopeteOnlineStatus & );
+
+	const KopeteOnlineStatus &contactOnlineStatus( const KopeteContact* ) const;
 
 signals:
 	/**
@@ -137,7 +141,7 @@ signals:
 	void remoteTyping( const KopeteContact *, bool );
 
 	void dying( QWidget* );
-	
+
 public slots:
 	/**
 	 * Got a typing notification from a user
@@ -202,7 +206,7 @@ protected:
 	KopeteMessageManager( const KopeteContact *user,
 		KopeteContactPtrList others, KopeteProtocol *protocol, int id = 0,
 		QObject *parent = 0, const char *name = 0 );
-	
+
 	void setMMId( int );
 
 	void customEvent( QCustomEvent * e );

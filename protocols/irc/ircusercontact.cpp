@@ -72,7 +72,7 @@ KopeteMessageManager* IRCUserContact::manager(bool)
 	{
 		kdDebug(14120) << k_funcinfo << "Creating new KMM for " << mNickName << endl;
 
-		mMsgManager = KopeteMessageManagerFactory::factory()->create( (KopeteContact *)mAccount->mySelf(), mMyself, (KopeteProtocol *)mAccount->protocol());
+		mMsgManager = KopeteMessageManagerFactory::factory()->create( mAccount->myself(), mMyself, (KopeteProtocol *)mAccount->protocol());
 		mMsgManager->setDisplayName( caption() );
 		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
 		QObject::connect( mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
@@ -185,23 +185,24 @@ void IRCUserContact::slotCtcpVersion()
 
 void IRCUserContact::slotIncomingModeChange( const QString &, const QString &channel, const QString &mode )
 {
-	if( mAccount->findChannel( channel )->locateUser( mNickName ) )
+	IRCChannelContact *chan = mAccount->findChannel( channel );
+	if( chan->locateUser( mNickName ) )
 	{
 		QString user = mode.section(' ', 1, 1);
 		if( user == mNickName )
 		{
 			QString modeChange = mode.section(' ', 0, 0);
 			if(modeChange == QString::fromLatin1("+o"))
-				mUserClassMap[channel.lower()] = KIRC::Operator;
+				manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserOp() );
 			else if(modeChange == QString::fromLatin1("-o"))
-				mUserClassMap[channel.lower()] = KIRC::Normal;
+				manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserOnline() );
 			else if(modeChange == QString::fromLatin1("+v"))
-				mUserClassMap[channel.lower()] = KIRC::Voiced;
+				manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserVoice() );
 			else if(modeChange == QString::fromLatin1("-v"))
-				mUserClassMap[channel.lower()] = KIRC::Normal;
+				manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserOnline() );
 		}
 
-		bool isOperator = mAccount->mySelf()->userclass(channel) == KIRC::Operator;
+		bool isOperator = ( chan->manager()->contactOnlineStatus( mAccount->myself() ) == IRCProtocol::IRCUserOp() );
 		actionModeMenu->setEnabled(isOperator);
 		actionBanMenu->setEnabled(isOperator);
 		actionKick->setEnabled(isOperator);

@@ -72,6 +72,8 @@ public:
 	static KopeteOnlineStatus IRCUserOnline() { return m_UserOnline; };
 	static KopeteOnlineStatus IRCChannelOffline() { return m_ChannelOffline; };
 	static KopeteOnlineStatus IRCUserOffline() { return m_UserOffline; };
+	static KopeteOnlineStatus IRCUserOp() { return m_UserOp; };
+	static KopeteOnlineStatus IRCUserVoice() { return m_UserVoice; };
 
 private slots:
 	void slotMessageFilter( KopeteMessage &msg );
@@ -86,6 +88,8 @@ private:
 	static KopeteOnlineStatus m_ChannelOnline;
 	static KopeteOnlineStatus m_ChannelOffline;
 	static KopeteOnlineStatus m_UserOnline;
+	static KopeteOnlineStatus m_UserOp;
+	static KopeteOnlineStatus m_UserVoice;
 	static KopeteOnlineStatus m_UserOffline;
 
 	KActionCollection *mActions;

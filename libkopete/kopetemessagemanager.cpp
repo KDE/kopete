@@ -35,7 +35,7 @@ struct KMMPrivate
 	KopeteContactPtrList mContactList;
 	const KopeteContact *mUser;
 	KopeteMessageLog *mLogger;
-	QMap<const KopeteContact *, QStringList> resources;
+	QMap<const KopeteContact *, KopeteOnlineStatus> contactStatus;
 	KopeteProtocol *mProtocol;
 	int mId;
 	bool mLog;
@@ -87,6 +87,19 @@ KopeteMessageManager::~KopeteMessageManager()
 	KopeteMessageManagerFactory::factory()->removeSession( this );
 	emit(closing( this ) );
 	delete d;
+}
+
+void KopeteMessageManager::setContactOnlineStatus( const KopeteContact *contact, const KopeteOnlineStatus &status )
+{
+	d->contactStatus[ contact ] = status;
+}
+
+const KopeteOnlineStatus &KopeteMessageManager::contactOnlineStatus( const KopeteContact *contact ) const
+{
+	if( d->contactStatus.contains( contact ) )
+		return d->contactStatus[ contact ];
+
+	return contact->onlineStatus();
 }
 
 void KopeteMessageManager::customEvent( QCustomEvent * e )

@@ -62,7 +62,7 @@ IRCContact::IRCContact(IRCAccount *account, const QString &nick, KopeteMetaConta
 	setDisplayName(mNickName);
 
 	// KopeteMessageManagerFactory stuff
-	mMyself.append((KopeteContact *)account->mySelf());
+	mMyself.append( static_cast<KopeteContact*>( this ) );
 
 	QObject::connect(mEngine, SIGNAL(incomingAction(const QString &, const QString &, const QString &)), this, SLOT(slotNewAction(const QString &, const QString &, const QString &)));
 	QObject::connect(mEngine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), this, SLOT(slotNewMessage(const QString &, const QString &, const QString &)));
