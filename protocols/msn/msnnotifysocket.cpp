@@ -40,6 +40,8 @@
 #include <ktempfile.h>
 #include <krun.h>
 
+#include <ctime>
+
 // Ugly hack to remain compatible with KDE 3.0 - We can't #ifdef out
 // preprocessor directives :(
 #ifndef KDE_IS_VERSION
@@ -381,7 +383,9 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		//write the tmp file
 		QString UserID=m_account->accountId();
 
-		QString sl="10"; //FIXME: sl should be a time since we are connected
+		time_t actualTime;
+		time(&actualTime);
+		QString sl=QString::number(  (unsigned long)actualTime - m_loginTime.toULong()   );
 
 		QString md5this(m_MSPAuth+sl+m_password);
 		KMD5 md5(md5this);
@@ -501,6 +505,12 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 			QRegExp rx("kv: ([0-9]*)");
 			rx.search(msg);
 			m_kv=rx.cap(1);
+		}
+		if(msg.contains("LoginTime:"))
+		{
+			QRegExp rx("LoginTime: ([0-9]*)");
+			rx.search(msg);
+			m_loginTime=rx.cap(1);
 		}
 		if(msg.contains("EmailEnabled:"))
 		{

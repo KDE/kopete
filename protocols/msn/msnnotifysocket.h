@@ -145,6 +145,7 @@ private:
 	QString m_MSPAuth;
 	QString m_kv;
 	QString m_sid;
+	QString m_loginTime;
 
 	QTimer *m_keepaliveTimer;
 
