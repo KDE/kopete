@@ -71,9 +71,11 @@ bool InputProtocolBase::safeReadBytes( QCString & data, uint & len )
 		m_din->readRawBytes( temp.data(), val );
 		// the rest of the string will be filled with FF,
 		// so look for that in the last position instead of \0
-		if ( (Q_UINT8)( * ( temp.data() + ( temp.length() - 1 ) ) ) == 0xFF )
+		// this caused a crash - guessing that temp.length() is set to the number of bytes actually read...
+		// if ( (Q_UINT8)( * ( temp.data() + ( temp.length() - 1 ) ) ) == 0xFF )
+		if ( temp.length() < ( val -1 ) )
 		{
-			qDebug( "EventProtocol::safeReadBytes() - string broke, giving up" );
+			qDebug( "EventProtocol::safeReadBytes() - string broke, giving up: %i, should be %i",  temp.length(), val );
 			m_state = NeedMore;
 			return false;
 		}
