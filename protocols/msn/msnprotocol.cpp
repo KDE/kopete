@@ -915,7 +915,8 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 			if( !m_contacts.contains( handle ) )
 			{
 				// FIXME: Proper MSNContact ctor required!
-				c = new MSNContact( handle, publicName, QString::null, 0L );
+				MSNContact *c = new MSNContact( handle, publicName,
+					QString::null, 0L );
 				c->setDeleted( true );
 				m_contacts.insert( c->msnId(), c );
 			}
