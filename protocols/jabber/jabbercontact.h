@@ -57,6 +57,8 @@ class JabberContact : public KopeteContact
 		ContactStatus status() const;
 		QString statusText() const;
 		QString statusIcon() const;
+        int importance() const;
+
 		void setResource(QString);
 
 	public slots:

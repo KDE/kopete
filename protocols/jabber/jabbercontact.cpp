@@ -104,7 +104,7 @@ void JabberContact::slotDeleteMySelf(bool connected) {
 
 
 JabberContact::ContactStatus JabberContact::status() const {
-	if (mStatus == QString("Online")) { return Online; }
+	if (mStatus == QString("online")) { return Online; }
 	if (mStatus == QString("away") || mStatus == QString("xa") || mStatus == QString("dnd")) { return Away; }
 	else { return Offline; }
 }
@@ -129,6 +129,16 @@ void JabberContact::slotMoveThisUser() {
 	mProtocol->moveUser(mUserID, actionContactMove->currentText(), mName, this);
 	mGroup = actionContactMove->currentText();
 }
+
+int JabberContact::importance() const {
+
+	if (mStatus == QString("online")) { return 20; }
+	if (mStatus == QString("away")) { return 15; }
+	if (mStatus == QString("xa")) { return 10; }
+	if (mStatus == QString("dnd")) { return 12; }
+	return 0;
+}
+
 
 #include "jabbercontact.moc"
 
