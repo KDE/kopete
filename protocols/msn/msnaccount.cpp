@@ -746,6 +746,15 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 		KopeteContact *ct= contacts()[handle];
 		if ( ct )
 		{
+			if( !ct->metaContact() )
+			{
+				kdWarning( 14140 ) << k_funcinfo << "the contact " << ct->contactId() << " has no meta contact" <<endl;
+				KopeteMetaContact *metaContact = new KopeteMetaContact();
+
+				ct->setMetaContact(metaContact);
+				KopeteContactList::contactList()->addMetaContact( metaContact );
+			}
+		
 			// Contact exists, update data.
 			// Merging difference between server contact list and KopeteContact's contact list into MetaContact's contact-list
 			MSNContact *c = static_cast<MSNContact *>( ct);
@@ -873,7 +882,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 			if ( c->onlineStatus() == MSNProtocol::protocol()->UNK )
 				c->setOnlineStatus( MSNProtocol::protocol()->FLN );
 
-			if ( c->metaContact()->isTemporary() )
+			if ( c->metaContact() && c->metaContact()->isTemporary() )
 				c->metaContact()->setTemporary( false, m_groupList[ group ] );
 			else
 				c->contactAddedToGroup( group, m_groupList[ group ] );
@@ -905,7 +914,8 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 	else if ( list == "RL" )
 	{
 		// search for new Contacts
-		if ( !contacts()[ handle ] || contacts()[ handle ]->metaContact()->isTemporary() )
+		KopeteContact *ct=contacts()[ handle ];
+		if ( !ct || !ct->metaContact() || ct->metaContact()->isTemporary() )
 		{
 			// Users in the allow list or block list now never trigger the
 			// 'new user' dialog, which makes it impossible to add those here.
@@ -924,7 +934,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 		}
 		else
 		{
-			static_cast<MSNContact *>( contacts()[ handle ] )->setReversed( true );
+			static_cast<MSNContact *>( ct )->setReversed( true );
 		}
 		m_reverseList.append( handle );
 		setPluginData( protocol(), QString::fromLatin1( "reverseList" ), m_reverseList.join( "," ) );
