@@ -168,7 +168,7 @@ public:
 	 * Returns whether or not the chat member list is visible
 	 * @return Is the chat member list visible?
 	 */
-	const bool visibleMembersList() { return visibleMembers; }
+	bool visibleMembersList();
 
 	/**
 	 * Returns the HTML contents of the KHTML widget
@@ -182,7 +182,7 @@ public:
 
 	QString &caption() const;
 
-	bool sendInProgress() { return m_sendInProgress; }
+	bool sendInProgress();
 
 	void historyUp();
 
@@ -429,8 +429,8 @@ private:
 	typedef QMap<unsigned long,KopeteMessage> MessageMap;
 
 	QPtrDict<QTimer> m_remoteTypingMap;
-	KHTMLPart *chatView;
-	KHTMLView *htmlWidget;
+	KHTMLPart *chatView; //move to d-pointer
+	KHTMLView *htmlWidget; //move to d-pointer
 	bool scrollPressed;
 	MembersListPolicy membersStatus;
 	QStringList historyList;
@@ -439,15 +439,9 @@ private:
 	QString unreadMessageFrom;
 	QMap<const KopeteContact*, KopeteContactLVI*> memberContactMap;
 	KTextEdit* m_edit;
-	KListView *membersList;
-	bool transparencyEnabled;
-	bool bgOverride;
-	bool fgOverride;
-	bool rtfOverride;
-	bool isActive;
-	bool m_sendInProgress;
-	bool visibleMembers;
-	unsigned long messageId;
+	KListView *membersList; //move to d-pointer
+	
+	unsigned long messageId; 
 	QString m_lastMatch;
 	QString backgroundFile;
 	QString m_status;

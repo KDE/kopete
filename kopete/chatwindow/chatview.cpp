@@ -93,6 +93,13 @@ class KopeteChatViewPrivate
 	public:
 		KopeteXSLT *xsltParser;
 		QString captionText;
+		bool transparencyEnabled;
+		bool bgOverride;
+		bool fgOverride;
+		bool rtfOverride;
+		bool isActive;
+		bool sendInProgress;
+		bool visibleMembers;
 };
 
 class ChatViewMembersTip : public QToolTip
@@ -292,15 +299,15 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	membersDock = 0L;
 	backgroundFile = QString::null;
 	root = 0L;
-	isActive = false;
+	d->isActive = false;
 	m_tabBar = 0L;
 	messageId = 0;
 	membersStatus = Smart;
 	bgChanged = false;
 	m_tabState=Normal;
-	visibleMembers = false;
+	d->visibleMembers = false;
 
-	m_sendInProgress = false;
+	d->sendInProgress = false;
 	scrollPressed = false;
 	mComplete = new KCompletion();
 	mComplete->setIgnoreCase( true );
@@ -443,7 +450,17 @@ void ChatView::makeVisible()
 
 bool ChatView::isVisible()
 {
-	return ( m_mainWindow && m_mainWindow->isVisible() && ( isActive || docked() ) );
+	return ( m_mainWindow && m_mainWindow->isVisible() && ( d->isActive || docked() ) );
+}
+
+bool ChatView::visibleMembersList()
+{
+	return d->visibleMembers;
+}
+
+bool ChatView::sendInProgress()
+{
+	return d->sendInProgress;
 }
 
 bool ChatView::closeView( bool force )
@@ -469,7 +486,7 @@ bool ChatView::closeView( bool force )
 				i18n( "Cl&ose Chat" ), QString::fromLatin1("AskCloseChatRecentMessage" ) );
 		}
 
-		if ( m_sendInProgress && ( response == KMessageBox::Continue ) )
+		if ( d->sendInProgress && ( response == KMessageBox::Continue ) )
 		{
 			response = KMessageBox::warningContinueCancel( this, i18n( "You have a message send in progress, which will be "
 				"aborted if this chat is closed. Are you sure you want to close this chat?" ), i18n( "Message in Transit" ),
@@ -586,9 +603,9 @@ void ChatView::createMembersList()
 		}
 
 		if( membersStatus == Smart )
-			visibleMembers = ( memberContactMap.count() > 2 );
+			d->visibleMembers = ( memberContactMap.count() > 2 );
 		else
-			visibleMembers = ( membersStatus == Visible );
+			d->visibleMembers = ( membersStatus == Visible );
 
 		placeMembersList( membersDockPosition );
 
@@ -602,8 +619,8 @@ void ChatView::toggleMembersVisibility()
 {
 	if( membersDock )
 	{
-		visibleMembers = !visibleMembers;
-		membersStatus = visibleMembers ? Visible : Hidden;
+		d->visibleMembers = !d->visibleMembers;
+		membersStatus = d->visibleMembers ? Visible : Hidden;
 		placeMembersList( membersDockPosition );
 		KopeteContactPtrList members = m_manager->members();
 		if ( members.first()->metaContact() )
@@ -618,9 +635,9 @@ void ChatView::toggleMembersVisibility()
 void ChatView::placeMembersList( KDockWidget::DockPosition dp )
 {
 	kdDebug(14000) << k_funcinfo << "Members list policy " << membersStatus <<
-			", visible " << visibleMembers << endl;
+			", visible " << d->visibleMembers << endl;
 
-	if ( visibleMembers )
+	if ( d->visibleMembers )
 	{
 		membersDockPosition = dp;
 
@@ -655,7 +672,7 @@ void ChatView::placeMembersList( KDockWidget::DockPosition dp )
 			root->repaint( true );
 	}
 
-	if( isActive )
+	if( d->isActive )
 		m_mainWindow->updateMembersActions();
 
 	refreshView();
@@ -717,7 +734,7 @@ void ChatView::remoteTyping( const KopeteContact *contact, bool isTyping )
 void ChatView::setStatus( const QString &status )
 {
 	m_status = status;
-	if ( isActive )
+	if ( d->isActive )
 		m_mainWindow->setStatus( status );
 }
 
@@ -849,9 +866,9 @@ void ChatView::slotContactAdded(const KopeteContact *contact , bool surpress)
 		if( membersStatus == Smart && membersDock )
 		{
 			bool currStatus = ( memberContactMap.count() > 2 );
-			if( currStatus != visibleMembers )
+			if( currStatus != d->visibleMembers )
 			{
-				visibleMembers = currStatus;
+				d->visibleMembers = currStatus;
 				placeMembersList( membersDockPosition );
 			}
 		}
@@ -919,14 +936,14 @@ void ChatView::setCaption( const QString &text, bool modified )
 		m_tabBar->setTabLabel( this, newCaption  );
 
 		//Blink icon if modified and not active
-		if( !isActive && modified )
+		if( !d->isActive && modified )
 			setTabState( Changed );
 		else
 			setTabState();
 	}
 
 	//Tell the parent we changed our caption
-	emit( captionChanged( isActive ) );
+	emit( captionChanged( d->isActive ) );
 }
 
 void ChatView::appendMessage(KopeteMessage &message)
@@ -934,7 +951,7 @@ void ChatView::appendMessage(KopeteMessage &message)
 	remoteTyping( message.from(), false );
 
 	addChatMessage( message );
-	if( !isActive )
+	if( !d->isActive )
 	{
 		switch ( message.importance() )
 		{
@@ -952,7 +969,7 @@ void ChatView::appendMessage(KopeteMessage &message)
 		}
 	}
 
-	if( !m_sendInProgress || message.from() != m_manager->user() )
+	if( !d->sendInProgress || message.from() != m_manager->user() )
 	{
 		unreadMessageFrom = message.from()->metaContact() ?
 			 message.from()->metaContact()->displayName() : message.from()->contactId();
@@ -1090,7 +1107,7 @@ void ChatView::sendInternalMessage(const QString &msg, KopeteMessage::MessageFor
 
 void ChatView::sendMessage()
 {
-	m_sendInProgress = true;
+	d->sendInProgress = true;
 
 	QString txt = editpart->text( Qt::PlainText );
 	if ( m_lastMatch.isNull() && ( txt.find( QRegExp( QString::fromLatin1("^\\w+:\\s") ) ) > -1 ) )
@@ -1121,7 +1138,7 @@ void ChatView::sendMessage()
 
 void ChatView::messageSentSuccessfully()
 {
-	m_sendInProgress = false;
+	d->sendInProgress = false;
 	emit ( messageSuccess( this ) );
 }
 
@@ -1239,7 +1256,7 @@ void ChatView::readOptions()
 		config->readNumEntry( QString::fromLatin1( "membersDockPosition" ), KDockWidget::DockRight ) );
 
 	QString dockKey = QString::fromLatin1( "viewDock" );
-	if ( visibleMembers )
+	if ( d->visibleMembers )
 	{
 		if( membersDockPosition == KDockWidget::DockLeft )
 			dockKey.prepend( QString::fromLatin1( "membersDock," ) );
@@ -1254,9 +1271,9 @@ void ChatView::readOptions()
 	viewDock->setDockSite( KDockWidget::DockLeft | KDockWidget::DockRight );
 	editDock->setEnableDocking( KDockWidget::DockNone );
 
-	bgOverride = KopetePrefs::prefs()->bgOverride();
-	fgOverride = KopetePrefs::prefs()->fgOverride();
-	rtfOverride = KopetePrefs::prefs()->rtfOverride();
+	d->bgOverride = KopetePrefs::prefs()->bgOverride();
+	d->fgOverride = KopetePrefs::prefs()->fgOverride();
+	d->rtfOverride = KopetePrefs::prefs()->rtfOverride();
 }
 
 void ChatView::addText( const QString &text )
@@ -1272,9 +1289,9 @@ void ChatView::setStylesheet( const QString &style )
 
 void ChatView::slotAppearanceChanged()
 {
-	bgOverride = KopetePrefs::prefs()->bgOverride();
-	fgOverride = KopetePrefs::prefs()->fgOverride();
-	rtfOverride = KopetePrefs::prefs()->rtfOverride();
+	d->bgOverride = KopetePrefs::prefs()->bgOverride();
+	d->fgOverride = KopetePrefs::prefs()->fgOverride();
+	d->rtfOverride = KopetePrefs::prefs()->rtfOverride();
 
 	d->xsltParser->setXSLT( KopetePrefs::prefs()->styleContents() );
 	slotRefreshNodes();
@@ -1284,9 +1301,9 @@ void ChatView::addChatMessage( KopeteMessage &message )
 {
 	uint bufferLen = (uint)KopetePrefs::prefs()->chatViewBufferSize();
 
-	message.setBgOverride( bgOverride );
-	message.setFgOverride( fgOverride );
-	message.setRtfOverride( rtfOverride );
+	message.setBgOverride( d->bgOverride );
+	message.setFgOverride( d->fgOverride );
+	message.setRtfOverride( d->rtfOverride );
 
 	messageMap.insert( ++messageId, message );
 	QDomDocument domMessage = message.asXML();
@@ -1339,9 +1356,9 @@ void ChatView::slotRefreshNodes()
 	QString xmlString;
 	for( MessageMap::Iterator it = messageMap.begin(); it != messageMap.end(); ++it)
 	{
-		(*it).setBgOverride( bgOverride );
-		(*it).setFgOverride( fgOverride );
-		(*it).setRtfOverride( rtfOverride );
+		(*it).setBgOverride( d->bgOverride );
+		(*it).setFgOverride( d->fgOverride );
+		(*it).setRtfOverride( d->rtfOverride );
 
 		QDomDocument message = (*it).asXML();
 	        message.documentElement().setAttribute( QString::fromLatin1( "id" ), QString::number( it.key() ) );
@@ -1589,8 +1606,8 @@ const QString ChatView::viewsText()
 
 void ChatView::setActive( bool value )
 {
-	isActive = value;
-	if ( isActive )
+	d->isActive = value;
+	if ( d->isActive )
 	{
 		setTabState( Normal );
 		emit( activated( static_cast<KopeteView*>(this) ) );
@@ -1841,11 +1858,11 @@ void ChatView::slotStopTimer()
 
 void ChatView::slotTransparencyChanged()
 {
-	transparencyEnabled = KopetePrefs::prefs()->transparencyEnabled();
+	d->transparencyEnabled = KopetePrefs::prefs()->transparencyEnabled();
 
 //	kdDebug(14000) << k_funcinfo << "transparencyEnabled=" << transparencyEnabled << ", bgOverride=" << bgOverride << "." << endl;
 
-	if ( transparencyEnabled )
+	if ( d->transparencyEnabled )
 	{
 		if ( !root )
 		{
