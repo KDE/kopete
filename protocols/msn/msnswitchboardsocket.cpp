@@ -174,10 +174,11 @@ redo:
 			miss = miss.left(len.toUInt());
 			if(miss.contains("Content-Type: text/plain;"))
 			{
-				miss = miss.right(miss.length() -miss.findRev("\r\n\r\n"));
+				miss = miss.right(miss.length() -miss.findRev("\r\n\r\n") - 4); // we wanna get rid of the \r\n\r\n as well...
 				kdDebug() << "MSG Plugin: ChatBoard: miss seria " << miss << endl;
 				QString handle = kstr.word(str,1);
 				kdDebug() << "MSG Plugin: ChatBoard: handle seria " << handle << endl;
+
 				emit msgReceived(handle,imService->getPublicName(handle), miss);//.replace(QRegExp("\r\n"),""));
 				//emit msgReceived(handle,"Nick", miss);//.replace(QRegExp("\r\n"),""));
 			}
