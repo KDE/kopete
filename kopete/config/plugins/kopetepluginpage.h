@@ -30,7 +30,6 @@ class KopetePluginConfig : public KSettings::PluginPage
 
 public:
 	KopetePluginConfig( QWidget *parent, const char *name, const QStringList &args );
-	virtual void save();
 };
 
 #endif // KOPETEPLUGINPAGE_H
