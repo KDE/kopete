@@ -107,7 +107,8 @@ const QColor KopeteAccount::color() const
 
 void KopeteAccount::setColor( const QColor &color )
 {
-	d->color = color;
+	if ( color.isValid() )
+		d->color = color;
 }
 
 void KopeteAccount::setAccountId( const QString &accountId )
