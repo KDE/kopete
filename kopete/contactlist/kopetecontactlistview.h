@@ -6,9 +6,9 @@
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Nick Betcher <nbetcher@usinternet.com>
     Copyright (c) 2002      by Stefan Gehn <sgehn@gmx.net>
-    Copyright (c) 2002      by Olivier Goffart <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2003 by Olivier Goffart <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -78,27 +78,25 @@ public slots:
 
 protected:
 	virtual void contentsMouseMoveEvent( QMouseEvent *e );
+	virtual void contentsMousePressEvent( QMouseEvent *e );
 	virtual void keyPressEvent( QKeyEvent *e );
+
+	virtual bool acceptDrag(QDropEvent *e) const;
 
 private slots:
 	void slotContextMenu(KListView*,QListViewItem *item, const QPoint &point );
-//	void newContact();
+
 	void slotExpanded( QListViewItem *item );
 	void slotDoubleClicked( QListViewItem *item );
 	void slotCollapsed( QListViewItem *item );
 	void removeGroup();
 	void slotSettingsChanged( void );
 	void slotExecuted( QListViewItem *item, const QPoint &pos, int c );
-//	void slotShowOffline( bool );
 
 	void slotAddedToGroup( KopeteMetaContact *mc, KopeteGroup *to );
 	void slotRemovedFromGroup( KopeteMetaContact *mc, KopeteGroup *from );
 	void slotMovedToGroup( KopeteMetaContact *mc, KopeteGroup *from, KopeteGroup *to );
 
-	/**
-	 * A meta contact changed its toplevel state
-	 */
-//	void slotMetaContactTopLevel( KopeteMetaContact *mc, const bool b );
 
 	/**
 	 * A meta contact was added to the contact list - update the view
@@ -114,7 +112,7 @@ private slots:
 
 	void slotShowAddContactDialog();
 	void slotNewMessageEvent(KopeteEvent *);
-	
+
 private:
 	KToggleAction *m_actionShowOffline;
 
@@ -134,11 +132,11 @@ private:
 	KopeteStatusGroupViewItem *m_offlineItem;
 	bool mSortByGroup;
 	KRootPixmap *root;
-	
+
 	QRect m_onItem;
 
-protected:
-	virtual bool acceptDrag(QDropEvent *e) const;
+	QPoint m_startDragPos;
+
 };
 
 #endif

@@ -6,9 +6,9 @@
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Nick Betcher           <nbetcher@usinternet.com>
     Copyright (c) 2002      by Stefan Gehn            <sgehn@gmx.net>
-    Copyright (c) 2002      by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002      by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -777,11 +777,6 @@ void KopeteContactListView::slotExecuted( QListViewItem *item,
 	}
 }
 
-/*void KopeteContactListView::slotShowOffline( bool p )
-{
-	KopetePrefs::prefs()->setShowOffline( p );
-}*/
-
 void KopeteContactListView::slotContactStatusChanged( KopeteMetaContact *mc )
 {
 	if(KopetePrefs::prefs()->sortByGroup())
@@ -852,6 +847,17 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/
 	KopeteMetaContactLVI *dest_metaLVI=dynamic_cast<KopeteMetaContactLVI*>(after);
 	KopeteGroupViewItem *dest_groupLVI=dynamic_cast<KopeteGroupViewItem*>(after);
 //	KopeteGroupViewItem *source_groupLVI=dynamic_cast<KopeteGroupViewItem*>(source);
+	KopeteContact *source_contact=0L;
+
+	if(source_metaLVI)
+	{
+		int px = m_startDragPos.x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
+			treeStepSize() * ( source_metaLVI->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
+		int py = m_startDragPos.y() - itemRect( source_metaLVI ).y();
+
+		source_contact = source_metaLVI->getContactFromIcon( QPoint( px, py ) ) ;
+	}
+
 
 	if(source_metaLVI  && dest_groupLVI)
 	{
@@ -867,8 +873,6 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/
 		}
 		else
 		{
-//			kdDebug(14000) << "KopeteContactListView::slotDropped : moving the meta contact " << source_metaLVI->metaContact()->displayName()
-//				<< " to " << parent->text(0) <<	endl;
 			source_metaLVI->metaContact()->moveToGroup(source_metaLVI->group() , dest_groupLVI->group() );
 		}
 	}
@@ -886,10 +890,28 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/
 		}
 		else
 		{
-			kdDebug(14000) << "KopeteContactListView::slotDropped : moving the meta contact " << source_metaLVI->metaContact()->displayName()			<< " to top-level " <<	endl;
+//			kdDebug(14000) << "KopeteContactListView::slotDropped : moving the meta contact " << source_metaLVI->metaContact()->displayName()			<< " to top-level " <<	endl;
 			source_metaLVI->metaContact()->moveToGroup(source_metaLVI->group() , KopeteGroup::toplevel);
 		}
 	}
+	else if(source_contact && dest_metaLVI) //we are moving a contact to another metacontact
+	{
+		if(source_metaLVI->metaContact()->isTemporary())
+		{
+			/*int r=KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "<qt>Would you like to add this contact to your contaclist</qt>" ),
+				i18n( "Kopete" ), KStdGuiItem::yes(),KStdGuiItem::no(),"addTemporaryWhenMoving" );
+			if(r==KMessageBox::Yes)
+				TODO*/
+		}
+		else
+		{
+//			kdDebug(14000) << "KopeteContactListView::slotDropped : moving the contact " << source_contact->contactId()	<< " to metacontact " << dest_metaLVI->metaContact()->displayName() <<	endl;
+			source_contact->setMetaContact(dest_metaLVI->metaContact());
+			if( source_metaLVI->metaContact()->contacts().isEmpty() )
+				KopeteContactList::contactList()->removeMetaContact(source_metaLVI->metaContact()); //delete the metacontact if it is empty
+		}
+	}
+
 /*	else if(source_groupLVI && dest_groupLVI)
 	{
 		if(source_groupLVI->group()->parentGroup()  == dest_groupLVI->group() )
@@ -913,9 +935,17 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/
 		KURL::List urlList;
 		KURLDrag::decode( e, urlList );
 
+		int px = e->pos().x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
+			treeStepSize() * ( dest_metaLVI->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
+		int py = e->pos().y() - itemRect( dest_metaLVI ).y();
+		KopeteContact *c = dest_metaLVI->getContactFromIcon( QPoint( px, py ) ) ;
+
 		for ( KURL::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
 		{
-			dest_metaLVI->metaContact()->sendFile( *it );
+			if(c)
+				c->sendFile( *it );
+			else
+				dest_metaLVI->metaContact()->sendFile( *it );
 		}
 		e->acceptAction();
 	}
@@ -940,10 +970,19 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 	if( e->source() == viewport() )
 	{
 		KopeteMetaContactLVI *source_metaLVI=dynamic_cast<KopeteMetaContactLVI*>(source);
-  		KopeteGroupViewItem *dest_groupLVI=dynamic_cast<KopeteGroupViewItem*>(afterme);
-//		KopeteGroupViewItem *source_groupLVI=dynamic_cast<KopeteGroupViewItem*>(source);
+		KopeteGroupViewItem *dest_groupLVI=dynamic_cast<KopeteGroupViewItem*>(afterme);
+		KopeteContact *source_contact=0L;
 
-		if( source_metaLVI && dest_groupLVI )
+		if(source_metaLVI)
+		{
+			int px = m_startDragPos.x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
+				treeStepSize() * ( source_metaLVI->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
+			int py = m_startDragPos.y() - itemRect( source_metaLVI ).y();
+
+			source_contact = source_metaLVI->getContactFromIcon( QPoint( px, py ) ) ;
+		}
+
+		if( source_metaLVI && dest_groupLVI && !source_contact) //we are moving a metacontact to another group
 		{
 			if(source_metaLVI->group() == dest_groupLVI->group())
 				return false;
@@ -953,7 +992,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 	//			return false;
 			return true;
 		}
-		else if(source_metaLVI  && !dest_metaLVI && !dest_groupLVI)
+		else if(source_metaLVI  && !dest_metaLVI && !dest_groupLVI && source_contact) //we are moving a metacontact to toplevel
 		{
 			if(source_metaLVI->group() == KopeteGroup::toplevel)
 				return false;
@@ -962,7 +1001,15 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 
 			return true;
 		}
-/*		else if(source_groupLVI && dest_groupLVI)
+		else if(source_contact && dest_metaLVI) //we are moving a contact to another metacontact
+		{
+			if(dest_metaLVI->metaContact()->isTemporary())
+				return false;
+			if(source_metaLVI->metaContact()->isTemporary())
+				return false;	//TODO: allow to move a temporary contact dirrecvtly in a metacontact
+			return true;
+		}
+/*		else if(source_groupLVI && dest_groupLVI) //we are moving a group to another group
 		{
 			if(dest_groupLVI->group() == KopeteGroup::temporary)
 				return false;
@@ -979,7 +1026,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 			}
 			return true;
 		}
-		else if(source_groupLVI && !dest_groupLVI && dest_metaLVI)
+		else if(source_groupLVI && !dest_groupLVI && dest_metaLVI) //we are moving a group to toplevel
 		{
 			if(source_groupLVI->group() == KopeteGroup::temporary)
 				return false;
@@ -991,11 +1038,32 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 	else
 	{
 		if ( e->provides( "text/uri-list" )  && dest_metaLVI && dest_metaLVI->metaContact()->canAcceptFiles() )
-			return true;
+		{ //we are sending a file
+			int px = e->pos().x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
+				treeStepSize() * ( dest_metaLVI->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
+			int py = e->pos().y() - itemRect( dest_metaLVI ).y();
+			KopeteContact *c = dest_metaLVI->getContactFromIcon( QPoint( px, py ) ) ;
+			if(c)
+				return c->canAcceptFiles();
+			else //to the metacontact
+				return true;
+		}
 	}
 
 	return false;
 }
+
+void KopeteContactListView::contentsMousePressEvent( QMouseEvent *e )
+{
+	if (e->button() == LeftButton)
+	{
+		//Maybe we are starting a drag?
+		//memorize the position to know later if the user move a small contacticon
+		m_startDragPos = e->pos();
+	}
+	KListView::contentsMousePressEvent( e );
+}
+
 
 
 /* This is a small hack ensuring that only F2 triggers inline
