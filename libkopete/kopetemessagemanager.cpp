@@ -235,7 +235,7 @@ void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 	emit messageAppended( msg, this );
 
 	if( d->mLogger && d->mLog )
-			d->mLogger->append( msg );
+		d->mLogger->append( msg );
 }
 
 void KopeteMessageManager::addContact( const KopeteContact *c, bool surpress )

@@ -160,6 +160,7 @@ void KopeteMessage::setBody( const QString &body, MessageFormat f )
 void KopeteMessage::setImportance(KopeteMessage::MessageImportance i)
 {
 	detach();
+	d->importance = i;
 	d->xmlDoc.documentElement().setAttribute( QString::fromLatin1("importance"), i );
 }
 
