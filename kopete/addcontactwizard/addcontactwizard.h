@@ -28,8 +28,10 @@
 #include <kabc/addressbook.h>
 #include "addcontactwizard_base.h"
 
+
 class AddContactPage;
 class QCheckListItem;
+class AddressBookSelectorWidget;
 
 namespace Kopete
 {
@@ -56,7 +58,7 @@ private:
 	QMap <Kopete::Account*,AddContactPage*> protocolPages;
 	QMap <QCheckListItem*,Kopete::Account*> m_accountItems;
 	QMap <QCheckListItem*,Kopete::Group*> m_groupItems;
-	KABC::AddressBook* m_addressBook;
+	AddressBookSelectorWidget *m_addressbookSelectorWidget;
 
 public slots:
 	virtual void accept();
@@ -68,13 +70,8 @@ public slots:
 
 protected slots:
 	virtual void next();
-	void slotAddAddresseeClicked();
 	void slotCheckAddresseeChoice( bool on );
 	void slotAddresseeListClicked( QListViewItem *addressee );
-	/**
-	 * Utility function, populates the addressee list
-	 */
-	void slotLoadAddressees();
 	void slotDataValid( AddContactPage *onPage, bool bOn);
 };
 

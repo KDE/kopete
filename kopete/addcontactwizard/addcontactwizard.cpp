@@ -43,6 +43,8 @@
 //		true
 
 #include <qcheckbox.h>
+#include <qlayout.h>
+#include <qvbox.h>
 #include <kapplication.h>
 #include <kconfig.h>
 #include <klocale.h>
@@ -61,6 +63,7 @@
 #include <kabc/stdaddressbook.h>
 
 #include <addcontactpage.h>
+#include "addressbookselectorwidget.h"
 #include "addcontactwizard.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
@@ -71,7 +74,9 @@
 AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 : AddContactWizard_Base( parent, name )
 {
-	m_addressBook = 0L;  // so we can tell if it's already loaded
+    //QVBox *kabcPageVbox = new QVBox(this->page(1));
+	m_addressbookSelectorWidget = new AddressBookSelectorWidget(this->page(1));
+	selectAddresseeLayout->addWidget(m_addressbookSelectorWidget);
 
 	// Populate the groups list
 	Kopete::GroupList groups=Kopete::ContactList::self()->groups();
@@ -110,15 +115,9 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	setFinishEnabled( finis, true );
 
 	// Addressee validation connections
-	connect( addAddresseeButton, SIGNAL( clicked() ), SLOT( slotAddAddresseeClicked() ) );
 	connect( chkAddressee, SIGNAL( toggled( bool ) ),
 			SLOT( slotCheckAddresseeChoice( bool ) ) );
-	connect( addresseeListView, SIGNAL( clicked(QListViewItem * ) ),
-			SLOT( slotAddresseeListClicked( QListViewItem * ) ) );
-	connect( addresseeListView, SIGNAL( selectionChanged( QListViewItem * ) ),
-			SLOT( slotAddresseeListClicked( QListViewItem * ) ) );
-	connect( addresseeListView, SIGNAL( spacePressed( QListViewItem * ) ),
-			SLOT( slotAddresseeListClicked( QListViewItem * ) ) );
+	connect( m_addressbookSelectorWidget, SIGNAL(addresseeListClicked( QListViewItem * )), SLOT(slotAddresseeListClicked( QListViewItem * )) );
 
 	// Group manipulation connection
 	connect( addGroupButton, SIGNAL(clicked()) , SLOT(slotAddGroupClicked()) );
@@ -143,73 +142,19 @@ AddContactWizard::~AddContactWizard()
 {
 }
 
-void AddContactWizard::slotAddAddresseeClicked()
-{
-	// Pop up add addressee dialog
-	QString addresseeName = KInputDialog::getText( i18n( "New Address Book Entry" ),
-												   i18n( "Name the new entry:" ),
-												   QString::null, 0, this );
-
-	if ( !addresseeName.isEmpty() )
-	{
-		KABC::Addressee addr;
-		addr.setNameFromString( addresseeName );
-		m_addressBook->insertAddressee( addr );
-		KABC::Ticket *ticket = m_addressBook->requestSaveTicket();
-		if ( !ticket )
-		{
-			kdError() << "Resource is locked by other application!" << endl;
-		}
-		else
-		{
-			if ( !m_addressBook->save( ticket ) )
-			{
-				kdError() << "Saving failed!" << endl;
-				m_addressBook->releaseSaveTicket( ticket );
-			}
-		}
-		slotLoadAddressees();
-	}
-}
-
 void AddContactWizard::slotCheckAddresseeChoice( bool on )
 {
 	setAppropriate( selectAddressee, on );
-	if ( on )
-	{
-		// Get a reference to the address book
-		if ( !m_addressBook )
-		{
-			m_addressBook = KABC::StdAddressBook::self();
-			KABC::StdAddressBook::setAutomaticSave( true );
-
-/*			connect( m_addressBook, SIGNAL( loadingFinished( Resource * ) ),
-				this, SLOT(slotLoadAddressees() ) );*/
-			connect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ),
-										   this, SLOT( slotLoadAddressees() ) );
-			slotLoadAddressees();
-		}
-	}
-	else
-		disconnect( m_addressBook );
-
 }
 
-void AddContactWizard::slotLoadAddressees()
-{
-	addresseeListView->clear();
-	KABC::AddressBook::Iterator it;
-	for( it = m_addressBook->begin(); it != m_addressBook->end(); ++it )
-		new KABC::AddresseeItem( addresseeListView, (*it) );
-}
-
-void AddContactWizard::slotAddresseeListClicked( QListViewItem *addressee )
+void AddContactWizard::slotAddresseeListClicked( QListViewItem */*addressee*/ )
 {
 	// enable next if a valid addressee is selected
-	setNextEnabled( selectAddressee, addressee ? addressee->isSelected() : false );
+	bool selected = m_addressbookSelectorWidget->addresseeSelected();
+	setNextEnabled( selectAddressee, selected );
 
-	if ( KABC::AddresseeItem* i = static_cast<KABC::AddresseeItem *>( addressee ) )
-		mDisplayName->setText( i->addressee().realName() );
+	if ( selected )
+		mDisplayName->setText( m_addressbookSelectorWidget->addressee().realName() );
 }
 
 void AddContactWizard::slotAddGroupClicked()
@@ -249,13 +194,7 @@ void AddContactWizard::accept()
 		metaContact->setNameSource( 0 );
 		metaContact->setDisplayName( mDisplayName->text() );
 	}
-	// NOT SURE IF I MEANT TO TAKE THIS OUT - WILLTODO - SEE THE BOTTOM OF THIS FUNCTION
-	//// set the KABC uid in the metacontact
-	KABC::AddresseeItem *item = 0L;
-	item = static_cast<KABC::AddresseeItem *>( addresseeListView->selectedItem() );
-	if ( addresseeListView->isEnabled() && item )
-		metaContact->setMetaContactId( item->addressee().uid() );
-
+	
 	// set the metacontact's groups
 	bool topLevel = true;
 	for ( QListViewItemIterator it( groupList ); it.current(); ++it )
@@ -282,18 +221,14 @@ void AddContactWizard::accept()
 
 	if ( ok )
 	{
-		// set the KABC uid in the metacontact
-		KABC::AddresseeItem* i = 0L;
-		i = static_cast<KABC::AddresseeItem *>( addresseeListView->selectedItem() );
-		if ( addresseeListView->isEnabled() && i )
-			metaContact->setMetaContactId( i->addressee().uid() );
+		if ( chkAddressee->isChecked() && m_addressbookSelectorWidget->addresseeSelected() )
+			metaContact->setMetaContactId( m_addressbookSelectorWidget->addressee().uid() );
+
 		// add it to the contact list
 		Kopete::ContactList::self()->addMetaContact( metaContact );
 	}
 	else
 		delete metaContact;
-
-	disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
 
 	// write sticky settings
 	KConfig *config = kapp->config();
@@ -305,7 +240,6 @@ void AddContactWizard::accept()
 
 void AddContactWizard::reject()
 {
-	disconnect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
 	QWizard::reject();
 }
 
