@@ -42,7 +42,7 @@ MSNContact::MSNContact( KopeteProtocol *proto, const QString &id,
 	m_actionBlock = 0L;
 	m_actionCollection=0L;
 
-	m_status = MSNProtocol::UNK;
+	m_status = MSNProtocol::FLN;
 
 //	m_deleted = false;
 	m_allowed = false;

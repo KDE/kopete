@@ -558,17 +558,14 @@ void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status 
 		// FIXME: Can't we share this code?
 		m_publicNameSyncMode = SyncFromServer;
 	}
-	else if (status==MSNSocket::Connecting)
+	else if( status == MSNSocket::Connecting )
 	{
-		QDictIterator<KopeteContact> it( contacts() );
-		for ( ; it.current() ; ++it )
-		{
-			static_cast<MSNContact *>( *it )->setMsnStatus( MSNProtocol::UNK );
-		}
+		for( QDictIterator<KopeteContact> it( contacts() ); it.current() ; ++it )
+			static_cast<MSNContact *>( *it )->setMsnStatus( MSNProtocol::FLN );
 	}
 }
 
-const QString MSNProtocol::protocolIcon( )
+const QString MSNProtocol::protocolIcon()
 {
 	return "msn_online";
 }
