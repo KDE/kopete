@@ -5,60 +5,67 @@
     copyright            : (C) 2002 by Till Gerken,
                            Kopete Development team
     email                : till@tantalo.net
- ***************************************************************************
+		***************************************************************************
 
- ***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+		***************************************************************************
+		*                                                                         *
+		*   This program is free software; you can redistribute it and/or modify  *
+		*   it under the terms of the GNU General Public License as published by  *
+		*   the Free Software Foundation; either version 2 of the License, or     *
+		*   (at your option) any later version.                                   *
+		*                                                                         *
+		***************************************************************************/
 
 #include <qpushbutton.h>
 #include <qtextedit.h>
+#include <kdebug.h>
 #include "dlgjabbersendraw.h"
-#include "dlgsendraw.h"
-#include "jabberprotocol.h"
 
-dlgJabberSendRaw::dlgJabberSendRaw(JabberProtocol *owner, QWidget *parent, const char *name) : dlgSendRaw(parent, name)
+
+dlgJabberSendRaw::dlgJabberSendRaw(Jabber::Client *engine,
+				QWidget *parent, const char *name)
+				: dlgSendRaw(parent, name)
 {
 
-	plugin = owner;
+		// Grab the thing that lets us talk
+		mEngine = engine;
 
-	connect(btnFinish, SIGNAL(clicked()), this, SLOT(slotFinish()));
-	connect(btnCancel, SIGNAL(clicked()), this, SLOT(slotCancel()));
-
-	show();
-
+		// Connect the GUI elements to things that do stuff
+		connect(btnFinish, SIGNAL(clicked()),
+						this, SLOT(slotFinish()));
+		connect(btnCancel, SIGNAL(clicked()),
+						this, SLOT(slotCancel()));
 }
 
 dlgJabberSendRaw::~dlgJabberSendRaw()
 {
-
+		// Nothing yet
 }
 
 void dlgJabberSendRaw::slotFinish()
 {
-
-	plugin->sendRawMessage(tePacket->text());
-	hide();
-
+		// Debugging output
+		kdDebug(14130) << "[dlgJabberSendRaw] Sending RAW message" << endl;
+		// Tell our engine to send
+		mEngine->send(tePacket->text());
+		// Hide ourselves
+		hide();
 }
 
 void dlgJabberSendRaw::slotCancel()
 {
-
-	hide();
-
+		// Clear the contents
+		tePacket->clear();
+		// Hide ourselves
+		hide();
 }
 
 #include "dlgjabbersendraw.moc"
 /*
  * Local variables:
+ * mode: c++
  * c-indentation-style: k&r
- * c-basic-offset: 8
+ * c-basic-offset: 4
  * indent-tabs-mode: t
  * End:
  */

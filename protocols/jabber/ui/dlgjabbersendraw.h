@@ -20,24 +20,34 @@
 #define DLGJABBERSENDRAW_H
 
 #include <qwidget.h>
+#include <psi/client.h>
 #include "dlgsendraw.h"
 
-class JabberProtocol;
 
+
+
+/**
+ * A dialog to send raw strings to the jabber server
+ *
+ * @author Till <till@tantalo.net>
+ * @author Chris TenHarmsel <tenharmsel@users.sf.net>
+ */
 class dlgJabberSendRaw : public dlgSendRaw
 {
 	Q_OBJECT
 
 	public:
-		dlgJabberSendRaw(JabberProtocol *owner, QWidget *parent = 0, const char *name = 0);
-		~dlgJabberSendRaw();
+		dlgJabberSendRaw(Jabber::Client *engine,
+										QWidget *parent = 0, const char *name = 0);
+		virtual ~dlgJabberSendRaw();
 
 	public slots:
 		void slotFinish();
 		void slotCancel();
 
 	private:
-		JabberProtocol *plugin;
+		/** This is what we talk through */
+		Jabber::Client *mEngine;
 
 };
 
