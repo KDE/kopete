@@ -49,7 +49,6 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
     userUin_ = KGlobal::config()->readEntry("Uin", "0").toUInt();
     password_= KGlobal::config()->readEntry("Password", "");
     nick_    = KGlobal::config()->readEntry("Nick", "");
-    status_  = KGlobal::config()->readNumEntry( "Status", 0 );
     myself_ = new GaduContact( this->id(), userUin_, nick_,
                                new KopeteMetaContact() );
 
@@ -62,14 +61,14 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
     initConnections();
 
     statusBarIcon_->setPixmap( connectingIcon_ );
+
+    if( KGlobal::config()->readBoolEntry("AutoConnect", false) )
+        slotGoOnline();
 }
 
 GaduProtocol::~GaduProtocol()
 {
     protocolStatic_ = 0L;
-    KGlobal::config()->setGroup("Gadu");
-    KGlobal::config()->writeEntry( "Status", status_ );
-    KGlobal::config()->sync();
 }
 
 GaduProtocol* GaduProtocol::protocolStatic_ = 0L;
@@ -318,9 +317,9 @@ GaduProtocol::slotLogoff()
 {
     if ( session_->isConnected() ) {
         status_ = 0;
-        changeStatus( 0 );
-        session_->logoff();
-    }
+        changeStatus( status_ );
+    } else
+        statusBarIcon_->setPixmap( offlineIcon_ );
 }
 
 void
@@ -376,7 +375,7 @@ GaduProtocol::changeStatus( int status, const QString& descr )
         statusBarIcon_->setPixmap( invisibleIcon_ );
         break;
     default:
-        slotLogoff();
+        session_->logoff();
         statusBarIcon_->setPixmap( offlineIcon_ );
         break;
     }
@@ -482,6 +481,7 @@ GaduProtocol::connectionFailed( struct gg_event* /*e*/ )
 {
     KMessageBox::error( kopeteapp->mainWindow(), i18n("Plugin unable to connect to the Gadu-Gadu server."),
                         i18n("Connection Error") );
+    statusBarIcon_->setPixmap( offlineIcon_ );
 }
 
 void

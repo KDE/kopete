@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>gaduPrefsUI</class>
 <author>Duncan Mac-Vicar P.</author>
 <widget class="QWidget">
@@ -57,6 +57,12 @@
                         <property name="sizeType">
                             <enum>Expanding</enum>
                         </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
+                        </property>
                     </spacer>
                     <widget class="QLineEdit" row="2" column="1">
                         <property name="name">
@@ -111,7 +117,7 @@
                     </widget>
                     <widget class="QCheckBox" row="10" column="0" rowspan="1" colspan="2">
                         <property name="name">
-                            <cstring>mAutoConnect</cstring>
+                            <cstring>autoConnect_</cstring>
                         </property>
                         <property name="text">
                             <string>&amp;Auto-connect</string>
@@ -221,6 +227,9 @@
                                 <property name="name">
                                     <cstring>mPort</cstring>
                                 </property>
+                                <property name="enabled">
+                                    <bool>false</bool>
+                                </property>
                                 <property name="buttonSymbols">
                                     <enum>UpDownArrows</enum>
                                 </property>
@@ -245,6 +254,12 @@
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
                         </property>
                     </spacer>
                 </grid>
@@ -300,7 +315,7 @@
                     </widget>
                     <widget class="QCheckBox">
                         <property name="name">
-                            <cstring>mLogAll</cstring>
+                            <cstring>logAll_</cstring>
                         </property>
                         <property name="sizePolicy">
                             <sizepolicy>
@@ -324,6 +339,12 @@
                         <property name="sizeType">
                             <enum>Expanding</enum>
                         </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
+                        </property>
                     </spacer>
                 </vbox>
             </widget>
@@ -337,8 +358,8 @@
     <tabstop>nicknameEdit_</tabstop>
     <tabstop>mServer</tabstop>
     <tabstop>mPort</tabstop>
-    <tabstop>mAutoConnect</tabstop>
-    <tabstop>mLogAll</tabstop>
+    <tabstop>autoConnect_</tabstop>
+    <tabstop>logAll_</tabstop>
 </tabstops>
 <includes>
     <include location="global" impldecl="in implementation">knuminput.h</include>
