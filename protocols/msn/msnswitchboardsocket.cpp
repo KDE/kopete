@@ -279,7 +279,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 
 		//Stupid MSN PLUS colors code. message with incorrect charactère are not showed correctly in the chatwindow.µ
 		//TODO: parse theses one to show the color too in Kopete
-		message.replace("\3","");
+		message.replace("\3","").replace("\4","").replace("\2","");
 
 		KopeteMessage kmsg( m_account->contacts()[ m_msgHandle ], others,
 			message,

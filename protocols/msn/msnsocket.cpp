@@ -485,7 +485,7 @@ QString MSNSocket::escape( const QString &str )
 QString MSNSocket::unescape( const QString &str )
 {
 	//GRRRRR FU*CKING MSN PLUS USERS!  they insert theses stupid colors code in their nickname, and message are not correctly showed
-	return KURL::decode_string( str , 106 ).replace("\3" , "");
+	return KURL::decode_string( str , 106 ).replace("\3" , "").replace("\4" , "").replace("\2" , "");
 }
 
 void MSNSocket::slotConnectionSuccess()
