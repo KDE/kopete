@@ -344,10 +344,9 @@ void OscarAccount::slotGotServerBuddyList(AIMBuddyList &buddyList)
 */
 
 	//save server side contact list
-#if 0
 	mLoginContactlist = new AIMBuddyList(this, "mLoginContactlist");
 	*mLoginContactlist += buddyList;
-#endif
+
 	*mInternalBuddyList += buddyList;
 	QValueList<AIMBuddy *> localList = buddyList.buddies().values();
 
@@ -363,11 +362,10 @@ void OscarAccount::slotGotServerBuddyList(AIMBuddyList &buddyList)
 void OscarAccount::slotLoggedIn()
 {
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
-#if 0
 	syncLocalWithServerBuddyList ( *mLoginContactlist );
 	delete mLoginContactlist;
 	mLoginContactlist = 0L;
-#endif
+
 	mIdleTimer->start(10 * 1000);
 }
 
@@ -376,15 +374,16 @@ void OscarAccount::slotLoggedIn()
 // contact list. So we compare the two lists and add all local contacts that are not
 // in the server side list.
 //
-#if 0
+
 void OscarAccount::syncLocalWithServerBuddyList(AIMBuddyList& serverList)
 {
-	kdDebug(14150) << k_funcinfo << "Called" << endl;
+	kdDebug(14150) << k_funcinfo << "Called but DISABLED" << endl;
+#if 0
 	//FIXME: Does not work [mETz]
 	const QDict<KopeteContact>& contactList = contacts();
 	QDictIterator<KopeteContact> it( contactList );
 
-	for ( ; it.current(); ++it )
+	for(; it.current(); ++it)
 	{
 		QString contactId = static_cast<OscarContact*>( it.current() )->contactName();
 		QString displayName = static_cast<OscarContact*>( it.current() )->displayName();
@@ -417,8 +416,9 @@ void OscarAccount::syncLocalWithServerBuddyList(AIMBuddyList& serverList)
 			engine()->sendAddBuddy(tocNormalize(contactId), group->name());
 		}
 	}
-}
 #endif
+}
+
 
 // Looks for the group localGroup in the server-side list.
 // If it doesn't find it there, creates and returns it.
@@ -473,6 +473,12 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 //		contact->setOnlineStatus( buddy->status() );
 // 		kdDebug(14150) << k_funcinfo <<
 // 			"serverside contact already in kopete, his status=" << buddy->status() << endl;
+
+		if(buddy->waitAuth())
+			kdDebug(14150) << k_funcinfo << "setting WAITAUTH on '" << contact->displayName() << "'" << endl;
+
+		contact->setWaitAuth(buddy->waitAuth());
+
 		if(contact->displayName()!=nick)
 			contact->rename(nick);
 		contact->syncGroups();

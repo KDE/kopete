@@ -214,9 +214,7 @@ protected:
 	void addOldContact(AIMBuddy *bud, KopeteMetaContact *meta=0l);
 
 protected:
-#if 0
 	void syncLocalWithServerBuddyList( AIMBuddyList& serverList );
-#endif
 	AIMGroup * findOrCreateGroup( const QString& localGroup, AIMBuddyList& serverList );
 
 protected:
@@ -226,9 +224,7 @@ protected:
 	 */
 	AIMBuddyList *mInternalBuddyList;
 
-#if 0
 	AIMBuddyList *mLoginContactlist;
-#endif
 
     /**
 	 * Server-side AIMBuddies that do not have KopeteContacts yet for the reason that

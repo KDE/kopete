@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>ICQEditAccountUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>424</width>
-            <height>370</height>
+            <height>344</height>
         </rect>
     </property>
     <property name="caption">
@@ -182,6 +182,20 @@
             <property name="text">
                 <string>&amp;Web aware</string>
             </property>
+            <property name="accel">
+                <string>Alt+W</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>chkRequireAuth</cstring>
+            </property>
+            <property name="text">
+                <string>Re&amp;quire Authorization</string>
+            </property>
+            <property name="accel">
+                <string>Alt+Q</string>
+            </property>
         </widget>
         <spacer>
             <property name="name">
@@ -195,8 +209,8 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>20</width>
-                    <height>20</height>
+                    <width>16</width>
+                    <height>8</height>
                 </size>
             </property>
         </spacer>

@@ -122,6 +122,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		mAccountSettings->edtServerPort->setValue(mAccount->pluginData(mProtocol, "Port").toInt());
 		mAccountSettings->chkHideIP->setChecked((mAccount->pluginData(mProtocol,"HideIP").toUInt()==1));
 		mAccountSettings->chkWebAware->setChecked((mAccount->pluginData(mProtocol,"WebAware").toUInt()==1));
+		mAccountSettings->chkRequireAuth->setChecked((mAccount->pluginData(mProtocol,"RequireAuth").toUInt()==1));
 
 		mUserInfoSettings->rwNickName->setText(
 			mAccount->pluginData(mProtocol,"NickName"));
@@ -197,6 +198,8 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		slotSetDefaultServer();
 	}
 
+	connect(mAccountSettings->chkWebAware, SIGNAL(toggled(bool)), this, SLOT(slotModified()));
+	connect(mAccountSettings->chkRequireAuth, SIGNAL(toggled(bool)), this, SLOT(slotModified()));
 	connect(mUserInfoSettings->prsCityEdit, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
 	connect(mUserInfoSettings->prsStateEdit, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
 	connect(mUserInfoSettings->prsPhoneEdit, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
@@ -240,6 +243,8 @@ KopeteAccount *ICQEditAccountWidget::apply()
 		QString::number(mAccountSettings->chkHideIP->isChecked()));
 	mAccount->setPluginData(mProtocol, "WebAware",
 		QString::number(mAccountSettings->chkWebAware->isChecked()));
+	mAccount->setPluginData(mProtocol, "RequireAuth",
+		QString::number(mAccountSettings->chkRequireAuth->isChecked()));
 
 	mAccount->setPluginData(mProtocol, "NickName",
 		mUserInfoSettings->rwNickName->text());
@@ -382,8 +387,19 @@ void ICQEditAccountWidget::slotSend()
 	generalInfo.publishEmail=false; // TODO
 	generalInfo.showOnWeb=false; // TODO
 
-	static_cast<ICQAccount *>(mAccount)->engine()->sendCLI_METASETGENERAL(generalInfo);
-
+	OscarSocket *osocket = static_cast<ICQAccount *>(mAccount)->engine();
+	if(osocket)
+	{
+		osocket->sendCLI_METASETGENERAL(generalInfo);
+		osocket->sendCLI_METASETSECURITY(
+			mAccountSettings->chkRequireAuth->isChecked(),
+			mAccountSettings->chkWebAware->isChecked(),
+			0x01);
+	}
+	else
+	{
+		kdDebug(14150) << k_funcinfo << "Failed to fetch engine counter, cannot send userinfo" << endl;
+	}
 	mModified=false;
 }
 

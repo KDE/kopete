@@ -231,6 +231,13 @@ class Buffer : public QObject
 		 */
 		int addChatTLV(const WORD, const WORD, const QString &, const WORD);
 
+		/*
+		 * Similar to the LNTS functions but length is prepended
+		 * as byte and not as word
+		 */
+		int addBSTR(const char * s);
+		char *getBSTR();
+
 	signals:
 		/*
 		 * Emitted when an error occurs, error means exceeding

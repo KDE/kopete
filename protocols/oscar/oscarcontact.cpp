@@ -65,6 +65,11 @@ OscarContact::OscarContact(const QString& name, const QString& displayName,
 	else
 		setDisplayName(name);
 
+	// fill userinfo with default values until we receive a userinfo block from the contact
+	mInfo.sn = name;
+	mInfo.capabilities = 0;
+	mInfo.icqextstatus = ICQ_STATUS_OFFLINE;
+
 	initSignals();
 }
 

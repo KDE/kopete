@@ -527,6 +527,8 @@ class OscarSocket : public OscarConnection
 		 */
 		void sendCLI_METASETGENERAL(ICQGeneralUserInfo &i);
 
+		void sendCLI_METASETSECURITY(bool requireauth, bool webaware, BYTE direct);
+
 		void sendAuthRequest(const QString &contact, const QString &reason);
 		void sendAuthReply(const QString &contact, const QString &reason, bool grant);
 

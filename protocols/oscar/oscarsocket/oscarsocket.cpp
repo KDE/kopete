@@ -2863,10 +2863,10 @@ void OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 	{
 		case 0x0008:
 		{
-			/*kdDebug(14150) << k_funcinfo << "SEND (CLI_ADDSTART)" << endl;
+			kdDebug(14150) << k_funcinfo << "SEND (CLI_ADDSTART)" << endl;
 			Buffer addstart;
 			addstart.addSnac(0x0013,0x0011,0x0000,0x00000000);
-			sendBuf(addstart,0x02);*/
+			sendBuf(addstart,0x02);
 			kdDebug(14150) << k_funcinfo << "SEND (CLI_ROSTERADD)" << endl;
 			break;
 		}
@@ -2889,19 +2889,13 @@ void OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 
 	Buffer outbuf;
 	outbuf.addSnac(0x0013,requestType,0x0000,0x00000000);
-	//name length
-/*
-	outbuf.addWord(item->name.length());
-	if (item->name.length())
-		outbuf.addString(item->name, item->name.length());
-*/
-	outbuf.addLNTS(item->name.local8Bit());
-	outbuf.addWord(item->gid);
-	outbuf.addWord(item->bid);
-	outbuf.addWord(item->type);
-	outbuf.addWord(item->tlvlength);
+	outbuf.addLNTS(item->name.latin1()); // TODO: encoding
+	outbuf.addWord(item->gid); // TAG
+	outbuf.addWord(item->bid); // ID
+	outbuf.addWord(item->type); // TYPE
+	outbuf.addWord(item->tlvlength); // LEN
 
-	if (item->tlvlength)
+	if (item->tlvlength > 0)
 	{
 		kdDebug(14150) << k_funcinfo << "Adding TLVs with length=" <<
 			item->tlvlength << endl;
@@ -2909,7 +2903,7 @@ void OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 	}
 
 	sendBuf(outbuf,0x02);
-/*
+
 	if(requestType==0x0008)
 	{
 		kdDebug(14150) << k_funcinfo << "SEND (CLI_ADDEND)" << endl;
@@ -2917,7 +2911,7 @@ void OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 		addend.addSnac(0x0013,0x0012,0x0000,0x00000000);
 		sendBuf(addend,0x02);
 	}
-*/
+
 }
 
 // Parses the SSI acknowledgement
@@ -3647,11 +3641,11 @@ void OscarSocket::parseAuthReply(Buffer &inbuf)
 
 	BYTE len=inbuf.getByte();
 	char *cb=inbuf.getBlock(len);
-	QString contact=QString::fromLocal8Bit(cb);
+	QString contact=QString::fromLocal8Bit(cb); // TODO: encoding
 	delete [] cb;
 	BYTE grant=inbuf.getByte();
 	char *r=inbuf.getLNTS();
-	QString reason=QString::fromLocal8Bit(r);
+	QString reason=QString::fromLocal8Bit(r); // TODO: encoding
 	delete []r;
 
 	emit gotAuthReply(contact, reason, (grant==0x01));

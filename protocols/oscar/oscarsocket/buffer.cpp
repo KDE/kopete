@@ -485,6 +485,20 @@ int Buffer::addLELNTS(const char * s)
 	return ret;
 }
 
+int Buffer::addBSTR(const char * s)
+{
+	unsigned int len = strlen(s);
+	int ret = addByte(len);
+	if(len > 0)
+		ret = addString(s, len);
+	return ret;
+}
+
+char *Buffer::getBSTR()
+{
+	BYTE len = getByte();
+	return getBlock(len);
+}
 
 char *Buffer::buffer() const
 {
@@ -495,7 +509,6 @@ int Buffer::length() const
 {
 	return (mBuffer.size() - mReadPos);
 }
-
 
 /*void Buffer::print() const
 {

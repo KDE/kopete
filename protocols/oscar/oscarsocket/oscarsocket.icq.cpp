@@ -295,33 +295,11 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					break;
 				} // END SRV_METAFOUND/SRV_METALAST
 
-				case 0x019a: // SRV_METAINFO410 seems to be unused
+				case 160: // SRV_METASECURITYDONE
 				{
-					kdDebug(14150) << k_funcinfo << "RECV (SRV_METAINFO410) !!!" << endl;
-					/*
-					char *tmptxt;
-					ICQInfoResult res;
-
-					fromicqsrv.getLEWord(); // datalen
-					res.uin = fromicqsrv.getLEDWord();
-
-					tmptxt=fromicqsrv.getLELNTS();
-					res.nickName = QString::fromLatin1(tmptxt);
-					delete [] tmptxt;
-
-					tmptxt=fromicqsrv.getLELNTS();
-					res.firstName = QString::fromLatin1(tmptxt);
-					delete [] tmptxt;
-
-					tmptxt=fromicqsrv.getLELNTS();
-					res.lastName = QString::fromLatin1(tmptxt);
-					delete [] tmptxt;
-
-					kdDebug(14150) << k_funcinfo << "emitting gotICQUserInfo()" << endl;
-					emit gotICQUserInfo(sequence, res);
-					*/
+					kdDebug(14150) << k_funcinfo << "RECV (SRV_METASECURITYDONE), IGNORING, length=" << fromicqsrv.length() << endl;
 					break;
-				} // END SRV_METAINFO410
+				}
 
 
 				case 200: // SRV_METAGENERAL
@@ -499,11 +477,11 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 						char *tmptxt;
 						QString mailAddress;
 
-						for(int mailx=0; mailx <= numMails; mailx++)
+						for(unsigned int mailx=0; mailx <= numMails; mailx++)
 						{
 							publishMail = fromicqsrv.getLEByte();
 							tmptxt = fromicqsrv.getLELNTS();
-							mailAddress = QString::fromLocal8Bit(tmptxt);
+							mailAddress = QString::fromLocal8Bit(tmptxt); // TODO: encoding
 							mailList.insert(mailAddress, (publishMail==0x01));
 							delete [] tmptxt;
 
@@ -562,6 +540,34 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					break;
 				}
 
+				case 410: // SRV_METAINFO410 seems to be unused
+				{
+					kdDebug(14150) << k_funcinfo << "RECV (SRV_METAINFO410) !!!" << endl;
+					/*
+					char *tmptxt;
+					ICQInfoResult res;
+
+					fromicqsrv.getLEWord(); // datalen
+					res.uin = fromicqsrv.getLEDWord();
+
+					tmptxt=fromicqsrv.getLELNTS();
+					res.nickName = QString::fromLatin1(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt=fromicqsrv.getLELNTS();
+					res.firstName = QString::fromLatin1(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt=fromicqsrv.getLELNTS();
+					res.lastName = QString::fromLatin1(tmptxt);
+					delete [] tmptxt;
+
+					kdDebug(14150) << k_funcinfo << "emitting gotICQUserInfo()" << endl;
+					emit gotICQUserInfo(sequence, res);
+					*/
+					break;
+				} // END SRV_METAINFO410
+
 				default:
 				{
 		 			kdDebug(14150) << k_funcinfo << "RECV (SRV_META), UNHANDLED, subtype=" <<
@@ -580,35 +586,36 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 	} // END switch(subcmd)
 
 //	kdDebug(14150) << k_funcinfo << "deleting tlv data" << endl;
+	fromicqsrv.clear();
 	delete [] tlv->data;
 
 //	kdDebug(14150) << k_funcinfo << "END" << endl;
 } // END OscarSocket::parseSRV_FROMICQSRV()
 
-ICQInfoItemList OscarSocket::extractICQItemList( Buffer& theBuffer )
+ICQInfoItemList OscarSocket::extractICQItemList(Buffer& theBuffer)
 {
 	ICQInfoItemList theList;
 	//get the number of items to read
 	BYTE numItems = theBuffer.getLEByte();
 // 	kdDebug(14150) << k_funcinfo <<
 // 		numItems << " items received." << endl;
-	if ( numItems > 0 )
+	if(numItems > 0)
 	{
 		WORD topic;				// Identifies the topic of the interest
 		char* tmptxt; 			// Description of the interest (raw)
-		for ( int i = 0; i < numItems; i++ )
+		for(unsigned int i = 0; i < numItems; i++)
 		{
 			topic = theBuffer.getLEWord();
 			tmptxt = theBuffer.getLELNTS();
+
 			ICQInfoItem thisItem;
 			thisItem.category = topic;
-			// TODO: What if the description is encoded differently?
-			// Do we know what encoding the contact prefers?
-			thisItem.description = QString::fromLocal8Bit( tmptxt );
-/*			kdDebug(14150) << k_funcinfo <<
+			thisItem.description = QString::fromLocal8Bit(tmptxt); // TODO: encoding
+			/*kdDebug(14150) << k_funcinfo <<
 				"interest type:" << thisItem.category <<
 				", description=" << thisItem.description << endl;*/
-			theList.append( thisItem );
+			theList.append(thisItem);
+
 			delete [] tmptxt;
 		}
 	}
@@ -648,9 +655,20 @@ void OscarSocket::fillDirectInfo(Buffer &directInfo)
 	directInfo.addWord(0x000C); // TLV(12)
 	directInfo.addWord(0x0025); // length 25
 
-	directInfo.addDWord(mDirectIMMgr->address().ip4Addr()); // IP
-	directInfo.addWord(0x0000);
-	directInfo.addWord(mDirectIMMgr->port()); // Port
+	if(mDirectIMMgr)
+	{
+		directInfo.addDWord(mDirectIMMgr->address().ip4Addr()); // IP
+		directInfo.addWord(0x0000);
+		directInfo.addWord(mDirectIMMgr->port()); // Port
+	}
+	else
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"No direct-connection socket, filling in dummy values for IP and Port" << endl;
+		directInfo.addDWord(0x00000000);
+		directInfo.addWord(0x0000);
+		directInfo.addWord(0x0000);
+	}
 
 	directInfo.addByte(0x00); // Mode, TODO: currently fixed to "Direct Connection disabled"
 	directInfo.addWord(ICQ_TCP_VERSION); // icq tcp protocol version, v8 currently
@@ -1248,4 +1266,29 @@ void OscarSocket::sendCLI_METASETGENERAL(ICQGeneralUserInfo &i)
 
 	sendCLI_TOICQSRV(0x07d0, req);
 }
+
+
+void OscarSocket::sendCLI_METASETSECURITY(bool requireauth, bool webaware, BYTE direct)
+{
+	kdDebug(14150) << k_funcinfo <<
+		"SEND (CLI_METASETSECURITY), sending security user information" << endl;
+
+	Buffer req; // ! LITTLE-ENDIAN
+	req.addLEWord(0x0424); // subtype: 1060
+	if (requireauth)
+		req.addLEByte(0x01);
+	else
+		req.addLEByte(0x00);
+
+	if (webaware)
+		req.addLEByte(0x00);
+	else
+		req.addLEByte(0x01);
+
+	req.addLEByte(direct);
+	req.addLEByte(0x00); // KIND: user kind, unknown
+
+	sendCLI_TOICQSRV(0x07d0, req);
+}
+
 // vim: set noet ts=4 sts=4 sw=4:
