@@ -155,6 +155,10 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 		break;
 	}
+	case 910:
+	case 921:
+		KMessageBox::error( 0, i18n( "MSN Server is busy or temporary unavailable. Try to reconnect later." ) , i18n( "MSN Plugin - Kopete" ) );
+		break;
 	default:
 		MSNAuthSocket::handleError( code, id );
 		break;
