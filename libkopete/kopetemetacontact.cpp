@@ -530,6 +530,39 @@ QString MetaContact::displayName() const
 	return d->displayName;
 }
 
+QImage MetaContact::photo() const
+{
+	KABC::AddressBook* ab = addressBook();
+		
+	// If the metacontact is linked to a kabc entry
+	if ( !d->metaContactId.isEmpty() )
+	{
+		KABC::Addressee theAddressee = ab->findByUid( metaContactId() );
+		if ( theAddressee.isEmpty() )
+		{
+			kdDebug( 14010 ) << k_funcinfo << "metacontact has Addressee id but it is a null Addressee" << displayName() << "..." << endl;
+		}
+		else
+		{
+			KABC::Picture pic = theAddressee.photo();
+			if ( pic.data().isNull() )
+				pic = theAddressee.logo();
+			
+			if ( pic.isIntern() && !pic.data().isNull() )
+			{
+				QImage img = pic.data();
+				return img;
+			}
+			else
+			{
+				kdDebug( 14010 ) << k_funcinfo << "null image" << displayName() << "..." << endl;
+			}
+		}
+	}
+	
+	return QImage();
+}
+
 Contact *MetaContact::nameSource() const
 {
 	// quick-out for contacts not tracking

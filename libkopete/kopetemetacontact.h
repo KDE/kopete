@@ -86,6 +86,14 @@ public:
 	QString metaContactId() const;
 
 	/**
+	 * @brief Returns this metacontact's photo avatar.
+	 *
+	 * Returns a image for the metacontact. If the metacontact is associated with
+	 * a KDE addressbook contact, it will return the picture stored in the addressbook
+	 */
+	QImage photo() const;
+	
+	/**
 	 * @brief Add or change the link to a KDE addressbook (KABC) Addressee.
 	 * FIXME: Use with care.  You could create 1 to many relationships with the current implementation
 	 */
