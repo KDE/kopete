@@ -397,8 +397,9 @@ public:
 	/**
 	 * used in @ref sync()   
 	 */
-	enum Changed{ MovedBetweenGroup = 0x01, /** the contact has been moved between groups */ 
-				DisplayNameChanged = 0x02 }; /** the displayname of the contact changed  */
+	enum Changed{ MovedBetweenGroup = 0x01, ///< the contact has been moved between groups
+		      DisplayNameChanged = 0x02 ///< the displayname of the contact changed
+	}; 
 
 
 public slots:
