@@ -80,7 +80,7 @@ public:
 	QValueList<KopeteLibraryInfo> loaded() const;
 	bool isLoaded(const QString &spec) const;
 	void setModules(const QStringList &mods);
-	bool loadPlugin( const QString &spec );
+	KopetePlugin *loadPlugin( const QString &spec );
 
 	/**
 	 * Search by Id
@@ -93,7 +93,7 @@ public:
 	 * ex: "ICQ"
 	 */
 	KopetePlugin *searchByName(const QString&);
-	
+
 	/**
 	 * The opposite of searchByName. Returns the name of the protocol.
 	 */

@@ -199,7 +199,7 @@ QValueList<KopeteLibraryInfo> LibraryLoader::available() const
 	return items;
 }
 
-bool LibraryLoader::loadPlugin( const QString &spec )
+KopetePlugin *LibraryLoader::loadPlugin( const QString &spec )
 {
 //	kdDebug( 14010 ) << k_funcinfo << spec << endl;
 
@@ -242,13 +242,12 @@ bool LibraryLoader::loadPlugin( const QString &spec )
 		kdDebug(14010) << k_funcinfo << "Successfully loaded plugin '" << pluginId << "'"<< endl;
 
 		emit pluginLoaded( plugin );
-		return true;
 	}
 	else
 	{
 		kdDebug(14010) << k_funcinfo << "Unable to load plugin '" << pluginId << "'!" << endl;
-		return false;
 	}
+	return plugin;
 }
 
 bool LibraryLoader::remove( const QString &spec )
