@@ -11,6 +11,8 @@
 typedef QString Message;
 typedef QString Status;
 
+class Task;
+
 class Client : public QObject
 {
 Q_OBJECT
@@ -109,13 +111,11 @@ Q_OBJECT
 		 * The client stream has data ready to read.
 		 */
 		void streamReadyRead();
-		/**
-		 */
-		 
 	private:
-		void distribute( const Transfer &transfer );
+		void distribute( const Transfer *transfer );
+		Task* rootTask();
 		class ClientPrivate;
-		ClientPrivate *d;
+		ClientPrivate* d;
 };
 
 #endif

@@ -1,3 +1,5 @@
+// url_escape_string taken directly from gaim
+
 #include <string.h>
 #include <iostream.h>
 
@@ -13,11 +15,16 @@
 #include "gwerror.h"
 #include "gwfield.h"
 #include "request.h"
+#include "response.h"
 
 #include "coreprotocol.h"
 
 #define NO_ESCAPE(ch) ((ch == 0x20) || (ch >= 0x30 && ch <= 0x39) || \
 					(ch >= 0x41 && ch <= 0x5a) || (ch >= 0x61 && ch <= 0x7a))
+#define GW_URLVAR_TAG "&tag="
+#define GW_URLVAR_METHOD "&cmd="
+#define GW_URLVAR_VAL "&val="
+#define GW_URLVAR_TYPE "&type="
 
 static char *
 url_escape_string( const char *src)
@@ -81,18 +88,42 @@ CoreProtocol::~CoreProtocol()
 {
 }
 
+int CoreProtocol::state()
+{
+	return m_state;
+}
+
 void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 {
+	// store locally
 	int oldsize = m_in.size();
 	m_in.resize( oldsize + incomingBytes.size() );
 	memcpy( m_in.data() + oldsize, incomingBytes.data(), incomingBytes.size() );
+	// convert to a Transfer
+	wireToTransfer( m_in );
 }
 
-Transfer * CoreProtocol::incomingTransfer()
+Transfer* CoreProtocol::incomingTransfer()
 {
-	// Convert the incoming data into either an event or a response, stored in an IncomingData
-	return 0;
+	if ( m_state == Available )
+	{
+		return m_inTransfer;
+		m_inTransfer = 0;
+	}
+	else
+		return 0;
 }
+
+void cp_dump( const QByteArray &bytes )
+{
+	cout << "contains: " << bytes.count() << " bytes " << endl;
+	for ( uint i = 0; i < bytes.count(); ++i )
+	{
+		printf( "%02x ", bytes[ i ] );
+	}
+	printf( "\n" );
+}
+
 
 void CoreProtocol::outgoingTransfer( Request* outgoing )
 {
@@ -110,249 +141,33 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 					0, NMFIELD_TYPE_UTF8, request->transactionId() ) );
 	
 	// convert to QByteArray
-	QCString bout;
+	QByteArray bytesOut;
+	QTextStream dout( bytesOut, IO_WriteOnly );
+	dout.setEncoding( QTextStream::Latin1 );
+	//dout.setByteOrder( QDataStream::LittleEndian );
 	
 	// add the POST
-	bout += "POST /";
-	bout += request->command();
-	bout += " HTTP/1.0\r\n";
+	dout << "POST /";
+	dout << request->command();
+	dout << " HTTP/1.0\r\n";
 	
 	// if a login, add Host arg 
 	if ( request->command() == "login" )
 	{
-		bout += "Host: ";
-		bout += "reiser.suse.de"; //FIXME: Get this from somewhere else!!
-		bout += ":8300\r\n\r\n";
+		dout <<  "Host: ";
+		dout <<  "reiser.suse.de"; //FIXME: Get this from somewhere else!!
+		dout <<  ":8300\r\n\r\n";
 	}
 	else
-		bout += "\r\n";
+		dout <<  "\r\n";
 	
-	emit outgoingData( bout );
+		
+	printf( "data out: %s", bytesOut.data() );
+	
+	emit outgoingData( bytesOut );
 	// now convert 
-	//fieldsToWire( fields );
+	fieldsToWire( fields );
 	return;
-}
-
-void CoreProtocol::wireToTransfer( const QByteArray& wire )
-{
-	// processing incoming data and reassembling it into transfers
-	// may be an event or a response
-	QDataStream din( wire, IO_ReadOnly );
-	din.setByteOrder( QDataStream::LittleEndian );
-	
-	// does protocol state indicate we are partially through reading a response?
-	if ( m_state == NeedMore )
-		readResponse( din );
-	else
-	{
-		// otherwise, examine the data to see what it is
-		// look at first four bytes
-		Q_UINT32 val;
-		din >> val;
-		// is 'HTTP' -> response
-		if ( qstrncmp( (const char *)&val, "HTTP", strlen( "HTTP" ) ) == 0 )
-		{
-			if ( readResponse( din ) )
-			{
-				m_state = Available;
-				emit incomingData();
-			}
-			else
-				m_state = NeedMore;
-		}
-		else	
-		// otherwise -> event
-		{
-			readEvent( val, din );
-			emit incomingData();
-		}
-	}
-}
-
-void CoreProtocol::readEvent( const Q_UINT32 eventType, QDataStream& wireEvent )
-{
-	// discover the length of the event's source, then read it
-	Q_UINT32 len;
-	wireEvent >> len;
-	QCString source;
-	if ( len > 0 )
-	{
-		char* rawSource;
-		wireEvent.readBytes( rawSource, len );
-		source = rawSource; // shallow copy, QCString's destructor will delete the allocated space
-	}
-	// now create an event object
-	EventTransfer * evt = new EventTransfer( eventType, source, QTime::currentTime() );
-	m_inQueue.append( evt );
-	
-}
-
-bool CoreProtocol::readResponse( QDataStream& wireResponse )
-{
-	// read rest of HTTP header and look for a 301 redirect. 
-	// we can treat the rest of the data as a textstream
-	QTextStream tin( wireResponse.device() );
-	QString headerFirst = tin.readLine();
-	// pull out the HTTP return code
-	int firstSpace = headerFirst.find( ' ' );
-	QString rtnField = headerFirst.mid( firstSpace, headerFirst.find( ' ', firstSpace + 1 ) );
-	bool ok = true;
-	int rtnCode;
-	int packetState = -1;
-	rtnCode = rtnField.toInt( &ok );
-	
-	// read rest of header
-	QStringList headerRest;
-	QString line;
-	while ( line != "\r" )
-	{
-		line = tin.readLine();
-		headerRest.append( line );
-	}
-	// if it's a redirect, set flag
-	if ( ok && rtnCode == 301 )
-	{	
-		packetState = ServerRedirect;
-		return false;
-	}
-	// other header processing ( 500! )
-	if ( ok && rtnCode == 500 )
-	{	
-		packetState = ServerError;
-		return false;
-	}
-	
-	// read fields
-	readFields( wireResponse, -1 );
-	// find transaction id field and create Response object if nonzero
-	int tId;
-	Field::FieldBase* field = 0;
-	for ( field = m_collatingFields.first(); field != m_collatingFields.end(); field = m_collatingFields.next() )
-	{
-		if ( field->tag() == "NM_A_SZ_TRANSACTION_ID" )
-		{
-			Field::SingleField * sf = dynamic_cast<Field::SingleField*>( field );
-			if ( sf )
-			{
-				tId = sf->value().toInt();
-				m_collatedFields.remove( f );
-				break;
-			}
-		}
-	}
-	// append to inQueue
-	if ( tId )
-	{
-		UserTransfer * response = new UserTransfer( tId );
-		response->setFields( m_collatedFields );
-		m_inQueue.append( response );
-		packetState = Available;
-	}
-	// TODO - handle broken responses..
-	// didn't find an 0 - Response is in multiple packets...
-		// Gaim doesn't handle this case yet
-		// Reconstruction - if we are just reading top level fields, read next packet until 0
-		// if we were reading a subarray, we know how long it should be, 
-		// store the partial request, partial MultiField and count of total number of fields in the protocol to await next packet
-		
-	return ( packetState == Available );
-}
-
-void CoreProtocol::readFields( QDataStream &din, int fieldCount, Field::FieldList * list )
-{
-	// build a list of fields.  
-	// If there is already a list of fields stored in m_collatingFields, 
-	// the list we're reading on this iteration must be a nested list
-	// so when we're done reading it, add it to the MultiList element
-	// that is the last element in the top list in m_collatingFields.
-	// if we find the beginning of a new nested list, push the current list onto m_collatingFields
-	
-	Field::FieldList currentList;
-	while ( fieldCount != 0 )
-	{
-		// the field being read
-		// read field
-		Q_UINT8 type, method;
-		Q_UINT32 val;
-		QCString tag;
-		// read uint8 type
-		din >> type;
-		// if type is 0 SOMETHING_INVALID, we're at the end of the fields
-		if ( type == 0 )
-		{
-			state = FieldsRead;
-			// do something to indicate we're done
-			break;
-		}
-		// read uint8 method
-		din >> method;
-		// read tag and length
-		char* rawData;
-		din.readBytes( rawData, val );
-		// set tag from the raw data.  QDataStream::readBytes() allocates the 
-		// space for rawData and expects us to manage it, and we let 
-		// QCString take care of it
-		tag.setRawData( rawData, val );
-		
-		// if multivalue or array
-		if ( type == NMFIELD_TYPE_MV || type == NMFIELD_TYPE_ARRAY )
-		{
-			// read length uint32
-			din >> val;
-			if ( val > 0 )
-			{
-			// create multifield
-				Field::MultiField* m = new Field::MultiField( tag, method, 0, type );
-				currentList.append( m );
-				readFields( din, val, &currentList);
-			}
-			else 
-				state = ProtocolError;
-				break;
-		}
-		else 
-		{
-		
-			if ( type == NMFIELD_TYPE_UTF8 || type == NMFIELD_TYPE_DN )
-			{
-				din.readBytes( rawData, val );
-				if ( val > NMFIELD_MAX_STR_LENGTH )
-				{
-					state = ProtocolError;
-					break;
-				}
-				// convert to unicode
-				QString fieldValue = QString::fromUtf8( rawData, val );
-				// create singlefield
-				Field::SingleField* s = new Field::SingleField( tag, method, 0, type, fieldValue );
-				currentList.append( s );
-			}
-			else
-			{
-				// otherwise ( numeric )
-				// read value uint32
-				din >> val;
-				Field::SingleField* s = new Field::SingleField( tag, method, 0, type, val );
-				currentList.append( s );
-			}
-		}
-		// decrease the fieldCount if we're using it
-		if ( fieldCount > 0 )
-			fieldCount--;
-	}
-	// got a whole list!
-	// if fieldCount == 0, we've just read a whole nested list, so add this list to the last element in 'list'
-	if ( fieldCount == 0 )
-	{
-		Field::MultiField * m = dynamic_cast<Field::MultiField*>( list->last() );
-		m->setFields( currentList );
-	}
-
-	// if fieldCount == -1; we're done reading the top level fieldlist, so store it.
-	if ( fieldCount == -1 )
-	{
-		m_collatingFields = currentList;
-	}
 }
 
 void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
@@ -368,24 +183,29 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 	{
 		++it;
 		//cout << " - writing a field" << endl;
-		QCString bout;
+		QByteArray bytesOut;
+		QDataStream dout( bytesOut, IO_WriteOnly );
+		//dout.setByteOrder( QDataStream::LittleEndian );
+		
 		// these fields are ignored by Gaim's novell
 		if ( field->type() == NMFIELD_TYPE_BINARY  || field->method() == NMFIELD_METHOD_IGNORE )
 			continue;
 			
-		// GAIM writes these tags to the socket separately - if we can't connect, check here
+		// GAIM writes these tags to the secure socket separately - if we can't connect, check here
 		// NM Protocol 1 writes them in an apparently arbitrary order
 		// tag
-		bout += "&tag=";
-		bout += field->tag();
+		//dout.writeRawBytes( GW_URLVAR_TAG, sizeof( GW_URLVAR_TAG ) );
+		//dout <<  field->tag();
 		
 		// method
-		bout += "&cmd=";
-		bout += encode_method( field->method() );
+		//dout.writeRawBytes( GW_URLVAR_METHOD, sizeof( GW_URLVAR_METHOD ) );
+		//		char methodChar = encode_method( field->method() );
+		//dout << (Q_UINT8)methodChar;
 		
 		// value
-		bout += "&val=";
+		//dout.writeRawBytes( GW_URLVAR_VAL, sizeof( GW_URLVAR_VAL ) );
 		
+		char valString[ NMFIELD_MAX_STR_LENGTH ];
 		switch ( field->type() )
 		{
 			case NMFIELD_TYPE_UTF8:		// Field contains UTF-8
@@ -395,10 +215,10 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 				const Field::SingleField *sField = static_cast<const Field::SingleField*>( field );
 // 				QString encoded = KURL::encode_string( sField->value().toString(), 106 /* UTF-8 */);
 // 				encoded.replace( "%20", "+" );
-// 				bout += encoded.ascii();
+// 				dout <<  encoded.ascii();
 
-				bout += url_escape_string( sField->value().toString().utf8() );
-				//bout += sField->value().toString().ascii();
+				snprintf( valString, NMFIELD_MAX_STR_LENGTH, "%s", url_escape_string( sField->value().toString().utf8() ) );
+				//dout <<  sField->value().toString().ascii();
 				break;
 			}
 			case NMFIELD_TYPE_ARRAY:	// Field contains a field array
@@ -407,25 +227,36 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 				//cout << " - it's a multi" << endl;
 				const Field::MultiField *mField = static_cast<const Field::MultiField*>( field );
 				subFieldCount = mField->fields().count();	// determines if we have a subarray to send after this field
-				bout += QString::number( subFieldCount ).ascii();
+				//dout <<  QString::number( subFieldCount ).ascii();
+				snprintf( valString, NMFIELD_MAX_STR_LENGTH, "%u", subFieldCount );
 				break;
 			}
 			default:					// Field contains a numeric value
 			{
 				//cout << " - it's a number" << endl;
 				const Field::SingleField *sField = static_cast<const Field::SingleField*>( field );
-				bout += QString::number( sField->value().toInt() ).ascii();
+				//dout <<  QString::number( sField->value().toInt() ).ascii();
+				snprintf( valString, NMFIELD_MAX_STR_LENGTH, "%u", sField->value().toInt() );
 			}
 		}
 				
 		// type
-		bout += "&type=";
-		bout += QString::number( field->type() ).ascii();
-		
+		//dout.writeRawBytes( GW_URLVAR_TYPE, sizeof( GW_URLVAR_TYPE ) );
+
+		//dout << QString::number( field->type() ).ascii();
+		QCString typeString;
+		typeString.setNum( field->type() );
+		QCString outgoing = GW_URLVAR_TAG + field->tag() 
+								+ GW_URLVAR_METHOD + (char)encode_method( field->method() ) 
+								+ GW_URLVAR_VAL + (const char *)valString 
+								+ GW_URLVAR_TYPE + typeString;
+								
+		cout << "outgoing data: " << outgoing.data() << endl;
+		dout.writeRawBytes( outgoing.data(), outgoing.length() );
 		// write what we have so far, we may be calling this function recursively
 		//kdDebug( 14999 ) << k_funcinfo << "writing \'" << bout << "\'" << endl;
-		//cout << " - signalling data" << endl;
-		emit outgoingData( bout );
+		cout << " - signalling data" << endl;
+		emit outgoingData( bytesOut );
 
 		// write fields of subarray, if that's what the current field is
 		if ( subFieldCount > 0 && 
@@ -443,6 +274,273 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		cout << " - request sent." << endl;
 	}
 	cout << " - method done" << endl;
+}
+
+void CoreProtocol::wireToTransfer( const QByteArray& wire )
+{
+	// processing incoming data and reassembling it into transfers
+	// may be an event or a response
+	m_din = new QDataStream( wire, IO_ReadOnly );
+	m_din->setByteOrder( QDataStream::LittleEndian );
+	
+	// does protocol state indicate we are partially through reading a response?
+	if ( false /*m_state == NeedMore*/ )
+		readResponse();
+	else
+	{
+		// otherwise, examine the data to see what it is
+		// look at first four bytes
+		Q_UINT32 val;
+		*m_din >> val;
+		// is 'HTTP' -> response
+		if ( qstrncmp( (const char *)&val, "HTTP", strlen( "HTTP" ) ) == 0 )
+		{
+			cout << "CoreProtocol::wireToTransfer() - got RESPONSE " << endl;
+			if ( readResponse() )
+			{
+				m_state = Available;
+				emit incomingData();
+			}
+			else
+				m_state = NeedMore;
+		}
+		else	
+		// otherwise -> event
+		{
+			cout << "CoreProtocol::wireToTransfer() - got EVENT " << endl;
+			readEvent( val );
+			emit incomingData();
+		}
+	}
+	delete m_din;
+}
+
+void CoreProtocol::readEvent( const Q_UINT32 eventType )
+{
+	// discover the length of the event's source, then read it
+	Q_UINT32 len;
+	*m_din >> len;
+	QCString source;
+	if ( len > 0 )
+	{
+		char* rawSource;
+		m_din->readBytes( rawSource, len );
+		source = rawSource; // shallow copy, QCString's destructor will delete the allocated space
+	}
+	// now create an event object
+	m_inTransfer = new EventTransfer( eventType, source, QTime::currentTime() );
+}
+
+QCString CoreProtocol::readGroupWiseLine()
+{
+	QCString read;
+	while ( true )
+	{
+		Q_UINT8 c;
+		*m_din >> c;
+		read += QChar(c);
+		if ( c == '\n' )
+			break;
+	}
+	return read;	
+}
+
+bool CoreProtocol::readResponse()
+{
+	// read rest of HTTP header and look for a 301 redirect. 
+	
+	QCString headerFirst = readGroupWiseLine();
+	// pull out the HTTP return code
+	int firstSpace = headerFirst.find( ' ' );
+	QString rtnField = headerFirst.mid( firstSpace, headerFirst.find( ' ', firstSpace + 1 ) );
+	bool ok = true;
+	int rtnCode;
+	int packetState = -1;
+	rtnCode = rtnField.toInt( &ok );
+	cout << "CoreProtocol::readResponse() got HTTP return code " << rtnCode << endl;
+	// read rest of header
+	QStringList headerRest;
+	QCString line;
+	int safetyCheck = 0; // sanity check in case the server is a babbling idiot
+	while ( line != "\r\n" && safetyCheck < 10000 )
+	{
+		if ( m_din->atEnd() )
+			break;
+		line = readGroupWiseLine();
+		headerRest.append( line );
+		cout << "- read header line " << safetyCheck << " (" << line.length() <<"):" << line.data() << endl;
+		safetyCheck++;
+	}
+/*	while ( !qstrcmp( buffer, "\r\n" ) && safetyCheck < 100 )
+	{
+		if ( rawIn->atEnd() )
+			break;
+		len = rawIn->readLine( buffer, sizeof(buffer) );
+		headerRest.append( buffer );
+		cout << "- read header line (" << qstrlen(buffer) << buffer << endl;
+		safetyCheck++;
+	}*/
+	cout << "CoreProtocol::readResponse() header finished" << endl;
+	// if it's a redirect, set flag
+	if ( ok && rtnCode == 301 )
+	{	
+		cout << "- server redirect " << rtnCode << endl;
+		packetState = ServerRedirect;
+		return false;
+	}
+	// other header processing ( 500! )
+	if ( ok && rtnCode == 500 )
+	{
+		cout << "- server error" << rtnCode << endl;
+		packetState = ServerError;
+		return false;
+	}
+	if ( m_din->atEnd() )
+	{
+		cout << "- no fields" << endl;
+		packetState = ProtocolError;
+		return false;
+	}
+	
+	// read fields
+	readFields( -1 ); // only read 20 in case we don't end the loop properly.
+	// find transaction id field and create Response object if nonzero
+	int tId;
+	Field::FieldBase* field = 0;
+	QPtrListIterator<Field::FieldBase> it( m_collatingFields );
+	Field::FieldList::const_iterator end = m_collatingFields.end();
+	while ( ( field = it.current()) != 0 )
+	{
+		++it;
+		if ( field->tag() == NM_A_SZ_TRANSACTION_ID )
+		{
+			Field::SingleField * sf = dynamic_cast<Field::SingleField*>( field );
+			if ( sf )
+			{
+				tId = sf->value().toInt();
+				m_collatingFields.remove( sf );
+				break;
+			}
+		}
+	}
+	// append to inQueue
+	if ( tId )
+	{
+		m_inTransfer = new Response( tId, m_collatingFields );
+		m_collatingFields.clear();
+		packetState = Available;
+	}
+	// TODO - handle broken responses..
+	// didn't find an 0 - Response is in multiple packets...
+		// Gaim doesn't handle this case yet
+		// Reconstruction - if we are just reading top level fields, read next packet until 0
+		// if we were reading a subarray, we know how long it should be, 
+		// store the partial request, partial MultiField and count of total number of fields in the protocol to await next packet
+		
+	return ( packetState == Available );
+}
+
+void CoreProtocol::readFields( int fieldCount, Field::FieldList * list )
+{
+	// build a list of fields.  
+	// If there is already a list of fields stored in m_collatingFields, 
+	// the list we're reading on this iteration must be a nested list
+	// so when we're done reading it, add it to the MultiList element
+	// that is the last element in the top list in m_collatingFields.
+	// if we find the beginning of a new nested list, push the current list onto m_collatingFields
+	cout << "CoreProtocol::readFields()" << endl;
+	cout << fieldCount << " reading " << fieldCount << "fields" << endl;
+	Field::FieldList currentList;
+	while ( fieldCount != 0 )
+	{
+		cout << fieldCount << " fields left to read" << endl;
+		// the field being read
+		// read field
+		Q_UINT8 type, method;
+		Q_UINT32 val;
+		QCString tag;
+		// read uint8 type
+		*m_din >> type;
+		// if type is 0 SOMETHING_INVALID, we're at the end of the fields
+		if ( type == 0 && m_din->atEnd() )
+		{
+			cout << "- end of field list" << endl;
+			*m_din >> type;
+			printf( "next byte is %02x", type );
+			*m_din >> type;
+			printf( "next byte is %02x", type );
+			m_packetState = FieldsRead;
+			// do something to indicate we're done
+			break;
+		}
+		// read uint8 method
+		*m_din >> method;
+		// read tag and length
+		char* rawData;
+		m_din->readBytes( rawData, val );
+		// set tag from the raw dcout "- end of field list" << endl;ata.  QDataStream::readBytes() allocates the 
+		// space for rawData and expects us to manage it, and we let 
+		// QCString take care of it
+		tag.setRawData( rawData, val );
+		printf( "- type: %i, method: %i, tag: %s\n", type, method, rawData );
+		// if multivalue or array
+		if ( type == NMFIELD_TYPE_MV || type == NMFIELD_TYPE_ARRAY )
+		{
+			// read length uint32
+			*m_din >> val;
+			// create multifield
+			qDebug( "- multi field containing: %i\n", val );
+			Field::MultiField* m = new Field::MultiField( tag, method, 0, type );
+			currentList.append( m );
+			readFields( val, &currentList);
+		}
+		else 
+		{
+		
+			if ( type == NMFIELD_TYPE_UTF8 || type == NMFIELD_TYPE_DN )
+			{
+				m_din->readBytes( rawData, val );
+				if ( val > NMFIELD_MAX_STR_LENGTH )
+				{
+					m_packetState = ProtocolError;
+					break;
+				}
+				// convert to unicode
+				QString fieldValue = QString::fromUtf8( rawData, val );
+				qDebug("- utf/dn single field: %s", fieldValue.ascii() );
+				// create singlefield
+				Field::SingleField* s = new Field::SingleField( tag, method, 0, type, fieldValue );
+				currentList.append( s );
+			}
+			else
+			{
+				// otherwise ( numeric )
+				// read value uint32
+				*m_din >> val;
+				qDebug( "- numeric field: %i\n", val );
+				Field::SingleField* s = new Field::SingleField( tag, method, 0, type, val );
+				currentList.append( s );
+			}
+		}
+		// decrease the fieldCount if we're using it
+		if ( fieldCount > 0 )
+			fieldCount--;
+	}
+	// got a whole list!
+	// if fieldCount == 0, we've just read a whole nested list, so add this list to the last element in 'list'
+	if ( fieldCount == 0 && list )
+	{
+		cout << "- finished reading nested list" << endl;
+		Field::MultiField * m = dynamic_cast<Field::MultiField*>( list->last() );
+		m->setFields( currentList );
+	}
+
+	// if fieldCount == -1; we're done reading the top level fieldlist, so store it.
+	if ( fieldCount == -1 )
+	{
+		cout << "- finished reading ALL FIELDS!" << endl;
+		m_collatingFields = currentList;
+	}
 }
 
 void CoreProtocol::reset()

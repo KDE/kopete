@@ -135,9 +135,19 @@ void Client::streamError( int error )
 void Client::streamReadyRead()
 {
 	qDebug( "CLIENT STREAM READY READ" );
+	// take the incoming transfer and distribute it to the task tree
+	Transfer * transfer = d->stream->read();
+	distribute( transfer );
 }
 
 // INTERNALS //
+
+void Client::distribute( const Transfer * transfer )
+{
+	if( !rootTask()->take( transfer ) )
+		qDebug( "CLIENT: root task refused transfer" );
+}
+
 void Client::send( Request * request )
 {
 	if( !d->stream )

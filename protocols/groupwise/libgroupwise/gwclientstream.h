@@ -123,11 +123,11 @@ public:
 	/**
 	 * Are there any messages waiting to be read
 	 */
-	bool fieldsAvailable() const;	// adapt to messages
+	bool transfersAvailable() const;
 	/**
 	 * Read a message received from the server
 	 */
-	Field::FieldList read();
+	Transfer * read();
 
 	/**
 	 * Send a message to the server
@@ -150,7 +150,7 @@ signals:
 	void warning(int);
 // #	void incomingXml(const QString &s); // signals emitted in processNext but don't seem to go anywhere...
 // #	void outgoingXml(const QString &s); //
-
+	void readyRead(); //signals that there is a transfer ready to be read
 public slots:
 	void continueAfterWarning();
 
@@ -160,8 +160,12 @@ private slots:
 	/**
 	 * collects wire ready outgoing data from the core protocol and sends
 	 */ 
-	void cp_outgoingData( const QCString & );
-	
+	void cp_outgoingData( const QByteArray& );
+	/**
+	 * collects parsed incoming data as a transfer from the core protocol and queues
+	 */
+	void cp_incomingData();
+
 	void bs_connectionClosed();
 	void bs_delayedCloseFinished();
 	void bs_error(int); // server only

@@ -39,11 +39,11 @@ public:
 	/**
 	 * Are there any messages waiting to be read
 	 */
-	virtual bool fieldsAvailable() const = 0;	// adapt to messages
+	virtual bool transfersAvailable() const = 0;	// adapt to messages
 	/**
 	 * Read a message received from the server
 	 */
-	virtual Field::FieldList read() = 0;
+	virtual Transfer * read() = 0;
 
 	/**
 	 * Send a message to the server

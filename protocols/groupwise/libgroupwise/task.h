@@ -20,7 +20,7 @@ public:
 
 	Task *parent() const;
 	Client *client() const;
-	Field::FieldList fields() const;
+	Transfer *transfer() const;
 	
 	QString id() const;
 

@@ -16,6 +16,7 @@
 #include <qapplication.h>  // for qdebug
 #include <qguardedptr.h> 
 #include <qobject.h>
+#include <qptrqueue.h>
 #include <qtimer.h>
 
 #include "bytestream.h"
@@ -28,6 +29,8 @@
 #include "iostream.h"
 
 #include "gwclientstream.h"
+
+void cs_dump( const QByteArray &bytes );
 
 enum {
 	Idle,
@@ -72,7 +75,7 @@ public:
 	{
 		state = Idle;
 		notify = 0;
-		newFields = false;
+		newTransfers = false;
 // 		sasl_ssf = 0;
 		tls_warned = false;
 		using_tls = false;
@@ -99,14 +102,14 @@ public:
 	SecureStream *ss;
 	CoreProtocol client;
 	Buffer inBuffer;
-	CoreProtocol srv;
+	//CoreProtocol srv;
 
 	QString defRealm;
 
 	int mode;
 	int state;
 	int notify;
-	bool newFields;
+	bool newTransfers;
 // 	int sasl_ssf;
 	bool tls_warned, using_tls;
 	bool doAuth;
@@ -116,7 +119,7 @@ public:
 	int errCond;
 	QString errText;
 
-	QPtrList<Field::FieldList> in;
+	QPtrQueue<Transfer> in;
 
 	QTimer noopTimer; // probably not needed
 	int noop_time;
@@ -132,7 +135,8 @@ ClientStream::ClientStream(Connector *conn, TLSHandler *tlsHandler, QObject *par
 	d->conn = conn;
 	connect( d->conn, SIGNAL(connected()), SLOT(cr_connected()) );
 	connect( d->conn, SIGNAL(error()), SLOT(cr_error()) );
-	connect( &d->client, SIGNAL( outgoingData( const QCString & ) ), SLOT ( cp_outgoingData( const QCString & ) ) );
+	connect( &d->client, SIGNAL( outgoingData( const QByteArray& ) ), SLOT ( cp_outgoingData( const QByteArray & ) ) );
+	connect( &d->client, SIGNAL( incomingData( const QByteArray& ) ), SLOT ( cp_incomingData() ) );
 
 	d->noop_time = 0;
 	connect(&d->noopTimer, SIGNAL(timeout()), SLOT(doNoop()));
@@ -207,19 +211,6 @@ void ClientStream::reset(bool all)
 		// reset state machine
 		d->client.reset();
 	}
-	// server
-	else {
-		if(d->tls)
-			d->tls->reset();
-
-		if(d->bs) {
-			d->bs->close();
-			d->bs = 0;
-		}
-
-		d->srv.reset();
-	}
-
 	if(all)
 		d->in.clear();
 }
@@ -380,19 +371,17 @@ void ClientStream::setRequireMutualAuth(bool b)
 // 	d->oldOnly = b;
 // }
 
-bool ClientStream::fieldsAvailable() const
+bool ClientStream::transfersAvailable() const
 {
 	return ( !d->in.isEmpty() );
 }
 
-Field::FieldList ClientStream::read()
+Transfer * ClientStream::read()
 {
-	if(d->in.isEmpty())	
-		return Field::FieldList(); //first from queue...
-	else {
-		// TODO: read from secure socket
-		return Field::FieldList();
-	}
+	if(d->in.isEmpty())
+		return 0; //first from queue...
+	else 
+		return d->in.dequeue();
 }
 
 void ClientStream::write( Request *request )
@@ -400,12 +389,58 @@ void ClientStream::write( Request *request )
 	// pass to CoreProtocol for transformation into wire format
 	d->client.outgoingTransfer( request );
 }
+	
+void cs_dump( const QByteArray &bytes )
+{
+	cout << "contains: " << bytes.count() << " bytes " << endl;
+	uint count = 0;
+	while ( count < bytes.count() )
+	{
+		int dword = 0;
+		for ( int i = 0; i < 8; ++i )
+		{
+			printf( "%02x ", bytes[ count + i ] );
+			if ( i == 3 )
+				printf( " " );
+		}
+		printf(" | ");
+		dword = 0;
+		for ( int i = 0; i < 8; ++i )
+		{
+			int j = bytes [ count + i ];
+			if ( j >= 0x20 && j <= 0x7e ) 
+				printf( "%2c ", j );
+			else
+				printf( "%2c ", '.' );
+			if ( i == 3 )
+				printf( " " );
+		}
+		printf( "\n" );
+		count += 8;
+	}
+	printf( "\n" );
+}
 
-void ClientStream::cp_outgoingData( const QCString & outgoingBytes )
+void ClientStream::cp_outgoingData( const QByteArray& outgoingBytes )
 {
 	// take formatted bytes from CoreProtocol and put them on the wire
-	qDebug( "ClientStream::cp_outgoingData: %s", outgoingBytes.data() );
+	qDebug( "ClientStream::cp_outgoingData:" );
+	cs_dump( outgoingBytes );
 	d->ss->write( outgoingBytes );
+}
+
+void ClientStream::cp_incomingData()
+{
+	qDebug( "ClientStream::cp_outgoingData:" );
+	Transfer * incoming = d->client.incomingTransfer();
+	if ( d->client.state() == CoreProtocol::Available && incoming )
+	{
+		d->in.enqueue( incoming );
+		d->newTransfers = true;
+	}
+	else
+		qDebug( "ClientStream::cp_outgoingData: client signalled incomingData but none was available" );
+	emit readyRead();
 }
 
 void ClientStream::cr_connected()
@@ -485,15 +520,14 @@ void ClientStream::ss_readyRead()
 
 //#ifdef LIBGW_DEBUG
 	QCString cs(a.data(), a.size()+1);
-	qDebug("ClientStream: recv: %d [%s]\n", a.size(), cs.data());
+	//qDebug("ClientStream: recv: %d [%s]\n", a.size(), cs.data());
+	qDebug("ClientStream: recv: %d\n", a.size() );
+	cs_dump( a );
 //#endif
 
 	d->client.addIncomingData(a);
 /*	if(d->notify & CoreProtocol::NRecv) { */
-#ifdef LIBGW_DEBUG
-	printf("We needed data, so let's process it\n");
-#endif
-	processNext();
+	//processNext();
 }
 
 void ClientStream::ss_bytesWritten(int bytes)

@@ -19,22 +19,28 @@ public:
 	 */
 	enum State { NeedMore, Available, ServerError, ServerRedirect };
 	
+	/**
+	 * Describes the parsing of the last received packet 
+	 */
+	enum PacketState { FieldsRead, ProtocolError };
+	
 	CoreProtocol();
 	
 	virtual ~CoreProtocol();
 	
-	/**
-	 * Accept data from the network, and buffer it into a useful message
-	 * @param incomingBytes Raw data in wire format.
-	 */
-	void addIncomingData( const QByteArray& incomingBytes );
 	/**
 	 * Reset the protocol, clear buffers
 	 */
 	void reset();
 	
 	/**
-	 * Returns the next incoming transfer from the queue or 0 if none is available
+	 * Accept data from the network, and buffer it into a useful message
+	 * @param incomingBytes Raw data in wire format.
+	 */
+	void addIncomingData( const QByteArray& incomingBytes );
+	
+	/**
+	 * @return the incoming transfer or 0 if none is available.
 	 */
 	Transfer* incomingTransfer();
 	
@@ -44,11 +50,16 @@ public:
 	 */
 	void outgoingTransfer( Request* outgoing );
 	
+	/**
+	 * Get the state of the protocol 
+	 */
+	int state();
+	
 signals:
 	/** 
 	 * Emitted as the core protocol converts fields to wire ready data
 	 */
-	void outgoingData( const QCString & );
+	void outgoingData( const QByteArray& );
 	/**
 	 * Emitted when there is incoming data, parsed into a Transfer
 	 */
@@ -74,25 +85,30 @@ protected:
 	/**
 	 * Read in an eventconst
 	 */
-	void readEvent( const Q_UINT32 eventType, QDataStream& wireEvent );
+	void readEvent( const Q_UINT32 eventType );
 	/**
 	 * Read in a response
 	 */
-	bool readResponse( QDataStream& wireRequest );
+	bool readResponse();
 	/** 
 	 * Parse received fields and store in m_collatingFields
 	 */
-	void readFields( QDataStream &din, int fieldCount, Field::FieldList * list = 0 );
+	void readFields( int fieldCount, Field::FieldList * list = 0 );
 	/**
 	 * encodes a method number (usually supplied as a #defined symbol) to a char
 	 */
 	QChar encode_method( Q_UINT8 method );
-
+	/**
+	 * read a line ending in \r\n, including the \r\n
+	 */
+	QCString readGroupWiseLine();
 private:
 	QByteArray m_in;
+	QDataStream* m_din; // contains the packet currently being parsed
 	int m_error;
-	QPtrList<Transfer> m_inQueue;
-	int m_state;
+	Transfer* m_inTransfer; // the transfer that is being received
+	int m_state;		// represents the protocol's overall state
+	int m_packetState;	// represents the state of the parsing of the last incoming data received
 	// fields from a packet being parsed, before it has been completely received
 	//QValueStack<Field::FieldList> m_collatingFields;
 	Field::FieldList m_collatingFields;

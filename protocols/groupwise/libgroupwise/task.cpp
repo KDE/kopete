@@ -21,7 +21,7 @@ public:
 	Client *client;
 	bool insignificant, deleteme, autoDelete;
 	bool done;
-	Field::FieldList fields;
+	Transfer * transfer;
 };
 
 Task::Task(Task *parent)
@@ -68,9 +68,9 @@ Client *Task::client() const
 	return d->client;
 }
 
-Field::FieldList Task::fields() const
+Transfer * Task::transfer() const
 {
-	return d->fields;
+	return d->transfer;
 }
 
 QString Task::id() const
@@ -106,7 +106,7 @@ bool Task::take( const Transfer * transfer)
 	if(!p)
 		return false;
 
-	// pass along the xml
+	// pass along the transfer to our children
 	QObjectListIt it(*p);
 	Task *t;
 	for(; it.current(); ++it) {

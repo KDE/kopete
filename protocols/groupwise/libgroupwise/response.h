@@ -9,8 +9,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef REQUEST_H
-#define REQUEST_H
+#ifndef GW_RESPONSE_H
+#define GW_RESPONSE_H
 
 #include "usertransfer.h"
 
@@ -21,8 +21,8 @@
 class Response: public UserTransfer
 {
 public:
-	Response( int transactionId, QCString &command, Field::FieldList fields );
-	~Response( );
+	Response( int transactionId, Field::FieldList fields );
+	~Response( ) {}
 	TransferType type() { return Transfer::ResponseTransfer; }
 };
 
