@@ -112,7 +112,7 @@ PluginConfig::PluginConfig( QObject *_parent )
 	QFrame *protocolTab = new QFrame( tabControl );
 	( new QVBoxLayout( protocolTab, KDialog::marginHint(),
 		KDialog::spacingHint() ) )->setAutoAdd( true );
-	( void ) new QLabel( i18n( "<b>Select The Protocols You Would Like Loaded::</b>" ),
+	( void ) new QLabel( i18n( "<b>Select The Protocols You Would Like Loaded:</b>" ),
 		protocolTab );
 
 	protocolList = new PluginListView( protocolTab );
