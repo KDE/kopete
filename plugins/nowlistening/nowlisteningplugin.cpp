@@ -37,8 +37,6 @@
 #include "nlnoatun.h"
 #include "nlxmms.h"
 
-#define NO_PLAYERS 3
-
 K_EXPORT_COMPONENT_FACTORY(  kopete_nowlistening, KGenericFactory<NowListeningPlugin> );
 
 NowListeningPlugin::NowListeningPlugin( QObject *parent, const char *name, const QStringList & /*args*/ )
@@ -61,10 +59,11 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char *name, const
 	m_client->attach();
 	
 	// set up known media players
-	m_mediaPlayer = new NLMediaPlayer*[ NO_PLAYERS ];
-	m_mediaPlayer[ 0 ] = new NLKscd( m_client );
-	m_mediaPlayer[ 1 ] = new NLNoatun( m_client );
-	m_mediaPlayer[ 2 ] = new NLXmms();
+	m_mediaPlayer = new QPtrList<NLMediaPlayer>;
+	m_mediaPlayer->setAutoDelete( true );
+	m_mediaPlayer->append( new NLKscd( m_client ) );
+	m_mediaPlayer->append( new NLNoatun( m_client ) );
+	m_mediaPlayer->append( new NLXmms() );
 	
 	// set up poll timers
 	m_pollTimer = new QTimer();
@@ -83,11 +82,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char *name, const
 NowListeningPlugin::~NowListeningPlugin()
 {
 	kdDebug() << "NowListeningPlugin::~NowListeningPlugin()" << endl;
-	// clean up our array of media player instances
-	for ( int i = 0; i < NO_PLAYERS; i++ )
-	{
-		delete m_mediaPlayer[ i ];
-	}
+
 	delete m_mediaPlayer;
 	
 	// cleanly end DCOP
@@ -188,15 +183,14 @@ QString NowListeningPlugin::allPlayerAdvert() const
 	QString message = m_prefs->header();
 	QString perTrack = m_prefs->perTrack();
 	
-	for ( int i = 0; i < NO_PLAYERS; i++ )
+	for ( NLMediaPlayer* i = m_mediaPlayer->first(); i; i = m_mediaPlayer->next() )
 	{
-		m_mediaPlayer[ i ]->update();
-		if ( m_mediaPlayer[ i ]->playing() )
+		i->update();
+		if ( i->playing() )
 		{
 			if (  message != m_prefs->header() ) // > 1 track playing!
 				message = message + m_prefs->conjunction();
-			message = message + substDepthFirst( m_mediaPlayer[ i ], 
-					perTrack, false );
+			message = message + substDepthFirst( i, perTrack, false );
 		}
 	}
 	return message;
@@ -208,10 +202,10 @@ QString NowListeningPlugin::changesOnlyAdvert() const
 	QString perTrack = m_prefs->perTrack();
 
 	// see if there is something new
-	for ( int i = 0; i < NO_PLAYERS; i++ )
+	for ( NLMediaPlayer* i = m_mediaPlayer->first(); i; i = m_mediaPlayer->next() )
 	{
-		m_mediaPlayer[ i ]->update();
-		if ( m_mediaPlayer[ i ]->playing() && m_mediaPlayer[ i ]->newTrack() )
+		i->update();
+		if ( i->playing() && i->newTrack() )
 		{
 			if ( message.isEmpty() )
 				message = m_prefs->header();
@@ -222,9 +216,8 @@ QString NowListeningPlugin::changesOnlyAdvert() const
 			// INCLUSION CONDITIONAL ON SUBSTITUTION BEING MADE
 			if (  message != m_prefs->header() ) // > 1 track playing!
 				message = message + m_prefs->conjunction();
-			//kdDebug() << m_mediaPlayer[ i ]->track() << m_mediaPlayer[ i ]->artist() << m_mediaPlayer[ i ]->album() << m_mediaPlayer[ i ]->name() << endl;
-			message = message + substDepthFirst( m_mediaPlayer[ i ], 
-					perTrack, false );
+			//kdDebug() << i->track() << i->artist() << i->album() << i->name() << endl;
+			message = message + substDepthFirst( i, perTrack, false );
 		}
 	}
 	return message;
@@ -303,26 +296,6 @@ QString NowListeningPlugin::substDepthFirst( NLMediaPlayer *player,
 	else
 		return in;
 }
-
-/*void NowListeningPlugin::advertiseNewTracks(QString message)
-{
-	// tell each active chat about the new song 
-	
-	// get the list of active chats
-	KopeteMessageManagerDict allsessions = 
-		KopeteMessageManagerFactory::factory()->sessions();
-	// for each active chat
-	for ( QIntDictIterator<KopeteMessageManager> it( allsessions );
-			it.current();
-			++it )
-	{
-		advertiseToChat( it.current() );
-	}
-	// for now, just print a debug message
-	kdDebug() << "NowListeningPlugin::advertiseNewTracks() - " << 
-		message << endl;
-}
-*/
 
 void NowListeningPlugin::advertiseToChat( KopeteMessageManager *theChat, QString message )
 {

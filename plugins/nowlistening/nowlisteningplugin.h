@@ -22,6 +22,7 @@
 
 
 #include "kopeteplugin.h"
+#include <qptrlist.h>
 
 
 class QTimer;
@@ -93,7 +94,7 @@ class NowListeningPlugin : public KopetePlugin
 		// used to access the GUI settings
 		NowListeningPreferences *m_prefs;
 		// abstracted media player interfaces
-		NLMediaPlayer **m_mediaPlayer;
+		QPtrList<NLMediaPlayer> *m_mediaPlayer;
 		// Triggers slotChangesToAllChats
 		QTimer *m_pollTimer;
 		// Needed for DCOP interprocess communication
