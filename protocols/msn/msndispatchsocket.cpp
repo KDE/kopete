@@ -1,11 +1,13 @@
 /*
     msndispatchsocket.cpp - Socket for the MSN Dispatch Server
 
-    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart       <ogoffart@tiscalinet.be>
+
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     Portions of this code are taken from KMerlin,
-              (c) 2001 by Olaf Lueg              <olueg@olsd.de>
+              (c) 2001      by Olaf Lueg             <olueg@olsd.de>
 
     *************************************************************************
     *                                                                       *
@@ -19,8 +21,8 @@
 
 #include "msndispatchsocket.h"
 
-MSNDispatchSocket::MSNDispatchSocket( const QString &msnId , QObject* parent)
-: MSNAuthSocket( msnId , parent)
+MSNDispatchSocket::MSNDispatchSocket( const QString &msnId, QObject *parent )
+: MSNAuthSocket( msnId, parent)
 {
 }
 
@@ -33,10 +35,9 @@ void MSNDispatchSocket::connect()
 	MSNAuthSocket::connect( "messenger.hotmail.com", 1863 );
 }
 
-void MSNDispatchSocket::parseCommand( const QString &cmd, uint id,
-	const QString &data )
+void MSNDispatchSocket::parseCommand( const QString &cmd, uint id, const QString &data )
 {
-	if( cmd == "XFR" )
+	if ( cmd == "XFR" )
 	{
 		// Got our notification server
 		QString host = data.section( ' ', 1, 1 );
@@ -55,14 +56,5 @@ void MSNDispatchSocket::parseCommand( const QString &cmd, uint id,
 
 #include "msndispatchsocket.moc"
 
-
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 

@@ -1,11 +1,13 @@
 /*
     msndispatchsocket.h - Socket for the MSN Dispatch Server
 
-    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart       <ogoffart@tiscalinet.be>
+
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     Portions of this code are taken from KMerlin,
-              (c) 2001 by Olaf Lueg              <olueg@olsd.de>
+              (c) 2001      by Olaf Lueg             <olueg@olsd.de>
 
     *************************************************************************
     *                                                                       *
@@ -34,7 +36,7 @@ class MSNDispatchSocket : public MSNAuthSocket
 	Q_OBJECT
 
 public:
-	MSNDispatchSocket( const QString &msnId , QObject* parent=0L);
+	MSNDispatchSocket( const QString &msnId, QObject *parent = 0L );
 	~MSNDispatchSocket();
 
 	/**
@@ -54,20 +56,10 @@ protected:
 	/**
 	 * Handle an MSN command response line.
 	 */
-	virtual void parseCommand( const QString &cmd, uint id,
-		const QString &data );
+	virtual void parseCommand( const QString &cmd, uint id, const QString &data );
 };
 
 #endif
 
-
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 
