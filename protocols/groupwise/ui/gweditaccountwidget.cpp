@@ -80,10 +80,10 @@ void GroupWiseEditAccountWidget::reOpen()
 	m_preferencesDialog->m_userId->setDisabled( true );
 	m_preferencesDialog->m_userId->setText( account()->accountId() );
 	m_preferencesDialog->m_password->load( &account()->password() );
-	m_preferencesDialog->m_server->setText( account()->pluginData( GroupWiseProtocol::protocol(), "Server") );
-	m_preferencesDialog->m_port->setValue( account()->pluginData( GroupWiseProtocol::protocol(), "Port" ).toInt() );
+	m_preferencesDialog->m_server->setText( account()->configGroup()->readEntry( "Server") );
+	m_preferencesDialog->m_port->setValue( account()->configGroup()->readNumEntry( "Port" ) );
 	m_preferencesDialog->m_autoConnect->setChecked( account()->autoConnect() );
-	m_preferencesDialog->m_alwaysAccept->setChecked( account()->pluginData( GroupWiseProtocol::protocol(), "AlwaysAcceptInvitations" ) == "true" );
+	m_preferencesDialog->m_alwaysAccept->setChecked( account()->configGroup()->readBoolEntry( "AlwaysAcceptInvitations" ) );
 }
 
 Kopete::Account* GroupWiseEditAccountWidget::apply()
@@ -113,10 +113,12 @@ bool GroupWiseEditAccountWidget::validateData()
 void GroupWiseEditAccountWidget::writeConfig()
 {
 	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
-	account()->setPluginData( GroupWiseProtocol::protocol(), "Server", m_preferencesDialog->m_server->text() );
-	account()->setPluginData( GroupWiseProtocol::protocol(), "Port", QString::number( m_preferencesDialog->m_port->value() ) );
+	account()->configGroup()->writeEntry( "Server", m_preferencesDialog->m_server->text() );
+	account()->configGroup()->writeEntry( "Port", QString::number( m_preferencesDialog->m_port->value() ) );
+	account()->configGroup()->writeEntry( "AlwaysAcceptInvitations", 
+			m_preferencesDialog->m_alwaysAccept->isChecked() ? "true" : "false" );
+	
 	account()->setAutoConnect( m_preferencesDialog->m_autoConnect->isChecked() );
-	account()->setPluginData( GroupWiseProtocol::protocol(), "AlwaysAcceptInvitations", m_preferencesDialog->m_alwaysAccept->isChecked() ? "true" : "false" );
 	m_preferencesDialog->m_password->save( &account()->password() );
 	settings_changed = false;
 }

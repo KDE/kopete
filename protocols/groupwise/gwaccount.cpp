@@ -132,12 +132,12 @@ KActionMenu* GroupWiseAccount::actionMenu()
 
 const int GroupWiseAccount::port() const
 {
-	return pluginData( Kopete::Account::protocol(), "Port" ).toInt();
+	return configGroup()->readNumEntry( "Port" );
 }
 
 const QString GroupWiseAccount::server() const
 {
-	return pluginData( Kopete::Account::protocol(), "Server" );
+	return configGroup()->readEntry( "Server" );
 }
 
 Client * GroupWiseAccount::client() const
@@ -1003,7 +1003,7 @@ void GroupWiseAccount::receiveInvitation( const ConferenceEvent & event )
 	GroupWiseContact * contactFrom = contactForDN( event.user );
 	if ( !contactFrom )
 		contactFrom = createTemporaryContact( event.user );
-	if ( pluginData( GroupWiseProtocol::protocol(), "AlwaysAcceptInvitations" ) == "true" )
+	if ( configGroup()->readEntry( "AlwaysAcceptInvitations" ) == "true" )
 	{
 		client()->joinConference( event.guid );
 	}
