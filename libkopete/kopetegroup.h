@@ -24,6 +24,7 @@
 
 class QDomElement;
 class KopetePlugin;
+struct KopeteGroupPrivate;
 
 /**
  * @author Olivier Goffart
@@ -56,8 +57,8 @@ public:
 	QString toXML();
 	bool fromXML( const QDomElement &data );
 
-	void setExpanded(bool in_expanded) { m_expanded = in_expanded; }
-	bool expanded() { return m_expanded; }
+	void setExpanded(bool in_expanded) ;
+	bool expanded() ;
 
 	/**
 	 * Convenience method to store or change only a single field of the
@@ -78,13 +79,8 @@ public:
 	static KopeteGroup *temporary;
 
 private:
-	QString m_displayName;
-	GroupType m_type;
-	bool m_expanded;
-	/**
-	 * Data to store in the XML file
-	 */
-	QMap<QString, QMap<QString, QString> > m_pluginData;
+	KopeteGroupPrivate *d;
+	
 
 
 signals: 

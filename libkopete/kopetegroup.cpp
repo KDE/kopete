@@ -44,44 +44,57 @@ QStringList KopeteGroupList::toStringList()
 }
 
 //-----------------------------------------------------------------------------
+struct KopeteGroupPrivate
+{
+	QString displayName;
+	KopeteGroup::GroupType type;
+	bool expanded;
+	/**
+	 * Data to store in the XML file
+	 */
+	QMap<QString, QMap<QString, QString> > pluginData;
+};
 
 KopeteGroup::KopeteGroup(QString _name, GroupType _type)  : QObject(KopeteContactList::contactList())
 {
-	m_displayName=_name;
-	m_type=_type;
-	m_expanded = true;
+	d=new KopeteGroupPrivate;
+	d->displayName=_name;
+	d->type=_type;
+	d->expanded = true;
 }
 KopeteGroup::KopeteGroup()  : QObject(KopeteContactList::contactList())
 {
-	m_type=Classic;
-	m_displayName=QString::null;
-	m_expanded = true;
+	d=new KopeteGroupPrivate;
+	d->expanded = true;
+	d->type=Classic;
+	d->displayName=QString::null;
 }
 
 KopeteGroup::~KopeteGroup()
 {
+	delete d;
 }
 
 QString KopeteGroup::toXML()
 {
 	QString xml = QString::fromLatin1( "  <kopete-group type=\"" );
 
-	if( m_type == Temporary )
+	if( d->type == Temporary )
 		xml += QString::fromLatin1( "temporary" );
-	else if( m_type == TopLevel )
+	else if( d->type == TopLevel )
 		xml += QString::fromLatin1( "top-level" );
 	else
 		xml += QString::fromLatin1( "standard" );
 
-	xml += QString::fromLatin1( "\" view=\"" ) + QString::fromLatin1( m_expanded ? "expanded" : "collapsed" ) + QString::fromLatin1( "\">\n" );
+	xml += QString::fromLatin1( "\" view=\"" ) + QString::fromLatin1( d->expanded ? "expanded" : "collapsed" ) + QString::fromLatin1( "\">\n" );
 
-	xml += QString::fromLatin1( "    <display-name>" ) + QStyleSheet::escape( m_displayName ) + QString::fromLatin1( "</display-name>\n" );
+	xml += QString::fromLatin1( "    <display-name>" ) + QStyleSheet::escape( d->displayName ) + QString::fromLatin1( "</display-name>\n" );
 
 	// Store other plugin data
-	if( !m_pluginData.isEmpty() )
+	if( !d->pluginData.isEmpty() )
 	{
 		QMap<QString, QMap<QString, QString> >::ConstIterator pluginIt;
-		for( pluginIt = m_pluginData.begin(); pluginIt != m_pluginData.end(); ++pluginIt )
+		for( pluginIt = d->pluginData.begin(); pluginIt != d->pluginData.end(); ++pluginIt )
 		{
 			xml += QString::fromLatin1( "    <plugin-data plugin-id=\"" ) + QStyleSheet::escape( pluginIt.key() ) + QString::fromLatin1( "\">\n" );
 
@@ -105,14 +118,14 @@ bool KopeteGroup::fromXML( const QDomElement& data )
 {
 	QString type = data.attribute( QString::fromLatin1( "type" ), QString::fromLatin1( "standard" ) );
 	if( type == QString::fromLatin1( "temporary" ) )
-		m_type = Temporary;
+		d->type = Temporary;
 	else if( type == QString::fromLatin1( "top-level" ) )
-		m_type = TopLevel;
+		d->type = TopLevel;
 	else
-		m_type = Classic;
+		d->type = Classic;
 
 	QString view = data.attribute( QString::fromLatin1( "view" ), QString::fromLatin1( "expanded" ) );
-	m_expanded = ( view != QString::fromLatin1( "collapsed" ) );
+	d->expanded = ( view != QString::fromLatin1( "collapsed" ) );
 
 	QDomNode groupData = data.firstChild();
 	while( !groupData.isNull() )
@@ -122,7 +135,7 @@ bool KopeteGroup::fromXML( const QDomElement& data )
 		{
 //			if( groupElement.text().isEmpty() )
 //				return false;
-			m_displayName = groupElement.text();
+			d->displayName = groupElement.text();
 		}
 		else if( groupElement.tagName() == QString::fromLatin1( "plugin-data" ) )
 		{
@@ -141,53 +154,62 @@ bool KopeteGroup::fromXML( const QDomElement& data )
 				field = field.nextSibling();
 			}
 
-			m_pluginData.insert( pluginId, pluginData );
-			if( m_type == TopLevel ) //FIXME:
-				toplevel->m_pluginData.insert( pluginId, pluginData );
+			d->pluginData.insert( pluginId, pluginData );
+			if( d->type == TopLevel ) //FIXME:
+				toplevel->d->pluginData.insert( pluginId, pluginData );
 		}
 
 		groupData = groupData.nextSibling();
 	}
 //	return true;
-	return (m_type==Classic);
+	return (d->type==Classic);
 	//FIXME: this workaroud allow to save data for the top-level group
 }
 
 void KopeteGroup::setDisplayName(const QString &s)
 {
-	if(m_displayName!=s)
+	if(d->displayName!=s)
 	{
-		QString oldname=m_displayName;
-		m_displayName=s;
+		QString oldname=d->displayName;
+		d->displayName=s;
 		emit renamed(this,oldname);
 	}
 }
 
 QString KopeteGroup::displayName() const
 {
-	return m_displayName;
+	return d->displayName;
 }
 
 KopeteGroup::GroupType KopeteGroup::type() const
 {
-	return m_type;
+	return d->type;
 }
 void KopeteGroup::setType(GroupType t)
 {
-	m_type=t;
+	d->type=t;
+}
+
+void KopeteGroup::setExpanded(bool in_expanded)
+{
+	d->expanded = in_expanded; 
+}
+bool KopeteGroup::expanded()
+{
+	return d->expanded;
 }
 
 QString KopeteGroup::pluginData( KopetePlugin *p, const QString &key ) const
 {
-	if( !m_pluginData.contains( QString::fromLatin1( p->pluginId() ) ) || !m_pluginData[ QString::fromLatin1( p->pluginId() ) ].contains( key ) )
+	if( !d->pluginData.contains( QString::fromLatin1( p->pluginId() ) ) || !d->pluginData[ QString::fromLatin1( p->pluginId() ) ].contains( key ) )
 		return QString::null;
 
-	return m_pluginData[ QString::fromLatin1( p->pluginId() ) ][ key ];
+	return d->pluginData[ QString::fromLatin1( p->pluginId() ) ][ key ];
 }
 
 void KopeteGroup::setPluginData( KopetePlugin *p, const QString &key, const QString &value )
 {
-	m_pluginData[ QString::fromLatin1( p->pluginId() ) ][ key ] = value;
+	d->pluginData[ QString::fromLatin1( p->pluginId() ) ][ key ] = value;
 }
 
 

@@ -21,6 +21,7 @@
 #include <qstringlist.h>
 
 #include <kdebug.h>
+#include <kaction.h>
 
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
@@ -28,10 +29,12 @@
 #include "kopetemetacontact.h"
 #include "kopeteidentitymanager.h"
 #include "kopeteidentity.h"
+#include "kopeteonlinestatus.h"
 
 KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
     : KopetePlugin( parent, name )
 {
+	m_menu=0L;
 }
 
 KopeteProtocol::~KopeteProtocol()
@@ -49,18 +52,25 @@ QString KopeteProtocol::statusIcon() const
 	return m_statusIcon;
 }
 
-void KopeteProtocol::setStatusIcon( const QString &icon )
-{
-	if( icon != m_statusIcon )
-	{
-		m_statusIcon = icon;
-		emit( statusIconChanged( this, icon ) );
-	}
-}
 
 KActionMenu* KopeteProtocol::protocolActions()
 {
-	return 0L;
+	delete m_menu;
+	m_menu=0L;
+	QDict<KopeteIdentity> dict=KopeteIdentityManager::manager()->identities(this);
+	QDictIterator<KopeteIdentity> it( dict ); 
+	if(dict.count() == 1 )
+	{
+		return (it.current())->actionMenu();
+	}
+
+	KActionMenu *m_menu=new KActionMenu(displayName(),protocolIcon(),this);
+
+	for( ; KopeteIdentity *identity=it.current(); ++it )
+	{
+		m_menu->insert(identity->actionMenu());
+	}
+	return m_menu;
 }
 
 const QDict<KopeteContact>& KopeteProtocol::contacts()
@@ -290,6 +300,44 @@ bool KopeteProtocol::addContactToMetaContact( const QString &, const QString &, 
 	return false;
 }
 
+void KopeteProtocol::slotIdentityAdded()
+{
+	QDict<KopeteIdentity> dict=KopeteIdentityManager::manager()->identities(this);
+	QDictIterator<KopeteIdentity> it( dict ); 
+	for( ; KopeteIdentity *identity=it.current(); ++it )
+	{
+		if(identity->myself())
+		{	//because we can't know if the identity has already connected
+			QObject::disconnect(identity->myself() , SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & )) , this , SLOT( slotRefreshStatusIcon()));
+			QObject::connect   (identity->myself() , SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & )) , this , SLOT( slotRefreshStatusIcon()));
+		}
+	}
+	slotRefreshStatusIcon();
+}
+
+void KopeteProtocol::slotRefreshStatusIcon()
+{
+	KopeteOnlineStatus status;
+	QDict<KopeteIdentity> dict=KopeteIdentityManager::manager()->identities(this);
+	QDictIterator<KopeteIdentity> it( dict ); 
+	for( ; KopeteIdentity *identity=it.current(); ++it )
+	{
+		if(identity->myself())
+		{
+			if(identity->myself()->onlineStatus() > status)
+			{
+				status=identity->myself()->onlineStatus();
+			}
+		}
+	}
+	
+	if( status.icon() != m_statusIcon )
+	{
+		m_statusIcon = status.icon();
+		emit( statusIconChanged( this, m_statusIcon ) );
+	}
+}
+
 //-------- OBSOLETE
 KopeteContact* KopeteProtocol::myself() const
 {
@@ -304,6 +352,17 @@ KopeteContact* KopeteProtocol::myself() const
 	}
 	return 0L;
 }
+
+
+void KopeteProtocol::setStatusIcon( const QString &icon )
+{
+	if( icon != m_statusIcon )
+	{
+		m_statusIcon = icon;
+		emit( statusIconChanged( this, icon ) );
+	}
+}
+
 
 #include "kopeteprotocol.moc"
 

@@ -119,7 +119,7 @@ KopeteContact::KopeteContact( KopeteIdentity *identity, const QString &contactId
 	{
 		d->protocol=identity->protocol();
 		identity->registerContact( this );
-		connect( identity, SIGNAL( identityDestroyed(KopeteIdentity*) ), SLOT( deleteLater() ) );
+		connect( identity, SIGNAL( identityDestroyed(KopeteIdentity*) ), SLOT( slotIdentityDestroyed() ) );
 	}
 
 	// Initialize the context menu
@@ -167,7 +167,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	if( protocol )
 	{
 		protocol->registerContact( this );
-		connect( protocol, SIGNAL( unloading() ), SLOT( slotProtocolUnloading() ) );
+		connect( protocol, SIGNAL( unloading() ), SLOT( slotIdentityDestroyed() ) );
 	}
 
 	// Initialize the context menu
@@ -198,8 +198,11 @@ KopeteContact::~KopeteContact()
 	delete d;
 }
 
-void KopeteContact::slotProtocolUnloading()
+void KopeteContact::slotIdentityDestroyed()
 {
+	//use of delete this and not deleteLater because later is too late :-D
+	//we have to delete contacts _before_ the deletion of the protocol
+	//
 	delete this;
 }
 
@@ -233,12 +236,9 @@ QString KopeteContact::displayName() const
 	return d->displayName;
 }
 
-KopeteOnlineStatus KopeteContact::onlineStatus() const
+const KopeteOnlineStatus& KopeteContact::onlineStatus() const
 {
-	if( d->protocol && d->protocol->isConnected() )
-		return d->onlineStatus;
-	else
-		return KopeteOnlineStatus( KopeteOnlineStatus::Offline );
+	return d->onlineStatus;
 }
 
 void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status )

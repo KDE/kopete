@@ -118,7 +118,6 @@ public:
 	 */
 	KActionCollection * customChatActions(KopeteMessageManager * );
 
-	virtual KActionMenu* protocolActions();
 	virtual const QString protocolIcon();
 
 	static MSNProtocol* protocol();
@@ -127,7 +126,6 @@ private slots:
 	void slotSyncContactList();
 
 private:
-	KActionMenu *m_menu;
 
 	static MSNProtocol *s_protocol;
 	MSNPreferences *mPrefs;

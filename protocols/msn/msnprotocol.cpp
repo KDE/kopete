@@ -66,7 +66,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 
 	mPrefs = new MSNPreferences( "msn_protocol", this );
 
-	m_menu=0L;
+
 
 	setStatusIcon( "msn_offline" );
 
@@ -116,25 +116,6 @@ KopeteIdentity *MSNProtocol::createNewIdentity(const QString &identityId)
 	return new MSNIdentity(this, identityId);
 }
 
-KActionMenu* MSNProtocol::protocolActions()
-{
-	delete m_menu;
-	m_menu=0L;
-	QDict<KopeteIdentity> dict=KopeteIdentityManager::manager()->identities(this);
-	QDictIterator<KopeteIdentity> it( dict ); 
-	if(dict.count() == 1 )
-	{
-		return static_cast<MSNIdentity*>(it.current())->actionMenu();
-	}
-
-	KActionMenu *m_menu=new KActionMenu(displayName(),protocolIcon(),this);
-
-	for( ; MSNIdentity *identity=static_cast<MSNIdentity*>(it.current()); ++it )
-	{
-		m_menu->insert(identity->actionMenu());
-	}
-	return m_menu;
-}
 
 // NOTE: CALL THIS ONLY BEING CONNECTED
 void MSNProtocol::slotSyncContactList()

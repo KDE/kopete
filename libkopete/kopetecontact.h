@@ -154,7 +154,7 @@ public:
 	 * Return the online status of the contact
 	 * @return the online status of the contact
 	 */
-	KopeteOnlineStatus onlineStatus() const;
+	const KopeteOnlineStatus& onlineStatus() const;
 
 	/**
 	 * Set the contact's online status
@@ -366,7 +366,7 @@ private slots:
 	void slotChangeDisplayName();
 
 	void slotMoveDialogOkClicked();
-	void slotProtocolUnloading();
+	void slotIdentityDestroyed();
 
 	/**
 	 * View the chat history

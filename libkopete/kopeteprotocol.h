@@ -72,8 +72,8 @@ public:
 	 * are supported too, and tried first
 	 */
 	QString statusIcon() const;
-	void setStatusIcon( const QString &icon );
-
+	
+	
 	/**
 	 * Return whether the protocol supports offline messages.
 	 * FIXME: Make pure virtual, or define protected method
@@ -86,10 +86,6 @@ public:
 	 * Return a KActionMenu using a custom menu to plug into e.g. the system
 	 * tray icon and the protocol icon in the status bar, but maybe elsewhere
 	 * too.
-	 * The default implementation returns a null pointer, to disable any menu.
-	 *
-	 * Note that you are responsible for allocating and deleting the
-	 * KActionMenu yourself (as far as Qt's API doesn't do it for you ).
 	 */
 	virtual KActionMenu* protocolActions();
 
@@ -161,6 +157,8 @@ public:
 	virtual void setAway() {}
 	virtual void setAvailable() {}
 	virtual bool isAway() const { return false; }
+	/** OBSOLETE **/
+	void setStatusIcon( const QString &icon );
 	
 	/**
 	 * @internal
@@ -176,22 +174,9 @@ public slots:
 	/** OBSOLETE **/	
 	virtual void connect() {};
 	virtual void disconnect() {};
-	
-	/**
-	 * Adds a contact to this protocol with the specified details
-	 * 
-	 * @param contactId The unique ID for this protocol
-	 * @param displayName The displayname of the contact (may equal userId for some protocols
-	 * @param parentContact The metacontact to add this contact to
-	 * @param groupName The name of the group to add the contact to
-	 * @param isTemporary If this is a temporary contact
-	 * @return Pointer to the KopeteContact object which was added
-	 */
 	bool addContact( const QString &contactId, const QString &displayName = QString::null,
 		KopeteMetaContact *parentContact = 0L, const QString &groupName = QString::null, bool isTemporary = false);
 		
-		
-	
 	/**
 	 * A meta contact is about to save.
 	 * Call serialize() for all contained contacts for this protocol.
@@ -212,6 +197,9 @@ private slots:
 	 * Track the deletion of a KopeteContact and cleanup
 	 */
 	void slotKopeteContactDestroyed( KopeteContact * );
+	
+	void slotRefreshStatusIcon();
+	void slotIdentityAdded();
 
 private:
 	QString m_statusIcon;
@@ -220,6 +208,8 @@ private:
 	 * The list of all contacts for this protocol
 	 */
 	QDict<KopeteContact> m_contacts;
+	
+	KActionMenu *m_menu;
 };
 
 #endif

@@ -611,9 +611,9 @@ void MSNNotifySocket::slotSendKeepAlive()
 
 void MSNNotifySocket::slotResetKeepAlive()
 {
-	// Fire the timer every 60 seconds. QTimer will reset a running timer
+	// Fire the timer every 90 seconds. QTimer will reset a running timer
 	// on a subsequent call if there has been activity again.
-	m_keepaliveTimer->start( 60000 );
+	m_keepaliveTimer->start( 90000 );
 }
 
 KopeteOnlineStatus MSNNotifySocket::convertOnlineStatus( const QString &status )
