@@ -1258,6 +1258,7 @@ void ClientStream::processNext()
 		}
 
 		int event = d->client.event;
+		d->notify = 0;
 		switch(event) {
 			case CoreProtocol::EError: {
 #ifdef XMPP_DEBUG
