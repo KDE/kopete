@@ -36,6 +36,7 @@
 #include <kstandarddirs.h>
 #include <ktempfile.h>
 #include <krun.h>
+#include "knotifyclient.h"
 
 #include <ctime>
 
@@ -466,16 +467,9 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 		m = m.left(msg.find("\r\n"));
 		mailCount = m.right(m.length() -m.find(" ")-1).toUInt();
 
-		if(MSNPreferences::mailNotifications())
-		{
-			int answer = KMessageBox::No;
+		KNotifyClient::event( 0 , "msn_mail" , i18n( "You have %1 unread messages in your MSN inbox." ).arg(mailCount) ,
+			i18n("Open &inbox") , this , SLOT(slotOpenInbox()) );
 
-			if(mailCount != 0)
-				answer = KMessageBox::questionYesNo( 0l, i18n( "<qt>You have %1 unread messages in your inbox.<br>Would you like to open your inbox now?</qt>" ).arg(mailCount), i18n( "MSN Plugin" ) );
-
-			if(answer==KMessageBox::Yes)
-				slotOpenInbox();
-		}
 	}
 	else if(msg.contains("text/x-msmsgsactivemailnotification"))
 	{
@@ -493,15 +487,8 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 		mailCount++;
 
-		if(MSNPreferences::mailNotifications())
-		{
-			int answer=KMessageBox::questionYesNo( 0l, i18n( "<qt>You have one new email from %1.<br>Would you like to open your inbox now?</qt>" ).arg(m), i18n( "MSN Plugin" ) );
-
-			if(answer==KMessageBox::Yes)
-			{
-				slotOpenInbox();
-			}
-		}
+		KNotifyClient::event( 0 , "msn_mail" , i18n( "You have one new email from %1 in your MSN inbox." ).arg(m) ,
+			i18n("Open &inbox") , this , SLOT(slotOpenInbox()) );
 	}
 	else if(msg.contains("text/x-msmsgsprofile"))
 	{

@@ -277,3 +277,9 @@ Comment[sv]=Ett meddelande markerades eftersom det innehöll ditt smeknamn
 Comment[xx]=xxA message was highlighted because it contained your nicknamexx
 default_sound=Kopete_Received.ogg
 default_presentation=1
+
+
+[msn_mail]
+Name=MSN Mail
+Comment=A new email arrived in your MSN inbox
+default_presentation=2
