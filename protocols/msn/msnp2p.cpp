@@ -245,9 +245,8 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 						QTextCodec *codec = QTextCodec::codecForName("ISO-10646-UCS-2");
 						if(!codec)
 							return; //abort();
-						QString filename = codec->toUnicode(binaryContext.data()+19 , binaryContext.size()-19) ;
-						//TODO FIXME !!!!!!!!!!!!!!!!!!!
-	
+						QString filename = codec->toUnicode(binaryContext.data()+19 , binaryContext.size()-19-16) ;
+						filename=filename.left(filename.find(QChar('\0')));
 	
 						//the size is placed in the context in the bytes 8..12  (source: the amsn code)
 						unsigned long int filesize= (unsigned char)(binaryContext[8]) + (unsigned char)(binaryContext[9]) *256 + (unsigned char)(binaryContext[10]) *65536 + (unsigned char)(binaryContext[11]) *16777216 ;
@@ -267,12 +266,8 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 						connect(KopeteTransferManager::transferManager() , SIGNAL(refused( const KopeteFileTransferInfo & ) ),
 								this, SLOT( slotFileTransferRefused( const KopeteFileTransferInfo & ) ) );
 	
-						QString description="Warning: I can't extract correctly the filename due to an encoding problem.\n"
-										"the extracted filename looks like: " + filename ;
-						filename= "msnfile";
-	
 						//show a dialog to ask the transfer.
-						KopeteTransferManager::transferManager()->askIncomingTransfer(c  , filename , filesize, description, QString::number(m_sessionId)+":"+m_branch+":"+m_CallID);
+						KopeteTransferManager::transferManager()->askIncomingTransfer(c  , filename , filesize, QString::null, QString::number(m_sessionId)+":"+m_branch+":"+m_CallID);
 	
 					}
 					else  //unknwon AppID
@@ -660,6 +655,9 @@ void MSNP2P::abortCurrentTransfer()
 		makeMSNSLPMessage(BYE, QString::null );
 
 		m_sessionId=0;
+		m_msgIdentifier=0;
+		m_totalDataSize=0;
+		m_offset=0;
 	}
 }
 
