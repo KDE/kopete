@@ -90,8 +90,6 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)),
 		this, SLOT(slotAccountUnregistered(KopeteAccount*)));
 		
-	connect ( KopeteAway::getInstance(), SIGNAL(messagesChanged()), this, SLOT(slotAwayMessagesChanged()) );
-
 	createGUI ( "kopeteui.rc", false );
 
 	// call this _after_ createGUI(), otherwise menubar is not set up correctly
