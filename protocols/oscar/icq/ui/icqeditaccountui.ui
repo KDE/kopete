@@ -155,6 +155,9 @@
                                         <property name="enabled">
                                             <bool>false</bool>
                                         </property>
+                                        <property name="maxLength">
+                                            <number>8</number>
+                                        </property>
                                         <property name="echoMode">
                                             <enum>Password</enum>
                                         </property>
