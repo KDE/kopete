@@ -179,16 +179,19 @@ bool CoreProtocol::safeReadBytes( QCString & data, uint & len )
 	if ( !okToProceed() )
 		return false;
 	QCString temp( val );
-	// if the server splits packets here we are in trouble,
-	// as there is no way to see how much data was actually read
-	m_din->readRawBytes( temp.data(), val );
-	// the rest of the string will be filled with FF,
-	// so look for that in the last position instead of \0
-	if ( (Q_UINT8)( * ( temp.data() + ( temp.length() - 1 ) ) ) == 0xFF )
+	if ( val != 0 )
 	{
-		cout << "CoreProtocol::safeReadBytes() - string broke, giving up" << endl;
-		m_state = NeedMore;
-		return false;
+		// if the server splits packets here we are in trouble,
+		// as there is no way to see how much data was actually read
+		m_din->readRawBytes( temp.data(), val );
+		// the rest of the string will be filled with FF,
+		// so look for that in the last position instead of \0
+		if ( (Q_UINT8)( * ( temp.data() + ( temp.length() - 1 ) ) ) == 0xFF )
+		{
+			cout << "CoreProtocol::safeReadBytes() - string broke, giving up" << endl;
+			m_state = NeedMore;
+			return false;
+		}
 	}
 	data = temp;
 	len = val;
