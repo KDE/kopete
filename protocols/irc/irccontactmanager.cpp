@@ -110,8 +110,8 @@ void IRCContactManager::slotNewPrivAction(const QString &originating, const QStr
 void IRCContactManager::unregister(KopeteContact *contact)
 {
 	unregisterServer(contact);
-	unregisterChannel(contact);
-	unregisterUser(contact);
+	unregisterChannel(contact, true);
+	unregisterUser(contact, true);
 }
 
 IRCServerContact *IRCContactManager::findServer(const QString &serverName, KopeteMetaContact *m)
@@ -181,7 +181,7 @@ IRCChannelContact *IRCContactManager::findChannel(const QString &name, KopeteMet
 		channel = new IRCChannelContact(this, name, m);
 		m_channels.insert( lowerName, channel );
 		QObject::connect(channel, SIGNAL(contactDestroyed(KopeteContact *)),
-			this, SLOT(unregisterChannel(KopeteContact *)));
+			this, SLOT(unregister(KopeteContact *)));
 	}
 	else
 	{
@@ -206,12 +206,13 @@ void IRCContactManager::unregisterChannel(const QString &name)
 	}
 }
 
-void IRCContactManager::unregisterChannel(KopeteContact *contact)
+void IRCContactManager::unregisterChannel(KopeteContact *contact, bool force)
 {
 	const IRCChannelContact *channel = (const IRCChannelContact *)contact;
-	if(	channel!=0 &&
+	if( force || (
+		channel!=0 &&
 		!channel->isChatting() &&
-		channel->metaContact())
+		channel->metaContact() ) )
 	{
 		m_channels.remove( channel->nickName().lower() );
 	}
@@ -233,7 +234,7 @@ IRCUserContact *IRCContactManager::findUser(const QString &name, KopeteMetaConta
 		user = new IRCUserContact(this, name, m);
 		m_users.insert( lowerName, user );
 		QObject::connect(user, SIGNAL(contactDestroyed(KopeteContact *)),
-				this, SLOT(unregisterUser(KopeteContact *)));
+				this, SLOT(unregister(KopeteContact *)));
 	}
 	else
 	{
@@ -258,12 +259,13 @@ void IRCContactManager::unregisterUser( const QString & /* name */ )
 	}*/
 }
 
-void IRCContactManager::unregisterUser(KopeteContact *contact)
+void IRCContactManager::unregisterUser(KopeteContact *contact, bool force)
 {
 	const IRCUserContact *user = (const IRCUserContact *)contact;
-	if(	user!=0 &&
+	if( force || (
+		user!=0 &&
 		user!=mySelf() &&
-		!user->isChatting())
+		!user->isChatting() ) )
 	{
 		kdDebug(14120) << k_funcinfo << user->nickName() << endl;
 		m_users.remove( user->nickName().lower() );

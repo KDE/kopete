@@ -67,13 +67,13 @@ class IRCContactManager
 		void unregister(KopeteContact *contact);
 		
 		void unregisterUser(const QString &nick);
-		void unregisterUser(KopeteContact *contact);
+		void unregisterUser(KopeteContact *contact, bool force = false);
 		
 		void addToNotifyList(const QString &nick);
 		void removeFromNotifyList(const QString &nick);
 		
 		void unregisterChannel(const QString &channel);
-		void unregisterChannel(KopeteContact *contact);
+		void unregisterChannel(KopeteContact *contact, bool force = false);
 		
 		void unregisterServer(const QString &server);
 		void unregisterServer(KopeteContact *contact);
