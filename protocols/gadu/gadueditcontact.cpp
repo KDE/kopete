@@ -47,17 +47,11 @@ GaduEditContact::GaduEditContact( GaduAccount* account, GaduContact* contact,
 	setMainWidget( ui_ );
 	show();
 	connect( this, SIGNAL( applyClicked() ), SLOT( slotApply() ) );
-
 }
 
-
-
-void 
-GaduAway::slotApply()
+void
+GaduEditContact::slotApply()
 {
-
-
-
 }
 
 #include "gadueditcontact.moc"

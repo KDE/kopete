@@ -76,7 +76,7 @@ GaduCommand::enableNotifiers( int checkWhat )
 			read_->setEnabled( true );
 		}
 	}
-	
+
 	if ( write_ ) {
 		if( checkWhat & GG_CHECK_WRITE ) {
 			write_->setEnabled( true );
@@ -116,12 +116,12 @@ GaduCommand::forwarder()
 
 
 RegisterCommand::RegisterCommand( QObject* parent, const char* name )
-:GaduCommand( parent, name ), session_( 0 ), tokenImg( 0 ), state( RegisterStateNoToken ), uin( 0 )
+:GaduCommand( parent, name ), session_( 0 ), state( RegisterStateNoToken ), uin( 0 )
 {
 }
 
 RegisterCommand::RegisterCommand( const QString& email, const QString& password, QObject* parent, const char* name )
-:GaduCommand( parent, name ), email_( email ), password_( password ), session_( 0 ), tokenImg( 0 ), state( RegisterStateNoToken ), uin( 0 )
+:GaduCommand( parent, name ), email_( email ), password_( password ), session_( 0 ), state( RegisterStateNoToken ), uin( 0 )
 {
 }
 
@@ -137,9 +137,6 @@ unsigned int RegisterCommand::newUin()
 
 RegisterCommand::~RegisterCommand()
 {
-	if ( tokenImg ) {
-		delete tokenImg;
-	}
 }
 
 void
@@ -181,7 +178,7 @@ RegisterCommand::execute()
 {
 	if ( state != RegisterStateGotToken || email_.isEmpty() || password_.isEmpty() || tokenString.isEmpty() ) {
 		// get token first || fill information
-		kdDebug(14100) << "not enough info to ruun execute, state: " << state << " , email: " << email_ << ", password present " << !password_.isEmpty() << ", token string:" << tokenString << endl; 
+		kdDebug(14100) << "not enough info to ruun execute, state: " << state << " , email: " << email_ << ", password present " << !password_.isEmpty() << ", token string:" << tokenString << endl;
 		return;
 	}
 	session_ = gg_register3( email_.ascii(), password_.ascii(), tokenId.ascii(), tokenString.ascii(), 1 );
@@ -230,10 +227,10 @@ void RegisterCommand::watcher()
 				tokenId = (char *)sp->tokenid;
 				kdDebug( 14100 ) << "got Token!, ID: " << tokenId << endl;
 				if ( pubDir->success ) {
-					tokenImg = new QPixmap;
-						tokenImg->loadFromData( (const unsigned char *)session_->body, session_->body_size );
+					QPixmap tokenImg;
+					tokenImg.loadFromData( (const unsigned char *)session_->body, session_->body_size );
 					state = RegisterStateGotToken;
-					emit tokenRecieved( *tokenImg, tokenId );
+					emit tokenRecieved( tokenImg, tokenId );
 				}
 				else {
 					emit error( i18n( "Gadu-Gadu" ), i18n( "unable to retrive token" ) );
@@ -275,7 +272,7 @@ void RegisterCommand::watcher()
 				state = RegisterStateGotToken;
 				return;
 				break;
-	
+
 			case GG_STATE_DONE:
 				if ( pubDir->success && pubDir->uin ) {
 					uin= pubDir->uin;

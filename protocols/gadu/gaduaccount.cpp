@@ -173,28 +173,28 @@ GaduAccount::actionMenu()
 		listputAction->setEnabled( FALSE );
 	}
 	kdDebug( 14100 ) << "nr of contacts - " << contacts().count() <<endl ;
-	
+
 	if ( contacts().count() > 1 ) {
 		if ( saveListDialog ) {
 			listToFileAction->setEnabled( FALSE );
-		}	
+		}
 		else {
 			listToFileAction->setEnabled( TRUE );
 		}
-	
+
 		listToFileAction->setEnabled( TRUE );
 	}
 	else {
 		listToFileAction->setEnabled( FALSE );
 	}
-	
+
 	if ( loadListDialog ) {
 		listFromFileAction->setEnabled( FALSE );
 	}
 	else {
 		listFromFileAction->setEnabled( TRUE );
 	}
-	
+
 	actionMenu_->insert( new KAction( i18n( "Go O&nline" ),
 			GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ).iconFor( this ),
 			0, this, SLOT( slotGoOnline() ), this, "actionGaduConnect" ) );
@@ -218,7 +218,7 @@ GaduAccount::actionMenu()
 	actionMenu_->popupMenu()->insertSeparator();
 	actionMenu_->insert( listToFileAction );
 	actionMenu_->insert( listFromFileAction );
-	
+
 	return actionMenu_;
 }
 
@@ -624,6 +624,7 @@ GaduAccount::startNotify()
 	}
 
 	session_->notify( userlist, contacts().count() );
+  delete [] userlist;
 }
 
 void
@@ -723,9 +724,9 @@ GaduAccount::userlist( const QString& contactsListString )
 			kdDebug(14100) << "oops, no KopeteContact in contacts()[] for some reason, for \"" << (*contactLine)->uin << "\"" << endl;
 			goto next_cont;
 		}
-		
+
 		// update/add infor for contact
-		
+
 		contact->setProperty( "emailAddress", (*contactLine)->email );
 		contact->setProperty( "firstName", (*contactLine)->firstname );
 		contact->setProperty( "lastName", (*contactLine)->surname );
@@ -765,33 +766,33 @@ GaduAccount::slotExportContactsListToFile()
 {
 	KTempFile tempFile;
 	tempFile.setAutoDelete( true );
-	
+
 	if ( saveListDialog ) {
 		kdDebug( 14100 ) << " save contacts to file: alread waiting for input " << endl ;
 		return;
 	}
-	
-	saveListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null, 
-					Kopete::UI::Global::mainWidget(), "gadu-list-save", false ); 
+
+	saveListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
+					Kopete::UI::Global::mainWidget(), "gadu-list-save", false );
 	saveListDialog->setCaption( i18n(" Save Contacts list for account %1 as ...").arg( myself()->displayName() ) );
-	
+
 	if ( saveListDialog->exec() == QDialog::Accepted ) {
-		
+
 		QCString list = textcodec_->fromUnicode( session_->contactsToString( userlist() ) );
-		
+
 		if ( tempFile.status() ) {
-			// say cheese, can't create file.....			
+			// say cheese, can't create file.....
 			error( i18n( "Unable to create temporary file" ), i18n( "Save Contacts list failed" ) );
 		}
 		else {
 			QTextStream* tempStream = tempFile.textStream();
 			(*tempStream) << list.data();
 			tempFile.close();
-			
-			bool res = KIO::NetAccess::upload( 
-								tempFile.name() , 
-								saveListDialog->selectedURL() , 
-								Kopete::UI::Global::mainWidget() 
+
+			bool res = KIO::NetAccess::upload(
+								tempFile.name() ,
+								saveListDialog->selectedURL() ,
+								Kopete::UI::Global::mainWidget()
 								);
 			if ( !res ) {
 				// say it failed
@@ -813,22 +814,22 @@ GaduAccount::slotImportContactsFromFile()
 		return;
 	}
 
-	loadListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null, 
-					Kopete::UI::Global::mainWidget(), "gadu-list-load", true ); 
+	loadListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
+					Kopete::UI::Global::mainWidget(), "gadu-list-load", true );
 	loadListDialog->setCaption( i18n(" Load Contacts list for account %1 as ...").arg( myself()->displayName() ) );
-	
+
 	if ( loadListDialog->exec() == QDialog::Accepted ) {
-		
+
 		QCString list;
 
 		KURL url = loadListDialog->selectedURL();
 		QString oname;
 		kdDebug(14100) << "a:"<<url<<"\nb:" << oname << endl;
-		if ( KIO::NetAccess::download(	url, 
+		if ( KIO::NetAccess::download(	url,
 						oname,
-						Kopete::UI::Global::mainWidget() 
+						Kopete::UI::Global::mainWidget()
 						) ) {
-						
+
 			QFile tempFile( oname );
 			if ( tempFile.open( IO_ReadOnly ) ) {
 				list = tempFile.readAll();
@@ -847,7 +848,7 @@ GaduAccount::slotImportContactsFromFile()
 		}
 		else {
 			// say, it failed misourably
-			error( KIO::NetAccess::lastErrorString(), 
+			error( KIO::NetAccess::lastErrorString(),
 				i18n( "Contacts list Load has failed" ) );
 		}
 
@@ -958,19 +959,19 @@ GaduAccount::useTls()
 	bool c;
 	unsigned int oldC;
 	tlsConnection Tls;
-	
+
 	s = pluginData( protocol(), QString::fromAscii( "useEncryptedConnection" ) );
 	oldC = s.toUInt( &c );
 	// we have old format
 	if ( c ) {
-		kdDebug( 14100 ) << "old format for param useEncryptedConnection, value " << 
+		kdDebug( 14100 ) << "old format for param useEncryptedConnection, value " <<
 				oldC << " willl be converted to new string value" << endl;
 		setUseTls( (tlsConnection) oldC );
 		// should be string now, unless there was an error reading
 		s = pluginData( protocol(), QString::fromAscii( "useEncryptedConnection" ) );
 		kdDebug( 14100 ) << "new useEncryptedConnection value : " << s << endl;
 	}
-	
+
 	Tls = TLS_no;
 	if ( s == "TLS_ifAvaliable" ) {
 		Tls = TLS_ifAvaliable;
@@ -978,7 +979,7 @@ GaduAccount::useTls()
 	if ( s == "TLS_only" ) {
 		Tls = TLS_only;
 	}
-	
+
 	return Tls;
 }
 
@@ -986,7 +987,7 @@ void
 GaduAccount::setUseTls( tlsConnection ut )
 {
 	QString s;
-	switch( ut ) {	
+	switch( ut ) {
 		case TLS_ifAvaliable:
 			s = "TLS_ifAvaliable";
 		break;
@@ -995,7 +996,7 @@ GaduAccount::setUseTls( tlsConnection ut )
 			s = "TLS_only";
 		break;
 
-		default: 
+		default:
 		case TLS_no:
 			s = "TLS_no";
 		break;

@@ -157,16 +157,16 @@ GaduSession::login( uin_t uin, const QString& password, bool useTls,
 	params_.async		= 1;
 	params_.tls		= useTls;
 	params_ .server_addr	= server;
-	
+
 	if ( useTls ) {
 		params_.server_port = GG_HTTPS_PORT;
-	} 
+	}
 	else {
 		if ( server ) {
 			params_.server_port = GG_DEFAULT_PORT;
 		}
 	}
-	
+
 	kdDebug(14100)<<"gadusession::login, server ( " << server << " ), tls(" << useTls << ") " <<endl;
 	login( &params_ );
 }
@@ -229,7 +229,7 @@ GaduSession::removeNotify( uin_t uin )
 int
 GaduSession::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 {
-	QString sendMsg; 
+	QString sendMsg;
 	QCString cpMsg;
 
 	if ( isConnected() ) {
@@ -464,7 +464,7 @@ GaduSession::exportContactsOnServer( gaduContactsList* contactsList )
 		kdDebug( 14100 ) << "you need to connect to export Contacts list " << endl;
 		return;
 	}
-	
+
 
 	plist = textcodec->fromUnicode( contactsToString( contactsList ) );
 	kdDebug(14100) <<"--------------------userlists\n" << plist << endl;
@@ -489,7 +489,7 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactsList , const QStrin
 	if ( sList.isEmpty() || sList.isNull() ) {
 		return false;
 	}
-	 
+
 	if ( ( !sList.contains( '\n' ) && sList.contains( ';' ) )  || !sList.contains( ';' ) ) {
 		// basicaly, server stores contact list as it is
 		// even if i will send him windows 2000 readme file
@@ -522,14 +522,14 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactsList , const QStrin
 		if ( cl == NULL ) {
 			cl = new contactLine;
 		}
-		
+
 		// ignored contact
 		if ( strList.count() == 7 ) {
 			 // well, this is probably it - you're d00med d\/de :-)
 			if ( (*stringIterator) == QString( "i" ) ) {
 				cl->ignored	= true;
 				cl->uin		= strList[6];
-				kdDebug(14100) << " ignored :\"" << cl->uin << "\"" << endl;	
+				kdDebug(14100) << " ignored :\"" << cl->uin << "\"" << endl;
 				++lni;
 				continue;
 			}
@@ -538,8 +538,8 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactsList , const QStrin
 				++lni;
 				continue;
 			}
-		} 
-		
+		}
+
 		if ( strList.count() == 12 ) {
 			email = true;
 		}
@@ -551,7 +551,7 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactsList , const QStrin
 				continue;
 			}
 		}
-		
+
 
 //each line ((firstname);(secondname);(nickname);(displayname);(tel);(group);(uin);
 
@@ -590,13 +590,11 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactsList , const QStrin
 
 		cl = NULL;
 	}
-	
+
 	// happends only when last contact was without UIN, and was at the end of list...
 	// rather rare, but don't leak please :-)
-	if ( cl ) {
-		delete cl;
-	}
-	
+	delete cl;
+
 	return true;
 }
 
@@ -822,7 +820,7 @@ GaduSession::checkDescriptor()
 			}
 			gaduNotify.remote_ip	= event->event.status60.remote_ip;
 			gaduNotify.remote_port	= event->event.status60.remote_port;
-			gaduNotify.version	= event->event.status60.version;			
+			gaduNotify.version	= event->event.status60.version;
 			gaduNotify.image_size	= event->event.status60.image_size;
 			gaduNotify.time		= event->event.status60.time;
 

@@ -100,7 +100,6 @@ private:
 	QString		password_;
 	struct gg_http*	session_;
 	int 			uin;
-	QPixmap*		tokenImg;
 	QString		tokenId;
 	QString		tokenString;
 };
