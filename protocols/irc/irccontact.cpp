@@ -168,16 +168,24 @@ void IRCContact::slotIncomingMotd(const QString &motd)
 void IRCContact::joinNow()
 {
 	
+	/* This is a frame inside the tab, where we put the widgets in */
 	mChatViewContainer = new QFrame(mContact->mWindow->mChannelsTabCtl);
-	mChatViewContainer->resize(300,300);
+	mChatViewContainer->resize(640,480);
 	kdDebug() << "FUCK PART 1" << endl;
-	(new QVBoxLayout(mChatViewContainer, KDialog::marginHint(), KDialog::spacingHint()))->setAutoAdd(true);
-	(void)new QLabel(i18n("<b>Test :-):</b>"),mChatViewContainer );	
-    kdDebug() << "FUCK PART 2" << endl;
+	QVBoxLayout *containerLayout;
+	containerLayout = new QVBoxLayout(mChatViewContainer);
+	//(void)new QLabel(i18n("<b>Test :-):</b>"),mChatViewContainer );	
+    //(void)new QLabel(i18n("<b>Test :-):</b>"), mContact->mWindow->mChannelsTabCtl);	
+
+	kdDebug() << "FUCK PART 2" << endl;
 	chatView = new IRCChatView(mServer, mTarget, this, mChatViewContainer);
+	containerLayout->addWidget(chatView);
+	//chatView = new IRCChatView(mServer, mTarget, this, mContact->mWindow->mChannelsTabCtl );
 	kdDebug() << "FUCK PART 3" << endl;
 	mContact->mWindow->mChannelsTabCtl->addTab(mChatViewContainer, mTarget);
-    mContact->mWindow->adjustSize();
+    //mContact->mWindow->mChannelsTabCtl->addTab(mContact->mWindow->mChannelsTabCtl, mTarget);
+
+	//mContact->mWindow->adjustSize();
 	mContact->mWindow->show();
 	mChatViewContainer->show();
 	chatView->show();
