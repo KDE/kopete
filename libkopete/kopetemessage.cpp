@@ -180,6 +180,7 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 	d->to   = to;
 	d->importance = (to.count() <= 1) ? Normal : Low;
 	d->timeStamp = timeStamp;
+	d->direction = direction;
 
 	QDomElement messageNode = d->xmlDoc.createElement( QString::fromLatin1("message") );
 	messageNode.setAttribute( QString::fromLatin1("time"), KGlobal::locale()->formatTime(timeStamp.time(), true) );
