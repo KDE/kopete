@@ -86,7 +86,7 @@ public:
 	~ChatView();
 
 	/**
-	 * Adds text into the edit area. Used when you select an emotiocon
+	 * Adds text into the edit area. Used when you select an emoticon
 	 * @param text The text to be inserted
 	 */
 	void addText( const QString &text );
@@ -103,12 +103,14 @@ public:
 	void setStatus( const QString &text );
 
 	/**
-	 * Tells this view if it is the active view
+	 * Tells this view it is the active view
 	 */
 	void setActive( bool value );
 
 	/**
 	 * Clears the chat buffer
+	 *
+	 * Reimplemented from KopeteView
 	 */
 	virtual void clear();
 
@@ -145,7 +147,8 @@ public:
 
 	/**
 	 * Returns the message currently in the edit area
-	 * @return The message
+	 * Reimplemented from KopeteView
+	 * @return The KopeteMessage object for the message
 	 */
 	virtual KopeteMessage currentMessage();
 
@@ -185,19 +188,21 @@ public:
 
 	void historyDown();
 
+	/** Reimplemented from KopeteView **/
 	virtual void raise(bool activate=false);
 
+	/** Reimplemented from KopeteView **/
 	virtual void makeVisible();
 
+	/** Reimplemented from KopeteView **/
 	virtual bool isVisible();
 
+	/** Reimplemented from KopeteView **/
 	virtual QTextEdit *editWidget() { return static_cast<QTextEdit*>( m_edit ); }
+	
+	/** Reimplemented from KopeteView **/
 	virtual QWidget *mainWidget() { return this; }
 
-	/**
-	 * Returns the HTML contents of the KHTML widget
-	 * @return The contents of the view
-	 */
 	void nickComplete();
 
 	void setStylesheet( const QString &style  );
@@ -259,7 +264,7 @@ public slots:
 	 */
 	void setFont( const QFont &newFont );
 
-	/*
+	/**
 	 * show a Font dialog and set the font selected by the user
 	 */
 	void setFont( );
@@ -296,6 +301,7 @@ public slots:
 	 */
 	void remoteTyping( const KopeteContact *contact, bool typing );
 
+	/** Reimplemented from KopeteView **/
 	virtual void messageSentSuccessfully();
 
 	virtual bool closeView( bool force = false );
@@ -445,8 +451,6 @@ private:
 	QString m_lastMatch;
 	QString backgroundFile;
 	QString m_status;
-//	QPixmap m_icon;
-//	QPixmap m_iconLight;
 	KCompletion *mComplete;
 	HTMLElement activeElement;
 
@@ -459,7 +463,7 @@ private:
 	KopeteRichTextEditPart *editpart;
 
 	KAction *copyAction;
-	KAction  *saveAction;
+	KAction *saveAction;
 	KAction *printAction;
 	KAction *closeAction;
 	KAction *copyURLAction;
