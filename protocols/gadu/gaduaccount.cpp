@@ -302,10 +302,10 @@ GaduAccount::actionMenu()
 void
 GaduAccount::connectWithPassword(const QString& password)
 {
-	if (password.isEmpty())
+	if (password.isEmpty()) {
 		return;
-#warning TODO: honor the initial status
-	slotGoOnline();
+	}
+	changeStatus( initialStatus() );
 }
 
 void
@@ -362,6 +362,7 @@ GaduAccount::changeStatus( const Kopete::OnlineStatus& status, const QString& de
 			else {
 				p->connectWithSSL = false;
 			}
+			dccOn();
 			p->serverIP = 0;
 			p->currentServer = -1;
 			p->status_ = status;
@@ -441,8 +442,7 @@ GaduAccount::slotLogoff()
 void
 GaduAccount::slotGoOnline()
 {
-	dccOn();
-	changeStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ) );
+	connect( GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ) );
 }
 void
 GaduAccount::slotGoOffline()
