@@ -26,6 +26,7 @@
 #include <kextsock.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kurl.h>
 
 MSNSocket::MSNSocket()
 {
@@ -314,12 +315,12 @@ void MSNSocket::sendCommand( const QString &cmd, const QString &args,
 
 QString MSNSocket::escape( const QString &str )
 {
-	return QString( str ).replace( QRegExp( " " ), "%20" );
+	return ( KURL::encode_string(str) );
 }
 
 QString MSNSocket::unescape( const QString &str )
 {
-	return QString( str ).replace( QRegExp( "%20" ), " " );
+	return ( KURL::decode_string(str) );
 }
 
 #include "msnsocket.moc"
