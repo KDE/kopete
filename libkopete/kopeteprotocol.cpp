@@ -83,7 +83,7 @@ void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact 
 	QMap<QString, QString> addressBookData, ad;
 	QMap<QString, QString>::Iterator it;
 
-//	kdDebug( 14010 ) << "KopeteProtocol::metaContactAboutToSave: protocol " << pluginId() << ": serializing " << metaContact->displayName() << endl;
+	//kdDebug( 14010 ) << "KopeteProtocol::metaContactAboutToSave: protocol " << pluginId() << ": serializing " << metaContact->displayName() << endl;
 
 	QPtrList<KopeteContact> contacts=metaContact->contacts();
 	for (KopeteContact *c=contacts.first() ; c ; c=contacts.next() )

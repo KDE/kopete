@@ -19,6 +19,8 @@
 
 #include "kopetemetacontact.h"
 
+#include <qtimer.h>
+
 #include <kapplication.h>
 
 #include <kabc/addressbook.h>
@@ -57,6 +59,10 @@ struct KopeteMetaContactPrivate
 	QString metaContactId;
 	KopeteOnlineStatus::OnlineStatus onlineStatus;
 };
+
+KABC::AddressBook* KopeteMetaContact::m_addressBook = 0L;
+
+bool KopeteMetaContact::m_addrBookWritePending = false;
 
 KopeteMetaContact::KopeteMetaContact()
 : KopetePluginDataObject( KopeteContactList::contactList() )
@@ -764,12 +770,13 @@ void KopeteMetaContact::setMetaContactId( const QString& newMetaContactId )
 void KopeteMetaContact::updateKABC()
 {
 	// Save any changes in each contact's addressBookFields to KABC
-	KABC::AddressBook* ab = KABC::StdAddressBook::self();
-	KABC::StdAddressBook::setAutomaticSave( false );
+	KABC::AddressBook* ab = addressBook();
 	
+	// Wipe out the existing addressBook entries
+	d->addressBook.clear();
 	// This causes each KopeteProtocol subclass to serialise its contacts' data into the metacontact's plugin data and address book data
 	emit aboutToSave(this);
-	kdDebug( 14010 ) << k_funcinfo << " Does " << displayName() << " exist in KABC? " << d->metaContactId << endl; 
+	
 	// If the metacontact is linked to a kabc entry
 	if ( !d->metaContactId.isEmpty() )
 	{
@@ -804,18 +811,7 @@ void KopeteMetaContact::updateKABC()
 			}
 			ab->insertAddressee( theAddressee );
 			
-			KABC::Ticket *ticket = ab->requestSaveTicket();
-			if ( !ticket )
-				kdWarning( 14010 ) << "WARNING: Resource is locked by other application!" << endl;
-			else 
-			{
-				if ( !ab->save( ticket ) )
-					kdWarning( 14010 ) << "ERROR: Saving failed!" << endl;
-#if KDE_IS_VERSION (3,1,90)
-				ab->releaseSaveTicket( ticket );
-#endif
-			}
-			kdDebug( 14010 ) << k_funcinfo << "Finished writing KABC for " << displayName() << endl;
+			writeAddressBook();
 		}
 	}
 }
@@ -824,9 +820,10 @@ void KopeteMetaContact::removeKABC()
 {
 	// remove any data this KMC has written to the KDE address book
 	// Save any changes in each contact's addressBookFields to KABC
-	KABC::AddressBook* ab = KABC::StdAddressBook::self();
-	KABC::StdAddressBook::setAutomaticSave( false );
+	KABC::AddressBook* ab = addressBook();
 	
+	// Wipe out the existing addressBook entries
+	d->addressBook.clear();
 	// This causes each KopeteProtocol subclass to serialise its contacts' data into the metacontact's plugin data and address book data
 	emit aboutToSave(this);
 	
@@ -860,18 +857,7 @@ void KopeteMetaContact::removeKABC()
 			}
 			ab->insertAddressee( theAddressee );
 			
-			KABC::Ticket *ticket = ab->requestSaveTicket();
-			if ( !ticket )
-				kdWarning( 14010 ) << "WARNING: Resource is locked by other application!" << endl;
-			else 
-			{
-				if ( !ab->save( ticket ) )
-					kdWarning( 14010 ) << "ERROR: Saving failed!" << endl;
-#if KDE_IS_VERSION (3,1,90)
-				ab->releaseSaveTicket( ticket );
-#endif
-			}
-			kdDebug( 14010 ) << k_funcinfo << "Finished writing KABC for " << displayName() << endl;
+			writeAddressBook();
 		}
 	}
 }
@@ -881,6 +867,43 @@ QPtrList<KopeteContact> KopeteMetaContact::contacts() const
 	return d->contacts;
 }
 
+KABC::AddressBook* KopeteMetaContact::addressBook()
+{
+	if ( m_addressBook == 0L )
+	{
+		m_addressBook = KABC::StdAddressBook::self();
+		KABC::StdAddressBook::setAutomaticSave( false );
+	}
+	return m_addressBook;
+}
+
+void KopeteMetaContact::writeAddressBook()
+{
+	if ( !m_addrBookWritePending )
+	{
+		m_addrBookWritePending = true;
+		QTimer::singleShot( 2000, this, SLOT( slotWriteAddressBook() ) );
+	}
+}
+
+void KopeteMetaContact::slotWriteAddressBook()
+{
+	KABC::AddressBook* ab = addressBook();
+	
+	KABC::Ticket *ticket = ab->requestSaveTicket();
+	if ( !ticket )
+		kdWarning( 14010 ) << k_funcinfo << "WARNING: Resource is locked by other application!" << endl;
+	else 
+	{
+		if ( !ab->save( ticket ) )
+			kdWarning( 14010 ) << k_funcinfo << "ERROR: Saving failed!" << endl;
+#if KDE_IS_VERSION (3,1,90)
+		ab->releaseSaveTicket( ticket );
+#endif
+	}
+	kdDebug( 14010 ) << k_funcinfo << "Finished writing KABC" << endl;
+	m_addrBookWritePending = false;
+}
 #include "kopetemetacontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

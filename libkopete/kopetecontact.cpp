@@ -374,14 +374,14 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 				return;
 		}
 
+		old->removeKABC();
 		old->removeContact( this );
 		disconnect( old, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
 			protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
+		old->updateKABC();
 
 		// Reparent the contact
-		old->removeKABC();
 		old->removeChild( this );
-		old->updateKABC();
 		
 		if(result==KMessageBox::Yes)
 		{
@@ -401,11 +401,11 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 	if( m )
 	{
 		m->addContact( this );
-		m->updateKABC();
 		m->insertChild( this );
 
 		connect( d->metaContact, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
 		protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
+		m->updateKABC();
 	}
 	syncGroups();
 }

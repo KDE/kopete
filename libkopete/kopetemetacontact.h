@@ -411,11 +411,25 @@ private slots:
 	 * If a plugin is loaded, maybe data about this plugin are already cached in the metacontact
 	 */
 	void slotPluginLoaded( KopetePlugin *plugin );
-
+	
+	/**
+	 * Perform a delayed address book write
+	 */
+	void slotWriteAddressBook();
 private:
 	KopeteContact *preferredContact();
 
 	KopeteMetaContactPrivate *d;
+	
+	/**
+	 * Request an address book write, will be delayed to bundle any others happening around the same time
+	 */
+	void writeAddressBook();
+	
+	static KABC::AddressBook* addressBook();
+	
+	static KABC::AddressBook* m_addressBook;
+	static bool m_addrBookWritePending;
 };
 
 #endif
