@@ -327,6 +327,7 @@ public:
 		mPassword.d->remembered = true;
 		mPassword.d->passwordFromKConfig = mNewPass;
 		mPassword.writeConfig();
+		return true;
 	}
 
 private:
@@ -396,6 +397,7 @@ bool KopetePassword::isWrong()
 void KopetePassword::setWrong( bool bWrong )
 {
 	d->isWrong = bWrong;
+	writeConfig();
 }
 
 void KopetePassword::requestWithoutPrompt( QObject *returnObj, const char *slot )
