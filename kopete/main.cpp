@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 		"(c) 2001,2002, Duncan Mac-Vicar Prett\n(c) 2002, The Kopete Development Team", "kopete-devel@kde.org", "http://kopete.kde.org");
 
 	aboutData.addAuthor ( "Duncan Mac-Vicar Prett", I18N_NOOP("Original author, core developer"), "duncan@kde.org", "http://www.mac-vicar.com" );
-	aboutData.addAuthor ( "Nick Betcher", I18N_NOOP("Core developer, fastest plugin developer on earth."), "nbetcher@usinternet.com", "http://www.kdedevelopers.net" );
+	aboutData.addAuthor ( "Nick Betcher", I18N_NOOP("Core developer, fastest plugin developer on earth."), "nbetcher@kde.org", "http://www.kdedevelopers.net" );
 	aboutData.addAuthor ( "Ryan Cumming", I18N_NOOP("Core developer"), "bodnar42@phalynx.dhs.org" );
 	aboutData.addAuthor ( "Martijn Klingens", I18N_NOOP("Core developer"), "klingens@kde.org" );
 	aboutData.addAuthor ( "Richard Stellingwerff", I18N_NOOP("Developer"), "remenic@linuxfromscratch.org");
