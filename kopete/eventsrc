@@ -148,6 +148,7 @@ Comment[es]=El usario entra en línea
 Comment[fi]=Käyttäjä avaa yhteyden
 Comment[fr]=L'utilisateur se met en ligne
 Comment[ja]=ユーザはオンライン
+Comment[pt]=Utilizador liga-se
 Comment[pt_BR]=O usuário fica conectado
 Comment[sv]=Användaren kopplar upp
 default_sound=kopete_online.wav
