@@ -354,12 +354,7 @@ void MSNNotifySocket::slotOpenInbox()
 		// though, so we can't do anything about it. For KDE 3.2 and newer
 		// we use the improved KRun that auto-deletes the temp file when done.
 
-		// KDE 3.0 has versions in the 300..305 range.
-		// KDE 3.1 has versions all over the place, from
-		// 	306 through 0x3017f
-		// KDE 3.2 has version numbers starting from
-		//	0x30190, it seems.
-#if KDE_VERSION <= 0x301ff
+#if defined(KDE_IS_VERSION) && KDE_IS_VERSION(3,1,90)
 		KRun::runURL( tmpFile.name(), "text/html" );
 #else
 		KRun::runURL( tmpFile.name(), "text/html", true );
