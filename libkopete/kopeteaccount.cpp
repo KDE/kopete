@@ -75,9 +75,10 @@ KopeteAccount::KopeteAccount( KopeteProtocol *parent, const QString &accountId, 
 	QObject::connect( d->suppressStatusTimer, SIGNAL( timeout() ),
 		this, SLOT( slotStopSuppression() ) );
 
-	KopeteAccountManager::manager()->registerAccount( this );
-
-	QTimer::singleShot( 0, this, SLOT( slotAccountReady() ) );
+	if ( KopeteAccountManager::manager()->registerAccount( this ) )
+		QTimer::singleShot( 0, this, SLOT( slotAccountReady() ) );
+	else
+		deleteLater();
 }
 
 KopeteAccount::~KopeteAccount()

@@ -176,7 +176,7 @@ private:
 	 * Register the account.
 	 * To be called ONLY from KopeteAccount, not from any other class!
 	 */
-	void registerAccount( KopeteAccount *account );
+	bool registerAccount( KopeteAccount *account );
 
 	/**
 	 * \internal

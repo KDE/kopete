@@ -156,20 +156,21 @@ QColor KopeteAccountManager::guessColor( KopeteProtocol *protocol )
 	return color;
 }
 
-void KopeteAccountManager::registerAccount( KopeteAccount *account )
+bool KopeteAccountManager::registerAccount( KopeteAccount *account )
 {
 
 	if ( !account || account->accountId().isNull() )
-		return;
+		return false;
 
 	// If this account already exists, do nothing
 	for ( QPtrListIterator<KopeteAccount> it( d->accounts ); it.current(); ++it )
 	{
 		if ( ( account->protocol() == it.current()->protocol() ) && ( account->accountId() == it.current()->accountId() ) )
-			return;
+			return false;
 	}
 
 	d->accounts.append( account );
+	return true;
 }
 
 const QPtrList<KopeteAccount>& KopeteAccountManager::accounts() const
