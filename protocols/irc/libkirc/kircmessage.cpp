@@ -73,10 +73,10 @@ KIRCMessage::~KIRCMessage()
 	if(m_ctcpMessage) delete m_ctcpMessage;
 }
 
-KIRCMessage KIRCMessage::writeRawMessage(KIRC *engine, const QString &message, const QTextCodec *codec)
+KIRCMessage KIRCMessage::writeRawMessage(KIRC *engine, const QString &str, const QTextCodec *codec)
 {
 	QCString s;
-	QString txt = message + QString::fromLatin1("\r\n");
+	QString txt = str + QString::fromLatin1("\r\n");
 
 	s = codec->fromUnicode(txt);
 
@@ -84,7 +84,8 @@ KIRCMessage KIRCMessage::writeRawMessage(KIRC *engine, const QString &message, c
 
 	// FIXME: Should check the amount of data really writen.
 	engine->socket()->writeBlock(s.data(), s.length());
-	return parse(message);
+
+	return parse(str);
 }
 
 KIRCMessage KIRCMessage::writeMessage(KIRC *engine, const QString &message, const QTextCodec *codec)
@@ -92,54 +93,34 @@ KIRCMessage KIRCMessage::writeMessage(KIRC *engine, const QString &message, cons
 	return writeRawMessage(engine, quote(message), codec);
 }
 
-KIRCMessage KIRCMessage::writeMessage(KIRC *engine,
-		const QString &command, const QString &arg, const QString &suffix,
-		const QTextCodec *codec)
+KIRCMessage KIRCMessage::writeMessage(KIRC *engine, const QString &command, const QString &arg,
+	const QString &suffix, const QTextCodec *codec)
 {
 	QString msg = command;
+
 	if (!arg.isNull())
 		msg += QChar(' ') + arg;
+
 	if (!suffix.isNull())
 		msg += QString::fromLatin1(" :") + suffix;
 
 	return writeMessage(engine, msg, codec);
 }
 
-KIRCMessage KIRCMessage::writeMessage(KIRC *engine,
-		const QString &command, const QStringList &args, const QString &suffix,
-		const QTextCodec *codec)
-{
-	return writeMessage(engine, command, args.join(QChar(' ')), suffix, codec);
-}
-
 KIRCMessage KIRCMessage::writeCtcpMessage(KIRC *engine,
-		const QString &command, const QString &to /*prefix*/, const QString &suffix,
-		const QString &ctcpMessage,
-		const QTextCodec *codec)
-{
-	return writeMessage(engine, command, to, suffix + QChar(0x01) + ctcpQuote(ctcpMessage) + QChar(0x01), codec);
-}
-
-KIRCMessage KIRCMessage::writeCtcpMessage(KIRC *engine,
-		const QString &command, const QString &to /*prefix*/, const QString &suffix,
-		const QString &ctcpCommand, const QString &ctcpArg, const QString &ctcpSuffix,
-		const QTextCodec *codec)
+		const QString &command, const QString &to, const QString &suffix,
+		const QString &ctcpCommand, const QTextCodec *codec, const QString &ctcpArg,
+		const QString &ctcpSuffix )
 {
 	QString ctcpMsg = ctcpCommand;
+
 	if (!ctcpArg.isNull())
 		ctcpMsg += QChar(' ') + ctcpArg;
+
 	if (!ctcpSuffix.isNull())
 		ctcpMsg += QString::fromLatin1(" :") + ctcpSuffix;
 
-	return writeCtcpMessage(engine, command, to, suffix, ctcpMsg, codec);
-}
-
-KIRCMessage KIRCMessage::writeCtcpMessage(KIRC *engine,
-		const QString &command, const QString &to /*prefix*/, const QString &suffix,
-		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix,
-		const QTextCodec *codec)
-{
-	return writeCtcpMessage(engine, command, to, suffix, ctcpCommand, ctcpArgs.join(QChar(' ')), ctcpSuffix, codec);
+	return writeMessage(engine, command, to, suffix + QChar(0x01) + ctcpQuote(ctcpMsg) + QChar(0x01), codec);
 }
 
 KIRCMessage KIRCMessage::parse(KIRC *engine, const QTextCodec *codec, bool *parseSuccess)

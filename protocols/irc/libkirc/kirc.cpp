@@ -202,9 +202,7 @@ void KIRC::slotConnected()
 
 	// If password is given for this server, send it now, and don't expect a reply
 	if (!(password()).isEmpty())
-	{
-		writeMessage("PASS", QStringList(password()) , m_Realname, false);
-	}
+		writeMessage("PASS", password() , m_Realname, false);
 
 	changeUser(m_Username, 0, QString::fromLatin1("Kopete User"));
 	changeNickname(m_Nickname);
@@ -289,7 +287,9 @@ KIRCMessage KIRC::writeRawMessage(const QString &rawMsg, bool mustBeConnected)
 		emit sentMessage(ircmsg);
 		return ircmsg;
 	}
+
 	kdDebug(14120) << "Must be connected error:" << rawMsg << endl;
+
 	return KIRCMessage();
 }
 
@@ -303,19 +303,9 @@ KIRCMessage KIRC::writeMessage(const QString &msg, bool mustBeConnected)
 		emit sentMessage(ircmsg);
 		return ircmsg;
 	}
-	kdDebug(14120) << "Must be connected error:" << msg << endl;
-	return KIRCMessage();
-}
 
-KIRCMessage KIRC::writeMessage(const QString &command, const QStringList &args, const QString &suffix, bool mustBeConnected)
-{
-	if(canSend(mustBeConnected))
-	{
-		KIRCMessage ircmsg = KIRCMessage::writeMessage(this, command, args, suffix, defaultCodec);
-		emit sentMessage(ircmsg);
-		return ircmsg;
-	}
-	kdDebug( 14120 ) << k_funcinfo << "Must be connected error:" << command << args.join( " " ) << suffix << endl;
+	kdDebug(14120) << "Must be connected error:" << msg << endl;
+
 	return KIRCMessage();
 }
 
@@ -323,51 +313,26 @@ KIRCMessage KIRC::writeMessage(const QString &command, const QString &arg, const
 {
 	if(canSend(mustBeConnected))
 	{
-		KIRCMessage ircmsg = KIRCMessage::writeMessage(this, command, arg,
-			suffix, codecForNick( arg ) );
+		KIRCMessage ircmsg = KIRCMessage::writeMessage(this, command, arg, suffix, codecForNick( arg ) );
 		emit sentMessage(ircmsg);
 		return ircmsg;
 	}
+
 	kdDebug(14120) << "Must be connected error:" << command << arg << suffix << endl;
+
 	return KIRCMessage();
 }
 
-KIRCMessage KIRC::writeCtcpMessage(const char *command, const QString &to, const QString &suffix,
-		const QString &ctcpMessage, bool emitRepliedCtcp)
-{
-	QString nick =  KIRCMessage::nickFromPrefix(to);
-	KIRCMessage msg = KIRCMessage::writeCtcpMessage(this, QString::fromLatin1(command),
-		nick, suffix, ctcpMessage, codecForNick( nick ) );
-
-	emit sentMessage(msg);
-	if(emitRepliedCtcp && msg.isValid() && msg.hasCtcpMessage())
-		emit repliedCtcp(msg.ctcpMessage().command(), msg.ctcpMessage().ctcpRaw());
-
-	return msg;
-}
-
-KIRCMessage KIRC::writeCtcpMessage(const char *command, const QString &to, const QString &suffix,
+KIRCMessage KIRC::writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
 		const QString &ctcpCommand, const QString &ctcpArg, const QString &ctcpSuffix, bool emitRepliedCtcp)
 {
 	QString nick =  KIRCMessage::nickFromPrefix(to);
-	KIRCMessage msg = KIRCMessage::writeCtcpMessage(this, QString::fromLatin1(command),
-		nick, suffix, ctcpCommand, ctcpArg, ctcpSuffix, codecForNick( nick ) );
+
+	KIRCMessage msg = KIRCMessage::writeCtcpMessage(this, command, nick, suffix, ctcpCommand,
+		codecForNick( nick ), ctcpArg, ctcpSuffix );
 
 	emit sentMessage(msg);
-	if(emitRepliedCtcp && msg.isValid() && msg.hasCtcpMessage())
-		emit repliedCtcp(msg.ctcpMessage().command(), msg.ctcpMessage().ctcpRaw());
 
-	return msg;
-}
-
-KIRCMessage KIRC::writeCtcpMessage(const char *command, const QString &to, const QString &suffix,
-		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix, bool emitRepliedCtcp)
-{
-	QString nick =  KIRCMessage::nickFromPrefix(to);
-	KIRCMessage msg = KIRCMessage::writeCtcpMessage(this, QString::fromLatin1(command),
-		nick, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, codecForNick( nick ) );
-
-	emit sentMessage(msg);
 	if(emitRepliedCtcp && msg.isValid() && msg.hasCtcpMessage())
 		emit repliedCtcp(msg.ctcpMessage().command(), msg.ctcpMessage().ctcpRaw());
 
@@ -483,7 +448,7 @@ void KIRC::changeUser(const QString &newUsername, const QString &hostname, const
 	m_Username = newUsername;
 	m_Realname = newRealname;
 
-	writeMessage("USER", QStringList(m_Username) << hostname << m_Host, m_Realname, false);
+	writeMessage("USER", join( m_Username, hostname, m_Host ), m_Realname, false);
 }
 
 void KIRC::changeUser(const QString &newUsername, Q_UINT8 mode, const QString &newRealname)
@@ -496,7 +461,7 @@ void KIRC::changeUser(const QString &newUsername, Q_UINT8 mode, const QString &n
 	m_Username = newUsername;
 	m_Realname = newRealname;
 
-	writeMessage("USER", QStringList(m_Username) << QString::number(mode) << QChar('*'), m_Realname, false);
+	writeMessage("USER", join(m_Username, QString::number(mode), QChar('*') ), m_Realname, false);
 }
 
 void KIRC::showInfoDialog()
@@ -548,7 +513,7 @@ bool KIRC::quitIRC(const KIRCMessage &msg)
 void KIRC::joinChannel(const QString &name, const QString &key)
 {
 	if ( !key.isNull() )
-		writeMessage("JOIN", QStringList(name) << key);
+		writeMessage("JOIN", join( name, key ) );
 	else
 		writeMessage("JOIN", name);
 }
@@ -588,7 +553,7 @@ bool KIRC::partChannel(const KIRCMessage &msg)
 
 void KIRC::changeMode(const QString &target, const QString &mode)
 {
-	writeMessage("MODE", QStringList(target) << mode);
+	writeMessage("MODE", join( target, mode ) );
 }
 
 bool KIRC::modeChange(const KIRCMessage &msg)
@@ -632,7 +597,7 @@ void KIRC::motd(const QString &server)
 
 void KIRC::kickUser(const QString &user, const QString &channel, const QString &reason)
 {
-	writeMessage("KICK", QStringList(channel) << user, reason);
+	writeMessage("KICK", join( channel, user, reason ) );
 }
 
 bool KIRC::kick(const KIRCMessage &msg)
@@ -699,15 +664,12 @@ void KIRC::whoisUser(const QString &user)
 
 bool KIRC::ping(const KIRCMessage &msg)
 {
-	writeMessage("PONG", msg.args(), msg.suffix(), false);
-	// maybe should emit one signal.
+	writeMessage("PONG", msg.arg(0), msg.suffix(), false);
 	return true;
 }
 
-//	received after a ping command
 bool KIRC::pong(const KIRCMessage &/*msg*/)
 {
-	// maybe should emit one signal.
 	return true;
 }
 

@@ -41,31 +41,22 @@ public:
 	~KIRCMessage();
 
 	static KIRCMessage writeRawMessage(KIRC *engine, const QString &str, const QTextCodec *codec);
+
 	static KIRCMessage writeMessage(KIRC *engine, const QString &str, const QTextCodec *codec);
 
-	static KIRCMessage writeMessage(KIRC *engine,
-			const QString &command, const QString &arg, const QString &suffix,
-			const QTextCodec *codec);
-	static KIRCMessage writeMessage(KIRC *engine,
-			const QString &command, const QStringList &args, const QString &suffix,
-			const QTextCodec *codec);
+	static KIRCMessage writeMessage(KIRC *engine, const QString &command, const QString &arg,
+		const QString &suffix, const QTextCodec *codec);
 
-	static KIRCMessage writeCtcpMessage(KIRC *engine,
-			const QString &command, const QString &to /*prefix*/, const QString &suffix,
-			const QString &ctcpMessage,
-			const QTextCodec *codec);
-	static KIRCMessage writeCtcpMessage(KIRC *engine,
-			const QString &command, const QString &to /*prefix*/, const QString &suffix,
-			const QString &ctcpCommand, const QString &ctcpArg, const QString &ctcpSuffix,
-			const QTextCodec *codec);
-	static KIRCMessage writeCtcpMessage(KIRC *engine,
-			const QString &command, const QString &to /*prefix*/, const QString &suffix,
-			const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix,
-			const QTextCodec *codec);
+	static KIRCMessage writeCtcpMessage(KIRC *engine, const QString &command, const QString &to,
+		const QString &suffix, const QString &ctcpMessage, const QTextCodec *codec,
+		const QString &ctcpArg = QString::null, const QString &ctcpSuffix = QString::null );
 
 	// FIXME: short term solution move me to the the KIRCEntity class
-	inline static QString nickFromPrefix(const QString &prefix)
+	inline static const QString nickFromPrefix(const QString &prefix)
 		{ return prefix.section('!', 0, 0); }
+
+	inline const QString nickFromPrefix() const
+		{ return nickFromPrefix(m_prefix); }
 
 	QString toString() const;
 
@@ -76,11 +67,8 @@ public:
 	// The raw message
 	inline const QCString &raw() const
 		{ return m_raw; }
-
 	inline const QString &prefix() const
 		{ return m_prefix; }
-	inline const QString nickFromPrefix() const
-		{ return m_prefix.section('!', 0, 0); }
 	inline const QString &command() const
 		{ return m_command; }
 	inline size_t argsSize() const

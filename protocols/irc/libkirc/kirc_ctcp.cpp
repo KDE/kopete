@@ -61,7 +61,7 @@ void KIRC::CtcpRequest_action(const QString &contact, const QString &message)
 {
 	if(m_status == Connected)
 	{
-		writeCtcpQueryMessage(contact, QString::null, "ACTION", QStringList(message));
+		writeCtcpQueryMessage(contact, QString::null, "ACTION", message );
 
 		if( isChannel(contact) )
 			emit incomingPrivAction(m_Nickname, contact, message);
@@ -99,8 +99,10 @@ void KIRC::CtcpRequest_dcc(const QString &nickname, const QString &filename, uin
 	case KIRCTransfer::Chat:
 		writeCtcpQueryMessage(nickname, QString::null,
 			QString("DCC"),
-			QStringList(QString::fromLatin1("CHAT")) << QString::fromLatin1("chat") <<
-			m_sock->localAddress()->nodeName() << QString::number(port));
+			KIRC::join( QString::fromLatin1("CHAT"), QString::fromLatin1("chat"),
+				m_sock->localAddress()->nodeName(), QString::number(port)
+			)
+		);
 		break;
 	case KIRCTransfer::FileOutgoing:
 		QFileInfo file(filename);
@@ -110,8 +112,10 @@ void KIRC::CtcpRequest_dcc(const QString &nickname, const QString &filename, uin
 
 		writeCtcpQueryMessage(nickname, QString::null,
 			QString("DCC"),
-			QStringList( QString::fromLatin1( "SEND" ) ) << noWhiteSpace <<
-			    m_sock->localAddress()->nodeName() << QString::number( port ) << QString::number( file.size() ) );
+			KIRC::join( QString::fromLatin1( "SEND" ), noWhiteSpace, m_sock->localAddress()->nodeName(),
+				QString::number( port ), QString::number( file.size() )
+			)
+		);
 		break;
 	}
 }
@@ -191,7 +195,7 @@ bool KIRC::CtcpQuery_clientInfo(const KIRCMessage &msg)
 	if( !response.isNull() )
 	{
 		writeCtcpReplyMessage(	msg.nickFromPrefix(), QString::null,
-					msg.ctcpMessage().command(), QStringList(), response);
+					msg.ctcpMessage().command(), QString::null, response);
 	}
 	else
 	{
@@ -200,7 +204,7 @@ bool KIRC::CtcpQuery_clientInfo(const KIRCMessage &msg)
 			"ACTION.");
 
 		writeCtcpReplyMessage(	msg.nickFromPrefix(), QString::null,
-					msg.ctcpMessage().command(), QStringList(), info);
+					msg.ctcpMessage().command(), QString::null, info);
 	}
 	return true;
 }
@@ -275,16 +279,16 @@ bool KIRC::CtcpReply_pingPong( const KIRCMessage &msg )
 
 bool KIRC::CtcpQuery_source(const KIRCMessage &msg)
 {
-	writeCtcpReplyMessage(	msg.nickFromPrefix(), QString::null,
-				msg.ctcpMessage().command(), QStringList(m_SourceString));
+	writeCtcpReplyMessage( msg.nickFromPrefix(), QString::null,
+				msg.ctcpMessage().command(), m_SourceString);
 	return true;
 }
 
 bool KIRC::CtcpQuery_time(const KIRCMessage &msg)
 {
 	writeCtcpReplyMessage(	msg.nickFromPrefix(), QString::null,
-				msg.ctcpMessage().command(), QStringList(QDateTime::currentDateTime().toString()), QString::null,
-				false);
+				msg.ctcpMessage().command(), QDateTime::currentDateTime().toString(),
+				QString::null, false);
 	return true;
 }
 
@@ -294,12 +298,12 @@ bool KIRC::CtcpQuery_userInfo(const KIRCMessage &msg)
 	if( !response.isNull() )
 	{
 		writeCtcpReplyMessage(msg.nickFromPrefix(), QString::null,
-			msg.ctcpMessage().command(), QStringList(), response);
+			msg.ctcpMessage().command(), QString::null, response);
 	}
 	else
 	{
 		writeCtcpReplyMessage( msg.nickFromPrefix(), QString::null,
-				msg.ctcpMessage().command(), QStringList(), m_UserString );
+				msg.ctcpMessage().command(), QString::null, m_UserString );
 	}
 
 	return true;
@@ -318,12 +322,12 @@ bool KIRC::CtcpQuery_version(const KIRCMessage &msg)
 	if( !response.isNull() )
 	{
 		writeCtcpReplyMessage(msg.nickFromPrefix(), QString::null,
-			msg.ctcpMessage().command(), QStringList(), response);
+			msg.ctcpMessage().command(), QString::null, response);
 	}
 	else
 	{
 		writeCtcpReplyMessage(msg.nickFromPrefix(), QString::null,
-			msg.ctcpMessage().command(), QStringList(), m_VersionString);
+			msg.ctcpMessage().command(), QString::null, m_VersionString);
 	}
 
 	return true;

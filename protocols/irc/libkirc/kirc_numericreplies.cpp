@@ -25,15 +25,19 @@
 void KIRC::registerNumericReplies()
 {
 //	Note: Numeric replies always have the current nick or *(when undefined) as first argmuent.
-	addIrcMethod("001",	&KIRC::numericReply_001,	1,	1);
+	addIrcMethod("001",	&KIRC::numericReply_001, 1, 1);
 
 	/* Gives information about the host, close to 004 (See case 004) in the form of:
 	 * ":Your host is <servername>, running version <ver>" */
-	addIrcMethod("002",	new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingConnectString,		1,	1));
+	addIrcMethod("002",	new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingConnectString, 1, 1));
 
 	/* Gives the date that this server was created (useful for determining the uptime of the server) in the form of:
 	 * "This server was created <date>" */
-	addIrcMethod("003",	new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingConnectString,		1,	1));
+	addIrcMethod("003",	new KIRCMethodFunctor_S_Suffix<KIRC>(this, &KIRC::incomingConnectString, 1, 1));
+
+	/* Gives information about the servername, version, available modes, etc in the form of:
+	 * "<servername> <version> <available user modes> <available channel modes>"
+	 */
 	addIrcMethod("004",	&KIRC::numericReply_004,	5,	5);
 
 	/* NOT IN RFC1459 NOR RFC2812
@@ -223,9 +227,6 @@ bool KIRC::numericReply_001(const KIRCMessage &msg)
 
 bool KIRC::numericReply_004(const KIRCMessage &msg)
 {
-	/* Gives information about the servername, version, available modes, etc in the form of:
-	 * "<servername> <version> <available user modes> <available channel modes>"
-	 */
 	emit incomingHostInfo(msg.arg(1),msg.arg(2),msg.arg(3),msg.arg(4));
 	return true;
 }

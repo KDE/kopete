@@ -248,66 +248,30 @@ signals:
 public:
 	inline static bool isChannel( const QString &s ) { return isChannelRegex.search(s) != -1; };
 
-	KIRCMessage writeRawMessage(const QString &message, bool mustBeConnected=true);
-	KIRCMessage writeMessage(const QString &message, bool mustBeConnected=true);
+	KIRCMessage writeRawMessage( const QString &message, bool mustBeConnected = true );
 
-	KIRCMessage writeMessage(const QString &command, const QStringList &args, const QString &suffix = QString::null, bool mustBeConnected=true);
-	inline KIRCMessage writeMessage(const char *command, const QStringList &args, const QString &suffix = QString::null, bool mustBeConnected=true)
-		{ return writeMessage(QString::fromLatin1(command), args, suffix, mustBeConnected); }
+	KIRCMessage writeMessage(const QString &message, bool mustBeConnected = true);
 
 	KIRCMessage writeMessage( const QString &command, const QString &arg,
 		const QString &suffix = QString::null, bool mustBeConnected = true );
-	inline KIRCMessage writeMessage(const char *command, const QString &arg = QString::null, const QString &suffix = QString::null, bool mustBeConnected=true)
-		{ return writeMessage(QString::fromLatin1(command), arg, suffix, mustBeConnected); }
 
-	KIRCMessage writeCtcpMessage(const char *command, const QString &to /* prefix */, const QString &suffix,
-			const QString &ctcpMessage,
-			bool emitRepliedCtcp = true);
-	KIRCMessage writeCtcpMessage(const char *command, const QString &to /* prefix */, const QString &suffix,
+	KIRCMessage writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
 			const QString &ctcpCommand, const QString &ctcpArgs, const QString &ctcpSuffix = QString::null,
 			bool emitRepliedCtcp = true);
-	KIRCMessage writeCtcpMessage(const char *command, const QString &to /* prefix */, const QString &suffix,
-			const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix = QString::null,
-			bool emitRepliedCtcp = true);
 
-	KIRCMessage writeCtcpQueryMessage(const QString &to /* prefix */, const QString &suffix,
-			const QString &ctcpMessage,
-			bool emitRepliedCtcp = true)
-		{ return writeCtcpMessage("PRIVMSG", to, suffix, ctcpMessage, emitRepliedCtcp); }
-	KIRCMessage writeCtcpQueryMessage(const QString &to /* prefix */, const QString &suffix,
-			const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix = QString::null,
-			bool emitRepliedCtcp = true)
-		{ return writeCtcpMessage("PRIVMSG", to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
-	KIRCMessage writeCtcpQueryMessage(const QString &to /* prefix */, const QString &suffix,
-			const QString &ctcpCommand, const QString &ctcpArg, const QString &ctcpSuffix = QString::null,
-			bool emitRepliedCtcp = true)
+	inline KIRCMessage writeCtcpQueryMessage(const QString &to, const QString &suffix,
+			const QString &ctcpCommand, const QString &ctcpArg = QString::null,
+			const QString &ctcpSuffix = QString::null, bool emitRepliedCtcp = true)
 		{ return writeCtcpMessage("PRIVMSG", to, suffix, ctcpCommand, ctcpArg, ctcpSuffix, emitRepliedCtcp); }
-//	inline KIRCMessage writeCtcpQueryMessage(const QString &to /* prefix */, const QString &suffix,
-//			const char *ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix = QString::null,
-//			bool emitRepliedCtcp = true)
-//		{ return writeCtcpQueryMessage(to, suffix, QString::fromLatin1(ctcpCommand), ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
 
-//	KIRCMessage writeCtcpReplyMessage(const QString &to /* prefix */, const QString &suffix,
-//			const QString &ctcpMessage,
-//			bool emitRepliedCtcp = true)
-//		{ return writeCtcpMessage("NOTICE", to, suffix, ctcpMessage, emitRepliedCtcp); }
-	KIRCMessage writeCtcpReplyMessage(const QString &to /* prefix */, const QString &suffix,
-			const QString &ctcpCommand, const QString &ctcpArg, const QString &ctcpSuffix = QString::null,
-			bool emitRepliedCtcp = true)
+	inline KIRCMessage writeCtcpReplyMessage(const QString &to, const QString &suffix,
+			const QString &ctcpCommand, const QString &ctcpArg = QString::null,
+			const QString &ctcpSuffix = QString::null, bool emitRepliedCtcp = true)
 		{ return writeCtcpMessage("NOTICE", to, suffix, ctcpCommand, ctcpArg, ctcpSuffix, emitRepliedCtcp); }
-	KIRCMessage writeCtcpReplyMessage(const QString &to /* prefix */, const QString &suffix,
-			const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix = QString::null,
-			bool emitRepliedCtcp = true)
-		{ return writeCtcpMessage("NOTICE", to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
-//	inline KIRCMessage writeCtcpReplyMessage(const QString &to /* prefix */, const QString &suffix,
-//			const char *ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
-//			bool emitRepliedCtcp = true)
-//		{ return writeCtcpReplyMessage(to, suffix, QString::fromLatin1(ctcpCommand), ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
 
-	inline KIRCMessage writeCtcpErrorMessage(const QString &to /*prefix*/,
-			const QString &ctcpLine, const char *errorMsg,
-			bool emitRepliedCtcp=true)
-		{ return writeCtcpReplyMessage(to, QString::null, "ERRMSG", ctcpLine, QString::fromLatin1(errorMsg), emitRepliedCtcp); }
+	inline KIRCMessage writeCtcpErrorMessage(const QString &to, const QString &ctcpLine,
+			const QString &errorMsg, bool emitRepliedCtcp=true)
+		{ return writeCtcpReplyMessage(to, QString::null, "ERRMSG", ctcpLine, errorMsg, emitRepliedCtcp); }
 
 private slots:
 	void slotConnected();
@@ -343,6 +307,15 @@ private:
 			int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0) {
 			addIrcMethod(m_IrcMethods, str, method, argsSize_min, argsSize_max, helpMessage);
 		}
+
+	inline static const QString join( const QString &arg1, const QString &arg2 = QString::null,
+		const QString &arg3 = QString::null, const QString &arg4 = QString::null,
+		const QString &arg5 = QString::null )
+	{
+		QStringList ret( arg1 );
+		ret << arg2 << arg3 << arg4 << arg5;
+		return ret.join( QString::fromLatin1(" ") );
+	}
 
 	ircMethod nickChange;
 	ircMethod notice;
