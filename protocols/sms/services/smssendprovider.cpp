@@ -145,8 +145,6 @@ void SMSSendProvider::send(const KopeteMessage& msg)
 	values[messagePos] = message;
 	values[telPos] = nr;
 
-	QString args = values.join("\" \"");
-
 #if KDE_VERSION > 305
 	KProcIO* p = new KProcIO;
 #else
