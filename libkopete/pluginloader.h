@@ -76,7 +76,7 @@ public:
 	/**
 	 * Search by Id
 	 */
-	KopetePlugin *searchByID( QString &Id );
+	KopetePlugin *searchByID( const QString &Id );
 
 	/**
 	 * loads all the enabled plugins

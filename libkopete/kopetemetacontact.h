@@ -231,8 +231,11 @@ private:
 
 	QStringList m_groups;
 
+	/**
+	 * Data to store in the XML file
+	 */
+	QMap<QString, QString> m_pluginData;
 	AddressBookFields m_addressBook;
-	
 };
 
 #endif

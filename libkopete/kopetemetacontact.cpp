@@ -423,8 +423,7 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 				}
 			}
 
-			else if( contactElement.tagName() ==
-				 "address-book-field" )
+			else if( contactElement.tagName() == "address-book-field" )
 			{
 				QString id = contactElement.attribute( "id", QString::null );
 				QString val = contactElement.text();
@@ -435,14 +434,25 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 			{
 				QString pluginId = contactElement.attribute(
 					"plugin-id", QString::null );
-				QStringList strList = QStringList::split( "||", contactElement.text() );
-				KopetePlugin *plugin = kopeteapp->libraryLoader()->searchByID( pluginId );
-				plugin->deserialize( this, strList );
+				m_pluginData.insert( pluginId, contactElement.text() );
 			}
 
 		}
 		contactNode = contactNode.nextSibling();
 	}
+
+	// Deserialize when the *whole* meta contact has been read!
+	QMap<QString, QString>::ConstIterator it;
+	for( it = m_pluginData.begin(); it != m_pluginData.end(); ++it )
+	{
+		QStringList strList = QStringList::split( "||", it.data() );
+		KopetePlugin *plugin = kopeteapp->libraryLoader()->searchByID(
+			it.key() );
+
+		if( plugin )
+			plugin->deserialize( this, strList );
+	}
+
 	return true;
 }
 

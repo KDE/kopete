@@ -333,7 +333,7 @@ void LibraryLoader::removeNow(const QString &spec)
 //	delete lib;
 }
 
-KopetePlugin* LibraryLoader::searchByID( QString &Id )
+KopetePlugin* LibraryLoader::searchByID( const QString &Id )
 {
 	QValueList<KopeteLibraryInfo> l = loaded();
 
