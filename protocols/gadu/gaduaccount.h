@@ -45,6 +45,7 @@ class KopeteProtocol;
 class GaduCommand;
 class QTimer;
 class KActionMenu;
+class GaduDCC;
 
 class GaduAccount : public KopeteAccount
 {
@@ -147,30 +148,29 @@ private:
 
 	GaduSession*	session_;
 
-	QTimer*			pingTimer_;
+	QTimer*		pingTimer_;
+	QString		nick_;
 
-	QString			nick_;
-
-	QTextCodec*		textcodec_;
+	QTextCodec*	textcodec_;
 	KFileDialog*	saveListDialog;
 	KFileDialog*	loadListDialog;
 
 	KActionMenu*	actionMenu_;
-	KAction*		searchAction;
-	KAction*		listputAction;
-	KAction*		listToFileAction;
-	KAction*		listFromFileAction;
-	KAction*		friendsModeAction;
-	bool			connectWithSSL;
+	KAction*	searchAction;
+	KAction*	listputAction;
+	KAction*	listToFileAction;
+	KAction*	listFromFileAction;
+	KAction*	friendsModeAction;
+	bool		connectWithSSL;
 
-	int			currentServer;
+	int		currentServer;
 	unsigned int	serverIP;
 
-	QString			lastDescription;
-	bool			forFriends;
-	
+	QString		lastDescription;
+	bool		forFriends;
+
 	QPtrList<GaduCommand>		commandList_;
-	KopeteOnlineStatus			status_;
+	KopeteOnlineStatus		status_;
 	QValueList<QHostAddress>	servers_;
 };
 
