@@ -1,12 +1,11 @@
 SUBDIRS = ui pixmaps oscarsocket data
 METASOURCES = AUTO
 AM_CPPFLAGS = -I$(srcdir)/ui \
-    -I$(top_srcdir)/kopete/protocols/oscar/ui \
-    -I$(top_builddir)/kopete/protocols/oscar/ui \
+    -I./ui \
     -I$(top_srcdir)/kopete/libkopete \
     -I$(top_srcdir)/kopete/libkopete/ui \
-    -I$(top_builddir)/kopete/libkopete/ui \
-    -I$(top_srcdir)/kopete/protocols/oscar/oscarsocket \
+    -I../../libkopete/ui \
+    -I$(srcdir)/oscarsocket \
     $(all_includes)
 
 kde_module_LTLIBRARIES = kopete_oscar.la

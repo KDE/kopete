@@ -1,9 +1,8 @@
 METASOURCES = AUTO
 SUBDIRS = lib ui pixmaps
 AM_CPPFLAGS = -I$(srcdir)/ui \
-	 -I$(top_srcdir)/kopete/protocols/gadu/ui \
-	 -I$(top_builddir)/kopete/protocols/gadu/ui \
-	 -I$(top_srcdir)/kopete/protocols/gadu/lib  \
+	 -I./ui \
+	 -I$(srcdir)/lib \
 	 -I$(top_srcdir)/kopete/libkopete \
 	 -I$(top_srcdir)/kopete/libkopete/ui \
 	 -I../../libkopete/ui \

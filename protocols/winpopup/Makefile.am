@@ -1,13 +1,12 @@
 METASOURCES = AUTO
 SUBDIRS = ui pixmaps libwinpopup
 AM_CPPFLAGS = -I$(srcdir)/ui \
-	-I$(top_srcdir)/kopete/libkopete \
-	-I$(top_srcdir)/kopete/libkopete/ui \
+	-I$(srcdir)/../../libkopete \
+	-I$(srcdir)/../../libkopete/ui \
 	-I../../libkopete/ui \
-	-I$(top_srcdir)/kopete/protocols/winpopup/ui \
-	-I$(top_builddir)/kopete/protocols/winpopup/ui \
+	-I$(srcdir)/ui \
 	-I./ui \
-	-I$(top_srcdir)/kopete/protocols/winpopup/libwinpopup \
+	-I$(srcdir)/libwinpopup \
 	$(all_includes)
 
 kde_module_LTLIBRARIES = kopete_wp.la
