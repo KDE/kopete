@@ -746,7 +746,7 @@ void MSNProtocol::addContactToGroup( MSNContact *c, QString group)
 	{
 		//FIXME: Correct my bad english.. thanks :-}
 		KMessageBox::information( 0l,
-			i18n( "<qt>Changes in the contact list when you are Offline don't update the contact list server-side. Your changes can be lost</qt>" ),
+			i18n( "<qt>Changes in the contact list when you are offline don't update the contact list server-side. Your changes may be lost</qt>" ),
 				i18n( "MSN Plugin" ), "msn_OfflineContactList" );
 	}
 }
@@ -809,7 +809,7 @@ void MSNProtocol::removeContactFromGroup(  MSNContact *c, const QString &group )
 	{
 		//FIXME: Correct my bad english.. thanks :-}
 		KMessageBox::information( 0l,
-			i18n( "<qt>Changes in the contact list when you are Offline don't update the contact list server-side. Your changes can be lost</qt>" ),
+			i18n( "<qt>Changes in the contact list when you are offline don't update the contact list server-side. Your changes may be lost</qt>" ),
 				i18n( "MSN Plugin" ), "msn_OfflineContactList" );
 	}
 }
@@ -829,7 +829,7 @@ void MSNProtocol::moveContact( MSNContact *c, const QString &oldGroup, const QSt
 	{
 		//FIXME: Correct my bad english.. thanks :-}
 		KMessageBox::information( 0l,
-			i18n( "<qt>Changes in the contact list when you are Offline don't update the contact list server-side. Your changes can be lost</qt>" ),
+			i18n( "<qt>Changes in the contact list when you are offline don't update the contact list server-side. Your changes may be lost</qt>" ),
 				i18n( "MSN Plugin" ), "msn_OfflineContactList" );
 	}
 
