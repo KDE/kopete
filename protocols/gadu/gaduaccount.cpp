@@ -42,11 +42,7 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
 
 QString GaduAccount::fullAccountName() const
 {
-    QString n;
-
-    n= i18n("Gadu-Gadu(")+accountId()+")";	
-    
-    return n;
+    return "Gadu-Gadu("+accountId()+")";	
 }
 
 void
