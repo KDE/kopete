@@ -226,7 +226,7 @@ QString KopeteEmoticons::parseEmoticons( QString message )
 	 * All emoticons:
 	 *		:-):-(:-):-):-) :-)
 	 *
-	 * M$N & gaim see the :p emoticon, we should see it too
+	 * MSN Messenger & gaim see the :p emoticon, we should see it too
 	 *		msn:possible
 	 *
 	 * Display the emoticon without breaking the link
