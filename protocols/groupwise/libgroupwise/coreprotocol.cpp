@@ -340,11 +340,11 @@ void CoreProtocol::readEvent( const QByteArray& wire, int bytesRead )
 {
 	// wire == m_din at this point
 	qDebug( "Reading event of type %i", m_collatingEvent);
-	QCString source;
+	QString source;
 	Q_UINT32 len;
 	char* rawData;
 	m_din->readBytes( rawData, len );
-	source = QCString( rawData ); // shallow copy, QCString's destructor will delete the allocated space
+	source = QString::fromUtf8( rawData );
 	bytesRead = bytesRead + sizeof( Q_UINT32 ) + len;
 	// now create an event object, passing it the wire data minus the source we just read
 	QByteArray remainder( wire.size() - bytesRead );
