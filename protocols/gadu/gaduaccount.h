@@ -30,7 +30,7 @@
 #include "gaducommands.h"
 #include "gadusession.h"
 #include "gaducontactlist.h"
-#include "libgadu/libgadu.h"
+#include <libgadu.h>
 
 #include <qhostaddress.h>
 #include <qmap.h>

@@ -35,7 +35,7 @@
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
-#include "libgadu/libgadu.h"
+#include <libgadu.h>
 
 class KAction;
 class GaduAccount;

@@ -27,7 +27,7 @@
 #ifndef GADUCOMMANDS_H
 #define GADUCOMMANDS_H
 
-#include "libgadu/libgadu.h"
+#include <libgadu.h>
 
 #include <qobject.h>
 #include <qstringlist.h>

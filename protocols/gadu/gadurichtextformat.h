@@ -23,7 +23,7 @@
 #ifndef GADURTF_H
 #define GADURTF_H
 
-#include "libgadu/libgadu.h"
+#include <libgadu.h>
 
 class Qstring;
 class KopeteMessage;

@@ -23,7 +23,7 @@
 #ifndef GADUPROTOCOL_H
 #define GADUPROTOCOL_H
 
-#include "libgadu/libgadu.h"
+#include <libgadu.h>
 
 #include <qmap.h>
 //#include <qptrlist.h>
