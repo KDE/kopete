@@ -522,8 +522,13 @@ void MSNContact::addToGroup( KopeteGroup *group )
 				notify->addContact( contactId(), displayName(), group->pluginData(protocol(),identity()->identityId() + " id").toUInt(), MSNProtocol::FL );
 		}
 		else if( group->displayName().isNull() || group->type() != KopeteGroup::Classic )
-		{
-			kdDebug( 14140 ) << k_funcinfo << "Ignoring top-level group" << endl;
+		{	//top-level group
+			if( m_serverGroups.isEmpty() )
+			{	//if the contact was not in the contact list, we add it on the default group. that's happends when adding temporary
+				notify->addContact( contactId(), displayName(), 0, MSNProtocol::FL );
+			}
+			else
+				kdDebug( 14140 ) << k_funcinfo << "Ignoring top-level group" << endl;
 		}
 		else
 		{
