@@ -1473,6 +1473,7 @@ void KopeteContactListView::slotMoveToGroup()
 				i18n( "Kopete" ), KStdGuiItem::yes(),KStdGuiItem::no(),"addTemporaryWhenMoving" ) == KMessageBox::Yes )
 		{
 			m->setTemporary(false,g);
+			m->moveToGroup( KopeteGroup::toplevel, to );
 		}
 	}
 	else if( !m->groups().contains( to ) )
