@@ -48,7 +48,6 @@ int main(int argc, char *argv[])
 	aboutData.addAuthor ( "Duncan Mac-Vicar Prett", I18N_NOOP("Original author, core developer"), "duncan@kde.org", "http://www.mac-vicar.org/~duncan" );
 	aboutData.addAuthor ( "Nick Betcher", I18N_NOOP("Core developer, fastest plugin developer on earth."), "nbetcher@kde.org");
 	aboutData.addAuthor ( "Martijn Klingens", I18N_NOOP("Core developer"), "klingens@kde.org" );
-	aboutData.addAuthor ( "Daniel Stone", I18N_NOOP("Core developer, Jabber plugin"), "dstone@kde.org", "http://raging.dropbear.id.au/daniel/");
 	aboutData.addAuthor ( "Till Gerken", I18N_NOOP("Core developer, Jabber plugin"), "till@tantalo.net");
 	aboutData.addAuthor ( "Olivier Goffart", I18N_NOOP("Core developer, MSN Plugin"), "ogoffart@tiscalinet.be");
 	aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("Developer"), "metz@gehn.net", "http://metz.gehn.net" );
@@ -70,10 +69,11 @@ int main(int argc, char *argv[])
 	aboutData.addCredit ( "Justin Karneges", I18N_NOOP("Psi Jabber code") );
 	aboutData.addCredit ( "Steve Cable", I18N_NOOP("Sounds") );
 
-	aboutData.addCredit ( "Ryan Cumming", I18N_NOOP("Old developer"), "ryan@kde.org" );
-	aboutData.addCredit ( "Richard Stellingwerff", I18N_NOOP("Old Developer"), "remenic@linuxfromscratch.org");
-	aboutData.addCredit ( "Hendrik vom Lehn", I18N_NOOP("Old Developer"), "hennevl@hennevl.de", "http://www.hennevl.de");
-	aboutData.addCredit ( "Andres Krapf", I18N_NOOP("Old Developer"), "dae@chez.com" );
+	aboutData.addAuthor ( "Daniel Stone", I18N_NOOP("Former developer, Jabber plugin"), "dstone@kde.org", "http://raging.dropbear.id.au/daniel/");
+	aboutData.addCredit ( "Ryan Cumming", I18N_NOOP("Former developer"), "ryan@kde.org" );
+	aboutData.addCredit ( "Richard Stellingwerff", I18N_NOOP("Former Developer"), "remenic@linuxfromscratch.org");
+	aboutData.addCredit ( "Hendrik vom Lehn", I18N_NOOP("Former Developer"), "hennevl@hennevl.de", "http://www.hennevl.de");
+	aboutData.addCredit ( "Andres Krapf", I18N_NOOP("Former Developer"), "dae@chez.com" );
 	aboutData.addCredit ( "Carsten Pfeiffer", I18N_NOOP("Misc Bugfixes and Enhancelets"), "pfeiffer@kde.org" );
 
 	KCmdLineArgs::init( argc, argv, &aboutData );
@@ -82,6 +82,7 @@ int main(int argc, char *argv[])
 
 	Kopete kopete;
 	kapp->dcopClient()->setDefaultObject( (new KopeteIface())->objId() ); // Has to be called before exec
+
 	kopete.exec();
 }
 /*

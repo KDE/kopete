@@ -55,12 +55,12 @@ public slots:
 	void quitKopete();
 
 	virtual void commitData( QSessionManager &sm );
-
-private slots:
 	/**
 	 * Load all plugins
 	 */
 	void slotLoadPlugins();
+
+private slots:
 
 	/**
 	 * The main window got deleted

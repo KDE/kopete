@@ -31,6 +31,7 @@
 #include <kstaticdeleter.h>
 #include <kstandarddirs.h>
 #include <kurl.h>
+#include <kapplication.h>
 
 #include "kopeteplugin.h"
 
@@ -128,6 +129,7 @@ bool LibraryLoader::loadAll()
 	{
 		KopeteLibraryInfo info = getInfo( *i );
 		loadPlugin( *i );
+		kapp->processEvents();
 	}
 
 	return true;
@@ -216,6 +218,8 @@ KopetePlugin *LibraryLoader::loadPlugin( const QString &spec )
 	// TODO: REMOVE THIS ASAP, WORKAROUND FOR BROKEN KDELIBS AROUND APRIL 2003!
 	if( !plugin ) // maybe it's a protocol?
 	{
+		kdDebug( 14010 ) << k_funcinfo << "WORKAROUND FOR BROKEN KDELIBS AROUND APRIL 2003! WHY IS THIS STILL BROKEN (JULY 2003)?" << endl;
+
 		plugin = KParts::ComponentFactory::createInstanceFromQuery<KopetePlugin>(
 			QString::fromLatin1("Kopete/Protocol"),
 			QString::fromLatin1("[X-Kopete-Plugin-Id]=='%1'").arg(pluginId), this);
