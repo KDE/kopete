@@ -339,10 +339,11 @@ void GroupWiseMessageManager::slotInviteOtherContact()
 	// connect ok signal to another slot
 	QWidget * w = ( view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) : 
 				Kopete::UI::Global::mainWidget() );
-	KDialogBase * searchDlg = new KDialogBase( w, "invitesearchdialog", false, i18n( "Search for contact to invite" ), KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::NoDefault, true );
+	KDialogBase * searchDlg = new KDialogBase( w, "invitesearchdialog", false, i18n( "Search for contact to invite" ), KDialogBase::Ok|KDialogBase::Cancel|KDialogBase::User1, KDialogBase::User1, true, KGuiItem( i18n( "&Search" ) ) );
 	m_search = new GroupWiseSearch( account(), QListView::Single, searchDlg, "invitesearchwidget" );
 	searchDlg->setMainWidget( m_search );
 	connect( searchDlg, SIGNAL( okClicked() ), SLOT( slotSearchedForUsers() ) );
+	connect( searchDlg, SIGNAL( user1Clicked() ), m_search, SLOT( doSearch() ) );
 	searchDlg->show();
 }
 

@@ -37,10 +37,11 @@ public:
 	GroupWiseSearch( GroupWiseAccount * account, QListView::SelectionMode mode, QWidget *parent = 0, const char *name = 0);
 	~GroupWiseSearch();
 	QValueList< GroupWise::ContactDetails > selectedResults();
+public slots:
+	void doSearch();
 protected:
 	unsigned char searchOperation( int comboIndex );
 protected slots:
-	void slotDoSearch();
 	void slotGotSearchResults();
 	void slotShowDetails();
 private:

@@ -62,7 +62,6 @@ GroupWiseSearch::GroupWiseSearch( GroupWiseAccount * account, QListView::Selecti
 {
 	m_results->setSelectionMode( mode );
 	m_results->setAllColumnsShowFocus( true );
-	connect( m_search, SIGNAL( clicked() ), SLOT( slotDoSearch() ) );
 	connect( m_details, SIGNAL( clicked() ), SLOT( slotShowDetails() ) );
 }
 
@@ -71,7 +70,7 @@ GroupWiseSearch::~GroupWiseSearch()
 {
 }
 
-void GroupWiseSearch::slotDoSearch()
+void GroupWiseSearch::doSearch()
 {
 	// build a query
 	QValueList< GroupWise::UserSearchQueryTerm > searchTerms;

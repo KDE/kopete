@@ -351,14 +351,6 @@
                         </size>
                     </property>
                 </spacer>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>m_search</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Search</string>
-                    </property>
-                </widget>
             </hbox>
         </widget>
     </vbox>
