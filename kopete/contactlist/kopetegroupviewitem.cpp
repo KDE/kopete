@@ -166,7 +166,7 @@ void KopeteGroupViewItem::refreshDisplayName()
 	// Sorting in this slot is extremely expensive as it's called dozens of times and
 	// the sorting itself is rather slow. Therefore we call delayedSort, which tries
 	// to group multiple sort requests into one.
-	if ( KopeteContactListView *lv = dynamic_cast<KopeteContactListView *>( listView() ) )
+	if ( ListView::ListView *lv = dynamic_cast<ListView::ListView *>( listView() ) )
 		lv->delayedSort();
 	else
 		listView()->sort();
@@ -191,10 +191,7 @@ void KopeteGroupViewItem::okRename( int col )
 {
 	//kdDebug(14000) << k_funcinfo << endl;
 	KListViewItem::okRename(col);
-	if ( col == 0 )
-		group()->setDisplayName(text(0));
 	setRenameEnabled( 0, false );
-	refreshDisplayName();
 }
 
 void KopeteGroupViewItem::cancelRename( int col )
@@ -266,7 +263,7 @@ QString KopeteGroupViewItem::text( int column ) const
 void KopeteGroupViewItem::setText( int column, const QString &text )
 {
 	if ( column == 0 )
-		d->name->setText( text );
+		group()->setDisplayName( text );
 	else
 		KListViewItem::setText( column, text );
 }

@@ -434,6 +434,12 @@ void KopeteMetaContactLVI::execute() const
 void KopeteMetaContactLVI::slotDisplayNameChanged()
 {
 	d->nameText->setText( m_metaContact->displayName() );
+
+	// delay the sort if we can
+	if ( ListView::ListView *lv = dynamic_cast<ListView::ListView *>( listView() ) )
+		lv->delayedSort();
+	else
+		listView()->sort();
 }
 
 /*
@@ -468,7 +474,6 @@ void KopeteMetaContactLVI::startRename( int col )
 void KopeteMetaContactLVI::okRename( int col )
 {
 	KListViewItem::okRename( col );
-	rename( text( 0 ) );
 	setRenameEnabled( 0, false );
 }
 
@@ -893,7 +898,7 @@ QString KopeteMetaContactLVI::text( int column ) const
 void KopeteMetaContactLVI::setText( int column, const QString &text )
 {
 	if ( column == 0 )
-		d->nameText->setText( text );
+		rename( text );
 	else
 		KListViewItem::setText( column, text );
 }
@@ -901,7 +906,3 @@ void KopeteMetaContactLVI::setText( int column, const QString &text )
 #include "kopetemetacontactlvi.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-
-
-
-
