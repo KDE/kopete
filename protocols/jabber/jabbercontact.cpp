@@ -203,11 +203,11 @@ void JabberContact::execute() {
 }
 
 void JabberContact::slotNewMessage(const JabMessage &message) {
-	QString userID = QString("%1@%2").arg(message.from.user(), 1).arg(message.from.host());
-	JabberMessage jabberMessage(this, userID, message.subject, message.body);
+	QString theirUserID = QString("%1@%2").arg(message.from.user(), 1).arg(message.from.host());
+	JabberMessage jabberMessage(theirUserID, mProtocol->myself()->userID(), message.subject, message.body);
 	
-	kdDebug() << "Jabber contact: Message recieved from " << userID << endl;
-    if (userID != mUserID) {
+	kdDebug() << "Jabber contact: Message recieved from " << theirUserID << endl;
+    if (theirUserID != mUserID) {
 		return;
     }
 	

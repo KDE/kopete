@@ -7,8 +7,8 @@
 #include "messagelog.h"
 #include <kdebug.h>
 
-KopeteMessageManager::KopeteMessageManager( const KopeteContact *user , KopeteContactList others,
-		QString logFile = QString::null , QObject *parent = 0, const char *name = 0 ) : QObject( parent, name)
+KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteContactList others,
+		QString logFile, QObject *parent, const char *name) : QObject( parent, name)
 {
 
 	mContactList = others;
@@ -77,13 +77,12 @@ void KopeteMessageManager::readMessages()
 		connect ( mChatWindow, SIGNAL(closeClicked()), this, SLOT(chatWindowClosing()) );
 	}
 	
-	for (KopeteMessageList::Iterator it = mMessageQueue.begin(); it != mMessageQueue.end(); ++it)
+	for (KopeteMessageList::Iterator it = mMessageQueue.begin(); it != mMessageQueue.end(); it++)
 	{
-		//KopeteMessage tmp = (*it);
-		kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from()  << endl;
-		mChatWindow->messageReceived( (*it) );
-		mMessageQueue.remove(it);
+		kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from() << endl;
+		mChatWindow->messageReceived((*it));
 	}
+	mMessageQueue.clear();
 	mChatWindow->show();	// show message window again
 }
 
