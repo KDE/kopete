@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>motionawayPrefsUI</class>
 <author>Duncan Mac-Vicar P.</author>
 <widget class="QWidget">
@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>405</width>
-            <height>146</height>
+            <width>413</width>
+            <height>152</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -20,6 +20,9 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
         </sizepolicy>
+    </property>
+    <property name="caption">
+        <string>motionawayPrefsUI</string>
     </property>
     <vbox>
         <property name="name">
@@ -38,15 +41,21 @@
                         <cstring>TextLabel2</cstring>
                     </property>
                     <property name="text">
-                        <string>Become away after</string>
+                        <string>&amp;Become away after</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>AwayTimeout</cstring>
                     </property>
                 </widget>
                 <widget class="QSpinBox">
                     <property name="name">
-                        <cstring>mAwayTimeout</cstring>
+                        <cstring>AwayTimeout</cstring>
                     </property>
                     <property name="maxValue">
                         <number>999</number>
+                    </property>
+                    <property name="value">
+                        <number>1</number>
                     </property>
                 </widget>
                 <widget class="QLabel">
@@ -61,10 +70,16 @@
         </widget>
         <widget class="QCheckBox">
             <property name="name">
-                <cstring>mGoAvailable</cstring>
+                <cstring>BecomeAvailableWithActivity</cstring>
             </property>
             <property name="text">
-                <string>Become available when detecting activity again</string>
+                <string>Become available when &amp;detecting activity again</string>
+            </property>
+            <property name="accel">
+                <string>Alt+D</string>
+            </property>
+            <property name="checked">
+                <bool>true</bool>
             </property>
         </widget>
         <widget class="QLayoutWidget">
@@ -80,12 +95,18 @@
                         <cstring>TextLabel2_2</cstring>
                     </property>
                     <property name="text">
-                        <string>Video4Linux device:</string>
+                        <string>&amp;Video4Linux device:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>VideoDevice</cstring>
                     </property>
                 </widget>
                 <widget class="KLineEdit">
                     <property name="name">
-                        <cstring>m_videoDevice</cstring>
+                        <cstring>VideoDevice</cstring>
+                    </property>
+                    <property name="text">
+                        <string>/dev/video0</string>
                     </property>
                 </widget>
             </hbox>
@@ -109,5 +130,10 @@
         </spacer>
     </vbox>
 </widget>
+<customwidgets>
+</customwidgets>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>klineedit.h</includehint>
+</includehints>
 </UI>

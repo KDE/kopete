@@ -26,9 +26,7 @@
 #define MOTIONAWAYPLUGIN_H
 
 #include "kopeteplugin.h"
-#include <qcstring.h>
 
-class MotionAwayPreferences;
 class QTimer;
 
 /**
@@ -44,12 +42,16 @@ public:
 	~MotionAwayPlugin();
 
 public slots:
+	void loadSettings();
 	void slotTimeout();
 	void slotCapture();
 	void slotActivity();
-	void slotSettingsChanged();
+
 private:
-	MotionAwayPreferences *mPrefs;
+	int awayTimeout;
+	bool becomeAvailableWithActivity;
+	QString videoDevice;
+	
 	QTimer *m_captureTimer;
 	QTimer *m_awayTimer;
 

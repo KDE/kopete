@@ -1,64 +1,50 @@
-/*
-    motionawaypreferences.h
+/***************************************************************************
+                          motionawaypreferences.h
+						  -------------------
+    begin                : jeu nov 14 2002
+    copyright            : (C) 2002 by Olivier Goffart
+    email                : ogoffart@tiscalinet.be
+ ***************************************************************************/
 
-    Kopete Motion Detector Auto-Away plugin
-
-    Copyright (c) 2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
-
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
-
-    *************************************************************************
-    *                                                                       *
-    * This program is free software; you can redistribute it and/or modify  *
-    * it under the terms of the GNU General Public License as published by  *
-    * the Free Software Foundation; either version 2 of the License, or     *
-    * (at your option) any later version.                                   *
-    *                                                                       *
-    *************************************************************************
-*/
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
 
 #ifndef MOTIONAWAYPREFERENCES_H
 #define MOTIONAWAYPREFERENCES_H
 
-#include <qcheckbox.h>
-#include <qspinbox.h>
+#include "kcmodule.h"
 
-#include <qwidget.h>
-#include <klineedit.h>
-#include "configmodule.h"
-#include "motionawayprefs.h"
+class motionawayPrefsUI;
+class KAutoConfig;
 
 /**
-  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
-  */
+ * Preference widget for the Cryptography plugin
+ * @author Olivier Goffart
+ */
+class MotionAwayPreferences : public KCModule  {
+   Q_OBJECT
 
-class MotionAwayPreferences : public ConfigModule
-{
-Q_OBJECT
 public:
-	MotionAwayPreferences(const QString &pixmap,QObject *parent=0);
-	~MotionAwayPreferences();
-   virtual void save();
+	MotionAwayPreferences(QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList());
 
-	bool goAvailable() const { return preferencesDialog->mGoAvailable->isChecked(); };
-	int awayTimeout() const { return preferencesDialog->mAwayTimeout->value(); };
-	const QString device() { return preferencesDialog->m_videoDevice->text(); };
-
-signals:
-	void saved();
+	virtual void save();
+	virtual void defaults();
 
 private:
 	motionawayPrefsUI *preferencesDialog;
+	KAutoConfig *kautoconfig;
+
+private slots: // Public slots
+	void widgetModified();
 
 };
 
 #endif
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
-// vim: set noet ts=4 sts=4 sw=4:
 
+// vim: set noet ts=4 sts=4 sw=4:

@@ -28,9 +28,9 @@
 #include <qtimer.h>
 
 #include "motionawayplugin.h"
-#include "motionawaypreferences.h"
 #include "kopeteaway.h"
 #include "kopeteaccountmanager.h"
+#include <kconfig.h>
 
 // motion.c includes
 #include <stdio.h>
@@ -94,8 +94,6 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name, const QSt
 	m_captureTimer = new QTimer(this);
 	m_awayTimer = new QTimer(this);
 
-	mPrefs = new MotionAwayPreferences ( "camera_umount", this );
-	connect( mPrefs, SIGNAL(saved()), this, SLOT(slotSettingsChanged()) );
 	connect( m_captureTimer, SIGNAL(timeout()), this, SLOT(slotCapture()) );
 	connect( m_awayTimer, SIGNAL(timeout()), this, SLOT(slotTimeout()) );
 
@@ -109,7 +107,7 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name, const QSt
 
 	kdDebug(14305) << k_funcinfo << "Opening Video4Linux Device" << endl;
 
-	m_deviceHandler = open( (mPrefs->device()).latin1() , O_RDWR);
+	m_deviceHandler = open( videoDevice.latin1() , O_RDWR);
 
 	if (m_deviceHandler < 0)
 	{
@@ -127,8 +125,10 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name, const QSt
 		m_wentAway = false;
 
 		m_captureTimer->start( DEF_POLL_INTERVAL );
-		m_awayTimer->start( mPrefs->awayTimeout() * 60 * 1000 );
+		m_awayTimer->start( awayTimeout * 60 * 1000 );
 	}
+	loadSettings();
+	connect(this, SIGNAL(settingsChanged()), this, SLOT( loadSettings() ) );
 }
 
 MotionAwayPlugin::~MotionAwayPlugin()
@@ -136,6 +136,16 @@ MotionAwayPlugin::~MotionAwayPlugin()
     kdDebug(14305) << k_funcinfo << "Closing Video4Linux Device" << endl;
 	close (m_deviceHandler);
 	kdDebug(14305) << k_funcinfo << "Freeing memory" << endl;
+}
+
+void MotionAwayPlugin::loadSettings(){
+	KConfig *kconfig = KGlobal::config();
+	kconfig->setGroup("MotionAway Plugin");
+
+	awayTimeout = kconfig->readNumEntry("AwayTimeout", 1);
+	becomeAvailableWithActivity = kconfig->readBoolEntry("BecomeAvailableWithActivity", true);
+	videoDevice = kconfig->readEntry("VideoDevice", "/dev/video0");
+	m_awayTimer->changeInterval(awayTimeout * 60 * 1000);
 }
 
 int MotionAwayPlugin::getImage(int _dev, QByteArray &_image, int _width, int _height, int _input, int _norm,  int _fmt)
@@ -237,14 +247,14 @@ void MotionAwayPlugin::slotCapture()
             kdDebug(14305) << k_funcinfo << "Motion Detected. [" << diffs << "] Reseting Timeout" << endl;
 
 			/* If we were away, now we are available again */
-			if ( mPrefs->goAvailable() && !KopeteAway::globalAway() && m_wentAway)
+			if ( becomeAvailableWithActivity && !KopeteAway::globalAway() && m_wentAway)
 			{
 				slotActivity();
 			}
 
 			/* We reset the away timer */
             m_awayTimer->stop();
-			m_awayTimer->start( mPrefs->awayTimeout() * 60 * 1000 );
+			m_awayTimer->start( awayTimeout * 60 * 1000 );
 		}
 
 		/* Old image slowly decays, this will make it even harder on
@@ -277,11 +287,6 @@ void MotionAwayPlugin::slotTimeout()
 		m_wentAway = true;
 		KopeteAccountManager::manager()->setAwayAll();
 	}
-}
-
-void MotionAwayPlugin::slotSettingsChanged()
-{
-	m_awayTimer->changeInterval(mPrefs->awayTimeout() * 60 * 1000);
 }
 
 #include "motionawayplugin.moc"
