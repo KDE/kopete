@@ -202,12 +202,6 @@ BYTE Buffer::getByte()
 	{
 		thebyte = mBuf[0];
 		mBuf++; //advance mBuf to the next char
-		/*
-		for (unsigned int i=1;i<mLength;i++)
-		{  //get rid of first element by shifting the array
-			mBuf[i-1] = mBuf[i];
-		}
-		*/
 		mLength--;
 	}
 	else

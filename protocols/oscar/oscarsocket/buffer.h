@@ -151,6 +151,8 @@ class Buffer : public QObject
 
 		/*
 		 * Gets a byte out of the buffer
+		 * It's not a constant method. It advances the buffer
+		 * to the next BYTE after returning one.
 		 */
 		BYTE getByte();
 

@@ -128,7 +128,7 @@ void ICQContact::setOwnDisplayName(const QString &s)
 
 void ICQContact::slotContactChanged(const UserInfo &u)
 {
-	if (u.sn != contactname())
+	if (u.sn != contactName())
 		return;
 
 	mInvisible = (u.icqextstatus & ICQ_STATUS_IS_INVIS);
@@ -151,7 +151,7 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 
 void ICQContact::slotOffgoingBuddy(QString sender)
 {
-	if(sender != contactname())
+	if(sender != contactName())
 		return;
 
 	setOnlineStatus(mProtocol->statusOffline);
@@ -160,7 +160,7 @@ void ICQContact::slotOffgoingBuddy(QString sender)
 
 void ICQContact::slotIMReceived(QString message, QString sender, bool /*isAuto*/)
 {
-	if(sender != contactname())
+	if(sender != contactName())
 		return;
 
 	// Build a KopeteMessage and set the body as Rich Text
@@ -191,7 +191,7 @@ void ICQContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	// we might be able to do that in AIM and we might also convert
 	// HTML to RTF for ICQ type-2 messages  [mETz]
 	static_cast<ICQAccount*>(account())->engine()->sendIM(
-		message.plainBody(), contactname(), false);
+		message.plainBody(), contactName(), false);
 
 	// Show the message we just sent in the chat window
 	manager()->appendMessage(message);
@@ -296,7 +296,7 @@ void ICQContact::requestUserInfo()
 	kdDebug(14200) << k_funcinfo << "called" << endl;
 	userinfoReplyCount = 0;
 	userinfoRequestSequence =
-		account()->engine()->sendReqInfo(contactname().toULong());
+		account()->engine()->sendReqInfo(contactName().toULong());
 }
 
 void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf)
@@ -409,7 +409,7 @@ void ICQContact::slotUpdBackgroundUserInfo( const int seq, const ICQInfoItemList
 
 	currentBackground = curr;
 	pastBackground = past;
-	
+
 	userinfoReplyCount++;
 	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
 		emit updatedUserInfo();

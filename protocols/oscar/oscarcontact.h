@@ -46,7 +46,7 @@ class OscarContact : public KopeteContact
 	Q_OBJECT
 
 	public:
-		OscarContact(const QString name, const QString displayName,
+		OscarContact(const QString& name, const QString& displayName,
 					KopeteAccount *account, KopeteMetaContact *parent);
 		virtual ~OscarContact();
 
@@ -61,8 +61,8 @@ class OscarContact : public KopeteContact
 
 		virtual KopeteMessageManager *manager( bool canCreate = false );
 
-		const QString &contactname() { return mName; };
-		OscarAccount *account() { return mAccount; };
+		QString contactName() const { return mName; };
+		OscarAccount *account() const { return mAccount; };
 
 		/*
 		 * Convert between internal status representation
@@ -73,14 +73,14 @@ class OscarContact : public KopeteContact
 		/*
 		 * Returns the idle time
 		 */
-		const unsigned int idleTime() { return mIdle; }
+		const unsigned int idleTime() const { return mIdle; }
 
-		const unsigned long realIP() { return mRealIP; }
-		const unsigned long localIP() { return mLocalIP; }
-		const unsigned int  port() { return mPort; }
-		const unsigned int  fwType() { return mFwType; }
-		const unsigned int  tcpVersion() { return mTcpVersion; }
-		const QDateTime signonTime() { return mSignonTime; }
+		const unsigned long realIP() const { return mRealIP; }
+		const unsigned long localIP() const { return mLocalIP; }
+		const unsigned int  port() const { return mPort; }
+		const unsigned int  fwType() const { return mFwType; }
+		const unsigned int  tcpVersion() const { return mTcpVersion; }
+		const QDateTime signonTime() const { return mSignonTime; }
 
 	public slots:
 		/** Method to delete a contact from the contact list */

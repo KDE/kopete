@@ -44,7 +44,7 @@ class OscarConnection : public QSocket
 
 		OscarConnection(const QString &sn, const QString &connName, ConnectionType type,
 			const QByteArray &cookie, QObject *parent=0, const char *name=0);
-		~OscarConnection();
+		virtual ~OscarConnection();
 
 		inline QString connectionName() const { return mConnName; };
 		/** Returns the type of this connection */

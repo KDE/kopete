@@ -29,8 +29,6 @@
 #include <qmap.h>
 #include <qobject.h>
 
-//#include "kopeteonlinestatus.h"
-
 class AIMBuddyCaps
 {
 public:
@@ -62,44 +60,43 @@ class AIMBuddy
 		AIMBuddy(const int buddyID, const int groupID, const QString &screenName);
 
 		// Returns the buddy id
-		int ID() { return mBuddyID; }
+		int ID() const { return mBuddyID; }
 
 		// Returns the group id
-		int groupID() { return mGroupID; }
+		int groupID() const { return mGroupID; }
 
 		// Returns the screenname of this buddy
-		const QString &screenname() { return mScreenName; }
+		QString screenname() const { return mScreenName; }
 
 		// Returns the alias for this buddy
-		const QString &alias() { return mAlias; }
+		QString alias() const { return mAlias; }
 
 		// Returns the capabilities of this buddy
-		const AIMBuddyCaps &capabilities() { return mCapabilities; }
+		const AIMBuddyCaps &capabilities() const { return mCapabilities; }
 
 		// Returns the status of this buddy
-	//	KopeteOnlineStatus status() { return mStatus; }
-		const int status() {  return mStatus; }
+		const int status() const {  return mStatus; }
 
 		// Returns the user class of this buddy
-		int userClass() { return mUserClass; }
+		int userClass() const { return mUserClass; }
 
 		// Returns the last known sign on time
-		long signOnTime() { return mSignOnTime; }
+		long signOnTime() const { return mSignOnTime; }
 
 		// Returns the idle time
 //		Q_UINT32 idleTime() { return mIdleTime; }
 
 		// Returns how long this user has been a member since
-		long memberSince() { return mMemberSince; }
+		long memberSince() const { return mMemberSince; }
 
 		// Returns the users evil (warning) level
-		Q_UINT32 evil() { return mEvil; }
+		Q_UINT32 evil() const { return mEvil; }
 
 		// Returns the users last sign on time
-		long lastSignOnTime() { return mLastOn; }
+		long lastSignOnTime() const { return mLastOn; }
 
 		// Returns the string version of the last sign on time
-		const QString &stringLastOn() { return mStringLastOn; }
+		QString stringLastOn() const { return mStringLastOn; }
 
 		// Sets the alias for this buddy
 		void setAlias(const QString &alias) { mAlias = alias; }
@@ -108,9 +105,7 @@ class AIMBuddy
 		void setCapabilities(const AIMBuddyCaps &cap) { mCapabilities = cap; }
 
 		// Sets the online/offline/away status of a user
-	//	void setStatus( const KopeteOnlineStatus &status ) { mStatus = status; }
 		void setStatus(const int status) { mStatus = status; }
-
 
 		// Sets the users user class
 		void setUserClass(int userClass) { mUserClass = userClass; }
@@ -161,13 +156,13 @@ class AIMGroup
 		AIMGroup(const int);
 
 		// Returns the group's ID
-		int ID() { return mGroupID; }
+		int ID() const { return mGroupID; }
 
 		// Returns this group's name, if it has been assigned one yet
-		const QString &name() { return mName; }
+		QString name() const { return mName; }
 
 		// Returns a list of buddies belonging to this group
-		const QPtrList<AIMBuddy> &buddies() { return mBuddies; }
+		QPtrList<AIMBuddy> buddies() const { return mBuddies; }
 
 	protected:
 		friend class AIMBuddyList;
@@ -235,13 +230,13 @@ class AIMBuddyList : public QObject
 		void removeBuddyDeny(AIMBuddy *);
 
 		// Returns a list of all of the buddies
-		const QMap<QString, AIMBuddy * > &buddies() { return mBuddyNameMap; }
+		QMap<QString, AIMBuddy * > buddies() const { return mBuddyNameMap; }
 
 		// Returns a list of all the buddies in the deny list
-		const QPtrList<AIMBuddy> &denyBuddies() { return mBuddiesDeny; }
+		QPtrList<AIMBuddy> denyBuddies() const { return mBuddiesDeny; }
 
 		// Returns a list of all the buddies in the permit list
-		const QPtrList<AIMBuddy> &permitBuddies() { return mBuddiesPermit; }
+		QPtrList<AIMBuddy> permitBuddies() const { return mBuddiesPermit; }
 
 		// length of this list
 		int length;

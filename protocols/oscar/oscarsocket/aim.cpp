@@ -1,76 +1,31 @@
 // aim.cpp
 //
-// Kit AIM client
+// Copyright (C)  2002-2003  Kopete developers
 //
-// For copyright and license, see accompanying documentation
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+// 02111-1307, USA.
+//
+// File based on aim.cpp from Kit client.
 
-//#include "config.h"
+
 
 #include "aim.h"
 #include <qregexp.h>
 
-//#define tocNormalize(s) (s.lower().replace(QRegExp(" "),""))
 
 QString tocNormalize(const QString &oldstr)
 {
 	return oldstr.lower().replace(" ","");
 }
-/*
-QString tocRoast(const QString &oldstr)
-{
-	const QString tocRoast_string = "Tic/Toc";
-	const int tocRoast_length = tocRoast_string.length();
-
-	QString newstr;
-	QString workstr;
-	unsigned char c;
-
-	newstr = "0x";
-
-	for(unsigned int i = 0; i < oldstr.length(); i++)
-	{
-		c = oldstr[i] ^ (tocRoast_string[i % tocRoast_length]);
-		workstr.sprintf("%02x", c);
-		newstr += workstr;
-	}
-
-	return newstr;
-}
-*/
-/*
-QString tocProcess(const QString &oldstr)
-{
-*/
-	/* Arguments
-	 * with whitespace characters should be enclosed in quotes. Dollar signs,
-	 * curly brackets, square brackets, parentheses, quotes, and backslashes
-	 * must all be backslashed whether in quotes or not. */
-/*
-	QString newstr = "\"";
-	for(unsigned int i = 0; i < oldstr.length(); i++)
-	{
-		switch( (char)(QChar)(oldstr.at(i)) )
-		{
-			//case '\n':
-			//	break;
-			case '$':
-			case '{':
-			case '}':
-			case '[':
-			case ']':
-			case '(':
-			case ')':
-			case '\'':
-			case '"':
-			case '\\':
-				newstr += '\\';
-				// fallthrough
-			default:
-				newstr += (char)(QChar)oldstr[i];
-		}
-	}
-	newstr += "\"";
-	return newstr;
-}
-*/
-

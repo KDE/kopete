@@ -43,8 +43,6 @@ AIMBuddyList *AIMBuddyList::operator+= (AIMBuddyList &original)
 				continue; //already have this in our list
 			mBuddyNameMap.insert((*it)->screenname(), (*it));
 		}
-		// why was this line outside the if()? [mETz]
-//		mBuddyNameMap.insert((*it)->screenname(), (*it));
 	}
 
 	for (QMap<int, AIMGroup * >::Iterator it = original.mGroupMap.begin(); it != original.mGroupMap.end(); ++it)
@@ -93,7 +91,7 @@ AIMBuddy *AIMBuddyList::findBuddy(const QString &name)
 AIMGroup *AIMBuddyList::addGroup(const int id, const QString &name)
 {
 	AIMGroup *group = new AIMGroup(id);
-	if (name != QString::null)
+	if (!name.isNull())
 	{
 		group->setName(name);
 		mGroupNameMap.insert(name, group);
@@ -108,8 +106,8 @@ void AIMBuddyList::removeGroup(const int id)
 	AIMGroup *group = mGroupMap[id];
 	if (!group) return;
 	mGroupNameMap.remove(group->name());
+  mGroupMap.remove(id);
 	delete group; // also deletes the buddies in that group too
-	mGroupMap.remove(id);
 }
 
 AIMGroup *AIMBuddyList::findGroup(const int id)
@@ -186,12 +184,6 @@ AIMBuddy::AIMBuddy(const int buddyID, const int groupID, const QString &screenNa
 	mScreenName = screenName;
 	// By default set it's status to offline
 	mStatus = OSCAR_OFFLINE;
-/*
-	if((screenName[0].isNumber()) && (screenName.length()>4))
-		mStatus = OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQOFFLINE);
-	else
-		mStatus = OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE);
-*/
 }
 
 AIMBuddyCaps::AIMBuddyCaps()

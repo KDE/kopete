@@ -402,7 +402,7 @@ void OscarAccount::syncLocalWithServerBuddyList( AIMBuddyList& serverList )
 	QDictIterator<KopeteContact> it( contactList );
 	for ( ; it.current(); ++it )
 	{
-		QString contactId = static_cast<OscarContact*>( it.current() )->contactname();
+		QString contactId = static_cast<OscarContact*>( it.current() )->contactName();
 		AIMBuddy *buddy = serverList.findBuddy( contactId );
 		if ( !buddy && it.current() != mMyself )
 		{

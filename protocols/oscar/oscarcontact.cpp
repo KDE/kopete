@@ -33,7 +33,7 @@
 #include "oscarsocket.h"
 #include "oscaraccount.h"
 
-OscarContact::OscarContact(const QString name, const QString displayName,
+OscarContact::OscarContact(const QString& name, const QString& displayName,
 	KopeteAccount *account, KopeteMetaContact *parent)
 	: KopeteContact(account, name, parent)
 {

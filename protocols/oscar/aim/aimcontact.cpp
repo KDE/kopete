@@ -162,7 +162,7 @@ void AIMContact::slotGotMiniType(QString screenName, int type)
 
 void AIMContact::slotContactChanged(const UserInfo &u)
 {
-	if (tocNormalize(u.sn) != tocNormalize(contactname()))
+	if (tocNormalize(u.sn) != tocNormalize(contactName()))
 		return; //this is not this contact
 
 // 	kdDebug(14190) << k_funcinfo << "Called for '"
@@ -178,7 +178,7 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 
 void AIMContact::slotOffgoingBuddy(QString sn)
 {
-	if(tocNormalize(sn) != contactname())
+	if(tocNormalize(sn) != contactName())
 		return;
 
 	kdDebug(14190) << k_funcinfo << "Called for '" << displayName() << "'" << endl;

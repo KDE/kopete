@@ -58,7 +58,7 @@ ICQUserInfo::ICQUserInfo(ICQContact *c, ICQAccount *account,
 	mMainWidget->rwAge->setValue(0);
 	mMainWidget->rwBday->setDate(QDate());
 	mMainWidget->roBday->setText("");
-	mMainWidget->roUIN->setText(c->contactname());
+	mMainWidget->roUIN->setText(c->contactName());
 	p->initUserinfoWidget(mMainWidget); // fill combos with values
 
 	connect(this, SIGNAL(user1Clicked()),
