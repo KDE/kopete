@@ -17,3 +17,16 @@ Changes to the Makefile.am files are fine and require no diffs, since Psi
 uses qmake.
 
 29.08.2003, Till Gerken (till@tantalo.net)
+
+Following up on xmpp's progress:
+
+001 - obsolete after new SSL code is in place
+002 - possible inclusion (remind Justin)
+003 - possible inclusion (remind Justin)
+004 - possible inclusion (remind Justin)
+005 - rejected
+006 - obsolete
+007 - obsolete
+008 - discussion
+
+This needs to be verified with the next synch.
