@@ -70,10 +70,10 @@ HistoryDialog::HistoryDialog(Kopete::MetaContact *mc, int count, QWidget* parent
 	mMainWidget = new HistoryViewer(this, "HistoryDialog::mMainWidget");
 	setMainWidget(mMainWidget);
 
-	mMainWidget->mBack->setPixmap(SmallIcon("2leftarrow"));
-	mMainWidget->mPrevious->setPixmap(SmallIcon(QString::fromLatin1("1leftarrow")));
-	mMainWidget->mNext->setPixmap(SmallIcon(QString::fromLatin1("1rightarrow")));
-	mMainWidget->mForward->setPixmap(SmallIcon(QString::fromLatin1("2rightarrow")));
+	mMainWidget->mBack->setIconSet(SmallIconSet("2leftarrow"));
+	mMainWidget->mPrevious->setIconSet(SmallIconSet(QString::fromLatin1("1leftarrow")));
+	mMainWidget->mNext->setIconSet(SmallIconSet(QString::fromLatin1("1rightarrow")));
+	mMainWidget->mForward->setIconSet(SmallIconSet(QString::fromLatin1("2rightarrow")));
 
 
 	mMainWidget->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);

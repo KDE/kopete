@@ -741,8 +741,8 @@ void IRCProtocol::editNetworks( const QString &networkName )
 	{
 		netConf = new NetworkConfig( Kopete::UI::Global::mainWidget(), "network_config", true );
 		netConf->host->setValidator( new QRegExpValidator( QString::fromLatin1("^[\\w-\\.]*$"), netConf ) );
-		netConf->upButton->setPixmap( SmallIcon( "up" )  );
-		netConf->downButton->setPixmap( SmallIcon( "down" ) );
+		netConf->upButton->setIconSet( SmallIconSet( "up" )  );
+		netConf->downButton->setIconSet( SmallIconSet( "down" ) );
 
 		connect( netConf->networkList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkConfig() ) );
 		connect( netConf->hostList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkHostConfig() ) );

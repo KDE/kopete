@@ -58,8 +58,8 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const char * /* name 
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	m_view = new KopeteAccountConfigBase( this, "KopeteAccountConfig::m_view" );
 
-	m_view->mButtonUp->setPixmap( SmallIcon( "up" ) );
-	m_view->mButtonDown->setPixmap( SmallIcon( "down" ) );
+	m_view->mButtonUp->setIconSet( SmallIconSet( "up" ) );
+	m_view->mButtonDown->setIconSet( SmallIconSet( "down" ) );
 
 	connect( m_view->mButtonNew,    SIGNAL( clicked() ), this, SLOT( slotAddAccount() ) );
 	connect( m_view->mButtonEdit,   SIGNAL( clicked() ), this, SLOT( slotEditAccount() ) );
