@@ -317,7 +317,7 @@ void KopeteChatWindow::initActions(void)
 	tabLeft->setText( i18n( "&Previous Chat" ) );
 	tabLeft->setEnabled( false );
 
-	tabRight = KStdAction::next( this, SLOT( slotNextTab() ), coll, "tabs_right" );
+	tabRight = KStdAction::forward( this, SLOT( slotNextTab() ), coll, "tabs_right" );
 	tabRight->setText( i18n( "&Next Chat" ) );
 	tabRight->setEnabled( false );
 
