@@ -1,9 +1,10 @@
 /*
     addaccountwizard.cpp - Kopete Add Account Wizard
 
-    Copyright (c) 2003 by Olivier Goffart <ogoffart@tiscalinet.be>
+    Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -15,209 +16,194 @@
     *************************************************************************
 */
 
-#include <qcheckbox.h>
-#include <klistview.h>
-
-#include <klocale.h>
-#include <kiconloader.h>
-#include <kmessagebox.h>
-#include <kdebug.h>
-#include <kcolorbutton.h>
-
 #include "addaccountwizard.h"
+
+#include <qcheckbox.h>
+
+#include <kcolorbutton.h>
+#include <kdebug.h>
+#include <kiconloader.h>
+#include <klistview.h>
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <kplugininfo.h>
+
+#include "addaccountwizardpage1.h"
+#include "addaccountwizardpage2.h"
+#include "addaccountwizardpage3.h"
+#include "editaccountwidget.h"
+#include "kopeteaccount.h"
+#include "kopeteaccountmanager.h"
 #include "kopeteprotocol.h"
 #include "pluginloader.h"
-#include "editaccountwidget.h"
-#include "kopeteaccountmanager.h"
-#include "kopeteaccount.h"
 
 AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool modal )
-	: KWizard(parent, name, modal)
+: KWizard( parent, name, modal )
 {
-//	kdDebug(14100) << k_funcinfo << "Called." << endl;
-	accountPage = 0L;
+	//kdDebug( 14100 ) << k_funcinfo << endl;
+	m_accountPage = 0L;
 
-	intro = new AddAccountWizardPage1(this);
-	selectService = new AddAccountWizardPage2(this);
-	finish = new AddAccountWizardPage3(this);
+	m_intro =         new AddAccountWizardPage1( this );
+	m_selectService = new AddAccountWizardPage2( this );
+	m_finish =        new AddAccountWizardPage3( this );
 
-	addPage( intro, intro->caption() );
-	addPage( selectService, selectService->caption() );
-	addPage( finish, finish->caption() );
+	addPage( m_intro,         m_intro->caption() );
+	addPage( m_selectService, m_selectService->caption() );
+	addPage( m_finish,        m_finish->caption() );
 
-	/*QPtrList<KopetePlugin> plugins = LibraryLoader::self()->plugins();
-	for(KopetePlugin *p = plugins.first(); p; p = plugins.next())
+	QListViewItem *pluginItem = 0L;
+
+	QValueList<KPluginInfo *> protocols = LibraryLoader::availablePlugins( "Protocols" );
+
+	for ( QValueList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it )
 	{
-		KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>(p);
-		if( proto )
-		{
-			pluginItem = new QListViewItem(selectService->protocolListView);
-			pluginItem->setText(0, proto->displayName());
-			pluginItem->setPixmap(0, SmallIcon(proto->pluginIcon()));
-			pluginCount++;
-			m_protocolItems.insert(pluginItem, proto);
-		}
-	}*/
-
-	int pluginCount = 0;
-	QListViewItem *pluginItem=0L;
-
-	QValueList<KopeteLibraryInfo> available = LibraryLoader::self()->available();
-
-	for(QValueList<KopeteLibraryInfo>::Iterator i = available.begin(); i != available.end(); ++i)
-	{
-//		bool exclusive = false;
-		if(( *i ).type == "Kopete/Protocol" )
-		{
-			pluginItem = new QListViewItem(selectService->protocolListView);
-			pluginItem->setText(0, ( *i ).name );
-			pluginItem->setText( 1, ( *i ).comment );
-			pluginItem->setPixmap(0, SmallIcon( (*i).icon ) );
-			pluginCount++;
-			m_protocolItems.insert(pluginItem, (*i));
-		}
+		pluginItem = new QListViewItem( m_selectService->protocolListView );
+		pluginItem->setText( 0, ( *it )->name() );
+		pluginItem->setText( 1, ( *it )->comment() );
+		pluginItem->setPixmap( 0, SmallIcon( ( *it )->icon() ) );
+		m_protocolItems.insert( pluginItem, ( *it ) );
 	}
 
-	if(pluginCount == 1)
+	if ( protocols.count() == 1 )
 	{
 		pluginItem->setSelected( true );
 		// I think it is important to select one protocol to make sure.
-		//setAppropriate( selectService, false );
+		//setAppropriate( m_selectService, false );
 	}
 
-	setNextEnabled(selectService, (pluginCount == 1));
-	setFinishEnabled(finish, true);
+	setNextEnabled( m_selectService, ( protocols.count() == 1 ) );
+	setFinishEnabled( m_finish, true );
 
-	connect(selectService->protocolListView, SIGNAL(clicked(QListViewItem *)),
-		this, SLOT(slotProtocolListClicked(QListViewItem *)));
-	connect(selectService->protocolListView, SIGNAL(doubleClicked(QListViewItem *)),
-		this, SLOT(slotProtocolListDoubleClicked(QListViewItem *)));
-	connect(selectService->protocolListView, SIGNAL(selectionChanged(QListViewItem *)), 
-		this, SLOT(slotProtocolListClicked(QListViewItem *)));
+	connect( m_selectService->protocolListView, SIGNAL( clicked( QListViewItem * ) ),
+		this, SLOT( slotProtocolListClicked( QListViewItem * ) ) );
+	connect( m_selectService->protocolListView, SIGNAL( doubleClicked( QListViewItem * ) ),
+		this, SLOT( slotProtocolListDoubleClicked( QListViewItem * ) ) );
+	connect( m_selectService->protocolListView, SIGNAL( selectionChanged( QListViewItem * ) ),
+		this, SLOT( slotProtocolListClicked( QListViewItem * ) ) );
 }
 
 AddAccountWizard::~AddAccountWizard()
 {
-//	kdDebug(14100) << k_funcinfo << "Called." << endl;
+	//kdDebug( 14100 ) << k_funcinfo << endl;
 }
 
-void AddAccountWizard::slotProtocolListClicked( QListViewItem *)
+void AddAccountWizard::slotProtocolListClicked( QListViewItem * )
 {
-//	kdDebug(14100) << k_funcinfo << "Called." << endl;
-	// Just makes sure only one protocol is selected before allowing the user to continue
-	setNextEnabled(
-		selectService,
-		(selectService->protocolListView->selectedItem()!=0)
-		);
+	//kdDebug( 14100 ) << k_funcinfo << endl;
+
+	// Make sure only one protocol is selected before allowing the user to continue
+	setNextEnabled( m_selectService, ( m_selectService->protocolListView->selectedItem() != 0 ) );
 }
 
 void AddAccountWizard::slotProtocolListDoubleClicked( QListViewItem *lvi)
 {
-	if(lvi) //make sure the user clicked on a item
-	{
+	// Make sure the user clicked on an item
+	if ( lvi )
 		next();
-	}
 }
-
 
 void AddAccountWizard::accept()
 {
-//	kdDebug(14100) << k_funcinfo << "Called." << endl;
-	KopeteAccount *a = accountPage->apply();
-	if(a)
-		a->setColor( finish->mUseColor->isChecked() ? finish->mColorButton->color() : QColor() );
+	//kdDebug( 14100 ) << k_funcinfo << endl;
+	KopeteAccount *account = m_accountPage->apply();
+	if ( account && m_finish->mUseColor->isChecked() )
+		account->setColor( m_finish->mColorButton->color() );
+
+	// FIXME: Why deleteLater()? Can't we simply set W_DestructiveClose instead? - Martijn
 	deleteLater();
 }
 
 void AddAccountWizard::back()
 {
-	if (currentPage() == dynamic_cast<QWidget*>(accountPage))
+	if ( currentPage() == dynamic_cast<QWidget *>( m_accountPage ) )
 	{
-		kdDebug(14100) << k_funcinfo << "deleting accountPage..." << endl;
-		// deletes accountPage actually, KWizard does not like deleting pages
-		// using different pointers, it only seems to watch its own pointer
-		delete(currentPage());
-//		removePage(dynamic_cast<QWidget*>(accountPage));
-//		delete accountPage;
-		accountPage = 0L;
-		return; // removePage() already goes back to previous page, no back() needed
-	}
-	KWizard::back();
-}
+		kdDebug( 14100 ) << k_funcinfo << "Deleting m_accountPage" << endl;
 
+		// Deletes the accountPage, KWizard does not like deleting pages
+		// using different pointers, it only seems to watch its own pointer
+		delete currentPage();
+		//removePage( dynamic_cast<QWidget *>( m_accountPage ) );
+		//delete m_accountPage;
+		m_accountPage = 0L;
+
+		// removePage() already goes back to previous page, no back() needed
+	}
+	else
+	{
+		KWizard::back();
+	}
+}
 
 void AddAccountWizard::next()
 {
-	if (currentPage() == selectService ||
-		(currentPage() == intro && !appropriate(selectService)))
+	if ( currentPage() == m_selectService ||
+		( currentPage() == m_intro && !appropriate( m_selectService ) ) )
 	{
-		if(accountPage)
+		if ( m_accountPage )
 		{
-			kdDebug(14100) << k_funcinfo << "accountPage still valid, part1!" << endl;
-/*			kdDebug(14100) << k_funcinfo << "deleting accountPage, first part" << endl;
-			removePage(dynamic_cast<QWidget*>(accountPage));
-			delete accountPage;
-			accountPage = 0L;
-			*/
+			kdDebug( 14100 ) << k_funcinfo << "AccountPage still valid, part1!" << endl;
+/*
+			// FIXME: Why is this commented out? Is this buggy or obsolete? - Martijn
+			kdDebug( 14100 ) << k_funcinfo << "Deleting accountPage, first part" << endl;
+			removePage( dynamic_cast<QWidget *>( m_accountPage ) );
+			delete m_accountPage;
+			m_accountPage = 0L;
+*/
 		}
 
-		QListViewItem *lvi = selectService->protocolListView->selectedItem();
-		if(lvi)
+		QListViewItem *lvi = m_selectService->protocolListView->selectedItem();
+		if ( lvi )
 		{
-			kdDebug( 14100 ) << k_funcinfo << "Trying to load plugin " << m_protocolItems[ lvi ].name << " by name" << endl;
-			KopetePlugin *pl = LibraryLoader::self()->searchByName( m_protocolItems[ lvi ].name );
-			if( !pl )
+			kdDebug( 14100 ) << k_funcinfo << "Trying to load plugin " << m_protocolItems[ lvi ]->name() << " by name" << endl;
+			KopetePlugin *pl = LibraryLoader::self()->searchByName( m_protocolItems[ lvi ]->name() );
+
+			m_proto = dynamic_cast<KopeteProtocol *>( pl );
+			if ( m_proto )
 			{
-				kdDebug( 14100 ) << k_funcinfo << "Unable to load by name. Trying to load plugin " <<
-					m_protocolItems[ lvi ].specfile << "by specfile" << endl;
-				pl = LibraryLoader::self()->loadPlugin( m_protocolItems[ lvi ].specfile );
-			}
-			prot = dynamic_cast <KopeteProtocol*> (pl);
-			if(prot)
-			{
-				if(accountPage)
+				if ( m_accountPage )
 				{
-					kdDebug(14100) << k_funcinfo << "accountPage still valid, part2!" << endl;
-	/*				kdDebug(14100) << k_funcinfo << "deleting accountPage after finding selected Protocol" << endl;
-					removePage(dynamic_cast<QWidget*>(accountPage));
-					delete accountPage;
-					accountPage = 0L;*/
+					kdDebug( 14100 ) << k_funcinfo << "AccountPage still valid, part2!" << endl;
+/*
+					// FIXME: Why is this commented out? Is this buggy or obsolete? - Martijn
+					kdDebug( 14100 ) << k_funcinfo << "Deleting accountPage after finding selected Protocol" << endl;
+					removePage( dynamic_cast<QWidget *>( m_accountPage ) );
+					delete m_accountPage;
+					m_accountPage = 0L;
+*/
 				}
 
-				accountPage = prot->createEditAccountWidget(0L, this);
-
-				if (!accountPage)
+				m_accountPage = m_proto->createEditAccountWidget( 0L, this );
+				if ( !m_accountPage )
 				{
-					KMessageBox::error(this,
-						i18n("The author of this protocol hasn't implemented adding of accounts."),
-						i18n("Error While Adding Account") );
+					KMessageBox::error( this,
+						i18n( "The author of this protocol hasn't implemented adding of accounts." ),
+						i18n( "Error While Adding Account" ) );
 				}
 				else
 				{
-					kdDebug(14100) << k_funcinfo << "Adding Step Two page and switching to that one" << endl;
-					insertPage(
-						dynamic_cast<QWidget*>(accountPage),
-						i18n("Step Two: Account Information"), indexOf(finish)
-					);
+					kdDebug( 14100 ) << k_funcinfo << "Adding Step Two page and switching to that one" << endl;
+					insertPage( dynamic_cast<QWidget *>( m_accountPage ),
+						i18n( "Step Two: Account Information" ), indexOf( m_finish ) );
 					KWizard::next();
 				}
 			}
 			else
 			{
-				KMessageBox::error(this, i18n("Impossible to load the protocol `%1'.").arg(m_protocolItems[lvi].name) , i18n("Error While Adding Account") );
+				KMessageBox::error( this, i18n( "Impossible to load the protocol `%1'." ).arg( m_protocolItems[ lvi ]->name() ),
+					i18n( "Error While Adding Account" ) );
 			}
 		}
 		return;
 	}
-	else if(indexOf(currentPage()) == 2)
+	else if( indexOf( currentPage() ) == 2 )
 	{
-		if(!accountPage->validateData())
+		if( !m_accountPage->validateData() )
 			return;
 
-		QColor col = KopeteAccountManager::manager()->guessColor(prot);
+		QColor col = KopeteAccountManager::manager()->guessColor( m_proto );
 
-		finish->mColorButton->setColor(col);
-		finish->mUseColor->setChecked(col.isValid());
+		m_finish->mColorButton->setColor( col );
+		m_finish->mUseColor->setChecked( col.isValid() );
 		KWizard::next();
 	}
 	else
@@ -225,5 +211,8 @@ void AddAccountWizard::next()
 		KWizard::next();
 	}
 }
+
 #include "addaccountwizard.moc"
+
 // vim: set noet ts=4 sts=4 sw=4:
+

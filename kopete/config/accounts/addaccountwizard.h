@@ -1,7 +1,10 @@
 /*
     addaccountwizard.h - Kopete Add Account Wizard
 
-    Copyright (c) 2003 by Olivier Goffart <ogoffart@tiscalinet.be>
+    Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
+
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -16,17 +19,20 @@
 #ifndef ADDACCOUNTWIZARD_H
 #define ADDACCOUNTWIZARD_H
 
-#include "addaccountwizardpage1.h"
-#include "addaccountwizardpage2.h"
-#include "addaccountwizardpage3.h"
-
 #include <qmap.h>
+
 #include <kwizard.h>
 
-class EditAccountWidget;
-class KopeteProtocol;
 class QListViewItem;
-struct KopeteLibraryInfo;
+
+class KPluginInfo;
+
+class KopeteProtocol;
+
+class AddAccountWizardPage1;
+class AddAccountWizardPage2;
+class AddAccountWizardPage3;
+class EditAccountWidget;
 
 /**
  * @author  Olivier Goffart <ogoffart@tiscalinet.be>
@@ -35,27 +41,29 @@ class AddAccountWizard : public KWizard
 {
 	Q_OBJECT
 
-	public:
-		AddAccountWizard( QWidget *parent = 0, const char *name = 0 , bool modal=false );
-		~AddAccountWizard();
+public:
+	AddAccountWizard( QWidget *parent = 0, const char *name = 0 , bool modal = false );
+	~AddAccountWizard();
 
-	private slots:
-		void slotProtocolListClicked( QListViewItem * );
-		void slotProtocolListDoubleClicked( QListViewItem *lvi);
+private slots:
+	void slotProtocolListClicked( QListViewItem *item );
+	void slotProtocolListDoubleClicked( QListViewItem *lvi );
 
-	protected slots:
-		virtual void back();
-		virtual void next();
-		virtual void accept();
+protected slots:
+	virtual void back();
+	virtual void next();
+	virtual void accept();
 
-	private:
-		QMap <QListViewItem*,KopeteLibraryInfo> m_protocolItems;
-		EditAccountWidget *accountPage;
-		KopeteProtocol *prot;
-		AddAccountWizardPage1 *intro;
-		AddAccountWizardPage2 *selectService;
-		AddAccountWizardPage3 *finish;
+private:
+	QMap<QListViewItem *, KPluginInfo *> m_protocolItems;
+	EditAccountWidget *m_accountPage;
+	AddAccountWizardPage1 *m_intro;
+	AddAccountWizardPage2 *m_selectService;
+	AddAccountWizardPage3 *m_finish;
+	KopeteProtocol *m_proto;
 };
 
 #endif
+
 // vim: set noet ts=4 sts=4 sw=4:
+
