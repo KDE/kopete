@@ -1066,7 +1066,7 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 
 void MSNAccount::slotCreateChat( const QString& address, const QString& auth )
 {
-	slotCreateChat( 0L, address, auth, m_msgHandle, m_msgHandle );
+	slotCreateChat( 0L, address, auth, m_msgHandle.first(), m_msgHandle.first() );
 }
 
 void MSNAccount::slotCreateChat( const QString& ID, const QString& address, const QString& auth,
@@ -1077,8 +1077,8 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 	if ( handle.isEmpty() )
 	{
 		// we have lost the handle?
+		kdDebug(14140) << k_funcinfo << "Impossible to open a chat session, I forgot the contact to invite" <<endl;
 		// forget it
-		// ( that can be because the user try to open two swichboard in the same time )
 		return;
 	}
 
@@ -1123,7 +1123,8 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 		 */
 	}
 
-	m_msgHandle = QString::null;
+	if(!m_msgHandle.isEmpty())
+		m_msgHandle.pop_front();
 }
 
 void MSNAccount::slotStartChatSession( const QString& handle )
@@ -1132,28 +1133,13 @@ void MSNAccount::slotStartChatSession( const QString& handle )
 	// manager back, in which case we likely also have an active switchboard
 	// connection to reuse...
 
-	if ( !m_msgHandle.isNull() )
-	{
-		// Hep hep hep l'ami! I am not crazy! i know you are trying to open
-		// a new chat session, but the previous one is not yet created.
-		// if it is with the same m_msgHandle, that is certenely because you
-		// are impatient, but you have to wait the server reply
-		if ( m_msgHandle == handle )
-			return;
-
-		// else, you are trying to open two sessions in the same time
-		// it will have conflict. but i can't return, may be you ask a signle
-		// session because the previous one was not created due to a randomely error
-		// never mind then, i don't care
-	}
-
 	MSNContact *c = static_cast<MSNContact *>( contacts()[ handle ] );
 	// if ( isConnected() && c && myself() && handle != m_msnId )
 	if ( m_notifySocket && c && myself() && handle != accountId() )
 	{
 		if ( !c->manager(Kopete::Contact::CannotCreate) || !static_cast<MSNChatSession *>( c->manager( Kopete::Contact::CanCreate ) )->service() )
 		{
-			m_msgHandle = handle;
+			m_msgHandle.append(handle);
 			m_notifySocket->createChatSession();
 		}
 	}

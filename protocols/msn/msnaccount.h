@@ -191,7 +191,7 @@ private:
 	// status which will be using for connecting
 	Kopete::OnlineStatus m_connectstatus;
 
-	QString m_msgHandle;
+	QStringList m_msgHandle;
 
 	bool m_newContactList;
 
