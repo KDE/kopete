@@ -76,6 +76,7 @@ void KopeteGroupListAction::slotUpdateList()
 		groupList.append( displayName );
 	}
 
+	groupList.sort();
 	setItems( groupList );
 }
 
@@ -103,9 +104,9 @@ void KopetePreferencesAction::slotShowPreferences()
 	if ( !s_settingsDialog )
 		s_settingsDialog = new KSettings::Dialog( KSettings::Dialog::Static, qApp->mainWidget() );
 	s_settingsDialog->show();
-	
+
 	s_settingsDialog->dialog()->raise();
-	
+
 #if KDE_IS_VERSION( 3, 1, 90 )
 	KWin::activateWindow( s_settingsDialog->dialog()->winId() );
 #endif
