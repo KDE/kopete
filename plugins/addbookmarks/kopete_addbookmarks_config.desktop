@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=Add Bookmarks
+Comment=Automatically bookmark links in incoming messages
+Icon=konqueror
+ServiceTypes=KCModule
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kopete_addbookmarks
+X-KDE-FactoryName=AddBookmarksConfigFactory
+X-KDE-ParentApp=kopete_addbookmarks
+X-KDE-ParentComponents=kopete_addbookmarks
