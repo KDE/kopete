@@ -8,106 +8,163 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>352</width>
-            <height>114</height>
+            <width>343</width>
+            <height>121</height>
         </rect>
+    </property>
+    <property name="backgroundOrigin">
+        <enum>WidgetOrigin</enum>
     </property>
     <property name="caption">
         <string>Away Dialog</string>
+    </property>
+    <property name="focusPolicy">
+        <enum>TabFocus</enum>
     </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLineEdit" row="1" column="0">
+        <property name="resizeMode">
+            <enum>Fixed</enum>
+        </property>
+        <widget class="QLayoutWidget" row="0" column="0">
             <property name="name">
-                <cstring>textEdit_</cstring>
+                <cstring>layout12</cstring>
             </property>
-            <property name="maxLength">
-                <number>70</number>
-            </property>
-            <property name="toolTip" stdset="0">
-                <string>type in your status description here</string>
-            </property>
-        </widget>
-        <widget class="QButtonGroup" row="0" column="0">
-            <property name="name">
-                <cstring>statusGroup_</cstring>
-            </property>
-            <property name="title">
-                <string>Status</string>
-            </property>
-            <grid>
+            <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QRadioButton" row="0" column="0">
+                <widget class="QButtonGroup">
                     <property name="name">
-                        <cstring>onlineButton_</cstring>
+                        <cstring>statusGroup_</cstring>
                     </property>
-                    <property name="font">
-                        <font>
-                            <pointsize>11</pointsize>
-                        </font>
+                    <property name="title">
+                        <string>Status</string>
                     </property>
-                    <property name="text">
-                        <string>Online</string>
+                    <property name="whatsThis" stdset="0">
+                        <string>Choose status, by default present status is selected. 
+So all you need to do is just to type in your description. 
+Choosing Offline status will disconnect you, with given description.</string>
                     </property>
-                    <property name="buttonGroupId">
-                        <number>4</number>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLayoutWidget" row="0" column="0">
+                            <property name="name">
+                                <cstring>layout11</cstring>
+                            </property>
+                            <hbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <widget class="QRadioButton">
+                                    <property name="name">
+                                        <cstring>onlineButton_</cstring>
+                                    </property>
+                                    <property name="font">
+                                        <font>
+                                            <pointsize>11</pointsize>
+                                        </font>
+                                    </property>
+                                    <property name="text">
+                                        <string>Online</string>
+                                    </property>
+                                    <property name="buttonGroupId">
+                                        <number>-1</number>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>Choose for Online status</string>
+                                    </property>
+                                </widget>
+                                <widget class="QRadioButton">
+                                    <property name="name">
+                                        <cstring>awayButton_</cstring>
+                                    </property>
+                                    <property name="font">
+                                        <font>
+                                            <pointsize>11</pointsize>
+                                        </font>
+                                    </property>
+                                    <property name="text">
+                                        <string>Busy</string>
+                                    </property>
+                                    <property name="buttonGroupId">
+                                        <number>-1</number>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>This status will mean that you are busy, and cannot reply.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QRadioButton">
+                                    <property name="name">
+                                        <cstring>invisibleButton_</cstring>
+                                    </property>
+                                    <property name="font">
+                                        <font>
+                                            <pointsize>11</pointsize>
+                                        </font>
+                                    </property>
+                                    <property name="text">
+                                        <string>Invisible</string>
+                                    </property>
+                                    <property name="buttonGroupId">
+                                        <number>-1</number>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>Choose this status to be "Invisible".
+Nobody will see that you are online. But you can talk, and see others.</string>
+                                    </property>
+                                </widget>
+                                <widget class="QRadioButton">
+                                    <property name="name">
+                                        <cstring>offlineButton_</cstring>
+                                    </property>
+                                    <property name="font">
+                                        <font>
+                                            <pointsize>11</pointsize>
+                                        </font>
+                                    </property>
+                                    <property name="text">
+                                        <string>Offline</string>
+                                    </property>
+                                    <property name="buttonGroupId">
+                                        <number>-1</number>
+                                    </property>
+                                    <property name="whatsThis" stdset="0">
+                                        <string>Choose this status, to disconnect with given description.</string>
+                                    </property>
+                                </widget>
+                            </hbox>
+                        </widget>
+                    </grid>
+                </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>textEdit_</cstring>
+                    </property>
+                    <property name="maxLength">
+                        <number>70</number>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>type in your status description here</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Type in status description here, up to 70 characters</string>
                     </property>
                 </widget>
-                <widget class="QRadioButton" row="0" column="2">
-                    <property name="name">
-                        <cstring>invisibleButton_</cstring>
-                    </property>
-                    <property name="font">
-                        <font>
-                            <pointsize>11</pointsize>
-                        </font>
-                    </property>
-                    <property name="text">
-                        <string>Invisible</string>
-                    </property>
-                    <property name="buttonGroupId">
-                        <number>22</number>
-                    </property>
-                </widget>
-                <widget class="QRadioButton" row="0" column="1">
-                    <property name="name">
-                        <cstring>awayButton_</cstring>
-                    </property>
-                    <property name="font">
-                        <font>
-                            <pointsize>11</pointsize>
-                        </font>
-                    </property>
-                    <property name="text">
-                        <string>Busy</string>
-                    </property>
-                    <property name="buttonGroupId">
-                        <number>5</number>
-                    </property>
-                </widget>
-                <widget class="QRadioButton" row="0" column="3">
-                    <property name="name">
-                        <cstring>offlineButton_</cstring>
-                    </property>
-                    <property name="font">
-                        <font>
-                            <pointsize>11</pointsize>
-                        </font>
-                    </property>
-                    <property name="text">
-                        <string>Offline</string>
-                    </property>
-                    <property name="buttonGroupId">
-                        <number>21</number>
-                    </property>
-                </widget>
-            </grid>
+            </vbox>
         </widget>
     </grid>
 </widget>
+<tabstops>
+    <tabstop>textEdit_</tabstop>
+    <tabstop>onlineButton_</tabstop>
+    <tabstop>awayButton_</tabstop>
+    <tabstop>invisibleButton_</tabstop>
+    <tabstop>offlineButton_</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
