@@ -1790,7 +1790,7 @@ void RTF2HTML::FlushOutTags()
         case TAG_FONT_COLOR:
             {
                // RTF colors are 1-based; colors[] is a 0-based array.
-               if (t.param > colors.size())
+               if (t.param > colors.size() || t.param == 0)
                    break;
                QColor &c = colors[t.param-1];
                PrintUnquoted("<span style=\"color:#%02X%02X%02X\">", c.red(), c.green(), c.blue());
@@ -1801,15 +1801,17 @@ void RTF2HTML::FlushOutTags()
             break;
         case TAG_FONT_FAMILY:
             {
+               if (t.param > fonts.size() || t.param == 0)
+                   break;
                FontDef &f = fonts[t.param-1];
                string name = (!f.nonTaggedName.empty()) ? f.nonTaggedName : f.taggedName;
                PrintUnquoted("<span style=\"font-family:%s\">", name.c_str());
             }
             break;
         case TAG_BG_COLOR:{
-               if (t.param > colors.size())
+               if (t.param > colors.size() || t.param == 0)
                    break;
-                QColor &c = colors[t.param];
+                QColor &c = colors[t.param-1];
                 PrintUnquoted("<span style=\"background-color:#%02X%02X%02X;\">", c.red(), c.green(), c.blue());
                 break;
             }
