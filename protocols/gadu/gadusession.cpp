@@ -642,6 +642,7 @@ GaduSession::checkDescriptor()
 			}
 			if ( e->event.failure == GG_FAILURE_TLS ) {
 				emit tlsConnectionFailed();
+				break;
 			}
 			kdDebug(14100) << "emit connection failed signal" << endl;
 			emit connectionFailed( failureDescription( (gg_failure_t)e->event.failure ) );

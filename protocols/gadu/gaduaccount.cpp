@@ -77,8 +77,8 @@ GaduAccount::initConnections()
 				SLOT( error( const QString&, const QString& ) ) );
 	QObject::connect( session_, SIGNAL( loginPasswordIncorrect( ) ),
 				SLOT( loginPasswordFailed( ) ) );
-	QObject::connect( session_, SIGNAL( void tlsConnectionFailed() ),
-				SLOT( void tlsConnectionFailed() ) );
+	QObject::connect( session_, SIGNAL( tlsConnectionFailed() ),
+				SLOT( tlsConnectionFailed() ) );
 	QObject::connect( session_, SIGNAL( messageReceived( struct gg_event* ) ),
 				SLOT( messageReceived( struct gg_event*) )  );
 	QObject::connect( session_, SIGNAL( notify( struct gg_event* ) ),
