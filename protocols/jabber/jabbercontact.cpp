@@ -144,10 +144,10 @@ KActionCollection *JabberContact::customContextMenuActions ()
 {
 	KActionCollection *actionCollection = new KActionCollection (this);
 
-	new KAction (i18n ("(Re)send Authorization To"), "forward", 0, this, SLOT (slotSendAuth ()), actionCollection, "actionSendAuth");
-	new KAction (i18n ("(Re)request Authorization From"), "back", 0, this, SLOT (slotRequestAuth ()), actionCollection, "actionRequestAuth");
+	new KAction (i18n ("(Re)send Authorization To"), "mail_forward", 0, this, SLOT (slotSendAuth ()), actionCollection, "actionSendAuth");
+	new KAction (i18n ("(Re)request Authorization From"), "mail_reply", 0, this, SLOT (slotRequestAuth ()), actionCollection, "actionRequestAuth");
 	// FIXME wrong position in the popup menu
-	new KAction (i18n ("Remove Authorization From"), "", 0, this, SLOT (slotRemoveAuth ()), actionCollection, "actionRemoveAuth");
+	new KAction (i18n ("Remove Authorization From"), "mail_delete", 0, this, SLOT (slotRemoveAuth ()), actionCollection, "actionRemoveAuth");
 
 	KActionMenu *actionSetAvailability = new KActionMenu (i18n ("Set Availability"), "kopeteavailable", actionCollection, "jabber_online");
 
@@ -168,6 +168,15 @@ KActionCollection *JabberContact::customContextMenuActions ()
 		int activeItem = 0;
 		JabberResource *tmpBestResource = bestResource ();
 
+		/*
+		 * FIXME: This is a workaround for the automatic garbage collection
+		 *        in KopeteContact. The reparenting of the menu actions
+		 *        makes the signal/slot mechanism break in the case of
+		 *        a KSelectAction. Due to this, a KActionMenu is instantiated
+		 *        instead as a replacement below.
+		 */
+		KActionMenu *actionSelectResource = new KActionMenu (i18n ("Select Resource"), "connect_no", actionCollection, "actionSelectResource");
+	
 		// put best resource first
 		items.append (i18n ("Automatic (best resource)"));
 
@@ -199,14 +208,18 @@ KActionCollection *JabberContact::customContextMenuActions ()
 			}
 		}
 
-		KSelectAction *actionSelectResource =
-			new KSelectAction (i18n ("Select Resource"), "selectresource", 0, this, SLOT (slotSelectResource ()), actionCollection, "actionSelectResource");
+		// now go through the string list and add the resources with their icons
+		i = 0;
+		for(QStringList::iterator it = items.begin(); it != items.end(); it++)
+		{
+			if(i == activeItem)
+				actionSelectResource->insert(new KAction ((*it), "button_ok", 0, this, SLOT (slotSelectResource ()), actionSelectResource, QString("%1").arg(i)));
+			else
+				actionSelectResource->insert(new KAction ((*it), "", 0, this, SLOT (slotSelectResource ()), actionSelectResource, QString("%1").arg(i)));
 
-		// attach list to the menu action
-		actionSelectResource->setItems (items);
+			i++;
+		}
 
-		// make sure the active item is selected
-		actionSelectResource->setCurrentItem (activeItem);
 	}
 
 	return actionCollection;
@@ -561,20 +574,20 @@ void JabberContact::slotResourceUnavailable (const Jabber::Jid & jid, const Jabb
 
 void JabberContact::slotSelectResource ()
 {
-	const KSelectAction *actionSelectResource = static_cast<const KSelectAction *>(sender());
+	int currentItem = QString(static_cast<const KAction *>(sender())->name()).toUInt();
 
-	if (actionSelectResource->currentItem () == 0)
+	if (currentItem == 0)
 	{
-		kdDebug (14130) << "[JabberContact] Removing active resource, trusting bestResource()." << endl;
+		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing active resource, trusting bestResource()." << endl;
 
 		resourceOverride = false;
 		activeResource = bestResource ();
 	}
 	else
 	{
-		QString selectedResource = actionSelectResource->currentText ();
+		QString selectedResource = static_cast<const KAction *>(sender())->text();
 
-		kdDebug (14130) << "[JabberContact] Moving to resource " << selectedResource << endl;
+		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Moving to resource " << selectedResource << endl;
 
 		resourceOverride = true;
 
@@ -582,7 +595,7 @@ void JabberContact::slotSelectResource ()
 		{
 			if (resource->resource () == selectedResource)
 			{
-				kdDebug (14130) << "[JabberContact] New active resource is " << resource->resource () << endl;
+				kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New active resource is " << resource->resource () << endl;
 
 				activeResource = resource;
 
