@@ -47,6 +47,7 @@
  * doesn't define this 64 bit types (we need GNU C lib
  * because we use long long and warning - gcc extensions.
  */
+#if 0
 #if !defined(__u64) && defined(__GNUC__)
 //#warning "defining __u64"
 typedef unsigned long long __u64;
@@ -54,6 +55,7 @@ typedef unsigned long long __u64;
 #if !defined(__s64) && defined(__GNUC__)
 //#warning "defining __s64"
 typedef __signed__ long long __s64;
+#endif
 #endif
 
 #include <linux/version.h>
