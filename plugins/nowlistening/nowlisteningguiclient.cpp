@@ -24,8 +24,10 @@
 #include <kdebug.h>
 #include <kaction.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 
 #include "kopetemessagemanager.h"
+#include "kopeteview.h"
 
 #include "nowlisteningplugin.h"
 #include "nowlisteningguiclient.h"
@@ -41,10 +43,20 @@ NowListeningGUIClient::NowListeningGUIClient( KopeteMessageManager *parent )
 
 void NowListeningGUIClient::slotAdvertToCurrentChat()
 {
-	kdDebug(14307) << k_funcinfo << endl;
+	kdDebug( 14307 ) << k_funcinfo << endl;
 	QString message = NowListeningPlugin::plugin()->allPlayerAdvert();
 
-	if ( !message.isEmpty() )
+	// We warn in a mode appropriate to the mode the user invoked the plugin - GUI on menu action, in message if they typed '/media'
+	if ( message.isEmpty() )
+    {
+		QWidget * origin = 0L;
+		if ( m_msgManager && m_msgManager->view() )
+			origin = m_msgManager->view()->mainWidget();
+		KMessageBox::queuedMessageBox( origin, KMessageBox::Sorry,
+							i18n( "None of the supported media players (KsCD, JuK, amaroK, Noatun or Kaffeine) are playing anything." ),
+							i18n( "Nothing to send" ) );
+    }
+    else
 	{
 		//advertise  to a single chat
 		if ( m_msgManager )
