@@ -79,11 +79,9 @@ KopeteOnlineStatus::KopeteOnlineStatus( OnlineStatus status )
 	case Online:
 		d->caption = d->description = i18n( "Online" );
 		// This might be problematic
-		d->overlayIcon = QString::null;
 		break;
 	case Away:
 		d->caption = d->description = i18n( "Away" );
-		d->overlayIcon = QString::null;
 		break;
 	case Unknown:
 		d->caption = d->description = i18n( "Status not available" );
@@ -91,12 +89,10 @@ KopeteOnlineStatus::KopeteOnlineStatus( OnlineStatus status )
 		break;
 	case Connecting:
 		d->caption = d->description = i18n( "Connecting" );
-		d->overlayIcon = QString::null;
 		break;
 	case Offline:
 	default:
 		d->caption = d->description = i18n( "Offline" );
-		d->overlayIcon = QString::null;
 	}
 }
 
