@@ -198,16 +198,6 @@ class JabberContact : public KopeteContact
 		void slotGotVCard(Jabber::JT_VCard *);
 
 		/**
-		 * User wants to edit vCard
-		 */
-		//void slotEditVCard();
-
-		/**
-		 * User wants to save vCard on to server
-		 */
-		//void slotSaveVCard(QDomElement &);
-
-		/**
 		 * Update contact to new roster data
 		 */
 		void slotUpdateContact(const Jabber::RosterItem &item);

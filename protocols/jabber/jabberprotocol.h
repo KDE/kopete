@@ -292,6 +292,12 @@ private slots:
 	void slotSendRaw();
 
 	/**
+	 * Slot for creating a new empty email window
+	 */
+	void slotEmptyMail();
+	void slotOpenEmptyMail();
+	
+	/**
 	 * Slot for sending a chat message to a user
 	 */
 	void slotChatUser(JabberContact *contact);
@@ -420,6 +426,7 @@ private:
 	KAction *actionServices;
 	KAction *actionSendRaw;
 	KAction *actionEditVCard;
+	KAction *actionEmptyMail;
 	KPopupMenu *popup;
 	KActionMenu *actionStatusMenu;
 
@@ -468,6 +475,11 @@ private:
 	 */
 	void initActions();
 
+	/**
+	 * Create a new JabberContact
+	 */
+	JabberContact *createContact(const QString &jid, const QString &alias, const QStringList &groups, KopeteMetaContact *metaContact, const QString &identity);
+	
 	/**
 	 * Add new contact to the Kopete contact list
 	 * Note: this does not affect the Jabber roster at all

@@ -24,6 +24,7 @@
 #include <kiconloader.h>
 #include <kpopupmenu.h>
 #include <kstandarddirs.h>
+#include <klineeditdlg.h>
 
 #include <qstringlist.h>
 #include <qmap.h>
@@ -141,6 +142,7 @@ void JabberProtocol::initActions()
 	actionServices = new KAction(i18n("Services..."), "filenew", 0, this, SLOT(slotGetServices()), this, "actionJabberServices");
 	actionSendRaw = new KAction(i18n("Send raw packet to Server..."), "filenew", 0, this, SLOT(slotSendRaw()), this, "actionJabberSendRaw");
 	actionEditVCard = new KAction(i18n("Edit User Info..."), "identity", 0, this, SLOT(slotEditVCard()), this, "actionEditVCard");
+	actionEmptyMail = new KAction(i18n("New email message..."), "filenew", 0, this, SLOT(slotEmptyMail()), this, "actionEmptyMail");
 
 	actionStatusMenu = new KActionMenu("Jabber", this);
 
@@ -158,6 +160,8 @@ void JabberProtocol::initActions()
 	actionStatusMenu->insert(actionServices);
 	actionStatusMenu->insert(actionSendRaw);
 	actionStatusMenu->insert(actionEditVCard);
+	actionStatusMenu->popupMenu()->insertSeparator();
+	actionStatusMenu->insert(actionEmptyMail);
 	actionStatusMenu->plug(kopeteapp->systemTray()->contextMenu(), 1);
 
 }
@@ -223,6 +227,7 @@ bool JabberProtocol::unload()
 	delete actionServices;
 	delete actionSendRaw;
 	delete actionEditVCard;
+	delete actionEmptyMail;
 	
 	delete actionStatusMenu;
 
@@ -937,6 +942,26 @@ void JabberProtocol::slotIconRightClicked(const QPoint&)
 
 }
 
+JabberContact *JabberProtocol::createContact(const QString &jid, const QString &alias, const QStringList &groups, KopeteMetaContact *metaContact, const QString &identity)
+{
+
+	JabberContact *jc = new JabberContact(jid, alias, groups, this, metaContact, identity);
+
+	connect(jc, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact *)));
+	connect(jc, SIGNAL(chatUser(JabberContact *)), this, SLOT(slotChatUser(JabberContact *)));
+	connect(jc, SIGNAL(emailUser(JabberContact *)), this, SLOT(slotEmailUser(JabberContact *)));
+
+	metaContact->addContact(jc );
+
+	contactMap.insert(jid, jc);
+
+	metaContactMap.insert(jc, metaContact);
+
+	return jc;
+
+}
+
+
 void JabberProtocol::createAddContact(KopeteMetaContact *mc, const Jabber::RosterItem &item)
 {
 	if(!mc)
@@ -993,16 +1018,7 @@ void JabberProtocol::createAddContact(KopeteMetaContact *mc, const Jabber::Roste
 	else
 		contactName = item.name();
 
-	JabberContact *jc = new JabberContact(item.jid().userHost(), contactName, item.groups(), this, mc, myContact->userId());
-
-	connect(jc, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact *)));
-	connect(jc, SIGNAL(chatUser(JabberContact *)), this, SLOT(slotChatUser(JabberContact *)));
-	connect(jc, SIGNAL(emailUser(JabberContact *)), this, SLOT(slotEmailUser(JabberContact *)));
-
-	mc->addContact(jc );
-
-	contactMap.insert(item.jid().userHost(), jc);
-	metaContactMap.insert(jc, mc);
+	createContact(item.jid().userHost(), contactName, item.groups(), mc, myContact->userId());
 
 	if(!isContactInList)
 		KopeteContactList::contactList()->addMetaContact(mc);
@@ -1287,6 +1303,39 @@ void JabberProtocol::slotNewMessage(const Jabber::Message &message)
 		manager->appendMessage(newMessage);
 
 	}
+
+}
+
+void JabberProtocol::slotEmptyMail()
+{
+
+	if(!isConnected())
+	{
+		errorConnectFirst();
+		return;
+	}
+
+	KLineEditDlg *dlg = new KLineEditDlg(i18n("Please enter a recipient"), QString::null, qApp->mainWidget());
+	connect(dlg, SIGNAL(okClicked()), this, SLOT(slotOpenEmptyMail()));
+	dlg->show();
+	dlg->raise();
+
+}
+
+void JabberProtocol::slotOpenEmptyMail()
+{
+	KLineEditDlg *dlg = (KLineEditDlg *)sender();
+
+	KopeteMetaContact *metaContact = new KopeteMetaContact();
+	metaContact->setTemporary(true);
+
+	JabberContact *contact = createContact(dlg->text(), dlg->text(), QStringList(), metaContact, myContact->userId());
+
+	KopeteContactList::contactList()->addMetaContact(metaContact);
+
+	messageManagerMap[contact->id()] = createMessageManager(contact, KopeteMessageManager::Email);
+
+	messageManagerMap[contact->id()]->readMessages();
 
 }
 
