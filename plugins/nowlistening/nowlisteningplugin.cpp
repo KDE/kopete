@@ -154,6 +154,13 @@ QString NowListeningPlugin::allPlayerAdvert() const
 		}
 	}
 	kdDebug( 14307 ) << k_funcinfo << message << endl;
+	
+	// Catch no players/no track playing message case:
+	// Since we can't stop a message send in a plugin, add some message text to
+	// prevent us sending an empty message
+	if ( message.isEmpty() )
+		message = i18n("Now Listening for Kopete - it would tell you what I'm listening to, if I was listening to something on a supported media player! ;-) ");
+		
 	return message;
 }
 
