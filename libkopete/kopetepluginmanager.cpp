@@ -34,7 +34,7 @@
 
 #include "kopeteplugin.h"
 
-class KopetePluginManagerPrivate
+class KopetePluginManager::KopetePluginManagerPrivate
 {
 public:
 	// All available plugins, regardless of category, and loaded or not

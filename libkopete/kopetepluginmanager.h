@@ -29,8 +29,6 @@ class KPluginInfo;
 
 class KopetePlugin;
 
-class KopetePluginManagerPrivate;
-
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  * @author Martijn Klingens <klingens@kde.org>
@@ -151,6 +149,7 @@ private:
 
 	static KopetePluginManager *s_self;
 
+	class KopetePluginManagerPrivate;
 	KopetePluginManagerPrivate *d;
 };
 

@@ -21,7 +21,7 @@
 #include <ksettings/dispatcher.h>
 
 KopetePlugin::KopetePlugin( KInstance *instance, QObject *parent, const char *name )
-: QObject( parent, name )
+: QObject( parent, name ) , KXMLGUIClient()
 {
 	setInstance( instance );
 	KSettings::Dispatcher::self()->registerInstance( instance, this, SIGNAL( settingsChanged() ) );
