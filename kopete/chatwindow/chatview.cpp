@@ -302,12 +302,7 @@ void ChatView::raise(bool activate)
 	if(!m_mainWindow || !m_mainWindow->isActiveWindow() || activate)
 		makeVisible();
 
-
-#if KDE_IS_VERSION(3, 1, 90)
 	if( !KWin::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).onAllDesktops() )
-#else
-	if( !KWin::info( m_mainWindow->winId() ).onAllDesktops )
-#endif
 		KWin::setOnDesktop( m_mainWindow->winId(), KWin::currentDesktop() );
 
 	m_mainWindow->show();
@@ -328,13 +323,8 @@ void ChatView::raise(bool activate)
 
 	//Will not activate window if user was typing
 	if(activate)
-	{
-#if KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
-		KWin::setActiveWindow( m_mainWindow->winId() );
-#else
 		KWin::activateWindow( m_mainWindow->winId() );
-#endif
-	}
+
 }
 
 void ChatView::slotScrollingTo( int /*x*/, int y)
@@ -831,12 +821,7 @@ void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &
 		else
 		{
 			sendInternalMessage( i18n( "%1 has left the chat (%2)." ).
-#if QT_VERSION < 0x030200
-				arg( contactName ).arg( reason )
-#else
-				arg( contactName, reason )
-#endif
-			);
+				arg( contactName, reason ));
 		}
 	}
 
