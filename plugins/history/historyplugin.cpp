@@ -75,14 +75,13 @@ HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringLi
 
 	// Add GUI action to all existing kmm objects
 	// (Needed if the plugin is enabled while kopete is already running)
-	QIntDict<Kopete::ChatSession> sessions = Kopete::ChatSessionManager::self()->sessions();
-	QIntDictIterator<Kopete::ChatSession> it( sessions );
-	for ( ; it.current() ; ++it )
+	QValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+	for (QValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
 	{
-		if(!m_loggers.contains(it.current()))
+	  if(!m_loggers.contains(*it))
 		{
-			m_loggers.insert(it.current(), new HistoryGUIClient( it.current() ) );
-			connect( it.current(), SIGNAL(closing(Kopete::ChatSession*)),
+			m_loggers.insert(*it, new HistoryGUIClient( *it ) );
+			connect( *it, SIGNAL(closing(Kopete::ChatSession*)),
 				this, SLOT(slotKMMClosed(Kopete::ChatSession*)));
 		}
 	}

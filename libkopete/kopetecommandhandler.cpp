@@ -233,7 +233,7 @@ void Kopete::CommandHandler::slotHelpCommand( const QString &args, Kopete::ChatS
 		int commandCount = 0;
 		output = i18n( "Available Commands:\n" );
 
-		CommandList mCommands = commands( manager->user()->protocol() );
+		CommandList mCommands = commands( manager->myself()->protocol() );
 		QDictIterator<Kopete::Command> it( mCommands );
 		for( ; it.current(); ++it )
 		{
@@ -249,21 +249,21 @@ void Kopete::CommandHandler::slotHelpCommand( const QString &args, Kopete::ChatS
 	else
 	{
 		QString command = parseArguments( args ).front().lower();
-		Kopete::Command *c = commands( manager->user()->protocol() )[ command ];
+		Kopete::Command *c = commands( manager->myself()->protocol() )[ command ];
 		if( c && !c->help().isNull() )
 			output = c->help();
 		else
 			output = i18n("There is no help available for '%1'.").arg( command );
 	}
 
-	Kopete::Message msg(manager->user(), manager->members(), output, Kopete::Message::Internal, Kopete::Message::PlainText);
+	Kopete::Message msg(manager->myself(), manager->members(), output, Kopete::Message::Internal, Kopete::Message::PlainText);
 	manager->appendMessage(msg);
 }
 
 void Kopete::CommandHandler::slotSayCommand( const QString &args, Kopete::ChatSession *manager )
 {
 	//Just say whatever is passed
-	Kopete::Message msg(manager->user(), manager->members(), args,
+	Kopete::Message msg(manager->myself(), manager->members(), args,
 		Kopete::Message::Outbound, Kopete::Message::PlainText);
 	manager->sendMessage(msg);
 }
@@ -298,7 +298,7 @@ void Kopete::CommandHandler::slotExecCommand( const QString &args, Kopete::ChatS
 		}
 		else
 		{
-			Kopete::Message msg(manager->user(), manager->members(),
+			Kopete::Message msg(manager->myself(), manager->members(),
 				i18n( "ERROR: Shell access has been restricted on your system. The /exec command will not function." ),
 				Kopete::Message::Internal, Kopete::Message::PlainText );
 			manager->sendMessage( msg );
@@ -350,7 +350,7 @@ void Kopete::CommandHandler::slotExecReturnedData(KProcess *proc, char *buff, in
 	kdDebug(14010) << k_funcinfo << endl;
 	QString buffer = QString::fromLocal8Bit( buff, bufflen );
 	ManagerPair mgrPair = p->processMap[ proc ];
-	Kopete::Message msg( mgrPair.first->user(), mgrPair.first->members(), buffer, mgrPair.second, Kopete::Message::PlainText );
+	Kopete::Message msg( mgrPair.first->myself(), mgrPair.first->members(), buffer, mgrPair.second, Kopete::Message::PlainText );
 	if( mgrPair.second == Kopete::Message::Outbound )
 		mgrPair.first->sendMessage( msg );
 	else

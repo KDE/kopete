@@ -42,7 +42,7 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 
 	/**
 	 * Add our own nick as first subcontact (we need to do that here
-	 * because we need to set this contact as user() of the message
+	 * because we need to set this contact as myself() of the message
 	 * manager).
 	 */
 	JabberBaseContact *subContact = addSubContact ( rosterItem );
@@ -59,7 +59,7 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 	 * FIXME: The first contact in the list of the message manager
 	 * needs to be our own contact. This is a flaw in the Kopete
 	 * API because it can't deal with group chat properly.
-	 * If we are alone in a room, we are user() already and members()
+	 * If we are alone in a room, we are myself() already and members()
 	 * is empty. This makes at least the history plugin crash.
 	 */
 	mManager->addContact ( this );

@@ -93,7 +93,7 @@ public:
 	 * @brief Get the local user in the session
 	 * @return the local user in the session, same as account()->myself()
 	 */
-	const Contact* user() const;
+	const Contact* myself() const;
 
 	/**
 	 * @brief Get the protocol being used.
@@ -106,12 +106,6 @@ public:
 	 * @return the account
 	 */
 	Account *account() const ;
-
-	/**
-	 * @brief the KMM unique id
-	 * @return a unique identifier associated with this manager
-	 */
-	int mmId() const;
 
 	/**
 	 * @brief The caption of the chat
@@ -240,7 +234,7 @@ signals:
 	 * that the user is typing if the protocol supports this
 	 * @param isTyping say if the user is typing or not
 	 */
-	void typingMsg( bool isTyping );
+	void myselfTyping( bool isTyping );
 
 	/**
 	 * Signals that a remote user is typing a message.
@@ -304,7 +298,7 @@ public slots:
 
 	/**
 	 * Tell the KMM that the user is typing
-	 * This method should be called only by a chatwindow. It emits @ref typingMsg signal
+	 * This method should be called only by a chatwindow. It emits @ref myselfTyping signal
 	 */
 	void typing( bool t );
 
@@ -327,10 +321,8 @@ protected:
 	 * not create instances yourself directly!
 	 */
 	ChatSession( const Contact *user, ContactPtrList others,
-		Protocol *protocol, int id = 0, const char *name = 0 );
+		Protocol *protocol, const char *name = 0 );
 
-	void setMMId( int );
-	
 	/**
 	 * Set wether or not contact from this account may be invited in this chat.
 	 * By default, it is set to false

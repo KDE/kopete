@@ -54,19 +54,22 @@ void GroupWiseChatSession::Dict::remove( const ConferenceGuid & key )
 	QMap< ConferenceGuid, GroupWiseChatSession * >::remove( key.left( CONF_GUID_END ) );
 }
 
-GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const GroupWise::ConferenceGuid & guid, int id, const char* name): Kopete::ChatSession(user, others, protocol, 0, name), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )
+GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const GroupWise::ConferenceGuid & guid, int id, const char* name): Kopete::ChatSession(user, others, protocol, name), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )
 {
+  static uint s_id=0;
+  m_mmId=++s_id;
+  
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId() << endl;
 
 	// Needed because this is (indirectly) a KXMLGuiClient, so it can find the gui description .rc file
 	setInstance( protocol->instance() );
 	
 	// make sure Kopete knows about this instance
-	Kopete::ChatSessionManager::self()->addChatSession ( this );
+	Kopete::ChatSessionManager::self()->registerChatSession ( this );
 
 	connect ( this, SIGNAL( messageSent ( Kopete::Message &, Kopete::ChatSession * ) ),
 			  SLOT( slotMessageSent ( Kopete::Message &, Kopete::ChatSession * ) ) );
-	connect( this, SIGNAL( typingMsg ( bool ) ), SLOT( slotSendTypingNotification ( bool ) ) );
+	connect( this, SIGNAL( myselfTyping ( bool ) ), SLOT( slotSendTypingNotification ( bool ) ) );
 	connect( account(), SIGNAL( contactTyping( const ConferenceEvent & ) ), 
 						SLOT( slotGotTypingNotification( const ConferenceEvent & ) ) );
 	connect( account(), SIGNAL( contactNotTyping( const ConferenceEvent & ) ), 
@@ -90,6 +93,11 @@ GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::
 
 GroupWiseChatSession::~GroupWiseChatSession()
 {
+}
+
+uint GroupWiseChatSession::mmId() const
+{
+  return m_mmId;
 }
 
 void GroupWiseChatSession::setGuid( const GroupWise::ConferenceGuid & guid )
@@ -200,7 +208,7 @@ void GroupWiseChatSession::slotCreationFailed( const int failedId, const int sta
 	{
 		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't start a chat, no GUID.\n" << endl;
 		//emit creationFailed();
-		Kopete::Message failureNotify = Kopete::Message( user(), members(), i18n("An error occurred when trying to start a chat: %1").arg( statusCode ), Kopete::Message::Internal, Kopete::Message::PlainText);
+		Kopete::Message failureNotify = Kopete::Message( myself(), members(), i18n("An error occurred when trying to start a chat: %1").arg( statusCode ), Kopete::Message::Internal, Kopete::Message::PlainText);
 		appendMessage( failureNotify );
 		setClosed();
 	}
@@ -221,13 +229,13 @@ void GroupWiseChatSession::slotMessageSent( Kopete::Message & message, Kopete::C
 	{
 		/*if ( closed() )
 		{
-			Kopete::Message failureNotify = Kopete::Message( user(), members(), i18n("Your message could not be sent. This conversation has been closed by the server, because all the other participants left or declined invitations. "), Kopete::Message::Internal, Kopete::Message::PlainText);
+			Kopete::Message failureNotify = Kopete::Message( myself(), members(), i18n("Your message could not be sent. This conversation has been closed by the server, because all the other participants left or declined invitations. "), Kopete::Message::Internal, Kopete::Message::PlainText);
 			appendMessage( failureNotify );
 			messageSucceeded();
 		}
 		else*/ if ( account()->myself()->onlineStatus() == ( static_cast<GroupWiseProtocol *>( protocol() ) )->groupwiseAppearOffline )
 		{
-			Kopete::Message failureNotify = Kopete::Message( user(), members(), i18n("Your message could not be sent. You cannot send messages while your status is Appear Offline. "), Kopete::Message::Internal, Kopete::Message::PlainText);
+			Kopete::Message failureNotify = Kopete::Message( myself(), members(), i18n("Your message could not be sent. You cannot send messages while your status is Appear Offline. "), Kopete::Message::Internal, Kopete::Message::PlainText);
 			appendMessage( failureNotify );
 			messageSucceeded();
 		}
@@ -311,7 +319,7 @@ void GroupWiseChatSession::slotActionInviteAboutToShow()
 	QDictIterator<Kopete::Contact> it( account()->contacts() );
 	for( ; it.current(); ++it )
 	{
-		if( !members().contains( it.current() ) && it.current()->isOnline() && it.current() != user() )
+		if( !members().contains( it.current() ) && it.current()->isOnline() && it.current() != myself() )
 		{
 			KAction *a=new KopeteContactAction( it.current(), this,
 				SLOT( slotInviteContact( Kopete::Contact * ) ), m_actionInvite );
@@ -449,7 +457,7 @@ void GroupWiseChatSession::left( GroupWiseContact * c )
 	{
 		if ( m_invitees.count() )
 		{
-			Kopete::Message failureNotify = Kopete::Message( user(), members(), 
+			Kopete::Message failureNotify = Kopete::Message( myself(), members(), 
 						i18n("All the other participants have left, and other invitations are still pending. Your messages will not be delivered until someone else joins the chat."), 
 						Kopete::Message::Internal, Kopete::Message::PlainText );
 			appendMessage( failureNotify );
@@ -475,7 +483,7 @@ void GroupWiseChatSession::inviteDeclined( GroupWiseContact * c )
 	
 	QString from = c->metaContact()->displayName();
 
-	Kopete::Message declined = Kopete::Message( user(), members(), 
+	Kopete::Message declined = Kopete::Message( myself(), members(), 
 				i18n("%1 has rejected an invitation to join this conversation.").arg( from ), 
 				Kopete::Message::Internal, Kopete::Message::PlainText );
 	appendMessage( declined );

@@ -333,7 +333,7 @@ void JavaScriptPlugin::slotShowConsole( const QString &, Kopete::ChatSession *ma
 	if( !ep )
 	{
 		//TODO: Init EP and continue
-		Kopete::Message msg( manager->user(), manager->members(),
+		Kopete::Message msg( manager->myself(), manager->members(),
 			i18n("There are no scripts currently active for this account."),
 			Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat );
 		manager->appendMessage( msg );
@@ -350,7 +350,7 @@ void JavaScriptPlugin::slotJsExec( const QString &args, Kopete::ChatSession *man
 	if( !ep )
 	{
 		//TODO: Init EP and continue
-		Kopete::Message msg( manager->user(), manager->members(),
+		Kopete::Message msg( manager->myself(), manager->members(),
 			i18n("There are no scripts currently active for this account."),
 			Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat );
 		manager->appendMessage( msg );
@@ -368,7 +368,7 @@ void JavaScriptPlugin::slotJsExec( const QString &args, Kopete::ChatSession *man
 		}
 
 		KJS::Value val = ep->jsEngine->evaluate( cmd );
-		Kopete::Message msg( manager->user(), manager->members(),
+		Kopete::Message msg( manager->myself(), manager->members(),
 			val.toString( ep->jsEngine->globalExec() ).qstring(), dir,
 			Kopete::Message::PlainText, Kopete::Message::Chat );
 

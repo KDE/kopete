@@ -121,7 +121,7 @@ void IRCServerContact::engineInternalError(KIRC::Engine::Error engineError, KIRC
 void IRCServerContact::slotSendMsg(Kopete::Message &, Kopete::ChatSession *manager)
 {
 	manager->messageSucceeded();
-	Kopete::Message msg( manager->user(), manager->members(),
+	Kopete::Message msg( manager->myself(), manager->members(),
 		i18n("You can not talk to the server, you can only issue commands here. Type /help for supported commands."), Kopete::Message::Internal, Kopete::Message::PlainText, Kopete::Message::Chat);
 	manager->appendMessage(msg);
 }

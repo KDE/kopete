@@ -168,7 +168,7 @@ Kopete::ChatSession* OscarContact::manager(CanCreateFlags canCreate )
 		connect(mMsgManager, SIGNAL(destroyed()),
 			this, SLOT(slotChatSessionDestroyed()));
 
-		connect(mMsgManager, SIGNAL(typingMsg(bool)),
+		connect(mMsgManager, SIGNAL(myselfTyping(bool)),
 			this, SLOT(slotTyping(bool)));
 	}
 	return mMsgManager;

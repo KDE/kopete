@@ -84,7 +84,7 @@ Kopete::ChatSession* MeanwhileContact::manager( Kopete::Contact::CanCreateFlags 
 		connect(m_msgManager, SIGNAL(destroyed()), 
 				this, SLOT(slotChatSessionDestroyed()));
 
-		connect(m_msgManager, SIGNAL(typingMsg(bool)),
+		connect(m_msgManager, SIGNAL(myselfTyping(bool)),
 				this, SLOT(slotMeTypingMsg(bool)));
 
 		return m_msgManager;

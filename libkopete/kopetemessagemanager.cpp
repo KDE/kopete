@@ -49,7 +49,6 @@ public:
 	const Kopete::Contact *mUser;
 	QMap<const Kopete::Contact *, Kopete::OnlineStatus> contactStatus;
 	Kopete::Protocol *mProtocol;
-	int mId;
 	bool isEmpty;
 	bool mCanBeDeleted;
 	bool customDisplayName;
@@ -61,13 +60,12 @@ public:
 };
 
 Kopete::ChatSession::ChatSession( const Kopete::Contact *user,
-	Kopete::ContactPtrList others, Kopete::Protocol *protocol, int id, const char *name )
+	Kopete::ContactPtrList others, Kopete::Protocol *protocol, const char *name )
 : QObject( user->account(), name )
 {
 	d = new KMMPrivate;
 	d->mUser = user;
 	d->mProtocol = protocol;
-	d->mId = id;
 	d->isEmpty = others.isEmpty();
 	d->mCanBeDeleted = true;
 	d->view = 0L;
@@ -177,7 +175,7 @@ const Kopete::ContactPtrList& Kopete::ChatSession::members() const
 	return d->mContactList;
 }
 
-const Kopete::Contact* Kopete::ChatSession::user() const
+const Kopete::Contact* Kopete::ChatSession::myself() const
 {
 	return d->mUser;
 }
@@ -187,15 +185,6 @@ Kopete::Protocol* Kopete::ChatSession::protocol() const
 	return d->mProtocol;
 }
 
-int Kopete::ChatSession::mmId() const
-{
-	return d->mId;
-}
-
-void Kopete::ChatSession::setMMId( int id )
-{
-	d->mId = id;
-}
 
 #include "kopetemessagehandler.h"
 #include "kopetemessageevent.h"
@@ -274,7 +263,7 @@ void Kopete::ChatSession::appendMessage( Kopete::Message &msg )
 
 	if ( msg.direction() == Kopete::Message::Inbound )
 	{
-		QString nick=user()->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+		QString nick=myself()->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 		if ( KopetePrefs::prefs()->highlightEnabled() && !nick.isEmpty() &&
 			msg.plainBody().contains( QRegExp( QString::fromLatin1( "\\b(%1)\\b" ).arg( nick ), false ) ) )
 		{
@@ -395,7 +384,7 @@ void Kopete::ChatSession::receivedTypingMsg( const QString &contactId, bool t )
 
 void Kopete::ChatSession::typing( bool t )
 {
-	emit typingMsg( t );
+	emit myselfTyping( t );
 }
 
 void Kopete::ChatSession::setCanBeDeleted ( bool b )
@@ -433,7 +422,7 @@ void Kopete::ChatSession::slotViewDestroyed()
 
 Kopete::Account *Kopete::ChatSession::account() const
 {
-	return user()->account();
+	return myself()->account();
 }
 
 void Kopete::ChatSession::slotContactDestroyed( Kopete::Contact *contact )

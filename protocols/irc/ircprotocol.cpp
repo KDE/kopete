@@ -478,7 +478,7 @@ void IRCProtocol::slotInviteCommand( const QString &args, Kopete::ChatSession *m
 		c = dynamic_cast<IRCChannelContact*>( members.first() );
 	}
 
-	if( c && c->manager()->contactOnlineStatus( manager->user() ) == m_UserStatusOp )
+	if( c && c->manager()->contactOnlineStatus( manager->myself() ) == m_UserStatusOp )
 	{
 		static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage(
 			QString::fromLatin1("INVITE %1 %2").arg( argsList[0] ).
@@ -504,7 +504,7 @@ void IRCProtocol::slotQueryCommand( const QString &args, Kopete::ChatSession *ma
 		c->startChat();
 		if( !rest.isEmpty() )
 		{
-			Kopete::Message msg( c->manager()->user(), c->manager()->members(), rest,
+			Kopete::Message msg( c->manager()->myself(), c->manager()->members(), rest,
 				Kopete::Message::Outbound, Kopete::Message::PlainText, Kopete::Message::Chat);
 			c->manager()->sendMessage(msg);
 		}
@@ -568,7 +568,7 @@ void IRCProtocol::slotMeCommand(const QString &args, Kopete::ChatSession *manage
 
 void IRCProtocol::slotKickCommand(const QString &args, Kopete::ChatSession *manager)
 {
-	if (manager->contactOnlineStatus( manager->user() ) == m_UserStatusOp)
+	if (manager->contactOnlineStatus( manager->myself() ) == m_UserStatusOp)
 	{
 		QRegExp spaces(QString::fromLatin1("\\s+"));
 		QString nick = args.section( spaces, 0, 0);
@@ -587,7 +587,7 @@ void IRCProtocol::slotKickCommand(const QString &args, Kopete::ChatSession *mana
 
 void IRCProtocol::slotBanCommand( const QString &args, Kopete::ChatSession *manager )
 {
-	if( manager->contactOnlineStatus( manager->user() ) == m_UserStatusOp )
+	if( manager->contactOnlineStatus( manager->myself() ) == m_UserStatusOp )
 	{
 		QStringList argsList = Kopete::CommandHandler::parseArguments( args );
 		Kopete::ContactPtrList members = manager->members();
@@ -645,7 +645,7 @@ void IRCProtocol::slotDevoiceCommand( const QString &args, Kopete::ChatSession *
 
 void IRCProtocol::simpleModeChange( const QString &args, Kopete::ChatSession *manager, const QString &mode )
 {
-	if( manager->contactOnlineStatus( manager->user() ) == m_UserStatusOp )
+	if( manager->contactOnlineStatus( manager->myself() ) == m_UserStatusOp )
 	{
 		QStringList argsList = Kopete::CommandHandler::parseArguments( args );
 		Kopete::ContactPtrList members = manager->members();

@@ -76,11 +76,10 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 	
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( chatSessionCreated( Kopete::ChatSession * )) , SLOT( slotNewKMM( Kopete::ChatSession * ) ) );
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	QIntDict<Kopete::ChatSession> sessions = Kopete::ChatSessionManager::self()->sessions();
-	QIntDictIterator<Kopete::ChatSession> it( sessions );
-	for ( ; it.current() ; ++it )
+	QValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+	for (QValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
 	{
-		slotNewKMM(it.current());
+		slotNewKMM(*it);
 	}
 
 }

@@ -251,6 +251,7 @@ public:
 	 * @param parent The metaContact parent (must exists)
 	 * @param mode If the KDE address book should be updated. see @ref AddMode.
 	 *
+	 * @return false if the cration of the contact has failed.
 	 */
 	bool addContact(const QString &contactId , MetaContact *parent, AddMode mode = DontChangeKABC );
 
@@ -331,6 +332,7 @@ protected:
 	 *
 	 * @param contactId The unique ID for this protocol
 	 * @param parentContact The metacontact to add this contact to
+	 * @return false if the creation of the contact failed.  libkopete may delete the parent Contact in that case
 	 */
 	virtual bool createContact( const QString &contactId, MetaContact *parentContact ) =0;
 

@@ -51,9 +51,9 @@
 
 MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contact *user,
 	Kopete::ContactPtrList others, const char *name )
-: Kopete::ChatSession( user, others, protocol, 0, name )
+: Kopete::ChatSession( user, others, protocol,  name )
 {
-	Kopete::ChatSessionManager::self()->addChatSession( this );
+	Kopete::ChatSessionManager::self()->registerChatSession( this );
 	m_chatService = 0l;
 //	m_msgQueued = 0L;
 
@@ -132,8 +132,8 @@ void MSNChatSession::createChat( const QString &handle,
 //	uncomment this line if you don't want to the peer know when you close the window
 //	setCanBeDeleted( false );
 
-	m_chatService = new MSNSwitchBoardSocket( static_cast<MSNAccount*>( user()->account() ) , this);
-	m_chatService->setHandle( user()->account()->accountId() );
+	m_chatService = new MSNSwitchBoardSocket( static_cast<MSNAccount*>( myself()->account() ) , this);
+	m_chatService->setHandle( myself()->account()->accountId() );
 	m_chatService->setMsgHandle( handle );
 	m_chatService->connectToSwitchBoard( ID, address, auth );
 
@@ -147,7 +147,7 @@ void MSNChatSession::createChat( const QString &handle,
 		this, SLOT( slotSwitchBoardClosed() ) );
 	connect( m_chatService, SIGNAL( receivedTypingMsg( const QString &, bool ) ),
 		this, SLOT( receivedTypingMsg( const QString &, bool ) ) );
-	connect( this, SIGNAL( typingMsg( bool ) ),
+	connect( this, SIGNAL( myselfTyping( bool ) ),
 		m_chatService, SLOT( sendTypingMsg( bool ) ) );
 	connect( m_chatService, SIGNAL( msgAcknowledgement(unsigned int, bool) ),
 		this, SLOT( slotAcknowledgement(unsigned int, bool) ) );
@@ -177,7 +177,7 @@ void MSNChatSession::slotUserJoined( const QString &handle, const QString &publi
 
 void MSNChatSession::slotUserLeft( const QString &handle, const QString& reason )
 {
-	MSNContact *c = static_cast<MSNContact*>( user()->account()->contacts()[ handle ] );
+	MSNContact *c = static_cast<MSNContact*>( myself()->account()->contacts()[ handle ] );
 	if(c)
 		removeContact(c, reason );
 }
@@ -234,7 +234,7 @@ void MSNChatSession::slotMessageSent(Kopete::Message &message,Kopete::ChatSessio
 	}
 	else // There's no switchboard available, so we must create a new one!
 	{
-		static_cast<MSNAccount*>( user()->account() )->slotStartChatSession( message.to().first()->contactId() );
+		static_cast<MSNAccount*>( myself()->account() )->slotStartChatSession( message.to().first()->contactId() );
 		m_messagesQueue.append(message);
 //		sendMessageQueue();
 		//m_msgQueued=new Kopete::Message(message);
@@ -261,7 +261,7 @@ void MSNChatSession::slotMessageReceived( Kopete::Message &msg )
 			m_awayMessageTime.elapsed() > 1000 * config->readNumEntry( "AwayMessagesSeconds", 90 ) )  )
 		{
 			// Don't translate "Auto-Message:" This string is caught by MSN Plus! (and also by kopete now)
-			Kopete::Message msg2( user(), members(),
+			Kopete::Message msg2( myself(), members(),
 				"AutoMessage: " + static_cast<MSNAccount *>( account() )->awayReason(), Kopete::Message::Outbound );
 			msg2.setFg( QColor( "SlateGray3" ) );
 			QFont f;
@@ -287,7 +287,7 @@ void MSNChatSession::slotActionInviteAboutToShow()
 	QDictIterator<Kopete::Contact> it( account()->contacts() );
 	for( ; it.current(); ++it )
 	{
-		if( !members().contains( it.current() ) && it.current()->isOnline() && it.current() != user() )
+		if( !members().contains( it.current() ) && it.current()->isOnline() && it.current() != myself() )
 		{
 			KAction *a=new KopeteContactAction( it.current(), this,
 				SLOT( slotInviteContact( Kopete::Contact * ) ), m_actionInvite );
@@ -318,7 +318,7 @@ void MSNChatSession::inviteContact(const QString &contactId)
 	if( m_chatService )
 		m_chatService->slotInviteContact( contactId );
 	else
-		static_cast<MSNAccount*>( user()->account() )->slotStartChatSession( contactId );
+		static_cast<MSNAccount*>( myself()->account() )->slotStartChatSession( contactId );
 }
 
 void MSNChatSession::slotInviteOtherContact()
@@ -396,7 +396,7 @@ void MSNChatSession::slotAcknowledgement(unsigned int id, bool ack)
 void MSNChatSession::slotInvitation(const QString &handle, const QString &msg)
 {
 	//FIXME! a contact from another account can send a file
-	MSNContact *c = static_cast<MSNContact*>( user()->account()->contacts()[ handle ] );
+	MSNContact *c = static_cast<MSNContact*>( myself()->account()->contacts()[ handle ] );
 	if(!c)
 		return;
 
@@ -413,7 +413,7 @@ void MSNChatSession::slotInvitation(const QString &handle, const QString &msg)
 	{
 		if( msg.contains(MSNFileTransferSocket::applicationID()) )
 		{
-			MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(user()->account()->accountId(),c,true,this);
+			MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(myself()->account()->accountId(),c,true,this);
 			connect(MFTS, SIGNAL( done(MSNInvitation*) ) , this , SLOT( invitationDone(MSNInvitation*) ));
 			m_invitations.insert( cookie  , MFTS);
 			MFTS->parseInvitation(msg);
@@ -473,7 +473,7 @@ void MSNChatSession::sendFile(const QString &fileLocation, const QString &/*file
 		}*/
 
 		QPtrList<Kopete::Contact>contacts=members();
-		MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(user()->account()->accountId(),contacts.first(), false,this);
+		MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(myself()->account()->accountId(),contacts.first(), false,this);
 
 		//Call the setFile command to let the MFTS know what file we are sending
 		MFTS->setFile(fileLocation, fileSize);

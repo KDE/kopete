@@ -1036,7 +1036,7 @@ void GroupWiseAccount::receiveInviteNotify( const ConferenceEvent & event )
 			c = createTemporaryContact( event.user );
 
 		mgr->addInvitee( c );
-		Kopete::Message declined = Kopete::Message( mgr->user(), mgr->members(), i18n("%1 has been invited to join this conversation.").arg( c->metaContact()->displayName() ), Kopete::Message::Internal, Kopete::Message::PlainText );
+		Kopete::Message declined = Kopete::Message( mgr->myself(), mgr->members(), i18n("%1 has been invited to join this conversation.").arg( c->metaContact()->displayName() ), Kopete::Message::Internal, Kopete::Message::PlainText );
 		mgr->appendMessage( declined );
 	}
 	else

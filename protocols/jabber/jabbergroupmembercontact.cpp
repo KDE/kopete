@@ -114,7 +114,7 @@ void JabberGroupMemberContact::handleIncomingMessage ( const XMPP::Message &mess
 	type = Kopete::Message::Chat;
 
 	Kopete::ContactPtrList contactList;
-	contactList.append ( manager( Kopete::Contact::CanCreate )->user () );
+	contactList.append ( manager( Kopete::Contact::CanCreate )->myself() );
 
 	// check for errors
 	if ( message.type () == "error" )

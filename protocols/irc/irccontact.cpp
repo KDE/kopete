@@ -277,11 +277,11 @@ bool IRCContact::isChatting(Kopete::ChatSession *avoid) const
 	if (!MYACCOUNT)
 		return false;
 
-	QIntDict<Kopete::ChatSession> sessions = Kopete::ChatSessionManager::self()->sessions();
-	for (QIntDictIterator<Kopete::ChatSession> it( sessions ); it.current() ; ++it)
+	QValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+	for (QValueList<Kopete::ChatSession*>::Iterator it= sessions.begin(); it!=sessions.end() ; ++it)
 	{
-		if( it.current() != avoid && it.current()->account() == MYACCOUNT &&
-			it.current()->members().contains(this) )
+	  if( (*it) != avoid && (*it)->account() == MYACCOUNT &&
+			   (*it)->members().contains(this) )
 		{
 			return true;
 		}

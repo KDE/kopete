@@ -82,10 +82,9 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QSt
 	setXMLFile( "translatorui.rc" );
 
 	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
-	QIntDict<Kopete::ChatSession> sessions = Kopete::ChatSessionManager::self()->sessions();
-	QIntDictIterator<Kopete::ChatSession> it( sessions );
-	for ( ; it.current() ; ++it )
-		slotNewKMM( it.current() );
+	QValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+	for (QValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
+	  slotNewKMM( *it );
 
 	loadSettings();
 	connect( this, SIGNAL( settingsChanged() ), this, SLOT( loadSettings() ) );

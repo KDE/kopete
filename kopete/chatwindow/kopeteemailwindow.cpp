@@ -279,7 +279,7 @@ void KopeteEmailWindow::slotCopy()
 
 void KopeteEmailWindow::appendMessage(Kopete::Message &message)
 {
-	if( message.from() != m_manager->user() )
+	if( message.from() != m_manager->myself() )
 	{
 		if( d->mode == Send )
 			toggleMode( Reply );

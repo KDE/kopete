@@ -39,7 +39,6 @@ class MessageEvent;
 
 typedef QPtrList<Contact>        ContactPtrList;
 typedef QValueList<Message>      MessageList;
-typedef QIntDict<ChatSession> ChatSessionDict;
 
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
@@ -81,19 +80,12 @@ public:
 	/**
 	 * Registers a Kopete::ChatSession (or subclass thereof) with the Kopete::ChatSessionManager
 	 */
-	void addChatSession(Kopete::ChatSession *);
-
-	/**
-	 * Find the idth Kopete::ChatSession that the factory knows of.
-	 * @param id The number of the desired Kopete::ChatSession.
-	 * @return A pointer to the Kopete::ChatSession, or 0 if it was not found.
-	 */
-	Kopete::ChatSession *findChatSession( int id );
+	void registerChatSession(Kopete::ChatSession *);
 
 	/**
 	 * Get a list of all open sessions.
 	 */
-	const Kopete::ChatSessionDict& sessions();
+	QValueList<ChatSession*> sessions();
 
 	/**
 	 * @internal
@@ -198,10 +190,10 @@ public slots:
 private:
 	ChatSessionManager( QObject* parent = 0, const char* name = 0 );
 
-	int mId;
-	Kopete::ChatSessionDict mSessionDict;
+	class Private;
+	Private *d;
 
-	static ChatSessionManager *s_factory;
+	static ChatSessionManager *s_self;
 
 };
 

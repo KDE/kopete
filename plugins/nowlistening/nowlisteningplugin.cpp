@@ -68,11 +68,9 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 			chatSessionCreated( Kopete::ChatSession * )) , SLOT( slotNewKMM(
 			Kopete::ChatSession * ) ) );
 
-	QIntDict<Kopete::ChatSession> sessions =
-			Kopete::ChatSessionManager::self()->sessions();
-	QIntDictIterator<Kopete::ChatSession> it( sessions );
-	for ( ; it.current() ; ++it )
-		slotNewKMM( it.current() );
+	QValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
+	for (QValueListIterator<Kopete::ChatSession*> it= sessions.begin(); it!=sessions.end() ; ++it)
+	  slotNewKMM( *it );
 
 	// get a pointer to the dcop client
 	m_client = kapp->dcopClient(); //new DCOPClient();
@@ -265,7 +263,7 @@ void NowListeningPlugin::advertiseToChat( Kopete::ChatSession *theChat, QString 
 	// any message
 	if ( pl.isEmpty() )
 		return;
-	Kopete::Message msg( theChat->user(),
+	Kopete::Message msg( theChat->myself(),
 			pl,
 			message,
 			Kopete::Message::Outbound,

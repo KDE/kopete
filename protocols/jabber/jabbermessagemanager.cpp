@@ -27,17 +27,17 @@
 
 JabberChatSession::JabberChatSession ( JabberProtocol *protocol, const JabberBaseContact *user,
 											 Kopete::ContactPtrList others, const QString &resource, const char *name )
-											 : Kopete::ChatSession ( user, others, protocol, 0, name )
+											 : Kopete::ChatSession ( user, others, protocol,  name )
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId () << endl;
 
 	// make sure Kopete knows about this instance
-	Kopete::ChatSessionManager::self()->addChatSession ( this );
+	Kopete::ChatSessionManager::self()->registerChatSession ( this );
 
 	connect ( this, SIGNAL ( messageSent ( Kopete::Message &, Kopete::ChatSession * ) ),
 			  this, SLOT ( slotMessageSent ( Kopete::Message &, Kopete::ChatSession * ) ) );
 
-	connect ( this, SIGNAL ( typingMsg ( bool ) ), this, SLOT ( slotSendTypingNotification ( bool ) ) );
+	connect ( this, SIGNAL ( myselfTyping ( bool ) ), this, SLOT ( slotSendTypingNotification ( bool ) ) );
 
 	// check if the user ID contains a hardwired resource,
 	// we'll have to use that one in that case
@@ -74,7 +74,7 @@ void JabberChatSession::updateDisplayName ()
 const JabberBaseContact *JabberChatSession::user () const
 {
 
-	return static_cast<const JabberBaseContact *>(Kopete::ChatSession::user());
+	return static_cast<const JabberBaseContact *>(Kopete::ChatSession::myself());
 
 }
 
@@ -119,7 +119,7 @@ void JabberChatSession::slotSendTypingNotification ( bool typing )
 		++listIterator;
 
 		// create JID for us as sender
-		XMPP::Jid fromJid ( user()->contactId () );
+		XMPP::Jid fromJid ( myself()->contactId () );
 		fromJid.setResource ( account()->pluginData ( protocol (), "Resource" ) );
 
 		// create JID for the recipient

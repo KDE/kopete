@@ -175,6 +175,13 @@ private:
 	Kopete::ContactPtrList m_invitees;
 	// track the number of members actually in the chat
 	uint m_memberCount;
+	
+	/**
+	 * return an unique identifier for that kmm
+	 * @todo check it!
+	*/
+	uint mmId() const;
+	uint m_mmId;
 
 };
 

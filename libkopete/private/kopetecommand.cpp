@@ -130,7 +130,7 @@ void Kopete::Command::printError( const QString &error, Kopete::ChatSession *man
 	}
 	else
 	{
-		Kopete::Message msg( manager->user(), manager->members(), error,
+		Kopete::Message msg( manager->myself(), manager->members(), error,
 			Kopete::Message::Internal, Kopete::Message::PlainText );
 		manager->appendMessage( msg );
 	}

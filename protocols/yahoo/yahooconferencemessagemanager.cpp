@@ -32,9 +32,9 @@
 
 YahooConferenceChatSession::YahooConferenceChatSession( const QString & /* yahooRoom */, Kopete::Protocol *protocol, const Kopete::Contact *user,
 	Kopete::ContactPtrList others, const char *name )
-: Kopete::ChatSession( user, others, protocol, 0, name )
+: Kopete::ChatSession( user, others, protocol,  name )
 {
-	Kopete::ChatSessionManager::self()->addChatSession( this );
+	Kopete::ChatSessionManager::self()->registerChatSession( this );
 }
 
 YahooConferenceChatSession::~YahooConferenceChatSession()

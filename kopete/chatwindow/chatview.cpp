@@ -121,7 +121,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, const char *name )
 	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 	
 	// add contacts
-	slotContactAdded( mgr->user(), true );
+	slotContactAdded( mgr->myself(), true );
 	for ( QPtrListIterator<Kopete::Contact> it( mgr->members() ); it.current(); ++it )
 		slotContactAdded( *it, true );
 	
@@ -587,7 +587,7 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString &reason, Kopete::Message::MessageFormat format, bool suppressNotification )
 {
 	kdDebug(14000) << k_funcinfo << endl;
-	if ( contact != m_manager->user() )
+	if ( contact != m_manager->myself() )
 	{
 		m_remoteTypingMap.remove( const_cast<Kopete::Contact *>( contact ) );
 
@@ -671,7 +671,7 @@ void ChatView::appendMessage(Kopete::Message &message)
 		}
 	}
 
-	if( !d->sendInProgress || message.from() != m_manager->user() )
+	if( !d->sendInProgress || message.from() != m_manager->myself() )
 	{
 		unreadMessageFrom = message.from()->metaContact() ?
 			 message.from()->metaContact()->displayName() : message.from()->contactId();
@@ -744,7 +744,7 @@ void ChatView::sendInternalMessage(const QString &msg, Kopete::Message::MessageF
 {
 	// When closing kopete, some internal message may be sent because some contact are deleted
 	// these contacts can already be deleted
-	Kopete::Message message = Kopete::Message( 0L /*m_manager->user()*/ , 0L /*m_manager->members()*/, msg, Kopete::Message::Internal, format );
+	Kopete::Message message = Kopete::Message( 0L /*m_manager->myself()*/ , 0L /*m_manager->members()*/, msg, Kopete::Message::Internal, format );
 	// (in many case, this is useless to set myself as contact)
 	// TODO: set the contact which initiate the internal message,
 	// so we can later show a icon of it (for example, when he join a chat)
@@ -845,7 +845,7 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 				}
 			}
 		
-			if(!found && contact != m_manager->user()->contactId())
+			if(!found && contact != m_manager->myself()->contactId())
 				event->accept();
 		}
 	}
@@ -862,7 +862,7 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 				Kopete::Contact *c=it.current();
 				if(c && c->account() == m_manager->account())
 				{
-					if( c != m_manager->user() &&  !m_manager->members().contains(c)  && c->isOnline())
+					if( c != m_manager->myself() &&  !m_manager->members().contains(c)  && c->isOnline())
 						event->accept();
 				}
 			}
@@ -898,7 +898,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 					break;
 				}
 			}
-			if(!found && contact != m_manager->user()->contactId())
+			if(!found && contact != m_manager->myself()->contactId())
 				m_manager->inviteContact(contact);
 		}
 	}
@@ -914,7 +914,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 				Kopete::Contact *c=it.current();
 				if(c && c->account() == m_manager->account() && c->isOnline())
 				{
-					if( c != m_manager->user() &&  !m_manager->members().contains(c) )
+					if( c != m_manager->myself() &&  !m_manager->members().contains(c) )
 						m_manager->inviteContact(c->contactId());
 				}
 			}

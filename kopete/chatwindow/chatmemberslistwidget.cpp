@@ -134,7 +134,7 @@ ChatMembersListWidget::ChatMembersListWidget( Kopete::ChatSession *session, QWid
 	setSorting( -1 );
 	
 	// add chat members
-	slotContactAdded( session->user() );
+	slotContactAdded( session->myself() );
 	for ( QPtrListIterator<Kopete::Contact> it( session->members() ); it.current(); ++it )
 		slotContactAdded( *it );
 	
@@ -170,7 +170,7 @@ void ChatMembersListWidget::slotContactAdded( const Kopete::Contact *contact )
 void ChatMembersListWidget::slotContactRemoved( const Kopete::Contact *contact )
 {
 	kdDebug(14000) << k_funcinfo << endl;
-	if ( m_members.contains( contact ) && contact != session()->user() )
+	if ( m_members.contains( contact ) && contact != session()->myself() )
 	{
 		delete m_members[ contact ];
 		m_members.remove( contact );

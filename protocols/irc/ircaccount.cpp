@@ -764,7 +764,7 @@ void IRCAccount::appendMessage( const QString &message, MessageType type )
 		if( activeView && activeView->msgManager()->account() == this )
 		{
 			Kopete::ChatSession *manager = activeView->msgManager();
-			Kopete::Message msg( manager->user(), manager->members(), message,
+			Kopete::Message msg( manager->myself(), manager->members(), message,
 				Kopete::Message::Internal, Kopete::Message::RichText, Kopete::Message::Chat );
 			activeView->appendMessage(msg);
 		}

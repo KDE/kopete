@@ -277,7 +277,7 @@ void KIMIfaceImpl::messageContact( const QString &uid, const QString& messageTex
 		Kopete::Contact * c = m->preferredContact();
 		Kopete::ChatSession * manager = c->manager(Kopete::Contact::CanCreate);
 		c->manager( Kopete::Contact::CanCreate )->view( true );
-		Kopete::Message msg = Kopete::Message( manager->user(), manager->members(), messageText,
+		Kopete::Message msg = Kopete::Message( manager->myself(), manager->members(), messageText,
 				Kopete::Message::Outbound, Kopete::Message::PlainText);
 		manager->sendMessage( msg );
 	}

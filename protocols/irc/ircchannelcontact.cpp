@@ -337,7 +337,7 @@ void IRCChannelContact::setTopic(const QString &topic)
 {
 	if (manager(Kopete::Contact::CannotCreate))
 	{
-		if( manager()->contactOnlineStatus( manager()->user() ) ==
+		if( manager()->contactOnlineStatus( manager()->myself() ) ==
 			m_protocol->m_UserStatusOp || !modeEnabled('t') )
 		{
 			bool okPressed = true;

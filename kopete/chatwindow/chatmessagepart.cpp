@@ -377,7 +377,7 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 			);
 		}
 	}
-	QString nick = m_manager->user()->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
+	QString nick = m_manager->myself()->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
 	retVal.replace( QRegExp( QString::fromLatin1("([\\s&;>])%1([\\s&;<:])")
 		.arg( QRegExp::escape( KopeteEmoticons::parseEmoticons( nick ) ) )  ), QString::fromLatin1("\\1%1\\2").arg( nick ) );
 	

@@ -27,14 +27,14 @@
 
 JabberGroupChatManager::JabberGroupChatManager ( JabberProtocol *protocol, const JabberBaseContact *user,
 											 Kopete::ContactPtrList others, XMPP::Jid roomJid, const char *name )
-											 : Kopete::ChatSession ( user, others, protocol, 0, name )
+											 : Kopete::ChatSession ( user, others, protocol,  name )
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId () << endl;
 
 	mRoomJid = roomJid;
 
 	// make sure Kopete knows about this instance
-	Kopete::ChatSessionManager::self()->addChatSession ( this );
+	Kopete::ChatSessionManager::self()->registerChatSession ( this );
 
 	connect ( this, SIGNAL ( messageSent ( Kopete::Message &, Kopete::ChatSession * ) ),
 			  this, SLOT ( slotMessageSent ( Kopete::Message &, Kopete::ChatSession * ) ) );
@@ -54,7 +54,7 @@ void JabberGroupChatManager::updateDisplayName ()
 const JabberBaseContact *JabberGroupChatManager::user () const
 {
 
-	return static_cast<const JabberBaseContact *>(Kopete::ChatSession::user());
+	return static_cast<const JabberBaseContact *>(Kopete::ChatSession::myself());
 
 }
 

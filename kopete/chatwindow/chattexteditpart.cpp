@@ -61,7 +61,7 @@ ChatTextEditPart::ChatTextEditPart( Kopete::ChatSession *session, QWidget *paren
 	connect( session, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & , const Kopete::OnlineStatus &) ),
 	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 	
-	slotContactAdded( session->user() );
+	slotContactAdded( session->myself() );
 	for ( QPtrListIterator<Kopete::Contact> it( session->members() ); it.current(); ++it )
 		slotContactAdded( *it );
 }
@@ -349,7 +349,7 @@ void ChatTextEditPart::setContents( const Kopete::Message &message )
 
 Kopete::Message ChatTextEditPart::contents()
 {
-	Kopete::Message currentMsg( m_session->user(), m_session->members(), edit()->text(),
+	Kopete::Message currentMsg( m_session->myself(), m_session->members(), edit()->text(),
 	                            Kopete::Message::Outbound, richTextEnabled() ?
 	                            Kopete::Message::RichText : Kopete::Message::PlainText );
 	
