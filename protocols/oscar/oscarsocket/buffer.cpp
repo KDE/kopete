@@ -18,6 +18,7 @@
 #include <kdebug.h>
 #include <string.h>
 #include "buffer.h"
+#include "buffer.moc"
 
 WORD Buffer::sequenceNum = 0x010f;
 
@@ -172,7 +173,7 @@ BYTE Buffer::getByte()
 		thebyte = buf[0];
 		for (unsigned int i=1;i<length;i++)
 		{  //get rid of first element by shifting the array
-			buf[i-1] = buf[i];	
+			buf[i-1] = buf[i];
 		}
 		length--;
 	}

@@ -38,6 +38,7 @@ using namespace std;
 
 // Local Includes
 #include "libwinpopup.h"
+#include "libwinpopup.moc"
 
 void UpdateThread::run()
 {
@@ -156,7 +157,7 @@ void KWinPopup::update(bool Wait)
 }
 
 void KWinPopup::doUpdate()
-{	
+{
 //	qDebug("Got initial search host: %s", myInitialSearchHost.latin1());
 
 	// get our domain master
@@ -173,15 +174,15 @@ void KWinPopup::doUpdate()
 	while(todo.count())
 	{
 //		qDebug("Searching server: %s", todo[0].latin1());
-	
+
 		// move one item from the todo to done.
 		QString thisServer = todo[0], thisGroup;
 		todo.remove(thisServer);
 		done += thisServer;
-		
+
 		// grab data
 		QPair<stringMap, stringMap> thisPair = grabData(thisServer, &thisGroup);
-		
+
 		// put all new workgroups on todo list
 		for(stringMap::Iterator i = thisPair.second.begin(); i != thisPair.second.end(); i++)
 			if( (!todo.contains(i.data())) && (!done.contains(i.data())) )
@@ -218,7 +219,7 @@ QPair<stringMap, stringMap> KWinPopup::grabData(const QString &Host, QString *th
 
 	int Phase = 0;
 	QRegExp pair("^\\t([^\\s]+)\\s+([^\\s].*)$"), base("^\\t([^\\s]+)\\s*$"), sep("^\\t-{9}"), info("^Domain=\\[([^\\]]+)\\] OS=\\[([^\\]]+)\\] Server=\\[([^\\]]+)\\]");
-	
+
 	stringMap hosts, groups;
 
 	while(sender->isRunning() || sender->canReadLineStdout())
@@ -258,7 +259,7 @@ QPair<stringMap, stringMap> KWinPopup::newGrabData(const QString &Host, QString 
 	int Phase = 0;
 	QRegExp pair("^\\t([^\\s]+)\\s+([^\\s].*)$"), base("^\\t([^\\s]+)\\s*$"), sep("^\\t-{9}"), info("^Domain=\\[([^\\]]+)\\] OS=\\[([^\\]]+)\\] Server=\\[([^\\]]+)\\]");
 	stringMap hosts, groups;
-	
+
 
 	for(QString Line = ""; sender->isRunning() || sender->readln(Line) > -1; Line = "")
 	{
@@ -301,7 +302,7 @@ const QStringList KWinPopup::getGroups()
 	for(QMap<QString, WorkGroup>::Iterator i = theGroups.begin(); i != theGroups.end(); i++)
 		ret += i.key();
 	reading--;
-	
+
 	return ret;
 }
 
@@ -320,7 +321,7 @@ const QStringList KWinPopup::getHosts(const QString &Group)
 bool KWinPopup::checkHost(const QString &Name)
 {
 	bool ret = false;
-	
+
 	reading++;
 	for(QMap<QString, WorkGroup>::Iterator i = theGroups.begin(); i != theGroups.end() && !ret; i++)
 		if((*i).Hosts.contains(Name)) ret = true;

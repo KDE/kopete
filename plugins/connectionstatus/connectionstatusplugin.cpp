@@ -21,6 +21,7 @@
 #include <kprocess.h>
 
 #include "connectionstatusplugin.h"
+#include "connectionstatusplugin.moc"
 #include "kopete.h"
 
 K_EXPORT_COMPONENT_FACTORY(kopete_connectionstatus, KGenericFactory<ConnectionStatusPlugin>);
@@ -34,7 +35,7 @@ ConnectionStatusPlugin::ConnectionStatusPlugin(QObject *parent, const char *name
 	connect(qtTimer, SIGNAL(timeout()), this,
 		 SLOT(slotCheckStatus()) );
 	qtTimer->start(60000);
-	
+
 	kpIfconfig = new KProcess;
 	connect(kpIfconfig, SIGNAL(receivedStdout(KProcess *, char *, int)),
 		this, SLOT(slotProcessStdout(KProcess *, char *, int)));
@@ -59,10 +60,10 @@ bool ConnectionStatusPlugin::unload()
 
 void ConnectionStatusPlugin::slotCheckStatus()
 {
-	/* Use KProcess to run netstat -r. We'll then parse the output of 
-	* netstat -r in slotProcessStdout() to see if it mentions the     
+	/* Use KProcess to run netstat -r. We'll then parse the output of
+	* netstat -r in slotProcessStdout() to see if it mentions the
 	* default gateway. If so, we're connected, if not, we're offline */
-	
+
 	kdDebug() << "ConnectionStatusPlugin::checkStatus()" << endl;
 	*kpIfconfig << "netstat" << "-r";
 	kpIfconfig->start(KProcess::DontCare, KProcess::Stdout);
@@ -86,9 +87,9 @@ void ConnectionStatusPlugin::setConnectedStatus(bool connected)
 	* connected -- then we call slotDisconnectAll(). This mechanism is required so that we don't
 	* keep calling slotConnectAll() or slotDisconnectAll() constantly.
 	*/
-	
+
 	kdDebug() << "ConnectionStatusPlugin::setConnectedStatus()" << endl;
-	
+
 	if (connected && !m_boolPluginConnected) // the machine is connected and plugin thinks we're disconnected
 	{
 		kdDebug() << "Setting m_boolPluginConnected to true" << endl;

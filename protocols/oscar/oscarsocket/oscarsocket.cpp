@@ -20,6 +20,7 @@ extern "C" {
 };
 
 #include "oscarsocket.h"
+#include "oscarsocket.moc"
 #include "oncomingsocket.h"
 #include <qdatetime.h>
 #include <unistd.h>
@@ -334,7 +335,7 @@ void OscarSocket::OnRead(void)
 								key = inbuf.getBlock(keylen);
 								emit keyReceived();
 								break;
-						default: //unknown subtype	
+						default: //unknown subtype
 								kdDebug() << "[OSCAR] Error: unknown family/subtype " << s.family << "/" << s.subtype << endl;
 						};
 						break;
@@ -382,8 +383,8 @@ FLAP OscarSocket::getFLAP(void)
 						// Got both pieces of info we need...
 						fl.sequence_number = (theword << 8) | theword2;
 				}
-				
-				
+
+
 				//get the data field length
 				if ((theword = getch()) == -1) {
 						kdDebug() << "[OSCAR] Error reading sequence number: nothing to be read" << endl;
@@ -394,7 +395,7 @@ FLAP OscarSocket::getFLAP(void)
 				} else {
 						fl.length = (theword << 8) | theword2;
 				}
-				
+
 		} else {
 				kdDebug() << "[OSCAR] Error reading FLAP... start byte is " << start << endl;
 		}
@@ -479,7 +480,7 @@ void OscarSocket::OnKeyReceived(void)
 }
 
 /** Sends login information, actually logs onto the server */
-void OscarSocket::sendLogin(void) 
+void OscarSocket::sendLogin(void)
 {
     kdDebug() << "[OSCAR] Sending login info..." << endl;;
     unsigned char digest[16];
@@ -679,7 +680,7 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 	    bosServer = ip.left(index);
 	    ip.remove(0,index+1); //get rid of the colon and everything before it
 	    bosPort = ip.toInt();
-	    kdDebug() << "[OSCAR] server is " << bosServer << ", ip.right(index) is " << ip 
+	    kdDebug() << "[OSCAR] server is " << bosServer << ", ip.right(index) is " << ip
 		      << ", bosPort is " << bosPort << endl;
 	    delete bosip->data;
 	}
@@ -777,7 +778,7 @@ void OscarSocket::parseMemRequest(Buffer &inbuf)
     DWORD len = inbuf.getDWord();
     QList<TLV> ql = inbuf.getTLVList();
     ql.setAutoDelete(TRUE);
-    kdDebug() << "[OSCAR][parseMemRequest] requested offset " << offset 
+    kdDebug() << "[OSCAR][parseMemRequest] requested offset " << offset
 	      << ", length " << len << endl;
     if (len == 0)
 	{
@@ -856,10 +857,10 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 	    ssiData.append(ssi);
 	    SSI *ssi2 = ssiData.current();
 	    if (ssi->name == "CWRU")
-		kdDebug() << "[OSCAR] Read CWRU: name: " << ssi2->name << ", gid: " << ssi2->gid 
-			  << ", bid: " << ssi2->bid << ", type: " << ssi2->type << ", tbslen: " 
+		kdDebug() << "[OSCAR] Read CWRU: name: " << ssi2->name << ", gid: " << ssi2->gid
+			  << ", bid: " << ssi2->bid << ", type: " << ssi2->type << ", tbslen: "
 			  << ssi2->tlvlength << endl;
-	    kdDebug() << "[OSCAR] Read a buddy: name: " << ssi->name << ", gid: " << ssi->gid 
+	    kdDebug() << "[OSCAR] Read a buddy: name: " << ssi->name << ", gid: " << ssi->gid
 		      << ", bid: " << ssi->bid << ", type: " << ssi->type << ", tbslen: " << ssi->tlvlength
 		      << endl;
 	    TBuddy *bud;
@@ -869,7 +870,7 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 		bud->name = ssi->name;
 		bud->group = curgroup;
 		bud->status = OSCAR_OFFLINE;
-		kdDebug() << "[OSCAR] Adding " << ssi->name <<  "to group " << curgroup 
+		kdDebug() << "[OSCAR] Adding " << ssi->name <<  "to group " << curgroup
 			  << " (" << blist.buddyList.getNameGroup(curgroup) << ")" << endl;
 		blist.buddyList.add(bud);
 		break;
@@ -1068,7 +1069,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
     QHostAddress qh;
     QString message;
     QSocket *s = new QSocket;
-				
+
 		switch(channel)
 		{
  		case 0x0001: //normal IM
@@ -1083,7 +1084,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 						switch(type) {
 						case 0x0002: //message block
 						{
-								
+
 								// This is the total length of the rest of this message TLV
 								length = inbuf.getWord();
 
@@ -1101,7 +1102,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 								//unicode encoding of the message, mostly 0x0000 0x0000
 								inbuf.getWord();
 								inbuf.getWord();
-								
+
 								//strip off the unicode info length
 								msglen -= 4;
 								// Get the message
@@ -1117,7 +1118,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 								} else {
 										moreTLVs = false;
 								}
-								
+
 								break;
 						}
 						case 0x0004: // Away message
@@ -1149,7 +1150,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 								} else {
 										moreTLVs = false;
 								}
-								
+
 						default: //unknown type
 								kdDebug() << "[OSCAR][parseIM] unknown msg tlv type " << type;
 								if(inbuf.getLength() > 0){
@@ -1157,7 +1158,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 								} else {
 										moreTLVs = false;
 								}
-																		
+
 						};
 				}
 				break;
@@ -1213,13 +1214,13 @@ void OscarSocket::parseIM(Buffer &inbuf)
 										kdDebug() << "[OSCAR] ClientIP1: " << cur->data[0] << "."
 															<< cur->data[1] << "." << cur->data[2] << "."
 															<< cur->data[3]  << endl;
-						
+
 								}
 								//Secondary IP address from the perspective of the client
 								else if (cur->type == 0x0003)
 								{
-										kdDebug() << "[OSCAR] ClientIP2: " << cur->data[0] << "." 
-															<< cur->data[1] << "." << cur->data[2] << "." 
+										kdDebug() << "[OSCAR] ClientIP2: " << cur->data[0] << "."
+															<< cur->data[1] << "." << cur->data[2] << "."
 															<< cur->data[3] << endl;
 								}
 								//Verified IP address (from perspective of oscar server)
@@ -1235,7 +1236,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 															<< cur->data[2] << "." << cur->data[3] << endl;
 										kdDebug() << "[OSCAR] OscarIP: " << qh.toString() << endl;
 								}
-								//Port number 
+								//Port number
 								else if (cur->type == 0x0005)
 								{
 										remotePort = (cur->data[1] << 8) | cur->data[0];
@@ -1297,11 +1298,11 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 				// First comes their screen name
 				char *cb = inbuf.getBlock(len);
 				u.sn = cb;
-				
+
 				// Next comes the warning level
 				//for some reason aol multiplies the warning level by 10
 				u.evil = inbuf.getWord() / 10;
-				
+
 				//the number of TLV's that follow
 				WORD tlvlen = inbuf.getWord();
 				kdDebug() << "[OSCAR] ScreenName length: " << len << ", sn: " << u.sn << ", evil: " << u.evil
@@ -1326,7 +1327,7 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 								u.idletime = (WORD) ((t.data[0] << 8) | t.data[1]);
 								break;
 								//case 0x000d: //capability info
-								
+
 								//break;
 						case 0x000f: //session length (in seconds)
 								u.sessionlen = (t.data[0] << 24) | (t.data[1] << 16)
@@ -1336,15 +1337,15 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 								kdDebug() << "[OSCAR][parseUserInfo] invalid tlv type " << t.type << endl;
 						};
 						delete t.data;
-						
+
 				}
-				// TODO [Sept 27 2002] gives compilation warning on third argument 
+				// TODO [Sept 27 2002] gives compilation warning on third argument
 				// (warning: unsigned int format, long unsigned int arg (arg 3))
 				kdDebug() << "[OSCAR], userclass: " << u.userclass << ", membersince: " << u.membersince
 									<< ", onlinesince: " << u.onlinesince << ", idletime: " << u.idletime << endl;
 				// (unsigned char)u.userclass, u.membersince,(unsigned short)u.onlinesince, u.idletime);
 		} else {
-				// Buffer had length of zero for some reason, so 
+				// Buffer had length of zero for some reason, so
 				u.userclass = -1;
 				u.membersince = -1;
 				u.onlinesince = -1;
@@ -1354,7 +1355,7 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 		return u;
 }
 
-		
+
 /** Sends message to dest */
 void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAuto)
 {
@@ -1465,7 +1466,7 @@ void OscarSocket::parseUserProfile(Buffer &inbuf)
     QDateTime qdt;
     qdt.setTime_t(u.onlinesince);
     profile += "Online Since: <B>" + qdt.toString() + "</B><br>\n";
-    profile += QString("Idle Minutes: <B>%1</B><br>\n<hr><br>").arg(u.idletime);  
+    profile += QString("Idle Minutes: <B>%1</B><br>\n<hr><br>").arg(u.idletime);
     QString away, prof;
     for (TLV *cur = tl.first();cur;cur = tl.next())
 		{
@@ -1606,7 +1607,7 @@ void OscarSocket::parseRedirect(Buffer &inbuf)
 		    break;
 		default: //unknown
 		    kdDebug() << "[OSCAR] Unknown tlv type in parseredirect: " << tmp->type << endl;
-		    break;				
+		    break;
 		}
 	    delete tmp->data;
 	}
@@ -1648,7 +1649,7 @@ void OscarSocket::sendDirectIMRequest(const QString &sn)
 		}
 	} //16
     //TLV (type a)
-    outbuf.addWord(0x000a);  
+    outbuf.addWord(0x000a);
     outbuf.addWord(0x0002);
     outbuf.addWord(0x0001); //6
     //TLV (type 3)
@@ -1747,7 +1748,7 @@ void OscarSocket::sendAddGroup(const QString &name)
     kdDebug() << "[OSCAR] Sending add group" << endl;
     SSI *newitem = ssiData.addGroup(name);
     kdDebug() << "[OSCAR] Adding group gid " << newitem->gid << endl;
-    sendSSIAddModDel(newitem,0x0008); 
+    sendSSIAddModDel(newitem,0x0008);
 }
 
 /** Sends SSI add, modify, or delete request, to reuse code */

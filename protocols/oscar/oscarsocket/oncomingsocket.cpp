@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include "oncomingsocket.h"
+#include "oncomingsocket.moc"
 
 OncomingSocket::OncomingSocket(QObject *parent, const char *name )
 : QServerSocket(0,5,parent,name)

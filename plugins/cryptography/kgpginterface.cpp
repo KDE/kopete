@@ -18,9 +18,8 @@
  ***************************************************************************/
 
 #include "cryptographyplugin.h" //needed for cached password
- 
 #include "kgpginterface.h"
-
+#include "kgpginterface.moc"
 
 #include <kmessagebox.h>
 #include <kapplication.h>
@@ -56,7 +55,7 @@ void KgpgInterface::KgpgEncryptFile(QString userIDs,KURL srcUrl,KURL destUrl, QS
     {
       *proc<<"gpg"<<"--no-tty"<<"--no-secmem-warning"<<"--status-fd=2";
 
-	
+
   *proc<<Options.local8Bit()<<"--output"<<destUrl.path().local8Bit()<<"-e";
       int ct=userIDs.find(" ");
       while (ct!=-1)  // if multiple keys...
@@ -357,7 +356,7 @@ void KgpgInterface::KgpgSignFile(QString keyName,QString keyID,KURL srcUrl,QStri
   keyID=keyID.stripWhiteSpace();
   Options=Options.stripWhiteSpace();
   Options=Options.simplifyWhiteSpace();
-  
+
     *proc<<"gpg"<<"--no-tty"<<"--no-secmem-warning"<<"--status-fd=2"<<"--passphrase-fd"<<QString::number(ppass[0])<<"-u"<<keyID;
 
 	 *proc<<Options.local8Bit()<<"--detach-sig"<<srcUrl.path().local8Bit();
@@ -404,7 +403,7 @@ void KgpgInterface::KgpgVerifyFile(KURL srcUrl,KURL sigUrl)
   proc->start(KProcess::NotifyOnExit,true);
       }
 
-      
+
 void KgpgInterface::readprocess(KProcIO *p)
 {
 QString required="";
@@ -510,11 +509,11 @@ int code=KPasswordDialog::getPassword(passphrase,i18n("Enter passphrase for %1:"
   char buffer[200];
   signb=0;
   sigsearch=0;
-  
+
  QString gpgcmd="gpg --no-tty --no-secmem-warning --with-colon --list-sigs "+keyID;
   //////////   encode with untrusted keys or armor if checked by user
   fp = popen(gpgcmd.latin1(), "r");
-  while ( fgets( buffer, sizeof(buffer), fp)) 
+  while ( fgets( buffer, sizeof(buffer), fp))
   {
   encResult=buffer;
   if (encResult.startsWith("sig"))
@@ -537,7 +536,7 @@ int code=KPasswordDialog::getPassword(passphrase,i18n("Enter passphrase for %1:"
 
   QObject::connect(conprocess, SIGNAL(processExited(KProcess *)),this, SLOT(delsignover(KProcess *)));
   conprocess->start(KProcess::NotifyOnExit,true);
-  
+
 }
 
 void KgpgInterface::timerDone()
@@ -553,7 +552,7 @@ while (p->readln(required,true)!=-1)
 {
  if ((step==0) && (required.find("keyedit.prompt")!=-1)) {p->writeStdin("uid 1");step=1;required="";}
   if ((step==1) && (required.find("keyedit.prompt")!=-1)) {p->writeStdin("delsig");step=2;required="";}
-  if ((step==2) && (required.find("keyedit.delsig")!=-1)) 
+  if ((step==2) && (required.find("keyedit.delsig")!=-1))
   {
 
   if (sigsearch==signb) {p->writeStdin("Y");step=3;}
@@ -561,7 +560,7 @@ while (p->readln(required,true)!=-1)
   sigsearch++;
   required="";
   }
- if ((step==3) && (required.find("keyedit.prompt")!=-1)) {p->writeStdin("save");required="";deleteSuccess=true;} 
+ if ((step==3) && (required.find("keyedit.prompt")!=-1)) {p->writeStdin("save");required="";deleteSuccess=true;}
  if (required.find("GET_LINE")!=-1){p->writeStdin("quit");deleteSuccess=false;}
  }
 //p->ackRead();
@@ -578,7 +577,7 @@ int KgpgInterface::checkuid(QString KeyID)
   QString encResult;
   char buffer[200];
 int  uidcnt=0;
-  
+
  QString gpgcmd="gpg --no-tty --no-secmem-warning --with-colon --list-sigs "+KeyID;
   //////////   encode with untrusted keys or armor if checked by user
   fp = popen(gpgcmd.latin1(), "r");
