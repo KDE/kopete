@@ -93,6 +93,7 @@ class KopeteChatViewPrivate
 	public:
 		KopeteXSLT *xsltParser;
 		QString captionText;
+		QString statusText;
 		bool transparencyEnabled;
 		bool bgOverride;
 		bool fgOverride;
@@ -549,7 +550,7 @@ void ChatView::setTabState( KopeteTabState newState )
 	}
 
 	if( newState != Typing )
-		setStatus( i18n( "One person in the chat", "%n people in the chat", memberContactMap.count() ) );
+		setStatusText( i18n( "One person in the chat", "%n people in the chat", memberContactMap.count() ) );
 }
 
 void ChatView::setMainWindow( KopeteChatWindow* parent )
@@ -722,7 +723,7 @@ void ChatView::remoteTyping( const KopeteContact *contact, bool isTyping )
 	// Update the status area
 	if( !typingList.isEmpty() )
 	{
-		setStatus ( i18n( "%1 is typing a message", "%1 are typing a message", typingList.count() ).arg( statusTyping ) );
+		setStatusText( i18n( "%1 is typing a message", "%1 are typing a message", typingList.count() ).arg( statusTyping ) );
 		setTabState( Typing );
 	}
 	else
@@ -731,11 +732,16 @@ void ChatView::remoteTyping( const KopeteContact *contact, bool isTyping )
 	}
 }
 
-void ChatView::setStatus( const QString &status )
+void ChatView::setStatusText( const QString &status )
 {
-	m_status = status;
+	d->statusText = status;
 	if ( d->isActive )
 		m_mainWindow->setStatus( status );
+}
+
+const QString& ChatView::statusText()
+{
+	return d->statusText;
 }
 
 void ChatView::pageUp()
@@ -1599,7 +1605,7 @@ KopeteMessage ChatView::messageFromNode( Node &n )
 	return message;
 }
 
-const QString ChatView::viewsText()
+QString ChatView::viewsText()
 {
 	return chatView->htmlDocument().body().innerHTML().string();
 }

@@ -100,7 +100,7 @@ public:
 	 * Sets the text to be displayed on the status label
 	 * @param text The text to be displayed
 	 */
-	void setStatus( const QString &text );
+	void setStatusText( const QString &text );
 
 	/**
 	 * Tells this view it is the active view
@@ -174,9 +174,9 @@ public:
 	 * Returns the HTML contents of the KHTML widget
 	 * @return The contents of the view
 	 */
-	const QString viewsText();
+	QString viewsText();
 
-	QString &status() { return m_status; }
+	const QString &statusText();
 
 	bool docked() { return ( m_tabBar != 0L ); }
 

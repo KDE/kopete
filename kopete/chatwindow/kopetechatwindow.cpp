@@ -892,7 +892,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	}
 
 	setCaption( m_activeView->caption() );
-	setStatus( m_activeView->status() );
+	setStatus( m_activeView->statusText() );
 	m_activeView->setFocus();
 
 	slotUpdateSendEnabled();
