@@ -19,8 +19,6 @@
  ***************************************************************************/
 
 
-#include <qregexp.h>
-
 #include <klocale.h>
 #include <kpassdlg.h>
 
@@ -230,7 +228,7 @@ void KgpgInterface::readdecprocess(KProcIO *p)
             {
               if (userIDs.isEmpty())
                 userIDs=i18n("[No user id found]");
-				userIDs.replace(QRegExp("<"),"&lt;");
+				userIDs.replace('<',"&lt;");
               QCString passphrase;
               QString passdlgmessage;
               if (anonymous)
@@ -346,7 +344,9 @@ QString KgpgInterface::KgpgEncryptText(QString text,QString userIDs, QString Opt
     }
   dests+=" --recipient "+userIDs;
 
-  text=text.replace(QRegExp("\\\\") , "\\\\").replace(QRegExp("\\\"") , "\\\"").replace(QRegExp("\\$") , "\\$");
+  // FIXME: Why replace this if we use KShellProcess:quote() 2 lines below?
+  //        This doesn't look like safe code to me - Martijn
+  text = text.replace( '\\', "\\\\" ).replace( '\"', "\\\"" ).replace( '$', "\\$" );
 
   gpgcmd="echo ";
   gpgcmd+=KShellProcess::quote(text);
@@ -449,7 +449,7 @@ void KgpgInterface::txtreaddecprocess(KProcIO *p)
               if ((step<3) && (!anonymous))
                 passdlgmessage=i18n("<b>Bad passphrase</b>. You have %1 tries left.<br>").arg(step);
               QString prettyuIDs=userIDs;
-              prettyuIDs.replace(QRegExp("<"),"&lt;");
+              prettyuIDs.replace('<',"&lt;");
               passdlgmessage+=i18n("Enter passphrase for <b>%1</b>").arg(prettyuIDs);
               int code=KPasswordDialog::getPassword(passphrase,passdlgmessage);
               if (code!=QDialog::Accepted)
@@ -497,7 +497,7 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
 		{
 			/// pipe for passphrase
 			//userID=QString::fromUtf8(userID);
-			userID.replace(QRegExp("<"),"&lt;");
+			userID.replace('<',"&lt;");
 			QString passdlg=i18n("Enter passphrase for <b>%1</b>:").arg(userID);
 			if (counter>1)
 				passdlg.prepend(i18n("<b>Bad passphrase</b><br> You have %1 tries left.<br>").arg(QString::number(4-counter)));
@@ -551,7 +551,7 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
       /// pipe for passphrase
       counter++;
 	  //userID=QString::fromUtf8(userID);
-	  userID.replace(QRegExp("<"),"&lt;");
+	  userID.replace('<',"&lt;");
       QString passdlg=i18n("Enter passphrase for <b>%1</b>:").arg(userID);
       if (counter>1)
         passdlg.prepend(i18n("<b>Bad passphrase</b><br> You have %1 tries left.<br>").arg(QString::number(4-counter)));
@@ -748,7 +748,7 @@ void KgpgInterface::readsignprocess(KProcIO *p)
               if (step<3)
                 passdlgmessage=i18n("<b>Bad passphrase</b>. you have %1 tries left.<br>").arg(step);
               QString prettyuIDs=QString::fromUtf8(userIDs);
-              prettyuIDs.replace(QRegExp("<"),"&lt;");
+              prettyuIDs.replace('<',"&lt;");
               passdlgmessage+=i18n("Enter passphrase for <b>%1</b>").arg(prettyuIDs);
               int code=KPasswordDialog::getPassword(passphrase,passdlgmessage);
               if (code!=QDialog::Accepted)
@@ -817,7 +817,7 @@ void KgpgInterface::verifyfin(KProcess *)
       keyID=message.section(' ',0,0);
       message.remove(0,keyID.length());
       keyMail=message;
-      KMessageBox::information(0,i18n("<qt>Good signature from :<br><b>%1</b><br>Key ID: %2</qt>").arg(keyMail.replace(QRegExp("<"),"&lt;")).arg(keyID),file.filename());
+      KMessageBox::information(0,i18n("<qt>Good signature from :<br><b>%1</b><br>Key ID: %2</qt>").arg(keyMail.replace('<',"&lt;")).arg(keyID),file.filename());
     }
   else if (message.find("UNEXPECTED")!=-1)
     KMessageBox::sorry(0,i18n("No signature found."),file.filename());
@@ -830,7 +830,7 @@ void KgpgInterface::verifyfin(KProcess *)
       message.remove(0,keyID.length());
       keyMail=message;
       KMessageBox::sorry(0,i18n("<qt><b>BAD signature</b> from:<br> %1<br>Key id: %2<br><br>"
-	  "<b>The file is corrupted!</b></qt>").arg(keyMail.replace(QRegExp("<"),"&lt;")).arg(keyID),file.filename());
+	  "<b>The file is corrupted!</b></qt>").arg(keyMail.replace('<',"&lt;")).arg(keyID),file.filename());
     }
   else
     KMessageBox::sorry(0,message);
@@ -856,7 +856,7 @@ void KgpgInterface::KgpgSignKey(QString keyID,QString signKeyID,QString signKeyM
       emit signatureFinished(0);
       return;
     }
-signKeyMail.replace(QRegExp("<"),"&lt;");
+signKeyMail.replace('<',"&lt;");
   konsLocal=local;
   konsSignKey=signKeyID;
   konsKeyID=keyID;

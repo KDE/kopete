@@ -10,7 +10,6 @@
 #include "msginfoplugin.h"
 
 #include <qcolor.h>
-#include <qregexp.h>
 
 K_EXPORT_COMPONENT_FACTORY( kopete_msginfo, KGenericFactory<MsgInfoPlugin> );
 
@@ -67,15 +66,15 @@ MsgInfoPlugin::slotProcessSend( KopeteMessage& msg )
 void
 MsgInfoPlugin::changeMessage( KopeteMessage& msg )
 {
-	msg.setBody( msg.body().replace( QRegExp( "%K%" ), "Kopete - The best IM client") );
-	msg.setBody( msg.body().replace( QRegExp( "%U%" ), "http://kopete.kde.org") );
+	msg.setBody( msg.body().replace( "%K%", "Kopete - The best IM client") );
+	msg.setBody( msg.body().replace( "%U%", "http://kopete.kde.org") );
 	if ( msg.direction() == KopeteMessage::Inbound ) {
 		int num = mMsgCountMap[ msg.from()->metaContact() ];
-		msg.setBody( msg.body().replace( QRegExp( "%#%" ), QString::number(num) ) );
+		msg.setBody( msg.body().replace( "%#%", QString::number(num) ) );
 	} else {
 		KopeteMetaContact *meta = msg.to().first()->metaContact();
 		int num = mMsgCountMap[ meta ];
-		msg.setBody( msg.body().replace( QRegExp( "%#%" ), QString::number(num) ) );
+		msg.setBody( msg.body().replace( "%#%", QString::number(num) ) );
 	}
 }
 
