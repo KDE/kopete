@@ -390,6 +390,7 @@ GaduAccount::notifyDescription( struct gg_event* e )
 void
 GaduAccount::statusChanged( struct gg_event* e )
 {
+    kdDebug(14100)<<"####"<<" status changed, uin:"<< e->event.status.uin <<endl;
     GaduContact *c = contactsMap_.find( e->event.status.uin ).data();
     if( !c )
 	return;
@@ -408,7 +409,7 @@ GaduAccount::connectionFailed( struct gg_event* /*e*/ )
 {
     status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
     myself_->setOnlineStatus( status_ );
-	KMessageBox::error( qApp->mainWidget(), i18n("Plugin unable to connect to the Gadu-Gadu server."),
+    KMessageBox::error( qApp->mainWidget(), i18n("Plugin unable to connect to the Gadu-Gadu server."),
 					i18n("Connection Error") );
 }
 
@@ -524,43 +525,48 @@ GaduAccount::userlist( const QString& u)
 		if (uin.isNull()){
 		    kdDebug(14100) << "no Uin, strange "<<endl;
 		    kdDebug(14100) << "LINE:" << cline <<endl;
-		    		    
+		    continue;    		    
 		}
 
-		if ( ! contactsMap_.contains( uin.toUInt() ) ){
-			// if there is no nicname
-			if (nickname.isNull()){
-				// no name either
-				if (name.isNull()){
-					// maybe we can use fistname + surname ?
-					if (firstname.isNull() && surname.isNull()){
-						contactname=uin;
+		// if exists, don't add it
+		// FIXME: this does not work, i don't know reason why :/		
+		// 	  contacts map didn't work either
+		if (contacts()[uin]){
+		    continue;
+		}
+
+		// if there is no nicname
+		if (nickname.isNull()){
+			// no name either
+			if (name.isNull()){
+			// maybe we can use fistname + surname ?
+				if (firstname.isNull() && surname.isNull()){
+					contactname=uin;
+				}
+				// what a shame, i have to use UIN than :/
+				else{
+					if (firstname.isNull()){
+						contactname=surname;
 					}
-					// what a shame, i have to use UIN than :/
 					else{
-						if (firstname.isNull()){
-							contactname=surname;
+						if (surname.isNull()){
+						contactname=firstname;
 						}
 						else{
-							if (surname.isNull()){
-							contactname=firstname;
-							}
-							else{
-								contactname=firstname+" "+surname;
-							}
+							contactname=firstname+" "+surname;
 						}
 					}
-				}
-				else{
-					contactname=name;
 				}
 			}
 			else{
-				contactname=nickname;
+				contactname=name;
 			}
-			addContact( uin, contactname, 0L, group );
 		}
-	}
+		else{
+			contactname=nickname;
+		}
+		addContact( uin, contactname, 0L, QString::null);
+    	}
 }
 
 void
