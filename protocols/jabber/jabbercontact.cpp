@@ -86,7 +86,6 @@ void JabberContact::initActions() {
 void JabberContact::showContextMenu(QPoint, QString) {
     popup = new KPopupMenu();
     popup->insertTitle(userID() + " (" + mResource + ")");
-	KGlobal::config()->setGroup("Jabber");
 	actionChat->plug(popup);
 	if (mStatus != STATUS_OFFLINE) {
 		QStringList items;
