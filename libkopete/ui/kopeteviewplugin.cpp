@@ -2,6 +2,7 @@
     kopeteviewplugin.cpp - View Manager
 
     Copyright (c) 2005      by Jason Keirstead       <jason@keirstead.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *

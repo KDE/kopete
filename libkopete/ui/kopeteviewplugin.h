@@ -2,6 +2,7 @@
     kopeteviewplugin.h - View Manager
 
     Copyright (c) 2005      by Jason Keirstead       <jason@keirstead.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -48,7 +49,7 @@ class KOPETE_EXPORT ViewPlugin : public Plugin
 		virtual KopeteView *createView( ChatSession *session ){ return 0L; };
 
 		/**
-		 * @brief Re-implimented from @ref KopetePlugin
+		 * @brief Reimplemented from @ref KopetePlugin
 		 */
 		virtual void aboutToUnload();
 };
