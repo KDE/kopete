@@ -24,8 +24,6 @@ class KopeteMetaContact;
 class AddContactPage;
 class KIRC;
 
-class KAction;
-class KActionMenu;
 class EditIdentityWidget;
 class KopeteIdentity;
 class IRCIdentity;
@@ -62,18 +60,9 @@ public:
 
 	virtual KopeteIdentity* createNewIdentity(const QString &identityId);
 
-public slots:
-	/** OBSOLETE **/
-	virtual void connect();
-	virtual void disconnect();
-
 private:
-	KActionMenu *m_actionMenu;
-
 	/** FIXME: Do something with this when Identity support is added!!!!!!!! */
 	IRCIdentity *identity;
-	KAction *actionDisconnect;
-	KAction *actionConnect;
 
 	QMap<QString,IRCIdentity*> mIdentityMap;
 };

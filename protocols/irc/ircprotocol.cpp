@@ -20,6 +20,7 @@
 #include <qapplication.h>
 #include <qcursor.h>
 #include <qregexp.h>
+#include <qdict.h>
 
 #include <kaction.h>
 #include <kconfig.h>
@@ -45,24 +46,15 @@
 
 K_EXPORT_COMPONENT_FACTORY( kopete_irc, KGenericFactory<IRCProtocol> );
 
-IRCProtocol::IRCProtocol( QObject *parent, const char *name,
-	const QStringList & /* args */ )
+IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
 : KopeteProtocol( parent, name )
 {
-	m_actionMenu = 0L;
-	actionConnect = new KAction ( i18n("Online"), "", 0, this, SLOT(connect()), this, "actionIRCConnect" );
-	actionDisconnect = new KAction ( i18n("Offline"), "", 0, this, SLOT(disconnect()), this, "actionIRCDisconnect" );
-
 	kdDebug(14120) << k_funcinfo << endl;
 	// Load all ICQ icons from KDE standard dirs
 
 	setStatusIcon( "irc_protocol_offline" );
 
 	new IRCPreferences("irc_protocol", this);
-
-	KConfig *cfg = KGlobal::config();
-	cfg->setGroup("IRC");
-	identity = new IRCIdentity( cfg->readEntry("Nickname", "KopeteUser") + "@" + cfg->readEntry("Server", "irc.freenode.net") + ":" + cfg->readEntry("Port", "6667"), this);
 }
 
 IRCProtocol::~IRCProtocol()
@@ -72,24 +64,22 @@ IRCProtocol::~IRCProtocol()
 
 KActionMenu* IRCProtocol::protocolActions()
 {
-	if (!m_actionMenu)
+	KActionMenu *mActionMenu;
+	QDict<KopeteIdentity> mIdentities = KopeteIdentityManager::manager()->identities(this);
+	QDictIterator<KopeteIdentity> it( mIdentities );
+
+	if( mIdentities.count() == 1 )
+		mActionMenu = static_cast<IRCIdentity*>( it.current() )->actionMenu();
+	else
 	{
-		m_actionMenu = new KActionMenu( "IRC", this );
-		m_actionMenu->popupMenu()->insertTitle(SmallIcon( "irc_protocol_small" ), i18n( "IRC" ) );
-		m_actionMenu->insert(actionConnect);
-		m_actionMenu->insert(actionDisconnect);
+		mActionMenu = new KActionMenu( "IRC", this );
+		for( ; it.current(); ++it )
+		{
+			mActionMenu->insert( static_cast<IRCIdentity*>( it.current() )->actionMenu() );
+		}
 	}
-	return m_actionMenu;
-}
 
-void IRCProtocol::connect()
-{
-	identity->connect();
-}
-
-void IRCProtocol::disconnect()
-{
-	identity->disconnect();
+	return mActionMenu;
 }
 
 const QString IRCProtocol::protocolIcon()
@@ -114,26 +104,34 @@ EditIdentityWidget *IRCProtocol::createEditIdentityWidget(KopeteIdentity *identi
 
 KopeteIdentity *IRCProtocol::createNewIdentity(const QString &identityId)
 {
-	if( !mIdentityMap.contains( identityId ) )
-	{
-		IRCIdentity *id = new IRCIdentity( identityId, this );
-		mIdentityMap[ identityId ] = id;
-	}
+	kdDebug(14120) << k_funcinfo << endl;
 
-	return mIdentityMap[ identityId ];
+	IRCIdentity *id = new IRCIdentity( identityId, this );
+	mIdentityMap[ identityId.section('@',1) ] = id;
+
+	return id;
 }
 
 void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> & /* addressBookData */ )
 {
+	kdDebug(14120) << k_funcinfo << endl;
+
 	QString contactId = serializedData[ "contactId" ];
-	if( !contacts()[ contactId ] )
+	QString displayName = serializedData[ "displayName" ];
+	QStringList identities  = QStringList::split( ",", serializedData[ "identities" ] );
+
+	if( !identities.isEmpty() && !contactId.isEmpty() )
 	{
-		QString displayName = serializedData[ "displayName" ];
 		if( displayName.isEmpty() )
 			displayName = contactId;
 
-		identity->addContact( contactId, displayName, metaContact );
+		for( QStringList::Iterator it = identities.begin() ; it != identities.end(); ++it )
+		{
+			QString server = (*it).section('@',1);
+			if( mIdentityMap.contains( server ) )
+				mIdentityMap[ server ]->addContact( contactId, displayName, metaContact );
+		}
 	}
 }
 
