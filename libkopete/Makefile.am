@@ -1,3 +1,4 @@
+SUBDIRS = ui
 INCLUDES = -I$(top_srcdir)/kopete/library $(all_includes)
 lib_LTLIBRARIES = libkopete.la
 # kopete_include_HEADERS = contactlist.h  imcontact.h  improtocol.h kopete.h pluginmanager.h
