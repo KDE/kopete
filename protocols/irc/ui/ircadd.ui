@@ -1,0 +1,113 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>ircAddUI</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>ircAddUI</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>353</width>
+            <height>155</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Form4</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>11</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>GroupBox1</cstring>
+            </property>
+            <property name="title">
+                <string>Contact Information</string>
+            </property>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel1</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>20</y>
+                        <width>90</width>
+                        <height>22</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>MSN id</string>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel3</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>90</y>
+                        <width>90</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Show as</string>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel1_2</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>50</y>
+                        <width>210</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>( for example joe@hotmail.com )</string>
+                </property>
+            </widget>
+            <widget class="QLineEdit">
+                <property name="name">
+                    <cstring>addID</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>90</x>
+                        <y>20</y>
+                        <width>127</width>
+                        <height>22</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget class="QLineEdit">
+                <property name="name">
+                    <cstring>addNick</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>90</x>
+                        <y>90</y>
+                        <width>127</width>
+                        <height>22</height>
+                    </rect>
+                </property>
+            </widget>
+        </widget>
+    </vbox>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

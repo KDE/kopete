@@ -1,0 +1,260 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>ircPrefsUI</class>
+<author>Duncan Mac-Vicar P.</author>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>ircPrefsUI</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>484</width>
+            <height>368</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Form1</string>
+    </property>
+    <widget class="QTabWidget">
+        <property name="name">
+            <cstring>TabWidget3</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>11</x>
+                <y>11</y>
+                <width>466</width>
+                <height>350</height>
+            </rect>
+        </property>
+        <widget class="QWidget">
+            <property name="name">
+                <cstring>tab</cstring>
+            </property>
+            <attribute name="title">
+                <string>Connection</string>
+            </attribute>
+            <widget class="QGroupBox">
+                <property name="name">
+                    <cstring>GroupBox2</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>170</y>
+                        <width>440</width>
+                        <height>140</height>
+                    </rect>
+                </property>
+                <property name="title">
+                    <string>Server Information</string>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>TextLabel6</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>16</x>
+                            <y>35</y>
+                            <width>70</width>
+                            <height>20</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>MSN Server</string>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>TextLabel7</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>16</x>
+                            <y>65</y>
+                            <width>63</width>
+                            <height>20</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Port</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>mServer</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>116</x>
+                            <y>35</y>
+                            <width>127</width>
+                            <height>22</height>
+                        </rect>
+                    </property>
+                </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>mPort</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>116</x>
+                            <y>65</y>
+                            <width>127</width>
+                            <height>22</height>
+                        </rect>
+                    </property>
+                </widget>
+            </widget>
+            <widget class="QGroupBox">
+                <property name="name">
+                    <cstring>GroupBox1</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>10</y>
+                        <width>440</width>
+                        <height>150</height>
+                    </rect>
+                </property>
+                <property name="title">
+                    <string>Login Information</string>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mAutoConnect</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>280</x>
+                            <y>20</y>
+                            <width>110</width>
+                            <height>20</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Auto-Connect</string>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>11</x>
+                            <y>21</y>
+                            <width>90</width>
+                            <height>22</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>MSN id</string>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>TextLabel2_2</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>10</x>
+                            <y>50</y>
+                            <width>240</width>
+                            <height>20</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>( for example joe@hotmail.com )</string>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>TextLabel2</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>10</x>
+                            <y>80</y>
+                            <width>90</width>
+                            <height>22</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>MSN Password</string>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>TextLabel3</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>10</x>
+                            <y>110</y>
+                            <width>90</width>
+                            <height>20</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>MSN Nick</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>mID</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>119</x>
+                            <y>21</y>
+                            <width>130</width>
+                            <height>22</height>
+                        </rect>
+                    </property>
+                </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>mPass</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>120</x>
+                            <y>80</y>
+                            <width>127</width>
+                            <height>22</height>
+                        </rect>
+                    </property>
+                    <property name="echoMode">
+                        <enum>Password</enum>
+                    </property>
+                </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>mNick</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>120</x>
+                            <y>110</y>
+                            <width>127</width>
+                            <height>22</height>
+                        </rect>
+                    </property>
+                </widget>
+            </widget>
+        </widget>
+    </widget>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
