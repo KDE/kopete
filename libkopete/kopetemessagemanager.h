@@ -48,6 +48,7 @@ class OnlineStatus;
 class Account;
 class ChatSessionManager;
 class MessageHandlerChain;
+class TemporaryKMMCallbackAppendMessageHandler;
 
 typedef QPtrList<Contact>   ContactPtrList;
 typedef QValueList<Message> MessageList;
