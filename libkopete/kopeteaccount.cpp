@@ -129,11 +129,15 @@ void KopeteAccount::writeConfig( const QString &configGroup )
 
 	if( !d->password.isNull() )
 		config->writeEntry( "Password", cryptStr( d->password ) );
+	else
+		config->deleteEntry( "Password" );
 
 	config->writeEntry( "AutoConnect", d->autologin );
 
 	if( d->color.isValid() )
 		config->writeEntry( "Color", d->color );
+	else
+		config->deleteEntry( "Color" );
 
 	// Store other plugin data
 	KopetePluginDataObject::writeConfig( configGroup );
