@@ -41,8 +41,8 @@ int main(int argc, char *argv[])
   aboutData.addAuthor ("Nick Betcher", "core developer","nbetcher@usinternet.com", "http://www.kdedevelopers.net" );
   KCmdLineArgs::init( argc, argv, &aboutData );
   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
+	KUniqueApplication::addCmdLineOptions();
 
-	
   Kopete kopete;
 //kopete->show();
   kopete.exec();
