@@ -1,2 +1,2 @@
-SUBDIRS = autoaway translator
+SUBDIRS = autoaway translator contactnotes
 
