@@ -256,3 +256,4 @@ void WebPresencePlugin::slotSettingsChanged()
 //#include "webpresenceplugin.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
+#include "webpresenceplugin.moc"
