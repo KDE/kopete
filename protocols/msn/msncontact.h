@@ -95,7 +95,7 @@ public:
 	 * Not the whole API supports multi-group membership yet, be careful
 	 * relying on this for now!
 	 */
-	QStringList groups() const;
+	virtual QStringList groups();
 
 	/**
 	 * The contact's MSN specific status, this is NOT the ContactStatus!
@@ -106,10 +106,10 @@ public:
 
 	/**
 	 * Add/Remove user to/from a group
-	 * FIXME: Probably needs another API. For now, just port.
 	 */
-	void addToGroup( const QString &group );
-	void removeFromGroup( const QString &group );
+	virtual void addToGroup( const QString &group );
+	virtual void removeFromGroup( const QString &group );
+	virtual void moveToGroup( const QString &from, const QString &to );
 
 public slots:
 	void slotChatThisUser();

@@ -162,6 +162,11 @@ void MSNContact::slotRemoveFromGroup()
 	MSNProtocol::protocol()->removeFromGroup( this, m_groups.first() );
 }
 
+void MSNContact::moveToGroup( const QString &from, const QString &to )
+{
+	MSNProtocol::protocol()->moveContact( this, from, to );
+}
+
 void MSNContact::slotMoveThisUser()
 {
 	// FIXME: originating group should also be provided!
@@ -174,12 +179,7 @@ void MSNContact::slotMoveThisUser()
 				<< "slot invocation. Yes, I know this is ugly!" << endl;
 		}
 		else
-		{
-			m_movingToGroup   = m_actionMove->currentText();
-			m_movingFromGroup = m_groups.first();
-			MSNProtocol::protocol()->moveContact( this, m_movingFromGroup,
-				m_movingToGroup );
-		}
+			moveToGroup( m_groups.first(), m_actionMove->currentText() );
 	}
 }
 
@@ -475,7 +475,7 @@ void MSNContact::setAllowed( bool allowed )
 	m_allowed = allowed;
 }
 
-QStringList MSNContact::groups() const
+QStringList MSNContact::groups()
 {
 	return m_groups;
 }
