@@ -956,7 +956,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 void ChatView::registerContextMenuHandler( QObject *target, const char* slot )
 {
 	connect( m_messagePart,
-		SIGNAL( contextMenuEvent( DOM::HTMLElement &, KPopupMenu * ) ),
+	SIGNAL( contextMenuEvent( Kopete::Message &, const QString &, KPopupMenu * ) ),
 		target,
 		slot
 	);
@@ -965,7 +965,7 @@ void ChatView::registerContextMenuHandler( QObject *target, const char* slot )
 void ChatView::registerTooltipHandler( QObject *target, const char* slot )
 {
 	connect( m_messagePart,
-		SIGNAL( tooltipEvent( DOM::HTMLElement &, QString & ) ),
+		SIGNAL( tooltipEvent( Kopete::Message &, const QString &, QString & ) ),
 		target,
 		slot
 	);

@@ -21,6 +21,8 @@
 
 #include <qclipboard.h>
 #include <qtooltip.h>
+#include <qrect.h>
+#include <qcursor.h>
 
 #include <dom/dom_doc.h>
 #include <dom/dom_text.h>
@@ -595,7 +597,38 @@ QString ChatMessagePart::textUnderMouse()
 		return QString::null;
 
 	DOM::Text textNode = activeNode;
-	return textNode.data().string();
+	QString data = textNode.data().string();
+	
+	//Ok, we have the whole node. Now, find the text under the mouse.
+	int mouseLeft = view()->mapFromGlobal( QCursor::pos() ).x(),
+		nodeLeft = activeNode.getRect().x(),
+		cPos = 0,
+		dataLen = data.length();
+	
+	QFontMetrics metrics( KopetePrefs::prefs()->fontFace() );
+	QString buffer;
+	while( cPos < dataLen && nodeLeft < mouseLeft )
+	{
+		QChar c = data[cPos++];
+		if( c.isSpace() )
+			buffer.truncate(0);
+		else
+			buffer += c;
+
+		nodeLeft += metrics.width(c);
+	}
+	
+	if( cPos < dataLen )
+	{
+		QChar c = data[cPos++];
+		while( cPos < dataLen && !c.isSpace() )
+		{
+			buffer += c;
+			c = data[cPos++];
+		}
+	}
+	
+	return buffer;
 }
 
 void ChatMessagePart::slotCopyURL()
