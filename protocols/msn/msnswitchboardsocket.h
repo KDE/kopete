@@ -70,6 +70,9 @@ private:
 	QTimer *m_emoticonTimer;
 	QPtrList<KTempFile> m_typewrited;
 
+	/** the number of chunk for currents messages */
+	unsigned int m_chunks;
+
 protected:
 	/**
 	 * Handle an MSN command response line.

@@ -57,6 +57,7 @@ MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account , QObject *paren
 	m_p2p=0l;
 	m_recvIcons=0;
 	m_emoticonTimer=0L;
+	m_chunks=0;
 }
 
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
@@ -236,9 +237,11 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			QString fontName;
 			QString fontInfo;
 			QString color;
-			int pos1 = msg.find( "X-MMS-IM-Format" ) + 15;
 
-			fontInfo = msg.mid(pos1, msg.find("\r\n\r\n") - pos1 );
+			rx=QRegExp("X-MMS-IM-Format: ([A-Za-z0-9$!*/;\\-]*)");
+			rx.search(msg);
+			fontInfo =rx.cap(1);
+			
 			color = parseFontAttr(fontInfo, "CO");
 
 			// FIXME: this is so BAAAAAAAAAAAAD :(
@@ -297,9 +300,9 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 
 		QString message=msg.right( msg.length() - msg.find("\r\n\r\n") - 4 );
 
-		//Stupid MSN PLUS colors code. message with incorrect charact�e are not showed correctly in the chatwindow.
+		//Stupid MSN PLUS colors code. message with incorrect charactere are not showed correctly in the chatwindow.
 		//TODO: parse theses one to show the color too in Kopete
-		message.replace("\3","").replace("\4","").replace("\2","");
+		message.replace("\3","").replace("\4","").replace("\2","").replace("\5","").replace("\6","").replace("\7","");
 
 		if(!m_account->contacts()[m_msgHandle])
 		{
@@ -317,10 +320,29 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		kmsg.setFg( fontColor );
 		kmsg.setFont( font );
 
-		if ( m_recvIcons > 0 )
+		rx=QRegExp("Chunks: ([0-9]*)");
+		rx.search(msg);
+		unsigned int chunks=rx.cap(1).toUInt();
+		rx=QRegExp("Chunk: ([0-9]*)");
+		rx.search(msg);
+		unsigned int chunk=rx.cap(1).toUInt();
+
+		if(chunk != 0 && !m_msgQueue.isEmpty())
+		{
+			QString msg=m_msgQueue.last().plainBody();
+			m_msgQueue.pop_back(); //removes the last item
+			kmsg.setBody( msg+ message, Kopete::Message::PlainText );
+		}
+
+		if(chunk == 0 )
+			m_chunks=chunks;
+		else if(chunk+1 >=  m_chunks)
+			m_chunks=0;
+
+		if ( m_recvIcons > 0  || m_chunks > 0)
 		{ //Some custom emoticons are waiting to be received. so append the message to the queue
-			
-			kdDebug(14140) << k_funcinfo << "Not all icons received => append to queue.  Emoticon left: " << m_recvIcons <<endl;
+		  //Or the message has not been fully received, so same thing
+			kdDebug(14140) << k_funcinfo << "Message not fully received => append to queue.  Emoticon left: " << m_recvIcons << "  chunks: " << chunk+1 << " of " << m_chunks   <<endl;
 			m_msgQueue.append( kmsg );
 			if(!m_emoticonTimer) //to be sure no message will be lost, we will appends message to
 			{                    // the queue in 15 secondes even if we have not received emoticons
@@ -481,18 +503,25 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 	head += "; CS=0; PF=0";		
 	if (msg.plainBody().isRightToLeft()) 
 		head += "; RL=1";
-	head += "\r\n\r\n";		
+	head += "\r\n";
 		
 	QString message= msg.plainBody().replace(  "\n" , "\r\n" );
 		
 	//-- Check if the message isn't too big,  TODO: do that at the libkopete level.
 	int len_H=head.utf8().length();	// != head.length()  because i need the size in butes and
 	int len_M=message.utf8().length();	//    some utf8 char may be longer than one byte
-	if( len_H+len_M >= 1664 ) //1664 is the maximum size of messages allowed by the server
+	if( len_H+len_M >= 1660 ) //1664 is the maximum size of messages allowed by the server
 	{
+		//We will certenly split the message in several ones.
+		//It's possible to made the opposite client join them, as explained in this MS Word document
+		//http://www.bot-depot.com/forums/index.php?act=Attach&type=post&id=35110
+
+		head+="Message-ID: {7B7B34E6-7A8D-44FF-926C-1799156B58"+QString::number( rand()%10)+QString::number( rand()%10)+"}\r\n";
+		int len_H=head.utf8().length()+ 14;   //14 is the size of "Chunks: x"
 		//this is the size of each part of the message (excluding the header)
-		int futurmessages_size=1664-len_H; 
-		
+		int futurmessages_size=1400;  //1400 is a common good size
+		//int futurmessages_size=1664-len_H; 
+
 		int nb=(int)ceil((float)(len_M)/(float)(futurmessages_size));
 
 		if(KMessageBox::warningContinueCancel(0L /* FIXME: we should try to find a parent somewere*/ ,
@@ -502,6 +531,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		{
 			int place=0;
 			int result;
+			int chunk=0;
 			do
 			{
 				QString m=message.mid(place, futurmessages_size);
@@ -525,16 +555,32 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 					m=m.left(len-d);
 					place -= d;
 				}
-
-				result=sendCommand( "MSG", "A", true, (head+m).utf8() );
-
+				QString chunk_str;
+				if(chunk==0)
+					chunk_str="Chunks: "+QString::number(nb)+"\r\n";
+				else if(chunk<nb)
+					chunk_str="Chunk: "+QString::number(chunk)+"\r\n";
+				else
+				{
+					kdDebug(14140) << k_funcinfo <<"The message is slit in more than initially estimated" <<endl;
+				}
+				result=sendCommand( "MSG", "A", true, (head+chunk_str+"\r\n"+m).utf8() );
+				chunk++;
 			}
 			while(place < len_M) ;
+
+			while(chunk<nb)
+			{
+				kdDebug(14140) << k_funcinfo <<"The message is plit in less than initially estimated.  Sending empty message to complete" <<endl;
+				QString chunk_str="Chunk: "+QString::number(chunk);
+				sendCommand( "MSG", "A", true, (head+chunk_str+"\r\n").utf8() );
+				chunk++;
+			}
 			return result;
 		}
 		return -2;  //the message hasn't been sent.
 	}
-	return sendCommand( "MSG", "A", true, (head+ message).utf8() );
+	return sendCommand( "MSG", "A", true, (head+"\r\n"+message).utf8() );
 }
 
 void MSNSwitchBoardSocket::slotSocketClosed( )
