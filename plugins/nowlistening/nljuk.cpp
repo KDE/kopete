@@ -66,8 +66,8 @@ void NLJuk::update()
 
 			if ( replyType == "QString" ) {
 				reply >> result;
-				m_artist = result.section("-",0,0);
-				newTrack = result.section("-",1,1);
+				m_artist = result.section( " - ", 0, 0 );
+				newTrack = result.section( " - ", 1, 1 );
 			}
 		}
 
