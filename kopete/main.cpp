@@ -41,6 +41,7 @@ static KCmdLineOptions options[] =
 		"to load multiple plugins. This option has no effect when\n"
 		"--noplugins is set and overrides all other plugin related\n"
 		"command line options." ), 0 },
+	{ "url <url>",              I18N_NOOP( "Load the given kopete: url" ), 0 },
 	{ "!+[plugin]",            I18N_NOOP( "Load specified plugins" ), 0 },
 	KCmdLineLastOption
 };

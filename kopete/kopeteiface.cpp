@@ -21,6 +21,7 @@
 #include <kglobal.h>
 
 #include "kopeteiface.h"
+#include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
@@ -28,7 +29,6 @@
 #include "kopeteprotocol.h"
 #include "kopeteaway.h"
 #include "kopetecontact.h"
-
 
 KopeteIface::KopeteIface() : DCOPObject( "KopeteIface" )
 {
@@ -91,6 +91,28 @@ void KopeteIface::sendFile(const QString &displayName, const KURL &sourceURL,
 }
 
 */
+
+QString KopeteIface::onlineStatus( const QString &metaContactId )
+{
+	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( metaContactId );
+	if( m )
+	{
+		KopeteOnlineStatus status = m->status();
+		return status.description();
+	}
+
+	return "Unknown Contact";
+}
+
+void KopeteIface::messageContactById( const QString &metaContactId )
+{
+	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( metaContactId );
+	if( m )
+	{
+		m->execute();
+	}
+}
+
 bool KopeteIface::addContact( const QString &protocolName, const QString &accountId, const QString &contactId,
 	const QString &displayName, const QString &groupName )
 {

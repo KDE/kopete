@@ -257,7 +257,7 @@ public:
 	 * This function should always return that instance.
 	 *
 	 * @param canCreate If a new message manager can be created in addition
-	 * to any existing managers. Current;y, this is only set to true when
+	 * to any existing managers. Currently, this is only set to true when
 	 * a chat is initiated by the user by clicking the contact list.
 	 */
 	virtual KopeteMessageManager * manager( bool canCreate = false ) =0;

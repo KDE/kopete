@@ -22,6 +22,8 @@
 #include <qstringlist.h>
 #include <kurl.h>
 
+#include "kopeteonlinestatus.h"
+
 /**
  * DCOP interface for kopete
  */
@@ -38,6 +40,7 @@ k_dcop:
 	QStringList onlineContacts();
 	QStringList fileTransferContacts();
 	QStringList contactFileProtocols(const QString &displayName);
+
 	/*void sendFile(const QString &displayName, const KURL &sourceURL,
 		const QString &altFileName = QString::null, uint fileSize = 0);*/
 
@@ -49,7 +52,18 @@ k_dcop:
 	/**
 	 * Open a chat to a contact, and optionally set some initial text
 	 */
-	 void messageContact( const QString &displayName, const QString &messageText = QString::null );
+	void messageContact( const QString &displayName, const QString &messageText = QString::null );
+
+	/**
+	 * Describe the status of a contact by their metaContactId,
+	 * aka their uid in KABC.
+	 */
+	QString onlineStatus( const QString &metaContactId );
+
+	/**
+	 * Message a contact by their metaContactId, aka their uid in KABC.
+	 */
+	void messageContactById( const QString &metaContactId );
 
 	/**
 	 * Adds a contact with the specified params.

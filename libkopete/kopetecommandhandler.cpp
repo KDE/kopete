@@ -20,8 +20,10 @@
 #include <klocale.h>
 #include <kprocess.h>
 #include <kdeversion.h>
+#include <kxmlguiclient.h>
+#include <qdom.h>
 
-#include "kopetemessagemanager.h"
+#include "kopetemessagemanagerfactory.h"
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
 #include "kopeteview.h"
@@ -35,11 +37,56 @@ typedef QMap<QObject*, CommandList> PluginCommandMap;
 typedef QMap<QString,QString> CommandMap;
 typedef QPair<KopeteMessageManager*, KopeteMessage::MessageDirection> ManagerPair;
 
+class KopeteCommandGUIClient : public QObject, public KXMLGUIClient
+{
+	public:
+		KopeteCommandGUIClient( KopeteMessageManager *manager ) : QObject(manager), KXMLGUIClient(manager)
+		{
+			setXMLFile( QString::fromLatin1("kopetecommandui.rc") );
+
+			QDomDocument doc = domDocument();
+			QDomNode menu = doc.documentElement().firstChild().firstChild().firstChild();
+			CommandList mCommands = KopeteCommandHandler::commandHandler()->commands(
+					manager->protocol()
+			);
+
+			for( QDictIterator<KopeteCommand> it( mCommands ); it.current(); ++it )
+			{
+				KAction *a = static_cast<KAction*>( it.current() );
+				actionCollection()->insert( a );
+				QDomElement newNode = doc.createElement( QString::fromLatin1("Action") );
+				newNode.setAttribute( QString::fromLatin1("name"),
+					QString::fromLatin1( a->name() ) );
+
+				bool added = false;
+				for( QDomElement n = menu.firstChild().toElement();
+					!n.isNull(); n = n.nextSibling().toElement() )
+				{
+					if( QString::fromLatin1(a->name()) < n.attribute(QString::fromLatin1("name")))
+					{
+						menu.insertBefore( newNode, n );
+						added = true;
+						break;
+					}
+				}
+
+				if( !added )
+				{
+					menu.appendChild( newNode );
+				}
+			}
+
+			setDOMDocument( doc );
+		}
+};
+
 struct CommandHandlerPrivate
 {
 	PluginCommandMap pluginCommands;
 	KopeteCommandHandler *s_handler;
 	QMap<KProcess*,ManagerPair> processMap;
+	bool inCommand;
+	QPtrList<KAction> m_commands;
 };
 
 CommandHandlerPrivate *KopeteCommandHandler::p = 0L;
@@ -47,13 +94,14 @@ CommandHandlerPrivate *KopeteCommandHandler::p = 0L;
 KopeteCommandHandler::KopeteCommandHandler() : QObject( qApp )
 {
 	p->s_handler = this;
+	p->inCommand = false;
 
 	CommandList mCommands(31, false);
 	mCommands.setAutoDelete( true );
 	p->pluginCommands.insert( this, mCommands );
 
 	registerCommand( this, QString::fromLatin1("help"), SLOT( slotHelpCommand( const QString &, KopeteMessageManager * ) ),
-		i18n( "USAGE: /help [<command>] - Used to list available commands, or show help for a specified command." ) );
+		i18n( "USAGE: /help [<command>] - Used to list available commands, or show help for a specified command." ), 0, 1 );
 
 	registerCommand( this, QString::fromLatin1("close"), SLOT( slotCloseCommand( const QString &, KopeteMessageManager * ) ),
 		i18n( "USAGE: /close - Closes the current view." ) );
@@ -73,16 +121,20 @@ KopeteCommandHandler::KopeteCommandHandler() : QObject( qApp )
 
 	registerCommand( this, QString::fromLatin1("awayall"), SLOT( slotAwayAllCommand( const QString &, KopeteMessageManager * ) ),
 		i18n( "USAGE: /awayall [<reason>] - Marks you as away/back for all accounts." ) );
-		
+
 	registerCommand( this, QString::fromLatin1("say"), SLOT( slotSayCommand( const QString &, KopeteMessageManager * ) ),
 		i18n( "USAGE: /say <text> - Say text in this chat. This is the same as just typing a message, but is very "
-			"useful for scripts." ) );
+			"useful for scripts." ), 1 );
 
 	registerCommand( this, QString::fromLatin1("exec"), SLOT( slotExecCommand( const QString &, KopeteMessageManager * ) ),
 		i18n( "USAGE: /exec [-o] <command> - Executes the specified command and displays the output in the chat buffer. "
-		"If -o is specified, the output is sent to all members of the chat.") );
+		"If -o is specified, the output is sent to all members of the chat."), 1 );
 
-	connect( KopetePluginManager::self(), SIGNAL( pluginLoaded( KopetePlugin*) ), this, SLOT(slotPluginLoaded(KopetePlugin*)) );
+	connect( KopetePluginManager::self(), SIGNAL( pluginLoaded( KopetePlugin*) ),
+		this, SLOT(slotPluginLoaded(KopetePlugin*) ) );
+
+	connect( KopeteMessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView * ) ),
+		this, SLOT( slotViewCreated( KopeteView* ) ) );
 }
 
 KopeteCommandHandler::~KopeteCommandHandler()
@@ -102,11 +154,12 @@ KopeteCommandHandler *KopeteCommandHandler::commandHandler()
 }
 
 void KopeteCommandHandler::registerCommand( QObject *parent, const QString &command, const char* handlerSlot,
-	const QString &help )
+	const QString &help, uint minArgs, int maxArgs, const KShortcut &cut, const QString &pix )
 {
 	QString lowerCommand = command.lower();
 
-	KopeteCommand *mCommand = new KopeteCommand( parent, lowerCommand, handlerSlot, help);
+	KopeteCommand *mCommand = new KopeteCommand( parent, lowerCommand, handlerSlot, help,
+		Normal, QString::null, minArgs, maxArgs, cut, pix);
 	p->pluginCommands[ parent ].insert( lowerCommand, mCommand );
 }
 
@@ -116,12 +169,13 @@ void KopeteCommandHandler::unregisterCommand( QObject *parent, const QString &co
 		p->pluginCommands[ parent ].remove( command );
 }
 
-void KopeteCommandHandler::registerAlias( QObject *parent, const QString &alias, const QString &formatString, 
-			const QString &help, CommandType type )
+void KopeteCommandHandler::registerAlias( QObject *parent, const QString &alias, const QString &formatString,
+	const QString &help, CommandType type, uint minArgs, int maxArgs, const KShortcut &cut, const QString &pix )
 {
 	QString lowerAlias = alias.lower();
-	
-	KopeteCommand *mCommand = new KopeteCommand( parent, lowerAlias, 0L, help, type, formatString );
+
+	KopeteCommand *mCommand = new KopeteCommand( parent, lowerAlias, 0L, help, type,
+		formatString, minArgs, maxArgs, cut, pix );
 	p->pluginCommands[ parent ].insert( lowerAlias, mCommand );
 }
 
@@ -133,30 +187,38 @@ void KopeteCommandHandler::unregisterAlias( QObject *parent, const QString &alia
 
 bool KopeteCommandHandler::processMessage( const QString &msg, KopeteMessageManager *manager )
 {
+	if( p->inCommand )
+		return false;
+
 	QRegExp spaces( QString::fromLatin1("\\s+") );
 	QString command = msg.section(spaces, 0, 0).section('/',1).lower();
-	
+
 	if(command.isEmpty())
 		return false;
 
 	QString args = msg.section( spaces, 1 );
-	
+
 	CommandList mCommands = commands( manager->protocol() );
 	KopeteCommand *c = mCommands[ command ];
 	if(c)
 	{
 		kdDebug(14010) << k_funcinfo << "Handled Command" << endl;
+		if( c->type() != SystemAlias && c->type() != UserAlias )
+			p->inCommand = true;
+
 		c->processCommand( args, manager );
+		p->inCommand = false;
+
 		return true;
 	}
-	
+
 	return false;
 }
 
 bool KopeteCommandHandler::processMessage( KopeteMessage &msg, KopeteMessageManager *manager )
 {
 	QString messageBody = msg.plainBody();
-		
+
 	return processMessage( messageBody, manager );
 }
 
@@ -198,7 +260,8 @@ void KopeteCommandHandler::slotHelpCommand( const QString &args, KopeteMessageMa
 void KopeteCommandHandler::slotSayCommand( const QString &args, KopeteMessageManager *manager )
 {
 	//Just say whatever is passed
-	KopeteMessage msg(manager->user(), manager->members(), args, KopeteMessage::Internal, KopeteMessage::PlainText);
+	KopeteMessage msg(manager->user(), manager->members(), args,
+		KopeteMessage::Internal, KopeteMessage::PlainText);
 	manager->sendMessage(msg);
 }
 
@@ -341,13 +404,13 @@ bool KopeteCommandHandler::commandHandled( const QString &command )
 CommandList KopeteCommandHandler::commands( KopeteProtocol *protocol )
 {
 	CommandList commandList(63, false);
-	
+
 	//Add plugin user aliases first
 	addCommands( p->pluginCommands[protocol], commandList, UserAlias );
-	
+
 	//Add plugin system aliases next
 	addCommands( p->pluginCommands[protocol], commandList, SystemAlias );
-	
+
 	//Add the commands for this protocol next
 	addCommands( p->pluginCommands[protocol], commandList );
 
@@ -360,10 +423,10 @@ CommandList KopeteCommandHandler::commands( KopeteProtocol *protocol )
 
 	//Add global user aliases first
 	addCommands( p->pluginCommands[this], commandList, UserAlias );
-	
+
 	//Add global system aliases next
 	addCommands( p->pluginCommands[this], commandList, SystemAlias );
-	
+
 	//Add the internal commands *last*
 	addCommands( p->pluginCommands[this], commandList );
 
@@ -375,10 +438,15 @@ void KopeteCommandHandler::addCommands( CommandList &from, CommandList &to, Comm
 	QDictIterator<KopeteCommand> itDict( from );
 	for( ; itDict.current(); ++itDict )
 	{
-		if( !to[ itDict.currentKey() ] && 
+		if( !to[ itDict.currentKey() ] &&
 				( type == Undefined || itDict.current()->type() == type ) )
 			to.insert( itDict.currentKey(), itDict.current() );
 	}
+}
+
+void KopeteCommandHandler::slotViewCreated( KopeteView *view )
+{
+	new KopeteCommandGUIClient( view->msgManager() );
 }
 
 void KopeteCommandHandler::slotPluginLoaded( KopetePlugin *plugin )

@@ -100,7 +100,7 @@ public:
 	 */
 	bool canAcceptFiles() const;
 
-		/**
+	/**
 	 * Return a more fine-grained status.
 	 * Online means at least one sub-contact is online, away means at least
 	 * one is away, but nobody is online and offline speaks for itself

@@ -312,9 +312,9 @@ void KopeteXSLT::setXSLT( const QString &_document )
 		// Add "<kopete-i18n>" and "</kopete-i18n>" to length, hence the '+ 27'
 		document.replace( uint( pos ), orig.length() + 27, trans );
 	}
-	
+
 	d->document = document.utf8();
-	
+
 	#ifdef RAWXSL
 		kdDebug(14000) << k_funcinfo << d->document << endl;
 	#endif

@@ -1120,10 +1120,17 @@ void KopeteChatWindow::slotConfKeys()
 	dlg.insert( actionCollection() );
 	if( m_activeView )
 	{
-		dlg.insert(m_activeView->msgManager()->actionCollection() , i18n("Plugin Actions"));
+		dlg.insert(m_activeView->msgManager()->actionCollection() , i18n("Plugin Actions") );
+		QPtrList<KXMLGUIClient> *children = m_activeView->msgManager()->childClients();
+		for( KXMLGUIClient *c = children->first(); c; c = children->next() )
+		{
+			dlg.insert( c->actionCollection() , i18n("Plugin Actions") );
+		}
+
 		if( m_activeView->part() )
 			dlg.insert( m_activeView->part()->actionCollection(), m_activeView->part()->name() );
 	}
+
 	dlg.configure();
 }
 

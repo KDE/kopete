@@ -59,6 +59,12 @@ public:
 	KopeteMetaContact *findContact( const QString &protocolId,
 		const QString &accountId, const QString &contactId );
 
+
+	/**
+	 * Return the metacontact referenced by the given id
+	 */
+	KopeteMetaContact *metaContact( const QString &metaContactId ) const;
+
 	/**
 	 * Return all meta contacts
 	 */

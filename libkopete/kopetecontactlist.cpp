@@ -78,6 +78,18 @@ KopeteContactList::~KopeteContactList()
 	delete d;
 }
 
+KopeteMetaContact *KopeteContactList::metaContact( const QString &metaContactId ) const
+{
+	QPtrListIterator<KopeteMetaContact> it( d->contacts );
+	for( ; it.current(); ++it )
+	{
+		if( it.current()->metaContactId() == metaContactId )
+			return it.current();
+	}
+
+	return 0L;
+}
+
 KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
 	const QString &accountId, const QString &contactId )
 {

@@ -78,6 +78,8 @@ private slots:
  */
 class ChatView : public KDockMainWindow, public KopeteView
 {
+	friend class KopeteChatViewTip;
+
 	Q_OBJECT
 public:
 	ChatView( KopeteMessageManager *manager, const char *name = 0 );

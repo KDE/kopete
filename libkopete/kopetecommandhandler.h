@@ -19,6 +19,7 @@
 #define _KOPETECOMMANDHANDLER_H_
 
 #include <qdict.h>
+#include <kshortcut.h>
 #include "kopetemessage.h"
 
 class KopeteCommand;
@@ -26,6 +27,7 @@ class KopeteMessageManager;
 class KProcess;
 class KopetePlugin;
 class KopeteProtocol;
+class KopeteView;
 
 struct CommandHandlerPrivate;
 
@@ -38,7 +40,7 @@ typedef QDict<KopeteCommand> CommandList;
  */
 class KopeteCommandHandler : public QObject
 {
-	friend class my_best_friend;
+	friend class KopeteCommandGUIClient;
 
 	Q_OBJECT
 
@@ -71,7 +73,8 @@ class KopeteCommandHandler : public QObject
 		 *   /help \<command\>
 		 */
 		void registerCommand( QObject *parent, const QString &command, const char* handlerSlot,
-			const QString &help = QString::null );
+			const QString &help = QString::null, uint minArgs = 0, int maxArgs = -1,
+			const KShortcut &cut = 0, const QString &pix = QString::null );
 
 		/**
 		 * Registers a command alias.
@@ -85,7 +88,8 @@ class KopeteCommandHandler : public QObject
 		 *    the entire argument string
 		 */
 		void registerAlias( QObject *parent, const QString &alias, const QString &formatString,
-			const QString &help = QString::null, CommandType = SystemAlias );
+			const QString &help = QString::null, CommandType = SystemAlias, uint minArgs = 0,
+			int maxArgs = -1, const KShortcut &cut = 0, const QString &pix = QString::null );
 
 		/**
 		 * Unregisters a command. When a plugin unloads, all commands are
@@ -139,6 +143,7 @@ class KopeteCommandHandler : public QObject
 		void slotPluginDestroyed( QObject * );
 		void slotExecReturnedData(KProcess *proc, char *buff, int bufflen );
 		void slotExecFinished(KProcess *proc);
+		void slotViewCreated( KopeteView *view );
 
 		void slotHelpCommand( const QString & args, KopeteMessageManager *manager );
 		void slotClearCommand( const QString & args, KopeteMessageManager *manager );

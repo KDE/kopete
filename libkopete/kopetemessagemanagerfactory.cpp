@@ -180,6 +180,19 @@ void KopeteMessageManagerFactory::postNewEvent(KopeteEvent *e)
 	emit newEvent(e);
 }
 
+KopeteView *KopeteMessageManagerFactory::activeView()
+{
+	/**
+	 * FIXME: This is an awful retarded way to do this. Why can't
+	 we just make the KMM factory a friend of the view manager and
+	 return activeView directly?
+	 */
+
+	KopeteView *v = 0L;
+	emit getActiveView(v);
+	return v;
+}
+
 #include "kopetemessagemanagerfactory.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

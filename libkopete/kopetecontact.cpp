@@ -48,6 +48,8 @@
 
 //For the moving to another metacontact dialog
 #include <qlabel.h>
+#include <qstylesheet.h>
+#include <qmime.h>
 #include <qvbox.h>
 #include <klistview.h>
 #include <qcheckbox.h>

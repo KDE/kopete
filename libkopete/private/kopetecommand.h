@@ -19,11 +19,12 @@
 #define __KOPETECOMMAND_H__
 
 #include <qobject.h>
+#include <kaction.h>
 #include "kopetecommandhandler.h"
 
 class KopeteMessageManager;
 
-class KopeteCommand : public QObject
+class KopeteCommand : public KAction
 {
 	Q_OBJECT
 
@@ -42,13 +43,14 @@ class KopeteCommand : public QObject
 		 * @param formatString The formatString of the alias if any
 		 */
 		 KopeteCommand( QObject *parent, const QString &command, const char* handlerSlot,
-		 	const QString &help = QString::null, KopeteCommandHandler::CommandType type = KopeteCommandHandler::Normal, 
-			const QString &formatString = QString::null );
+		 	const QString &help = QString::null, KopeteCommandHandler::CommandType type = KopeteCommandHandler::Normal, const QString &formatString = QString::null,
+			uint minArgs = 0, int maxArgs = -1, const KShortcut &cut = 0,
+			const QString &pix = QString::null );
 
 		/**
 		 * Process this command
 		 */
-		void processCommand( const QString &args, KopeteMessageManager *manager );
+		void processCommand( const QString &args, KopeteMessageManager *manager, bool gui = false );
 
 		/**
 		 * Returns the command this object handles
@@ -59,7 +61,7 @@ class KopeteCommand : public QObject
 		  * Returns the help string for this command
 		  */
 		 const QString &help() const { return m_help; };
-		 
+
 		 /**
 		  * Returns the type of the command
 		  */
@@ -73,10 +75,24 @@ class KopeteCommand : public QObject
 		 */
 		void handleCommand( const QString &args, KopeteMessageManager *manager );
 
+	private slots:
+		/**
+		 * Connected to our activated() signal
+		 */
+		void slotAction();
+
 	private:
+		void init( const QString &command, const char* slot, const QString &help,
+			KopeteCommandHandler::CommandType type, const QString &formatString,
+			uint minArgs, int maxArgs );
+
+		void printError( const QString &error, KopeteMessageManager *manager, bool gui = false ) const;
+
 		QString m_command;
 		QString m_help;
 		QString m_formatString;
+		uint m_minArgs;
+		int m_maxArgs;
 		KopeteCommandHandler::CommandType m_type;
 };
 

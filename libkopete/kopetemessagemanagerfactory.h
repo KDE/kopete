@@ -108,6 +108,11 @@ public:
 	 */
 	void postNewEvent(KopeteEvent*);
 
+	/**
+	 * Returns the current active Kopete view
+	 */
+	KopeteView *activeView();
+
 signals:
 	/**
 	 * This signal is emitted whenever a message
@@ -175,11 +180,13 @@ signals:
 	 */
 	void readMessage();
 
-	/*
-	 * obsolete temporary method used by the spellchecking plugin (ugly workaround)
+	/**
+	 * Emit this signal to obtain the avtive view from the
+	 * KopeteViewManager
+	 *
+	 * FIXME: This is realy dumb API
 	 */
-	void getActiveView(KopeteView*& ); public: void activeView(KopeteView*&v) { emit getActiveView(v); }
-
+	 void getActiveView( KopeteView *& );
 
 private:
 	KopeteMessageManagerFactory( QObject* parent = 0, const char* name = 0 );
