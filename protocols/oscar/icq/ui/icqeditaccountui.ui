@@ -12,9 +12,6 @@
             <height>419</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>ICQEditAccountUI</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>

@@ -13,9 +13,6 @@
             <height>550</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>DlgJabberEditAccountWidget</string>
-    </property>
     <property name="whatsThis" stdset="0">
         <string></string>
     </property>
