@@ -34,6 +34,7 @@
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopetemetacontact.h"
+#include "kopetemessagemanager.h"
 
 HistoryLogger::HistoryLogger( KopeteMetaContact *m ,  QObject *parent , const char *name )
  : QObject(parent, name)
@@ -154,7 +155,17 @@ void HistoryLogger::appendMessage( const KopeteMessage &msg , const KopeteContac
 	if(!msg.from())
 		return;
 
-	const KopeteContact *c=ct?ct:(  msg.direction()==KopeteMessage::Outbound?msg.to().first():msg.from()  );
+
+	//If no contact are given:  If the manager is availiable, use the manager's first contact (the channel on irc, or the other contact for others protocols
+	const KopeteContact *c = ct;
+	if(!c && msg.manager() )
+	{
+		QPtrList<KopeteContact> mb=msg.manager()->members() ;
+		c = mb.first();
+	}
+	if(!c)  //If the contact is still not initialized, use the message author.
+		c =   msg.direction()==KopeteMessage::Outbound ? msg.to().first() : msg.from()  ;
+
 
 	if(!m_metaContact)
 	{ //this may happen if the contact has been moved, and the MC deleted
@@ -167,7 +178,7 @@ void HistoryLogger::appendMessage( const KopeteMessage &msg , const KopeteContac
 
 	if(!c || !m_metaContact->contacts().contains(c) )
 	{
-		QPtrList<KopeteContact> contacts= m_metaContact->contacts();
+		/*QPtrList<KopeteContact> contacts= m_metaContact->contacts();
 		QPtrListIterator<KopeteContact> it( contacts );
 		for( ; it.current(); ++it )
 		{
@@ -176,9 +187,11 @@ void HistoryLogger::appendMessage( const KopeteMessage &msg , const KopeteContac
 				c=*it;
 				break;
 			}
-		}
-		if(!c)
-			return; //TODO: show a warning
+		}*/
+		//if(!c)
+
+		kdWarning( ) << k_funcinfo << "No contact found in this metacontact to append in the history" << endl; //FIXME:  no debug code for the history plugin?
+		return;
 	}
 	QDomDocument doc=getDocument(c,0);
 	QDomElement docElem = doc.documentElement();
@@ -390,6 +403,7 @@ QValueList<KopeteMessage> HistoryLogger::readMessages( unsigned int nb , const K
 				{
 					QString f=msgElem.attribute("from" );
 					const KopeteContact *from=f.isNull()? 0L : currentContact->account()->contacts()[f];
+
 					if(!from)
 						from= dir==KopeteMessage::Inbound ? currentContact : currentContact->account()->myself();
 

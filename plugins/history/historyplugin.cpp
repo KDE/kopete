@@ -86,7 +86,6 @@ void HistoryPlugin::slotMessageDisplayed(KopeteMessage &m)
 
 	if(!m_loggers.contains(m.manager()))
 	{
-		//QPtrList<KopeteContact> mb=m.manager()->members();
 		//m_loggers.insert(m.manager() , new HistoryLogger(mb.first() , m_prefs->historyColor() ,  this));
 		m_loggers.insert(m.manager() , new HistoryGUIClient( m.manager() ) );
 		connect( m.manager() , SIGNAL(closing(KopeteMessageManager*)) , this , SLOT(slotKMMClosed(KopeteMessageManager*)));
@@ -94,7 +93,10 @@ void HistoryPlugin::slotMessageDisplayed(KopeteMessage &m)
 
 	HistoryLogger *l=m_loggers[m.manager()]->logger();
 	if(l)
-		l->appendMessage(m);
+	{
+		QPtrList<KopeteContact> mb=m.manager()->members();
+		l->appendMessage(m,mb.first());
+	}
 
 	m_lastmessage=m;
 }
