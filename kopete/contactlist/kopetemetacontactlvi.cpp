@@ -29,6 +29,8 @@
 #include <kmessagebox.h>
 #include <kpassivepopup.h>
 #include <kpopupmenu.h>
+#include <kglobal.h>
+#include <kconfig.h>
 
 #include <kdeversion.h>
 #if KDE_IS_VERSION( 3, 1, 90 )
@@ -151,8 +153,9 @@ void KopeteMetaContactLVI::initLVI()
 	Component *hbox = new BoxComponent( this, BoxComponent::Horizontal );
 	d->metaContactIcon = new ImageComponent( hbox );
 
-	static int type = 0; ++type; type %= 3;
-	if( type == 0 )    // new funky contact
+	KGlobal::config()->setGroup( QString::fromLatin1("ContactList") );
+	QString type = KGlobal::config()->readEntry( QString::fromLatin1("ViewStyle"), QString::fromLatin1("Default") );
+	if( type == QString::fromLatin1("Detailed") )    // new funky contact
 	{
 		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
 		d->nameText = new TextComponent( vbox, listView()->font() );
@@ -174,7 +177,7 @@ void KopeteMetaContactLVI::initLVI()
 		d->buddyIcon->setPixmap( SmallIcon(QString::fromLatin1("newmsg")) );
 		d->iconSize = 32;
 	}
-	else if( type == 1 ) // old right-aligned contact
+	else if( type == QString::fromLatin1("RightAligned") ) // old right-aligned contact
 	{
 		d->nameText = new TextComponent( hbox, listView()->font() );
 		d->contactIconBox = new BoxComponent( hbox, BoxComponent::Horizontal );
