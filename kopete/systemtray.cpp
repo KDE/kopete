@@ -240,9 +240,14 @@ void KopeteSystemTray::addBalloon()
 			else
 				msgFrom = msg.from()->displayName();
 
-			m_balloon= new KopeteBalloon(
-				i18n("<qt><nobr><b>New Message from %1:</b></nobr><br><br><nobr>\"%2\"</nobr></qt>")
-					.arg( msgFrom ).arg( msgText ), QString::null );
+			m_balloon = new KopeteBalloon(
+				i18n( "<qt><nobr><b>New Message from %1:</b></nobr><br><br><nobr>\"%2\"</nobr></qt>" )
+#if QT_VERSION < 0x030200
+					.arg( msgFrom ).arg( msgText ),
+#else
+					.arg( msgFrom, msgText ),
+#endif
+				QString::null );
 			connect(m_balloon, SIGNAL(signalBalloonClicked()), mEventList.first() , SLOT(apply()));
 			connect(m_balloon, SIGNAL(signalButtonClicked()), mEventList.first() , SLOT(apply()));
 			connect(m_balloon, SIGNAL(signalIgnoreButtonClicked()), mEventList.first() , SLOT(ignore()));
