@@ -258,6 +258,7 @@ void MSNContact::setInfo(const  QString &type,const QString &data )
 	else if( type == "PHW" )
 	{
 		m_phoneWork=data;
+		setProperty(MSNProtocol::protocol()->propPhoneWork, data);
 	}
 	else if( type == "PHM" )
 	{

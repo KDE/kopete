@@ -59,6 +59,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 	CNT( KopeteOnlineStatus::Connecting, 2, this, 10,"msn_connecting","FIXME: Make this unselectable", i18n( "Connecting" ) ),
 	propEmail(Kopete::Global::Properties::self()->emailAddress()),
 	propPhoneHome(Kopete::Global::Properties::self()->privatePhone()),
+	propPhoneWork(Kopete::Global::Properties::self()->workPhone()),
 	propPhoneMobile(Kopete::Global::Properties::self()->privateMobilePhone())
 {
 	s_protocol = this;

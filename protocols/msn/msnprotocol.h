@@ -103,6 +103,7 @@ public:
 
 	const Kopete::ContactPropertyTmpl propEmail;
 	const Kopete::ContactPropertyTmpl propPhoneHome;
+	const Kopete::ContactPropertyTmpl propPhoneWork;
 	const Kopete::ContactPropertyTmpl propPhoneMobile;
 
 	enum List
