@@ -139,22 +139,30 @@ KTempFile* WebPresencePlugin::generateFile()
 	for ( KopeteProtocol *p = protocols.first();
 			p; p = protocols.next() )
 	{
-		Q_ASSERT( p );
-		kdDebug() << p->pluginId() << endl;
-		kdDebug() << statusAsString(  p->myself()->status() ) << endl;
-		kdDebug() << p->myself()->contactId().latin1() << endl;
+		KopeteContact* me = p->myself();
+		QString notKnown = i18n( "Not yet known" );
 
 		*qout << shift.fill( '\t', depth++ ) << "<protocol>\n";
-		*qout << shift.fill( '\t', depth ) << "<protoname>"
-			<< p->pluginId() << "</protoname>\n";
-		*qout << shift.fill( '\t', depth ) << "<protostatus>"
-			<< statusAsString( p->myself()->status() )
-			<< "</protostatus>\n";
+		
+		*qout << shift.fill( '\t', depth ) << "<protoname>";
+		*qout << p->pluginId();
+		*qout << "</protoname>";
+		
+		*qout << shift.fill( '\t', depth ) << "<protostatus>";
+		if ( me )
+			*qout << statusAsString( me->status() );
+		else
+			*qout << notKnown;
+		*qout << "</protostatus>\n";
+
 		if ( m_prefs->showAddresses() )
 		{
-			*qout << shift.fill( '\t', depth ) << "<protoaddress>"
-				<< p->myself()->contactId().latin1()
-				<< "</protoaddress>\n";
+			*qout << shift.fill( '\t', depth ) << "<protoaddress>";
+			if ( me )
+				*qout << me->contactId().latin1();
+			else
+				*qout << notKnown;
+			*qout << "</protoaddress>\n";
 		}
 		*qout << shift.fill( '\t', --depth ) << "</protocol>\n";
 	}
