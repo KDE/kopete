@@ -1,6 +1,69 @@
 Kopete Messenger ChangeLog
 --------------------------
 
+Kopete 0.7 (not yet released)
+==============================
+ 
+o Main App
+	o KopeteViewManager, clean up KopeteMessageManager (Jason)
+	o Fix up fire and forget message window, make it work for all protocols (Jason)
+	o Make send message keycombos to be customiseable KActions (Jason)
+	o Add right click menu to tabs, add ability to move a tab to another window (Jason)
+	o Tab color highlighting on new messages, typing (Jason)
+	o Message in transit animation (Jason)
+	o When a message is received, flash contact's icon to indicate a new message (Oliver)
+	o Nick completion (Jason)
+	o Message Highlighting with Notifications (Jason)
+	o New KopeteAccount arch. allows multiple accounts of the same protocol (Oliver)
+	o Online Status Reworked (Will)
+	o New Account Password Handling, there are not anymore stored human readable on the HD (Olivier)
+o IRC Plugin
+	o Integrate IRC into new chatwindow (Nick, Jason)
+	o Support for peliminary /commands
+o MSN Plugin
+	o Better group sync with Server (Olivier)
+	o Show the user's web profile (Olivier)
+	o Use correct way to ping the server (Olivier)
+	o Don't reload the contactlist from server if it is not modified (Olivier)
+o Cryptography Plugin
+	o BugFixes
+	o Limte the cache time for the passphrase (Olivier)
+o Perl plugin (Jason)
+o Text Effect Plugin (Olivier)
+
+
+
+09-Febr-2003 Released Kopete 0.6
+=================================
+
+o Main App
+	o Make Emoticon-mapping an external XML-file (Olivier)
+	o New tabbed chatwindow (Jason)
+	o Chatwindow transparancy (Jason)
+	o Unify away dialogs
+	o Lots of bugfixing (All the team)
+	o Make tabs in chatwindow detachable (Jason)
+	o Make some parameters configurable (Duncan)
+	o Sort contact by online status (Olivier)
+	o Show number of onlines contacts in groups (Olivier)
+o MSN plugin
+	o Show when an user is typing a message (Olivier)
+	o Outgoing file transfer (Olivier)
+	o Hotmail mail notifications (Olivier, James)
+	o Phone number (Olivier)
+o ICQ Plugin
+	o Translate between message-encodings (needed for non-latin languages) (Stefan)
+	o Server contacts import
+	o Receiving Files (Nick, Stefan)
+o Translator Plugin
+	o Option to show original messages (Olivier)
+o GnuPG signing/encryption filter plugin (Oliver)
+o SMS Plugin (Richard)
+o Now Listening Plugin (Will)
+o Web Presence Plugin (Will)
+
+
+
 30-Sept-2002 Released Kopete 0.5
 =================================
 
@@ -12,10 +75,15 @@ o Main App
 	o Drag and Drop ( Olivier )
 	o File transfers API ( Nick )
 	o new icon ( Luci )
+	o New away system (Chris)
+    o New emoticon handling (code-wise) and popup to select emoticons in the chat dialog
+    o Update internationalization (i18n)
 o ICQ Plugin
 	o New written from scratch plugin ( Nick )
 	o new features ( Stefan )
 	o contact search ( Stefan )
+	o Read others' info and set your own
+	o Proxy settings
 o MSN Plugin
 	o Incoming File Transfer ( Olivier )
 	o Bugfixes ( Martijn, Olivier )
@@ -28,6 +96,8 @@ o AIM Plugin
 o Gadu Plugin ( Zack )
 o Translator plugin ( Duncan )
 o Contact Notes (Olivier)
+o Video4Linux Motion Auto-Away Plugin (Duncan)
+
 
 16-Jun-2002 Released Kopete 0.4.1
 =================================

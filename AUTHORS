@@ -1,3 +1,7 @@
+See the Development team section of http://kopete.kde.org
+for an updated list of Kopete team!
+
+
 Main Developers
 ===============
 
@@ -7,33 +11,35 @@ Duncan Mac-Vicar Prett <duncan@kde.org> (irc: duncanmv)
 Nick Betcher <nbetcher@kde.org> (irc: Error403)
 - ICQ Plugin, AIM Plugin, IRC Plugin, various hacks
 
-Developer Team
-==============
-
-Ryan Cumming <bodnar42@phalynx.dhs.org> (irc: Phalynx)
-- ChatView class. API re-design & cleanup.
-  History logger, etc
-
 Martijn Klingens <klingens@kde.org> (irc: spaze)
 - Misc hacks, bugfixes, KopeteMessage, MSN plugin cleanups and redesign
 
 Stefan Gehn <sgehn@gmx.net> (irc: mETz )
 - Misc bugfixes, cleanups, hacks, features.
 
-Richard Stellingwerff <remenic@linuxfromscratch.org> (irc: Remenic)
-- Misc fixes. History dialog, etc
-
 Daniel Stone <dstone@kde.org> (irc: DannyS)
 - Jabber plugin, misc hacks
 
-Ian Renhart Geiser <geiseri@kde.org> (irc: geiseri)
-- KMM work
+Olivier Goffart <ogoffart@tiscalinet.be> (irc: Gof)
+- Core developer, MSN plugin, oters plugins
 
 Christopher TenHarmsel <tenharmsel@users.sourceforge.net> (irc: Ph0nK)
 - AIM/OSCAR work, Away Messages
 
-See the Development team section of http://kopete.kde.org
-for an updated list of Kopete team!
+Till Gerken <till@tantalo.net> (irc: tigloo)
+- Jabber plugin
+
+Gav Wood <gjw102@york.ac.uk> (irc: emmCee)
+-Winpopup and Yahoo plugins
+
+James Grant <topace@lightbox.org> (irc: topace)
+- Developer
+
+Jason Keirstead <jason@keirstead.org> (irc: brunes)
+- Core developer, website
+
+
+
 
 Contributed patches. Thanks!
 ==============================
@@ -49,6 +55,17 @@ Juanjo Alvarez <juanjux@yahoo.es>
 - Support for configurable Ctrl-Enter or Enter
   shortcut in KopeteChatWindow
 
-Olivier Goffart <ogoffart@tiscalinet.be>
-- Alternative chatwindows
-- MSN file transfer
+Zack Rustin <zack@kde.org>
+- Many bugfixes
+- Gadu plugin
+
+Ryan Cumming <bodnar42@phalynx.dhs.org> (irc: Phalynx)
+- old ChatView class. API re-design & cleanup.
+  History logger, etc
+
+Richard Stellingwerff <remenic@linuxfromscratch.org> (irc: Remenic)
+- Misc fixes. History dialog, etc
+
+Ian Renhart Geiser <geiseri@kde.org> (irc: geiseri)
+- KMM work
+
