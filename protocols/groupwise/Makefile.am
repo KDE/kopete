@@ -20,7 +20,8 @@ kopete_groupwise_la_LIBADD = ui/libkopetegroupwiseui.la \
 service_DATA = kopete_groupwise.desktop
 servicedir = $(kde_servicesdir)
 INCLUDES = -I$(top_srcdir)/kopete/protocols/groupwise/libgroupwise/tasks \
-	-I$(top_srcdir)/kopete/protocols/groupwise/libgroupwise/qca/src -I$(top_srcdir)/kopete/protocols/groupwise/libgroupwise
+	-I$(top_srcdir)/kopete/protocols/groupwise/libgroupwise/qca/src -I$(top_srcdir)/kopete/protocols/groupwise/libgroupwise \
+	-I$(top_srcdir)/kopete/protocols/groupwise/ui -I$(top_builddir)/kopete/protocols/groupwise/ui
 
 mydatadir = $(kde_datadir)/kopete_groupwise
 mydata_DATA = gwchatui.rc

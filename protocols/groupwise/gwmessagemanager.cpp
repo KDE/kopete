@@ -13,6 +13,7 @@
 #include <qlabel.h>
 #include <qvalidator.h>
 #include <kdebug.h>
+#include <kdialogbase.h>
 #include <kiconloader.h>
 #include <kinputdialog.h>
 #include <klocale.h>
@@ -32,6 +33,7 @@
 #include "gwcontact.h"
 #include "gwerror.h"
 #include "gwprotocol.h"
+#include "gwsearch.h"
 
 #include "gwmessagemanager.h"
 
@@ -270,9 +272,9 @@ void GroupWiseMessageManager::slotActionInviteAboutToShow()
 		}
 	}
 	// Invite someone off-list
-/*	KAction *b=new KAction( i18n ("Other..."), 0, this, SLOT( slotInviteOtherContact() ), m_actionInvite, "actionOther" );
+	KAction *b=new KAction( i18n ("&Other..."), 0, this, SLOT( slotInviteOtherContact() ), m_actionInvite, "actionOther" );
 	m_actionInvite->insert( b );
-	m_inviteActions.append( b ) ;*/
+	m_inviteActions.append( b ) ;
 }
 
 void GroupWiseMessageManager::slotInviteContact( KopeteContact * contact )
@@ -288,8 +290,44 @@ void GroupWiseMessageManager::slotInviteContact( KopeteContact * contact )
 	if ( ok )
 	{	
 		GroupWiseContact * gwc = static_cast< GroupWiseContact *>( contact );
-		static_cast< GroupWiseAccount * >(account())->sendInvitation( m_guid, gwc, inviteMessage );
+		static_cast< GroupWiseAccount * >(account())->sendInvitation( m_guid, gwc->dn(), inviteMessage );
 	}
 }
+
+void GroupWiseMessageManager::slotInviteOtherContact()
+{
+	// show search dialog
+	// connect ok signal to another slot
+	QWidget * w = ( view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) : 
+				Kopete::UI::Global::mainWidget() );
+	KDialogBase * searchDlg = new KDialogBase( w, "invitesearchdialog", false, i18n( "Search for contact to invite" ), KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::NoDefault, true );
+	m_search = new GroupWiseSearch( account(), QListView::Single, searchDlg, "invitesearchwidget" );
+	searchDlg->setMainWidget( m_search );
+	connect( searchDlg, SIGNAL( okClicked() ), SLOT( slotSearchedForUsers() ) );
+	searchDlg->show();
+}
+
+void GroupWiseMessageManager::slotSearchedForUsers()
+{
+	// create an item for each result, in the block list
+	QValueList< ContactDetails > selected = m_search->selectedResults();
+	if ( selected.count() )
+	{
+		QWidget * w = ( view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) :
+				Kopete::UI::Global::mainWidget() ); 
+		ContactDetails cd = selected.first();
+		bool ok;
+		QRegExp rx( ".*" );
+		QRegExpValidator validator( rx, this );
+		QString inviteMessage = KInputDialog::getText( i18n( "Enter Invitation Message" ),
+				i18n( "Enter the reason for the invitation, or leave blank for no reason" ), QString(),
+				&ok, w , "invitemessagedlg", &validator );
+		if ( ok )
+		{	
+			static_cast< GroupWiseAccount * >(account())->sendInvitation( m_guid, cd.dn, inviteMessage );
+		}
+	}
+}
+
 
 #include "gwmessagemanager.moc"

@@ -22,7 +22,7 @@ class QLabel;
 class KAction;
 class KActionMenu;
 class GroupWiseAccount;
-
+class GroupWiseSearch;
 /**
  * Specialised message manager, which tracks the GUID used by GroupWise to uniquely identify a given chat, and provides invite actions and logging and security indicators.  To instantiate call @ref GroupWiseAccount::messageManager().
  * @author SUSE AG
@@ -106,6 +106,14 @@ protected slots:
 	 * Invite a contact to join this chat
 	 */
 	void slotInviteContact( KopeteContact * );
+	/** 
+	 * Show the search dialog to invite another contact to the chat
+	 */
+	void slotInviteOtherContact();
+	/**
+	 * Process the response from the search dialog; send the actual invitation
+	 */
+	void slotSearchedForUsers();
 private:
 	
 	GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const QString & guid, int id = 0, const char* name = 0);
@@ -119,7 +127,8 @@ private:
 	// labels showing secure and logging status
 	KAction *m_secure;
 	KAction *m_logging;
-	bool m_currentlyTyping;
+	// search widget used for inviting contacts
+	GroupWiseSearch * m_search;
 };
 
 #endif

@@ -120,7 +120,7 @@ public:
 	/**
 	 * Invite someone to join a conference
 	 */
-	void sendInvitation( const QString & guid, const GroupWiseContact * contact, const QString & message );
+	void sendInvitation( const QString & guid, const QString & dn, const QString & message );
 	
 	/**
 	 * Check a contact's blocking status

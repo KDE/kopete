@@ -365,13 +365,13 @@ void GroupWiseAccount::createConference( const int clientId, const QStringList& 
 	m_client->createConference( clientId , invitees );
 }
 
-void GroupWiseAccount::sendInvitation( const QString & guid, const GroupWiseContact * contact, const QString & message )
+void GroupWiseAccount::sendInvitation( const QString & guid, const QString & dn, const QString & message )
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	GroupWise::OutgoingMessage msg;
 	msg.guid = guid;
 	msg.message = message;
-	m_client->sendInvitation( guid, contact->dn(), msg );
+	m_client->sendInvitation( guid, dn, msg );
 }
 
 void GroupWiseAccount::slotGoOnline()
