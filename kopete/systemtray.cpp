@@ -230,8 +230,11 @@ void KopeteSystemTray::slotEventDone(KopeteEvent *event)
 
 void KopeteSystemTray::addBalloon()
 {
-	kdDebug(14010) << k_funcinfo << m_balloon << ":" << KopetePrefs::prefs()->showTray() << ":" << KopetePrefs::prefs()->balloonNotify()
-			<< ":" << !mEventList.isEmpty() << endl;
+	kdDebug(14010) << k_funcinfo <<
+		m_balloon << ":" << KopetePrefs::prefs()->showTray() <<
+		":" << KopetePrefs::prefs()->balloonNotify()
+		<< ":" << !mEventList.isEmpty() << endl;
+
 	if( !m_balloon && KopetePrefs::prefs()->showTray() && KopetePrefs::prefs()->balloonNotify() && !mEventList.isEmpty() )
 	{
 		KopeteMessage msg = mEventList.first()->message();
@@ -239,9 +242,9 @@ void KopeteSystemTray::addBalloon()
 		if ( msg.from() )
 		{
 			kdDebug(14010) << k_funcinfo << "Orig msg text=" << msg.parsedBody() << endl;
-			
+
 			QString msgText = squashMessage( msg );
-			
+
 			kdDebug(14010) << k_funcinfo << "New msg text=" << msgText << endl;
 
 			QString msgFrom;
@@ -261,9 +264,9 @@ void KopeteSystemTray::addBalloon()
 			connect(m_balloon, SIGNAL(signalBalloonClicked()), mEventList.first() , SLOT(apply()));
 			connect(m_balloon, SIGNAL(signalButtonClicked()), mEventList.first() , SLOT(apply()));
 			connect(m_balloon, SIGNAL(signalIgnoreButtonClicked()), mEventList.first() , SLOT(ignore()));
-			m_balloon->setAnchor( KopeteSystemTray::systemTray()->mapToGlobal(pos()) );
+			m_balloon->setAnchor(mapToGlobal(pos()));
 			m_balloon->show();
-			KWin::setOnAllDesktops(m_balloon->winId() , true);
+			KWin::setOnAllDesktops(m_balloon->winId(), true);
 		}
 	}
 }
@@ -301,12 +304,12 @@ QString KopeteSystemTray::squashMessage( const KopeteMessage& msg )
 			if ( fullUrl.length() > 30 )
 			{
 				QString urlWithoutProtocol = rx.cap( 4 );
-				shorterUrl = urlWithoutProtocol.left( 27 ) 
+				shorterUrl = urlWithoutProtocol.left( 27 )
 						+ QString::fromLatin1( "... " );
 			}
 			else
 			{
-				shorterUrl = fullUrl.left( 27 ) 
+				shorterUrl = fullUrl.left( 27 )
 						+ QString::fromLatin1( "... " );
 			}
 			// remove message text
