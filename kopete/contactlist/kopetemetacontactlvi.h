@@ -122,7 +122,7 @@ private slots:
 
 	void slotDisplayNameChanged();
 
-	void slotAddTemoraryContact();
+	void slotAddTemporaryContact();
 
 	void slotAddToNewGroup();
 	void slotIdleStateChanged();

@@ -206,7 +206,7 @@ void KopeteContactListView::initActions(KActionCollection* ac)
 
 
 	//TODO
-	actionAddTemporaryContact = new KAction( i18n( "Add to Your Contact List" ), "bookmark_add", 0, this, SLOT( slotAddTemoraryContact() ), ac, "actionAddTemporaryContact" );
+	actionAddTemporaryContact = new KAction( i18n( "Add to Your Contact List" ), "bookmark_add", 0, this, SLOT( slotAddTemporaryContact() ), ac, "actionAddTemporaryContact" );
 
 	//update enabled/disabled actions
 	slotSelectionChanged();

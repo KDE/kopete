@@ -333,7 +333,7 @@ void KopeteMetaContactLVI::slotAddToNewGroup()
 }
 
 
-void KopeteMetaContactLVI::slotAddTemoraryContact()
+void KopeteMetaContactLVI::slotAddTemporaryContact()
 {
 	m_metaContact->setTemporary( false, KopeteGroup::toplevel );
 }
