@@ -856,7 +856,7 @@ void KopeteContactList::removeGroup( KopeteGroup *g)
 	delete g;
 }
 
-KopeteGroup * KopeteContactList::getGroup(const QString& displayName, unsigned int type)
+KopeteGroup * KopeteContactList::getGroup(const QString& displayName, int type)
 {
 	if( type == KopeteGroup::Temporary )
 		return KopeteGroup::temporary();

@@ -167,7 +167,7 @@ public:
 	 * @param displayName is the display name to search
 	 * @param type is the KopeteGroup::GroupType to search, the default value is Kopetegroup::Normal
 	 */
-	KopeteGroup * getGroup( const QString &displayName, unsigned int type = 0/*KopeteGroup::Normal*/ );
+	KopeteGroup * getGroup( const QString &displayName, int type = 0/*KopeteGroup::Normal*/ );
 
 	/**
 	 * return the group with the given unique id. if none is found return 0L
