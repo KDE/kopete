@@ -202,7 +202,12 @@ void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 	kdDebug(14010) << k_funcinfo << endl;
 
 	if( msg.direction() == KopeteMessage::Inbound )
+	{
 		emit( messageReceived( msg, this ) );
+
+		if( msg.plainBody().contains( QRegExp( QString::fromLatin1("\\b(%1)\\b").arg( d->mUser->displayName() ) ) ) )
+			msg.highlight();
+	}
 
 	emit messageAppended( msg, this );
 

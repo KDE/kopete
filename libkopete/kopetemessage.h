@@ -253,6 +253,8 @@ public:
 	 */
 	static QString parseHTML( const QString &message, bool parseURLs = true );
 
+	void highlight();
+
 private:
 	/**
 	 * Helper for constructors

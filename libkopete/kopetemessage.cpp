@@ -136,6 +136,13 @@ void KopeteMessage::setFont( const QFont &font )
 	d->font = font;
 }
 
+void KopeteMessage::highlight()
+{
+	//FIXME: Config option for this color, bold? Italic? Font?
+	setBg( Qt::yellow );
+	setFg( Qt::black );
+}
+
 void KopeteMessage::setBody( const QString &body, MessageFormat f )
 {
 	detach();
