@@ -65,7 +65,7 @@ private slots:
 	void slotSelectedEmoticonsThemeChanged();
 	void slotTransparencyChanged(bool);
 	void slotUpdatePreview();
-	void slotShowTrayChanged();
+	void slotShowTrayChanged(bool);
 	void slotHighlightChanged();
 	void slotChangeFont();
 	void slotAddStyle();

@@ -76,7 +76,7 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	// "General" TAB =============================================================
 	mPrfsGeneral = new AppearanceConfig_General(mAppearanceTabCtl);
 	connect(mPrfsGeneral->configSound, SIGNAL(clicked()), this, SLOT(slotConfigSound()));
-	connect(mPrfsGeneral->mShowTrayChk, SIGNAL(clicked()), this, SLOT(slotShowTrayChanged()));
+	connect(mPrfsGeneral->mShowTrayChk, SIGNAL(toggled(bool)), this, SLOT(slotShowTrayChanged(bool)));
 	mAppearanceTabCtl->addTab( mPrfsGeneral, i18n("&General") );
 
 	// "Away" TAB ========================================================
@@ -143,7 +143,7 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	errorAlert = false;
 //	reopen(); // load settings from config  //WHY? theses are loaded when we need it
 	slotTransparencyChanged(mPrfsChatWindow->mTransparencyEnabled->isChecked());
-	slotShowTrayChanged();
+//	slotShowTrayChanged(mPrfsGeneral->mShowTrayChk->isChecked());
 }
 
 AppearanceConfig::~AppearanceConfig()
@@ -221,7 +221,8 @@ void AppearanceConfig::reopen()
 	mPrfsGeneral->mUseQueueChk->setChecked( p->useQueue() );
 	mPrfsGeneral->mTrayflashNotifyChk->setChecked ( p->trayflashNotify() );
 	mPrfsGeneral->mBalloonNotifyChk->setChecked ( p->balloonNotify() );
-	mPrfsGeneral->mSoundIfAwayChk->setChecked( p->soundIfAway( )  ) ;
+	mPrfsGeneral->mSoundIfAwayChk->setChecked( p->soundIfAway() );
+	slotShowTrayChanged( mPrfsGeneral->mShowTrayChk->isChecked() );
 
 	// "Contact List" TAB
 	mPrfsContactlist->mTreeContactList->setChecked( p->treeView() );
@@ -359,9 +360,9 @@ void AppearanceConfig::slotHighlightChanged()
 	slotUpdatePreview();
 }
 
-void AppearanceConfig::slotShowTrayChanged()
+void AppearanceConfig::slotShowTrayChanged(bool check)
 {
-	bool check = mPrfsGeneral->mShowTrayChk->isChecked();
+//	bool check = mPrfsGeneral->mShowTrayChk->isChecked();
 
 	mPrfsGeneral->mStartDockedChk->setEnabled(check);
 	mPrfsGeneral->mTrayflashNotifyChk->setEnabled(check);
