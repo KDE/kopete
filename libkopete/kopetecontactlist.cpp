@@ -292,7 +292,7 @@ QStringList KopeteContactList::fileTransferContacts() const
 void KopeteContactList::sendFile( QString displayName, QString fileName)
 {
 	/*
-	 * FIXME: We should be using either some kind of unique ID (kabc ID??)
+	 * FIXME: We should be using either some kind of unique ID (kabc ID?)
 	 * here, or force user to only enter unique display names. A
 	 * unique identifier is needed for external DCOP refs like this!
 	 */
