@@ -117,9 +117,7 @@ void AddAccountWizard::accept()
 		KopetePluginManager::self()->setPluginEnabled( protocol_name , true );
 	}
 
-	// FIXME: Why deleteLater()? Can't we simply set W_DestructiveClose instead? - Martijn
-	//       or KWizard::accpet? - Olivier
-	deleteLater();
+	KWizard::accept();
 }
 
 void AddAccountWizard::reject()
