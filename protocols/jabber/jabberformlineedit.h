@@ -1,5 +1,5 @@
 /***************************************************************************
-                          jabberformtranslator.h  -  description
+                          jabberformlineedit.h  -  description
                              -------------------
     begin                : Wed Dec 11 2002
     copyright            : (C) 2002 by Kopete developers
@@ -15,11 +15,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef JABBERFORMTRANSLATOR_H
-#define JABBERFORMTRANSLATOR_H
+#ifndef JABBERFORMLINEEDIT_H
+#define JABBERFORMLINEEDIT_H
 
 #include <qwidget.h>
-#include <qlayout.h>
+#include <qlineedit.h>
 
 #include <psi/types.h>
 #include <psi/tasks.h>
@@ -28,23 +28,21 @@
   *@author Kopete developers
   */
 
-class JabberFormTranslator : public QWidget
+class JabberFormLineEdit : public QLineEdit
 {
 
    Q_OBJECT
 
 public: 
-	JabberFormTranslator(QWidget *parent=0, const char *name=0);
-	~JabberFormTranslator();
+	JabberFormLineEdit(const int type, const QString &realName, const QString &value, QWidget *parent=0, const char *name=0);
+	~JabberFormLineEdit();
 
-	void translate(const Jabber::Form &form, QLayout *layout);
-	Jabber::Form &resultData();
+public slots:
+	void slotGatherData(Jabber::Form &form);
 
-signals:
-	void gatherData(Jabber::Form &form);
-	
 private:
-	Jabber::Form privForm;
+	int fieldType;
+	QString fieldName;
 
 };
 

@@ -10,7 +10,8 @@ INCLUDES = -I$(srcdir)/../../libkopete \
 kde_module_LTLIBRARIES = kopete_jabber.la
 
 kopete_jabber_la_SOURCES = jabberprotocol.cpp jabberresource.cpp jabbercontact.cpp \
-                           jabberprefs.cpp jabbermessagemanager.cpp jabberformtranslator.cpp
+                           jabberprefs.cpp jabbermessagemanager.cpp jabberformtranslator.cpp \
+                           jabberformlineedit.cpp
 kopete_jabber_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN)
 kopete_jabber_la_LIBADD  = ../../libkopete/libkopete.la \
 	ui/libkopetejabberui.la \
@@ -19,4 +20,3 @@ kopete_jabber_la_LIBADD  = ../../libkopete/libkopete.la \
 
 data_DATA = jabber.plugin
 datadir = $(kde_datadir)/kopete
-

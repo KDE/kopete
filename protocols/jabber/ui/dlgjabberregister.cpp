@@ -19,6 +19,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qgroupbox.h>
+#include <qpushbutton.h>
 
 #include <kmessagebox.h>
 #include <klocale.h>
@@ -40,6 +41,8 @@ DlgJabberRegister::DlgJabberRegister(const Jabber::Jid &jid, QWidget *parent, co
 	task->getForm(jid);
 	task->go(true);
 
+	translator = 0;
+
 }
 
 void DlgJabberRegister::slotGotForm()
@@ -51,19 +54,70 @@ void DlgJabberRegister::slotGotForm()
 
 	if(!task->success())
 	{
-		KMessageBox::information(qApp->mainWidget(),
+		KMessageBox::information(this,
 								 i18n("Unable to retrieve registration form"),
 								 i18n("Jabber Error"));
 
 		return;
 	}
 
+	// create a layout for the form
 	QGridLayout *layout = new QGridLayout(grpForm, 1, 1, 20, 10);
+
+	// translate the form and create it inside the layout
+	translator = new JabberFormTranslator(grpForm);
+
+	translator->translate(task->form(), layout);
+
+	// enable the send button
+	btnRegister->setEnabled(true);
+
+	connect(btnRegister, SIGNAL(clicked()), this, SLOT(slotSendForm()));
+
+}
+
+void DlgJabberRegister::slotSendForm()
+{
+
+	Jabber::JT_Register *task = new Jabber::JT_Register(JabberProtocol::protocol()->jabberClient->rootTask());
+
+	connect(task, SIGNAL(finished()), this, SLOT(slotSentForm()));
 	
-	JabberFormTranslator::translate(task->form(), layout, grpForm);
+	task->setForm(translator->resultData());
+	task->go(true);
+
+	btnRegister->setEnabled(false);
+	btnCancel->setEnabled(false);
+
+}
+
+void DlgJabberRegister::slotSentForm()
+{
+	Jabber::JT_Register *task = (Jabber::JT_Register *)sender();
+
+	if(task->success())
+	{
+		KMessageBox::information(this,
+								 i18n("Registration sent successfully"),
+								 i18n("Jabber Registration"));
+
+		deleteLater();
+	}
+	else
+	{
+		KMessageBox::error(this,
+								 i18n("The server denied the registration form."),
+								 i18n("Jabber Registration"));
+
+		btnRegister->setEnabled(true);
+		btnRegister->setEnabled(true);
+	}
 
 }
 
 DlgJabberRegister::~DlgJabberRegister()
 {
+
+	delete translator;
+
 }

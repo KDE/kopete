@@ -27,6 +27,7 @@
 #include <psi/tasks.h>
 
 #include "dlgregister.h"
+#include "jabberformtranslator.h"
 
 /**
   *@author Kopete developers
@@ -44,6 +45,11 @@ public:
 
 private slots:
 	void slotGotForm();
+	void slotSendForm();
+	void slotSentForm();
+
+private:
+	JabberFormTranslator *translator;
 
 };
 
