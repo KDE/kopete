@@ -18,8 +18,9 @@
 #include <kdialogbase.h>
 #include <klocale.h>
 #include <kopeteglobal.h>
-#include <kopeteuiglobal.h>
 #include <kopeteonlinestatus.h>
+#include <kopetemetacontact.h>
+#include <kopeteuiglobal.h>
 #include "gwcontact.h"
 #include "gwcontactpropswidget.h"
 
@@ -33,7 +34,7 @@ GroupWiseContactProperties::GroupWiseContactProperties( GroupWiseContact * conta
 	// set up the contents of the props widget
 	m_propsWidget->m_userId->setText( contact->contactId() );
 	m_propsWidget->m_status->setText( contact->onlineStatus().description() );
-	m_propsWidget->m_displayName->setText( contact->property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
+	m_propsWidget->m_displayName->setText( contact->metaContact()->displayName() );
 	m_propsWidget->m_firstName->setText( contact->property( Kopete::Global::Properties::self()->firstName() ).value().toString() );
 	m_propsWidget->m_lastName->setText( contact->property( Kopete::Global::Properties::self()->lastName() ).value().toString() );
 	// now do the properties

@@ -288,8 +288,9 @@ void GroupWiseContact::handleIncomingMessage( const ConferenceEvent & message, b
 	QString messageMunged = message.message;
 	if ( autoReply )
 	{
-		QString autoReplyPrefix = i18n("Prefix used for automatically generated auto-reply messages when the contact is Away, contains contact's name",
-									   "Auto reply from %1: " ).arg( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
+		QString autoReplyPrefix = i18n("Prefix used for automatically generated auto-reply"
+									   " messages when the contact is Away, contains contact's name",
+				"Auto reply from %1: " ).arg( metaContact()->displayName() );
 		messageMunged = autoReplyPrefix + message.message;
 	}
 	KopeteMessage * newMessage = new KopeteMessage ( message.timeStamp, this, contactList, messageMunged, 
@@ -424,13 +425,13 @@ void GroupWiseContact::syncGroups()
 				instance.parentId = (*it).parentId;
 				instance.sequence = (*it).sequence;
 				instance.dn = m_dn;
-				instance.displayName = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+				instance.displayName = m_displayName;
 				instancesToChange.append( instance );
 			}
 			UpdateContactTask * uct = new UpdateContactTask( account()->client()->rootTask() );
 			uct->renameContact( metaContact()->displayName(), instancesToChange );
 			uct->go( true );
-			setProperty( Kopete::Global::Properties::self()->nickName(), metaContact()->displayName() );
+//			setProperty( Kopete::Global::Properties::self()->nickName(), metaContact()->displayName() );
 // 		}
 	}
 }
