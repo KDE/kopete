@@ -44,6 +44,10 @@ JabberBaseContact::JabberBaseContact (const XMPP::RosterItem &rosterItem, Jabber
 	// since we're not in the account's contact pool yet
 	// (we'll only be once we returned from this constructor),
 	// we need to force an update to our status here
+	// FIXME: libkopete doesn't allow us to use this call
+	// here anymore as it causes an invocation of manager()
+	// which is still a pure virtual in this constructor.
+	// (needs to be done in subclasses instead)
 	reevaluateStatus ();
 
 }

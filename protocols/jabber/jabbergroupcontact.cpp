@@ -64,6 +64,9 @@ JabberGroupContact::JabberGroupContact (const XMPP::RosterItem &rosterItem, Jabb
 	 */
 	mManager->addContact ( this );
 
+	// call moved from superclass, see JabberBaseContact for details
+	reevaluateStatus ();
+
 }
 
 JabberGroupContact::~JabberGroupContact ()

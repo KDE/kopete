@@ -86,6 +86,9 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 			slotCheckVCard ();
 	}
 
+	// call moved from superclass, see JabberBaseContact for details
+	reevaluateStatus ();
+
 }
 
 QPtrList<KAction> *JabberContact::customContextMenuActions ()
