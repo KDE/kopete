@@ -84,7 +84,6 @@ public:
 	enum ChatWindowPref { EmailWindow=0, ChatWindow };
 	ChatWindowPref interfacePreference() const { return mInterfacePreference; }
 	bool showTray() const { return mShowTray; }
-	bool notifyAway() const { return mNotifyAway; }
 	bool richText() const { return mRichText; }
 	bool chatWShowSend() const { return mChatWShowSend; }
 
@@ -144,7 +143,6 @@ public:
 	void setFontFace(const QFont &);
 	void setIdleContactColor(const QColor &);
 	void setShowTray(bool);
-	void setNotifyAway(bool);
 	void setRichText(bool);
 	void setRememberedMessages(int);
 	void setToolTipContents(const QStringList &);
@@ -223,7 +221,6 @@ private:
 	bool mWindowAppearanceChanged;
 	bool mMessageAppearanceChanged;
 	bool mContactListAppearanceChanged;
-	bool mNotifyAway;
 	bool mChatWShowSend;
 
 	int mChatWindowPolicy;

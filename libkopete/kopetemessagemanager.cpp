@@ -4,7 +4,7 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Daniel Stone           <dstone@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
     Copyright (c) 2003      by Jason Keirstead        <jason@keirstead.org>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
@@ -93,24 +93,6 @@ KopeteMessageManager::~KopeteMessageManager()
 
 void KopeteMessageManager::slotOnlineStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus )
 {
-	kdDebug( 14010 ) << k_funcinfo << endl;
-	if ( c == d->mUser && KopetePrefs::prefs()->notifyAway() )
-	{
-		if ( status.status() == KopeteOnlineStatus::Away )
-		{
-			d->awayTime = QDateTime::currentDateTime();
-			KopeteMessage msg( c, d->mContactList, i18n( "%1 has been marked as away." ).arg( QString::fromLatin1( "/me" ) ),
-			KopeteMessage::Outbound, KopeteMessage::PlainText );
-			sendMessage( msg );
-		}
-		else if ( oldStatus.status() == KopeteOnlineStatus::Away && status.status() == KopeteOnlineStatus::Online )
-		{
-			KopeteMessage msg( c, d->mContactList, i18n( "%1 is no longer marked as away. Gone since %1." ).arg( QString::fromLatin1( "/me" ) )
-				.arg( KGlobal::locale()->formatDateTime( d->awayTime, true ) ), KopeteMessage::Outbound, KopeteMessage::PlainText );
-			sendMessage( msg );
-		}
-	}
-
 	slotUpdateDisplayName();
 	emit onlineStatusChanged((KopeteContact*)c, status, oldStatus);
 }
