@@ -218,7 +218,7 @@ class OscarContact : public KopeteContact
 		bool mDirectlyConnected;
 
 		int mEncoding;
-		int mGroupId; // TODO: move the server groupid to OscarContact!
+		int mGroupId; 
 
 		QString mAwayMessage;
 };
