@@ -124,7 +124,6 @@ void KopeteMessageManager::messageSentFromWindow(const QString &message)
 	QString body = message;
 	KopeteMessage tmpmessage(mUser, mContactList, QStyleSheet::escape(body), KopeteMessage::Outbound);
 	emit messageSent(tmpmessage);
-	readMessages();
 }
 
 void KopeteMessageManager::chatWindowClosing()
