@@ -393,7 +393,7 @@
                                     <cstring>lblSignonTime</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Signon time:</string>
+                                    <string>Sign-on time:</string>
                                 </property>
                             </widget>
                             <widget class="QGroupBox" row="0" column="0" rowspan="6" colspan="1">

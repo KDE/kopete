@@ -256,7 +256,7 @@ void AliasPreferences::slotAddAlias()
 		if( alias.contains( QRegExp("[_=]") ) )
 		{
 			KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. An"
-					" alias name can not contain the characters \"_\" or \"=\"."
+					" alias name cannot contain the characters \"_\" or \"=\"."
 					"</qt>").arg(alias),i18n("Invalid Alias Name") );
 		}
 		else
@@ -332,7 +332,7 @@ void AliasPreferences::slotEditAlias()
 			if( alias.contains( QRegExp("[_=]") ) )
 			{
 				KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. An"
-						" alias name can not contain the characters \"_\" or \"=\"."
+						" alias name cannot contain the characters \"_\" or \"=\"."
 						"</qt>").arg(alias),i18n("Invalid Alias Name") );
 			}
 			else

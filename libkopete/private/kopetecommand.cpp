@@ -68,15 +68,15 @@ void KopeteCommand::processCommand( const QString &args, KopeteMessageManager *m
 	QStringList mArgs = KopeteCommandHandler::parseArguments( args );
 	if( mArgs.count() < m_minArgs )
 	{
-		printError( i18n("\"%1\" requires at least %2 argument.",
-			"\"%1\" requires at least %2 arguments.", m_minArgs)
-			.arg( text() ).arg( m_minArgs ), manager, gui );
+		printError( i18n("\"%1\" requires at least %n argument.",
+			"\"%1\" requires at least %n arguments.", m_minArgs)
+			.arg( text() ), manager, gui );
 	}
 	else if( m_maxArgs > -1 && (int)mArgs.count() > m_maxArgs )
 	{
-		printError( i18n("\"%1\" has a maximum of %2 argument.",
-			"\"%1\" has a maximum of %2 arguments.", m_minArgs)
-			.arg( text() ).arg( m_maxArgs ), manager, gui );
+		printError( i18n("\"%1\" has a maximum of %n argument.",
+			"\"%1\" has a maximum of %n arguments.", m_minArgs)
+			.arg( text() ), manager, gui );
 	}
 	else if( !KApplication::kApplication()->authorizeKAction( name() ) )
 	{
