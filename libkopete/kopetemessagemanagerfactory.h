@@ -77,8 +77,22 @@ public:
 	void cleanSessions( KopeteProtocol *);
 
 signals:
-	void messageReceived( KopeteMessage& message );
-	void messageQueued( KopeteMessage& message );
+	/**
+	 * This signal is emitted whenever a message
+	 * is about to be displayed by the KopeteChatWindow.
+	 * Please remember that both messages sent and
+	 * messages received will emit this signal!
+	 * Plugins may connect to this signal to change
+	 * the message contents before it's going to be displayed.
+	 */
+	void aboutToDisplay( KopeteMessage& message );
+
+	/**
+	 * Plugins may connect to this signal
+	 * to manipulate the contents of the
+	 * message that is being sent.
+	 */
+	void aboutToSend( KopeteMessage& message );
 
 protected slots:
 	void slotRemoveSession( KopeteMessageManager *session );

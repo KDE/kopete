@@ -3,12 +3,12 @@
 #include <kstandarddirs.h>
 
 #include "kopetemessage.h"
+#include "kopetemessagemanagerfactory.h"
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
 
 #include "msginfoplugin.h"
 
-#include <qapplication.h>
 #include <qcolor.h>
 #include <qregexp.h>
 
@@ -18,10 +18,12 @@ MsgInfoPlugin::MsgInfoPlugin( QObject *parent, const char *name,
 				const QStringList &/*args*/ )
 : KopetePlugin( parent, name )
 {
-	connect( qApp, SIGNAL( aboutToDisplay( KopeteMessage & ) ),
-		 SLOT( slotProcessDisplay( KopeteMessage & ) ) );
-	connect( qApp, SIGNAL( aboutToSend( KopeteMessage & ) ),
-		 SLOT( slotProcessSend( KopeteMessage & ) ) );
+	connect( KopeteMessageManagerFactory::factory(),
+		SIGNAL( aboutToDisplay( KopeteMessage & ) ),
+		SLOT( slotProcessDisplay( KopeteMessage & ) ) );
+	connect( KopeteMessageManagerFactory::factory(),
+		SIGNAL( aboutToSend( KopeteMessage & ) ),
+		SLOT( slotProcessSend( KopeteMessage & ) ) );
 }
 
 MsgInfoPlugin::~MsgInfoPlugin()

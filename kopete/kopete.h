@@ -39,36 +39,12 @@ public:
 	Kopete();
 	~Kopete();
 
-signals:
-	/**
-	 * This signal is emitted whenever a message
-	 * is about to be displayed by the KopeteChatWindow.
-	 * Please remember that both messages sent and
-	 * messages received will emit this signal!
-	 * Plugins may connect to this signal to change
-	 * the message contents before it's going to be displayed.
-	 */
-	void aboutToDisplay( KopeteMessage& );
-
-	/**
-	 * Plugins may connect to this signal
-	 * to manipulate the contents of the
-	 * message that is being sent.
-	 */
-	void aboutToSend( KopeteMessage& );
-
-	void signalSettingsChanged();
-
 private slots:
-	void slotShowTransfers();
-
 	/**
 	 * Load all plugins
 	 */
 	void slotLoadPlugins();
 };
-
-#define kopeteapp (static_cast<Kopete*>(kapp))
 
 #endif
 

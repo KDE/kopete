@@ -15,7 +15,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qapplication.h>
 #include <qstylesheet.h>
 
 #include <kdebug.h>
@@ -26,6 +25,7 @@
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
 #include "kopetemessagemanager.h"
+#include "kopetemessagemanagerfactory.h"
 
 #include "cryptographyplugin.h"
 #include "cryptographypreferences.h"
@@ -46,10 +46,12 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name,
 	//TODO: found a pixmap
 	m_prefs = new CryptographyPreferences ( "kgpg", this );
 
-	connect( qApp, SIGNAL( aboutToDisplay( KopeteMessage & ) ),
-		 SLOT( slotIncomingMessage( KopeteMessage & ) ) );
-	connect( qApp, SIGNAL( aboutToSend( KopeteMessage & ) ),
-		 SLOT( slotOutgoingMessage( KopeteMessage & ) ) );
+	connect( KopeteMessageManagerFactory::factory(),
+		SIGNAL( aboutToDisplay( KopeteMessage & ) ),
+		SLOT( slotIncomingMessage( KopeteMessage & ) ) );
+	connect( KopeteMessageManagerFactory::factory(),
+		SIGNAL( aboutToSend( KopeteMessage & ) ),
+		SLOT( slotOutgoingMessage( KopeteMessage & ) ) );
 
 	m_collection=0l;
 	m_currentMetaContact=0L;

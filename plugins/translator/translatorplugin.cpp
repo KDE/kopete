@@ -37,6 +37,7 @@
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
 #include "kopetemessagemanager.h"
+#include "kopetemessagemanagerfactory.h"
 
 #include "translatorplugin.h"
 #include "translatorprefs.h"
@@ -129,10 +130,12 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 
 	m_prefs = new TranslatorPreferences ( "locale", this );
 
-	connect( qApp, SIGNAL(aboutToDisplay(KopeteMessage&)),
-		 SLOT(slotIncomingMessage(KopeteMessage&)) );
-	connect( qApp, SIGNAL(aboutToSend(KopeteMessage&)),
-		 SLOT(slotOutgoingMessage(KopeteMessage&)) );
+	connect( KopeteMessageManagerFactory::factory(),
+		SIGNAL( aboutToDisplay( KopeteMessage & ) ),
+		SLOT( slotIncomingMessage( KopeteMessage & ) ) );
+	connect( KopeteMessageManagerFactory::factory(),
+		SIGNAL( aboutToSend( KopeteMessage & ) ),
+		SLOT( slotOutgoingMessage( KopeteMessage & ) ) );
 }
 
 TranslatorPlugin::~TranslatorPlugin()

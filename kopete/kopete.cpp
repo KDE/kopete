@@ -29,12 +29,14 @@
 #include "appearanceconfig.h"
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
-#include "kopeteprefs.h"
-#include "kopetetransfermanager.h"
 #include "kopeteuserpreferences.h"
 #include "kopetewindow.h"
 #include "pluginloader.h"
 #include "pluginmodule.h"
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 Kopete::Kopete()
 : KUniqueApplication( true, true, true )
@@ -47,14 +49,6 @@ Kopete::Kopete()
 
 	new AppearanceConfig( mainWindow );
 	new KopeteUserPreferencesConfig( mainWindow );
-
-	connect( KopetePrefs::prefs() , SIGNAL(saved()), this, SIGNAL(signalSettingsChanged()));
-	connect( KopeteMessageManagerFactory::factory(),
-		SIGNAL( messageReceived( KopeteMessage & ) ),
-		SIGNAL( aboutToDisplay( KopeteMessage & ) ) );
-	connect( KopeteMessageManagerFactory::factory(),
-		SIGNAL( messageQueued( KopeteMessage & ) ),
-		SIGNAL( aboutToSend( KopeteMessage & ) ) );
 
 	KopeteContactList::contactList()->load();
 
@@ -140,11 +134,6 @@ void Kopete::slotLoadPlugins()
 	config->writeEntry("Modules", modules);
 
 	LibraryLoader::pluginLoader()->loadAll();
-}
-
-void Kopete::slotShowTransfers()
-{
-	KopeteTransferManager::transferManager()->show();
 }
 
 #include "kopete.moc"

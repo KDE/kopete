@@ -44,6 +44,7 @@
 #include "kopeteidentitymanager.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
+#include "kopetetransfermanager.h"
 #include "pluginloader.h"
 #include "preferencesdialog.h"
 #include "systemtray.h"
@@ -122,9 +123,9 @@ void KopeteWindow::initActions ( void )
 	actionAwayMenu->insert(actionSetAvailable);
 	actionAwayMenu->insert(actionSetAway);
 
-	actionShowTransfers = new KAction( i18n("Show &File Transfers"),"network", 0 ,
-							qApp, SLOT(slotShowTransfers()),
-							actionCollection(), "ShowTransfers" );
+	actionShowTransfers = new KAction( i18n( "Show &File Transfers" ),
+		"network", 0, KopeteTransferManager::transferManager(),
+		SLOT( show() ), actionCollection(), "ShowTransfers" );
 
 	actionPrefs = KStdAction::preferences(
 		PreferencesDialog::preferencesDialog(), SLOT( show() ),
