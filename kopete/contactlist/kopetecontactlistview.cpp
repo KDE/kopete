@@ -1466,7 +1466,7 @@ void KopeteContactListView::slotMoveToGroup()
 
 	if(m->isTemporary())
 	{
-		if( KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "<qt>Would you like to add this contact to your contaclist</qt>" ),
+		if( KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "<qt>Would you like to add this contact to your contaclist?</qt>" ),
 				i18n( "Kopete" ), KStdGuiItem::yes(),KStdGuiItem::no(),"addTemporaryWhenMoving" ) == KMessageBox::Yes )
 		{
 			m->setTemporary(false,g);
