@@ -281,7 +281,7 @@ void ChatView::makeVisible()
 {
 	if( !m_mainWindow )
 	{
-		m_mainWindow = KopeteChatWindow::window( m_manager->protocol() );
+		m_mainWindow = KopeteChatWindow::window( m_manager->account() );
 		if( root )
 			root->repaint( true );
 	}

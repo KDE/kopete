@@ -112,13 +112,13 @@
                 </widget>
                 <widget class="QRadioButton">
                     <property name="name">
-                        <cstring>mTabProtocolWindow</cstring>
+                        <cstring>mTabAccountWindow</cstring>
                     </property>
                     <property name="text">
-                        <string>Group messages from the same protocol in the same chat window</string>
+                        <string>Group messages from the same account in the same chat window</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>All chats using one protocol are grouped into one window by using tabs.</string>
+                        <string>All chats for one account get grouped into one window by using tabs.</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton">
@@ -198,7 +198,7 @@
     <tabstop>mSingleShot</tabstop>
     <tabstop>mChatWindow</tabstop>
     <tabstop>mNewWindow</tabstop>
-    <tabstop>mTabProtocolWindow</tabstop>
+    <tabstop>mTabAccountWindow</tabstop>
     <tabstop>mTabWindow</tabstop>
     <tabstop>mChatViewBufferSize</tabstop>
 </tabstops>

@@ -52,16 +52,16 @@
 //#include "emoticonselector.h"
 #include "kopeteemoticonaction.h"
 
-typedef QMap<KopeteProtocol*,KopeteChatWindow*> ProtocolMap;
+typedef QMap<KopeteAccount*,KopeteChatWindow*> AccountMap;
 typedef QPtrList<KopeteChatWindow> WindowList;
 
 namespace
 {
-	ProtocolMap protocolMap;
+	AccountMap accountMap;
 	WindowList windows;
 }
 
-KopeteChatWindow *KopeteChatWindow::window( KopeteProtocol *p )
+KopeteChatWindow *KopeteChatWindow::window( KopeteAccount *a )
 {
 	bool windowCreated = false;
 	KopeteChatWindow *myWindow;
@@ -72,9 +72,9 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteProtocol *p )
 			windowCreated = true;
 			break;
 
-		case GROUP_BY_PROTOCOL: //Open chats in the same protocol in the same window
-			if( protocolMap.contains( p ) )
-				myWindow = protocolMap[ p ];
+		case GROUP_BY_ACCOUNT: //Open chats in the same protocol in the same window
+			if( accountMap.contains( a ) )
+				myWindow = accountMap[ a ];
 			else
 				windowCreated = true;
 			break;
@@ -100,8 +100,8 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteProtocol *p )
 	if( windowCreated )
 	{
 		myWindow = new KopeteChatWindow();
-		if( !protocolMap.contains( p ) )
-			protocolMap.insert( p, myWindow );
+		if( !accountMap.contains( a ) )
+			accountMap.insert( a, myWindow );
 	}
 
 //	kdDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
@@ -162,11 +162,11 @@ KopeteChatWindow::~KopeteChatWindow()
 	while( repeat )
 	{
 		repeat = false;
-		for( ProtocolMap::Iterator it = protocolMap.begin(); it != protocolMap.end(); ++it )
+		for( AccountMap::Iterator it = accountMap.begin(); it != accountMap.end(); ++it )
 		{
 			if( it.data() == this )
 			{
-				protocolMap.remove( it.key() );
+				accountMap.remove( it.key() );
 
 				// When deleting items from a QMap you can no longer use any outstanding
 				// iterators to the map, so reset the loop here.

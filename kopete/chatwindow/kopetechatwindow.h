@@ -57,7 +57,7 @@ public:
 	 * @return A KopeteChatWindow suitable for docking a ChatView into. Guaranteed
 	 *  to be a valid pointer.
 	 */
-	static KopeteChatWindow *window( KopeteProtocol *protocol );
+	static KopeteChatWindow *window( KopeteAccount *account );
 	~KopeteChatWindow();
 
 	KopeteMessage currentMessage();

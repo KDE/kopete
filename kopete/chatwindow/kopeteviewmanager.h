@@ -22,7 +22,7 @@
 #include "kopetemessage.h"
 
 #define NEW_WINDOW 0
-#define GROUP_BY_PROTOCOL 1
+#define GROUP_BY_ACCOUNT 1
 #define GROUP_ALL 2
 
 
