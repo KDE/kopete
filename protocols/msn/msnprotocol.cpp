@@ -141,7 +141,7 @@ void MSNProtocol::connect()
 				"You can specify your MSN settings in the Kopete configuration dialog<br>"
 				"Get an MSN account <a href=\"http://login.hotmail.passport.com/cgi-bin/register/en/default.asp\">here</a><br>"
 				"Do you want to configure MSN now?</qt>" ),
-			i18n( "MSN plugin not configured yet" ),
+			i18n( "MSN plugin Not Configured Yet" ),
 			KGuiItem( i18n( "C&onfigure..." ), "configure" ), QString::null,
 			KMessageBox::AllowLink );
 
@@ -427,8 +427,8 @@ void MSNProtocol::slotStartChat()
 
 	bool ok;
 	QString handle = KLineEditDlg::getText(
-		i18n( "Start chat - MSN Plugin" ),
-		i18n( "Please enter the email address of the person with whom you want to chat" ),
+		i18n( "Start Chat - MSN Plugin" ),
+		i18n( "Please enter the email address of the person with whom you want to chat:" ),
 		QString::null, &ok );
 	if( ok )
 	{
@@ -1175,7 +1175,7 @@ void MSNProtocol::slotChangePublicName()
 	QString name = KLineEditDlg::getText(
 		i18n( "Change Nickname - MSN Plugin - Kopete" ),
 		i18n( "Enter the new public name by which you want to be "
-			"visible to your friends on MSN." ),
+			"visible to your friends on MSN:" ),
 		m_publicName, &ok );
 
 	if( ok )

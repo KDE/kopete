@@ -44,7 +44,7 @@ KopeteAwayConfigUI::KopeteAwayConfigUI(QWidget *parent) :
 void KopeteAwayConfigUI::newButtonClicked()
 {
 	bool createNewTitle = false;
-	QString newTitle = KLineEditDlg::getText(i18n("New Away Message"), i18n("Away Message Title"),
+	QString newTitle = KLineEditDlg::getText(i18n("New Away Message"), i18n("Enter away message title:"),
 						i18n("Title"), &createNewTitle, this);
 	if( createNewTitle )
 	{
@@ -59,7 +59,7 @@ void KopeteAwayConfigUI::deleteButtonClicked()
 
 	QListBoxItem *selectedItem = lstTitles->item( lstTitles->currentItem() );
 	int retval = KMessageBox::warningYesNo( this,
-		i18n( "Delete Message %1?").arg( selectedItem->text() ),
+		i18n( "Delete message '%1'?").arg( selectedItem->text() ),
 		i18n( "Delete Message - Kopete" ) );
 
 	if( retval == KMessageBox::Yes )

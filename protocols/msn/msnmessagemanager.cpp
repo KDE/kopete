@@ -232,7 +232,7 @@ void MSNMessageManager::slotInviteOtherContact()
 {
 	bool ok;
 	QString handle = KLineEditDlg::getText(i18n( "MSN Plugin" ),
-			i18n( "Please enter the email address of the person you want to invite" ),
+			i18n( "Please enter the email address of the person you want to invite:" ),
 			QString::null, &ok );
 	if( !ok )
 		return;

@@ -76,7 +76,7 @@ KAction* KopeteStdAction::contactInfo(const QObject *recvr, const char *slot, QO
 
 KAction* KopeteStdAction::sendFile(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction( i18n( "Send &File" ), QString::fromLatin1( "launch" ), 0, recvr, slot, parent, name );
+	return new KAction( i18n( "Send &File..." ), QString::fromLatin1( "launch" ), 0, recvr, slot, parent, name );
 }
 
 KAction* KopeteStdAction::viewHistory(const QObject *recvr, const char *slot, QObject* parent, const char *name)

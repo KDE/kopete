@@ -126,7 +126,7 @@ void AddContactWizard::slotAddGroupClicked()
 	bool ok;
 	QString groupName = KLineEditDlg::getText(
 		i18n( "New Group - Kopete" ),
-		i18n( "Please enter the name for the new group" ),
+		i18n( "Please enter the name for the new group:" ),
 		QString::null, &ok );
 
 	if ( !groupName.isNull() && ok)

@@ -41,7 +41,7 @@
                 <cstring>m_selectOwnKey</cstring>
             </property>
             <property name="text">
-                <string>Select</string>
+                <string>Select...</string>
             </property>
         </widget>
         <spacer row="1" column="1">

@@ -213,7 +213,7 @@ Expressions in brackets depend on a substitution being made.</string>
                         <cstring>m_conjunctionLabel</cstring>
                     </property>
                     <property name="text">
-                        <string>Co&amp;njunction (if &gt;1 track): </string>
+                        <string>Co&amp;njunction (if &gt;1 track):</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>m_conjunction</cstring>

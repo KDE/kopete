@@ -280,7 +280,7 @@ void KopeteContact::showContextMenu(const QPoint& p)
 
 void KopeteContact::slotChangeDisplayName(){
 	bool okClicked;
-	QString newName = KLineEditDlg::getText(i18n("Change Alias"), i18n("New alias for %1").arg(contactId()),
+	QString newName = KLineEditDlg::getText(i18n("Change Alias"), i18n("New alias for %1:").arg(contactId()),
 		displayName(), &okClicked);
 
 	if(okClicked)

@@ -127,7 +127,7 @@ void KopeteWindow::initActions ( void )
 	actionAwayMenu->insert(actionSetAvailable);
 	actionAwayMenu->insert(actionSetAway);
 
-	actionShowTransfers = new KAction( i18n( "Show &File Transfers..." ),
+	actionShowTransfers = new KAction( i18n( "Show &File Transfers" ),
 		"network", 0, KopeteTransferManager::transferManager(),
 		SLOT( show() ), actionCollection(), "ShowTransfers" );
 
@@ -479,7 +479,7 @@ void KopeteWindow::slotShowPreferencesDialog()
 void KopeteWindow::slotSaveContactList()
 {
 	KopeteContactList::contactList()->save();
-	KMessageBox::information(this, i18n("Contact List Saved."), i18n("Contact List Saved"));
+	KMessageBox::information(this, i18n("Contact list saved."), i18n("Contact List Saved"));
 }
 
 void KopeteWindow::showAddContactDialog()

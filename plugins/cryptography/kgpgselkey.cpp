@@ -83,7 +83,7 @@
 /***************////////////////////////////////////////////////////////////////////////////////////////////////////
   
 ////////////////   Secret key selection dialog, used when user wants to sign a key
-KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal):KDialogBase( parent, name, true,i18n("Private key list"),Ok | Cancel)
+KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal):KDialogBase( parent, name, true,i18n("Private Key List"),Ok | Cancel)
 {
   QString keyname;
   QWidget *page = new QWidget(this);

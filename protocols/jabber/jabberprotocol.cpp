@@ -360,7 +360,7 @@ void JabberProtocol::connect()
 							"You can specify your Jabber settings in the Kopete "
 							"configuration dialog<br>"
 							"Do you want to configure Jabber now?</qt>" ),
-			i18n( "Jabber plugin not configured yet" ),
+			i18n( "Jabber Plugin Not Configured Yet" ),
 			KGuiItem( i18n( "C&onfigure..." ), "configure" ) );
 		if(r!=KMessageBox::Cancel)
 		{
