@@ -2807,6 +2807,10 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 	BYTE currentState = inbuf.getByte();
 	kdDebug(14150) << k_funcinfo << "currentState=" << currentState << endl;
 
+	//Predict the new rate level
+	int newLevel = ((windowSize - 1) / windowSize) * ((currentLevel + 1) / windowSize) * lastTime;
+	kdDebug(14150) << "New Level is: " << newLevel << endl;
+	
 	if (code == 0x0002) //we've been warned about exceeding the rate limit
 	{
 		slotToggleSend();
