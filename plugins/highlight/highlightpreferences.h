@@ -18,7 +18,8 @@
 #ifndef HighlightPREFERENCES_H
 #define HighlightPREFERENCES_H
 
-#include "configmodule.h"
+#include <kcmodule.h>
+#include <qstring.h>
 
 class HighlightPrefsUI;
 class Filter;
@@ -28,29 +29,30 @@ class QListViewItem;
   *@author Olivier Goffart
   */
 
-class HighlightPreferences : public ConfigModule  {
+class HighlightPreferences : public KCModule  {
    Q_OBJECT
 public:
 
-	HighlightPreferences(const QString &pixmap, QObject *parent=0);
+	HighlightPreferences(QWidget *parent = 0, const char* name = 0, const QStringList &args = QStringList());
 	~HighlightPreferences();
 
 	virtual void save();
-	virtual void reopen();
+	virtual void load();
 
 private:
 	HighlightPrefsUI *preferencesDialog;
+	HighlightConfig *m_config;
 	QMap <QListViewItem*,Filter*> m_filterItems;
-	
+
 	bool donttouch;
-	
-private slots: 
+
+private slots:
 	void slotCurrentFilterChanged();
 	void slotAddFilter();
 	void slotRemoveFilter();
 	void slotRenameFilter();
 	void slotSomethingHasChanged();
-	void slotEditRegExp(); 
+	void slotEditRegExp();
 };
 
 #endif

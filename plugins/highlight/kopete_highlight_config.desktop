@@ -1,0 +1,14 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=highlight
+Type=Service
+ServiceTypes=KCModule
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kcm_kopete_highlight
+X-KDE-FactoryName=HighlightConfigFactory
+X-KDE-ParentApp=kopete
+X-KDE-ParentComponents=kopete_highlight_plugin
+
+Name=Highlight
+Comment=Highlights text based on filters

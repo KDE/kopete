@@ -34,7 +34,7 @@ class KopeteMessage;
 class KopeteMetaContact;
 class KopeteMessageManager;
 
-class HighlightPreferences;
+class HighlightConfig;
 class Filter;
 
 /**
@@ -51,10 +51,10 @@ public:
 	HighlightPlugin( QObject *parent, const char *name, const QStringList &args );
 	~HighlightPlugin();
 
-	QPtrList<Filter> filters();
+
 	Filter* newFilter();
 	void removeFilter(Filter *f);
-	
+
 	void load();
 	void save();
 
@@ -69,8 +69,7 @@ public slots:
 
 private:
 	static HighlightPlugin* pluginStatic_;
-	HighlightPreferences *m_prefs;
-	QPtrList<Filter> m_filters;
+	HighlightConfig *m_config;
 };
 
 #endif

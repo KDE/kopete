@@ -23,7 +23,7 @@
 #include <kparts/componentfactory.h>
 #include <klocale.h>
 #include <klistview.h>
-//#include <kcolorcombo.h>
+#include <kgenericfactory.h>
 #include <kcolorbutton.h>
 #include <klineeditdlg.h>
 #include <kurlrequester.h>
@@ -31,16 +31,20 @@
 
 #include "filter.h"
 #include "highlightplugin.h"
+#include "highlightconfig.h"
 #include "highlightprefsbase.h"
 #include "highlightpreferences.h"
 
+typedef KGenericFactory<HighlightPreferences> HighlightPreferencesFactory;
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_highlight, HighlightPreferencesFactory( "kcm_kopete_highlight" )  );
 
-HighlightPreferences::HighlightPreferences(const QString &pixmap,QObject *parent)
-							: ConfigModule(i18n("Highlight"),i18n("Highlight Plugin"),pixmap,parent)
+HighlightPreferences::HighlightPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
+							: KCModule(HighlightPreferencesFactory::instance(), parent, args)
 {
 	donttouch=true;
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	preferencesDialog = new HighlightPrefsUI(this);
+	m_config = new HighlightConfig;
 
 	connect(preferencesDialog->m_list , SIGNAL(selectionChanged()) , this , SLOT(slotCurrentFilterChanged()));
 	connect(preferencesDialog->m_add , SIGNAL(pressed()) , this , SLOT(slotAddFilter()));
@@ -62,25 +66,30 @@ HighlightPreferences::HighlightPreferences(const QString &pixmap,QObject *parent
 	connect(preferencesDialog->m_FG , SIGNAL(changed(const QColor&)) , this , SLOT(slotSomethingHasChanged()));
 	connect(preferencesDialog->m_BG , SIGNAL(changed(const QColor&)) , this , SLOT(slotSomethingHasChanged()));
 
-	reopen();
+	load();
 	donttouch=false;
 }
 
 HighlightPreferences::~HighlightPreferences()
 {
+	delete preferencesDialog;
+	delete m_config;
 }
 
 
-void HighlightPreferences::reopen()
+void HighlightPreferences::load()
 {
+	m_config->load();
 	donttouch=true;
 	preferencesDialog->m_list->clear();
 	m_filterItems.clear();
 
-	QPtrList<Filter>  filters = HighlightPlugin::plugin()->filters();
+	QPtrListIterator<Filter> it( m_config->filters());
+	Filter *f;
 	bool first=true;
-	for(Filter *f=filters.first() ; f; f=filters.next() )
+	while ( (f=it.current()) != 0 )
 	{
+		++it;
 		QListViewItem* lvi= new QListViewItem(preferencesDialog->m_list);
 		lvi->setText(0,f->displayName );
 		m_filterItems.insert(lvi,f);
@@ -93,7 +102,7 @@ void HighlightPreferences::reopen()
 
 void HighlightPreferences::save()
 {
-	HighlightPlugin::plugin()->save();
+	m_config->save();
 }
 
 
@@ -150,7 +159,7 @@ void HighlightPreferences::slotCurrentFilterChanged()
 
 void HighlightPreferences::slotAddFilter()
 {
-	Filter *filtre=HighlightPlugin::plugin()->newFilter();
+	Filter *filtre=m_config->newFilter();
 	QListViewItem* lvi= new QListViewItem(preferencesDialog->m_list);
 	lvi->setText(0,filtre->displayName );
 	m_filterItems.insert(lvi,filtre);
@@ -168,7 +177,7 @@ void HighlightPreferences::slotRemoveFilter()
 
 	m_filterItems.remove(lvi);
 	delete lvi;
-	HighlightPlugin::plugin()->removeFilter(current);
+	m_config->removeFilter(current);
 }
 
 void HighlightPreferences::slotRenameFilter()
@@ -240,3 +249,5 @@ void HighlightPreferences::slotEditRegExp()
 }
 
 #include "highlightpreferences.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:
