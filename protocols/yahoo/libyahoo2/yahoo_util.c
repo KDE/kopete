@@ -55,6 +55,8 @@ char * y_string_append(char * string, char * append)
 	return new_string;
 }
 
+#if !HAVE_GLIB
+
 void y_strfreev(char ** vector)
 {
 	char **v;
@@ -104,3 +106,4 @@ void * y_memdup(const void * addr, int n)
 	return new_chunk;
 }
 
+#endif

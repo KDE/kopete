@@ -68,7 +68,7 @@ YList * y_list_remove(YList * list, void * data)
 
 /* Warning */
 /* link MUST be part of list */
-YList * y_list_remove_link(YList * list, YList * link)
+YList * y_list_remove_link(YList * list, const YList * link)
 {
   if(!link)
     return list;
@@ -81,7 +81,7 @@ YList * y_list_remove_link(YList * list, YList * link)
   if(link == list)
     list = link->next;
 
-  link->prev = link->next = NULL;
+//  link->prev = link->next = NULL;
 
   return list;
 }

@@ -20,6 +20,12 @@
  *
  */
 
+/*
+ * This is a replacement for the GList.  It only provides functions that 
+ * we use in libyahoo2.  Thanks to Meredyyd from everybuddy dev for doing 
+ * most of it.
+ */
+
 #ifndef __YAHOO_LIST_H__
 #define __YAHOO_LIST_H__
 
@@ -36,7 +42,7 @@ typedef struct _YList {
 typedef int (*YListCompFunc)(const void *, const void *);
 
 YList * y_list_append(YList * list, void * data);
-YList * y_list_remove_link(YList * list, YList * link);
+YList * y_list_remove_link(YList * list, const YList * link);
 YList * y_list_remove(YList * list, void * data);
 
 YList * y_list_copy(YList * list);

@@ -46,10 +46,12 @@ char *strchr (), *strrchr ();
 #include "yahoo2.h"
 #include "yahoo2_callbacks.h"
 #include "yahoo_httplib.h"
-#include "yahoo_debug.h"
 #include "yahoo_util.h"
 
+#include "yahoo_debug.h"
+
 extern enum yahoo_log_level log_level;
+extern int yahoo_connect(char * host, int port);
 
 int yahoo_tcp_readline(char *ptr, int maxlen, int fd)
 {
@@ -202,7 +204,7 @@ char *yahoo_urldecode(const char *instr)
 
 static int yahoo_send_http_request(char *host, int port, char *request)
 {
-	int fd = ext_yahoo_connect(host, port);
+	int fd = yahoo_connect(host, port);
 
 	if(fd > 0)
 		write(fd, request, strlen(request));
@@ -223,7 +225,7 @@ int yahoo_http_post(const char *url, const struct yahoo_data *yd, long content_l
 	snprintf(buff, sizeof(buff), 
 			"POST %s HTTP/1.0\n"
 			"Content-length: %ld\n"
-			"User-Agent: Mozilla/4.5 [en] (libyahoo2/1.0)\n"
+			"User-Agent: Mozilla/4.5 [en] (" PACKAGE "/" VERSION ")\n"
 			"Host: %s:%d\n"
 			"Cookie: Y=%s; T=%s\n"
 			"\n",

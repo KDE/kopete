@@ -19,18 +19,20 @@
  *
  */
 
-#define NOTICE(x) if(log_level >= YAHOO_LOG_NOTICE) { ext_yahoo_log x; ext_yahoo_log("\n"); }
+extern int yahoo_log_message(char *fmt, ...);
 
-#define LOG(x) if(log_level >= YAHOO_LOG_INFO) { ext_yahoo_log("%s:%d: ", __FILE__, __LINE__); \
-	ext_yahoo_log x; \
-	ext_yahoo_log("\n"); }
+#define NOTICE(x) if(log_level >= YAHOO_LOG_NOTICE) { yahoo_log_message x; yahoo_log_message("\n"); }
 
-#define WARNING(x) if(log_level >= YAHOO_LOG_WARNING) { ext_yahoo_log("%s:%d: warning: ", __FILE__, __LINE__); \
-	ext_yahoo_log x; \
-	ext_yahoo_log("\n"); }
+#define LOG(x) if(log_level >= YAHOO_LOG_INFO) { yahoo_log_message("%s:%d: ", __FILE__, __LINE__); \
+	yahoo_log_message x; \
+	yahoo_log_message("\n"); }
 
-#define DEBUG_MSG(x) if(log_level >= YAHOO_LOG_DEBUG) { ext_yahoo_log("%s:%d: debug: ", __FILE__, __LINE__); \
-	ext_yahoo_log x; \
-	ext_yahoo_log("\n"); }
+#define WARNING(x) if(log_level >= YAHOO_LOG_WARNING) { yahoo_log_message("%s:%d: warning: ", __FILE__, __LINE__); \
+	yahoo_log_message x; \
+	yahoo_log_message("\n"); }
+
+#define DEBUG_MSG(x) if(log_level >= YAHOO_LOG_DEBUG) { yahoo_log_message("%s:%d: debug: ", __FILE__, __LINE__); \
+	yahoo_log_message x; \
+	yahoo_log_message("\n"); }
 
 

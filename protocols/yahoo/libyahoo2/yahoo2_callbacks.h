@@ -19,6 +19,18 @@
  *
  */
 
+/*
+ * The functions in this file *must* be defined in your client program
+ * If you want to use a callback structure instead of direct functions,
+ * then you must define USE_STRUCT_CALLBACKS in all files that #include
+ * this one.
+ *
+ * Register the callback structure by calling yahoo_register_callbacks -
+ * declared in this file and defined in libyahoo2.c
+ */
+
+
+
 #ifndef YAHOO2_CALLBACKS_H
 #define YAHOO2_CALLBACKS_H
 
@@ -34,11 +46,31 @@ extern "C" {
  * Callback interface for libyahoo2
  */
 
+typedef enum {
+	YAHOO_INPUT_READ = 1 << 0,
+	YAHOO_INPUT_WRITE = 1 << 1,
+	YAHOO_INPUT_EXCEPTION = 1 << 2
+} yahoo_input_condition;
+
 /*
  * The following functions need to be implemented in the client
  * interface.  They will be called by the library when each
  * event occurs.
  */
+
+/* 
+ * should we use a callback structure or directly call functions
+ * if you want the structure, you *must* define USE_STRUCT_CALLBACKS
+ * both when you compile the library, and when you compile your code
+ * that uses the library
+ */
+
+#ifdef USE_STRUCT_CALLBACKS
+#define YAHOO_CALLBACK_TYPE(x)	(*x)
+struct yahoo_callbacks {
+#else
+#define YAHOO_CALLBACK_TYPE(x)	x
+#endif
 
 /*
  * Name: ext_yahoo_login_response
@@ -48,7 +80,7 @@ extern "C" {
  * 	succ - enum yahoo_login_status
  * 	url  - url to reactivate account if locked
  */
-void ext_yahoo_login_response(int id, int succ, char *url);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_login_response)(int id, int succ, char *url);
 
 
 
@@ -60,7 +92,7 @@ void ext_yahoo_login_response(int id, int succ, char *url);
  * 	id   - the id that identifies the server connection
  * 	buds - the buddy list
  */
-void ext_yahoo_got_buddies(int id, YList * buds);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_got_buddies)(int id, YList * buds);
 
 
 
@@ -72,8 +104,20 @@ void ext_yahoo_got_buddies(int id, YList * buds);
  * 	id   - the id that identifies the server connection
  * 	igns - the ignore list
  */
-void ext_yahoo_got_ignore(int id, YList * igns);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_got_ignore)(int id, YList * igns);
 
+
+
+
+
+/*
+ * Name: ext_yahoo_got_identities
+ * 	Called when the contact list is got from the server
+ * Params:
+ * 	id   - the id that identifies the server connection
+ * 	ids  - the identity list
+ */
+void YAHOO_CALLBACK_TYPE(ext_yahoo_got_identities)(int id, YList * ids);
 
 
 
@@ -88,7 +132,7 @@ void ext_yahoo_got_ignore(int id, YList * igns);
  * 	msg  - the message if stat == YAHOO_STATUS_CUSTOM
  * 	away - whether the contact is away or not (YAHOO_STATUS_CUSTOM)
  */
-void ext_yahoo_status_changed(int id, char *who, int stat, char *msg, int away);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_status_changed)(int id, char *who, int stat, char *msg, int away);
 
 
 
@@ -106,7 +150,7 @@ void ext_yahoo_status_changed(int id, char *who, int stat, char *msg, int away);
  * 				2 == error sending message
  * 				5
  */
-void ext_yahoo_got_im(int id, char *who, char *msg, long tm, int stat);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_got_im)(int id, char *who, char *msg, long tm, int stat);
 
 
 
@@ -121,7 +165,7 @@ void ext_yahoo_got_im(int id, char *who, char *msg, long tm, int stat);
  * 	msg  - the message
  *      members - the initial members of the conference (null terminated list)
  */
-void ext_yahoo_got_conf_invite(int id, char *who, char *room, char *msg, YList *members);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_got_conf_invite)(int id, char *who, char *room, char *msg, YList *members);
 
 
 
@@ -135,7 +179,7 @@ void ext_yahoo_got_conf_invite(int id, char *who, char *room, char *msg, YList *
  * 	room - the room
  * 	msg  - the declining message
  */
-void ext_yahoo_conf_userdecline(int id, char *who, char *room, char *msg);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_conf_userdecline)(int id, char *who, char *room, char *msg);
 
 
 
@@ -148,7 +192,7 @@ void ext_yahoo_conf_userdecline(int id, char *who, char *room, char *msg);
  * 	who  - the user who has joined
  * 	room - the room joined
  */
-void ext_yahoo_conf_userjoin(int id, char *who, char *room);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_conf_userjoin)(int id, char *who, char *room);
 
 
 
@@ -161,7 +205,7 @@ void ext_yahoo_conf_userjoin(int id, char *who, char *room);
  * 	who  - the user who has left
  * 	room - the room left
  */
-void ext_yahoo_conf_userleave(int id, char *who, char *room);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_conf_userleave)(int id, char *who, char *room);
 
 
 
@@ -175,7 +219,7 @@ void ext_yahoo_conf_userleave(int id, char *who, char *room);
  * 	room - the room
  * 	msg  - the message
  */
-void ext_yahoo_conf_message(int id, char *who, char *room, char *msg);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_conf_message)(int id, char *who, char *room, char *msg);
 
 
 
@@ -192,7 +236,7 @@ void ext_yahoo_conf_message(int id, char *who, char *room, char *msg);
  * 	fname- the file name if direct transfer
  * 	fsize- the file size if direct transfer
  */
-void ext_yahoo_got_file(int id, char *who, char *url, long expires, char *msg, char *fname, unsigned long fesize);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_got_file)(int id, char *who, char *url, long expires, char *msg, char *fname, unsigned long fesize);
 
 
 
@@ -206,7 +250,7 @@ void ext_yahoo_got_file(int id, char *who, char *url, long expires, char *msg, c
  * 	who  - who was added
  * 	msg  - any message sent
  */
-void ext_yahoo_contact_added(int id, char *myid, char *who, char *msg);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_contact_added)(int id, char *myid, char *who, char *msg);
 
 
 
@@ -219,7 +263,7 @@ void ext_yahoo_contact_added(int id, char *myid, char *who, char *msg);
  * 	who  - who rejected you
  * 	msg  - any message sent
  */
-void ext_yahoo_rejected(int id, char *who, char *msg);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_rejected)(int id, char *who, char *msg);
 
 
 
@@ -232,7 +276,7 @@ void ext_yahoo_rejected(int id, char *who, char *msg);
  * 	who  - the handle of the remote user
  * 	stat - 1 if typing, 0 if stopped typing
  */
-void ext_yahoo_typing_notify(int id, char *who, int stat);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_typing_notify)(int id, char *who, int stat);
 
 
 
@@ -245,7 +289,7 @@ void ext_yahoo_typing_notify(int id, char *who, int stat);
  * 	who  - the handle of the remote user
  * 	stat - 1 if game, 0 if stopped gaming
  */
-void ext_yahoo_game_notify(int id, char *who, int stat);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_game_notify)(int id, char *who, int stat);
 
 
 
@@ -259,7 +303,7 @@ void ext_yahoo_game_notify(int id, char *who, int stat);
  * 	subj - the subject of the mail - NULL if only mail count
  * 	cnt  - mail count - 0 if new mail notification
  */
-void ext_yahoo_mail_notify(int id, char *from, char *subj, int cnt);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_mail_notify)(int id, char *from, char *subj, int cnt);
 
 
 
@@ -271,7 +315,7 @@ void ext_yahoo_mail_notify(int id, char *from, char *subj, int cnt);
  * 	id   - the id that identifies the server connection
  * 	msg  - the message
  */
-void ext_yahoo_system_message(int id, char *msg);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_system_message)(int id, char *msg);
 
 
 
@@ -283,10 +327,10 @@ void ext_yahoo_system_message(int id, char *msg);
  * 	Called on error.
  * Params:
  * 	id   - the id that identifies the server connection
- * 	err  - the error message
+ * 	err  - the error message if num == E_CUSTOM
  * 	fatal- whether this error is fatal to the connection or not
  */
-void ext_yahoo_error(int id, char *err, int fatal);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_error)(int id, char *err, int fatal);
 
 
 
@@ -303,16 +347,10 @@ void ext_yahoo_error(int id, char *err, int fatal);
  * Returns:
  * 	0
  */
-int ext_yahoo_log(char *fmt, ...);
+int YAHOO_CALLBACK_TYPE(ext_yahoo_log)(char *fmt, ...);
 
 
 
-
-typedef enum {
-	YAHOO_INPUT_READ = 1 << 0,
-	YAHOO_INPUT_WRITE = 1 << 1,
-	YAHOO_INPUT_EXCEPTION = 1 << 2
-} yahoo_input_condition;
 
 
 /*
@@ -323,7 +361,7 @@ typedef enum {
  * 	fd   - the fd on which to listen
  * 	cond - the condition on which to call the callback
  */
-void ext_yahoo_add_handler(int id, int fd, yahoo_input_condition cond);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_add_handler)(int id, int fd, yahoo_input_condition cond);
 
 
 
@@ -335,7 +373,7 @@ void ext_yahoo_add_handler(int id, int fd, yahoo_input_condition cond);
  * 	id   - the id that identifies the server connection
  * 	fd   - the fd on which to listen
  */
-void ext_yahoo_remove_handler(int id, int fd);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_remove_handler)(int id, int fd);
 
 
 
@@ -350,7 +388,20 @@ void ext_yahoo_remove_handler(int id, int fd);
  * Returns:
  * 	a unix file descriptor to the socket
  */
-int ext_yahoo_connect(char *host, int port);
+int YAHOO_CALLBACK_TYPE(ext_yahoo_connect)(char *host, int port);
+
+#ifdef USE_STRUCT_CALLBACKS
+};
+
+/*
+ * if using a callback structure, call yahoo_register_callbacks
+ * before doing anything else
+ */
+void yahoo_register_callbacks(struct yahoo_callbacks * tyc);
+	
+#undef YAHOO_CALLBACK_TYPE
+
+#endif
 
 #ifdef __cplusplus
 }

@@ -22,13 +22,41 @@
 #ifndef __YAHOO_UTIL_H__
 #define __YAHOO_UTIL_H__
 
-#include <stdlib.h>
-
-#ifdef FREE
-#undef FREE
+#if HAVE_CONFIG_H
+# include <config.h>
 #endif
 
-#define FREE(x)	if(x) {free(x); x=NULL;}
+#if HAVE_GLIB
+# include <glib.h>
+
+# define FREE(x)	if(x) {g_free(x); x=NULL;}
+
+# define y_new		g_new
+# define y_new0		g_new0
+# define y_renew	g_renew
+
+# define y_memdup	g_memdup
+# define y_strsplit	g_strsplit
+# define y_strfreev	g_strfreev
+# ifndef strdup
+#  define strdup	g_strdup
+# endif
+
+#else
+
+# include <stdlib.h>
+
+# define FREE(x)		if(x) {free(x); x=NULL;}
+
+# define y_new(type, n)		(type *)malloc(sizeof(type) * (n))
+# define y_new0(type, n)	(type *)calloc((n), sizeof(type))
+# define y_renew(type, mem, n)	(type *)realloc(mem, n)
+
+void * y_memdup(const void * addr, int n);
+char ** y_strsplit(char * str, char * sep, int nelem);
+void y_strfreev(char ** vector);
+
+#endif
 
 #ifndef TRUE
 #define TRUE 1
@@ -45,14 +73,6 @@
 #ifndef MAX
 #define MAX(x,y) ((x)>(y)?(x):(y))
 #endif
-
-#define y_new(type, n)		(type *)malloc(sizeof(type) * (n))
-#define y_new0(type, n)		(type *)calloc((n), sizeof(type))
-#define y_renew(type, mem, n)	(type *)realloc(mem, n)
-
-void * y_memdup(const void * addr, int n);
-char ** y_strsplit(char * str, char * sep, int nelem);
-void y_strfreev(char ** vector);
 
 char * y_string_append(char * str, char * append);
 
