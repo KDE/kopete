@@ -82,6 +82,9 @@ void KopetePluginDataObject::writeConfig( const QString &configGroup ) const
 #endif
 		}
 	}
+
+	// Sync all changes to disk
+	config->sync();
 }
 
 const QValueList<QDomElement> KopetePluginDataObject::toXML()

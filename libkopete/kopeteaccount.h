@@ -226,6 +226,11 @@ public:
 	 */
 	void registerContact( KopeteContact *c );
 
+	/**
+	 * @return the name of the config group to be used
+	 */
+	QString configGroup() const;
+
 protected:
 	/**
 	 * Create a new contact in the specified metacontact
@@ -276,13 +281,6 @@ signals:
 	 * The accountId should be constant, see @ref KopeteAccount::setAccountId()
 	 */
 	void accountIdChanged();
-
-	/**
-	 * The password has changed. Practically, you shouldn't keep the password in memory, but you should
-	 * call @ref getPassword() which takes care of asking for the password. Reserved only for
-	 * expert usage.
-	 */
-	void passwordChanged();
 
 protected slots:
 	/**

@@ -59,11 +59,11 @@ struct KopeteAccountPrivate
 
 KopeteAccount::KopeteAccount(KopeteProtocol *parent, const QString& _accountId , const char *name):  KopetePluginDataObject (parent, name)
 {
-	d=new KopeteAccountPrivate;
-	d->protocol=parent;
-	d->id=_accountId;
-	d->autologin=false;
-	d->password=QString::null;
+	d = new KopeteAccountPrivate;
+	d->protocol = parent;
+	d->id = _accountId;
+	d->autologin = false;
+	d->password = QString::null;
 	d->color = QColor();
 
 	KopeteAccountManager::manager()->registerAccount( this );
@@ -119,15 +119,24 @@ void KopeteAccount::setAccountId( const QString &accountId )
 	}
 }
 
-void KopeteAccount::writeConfig( const QString &configGroup )
+QString KopeteAccount::configGroup() const
+{
+#if QT_VERSION < 0x030200
+	return QString::fromLatin1( "Account_%2_%1" ).arg( accountId() ).arg( protocol()->pluginId() );
+#else
+	return QString::fromLatin1( "Account_%2_%1" ).arg( accountId(), protocol()->pluginId() );
+#endif
+}
+
+void KopeteAccount::writeConfig( const QString &configGroupName )
 {
 	KConfig *config = KGlobal::config();
-	config->setGroup( configGroup );
+	config->setGroup( configGroupName );
 
 	config->writeEntry( "Protocol", d->protocol->pluginId() );
 	config->writeEntry( "AccountId", d->id );
 
-	if( !d->password.isNull() )
+	if ( !d->password.isNull() )
 		config->writeEntry( "Password", cryptStr( d->password ) );
 	else
 		config->deleteEntry( "Password" );
@@ -140,21 +149,20 @@ void KopeteAccount::writeConfig( const QString &configGroup )
 		config->deleteEntry( "Color" );
 
 	// Store other plugin data
-	KopetePluginDataObject::writeConfig( configGroup );
+	KopetePluginDataObject::writeConfig( configGroupName );
 }
 
-void KopeteAccount::readConfig( const QString &configGroup )
+void KopeteAccount::readConfig( const QString &configGroupName )
 {
 	KConfig *config = KGlobal::config();
-	config->setGroup( configGroup );
+	config->setGroup( configGroupName );
 
 	d->password  = cryptStr( config->readEntry( "Password" ) );
 	d->autologin = config->readBoolEntry( "AutoConnect", false );
 	d->color     = config->readColorEntry( "Color", &d->color );
 
-
 	// Handle the plugin data, if any
-	QMap<QString, QString> entries = config->entryMap( configGroup );
+	QMap<QString, QString> entries = config->entryMap( configGroupName );
 	QMap<QString, QString>::Iterator entryIt;
 	QMap<QString, QMap<QString, QString> > pluginData;
 	for ( entryIt = entries.begin(); entryIt != entries.end(); ++entryIt )
@@ -187,28 +195,24 @@ void KopeteAccount::loaded()
 QString KopeteAccount::getPassword( bool error, bool *ok, unsigned int maxLength )
 {
 	if(ok) *ok=true;
-	if(!d->password.isNull())
+	if ( !d->password.isNull() )
 	{
-		if(!error)
-		{
-			return d->password;
-		}
+		//if the cached password was wrong, we remove it
+		if ( error )
+			d->password = QString::null;
 		else
-		{	//if the cached password was wrong, we remove it
-			d->password=QString::null;
-		}
+			return d->password;
 	}
 
-	KDialogBase *passwdDialog= new KDialogBase( qApp->mainWidget() ,"passwdDialog", true, i18n( "Password Needed" ),
-				KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true );
+	KDialogBase *passwdDialog = new KDialogBase( qApp->mainWidget() ,"passwdDialog", true, i18n( "Password Needed" ),
+		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
 
-	KopetePasswordDialog *view = new KopetePasswordDialog(passwdDialog);
+	KopetePasswordDialog *view = new KopetePasswordDialog( passwdDialog );
 
-	if(error)
+	if ( error )
 		view->m_text->setText(i18n("<b>The password was wrong! Please re-enter your password for %1</b>").arg(protocol()->displayName()));
 	else
 		view->m_text->setText(i18n("Please enter password for %1").arg(protocol()->displayName()));
-
 
 	passwdDialog->setMainWidget(view);
 
@@ -220,9 +224,7 @@ QString KopeteAccount::getPassword( bool error, bool *ok, unsigned int maxLength
 	view->adjustSize();
 	passwdDialog->adjustSize();
 
-
-	QString pass=QString::null;
-
+	QString pass;
 	if(passwdDialog->exec() == QDialog::Accepted )
 	{
 		pass=view->m_password->text();
@@ -232,16 +234,17 @@ QString KopeteAccount::getPassword( bool error, bool *ok, unsigned int maxLength
 	}
 	else
 	{
-		if(ok) *ok=false;
+		if ( ok )
+            *ok = false;
 	}
 	passwdDialog->deleteLater();
 	return pass;
 }
 
-void KopeteAccount::setPassword(const QString& pass)
+void KopeteAccount::setPassword( const QString &pass )
 {
-	d->password=pass;
-	emit( passwordChanged() );
+	d->password = pass;
+	writeConfig( configGroup() );
 }
 
 void KopeteAccount::setAutoLogin(bool b)

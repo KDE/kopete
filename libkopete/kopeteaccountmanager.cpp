@@ -203,11 +203,12 @@ void KopeteAccountManager::removeAccount( KopeteAccount *account )
 	kdDebug(14010) << k_funcinfo << "Removing account and cleanning up config" << account->accountId() << endl;
 
 	KConfig *config = KGlobal::config();
-	QString groupName = QString::fromLatin1( "Account_%2_%1" ).arg( account->accountId() ).arg( account->protocol()->pluginId() );
+	QString groupName = account->configGroup();
 
 	delete account;
-	/* Clean up configuration */
-	config->deleteGroup(groupName);
+
+	// Clean up configuration
+	config->deleteGroup( groupName );
 	config->sync();
 }
 
@@ -228,14 +229,7 @@ void KopeteAccountManager::save()
 	while ( ( account = it.current() ) != 0 )
 	{
 		++it;
-#if QT_VERSION < 0x030200
-		QString groupName = QString::fromLatin1( "Account_%2_%1" ).arg( account->accountId() ).arg( account->protocol()->pluginId() );
-#else
-		QString groupName = QString::fromLatin1( "Account_%2_%1" ).arg( account->accountId(), account->protocol()->pluginId() );
-#endif
-		config->setGroup( groupName );
-
-		account->writeConfig( groupName );
+		account->writeConfig( account->configGroup() );
 	}
 
 	config->sync();
