@@ -47,7 +47,7 @@ public:
 	void setServerSide( bool b ) { mIsServerSide = b; }
 
 protected:
-	friend class AIMBuddyList;
+	friend class OscarAccount;
 	void removeBuddy( AIMBuddy *buddy );
 	bool addBuddy( AIMBuddy *buddy );
 	void setName( const QString &name ) { mName = name; }

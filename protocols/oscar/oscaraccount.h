@@ -31,7 +31,6 @@ class KopeteGroup;
 
 class OscarContact;
 
-class AIMBuddyList;
 class OscarSocket;
 class AIMBuddy;
 class AIMGroup;
@@ -105,20 +104,25 @@ public:
 	virtual void setStatus(const unsigned long status,
 		const QString &awayMessage = QString::null) =0;
 
-	// -- START PROXIED METHODS ------------------------------------------
-	// Proxy methods for stuff that's in AIMBuddyList. These are the only
-	// methods of AIMBuddyList used outside the account, so having them
-	// proxied here helps in getting rid of AIMBuddyList in the future
+	// -- MERGED METHODS FROM AIMBUDDYLIST -------------------------------
+	// These methods need to be reviewed and better integrated with
+	// OscarAccount, for now they are just a direct copy of the code
+	enum OscarContactType { AllContacts, ServerSideContacts };
+
 	/**
-	 * The contact list to use.
-	 * Currently OSCAR uses a login contact list and an internal contact
-	 * list. While the two should be merged in the future it's for now
-	 * easier to keep both of them and use the enum to specify the list
-	 * to use.
-	 * When operating on the login list it will be created if it doesn't
-	 * exist yet, as it's demand created in slotGotServerBuddyList
+	 * Adds a group to the contact list and returns the new group
 	 */
-	enum OscarContactList { InternalContactList, LoginContactList };
+	AIMGroup *addGroup( int id, const QString &name = QString::null, OscarContactType type = AllContacts );
+
+	/**
+	 * Finds a group and returns it. Uses GID
+	 */
+	AIMGroup *findGroup( int id, OscarContactType type = AllContacts );
+
+	/**
+	 * Returns a list of all of the buddies
+	 */
+	QMap<QString, AIMBuddy * > buddies( OscarContactType type = AllContacts ) const;
 
 	/**
 	 * Adds a buddy to the buddy list
@@ -126,35 +130,87 @@ public:
 	void addBuddy( AIMBuddy *buddy );
 
 	/**
-	 * Removes a buddy from the buddy list
-	 */
-	void removeBuddy( AIMBuddy *buddy );
-
-	/**
-	 * Finds a buddy in the buddy list. Returns 0L if none found.
-	 */
-	AIMBuddy * findBuddy( const QString &screenName );
-
-	/**
-	 * Finds a group and returns it. Uses GID
-	 */
-	AIMGroup * findGroup( int groupId, OscarContactList list = InternalContactList );
-
-	/**
-	 * Finds a group by name
-	 */
-	AIMGroup * findGroup( const QString &name );
-
-	/**
 	 * Adds a buddy to the deny list
 	 */
 	void addBuddyDeny( AIMBuddy *buddy );
 
 	/**
-	 * Adds a group to the contact list and returns the new group
+	 * Finds a buddy in the buddy list. Returns 0L if none found.
 	 */
-	AIMGroup *addGroup( int id, const QString &name = QString::null, OscarContactList list = InternalContactList );
-	// -- END PROXIED METHODS --------------------------------------------
+	AIMBuddy *findBuddy( const QString &screenName );
+
+	/**
+	 * Finds a group by name
+	 */
+	AIMGroup *findGroup( const QString &name );
+
+	/**
+	 * Removes a buddy from the buddy list
+	 */
+	void removeBuddy( AIMBuddy *buddy );
+
+private:
+	/**
+	 * Moves a buddy 'buddy' from group 'from' to group 'to'. Both groups
+	 * need to have been created already
+	 */
+	void moveBuddy( AIMBuddy *buddy, AIMGroup *from, AIMGroup *to );
+
+	/**
+	 * Finds a buddy in the buddy list. Returns 0L if none found.
+	 */
+	AIMBuddy *findBuddy( int buddyId, int gid );
+
+	/**
+	 * Removes an entire group (including its child buddies!)
+	 */
+	void removeGroup( int id );
+
+	/**
+	 * Sets the name of a group. If this returns false, that means another group has this same name
+	 */
+	bool setGroupName( AIMGroup *group, const QString &name );
+
+	/**
+	 * Adds a buddy to the permit list
+	 */
+	void addBuddyPermit( AIMBuddy *buddy );
+
+	/**
+	 * Removes a buddy from the permit list
+	 */
+	void removeBuddyPermit( AIMBuddy *buddy );
+
+	/**
+	 * Removes a buddy from the deny list
+	 */
+	void removeBuddyDeny( AIMBuddy *buddy );
+
+	/**
+	 * Returns a list of all the buddies in the deny list
+	 */
+	QPtrList<AIMBuddy> denyBuddies() const;
+
+	/**
+	 * Returns a list of all the buddies in the permit list
+	 */
+	QPtrList<AIMBuddy> permitBuddies() const;
+	// -- END MERGED METHODS FROM AIMBUDDYLIST ---------------------------
+
+signals:
+	// -- MERGED SIGNALS FROM AIMBUDDYLIST -------------------------------
+	/**
+	 * "Why?" you ask, do I have a signal that lets us know such a useless thing?
+	 * Well, basically the AOL server can and often does (on certain accounts) send
+	 * us contacts with a GID in which the group matching to that GID hasn't been
+	 * sent down from the server yet. This gets around that by having OscarProtocol
+	 * queue up contacts that have a GID which hasn't been created yet, then when
+	 * that group is greated with the cooresponding GID to the contacts which
+	 * have been queued up, we add those contacts. That's why we have this signal,
+	 * to let OscarProtocol know to try to add certain contacts.
+	 */
+	void groupAdded( AIMGroup *group );
+	// -- END MERGED SIGNALS FROM AIMBUDDYLIST ---------------------------
 
 public slots:
 	/*

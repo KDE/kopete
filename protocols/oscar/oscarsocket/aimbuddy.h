@@ -55,7 +55,7 @@ public:
 	void setServerSide( bool b ) { mIsServerSide = b; }
 
 private:
-	friend class AIMBuddyList;
+	friend class OscarAccount;
 
 	void setGroupID( const int groupID ) { mGroupID = groupID; }
 

@@ -1141,7 +1141,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 				// In case we already know that contact
 				OscarContact *contact = static_cast<OscarContact*>(mAccount->contacts()[ssi->name]);
 
-				AIMGroup *group = mAccount->findGroup( ssi->gid, OscarAccount::LoginContactList );
+				AIMGroup *group = mAccount->findGroup( ssi->gid, OscarAccount::ServerSideContacts );
 				QString groupName = "\"Group not found\"";
 				if (group)
 					groupName = group->name();
@@ -1242,7 +1242,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 				{
 					kdDebug(14150) << k_funcinfo << "Adding Group " <<
 						ssi->gid << " (" <<  ssi->name << ")" << endl;
-					mAccount->addGroup( ssi->gid, ssi->name, OscarAccount::LoginContactList );
+					mAccount->addGroup( ssi->gid, ssi->name, OscarAccount::ServerSideContacts );
 				}
 				break;
 			}
