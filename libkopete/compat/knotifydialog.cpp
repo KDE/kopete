@@ -35,6 +35,7 @@
 #include <knotifydialog.h>
 #include <kstandarddirs.h>
 #include <kurlrequester.h>
+#include <kdeversion.h>
 
 #include <qcheckbox.h>
 #include <qgroupbox.h>
@@ -48,6 +49,16 @@
 #include <qtooltip.h>
 #include <qtimer.h>
 #include <qvbox.h>
+
+#if KDE_VERSION < 310
+	namespace KNotifyClient
+	{
+    	enum {
+        	PassivePopup = 16,
+	        Execute      = 23
+	    };
+	}
+#endif
 
 using namespace KNotify;
 
