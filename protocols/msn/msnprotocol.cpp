@@ -730,7 +730,7 @@ void MSNProtocol::blockContact( QString handle ) const
 		m_notifySocket->addContact( handle, handle, 0, BL );
 }
 
-void MSNProtocol::addContact( const QString &userID , KopeteMetaContact *m) 
+void MSNProtocol::addContact( const QString &userID , KopeteMetaContact *m, const QString &group) 
 {
 	if( isConnected() )
 	{
@@ -742,20 +742,27 @@ void MSNProtocol::addContact( const QString &userID , KopeteMetaContact *m)
 			for( QStringList::ConstIterator it = gprs.begin(); it != gprs.end(); ++it )
 			{
 				int g = groupNumber( *it );
-				if(g!=-1)
+				if(g!=-1) 
 				{
 					m_notifySocket->addContact( userID, userID, g, FL );
 				}
 				else
-				{  //FIXME: if there are several group to add, the contact will to add only in one new group
-					tmp_addToNewGroup=userID;
+				{
+					tmp_addToNewGroup << QPair<QString,QString>(userID,*it);
 					addGroup(*it);
 				}
 			}
 		}
 		else
 		{
-			m_notifySocket->addContact( userID, userID, 0, FL ); 
+			int g = groupNumber( group );
+			if(g==-1) {
+				tmp_addToNewGroup << QPair<QString,QString>(userID,group);
+				addGroup(group);
+			}
+			else {
+				m_notifySocket->addContact( userID, userID, g, FL ); 
+			}
 		}
 	}
 }
@@ -775,7 +782,7 @@ void MSNProtocol::addContactToGroup( MSNContact *c, QString group)
 		}
 		else
 		{
-			tmp_addToNewGroup=c->msnId();
+			tmp_addToNewGroup << QPair<QString,QString>(c->msnId(),group);
 			addGroup(group);
 		}
 	}
@@ -888,6 +895,10 @@ MSNProtocol* MSNProtocol::protocol()
 
 int MSNProtocol::groupNumber( const QString &group) const
 {
+	//if group is null, add them to the first available group
+	if(group==QString::null)
+		return m_groupList.begin().key();
+
 	QMap<uint, QString>::ConstIterator it;
 	for( it = m_groupList.begin(); it != m_groupList.end(); ++it )
 	{
@@ -923,12 +934,18 @@ void MSNProtocol::slotGroupAdded( QString groupName, uint /* serial */, uint gro
 		//	<< ", with name " << groupName << endl;
 		m_groupList.insert( group, groupName );
 	}
-	if(!tmp_addToNewGroup.isNull())
+	if(tmp_addToNewGroup.count()>0)
 	{
-		kdDebug() << "MSNProtocol::slotGroupAdded : add the contact to the new group" << endl;
-		m_notifySocket->addContact( tmp_addToNewGroup, tmp_addToNewGroup, group, FL );
+		for ( QValueList<QPair<QString,QString> >::Iterator it = tmp_addToNewGroup.begin(); it != tmp_addToNewGroup.end(); ++it)
+		{
+			kdDebug() << "MSNProtocol::slotGroupAdded : add the contact to the new group" << endl;
+			if((*it).second==groupName)
+			{
+				m_notifySocket->addContact( (*it).first, (*it).first, group, FL );
+				tmp_addToNewGroup.remove(*it);
+			}
+		}
 	}
-	tmp_addToNewGroup=QString::null;
 }
 
 void MSNProtocol::slotGroupRenamed( QString groupName, uint /* serial */,

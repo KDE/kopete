@@ -135,7 +135,7 @@ public:
 	virtual void setAvailable();
 	virtual bool isAway() const;
 
-	void addContact( const QString &userID , KopeteMetaContact *m=0L);
+	void addContact( const QString &userID , KopeteMetaContact *m=0L, const QString &group=QString::null);
 	void addContactToGroup( MSNContact * , QString group)  ;
 	void removeContact( MSNContact *c )  ;
 	void removeContactFromGroup( MSNContact *c, const QString &group ) ;
@@ -379,7 +379,7 @@ private:
 	QStringList m_allowList;
 	QStringList m_blockList;
 
-	QString tmp_addToNewGroup;
+	QValueList< QPair<QString,QString> > tmp_addToNewGroup;
 
 };
 
