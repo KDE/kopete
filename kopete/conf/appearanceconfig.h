@@ -18,16 +18,21 @@
 #define __APPEARANCE_H
 
 #include "configmodule.h"
+#include "qptrlist.h"
 
 class QFrame;
 class KTabCtl;
 class QCheckBox;
 class KListBox;
+class KHTMLPart;
+class KopeteContact;
 
 class AppearanceConfig_General;
 class AppearanceConfig_ChatWindow;
 class AppearanceConfig_ChatAppearance;
 class AppearanceConfig_Contactlist;
+
+typedef QPtrList<KopeteContact> KopeteContactPtrList;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -52,6 +57,7 @@ private slots:
 	void slotUseEmoticonsChanged(bool);
 	void slotConfigChanged(void);
 	void slotTransparencyChanged(bool);
+	void slotUpdatePreview();
 
 private:
 	KTabCtl* mAppearanceTabCtl; // The TabWidget
@@ -60,6 +66,7 @@ private:
 	QFrame* mEmoticonsTab;
 	QCheckBox *mUseEmoticonsChk;
 	KListBox *icon_theme_list;
+	KHTMLPart *preview;
 
 	// All other TABs have their own ui-file
 	AppearanceConfig_General *mPrfsGeneral;

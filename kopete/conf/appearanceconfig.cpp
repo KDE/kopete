@@ -42,6 +42,8 @@
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <klistbox.h>
+#include <khtmlview.h>
+#include <khtml_part.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #if KDE_VERSION >= 306
@@ -61,6 +63,8 @@
 #include "configmodule.h"
 #include "kopetechatwindow.h"
 #include "kopeteprefs.h"
+#include "kopetemessage.h"
+#include "kopetecontact.h"
 
 AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	ConfigModule (
@@ -100,9 +104,26 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 
 	// "Chat Appearance" TAB =====================================================
 	mPrfsChatAppearance = new AppearanceConfig_ChatAppearance(mAppearanceTabCtl);
+	mPrfsChatAppearance->htmlFrame->setFrameStyle( QFrame::WinPanel | QFrame::Sunken );
+	QVBoxLayout *l = new QVBoxLayout( mPrfsChatAppearance->htmlFrame );
+	
+	preview = new KHTMLPart( mPrfsChatAppearance->htmlFrame, "preview" );
+	preview->setJScriptEnabled( false ) ;
+	preview->setJavaEnabled( false );
+	preview->setPluginsEnabled( false );
+	preview->setMetaRefreshEnabled( false );
+	
+	KHTMLView *htmlWidget = preview->view();
+	htmlWidget->setMarginWidth(4);
+	htmlWidget->setMarginHeight(4);
+	htmlWidget->setFocusPolicy( NoFocus );
+	htmlWidget->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
+	l->addWidget( htmlWidget );
+	
 	mAppearanceTabCtl->addTab( mPrfsChatAppearance, i18n("Chat &Appearance") );
 	connect(mPrfsChatAppearance->cb_Kind, SIGNAL(activated(int)), this, SLOT(slotSelectKind(int)));
-
+	connect(mPrfsChatAppearance->previewButton, SIGNAL(pressed()), this, SLOT(slotUpdatePreview()));
+	
 	// ===========================================================================
 
 	reopen(); // load settings from config
@@ -246,6 +267,8 @@ void AppearanceConfig::reopen()
 
 	// "Chat Appearance" TAB
 	mPrfsChatAppearance->mle_codehtml->setText( p->kindMessagesHtml() );
+	
+	slotUpdatePreview();
 }
 
 void AppearanceConfig::slotConfigSound()
@@ -292,6 +315,34 @@ void AppearanceConfig::slotSelectKind(int k)
 		QString model = KopeteChatWindow::KindMessagesHTML(k-1);
 		mPrfsChatAppearance->mle_codehtml->setText( model );
 	}
+	slotUpdatePreview();
+}
+
+void AppearanceConfig::slotUpdatePreview()
+{
+	KopeteContact *cFrom = new KopeteContact(0L, QString::fromLatin1("UserFrom"), 0L);
+	KopeteContact *cTo = new KopeteContact(0L, QString::fromLatin1("UserTo"), 0L);
+	
+	KopeteContactPtrList toList = KopeteContactPtrList();
+	toList.append( cTo );
+	
+	KopeteMessage *msgIn = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an incoming message"),KopeteMessage::Inbound );
+	KopeteMessage *msgOut = new KopeteMessage( cFrom, toList, QString::fromLatin1("This is an outgoing message"),KopeteMessage::Outbound );
+	
+	QString model = mPrfsChatAppearance->mle_codehtml->text();
+	
+	preview->begin();
+	preview->write( QString::fromLatin1( "<html><body>" ) );
+	preview->write( msgIn->transformMessage( model ) );
+	preview->write( QString::fromLatin1( "<br/><br/>" ) );
+	preview->write( msgOut->transformMessage( model ) );
+	preview->write( QString::fromLatin1( "</body></html>" ) );
+	preview->end();
+	
+	delete msgIn;
+	delete msgOut;
+	delete cFrom;
+	delete cTo;
 }
 
 #include "appearanceconfig.moc"
