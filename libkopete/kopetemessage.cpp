@@ -2,9 +2,9 @@
     kopetemessage.cpp  -  Base class for Kopete messages
 
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -235,8 +235,12 @@ QString Message::unescape( const QString &xml )
 {
 	QString data = xml;
 
+	//remove linebreak and multiple spaces
+	data.replace( QRegExp( QString::fromLatin1( "\\s*[\n\r\t]+\\s*" ) , false ), QString::fromLatin1(" " )) ;
+
 	data.replace( QRegExp( QString::fromLatin1( "< *img[^>]*title=\"([^>\"]*)\"[^>]*>" ) , false ), QString::fromLatin1( "\\1" ) );  //escape smeleys, return to the original code
 	data.replace( QRegExp( QString::fromLatin1( "< */ *p[^>]*>" ) , false ), QString::fromLatin1( "\n" ) );
+	data.replace( QRegExp( QString::fromLatin1( "< */ *div[^>]*>" ) , false ), QString::fromLatin1( "\n" ) );
 	data.replace( QRegExp( QString::fromLatin1( "< *br */? *>" ) , false ), QString::fromLatin1( "\n" ) );
 	data.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
 
