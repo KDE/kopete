@@ -44,6 +44,7 @@ public:
 	void partChannel(const QCString &name, const QString &reason);
 	void quitIRC(const QString &reason);
 	void setVersionString(const QString &newString) { mVersionString = newString; };
+	void setTopic(const QString &channel, const QString &topic);
 enum UserClass
 {
 	Normal = 0,

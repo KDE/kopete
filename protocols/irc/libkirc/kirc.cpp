@@ -583,4 +583,13 @@ void KIRC::connectToServer(const QString host, Q_UINT16 port, const QString user
 	connectToHost(host.latin1(), port);
 	emit connecting();
 }
+
+
+void KIRC::setTopic(const QString &channel, const QString &topic)
+{
+	QString command;
+	command = "TOPIC " + channel + " :" + topic + "\r\n";
+
+	writeBlock(command.latin1(), command.length());
+}
 #include "kirc.moc"
