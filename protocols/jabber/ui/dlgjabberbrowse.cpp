@@ -51,12 +51,8 @@ void DlgJabberBrowse::slotGotForm()
 {
 	Jabber::JT_Search *task = (Jabber::JT_Search *)sender();
 	
-	// Let's get rid of previous layout+widgets
-	QLayout *oldLayout = dynamicForm->layout();
-	
-	// remove the "wait" message
+	// delete the wait message
 	delete lblWait;
-	delete oldLayout;
 	
 	if(!task->success())
 	{
@@ -68,13 +64,10 @@ void DlgJabberBrowse::slotGotForm()
 	}
 	
 	
-	// create a layout for the form
-	QGridLayout *layout = new QGridLayout(dynamicForm, 1, 1, 20, 10);
-
-	// translate the form and create it inside the layout
+	// translate the form and create it inside the display widget
 	translator = new JabberFormTranslator(dynamicForm);
 
-	translator->translate(task->form(), layout);
+	translator->translate(task->form(), dynamicForm);
 
 	// enable the send button
 	btnSearch->setEnabled(true);

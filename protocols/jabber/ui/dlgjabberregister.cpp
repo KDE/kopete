@@ -63,13 +63,10 @@ void DlgJabberRegister::slotGotForm()
 		return;
 	}
 
-	// create a layout for the form
-	QGridLayout *layout = new QGridLayout(grpForm, 1, 1, 20, 10);
-
-	// translate the form and create it inside the layout
+	// translate the form and create it inside the box widget
 	translator = new JabberFormTranslator(grpForm);
 
-	translator->translate(task->form(), layout);
+	translator->translate(task->form(), grpForm);
 
 	// enable the send button
 	btnRegister->setEnabled(true);

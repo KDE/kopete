@@ -27,8 +27,9 @@ JabberFormTranslator::JabberFormTranslator(QWidget *parent, const char *name ) :
 {
 }
 
-void JabberFormTranslator::translate(const Jabber::Form &form, QLayout *layout)
+void JabberFormTranslator::translate(const Jabber::Form &form, QWidget *widget)
 {
+	QVBoxLayout *innerLayout;
 
 	// copy basic form values
 	privForm.setJid(form.jid());
@@ -36,14 +37,18 @@ void JabberFormTranslator::translate(const Jabber::Form &form, QLayout *layout)
 	privForm.setKey(form.key());
 
 	// add instructions to layout
-	QVBoxLayout *innerLayout = new QVBoxLayout(layout);
+	if(widget->layout())
+		innerLayout = new QVBoxLayout(widget->layout());
+	else
+		innerLayout = new QVBoxLayout(widget);
+	
 
 	QLabel *label = new QLabel(form.instructions(), parentWidget(), "InstructionLabel");
 	innerLayout->addWidget(label, 0, 0);
 	label->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter ) );
 	label->show();
 
-	QGridLayout *formLayout = new QGridLayout(innerLayout);
+	QGridLayout *formLayout = new QGridLayout(innerLayout, form.count(), 2);
 
 	int row = 1;
 	for(Jabber::Form::const_iterator it = form.begin(); it != form.end(); it++)

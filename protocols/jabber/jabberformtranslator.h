@@ -37,7 +37,7 @@ public:
 	JabberFormTranslator(QWidget *parent=0, const char *name=0);
 	~JabberFormTranslator();
 
-	void translate(const Jabber::Form &form, QLayout *layout);
+	void translate(const Jabber::Form &form, QWidget *widget);
 	Jabber::Form &resultData();
 
 signals:
