@@ -33,6 +33,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 
+#include "config.h"
 #ifdef HAVE_XSLT
 #include <libxml/xmlmemory.h>
 #include <libxml/debugXML.h>

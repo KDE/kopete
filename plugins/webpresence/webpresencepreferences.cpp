@@ -28,6 +28,7 @@
 #include <klocale.h>
 #include <kurlrequester.h>
 
+#include "config.h"
 #include "webpresenceprefs.h"
 #include "webpresencepreferences.h"
 #include "webpresencepreferences.moc"
