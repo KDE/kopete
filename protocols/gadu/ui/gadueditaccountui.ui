@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>461</width>
-            <height>518</height>
+            <height>520</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -312,6 +312,12 @@
                     </property>
                     <property name="text">
                         <string>C&amp;ache server information</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+A</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Cache connection information for each server connected to in case the main load-balancing server fails.</string>
