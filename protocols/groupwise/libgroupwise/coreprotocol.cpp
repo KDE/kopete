@@ -153,12 +153,14 @@ Transfer* CoreProtocol::incomingTransfer()
 
 void cp_dump( const QByteArray &bytes )
 {
+#ifdef GW_COREPROTOCOL_DEBUG
 	qDebug( "contains: %i bytes", bytes.count() );
 	for ( uint i = 0; i < bytes.count(); ++i )
 	{
 		printf( "%02x ", bytes[ i ] );
 	}
 	printf( "\n" );
+#endif
 }
 
 void CoreProtocol::outgoingTransfer( Request* outgoing )

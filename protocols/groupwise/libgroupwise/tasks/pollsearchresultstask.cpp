@@ -12,6 +12,8 @@
 #include "gwfield.h"
 #include "response.h"
 
+#include "logintask.h"
+
 #include "pollsearchresultstask.h"
 
 using namespace GroupWise;
@@ -48,14 +50,24 @@ bool PollSearchResultsTask::take( Transfer * transfer )
 	// look for the status code
 	Field::FieldList responseFields = response->fields();
 	Field::SingleField * sf = responseFields.findSingleField( NM_A_SZ_STATUS );
-	int queryStatus = sf->value().toInt();
-	responseFields.dump();
+	m_queryStatus = sf->value().toInt();
 	
 	Field::MultiField * resultsArray = responseFields.findMultiField( NM_A_FA_RESULTS );
 	if ( !resultsArray )
 	{
 		setError( Protocol );
 		return true;
+	}
+	Field::FieldList matches = resultsArray->fields();
+	const Field::FieldListIterator end = matches.end();
+	for ( Field::FieldListIterator it = matches.find( NM_A_FA_CONTACT );
+		  it != end;
+		  it = matches.find( ++it, NM_A_FA_CONTACT ) )
+	{
+		Field::MultiField * mf = static_cast<Field::MultiField *>( *it );
+		Field::FieldList contact = mf->fields();
+		GroupWise::ContactDetails cd = extractUserDetails( contact );
+		m_results.append( cd );
 	}
 	
 	// first field: NM_A_SZ_STATUS contains 
@@ -69,16 +81,64 @@ bool PollSearchResultsTask::take( Transfer * transfer )
 	// followed by NM_A_FA_RESULTS, looks like a getdetails
 	// add an accessor to get at the results list of ContactItems, probably
 	
-	if ( queryStatus != 2 )
-		setError( queryStatus );
+	if ( m_queryStatus != 2 )
+		setError( m_queryStatus );
 	else
-		setSuccess();
+		setSuccess( m_queryStatus );
 	return true;
 }
 
-QValueList< GroupWise::ContactItem > PollSearchResultsTask::results()
+QValueList< GroupWise::ContactDetails > PollSearchResultsTask::results()
 {
 	return m_results;
+}
+
+int PollSearchResultsTask::queryStatus()
+{
+	return m_queryStatus;
+}
+
+GroupWise::ContactDetails PollSearchResultsTask::extractUserDetails( Field::FieldList & fields )
+{
+	ContactDetails cd;
+	cd.status = GroupWise::Invalid;
+	// read the supplied fields, set metadata and status.
+	Field::SingleField * sf;
+	if ( ( sf = fields.findSingleField ( NM_A_SZ_AUTH_ATTRIBUTE ) ) )
+		cd.authAttribute = sf->value().toString();
+	if ( ( sf = fields.findSingleField ( NM_A_SZ_DN ) ) )
+		cd.dn =sf->value().toString().lower(); // HACK: lowercased DN
+	if ( ( sf = fields.findSingleField ( "CN" ) ) )
+		cd.cn = sf->value().toString();
+	if ( ( sf = fields.findSingleField ( "Given Name" ) ) )
+		cd.givenName = sf->value().toString();
+	if ( ( sf = fields.findSingleField ( "Surname" ) ) )
+		cd.surname = sf->value().toString();
+	if ( ( sf = fields.findSingleField ( "Full Name" ) ) )
+		cd.fullName = sf->value().toString();
+	if ( ( sf = fields.findSingleField ( NM_A_SZ_STATUS ) ) )
+		cd.status = sf->value().toInt();
+	if ( ( sf = fields.findSingleField ( NM_A_SZ_MESSAGE_BODY ) ) )
+		cd.awayMessage = sf->value().toString();
+	Field::MultiField * mf;
+	QMap< QString, QString > propMap;
+	if ( ( mf = fields.findMultiField ( NM_A_FA_INFO_DISPLAY_ARRAY ) ) )
+	{
+		Field::FieldList fl = mf->fields();
+		const Field::FieldListIterator end = fl.end();
+		for ( Field::FieldListIterator it = fl.begin(); it != end; ++it )
+		{
+			Field::SingleField * propField = static_cast<Field::SingleField *>( *it );
+			QString propName = propField->tag();
+			QString propValue = propField->value().toString();
+			propMap.insert( propName, propValue );
+		}
+	}
+	if ( !propMap.empty() )
+	{
+		cd.properties = propMap;
+	}
+	return cd;
 }
 
 #include "pollsearchresultstask.moc"

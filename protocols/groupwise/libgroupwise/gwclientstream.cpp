@@ -364,6 +364,7 @@ void ClientStream::write( Request *request )
 	
 void cs_dump( const QByteArray &bytes )
 {
+#ifdef GW_CLIENTSTREAM_DEBUG
 	qDebug( "contains: %i bytes ", bytes.count() );
 	uint count = 0;
 	while ( count < bytes.count() )
@@ -399,6 +400,7 @@ void cs_dump( const QByteArray &bytes )
 		count += 8;
 	}
 	printf( "\n" );
+#endif
 }
 
 void ClientStream::cp_outgoingData( const QByteArray& outgoingBytes )

@@ -21,6 +21,8 @@
 #ifndef TESTBEDADDCONTACTPAGE_H
 #define TESTBEDADDCONTACTPAGE_H
 
+#include "gwerror.h"
+
 #include <addcontactpage.h>
 
 class QLabel;
@@ -55,6 +57,7 @@ protected slots:
 	void slotShowDetails();
 	void slotGotSearchResults();
 protected:
+	QValueList< GroupWise::ContactDetails > m_searchResults;
 	unsigned char searchOperation( int comboIndex );
 	GroupWiseAccount * m_account;
 	GroupWiseAddUI * m_gwAddUI;

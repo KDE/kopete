@@ -409,26 +409,29 @@ void GroupWiseContact::syncGroups()
 	
 		// determine which groups we have left
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " assuming we haven't LEFT any groups" << endl;
-		// start an UpdateItem 
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " resetting the contact's display name to " << metaContact()->displayName() << endl;
-		// form a list of the contact's groups
-		QValueList< ContactItem > instancesToChange;
-		QValueList< ContactListInstance >::Iterator it = m_instances.begin();
-		const QValueList< ContactListInstance >::Iterator end = m_instances.end();
-		for ( ; it != end; ++it )
-		{
-			ContactItem instance;
-			instance.id = (*it).objectId;
-			instance.parentId = (*it).parentId;
-			instance.sequence = (*it).sequence;
-			instance.dn = m_dn;
-			instance.displayName = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-			instancesToChange.append( instance );
-		}
-		UpdateContactTask * uct = new UpdateContactTask( account()->client()->rootTask() );
-		uct->renameContact( metaContact()->displayName(), instancesToChange );
-		uct->go( true );
-		setProperty( Kopete::Global::Properties::self()->nickName(), metaContact()->displayName() );
+		// start an UpdateItem
+/*		if ( metaContact()->displayName() != m_displayName )
+		{*/
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " resetting the contact's display name to " << metaContact()->displayName() << endl;
+			// form a list of the contact's groups
+			QValueList< ContactItem > instancesToChange;
+			QValueList< ContactListInstance >::Iterator it = m_instances.begin();
+			const QValueList< ContactListInstance >::Iterator end = m_instances.end();
+			for ( ; it != end; ++it )
+			{
+				ContactItem instance;
+				instance.id = (*it).objectId;
+				instance.parentId = (*it).parentId;
+				instance.sequence = (*it).sequence;
+				instance.dn = m_dn;
+				instance.displayName = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+				instancesToChange.append( instance );
+			}
+			UpdateContactTask * uct = new UpdateContactTask( account()->client()->rootTask() );
+			uct->renameContact( metaContact()->displayName(), instancesToChange );
+			uct->go( true );
+			setProperty( Kopete::Global::Properties::self()->nickName(), metaContact()->displayName() );
+// 		}
 	}
 }
 

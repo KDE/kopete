@@ -32,9 +32,12 @@ public:
 	~PollSearchResultsTask();
 	void poll( const QString & queryHandle);
 	bool take( Transfer * transfer );
-	QValueList< GroupWise::ContactItem > results();
+	int queryStatus();
+	QValueList< GroupWise::ContactDetails > results();
+GroupWise::ContactDetails extractUserDetails( Field::FieldList & fields );
 private:
-	QValueList< GroupWise::ContactItem > m_results;
+	int m_queryStatus;
+	QValueList< GroupWise::ContactDetails > m_results;
 };
 
 #endif

@@ -793,7 +793,7 @@ bool GroupWiseAccount::addContactToMetaContact( const QString& contactId, const 
 	GroupWiseContact * c = new GroupWiseContact( this, contactId, parentContact, 0, 0, 0 );
 
 	// If the CreateContactTask finishes with an error, we'll have to 
-	// delete the contact we just created, in receiveContactCreated :/	
+	// delete the contact we just created, in receiveContactCreated :/
 	
 	CreateContactTask * cct = new CreateContactTask( client()->rootTask() );
 	cct->contactFromUserId( contactId, displayName, highestFreeSequence, folders );

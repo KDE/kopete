@@ -188,6 +188,7 @@ protected:
 	int m_parentId;
 	int m_sequence;
 	QString m_dn;
+	QString m_displayName;
 	KAction* m_actionPrefs;
 	KAction *m_actionBlock;
 	// all the message managers that this contact is currently chatting via

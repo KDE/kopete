@@ -24,7 +24,7 @@
 
 using namespace GroupWise;
 
-SearchTask::SearchTask(Task* parent): RequestTask(parent)
+SearchTask::SearchTask(Task* parent): RequestTask(parent), m_polls( 0 )
 {
 }
 
@@ -37,14 +37,19 @@ void SearchTask::search( const QValueList<UserSearchQueryTerm> & query )
 {
 	m_queryHandle = QString::number( QDateTime::currentDateTime().toTime_t () );
 	Field::FieldList lst;
+	if ( query.isEmpty() )
+	{
+		setError( 1, "no query terms" );
+		return;
+	}
 	// object Id identifies the search for later reference
 	lst.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, m_queryHandle ) );
 	QValueList<UserSearchQueryTerm>::ConstIterator it = query.begin();
-	const QValueList<UserSearchQueryTerm>::ConstIterator end = query.begin();
+	const QValueList<UserSearchQueryTerm>::ConstIterator end = query.end();
 	for ( ; it != end; ++it )
 	{
-		UserSearchQueryTerm term = *it;
-		lst.append( new Field::SingleField( term.field.ascii(), 0, NMFIELD_TYPE_UTF8, term.operation, term.argument ) );
+		Field::SingleField * fld =  new Field::SingleField( (*it).field.ascii(), (*it).operation, 0, NMFIELD_TYPE_UTF8, (*it).argument );
+		lst.append( fld );
 	}
 	//lst.append( new Field::SingleField( "Given Name", 0, NMFIELD_TYPE_UTF8, [ NMFIELD_METHOD_EQUAL | NMFIELD_METHOD_MATCHBEGIN | NMFIELD_METHOD_MATCHEND | NMFIELD_METHOD_SEARCH ], searchTerm );
 	// Or "Surname", NM_A_SZ_USERID, NM_A_SZ_TITLE, NM_A_SZ_DEPARTMENT in other fields
@@ -61,6 +66,7 @@ bool SearchTask::take( Transfer * transfer )
 		return false;
 	if ( response->resultCode() )
 	{
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "got return code in response << " << response->resultCode() << endl;
 		setError( response->resultCode() );
 		return true;
 	}
@@ -75,17 +81,22 @@ void SearchTask::slotPollForResults()
 	PollSearchResultsTask * psrt = new PollSearchResultsTask( client()->rootTask() );
 	psrt->poll( m_queryHandle );
 	connect( psrt, SIGNAL( finished() ), SLOT( slotGotPollResults() ) );
+	psrt->go( true );
 }
 
 void SearchTask::slotGotPollResults()
 {
 	PollSearchResultsTask * psrt = (PollSearchResultsTask *)sender();
-	switch ( psrt->statusCode() )
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "status code is " << psrt->queryStatus() << endl;
+	m_polls++;
+	switch ( psrt->queryStatus() )
 	{
 		case PollSearchResultsTask::Pending:
 		case PollSearchResultsTask::InProgess:
-			// restart timer
-			QTimer::singleShot( 1000, this, SLOT( slotPollForResults() ) );
+			if ( m_polls < 5 ) // restart timer
+				QTimer::singleShot( 10000, this, SLOT( slotPollForResults() ) );
+			else
+				setSuccess( psrt->statusCode() );
 			break;
 		case PollSearchResultsTask::Completed: 
 			m_results = psrt->results();
@@ -102,4 +113,10 @@ void SearchTask::slotGotPollResults()
 			break;
 	}
 }
+
+QValueList< GroupWise::ContactDetails > SearchTask::results()
+{
+	return m_results;
+}
+
 #include "searchtask.moc"

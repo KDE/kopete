@@ -24,6 +24,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
+#include <qlistview.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qtabwidget.h>
@@ -38,9 +39,30 @@
 #include "client.h"
 #include "gwaccount.h"
 #include "gwerror.h"
+#include "gwprotocol.h"
 #include "gwsearchwidget.h"
 #include "tasks/searchtask.h"
 #include "gwaddui.h"
+
+class GWSearchResultsLVI : public QListViewItem
+{
+public:
+	GWSearchResultsLVI( QListView * parent, int status, const QPixmap & statusPM, const QString & givenName,
+		const QString & surname, const QString & userId, const QString & dn )
+	: QListViewItem( parent, QString::null, givenName, surname, userId ), m_status( status ), m_dn( dn )
+	{
+		setPixmap( 0, statusPM );
+	}
+	QString key( int column, bool ascending ) const
+	{
+		if ( column == 0 )
+			return QString::number( 99 - m_status );
+		else
+			return QListViewItem::key( column, ascending );
+	}
+	int m_status;
+	QString m_dn;
+};
 
 GroupWiseAddContactPage::GroupWiseAddContactPage( KopeteAccount * owner, QWidget* parent, const char* name )
 		: AddContactPage(parent, name)
@@ -57,8 +79,9 @@ GroupWiseAddContactPage::GroupWiseAddContactPage( KopeteAccount * owner, QWidget
 		// add search widget
 		( new QVBoxLayout( m_gwAddUI->m_tabWidget->page( 1 ) ) )->setAutoAdd( true );
 		m_searchUI = new GWSearchWidget( m_gwAddUI->m_tabWidget->page( 1 ) );
+		m_searchUI->m_results->setAllColumnsShowFocus( true );
 		connect( m_searchUI->m_search, SIGNAL( clicked() ), SLOT( slotDoSearch() ) );
-		connect( m_searchUI->m_details, SIGNAL( clicked() ), SLOT( slotDetails() ) );
+		connect( m_searchUI->m_details, SIGNAL( clicked() ), SLOT( slotShowDetails() ) );
 		m_gwAddUI->show ();
 
 		m_canadd = true;
@@ -90,11 +113,22 @@ bool GroupWiseAddContactPage::apply( KopeteAccount* account, KopeteMetaContact* 
 {
 	if ( m_canadd && validateData() )
 	{
-		QString contactId = m_gwAddUI->m_userId->text();
-		QString displayName = parentContact->displayName();
-		
-		if ( displayName.isEmpty() )
-			displayName = contactId;
+		QString contactId;
+		QString displayName;
+		// take the entered userId if that tab is at the front, otherwise the selected search results.
+		displayName = parentContact->displayName();
+		if ( m_gwAddUI->m_tabWidget->currentPageIndex() == 0 )
+		{	contactId = m_gwAddUI->m_userId->text();
+			if ( displayName.isEmpty() )
+				displayName = contactId;
+		}
+		else
+		{
+			GWSearchResultsLVI * selection = static_cast< GWSearchResultsLVI * >( m_searchUI->m_results->selectedItem() );
+			contactId = selection->m_dn;
+			if ( displayName.isEmpty() )
+				displayName = selection->text( 1 ) + " " + selection->text( 3 );
+		}
 
 		return ( account->addContact ( contactId, displayName, parentContact, KopeteAccount::ChangeKABC ) );
 	}
@@ -104,7 +138,10 @@ bool GroupWiseAddContactPage::apply( KopeteAccount* account, KopeteMetaContact* 
 
 bool GroupWiseAddContactPage::validateData()
 {
-    return true;
+	if ( m_gwAddUI->m_tabWidget->currentPageIndex() == 0 )
+		return ( !m_gwAddUI->m_userId->text().isEmpty() );
+	else
+		return ( m_searchUI->m_results->selectedItem() );
 }
 
 void GroupWiseAddContactPage::slotDoSearch()
@@ -123,7 +160,7 @@ void GroupWiseAddContactPage::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_searchUI->m_lastName->text();
-		arg.field = "Given Name";
+		arg.field = "Surname";
 		arg.operation = searchOperation( m_searchUI->m_lastNameOperation->currentItem() );
 		searchTerms.append( arg );
 	}
@@ -131,7 +168,7 @@ void GroupWiseAddContactPage::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_searchUI->m_userId->text();
-		arg.field = "Given Name";
+		arg.field = "UserID";
 		arg.operation = searchOperation( m_searchUI->m_userIdOperation->currentItem() );
 		searchTerms.append( arg );
 	}
@@ -139,7 +176,7 @@ void GroupWiseAddContactPage::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_searchUI->m_title->text();
-		arg.field = "Given Name";
+		arg.field = "Title";
 		arg.operation = searchOperation( m_searchUI->m_titleOperation->currentItem() );
 		searchTerms.append( arg );
 	}
@@ -147,15 +184,24 @@ void GroupWiseAddContactPage::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_searchUI->m_dept->text();
-		arg.field = "Given Name";
+		arg.field = "Department";
 		arg.operation = searchOperation( m_searchUI->m_deptOperation->currentItem() );
 		searchTerms.append( arg );
 	}
-	// start a search task
-	SearchTask * st = new SearchTask( m_account->client()->rootTask() );
-	st->search( searchTerms );
-	connect( st, SIGNAL( finished() ), SLOT( slotGotSearchResults ) );
-	st->go( true );
+	if ( !searchTerms.isEmpty() )
+	{
+		// start a search task
+		SearchTask * st = new SearchTask( m_account->client()->rootTask() );
+		st->search( searchTerms );
+		connect( st, SIGNAL( finished() ), SLOT( slotGotSearchResults() ) );
+		st->go( true );
+		m_searchUI->m_matchCount->setText( i18n( "Searching" ) );
+	}
+	else
+	{
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "no query to perform!" << endl;
+	}
+	
 }
 
 void GroupWiseAddContactPage::slotShowDetails()
@@ -166,7 +212,44 @@ void GroupWiseAddContactPage::slotShowDetails()
 
 void GroupWiseAddContactPage::slotGotSearchResults()
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "NOT IMPLEMENTED" << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	SearchTask * st = ( SearchTask * )sender();
+	m_searchResults = st->results();
+	
+	m_searchUI->m_matchCount->setText( i18n( "%1 matching users found" ).arg( m_searchResults.count() ) );
+
+	m_searchUI->m_results->clear();
+	QValueList< GroupWise::ContactDetails >::Iterator it = m_searchResults.begin();
+	QValueList< GroupWise::ContactDetails >::Iterator end = m_searchResults.end();
+	for ( ; it != end; ++it )
+	{
+		int statusOrdered;
+		switch ( (*it).status )
+		{
+			case 0: //unknown
+				statusOrdered = 0;
+				break;
+			case 1: //offline
+				statusOrdered = 1;
+				break;
+			case 2: //online
+				statusOrdered = 5;
+				break;
+			case 3: //busy
+				statusOrdered = 2;
+				break;
+			case 4: // away
+				statusOrdered = 3;
+				break;
+			case 5: //idle
+				statusOrdered = 4;
+				break;
+		}
+
+		new GWSearchResultsLVI( m_searchUI->m_results, statusOrdered,
+				m_account->protocol()->gwStatusToKOS( (*it).status ).iconFor( m_account ),
+				(*it).givenName, (*it).surname, m_account->protocol()->dnToDotted( (*it).dn ), (*it).dn );
+	}
 }
 
 unsigned char GroupWiseAddContactPage::searchOperation( int comboIndex )
