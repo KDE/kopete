@@ -26,6 +26,8 @@ AddContactPage::~AddContactPage()
 
 }
 
+#include "addcontactpage.moc"
+
 /*
  * Local variables:
  * c-indentation-style: k&r

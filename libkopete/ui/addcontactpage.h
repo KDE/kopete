@@ -28,9 +28,11 @@
 
 class AddContactPage : public QWidget
 {
+Q_OBJECT
+
 public:
 	AddContactPage(QWidget *parent=0, const char *name=0);
-	~AddContactPage();
+	virtual ~AddContactPage();
 	//KopeteProtocol *protocol;
 
 	/**
@@ -43,7 +45,7 @@ public:
 	 * add the contact the the specified meta contact, with the given account
 	 * return false if the contact has not been added
 	 */
-	virtual bool apply(KopeteAccount * , KopeteMetaContact *) = 0L;
+	virtual bool apply(KopeteAccount * , KopeteMetaContact *) = 0;
 
 };
 #endif

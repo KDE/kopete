@@ -14,7 +14,7 @@ libkopeteui_la_SOURCES = configmodule.cpp preferencesdialog.cpp \
 
 libkopeteui_la_LDFLAGS = $(all_libraries)
 libkopeteui_la_LIBADD = ../private/libkopeteprivate.la \
-        $(LIB_KDEUI) $(LIB_KHTML) $(LIB_KIO) $(LIBXML_LIBS) $(LIBXSLT_LIBS)
+        $(LIB_KHTML) $(LIBXML_LIBS) $(LIBXSLT_LIBS)
 
 
 # vim: set noet:
