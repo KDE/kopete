@@ -45,14 +45,18 @@ public:
 	QString mServer;
 private:
 	bool tryingQuit;
+	bool completedDisconnect;
 private slots:
 	void nickInUseOnLogin(const QString &);
 	void slotChangedNick(const QString &, const QString &);
 	void slotServerHasQuit();
 	void slotPollList();
+	void forceDisconnect();
+	void disconnectNow();
 public slots:
 	void slotQuitServer();
 	void unloading();
+	void connectNow();
 signals:
 	void quittingServer();
 	void serverQuit();

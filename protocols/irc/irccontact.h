@@ -53,6 +53,7 @@ private:
 	bool mJoinOnConnect;
 	IRCChatView *chatView;
 	KPopupMenu *popup;
+	QVBox *mTabPage;
 private slots:
 	void slotIncomingMotd(const QString &);
 	void slotConnectedToHost();

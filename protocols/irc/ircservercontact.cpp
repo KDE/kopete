@@ -23,12 +23,16 @@
 #include "ircconsoleview.h"
 #include <qtabwidget.h>
 #include <qvbox.h>
-#include <kdialogbase.h>
+#include <kjanuswidget.h>
+#include <ktoolbar.h>
+#include <ktoolbarbutton.h>
+#include <qsocket.h>
 
 IRCServerContact::IRCServerContact(const QString &server, const QString &nickname, bool connectNow, IRCServerManager *manager)
 	: KListViewItem( kopeteapp->contactList() )
 {
 	tryingQuit = false;
+	completedDisconnect = true;
 	engine = new KIRC();
 	QObject::connect(engine, SIGNAL(incomingFailedNickOnLogin(const QString &)), this, SLOT(nickInUseOnLogin(const QString &)));
 	QObject::connect(engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)), this, SLOT(slotChangedNick(const QString &, const QString &)));
@@ -37,8 +41,10 @@ IRCServerContact::IRCServerContact(const QString &server, const QString &nicknam
 	mNickname = nickname;
 	mServer = server;
 	mWindow = new IRCChatWindow(mServer);
+	QObject::connect(mWindow, SIGNAL(windowClosing()), this, SLOT(slotQuitServer()));
+	mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
 
-	IRCConsoleView *consoleView = new IRCConsoleView(mServer, engine, this, mWindow->addVBoxPage(mServer));
+	IRCConsoleView *consoleView = new IRCConsoleView(mServer, engine, this, mWindow->mDialog->addVBoxPage(mServer));
 
 	QObject::connect(consoleView, SIGNAL(quitRequested()), this, SLOT(slotQuitServer()));
 	QObject::connect(this, SIGNAL(connecting()), consoleView, SLOT(slotConnecting()));
@@ -52,8 +58,41 @@ IRCServerContact::IRCServerContact(const QString &server, const QString &nicknam
 	setText(0, title);
 	if (connectNow == true)
 	{
+		// GCC didn't like me calling connectNow(), not sure why
+		mWindow->mToolBar->removeItem(1);
+		mWindow->mToolBar->insertButton("connect_creating", 1, SIGNAL(clicked()), this, SLOT(disconnectNow()));
 		emit connecting();
-		engine->connectToServer(server, 6667, QString("kopeteuser"), nickname);
+		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname);
+	}
+}
+
+void IRCServerContact::connectNow()
+{
+	mWindow->mToolBar->removeItem(1);
+	mWindow->mToolBar->insertButton("connect_creating", 1, SIGNAL(clicked()), this, SLOT(disconnectNow()));
+	if (engine->isLoggedIn() == false && engine->state() == QSocket::Idle)
+	{
+		emit connecting();
+		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname);
+	} else {
+		emit quittingServer();
+		engine->close();
+		slotQuitServer();
+		emit connecting();
+		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname);
+	}
+}
+
+void IRCServerContact::disconnectNow()
+{
+	completedDisconnect = false;
+	mWindow->mToolBar->removeItem(1);
+	mWindow->mToolBar->insertButton("stop", 1, SIGNAL(clicked()), this, SLOT(forceDisconnect()));
+	if (engine->isLoggedIn() == true)
+	{
+		slotQuitServer();
+	} else {
+		forceDisconnect();
 	}
 }
 
@@ -93,6 +132,20 @@ void IRCServerContact::nickInUseOnLogin(const QString &oldNickname)
 	}
 }
 
+void IRCServerContact::forceDisconnect()
+{
+	if (completedDisconnect == false)
+	{
+		tryingQuit = true;
+		emit quittingServer();
+		engine->close();
+		slotQuitServer();
+		completedDisconnect = true;
+	}
+	mWindow->mToolBar->removeItem(1);
+	mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
+}
+
 void IRCServerContact::slotQuitServer()
 {
 	if (tryingQuit == false)
@@ -100,14 +153,15 @@ void IRCServerContact::slotQuitServer()
 		tryingQuit = true;
 		emit quittingServer();
 		engine->quitIRC("Using Kopete IRC Plugin");
+		completedDisconnect = false;
+		QTimer::singleShot(10000, this, SLOT(forceDisconnect()));
 	} else {
+		completedDisconnect = true;
 		emit serverQuit();
 		mManager->removeServer(text(0));
-		if (mWindow !=0)
-		{
-			delete mWindow;
-		}
-		delete this;
+		completedDisconnect = false;
+		mWindow->mToolBar->removeItem(1);
+		mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
 	}
 }
 

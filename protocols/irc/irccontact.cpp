@@ -25,7 +25,7 @@
 #include <kstddirs.h>
 #include <ircchatwindow.h>
 #include <qtabwidget.h>
-#include <kdialogbase.h>
+#include <kjanuswidget.h>
 #include <qvbox.h>
 
 IRCContact::IRCContact(QListViewItem *parent, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact)
@@ -83,7 +83,7 @@ IRCContact::IRCContact(QListViewItem *parent, const QString &server, const QStri
 
 void IRCContact::slotServerHasQuit()
 {
-	delete this;
+	unloading();
 }
 
 void IRCContact::slotServerIsQuitting()
@@ -93,7 +93,7 @@ void IRCContact::slotServerIsQuitting()
 		QColor color(175, 8, 8);
 		QString partWarning = "<font color=";
 		partWarning.append(color.name());
-		partWarning.append(">Attempting to quit server. If this takes an unusual amount of time, please right click on one of the channels or server in Kopete contact list and click \"Quit IRC Server\" again.</font><br>");
+		partWarning.append(i18n(">Attempting to quit server. If this takes an unusual amount of time, please click the red stop button on the toolbar.</font><br>"));
 		chatView->chatView->append(partWarning);
 		chatView->chatView->scrollToBottom();
 	}
@@ -155,9 +155,9 @@ void IRCContact::slotPartedChannel(const QString &originating, const QString &ch
 
 void IRCContact::unloading()
 {
-	if (chatView != 0)
+	if (mTabPage != 0)
 	{
-		delete chatView;
+		delete mTabPage;
 	}
 	mContact->unloading();
 	delete this;
@@ -171,13 +171,12 @@ void IRCContact::slotIncomingMotd(const QString &motd)
 void IRCContact::joinNow()
 {
 
-	QVBox *parent = mContact->mWindow->addVBoxPage(mTarget);
-	chatView = new IRCChatView(mServer, mTarget, this, parent);
+	mTabPage = mContact->mWindow->mDialog->addVBoxPage(mTarget);
+	chatView = new IRCChatView(mServer, mTarget, this, mTabPage);
 
 	mContact->mWindow->show();
 	chatView->show();
-	mContact->mWindow->showPage(mContact->mWindow->pageIndex(parent));
-	mContact->mWindow->resize(640, 480);
+	mContact->mWindow->mDialog->showPage(mContact->mWindow->mDialog->pageIndex(mTabPage));
 	QObject::connect(mContact->engine, SIGNAL(userJoinedChannel(const QString &, const QString &)), chatView, SLOT(userJoinedChannel(const QString &, const QString &)));
 	QObject::connect(mContact->engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), chatView, SLOT(incomingMessage(const QString &, const QString &, const QString &)));
 	QObject::connect(mContact->engine, SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), chatView, SLOT(userPartedChannel(const QString &, const QString &, const QString &)));
