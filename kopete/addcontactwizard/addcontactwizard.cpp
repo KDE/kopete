@@ -51,17 +51,14 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	int pluginCount = 0;
 	ProtocolBoxItem *pluginItem = 0L;
 
-	QValueList<KopeteLibraryInfo> l = LibraryLoader::pluginLoader()->loaded();
-	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
+	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
+	for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
 	{
-//		kdDebug() << "AddContactWizard::AddContactWizard :" <<(*i).name << " " << (*i).specfile <<"\n";
-		KopetePlugin *tmpprot = LibraryLoader::pluginLoader()->searchByName( (*i).name );
-		KopeteProtocol *prot = dynamic_cast<KopeteProtocol*>( tmpprot );
-
-		if (prot)
+		KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
+		if( proto )
 		{
-			pluginItem = new ProtocolBoxItem( protocolListView, (*i).name );
-			pluginItem->protocol = prot;
+			pluginItem = new ProtocolBoxItem( protocolListView, proto->pluginId() );
+			pluginItem->protocol = proto;
 			pluginCount++;
 		}
 	}
