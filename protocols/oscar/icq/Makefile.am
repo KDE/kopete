@@ -15,7 +15,7 @@ kopete_icq_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_icq_la_LIBADD  = ../libkopete_oscar.la \
 	$(top_builddir)/kopete/libkopete/libkopete.la ui/libkopeteicqui.la
 
-service_DATA = kopete_icq2.desktop
+service_DATA = kopete_icq.desktop
 servicedir = $(kde_servicesdir)
 
 mime_DATA = x-icq.desktop
