@@ -207,8 +207,6 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 
 ChatView::~ChatView()
 {
-	kdDebug( 14000 ) << k_funcinfo << "Destroying ChatView" << endl;
-
 	emit( closing( static_cast<KopeteView*>(this) ) );
 
 	saveOptions();
@@ -283,8 +281,6 @@ bool ChatView::isVisible()
 
 bool ChatView::closeView( bool force )
 {
-	kdDebug() << k_funcinfo << endl;
-
 	int response = KMessageBox::Continue;
 
 	if( !force )
@@ -365,11 +361,10 @@ void ChatView::setTabState( KopeteTabState newState = Undefined )
 
 		if( newState != Typing &&  (  newState!=Changed || (m_tabState != Message && m_tabState != Highlighted) ) && ( newState != Message ||  m_tabState != Highlighted ) )
 			m_tabState = newState;
-
-		if( newState!= Typing )
-			setStatus ( i18n( "%1 people in the chat" ).arg( memberContactMap.count()  ) );
-
 	}
+	if( newState!= Typing )
+		setStatus ( i18n( "%1 people in the chat" ).arg( memberContactMap.count()  ) );
+
 }
 
 void ChatView::setMainWindow( KopeteChatWindow* parent )
@@ -388,8 +383,6 @@ void ChatView::createMembersList(void)
 {
 	if( !membersDock )
 	{
-		kdDebug(14000) << k_funcinfo << "Creating members list" << endl;
-
 		//Create the chat members list
 		membersDock = createDockWidget( QString::fromLatin1( "membersDock" ), QPixmap(), 0L,
 			QString::fromLatin1( "membersDock" ), QString::fromLatin1( " " ) );
@@ -468,7 +461,10 @@ void ChatView::remoteTyping( const KopeteContact *c, bool isTyping )
 	// Strictly speaking the below code does that, but contactAdded() does
 	// some additional bookkeeping, hence this call
 	if( !typingMap.contains( c ) )
+	{
+		kdDebug( 14000 ) << k_funcinfo << "WARNING: contact was not in the typing map" << endl;
 		slotContactAdded( c, false );
+	}
 
 	// Set his typing status
 	typingMap[ c ] = isTyping;
@@ -482,7 +478,7 @@ void ChatView::remoteTyping( const KopeteContact *c, bool isTyping )
 	m_remoteTypingMap.remove( key );
 	if( isTyping )
 	{
-		m_remoteTypingMap.insert( key, new QTimer );
+		m_remoteTypingMap.insert( key, new QTimer(this) );
 		connect( m_remoteTypingMap[ key ], SIGNAL( timeout() ), SLOT( slotRemoteTypingTimeout() ) );
 		m_remoteTypingMap[ key ]->start( 6000, true );
 	}
@@ -509,7 +505,9 @@ void ChatView::remoteTyping( const KopeteContact *c, bool isTyping )
 		setTabState( Typing );
 	}
 	else
+	{
 		setTabState();
+	}
 }
 
 void ChatView::setStatus( const QString &status )
@@ -545,7 +543,7 @@ void ChatView::nickComplete()
 		QString word = txt.mid( firstSpace, lastSpace - firstSpace );
 		QString m_Match;
 
-		kdDebug( 14000 ) << "Word is '" << word << "', last match is '" << m_lastMatch << "'" << endl;
+//		kdDebug( 14000 ) <<  "Word is '" << word << "', last match is '" << m_lastMatch << "'" << endl;
 
 		if( word != m_lastMatch )
 		{
@@ -587,7 +585,8 @@ void ChatView::slotChatDisplayNameChanged()
 
 void ChatView::slotContactNameChanged( const QString &oldName, const QString &newName )
 {
-	sendInternalMessage(i18n("%1 changed their nickname to %2").arg( oldName ).arg( newName ) );
+	if(KopetePrefs::prefs()->showEvents())
+		sendInternalMessage(i18n("%1 changed their nickname to %2").arg( oldName ).arg( newName ) );
 	mComplete->removeItem( oldName );
 	mComplete->addItem( newName );
 }
@@ -717,7 +716,6 @@ void ChatView::slotMarkMessageRead()
 
 void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus & /* newStatus */ )
 {
-	//kdDebug(14000) << "slotContactStatusChanged" << endl;
 	// %2 before %1 because displayName can contains '%' . And i don't think the status can
 	if(KopetePrefs::prefs()->showEvents())
 	{
@@ -822,8 +820,6 @@ void ChatView::historyDown()
 
 void ChatView::saveOptions()
 {
-	kdDebug(14000) << k_funcinfo << endl;
-
 	KConfig *config = KGlobal::config();
 
 	writeDockConfig ( config, QString::fromLatin1("ChatViewDock") );
@@ -842,8 +838,6 @@ void ChatView::saveOptions()
 
 void ChatView::readOptions()
 {
-	kdDebug(14000) << k_funcinfo << endl;
-
 	KConfig *config = KGlobal::config();
 
 	/** THIS IS BROKEN !!! */
@@ -1131,8 +1125,6 @@ void ChatView::cut()
 
 void ChatView::copy()
 {
-	kdDebug(14000) << k_funcinfo << endl;
-
 	if ( chatView->hasSelection() )
 	{
 		QApplication::clipboard()->setText( chatView->selectedText(), QClipboard::Clipboard );
@@ -1208,25 +1200,21 @@ void ChatView::slotRepeatTimer()
 
 void ChatView::slotRemoteTypingTimeout()
 {
-	kdDebug( 14000 ) << k_funcinfo << endl;
-
 	// Remove the topmost timer from the list. Why does QPtrDict use void* keys and not typed keys? *sigh*
 	if( !m_remoteTypingMap.isEmpty() )
-		remoteTyping( reinterpret_cast<const KopeteContact *>( QPtrDictIterator<QTimer>( m_remoteTypingMap ).currentKey() ), false );
+	{
+		remoteTyping( reinterpret_cast<const KopeteContact *>( QPtrDictIterator<QTimer>(m_remoteTypingMap).currentKey() ), false );
+	}
 }
 
 void ChatView::slotStopTimer()
 {
-	kdDebug( 14000 ) << k_funcinfo << endl;
-
 	m_typingRepeatTimer->stop();
 	emit typing( false );
 }
 
 void ChatView::slotTransparancyChanged()
 {
-	kdDebug(14000) << k_funcinfo << "called." << endl;
-
 	transparencyEnabled = KopetePrefs::prefs()->transparencyEnabled();
 	bgOverride = KopetePrefs::prefs()->bgOverride();
 
