@@ -118,8 +118,7 @@ void JabberProtocol::Connect()
 			kdDebug() << "Jabber plugin: Nope, just another day at the off^W^W^Wnormal login." << endl;
 			protocol->login(STATUS_ONLINE, "", 1, true);
 		}
-		myContact = new JabberContact(QString("%1@%2").arg(mUsername, 1).arg(mServer, 2), mUsername, i18n("Unknown"), this);
-		mIsConnected = true;
+		slotConnecting();
     } 
 	else if (isAway()) {	/* They're really away, and they want to un-away. */
 		slotGoOnline();
@@ -165,6 +164,11 @@ void JabberProtocol::slotConnected()
 {
     mIsConnected = true;
     kdDebug() << "Jabber plugin: Connected to Jabber server." << endl;
+	int status = mProtocol->status();
+	if (status == JABBER_ONLINE) { statusBarIcon->setPixmap(onlineIcon); }
+	if (status == JABBER_AWAY || status == JABBER_XA) { statusBarIcon->setPixmap(awayIcon); }
+	if (status == JABBER_DND) { statusBarIcon->setPixmap(naIcon); }
+	myContact = new JabberContact(QString("%1@%2").arg(mUsername, 1).arg(mServer, 2), mUsername, i18n("Unknown"), this);
 }
 
 void JabberProtocol::slotDisconnected()
