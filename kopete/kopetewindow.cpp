@@ -38,14 +38,13 @@ void KopeteWindow::initActions()
                           kopeteapp, SLOT(slotAddContact()),
                           actionCollection(), "AddContact" );
 
-	actionConnect = new KAction( i18n("&Connect"),"connect_no",0 ,
+	actionConnect = new KAction( i18n("&Connect All"),"connect_no",0 ,
                           kopeteapp, SLOT(slotConnectAll()),
                           actionCollection(), "Connect" );
 	
-	actionDisconnect = new KAction( i18n("&Disconnect"),"connect_established",0 ,
+	actionDisconnect = new KAction( i18n("&Disconnect All"),"connect_established",0 ,
                           kopeteapp, SLOT(slotDisconnectAll()),
                           actionCollection(), "Disconnect" );
-    actionDisconnect->setEnabled(false);
 
 	actionAboutPlugins = new KAction( i18n("&Plugins"),"input_devices_settings", 0,
                           kopeteapp, SLOT(slotAboutPlugins()),

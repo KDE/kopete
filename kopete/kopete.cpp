@@ -175,9 +175,6 @@ void Kopete::slotConnectAll()
 			prot->Connect();
 		}
 	}
-	allConnected = true;
-	mainWindow()->actionConnect->setEnabled(false);
-    mainWindow()->actionDisconnect->setEnabled(true);
 }
 
 /** Connect to all loaded protocol plugins */
@@ -194,9 +191,6 @@ void Kopete::slotDisconnectAll()
 			prot->Disconnect();
 		}
 	}
-	allConnected = false;
-	mainWindow()->actionConnect->setEnabled(true);
-    mainWindow()->actionDisconnect->setEnabled(false);
 }
 
 /** No descriptions */
