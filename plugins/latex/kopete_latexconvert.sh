@@ -39,7 +39,7 @@ fi
 
 while getopts hanzb:t:f:o:r:vx: Optionen; do
 	case $Optionen in
-		h) echo "tex2im [options] inputfile
+		h) echo "tex2im [options] latex_expression
 
 The content of input file should be _plain_ latex mathmode code!
 Alternatively, a string containing the latex code can be specified.
@@ -54,7 +54,7 @@ Options:
            default is inputfile with new extension
 -f expr    specifies output format, 
            possible examples: gif, jpg, tif......
-           all formates supported by "convert" should work, 
+           all formates supported by 'convert' should work, 
            default: png
 -r expr    specifies desired resolution in dpi, 
            possible examples: 100x100, 300x300, 200x150, 
@@ -167,11 +167,12 @@ ENDHEADER2
 ) >> $tmpdir/out.tex
 fi
 
-if [ -e "$infile" ]; then
-	cat $infile >> $tmpdir/out.tex
-else
+# Kopete does not need to parse the content of a file.
+#if [ -e "$infile" ]; then
+#	cat $infile >> $tmpdir/out.tex
+#else
 	echo $infile >> $tmpdir/out.tex
-fi	
+#fi	
 
 if [ $noformula -eq 1 ]; then
 (
