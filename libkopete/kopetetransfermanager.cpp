@@ -203,7 +203,7 @@ KopeteTransfer* KopeteTransferManager::addTransfer(  KopeteContact *contact, con
 		nextID++;
 	KopeteFileTransferInfo info(contact, file, size, recipient,di,  nextID);
 	KopeteTransfer *trans = new KopeteTransfer(info, contact);
-	connect(trans, SIGNAL(result(KIO::Job *)), this, SLOT(slotComplete(KopeteTransfer *)));
+	connect(trans, SIGNAL(result(KIO::Job *)), this, SLOT(slotComplete(KIO::Job *)));
 	mTransfersMap.insert(nextID, trans);
 	return trans;
 }
@@ -211,7 +211,7 @@ KopeteTransfer* KopeteTransferManager::addTransfer(  KopeteContact *contact, con
 void KopeteTransferManager::slotAccepted(const KopeteFileTransferInfo& info, const QString& filename)
 {
 	KopeteTransfer *trans = new KopeteTransfer(info, filename);
-	connect(trans, SIGNAL(result(KIO::Job *)), this, SLOT(slotComplete(KopeteTransfer *)));
+	connect(trans, SIGNAL(result(KIO::Job *)), this, SLOT(slotComplete(KIO::Job *)));
 	mTransfersMap.insert(info.transferId(), trans);
 	emit accepted(trans,filename);
 }
@@ -233,13 +233,16 @@ int KopeteTransferManager::askIncomingTransfer(  KopeteContact *contact, const Q
 
 void KopeteTransferManager::removeTransfer( unsigned int id )
 {
-	KopeteTransfer *trans = mTransfersMap[id];
-//	mTransfersMap.remove(id);
-	delete trans;
+	mTransfersMap.remove(id);
+	//we don't need to delete the job, the job get deleted itself
 }
 
-void KopeteTransferManager::slotComplete(KopeteTransfer *transfer)
+void KopeteTransferManager::slotComplete(KIO::Job *job)
 {
+	KopeteTransfer *transfer=dynamic_cast<KopeteTransfer*>(job);
+	if(!transfer)
+		return;
+
 	emit done(transfer);
 
 	for( QMap<unsigned, KopeteTransfer*>::Iterator it = mTransfersMap.begin();
@@ -247,7 +250,7 @@ void KopeteTransferManager::slotComplete(KopeteTransfer *transfer)
 	{
 		if( it.data() == transfer )
 		{
-			mTransfersMap.remove( it.key() );
+			removeTransfer(it.key());
 			break;
 		}
 	}

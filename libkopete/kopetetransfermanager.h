@@ -115,7 +115,7 @@ signals:
 
 private slots:
 	void slotAccepted(const KopeteFileTransferInfo&, const QString&);
-	void slotComplete(KopeteTransfer*);
+	void slotComplete(KIO::Job*);
 
 private:
 	KopeteTransferManager( QObject *parent );

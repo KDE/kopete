@@ -243,15 +243,11 @@ void KopeteAccountManager::save()
 
 void KopeteAccountManager::load()
 {
-	kdDebug( 14010 ) << k_funcinfo << endl;
-
 	connect( LibraryLoader::pluginLoader(), SIGNAL( pluginLoaded( KopetePlugin* ) ), SLOT( slotPluginLoaded( KopetePlugin * ) ) );
 }
 
 void KopeteAccountManager::slotPluginLoaded( KopetePlugin *plugin )
 {
-	kdDebug(14010) << k_funcinfo << "Called." << endl;
-
 	KopeteProtocol* protocol = dynamic_cast<KopeteProtocol*>( plugin );
 	if ( !protocol )
 		return;
