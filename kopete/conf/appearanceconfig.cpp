@@ -117,7 +117,7 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	htmlWidget->setMarginWidth(4);
 	htmlWidget->setMarginHeight(4);
 	htmlWidget->setFocusPolicy( NoFocus );
-	htmlWidget->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
+	htmlWidget->setSizePolicy( QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding) );
 	l->addWidget( htmlWidget );
 
 	mAppearanceTabCtl->addTab( mPrfsChatAppearance, i18n("Chat &Appearance") );
