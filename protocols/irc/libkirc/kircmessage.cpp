@@ -307,7 +307,7 @@ void KIRCMessage::dump() const
 	kdDebug(14120)	<< "Raw:" << m_raw
 			<< "Prefix:" << m_prefix << endl
 			<< "Command:" << m_command << endl
-			<< "Args:" << m_args << endl
+//			<< "Args:" << m_args << endl   //this does not compile on KDE 3.1
 			<< "Suffix:" << m_suffix << endl
 			<< "CtcpRaw:" << m_ctcpRaw << endl;
 	if(m_ctcpMessage)
