@@ -49,3 +49,6 @@ TODO for Jabber:
 - subclass TLS to make use of KDE classes
 - allow SSL fallback with setOptProbe
 - better progress bar feedback for account registration (integrated)
+- move authorization menu for contact in a separate context menu
+- make sure both context menus are created using a factory
+- verify if Kopete can follow foreign clients modifying it's contact list
