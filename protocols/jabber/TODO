@@ -22,6 +22,5 @@ TODO for Jabber:
 - using "online" presence emits "Going online"?
 - going away globally does not allow returning to online mode
 - should the away dialog pop up when going away using the account context menu?
-- add canSendOffline() to JabberProtocol
 - verify FIXMEs in JabberContact
 - save "auto connect" in account preferences

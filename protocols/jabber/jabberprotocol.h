@@ -52,12 +52,6 @@ class JabberProtocol:public KopeteProtocol
 
 public:
 
-	/*********************************************************************
-	 *
-	 * KopeteProtocol reimplementation start
-	 *
-	 ********************************************************************/
-
 	/**
 	 * Object constructor and destructor
 	 */
@@ -77,12 +71,6 @@ public:
 	virtual void deserializeContact (KopeteMetaContact * metaContact,
 									 const QMap < QString, QString > &serializedData, const QMap < QString, QString > &addressBookData);
 
-	/*********************************************************************
-	 *
-	 * KopeteProtocol reimplementation end
-	 *
-	 ********************************************************************/
-
 	const KopeteOnlineStatus JabberOnline;
 	const KopeteOnlineStatus JabberChatty;
 	const KopeteOnlineStatus JabberAway;
@@ -96,6 +84,11 @@ public:
 	 * This returns our protocol instance
 	 */
 	static JabberProtocol *protocol ();
+
+	/**
+	 * Return whether the protocol supports offline messages.
+	 */
+	bool canSendOffline() const { return true; }
 
 private:
 	/*
