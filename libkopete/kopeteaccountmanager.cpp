@@ -99,7 +99,7 @@ void KopeteAccountManager::setAwayAll( const QString &awayReason )
 
 	for ( QPtrListIterator<KopeteAccount> it( d->accounts ); it.current(); ++it )
 	{
-		if ( it.current()->isConnected() && !it.current()->isAway() )
+		if ( it.current()->isConnected() )
 			it.current()->setAway( true, awayReason.isNull() ? KopeteAway::message() : awayReason );
 	}
 }
