@@ -1,6 +1,6 @@
 /*
    Copyright (c) 2002 Jason Keirstead <jason@keirstead.org>
-   Based on kio_sql.cpp (c) 2000 Praduroux Alessandro <pradu@thekompany.com>
+   Partially based on kio_sql.cpp (c) 2000 Praduroux Alessandro <pradu@thekompany.com>
  
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -17,6 +17,7 @@
    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.
 */     
+
 #include "kio_kopete.h"
 
 #include <sys/types.h>
@@ -26,19 +27,20 @@
 #include <fcntl.h>
 
 #include <kinstance.h>
+#include <kfileitem.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <dcopclient.h>
-
+#include <fstream>
+ 
 using namespace KIO;
+using namespace std;
 
 extern "C" {
 	int kdemain( int argc, char **argv ) {
 		KInstance instance( "kio_kopete" );
-
 		KopeteProtocol slave(argv[2], argv[3]);
 		slave.dispatchLoop();
-
 		return 0;
 	}
 }
@@ -50,17 +52,76 @@ KopeteProtocol::KopeteProtocol( const QCString &pool, const QCString &app):Slave
 
 void KopeteProtocol::get( const KURL& url ) {
 
-	//This is the function that will return file data
-	//Output garbage for now
+	/*
+	 * This is the function that will return file data,
+	 * for copying a file from kopete. Output nothing for now
+	 */
 	
 	mimeType("text/html");
 	QCString output;
-	output.sprintf("me\n");
+	output.sprintf("\n");
 	data(output);
 	finished();
 }
+
+//Called to copy a file to a contact (send a file)
+void KopeteProtocol::put( const KURL& dest_url, int perms, bool overWrite, bool resume ) {
+
+	int result;
+	QByteArray data, replyData;
+	QCString replyType;
+	QDataStream arg(data, IO_WriteOnly);
 	
-	 
+	ofstream inout("/tmp/debug.out", ios::ate);
+	
+	//Create the DCOP Client
+	DCOPClient *client = new DCOPClient();
+	
+	//Register with DCOP
+	client->attach();
+	QCString appId = client->registerAs("kio_kopete");
+	
+	//Pass contact, file, and new file name to function
+	//arg << [contact] [filename] << [new file name];
+	
+	//Create the FIFO for output if it doesn't exist
+	mkfifo("/tmp/kopete", 0600);
+	
+	
+	if (client->call("kopete", "KopeteIface", "sendFile(QString &, QString &, QString &)", data, replyType, replyData)) {
+		
+		//Open the FIFO
+		FILE *fp = fopen("/tmp/kopete","wb");
+		do {
+			QByteArray buffer;
+			dataReq(); //Request Data from KIO
+			result = readData( buffer ); //Populate buffer
+			if (result > 0)
+				fwrite(buffer.data(), buffer.size(), 1, fp); //Write to FIFO
+				
+		} while ( result > 0 );
+		
+		//Close the FIFO
+		fclose(fp);
+	
+	} else {
+		//Couldn't connect to kopete!
+	}
+	
+	client->detach(); //Detach from DCOP
+	
+	delete client;
+	
+	finished(); //Signal that we are finished
+}
+
+//Unused (?)
+void KopeteProtocol::copy( const KURL& src, const KURL& dest, int perms, bool overWrite) {
+	
+	finished(); //Signal that we are finished
+}
+
+//List the contents of a directory	 
 void KopeteProtocol::listDir(const KURL & url) {
 	
 	UDSEntry entry;
@@ -69,7 +130,7 @@ void KopeteProtocol::listDir(const KURL & url) {
 	QString filename = url.fileName();
 
 	if( directory == "/" && filename.isNull() ) {
-		//At root, list all the contacts will file transfer capabilities
+		//At root, list all the contacts with file transfer capabilities
 		fillList( entry, "fileTransferContacts()"); 
 	} else if ( directory == "/" ) {
 		/*
@@ -81,41 +142,52 @@ void KopeteProtocol::listDir(const KURL & url) {
 		//This is either a file or an invalid path
 	}
 	
-	listEntry(entry, true);
-	finished();
+	listEntry(entry, true); //Complete directory entry list
+	
+	finished(); //Signal that we are finished
 	
 }
  
 //This function calls the DCOP functions to get directory data from Kopete
 void KopeteProtocol::fillList( KIO::UDSEntry &e, QString methodName, const QString &arg0 ) {
 		
-	DCOPClient *client = new DCOPClient();
 	QByteArray data, replyData;
 	QCString replyType;
 	QDataStream arg(data, IO_WriteOnly);
- 
+	
+	//Create the DCOP Client
+	DCOPClient *client = new DCOPClient();
+	
+	//Read in arguments 
 	arg << arg0;
  
+	//Register with DCOP
 	client->attach();
 	QCString appId = client->registerAs("kio_kopete");
 
+	//Call function
 	if (client->call("kopete", "KopeteIface", methodName.latin1(), data, replyType, replyData)) {
 		QDataStream reply(replyData, IO_ReadOnly);
 		if (!replyData.isNull() && !replyData.isEmpty() && replyType == "QStringList") {
+			//Read in results
 			QStringList result;
 			reply >> result;
 			for ( QStringList::Iterator it = result.begin(); it != result.end(); ++it ) {
+				
+				//Add directory entries
 				createUDSEntry( 2, *it, e );
 				listEntry(e, false);
 			}
 		} 
 	}
+	
+	//Detach from DCOP
 	client->detach();
 	
 	delete client;
 }
 
-//Get file information (?)
+//Get file information
 void KopeteProtocol::stat( const KURL& url ) {
 	
 	UDSEntry entry;
@@ -126,20 +198,20 @@ void KopeteProtocol::stat( const KURL& url ) {
 	finished();
 }
 
+//Overload for createUDSEntry
 void KopeteProtocol::createUDSEntry( QString path, QString fileName, KIO::UDSEntry &entry ) {
 	QString full = path + "/" + fileName;
 	createUDSEntry(2, fileName, entry);
 }
 
+//Creates a UDS entry for the list of files
 void KopeteProtocol::createUDSEntry(int size, QString fileName, KIO::UDSEntry &entry) {
 
-	//Size(contact) will be the # of protocols under the contact
-	//Size(protocol) will be 0
-	
 	UDSAtom atom;
-
-	entry.clear();
 	
+	entry.clear(); //Clear the existing attributes, if any
+		
+	//Populate filename
 	atom.m_uds = KIO::UDS_NAME;
 	if (fileName.isEmpty())
 		atom.m_str = "/";
@@ -152,13 +224,21 @@ void KopeteProtocol::createUDSEntry(int size, QString fileName, KIO::UDSEntry &e
 	atom.m_long = S_IFDIR;
         entry.append( atom );
 
+	//Mime type is directory
 	atom.m_uds = KIO::UDS_MIME_TYPE;
 	atom.m_str = "inode/directory";
 	entry.append( atom );
 	
+	//Owner read / execute only 
 	atom.m_uds = UDS_ACCESS;
-	atom.m_long = S_IRWXU | S_IRWXG | S_IRWXO;
+	atom.m_long = 0600;
 	entry.append( atom );
+	
+	/*
+	 * Size(contact) will be the # of protocols under the contact
+	 * Size(protocol) will be 0
+	 */
 }
+
 
 

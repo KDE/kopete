@@ -35,10 +35,12 @@ public:
 	
 
 	void get( const KURL& url );
+	void put( const KURL& url, int perms, bool overWrite, bool resume );
+	void copy( const KURL& src, const KURL& dest, int perms, bool overWrite);
 	void listDir( const KURL& url );
 	void stat( const KURL& url );
 private:
-	
+	void debug(QString msg);
 	void createUDSEntry(QString path, QString filename, KIO::UDSEntry &);
 	void createUDSEntry(int fileType, QString filename, KIO::UDSEntry &);
 	void fillList( KIO::UDSEntry &e, QString methodName, const QString &arg0 = QString::null );

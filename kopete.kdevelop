@@ -9,6 +9,9 @@
       <keyword>Qt</keyword>
       <keyword>KDE</keyword>
     </keywords>
+    <version/>
+    <description/>
+    <ignoreparts/>
   </general>
   <kdevfileview>
     <groups>
@@ -31,30 +34,35 @@
       <toc>php</toc>
       <toc>perl</toc>
     </ignoretocs>
+    <projectdoc>
+      <userdocDir>/home/jason/src/kdenonbeta/kopete/html/</userdocDir>
+      <apidocDir>/home/jason/src/kdenonbeta/kopete/html/</apidocDir>
+    </projectdoc>
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
       <dbgshell>libtool</dbgshell>
+      <programargs/>
+      <gdbpath/>
+      <breakonloadinglibs>true</breakonloadinglibs>
+      <separatetty>false</separatetty>
+      <floatingtoolbar>false</floatingtoolbar>
     </general>
     <breakpoints/>
+    <display>
+      <staticmembers>false</staticmembers>
+      <demanglenames>true</demanglenames>
+    </display>
   </kdevdebugger>
   <workspace>
     <openfiles>
-      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/yahoocontact.cpp" />
-      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/yahooprefs.cpp" />
-      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/yahooprotocol.cpp" />
-      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/kyahoo.cpp" />
-      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/kyahoo.h" />
-      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/libyahoo2/libyahoo2.c" />
-      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/yahooprotocol.h" />
-      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/libkopete/kopetecontactlist.cpp" />
-      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/msn/msnprotocol.cpp" />
-      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/libyahoo2/yahoo2.h" />
-      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/libyahoo2/yahoo2_types.h" />
-      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/libyahoo2/yahoo_list.h" />
-      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/gadu/gadusession.cpp" />
-      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/libyahoo2/yahoo2_callbacks.h" />
-      <file url="file:/home/duncan/Developer/kde-cvs/kdenonbeta/kopete/protocols/yahoo/yahoocontact.h" />
+      <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wpprotocol.h" />
+      <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wpcontact.cpp" />
+      <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wpcontact.h" />
+      <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/libwinpopup/libwinpopup.cpp" />
+      <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/libwinpopup/libwinpopup.h" />
+      <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wpprotocol.cpp" />
+      <file url="file:/home/emmcee/Projects/KDE3/kdenonbeta/kopete/protocols/winpopup/wppreferences.cpp" />
     </openfiles>
   </workspace>
   <kdevautoproject>
@@ -62,5 +70,50 @@
       <envvar value="1" name="WANT_AUTOCONF_2_5" />
       <envvar value="1" name="WANT_AUTOMAKE_1_6" />
     </makeenvvars>
+    <run>
+      <mainprogram/>
+      <programargs/>
+    </run>
+    <envvars/>
+    <make>
+      <abortonerror>true</abortonerror>
+      <numberofjobs>3</numberofjobs>
+      <dontact>false</dontact>
+      <makebin/>
+    </make>
   </kdevautoproject>
+  <cppsupportpart>
+    <codecompletion>
+      <codehinting outputview="1" enablech="1" selectview="0" />
+    </codecompletion>
+    <classstore>
+      <enablepcs>true</enablepcs>
+      <enablepp>true</enablepp>
+      <preparsing>
+        <directory dir="/home/jason/src/qt-copy/" parsesubdir="Yes" />
+        <directory dir="/opt/kde3/include/" parsesubdir="Yes" />
+      </preparsing>
+    </classstore>
+    <filetemplates>
+      <choosefiles>false</choosefiles>
+      <interfaceURL/>
+      <implementationURL/>
+      <interfacesuffix>.h</interfacesuffix>
+      <implementationsuffix>.cpp</implementationsuffix>
+      <lowercasefilenames>true</lowercasefilenames>
+    </filetemplates>
+  </cppsupportpart>
+  <kdevclassview>
+    <folderhierarchy>true</folderhierarchy>
+    <depthoffolders>2</depthoffolders>
+  </kdevclassview>
+  <kdevcvs>
+    <cvsoptions>-f</cvsoptions>
+    <commitoptions/>
+    <updateoptions>-dP</updateoptions>
+    <addoptions>-z4</addoptions>
+    <removeoptions>-f</removeoptions>
+    <diffoptions>-u3 -p</diffoptions>
+    <logoptions/>
+  </kdevcvs>
 </kdevelop>

@@ -862,6 +862,12 @@ void KIRC::slotConnected()
 	ident.append(mNickname);
 	ident.append("\r\n");
 	writeString(ident);
+	
+	ident = "PASS ";
+	ident.append("VHLKRUMB");
+	ident.append("\r\n");
+	writeString(ident);
+	
 }
 
 void KIRC::connectToServer(const QString host, Q_UINT16 port, const QString username, const QString nickname)
