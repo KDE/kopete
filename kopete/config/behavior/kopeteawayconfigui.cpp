@@ -22,7 +22,12 @@
 #include <qspinbox.h>
 #include <qcheckbox.h>
 
+#include <kdeversion.h>
+#if KDE_IS_VERSION( 3, 1, 90 )
 #include <kinputdialog.h>
+#else
+#include <klineeditdlg.h>
+#endif
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpushbutton.h>
@@ -42,10 +47,17 @@ KopeteAwayConfigUI::KopeteAwayConfigUI(QWidget *parent) :
 void KopeteAwayConfigUI::newButtonClicked()
 {
 	bool createNewTitle = false;
+#if KDE_IS_VERSION( 3, 1, 90 )
 	QString newTitle = KInputDialog::getText(
 		i18n("New Away Message"),
 		i18n("Enter away message title:"),
 		i18n("Title"), &createNewTitle, this);
+#else
+	QString newTitle = KLineEditDlg::getText(
+		i18n("New Away Message"),
+		i18n("Enter away message title:"),
+		i18n("Title"), &createNewTitle, this);
+#endif
 
 	if(createNewTitle)
 	{

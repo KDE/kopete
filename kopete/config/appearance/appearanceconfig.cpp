@@ -26,11 +26,17 @@
 #include <qslider.h>
 #include <qlabel.h>
 
+#include <kdeversion.h>
+#if KDE_IS_VERSION( 3, 1, 90 )
+#include <kinputdialog.h>
+#else
+#include <klineeditdlg.h>
+#endif
+
 #include <klineedit.h>
 #include <kcolorcombo.h>
 #include <kcolorbutton.h>
 #include <kdebug.h>
-#include <kinputdialog.h>
 #include <khtmlview.h>
 #include <khtml_part.h>
 #include <klocale.h>
@@ -42,7 +48,6 @@
 #include <kfontdialog.h>
 #include <ktrader.h>
 #include <klibloader.h>
-//#include <kiconview.h>
 #include <ktextedit.h>
 #include <kgenericfactory.h>
 #include <ktrader.h>
@@ -442,18 +447,21 @@ void AppearanceConfig::slotCopyStyle()
 	QListBoxItem *copiedItem = mPrfsChatWindow->styleList->selectedItem();
 	if( copiedItem )
 	{
-		bool okPressed;
-		if( okPressed )
+#if KDE_IS_VERSION( 3, 1, 90 )
+		QString styleName = KInputDialog::getText(
+			i18n("New Style Name"),
+			i18n("Enter the name of the new style:"),
+			);
+#else
+		QString styleName = KLineEditDlg::getText(
+			i18n("New Style Name"),
+			i18n("Enter the name of the new style:")
+			);
+#endif
+		if ( !styleName.isEmpty() )
 		{
-			QString styleName = KInputDialog::getText(
-				i18n("New Style Name"),
-				i18n("Enter the name of the new style:"),
-				QString::null, &okPressed, 0L );
-                        if ( !styleName.isEmpty() )
-                        {
-                            QString copiedXSL = fileContents( itemMap[ copiedItem] );
-                            addStyle( styleName, copiedXSL );
-                        }
+			QString copiedXSL = fileContents( itemMap[ copiedItem] );
+			addStyle( styleName, copiedXSL );
 		}
 	}
 	else

@@ -26,10 +26,17 @@
 #include <kpopupmenu.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
-#include <kinputdialog.h>
 #include <kiconeffect.h>
 #include <kpassivepopup.h>
 #include "kopetenotifyclient.h"
+
+#include <kdeversion.h>
+#if KDE_IS_VERSION( 3, 1, 90 )
+#include <kinputdialog.h>
+#else
+#include <klineeditdlg.h>
+#endif
+
 
 #include "kopetecontactlistview.h"
 #include "kopeteaccountmanager.h"
@@ -327,12 +334,18 @@ void KopeteMetaContactLVI::slotAddToNewGroup()
 	if( m_metaContact->isTemporary() )
 		return;
 
-	bool ok;
+#if KDE_IS_VERSION( 3, 1, 90 )
 	QString groupName = KInputDialog::getText(
 		i18n( "New Group" ),
-		i18n( "Please enter the name for the new group:" ),
-		QString::null, &ok );
-	if( ok )
+		i18n( "Please enter the name for the new group:" )
+		);
+#else
+	QString groupName = KLineEditDlg::getText(
+		i18n( "New Group" ),
+		i18n( "Please enter the name for the new group:" )
+		);
+#endif
+	if( !groupName.isEmpty() )
 		m_metaContact->addToGroup( KopeteContactList::contactList()->getGroup(groupName) );
 }
 

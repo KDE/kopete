@@ -24,7 +24,12 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 //#include <kfiledialog.h>
+#include <kdeversion.h>
+#if KDE_IS_VERSION( 3, 1, 90 )
 #include <kinputdialog.h>
+#else
+#include <klineeditdlg.h>
+#endif
 
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
@@ -584,9 +589,13 @@ void OscarContact::slotParseUserInfo(const UserInfo &u)
 void OscarContact::slotRequestAuth()
 {
 	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
-
+#if KDE_IS_VERSION( 3, 1, 90 )
 	QString reason = KInputDialog::getText(
 		i18n("Request Authorization"),i18n("Reason for requesting authorization"));
+#else
+	QString reason = KLineEditDlg::getText(
+		i18n("Request Authorization"),i18n("Reason for requesting authorization"));
+#endif
 	if(!reason.isNull())
 	{
 		kdDebug(14150) << k_funcinfo << "Sending auth request to '" <<
@@ -600,9 +609,13 @@ void OscarContact::slotSendAuth()
 	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
 
 	// TODO: custom dialog also allowing a refusal
+#if KDE_IS_VERSION( 3, 1, 90 )
 	QString reason = KInputDialog::getText(
+		i18n("Request Authorization"),i18n("Reason for requesting authorization"));
+#else
+	QString reason = KLineEditDlg::getText(
 		i18n("Grant Authorization"),i18n("Reason for granting authorization"));
-
+#endif
 	if(!reason.isNull())
 	{
 		kdDebug(14150) << k_funcinfo << "Sending auth granted to '" <<

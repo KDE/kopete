@@ -43,7 +43,14 @@
 #include <qcheckbox.h>
 #include <klocale.h>
 #include <kiconloader.h>
+
+#include <kdeversion.h>
+#if KDE_IS_VERSION( 3, 1, 90 )
 #include <kinputdialog.h>
+#else
+#include <klineeditdlg.h>
+#endif
+
 #include <kpushbutton.h>
 #include <kdebug.h>
 #include <klistview.h>
@@ -165,14 +172,19 @@ void AddContactWizard::slotAddresseeListClicked( QListViewItem *addressee )
 
 void AddContactWizard::slotAddGroupClicked()
 {
-	bool ok;
+#if KDE_IS_VERSION( 3, 1, 90 )
 	QString groupName = KInputDialog::getText(
 		i18n( "New Group" ),
-		i18n( "Please enter the name for the new group:" ),
-		QString::null, &ok );
-
-	if ( !groupName.isNull() && ok)
-		new QCheckListItem( groupList, groupName, QCheckListItem::CheckBox);
+		i18n( "Please enter the name for the new group:" )
+		);
+#else
+	QString groupName = KLineEditDlg::getText(
+		i18n( "New Group" ),
+		i18n( "Please enter the name for the new group:" )
+		);
+#endif
+	if ( !groupName.isNull() )
+		new QCheckListItem( groupList, groupName, QCheckListItem::CheckBox );
 }
 
 void AddContactWizard::slotProtocolListClicked( QListViewItem *)
@@ -267,7 +279,7 @@ void AddContactWizard::next()
 				if (!addPage) continue;
 
 				QString title = i18n( "The account name is prepended here",
-									  "%1 contact information" )
+									 "%1 contact information" )
 									 .arg( item->text(0) );
 				addPage->show();
 				insertPage( addPage, title, indexOf( finis ) );

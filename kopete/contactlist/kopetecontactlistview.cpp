@@ -32,12 +32,18 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kiconloader.h>
-#include <kinputdialog.h>
 #include <klocale.h>
 #include <kmainwindow.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <kurldrag.h>
+
+#include <kdeversion.h>
+#if KDE_IS_VERSION( 3, 1, 90 )
+#include <kinputdialog.h>
+#else
+#include <klineeditdlg.h>
+#endif
 
 #include "addcontactwizard.h"
 #include "addcontactpage.h"
@@ -645,12 +651,19 @@ KopeteGroupViewItem *KopeteContactListView::getGroup( KopeteGroup *Kgroup , bool
 
 void KopeteContactListView::addGroup()
 {
-	bool ok;
+#include <kdeversion.h>
+#if KDE_IS_VERSION( 3, 1, 90 )
 	QString groupName = KInputDialog::getText(
 		i18n( "New Group" ),
-		i18n( "Please enter the name for the new group:" ),
-		QString::null, &ok );
-	if( ok )
+		i18n( "Please enter the name for the new group:" )
+		);
+#else
+	QString groupName = KLineEditDlg::getText(
+		i18n( "New Group" ),
+		i18n( "Please enter the name for the new group:" )
+		);
+#endif
+	if( !groupName.isEmpty() )
 		addGroup( groupName );
 }
 
@@ -1688,10 +1701,17 @@ void KopeteContactListView::slotRename()
 		KopeteGroup* group=KopeteContactList::contactList()->selectedGroups().first();
 
 		bool ok;
+#if KDE_IS_VERSION( 3, 1, 90 )
 		QString newname = KInputDialog::getText(
 			i18n( "Rename Group" ),
 			i18n( "Please enter the new name for the group '%1':" ).arg(group->displayName()),
 			group->displayName(), &ok );
+#else
+		QString newname = KLineEditDlg::getText(
+			i18n( "Rename Group" ),
+			i18n( "Please enter the new name for the group '%1':" ).arg(group->displayName()),
+			group->displayName(), &ok );
+#endif
 		if( !ok )
 			return;
 		group->setDisplayName(newname);
