@@ -6,7 +6,7 @@
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Nick Betcher           <nbetcher@usinternet.com>
     Copyright (c) 2002      by Stefan Gehn            <metz AT gehn.net>
-    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
 
@@ -1037,15 +1037,13 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 		{
 			if(source_metaLVI->metaContact()->isTemporary())
 			{
-				/*
 				int r=KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
 					i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
 					i18n( "Kopete" ), KStdGuiItem::yes(), KStdGuiItem::no(),
 					"addTemporaryWhenMoving" );
 
 				if( r == KMessageBox::Yes )
-					TODO
-				*/
+					source_contact->setMetaContact(dest_metaLVI->metaContact());
 			}
 			else
 			{
@@ -1164,11 +1162,6 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 				return false;
 			if(dest_metaLVI->metaContact()->isTemporary())
 				return false;
-			if(source_metaLVI->metaContact()->isTemporary())
-			{
-				//TODO: Allow to move a temporary contact directly in a metacontact
-				return false;
-			}
 			return true;
 		}
 /*		else if(source_groupLVI && dest_groupLVI) //we are moving a group to another group
