@@ -98,7 +98,7 @@ void KopeteMetaContactLVI::initLVI()
 		SLOT( slotUpdateIcons() ) );
 
 	connect( m_metaContact, SIGNAL( contactStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ),
-		SLOT( slotContactStatusChanged() ) );
+		SLOT( slotContactStatusChanged(KopeteContact *) ) );
 
 	connect( m_metaContact, SIGNAL( contactAdded( KopeteContact * ) ),
 		SLOT( slotUpdateIcons() ) );
@@ -173,7 +173,7 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 		", TrackChildNameChanges=" << m_metaContact->trackChildNameChanges() << endl;
 }
 
-void KopeteMetaContactLVI::slotContactStatusChanged()
+void KopeteMetaContactLVI::slotContactStatusChanged(KopeteContact *c)
 {
 	// FIXME: All this code should be in kopetemetacontact.cpp.. having it in the LVI makes it all fire
 	// multiple times if the user is in multiple groups - Jason
@@ -187,19 +187,22 @@ void KopeteMetaContactLVI::slotContactStatusChanged()
 
 	m_oldStatus = m_metaContact->status();
 
-	int winId = KopeteSystemTray::systemTray() ?
-		KopeteSystemTray::systemTray()->winId() : 0;
-
-	KopeteNotifyClient::event(winId, event,
-		i18n("%2 is now %1!").arg(m_metaContact->statusString()).arg(m_metaContact->displayName()),
-		i18n("Chat") , this, SLOT(execute()));
-
-	if( !mBlinkTimer->isActive() &&
-		( m_metaContact->statusIcon() != m_oldStatusIcon ) )
+	if(c->account()->myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting)
 	{
-		mIsBlinkIcon = false;
-		m_blinkLeft = 3;
-		mBlinkTimer->start( 400, false );
+		int winId = KopeteSystemTray::systemTray() ?
+			KopeteSystemTray::systemTray()->winId() : 0;
+
+		KopeteNotifyClient::event(winId, event,
+			i18n("%2 is now %1!").arg(m_metaContact->statusString()).arg(m_metaContact->displayName()),
+			i18n("Chat") , this, SLOT(execute()));
+
+		if( !mBlinkTimer->isActive() &&
+			( m_metaContact->statusIcon() != m_oldStatusIcon ) )
+		{
+			mIsBlinkIcon = false;
+			m_blinkLeft = 3;
+			mBlinkTimer->start( 400, false );
+		}
 	}
 
 	slotUpdateIcons();

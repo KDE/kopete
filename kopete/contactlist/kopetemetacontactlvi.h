@@ -146,7 +146,7 @@ public slots:
 
 private slots:
 	void slotUpdateIcons();
-	void slotContactStatusChanged();
+	void slotContactStatusChanged(KopeteContact *);
 
 	void slotDisplayNameChanged();
 
