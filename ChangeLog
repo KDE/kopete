@@ -12,6 +12,8 @@ o Main Application
 	o Add DCop interface to connect/disconnect an account, or load/unload a
 	  plugin. Make possible to select what account to connect with the command
 	  line. (Olivier)
+	o URLs in the new message balloon are now clickable links that don't open
+	  a chat window. (Will)
 
 
 Kopete 0.7 (released 2003/08/04)
