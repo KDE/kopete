@@ -1068,7 +1068,7 @@ class OscarSocket : public OscarConnection
 		 * This function is called when there is data to be read from the socket
 		 */
 		virtual void slotRead();
-		void slotDelayConnectingPhaseTimeout();
+//		void slotDelayConnectingPhaseTimeout();
 
 
 	protected: // protected vars

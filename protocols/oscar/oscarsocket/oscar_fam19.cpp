@@ -287,7 +287,7 @@ void OscarSocket::parseSSIContact(SSI *pSsi, QStringList &blmContacts)
 void OscarSocket::parseSSIGroup(SSI *pSsi)
 {
 #ifdef OSCAR_SSI_DEBUG
-	Buffer tmpBuf(ssi->tlvlist, ssi->tlvlength);
+	Buffer tmpBuf(pSsi->tlvlist, pSsi->tlvlength);
 	QPtrList<TLV> lst = tmpBuf.getTLVList();
 	lst.setAutoDelete(TRUE);
 	kdDebug(14150) << k_funcinfo << "Group entry contained TLVs:" << endl;
@@ -780,7 +780,7 @@ void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
 	}
 }
 
-#if 0
+
 void OscarSocket::sendBlock(const QString &sname)
 {
 	SSI *newitem = mSSIData.addInvis(sname);
@@ -828,7 +828,7 @@ void OscarSocket::sendRemoveBlock(const QString &sname)
 	// FIXME: Use SNAC headers and SSI acks to do this more correctly
 	emit denyRemoved(sname);
 }
-#endif
+
 
 
 // Changes the group a buddy is in on the server
