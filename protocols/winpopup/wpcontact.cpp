@@ -42,6 +42,7 @@ WPContact::WPContact(KopeteAccount *account, const QString &newHostName, const Q
 	: KopeteContact(account, newHostName, metaContact)
 {
 	DEBUG(WPDMETHOD, "WPContact::WPContact(<account>, " << newHostName << ", " << displayName << ", <parent>)");
+	DEBUG(WPDINFO, "I am " << this);
 
 	QString newDisplayName;
 	for(unsigned i = 0; i < newHostName.length(); i++)
@@ -130,7 +131,7 @@ void WPContact::slotCheckStatus()
 	bool newIsOnline = false;
 
 	myWasConnected = protocol() != 0 && account() != 0;
-	if(account()) newIsOnline = static_cast<WPAccount *>(account())->checkHost(theHostName);
+	if(account()) newIsOnline = static_cast<WPAccount *>(account())->checkHost(contactId());
 
 	if(newIsOnline != isOnline() || myWasConnected != oldWasConnected)
 		setOnlineStatus(myWasConnected ? newIsOnline ? WPProtocol::protocol()->WPOnline : WPProtocol::protocol()->WPOffline : WPProtocol::protocol()->WPOffline );
@@ -157,9 +158,10 @@ void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 void WPContact::slotSendMessage( KopeteMessage& message )
 {
 	DEBUG(WPDMETHOD, "WPContact::slotSendMessage(<message>)");
+	DEBUG(WPDINFO, message.to().first() << " is " << dynamic_cast<WPContact *>( message.to().first() )->contactId() );
 
 	QString Message = (!message.subject().isEmpty() ? "Subject: " + message.subject() + "\n" : QString("")) + message.plainBody();
-	static_cast<WPAccount *>(account())->slotSendMessage( Message, dynamic_cast<WPContact *>( message.to().first() )->hostName() );
+	static_cast<WPAccount *>(account())->slotSendMessage( Message, dynamic_cast<WPContact *>( message.to().first() )->contactId() );
 
 	emit messageSuccess();
 }

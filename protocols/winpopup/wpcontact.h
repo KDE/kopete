@@ -62,8 +62,6 @@ public:
 	virtual KopeteMessageManager *manager(bool canCreate = false);
 	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 
-	const QString &hostName() { return theHostName; }
-
 public slots:
 	virtual void slotDeleteContact() { deleteLater(); }
 	virtual void slotUserInfo();
@@ -78,7 +76,6 @@ private slots:
 	void slotSendMessage(KopeteMessage &message);
 
 private:
-	QString theHostName;
 	bool myWasConnected;	// true if protocol connected at last check
 
 	QTimer checkStatus;		// checks the status of this contact every second or so
