@@ -22,6 +22,7 @@
 
 #include "messagelog.h"
 
+#include <kcolorbutton.h>
 #include <kdebug.h>
 #include <klocale.h>
 
@@ -123,6 +124,12 @@ void KopeteMessageManager::messageSentFromWindow(const QString &message)
 {
 	QString body = message;
 	KopeteMessage tmpmessage(mUser, mContactList, QStyleSheet::escape(body), KopeteMessage::Outbound);
+	if (mChatWindow->fg()->color().isValid()) {
+		tmpmessage.setFg(mChatWindow->fg()->color());
+	}
+	if (mChatWindow->bg()->color().isValid()) {
+		tmpmessage.setBg(mChatWindow->bg()->color());
+	}
 	emit messageSent(tmpmessage);
 }
 
@@ -261,7 +268,14 @@ void KopeteMessageManager::removeResource(const KopeteContact *c, QString resour
 		if (mChatWindow != 0L) {
 			mChatWindow->removeResource(c, resource);
 		}
-		(resources[c]).remove(resource);
+
+		QStringList tmpResources = resources[c];
+		if (&tmpResources == NULL) {
+			kdDebug() << "[KopeteMessageManager] ->rR(): Eeks, no tmpResource!" << endl;
+		}
+		else {
+			tmpResources.remove(resource);
+		}
 	}
 	else {
 		kdDebug() << "[KopeteMessageManager] Removing resource from other widget: " << resource << endl;
