@@ -42,8 +42,8 @@ AutoReplacePreferences::AutoReplacePreferences(	const QString &pixmap,QObject *p
 	preferencesDialog = new AutoReplacePrefsUI( this );
 
 	// creates table columns (avoids new columns every time)
-	preferencesDialog->m_list->addColumn("text");
-	preferencesDialog->m_list->addColumn("replacement");
+	preferencesDialog->m_list->addColumn( i18n("text") );
+	preferencesDialog->m_list->addColumn( i18n("replacement") );
 
 	// connect SIGNALS/SLOTS
 	connect( preferencesDialog->m_add, SIGNAL(pressed()),
@@ -73,7 +73,7 @@ void AutoReplacePreferences::reopen()
 		// basic list, key/value
 		// a list based on i18n should be provided, i.e. for italian
 		// "qsa,qualcosa,qno,qualcuno" remember UTF-8 accents
-		wordsList = QStringList::split( ",", i18n( "w2r", 
+		wordsList = QStringList::split( ",", i18n( "list_of_words_to_replace", 
 			"ur,your,r,are,u,you,theres,there is,arent,are not,dont,do not" ) );
 	}
 
