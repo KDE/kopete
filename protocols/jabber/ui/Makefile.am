@@ -14,6 +14,7 @@ libkopetejabberui_la_SOURCES = dlgjabberprefs.cpp dlgpreferences.ui \
 	dlgjabberrename.cpp dlgrename.ui \
 	dlgjabbervcard.cpp dlgvcard.ui \
 	dlgjabberservices.cpp dlgservices.ui \
+	dlgjabberregister.cpp dlgregister.ui \
 	empty.cpp
 
 EXTRA_DIST = dlgpreferences.ui \
@@ -22,4 +23,5 @@ EXTRA_DIST = dlgpreferences.ui \
 	dlgaddcontact.ui \
 	dlgrename.ui \
 	dlgvcard.ui \
-	dlgservices.ui
+	dlgservices.ui \
+	dlgregister.ui

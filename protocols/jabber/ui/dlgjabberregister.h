@@ -1,8 +1,8 @@
 /***************************************************************************
-                          dlgjabberservices.h  -  description
+                          dlgjabberregister.h  -  description
                              -------------------
     begin                : Mon Dec 9 2002
-    copyright            : (C) 2002 by Kopete developers
+    copyright            : (C) 2002 by Till Gerken
     email                : kopete-devel@kde.org
  ***************************************************************************/
 
@@ -15,40 +15,35 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef DLGJABBERSERVICES_H
-#define DLGJABBERSERVICES_H
+#ifndef DLGJABBERREGISTER_H
+#define DLGJABBERREGISTER_H
 
 #include <qwidget.h>
+#include <qlayout.h>
+#include <qgroupbox.h>
+#include <qlabel.h>
 
 #include <psi/types.h>
 #include <psi/tasks.h>
 
-#include "dlgservices.h"
+#include "dlgregister.h"
 
 /**
   *@author Kopete developers
   */
 
-class DlgJabberServices : public dlgServices
+class DlgJabberRegister : public dlgRegister
 {
 
    Q_OBJECT
 
 public: 
-	DlgJabberServices(QWidget *parent=0, const char *name=0);
-	~DlgJabberServices();
+
+	DlgJabberRegister(const Jabber::Jid &jid, QWidget *parent=0, const char *name=0);
+	~DlgJabberRegister();
 
 private slots:
-	void slotSetSelection(int row, int, int, const QPoint &);
-	void slotQuery();
-	void slotQueryFinished();
-	void slotRegister();
-	void slotBrowse();
-
-private:
-	Jabber::JT_GetServices *serviceTask;
-
-	int selectedRow;
+	void slotGotForm();
 
 };
 

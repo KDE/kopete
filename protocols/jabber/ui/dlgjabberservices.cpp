@@ -29,6 +29,7 @@
 
 #include "jabbercontact.h"
 #include "jabberprotocol.h"
+#include "dlgjabberregister.h"
 #include "dlgjabberservices.h"
 #include "dlgjabberservices.moc"
 
@@ -44,19 +45,50 @@ DlgJabberServices::DlgJabberServices(QWidget *parent, const char *name ) : dlgSe
 	// disable the left margin
 	tblServices->setLeftMargin(0);
 
-	// disable the "register" button while nothing has been selected
+	// no content for now
+	tblServices->setNumRows(0);
+
+	// disable the buttons as long as nothing has been selected
 	btnRegister->setDisabled(true);
+	btnBrowse->setDisabled(true);
 
 	// allow autostretching
 	tblServices->setColumnStretchable(0, true);
 	tblServices->setColumnStretchable(1, true);
+
+	// disable user selections
+	tblServices->setSelectionMode(QTable::NoSelection);
 	
 	// name table headers
 	tblServices->horizontalHeader()->setLabel(0, i18n("Name"));
 	tblServices->horizontalHeader()->setLabel(1, i18n("Address"));
 	
 	connect(btnQuery, SIGNAL(clicked()), this, SLOT(slotQuery()));
+	connect(tblServices, SIGNAL(clicked(int, int, int, const QPoint &)), this, SLOT(slotSetSelection(int, int, int, const QPoint &)));
 
+	connect(btnRegister, SIGNAL(clicked()), this, SLOT(slotRegister()));
+	connect(btnBrowse, SIGNAL(clicked()), this, SLOT(slotBrowse()));
+	
+	// create the jabber task
+	serviceTask = new Jabber::JT_GetServices(JabberProtocol::protocol()->jabberClient->rootTask());
+	connect(serviceTask, SIGNAL(finished()), this, SLOT(slotQueryFinished()));
+
+	selectedRow = 0;
+
+}
+
+void DlgJabberServices::slotSetSelection(int row, int, int, const QPoint &)
+{
+
+	tblServices->clearSelection(true);
+	tblServices->addSelection(QTableSelection(row, 0, row, 1));
+
+	// query the agent list about the selected item
+	btnRegister->setDisabled(!serviceTask->agents()[row].canRegister());
+	btnBrowse->setDisabled(!serviceTask->agents()[row].canSearch());
+
+	selectedRow = row;
+	
 }
 
 void DlgJabberServices::slotQuery()
@@ -74,10 +106,8 @@ void DlgJabberServices::slotQuery()
 
 	kdDebug() << "[DlgJabberServices] Trying to fetch a list of services at " << leServer->text() << endl;
 
-	Jabber::JT_GetServices *serviceTask = new Jabber::JT_GetServices(JabberProtocol::protocol()->jabberClient->rootTask());
-	connect(serviceTask, SIGNAL(finished()), this, SLOT(slotQueryFinished()));
 	serviceTask->get(leServer->text());
-	serviceTask->go(true);
+	serviceTask->go(false);
 
 }
 
@@ -107,6 +137,24 @@ void DlgJabberServices::slotQueryFinished()
 
 }
 
+void DlgJabberServices::slotRegister()
+{
+
+	DlgJabberRegister *registerDialog = new DlgJabberRegister(serviceTask->agents()[selectedRow].jid());
+
+	registerDialog->show();
+	registerDialog->raise();
+
+}
+
+void DlgJabberServices::slotBrowse()
+{
+
+}
+
 DlgJabberServices::~DlgJabberServices()
 {
+
+	delete serviceTask;
+
 }
