@@ -130,7 +130,7 @@ void KopeteContact::setDisplayName( const QString &name )
 	if( name == nick )
 		return;
  
-	setProperty( Kopete::Global::Properties::self()->nickName(), nick );
+	setProperty( Kopete::Global::Properties::self()->nickName(), name );
 }
 
 QString KopeteContact::displayName() const
