@@ -221,47 +221,45 @@ QString KopeteEmoticons::parseEmoticons( QString message )
 
 	/*
 	 * FIXME: do proper emoticon support
-	 * Testcase:
 	 *
-	 * All emoticons:
-	 *		:-):-(:-):-):-) :-)
-	 *
-	 * MSN Messenger & gaim see the :p emoticon, we should see it too
-	 *		msn:possible
-	 *
-	 * Display the emoticon without breaking the link
-	 *		http://blah.com/something:-)
-	 *
-	 * Show the trailing emoticon
-	 *		funny:-)
-	 *
-	 *  Does not include some html escaped code in the emoticon
-	 *		>)       &)       )        ( &nbsp;) )
-	 *
-	 * Parse bigger emoticons first
-	 *		>:-)
-	 *
-	 * Do not parse emiticons if they are in a html tag:
-	 *		<img src="..." title=">:-)" />
+	 * Testcases can be found in the kopeteemoticontest app in the tests/ directory.
 	 */
 	for ( QStringList::Iterator it = emoticons.begin(); it != emoticons.end(); ++it )
 	{
-		QString es=QStyleSheet::escape(*it);
-		if(message.contains(es))
+		QString escaped = QStyleSheet::escape( *it );
+		if ( message.contains( escaped ) )
 		{
-			QRegExp regex = QRegExp( QString::fromLatin1("(?![^<]+>)(?!(http|https|mailto))(%1)(?![^<]+>)")
-					.arg( QRegExp::escape( es ) )  );
-			
 			QString imgPath = KopeteEmoticons::emoticons()->emoticonToPicPath( *it );
+			QImage iconImage( imgPath );
 
-			QImage iconImage(imgPath);
- 			message.replace( regex,
-				QString::fromLatin1("<img align=\"center\" width=\"") +
-				QString::number(iconImage.width()) +
-				QString::fromLatin1("\" height=\"") +
-				QString::number(iconImage.height()) +
-				QString::fromLatin1("\" src=\"") + imgPath +
-				QString::fromLatin1("\" title=\"") + es +
+			// Due to the nature of the regexp replacing and the lack of lookbacks in
+			// QRegExp we need a workaround for URIs like http://www.kde.org, as these
+			// would replace the ':/' part with an emoticon.
+			// The workaround is to add a special condition that the pattern should
+			// not be followed by a '/' if it already ends with a slash itself.
+			QString doubleSlashPattern;
+			if ( escaped.endsWith( QString::fromLatin1( "/" ) ) )
+				doubleSlashPattern = QString::fromLatin1( "(?!/)" );
+
+			// Explanation of the below regexp:
+			// "(?![^<]+>)"              - Negative lookahead for "[^<]+>", i.e. don't match when the emoticon
+			//                             pattern is directly preceded by an HTML tag.
+			//                             FIXME: What's the use of this part? Testcase? - Martijn
+			// "(?!(https?://|mailto:))" - Another negative lookahead. Don't match if there is a protocol URI
+			//                             directly in front of the emoticon
+			// "(%1)"                    - The actual emoticon pattern
+			// "(?![^<]+>)"              - Last lookahead: don't match if the emoticon pattern is part of an
+			//                             HTML tag.
+			QRegExp regex = QRegExp( QString::fromLatin1( "(?![^<]+>)(?!(https?://|mailto:))(%1)" ).arg( QRegExp::escape( escaped ) ) +
+				doubleSlashPattern + QString::fromLatin1( "(?![^<]+>)" ) );
+
+			message.replace( regex,
+				QString::fromLatin1( "<img align=\"center\" width=\"" ) +
+				QString::number( iconImage.width() ) +
+				QString::fromLatin1( "\" height=\"" ) +
+				QString::number( iconImage.height() ) +
+				QString::fromLatin1( "\" src=\"" ) + imgPath +
+				QString::fromLatin1( "\" title=\"" ) + escaped +
 				QString::fromLatin1( "\"/>" ) );
 		}
 	}
@@ -269,7 +267,7 @@ QString KopeteEmoticons::parseEmoticons( QString message )
 	return message;
 }
 
-//%1%1%1%1
-
 #include "kopeteemoticons.moc"
+
 // vim: set noet ts=4 sts=4 sw=4:
+
