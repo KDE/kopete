@@ -778,6 +778,7 @@ void
 GaduAccount::slotExportContactsListToFile()
 {
 	KTempFile tempFile;
+	tempFile.setAutoDelete( true );
 	
 	if ( saveListDialog ) {
 		kdDebug( 14100 ) << " save contacts to file: alread waiting for input " << endl ;
@@ -846,9 +847,9 @@ GaduAccount::slotImportContactsFromFile()
 						
 			QFile tempFile( oname );
 			if ( tempFile.open( IO_ReadOnly ) ) {
-				QTextStream tempStream( &tempFile );
-				tempStream >> list;
+				list = tempFile.readAll();
 				tempFile.close();
+				KIO::NetAccess::removeTempFile( oname );
 				// and store it
 				kdDebug( 14100 ) << "loaded list:" << endl;
 				kdDebug( 14100 ) << list << endl;
