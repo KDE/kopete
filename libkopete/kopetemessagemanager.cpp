@@ -1,11 +1,9 @@
 /*
     kopetemessagemanager.cpp - Manages all chats
 
-    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2002      by Daniel Stone           <dstone@kde.org>
-
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright   : (c) 2002 by Martijn Klingens <klingens@kde.org>
+                  (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+                  (c) 2002 by Daniel Stone <dstone@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -95,9 +93,8 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	// directory traversal, although appending '.log' and the rest of the
 	// code should really make overwriting files possible anyway.
 	KopeteContact *c = others.first();
-	QString logFileName = QString::fromLatin1( "kopete/" ) + QString::fromLatin1( c->protocol()->pluginId() ) +
-		QString::fromLatin1( "/" ) + c->contactId().replace( QRegExp( QString::fromLatin1( "[./~]" ) ), QString::fromLatin1( "-" ) ) +
-		QString::fromLatin1( ".log" );
+	QString logFileName = "kopete/" + QString( c->protocol()->pluginId() ) +
+		"/" + c->contactId().replace( QRegExp( "[./~]" ), "-" ) + ".log";
 	d->mLogger = new KopeteMessageLog( logFileName, this );
 
 //	connect(protocol, SIGNAL(destroyed()), this, SLOT(slotProtocolUnloading()));
@@ -155,7 +152,7 @@ const QString KopeteMessageManager::chatName()
 			nextDisplayName = c->metaContact()->displayName();
 		else
 			nextDisplayName = c->displayName();
-		chatName.append( QString::fromLatin1( ", " ) ).append( nextDisplayName );
+		chatName.append(", ").append( nextDisplayName );
 	}
 
 	return chatName;
@@ -262,7 +259,7 @@ void KopeteMessageManager::newChatView()
 
 	if (d->mWidget == Email)
 	{
-		d->mEmailWindow = new KopeteEmailWindow(d->mUser, d->mContactList);
+		d->mEmailWindow = myWindow = new KopeteEmailWindow(d->mUser, d->mContactList);
 		d->mEmailWindow->setSendEnabled(d->mSendEnabled);
 		connect (d->mEmailWindow, SIGNAL(shown()), this, SLOT(slotCancelUnreadMessageEvent()));
 		connect (d->mEmailWindow, SIGNAL(sendMessage(KopeteMessage &)),
@@ -277,7 +274,7 @@ void KopeteMessageManager::newReplyWindow()
 	if (d->mWidget == Email)
 	{
 		kdDebug(14010) << k_funcinfo << "newReplyWindow() called for email-type window" << endl;
-		d->mEmailReplyWindow = new KopeteEmailWindow(d->mUser, d->mContactList);
+		d->mEmailReplyWindow = myWindow = new KopeteEmailWindow(d->mUser, d->mContactList);
 		d->mEmailReplyWindow->setSendEnabled(true);
 		d->mEmailReplyWindow->setReplyMode(true);
 		d->mEmailReplyWindow->show();
@@ -383,7 +380,8 @@ void KopeteMessageManager::readMessages()
 		{
 			KWin::setOnDesktop(myWindow->winId() , KWin::currentDesktop()); //set on the desktop
 			myWindow->raise(); // make it top window
-			myWindow->makeWidgetDockVisible(mainView);
+			if (d->mWidget == ChatWindow)
+				myWindow->makeWidgetDockVisible(mainView);
 			myWindow->setActiveWindow();
 		}
 	}
@@ -444,7 +442,7 @@ void KopeteMessageManager::slotMessageSent(const KopeteMessage &message)
 	if ( KopetePrefs::prefs()->soundNotify() )
 	{
 		if ( !protocol()->isAway() || KopetePrefs::prefs()->soundIfAway() )
-			KNotifyClient::event( QString::fromLatin1( "kopete_outgoing" ) );
+		    KNotifyClient::event("kopete_outgoing");
 	}
 }
 
@@ -554,12 +552,12 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 				if (msg.from()->metaContact())
 				{
 					d->mUnreadMessageEvent = new KopeteEvent( i18n("Message from %1").arg(msg.from()->metaContact()->displayName()),
-						QString::fromLatin1( QString::fromLatin1( "kopete/pics/newmsg.png" ) ), this, SLOT( slotReadMessages() ) );
+						"kopete/pics/newmsg.png", this, SLOT(slotReadMessages()));
 				}
 				else
 				{
 					d->mUnreadMessageEvent = new KopeteEvent( i18n("Message from %1").arg(msg.from()->displayName()),
-						QString::fromLatin1( QString::fromLatin1( "kopete/pics/newmsg.png" ) ), this, SLOT( slotReadMessages() ) );
+						"kopete/pics/newmsg.png", this, SLOT(slotReadMessages()));
 				}
 				connect(d->mUnreadMessageEvent, SIGNAL(done(KopeteEvent *)),
 					this, SLOT(slotEventDeleted(KopeteEvent *)));
@@ -571,7 +569,7 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 	if ( KopetePrefs::prefs()->soundNotify() && (isvisible || d->mReadMode == Popup) && (msg.direction() != KopeteMessage::Outbound) )
 	{
 		if ( !protocol()->isAway() || KopetePrefs::prefs()->soundIfAway() )
-			KNotifyClient::event( QString::fromLatin1( "kopete_incoming" ) );
+		    KNotifyClient::event("kopete_incoming");
 	}
 }
 
@@ -691,4 +689,3 @@ void KopeteMessageManager::setCurrentMessage(const KopeteMessage &message)
 #include "kopetemessagemanager.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-
