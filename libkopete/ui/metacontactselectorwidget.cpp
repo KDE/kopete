@@ -46,6 +46,11 @@
 
 using namespace Kopete::UI::ListView;
 
+namespace Kopete
+{
+namespace UI
+{
+
 class MetaContactSelectorWidgetLVI::Private
 {
 public:
@@ -268,6 +273,9 @@ void MetaContactSelectorWidget::setLabelMessage( const QString &msg )
 {
 	d->widget->lblHeader->setText(msg);
 }
+
+} // namespace UI
+} // namespace Kopete
 
 #include "metacontactselectorwidget.moc"
 

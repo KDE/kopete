@@ -25,6 +25,11 @@
 
 class Kopete::MetaContact;
 
+namespace Kopete
+{
+namespace UI
+{
+
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
  */
@@ -82,6 +87,9 @@ private:
 	class Private;
 	Private *d;
 };
+
+} // namespace UI
+} // namespace Kopete
 
 #endif
 
