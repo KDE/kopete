@@ -21,8 +21,10 @@
 #include <qcstring.h>
 
 #include "gwfield.h"
+#include <iostream>
 
 using namespace Field;
+using namespace std;
 
 /* === FieldList ==================================================== */
 FieldList::~FieldList()
@@ -70,12 +72,18 @@ void FieldList::dump( bool recursive, int offset )
 {
 	const FieldListIterator myEnd = end();
 	if ( !offset )
-		qDebug( "FieldList::dump() %s\n", ( recursive ? ", recursively" : ", non-recursive" ) );
+		qDebug( "FieldList::dump() %s", ( recursive ? ", recursively" : ", non-recursive" ) );
 	for( FieldListIterator it = begin(); it != myEnd; ++it )
 	{
 		for ( int i = 0; i < offset; i ++ )
-			qDebug( "  " );
-		qDebug( "%s\n", (*it)->tag().data() );
+			cout << "  ";
+		cout << (*it)->tag().data();
+		SingleField * sf;
+		if ( ( sf = dynamic_cast<SingleField*>( *it ) ) )
+		{
+			cout << " :" << sf->value().toString().ascii();
+		}
+		cout << endl;
 		if ( recursive )
 		{
 			MultiField * mf;
@@ -96,7 +104,10 @@ SingleField * FieldList::findSingleField( QCString tag )
 SingleField * FieldList::findSingleField( FieldListIterator &it, QCString tag )
 {
 	FieldListIterator found = find( it, tag );
-	return dynamic_cast<SingleField *>( *found );
+	if ( found == end() )
+		return 0;
+	else
+		return dynamic_cast<SingleField *>( *found );
 }
 
 MultiField * FieldList::findMultiField( QCString tag )
@@ -108,6 +119,9 @@ MultiField * FieldList::findMultiField( QCString tag )
 MultiField * FieldList::findMultiField( FieldListIterator &it, QCString tag )
 {
 	FieldListIterator found = find( it, tag );
+	if ( found == end() )
+		return 0;
+	else
 	return dynamic_cast<MultiField *>( *found );
 }
 
