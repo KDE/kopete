@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>NowListeningPrefsUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>348</width>
-            <height>362</height>
+            <height>422</height>
         </rect>
     </property>
     <property name="caption">
@@ -30,12 +30,34 @@
                 <cstring>advertiseNewMediaToBuddiesLabel</cstring>
             </property>
             <property name="text">
-                <string>&lt;b&gt;Advertise New Media to Buddies&lt;/b&gt;</string>
+                <string>&lt;b&gt;Share your musical taste&lt;/b&gt;</string>
             </property>
         </widget>
         <widget class="QFrame">
             <property name="name">
                 <cstring>advertiseNewMediaToBuddiesHLine</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>useThisMessageLabel_2</cstring>
+            </property>
+            <property name="text">
+                <string>To use, select "Tools-&gt;Send Media Info", or type "/media" in the chat window edit area.</string>
+            </property>
+            <property name="alignment">
+                <set>WordBreak|AlignVCenter</set>
+            </property>
+        </widget>
+        <widget class="QFrame">
+            <property name="name">
+                <cstring>advertiseNewMediaToBuddiesHLine_2</cstring>
             </property>
             <property name="frameShape">
                 <enum>HLine</enum>
@@ -64,23 +86,6 @@ Expressions in brackets depend on a substitution being made.</string>
                 <set>WordBreak|AlignVCenter</set>
             </property>
         </widget>
-        <spacer>
-            <property name="name">
-                <cstring>nowListeningSpacer_2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>16</height>
-                </size>
-            </property>
-        </spacer>
         <widget class="QLayoutWidget">
             <property name="name">
                 <cstring>layout2</cstring>
@@ -157,23 +162,6 @@ Expressions in brackets depend on a substitution being made.</string>
                 </widget>
             </vbox>
         </widget>
-        <spacer>
-            <property name="name">
-                <cstring>nowListeningSpacer</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>16</height>
-                </size>
-            </property>
-        </spacer>
     </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
