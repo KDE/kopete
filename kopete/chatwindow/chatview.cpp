@@ -246,12 +246,7 @@ void ChatView::raise( bool activate )
 	if ( !KWin::windowInfo( m_mainWindow->winId(), NET::WMDesktop ).onAllDesktops() )
 		KWin::setOnDesktop( m_mainWindow->winId(), KWin::currentDesktop() );
 
-	m_mainWindow->show();
-	//raise() and show() should normally deIconify the window. but it doesn't do that here due
-	// to a bug in QT or in KDE  (qt3.1.x or KDE 3.1.x) then, i have to call KWin's method
-	if ( m_mainWindow->isMinimized() )
-		KWin::deIconifyWindow( m_mainWindow->winId() );
-	KWin::raiseWindow( m_mainWindow->winId() );
+	m_mainWindow->raise();
 
 	/* Removed Nov 2003
 	According to Zack, the user double-clicking a contact is not valid reason for a non-pager
