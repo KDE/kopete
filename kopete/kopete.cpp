@@ -62,10 +62,9 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 		modules.append("msn.plugin");
 		config->writeEntry("Modules", modules);
 	}
+	tray = new KopeteSystemTray();
 	/* Ok, load saved plugins */
 	loadPlugins();
-	tray = new KopeteSystemTray();
-
 }
 
 Kopete::~Kopete()
