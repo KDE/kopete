@@ -114,7 +114,6 @@ GaduCommand::forwarder()
 	emit socketReady();
 }
 
-
 RegisterCommand::RegisterCommand( QObject* parent, const char* name )
 :GaduCommand( parent, name ), state( RegisterStateNoToken ), session_( 0 ), uin( 0 )
 {
@@ -125,6 +124,9 @@ RegisterCommand::RegisterCommand( const QString& email, const QString& password,
 {
 }
 
+RegisterCommand::~RegisterCommand()
+{
+}
 
 unsigned int RegisterCommand::newUin()
 {
@@ -134,11 +136,6 @@ unsigned int RegisterCommand::newUin()
 //	else
 	return 0;
 }
-
-RegisterCommand::~RegisterCommand()
-{
-}
-
 void
 RegisterCommand::requestToken()
 {
@@ -319,11 +316,6 @@ RemindPasswordCommand::setUIN( uin_t uin )
 void
 RemindPasswordCommand::execute()
 {
-/*
-	session_ = gg_remind_passwd( uin_, 1 );
-	connect( this, SIGNAL( socketReady() ), SLOT( watcher() ) );
-	checkSocket( session_->fd, session_->check );
-	*/
 }
 
 void
@@ -380,15 +372,6 @@ ChangePasswordCommand::setInfo( uin_t uin, const QString& passwd, const QString&
 void
 ChangePasswordCommand::execute()
 {
-/*
-	session_ = gg_change_passwd2( uin_,
-							passwd_.ascii(),
-							newpasswd_.ascii(),
-							newemail_.ascii(),
-							newemail_.ascii(), 1 );
-	connect( this, SIGNAL( socketReady() ), SLOT( watcher() ) );
-	checkSocket( session_->fd, session_->check );
-	*/
 }
 
 void
@@ -441,28 +424,11 @@ ChangeInfoCommand::setInfo( uin_t /*uin*/, const QString& /*passwd*/,
 						int /*born*/, int /*gender*/, const QString& /*city*/ )
 {
 // FIXME: update for 6.0 and add support in plugin
-/*
-	memset( &info_, 0, sizeof( struct gg_change_info_request ) );
-	uin_			= uin;
-	passwd_		= passwd;
-	info_.first_name	= firstName.ascii();
-	info_.last_name	= lastName.ascii();
-	info_.nickname	= nickname.ascii();
-	info_.email		= email.ascii();
-	info_.born		= born;
-	info_.gender	= gender;
-	info_.city		= city.ascii();
-*/
 }
 
 void
 ChangeInfoCommand::execute()
 {
-/*
-	session_ = gg_change_info( uin_, passwd_.ascii(), &info_, 1 );
-	connect( this, SIGNAL( socketReady() ), SLOT( watcher() ) );
-	checkSocket( session_->fd, session_->check );
-	*/
 }
 
 void

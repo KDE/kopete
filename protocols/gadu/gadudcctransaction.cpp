@@ -47,6 +47,11 @@ GaduDCCTransaction::GaduDCCTransaction( QObject* parent, const char* name )
 */
 //unsigned int ip, unsigned int port, unsigned int myUin, unsigned int peerUin,
 
+GaduDCCTransaction::~GaduDCCTransaction()
+{
+	closeDCC();
+}
+
 unsigned int
 GaduDCCTransaction::recvUIN()
 {
@@ -65,7 +70,8 @@ GaduDCCTransaction::peerUIN()
 	return 0;
 }
 
-bool GaduDCCTransaction::setup()
+bool 
+GaduDCCTransaction::setup()
 {
 	if ( dccSock == NULL ){
 		kdDebug(14100) << "attempt to initialize gadu-dcc transaction with NULL dccsocket " << endl;
@@ -78,11 +84,6 @@ bool GaduDCCTransaction::setup()
 	return true;
 }
 
-
-GaduDCCTransaction::~GaduDCCTransaction()
-{
-	closeDCC();
-}
 
 void
 GaduDCCTransaction::closeDCC()
@@ -162,7 +163,7 @@ GaduDCCTransaction::watcher() {
 	}
 	switch ( dccEvent->type ) {
 		default:
-kdDebug(14100) << "unknown/unhandled DCC EVENT: " << dccEvent->type << endl;
+			kdDebug(14100) << "unknown/unhandled DCC EVENT: " << dccEvent->type << endl;
 			break;
 	}
 

@@ -342,17 +342,20 @@ GaduContact::findBestContactName( const GaduContactsList::ContactLine* cl )
 	return name;
 }
 
-void GaduContact::messageAck()
+void 
+GaduContact::messageAck()
 {
 	manager()->messageSucceeded();
 }
 
-void	GaduContact::setIgnored( bool val )
+void
+GaduContact::setIgnored( bool val )
 {
 	ignored_ = val;
 }
 
-bool GaduContact::ignored()
+bool 
+GaduContact::ignored()
 {
 	return ignored_;
 }

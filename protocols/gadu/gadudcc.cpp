@@ -41,7 +41,7 @@
 #include <qmap.h>
 #include <qstring.h>
 
-unsigned volatile int GaduDCC::referenceCount = 0;
+volatile unsigned int GaduDCC::referenceCount = 0;
 
 GaduDCCServer* GaduDCC::dccServer = NULL;
 
@@ -138,7 +138,7 @@ GaduDCC::registerAccount( GaduAccount* account )
 void
 GaduDCC::slotIncoming( gg_dcc* incoming, bool& handled )
 {
-	gg_dcc* newdcc;
+//	gg_dcc* newdcc;
 kdDebug( 14100 ) << "slotIncomming " << endl;
 
 	if ( handled && !accountId ) {
@@ -150,9 +150,9 @@ kdDebug( 14100 ) << "slotIncomming " << endl;
 		handled = true;
 	// TODO: limit number of connections per contact, or maybe even use parametr for that
 	// dcc_e->event.dcc_new;
-		newdcc = new gg_dcc;
-		memcpy( newdcc, incoming, sizeof( gg_dcc ) );
-		emit dccConnect( new GaduDCCTransaction( newdcc, parent() ) );
+//		newdcc = new gg_dcc;
+//		memcpy( newdcc, incoming, sizeof( gg_dcc ) );
+		emit dccConnect( new GaduDCCTransaction( incoming, parent() ) );
 	}
 
 }

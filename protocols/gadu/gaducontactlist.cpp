@@ -32,41 +32,6 @@ GaduContactsList::~GaduContactsList()
 {
 }
 
-void
-GaduContactsList::addContact( ContactLine& cl )
-{
-	cList.append( cl );
-}
-
-void
-GaduContactsList::addContact(
-		QString& displayname,
-		QString& group,
-		QString& uin,
-		QString& firstname,
-		QString& surname,
-		QString& nickname,
-		QString& phonenr,
-		QString& email,
-		bool& 	ignored
-)
-{
-	ContactLine cl;
-
-	cl.displayname	= displayname;
-	cl.group	= group;
-	cl.uin		= uin;
-	cl.firstname	= firstname;
-	cl.surname	= surname;
-	cl.nickname	= nickname;
-	cl.phonenr	= phonenr;
-	cl.email	= email;
-	cl.ignored	= ignored;
-
-	cList.append( cl );
-
-}
-
 GaduContactsList::GaduContactsList( QString sList )
 {
 	QStringList::iterator stringIterator;
@@ -157,6 +122,41 @@ GaduContactsList::GaduContactsList( QString sList )
 	}
 
 	return;
+}
+
+void
+GaduContactsList::addContact( ContactLine& cl )
+{
+	cList.append( cl );
+}
+
+void
+GaduContactsList::addContact(
+		QString& displayname,
+		QString& group,
+		QString& uin,
+		QString& firstname,
+		QString& surname,
+		QString& nickname,
+		QString& phonenr,
+		QString& email,
+		bool& 	ignored
+)
+{
+	ContactLine cl;
+
+	cl.displayname	= displayname;
+	cl.group	= group;
+	cl.uin		= uin;
+	cl.firstname	= firstname;
+	cl.surname	= surname;
+	cl.nickname	= nickname;
+	cl.phonenr	= phonenr;
+	cl.email	= email;
+	cl.ignored	= ignored;
+
+	cList.append( cl );
+
 }
 
 QString

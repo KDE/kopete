@@ -77,12 +77,13 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, KopeteAccount* ident, QWi
 	QObject::connect( registerNew, SIGNAL( clicked( ) ), SLOT( registerNewAccount( ) ) );
 }
 
-void GaduEditAccount::registerNewAccount()
+void 
+GaduEditAccount::registerNewAccount()
 {
 	registerNew->setDisabled( true );
 	regDialog = new GaduRegisterAccount( NULL , "Register account dialog" );
 	connect( regDialog, SIGNAL( registeredNumber( unsigned int, QString  ) ), SLOT( newUin( unsigned int, QString  ) ) );
-	if ( regDialog->exec() != QDialog::Accepted ){
+	if ( regDialog->exec() != QDialog::Accepted ) {
 		registerNew->setDisabled( false );
 		loginEdit_->setText( "" );
 		rememberCheck_->setChecked( true );
@@ -91,18 +92,21 @@ void GaduEditAccount::registerNewAccount()
 	}
 }
 
-void GaduEditAccount::registrationFailed()
+void 
+GaduEditAccount::registrationFailed()
 {
 	KMessageBox::sorry( this, i18n( "<b>Registration FAILED.</b>" ), i18n( "Gadu-Gadu" ) );
 }
 
-void GaduEditAccount::newUin( unsigned int uni, QString password )
+void 
+GaduEditAccount::newUin( unsigned int uni, QString password )
 {
 	loginEdit_->setText( QString::number( uni ) );
 	passwordEdit_->setText( password );
 }
 
-bool GaduEditAccount::validateData()
+bool 
+GaduEditAccount::validateData()
 {
 
 	if ( loginEdit_->text().isEmpty() ) {
@@ -123,7 +127,8 @@ bool GaduEditAccount::validateData()
 	return true;
 }
 
-KopeteAccount* GaduEditAccount::apply()
+KopeteAccount*
+GaduEditAccount::apply()
 {
 	if ( account() == NULL ) {
 		setAccount( new GaduAccount( protocol_, loginEdit_->text() ) );
