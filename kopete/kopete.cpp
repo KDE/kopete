@@ -110,6 +110,7 @@ void Kopete::initialize()
 	loadPlugins();
 
 	(KopeteContactList::contactList())->loadXML();
+	kdDebug() << endl << (KopeteContactList::contactList())->toXML() << endl;
 }
 
 

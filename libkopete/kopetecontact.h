@@ -171,6 +171,12 @@ public:
 		QString protocol() const { return m_protocolId; }
 		void setProtocol( const QString &id ) { m_protocolId = id; }
 
+
+		/**
+		 * Return a XML representation of the contact
+		 */
+		QString toXML();
+
 signals:
 	/**
 	 * The contact's online status changed

@@ -115,6 +115,11 @@ public:
 	 */
 	QStringList groups() const;
 
+	/**
+	 * Return a XML representation of the metacontact
+	 */
+	QString toXML();
+
 public slots:
 	/**
 	 * Contact another user.

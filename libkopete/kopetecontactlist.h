@@ -78,6 +78,11 @@ public:
 	 */
 	static QStringList meta_status();
 
+	/**
+	 * Return a XML representation of the contact list
+	 */
+	QString toXML();
+
     /**
 	 * Load the contact list from XML file [NON-FINISHED YET]
 	 */

@@ -200,20 +200,28 @@ void KopeteContactList::saveXML()
 
 	stream.setEncoding(QTextStream::UnicodeUTF8);
 	
-	/*
-	QPtrListIterator<KopeteMetaContact> it( m_contacts );
-	for( ; it.current(); ++it )
-	{
-		QPtrListIterator<KopeteContact> contactIt( it.current()->contacts() );
-		for( ; contactIt.current(); ++contactIt )
-		{
-			
-		}
-	}
-	*/
+	stream << toXML();
+
 	stream.device()->flush();
 	xml_file.close();
 }
+
+QString KopeteContactList::toXML()
+{
+	QString xml;
+
+	xml = "<list>\n";
+
+	QPtrListIterator<KopeteMetaContact> it( m_contacts );
+	for( ; it.current(); ++it )
+	{
+		xml = xml + "\t" + (it.current())->toXML() + "\n";	
+	}
+	xml = xml + "</list>";
+
+    return xml;
+}
+
 
 QStringList KopeteContactList::meta_all()
 {

@@ -71,6 +71,29 @@ QString KopeteContact::statusText() const
 	}
 }
 
+QString KopeteContact::toXML()
+{
+	QString xml;
+
+	xml = "<contact";
+    if ( ! m_id.isNull() && ! m_protocolId.isNull() )
+	{
+    	xml = xml + " id=\"" + m_id + "\"";
+		xml = xml + " protocol=\"" + m_protocolId + "\"";
+
+		if ( ! mName.isNull() )
+			xml = xml + " name=\"" + mName + "\"";			
+	}
+	else
+	{
+		return QString::null;
+	}
+
+	xml = xml + "/>";
+	return xml;
+}
+
+
 QString KopeteContact::statusIcon() const
 {
 	return "unknown";

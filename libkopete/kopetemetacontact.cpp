@@ -356,6 +356,33 @@ void KopeteMetaContact::slotMetaContactDestroyed( QObject *obj )
 	m_contacts.remove( dynamic_cast<KopeteContact *>( obj ) );
 }
 
+QString KopeteMetaContact::toXML()
+{
+	QString xml;
+
+	xml = "<person";
+
+	if ( ! m_displayName.isNull() )
+	{
+		xml = xml + " name=\"" + m_displayName + "\"";
+    }
+
+	xml = xml + ">\n";
+
+	/* We include all contacts in the XML */
+	QPtrListIterator<KopeteContact> it( m_contacts );
+	for( ; it.current(); ++it )
+	{
+		    xml = xml + "\t" + (it.current())->toXML() + "\n";
+	}
+
+	#warning FIXME KopeteMetaContact::toXML() Metadata is ignored
+
+	xml = xml + "</person>";
+	return xml;
+}
+
+
 #include "kopetemetacontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
