@@ -82,6 +82,10 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	if (account())
 	{
 		this->reopen ();
+		btnRegister->setDisabled( true );
+	}
+	else {
+		btnRegister->setEnabled( true );
 	}
 }
 
