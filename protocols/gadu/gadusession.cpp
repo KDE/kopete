@@ -466,7 +466,8 @@ GaduSession::exportContactsOnServer( gaduContactsList* contactsList )
 	
 
 	plist = textcodec->fromUnicode( contactsToString( contactsList ) );
-	kdDebug(14100) <<"--------------------userlists\n" << plist << "\n---------------" << endl;
+	kdDebug(14100) <<"--------------------userlists\n" << plist << endl;
+	kdDebug(14100) << "----------------------------" << endl;
 
 	if ( gg_userlist_request( session_, GG_USERLIST_PUT, plist.ascii() ) == -1 ) {
 		kdDebug( 14100 ) << "export contact list failed " << endl;
@@ -551,7 +552,7 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactsList , const QStrin
 		}
 		
 
-//each line ((firstname);(secondname);(nickname).;(displayname);(tel);(group);(uin);
+//each line ((firstname);(secondname);(displayname);(nickname);(tel);(group);(uin);
 
 		stringIterator = strList.begin();
 

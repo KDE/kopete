@@ -156,16 +156,15 @@ private:
 	KFileDialog*		saveListDialog;
 
 	KActionMenu*		actionMenu_;
-	KAction*			searchAction;
-	KAction*			listputAction;
+	KAction*		searchAction;
+	KAction*		listputAction;
 	KAction*		listToFileAction;
-	bool				connectWithSSL;
+	bool			connectWithSSL;
 
-	int				currentServer;
+	int			currentServer;
 	QValueList<QHostAddress> servers_;
 	unsigned int		serverIP;
 
-//	int				lastStatus;
 	QString			lastDescription;
 };
 

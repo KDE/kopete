@@ -656,9 +656,9 @@ GaduAccount::userlist( const QString& contactsListString )
 			}
 
 			// if there is no nickname
-			if ( (*contactLine)->nickname.isNull() ) {
+			if ( (*contactLine)->displayname.isNull() ) {
 				// no name either
-				if ( (*contactLine)->displayname.isNull() ) {
+				if ( (*contactLine)->nickname.isNull() ) {
 					// maybe we can use fistname + surname ?
 					if ( (*contactLine)->firstname.isNull() && (*contactLine)->surname.isNull() ) {
 						contactName = (*contactLine)->uin;
@@ -679,11 +679,11 @@ GaduAccount::userlist( const QString& contactsListString )
 					}
 				}
 				else {
-					contactName = (*contactLine)->displayname;
+					contactName = (*contactLine)->nickname;
 				}
 			}
 			else {
-				contactName = (*contactLine)->nickname;
+				contactName = (*contactLine)->displayname;
 			}
 
 			bool s = addContact( (*contactLine)->uin, contactName, 0L, KopeteAccount::DontChangeKABC, QString::null, false );
@@ -705,7 +705,9 @@ GaduAccount::userlist( const QString& contactsListString )
 		contact->setProperty( "lastName", (*contactLine)->surname );
 		contact->setProperty( "privPhoneNum", (*contactLine)->phonenr );
 		contact->setProperty( "ignored", i18n( "ignored" ), (*contactLine)->ignored ? "true" : "false" );
-		contact->rename( (*contactLine)->nickname );
+		kdDebug(14100) << (*contactLine)->uin << "nick name: " << (*contactLine)->nickname << endl;
+		contact->rename( (*contactLine)->displayname );
+		
 
 		if ( !( (*contactLine)->group.isEmpty() ) ) {
 			// FIXME: libkopete bug i guess, by default contact goes to top level group
