@@ -25,6 +25,7 @@
 #include "aimprotocol.h"
 #include "aimcontact.h"
 #include "aimaccount.h"
+#include "aimuserinfo.h"
 #include "aim.h" //for tocNormalize
 
 AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount *account, KopeteMetaContact *parent)
@@ -301,5 +302,15 @@ KopeteMessage AIMContact::parseAIMHTML ( QString m )
 	// We don't actually do anything in there yet, but we might eventually
 	return msg;
 }
+
+// Called when the user requests a contact's user info
+void AIMContact::slotUserInfo()
+{
+	kdDebug(14190) << k_funcinfo << "Creating User Profile/Info dialog" << endl;
+	AIMUserInfo *userInfoDialog = new AIMUserInfo(mName, displayName(), mAccount, this);
+	kdDebug(14190) << k_funcinfo << "Showing User Profile/Info dialog" << endl;
+	userInfoDialog->show();
+}
+
 
 #include "aimcontact.moc"

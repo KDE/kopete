@@ -61,6 +61,8 @@ private slots:
 	void slotSendMsg(KopeteMessage&, KopeteMessageManager *);
 	/** Called when an IM is received */
 	void slotIMReceived(QString sender, QString msg, bool isAuto);
+	/** Called when the user requests a contact's user info */
+	void slotUserInfo();
 };
 
 #endif

@@ -23,37 +23,40 @@
 
 class KTextBrowser;
 class OscarAccount;
-class AIMBuddy;
+class AIMContact;
 
 class AIMUserInfo : public AIMUserInfoBase
 {
 	Q_OBJECT
-	public:
+public:
 	/**
-	* This constructor is used to show the user info
-	* for a contact
-	*/
-		AIMUserInfo(const QString name, const QString nick,
-				OscarAccount *account, AIMBuddy &buddy);
+	 * This constructor is used to show the user info
+	 * for a contact.  This constructor will tell the
+	 * engine to send the User Profile Request, and will
+	 * update it's view with the info when it is returned
+	 * by the AIM server
+	 */
+	AIMUserInfo(const QString name, const QString nick,
+				OscarAccount *account, AIMContact *contact);
 	/**
-	* This constructor is called when we want to edit our
-	* own profile
-	*/
-		AIMUserInfo(const QString name, const QString nick,
+	 * This constructor is called when we want to edit our
+	 * own profile
+	 */
+	AIMUserInfo(const QString name, const QString nick,
 				OscarAccount *account, const QString &profile);
 
-	private:
-		QString m_nick;
-		OscarAccount *m_account;
-		QString m_name;
+private:
+	QString m_nick;
+	OscarAccount *m_account;
+	QString m_name;
 
-	private slots:
-		void slotSaveClicked();
-		void slotCloseClicked();
-		void slotSearchFound(UserInfo, QString);
+private slots:
+	void slotSaveClicked();
+	void slotCloseClicked();
+	void slotSearchFound(const UserInfo &/*u*/, const QString /*profile*/);
 
-	signals:
-		void updateNickname(const QString);
+signals:
+	void updateNickname(const QString);
 };
 
 #endif
