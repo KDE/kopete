@@ -148,6 +148,10 @@ public:
 	 */
 	KopeteMetaContact *findContactByDisplayName( const QString &displayName );
 
+	/**
+	 * Find a meta contact by its contact id. Returns the first match.
+	 */
+	KopeteMetaContact *findMetaContactByContactId( const QString &contactId );
 
 	/**
 	 * return the list of metacontact actually selected in the contactlist UI

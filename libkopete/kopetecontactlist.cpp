@@ -793,9 +793,9 @@ void KopeteContactList::sendFile( const QString &displayName, const KURL &source
 		c->sendFile( sourceURL, altFileName, fileSize );
 }
 
-void KopeteContactList::messageContact( const QString &displayName, const QString &messageText )
+void KopeteContactList::messageContact( const QString &contactId, const QString &messageText )
 {
-	KopeteMetaContact *mc = findContactByDisplayName( displayName );
+	KopeteMetaContact *mc = findMetaContactByContactId( contactId );
 	if (!mc) return;
 
 	KopeteContact *c = mc->execute(); //We need to know which contact was chosen as the preferred in order to message it
@@ -817,6 +817,24 @@ KopeteMetaContact *KopeteContactList::findContactByDisplayName( const QString &d
 		}
 	}
 
+	return 0L;
+}
+
+KopeteMetaContact* KopeteContactList::findMetaContactByContactId( const QString &contactId )
+{
+	QPtrListIterator<KopeteMetaContact> it( d->contacts );
+	//FIXME: This loop isn't very efficient
+	for ( ; it.current(); ++it )
+	{
+		QPtrList<KopeteContact> cl = it.current()->contacts();
+		QPtrListIterator<KopeteContact> kcit ( cl ); 
+		
+		for ( ; kcit.current(); ++kcit )
+		{
+			if ( kcit.current()->contactId() == contactId )
+				return kcit.current()->metaContact();
+		}
+	}
 	return 0L;
 }
 

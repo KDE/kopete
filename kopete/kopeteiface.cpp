@@ -85,9 +85,9 @@ QStringList KopeteIface::contactFileProtocols(const QString &displayName)
 	return KopeteContactList::contactList()->contactFileProtocols(displayName);
 }
 
-void KopeteIface::messageContact( const QString &displayName, const QString &messageText )
+void KopeteIface::messageContact( const QString &contactId, const QString &messageText )
 {
-	KopeteContactList::contactList()->messageContact( displayName, messageText );
+	KopeteContactList::contactList()->messageContact( contactId, messageText );
 }
 /*
 void KopeteIface::sendFile(const QString &displayName, const KURL &sourceURL,
