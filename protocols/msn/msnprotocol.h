@@ -140,19 +140,15 @@ public:
 //	QStringList groups() const;
 
 	QString publicName() const { return m_publicName; }
-	/**
-	 * change the publicName to this new name
-	 */
-	void setPublicName( const QString &name );
 
-	void setStatus(Status);
+
 	/**
 	 * Returns a set of action items for the chatWindows
 	 */
 	KActionCollection * customChatActions(KopeteMessageManager * );
 
-	MSNNotifySocket *notifySocket() { return m_notifySocket; };
-
+	MSNNotifySocket *notifySocket();
+	
 	virtual KActionMenu* protocolActions();
 	virtual const QString protocolIcon();
 
@@ -164,33 +160,15 @@ public slots:
 	 * Start a new chat session: the result is an XFR command, see above
 	 */
 	void slotStartChatSession( QString handle );
+	
+		void slotNotifySocketStatusChanged( MSNSocket::OnlineStatus );
 
 private slots:
-	/**
-	 * The publicName has successful changed
-	 * This is an anwser from setMyPublicName
-	 */
-	void slotPublicNameChanged(QString publicName);
-
 	// Block a Contact
-	void slotBlockContact( QString passport ) const;
+	void slotBlockContact( QString passport ) ;
 
 	void slotSyncContactList();
 
-	void slotNotifySocketStatusChanged( MSNSocket::OnlineStatus );
-
-	void slotGoOnline();
-	void slotGoOffline();
-	void slotGoAway();
-	void slotGoBusy();
-	void slotGoBeRightBack();
-	void slotGoOnThePhone();
-	void slotGoOutToLunch();
-	void slotGoInvisible();
-
-	void slotStartChat();
-
-	void slotOpenInbox();
 
 	void slotAddContact( const QString &userName );
 	/**
@@ -227,7 +205,6 @@ private slots:
 		uint serial, uint group );
 
 	void slotContactListed( QString handle, QString publicName, QString group, QString list );
-	void slotStatusChanged( QString status );
 
 	/**
 	 * Incoming RING command: connect to the Switchboard server and send
@@ -243,35 +220,17 @@ private slots:
 	 */
 	void slotCreateChat( QString address, QString auth);
 
-	/**
-	 * Set our public name
-	 * FIXME: This should be 'setPublicName( foo )' instead of course with
-	 *        the GUI being defined elsewhere. Time to think about more
-	 *        API fixes :(
-	 */
-	void slotChangePublicName();
-
-	/**
-	 * Show simple debugging aid
-	 */
-	void slotDebugRawCommand();
-
-	/**
-	 * The Notify socket might have closed unexpectedly...
-	 */
-	 void slotNotifySocketClosed( int state );
-
 	void slotPreferencesSaved();
 
 private:
-	void initActions();
+
 
 	bool mIsConnected;
 
 	MSNPreferences *mPrefs;
 
 	// Actions we use
-	KAction* actionGoOnline;
+	/*KAction* actionGoOnline;
 	KAction* actionGoOffline;
 	KAction* actionGoAway;
 	KAction* actionGoBusy;
@@ -290,7 +249,7 @@ private:
 	KAction* actionConnect;
 	KAction* actionDisconnect;
 	KAction* actionPrefs;
-	KAction* actionUnload;
+	KAction* actionUnload;*/
 	int m_menuTitleId;
 
 	QMap<unsigned int, KopeteGroup*> m_groupList;
@@ -305,9 +264,6 @@ private:
 	bool m_publicNameSyncNeeded;
 	QString m_msgHandle;
 	KopeteMetaContact *m_addWizard_metaContact;
-
-	MSNNotifySocket *m_notifySocket;
-	MSNContact *m_myself;
 
 	MSNIdentity *m_identity;
 //	QPtrDict<MSNSwitchBoardSocket> m_switchBoardSockets;

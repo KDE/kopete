@@ -36,19 +36,6 @@ class MSNContact : public KopeteContact
 {
 	Q_OBJECT
 
-	/**
-	 * With the notify socket handling most of the finer details of the
-	 * protocol it needs access to setDisplayName, so make it a friend
-	 * of this class
-	 */
-	friend class MSNNotifySocket;
-
-	/**
-	 * MSNProtocol needs to change the display name of mySelf() when it's
-	 * received from the server
-	 */
-	friend class MSNProtocol;
-
 public:
 	MSNContact( KopeteProtocol *protocol, const QString &id,
 		const QString &displayName, KopeteMetaContact *parent );
@@ -136,6 +123,16 @@ public:
 	 * Returns the MSN Message Manager associated with this contact
 	 */
 	virtual KopeteMessageManager *manager( bool canCreate = false );
+
+
+	/**
+	 * MSNIdentity and MSNSwhitchBoardSocket need to change the displayName of contacts.
+	 * Then, we do this fuction public  
+	 **/
+	void setDisplayName(const QString &Dname)
+	{
+		KopeteContact::setDisplayName(Dname);
+	}
 
 public slots:
 	virtual void slotUserInfo();
