@@ -119,7 +119,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	m_StatusUnknown(KopeteOnlineStatus::Unknown, 999, this, 999, "status_unknown", "FIXME: Make this unselectable", i18n("Status not available")),
 
-	propChannelTopic(QString::fromLatin1("channelTopic"), i18n("Topic"), false, true ),
+	propChannelTopic(QString::fromLatin1("channelTopic"), i18n("Topic"), QString::null, false, true ),
 	propChannelMembers(QString::fromLatin1("channelMembers"), i18n("Members")),
 	propHomepage(QString::fromLatin1("homePage"), i18n("Home Page")),
 	propLastSeen(Kopete::Global::Properties::self()->lastSeen()),
