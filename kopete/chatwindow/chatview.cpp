@@ -925,7 +925,8 @@ bool ChatView::canSend()
 	KopeteContactPtrList members = msgManager()->members();
 
 	// can't send if there's nothing *to* send...
-	if ( !isTyping() ) return false;
+	if ( m_edit->text().isEmpty() )
+	    return false;
 
 	// if we can't send offline, make sure we have an online contact...
 	if ( !msgManager()->protocol()->canSendOffline() )
@@ -1078,6 +1079,10 @@ void ChatView::messageSentSuccessfully()
 bool ChatView::isTyping()
 {
 	QString txt = m_edit->text( Qt::PlainText );
+
+	// gregj:
+	// if anyone knows reason why we strip spaces here, 
+	// speak now or remain silent forever 
 	return !txt.stripWhiteSpace().isEmpty();
 }
 
