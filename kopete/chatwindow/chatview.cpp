@@ -1111,7 +1111,7 @@ KopeteMessage ChatView::messageFromNode( Node &node )
 {
 	HTMLElement e = node;
 
-	while (!e.isNull() && e.className() != QString::fromLatin1("KopeteMessage") && e != (const DOM::Node)chatView->htmlDocument().body())
+	while (!e.isNull() && e.className() != QString::fromLatin1("KopeteMessage") && e != static_cast<const DOM::Node>(chatView->htmlDocument().body()))
 		e = e.parentNode();
 
 	KopeteMessage m;
