@@ -101,6 +101,12 @@ private:
 	// All KopeteChatWindows are created by the findWindow function
 	KopeteChatWindow(QWidget *parent = 0, const char* name = "KopeteChatWindow" );
 
+	/**
+	 * The window list has changed:
+	 * For each chat window, update it's Move Tab to Window action
+	 */
+	static void windowListChanged();
+
 	void initActions(void);
 	void saveOptions(void);
 	void readOptions(void);
