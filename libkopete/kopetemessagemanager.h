@@ -36,8 +36,9 @@ class KopeteEvent;
 class KopeteMessageLog;
 class KopeteProtocol;
 class KopeteChatWindow;
+class KMainWindow;
 
-typedef QMap<KopeteProtocol*,KopeteChatWindow*> ChatWindowMap;
+typedef QMap<KopeteProtocol*,KMainWindow*> ChatWindowMap;
 typedef QPtrList<KopeteContact>        KopeteContactPtrList;
 typedef QValueList<KopeteMessage>        KopeteMessageList;
 typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
@@ -228,7 +229,7 @@ private:
 	bool dockChatWindows;
 	KopeteChatWindow *newWindow();
 	ChatWindowMap *chatWindowMap();
-	KopeteChatWindow *myWindow;
+	KMainWindow *myWindow;
 	
 	KMMPrivate *d;
 };

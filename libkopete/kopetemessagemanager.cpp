@@ -230,7 +230,7 @@ KopeteChatWindow *KopeteMessageManager::newWindow()
 	if( windowCreated && !chatWindowMap()->contains( d->mProtocol ) )
 		chatWindowMap()->insert(d->mProtocol, myWindow);
 	
-	return myWindow;
+	return (KopeteChatWindow*)myWindow;
 }
 
 void KopeteMessageManager::newChatView()
@@ -259,7 +259,7 @@ void KopeteMessageManager::newChatView()
 
 	if (d->mWidget == Email)
 	{
-		d->mEmailWindow = myWindow = new KopeteEmailWindow(d->mUser, d->mContactList);
+		myWindow = (KMainWindow*)d->mEmailWindow = new KopeteEmailWindow(d->mUser, d->mContactList);
 		d->mEmailWindow->setSendEnabled(d->mSendEnabled);
 		connect (d->mEmailWindow, SIGNAL(shown()), this, SLOT(slotCancelUnreadMessageEvent()));
 		connect (d->mEmailWindow, SIGNAL(sendMessage(KopeteMessage &)),
@@ -274,7 +274,7 @@ void KopeteMessageManager::newReplyWindow()
 	if (d->mWidget == Email)
 	{
 		kdDebug(14010) << k_funcinfo << "newReplyWindow() called for email-type window" << endl;
-		d->mEmailReplyWindow = myWindow = new KopeteEmailWindow(d->mUser, d->mContactList);
+		myWindow = (KMainWindow*)d->mEmailReplyWindow = new KopeteEmailWindow(d->mUser, d->mContactList);
 		d->mEmailReplyWindow->setSendEnabled(true);
 		d->mEmailReplyWindow->setReplyMode(true);
 		d->mEmailReplyWindow->show();
@@ -381,7 +381,7 @@ void KopeteMessageManager::readMessages()
 			KWin::setOnDesktop(myWindow->winId() , KWin::currentDesktop()); //set on the desktop
 			myWindow->raise(); // make it top window
 			if (d->mWidget == ChatWindow)
-				myWindow->makeWidgetDockVisible(mainView);
+				((KopeteChatWindow*)myWindow)->makeWidgetDockVisible(mainView);
 			myWindow->setActiveWindow();
 		}
 	}
