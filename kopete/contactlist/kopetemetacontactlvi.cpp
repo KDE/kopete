@@ -206,6 +206,15 @@ void KopeteMetaContactLVI::movedToGroup( KopeteGroup *to )
 
 	if ( m_parentGroup )
 		m_parentGroup->refreshDisplayName();
+	
+	// create a spacer if wanted
+	// I assume that the safety property that allows the delete in slotConfigChanged holds here - Will
+	delete d->spacerBox->component( 0 );
+	if ( KListViewItem::parent() && KopetePrefs::prefs()->contactListIndentContacts() &&
+	                !KopetePrefs::prefs()->treeView() )
+	{
+		new SpacerComponent( d->spacerBox, 20, 0 );
+	}
 
 	KopeteGroupViewItem *group_item = lv->getGroup( to );
 	if ( group_item )
