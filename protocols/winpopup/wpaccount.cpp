@@ -23,12 +23,13 @@
 // KDE Includes
 #include <kdebug.h>
 #include <kpopupmenu.h>
+#include <klocale.h>
+
+// Kopete Includes
 
 // Local Includes
 #include "wpaccount.h"
 #include "wpdebug.h"
-
-// Kopete Includes
 
 class KPopupMenu;
 
@@ -79,7 +80,7 @@ const QStringList WPAccount::getHosts(const QString &Group)
 
 const QStringList WPAccount::getHostDetails( const QString &Host )
 {
-	kdDebug( 14180 ) << k_funcinfo << endl;
+	kdDebug(14180) << k_funcinfo << endl;
 	return theInterface->getHostDetails( Host );
 }
 
@@ -146,7 +147,7 @@ void WPAccount::setAway(bool status, const QString &awayMessage)
 {
 	DEBUG(WPDMETHOD, "WPAccount::setAway()");
 
-	theAwayMessage = awayMessage.isNull() ? QString::fromLatin1("I'm away at the moment.") : awayMessage;
+	theAwayMessage = awayMessage.isNull() ? i18n("I'm away at the moment.") : awayMessage;
 
 	if(!isConnected())
 		theInterface->goOnline();
@@ -159,7 +160,7 @@ KActionMenu* WPAccount::actionMenu()
 
 	WPProtocol *theProtocol = dynamic_cast<WPProtocol *>(protocol());
 	KActionMenu *theActionMenu = new KActionMenu(accountId() , myself()->onlineStatus().iconFor(this), this);
-	theActionMenu->popupMenu()->insertTitle(theMyself->icon(), "WinPopup (" + accountId() + ")");
+	theActionMenu->popupMenu()->insertTitle(theMyself->icon(), i18n("WinPopup (%1)").arg(accountId()));
 
 	if (theProtocol)
 	{
