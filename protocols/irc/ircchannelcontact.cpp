@@ -115,7 +115,7 @@ void IRCChannelContact::slotChannelTopic(const QString &channel, const QString &
 	{
 		mTopic = topic;
 		manager()->setDisplayName( caption() );
-		KopeteMessage msg((KopeteContact*)this, mContact, i18n("Topic for %1 is %2").arg(mNickName).arg(mTopic), KopeteMessage::Internal);
+		KopeteMessage msg((KopeteContact*)this, mContact, i18n("Topic for %1 is %2").arg(mNickName).arg(mTopic), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 		manager()->appendMessage(msg);
 	}
 }
@@ -140,7 +140,7 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 		{
 			isConnected = true;
 			KopeteMessage msg((KopeteContact *)this, mContact,
-			i18n("You have joined channel %1").arg(mNickName), KopeteMessage::Internal);
+			i18n("You have joined channel %1").arg(mNickName), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 			manager()->appendMessage(msg);
 			while( !messageQueue.isEmpty() )
 			{
@@ -156,7 +156,7 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 
 			KopeteMessage msg((KopeteContact *)this, mContact,
 			i18n("User %1 [%2] joined channel %3").arg(nickname).arg(user.section('!', 1)).arg(mNickName),
-			KopeteMessage::Internal);
+			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 			manager()->appendMessage(msg);
 		}
 	}
@@ -175,7 +175,7 @@ void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString
 		}
 		KopeteMessage msg((KopeteContact *)this, mContact,
 		i18n("User %1 parted channel %2 (%3)").arg(nickname).arg(mNickName).arg(reason),
-		KopeteMessage::Internal);
+		KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 		manager()->appendMessage(msg);
 	}
 }
@@ -200,7 +200,7 @@ void IRCChannelContact::slotTopicChanged( const QString &channel, const QString 
 	{
 		mTopic = newtopic;
 		mMsgManager->setDisplayName( caption() );
-		KopeteMessage msg((KopeteContact *)this, mContact, i18n("%1 has changed the topic to %2").arg(nick).arg(newtopic), KopeteMessage::Internal);
+		KopeteMessage msg((KopeteContact *)this, mContact, i18n("%1 has changed the topic to %2").arg(nick).arg(newtopic), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 		manager()->appendMessage(msg);
 	}
 }
@@ -209,7 +209,7 @@ void IRCChannelContact::slotIncomingModeChange( const QString &nick, const QStri
 {
 	if( isConnected && mNickName.lower() == channel.lower() )
 	{
-		KopeteMessage msg((KopeteContact *)this, mContact, i18n("%1 sets mode %2 %3").arg(nick).arg(mode).arg(mNickName), KopeteMessage::Internal);
+		KopeteMessage msg((KopeteContact *)this, mContact, i18n("%1 sets mode %2 %3").arg(nick).arg(mode).arg(mNickName), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 		manager()->appendMessage(msg);
 	}
 }

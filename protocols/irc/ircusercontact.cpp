@@ -79,7 +79,7 @@ void IRCUserContact::slotNewPrivMessage(const QString &originating, const QStrin
 	kdDebug(14120) << k_funcinfo << "o:" << originating << "; t:" << target << endl;
 	if (originating.section('!',0,0).lower() == mNickName.lower())
 	{
-		KopeteMessage msg( (KopeteContact*)this, mMyself, message, KopeteMessage::Inbound );
+		KopeteMessage msg( (KopeteContact*)this, mMyself, message, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat );
 		msg.setBody( mParser->parse( msg.escapedBody() ), KopeteMessage::RichText );
 		manager()->appendMessage(msg);
 	}

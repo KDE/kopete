@@ -71,7 +71,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 
 IRCProtocol::~IRCProtocol()
 {
-
+	delete identity;
 }
 
 KActionMenu* IRCProtocol::protocolActions()
