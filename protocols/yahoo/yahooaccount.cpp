@@ -172,14 +172,14 @@ void YahooAccount::connect()
 	
 	
 		
-	if ((password(m_needNewPassword)).isNull())
+	if ((password(m_needNewPassword)).isEmpty())
 	{ //cancel the connection attempt
 		static_cast<YahooContact*>(myself())->setYahooStatus(YahooStatus::Offline);
 		return;
 	}
 	
 	m_session = YahooSessionManager::manager()->createSession(accountId(), password());
-
+	m_needNewPassword = false;
 	if(!isConnected())
 	{
 		kdDebug(14180) << "Attempting to connect to Yahoo on <" << server << ":" << port << ">. user <" << accountId() << ">" << endl;
@@ -396,7 +396,8 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		 * Support needs to be added for invisible
 		 */
 		static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Available);
-		m_needNewPassword = false;	
+		m_needNewPassword = false;
+		theHaveContactList = true;	
 		return;
 	}
 	else if(succ == YAHOO_LOGIN_PASSWD)
