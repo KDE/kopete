@@ -125,6 +125,9 @@ protected:
 	virtual void parseCommand( const QString &cmd, uint id,
 		const QString &data ) = 0;
 
+	const QString &server() { return m_server; }
+	uint port() { return m_port; }
+
 private slots:
 	void slotDataReceived();
 	//void slotSocketError(int error);
@@ -160,6 +163,8 @@ private:
 	OnlineStatus m_onlineStatus;
 
 	QString m_buffer;
+	QString m_server;
+	uint m_port;
 
 	/**
 	 * The size of the requested block for block-based reads

@@ -58,6 +58,8 @@ void MSNSocket::connect( const QString &server, uint port )
 	m_id = 0;
 	m_waitBlockSize = 0L;
 
+	m_server = server;
+	m_port = port;
 	m_socket = new KExtendedSocket( server, port, 0x600000 );
 	m_socket->enableRead( true );
 

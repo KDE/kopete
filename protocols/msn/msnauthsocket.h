@@ -1,5 +1,6 @@
 /*
-    msndispatchsocket.h - Socket for the MSN Dispatch Server
+    msnauthsocket.h - Socket that does the initial handshake as used by
+                       both MSNAuthSocket and MSNNotifySocket
 
     Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
@@ -17,45 +18,56 @@
     *************************************************************************
 */
 
-#ifndef MSNDISPATCHSOCKET_H
-#define MSNDISPATCHSOCKET_H
+#ifndef MSNAUTHSOCKET_H
+#define MSNAUTHSOCKET_H
 
-#include <msnauthsocket.h>
+#include <msnsocket.h>
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
  *
- * MSNDispatchSocket contains the connection to the MSN Dispatch Server.
- * The initial communication takes place using this server, after which
- * you are redirected to a notification server.
+ * MSNAuthSocket contains a connection to the MSN Servers that require
+ * handshaking. Both the Dispatch Server and the Notification Server do this,
+ * and most of the code is shared. MSNDispatchServer now provides only a
+ * _very_ thin wrapper over this class, whereas MSNNotifyServer will truly
+ * extend it.
  */
-class MSNDispatchSocket : public MSNAuthSocket
+class MSNAuthSocket : public MSNSocket
 {
 	Q_OBJECT
 
 public:
-	MSNDispatchSocket( const QString &msnId );
-	~MSNDispatchSocket();
-
-	/**
-	 * The dispatch server always connects to the same host, this method is
-	 * for convenience.
-	 */
-	void connect();
-
-signals:
-	/**
-	 * When the dispatch server sends us the notification server to use, this
-	 * signal is emitted. After this the socket is automatically closed.
-	 */
-	void receivedNotificationServer( const QString &host, uint port );
+	MSNAuthSocket( const QString &msnId );
+	~MSNAuthSocket();
 
 protected:
+	/**
+	 * This reimplementation sets up the negotiating with the server and
+	 * suppresses the change of the status to online until the handshake
+	 * is complete.
+	 */
+	virtual void doneConnect();
+
+	/**
+	 * Handle an MSN error condition.
+	 * This reimplementation handles the 'server busy' error by attempting a
+	 * reconnect in about 10 seconds, but calls the parent's implementation
+	 * for all other errors.
+	 */
+	virtual void handleError( uint code, uint id );
+
 	/**
 	 * Handle an MSN command response line.
 	 */
 	virtual void parseCommand( const QString &cmd, uint id,
 		const QString &data );
+
+private slots:
+	void reconnect();
+
+private:
+	QString m_msnId;
+	bool m_msgBoxShown;
 };
 
 #endif

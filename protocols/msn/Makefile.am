@@ -10,7 +10,7 @@ kde_module_LTLIBRARIES = kopete_msn.la
 
 kopete_msn_la_SOURCES     = msnprotocol.cpp msnidentity.cpp \
         msnpreferences.cpp protocol.cpp msnaddcontactpage.cpp \
-        msncontact.cpp msnsocket.cpp msndispatchsocket.cpp
+        msncontact.cpp msnsocket.cpp msnauthsocket.cpp msndispatchsocket.cpp
 kopete_msn_la_METASOURCES = AUTO
 kopete_msn_la_LDFLAGS     = -module $(KDE_PLUGIN)
 kopete_msn_la_LIBADD      = ./ui/libkopetemsnui.la \

@@ -19,16 +19,9 @@
 
 #include "msndispatchsocket.h"
 
-#include <qtimer.h>
-
-#include <kdebug.h>
-#include <klocale.h>
-#include <kmessagebox.h>
-
 MSNDispatchSocket::MSNDispatchSocket( const QString &msnId )
+: MSNAuthSocket( msnId )
 {
-	m_msnId = msnId;
-	m_msgBoxShown = false;
 }
 
 MSNDispatchSocket::~MSNDispatchSocket()
@@ -37,52 +30,13 @@ MSNDispatchSocket::~MSNDispatchSocket()
 
 void MSNDispatchSocket::connect()
 {
-	MSNSocket::connect( "messenger.hotmail.com", 1863 );
-}
-
-void MSNDispatchSocket::connect( const QString &server, uint port )
-{
-	MSNSocket::connect( server, port );
-}
-
-void MSNDispatchSocket::handleError( uint code, uint id )
-{
-	if( code != 600 )
-	{
-		MSNSocket::handleError( code, id );
-		return;
-	}
-
-	disconnect();
-	QTimer::singleShot( 10, this, SLOT( connect() ) );
-
-	if( !m_msgBoxShown )
-	{
-		QString msg =
-			i18n( "The MSN server is busy.\n"
-				"Trying to reconnect every 10 seconds. Please be pateint..." );
-		m_msgBoxShown = true;
-
-		KMessageBox::information( 0, msg, i18n( "MSN Plugin - Kopete" ) );
-	}
+	MSNAuthSocket::connect( "messenger.hotmail.com", 1863 );
 }
 
 void MSNDispatchSocket::parseCommand( const QString &cmd, uint id,
 	const QString &data )
 {
-	if( cmd == "VER" )
-	{
-		kdDebug() << "MSNDispatchSocket: Requesting authentication method"
-			<< endl;
-		sendCommand( "INF" );
-	}
-	else if( cmd == "INF" )
-	{
-		kdDebug() << "MSNDispatchSocket: Requesting MD5 authentication "
-			<< "for Passport " << m_msnId << endl;
-		sendCommand( "USR", "MD5 I " + m_msnId );
-	}
-	else if( cmd == "XFR" )
+	if( cmd == "XFR" )
 	{
 		// Got our notification server
 		QString host = data.section( ' ', 1, 1 );
@@ -94,16 +48,9 @@ void MSNDispatchSocket::parseCommand( const QString &cmd, uint id,
 	}
 	else
 	{
-		kdDebug() << "MSNDispatchSocket::parseCommand: Unexpected response '"
-			<< cmd << " " << id << " " << data << "' from server!" << endl;
+		// Let the base class handle the rest
+		MSNAuthSocket::parseCommand( cmd, id, data );
 	}
-}
-
-void MSNDispatchSocket::doneConnect()
-{
-	kdDebug() << "MSNDispatchSocket: Negotiating server protocol version"
-		<< endl;
-	sendCommand( "VER", "MSNP7 MSNP6 MSNP5 MSNP4 CVR0" );
 }
 
 #include "msndispatchsocket.moc"
