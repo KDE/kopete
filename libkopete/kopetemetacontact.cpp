@@ -66,6 +66,21 @@ struct KopeteMetaContactPrivate
 KABC::AddressBook* KopeteMetaContact::m_addressBook = 0L;
 bool KopeteMetaContactPrivate::s_addrBookWritePending = false;
 
+/**
+ * utility function to merge two QStrings containing individual elements separated by 0xE000
+ */
+QString unionContents( QString arg1, QString arg2 )
+{
+	QChar separator( 0xE000 );
+	QStringList outList = QStringList::split( separator, arg1 );
+	QStringList arg2List = QStringList::split( separator, arg2 );
+	for ( QStringList::iterator it = arg2List.begin(); it != arg2List.end(); ++it )
+		if ( !outList.contains( *it ) )
+			outList.append( *it );
+	QString out = outList.join( separator );
+	return out;
+}
+
 KopeteMetaContact::KopeteMetaContact()
 : KopetePluginDataObject( KopeteContactList::contactList() ), KopeteNotifyDataObject()
 {
@@ -826,7 +841,10 @@ void KopeteMetaContact::setMetaContactId( const QString& newMetaContactId )
 	// 4) May be called with Null to remove an invalid kabc uid by KMC::toKABC()
 	// 5) Is called when reading the saved contact list
 
-	removeKABC();
+	// only remove kabc data if we are changing contacts; other programs may have written that data,
+	// and kopete will not pick up on it if no other MC is associated with the data left behind
+	if ( !newMetaContactId.isNull() )
+		removeKABC();
 	d->metaContactId = newMetaContactId;
 	updateKABC();
 	emit onlineStatusChanged( this, d->onlineStatus );
@@ -852,7 +870,6 @@ void KopeteMetaContact::updateKABC()
 		// Check that if addressee is not deleted or if the link is spurious
 		// (inherited from Kopete < 0.8, where all metacontacts had random ids)
 
-		// FIXME: this no longer gets called when reading all contacts but we need something similar to update from 0.7
 		if ( theAddressee.isEmpty() )
 		{
 			// remove the link
@@ -868,10 +885,14 @@ void KopeteMetaContact::updateKABC()
 				QMap<QString, QString>::ConstIterator addrIt = appIt.data().begin();
 				for( ; addrIt != appIt.data().end(); ++addrIt )
 				{
-					// FIXME: This assumes Kopete is the only app writing these fields
+					// read existing data for this key
+					QString currentCustom = theAddressee.custom( appIt.key(), addrIt.key() );
+					// merge without duplicating
+					QString toWrite = unionContents( currentCustom, addrIt.data() );
+					// write the result
 					// Note if nothing ends up in the KABC data, this is because insertCustom does nothing if any param is empty.
-					kdDebug( 14010 ) << k_funcinfo << "Writing: " << appIt.key() << ", " << addrIt.key() << ", " << addrIt.data() << endl;
-					theAddressee.insertCustom( appIt.key(), addrIt.key(), addrIt.data() );
+					kdDebug( 14010 ) << k_funcinfo << "Writing: " << appIt.key() << ", " << addrIt.key() << ", " << toWrite << endl;
+					theAddressee.insertCustom( appIt.key(), addrIt.key(), toWrite );
 				}
 			}
 			ab->insertAddressee( theAddressee );
