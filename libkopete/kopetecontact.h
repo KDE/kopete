@@ -47,7 +47,7 @@ typedef QPtrList<KopeteGroup> KopeteGroupList;
  * @author Martijn Klingens <klingens@kde.org>
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  *
- * This class abstracts a generic contact/buddie.
+ * This class abstracts a generic contact
  * Use it for inserting contacts in the contact list for example.
  */
 class KopeteContact : public QObject
@@ -66,9 +66,11 @@ class KopeteContact : public QObject
 
 public:
 	/**
-	 * Create new contact. Supply the parent meta contact!
+	 * \brief Create new contact.
 	 *
-	 * Note: Id is required to be unique per protocol and per account.
+	 * <b>The parent KopeteMetaContact must not be NULL</b>
+	 *
+	 * \note id is required to be unique per protocol and per account.
 	 * Across those boundaries ids may occur multiple times.
 	 * The id is solely for comparing items safely (using pointers is
 	 * more crash-prone). DO NOT assume anything regarding the id's
@@ -86,18 +88,20 @@ public:
 	~KopeteContact();
 
 	/**
-	 * Return whether this contact is online or not.
-	 * @return bool indicating whhether the contact is online
+	 * \brief Get whether this contact is online
+	 * @return true if the contact is online
+	 * @return false if the contact is not online
 	 */
 	bool isOnline() const;
 
 	/**
-	 * Function used in determining if the contact is able to
-	 * receive messages even if offline, etc.  This function must
-	 * be defined by child classes
-	 * if this function return false, the user will be unable to open a chatwindow
+	 * \brief Get whether this contact can receive messages
 	 *
-	 * @return bool indicating whether or not the contact is reachable (can send a message to it)
+	 * Used in determining if the contact is able to
+	 * receive messages.  This function must be defined by child classes
+	 *
+	 * @return true if the contact can be reached
+	 * @return false if the contact can not be reached
 	 */
 	// FIXME: After KDE 3.2 we should split this into a public, NON-virtual
 	//        isReachable() accessor that checks for account->isConnected()
@@ -106,8 +110,8 @@ public:
 	virtual bool isReachable();
 
 	/**
-	 * Accessor function for the contact's MetaContact
-	 * @return The contact's metacontact
+	 * \brief Get the metacontact for this contact
+	 * @return The KopeteMetaContact object for this contact
 	 */
 	KopeteMetaContact *metaContact() const;
 
@@ -134,7 +138,7 @@ public:
 	/**
 	 * @brief Serialize the contacts persistent properties for storage in the contact list.
 	 *
-	 * Does the same @ref serialize() does but fur KopeteContactProperties
+	 * Does the same as @ref serialize() does but for KopeteContactProperties
 	 * set in this contact with their persistency flag turned on.
 	 * In contrary to @ref serialize() this does not need to be reimplemented.
 	 *
@@ -147,26 +151,27 @@ public:
 	void deserializeProperties(QMap<QString, QString> &serializedData);
 
 	/**
-	 * Get the current display name
+	 * \brief Get the current display name
 	 * @return The display name
 	 */
 	QString displayName() const;
 
 	/**
-	 * @brief Return the online status of the contact
+	 * @brief Get the online status of the contact
 	 * @return the online status of the contact
 	 */
 	const KopeteOnlineStatus& onlineStatus() const;
 
 	/**
-	 * Set the contact's online status
+	 * \brief Set the contact's online status
 	 */
 	void setOnlineStatus(const KopeteOnlineStatus &status);
 
 	/**
-	 * Return the unique id that identifies a contact. Id is required
-	 * to be unique per protocol and per account. Across those boundaries
-	 * ids may occur multiple times.
+	 * \brief Get the unique id that identifies a contact.
+	 *
+	 * \note Id is required to be unique per protocol and per account.
+	 * Across those boundaries ids may occur multiple times.
 	 * The id is solely for comparing items safely (using pointers is
 	 * more crash-prone). DO NOT assume anything regarding the id's
 	 * value! Even if it may look like an ICQ UIN or an MSN passport,
@@ -177,9 +182,9 @@ public:
 	QString contactId() const;
 
 	/**
-	 * Return the protocol that the contact belongs to.
+	 * \brief Get the protocol that the contact belongs to.
 	 *
-	 * Note: Id is required to be unique per protocol and per account.
+	 * \note Id is required to be unique per protocol and per account.
 	 * Across those boundaries ids may occur multiple times.
 	 * The id is solely for comparing items safely (using pointers is
 	 * more crash-prone). DO NOT assume anything regarding the id's
@@ -191,13 +196,15 @@ public:
 	KopeteProtocol* protocol() const;
 
 	/**
-	 * Return the account that the contact belongs to.
+	 * \brief Get the account that this contact belongs to
 	 *
-	 * @return the contact's account
+	 * @return the KopeteAccount object for this contact
 	 */
 	KopeteAccount* account() const;
 
 	/**
+	 * \brief Get the set of custom menu items for this contact
+	 *
 	 * Returns a set of custom menu items for the context menu
 	 * which is displayed in showContextMenu (private).  Protocols
 	 * should use this to add protocol-specific actions to the
@@ -212,13 +219,13 @@ public:
 	/**
 	 * @brief Get the Context Menu for this contact
 	 *
-	 * this menu include generic actions common to each protocol, and action defined in
+	 * This menu includes generic actions common to each protocol, and action defined in
 	 * @ref customContextMenuActions()
 	 */
 	KPopupMenu *popupMenu( KopeteMessageManager *manager = 0L );
 
 	/**
-	 * Moves this contact to a new MetaContact.
+	 * \brief Move this contact to a new MetaContact.
 	 * This basically reparents the contact and updates the internal
 	 * data structures.
 	 * If the old contact is going to be empty, a question may ask to the user if it wants to delete the old contact.
@@ -228,21 +235,30 @@ public:
 	void setMetaContact(KopeteMetaContact *m);
 
 	/**
-	 * Returns whether or not this contact is capable of file transfers
-	 * see @ref setFileCapable()
+	 * \brief Get whether or not this contact is capable of file transfers
+	 * 
+	 * 
+	 * \see setFileCapable()
+	 * \return true if the protocol for this contact is capable of file transfers
+	 * \return false if the protocol for this contact is not capable of file transfers
 	 */
 	bool isFileCapable() const;
 
 	/**
-	 * Sets the capability of file transfers for this user. Once this is changed it will
-	 * immediately add a new menu entry called "Send File...", and will call the
-	 * virtual slotSendFile
+	 * \brief Set the file transfer capability of this contact
+	 *
+	 * \param filecap The new file transfer capability setting
 	 */
 	void setFileCapable( bool filecap );
 
 	/**
-	 * Returns if this contact can accept file transfers
-	 * @return true if this contact is online and is capable of sending files, false otherwise
+	 * \brief Get whether or not this contact can accept file transfers 
+	 *
+	 * This function checks to make sure that the contact is online as well as
+	 * capable of sending files.
+	 * \see isReachable()
+	 * @return true if this contact is online and is capable of receiving files
+	 * \return false if this contact is not capable of receiving files
 	 */
 	bool canAcceptFiles() const;
 
@@ -277,15 +293,15 @@ public:
 	virtual QString& icon() const;
 
 	/**
-	 * Return the time (in seconds) this contact has been idle
+	 * \brief Get the time (in seconds) this contact has been idle
 	 * It will return the time set in @ref setIdleTime() with an addition of the time
 	 * since you set this last time
-	 * @return time this contact has been idle for, measuring unit is seconds
+	 * @return time this contact has been idle for, in seconds
 	 */
 	virtual unsigned long int idleTime() const;
 
 	/**
-	 * Set the current idle time in seconds.
+	 * \brief Set the current idle time in seconds.
 	 * Kopete will automatically calculate the time in @ref idleTime
 	 * except if you set 0.
 	 */
@@ -299,25 +315,28 @@ public:
 	/**
 	 * Check for existance of a certain property stored
 	 * using "key".
+	 * \param key the property to check for
 	 **/
 	bool hasProperty(const QString &key) const;
 
 	/**
-	 * Return the value of a property with key "key".
-	 * You should either know the type of the returned QVariant
-	 * or check for it.
+	 * \brief Get the value of a property with key "key".
+	 *
+	 * If you don't know the type of the returned QVariant, you will need
+	 * to check for it.
+	 * \return the value of the property 
 	 **/
 	const Kopete::ContactProperty &property(const QString &key) const;
 	const Kopete::ContactProperty &property(const Kopete::ContactPropertyTmpl &tmpl) const;
 
 	/**
-	 * Add or Set a property for this contact.
+	 * \brief Add or Set a property for this contact.
 	 *
 	 * @param tmpl The template this property is based on, key, label etc. are
 	 * taken from this one
 	 * @param value The value to store
 	 *
-	 * NOTE: Setting a NULL value removes the property if it already existed
+	 * \note Setting a NULL value removes the property if it already existed.
 	 * <b>don't</b> abuse this for property-removal, instead use
 	 * @ref removeProperty() if you want to remove on purpose.
 	 * Removal on NULL is to clean up the list of properties and to purge them
@@ -326,15 +345,16 @@ public:
 	void setProperty(const Kopete::ContactPropertyTmpl &tmpl, const QVariant &value);
 
 	/**
-	 * Remove a property if it exists
+	 * \brief Remove a property if it exists
 	 *
 	 * @param tmpl the template this property is based on
 	 **/
 	void removeProperty(const Kopete::ContactPropertyTmpl &tmpl);
 
 	/**
-	 * Returns an RTF tooltip depending on KopetePrefs settings
+	 * \brief Get the tooltip for this contact
 	 * Makes use of formattedName() and formattedIdleTime().
+	 * \return an RTF tooltip depending on KopetePrefs settings
 	 **/
 	QString toolTip() const;
 

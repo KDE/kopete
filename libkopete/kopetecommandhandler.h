@@ -56,13 +56,15 @@ class KopeteCommandHandler : public QObject
 		static KopeteCommandHandler *commandHandler();
 
 		/**
-		 * Registers a command with the command handler. Command matching is
-		 * case insensitive. All commands are registered, regardless of whether
-		 * or not they are already handled by another handler. This is so that
-		 * if the first plugin is unloaded, the next handler in the sequence
-		 * will handle the command. However, there are certain commands which
-		 * are reserved (internally handled by the KopeteCommandHandler). These
-		 * commands can also be overridden by registering a new duplicate command.
+		 * \brief Register a command with the command handler. 
+		 *
+		 * Command matching is case insensitive. All commands are registered,
+		 * regardless of whether  or not they are already handled by another 
+		 * handler. This is so that if the first plugin is unloaded, the next 
+		 * handler in the sequence will handle the command. However, there are
+		 * certain commands which are reserved (internally handled by the 
+		 * KopeteCommandHandler). These commands can also be overridden by 
+		 * registering a new duplicate command.
 		 *
 		 * @param parent The plugin who owns this command
 		 * @param command The command we want to handle, not including the '/'
@@ -77,7 +79,7 @@ class KopeteCommandHandler : public QObject
 			const KShortcut &cut = 0, const QString &pix = QString::null );
 
 		/**
-		 * Registers a command alias.
+		 * \brief Register a command alias.
 		 *
 		 * @param parent The plugin who owns this alias
 		 * @param alias The command for the alias
@@ -92,10 +94,11 @@ class KopeteCommandHandler : public QObject
 			int maxArgs = -1, const KShortcut &cut = 0, const QString &pix = QString::null );
 
 		/**
-		 * Unregisters a command. When a plugin unloads, all commands are
-		 * automaticlly unregistered and deleted. This function should only
-		 * be called in the case of a plugin which loads and unloads commands
-		 * dynamically.
+		 * \brief Unregister a command.
+		 *
+		 * When a plugin unloads, all commands are automaticlly unregistered and deleted.
+		 * This function should only be called in the case of a plugin which loads and 
+		 * unloads commands dynamically.
 		 *
 		 * @param parent The plugin who owns this command
 		 * @param command The command to unload
@@ -103,15 +106,16 @@ class KopeteCommandHandler : public QObject
 		void unregisterCommand( QObject *parent, const QString &command );
 
 		/**
-		 * Unregisteres an alias. See above.
+		 * \brief Unregister an alias. 
 		 *
+		 * \see unregisterCommand( QObject *parent, const QString &command )
 		 * @param parent The plugin who owns this alias
 		 * @param alias The alais to unload
 		 */
 		void unregisterAlias( QObject *parent, const QString &alias );
 
 		/**
-		 * Processes a message to see if any commands should be handled
+		 * \brief Process a message to see if any commands should be handled
 		 *
 		 * @param msg The message to process
 		 * @param manager The manager who owns this message
@@ -120,7 +124,12 @@ class KopeteCommandHandler : public QObject
 		bool processMessage( KopeteMessage &msg, KopeteMessageManager *manager );
 
 		/**
-		 * An overload of the above function
+		 * \brief Process a message to see if any commands should be handled
+		 *
+		 * \see processMessage( KopeteMessage &msg, KopeteMessageManager *manager)
+		 * \param msg A QString contain the message
+		 * \param manager the KopeteMessageManager who will own the message
+		 * \return true if the command was handled, false if the command was not handled.
 		 */
 		bool processMessage( const QString &msg, KopeteMessageManager *manager );
 
@@ -131,7 +140,7 @@ class KopeteCommandHandler : public QObject
 		static QStringList parseArguments( const QString &args );
 
 		/**
-		 * Used to discover if a command is already handled by any handler
+		 * \brief Check if a command is already handled
 		 *
 		 * @param command The command to check
 		 * @return True if the command is already being handled, False if not

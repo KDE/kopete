@@ -64,6 +64,7 @@ public:
 
 	/**
 	 * \brief Retrieve the list of accounts
+	 * \return a list of all the accounts
 	 */
 	const QPtrList<KopeteAccount> & accounts() const;
 
@@ -72,11 +73,15 @@ public:
 	 *
 	 * The list is guaranteed to contain only accounts for the specified
 	 * protocol
+	 * \param p is the KopeteProtocol object you want accounts for
 	 */
 	QDict<KopeteAccount> accounts( const KopeteProtocol *p );
 
 	/**
 	 * \brief Return the account asked
+	 * \param protocolId is the ID for the protocol
+	 * \param accountId is the ID for the account you want
+	 * \return the KopeteAccount object found or NULL if no account was found
 	 */
 	KopeteAccount* findAccount( const QString &protocolId, const QString &accountId );
 
@@ -89,6 +94,7 @@ public:
 	 * \brief Guess the color for a new account
 	 *
 	 * Guesses a color for the next account of a given protocol based on the already registered colors
+	 * \return the color guessed for the account
 	 */
 	QColor guessColor( KopeteProtocol *protocol );
 
@@ -127,34 +133,34 @@ public slots:
 	void setAvailableAll();
 
 	/**
-	 * @internal
+	 * \internal
 	 * Save the account data to KConfig
 	 */
 	void save();
 
 	/**
-	 * @internal
+	 * \internal
 	 * Load the account data from KConfig
 	 */
 	void load();
 
 signals:
 	/**
-	 * \brief An account is ready for use
+	 * \brief Signals when an account is ready for use
 	 */
 	void accountReady( KopeteAccount *account );
 
 	/**
-	 * \brief An account has been unregistered
+	 * \brief Signals when an account has been unregistered
 	 */
 	void accountUnregistered( KopeteAccount *account );
 
 	/**
 	 * \brief An account has changed its onlinestatus
 	 * Technically this monitors KopeteAccount::myself() onlinestatus changes
-	 * @p account Account which changed its onlinestatus
-	 * @p oldStatus Status before the change
-	 * @p newStatus New status
+	 * \param account Account which changed its onlinestatus
+	 * \param oldStatus The online status before the change
+	 * \param newStatus The new online status
 	 */
 	void accountOnlineStatusChanged(KopeteAccount *account,
 		const KopeteOnlineStatus &oldStatus, const KopeteOnlineStatus &newStatus);
@@ -166,21 +172,21 @@ private:
 	KopeteAccountManager();
 
 	/**
-	 * @internal
+	 * \internal
 	 * Register the account.
 	 * To be called ONLY from KopeteAccount, not from any other class!
 	 */
 	void registerAccount( KopeteAccount *account );
 
 	/**
-	 * @internal
+	 * \internal
 	 * Notify the KopeteAccountManager that an account is ready for use
 	 * Same rules apply as for registerAccount()
 	 */
 	void notifyAccountReady( KopeteAccount *account );
 
 	/**
-	 * @internal
+	 * \internal
 	 * Unregister the account.
 	 * To be called ONLY from KopeteAccount, not from any other class!
 	 */

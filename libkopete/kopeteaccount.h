@@ -55,7 +55,7 @@ struct KopeteAccountPrivate;
  * you can call setPluginData( protocol() , "key" , "value") and pluginData( protocol , "key")
  * see @ref KopetePluginDataObject::setPluginData() and \ref KopetePluginDataObject::pluginData()
  * Note that plugin data are not availiable in the account constructor. They are
- * only availiable after the XML file has been totally parsed. You can reimplement
+ * only available after the XML file has been totally parsed. You can reimplement
  * @ref KopeteAccount::loaded() to do what you have to do right after the XML file is
  * loaded. in the same way, you can't set pluginData in the destructor, because the
  * XML file has already been written, and new changes will not be updated on the disk.

@@ -76,7 +76,7 @@ public:
 	void setGlobalAwayMessage(const QString &message);
 
 	/**
-	 * @brief Sets global away (all protocols)
+	 * @brief Sets global away for all protocols
 	 */
 	static void setGlobalAway(bool status);
 
