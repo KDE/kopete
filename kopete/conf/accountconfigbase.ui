@@ -90,7 +90,7 @@
                 <cstring>mUseColor</cstring>
             </property>
             <property name="text">
-                <string>Use Custom Color</string>
+                <string>Use custom color</string>
             </property>
         </widget>
         <spacer row="6" column="2">

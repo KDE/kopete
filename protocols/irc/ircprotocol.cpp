@@ -103,7 +103,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("query"),
 		SLOT( slotQueryCommand( const QString &, KopeteMessageManager*) ),
-		i18n("USAGE: /query <nickname> - Open a provate chat with this user.") );
+		i18n("USAGE: /query <nickname> - Open a private chat with this user.") );
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("mode"),
 		SLOT( slotModeCommand( const QString &, KopeteMessageManager*) ),

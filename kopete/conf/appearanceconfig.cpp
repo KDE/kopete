@@ -560,7 +560,7 @@ void AppearanceConfig::slotUpdatePreview()
 			KopeteContact *jack = new TestContact(i18n("Jack") );
 
 			KopeteMessage msgIn( jack, myself, i18n("Hello, This is an incoming message :-) "),KopeteMessage::Inbound );
-			KopeteMessage msgOut( myself, jack, i18n("Ok, there is an outgoing message"),KopeteMessage::Outbound );
+			KopeteMessage msgOut( myself, jack, i18n("Ok, this is an outgoing message"),KopeteMessage::Outbound );
 			KopeteMessage msgInt( jack, myself, i18n("This is an internal message"),KopeteMessage::Internal );
 			//KopeteMessage msgHigh( jack, myself, i18n("This is a highlighted message"),KopeteMessage::Inbound );
 			KopeteMessage msgAct( jack, myself, i18n("did an action"),KopeteMessage::Action );

@@ -147,7 +147,7 @@
                         <cstring>txtChatViewBufferSize</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Maximum Chat Window Lines:</string>
+                        <string>&amp;Maximum chat window lines:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>mChatViewBufferSize</cstring>

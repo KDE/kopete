@@ -187,7 +187,7 @@ void IRCContact::slotWhoIsComplete(const QString &nickname)
 		whoIsInfo *w = mWhoisMap[nickname];
 
 		//User info
-		QString msg=i18n("%1 is (%2@%3) : %4\n").arg(nickname).arg(w->userName).arg(w->hostName).arg(w->realName);
+		QString msg=i18n("%1 is (%2@%3): %4\n").arg(nickname).arg(w->userName).arg(w->hostName).arg(w->realName);
 		if( w->isOperator )
 			msg += i18n("%1 is an IRC operator\n").arg(nickname);
 

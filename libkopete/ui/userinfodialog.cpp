@@ -189,31 +189,31 @@ void UserInfoDialog::fillWidgets()
 {
 	kdDebug()<<"Creating widgets"<<endl;
 	if ( !d->name.isEmpty() ) {
-		d->topLayout->addWidget( addLabelEdit( i18n("Name :"), d->name, d->nameEdit ) );
+		d->topLayout->addWidget( addLabelEdit( i18n("Name:"), d->name, d->nameEdit ) );
 	}
 
 	if ( !d->id.isEmpty() ) {
-		d->topLayout->addWidget( addLabelEdit( i18n("ID :"), d->id, d->idEdit ) );
+		d->topLayout->addWidget( addLabelEdit( i18n("ID:"), d->id, d->idEdit ) );
 	}
 
 	if ( !d->status.isEmpty() ) {
-		d->topLayout->addWidget( addLabelEdit( i18n("Status :"), d->status, d->statusEdit ) );
+		d->topLayout->addWidget( addLabelEdit( i18n("Status:"), d->status, d->statusEdit ) );
 	}
 
 	if ( !d->warningLevel.isEmpty() ) {
-		d->topLayout->addWidget( addLabelEdit( i18n("Warning Level :"), d->warningLevel, d->warningEdit ) );
+		d->topLayout->addWidget( addLabelEdit( i18n("Warning level:"), d->warningLevel, d->warningEdit ) );
 	}
 
 	if ( !d->onlineSince.isEmpty() ) {
-		d->topLayout->addWidget( addLabelEdit( i18n("Online Since :"), d->onlineSince, d->onlineEdit ) );
+		d->topLayout->addWidget( addLabelEdit( i18n("Online since:"), d->onlineSince, d->onlineEdit ) );
 	}
 
 	if ( !d->address.isEmpty() ) {
-		d->topLayout->addWidget( addLabelEdit( i18n("Address :"), d->address, d->addressEdit ) );
+		d->topLayout->addWidget( addLabelEdit( i18n("Address:"), d->address, d->addressEdit ) );
 	}
 
 	if ( !d->phone.isEmpty() ) {
-		d->topLayout->addWidget( addLabelEdit( i18n("Phone :"), d->phone, d->phoneEdit ) );
+		d->topLayout->addWidget( addLabelEdit( i18n("Phone:"), d->phone, d->phoneEdit ) );
 	}
 
 	if ( !d->awayMessage.isEmpty() ) {
