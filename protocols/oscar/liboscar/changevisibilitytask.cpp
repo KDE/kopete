@@ -32,6 +32,8 @@
 
 ChangeVisibilityTask::ChangeVisibilityTask(Task* parent): Task(parent)
 {
+	m_sequence = 0;
+	m_visible = true;
 }
 
 
@@ -51,7 +53,7 @@ bool ChangeVisibilityTask::forMe(const Transfer* transfer) const
 		return false;
 	
 	SNAC s = st->snac(); //cheat
-	if ( s.family == 0x0013 && s.subtype == 0x000E && s.id == m_sequence )
+	if ( s.family == 0x0013 && s.subtype == 0x000E )
 		return true;
 	else
 		return false;
@@ -61,7 +63,7 @@ bool ChangeVisibilityTask::take(Transfer* transfer)
 {
 	if ( forMe( transfer ) )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Accepting transfer" << endl;
+		setTransfer( transfer );
 		setSuccess( 0, QString::null );
 		return true;
 	}
@@ -149,58 +151,5 @@ void ChangeVisibilityTask::sendEditEnd()
 	Transfer *t5 = createTransfer( editEnd, editEndSnac, emptyBuffer );
 	send( t5 );
 }
-
-	
-	/* OLD OSCARSOCKET CODE
-	
-		// construct new SSI entry replacing the old one
-		SSI *newSSI = new SSI();
-		newSSI->name = ssi->name;
-		newSSI->gid = ssi->gid;
-		newSSI->bid = ssi->bid;
-		newSSI->type = ssi->type;
-		Buffer *newSSITLV = new Buffer();
-		for(TLV* t = lst.first(); t; t = lst.next())
-		{
-			if(t->type!=0x00ca)
-			{
-				newSSITLV->addTLV(t->type, t->length, t->data);
-				lst.remove(t);
-			}
-		}
-	
-		visibility->data[0] = value;
-		newSSITLV->addTLV(visibility->type, visibility->length, visibility->data);
-	
-		if (!mSSIData.remove(ssi))
-		{
-			kdDebug(14151) << k_funcinfo <<
-				"Couldn't remove old ssi containing visibility value" << endl;
-			delete newSSITLV;
-			delete newSSI;
-			return;
-		}
-		newSSI->tlvlist = newSSITLV->buffer();
-		newSSI->tlvlength = newSSITLV->length();
-	
-		mSSIData.append(newSSI);
-	
-		kdDebug(14151) << k_funcinfo <<
-			"new visibility value=" << visibility->data[0] << endl;
-	
-		kdDebug(14151) << k_funcinfo << "Sending SSI Data to server" << endl;
-		// Make the call to sendSSIAddModDel requesting a "modify"
-		// SNAC (0x0009) with the buddy with the modified group number
-		sendSSIAddModDel(newSSI, 0x0009);
-	}
-	else
-	{
-		kdDebug(14151) << k_funcinfo <<
-			"No visibility TLV found in contactlist, doing nothing" << endl;
-		return;
-	}
-	
-	// Send debugging info that we're done
-	kdDebug(14151) << k_funcinfo << "Completed" << endl;*/
 
 //kate: indent-mode csands; space-indent off; replace-tabs off; tab-width 4;
