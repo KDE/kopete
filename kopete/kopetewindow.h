@@ -23,12 +23,14 @@
 
 #include <kmainwindow.h>
 
-class QLabel;
 class QHBox;
+class QLabel;
 class QListViewItem;
-class KGlobalAccel;
+
 class KAction;
 class KActionMenu;
+class KConfigureDialog;
+class KGlobalAccel;
 class KSelectAction;
 class KToggleAction;
 
@@ -158,12 +160,26 @@ public:
 
 	KopeteSystemTray *tray;
 
+private slots:
+	/**
+	 * Show the prefs dialog. See also the source for a description
+	 * why this is needed.
+	 */
+	void slotShowPreferencesDialog();
+	void slotShowOldPreferencesDialog();
+//	void slotAddAccount();
+	void slotSaveContactList();
+	void slotConfGlobalKeys();
+	void slotShowHide();
+
 private:
 	void initView();
 	void initActions();
 	void initSystray();
 	void loadOptions();
 	void saveOptions();
+
+	KConfigureDialog *m_configDialog;
 	int docked;
 	bool hidden;
 	int deskRight;
@@ -177,6 +193,7 @@ private:
 	 * use QObject instead.
 	 */
 	QPtrDict<QObject> m_accountStatusBarIcons;
+
 	/**
 	 * This is really a dictionary of KopeteProtocolStatusBarIcon objects, but
 	 * QPtrDict requires a full class definition to be known to make
@@ -189,19 +206,9 @@ private:
 	 * This is the away message selection dialog
 	 */
 	KopeteGlobalAwayDialog *m_awayMessageDialog;
-
-private slots:
-	/**
-	 * Show the prefs dialog. See also the source for a description
-	 * why this is needed.
-	 */
-	void slotShowPreferencesDialog();
-	void slotShowOldPreferencesDialog();
-//	void slotAddAccount();
-	void slotSaveContactList();
-	void slotConfGlobalKeys();
-	void slotShowHide();
 };
 
 #endif
+
 // vim: set noet ts=4 sts=4 sw=4:
+

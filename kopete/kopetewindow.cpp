@@ -1,8 +1,9 @@
 /*
     kopetewindow.cpp  -  Kopete Main Window
 
-    Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
-    Copyright (c) 2001-2002 by Stefan Gehn <metz AT gehn.net>
+    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002      by Stefan Gehn            <metz@gehn.net>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -55,12 +56,9 @@
 #include "kopeteprotocolstatusbaricon.h"
 #include <kconfiguredialog.h>
 
-
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 : KMainWindow( parent, name )
 {
-//	kdDebug(14000) << k_funcinfo << "called." << endl;
-
 	// Applications should ensure that their StatusBar exists before calling createGUI()
 	// so that the StatusBar is always correctly positioned when KDE is configured to use
 	// a MacOS-style MenuBar.
@@ -70,6 +68,8 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	m_statusBarWidget->setSpacing( 2 );
 	m_statusBarWidget->setMargin( 2 );
 	statusBar()->addWidget(m_statusBarWidget, 0, true);
+
+	m_configDialog = 0L;
 
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ), this, SLOT( slotSettingsChanged() ) );
 
@@ -659,8 +659,9 @@ void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
 
 void KopeteWindow::slotShowPreferencesDialog()
 {
-	KConfigureDialog *kcd = new KConfigureDialog( this );
-	kcd->show();
+	if ( !m_configDialog )
+		m_configDialog = new KConfigureDialog( this );
+	m_configDialog->show();
 }
 
 void KopeteWindow::slotShowOldPreferencesDialog()
