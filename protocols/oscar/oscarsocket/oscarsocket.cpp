@@ -32,10 +32,6 @@
 #include <kdebug.h>
 #include <kextsock.h>
 
-#include "aimbuddy.h"
-#include "aimgroup.h"
-
-
 // ---------------------------------------------------------------------------------------
 
 OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
@@ -127,6 +123,11 @@ DWORD OscarSocket::setIPv4Address(const QString &address)
 			return newAddr;
 	}
 	return 0;
+}
+
+SSIData& OscarSocket::ssiData()
+{
+	return mSSIData;
 }
 
 void OscarSocket::slotConnected()
@@ -1133,28 +1134,23 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 			ssi->tlvlist = inbuf.getBlock(ssi->tlvlength);
 		else
 			ssi->tlvlist = 0L;
-		ssiData.append(ssi);
-
+		ssi->waitingAuth = false;
+		mSSIData.append(ssi);
 
 		kdDebug(14150) << k_funcinfo << "Read server-side list-entry. name='" <<
 			ssi->name << "', groupId=" << ssi->gid << ", id=" << ssi->bid <<
 			", type=" << ssi->type << ", TLV length=" << ssi->tlvlength << endl;
 
 
-		AIMBuddy *bud;
 		switch (ssi->type)
 		{
 			case 0x0000: // normal contact
 			{
-				bud = new AIMBuddy(ssi->bid, ssi->gid, ssi->name);
-
-				// In case we already know that contact
-				OscarContact *contact = static_cast<OscarContact*>(mAccount->contacts()[ssi->name]);
-
-				AIMGroup *group = mAccount->findGroup( ssi->gid, OscarAccount::ServerSideContacts );
+				SSI* group = mSSIData.findGroup( ssi->gid );
 				QString groupName = "\"Group not found\"";
-				if (group)
-					groupName = group->name();
+
+				if ( group )
+					groupName = group->name;
 
 				kdDebug(14150) << k_funcinfo << "Adding Contact '" << ssi->name <<
 					"' to group " << ssi->gid << " (" <<  groupName << ")" << endl;
@@ -1172,8 +1168,8 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 						{
 							if(t->length > 0)
 							{
-								bud->setAlias(ServerToQString(t->data, contact, false));
-								//bud->setalias(QString::fromLocal8Bit(t->data));
+								kdDebug(14150) << k_funcinfo << "sent nickname '"
+									 << t->data << "'" << endl;
 							}
 							break;
 						}
@@ -1189,8 +1185,10 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 							*/
 							/*kdDebug(14150) << k_funcinfo <<
 								"Contact has WAITAUTH set." << endl;*/
-							bud->setWaitAuth(true);
-							blmBuddies << bud->screenname();
+							//TODO: reimplement somehow. Set waitauth flag and add to blm lists
+							ssi->waitingAuth = true;
+							blmBuddies << ssi->name;
+							
 							break;
 						}
 
@@ -1230,8 +1228,6 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 				} // END for()
 
 				lst.clear();
-				bud->setServerSide( true );
-				mAccount->addBuddy( bud );
 				break;
 			}
 
@@ -1253,7 +1249,6 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 				{
 					kdDebug(14150) << k_funcinfo << "Adding Group " <<
 						ssi->gid << " (" <<  ssi->name << ")" << endl;
-					mAccount->addGroup( ssi->gid, ssi->name, OscarAccount::ServerSideContacts );
 				}
 				break;
 			}
@@ -1268,20 +1263,8 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 
 			case 0x0003: // TODO deny buddy AKA invisible list
 			{
-				// FIXME: We don't support the deny list yet, so the below
-				//        (commented out) code is not used anyway. To ease
-				//        the removal of AIMBuddy I commented it out. What
-				//        we need is a list of commented out buddies. This
-				//        used to be a simple QPtrList<AIMBuddy>, but I
-				//        guess almost anything will do. - Martijn
-			/*
-				bud = new AIMBuddy(ssi->bid, ssi->gid, ssi->name);
-				kdDebug(14150) << k_funcinfo << "Adding Contact '" << ssi->name <<
-					"' to INVISIBLE/DENY list." << endl;
-				bud->setServerSide( true );
-				mAccount->addBuddyDeny( bud );
-				emit denyAdded(ssi->name);
-			*/
+				kdDebug(14150) << k_funcinfo << "[TODO] Add contact '" << ssi->name << "'"
+					<< " to INVISIBLE/DENY list." << endl;
 				break;
 			}
 
@@ -2894,6 +2877,7 @@ xx			byte	Current state
 
 void OscarSocket::doLogoff()
 {
+	mSSIData.clear();
 	if(isLoggedIn && (socket()->socketStatus() == KExtendedSocket::connected))
 	{
 		/*if(mIsICQ) // Done in slotConnectionClosed()
@@ -2924,14 +2908,14 @@ void OscarSocket::sendAddBuddy(const QString &contactName, const QString &groupN
 
 	kdDebug(14150) << k_funcinfo << "Sending SSI add buddy" << endl;
 
-	group = ssiData.findGroup(groupName);
+	group = mSSIData.findGroup(groupName);
 	if (!group)
 	{
-		group = ssiData.addGroup(groupName);
+		group = mSSIData.addGroup(groupName);
 		sendAddGroup(groupName);
 	}
 
-	newContact = ssiData.addContact(contactName, groupName, addingAuthBuddy);
+	newContact = mSSIData.addContact(contactName, groupName, addingAuthBuddy);
 
 	kdDebug(14150) << k_funcinfo << "Adding " << newContact->name << ", gid " <<
 		newContact->gid << ", bid " << newContact->bid << ", type " << newContact->type
@@ -2969,8 +2953,8 @@ void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
 			"Moving " << buddyName << " into group " << newGroup << endl;
 
 	// Check to make sure that the group has actually changed
-	SSI *buddyItem = ssiData.findContact(buddyName, oldGroup);
-	SSI *groupItem = ssiData.findGroup(newGroup);
+	SSI *buddyItem = mSSIData.findContact(buddyName, oldGroup);
+	SSI *groupItem = mSSIData.findGroup(newGroup);
 	if (buddyItem == 0L || groupItem == 0L)
 	{
 		kdDebug(14150) << k_funcinfo <<
@@ -3052,7 +3036,7 @@ void OscarSocket::sendChangeVisibility(BYTE value)
 	kdDebug(14150) << k_funcinfo << "Setting visibility to " << value << endl;
 
 	// Check to make sure that the group has actually changed
-	SSI *ssi = ssiData.findVisibilitySetting();
+	SSI *ssi = mSSIData.findVisibilitySetting();
 	if (!ssi)
 	{
 		kdDebug(14150) << k_funcinfo <<
@@ -3101,7 +3085,7 @@ void OscarSocket::sendChangeVisibility(BYTE value)
 		visibility->data[0] = value;
 		newSSITLV->addTLV(visibility->type, visibility->length, visibility->data);
 
-		if (!ssiData.remove(ssi))
+		if (!mSSIData.remove(ssi))
 		{
 			kdDebug(14150) << k_funcinfo <<
 				"Couldn't remove old ssi containing visibility value" << endl;
@@ -3112,7 +3096,7 @@ void OscarSocket::sendChangeVisibility(BYTE value)
 		newSSI->tlvlist = newSSITLV->buffer();
 		newSSI->tlvlength = newSSITLV->length();
 
-		ssiData.append(newSSI);
+		mSSIData.append(newSSI);
 
 		kdDebug(14150) << k_funcinfo <<
 			"new visibility value=" << visibility->data[0] << endl;
@@ -3138,7 +3122,7 @@ void OscarSocket::sendRenameBuddy(const QString &budName,
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 
-	SSI *ssi = ssiData.findContact(budName, budGroup);
+	SSI *ssi = mSSIData.findContact(budName, budGroup);
 
 	if (!ssi)
 	{
@@ -3195,7 +3179,7 @@ void OscarSocket::sendRenameBuddy(const QString &budName,
 	//const char *newNickData = newAlias.local8Bit().copy();
 	newSSIdata->addTLV(0x0131, newAlias.local8Bit().length(), newAlias.local8Bit());
 
-	if (!ssiData.remove(ssi))
+	if (!mSSIData.remove(ssi))
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"Couldn't remove old ssi containing contact" << endl;
@@ -3206,7 +3190,7 @@ void OscarSocket::sendRenameBuddy(const QString &budName,
 	newSSI->tlvlist = newSSIdata->buffer();
 	newSSI->tlvlength = newSSIdata->length();
 
-	ssiData.append(newSSI);
+	mSSIData.append(newSSI);
 
 	kdDebug(14150) << k_funcinfo << "Renaming, new SSI block: name=" << newSSI->name <<
 		", gid=" << newSSI->gid << ", bid=" << newSSI->bid <<
@@ -3221,7 +3205,7 @@ int OscarSocket::sendAddGroup(const QString &name)
 {
 	kdDebug(14150) << k_funcinfo << "Called. Adding group to SSI" << endl;
 
-	SSI *newitem = ssiData.addGroup(name);
+	SSI *newitem = mSSIData.addGroup(name);
 	if(!newitem)
 	{
 		kdDebug(14150) << k_funcinfo <<
@@ -3253,7 +3237,7 @@ void OscarSocket::sendChangeGroupName(const QString &currentName,
 
 	// Get the SSI data item to send using the
 	// sendSSIAddModDel method
-	SSI *updatedItem = ssiData.renameGroup(currentName, newName);
+	SSI *updatedItem = mSSIData.renameGroup(currentName, newName);
 	// Make the call to sendSSIAddModDel requesting a "modify"
 	// SNAC (0x0009)
 	sendSSIAddModDel(updatedItem, 0x0009);
@@ -3265,10 +3249,10 @@ void OscarSocket::sendDelGroup(const QString &groupName)
 		<< "Removing group " << groupName << "from SSI" << endl;
 
 	// Get the SSIData for this operation
-	SSI *delGroup = ssiData.findGroup(groupName);
+	SSI *delGroup = mSSIData.findGroup(groupName);
 
 	// Print out the SSI Data for debugging purposes
-	ssiData.print();
+	mSSIData.print();
 
 	if (!delGroup)
 	{	// There was an error finding the group
@@ -3288,7 +3272,7 @@ void OscarSocket::sendDelGroup(const QString &groupName)
 
 	// Remove it from the internal Server Side Information
 	// list
-	if (!ssiData.remove(delGroup))
+	if (!mSSIData.remove(delGroup))
 	{
 		kdDebug(14150) << k_funcinfo << delGroup 
 			<< " was not found in the SSI list" << endl;
@@ -3363,14 +3347,12 @@ void OscarSocket::parseSSIAck(Buffer &inbuf, const DWORD reqId)
 	WORD result = inbuf.getWord();
 	AckBuddy buddy = ackBuddy(reqId);
 
-	AIMBuddy *bud = 0L;
 	OscarContact *contact = 0L;
 
+	SSI* ssiItem = mSSIData.findContact( buddy.contactName, buddy.groupName );
+
 	if ( !buddy.contactName.isEmpty() )
-	{
 		contact = static_cast<OscarContact*>(mAccount->contacts()[buddy.contactName]);
-		bud = mAccount->findBuddy( buddy.contactName );
-	}
 
 	switch(result)
 	{
@@ -3399,7 +3381,7 @@ void OscarSocket::parseSSIAck(Buffer &inbuf, const DWORD reqId)
 			contact->requestAuth();
 			sendAddBuddy(buddy.contactName, buddy.groupName, true);
 			sendAddBuddylist(buddy.contactName);
-			bud->setWaitAuth(true);
+			ssiItem->waitingAuth = true;
 			break;
 		default:
 			kdDebug(14150) << k_funcinfo << "Unknown result " << result << endl;
@@ -3412,8 +3394,8 @@ void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
 {
 	kdDebug(14150) << k_funcinfo << "Sending del contact" << endl;
 
-	SSI *delitem = ssiData.findContact(budName,budGroup);
-	ssiData.print();
+	SSI *delitem = mSSIData.findContact(budName,budGroup);
+	mSSIData.print();
 	if (!delitem)
 	{
 		kdDebug(14150) << "Item with name " << budName << " and group "
@@ -3427,7 +3409,7 @@ void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
 
 	sendSSIAddModDel(delitem,0x000a);
 
-	if (!ssiData.remove(delitem))
+	if (!mSSIData.remove(delitem))
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"delitem was not found in the SSI list" << endl;
@@ -3773,7 +3755,7 @@ void OscarSocket::sendMsgParams()
 
 void OscarSocket::sendBlock(const QString &sname)
 {
-	SSI *newitem = ssiData.addInvis(sname);
+	SSI *newitem = mSSIData.addInvis(sname);
 	if (!newitem)
 		return;
 
@@ -3792,7 +3774,7 @@ void OscarSocket::sendRemoveBlock(const QString &sname)
 	kdDebug(14150) << k_funcinfo << "Removing DENY for contact '" <<
 		sname << "'" << endl;
 
-	SSI *delitem = ssiData.findInvis(sname);
+	SSI *delitem = mSSIData.findInvis(sname);
 	if (!delitem)
 	{
 		kdDebug(14150) << k_funcinfo << "Item with name " << sname <<
@@ -3807,13 +3789,13 @@ void OscarSocket::sendRemoveBlock(const QString &sname)
 
 	sendSSIAddModDel(delitem,0x000a);
 
-	if (!ssiData.remove(delitem))
+	if (!mSSIData.remove(delitem))
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"delitem was not found in the SSI list" << endl;
 	}
 
-	ssiData.print();
+	mSSIData.print();
 
 	// FIXME: Use SNAC headers and SSI acks to do this more correctly
 	emit denyRemoved(sname);

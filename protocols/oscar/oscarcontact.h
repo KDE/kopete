@@ -2,7 +2,8 @@
   oscarcontact.h  -  Oscar Protocol Plugin
 
   Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
-  Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+  Copyright (c) 2004 by Matt Rogers <matt.rogers@kdemail.net>
+  Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -26,8 +27,6 @@
 #include "kopetemessage.h"
 
 #include "oscarsocket.h"
-
-class AIMBuddy;
 
 class KAction;
 class KopeteMessageManager;
@@ -86,8 +85,8 @@ class OscarContact : public KopeteContact
 		const unsigned int  tcpVersion() const { return mTcpVersion; }
 		const QDateTime signonTime() const { return mSignonTime; }*/
 
-		bool waitAuth() const;
-		void setWaitAuth(bool b) const;
+//		bool waitAuth() const;
+//		void setWaitAuth(bool b) const;
 		const UserInfo &userInfo() { return mInfo; }
 		bool hasCap(DWORD cap) { return mInfo.capabilities & cap; }
 
@@ -138,10 +137,10 @@ class OscarContact : public KopeteContact
 		KopeteMessageManager *mMsgManager;
 
 		/*
-		 * The internal representation of our AIMBuddy
-		 * in the internal buddy list
+		 * The internal representation of our contact
 		 */
-		AIMBuddy *mListContact;
+		//TODO: Use SSI
+		
 
 	protected slots:
 		/** Called when a buddy has changed status */

@@ -895,7 +895,7 @@ void ICQProtocol::deserializeContact(KopeteMetaContact *metaContact,
 	ICQContact *c = new ICQContact(contactId, displayName, account, metaContact);
 	c->setGroupId(serializedData["groupID"].toInt());
 	c->setEncoding(serializedData["Encoding"].toInt());
-	c->setWaitAuth(serializedData["awaitingAuth"] == "1");
+	
 }
 
 AddContactPage *ICQProtocol::createAddContactWidget(QWidget *parent, KopeteAccount *account)

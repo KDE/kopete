@@ -249,7 +249,8 @@ QPtrList<KAction> *ICQContact::customContextMenuActions()
 			this, SLOT(slotSendAuth()), this, "actionSendAuth");
 	}
 
-	actionRequestAuth->setEnabled(waitAuth() && account()->isConnected());
+	//TODO: Only enable this if waitAuth is set
+	actionRequestAuth->setEnabled(account()->isConnected());
 	actionSendAuth->setEnabled(account()->isConnected());
 	actionReadAwayMessage->setEnabled(status != OSCAR_OFFLINE && status != OSCAR_ONLINE);
 

@@ -1,15 +1,18 @@
-//
-//
-// C++ Implementation: cpp
-//
-// Description:
-//
-//
-// Author: Will Stephenson, (C) 2003
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+/*
+  aimcontact.cpp  -  Oscar Protocol Plugin
+
+  Copyright (c) 2003 by Will Stephenson
+  Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
+
+  *************************************************************************
+  *                                                                       *
+  * This program is free software; you can redistribute it and/or modify  *
+  * it under the terms of the GNU General Public License as published by  *
+  * the Free Software Foundation; either version 2 of the License, or     *
+  * (at your option) any later version.                                   *
+  *                                                                       *
+  *************************************************************************
+*/
 
 #include <time.h>
 
@@ -23,7 +26,7 @@
 #include "kopeteaway.h"
 #include "kopetemessagemanager.h"
 #include "kopeteuiglobal.h"
-#include "aimbuddy.h"
+#include "kopetemetacontact.h"
 #include "aimprotocol.h"
 #include "aimcontact.h"
 #include "aimaccount.h"
@@ -83,6 +86,12 @@ void AIMContact::slotGotProfile(const UserInfo &user, const QString &profile, co
 	kdDebug(14200) << k_funcinfo << "Called for contact '" << displayName() << "'" << endl;
 	mUserProfile = profile;
 	setAwayMessage(away);
+	if ( metaContact()->isTemporary() && onlineStatus().internalStatus() == OSCAR_OFFLINE && user.onlinesince.isValid() )
+	{
+		kdDebug(14150) << k_funcinfo << "Attempting to set status to online for temp contact" << endl;
+		setStatus(OSCAR_ONLINE);
+	}
+	
 	emit updatedProfile();
 }
 
@@ -346,8 +355,8 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	}
 
 	// Check to see if the person we're sending the message to is online
-	if((mListContact->status() == static_cast<int>(OSCAR_OFFLINE)) ||
-		(onlineStatus().status() == KopeteOnlineStatus::Offline))
+	
+	if( onlineStatus().status() == KopeteOnlineStatus::Offline )
 	{
 		KMessageBox::sorry(Kopete::UI::Global::mainWidget(),
 			i18n("<qt>This user is not online at the moment for you to message them. "

@@ -40,6 +40,7 @@ SSI *SSIData::addContact(const QString &name, const QString &group, bool addingA
 	SSI *newitem = new SSI;
 	newitem->name = name;
 	newitem->gid = tmp->gid;
+	newitem->waitingAuth = false;
 
 	//find the largest bid (=contact id) in our group
 	unsigned short maxbid = 0;
@@ -61,6 +62,7 @@ SSI *SSIData::addContact(const QString &name, const QString &group, bool addingA
 		// TLV(0x0066) with no data
 		newitem->tlvlist = "\x00\x66\x00\x00";
 		newitem->tlvlength = 4;
+		newitem->waitingAuth = true;
 	}
 
 	append(newitem);
@@ -97,6 +99,24 @@ SSI *SSIData::findContact(const QString &name, const QString &group)
 	return 0L;
 }
 
+SSI *SSIData::findContact( const QString& name )
+{
+	for (SSI *i=first(); i; i = next())
+	{
+		//if the ssi item has the right name, is a contact, and has the right group
+		/*kdDebug(14150) << k_funcinfo <<
+			"i->gid is " << i->gid << ", gr->gid is " << gr->gid << endl;*/
+		if ((i->name.lower() == name.lower()) && (i->type == ROSTER_CONTACT))
+		{
+			//we have found our contact
+			kdDebug(14150) << "Found contact " << name << " in SSI data" << endl;
+			return i;
+		}
+	}
+	
+	return 0L;
+}
+
 // ========================================================================================
 
 SSI *SSIData::findGroup(const QString &name)
@@ -111,10 +131,11 @@ SSI *SSIData::findGroup(const QString &name)
 
 SSI *SSIData::findGroup(const int groupId)
 {
-	for (SSI *i=first(); i; i = next())
+	kdDebug(14151) << "Looking for gid '" << groupId << "'" << endl;
+	for (QPtrListIterator<SSI> it (*this); it.current(); ++it)
 	{
-		if ((current()->bid == groupId) && (current()->type == ROSTER_GROUP))
-			return current();
+		if ( it.current()->gid == groupId && it.current()->type == ROSTER_GROUP )
+			return it.current();
 	}
 	return 0L;
 }
@@ -175,6 +196,7 @@ SSI *SSIData::addInvis(const QString &name)
 	newitem->type = ROSTER_INVISIBLE; // the type here is deny
 	newitem->tlvlist = 0L;
 	newitem->tlvlength = 0;
+	newitem->waitingAuth = false;
 
 	append(newitem);
 
@@ -234,6 +256,21 @@ unsigned short SSIData::maxGroupId()
 	}
 	return maxId;
 }
+
+void SSIData::setWaitingAuth( SSI* item, bool waiting )
+{
+	if ( item )
+		item->waitingAuth = waiting;
+}
+
+bool SSIData::waitingAuth( SSI* item )
+{
+	if ( item )
+		return item->waitingAuth;
+
+	return 0L;
+}
+
 
 void SSIData::print()
 {

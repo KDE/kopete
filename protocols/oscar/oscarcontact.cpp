@@ -39,8 +39,6 @@
 #include <kopeteglobal.h>
 
 #include "aim.h"
-#include "aimbuddy.h"
-#include "aimgroup.h"
 #include "oscarsocket.h"
 #include "oscaraccount.h"
 
@@ -62,16 +60,6 @@ OscarContact::OscarContact(const QString& name, const QString& displayName,
 	mEncoding=0;
 	mGroupId=0;
 	mMsgManager=0L;
-
-	// BEGIN TODO: remove AIMBuddy
-	mListContact = mAccount->findBuddy( mName );
-
-	if (!mListContact) // this Contact is not yet in the internal contactlist!
-	{
-		mListContact=new AIMBuddy(mAccount->randomNewBuddyNum(), 0, mName);
-		mAccount->addBuddy( mListContact );
-	}
-	// END TODO: remove AIMBuddy
 
 	setFileCapable(false);
 
@@ -181,34 +169,6 @@ void OscarContact::slotMessageManagerDestroyed()
 	mMsgManager = 0L;
 }
 
-// FIXME: Can be removed when AIMBuddy is gone
-void OscarContact::slotUpdateBuddy()
-{
-	// Just to make sure the stupid AIMBuddy has proper status
-	// This should be handled in AIM/ICQContact now!
-	mListContact->setStatus(onlineStatus().internalStatus());
-
-	if (mAccount->isConnected())
-	{
-		// Probably already broken. Does not work at all for ICQ because uin never changes
-		if (mName != mListContact->screenname()) // contact changed his nickname
-		{
-			if(!mListContact->alias().isEmpty())
-				setDisplayName(mListContact->alias());
-			else
-				setDisplayName(mListContact->screenname());
-		}
-	}
-	else // oscar-account is offline so all users are offline too
-	{
-		mListContact->setStatus(OSCAR_OFFLINE);
-		setStatus(OSCAR_OFFLINE);
-		mInfo.idletime = 0;
-		setIdleTime(0);
-		emit idleStateChanged(this);
-	}
-}
-
 void OscarContact::slotMainStatusChanged(const unsigned int newStatus)
 {
 	if(newStatus == OSCAR_OFFLINE)
@@ -236,40 +196,30 @@ void OscarContact::slotOffgoingBuddy(QString sn)
 void OscarContact::slotUpdateNickname(const QString newNickname)
 {
 	setDisplayName(newNickname);
-	//emit updateNickname ( newNickname );
-	mListContact->setAlias(newNickname);
 }
+
+void OscarContact::slotUpdateBuddy()
+{
+
+}
+
 
 void OscarContact::slotDeleteContact()
 {
 	kdDebug(14150) << k_funcinfo << "contact '" << displayName() << "'" << endl;
 
-	AIMGroup *group = mAccount->findGroup( mGroupId );
-
-	if(!group && metaContact() && metaContact()->groups().count() > 0)
+	QString grpName;
+	if( metaContact() && metaContact()->groups().count() > 0 )
 	{
-		QString grpName=metaContact()->groups().first()->displayName();
+		grpName = metaContact()->groups().first()->displayName();
 		kdDebug(14150) << k_funcinfo <<
 			"searching group by name '" << grpName << "'" << endl;
-		group = mAccount->findGroup( grpName );
 	}
 
-	if (!group)
-	{
-		kdDebug(14150) << k_funcinfo <<
-			"Couldn't find serverside group for contact, cannot delete on server :(" << endl;
-		if ( mAccount->engine()->isICQ() )
-			mAccount->engine()->sendDelBuddylist(contactName());
-		return;
-	}
-	else
-	{
-		if (waitAuth())
-			mAccount->engine()->sendDelBuddylist(contactName());
-		mAccount->engine()->sendDelBuddy(contactName(), group->name());
-	}
-
-	mAccount->removeBuddy( mListContact );
+	if ( mAccount->engine()->isICQ() )
+		mAccount->engine()->sendDelBuddylist(contactName());
+	mAccount->engine()->sendDelBuddy(contactName(), grpName ); 
+	
 	deleteLater();
 }
 
@@ -379,6 +329,7 @@ void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*
 // Called when the metacontact owning this contact has changed groups
 void OscarContact::syncGroups()
 {
+	kdDebug(14150) << k_funcinfo << "Called" << endl;
 	if( !metaContact())
 		return;
 	// Get the (kopete) group that we belong to
@@ -389,6 +340,7 @@ void OscarContact::syncGroups()
 		return;
 	}
 
+	
 	// Oscar only supports one group per contact, so just get the first one
 	KopeteGroup *firstKopeteGroup = groups.first();
 	if(!firstKopeteGroup)
@@ -397,48 +349,39 @@ void OscarContact::syncGroups()
 		return;
 	}
 
-	//kdDebug(14150) << k_funcinfo << "First Kopete Group: " << firstKopeteGroup->displayName() << endl;
-	//kdDebug(14150) << k_funcinfo << "Current mGroupId: " << mGroupId << endl;
-
-	// Get the current (oscar) group that this contact belongs to on the server
-	AIMGroup *currentOscarGroup = mAccount->findGroup( mGroupId );
-
-	// Get the new (oscar) group that this contact belongs to on the server
-	AIMGroup *newOscarGroup = mAccount->findGroup( firstKopeteGroup->displayName() );
-
-	if(!newOscarGroup)
+	kdDebug(14150) << k_funcinfo << "SSI Data before change of group" << endl;
+	mAccount->engine()->ssiData().print();
+	if ( !mAccount->engine()->ssiData().findGroup( firstKopeteGroup->displayName() ) )
 	{
-		// This is a new group, it doesn't exist on the server yet
-		kdDebug(14150) << k_funcinfo
-			<< ": New group did not exist on server, "
-			<< "asking server to create it first"
-			<< endl;
-		// Ask the server to create the group
-		mGroupId = mAccount->engine()->sendAddGroup(firstKopeteGroup->displayName());
+		//We don't have the group in SSI yet. Add it.
+		kdDebug(14150) << "Adding missing group " << firstKopeteGroup->displayName() << endl;
+		mAccount->engine()->sendAddGroup( firstKopeteGroup->displayName() );
 	}
 	else
-		mGroupId = newOscarGroup->ID();
+		kdDebug(14150) << "New group found in SSI already" << endl;
 
-	//kdDebug(14150) << k_funcinfo << "New mGroupId: " << mGroupId << endl;
-
-	if (!currentOscarGroup)
-	{
-		// Contact is not on the SSI
-		kdDebug(14150) << k_funcinfo <<
-			"Could not get current Oscar group for contact '" << displayName() << "'. Adding contact to the SSI." << endl;
-		mAccount->engine()->sendAddBuddy(contactName(), firstKopeteGroup->displayName(), false);
-		return;
+	/*
+	* temporary contact's have their display name set to what the contactID would be
+	* so if it's a temporary contact, it's not on SSI. We'll have to add it.
+	*
+	* Another possibility is moving a buddy in the blm, but in that case, we don't need
+        * to move him on BLM or SSI or anywhere, since BLM doesn't keep track of groups.
+	* 
+	* Due to a bug in libkopete, temporary contacts don't have syncGroups called on them
+	*/
+	SSI* movedItem = mAccount->engine()->ssiData().findContact( contactId() );
+	if ( movedItem )
+	{	//hey, contact's on SSI, move him
+		SSI* oldGroup = mAccount->engine()->ssiData().findGroup( movedItem->gid );
+		//I'm not checking the old group pointer because since we're using
+		//the gid, the group is guaranteed to be found.
+		mAccount->engine()->sendChangeBuddyGroup( movedItem->name, oldGroup->name,
+			firstKopeteGroup->displayName() );
 	}
-
-	if (currentOscarGroup->name() != firstKopeteGroup->displayName())
-	{
-		// The group has changed, so ask the engine to change
-		// our group on the server
-		mAccount->engine()->sendChangeBuddyGroup(
-			contactName(),
-			currentOscarGroup->name(),
-			firstKopeteGroup->displayName());
-	}
+	else
+		kdDebug(14150) << "Contact must be in BLM. Doing nothing" << endl;
+	kdDebug(14150) << k_funcinfo << "SSI Data after change of group" << endl;
+	mAccount->engine()->ssiData().print();
 }
 
 #if 0
@@ -505,36 +448,8 @@ void OscarContact::rename(const QString &newNick)
 	kdDebug(14150) << k_funcinfo << "Rename '" << displayName() << "' to '" <<
 		newNick << "'" << endl;
 
-	AIMGroup *currentOscarGroup = 0L;
-
-	if(mAccount->isConnected())
-	{
-		//FIXME: group handling!
-		currentOscarGroup = mAccount->findGroup( mGroupId );
-		if(!currentOscarGroup)
-		{
-			if(metaContact() && metaContact()->groups().count() > 0)
-			{
-				QString grpName=metaContact()->groups().first()->displayName();
-				kdDebug(14150) << k_funcinfo <<
-					"searching group by name '" << grpName << "'" << endl;
-				currentOscarGroup = mAccount->findGroup( grpName );
-			}
-		}
-
-		if(currentOscarGroup)
-		{
-			mAccount->engine()->sendRenameBuddy(mName,
-				currentOscarGroup->name(), newNick);
-		}
-		else
-		{
-			kdDebug(14150) << k_funcinfo <<
-				"couldn't find AIMGroup for contact, can't rename on server" << endl;
-		}
-	}
-
-	mListContact->setAlias(newNick);
+	//TODO: group handling!
+	
 	setDisplayName(newNick);
 }
 
@@ -623,10 +538,11 @@ void OscarContact::slotGotAuthReply(const QString &contact, const QString &reaso
 	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "' reason='" <<
 		reason << "' granted=" << granted << endl;
 
-	setWaitAuth(granted);
+// TODO: Reimplement
+//	setWaitAuth(granted);
 
-	if (!waitAuth())
-		mAccount->engine()->sendDelBuddylist(tocNormalize(contact));
+/*	if (!waitAuth())
+		mAccount->engine()->sendDelBuddylist(tocNormalize(contact));*/
 
 	// FIXME: remove this method and handle auth in oscaraccount already!
 	/*
@@ -696,6 +612,7 @@ void OscarContact::receivedIM(KopeteMessage &msg)
 #endif
 }
 
+#if 0
 bool OscarContact::waitAuth() const
 {
 	// TODO: move var to OscarContact
@@ -706,6 +623,8 @@ void OscarContact::setWaitAuth(bool b) const
 {
 	mListContact->setWaitAuth(b);
 }
+
+#endif
 
 const unsigned int OscarContact::encoding()
 {
@@ -734,7 +653,7 @@ void OscarContact::setGroupId(const int newgid)
 
 void OscarContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &/*addressBookData*/)
 {
-	serializedData["awaitingAuth"] = waitAuth() ? "1" : "0";
+//	serializedData["awaitingAuth"] = waitAuth() ? "1" : "0";
 	serializedData["Encoding"] = QString::number(mEncoding);
 	serializedData["groupID"] = QString::number(mGroupId);
 }

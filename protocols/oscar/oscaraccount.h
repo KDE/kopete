@@ -28,13 +28,8 @@
 
 class KopeteContact;
 class KopeteGroup;
-
 class OscarContact;
-
 class OscarSocket;
-class AIMBuddy;
-class AIMGroup;
-
 class OscarAccountPrivate;
 
 class OscarAccount : public KopeteAccount
@@ -85,6 +80,32 @@ public:
 	 */
 	int randomNewGroupNum();
 
+	/**
+	 * \brief Add a group to the contact list from the server
+	 *
+	 * Used on initial contactlist fetch in order to add groups to 
+	 * the contact list that may or may not exist yet.
+	 * Also takes care of adding contacts that are waiting in the queue
+	 * because their group hasn't arrived yet.
+	 */
+	void addGroup( const QString& groupName );
+
+	/**
+	 * \brief Add a already existing server contacts to the Kopete list
+	 *
+	 * Used on initial contactlist fetch to add contacts to the Kopete contact list
+	 * 
+	 */
+	void addOldContact( SSI* ssiItem, KopeteMetaContact* meta = 0L );
+
+	/**
+	 * \brief Add contacts that were missing groups to the contact list
+	 * 
+	 * Use on initial contactlist fetch to add contacts to the contact list
+	 * that were missing a group
+	 */
+	void addServerContact( SSI* ssiItem );
+
 	/*
 	 * Sets the port we connect to
 	 */
@@ -108,42 +129,6 @@ public:
 	 */
 	virtual void setStatus(const unsigned long status,
 		const QString &awayMessage = QString::null) =0;
-
-	// -- MERGED METHODS FROM AIMBUDDYLIST -------------------------------
-	// These methods need to be reviewed and better integrated with
-	// OscarAccount, for now they are just a direct copy of the code
-	enum OscarContactType { AllContacts, ServerSideContacts };
-
-	/**
-	 * Adds a group to the contact list and returns the new group
-	 */
-	AIMGroup *addGroup( int id, const QString &name = QString::null, OscarContactType type = AllContacts );
-
-	/**
-	 * Finds a group and returns it. Uses GID
-	 */
-	AIMGroup *findGroup( int id, OscarContactType type = AllContacts );
-
-	/**
-	 * Adds a buddy to the buddy list
-	 */
-	void addBuddy( AIMBuddy *buddy );
-
-	/**
-	 * Finds a buddy in the buddy list. Returns 0L if none found.
-	 */
-	AIMBuddy *findBuddy( const QString &screenName );
-
-	/**
-	 * Finds a group by name
-	 */
-	AIMGroup *findGroup( const QString &name );
-
-	/**
-	 * Removes a buddy from the buddy list
-	 */
-	void removeBuddy( AIMBuddy *buddy );
-	// -- END MERGED METHODS FROM AIMBUDDYLIST ---------------------------
 
 public slots:
 	/*
@@ -224,25 +209,12 @@ protected:
 		KopeteMetaContact *parentContact ) =0;
 
 	/*
-	 * Adds a contact to the internal list.
-	 * This means that the contact is already
-	 * on the server-side list
-	 */
-	virtual void addServerContact(AIMBuddy *buddy);
-
-	/*
 	 * Initializes the engine
 	 */
 	virtual void initEngine(bool);
 
-	/*
-	 * Adds a buddy that we queued to
-	 * the contact list
-	 */
-	void addOldContact(AIMBuddy *bud, KopeteMetaContact *meta=0l);
-
 	void syncLocalWithServerBuddyList();
-	AIMGroup * findOrCreateGroup( const QString& localGroup );
+
 
 private:
 	OscarAccountPrivate *d;
