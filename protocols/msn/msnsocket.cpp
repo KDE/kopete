@@ -48,9 +48,8 @@ MSNSocket::~MSNSocket()
 	//if ( m_onlineStatus != Disconnected )
 	//	disconnect();
 	doneDisconnect();
-	delete m_socket;
-	//if ( m_socket )
-	//	m_socket->deleteLater();
+	if ( m_socket )
+		m_socket->deleteLater();
 }
 
 void MSNSocket::connect( const QString &server, uint port )

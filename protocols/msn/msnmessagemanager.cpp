@@ -181,7 +181,7 @@ void MSNMessageManager::slotUserLeft( const QString &handle, const QString& reas
 void MSNMessageManager::slotSwitchBoardClosed()
 {
 	kdDebug(14140) << "MSNMessageManager::slotSwitchBoardClosed"  << endl;
-	delete m_chatService; //->deleteLater();
+	m_chatService->deleteLater();
 	m_chatService=0l;
 
 	for ( QMap<unsigned int , KopeteMessage>::iterator it = m_messagesSent.begin(); it!=m_messagesSent.end(); it = m_messagesSent.begin() )
