@@ -66,9 +66,9 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	// a MacOS-style MenuBar.
 	// This fixes a "statusbar drawn over the top of the toolbar" bug
 	// e.g. it can happen when you switch desktops on Kopete startup
-	statusBar();
 	m_statusBarWidget = new QHBox(statusBar(), "m_statusBarWidget");
 	m_statusBarWidget->setSpacing( 2 );
+	m_statusBarWidget->setMargin( 2 );
 	statusBar()->addWidget(m_statusBarWidget, 0, true);
 
 	/* -------------------------------------------------------------------------------- */
