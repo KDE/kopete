@@ -1901,6 +1901,11 @@ void OscarSocket::sendAddGroup(const QString &name)
 {
     kdDebug(14150) << "[OSCAR] Sending add group" << endl;
     SSI *newitem = ssiData.addGroup(name);
+    if(!newitem)
+    {
+			kdDebug(14150) << k_funcinfo << "Null SSI returned from addGroup, group must already exist" << endl;
+			return;
+		}
     kdDebug(14150) << "[OSCAR] Adding group gid " << newitem->gid << endl;
     sendSSIAddModDel(newitem,0x0008);
 }
