@@ -64,7 +64,11 @@ private:
 	};
 
 public:
-	LibraryLoader();
+	/**
+	 * Retrieve the plugin loader instance.
+	 */
+	static LibraryLoader* pluginLoader();
+
 	~LibraryLoader();
 
 	QValueList<KopeteLibraryInfo> available() const;
@@ -126,6 +130,8 @@ private slots:
 	void slotPluginDestroyed( QObject *o );
 
 private:
+	LibraryLoader();
+
 	bool loadSO(const QString &spec);
 	void removeNow(const QString &spec);
 
@@ -140,6 +146,8 @@ private:
 	 * A cache for plugin info, to avoid reparsing (and hence mutable)
 	 */
 	mutable QMap<QString, KopeteLibraryInfo> m_cachedInfo;
+
+	static LibraryLoader *s_pluginLoader;
 };
 
 #endif

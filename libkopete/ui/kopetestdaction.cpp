@@ -19,15 +19,12 @@
 #include <klocale.h>
 #include <kdebug.h>
 
-#include "kopete.h"
 #include "kopetegroup.h"
 #include "kopetestdaction.h"
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
 #include "kopeteprotocol.h"
 #include "pluginloader.h"
-
-
 
 /** KopeteGroupList **/
 KopeteGroupListAction::KopeteGroupListAction(const QString& text, const QString& pix, const KShortcut& cut, const QObject* receiver, const char* slot, QObject* parent, const char* name)
@@ -116,13 +113,13 @@ KAction* KopeteStdAction::deleteContact(const QObject *recvr, const char *slot, 
 
 KListAction *KopeteStdAction::addContact(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-   KListAction *a=new KListAction(  i18n("&Add Contact"), "bookmark_add", 0, recvr, slot, parent, name );
-   QStringList protocolList;
+	KListAction *a=new KListAction(  i18n("&Add Contact"), "bookmark_add", 0, recvr, slot, parent, name );
+	QStringList protocolList;
 
-	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
+	QValueList<KopeteLibraryInfo> l = LibraryLoader::pluginLoader()->loaded();
 	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
-		KopetePlugin *tmpprot = kopeteapp->libraryLoader()->searchByName( ( *i ).name );
+		KopetePlugin *tmpprot = LibraryLoader::pluginLoader()->searchByName( ( *i ).name );
 		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>( tmpprot );
 		if (prot)
 		{
@@ -139,14 +136,7 @@ KAction* KopeteStdAction::changeAlias(const QObject *recvr, const char *slot, QO
 	return new KAction( i18n("Change A&lias..."), "signature", 0, recvr, slot, parent, name );
 }
 
-
 #include "kopetestdaction.moc"
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
+
 // vim: set noet ts=4 sts=4 sw=4:
 

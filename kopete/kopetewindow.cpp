@@ -18,6 +18,7 @@
 
 #include "kopetewindow.h"
 
+#include <qapplication.h>
 #include <qlayout.h>
 
 #include <kaction.h>
@@ -35,7 +36,6 @@
 #include <kstatusbar.h>
 #include <kwin.h>
 
-#include "kopete.h"
 #include "kopeteballoon.h"
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
@@ -74,7 +74,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	tray->show();
 
 	// Trap all loaded plugins, so we can add their status bar icons accordingly
-	connect( kopeteapp->libraryLoader(),
+	connect( LibraryLoader::pluginLoader(),
 		SIGNAL( pluginLoaded( KopetePlugin * ) ),
 		this, SLOT( slotPluginLoaded( KopetePlugin * ) ) );
 }
@@ -88,15 +88,15 @@ void KopeteWindow::initView ( void )
 void KopeteWindow::initActions ( void )
 {
 	actionAddContact = new KAction( i18n("&Add Contact..."),"bookmark_add", 0 ,
-							kopeteapp, SLOT(slotAddContact()),
+							qApp, SLOT(slotAddContact()),
 							actionCollection(), "AddContact" );
 
 	actionConnect = new KAction( i18n("&Connect All"),"connect_creating", 0 ,
-							kopeteapp, SLOT(slotConnectAll()),
+							qApp, SLOT(slotConnectAll()),
 							actionCollection(), "Connect" );
 
 	actionDisconnect = new KAction( i18n("&Disconnect All"),"connect_no", 0 ,
-							kopeteapp, SLOT(slotDisconnectAll()),
+							qApp, SLOT(slotDisconnectAll()),
 							actionCollection(), "Disconnect" );
 
 	actionConnectionMenu = new KActionMenu( i18n("Connection"),"connect_established",
@@ -106,11 +106,11 @@ void KopeteWindow::initActions ( void )
 	actionConnectionMenu->insert(actionDisconnect);
 
 	actionSetAway = new KAction( i18n("&Set Away Globally"), "kopeteaway", 0 ,
-							kopeteapp, SLOT(slotSetAwayAll()),
+							qApp, SLOT(slotSetAwayAll()),
 							actionCollection(), "SetAway" );
 
 	actionSetAvailable = new KAction( i18n("Set Availa&ble Globally"), "kopeteavailable", 0 ,
-							kopeteapp, SLOT(slotSetAvailableAll()),
+							qApp, SLOT(slotSetAvailableAll()),
 							actionCollection(), "SetAvailable" );
 
 	actionAwayMenu = new KActionMenu( i18n("Status"),"kopetestatus",
@@ -120,16 +120,16 @@ void KopeteWindow::initActions ( void )
 	actionAwayMenu->insert(actionSetAway);
 
 	actionShowTransfers = new KAction( i18n("Show &File Transfers"),"network", 0 ,
-							kopeteapp, SLOT(slotShowTransfers()),
+							qApp, SLOT(slotShowTransfers()),
 							actionCollection(), "ShowTransfers" );
 
-	actionPrefs = KStdAction::preferences(kopeteapp, SLOT(slotPreferences()), actionCollection());
+	actionPrefs = KStdAction::preferences( qApp, SLOT(slotPreferences()), actionCollection());
 
 	actionSave = new KAction( i18n("Save &ContactList"), "filesave", KStdAccel::shortcut(KStdAccel::Save),
 							KopeteContactList::contactList(), SLOT(save()),
 							actionCollection(), "save_contactlist" );
 
-//	actionQuit = KStdAction::quit(kopeteapp, SLOT(slotExit()), actionCollection());
+//	actionQuit = KStdAction::quit( qApp, SLOT(slotExit()), actionCollection());
 	KStdAction::quit(this, SLOT(slotQuit()), actionCollection());
 
 	toolbarAction = KStdAction::showToolbar(this, SLOT(showToolbar()), actionCollection());

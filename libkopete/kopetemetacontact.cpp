@@ -27,7 +27,6 @@
 #include <klocale.h>
 #include <knotifyclient.h>
 
-#include "kopete.h"
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
 #include "kopetemetacontactlvi.h"
@@ -550,7 +549,7 @@ QString KopeteMetaContact::toXML()
 	}
 
 /* //SERIALIZE IS NOW OBSOLETE
-	QPtrList<KopetePlugin> ps = kopeteapp->libraryLoader()->plugins();
+	QPtrList<KopetePlugin> ps = LibraryLoader::pluginLoader()->plugins();
 	for( KopetePlugin *p = ps.first() ; p != 0L; p = ps.next() )
 	{
 		QStringList strList;
@@ -645,7 +644,7 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 	QMap<QString, QString>::ConstIterator it;
 	for( it = m_pluginData.begin(); it != m_pluginData.end(); ++it )
 	{
-		KopetePlugin *plugin = kopeteapp->libraryLoader()->searchByID( it.key() );
+		KopetePlugin *plugin = LibraryLoader::pluginLoader()->searchByID( it.key() );
 		if( plugin )
 		{
 			QStringList strList = QStringList::split( "||", it.data() );
@@ -661,7 +660,7 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 	}*/
 
 	// If a plugin is loaded, load data cached
-	connect( kopeteapp->libraryLoader(), SIGNAL( pluginLoaded(KopetePlugin*) ),
+	connect( LibraryLoader::pluginLoader(), SIGNAL( pluginLoaded(KopetePlugin*) ),
 		this, SLOT( slotPluginLoaded(KopetePlugin*) ) );
 
 	return true;

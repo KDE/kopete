@@ -33,7 +33,6 @@ class KopeteEvent;
 class KopeteNotifier;
 class KopeteUserPreferencesConfig;
 class KopeteWindow;
-class LibraryLoader;
 class Plugins;
 class PreferencesDialog;
 
@@ -56,13 +55,6 @@ public:
 	{ return mPref; }
 
 	/**
-	 * Use it to access Kopete's plugin loader.
-	 * You shouldn't need to use it from a plugin.
-	 */
-	LibraryLoader *libraryLoader() const
-	{ return mLibraryLoader; }
-
-	/**
 	 * Like slotSetAwayAll, but don't pops up the dialog
 	 * (for the autowayplugin)
 	 */
@@ -82,14 +74,9 @@ public slots:
 	 */
 	void cancelEvent( KopeteEvent * );
 
-	void slotPreferences();
-//	void slotExit();
+	void slotSetAvailableAll();
 	void slotConnectAll();
 	void slotDisconnectAll();
-	void slotAddContact();
-	void slotSetAwayAll();
-	void slotSetAvailableAll();
-	void slotShowTransfers();
 
 signals:
 	/**
@@ -112,6 +99,12 @@ signals:
 	void signalSettingsChanged();
 
 private slots:
+	void slotPreferences();
+//	void slotExit();
+	void slotAddContact();
+	void slotSetAwayAll();
+	void slotShowTransfers();
+
 	void slotMainWindowDestroyed();
 	void initialize();
 
@@ -125,7 +118,6 @@ private:
 	Plugins *mPluginsModule;
 
 	KopeteWindow *m_mainWindow;
-	LibraryLoader *mLibraryLoader;
 	AppearanceConfig *mAppearance;
 
 	//User preferences config module

@@ -18,6 +18,7 @@
     *************************************************************************
 */
 
+#include <qapplication.h>
 #include <qdir.h>
 #include <qfile.h>
 
@@ -41,7 +42,18 @@ bool operator ==(const KopeteLibraryInfo &a, const KopeteLibraryInfo &b)
 	return a.specfile == b.specfile;
 }
 
+LibraryLoader* LibraryLoader::s_pluginLoader = 0L;
+
+LibraryLoader* LibraryLoader::pluginLoader()
+{
+	if( !s_pluginLoader )
+		s_pluginLoader = new LibraryLoader();
+
+	return s_pluginLoader;
+}
+
 LibraryLoader::LibraryLoader()
+: QObject( qApp )
 {
 }
 

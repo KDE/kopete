@@ -73,8 +73,6 @@ Kopete::Kopete()
 
 void Kopete::initialize()
 {
-	mLibraryLoader = new LibraryLoader();
-
 	// TODO: move that to mainwindow!
 	mPref = new PreferencesDialog();
 	mPref->hide();
@@ -112,7 +110,6 @@ Kopete::~Kopete()
 	KopeteContactList::contactList()->save();
 
 	delete mPref;
-	delete mLibraryLoader;
 
 	kdDebug() << "[Kopete] END ~Kopete()" << endl;
 }
@@ -169,7 +166,7 @@ void Kopete::slotLoadPlugins()
 
 	config->writeEntry("Modules", modules);
 
-	mLibraryLoader->loadAll();
+	LibraryLoader::pluginLoader()->loadAll();
 }
 
 void Kopete::slotPreferences()
@@ -190,11 +187,11 @@ void Kopete::slotExit()
 /** Connect all loaded protocol plugins */
 void Kopete::slotConnectAll()
 {
-	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
+	QValueList<KopeteLibraryInfo> l = LibraryLoader::pluginLoader()->loaded();
 	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
 //		kdDebug() << "[Kopete] Connect All: " << (*i).name << endl;
-		KopetePlugin *tmpprot = kopeteapp->libraryLoader()->searchByName( ( *i ).name );
+		KopetePlugin *tmpprot = LibraryLoader::pluginLoader()->searchByName( ( *i ).name );
 		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
 		if (!prot)
 			continue;
@@ -209,11 +206,11 @@ void Kopete::slotConnectAll()
 /** Disconnect all loaded protocol plugins */
 void Kopete::slotDisconnectAll()
 {
-	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
+	QValueList<KopeteLibraryInfo> l = LibraryLoader::pluginLoader()->loaded();
 	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
 //		kdDebug() << "[Kopete] Disconnect All: "<<(*i).name << endl;
-		KopetePlugin *tmpprot = kopeteapp->libraryLoader()->searchByName( ( *i ).name );
+		KopetePlugin *tmpprot = LibraryLoader::pluginLoader()->searchByName( ( *i ).name );
 		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
 
 		if (!prot)
@@ -239,11 +236,11 @@ void Kopete::slotSetAwayAll(void)
 // Set a meta-away in all protocol plugins without showing the dialog
 void Kopete::setAwayAll(void)
 {
-	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
+	QValueList<KopeteLibraryInfo> l = LibraryLoader::pluginLoader()->loaded();
 	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
 		kdDebug() << "[Kopete] slotSetAwayAll() for plugin: " << (*i).name << endl;
-		KopetePlugin *tmpprot = kopeteapp->libraryLoader()->searchByID( ( *i ).name );
+		KopetePlugin *tmpprot = LibraryLoader::pluginLoader()->searchByID( ( *i ).name );
 		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
 
 		if (!prot)
@@ -263,11 +260,11 @@ void Kopete::setAwayAll(void)
 void Kopete::slotSetAvailableAll(void)
 {
 	KopeteAway::setGlobalAway(false);
-	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
+	QValueList<KopeteLibraryInfo> l = LibraryLoader::pluginLoader()->loaded();
 	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
 		kdDebug() << "[Kopete] slotSetAvailableAll() for plugin: " << (*i).name << endl;
-		KopetePlugin *tmpprot = kopeteapp->libraryLoader()->searchByID( ( *i ).name );
+		KopetePlugin *tmpprot = LibraryLoader::pluginLoader()->searchByID( ( *i ).name );
 		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
 
 		if (!prot)
