@@ -222,20 +222,18 @@ void KopeteMessageManager::readMessages()
 	if (window->isHidden())
 		kdDebug() << "[KopeteMessageManager] window is hidden" << endl;
 
-	bool foreignMessage = false;
-	foreignMessage = emptyMessageBuffer();
+	bool queueEmpty = d->mMessageQueue.isEmpty() ;
+	bool foreignMessage = emptyMessageBuffer();
 
 	// only show the window when a message from someone else (i.e. not an own message) arrived or
 	// when no message at all arrived (happens when you click on a contact, creating the window)
-	// FIXME: mMessageQueue is always empty (cleared in emptyMessageBuffer()) 
-	if ( foreignMessage || d->mMessageQueue.isEmpty() )
+	if ( foreignMessage || queueEmpty )
 	{
 		if(KopetePrefs::prefs()->raiseMsgWindow())
 		{
 			KWin::setOnDesktop(window->winId() , KWin::currentDesktop()); //set on the desktop
 			window->raise(); // make it top window
 		}
-
 		window->show();	// show message window again (but not for own messages)
 	}
 }
