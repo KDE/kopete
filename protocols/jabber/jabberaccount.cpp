@@ -1058,7 +1058,7 @@ void JabberAccount::slotGroupChatPresence (const Jabber::Jid & jid, const Jabber
 	static_cast < JabberGroupChat * >(contacts ()[jid.userHost ()])->updatePresence (jid, status);
 }
 
-void JabberAccount::slotGroupChatError (const Jabber::Jid & jid, int error, QString & reason)
+void JabberAccount::slotGroupChatError (const Jabber::Jid & jid, int error, const QString & reason)
 {
 	/* FIXME: Present this to the user, damnit! */
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Group chat error - room " << jid.userHost () << " had error " << error << " (" << reason << ")!" << endl;

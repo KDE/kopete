@@ -205,7 +205,7 @@ private slots:
 	void slotGroupChatJoined (const Jid & jid);
 	void slotGroupChatLeft (const Jid & jid);
 	void slotGroupChatPresence (const Jid & jid, const Status & status);
-	void slotGroupChatError (const Jid & jid, int error, QString & reason);
+	void slotGroupChatError (const Jid & jid, int error,const QString & reason);
 
 	/* Incoming subscription request. */
 	void slotSubscription (const Jid & jid, const QString & type);
