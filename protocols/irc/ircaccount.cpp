@@ -21,6 +21,8 @@
 #include <kinputdialog.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
+#include <kconfig.h>
+#include <kglobal.h>
 
 #include "kopeteaway.h"
 #include "kopeteawayaction.h"
