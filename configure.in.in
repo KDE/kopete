@@ -126,3 +126,26 @@ AC_SUBST(KOPETE_INCLUDES)
 AC_SUBST(KOPETE_COMPAT_INCLUDES)
 AC_SUBST(LIB_KOPETECOMPAT)
 
+# -- Check for installed Valgrind headers --------------------
+
+AC_MSG_CHECKING([for valgrind.h])
+
+AC_TRY_COMPILE([
+#define __VALGRIND_SOMESKIN_H
+#include <valgrind/valgrind.h>
+],
+[
+],
+	ac_have_valgrind_h=yes
+,
+	ac_have_valgrind_h=no
+)
+
+if test $ac_have_valgrind_h = yes; then
+	AC_DEFINE(HAVE_VALGRIND_H, 1, [Define if you have valgrind.h installed])
+fi
+
+AC_MSG_RESULT($ac_have_valgrind_h)
+
+# -- End valgrind ----------------------------------------------
+
