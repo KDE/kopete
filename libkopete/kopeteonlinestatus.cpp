@@ -375,7 +375,11 @@ QPixmap Kopete::OnlineStatusIconCache::renderIcon( const Kopete::OnlineStatus &s
 
 	// composite the iconOverlay for this status and the supplied baseIcon
 	if ( !statusFor.d->overlayIcon.isNull() )
-		basis = overlayPixmaps( basis, SmallIcon( statusFor.d->overlayIcon ) );
+	{
+		KIconLoader *loader = KGlobal::instance()->iconLoader();
+		QPixmap overlay = loader->loadIcon(statusFor.d->overlayIcon, KIcon::Small, 0 ,  KIcon::DefaultState, 0L, /*canReturnNull=*/ true );
+		basis = overlayPixmaps( basis, overlay );
+	}
 
 	if ( statusFor.d->status == Kopete::OnlineStatus::Offline)
 	{
