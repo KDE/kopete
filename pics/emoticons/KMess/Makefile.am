@@ -1,5 +1,4 @@
-icondir = $(kde_datadir)/kopete/pics/emoticons/KMess-Original
-
+icondir = $(kde_datadir)/kopete/pics/emoticons/KMess
 icon_DATA = emoticons.xml \
 angel.png angry.png bat.png \
 beer.png boy.png cake.png \
@@ -17,13 +16,16 @@ teeth.png thumbs_down.png thumbs_up.png \
 tongue.png unlove.png wilted_rose.png \
 wink.png
  
-# missing ones I did not commit
-# (got no emoticon for these)
+# Currently without a mapping and not installed:
 # arrogant.png
+# asl.png
 # bad.png
+# envelope.png
 # handcuffs.png
 # moon.png
 # rainbow.png
 # satisfied.png
+# shout.png
 # sorry.png
+# sun.png
 # ugly.png
