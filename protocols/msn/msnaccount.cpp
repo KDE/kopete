@@ -737,6 +737,17 @@ void MSNAccount::slotKopeteGroupRemoved( KopeteGroup *g )
 			}*/
 			m_notifySocket->removeGroup( groupNumber );
 		}
+		
+	}
+	
+	//remove it from the old list
+	for(QMap<unsigned int, KopeteGroup*>::Iterator it=m_oldGroupList.begin() ; it != m_oldGroupList.end() ; ++it )
+	{
+		if(g==it.data())
+		{
+			m_oldGroupList.remove(it);
+			break;
+		}
 	}
 }
 
