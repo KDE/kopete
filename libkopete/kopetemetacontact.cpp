@@ -80,7 +80,7 @@ void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups 
 		connect( c, SIGNAL( destroyed( QObject * ) ),
 			this, SLOT( slotContactDestroyed( QObject * ) ) );
 
-		 if (displayName() == "")
+		 if (m_displayName == QString::null)
 			 setDisplayName( c->displayName() );
 
 		for( QStringList::ConstIterator it = groups.begin(); it != groups.end(); ++it )

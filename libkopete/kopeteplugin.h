@@ -22,6 +22,7 @@
 #include <qobject.h>
 
 class KopeteMetaContact;
+class KActionCollection;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -51,6 +52,12 @@ public:
 	 * The default implementation returns an empty list.
 	 */
 	virtual QStringList addressBookFields() const;
+
+	/**
+	 * Returns a set of custom menu items for the meta contact's context menu
+	 */
+	virtual KActionCollection *customContextMenuActions(KopeteMetaContact*) { return 0l; };
+
 
 public slots:
 	/**

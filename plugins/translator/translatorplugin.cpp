@@ -22,8 +22,10 @@
 #include <qcolor.h>
 #include <qcstring.h>
 #include <qregexp.h>
+#include <qmap.h>
 
 #include <kdebug.h>
+#include <kaction.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
 #include <kio/global.h>
@@ -43,6 +45,9 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 	const QStringList &/*args*/ )
 : KopetePlugin( parent, name )
 {
+	m_actionCollection=0L;
+	m_actionLanguage=0L;
+
 	if ( pluginStatic_ )
 		kdDebug()<<"####"<<"Translator already initialized"<<endl;
 	else
@@ -130,6 +135,31 @@ void TranslatorPlugin::deserialize( KopeteMetaContact *metaContact, const QStrin
 	m_langMap[ metaContact ] = data.first();
 	kdDebug() << "[Translator] Deserialize " << metaContact->displayName() << " lang is " << data.first() << endl;
 
+}
+
+KActionCollection *TranslatorPlugin::customContextMenuActions(KopeteMetaContact *m)
+{
+    QStringList keys;
+
+	QMap<QString,QString>::ConstIterator it;
+	for ( it = m_langs.begin(); it != m_langs.end(); ++it)
+	{
+		keys << it.key();
+	}
+
+	if(m_actionLanguage)
+		delete m_actionLanguage;
+
+	if( m_actionCollection )
+		delete m_actionCollection;
+
+	m_actionCollection = new KActionCollection(this);
+	m_actionLanguage=new KListAction(i18n("Set &Language"),"",0,  m_actionCollection ,"m_actionLanguage");
+	m_actionLanguage->setItems( keys );
+	connect( m_actionLanguage, SIGNAL( activated() ), this, SLOT(slotSetLanguage()) );
+	m_actionCollection->insert(m_actionLanguage);
+	m_currentMetaContact=m;
+	return m_actionCollection;
 }
 
 void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
@@ -307,4 +337,10 @@ void TranslatorPlugin::slotJobDone ( KIO::Job *job)
 
 }
 
-
+void TranslatorPlugin::slotSetLanguage()
+{
+	if( m_actionLanguage && m_currentMetaContact)
+	{
+		m_langMap[ m_currentMetaContact ]=m_actionLanguage->currentText();
+	}
+}

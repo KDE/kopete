@@ -31,6 +31,7 @@
 
 class QStringList;
 class QString;
+class KListAction;
 
 class KopeteMessage;
 class KopeteMetaContact;
@@ -64,6 +65,8 @@ public:
 	bool serialize( KopeteMetaContact *metaContact, QStringList &strList) const;
 	void deserialize( KopeteMetaContact *metaContact, const QStringList& data );
 
+	virtual KActionCollection *customContextMenuActions(KopeteMetaContact*);
+
 	/***************************************************************************
 	 *   Plugin's API (used by preferences)                                    *
 	 ***************************************************************************/
@@ -86,6 +89,7 @@ public slots:
 	void slotOutgoingMessage( KopeteMessage& msg );
 	void slotDataReceived ( KIO::Job *, const QByteArray &data);
 	void slotJobDone ( KIO::Job *);
+	void slotSetLanguage();
 
 protected:
 
@@ -113,6 +117,10 @@ private:
 
 	QMap< KIO::Job *, QCString> m_data;
 	QMap< KIO::Job *, bool> m_completed;
+
+	KActionCollection* m_actionCollection;
+	KListAction* m_actionLanguage;
+	KopeteMetaContact *m_currentMetaContact;
 
 	static TranslatorPlugin* pluginStatic_;
 
