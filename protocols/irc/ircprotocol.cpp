@@ -116,6 +116,7 @@ void IRCProtocol::slotIconRightClicked(const QPoint)
 
 void IRCProtocol::slotNewConsole()
 {
+	kdDebug() << "IRCProtocol::slotNewConsole";
 	(void)new IRCServerContact(this);
 }
 

@@ -70,6 +70,7 @@ IRCServerContact::IRCServerContact(IRCProtocol *protocol, bool connectNow)
 {
 	mProtocol = protocol;
 	mManager = mProtocol->manager;
+	KGlobal::config()->setGroup("IRC");
 	mNickname = KGlobal::config()->readEntry("Nickname", "KopeteUser");
 	QString tmpServer = KGlobal::config()->readEntry("Server", "");
 	if (tmpServer.isEmpty())
@@ -110,7 +111,7 @@ void IRCServerContact::init()
 	QObject::connect(engine, SIGNAL(incomingDccSendRequest(const QHostAddress &, unsigned int, const QString &, const QString &, unsigned int, DCCClient &)), this, SLOT(incomingDccSendRequest(const QHostAddress &, unsigned int, const QString &, const QString &, unsigned int, DCCClient &)));
 	mWindow = new IRCChatWindow(mServer, this);
 	QObject::connect(mWindow, SIGNAL(windowClosing()), this, SLOT(slotQuitServer()));
-	mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
+	mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(slotConnectNow()));
 
 	mTabView = new QVBox(mWindow->mTabWidget);
 	mConsoleView = new IRCConsoleView(mServer, engine, this, mTabView);
