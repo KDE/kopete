@@ -76,7 +76,7 @@ GaduSession::login( struct gg_login_params* p )
 
 // turn on in case you have any problems, and  you want
 // to report it better. libgadu needs to be recompiled with debug enabled
-		gg_debug_level=GG_DEBUG_MISC|GG_DEBUG_FUNCTION;
+//		gg_debug_level=GG_DEBUG_MISC|GG_DEBUG_FUNCTION;
 
 		kdDebug(14100) << "Login" << endl;
 
