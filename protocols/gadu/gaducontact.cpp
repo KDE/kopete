@@ -93,8 +93,6 @@ GaduContact::initActions()
 																										this, "actionMessage" );
 	actionInfo_ = KopeteStdAction::contactInfo( this, SLOT(slotUserInfo()),
 																							this, "actionInfo" );
-	/*actionRemove_ = KopeteStdAction::deleteContact( this, SLOT(removeThisUser()),
-		this, "actionDelete" );*/
 }
 
 void
@@ -116,7 +114,7 @@ GaduContact::messageSend( KopeteMessage& msg, KopeteMessageManager* mgr )
 bool
 GaduContact::isReachable()
 {
-	return false;
+	return true;
 }
 
 KActionCollection *

@@ -28,31 +28,21 @@ class gaduPrefsUI;
 
 class GaduPreferences : public ConfigModule
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    GaduPreferences( const QString &pixmap, QObject *parent=0 );
-    ~GaduPreferences();
+	GaduPreferences( const QString &pixmap, QObject *parent=0 );
+	~GaduPreferences();
 
-    virtual void save();
-    const QString password() { return password_; };
-    const Q_UINT32 uin() { return uin_; };
+	virtual void save();
+	const QString password() { return password_; };
+	const Q_UINT32 uin() { return uin_; };
 signals:
-    void saved();
+	void saved();
 private:
-    gaduPrefsUI *prefDialog_;
-    QString password_;
-    Q_UINT32 uin_;
+	gaduPrefsUI *prefDialog_;
+	QString password_;
+	Q_UINT32 uin_;
 };
 
 
 #endif
-
-/*
- * Local variables:
- * c-indentation-style: bsd
- * c-basic-offset: 4
- * indent-tabs-mode: nil
- * End:
- *
- * vim: set et ts=4 sts=4 sw=4:
- */

@@ -37,125 +37,11 @@
                 <attribute name="title">
                     <string>&amp;Connection</string>
                 </attribute>
-                <grid>
+                <vbox>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <property name="margin">
-                        <number>11</number>
-                    </property>
-                    <property name="spacing">
-                        <number>6</number>
-                    </property>
-                    <spacer row="11" column="1">
-                        <property name="name">
-                            <cstring>Spacer4</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <widget class="QLineEdit" row="2" column="1">
-                        <property name="name">
-                            <cstring>uinEdit_</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="2" column="0">
-                        <property name="name">
-                            <cstring>TextLabel1</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Gadu UIN:</string>
-                        </property>
-                        <property name="buddy" stdset="0">
-                            <cstring>mID</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QLineEdit" row="4" column="1">
-                        <property name="name">
-                            <cstring>nicknameEdit_</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="3" column="0">
-                        <property name="name">
-                            <cstring>TextLabel2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Password:</string>
-                        </property>
-                        <property name="buddy" stdset="0">
-                            <cstring>mPass</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QLineEdit" row="3" column="1">
-                        <property name="name">
-                            <cstring>passwordEdit_</cstring>
-                        </property>
-                        <property name="echoMode">
-                            <enum>Password</enum>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="4" column="0">
-                        <property name="name">
-                            <cstring>TextLabel3</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Nickname:</string>
-                        </property>
-                        <property name="buddy" stdset="0">
-                            <cstring>mNick</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="10" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>autoConnect_</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&amp;Auto-connect</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="9" column="0">
-                        <property name="name">
-                            <cstring>TextLabel6</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&amp;Server:</string>
-                        </property>
-                        <property name="buddy" stdset="0">
-                            <cstring>mServer</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="6" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>TextLabel1_2</cstring>
-                        </property>
-                        <property name="font">
-                            <font>
-                                <bold>1</bold>
-                            </font>
-                        </property>
-                        <property name="text">
-                            <string>Server Information</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="5" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>TextLabel6_2</cstring>
-                        </property>
-                        <property name="text">
-                            <string></string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
+                    <widget class="QLabel">
                         <property name="name">
                             <cstring>TextLabel2_3</cstring>
                         </property>
@@ -167,8 +53,11 @@
                         <property name="text">
                             <string>Login Information</string>
                         </property>
+                        <property name="alignment">
+                            <set>AlignCenter</set>
+                        </property>
                     </widget>
-                    <widget class="QFrame" row="1" column="0" rowspan="1" colspan="3">
+                    <widget class="QFrame">
                         <property name="name">
                             <cstring>Frame3</cstring>
                         </property>
@@ -179,90 +68,50 @@
                             <enum>Sunken</enum>
                         </property>
                     </widget>
-                    <widget class="QFrame" row="7" column="0" rowspan="2" colspan="3">
+                    <widget class="QLayoutWidget">
                         <property name="name">
-                            <cstring>Frame3_2</cstring>
-                        </property>
-                        <property name="frameShape">
-                            <enum>HLine</enum>
-                        </property>
-                        <property name="frameShadow">
-                            <enum>Sunken</enum>
-                        </property>
-                    </widget>
-                    <widget class="QLayoutWidget" row="8" column="1" rowspan="2" colspan="1">
-                        <property name="name">
-                            <cstring>Layout1</cstring>
+                            <cstring>layout2</cstring>
                         </property>
                         <hbox>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <property name="margin">
-                                <number>0</number>
-                            </property>
-                            <property name="spacing">
-                                <number>6</number>
-                            </property>
-                            <widget class="QLineEdit">
-                                <property name="name">
-                                    <cstring>mServer</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
-                            </widget>
                             <widget class="QLabel">
                                 <property name="name">
-                                    <cstring>TextLabel7</cstring>
+                                    <cstring>TextLabel3</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Po&amp;rt:</string>
+                                    <string>Nickname:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
-                                    <cstring>mPort</cstring>
+                                    <cstring>mNick</cstring>
                                 </property>
                             </widget>
-                            <widget class="QSpinBox">
+                            <widget class="QLineEdit">
                                 <property name="name">
-                                    <cstring>mPort</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
-                                <property name="buttonSymbols">
-                                    <enum>UpDownArrows</enum>
-                                </property>
-                                <property name="maxValue">
-                                    <number>32768</number>
-                                </property>
-                                <property name="minValue">
-                                    <number>1</number>
-                                </property>
-                                <property name="value">
-                                    <number>8080</number>
+                                    <cstring>nicknameEdit_</cstring>
                                 </property>
                             </widget>
                         </hbox>
                     </widget>
-                    <spacer row="2" column="2">
+                    <spacer>
                         <property name="name">
-                            <cstring>Spacer5</cstring>
+                            <cstring>spacer4</cstring>
                         </property>
                         <property name="orientation">
-                            <enum>Horizontal</enum>
+                            <enum>Vertical</enum>
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>20</width>
-                                <height>20</height>
+                                <width>31</width>
+                                <height>241</height>
                             </size>
                         </property>
                     </spacer>
-                </grid>
+                </vbox>
             </widget>
             <widget class="QWidget">
                 <property name="name">
@@ -353,12 +202,7 @@
 </widget>
 <tabstops>
     <tabstop>TabWidget3</tabstop>
-    <tabstop>uinEdit_</tabstop>
-    <tabstop>passwordEdit_</tabstop>
     <tabstop>nicknameEdit_</tabstop>
-    <tabstop>mServer</tabstop>
-    <tabstop>mPort</tabstop>
-    <tabstop>autoConnect_</tabstop>
     <tabstop>logAll_</tabstop>
 </tabstops>
 <includes>

@@ -39,6 +39,7 @@ class KopeteContact;
 class KAction;
 class KActionMenu;
 class GaduContact;
+class GaduAccount;
 class QWidget;
 class KopeteMetaContact;
 class GaduPreferences;
@@ -84,6 +85,8 @@ private:
 	const KopeteOnlineStatus gaduStatusInvisibleDescr_;
 	const KopeteOnlineStatus gaduStatusAvail_;
 	const KopeteOnlineStatus gaduStatusAvailDescr_;
+
+  GaduAccount *defaultAccount_;
 };
 
 
