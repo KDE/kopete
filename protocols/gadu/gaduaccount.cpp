@@ -232,7 +232,6 @@ GaduAccount::actionMenu()
 	kdDebug(14100) << "actionMenu() " << endl;
 	
 	p->actionMenu_ = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ), this );
-	p->actionMenu_ = Kopete::Account::actionMenu();
 	p->actionMenu_->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> " ).
 	    arg( myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), accountId() ) );
 
