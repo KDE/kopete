@@ -438,7 +438,7 @@ void MSNContact::setMsnStatus( MSNProtocol::Status status )
 	if( m_status == MSNProtocol::BLO )
 		setNickname( i18n( "%1 (Blocked)").arg( nickname() ) );
 
-	emit statusChanged();
+	emit statusChanged( this, MSNContact::status() );
 }
 
 bool MSNContact::isBlocked() const

@@ -66,6 +66,13 @@ public:
 	bool isOnline() const;
 
 	/**
+	 * Return more fine-grained status.
+	 * Online means at least one sub-contact is online, away means at least
+	 * one is away, but nobody is online and offline speaks for itself
+	 */
+	ContactStatus status() const;
+
+	/**
 	 * Like isOnline, but returns true even if the contact is not online, but
 	 * can be reached trough offline-messages.
 	 * FIXME: Here too, use preference order, not append order!
@@ -89,6 +96,12 @@ public slots:
 	 * ICQ the only true difference is the GUI shown to the user.
 	 */
 	void startChat();
+
+private slots:
+	/**
+	 * One of the child contact's online status changed
+	 */
+	void slotContactStatusChanged( KopeteContact *c, ContactStatus s );
 
 private:
 	QPtrList<KopeteContact> m_contacts;

@@ -118,12 +118,17 @@ public:
 		QString id() const { return m_id; }
 		void setId( const QString &id ) { m_id = id; }
 
-	signals:
-		/**
-		* Connect to this signal to know when the contact
-		* changed its status
-		**/
-		void statusChanged();
+signals:
+	/**
+	 * The contact's online status changed
+	 */
+	void statusChanged( KopeteContact *contact, ContactStatus status );
+
+	/**
+	 * Deprecated, old signal! Use the above one instead
+	 */
+	void statusChanged();
+
 		/**
 		* Connect to this signal to know when the contact
 		* changed its name/nick

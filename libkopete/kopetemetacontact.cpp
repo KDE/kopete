@@ -44,6 +44,10 @@ void KopeteMetaContact::addContact( KopeteContact *c,
 	{
 		m_contacts.append( c );
 
+		connect( c, SIGNAL( statusChanged( KopeteContact *, ContactStatus ) ),
+			this, SLOT( slotContactStatusChanged( KopeteContact *,
+			ContactStatus ) ) );
+
 		// FIXME: Naming!!!
 		setName( c->name() );
 
@@ -138,10 +142,35 @@ void KopeteMetaContact::startChat()
 
 QString KopeteMetaContact::statusIcon() const
 {
-	if( isOnline() )
-		return "metacontact_online";
-	else
-		return "metacontact_offline";
+	switch( status() )
+	{
+		case Online:
+			return "metacontact_online";
+		case Away:
+			return "metacontact_away";
+		case Offline:
+		default:
+			return "metacontact_offline";
+	}
+}
+
+KopeteContact::ContactStatus KopeteMetaContact::status() const
+{
+	QPtrListIterator<KopeteContact> it( m_contacts );
+	for( ; it.current(); ++it )
+	{
+		if( it.current()->status() == Online )
+			return Online;
+	}
+
+	it.toFirst();
+	for( ; it.current(); ++it )
+	{
+		if( it.current()->status() == Away )
+			return Away;
+	}
+
+	return Offline;
 }
 
 bool KopeteMetaContact::isOnline() const
@@ -169,6 +198,13 @@ bool KopeteMetaContact::isReachable() const
 		continue;
 	}
 	return false;
+}
+
+void KopeteMetaContact::slotContactStatusChanged( KopeteContact * /* c */,
+	ContactStatus /* s */ )
+{
+	kdDebug() << "KopeteMetaContact::slotContactStatusChanged" << endl;
+	emit statusChanged();
 }
 
 #include "kopetemetacontact.moc"
