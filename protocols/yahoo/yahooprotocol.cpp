@@ -42,12 +42,9 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 
 	s_protocolStatic_ = this;
 
-
 	// Init actions and icons and create the status bar icon
 	// TODO: this will be useful for introduing yahoo specific actions in the future, but i cant be bothered yet.
 	//initActions();
-
-
 
 	// Create preferences menu
 	m_prefs = new YahooPreferences("yahoo_protocol", this);
