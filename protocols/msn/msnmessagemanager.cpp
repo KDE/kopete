@@ -39,6 +39,7 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 : KopeteMessageManager( user, others, protocol, 0,
 	ChatWindow, protocol, name )
 {
+	m_protocol = protocol;
 	KopeteMessageManagerFactory::factory()->addKopeteMessageManager( this );
 	m_chatService = 0l;
 //	m_msgQueued = 0L;
@@ -355,7 +356,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			rx.search(msg);
 			unsigned long int filesize= rx.cap(1).toUInt();
 
-			MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(true,this);
+			MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(m_protocol,true,this);
 			MFTS->setCookie(cookie);
 			connect(MFTS, SIGNAL( done(MSNFileTransferSocket*) ) , this , SLOT( slotFileTransferDone(MSNFileTransferSocket*) ));
 			m_invitations.insert( cookie  , MFTS);

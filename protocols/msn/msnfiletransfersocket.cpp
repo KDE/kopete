@@ -35,8 +35,9 @@
 #include "kopetetransfermanager.h"
 #include "msnprotocol.h"
 
-MSNFileTransferSocket::MSNFileTransferSocket(bool incoming, QObject* parent) : MSNSocket(parent)
+MSNFileTransferSocket::MSNFileTransferSocket(KopeteProtocol *protocol, bool incoming, QObject* parent) : MSNSocket(parent)
 {
+	m_protocol=protocol;
 	m_kopeteTransfer=0l;
 	m_incoming=incoming;
 	m_file=0L;

@@ -27,7 +27,7 @@ class QFile;
 class KExtendedSocket;
 
 class KopeteTransfer;
-class MSNProtocol;
+class KopeteProtocol;
 
 /**
  * @author Olivier Goffart
@@ -37,7 +37,7 @@ class MSNFileTransferSocket : public MSNSocket
 	Q_OBJECT
 
 public:
-	MSNFileTransferSocket( bool incoming, QObject* parent = 0L );
+	MSNFileTransferSocket( KopeteProtocol *protocol, bool incoming, QObject* parent = 0L );
 	~MSNFileTransferSocket();
 
 	void setKopeteTransfer( KopeteTransfer *kt );
@@ -82,7 +82,7 @@ private slots:
 	void slotSendFile();
 
 private:
-	MSNProtocol *m_protocol;
+	KopeteProtocol *m_protocol;
 
 	long unsigned int m_cookie;
 	long unsigned int m_size;

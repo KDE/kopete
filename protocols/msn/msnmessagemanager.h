@@ -62,6 +62,8 @@ private slots:
 	void slotFileTransferRefused( const KopeteFileTransferInfo &info );
 
 private:
+	KopeteProtocol *m_protocol;
+
 	MSNSwitchBoardSocket *m_chatService;
 //	KopeteMessage *m_msgQueued;
 	QString otherString;
