@@ -3,6 +3,7 @@
 
 #include "kopete.h"
 #include "kopetestdaction.h"
+#include "kopetestdaction.moc"
 #include "contactlist.h"
 
 /** KopeteGroupList **/

@@ -25,6 +25,7 @@
 #include <inttypes.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include "dcchandler.moc"
 
 DCCClient::DCCClient(QHostAddress host, unsigned int port, unsigned int size, Type type)
 	: QSocket()

@@ -15,6 +15,7 @@
 */
 
 #include "kopetemessagemanagerfactory.h"
+#include "kopetemessagemanagerfactory.moc"
 #include "kopetemessagemanager.h"
 
 #include <kdebug.h>

@@ -17,6 +17,7 @@
 */
 
 #include "kopetemessagemanager.h"
+#include "kopetemessagemanager.moc"
 #include "kopetechatwindow.h"
 #include "kopeteevent.h"
 #include "kopete.h"
