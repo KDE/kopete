@@ -16,9 +16,9 @@
 */
 
 #include <kdebug.h>
+#include <kextsock.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kextsock.h>
 
 #include "kopetemessage.h"
 
@@ -192,12 +192,6 @@ QString KIRCMessage::quote(const QString &str)
 // FIXME: The unquote system is buggy.
 QString KIRCMessage::unquote(const QString &str)
 {
-#if !KDE_IS_VERSION( 3, 2, 92 )
-	// Workaround a KStringHandler bug.
-	if (str.isEmpty())
-		return QString::fromLatin1("");
-#endif
-
 	QString tmp = str;
 
 	char b[3];
