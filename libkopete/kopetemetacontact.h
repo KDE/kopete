@@ -147,6 +147,17 @@ public:
 	void setTemporary( bool b = true );
 
 	/**
+	 * When true, the meta-contact needs to be serialized
+	 * and the previous serialize can't be used anymore
+	 */
+	bool isDirty() const;
+	/**
+	 * Plugins should set the metacontact to dirty
+	 * as a save-me request
+	 */
+	void setDirty( bool b = true );
+
+	/**
 	 * Return true if the contact is shown at toplevel
 	 */
 	bool isTopLevel();
@@ -295,6 +306,8 @@ private:
 	AddressBookFields m_addressBook;
 
 	bool m_temporary;
+
+	bool m_dirty;
 
 	OnlineStatus m_onlineStatus;
 };

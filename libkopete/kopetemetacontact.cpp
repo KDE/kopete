@@ -675,6 +675,16 @@ void KopeteMetaContact::setTemporary( bool b  )
 		moveToGroup("temporaryGroup",QString::null);  //move to top-level
 }
 
+bool KopeteMetaContact::isDirty() const
+{
+	return m_dirty;
+}
+
+void KopeteMetaContact::setDirty( bool b  )
+{
+	m_dirty = b;
+}
+
 void KopeteMetaContact::slotPluginLoaded(KopetePlugin *p)
 {
 	if(!p)
