@@ -65,32 +65,34 @@ GaduCommand::checkSocket( int fd, int checkWhat )
 	write_->setEnabled( false );
 	QObject::connect( write_, SIGNAL( activated(int) ), SLOT( forwarder() ) );
 
-	if( checkWhat & GG_CHECK_READ ) {
-		read_->setEnabled( true );
-	}
-
-	if( checkWhat & GG_CHECK_WRITE ) {
-		write_->setEnabled( true );
-	}
+	enableNotifiers( checkWhat );
 }
 
 void
 GaduCommand::enableNotifiers( int checkWhat )
 {
-	if( checkWhat & GG_CHECK_READ ) {
-		read_->setEnabled( true );
+	if ( read_ ) {
+		if( checkWhat & GG_CHECK_READ ) {
+			read_->setEnabled( true );
+		}
 	}
-
-	if( checkWhat & GG_CHECK_WRITE ) {
-		write_->setEnabled( true );
+	
+	if ( write_ ) {
+		if( checkWhat & GG_CHECK_WRITE ) {
+			write_->setEnabled( true );
+		}
 	}
 }
 
 void
 GaduCommand::disableNotifiers()
 {
+	if ( read_ ) {
 	read_->setEnabled( false );
-	write_->setEnabled( false );
+	}
+	if ( write_ ) {
+		write_->setEnabled( false );
+	}
 }
 
 void
@@ -98,9 +100,11 @@ GaduCommand::deleteNotifiers()
 {
 	if ( read_ ) {
 		delete read_;
+		read_ = NULL;
 	}
 	if ( write_ ) {
 		delete write_;
+		write_ = NULL;
 	}
 }
 
