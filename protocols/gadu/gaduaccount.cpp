@@ -490,7 +490,6 @@ GaduAccount::userlist( const QString& u)
 	QString cline;
 	QString contactname;
 	QStringList::iterator it;
-	QStringList::iterator itNext;
 	QStringList strList ;
 
 
