@@ -1,6 +1,7 @@
 [!Global!]
 IconName=kopete
 Comment=Kopete Messenger
+Comment[ar]=مرسال Kopete
 Comment[bg]=Месинджър
 Comment[ca]=Missatger Kopete
 Comment[cy]=Negesydd Kopete
@@ -32,6 +33,7 @@ Comment[zh_CN]=Kopete 信使
 
 [kopete_event]
 Name=Event
+Name[ar]=الحدث
 Name[be]=Падзея
 Name[bg]=Събитие
 Name[bs]=Događaj
@@ -97,6 +99,7 @@ Comment[sl]=Zvočna obvestila o dogodkih v Kopete
 Comment[sr]=Звучно обавештење о Kopete-овим догађајима
 Comment[sr@Latn]=Звучно обавештење о Kopete-овим догађајима
 Comment[sv]=Ljudunderrättelse för händelser i Kopete
+Comment[ta]= Kopete ல் ஒலி அறிவிப்பதற்கான நிகழ்வுகள்
 Comment[tg]=Огоҳонии овозӣ оиди ҳодисаҳои Kopete
 Comment[uk]=Звукове сповіщення про події у Kopete
 Comment[xx]=xxSound notification for Kopete eventsxx
@@ -106,6 +109,7 @@ default_presentation=65
 
 [kopete_contact_incoming]
 Name=Incoming
+Name[ar]=وارد
 Name[bg]=Пристигна ново съобщение
 Name[bs]=Ulazni
 Name[ca]=Entrant
@@ -181,6 +185,7 @@ default_presentation=64
 
 [kopete_outgoing]
 Name=Outgoing
+Name[ar]=خارج
 Name[bg]=Изпратено е съобщение
 Name[bs]=Izlazni
 Name[ca]=Sortint
@@ -257,6 +262,7 @@ default_presentation=0
 
 [kopete_contact_online]
 Name=Online
+Name[ar]=متصل
 Name[bg]=Включи се приятел
 Name[ca]=Connectat
 Name[cy]=Ar-lein
@@ -324,6 +330,7 @@ default_presentation=16
 
 [kopete_contact_offline]
 Name=Offline
+Name[ar]=غير متصل
 Name[bg]=Изключи се приятел
 Name[ca]=Desconnectat
 Name[cy]=All-lein
@@ -392,6 +399,7 @@ default_presentation=0
 
 [kopete_contact_status_change]
 Name=Status Change
+Name[ar]=تغير حالة
 Name[be]=Зьмяненьне статусу
 Name[bg]=Променено състояние на приятел
 Name[bs]=Izmjena statusa
@@ -465,6 +473,7 @@ default_presentation=0
 
 [kopete_contact_highlight]
 Name=Highlight
+Name[ar]=تمييز
 Name[be]=Падсьветка
 Name[bg]=Пристигна специално съобщение
 Name[bs]=Isticanje
@@ -558,7 +567,7 @@ Name[sl]=Manj pomembna sporočila
 Name[sr]=Поруке ниског приоритета
 Name[sr@Latn]=Поруке ниског приоритета
 Name[sv]=Lågprioriterat meddelande
-Name[ta]=குறைந்த முண்ணுரிமை உள்ள செய்திகள்
+Name[ta]=குறைந்த முன்னுரிமை உள்ள செய்திகள்
 Name[tg]=Пайёмҳои Имтиёзашон Кам
 Name[uk]=Повідомлення з низьким пріорітетом
 Name[xx]=xxLow priority messagesxx
@@ -585,7 +594,7 @@ Comment[sl]=Prejeto je bilo manj pomembno sporočilo
 Comment[sr]=Примљена је порука означена ниским приоритетом
 Comment[sr@Latn]=Примљена је порука означена ниским приоритетом
 Comment[sv]=Ett inkommande meddelande har anlänt
-Comment[ta]=எளிய முண்ணுரிமை ஏற்க்கப்பட்ட செய்தி சுழற்ச்சி
+Comment[ta]=எளிய முன்னுரிமை ஏற்கப்பட்ட செய்தி சுழற்சி
 Comment[tg]=Пайёми бо имтиёзи паст нишона карда шуда қабул гардид
 Comment[uk]=Отримано повідомлення з низьким пріорітетом
 Comment[xx]=xxA message marked with a low priority has been receivedxx
@@ -609,7 +618,7 @@ Name[sk]=Pošta Yahoo
 Name[sr]=Yahoo пошта
 Name[sr@Latn]=Yahoo пошта
 Name[sv]=Yahoo e-post
-Name[ta]=யாஊ கடிதம்
+Name[ta]=யாஹூ அஞ்சல்
 Name[tg]=Пости Yahoo
 Name[uk]=Пошта Yahoo
 Name[xx]=xxYahoo Mailxx
@@ -645,6 +654,7 @@ default_presentation=16
 
 [msn_mail]
 Name=MSN Mail
+Name[ar]=بريد MSN
 Name[be]=Пошта MSN
 Name[bg]=Пристигна нова поща в MSN
 Name[bs]=MSN mail
@@ -701,7 +711,7 @@ Comment[sl]=Nova pošta je prispela v vaš nabiralnik MSN
 Comment[sr]=Нова порука је стигла у ваше MSN сандуче
 Comment[sr@Latn]=Нова порука је стигла у ваше MSN сандуче
 Comment[sv]=Ett nytt brev har anlänt i din MSN-inkorg
-Comment[ta]=உங்கள் எம் எஸ் என் அஞ்சல் பெட்டிக்கு புதிய மின்னஞ்சல் வந்துள்ளது
+Comment[ta]=உங்கள் எம்எஸ்என் அஞ்சல் பெட்டிக்கு புதிய மின்னஞ்சல் வந்துள்ளது
 Comment[tg]=Ба қутии пости MSN-и шумо пайёми электронии нав омад
 Comment[uk]=Прийшли нові листи у Вашу скриньку MSN
 Comment[xx]=xxNew email has arrived in your MSN inboxxx

@@ -4,6 +4,7 @@ Type=ServiceType
 X-KDE-ServiceType=Kopete/Plugin
 X-KDE-Derived=KPluginInfo
 Comment=Kopete Plugin
+Comment[ar]=توصيلة Kopete
 Comment[be]=Дапаўненьне Kopete
 Comment[bg]=Приставки на Kopete
 Comment[br]=Lugent Kopete
