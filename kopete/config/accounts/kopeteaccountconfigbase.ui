@@ -47,14 +47,6 @@
                 <string>&amp;Remove</string>
             </property>
         </widget>
-        <widget class="QPushButton" row="7" column="1" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>mButtonUp</cstring>
-            </property>
-            <property name="text">
-                <string>Move &amp;Up</string>
-            </property>
-        </widget>
         <widget class="KListView" row="0" column="0" rowspan="9" colspan="1">
             <column>
                 <property name="text">
@@ -127,14 +119,6 @@
                 </size>
             </property>
         </spacer>
-        <widget class="QPushButton" row="8" column="1" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>mButtonDown</cstring>
-            </property>
-            <property name="text">
-                <string>Move &amp;Down</string>
-            </property>
-        </widget>
         <widget class="KColorButton" row="5" column="2">
             <property name="name">
                 <cstring>mColorButton</cstring>
@@ -175,8 +159,6 @@
     <tabstop>mButtonNew</tabstop>
     <tabstop>mButtonEdit</tabstop>
     <tabstop>mButtonRemove</tabstop>
-    <tabstop>mButtonUp</tabstop>
-    <tabstop>mButtonDown</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

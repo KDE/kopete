@@ -48,15 +48,15 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const char * /* name 
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	m_view = new KopeteAccountConfigBase( this, "KopeteAccountConfig::m_view" );
 
-	m_view->mButtonUp->setPixmap( SmallIcon( "up" ) );
-	m_view->mButtonDown->setPixmap( SmallIcon( "down" ) );
+	//m_view->mButtonUp->setPixmap( SmallIcon( "up" ) );
+	//m_view->mButtonDown->setPixmap( SmallIcon( "down" ) );
 	m_view->mAccountList->setSorting( -1 );
 
 	connect( m_view->mButtonNew,    SIGNAL( clicked() ), this, SLOT( slotAddAccount() ) );
 	connect( m_view->mButtonEdit,   SIGNAL( clicked() ), this, SLOT( slotEditAccount() ) );
 	connect( m_view->mButtonRemove, SIGNAL( clicked() ), this, SLOT( slotRemoveAccount() ) );
-	connect( m_view->mButtonUp,     SIGNAL( clicked() ), this, SLOT( slotAccountUp() ) );
-	connect( m_view->mButtonDown,   SIGNAL( clicked() ), this, SLOT( slotAccountDown() ) );
+	//connect( m_view->mButtonUp,     SIGNAL( clicked() ), this, SLOT( slotAccountUp() ) );
+	//connect( m_view->mButtonDown,   SIGNAL( clicked() ), this, SLOT( slotAccountDown() ) );
 	connect( m_view->mAccountList,  SIGNAL( selectionChanged() ), this, SLOT( slotItemSelected() ) );
 	connect( m_view->mAccountList,  SIGNAL( doubleClicked( QListViewItem * ) ), this, SLOT( slotEditAccount() ) );
 
@@ -101,7 +101,8 @@ void KopeteAccountConfig::slotItemSelected()
 	m_view->mButtonEdit->setEnabled( itemSelected );
 	m_view->mButtonRemove->setEnabled( itemSelected );
 
-	if( itemSelected )
+        /* FIXME uncomment when implementing all acc order func        
+        if ( itemSelected )
 	{
 		m_view->mButtonUp->setEnabled( itemSelected->itemAbove() );
 		m_view->mButtonDown->setEnabled( itemSelected->itemBelow() );
@@ -111,6 +112,7 @@ void KopeteAccountConfig::slotItemSelected()
 		m_view->mButtonUp->setEnabled( itemSelected );
 		m_view->mButtonDown->setEnabled( itemSelected );
 	}
+        */
 
 	// We shouldn't really save data before apply :-s
 	if ( previousAccount )
@@ -134,6 +136,7 @@ void KopeteAccountConfig::slotItemSelected()
 
 void KopeteAccountConfig::slotAccountUp()
 {
+  /*
 	QListViewItem *itemSelected = m_view->mAccountList->selectedItem();
 	if ( !itemSelected )
 		return;
@@ -145,10 +148,12 @@ void KopeteAccountConfig::slotAccountUp()
 
 	slotItemSelected();
 	setChanged(true);
-}
+  */
+}        
 
 void KopeteAccountConfig::slotAccountDown()
 {
+  /*
 	QListViewItem *itemSelected = m_view->mAccountList->selectedItem();
 	if ( !itemSelected )
 		return;
@@ -159,6 +164,7 @@ void KopeteAccountConfig::slotAccountDown()
 
 	slotItemSelected();
 	setChanged(true);
+  */
 }
 
 void KopeteAccountConfig::slotAddAccount()
