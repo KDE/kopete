@@ -217,6 +217,7 @@ void KopetePrefs::setUseEmoticons(bool value)
 
 void KopetePrefs::setShowOffline(bool value)
 {
+	mContactListAppearanceChanged = mContactListAppearanceChanged || !(value == mShowOffline);
 	mShowOffline = value;
 }
 
