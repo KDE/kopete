@@ -16,6 +16,7 @@
 */
 #include <kmessagebox.h>
 #include <klocale.h>
+#include <kdebug.h>
 #include <qlineedit.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>
@@ -60,7 +61,10 @@ KopeteAccount *IRCEditAccountWidget::apply()
 //	else
 //		m_IRCAccount->setAccountId( mAccountId );
 
-	m_IRCAccount->setPassword( mPassword->text() );
+	if (mRememberPassword->isChecked()) {
+		kdDebug(14120) << k_funcinfo << "Saving password '" << mPassword->text() << "' empty: " << mPassword->text().isEmpty() << " null: " <<  mPassword->text().isNull() << endl;
+		m_IRCAccount->setPassword( mPassword->text() );
+	}
 	m_IRCAccount->setUserName( mUserName->text() );
 	m_IRCAccount->setAutoLogin( mAutoConnect->isChecked() );
 

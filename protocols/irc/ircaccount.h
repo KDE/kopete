@@ -51,10 +51,11 @@ public:
 	virtual void loaded();
 
 	QString userName();
-
+	
 public slots:
 	void setUserName(QString userName);
 
+public slots:
 	void unregister(KopeteContact *);
 
 	IRCServerContact *findServer(const QString &name, KopeteMetaContact *m = 0L);
@@ -131,6 +132,7 @@ protected:
 
 
 private slots:
+	void slotFailedServerPassword();
 	void slotGoAway();
 	void slotJoinChannel();
 	void slotShowServerWindow();

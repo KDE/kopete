@@ -87,11 +87,12 @@ void IRCChannelContact::updateStatus()
 
 void IRCChannelContact::messageManagerDestroyed()
 {
-	kdDebug(14120) << k_funcinfo << "for:" << m_nickName << endl;
+	kdDebug(14120) << k_funcinfo << "for: " << m_nickName << endl;
 	if(manager(false))
 	{
 		slotPart();
 		KopeteContactPtrList contacts = manager()->members();
+		// remove all the users on the channel
 		for( KopeteContact *c = contacts.first(); c; c = contacts.next() )
 			m_account->contactManager()->unregisterUser(c);
 	}
@@ -101,6 +102,7 @@ void IRCChannelContact::messageManagerDestroyed()
 
 void IRCChannelContact::slotJoinChannel( KopeteView *view )
 {
+	kdDebug(14120) << k_funcinfo << "SLOTJOINCHANNEL" << endl;
 	if( view->msgManager() == manager(false) )
 	{
 		m_engine->joinChannel(m_nickName, password());

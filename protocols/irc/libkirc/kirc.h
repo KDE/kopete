@@ -165,6 +165,7 @@ signals:
 	void incomingAction(const QString &originating, const QString &target, const QString &message);
 	void incomingNickInUse(const QString &usingNick);
 	void incomingNickChange(const QString &, const QString &);
+	void incomingFailedServerPassword();
 	void incomingFailedChankey(const QString &);
 	void incomingFailedNickOnLogin(const QString &);
 	void incomingNoNickChan(const QString &);
@@ -300,6 +301,7 @@ protected:
 	ircMethod numericReply_353;
 
 	ircMethod numericReply_433;
+	ircMethod numericReply_464;
 	ircMethod numericReply_475;
 
 	inline void addCtcpQueryIrcMethod(const char *str, KIRCMethodFunctorCall *method) {
@@ -353,7 +355,7 @@ protected:
 	QString m_Realname;
 	QString m_Nickname;
 	QString m_Passwd;
-	bool m_ReqsPasswd;
+	bool	m_ReqsPasswd;
 	bool m_FailedNickOnLogin;
 
 	QString m_VersionString;
@@ -371,7 +373,7 @@ private slots:
 	void slotConnected();
 	void slotConnectionClosed();
 	void slotReadyRead();
-	void error();
+	void error(int errCode = 0);
 	void quitTimeout();
 	
 private:

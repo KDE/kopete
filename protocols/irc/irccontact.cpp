@@ -124,8 +124,11 @@ KopeteMessageManager *IRCContact::manager(bool canCreate)
 
 void IRCContact::messageManagerDestroyed()
 {
+	// Called after all users have been removed from the chat..
 	kdDebug(14120) << k_funcinfo << "for:" << m_nickName << endl;
-	m_account->unregister( this );
+	// Removed the unregister() function in favor of just removing the Channel
+	// - JLN
+	m_account->unregisterChannel( m_nickName );
 
 	m_msgManager = 0L;
 	m_isConnected = false;

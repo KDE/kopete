@@ -242,6 +242,8 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 	addIrcMethod("406",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWasNoNick,		2,	2));
 
 	addIrcMethod("433",	&KIRC::numericReply_433,	2,	2);
+	/* Bad server password */
+	addIrcMethod("464",	&KIRC::numericReply_464,	1,	1);
 	/* Wrong Chan-key */
 	addIrcMethod("475",	&KIRC::numericReply_475,	2,	2);
 
@@ -266,7 +268,7 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 	QObject::connect(&m_sock, SIGNAL(closed(int)), this, SLOT(slotConnectionClosed()));
 
 	QObject::connect(&m_sock, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
-	QObject::connect(&m_sock, SIGNAL(connectionFailed(int)), this, SLOT(error()));
+	QObject::connect(&m_sock, SIGNAL(connectionFailed(int)), this, SLOT(error(int)));
 
 	m_VersionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
 	m_UserString = QString::fromLatin1("Response not supplied by user.");
@@ -297,10 +299,18 @@ void KIRC::connectToServer(const QString &nickname, const QString &host, Q_UINT1
 	}
 
 	kdDebug(14120) << "Trying to connect to server " << m_Host << ":" << m_Port << endl;
-	m_sock.setAddress(m_Host, m_Port);
-	m_sock.lookup();		// necessary to avoid QDns
-	if(m_sock.startAsyncConnect()==0)
+	kdDebug(14120) << "Sock status: " << m_sock.socketStatus() << endl;
+	if (!m_sock.setAddress(m_Host, m_Port))
+		kdDebug(14120) << k_funcinfo << "setAddress failed. Status:  " << m_sock.socketStatus() << endl;
+	if (m_sock.lookup())		// necessary to avoid QDns
+		kdDebug(14120) << k_funcinfo << "lookup() failed. Status: " << m_sock.socketStatus() << endl;
+	if(m_sock.startAsyncConnect()==0) {
+		kdDebug(14120) << k_funcinfo << "startAsyncConnect() success!. Status: " << m_sock.socketStatus() << endl;
 		setStatus(Connecting);
+	} else {
+		kdDebug(14120) << k_funcinfo << "startAsyncConnect() failed. Status: " << m_sock.socketStatus() << endl;
+	}
+
 }
 
 void KIRC::slotHostFound()
@@ -310,12 +320,12 @@ void KIRC::slotHostFound()
 
 void KIRC::slotConnected()
 {
-	kdDebug(14120) << "Connected" << endl;
+	kdDebug(14120) << k_funcinfo << "Connected" << endl;
 	setStatus(Authentifying);
 	m_sock.enableRead(true);
 	// If password is given for this server, send it now, and don't expect a reply
-	if (reqsPassword()) {
-		writeMessage("PASS", QStringList(m_Passwd) , m_Realname, false);
+	if (!(password()).isEmpty()) {
+		writeMessage("PASS", QStringList(password()) , m_Realname, false);
 	}
                                                
 	changeUser(m_Username, 0, QString::fromLatin1("Kopete User"));
@@ -324,7 +334,7 @@ void KIRC::slotConnected()
 
 void KIRC::slotConnectionClosed()
 {
-	kdDebug(14120) << "Connection Closed" << endl;
+	kdDebug(14120) << k_funcinfo << "Connection Closed - local status: " << m_status << " sock status: " << m_sock.socketStatus() << endl;
 	if(m_status == Closing)
 		emit successfulQuit();
 //	else
@@ -334,11 +344,13 @@ void KIRC::slotConnectionClosed()
 	m_sock.reset();
 }
 
-void KIRC::error()
+void KIRC::error(int errCode)
 {
-	kdDebug(14120) << "Slot error, reseting connection." << endl;
-	setStatus(Disconnected);
-	m_sock.reset();
+	if (m_sock.socketStatus () != KExtendedSocket::connecting) {
+		// Connection in progress.. This is a signal fired wrong
+		setStatus(Disconnected);
+		m_sock.reset();
+	}
 }
 
 void KIRC::setVersionString(const QString &newString)
@@ -1125,6 +1137,13 @@ bool KIRC::numericReply_433(const KIRCMessage &msg)
 	}
 	
 	
+	return true;
+}
+
+bool KIRC::numericReply_464(const KIRCMessage &msg)
+{
+	/* Server need pass.. Call disconnect */
+	emit incomingFailedServerPassword();
 	return true;
 }
 

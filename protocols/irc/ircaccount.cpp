@@ -51,7 +51,9 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 
 	QObject::connect(m_engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)),
 			this, SLOT(successfullyChangedNick(const QString &, const QString &)));
-	
+	QObject::connect(m_engine, SIGNAL(incomingFailedServerPassword()),
+			this, SLOT(slotFailedServerPassword()));
+
 	QObject::connect(m_engine, SIGNAL(incomingNickInUse(const QString &)),
 			this, SLOT(slotNickInUseAlert( const QString &)) );
 	
@@ -86,13 +88,8 @@ IRCAccount::~IRCAccount()
 void IRCAccount::loaded()
 {
 	m_engine->setUserName(userName());
-	QString pass = password();
-	if ( !pass.isEmpty() ) {
-		m_engine->setPassword(pass);
-		m_engine->setReqsPassword(true);
-	} else {
-		m_engine->setReqsPassword(false);
-	}
+	if( rememberPassword() )
+		m_engine->setPassword( password() );
 
 }
 
@@ -163,6 +160,16 @@ void IRCAccount::setAway( bool isAway, const QString &awayMessage )
 	}
 }
 
+/*
+ * Ask for server password, and reconnect 
+ */
+void IRCAccount::slotFailedServerPassword()
+{
+	// JLN
+	QString servPass = KopeteAccount::password();
+	m_engine->setPassword(servPass);
+	connect();
+}
 void IRCAccount::slotGoAway()
 {
 	setAway( true, KopeteAway::message() );

@@ -91,6 +91,7 @@ protected slots:
 	void slotNewPrivAction(const QString &originating, const QString &, const QString &action);
 	
 	//ViewManagement slots
+	// Called when view has been created and is ready
 	void viewCreated(KopeteView *view);
 	void viewActivated(KopeteView *view);
 	void viewClosing(KopeteView *view);

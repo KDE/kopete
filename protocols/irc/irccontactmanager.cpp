@@ -98,6 +98,9 @@ void IRCContactManager::viewCreated(KopeteView *view)
 {
 	kdDebug(14120) << k_funcinfo << view << endl;
 
+	// This code runs through all channels for this connection to find 
+	// out if a given view is open.
+	
 	/* should search for user/channel/server view but only channels are really needed */
 	QValueList<IRCChannelContact *> channels = m_channels.values();
 	for(QValueList<IRCChannelContact *>::Iterator cc = channels.begin(); cc != channels.end(); ++cc )
@@ -107,6 +110,7 @@ void IRCContactManager::viewCreated(KopeteView *view)
 			kdDebug(14120) << k_funcinfo << "Testing view:" << (*cc)->manager()->view(false) << endl;
 		if((*cc)->manager(false) && (*cc)->manager() == view->msgManager())
 		{
+			kdDebug(14120) << k_funcinfo << "Calling slotJoinChannel on view" << endl;
 			(*cc)->slotJoinChannel(view);
 		}
 	}
@@ -114,12 +118,12 @@ void IRCContactManager::viewCreated(KopeteView *view)
 
 void IRCContactManager::viewActivated(KopeteView */*view*/)
 {
-//	kdDebug(14120) << "View activated" << endl;
+	//kdDebug(14120) << k_funcinfo << "View activated" << endl;
 }
 
 void IRCContactManager::viewClosing(KopeteView */*view*/)
 {
-	kdDebug(14120) << "View closing" << endl;
+	kdDebug(14120) << k_funcinfo << "View closing" << endl;
 }
 
 void IRCContactManager::unregister(KopeteContact *contact)
