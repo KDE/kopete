@@ -18,6 +18,7 @@ class AliasDialogBase;
 namespace Kopete { class Protocol; }
 class ProtocolItem;
 class AliasItem;
+class AliasDialog;
 namespace Kopete { class Plugin; }
 
 class AliasPreferences : public KCModule
@@ -42,8 +43,8 @@ class AliasPreferences : public KCModule
 	private:
 		AliasDialogBase * preferencesDialog;
 		void addAlias( QString &alias, QString &command, const ProtocolList &p, uint id = 0 );
-		void loadProtocols( AliasDialog *dialog );
-		const ProtocolList selectedProtocols( AliasDialog *dialog );
+		void loadProtocols( EditAliasDialog *dialog );
+		const ProtocolList selectedProtocols( EditAliasDialog *dialog );
 		QMap<Kopete::Protocol*,ProtocolItem*> itemMap;
 		QMap<QPair<Kopete::Protocol*,QString>, bool> protocolMap;
 		QMap<QString,AliasItem*> aliasMap;

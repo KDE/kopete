@@ -37,6 +37,7 @@ public:
     void setContactsList(QStringList list) {m_contactslist = list;}
     
 private:
+    bool m_folderPerContact;
     UseSubfolders m_isfolderforeachcontact;
     QStringList m_contactslist;
 

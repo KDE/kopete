@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>WebPresencePrefsUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -14,6 +14,9 @@
             <width>426</width>
             <height>558</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>WebPresencePrefsUI</string>
     </property>
     <vbox>
         <property name="name">
@@ -138,7 +141,10 @@
                         <cstring>formatDefault</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;HTML using default (boring) stylesheet</string>
+                        <string>&amp;HTML using the default simple look</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+H</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -159,7 +165,7 @@
                 <cstring>buttonGroup2</cstring>
             </property>
             <property name="title">
-                <string>Show Your Name As</string>
+                <string>Display Name</string>
             </property>
             <grid>
                 <property name="name">
@@ -244,8 +250,6 @@
         </spacer>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>formatStylesheet</sender>

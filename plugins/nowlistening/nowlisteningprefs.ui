@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>NowListeningPrefsUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -31,6 +31,9 @@
             </property>
             <property name="text">
                 <string>&lt;b&gt;Share your musical taste&lt;/b&gt;</string>
+            </property>
+            <property name="alignment">
+                <set>AlignVCenter</set>
             </property>
         </widget>
         <widget class="QFrame">
@@ -162,6 +165,23 @@ Expressions in brackets depend on a substitution being made.</string>
                 </widget>
             </vbox>
         </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer25</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>21</height>
+                </size>
+            </property>
+        </spacer>
     </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>

@@ -29,6 +29,7 @@ void BookmarksPrefsSettings::load()
 	KConfig configfile(QString::fromLatin1("kopeterc") , true);
 	m_isfolderforeachcontact = Yes;
 	m_contactslist.clear();
+	m_folderPerContact = false;
 	if( configfile.getConfigState() == KConfigBase::NoAccess ){
 		kdDebug( 14501 ) << "load: failed to open config file for reading" << endl;
 		return;
@@ -40,6 +41,7 @@ void BookmarksPrefsSettings::load()
 	configfile.setGroup("Bookmarks Plugin");
 	m_isfolderforeachcontact = (UseSubfolders)configfile.readNumEntry("UseSubfolderForEachContact", 0);
 	m_contactslist = configfile.readListEntry("ContactsList");
+	
 }
 
 void BookmarksPrefsSettings::save()
@@ -68,6 +70,7 @@ bool BookmarksPrefsSettings::isUseSubfolderForContact( QString nickname )
 	case OnlyContactsNotInList:
 		return (m_contactslist.find(nickname) == m_contactslist.end());
 	}
+	
 	return false;
 }
 

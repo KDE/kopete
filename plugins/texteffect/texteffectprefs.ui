@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>TextEffectPrefs</class>
 <author>Olivier Goffart</author>
 <widget class="QWidget">
@@ -9,16 +9,19 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>402</width>
-            <height>409</height>
+            <width>630</width>
+            <height>529</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>TextEffectPrefs</string>
     </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
         <property name="margin">
-            <number>0</number>
+            <number>5</number>
         </property>
         <property name="spacing">
             <number>0</number>
@@ -34,11 +37,11 @@
                 <attribute name="title">
                     <string>&amp;Colors</string>
                 </attribute>
-                <vbox>
+                <grid>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QGroupBox">
+                    <widget class="QGroupBox" row="0" column="0">
                         <property name="name">
                             <cstring>groupBox1</cstring>
                         </property>
@@ -105,7 +108,7 @@
                             </spacer>
                         </grid>
                     </widget>
-                    <widget class="QCheckBox">
+                    <widget class="QCheckBox" row="1" column="0">
                         <property name="name">
                             <cstring>m_colorRandom</cstring>
                         </property>
@@ -113,7 +116,7 @@
                             <string>Random order</string>
                         </property>
                     </widget>
-                    <widget class="Line">
+                    <widget class="Line" row="2" column="0">
                         <property name="name">
                             <cstring>Line1</cstring>
                         </property>
@@ -127,7 +130,7 @@
                             <enum>Horizontal</enum>
                         </property>
                     </widget>
-                    <widget class="QCheckBox">
+                    <widget class="QCheckBox" row="3" column="0">
                         <property name="name">
                             <cstring>m_fg</cstring>
                         </property>
@@ -135,7 +138,7 @@
                             <string>Change global text foreground color</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox">
+                    <widget class="QCheckBox" row="4" column="0">
                         <property name="name">
                             <cstring>m_char</cstring>
                         </property>
@@ -143,7 +146,7 @@
                             <string>Change color every letter</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox">
+                    <widget class="QCheckBox" row="5" column="0">
                         <property name="name">
                             <cstring>m_words</cstring>
                         </property>
@@ -151,7 +154,7 @@
                             <string>Change color every word</string>
                         </property>
                     </widget>
-                </vbox>
+                </grid>
             </widget>
             <widget class="QWidget">
                 <property name="name">

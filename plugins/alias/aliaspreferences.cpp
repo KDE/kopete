@@ -27,7 +27,7 @@
 #include "kopeteprotocol.h"
 
 #include "aliasdialogbase.h"
-#include "aliasdialog.h"
+#include "editaliasdialog.h"
 #include "aliaspreferences.h"
 
 typedef KGenericFactory<AliasPreferences> AliasPreferencesFactory;
@@ -177,8 +177,9 @@ void AliasPreferences::load()
 			addAlias( *it, aliasCommand, protocolList, aliasNumber );
 		}
 
-		slotCheckAliasSelected();
 	}
+	
+	slotCheckAliasSelected();
 }
 
 void AliasPreferences::slotPluginLoaded( Kopete::Plugin *plugin )
@@ -303,8 +304,9 @@ void AliasPreferences::addAlias( QString &alias, QString &command, const Protoco
 
 void AliasPreferences::slotAddAlias()
 {
-	AliasDialog addDialog;
+	EditAliasDialog addDialog;
 	loadProtocols( &addDialog );
+	addDialog.addButton->setText( i18n("&Add") );
 
 	if( addDialog.exec() == QDialog::Accepted )
 	{
@@ -337,7 +339,7 @@ void AliasPreferences::slotAddAlias()
 	}
 }
 
-const ProtocolList AliasPreferences::selectedProtocols( AliasDialog *dialog )
+const ProtocolList AliasPreferences::selectedProtocols( EditAliasDialog *dialog )
 {
 	ProtocolList protocolList;
 	QListViewItem *item = dialog->protocolList->firstChild();
@@ -356,7 +358,7 @@ const ProtocolList AliasPreferences::selectedProtocols( AliasDialog *dialog )
 	return protocolList;
 }
 
-void AliasPreferences::loadProtocols( AliasDialog *dialog )
+void AliasPreferences::loadProtocols( EditAliasDialog *dialog )
 {
 	QValueList<KPluginInfo*> plugins = Kopete::PluginManager::self()->availablePlugins("Protocols");
 	for( QValueList<KPluginInfo*>::Iterator it = plugins.begin(); it != plugins.end(); ++it )
@@ -368,7 +370,7 @@ void AliasPreferences::loadProtocols( AliasDialog *dialog )
 
 void AliasPreferences::slotEditAlias()
 {
-	AliasDialog editDialog;
+	EditAliasDialog editDialog;
 	loadProtocols( &editDialog );
 
 	QListViewItem *item = preferencesDialog->aliasList->selectedItems().first();

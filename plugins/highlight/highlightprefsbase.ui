@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>HighlightPrefsUI</class>
 <author>Olivier Goffart</author>
 <widget class="QWidget">
@@ -12,6 +12,9 @@
             <width>513</width>
             <height>504</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>HighlighPrefsUI</string>
     </property>
     <vbox>
         <property name="name">
@@ -48,6 +51,9 @@
                     <property name="name">
                         <cstring>m_remove</cstring>
                     </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
                     <property name="text">
                         <string>Remove</string>
                     </property>
@@ -55,6 +61,9 @@
                 <widget class="QPushButton" row="1" column="2">
                     <property name="name">
                         <cstring>m_rename</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
                     </property>
                     <property name="text">
                         <string>Rename...</string>
@@ -105,11 +114,6 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="KLineEdit">
-                    <property name="name">
-                        <cstring>m_search</cstring>
-                    </property>
-                </widget>
                 <widget class="QLabel">
                     <property name="name">
                         <cstring>textLabel1</cstring>
@@ -124,6 +128,11 @@
                     </property>
                     <property name="text">
                         <string>If the message contains:</string>
+                    </property>
+                </widget>
+                <widget class="KLineEdit">
+                    <property name="name">
+                        <cstring>m_search</cstring>
                     </property>
                 </widget>
                 <widget class="QLayoutWidget">
@@ -406,13 +415,31 @@
         </widget>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
+<tabstops>
+    <tabstop>m_list</tabstop>
+    <tabstop>m_add</tabstop>
+    <tabstop>m_remove</tabstop>
+    <tabstop>m_rename</tabstop>
+    <tabstop>m_search</tabstop>
+    <tabstop>m_regexp</tabstop>
+    <tabstop>m_editregexp</tabstop>
+    <tabstop>m_case</tabstop>
+    <tabstop>m_setImportance</tabstop>
+    <tabstop>m_importance</tabstop>
+    <tabstop>m_setBG</tabstop>
+    <tabstop>m_BG</tabstop>
+    <tabstop>m_setFG</tabstop>
+    <tabstop>m_FG</tabstop>
+    <tabstop>m_sound</tabstop>
+    <tabstop>m_soundFN</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klistview.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>kcombobox.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
+    <includehint>kcolorbutton.h</includehint>
     <includehint>kurlrequester.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>kpushbutton.h</includehint>

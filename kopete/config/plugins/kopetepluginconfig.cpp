@@ -40,7 +40,7 @@ KopetePluginConfig::~KopetePluginConfig()
 }
 
 KopetePluginConfig::KopetePluginConfig( QWidget *parent, const char *name )
-: KDialogBase( Plain, i18n( "Configure" ), Help | Default | Cancel | Apply | Ok | User1,
+: KDialogBase( Plain, i18n( "Configure Plugins" ), /*Help |*/ Cancel | Apply | Ok | User1,
 	Ok, parent, name, false, true, KGuiItem( i18n( "&Reset" ), "undo" ) )
 {
 	d = new KopetePluginConfigPrivate;

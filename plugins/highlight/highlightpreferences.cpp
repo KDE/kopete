@@ -126,9 +126,15 @@ void HighlightPreferences::slotCurrentFilterChanged()
 		preferencesDialog->m_soundFN->setEnabled(false);
 		preferencesDialog->m_sound->setEnabled(false);
 		preferencesDialog->m_editregexp->setEnabled(false);
+		preferencesDialog->m_rename->setEnabled(false);
+		preferencesDialog->m_remove->setEnabled(false);
 		donttouch=false;
 		return;
 	}
+	
+	preferencesDialog->m_rename->setEnabled(true);
+	preferencesDialog->m_remove->setEnabled(true);
+	
 	preferencesDialog->m_search->setEnabled(true);
 	preferencesDialog->m_case->setEnabled(true);
 	preferencesDialog->m_regexp->setEnabled(true);
