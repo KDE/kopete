@@ -40,7 +40,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_latex, LatexPluginFactory( "kopete_latex" )  
 LatexPlugin::LatexPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
 : KopetePlugin( LatexPluginFactory::instance(), parent, name )
 {
-	kdDebug() << k_funcinfo << endl;
+//	kdDebug() << k_funcinfo << endl;
 	if( !s_pluginStatic )
 		s_pluginStatic = this;
 
@@ -69,16 +69,12 @@ LatexPlugin* LatexPlugin::s_pluginStatic = 0L;
 
 void LatexPlugin::slotHandleLatex( KopeteMessage& msg )
 {
-	
-	kdDebug() << k_funcinfo << " Using converter: " << m_convScript << endl;
 	QString messageText = msg.plainBody();
-
 	if( !messageText.contains("$$"))
-	{
 		return;
-	}
 
-	
+	//kdDebug() << k_funcinfo << " Using converter: " << m_convScript << endl;
+
 	// /\[([^]]).*?\[/$1\]/
 	// \$\$.+?\$\$
 	
@@ -109,7 +105,7 @@ void LatexPlugin::slotHandleLatex( KopeteMessage& msg )
 				continue;
 			}
 			
-			kdDebug() << k_funcinfo << " captured: " << match << endl;
+//			kdDebug() << k_funcinfo << " captured: " << match << endl;
 			QString latexFormula = match;
 			latexFormula.replace("$$","");  
 			
@@ -122,14 +118,14 @@ void LatexPlugin::slotHandleLatex( KopeteMessage& msg )
 			
 			fileName = tempFile.name();
 			
-			kdDebug() << k_funcinfo  << " Rendering " << latexFormula << " to: " << fileName<< endl;
+//			kdDebug() << k_funcinfo  << " Rendering " << latexFormula << " to: " << fileName<< endl;
 
 			p << m_convScript << "-o " + fileName << latexFormula  ;
 			
 			// FIXME our sucky sync filter API limitations :-)
 			p.start(KProcess::Block);
 			
-			kdDebug() << k_funcinfo  << " render process finished..." << endl;
+//			kdDebug() << k_funcinfo  << " render process finished..." << endl;
 			
 			// get the image and encode it with base64
 			#if ENCODED_IMAGE_MODE

@@ -51,6 +51,9 @@ K_EXPORT_COMPONENT_FACTORY( kopete_translator, TranslatorPluginFactory( "kopete_
 TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
 : KopetePlugin( TranslatorPluginFactory::instance(), parent, name )
 {
+	kdDebug( 14308 ) << k_funcinfo << endl;
+
+
 	if ( pluginStatic_ )
 		kdWarning( 14308 ) << k_funcinfo << "Translator already initialized" << endl;
 	else
@@ -89,6 +92,7 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QSt
 
 TranslatorPlugin::~TranslatorPlugin()
 {
+	kdDebug( 14308 ) << k_funcinfo << endl;
 	pluginStatic_ = 0L;
 }
 
