@@ -229,7 +229,8 @@ void KopeteAccountManager::removeAccount( KopeteAccount *account )
 
 void KopeteAccountManager::unregisterAccount( KopeteAccount *account )
 {
-	kdDebug(14010) << k_funcinfo << "Unregistering account " << account->accountId() << endl;
+	kdDebug( 14010 ) << k_funcinfo << "Unregistering account " << account->accountId() << endl;
+	d->accounts.remove( account );
 	emit accountUnregistered( account );
 }
 
@@ -320,7 +321,6 @@ void KopeteAccountManager::notifyAccountReady( KopeteAccount *account )
 	emit accountReady( account );
 	d->accounts.sort();
 }
-
 
 #include "kopeteaccountmanager.moc"
 
