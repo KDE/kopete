@@ -104,12 +104,12 @@ public:
 	/**
 	 * Returns a Kopete::ChatSession associated with this contact
 	 */
-	virtual Kopete::ChatSession *manager( bool canCreate = false );
+	virtual Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags canCreate =  Kopete::Contact::CannotCreate );
 
 	/** 
 	 * Locate or create a messagemanager for the specified group of contacts
 	 */
-	GroupWiseChatSession *manager ( Kopete::ContactPtrList chatMembers, bool canCreate = false );
+	GroupWiseChatSession *manager ( Kopete::ContactPtrList chatMembers, Kopete::Contact::CanCreateFlags canCreate =  Kopete::Contact::CannotCreate );
 
 	/**
 	 * Received a message from the server.
@@ -204,7 +204,7 @@ protected:
 	/**
 	 * Returns the Kopete::ChatSession for the GroupWise conference with the supplied GUID, or creates a new one.
 	 */
-	GroupWiseChatSession *manager( const ConferenceGuid & guid, bool canCreate = false );
+  GroupWiseChatSession *manager( const ConferenceGuid & guid, Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CannotCreate );
 	// debug function to see what message managers we have on the server
 	void dumpManagers();
 protected slots:

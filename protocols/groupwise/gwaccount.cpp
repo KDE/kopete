@@ -99,26 +99,26 @@ KActionMenu* GroupWiseAccount::actionMenu()
 	KActionMenu *theActionMenu = new KActionMenu(accountId(), myself()->onlineStatus().iconFor(this) , this);
 	theActionMenu->popupMenu()->insertTitle(myself()->icon(), i18n("GroupWise (%1)").arg(accountId()));
 
-	theActionMenu->insert( new KAction (GroupWiseProtocol::protocol()->groupwiseAvailable.caption(),
+	theActionMenu->insert( new KAction( i18n( "&Online" ),
 		GroupWiseProtocol::protocol()->groupwiseAvailable.iconFor(this), 0, this, SLOT ( slotGoOnline() ), this,
 		"actionGroupWiseConnect") );
-	theActionMenu->insert( new Kopete::AwayAction (GroupWiseProtocol::protocol()->groupwiseAway.caption(),
+	theActionMenu->insert( new Kopete::AwayAction ( i18n( "&Away" ),
 		GroupWiseProtocol::protocol()->groupwiseAway.iconFor(this), 0, this, SLOT ( slotGoAway( const QString & ) ), this,
 		"actionGroupWiseAway") );
-	theActionMenu->insert( new Kopete::AwayAction (GroupWiseProtocol::protocol()->groupwiseBusy.caption(),
+	theActionMenu->insert( new Kopete::AwayAction ( i18n( "&Busy" ),
 		GroupWiseProtocol::protocol()->groupwiseBusy.iconFor(this), 0, this, SLOT ( slotGoBusy( const QString & ) ), this,
 		"actionGroupWiseBusy") );
-	theActionMenu->insert( new KAction ( "A&ppear Offline", "groupwise_invisible", 0, this,
+	theActionMenu->insert( new KAction( i18n( "A&ppear Offline" ), "groupwise_invisible", 0, this,
 		SLOT( slotGoAppearOffline() ), this,
-		"actionGroupWiseAppearOffline") );
-	theActionMenu->insert( new KAction (GroupWiseProtocol::protocol()->groupwiseOffline.caption(),
+		"actionGroupWiseAppearOffline") ) ;
+	theActionMenu->insert( new KAction ( i18n( "O&ffline" ),
 		GroupWiseProtocol::protocol()->groupwiseOffline.iconFor(this), 0, this, SLOT ( slotGoOffline() ), this,
 		"actionGroupWiseOfflineDisconnect") );
-	KAction * autoReply = new KAction ( "&Set Auto-Reply...", QString::null, 0, this,
+	KAction * autoReply = new KAction ( i18n( "&Set Auto-Reply..." ), QString::null, 0, this,
 		SLOT( slotSetAutoReply() ), this, "actionSetAutoReply");
 	autoReply->setEnabled( isConnected() );
 	theActionMenu->insert( autoReply );
-	KAction * managePrivacy = new KAction ( "&Manage Privacy...", QString::null, 0, this,
+	KAction * managePrivacy = new KAction ( i18n( "&Manage Privacy..." ), QString::null, 0, this,
 		SLOT( slotPrivacy() ), this, "actionPrivacy");
 	managePrivacy->setEnabled( isConnected() );
 	theActionMenu->insert( managePrivacy );
@@ -677,7 +677,7 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 			if ( (uint)grp->pluginData( protocol(), accountId() + " objectId" ).toInt() == contact.parentId )
 			{
 				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - matches, adding." << endl;
-				metaContact->addToGroup( grp, Kopete::MetaContact::DontSyncGroups ); //addToGroup() is safe to call if already a member
+				metaContact->addToGroup( grp ); //addToGroup() is safe to call if already a member
 				break;
 			}
 		}
@@ -693,7 +693,7 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 		{
 			if ( (uint)grp->pluginData( protocol(), accountId() + " objectId" ).toInt() == contact.parentId )
 			{
-				metaContact->addToGroup( grp, Kopete::MetaContact::DontSyncGroups );
+				metaContact->addToGroup( grp );
 				break;
 			}
 		}

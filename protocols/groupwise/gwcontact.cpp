@@ -153,7 +153,7 @@ void GroupWiseContact::serialize( QMap< QString, QString > &serializedData, QMap
 	serializedData[ "DN" ] = m_dn;
 }
 
-Kopete::ChatSession * GroupWiseContact::manager( bool canCreate )
+Kopete::ChatSession * GroupWiseContact::manager( Kopete::Contact::CanCreateFlags canCreate )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "called, canCreate: " << canCreate << endl;
 
@@ -178,7 +178,7 @@ Kopete::ChatSession * GroupWiseContact::manager( bool canCreate )
 	}*/
 }
 
-GroupWiseChatSession * GroupWiseContact::manager( Kopete::ContactPtrList chatMembers, bool canCreate )
+GroupWiseChatSession * GroupWiseContact::manager( Kopete::ContactPtrList chatMembers, Kopete::Contact::CanCreateFlags canCreate )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	
@@ -189,7 +189,7 @@ GroupWiseChatSession * GroupWiseContact::manager( Kopete::ContactPtrList chatMem
 	 * If we didn't find a message manager for this contact,
 	 * instantiate a new one if we are allowed to. (otherwise return 0)
 	 */
-	if ( !mgr && canCreate )
+	if ( !mgr && canCreate==Kopete::Contact::CanCreate )
 	{
 		mgr = account()->chatSession( account()->myself(), chatMembers, protocol(), QString::null );
 		connect( mgr, SIGNAL( destroyed ( QObject * ) ), SLOT( slotChatSessionDeleted ( QObject * ) ) );
@@ -201,7 +201,7 @@ GroupWiseChatSession * GroupWiseContact::manager( Kopete::ContactPtrList chatMem
 	return mgr;
 }
 
-GroupWiseChatSession * GroupWiseContact::manager( const GroupWise::ConferenceGuid & guid, bool canCreate )
+GroupWiseChatSession * GroupWiseContact::manager( const GroupWise::ConferenceGuid & guid, Kopete::Contact::CanCreateFlags canCreate )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << m_dn << "looking for message manager for guid: " << guid << ", canCreate: " << canCreate << endl;
 	if ( !guid.isNull() )
@@ -301,7 +301,7 @@ void GroupWiseContact::handleIncomingMessage( const ConferenceEvent & message, b
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << m_dn << " sent a " << ( autoReply ? "auto-reply" : "message" ) << " to conference: " << message.guid << ", message: " << message.message << endl;
 	Kopete::ContactPtrList contactList;
 	contactList.append ( account()->myself () );
-	GroupWiseChatSession *mgr = manager( message.guid, true );
+	GroupWiseChatSession *mgr = manager( message.guid, Kopete::Contact::CanCreate );
 
 	// add an auto-reply indicator if needed
 	QString messageMunged = message.message;
@@ -323,7 +323,7 @@ void GroupWiseContact::handleIncomingMessage( const ConferenceEvent & message, b
 void GroupWiseContact::joinConference( const GroupWise::ConferenceGuid & guid )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	manager( guid, false );
+	manager( guid, Kopete::Contact::CannotCreate );
 }
 
 void GroupWiseContact::leaveConference( const GroupWise::ConferenceGuid & guid )
@@ -614,7 +614,7 @@ void GroupWiseContact::setOnlineStatus( const Kopete::OnlineStatus& status )
 	{
 		Kopete::Contact::setOnlineStatus(Kopete::OnlineStatus(status.status() , (status.weight()==0) ? 0 : (status.weight() -1)  ,
 			protocol() , status.internalStatus()+15 , QString::fromLatin1("msn_blocked"),
-			status.caption() ,  i18n("%1|Blocked").arg( status.description() ) ) );
+			i18n("%1|Blocked").arg( status.description() ) ) );
 	}
 	else
 	{
