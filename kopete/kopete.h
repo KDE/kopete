@@ -82,7 +82,6 @@ signals:
 	void signalSettingsChanged();
 
 private slots:
-//	void slotExit();
 	void slotAddContact();
 	void slotSetAwayAll();
 	void slotShowTransfers();

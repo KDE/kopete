@@ -134,7 +134,6 @@ void KopeteWindow::initActions ( void )
 							KopeteContactList::contactList(), SLOT(save()),
 							actionCollection(), "save_contactlist" );
 
-//	actionQuit = KStdAction::quit( qApp, SLOT(slotExit()), actionCollection());
 	KStdAction::quit(this, SLOT(slotQuit()), actionCollection());
 
 	toolbarAction = KStdAction::showToolbar(this, SLOT(showToolbar()), actionCollection());

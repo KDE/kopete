@@ -162,16 +162,6 @@ void Kopete::slotLoadPlugins()
 	LibraryLoader::pluginLoader()->loadAll();
 }
 
-/*
-void Kopete::slotExit()
-{
-	kdDebug() << "[Kopete] slotExit()" << endl;
-	quit();
-}
-*/
-
-/** Disconnect all loaded protocol plugins */
-
 // Set a meta-away in all protocol plugins
 // This is a fire and forget thing, we do not check if
 // it worked or if the plugin exits away-mode
