@@ -6,12 +6,11 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes)
 
 METASOURCES = AUTO
 
-noinst_HEADERS = gwprotocol.h gwcontact.h gwaccount.h gwfakeserver.h \
-	gwincomingmessage.h gwbytestream.h gwconnector.h gwmessagemanager.h
+noinst_HEADERS = gwprotocol.h gwcontact.h gwaccount.h gwbytestream.h \
+	gwconnector.h gwmessagemanager.h
 kde_module_LTLIBRARIES =  kopete_groupwise.la
 kopete_groupwise_la_SOURCES = gwprotocol.cpp gwcontact.cpp gwaccount.cpp \
-	gwfakeserver.cpp gwincomingmessage.cpp gwbytestream.cpp gwconnector.cpp \
-	gwmessagemanager.cpp
+	gwbytestream.cpp gwconnector.cpp gwmessagemanager.cpp
 kopete_groupwise_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) \
 	$(all_libraries)
 kopete_groupwise_la_LIBADD = ui/libkopetegroupwiseui.la \

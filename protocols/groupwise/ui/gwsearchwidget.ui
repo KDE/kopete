@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>GroupWiseSearchWidget</class>
 <widget class="QWidget">
     <property name="name">
@@ -333,9 +333,6 @@
                     <property name="text">
                         <string>Detai&amp;ls...</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+L</string>
-                    </property>
                 </widget>
                 <spacer>
                     <property name="name">
@@ -360,9 +357,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Search</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
                     </property>
                 </widget>
             </hbox>

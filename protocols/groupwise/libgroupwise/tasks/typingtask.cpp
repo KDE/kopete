@@ -1,16 +1,24 @@
-//
-// C++ Implementation: %{MODULE}
-//
-// Description: 
-//
-//
-// Author: %{AUTHOR} <%{EMAIL}>, (C) %{YEAR}
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
-// included for the event code for typing - FIXME: rationalise numeric constants
-#include "eventtransfer.h"
+/*
+    Kopete Groupwise Protocol
+    typingtask.cpp - sends typing notifications to the server
+
+    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+    
+    Based on Iris, Copyright (C) 2003  Justin Karneges
+
+    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+ 
+    *************************************************************************
+    *                                                                       *
+    * This library is free software; you can redistribute it and/or         *
+    * modify it under the terms of the GNU Lesser General Public            *
+    * License as published by the Free Software Foundation; either          *
+    * version 2 of the License, or (at your option) any later version.      *
+    *                                                                       *
+    *************************************************************************
+*/
+
+//#include "eventtransfer.h"
 
 #include "typingtask.h"
 

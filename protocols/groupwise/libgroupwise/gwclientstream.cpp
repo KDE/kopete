@@ -1,6 +1,23 @@
-// taken from jabber
-// encode_method taken from gaim plugin
-// Buffer taken from MSN
+/*
+    gwclientstream.cpp - Kopete Groupwise Protocol
+  
+    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+    
+    Based on Iris, Copyright (C) 2003  Justin Karneges
+    encode_method from Gaim src/protocols/novell/nmconn.c
+    Copyright (c) 2004 Novell, Inc. All Rights Reserved
+    
+    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+ 
+    *************************************************************************
+    *                                                                       *
+    * This library is free software; you can redistribute it and/or         *
+    * modify it under the terms of the GNU Lesser General Public            *
+    * License as published by the Free Software Foundation; either          *
+    * version 2 of the License, or (at your option) any later version.      *
+    *                                                                       *
+    *************************************************************************
+*/
 
 //#include<qtextstream.h>
 //#include<qguardedptr.h>
@@ -103,7 +120,6 @@ public:
 // 	QCA::SASL *sasl;
 	SecureStream *ss;
 	CoreProtocol client;
-	Buffer inBuffer;
 	//CoreProtocol srv;
 
 	QString defRealm;
@@ -400,6 +416,8 @@ void cs_dump( const QByteArray &bytes )
 		count += 8;
 	}
 	printf( "\n" );
+#else
+	Q_UNUSED( bytes );
 #endif
 }
 
@@ -521,18 +539,9 @@ void ClientStream::ss_bytesWritten(int bytes)
 {
 #ifdef LIBGW_DEBUG
 	qDebug( "ClientStream::ss_bytesWritten: %i bytes written", bytes );
+#else
+	Q_UNUSED( bytes );
 #endif
-/*	if(d->mode == Client)
-		d->client.outgoingDataWritten(bytes);
-	else
-		d->srv.outgoingDataWritten(bytes);
-*/
-/*	if(d->notify & CoreProtocol::NSend) {
-#ifdef LIBGW_DEBUG
-		printf("We were waiting for data to be written, so let's process\n");
-#endif
-		processNext();
-	}*/
 }
 
 void ClientStream::ss_tlsHandshaken()
@@ -586,163 +595,6 @@ void ClientStream::processNext()
 	}
 }
 
-/*	if(d->mode == Server) {
-		srvProcessNext();
-		return;
-	}
-
-	QGuardedPtr<QObject> self = this;
-
-	while(1) {
-#ifdef LIBGW_DEBUG
-		printf("Processing step...\n");
-#endif
-		bool ok = d->client.processStep();
-		// deal with send/received items
-		for(QValueList<XmlProtocol::TransferItem>::ConstIterator it = d->client.transferItemList.begin(); it != d->client.transferItemList.end(); ++it) {
-			const XmlProtocol::TransferItem &i = *it;
-			if(i.isExternal)
-				continue;
-			QString str;
-			if(i.isString) {
-				// skip whitespace pings
-				if(i.str.stripWhiteSpace().isEmpty())
-					continue;
-				str = i.str;
-			}
-			else
-				str = d->client.elementToString(i.elem);
-			if(i.isSent)
-				outgoingXml(str);
-			else
-				incomingXml(str);
-		}
-
-		if(!ok) {
-			bool cont = handleNeed();
-
-			// now we can announce stanzas
-			//if(!d->in_rrsig && !d->in.isEmpty()) {
-			if(!d->in.isEmpty()) {
-				//d->in_rrsig = true;
-				QTimer::singleShot(0, this, SLOT(doReadyRead()));
-			}
-
-			if(cont)
-				continue;
-			return;
-		}
-
-		int event = d->client.event;
-		d->notify = 0;
-		switch(event) {
-			case CoreProtocol::EError: {
-#ifdef LIBGW_DEBUG
-				printf("Error! Code=%d\n", d->client.errorCode);
-#endif
-				handleError();
-				return;
-			}
-			case CoreProtocol::ESend: {
-				QByteArray a = d->client.takeOutgoingData();
-#ifdef LIBGW_DEBUG
-				QCString cs(a.size()+1);
-				memcpy(cs.data(), a.data(), a.size());
-				printf("Need Send: {%s}\n", cs.data());
-#endif
-				d->ss->write(a);
-				break;
-			}
-			case CoreProtocol::ERecvOpen: {
-#ifdef LIBGW_DEBUG
-				printf("Break (RecvOpen)\n");
-#endif
-
-#ifdef XMPP_TEST
-				QString s = QString("handshake success (lang=[%1]").arg(d->client.lang);
-				if(!d->client.from.isEmpty())
-					s += QString(", from=[%1]").arg(d->client.from);
-				s += ')';
-				TD::msg(s);
-#endif
-
-				if(d->client.old) {
-					d->state = WaitVersion;
-					warning(WarnOldVersion);
-					return;
-				}
-				break;
-			}
-			case CoreProtocol::EFeatures: {
-#ifdef LIBGW_DEBUG
-				printf("Break (Features)\n");
-#endif
-				if(!d->tls_warned && !d->using_tls && !d->client.features.tls_supported) {
-					d->tls_warned = true;
-					d->state = WaitTLS;
-					warning(WarnNoTLS);
-					return;
-				}
-				break;
-			}
-			case CoreProtocol::ESASLSuccess: {
-#ifdef LIBGW_DEBUG
-				printf("Break SASL Success\n");
-#endif
-				break;
-			}
-			case CoreProtocol::EReady: {
-#ifdef LIBGW_DEBUG
-				printf("Done!\n");
-#endif
-				// grab the JID, in case it changed
-				// TODO: d->jid = d->client.jid;
-				d->state = Active;
-				setNoopTime(d->noop_time);
-				authenticated();
-				if(!self)
-					return;
-				break;
-			}
-			case CoreProtocol::EPeerClosed: {
-#ifdef LIBGW_DEBUG
-				printf("DocumentClosed\n");
-#endif
-				reset();
-				connectionClosed();
-				return;
-			}
-			case CoreProtocol::EStanzaReady: {
-#ifdef LIBGW_DEBUG
-				printf("StanzaReady\n");
-#endif
-				// store the stanza for now, announce after processing all events
-				Stanza s = createStanza(d->client.recvStanza());
-				if(s.isNull())
-					break;
-				d->in.append(new Stanza(s));
-				break;
-			}
-			case CoreProtocol::EStanzaSent: {
-#ifdef LIBGW_DEBUG
-				printf("StanzasSent\n");
-#endif
-				stanzaWritten();
-				if(!self)
-					return;
-				break;
-			}
-			case CoreProtocol::EClosed: {
-#ifdef LIBGW_DEBUG
-				printf("Closed\n");
-#endif
-				reset();
-				delayedCloseFinished();
-				return;
-			}
-		}
-	}*/
-
 bool ClientStream::handleNeed()
 {
 	return false;
@@ -755,48 +607,6 @@ void ClientStream::doNoop()
 
 void ClientStream::handleError()
 {
-}
-
-ClientStream::Buffer::Buffer( unsigned int sz )
-: QByteArray( sz )
-{
-}
-
-ClientStream::Buffer::~Buffer()
-{
-}
-
-void ClientStream::Buffer::add( char *str, unsigned int sz )
-{
-	char *b = new char[ size() + sz ];
-	for ( uint f = 0; f < size(); f++ )
-		b[ f ] = data()[ f ];
-	for ( uint f = 0; f < sz; f++ )
-		b[ size() + f ] = str[ f ];
-
-	duplicate( b, size() + sz );
-	delete[] b;
-}
-
-QByteArray ClientStream::Buffer::take( unsigned blockSize )
-{
-	if ( size() < blockSize )
-	{
-		qDebug( "ClientStream::Buffer::take( unsigned blockSize ) Buffer size: %i  asked size: %i!",  size(), blockSize  );
-		return QByteArray();
-	}
-
-	QByteArray rep( blockSize );
-	for( uint i = 0; i < blockSize; i++ )
-		rep[ i ] = data()[ i ];
-
-	char *str = new char[ size() - blockSize ];
-	for ( uint i = 0; i < size() - blockSize; i++ )
-		str[ i ] = data()[ blockSize + i ];
-	duplicate( str, size() - blockSize );
-	delete[] str;
-
-	return rep;
 }
 
 #include "gwclientstream.moc"

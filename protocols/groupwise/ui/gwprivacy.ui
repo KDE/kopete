@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>GroupWisePrivacyWidget</class>
 <widget class="QWidget">
     <property name="name">
@@ -11,9 +11,6 @@
             <width>463</width>
             <height>314</height>
         </rect>
-    </property>
-    <property name="caption">
-        <string>GroupWisePrivacyWidget</string>
     </property>
     <vbox>
         <property name="name">
@@ -93,9 +90,6 @@
                             <property name="text">
                                 <string>&amp;Block &gt;&gt;</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+B</string>
-                            </property>
                         </widget>
                         <widget class="QPushButton">
                             <property name="name">
@@ -103,9 +97,6 @@
                             </property>
                             <property name="text">
                                 <string>&lt;&lt; Allo&amp;w</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+W</string>
                             </property>
                         </widget>
                         <spacer>
@@ -132,9 +123,6 @@
                             <property name="text">
                                 <string>A&amp;dd...</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+D</string>
-                            </property>
                         </widget>
                         <widget class="QPushButton">
                             <property name="name">
@@ -142,9 +130,6 @@
                             </property>
                             <property name="text">
                                 <string>&amp;Remove</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+R</string>
                             </property>
                         </widget>
                         <spacer>

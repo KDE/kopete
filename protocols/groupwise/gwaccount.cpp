@@ -50,7 +50,6 @@
 #include "client.h"
 #include "qca.h"
 #include "gwcontact.h"
-#include "gwfakeserver.h"
 #include "gwprotocol.h"
 #include "gwclientstream.h"
 #include "gwconnector.h"

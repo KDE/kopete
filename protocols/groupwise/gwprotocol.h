@@ -5,6 +5,8 @@
     
     Based on Testbed   
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
+    rtfizeTest from nm_rtfize_text, from Gaim src/protocols/novell/nmuser.c
+    Copyright (c) 2004 Novell, Inc. All Rights Reserved
     
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
  

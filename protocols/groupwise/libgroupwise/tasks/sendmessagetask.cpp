@@ -1,14 +1,23 @@
-//
-// C++ Implementation: sendmessagetask
-//
-// Description: 
-//
-//
-// Author: SUSE AG <>, (C) 2004
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+/*
+    Kopete Groupwise Protocol
+    sendmessagetask.cpp - sends a message to a conference
+
+    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+    
+    Based on Iris, Copyright (C) 2003  Justin Karneges
+
+    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+ 
+    *************************************************************************
+    *                                                                       *
+    * This library is free software; you can redistribute it and/or         *
+    * modify it under the terms of the GNU Lesser General Public            *
+    * License as published by the Free Software Foundation; either          *
+    * version 2 of the License, or (at your option) any later version.      *
+    *                                                                       *
+    *************************************************************************
+*/
+
 #include "sendmessagetask.h"
 
 SendMessageTask::SendMessageTask(Task* parent): RequestTask(parent)
@@ -27,9 +36,7 @@ void SendMessageTask::message( const QStringList & recipientDNList, const Outgoi
 	// list containing GUID
 	tmp.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, msg.guid ) );
 	lst.append( new Field::MultiField( NM_A_FA_CONVERSATION, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, tmp ) );
-	// message body as rtf : FIXME RTFIZE TEXT - HOPE
-	QString substitute("{\\rtf1\\ansi\n{\\fonttbl\\f0\\fnil Monospaced;\\f1\\fnil SansSerif;}\n\n\\f1\\fs18\\i0\\b0\\ul0\\cf0 tiredy.\\par\n}\n");
-	msgBodies.append( new Field::SingleField( NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, /*substitute*/ msg.rtfMessage ) );
+	msgBodies.append( new Field::SingleField( NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, msg.rtfMessage ) );
 	// message body type indicator / separator?
  	msgBodies.append( new Field::SingleField( NM_A_UD_MESSAGE_TYPE, 0, NMFIELD_TYPE_UDWORD, 0 ) );
 	// message body plaintext

@@ -1,12 +1,12 @@
 /*
-    gwconnector.h - Kopete GroupWise Protocol
-	Socket connector
-	verbatim
+    Kopete Groupwise Protocol
+    connector.h - the Groupwise socket connector
+
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
     Based on Iris, Copyright (C) 2003  Justin Karneges
-	
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+
+    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
@@ -17,6 +17,7 @@
     *                                                                       *
     *************************************************************************
 */
+
 #ifndef LIBGW_CONNECTOR_H
 #define LIBGW_CONNECTOR_H
 

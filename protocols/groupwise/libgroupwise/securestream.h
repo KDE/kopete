@@ -1,22 +1,22 @@
 /*
- * securestream.h - combines a ByteStream with TLS and SASL
- * Copyright (C) 2004  Justin Karneges
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- */
+    securestream.h - Kopete Groupwise Protocol
+    Combines a ByteStream with TLS and SASL
+  
+    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+    
+    Based on Iris, Copyright (C) 2003  Justin Karneges
+    
+    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+ 
+    *************************************************************************
+    *                                                                       *
+    * This library is free software; you can redistribute it and/or         *
+    * modify it under the terms of the GNU Lesser General Public            *
+    * License as published by the Free Software Foundation; either          *
+    * version 2 of the License, or (at your option) any later version.      *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #ifndef SECURESTREAM_H
 #define SECURESTREAM_H

@@ -42,7 +42,6 @@
 #include "gwaccount.h"
 #include "ui/gwcontactproperties.h"
 #include "gwerror.h"
-#include "gwfakeserver.h"
 #include "gwmessagemanager.h"
 #include "gwprotocol.h"
 #include "privacymanager.h"

@@ -1,5 +1,6 @@
 /*
-    gwaddcontactpage.cpp - Kopete GroupWise Protocol
+    Kopete GroupWise Protocol
+    gweditaccountwidget.cpp - widget for adding GroupWise contacts
 
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     

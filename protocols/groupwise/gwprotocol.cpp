@@ -5,13 +5,15 @@
     
     Based on Testbed   
     Copyright (c) 2003      by Will Stephenson		 <will@stevello.free-online.co.uk>
+    rtfizeTest from nm_rtfize_text, from Gaim src/protocols/novell/nmuser.c
+    Copyright (c) 2004 Novell, Inc. All Rights Reserved
     
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
-    * modify it under the terms of the GNU Lesser General Public            *
+    * modify it under the terms of the GNU General Public                   *
     * License as published by the Free Software Foundation; either          *
     * version 2 of the License, or (at your option) any later version.      *
     *                                                                       *
@@ -166,7 +168,7 @@ QString GroupWiseProtocol::rtfizeText( const QString & plain )
 	QString rtfTemplate = QString::fromLatin1("{\\rtf1\\ansi\n"
 						"{\\fonttbl{\\f0\\fnil Unknown;}}\n"
 						"{\\colortbl ;\\red0\\green0\\blue0;}\n"
-						"\\uc1\\cf1\\f0\\fs24 %1\\par\n}");
+						"\\uc1\\cf1\\f0\\fs12 %1\\par\n}");
 	QString outputText; // output text
 	QCString plainUtf8 = plain.utf8(); // encoded as UTF8, because that's what this encoding algorithm, taken from Gaim's Novell plugin
 	uint index = 0; // current char to transcode

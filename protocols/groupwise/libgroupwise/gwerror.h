@@ -1,4 +1,19 @@
-// taken from nmuser.h
+/*
+    gwerror.h - Kopete Groupwise Protocol
+  
+    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
+    
+    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+ 
+    *************************************************************************
+    *                                                                       *
+    * This library is free software; you can redistribute it and/or         *
+    * modify it under the terms of the GNU Lesser General Public            *
+    * License as published by the Free Software Foundation; either          *
+    * version 2 of the License, or (at your option) any later version.      *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #ifndef GW_ERROR_H
 #define GW_ERROR_H
@@ -13,15 +28,6 @@ typedef Q_UINT16 NMERR_T;
 
 #define BLANK_GUID "[00000000-00000000-00000000-0000-0000]"
 #define CONF_GUID_END 27
-
-/*#define	NM_STATUS_UNKNOWN			0
-#define	NM_STATUS_OFFLINE			1
-#define NM_STATUS_AVAILABLE			2
-#define	NM_STATUS_BUSY				3
-#define	NM_STATUS_AWAY				4
-#define	NM_STATUS_AWAY_IDLE			5
-#define	NM_STATUS_INVALID			6
-*/
 
 namespace GroupWise
 {
