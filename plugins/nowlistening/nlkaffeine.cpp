@@ -8,7 +8,7 @@
 	Copyright (c) 2002,2003,2004 by the Kopete developers  <kopete-devel@kde.org>
 	
 	Purpose: 
-	This class abstracts the interface to AmaroK by
+	This class abstracts the interface to Kaffeine by
 	implementing NLMediaPlayer
 
     *************************************************************************
@@ -72,6 +72,6 @@ void NLKaffeine::update()
 		}
 	}
 	else
-		kdDebug ( 14307 ) << "AmaroK is not running!\n" << endl;
+		kdDebug ( 14307 ) << "Kaffeine is not running!\n" << endl;
 }
 
