@@ -18,7 +18,6 @@
  ***************************************************************************/
 
 
-#include <qcursor.h>
 #include <qapplication.h>
 #include <qtimer.h>
 
@@ -30,7 +29,6 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
-#include <kstandarddirs.h>
 
 #include "kopetecontactlist.h"
 #include "kopetemessagemanager.h"

@@ -21,14 +21,10 @@
 #define MSNPROTOCOL_H
 
 #include <qmap.h>
-#include <qmovie.h>
-#include <qpixmap.h>
-#include <qptrdict.h>
-#include <qptrlist.h>
+//#include <qptrdict.h>
 #include <qstringlist.h>
 
 #include "kopeteprotocol.h"
-#include "kopetecontact.h"
 #include "msnsocket.h"
 
 class KAction;
