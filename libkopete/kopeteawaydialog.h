@@ -91,7 +91,7 @@ class KopeteAwayDialog : public KopeteAwayBase
 		* will need to compare it to an enum that you declare
 		* in your subclass.
 		*/
-		virtual void setAway( int/*awayType*/ ) = 0;
+		virtual void setAway( int awayType ) = 0;
 
 		/**
 		* This method is called when the user clicks
@@ -105,7 +105,7 @@ class KopeteAwayDialog : public KopeteAwayBase
 		* if show was called with a parameter, if show() was called
 		* instead, this parameter will be the empty string.
 		*/
-		virtual void cancelAway( int/*awayType*/ ){};
+		virtual void cancelAway( int awayType ){};
 
 	private:
 		/**
@@ -155,7 +155,7 @@ class KopeteAwayDialog : public KopeteAwayBase
 		* when it is called so that you can decide what
 		* kind of "away" you really want to do.
 		*
-		* @param status The type of "away" you want to set.
+		* @param awayType The type of "away" you want to set.
 		*/
 		void show( int awayType );
 

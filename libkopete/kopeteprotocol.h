@@ -43,6 +43,13 @@ class KopeteProtocol : public KopetePlugin
 	Q_OBJECT
 
 public:
+	/**
+	 * @brief Constructor for KopeteProtocol
+	 *
+	 * @param instance The protocol's instance, every plugin needs to have a @ref KInstance of its own
+	 * @param parent The protocol's parent object
+	 * @param name The protocol's name
+	 */
 	KopeteProtocol( KInstance *instance, QObject *parent, const char *name );
 	virtual ~KopeteProtocol();
 
@@ -59,6 +66,7 @@ public:
 	 * @return A new EditAccountWidget to be shown in the account part of the configurations.
 	 *
 	 * @param account is the KopeteAccount to edit. If it's 0L, then we create a new account
+	 * @param parent The parent of the 'to be returned' widget
 	 */
 	virtual EditAccountWidget *createEditAccountWidget( KopeteAccount *account, QWidget *parent ) = 0L;
 
@@ -122,7 +130,7 @@ public:
 	 */
 	virtual void deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
 		const QMap<QString, QString> &addressBookData );
-		
+
 	/**
 	 * Return if this protocol supports advanced rich text (HTML returned from chat widget)
 	 */
@@ -158,6 +166,9 @@ private slots:
 	void slotRefreshStatus();
 
 protected:
+	/**
+	 * The default unknown status every protocol needs
+	 */
 	KopeteOnlineStatus m_status;
 };
 

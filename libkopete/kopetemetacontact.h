@@ -56,7 +56,7 @@ class KopeteMetaContact : public KopetePluginDataObject
 public:
 	KopeteMetaContact();
 	~KopeteMetaContact();
-	
+
 	/**
 	 * @brief Retrieve the list of contacts that are part of the meta contact
 	 */
@@ -65,10 +65,9 @@ public:
 	/**
 	 * @brief Add a brand new contact to the meta contact.  Updates KABC
 	 * @param c The KopeteContact being added
-	 * @param mode Whether the Contact is a completely new contact(Add) or one that is being loaded from disk
 	 */
 	void addContact( KopeteContact *c );
-	
+
 	/**
 	 * Find the KopeteContact to a given contact. If contact
 	 * is not found, a null pointer is returned.
@@ -228,18 +227,19 @@ public:
 	 * Every metacontact has a unique id, set by kopete when creating the contact, or reading the contactlist
 	 */
 	QString metaContactId() const;
-	
-	/** 
-	 * @brief Add or change the link to a KDE addressbook (KABC) Addressee.  
+
+	/**
+	 * @brief Add or change the link to a KDE addressbook (KABC) Addressee.
 	 * FIXME: Use with care.  You could create 1 to many relationships with the current implementation
 	 */
 	void setMetaContactId( const QString& newMetaContactId );
-	
+
 	/**
 	 * Get or set a field for the KDE address book backend. Fields not
 	 * registered during the call to KopetePlugin::addressBookFields()
 	 * cannot be altered!
 	 *
+	 * @param p The KopetePlugin by which uses this field
 	 * @param app refers to the application id in the libkabc database.
 	 * This should be a standardized format to make sense in the address
 	 * book in the first place - if you could use "kopete" as application
@@ -254,9 +254,10 @@ public:
 	 */
 	QString addressBookField( KopetePlugin *p, const QString &app, const QString &key ) const;
 	/**
-	 * @bief set an address book field
+	 * @brief set an address book field
 	 *
 	 * @see also @ref addressBookField()
+	 * @param p The KopetePlugin by which uses this field
 	 */
 	void setAddressBookField( KopetePlugin *p, const QString &app, const QString &key, const QString &value );
 
@@ -313,8 +314,8 @@ public slots:
 	 * The KABC exposed data changed, so change it in KABC
 	 */
 	void updateKABC();
-	
-	/** 
+
+	/**
 	 * Remove any KABC data for this meta contact
 	 */
 	void removeKABC();
@@ -411,7 +412,7 @@ private slots:
 	 * If a plugin is loaded, maybe data about this plugin are already cached in the metacontact
 	 */
 	void slotPluginLoaded( KopetePlugin *plugin );
-	
+
 	/**
 	 * Perform a delayed address book write
 	 */
@@ -420,14 +421,14 @@ private:
 	KopeteContact *preferredContact();
 
 	KopeteMetaContactPrivate *d;
-	
+
 	/**
 	 * Request an address book write, will be delayed to bundle any others happening around the same time
 	 */
 	void writeAddressBook();
-	
+
 	static KABC::AddressBook* addressBook();
-	
+
 	static KABC::AddressBook* m_addressBook;
 };
 

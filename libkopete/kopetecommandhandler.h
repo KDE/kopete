@@ -43,8 +43,11 @@ class KopeteCommandHandler : public QObject
 	Q_OBJECT
 
 	public:
+		/**
+		 * an enum defining the type of a command
+		 */
 		enum CommandType { Normal, SystemAlias, UserAlias, Undefined };
-		
+
 		/**
 		 * Returns a pointer to the command handler
 		 */
@@ -65,11 +68,11 @@ class KopeteCommandHandler : public QObject
 		 *   accept two parameters, a QString of arguments, and a KopeteMessageManager
 		 *   pointer to the manager under which the command was sent.
 		 * @param help An optional help string to be shown when the user uses
-		 *   /help <command>
+		 *   /help \<command\>
 		 */
 		void registerCommand( QObject *parent, const QString &command, const char* handlerSlot,
 			const QString &help = QString::null );
-			
+
 		/**
 		 * Registers a command alias.
 		 *
@@ -80,7 +83,7 @@ class KopeteCommandHandler : public QObject
 		 *    followed by any other arguments. The variables %1, %2... %9 will be substituted
 		 *    with the arguments passed into the alias
 		 */
-		void registerAlias( QObject *parent, const QString &alias, const QString &formatString, 
+		void registerAlias( QObject *parent, const QString &alias, const QString &formatString,
 			const QString &help = QString::null, CommandType = SystemAlias );
 
 		/**
@@ -93,7 +96,7 @@ class KopeteCommandHandler : public QObject
 		 * @param command The command to unload
 		 */
 		void unregisterCommand( QObject *parent, const QString &command );
-		
+
 		/**
 		 * Unregisteres an alias. See above.
 		 *
@@ -110,7 +113,7 @@ class KopeteCommandHandler : public QObject
 		 * @return True if the command was handled, false if not
 		 */
 		bool processMessage( KopeteMessage &msg, KopeteMessageManager *manager );
-		
+
 		/**
 		 * An overload of the above function
 		 */

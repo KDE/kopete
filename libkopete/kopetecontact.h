@@ -64,13 +64,14 @@ public:
 	 * this is undefined and may change at any time!
 	 *
 	 * @param account is the parent account. this constructor automatically register the contact to the account
-	 * @param id is the KopeteContact inique Id (mostly the user's login)
+	 * @param id is the KopeteContact's unique Id (mostly the user's login)
+	 * @param parent is the parent @ref KopeteMetaContact this KopeteContact is part of
+	 * @param icon is an optional icon
 	 */
 	KopeteContact( KopeteAccount *account, const QString &id, KopeteMetaContact *parent,
-					   const QString &icon = QString::null );
+		const QString &icon = QString::null );
 
 	~KopeteContact();
-	
 
 	/**
 	 * Return whether this contact is online or not.
@@ -130,7 +131,7 @@ public:
 	 * Set the contact's online status and status description
 	 * When unused description is set to QString::null
 	*/
-	void setOnlineStatus(const KopeteOnlineStatus &status, 
+	void setOnlineStatus(const KopeteOnlineStatus &status,
 			const QString &statusDescription=QString::null);
 
 	/**
@@ -217,9 +218,9 @@ public:
 	 */
 	void setFileCapable( bool filecap );
 
-	/*
+	/**
 	 * Returns if this contact can accept file transfers
-	 * @return True if this contact is online and is capable of sending files, False otherwise
+	 * @return true if this contact is online and is capable of sending files, false otherwise
 	 */
 	bool canAcceptFiles() const;
 
@@ -247,10 +248,6 @@ public:
 	 * a chat is initiated by the user by clicking the contact list.
 	 */
 	virtual KopeteMessageManager * manager( bool canCreate = false ) =0;
-
-/*  //this is useless, that caused crash when closing the kmm when the contact was deleted (ex: on exit)
-	const int conversations() const;
-	void setConversations( int ) const;*/
 
 	/**
 	 * Returns the name of the icon to use for this contact

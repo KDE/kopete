@@ -32,7 +32,7 @@ class KopeteFileConfirmDialog : public KDialogBase
 {
 Q_OBJECT
 
-public: 
+public:
 	KopeteFileConfirmDialog(const KopeteFileTransferInfo &info,const QString& description=QString::null, QWidget *parent=0, const char* name=0);
 	~KopeteFileConfirmDialog();
 
@@ -41,10 +41,10 @@ private:
 	KopeteFileTransferInfo m_info;
 	bool m_emited;
 
-public slots: 
+public slots:
 	void slotBrowsePressed();
-  
-protected slots: 
+
+protected slots:
 	virtual void slotUser2();
 	virtual void slotUser1();
 	virtual void closeEvent( QCloseEvent *e);

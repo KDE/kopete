@@ -50,7 +50,8 @@ class EditAccountWidget
 {
 	public:
 		/**
-		 * Constructor. if 'account' is 0L, then, we are in the addAccountWizzard, if it is an account, we are editing this account
+		 * Constructor. if 'account' is 0L, then, we are in the addAccountWizzard,
+		 * if it is an account, we are editing this account
 		 */
 		EditAccountWidget(KopeteAccount *account);
 
@@ -61,7 +62,8 @@ class EditAccountWidget
 		virtual bool validateData()=0;
 
 		/**
-		 * This must create the account if we are in the addAccountWizard, or update it if we are in the edit page.
+		 * This must create the account if we are in the addAccountWizard,
+		 * or update it if we are in the edit page.
 		 */
 		virtual KopeteAccount *apply()=0;
 

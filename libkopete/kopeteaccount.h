@@ -40,7 +40,7 @@ QString cryptStr(const QString &aStr);
  * The KopeteAccount class handle one account.
  * Each protocol should subclass this class in their own customAccounts class.
  * there are few pure virtual method than the protocol must implement. like
- * @ref myslef()  @ref connect()  @ref disconnect() or @ref addContactToMetaContact()
+ * @ref myself()  @ref connect()  @ref disconnect() or @ref addContactToMetaContact()
  *
  * The accountId is an *constant* unique id. which represent the login.
  * The @ref myself() contact one of the most importent contact, which represent the user
@@ -227,8 +227,8 @@ public:
 	/**
 	 * @internal
 	 * Register a new KopeteContact with the account
-	 * To be called ONLY from KopeteContact constructor, not from any other class!
-	 * (Not even a derived class).
+	 * To be called <b>only</b> from @ref KopeteContact constructor
+	 * not from any other class! (Not even a derived class).
 	 */
 	void registerContact( KopeteContact *c );
 
@@ -281,7 +281,7 @@ public slots:
 	 * @return Pointer to the KopeteContact object which was added
 	 */
 	bool addContact( const QString &contactId, const QString &displayName = QString::null,
-		KopeteMetaContact *parentContact = 0L, const AddMode mode = DontChangeKABC, 
+		KopeteMetaContact *parentContact = 0L, const AddMode mode = DontChangeKABC,
 		const QString &groupName = QString::null, bool isTemporary = false ) ;
 
 signals:

@@ -36,13 +36,13 @@ typedef QPtrList<KopeteContact> KopeteContactPtrList;
  * @author Martijn Klingens <klingens@kde.org>
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  *
- * The KopeteMessage represent any kind of messages showed on the chatwindow.
+ * KopeteMessage represents any kind of messages shown on a chat view.
  *
- * The message may be a simple plain text string, or a Rich text HTML like message,
- * this flag is indicated by the @ref format() flag.
- * PlainText message can however have a color, or speccifics fonts with the flag
- * @ref bg() @ref fg() @ref font()
- * It is recemanded to use theses flag even for RichText message, so the user can disable
+ * The message may be a simple plaintext string, or a Richtext HTML like message,
+ * this is indicated by the @ref format() flag.
+ * PlainText message can however have a color, or specific fonts with the flag
+ * @ref bg(), @ref fg(), @ref font()
+ * It is recommended to use these flags, even for RichText messages, so the user can disable
  * custom colors in the chat window style.
  */
 class KopeteMessage
@@ -50,38 +50,40 @@ class KopeteMessage
 public:
 	/**
 	 * Direction of a message.
-	 * - Inbound is from the chat partner
-	 * - Outbound is from the user.
-	 * - Internal messages are messages which are not send via the network. this is just a notification than plugin can show on the chat window
-	 * - Action is for the /me command , like on irc
+	 * - Inbound: Message is from the chat partner
+	 * - Outbound: Message sent by the user.
+	 * - Internal: Messages which are not sent via the network. This is just a notification a plugin can show in a chat view
+	 * - Action: For the /me command , like on irc
 	 */
 	enum MessageDirection { Inbound = 0, Outbound = 1, Internal= 2, Action = 3 };
 
 	/**
-	 * Format of the body
-	 * - PlainText: Just a simple text, without any formating. If there are html tag on it, they simply be shown in the chatwindow.
-     * - RichText: Text already HTML escaped and which can contains some tags. the string should be a valid (X)HTML string. Any html special
-	 *   charactere (<,>,&,...) are escaped to the equivalent html entity (&gt;,...) newlines are <br \> and any other html tags will be interpreted.
-	 * - ParsedHTML: only used by the chatwindow, this text is parsed and ready to
-	 *  show into the chatwindow, with Emoticons, and urls
+	 * Format of body
+	 * - PlainText: Just a simple text, without any formatting. If it contains HTML tags then they will be simply shown in the chatview.
+	 * - RichText: Text already HTML escaped and which can contains some tags. the string
+	 *   should be a valid (X)HTML string.
+	 *   Any HTML specific characters (\<, \>, \&, ...) are escaped to the equivalent HTML
+	 *   entity (\&gt;, \&lt;, ...) newlines are \<br /\> and any other HTML tags will be interpreted.
+	 * - ParsedHTML: only used by the chatview, this text is parsed and ready to
+	 *  show into the chatview, with Emoticons, and URLs
 	 * - Crypted is used only by Jabber and the Cryptography plugin
 	 */
 	enum MessageFormat{ PlainText = 0x01 , RichText =0x02 , ParsedHTML = 0x04|RichText , Crypted = 0x08|PlainText};
 
 	/**
-	* Specifies the type of the view.
-	* May currently be of type
-	* - Chat: Two way chat
-	* - Email: Single shot messaging
-	*/
+	 * Specifies the type of the view.
+	 * May currently be of type
+	 * - Chat: Two way chat
+	 * - Email: Single shot messaging
+	 */
 	enum MessageType { Undefined, Chat, Email };
 
 	/**
-	* Specifies the type of notification that will be sent with this message
-	* - Low: almost no notifications. automatically used in groupChat
-	* - Normal: Default notification, for normal message
-	* - Highlight: Highlight notification, for most important messages, which require particular attentions.
-	*/
+	 * Specifies the type of notification that will be sent with this message
+	 * - Low: almost no notifications. automatically used in groupChat
+	 * - Normal: Default notification, for normal message
+	 * - Highlight: Highlight notification, for most important messages, which require particular attentions.
+	 */
 	enum MessageImportance { Low = 0, Normal = 1, Highlight = 2 };
 
 	/**
@@ -101,6 +103,7 @@ public:
 	 * @param body Message body
 	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
 	 * @param format Format of the message
+	 * @param type Type of the message, see @ref MessageType
 	 */
 	KopeteMessage( const KopeteContact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
 		MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
@@ -112,6 +115,7 @@ public:
 	 * @param body Message body
 	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
 	 * @param format Format of the message
+	 * @param type Type of the message, see @ref MessageType
 	 */
 	KopeteMessage( const KopeteContact *fromKC, const KopeteContact *toKC, const QString &body,
 		MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
@@ -125,6 +129,7 @@ public:
 	 * @param subject The subject of the message
 	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
 	 * @param format Format of the message
+	 * @param type Type of the message, see @ref MessageType
 	 */
 	KopeteMessage( const KopeteContact *fromKC, const KopeteContactPtrList &toKC, const QString &body,
 		const QString &subject, MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
@@ -137,6 +142,7 @@ public:
 	 * @param body Message body
 	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
 	 * @param format Format of the message
+	 * @param type Type of the message, see @ref MessageType
 	 */
 	KopeteMessage( const QDateTime &timeStamp, const KopeteContact *fromKC, const KopeteContactPtrList &toKC,
 		const QString &body, MessageDirection direction, MessageFormat format = PlainText, MessageType type = Undefined );
@@ -150,6 +156,7 @@ public:
 	 * @param subject The subject of the message
 	 * @param direction The direction of the message, KopeteMessage::Inbound, KopeteMessage::Outbound, KopeteMessage::Internal
 	 * @param format Format of the message
+	 * @param type Type of the message, see @ref MessageType
 	 */
 	KopeteMessage( const QDateTime &timeStamp, const KopeteContact *fromKC, const KopeteContactPtrList &toKC,
 		const QString &body, const QString &subject, MessageDirection direction,
@@ -234,10 +241,10 @@ public:
 
 	/**
 	 * @brief Set the importance.
-	 *
-	 * see @importance
+	 * @see importance
+	 * @param importance The message importance to set
 	 */
-	void setImportance(MessageImportance );
+	void setImportance(MessageImportance importance);
 
 	/**
 	 * Sets the foreground color for the message
@@ -247,7 +254,7 @@ public:
 
 	/**
 	 * Sets the background color for the message
-	 * @param The color
+	 * @param color The color
 	 */
 	void setBg( const QColor &color );
 
@@ -260,15 +267,8 @@ public:
 	/**
 	 * @brief Sets the body of the message
 	 *
-	 * if format is PlainText the text is a simple brute QString, without any formating
-	 * if there are html tag on it, they simply be shown in the chatwindow.
-	 *
-	 * if format is RichText, then the format must be a valid (X)HTML string. any html special
-	 * charactere (<,>,&,...) must be escaped to the equivalent html etity (&gt;,...) newlines are <br \> and
-	 * any other html tags will be interpreted.
-	 *
 	 * @param body The body
-	 * @param format The format of the message
+	 * @param format The format of the message, @see MessageFormat
 	 */
 	void setBody( const QString &body, MessageFormat format = PlainText );
 
@@ -276,15 +276,15 @@ public:
 	 * Get the message body back as plain text
 	 * @return The message body as plain text
 	 */
-	QString plainBody() const ;
+	QString plainBody() const;
 
 	/**
-	 * Get the message body as escaped (x)html format.
-	 * That mean every HTML special char (>,<,&,...) are escaped to the html entity (&lt; , ...)
-	 * and \n are converted to <br />
+	 * Get the message body as escaped (X)HTML format.
+	 * That means every HTML special char (\>, \<, \&, ...) is escaped to the HTML entity (\&lt;, \&gt;, ...)
+	 * and newlines (\\n) are converted to \<br /\>
 	 * @return The message body as escaped text
 	 */
-	QString escapedBody() const ;
+	QString escapedBody() const;
 
 	/**
 	 * Get the message body as parsed HTML with Emoticons, and URL parsed
@@ -297,7 +297,7 @@ public:
 	 * Get the related kopete message manager.
 	 * If it is not set, returns 0L.
 	 *
-	 * The kopeteMessagemanager is only set if the message is already passed by the manager.
+	 * The @ref KopeteMessageManager is only set if the message is already passed by the manager.
 	 * We should trust this only in aboutToSend/aboutToReceive signals
 	 */
 	 KopeteMessageManager *manager()const ;
@@ -320,7 +320,7 @@ public:
 	void setBgOverride( bool enable );
 
 	/**
-	* Unescapes a string, removing XML entitiy references
+	* Unescapes a string, removing XML entity references
 	*
 	* @param xml The string you want to unescape
 	*/
