@@ -71,6 +71,9 @@ public:
 	 * @param accountId - the account ID to create the account with. This is usually
 	 * the login name of the account
 	 *
+	 * you don't need to register the account to the AccountManager in this function.  
+	 * But if you want to use this function don't forget to call  @ref AccountManager::registerAccount
+	 *
 	 * @return The new @ref Account object created by this function
 	 */
 	virtual Account *createNewAccount( const QString &accountId ) = 0;

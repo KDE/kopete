@@ -1,3 +1,5 @@
+Porting from Kopete 0.9 to Kopete 0.10
+
 
 *) KopetePluginManager has been renamed Kopete::PluginManager
 	.) QMap<KPluginInfo *, KopetePlugin *> loadedPlugins( const QString &category = QString::null ) const;
@@ -18,3 +20,22 @@
 	.) protocolAction() has been removed
 	.) the broken canSendOffline()  has been removed, and we can uses capabilities insteads
 	.) (set)RichTextCapabilities  has been renamed to (set)Capabilities
+
+*) KopeteAccountManager has been removed to Kopete::AccountManager
+	.) manager()  has been renamed to self()
+	.) registerAccount is now public, and MUST be called manualy on account creation
+	.) autoConnect has been merged with connectAll  which only connect accounts with the flag autoConnect
+	.) accountReady has been renamed again to accountRegistered
+	.) accountUnregistered signal takes now a const Account.
+
+*) KopeteAccount has been renamed to Kopete::Account
+	.) Account no longer inerits from PluginDataObject.  you can access directly to the config with configGroup()  
+		The config now uses the KConfig cache dirrectly and not internal cache.
+	.) loaded() has been removed since properties are available dirrectly in the constructor.
+	.) setAccountId  and accountIdChanged has been removed
+	.) password()  setPassword()  rememberPassword()  has been removed.  if the account has a pssword, uses PasswordedAccount
+	.) addContactToMetaContact has been renamed createContact. it  has loose his displayName param,  uses the metacontact one if you want.
+	.) addContact has been splitted into addMetaContact and addContact
+	.) connect now takes the initial status as parameter
+	.) autoLogin has been renamed autoConnect for consistency
+	
