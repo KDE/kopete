@@ -722,7 +722,16 @@ void JabberProtocol::slotUserWantsAuth(const Jid &jid)
 	
 	if (KMessageBox::questionYesNo(kopeteapp->mainWindow(),
 	    i18n("The Jabber user %1 wants to add you to their contact list. Do you want to authorize them?").arg(userID, 1), i18n("Authorize Jabber User?")) == 3)
+	{
 		mProtocol->subscribed(userID);
+	
+		// ask if we are to subscribe to this user's presence in return,
+		// in case it is not in our contact list yet
+		if (!contactList.contains(userID))
+			if (KMessageBox::questionYesNo(kopeteapp->mainWindow(),
+			    i18n("Do you want to add %1 to your contact list in return?").arg(userID, 1), i18n("Add Jabber User?")) == 3)
+				mProtocol->subscribe(userID);
+	}
 
 }
 
