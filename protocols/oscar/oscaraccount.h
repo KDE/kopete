@@ -148,69 +148,7 @@ public:
 	 * Removes a buddy from the buddy list
 	 */
 	void removeBuddy( AIMBuddy *buddy );
-
-private:
-	/**
-	 * Moves a buddy 'buddy' from group 'from' to group 'to'. Both groups
-	 * need to have been created already
-	 */
-	void moveBuddy( AIMBuddy *buddy, AIMGroup *from, AIMGroup *to );
-
-	/**
-	 * Finds a buddy in the buddy list. Returns 0L if none found.
-	 */
-	AIMBuddy *findBuddy( int buddyId, int gid );
-
-	/**
-	 * Removes an entire group (including its child buddies!)
-	 */
-	void removeGroup( int id );
-
-	/**
-	 * Sets the name of a group. If this returns false, that means another group has this same name
-	 */
-	bool setGroupName( AIMGroup *group, const QString &name );
-
-	/**
-	 * Adds a buddy to the permit list
-	 */
-	void addBuddyPermit( AIMBuddy *buddy );
-
-	/**
-	 * Removes a buddy from the permit list
-	 */
-	void removeBuddyPermit( AIMBuddy *buddy );
-
-	/**
-	 * Removes a buddy from the deny list
-	 */
-	void removeBuddyDeny( AIMBuddy *buddy );
-
-	/**
-	 * Returns a list of all the buddies in the deny list
-	 */
-	QPtrList<AIMBuddy> denyBuddies() const;
-
-	/**
-	 * Returns a list of all the buddies in the permit list
-	 */
-	QPtrList<AIMBuddy> permitBuddies() const;
 	// -- END MERGED METHODS FROM AIMBUDDYLIST ---------------------------
-
-signals:
-	// -- MERGED SIGNALS FROM AIMBUDDYLIST -------------------------------
-	/**
-	 * "Why?" you ask, do I have a signal that lets us know such a useless thing?
-	 * Well, basically the AOL server can and often does (on certain accounts) send
-	 * us contacts with a GID in which the group matching to that GID hasn't been
-	 * sent down from the server yet. This gets around that by having OscarProtocol
-	 * queue up contacts that have a GID which hasn't been created yet, then when
-	 * that group is greated with the cooresponding GID to the contacts which
-	 * have been queued up, we add those contacts. That's why we have this signal,
-	 * to let OscarProtocol know to try to add certain contacts.
-	 */
-	void groupAdded( AIMGroup *group );
-	// -- END MERGED SIGNALS FROM AIMBUDDYLIST ---------------------------
 
 public slots:
 	/*
@@ -267,14 +205,6 @@ protected slots:
 	 * Displays an error dialog with the given text
 	 */
 	void slotError(QString errmsg, int errorCode);
-
-	/*
-	 * Having received a new server side group, try
-	 * to find queued buddies that are members of
-	 * this group.
-	 * @param group the newly added group.
-	 */
-	void slotReTryServerContacts();
 
 	void slotLoggedIn();
 

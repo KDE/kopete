@@ -160,10 +160,6 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 		d->idleTimer, SIGNAL(timeout()),
 		this, SLOT(slotIdleTimeout()));
 
-	// Got a new server-side group, try and add any queued
-	// buddies to our Kopete contact list
-	QObject::connect( this, SIGNAL( groupAdded( AIMGroup * ) ), this, SLOT( slotReTryServerContacts() ) );
-
 	QObject::connect( d->engine, SIGNAL( loggedIn() ), this, SLOT( slotLoggedIn() ) );
 }
 
@@ -369,8 +365,14 @@ void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
 	if (aGroup)
 	{
 		engine()->sendDelGroup(groupName);
+
 		// and remove the group from our BuddyList
-		removeGroup( aGroup->ID() );
+		AIMGroup *group = d->groupMap[ aGroup->ID() ];
+		if ( !group )
+			return;
+		d->groupNameMap.remove( group->name() );
+		d->groupMap.remove( aGroup->ID() );
+		delete group; // also deletes the buddies in that group
 	}
 }
 
@@ -805,24 +807,6 @@ void OscarAccount::slotOurStatusChanged(const unsigned int newStatus)
 		d->idleTimer->stop();
 }
 
-void OscarAccount::slotReTryServerContacts()
-{
-	kdDebug(14150) << k_funcinfo << "==================== Called, d->groupQueue.count()=" <<
-		d->groupQueue.count() << endl;
-
-	// Process the queue
-	int i = 0;
-	for (AIMBuddy *it = d->groupQueue.at(i); it != 0L; it = d->groupQueue.at( ++i ))
-	{
-		// Success, group now exists, add contact
-		if (findGroup(it->groupID()))
-		{
-			d->groupQueue.remove(i);
-			addOldContact(it);
-		}
-	}
-}
-
 // Adds a contact that we already know about to the list
 void OscarAccount::addOldContact(AIMBuddy *bud,KopeteMetaContact *meta)
 {
@@ -923,13 +907,6 @@ void OscarAccount::removeBuddy(AIMBuddy *buddy)
 	(*group)->removeBuddy(buddy);
 }
 
-void OscarAccount::moveBuddy(AIMBuddy *buddy, AIMGroup *from, AIMGroup *to)
-{
-	from->removeBuddy(buddy);
-	buddy->setGroupID(to->ID());
-	to->addBuddy(buddy);
-}
-
 AIMBuddy *OscarAccount::findBuddy(const QString &name)
 {
 	QMap<QString, AIMBuddy * >::Iterator it = d->buddyNameMap.find(tocNormalize(name));
@@ -950,17 +927,27 @@ AIMGroup *OscarAccount::addGroup( int id, const QString &name, OscarContactType 
 		d->groupNameMap.insert(name, group);
 	}
 	d->groupMap.insert(group->ID(), group);
-	emit groupAdded(group);
-	return group;
-}
 
-void OscarAccount::removeGroup( int id )
-{
-	AIMGroup *group = d->groupMap[id];
-	if (!group) return;
-	d->groupNameMap.remove(group->name());
-	d->groupMap.remove(id);
-	delete group; // also deletes the buddies in that group too
+	// Process the queue
+	// The AOL server can and often does (on certain accounts) send
+	// us contacts with a GID in which the group matching to that GID hasn't been
+	// sent down from the server yet. This gets around that by having OscarProtocol
+	// queue up contacts that have a GID which hasn't been created yet, then when
+	// that group is greated with the corresponding GID to the contacts which
+	// have been queued up, we add those contacts.
+	kdDebug( 14150 ) << k_funcinfo << "d->groupQueue.count() = " << d->groupQueue.count() << endl;
+	int i = 0;
+	for ( AIMBuddy *buddy = d->groupQueue.at( i ); buddy; buddy = d->groupQueue.at( ++i ) )
+	{
+		// Success, group now exists, add contact
+		if ( findGroup( buddy->groupID() ) )
+		{
+			d->groupQueue.remove( i );
+			addOldContact( buddy );
+		}
+	}
+
+	return group;
 }
 
 AIMGroup *OscarAccount::findGroup( int id, OscarContactType type )
@@ -979,35 +966,9 @@ AIMGroup *OscarAccount::findGroup(const QString &name)
 	return 0L;
 }
 
-bool OscarAccount::setGroupName(AIMGroup *group, const QString &name)
-{
-	QMap<QString, AIMGroup * >::Iterator oldgroup = d->groupNameMap.find(name);
-	if (oldgroup == d->groupNameMap.end())
-	{
-		group->setName(name);
-		return true;
-	}
-	return false;
-}
-
-void OscarAccount::addBuddyPermit(AIMBuddy *buddy)
-{
-	d->buddiesPermit.insert(buddy->ID(), buddy);
-}
-
-void OscarAccount::removeBuddyPermit(AIMBuddy *buddy)
-{
-	d->buddiesPermit.remove(buddy->ID());
-}
-
 void OscarAccount::addBuddyDeny(AIMBuddy *buddy)
 {
 	d->buddiesDeny.insert(buddy->ID(), buddy);
-}
-
-void OscarAccount::removeBuddyDeny(AIMBuddy *buddy)
-{
-	d->buddiesDeny.remove(buddy->ID());
 }
 
 QMap<QString, AIMBuddy *> OscarAccount::buddies( OscarContactType type ) const
@@ -1023,16 +984,6 @@ QMap<QString, AIMBuddy *> OscarAccount::buddies( OscarContactType type ) const
 	}
 
 	return result;
-}
-
-QPtrList<AIMBuddy> OscarAccount::denyBuddies() const
-{
-	return d->buddiesDeny;
-}
-
-QPtrList<AIMBuddy> OscarAccount::permitBuddies() const
-{
-	return d->buddiesPermit;
 }
 // -- END MERGED CODE FROM AIMBUDDYLIST ------------------------------
 
