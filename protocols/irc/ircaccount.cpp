@@ -674,8 +674,18 @@ bool IRCAccount::createContact( const QString &contactId, Kopete::MetaContact *m
 		Kopete::ContactList::self()->addMetaContact(m);
 	}
 
-	if (contactId.startsWith(QString::fromLatin1("#")))
+	if( contactId == mNickName )
+	{
+		KMessageBox::error( Kopete::UI::Global::mainWidget(),
+			i18n("\"You are not allowed to add yourself to your contact list."), i18n("IRC Plugin")
+		);
+
+		return false;
+	}
+	else if (contactId.startsWith(QString::fromLatin1("#")))
+	{
 		c = static_cast<IRCContact*>(contactManager()->findChannel(contactId, m));
+	}
 	else
 	{
 		m_contactManager->addToNotifyList( contactId );

@@ -168,7 +168,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("join"),
 		SLOT( slotJoinCommand( const QString &, Kopete::ChatSession*) ),
-		i18n("USAGE: /join <#channel 1> <#channel 2...> - Joins the specified channels."), 1 );
+		i18n("USAGE: /join <#channel 1> [<password>] - Joins the specified channel."), 1, 2 );
 
 	Kopete::CommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("topic"),
 		SLOT( slotTopicCommand( const QString &, Kopete::ChatSession*) ),
@@ -248,8 +248,8 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	Kopete::CommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("j"),
 		QString::fromLatin1("join %1"),
-		i18n("USAGE: /j <#channel 1>, <#channel 2...> - Alias for JOIN."), Kopete::CommandHandler::SystemAlias,
-		1 );
+		i18n("USAGE: /j <#channel 1> [<password>] - Alias for JOIN."), Kopete::CommandHandler::SystemAlias,
+		1, 2 );
 
 	Kopete::CommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("msg"),
 		QString::fromLatin1("query %s"),
@@ -439,19 +439,21 @@ void IRCProtocol::slotTopicCommand( const QString &args, Kopete::ChatSession *ma
 	}
 }
 
-void IRCProtocol::slotJoinCommand( const QString &args, Kopete::ChatSession *manager )
+void IRCProtocol::slotJoinCommand( const QString &arg, Kopete::ChatSession *manager )
 {
-	QString chan = Kopete::CommandHandler::parseArguments( args ).front();
-	if( KIRC::Entity::isChannel(chan) )
+	QStringList args = Kopete::CommandHandler::parseArguments( arg );
+	if( KIRC::Entity::isChannel(args[0]) )
 	{
-		static_cast<IRCAccount*>( manager->account() )->
-			contactManager()->findChannel( chan )->startChat();
+		IRCChannelContact *chan = static_cast<IRCAccount*>( manager->account() )->contactManager()->findChannel( args[0] );
+		if( args.count() == 2 )
+			chan->setPassword( args[1] );
+		static_cast<IRCAccount*>( manager->account() )->engine()->join(args[0], chan->password());
 	}
 	else
 	{
 		static_cast<IRCAccount*>( manager->account() )->appendMessage(
 			i18n("\"%1\" is an invalid channel. Channels must start with '#', '!', '+', or '&'.")
-			.arg(chan), IRCAccount::ErrorReply );
+			.arg(args[0]), IRCAccount::ErrorReply );
 	}
 }
 
