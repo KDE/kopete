@@ -86,9 +86,8 @@ public:
 };
 
 
-KopeteContact::KopeteContact( KopeteAccount *account,
-	const QString &contactId, KopeteMetaContact *parent, const QString &icon )
-	: QObject( parent )
+KopeteContact::KopeteContact( KopeteAccount *account, const QString &contactId, KopeteMetaContact *parent, const QString &icon )
+: QObject( parent )
 {
 	d = new KopeteContactPrivate;
 
@@ -99,13 +98,11 @@ KopeteContact::KopeteContact( KopeteAccount *account,
 	d->metaContact = parent;
 	d->fileCapable = false;
 	d->displayName = contactId;
-	d->account=account;
-	d->idleTime=0;
+	d->account = account;
+	d->idleTime = 0;
 
-	if( account )
-	{
+	if ( account )
 		account->registerContact( this );
-	}
 
 	d->icon = icon;
 
@@ -161,15 +158,14 @@ const KopeteOnlineStatus& KopeteContact::onlineStatus() const
 	return d->onlineStatus;
 }
 
-void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status,
-					const QString &statusDescription )
+void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status, const QString &statusDescription )
 {
-	if( status == d->onlineStatus && statusDescription==d->statusDescription )
+	if( status == d->onlineStatus && statusDescription == d->statusDescription )
 		return;
 
 	KopeteOnlineStatus oldStatus = d->onlineStatus;
 	d->onlineStatus = status;
-	d->statusDescription=statusDescription;
+	d->statusDescription = statusDescription;
 
 	emit onlineStatusChanged( this, status, oldStatus );
 }
