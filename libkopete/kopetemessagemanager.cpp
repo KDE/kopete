@@ -40,6 +40,7 @@ struct KMMPrivate
 	bool mLog;
 	bool isEmpty;
 	bool mCanBeDeleted;
+	QString displayName;
 };
 
 KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
@@ -90,20 +91,40 @@ bool KopeteMessageManager::logging() const
 	return d->mLog;
 }
 
-const QString KopeteMessageManager::chatName()
+const QString KopeteMessageManager::displayName()
 {
-	QString chatName, nextDisplayName;
+	if( d->displayName.isNull() )
+	{
+		connect( this, SIGNAL( contactDisplayNameChanged(const QString &) ), this, SLOT( slotUpdateDisplayName() ) );
+		slotUpdateDisplayName();
+	}
+
+	return d->displayName;
+}
+
+void KopeteMessageManager::setDisplayName( const QString &newName )
+{
+	disconnect( this, SIGNAL( contactDisplayNameChanged(const QString &) ), this, SLOT( slotUpdateDisplayName() ) );
+
+	d->displayName = newName;
+
+	emit( displayNameChanged() );
+}
+
+void KopeteMessageManager::slotUpdateDisplayName()
+{
+	QString nextDisplayName;
 
 	KopeteContact *c = d->mContactList.first();
 	if( c->metaContact() )
-		chatName = c->metaContact()->displayName();
+		d->displayName = c->metaContact()->displayName();
 	else
-		chatName = c->displayName();
+		d->displayName = c->displayName();
 
 	//If we have only 1 contact, add the status of him
 	if( d->mContactList.count() == 1 )
 	{
-		chatName.append( QString::fromLatin1(" (") + c->statusText() + QString::fromLatin1(")") );
+		d->displayName.append( QString::fromLatin1(" (") + c->statusText() + QString::fromLatin1(")") );
 	}
 	else
 	{
@@ -113,11 +134,11 @@ const QString KopeteMessageManager::chatName()
 				nextDisplayName = c->metaContact()->displayName();
 			else
 				nextDisplayName = c->displayName();
-			chatName.append( QString::fromLatin1( ", " ) ).append( nextDisplayName );
+			d->displayName.append( QString::fromLatin1( ", " ) ).append( nextDisplayName );
 		}
 	}
 
-	return chatName;
+	emit( displayNameChanged() );
 }
 
 const KopeteContactPtrList& KopeteMessageManager::members() const
@@ -190,15 +211,15 @@ void KopeteMessageManager::addContact( const KopeteContact *c )
 			kdDebug(14010) << k_funcinfo << old->displayName() << " left and " << c->displayName() << " joined " <<endl;
 			d->mContactList.remove(old);
 			d->mContactList.append(c);
-			disconnect (old->metaContact(), SIGNAL(displayNameChanged(KopeteMetaContact *, const QString)), this, SIGNAL(chatNameChanged()));
-			connect (c->metaContact(), SIGNAL(displayNameChanged(KopeteMetaContact *, const QString)), this, SIGNAL(chatNameChanged()));
+			disconnect (old, SIGNAL(displayNameChanged(const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &)));
+			connect (c, SIGNAL(displayNameChanged(const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &)));
 			emit contactAdded(c);
 			emit contactRemoved(old);
 		}
 		else
 		{
 			kdDebug(14010) << k_funcinfo << "Contact Joined session : " <<c->displayName() <<endl;
-			connect (c->metaContact(), SIGNAL(displayNameChanged(KopeteMetaContact *, const QString)), this, SIGNAL(chatNameChanged()));
+			connect (c, SIGNAL(displayNameChanged(const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &)));
 			d->mContactList.append(c);
 			emit contactAdded(c);
 		}
@@ -219,7 +240,7 @@ void KopeteMessageManager::removeContact( const KopeteContact *c )
 	else
 	{
 		d->mContactList.remove( c );
-		disconnect (c->metaContact(), SIGNAL(displayNameChanged(KopeteMetaContact *, const QString)), this, SIGNAL(chatNameChanged()));
+		disconnect (c, SIGNAL(displayNameChanged(const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &)));
 	}
 	emit contactRemoved(c);
 }

@@ -85,7 +85,9 @@ public:
 	/**
 	 * Used for named chats
 	 */
-	virtual const QString chatName();
+	const QString displayName();
+
+	void setDisplayName( const QString & );
 
 
 	void setCurrentMessage( const KopeteMessage &message );
@@ -110,11 +112,13 @@ signals:
 
 	void contactAdded(const KopeteContact *);
 	void contactRemoved(const KopeteContact *);
+	
+	void contactDisplayNameChanged(const QString &);
 
 	/**
 	 * The name of the chat is changed
 	 */
-	void chatNameChanged();
+	void displayNameChanged();
 
 	/**
 	 * The user is typing a message
@@ -178,6 +182,9 @@ public slots:
 	 * Called after a message was sent successfully
 	 */
 	void messageSucceeded();
+
+private slots:
+	void slotUpdateDisplayName();
 
 protected:
 	/**
