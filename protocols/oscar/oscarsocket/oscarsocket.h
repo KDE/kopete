@@ -202,12 +202,12 @@ class OscarSocket : public OscarConnection
 		/**
 		 * \brief Logs in the user!  [OSCAR]
 		 *
-		 * @param host				Login server.
-		 * @param port				Login port.
-		 * @param name				Screen name/UIN
+		 * @param host			Login server
+		 * @param port			Login port
+		 * @param name			Screen name/UIN
 		 * @param password 		password
-		 * @param profile			UserProfile for AIM connection
-		 * @param initialStatus	Login Status (Online, Away, etc)
+		 * @param profile		UserProfile for AIM connection
+		 * @param initialStatus		Login Status (Online, Away, etc)
 		 */
 		void doLogin(
 			const QString &host,
@@ -241,8 +241,7 @@ class OscarSocket : public OscarConnection
 		/**
 		 * Sends a type-1 message to dest [OSCAR]
 		 */
-		void sendIM(
-			const QString &message,
+		void sendIM(const QString &message,
 			OscarContact *contact,
 			bool isAuto);
 
