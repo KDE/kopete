@@ -77,8 +77,11 @@ void MSNSocket::connect( const QString &server, uint port )
 	m_server = server;
 	m_port = port;
 	m_socket = new KExtendedSocket( server, port, 0x600000 );
+	 //can this prevent the kopete frezee? (http://lists.kde.org/?l=kopete-devel&m=107117795131722&w=2)
+	m_socket->setBlockingMode( false ); 
+	
 	m_socket->enableRead( true );
-
+	
 	// enableWrite eats the CPU, and we only need it when the queue is
 	// non-empty, so disable it until we have actual data in the queue
 	m_socket->enableWrite( false );
@@ -168,10 +171,11 @@ void MSNSocket::slotSocketError( int error )
 void MSNSocket::slotDataReceived()
 {
 	int avail = m_socket->bytesAvailable();
-	if ( avail == -1 )
+	if ( avail < 0 )
 	{
 		// error!
-		kdWarning( 14140 ) << k_funcinfo << "bytesAvailable() returned -1. This should not happen!" << endl
+		kdWarning( 14140 ) << k_funcinfo << "bytesAvailable() returned " << avail 
+		 	<< ". This should not happen!" << endl
 			<< "Are we disconnected? Backtrace:" << endl << kdBacktrace() << endl;
 		return;
 	}

@@ -213,8 +213,14 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 
 			kdDebug(14140) << "MSNNotifySocket::parseCommand: " << authURL << endl;
 
-			KIO::Job *job = KIO::get( authURL , false, false );
+			KIO::Job *job = KIO::get( authURL , true, false ); 
 			job->addMetaData("cookies", "manual");
+			/* FIXME: This should force kio to download the page even is we are in the 
+			 * konqueror offline mode.  But it does not seems to have any effect
+			 * [see bug #68483]
+			job->addMetaData("cache", "reload");
+			job->addMetaData("no-cache", "true"); 
+			 */
 			QObject::connect( job, SIGNAL(result( KIO::Job *)), this, SLOT(slotAuthJobDone( KIO::Job *)) );
 		}
 		else
