@@ -189,8 +189,7 @@ VCard::Private::Private()
 
 VCard::Private::~Private()
 {
-	if ( agent )
-		delete agent;
+	delete agent;
 }
 
 bool VCard::Private::isEmpty()

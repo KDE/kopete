@@ -526,9 +526,7 @@ Stream::~Stream()
 	close();
 
 	delete d->noopTimer;
-
-	if(d->ssl)
-		delete d->ssl;
+	delete d->ssl;
 	delete d;
 }
 
