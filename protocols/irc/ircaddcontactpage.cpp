@@ -73,6 +73,7 @@ IRCAddContactPage::~IRCAddContactPage()
 void IRCAddContactPage::slotSearch()
 {
 	ircdata->searchResults->clear();
+	ircdata->searchResults->setEnabled(false);
 
 	if( mAccount->isConnected() )
 	{
@@ -100,6 +101,7 @@ void IRCAddContactPage::slotListedChannel( const QString &channel, uint users, c
 void IRCAddContactPage::slotListEnd()
 {
 	disconnect( mAccount->engine(), 0, this, 0 );
+	ircdata->searchResults->setEnabled(true);
 }
 
 void IRCAddContactPage::slotSelectionChanged( QListViewItem *i )
