@@ -173,7 +173,11 @@ public slots:
 	 * If all the instance of the contact are deleted, the contact will delete itself with deleteLater()
 	 */
 	void receiveContactDeleted( const ContactItem & );
-
+	/**
+	 * Called when the call to rename the contact on the server has completed
+	 */
+	void slotRenamedOnServer();
+	
 protected:
 	/**
 	 * Returns the KopeteMessageManager for the GroupWise conference with the supplied GUID, or creates a new one.

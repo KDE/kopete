@@ -33,8 +33,14 @@ UpdateContactTask::~UpdateContactTask()
 {
 }
 
+QString UpdateContactTask::displayName()
+{
+	return m_name;
+}
+
 void UpdateContactTask::renameContact( const QString & newName, const QValueList<ContactItem> & contactInstances )
 {
+	m_name = newName;
 	// build a list of delete, add fields that removes each instance on the server and then readds it with the new name
 	Field::FieldList lst;
 	const QValueList<ContactItem>::ConstIterator end = contactInstances.end();

@@ -429,23 +429,25 @@ void GroupWiseContact::syncGroups()
 		{*/
 			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " resetting the contact's display name to " << metaContact()->displayName() << endl;
 			// form a list of the contact's groups
-			QValueList< ContactItem > instancesToChange;
 			QValueList< ContactListInstance >::Iterator it = m_instances.begin();
 			const QValueList< ContactListInstance >::Iterator end = m_instances.end();
 			for ( ; it != end; ++it )
 			{
+				QValueList< ContactItem > instancesToChange;
 				ContactItem instance;
 				instance.id = (*it).objectId;
 				instance.parentId = (*it).parentId;
 				instance.sequence = (*it).sequence;
 				instance.dn = m_dn;
-				instance.displayName = m_displayName;
+				instance.displayName = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
 				instancesToChange.append( instance );
+				UpdateContactTask * uct = new UpdateContactTask( account()->client()->rootTask() );
+				uct->renameContact( metaContact()->displayName(), instancesToChange );
+				connect ( uct, SIGNAL( finished() ), SLOT( slotRenamedOnServer() ) );
+				uct->go( true );
+				
 			}
-			UpdateContactTask * uct = new UpdateContactTask( account()->client()->rootTask() );
-			uct->renameContact( metaContact()->displayName(), instancesToChange );
-			uct->go( true );
-//			setProperty( Kopete::Global::Properties::self()->nickName(), metaContact()->displayName() );
+//		setProperty( Kopete::Global::Properties::self()->nickName(), metaContact()->displayName() );
 // 		}
 	}
 }
@@ -530,6 +532,18 @@ bool GroupWiseContact::archiving()
 	return m_archiving;
 }
 
+void GroupWiseContact::slotRenamedOnServer()
+{
+	UpdateContactTask * uct = ( UpdateContactTask * )sender();
+	if ( uct->success() )
+	{
+		if( uct->displayName() != 
+				property( Kopete::Global::Properties::self()->nickName() ).value().toString() )
+			setProperty( Kopete::Global::Properties::self()->nickName(), uct->displayName() );
+	}
+	else
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "rename failed, return code: " << uct->statusCode() << endl;
+}
 #include "gwcontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -36,6 +36,9 @@ public:
 	UpdateContactTask(Task* parent);
 	~UpdateContactTask();
 	void renameContact( const QString& newName, const QValueList<GroupWise::ContactItem> & contactInstances );
+	QString displayName();
+private:
+	QString m_name;
 };
 
 #endif
