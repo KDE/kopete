@@ -40,6 +40,9 @@ public:
 	QString &nickName() { return mNickname; };
 	QString &host() { return mHost; };
 	bool isLoggedIn() { return loggedIn; };
+	void changeNickname(const QString &newNickname);
+	void partChannel(const QCString &name, const QString &reason);
+	void quitIRC(const QString &reason);
 enum UserClass
 {
 	Normal = 0,
@@ -57,7 +60,7 @@ signals:
 	void incomingMotd(const QString &motd);
 	void incomingWelcome(const QString &welcome);
 	void incomingYourHost(const QString &hostInfo);
-	void connectedToServer();
+	void connectedToServer(); // This is only on successful login. connected() is QSocket's signal if you want to tell when the TCP connection is ACK'ed
 	void incomingHostCreated(const QString &info);
 	void incomingHostInfo(const QString &hostInfo);
 	void incomingUsersInfo(const QString &users);
@@ -72,13 +75,25 @@ signals:
 	void incomingEndOfMotd();
 	void incomingStartOfMotd();
 	void incomingPartedChannel(const QString &user, const QString &channel, const QString &reason);
+	void incomingQuitIRC(const QString &user, const QString &reason);
 	void incomingAction(const QString &originating, const QString &target, const QString &message);
+	void incomingNickInUse(const QString &usingNick);
+	void successfullyChangedNick(const QString &, const QString &);
+	void incomingNickChange(const QString &, const QString &);
+	void loginNickNameAccepted(const QString &);
+	void incomingFailedNickOnLogin(const QString &);
+	void incomingTopicChange(const QString &, const QString &, const QString &);
+	void incomingExistingTopic(const QString &, const QString &);
+	void successfulQuit();
 private:
 	bool waitingFinishMotd;
 	bool loggedIn;
 	QString mUsername;
 	QString mNickname;
 	QString mHost;
+	bool failedNickOnLogin;
+	QString pendingNick;
+	bool attemptingQuit;
 };
 
 #endif

@@ -22,7 +22,8 @@ public:
 public slots: // Public slots
   /** No descriptions */
   virtual void slotFinish();
-
+private slots:
+	void connectNowClicked();
 };
 
 

@@ -1,6 +1,7 @@
 #include <qlayout.h>
 #include <qlineedit.h>
 #include <kdebug.h>
+#include <qcheckbox.h>
 
 #include "ircaddcontactpage.h"
 #include <ircadd.h>
@@ -14,7 +15,8 @@ IRCAddContactPage::IRCAddContactPage(IRCProtocol *owner, QWidget *parent, const 
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	ircdata = new ircAddUI(this);
-	plugin = owner;	
+	plugin = owner;
+	QObject::connect(ircdata->chkConnectNow, SIGNAL(clicked()), this, SLOT(connectNowClicked()));
 }
 IRCAddContactPage::~IRCAddContactPage()
 {
@@ -22,5 +24,16 @@ IRCAddContactPage::~IRCAddContactPage()
 /** No descriptions */
 void IRCAddContactPage::slotFinish()
 {
-	plugin->addContact(ircdata->ircServer->text(), ircdata->addID->text());
+	plugin->addContact(ircdata->ircServer->text(), ircdata->addID->text(), ircdata->chkConnectNow->isChecked(), ircdata->chkJoinNow->isChecked());
+}
+
+void IRCAddContactPage::connectNowClicked()
+{
+	if (ircdata->chkConnectNow->isChecked() == true)
+	{
+		ircdata->chkJoinNow->setEnabled(true);
+	} else {
+		ircdata->chkJoinNow->setEnabled(false);
+		ircdata->chkJoinNow->setChecked(false);
+	}
 }

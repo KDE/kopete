@@ -2,8 +2,8 @@
                           ircprotocol.cpp  -  description
                              -------------------
     begin                : Wed Jan 2 2002
-    copyright            : (C) 2002 by duncan
-    email                : duncan@tarro
+    copyright            : (C) 2002 by nbetcher
+    email                : nbetcher@usinternet.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -54,12 +54,8 @@ IRCProtocol::IRCProtocol(): QObject(0, "IRC"), IMProtocol()
 		return;
 	}
 
-	engine = new KIRC();
-	QObject::connect(engine, SIGNAL(incomingMotd(const QString &)), this, SLOT(slotIncomingMotd(const QString &)));
-	QObject::connect(engine, SIGNAL(connectedToServer()), this, SLOT(slotConnectedToHost()));
-	QObject::connect(engine, SIGNAL(userJoinedChannel(const QString &, const QString &)), this, SLOT(slotUserJoinedChannel(const QString &, const QString &)));
-	QObject::connect(engine, SIGNAL(incomingNamesList(const QString &, const QString &, const int)), this, SLOT(slotNamesList(const QString &, const QString &, const int)));
-	
+	manager = new IRCServerManager();
+
 	/** Autoconnect if is selected in config */
 	if ( KGlobal::config()->readBoolEntry("AutoConnect", "0") )
 	{
@@ -87,16 +83,25 @@ void IRCProtocol::slotIncomingMotd(const QString &message)
 
 }
 
-void IRCProtocol::addContact(const QString &server, const QString &contact)
+void IRCProtocol::addContact(const QString &server, const QString &contact, bool connectNow, bool joinNow)
 {
-	// TODO: Add some sort of check here to see if the room already exists
-	IRCChatView *chatView = new IRCChatView(server, contact, this);
-	chatView->show();
-	QObject::connect(engine, SIGNAL(userJoinedChannel(const QString &, const QString &)), chatView, SLOT(userJoinedChannel(const QString &, const QString &)));
-	QObject::connect(engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), chatView, SLOT(incomingMessage(const QString &, const QString &, const QString &)));
-	QObject::connect(engine, SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), chatView, SLOT(userPartedChannel(const QString &, const QString &, const QString &)));
-	QObject::connect(engine, SIGNAL(incomingNamesList(const QString &, const QString &, const int)), chatView, SLOT(incomingNamesList(const QString &, const QString &, const int)));
-	QObject::connect(engine, SIGNAL(incomingAction(const QString &, const QString &, const QString &)), chatView, SLOT(incomingAction(const QString &, const QString &, const QString &)));
+	KGlobal::config()->setGroup("IRC");
+	QString nick = KGlobal::config()->readEntry("Nickname", "KopeteUser");
+
+	QString serverAndNick = nick;
+	serverAndNick.append("@");
+	serverAndNick.append(server);
+	IRCServerContact *serverContact = manager->findServer(serverAndNick);
+	if (serverContact != 0)
+	{
+		IRCContact *listContact = new IRCContact((QListViewItem *)serverContact, server, contact, 6667, joinNow, serverContact);
+	} else {
+		IRCServerContact *serverItem = manager->addServer(serverAndNick, connectNow);
+		if (serverItem != 0)
+		{
+			IRCContact *listContact = new IRCContact(serverItem, server, contact, 6667, joinNow, serverItem);
+		}
+	}
 }
 
 IRCProtocol::~IRCProtocol()
@@ -128,12 +133,7 @@ bool IRCProtocol::unload()
 
 void IRCProtocol::Connect()
 {
-	KGlobal::config()->setGroup("IRC");
-	QString server = KGlobal::config()->readEntry("Server", "irc.openprojects.net");
-	unsigned int port = KGlobal::config()->readEntry("Port", "6667").toUInt();
-	QString user = "kopeteuser";
-	QString nick = KGlobal::config()->readEntry("Nickname", "KopeteUser");
-	engine->connectToServer(server, port, user, nick);
+
 }
 
 void IRCProtocol::Disconnect()

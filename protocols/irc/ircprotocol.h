@@ -26,6 +26,8 @@
 #include <addcontactpage.h>
 #include <improtocol.h>
 #include "kirc.h"
+#include "ircservermanager.h"
+#include "ircservercontact.h"
 
 /**
   *@author duncan
@@ -53,11 +55,12 @@ public:
 	QPixmap onlineIcon;
 	QPixmap offlineIcon;
 	QPixmap awayIcon;
-	void addContact(const QString &, const QString &);
+	void addContact(const QString &, const QString &, bool, bool);
 	bool mIsConnected;
 	KIRC *engine;
 	QPixmap joinIcon;
 	QPixmap privmsgIcon;
+	IRCServerManager *manager;
 private:
 	void initIcons();
 public slots: // Public slots

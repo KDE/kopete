@@ -24,6 +24,7 @@
 KIRC::KIRC()
 	: QSocket()
 {
+	attemptingQuit = false;
 	waitingFinishMotd = false;
 	loggedIn = false;
 	QObject::connect(this, SIGNAL(hostFound()), this, SLOT(slotHostFound()));
@@ -80,8 +81,8 @@ void KIRC::slotReadyRead()
 			originating.remove(0, 1);
 			QString target = line.section(' ', 2, 2);
 			QString message = line.section(' ', 3);
+			message.remove(0,1);
 			message.replace(QRegExp("[\\r\\n]*$"), "");
-			message = message.remove(0, 1);
 			if ((QChar(message[0]).category()) == QChar::Other_Control && (QChar(message[(message.length() -1)]).category()) == QChar::Other_Control)
 			{
 				// Fun!
@@ -106,6 +107,50 @@ void KIRC::slotReadyRead()
 			message.replace(QRegExp("[\\r\\n]*$"), "");
 			message = message.remove(0, 1);
 			emit incomingPartedChannel(originating, target, message);
+		}
+		if (command == QString("QUIT"))
+		{
+			/*
+			This signal emits when a user quits irc
+			*/
+			kdDebug() << "IRC Plugin: User quiting" << endl;
+			QString originating = line.section(' ', 0, 0);
+			originating.remove(0, 1);
+			QString message = line.section(' ', 2);
+			message.replace(QRegExp("[\\r\\n]*$"), "");
+			message = message.remove(0, 1);
+			emit incomingQuitIRC(originating, message);
+		}
+		if (command == QString("NICK"))
+		{
+			/*
+			Nick name of a user changed
+			*/
+			QString oldNick = line.section('!', 0, 0);
+			oldNick = oldNick.remove(0,1);
+			QString newNick = line.section(' ', 2, 2);
+			newNick = newNick.remove(0, 1);
+			newNick.replace(QRegExp("[\\r\\n]*$"), "");
+			if (oldNick.lower() == mNickname.lower())
+			{
+				emit successfullyChangedNick(oldNick, newNick);
+				mNickname = newNick;
+				return;
+			}
+			emit incomingNickChange(oldNick, newNick);
+		}
+		if (command == QString("TOPIC"))
+		{
+			/*
+			The topic of a channel changed. emit the channel, new topic, and the person who changed it
+			*/
+			QString channel = line.section(' ', 2, 2);
+			QString newTopic = line.section(' ', 3);
+			newTopic = newTopic.remove(0, 1);
+			newTopic.replace(QRegExp("[\\r\\n]*$"), "");
+			QString changer = line.section('!', 0, 0);
+			changer = changer.remove(0,1);
+			emit incomingTopicChange(channel, changer, newTopic);
 		}
 		if (number.contains(QRegExp("^\\d\\d\\d$")))
 		{
@@ -149,6 +194,13 @@ void KIRC::slotReadyRead()
 				}
 				case 001:
 				{
+					if (failedNickOnLogin == true)
+					{
+						// this is if we had a "Nickname in user" message when connecting and we set another nick. This signal emits that the nick was accepted and we are now logged in
+						emit loginNickNameAccepted(pendingNick);
+						mNickname = pendingNick;
+						failedNickOnLogin = false;
+					}
 					/*
 					Gives a welcome message in the form of:
 					"Welcome to the Internet Relay Network
@@ -237,6 +289,18 @@ void KIRC::slotReadyRead()
 					emit incomingHostedClients(message);
 					break;
 				}
+				case 332:
+				{
+					/*
+					Gives the existing topic for a channel after a join
+					*/
+					QString channel = line.section(' ', 3, 3);
+					QString topic = line.section(' ', 4);
+					topic = topic.remove(0, 1);
+					topic.replace(QRegExp("[\\r\\n]*$"), "");
+					emit incomingExistingTopic(channel, topic);
+					break;
+				}
 				case 353:
 				{
 					/*
@@ -285,6 +349,22 @@ void KIRC::slotReadyRead()
 					emit incomingEndOfNames(line.section(' ', 3, 3));
 					break;
 				}
+				case 433:
+				{
+					/*
+					Tells us that our nickname is already in use.
+					*/
+					if (loggedIn == false)
+					{
+						// This tells us that our nickname is, but we aren't logged in. This differs because the server won't send us a response back telling us our nick changed (since we aren't logged in)
+						failedNickOnLogin = true;
+						emit incomingFailedNickOnLogin(line.section(' ', 3, 3));
+						return;
+					}
+					// And this is the signal for if someone is trying to use the /nick command or such when already logged in, but it's already in use
+					emit incomingNickInUse(line.section(' ', 3, 3));
+					break;
+				}
 			}
 		}
 	}
@@ -299,6 +379,37 @@ void KIRC::joinChannel(const QCString &name)
 	{
 		QCString statement = "JOIN ";
 		statement.append(name.data());
+		statement.append("\r\n");
+		writeBlock(statement.data(), statement.length());
+	}
+}
+
+void KIRC::quitIRC(const QString &reason)
+{
+	/*
+	This will quit IRC
+	*/
+	if (state() == QSocket::Connected && loggedIn == true && attemptingQuit == false)
+	{
+		attemptingQuit = true;
+		QCString statement = "QUIT :";
+		statement.append(reason.local8Bit());
+		statement.append("\r\n");
+		writeBlock(statement.data(), statement.length());
+	}
+}
+
+void KIRC::partChannel(const QCString &name, const QString &reason)
+{
+	/*
+	This will part a channel with 'reason' as the reason for parting
+	*/
+	if (state() == QSocket::Connected && loggedIn == true)
+	{
+		QCString statement = "PART ";
+		statement.append(name.data());
+		statement.append(" :");
+		statement.append(reason.local8Bit());
 		statement.append("\r\n");
 		writeBlock(statement.data(), statement.length());
 	}
@@ -340,6 +451,24 @@ void KIRC::slotConnectionClosed()
 {
 	kdDebug() << "IRC Plugin: Connection Closed" << endl;
 	loggedIn = false;
+	if (attemptingQuit == true)
+	{
+		emit successfulQuit();
+	}
+	attemptingQuit = false;
+}
+
+void KIRC::changeNickname(const QString &newNickname)
+{
+	if (loggedIn == false)
+	{
+		failedNickOnLogin = true;
+	}
+	pendingNick = newNickname;
+	QString newString = "NICK ";
+	newString.append(newNickname);
+	newString.append("\r\n");
+	writeBlock(newString.latin1(), newString.length());
 }
 
 void KIRC::slotHostFound()
@@ -350,7 +479,6 @@ void KIRC::slotHostFound()
 void KIRC::slotConnected()
 {
 	kdDebug() << "IRC Plugin: Connected" << endl;
-	emit connectedToServer();
 	// Just a test for now:
 	QString ident = "USER ";
 	ident.append(mUsername);
