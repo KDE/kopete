@@ -138,14 +138,6 @@
                         <string>Sort by &amp;group</string>
                     </property>
                 </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>mShowOfflineUsers</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Show offline &amp;users</string>
-                    </property>
-                </widget>
             </vbox>
         </widget>
         <spacer>

@@ -76,7 +76,6 @@ void BehaviorConfig::save()
 	p->setBalloonNotify(mPrfsGeneral->mBalloonNotifyChk->isChecked());
 	p->setSoundIfAway(mPrfsGeneral->mSoundIfAwayChk->isChecked());
 	p->setTreeView(mPrfsGeneral->mTreeContactList->isChecked());
-	p->setShowOffline(mPrfsGeneral->mShowOfflineUsers->isChecked());
 	p->setSortByGroup(mPrfsGeneral->mSortByGroup->isChecked());
 
 
@@ -118,7 +117,6 @@ void BehaviorConfig::reopen()
 	slotShowTrayChanged( mPrfsGeneral->mShowTrayChk->isChecked() );
 	mPrfsGeneral->mTreeContactList->setChecked( p->treeView() );
 	mPrfsGeneral->mSortByGroup->setChecked( p->sortByGroup() );
-	mPrfsGeneral->mShowOfflineUsers->setChecked( p->showOffline() );
 
 
 	// "Away" TAB ===============================================================
