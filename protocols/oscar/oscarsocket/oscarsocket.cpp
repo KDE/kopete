@@ -31,13 +31,14 @@ extern "C" {
 #define DIRECTIM_PORT		4443
 
 #define AIM_MD5_STRING "AOL Instant Messenger (SM)"
-#define AIM_CLIENTSTRING "AOL Instant Messenger, version 5.1.3036/WIN32"
+#define AIM_CLIENTSTRING "AOL Instant Messenger (SM), version 4.8.2790/WIN32"
 
 #define AIM_CLIENTID 0x0109
-#define AIM_MAJOR 0x0005
-#define AIM_MINOR 0x0001
+#define AIM_MAJOR 0x0004
+#define AIM_MINOR 0x0008
 #define AIM_POINT 0x0000
-#define AIM_BUILD 0x0bdc
+#define AIM_BUILD 0x0ae6
+static const char AIM_OTHER[] = { 0x00, 0x00, 0x00, 0xbb };
 #define AIM_COUNTRY "us"
 #define AIM_LANG "en"
 
@@ -202,6 +203,8 @@ OscarSocket::OscarSocket(QObject *parent, const char *name)
     idle = false;
 //    tmpSocket = NULL;
     rateClasses.setAutoDelete(TRUE);
+    myUserProfile = "Visit the Kopete website at <a href=""http://kopete.kde.org"">http://kopete.kde.org</a>";
+    isConnected = false;
 }
 
 OscarSocket::~OscarSocket(void)
@@ -351,6 +354,9 @@ void OscarSocket::OnRead(void)
 						break;
 				case 0x0013: //buddy list management
 						switch(s.subtype) {
+						case 0x0003: //ssi rights
+								parseSSIRights(inbuf);
+								break;
 						case 0x0006: //buddy list
 								parseSSIData(inbuf);
 								break;
@@ -476,6 +482,8 @@ void OscarSocket::OnConnectionClosed(void)
 {
     emit statusChanged(OSCAR_OFFLINE);
     kdDebug() << "[OSCAR] Connection closed by server" << endl;
+    rateClasses.clear();
+    isConnected = false;
 }
 
 /** Called when the server aknowledges the connection */
@@ -535,8 +543,9 @@ void OscarSocket::sendLogin(void)
     outbuf.addTLV16(0x0018,AIM_MINOR);
     outbuf.addTLV16(0x0019,AIM_POINT);
     outbuf.addTLV16(0x001a,AIM_BUILD);
-    outbuf.addTLV(0x000e,0x0002,AIM_COUNTRY);
+    outbuf.addTLV(0x0014,0x0004,AIM_OTHER);
     outbuf.addTLV(0x000f,0x0002,AIM_LANG);
+    outbuf.addTLV(0x000e,0x0002,AIM_COUNTRY);
     //if set, old-style buddy lists will not work... you will need to use SSI
     outbuf.addTLV8(0x004a,0x01);
     //printf("Outbuf length before flap is: %d\n",outbuf.getLength());
@@ -585,7 +594,7 @@ void OscarSocket::sendRateInfoRequest(void)
 {
     kdDebug() << "[OSCAR] Sending rate info request packet!" << endl;
     Buffer outbuf;
-    outbuf.addSnac(0x0001,0x0006,0x0000,0x00000000);
+    outbuf.addSnac(0x0001,0x0006,0x0000,0x00000006);
     sendBuf(outbuf,0x02);
 }
 
@@ -646,10 +655,11 @@ void OscarSocket::sendRateAck()
     kdDebug() << "[OSCAR] Sending rate ack" << endl;
     emit connectionChanged(7,"Completing login...");
     Buffer outbuf;
-    outbuf.addSnac(0x0001,0x0008,0x0000,0x00000000);
+    outbuf.addSnac(0x0001,0x0008,0x0000,0x00000008);
     for (RateClass *rc=rateClasses.first();rc;rc=rateClasses.next())
     {
-			outbuf.addWord(rc->classid);
+			if (rc->classid != 0x0015) //0x0015 is ICQ
+				outbuf.addWord(rc->classid);
 		}
     sendBuf(outbuf,0x02);
     requestInfo();
@@ -757,10 +767,31 @@ void OscarSocket::sendClientReady(void)
 {
     kdDebug() << "[OSCAR] Sending client ready! " << endl;
     Buffer outbuf;
-    outbuf.addSnac(0x0001,0x0002,0x0000,0x00000000);
-    outbuf.addWord(0x0001);
-    outbuf.addWord(0x0003);
-    outbuf.addWord(0x0004);
+    outbuf.addSnac(0x0001,0x0002,0x0000,0x00000002);
+    for (RateClass *rc=rateClasses.first();rc;rc=rateClasses.next())
+    {
+			if (rc->classid != 0x0015) //0x0015 is ICQ
+			{
+				outbuf.addWord(rc->classid);
+				if (rc->classid == 0x0001 || rc->classid == 0x0013)
+					outbuf.addWord(0x0003);
+				else
+					outbuf.addWord(0x0001);
+				if (rc->classid == 0x0008 || rc->classid == 0x000b || rc->classid == 0x000c)
+				{
+					outbuf.addWord(0x0104);
+					outbuf.addWord(0x0001);
+				}
+				else
+				{
+					outbuf.addWord(0x0110);
+					outbuf.addWord(0x059b);
+				}
+			}
+		}
+/*  outbuf.addWord(0x0001);
+		outbuf.addWord(0x0003);
+		outbuf.addWord(0x0004);
     outbuf.addWord(0x0686);
     outbuf.addWord(0x0002);
     outbuf.addWord(0x0001);
@@ -785,23 +816,24 @@ void OscarSocket::sendClientReady(void)
     outbuf.addWord(0x000b);
     outbuf.addWord(0x0001);
     outbuf.addWord(0x0004);
-    outbuf.addWord(0x0001);
+    outbuf.addWord(0x0001); */
     sendBuf(outbuf,0x02);
     emit statusChanged(OSCAR_ONLINE);
     TAimConfig cnf;
     cnf.revision = 0;
-    sendBuddyListRequest(cnf);
+    isConnected = true;
+    //sendBuddyListRequest(cnf);
 }
 
 /** Sends versions so that we get proper rate info */
 void OscarSocket::sendVersions(const WORD *families, const int len)
 {
     Buffer outbuf;
-    outbuf.addSnac(0x0001,0x0017,0x0000,0x00000003);
-    for(int i=len-1;i>=0;i--)
+    outbuf.addSnac(0x0001,0x0017,0x0000,0x00000017);
+    for(int i=0;i<len;i++)
 	{
 	    outbuf.addWord(families[i]);
-	    if (families[i] == 0x0001)
+	    if (families[i] == 0x0001 || families[i] == 0x0013)
 		outbuf.addWord(0x0003);
 	    else
 		outbuf.addWord(0x0001);
@@ -936,13 +968,14 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
     kdDebug() << "[OSCAR] Finished getting buddy list" << endl;
     sendSSIActivate();
     emit gotConfig(blist);
+    sendInfo();
 }
 
 /** Requests the user's BOS rights */
 void OscarSocket::requestBOSRights(void)
 {
     Buffer outbuf;
- outbuf.addSnac(0x0009,0x0002,0x0000,0x00000000);
+ outbuf.addSnac(0x0009,0x0002,0x0000,0x00000002);
 	sendBuf(outbuf,0x02);
 }
 
@@ -967,7 +1000,7 @@ void OscarSocket::parseBOSRights(Buffer &inbuf)
 /** Called when bos rights are received */
 void OscarSocket::OnGotBOSRights(WORD /*maxperm*/, WORD /*maxdeny*/)
 {
-	sendClientReady();
+	//sendClientReady();
 }
 
 /** Parses the server ready response */
@@ -1004,7 +1037,7 @@ void OscarSocket::parseMessageOfTheDay(Buffer &inbuf)
 void OscarSocket::requestLocateRights(void)
 {
 	Buffer buf;
-	buf.addSnac(0x0002,0x0002,0x0000,0x00000000);
+	buf.addSnac(0x0002,0x0002,0x0000,0x00000002);
 	sendBuf(buf,0x02);
 }
 
@@ -1012,14 +1045,12 @@ void OscarSocket::requestLocateRights(void)
 void OscarSocket::requestInfo(void)
 {
 	requestMyUserInfo();
-	sendCapabilities(KOPETE_CAPS);
-/*	requestLocateRights(outbuf);
-	requestBuddyRights(outbuf);
-	requestMsgRights(outbuf);
-	requestBOSRights(outbuf);
-	sendGroupPermissionMask(outbuf);
-	sendPrivacyFlags(outbuf);
-	*/
+	sendSSIRightsRequest();
+	sendSSIRequest();
+	requestLocateRights();
+	requestBuddyRights();
+	requestMsgRights();
+	requestBOSRights();
 }
 
 /** adds a mask of the groups that you want to be able to see you to the buffer */
@@ -1035,7 +1066,7 @@ void OscarSocket::sendGroupPermissionMask(void)
 void OscarSocket::requestBuddyRights(void)
 {
 	Buffer outbuf;
-	outbuf.addSnac(0x0003,0x0002,0x0000,0x00000000);
+	outbuf.addSnac(0x0003,0x0002,0x0000,0x00000002);
 	sendBuf(outbuf,0x02);
 }
 
@@ -1043,7 +1074,7 @@ void OscarSocket::requestBuddyRights(void)
 void OscarSocket::requestMsgRights(void)
 {
 	Buffer outbuf;
-	outbuf.addSnac(0x0004,0x0004,0x0000,0x00000000);
+	outbuf.addSnac(0x0004,0x0004,0x0000,0x00000004);
 	sendBuf(outbuf,0x02);
 }
 
@@ -1439,7 +1470,7 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 
     //NOTE TO TOM: there are a lot of other options that can go here
     // IMPLEMENT THEM!
-    if ( isAuto )
+    if ( isAuto )                  
 	{
 	    outbuf.addWord(0x0004);
 	    outbuf.addWord(0x0000);
@@ -1946,6 +1977,85 @@ void OscarSocket::parseMissedMessage(Buffer &inbuf)
 	}
 }
 
+/** Sends a 0x0013,0x0002 (requests SSI rights information) */
+void OscarSocket::sendSSIRightsRequest()
+{
+	Buffer outbuf;
+	outbuf.addSnac(0x0013,0x0002,0x0000,0x00000002);
+	sendBuf(outbuf,0x02);	
+}
+
+/** Sends a 0x0013,0x0004 (requests SSI data?) */
+void OscarSocket::sendSSIRequest(void)
+{
+	Buffer outbuf;
+	outbuf.addSnac(0x0013,0x0004,0x0000,0x00020004);
+	sendBuf(outbuf,0x02);
+}
+
+/** Parses a 0x0013,0x0003 (SSI rights) from the server */
+void OscarSocket::parseSSIRights(Buffer &inbuf)
+{
+   //don't really care about this stuff...
+   //maybe write code to parse it into something useful later
+}
+
+/** Sends the server lots of  information about the currently logged in user */
+void OscarSocket::sendInfo(void)
+{
+	sendMyProfile();
+	sendMsgParams();
+	sendIdleTime(0);
+	sendGroupPermissionMask();
+	sendPrivacyFlags();
+	sendCapabilities(KOPETE_CAPS);
+	sendClientReady();
+}
+
+/** Sends the user's profile to the server */
+void OscarSocket::sendMyProfile(void)
+{
+    static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
+    Buffer outbuf;
+    outbuf.addSnac(0x0002,0x0004,0x0000,0x00000004);
+    outbuf.addTLV(0x0001,defencoding.length(),defencoding.latin1());
+    outbuf.addTLV(0x0002,myUserProfile.length(),myUserProfile.local8Bit());
+    sendBuf(outbuf,0x02);
+}
+
+/** Sends parameters for ICBM messages */
+void OscarSocket::sendMsgParams(void)
+{
+	Buffer outbuf;
+	outbuf.addSnac(0x0004,0x0002,0x0000,0x00000002);
+
+	//this is read-only, and must be set to 0 here
+	outbuf.addWord(0x0000);
+
+	//these are all read-write
+	//flags
+	outbuf.addDWord(0x0000000b);
+	
+	//TODO: make these parameters customizable options!
+	//max message length
+	outbuf.addWord(0x1f40);
+	//max sender warning level
+	outbuf.addWord(0x03e7);
+	//max reciever warning level
+	outbuf.addWord(0x03e7);
+	//min message interval limit
+	outbuf.addDWord(0x00000000);
+
+	sendBuf(outbuf,0x02);
+}
+
+/** Sets the user's profile */
+void OscarSocket::setMyProfile(const QString &profile)
+{
+	myUserProfile = profile;
+	if (isConnected)
+		sendMyProfile();
+}
 
 /*
  * Local variables:

@@ -115,6 +115,14 @@ public:
   virtual void sendAddGroup(const QString &name);
   /** Deletes a buddy from the server side contact list */
   virtual void sendDelBuddy(const QString &budName, const QString &budGroup);
+  /** Sends the server lots of  information about the currently logged in user */
+  void sendInfo(void);
+  /** Sends the user's profile to the server */
+  void sendMyProfile();
+  /** Sets the user's profile */
+  void setMyProfile(const QString &profile);
+  /** Returns the user's profile */
+  inline QString getMyProfile(void) { return myUserProfile; };
 public slots: // Public slots
   /** This is called when a connection is established */
   void OnConnect(void);
@@ -210,6 +218,14 @@ private: // Private methods
 		type == 1: deny
 		type == 2: accept  */
   void sendDirectIMInit(const QString &sn, WORD type);
+  /** Sends a 0x0013,0x0002 (requests SSI rights information) */
+  void sendSSIRightsRequest(void);
+  /** Sends a 0x0013,0x0004 (requests SSI data?) */
+  void sendSSIRequest(void);
+  /** Parses a 0x0013,0x0003 (SSI rights) from the server */
+  void parseSSIRights(Buffer &inbuf);
+  /** Sends parameters for ICBM messages */
+  void sendMsgParams(void);
 private slots: // Private slots
   /** Called when a connection has been closed */
   void OnConnectionClosed(void);
@@ -265,6 +281,10 @@ private: // Private attributes
   SSIData ssiData;
   /** Socket for direct connections */
   QSocket * connsock;
+  /** The currently logged in user's profile */
+  QString myUserProfile;
+  /** Tells if we are connected to the server and ready to operate */
+  bool isConnected;
 signals: // Signals
   /** Called when an SSI acknowledgement is recieved */
   void SSIAck();
