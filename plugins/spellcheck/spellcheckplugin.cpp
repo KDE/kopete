@@ -194,3 +194,5 @@ void SpellCheckPlugin::slotSpellDone( const QString & )
 
 
 
+
+#include "spellcheckplugin.moc"

@@ -209,3 +209,5 @@ bool SingleSpellInstance::eventFilter(QObject *o, QEvent *e)
 	return false;
 }
 
+
+#include "singlespellinstance.moc"

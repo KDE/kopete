@@ -16,12 +16,17 @@
     *                                                                       *
     *************************************************************************
 */
+
+#ifndef SPELLCHECKPLUGIN_H
+#define SPELLCHECKPLUGIN_H
+
 #include "kopeteplugin.h"
 #include "kopetemessage.h"
 
 class KActionCollection;
 class KopeteMessageManager;
 class KopeteMessage;
+class KopeteView;
 class KSpell;
 class SpellCheckPreferences;
 class SingleSpellInstance;
@@ -56,3 +61,5 @@ class SpellCheckPlugin : public KopetePlugin
 		void slotMisspelling( const QString &, const QStringList &, unsigned int );
 		void slotSpellDone( const QString & );
 };
+
+#endif // SPELLCHECKPLUGIN_H

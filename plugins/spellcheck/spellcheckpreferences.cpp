@@ -107,3 +107,5 @@ void SpellCheckPreferences::reopen()
 
 	preferencesDialog->autoCheck->setChecked( autoCheck );
 }
+
+#include "spellcheckpreferences.moc"

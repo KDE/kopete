@@ -1,5 +1,4 @@
 /*
-    spellcheckplugin.h
 
     Kopete Spell Checking plugin
 
@@ -16,6 +15,10 @@
     *                                                                       *
     *************************************************************************
 */
+
+#ifndef SINGLESPELLINSTANCE_H
+#define SINGLESPELLINSTANCE_H
+
 #include <qobject.h>
 #include <qmap.h>
 #include <qstringlist.h>
@@ -53,3 +56,5 @@ class SingleSpellInstance : public QObject
 	protected:
 		virtual bool eventFilter( QObject *watched, QEvent *e );
 };
+
+#endif // SINGLESPELLINSTANCE_H
