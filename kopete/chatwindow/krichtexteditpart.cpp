@@ -74,6 +74,7 @@ void KopeteRichTextEditPart::slotSetRichTextEnabled( bool enable )
 	}
 
 	m_richTextEnabled = enable;
+	emit toggleToolbar( m_richTextEnabled );
 
 	// Spellchecking disabled when using rich text because the
 	// text we were getting from widget was coloured HTML!

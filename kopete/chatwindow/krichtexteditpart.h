@@ -65,6 +65,9 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 		void setAlignCenter( bool yes );
 		void setAlignJustify( bool yes );
 
+	signals:
+		void toggleToolbar( const bool &enabled );
+
 	protected:
 		/**
 		* Creates the part's actions in the specified action collection.

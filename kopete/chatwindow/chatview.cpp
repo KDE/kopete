@@ -184,6 +184,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 
 	editpart = new KopeteRichTextEditPart( editDock, "kopeterichtexteditpart",
 		mgr->protocol()->richTextCapabilities() );
+	connect( editpart, SIGNAL( toggleToolbar(const bool &)), this, SLOT(slotToggleRtfToolbar( const bool & )) );
 
 	m_edit = static_cast<KTextEdit*>( editpart->widget() );
 
@@ -890,6 +891,14 @@ void ChatView::appendMessage(KopeteMessage &message)
 void ChatView::slotMarkMessageRead()
 {
 	unreadMessageFrom = QString::null;
+}
+
+void ChatView::slotToggleRtfToolbar( const bool &enabled )
+{
+	if( enabled )
+		m_mainWindow->toolBar("formatToolBar")->show();
+	else
+		m_mainWindow->toolBar("formatToolBar")->hide();
 }
 
 bool ChatView::canSend()

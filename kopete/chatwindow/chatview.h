@@ -400,6 +400,8 @@ private slots:
 
 	void slotCopyURL();
 
+	void slotToggleRtfToolbar( const bool &enabled );
+
 private:
 	enum KopeteTabState { Normal , Highlighted , Changed , Typing , Message , Undefined };
 	enum MembersListPolicy { Smart = 0, Visible = 1, Hidden = 2 };
