@@ -13,7 +13,7 @@
 	</MenuBar>
 
 
-	<ToolBar name="status">
+	<ToolBar name="statusToolBar">
 		<Action name="msnDisplayPicture" />
 	</ToolBar>
 
