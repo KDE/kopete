@@ -138,14 +138,14 @@ GaduContact::isReachable()
 QPtrList<KAction>*
 GaduContact::customContextMenuActions()
 {
-	KActionCollection *actionCollection = new KActionCollection(this);
-
+	QPtrList<KAction> *fakeCollection = new QPtrList<KAction>();
 	//show profile
-	KAction* actionShowProfile = new KAction( i18n("Show Profile") , 0, this, SLOT( slotShowPublicProfile() ), actionCollection, "actionShowPublicProfile" );
+	KAction* actionShowProfile = new KAction( i18n("Show Profile") , "info", 0,  this, SLOT( slotShowPublicProfile() ),
+										this, "actionShowPublicProfile" );
 
-	actionCollection->insert( actionShowProfile );
+	fakeCollection->append( actionShowProfile );
 
-	return actionCollection;
+	return fakeCollection;
 }
 
 void
