@@ -37,3 +37,7 @@ TODO for Jabber:
 - support avatars and idle times for tooltips
 - when trying to register an account, try to display the actual server error
   message
+- when adding a new contact, automatically save the display name chosen
+  there to the server
+- when adding a new contact to an existing meta contact, save its display
+  name to the server
