@@ -81,10 +81,10 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	mCurrentPenaltyTime = 0;
 
 	// create metacontact for myself()
-	Kopete::MetaContact *metaContact = new Kopete::MetaContact;
+//	Kopete::MetaContact *metaContact = new Kopete::MetaContact;
 
 	// add our own contact to the pool
-	JabberContact *myContact = contactPool()->addContact ( XMPP::RosterItem ( accountId ), metaContact, false );
+	JabberContact *myContact = contactPool()->addContact ( XMPP::RosterItem ( accountId ), 0, false );
 	setMyself( myContact );
 
 	initialPresence = XMPP::Status ( "", "", 5, true );
@@ -102,7 +102,8 @@ JabberAccount::~JabberAccount ()
 
 	cleanup ();
 
-	delete myself()->metaContact ();
+	// this is causing a lot of trouble because the accounts other contacts access myself(), and that takes place in ~Account(), after myself has been deleted
+	//delete myself()->metaContact ();
 
 }
 
