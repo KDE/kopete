@@ -79,25 +79,17 @@ Kopete::~Kopete()
 {
 	kdDebug() << "Kopete::~Kopete()" << endl;
 
-	if (mPref)
-		delete mPref;
+	delete mPref;
+	delete mLibraryLoader;
 
-	if (mLibraryLoader)
-		delete mLibraryLoader;
-
-/*	if (tray)
-	{
-		kdDebug() << "~Kopete(), deleting tray" << endl;
-		delete tray;
-	}*/
-
-
-	if (mainwindow)
-	{
-		kdDebug() << "~Kopete(), deleting mainwindow" << endl;
-		delete mainwindow;
+/*
+	kdDebug() << "~Kopete(), deleting tray" << endl;
+	delete tray;
 	}
+*/
 
+	kdDebug() << "~Kopete(), deleting mainwindow" << endl;
+	delete mainwindow;
 
 	// Only use this if cant find crash cause :-)
 	//KCrash::setCrashHandler(Kopete::cleverKCrashHack);
