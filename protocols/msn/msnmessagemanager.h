@@ -22,9 +22,9 @@
 
 class MSNSwitchBoardSocket;
 class KActionCollection;
+class MSNInvitation;
 class MSNFileTransferSocket;
-class KopeteTransfer;
-class KopeteFileTransferInfo;
+
 
 /**
  * @author Olivier Goffart
@@ -43,7 +43,7 @@ public:
 
 	MSNSwitchBoardSocket *service() { return m_chatService; };
 
-	void sendFile( const QString &fileLocation, const QString &fileName, 
+	void sendFile( const QString &fileLocation, const QString &fileName,
 		long unsigned int fileSize );
 
 public slots:
@@ -59,10 +59,7 @@ private slots:
 	void slotAcknowledgement( unsigned int id, bool ack );
 	void slotInvitation( const QString &handle, const QString &msg );
 
-	void slotFileTransferAccepted( KopeteTransfer *trans, const QString& fileName );
 	void slotFileTransferDone( MSNFileTransferSocket* MFTS );
-	void slotFileTransferRefused( const KopeteFileTransferInfo &info );
-
 private:
 
 	MSNSwitchBoardSocket *m_chatService;
@@ -76,7 +73,7 @@ private:
 
 	QMap<unsigned int, KopeteMessage> m_messagesSent;
 
-	QMap<long unsigned int, MSNFileTransferSocket*> m_invitations;
+	QMap<long unsigned int, MSNInvitation*> m_invitations;
 };
 
 #endif

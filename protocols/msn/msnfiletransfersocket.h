@@ -28,6 +28,7 @@ class QFile;
 class KExtendedSocket;
 
 class KopeteTransfer;
+class KopeteFileTransferInfo;
 class KopeteProtocol;
 class KopeteContact;
 
@@ -85,6 +86,10 @@ private slots:
 	void slotAcceptConnection();
 	void slotTimer();
 	void slotSendFile();
+
+	void slotFileTransferRefused( const KopeteFileTransferInfo &info );
+	void slotFileTransferAccepted( KopeteTransfer *trans, const QString& fileName );
+
 
 private:
 	QString m_handle;

@@ -25,6 +25,7 @@
 class MSNInvitation
 {
 public:
+
 	MSNInvitation(bool incomming,const QString &applicationID , const QString &applicationName);
 	virtual ~MSNInvitation();
 	void setCookie( long unsigned int c ) { m_cookie = c; }

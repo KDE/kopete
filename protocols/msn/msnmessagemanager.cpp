@@ -27,7 +27,6 @@
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
-#include "kopetetransfermanager.h"
 
 #include "msncontact.h"
 #include "msnfiletransfersocket.h"
@@ -49,14 +48,6 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 		KopeteMessageManager* ) ),
 		this, SLOT( slotMessageSent( KopeteMessage&,
 		KopeteMessageManager* ) ) );
-	connect( KopeteTransferManager::transferManager(),
-		SIGNAL( accepted( KopeteTransfer *, const QString& ) ),
-		this,
-		SLOT( slotFileTransferAccepted( KopeteTransfer *, const QString& ) ) );
-	connect( KopeteTransferManager::transferManager(),
-		SIGNAL( refused( const KopeteFileTransferInfo & ) ),
-		this,
-		SLOT( slotFileTransferRefused( const KopeteFileTransferInfo & ) ) );
 }
 
 MSNMessageManager::~MSNMessageManager()
@@ -65,7 +56,7 @@ MSNMessageManager::~MSNMessageManager()
 	if(m_chatService)
 		delete m_chatService;
 
-	QMap<unsigned long int, MSNFileTransferSocket*>::Iterator it;
+	QMap<unsigned long int, MSNInvitation*>::Iterator it;
 	for( it = m_invitations.begin(); it != m_invitations.end() ; it = m_invitations.begin())
 	{
 		m_invitations.remove( it );
@@ -274,40 +265,12 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 	rx.search(msg);
 	long unsigned int cookie=rx.cap(1).toUInt();
 
-	if( msg.contains("Invitation-Command: ACCEPT") )
+	if(m_invitations.contains(cookie))
 	{
-		if(m_invitations.contains(cookie))
-		{
-			MSNFileTransferSocket *MFTS=m_invitations[cookie];
-			if(MFTS && MFTS->incoming())
-			{
-				MFTS->parseInvitation(msg);
-			}
-			else
-			{
-				unsigned long int auth = (rand()%(999999))+1;
-				MFTS->setAuthCookie(QString::number(auth));
-
-				MFTS->setKopeteTransfer(KopeteTransferManager::transferManager()->addTransfer(c, MFTS->fileName(), MFTS->size(),  c->displayName(), KopeteFileTransferInfo::Outgoing));
-
-				QCString message=QString(
-						"MIME-Version: 1.0\r\n"
-						"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
-						"\r\n"
-						"Invitation-Command: ACCEPT\r\n"
-						"Invitation-Cookie: " + QString::number(cookie) + "\r\n"
-						"IP-Address: " + m_chatService->getLocalIP() + "\r\n"
-						"Port: 6891\r\n"
-						"AuthCookie: "+QString::number(auth)+"\r\n"
-						"Launch-Application: FALSE\r\n"
-						"Request-Data: IP-Address:\r\n\r\n").utf8();
-				m_chatService->sendCommand( "MSG" , "N", true, message );
-
-				MFTS->listen(6891);
-			}
-		}
+		MSNInvitation *msnI=m_invitations[cookie];
+		msnI->parseInvitation(msg);
 	}
-	else  if( msg.contains("Invitation-Command: CANCEL") )
+	/*	else  if( msg.contains("Invitation-Command: CANCEL") )
 	{
 		if(m_invitations.contains(cookie))
 		{
@@ -325,8 +288,8 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 				delete MFTS;
 			}
 		}
-	}
-	else  if( msg.contains("Invitation-Command: INVITE") )
+	}*/
+	else if( msg.contains("Invitation-Command: INVITE") )
 	{
 		if( msg.contains(MSNFileTransferSocket::applicationID()) )
 		{
@@ -349,75 +312,6 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			m_chatService->sendCommand( "MSG" , "N", true, MSNInvitation::unimplemented(cookie) );
 		}
 	}
-}
-
-void MSNMessageManager::slotFileTransferAccepted(KopeteTransfer *trans, const QString& fileName)
-{
-	if(!members().contains(trans->info().contact()))
-		return;
-
-	MSNFileTransferSocket *MFTS=dynamic_cast<MSNFileTransferSocket*>((MSNFileTransferSocket*)(trans->info().internalId()));
-	if(!MFTS)
-		return;
-
-	if(MFTS->cookie()==0)
-	{
-		delete MFTS;
-		trans->setError(KopeteTransfer::CanceledRemote);
-		return;
-	}
-
-	if(m_chatService)
-	{
-		MFTS->setFile(fileName);
-		MFTS->setKopeteTransfer(trans);
-
-		QCString message=QString(
-			"MIME-Version: 1.0\r\n"
-			"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
-			"\r\n"
-			"Invitation-Command: ACCEPT\r\n"
-			"Invitation-Cookie: " + QString::number(MFTS->cookie()) + "\r\n"
-			"Launch-Application: FALSE\r\n"
-			"Request-Data: IP-Address:\r\n"  ).utf8();
-		m_chatService->sendCommand( "MSG" , "N", true, message );
-	}
-	else
-	{
-		m_invitations.remove(MFTS->cookie());
-		delete MFTS;
-
-		if( m_invitations.isEmpty())
-			setCanBeDeleted(true);
-	}
-}
-
-void MSNMessageManager::slotFileTransferRefused(const KopeteFileTransferInfo &info)
-{
-	if(!members().contains(info.contact()))
-		return;
-
-	MSNFileTransferSocket *MFTS=dynamic_cast<MSNFileTransferSocket*>((MSNFileTransferSocket*)(info.internalId()));
-	if(!MFTS)
-		return;
-
-	m_invitations.remove(MFTS->cookie());
-	delete MFTS;
-
-	if(m_chatService)
-	{
-		QCString message=QString(
-			"MIME-Version: 1.0\r\n"
-			"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
-			"\r\n"
-			"Invitation-Command: CANCEL\r\n"
-			"Invitation-Cookie: " + QString::number(MFTS->cookie()) + "\r\n"
-			"Cancel-Code: REJECT").utf8();
-		m_chatService->sendCommand( "MSG" , "N", true, message );
-	}
-	else if( m_invitations.isEmpty())
-		setCanBeDeleted(true);
-
 }
 
 void MSNMessageManager::slotFileTransferDone(MSNFileTransferSocket* MFTS)
