@@ -27,7 +27,7 @@
   */
 
 class QDomNode;
-//class KopeteGroup;
+class KopetePlugin;
 
 class KopeteGroup : public QObject 
 {
@@ -40,7 +40,14 @@ public:
 //	KopeteGroup(const KopeteGroup &);
 	~KopeteGroup();
 
+	/**
+	 *   return the group displayName
+	 */
 	QString displayName() const ;
+
+	/*
+	 *  rename the group
+	 */
 	void setDisplayName (const QString&);
 
 	GroupType type() const ;
@@ -52,6 +59,14 @@ public:
 	void setExpanded(bool in_expanded) { m_expanded = in_expanded; }
 	bool expanded() { return m_expanded; }
 
+	/**
+	 * Set or get data specific for each plugin.
+	 * Theses data are saved to the contactlist
+	 */
+	void setPluginData(KopetePlugin *p, QStringList value );
+	QStringList pluginData(KopetePlugin *p) ;
+
+
 	static KopeteGroup *toplevel;
 	static KopeteGroup *temporary;
 
@@ -59,11 +74,13 @@ private:
 	QString m_displayName;
 	GroupType m_type;
 	bool m_expanded;
+  	QMap<QString, QString> m_pluginData;
 
 signals: 
   void renamed(KopeteGroup* , const QString& );
 };
 
+//FIXME: should be typedef QPtrList<KopeteGroup> KopeteGroupList
 class KopeteGroupList : public  QPtrList<KopeteGroup>
 {
 	public:
@@ -71,9 +88,6 @@ class KopeteGroupList : public  QPtrList<KopeteGroup>
 		~KopeteGroupList();
 		QStringList toStringList();
 };
-
-/*bool operator ==(const KopeteGroup &, const KopeteGroup &);
-bool operator !=(const KopeteGroup &, const KopeteGroup &);*/
 
 
 #endif

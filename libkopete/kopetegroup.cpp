@@ -17,25 +17,13 @@
 
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
+#include "kopeteplugin.h"
 #include <qdom.h>
+#include <qstylesheet.h>
+#include <qregexp.h>
 
 KopeteGroup* KopeteGroup::toplevel=new KopeteGroup(QString::null , KopeteGroup::TopLevel);
 KopeteGroup* KopeteGroup::temporary=new KopeteGroup("temporaryGroup",KopeteGroup::Temporary);
-
-/*bool operator==(const KopeteGroup &a, const KopeteGroup &b)
-{
-	if(a.type()==KopeteGroup::TopLevel && b.type()==KopeteGroup::TopLevel)
-		return true;
-	if(a.type() != b.type()) return false;
-	if(a.displayName() != b.displayName()) return false;
-	return true;
-}
-
-bool operator!=(const KopeteGroup &a, const KopeteGroup &b)
-{
-	return !(a==b);
-}*/
-
 
 KopeteGroupList::KopeteGroupList(){}
 KopeteGroupList::~KopeteGroupList(){}
@@ -52,6 +40,8 @@ QStringList KopeteGroupList::toStringList()
 	return rep;
 }
 
+//-----------------------------------------------------------------------------
+
 KopeteGroup::KopeteGroup(QString _name, GroupType _type)  : QObject(KopeteContactList::contactList())
 {
 	m_displayName=_name;
@@ -64,11 +54,6 @@ KopeteGroup::KopeteGroup()  : QObject(KopeteContactList::contactList())
 	m_displayName=QString::null;
 	m_expanded = true;
 }
-/*KopeteGroup::KopeteGroup(const KopeteGroup &a)
-{
-	m_displayName=a.displayName();
-	m_type=a.type();
-} */
 
 KopeteGroup::~KopeteGroup()
 {
@@ -90,8 +75,16 @@ QString KopeteGroup::toXML()
 		xml += "    <view>expanded</view>\n";
 	else
 		xml += "    <view>collapsed</view>\n";
-	xml += "  </kopete-group>\n";
 
+	// Store other plugin data
+	QMap<QString, QString>::ConstIterator it;
+	for( it = m_pluginData.begin(); it != m_pluginData.end(); ++it )
+	{
+		xml += "    <plugin-data plugin-id=\"" + QStyleSheet::escape(it.key()) + "\">"
+				+ QStyleSheet::escape(it.data()) + "</plugin-data>\n";
+	}
+
+	xml += "  </kopete-group>\n";
 	return xml;
 }
 
@@ -125,6 +118,12 @@ bool KopeteGroup::fromXML(const QDomNode& data)
 			else
 				m_expanded = true;
 		}
+		else if( groupElement.tagName() == "plugin-data" )
+		{
+			QString pluginId = groupElement.attribute(
+				"plugin-id", QString::null );
+			m_pluginData.insert( pluginId, groupElement.text() );
+		}                           
 
 		groupData = groupData.nextSibling();
 	}
@@ -154,6 +153,37 @@ KopeteGroup::GroupType KopeteGroup::type() const
 void KopeteGroup::setType(GroupType t)
 {
 	m_type=t;
+}                                                   
+
+void KopeteGroup::setPluginData(KopetePlugin *p, QStringList strList )
+{
+	if(strList.isEmpty())
+	{
+		m_pluginData.remove(p->pluginId());
+		return;
+	}
+
+	for ( QStringList::iterator it = strList.begin(); it != strList.end(); ++it )
+	{
+		//escape '||' I don't like this but it is needed
+		(*it)=(*it).replace(QRegExp("\\\\"),"\\\\").replace(QRegExp("\\|"),"\\|;");
+	}
+	m_pluginData[p->pluginId()] =  strList.join( "||" ) ;
 }
+
+QStringList KopeteGroup::pluginData(KopetePlugin *p)
+{
+	if(!m_pluginData.contains(p->pluginId()))
+		return QStringList();
+
+	QStringList strList = QStringList::split( "||", m_pluginData[p->pluginId()] );
+	for ( QStringList::iterator it2 = strList.begin(); it2 != strList.end(); ++it2 )
+	{
+		//unescape '||'  
+		(*it2)=(*it2).replace(QRegExp("\\\\\\|;"),"|").replace(QRegExp("\\\\\\\\"),"\\");
+	}
+	return strList;
+}
+
 
 #include "kopetegroup.moc"
