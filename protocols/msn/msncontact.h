@@ -55,6 +55,9 @@ class MSNContact : public IMContact
 	private slots:
 		void removeThisUser();
 		void slotUpdateContact (QString, uint);
+		// We have to delete the contact if MSN disconenct
+		// We will use the engine signal
+		void slotDeleteMySelf ( bool );
 		void slotNewMessage(QString, QString, QString);
 		void slotFlashIcon();
 	private:

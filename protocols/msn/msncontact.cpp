@@ -35,7 +35,7 @@ MSNContact::MSNContact(QString userid, const QString name, MSNProtocol *protocol
 	QObject::connect(protocol->engine, SIGNAL(startChat(KMSNChatService *, QString)), this, SLOT(slotIncomingChat (KMSNChatService *, QString) ));
 	QObject::connect(this, SIGNAL(chatToUser(QString)), protocol->engine, SLOT( slotStartChatSession(QString)) );
 	QObject::connect(messageTimer, SIGNAL(timeout()), this, SLOT(slotFlashIcon()));
-
+    QObject::connect(protocol->engine, SIGNAL(connectedToService(bool)), this, SLOT(slotDeleteMySelf(bool)));
 	QString tmp = name;
 	//tmp.append(" (");
 	//tmp.append(QString::number(uin));
@@ -104,7 +104,6 @@ void MSNContact::slotUpdateContact (QString handle , uint status)
    			case BLO:
    			{
    				setText(0,  tmppublicname + " ( " + i18n("Blocked") + " )" );
-   				setPixmap(0, mProtocol->onlineIcon);
    				break;
    			}
    			case NLN:
@@ -122,37 +121,37 @@ void MSNContact::slotUpdateContact (QString handle , uint status)
    			case BSY:
    			{
 				setText(0, tmppublicname );
-   				setPixmap(0, mProtocol->onlineIcon );
+   				setPixmap(0, mProtocol->awayIcon );
    				break;
    			}
    			case IDL:
    			{
 				setText(0, tmppublicname );
-   				setPixmap(0, mProtocol->onlineIcon );
+   				setPixmap(0, mProtocol->awayIcon );
    				break;
    			}
    			case AWY:
    			{
 				setText(0, tmppublicname );
-   				setPixmap(0, mProtocol->onlineIcon );
+   				setPixmap(0, mProtocol->awayIcon );
    				break;
    			}
    			case PHN:
    			{
 				setText(0, tmppublicname );
-   				setPixmap(0, mProtocol->onlineIcon );
+   				setPixmap(0, mProtocol->awayIcon );
    				break;
    			}
    			case BRB:
    			{
 				setText(0, tmppublicname );
-   				setPixmap(0, mProtocol->onlineIcon );
+   				setPixmap(0, mProtocol->awayIcon );
    				break;
    			}
    			case LUN:
    			{
 				setText(0, tmppublicname );
-   				setPixmap(0, mProtocol->onlineIcon );
+   				setPixmap(0, mProtocol->awayIcon );
    				break;
    			}
 		}
@@ -170,6 +169,13 @@ void MSNContact::slotNewMessage(QString userid, QString publicname, QString mess
 	*/
 }
 
+void MSNContact::slotDeleteMySelf(bool connected)
+{
+	if (!connected)
+	{
+		delete this;
+	}
+}
 
 void MSNContact::slotFlashIcon()
 {
