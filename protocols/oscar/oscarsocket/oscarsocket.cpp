@@ -415,7 +415,7 @@ void OscarSocket::slotRead(void)
 			//		case 0x03: //FLAP error channel
 			//			break;
 		case 0x04: //close connection negotiation channel
-			kdDebug() << "[OSCAR] Got connection close request " << endl;
+			kdDebug(14150) << "[OSCAR] Got connection close request " << endl;
 			break;
 
 		default: //oh, crap, something's wrong
