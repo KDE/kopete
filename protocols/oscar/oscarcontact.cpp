@@ -116,6 +116,12 @@ QString OscarContact::id(void) const
 /** Return the protocol specific serialized data that a plugin may want to store a contact list. */
 QString OscarContact::data(void) const
 {
+	TBuddy tmpBuddy;
+	int num = mProtocol->buddyList()->getNum(mName);
+
+	if (mProtocol->buddyList()->get(&tmpBuddy, num) != -1)
+		if (tmpBuddy.alias)
+			return tmpBuddy.alias;
 	return QString::null;
 }
 
