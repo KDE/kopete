@@ -22,6 +22,7 @@
 #include <qapplication.h>
 #include <qregexp.h>
 #include <qstylesheet.h>
+#include <qtimer.h>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -49,6 +50,8 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	mMsgManager = 0L;
 	mIdle = 0;
 	mLastAutoResponseTime = 0;
+	mTypingTimer = new QTimer();
+	
 	// Buddy Changed
 	QObject::connect(mProtocol->engine, SIGNAL(gotBuddyChange(UserInfo)),
 					this,SLOT(slotBuddyChanged(UserInfo)));
@@ -67,7 +70,11 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	// Incoming minitype notification
 	QObject::connect(mProtocol->engine, SIGNAL(gotMiniTypeNotification(QString, int)),
 					this, SLOT(slotGotMiniType(QString, int)));
-	
+
+	// Set up the mTypingTimer
+	QObject::connect(mTypingTimer, SIGNAL(timeout()),
+					this, SLOT(slotTextEntered()));
+		
 	if(parent){
 		connect (parent , SIGNAL( aboutToSave(KopeteMetaContact*) ),
 				protocol, SLOT (serialize(KopeteMetaContact*) ));
@@ -94,6 +101,7 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 OscarContact::~OscarContact()
 {
 	kdDebug() << "[OscarContact] ~OscarContact()" << endl;
+	delete mTypingTimer;
 }
 
 /** Pops up a chat window */
@@ -134,8 +142,22 @@ KopeteMessageManager* OscarContact::msgManager()
 	else
 	{
 		//printf("Creating a mmsgmanager: %d\n",mProtocol->myself());fflush(stdout);
-		mMsgManager = KopeteMessageManagerFactory::factory()->create(mProtocol->myself(), theContacts, mProtocol, KopeteMessageManager::ChatWindow);
-		connect(mMsgManager, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(const KopeteMessage&, KopeteMessageManager *)));
+		mMsgManager =
+				KopeteMessageManagerFactory::factory()->create(
+								mProtocol->myself(), theContacts,
+								mProtocol, KopeteMessageManager::ChatWindow);
+		QObject::connect(
+						mMsgManager,
+						SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager *)),
+						this,
+						SLOT(slotSendMsg(const KopeteMessage&, KopeteMessageManager *)));
+		// TODO
+		QObject::connect(
+						mMsgManager,
+						SIGNAL(typingMsg(bool)),
+						this,
+						SLOT(slotTyping(bool)));
+		
 		return mMsgManager;
 	}
 }
@@ -303,6 +325,37 @@ void OscarContact::slotGotMiniType(QString screenName, int type){
 				}
 		}
 		
+}
+
+// Called when we want to send a typing notification to
+// the other person
+void OscarContact::slotTyping(bool typing){
+		kdDebug() << "[OSCAR] Sending typing notify" << endl;
+		
+		if(typing){
+				kdDebug() << "[OSCAR TYPING] Typing" << endl;
+				if(mTypingTimer->isActive()){
+						mTypingTimer->stop();
+						// Start the timer at 3 seconds
+						mTypingTimer->start(1000*3, true);
+				} else {
+						mProtocol->engine->sendMiniTypingNotify(tocNormalize(mName),
+								OscarSocket::TypingBegun);
+						// Start the timer
+						mTypingTimer->start(1000*3, true);
+				}
+		} else {
+				kdDebug() << "[OSCAR TYPING] Finished" << endl;
+				mProtocol->engine->sendMiniTypingNotify(tocNormalize(mName),
+								OscarSocket::TypingFinished);
+				// Stop the timer
+				mTypingTimer->stop();
+		}
+}
+
+void OscarContact::slotTextEntered(){
+		mProtocol->engine->sendMiniTypingNotify(tocNormalize(mName),
+						OscarSocket::TextTyped);
 }
 
 /** Called when a buddy is offgoing */

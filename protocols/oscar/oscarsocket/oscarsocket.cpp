@@ -1158,6 +1158,8 @@ void OscarSocket::parseMsgRights(Buffer &/*inbuf*/)
 {
     //NOTE TO TOM: write code to parse this
     //requestBOSRights();
+		// After we get this from the server
+		// we have to send some messaging paramters
 }
 
 /** Parses an incoming IM */
@@ -2206,6 +2208,41 @@ void OscarSocket::sendRemoveBlock(const QString &sname)
 	emit denyRemoved(sname);
 }
 
+
+void OscarSocket::sendMiniTypingNotify(QString screenName,TypingNotify notifyType ){
+		//BLARG
+		kdDebug() << "[OSCAR] Sending Typing notify " << endl;
+
+		// Build the buffer
+		Buffer outbuf;
+		// This is header stuff for the SNAC
+		outbuf.addSnac(0x0004,0x0014,0x0000,0x00000001);
+		outbuf.addDWord(0x00000000);
+		outbuf.addDWord(0x00000000);
+		outbuf.addWord(0x0001);
+		// Screenname length is next
+		outbuf.addByte(screenName.length());
+		// Then the actual screen name
+		outbuf.addString(screenName.latin1(), screenName.length());
+		// Then the typing status
+		switch(notifyType){
+		case TypingFinished:
+				outbuf.addWord(0x0000);
+				break;
+		case TextTyped:
+				outbuf.addWord(0x0001);
+				break;
+		case TypingBegun:
+				outbuf.addWord(0x0002);
+				break;
+		default:
+				// Error, bad bad, ouchie
+				return;
+		}
+
+		// Send it
+		sendBuf(outbuf, 0x02);
+}
 
 void OscarSocket::setDebugDialog(OscarDebugDialog *dialog){
 		if(dialog){

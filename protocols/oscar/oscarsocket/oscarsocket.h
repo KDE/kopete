@@ -74,6 +74,14 @@ class OscarSocket : public ProtocolSocket  {
 public:
 	OscarSocket(QObject *parent=0, const char *name=0);
 	~OscarSocket();
+
+	/** Enum for typing notifications */
+	enum TypingNotify
+		{
+			TypingFinished, TextTyped, TypingBegun
+		};
+	
+	
   /** Sends an authorization request to the server */
   void sendLoginRequest(void);
   /** encodes a password, outputs to the 3rd parameter */
@@ -127,7 +135,13 @@ public:
   /** Blocks user sname */
   void sendBlock(const QString &sname);
   /** Removes the block on user sname */
-  void sendRemoveBlock(const QString &sname);
+	void sendRemoveBlock(const QString &sname);
+	/**
+	 * Sends a typing notification to the server
+	 * @param screenName The name of the person to send to
+	 * @param notifyType Type of notify to send
+	 */
+	void sendMiniTypingNotify(QString screenName, TypingNotify notifyType);
 	/** Sets the pointer to the debug dialog */
 	void setDebugDialog(OscarDebugDialog *dialog);
 	
@@ -143,13 +157,19 @@ private: // Private methods
   void putFlapVer(Buffer &buf);
   /** Sends the output buffer, and clears it */
   void sendBuf(Buffer &buf, BYTE chan);
-  /** Sends login information, actually logs onto the server */
+  /**
+	 * Sends login information, actually logs
+	 * onto the server
+	 */
   void sendLogin(void);
   /** Sends the authorization cookie to the BOS server */
   void sendCookie(void);
   /** Parses the rate info response */
   void parseRateInfoResponse(Buffer &inbuf);
-  /** Tells the server we accept it's communist rate limits, even though I have no idea what they mean */
+  /**
+	 * Tells the server we accept it's communist rate
+	 * limits, even though I have no idea what they mean
+	 */
   void sendRateAck(void);
   /** Sends privacy flags to the server  */
   void sendPrivacyFlags(void);
@@ -157,13 +177,24 @@ private: // Private methods
   void parseMyUserInfo(Buffer &inbuf);
   /** finds a tlv of type typ in the list */
   TLV * findTLV(QList<TLV> &l, WORD typ);
-  /** parse the server's authorization response (which hopefully contains the cookie) */
+  /**
+	 * Parse the server's authorization response
+	 * (which hopefully contains the cookie)
+	 */
   void parseAuthResponse(Buffer &inbuf);
-  /** tells the server that the client is ready to receive commands & stuff */
+  /**
+	 * tells the server that the client is
+	 * ready to receive commands & stuff */
   void sendClientReady(void);
   /** Sends versions so that we get proper rate info */
   void sendVersions(const WORD *families, const int len);
-  /** Handles AOL's evil attempt to thwart 3rd party apps using Oscar.  It requests a segment and offset of aim.exe.  We can thwart it with help from the good people at Gaim */
+  /**
+	 * Handles AOL's evil attempt to thwart 3rd
+	 * party apps using Oscar.  It requests a
+	 * segment and offset of aim.exe.  We can
+	 * thwart it with help from the good people
+	 * at Gaim
+	 */
   void parseMemRequest(Buffer &inbuf);
   /** parses incoming ssi data */
   void parseSSIData(Buffer &inbuf);

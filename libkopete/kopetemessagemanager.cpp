@@ -518,12 +518,11 @@ void KopeteMessageManager::userTypingMsg ( const KopeteContact *c , bool t )
 	}
 }
 
-/*void KopeteMessageManager::slotTyping ( bool t )
+void KopeteMessageManager::slotTyping ( bool t )
 {
 	kdDebug() << "KopeteMessageManager::slotTyping "<< t << endl;
-	if(t)
-		emit typingMsg();
-}*/
+	emit typingMsg(t);
+}
 
 void KopeteMessageManager::setCanBeDeleted ( bool b )
 {

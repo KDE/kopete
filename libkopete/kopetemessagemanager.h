@@ -132,7 +132,7 @@ signals:
 	void contactAdded(const KopeteContact *);
 	void contactRemoved(const KopeteContact *);
 
-//	void typingMsg();
+	virtual void typingMsg(bool);
 
 public slots:
 	void readModeChanged();
@@ -185,7 +185,7 @@ protected slots:
 	void slotReplyWindowClosing();
 	void slotReadMessages();
 	void slotReply();
-	virtual void slotTyping(bool ) {};
+	virtual void slotTyping(bool );
 
 protected:
 	/**

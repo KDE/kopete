@@ -28,6 +28,7 @@
   */
 
 struct UserInfo;
+class QTimer;
 class OscarProtocol;
 class KopeteMessageManager;
 class OscarProtocol;
@@ -101,6 +102,8 @@ private: // Private attributes
 		
 	/** The contact's idle time */
 	int mIdle;
+	/** Timer for sending typing notifications */
+	QTimer* mTypingTimer;
 
 private slots: // Private slots
 	/** Called when a buddy changes */
@@ -109,6 +112,16 @@ private slots: // Private slots
 	void slotBuddyChanged(UserInfo u);
 	/** Called when we get a minityping notification */
 	void slotGotMiniType(QString screenName, int type);
+	/**
+	 * Called when we are notified by the chat window
+	 * that this person is being typed to...
+	 */
+	void slotTyping(bool typing);
+	/**
+	 * Called by a timer set up in slotTyping
+	 * to do the "Buddy has entered text"
+	 */
+	void slotTextEntered();
 	/** Called when a buddy is offgoing */
 	void slotOffgoingBuddy(QString sn);
 	/** Called when user info is requested */
