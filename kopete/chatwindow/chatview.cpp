@@ -238,8 +238,11 @@ void ChatView::raise(bool activate)
 	
 	//Will not activate window if user was typing
 	if(activate)
+#if KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
+		KWin::setActiveWindow( m_mainWindow->winId() );
+#else
 		KWin::activateWindow( m_mainWindow->winId() );
-
+#endif
 }
 
 void ChatView::slotScrollingTo( int /*x*/, int y)
