@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
 	aboutData.addCredit ( "Olaf Lueg", I18N_NOOP("Kmerlin MSN code") );
 	aboutData.addCredit ( "Neil Stevens", I18N_NOOP("TAim engine AIM code") );
 	aboutData.addCredit ( "Justin Karneges", I18N_NOOP("Psi Jabber code") );
+	aboutData.addCredit ( "Steve Cable", I18N_NOOP("Sounds") );
 
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
