@@ -564,11 +564,12 @@ VSpacerComponent::VSpacerComponent( ComponentBase *parent )
 class Item::Private
 {
 public:
-	Private() : opacity( 1.0 ), visibilityLevel( 0 ), visibilityTarget( false ) {}
+	Private() : animateLayout( true ), opacity( 1.0 ), visibilityLevel( 0 ), visibilityTarget( false ) {}
 
 	QTimer layoutTimer;
 
 	QTimer layoutAnimateTimer;
+	bool animateLayout;
 	int layoutAnimateSteps;
 	static const int layoutAnimateStepsTotal = 10;
 
@@ -576,8 +577,8 @@ public:
 	QTimer visibilityTimer;
 	int visibilityLevel;
 	bool visibilityTarget;
-	static const int visibilityFoldSteps = 10;
-	static const int visibilityFadeSteps = 10;
+	static const int visibilityFoldSteps = 7;
+	static const int visibilityFadeSteps = 7;
 	static const int visibilityStepsTotal = visibilityFoldSteps + visibilityFadeSteps;
 };
 
@@ -600,7 +601,7 @@ Item::~Item()
 
 void Item::initLVI()
 {
-	connect( listView()->header(), SIGNAL( sizeChange( int, int, int ) ), SLOT( slotScheduleLayout() ) );
+	connect( listView()->header(), SIGNAL( sizeChange( int, int, int ) ), SLOT( slotColumnResized() ) );
 	connect( &d->layoutTimer, SIGNAL( timeout() ), SLOT( slotLayoutItems() ) );
 	connect( &d->layoutAnimateTimer, SIGNAL( timeout() ), SLOT( slotLayoutAnimateItems() ) );
 	connect( &d->visibilityTimer, SIGNAL( timeout() ), SLOT( slotUpdateVisibility() ) );
@@ -608,11 +609,18 @@ void Item::initLVI()
 	setTargetVisibility( true );
 }
 
-void Item::slotScheduleLayout()
+void Item::slotColumnResized()
+{
+	scheduleLayout();
+	// if we've been resized, don't animate the layout
+	d->animateLayout = false;
+}
+
+void Item::scheduleLayout()
 {
 	// perform a delayed layout in order to speed it all up
 	if ( ! d->layoutTimer.isActive() )
-	d->layoutTimer.start( 30, true );
+		d->layoutTimer.start( 30, true );
 }
 
 void Item::slotLayoutItems()
@@ -639,6 +647,11 @@ void Item::slotLayoutItems()
 	if ( !d->layoutAnimateTimer.isActive() )
 		d->layoutAnimateTimer.start( 10 );
 	d->layoutAnimateSteps = -1;
+	if ( !d->animateLayout )
+	{
+		d->layoutAnimateSteps += Private::layoutAnimateStepsTotal;
+		d->animateLayout = true;
+	}
 	slotLayoutAnimateItems();
 }
 
@@ -683,7 +696,7 @@ void Item::setTargetVisibility( bool vis )
 		return;
 	}
 	d->visibilityTarget = vis;
-	d->visibilityTimer.start( 30 );
+	d->visibilityTimer.start( 40 );
 	if ( targetVisibility() )
 		setVisible( true );
 	slotUpdateVisibility();
@@ -721,7 +734,7 @@ void Item::repaint()
 
 void Item::relayout()
 {
-	slotScheduleLayout();
+	scheduleLayout();
 }
 
 void Item::setup()
@@ -777,19 +790,19 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 void Item::componentAdded( Component *component )
 {
 	ComponentBase::componentAdded( component );
-	slotScheduleLayout();
+	scheduleLayout();
 }
 
 void Item::componentRemoved( Component *component )
 {
 	ComponentBase::componentRemoved( component );
-	slotScheduleLayout();
+	scheduleLayout();
 }
 
 void Item::componentResized( Component *component )
 {
 	ComponentBase::componentResized( component );
-	slotScheduleLayout();
+	scheduleLayout();
 }
 
 } // END namespace ListView

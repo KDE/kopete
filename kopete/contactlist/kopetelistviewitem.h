@@ -277,9 +277,10 @@ protected:
 private:
 	void initLVI();
 	void recalcHeight();
+	void scheduleLayout();
 
 private slots:
-	void slotScheduleLayout();
+	void slotColumnResized();
 	void slotLayoutItems();
 	void slotLayoutAnimateItems();
 	void slotUpdateVisibility();
