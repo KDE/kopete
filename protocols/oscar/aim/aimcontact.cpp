@@ -63,8 +63,9 @@ AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount
 		acc->engine(), SIGNAL(gotUserProfile(const UserInfo &, const QString &, const QString &)),
 		this, SLOT(slotGotProfile(const UserInfo &, const QString &, const QString &)));
 
-// 	kdDebug(14190) << k_funcinfo "name='" << name <<
-// 		"', displayName='" << displayName << "' " << endl;
+	kdDebug(14190) << k_funcinfo <<
+		"contactName()='" << contactName() <<
+		"', displayName()='" << displayName << "'" << endl;
 }
 
 void AIMContact::setOwnProfile(const QString &profile)
@@ -212,22 +213,27 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 	kdDebug(14190) << k_funcinfo << "Called for '"
 		<< displayName() << "', userclass=" << u.userclass << endl;
 
-	/*
+	QString uclass = "";
+	if(u.userclass & CLASS_AWAY)
+		uclass += " AWAY ";
+	else
+		uclass += " ONLINE ";
 	if(u.userclass & CLASS_AIM)
-		kdDebug(14190) << k_funcinfo << "AIM user" << endl;
+		uclass += " AIM User ";
 	if(u.userclass & CLASS_ICQ)
-		kdDebug(14190) << k_funcinfo << "ICQ user??" << endl;
+		uclass += " ICQ user ";
 	if(u.userclass & CLASS_WIRELESS)
-		kdDebug(14190) << k_funcinfo << "Wireless user" << endl;
+		uclass += " Wireless user ";
 	if(u.userclass & CLASS_COMMERCIAL)
-		kdDebug(14190) << k_funcinfo << "AOL commercial account" << endl;
+		uclass += " AOL commercial account ";
 	if(u.userclass & CLASS_TRIAL)
-		kdDebug(14190) << k_funcinfo << "AOL trial account" << endl;
+		uclass += " AOL trial account ";
 	if(u.userclass & CLASS_ADMINISTRATOR)
-		kdDebug(14190) << k_funcinfo << "AOL administrator account" << endl;
+		uclass += " AOL administrator account ";
 	if(u.userclass & CLASS_UNKNOWN400)
-		kdDebug(14190) << k_funcinfo << "Active contact" << endl;
-	*/
+		uclass += " Active contact ";
+
+	kdDebug(14190) << k_funcinfo << "decoded userclass=[" << uclass << "]" << endl;
 
 	if(u.userclass & CLASS_AWAY)
 		setStatus(OSCAR_AWAY);

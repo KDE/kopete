@@ -859,17 +859,17 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 	if (err)
 	{
 		QString errorString;
-		int errorCode = 0;
+		int errorCode = (err->data[0] << 8)|err->data[1];
 
-		switch((err->data[0] << 8)|err->data[1])
+		switch(errorCode)
 		{
-			case 1: { errorString = i18n("Sign on failed because the screen name you provided is not registered on the AIM network. Please visit http://aim.aol.com to create a screen name for use on the AIM network."); errorCode = 1; break;  }
-			case 5: { errorString = i18n("Sign on failed because the password supplied for this screen name is invalid. Please check your password and try again."); errorCode = 5; break; }
-			case 0x11: { errorString = i18n("Sign on failed because your account is currently suspended."); errorCode = 0x11; break; }
-			case 0x14: { errorString = i18n("The AOL Instant Messenger service is temporarily unavailable. Please try again later."); errorCode = 0x14; break; }
-			case 0x18: { errorString = i18n("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."); errorCode = 0x18; break; }
-			case 0x1c: { errorString = i18n("The client you are using is too old. Please upgrade."); errorCode = 0x1c; break; }
-			default: { errorString = i18n("Authentication failed."); errorCode = (err->data[0] << 8) | err->data[1]; break; }
+			case 1: { errorString = i18n("Sign on failed because the screen name you provided is not registered on the AIM network. Please visit http://aim.aol.com to create a screen name for use on the AIM network."); break;  }
+			case 5: { errorString = i18n("Sign on failed because the password supplied for this screen name is invalid. Please check your password and try again."); break; }
+			case 0x11: { errorString = i18n("Sign on failed because your account is currently suspended."); break; }
+			case 0x14: { errorString = i18n("The AOL Instant Messenger service is temporarily unavailable. Please try again later."); break; }
+			case 0x18: { errorString = i18n("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."); break; }
+			case 0x1c: { errorString = i18n("The client you are using is too old. Please upgrade."); break; }
+			default: { errorString = i18n("Authentication failed."); break; }
 		}
 
 		emit protocolError(errorString, errorCode);
@@ -3696,8 +3696,8 @@ void OscarSocket::parseConnectionClosed(Buffer &inbuf)
 // 				kdDebug(14150) << k_funcinfo <<
 // 					"multiple logins (on same UIN)!!!" << endl;
 				emit protocolError(
-					i18n("You've logged in more than once with the same UIN/buddy name," \
-						" this login is now disconnected."), 0);
+					i18n("You've logged in more than once with the same %1," \
+						" this login is now disconnected.").arg((mIsICQ ? "UIN" : "buddy name")), 0);
 				break;
 			}
 

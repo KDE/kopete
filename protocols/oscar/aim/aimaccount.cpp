@@ -129,6 +129,7 @@ void AIMAccount::initSignals()
 
 void AIMAccount::slotGotMyUserInfo(UserInfo &newInfo)
 {
+	kdDebug(14190) << k_funcinfo << "Called" << endl;
 	mUserInfo = newInfo;
 }
 
