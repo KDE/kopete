@@ -40,17 +40,9 @@
 #define TOC_VER_INT 1
 
 #include <qstring.h>
-#include "tbuddylist.h"
 
 QString tocNormalize(const QString &);
 QString tocRoast(const QString &);
 QString tocProcess(const QString &);
-
-// reads and writes configuration strings in TOC server format
-void tocParseConfig(const QString data, TBuddyList *buddy, TBuddyList *permit, TBuddyList *deny, int *permitStatus);
-void tocParseConfigAlias(const QString data, TBuddyList *buddy, TBuddyList *permit, TBuddyList *deny, int *permitStatus);
-
-
-QString tocWriteConfig(const TBuddyList *buddyList, const TBuddyList *permitList, const TBuddyList *denyList, int permitStatus);
 
 #endif

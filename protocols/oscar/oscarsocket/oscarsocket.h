@@ -23,7 +23,7 @@
 #include <kfileitem.h>
 #include "oncomingsocket.h"
 #include "ssidata.h"
-#include "tbuddylist.h"
+#include "aimbuddylist.h"
 
 struct FLAP { //flap header
 	BYTE channel;
@@ -50,16 +50,6 @@ struct RateClass { //rate info
 	QPtrList<SnacPair> members;
 };
 
-typedef struct TAimConfig
-{
-	int permitStatus;
-	TBuddyList buddyList;
-	TBuddyList permitList;
-	TBuddyList denyList;
-	unsigned short revision;
-	unsigned long timestamp;
-};
-
 struct UserInfo { //user info
 	QString sn;
 	int evil;
@@ -74,9 +64,9 @@ struct UserInfo { //user info
 #define OSCAR_SERVER 	"login.oscar.aol.com"
 #define OSCAR_PORT 		5190
 #define OSCAR_OFFLINE	0
-#define OSCAR_ONLINE	1
+#define OSCAR_ONLINE		1
 #define OSCAR_AWAY		2
-      
+
 #define USERCLASS_TRIAL			0x0001
 #define USERCLASS_UNKNOWN2 	0x0002
 #define USERCLASS_AOL				0x0004
@@ -108,7 +98,7 @@ public:
   /** Sets idle time */
   void sendIdleTime(DWORD time);
   /** requests ssi data from the server */
-  void sendBuddyListRequest(const TAimConfig &);
+  /*void sendBuddyListRequest(const TAimConfig &);*/
   /** Sends message to dest */
   void sendIM(const QString &message, const QString &dest, bool isAuto);
   /** Requests sn's user info */
@@ -331,7 +321,7 @@ signals: // Signals
   /** Emitted when my user info is received */
   void gotMyUserInfo(UserInfo);
   /** A buddy list has been received */
-  void gotConfig(TAimConfig);
+  void gotConfig(AIMBuddyList &);
   /** emitted when we have recieved an ack from the server */
   void gotAck(QString, int);
   /** Emitted (with new status as parameter) when our status has changed */

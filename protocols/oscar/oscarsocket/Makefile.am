@@ -4,7 +4,7 @@ METASOURCES = AUTO
 
 noinst_LTLIBRARIES = libkopeteoscarsocket.la
 
-libkopeteoscarsocket_la_SOURCES = oscarsocket.cpp oncomingsocket.cpp buffer.cpp md5.c tbuddylist.cpp aim.cpp ssidata.cpp oscarconnection.cpp oscardirectconnection.cpp oscarfilesendconnection.cpp
+libkopeteoscarsocket_la_SOURCES = oscarsocket.cpp oncomingsocket.cpp buffer.cpp md5.c aimbuddylist.cpp aim.cpp ssidata.cpp oscarconnection.cpp oscardirectconnection.cpp oscarfilesendconnection.cpp
 
 EXTRA_DIST =
 # set the include path for X, qt and KDE

@@ -23,6 +23,8 @@
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
+class AIMBuddy;
+
 /**
   * Contact for oscar protocol
   * @author Tom Linsky <twl6@po.cwru.edu>
@@ -105,14 +107,16 @@ private: // Private attributes
 	KActionCollection* actionCollection;
 
 	OscarProtocol *mProtocol;
-	
+
+	AIMBuddy *mListContact;
+
 	/**
 	 * The time of the last autoresponse,
 	 * used to determine when to send an
 	 * autoresponse again.
 	 */
 	long mLastAutoResponseTime;
-		
+
 	/** The contact's idle time */
 	int mIdle;
 	/** Tells whether or not we have a direct connection with the contact */
@@ -120,7 +124,7 @@ private: // Private attributes
 
 private slots: // Private slots
 	/** Called when a buddy changes */
-	void slotUpdateBuddy(int buddyNum);
+	void slotUpdateBuddy();
 	/** Called when a buddy has changed status */
 	void slotBuddyChanged(UserInfo u);
 	/** Called when we get a minityping notification */

@@ -23,9 +23,9 @@ extern "C" {
 };
 
 #include "oscarsocket.h"
-#include "oscarsocket.moc"
 #include "oncomingsocket.h"
 #include "oscardebugdialog.h"
+#include "oscarsocket.moc"
 
 #include <qdatetime.h>
 #include <unistd.h>
@@ -395,7 +395,7 @@ void OscarSocket::slotRead(void)
 					default:
 							kdDebug(14150) << "[OSCAR] Error: unknown family/subtype " << s.family << "/" << s.subtype << endl;
 					};
-					break;        
+					break;
 			case 0x0017: //authorization family
 					switch(s.subtype) {
 					case 0x0003: //authorization response (and hash) is being sent
@@ -409,7 +409,7 @@ void OscarSocket::slotRead(void)
 					};
 					break;
 			default: //unknown family
-					kdDebug(14150) << "[OSCAR] Error: unknown family " << s.family << "/" << s.subtype << endl; 
+					kdDebug(14150) << "[OSCAR] Error: unknown family " << s.family << "/" << s.subtype << endl;
 			};
 			break;
 			//		case 0x03: //FLAP error channel
@@ -427,7 +427,7 @@ void OscarSocket::slotRead(void)
 #endif
 		}
 	} // END switch(fl.channel)
-	delete [] buf; 
+	delete [] buf;
 }
 
 /** Sends an authorization request to the server */
@@ -827,10 +827,7 @@ void OscarSocket::sendClientReady(void)
     outbuf.addWord(0x0001); */
     sendBuf(outbuf,0x02);
     emit statusChanged(OSCAR_ONLINE);
-    TAimConfig cnf;
-    cnf.revision = 0;
     isConnected = true;
-    //sendBuddyListRequest(cnf);
 }
 
 /** Sends versions so that we get proper rate info */
@@ -904,7 +901,7 @@ void OscarSocket::sendIdleTime(DWORD time)
 }
 
 /** requests ssi data from the server */
-void OscarSocket::sendBuddyListRequest(const TAimConfig &a)
+/*void OscarSocket::sendBuddyListRequest(const TAimConfig &a)
 {
     kdDebug(14150) << "[OSCAR] Requesting SSI data" << endl;
     Buffer outbuf;
@@ -913,12 +910,12 @@ void OscarSocket::sendBuddyListRequest(const TAimConfig &a)
     outbuf.addWord(a.revision);
     sendBuf(outbuf,0x02);
 }
+*/
 
 /** parses incoming ssi data */
 void OscarSocket::parseSSIData(Buffer &inbuf)
 {
-	int curgroup = -1;
-	TAimConfig blist;
+	AIMBuddyList blist;
 	//get fmt version
 	inbuf.getByte();
 	blist.revision = inbuf.getWord(); //gets the revision
@@ -943,28 +940,26 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 				<< ", bid: " << ssi->bid << ", type: " << ssi->type << ", tbslen: " << ssi->tlvlength
 				<< endl;
 
-		TBuddy *bud;
+		AIMBuddy *bud;
 		switch (ssi->type)
 		{
 			case 0x0000: //buddy
 			{
-				bud = new TBuddy;
-				bud->name = ssi->name;
-				bud->group = curgroup;
-				bud->status = OSCAR_OFFLINE;
-				kdDebug(14150) << "[OSCAR] Adding Buddy " << ssi->name <<  " to group " << curgroup
-						<< " (" << blist.buddyList.getNameGroup(curgroup) << ")" << endl;
-				blist.buddyList.add(bud);
+				bud = new AIMBuddy(ssi->bid, ssi->gid, ssi->name);
+				AIMGroup *group = blist.findGroup(ssi->gid);
+				QString groupName = "\"Group not found\"";
+				if (group)
+					groupName = group->name();
+				kdDebug(14150) << "[OSCAR] Adding Buddy " << ssi->name <<  " to group " << ssi->gid
+						<< " (" <<  groupName << ")" << endl;
+				blist.addBuddy(bud);
 				break;
 			}
 
 			case 0x0001: //group
 			{
 				if (namelen) //if it's not the master group
-				{
-					blist.buddyList.addGroup(ssi->name);
-					curgroup++;
-				}
+					blist.addGroup(ssi->gid, ssi->name);
 				break;
 			}
 
@@ -973,10 +968,9 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 
 			case 0x0003: // TODO deny buddy
 			{
-				bud = new TBuddy;
-				bud->name = ssi->name;
+				bud = new AIMBuddy(ssi->bid, ssi->gid, ssi->name);
 				kdDebug(14150) << "[OSCAR] Adding Buddy " << ssi->name << " to deny list." << endl;
-				blist.denyList.add(bud);
+				blist.addBuddyDeny(bud);
 				emit denyAdded(ssi->name);
 				break;
 			}
@@ -2184,7 +2178,7 @@ void OscarSocket::sendInfo(void)
 /** Sends the user's profile to the server */
 void OscarSocket::sendMyProfile(void)
 {
-  static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
+  static const QString defencoding = "text/x-aolrtf; charset=\"us-ascii\"";
   Buffer outbuf;
   outbuf.addSnac(0x0002,0x0004,0x0000,0x00000004);
   outbuf.addTLV(0x0001,defencoding.length(),defencoding.latin1());

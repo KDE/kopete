@@ -49,10 +49,21 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	mName = name;
 	mProtocol = protocol;
 	mMsgManager = 0L;
+	mListContact = mProtocol->buddyList()->findBuddy(mName);
 	mIdle = 0;
 	mLastAutoResponseTime = 0;
 	setFileCapable(true);
 	mStatus = -1; //OSCAR_OFFLINE;
+
+	if (!mListContact)
+	{
+		kdDebug(14150) << "[OSCAR] ERROR, mListContact is NULL! Ehem, why?" << endl;
+		mListContact = new AIMBuddy(mProtocol->randomNewBuddyNum, 0, mName);
+		mProtocol->randomNewBuddyNum++;
+		mProtocol->buddyList()->addBuddy(mListContact);
+		if (!mListContact)
+			kdDebug(14150) << "[OSCAR] ERROR, mListContact is *STILL* NULL! Prepare to crashz0r!" << endl;
+	}
 
 	// Buddy Changed
 	QObject::connect(mProtocol->engine, SIGNAL(gotBuddyChange(UserInfo)),
@@ -88,21 +99,14 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 		this, SLOT(slotTransferDenied(const KopeteFileTransferInfo &)) );
 
 	initActions();
-	TBuddy tmpBuddy;
-	int num = mProtocol->buddyList()->getNum( mName );
-	if( mProtocol->buddyList()->get( &tmpBuddy, num ) != -1 )
-	{
-		if ( !tmpBuddy.alias.isEmpty() )
-			setDisplayName( tmpBuddy.alias );
-		else
-			setDisplayName( tmpBuddy.name );
 
-		slotUpdateBuddy( num );
-	}
+	if ( !mListContact->alias().isEmpty() )
+		setDisplayName( mListContact->alias() );
 	else
-	{
-		setDisplayName( mName );
-	}
+		setDisplayName( mListContact->screenname() );
+
+		slotUpdateBuddy();
+
 	theContacts.append( this );
 }
 
@@ -114,22 +118,18 @@ OscarContact::~OscarContact()
 /** Return the protocol specific serialized data that a plugin may want to store a contact list. */
 QString OscarContact::data(void) const
 {
-	TBuddy tmpBuddy;
-	int num = mProtocol->buddyList()->getNum(mName);
+	AIMBuddy *mListContact = mProtocol->buddyList()->findBuddy(mName);
 
-	if (mProtocol->buddyList()->get(&tmpBuddy, num) != -1)
-		if (tmpBuddy.alias)
-			return tmpBuddy.alias;
+	if (!mListContact)
+		if (mListContact->alias())
+			return mListContact->alias();
 	return QString::null;
 }
 
 KopeteMessageManager* OscarContact::manager( bool )
 {
 	if ( mMsgManager )
-	{
-		//printf("REturning a mmsgmanager: %d\n",mMsgManager);fflush(stdout);
 		return mMsgManager;
-	}
 	else
 	{
 		//printf("Creating a mmsgmanager: %d\n",mProtocol->myself());fflush(stdout);
@@ -174,38 +174,25 @@ void OscarContact::slotMainStatusChanged(int newStatus)
 		mStatus = OSCAR_OFFLINE;
 		emit statusChanged( this, status() );
 		// Try to do this, otherwise no big deal
-		TBuddy tmpBuddy;
-		int buddyNum = mProtocol->buddyList()->getNum(mName);
-		if ( mProtocol->buddyList()->get(&tmpBuddy, buddyNum) == -1 )
-			return;
-		mProtocol->buddyList()->setStatus(buddyNum, OSCAR_OFFLINE);
+		AIMBuddy *mListContact = mProtocol->buddyList()->findBuddy(mName);
+		if ( !mListContact)
+			mListContact->setStatus(OSCAR_OFFLINE);
 	}
 }
 
 /** Called when a buddy changes */
-void OscarContact::slotUpdateBuddy(int buddyNum)
+void OscarContact::slotUpdateBuddy()
 {
-	TBuddy tmpBuddy;
-
-	// buddy not found in our list of buddies
-	if ( mProtocol->buddyList()->get(&tmpBuddy, buddyNum) == -1 )
-		return;
-
-	QString tmpBuddyName = tocNormalize ( tmpBuddy.name );
-
-	if ( tmpBuddyName != tocNormalize(mName) ) // that's not our contact
-		return;
-
 	// status did not change, do nothing
-	if ( ( mStatus == tmpBuddy.status ) && ( mIdle == tmpBuddy.idleTime ) )
+	if ( ( mStatus == mListContact->status() ) && ( mIdle == mListContact->idleTime() ) )
 		return;
 
 	// if we have become idle
 	if ( mProtocol->isConnected() )
 	{
-		if ( tmpBuddy.idleTime > 0 )
+		if ( mListContact->idleTime() > 0 )
 		{
-			kdDebug(14150) << "[OscarContact] setting " << mName << " idle! Idletime: " << tmpBuddy.idleTime << endl;
+			kdDebug(14150) << "[OscarContact] setting " << mName << " idle! Idletime: " << mListContact->idleTime() << endl;
 			setIdleState(Idle);
 		}
 		// we have become un-idle
@@ -214,41 +201,31 @@ void OscarContact::slotUpdateBuddy(int buddyNum)
 			kdDebug(14150) << "[OscarContact] setting " << mName << " active!" << endl;
 			setIdleState(Active);
 		}
-		mIdle = tmpBuddy.idleTime;
+		mIdle = mListContact->idleTime();
 	}
-	mStatus = tmpBuddy.status;
+	mStatus = mListContact->status();
 	kdDebug(14150) << "[OscarContact] slotUpdateBuddy(), Contact " << mName << " is now " << mStatus << endl;
 
 	if ( mProtocol->isConnected() ) // oscar-plugin is online
 	{
-		if ( mName != tmpBuddyName ) // contact changed his nickname
+		if ( mName != mListContact->screenname() ) // contact changed his nickname
 		{
-			if ( !tmpBuddy.alias.isEmpty() )
-				setDisplayName(tmpBuddy.alias);
+			if ( !mListContact->alias().isEmpty() )
+				setDisplayName(mListContact->alias());
 			else
-				setDisplayName(tmpBuddy.name);
+				setDisplayName(mListContact->screenname());
 		}
 	}
 	else // oscar-plugin is offline so all users are offline too
 	{
 		mStatus = OSCAR_OFFLINE;
-		mProtocol->buddyList()->setStatus(buddyNum, OSCAR_OFFLINE);
+		mListContact->setStatus(OSCAR_OFFLINE);
 
-//		actionSendMessage->setEnabled(false);
-//		actionInfo->setEnabled(false);
-
-//		emit userStatusChanged(OSCAR_OFFLINE);
-//		emit statusChanged();
 		emit statusChanged( this, status() );
 		return;
 	}
 
 	// We can only send messages to online user
-//	actionSendMessage->setEnabled(mStatus != TAIM_OFFLINE);
-//	actionInfo->setEnabled(mStatus != TAIM_OFFLINE);
-
-	//emit userStatusChanged(tmpBuddy.status);
-	//emit statusChanged();
 	emit statusChanged( this, status() );
 }
 
@@ -290,23 +267,15 @@ void OscarContact::slotBuddyChanged(UserInfo u)
 	if (tocNormalize(u.sn) == tocNormalize(mName))
 	//if we are the contact that is oncoming
 	{
-		TBuddy *tmpBuddy;
-		int num = mProtocol->buddyList()->getNum(mName);
-		kdDebug(14150) << "[OscarContact] Names match... " << u.sn << endl;
-		if ( (tmpBuddy = mProtocol->buddyList()->getByNum(num)) != NULL )
-		{
-			kdDebug(14150) << "[OscarContact] Setting status for " << u.sn << endl;
-			if ( u.userclass & USERCLASS_AWAY )
-				tmpBuddy->status = OSCAR_AWAY;
-			else
-				tmpBuddy->status = OSCAR_ONLINE;
-			tmpBuddy->evil = u.evil;
-			tmpBuddy->idleTime = u.idletime;
-			tmpBuddy->signonTime = u.onlinesince;
-			slotUpdateBuddy(num);
-		}
+		kdDebug(14150) << "[OscarContact] Setting status for " << u.sn << endl;
+		if ( u.userclass & USERCLASS_AWAY )
+			mListContact->setStatus(OSCAR_AWAY);
 		else
-			kdDebug(14150) << "[OscarContact] Buddy is oncoming but is not in buddy list" << endl;
+			mListContact->setStatus(OSCAR_ONLINE);
+		mListContact->setEvil(u.evil);
+		mListContact->setIdleTime(u.idletime);
+		mListContact->setSignOnTime(u.onlinesince);
+		slotUpdateBuddy();
 	}
 }
 
@@ -350,44 +319,28 @@ void OscarContact::slotOffgoingBuddy(QString sn)
 	if (tocNormalize(sn) == tocNormalize(mName))
 	//if we are the contact that is offgoing
 	{
-		TBuddy *tmpBuddy;
-		int num = mProtocol->buddyList()->getNum(mName);
-		if ( (tmpBuddy = mProtocol->buddyList()->getByNum(num)) != NULL )
-		{
-			tmpBuddy->status = OSCAR_OFFLINE;
-			slotUpdateBuddy(num);
-		}
-		else
-			kdDebug(14150) << "[OscarContact] Buddy is offgoing but not in buddy list" << endl;
+		mListContact->setStatus(OSCAR_OFFLINE);
+		slotUpdateBuddy();
 	}
 }
 
 /** Called when user info is requested */
 void OscarContact::slotUserInfo(void)
 {
-	TBuddy tmpBuddy;
-	int num = mProtocol->buddyList()->getNum(mName);
-
-	if (mProtocol->buddyList()->get(&tmpBuddy, num) == -1)
-		return;
-
 	if (!mProtocol->isConnected())
-	{
 		KMessageBox::sorry(qApp->mainWidget(),
 			i18n("<qt>Sorry, you must be connected to the AIM server to retrieve user information, but you will be allowed to continue if you	would like to change the user's nickname.</qt>"),
 			i18n("You Must be Connected") );
-	}
 	else
-	{
-		if (tmpBuddy.status == TAIM_OFFLINE)
+		if (mListContact->status() == TAIM_OFFLINE)
 		{
 			KMessageBox::sorry(qApp->mainWidget(),
 				i18n("<qt>Sorry, this user isn't online for you to view his/her information, but you will be allowed to only change his/her nickname. Please wait until this user becomes available and try again</qt>" ),
 				i18n("User not Online"));
 		}
-	}
+
 	OscarUserInfo *Oscaruserinfo =
-		new OscarUserInfo(mName, tmpBuddy.alias, mProtocol, tmpBuddy);
+		new OscarUserInfo(mName, mListContact->alias(), mProtocol, *mListContact);
 
 	connect(Oscaruserinfo, SIGNAL(updateNickname(const QString)),
 		this, SLOT(slotUpdateNickname(const QString)));
@@ -401,9 +354,6 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 	// Check if we're the one who sent the message
 	if ( tocNormalize(sender) != tocNormalize(mName) )
 		return;
-
-	TBuddy tmpBuddy;
-	mProtocol->buddyList()->get(&tmpBuddy, mProtocol->buddyList()->getNum(mName));
 
 	// Tell the message manager that the buddy is done typing
 	manager()->receivedTypingMsg( this, false );
@@ -457,8 +407,6 @@ void OscarContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	if ( message.body().isEmpty() ) // no text, do nothing
 		return;
 
-	TBuddy *tmpBuddy = mProtocol->buddyList()->getByNum(mProtocol->buddyList()->getNum(mName));
-
 	// Check to see if we're even online
 	if (!mProtocol->isConnected())
 	{
@@ -469,7 +417,7 @@ void OscarContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	}
 
 	// Check to see if the person we're sending the message to is online
-	if (tmpBuddy->status == TAIM_OFFLINE || mStatus == TAIM_OFFLINE)
+	if (mListContact->status() == TAIM_OFFLINE || mStatus == TAIM_OFFLINE)
 	{
 			KMessageBox::sorry(qApp->mainWidget(),
 							i18n("<qt>This user is not online at the moment for you to message him/her. AIM users must be online for you to be able to message them.</qt>"),
@@ -491,9 +439,7 @@ void OscarContact::slotUpdateNickname(const QString newNickname)
 	setDisplayName( newNickname );
 	//emit updateNickname ( newNickname );
 
-	TBuddy *tmp;
-	tmp = mProtocol->buddyList()->getByNum(mProtocol->buddyList()->getNum(mName));
-	tmp->alias = newNickname;
+	mListContact->setAlias(newNickname);
 }
 
 /** Return whether or not this contact is REACHABLE. */
@@ -519,9 +465,7 @@ KActionCollection *OscarContact::customContextMenuActions(void)
 /** Method to delete a contact from the contact list */
 void OscarContact::slotDeleteContact(void)
 {
-	TBuddy tmpBuddy;
-	mProtocol->buddyList()->get( &tmpBuddy, mProtocol->buddyList()->getNum(mName) );
-	QString buddyName = (tmpBuddy.alias.isEmpty() ? mName : tmpBuddy.alias);
+	QString buddyName = (mListContact->alias().isEmpty() ? mName : mListContact->alias());
 
 	if (
 		KMessageBox::warningYesNo(
@@ -530,8 +474,10 @@ void OscarContact::slotDeleteContact(void)
 			i18n("Confirmation")
 			) == KMessageBox::Yes )
 	{
-		mProtocol->buddyList()->del(tocNormalize(mName));
-		mProtocol->engine->sendDelBuddy(tmpBuddy.name,mProtocol->buddyList()->getNameGroup(tmpBuddy.group));
+		mProtocol->buddyList()->removeBuddy(mListContact);
+		AIMGroup *group = mProtocol->buddyList()->findGroup(mListContact->groupID());
+		if (group)
+			mProtocol->engine->sendDelBuddy(mListContact->screenname(),group->name());
 		deleteLater();
 	}
 }
@@ -549,13 +495,9 @@ void OscarContact::slotWarn()
 
 	int result = KMessageBox::questionYesNoCancel(qApp->mainWidget(), message, title);
 	if (result == KMessageBox::Yes)
-	{
 		mProtocol->engine->sendWarning(mName, true);
-	}
 	else if (result == KMessageBox::No)
-	{
 		mProtocol->engine->sendWarning(mName, false);
-	}
 }
 
 
@@ -643,50 +585,6 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 
 	return msg;
 }
-
-
-
-
-
-// removes a weird html-tag (and returns the attributes it contained)
-/*
-QStringList OscarContact::removeTag ( QString &message, QString tag )
-{
-	QStringList attr;
-	// first occurance of <TAG *> where * is anything except a '>'
-	// regexp is NOT case-sensitive
-	int tagStart = message.find ( QRegExp(QString("<"+tag+"\\s+[^>]*>"),false) );
-	int tagStartEnd = message.find ( ">", tagStart+4, false );
-
-	while((tagStart != -1 && tagStart != -1))
-	{
-		if ( tagStart != -1 && tagStartEnd != -1)
-		{
-			// we found a proper opening-tag
-			QString tagAttr = message.mid(tagStart, (tagStartEnd - tagStart));
-
-			// Strip the <>'s
-			tagAttr.remove(0, 1);
-			tagAttr.remove(tagAttr.length(), 1);
-
-			// Now grab the attributes
-			tagAttr = tagAttr.section(' ', 1);
-			attr += QStringList::split(' ', tagAttr);
-
-			message.remove ( tagStart, tagStartEnd - tagStart + 1 ); // remove the opening-tag
-			// find last closing of TAG (NOT case-sensitive)
-			int tagEnd = message.findRev( QString("</"+tag+">"), -1, false );
-			if ( tagEnd != -1 ) // found closing of font-tag
-			{
-				message.remove ( tagEnd, tag.length()+3  );
-			}
-		}
-		tagStart = message.find ( QRegExp(QString("<"+tag+"\\s+[^>]*>"),false) );
-		tagStartEnd = message.find ( ">", tagStart+4, false );
-	}
-	return attr;
-}
-*/
 
 /** Called when we want to block the contact */
 void OscarContact::slotBlock(void)
