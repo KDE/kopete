@@ -97,7 +97,7 @@ void Kopete::UI::PasswordWidget::save( Kopete::Password *target )
 		return;
 	
 	if ( mRemembered->isChecked() )
-		target->set( QString::fromLocal8Bit( mPassword->password() ) );
+		target->set( password() );
 	else
 		target->set();
 }
@@ -106,7 +106,17 @@ bool Kopete::UI::PasswordWidget::validate()
 {
 	if ( !mRemembered->isChecked() ) return true;
 	if ( d->maxLength == 0 ) return true;
-	return QString::fromLocal8Bit( mPassword->password() ).length() <= d->maxLength;
+	return password().length() <= d->maxLength;
+}
+
+QString Kopete::UI::PasswordWidget::password() const
+{
+	return QString::fromLocal8Bit( mPassword->password() );
+}
+
+bool Kopete::UI::PasswordWidget::remember() const
+{
+	return mRemembered->state() == QButton::On;
 }
 
 #include "kopetepasswordwidget.moc"

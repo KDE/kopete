@@ -63,6 +63,17 @@ public:
 	 */
 	bool validate();
 
+	/**
+	 * Returns the string currently in the input box in the widget
+	 */
+	QString password() const;
+	/**
+	 * Returns a boolean indicating whether the Remember Password checkbox is checked.
+	 * Result is undefined if the Remember Password field is in the 'no change' state
+	 * because the user has not (yet) opened the wallet.
+	 */
+	bool remember() const;
+
 signals:
 	/**
 	 * Emitted when the information stored in this widget changes
