@@ -110,7 +110,7 @@ KActionCollection *CryptographyPlugin::customContextMenuActions(KopeteMetaContac
 
 void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 {
-	QString body=msg.plainBody();
+ QString body=msg.plainBody();
 	if(!body.startsWith("-----BEGIN PGP MESSAGE----"))
 		return;
 

@@ -57,8 +57,8 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	d->mCanBeDeleted = false;
 
 
-//	connect( this, SIGNAL(readMessages( KopeteMessageManager*, bool )), KopeteViewManager::viewManager(), SLOT(readMessages(KopeteMessageManager*,bool)));
-//	connect( this, SIGNAL(messageAppended( KopeteMessage &, KopeteMessageManager *) ), KopeteViewManager::viewManager(), SLOT( messageAppended( KopeteMessage &, KopeteMessageManager *) ) );
+	connect( this, SIGNAL(readMessages( KopeteMessageManager*, bool )), KopeteViewManager::viewManager(), SLOT(readMessages(KopeteMessageManager*,bool)));
+	connect( this, SIGNAL(messageAppended( KopeteMessage &, KopeteMessageManager *) ), KopeteViewManager::viewManager(), SLOT( messageAppended( KopeteMessage &, KopeteMessageManager *) ) );
 
 	// Replace '.', '/' and '~' in the user id with '-' to avoid possible
 	// directory traversal, although appending '.log' and the rest of the
@@ -169,8 +169,6 @@ void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 		emit( messageReceived( msg, this ) );
 
 	emit messageAppended( msg, this );
-	
-	KopeteViewManager::viewManager()->messageAppended( msg, this);
 
 	if( d->mLogger && d->mLog )
 		d->mLogger->append( msg );
@@ -250,24 +248,13 @@ void KopeteMessageManager::typing ( bool t )
 void KopeteMessageManager::setCanBeDeleted ( bool b )
 {
 	d->mCanBeDeleted = b;
-	/*if(b)
-		deleteLater();*/
+	if(b)
+		deleteLater();
 }
 
 void KopeteMessageManager::slotReadMessages()
 {
-	KopeteViewManager::viewManager()->readMessages(this,true);
-	//emit( readMessages( this, true ) );
-}
-
-KopeteMessage KopeteMessageManager::currentMessage()
-{
-	return KopeteViewManager::viewManager()->view(this, false)->currentMessage();
-}
-
-void KopeteMessageManager::setCurrentMessage(const KopeteMessage &message)
-{
-	KopeteViewManager::viewManager()->view(this, false)->setCurrentMessage(message);
+	emit( readMessages( this, true ) );
 }
 
 #include "kopetemessagemanager.moc"

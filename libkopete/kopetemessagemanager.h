@@ -100,7 +100,7 @@ signals:
 	void contactAdded(const KopeteContact *);
 	void contactRemoved(const KopeteContact *);
 
-//	void readMessages( KopeteMessageManager *, bool );
+	void readMessages( KopeteMessageManager *, bool );
 
 	/**
 	 * The name of the chat is changed
