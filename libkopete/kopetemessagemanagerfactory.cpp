@@ -47,7 +47,7 @@ KopeteMessageManagerFactory::~KopeteMessageManagerFactory()
 	for ( ; it.current() ; ++it )
 	{
 		kdDebug( 14010 ) << k_funcinfo << "Unloading KMM: Why this KMM isn't yet unloaded?" << endl;
-		delete it.current();
+		it.current()->deleteLater();
 	}
 }
 

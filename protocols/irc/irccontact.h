@@ -67,6 +67,13 @@ class IRCContact : public KopeteContact
 
 		virtual bool isReachable();
 
+		/**
+		 * return true if the contact is in a chat. false if the contact is in no chats
+		 * that loop over all manager, and checks the presence of the user
+		 */
+		bool isChatting();
+
+
 	private slots:
 		void slotConnectionClosed();
 		void slotNewMessage(const QString &originating, const QString &target, const QString &message);
@@ -95,6 +102,7 @@ class IRCContact : public KopeteContact
 		QValueList<KopeteMessage> messageQueue;
 		bool isConnected;
 		KopeteMessage::MessageDirection execDir;
+
 };
 
 #endif

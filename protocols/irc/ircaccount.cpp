@@ -160,7 +160,7 @@ IRCChannelContact *IRCAccount::findChannel(const QString &name, KopeteMetaContac
 	else
 	{
 		channel = mChannels[ lowerName ];
-		kdDebug(14120) << k_funcinfo << lowerName << " conversations:" << channel->conversations() << endl;
+//		kdDebug(14120) << k_funcinfo << lowerName << " conversations:" << channel->conversations() << endl;
 	}
 
 	return channel;
@@ -172,7 +172,7 @@ void IRCAccount::unregisterChannel( const QString &name )
 	if( mChannels.contains( lowerName ) )
 	{
 		IRCChannelContact *channel = mChannels[lowerName];
-		if( channel->conversations() == 0 && channel->metaContact()->isTemporary() )
+		if( !channel->isChatting() && channel->metaContact()->isTemporary() )
 		{
 			kdDebug(14120) << k_funcinfo << name << endl;
 			delete channel->metaContact();
@@ -200,7 +200,7 @@ IRCUserContact *IRCAccount::findUser(const QString &name, KopeteMetaContact *m)
 	else
 	{
 		user = mUsers[ lowerName ];
-		kdDebug(14120) << k_funcinfo << lowerName << " conversations:" << user->conversations() << endl;
+//		kdDebug(14120) << k_funcinfo << lowerName << " conversations:" << user->conversations() << endl;
 	}
 
 	return user;
@@ -212,7 +212,7 @@ void IRCAccount::unregisterUser( const QString &name )
 	if( lowerName != mNickName.lower() && mUsers.contains( lowerName ) )
 	{
 		IRCUserContact *user = mUsers[lowerName];
-		if( user->conversations() == 0 && user->metaContact()->isTemporary() )
+		if( !user->isChatting() && user->metaContact()->isTemporary() )
 		{
 			kdDebug(14120) << k_funcinfo << name << endl;
 			delete user->metaContact();

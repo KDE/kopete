@@ -73,8 +73,8 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 
 KopeteMessageManager::~KopeteMessageManager()
 {
-	for( KopeteContact *c = d->mContactList.first(); c; c = d->mContactList.next() )
-		c->setConversations( c->conversations() - 1 );
+/*	for( KopeteContact *c = d->mContactList.first(); c; c = d->mContactList.next() )
+		c->setConversations( c->conversations() - 1 );*/
 
 	if (!d) return;
 	d->mCanBeDeleted = false; //prevent double deletion
@@ -250,7 +250,7 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool supress )
 			d->mContactList.append(c);
 			emit contactAdded(c, supress);
 		}
-		c->setConversations( c->conversations() + 1 );
+		//c->setConversations( c->conversations() + 1 );
 		//connect (c, SIGNAL(displayNameChanged(const QString &,const QString &)), this, SIGNAL(contactChanged()));
 		connect (c, SIGNAL(onlineStatusChanged( KopeteContact*, const KopeteOnlineStatus&, const KopeteOnlineStatus&)), this, SIGNAL(contactChanged()));
 		if(c->metaContact())
@@ -279,7 +279,7 @@ void KopeteMessageManager::removeContact( const KopeteContact *c, const QString&
 		if(c->metaContact())
 			disconnect (c->metaContact(), SIGNAL(displayNameChanged(const QString &, const QString &)), this, SIGNAL(contactChanged()));
 		disconnect (c, SIGNAL(contactDestroyed(KopeteContact*)) , this , SLOT(slotContactDestroyed(KopeteContact*)));
-		c->setConversations( c->conversations() - 1 );
+		//c->setConversations( c->conversations() - 1 );
 	}
 	emit contactRemoved(c, raison);
 	slotUpdateDisplayName();

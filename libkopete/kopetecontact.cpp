@@ -48,7 +48,6 @@ struct KopeteContactPrivate
 public:
 	QString displayName;
 	bool fileCapable;
-	int conversations;
 
 	KopeteContact::IdleState idleState;
 	KopeteOnlineStatus onlineStatus;
@@ -65,10 +64,7 @@ public:
 	KAction *actionSendFile;
 	KAction *actionAddContact;
 
-//	KListView *selectMetaContactListBox;
-
 	QString contactId;
-
 	QString icon;
 };
 
@@ -85,9 +81,7 @@ KopeteContact::KopeteContact( KopeteAccount *account,
 	d->onlineStatus = KopeteOnlineStatus( KopeteOnlineStatus::Offline );
 
 	d->metaContact = parent;
-	//d->cachedSize = 0;
 	d->fileCapable = false;
-	d->conversations = 0;
 	d->idleState = Unspecified;
 	d->displayName = contactId;
 	d->account=account;
@@ -117,7 +111,7 @@ KopeteContact::~KopeteContact()
 	delete d;
 }
 
-void KopeteContact::setConversations( int value ) const
+/*void KopeteContact::setConversations( int value ) const
 {
 	d->conversations = value;
 }
@@ -125,7 +119,7 @@ void KopeteContact::setConversations( int value ) const
 const int KopeteContact::conversations() const
 {
 	return d->conversations;
-}
+}*/
 
 void KopeteContact::rename( const QString &name )
 {

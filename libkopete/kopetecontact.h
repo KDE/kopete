@@ -242,16 +242,9 @@ public:
 	 */
 	virtual KopeteMessageManager * manager( bool canCreate = false );
 
-	/**
-	 * ??? what is this method?
-	 * FIXME: document
-	 */
+/*  //this is useless, that caused crash when closing the kmm when the contact was deleted (ex: on exit)
 	const int conversations() const;
-	/**
-	 * ??? what is this method?
-	 * FIXME: document
-	 */
-	void setConversations( int ) const;
+	void setConversations( int ) const;*/
 
 	/**
 	 * Returns the name of the icon to use for this contact

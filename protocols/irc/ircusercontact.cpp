@@ -80,7 +80,7 @@ void IRCUserContact::slotUserOffline()
 
 void IRCUserContact::slotUserInfo()
 {
-	if( conversations() > 0 )
+	if( isChatting() )
 		mEngine->whoisUser( mNickName );
 }
 

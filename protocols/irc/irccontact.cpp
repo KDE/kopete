@@ -315,4 +315,17 @@ KopeteContact *IRCContact::locateUser( const QString &nick )
 	return 0L;
 }
 
+bool IRCContact::isChatting()
+{
+	bool result=false;
+	QIntDict<KopeteMessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();
+
+	QIntDictIterator<KopeteMessageManager> it( sessions );
+	for ( ; it.current() ; ++it )
+	{
+		result |= it.current()->members().contains(this);
+	}
+	return result;
+}
+
 #include "irccontact.moc"
