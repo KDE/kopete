@@ -162,6 +162,26 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 			{
 				mEngine->whoisUser( *commandLine.at(1) );
 			}
+			else if( command == QString::fromLatin1("query") && commandCount > 1 )
+			{
+				if( !(*commandLine.at(1)).startsWith( QString::fromLatin1("#") ) )
+					mIdentity->findUser( *commandLine.at(1) )->startChat();
+				else
+				{
+					KopeteMessage msg((KopeteContact*)this, mContact, i18n("\"%1\" is an invaid nickname. Nicknames must not start with '#'.").arg(*commandLine.at(1)), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+					manager()->appendMessage(msg);
+				}
+			}
+			else if( command == QString::fromLatin1("join") && commandCount > 1 )
+			{
+				if( (*commandLine.at(1)).startsWith( QString::fromLatin1("#") ) )
+					mIdentity->findChannel( *commandLine.at(1) )->startChat();
+				else
+				{
+					KopeteMessage msg((KopeteContact*)this, mContact, i18n("\"%1\" is an invaid channel. Channels must start with '#'.").arg(*commandLine.at(1)), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+					manager()->appendMessage(msg);
+				}
+			}
 			else
 			{
 				KopeteMessage msg((KopeteContact*)this, mContact, i18n("\"%1\" is an unrecognized command.").arg(command), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
