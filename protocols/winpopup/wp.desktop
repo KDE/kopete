@@ -1,0 +1,22 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=WinPopup
+Icon=wp_protocol
+ServiceTypes=Kopete/Protocol
+X-KDE-Library=kopete_wp
+X-Kopete-Author=Gav Wood
+X-Kopete-Site=http://kopete.kde.org
+X-Kopete-Email=gav@indigoarchive.net
+X-Kopete-License=GPL
+Name[ja]=ウィンドウポップアップ
+Comment=Protocol to use Windows WinPopup Messages
+Comment[es]=Protocolo para utilizar los mensajes emergentes de Windows
+Comment[fr]=Protocole pour utiliser les messages WinPopup Windows
+Comment[ja]=Windows ウィンドウポップアップメッセージを使用するプロトコル
+Comment[pt]=Protocolo para utilizar mensagens WinPopup do Windows
+Comment[pt_BR]=Protocolo para usar Mensagens WinPopup do Windows
+Comment[ru]=Протокол сообщений Windows WinPopup
+Comment[sv]=Protokoll för att använda Windows WinPopup meddelanden
+Comment[zh_CN]=使用微软视窗 WinPopup 讯息的协议
+Comment[zh_TW]=使用視窗 WinPopup Messages 的協定

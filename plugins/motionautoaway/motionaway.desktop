@@ -1,0 +1,22 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Icon=autoaway_plugin
+Name=Motion Auto-Away
+ServiceTypes=Kopete/Plugin
+X-KDE-Library=kopete_motionaway
+X-Kopete-Author=Duncan Mac-Vicar P.
+X-Kopete-Site=http://kopete.kde.org
+X-Kopete-Email=duncan@kde.org
+X-Kopete-License=GPL
+Name[es]=Autoalejado por movimiento
+Name[fr]=Auto-absence
+Name[ja]=モーション自動Away
+Name[pt]=Auto-Ausência por Movimento
+Name[pt_BR]=Movimento Auto-Ausente
+Name[ru]=Авто-отсутствие по движению
+Name[sv]=Automatisk rörelsefrånvaro
+Name[zh_CN]=按移动设置自动离开
+Name[zh_TW]=依移動自動暫離
+Name[zu]=Nyakazisa Ngokuhambisa-Okuzenzekelayo
+Comment=Sets away status when not detecting movement near the computer 

@@ -1,0 +1,16 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=Perl Scripting Plugin
+Name[es]=Plugin de Script para Perl .
+Icon=autoaway_plugin
+ServiceTypes=Kopete/Plugin
+X-KDE-Library=kopete_perlscript
+X-Kopete-Author=Jason Keirstead
+X-Kopete-Site=http://kopete.kde.org
+X-Kopete-Email=jason@keirstead.org
+X-Kopete-License=GPL
+Name[pt]='Plugin' de 'Scripting' em Perl
+Name[pt_BR]='Plugin' de 'Scripting' em Perl
+Name[sv]=Insticksprogram för Perl-skript
+Comment=Script Kopete using Perl 

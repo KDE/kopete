@@ -1,0 +1,20 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=SMS
+Icon=sms_protocol
+ServiceTypes=Kopete/Protocol
+X-KDE-Library=kopete_sms
+X-Kopete-Author=Richard Lärkäng
+X-Kopete-Site=http://kopete.kde.org
+X-Kopete-Email=richard@goteborg.utfors.se
+X-Kopete-License=GPL
+Comment=Protocol plugin for SMS
+Comment[es]=Plugin de protocolo para SMS
+Comment[fr]=Module du protocole SMS
+Comment[ja]=SMS用のプロトコルプラグイン
+Comment[pt]='Plugin' do protocolo SMS
+Comment[pt_BR]=Um Plugin de protocolo para SMS
+Comment[sv]=Protokollinsticksprogram för SMS
+Comment[zh_CN]=SMS 协议插件
+Comment[zu]=I-plugin yomthetho olandelwayo ye-SMS

@@ -73,7 +73,7 @@ LibraryLoader::~LibraryLoader()
 	{
 		// Remove causes the iterator to auto-increment, so
 		// only increment explicitly when not removing
-		if( getInfo( i.currentKey() ).type != QString::fromLatin1( "protocol" ) )
+		if( getInfo( i.currentKey() ).type != QString::fromLatin1( "Kopete/Protocol" ) )
 			remove( i.current() );
 		else
 			++i;
@@ -113,7 +113,7 @@ bool LibraryLoader::loadAll()
 {
 	KConfig *config=KGlobal::config();
 	config->setGroup("");
-	QStringList modules = config->readListEntry("Modules");
+	QStringList modules = config->readListEntry("Plugins");
 
 	// Session management...
 /*
@@ -129,7 +129,7 @@ bool LibraryLoader::loadAll()
 	for(QStringList::ConstIterator i=modules.begin(); i!=modules.end(); ++i)
 	{
 		KopeteLibraryInfo info=getInfo(*i);
-		if( !info.type.contains( QString::fromLatin1( "protocol" ) ) )
+		if( !info.type.contains( QString::fromLatin1( "Kopete/Protocol" ) ) )
 			continue;
 
 		if ( !loadPlugin( *i ) )
@@ -140,7 +140,7 @@ bool LibraryLoader::loadAll()
 	for(QStringList::ConstIterator i=modules.begin(); i!=modules.end(); ++i)
 	{
 		KopeteLibraryInfo info=getInfo(*i);
-		if( !info.type.contains( QString::fromLatin1( "other" ) ) )
+		if( !info.type.contains( QString::fromLatin1( "Kopete/Plugin" ) ) )
 			continue;
 
 		if ( !loadPlugin( *i ) )
@@ -167,14 +167,16 @@ KopeteLibraryInfo LibraryLoader::getInfo(const QString &spec) const
 	else
 		info.specfile = spec;
 
-	info.filename = file.readEntry( "Filename" );
-	info.author   = file.readEntry( "Author" );
-	info.site     = file.readEntry( "Site" );
-	info.email    = file.readEntry( "Email" );
-	info.type     = file.readEntry( "Type" );
+	file.setGroup( QString::fromLatin1( "Desktop Entry" ) );
+
+	info.filename = file.readEntry( "X-KDE-Library" );
+	info.author   = file.readEntry( "X-Kopete-Author" );
+	info.site     = file.readEntry( "X-Kopete-Site" );
+	info.email    = file.readEntry( "X-Kopete-Email" );
+	info.type     = file.readEntry( "ServiceTypes" );
 	info.name     = file.readEntry( "Name" );
 	info.comment  = file.readEntry( "Comment" );
-	info.license  = file.readEntry( "License" );
+	info.license  = file.readEntry( "X-Kopete-License" );
 	info.icon     = file.readEntry( "Icon" );
 
 	m_cachedInfo[ spec ] = info;
@@ -191,14 +193,14 @@ void LibraryLoader::setModules(const QStringList &mods)
 {
 	KConfig *config=KGlobal::config();
 	config->setGroup("");
-	config->writeEntry("Modules", mods);
+	config->writeEntry("Plugins", mods);
 	KGlobal::config()->sync();
 }
 
 QValueList<KopeteLibraryInfo> LibraryLoader::available() const
 {
 	QValueList<KopeteLibraryInfo> items;
-	QStringList files = KGlobal::dirs()->findAllResources( "appdata", QString::fromLatin1( "*.plugin" ), false, true );
+	QStringList files = KGlobal::dirs()->findAllResources( "appdata", QString::fromLatin1( "*.desktop" ), false, true );
 	for( QStringList::Iterator i=files.begin(); i!=files.end(); ++i )
 		items.append(getInfo(*i));
 

@@ -18,5 +18,5 @@ kopete_jabber_la_LIBADD  = ../../libkopete/libkopete.la \
 	-lpsi \
 	-lqssl
 
-data_DATA = jabber.plugin
+data_DATA = jabber.desktop
 datadir = $(kde_datadir)/kopete

@@ -102,8 +102,10 @@ void Kopete::slotLoadPlugins()
 
 	QStringList modules;
 	
-	if (config->hasKey("Modules"))
-		modules = config->readListEntry("Modules");
+	if( config->hasKey( "Plugins" ) )
+	{
+		modules = config->readListEntry( "Plugins" );
+	}
 	else
 	{
 		// Ups! the user does not have plugins selected.
@@ -143,7 +145,7 @@ void Kopete::slotLoadPlugins()
 		modules.clear();
 	}
 
-	config->writeEntry("Modules", modules);
+	config->writeEntry( "Plugins", modules );
 
 	LibraryLoader::pluginLoader()->loadAll();
 }

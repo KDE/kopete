@@ -7,5 +7,5 @@ kopete_connectionstatus_la_METASOURCES = AUTO
 kopete_connectionstatus_la_LDFLAGS     = -module $(KDE_PLUGIN)
 kopete_connectionstatus_la_LIBADD      = ../../libkopete/libkopete.la
 
-data_DATA = connectionstatus.plugin
+data_DATA = connectionstatus.desktop
 datadir = $(kde_datadir)/kopete

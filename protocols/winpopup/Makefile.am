@@ -19,7 +19,7 @@ kopete_wp_la_LIBADD  = ../../libkopete/libkopete.la \
 	./libwinpopup/libwinpopup.la \
 	$(LIB_KIO)
 
-data_DATA = wp.plugin
+data_DATA = wp.desktop
 datadir = $(kde_datadir)/kopete
 
 bin_SCRIPTS = winpopup-send.sh winpopup-install.sh

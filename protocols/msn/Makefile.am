@@ -17,5 +17,5 @@ kopete_msn_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_msn_la_LIBADD  = ./ui/libkopetemsnui.la \
 	../../libkopete/libkopete.la  $(LIB_KIO)
 
-data_DATA = msn.plugin
+data_DATA = msn.desktop
 datadir = $(kde_datadir)/kopete

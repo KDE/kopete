@@ -7,5 +7,5 @@ kopete_msginfo_la_METASOURCES = AUTO
 kopete_msginfo_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN)
 kopete_msginfo_la_LIBADD      = ../../libkopete/libkopete.la
 
-data_DATA = msginfo.plugin
+data_DATA = msginfo.desktop
 datadir = $(kde_datadir)/kopete
