@@ -42,29 +42,11 @@
 #include "pluginmodule.h"
 #include "pluginloader.h"
 
-/* included so every plugon can access global appeareance-prefs */
-#include "appearanceconfig.h"
+//#include "appearanceconfig.h"
 
 class LibraryLoader;
 class KopeteLibraryInfo;
 class KopeteMessageManagerFactory;
-
-struct KopeteEmoticons
-{
-	/* Happy */
-	QString smile;
-	QString wink;
-	QString tongue;
-	QString biggrin;
-
-	/* Sad */
-	QString unhappy;
-	QString cry;
-	/* Surprise */
-	QString oh;
-	/* Other */
-	QString sleep;
-};
 
 
 /**
@@ -90,11 +72,6 @@ public:
 	* preferences are, and where plugins embedd its preferences.
 	**/
 	PreferencesDialog *preferencesBox() const { return mPref; }
-	/**
-	* Use it to access the appearance preferences module
-	* preferences are, and where plugins embedd its preferences.
-	**/
-//	AppearanceConfig *appearance() const { return mAppearance; }
 	/**
 	* Use it to access Kopete's plugin loader.
 	* You wouldnt need to use it from a plugin.
@@ -139,7 +116,7 @@ public:
 	* and uses emoticons parser.
 	* This function will use the selected emoticon theme.
 	**/
-	QString parseEmoticons(QString);
+	QString parseEmoticons ( QString );
 	/**
 	* Use it to parse HTML in text.
 	* You dont need to use this for chat windows,
@@ -148,7 +125,6 @@ public:
 	**/
 	QString parseHTML( QString message, bool parseURLs = true );
 
-	void initEmoticons();
 
 private:
 	PreferencesDialog *mPref;
@@ -157,13 +133,13 @@ private:
 	KopeteWindow *m_mainWindow;
 	LibraryLoader *mLibraryLoader;
 	KIconLoader *mIconLoader;
-	KopeteEmoticons mEmoticons;
 	AppearanceConfig *mAppearance;
 	QString mEmoticonTheme;
 	KopeteNotifier *mNotifier;
 	KopeteMessageManagerFactory *mMessageManagerFactory;
 	KopeteAway *mAway;
 	void loadPlugins();
+
 
 public slots:
 	/**
