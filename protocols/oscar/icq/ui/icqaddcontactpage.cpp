@@ -75,11 +75,11 @@ ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent, const c
 	if(!mAccount->isConnected())
 	{
 		new QListViewItem(icqdata->resultView,
-			i18n("Adding contacts is impossible while being offline"), "", "", "", "");
+			i18n("Adding contacts is impossible while offline"), "", "", "", "");
 		new QListViewItem(icqdata->resultView,
 			i18n("Please go online before adding ICQ contacts"), "", "", "", "");
 
-		icqdata->progressText->setText(i18n("Adding contacts is impossible while being offline"));
+		icqdata->progressText->setText(i18n("Adding contacts is impossible while offline"));
 
 		icqdata->startSearch->setDisabled(true);
 		icqdata->stopSearch->setDisabled(true);
