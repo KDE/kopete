@@ -65,6 +65,10 @@ void KopeteGroupViewItem::refreshDisplayName()
 //	if(!m_group) return;
 
 	QString newText;
+	// FIXME: I think handling the i18n for temporary and top level
+	//        groups belongs in KopeteGroup instead.
+	//        It's now duplicated in KopeteGroupListAction and
+	//        KopeteGroupViewItem already - Martijn
 	switch ( m_group->type() )
 	{
 	case KopeteGroup::Temporary:
