@@ -36,6 +36,7 @@
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
+#include "kopetemessagemanager.h"
 
 #include "translatorplugin.h"
 #include "translatorprefs.h"
@@ -181,11 +182,7 @@ KActionCollection *TranslatorPlugin::customContextMenuActions(KopeteMetaContact 
 		keys << m_langs[ languageKey(k) ];
 	}
 
-	if(m_actionLanguage)
-		delete m_actionLanguage;
-
-	if( m_actionCollection )
-		delete m_actionCollection;
+	delete m_actionCollection;
 
 	m_actionCollection = new KActionCollection(this);
 	m_actionLanguage=new KListAction(i18n("Set &Language"),"",0,  m_actionCollection ,"m_actionLanguage");
@@ -200,6 +197,19 @@ KActionCollection *TranslatorPlugin::customContextMenuActions(KopeteMetaContact 
 	connect( m_actionLanguage, SIGNAL( activated() ), this, SLOT(slotSetLanguage()) );
 	m_actionCollection->insert(m_actionLanguage);
 	m_currentMetaContact=m;
+	return m_actionCollection;
+}
+
+KActionCollection *TranslatorPlugin::customChatActions(KopeteMessageManager *KMM)
+{
+	delete m_actionCollection;
+
+	m_actionCollection = new KActionCollection(this);
+	KAction *actionTranslate = new KAction( i18n ("Translate"), 0,
+		this, SLOT( slotTranslateChat() ), m_actionCollection, "actionTranslate" );
+	m_actionCollection->insert( actionTranslate );
+
+	m_currentMessageManager=KMM;
 	return m_actionCollection;
 }
 
@@ -243,7 +253,7 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 		{
 			if ( *i == src_lang + "_" + dst_lang )
 			{
-				translateMessage( msg , src_lang, dst_lang);
+				sendTranslation(msg , translateMessage( msg.body() , src_lang, dst_lang));
 				return;
 			}
 		}
@@ -300,7 +310,8 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 		{
 			if ( *i == src_lang + "_" + dst_lang )
 			{
-				translateMessage( msg , src_lang, dst_lang);
+				sendTranslation(msg , translateMessage( msg.body() , src_lang, dst_lang));
+				return;
 //				kdDebug() << "[Translator] Outgoing, DONE" << endl;
 				return;
 			}
@@ -316,18 +327,19 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 	}
 }
 
-void TranslatorPlugin::translateMessage( KopeteMessage &msg , const QString &from, const QString &to)
+QString TranslatorPlugin::translateMessage(const QString &msg , const QString &from, const QString &to)
 {
 	if ( m_prefs->service() == "babelfish" )
-		babelTranslateMessage( msg ,from, to);
+		return babelTranslateMessage( msg ,from, to);
 	if ( m_prefs->service() == "google" )
-		googleTranslateMessage( msg ,from, to);
+		return googleTranslateMessage( msg ,from, to);
+	return QString::null;
 }
 
-void TranslatorPlugin::googleTranslateMessage( KopeteMessage &msg , const QString &from, const QString &to)
+QString TranslatorPlugin::googleTranslateMessage( const QString &msg , const QString &from, const QString &to)
 {
 	kdDebug() << "[Translator] Google Translating: [" << from << "_" << to << "] " << endl
-		<< msg.body() << endl << endl;
+		<< msg << endl << endl;
 
 	QString body, lp;
 	KURL translatorURL;
@@ -337,7 +349,7 @@ void TranslatorPlugin::googleTranslateMessage( KopeteMessage &msg , const QStrin
 	translatorURL = "http://translate.google.com/translate_t";
 
 	//body = KURL::encode_string("*-*-* " + msg.body() + " *-*-*");
-	body = KURL::encode_string( msg.body() );
+	body = KURL::encode_string( msg );
 
 	lp = from + "|" + to;
 
@@ -375,10 +387,12 @@ void TranslatorPlugin::googleTranslateMessage( KopeteMessage &msg , const QStrin
 
 	QString translated = re.cap(1);
 
-	sendTranslation(msg,translated);
+	return translated;
+
+//	sendTranslation(msg,translated);
 }
 
-void TranslatorPlugin::babelTranslateMessage( KopeteMessage &msg , const QString &from, const QString &to)
+QString TranslatorPlugin::babelTranslateMessage( const QString &msg , const QString &from, const QString &to)
 {
 	kdDebug() << "TranslatorPlugin::babelTranslateMessage : [" << from << "_" << to << "] " << endl ;
 	
@@ -390,7 +404,7 @@ void TranslatorPlugin::babelTranslateMessage( KopeteMessage &msg , const QString
 	translatorURL = "http://babel.altavista.com/tr";
 
 	//body = KURL::encode_string("*-*-* " + msg.body() + " *-*-*");
-	body = KURL::encode_string( msg.body() );
+	body = KURL::encode_string( msg);
 
 	lp = from + "_" + to;
 
@@ -427,8 +441,9 @@ void TranslatorPlugin::babelTranslateMessage( KopeteMessage &msg , const QString
 	re.match( data );
 
 	QString translated = re.cap(1);
+	return translated;
 
-	sendTranslation(msg,translated);
+//	sendTranslation(msg,translated);
 }
 
 void TranslatorPlugin::sendTranslation(KopeteMessage &msg, const QString &translated)
@@ -498,6 +513,58 @@ void TranslatorPlugin::slotSetLanguage()
 		m_langMap[ m_currentMetaContact ]= languageKey( m_actionLanguage->currentItem() );
 	}
 }
+
+void TranslatorPlugin::slotTranslateChat()
+{
+	if(!m_currentMessageManager)
+		return;
+
+	QString body=m_currentMessageManager->currentText();
+	if(body.isEmpty())
+		return;
+
+	QString src_lang = m_prefs->myLang();
+	QString dst_lang;
+
+	QPtrList<KopeteContact> list=m_currentMessageManager->members();
+	KopeteMetaContact *to = list.first()->metaContact();
+	if ( m_langMap.contains( to ) && (m_langMap[to] != "null"))
+	{
+		dst_lang = m_langMap[ to ];
+	}
+	else
+	{
+		kdDebug() << "TranslatorPlugin::slotTranslateChat :  Cannot determine dst Metacontact language (" << to->displayName() << ")" << endl;
+		return;
+	}
+	if ( src_lang == dst_lang )
+	{
+		kdDebug() << "TranslatorPlugin::slotTranslateChat :  Src and Dst languages are the same" << endl;
+		return;
+	}
+
+	/* We search for src_dst */
+
+	QStringList s = m_supported[ m_prefs->service() ];
+	QStringList::ConstIterator i;
+
+	for ( i = s.begin(); i != s.end() ; ++i )
+	{
+		if ( *i == src_lang + "_" + dst_lang )
+		{
+			QString translated=translateMessage( body , src_lang, dst_lang);
+			if(translated.isEmpty())
+			{
+				kdDebug() << "TranslatorPlugin::slotTranslateChat : empty string returned"  << endl;
+				return;
+			}
+			m_currentMessageManager->setCurrentText(translated);
+			return;
+		}
+	}
+	kdDebug() << "TranslatorPlugin::slotTranslateChat : "<< src_lang + "_" + dst_lang << " doesn't exists with service " << m_prefs->service() << endl;
+}
+
 
 #include "translatorplugin.moc"
 

@@ -37,6 +37,7 @@ class KListAction;
 
 class KopeteMessage;
 class KopeteMetaContact;
+class KopeteMessageManager;
 
 class TranslatorPreferences;
 
@@ -77,6 +78,7 @@ public:
 	void deserialize( KopeteMetaContact *metaContact, const QStringList& data );
 
 	virtual KActionCollection *customContextMenuActions(KopeteMetaContact*);
+	virtual KActionCollection *customChatActions(KopeteMessageManager*);
 
 	/***************************************************************************
 	 *   Plugin's API (used by preferences)                                    *
@@ -116,10 +118,10 @@ public slots:
 
 protected:
 
-	void translateMessage( KopeteMessage &, const QString &, const QString & );
+	QString translateMessage( const QString &, const QString &, const QString & );
 
-	void googleTranslateMessage( KopeteMessage &, const QString &, const QString & );
-	void babelTranslateMessage( KopeteMessage &, const QString &, const QString & );
+	QString googleTranslateMessage( const QString &, const QString &, const QString & );
+	QString babelTranslateMessage(const QString &, const QString &, const QString & );
 
 
 private:
@@ -162,12 +164,16 @@ private:
 	KActionCollection* m_actionCollection;
 	KListAction* m_actionLanguage;
 	KopeteMetaContact *m_currentMetaContact;
+	KopeteMessageManager *m_currentMessageManager;
 
 	static TranslatorPlugin* pluginStatic_;
 
 private: // Private methods
   /** No descriptions */
   void sendTranslation(KopeteMessage &msg, const QString &translated);
+private slots: // Private slots
+  /** No descriptions */
+  void slotTranslateChat();
 };
 
 #endif
