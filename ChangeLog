@@ -1,6 +1,27 @@
 Kopete Messenger ChangeLog
 --------------------------
 
+o Main App
+	o New metacontact serialize architecture ( Martijn, Zack )
+	o Contact list UI/Logic separation and cleanup ( Duncan )
+	o Lot of bugfixing ( Olivier and all the team )
+	o New away system ( Chris )
+o ICQ Plugin
+	o New written from scratch plugin ( Nick )
+	o new features ( Stefan )
+	o contact search ( Stefan )
+o MSN Plugin
+	o Bugfixes ( Martijn, Olivier )
+o IRC Plugin
+	o Bugfixing ( André )
+o Jabber Plugin
+	o Port to new jabber engine ( Till )
+	o Bugfixing ( Till, Robert )
+o AIM Plugin
+o Gadu Plugin ( Zack )
+o Translator plugin ( Duncan )
+
+
 16-Jun-2002 Released Kopete 0.4.1
 =================================
 

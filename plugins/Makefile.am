@@ -1,2 +1,2 @@
-SUBDIRS = autoaway translator contactnotes
+SUBDIRS = autoaway translator contactnotes motionautoaway
 

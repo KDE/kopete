@@ -142,6 +142,9 @@ bool LibraryLoader::loadAll(const QStringList &modules)
 
 KopeteLibraryInfo LibraryLoader::getInfo(const QString &spec) const
 {
+	QMap<QString, KopeteLibraryInfo>::iterator cached = m_cachedInfo.find(spec);        
+	if (cached != m_cachedInfo.end() )
+		return *cached;
 	KopeteLibraryInfo info;
 	QString specPath = (spec[0]=='/') ? spec : KGlobal::dirs()->findResource("appdata", spec);
 	if (!QFile::exists(specPath))
@@ -160,6 +163,7 @@ KopeteLibraryInfo LibraryLoader::getInfo(const QString &spec) const
 	info.comment=file.readEntry("Comment");
 	info.require=file.readListEntry("Require");
 	info.license=file.readEntry("License");
+	m_cachedInfo[spec]=info;
 	return info;
 }
 

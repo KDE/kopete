@@ -130,6 +130,11 @@ private:
 	 * The list of all address book keys used by each plugin
 	 */
 	QMap<KopetePlugin *, QStringList> m_addressBookFields;
+    
+	/**
+	 * A cache for plugin info, to avoid reparsing (and hence mutable)
+	 */
+	mutable QMap<QString, KopeteLibraryInfo> m_cachedInfo;
 
 signals: // Signals
 	void pluginLoaded(KopetePlugin *);

@@ -1,12 +1,12 @@
 Kopete, The KDE Messenger
-Duncan Mac-Vicar Prett <duncan@kdedevelopers.net>
+Duncan Mac-Vicar Prett <duncan@kde.org>
 ----------------------------------------------------------------------
 
 Kopete is a IM client being designed to be modular and plugin based.
 
 It requires the KDE Desktop, version 3 or higher.
 
-Currently, the  supported protocol plugins are MSN, ICQ, AIM, IRC and
+Currently, the  supported protocol plugins are MSN, ICQ, AIM, Gadu, IRC and
 Jabber. Yahoo! support is currently under development and expected
 to stabilise soon.
 
