@@ -1,32 +1,45 @@
 Have fun using this all-improved plugin and feel free to contribute patches
 and other improvements to our mailing list! Although we all like to boast
-about our great work, we're sure there are still many bugs remaining, which
-is why we don't call this release 1.0, but only 0.5 Please read the
-release notes first before reporting bugs, but please do report anything
-not listed there!
+about our great work, we're sure there are still bugs remaining, which is
+why we don't call this release 1.0, but only 0.5.
+
+Nevertheless, we feel this new MSN plugin is an enormous step forward from
+the last 0.4.1 release and we recommend anyone to try out this all-improved
+plugin. Please read the release notes first before reporting bugs, but please
+do report anything not listed there!
 
 Thanks for your interest in Kopete!
 
-                        September 2002, The kopete team <kopete-devel@kde.org>
+                        October 2002, the Kopete team <kopete-devel@kde.org>
 
 
 CHANGES IN THE MSN PLUGIN SINCE KOPETE 0.4.1
 
-- Added a local copy of the contact list, sychronised with the server list
-  on each connection
+- Ported the plugin to the new MetaContact API, allowing a locally cached
+  copy of the contact list to be always available (even when offline) and
+  to combine your MSN contacts with other messaging systems in one entry
+  in the contact list.
 
-- Added some online status (by right back, out to lunch, busy, invisible)
-  possibility of connecting dirrectly with a particular status (especially
-  useful with invisible) 
+- Added additional online states ('be right back', 'out to lunch', 'busy',
+  'invisible') and the possibility to connect directly with a particular
+  status (especially useful with 'invisible')
 
-- Fix multi-user chat
+- Fix multi-user chat now the API finally supports it properly
 
-- Added possibility to talk with user who aren't in the contact list
+- Fix a grave bug in Kopete 0.4.1 where Kopete would popup the 'new user'
+  dialog for every user in your block list, asking whether you want to
+  allow or block the user, often crashing Kopete completely
 
-- Incomming filetransfers
+- Fix support for Unicode messages
 
-- A lot of other bugfixes
+- Fix the 'unhandled error 219' problem that caused Kopete to disconnect
+  unexpectedly for some people
 
+- Added possibility to talk with users who aren't in the contact list
+
+- Incoming filetransfers
+
+- As usual, several other bugfixes
 
 CHANGES IN THE MSN PLUGIN SINCE KOPETE 0.4
 
@@ -74,7 +87,7 @@ was even aware of at that time. Below are the bigger changes and fixes:
   of bugs during the process. The main goal was to make the code more
   maintainable and extensible, but the gratuitous bug fixes are of course
   much more useful for most people. The most important fix of all is a
-  grave bug that cause the plugin to read a fixed-size 1kb buffer in Kopete
+  grave bug that caused the plugin to read a fixed-size 1kb buffer in Kopete
   0.3 without checking for additional data, often causing the plugin to
   seemingly 'hang'.
 
