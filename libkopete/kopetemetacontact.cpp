@@ -69,6 +69,13 @@ void KopeteMetaContact::addContact( KopeteContact *c,
 			QListViewItem *group_item =
 				kopeteapp->contactList()->getGroup( *it );
 
+			// If the group doesn't exist: create it first
+			if ( !group_item )
+			{
+				kopeteapp->contactList()->addGroup( *it );
+				group_item = kopeteapp->contactList()->getGroup( *it );
+			}
+
 			kopeteapp->contactList()->addContact(
 				new KopeteMetaContactLVI( this, group_item ) );
 		}
