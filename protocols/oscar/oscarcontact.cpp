@@ -445,3 +445,4 @@ void OscarContact::slotWarn()
 	}
 }
 
+#include "oscarcontact.moc"

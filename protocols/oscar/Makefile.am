@@ -19,8 +19,7 @@ kopete_oscar_la_SOURCES = oscarprotocol.cpp oscarcontact.cpp oscarpreferences.cp
 
 kopete_oscar_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_oscar_la_LIBADD  = ./oscarsocket/libkopeteoscarsocket.la \
-    ./ui/libkopeteoscarui.la $(top_builddir)/kopete/libkopete/libkopete.la \
-    $(LIB_KHTML)
+    ./ui/libkopeteoscarui.la $(top_builddir)/kopete/libkopete/libkopete.la
 
 data_DATA = oscar.plugin
 datadir = $(kde_datadir)/kopete

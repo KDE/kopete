@@ -1347,11 +1347,11 @@ void OscarSocket::parseUserProfile(Buffer &inbuf)
     profile += "Username: <B>" + u.sn + "</B>";
     profile += "<IMG SRC=\"";
     if (u.userclass & 0x0004) //AOL user
-  	profile += "aol_icon.gif";
+  	profile += "aol_icon.png";
     else if (u.userclass & 0x0010) //AIM user
-  	profile += "free_icon.gif";
+  	profile += "free_icon.png";
     else  //other
-  	profile += "dt_icon.gif";
+  	profile += "dt_icon.png";
     profile += "\"><br>\n";
     profile += QString("Warning Level: <B>%1 %</B><br>\n").arg(u.evil);
     QDateTime qdt;
@@ -1392,9 +1392,9 @@ void OscarSocket::parseUserProfile(Buffer &inbuf)
     else
 	profile += "<I>No user information provided</I>";
     tl.clear();
-    profile += "<br><hr><I>Legend:</I><br><br><IMG SRC=\"free_icon.gif\">: Normal AIM User<br> \
-		<IMG SRC=\"aol_icon.gif\">: AOL User<br><IMG SRC=\"dt_icon.gif\">: Trial AIM User <br> \
-		<IMG SRC=\"admin_icon.gif\">: Administrator</HTML>";
+    profile += "<br><hr><I>Legend:</I><br><br><IMG SRC=\"free_icon.png\">: Normal AIM User<br> \
+		<IMG SRC=\"aol_icon.png\">: AOL User<br><IMG SRC=\"dt_icon.png\">: Trial AIM User <br> \
+		<IMG SRC=\"admin_icon.png\">: Administrator</HTML>";
     emit gotUserProfile(u,profile);
 }
 
