@@ -93,7 +93,7 @@ public:
 	* Use it to access the appearance preferences module
 	* preferences are, and where plugins embedd its preferences.
 	**/
-	AppearanceConfig *appearance() const { return mAppearance; }
+//	AppearanceConfig *appearance() const { return mAppearance; }
 	/**
 	* Use it to access Kopete's plugin loader.
 	* You wouldnt need to use it from a plugin.

@@ -177,9 +177,11 @@ KopeteMetaContact::OnlineStatus KopeteMetaContact::status() const
 	QPtrListIterator<KopeteContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
-		if( it.current()->status() == KopeteContact::Online )
+		KopeteContact::ContactStatus s = it.current()->status();
+
+		if ( s == KopeteContact::Online )
 			return Online;
-		else if( it.current()->status() == KopeteContact::Away)
+		else if ( s == KopeteContact::Away )
 			awayFound = true;
 	}
 /*
@@ -247,8 +249,7 @@ void KopeteMetaContact::slotContactNameChanged( const QString &name )
 		setDisplayName( name );
 }
 
-void KopeteMetaContact::moveToGroup( const QString &from,
-	const QString &to )
+void KopeteMetaContact::moveToGroup( const QString &from, const QString &to )
 {
 	if( from == to )
 		return;

@@ -19,6 +19,7 @@
 #include "kopetechatwindow.h"
 #include "kopeteevent.h"
 #include "kopete.h"
+#include "kopeteprefs.h"
 
 #include "messagelog.h"
 
@@ -44,7 +45,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteCon
 	mWidget = widget;
 	
 	readModeChanged();
-	connect(kopeteapp->appearance(), SIGNAL(queueChanged()), this, SLOT(readModeChanged()));
+	connect( KopetePrefs::prefs(), SIGNAL(queueChanged()), this, SLOT(readModeChanged()));
 	
 	if (!logFile.isEmpty())	{
 		QString logFileName = "kopete/" + logFile;
@@ -185,7 +186,7 @@ void KopeteMessageManager::slotReply() {
 
 void KopeteMessageManager::slotMessageSent(const KopeteMessage &message) {
 	emit messageSent(message);
-	if ( kopeteapp->appearance()->soundNotify() )
+	if ( KopetePrefs::prefs()->soundNotify() )
 	    KNotifyClient::event("kopete_outgoing");
 }
 
@@ -275,7 +276,7 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg ) {
 			}
 		}
 	}
-	if ( kopeteapp->appearance()->soundNotify() && isvisible && (msg.direction() != KopeteMessage::Outbound) )
+	if ( KopetePrefs::prefs()->soundNotify() && isvisible && (msg.direction() != KopeteMessage::Outbound) )
 	    KNotifyClient::event("kopete_incoming");
 }
 void KopeteMessageManager::addContact( const KopeteContact *c )
@@ -302,7 +303,7 @@ void KopeteMessageManager::removeContact( const KopeteContact *c )
 
 void KopeteMessageManager::readModeChanged()
 {
-	if ( kopeteapp->appearance()->useQueue() )
+	if ( KopetePrefs::prefs()->useQueue() )
 	{
 		mReadMode = Queued;
 	}

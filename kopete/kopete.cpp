@@ -33,7 +33,7 @@
 #include <kopetewindow.h>
 #include "kopetemessagemanagerfactory.h"
 
-#include "ui/appearanceconfig.h"
+#include "kopeteprefs.h"
 #include "plugin.h"
 #include "pluginloader.h"
 #include "pluginmodule.h"
@@ -85,7 +85,7 @@ void Kopete::initialize()
 				this, SLOT( slotMainWindowDestroyed() ) );
 
 	mAppearance = new AppearanceConfig(m_mainWindow);
-	connect( mAppearance , SIGNAL(saved()), this, SIGNAL(signalSettingsChanged()));
+	connect( KopetePrefs::prefs() , SIGNAL(saved()), this, SIGNAL(signalSettingsChanged()));
 	mNotifier = new KopeteNotifier(this, "mNotifier");
 	mMessageManagerFactory = new KopeteMessageManagerFactory(this, "KMMFactory");
 
@@ -252,9 +252,7 @@ void Kopete::cancelEvent( KopeteEvent *event)
 void Kopete::initEmoticons()
 {
 	KStandardDirs dir;
-	KConfig *config=KGlobal::config();
-	config->setGroup("Appearance");
-	mEmoticonTheme = config->readEntry("EmoticonTheme", "Default");
+	mEmoticonTheme = KopetePrefs::prefs()->iconTheme();
 
 	/* Happy emoticons */
 	/* :-) */
@@ -299,7 +297,7 @@ void Kopete::initEmoticons()
 QString Kopete::parseEmoticons( QString message )
 {
 	/* if emoticons are disabled, we do nothing */
-	if ( ! appearance()->useEmoticons() )
+	if ( !KopetePrefs::prefs()->useEmoticons() )
 	{
 		return message;
 	}

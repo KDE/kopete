@@ -53,6 +53,8 @@ QString KopeteContact::statusText() const
 {
 	ContactStatus stat = status();
 
+	kdDebug() << "[KopeteContact] statusText() with status= " << stat << endl;
+
 	switch( stat )
 	{
 	case Online:
@@ -73,6 +75,8 @@ QString KopeteContact::statusIcon() const
 int KopeteContact::importance() const
 {
 	ContactStatus stat = status();
+
+	kdDebug() << "[KopeteContact] importance() with status= " << stat << endl;
 
 	if (stat == Online)
 		return 20;
