@@ -278,7 +278,7 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg, const QStr
 	while ( !m_completed[ job ] )
 		qApp->processEvents();
 
-	QString data = QString::fromUtf8( m_data[ job ] );
+	QString data = QString::fromLatin1( m_data[ job ] );
 
 	// After hacks, we need to clean
 	m_data.remove( job );
