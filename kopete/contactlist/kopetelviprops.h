@@ -68,6 +68,7 @@ class KopeteMetaLVIProps: public KDialogBase
 		KopeteMetaContactLVI *item;
 		KopeteAddressBookExport *mExport;
 		KABC::Sound mSound;
+		int m_countPhotoCapable;
 
 	private slots:
 		void slotOkClicked();
@@ -77,6 +78,8 @@ class KopeteMetaLVIProps: public KDialogBase
 		void slotMergeClicked();
 		void slotFromKABCClicked();
 		void slotOpenSoundDialog( KURLRequester *requester );
+		void slotSetPhotoComboEnabled( bool on );
+		void slotSetNameComboEnabled( bool on );
 };
 
 #endif

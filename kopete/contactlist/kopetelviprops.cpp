@@ -3,8 +3,10 @@
 
     Kopete Contactlist Properties GUI for Groups and MetaContacts
 
-    Copyright (c) 2002-2003 by Stefan Gehn            <metz AT gehn.net>
-	Copyright (c) 2004      by Will Stephenson <lists@stevello.free-online.co.uk>
+    Copyright (c) 2002-2003 by Stefan Gehn <metz AT gehn.net>
+    Copyright (c) 2004 by Will Stephenson <lists@stevello.free-online.co.uk>
+    Copyright (c) 2004 by Duncan Mac-Vicar P. <duncan@kde.org>
+    
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -140,6 +142,7 @@ void KopeteGVIProps::slotIconChanged()
 KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *parent, const char *name)
 : KDialogBase(parent, name, true, i18n("Properties of Meta Contact %1").arg(lvi->metaContact()->displayName()), Ok|Cancel, Ok, false)
 {
+	m_countPhotoCapable = 0;
 	mainWidget = new KopeteMetaLVIPropsWidget( this, "mainWidget" );
 	mainWidget->icnbOffline->setIconSize( KIcon::SizeSmall );
 	mainWidget->icnbOnline->setIconSize( KIcon::SizeSmall );
@@ -163,10 +166,15 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 
 	mainWidget->edtDisplayName->setText( item->metaContact()->displayName() );
 	mainWidget->chkTrackChildDisplayName->setChecked( item->metaContact()->nameSource() != 0 );
+	mainWidget->chkTrackChildPhoto->setChecked( item->metaContact()->photoSource() != 0 );
 	mainWidget->chkTrackChildDisplayName->setEnabled( item->metaContact()->contacts().count() > 0 );
+	mainWidget->chkTrackChildPhoto->setEnabled( item->metaContact()->contacts().count() > 0 );
 	mainWidget->cmbAccount->setEnabled( mainWidget->chkTrackChildDisplayName->isChecked() );
 	
-	Kopete::Contact* tracking = item->metaContact()->nameSource();
+	slotSetNameComboEnabled(mainWidget->chkTrackChildDisplayName->isChecked());
+	slotSetPhotoComboEnabled(mainWidget->chkTrackChildPhoto->isChecked());
+	
+	Kopete::Contact* trackingName = item->metaContact()->nameSource();
 	QPtrList< Kopete::Contact > cList = item->metaContact()->contacts();
 	QPtrListIterator<Kopete::Contact> it( cList );
 	for( ; it.current(); ++it )
@@ -176,12 +184,40 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 		mainWidget->cmbAccount->insertItem( acctIcon, acct );
 		
 		// Select this item if it's the one we're tracking.
-		if( it.current() == tracking )
+		if( it.current() == trackingName )
 		{
 			mainWidget->cmbAccount->setCurrentItem( mainWidget->cmbAccount->count() - 1 );
 		}
 	}
 
+	Kopete::Contact* trackingPhoto = item->metaContact()->photoSource();
+	QPtrListIterator<Kopete::Contact> itp( cList );
+	for( ; itp.current(); ++itp )
+	{
+		Kopete::Contact *citem = itp.current();
+		if ( citem->isPhotoCapable() )
+		{
+			m_countPhotoCapable++;
+			QString acct = citem->property( Kopete::Global::Properties::self()->nickName() ).value().toString() + " <" + citem->contactId() + ">";
+			QPixmap acctIcon = citem->account()->accountIcon();
+			mainWidget->cmbAccountPhoto->insertItem( acctIcon, acct );
+			
+			// Select this item if it's the one we're tracking.
+			if( citem == trackingPhoto )
+			{
+				mainWidget->cmbAccountPhoto->setCurrentItem( mainWidget->cmbAccountPhoto->count() - 1 );
+			}
+		}
+	}
+
+	if ( ! m_countPhotoCapable )
+	{
+		slotSetPhotoComboEnabled(false);
+		mainWidget->chkTrackChildPhoto->setEnabled(false);
+		mainWidget->chkSyncPhoto->setEnabled(false);
+		mainWidget->cmbAccountPhoto->insertItem(i18n("No contacts with photo support"));
+	}
+	
 	mainWidget->chkUseCustomIcons->setChecked( item->metaContact()->useCustomIcon() );
 
 	QString offlineName = item->metaContact()->icon( Kopete::ContactListElement::Offline );
@@ -237,13 +273,28 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 		this, SLOT( slotMergeClicked() ) );
 	connect( mFromKABC, SIGNAL( clicked() ),
 		this, SLOT( slotFromKABCClicked() ) );
-    connect( mNotificationProps->widget()->customSound, SIGNAL( openFileDialog( KURLRequester * )),
+	connect( mNotificationProps->widget()->customSound, SIGNAL( openFileDialog( KURLRequester * )),
              SLOT( slotOpenSoundDialog( KURLRequester * )));
+
+	connect( mainWidget->chkTrackChildPhoto, SIGNAL(toggled(bool)), SLOT(slotSetPhotoComboEnabled(bool)));
+	connect( mainWidget->chkTrackChildDisplayName, SIGNAL(toggled(bool)), SLOT(slotSetNameComboEnabled(bool)));
 	slotUseCustomIconsToggled( mainWidget->chkUseCustomIcons->isChecked() );
 }
 
 KopeteMetaLVIProps::~KopeteMetaLVIProps()
 {
+}
+
+void KopeteMetaLVIProps::slotSetPhotoComboEnabled( bool on )
+{
+	mainWidget->cmbAccountPhoto->setEnabled(on);
+	mainWidget->lblPhotoAccount->setEnabled(on);
+}
+
+void KopeteMetaLVIProps::slotSetNameComboEnabled( bool on )
+{
+	mainWidget->cmbAccount->setEnabled(on);
+	mainWidget->lblAccountName->setEnabled(on);
 }
 
 void KopeteMetaLVIProps::slotOkClicked()
