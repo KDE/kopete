@@ -66,8 +66,6 @@ JabberContact::JabberContact (QString userId, QString nickname, QStringList grou
 	JabberResource *defaultResource = new JabberResource (QString::null, -1, QDateTime::currentDateTime (),
 														  static_cast<JabberProtocol *>(protocol())->JabberKOSOffline, "");
 
-	//JabberProtocol::JabberKOSOffline(), "");
-
 	resources.append (defaultResource);
 
 	activeResource = defaultResource;
@@ -100,7 +98,7 @@ KopeteMessageManager *JabberContact::manager (bool)
 	// create a new message manager if there is none
 	if (!messageManager)
 	{
-		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberContact] Creating new message manager." << endl;
+		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Creating new message manager." << endl;
 
 		KopeteContactPtrList contactList;
 
@@ -119,7 +117,7 @@ KopeteMessageManager *JabberContact::manager (bool)
 void JabberContact::slotMessageManagerDeleted ()
 {
 
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberContact] Message manager has been deleted." << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Message manager has been deleted." << endl;
 
 	messageManager = 0L;
 
@@ -202,7 +200,7 @@ KActionCollection *JabberContact::customContextMenuActions ()
 			// mark the currently active resource
 			if (tmpResource->resource () == activeResource->resource () && resourceOverride)
 			{
-				kdDebug (14130) << "[JabberContact] Activating item " << i << " as active resource." << endl;
+				kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Activating item " << i << " as active resource." << endl;
 				activeItem = i;
 			}
 		}
@@ -247,7 +245,7 @@ void JabberContact::slotRenameContact (const QString &oldName, const QString &ne
 {
 	QString name = newName;
 
-	kdDebug (14130) << k_funcinfo << "Renaming contact " << oldName << " to " << newName << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Renaming contact " << oldName << " to " << newName << endl;
 
 	// if the name has been deleted, revert
 	// to using the user ID instead
@@ -272,7 +270,7 @@ void JabberContact::slotRenameContact (const QString &oldName, const QString &ne
 
 void JabberContact::slotDeleteContact ()
 {
-	kdDebug (14130) << k_funcinfo << "Removing user " << userId () << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing user " << userId () << endl;
 
 	// unsubscribe
 	if (!account()->isConnected ())
@@ -290,19 +288,19 @@ void JabberContact::slotDeleteContact ()
 
 void JabberContact::slotSendAuth ()
 {
-	kdDebug (14130) << "[JabberContact] (Re)send auth " << userId () << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "(Re)send auth " << userId () << endl;
 	sendSubscription ("subscribed");
 }
 
 void JabberContact::slotRequestAuth ()
 {
-	kdDebug (14130) << "[JabberContact] (Re)request auth " << userId () << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "(Re)request auth " << userId () << endl;
 	sendSubscription ("subscribe");
 }
 
 void JabberContact::slotRemoveAuth ()
 {
-	kdDebug (14130) << "[JabberContact] Remove auth " << userId () << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Remove auth " << userId () << endl;
 	sendSubscription ("unsubscribed");
 }
 
@@ -402,16 +400,9 @@ void JabberContact::slotReceivedMessage (const Jabber::Message & message)
 {
 	KopeteMessage::MessageType type;
 	KopeteContactPtrList contactList;
+	KopeteMessage *newMessage;
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received Message Type:" << message.type () << endl;
-
-	// check for errors first
-	if (message.type () == "error")
-	{
-		// FIXME: unable to add i18n string here before release,
-		// add warning dialog after 0.7
-		return;
-	}
 
 	// determine message type
 	if (message.type () == "chat")
@@ -421,21 +412,33 @@ void JabberContact::slotReceivedMessage (const Jabber::Message & message)
 
 	contactList.append (account()->myself ());
 
-	// retrieve and reformat body
-	QString body = message.body();
-
-	if(!message.xencrypted().isEmpty())
+	// check for errors
+	if (message.type () == "error")
 	{
-		body = QString("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted() + QString("\n-----END PGP MESSAGE-----\n");
+		//KMessageBox::sorry(qApp->mainWidget(), i18n("Your message to %1 could not be delivered: \"%2\"").arg(message.from().full()).arg(message.body()));
+		//return;
+		newMessage = new KopeteMessage(message.timeStamp(), this, contactList, i18n("Your message could not be delivered: \"%1\"").arg(message.body()), message.subject(), KopeteMessage::Inbound, KopeteMessage::PlainText, type);
 	}
+	else
+	{
+		// retrieve and reformat body
+		QString body = message.body();
 
-	// convert Jabber::Message into KopeteMessage
-	KopeteMessage newMessage (message.timeStamp (), this, contactList, body,
+		if(!message.xencrypted().isEmpty())
+		{
+			body = QString("-----BEGIN PGP MESSAGE-----\n\n") + message.xencrypted() + QString("\n-----END PGP MESSAGE-----\n");
+		}
+
+		// convert Jabber::Message into KopeteMessage
+		newMessage = new KopeteMessage(message.timeStamp (), this, contactList, body,
 				  message.subject (), KopeteMessage::Inbound,
 				  KopeteMessage::PlainText, type);
+	}
 
 	// add it to the manager
-	manager ()->appendMessage (newMessage);
+	manager ()->appendMessage (*newMessage);
+
+	delete newMessage;
 
 }
 
@@ -478,11 +481,11 @@ JabberResource *JabberContact::bestResource ()
 	// iterate through all available resources
 	for (resource = tmpResource = resources.first (); tmpResource; tmpResource = resources.next ())
 	{
-		kdDebug (14130) << "[JabberContact] Processing resource " << tmpResource->resource () << endl;
+		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Processing resource " << tmpResource->resource () << endl;
 
 		if (tmpResource->priority () > resource->priority ())
 		{
-			kdDebug (14130) << "[JabberContact] Got better resource " << tmpResource->resource () << " through better priority." << endl;
+			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Got better resource " << tmpResource->resource () << " through better priority." << endl;
 			resource = tmpResource;
 		}
 		else
@@ -491,17 +494,17 @@ JabberResource *JabberContact::bestResource ()
 			{
 				if (tmpResource->timestamp () >= resource->timestamp ())
 				{
-					kdDebug (14130) << "[JabberContact] Got better resource " << tmpResource->resource () << " through newer timestamp." << endl;
+					kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Got better resource " << tmpResource->resource () << " through newer timestamp." << endl;
 					resource = tmpResource;
 				}
 				else
 				{
-					kdDebug (14130) << "[JabberContact] Discarding resource " << tmpResource->resource () << " with older timestamp." << endl;
+					kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Discarding resource " << tmpResource->resource () << " with older timestamp." << endl;
 				}
 			}
 			else
 			{
-				kdDebug (14130) << "[JabberContact] Discarding resource " << tmpResource->resource () << " with worse priority." << endl;
+				kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Discarding resource " << tmpResource->resource () << " with worse priority." << endl;
 			}
 		}
 	}
@@ -513,7 +516,7 @@ JabberResource *JabberContact::bestResource ()
 void JabberContact::slotResourceAvailable (const Jabber::Jid &, const Jabber::Resource & resource)
 {
 
-	kdDebug (14130) << "[JabberContact] Adding new resource '" << resource.
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo "Adding new resource '" << resource.
 		name () << "' for " << userId () << ", name [" << resource.
 		name () << "], priority " << resource.priority () << ", status [" << resource.status ().status () << endl;
 
@@ -530,7 +533,7 @@ void JabberContact::slotResourceAvailable (const Jabber::Jid &, const Jabber::Re
 	{
 		if (tmpResource->resource () == resource.name ())
 		{
-			kdDebug (14130) << "[JabberContact] Resource " << tmpResource->resource () << " already added, removing instance with older timestamp" << endl;
+			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Resource " << tmpResource->resource () << " already added, removing instance with older timestamp" << endl;
 			resources.remove ();
 		}
 	}
@@ -562,7 +565,7 @@ void JabberContact::slotResourceAvailable (const Jabber::Jid &, const Jabber::Re
 
 	JabberResource *tmpBestResource = bestResource ();
 
-	kdDebug (14130) << "[JabberContact] Best resource is now " << tmpBestResource->resource () << "." << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Best resource is now " << tmpBestResource->resource () << "." << endl;
 
 	slotUpdatePresence (tmpBestResource->status (), tmpBestResource->reason ());
 
@@ -576,18 +579,16 @@ void JabberContact::slotResourceUnavailable (const Jabber::Jid & jid, const Jabb
 {
 	JabberResource *tmpResource;
 
-	kdDebug (14130) << "[JabberContact] Removing resource '" << jid.resource () << "' for " << userId () << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing resource '" << jid.resource () << "' for " << userId () << endl;
 
 	for (tmpResource = resources.first (); tmpResource; tmpResource = resources.next ())
 	{
 		if (tmpResource->resource () == resource.name ())
 		{
-			kdDebug (14130) << "[JabberContact] Got a match in " << tmpResource->resource () << ", removing." << endl;
+			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Got a match in " << tmpResource->resource () << ", removing." << endl;
 
-			if (resources.remove ())
-				kdDebug (14130) << "[JabberContact] Successfully removed, there are now " << resources.count () << " resources!" << endl;
-			else
-				kdDebug (14130) << "[JabberContact] Ack! Couldn't remove the resource. Bugger!" << endl;
+			if (!resources.remove ())
+				kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Ack! Couldn't remove the resource. Bugger!" << endl;
 
 			break;
 		}
@@ -595,7 +596,7 @@ void JabberContact::slotResourceUnavailable (const Jabber::Jid & jid, const Jabb
 
 	JabberResource *newResource = bestResource ();
 
-	kdDebug (14130) << "[JabberContact] Best resource is now " << newResource->resource () << "." << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Best resource is now " << newResource->resource () << "." << endl;
 	slotUpdatePresence (newResource->status (), newResource->reason ());
 
 	// if override was in effect or we just deleted the current
