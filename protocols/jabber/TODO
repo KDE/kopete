@@ -34,3 +34,6 @@ TODO for Jabber:
   list
 - provide better feedback for dialogs querying the server
 - try to find a way to read a nickname for yourself from the Jabber roster
+- support avatars and idle times for tooltips
+
+
