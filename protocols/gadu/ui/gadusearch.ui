@@ -121,7 +121,7 @@
             </property>
             <property name="text">
                 <string>&lt;B&gt;Registration:&lt;/B&gt;
-Please enter here your current email address and the password, which you will use to log onto Gadu-Gadu server.</string>
+Enter here your current email address and the password which you will use to log on to the Gadu-Gadu server.</string>
             </property>
             <property name="textFormat">
                 <enum>RichText</enum>

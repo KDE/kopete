@@ -270,8 +270,8 @@ GaduProtocol::slotLogin()
 {
     if ( (userUin_ == 0) || password_.isEmpty() ) {
         KMessageBox::error( kopeteapp->mainWindow(),
-                            i18n("You have fill in uin and password fields in the preferences dialog before you'll be able to login"),
-                            i18n("Couldn't login") );
+                            i18n("You must fill in UIN and password fields in the preferences dialog before you can login"),
+                            i18n("Unable to Login") );
         return;
     }
     if ( !session_->isConnected() ) {
@@ -448,8 +448,8 @@ GaduProtocol::pong()
 void
 GaduProtocol::connectionFailed( struct gg_event* /*e*/ )
 {
-    KMessageBox::error( kopeteapp->mainWindow(), i18n("Plugin couldn't connect to the Gadu-Gadu server."),
-                        i18n("Connection error") );
+    KMessageBox::error( kopeteapp->mainWindow(), i18n("Plugin unable to connect to the Gadu-Gadu server."),
+                        i18n("Connection Error") );
 }
 
 void
