@@ -1,10 +1,10 @@
 /*
     kopetecontact.h - Kopete Contact
 
-	Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-	Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
 
-	Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -93,100 +93,105 @@ public:
 	KopeteContact( KopeteMetaContact *parent );
 	~KopeteContact();
 
-		/**
-		* set name of an KopeteContact
-		* This is the string that gets drawn in the listview
-		**/
-		virtual void setName( const QString &name );
-		/**
-		* Display name, known as nick
-		**/
-		virtual QString name() const;
-		/**
-		* return status of an KopeteContact
-		**/
-		virtual ContactStatus status() const;
-		/**
-		* The text describing the contact's status
-		* The default implement does what you'd expect,
-		* but you might want to reimplement it for more
-		* fine-grained reporting of status
-		**/
-		virtual QString statusText() const;
-		/**
-		* The name of the icon associated with the contact's status
-		**/
-		virtual QString statusIcon() const;
-		/**
-		* This method provides an scaled version of the status icon.
-		* useful for metacontacts, and it uses a primitive cache so
-		* we dont have to scale at every repaint, it asumes square.
-		**/
-		virtual QPixmap scaledStatusIcon(int size);
-		/**
-		* The "importance" of this contact, used for sorting
-		* This is almost always related to the contact's status
-		* Here is how ICQ does it:
-		* 25 = Free For Chat
-		* 20 = Online
-		* 15 = Away (temporary away)
-		* 10 = Not Available (extended away)
-		* 5 = Invisible
-		* 0 = Offline
-		*
-		* The default implementation returns 20 for Online,
-		* 10 for away, and 0 for offline
-		* Please make your importance values between 0 and 25,
-		* and try to follow ICQ's scheme somewhat
-		**/
-		virtual int importance() const;
-		/**
-		* This should typically pop up a KopeteChatWindow
-		**/
-		virtual void execute() {}
-		/**
-		* Show a context menu of actions pertaining to this contact
-		* I hate having the group parameter, but its used for when
-		* a contact can be in multiple groups and you have to move
-		* a specific instance from one group to another.
-		**/
-		virtual void showContextMenu( QPoint /* p */, QString /* group */ ) {}
+	/**
+	 * set name of an KopeteContact
+	 * This is the string that gets drawn in the listview
+	 */
+	void setDisplayName( const QString &name );
+	QString displayName() const;
 
-		/**
-		 * Return the unique id that identifies a contact. Id is required
-		 * to be unique per protocol and per identity. Across those boundaries
-		 * ids may occur multiple times.
-		 * The id is solely for comparing items safely (using pointers is
-		 * more crash-prone). DO NOT assume anything regarding the id's
-		 * value! Even if it may look like an ICQ UIN or an MSN passport,
-		 * this is undefined and may change at any time!
-		 */
-		QString id() const { return m_id; }
-		void setId( const QString &id ) { m_id = id; }
-		
-		/**
-		 * Return the protocol id that identifies a contact. Id is required
-		 * to be unique per protocol and per identity. Across those boundaries
-		 * ids may occur multiple times.
-		 * The id is solely for comparing items safely (using pointers is
-		 * more crash-prone). DO NOT assume anything regarding the id's
-		 * value! Even if it may look like an ICQ UIN or an MSN passport,
-		 * this is undefined and may change at any time!
-		 */
-		QString protocol() const { return m_protocolId; }
-		void setProtocol( const QString &id ) { m_protocolId = id; }
+	/**
+	 * return status of an KopeteContact
+	 */
+	virtual ContactStatus status() const;
 
-		/**
-		 * Return the protocol specific serialized data
-		 * that a plugin may want to store here.
-		 */
-		QString data() const { return m_data; }
-		void setData( const QString &data ) { m_data = data; }
+	/**
+	 * The text describing the contact's status
+	 * The default implement does what you'd expect,
+	 * but you might want to reimplement it for more
+	 * fine-grained reporting of status
+	 */
 
-		/**
-		 * Return a XML representation of the contact
-		 */
-		QString toXML();
+	virtual QString statusText() const;
+	/**
+	 * The name of the icon associated with the contact's status
+	 */
+
+	virtual QString statusIcon() const;
+
+	/**
+	 * This method provides an scaled version of the status icon.
+	 * useful for metacontacts, and it uses a primitive cache so
+	 * we dont have to scale at every repaint, it asumes square.
+	 */
+	virtual QPixmap scaledStatusIcon(int size);
+
+	/**
+	 * The "importance" of this contact, used for sorting
+	 * This is almost always related to the contact's status
+	 * Here is how ICQ does it:
+	 * 25 = Free For Chat
+	 * 20 = Online
+	 * 15 = Away (temporary away)
+	 * 10 = Not Available (extended away)
+	 * 5 = Invisible
+	 * 0 = Offline
+	 *
+	 * The default implementation returns 20 for Online,
+	 * 10 for away, and 0 for offline
+	 * Please make your importance values between 0 and 25,
+	 * and try to follow ICQ's scheme somewhat
+	 */
+	virtual int importance() const;
+
+	/**
+	 * This should typically pop up a KopeteChatWindow
+	 */
+	virtual void execute() = 0;
+
+	/**
+	 * Show a context menu of actions pertaining to this contact
+	 * I hate having the group parameter, but its used for when
+	 * a contact can be in multiple groups and you have to move
+	 * a specific instance from one group to another.
+	 */
+	virtual void showContextMenu( QPoint p, QString group ) = 0;
+
+	/**
+	 * Return the unique id that identifies a contact. Id is required
+	 * to be unique per protocol and per identity. Across those boundaries
+	 * ids may occur multiple times.
+	 * The id is solely for comparing items safely (using pointers is
+	 * more crash-prone). DO NOT assume anything regarding the id's
+	 * value! Even if it may look like an ICQ UIN or an MSN passport,
+	 * this is undefined and may change at any time!
+	 */
+	QString id() const;
+	void setId( const QString &id );
+
+	/**
+	 * Return the protocol id that identifies a contact. Id is required
+	 * to be unique per protocol and per identity. Across those boundaries
+	 * ids may occur multiple times.
+	 * The id is solely for comparing items safely (using pointers is
+	 * more crash-prone). DO NOT assume anything regarding the id's
+	 * value! Even if it may look like an ICQ UIN or an MSN passport,
+	 * this is undefined and may change at any time!
+	 */
+	QString protocol() const { return m_protocolId; }
+	void setProtocol( const QString &id ) { m_protocolId = id; }
+
+	/**
+	 * Return the protocol specific serialized data
+	 * that a plugin may want to store here.
+	 */
+	QString data() const { return m_data; }
+	void setData( const QString &data ) { m_data = data; }
+
+	/**
+	 * Return a XML representation of the contact
+	 */
+	QString toXML();
 
 signals:
 	/**
@@ -200,32 +205,33 @@ signals:
 	 */
 	void statusChanged();
 
-		/**
-		* Connect to this signal to know when the contact
-		* changed its name/nick
-		**/
-		void nameChanged(const QString &name);
-		/**
-		* This gets emitted usually when you receive a message from
-		* this contact.
-		**/
-		void incomingEvent(KopeteEvent *);
+	/**
+	 * Connect to this signal to know when the contact
+	 * changed its name/nick
+	 */
+	void displayNameChanged(const QString &name);
 
-	private:
-		QString m_name;
+	/**
+	 * This gets emitted usually when you receive a message from
+	 * this contact.
+	 */
+	void incomingEvent(KopeteEvent *);
 
-		QString m_id;
-		QString m_protocolId;
-		QString m_data;
+private:
+	QString m_displayName;
 
-		/**
-		* Scaled icon cache
-		*/
-		QPixmap m_cachedScaledIcon;
-		int m_cachedSize;
-		ContactStatus m_cachedOldStatus;
+	QString m_id;
+	QString m_protocolId;
+	QString m_data;
 
-		KopeteMetaContact *m_metaContact;
+	/**
+	 * Scaled icon cache
+	 */
+	QPixmap m_cachedScaledIcon;
+	int m_cachedSize;
+	ContactStatus m_cachedOldStatus;
+
+	KopeteMetaContact *m_metaContact;
 };
 
 #endif

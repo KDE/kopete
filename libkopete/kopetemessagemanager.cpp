@@ -135,7 +135,7 @@ void KopeteMessageManager::readMessages()
 			mChatWindow->raise();	// make it top window
 		for (KopeteMessageList::Iterator it = mMessageQueue.begin(); it != mMessageQueue.end(); it++)
 		{
-			kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from()->name() << endl;
+			kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from()->displayName() << endl;
 			mChatWindow->messageReceived(*it);
 		}
 		mChatWindow->show();	// show message window again
@@ -152,7 +152,7 @@ void KopeteMessageManager::readMessages()
 		if(KopetePrefs::prefs()->raiseMsgWindow())
 			mEmailWindow->raise();
 		for (KopeteMessageList::Iterator it = mMessageQueue.begin(); it != mMessageQueue.end(); it++) {
-			kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from()->name() << endl;
+			kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from()->displayName() << endl;
 			mEmailWindow->messageReceived(*it);
 		}
 		mEmailWindow->show();
@@ -266,7 +266,7 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg ) {
 		else { /* Bug, WHOOHOO! If a window's on another desktop, we queue regardless. Grrr. */
 			/* Create an event if a prevoius one not exist */
 			if ((mUnreadMessageEvent == 0L) && (msg.direction() == KopeteMessage::Inbound)) {
-		 		mUnreadMessageEvent = new KopeteEvent( i18n("Message from %1").arg(msg.from()->name()), "kopete/pics/newmsg.png", this, SLOT(slotReadMessages()));
+		 		mUnreadMessageEvent = new KopeteEvent( i18n("Message from %1").arg(msg.from()->displayName()), "kopete/pics/newmsg.png", this, SLOT(slotReadMessages()));
 				connect(mUnreadMessageEvent, SIGNAL(done(KopeteEvent *)), this, SLOT(slotEventDeleted(KopeteEvent *)));
 				kopeteapp->notifyEvent( mUnreadMessageEvent );
 			}

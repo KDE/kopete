@@ -193,7 +193,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			sendCommand( command + message, args + message, false );
 		}*/
 
-		QString contact = MSNProtocol::protocol()->contacts()[ m_msgHandle ]->nickname();
+		QString contact = MSNProtocol::protocol()->contacts()[ m_msgHandle ]->displayName();
 		QString message = i18n("%1 tried to send you a file.\nUnfortunately,"
 			" file transfer is currently not supported.\n").arg( contact );
 

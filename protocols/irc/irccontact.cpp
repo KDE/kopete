@@ -209,7 +209,7 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 	mContact->mProtocol->mConfig->writeEntry("Group", groupName);
 	mContact->mProtocol->mConfig->sync();
 
-	setName(QString("%1@%2").arg(target).arg(mServer));
+	setDisplayName(QString("%1@%2").arg(target).arg(mServer));
 
 	connect(mContact->engine, SIGNAL(connectionClosed()), this, SLOT(unloading()));
 

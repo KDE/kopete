@@ -48,7 +48,7 @@ YahooContact::YahooContact(QString userID, QString fullName, QString group,
 	mStatusText = "";
 
 	// Update ContactList
-    setName(mFullName);
+    setDisplayName(mFullName);
 	emit statusChanged();
 
     // XXX initActions();

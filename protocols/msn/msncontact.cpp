@@ -26,14 +26,14 @@
 #include "msnprotocol.h"
 
 // Constructor for no-groups
-MSNContact::MSNContact( const QString &msnId, const QString &nickname,
+MSNContact::MSNContact( const QString &msnId, const QString &displayName,
 	const QString &group, KopeteMetaContact *parent )
 	: KopeteContact( parent )
 {
-	initContact( msnId, nickname, group );
+	initContact( msnId, displayName, group );
 }
 
-void MSNContact::initContact( const QString &msnId, const QString &nickname,
+void MSNContact::initContact( const QString &msnId, const QString &displayName,
 	const QString &group )
 {
 	m_actionRemove = 0L;
@@ -54,7 +54,6 @@ void MSNContact::initContact( const QString &msnId, const QString &nickname,
 	historyDialog = 0L;
 
 	m_msnId = msnId;
-	m_nickname = nickname;
 	if( !group.isEmpty() )
 		m_groups = group;
 	hasLocalGroup = false;
@@ -63,13 +62,13 @@ void MSNContact::initContact( const QString &msnId, const QString &nickname,
 		MSNProtocol::protocol(),
 		SLOT( slotStartChatSession( QString ) ) );
 
-	setName( nickname );
+	setDisplayName( displayName );
 }
 
 void MSNContact::showContextMenu(QPoint point, QString /*group*/)
 {
 	KPopupMenu *popup = new KPopupMenu();
-	popup->insertTitle( i18n( "%1 (%2)" ).arg( name() ).arg( msnId() ) );
+	popup->insertTitle( i18n( "%1 (%2)" ).arg( displayName() ).arg( msnId() ) );
 
 	// Chat with user
 	if( !m_actionChat )
@@ -207,7 +206,7 @@ void MSNContact::slotViewHistory()
 	}
 	else
 	{
-		historyDialog = new KopeteHistoryDialog(QString("msn_logs/%1.log").arg(m_msnId), name(), true, 50, 0, "MSNHistoryDialog");
+		historyDialog = new KopeteHistoryDialog(QString("msn_logs/%1.log").arg(m_msnId), displayName(), true, 50, 0, "MSNHistoryDialog");
 
 		connect ( historyDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()) );
 		connect ( historyDialog, SIGNAL(destroyed()), this, SLOT(slotHistoryDialogClosing()) );
@@ -399,28 +398,6 @@ void MSNContact::setMsnId( const QString &id )
 	m_msnId = id;
 }
 
-QString MSNContact::nickname() const
-{
-	return m_nickname;
-}
-
-QString MSNContact::name() const
-{
-	if( m_blocked )
-		return i18n( "%1 (Blocked)" ).arg( nickname() );
-	else
-		return nickname();
-}
-
-void MSNContact::setNickname( const QString &nick )
-{
-	if( m_nickname != nick )
-	{
-		m_nickname = nick;
-		emit nameChanged( name() );
-	}
-}
-
 MSNProtocol::Status MSNContact::msnStatus() const
 {
 	return m_status;
@@ -435,9 +412,6 @@ void MSNContact::setMsnStatus( MSNProtocol::Status status )
 		" to " << status << endl;
 	m_status = status;
 
-	if( m_status == MSNProtocol::BLO )
-		setNickname( i18n( "%1 (Blocked)").arg( nickname() ) );
-
 	emit statusChanged( this, MSNContact::status() );
 }
 
@@ -451,7 +425,7 @@ void MSNContact::setBlocked( bool blocked )
 	if( m_blocked != blocked )
 	{
 		m_blocked = blocked;
-		emit nameChanged( name() );
+		emit statusChanged( this, MSNContact::status() );
 	}
 }
 

@@ -265,15 +265,15 @@ bool MSNProtocol::isAway(void) const
 KopeteContact* MSNProtocol::createContact( KopeteMetaContact *parent, const QString &serializedData )
 {
 	// FIXME: serializedData contains much more than just the passport and
-	// the nickname, but for now it hopefully suffices.
+	// the display name, but for now it hopefully suffices.
 
 	// FIXME: more error-proof deserialize would be useful :)
-	QStringList data = QStringList::split( ' ', serializedData );
-	QString passport = data[ 0 ].replace( QRegExp( "%20" ), " " );
-	QString nickname = data[ 1 ].replace( QRegExp( "%20" ), " " );
-	QString groups   = data[ 2 ].replace( QRegExp( "%20" ), " " );
+	QStringList data    = QStringList::split( ' ', serializedData );
+	QString passport    = data[ 0 ].replace( QRegExp( "%20" ), " " );
+	QString displayName = data[ 1 ].replace( QRegExp( "%20" ), " " );
+	QString groups      = data[ 2 ].replace( QRegExp( "%20" ), " " );
 
-	return new MSNContact( passport, nickname, QString::null, parent );
+	return new MSNContact( passport, displayName, QString::null, parent );
 }
 
 /** Get myself */
@@ -599,7 +599,7 @@ void MSNProtocol::moveContact( const MSNContact *c,
 
 	if( og != -1 && ng != -1 )
 	{
-		m_notifySocket->addContact( c->msnId(), c->nickname(), ng,
+		m_notifySocket->addContact( c->msnId(), c->displayName(), ng,
 			FL);
 		m_notifySocket->removeContact( c->msnId(), og, FL );
 	}
@@ -611,7 +611,7 @@ void MSNProtocol::copyContact( const MSNContact *c,
 	int g = groupNumber( newGroup );
 	if( g != -1 )
 	{
-		m_notifySocket->addContact( c->msnId(), c->nickname(), g,
+		m_notifySocket->addContact( c->msnId(), c->displayName(), g,
 			FL);
 	}
 }
@@ -760,7 +760,7 @@ void MSNProtocol::slotContactStatus( QString handle, QString publicName,
 	if( m_contacts.contains( handle ) )
 	{
 		m_contacts[ handle ]->setMsnStatus( convertStatus( status ) );
-		m_contacts[ handle ]->setNickname( publicName );
+		m_contacts[ handle ]->setDisplayName( publicName );
 	}
 }
 
@@ -773,7 +773,7 @@ void MSNProtocol::slotContactStatusChanged( const QString &handle,
 	if( m_contacts.contains( handle ) )
 	{
 		m_contacts[ handle ]->setMsnStatus( status );
-		m_contacts[ handle ]->setNickname( publicName );
+		m_contacts[ handle ]->setDisplayName( publicName );
 
 		if( status == FLN )
 		{
@@ -1047,7 +1047,7 @@ void MSNProtocol::slotExecute( QString userid )
 void MSNProtocol::slotMessageReceived( const KopeteMessage &msg )
 {
 	kdDebug() << "MSNProtocol::slotMessageReceived: Message received from " <<
-		msg.from()->name() << endl;
+		msg.from()->displayName() << endl;
 
 	KopeteContactPtrList chatmembers;
 
@@ -1074,7 +1074,7 @@ void MSNProtocol::slotMessageReceived( const KopeteMessage &msg )
 void MSNProtocol::slotMessageSent( const KopeteMessage msg )
 {
 	kdDebug() << "MSNProtocol::slotMessageSent: Message sent to " <<
-		msg.to().first()->name() << endl;
+		msg.to().first()->displayName() << endl;
 
 	KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
 		m_myself, msg.to(), this );
@@ -1200,9 +1200,9 @@ void MSNProtocol::slotChangePublicName()
 		if( name.contains( "msn", false ) )
 		{
 			KMessageBox::error( 0L,
-				i18n( "Sorry, but your nickname is "
+				i18n( "Sorry, but your display name is "
 					"not allowed to contain the text 'MSN'.\n"
-					"Your nickname has not been changed." ),
+					"Your display name has not been changed." ),
 				i18n( "Change Nickname - MSN Plugin - Kopete" ) );
 			return;
 		}

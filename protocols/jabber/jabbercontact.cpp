@@ -27,10 +27,10 @@
 #include "jabberprotocol.h"
 #include "jabcommon.h"
 
-JabberContact::JabberContact(QString userID, QString name, QString group, JabberProtocol *protocol) : KopeteContact(protocol) {
+JabberContact::JabberContact(QString userID, QString displayName(), QString group, JabberProtocol *protocol) : KopeteContact(protocol) {
     mProtocol = protocol;
-    if (name.isNull()) { name = userID; hasLocalName = false; }
-    setName(name);
+    if (displayName().isNull()) { name = userID; hasLocalName = false; }
+    setDisplayName(displayName());
     mGroup = group;
     mUserID = userID;
 	if (mGroup == QString("")) { hasLocalGroup = false; }
@@ -43,7 +43,7 @@ JabberContact::JabberContact(QString userID, QString name, QString group, Jabber
 
 	historyDialog = 0L;
 
-    initContact(userID, name);
+    initContact(userID, displayName());
 }
 
 void JabberContact::initContact(QString, QString)
@@ -82,7 +82,7 @@ void JabberContact::initActions() {
     actionRemove = KopeteStdAction::deleteContact(this, SLOT(slotRemoveThisUser()), this, "actionDelete");
     actionContactMove = KopeteStdAction::moveContact(this, SLOT(slotMoveThisUser()), this, "actionMove");
     actionHistory = KopeteStdAction::viewHistory(this, SLOT(slotViewHistory()), this, "actionHistory");
-    actionRename = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");
+    actionRedisplayName() = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");
 	actionSelectResource = new KSelectAction(i18n("Select Resource"), "selectresource", 0, this, SLOT(slotSelectResource()), this, "actionSelectResource");
 }
 
@@ -135,7 +135,7 @@ void JabberContact::showContextMenu(QPoint, QString)
 	popup->insertSeparator();
     actionHistory->plug(popup);
     popup->insertSeparator();
-    actionRename->plug(popup);
+    actionRedisplayName()->plug(popup);
     actionContactMove->plug(popup);
     actionRemoveFromGroup->plug(popup);
     actionRemove->plug(popup);
@@ -162,23 +162,23 @@ void JabberContact::slotUpdateContact(QString handle, QString resource, int newS
 	emit statusChanged( this, status() );
 }
 
-void JabberContact::slotRenameContact() {
+void JabberContact::slotRedisplayName()Contact() {
     kdDebug() << "[JabberContact] Renaming contact." << endl;
-    dlgRename = new dlgJabberRename;
-    dlgRename->lblUserID->setText(userID());
-    dlgRename->leNickname->setText(name());
-    connect(dlgRename->btnRename, SIGNAL(clicked()), this, SLOT(slotDoRenameContact()));
-    dlgRename->show();
+    dlgRedisplayName() = new dlgJabberRename;
+    dlgRedisplayName()->lblUserID->setText(userID());
+    dlgRedisplayName()->leNickname->setText(name());
+    connect(dlgRedisplayName()->btnRename, SIGNAL(clicked()), this, SLOT(slotDoRenameContact()));
+    dlgRedisplayName()->show();
 }
 
-void JabberContact::slotDoRenameContact() {
-	QString name = dlgRename->leNickname->text();
-	if (name == QString("")) { hasLocalName = false; name = mUserID; }
+void JabberContact::slotDoRedisplayName()Contact() {
+	QString displayName() = dlgRename->leNickname->text();
+	if (displayName() == QString("")) { hasLocalName = false; name = mUserID; }
 	else { hasLocalName = true; }
-	setName(name);
+	setDisplayName(displayName());
     
-	delete dlgRename;
-	mProtocol->renameContact(userID(), hasLocalName ? name : QString(""), hasLocalGroup ? mGroup : QString(""));
+	delete dlgRedisplayName();
+	mProtocol->redisplayName()Contact(userID(), hasLocalName ? name : QString(""), hasLocalGroup ? mGroup : QString(""));
 }
 
 void JabberContact::slotDeleteMySelf(bool) {
@@ -256,7 +256,7 @@ void JabberContact::slotMoveThisUser() {
 	else {
 		hasLocalGroup = true;
 	}
-	mProtocol->moveUser(userID(), mGroup, name(), this);
+	mProtocol->moveUser(userID(), mGroup, displayName()(), this);
 }
 
 int JabberContact::importance() const {
@@ -320,7 +320,7 @@ void JabberContact::slotNewMessage(const JabMessage &message) {
 
 void JabberContact::slotViewHistory() {
     if (historyDialog == 0L) {
-		historyDialog = new KopeteHistoryDialog(QString("jabber_logs/%1.log").arg(userID()), name(), true, 50, 0, "JabberHistoryDialog");
+		historyDialog = new KopeteHistoryDialog(QString("jabber_logs/%1.log").arg(userID()), displayName()(), true, 50, 0, "JabberHistoryDialog");
 		connect(historyDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()));
     }
 }
@@ -371,7 +371,7 @@ void JabberContact::slotResourceAvailable(const Jid &jid, const JabResource &res
 	QString theirJID = QString("%1@%2").arg(jid.user(), 1).arg(jid.host(), 2);
 //	kdDebug() << "[JabberContact] New resource - they want " << theirJID << ", we're " << userID() << endl;
 	if (theirJID != userID()) { return; }
-	kdDebug() << "[JabberContact] Adding new resource '" << resource.name << "' for " << userID() << endl;
+	kdDebug() << "[JabberContact] Adding new resource '" << resource.displayName() << "' for " << userID() << endl;
 	for (JabberResource *tmpResource = resources.first(); tmpResource; tmpResource = resources.next()) {
 //		msgManager()->removeResource(this, tmpResource->resource());
 		if (tmpResource->resource() == jid.resource()) {
@@ -385,7 +385,7 @@ void JabberContact::slotResourceAvailable(const Jid &jid, const JabResource &res
 			resources.remove();
 		}
 	}
-	JabberResource *newResource = new JabberResource(resource.name, resource.priority, resource.timeStamp, resource.status, resource.statusString);
+	JabberResource *newResource = new JabberResource(resource.displayName(), resource.priority, resource.timeStamp, resource.status, resource.statusString);
 	resources.append(newResource);
 	JabberResource *tmpBestResource = bestResource();
 	kdDebug() << "[JabberContact] Best resource is now " << tmpBestResource->resource() << "." << endl;
@@ -481,7 +481,7 @@ JabberResource *JabberContact::bestResource() {
 }
 
 void JabberContact::slotRemoveFromGroup() {
-	mProtocol->moveUser(userID(), mGroup = QString(""), name(), this);
+	mProtocol->moveUser(userID(), mGroup = QString(""), displayName()(), this);
 	hasLocalGroup = false;
 }
 

@@ -37,10 +37,10 @@ class MSNContact : public KopeteContact
 	Q_OBJECT
 
 public:
-	MSNContact( const QString &msnId, const QString &nickname,
+	MSNContact( const QString &msnId, const QString &displayName,
 				const QString &group, KopeteMetaContact *parent );
 
-	void initContact( const QString &msnId, const QString &nickname,
+	void initContact( const QString &msnId, const QString &displayName,
 						const QString &group );
 	virtual void showContextMenu(QPoint, QString group);
 	virtual void execute();
@@ -55,20 +55,6 @@ public:
 	 */
 	QString msnId() const;
 	void setMsnId( const QString &id );
-
-	/**
-	 * The nickname of this user as known to MSN. By default this is also
-	 * the name as displayed in the contact list, but the user may want to
-	 * rename contacts locally, in which case there is an obvious difference.
-	 */
-	QString nickname() const;
-	void setNickname( const QString &nick );
-
-	/**
-	 * Return nickname for now, but with 'blocked' appended for blocked
-	 * contacts
-	 */
-	virtual QString name() const;
 
 	/**
 	 * Indicate whether this contact is blocked
@@ -130,7 +116,6 @@ private slots:
 
 private:
 	QString m_msnId;
-	QString m_nickname;
 	QStringList m_groups;
 	bool hasLocalGroup;
 

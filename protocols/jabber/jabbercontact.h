@@ -18,36 +18,35 @@
 #ifndef JABBERCONTACT_H
 #define JABBERCONTACT_H
 
-#include "kopetecontact.h"
-#include "jabberprotocol.h"
-#include "kopetemessagemanagerfactory.h"
-#include "kopetemessagemanager.h"
-#include "kopetehistorydialog.h"
-#include "dlgrename.h"
-#include "jabcommon.h"
-#include "kopetemessage.h"
-
-#include <kopete.h>
-#include <contactlist.h>
-
-#include <qvaluestack.h>
+#include <qcursor.h>
 #include <qlabel.h>
 #include <qlineedit.h>
-#include <qcursor.h>
 #include <qptrlist.h>
+#include <qvaluestack.h>
 
+#include "kopete.h"
+#include "kopetecontact.h"
+#include "kopetecontactlist.h"
+#include "kopetehistorydialog.h"
+#include "kopetemessage.h"
+#include "kopetemessagemanager.h"
+#include "kopetemessagemanagerfactory.h"
 
-class QTimer;
-class QPixmap;
+#include "dlgrename.h"
+#include "jabberprotocol.h"
+#include "jabcommon.h"
+
 class QListView;
 class QListViewItem;
-class KPopupMenu;
+class QPixmap;
+class QTimer;
+
 class KAction;
 class KListAction;
+class KPopupMenu;
 
 class JabberProtocol;
 class JabberResource;
-
 
 class JabberContact:public KopeteContact {
   Q_OBJECT

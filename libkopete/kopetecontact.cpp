@@ -39,16 +39,15 @@ KopeteContact::~KopeteContact()
 {
 }
 
-
-void KopeteContact::setName( const QString &name )
+void KopeteContact::setDisplayName( const QString &name )
 {
-	m_name = name;
-	emit nameChanged(name);
+	m_displayName = name;
+	emit displayNameChanged( name );
 }
 
-QString KopeteContact::name() const
+QString KopeteContact::displayName() const
 {
-	return m_name;
+	return m_displayName;
 }
 
 KopeteContact::ContactStatus KopeteContact::status() const
@@ -83,15 +82,15 @@ QString KopeteContact::toXML()
 	kdDebug() << "KC: " << m_id << endl;
 	kdDebug() << "KC: " << m_protocolId << endl;
 
-    if ( ! m_id.isNull() && ! m_protocolId.isNull() )
+	if ( ! m_id.isNull() && ! m_protocolId.isNull() )
 	{
-    	xml = xml + " id=\"" + m_id + "\"";
+		xml = xml + " id=\"" + m_id + "\"";
 		xml = xml + " protocol=\"" + m_protocolId + "\"";
-        
-		if ( ! m_name.isNull() )
-			xml = xml + " name=\"" + m_name + "\"";
+
+		if ( ! m_displayName.isNull() )
+			xml = xml + " name=\"" + m_displayName + "\"";
 		if ( ! m_data.isNull() )
-			xml = xml + " data=\"" + m_data + "\"";						
+			xml = xml + " data=\"" + m_data + "\"";
 	}
 	else
 	{
@@ -164,6 +163,16 @@ void KopeteContact::moveToGroup( const QString & /* from */,
 {
 	kdDebug() << "KopeteContact::moveToGroup: WARNING: "
 		<< "Default implementation called! Function not implemented?" << endl;
+}
+
+QString KopeteContact::id() const
+{
+	return m_id;
+}
+
+void KopeteContact::setId( const QString &id )
+{
+	m_id = id;
 }
 
 #include "kopetecontact.moc"
