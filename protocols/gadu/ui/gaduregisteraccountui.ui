@@ -1,6 +1,6 @@
 <!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>GaduRegisterAccountUI</class>
-<widget class="QDialog">
+<widget class="QWidget">
     <property name="name">
         <cstring>GaduRegisterAccountUI</cstring>
     </property>
@@ -8,53 +8,18 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>315</width>
-            <height>279</height>
+            <width>332</width>
+            <height>302</height>
         </rect>
     </property>
-    <property name="sizePolicy">
-        <sizepolicy>
-            <hsizetype>7</hsizetype>
-            <vsizetype>7</vsizetype>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-        </sizepolicy>
-    </property>
-    <property name="minimumSize">
-        <size>
-            <width>0</width>
-            <height>0</height>
-        </size>
-    </property>
-    <property name="maximumSize">
-        <size>
-            <width>32767</width>
-            <height>32767</height>
-        </size>
-    </property>
-    <property name="baseSize">
-        <size>
-            <width>500</width>
-            <height>500</height>
-        </size>
-    </property>
     <property name="caption">
-        <string>New Account Registration Form</string>
+        <string>Register New Gadu-Gadu Account</string>
     </property>
-    <property name="modal">
-        <bool>false</bool>
-    </property>
-    <vbox>
+    <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <property name="spacing">
-            <number>6</number>
-        </property>
-        <widget class="QLayoutWidget">
+        <widget class="QLayoutWidget" row="0" column="0">
             <property name="name">
                 <cstring>layout10</cstring>
             </property>
@@ -181,7 +146,7 @@ nt.</string>
                 </widget>
             </hbox>
         </widget>
-        <widget class="QLabel">
+        <widget class="QLabel" row="1" column="0">
             <property name="name">
                 <cstring>textLabel1</cstring>
             </property>
@@ -190,7 +155,7 @@ nt.</string>
 This is required to register new account.&lt;/i&gt;&lt;/p&gt;</string>
             </property>
         </widget>
-        <widget class="QLayoutWidget">
+        <widget class="QLayoutWidget" row="2" column="0">
             <property name="name">
                 <cstring>layout277</cstring>
             </property>
@@ -299,7 +264,7 @@ This is required to register new account.&lt;/i&gt;&lt;/p&gt;</string>
                 </spacer>
             </hbox>
         </widget>
-        <spacer>
+        <spacer row="3" column="0">
             <property name="name">
                 <cstring>spacer5</cstring>
             </property>
@@ -312,11 +277,11 @@ This is required to register new account.&lt;/i&gt;&lt;/p&gt;</string>
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>16</height>
+                    <height>54</height>
                 </size>
             </property>
         </spacer>
-    </vbox>
+    </grid>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
