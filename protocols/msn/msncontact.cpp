@@ -205,7 +205,7 @@ void MSNContact::slotBlockUser()
 	if( isBlocked() )
 		MSNProtocol::protocol()->contactUnBlock( m_msnId );
 	else
-		MSNProtocol::protocol()->slotBlockContact( m_msnId );
+		MSNProtocol::protocol()->blockContact( m_msnId );
 }
 
 void MSNContact::slotViewHistory()

@@ -66,7 +66,6 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	m_status = FLN;
 	mIsConnected = false;
 	m_serial = 0;
-	m_silent = false;
 	m_notifySocket = 0L;
 
 	m_identity = new MSNIdentity( this, "m_identity" );
@@ -606,6 +605,11 @@ void MSNProtocol::slotAddContact( QString handle )
 }
 
 void MSNProtocol::slotBlockContact( QString handle ) const
+{
+	blockContact( handle );
+}
+
+void MSNProtocol::blockContact( QString handle ) const
 {
 	m_notifySocket->removeContact( handle, 0, AL);
 	m_notifySocket->addContact( handle, handle, 0, BL );

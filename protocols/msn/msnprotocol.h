@@ -156,11 +156,6 @@ public:
 
 	QStringList groups() const;
 
-	void setSilent( bool s ) { m_silent = s; }
-	bool isSilent() { return m_silent; }
-
-	//QString msnId() const { return m_msnId; }
-
 	QString publicName() const { return m_publicName; }
 	/**
 	 * change the publicName to this new name
@@ -174,15 +169,13 @@ public:
 
 	const ContactList& contacts() const { return m_contacts; }
 
-public slots:
-	void slotSyncContactList();
+	void blockContact( QString passport ) const;
 
-	void slotIconRightClicked( const QPoint& );
+signals:
+	void protocolUnloading();
+	void settingsChanged( void );
 
-	void slotOnlineStatusChanged( MSNSocket::OnlineStatus );
-
-	void slotStateChanged( QString status );
-
+private slots:
 	/**
 	 * The publicName has successful changed
 	 * This is an anwser from setMyPublicName
@@ -192,13 +185,16 @@ public slots:
 	// Add a Contact
 	void slotAddContact( QString );
 	// Block a Contact
-	void slotBlockContact(QString) const;
+	void slotBlockContact( QString passport ) const;
 
-signals:
-	void protocolUnloading();
-	void settingsChanged( void );
+	void slotSyncContactList();
 
-private slots:
+	void slotIconRightClicked( const QPoint& );
+
+	void slotOnlineStatusChanged( MSNSocket::OnlineStatus );
+
+	void slotStateChanged( QString status );
+
 	void slotGoOnline();
 	void slotGoOffline();
 	void slotGoAway();
