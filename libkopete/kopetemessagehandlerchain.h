@@ -20,23 +20,26 @@
 #include <qobject.h>
 #include <kdemacros.h>
 #include <ksharedptr.h>
-
 #include "kopetemessage.h"
+#include "kopetetask.h"
 
 namespace Kopete
 {
 
+class MessageEvent;
 class MessageHandler;
+class ProcessMessageTask;
 
 /**
  * @brief A chain of message handlers; the processing layer between protocol and chat view
- * @author Richard Smith       <kde@metafoo.co.uk>
  *
  * This class represents a chain of connected message handlers.
  *
  * This class is the client of the chain of responsibility formed by the
  * MessageHandlers, and acts as a facade for that chain, presenting a
  * more convenient interface.
+ * 
+ * @author Richard Smith       <kde@metafoo.co.uk>
  */
 class MessageHandlerChain : public QObject, private KShared
 {
@@ -51,13 +54,37 @@ public:
 	 */
 	static Ptr create( MessageManager *manager, Message::MessageDirection direction );
 
-	void processMessage( const Message &message );
+	ProcessMessageTask *processMessage( const Message &message );
 	int capabilities();
 	
 private:
 	MessageHandlerChain();
 	~MessageHandlerChain();
 	
+	friend class ProcessMessageTask;
+	class Private;
+	Private *d;
+};
+
+/**
+ * @brief A task for processing a message
+ * @author Richard Smith       <kde@metafoo.co.uk>
+ */
+class ProcessMessageTask : public Task
+{
+	Q_OBJECT
+public:
+	MessageEvent *event();
+	
+private slots:
+	void slotStart();
+	void slotDone();
+	
+private:
+	ProcessMessageTask(MessageHandlerChain::Ptr, MessageEvent *event);
+	~ProcessMessageTask();
+	
+	friend class MessageHandlerChain;
 	class Private;
 	Private *d;
 };

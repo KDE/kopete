@@ -21,17 +21,11 @@
 #include <kdebug.h>
 
 #include <qmap.h>
+#include <qtimer.h>
 #include <qvaluelist.h>
 
 namespace Kopete
 {
-
-class MessageHandlerChain::Private
-{
-public:
-	Private() : first(0) {}
-	MessageHandler *first;
-};
 
 class MessageHandlerChainTerminator : public MessageHandler
 {
@@ -45,6 +39,15 @@ public:
 		kdError( 14010 ) << k_funcinfo << "request got to end of chain!" << endl;
 		return 0;
 	}
+};
+
+// BEGIN MessageHandlerChain
+
+class MessageHandlerChain::Private
+{
+public:
+	Private() : first(0) {}
+	MessageHandler *first;
 };
 
 MessageHandlerChain::Ptr MessageHandlerChain::create( MessageManager *manager, Message::MessageDirection direction )
@@ -118,16 +121,57 @@ MessageHandlerChain::~MessageHandlerChain()
 }
 
 
-void MessageHandlerChain::processMessage( const Message &message )
+ProcessMessageTask *MessageHandlerChain::processMessage( const Message &message )
 {
 	MessageEvent *event = new MessageEvent( message );
-	d->first->handleMessage( event );
+	return new ProcessMessageTask( this, event );
 }
 
 int MessageHandlerChain::capabilities()
 {
 	return d->first->capabilities();
 }
+
+// END MessageHandlerChain
+
+// BEGIN ProcessMessageTask
+
+class ProcessMessageTask::Private
+{
+public:
+	Private( MessageHandlerChain::Ptr chain, MessageEvent *event ) : chain(chain), event(event) {}
+	MessageHandlerChain::Ptr chain;
+	MessageEvent *event;
+};
+
+ProcessMessageTask::ProcessMessageTask( MessageHandlerChain::Ptr chain, MessageEvent *event )
+ : d( new Private(chain, event) )
+{
+	QTimer::singleShot( 0, this, SLOT( slotStart() ) );
+	connect( event, SIGNAL( done( Kopete::MessageEvent* ) ), this, SLOT( slotDone() ) );
+}
+
+ProcessMessageTask::~ProcessMessageTask()
+{
+	delete d;
+}
+
+void ProcessMessageTask::slotStart()
+{
+	d->chain->d->first->handleMessage( d->event );
+}
+
+void ProcessMessageTask::slotDone()
+{
+	emitResult();
+}
+
+MessageEvent *ProcessMessageTask::event()
+{
+	return d->event;
+}
+
+//END ProcessMessageTask
 
 }
 
