@@ -222,6 +222,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 
 	m_contactManager = new IRCContactManager(mNickName, this);
 	setMyself( m_contactManager->mySelf() );
+	setAccountLabel(networkName);
 	m_myServer = m_contactManager->myServer();
 }
 
@@ -256,6 +257,7 @@ void IRCAccount::slotNickInUseAlert( const QString &nick )
 void IRCAccount::setAltNick( const QString &altNick )
 {
 	configGroup()->writeEntry(QString::fromLatin1( "altNick" ), altNick);
+	configGroup()->sync();
 }
 
 const QString IRCAccount::altNick() const
@@ -275,6 +277,7 @@ void IRCAccount::setUserName( const QString &userName )
 {
 	m_engine->setUserName(userName);
 	configGroup()->writeEntry(CONFIG_USERNAME, userName);
+	configGroup()->sync();
 }
 
 const QString IRCAccount::userName() const
@@ -286,6 +289,7 @@ void IRCAccount::setRealName( const QString &userName )
 {
 	m_engine->setRealName(userName);
 	configGroup()->writeEntry(CONFIG_REALNAME, userName);
+	configGroup()->sync();
 }
 
 const QString IRCAccount::realName() const
@@ -300,6 +304,8 @@ void IRCAccount::setNetwork( const QString &network )
 	{
 		m_network = net;
 		configGroup()->writeEntry(CONFIG_NETWORKNAME, network);
+		configGroup()->sync();
+		setAccountLabel(network);
 	}
 	else
 	{
@@ -315,6 +321,8 @@ void IRCAccount::setNickName( const QString &nick )
 {
 	mNickName = nick;
 	configGroup()->writeEntry(CONFIG_NICKNAME, mNickName);
+	configGroup()->sync();
+
 	if( mySelf() )
 		mySelf()->setNickName( mNickName );
 }
@@ -324,6 +332,8 @@ void IRCAccount::setCodec( QTextCodec *codec )
 {
 	mCodec = codec;
 	configGroup()->writeEntry(CONFIG_CODECMIB, codec->mibEnum());
+	configGroup()->sync();
+
 	if( mCodec )
 		m_engine->setDefaultCodec( mCodec );
 }
@@ -337,12 +347,14 @@ QTextCodec *IRCAccount::codec() const
 void IRCAccount::setDefaultPart( const QString &defaultPart )
 {
 	configGroup()->writeEntry( QString::fromLatin1( "defaultPart" ), defaultPart );
+	configGroup()->sync();
 }
 
 // FIXME: Move this to a dictionnary
 void IRCAccount::setDefaultQuit( const QString &defaultQuit )
 {
 	configGroup()->writeEntry( QString::fromLatin1( "defaultQuit" ), defaultQuit );
+	configGroup()->sync();
 }
 
 // FIXME: Move this to a dictionnary

@@ -232,7 +232,6 @@ Kopete::Account *IRCEditAccountWidget::apply()
 	{
 		setAccount( new IRCAccount( mProtocol, generateAccountId(networkName) ) );
 
-		account()->setNetwork( networkName );
 	}
 
 	mPasswordWidget->save( &account()->password() );
@@ -241,7 +240,7 @@ Kopete::Account *IRCEditAccountWidget::apply()
 	account()->setAltNick( mAltNickname->text() );
 	account()->setUserName( mUserName->text() );
 	account()->setRealName( m_realNameLineEdit->text() );
-
+	account()->setNetwork( networkName );
 	account()->setDefaultPart( partMessage->text() );
 	account()->setDefaultQuit( quitMessage->text() );
 	account()->setExcludeConnect( autoConnect->isChecked() );

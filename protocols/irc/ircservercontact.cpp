@@ -73,6 +73,8 @@ void IRCServerContact::updateStatus()
 	{
 		case KIRC::Engine::Idle:
 		case KIRC::Engine::Connecting:
+			if( m_chatSession )
+				m_chatSession->setDisplayName( caption() );
 			setOnlineStatus( m_protocol->m_ServerStatusOffline );
 			break;
 
@@ -90,7 +92,7 @@ void IRCServerContact::updateStatus()
 
 const QString IRCServerContact::caption() const
 {
-	return i18n("%1 @ %2").arg(ircAccount()->mySelf()->nickName()).arg(kircEngine()->currentHost());
+	return i18n("%1 @ %2").arg(ircAccount()->mySelf()->nickName() ).arg( kircEngine()->currentHost() );
 }
 
 void IRCServerContact::engineInternalError(KIRC::Engine::Error engineError, KIRC::Message &ircmsg)

@@ -130,7 +130,7 @@ Kopete::ChatSession *IRCContact::manager(Kopete::Contact::CanCreateFlags canCrea
 
 	if (canCreate == Kopete::Contact::CanCreate && !m_chatSession)
 	{
-		if (engine->status() == KIRC::Engine::Idle)
+		if( engine->status() == KIRC::Engine::Idle && dynamic_cast<IRCServerContact*>(this) == 0 )
 			account->connect();
 
 		m_chatSession = Kopete::ChatSessionManager::self()->create(account->myself(), mMyself, account->protocol());
