@@ -789,7 +789,7 @@ void ChatView::slotTextChanged()
 {
 	QString txt = m_edit->text();
 	txt = txt.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null ).stripWhiteSpace();
-	m_mainWindow->setSendEnabled( txt.isEmpty() );
+	m_mainWindow->setSendEnabled( !txt.isEmpty() );
 
 	// And they were previously typing
 	if( !m_typingRepeatTimer->isActive() )
