@@ -18,6 +18,7 @@
 #include "jabbermessagemanager.h"
 
 #include <qptrlist.h>
+#include <kconfig.h>
 #include <klocale.h>
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteview.h"
@@ -64,10 +65,12 @@ void JabberChatSession::updateDisplayName ()
 	if ( !mResource.isEmpty () )
 		jid.setResource ( mResource );
 
+	QString statusText = i18n("a contact's online status in parenthesis.", " (%1)")
+							.arg( chatMembers.first()->onlineStatus().description() );
 	if ( jid.resource().isEmpty () )
-		setDisplayName ( chatMembers.first()->metaContact()->displayName () );
+		setDisplayName ( chatMembers.first()->metaContact()->displayName () + statusText );
 	else
-		setDisplayName ( chatMembers.first()->metaContact()->displayName () + "/" + jid.resource () );
+		setDisplayName ( chatMembers.first()->metaContact()->displayName () + "/" + jid.resource () + statusText );
 
 }
 
@@ -120,7 +123,7 @@ void JabberChatSession::slotSendTypingNotification ( bool typing )
 
 		// create JID for us as sender
 		XMPP::Jid fromJid ( myself()->contactId () );
-		fromJid.setResource ( account()->pluginData ( protocol (), "Resource" ) );
+		fromJid.setResource ( account()->configGroup()->readEntry( "Resource", QString::null ) );
 
 		// create JID for the recipient
 		XMPP::Jid toJid ( contact->contactId () );
@@ -153,7 +156,7 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 		Kopete::Contact *recipient = message.to().first ();
 
 		XMPP::Jid jid ( message.from()->contactId () );
-		jid.setResource ( account()->pluginData ( protocol (), "Resource" ) );
+		jid.setResource ( account()->configGroup()->readEntry( "Resource", QString::null ) );
 		jabberMessage.setFrom ( jid );
 
 		XMPP::Jid toJid ( recipient->contactId () );
@@ -227,3 +230,4 @@ void JabberChatSession::slotMessageSent ( Kopete::Message &message, Kopete::Chat
 #include "jabbermessagemanager.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
+// kate: tab-width 4; replace-tabs off; space-indent off;
