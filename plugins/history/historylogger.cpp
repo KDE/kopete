@@ -252,27 +252,27 @@ void HistoryLogger::appendMessage( const Kopete::Message &msg , const Kopete::Co
 	docElem.appendChild( msgElem );
 	msgElem.appendChild( msgNode );
 
-	
+
 	// I'm temporizing the save.
 	// On hight-traffic channel, saving can take lots of CPU. (because the file is big)
 	// So i wait a time proportional to the time needed to save..
-	
+
 	const QString filename=getFileName(c,0);
 	if(!m_toSaveFileName.isEmpty() && m_toSaveFileName != filename)
 	{ //that mean the contact or the month has changed, save it now.
 		saveToDisk();
 	}
-	
+
 	m_toSaveFileName=filename;
 	m_toSaveDocument=doc;
-	
+
 	if(!m_saveTimer)
 	{
 		m_saveTimer=new QTimer(this);
 		connect( m_saveTimer, SIGNAL( timeout() ) , this, SLOT(saveToDisk()) );
 	}
 	if(!m_saveTimer->isActive())
-		m_saveTimer->start( m_saveTimerTime, true /*singleshot*/ ); 
+		m_saveTimer->start( m_saveTimerTime, true /*singleshot*/ );
 }
 
 void HistoryLogger::saveToDisk()
@@ -281,7 +281,7 @@ void HistoryLogger::saveToDisk()
 		m_saveTimer->stop();
 	if(m_toSaveFileName.isEmpty() || m_toSaveDocument.isNull())
 		return;
-		
+
 	QTime t;
 	t.start(); //mesure the time needed to save.
 
@@ -292,20 +292,20 @@ void HistoryLogger::saveToDisk()
 		//stream->setEncoding( QTextStream::UnicodeUTF8 ); //???? oui ou non?
 		m_toSaveDocument.save( *stream, 1 );
 		file.close();
-		
-		m_saveTimerTime=QMIN(t.elapsed()*1000, 300000); 
+
+		m_saveTimerTime=QMIN(t.elapsed()*1000, 300000);
 		    //a time 1000 times supperior to the time needed to save.  but with a upper limit of 5 minutes
-		//on a my machine, (2.4Ghz, but old HD) it should take about 10 ms to save the file. 
+		//on a my machine, (2.4Ghz, but old HD) it should take about 10 ms to save the file.
 		// So that would mean save every 10 seconds, which seems to be ok.
 		// But it may take 500 ms if the file to save becomes too big (1Mb).
 		kdDebug(14310) << k_funcinfo << m_toSaveFileName << " saved in " << t.elapsed() << " ms " <<endl ;
-		
+
 		m_toSaveFileName=QString::null;
 		m_toSaveDocument=QDomDocument();
 	}
 	else
 		kdError(14310) << k_funcinfo << "impossible to save the history file " << m_toSaveFileName << endl;
-	
+
 }
 
 QValueList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
@@ -493,9 +493,19 @@ QValueList<Kopete::Message> HistoryLogger::readMessages(unsigned int lines,
 
 					Kopete::Message msg(timestamp, from, to, msgElem.text(), dir);
 					if (colorize)
-						msg.setFg(fgColor);
-						
-					msg.setBody( "<span title=\"" + timestamp.toString(Qt::LocalDate) + "\">" + msg.escapedBody() +"</span>" , Kopete::Message::RichText );
+					{
+						msg.setBody( QString::fromLatin1("<span style=\"color:%1\" title=\"%2\">%3</span>")
+							.arg( fgColor.name(), timestamp.toString(Qt::LocalDate), msg.escapedBody() ),
+							Kopete::Message::RichText
+						);
+					}
+					else
+					{
+						msg.setBody( QString::fromLatin1("<span title=\"%1\">%2</span>")
+							.arg( timestamp.toString(Qt::LocalDate), msg.escapedBody() ),
+							Kopete::Message::RichText
+						);
+					}
 
 					if(reverseOrder)
 						messages.prepend(msg);
@@ -606,7 +616,7 @@ unsigned int HistoryLogger::getFirstMonth(const Kopete::Contact *c)
 		{
 			rx.search(fi->fileName());
 			int result = 12*(QDate::currentDate().year() - rx.cap(1).toUInt()) +QDate::currentDate().month() - rx.cap(2).toUInt();
-			
+
 			if(result < 0)
 			{
 				kdWarning(14310) << k_funcinfo << "Kopete only found log file from Kopete 0.7.x made in the future. Check your date!" << endl;
