@@ -288,6 +288,14 @@ void KopeteProtocol::slotRefreshStatusIcon()
 		emit( statusIconChanged( m_status ) );
 	}
 }
+void KopeteProtocol::setStatusIcon( const QString &icon )
+{
+	if( icon != m_statusIcon )
+	{
+		m_statusIcon = icon;
+		emit( statusIconChanged( m_status ) );
+	}
+}
 
 #include "kopeteprotocol.moc"
 

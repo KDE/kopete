@@ -15,10 +15,15 @@
     *************************************************************************
 */
 
+#include <kmessagebox.h>
+#include <klocale.h>
+
 #include "kopeteiface.h"
 #include "kopetecontactlist.h"
 #include "kopetecontact.h"
 #include "kopetemessage.h"
+#include "kopeteaccount.h"
+#include "kopeteaccountmanager.h"
 
 
 KopeteIface::KopeteIface() : DCOPObject( "KopeteIface" )
@@ -76,7 +81,40 @@ void KopeteIface::sendFile(const QString &displayName, const KURL &sourceURL,
 bool KopeteIface::addContact( const QString &protocolName, const QString &accountId, const QString &contactId,
 	const QString &displayName, const QString &groupName )
 {
-	return KopeteContactList::contactList()->dcopAddContact( protocolName, accountId, contactId, displayName, 0L, groupName );
+		//Get the protocol instance
+	KopeteAccount *myAccount = KopeteAccountManager::manager()->findAccount( protocolName, accountId );
+
+	if( myAccount )
+	{
+		QString contactName;
+
+		//If the nickName isn't specified we need to display the userId in the prompt
+		if( displayName.isEmpty() || displayName.isNull() )
+			contactName = contactId;
+		else
+			contactName = displayName;
+
+		//Confirm with the user before we add the contact
+		if( KMessageBox::questionYesNo( 0, i18n("An external application is attempting to add the "
+				" %1 contact \"%2\" to your contact list. Do you want to allow this?"
+				).arg(protocolName).arg(contactName), i18n("Allow contact?")) == 3) // Yes == 3
+		{
+			//User said Yes
+			myAccount->addContact( contactId, displayName, 0L, groupName, false );
+			return true;
+		} else {
+			//User said No
+			return false;
+		}
+
+	} else {
+		//This protocol is not loaded
+		KMessageBox::error( 0, i18n("An external application has attempted to add a contact using "
+				" the %1 protocol, which either does not exist or is not loaded.").arg( protocolName ),
+				i18n("Missing Protocol"));
+
+		return false;
+	}
 }
 
 
