@@ -454,9 +454,13 @@ class OscarSocket : public OscarConnection
 		void sendCLI_METASETGENERAL(ICQGeneralUserInfo &i);
 
 	public slots:
-		/** This is called when a connection is established */
-		void OnConnect();
-		/** This function is called when there is data to be read */
+		/*
+		 * This is called when a connection is established
+		 */
+		void slotConnected();
+		/*
+		 * This function is called when there is data to be read from the socket
+		 */
 		virtual void slotRead();
 
 	private:
@@ -626,10 +630,13 @@ class OscarSocket : public OscarConnection
 	/** Returns the appropriate server socket, based on the capability flag it is passed. */
 	OncomingSocket * serverSocket(DWORD capflag);
 
+	// parse DISCONNECT messages on channel 4, ICQ specific
+	void parseConnectionClosed(Buffer &inbuf);
+
 	/*
 	 * send a CLI_TOICQSRV with subcommand and DATA supplied in data
 	 * returns the sequence sent out with the packet
-		* incoming server replies will have the same sequence!
+	 * incoming server replies will have the same sequence!
 	 */
 	WORD sendCLI_TOICQSRV(const WORD subcommand, Buffer &data);
 
@@ -638,7 +645,7 @@ class OscarSocket : public OscarConnection
 
 	private slots:
 	/** Called when a connection has been closed */
-	void OnConnectionClosed();
+	void slotConnectionClosed();
 	/** Called when the server aknowledges the connection */
 	void OnConnAckReceived();
 	/** called when a conn ack is received for the BOS connection */
@@ -743,13 +750,13 @@ class OscarSocket : public OscarConnection
 		  */
 		unsigned long loginStatus;
 
-		/** The authorization cookie */
+		// The authorization cookie
 		char * mCookie;
-		/** ip address of the bos server */
+		// The length of the cookie
+		WORD mCookieLength;
+		// ip address of the bos server
 		QString bosServer;
-		/** The length of the cookie */
-		WORD cookielen;
-		/** The port of the bos server */
+		// The port of the bos server
 		int bosPort;
 		/** Stores rate class information */
 		QPtrList<RateClass> rateClasses;

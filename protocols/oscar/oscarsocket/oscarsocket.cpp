@@ -158,7 +158,7 @@ static const QString msgerrreason[] =
 	I18N_NOOP("Not while on AOL")
 };
 
-static const int msgerrreasonlen = 25;
+static const int msgerrreasonlen=25;
 
 OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	OscarAccount *account, QObject *parent, const char *name, bool isicq)
@@ -167,28 +167,27 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	kdDebug(14150) << k_funcinfo << "connName=" << connName <<
 		QString::fromLatin1( isicq?" ICQICQ":" AIMAIM" ) << endl;
 
-	mIsICQ = isicq; // TODO: I have no idea if this is a good way of handling icq mode
-	toicqsrv_seq = 1;
-//	flapSequenceNum = 0x010f; // old value from oscar
-	flapSequenceNum = rand() & 0x7FFF; // value taken from libicq
-	key = 0L;
-	loginPassword = QString::null;
-	loginProfile = QString::null;
-	loginStatus = 0;
-	mCookie = 0L;
-	idle = false;
+	mIsICQ=isicq; // TODO: Maybe find a better way of handling icq mode
+	toicqsrv_seq=1;
+//	flapSequenceNum=0x010f; // old value from oscar
+	flapSequenceNum=rand() & 0x7FFF; // value taken from libicq
+	key=0L;
+	mCookie=0L;
+	loginStatus=0;
 	gotAllRights=0;
 	keepaliveTime=60;
 	keepaliveTimer=0L;
 	rateClasses.setAutoDelete(TRUE);
-	isLoggedIn = false;
-	mDirectConnnectionCookie = rand();
-	mAccount = account;
+	isLoggedIn=false;
+	idle=false;
+	mDirectConnnectionCookie=rand();
+	mAccount=account;
 
 	// from OscarConnection
-	connect(this, SIGNAL(connectionClosed(QString)), this, SLOT(OnConnectionClosed()));
+	connect(this, SIGNAL(connectionClosed(QString)), this, SLOT(slotConnectionClosed()));
 	// from QSocket
-	connect(this, SIGNAL(connectionClosed()), this, SLOT(OnConnectionClosed()));
+	connect(this, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
+	connect(this, SIGNAL(delayedCloseFinished()), this, SLOT(slotConnectionClosed()));
 	connect(this, SIGNAL(serverReady()), this, SLOT(OnServerReady()));
 }
 
@@ -199,15 +198,22 @@ OscarSocket::~OscarSocket()
 		clearPendingData();
 		close();
 	}
+
+	if (mCookie)
+		delete[] mCookie;
+	if (key)
+		delete [] key;
+
 	rateClasses.clear();
 }
 
-void OscarSocket::OnConnect()
+void OscarSocket::slotConnected()
 {
-	kdDebug(14150) << k_funcinfo << "Connected to " << peerName() << ", port " << peerPort() << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"Connected to " << peerName() << ", port " << peerPort() << endl;
 
-	mDirectIMMgr = new OncomingSocket(this, address(), DirectIM);
-	mFileTransferMgr = new OncomingSocket(this, address(), SendFile, SENDFILE_PORT);
+	mDirectIMMgr=new OncomingSocket(this, address(), DirectIM);
+	mFileTransferMgr=new OncomingSocket(this, address(), SendFile, SENDFILE_PORT);
 
 	kdDebug(14150) << k_funcinfo << "address() is " << address().toString() <<
 		" mDirectIMMgr->address() is " << mDirectIMMgr->address().toString() << endl;
@@ -215,17 +221,50 @@ void OscarSocket::OnConnect()
 //	emit connectionChanged(1, QString("Connected to %2, port %1").arg(peerPort()).arg(peerName()));
 }
 
+void OscarSocket::slotConnectionClosed()
+{
+	kdDebug(14150) << k_funcinfo << "Connection for account '" <<
+		mAccount->accountId() << "' closed." << endl;
+
+	if(size() > 0)
+		kdDebug(14150) << k_funcinfo <<  size() << " bytes left to read" << endl;
+
+	if(mIsICQ)
+		stopKeepalive();
+
+	rateClasses.clear();
+	loginStatus=0;
+	idle=false;
+	gotAllRights=0;
+	isLoggedIn=false;
+
+	clearPendingData();
+	kdDebug(14150) << k_funcinfo << "Socket state is " << state() << endl;
+
+	disconnect(this, SIGNAL(connAckReceived()));
+	disconnect(this, SIGNAL(connected()));
+
+	if (mDirectIMMgr)
+		delete mDirectIMMgr;
+
+	if (mFileTransferMgr)
+		delete mFileTransferMgr;
+
+	kdDebug(14150) << k_funcinfo << "emitting statusChanged(OSCAR_OFFLINE)" << endl;
+	emit statusChanged(OSCAR_OFFLINE);
+}
+
 void OscarSocket::slotRead()
 {
-	FLAP fl = getFLAP();
-	char *buf = new char[fl.length];
+	FLAP fl=getFLAP();
+	char *buf=new char[fl.length];
 	Buffer inbuf;
 
 	if (fl.error) //something went wrong, this shouldn't happen
 	{
 		kdDebug(14150) << k_funcinfo << "FLAP() read error occurred!" << endl;
 		//dump packet, try to recover
-		char *tmp = new char[bytesAvailable()];
+		char *tmp=new char[bytesAvailable()];
 		readBlock(tmp, bytesAvailable());
 		inbuf.setBuf(tmp, bytesAvailable());
 
@@ -241,7 +280,7 @@ void OscarSocket::slotRead()
 			kdDebug(14150) << k_funcinfo << "Not enough data read yet... waiting" << endl;
 	}
 
-	int bytesread = readBlock(buf,fl.length);
+	int bytesread=readBlock(buf,fl.length);
 	if (bytesAvailable())
 		emit readyRead(); //there is another packet waiting to be read
 
@@ -257,7 +296,7 @@ void OscarSocket::slotRead()
 		case 0x01: //new connection negotiation channel
 		{
 			DWORD flapversion;
-			flapversion = inbuf.getDWord();
+			flapversion=inbuf.getDWord();
 			if (flapversion == 0x00000001)
 			{
 				emit connAckReceived();
@@ -273,7 +312,7 @@ void OscarSocket::slotRead()
 		case 0x02: //snac data channel
 		{
 			SNAC s;
-			s = inbuf.getSnacHeader();
+			s=inbuf.getSnacHeader();
 
 //			kdDebug(14150) << k_funcinfo << "SNAC(" << s.family << "," << s.subtype << "), id=" << s.id << endl;
 
@@ -496,119 +535,7 @@ void OscarSocket::slotRead()
 
 		case 0x04: //close connection negotiation channel
 		{
-			kdDebug(14150) << k_funcinfo << "Got connection close request, length=" << inbuf.length() << endl;
-
-			// BEGIN TODO
-			// This is a part of icq login procedure,
-			// Move this into its own function!
-			QPtrList<TLV> lst = inbuf.getTLVList();
-			lst.setAutoDelete(TRUE);
-
-			kdDebug(14150) << "contained TLVs:" << endl;
-			TLV *t;
-			for(t=lst.first(); t; t=lst.next())
-			{
-				kdDebug(14150) << "TLV(" << t->type << ") with length " << t->length << endl;
-			}
-
-			TLV *uin = findTLV(lst,0x0001);
-			if(uin)
-			{
-				kdDebug(14150) << "found TLV(1) [UIN], uin=" << uin->data << endl;
-//				delete [] uin->data;
-			}
-			TLV *server = findTLV(lst,0x0005);
-			TLV *cook = findTLV(lst,0x0006);
-
-			TLV *err = findTLV(lst,0x0008);
-			if (!err)
-				err = findTLV(lst,0x0009);
-			if (err)
-			{
-				kdDebug(14150) << k_funcinfo << "found TLV(8) [ERROR] error= " <<
-					((err->data[0] << 8)|err->data[1]) << endl;
-
-				switch(((err->data[0] << 8)|err->data[1]))
-				{
-					// TODO: add signal for connection errors and emit them
-
-					case 0x0001: // multiple logins (on same UIN)
-						kdDebug(14150) << k_funcinfo <<
-							"multiple logins (on same UIN)!!!" << endl;
-						emit protocolError( i18n( "You've logged in more than once with the same UIN/buddy name, this login is now disconnected." ), 0 );
-						doLogoff();
-						break;
-					case 0x0004:
-					case 0x0005: // bad password
-						kdDebug(14150) << k_funcinfo << "bad password!!!" << endl;
-						emit protocolError( i18n( "Couldn't log on to %1 with account %2 as the password was incorrect." ).arg(
-														( mIsICQ ? "ICQ" : "AIM" ) ).arg( getSN() ), 0 );
-						doLogoff();
-						disconnect();
-						emit statusChanged( OSCAR_OFFLINE );
-						break;
-					case 0x0007: // non-existant ICQ#
-					case 0x0008: // non-existant ICQ#
-						kdDebug(14150) << k_funcinfo << "non-existant ICQ#" << endl;
-						emit protocolError( i18n( "Couldn't log on to %1 with nonexistent account %2." ).arg(
-														( mIsICQ ? "ICQ" : "AIM" ) ).arg( getSN() ), 0 );
-						doLogoff();
-						break;
-					case 0x0015: // too many clients from same IP
-					case 0x0016: // too many clients from same IP
-						kdDebug(14150) << k_funcinfo <<
-							"too many clients from same IP" << endl;
-						emit protocolError( i18n( "Couldn't log on to %1 as there are too many clients from the same computer." ).arg(
-														( mIsICQ ? "ICQ" : "AIM" ) ), 0 );
-						break;
-					case 0x0018: // rate exceeded (turboing)
-						kdDebug(14150) << k_funcinfo <<
-							"rate exceeded (maybe reconnecting too fast), " \
-							"server-ban for at least 10 mins!!!" << endl;
-						emit protocolError( i18n( "Server has blocked %1 account %2 for sending messages too quickly. Wait ten minutes and try again. If you continue to try, you will need to wait even longer." ).arg(
-														( mIsICQ ? "ICQ" : "AIM" ) ).arg( getSN() ), 0 );
-						break;
-				}
-
-				if (err->data != 0x0000)
-					doLogoff();
-
-				delete [] err->data;
-			}
-
-			TLV *descr = findTLV(lst,0x0004);
-			if(!descr)
-				descr = findTLV(lst,0x000b);
-			if(descr)
-			{
-				kdDebug(14150) << "found TLV(4) [DESCRIPTION] reason=" << descr->data << endl;
-				delete [] descr->data;
-			}
-
-			if (server)
-			{
-				kdDebug(14150) << "found TLV(5) [SERVER]" << endl;
-				QString ip = server->data;
-				int index = ip.find(':');
-				bosServer = ip.left(index);
-				ip.remove(0,index+1); //get rid of the colon and everything before it
-				bosPort = ip.toInt();
-				kdDebug(14150) << "we should reconnect to server " << bosServer <<
-					", ip.right(index) is " << ip <<
-					", bosPort is " << bosPort << endl;
-				delete[] server->data;
-			}
-
-			if (cook)
-			{
-				kdDebug(14150) << "found TLV(6) [COOKIE]" << endl;
-				mCookie = cook->data;
-				cookielen = cook->length;
-				connectToBos();
-			}
-			lst.clear();
-			// END TODO
-
+			parseConnectionClosed(inbuf);
 			break;
 		}
 
@@ -631,7 +558,6 @@ void OscarSocket::slotRead()
 	delete [] buf;
 }
 
-// Sends an authorization request to the server
 void OscarSocket::sendLoginRequest()
 {
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
@@ -642,41 +568,11 @@ void OscarSocket::sendLoginRequest()
 //	emit connectionChanged(2,QString("Requesting login for " + getSN() + "..."));
 }
 
-/** adds the flap version to the buffer */
 void OscarSocket::putFlapVer(Buffer &outbuf)
 {
 	outbuf.addDWord(0x00000001);
 }
 
-// Called when a connection has been closed
-void OscarSocket::OnConnectionClosed()
-{
-	kdDebug(14150) << k_funcinfo << "Connection for account '" <<
-		mAccount->accountId() << "' closed by server" << endl;
-
-	if(size() > 0)
-		kdDebug(14150) << k_funcinfo <<  size() << " bytes left to read" << endl;
-
-	if(mIsICQ)
-		stopKeepalive();
-
-	rateClasses.clear();
-	isLoggedIn = false;
-
-	clearPendingData();
-	kdDebug(14150) << k_funcinfo << "Socket state is " << state() << endl;
-
-	if (mDirectIMMgr)
-		delete mDirectIMMgr;
-
-	if (mFileTransferMgr)
-		delete mFileTransferMgr;
-
-	kdDebug(14150) << k_funcinfo << "emitting statusChanged(OSCAR_OFFLINE)" << endl;
-	emit statusChanged(OSCAR_OFFLINE);
-}
-
-// Called when the server aknowledges the connection
 void OscarSocket::OnConnAckReceived(void)
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
@@ -695,7 +591,6 @@ void OscarSocket::OnConnAckReceived(void)
 	}
 }
 
-/** Sends the output buffer, and clears it */
 void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 {
 	outbuf.addFlap(chan, flapSequenceNum);
@@ -750,14 +645,14 @@ void OscarSocket::doLogin(
 	connect(this, SIGNAL(connAckReceived()), this, SLOT(OnConnAckReceived()));
 
 	disconnect(this, SIGNAL(connected()), this, SLOT(OnBosConnect()));
-	connect(this, SIGNAL(connected()), this, SLOT(OnConnect()));
+	connect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
 	//TODO: start connecting animation after host has been found
 //	connect(this, SIGNAL(hostFound()), this, SLOT(slotHostFound()));
 
 	setSN(name);
-	loginPassword = password;
-	loginProfile = userProfile;
-	loginStatus = initialStatus;
+	loginPassword=password;
+	loginProfile=userProfile;
+	loginStatus=initialStatus;
 
 	kdDebug(14150) << k_funcinfo << "emitting statusChanged(OSCAR_CONNECTING)" << endl;
 	emit statusChanged(OSCAR_CONNECTING);
@@ -769,11 +664,10 @@ void OscarSocket::parsePasswordKey(Buffer &inbuf)
 {
 	kdDebug(14150) << k_funcinfo << "Got the key" << endl;
 
-	WORD keylen;
-	keylen = inbuf.getWord();
+	WORD keylen=inbuf.getWord();
 	if (key)
 		delete [] key;
-	key = inbuf.getBlock(keylen);
+	key=inbuf.getBlock(keylen);
 	sendLoginAIM();
 }
 
@@ -786,7 +680,7 @@ void OscarSocket::connectToBos()
 	disconnect(this, SIGNAL(connAckReceived()), this, SLOT(OnConnAckReceived()));
 	connect(this, SIGNAL(connAckReceived()), this, SLOT(OnBosConnAckReceived()));
 
-	disconnect(this, SIGNAL(connected()), this, SLOT(OnConnect()));
+	disconnect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
 	connect(this, SIGNAL(connected()), this, SLOT(OnBosConnect()));
 
 	connectToHost(bosServer,bosPort);
@@ -804,11 +698,11 @@ void OscarSocket::sendCookie()
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_COOKIE) Mhh, cookies, let's give one to the server" << endl;
 	Buffer outbuf;
 	putFlapVer(outbuf);
-	outbuf.addTLV(0x0006,cookielen, mCookie);
-	sendBuf(outbuf,0x01);
+	outbuf.addTLV(0x0006, mCookieLength, mCookie);
+	sendBuf(outbuf, 0x01);
 }
 
-void OscarSocket::OnServerReady(void)
+void OscarSocket::OnServerReady()
 {
 //	kdDebug(14150) << k_funcinfo << "What is this? [mETz] ==================" << endl;
 //	emit connectionChanged(6,"Authorization successful, getting info from server");
@@ -826,7 +720,7 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 {
 	kdDebug(14150) << k_funcinfo << "RECV (SRV_RATES), Parsing Rate Info Response" << endl;
 
-	RateClass *rc = NULL;
+	RateClass *rc=NULL;
 	WORD numclasses = inbuf.getWord();
 //	kdDebug(14150) << k_funcinfo << "Number of Rate Classes=" << numclasses << endl;
 
@@ -993,6 +887,7 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 		}
 
 		emit protocolError(errorString, errorCode);
+		delete[] err->data;
 	}
 
 	if (bosip)
@@ -1013,9 +908,10 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 
 	if (cook)
 	{
-		mCookie = cook->data;
-		cookielen = cook->length;
+		mCookie=cook->data;
+		mCookieLength=cook->length;
 		connectToBos();
+//		delete[] cook->data; // DON'T, we have mCookie as a pointer to it and can delete it that way
 	}
 
 	if (sn)
@@ -1027,10 +923,10 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 	if (regstatus)
 		delete [] regstatus->data;
 
-	lst.clear();
-
 	if (url)
 		delete [] url->data;
+
+	lst.clear();
 }
 
 /** finds a tlv of type typ in the list */
@@ -2485,19 +2381,24 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 	switch(code)
 	{
 		case 0x0001:
-			kdDebug(14150) << k_funcinfo << "Rate limits parameters changed" << endl;
+			kdDebug(14150) << k_funcinfo <<
+				"Rate limits parameters changed" << endl;
 			break;
 		case 0x0002:
-			kdDebug(14150) << k_funcinfo << "Rate limits warning (current level < alert level)" << endl;
+			kdDebug(14150) << k_funcinfo <<
+				"Rate limits warning (current level < alert level)" << endl;
 			break;
 		case 0x0003:
-			kdDebug(14150) << k_funcinfo << "Rate limit hit (current level < limit level)" << endl;
+			kdDebug(14150) << k_funcinfo <<
+				"Rate limit hit (current level < limit level)" << endl;
 			break;
 		case 0x0004:
-			kdDebug(14150) << k_funcinfo << "Rate limit clear (current level become > clear level)" << endl;
+			kdDebug(14150) << k_funcinfo <<
+				"Rate limit clear (current level > clear level)" << endl;
 			break;
 		default:
-			kdDebug(14150) << k_funcinfo << "unknown code for rate limit warning" << endl;
+			kdDebug(14150) << k_funcinfo <<
+				"unknown code for rate limit warning" << endl;
 	}
 
 	WORD rateclass = inbuf.getWord();
@@ -2515,12 +2416,15 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 	kdDebug(14150) << k_funcinfo << "disconnectLevel=" << disconnectLevel << endl;
 	DWORD currentLevel = inbuf.getDWord();
 	kdDebug(14150) << k_funcinfo << "currentLevel=" << currentLevel << endl;
+
 	DWORD maxLevel = inbuf.getDWord();
 	kdDebug(14150) << k_funcinfo << "maxLevel=" << maxLevel << endl;
-	/*DWORD lastTime = */inbuf.getDWord();
-	/*BYTE currentState = */inbuf.getByte();
 
-	//there might be stuff that can be done with this crap
+	DWORD lastTime = inbuf.getDWord();
+	kdDebug(14150) << k_funcinfo << "lastTime=" << lastTime << endl;
+
+	BYTE currentState = inbuf.getByte();
+	kdDebug(14150) << k_funcinfo << "currentState=" << currentState << endl;
 
 /*
  Docs from http://iserverd.khstu.ru/oscar/snac_01_0a.html
@@ -2546,10 +2450,12 @@ xx			byte	Current state
 
 void OscarSocket::doLogoff()
 {
-	if(isLoggedIn)
+	if(isLoggedIn && (state() == QSocket::Connected))
 	{
-		if(mIsICQ)
+
+/*		if(mIsICQ) // Done in slotConnectionClosed()
 			stopKeepalive();
+		*/
 		kdDebug(14150) << k_funcinfo << "Sending sign off request" << endl;
 		Buffer outbuf;
 		sendBuf(outbuf,0x04);
@@ -2559,9 +2465,10 @@ void OscarSocket::doLogoff()
 		if(state() != QSocket::Idle)
 		{
 			kdDebug(14150) << k_funcinfo <<
-				"QSocket state wasn't idle, closing down socket..." << endl;
-			clearPendingData();
+				"we're either not logged in correctly or" <<
+				", closing down socket..." << endl;
 			close();
+			emit connectionClosed(QString::null);
 		}
 	}
 }
@@ -3468,6 +3375,138 @@ OncomingSocket *OscarSocket::serverSocket(DWORD capflag)
 		return mDirectIMMgr;
 	else  //must be a file transfer?
 		return mFileTransferMgr;
+}
+
+void OscarSocket::parseConnectionClosed(Buffer &inbuf)
+{
+	kdDebug(14150) << k_funcinfo << "RECV (DISCONNECT)" << endl;
+
+	// This is a part of icq login procedure,
+	// Move this into its own function!
+	QPtrList<TLV> lst=inbuf.getTLVList();
+	lst.setAutoDelete(TRUE);
+/*
+	kdDebug(14150) << "contained TLVs:" << endl;
+	TLV *t;
+	for(t=lst.first(); t; t=lst.next())
+	{
+		kdDebug(14150) << "TLV(" << t->type << ") with length " << t->length << endl;
+	}
+*/
+	TLV *uin=findTLV(lst,0x0001);
+	if(uin)
+	{
+		kdDebug(14150) << k_funcinfo << "found TLV(1) [UIN], uin=" << uin->data << endl;
+		delete [] uin->data;
+	}
+
+	TLV *descr=findTLV(lst,0x0004);
+	if(!descr)
+		descr=findTLV(lst,0x000b);
+	if(descr)
+	{
+		kdDebug(14150) << k_funcinfo << "found TLV(4) [DESCRIPTION] reason=" << descr->data << endl;
+		delete [] descr->data;
+	}
+
+	TLV *err=findTLV(lst,0x0008);
+	if (!err)
+		err=findTLV(lst,0x0009);
+	if (err)
+	{
+		kdDebug(14150) << k_funcinfo << k_funcinfo << "found TLV(8) [ERROR] error= " <<
+			((err->data[0] << 8)|err->data[1]) << endl;
+
+		WORD errorNum = ((err->data[0] << 8)|err->data[1]);
+
+		switch(errorNum)
+		{
+			case 0x0001: // multiple logins (on same UIN)
+			{
+// 				kdDebug(14150) << k_funcinfo <<
+// 					"multiple logins (on same UIN)!!!" << endl;
+				emit protocolError(
+					i18n("You've logged in more than once with the same UIN/buddy name," \
+						" this login is now disconnected."), 0);
+				break;
+			}
+
+			case 0x0004:
+			case 0x0005: // bad password
+			{
+// 				kdDebug(14150) << k_funcinfo << "bad password!!!" << endl;
+				emit protocolError(
+					i18n("Couldn't log on to %1 with account %2 as the password was" \
+						" incorrect.").arg((mIsICQ ? "ICQ" : "AIM")).arg(getSN()), 0);
+				break;
+			}
+
+			case 0x0007: // non-existant ICQ#
+			case 0x0008: // non-existant ICQ#
+			{
+// 				kdDebug(14150) << k_funcinfo << "non-existant ICQ#" << endl;
+				emit protocolError(
+					i18n("Couldn't log on to %1 with nonexistent account %2.").arg(
+						(mIsICQ ? "ICQ" : "AIM")).arg(getSN()), 0);
+				break;
+			}
+
+			case 0x0015: // too many clients from same IP
+			case 0x0016: // too many clients from same IP
+			{
+/*				kdDebug(14150) << k_funcinfo <<
+					"too many clients from same IP" << endl;*/
+				emit protocolError(
+					i18n("Couldn't log on to %1 as there are too many clients" \
+						" from the same computer.").arg(
+							(mIsICQ ? "ICQ" : "AIM")), 0);
+				break;
+			}
+
+			case 0x0018: // rate exceeded (turboing)
+			{
+				/*kdDebug(14150) << k_funcinfo <<
+					"rate exceeded (maybe reconnecting too fast), " \
+					"server-ban for at least 10 mins!!!" << endl;*/
+				emit protocolError(
+					i18n("Server has blocked %1 account %2 for sending messages too quickly." \
+						" Wait ten minutes and try again. If you continue to try, you will" \
+						" need to wait even longer.").arg(
+							(mIsICQ ? "ICQ" : "AIM")).arg(getSN()), 0);
+				break;
+			}
+		}
+
+		if (errorNum != 0x0000)
+			doLogoff();
+
+		delete [] err->data;
+	}
+
+	TLV *server=findTLV(lst,0x0005);
+	if (server)
+	{
+		kdDebug(14150) << k_funcinfo << "found TLV(5) [SERVER]" << endl;
+		QString ip=server->data;
+		int index=ip.find(':');
+		bosServer=ip.left(index);
+		ip.remove(0,index+1); //get rid of the colon and everything before it
+		bosPort=ip.toInt();
+		kdDebug(14150) << k_funcinfo << "We should reconnect to server '" << bosServer <<
+			"' on port " << bosPort << endl;
+		delete[] server->data;
+	}
+
+	TLV *cook=findTLV(lst,0x0006);
+	if (cook)
+	{
+		kdDebug(14150) << "found TLV(6) [COOKIE]" << endl;
+		mCookie=cook->data;
+		mCookieLength=cook->length;
+//		delete [] cook->data;
+		connectToBos();
+	}
+	lst.clear();
 }
 
 #include "oscarsocket.moc"

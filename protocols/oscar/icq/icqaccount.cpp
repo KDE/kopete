@@ -105,16 +105,6 @@ KActionMenu* ICQAccount::actionMenu()
 
 	mActionOffline->setEnabled(isConnected());
 
-	// FIXME: allow setting these on connect
-	// OscarSocket needs to be fixed for that
-/*
-	mActionAway->setEnabled(isConnected());
-	mActionNA->setEnabled(isConnected());
-	mActionDND->setEnabled(isConnected());
-	mActionOCC->setEnabled(isConnected());
-	mActionFFC->setEnabled(isConnected());
-	mActionInvisible->setEnabled(isConnected());
-*/
 	mActionMenu->popupMenu()->insertTitle(
 		mMyself->onlineStatus().iconFor(mMyself),
 		i18n("%2 <%1>").arg(accountId()).arg(mMyself->displayName()));

@@ -94,17 +94,19 @@ KActionMenu* AIMAccount::actionMenu()
 			this, SLOT(slotGoAway()), mActionMenu,
 			"AIMAccount::mActionAway"));
 
-	mActionMenu->insert(
-		new KAction(p->statusOffline.caption(),
-			p->statusOffline.iconFor(this),
-			0, this, SLOT(slotGoOffline()), mActionMenu,
-			"AIMAccount::mActionOffline"));
+	KAction* mActionOffline = new KAction(p->statusOffline.caption(),
+		p->statusOffline.iconFor(this),
+		0, this, SLOT(slotGoOffline()), mActionMenu,
+		"AIMAccount::mActionOffline");
+	mActionOffline->setEnabled(isConnected());
 
+	mActionMenu->insert(mActionOffline);
 	mActionMenu->popupMenu()->insertSeparator();
 
 	mActionMenu->insert(
 		KopeteStdAction::contactInfo(this, SLOT(slotEditInfo()),
 			mActionMenu, "AIMAccount::mActionEditInfo"));
+	mActionOffline->setEnabled(isConnected());
 
 	return mActionMenu;
 }
