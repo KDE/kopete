@@ -1,48 +1,85 @@
-Kopete Messenger ChangeLog
---------------------------
+Kopete, The KDE Instant Messenger - ChangeLog
+------------------------------------------
 
-Kopete 0.7 (not yet released)
-==============================
+Kopete 0.7 (released 2003/08/04)
+================================
 
 o Main App
-	o KopeteViewManager, clean up KopeteMessageManager (Jason)
-	o Fix up fire and forget message window, make it work for all protocols (Jason)
-	o Make send message keycombos to be customiseable KActions (Jason)
-	o Add right click menu to tabs, add ability to move a tab to another window (Jason)
-	o Tab color highlighting on new messages, typing (Jason)
+	o Multiple accounts of the same protocol are possible using the New
+	  KopeteAccount architecture. (Oliver)
+	o Allow custom colours for each account's icon (Duncan, Olivier)
+
+	o Drag and Drop contacts between metacontacts (Olivier)
+	o Show an icon while DNDing on the contactlist (Will, Olivier>
+	o Fix up fire and forget message window, make it work for all protocols 
+	  (Jason)
+	o Make send message keyboard shortcuts into customisable KActions (Jason)
 	o Message in transit animation (Jason)
-	o When a message is received, flash contact's icon to indicate a new message (Oliver)
-	o Nick completion (Jason)
 	o Message Highlighting with Notifications (Jason)
-	o New KopeteAccount arch. allows multiple accounts of the same protocol (Oliver)
-	o Online Status Reworked (Will)
-	o New Account Password Handling, there are not anymore stored human readable on the HD (Olivier)
+	o Add right click menu to tabs, add ability to move a tab to another window
+	  (Jason)
+	o Tab color highlighting on new messages, typing (Jason)
+	o When a message is received, flash contact's icon to indicate a new message
+	  (Oliver)
+	o XML/XSL config for chatwindow theme
+	o Nick completion (Jason)
+	o New icon effects architecture. with overlays (Will)
+	o KopeteCommandhandler for /commands. Kopete-wide support of /part, /close,
+	  /clear, /exec, /help, /me (Jason)
+	o New Account Password Handling, passwords are not stored in plain text 
+	  any more (Olivier)
+	o Kopete OnlineStatus architecture (Martijn)
+	o remove KopeteTransferManager (lilachaze)
+	o Create KopeteViewManager, clean up KopeteMessageManager (Jason)
+	o Migrate file transfers to use KIO (new standardised file transfer API in 
+	  KMM)
+	o General API cleanups (Everyone)
+	o License headers unification and correction (Duncan)
+	o Tons of bugfixes (Everyone)
 	o Drag and Drop child contact beween metacontacts
 o IRC Plugin
-	o Total re-write
-	o Integrate IRC into new chatwindow (Nick, Jason)
-	o Support for peliminary /commands
-o OSCAR plugin
-	o Support for ICQ over OSCAR (Stefan)
-o MSN Plugin (Olivier)
-	o Better group sync with Server
+	o Total re-write of IRC, with many improvements. IRC is now integrated into
+	  the Kopete chatwindow (Nick, Jason)
+	o Channel / Nickname search in AddContact Wizard (Jason)
+	o Add support for all /commands needed for a basic client
+	o Use kopete away system
+	o "Show server window" account context menu option (Michel)
+	o Use KExtendedSocket for proxy and firewall support (Michel)
+	o IPV6 support (Michel)
+	o WHOIS support (Michel>
+o OSCAR (AIM and ICQ) plugin
+	o Total rewrite, ICQ now uses the newer OSCAR Protocol (Stefan)
+	o More complete userinfo (Stefan, Will)
+o MSN Plugin
+	o Better group sync with server
 	o Show the user's web profile
 	o Use correct way to ping the server
 	o Don't reload the contactlist from server if it is not modified
-	o Correct handling of the hotmail inbox, and send mail to contact with hotmail
+	o Correct handling of the hotmail inbox, and send mail to contact with 
+	  hotmail
 	o Handle MSN Plus away reasons.
 	o Detect when the other party timed out and left the chat
 	o Interface to allow plugins to use MSN invitations
-o Cryptography Plugin
-	o BugFixes
-	o Limte the cache time for the passphrase (Olivier)
-o Perl plugin (Jason)
-o Text Effect Plugin
-	Initial Release (Olivier)
+      (all Olivier)
+o Yahoo Plugin
+	o First release (Matt)
+o Gadu-gadu Plugin
+	o Many bug fixes (Greg)
 o History plugin
-	Initial Release (Olivier)
+	o Initial Release
+	o Move history/logging into its own plugin. (Olivier)
+o Cryptography Plugin
+	o Bug and security fixes
+	o Limit the cache time for the passphrase (Olivier)
+o Spell Checking Plugin
+	o Initial Release
+	o Enable check-as-you-type (Jason)
+o Text Effect Plugin
+	o Give your messages a bit of sparkle, even if you have no wit. (Olivier)
+	o Initial Release (Olivier)
 o Auto replace plugin
-	Initial Release (Roberto Pariset)
+	o Initial Release
+	o Perform substitutions on messages. (Roberto Pariset)
 
 
 
@@ -65,7 +102,8 @@ o MSN plugin
 	o Hotmail mail notifications (Olivier, James)
 	o Phone number (Olivier)
 o ICQ Plugin
-	o Translate between message-encodings (needed for non-latin languages) (Stefan)
+	o Translate between message-encodings (needed for non-latin languages) 
+	  (Stefan)
 	o Server contacts import
 	o Receiving Files (Nick, Stefan)
 o Translator Plugin

@@ -1,30 +1,23 @@
 Kopete, The KDE Messenger
-Duncan Mac-Vicar Prett <duncan@kde.org>
+Duncan Mac-Vicar Prett <duncan@kde.org>, and a cast of thousands.
 http://kopete.kde.org
 ----------------------------------------------------------------------
 
-Kopete is an Instant Messaging client being designed to be modular and
-plugin based.
+Kopete is an Instant Messaging client designed to be modular and plugin based.
 
-It requires the KDE Desktop, version 3 or higher.
+It requires the KDE Desktop, version 3.1 or higher.
 
-Kopete ships with a lot of protocol plugins, most of which are actively
-supported. The MSN, ICQ, AIM, Jabber and IRC plugins have seen numerous
-enhancements and bugfixes since the last release and should bring your
-Kopete experience to a whole new level.
+Kopete ships with a lot of protocol plugins, supporting nine different IM 
+systems.  The MSN, ICQ, AIM, Jabber, Gadu-gadu and IRC plugins have seen 
+numerous enhancements and bugfixes since the last release and should bring 
+your Kopete experience to a whole new level.
 
-Additionally there are some new plugins, but not all of them are considered
-fully usable yet. The Gadu-Gadu plugin is complete and supported. To use 
-Gadu-Gadu plugin you have to set up libgadu in your system, both runtime
-and development part. WinPopup should be complete, but is not yet supported 
-in this release. The Yahoo plugin and the new Oscar plugin (which is scheduled 
-to replace both the ICQ and AIM plugins) are under development and not ready 
-for general use yet.
+Additionally there are some new plugins.  The Yahoo plugin and the new Oscar 
+plugin make their debut with this release.  The Oscar plugin replaces the previous AIM and ICQ plugins with a common codebase based around a newer protocol.
+The Gadu-Gadu plugin is complete. To use it you have to set up libgadu in your 
+system.  See INSTALL for details.  WinPopup and SMS have seen a lot of clean ups, and are fully supported in this release.  
 
-As always, bug reports and patches are welcome, but especially for the new
-'unsupported' plugins we'd like you to check the current development version
-of Kopete in KDE CVS before filing bug reports or submitting patches. The
-code is simply too much subject to change for these plugins.
+There are a number of new general plugins that apply to all protocols.  Try out Text Effect, Spell Check, Auto Replace and Highlight.  These demonstrate the advantages of a unified IM client, as you can enjoy rich features without having to learn a different UI for every chat protocol they use.
 
 The Kopete team consists now of several active developers, working on the
 various plugins and the core API. However, Kopete wouldn't be in the shape
@@ -32,6 +25,9 @@ in which it is now without the various contributions from KDE developers
 all over the world and the high-quality bug reports from active users.
 Thanks to all of you for your support and your interest in Kopete!
 
+As always, more bug reports and patches are welcome.  
+Please use http://bugs.kde.org.
+
 The Kopete main developers can be contacted on our mailing list,
-kopete-devel@kde.org.
+kopete-devel@kde.org, and on IRC in #kopete, on irc.freenode.net. We always welcome new contributors.
 
