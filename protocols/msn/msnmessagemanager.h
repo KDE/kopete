@@ -48,6 +48,7 @@ public:
 
 public slots:
 	void slotCloseSession();
+	void slotInviteOtherContact();
 
 private slots:
 	void slotMessageSent( KopeteMessage &message, KopeteMessageManager *kmm );

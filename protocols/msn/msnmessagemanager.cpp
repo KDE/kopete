@@ -206,11 +206,8 @@ KActionCollection * MSNMessageManager::chatActions()
 				SLOT( slotInviteContact( KopeteContact * ) ), actionInvite ) );
 		}
 	}
-	// TODO: invite other contact
-	//sl.append( otherString = i18n( "Other..." ) );
-	//actionInvite->setItems( sl );
-	//connect( actionInvite, SIGNAL( activated( const QString & ) ),
-	//	SLOT( slotInviteContact( const QString & ) ) );
+	actionInvite->insert( new KAction( i18n ("Other ..."), 0, this, SLOT( slotInviteOtherContact() ), actionInvite, "actionOther" ));
+	
 	m_actions->insert( actionInvite );
 
 	return m_actions;
@@ -225,30 +222,34 @@ void MSNMessageManager::slotCloseSession()
 
 void MSNMessageManager::slotInviteContact( KopeteContact *contact )
 {
-	/*
-	 FIXME: Move this to a separate slot for 'other...' - Martijn
-	QString handle=_handle;
-	if(handle==otherString)
-	{
-		bool ok;
-		handle = KLineEditDlg::getText(i18n( "MSN Plugin" ),
-			i18n( "Please enter the email address of the person you want to invite" ),
-			QString::null, &ok );
-		if( !ok )
-			return;
-	}
-	if( handle.contains('@') != 1 || handle.contains('.') <1)
-	{
-			KMessageBox::error(0l, i18n("<qt>You must enter a valid e-mail address</qt>"), i18n("MSN Plugin"));
-			return;
-	}
-	*/
-
 	if( m_chatService )
 		m_chatService->slotInviteContact( contact->contactId() );
 	else
 		static_cast<MSNProtocol*>( protocol() )->slotStartChatSession( contact->contactId() );
 }
+
+
+void MSNMessageManager::slotInviteOtherContact()
+{
+	bool ok;
+	QString handle = KLineEditDlg::getText(i18n( "MSN Plugin" ),
+			i18n( "Please enter the email address of the person you want to invite" ),
+			QString::null, &ok );
+	if( !ok )
+		return;
+	
+	if( handle.contains('@') != 1 || handle.contains('.') <1)
+	{
+			KMessageBox::error(0l, i18n("<qt>You must enter a valid e-mail address</qt>"), i18n("MSN Plugin"));
+			return;
+	}
+
+	if( m_chatService )
+		m_chatService->slotInviteContact( handle );
+	else
+		static_cast<MSNProtocol*>( protocol() )->slotStartChatSession( handle );
+}
+
 
 void MSNMessageManager::sendMessageQueue()
 {
