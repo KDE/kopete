@@ -47,13 +47,6 @@ Kopete::Kopete()
 	m_isShuttingDown = false;
 	m_mainWindow = new KopeteWindow( 0, "mainWindow" );
 
-	// Since the main window has no parent we must delete it in the Kopete
-	// destructor (we can't leak it, some code depends on the destructor
-	// being called). But since a KMainWindow usually has W_DestructiveClose
-	// set we can't be sure it exists by then either. Therefore track its
-	// deletion to make sure:
-	connect( m_mainWindow, SIGNAL( destroyed() ), this, SLOT( slotMainWindowDestroyed() ) );
-
 	/*
 	 * FIXME: This is a workaround for a quite odd problem:
 	 * When starting up kopete and the msn plugin gets loaded it can bring up
@@ -217,11 +210,6 @@ void  Kopete::slotAllPluginsLoaded()
 	}
 }
 
-void Kopete::slotMainWindowDestroyed()
-{
-	m_mainWindow = 0L;
-}
-
 void Kopete::quitKopete()
 {
 	kdDebug( 14000 ) << k_funcinfo << endl;
@@ -249,7 +237,7 @@ void Kopete::quitKopete()
 #endif
 	}
 
-	if ( m_mainWindow )
+	if ( !m_mainWindow.isNull() )
 		m_mainWindow->close();
 
 	// First save the contacts and accounts before unloading them

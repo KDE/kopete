@@ -24,6 +24,8 @@
 #include <config.h>
 #endif
 
+#include <qguardedptr.h>
+
 #include <kuniqueapplication.h>
 
 class KopeteWindow;
@@ -61,19 +63,15 @@ public slots:
 	void slotLoadPlugins();
 
 private slots:
-
-	/**
-	 * The main window got deleted
-	 */
-	void slotMainWindowDestroyed();
-
 	/**
 	 * auto-connect
 	 */
 	void slotAllPluginsLoaded();
 
 private:
-	KopeteWindow *m_mainWindow;
+	// The main window might get deleted behind our back (W_DestructiveClose),
+	// so use a guarded pointer
+	QGuardedPtr<KopeteWindow> m_mainWindow;
 	bool m_isShuttingDown;
 };
 
