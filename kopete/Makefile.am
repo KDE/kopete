@@ -1,12 +1,12 @@
-INCLUDES = $(all_includes) -I$(srcdir)/library -I$(srcdir)/library/ui -I$(srcdir)/protocols/icq -I$(srcdir)/protocols/icq/kxengine
+INCLUDES = -I$(srcdir)/library -I$(srcdir)/library/ui -I$(srcdir)/protocols/icq -I$(srcdir)/protocols/icq/kxengine $(all_includes)
 SUBDIRS = library protocols pics
 
 KDE_ICON = AUTO
 
 lib_LTLIBRARIES = libkopetemain.la
 libkopetemain_la_SOURCES = main.cpp
-libkopetemain_la_LDFLAGS = $(all_libraries) $(LIB_KDEUI) $(KDE_RPATH)
-libkopetemain_la_LIBADD = library/libkopete.la
+libkopetemain_la_LDFLAGS = -module -avoid-version $(all_libraries)
+libkopetemain_la_LIBADD = library/libkopete.la 
 
 bin_PROGRAMS = kopete
 kopete_SOURCES = dummy.cpp

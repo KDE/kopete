@@ -32,5 +32,3 @@ libkopeteui_la_SOURCES = configmodule.cpp\
 			historydialog.cpp
 
 libkopeteui_la_METASOURCES = AUTO
-libkopeteui_la_LDFLAGS     =
-libkopeteui_la_LIBADD      = $(LIB_KDEUI)

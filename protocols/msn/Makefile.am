@@ -6,14 +6,13 @@ INCLUDES = -I$(srcdir)/ui \
         -I$(srcdir)/../../library \
         -I$(srcdir)/../../library/ui \
         $(all_includes)
-lib_LTLIBRARIES = libkopetemsn.la
+kde_module_LTLIBRARIES = kopete_msn.la
 
-libkopetemsn_la_SOURCES     = msnprotocol.cpp msnpreferences.cpp protocol.cpp msnaddcontactpage.cpp msncontact.cpp msnmessage.cpp msnuser.cpp
-libkopetemsn_la_METASOURCES = AUTO
-libkopetemsn_la_LDFLAGS     = 
-libkopetemsn_la_LIBADD      = ../../library/libkopete.la \
-        ./ui/libkopetemsnui.la \
-        ./libkmerlin/libkmerlin.la
+kopete_msn_la_SOURCES     = msnprotocol.cpp msnpreferences.cpp protocol.cpp msnaddcontactpage.cpp msncontact.cpp msnmessage.cpp msnuser.cpp
+kopete_msn_la_METASOURCES = AUTO
+kopete_msn_la_LDFLAGS     = -module $(KDE_PLUGIN)
+kopete_msn_la_LIBADD      = ./ui/libkopetemsnui.la \
+        ./libkmerlin/libkmerlin.la ../../library/libkopete.la 
 
 data_DATA = msn.plugin
 datadir = $(kde_datadir)/kopete
