@@ -39,27 +39,27 @@ JabberResource::JabberResource (const QString & resource, const int &priority,
 
 }
 
-QString JabberResource::resource ()
+QString JabberResource::resource () const
 {
 	return mResource;
 }
 
-int JabberResource::priority ()
+int JabberResource::priority () const
 {
 	return mPriority;
 }
 
-QDateTime JabberResource::timestamp ()
+QDateTime JabberResource::timestamp () const
 {
 	return mTimestamp;
 }
 
-KopeteOnlineStatus JabberResource::status ()
+KopeteOnlineStatus JabberResource::status () const
 {
 	return mStatus;
 }
 
-QString JabberResource::reason ()
+QString JabberResource::reason () const
 {
 	return mReason;
 }

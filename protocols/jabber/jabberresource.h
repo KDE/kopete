@@ -33,16 +33,16 @@ class JabberResource:public QObject
 	  JabberResource ();
 	  JabberResource (const QString &, const int &, const QDateTime &, const KopeteOnlineStatus & status, const QString &);
 
-	QString resource ();
+	int priority () const;
 
-	int priority ();
+	QString reason () const;
 
-	QDateTime timestamp ();
+	QString resource () const;
 
-	KopeteOnlineStatus status ();
+	QDateTime timestamp () const;
 
-	QString reason ();
-
+	KopeteOnlineStatus status () const;
+	
   private:
 	  QString mResource, mReason;
 	int mPriority;
