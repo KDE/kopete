@@ -136,6 +136,9 @@ public:
 	const Kopete::ContactPropertyTmpl propFullName;
 	const Kopete::ContactPropertyTmpl propIsIdentified;
 
+	bool commandInProgress(){ return m_commandInProgress; }
+	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }
+
 	QDict<IRCNetwork> &networks(){ return m_networks; }
 	void addNetwork( IRCNetwork *network );
 
@@ -208,6 +211,8 @@ private:
 
 	DOM::Node activeNode;
 	IRCAccount *activeAccount;
+
+	bool m_commandInProgress;
 
 	QDict<IRCNetwork> m_networks;
 	QDict<IRCHost> m_hosts;

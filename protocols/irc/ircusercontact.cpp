@@ -191,7 +191,7 @@ void IRCUserContact::slotUserInfo()
 {
 	if (isChatting())
 	{
-		ircAccount()->setCurrentCommandSource(manager());
+		m_protocol->setCommandInProgress(true);
 		kircEngine()->whoisUser( m_nickName );
 	}
 }
@@ -318,7 +318,7 @@ void IRCUserContact::whoIsComplete()
 {
 	updateInfo();
 
-	if( isChatting() && ircAccount()->currentCommandSource() == manager() )
+	if( m_protocol->commandInProgress() )
 	{
 		//User info
 		QString msg = i18n("%1 is (%2@%3): %4<br/>")
@@ -345,13 +345,13 @@ void IRCUserContact::whoIsComplete()
 
 		//End
 		ircAccount()->appendMessage(msg, IRCAccount::InfoReply );
-		ircAccount()->setCurrentCommandSource(0);
+		m_protocol->setCommandInProgress(false);
 	}
 }
 
 void IRCUserContact::whoWasComplete()
 {
-	if( isChatting() && ircAccount()->currentCommandSource() == manager() )
+	if( m_protocol->commandInProgress() )
 	{
 		//User info
 		QString msg = i18n("%1 was (%2@%3): %4\n")
@@ -367,7 +367,7 @@ void IRCUserContact::whoWasComplete()
 		);
 
 		ircAccount()->appendMessage(msg, IRCAccount::InfoReply );
-		ircAccount()->setCurrentCommandSource(0);
+		m_protocol->setCommandInProgress(false);
 	}
 }
 
@@ -407,9 +407,9 @@ void IRCUserContact::newWhoReply( const QString &channel, const QString &user, c
 
 	updateInfo();
 
-	if( isChatting() && ircAccount()->currentCommandSource() == manager() )
+	if( m_protocol->commandInProgress() )
 	{
-		ircAccount()->setCurrentCommandSource(0);
+		m_protocol->setCommandInProgress(false);
 	}
 }
 

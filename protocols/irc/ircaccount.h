@@ -163,10 +163,6 @@ public:
 
 	const QMap<QString, QString> customCtcpReplies() const;
 
-	void setCurrentCommandSource( Kopete::ChatSession *session );
-
-	Kopete::ChatSession *currentCommandSource();
-
 public slots:
 
 	virtual KActionMenu *actionMenu();
@@ -247,7 +243,6 @@ private:
 	IRCServerContact *m_myServer;
 
 	QMap< QString, QString > m_customCtcp;
-	Kopete::ChatSession *commandSource;
 };
 
 #endif
