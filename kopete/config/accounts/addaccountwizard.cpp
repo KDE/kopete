@@ -19,7 +19,6 @@
 #include "addaccountwizard.h"
 
 #include <qcheckbox.h>
-#include <qptrcollection.h>
 
 #include <kcolorbutton.h>
 #include <kdebug.h>
