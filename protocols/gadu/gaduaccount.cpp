@@ -75,18 +75,14 @@ GaduAccount::initConnections()
 {
 	QObject::connect( session_, SIGNAL( error( const QString&, const QString& ) ),
 				SLOT( error( const QString&, const QString& ) ) );
-	QObject::connect( session_, SIGNAL( loginPasswordIncorrect( ) ),
-				SLOT( loginPasswordFailed( ) ) );
-	QObject::connect( session_, SIGNAL( tlsConnectionFailed() ),
-				SLOT( tlsConnectionFailed() ) );
 	QObject::connect( session_, SIGNAL( messageReceived( struct gg_event* ) ),
 				SLOT( messageReceived( struct gg_event*) )  );
 	QObject::connect( session_, SIGNAL( notify( struct gg_event* ) ),
 				SLOT( notify( struct gg_event* ) ) );
 	QObject::connect( session_, SIGNAL( statusChanged( struct gg_event* ) ),
 				SLOT( statusChanged( struct gg_event* ) ) );
-	QObject::connect( session_, SIGNAL( connectionFailed( const QString& )),
-				SLOT( connectionFailed( const QString& ) ) );
+	QObject::connect( session_, SIGNAL( connectionFailed( gg_failure_t )),
+				SLOT( connectionFailed( gg_failure_t ) ) );
 	QObject::connect( session_, SIGNAL( connectionSucceed( struct gg_event* ) ),
 				SLOT( connectionSucceed( struct gg_event* ) ) );
 	QObject::connect( session_, SIGNAL( disconnect() ),
@@ -249,22 +245,6 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 			pingTimer_->stop();
 		}
 	}
-}
-
-void
-GaduAccount::tlsConnectionFailed()
-{
-	if ( isTls == 0 && connectWithSSL) {
-		connectWithSSL = false;
-		slotCommandDone( QString::null, i18n( "connection using SSL was not possible, retrying without." ) );
-		slotLogin( lastStatus, lastDescription );
-	}
-}
-
-void
-GaduAccount::loginPasswordFailed()
-{
-	slotLogin( lastStatus, lastDescription, true );
 }
 
 void
@@ -506,16 +486,27 @@ GaduAccount::pong()
 }
 
 void
-GaduAccount::connectionFailed( const QString& fReason )
+GaduAccount::connectionFailed( gg_failure_t failure )
 {
-	if ( isTls == 0 && connectWithSSL) {
-		tlsConnectionFailed();
+	status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
+	myself_->setOnlineStatus( status_ );
+
+	if ( failure == GG_FAILURE_PASSWORD ) {
+		slotLogin( lastStatus, lastDescription, true );
+		return;
 	}
-	else{
-		status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
-		myself_->setOnlineStatus( status_ );
-		error( i18n( "unable to connect to the Gadu-Gadu server(\"%1\")." ).arg( fReason ),	i18n( "Connection Error" ) );
+	if ( failure == GG_FAILURE_TLS || ( connectWithSSL && failure == GG_FAILURE_CONNECTING ) ) {
+		if ( isTls == 0 && connectWithSSL) {
+			connectWithSSL = false;
+			slotCommandDone( QString::null, i18n( "connection using SSL was not possible, retrying without." ) );
+			slotLogin( lastStatus, lastDescription );
+			return;
+		}
 	}
+
+	error( i18n( "unable to connect to the Gadu-Gadu server(\"%1\")." ).arg( GaduSession::failureDescription( failure ) ),
+			i18n( "Connection Error" ) );
+
 }
 
 void

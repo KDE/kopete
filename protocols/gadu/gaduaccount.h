@@ -82,10 +82,6 @@ public slots:
 	void sendMessage( uin_t recipient, const QString& msg,
 			int msgClass = GG_CLASS_CHAT );
 
-	// call when password was incorrect, and you want to ask user again
-	void loginPasswordFailed();
-	void tlsConnectionFailed();
-
 	void error( const QString& title, const QString& message );
 
 	void pong();
@@ -128,7 +124,7 @@ private slots:
 	void userlist( const QString& contacts );
 	gaduContactsList* userlist();
 
-	void connectionFailed( const QString& );
+	void connectionFailed( gg_failure_t failure );
 	void connectionSucceed( struct gg_event* /*e*/ );
 
 	void slotChangePassword();

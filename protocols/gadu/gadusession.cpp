@@ -69,15 +69,16 @@ GaduSession::login( struct gg_login_params* p )
 {
 	if ( !isConnected() ) {
 
-// turn on in case you have any problems, and  you want 
+// turn on in case you have any problems, and  you want
 // to report it better. libgadu needs to be recompiled with debug enabled
-//		gg_debug_level=GG_DEBUG_MISC;	
+//		gg_debug_level=GG_DEBUG_MISC;
 
 		kdDebug(14100) << "Login" << endl;
 
 		if ( !( session_ = gg_login( p ) ) ) {
 			destroySession();
-			emit connectionFailed( i18n( "Internal gg_login error.Please contact author." ) );
+			kdDebug( 14100 ) << "libgadu internal error " << endl;
+			emit connectionFailed(  GG_FAILURE_CONNECTING );
 			return;
 		}
 
@@ -87,7 +88,7 @@ GaduSession::login( struct gg_login_params* p )
 	}
 }
 
-void 
+void
 GaduSession::destroyNotifiers()
 {
 	disableNotifiers();
@@ -107,13 +108,13 @@ GaduSession::createNotifiers( bool connect )
 	if ( !session_ ){
 		return;
 	}
-		
+
 	read_ = new QSocketNotifier( session_->fd, QSocketNotifier::Read, this );
 	read_->setEnabled( false );
 
 	write_ = new QSocketNotifier( session_->fd, QSocketNotifier::Write, this );
 	write_->setEnabled( false );
-    
+
 	if ( connect ) {
 		QObject::connect( read_, SIGNAL( activated( int ) ), SLOT( checkDescriptor() ) );
 		QObject::connect( write_, SIGNAL( activated( int ) ), SLOT( checkDescriptor() ) );
@@ -577,7 +578,6 @@ GaduSession::handleUserlist( gg_event* e )
 	}
 }
 
-const
 QString
 GaduSession::failureDescription( gg_failure_t f )
 {
@@ -607,8 +607,8 @@ GaduSession::failureDescription( gg_failure_t f )
 			return i18n( "Unable to connect over encrypted channel.\nTry to turn off encryption support in Gadu account settings and reconnect." );
 			break;
 	}
-	
-	return i18n( "Unknown error number %1." ).arg( QString::number( (unsigned int)f ) );	
+
+	return i18n( "Unknown error number %1." ).arg( QString::number( (unsigned int)f ) );
 }
 
 void
@@ -656,20 +656,9 @@ GaduSession::checkDescriptor()
 			emit connectionSucceed( e );
 		break;
 		case GG_EVENT_CONN_FAILED:
-			kdDebug(14100) << "event connectionFailed" << endl;
 			destroySession();
-			if ( e->event.failure == GG_FAILURE_PASSWORD ) {
-				kdDebug(14100) << "incorrect passwd, retrying" << endl;
-				emit loginPasswordIncorrect();
-				break;
-			}
-			if ( e->event.failure == GG_FAILURE_TLS ) {
-				emit tlsConnectionFailed();
-				break;
-			}
-			kdDebug(14100) << "emit connection failed signal" << endl;
-			emit connectionFailed( failureDescription( (gg_failure_t)e->event.failure ) );
-			
+			kdDebug(14100) << "emit connection failed(" << e->event.failure << ") signal" << endl;
+			emit connectionFailed( (gg_failure_t)e->event.failure );
 			break;
 		case GG_EVENT_DISCONNECT:
 			kdDebug(14100)<<"event Disconnected"<<endl;
