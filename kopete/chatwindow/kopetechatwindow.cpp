@@ -450,7 +450,7 @@ void KopeteChatWindow::initActions(void)
 
 	//The Sending movie
 	normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
-	animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::User);
+	animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
 
 	// we can't set the tool bar as parent, if we do, it will be deleted when we configure toolbars
 	anim = new QLabel( QString::null, 0L ,"kde toolbar widget" );
