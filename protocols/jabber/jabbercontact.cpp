@@ -138,6 +138,7 @@ void JabberContact::initContact(QString &userID, QString &nickname, QString &gro
 	slotUpdateContact("", STATUS_OFFLINE, "");
 	
 	theContacts.append(this);
+	mEditingVCard = false;
 
 }
 
@@ -415,8 +416,7 @@ QString JabberContact::statusText() const
 {
 	QString txt;
 
-	switch ( mStatus )
-	{
+	switch (mStatus) {
 		case STATUS_ONLINE:
 			txt = i18n("Online");
 			break;
@@ -500,10 +500,10 @@ void JabberContact::slotSendAuth()
 
 void JabberContact::addToGroup(const QString &group)
 {
-
+	mProtocol->moveUser(userID(), group, displayName(), this);
 }
 
-void JabberContact::moveToGroup(const QString &from, const QString &to)
+void JabberContact::moveToGroup(const QString &/*from*/, const QString &to)
 {
 
 	if(to == "")
@@ -516,14 +516,12 @@ void JabberContact::moveToGroup(const QString &from, const QString &to)
 
 }
 
-void JabberContact::removeFromGroup(const QString &group)
+void JabberContact::removeFromGroup(const QString &/*group*/)
 {
-
 	hasLocalGroup = false;
 	
 	// pass empty group to protocol backend
 	mProtocol->moveUser(userID(), "", displayName(), this);
-
 }
 
 int JabberContact::importance() const
@@ -589,11 +587,6 @@ void JabberContact::execute()
 void JabberContact::slotNewMessage(const JabMessage &message)
 {
 	QString theirUserID = QString("%1@%2").arg(message.from.user(), 1).arg(message.from.host());
-
-	// make sure we don't process other user's messages
-	if (theirUserID != userID())
-		return;
-
 
 	// FIXME: is this necessary?
 	KopeteContactPtrList contactList;
@@ -748,10 +741,6 @@ void JabberContact::slotResourceUnavailable(const Jid &jid)
 	
 	kdDebug() << "[JabberContact] Removing resource - they want " << theirJID << ", we're " << userID() << endl;
 	
-	// safety check: don't process resources of other users
-	if (theirJID != userID())
-		return;
-
 	kdDebug() << "[JabberContact] Removing resource '" << jid.resource() << "' for " << userID() << endl;
 
 	for (resource = resources.first(); resource; resource = resources.next())
@@ -839,16 +828,31 @@ void JabberContact::slotGotVCard(JT_VCard *vCard)
 	kdDebug() << "[JabberContact] Got vCard for user " << vCard->jid << ", displaying." << endl;
 	
 	dlgVCard = new dlgJabberVCard(kopeteapp->mainWindow(), "dlgJabberVCard", vCard);
-	
-	QObject::connect(dlgVCard, SIGNAL(updateNickname(const QString)), SLOT(slotUpdateNickname(const QString)));
+	if (mEditingVCard) {
+		connect(dlgVCard, SIGNAL(saveAsXML(QDomElement &)), this, SLOT(slotSaveVCard(QDomElement &)));
+		dlgVCard->setReadOnly(false);
+	}
+	else
+		connect(dlgVCard, SIGNAL(updateNickname(const QString)), this, SLOT(slotUpdateNickname(const QString)));
 	
 	dlgVCard->show();
 	dlgVCard->raise();
-
 }
 
-JabberResource *JabberContact::bestResource()
-{
+void JabberContact::slotEditVCard() {
+	mEditingVCard = true;
+	slotSnarfVCard();
+}
+
+void JabberContact::slotSaveVCard(QDomElement &vCardXML) {
+	mProtocol->slotSaveVCard(vCardXML);
+	mEditingVCard = false;
+}
+
+JabberResource *JabberContact::bestResource() {
+/*
+ * Determine the currently best resource for the contact
+ */
 	JabberResource *resource, *tmpResource;
 	
 	// iterate through all available resources
@@ -915,7 +919,7 @@ void JabberContact::slotUpdateNickname(const QString newNickname)
 {
 	kdDebug() << "JabberContact::slotUpdateNickname( " << newNickname << " )" << endl;
 	
-	if ( newNickname == displayName() )
+	if (newNickname == displayName())
 		// new nickname matches old nickname, don't change
 		return;
 
@@ -929,7 +933,7 @@ void JabberContact::slotUpdateNickname(const QString newNickname)
 	mProtocol->renameContact(mUserID, newNickname, mGroup);
 	
 	// update display
-	setDisplayName( newNickname );
+	setDisplayName(newNickname);
 
 }
 

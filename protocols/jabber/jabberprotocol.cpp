@@ -112,10 +112,6 @@ JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : Kop
  */
 JabberProtocol::~JabberProtocol()
 {
-
-	// we should at least disconnect here
-	Disconnect();
-	
 	for(JabberContactList::iterator it = contactList.begin(); it != contactList.end(); it++)
 	{
 		//delete it.data();
@@ -541,11 +537,12 @@ void JabberProtocol::initActions()
 	actionGoXA = new KAction(i18n("Extended Away"), "jabber_away", 0, this, SLOT(slotSetXA()), this, "actionJabberXA");
 	actionGoDND = new KAction(i18n("Do Not Disturb"), "jabber_na", 0, this, SLOT(slotSetDND()), this, "actionJabberDND");
 	actionGoOffline = new KAction(i18n("Offline"), "jabber_offline", 0, this, SLOT(slotDisconnect()), this, "actionJabberDisconnect");
-	actionSendRaw = new KAction(i18n("Send raw packet..."), "filenew", 0, this, SLOT(slotSendRaw()), this, "actionJabberSendRaw");
+	actionSendRaw = new KAction(i18n("Send raw packet to Server"), "filenew", 0, this, SLOT(slotSendRaw()), this, "actionJabberSendRaw");
+	actionEditVCard = new KAction(i18n("Edit User Info"), "identity", 0, this, SLOT(slotEditVCard()), this, "actionEditVCard");
 	
 	actionStatusMenu = new KActionMenu("Jabber", this);
 	
-	// will be overwritten in slotSettingsChanged, maybe there is a better way (gogo)
+	// will be overwritten in slotSettingsChanged, maybe there is a better way (gogo) ??? -DS
 	m_menuTitleId = actionStatusMenu->popupMenu()->insertTitle(""); 	
 	
 	actionStatusMenu->insert(actionGoOnline);
@@ -556,7 +553,7 @@ void JabberProtocol::initActions()
 	
 	actionStatusMenu->popupMenu()->insertSeparator();
 	actionStatusMenu->insert(actionSendRaw);
-
+	actionStatusMenu->insert(actionEditVCard);
 	actionStatusMenu->plug(kopeteapp->systemTray()->contextMenu(), 1);
 }
 
@@ -891,8 +888,8 @@ void JabberProtocol::slotNewContact(JabRosterEntry *contact)
 	QString group = *(contact->groups.begin());
 
 	KopeteContactList *l = KopeteContactList::contactList();
-	KopeteMetaContact *m = l->findContact(this->id(), QString::null, contact->jid);
-	KopeteContact *c = m->findContact(this->id(), QString::null,contact->jid);
+	KopeteMetaContact *m = l->findContact(this->id(), contact->jid);
+	KopeteContact *c = m->findContact(this->id(), contact->jid);
 
 	if (c)
 	{
@@ -932,11 +929,7 @@ KopeteContact *JabberProtocol::createContact(KopeteMetaContact *parent, const QS
 	
 	// assumption: data is just the JID; this could change at some stage
 	addContact(data);
-	
 	JabberContact *contact = new JabberContact(data, "", QString(""), this, parent, myContact->userID());
-	
-	connect(contact, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact *)));
-	
 	contactList[data] = contact;
 	metaContactMap.insert(parent, contact);
 	
@@ -1101,25 +1094,44 @@ void JabberProtocol::slotGotVCard(JabTask *task)
 		// unsuccessful, or incomplete
 		return;
 
-	if(!contactList.contains(vCard->jid))
+	/* stupid special casing. this is ugly, and i shouldn't have to be doing this. */
+	if (vCard->jid == QString("%1@%2").arg(mUsername, 1).arg(mServer, 2)) {
+		myContact->slotGotVCard(vCard);
+		return;
+	}
+
+	if (!contactList.contains(vCard->jid))
 	{
 		kdDebug() << "[JabberProtocol] slotGotVCard received a vCard - but couldn't find JID " << vCard->jid << " in the list!" << endl;
 		return;
 	}
 	
 	contactList[vCard->jid]->slotGotVCard(vCard);
-
 	// FIXME: this should be done here, have to check dialog first for copying the data correctly though
 //	delete vCard;
-	
 }
 
+void JabberProtocol::slotEditVCard() {
+	if (!myContact) {
+		kdDebug() << "[JabberProtocol] fuck me silly with a fencepost" << endl;
+		return;
+	}
+	myContact->slotEditVCard();
+}
+
+void JabberProtocol::slotSaveVCard(QDomElement &vCardXML) {
+	JabTask *psiIOTask = mProtocol->ioUser();
+	JT_VCard *tmpvCard = new JT_VCard(psiIOTask);
+	VCard vCard = VCard();
+	vCard.fromXml(vCardXML);
+	tmpvCard->set(vCard);
+	tmpvCard->go();
+}
+
+void JabberProtocol::registerUser() {
 /*
  * Create a new user account on the server
  */
-void JabberProtocol::registerUser()
-{
-
 	// a bit clumsy: hardwire registering to "on", connect and reset the flag
 	mPrefs->save();
 	doRegister = true;

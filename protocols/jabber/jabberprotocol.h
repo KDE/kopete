@@ -138,6 +138,8 @@ public slots:
 
 	void slotSnarfVCard (QString &);
 	void slotGotVCard(JabTask *);
+	void slotEditVCard();
+	void slotSaveVCard(QDomElement &);
 
 signals:
 	void protocolUnloading();
@@ -166,6 +168,8 @@ private:
 	KAction *actionGoDND;
 	KAction *actionGoOffline;
 	KAction *actionSendRaw;
+	KAction *actionEditVCard;
+	KPopupMenu *popup;
 	KActionMenu *actionStatusMenu;
 
 	QString mUsername, mPassword, mServer, mResource;

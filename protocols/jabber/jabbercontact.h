@@ -217,6 +217,16 @@ class JabberContact : public KopeteContact
 		 * vCard received from server for this contact
 		 */
 		void slotGotVCard(JT_VCard *);
+
+		/**
+		 * User wants to edit vCard
+		 */
+		void slotEditVCard();
+
+		/**
+		 * User wants to save vCard on to server
+		 */
+		void slotSaveVCard(QDomElement &);
 		
 		/**
 		 * Update contact to a new status
@@ -307,7 +317,7 @@ class JabberContact : public KopeteContact
 		QPtrList<JabberResource> resources;
 		QPtrList<KopeteContact> theContacts;
 
-		bool hasLocalName, hasLocalGroup, hasResource;
+		bool hasLocalName, hasLocalGroup, hasResource, mEditingVCard;
 		QString mUserID, mResource, mGroup, mReason;
 		int mStatus;
 
@@ -324,16 +334,7 @@ class JabberContact : public KopeteContact
 		dlgJabberRename *dlgRename;
 		dlgJabberVCard *dlgVCard;
 		KopeteMessageManager *mMsgManagerKCW, *mMsgManagerKEW;
-		
-		/**
-		 * Singleton for returning a chat window
-		 */
-		KopeteMessageManager *msgManagerKCW();
-		
-		/**
-		 * Singleton for returning an email window
-		 */
-		KopeteMessageManager *msgManagerKEW();
+		KopeteMessageManager *msgManagerKCW(), *msgManagerKEW();
 
 		KopeteHistoryDialog *historyDialog;
 

@@ -166,6 +166,14 @@
                                 <string>Homepage:</string>
                             </property>
                         </widget>
+                        <widget class="KLineEdit">
+                            <property name="name">
+                                <cstring>leHomepage</cstring>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                        </widget>
                         <widget class="KURLLabel">
                             <property name="name">
                                 <cstring>urlHomepage</cstring>
@@ -362,6 +370,14 @@
                             </property>
                             <property name="text">
                                 <string>Email:</string>
+                            </property>
+                        </widget>
+                        <widget class="KLineEdit">
+                            <property name="name">
+                                <cstring>leEmail</cstring>
+                            </property>
+                            <property name="text">
+                                <string></string>
                             </property>
                         </widget>
                         <widget class="KURLLabel">
