@@ -110,16 +110,6 @@ YahooSession *YahooAccount::yahooSession()
 	return m_session ? m_session : 0L;
 }
 
-void YahooAccount::setUseServerGroups(bool newSetting)
-{
-	m_useServerGroups = newSetting;
-}
-
-void YahooAccount::setImportContacts(bool newSetting)
-{
-	m_importContacts = newSetting;
-}
-
 QString YahooAccount::stripMsgColorCodes(const QString& msg)
 {
 	return QString(msg).remove(QRegExp("\033\\[(..m|#......)"));
@@ -194,8 +184,8 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 				QObject::connect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
 						this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
 
-				/*QObject::connect( m_session , SIGNAL(gotIgnore( const QStringList & )), this , SLOT(void s
-					slotGotIgnore( const QStringList & )) );*/
+				QObject::connect(m_session, SIGNAL( buddyListFetched( int ) ),
+						 this, SLOT(slotBuddyListFetched( int ) ) );
 
 				QObject::connect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int)),
 						this, SLOT(slotStatusChanged(const QString&, int, const QString&, int)));
@@ -291,6 +281,8 @@ void YahooAccount::disconnect()
 		for(QDictIterator<KopeteContact> i(contacts()); i.current(); ++i)
 			static_cast<YahooContact *>(i.current())->setOnlineStatus( m_protocol->Offline );
 	}
+
+	theHaveContactList = false;
 }
 
 void YahooAccount::setAway(bool status, const QString &awayMessage)
@@ -323,6 +315,12 @@ void YahooAccount::slotGoOffline()
 		disconnect();
 	else
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
+}
+
+void YahooAccount::slotBuddyListFetched( int numBuddies )
+{
+	kdDebug(14180) << "Number of buddies: " << numBuddies << endl;
+	theHaveContactList = true;
 }
 
 KActionMenu *YahooAccount::actionMenu()
@@ -457,7 +455,6 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		 * Support needs to be added for invisible
 		 */
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Online );
-		theHaveContactList = true;
 		return;
 	}
 	else if(succ == YAHOO_LOGIN_PASSWD)
@@ -508,7 +505,7 @@ void YahooAccount::slotGotIdentities( const QStringList & /* ids */ )
 	//kdDebug(14180) << k_funcinfo << endl;
 }
 
-void YahooAccount::slotStatusChanged( const QString &who, int stat, const QString &msg, int away)
+void YahooAccount::slotStatusChanged( const QString &who, int stat, const QString &msg, int /* away */)
 {
 	kdDebug(14180) << k_funcinfo << endl;
 	KopeteContact *kc = contact( who );
@@ -532,7 +529,10 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	KopeteContactPtrList justMe;
 
 	if( !contact( who ) )
+	{
+		kdDebug(14180) << "Adding contact " << who << endl;
 		addContact( who, who, 0L, KopeteAccount::DontChangeKABC, QString::null, true );
+	}
 
 	KopeteMessageManager *mm = contact(who)->manager();
 

@@ -75,7 +75,7 @@ public:
 	int setLogLevel(enum yahoo_log_level level);
 
 	/* YahooSession public API */
-	
+
 	void login(int initial);
 	void logOff();
 	void refresh();
@@ -107,10 +107,10 @@ public:
 	QStringList getIdentities();
 	QString getCookie( const QString &which);
 	QString getProfile_url( void );
-	
-	/* Private Receivers for libyahoo callbacks, we capture them  and emit signals 
+
+	/* Private Receivers for libyahoo callbacks, we capture them  and emit signals
 	   called only by libyahoo callbacks, don't use them */
-	
+
 	void _loginResponseReceiver(int succ, const char *url);
 	void _gotIgnoreReceiver(YList *igns);
 	void _gotBuddiesReceiver(YList *buds);
@@ -146,6 +146,11 @@ signals:
 	 * emitted when servers send us our contact list
 	 */
 	void gotBuddy(const QString &userid, const QString &alias, const QString &group);
+
+	/**
+	 * emitted when we've finished getting the buddy list
+	 */
+	void buddyListFetched( int numBuddies );
 
 	/**
 	 * emitted when server notifies us our ignore list
@@ -245,14 +250,14 @@ signals:
 
 	KExtendedSocket *m_socket;
 	void *m_data;
-	
+
 	QString m_Username, m_Password, m_Server; // User data
-	
+
 	int m_Port;
 	int m_Status;
 	int m_connId;
 	int m_fd;
-	
+
 	QString m_BuddyListServer; // Buddy List server
 	int m_BuddyListPort;
 	QTimer *m_keepalive;

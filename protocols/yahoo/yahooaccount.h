@@ -84,10 +84,6 @@ public:
 	 */
 	bool haveContactList() const { return theHaveContactList; }
 
-	bool useServerGroups() const { return m_useServerGroups; }
-
-	bool importContacts() const { return m_importContacts; }
-
 	void setUseServerGroups(bool newSetting);
 
 	void setImportContacts(bool newSetting);
@@ -158,6 +154,8 @@ protected slots:
 	void slotError(const QString &, int);
 	void slotRemoveHandler(int fd);
 	//void slotHostConnect(const QString &host, int port);
+
+	void slotBuddyListFetched( int numBuddies );
 
 private slots:
 	// various status slots for the action menu

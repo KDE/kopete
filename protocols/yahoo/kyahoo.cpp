@@ -86,7 +86,7 @@ YahooSession* YahooSessionManager::createSession( const QString username, const 
 	int id;
 	YahooSession *session;
 
-	kdDebug(14181) << k_funcinfo << " init!!!..."<< endl;
+	kdDebug(14181) << k_funcinfo << " Initializing" << endl;
 	id = yahoo_init( username.local8Bit(), password.local8Bit() );
 
 	session = new YahooSession(id, username, password);
@@ -742,6 +742,7 @@ void YahooSession::_gotBuddiesReceiver( YList * buds )
 {
 	kdDebug(14181) << k_funcinfo << endl;
 
+	int buddyListCount = 0;
 	YList *l;
 
 	for ( l = buds; l; l = l->next )
@@ -758,8 +759,11 @@ void YahooSession::_gotBuddiesReceiver( YList * buds )
 			kdDebug(14181) << k_funcinfo << " " << bud->id << endl;
 			emit gotBuddy( QString( bud->id ) , QString::fromLocal8Bit( bud->real_name ),
 					QString::fromLocal8Bit( bud->group ) );
+			buddyListCount++;
 		}
 	}
+
+	emit buddyListFetched( buddyListCount );
 }
 
 void YahooSession::_gotIdentitiesReceiver( YList *ids )
