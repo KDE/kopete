@@ -429,7 +429,7 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	 * Don't display empty messages, these were most likely just carrying
 	 * event notifications or other payload.
 	 */
-	if ( message.type().isEmpty () && message.body().isEmpty () )
+	if ( message.body().isEmpty () )
 		return;
 
 	// determine message type
