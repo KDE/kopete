@@ -26,6 +26,7 @@
 #include <kdebug.h>
 #include <kconfig.h>
 #include <kgenericfactory.h>
+#include <kmessagebox.h>
 #include <ktempfile.h>
 #include <kstandarddirs.h>
 
@@ -163,13 +164,14 @@ void WebPresencePlugin::slotWriteFile()
 		{
 			error = true;
 			delete m_output;
+			m_output = 0L;
 		}
 		delete xml; // might make debugging harder!
 	}
 
 		// upload it to the specified URL
 		KURL src( m_output->name() );
-		KIO::FileCopyJob *job = KIO::file_copy( src, dest, -1, true, false, false );
+		KIO::FileCopyJob *job = KIO::file_move( src, dest, -1, true, false, false );
 		connect( job, SIGNAL( result( KIO::Job * ) ),
 				SLOT(  slotUploadJobResult( KIO::Job * ) ) );
 	}
@@ -180,10 +182,10 @@ void WebPresencePlugin::slotUploadJobResult( KIO::Job *job )
 {
 	if (  job->error() ) {
 		kdDebug(14309) << "Error uploading presence info." << endl;
-		job->showErrorDialog( 0 );
+		KMessageBox::queuedDetailedError( 0, i18n("An error occurred when uploading your presence page.\nCheck the path and write permissions of the destination."), 0, displayName() );
+		delete m_output;
+		m_output = 0L;
 	}
-	delete m_output;
-	return;
 }
 
 KTempFile* WebPresencePlugin::generateFile()
