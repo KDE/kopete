@@ -269,14 +269,8 @@ bool MSNProtocol::isAway(void) const
 	}
 }
 
-KopeteContact* MSNProtocol::createContact( KopeteMetaContact *parent, const QString &serializedData )
-{
-	// FIXME: remove this method!
-	return 0L;
-}
-
 bool MSNProtocol::serialize( KopeteMetaContact *metaContact,
-			     QStringList &stream ) const
+	QStringList &stream ) const
 {
 	//kdDebug() << "MSNProtocol::serialize " << metaContact->displayName()
 	//<< endl;

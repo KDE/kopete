@@ -120,13 +120,10 @@ public:
 		RL     // reverse
 	};
 
-	// KopeteProtocol reimplementation
-	virtual KopeteContact* createContact( KopeteMetaContact *parent, const QString &serializedData );
-
 	virtual bool serialize( KopeteMetaContact *metaContact,
-				QStringList &strList ) const;
+		QStringList &strList ) const;
 	virtual void deserialize( KopeteMetaContact *metaContact,
-				  const QStringList &strList );
+		const QStringList &strList );
 
 	virtual QString protocolIcon() const;
 	virtual AddContactPage *createAddContactWidget( QWidget *parent );
@@ -162,7 +159,7 @@ public:
 	void setSilent( bool s ) { m_silent = s; }
 	bool isSilent() { return m_silent; }
 
-	QString msnId() const { return m_msnId; }
+	//QString msnId() const { return m_msnId; }
 
 	QString publicName() const { return m_publicName; }
 	/**
@@ -180,10 +177,6 @@ public:
 public slots:
 	void slotSyncContactList();
 
-	// To go online we need to check if connected
-	void slotGoOnline();
-	void slotGoOffline();
-	void slotGoAway();
 	void slotIconRightClicked( const QPoint& );
 
 	void slotOnlineStatusChanged( MSNSocket::OnlineStatus );
@@ -206,6 +199,10 @@ signals:
 	void settingsChanged( void );
 
 private slots:
+	void slotGoOnline();
+	void slotGoOffline();
+	void slotGoAway();
+
 	/**
 	 * We received a message
 	 */
