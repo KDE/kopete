@@ -469,8 +469,11 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 		m = m.left(msg.find("\r\n"));
 		mailCount = m.right(m.length() -m.find(" ")-1).toUInt();
 
-		KNotifyClient::event( 0 , "msn_mail" , i18n( "You have %1 unread messages in your MSN inbox." ).arg(mailCount) ,
-			i18n("Open &inbox") , this , SLOT(slotOpenInbox()) );
+		if(mailCount > 0 )
+		{
+			KNotifyClient::event( 0 , "msn_mail" , i18n( "You have %1 unread messages in your MSN inbox." ).arg(mailCount) ,
+				i18n("Open &inbox") , this , SLOT(slotOpenInbox()) );
+		}
 
 	}
 	else if(msg.contains("text/x-msmsgsactivemailnotification"))
