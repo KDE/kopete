@@ -339,8 +339,9 @@ bool KopeteMetaContact::isReachable() const
 }
 
 void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
-	KopeteContact::ContactStatus /* s */ )
+	KopeteContact::ContactStatus  s  )
 {
+	emit contactStatusChanged(c,s);
 	OnlineStatus m = m_onlineStatus;
 	updateOnlineStatus();
 	if ( (m_onlineStatus != m) && (m_onlineStatus==Online) && (KopetePrefs::prefs()->soundNotify()) )

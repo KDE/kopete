@@ -231,6 +231,15 @@ signals:
 		KopeteMetaContact::OnlineStatus status );
 
 	/**
+	 * A contact's online status changed
+	 * this signal differs from onlineStatusChanged because a contact can
+	 * change his status without changing MetaContact status
+	 */
+	void contactStatusChanged( KopeteContact *contact,
+		KopeteContact::ContactStatus status );
+
+
+	/**
 	 * The meta contact's display name changed
 	 */
 	void displayNameChanged( KopeteMetaContact *c, const QString &name );
