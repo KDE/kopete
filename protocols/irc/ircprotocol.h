@@ -61,7 +61,7 @@ public:
 	// FIXME WHEN IDENTITY SUPPORT IS ADDED:
 	virtual KopeteContact *myself() const { return static_cast<KopeteContact*>( identity->mySelf() ); }
 
-	void addContact(const QString &, const QString &, bool isChannel, KopeteMetaContact *m=0l);
+	void addContact(const QString &, const QString &, const QString &, KopeteMetaContact *m=0l);
 
 	/**
 	 * Deserialize contact data

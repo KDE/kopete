@@ -52,13 +52,12 @@ class IRCContact : public KopeteContact
 
 		KopeteContact *locateUser( const QString &nickName );
 
-		uint conversations() const { return mConversations; };
-		void setConversations( uint conversations ) { mConversations = conversations; };
-
 	signals:
 		void endSession();
 
 	private slots:
+		void slotConnectedToServer();
+		void slotConnectionClosed();
 		void slotMessageManagerDestroyed();
 		void slotNewMessage(const QString &originating, const QString &target, const QString &message);
 		void slotNewAction(const QString &originating, const QString &target, const QString &message);
@@ -88,7 +87,6 @@ class IRCContact : public KopeteContact
 		KSParser *mParser;
 		QValueList<KopeteMessage> messageQueue;
 		bool isConnected;
-		uint mConversations;
 };
 
 #endif

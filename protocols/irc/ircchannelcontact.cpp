@@ -64,8 +64,6 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 	actionModeMenu->insert( actionModeI );
 
 	// KIRC Engine stuff
-	QObject::connect(identity->engine(), SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
-	QObject::connect(identity->engine(), SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
 	QObject::connect(identity->engine(), SIGNAL(userJoinedChannel(const QString &, const QString &)), this, SLOT(slotUserJoinedChannel(const QString &, const QString &)));
 	QObject::connect(identity->engine(), SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), this, SLOT(slotUserPartedChannel(const QString &, const QString &, const QString &)));
 	QObject::connect(identity->engine(), SIGNAL(incomingNamesList(const QString &, const QString &, const int)), this, SLOT(slotNamesList(const QString &, const QString &, const int)));
@@ -83,13 +81,6 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 IRCChannelContact::~IRCChannelContact()
 {
 	mIdentity->unregisterChannel(mNickName);
-}
-
-void IRCChannelContact::slotConnectedToServer()
-{
-	// TODO: make this configurable: (if this channel is join on connetct, run this)
-	//mEngine->joinChannel(mNickName);
-	setOnlineStatus( KopeteContact::Online );
 }
 
 void IRCChannelContact::slotNamesList(const QString &channel, const QString &nickname, const int mode)
@@ -245,11 +236,6 @@ void IRCChannelContact::slotModeChanged()
 		modeString.append( QString::fromLatin1("-i") );
 
 	setMode( modeString );
-}
-
-void IRCChannelContact::slotConnectionClosed()
-{
-	setOnlineStatus( KopeteContact::Offline );
 }
 
 KActionCollection *IRCChannelContact::customContextMenuActions()

@@ -50,7 +50,7 @@ void IRCAddContactPage::slotFinish(KopeteMetaContact *m)
 {
 	QString server = ircdata->ircServer->lineEdit()->text();
 	QString name = ircdata->addID->text();
-	plugin->addContact(server, name, ircdata->rdoChannel->isChecked() ? true : false, m);
+	plugin->addContact(server, name, name, m);
 }
 
 bool IRCAddContactPage::validateData()

@@ -91,7 +91,7 @@ const QString IRCProtocol::protocolIcon()
 	return "irc_protocol_small";
 }
 
-void IRCProtocol::addContact(  const QString &server, const QString &contact, bool isChannel, KopeteMetaContact *m)
+void IRCProtocol::addContact(  const QString &server, const QString &contact, const QString &displayName, KopeteMetaContact *m)
 {
 	kdDebug(14120) << "[IRCProtocol] addContact called" << endl;
 	IRCContact *c;
@@ -102,7 +102,7 @@ void IRCProtocol::addContact(  const QString &server, const QString &contact, bo
 		KopeteContactList::contactList()->addMetaContact(m);
 	}
 
-	if (isChannel)
+	if ( contact.startsWith( QString::fromLatin1("#") ) )
 		c = static_cast<IRCContact*>( identity->findChannel(contact, m) );
 	else
 		c = static_cast<IRCContact*>( identity->findUser(contact, m) );
@@ -189,7 +189,7 @@ void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 		if( displayName.isEmpty() )
 			displayName = contactId;
 
-		addContact( serializedData[ "serverName" ], contactId, true, metaContact );
+		addContact( serializedData[ "serverName" ], contactId, displayName, metaContact );
 	}
 }
 

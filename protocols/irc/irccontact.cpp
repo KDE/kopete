@@ -74,13 +74,24 @@ IRCContact::IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaCon
 	QObject::connect(mEngine, SIGNAL(incomingNickChange(const QString &, const QString &)), this, SLOT( slotNewNickChange(const QString&, const QString&)));
 	QObject::connect(mEngine, SIGNAL(incomingQuitIRC(const QString &, const QString &)), this, SLOT( slotUserDisconnected(const QString&, const QString&)));
 	QObject::connect(mEngine, SIGNAL(incomingCtcpReply(const QString &, const QString &, const QString &)), this, SLOT( slotNewCtcpReply(const QString&, const QString &, const QString &)));
-
+	QObject::connect(mEngine, SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
+	QObject::connect(mEngine, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
 	isConnected = false;
 }
 
 IRCContact::~IRCContact()
 {
 	delete mParser;
+}
+
+void IRCContact::slotConnectedToServer()
+{
+	setOnlineStatus( KopeteContact::Online );
+}
+
+void IRCContact::slotConnectionClosed()
+{
+	setOnlineStatus( KopeteContact::Offline );
 }
 
 KopeteMessageManager* IRCContact::manager(bool)
