@@ -124,8 +124,32 @@ Client::~Client()
 	
 	//delete the connections differently than in deleteConnections()
 	//deleteLater() seems to cause destruction order issues
+	QValueList<Connection*> connList = d->connections.getConnections();
+	QValueList<Connection*>::iterator it = connList.begin();
+	d->connections.removeAllConnections();
+	while ( it != connList.end() )
+	{
+		Connection* c = *it;
+		it = connList.remove( it );
+		delete c;
+	}
+	
 	delete d->ssiManager;
 	delete d;
+}
+
+void Client::deleteConnections()
+{
+//	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Deleting " << d->connections.count() << " connections" << endl;
+	QValueList<Connection*> list = d->connections.getConnections();
+	QValueList<Connection*>::iterator it = list.begin();
+	d->connections.removeAllConnections();
+	while ( it != list.end() )
+	{
+		Connection* c = *it;
+		it = list.remove( it );
+		c->deleteLater();
+	}
 }
 
 void Client::connectToServer( Connection *c, const QString& server, bool auth )
@@ -133,8 +157,8 @@ void Client::connectToServer( Connection *c, const QString& server, bool auth )
 	if ( auth == true )
 	{
 		d->connections.registerAuthConnection( c );
-		m_loginTask = new StageOneLoginTask( c->rootTask() );
-		connect( m_loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
+	m_loginTask = new StageOneLoginTask( c->rootTask() );
+	connect( m_loginTask, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 	}
 	else
 		d->connections.registerBOSConnection( c );
@@ -159,6 +183,7 @@ void Client::close()
 {
 	d->active = false;
 //	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "Closing " << d->connections.count() << " connections" << endl;
+	deleteConnections();
 	//these are based on a connection. delete them.
 	delete d->errorTask;
 	delete d->onlineNotifier;
@@ -181,7 +206,6 @@ void Client::close()
 	d->connectWithMessage = QString::null;
 //	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Clearing our internal SSI list" << endl;
 	d->ssiManager->clear();
-	d->connections.removeAllConnections();
 }
 
 void Client::setStatus( AIMStatus status, const QString &_message )

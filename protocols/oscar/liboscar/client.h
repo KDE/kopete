@@ -381,6 +381,8 @@ protected slots:
 	void serverRedirectFinished();
 
 private:
+	/** Delete the connections */
+	void deleteConnections();
 	
 	/** Initialize some static tasks */
 	void initializeStaticTasks();
