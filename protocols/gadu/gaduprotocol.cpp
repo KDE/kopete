@@ -52,7 +52,16 @@
 K_EXPORT_COMPONENT_FACTORY( kopete_gadu, KGenericFactory<GaduProtocol> );
 
 GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList & )
-    : KopeteProtocol( parent, name )
+:   KopeteProtocol( parent, name ),
+    GaduStatusOffline(        KopeteOnlineStatus::Offline, 25, this, 0x0,                       "gg_offline", i18n( "Go O&ffline" ),   i18n( "Online" ) ),
+    GaduStatusNotAvail(       KopeteOnlineStatus::Away,    15, this, GG_STATUS_NOT_AVAIL,       "gg_away",    i18n( "Go A&way" ),      i18n( "Unavailable" ) ),
+    GaduStatusNotAvailDescr(  KopeteOnlineStatus::Away,    20, this, GG_STATUS_NOT_AVAIL_DESCR, "gg_away",    i18n( "Go A&way" ),      i18n( "Unavailable" ) ),
+    GaduStatusBusy(           KopeteOnlineStatus::Away,    20, this, GG_STATUS_BUSY,            "gg_busy",    i18n( "Go B&usy" ),      i18n( "Busy" ) ),
+    GaduStatusBusyDescr(      KopeteOnlineStatus::Away,    25, this, GG_STATUS_BUSY_DESCR,      "gg_busy",    i18n( "Go B&usy" ),      i18n( "Busy" ) ),
+    GaduStatusInvisible(      KopeteOnlineStatus::Away,     5, this, GG_STATUS_INVISIBLE,       "gg_invi",    i18n( "Go I&nvisible" ), i18n( "Invisible" ) ),
+    GaduStatusInvisibleDescr( KopeteOnlineStatus::Away,    10, this, GG_STATUS_INVISIBLE_DESCR, "gg_invi",    i18n( "Go I&nvisible" ), i18n( "Invisible" ) ),
+    GaduStatusAvail(          KopeteOnlineStatus::Online,  20, this, GG_STATUS_AVAIL,           "gg_online",  i18n( "Go O&nline" ),    i18n( "Online" ) ),
+    GaduStatusAvailDescr(     KopeteOnlineStatus::Online,  25, this, GG_STATUS_AVAIL_DESCR,     "gg_online",  i18n( "Go O&nline" ),    i18n( "Online" ) )
 {
     if ( protocolStatic_ )
         kdDebug(14100)<<"####"<<"GaduProtocol already initialized"<<endl;
@@ -190,7 +199,7 @@ GaduProtocol::setAvailable()
 bool
 GaduProtocol::isAway(void) const
 {
-    return myself_->onlineStatus() == KopeteContact::Away;
+    return myself_->onlineStatus().status() == KopeteOnlineStatus::Away;
 }
 
 AddContactPage*
@@ -261,13 +270,13 @@ GaduProtocol::slotLogin()
     }
     if ( !session_->isConnected() ) {
         session_->login( userUin_, password_, GG_STATUS_AVAIL );
-        status_ = GG_STATUS_AVAIL;
-        myself_->setGaduStatus( status_ );
+        status_ = GaduStatusAvail;
+        myself_->setOnlineStatus( status_ );
         changeStatus( status_ );
     } else {
         session_->changeStatus( GG_STATUS_AVAIL );
-        status_ = GG_STATUS_AVAIL;
-        myself_->setGaduStatus( status_);
+        status_ = GaduStatusAvail;
+        myself_->setOnlineStatus( status_);
         changeStatus( status_ );
     }
 }
@@ -276,7 +285,7 @@ void
 GaduProtocol::slotLogoff()
 {
     if ( session_->isConnected() ) {
-        status_ = 0;
+        status_ = GaduStatusOffline;
         changeStatus( status_ );
     } else
         setStatusIcon( "gg_offline" );
@@ -304,41 +313,20 @@ GaduProtocol::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 }
 
 void
-GaduProtocol::changeStatus( int status, const QString& descr )
+GaduProtocol::changeStatus( const KopeteOnlineStatus &status, const QString& descr )
 {
     if ( !session_->isConnected() ) {
         slotLogin();
     }
     if ( descr.isEmpty() ) {
-        session_->changeStatus( status );
+        session_->changeStatus( status.internalStatus() );
     } else {
-        session_->changeStatusDescription( status, descr );
+        session_->changeStatusDescription( status.internalStatus(), descr );
     }
     status_ = status;
-    myself_->setGaduStatus( status_ );
+    myself_->setOnlineStatus( status_ );
 
-    switch( status_ ) {
-    case GG_STATUS_NOT_AVAIL:
-    case GG_STATUS_NOT_AVAIL_DESCR:
-        setStatusIcon( "gg_away" );
-        break;
-    case GG_STATUS_AVAIL:
-    case GG_STATUS_AVAIL_DESCR:
-        setStatusIcon( "gg_online" );
-        break;
-    case GG_STATUS_BUSY:
-    case GG_STATUS_BUSY_DESCR:
-        setStatusIcon( "gg_busy" );
-        break;
-    case GG_STATUS_INVISIBLE:
-    case GG_STATUS_INVISIBLE_DESCR:
-        setStatusIcon( "gg_invi" );
-        break;
-    default:
-        session_->logoff();
-        setStatusIcon( "gg_offline" );
-        break;
-    }
+    setStatusIcon( status_.icon() );
 }
 
 void
@@ -378,7 +366,7 @@ GaduProtocol::messageReceived( struct gg_event* e )
 }
 
 void
-GaduProtocol::ackReceived( struct gg_event* e )
+GaduProtocol::ackReceived( struct gg_event* /* e */ )
 {
     //kdDebug(14100)<<"####"<<"Received an ACK from "<<e->event.ack.recipient<<endl;
 }
@@ -396,9 +384,9 @@ GaduProtocol::notify( struct gg_event* e )
             ++n;
             continue;
         }
-        if ( c->gaduStatus() == (Q_UINT32)n->status )
+        if ( c->onlineStatus() == convertStatus( n->status ) )
             continue;
-        c->setGaduStatus( n->status );
+        c->setOnlineStatus( convertStatus( n->status ) );
         ++n;
     }
 }
@@ -415,9 +403,10 @@ GaduProtocol::notifyDescription( struct gg_event* e )
         char *descr = (e->type == GG_EVENT_NOTIFY_DESCR) ? e->event.notify_descr.descr : NULL;
         if ( !(c=contactsMap_.find( n->uin ).data()) )
             continue;
-        if ( c->gaduStatus() == (Q_UINT32)n->status )
+        if ( c->onlineStatus() == convertStatus( n->status ) )
             continue;
-        c->setGaduStatus( n->status, descr );
+        c->setDescription( descr );
+        c->setOnlineStatus( convertStatus( n->status ) );
     }
 }
 
@@ -427,7 +416,8 @@ GaduProtocol::statusChanged( struct gg_event* e )
     GaduContact *c = contactsMap_.find( e->event.status.uin ).data();
     if( !c )
         return;
-    c->setGaduStatus( e->event.status.status, e->event.status.descr );
+    c->setDescription( e->event.status.descr );
+    c->setOnlineStatus( convertStatus( e->event.status.status ) );
 }
 
 void
@@ -469,7 +459,7 @@ void
 GaduProtocol::slotSessionDisconnect()
 {
     pingTimer_->stop();
-    changeStatus( 0 );
+    changeStatus( GaduStatusOffline );
 }
 
 void
@@ -503,7 +493,7 @@ GaduProtocol::slotGoOnline()
         kdDebug(14100)<<"#### Connecting..."<<endl;
         slotLogin();
     } else
-        changeStatus( GG_STATUS_AVAIL );
+        changeStatus( GaduStatusAvail );
 }
 
 void
@@ -515,19 +505,19 @@ GaduProtocol::slotGoOffline()
 void
 GaduProtocol::slotGoInvisible()
 {
-    changeStatus( GG_STATUS_INVISIBLE );
+    changeStatus( GaduStatusInvisible );
 }
 
 void
 GaduProtocol::slotGoAway()
 {
-    changeStatus( GG_STATUS_NOT_AVAIL );
+    changeStatus( GaduStatusNotAvail );
 }
 
 void
 GaduProtocol::slotGoBusy()
 {
-    changeStatus( GG_STATUS_BUSY );
+    changeStatus( GaduStatusBusy );
 }
 
 void
@@ -543,6 +533,32 @@ GaduProtocol::deserializeContact( KopeteMetaContact *metaContact,
 {
     //kdDebug()<<"Adding "<<serializedData[ "contactId" ]<<" || "<< serializedData[ "displayName" ] <<endl;
     addContact( serializedData[ "contactId" ], serializedData[ "displayName" ], metaContact );
+}
+
+KopeteOnlineStatus
+GaduProtocol::convertStatus( uint status )
+{
+    switch( status )
+    {
+    case GG_STATUS_NOT_AVAIL:
+        return GaduStatusNotAvail;
+    case GG_STATUS_NOT_AVAIL_DESCR:
+        return GaduStatusNotAvailDescr;
+    case GG_STATUS_BUSY:
+        return GaduStatusBusy;
+    case GG_STATUS_BUSY_DESCR:
+        return GaduStatusBusyDescr;
+    case GG_STATUS_INVISIBLE:
+        return GaduStatusInvisible;
+    case GG_STATUS_INVISIBLE_DESCR:
+        return GaduStatusInvisibleDescr;
+    case GG_STATUS_AVAIL:
+        return GaduStatusAvail;
+    case GG_STATUS_AVAIL_DESCR:
+        return GaduStatusAvailDescr;
+    default:
+        return GaduStatusOffline;
+    }
 }
 
 #include "gaduprotocol.moc"

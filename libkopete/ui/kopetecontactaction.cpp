@@ -19,10 +19,11 @@
 
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
+#include "kopeteonlinestatus.h"
 
 KopeteContactAction::KopeteContactAction( KopeteContact *contact, const QObject *receiver,
 	const char *slot, KAction *parent )
-: KAction( contact->metaContact()->displayName(), contact->statusIcon(), KShortcut(),
+: KAction( contact->metaContact()->displayName(), contact->onlineStatus().icon(), KShortcut(),
 	parent, contact->contactId().latin1() )
 {
 	m_contact = contact;

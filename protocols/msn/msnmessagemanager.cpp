@@ -110,10 +110,10 @@ void MSNMessageManager::createChat( const QString &handle,
 void MSNMessageManager::slotUpdateChatMember(const QString &handle, const QString &publicName, bool add)
 {
 	if( add && !user()->identity()->contacts()[ handle ] )
-		user()->identity()->addContact( handle, publicName, 0L, QString::null, true);
+		user()->identity()->addContact( handle, publicName, 0L, QString::null, true );
 		
 	MSNContact *c = static_cast<MSNContact*>( user()->identity()->contacts()[ handle ] );
-		
+
 	if(add)
 	{
 		addContact(c);

@@ -305,7 +305,7 @@ signals:
 	 * this signal differs from onlineStatusChanged because a contact can
 	 * change his status without changing MetaContact status
 	 */
-	void contactStatusChanged( KopeteContact *contact, KopeteContact::OnlineStatus status );
+	void contactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &status );
 
 	/**
 	 * The meta contact's display name changed
@@ -371,7 +371,7 @@ private slots:
 	/**
 	 * One of the child contact's online status changed
 	 */
-	void slotContactStatusChanged( KopeteContact *c, KopeteContact::OnlineStatus s );
+	void slotContactStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status );
 
 	/**
 	 * One of the child contact's display names changed

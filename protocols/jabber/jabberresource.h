@@ -33,24 +33,26 @@ class JabberResource : public QObject
 
 	public:
 		JabberResource();
-		JabberResource(const QString &, const int &, const QDateTime &, const JabberProtocol::Presence &, const QString &);
-		~JabberResource();
+		JabberResource( const QString &, const int &, const QDateTime &, const KopeteOnlineStatus &status, const QString & );
 
-        QString resource();
-		
+		QString resource();
+
 		int priority();
 
 		QDateTime timestamp();
 		
-		JabberProtocol::Presence status();
+		KopeteOnlineStatus status();
 
 		QString reason();
 
 	private:
 		QString mResource, mReason;
 		int mPriority;
-		JabberProtocol::Presence mStatus;
+		KopeteOnlineStatus mStatus;
 		QDateTime mTimestamp;
 };
 
 #endif
+
+// vim: set noet ts=4 sts=4 tw=4:
+

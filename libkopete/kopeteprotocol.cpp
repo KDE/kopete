@@ -295,7 +295,7 @@ KopeteContact* KopeteProtocol::myself() const
 {
 	QDict<KopeteIdentity> dict=KopeteIdentityManager::manager()->identities(this);
 	QDictIterator<KopeteIdentity> it( dict ); 
-    for( ; KopeteIdentity *identity=it.current(); ++it )
+	for( ; KopeteIdentity *identity=it.current(); ++it )
 	{
 		if(identity->myself())
 		{
@@ -304,8 +304,6 @@ KopeteContact* KopeteProtocol::myself() const
 	}
 	return 0L;
 }
-
-
 
 #include "kopeteprotocol.moc"
 

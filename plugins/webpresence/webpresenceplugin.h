@@ -25,8 +25,9 @@
 
 #include <kio/job.h>
 
-#include "kopeteplugin.h"
 #include "kopetecontact.h"
+#include "kopeteplugin.h"
+#include "kopeteonlinestatus.h"
 
 class QTimer;
 class KTempFile;
@@ -38,70 +39,76 @@ class WebPresencePreferences;
 class WebPresencePlugin : public KopetePlugin
 {
 	Q_OBJECT
-	struct ProtoContactStatus {
+
+private:
+	struct ProtoContactStatus
+	{
 		const char *name;
 		const char *id;
-		KopeteContact::OnlineStatus status;
+		KopeteOnlineStatus status;
 	};
-	public:
-		WebPresencePlugin( QObject *parent, const char *name, const QStringList &args );
-		virtual ~WebPresencePlugin();
 
-	public slots:
-		/**
-		 * Apply updated preference dialog settings
-		 */
-		void slotSettingsChanged();
-	protected slots:
-		/**
-		 * Write a file to the specified location
-		 */
-		void slotWriteFile();
-		/**
-		 * Called when an upload finished, displays error if needed
-		 */
-		 void slotUploadJobResult( KIO::Job * );
-	protected:
-		/**
-		 * Generate the file (HTML, text) to be uploaded
-		 */	
-		KTempFile* generateFile();
-		/**
-		* Apply named stylesheet to get content and presentation
-		*/
-		bool transform( KTempFile* src, KTempFile* dest );
-		/** 
-		 * Helper method, generates list of all IM protocols
-		 */
-		QPtrList<KopeteProtocol> allProtocols();
-		/**
-		 * Converts numeric status to a string
-		 */
-		QString statusAsString( KopeteContact::OnlineStatus c );
-		// Triggers a write of the current contactlist
-		QTimer *m_timer;
-		// Interface to the preferences GUI
-		WebPresencePreferences* m_prefs;
-		// The file to be uploaded to the WWW
-		KTempFile *m_output;
+public:
+	WebPresencePlugin( QObject *parent, const char *name, const QStringList &args );
+	virtual ~WebPresencePlugin();
 
-		// Helper class to produce the XML
-		class XMLHelper
-		{
-			public:
-				XMLHelper();
-				virtual ~XMLHelper();
-				QString oneLineTag( QString name,
-						QString content = QString::null,
-						QString attrs = QString::null);
-				QString openTag( QString name, QString attrs = QString::null );
-				QString content( QString content );
-				QString closeTag();
-				QString closeAll();
-			private:
-				QValueStack<QString> *stack;
-				int depth;
-		};
+public slots:
+	/**
+	 * Apply updated preference dialog settings
+	 */
+	void slotSettingsChanged();
+protected slots:
+	/**
+	 * Write a file to the specified location
+	 */
+	void slotWriteFile();
+	/**
+	 * Called when an upload finished, displays error if needed
+	 */
+	 void slotUploadJobResult( KIO::Job * );
+protected:
+	/**
+	 * Generate the file (HTML, text) to be uploaded
+	 */	
+	KTempFile* generateFile();
+	/**
+	* Apply named stylesheet to get content and presentation
+	*/
+	bool transform( KTempFile* src, KTempFile* dest );
+	/** 
+	 * Helper method, generates list of all IM protocols
+	 */
+	QPtrList<KopeteProtocol> allProtocols();
+
+	/**
+	 * Converts numeric status to a string
+	 */
+	QString statusAsString( const KopeteOnlineStatus &newStatus );
+
+	// Triggers a write of the current contactlist
+	QTimer *m_timer;
+	// Interface to the preferences GUI
+	WebPresencePreferences* m_prefs;
+	// The file to be uploaded to the WWW
+	KTempFile *m_output;
+
+	// Helper class to produce the XML
+	class XMLHelper
+	{
+		public:
+			XMLHelper();
+			virtual ~XMLHelper();
+			QString oneLineTag( QString name,
+					QString content = QString::null,
+					QString attrs = QString::null);
+			QString openTag( QString name, QString attrs = QString::null );
+			QString content( QString content );
+			QString closeTag();
+			QString closeAll();
+		private:
+			QValueStack<QString> *stack;
+			int depth;
+	};
 };
 
 #endif

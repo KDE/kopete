@@ -24,18 +24,14 @@ class KopeteMetaContact;
 class KActionCollection;
 class KAction;
 
-
 class SMSContact : public KopeteContact
 {
 	Q_OBJECT
 public:
 	SMSContact( SMSProtocol* _protocol, const QString &phoneNumber,
 		const QString &displayName, KopeteMetaContact *parent );
-	~SMSContact();
 
 	KActionCollection* customContextMenuActions();
-
-	int importance() const;
 
 	virtual bool isReachable() { return true; };
 

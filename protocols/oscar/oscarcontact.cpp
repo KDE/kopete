@@ -42,8 +42,7 @@
 #include "oscarsocket.h"
 #include "oscaruserinfo.h"
 
-OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
-		KopeteMetaContact *parent)
+OscarContact::OscarContact(const QString name, OscarProtocol *protocol, KopeteMetaContact *parent)
 : KopeteContact(protocol, name, parent)
 {
 	kdDebug(14150) << "[OscarContact] OscarContact(), name=" << name << endl;
@@ -55,7 +54,7 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	mIdle = 0;
 	mLastAutoResponseTime = 0;
 	setFileCapable(true);
-	mStatus = -1; //OSCAR_OFFLINE;
+	setOnlineStatus( protocol->OscarOffline );
 
 	if (!mListContact)
 	{
@@ -76,9 +75,11 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	// Got IM
 	QObject::connect(mProtocol->engine, SIGNAL(gotIM(QString,QString,bool)),
 					this,SLOT(slotIMReceived(QString,QString,bool)));
+
 	// User's status changed (I don't understand this)
-	QObject::connect(mProtocol->engine, SIGNAL(statusChanged(int)),
-					this, SLOT(slotMainStatusChanged(int)));
+	QObject::connect( mProtocol->engine, SIGNAL( statusChanged( const KopeteOnlineStatus & ) ),
+		SLOT( slotMainStatusChanged( const KopeteOnlineStatus & ) ) );
+
 	// Incoming minitype notification
 	QObject::connect(mProtocol->engine, SIGNAL(gotMiniTypeNotification(QString, int)),
 					this, SLOT(slotGotMiniType(QString, int)));
@@ -99,8 +100,10 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 		this, SLOT(slotTransferAccepted(KopeteTransfer *, const QString &)) );
 	QObject::connect( KopeteTransferManager::transferManager(), SIGNAL(refused(const KopeteFileTransferInfo &)),
 		this, SLOT(slotTransferDenied(const KopeteFileTransferInfo &)) );
+
 	// When the contact is being removed (whether from a group or not)
-	QObject::connect((KopeteContact *)(this), SIGNAL(contactDestroyed( KopeteContact *c )), this, SLOT(slotContactDestroyed( KopeteContact *c )));
+	QObject::connect( this, SIGNAL( contactDestroyed( KopeteContact * ) ), SLOT( slotContactDestroyed( KopeteContact * ) ) );
+
 	QObject::connect(KopeteContactList::contactList(), SIGNAL(groupRemoved( KopeteGroup * )), this, SLOT(slotGroupRemoved( KopeteGroup * )));
 	initActions();
 
@@ -165,24 +168,23 @@ void OscarContact::slotMessageManagerDestroyed()
 	mMsgManager = 0L;
 }
 
-void OscarContact::slotMainStatusChanged(int newStatus)
+void OscarContact::slotMainStatusChanged( const KopeteOnlineStatus &newStatus )
 {
-	if (newStatus == OSCAR_OFFLINE)
+	if( newStatus == mProtocol->OscarOffline )
 	{
-		mStatus = OSCAR_OFFLINE;
-		setOnlineStatus( Offline );
+		setOnlineStatus( mProtocol->OscarOffline );
+
 		// Try to do this, otherwise no big deal
 		AIMBuddy *mListContact = mProtocol->buddyList()->findBuddy(mName);
-		if ( !mListContact)
-			mListContact->setStatus(OSCAR_OFFLINE);
+		if( mListContact )
+			mListContact->setStatus( mProtocol->OscarOffline );
 	}
 }
 
-/** Called when a buddy changes */
 void OscarContact::slotUpdateBuddy()
 {
 	// status did not change, do nothing
-	if ( ( mStatus == mListContact->status() ) && ( mIdle == mListContact->idleTime() ) )
+	if( onlineStatus() == mListContact->status() && mIdle == mListContact->idleTime() )
 		return;
 
 	// if we have become idle
@@ -201,8 +203,8 @@ void OscarContact::slotUpdateBuddy()
 		}
 		mIdle = mListContact->idleTime();
 	}
-	mStatus = mListContact->status();
-	kdDebug(14150) << "[OscarContact] slotUpdateBuddy(), Contact " << mName << " is now " << mStatus << endl;
+	setOnlineStatus( mListContact->status() );
+	kdDebug( 14150 ) << k_funcinfo << "Contact " << mName << " is now " << onlineStatus().internalStatus() << endl;
 
 	if ( mProtocol->isConnected() ) // oscar-plugin is online
 	{
@@ -216,20 +218,11 @@ void OscarContact::slotUpdateBuddy()
 	}
 	else // oscar-plugin is offline so all users are offline too
 	{
-		mStatus = OSCAR_OFFLINE;
-		mListContact->setStatus(OSCAR_OFFLINE);
+		mListContact->setStatus( mProtocol->OscarOffline );
+		setOnlineStatus( mProtocol->OscarOffline );
 
-		setOnlineStatus( Offline );
 		return;
 	}
-
-	// We can only send messages to online user
-	if( mStatus == OSCAR_ONLINE )
-		setOnlineStatus( Online );
-	else if( mStatus == OSCAR_AWAY )
-		setOnlineStatus( Away );
-	else
-		setOnlineStatus( Offline );
 }
 
 /** Initialzes the actions */
@@ -242,18 +235,6 @@ void OscarContact::initActions(void)
 	actionDirectConnect = new KAction(i18n("&Direct IM"), 0, this, SLOT(slotDirectConnect()), this, "actionDirectConnect");
 }
 
-/** Returns the status icon of the contact */
-QString OscarContact::statusIcon(void) const
-{
-	if (mStatus == OSCAR_ONLINE)
-		return "oscar_online";
-	else if (mStatus == OSCAR_AWAY)
-		return "oscar_away";
-	else
-		return "oscar_offline";
-}
-
-/** Called when a buddy is oncoming */
 void OscarContact::slotBuddyChanged(UserInfo u)
 {
 	if (tocNormalize(u.sn) == tocNormalize(mName))
@@ -261,9 +242,9 @@ void OscarContact::slotBuddyChanged(UserInfo u)
 	{
 		kdDebug(14150) << "[OscarContact] Setting status for " << u.sn << endl;
 		if ( u.userclass & USERCLASS_AWAY )
-			mListContact->setStatus(OSCAR_AWAY);
+			mListContact->setStatus( mProtocol->OscarAway );
 		else
-			mListContact->setStatus(OSCAR_ONLINE);
+			mListContact->setStatus( mProtocol->OscarOnline );
 		mListContact->setEvil(u.evil);
 		mListContact->setIdleTime(u.idletime);
 		mListContact->setSignOnTime(u.onlinesince);
@@ -305,13 +286,12 @@ void OscarContact::slotTyping( bool typing )
 		typing ? OscarSocket::TypingBegun : OscarSocket::TypingFinished );
 }
 
-/** Called when a buddy is offgoing */
 void OscarContact::slotOffgoingBuddy(QString sn)
 {
-	if (tocNormalize(sn) == tocNormalize(mName))
-	//if we are the contact that is offgoing
+	if( tocNormalize( sn ) == tocNormalize( mName ) )
 	{
-		mListContact->setStatus(OSCAR_OFFLINE);
+		//if we are the contact that is offgoing
+		mListContact->setStatus( mProtocol->OscarOffline );
 		slotUpdateBuddy();
 	}
 }
@@ -324,12 +304,16 @@ void OscarContact::slotUserInfo(void)
 			i18n("<qt>Sorry, you must be connected to the AIM server to retrieve user information, but you will be allowed to continue if you	would like to change the user's nickname.</qt>"),
 			i18n("You Must be Connected") );
 	else
-		if (mListContact->status() == TAIM_OFFLINE)
+	{
+		if( mListContact->status() == mProtocol->OscarOffline )
 		{
-			KMessageBox::sorry(qApp->mainWidget(),
-				i18n("<qt>Sorry, this user isn't online for you to view his/her information, but you will be allowed to only change his/her nickname. Please wait until this user becomes available and try again</qt>" ),
-				i18n("User not Online"));
+			KMessageBox::sorry( qApp->mainWidget(),
+				i18n( "<qt>Sorry, this user isn't online for you to view his/her information, "
+				"but you will be allowed to only change his/her nickname. "
+				"Please wait until this user becomes available and try again</qt>" ),
+				i18n( "User not Online" ) );
 		}
+	}
 
 	OscarUserInfo *Oscaruserinfo =
 		new OscarUserInfo(mName, mListContact->alias(), mProtocol, *mListContact);
@@ -409,12 +393,13 @@ void OscarContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	}
 
 	// Check to see if the person we're sending the message to is online
-	if (mListContact->status() == TAIM_OFFLINE || mStatus == TAIM_OFFLINE)
+	if( mListContact->status() == mProtocol->OscarOffline || onlineStatus() == mProtocol->OscarOffline )
 	{
-			KMessageBox::sorry(qApp->mainWidget(),
-							i18n("<qt>This user is not online at the moment for you to message him/her. AIM users must be online for you to be able to message them.</qt>"),
-							i18n("User not Online"));
-			return;
+		KMessageBox::sorry( qApp->mainWidget(),
+			i18n( "<qt>This user is not online at the moment for you to message him/her. "
+			"AIM users must be online for you to be able to message them.</qt>" ),
+			i18n( "User not Online" ) );
+		return;
 	}
 
 	mProtocol->engine->sendIM(message.escapedBody(), mName, false);
@@ -437,7 +422,7 @@ void OscarContact::slotUpdateNickname(const QString newNickname)
 /** Return whether or not this contact is REACHABLE. */
 bool OscarContact::isReachable(void)
 {
-	return (mStatus != OSCAR_OFFLINE);
+	return !( onlineStatus() == mProtocol->OscarOffline );
 }
 
 /** Returns a set of custom menu items for the context menu */
@@ -464,7 +449,7 @@ void OscarContact::slotDeleteContact(void)
 	deleteLater();
 }
 
-void OscarContact::slotContactDestroyed( KopeteContact *c )
+void OscarContact::slotContactDestroyed( KopeteContact * /* contact */ )
 {
 	slotDeleteContact();
 }

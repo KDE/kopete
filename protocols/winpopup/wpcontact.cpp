@@ -52,11 +52,10 @@ WPContact::WPContact(WPProtocol *protocol, const QString &host, KopeteMetaContac
 	setDisplayName(newDisplayName);
 	myWasConnected = false;
 	myProtocol = protocol;
-	myHost = host;
 
 	// Initialise and start the periodical checking for contact's status
 	myIsOnline = true;
-	setOnlineStatus( Unknown );
+	setOnlineStatus( protocol->WPOffline );
 	slotCheckStatus();
 	connect(&checkStatus, SIGNAL(timeout()), this, SLOT(slotCheckStatus()));
 	checkStatus.start(1000, false);
@@ -75,7 +74,7 @@ KopeteMessageManager* WPContact::manager( bool )
 		QPtrList<KopeteContact> singleContact;
 		singleContact.append(this);
 
-		m_manager = KopeteMessageManagerFactory::factory()->create(myProtocol->myself(), singleContact, myProtocol);
+		m_manager = KopeteMessageManagerFactory::factory()->create( protocol()->myself(), singleContact, protocol() );
 
 		connect(m_manager, SIGNAL(messageSent(KopeteMessage &, KopeteMessageManager *)), this, SLOT(slotSendMessage(KopeteMessage &)));
   		connect(m_manager, SIGNAL(messageSent(KopeteMessage &, KopeteMessageManager *)), m_manager, SLOT(appendMessage(KopeteMessage &)));
@@ -97,15 +96,15 @@ void WPContact::slotCheckStatus()
 
 	bool oldWasConnected = myWasConnected;
 	bool oldIsOnline = myIsOnline;
-	
+
 	myWasConnected = myProtocol;
-	
+
 	if(myProtocol)
-		myIsOnline = myProtocol->checkHost(myHost);
+		myIsOnline = myProtocol->checkHost( contactId() );
 	else
 		myIsOnline = false;
 	if( oldIsOnline != myIsOnline || myWasConnected != oldWasConnected )
-		setOnlineStatus( myWasConnected ? myIsOnline ? Online : Offline : Unknown );
+		setOnlineStatus( myWasConnected ? myIsOnline ? WPProtocol::protocol()->WPOnline : WPProtocol::protocol()->WPOffline : WPProtocol::protocol()->WPUnknown );
 }
 
 void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
@@ -113,7 +112,7 @@ void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 	DEBUG(WPDMETHOD, "WPContact::slotNewMessage(" << Body << ", " << Arrival.toString() << ")");
 
 	QPtrList<KopeteContact> contactList;
-	contactList.append(myProtocol->myself());
+	contactList.append( protocol()->myself() );
 
 	QRegExp subj("^Subject: ([^\n]*)\n(.*)$");
 	KopeteMessage msg;
@@ -126,12 +125,12 @@ void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 	manager()->appendMessage(msg);
 }
 
-void WPContact::slotSendMessage(KopeteMessage& message)
+void WPContact::slotSendMessage( KopeteMessage& message )
 {
 	DEBUG(WPDMETHOD, "WPContact::slotSendMessage(<message>)");
 	
 	QString Message = (!message.subject().isEmpty() ? "Subject: " + message.subject() + "\n" : QString("")) + message.plainBody();
-	myProtocol->slotSendMessage(Message, dynamic_cast<WPContact *>(message.to().first())->host());
+	static_cast<WPProtocol*>( protocol() )->slotSendMessage( Message, dynamic_cast<WPContact *>( message.to().first() )->contactId() );
 }
 
 #include "wpcontact.moc"

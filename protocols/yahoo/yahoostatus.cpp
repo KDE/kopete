@@ -18,6 +18,8 @@
 #include <qstring.h>
 #include <kdebug.h>
 #include "yahoostatus.h"
+#include "yahooprotocol.h"
+#include "kopeteonlinestatus.h"
 
 YahooStatus::YahooStatus( Status status_ )
 {
@@ -29,149 +31,40 @@ YahooStatus::YahooStatus()
 	m_status = Offline;
 }
 
-KopeteContact::OnlineStatus YahooStatus::translate() const
+KopeteOnlineStatus YahooStatus::translate() const
 {
 	if(m_status == Offline )
-		return KopeteContact::Offline;
+		return KopeteOnlineStatus( KopeteOnlineStatus::Offline, 25, YahooProtocol::protocol(), m_status, "yahoo_offline", i18n(YSTOffline), i18n(YSTOffline));
 	else if(m_status == Available )
-		return KopeteContact::Online;
+		return KopeteOnlineStatus( KopeteOnlineStatus::Online,  25, YahooProtocol::protocol(), m_status, "yahoo_online", i18n(YSTAvailable), i18n(YSTAvailable) );
 	else if(m_status == Mobile )
-		return KopeteContact::Away;
+		return KopeteOnlineStatus( KopeteOnlineStatus::Away,     5, YahooProtocol::protocol(), m_status, "yahoo_mobile", "", "" );
 	else if(m_status == Invisible )
-		return KopeteContact::Offline;
+		return KopeteOnlineStatus( KopeteOnlineStatus::Offline, 25, YahooProtocol::protocol(), m_status, "yahoo_offline", i18n(YSTInvisible), i18n(YSTInvisible) );
 	else if(m_status == Idle)
-		return KopeteContact::Away;
+		return KopeteOnlineStatus( KopeteOnlineStatus::Away,    15, YahooProtocol::protocol(), m_status, "yahoo_idle", i18n("Idle"), i18n("Idle") );
 	else if(m_status == Custom || m_status == CustomBusy || m_status == CustomMobile)
-		return KopeteContact::Away;
+		return KopeteOnlineStatus( KopeteOnlineStatus::Away,    20, YahooProtocol::protocol(), m_status, "yahoo_away", m_statusText, m_statusText );
 	else if(m_status == BeRightBack)
-		return KopeteContact::Away;
+		return KopeteOnlineStatus( KopeteOnlineStatus::Away,    10, YahooProtocol::protocol(), m_status, "yahoo_busy", i18n(YSTBeRightBack), i18n(YSTBeRightBack));
 	else if(m_status == Busy)
-		return KopeteContact::Away;
+		return KopeteOnlineStatus( KopeteOnlineStatus::Away,    10, YahooProtocol::protocol(), m_status, "yahoo_busy", i18n(YSTBusy), i18n(YSTBusy));
 	else if(m_status == NotAtHome)
-		return KopeteContact::Away;
+		return KopeteOnlineStatus( KopeteOnlineStatus::Away,    10, YahooProtocol::protocol(), m_status, "yahoo_busy", i18n(YSTNotAtHome), i18n(YSTNotAtHome ) );
 	else if(m_status == NotAtMyDesk)
-		return KopeteContact::Away;
+		return KopeteOnlineStatus( KopeteOnlineStatus::Away,    10, YahooProtocol::protocol(), m_status, "yahoo_busy", i18n(YSTNotAtMyDesk), i18n(YSTNotAtMyDesk));
 	else if(m_status == NotInTheOffice)
-		return KopeteContact::Away;
+		return KopeteOnlineStatus( KopeteOnlineStatus::Away,    10, YahooProtocol::protocol(), m_status, "yahoo_busy", i18n(YSTNotInTheOffice), i18n(YSTNotInTheOffice));
 	else if(m_status == OnThePhone)
-		return KopeteContact::Away;
+		return KopeteOnlineStatus( KopeteOnlineStatus::Away,    10, YahooProtocol::protocol(), m_status, "yahoo_busy", i18n(YSTOnThePhone), i18n(YSTOnThePhone));
 	else if(m_status == OnVacation)
-		return KopeteContact::Away;
+		return KopeteOnlineStatus( KopeteOnlineStatus::Away,    10, YahooProtocol::protocol(), m_status, "yahoo_busy", i18n(YSTOnVacation), i18n(YSTOnVacation));
 	else if(m_status == OutToLunch)
-		return KopeteContact::Away;
+		return KopeteOnlineStatus( KopeteOnlineStatus::Away,    10, YahooProtocol::protocol(), m_status, "yahoo_busy", i18n(YSTOutToLunch), i18n(YSTOutToLunch));
 	else if(m_status == SteppedOut)
-		return KopeteContact::Away;
+		return KopeteOnlineStatus( KopeteOnlineStatus::Away,    10, YahooProtocol::protocol(), m_status, "yahoo_busy", i18n(YSTSteppedOut), i18n(YSTSteppedOut));
 	else
-		return KopeteContact::Offline;
-}
-
-QString YahooStatus::text() const
-{
-	kdDebug(14180) << "YahooStatus::text()" << endl;
-
-	if(/*m_status == Offline || m_status == Available || */m_status == Mobile/* || m_status == Invisible*/)
-		return "";
-	else if(m_status == Offline)
-		return i18n(YSTOffline);
-	else if(m_status == Invisible)
-		return i18n(YSTInvisible);
-	else if(m_status == Available)
-		return i18n(YSTAvailable);
-	else if(m_status == Idle)
-		return i18n("Idle");
-	else if(m_status == Custom || m_status == CustomBusy || m_status == CustomMobile)
-		return m_statusText;
-	else if(m_status == BeRightBack)
-		return i18n(YSTBeRightBack);
-	else if(m_status == Busy)
-		return i18n(YSTBusy);
-	else if(m_status == NotAtHome)
-		return i18n(YSTNotAtHome);
-	else if(m_status == NotAtMyDesk)
-		return i18n(YSTNotAtMyDesk);
-	else if(m_status == NotInTheOffice)
-		return i18n(YSTNotInTheOffice);
-	else if(m_status == OnThePhone)
-		return i18n(YSTOnThePhone);
-	else if(m_status == OnVacation)
-		return i18n(YSTOnVacation);
-	else if(m_status == OutToLunch)
-		return i18n(YSTOutToLunch);
-	else if(m_status == SteppedOut)
-		return i18n(YSTSteppedOut);
-	else
-	{
-		kdDebug(14180) << "Invalid status" << endl;
-		return "?";
-	}
-}
-
-QString YahooStatus::icon() const
-{
-	kdDebug(14180) << "YahooStatus::icon()" << endl;
-	if(m_status == Offline || m_status == Invisible)
-	{
-		return "yahoo_offline";
-	}
-	else if(m_status == Idle)
-	{
-		return "yahoo_idle";
-	}
-	else if(m_status == Mobile || m_status == CustomMobile)
-	{
-		return "yahoo_mobile";
-	}
-	else if(m_status == Available || m_status == Custom)
-	{
-		return "yahoo_online";
-	}
-	else if(m_status == BeRightBack || m_status == Busy || m_status == NotAtHome
-			|| m_status == NotAtMyDesk || m_status == NotInTheOffice
-			|| m_status == OnThePhone || m_status == OnVacation
-			|| m_status == OutToLunch || m_status == SteppedOut
-			|| m_status == CustomBusy)
-	{
-		return "yahoo_busy";
-	}
-	else
-	{
-		kdDebug(14180) << "Unknown status" << endl;
-		return "yahoo_unknown";
-	}
-}
-
-int YahooStatus::importance() const
-{
-	kdDebug(14180) << "YahooStatus::improtance()" << endl;
-	if(m_status == Offline || m_status == Invisible)
-	{
-		return 0;
-	}
-	else if(m_status == Idle)
-	{
-		return 15;
-	}
-	else if(m_status == Mobile || m_status == CustomMobile)
-	{
-		return 5;
-	}
-	else if(m_status == Available || m_status == Custom)
-	{
-		return 20;
-	}
-	else if(m_status == BeRightBack || m_status == Busy || m_status == NotAtHome
-			|| m_status == NotAtMyDesk || m_status == NotInTheOffice
-			|| m_status == OnThePhone || m_status == OnVacation
-			|| m_status == OutToLunch || m_status == SteppedOut
-			|| m_status == CustomBusy)
-	{
-		return 10;
-	}
-	else
-	{
-		kdDebug(14180) << "Unknown status" << endl;
-		return "yahoo_unknown";
-	}
+		return KopeteOnlineStatus( KopeteOnlineStatus::Offline,  0, YahooProtocol::protocol(), m_status, "yahoo_offline", i18n(YSTOffline), i18n(YSTOffline));
 }
 
 void YahooStatus::setStatus( Status status_, const QString &statusText_ )

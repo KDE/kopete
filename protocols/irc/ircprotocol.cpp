@@ -46,9 +46,15 @@
 
 K_EXPORT_COMPONENT_FACTORY( kopete_irc, KGenericFactory<IRCProtocol> );
 
+IRCProtocol *IRCProtocol::s_protocol = 0L;
+
 IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
-: KopeteProtocol( parent, name )
+: KopeteProtocol( parent, name ),
+	IRCOnline(  KopeteOnlineStatus::Online,  25, this, 0, "irc_protocol_small",   i18n( "Go O&nline" ),  i18n( "Online" ) ),
+	IRCOffline( KopeteOnlineStatus::Offline, 25, this, 1, "irc_protocol_offline", i18n( "Go O&ffline" ), i18n( "Offline" ) )
 {
+	s_protocol = this;
+
 	kdDebug(14120) << k_funcinfo << endl;
 	// Load all ICQ icons from KDE standard dirs
 
@@ -70,6 +76,11 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		cfg->deleteEntry("AutoConnect");
 		cfg->sync();
 	}
+}
+
+IRCProtocol * IRCProtocol::protocol()
+{
+	return s_protocol;
 }
 
 IRCProtocol::~IRCProtocol()

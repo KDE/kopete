@@ -41,7 +41,6 @@ class IRCChannelContact : public IRCContact
 		// START: Virtual reimplmentations from KopeteContact, see kopetecontact.h:
 		virtual bool isReachable();
 		virtual KActionCollection *customContextMenuActions();
-		virtual QString statusIcon() const;
 		virtual const QString caption() const;
 		const QString &topic() const { return mTopic; };
 		bool modeEnabled( QChar mode, QString *value = 0 );

@@ -16,8 +16,9 @@
     *                                                                       *
     *************************************************************************
 */
-#include "kopetemessagemanagerfactory.h"
 #include "kopetegroup.h"
+#include "kopetemessagemanagerfactory.h"
+#include "kopeteonlinestatus.h"
 
 // Local Includes
 #include "yahoodebug.h"
@@ -60,33 +61,11 @@ YahooContact::~YahooContact()
 	kdDebug(14180) << "Yahoo::~YahooContact()" << endl;
 }
 
-int YahooContact::importance() const
-{
-	kdDebug(14180) << "[YahooContact::importance()]" << endl;
-	return m_status.importance();
-}
-
-// Return status text
-QString YahooContact::statusText() const
-{
-	kdDebug(14180) << "Yahoo::statusText() = " << m_status.text() << endl;
-	return m_status.text();
-}
-
-// Return status icon
-QString YahooContact::statusIcon() const
-{
-	kdDebug(14180) << "Yahoo::statusIcon() = " << m_status.icon() << endl;
-	kdDebug(14180) << "*" << endl << "*" << endl << "*" << endl << "*" << endl << "*" << endl;
-	return m_status.icon();
-}
-
 void YahooContact::setYahooStatus( YahooStatus::Status status_, const QString &msg, int /*away*/)
 {
 	kdDebug(14180) << "Yahoo::setYahooStatus( " << status_ << ", " << msg << ")" << endl;
 	m_status.setStatus(status_);
 	setOnlineStatus( m_status.translate() );
-	emit onlineStatusChanged( this, m_status.translate() );
 }
 
 /*
@@ -120,7 +99,7 @@ void YahooContact::syncToServer()
 bool YahooContact::isOnline() const
 {
 	kdDebug(14180) << "[YahooContact::isOnline()]" << endl;
-	return onlineStatus() != Offline && onlineStatus() != Unknown;
+	return onlineStatus().status() != KopeteOnlineStatus::Offline && onlineStatus().status() != KopeteOnlineStatus::Unknown;
 }
 
 bool YahooContact::isReachable()

@@ -44,9 +44,6 @@ class YahooContact : public KopeteContact
 	virtual bool isOnline() const;
 	virtual bool isReachable();
 	virtual QString identityId() const;
-	virtual QString statusText() const;
-	virtual QString statusIcon() const;
-	virtual int importance() const;
 	virtual KActionCollection *customContextMenuActions();
 	virtual KopeteMessageManager *manager( bool canCreate = false );
 

@@ -18,6 +18,7 @@
 #include <qstringlist.h>
 
 #include "kopeteprotocol.h"
+#include "kopeteonlinestatus.h"
 #include "kopetecontact.h"
 
 class KAction;
@@ -39,8 +40,6 @@ public:
 
 	static SMSProtocol *protocol();
 
-	bool unload();
-
 	/**
 	 * Deserialize contact data
 	 */
@@ -49,15 +48,17 @@ public:
 
 	virtual AddContactPage *createAddContactWidget( QWidget *parent );
 	virtual bool isConnected() const;
-	virtual void setAway();
-	virtual void setAvailable();
 	virtual bool isAway() const;
 
 	SMSContact* addContact( const QString& nr , const QString& name, KopeteMetaContact *m=0L);
 
 	KopeteContact *myself() const;
-	
+
 	virtual const QString protocolIcon();
+
+	const KopeteOnlineStatus SMSOnline;
+	const KopeteOnlineStatus SMSOffline;
+	const KopeteOnlineStatus SMSUnknown;
 
 public slots:
 	virtual void connect();

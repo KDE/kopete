@@ -30,6 +30,8 @@
 #include <libgadu.h>
 
 #include "kopeteprotocol.h"
+#include "kopeteonlinestatus.h"
+
 #include "gaducommands.h"
 
 class GaduSession;
@@ -77,6 +79,18 @@ public:
     void removeContact( const GaduContact *c );
     virtual const QString protocolIcon();
 
+    const KopeteOnlineStatus GaduStatusOffline;
+    const KopeteOnlineStatus GaduStatusNotAvail;
+    const KopeteOnlineStatus GaduStatusNotAvailDescr;
+    const KopeteOnlineStatus GaduStatusBusy;
+    const KopeteOnlineStatus GaduStatusBusyDescr;
+    const KopeteOnlineStatus GaduStatusInvisible;
+    const KopeteOnlineStatus GaduStatusInvisibleDescr;
+    const KopeteOnlineStatus GaduStatusAvail;
+    const KopeteOnlineStatus GaduStatusAvailDescr;
+
+    KopeteOnlineStatus convertStatus( uint status );
+
 public slots:
     virtual void connect();
     virtual void disconnect();
@@ -85,7 +99,7 @@ public slots:
     void addNotify( uin_t uin );
     void notify( uin_t *userlist, int count );
     void sendMessage( uin_t recipient, const QString& msg, int msgClass=GG_CLASS_CHAT );
-    void changeStatus( int status, const QString& descr=QString::null );
+    void changeStatus( const KopeteOnlineStatus &status, const QString& descr=QString::null );
 
     void slotGoOnline();
     void slotGoOffline();
@@ -122,7 +136,7 @@ private:
 
     GaduContact         *myself_;
     Q_UINT32             userUin_;
-    Q_UINT32             status_;
+    KopeteOnlineStatus   status_;
     QString              password_;
     QString              nick_;
 

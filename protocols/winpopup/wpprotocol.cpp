@@ -50,13 +50,19 @@
 
 class KPopupMenu;
 
-//WPProtocol *WPProtocol::sProtocol = 0;
+WPProtocol *WPProtocol::sProtocol = 0;
 
 K_EXPORT_COMPONENT_FACTORY(kopete_wp, KGenericFactory<WPProtocol>);
 
 // WP Protocol
-WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProtocol(parent, name)
+WPProtocol::WPProtocol( QObject *parent, QString name, QStringList )
+: KopeteProtocol( parent, name ),
+	WPOnline(  KopeteOnlineStatus::Online,  25, this, 0,  "wp_available", i18n( "Go O&nline" ),   i18n( "Online" ) ),
+	WPOffline( KopeteOnlineStatus::Offline, 25, this, 1,  "wp_offline",   i18n( "Go O&ffline" ),  i18n( "Offline" ) ),
+	WPUnknown( KopeteOnlineStatus::Unknown, 25, this, 2,  "wp_available", "FIXME: Make unavail!", i18n( "Unknown" ) )
 {
+	sProtocol = this;
+
 	DEBUG(WPDMETHOD, "WPProtocol::WPProtocol()");
 
 	theInterface = 0;
@@ -122,6 +128,8 @@ WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProto
 // Destructor
 WPProtocol::~WPProtocol()
 {
+	sProtocol = 0L;
+
 	DEBUG(WPDMETHOD, "WPProtocol::~WPProtocol()");
 }
 

@@ -24,102 +24,12 @@ GaduContact::GaduContact( const QString& /*protocolId*/, uin_t uin,
     msgManager_ = 0L;
     uin_ = uin;
     protocol_ = GaduProtocol::protocol();
-    status_ = 0;
+    setOnlineStatus( protocol_->GaduStatusOffline );
 
     initActions();
 
     setDisplayName( name );
     thisContact_.append( this );
-}
-
-QString
-GaduContact::statusText() const
-{
-    switch( status_ ) {
-    case GG_STATUS_NOT_AVAIL:
-    case GG_STATUS_NOT_AVAIL_DESCR:
-        return i18n("Unavailable");
-        break;
-    case GG_STATUS_BUSY:
-    case GG_STATUS_BUSY_DESCR:
-        return i18n("Busy");
-        break;
-    case GG_STATUS_INVISIBLE:
-    case GG_STATUS_INVISIBLE_DESCR:
-        return i18n("Invisible");
-        break;
-    case GG_STATUS_AVAIL:
-    case GG_STATUS_AVAIL_DESCR:
-        return i18n("Online");
-        break;
-    default:
-        return i18n("Offline");
-        break;
-    }
-}
-
-QString
-GaduContact::statusIcon() const
-{
-    switch( status_ ) {
-    case GG_STATUS_NOT_AVAIL:
-        return "gg_away";
-        break;
-    case GG_STATUS_NOT_AVAIL_DESCR:
-        return "gg_away";
-        break;
-    case GG_STATUS_BUSY:
-        return "gg_busy";
-        break;
-    case GG_STATUS_BUSY_DESCR:
-        return "gg_busy";
-        break;
-    case GG_STATUS_INVISIBLE:
-        return "gg_invi";
-        break;
-    case GG_STATUS_INVISIBLE_DESCR:
-        return "gg_invi";
-        break;
-    case GG_STATUS_AVAIL:
-        return "gg_online";
-        break;
-    case GG_STATUS_AVAIL_DESCR:
-        return "gg_online";
-        break;
-    default:
-        return "gg_offline";
-        break;
-    }
-}
-
-int
-GaduContact::importance() const
-{
-    switch( status_ ) {
-    case GG_STATUS_NOT_AVAIL:
-        return 13;
-    case GG_STATUS_NOT_AVAIL_DESCR:
-        return 14;
-        break;
-    case GG_STATUS_BUSY:
-        return 15;
-    case GG_STATUS_BUSY_DESCR:
-        return 16;
-        break;
-    case GG_STATUS_INVISIBLE:
-        return 5;
-    case GG_STATUS_INVISIBLE_DESCR:
-        return 6;
-        break;
-    case GG_STATUS_AVAIL:
-        return 19;
-    case GG_STATUS_AVAIL_DESCR:
-        return 20;
-        break;
-    default:
-        return 0;
-        break;
-    }
 }
 
 QString
@@ -141,41 +51,15 @@ GaduContact::setParentIdentity( const QString& id)
 }
 
 void
-GaduContact::setGaduStatus( Q_UINT32 status, const QString& descr )
+GaduContact::setDescription( const QString& descr )
 {
-    status_ = status;
     description_ = descr;
-
-    switch( status_ )
-    {
-    case GG_STATUS_NOT_AVAIL:
-    case GG_STATUS_NOT_AVAIL_DESCR:
-    case GG_STATUS_BUSY:
-    case GG_STATUS_BUSY_DESCR:
-    case GG_STATUS_INVISIBLE:
-    case GG_STATUS_INVISIBLE_DESCR:
-        setOnlineStatus( Away );
-        break;
-    case GG_STATUS_AVAIL:
-    case GG_STATUS_AVAIL_DESCR:
-        setOnlineStatus( Online );
-        break;
-    default:
-        setOnlineStatus( Offline );
-        break;
-    }
 }
 
 QString
 GaduContact::description() const
 {
     return description_;
-}
-
-Q_UINT32
-GaduContact::gaduStatus() const
-{
-    return status_;
 }
 
 uin_t
@@ -252,7 +136,7 @@ GaduContact::slotUserInfo()
 
     dlg->setName( metaContact()->displayName() );
     dlg->setId( QString::number( uin_ ) );
-    dlg->setStatus( statusText() );
+    dlg->setStatus( onlineStatus().description() );
     dlg->setAwayMessage( description_ );
     dlg->show();
 }

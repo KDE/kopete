@@ -43,8 +43,6 @@ class KopeteGroupList;
 class Jabber::Jid;
 class Jabber::Message;
 
-enum JabberProtocol::Presence;
-
 class JabberContact : public KopeteContact
 {
 	Q_OBJECT
@@ -69,23 +67,6 @@ public:
 	virtual void addToGroup( KopeteGroup * );
 	virtual void removeFromGroup( KopeteGroup * );
 	virtual void moveToGroup( KopeteGroup * , KopeteGroup * );
-
-	/**
-	 * Return contact's status in textual form
-	 */
-	virtual QString statusText() const;
-
-	/**
-	 * Return contact's status as icon name
-	 */
-	virtual QString statusIcon() const;
-
-	/**
-	 * Return importance of contact.
-	 * The importance is used for sorting and determined based
-	 * on the contact's current status. See ICQ for reference values.
-	 */
-	virtual int importance() const;
 
 	/**
 	 * Return the identity ID
@@ -181,7 +162,7 @@ public slots:
 	/**
 	 * Update contact to a new status
 	 */
-	void slotUpdatePresence(const JabberProtocol::Presence newStatus, const QString &reason);
+	void slotUpdatePresence( const KopeteOnlineStatus &newStatus, const QString &reason );
 
 	/**
 	 * Received a message for this contact
@@ -252,11 +233,6 @@ private:
 	void km2jm(const KopeteMessage &km, Jabber::Message &jm);
 
 	/**
-	 * Convert Jabber presence to KopeteContact's idea of status
-	 */
-	OnlineStatus convertPresenceToStatus ( JabberProtocol::Presence status );
-
-	/**
 	 * Protocol identity (user ID) that this
 	 * contact belongs to. Basically identifies
 	 * the account into whose roster this contact
@@ -297,7 +273,6 @@ private:
 	 * Current away reason and -type
 	 */
 	QString awayReason;
-	JabberProtocol::Presence presence;
 
 	/**
 	 * Do we specifically send to a

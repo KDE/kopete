@@ -23,6 +23,7 @@ extern "C" {
 };
 
 #include "oscarsocket.h"
+#include "oscarprotocol.h"
 #include "oncomingsocket.h"
 #include "oscardebugdialog.h"
 #include "oscarsocket.moc"
@@ -463,7 +464,7 @@ void OscarSocket::putFlapVer(Buffer &outbuf)
 /** Called when a connection has been closed */
 void OscarSocket::OnConnectionClosed(void)
 {
-    emit statusChanged(OSCAR_OFFLINE);
+    emit statusChanged( OscarProtocol::protocol()->OscarOffline );
     kdDebug(14150) << "[OSCAR] Connection closed by server" << endl;
     rateClasses.clear();
     isConnected = false;
@@ -827,7 +828,7 @@ void OscarSocket::sendClientReady(void)
     outbuf.addWord(0x0004);
     outbuf.addWord(0x0001); */
     sendBuf(outbuf,0x02);
-    emit statusChanged(OSCAR_ONLINE);
+    emit statusChanged( OscarProtocol::protocol()->OscarOnline );
     isConnected = true;
 }
 
@@ -1672,12 +1673,12 @@ void OscarSocket::sendAway(int, const QString &message)
 	{
 	    outbuf.addTLV(0x0003,defencoding.length(),defencoding.latin1());
 	    outbuf.addTLV(0x0004,message.length(),message.local8Bit());
-	    emit statusChanged(OSCAR_AWAY);
+	    emit statusChanged( OscarProtocol::protocol()->OscarAway );
 	}
     else
 	{
 	    outbuf.addTLV(0x0004,0,""); //if we send it a tlv with length 0, we become unaway
-	    emit statusChanged(OSCAR_ONLINE);
+	    emit statusChanged( OscarProtocol::protocol()->OscarOnline );
 	}
     sendBuf(outbuf,0x02);
 }

@@ -19,10 +19,13 @@
 K_EXPORT_COMPONENT_FACTORY( kopete_sms, KGenericFactory<SMSProtocol> );
 
 SMSProtocol::SMSProtocol( QObject *parent, const char *name, const QStringList& /*args*/)
-: KopeteProtocol( parent, name )
+: KopeteProtocol( parent, name ),
+	SMSOnline(  KopeteOnlineStatus::Online,  25, this, 0,  "sms_online",  i18n( "Go O&nline" ),   i18n( "Online" ) ),
+	SMSUnknown( KopeteOnlineStatus::Unknown, 25, this, 1,  "sms_unknown", "FIXME: Make optional", i18n( "Unknown" ) ),
+	SMSOffline( KopeteOnlineStatus::Offline, 25, this, 2,  "sms_offline", i18n( "Go O&ffline" ),  i18n( "Offline" ) )
 {
-	if (s_protocol)
-		kdDebug(14160) << "SMSProtocol::SMSProtocol: WARNING s_protocol already defined!" << endl;
+	if( s_protocol )
+		kdWarning( 14160 ) << k_funcinfo << "s_protocol already defined!" << endl;
 	else
 		s_protocol = this;
 	
@@ -45,35 +48,26 @@ const QString SMSProtocol::protocolIcon()
 	return QString::null;
 }
 
-
-bool SMSProtocol::unload()
-{
-	return KopeteProtocol::unload();
-}
-
 void SMSProtocol::connect()
 {
+	m_mySelf->setOnlineStatus( SMSOnline );
+
+	// FIXME: Set all contacts to SMSUnknown here
 }
 
 void SMSProtocol::disconnect()
 {
+	m_mySelf->setOnlineStatus( SMSOffline );
+
+	// FIXME: Set all contacts to SMSOffline here
 }
 
 bool SMSProtocol::isConnected() const
 {
-	return true;
+	return m_mySelf->onlineStatus() == SMSOnline;
 }
 
-
-void SMSProtocol::setAway(void)
-{
-}
-
-void SMSProtocol::setAvailable(void)
-{
-}
-
-bool SMSProtocol::isAway(void) const
+bool SMSProtocol::isAway() const
 {
 	return false;
 }
@@ -91,6 +85,7 @@ AddContactPage *SMSProtocol::createAddContactWidget(QWidget *parent)
 SMSContact* SMSProtocol::addContact( const QString& nr , const QString& name, KopeteMetaContact *m)
 {
 	SMSContact* c = new SMSContact(protocol(), nr, name, m);
+	c->setOnlineStatus( SMSUnknown ); // FIXME: Set to offline when protocol is offline
 	m->addContact(c);
 	return c;
 }

@@ -57,14 +57,14 @@ public:
 	 * identity is the KopeteIdentity to edit, if it is egal to 0l, then, we are creating a 
 	 * new identity
 	 */
-	virtual EditIdentityWidget *createEditIdentityWidget(KopeteIdentity *identity, QWidget *parent)
+	virtual EditIdentityWidget *createEditIdentityWidget( KopeteIdentity * /*identity*/, QWidget * /*parent*/ )
 		{ return 0L; }  //TODO: make this pure virtual
 		
 	/**
 	 * create a new empty KopeteIdentity with the id identityId
 	 * this method is called durring the loading from the xml file
 	 */
-	virtual KopeteIdentity *createNewIdentity(const QString &identityId)
+	virtual KopeteIdentity *createNewIdentity( const QString & /* identityId */ )
 		{ return 0L; }  //TODO: make this pure virtual
 
 	/**

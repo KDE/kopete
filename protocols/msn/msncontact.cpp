@@ -1,16 +1,18 @@
 /*
     msncontact.cpp - MSN Contact
 
-    Copyright (c) 2002 Duncan Mac-Vicar Prett <duncan@kde.org>
-              (c) 2002 Ryan Cumming           <bodnar42@phalynx.dhs.org>
-              (c) 2002 Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002      by Ryan Cumming           <bodnar42@phalynx.dhs.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
-    * This program is free software; you can redistribute it and/or modify  *
-    * it under the terms of the GNU General Public License as published by  *
-    * the Free Software Foundation; either version 2 of the License, or     *
-    * (at your option) any later version.                                   *
+    * This library is free software; you can redistribute it and/or         *
+    * modify it under the terms of the GNU Lesser General Public            *
+    * License as published by the Free Software Foundation; either          *
+    * version 2 of the License, or (at your option) any later version.      *
     *                                                                       *
     *************************************************************************
 */
@@ -37,14 +39,11 @@
 #include "msnprotocol.h"
 #include "msnidentity.h"
 
-
-MSNContact::MSNContact( KopeteIdentity *identity, const QString &id,
-	const QString &displayName, KopeteMetaContact *parent  ) : KopeteContact( identity, id, parent )
+MSNContact::MSNContact( KopeteIdentity *identity, const QString &id, const QString &displayName, KopeteMetaContact *parent )
+: KopeteContact( identity, id, parent )
 {
 	m_actionBlock = 0L;
 	m_actionCollection=0L;
-
-	m_status = MSNProtocol::UNK;
 
 //	m_deleted = false;
 	m_allowed = false;
@@ -53,11 +52,9 @@ MSNContact::MSNContact( KopeteIdentity *identity, const QString &id,
 
 	setDisplayName( displayName );
 
-	setFileCapable(true);
-}
+	setFileCapable( true );
 
-MSNContact::~MSNContact()
-{
+	setOnlineStatus( MSNProtocol::statusUNK() );
 }
 
 KopeteMessageManager *MSNContact::manager( bool canCreate )
@@ -142,7 +139,7 @@ void MSNContact::slotDeleteContact()
 	MSNNotifySocket *notify = static_cast<MSNIdentity*>( identity() )->notifySocket();
 	if( notify )
 	{
-		if( m_serverGroups.isEmpty() || m_status == MSNProtocol::UNK )
+		if( m_serverGroups.isEmpty() || onlineStatus() == MSNProtocol::statusUNK() )
 		{
 			kdDebug( 14140 ) << k_funcinfo << "Ohoh, contact already removed from server, just delete it" << endl;
 			// FIXME: 1. Shouldn't this be a deleteLater, as this is a slot???
@@ -158,181 +155,6 @@ void MSNContact::slotDeleteContact()
 	{
 		// FIXME: This case should be handled by Kopete, not by the plugins :( - Martijn
 		KMessageBox::error( 0L, i18n( "<qt>Please go online to remove contact</qt>" ), i18n( "MSN Plugin" ));
-	}
-}
-
-QString MSNContact::statusText() const
-{
-	QString statusText="";
-	switch ( m_status )
-	{
-/*		case MSNProtocol::BLO: // blocked -- not used
-		{
-			return i18n("Blocked");
-			break;
-		}*/
-		case MSNProtocol::NLN: // Online
-		{
-			statusText= i18n("Online");
-			break;
-		}
-		case MSNProtocol::BSY: // Busy
-		{
-			statusText= i18n("Busy");
-			break;
-		}
-		case MSNProtocol::IDL: // Idle
-		{
-			statusText= i18n("Idle");
-			break;
-		}
-		case MSNProtocol::AWY: // Away from computer
-		{
-			statusText= i18n("Away From Computer");
-			break;
-		}
-		case MSNProtocol::PHN: // On the phone
-		{
-			statusText= i18n("On the Phone");
-			break;
-		}
-		case MSNProtocol::BRB: // Be right back
-		{
-			statusText= i18n("Be Right Back");
-			break;
-		}
-		case MSNProtocol::LUN: // Out to lunch
-		{
-			statusText= i18n("Out to Lunch");
-			break;
-		}
-		case MSNProtocol::FLN: // offline
-		{
-			statusText= i18n("Offline");
-			break;
-		}
-		default:
-		{
-			statusText= i18n("Status not avaliable");
-		}
-	}
-	if(isBlocked())
-		statusText += i18n("|Blocked");
-	return statusText;
-}
-
-QString MSNContact::statusIcon() const
-{
-	switch ( m_status )
-	{
-		case MSNProtocol::NLN: // Online
-		{
-			return isBlocked() ? "msn_online_blocked" : "msn_online";
-			break;
-		}
-		case MSNProtocol::BSY: // Busy
-		case MSNProtocol::PHN: // On the phone
-		{
-			return isBlocked() ? "msn_online_blocked" : "msn_na";
-			break;
-		}
-		case MSNProtocol::IDL: // Idle
-		case MSNProtocol::AWY: // Away from computer
-		case MSNProtocol::BRB: // Be right back
-		case MSNProtocol::LUN: // Out to lunch
-		{
-			return isBlocked() ? "msn_online_blocked" : "msn_away";
-			break;
-		}
-		default:
-			return isBlocked() ? "msn_offline_blocked" : "msn_offline";
-	}
-}
-
-int MSNContact::importance() const
-{
-	switch ( m_status )
-	{
-/*		case MSNProtocol::BLO: // blocked
-		{
-			return 1;
-			break;
-		}*/
-		case MSNProtocol::NLN: // Online
-		{
-			return 20;
-			break;
-		}
-		case MSNProtocol::BSY: // Busy
-		{
-			return 13;
-			break;
-		}
-		case MSNProtocol::IDL: // Idle
-		{
-			return 15;
-			break;
-		}
-		case MSNProtocol::AWY: // Away from computer
-		{
-			return 10;
-			break;
-		}
-		case MSNProtocol::PHN: // On the phone
-		{
-			return 12;
-			break;
-		}
-		case MSNProtocol::BRB: // Be right back
-		{
-			return 14;
-			break;
-		}
-		case MSNProtocol::LUN: // Out to lunch
-		{
-			return 11;
-			break;
-		}
-
-		default:
-		{
-			return 0;
-		}
-	}
-}
-
-MSNProtocol::Status MSNContact::msnStatus() const
-{
-	return m_status;
-}
-
-void MSNContact::setMsnStatus( MSNProtocol::Status _status )
-{
-	if( m_status == _status )
-		return;
-
-	//kdDebug( 14140 ) << k_funcinfo << "Setting status for " << contactId() << " to " << _status << endl;
-	m_status = _status;
-
-	switch ( m_status )
-	{
-		case MSNProtocol::NLN: // Online
-			setOnlineStatus( Online );
-			break;
-		case MSNProtocol::BSY: // Busy
-		case MSNProtocol::IDL: // Idle
-		case MSNProtocol::AWY: // Away from computer
-		case MSNProtocol::PHN: // On the phone
-		case MSNProtocol::BRB: // Be right back
-		case MSNProtocol::LUN: // Out to lunch
-			setOnlineStatus( Away );
-			break;
-		case MSNProtocol::FLN: // Offline
-			setOnlineStatus( Offline );
-			break;
-		case MSNProtocol::UNK:
-		default:
-			setOnlineStatus( Unknown );
 	}
 }
 
@@ -377,33 +199,32 @@ void MSNContact::setReversed( bool reversed )
 	m_reversed= reversed;
 }
 
-
-void MSNContact::setInfo(QString type, QString data)
+void MSNContact::setInfo( QString type, QString data )
 {
-	if( type == "PHH")
+	if( type == "PHH" )
 	{
-		m_phoneHome=data;
+		m_phoneHome = data;
 	}
-	else if( type == "PHW")
+	else if( type == "PHW" )
 	{
 		m_phoneWork=data;
 	}
-	else if( type == "PHM")
+	else if( type == "PHM" )
 	{
-		m_phoneMobile=data;
+		m_phoneMobile = data;
 	}
-	else if( type == "MOB")
+	else if( type == "MOB" )
 	{
-		if(data=="Y")
-			m_phone_mob=true;
-		else if (data=="N")
-			m_phone_mob=false;
+		if( data == "Y" )
+			m_phone_mob = true;
+		else if( data == "N" )
+			m_phone_mob = false;
 		else
-			kdDebug(14140) <<"MSNContact::setInfo : unknow MOB " << data <<endl;
+			kdDebug( 14140 ) << k_funcinfo << "Unknown MOB " << data << endl;
 	}
 	else
 	{
-		kdDebug(14140) <<"MSNContact::setInfo : unknow info " << type << " " <<data <<endl;
+		kdDebug( 14140 ) << k_funcinfo << "Unknow info " << type << " " << data << endl;
 	}
 }
 

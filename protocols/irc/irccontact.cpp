@@ -31,6 +31,7 @@
 #include "kopeteviewmanager.h"
 #include "ircusercontact.h"
 #include "irccontact.h"
+#include "ircprotocol.h"
 
 struct whoIsInfo
 {
@@ -85,7 +86,7 @@ IRCContact::~IRCContact()
 
 void IRCContact::slotConnectionClosed()
 {
-	setOnlineStatus( KopeteContact::Offline );
+	setOnlineStatus( IRCProtocol::protocol()->IRCOffline );
 }
 
 bool IRCContact::processMessage( const KopeteMessage &msg )
@@ -175,7 +176,7 @@ void IRCContact::slotUserDisconnected( const QString &user, const QString &reaso
 			KopeteMessage msg(c, mContact, i18n("User %1 has quit (\"%2\")").arg(nickname).arg(reason), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 			manager()->appendMessage(msg);
 			manager()->removeContact( c, true );
-			c->setOnlineStatus( KopeteContact::Offline );
+			c->setOnlineStatus( IRCProtocol::protocol()->IRCOffline );
 			mIdentity->unregisterUser( nickname );
 		}
 	}

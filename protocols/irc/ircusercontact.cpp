@@ -18,6 +18,7 @@
 #include "ircusercontact.h"
 #include "ircchannelcontact.h"
 #include "ircidentity.h"
+#include "ircprotocol.h"
 #include "kopetemessagemanager.h"
 #include "kopeteviewmanager.h"
 
@@ -96,27 +97,14 @@ void IRCUserContact::slotUserOnline( const QString &nick )
 {
 	if( nick.lower() == mNickName.lower() )
 	{
-		setOnlineStatus( KopeteContact::Online );
+		setOnlineStatus( IRCProtocol::protocol()->IRCOnline );
 		mOnlineTimer->start( 90000, true );
 	}
 }
 
 void IRCUserContact::slotUserOffline()
 {
-	setOnlineStatus( KopeteContact::Offline );
-}
-
-QString IRCUserContact::statusIcon() const
-{
-	/*if (mUserclass == KIRC::Operator)
-		return "irc_op";
-
-	if (mUserclass == KIRC::Voiced)
-		return "irc_voice";*/
-	if( onlineStatus() != KopeteContact::Offline )
-		return "irc_normal";
-	else
-		return "irc_offline";
+	setOnlineStatus( IRCProtocol::protocol()->IRCOffline );
 }
 
 void IRCUserContact::slotNewPrivMessage(const QString &originating, const QString &, const QString &message)

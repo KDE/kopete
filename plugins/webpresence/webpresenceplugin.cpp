@@ -286,24 +286,24 @@ QPtrList<KopeteProtocol> WebPresencePlugin::allProtocols()
 	return protos;
 }
 
-QString WebPresencePlugin::statusAsString( KopeteContact::OnlineStatus c )
+QString WebPresencePlugin::statusAsString( const KopeteOnlineStatus &newStatus )
 {
 	QString status;
-	switch ( c )
+	switch ( newStatus.status() )
 	{
-		case KopeteContact::Online:
-			status = "ONLINE";
-			break;
-		case KopeteContact::Away:
-			status = "AWAY";
-			break;
-		case KopeteContact::Offline:
-			status = "OFFLINE";
-			break;
-		default:
-			status = "UNKNOWN";
+	case KopeteOnlineStatus::Online:
+		status = "ONLINE";
+		break;
+	case KopeteOnlineStatus::Away:
+		status = "AWAY";
+		break;
+	case KopeteOnlineStatus::Offline:
+		status = "OFFLINE";
+		break;
+	default:
+		status = "UNKNOWN";
 	}
-	
+
 	return status;
 }
 

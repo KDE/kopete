@@ -1,30 +1,31 @@
-/***************************************************************************
-                    msnprotocol.h  -  Kopete's MSN Plugin
-                             -------------------
-   Copyright (c) 2002       by Duncan Mac-Vicar P. <duncan@kde.org>
-   Copyright (c) 2002       by Martijn Klingens    <klingens@kde.org>
-   Copyright (c) 2002-2003  by Olivier Goffart     <ogoffart@tiscalinet.be>
+/*
+    msnprotocol.h - Kopete MSN Protocol Plugin
 
-   Copyright (c) 2002-2003  by the Kopete developers  <kopete-devel@kde.org>
- ***************************************************************************/
+    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
-#ifndef MSNPROTOCOL_H
-#define MSNPROTOCOL_H
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
+
+#ifndef __msnprotocol_h__
+#define __msnprotocol_h__
 
 #include <qmap.h>
-//#include <qptrdict.h>
 #include <qstringlist.h>
 
 #include "kopeteprotocol.h"
+#include "kopeteonlinestatus.h"
+
 #include "msnsocket.h"
 
 class KAction;
@@ -44,6 +45,7 @@ class KopeteGroup;
 
 /**
  * @author duncan
+ * @author Martijn Klingens <klingens@kde.org>
  */
 class MSNProtocol : public KopeteProtocol
 {
@@ -51,7 +53,6 @@ class MSNProtocol : public KopeteProtocol
 
 public:
 	MSNProtocol( QObject *parent, const char *name, const QStringList &args );
-	~MSNProtocol();
 
 	/**
 	 * SyncMode indicates whether settings differing between client and
@@ -83,22 +84,19 @@ public:
 		SyncBoth       = 0x03
 	};
 
-
-
-	enum Status
-	{
-		NLN,    // Online
-		BSY,    // Busy
-		BRB,    // Be right back
-		AWY,    // Away from computer
-		PHN,    // On the phone
-		LUN,    // Out to lunch
-		FLN,    // Offline
-		HDN,    // Invisible
-		IDL,    // Idle
-//		BLO,     // blocked (not used)
-		UNK     // Unknown (Not in the contact list)
-	};
+	/**
+	 * The possible MSN online statuses
+	 */
+	static KopeteOnlineStatus statusNLN() { return s_statusNLN; }
+	static KopeteOnlineStatus statusBSY() { return s_statusBSY; }
+	static KopeteOnlineStatus statusBRB() { return s_statusBRB; }
+	static KopeteOnlineStatus statusAWY() { return s_statusAWY; }
+	static KopeteOnlineStatus statusPHN() { return s_statusPHN; }
+	static KopeteOnlineStatus statusLUN() { return s_statusLUN; }
+	static KopeteOnlineStatus statusFLN() { return s_statusFLN; }
+	static KopeteOnlineStatus statusHDN() { return s_statusHDN; }
+	static KopeteOnlineStatus statusIDL() { return s_statusIDL; }
+	static KopeteOnlineStatus statusUNK() { return s_statusUNK; }
 
 	enum List
 	{
@@ -114,34 +112,34 @@ public:
 	virtual AddContactPage *createAddContactWidget( QWidget *parent );
 	virtual EditIdentityWidget *createEditIdentityWidget(KopeteIdentity *identity, QWidget *parent);
 	virtual KopeteIdentity *createNewIdentity(const QString &identityId);
-	
-
-	/**
-	 * Convert string-like status to Status enum
-	 */
-	static Status convertStatus( QString status );
 
 	/**
 	 * Returns a set of action items for the chatWindows
 	 */
 	KActionCollection * customChatActions(KopeteMessageManager * );
 
-	
 	virtual KActionMenu* protocolActions();
 	virtual const QString protocolIcon();
 
 private slots:
-
 	void slotSyncContactList();
 
-
 private:
-	
 	KActionMenu *m_menu;
 
 	static MSNProtocol *s_protocol;
-	MSNPreferences *mPrefs;  
+	MSNPreferences *mPrefs;
 
+	static KopeteOnlineStatus s_statusNLN;
+	static KopeteOnlineStatus s_statusBSY;
+	static KopeteOnlineStatus s_statusBRB;
+	static KopeteOnlineStatus s_statusAWY;
+	static KopeteOnlineStatus s_statusPHN;
+	static KopeteOnlineStatus s_statusLUN;
+	static KopeteOnlineStatus s_statusFLN;
+	static KopeteOnlineStatus s_statusHDN;
+	static KopeteOnlineStatus s_statusIDL;
+	static KopeteOnlineStatus s_statusUNK;
 };
 
 #endif

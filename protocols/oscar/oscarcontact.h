@@ -26,11 +26,12 @@
 class AIMBuddy;
 
 struct UserInfo;
-class QTimer;
-class OscarProtocol;
-class KopeteMessageManager;
-class OscarConnection;
 class KAction;
+class KopeteMessageManager;
+class KopeteOnlineStatus;
+class OscarConnection;
+class OscarProtocol;
+class QTimer;
 
 /**
  * Contact for oscar protocol
@@ -49,8 +50,6 @@ public:
 	 * that a plugin may want to store a contact list.
 	 */
 	virtual QString data(void) const;
-	/** Returns the status icon of the contact */
-	virtual QString statusIcon(void) const;
 	/**
 	 * Returns a set of custom menu items for
 	 * the context menu
@@ -74,15 +73,12 @@ public slots:
 	/** Send a file */
 	virtual void sendFile(const KURL &sourceURL, const QString &altFileName, const long unsigned int fileSize);
 
-public: // Public attributes
+private:
 	/** The name of the contact */
 	QString mName;
-	/** The status of the contact */
-	int mStatus;
+
 	/** List of contacts.. I don't want this to be here */
 	QPtrList<KopeteContact> theContacts;
-
-private: // Private members
 
 	/** Initialzes the actions */
 	void initActions(void);
@@ -114,7 +110,7 @@ private: // Private attributes
 	long mLastAutoResponseTime;
 
 	/** The contact's idle time */
-	int mIdle;
+	uint mIdle;
 	/** Tells whether or not we have a direct connection with the contact */
 	bool mDirectlyConnected;
 
@@ -142,8 +138,12 @@ private slots: // Private slots
 	void slotUpdateNickname(const QString);
 	/** Warn the user */
 	void slotWarn(void);
-	/** Called when the status of the Kopete user(behind this computer)'s status has changed */
-	void slotMainStatusChanged(int);
+
+	/**
+	 * Called when the status of the Kopete user(behind this computer)'s status has changed
+	 */
+	void slotMainStatusChanged( const KopeteOnlineStatus & );
+
 	/** Called when KMM is destroyed */
 	void slotMessageManagerDestroyed();
 	/** Called when we want to block the contact */

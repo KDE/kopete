@@ -33,6 +33,7 @@
 
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
+#include "kopeteonlinestatus.h"
 #include "addcontactpage.h"
 #include "jabberprefs.h"
 #include "jabbermap.h"
@@ -135,20 +136,13 @@ public:
 	 *
 	 ********************************************************************/
 
-	/**
-	 * Internal enum for passing on the status as a constant
-	 * (instead of a string, how Psi handles it)
-	 */
-	enum Presence
-	{
-			STATUS_ONLINE,
-			STATUS_CHATTY,
-			STATUS_AWAY,
-			STATUS_XA,
-			STATUS_DND,
-			STATUS_INVISIBLE,
-			STATUS_OFFLINE
-	};
+	const KopeteOnlineStatus JabberOnline;
+	const KopeteOnlineStatus JabberChatty;
+	const KopeteOnlineStatus JabberAway;
+	const KopeteOnlineStatus JabberXA;
+	const KopeteOnlineStatus JabberDND;
+	const KopeteOnlineStatus JabberOffline;
+	const KopeteOnlineStatus JabberInvisible;
 
 	/**
 	 * This returns our protocol instance
@@ -194,19 +188,18 @@ public slots:
 	 */
 	virtual void disconnect();
 
-	void setPresence(Presence status, const QString &reason = 0,
+	void setPresence( const KopeteOnlineStatus &status, const QString &reason = 0,
 					int priority = 5);
 
 	/**
 	 * Sends a presence packet to a node
 	 */
-	void sendPresenceToNode(const Presence &, const QString &);
+	void sendPresenceToNode( const KopeteOnlineStatus &status, const QString & );
 
-signals:		
+signals:
 	void settingsChanged();
 
 private slots:
-
 
 	/*
 	 * Slot to connect to the server
@@ -386,7 +379,7 @@ private:
 	/*
 	 * Initial presence to set after connecting
 	 */
-	Presence initialPresence;
+	KopeteOnlineStatus initialPresence;
 
 	/*
 	 * Jabber client classes per identity
@@ -442,14 +435,5 @@ private:
 
 #endif
 
-
-/*
- * Local variables:
- * mode: c++
- * c-indentation-style: k&r
- * c-basic-offset: 4
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 

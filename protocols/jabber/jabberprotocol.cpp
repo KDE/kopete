@@ -65,8 +65,15 @@ JabberProtocol *JabberProtocol::protocolInstance = 0;
 
 K_EXPORT_COMPONENT_FACTORY(kopete_jabber, KGenericFactory<JabberProtocol>);
 
-JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList)
-				: KopeteProtocol(parent, name)
+JabberProtocol::JabberProtocol( QObject *parent, QString name, QStringList )
+: KopeteProtocol( parent, name ),
+	JabberOnline(    KopeteOnlineStatus::Online,  25, this, 0,  "jabber_online",  i18n( "Go O&nline" ),         i18n( "Online" ) ),
+	JabberChatty(    KopeteOnlineStatus::Online,  20, this, 1,  "jabber_chatty",  i18n( "Go F&ree to Chat" ),   i18n( "Free to Chat" ) ),
+	JabberAway(      KopeteOnlineStatus::Away,    25, this, 2,  "jabber_away",    i18n( "Go A&way" ),           i18n( "Away" ) ),
+	JabberXA(        KopeteOnlineStatus::Away,    20, this, 3,  "jabber_away",    i18n( "Go E&xtended Away" ),  i18n( "Extended Away" ) ),
+	JabberDND(       KopeteOnlineStatus::Away,    15, this, 4,  "jabber_na",      i18n( "Go &Do not Disturb" ), i18n( "Do not Disturb" ) ),
+	JabberOffline(   KopeteOnlineStatus::Offline, 20, this, 5,  "jabber_offline", i18n( "Go O&ffline" ),        i18n( "Offline" ) ),
+	JabberInvisible( KopeteOnlineStatus::Online,   5, this, 6,  "jabber_offline", i18n( "Go I&nvisible" ),      i18n( "Invisible" ) )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Loading ..." << endl;
 
@@ -91,7 +98,7 @@ JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList)
 
 	myContact = 0L;
 
-	initialPresence = STATUS_ONLINE;
+	initialPresence = JabberOnline;
 
 	preferences = new JabberPreferences("jabber_protocol_32", this);
 	QObject::connect( preferences, SIGNAL(saved()),
@@ -507,7 +514,7 @@ void JabberProtocol::slotConnected(bool success, int statusCode,
 		// presence information before we have updated our roster
 		// with actual contacts from the server! (libpsi won't forward
 		// presence information in that case either)
-		setPresence(initialPresence, myContact->reason());
+		setPresence( initialPresence, myContact->reason() );
 
 		// initiate anti-idle timer (will be triggered every 10 seconds)
 		jabberClient->setNoopTime(10000);
@@ -565,8 +572,7 @@ void JabberProtocol::disconnect()
 	QDictIterator<KopeteContact> it( contacts() );
 	for ( ; it.current() ; ++it )
 	{
-		static_cast<JabberContact *>( *it )->slotUpdatePresence(
-			STATUS_OFFLINE, "" );
+		static_cast<JabberContact *>( *it )->slotUpdatePresence( JabberOffline, "" );
 	}
 
 }
@@ -672,8 +678,7 @@ bool JabberProtocol::isConnected() const
 /*
  * Set presence (usually called by dialog widget)
  */
-void JabberProtocol::setPresence(Presence status, const QString &reason,
-				int priority)
+void JabberProtocol::setPresence( const KopeteOnlineStatus &status, const QString &reason, int priority )
 {
 	if (isConnected())
 	{
@@ -683,47 +688,26 @@ void JabberProtocol::setPresence(Presence status, const QString &reason,
 		presence.setStatus(reason);
 		presence.setIsAvailable(true);
 
-		switch(status)
+		if( status == JabberOnline )
+			presence.setShow("");
+		else if( status == JabberChatty )
+			presence.setShow("chat");
+		else if( status == JabberAway )
+			presence.setShow("away");
+		else if( status == JabberXA )
+			presence.setShow("xa");
+		else if( status == JabberDND )
+			presence.setShow("dnd");
+		else if( status == JabberInvisible )
+			presence.setIsInvisible(true);
+		else
 		{
-		case STATUS_ONLINE:
-				setStatusIcon("jabber_online");
-				presence.setShow("");
-				break;
-
-		case STATUS_CHATTY:
-				setStatusIcon("jabber_chatty");
-				presence.setShow("chat");
-				break;
-
-		case STATUS_AWAY:
-				setStatusIcon("jabber_away");
-				presence.setShow("away");
-				break;
-
-		case STATUS_XA:
-				setStatusIcon("jabber_na");
-				presence.setShow("xa");
-				break;
-
-		case STATUS_DND:
-				setStatusIcon("jabber_na");
-				presence.setShow("dnd");
-				break;
-
-		case STATUS_INVISIBLE:
-				setStatusIcon("jabber_invisible");
-				presence.setIsInvisible(true);
-				break;
-
-		default:
-				kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Unknown presence status, "
-											<< "ignoring (status == " << status << ")"
+			kdDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Unknown presence status, "
+											<< "ignoring (status == " << status.description() << ")"
 											<< endl;
-				break;
 		}
 
-		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] setPresence() called, updating "
-									<< "to \"" << presence.status()
+		kdDebug( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Updating to \"" << presence.status()
 									<< "\" with reason \"" << reason << endl;
 
 		myContact->slotUpdatePresence(status, reason);
@@ -739,7 +723,7 @@ void JabberProtocol::setPresence(Presence status, const QString &reason,
 void JabberProtocol::setAway(void)
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Setting globally away." << endl;
-	setPresence(STATUS_AWAY, KopeteAway::getInstance()->message());
+	setPresence( JabberAway, KopeteAway::getInstance()->message() );
 }
 
 void JabberProtocol::setAvailable(void)
@@ -754,7 +738,7 @@ KopeteContact* JabberProtocol::myself() const
 
 bool JabberProtocol::isAway(void) const
 {
-	return (myContact->onlineStatus() != KopeteContact::Online);
+	return myContact->onlineStatus().status() == KopeteOnlineStatus::Away;
 }
 
 void JabberProtocol::deserializeContact( KopeteMetaContact *metaContact,
@@ -793,11 +777,11 @@ void JabberProtocol::slotGoOnline()
 	if (!isConnected())
 	{
 		// we are not connected yet, so connect now
-		initialPresence = STATUS_ONLINE;
+		initialPresence = JabberOnline;
 		connect();
 	}
 
-	setPresence(STATUS_ONLINE, "");
+	setPresence( JabberOnline, "" );
 
 }
 
@@ -815,11 +799,11 @@ void JabberProtocol::slotGoChatty()
 	if (!isConnected())
 	{
 		// we are not connected yet, so connect now
-		initialPresence = STATUS_CHATTY;
+		initialPresence = JabberChatty;
 		connect();
 	}
 
-	setPresence(STATUS_CHATTY, "");
+	setPresence( JabberChatty, "" );
 
 }
 
@@ -830,7 +814,7 @@ void JabberProtocol::slotGoAway()
 	if (!isConnected())
 	{
 		// we are not connected yet, so connect now
-		initialPresence = STATUS_AWAY;
+		initialPresence = JabberAway;
 		connect();
 	}
 
@@ -839,7 +823,7 @@ void JabberProtocol::slotGoAway()
 		delete reasonDialog;
 
 	// TODO Fix this to work with KopeteAwayDialog
-	reasonDialog = new dlgJabberStatus(this, STATUS_AWAY, qApp->mainWidget());
+	reasonDialog = new dlgJabberStatus( this, JabberAway, qApp->mainWidget() );
 }
 
 void JabberProtocol::slotGoXA()
@@ -850,7 +834,7 @@ void JabberProtocol::slotGoXA()
 	if (!isConnected())
 	{
 		// we are not connected yet, so connect now
-		initialPresence = STATUS_XA;
+		initialPresence = JabberXA;
 		connect();
 	}
 
@@ -859,7 +843,7 @@ void JabberProtocol::slotGoXA()
 			delete reasonDialog;
 
 	// TODO Fix this to work with KopeteAwayDialog
-	reasonDialog = new dlgJabberStatus(this, STATUS_XA, qApp->mainWidget());
+	reasonDialog = new dlgJabberStatus( this, JabberXA, qApp->mainWidget() );
 
 }
 
@@ -871,7 +855,7 @@ void JabberProtocol::slotGoDND()
 	if (!isConnected())
 	{
 		// we are not connected yet, so connect now
-		initialPresence = STATUS_DND;
+		initialPresence = JabberDND;
 		connect();
 	}
 
@@ -880,7 +864,7 @@ void JabberProtocol::slotGoDND()
 		delete reasonDialog;
 
 	// TODO Fix this to work with KopeteAwayDialog
-	reasonDialog = new dlgJabberStatus(this, STATUS_DND, qApp->mainWidget());
+	reasonDialog = new dlgJabberStatus(this, JabberDND, qApp->mainWidget() );
 
 }
 
@@ -891,11 +875,11 @@ void JabberProtocol::slotGoInvisible()
 	if (!isConnected())
 	{
 		// we are not connected yet, so connect now
-		initialPresence = STATUS_INVISIBLE;
+		initialPresence = JabberInvisible;
 		connect();
 	}
 
-	setPresence(STATUS_INVISIBLE);
+	setPresence( JabberInvisible );
 
 }
 
@@ -950,8 +934,7 @@ void JabberProtocol::subscribed(const Jabber::Jid &jid)
 
 }
 
-void JabberProtocol::sendPresenceToNode(const Presence &pres,
-				const QString &userId )
+void JabberProtocol::sendPresenceToNode( const KopeteOnlineStatus &pres, const QString &userId )
 {
 
 	if(!isConnected())
@@ -966,31 +949,23 @@ void JabberProtocol::sendPresenceToNode(const Presence &pres,
 	Jabber::Jid jid(userId);
 	Jabber::Status status;
 
-	switch(pres)
+	if( pres == JabberOnline )
+		status.setShow("");
+	else if( pres == JabberChatty )
+		status.setShow("chat");
+	else if( pres == JabberAway )
+		status.setShow("away");
+	else if( pres == JabberXA )
+		status.setShow("xa");
+	else if( pres == JabberDND )
+		status.setShow("dnd");
+	else if( pres == JabberInvisible )
 	{
-	case STATUS_ONLINE:
-			status.setShow("");
-			break;
-	case STATUS_CHATTY:
-			status.setShow("chat");
-			break;
-	case STATUS_AWAY:
-			status.setShow("away");
-			break;
-	case STATUS_XA:
-			status.setShow("xa");
-			break;
-	case STATUS_DND:
-			status.setShow("dnd");
-			break;
-	case STATUS_INVISIBLE:
-			status.setShow("away");
-			status.setIsInvisible(true);
-			break;
-	default:
-			status.setShow("away");
-			break;
+		status.setShow("away");
+		status.setIsInvisible(true);
 	}
+	else
+		status.setShow("away");
 
 	task->pres(jid, status);
 	task->go(true);
@@ -1402,8 +1377,7 @@ void JabberProtocol::slotGroupChatPresence(const Jabber::Jid &jid, const Jabber:
 
 }
 
-void JabberProtocol::slotGroupChatError(const Jabber::Jid &jid,
-				int error, QString &reason)
+void JabberProtocol::slotGroupChatError(const Jabber::Jid & /* jid */, int /* error */, QString & /* reason */ )
 {
 		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Group chat error!" << endl;
 

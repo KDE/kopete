@@ -7,10 +7,6 @@
 #ifndef AIM_H
 #define AIM_H
 
-#define TAIM_ONLINE 1
-#define TAIM_AWAY 2
-#define TAIM_OFFLINE 0
-
 #define TOC_PERMITALL 1
 #define TOC_DENYALL 2
 #define TOC_PERMITSOME 3

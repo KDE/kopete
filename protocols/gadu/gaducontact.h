@@ -40,17 +40,13 @@ public:
     GaduContact( const QString &protocolId, uin_t uin, const QString& name,
                  KopeteMetaContact *parent );
 
-    virtual QString statusText() const;
-    virtual QString statusIcon() const;
-    virtual int     importance() const;
     virtual QString data() const;
     virtual bool    isReachable();
     virtual KActionCollection *customContextMenuActions();
     virtual QString identityId() const;
 
     void  setParentIdentity( const QString& );
-    void  setGaduStatus( Q_UINT32, const QString& descr = QString::null );
-    Q_UINT32  gaduStatus() const;
+    void  setDescription( const QString& descr );
     QString   description() const;
     uin_t uin() const;
 public slots:
@@ -69,7 +65,6 @@ private:
     QString               description_;
     QString               parentIdentity_;
     GaduProtocol         *protocol_;
-    Q_UINT32              status_;
     KopeteContactPtrList  thisContact_;
 
     KAction     *actionSendMessage_;

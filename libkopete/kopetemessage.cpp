@@ -25,9 +25,10 @@
 #include <klocale.h>
 #include <kiconloader.h>
 
-#include "kopetemessage.h"
 #include "kopeteemoticons.h"
+#include "kopetemessage.h"
 #include "kopetemetacontact.h"
+#include "kopeteonlinestatus.h"
 
 class KopeteMessagePrivate
 {
@@ -421,7 +422,7 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 				case 'I': //insert the statusicon path
 					if(d->from)
 					{
-						QString icoPath = KGlobal::iconLoader()->iconPath(d->from->statusIcon(), KIcon::Small);
+						QString icoPath = KGlobal::iconLoader()->iconPath( d->from->onlineStatus().icon(), KIcon::Small );
 						if (!icoPath.isNull())
 						message.append( QStyleSheet::escape(icoPath) );
 					}

@@ -24,9 +24,6 @@
 // Qt Includes
 #include <qvaluestack.h>
 #include <qdatetime.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qcursor.h>
 #include <qptrlist.h>
 #include <qtimer.h>
 #include <qstringlist.h>
@@ -43,7 +40,6 @@
 #include "wpprotocol.h"
 
 class QTimer;
-class QPixmap;
 class QListView;
 class QListViewItem;
 class KPopupMenu;
@@ -60,7 +56,6 @@ class WPContact: public KopeteContact
 private:
 	bool myIsOnline;		// true if online, false if not
 	bool myWasConnected;	// true if protocol connected at last check
-	QString myHost;			// stores the hostname of this contact
 	WPProtocol *myProtocol;	// stores the protocol instance to which this contact belongs
 	QTimer checkStatus;		// checks the status of this contact every second or so
 	KActionCollection *myActionCollection;
@@ -77,8 +72,6 @@ public slots:
 public:
 	WPContact(WPProtocol *protocol, const QString &userID, KopeteMetaContact *parent);
 							// the constructor
-	const QString host() { return myHost; }
-							// the host name return method
 	KopeteMessageManager *manager( bool canCreate = false );
 signals:
 	void messageSuccess();
@@ -92,13 +85,10 @@ public:
 	// very basic actions
 	bool isOnline() const { return myIsOnline; }
 	bool isReachable() { return myIsOnline; }
-	QString statusText() const { return myIsOnline ? "Online" : "Offline"; }
-	QString statusIcon() const { return myIsOnline ? "wp_available" : "wp_offline"; }
 	
-	int importance() const { return myIsOnline ? 20 : 0; }
 	KActionCollection *customContextMenuActions() { return myActionCollection; }
 
-	QString identityId() const { return myHost; }
+	QString identityId() const { return contactId(); }
 
 public slots:
 	void slotDeleteContact() { deleteLater(); }

@@ -28,7 +28,8 @@ JabberResource::JabberResource()
 
 }
 
-JabberResource::JabberResource(const QString &resource, const int &priority, const QDateTime &timestamp, const JabberProtocol::Presence &status, const QString &reason)
+JabberResource::JabberResource( const QString &resource, const int &priority, const QDateTime &timestamp, const KopeteOnlineStatus &status,
+	const QString &reason )
 {
 	
 	kdDebug(14130) << QString("Jabber resource: New Jabber resource (resource %1, priority %2, timestamp %3).").arg(resource, 1).arg(priority, 2).arg(timestamp.toString("yyyyMMddhhmmss"), 3) << endl;
@@ -38,11 +39,6 @@ JabberResource::JabberResource(const QString &resource, const int &priority, con
 	mTimestamp = timestamp;
 	mStatus = status;
 	mReason = reason;
-
-}
-
-JabberResource::~JabberResource()
-{
 
 }
 
@@ -61,7 +57,7 @@ QDateTime JabberResource::timestamp()
     return mTimestamp;
 }
 	
-JabberProtocol::Presence JabberResource::status()
+KopeteOnlineStatus JabberResource::status()
 {
     return mStatus;
 }

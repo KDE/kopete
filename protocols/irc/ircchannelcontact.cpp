@@ -18,6 +18,7 @@
 #include "ircchannelcontact.h"
 #include "ircusercontact.h"
 #include "ircidentity.h"
+#include "ircprotocol.h"
 
 #include "kirc.h"
 #include "kopetemessagemanagerfactory.h"
@@ -110,7 +111,7 @@ void IRCChannelContact::slotMessageManagerDestroyed()
 
 void IRCChannelContact::slotConnectedToServer()
 {
-	setOnlineStatus( KopeteContact::Online );
+	setOnlineStatus( IRCProtocol::protocol()->IRCOnline );
 }
 
 void IRCChannelContact::slotNamesList(const QString &channel, const QStringList &nicknames)
@@ -141,7 +142,7 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QStringList 
 
 			IRCUserContact *user = mIdentity->findUser( *it );
 			user->setUserclass( mNickName, userclass );
-			user->setOnlineStatus( KopeteContact::Online );
+			user->setOnlineStatus( IRCProtocol::protocol()->IRCOnline );
 			user->addChannel( mNickName );
 
 			//Post the event so we don't block the UI
@@ -165,7 +166,7 @@ void IRCChannelContact::slotChannelTopic(const QString &channel, const QString &
 
 void IRCChannelContact::slotJoin()
 {
-	if ( !isConnected && onlineStatus() == KopeteContact::Online )
+	if ( !isConnected && onlineStatus().status() == KopeteOnlineStatus::Online )
 		mEngine->joinChannel(mNickName);
 }
 
@@ -195,7 +196,7 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 		else
 		{
 			IRCUserContact *contact = mIdentity->findUser( nickname );
-			contact->setOnlineStatus( KopeteContact::Online );
+			contact->setOnlineStatus( IRCProtocol::protocol()->IRCOnline );
 			contact->addChannel( mNickName );
 			manager()->addContact((KopeteContact *)contact, true);
 
@@ -364,7 +365,7 @@ bool IRCChannelContact::modeEnabled( QChar mode, QString *value )
 KActionCollection *IRCChannelContact::customContextMenuActions()
 {
 	bool isOperator = (mIdentity->mySelf()->userclass( mNickName ) == KIRC::Operator);
-	bool amOnline = (onlineStatus() == KopeteContact::Online || onlineStatus() == KopeteContact::Away );
+	bool amOnline = onlineStatus().status() == KopeteOnlineStatus::Online || onlineStatus().status() == KopeteOnlineStatus::Away;
 
 	actionJoin->setEnabled( !isConnected && amOnline );
 	actionPart->setEnabled( !actionJoin->isEnabled() );
@@ -382,17 +383,10 @@ KActionCollection *IRCChannelContact::customContextMenuActions()
 
 bool IRCChannelContact::isReachable()
 {
-	if ( onlineStatus() != KopeteContact::Offline && onlineStatus() != KopeteContact::Unknown )
+	if ( onlineStatus().status() != KopeteOnlineStatus::Offline && onlineStatus().status() != KopeteOnlineStatus::Unknown )
 		return true;
 
 	return false;
-}
-
-QString IRCChannelContact::statusIcon() const
-{
-	if ( onlineStatus() == KopeteContact::Online || onlineStatus() == KopeteContact::Away )
-		return "irc_protocol_small";
-	return "irc_protocol_offline";
 }
 
 const QString IRCChannelContact::caption() const

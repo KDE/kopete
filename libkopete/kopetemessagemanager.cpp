@@ -25,6 +25,7 @@
 #include "kopetemessagelog.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
+#include "kopeteonlinestatus.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopetemetacontact.h"
@@ -141,7 +142,7 @@ void KopeteMessageManager::slotUpdateDisplayName()
 	//If we have only 1 contact, add the status of him
 	if( d->mContactList.count() == 1 )
 	{
-		d->displayName.append( QString::fromLatin1(" (") + c->statusText() + QString::fromLatin1(")") );
+		d->displayName.append( QString::fromLatin1( " (%1)").arg( c->onlineStatus().description() ) );
 	}
 	else
 	{

@@ -29,6 +29,8 @@
 #include <qmap.h>
 #include <qobject.h>
 
+#include "kopeteonlinestatus.h"
+
 class AIMBuddyCaps
 {
 public:
@@ -75,7 +77,7 @@ public:
 	const AIMBuddyCaps &capabilities() { return mCapabilities; }
 
 	// Returns the status of this buddy
-	Q_UINT8 status() { return mStatus; }
+	KopeteOnlineStatus status() { return mStatus; }
 
 	// Returns the user class of this buddy
 	int userClass() { return mUserClass; }
@@ -105,7 +107,7 @@ public:
 	void setCapabilities(const AIMBuddyCaps &cap) { mCapabilities = cap; }
 
 	// Sets the online/offline/away status of a user
-	void setStatus(Q_UINT8 status) { mStatus = status; }
+	void setStatus( const KopeteOnlineStatus &status ) { mStatus = status; }
 
 	// Sets the users user class
 	void setUserClass(int userClass) { mUserClass = userClass; }
@@ -136,7 +138,7 @@ private:
 	int mBuddyID;
 	int mGroupID;
 	AIMBuddyCaps mCapabilities;
-	Q_UINT8 mStatus;
+	KopeteOnlineStatus mStatus;
 	int mUserClass;
 	long mSignOnTime;
 	Q_UINT32 mIdleTime;

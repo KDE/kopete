@@ -28,8 +28,9 @@
 // KDE Includes
 
 // Kopete Includes
-#include <kopetemetacontact.h>
-#include <kopeteprotocol.h>
+#include "kopetemetacontact.h"
+#include "kopeteprotocol.h"
+#include "kopeteonlinestatus.h"
 
 // Local Includes
 #include "wppreferences.h"
@@ -83,6 +84,12 @@ public:
 	const QStringList getHosts(const QString &Group) { return theInterface->getHosts(Group); }
 	virtual KActionMenu* protocolActions();	// Per-protocol actions for the systray and the status bar
 
+	static WPProtocol *protocol() { return sProtocol; }
+
+	const KopeteOnlineStatus WPOnline;
+	const KopeteOnlineStatus WPOffline;
+	const KopeteOnlineStatus WPUnknown;
+
 public slots:
 	void slotSettingsChanged(void);			// Callback when settings changed
 	void installSamba();				// Modify smb.conf to use winpopup-send.sh script
@@ -98,8 +105,7 @@ private:
 	WPPreferences *mPrefs;			// Preferences Object
 	WPContact *theMyself;			// A contact to return for the API
 
-//	static WPProtocol *protocol() { return sProtocol; }
-//	static WPProtocol *sProtocol;
+	static WPProtocol *sProtocol;
 
 private slots:
 	/**

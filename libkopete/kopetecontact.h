@@ -21,6 +21,7 @@
 
 #include <qobject.h>
 #include <qstringlist.h>
+
 #include <kurl.h>
 
 struct KopeteContactPrivate;
@@ -33,6 +34,7 @@ class KopeteGroup;
 class KopeteGroupList;
 class KopeteMetaContact;
 class KopeteMessageManager;
+class KopeteOnlineStatus;
 class KopetePlugin;
 class KopeteProtocol;
 class KopeteIdentity;
@@ -58,11 +60,6 @@ public:
 	~KopeteContact();
 
 	/**
-	 * Contact's status
-	 */
-	enum OnlineStatus { Online, Away, Offline, Unknown };
-
-	/**
 	 * Contact's idle status
 	 */
 	enum IdleState { Unspecified, Idle, Active };
@@ -72,7 +69,7 @@ public:
 	 * @return bool indicating whhether the contact is online
 	 * FIXME: When all plugins support this, make this pure virtual!
 	 */
-	virtual bool isOnline() const;
+	bool isOnline() const;
 
 	/**
 	 * Function used in determining if the contact is able to
@@ -157,54 +154,19 @@ public:
 	 * Return the online status of the contact
 	 * @return the online status of the contact
 	 */
-	OnlineStatus onlineStatus() const;
+	KopeteOnlineStatus onlineStatus() const;
 
 	/**
 	 * Set the contact's online status
 	 */
-	void setOnlineStatus( OnlineStatus status );
-
-	/**
-	 * The text describing the contact's status
-	 * The default implement does what you'd expect,
-	 * but you might want to reimplement it for more
-	 * fine-grained reporting of status
-	 *
-	 * @return Formatted status text
-	 */
-	virtual QString statusText() const;
-
-	/**
-	 * The name of the icon associated with the contact's status
-	 * @return name of the icon associated with the contact's status
-	 */
-	virtual QString statusIcon() const;
+	void setOnlineStatus( const KopeteOnlineStatus &status );
 
 	/**
 	 * This method provides an scaled version of the status icon.
 	 * useful for metacontacts, and it uses a primitive cache so
 	 * we dont have to scale at every repaint, it asumes square.
 	 */
-	virtual QPixmap scaledStatusIcon(int size);
-
-	/**
-	 * The "importance" of this contact, used for sorting
-	 * This is almost always related to the contact's status
-	 * Here is how ICQ does it:
-	 *
-	 * 25 = Free For Chat
-	 * 20 = Online
-	 * 15 = Away (temporary away)
-	 * 10 = Not Available (extended away)
-	 * 5  = Invisible
-	 * 0  = Offline
-	 *
-	 * The default implementation returns 20 for Online,
-	 * 10 for away, and 0 for offline
-	 * Please make your importance values between 0 and 25,
-	 * and try to follow ICQ's scheme somewhat
-	 */
-	virtual int importance() const;
+	QPixmap scaledStatusIcon( int size );
 
 	/**
 	 * Return the unique id that identifies a contact. Id is required
@@ -422,7 +384,7 @@ signals:
 	/**
 	 * The contact's online status changed
 	 */
-	void onlineStatusChanged( KopeteContact *contact, KopeteContact::OnlineStatus status );
+	void onlineStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &status );
 
 	/**
 	 * Connect to this signal to know when the contact

@@ -73,7 +73,7 @@ JabberContact::JabberContact(QString userId, QString nickname, QStringList group
 	initActions();
 
 	// create a default (empty) resource for the contact
-	JabberResource *defaultResource = new JabberResource(QString::null, -1, QDateTime::currentDateTime(), JabberProtocol::STATUS_OFFLINE, "");
+	JabberResource *defaultResource = new JabberResource( QString::null, -1, QDateTime::currentDateTime(), JabberProtocol::protocol()->JabberOffline, "" );
 	resources.append(defaultResource);
 
 	activeResource = defaultResource;
@@ -82,7 +82,7 @@ JabberContact::JabberContact(QString userId, QString nickname, QStringList group
 	setDisplayName(rosterItem.name());
 
 	// specifically cause this instance to update this contact as offline
-	slotUpdatePresence(JabberProtocol::STATUS_OFFLINE, "");
+	slotUpdatePresence( p->JabberOffline, QString::null );
 }
 
 /**
@@ -222,7 +222,7 @@ KActionCollection *JabberContact::customContextMenuActions()
 
 	// if the contact is online,
 	// display the resources we have for it
-	if (onlineStatus() != Offline)
+	if( onlineStatus().status() != KopeteOnlineStatus::Offline )
 	{
 		QStringList items;
 		int activeItem = 0;
@@ -278,64 +278,11 @@ KActionCollection *JabberContact::customContextMenuActions()
 
 }
 
-void JabberContact::slotUpdatePresence(const JabberProtocol::Presence newStatus, const QString &reason)
+void JabberContact::slotUpdatePresence( const KopeteOnlineStatus &newStatus, const QString &reason )
 {
-
-	QString dbgString = "[JabberContact] Updating contact " + userId() + "  to ";
-	switch(newStatus)
-	{
-		case JabberProtocol::STATUS_ONLINE:
-			dbgString += "STATUS_ONLINE";
-			break;
-		case JabberProtocol::STATUS_CHATTY:
-			dbgString += "STATUS_CHATTY";
-			break;
-		case JabberProtocol::STATUS_AWAY:
-			dbgString += "STATUS_AWAY";
-			break;
-		case JabberProtocol::STATUS_XA:
-			dbgString += "STATUS_XA";
-			break;
-		case JabberProtocol::STATUS_DND:
-			dbgString += "STATUS_DND";
-			break;
-		case JabberProtocol::STATUS_INVISIBLE:
-			dbgString += "STATUS_INVISIBLE";
-			break;
-		case JabberProtocol::STATUS_OFFLINE:
-			dbgString += "STATUS_OFFLINE";
-			break;
-	}
-	kdDebug(14130) << dbgString << " (Reason: " << reason << ")" << endl;
-
 	awayReason = reason;
-	presence = newStatus;
 
-	setOnlineStatus( convertPresenceToStatus( presence ) );
-}
-
-KopeteContact::OnlineStatus JabberContact::convertPresenceToStatus( JabberProtocol::Presence status )
-{
-	OnlineStatus kcStatus = Unknown;
-
-	switch(status)
-	{
-		case JabberProtocol::STATUS_ONLINE:
-		case JabberProtocol::STATUS_CHATTY:
-			kcStatus = Online;
-			break;
-		case JabberProtocol::STATUS_AWAY:
-		case JabberProtocol::STATUS_XA:
-		case JabberProtocol::STATUS_DND:
-			kcStatus = Away;
-			break;
-		case JabberProtocol::STATUS_INVISIBLE:
-		case JabberProtocol::STATUS_OFFLINE:
-			kcStatus = Offline;
-			break;
-	}
-
-	return kcStatus;
+	setOnlineStatus( newStatus );
 }
 
 void JabberContact::slotUpdateContact(const Jabber::RosterItem &item)
@@ -346,8 +293,6 @@ void JabberContact::slotUpdateContact(const Jabber::RosterItem &item)
 	// only update the nickname if its not empty
 	if(!item.name().isEmpty() && !item.name().isNull())
 		setDisplayName(item.name());
-
-	setOnlineStatus( convertPresenceToStatus( presence ) );
 
 }
 
@@ -386,77 +331,6 @@ void JabberContact::slotDoRenameContact(const QString &nickname)
 	// and thus our changes did not make it to the server
 	// yet)
 	setDisplayName(name);
-
-}
-
-QString JabberContact::statusText() const
-{
-	QString txt;
-
-	switch (presence)
-	{
-		case JabberProtocol::STATUS_ONLINE:
-			txt = i18n("Online");
-			break;
-
-		case JabberProtocol::STATUS_CHATTY:
-			txt = i18n("Free to Chat");
-			break;
-
-		case JabberProtocol::STATUS_AWAY:
-			txt = i18n("Away");
-			break;
-
-		case JabberProtocol::STATUS_XA:
-			txt = i18n("Extended Away");
-			break;
-
-		case JabberProtocol::STATUS_DND:
-			txt = i18n("Do Not Disturb");
-			break;
-
-		default:
-			txt = i18n("Offline");
-			break;
-	}
-
-	// append away reason if there is one
-	if (!awayReason.isNull() && !awayReason.isEmpty())
-		txt += " (" + awayReason + ")";
-
-	return txt;
-
-}
-
-QString JabberContact::statusIcon() const
-{
-	QString icon;
-
-	switch(presence)
-	{
-		case JabberProtocol::STATUS_ONLINE:
-					icon = "jabber_online";
-					break;
-
-		case JabberProtocol::STATUS_CHATTY:
-					icon = "jabber_chatty";
-					break;
-
-		case JabberProtocol::STATUS_AWAY:
-		case JabberProtocol::STATUS_XA:
-					icon = "jabber_away";
-					break;
-
-		case JabberProtocol::STATUS_DND:
-					icon = "jabber_na";
-					break;
-
-		default:
-					icon = "jabber_offline";
-					break;
-	}
-
-	return icon;
 
 }
 
@@ -525,36 +399,6 @@ void JabberContact::removeFromGroup(KopeteGroup *group)
 	rosterItem.setGroups(groups);
 
 	protocol->updateContact(rosterItem);
-
-}
-
-int JabberContact::importance() const
-{
-	int value;
-
-	switch(presence)
-	{
-		case JabberProtocol::STATUS_CHATTY:
-					value = 20;
-					break;
-		case JabberProtocol::STATUS_ONLINE:
-					value = 19;
-					break;
-		case JabberProtocol::STATUS_AWAY:
-					value = 15;
-					break;
-		case JabberProtocol::STATUS_XA:
-					value = 12;
-					break;
-		case JabberProtocol::STATUS_DND:
-					value = 10;
-					break;
-		default:
-					value = 0;
-					break;
-	}
-
-	return value;
 
 }
 
@@ -712,25 +556,25 @@ void JabberContact::slotResourceAvailable(const Jabber::Jid &, const Jabber::Res
 		}
 	}
 
-	JabberProtocol::Presence status = JabberProtocol::STATUS_ONLINE;
+	KopeteOnlineStatus status = JabberProtocol::protocol()->JabberOnline;
 	if(resource.status().show() == "chat")
 	{
-		status = JabberProtocol::STATUS_CHATTY;
+		status = JabberProtocol::protocol()->JabberChatty;
 	}
 	else
 	if(resource.status().show() == "away")
 	{
-		status = JabberProtocol::STATUS_AWAY;
+		status = JabberProtocol::protocol()->JabberAway;
 	}
 	else
 	if(resource.status().show() == "xa")
 	{
-		status = JabberProtocol::STATUS_XA;
+		status = JabberProtocol::protocol()->JabberXA;
 	}
 	else
 	if(resource.status().show() == "dnd")
 	{
-		status = JabberProtocol::STATUS_DND;
+		status = JabberProtocol::protocol()->JabberDND;
 	}
 
 	JabberResource *newResource = new JabberResource(resource.name(), resource.priority(), resource.status().timeStamp(), status, resource.status().status());
@@ -910,7 +754,7 @@ void JabberContact::slotStatusOnline()
 	if(resourceOverride)
 		id += activeResource->resource();
 
-	protocol->sendPresenceToNode(JabberProtocol::STATUS_ONLINE, id);
+	protocol->sendPresenceToNode( JabberProtocol::protocol()->JabberOnline, id );
 
 }
 
@@ -922,7 +766,7 @@ void JabberContact::slotStatusChatty()
 	if(resourceOverride)
 		id += activeResource->resource();
 
-	protocol->sendPresenceToNode(JabberProtocol::STATUS_CHATTY, id);
+	protocol->sendPresenceToNode( JabberProtocol::protocol()->JabberChatty, id );
 
 }
 
@@ -934,7 +778,7 @@ void JabberContact::slotStatusAway()
 	if(resourceOverride)
 		id += activeResource->resource();
 
-	protocol->sendPresenceToNode(JabberProtocol::STATUS_AWAY, id);
+	protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberAway, id );
 
 }
 
@@ -946,7 +790,7 @@ void JabberContact::slotStatusXA()
 	if(resourceOverride)
 		id += activeResource->resource();
 
-	protocol->sendPresenceToNode(JabberProtocol::STATUS_XA, id);
+	protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberXA, id );
 
 }
 
@@ -957,7 +801,7 @@ void JabberContact::slotStatusDND()
 	if(resourceOverride)
 		id += activeResource->resource();
 
-	protocol->sendPresenceToNode(JabberProtocol::STATUS_DND, id);
+	protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberDND, id );
 
 }
 
@@ -968,7 +812,7 @@ void JabberContact::slotStatusInvisible()
 	if(resourceOverride)
 		id += activeResource->resource();
 
-	protocol->sendPresenceToNode(JabberProtocol::STATUS_INVISIBLE, id);
+	protocol->sendPresenceToNode(JabberProtocol::protocol()->JabberInvisible, id );
 }
 
 void JabberContact::serialize( QMap<QString, QString> &serializedData,

@@ -66,13 +66,7 @@ public:
 	YahooStatus();
 	
 	/* Translates YahooStatus to Kopete standard ones */
-	KopeteContact::OnlineStatus translate() const;
-	/* Returns a status description */
-	QString text() const;
-	/* Returns status asscociated icon */
-	QString icon() const;
-	/* Returns current importance */
-	int importance() const;
+	KopeteOnlineStatus translate() const;
 	/* Set current status */
 	void setStatus( Status, const QString & = QString::null );
 	static Status fromLibYahoo2( int );

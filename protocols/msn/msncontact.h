@@ -19,7 +19,7 @@
 #define MSNCONTACT_H
 
 #include "kopetecontact.h"
-#include "msnprotocol.h"
+
 #include <kurl.h>
 
 class QListView;
@@ -32,19 +32,14 @@ class KAction;
 class KActionCollection;
 class KListAction;
 
+class KopeteProtocol;
+
 class MSNContact : public KopeteContact
 {
 	Q_OBJECT
 
 public:
-	MSNContact( KopeteIdentity *identity, const QString &id,
-		const QString &displayName, KopeteMetaContact *parent );
-
-	~MSNContact();
-
-	QString statusText() const;
-	QString statusIcon() const;
-	int importance() const;
+	MSNContact( KopeteIdentity *identity, const QString &id, const QString &displayName, KopeteMetaContact *parent );
 
 	/**
 	 * Indicate whether this contact is blocked
@@ -88,13 +83,6 @@ public:
 	 * efficient.
 	 */
 	virtual KopeteGroupList groups() const;
-
-	/**
-	 * The contact's MSN specific status, this is NOT the ContactStatus!
-	 * FIXME: Status handling needs serious redesign, probably!
-	 */
-	MSNProtocol::Status msnStatus() const;
-	void setMsnStatus( MSNProtocol::Status status );
 
 	virtual bool isReachable() { return true; };
 
@@ -149,8 +137,6 @@ private:
 //	bool m_deleted;
 	bool m_reversed;
 
-	MSNProtocol::Status m_status;
-
 	KActionCollection* m_actionCollection;
 	KAction* m_actionBlock;
 
@@ -164,14 +150,5 @@ private:
 
 #endif
 
-
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 

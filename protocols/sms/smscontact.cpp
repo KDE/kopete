@@ -41,11 +41,7 @@ SMSContact::SMSContact( SMSProtocol* _protocol, const QString &phoneNumber,
 
 	m_msgManager = 0L;
 
-	setOnlineStatus( Unknown );
-}
-
-SMSContact::~SMSContact()
-{
+	setOnlineStatus( _protocol->SMSUnknown );
 }
 
 void SMSContact::serialize( QMap<QString, QString> &serializedData,
@@ -139,11 +135,6 @@ void SMSContact::slotDeleteContact()
 	deleteLater();
 }
 
-int SMSContact::importance() const
-{
-	return 20;
-}
-
 QString SMSContact::phoneNumber()
 {
 	return m_phoneNumber;
@@ -163,7 +154,6 @@ void SMSContact::setServiceName(QString name)
 {
 	m_serviceName = name;
 }
-
 
 QString SMSContact::servicePref(QString name)
 {

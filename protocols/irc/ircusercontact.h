@@ -42,7 +42,6 @@ class IRCUserContact : public IRCContact
 		const KIRC::UserClass userclass( const QString &channel ) const { return  mUserClassMap[channel.lower()]; }
 
 		// KopeteContact stuff
-		virtual QString statusIcon() const;
 		virtual KActionCollection *customContextMenuActions() { return mCustomActions; };
 		virtual const QString caption() const;
 		virtual KopeteMessageManager* manager( bool canCreate = false );

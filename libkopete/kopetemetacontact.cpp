@@ -28,6 +28,7 @@
 #include <knotifyclient.h>
 
 #include "kopetecontactlist.h"
+#include "kopeteonlinestatus.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopeteidentity.h"
@@ -86,8 +87,8 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 	{
 		d->contacts.append( c );
 
-		connect( c, SIGNAL( onlineStatusChanged( KopeteContact *, KopeteContact::OnlineStatus ) ),
-			SLOT( slotContactStatusChanged( KopeteContact *, KopeteContact::OnlineStatus ) ) );
+		connect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ),
+			SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ) );
 
 		connect( c, SIGNAL( displayNameChanged( const QString & ) ),
 			this, SLOT( slotContactNameChanged( const QString & ) ) );
@@ -126,20 +127,21 @@ void KopeteMetaContact::updateOnlineStatus()
 	QPtrListIterator<KopeteContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
-		KopeteContact::OnlineStatus s = it.current()->onlineStatus();
+		KopeteOnlineStatus status = it.current()->onlineStatus();
 
-		if( s == KopeteContact::Online )
+		if( status.status() == KopeteOnlineStatus::Online )
 		{
 			newStatus = Online;
 			break;
 		}
-		else if( ( s == KopeteContact::Away ) && ( newStatus != Online ) )
+
+		else if( ( status.status() == KopeteOnlineStatus::Away ) && ( newStatus != Online ) )
 		{
 			// Set status, but don't stop searching, since 'Online' overrules
 			// 'Away'
 			newStatus = Away;
 		}
-		else if( ( s == KopeteContact::Offline ) && ( newStatus != Away ) && ( newStatus != Online ) )
+		else if( ( status == KopeteOnlineStatus::Offline ) && ( newStatus != Away ) && ( newStatus != Online ) )
 		{
 			newStatus = Offline;
 		}
@@ -193,8 +195,8 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 
 		if(!deleted)
 		{  //If this function is tell by slotContactRemoved, c is maybe just a QObject
-			disconnect( c, SIGNAL( onlineStatusChanged( KopeteContact *, KopeteContact::OnlineStatus ) ),
-				this, SLOT( slotContactStatusChanged( KopeteContact *, KopeteContact::OnlineStatus ) ) );
+			disconnect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ),
+				this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ) );
 
 			disconnect( c, SIGNAL( displayNameChanged( const QString & ) ),
 				this, SLOT( slotContactNameChanged( const QString & ) ) );
@@ -331,8 +333,8 @@ KopeteContact *KopeteMetaContact::preferredContact()
 
 	for( QPtrListIterator<KopeteContact> it( d->contacts ) ; it.current(); ++it )
 	{
-		if( !c || ( (*it)->importance() > c->importance() && (*it)->isReachable() ) )
-			c = (*it);
+		if( ( *it )->isReachable() && ( !c || ( *it )->onlineStatus() > c->onlineStatus() ) )
+			c = *it;
 	}
 
 	return c;
@@ -443,19 +445,19 @@ void KopeteMetaContact::sendFile( const KURL &sourceURL, const QString &altFileN
 	KopeteContact *c = d->contacts.first();
 	for( QPtrListIterator<KopeteContact> it( d->contacts ) ; it.current(); ++it )
 	{
-		if( ( (*it)->importance() > c->importance() ) && ( (*it)->canAcceptFiles() ) )
-			c=*it;
+		if( ( *it )->onlineStatus() > c->onlineStatus() && ( *it )->canAcceptFiles() )
+			c = *it;
 	}
 
 	//Call the sendFile slot of this protocol
 	c->sendFile( sourceURL, altFileName, fileSize );
 }
 
-void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c, KopeteContact::OnlineStatus s  )
+void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c, const KopeteOnlineStatus &status  )
 {
 	updateOnlineStatus();
 
-	emit contactStatusChanged( c, s );
+	emit contactStatusChanged( c, status );
 }
 
 void KopeteMetaContact::setDisplayName( const QString &name )

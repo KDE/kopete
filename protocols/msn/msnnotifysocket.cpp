@@ -1,19 +1,24 @@
-/***************************************************************************
-                          imservicesocket.cpp  -  description
-                             -------------------
-    begin                : Mon Nov 12 2001
-    copyright            : (C) 2001 by Olaf Lueg
-    email                : olueg@olsd.de
- ***************************************************************************/
+/*
+    msnnotifysocket.cpp - Notify Socket for the MSN Protocol
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+
+    Portions taken from
+    KMerlin   (c) 2001      by Olaf Lueg              <olueg@olsd.de>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #include "msnnotifysocket.h"
 #include "msndispatchsocket.h"
@@ -44,12 +49,13 @@
 MSNNotifySocket::MSNNotifySocket( MSNIdentity *identity, const QString &msnId )
 : MSNAuthSocket( msnId, identity )
 {
+	m_newstatus = MSNProtocol::statusNLN();
+
 	m_identity = identity;
 	QObject::connect( this, SIGNAL( blockRead( const QString & ) ),
 		this, SLOT( slotReadMessage( const QString & ) ) );
 
 	m_dispatchSocket = 0L;
-	m_newstatus = MSNProtocol::NLN;
 
 	m_keepaliveTimer = new QTimer( this, "m_keepaliveTimer" );
 	QObject::connect( m_keepaliveTimer, SIGNAL( timeout() ), SLOT( slotSendKeepAlive() ) );
@@ -74,15 +80,8 @@ void MSNNotifySocket::connect( const QString &pwd )
 		this,
 		SLOT( slotReceivedServer( const QString &, uint ) ) );
 
-/*	QObject::connect( m_dispatchSocket,
-		SIGNAL( connectionFailed( ) ),
-		this,
-		SLOT( slotDispatchFailed( ) ) );*/
-	QObject::connect( m_dispatchSocket,
-		SIGNAL( socketClosed( int ) ),
-		this,
-		SLOT( slotDispatchClosed( ) ) );
-
+	//QObject::connect( m_dispatchSocket, SIGNAL( connectionFailed( ) ), SLOT( slotDispatchFailed( ) ) );
+	QObject::connect( m_dispatchSocket, SIGNAL( socketClosed( int ) ), SLOT( slotDispatchClosed( ) ) );
 
 	m_dispatchSocket->connect();
 }
@@ -189,7 +188,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		MSNContact *c = static_cast<MSNContact*>( m_identity->contacts()[ data.section( ' ', 1, 1 ) ] );
 		if( c )
 		{
-			c->setMsnStatus( MSNProtocol::convertStatus( data.section( ' ', 0, 0 ) ) );
+			c->setOnlineStatus( convertOnlineStatus( data.section( ' ', 0, 0 ) ) );
 			QString publicName = unescape( data.section( ' ', 2, 2 ) );
 			if( publicName != c->displayName())
 				changePublicName( publicName, c->contactId() );
@@ -210,7 +209,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		MSNContact *c = static_cast<MSNContact*>( m_identity->contacts()[ data.section( ' ', 0, 0 ) ] );
 		if( c )
-			c->setMsnStatus( MSNProtocol::FLN );
+			c->setOnlineStatus( MSNProtocol::statusFLN() );
 	}
 	else if( cmd == "ILN" )
 	{
@@ -218,7 +217,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		MSNContact *c = static_cast<MSNContact*>( m_identity->contacts()[ data.section( ' ', 1, 1 ) ] );
 		if( c )
 		{
-			c->setMsnStatus( MSNProtocol::convertStatus(data.section( ' ', 0, 0 )));
+			c->setOnlineStatus( convertOnlineStatus( data.section( ' ', 0, 0 ) ) );
 			QString publicName=unescape( data.section( ' ', 2, 2 ) );
 			if (publicName!=c->displayName())
 				changePublicName(publicName,c->contactId());
@@ -272,7 +271,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		QString status = data.section( ' ', 0, 0 );
 		setOnlineStatus( Connected );
-		emit statusChanged( status );
+		emit statusChanged( convertOnlineStatus( status ) );
 	}
 	else if( cmd == "REA" )
 	{
@@ -328,7 +327,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		}*/
 		//emit connected(true);
 		// set the status
-		setStatus(m_newstatus);
+		setStatus( m_newstatus );
 	}
 	else if( cmd == "BPR" )
 	{
@@ -540,14 +539,14 @@ void MSNNotifySocket::removeContact( const QString &handle, uint group,	int list
 	sendCommand( "REM", args );
 }
 
-void MSNNotifySocket::setStatus( int status )
+void MSNNotifySocket::setStatus( const KopeteOnlineStatus &status )
 {
-	kdDebug(14140) << "MSNNotifySocket::setStatus : " <<statusToString(status) <<endl;
-	if(onlineStatus() == Disconnected)
-		m_newstatus=status;
+	kdDebug( 14140 ) << k_funcinfo << statusToString( status ) << endl;
+
+	if( onlineStatus() == Disconnected )
+		m_newstatus = status;
 	else
 		sendCommand( "CHG", statusToString( status ) );
-
 }
 
 void MSNNotifySocket::changePublicName( const QString &publicName, const QString &handle )
@@ -563,32 +562,30 @@ void MSNNotifySocket::createChatSession()
 	sendCommand( "XFR", "SB" );
 }
 
-QString MSNNotifySocket::statusToString( int status ) const
+QString MSNNotifySocket::statusToString( const KopeteOnlineStatus &status ) const
 {
-	switch( status )
-	{
-	case MSNProtocol::NLN:
+	if( status == MSNProtocol::statusNLN() )
 		return "NLN";
-	case MSNProtocol::BSY:
+	else if( status == MSNProtocol::statusBSY() )
 		return "BSY";
-	case MSNProtocol::BRB:
+	else if( status == MSNProtocol::statusBRB() )
 		return "BRB";
-	case MSNProtocol::AWY:
+	else if( status == MSNProtocol::statusAWY() )
 		return "AWY";
-	case MSNProtocol::PHN:
+	else if( status == MSNProtocol::statusPHN() )
 		return "PHN";
-	case MSNProtocol::LUN:
+	else if( status == MSNProtocol::statusLUN() )
 		return "LUN";
-	case MSNProtocol::FLN:
+	else if( status == MSNProtocol::statusFLN() )
 		return "FLN";
-	case MSNProtocol::HDN:
+	else if( status == MSNProtocol::statusHDN() )
 		return "HDN";
-	case MSNProtocol::IDL:
+	else if( status == MSNProtocol::statusIDL() )
 		return "IDL";
-	default:
-		kdDebug(14140) << "MSNNotifySocket::statusToString: " <<
-			"WARNING! Unknown status " << status << "!" << endl;
-		return QString::null;
+	else
+	{
+		kdWarning( 14140 ) << k_funcinfo << "Unknown status " << status.internalStatus() << "!" << endl;
+		return "UNK";
 	}
 }
 
@@ -617,6 +614,30 @@ void MSNNotifySocket::slotResetKeepAlive()
 	// Fire the timer every 60 seconds. QTimer will reset a running timer
 	// on a subsequent call if there has been activity again.
 	m_keepaliveTimer->start( 60000 );
+}
+
+KopeteOnlineStatus MSNNotifySocket::convertOnlineStatus( const QString &status )
+{
+	if( status == "NLN" )
+		return MSNProtocol::statusNLN();
+	else if( status == "FLN" )
+		return MSNProtocol::statusFLN();
+	else if( status == "HDN" )
+		return MSNProtocol::statusHDN();
+	else if( status == "PHN" )
+		return MSNProtocol::statusPHN();
+	else if( status == "LUN" )
+		return MSNProtocol::statusLUN();
+	else if( status == "BRB" )
+		return MSNProtocol::statusBRB();
+	else if( status == "AWY" )
+		return MSNProtocol::statusAWY();
+	else if( status == "BSY" )
+		return MSNProtocol::statusBSY();
+	else if( status == "IDL" )
+		return MSNProtocol::statusIDL();
+	else
+		return MSNProtocol::statusUNK();
 }
 
 #include "msnnotifysocket.moc"

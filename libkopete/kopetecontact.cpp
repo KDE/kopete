@@ -34,6 +34,7 @@
 
 #include "kopetecontactlist.h"
 #include "kopetehistorydialog.h"
+#include "kopeteonlinestatus.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopeteidentity.h"
@@ -55,10 +56,10 @@ public:
 
 	QPixmap cachedScaledIcon;
 	int cachedSize;
-	int cachedOldImportance;
 
 	KopeteContact::IdleState idleState;
-	KopeteContact::OnlineStatus onlineStatus;
+	KopeteOnlineStatus onlineStatus;
+	KopeteOnlineStatus oldStatus;
 	KopeteIdentity *identity;
 
 	KopeteMetaContact *metaContact;
@@ -101,12 +102,11 @@ KopeteContact::KopeteContact( KopeteIdentity *identity, const QString &contactId
 	//kdDebug() << k_funcinfo << "Creating contact with id " << contactId << endl;
 
 	d->contactId = contactId;
-	d->onlineStatus = Offline;
+	d->onlineStatus = KopeteOnlineStatus( KopeteOnlineStatus::Offline );
 
 	d->metaContact = parent;
 	d->protocol = 0l;
 	d->cachedSize = 0;
-	d->cachedOldImportance = 0;
 	d->contextMenu = 0L;
 	d->fileCapable = false;
 	d->conversations = 0;
@@ -114,7 +114,6 @@ KopeteContact::KopeteContact( KopeteIdentity *identity, const QString &contactId
 	d->idleState = Unspecified;
 	d->displayName = contactId;
 	d->identity=identity;
-	
 
 	if( identity )
 	{
@@ -152,12 +151,11 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	//kdDebug() << k_funcinfo << "Creating contact with id " << contactId << endl;
 
 	d->contactId = contactId;
-	d->onlineStatus = Offline;
+	d->onlineStatus = KopeteOnlineStatus( KopeteOnlineStatus::Offline );
 
 	d->metaContact = parent;
 	d->protocol = protocol;
 	d->cachedSize = 0;
-	d->cachedOldImportance = 0;
 	d->contextMenu = 0L;
 	d->fileCapable = false;
 	d->conversations = 0;
@@ -192,7 +190,6 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 		parent->addContact( this );
 	}
 }
-
 
 KopeteContact::~KopeteContact()
 {
@@ -236,12 +233,15 @@ QString KopeteContact::displayName() const
 	return d->displayName;
 }
 
-KopeteContact::OnlineStatus KopeteContact::onlineStatus() const
+KopeteOnlineStatus KopeteContact::onlineStatus() const
 {
-	return d->onlineStatus;
+	if( d->protocol && d->protocol->isConnected() )
+		return d->onlineStatus;
+	else
+		return KopeteOnlineStatus( KopeteOnlineStatus::Offline );
 }
 
-void KopeteContact::setOnlineStatus( KopeteContact::OnlineStatus status )
+void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status )
 {
 	if( status == d->onlineStatus )
 		return;
@@ -251,63 +251,24 @@ void KopeteContact::setOnlineStatus( KopeteContact::OnlineStatus status )
 	emit onlineStatusChanged( this, status );
 }
 
-QString KopeteContact::statusText() const
-{
-	OnlineStatus stat = onlineStatus();
-
-	//kdDebug( 14010 ) << k_funcinfo << "onlineStatus=" << stat << endl;
-
-	switch( stat )
-	{
-	case Online:
-		return i18n( "Online" );
-	case Away:
-		return i18n( "Away" );
-	case Unknown:
-		return i18n( "Status not available" );
-	case Offline:
-	default:
-		return i18n( "Offline" );
-	}
-}
-
-QString KopeteContact::statusIcon() const
-{
-	return QString::fromLatin1( "unknown" );
-}
-
 QPixmap KopeteContact::scaledStatusIcon( int size )
 {
-	if ( ( importance() != d->cachedOldImportance ) || ( size != d->cachedSize ) )
+	if ( !( d->onlineStatus == d->oldStatus ) || size != d->cachedSize )
 	{
-		QImage afScal = ( ( QPixmap( SmallIcon( statusIcon() ) ) ).convertToImage() ).smoothScale( size, size );
+		QImage afScal = ( SmallIcon( d->onlineStatus.icon() ).convertToImage() ).smoothScale( size, size );
 		d->cachedScaledIcon = QPixmap( afScal );
-		d->cachedOldImportance = importance();
+		d->oldStatus = d->onlineStatus;
 		d->cachedSize = size;
 	}
+
 	if ( d->idleState == Idle )
 	{
 		QPixmap tmp = d->cachedScaledIcon;
 		KIconEffect::semiTransparent( tmp );
 		return tmp;
 	}
+
 	return d->cachedScaledIcon;
-}
-
-int KopeteContact::importance() const
-{
-	OnlineStatus stat = onlineStatus();
-
-	if( stat == Online )
-		return 20;
-
-	if( stat == Away )
-		return 10;
-
-	if( stat == Offline )
-		return 0;
-
-	return 0;
 }
 
 void KopeteContact::slotViewHistory()
@@ -362,9 +323,9 @@ KPopupMenu* KopeteContact::createContextMenu()
 
 	QString titleText;
 	if( displayName() == contactId() )
-		titleText = QString::fromLatin1( "%1 (%2)" ).arg( displayName() ).arg( statusText() );
+		titleText = QString::fromLatin1( "%1 (%2)" ).arg( displayName() ).arg( d->onlineStatus.description() );
 	else
-		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( displayName() ).arg( contactId() ).arg( statusText() );
+		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( displayName() ).arg( contactId() ).arg( d->onlineStatus.description() );
 	menu->insertTitle( titleText );
 
 	if( metaContact() && metaContact()->isTemporary() )
@@ -629,7 +590,7 @@ KopeteGroupList KopeteContact::groups() const
 
 bool KopeteContact::isOnline() const
 {
-	return onlineStatus() != Offline && onlineStatus() != Unknown;
+	return d->onlineStatus.status() != KopeteOnlineStatus::Offline && d->onlineStatus.status() != KopeteOnlineStatus::Unknown;
 }
 
 KopeteMetaContact * KopeteContact::metaContact() const

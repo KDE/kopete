@@ -324,8 +324,12 @@ signals: // Signals
   void gotConfig(AIMBuddyList &);
   /** emitted when we have recieved an ack from the server */
   void gotAck(QString, int);
-  /** Emitted (with new status as parameter) when our status has changed */
-  void statusChanged(int);
+
+	/**
+	 * Emitted (with new status as parameter) when our status has changed
+	 */
+	void statusChanged( const KopeteOnlineStatus &newStatus );
+
   /** Emitted when the logged in user has been warned
   		The int is the new warning level.
     	The QString is the name of the user which warned us (QString::null if anonymous)

@@ -18,6 +18,7 @@
 #ifndef IRCPROTOCOL_H
 #define IRCPROTOCOL_H
 
+#include "kopeteonlinestatus.h"
 #include "kopeteprotocol.h"
 
 class KopeteMetaContact;
@@ -60,11 +61,18 @@ public:
 
 	virtual KopeteIdentity* createNewIdentity(const QString &identityId);
 
+	static IRCProtocol *protocol();
+
+	const KopeteOnlineStatus IRCOnline;
+	const KopeteOnlineStatus IRCOffline;
+
 private:
 	/** FIXME: Do something with this when Identity support is added!!!!!!!! */
 	IRCIdentity *identity;
 
 	QMap<QString,IRCIdentity*> mIdentityMap;
+
+	static IRCProtocol *s_protocol;
 };
 
 #endif

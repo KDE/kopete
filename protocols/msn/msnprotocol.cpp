@@ -1,22 +1,21 @@
-/***************************************************************************
-                          msnprotocol.cpp  -  MSN Plugin
-                             -------------------
-    Copyright (c) 2002        by Duncan Mac-Vicar P. <duncan@kde.org>
-    Copyright (c) 2002        by Martijn Klingens    <klingens@kde.org>
-    Copyright (c) 2002-2003   by Olivier Goffart     <ogoffart@tiscalinet.be>
+/*
+    msnprotocol.cpp - Kopete MSN Protocol Plugin
 
-    Copyright (c) 2002-2003  by the Kopete developers  <kopete-devel@kde.org>
- ***************************************************************************
+    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
- ***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #include <qapplication.h>
 #include <qtimer.h>
@@ -46,28 +45,40 @@
 
 K_EXPORT_COMPONENT_FACTORY( kopete_msn, KGenericFactory<MSNProtocol> );
 
-MSNProtocol::MSNProtocol( QObject *parent, const char *name,
-	const QStringList & /* args */ )
+KopeteOnlineStatus MSNProtocol::s_statusNLN;
+KopeteOnlineStatus MSNProtocol::s_statusBSY;
+KopeteOnlineStatus MSNProtocol::s_statusBRB;
+KopeteOnlineStatus MSNProtocol::s_statusAWY;
+KopeteOnlineStatus MSNProtocol::s_statusPHN;
+KopeteOnlineStatus MSNProtocol::s_statusLUN;
+KopeteOnlineStatus MSNProtocol::s_statusFLN;
+KopeteOnlineStatus MSNProtocol::s_statusHDN;
+KopeteOnlineStatus MSNProtocol::s_statusIDL;
+KopeteOnlineStatus MSNProtocol::s_statusUNK;
+
+MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
 : KopeteProtocol( parent, name )
 {
-	QString protocolId = pluginId();
+	s_statusNLN = KopeteOnlineStatus( KopeteOnlineStatus::Online,  25, this, 1, "msn_online",  i18n( "Go O&nline" ),         i18n( "Online" ) );
+	s_statusBSY = KopeteOnlineStatus( KopeteOnlineStatus::Away,    20, this, 2, "msn_na",      i18n( "Set &Busy" ),          i18n( "Busy" ) );
+	s_statusBRB = KopeteOnlineStatus( KopeteOnlineStatus::Away,     5, this, 3, "msn_away",    i18n( "Set Be &Right Back" ), i18n( "Be Right Back" ) );
+	s_statusAWY = KopeteOnlineStatus( KopeteOnlineStatus::Away,    25, this, 4, "msn_away",    i18n( "Set &Away" ),          i18n( "Away From Computer" ) );
+	s_statusPHN = KopeteOnlineStatus( KopeteOnlineStatus::Away,    10, this, 5, "msn_na",      i18n( "Set on the &Phone" ),  i18n( "On the Phone" ) );
+	s_statusLUN = KopeteOnlineStatus( KopeteOnlineStatus::Away,    15, this, 6, "msn_away",    i18n( "Set Out to &Lunch" ),  i18n( "Out to Lunch" ) );
+	s_statusFLN = KopeteOnlineStatus( KopeteOnlineStatus::Offline, 25, this, 7, "msn_offline", i18n( "Go &Offline" ),        i18n( "Offline" ) );
+	s_statusHDN = KopeteOnlineStatus( KopeteOnlineStatus::Online,  10, this, 8, "msn_offline", i18n( "Set &Invisible" ),     i18n( "Invisible" ) );
+	s_statusIDL = KopeteOnlineStatus( KopeteOnlineStatus::Away,     5, this, 9, "msn_online",  "FIXME: Make this unselectable", i18n( "Idle" ) );
+	s_statusUNK = KopeteOnlineStatus( KopeteOnlineStatus::Unknown, 25, this, 0, "msn_offline", "FIXME: Make this unselectable", i18n( "Status not available" ) );
 
-	// Go in experimental mode: enable the new API :-)
-	//enableStreaming( true );
+	kdDebug( 14140 ) << k_funcinfo << endl;
 
-	kdDebug(14140) << "MSNProtocol::MSNProtocol: MSN Plugin Loading" << endl;
-
-	mPrefs= new MSNPreferences( "msn_protocol", this );
+	mPrefs = new MSNPreferences( "msn_protocol", this );
 
 	m_menu=0L;
 
 	setStatusIcon( "msn_offline" );
 
 	addAddressBookField( "messaging/msn", KopetePlugin::MakeIndexField );
-}
-
-MSNProtocol::~MSNProtocol()
-{
 }
 
 void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
@@ -83,18 +94,17 @@ void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	if(identityId.isNull())
 	{
 		//Kopete 0.6.x contactlist
+		// FIXME: This should be in a KConfUpdate - Martijn
 		KGlobal::config()->setGroup("MSN");
 		identityId=KGlobal::config()->readEntry( "UserID", "" );;
 	}
 	KopeteIdentity *identity=identities[identityId];
-	if(!identity)
-	{
-		identity=createNewIdentity(identityId);
-	}
+	if( !identity )
+		identity = createNewIdentity( identityId );
 
 	// Create MSN contact
 	MSNContact *c = new MSNContact( identity, contactId, displayName, metaContact );
-	c->setMsnStatus( MSNProtocol::FLN );
+	c->setOnlineStatus( statusFLN() );
 	for( QStringList::Iterator it = groups.begin() ; it != groups.end(); ++it )
 		c->contactAddedToGroup( ( *it ).toUInt(), 0L  /* FIXME - m_groupList[ ( *it ).toUInt() ]*/ );
 }
@@ -154,7 +164,6 @@ void MSNProtocol::slotSyncContactList()
 */
 }
 
-
 /*void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status )
 {
 	kdDebug(14140) << "MSNProtocol::slotOnlineStatusChanged: " << status <<endl;
@@ -181,9 +190,7 @@ void MSNProtocol::slotSyncContactList()
 
 		QDictIterator<KopeteContact> it( contacts() );
 		for ( ; it.current() ; ++it )
-		{
-			static_cast<MSNContact *>( *it )->setMsnStatus( MSNProtocol::FLN );
-		}
+			static_cast<MSNContact *>( *it )->setOnlineStatus( statusFLN() );
 
 		m_allowList.clear();
 		m_blockList.clear();
@@ -193,7 +200,7 @@ void MSNProtocol::slotSyncContactList()
 		setStatusIcon( "msn_offline" );
 //		m_openInboxAction->setEnabled(false);
 
-		m_status = FLN;
+		m_status = statusFLN();
 
 		// Reset flags. They can't be set in the connect method, because
 		// offline changes might have been made before. Instead the c'tor
@@ -204,7 +211,7 @@ void MSNProtocol::slotSyncContactList()
 	else if( status == MSNSocket::Connecting )
 	{
 		for( QDictIterator<KopeteContact> it( contacts() ); it.current() ; ++it )
-			static_cast<MSNContact *>( *it )->setMsnStatus( MSNProtocol::FLN );
+			static_cast<MSNContact *>( *it )->setOnlineStatus( statusFLN() );
 	}
 }*/
 
@@ -213,31 +220,6 @@ const QString MSNProtocol::protocolIcon()
 {
 	return "msn_online";
 }
-
-MSNProtocol::Status MSNProtocol::convertStatus( QString status )
-{
-	if( status == "NLN" )
-		return NLN;
-	else if( status == "FLN" )
-		return FLN;
-	else if( status == "HDN" )
-		return HDN;
-	else if( status == "PHN" )
-		return PHN;
-	else if( status == "LUN" )
-		return LUN;
-	else if( status == "BRB" )
-		return BRB;
-	else if( status == "AWY" )
-		return AWY;
-	else if( status == "BSY" )
-		return BSY;
-	else if( status == "IDL" )
-		return IDL;
-	else
-		return FLN;
-}
-
 
 KActionCollection * MSNProtocol::customChatActions(KopeteMessageManager * manager)
 {

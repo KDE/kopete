@@ -1,20 +1,24 @@
-/***************************************************************************
-                          imservicesocket.h  -  description
-                             -------------------
-    begin                : Mon Nov 12 2001
-    copyright            : (C) 2001 by Olaf Lueg
-    email                : olueg@olsd.de
- ***************************************************************************/
+/*
+    msnnotifysocket.h - Notify Socket for the MSN Protocol
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+
+    Portions taken from
+    KMerlin   (c) 2001      by Olaf Lueg              <olueg@olsd.de>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #ifndef MSNNOTIFYSOCKET_H
 #define MSNNOTIFYSOCKET_H
@@ -39,7 +43,7 @@ public:
 	void connect( const QString &password );
 	virtual void disconnect();
 
-	void setStatus( int status );
+	void setStatus( const KopeteOnlineStatus &status );
 	void addContact( const QString &handle, QString pulicName, uint group , int list );
 	void removeContact( const QString &handle, uint group, int list );
 
@@ -72,7 +76,7 @@ signals:
 	void startChat( QString, QString );
 
 	void publicNameChanged( QString );
-	void statusChanged( QString );
+	void statusChanged( const KopeteOnlineStatus &newStatus );
 
 //	void recievedInfo(QString, QString , QString);
 	void hotmailSeted(bool) ;
@@ -115,17 +119,22 @@ private slots:
 	void slotResetKeepAlive();
 
 private:
+	/**
+	 * Convert the MSN status strings to a KopeteOnlineStatus
+	 */
+	KopeteOnlineStatus convertOnlineStatus( const QString &statusString );
+
 	MSNIdentity *m_identity;
 
 	unsigned int mailCount;
 	QString m_password;
 
-	int m_newstatus;
+	KopeteOnlineStatus m_newstatus;
 
 	/**
 	 * Convert an entry of the Status enum back to a string
 	 */
-	QString statusToString( int status ) const;
+	QString statusToString( const KopeteOnlineStatus &status ) const;
 
 	MSNDispatchSocket *m_dispatchSocket;
 	bool dispatchOK;

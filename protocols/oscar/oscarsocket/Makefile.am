@@ -9,6 +9,7 @@ libkopeteoscarsocket_la_SOURCES = oscarsocket.cpp oncomingsocket.cpp buffer.cpp 
 EXTRA_DIST =
 # set the include path for X, qt and KDE
 AM_CPPFLAGS = -DDATADIR=\"$(kde_datadir)/kopete\" \
+	$(KOPETE_INCLUDES) \
     -I$(top_srcdir)/kopete/protocols/oscar \
     -I$(top_srcdir)/kopete/protocols/oscar/ui \
     -I$(top_builddir)/kopete/protocols/oscar/ui \
