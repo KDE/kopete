@@ -58,7 +58,7 @@ Comment[ven]=Ndivhadzo ya mubvumo uitela mitambo ya Kopete
 Comment[xh]=Isazisi Sesandi se Ziganeko ze Kopete
 Comment[zh_TW]=Kopeta 事件的聲音通知
 Comment[zu]=Imicimbi ye-Kopete Yomsindo Wesaziso
-default_sound=Kopete_Event.mp3
+default_sound=Kopete_Event.ogg
 default_presentation=1
 
 [kopete_incoming]
@@ -101,7 +101,7 @@ Comment[ven]=Milaedza ine ya khou touda yo swika
 Comment[xh]=Umyalezo ongenayo uyafika
 Comment[zh_TW]=寄來的訊息送達
 Comment[zu]=Umyalezo ongena ngaphakathi usufikile
-default_sound=Kopete_Received.mp3
+default_sound=Kopete_Received.ogg
 default_presentation=0
 
 [kopete_outgoing]
@@ -144,7 +144,7 @@ Comment[ven]=Mulaedza une wa khou toubva wo rumelwa
 Comment[xh]=Umyalezo ophumayo uthunyelwe
 Comment[zh_TW]=寄出的訊息送出
 Comment[zu]=Umyalezo ongena ngaphandle uthunyelwe
-default_sound=Kopete_Sent.mp3
+default_sound=Kopete_Sent.ogg
 default_presentation=0
 
 
@@ -178,7 +178,7 @@ Comment[sv]=Användaren kopplar upp
 Comment[xh]=Umsebenzisi ungena ngaphakathi kwelayini
 Comment[zh_TW]=使用者已上線
 Comment[zu]=Umsebenzi uya ngaphakathi koxhumano
-default_sound=Kopete_User_is_Online.mp3
+default_sound=Kopete_User_is_Online.ogg
 default_presentation=0
 
 
