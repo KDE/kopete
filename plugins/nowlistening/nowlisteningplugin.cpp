@@ -58,7 +58,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char *name, const
 	m_currentMessageManager = 0L;
 
 	// initialise preferences
-	m_prefs = new NowListeningPreferences( pluginIcon(), this );
+	m_prefs = new NowListeningPreferences( "kaboodle", this );
 
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL(
 			messageManagerCreated( KopeteMessageManager * )) , SLOT( slotNewKMM(
