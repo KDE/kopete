@@ -47,15 +47,14 @@ void KopeteGroupListAction::slotUpdateList()
 
 	// Top Level is special, separate it from the other groups
 	m_groupList << i18n( "Contacts are put in groups. Top Level holds all groups (but can contain contacts too) Similar to KMail's folders", "Top Level" );
-
+	
+	KopeteGroupList groups=KopeteContactList::contactList()->groups();
 	// Add groups to our list
-	for( KopeteGroup *it = KopeteContactList::contactList()->groups().first(); it; it = KopeteContactList::contactList()->groups().next() )
-		m_groupList.append( it->displayName() );
-
-	// Remove the Top Level group (with no name) from our internal list
-	// This is an empty QString that would lead to a seperator in the UI, but
-	// such an empty string triggers a bug in KListAction :-(  - Andy
-	m_groupList.remove( QString::null );
+	for( KopeteGroup *it = groups.first(); it; it = groups.next() )
+	{
+		if(!it->displayName().isEmpty())	//do not add top-level groups or other
+			m_groupList.append( it->displayName() );
+	}
 
 	setItems( m_groupList );
 }
