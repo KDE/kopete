@@ -1,4 +1,4 @@
-y/*
+/*
   kopeteglobalawaydialog.cpp  -  Kopete Global Away Dialog
 
   Copyright (c) 2002 by Christopher TenHarmsel <tenharmsel@users.sourceforge.net>
