@@ -255,6 +255,8 @@ public:
 
 	void highlight();
 
+	bool isHighlighted();
+
 private:
 	/**
 	 * Helper for constructors

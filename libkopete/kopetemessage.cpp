@@ -49,6 +49,7 @@ public:
 	KopeteMessage::MessageType type;
 
 	bool bgOverride;
+	bool highlighted;
 };
 
 KopeteMessage::KopeteMessage()
@@ -147,6 +148,13 @@ void KopeteMessage::highlight()
 
 	setBg( KopetePrefs::prefs()->highlightBackground() );
 	setFg( KopetePrefs::prefs()->highlightForeground() );
+
+	d->highlighted = true;
+}
+
+bool KopeteMessage::isHighlighted()
+{
+	return d->highlighted;
 }
 
 void KopeteMessage::setBody( const QString &body, MessageFormat f )
@@ -180,6 +188,7 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 	setBody( body, f );
 	d->bgOverride = false;
 	d->type = type;
+	d->highlighted = false;
 }
 
 QString KopeteMessage::plainBody() const
