@@ -44,7 +44,6 @@
 #include "kopetewindow.h"
 #include "pluginloader.h"
 #include "pluginmodule.h"
-#include "preferencesdialog.h"
 
 Kopete::Kopete()
 : KUniqueApplication( true, true, true )
@@ -73,10 +72,6 @@ Kopete::Kopete()
 
 void Kopete::initialize()
 {
-	// TODO: move that to mainwindow!
-	mPref = new PreferencesDialog();
-	mPref->hide();
-
 	mPluginsModule = new Plugins(this);
 
 	m_mainWindow = new KopeteWindow( 0, "m_mainWindow" );
@@ -108,8 +103,6 @@ Kopete::~Kopete()
 	kdDebug() << "[Kopete] ~Kopete()" << endl;
 
 	KopeteContactList::contactList()->save();
-
-	delete mPref;
 
 	kdDebug() << "[Kopete] END ~Kopete()" << endl;
 }
@@ -167,13 +160,6 @@ void Kopete::slotLoadPlugins()
 	config->writeEntry("Modules", modules);
 
 	LibraryLoader::pluginLoader()->loadAll();
-}
-
-void Kopete::slotPreferences()
-{
-	kdDebug() << "[Kopete] slotPreferences()" << endl;
-	mPref->show();
-	mPref->raise();
 }
 
 /*

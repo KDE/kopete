@@ -19,7 +19,6 @@
 */
 
 #include "configmodule.h"
-#include "kopete.h"
 #include "preferencesdialog.h"
 
 #include <qlabel.h>
@@ -30,22 +29,22 @@
 #include <klocale.h>
 
 ConfigModule::ConfigModule(const QString &name, const QString &description, QObject *owner)
-	: QWidget(kopeteapp->preferencesBox()->addPage(name, description))
+	: QWidget( PreferencesDialog::preferencesDialog()->addPage( name, description ) )
 {
 	if (owner)
 		connect(owner, SIGNAL(destroyed()), SLOT(ownerDeleted()));
-	kopeteapp->preferencesBox()->add(this);
+	PreferencesDialog::preferencesDialog()->add(this);
 
 	QFrame *page=static_cast<QFrame*>(parent());
 	(new QHBoxLayout(page))->addWidget(this);
 }
 
 ConfigModule::ConfigModule(const QString &name, const QString &description, const QString &pixmap, QObject *owner)
-	: QWidget(kopeteapp->preferencesBox()->addPage(name, description, KGlobal::iconLoader()->loadIcon(pixmap,KIcon::NoGroup, KIcon::SizeMedium)  ))
+	: QWidget(PreferencesDialog::preferencesDialog()->addPage(name, description, KGlobal::iconLoader()->loadIcon(pixmap,KIcon::NoGroup, KIcon::SizeMedium)  ))
 {
 	if (owner)
 		connect(owner, SIGNAL(destroyed()), SLOT(ownerDeleted()));
-	kopeteapp->preferencesBox()->add(this);
+	PreferencesDialog::preferencesDialog()->add(this);
 
 	QFrame *page=static_cast<QFrame*>(parent());
 	(new QHBoxLayout(page))->addWidget(this);
@@ -54,7 +53,7 @@ ConfigModule::ConfigModule(const QString &name, const QString &description, cons
 
 ConfigModule::~ConfigModule()
 {
-	kopeteapp->preferencesBox()->remove(this);
+	PreferencesDialog::preferencesDialog()->remove(this);
 
 }
 
@@ -68,9 +67,9 @@ void ConfigModule::ownerDeleted()
 void ConfigModule::activate()
 {
 	QFrame *page=static_cast<QFrame*>(parent());
-	kopeteapp->preferencesBox()->showPage(kopeteapp->preferencesBox()->pageIndex(page));
-	kopeteapp->preferencesBox()->show();
-	kopeteapp->preferencesBox()->raise();
+	PreferencesDialog::preferencesDialog()->showPage(PreferencesDialog::preferencesDialog()->pageIndex(page));
+	PreferencesDialog::preferencesDialog()->show();
+	PreferencesDialog::preferencesDialog()->raise();
 }
 
 #include "configmodule.moc"

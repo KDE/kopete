@@ -1,7 +1,7 @@
 /*
     preferencesdialog.h  -  Kopete Setup Dialog
 
-	Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
+    Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -24,42 +24,35 @@
 class ConfigModule;
 
 /**
-  * @author Duncan Mac-Vicar P. <duncan@kde.org>
-  *	
-  */
+ * @author Duncan Mac-Vicar P. <duncan@kde.org>
+ */
 class PreferencesDialog : public KDialogBase
 {
-	friend class ConfigModule;
-
 	Q_OBJECT
-	
-	public:
-		PreferencesDialog(QWidget *parent=0);
-		~PreferencesDialog();
-	
-	public:
-		virtual void show();
-	
-	public slots:
-		virtual void slotApply();
-		virtual void slotOk();
 
-	private:
-		void add(ConfigModule *page);
-		void remove(ConfigModule *page);
+public:
+	static PreferencesDialog* preferencesDialog();
 
-	private:
-		QList<ConfigModule> mModules;
+	~PreferencesDialog();
 
+	virtual void show();
+
+	void add( ConfigModule *page );
+	void remove( ConfigModule *page );
+
+public slots:
+	virtual void slotApply();
+	virtual void slotOk();
+
+private:
+	PreferencesDialog();
+
+	QList<ConfigModule> mModules;
+
+	static PreferencesDialog *s_preferencesDialog;
 };
 
 #endif
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
+
 // vim: set noet ts=4 sts=4 sw=4:
 

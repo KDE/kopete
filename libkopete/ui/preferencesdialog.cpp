@@ -1,7 +1,7 @@
 /*
     preferencesdialog.cpp  -  Kopete Setup Dialog
 
-	Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
+    Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -15,14 +15,27 @@
     *************************************************************************
 */
 
-#include "configmodule.h"
 #include "preferencesdialog.h"
-#include "preferencesdialog.moc"
+
+#include <qapplication.h>
 
 #include <klocale.h>
 
-PreferencesDialog::PreferencesDialog(QWidget *parent)
-	: KDialogBase(IconList, i18n("Preferences"), Ok|Apply|Cancel, Ok, parent, 0, false)
+#include "configmodule.h"
+
+PreferencesDialog* PreferencesDialog::s_preferencesDialog = 0L;
+
+PreferencesDialog* PreferencesDialog::preferencesDialog()
+{
+	if( !s_preferencesDialog )
+		s_preferencesDialog = new PreferencesDialog;
+
+	return s_preferencesDialog;
+}
+
+PreferencesDialog::PreferencesDialog()
+: KDialogBase( IconList, i18n( "Preferences" ), Ok | Apply | Cancel,
+	Ok, qApp->mainWidget(), 0, false )
 {
 //	resize(640, 480); // KDE is required to support 800x600 min.
 }
@@ -60,12 +73,7 @@ void PreferencesDialog::remove(ConfigModule *page)
 	mModules.removeRef(page);
 }
 
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
+#include "preferencesdialog.moc"
+
 // vim: set noet ts=4 sts=4 sw=4:
 

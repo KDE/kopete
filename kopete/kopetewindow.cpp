@@ -44,6 +44,7 @@
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "pluginloader.h"
+#include "preferencesdialog.h"
 #include "systemtray.h"
 #include "statusbaricon.h"
 
@@ -123,7 +124,9 @@ void KopeteWindow::initActions ( void )
 							qApp, SLOT(slotShowTransfers()),
 							actionCollection(), "ShowTransfers" );
 
-	actionPrefs = KStdAction::preferences( qApp, SLOT(slotPreferences()), actionCollection());
+	actionPrefs = KStdAction::preferences(
+		PreferencesDialog::preferencesDialog(), SLOT( show() ),
+		actionCollection() );
 
 	actionSave = new KAction( i18n("Save &ContactList"), "filesave", KStdAccel::shortcut(KStdAccel::Save),
 							KopeteContactList::contactList(), SLOT(save()),

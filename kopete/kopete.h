@@ -48,13 +48,6 @@ public:
 	~Kopete();
 
 	/**
-	 * This is the preferences dialog, where Kopete's general
-	 * preferences are, and where plugins embedd its preferences.
-	 */
-	PreferencesDialog *preferencesBox() const
-	{ return mPref; }
-
-	/**
 	 * Like slotSetAwayAll, but don't pops up the dialog
 	 * (for the autowayplugin)
 	 */
@@ -99,7 +92,6 @@ signals:
 	void signalSettingsChanged();
 
 private slots:
-	void slotPreferences();
 //	void slotExit();
 	void slotAddContact();
 	void slotSetAwayAll();
@@ -114,7 +106,6 @@ private slots:
 	void slotLoadPlugins();
 
 private:
-	PreferencesDialog *mPref;
 	Plugins *mPluginsModule;
 
 	KopeteWindow *m_mainWindow;

@@ -18,7 +18,6 @@
 #include "kopetetransfermanager.h"
 #include "kopetefileconfirmdialog.h"
 
-#include "kopete.h"
 #include "kopetecontactlist.h"
 #include "kopeteprotocol.h"
 #include "kopetemetacontact.h"
