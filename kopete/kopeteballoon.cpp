@@ -57,7 +57,10 @@ KopeteBalloon::KopeteBalloon( const QString &text, const QString &pix )
 
 	QPushButton *viewButton = new QPushButton( this, "m_reject" );
 	viewButton->setText( i18n( "View" ) );
+	QPushButton *ignoreButton = new QPushButton( this );
+	ignoreButton->setText( i18n( "Ignore" ) );
 	Layout2->addWidget( viewButton );
+	Layout2->addWidget( ignoreButton );
 	QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
 	Layout2->addItem( spacer_2 );
 	BalloonLayout->addLayout( Layout2 );
@@ -72,7 +75,9 @@ KopeteBalloon::KopeteBalloon( const QString &text, const QString &pix )
 	m_caption->setText(text);
 //	m_caption->setAlignment ( m_caption->alignment() | Qt::WordBreak ); // does not work
 	connect( viewButton, SIGNAL( clicked() ), SLOT( hide() ) );
+	connect( ignoreButton, SIGNAL( clicked() ), SLOT( hide() ) );
 	connect( viewButton, SIGNAL( clicked() ), SIGNAL( signalButtonClicked() ) );
+	connect( ignoreButton, SIGNAL( clicked() ), SIGNAL( signalIgnoreButtonClicked() ) );
 }
 
 void KopeteBalloon::setAnchor( const QPoint &anchor)

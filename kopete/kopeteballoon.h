@@ -43,6 +43,7 @@ public:
 
 signals:
 	void signalButtonClicked();
+	void signalIgnoreButtonClicked();
 	void signalBalloonClicked();
 
 protected:
