@@ -109,6 +109,9 @@ public:
 	 */
 	bool remove(const QString &spec);
 
+	/**
+	 * @return a list of all loaded plugins or protocols
+	 */
 	QPtrList<KopetePlugin> plugins() const;
 
 	/**
@@ -127,6 +130,9 @@ public:
 	QString pluginIcon( const KopetePlugin *plugin ) const;
 
 signals:
+	/**
+	 * A new plugin has just been loaded.
+	 */
 	void pluginLoaded(KopetePlugin *);
 
 private slots:

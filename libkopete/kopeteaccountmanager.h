@@ -110,11 +110,13 @@ public slots:
 	void setAvailableAll();
 
 	/**
+	 * @internal
 	 * save to accounts.xml
 	 */
 	void save();
 
 	/**
+	 * @internal
 	 * load accounts.xml
 	 */
 	void load();

@@ -55,6 +55,16 @@ class KopeteContact : public QObject
 public:
 	/**
 	 * Create new contact. Supply the parent meta contact!
+	 *
+	 * Note: Id is required to be unique per protocol and per account.
+	 * Across those boundaries ids may occur multiple times.
+	 * The id is solely for comparing items safely (using pointers is
+	 * more crash-prone). DO NOT assume anything regarding the id's
+	 * value! Even if it may look like an ICQ UIN or an MSN passport,
+	 * this is undefined and may change at any time!
+	 *
+	 * @param account is the parent account. this constructor automaticaly register the contact to the account
+	 * @param id is the KopeteContact inique Id (mostly the user's login)
 	 */
 	KopeteContact( KopeteAccount *account, const QString &id, KopeteMetaContact *parent, const QString &icon = QString::null );
 	~KopeteContact();
@@ -74,6 +84,7 @@ public:
 	 * Function used in determining if the contact is able to
 	 * receive messages even if offline, etc.  This function must
 	 * be defined by child classes
+	 * if this function return false, the user will be unable to open a chatwindow
 	 *
 	 * @return bool indicating whether or not the contact is reachable (can send a message to it)
 	 */
@@ -86,7 +97,7 @@ public:
 	KopeteMetaContact *metaContact() const;
 
 	/**
-	 * Serialize the contact for storage in the contact list.
+	 * @brief Serialize the contact for storage in the contact list.
 	 *
 	 * The provided serializedData contain the contact id in the field
 	 * "contactId" and the display name in the field "displayName". If
@@ -112,7 +123,7 @@ public:
 	QString displayName() const;
 
 	/**
-	 * Return the online status of the contact
+	 * @brief Return the online status of the contact
 	 * @return the online status of the contact
 	 */
 	const KopeteOnlineStatus& onlineStatus() const;
@@ -152,13 +163,6 @@ public:
 	/**
 	 * Return the account that the contact belongs to.
 	 *
-	 * Note: Id is required to be unique per protocol and per account.
-	 * Across those boundaries ids may occur multiple times.
-	 * The id is solely for comparing items safely (using pointers is
-	 * more crash-prone). DO NOT assume anything regarding the id's
-	 * value! Even if it may look like an ICQ UIN or an MSN passport,
-	 * this is undefined and may change at any time!
-	 *
 	 * @return the contact's account
 	 */
 	KopeteAccount* account() const;
@@ -167,7 +171,8 @@ public:
 	 * Returns a set of custom menu items for the context menu
 	 * which is displayed in showContextMenu (private).  Protocols
 	 * should use this to add protocol-specific actions to the
-	 * popup menu
+	 * popup menu. Kopete take care of the deletion of the action collection.
+	 * Actions should have the collection as parent.
 	 *
 	 * @return Collection of menu items to be show on the context menu
 	 */
@@ -175,7 +180,10 @@ public:
 
 
 	/**
-	 * Get the Context Menu for this contact
+	 * @brief Get the Context Menu for this contact
+	 *
+	 * this menu include generic actions common to each protocol, and action defined in
+	 * @ref customContextMenuActions()
 	 */
 	KPopupMenu *popupMenu();
 
@@ -183,6 +191,7 @@ public:
 	 * Moves this contact to a new MetaContact.
 	 * This basically reparents the contact and updates the internal
 	 * data structures.
+	 * If the old contact is going to be empty, a question may ask to the user if it wants to delete the old contact.
 	 *
 	 * @param m The new MetaContact to move this contact to
 	 */
@@ -190,10 +199,11 @@ public:
 
 	/**
 	 * Returns whether or not this contact is capable of file transfers
+	 * see @ref setFileCapable()
 	 */
 	bool isFileCapable() const;
 
-	/*
+	/**
 	 * Sets the capability of file transfers for this user. Once this is changed it will
 	 * immediately add a new menu entry called "Send File...", and will call the
 	 * virtual slotSendFile
@@ -219,7 +229,8 @@ public:
 	void setIdleState( KopeteContact::IdleState newState );
 
 	/**
-	 * Rename a contact's display name.
+	 * @brief Rename a contact's display name.
+	 *
 	 * This method can be asynchronous, i.e. it starts the rename, but the
 	 * result may not be instant. Whenever the rename is done the contact
 	 * will call @ref setDisplayName() (which emits @ref displayNameChanged() )
@@ -354,6 +365,8 @@ signals:
 	 * The contact is about to be destroyed.
 	 * Called when entering the destructor. Useful for cleanup, since
 	 * metaContact() is still accessible at this point.
+	 *
+	 * @warning this signal is emit in the KopeteContact destructor, so all virtual method are not available
 	 */
 	void contactDestroyed( KopeteContact *contact );
 

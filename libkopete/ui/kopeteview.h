@@ -147,6 +147,9 @@ class KopeteView
 
 
 	protected:
+		/**
+		 * a pointer to the KopeteMessageManager given in the constructor
+		 */
 		KopeteMessageManager *m_manager;
 		KopeteMessage::MessageType m_type;
 };

@@ -73,7 +73,7 @@ public:
 	~KopeteAccount();
 
 	/**
-	 * return the protocol for this account
+	 * return the KopeteProtocol for this account
 	 */
 	KopeteProtocol *protocol() const ;
 	/**
@@ -102,7 +102,7 @@ public:
 	 * @return The password or QString::null if the user has canceled
 	 */
 	QString getPassword( bool error = false, bool *ok =0L );
-	/*
+	/**
 	 * Set the password for this account.
 	 * @param pass set to Qtring::null means that
 	 * the password is not remembered, otherwise sets the new password
@@ -117,20 +117,20 @@ public:
 	 */
 	bool rememberPassword();
 
-	/*
+	/**
 	 * Set if the account should log in automatically or not
 	 */
 	void setAutoLogin(bool);
-	/*
+	/**
 	 * Say if the account should log in automatically
 	 */
 	bool autoLogin() const;
 
-	/*
+	/**
 	 * returns the user color for this account
 	 */
 	const QColor color() const;
-	/*
+	/**
 	 * Set the color this account will use to differentiate from the other accounts
 	 * normaly, this should be called by the Kopete's account config page. so you
 	 * don't have to set yourself the color.
@@ -144,7 +144,7 @@ public:
 	virtual void setAway( bool away, const QString &reason = QString::null ) = 0;
 
 	/**
-	 * Indicate whether the account is connected at all.
+	 * @brief Indicate whether the account is connected at all.
 	 *
 	 * This is a convenience method that queries @ref KopeteContact::onlineStatus()
 	 * on @ref myself()
@@ -152,7 +152,7 @@ public:
 	bool isConnected() const;
 
 	/**
-	 * Indicate whether the account is away.
+	 * @brief Indicate whether the account is away.
 	 *
 	 * This is a convenience method that queries @ref KopeteContact::onlineStatus()
 	 * on @ref myself()
@@ -174,12 +174,16 @@ public:
 	virtual KopeteContact* myself() const = 0;
 
 	/**
-	 * return the menu for this account
+	 * @bried Return the menu for this account
+	 *
+	 * You have to reimplement this method to return the custom action menu which will
+	 * be shown in the statusbar. Kopete take care of the deletion of the menu. Actions
+	 * should have the menu as parent.
 	 */
-	virtual KActionMenu* actionMenu();
+	virtual KActionMenu* actionMenu() ;
 
 	/**
-	 * Retrieve the list of contacts for this protocol
+	 * @brief Retrieve the list of contacts for this protocol
 	 *
 	 * The list is guaranteed to contain only contacts for this account,
 	 * so you can safely use static_cast to your own derived contact class
@@ -188,11 +192,13 @@ public:
 	const QDict<KopeteContact>& contacts();
 
 	/**
+	 * @internal
 	 * Save the account to an XML string. Only used internally
 	 */
 	const QDomElement toXML();
 
 	/**
+	 * @internal
 	 * Load account from XML
 	 */
 	bool fromXML(const QDomElement& cnode);
@@ -200,7 +206,7 @@ public:
 	/**
 	 * @internal
 	 * Register a new KopeteContact with the account
-	 * To be called ONLY from KopeteContact, not from any other class!
+	 * To be called ONLY from KopeteContact constructor, not from any other class!
 	 * (Not even a derived class).
 	 */
 	void registerContact( KopeteContact *c );
@@ -208,10 +214,15 @@ public:
 protected:
 	/**
 	 * Create a new contact in the specified metacontact
-	 * You shouldn't call yourself this method, for adding contact see @ref addContact()
+	 *
+	 * You shouldn't never call yourself this method, For adding contact see @ref addContact()
+	 *
+	 * This method is called by @ref KopeteAccount::addContact() in this method, you should
+	 * simply create the new custom @ref KopeteContact in the given metacontact. And you can
+	 * add the contact to the server if the protocol support it
 	 *
 	 * @param contactId The unique ID for this protocol
-	 * @param displayName The displayname of the contact (may equal userId for some protocols
+	 * @param displayName The displayname of the contact (may equal userId for some protocols)
 	 * @param parentContact The metacontact to add this contact to
 	 */
 	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName,
@@ -219,14 +230,15 @@ protected:
 
 public slots:
 	/**
-	 * Go online for this service.
+	 * @brief Go online for this service.
+	 *
 	 * This is a slot, so it can be called directly from a KAction, for example.
 	 */
-
 	virtual void connect() = 0;
 
 	/**
-	 * Disconnect from this service.
+	 * @brief Disconnect from this service.
+	 *
 	 * This is a slot, so it can be called directly from a KAction, for example.
 	 */
 	virtual void disconnect() = 0;
@@ -263,7 +275,7 @@ signals:
 	void onlineStatusIconChanged( KopeteAccount *account );
 
 protected slots:
-	/*
+	/**
 	 * This method is called at the end of the  fromXML function
 	 * since pluginData are not accessible yet in the constructor
 	 */

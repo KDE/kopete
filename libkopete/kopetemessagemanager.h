@@ -61,7 +61,7 @@ struct  KMMPrivate;
  *
  * The KMM inherits from KXMLGUIClient, this client is merged with the chatwindow's ui
  * so plugins can add childClients of this client to add their own actions in the
- * chatwindow. 
+ * chatwindow.
  */
 class KopeteMessageManager : public QObject , public KXMLGUIClient
 {
@@ -108,18 +108,21 @@ public:
 
 	/**
 	 * @brief The caption of the chat
+	 *
 	 * Used for named chats
 	 */
 	const QString displayName();
 
 	/**
 	 * @brief change the displayname
+	 *
 	 * change the display name of the chat
 	 */
 	void setDisplayName( const QString & );
 
 	/**
 	 * @brief set a specified KOS for specified contact in this KMM
+	 *
 	 * Set a special icon for a contact in this kmm only.
 	 * by default, all contact have their own status
 	 */
@@ -127,12 +130,14 @@ public:
 
 	/**
 	 * @brief get the status of a contact.
+	 *
 	 * see @ref setContactOnlineStatus()
 	 */
 	const KopeteOnlineStatus contactOnlineStatus( const KopeteContact* ) const;
 
 	/**
 	 * @brief the manager's view
+	 *
 	 * Return the view for the supplied KopeteMessageManager.  If it already
 	 * exists, it will be returned, otherwise, 0L will be returned or a new one
 	 * if canCreate=true
@@ -161,6 +166,7 @@ signals:
 	void messageReceived( KopeteMessage& msg, KopeteMessageManager * = 0L );
 	/**
 	 * @brief a message is going to be sent
+	 *
 	 * The message is going to be sent.
 	 * protocols can connect to this signal to send the message ro the network.
 	 * the protocol have also to call @ref appendMessage() and @ref messageSucceeded()
@@ -193,6 +199,7 @@ signals:
 
 	/**
 	 * @brief emitting a typing notification
+	 *
 	 * The user is typing a message, or just stopped typing
 	 * the protocol should connect to this signal to signal to others
 	 * that the user is typing if the protocol supports this

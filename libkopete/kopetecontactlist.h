@@ -204,6 +204,7 @@ public slots:
 	 void setSelectedItems(QPtrList<KopeteMetaContact> metaContacts , KopeteGroupList groups);
 
 	/**
+	 * @internal
 	 * Load the contact list
 	 *
 	 * FIXME: Use a better way, without exposing the XML backend, though.

@@ -27,6 +27,7 @@ class QDomElement;
 
 /**
  * @author Olivier Goffart  <ogoffart@tiscalinet.be>
+ *
  * this class handles the saving of the plugin data to xml files.
  * KopeteMetaContact, KopeteGroup, and KopeteAccount inherits from it
  */

@@ -46,7 +46,8 @@ class KopeteGlobalAwayDialog;
  * list of user-defined away messages from this.  Protocol
  * plugins' individual away dialogs should also get away
  * messages from this object.
- * It also handle global Idle Time
+ *
+ * It also handle global Idle Time, and all auto away stuff
  *
  * @author Hendrik vom Lehn <hvl@linux-4-ever.de>
  * @author Chris TenHarmsel <tenharmsel@users.sourceforge.net>
@@ -164,26 +165,37 @@ public:
 	 */
 	long int idleTime();
 
+
 	/**
-	 * set go available when we detect activity
+	 * set if kopete will go available when we detect activity
+	 * This should be only used by the preference dialog
 	 */
 	void setGoAvailable(bool );
 	/**
-	 *  Go available when we detect activity
+	 * Say if kopete will go available when we detect activity.
+	 * this is a configuration setting, and is used by the preferences dialog
 	 */
 	bool goAvailable() const;
 
 	/**
-	 * set the time before going away automatically.
-	 * set to 0 to not going away
+	 * Set the time before going away automatically.
+	 * This is used by the preferences dialog.
 	 */
 	void setAutoAwayTimeout(int);
 	/**
-	 * the time before going away automatically.
+	 * The time (in seconds) of idle before Kopete will set automaticaly every accounts away
 	 */
 	int autoAwayTimeout() const;
 
+	/**
+	 * set if Kopete will set every accounts in away mode after an idle time.
+	 * This is a configuration option used by the preferences page
+	 * see @ref autoAwayTimeout()
+	 */
 	void setUseAutoAway(bool);
+	/**
+	 * @return true if Kopete will set to away every online accounts if the user is idle
+	 */
 	bool useAutoAway() const;
 
 private:
@@ -199,14 +211,20 @@ private slots:
 
 public slots:
 	/**
-	 * Set the activity
-	 * Plugins can set the activity if they discover activity by another way than the mouse
+	 * @brief Set the activity
+	 *
+	 * Plugins can set the activity if they discover activity by another way than the mouse or the keyboard
+	 * (example, the motion auto away plugin)
+	 * this will reset the @ref idleTime to 0, and set all protocols to available (online) if the state was
+	 * set automaticaly to away because of idleness, and if they was previously online
 	 */
 	void setActivity();
 
 signals:
 	/**
-	 * Activity was detected
+	 * @brief Activity was detected
+	 *
+	 * this signal is emit when activity has been discover after being autoAway.
 	 */
 	void activity();
 };
