@@ -36,6 +36,7 @@
 #include <libxml/DOCBparser.h>
 #include <libxml/xinclude.h>
 #include <libxml/catalog.h>
+#include <libxml/globals.h>
 #include <libxslt/xsltconfig.h>
 #include <libxslt/xslt.h>
 #include <libxslt/xsltInternals.h>
