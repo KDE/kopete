@@ -428,10 +428,11 @@ bool Account::isBlocked( const QString &contactId )
 void Account::editAccount(QWidget *parent)
 {
 	KDialogBase *editDialog = new KDialogBase( parent, "KopeteAccountConfig::editDialog", true,
-											 i18n( "Edit Account" ), KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
+						   i18n( "Edit Account" ), KDialogBase::Ok | KDialogBase::Cancel,
+						   KDialogBase::Ok, true );
 
 	KopeteEditAccountWidget *m_accountWidget = protocol()->createEditAccountWidget( this, editDialog );
-  	if ( !m_accountWidget )
+	if ( !m_accountWidget )
 		return;
 
 	// FIXME: Why the #### is EditAccountWidget not a QWidget?!? This sideways casting
