@@ -194,7 +194,7 @@ void PluginConfig::save()
 
 	// Load the plugins the user added
 	for(QStringList::Iterator i = mAdded.begin(); i != mAdded.end(); ++i)
-		loader->add( *i );
+		loader->loadPlugin( *i );
 
 	// Remove the plugins the user removed
 	for (QStringList::Iterator i = mDeleted.begin(); i != mDeleted.end(); ++i)

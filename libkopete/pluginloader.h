@@ -55,13 +55,6 @@ class LibraryLoader : public QObject
 {
 	Q_OBJECT
 
-private:
-	struct PluginLibrary
-	{
-		KopetePlugin *plugin;
-		KLibrary *library;
-	};
-
 public:
 	/**
 	 * Retrieve the plugin loader instance.
@@ -82,9 +75,9 @@ public:
 	KopeteLibraryInfo getInfo(const QString &spec) const;
 	QValueList<KopeteLibraryInfo> available() const;
 	QValueList<KopeteLibraryInfo> loaded() const;
-	void add(const QString &spec);
 	bool isLoaded(const QString &spec) const;
 	void setModules(const QStringList &mods);
+	bool loadPlugin( const QString &spec );
 
 	/**
 	 * Search by name
@@ -101,11 +94,11 @@ public:
 	 * unload the plugin specified by spec
 	 */
 	bool remove(const QString &spec);
+
 	/**
 	 * unload the plugin that is plugin
 	 */
-	bool remove(const LibraryLoader::PluginLibrary *plugin);
-	bool remove(const KopetePlugin *plugin);
+	bool remove( KopetePlugin *plugin );
 
 	QPtrList<KopetePlugin> plugins() const;
 
@@ -128,10 +121,7 @@ private slots:
 private:
 	LibraryLoader();
 
-	bool loadSO(const QString &spec);
-	void removeNow(const QString &spec);
-
-	QDict<LibraryLoader::PluginLibrary> mLibHash;
+	QDict<KopetePlugin> mLibHash;
 
 	/**
 	 * The list of all address book keys used by each plugin
