@@ -41,7 +41,7 @@ SSIModifyTask::~SSIModifyTask()
 {
 }
 
-void SSIModifyTask::onGo( )
+void SSIModifyTask::onGo()
 {
 	sendSSIUpdate();
 }
@@ -62,7 +62,10 @@ bool SSIModifyTask::addContact( const QString& contact, const QString& group, bo
 {
 	m_opType = Add;
 	m_opSubject = Contact;
-	Oscar::SSI oldItem = m_ssiManager->findContact( contact );
+	
+	QString newContact = Oscar::normalize( contact );
+	
+	Oscar::SSI oldItem = m_ssiManager->findContact( newContact );
 	Oscar::SSI groupItem = m_ssiManager->findGroup( group );
 	
 	if ( !groupItem )
@@ -81,7 +84,7 @@ bool SSIModifyTask::addContact( const QString& contact, const QString& group, bo
 	}
 	
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "creating new SSI item for " << contact << " in group " << group << endl;
-	Oscar::SSI newItem( contact, groupItem.gid(), m_ssiManager->nextContactId(), ROSTER_CONTACT, tlvList );
+	Oscar::SSI newItem( newContact, groupItem.gid(), m_ssiManager->nextContactId(), ROSTER_CONTACT, tlvList );
 	m_newItem = newItem;
 	return true;
 }
@@ -90,7 +93,7 @@ bool SSIModifyTask::removeContact( const QString& contact )
 {
 	m_opType = Remove;
 	m_opSubject = Contact;
-	m_oldItem = m_ssiManager->findContact( contact );
+	m_oldItem = m_ssiManager->findContact( Oscar::normalize( contact ) );
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Scheduling" << m_oldItem.name() << " for removal" << endl;
 	return true;
 }
@@ -99,7 +102,7 @@ bool SSIModifyTask::changeGroup( const QString& contact, const QString& newGroup
 {
 	m_opType = Change;
 	m_opSubject = Group;
-	m_oldItem = m_ssiManager->findContact( contact );
+	m_oldItem = m_ssiManager->findContact( Oscar::normalize( contact ) );
 	Oscar::SSI oldGroupItem;
 	if ( m_oldItem.isValid() )
 		oldGroupItem = m_ssiManager->findGroup( newGroup );
@@ -138,7 +141,7 @@ bool SSIModifyTask::addGroup( const QString& groupName )
 	return true;
 }
 
-bool SSIModifyTask::removeGroup( const QString & groupName )
+bool SSIModifyTask::removeGroup( const QString& groupName )
 {
 	m_opType = Remove;
 	m_opSubject = Group;

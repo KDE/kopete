@@ -106,7 +106,7 @@ void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& det
 
 void ICQContact::userOnline( const QString& userId )
 {
-	if ( userId != contactId() )
+	if ( Oscar::normalize( userId ) != Oscar::normalize( contactId() ) )
 		return;
 
 	kdDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " online" << endl;
@@ -116,7 +116,7 @@ void ICQContact::userOnline( const QString& userId )
 
 void ICQContact::userOffline( const QString& userId )
 {
-	if ( userId != contactId() )
+	if ( Oscar::normalize( userId ) != Oscar::normalize( contactId() ) )
 		return;
 
 	kdDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " offline" << endl;
@@ -130,7 +130,7 @@ void ICQContact::loggedIn()
 		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 
 	QString nickname = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-	if ( nickname.isEmpty() || nickname == contactId() )
+	if ( nickname.isEmpty() || Oscar::normalize( nickname ) == Oscar::normalize( contactId() ) )
 	{
 		int time = ( KApplication::random() % 25 ) * 1000;
 		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating nickname in " << time/1000 << " seconds" << endl;
@@ -164,7 +164,7 @@ void ICQContact::slotSendAuth()
 
 void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason, bool granted )
 {
-	if ( contact != contactId() )
+	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 	
 	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << endl;
@@ -189,7 +189,7 @@ void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason
 
 void ICQContact::slotGotAuthRequest( const QString& contact, const QString& reason )
 {
-	if ( contact != contactId() )
+	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 	
 	ICQAuthReplyDialog replyDialog;
@@ -202,7 +202,7 @@ void ICQContact::slotGotAuthRequest( const QString& contact, const QString& reas
 
 void ICQContact::receivedLongInfo( const QString& contact )
 {
-	if ( contact.lower() != contactId().lower() )
+	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 	{
 		if ( m_infoWidget )
 			m_infoWidget->delayedDestruct();
@@ -224,7 +224,7 @@ void ICQContact::receivedLongInfo( const QString& contact )
 
 void ICQContact::receivedShortInfo( const QString& contact )
 {
-	if ( contact != contactId() )
+	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 	
 	ICQShortInfo shortInfo = mAccount->engine()->getShortInfo( contact );

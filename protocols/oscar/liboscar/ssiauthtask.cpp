@@ -21,6 +21,7 @@
 #include "transfer.h"
 #include "buffer.h"
 #include "connection.h"
+#include "oscarutils.h"
 
 #include <kdebug.h>
 
@@ -135,7 +136,7 @@ void SSIAuthTask::handleFutureAuthGranted()
 {
 	Buffer* buf = transfer()->buffer();
 	
-	QString uin = buf->getBUIN();
+	QString uin = Oscar::normalize( buf->getBUIN() );
 	QString reason = buf->getBSTR();
 	
 	buf->getWord(); // 0x0000 - Unknown
@@ -149,7 +150,7 @@ void SSIAuthTask::handleAuthRequested()
 {
 	Buffer* buf = transfer()->buffer();
 	
-	QString uin = buf->getBUIN();
+	QString uin = Oscar::normalize( buf->getBUIN() );
 	QString reason = buf->getBSTR();
 	
 	buf->getWord(); // 0x0000 - Unknown
@@ -164,7 +165,7 @@ void SSIAuthTask::handleAuthReplied()
 {
 	Buffer* buf = transfer()->buffer();
 	
-	QString uin = buf->getBUIN();
+	QString uin = Oscar::normalize( buf->getBUIN() );
 	bool accepted = buf->getByte();
 	QString reason = buf->getBSTR();
 	
@@ -186,7 +187,7 @@ void SSIAuthTask::handleAddedMessage()
 {
 	Buffer* buf = transfer()->buffer();
 	
-	QString uin = buf->getBUIN();
+	QString uin = Oscar::normalize( buf->getBUIN() );
 	
 	kdDebug( OSCAR_RAW_DEBUG ) << k_funcinfo << "User " << uin << " added you to the contact list" << endl;
 	emit contactAddedYou( uin );

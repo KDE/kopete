@@ -145,7 +145,7 @@ void AIMContact::slotUserInfo()
 
 void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& details )
 {
-	if ( contact.lower() != contactId().lower() )
+	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 
 	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << contact << endl;
@@ -179,7 +179,7 @@ void AIMContact::userInfoUpdated( const QString& contact, const UserDetails& det
 
 void AIMContact::userOnline( const QString& userId )
 {
-	if ( userId.lower() == contactId().lower() )
+	if ( Oscar::normalize( userId ) == Oscar::normalize( contactId() ) )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Getting more contact info" << endl;
 		setOnlineStatus( mProtocol->statusOnline );
@@ -197,7 +197,7 @@ void AIMContact::userOffline( const QString& userId )
 
 void AIMContact::updateAwayMessage( const QString& contact, const QString& message )
 {
-	if ( contact.lower() != contactId().lower() )
+	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 	else
 	{
@@ -220,7 +220,7 @@ void AIMContact::updateAwayMessage( const QString& contact, const QString& messa
 
 void AIMContact::updateProfile( const QString& contact, const QString& profile )
 {
-	if ( contact.lower() != contactId().lower() )
+	if ( Oscar::normalize( contact ) != Oscar::normalize( contactId() ) )
 		return;
 	
 	setProperty( mProtocol->clientProfile, profile );
