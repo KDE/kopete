@@ -1,8 +1,13 @@
-2003-07-05 - Considered Releaseable
-- Font handling now works, and AFAICT I can't do color handling
-- The yahoo plugin no longer crashes when setting a custom away mode
-- Display of a custom away mode now works.
-- All the basic functionality is there.
+2003-07-05 - Things to do for after 0.7
+
+- Update libyahoo2 to the latest version and port it to use the QT/KDE classes
+  so we get things like proxy support, IPv6, etc.
+- Implement file transfers
+- Implement group chats (using both yahoo groups and multiple person chats)
+- Implement color handling as soon as I find a way to get a client
+  to send me colored text.
+- Delete contacts from the server side list when deleting them from 
+  Kopete. 
 - Main thing to note is invisible mode, which won't work if you go straight from
     offline->invisible, since it will go offline->online->invisible and the
     opposite end will notice you go online.

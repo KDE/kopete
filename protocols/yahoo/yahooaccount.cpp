@@ -16,6 +16,7 @@
     *************************************************************************
 */
 //QT
+#include <kyahoo.h>
 #include <qfont.h>
 
 // KDE
@@ -23,6 +24,7 @@
 #include <kdebug.h>
 #include <kaction.h>
 #include <kpopupmenu.h>
+#include <kmessagebox.h>
 
 // Kopete
 #include "kopetemessagemanager.h"
@@ -277,6 +279,33 @@ bool YahooAccount::addContactToMetaContact(const QString &contactId, const QStri
 void YahooAccount::slotLoginResponse( int succ , const QString &url )
 {
 	kdDebug(14180) << k_funcinfo << succ << ", " << url << ")]" << endl;
+	if (succ == YAHOO_LOGIN_OK)
+	{
+		//m_sessionI = yahoo_current_status(m_connId);
+		kdDebug(14180) << "logged in" << endl;
+	}
+	else if(succ == YAHOO_LOGIN_PASSWD)
+	{
+		KMessageBox::error(0,i18n("Could not log into the Yahoo service.  Please verify that your username and password are correctly typed."),
+				   i18n("Login Failed"));
+		m_myself->setYahooStatus(YahooStatus::Offline);
+		return;
+	}
+	else if(succ == YAHOO_LOGIN_LOCK)
+	{
+		KMessageBox::error(0,i18n("Could not log into the Yahoo service. Your account has been locked.\nVisit %1 to reactivate it.").arg(url),
+			   i18n("Login Failed"));
+		m_myself->setYahooStatus(YahooStatus::Offline);
+		return;
+	}
+	else if(succ == YAHOO_LOGIN_DUPL)
+	{
+		KMessageBox::error(0,i18n("You have been logged out of the Yahoo service, possibly due to a duplicate login."),
+				   i18n("Login Failed"));
+		m_myself->setYahooStatus(YahooStatus::Offline);
+		disconnect();
+		return;
+	}
 	slotGotBuddies(yahooSession()->getLegacyBuddyList());
 	if(stateOnConnection)
 	{	m_session->setAway(yahoo_status(stateOnConnection), "", 0);
