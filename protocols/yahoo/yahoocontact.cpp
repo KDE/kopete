@@ -39,6 +39,7 @@ YahooContact::YahooContact(KopeteAccount *account, const QString &userId, const 
 	m_userId = userId;
 	m_manager = 0L;
 	m_status.setStatus(YahooStatus::Offline);
+	m_account = static_cast<YahooAccount*>(account);
 
 	// Update ContactList
 	setDisplayName(fullName);
@@ -50,8 +51,12 @@ YahooContact::YahooContact(KopeteAccount *account, const QString &userId, const 
 //	QObject::connect (metaContact , SIGNAL( aboutToSave(KopeteMetaContact*) ), pluginInstance, SLOT (serialize(KopeteMetaContact*) ));
 	//TODO: Probably doesn't save contacts now!
 
-	if(static_cast<YahooAccount *>(account)->haveContactList())
+	if(m_account->haveContactList())
 		syncToServer();
+}
+
+YahooContact::~YahooContact()
+{
 }
 
 void YahooContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)
@@ -87,17 +92,17 @@ void YahooContact::slotUpdateStatus(QString status, QString statusText)
 
 void YahooContact::syncToServer()
 {
-	YahooAccount* yAccount = static_cast<YahooAccount*> (account());
+	
 
 	kdDebug(14180) << k_funcinfo<< endl;
-	if(!yAccount->isConnected()) return;
+	if(!m_account->isConnected()) return;
 
-	if(!yAccount->isOnServer(m_userId))
+	if(!m_account->isOnServer(m_userId))
 	{	kdDebug(14180) << "Contact " << m_userId << " doesn't exist on server-side. Adding..." << endl;
 
 		KopeteGroupList groupList = metaContact()->groups();
 		for( KopeteGroup *g = groupList.first(); g; g = groupList.next() )
-			yAccount->yahooSession()->addBuddy(m_userId, g->displayName() );
+			m_account->yahooSession()->addBuddy(m_userId, g->displayName() );
 	}
 }
 
@@ -110,7 +115,10 @@ bool YahooContact::isOnline() const
 bool YahooContact::isReachable()
 {
 	//kdDebug(14180) << k_funcinfo << endl;
-	return true;
+	if (m_account->isConnected())
+		return true;
+	else
+		return false;
 }
 
 KopeteMessageManager *YahooContact::manager( bool )

@@ -37,6 +37,7 @@
 
 class YahooProtocol;
 class KopeteMessageManager;
+class YahooAccount;
 
 class YahooContact : public KopeteContact
 {
@@ -44,6 +45,7 @@ class YahooContact : public KopeteContact
 public:
 	YahooContact(KopeteAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact);
 
+	~YahooContact();
 	virtual bool isOnline() const;
 	virtual bool isReachable();
 	virtual KActionCollection *customContextMenuActions();
@@ -71,6 +73,9 @@ private:
 	QString m_userId;
 	YahooStatus m_status;
 	KopeteMessageManager *m_manager;
+	
+	//the account that this contact belongs to
+	YahooAccount* m_account;
 };
 
 #endif
