@@ -107,6 +107,9 @@ void JabberMessageManager::slotSendTypingNotification ( bool typing )
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Sending out typing notification (" << typing << ") to all chat members." << endl;
 
+	if ( !account()->isConnected () )
+		return;
+
 	KopeteContact *contact;
 	QPtrListIterator<KopeteContact> listIterator ( members () );
 
