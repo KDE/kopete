@@ -2,8 +2,8 @@
 #ifndef OSCARSOCKET_ICQ_H
 #define OSCARSOCKET_ICQ_H
 
-#define ICQ_SERVER 			"login.icq.com"
-#define ICQ_PORT 				5190
+#define ICQ_SERVER "login.icq.com"
+#define ICQ_PORT 5190
 
 //** Internal status for the ICQ protocol **/
 const unsigned short ICQ_STATUS_ONLINE		= 0x0000;

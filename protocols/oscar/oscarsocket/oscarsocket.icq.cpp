@@ -1016,4 +1016,32 @@ WORD OscarSocket::sendReqInfo(const unsigned long uin)
 	return ret;
 }
 
+void OscarSocket::sendCLI_METASETGENERAL(ICQGeneralUserInfo &i)
+{
+	kdDebug(14150) << k_funcinfo <<
+		"SEND (CLI_METASETGENERAL), sending general user information" << endl;
+
+	Buffer req; // ! LITTLE-ENDIAN
+	req.addLEWord(0x03ea); // subtype: 1002
+	req.addLELNTS(i.nickName.local8Bit());
+	req.addLELNTS(i.nickName.latin1());
+	req.addLELNTS(i.firstName.latin1());
+	req.addLELNTS(i.lastName.latin1());
+	req.addLELNTS(i.eMail.latin1());
+	req.addLELNTS(i.city.latin1());
+	req.addLELNTS(i.state.latin1());
+	req.addLELNTS(i.phoneNumber.latin1());
+	req.addLELNTS(i.faxNumber.latin1());
+	req.addLELNTS(i.street.latin1());
+	req.addLELNTS(i.cellularNumber.latin1());
+	req.addLELNTS(i.zip.latin1());
+	req.addLEWord(i.countryCode);
+	req.addLEByte(i.timezoneCode);
+	if (i.publishEmail)
+		req.addLEByte(0x00);
+	else
+		req.addLEByte(0x01);
+
+	sendCLI_TOICQSRV(0x07d0, req);
+}
 // vim: set noet ts=4 sts=4 sw=4:

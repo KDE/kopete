@@ -61,6 +61,13 @@ class Buffer : public QObject
 		/** adds the given string to the buffer (make sure it's NULL-terminated) */
 		int addString(const char *, const DWORD);
 		int addLEString(const char *, const DWORD);
+
+		/* adds the given string to the buffer with the length in front of it
+		 * (make sure it's NULL-terminated)
+		 */
+		int addLNTS(const char * s);
+		int addLELNTS(const char * s);
+
 		/** adds the given DWord to the buffer */
 		int addDWord(const DWORD);
 

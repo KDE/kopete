@@ -509,7 +509,7 @@ void OscarAccount::setPort( int port )
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	if (port>0)// Do a little error checkin on it
-		setPluginData(protocol(), "Port", QString::number( port ));
+		setPluginData(protocol(), "Port", QString::number(port));
 }
 
 bool OscarAccount::addContactToMetaContact(const QString &contactId,

@@ -5,8 +5,13 @@
 #include <qcheckbox.h>
 #include <qlineedit.h>
 #include <qspinbox.h>
+//#include <qtabwidget.h>
 
 #include <kdebug.h>
+#include <klocale.h>
+#include <kjanuswidget.h>
+#include <kurllabel.h>
+#include "icquserinfowidget.h"
 
 #include "icqprotocol.h"
 #include "icqaccount.h"
@@ -20,31 +25,67 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	mAccount = account;
 	mProtocol = protocol;
 
-	// create the gui (generated from a .ui file)
 	(new QVBoxLayout(this))->setAutoAdd(true);
-	mGui = new OscarEditAccountUI(this, "ICQEditAccountWidget::mGui");
+//	mTop = new QTabWidget(this, "ICQEditAccountWidget::mTop");
+	mTop = new KJanusWidget(this, "ICQEditAccountWidget::mTop", KJanusWidget::IconList);
+	QFrame *acc = mTop->addPage(i18n("Account"), i18n("ICQ Account Settings"));
+	QFrame *det = mTop->addPage(i18n("Contact"), i18n("ICQ Contact Details") );
+
+	(new QVBoxLayout(acc))->setAutoAdd(true);
+	mAccountSettings = new OscarEditAccountUI(acc,
+		"ICQEditAccountWidget::mAccountSettings");
+//	mTop->addTab( mAccountSettings, i18n("&Account Settings") );
+
+	(new QVBoxLayout(det))->setAutoAdd(true);
+	mUserInfoSettings = new ICQUserInfoWidget(det,
+		"ICQEditAccountWidget::mUserInfoSettings");
+//	mTop->addTab( mUserInfoSettings, i18n("&User Details") );
+
+	// ----------------------------------------------------------------
 
 	// Read in the settings from the account if it exists
-	if (account)
+	if(account)
 	{
-		if (account->rememberPassword())
-		{ // If we want to remember the password
-			mGui->mSavePassword->setChecked(true);
-			mGui->mPassword->setText(account->getPassword());
+		if(account->rememberPassword())
+		{
+			mAccountSettings->mSavePassword->setChecked(true);
+			mAccountSettings->mPassword->setText(account->getPassword());
 		}
-		mGui->mAccountId->setText(account->accountId());
-		mGui->mAutoLogon->setChecked(account->autoLogin());
-		mGui->mServer->setText(account->pluginData(protocol, "Server"));
-		mGui->mPort->setValue(account->pluginData(protocol,"Port").toInt());
+
+		mAccountSettings->mAccountId->setText(account->accountId());
+		mAccountSettings->mAutoLogon->setChecked(account->autoLogin());
+		mAccountSettings->mServer->setText(account->pluginData(protocol, "Server"));
+		mAccountSettings->mPort->setValue(account->pluginData(protocol, "Port").toInt());
+
+		mUserInfoSettings->roUIN->setText(account->accountId());
+		mUserInfoSettings->rwNickName->setText(account->pluginData(protocol,"NickName"));
+		mUserInfoSettings->rwFirstName->setText(account->pluginData(protocol,"FirstName"));
+		mUserInfoSettings->rwLastName->setText(account->pluginData(protocol,"LastName"));
+		// TODO: allow fetching userinfo from server
 	}
 	else
 	{
 		// Just set the default saved password to true
-		mGui->mSavePassword->setChecked(true);
+		mAccountSettings->mSavePassword->setChecked(true);
 		// These come from OscarSocket where they are #defined
-		mGui->mServer->setText(ICQ_SERVER);
-		mGui->mPort->setValue(ICQ_PORT);
+		mAccountSettings->mServer->setText(ICQ_SERVER);
+		mAccountSettings->mPort->setValue(ICQ_PORT);
 	}
+
+	mUserInfoSettings->rwAlias->hide();
+	mUserInfoSettings->roSignonTime->hide();
+	mUserInfoSettings->roIPAddress->hide();
+	mUserInfoSettings->roBday->hide();
+	mUserInfoSettings->roGender->hide();
+	mUserInfoSettings->roTimezone->hide();
+	mUserInfoSettings->roLang1->hide();
+	mUserInfoSettings->roLang2->hide();
+	mUserInfoSettings->roLang3->hide();
+	mUserInfoSettings->roPrsCountry->hide();
+	mUserInfoSettings->prsEmailLabel->hide();
+	mUserInfoSettings->prsHomepageLabel->hide();
+	mUserInfoSettings->roWrkCountry->hide();
+	mUserInfoSettings->wrkHomepageLabel->hide();
 }
 
 ICQEditAccountWidget::~ICQEditAccountWidget()
@@ -59,19 +100,29 @@ KopeteAccount *ICQEditAccountWidget::apply()
 	if (!mAccount)
 	{
 		kdDebug(14200) << k_funcinfo << "creating a new account" << endl;
-		QString newId = mGui->mAccountId->text();
+		QString newId = mAccountSettings->mAccountId->text();
 		mAccount = new ICQAccount(mProtocol, newId);
+		if(!mAccount)
+			return NULL;
 	}
 
 	// Check to see if we're saving the password, and set it if so
-	if (mGui->mSavePassword->isChecked())
-		mAccount->setPassword(mGui->mPassword->text());
+	if (mAccountSettings->mSavePassword->isChecked())
+		mAccount->setPassword(mAccountSettings->mPassword->text());
 	else
 		mAccount->setPassword(QString::null);
 
-	mAccount->setAutoLogin(mGui->mAutoLogon->isChecked()); // save the autologon choice
-	static_cast<ICQAccount *>(mAccount)->setServer(mGui->mServer->text());
-	static_cast<ICQAccount *>(mAccount)->setPort(mGui->mPort->value());
+	mAccount->setAutoLogin(mAccountSettings->mAutoLogon->isChecked());
+	static_cast<OscarAccount *>(mAccount)->setServer(mAccountSettings->mServer->text());
+	static_cast<OscarAccount *>(mAccount)->setPort(mAccountSettings->mPort->value());
+
+	mAccount->setPluginData(mProtocol, "NickName", mUserInfoSettings->rwNickName->text());
+	mAccount->setPluginData(mProtocol, "FirstName", mUserInfoSettings->rwFirstName->text());
+	mAccount->setPluginData(mProtocol, "LastName", mUserInfoSettings->rwLastName->text());
+
+	// FIXME: bad place for doing this
+	mAccount->myself()->rename(mUserInfoSettings->rwNickName->text());
+	// TODO: send updated userinfo to server if connected
 
 	return mAccount;
 }
@@ -80,9 +131,9 @@ bool ICQEditAccountWidget::validateData()
 {
 	kdDebug(14200) << k_funcinfo << "Called." << endl;
 
-	QString userName = mGui->mAccountId->text();
-	QString server = mGui->mServer->text();
-	int port = mGui->mPort->value();
+	QString userName = mAccountSettings->mAccountId->text();
+	QString server = mAccountSettings->mServer->text();
+	int port = mAccountSettings->mPort->value();
 
 	if (userName.contains(" "))
 		return false;

@@ -423,4 +423,18 @@ char *Buffer::getLELNTS()
 	return getLEBlock(len);
 }
 
+int Buffer::addLNTS(const char * s)
+{
+	unsigned int len = strlen(s);
+	addWord(len);
+	addString(s, len);
+}
+
+int Buffer::addLELNTS(const char * s)
+{
+	unsigned int len = strlen(s);
+	addLEWord(len);
+	addLEString(s, len);
+}
+
 // vim: set noet ts=4 sts=4 sw=4:

@@ -29,27 +29,31 @@ class KopeteAccount;
 
 class ICQProtocol;
 class OscarEditAccountUI;
+class ICQUserInfoWidget;
+// class QTabWidget;
+class KJanusWidget;
 
 class ICQEditAccountWidget : public QWidget, public EditAccountWidget
 {
-    Q_OBJECT
-public:
-    /** Constructor */
-    ICQEditAccountWidget(ICQProtocol *protocol, KopeteAccount *account,
-			   QWidget *parent=0, const char *name=0);
-    /** Destructor */
-    virtual ~ICQEditAccountWidget();
-    /** Validates the input */
-    virtual bool validateData();
-    /** Applies the data */
-    virtual KopeteAccount *apply();
-protected:
-    /** Our account we're editing */
-    KopeteAccount *mAccount;
-    /** The Protocol we're in */
-    ICQProtocol *mProtocol;
-    /** The GUI */
-    OscarEditAccountUI *mGui;
+	Q_OBJECT
+
+	public:
+		ICQEditAccountWidget(ICQProtocol *, KopeteAccount *,
+			QWidget *parent=0, const char *name=0);
+		virtual ~ICQEditAccountWidget();
+
+		virtual bool validateData();
+		virtual KopeteAccount *apply();
+
+	protected:
+		/** Our account we're editing */
+		KopeteAccount *mAccount;
+		/** The Protocol we're in */
+		ICQProtocol *mProtocol;
+		/** The GUI */
+		OscarEditAccountUI *mAccountSettings;
+		ICQUserInfoWidget *mUserInfoSettings;
+		KJanusWidget *mTop;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

@@ -149,7 +149,7 @@ void ICQContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 		return;
 
 	// Check to see if we're even online
-	if (!account()->isConnected())
+	if(!account()->isConnected())
 	{
 		KMessageBox::sorry(qApp->mainWidget(),
 			i18n("<qt>You must be logged on to ICQ before you can "

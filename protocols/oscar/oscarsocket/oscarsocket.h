@@ -340,6 +340,11 @@ class OscarSocket : public OscarConnection
 		 */
 		WORD sendReqInfo(const unsigned long uin);
 
+		/*
+		 * sends the general info for the uin owner to icq
+		 */
+		void sendCLI_METASETGENERAL(ICQGeneralUserInfo &i);
+
 	public slots:
 		/** This is called when a connection is established */
 		void OnConnect();
