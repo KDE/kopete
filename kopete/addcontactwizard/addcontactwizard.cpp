@@ -163,10 +163,10 @@ void AddContactWizard::slotAddAddresseeClicked()
 			if ( !m_addressBook->save( ticket ) )
 			{
 				kdError() << "Saving failed!" << endl;
-			}
 #if KDE_IS_VERSION (3,1,90)
-			m_addressBook->releaseSaveTicket( ticket );
+				m_addressBook->releaseSaveTicket( ticket );
 #endif
+			}
 		}
 	}
 }

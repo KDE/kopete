@@ -891,10 +891,12 @@ void KopeteMetaContact::slotWriteAddressBook()
 	else
 	{
 		if ( !ab->save( ticket ) )
+		{
 			kdWarning( 14010 ) << k_funcinfo << "ERROR: Saving failed!" << endl;
 #if KDE_IS_VERSION (3,1,90)
-		ab->releaseSaveTicket( ticket );
+			ab->releaseSaveTicket( ticket );
 #endif
+		}
 	}
 	kdDebug( 14010 ) << k_funcinfo << "Finished writing KABC" << endl;
 	KopeteMetaContactPrivate::s_addrBookWritePending = false;
