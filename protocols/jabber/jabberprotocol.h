@@ -23,6 +23,8 @@
 #include <qptrlist.h>
 #include <qsocket.h>
 #include <qdom.h>
+#include <qmap.h>
+#include <map>
 
 #include "jabbercontact.h"
 #include "jabcommon.h"
@@ -134,12 +136,15 @@ class JabberProtocol:public QObject, public KopeteProtocol {
 	QString mUsername, mPassword, mServer, mResource;
     int mPort;
 	bool doRegister;
+	int mStatus; /* If you use this for any purpose other than to determine the initial status, I will slice your testicles
+				  * off and have them on toast in the morning. */
 
     JabberPreferences *mPrefs;
     Jabber *protocol;
 	JabberContact *myContact;
 	KMessageBox *authContact;
 	dlgJabberStatus *reasonDialog;
+	QMap<QString, JabberContact *> contactList;
 };
 
 #endif

@@ -25,6 +25,7 @@
 #include "kopetehistorydialog.h"
 #include "dlgrename.h"
 #include "jabcommon.h"
+#include "kopetemessage.h"
 
 #include <kopete.h>
 #include <contactlist.h>
@@ -47,6 +48,7 @@ class KListAction;
 class JabberProtocol;
 class JabberResource;
 
+
 class JabberContact:public KopeteContact {
   Q_OBJECT
   public:
@@ -61,8 +63,9 @@ class JabberContact:public KopeteContact {
     int importance() const;
     void execute();
 
-    QString resource() { return mResource; }
-    QString group() { return mGroup; }
+    QString resource() const { return mResource; }
+    QString group() const { return mGroup; }
+    QString userID() const { return mUserID; }
     bool localGroup() { return hasLocalGroup; }
     
     virtual void showContextMenu(QPoint, QString);
@@ -99,8 +102,8 @@ class JabberContact:public KopeteContact {
     QPtrList<JabberResource> resources;
     QPtrList<KopeteContact> theContacts;
     
-    bool hasLocalGroup;
-    QString mUserID, mName, mResource, mGroup, mReason;
+    bool hasLocalName, hasLocalGroup;
+    QString mUserID, mResource, mGroup, mReason;
     int mStatus;
     
     KPopupMenu *popup;
@@ -108,7 +111,9 @@ class JabberContact:public KopeteContact {
     KListAction *actionContactMove;
 
     dlgJabberRename *dlgRename;
-    KopeteMessageManager *msgManager;
+    KopeteMessageManager *mMsgManager;
+	KopeteMessageManager *msgManager();
+
     KopeteHistoryDialog *historyDialog;
 
 };
@@ -120,11 +125,11 @@ class JabberResource : public QObject {
     JabberResource(const QString &, const int &, const QDateTime &, const int &, const QString &);
     ~JabberResource();
     
-    QString resource() { return mResource; }
+    QString &resource() { return mResource; }
     int priority() { return mPriority; }
     QDateTime timestamp() { return mTimestamp; }
     int status() { return mStatus; }
-    QString reason() { return mReason; }
+    QString &reason() { return mReason; }
 
   private:
     QString mResource, mReason;
