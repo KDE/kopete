@@ -114,8 +114,16 @@ void IRCProtocol::addContact(  const QString &server, const QString &contact, co
 		c = static_cast<IRCContact*>( identity->findUser(contact, m) );
 	}
 
-	if( c->metaContact()->isTemporary() )
-		c->metaContact()->setTemporary(false);
+	if( c->metaContact() != m )
+	{
+		KopeteMetaContact *old = c->metaContact();
+		c->setMetaContact( m );
+		KopeteContactPtrList children = old->contacts();
+		if( children.isEmpty() )
+			KopeteContactList::contactList()->removeMetaContact( old );
+	}
+	else if( c->metaContact()->isTemporary() )
+		m->setTemporary(false);
 }
 
 void IRCProtocol::slotConnectedToServer()
