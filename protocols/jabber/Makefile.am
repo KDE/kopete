@@ -15,7 +15,6 @@ kopete_jabber_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN)
 kopete_jabber_la_LIBADD  = ../../libkopete/libkopete.la \
 	ui/libkopetejabberui.la \
 	-lpsi \
-	-lssl \
 	-lqssl
 
 data_DATA = jabber.plugin
