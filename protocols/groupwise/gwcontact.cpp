@@ -374,6 +374,11 @@ CLInstanceList GroupWiseContact::instances() const
 	return m_instances;
 }
 
+void GroupWiseContact::purgeCLInstances()
+{
+	m_instances.clear();
+}
+
 void GroupWiseContact::slotDeleteContact()
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;

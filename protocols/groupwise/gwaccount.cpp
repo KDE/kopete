@@ -331,6 +331,11 @@ void GroupWiseAccount::disconnect()
 		m_client->close ();
 	}
 
+	// clear the model of the server side contact list, so that when we reconnect, there will not be any stale entries to confuse GroupWiseContact::syncGroups()
+	QDictIterator<KopeteContact> it( contacts() );
+	for ( ; it.current(); ++it )
+		static_cast< GroupWiseContact * >( *it  )->purgeCLInstances();
+		
 	// make sure that the connection animation gets stopped if we're still
 	// in the process of connecting
 	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );

@@ -135,16 +135,37 @@ public:
 	
 	// CONTACT LIST MANAGEMENT FUNCTIONS
 	/**
-	 *	These functions simulate the server side contact list structure enough to allow Kopete to manipulate it correctly
+	 *  These functions model the server side contact list structure enough to allow Kopete to manipulate it correctly
+	 *  In GroupWise, a contactlist is composed of folders, containing contacts.  But the contacts don't record which 
+	 *  folders they are in.  Instead, each contact entry represents an instance of that contact within the list.  
+	 *  In Kopete's model, this looks like duplicate contacts (illegal), so instead we have unique contacts, 
+	 *  each (by way of its metacontact) knowing membership of potentially >1 KopeteGroups.  Contacts contain a list of the 
+	 *  server side list instances.  Contact list management operations affect this list, which is updated during every
+	 *  operation.  Having this list allows us to update the server side contact list and keep changes synchronised across 
+	 *  different clients.
+	 *  The list is volatile - it is not stored in stable storage, but is purged on disconnect and recreated at login.
 	 */
 	/**
 	 * Add an instance to this contact
 	 */
 	void addCLInstance( const ContactListInstance & );
+	/**
+	 * Remove an instance from this contact
+	 */
 	void removeCLInstance( const int objectId );
+	/** 
+	 * See if this contact contains an instance with this ID
+	 */
 	bool hasCLObjectId( const int objectId ) const;
+	/**
+	 * Get a list of all this contact's instances
+	 */
 	CLInstanceList instances() const;
-	
+	/**
+	 * Remove all this contact's contact list instances, called on disconnect so that a clean list is formed on reconnect.
+	 */
+	void purgeCLInstances();
+
 	/** 
 	 * Updates this contact's group membership and display name on the server
 	 */
