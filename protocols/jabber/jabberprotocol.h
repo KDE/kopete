@@ -49,6 +49,7 @@ class JabberProtocol : public KopeteProtocol
 	Q_OBJECT
 
 	friend class JabberContact; /* Friends can touch each other's private parts. */
+	friend class DlgJabberServices;
 
 public:
 	/*********************************************************************
@@ -368,6 +369,11 @@ private slots:
 	
 	void slotEditVCard();
 
+	/**
+	 * The user wants to manage services
+	 */
+	void slotGetServices();
+
 private:
 	typedef JabberMap<JabberContact*, KopeteMetaContact*> JabberMetaContactMap;
 	typedef QMap<QString, JabberContact*> JabberContactMap;
@@ -408,6 +414,7 @@ private:
 	KAction *actionGoDND;
 	KAction *actionGoInvisible;
 	KAction *actionGoOffline;
+	KAction *actionServices;
 	KAction *actionSendRaw;
 	KAction *actionEditVCard;
 	KPopupMenu *popup;

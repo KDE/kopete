@@ -54,6 +54,7 @@
 #include "jabberprefs.h"
 #include "dlgjabberstatus.h"
 #include "dlgjabbersendraw.h"
+#include "dlgjabberservices.h"
 #include "jabberaddcontactpage.h"
 #include "jabbermap.h"
 #include "jabbermessagemanager.h"
@@ -115,6 +116,52 @@ void JabberProtocol::errorConnectFirst()
 
 }
 
+void JabberProtocol::initIcons()
+{
+	KIconLoader *loader = KGlobal::iconLoader();
+	KStandardDirs dir;
+
+	onlineIcon = QPixmap(loader->loadIcon("jabber_online", KIcon::User));
+	offlineIcon = QPixmap(loader->loadIcon("jabber_offline", KIcon::User));
+	awayIcon = QPixmap(loader->loadIcon("jabber_away", KIcon::User));
+	naIcon = QPixmap(loader->loadIcon("jabber_na", KIcon::User));
+	connectingIcon = QMovie(dir.findResource("data", "kopete/pics/jabber_connecting.mng"));
+
+}
+
+void JabberProtocol::initActions()
+{
+
+	actionGoOnline = new KAction(i18n("Online"), "jabber_online", 0, this, SLOT(slotGoOnline()), this, "actionJabberConnect");
+	actionGoAway = new KAction(i18n("Away"), "jabber_away", 0, this, SLOT(slotGoAway()), this, "actionJabberAway");
+	actionGoXA = new KAction(i18n("Extended Away"), "jabber_away", 0, this, SLOT(slotGoXA()), this, "actionJabberXA");
+	actionGoDND = new KAction(i18n("Do Not Disturb"), "jabber_na", 0, this, SLOT(slotGoDND()), this, "actionJabberDND");
+	actionGoInvisible = new KAction(i18n("Invisible"), "jabber_offline", 0, this, SLOT(slotGoInvisible()), this, "actionJabberInvisible");
+	actionGoOffline = new KAction(i18n("Offline"), "jabber_offline", 0, this, SLOT(slotGoOffline()), this, "actionJabberDisconnect");
+	actionServices = new KAction(i18n("Services..."), "filenew", 0, this, SLOT(slotGetServices()), this, "actionJabberServices");
+	actionSendRaw = new KAction(i18n("Send raw packet to Server..."), "filenew", 0, this, SLOT(slotSendRaw()), this, "actionJabberSendRaw");
+	actionEditVCard = new KAction(i18n("Edit User Info..."), "identity", 0, this, SLOT(slotEditVCard()), this, "actionEditVCard");
+
+	actionStatusMenu = new KActionMenu("Jabber", this);
+
+	// will be overwritten in slotSettingsChanged, maybe there is a better way (gogo) ??? -DS
+	menuTitleId = actionStatusMenu->popupMenu()->insertTitle("");
+
+	actionStatusMenu->insert(actionGoOnline);
+	actionStatusMenu->insert(actionGoAway);
+	actionStatusMenu->insert(actionGoXA);
+	actionStatusMenu->insert(actionGoDND);
+	actionStatusMenu->insert(actionGoInvisible);
+	actionStatusMenu->insert(actionGoOffline);
+
+	actionStatusMenu->popupMenu()->insertSeparator();
+	actionStatusMenu->insert(actionServices);
+	actionStatusMenu->insert(actionSendRaw);
+	actionStatusMenu->insert(actionEditVCard);
+	actionStatusMenu->plug(kopeteapp->systemTray()->contextMenu(), 1);
+
+}
+
 void JabberProtocol::init()
 {
 
@@ -165,7 +212,21 @@ bool JabberProtocol::unload()
 	// make sure that the next attempt to load Jabber
 	// re-initializes the protocol class
 	protocolInstance = 0L;
+
+	delete actionGoOnline;
+	delete actionGoAway;
+	delete actionGoXA;
+	delete actionGoDND;
+	delete actionGoInvisible;
+	delete actionGoOffline;
+
+	delete actionServices;
+	delete actionSendRaw;
+	delete actionEditVCard;
 	
+	delete actionStatusMenu;
+
+		
 	return KopeteProtocol::unload();
 
 }
@@ -674,50 +735,6 @@ AddContactPage *JabberProtocol::createAddContactWidget(QWidget *parent)
 {
 
 	return new JabberAddContactPage(this, parent);
-
-}
-
-void JabberProtocol::initIcons()
-{
-	KIconLoader *loader = KGlobal::iconLoader();
-	KStandardDirs dir;
-
-	onlineIcon = QPixmap(loader->loadIcon("jabber_online", KIcon::User));
-	offlineIcon = QPixmap(loader->loadIcon("jabber_offline", KIcon::User));
-	awayIcon = QPixmap(loader->loadIcon("jabber_away", KIcon::User));
-	naIcon = QPixmap(loader->loadIcon("jabber_na", KIcon::User));
-	connectingIcon = QMovie(dir.findResource("data", "kopete/pics/jabber_connecting.mng"));
-
-}
-
-void JabberProtocol::initActions()
-{
-
-	actionGoOnline = new KAction(i18n("Online"), "jabber_online", 0, this, SLOT(slotGoOnline()), this, "actionJabberConnect");
-	actionGoAway = new KAction(i18n("Away"), "jabber_away", 0, this, SLOT(slotGoAway()), this, "actionJabberAway");
-	actionGoXA = new KAction(i18n("Extended Away"), "jabber_away", 0, this, SLOT(slotGoXA()), this, "actionJabberXA");
-	actionGoDND = new KAction(i18n("Do Not Disturb"), "jabber_na", 0, this, SLOT(slotGoDND()), this, "actionJabberDND");
-	actionGoInvisible = new KAction(i18n("Invisible"), "jabber_offline", 0, this, SLOT(slotGoInvisible()), this, "actionJabberInvisible");
-	actionGoOffline = new KAction(i18n("Offline"), "jabber_offline", 0, this, SLOT(slotGoOffline()), this, "actionJabberDisconnect");
-	actionSendRaw = new KAction(i18n("Send raw packet to Server"), "filenew", 0, this, SLOT(slotSendRaw()), this, "actionJabberSendRaw");
-	actionEditVCard = new KAction(i18n("Edit User Info"), "identity", 0, this, SLOT(slotEditVCard()), this, "actionEditVCard");
-	
-	actionStatusMenu = new KActionMenu("Jabber", this);
-	
-	// will be overwritten in slotSettingsChanged, maybe there is a better way (gogo) ??? -DS
-	menuTitleId = actionStatusMenu->popupMenu()->insertTitle(""); 	
-	
-	actionStatusMenu->insert(actionGoOnline);
-	actionStatusMenu->insert(actionGoAway);
-	actionStatusMenu->insert(actionGoXA);
-	actionStatusMenu->insert(actionGoDND);
-	actionStatusMenu->insert(actionGoInvisible);
-	actionStatusMenu->insert(actionGoOffline);
-	
-	actionStatusMenu->popupMenu()->insertSeparator();
-	actionStatusMenu->insert(actionSendRaw);
-	actionStatusMenu->insert(actionEditVCard);
-	actionStatusMenu->plug(kopeteapp->systemTray()->contextMenu(), 1);
 
 }
 
@@ -1495,6 +1512,16 @@ void JabberProtocol::removeContact(const Jabber::RosterItem &item)
 	rosterTask->remove(item.jid());
 	rosterTask->go(true);
 
+}
+
+void JabberProtocol::slotGetServices()
+{
+
+	DlgJabberServices *dialog = new DlgJabberServices();
+
+	dialog->show();
+	dialog->raise();
+	
 }
 
 #include "jabberprotocol.moc"
