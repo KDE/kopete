@@ -1249,7 +1249,6 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 				{
 					kdDebug(14150) << k_funcinfo << "Adding Group " <<
 						ssi->gid << " (" <<  ssi->name << ")" << endl;
-					mAccount->addGroup( ssi->name );
 				}
 				break;
 			}

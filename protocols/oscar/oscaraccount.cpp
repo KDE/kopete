@@ -381,19 +381,44 @@ void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
 void OscarAccount::slotGotServerBuddyList()
 {
 	kdDebug( 14150 ) << k_funcinfo << "account='" << accountId() << "'" << endl;
+	
+	//We're adding groups from the SSI data. We don't need to add them to the
+	//SSI in slotKopeteGroupAdded
+	QObject::disconnect(KopeteContactList::contactList(), SIGNAL(groupAdded(KopeteGroup *)),
+		this, SLOT(slotGroupAdded(KopeteGroup *)));
 
-	//groups are added. Add the contacts
-	QPtrListIterator<SSI> it( engine()->ssiData() );
-	for ( ; it.current(); ++it )
+	QPtrListIterator<SSI> git( static_cast< (QPtrList<SSI>) >( engine()->ssiData() ) );
+	for ( ; git.current(); ++git )
 	{
-		if ( it.current()->type == 0 )
+		kdDebug(14150) << "Looking at " << git.count() << " items" << endl;
+		if ( git.current()->type == 1 )
 		{ //active contact on SSI
-			SSI* ssiGroup = engine()->ssiData().findGroup( it.current()->gid );
-			kdDebug(14150) << "Adding contact '" << it.current()->name << "' to contact list" << endl;
-			addContact( tocNormalize(it.current()->name), it.current()->name, 0L,
-				 DontChangeKABC, ssiGroup ? ssiGroup->name : i18n("Buddies") , false );
+			
+			kdDebug(14150) << "Adding group '" << git.current()->name << "' to contact list" << endl;
+			addGroup( git.current()->name );
 		}
 	}
+	
+	//groups are added. Add the contacts
+	QPtrListIterator<SSI> bit( engine()->ssiData() );
+	for ( ; bit.current(); ++bit )
+	{
+		kdDebug(14150) << "Looking at " << bit.count() << " items" << endl;
+		if ( bit.current()->type == 0 )
+		{ //active contact on SSI
+			SSI* ssiGroup = engine()->ssiData().findGroup( bit.current()->gid );
+			OscarContact* contact = static_cast<OscarContact*> (contacts()[bit.current()->name]);
+			if ( !contact )
+			{
+				kdDebug(14150) << "Adding contact '" << bit.current()->name << "' to contact list" << endl;
+				addContact( tocNormalize(bit.current()->name), bit.current()->name, 0L,
+					 DontChangeKABC, ssiGroup ? ssiGroup->name : i18n("Buddies") , false );
+			}
+		}
+	}
+	
+	QObject::connect(KopeteContactList::contactList(), SIGNAL(groupAdded(KopeteGroup *)),
+		this, SLOT(slotGroupAdded(KopeteGroup *)));
 	
 }
 
@@ -554,23 +579,6 @@ void OscarAccount::addGroup( const QString& groupName )
 	KopeteGroup* group = KopeteContactList::contactList()->getGroup( groupName );
 	if ( !group ) //group was not found and group creation failed
 		return;
-
-	QPtrListIterator<SSI> it( d->groupQueue );
-	int i = 0;
-	int gid = 0;
-	SSI* ssiGroup = engine()->ssiData().findGroup( groupName );
-
-	if ( ssiGroup )
-		gid = ssiGroup->gid;
-
-	for ( ; it.current(); ++it )
-	{
-		if ( it.current()->gid == gid )
-		{ //add the contact from the group queue to the contact list
-			d->groupQueue.remove( i );
-			addOldContact( it.current() );
-		}
-	}
 }
 
 void OscarAccount::addOldContact( SSI* ssiItem, KopeteMetaContact* meta )
