@@ -2825,6 +2825,9 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 
 	//Predict the new rate level
 	int newLevel = ((windowSize - 1) / windowSize) * ((currentLevel + 1) / windowSize);
+	if (newLevel <= 0)
+		newLevel = 250; //seems like a good default
+	
 	kdDebug(14150) << "New Level is: " << newLevel << endl;
 
 	if (currentLevel <= disconnectLevel)
@@ -2842,7 +2845,7 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 		{
 			slotToggleSend();
 			kdDebug(14150) << "Warning about the rate limit received. Waiting "
-							<< newLevel / 2 << "milliseconds" << endl;
+							<< newLevel / 2 << " milliseconds" << endl;
 			QTimer::singleShot( newLevel / 2, this, SLOT(slotToggleSend()));
 		}
 	}
