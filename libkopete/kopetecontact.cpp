@@ -195,10 +195,11 @@ KPopupMenu* Contact::popupMenu( ChatSession *manager )
 	d->actionBlock = account()->isBlocked( d->contactId ) ? KopeteStdAction::unblockContact( this, SLOT( slotUnblock() ), menu, "actionUnblockContact" ) : KopeteStdAction::blockContact( this, SLOT( slotBlock() ), menu, "actionBlockContact" );
 
 	// FIXME: After KDE 3.2 we should make isReachable do the isConnected call so it can be removed here - Martijn
-	bool reach = isReachable() && d->account->isConnected(); // save calling a method several times
-	d->actionChat->setEnabled( reach );
-	d->actionSendFile->setEnabled( reach && d->fileCapable );
-	d->actionSendMessage->setEnabled( reach );
+	bool reach = isReachable() && account()->isConnected(); // save calling a method several times
+	bool myself = (this == account()->myself());
+	d->actionChat->setEnabled( reach && !myself );
+	d->actionSendFile->setEnabled( reach && d->fileCapable && !myself );
+	d->actionSendMessage->setEnabled( reach && !myself );
 
 	QString titleText;
 
@@ -255,7 +256,6 @@ KPopupMenu* Contact::popupMenu( ChatSession *manager )
 
 void Contact::slotChangeMetaContact()
 {
-
 	KDialogBase *moveDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "moveDialog", true, i18n( "Move Contact" ),
 		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
 
