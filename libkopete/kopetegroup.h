@@ -22,16 +22,16 @@
 #include <qstringlist.h>
 #include <qvaluelist.h>
 
-/**
-  *@author Olivier Goffart
-  */
-
-class QDomNode;
+class QDomElement;
 class KopetePlugin;
 
-class KopeteGroup : public QObject 
+/**
+ * @author Olivier Goffart
+ */
+class KopeteGroup : public QObject
 {
 	Q_OBJECT
+
 public:
 	enum GroupType { Classic, Temporary, TopLevel};
 
@@ -54,8 +54,8 @@ public:
 	void setType(GroupType);
 
 	QString toXML();
-	bool fromXML( const QDomNode &data );
-	
+	bool fromXML( const QDomElement &data );
+
 	void setExpanded(bool in_expanded) { m_expanded = in_expanded; }
 	bool expanded() { return m_expanded; }
 

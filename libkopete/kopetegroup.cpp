@@ -18,10 +18,12 @@
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
 #include "kopeteplugin.h"
-#include <klocale.h>
+
 #include <qdom.h>
-#include <qstylesheet.h>
 #include <qregexp.h>
+#include <qstylesheet.h>
+
+#include <klocale.h>
 
 KopeteGroup* KopeteGroup::toplevel = new KopeteGroup(QString::null , KopeteGroup::TopLevel);
 KopeteGroup* KopeteGroup::temporary = new KopeteGroup(i18n("Not in your contact list"),KopeteGroup::Temporary);
@@ -87,24 +89,23 @@ QString KopeteGroup::toXML()
 	return xml;
 }
 
-bool KopeteGroup::fromXML(const QDomNode& data)
+bool KopeteGroup::fromXML( const QDomElement& data )
 {
-	QDomNode groupData = data;
-	
+	QString type = data.attribute( "type", "standard" );
+	if( type == "temporary" )
+		m_type = Temporary;
+	else if( type == "top-level" )
+		m_type = TopLevel;
+	else
+		m_type = Classic;
+
+	QString view = data.attribute( "view", "expanded" );
+	m_expanded = ( view != "collapsed" );
+
+	QDomNode groupData = data.firstChild();
 	while( !groupData.isNull() )
 	{
 		QDomElement groupElement = groupData.toElement();
-		QString type = groupElement.attribute( "type", "standard" );
-		if( type == "temporary" )
-			m_type = Temporary;
-		else if( type == "top-level" )
-			m_type = TopLevel;
-		else
-			m_type = Classic;
-
-		QString view = groupElement.attribute( "view", "expanded" );
-		m_expanded = ( type != "collapsed" );
-
 		if( groupElement.tagName() == "display-name" )
 		{
 //			if( groupElement.text().isEmpty() )

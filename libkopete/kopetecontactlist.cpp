@@ -161,7 +161,7 @@ void KopeteContactList::loadXML()
 			else if( element.tagName() == "kopete-group" )
 			{
 				KopeteGroup *group = new KopeteGroup();
-				if( !group->fromXML( node.firstChild() ) )
+				if( !group->fromXML( element ) )
 				{
 					delete group;
 					group = 0;
