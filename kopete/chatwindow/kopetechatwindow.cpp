@@ -175,7 +175,7 @@ KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KParts::
 	initActions();
 	m_tabBar = 0L;
 
-	vBox = new QVBox( this );
+	QVBox *vBox = new QVBox( this );
 	vBox->setLineWidth( 0 );
 	vBox->setSpacing( 0 );
 	vBox->setFrameStyle( QFrame::NoFrame );
@@ -213,6 +213,8 @@ KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KParts::
 	windows.append( this );
 	windowListChanged();
 
+	KGlobal::config()->setGroup( QString::fromLatin1("ChatWindowSettings") );
+	m_alwaysShowTabs = KGlobal::config()->readBoolEntry( QString::fromLatin1("AlwaysShowTabs"), false );
 //	kdDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
 }
 
@@ -666,6 +668,8 @@ void KopeteChatWindow::createTabBar()
 
 		if( m_activeView )
 			m_tabBar->showPage( m_activeView );
+		else
+			setActiveView( chatViewList.first() );
 
 		int tabPosition = KGlobal::config()->readNumEntry( QString::fromLatin1("Tab Placement") , 0 );
 		slotPlaceTabs( tabPosition );
@@ -726,9 +730,7 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 {
 	chatViewList.append( newView );
 
-	KGlobal::config()->setGroup( QString::fromLatin1("ChatWindowSettings") );
-	bool alwaysShowTabs = KGlobal::config()->readBoolEntry( QString::fromLatin1("AlwaysShowTabs"), false );
-	if ( !alwaysShowTabs && chatViewList.count() == 1 )
+	if ( !m_alwaysShowTabs && chatViewList.count() == 1 )
 		setPrimaryChatView( newView );
 	else if ( !m_tabBar )
 		createTabBar();
@@ -752,7 +754,7 @@ void KopeteChatWindow::checkDetachEnable()
 	tabDetach->setEnabled( haveTabs );
 	tabLeft->setEnabled( haveTabs );
 	tabRight->setEnabled( haveTabs );
-	actionTabPlacementMenu->setEnabled( haveTabs );
+	actionTabPlacementMenu->setEnabled( m_tabBar != 0 );
 
 	bool otherWindows = (windows.count() > 1);
 	actionDetachMenu->setEnabled( otherWindows );
@@ -788,11 +790,9 @@ void KopeteChatWindow::detachChatView( ChatView *view )
 			setActiveView( static_cast<ChatView*>(m_tabBar->currentPage()) );
 	}
 
-	KGlobal::config()->setGroup( QString::fromLatin1("ChatWindowSettings") );
-	bool alwaysShowTabs = KGlobal::config()->readBoolEntry( QString::fromLatin1("AlwaysShowTabs"), false );
 	if( chatViewList.isEmpty() )
 		close();
-	else if( !alwaysShowTabs && chatViewList.count() == 1)
+	else if( !m_alwaysShowTabs && chatViewList.count() == 1)
 		deleteTabBar();
 
 	checkDetachEnable();
@@ -918,7 +918,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 		animIcon.pause();
 	}
 
-	if ( chatViewList.count() > 1 )
+	if ( m_alwaysShowTabs || chatViewList.count() > 1 )
 	{
 		if( !m_tabBar )
 			createTabBar();

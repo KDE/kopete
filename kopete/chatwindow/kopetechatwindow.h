@@ -118,14 +118,11 @@ private:
 
 	ChatView *m_activeView;
 	ChatView *m_popupView;
-	bool widgetSet;
-	bool tabsEnabled;
-	const KopeteContact *m_us;
+	bool m_alwaysShowTabs;
 	bool updateBg;
 	KTabWidget *m_tabBar;
 	KPushButton *m_button_send;
 	KSqueezedTextLabel *m_status_text;
-	QVBox *vBox;
 	QVBoxLayout *mainLayout;
 	QFrame *mainArea;
 	QLabel *anim;
@@ -138,7 +135,7 @@ private:
 	KAction *nickComplete;
 
 #if !KDE_IS_VERSION( 3, 1, 90 )
-  KToggleAction *mStatusbarAction;
+	KToggleAction *mStatusbarAction;
 #endif
 
 	KAction *tabLeft;
