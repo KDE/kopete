@@ -7,9 +7,10 @@
 #ifndef __ksparser_h__
 #define __ksparser_h__
 
-#include <qstring.h>
-#include <qmap.h>
 #include <qcolor.h>
+#include <qmap.h>
+#include <qregexp.h>
+#include <qstring.h>
 #include <qvaluestack.h>
 
 /*
@@ -27,25 +28,24 @@ public:
 	static QCString parse(const QCString &);
 	static int colorForHTML( const QString &html );
 
+	static QColor ircColor(const QString &color);
+	static QColor ircColor(unsigned int color);
+
 	~KSParser();
 private:
 	KSParser();
 
 	QString _parse(const QString &);
 	QString pushTag(const QString &, const QString & = QString::null);
+	QString pushColorTag(const QColor &fgColor, const QColor &bgColor);
 	QString popTag(const QString &);
 	QString toggleTag(const QString &);
 	QString popAll();
 
-	static inline QColor ircColor(unsigned int color)
-	{
-		unsigned int maxcolor = sizeof(IRC_Colors)/sizeof(QColor);
-		return color<=maxcolor?IRC_Colors[color]:IRC_Colors[maxcolor];
-	}
-
 private:
 	static KSParser m_parser;
 	static const QColor IRC_Colors[17];
+	static const QRegExp sm_colorsModeRegexp;
 
 	QValueStack<QString> m_tags;
 	QMap<QString, QString> m_attributes;
