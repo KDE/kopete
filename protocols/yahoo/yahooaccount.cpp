@@ -122,7 +122,7 @@ void YahooAccount::connect()
 				/* We have a session, time to connect its signals to our plugin slots */
 				QObject::connect( session_ , SIGNAL(loginResponse( int,  const QString &)), this , SLOT(slotLoginResponse( int, const QString &)) );
 				QObject::connect( session_ , SIGNAL(gotBuddy(const QString &, const QString &, const QString &)), this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
-				QObject::connect( session_ , SIGNAL(gotIgnore( const QStringList & )), this , SLOT(void slotGotIgnore( const QStringList & )) );
+				//QObject::connect( session_ , SIGNAL(gotIgnore( const QStringList & )), this , SLOT(void slotGotIgnore( const QStringList & )) );
 				QObject::connect( session_ , SIGNAL(statusChanged( const QString &, int, const QString &, int)), this , SLOT(slotStatusChanged( const QString &, int , const QString &, int )) );
 				QObject::connect( session_ , SIGNAL(gotIm( const QString &, const QString &, long, int )), this , SLOT(slotGotIm( const QString &, const QString &, long, int)) );
 				QObject::connect( session_ , SIGNAL(gotConfInvite( const QString &, const QString &, const QString &, const QStringList &)), this , SLOT(slotGotConfInvite( const QString &, const QString &, const QString &, const QStringList &)) );
