@@ -757,7 +757,6 @@ void ChatView::slotContactNameChanged( const QString &oldName, const QString &ne
 
 void ChatView::slotContactAdded(const KopeteContact *c, bool surpress)
 {
-	kdDebug(14000) << k_funcinfo << endl;
 	if( !memberContactMap.contains(c) )
 	{
 		QString contactName;
