@@ -40,7 +40,6 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 {
 
 	m_protocol = proto;
-	m_account = ident;
 
 	connect (mID, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 	connect (mPass, SIGNAL (changed ()), this, SLOT (configChanged ()));
@@ -81,7 +80,7 @@ JabberEditAccountWidget::~JabberEditAccountWidget ()
 JabberAccount *JabberEditAccountWidget::account ()
 {
 
-	return m_account;
+	return dynamic_cast<JabberAccount *>(KopeteEditAccountWidget::account () );
 
 }
 

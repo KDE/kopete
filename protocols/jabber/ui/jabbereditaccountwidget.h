@@ -55,7 +55,6 @@ private slots:
 
 private:
 	JabberProtocol *m_protocol;
-	JabberAccount *m_account;
 
 	void reopen ();
 	void writeConfig ();
