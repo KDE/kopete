@@ -46,8 +46,6 @@ KopeteSystemTray* KopeteSystemTray::systemTray( QWidget *parent, const char* nam
 KopeteSystemTray::KopeteSystemTray(QWidget* parent, const char* name)
 	: KSystemTray(parent,name)
 {
-	kapp->setMainWidget(this);
-
 //	kdDebug(14010) << "Creating KopeteSystemTray" << endl;
 	QToolTip::add( this, kapp->aboutData()->shortDescription() );
 
