@@ -68,7 +68,7 @@ class ICQAccount : public OscarAccount
 
 	protected:
 		virtual OscarContact *createNewContact(const QString &contactId,
-			const QString &displayName, KopeteMetaContact *parentContact);
+			const QString &displayName, KopeteMetaContact *parentContact, bool isOnSSI = false);
 
 	private:
 		const unsigned long fullStatus(const unsigned long plainStatus);

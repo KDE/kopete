@@ -207,7 +207,7 @@ protected:
 	 * @return whether the creation succeeded or not
 	 */
 	 virtual OscarContact *createNewContact( const QString &contactId, const QString &displayName,
-		KopeteMetaContact *parentContact ) =0;
+		KopeteMetaContact *parentContact, bool isOnSSI = false ) =0;
 
 	/*
 	 * Initializes the engine

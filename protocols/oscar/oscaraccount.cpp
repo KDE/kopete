@@ -703,7 +703,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 	if ( ssiItem )
 	{
 		kdDebug(14150) << k_funcinfo << "Found contact on internal list. Making new OscarContact" << endl;
-		OscarContact* newContact = createNewContact(contactId, displayName, parentContact);
+		OscarContact* newContact = createNewContact(contactId, displayName, parentContact, true);
 		if ( newContact )
 		{
 			newContact->setStatus( OSCAR_OFFLINE );
@@ -769,7 +769,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			d->randomNewBuddyNum++;
 
 			// Create the actual contact, which adds it to the metacontact
-			return(createNewContact(contactId, displayName, parentContact));
+			return(createNewContact(contactId, displayName, parentContact, true));
 		}
 		else
 		{

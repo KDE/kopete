@@ -59,9 +59,10 @@ void AIMAccount::loaded()
 }
 
 OscarContact *AIMAccount::createNewContact( const QString &contactId,
-		const QString &displayName, KopeteMetaContact *parentContact )
+		const QString &displayName, KopeteMetaContact *parentContact, bool isOnSSI )
 {
-	return new AIMContact(contactId, displayName, this, parentContact);
+	AIMContact* contact = new AIMContact(contactId, displayName, this, parentContact);
+	contact->setServerSide( isOnSSI );
 }
 
 KActionMenu* AIMAccount::actionMenu()

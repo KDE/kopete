@@ -314,15 +314,16 @@ void ICQAccount::reloadPluginData()
 	}
 }
 
-OscarContact *ICQAccount::createNewContact(
-	const QString &contactId,
-	const QString &displayName,
-	KopeteMetaContact *parentContact)
+OscarContact *ICQAccount::createNewContact(const QString &contactId,
+	const QString &displayName, KopeteMetaContact *parentContact,
+	bool isOnSSI)
 {
 	/*kdDebug(14200) << k_funcinfo <<
 		"contactId='" << contactId <<
 		"', displayName='" << displayName << endl;*/
-	return new ICQContact(contactId, displayName, this, parentContact);
+	
+	ICQContact* contact = new ICQContact(contactId, displayName, this, parentContact);
+	contact->setServerSide( isOnSSI );
 }
 
 #include "icqaccount.moc"

@@ -106,6 +106,10 @@ class OscarContact : public KopeteContact
 
 		virtual const QString awayMessage() = 0;
 		virtual void setAwayMessage(const QString &message) = 0;
+		
+		//Server side accessors
+		bool serverSide() { return mIsServerSide; }
+		void setServerSide( bool isServerSide ) { mIsServerSide = isServerSide; }
 
 	signals:
 		void awayMessageChanged();
@@ -140,6 +144,7 @@ class OscarContact : public KopeteContact
 		 * The internal representation of our contact
 		 */
 		//TODO: Use SSI
+		
 		
 
 	protected slots:
@@ -220,6 +225,8 @@ class OscarContact : public KopeteContact
 
 		int mEncoding;
 		int mGroupId;
+		
+		bool mIsServerSide;
 };
 
 #endif
