@@ -616,11 +616,17 @@ void OscarAccount::slotGotSSIAck(WORD result)
 			break;
 		case SSIACK_NEEDAUTH:
 			kdDebug(14150) << k_funcinfo << "Adding: " << buddyWaitingSSIAck.contact() << " group: " << buddyWaitingSSIAck.group() << endl;
-
-			engine()->sendAuthRequest(tocNormalize(buddyWaitingSSIAck.contact()), reason);
-			engine()->setAddingAuthBuddy(true);
-			engine()->sendAddBuddy(tocNormalize(buddyWaitingSSIAck.contact()), buddyWaitingSSIAck.group());
-			engine()->setAddingAuthBuddy(false);
+			AIMBuddy* bud = findBuddy( buddyWaitingSSIAck.contact() );
+			
+			if (bud)
+				bud->setWaitAuth(true);
+			
+			OscarContact *contact = static_cast<OscarContact*>(contacts()[tocNormalize(bud->screenname())]);
+			contact->setWaitAuth( true );
+			engine()->sendAuthRequest( tocNormalize( buddyWaitingSSIAck.contact() ), reason );
+			engine()->setAddingAuthBuddy( true );
+			engine()->sendAddBuddy( tocNormalize( buddyWaitingSSIAck.contact() ), buddyWaitingSSIAck.group() );
+			engine()->setAddingAuthBuddy( false );
 			break;
 	}
 }
