@@ -73,8 +73,9 @@
 
 JabberAccount::JabberAccount(KopeteProtocol *parent, const QString& accountID,
 		             const char *name) : KopeteAccount(parent, accountID, name) {
-/* create a new contact for myself(), using accountID for the actual user ID,
- * the display name and the identity ID, metacontact is left empty. */
+	
+	/* Create a new JabberContact for this account, to be returned from
+	 * myself(). */
 	myContact = new JabberContact(accountID, accountID, QStringList(),
 			static_cast<JabberAccount*>(parent), 0L, accountID);
 
@@ -1061,8 +1062,7 @@ void JabberAccount::slotReceivedMessage(const Jabber::Message &message) {
 
 }
 
-void JabberAccount::slotEmptyMail() {
-
+void JabberAccount::slotGetOneShotRecipient() {
 	if(!isConnected()) {
 		errorConnectFirst();
 		return;
@@ -1070,13 +1070,17 @@ void JabberAccount::slotEmptyMail() {
 
 	KLineEditDlg *dlg = new KLineEditDlg(i18n("Please enter a recipient:"), QString::null, qApp->mainWidget());
 
-	QObject::connect(dlg, SIGNAL(okClicked()), this, SLOT(slotOpenEmptyMail()));
+	QObject::connect(dlg, SIGNAL(okClicked()), this, SLOT(slotNewOneShot()));
 
 	dlg->show();
 	dlg->raise();
 }
 
-void JabberAccount::slotOpenEmptyMail() {
+void JabberAccount::slotNewOneShot() {
+	if (!sender()) {
+		slotGetOneShotRecipient();
+	}
+
 	QString userHost = ((KLineEditDlg *)sender())->text();
 
 	if (!userHost.isEmpty() && !userHost.isNull()) {

@@ -66,8 +66,8 @@ K_EXPORT_COMPONENT_FACTORY(kopete_jabber, KGenericFactory<JabberProtocol>);
 
 JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList)
 	: KopeteProtocol(parent, name),
-	JabberOnline(KopeteOnlineStatus::Online, 25, this, 0, "jabber_online", i18n("Go O&nline" ), i18n("Online")),
-	JabberChatty(KopeteOnlineStatus::Online, 20, this, 1, "jabber_chatty", i18n("Set F&ree to Chat" ), i18n("Free to Chat")),
+	JabberOnline(KopeteOnlineStatus::Online, 25, this, 0, "jabber_online", i18n("Go O&nline"), i18n("Online")),
+	JabberChatty(KopeteOnlineStatus::Online, 20, this, 1, "jabber_chatty", i18n("Set F&ree to Chat"), i18n("Free to Chat")),
 	JabberAway(KopeteOnlineStatus::Away, 25, this, 2, "jabber_away", i18n("Set A&way"), i18n("Away")),
 	JabberXA(KopeteOnlineStatus::Away, 20, this, 3, "jabber_away", i18n("Set E&xtended Away"), i18n("Extended Away")),
 	JabberDND(KopeteOnlineStatus::Away, 15, this, 4, "jabber_na", i18n("Set &Do not Disturb"), i18n("Do not Disturb")),
@@ -1405,9 +1405,7 @@ void JabberProtocol::updateContact(const Jabber::RosterItem &item)
 
 }
 
-void JabberProtocol::removeContact(const Jabber::RosterItem &item)
-{
-
+void JabberProtocol::removeContact(const Jabber::RosterItem &item) {
 	if(!isConnected())
 	{
 		errorConnectFirst();
@@ -1422,9 +1420,7 @@ void JabberProtocol::removeContact(const Jabber::RosterItem &item)
 
 }
 
-void JabberProtocol::slotGetServices()
-{
-
+void JabberProtocol::slotGetServices() {
 	dlgJabberServices *dialog = new dlgJabberServices();
 
 	dialog->show();
@@ -1433,14 +1429,3 @@ void JabberProtocol::slotGetServices()
 }
 
 #include "jabberprotocol.moc"
-/*
- * Local variables:
- * mode: c++
- * c-indentation-style: k&r
- * c-basic-offset: 4
- * indent-tabs-mode: t
- * End:
- */
-
-// vim: set noet ts=4 sts=4 sw=4:
-
