@@ -58,7 +58,7 @@ public:
 	 * Sets the nickname of this contact. The nickname is distinct from the displayName
 	 * in case trackNameChanges is disabled.
 	 */
-	void setNickName(const QString &nickname) { m_nickName = nickname; }
+	void setNickName(const QString &nickname) { m_nickName = nickname; setDisplayName(nickname); }
 
 	/**
 	 * Returns the nickname / channel name
