@@ -28,7 +28,7 @@
 static const char *description =
 	I18N_NOOP("Kopete, the KDE Instant Messenger");
 
-#define KOPETE_VERSION "0.6.0cvs >= 20030216"
+#define KOPETE_VERSION "0.6.90cvs >= 20030218"
 
 static KCmdLineOptions options[] =
 {
