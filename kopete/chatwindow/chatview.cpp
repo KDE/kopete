@@ -74,7 +74,7 @@
 namespace Kopete {
 
 ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
-	 : KDockMainWindow( 0L, name, 0L ), KopeteView( mgr ), m_haveRichText( false )
+	 : KDockMainWindow( 0L, name, 0L ), KopeteView( mgr )
 {
 	hide();
 
@@ -107,7 +107,6 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 
 	if ( editpart )
 	{
-		m_haveRichText = true;
 		QDomDocument doc = editpart->domDocument();
 		QDomNode menu = doc.documentElement().firstChild();
 		menu.removeChild( menu.firstChild() ); // Remove File
@@ -827,9 +826,6 @@ void ChatView::saveOptions()
 	config->writeEntry( QString::fromLatin1("membersDockPosition"), membersDockPosition );
 
 	config->setGroup( QString::fromLatin1("ChatViewSettings") );
-
-	config->writeEntry ( QString::fromLatin1("Font"), mFont );
-	config->writeEntry ( QString::fromLatin1("TextColor"), mFgColor );
 	config->writeEntry ( QString::fromLatin1("BackgroundColor"), mBgColor );
 
 	//config->writeEntry ( "SplitterWidth", editDock->parent()->seperatorPos() );
@@ -857,13 +853,7 @@ void ChatView::readOptions()
 
 	config->setGroup( QString::fromLatin1("ChatViewSettings") );
 
-	QFont tmpFont = KGlobalSettings::generalFont();
-	setFont( config->readFontEntry( QString::fromLatin1("Font"), &tmpFont) );
-
-	QColor tmpColor = KGlobalSettings::textColor();
-	setFgColor( config->readColorEntry ( QString::fromLatin1("TextColor"), &tmpColor ) );
-
-	tmpColor = KGlobalSettings::baseColor();
+	QColor tmpColor = KGlobalSettings::baseColor();
 	setBgColor( config->readColorEntry ( QString::fromLatin1("BackgroundColor"), &tmpColor) );
 	//editDock->parent()->setSeperatorPos( config->readNumEntry ( "SplitterWidth", 70 ) );
 }
@@ -1099,18 +1089,15 @@ void ChatView::slotScrollView()
 void ChatView::setCurrentMessage( const KopeteMessage &message )
 {
 	m_edit->setText( message.plainBody() );
-	setFont( message.font() );
+	m_edit->setFont( message.font() );
+	m_edit->setColor( message.fg() );
 	setBgColor( message.bg() );
-	setFgColor( message.fg() );
 }
 
 KopeteMessage ChatView::currentMessage()
 {
-	KopeteMessage currentMsg = KopeteMessage( m_manager->user(), m_manager->members(), m_edit->text(), KopeteMessage::Outbound, m_haveRichText ? KopeteMessage::RichText : KopeteMessage::PlainText );
-
-	currentMsg.setFont( mFont );
+	KopeteMessage currentMsg = KopeteMessage( m_manager->user(), m_manager->members(), m_edit->text(), KopeteMessage::Outbound, editpart ? KopeteMessage::RichText : KopeteMessage::PlainText );
 	currentMsg.setBg( mBgColor );
-	currentMsg.setFg( mFgColor );
 
 	return currentMsg;
 }
@@ -1146,38 +1133,6 @@ void ChatView::print()
 void ChatView::selectAll()
 {
 	chatView->selectAll();
-}
-
-void ChatView::setFont()
-{
-	KFontDialog::getFont(mFont, false, this);
-	m_edit->setFont(mFont);
-}
-
-void ChatView::setFont( const QFont &newFont )
-{
-	mFont = newFont;
-	m_edit->setFont(mFont);
-}
-
-void ChatView::setFgColor( const QColor &newColor )
-{
-	if( newColor == QColor() )
-		KColorDialog::getColor( mFgColor, this );
-	else
-		mFgColor = newColor;
-
-	QPalette pal = m_edit->palette();
-	pal.setColor(QPalette::Active, QColorGroup::Text, mFgColor );
-	pal.setColor(QPalette::Inactive, QColorGroup::Text, mFgColor );
-
-	// unsetPalette() so that color changes in kcontrol are honoured
-	// if we ever have a subclass of KTextEdit, reimplement setPalette()
-	// and check it there.
-	if ( pal == QApplication::palette( m_edit ) )
-		m_edit->unsetPalette();
-	else
-		m_edit->setPalette(pal);
 }
 
 void ChatView::setBgColor( const QColor &newColor )

@@ -363,10 +363,6 @@ void KopeteChatWindow::initActions(void)
 	editCopy = KStdAction::copy( this, SLOT(slotCopy()), coll);
 	editPaste = KStdAction::paste( this, SLOT(slotPaste()), coll);
 
-	editFont = new KAction( i18n( "&Set Font..." ), QString::fromLatin1( "charset" ), 0,
-		this, SLOT( slotSetFont() ), coll, "format_font" );
-	editColor = new KAction( i18n( "Set Text &Color..." ), QString::fromLatin1( "pencil" ), 0,
-		this, SLOT( slotSetFgColor() ), coll, "format_color" );
 	editBgColor = new KAction( i18n( "Set &Background Color..." ), QString::fromLatin1( "fill" ), 0,
 		this, SLOT( slotSetBgColor() ), coll, "format_bgcolor" );
 
@@ -495,16 +491,6 @@ void KopeteChatWindow::slotPaste()
 void KopeteChatWindow::slotSetBgColor()
 {
 	m_activeView->setBgColor();
-}
-
-void KopeteChatWindow::slotSetFgColor()
-{
-	m_activeView->setFgColor();
-}
-
-void KopeteChatWindow::slotSetFont()
-{
-	m_activeView->setFont();
 }
 
 /*

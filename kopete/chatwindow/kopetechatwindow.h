@@ -135,8 +135,6 @@ private:
 	KAction* editCut;
 	KAction* editCopy;
 	KAction* editPaste;
-	KAction* editFont;
-	KAction* editColor;
 	KAction* editBgColor;
 
 	KAction* chatSave;
@@ -183,8 +181,6 @@ private slots:
 	void slotPaste();
 
 	void slotSetBgColor();
-	void slotSetFgColor();
-	void slotSetFont();
 
 	void slotHistoryUp();
 	void slotHistoryDown();

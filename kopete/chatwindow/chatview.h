@@ -222,24 +222,6 @@ public slots:
 	void setBgColor( const QColor &newColor = QColor() );
 
 	/**
-	 * Sets the foreground color of the entry area, and outgoing messages
-	 * @param newColor The new foreground color. If this is QColor(), then
-	 * a color chooser dialog is opened
-	 */
-	void setFgColor( const QColor &newColor = QColor() );
-
-	/**
-	 * Sets the font of the edit area and outgoign messages. Opens a font chooser dialog.
-	 */
-	void setFont();
-
-	/**
-	 * Sets the font of the edit area and outgoing messages to the specified value.
-	 * @param newFont The new font to use.
-	 */
-	void setFont( const QFont &newFont );
-
-	/**
 	 * Sends the text currently entered into the edit area
 	 */
 	virtual void sendMessage();
@@ -374,8 +356,6 @@ private:
 	QMap<const KopeteContact *, bool> typingMap;
 	QMap<const KopeteContact *, KopeteContactLVI *> memberContactMap;
 	KTextEdit* m_edit;
-	QFont mFont;
-	QColor mFgColor;
 	QColor mBgColor;
 	KListView *membersList;
 	bool transparencyEnabled;
@@ -441,7 +421,6 @@ private:
 	const QString styleHTML() const;
 
 	QMap<unsigned long,KopeteMessage> messageMap;
-	bool m_haveRichText;
 };
 
 } // namespace Kopete
