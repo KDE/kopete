@@ -3,7 +3,8 @@ SUBDIRS = library protocols
 
 lib_LTLIBRARIES = libkopetemain.la
 libkopetemain_la_SOURCES = main.cpp
-libkopetemain_la_LDFLAGS = -lX11 lpng -lz -lm -ljpeg -lqt -lXext -lkdecore -lkdeui lkfile -lXpm $(top_srcdir)/kopete/library/libkopete.la $(top_srcdir)/kopete/protocols/icq/libicqprotocol.la $(top_srcdir)/kopete/protocols/msn/libmsnprotocol.la
+libkopetemain_la_LDFLAGS = -lX11 lpng -lz -lm -ljpeg -lqt -lXext -lkdecore -lkdeui lkfile -lXpm 
+libkopetemain_la_LIBADD = $(top_srcdir)/kopete/library/libkopete.la $(top_srcdir)/kopete/protocols/icq/libicqprotocol.la $(top_srcdir)/kopete/protocols/msn/libmsnprotocol.la
 
 bin_PROGRAMS = kopete
 kopete_SOURCES = dummy.cpp

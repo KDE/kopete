@@ -28,12 +28,13 @@
 #include <qpushbutton.h>
 #include <qlabel.h>
 #include <kpopupmenu.h>
+#include <kaction.h>
 
 
-#include "contactlist.h"
 #include "pluginmanager.h"
 #include "ui/preferencesdialog.h"
 #include "ui/aboutplugins.h"
+#include "ui/kopetewindow.h"
 
 /** Kopete is the base class of the project */
 class Kopete : public KUniqueApplication
@@ -44,7 +45,7 @@ class Kopete : public KUniqueApplication
     ~Kopete();
 	
 	PreferencesDialog *preferencesBox() const { return mPref; }
-  KPopupMenu *popupMenu() const { return popupmenu; };
+  KopeteWindow *popupMenu() const { /*return mainwidget->popupmenu;*/ };
 	PluginManager *Plugins() const { return plugins; }
 	
 	/** No descriptions */
@@ -52,34 +53,21 @@ class Kopete : public KUniqueApplication
   /** No descriptions */
   void readOptions();
 
+
 	PluginManager *plugins;
 	PreferencesDialog *mPref;
+	
 	private:
-	QWidget *mainwidget;
-	
-	ContactList *contactlist;
-	QPushButton *mainbutton;
-	
-	QPushButton *addbutton;
-	QPushButton *awaybutton;
-	QPushButton *globalbutton;
-	QPushButton *otherbutton;
-	
-	KPopupMenu *popupmenu;
-	QLabel *statuslabel;
+	KopeteWindow *mainwindow;
 	
 	
 public slots:
-  /** No descriptions */
   void slotPreferences();
-  /** No descriptions */
   void slotExit();
-  /** No descriptions */
-  void slotPrefDialogClosed();
-  /** No descriptions */
   void slotConnectAll();
-  /** No descriptions */
   void slotAboutPlugins();
+  void slotAddContact();
+	void slotSetAway();
 };
 
 #define kopeteapp (static_cast<Kopete*>(kapp))

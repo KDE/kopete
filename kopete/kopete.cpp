@@ -19,67 +19,24 @@
 #include <qlayout.h>
 #include <kconfig.h>
 #include "ui/preferencesdialog.h"
+#include "ui/kopetewindow.h"
 
 Kopete::Kopete(): KUniqueApplication(true, true, true)
 {
-	mainwidget = new QWidget(0);
-	mainwidget->resize(200,400);
-	setMainWidget(mainwidget);
-	mPref=new PreferencesDialog(0);
+	
+	mainwindow = new KopeteWindow;
+	
+	setMainWidget(mainwindow);
+	mPref=new PreferencesDialog;
   mPref->hide();
-	plugins = new PluginManager();
-	QBoxLayout *layout = new QBoxLayout(mainwidget,QBoxLayout::TopToBottom);
-  QBoxLayout *layout2 = new QBoxLayout(mainwidget,QBoxLayout::LeftToRight);
-  QBoxLayout *layout3 = new QBoxLayout(mainwidget,QBoxLayout::LeftToRight);
-
-	contactlist = new ContactList(mainwidget);
-	mainbutton = new QPushButton(mainwidget);
+	plugins = new PluginManager;
 	
-	addbutton = new QPushButton(mainwidget);
-	globalbutton = new QPushButton(mainwidget);
-	awaybutton = new QPushButton(mainwidget);
-	otherbutton = new QPushButton(mainwidget);
-
-	statuslabel = new QLabel(mainwidget);
-  popupmenu = new KPopupMenu(mainwidget);
-
-	mainbutton->setText("Kopete");
-
-	addbutton->setText("+");
-	globalbutton->setText("O");
-	awaybutton->setText("N/A");
-	otherbutton->setText("-");
-
-	statuslabel->setText("offline");
-	
-	layout->addLayout(layout3);
-	layout3->insertWidget(-1,addbutton);
-	layout3->insertWidget(-1,globalbutton);
-	layout3->insertWidget(-1,awaybutton);
-	layout3->insertWidget(-1,otherbutton);
-	
-	layout->insertWidget(-1,contactlist);
-	layout->addLayout(layout2);
-	layout2->insertWidget(-1,mainbutton);
-	layout2->insertWidget(-1,statuslabel);
-	
-	popupmenu->insertTitle("Kopete");
-	popupmenu->insertItem("&Connect", this, SLOT(slotConnectAll()),0);
-	popupmenu->insertSeparator();
-	popupmenu->insertItem("&Preferences", this, SLOT(slotPreferences()),0);
-	popupmenu->insertItem("About Plugins", this, SLOT(slotAboutPlugins()),0);
-	popupmenu->insertSeparator();
-	popupmenu->insertItem("&Exit", this, SLOT(slotExit()),0);
-	
-	mainbutton->setPopup(popupmenu);
-	mainwidget->show();
 	
 }
 
 Kopete::~Kopete()
 {
 }
-
 void Kopete::slotPreferences()
 {
   mPref->show();
@@ -90,10 +47,7 @@ void Kopete::slotExit()
 {
 	quit();
 }
-/** No descriptions */
-void Kopete::slotPrefDialogClosed()
-{
-}
+
 
 /** No descriptions */
 void Kopete::readOptions()
@@ -165,7 +119,16 @@ void Kopete::slotConnectAll()
 void Kopete::slotAboutPlugins()
 {
 	AboutPlugins *aboutPl;
-	aboutPl = new AboutPlugins(mainwidget);
+	aboutPl = new AboutPlugins(mainwindow);
 	aboutPl->show();
 	
+}
+/** No descriptions */
+void Kopete::slotAddContact()
+{
+}
+
+/** No descriptions */
+void Kopete::slotSetAway()
+{
 }
