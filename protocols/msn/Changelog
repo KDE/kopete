@@ -37,6 +37,8 @@ CHANGES IN THE MSN PLUGIN SINCE KOPETE 0.4
 - Made the connect code asynchronous, so connecting doesn't hang kopete
   while processing
 
+- Fixed minor memory leak in the connect code
+
 CHANGES IN THE MSN PLUGIN SINCE KOPETE 0.3
 
 Many things changed since 0.3. I won't mention them all, because so much of
