@@ -132,7 +132,10 @@ void IRCUserContact::userOnline()
 void IRCUserContact::slotUserInfo()
 {
 	if( isChatting() )
+	{
+		m_protocol->setCommandInProgress(true);
 		m_engine->whoisUser( m_nickName );
+	}
 }
 
 const QString IRCUserContact::caption() const
