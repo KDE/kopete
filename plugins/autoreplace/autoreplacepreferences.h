@@ -18,9 +18,10 @@
 #ifndef AutoReplacePREFERENCES_H
 #define AutoReplacePREFERENCES_H
 
-#include "configmodule.h"
+#include <kcmodule.h>
 
 class AutoReplacePrefsUI;
+class AutoReplaceConfig;
 
 	// TODO
 	// add button enabled only when k and v are present 
@@ -28,39 +29,31 @@ class AutoReplacePrefsUI;
 	// signal/slot when map changes (needed?)
 	// capital letter not just at the beginning but always after ". ", "! "...
 
-class AutoReplacePreferences : public ConfigModule  {
-   Q_OBJECT
-public:
+class AutoReplacePreferences : public KCModule
+{
+	Q_OBJECT
 
-	AutoReplacePreferences( const QString & pixmap, QObject * parent = 0 );
+public:
+	AutoReplacePreferences( QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList() );
 	~AutoReplacePreferences();
 
 	virtual void save();
-	virtual void reopen();
-
-	typedef QMap<QString, QString> WordsToReplace;
-	
-	WordsToReplace getMap() const { return map; };	// O(1) implicity shared
-	bool getAutoreplaceIncoming() const { return autoreplaceIncoming; };
-	bool getAutoreplaceOutgoing() const { return autoreplaceOutgoing; };
-	bool getAddDot() const { return addDot; };
-	bool getUpper() const { return upper; };
-
-private:
-	AutoReplacePrefsUI * preferencesDialog;
-	WordsToReplace map;
-	QStringList wordsList;
-
-	bool autoreplaceIncoming;
-	bool autoreplaceOutgoing;
-	bool addDot;
-	bool upper;
+	virtual void load();
 
 private slots:
+	//void slotSettingsDirty();
 	void slotAddCouple();
 	void slotRemoveCouple();
 	/* void slotEnableAdd();
 	void slotEnableRemove(); */
+
+private:
+	AutoReplacePrefsUI * preferencesDialog;
+
+	AutoReplaceConfig *m_config;
 };
 
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:
+

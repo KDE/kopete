@@ -29,30 +29,35 @@
 class KopeteMessage;
 class KopeteMetaContact;
 class KopeteMessageManager;
-class AutoReplacePreferences;
-
+class AutoReplaceConfig;
 
 class AutoReplacePlugin : public KopetePlugin
 {
 	Q_OBJECT
 
 public:
-	static AutoReplacePlugin  * plugin();
+	static AutoReplacePlugin *plugin();
 
 	AutoReplacePlugin( QObject *parent, const char *name, const QStringList &args );
 	~AutoReplacePlugin();
 
-public slots:
+private slots:
 	void slotAutoReplaceOutgoingMessage( KopeteMessage & msg );
 	void slotAutoReplaceIncomingMessage( KopeteMessage & msg );
 	void slotAddDot( KopeteMessage & msg );
 	void slotCapitolize( KopeteMessage & msg );
 
+	void slotSettingsChanged();
+
 private:
 	void autoReplaceMessage( KopeteMessage & msg );
+
 	static AutoReplacePlugin * pluginStatic_;
-	AutoReplacePreferences * m_prefs;
-	QMap<QString, QString> map;
+
+	AutoReplaceConfig *m_prefs;
 };
 
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:
+

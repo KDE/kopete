@@ -22,15 +22,19 @@
 
 #include <klocale.h>
 #include <klineedit.h>
-#include <kconfig.h>
 #include <kglobal.h>
 
 #include "autoreplaceprefs.h"
 #include "autoreplacepreferences.h"
+#include "autoreplaceconfig.h"
+#include <kgenericfactory.h>
 
+typedef KGenericFactory<AutoReplacePreferences> AutoReplacePreferencesFactory;
 
-AutoReplacePreferences::AutoReplacePreferences(	const QString &pixmap,QObject *parent ) :
-		ConfigModule(i18n("AutoReplace"),i18n("AutoReplace Plugin"),pixmap,parent)
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_autoreplace, AutoReplacePreferencesFactory( "kcm_kopete_autoreplace" ) );
+
+AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const char * /* name */, const QStringList &args )
+: KCModule( AutoReplacePreferencesFactory::instance(), parent, args )
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	preferencesDialog = new AutoReplacePrefsUI( this );
@@ -49,104 +53,63 @@ AutoReplacePreferences::AutoReplacePreferences(	const QString &pixmap,QObject *p
 	connect( preferencesDialog->m_value, SIGNAL(textChanged ( const QString & )),
 		SLOT( slotEnableAdd()) ); */
 
-	reopen();
+	m_config = new AutoReplaceConfig;
+
+	load();
 }
 
 AutoReplacePreferences::~AutoReplacePreferences()
 {
+	delete m_config;
 }
 
 // reload configuration reading it from kopeterc
-void AutoReplacePreferences::reopen()
+void AutoReplacePreferences::load()
 {
-	KGlobal::config()->setGroup("AutoReplace Plugin");
-	// read the list of words to replace
-	wordsList = KGlobal::config()->readListEntry("WordsToReplace");
-	if( wordsList.isEmpty() )
-	{
-		// basic list, key/value
-		// a list based on i18n should be provided, i.e. for italian
-		// "qsa,qualcosa,qno,qualcuno" remember UTF-8 accents
-		wordsList = QStringList::split( ",", i18n( "list_of_words_to_replace", 
-			"ur,your,r,are,u,you,theres,there is,arent,are not,dont,do not" ) );
-	}
+	m_config->load();
 
 	// Removes and deletes all the items in this list view and triggers an update
 	preferencesDialog->m_list->clear();
 
 	// show keys/values on gui
-	QStringList::Iterator it=wordsList.begin();
-	QString k, v;
-	while( it!=wordsList.end() ) {
+	AutoReplaceConfig::WordsToReplace::Iterator it;
+	AutoReplaceConfig::WordsToReplace map = m_config->map();
+	for ( it = map.begin(); it != map.end(); ++it )
+	{
 		// notice: insertItem is called automatically by the constructor
-		k = *it;
-		v = *(++it);
-		new QListViewItem( preferencesDialog->m_list, k, v );
-		++it;
+		new QListViewItem( preferencesDialog->m_list, it.key(), it.data() );
 	}
 
 	// checkboxes
-	autoreplaceIncoming = KGlobal::config()->readBoolEntry( "AutoReplaceIncoming" , false );
-	autoreplaceOutgoing = KGlobal::config()->readBoolEntry( "AutoReplaceOutgoing" , true );
-	addDot = KGlobal::config()->readBoolEntry( "DotEndSentence" , false );
-	upper = KGlobal::config()->readBoolEntry( "CapitalizeBeginningSentence" , false );
-	preferencesDialog->m_cb_incoming->setChecked( autoreplaceIncoming );
-	preferencesDialog->m_cb_outgoing->setChecked( autoreplaceOutgoing );
-	preferencesDialog->m_cb_dot->setChecked( addDot );
-	preferencesDialog->m_cb_upper->setChecked( upper );
+	preferencesDialog->m_cb_incoming->setChecked( m_config->autoReplaceIncoming() );
+	preferencesDialog->m_cb_outgoing->setChecked( m_config->autoReplaceOutgoing() );
+	preferencesDialog->m_cb_dot->setChecked( m_config->dotEndSentence() );
+	preferencesDialog->m_cb_upper->setChecked( m_config->capitalizeBeginningSentence() );
 
-	// MAP NEEDS TO BE FIRST CREATED HERE
-	QStringList::Iterator itl = wordsList.begin();
-	while( itl != wordsList.end() ) {
-		k = *itl;
-		v = *(++itl);
-		map.insert( k, v );
-		++itl;
-	}
+	setChanged( false );
 }
 
 // save list to kopeterc and creates map out of it
 void AutoReplacePreferences::save()
 {
-	KConfig * config = KGlobal::config();
-	config->setGroup( "AutoReplace Plugin" );
-
 	// make a list reading all values from gui
-	QStringList newWords = QStringList();
-	QListViewItem * i = preferencesDialog->m_list->firstChild();
-	while( i!=0 ) {
-		newWords += i->text(0);
-		newWords += i->text(1);
-		i = i->nextSibling();
-	}
+	AutoReplaceConfig::WordsToReplace newWords;
+	for ( QListViewItem * i = preferencesDialog->m_list->firstChild(); i != 0; i = i->nextSibling() )
+		newWords[ i->text( 0 ) ] = i->text( 1 );
 
 	// save the words list
-	config->writeEntry("WordsToReplace", newWords);
+	m_config->setMap( newWords );
 
 	// save checkboxes
-	autoreplaceIncoming = preferencesDialog->m_cb_incoming->isChecked();
-	autoreplaceOutgoing = preferencesDialog->m_cb_outgoing->isChecked();
-	addDot = preferencesDialog->m_cb_dot->isChecked();
-	upper = preferencesDialog->m_cb_upper->isChecked();
-	config->writeEntry("AutoReplaceIncoming", autoreplaceIncoming);
-	config->writeEntry("AutoReplaceOutgoing", autoreplaceOutgoing);
-	config->writeEntry("DotEndSentence", addDot);
-	config->writeEntry("CapitalizeBeginningSentence", upper);
+	m_config->setAutoReplaceIncoming( preferencesDialog->m_cb_incoming->isChecked() );
+	m_config->setAutoReplaceOutgoing( preferencesDialog->m_cb_outgoing->isChecked() );
+	m_config->setDotEndSentence( preferencesDialog->m_cb_dot->isChecked() );
+	m_config->setCapitalizeBeginningSentence( preferencesDialog->m_cb_upper->isChecked() );
 
 	// save all config to kopeterc
-	config->sync();
+	m_config->save();
 
-	// create map out of a list
-	QString k, v;
-	map.clear();
-	QStringList::Iterator itl = newWords.begin();
-	while( itl != newWords.end() ) {
-		k = *itl;
-		v = *(++itl);
-		map.insert( k, v );
-		++itl;
-	}
-
+	setChanged( false );
 }
 
 // read m_key m_value, create a QListViewItem
@@ -173,9 +136,10 @@ void AutoReplacePreferences::slotAddCouple()
 void AutoReplacePreferences::slotRemoveCouple()
 {
 	QListViewItem * lvi = preferencesDialog->m_list->selectedItem();
-      	if(lvi)
+	if( lvi )
 		delete lvi;
 }
+
 /*
 void AutoReplacePreferences::slotEnableAdd()
 {
@@ -187,4 +151,8 @@ void AutoReplacePreferences::slotEnableRemove()
 	preferencesDialog->m_remove->setEnabled( true );
 }
 */
+
 #include "autoreplacepreferences.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:
+
