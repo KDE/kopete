@@ -98,6 +98,7 @@ default_presentation=0
 [kopete_online]
 Name=Online
 Name[af]=aan-lyn
+Name[es]=En línea
 Name[fi]=Yhteys auki
 Name[ja]=オンライン
 Name[pt_BR]=On-line
@@ -106,6 +107,7 @@ Comment=User goes online
 Comment[af]=gebruiker gaan aan-lyn
 Comment[bs]=Korisnik ide online
 Comment[da]=Bruger går online
+Comment[es]=El usario entra en línea
 Comment[fi]=Käyttäjä avaa yhteyden
 Comment[ja]=ユーザはオンライン
 Comment[pt_BR]=O usuário fica conectado
