@@ -154,6 +154,7 @@ Comment[fr]=Un message entrant a été reçu
 Comment[pt_BR]=chegou nova mensagem
 Comment[sv]=Ett inkommande meddelande har anlänt
 Comment[ta]=உள்வரும் தகவல் பெறப்பட்டது
+Comment[xx]=xxAn incoming message has been receivedxx
 default_sound=Kopete_Received.ogg
 default_presentation=64
 
@@ -202,6 +203,7 @@ Comment[fr]=Un message sortant a été envoyé
 Comment[pt_BR]=mensagem enviada
 Comment[sv]=Ett utgående meddelande har skickats
 Comment[ta]=வெளிச்செல்ல வேண்டிய தகவல் அனுப்பட்டது
+Comment[xx]=xxAn outgoing message has been sentxx
 default_sound=Kopete_Sent.ogg
 default_presentation=0
 
@@ -243,6 +245,7 @@ Comment[fr]=Un contact s'est connecté
 Comment[pt_BR]=O usuário ficou on-line
 Comment[sv]=En användare har kopplat upp
 Comment[ta]=பயனர் உரையாட வந்துள்ளார்
+Comment[xx]=xxA contact has come onlinexx
 default_sound=Kopete_User_is_Online.ogg
 default_presentation=16
 
@@ -281,6 +284,7 @@ Comment[fr]=Un contact s'est déconnecté
 Comment[pt_BR]=O usuário se desconectou
 Comment[sv]=En användare har kopplat ner
 Comment[ta]=பயனர் வெளியேறிவிட்டார்
+Comment[xx]=xxA contact has gone offlinexx
 default_sound=Kopete_Event.ogg
 default_presentation=0
 
@@ -328,6 +332,7 @@ Comment[fr]=Un contact a changé son état de connexion
 Comment[pt_BR]=O usuário mudou o seu status de on-line
 Comment[sv]=Uppkopplingsstatus för en användare har ändrats
 Comment[ta]= இணைய உரையாடலில் பயனரின் நிலை மாற்றப்பட்டது
+Comment[xx]=xxA contact's online status has changedxx
 default_sound=Kopete_Event.ogg
 default_presentation=0
 
@@ -371,6 +376,7 @@ Comment[fr]=Un message surligné a été reçu
 Comment[pt_BR]=Uma mensagem de destaque foi recebida
 Comment[sv]=Ett markerat meddelande har tagits emot
 Comment[ta]=தனிப்படுத்தப்பட்ட செய்தி பெறப்பட்டது
+Comment[xx]=xxA highlighted message has been receivedxx
 default_sound=Kopete_Received.ogg
 default_presentation=65
 
@@ -378,11 +384,13 @@ default_presentation=65
 Name=Yahoo Mail
 Name[fr]=Courrier Yahoo
 Name[sv]=Yahoo e-post
+Name[xx]=xxYahoo Mailxx
 Comment=New email has arrived in your Yahoo inbox
 Comment[da]=Ny e-post ankom til din Yahoo-indbakke
 Comment[et]=Saabus uus meil sinu Yahoo Inboxi
 Comment[fr]=Un nouveau message est arrivé dans votre boîte aux lettres Yahoo
 Comment[sv]=Ett nytt brev har anlänt i din Yahoo-inkorg
+Comment[xx]=xxNew email has arrived in your Yahoo inboxxx
 
 
 [msn_mail]
@@ -420,4 +428,5 @@ Comment[fr]=Un nouveau message est arrivé dans votre boîte aux lettres MSN
 Comment[pt_BR]=chegou um novo e-mail em sua caixa de entrada MSN
 Comment[sv]=Ett nytt brev har anlänt i din MSN-inkorg
 Comment[ta]=உங்கள் எம் எஸ் என் அஞ்சல் பெட்டிக்கு புதிய மின்னஞ்சல் வந்துள்ளது
+Comment[xx]=xxNew email has arrived in your MSN inboxxx
 default_presentation=2
