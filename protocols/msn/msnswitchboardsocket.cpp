@@ -123,7 +123,7 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 		// new user joins the chat, update user in chat list
 		emit switchBoardIsActive(true);   
 		QString handle = data.section( ' ', 0, 0 );
-		QString screenname = data.section( ' ', 1, 1 );
+		QString screenname = unescape(data.section( ' ', 1, 1 ));
 		emit updateChatMember( handle, screenname, true );
     
 		if( !m_chatMembers.contains( handle ) )
@@ -134,13 +134,12 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 	else if( cmd == "IRO" )
 	{
 		// we have joined a multi chat session- this are the users in this chat
-    emit switchBoardIsActive(true);
+		emit switchBoardIsActive(true);
 		QString handle = data.section( ' ', 2, 2 );  
 		if( !m_chatMembers.contains( handle ) )
 			m_chatMembers.append( handle );
 
-      
-    QString screenname = data.section( ' ', 3, 3);
+		QString screenname = unescape(data.section( ' ', 3, 3));
 		emit updateChatMember( handle,  screenname, true);
 	}
 	else if( cmd == "USR" )
@@ -150,8 +149,7 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 	else if( cmd == "BYE" )
 	{
 		// some has disconnect from chat, update user in chat list
-		QString handle = data.section( ' ', 0, 0 ).replace(
-			QRegExp( "\r\n" ), "" );
+		QString handle = data.section( ' ', 0, 0 ).replace( QRegExp( "\r\n" ), "" );
 
 		userLeftChat(handle);
 

@@ -147,7 +147,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		else
 		{
 			// Successful auth, sync contact list
-			kdDebug() << "Sending serial number" << endl;
+//			kdDebug() << "Sending serial number" << endl;
 
 			//sendCommand( "SYN", QString::number( _serial ) );
 			sendCommand( "SYN", "0" );
@@ -201,6 +201,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			c->setMsnStatus( MSNProtocol::convertStatus(data.section( ' ', 0, 0 )));
 			c->setDisplayName(unescape( data.section( ' ', 2, 2 ) ) );
 		}
+		//FIXME - is that command used?? (olivier)
 	}
 	else if( cmd == "XFR" )
 	{
@@ -210,10 +211,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	else if( cmd == "RNG" )
 	{
 		// SessionID, Address, AuthInfo, handle, publicName
-		emit invitedToChat( QString::number( id ),
-			data.section( ' ', 0, 0 ), data.section( ' ', 2, 2 ),
-			data.section( ' ', 3, 3 ),
-			unescape( data.section( ' ', 4, 4 ) ) );
+		emit invitedToChat( QString::number( id ), data.section( ' ', 0, 0 ), data.section( ' ', 2, 2 ),
+			data.section( ' ', 3, 3 ), unescape( data.section( ' ', 4, 4 ) ) );
 	}
 	else if( cmd == "ADD" )
 	{
@@ -225,9 +224,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			group = 0;
 
 		// handle, publicName, List, serial , group
-		emit contactAdded( msnId, unescape( msnId ),
-			data.section( ' ', 0, 0 ), data.section( ' ', 1, 1 ).toUInt(),
-			group );
+		emit contactAdded( msnId, unescape( data.section( ' ', 2, 2 ) ),
+			data.section( ' ', 0, 0 ), data.section( ' ', 1, 1 ).toUInt(), group );
 	}
 	else if( cmd == "REM" ) // someone is removed from a list
 	{
