@@ -18,6 +18,7 @@
 #include <qtextedit.h>
 
 #include <klineedit.h>
+#include <kconfig.h>
 #include <klocale.h>
 #include <kfiledialog.h>
 #include <kpushbutton.h>
@@ -38,11 +39,14 @@ KopeteFileConfirmDialog::KopeteFileConfirmDialog(const KopeteFileTransferInfo &i
 
 	m_view=new FileConfirmBase(this, "FileConfirmView");
 	m_view->m_from->setText( info.contact()->metaContact()->displayName() + QString::fromLatin1( " <" ) +
-		info.contact()->contactId() + QString::fromLatin1( "> " ) );
+			info.contact()->contactId() + QString::fromLatin1( "> " ) );
 	m_view->m_size->setText( KGlobal::locale()->formatNumber( long( info.size() ) ) );
 	m_view->m_description->setText( description );
 	m_view->m_filename->setText( info.file() );
-	m_view->m_saveto->setText( QDir::homeDirPath() + QString::fromLatin1( "/" ) + info.file() );
+	
+	KGlobal::config()->setGroup("File Transfer");
+	const QString defaultPath=KGlobal::config()->readEntry("defaultPath" , QDir::homeDirPath() );
+	m_view->m_saveto->setText(defaultPath  + QString::fromLatin1( "/" ) + info.file() );
 
 	setMainWidget(m_view);
 
@@ -65,6 +69,16 @@ void KopeteFileConfirmDialog::slotBrowsePressed()
 void KopeteFileConfirmDialog::slotUser1()
 {
 	m_emited=true;
+	KURL url(m_view->m_saveto->text());
+	if(url.isValid())
+	{
+		const QString directory=url.directory();
+		if(!directory.isEmpty())
+		{
+			KGlobal::config()->setGroup("File Transfer");
+			KGlobal::config()->writeEntry("defaultPath" , directory );
+		}
+	} 
 	emit accepted(m_info,m_view->m_saveto->text());
 	close();
 }
