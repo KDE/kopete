@@ -1,3 +1,7 @@
+if include_meanwhile
+MEANWHILE=meanwhile
+endif
+
 if include_gadu
 GADU=gadu
 endif

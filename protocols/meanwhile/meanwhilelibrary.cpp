@@ -33,7 +33,7 @@ extern "C"
 {
 #include <meanwhile/channel.h>
 #include <meanwhile/message.h>
-#include <meanwhile/mw_error.h>
+#include <meanwhile/error.h>
 #include <meanwhile/service.h>
 #include <meanwhile/session.h>
 #include <meanwhile/srvc_aware.h>
