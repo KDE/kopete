@@ -56,7 +56,7 @@ MSNContact::MSNContact( KopeteAccount *account, const QString &id, const QString
 
 	setFileCapable( true );
 
-	setOnlineStatus( MSNProtocol::protocol()->UNK );
+//	setOnlineStatus( MSNProtocol::protocol()->UNK );
 
 }
 

@@ -87,7 +87,6 @@ KopeteContact::KopeteContact( KopeteAccount *account,
 	//kdDebug( 14010 ) << k_funcinfo << "Creating contact with id " << contactId << endl;
 
 	d->contactId = contactId;
-	d->onlineStatus = KopeteOnlineStatus( KopeteOnlineStatus::Offline );
 
 	d->metaContact = parent;
 	d->fileCapable = false;
