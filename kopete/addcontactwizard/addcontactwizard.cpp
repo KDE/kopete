@@ -27,7 +27,7 @@
 #include <kdebug.h>
 #include <klistview.h>
 
-#include "addcontactpage.h"
+#include <addcontactpage.h>
 #include "addcontactwizard.h"
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
