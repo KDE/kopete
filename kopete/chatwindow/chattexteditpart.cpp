@@ -228,6 +228,10 @@ void ChatTextEditPart::slotContactStatusChanged( Kopete::Contact *, const Kopete
 void ChatTextEditPart::sendMessage()
 {
 	QString txt = text( Qt::PlainText );
+	// avoid sending emtpy messages or enter keys (see bug 100334)
+	if ( txt.isEmpty() || txt == "\n" )
+		return;
+
 	if ( m_lastMatch.isNull() && ( txt.find( QRegExp( QString::fromLatin1("^\\w+:\\s") ) ) > -1 ) )
 	{ //no last match and it finds something of the form of "word:" at the start of a line
 		QString search = txt.left( txt.find(':') );
