@@ -205,7 +205,6 @@ IRCUserContact *IRCAccount::findUser(const QString &name, KopeteMetaContact *m)
 		mUsers.insert( lowerName, user );
 		QObject::connect(user, SIGNAL(contactDestroyed(KopeteContact *)), this,
 			SLOT(slotContactDestroyed(KopeteContact *)));
-		engine()->addToNotifyList( lowerName );
 	}
 	else
 	{
