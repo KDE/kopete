@@ -25,16 +25,7 @@ release:
   do experience problems, you could join both groups using another MSN
   client, like the official client, Trillian or Gaim as a workaround.
 
-- MSN contacts can be in more than one group at the same time. Kopete
-  supports this partly, but not completely yet. In general Kopete will
-  function, but this ability has not really been tested yet, so more
-  hidden problems may arise.
-
-- Kopete doesn't support moving contacts to groups that do not exist on
-  the server yet. Ideally the group should be automatically created on
-  the server, but this can not be done reliably with the current code.
-  Your attempt to move will be ignored by Kopete, but not produce any
-  error except for a debug message on the console that you're moving a
-  contact from group ID -1. A workaround is to always sync groups to
-  the server, so groups always exist.
+- Kopete contacts can be at Top-Level and in no groups. MSN doesn't
+  support this freature. The kopete's contact list can differe from server 
+  if you have top-level contact
 
