@@ -463,10 +463,10 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 		connect( d->metaContact, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
 		protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
 
-		// Sync groups
+		// Sync groups //FIXME: for msn that can be done in only one line. (Olivier)
 		for( KopeteGroup *group = newGroups.first(); group; group = newGroups.next() )
 		{
-			if( !groups().contains( group ) )
+			if(!old || !old->groups().contains( group ) )
 				addToGroup( group );
 		}
 	}
@@ -571,11 +571,6 @@ void KopeteContact::moveToGroup( KopeteGroup * /* from */, KopeteGroup * /* to *
 	/* Default implementation does nothing */
 }
 
-KopeteGroupList KopeteContact::groups() const
-{
-	/* Default implementation does nothing */
-	return KopeteGroupList();
-}
 
 bool KopeteContact::isOnline() const
 {

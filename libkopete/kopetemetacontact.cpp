@@ -534,7 +534,7 @@ void KopeteMetaContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 		return;
 	}
 
-	kdDebug( 14010 ) << k_funcinfo << from->displayName() << " => " << to->displayName() << endl;
+	//kdDebug( 14010 ) << k_funcinfo << from->displayName() << " => " << to->displayName() << endl;
 
 	d->groups.remove( from );
 	d->groups.append( to );

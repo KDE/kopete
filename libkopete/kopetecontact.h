@@ -105,20 +105,6 @@ public:
 	 */
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
-	/**
-	 * The groups in which the user is physically located.
-	 * The logical groups are stored in the Meta Contact. Physical groups
-	 * can be different from the logical groups!
-	 * Not the whole API supports multi-group membership yet, be careful
-	 * relying on this for now!
-	 *
-	 * The default implementation returns an empty list. This is fine if
-	 * your protocol doesn't support groups. However, if you reimplemented
-	 * @ref addToGroup() or @removeFromGroup() you MUST also implement this
-	 * method, or strange things may happen when Kopete tries to sync
-	 * groups when moving contacts around.
-	 */
-	virtual KopeteGroupList groups() const;
 
 	/**
 	 * Add a contact to a physical group. If the protocol doesn't support
