@@ -157,3 +157,5 @@ void TestbedAccount::updateContactStatus()
 		itr.current()->setOnlineStatus( m_myself->onlineStatus() );
 }
 
+
+#include "testbedaccount.moc"

@@ -63,3 +63,5 @@ bool TestbedAddContactPage::validateData()
     return true;
 }
 
+
+#include "testbedaddcontactpage.moc"

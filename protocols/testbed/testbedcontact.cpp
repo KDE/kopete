@@ -133,3 +133,5 @@ void TestbedContact::slotMessageManagerDestroyed()
 	//FIXME: the chat window was closed?  Take appropriate steps.
 	m_msgManager = 0L;
 }
+
+#include "testbedcontact.moc"

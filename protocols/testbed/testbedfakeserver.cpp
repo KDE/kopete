@@ -64,3 +64,5 @@ void TestbedFakeServer::purgeMessages()
 			m_incomingMessages.remove();
 	}
 }
+
+#include "testbedfakeserver.moc"

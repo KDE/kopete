@@ -96,3 +96,5 @@ TestbedProtocol *TestbedProtocol::protocol()
 }
 
 
+
+#include "testbedprotocol.moc"
