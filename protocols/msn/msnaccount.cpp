@@ -1080,8 +1080,9 @@ bool MSNAccount::isHotmail() const
 
 QString MSNAccount::pictureObject()
 {
-	if(!m_pictureObj.isNull())
-		return m_pictureObj;
+	QString m_pictureObj;
+	//if(!m_pictureObj.isNull())
+	//	return m_pictureObj;
 
 	QFile pictFile(locateLocal( "appdata", QString::fromLatin1( "msnpicture.png" ) ) );
 	if(!pictFile.open(IO_ReadOnly))
@@ -1095,7 +1096,7 @@ QString MSNAccount::pictureObject()
 	m_pictureObj="<msnobj Creator=\"" + accountId() + "\" Size=\"" + size  + "\" Type=\"3\" Location=\"TFR2C.tmp\" Friendly=\"AAA=\" SHA1D=\""+sha1d+"\" SHA1C=\""+ QString(KCodecs::base64Encode(SHA1::hashString(all.utf8())))  +"\"/>";
 
 
-	kdDebug( 14140 ) << "MSNAccount::PictureObject: file size=" << ar.size() << endl;
+	//kdDebug( 14140 ) << "MSNAccount::PictureObject: file size=" << ar.size() << endl;
 
 	return m_pictureObj;
 }

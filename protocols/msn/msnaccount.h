@@ -191,7 +191,7 @@ private:
 
 	QString m_awayReason;
 
-	QString m_pictureObj;
+//	QString m_pictureObj;
 };
 
 #endif
