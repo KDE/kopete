@@ -13,7 +13,7 @@ AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CA
 
 lib_LTLIBRARIES = libkopete.la
 
-libkopete_la_SOURCES = kopeteonlinestatus.cpp kopeteonlinestatusmanager.cpp \
+libkopete_la_SOURCES = connectionmanager.cpp kopeteonlinestatus.cpp kopeteonlinestatusmanager.cpp \
 	kopeteprotocol.cpp kopetecontact.cpp kopetepluginmanager.cpp kopeteplugin.cpp \
 	kopetemessage.cpp kopetemessagemanager.cpp kopetemessagemanagerfactory.cpp \
 	kopetecontactlist.cpp kopetemetacontact.cpp kopeteawaydialog.cpp kopetetransfermanager.cpp \
@@ -25,7 +25,7 @@ libkopete_la_SOURCES = kopeteonlinestatus.cpp kopeteonlinestatusmanager.cpp \
 	kopeteeventpresentation.cpp kopetenotifyevent.cpp kopetenotifydataobject.cpp kopeteblacklister.cpp \
 	kopetemessageevent.cpp kopetemessagehandler.cpp kopetemessagehandlerchain.cpp \
 	kopetesimplemessagehandler.cpp kopeteproperties.cpp kabcpersistence.cpp connectionmanager.skel \
-	connectionmanager.cpp clientiface.stub managedconnectionaccount.cpp networkstatuscommon.h
+	clientiface.stub managedconnectionaccount.cpp networkstatuscommon.h
 
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
 libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(LIB_KIO) $(LIB_XSS) $(LIBXML_LIBS) $(LIBXSLT_LIBS)

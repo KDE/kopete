@@ -51,9 +51,9 @@ void ConnectionManager::initialise()
 void ConnectionManager::updateStatus()
 {
 	NetworkStatus::EnumStatus daemonStatus = (NetworkStatus::EnumStatus)d->m_stub->status( QString::null );
+	kdDebug() << k_funcinfo << endl;
 	switch ( daemonStatus )
 	{
-		kdDebug() << k_funcinfo << endl;
 		case NetworkStatus::Offline:
 		case NetworkStatus::OfflineFailed:
 		case NetworkStatus::OfflineDisconnected:
