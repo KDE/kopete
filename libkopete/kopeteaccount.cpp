@@ -55,7 +55,7 @@ public:
 	 : protocol( protocol ), id( accountId )
 	 , password( configGroup( protocol, accountId ) )
 	 , autologin( false ), priority( 0 ), myself( 0 )
-	 , suppressStatusTimer( 0 ), suppressStartupNotification( false )
+	 , suppressStatusTimer( 0 ), suppressStatusNotification( false )
 	{
 	}
 
