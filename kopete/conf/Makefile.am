@@ -10,10 +10,9 @@ noinst_HEADERS = pluginconfig.h appearanceconfig.h accountconfig.h addaccountwiz
 	behaviorconfig.h
 
 libkopeteconf_la_SOURCES = pluginconfig.cpp \
-	appearanceconfig_general.ui appearanceconfig_contactlist.ui \
 	appearanceconfig_chatwindow.ui appearanceconfig_chatappearance.ui \
 	appearanceconfig.cpp kopeteawayconfigbase.ui kopeteawayconfigui.cpp \
-	behaviorconfig.cpp \
+	behaviorconfig_general.ui behaviorconfig_chat.ui behaviorconfig.cpp \
 	accountconfigbase.ui accountconfig.cpp \
 	addaccountwizardpage1.ui addaccountwizardpage2.ui addaccountwizardpage3.ui \
 	addaccountwizard.cpp styleeditdialog.ui

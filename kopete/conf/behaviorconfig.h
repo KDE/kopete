@@ -20,24 +20,30 @@
 
 class QFrame;
 class QTabWidget;
-class QCheckBox;
 
+class BehaviorConfig_General;
+class BehaviorConfig_Chat;
 class KopeteAwayConfigUI;
 
 class BehaviorConfig : public ConfigModule
 {
 	Q_OBJECT
 
-public:
-	BehaviorConfig(QWidget * parent);
+	public:
+		BehaviorConfig(QWidget * parent);
 
-	virtual void save();
-	virtual void reopen();
+		virtual void save();
+		virtual void reopen();
 
-private:
-	QTabWidget* mBehaviorTabCtl;
-	KopeteAwayConfigUI *mAwayConfigUI;
+	private slots:
+		void slotConfigSound();
+		void slotShowTrayChanged(bool);
 
+	private:
+		QTabWidget* mBehaviorTabCtl;
+		BehaviorConfig_General *mPrfsGeneral;
+		BehaviorConfig_Chat *mPrfsChat;
+		KopeteAwayConfigUI *mAwayConfigUI;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

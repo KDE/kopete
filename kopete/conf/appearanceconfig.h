@@ -34,7 +34,6 @@ class QListBoxItem;
 class AppearanceConfig_General;
 class AppearanceConfig_ChatWindow;
 class AppearanceConfig_ChatAppearance;
-class AppearanceConfig_Contactlist;
 
 namespace KTextEditor {
 	class View;
@@ -53,18 +52,15 @@ class AppearanceConfig : public ConfigModule
 
 public:
 	AppearanceConfig(QWidget * parent);
-	~AppearanceConfig();
 
 	virtual void save();
 	virtual void reopen();
 
 private slots:
-	void slotConfigSound();
 	void slotUseEmoticonsChanged(bool);
 	void slotSelectedEmoticonsThemeChanged();
 	void slotTransparencyChanged(bool);
 	void slotUpdatePreview();
-	void slotShowTrayChanged(bool);
 	void slotHighlightChanged();
 	void slotChangeFont();
 	void slotAddStyle();
@@ -87,8 +83,6 @@ private:
 	KTextEditor::Document* editDocument;
 
 	// All other TABs have their own ui-file
-	AppearanceConfig_General *mPrfsGeneral;
-	AppearanceConfig_Contactlist *mPrfsContactlist;
 	AppearanceConfig_ChatAppearance *mPrfsChatAppearance;
 	AppearanceConfig_ChatWindow *mPrfsChatWindow;
 

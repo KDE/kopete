@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>566</width>
-            <height>541</height>
+            <width>434</width>
+            <height>247</height>
         </rect>
     </property>
     <property name="caption">
@@ -19,97 +19,6 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>cb_RaiseMsgWindowChk</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Raise window/tab on new messages</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>cb_ShowEventsChk</cstring>
-            </property>
-            <property name="text">
-                <string>Show e&amp;vents in chat window</string>
-            </property>
-        </widget>
-        <widget class="QButtonGroup">
-            <property name="name">
-                <cstring>interfaceGroup</cstring>
-            </property>
-            <property name="title">
-                <string>Interface Preference</string>
-            </property>
-            <vbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>mSingleShot</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Single-shot window (Jabber email/Old ICQ style)</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>mChatWindow</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Chat window (Jabber chat/MSN/New ICQ style)</string>
-                    </property>
-                </widget>
-            </vbox>
-        </widget>
-        <widget class="QButtonGroup">
-            <property name="name">
-                <cstring>chatWindowGroup</cstring>
-            </property>
-            <property name="title">
-                <string>Chat Window Grouping Policy</string>
-            </property>
-            <vbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>mNewWindow</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Open all messages in a new chat window</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Every chat has its own window.</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>mTabProtocolWindow</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Group messages from the same protocol in the same chat window</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>All chats using one protocol are grouped into one window by using tabs.</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton">
-                    <property name="name">
-                        <cstring>mTabWindow</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Group all messages in the same chat window</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>All chats get grouped into one window by using tabs.</string>
-                    </property>
-                </widget>
-            </vbox>
-        </widget>
         <widget class="QButtonGroup">
             <property name="name">
                 <cstring>mTransparencyGroupBox</cstring>
@@ -241,38 +150,6 @@
                 </widget>
             </grid>
         </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout2</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>txtChatViewBufferSize</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Maximum chatwindow lines:</string>
-                    </property>
-                </widget>
-                <widget class="QSpinBox">
-                    <property name="name">
-                        <cstring>mChatViewBufferSize</cstring>
-                    </property>
-                    <property name="maxValue">
-                        <number>9000</number>
-                    </property>
-                    <property name="minValue">
-                        <number>2</number>
-                    </property>
-                    <property name="value">
-                        <number>250</number>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
         <spacer>
             <property name="name">
                 <cstring>spacer2</cstring>
@@ -293,18 +170,10 @@
     </vbox>
 </widget>
 <tabstops>
-    <tabstop>cb_RaiseMsgWindowChk</tabstop>
-    <tabstop>cb_ShowEventsChk</tabstop>
-    <tabstop>mSingleShot</tabstop>
-    <tabstop>mChatWindow</tabstop>
-    <tabstop>mNewWindow</tabstop>
-    <tabstop>mTabProtocolWindow</tabstop>
-    <tabstop>mTabWindow</tabstop>
     <tabstop>mTransparencyEnabled</tabstop>
     <tabstop>mTransparencyBgOverride</tabstop>
     <tabstop>mTransparencyTintColor</tabstop>
     <tabstop>mTransparencyValue</tabstop>
-    <tabstop>mChatViewBufferSize</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

@@ -47,8 +47,6 @@
 #include <ktexteditor/document.h>
 #include <ktexteditor/view.h>
 
-#include "appearanceconfig_general.h"
-#include "appearanceconfig_contactlist.h"
 #include "appearanceconfig_chatwindow.h"
 #include "appearanceconfig_chatappearance.h"
 #include "kopeteprefs.h"
@@ -72,16 +70,6 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	mAppearanceTabCtl = new QTabWidget(this, "mAppearanceTabCtl");
 
 	editedItem = 0L;
-
-	// "General" TAB =============================================================
-	mPrfsGeneral = new AppearanceConfig_General(mAppearanceTabCtl);
-	connect(mPrfsGeneral->configSound, SIGNAL(clicked()), this, SLOT(slotConfigSound()));
-	connect(mPrfsGeneral->mShowTrayChk, SIGNAL(toggled(bool)), this, SLOT(slotShowTrayChanged(bool)));
-	mAppearanceTabCtl->addTab( mPrfsGeneral, i18n("&General") );
-
-	// "Contact List" TAB ========================================================
-	mPrfsContactlist = new AppearanceConfig_Contactlist(mAppearanceTabCtl);
-	mAppearanceTabCtl->addTab( mPrfsContactlist, i18n("Contact &List") );
 
 	// "Emoticons" TAB ===========================================================
 	mEmoticonsTab = new QFrame(mAppearanceTabCtl);
@@ -122,7 +110,7 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	l->addWidget( htmlWidget );
 
 	mAppearanceTabCtl->addTab( mPrfsChatAppearance, i18n("Chat &Appearance") );
-	connect(mPrfsChatAppearance->highlightEnabled, SIGNAL(toggled(bool)), this, SLOT(slotHighlightChanged()));
+//	connect(mPrfsChatAppearance->highlightEnabled, SIGNAL(toggled(bool)), this, SLOT(slotHighlightChanged()));
 	connect(mPrfsChatAppearance->foregroundColor, SIGNAL(changed(const QColor &)), this, SLOT(slotHighlightChanged()));
 	connect(mPrfsChatAppearance->backgroundColor, SIGNAL(changed(const QColor &)), this, SLOT(slotHighlightChanged()));
 	connect(mPrfsChatAppearance->fontFace, SIGNAL(clicked()), this, SLOT(slotChangeFont()));
@@ -140,11 +128,6 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	errorAlert = false;
 //	reopen(); // load settings from config  //WHY? theses are loaded when we need it
 	slotTransparencyChanged(mPrfsChatWindow->mTransparencyEnabled->isChecked());
-//	slotShowTrayChanged(mPrfsGeneral->mShowTrayChk->isChecked());
-}
-
-AppearanceConfig::~AppearanceConfig()
-{
 }
 
 void AppearanceConfig::save()
@@ -152,45 +135,23 @@ void AppearanceConfig::save()
 //	kdDebug(14000) << k_funcinfo << "called." << endl;
 	KopetePrefs *p = KopetePrefs::prefs();
 
-	// "General" TAB
-	p->setShowTray( mPrfsGeneral->mShowTrayChk->isChecked() );
-	p->setStartDocked ( mPrfsGeneral->mStartDockedChk->isChecked() );
-	p->setUseQueue ( mPrfsGeneral->mUseQueueChk->isChecked() );
-	p->setTrayflashNotify ( mPrfsGeneral->mTrayflashNotifyChk->isChecked() );
-	p->setBalloonNotify ( mPrfsGeneral->mBalloonNotifyChk->isChecked() );
-	p->setSoundIfAway( mPrfsGeneral->mSoundIfAwayChk->isChecked() );
-
-	// "Contact List" TAB
-	p->setTreeView ( mPrfsContactlist->mTreeContactList->isChecked() );
-	p->setShowOffline ( mPrfsContactlist->mShowOfflineUsers->isChecked() );
-	p->setSortByGroup ( mPrfsContactlist->mSortByGroup->isChecked() );
-	p->setGreyIdleMetaContacts( mPrfsContactlist->mGreyIdleMetaContacts->isChecked() );
-
 	// Another TAB
 	p->setIconTheme( icon_theme_list->currentText() );
 	p->setUseEmoticons ( mUseEmoticonsChk->isChecked() );
 
 	// "Chat Window" TAB
-	p->setRaiseMsgWindow( mPrfsChatWindow->cb_RaiseMsgWindowChk->isChecked() );
-	p->setShowEvents( mPrfsChatWindow->cb_ShowEventsChk->isChecked() );
-	p->setChatWindowPolicy ( mPrfsChatWindow->chatWindowGroup->id(mPrfsChatWindow->chatWindowGroup->selected()) );
-	p->setInterfacePreference( mPrfsChatWindow->interfaceGroup->id(mPrfsChatWindow->interfaceGroup->selected()) );
 	p->setTransparencyColor( mPrfsChatWindow->mTransparencyTintColor->color() );
 	p->setTransparencyEnabled( mPrfsChatWindow->mTransparencyEnabled->isChecked() );
 	p->setTransparencyValue( mPrfsChatWindow->mTransparencyValue->value() );
-	p->setChatViewBufferSize ( mPrfsChatWindow->mChatViewBufferSize->value() );
-// 	p->setCTransparencyColor( mPrfsChatWindow->mCTransparencyColor->color() );
-// 	p->setCTransparencyEnabled( mPrfsChatWindow->mCTransparencyEnabled->isChecked() );
-// 	p->setCTransparencyValue( mPrfsChatWindow->mCTransparencyValue->value() );
 	p->setBgOverride( mPrfsChatWindow->mTransparencyBgOverride->isChecked() );
-	p->setHighlightEnabled(mPrfsChatAppearance->highlightEnabled->isChecked());
+
+	// "Appearance" TAB
 	p->setHighlightBackground(mPrfsChatAppearance->backgroundColor->color());
 	p->setHighlightForeground(mPrfsChatAppearance->foregroundColor->color());
-
-	p->setBgColor( mPrfsChatAppearance->bgColor->color() );
-	p->setTextColor(  mPrfsChatAppearance->textColor->color() );
-	p->setLinkColor( mPrfsChatAppearance->linkColor->color() );
-	p->setFontFace( mPrfsChatAppearance->fontFace->font() );
+	p->setBgColor(mPrfsChatAppearance->bgColor->color());
+	p->setTextColor(mPrfsChatAppearance->textColor->color());
+	p->setLinkColor(mPrfsChatAppearance->linkColor->color());
+	p->setFontFace(mPrfsChatAppearance->fontFace->font());
 
 	p->setStyleSheet( itemMap[ mPrfsChatAppearance->styleList->selectedItem() ] );
 
@@ -205,21 +166,6 @@ void AppearanceConfig::reopen()
 		return;
 //	kdDebug(14000) << k_funcinfo << "called" << endl;
 	KopetePrefs *p = KopetePrefs::prefs();
-
-	// "General" TAB
-	mPrfsGeneral->mShowTrayChk->setChecked( p->showTray() );
-	mPrfsGeneral->mStartDockedChk->setChecked( p->startDocked() );
-	mPrfsGeneral->mUseQueueChk->setChecked( p->useQueue() );
-	mPrfsGeneral->mTrayflashNotifyChk->setChecked ( p->trayflashNotify() );
-	mPrfsGeneral->mBalloonNotifyChk->setChecked ( p->balloonNotify() );
-	mPrfsGeneral->mSoundIfAwayChk->setChecked( p->soundIfAway() );
-	slotShowTrayChanged( mPrfsGeneral->mShowTrayChk->isChecked() );
-
-	// "Contact List" TAB
-	mPrfsContactlist->mTreeContactList->setChecked( p->treeView() );
-	mPrfsContactlist->mSortByGroup->setChecked( p->sortByGroup() );
-	mPrfsContactlist->mShowOfflineUsers->setChecked( p->showOffline() );
-	mPrfsContactlist->mGreyIdleMetaContacts->setChecked( p->greyIdleMetaContacts() );
 
 	// "Emoticons" TAB
 	KStandardDirs dir;
@@ -256,19 +202,15 @@ void AppearanceConfig::reopen()
 	mUseEmoticonsChk->setChecked( p->useEmoticons() );
 	slotUseEmoticonsChanged     ( p->useEmoticons() );
 
+
 	// "Chat Window" TAB
-	mPrfsChatWindow->cb_RaiseMsgWindowChk->setChecked( p->raiseMsgWindow() );
-	mPrfsChatWindow->cb_ShowEventsChk->setChecked( p->showEvents() );
-	mPrfsChatWindow->chatWindowGroup->setButton( p->chatWindowPolicy() );
 	mPrfsChatWindow->mTransparencyEnabled->setChecked( p->transparencyEnabled() );
 	mPrfsChatWindow->mTransparencyTintColor->setColor( p->transparencyColor() );
 	mPrfsChatWindow->mTransparencyValue->setValue( p->transparencyValue() );
 	mPrfsChatWindow->mTransparencyBgOverride->setChecked( p->bgOverride() );
-	mPrfsChatWindow->interfaceGroup->setButton( p->interfacePreference() );
-	mPrfsChatWindow->mChatViewBufferSize->setValue( p->chatViewBufferSize() );
+
 
 	// "Chat Appearance" TAB
-	mPrfsChatAppearance->highlightEnabled->setChecked( p->highlightEnabled() );
 	mPrfsChatAppearance->foregroundColor->setColor( p->highlightForeground() );
 	mPrfsChatAppearance->backgroundColor->setColor( p->highlightBackground() );
 
@@ -278,7 +220,8 @@ void AppearanceConfig::reopen()
 	mPrfsChatAppearance->fontFace->setFont( p->fontFace() );
 	mPrfsChatAppearance->fontFace->setText( p->fontFace().family() );
 
-	QStringList mChatStyles = KGlobal::dirs()->findAllResources("appdata", QString::fromLatin1("styles/*.xsl") );
+	QStringList mChatStyles = KGlobal::dirs()->findAllResources(
+		"appdata", QString::fromLatin1("styles/*.xsl") );
 	mPrfsChatAppearance->styleList->clear();
 
 	for( QStringList::Iterator it = mChatStyles.begin(); it != mChatStyles.end(); ++it)
@@ -290,15 +233,13 @@ void AppearanceConfig::reopen()
 		itemMap.insert( mPrfsChatAppearance->styleList->firstItem(), *it );
 
 		if( *it == p->styleSheet() )
-			mPrfsChatAppearance->styleList->setSelected( mPrfsChatAppearance->styleList->firstItem(), true );
+		{
+			mPrfsChatAppearance->styleList->setSelected(
+				mPrfsChatAppearance->styleList->firstItem(), true );
+		}
 	}
 
 	mPrfsChatAppearance->styleList->sort();
-}
-
-void AppearanceConfig::slotConfigSound()
-{
-	KNotifyDialog::configure(this);
 }
 
 void AppearanceConfig::slotUseEmoticonsChanged ( bool checked )
@@ -333,21 +274,13 @@ void AppearanceConfig::slotTransparencyChanged ( bool checked )
 	mPrfsChatWindow->mTransparencyBgOverride->setEnabled( checked );
 }
 
+
 void AppearanceConfig::slotHighlightChanged()
 {
-	bool value = mPrfsChatAppearance->highlightEnabled->isChecked();
-	mPrfsChatAppearance->foregroundColor->setEnabled ( value );
-	mPrfsChatAppearance->backgroundColor->setEnabled ( value );
+//	bool value = mPrfsChatAppearance->highlightEnabled->isChecked();
+//	mPrfsChatAppearance->foregroundColor->setEnabled ( value );
+//	mPrfsChatAppearance->backgroundColor->setEnabled ( value );
 	slotUpdatePreview();
-}
-
-void AppearanceConfig::slotShowTrayChanged(bool check)
-{
-//	bool check = mPrfsGeneral->mShowTrayChk->isChecked();
-
-	mPrfsGeneral->mStartDockedChk->setEnabled(check);
-	mPrfsGeneral->mTrayflashNotifyChk->setEnabled(check);
-	mPrfsGeneral->mBalloonNotifyChk->setEnabled(check);
 }
 
 void AppearanceConfig::slotChangeFont()
