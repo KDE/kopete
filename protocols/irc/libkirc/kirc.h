@@ -83,6 +83,9 @@ public:
 
 	const QString &userName() const {return m_Username; }
 	void setUserName(const QString &newName);
+
+	const bool reqsPassword() const { return m_ReqsPasswd; };
+	void setReqsPassword(bool b) { m_ReqsPasswd = b; };
 	
 	EngineStatus status() const { return m_status; }
 	inline bool isDisconnected() const { return m_status == Disconnected; }
@@ -100,7 +103,7 @@ public slots:
 	void changeNickname(const QString &newNickname);
 	void sendNotice(const QString &target, const QString &message);
 	void changeMode(const QString &target, const QString &mode);
-	void joinChannel(const QString &);
+	void joinChannel(const QString &name, const QString &key);
 	void messageContact(const QString &contact, const QString &message);
 	void setTopic(const QString &channel, const QString &topic);
 	void kickUser(const QString &user, const QString &channel, const QString &reason);
@@ -162,6 +165,7 @@ signals:
 	void incomingAction(const QString &originating, const QString &target, const QString &message);
 	void incomingNickInUse(const QString &usingNick);
 	void incomingNickChange(const QString &, const QString &);
+	void incomingFailedChankey(const QString &);
 	void incomingFailedNickOnLogin(const QString &);
 	void incomingNoNickChan(const QString &);
 	void incomingWasNoNick(const QString &);
@@ -296,6 +300,7 @@ protected:
 	ircMethod numericReply_353;
 
 	ircMethod numericReply_433;
+	ircMethod numericReply_475;
 
 	inline void addCtcpQueryIrcMethod(const char *str, KIRCMethodFunctorCall *method) {
 		addIrcMethod(m_IrcCTCPQueryMethods, str, method);
@@ -348,6 +353,7 @@ protected:
 	QString m_Realname;
 	QString m_Nickname;
 	QString m_Passwd;
+	bool	m_ReqsPasswd;
 
 	QString m_VersionString;
 	QString m_UserString;

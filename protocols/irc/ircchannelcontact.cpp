@@ -53,6 +53,10 @@ IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QS
 	QObject::connect(m_engine, SIGNAL(connectedToServer()),
 		this, SLOT(slotConnectedToServer()));
 
+
+	QObject::connect(m_engine, SIGNAL(incomingFailedChankey(const QString &)),
+			this, SLOT(slotFailedChankey(const QString&)));
+
 	updateStatus();
 }
 
@@ -99,7 +103,7 @@ void IRCChannelContact::slotJoinChannel( KopeteView *view )
 {
 	if( view->msgManager() == manager(false) )
 	{
-		m_engine->joinChannel(m_nickName);
+		m_engine->joinChannel(m_nickName, password());
 	}
 }
 
@@ -249,6 +253,7 @@ void IRCChannelContact::slotTopicChanged(const QString &channel, const QString &
 
 void IRCChannelContact::slotIncomingModeChange( const QString &nick, const QString &channel, const QString &mode )
 {
+	kdDebug(14120) << k_funcinfo << "Nick: " << nick << " : " << mode << endl;
 	if( m_isConnected && m_nickName.lower() == channel.lower() )
 	{
 		KopeteMessage msg((KopeteContact *)this, mMyself, i18n("%1 sets mode %2 %3").arg(nick).arg(mode).arg(m_nickName), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
@@ -286,9 +291,9 @@ void IRCChannelContact::slotIncomingModeChange( const QString &nick, const QStri
 
 void IRCChannelContact::slotIncomingChannelMode( const QString &channel, const QString &mode, const QString &params )
 {
-	if( m_isConnected && channel.lower() == m_nickName.lower() )
+	kdDebug(14120) << k_funcinfo << channel << " : " << mode << " (" << mode.length() << ") " << " : " << params << " : " << m_nickName << endl;
+	if( m_isConnected && (channel.lower() == m_nickName.lower()) )
 	{
-		kdDebug(14120) << k_funcinfo << channel << " : " << mode << " : " << params << endl;
 		for( uint i=1; i < mode.length(); i++ )
 		{
 			if( mode[i] != 'l' && mode[i] != 'k' )
@@ -310,6 +315,31 @@ void IRCChannelContact::slotModeChanged()
 	toggleMode( 's', actionModeS->isChecked(), true );
 	toggleMode( 'm', actionModeM->isChecked(), true );
 	toggleMode( 'i', actionModeI->isChecked(), true );*/
+}
+
+// JLN
+void IRCChannelContact::slotFailedChankey(const QString &channel)
+{
+	bool ok;
+	KopeteView *v=manager(true)->view(true, KopeteMessage::Chat );
+	if ( m_isConnected && channel.lower() == m_nickName.lower() ) {
+
+		kdDebug(14120) << k_funcinfo << "NEED PASSWORD FOR CHAN: " << channel << endl;
+		QString diaPassword = KInputDialog::getText( i18n( "IRC Plugin" ),
+			i18n( "Please enter key for channel %1: ").arg(channel),
+			QString::null,
+			&ok);
+		if (!ok) {
+			if (v)
+				v->closeView(true);
+			
+			// Close the chat windows
+		} else {
+			setPassword(diaPassword);
+			m_engine->joinChannel(channel, password());
+		}
+	}
+			
 }
 
 void IRCChannelContact::toggleMode( QChar mode, bool enabled, bool update )
@@ -352,8 +382,10 @@ void IRCChannelContact::toggleMode( QChar mode, bool enabled, bool update )
 
 bool IRCChannelContact::modeEnabled( QChar mode, QString *value )
 {
-	if( !value )
+	kdDebug(14120) << k_funcinfo << "Mode for " << QString(mode) << ": " << modeMap[mode] << " value: " << value << endl;
+	if( !value ) {
 		return modeMap[mode];
+	}
 	return false;
 }
 

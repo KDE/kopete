@@ -52,6 +52,9 @@ public:
 
 	QString userName();
 
+public slots:
+	void setUserName(QString userName);
+
 	void unregister(KopeteContact *);
 
 	IRCServerContact *findServer(const QString &name, KopeteMetaContact *m = 0L);
@@ -119,11 +122,9 @@ public:
 	// Returns the KopeteContact of the server of the user
 	IRCServerContact *myServer() const;
 
-public slots:
 	void successfullyChangedNick(const QString &, const QString &);
 	virtual void connect();
 	virtual void disconnect();
-	void setUserName(QString userName);
 	
 protected:
 	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact ) ;

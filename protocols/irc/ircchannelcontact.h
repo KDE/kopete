@@ -54,6 +54,11 @@ public:
 	 */
 	 const QString &topic() const { return mTopic; };
 
+	/* Set password for a channel */
+	void setPassword(const QString &password) { mPassword = password; }
+	/* Get password for a channel */
+	const QString &password() const { return mPassword; }
+
 	/**
 	 * Returns if a mode is enabled for this channel.
 	 * @param mode The mode you want to check ( 't', 'n', etc. )
@@ -91,6 +96,7 @@ protected slots:
 
 public slots: // should be viewCreated( KopeteView* )
 	void slotJoinChannel( KopeteView* );
+	void slotFailedChankey(const QString &channame);
 
 private slots:
 	void slotConnectedToServer();
@@ -105,6 +111,7 @@ private slots:
 	void slotIncomingChannelMode( const QString &channel, const QString &mode, const QString &params );
 	void slotModeChanged();
 	void slotAddNicknames();
+
 
 private:
 	// KAction stuff:
@@ -123,6 +130,7 @@ private:
 	KToggleAction *actionModeB;
 
 	QString mTopic;
+	QString mPassword;
 	QStringList mJoinedNicks;
 	QMap<QString,bool> modeMap;
 	void toggleMode( QChar mode, bool enabled, bool update );

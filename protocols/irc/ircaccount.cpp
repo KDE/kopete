@@ -58,8 +58,12 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	m_myServer = m_contactManager->myServer();
 
 	//Warning: requesting the password may ask to kwallet, this will open a dcop call and call QApplication::enter_loop
-	if( rememberPassword() )
-		m_engine->setPassword( password() );
+	//
+	// Never load passwords here, the initializer doesn't have a chance 
+	// to load it anyway. Passowords are loaded in ::loaded() - JLN
+	//
+	//if( rememberPassword() )
+	//	m_engine->setPassword( password() );
 
 
 }
@@ -77,13 +81,20 @@ IRCAccount::~IRCAccount()
 void IRCAccount::loaded()
 {
 	m_engine->setUserName(userName());
+	QString pass = password();
+	if ( !pass.isEmpty() ) {
+		m_engine->setPassword(pass);
+		m_engine->setReqsPassword(true);
+	} else {
+		m_engine->setReqsPassword(false);
+	}
+
 }
 
 QString IRCAccount::userName()
 {
 	return pluginData(protocol(), QString::fromLatin1("userName"));
 }
-
 void IRCAccount::setUserName(QString userName)
 {
 	m_engine->setUserName(userName);
@@ -238,6 +249,7 @@ void IRCAccount::slotJoinChannel()
 
 	QString chan = KInputDialog::getText( i18n( "IRC Plugin" ),
 		i18n( "Please enter name of the channel you want to join:" ), QString::null);
+
 	if( !chan.isNull() )
 	{
 		if( chan.startsWith( QString::fromLatin1("#") ) )

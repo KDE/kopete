@@ -242,6 +242,8 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 	addIrcMethod("406",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWasNoNick,		2,	2));
 
 	addIrcMethod("433",	&KIRC::numericReply_433,	2,	2);
+	/* Wrong Chan-key */
+	addIrcMethod("475",	&KIRC::numericReply_475,	2,	2);
 
 
 //	CTCP Queries
@@ -311,7 +313,11 @@ void KIRC::slotConnected()
 	kdDebug(14120) << "Connected" << endl;
 	setStatus(Authentifying);
 	m_sock.enableRead(true);
-
+	// If password is given for this server, send it now, and don't expect a reply
+	if (reqsPassword()) {
+		writeMessage("PASS", QStringList(m_Passwd) , m_Realname, false);
+	}
+                                               
 	changeUser(m_Username, 0, QString::fromLatin1("Kopete User"));
 	changeNickname(m_Nickname);
 }
@@ -580,11 +586,16 @@ bool KIRC::quitIRC(const KIRCMessage &msg)
 	return true;
 }
 
-void KIRC::joinChannel(const QString &name)
+void KIRC::joinChannel(const QString &name, const QString &key)
 {
 	/* This will join a channel
 	 */
-	writeMessage("JOIN", name);
+	if (!key.isNull()) {
+		writeMessage("JOIN", QStringList(name) << key);
+	} else {
+		writeMessage("JOIN", name);
+	}
+		
 }
 
 bool KIRC::joinChannel(const KIRCMessage &msg)
@@ -594,7 +605,6 @@ bool KIRC::joinChannel(const KIRCMessage &msg)
 	 * assumed ":<channel>"
 	 * This is the response of someone joining a channel.
 	 * Remember that this will be emitted when *you* /join a room for the first time */
-	kdDebug(14120) << "userJoinedChannel emitting" << endl;
 	if (msg.args().size()==1)
 		emit userJoinedChannel(msg.prefix(), msg.args()[0]);
 	else
@@ -1116,6 +1126,13 @@ bool KIRC::numericReply_433(const KIRCMessage &msg)
 	}
 	return true;
 }
+
+bool KIRC::numericReply_475(const KIRCMessage &msg)
+{
+	emit incomingFailedChankey(msg.args()[1]);
+	return true;
+}
+
 
 void KIRC::sendCtcpAction(const QString &contact, const QString &message)
 {
