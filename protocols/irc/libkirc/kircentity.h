@@ -22,6 +22,9 @@
 #include <qregexp.h>
 #include <qstring.h>
 
+#include <qt-addon/qresolver.h>
+#include <kdemacros.h>
+
 class KIRCEntity
 	: public QObject
 {
@@ -42,23 +45,47 @@ public:
 		: m_name(name)
 		{  }
 
-	inline QString getNick() const
-		{ return getNickFromPrefix(m_name); }
+	inline QString name() const
+		{ return m_name; }
 
-//	inline QString getUser() const
-//		{ return getUserFromPrefix(m_name); }
+	inline QString userNick() const
+		{ return userNick(m_name); }
+	static QString userNick(const QString &s)
+		{ return userInfo(s, 1); }
 
-//	inline QString getAddress()
-//		{ return ; }
+	inline QString userName() const
+		{ return userName(m_name); }
+	inline static QString userName(const QString &s)
+		{ return userInfo(s, 2); }
 
-	inline static QString getNickFromPrefix(const QString &s)
-		{ return s.section('!', 0, 0); }
+	inline QString userHost() const
+		{ return userHost(m_name); }
+	inline static QString userHost(const QString &s)
+		{ return userInfo(s, 3); }
+
+	inline static bool isUser( const QString &s )
+		{ return sm_userRegExp.exactMatch(s); };
 
 	inline bool isChannel()
 		{ return isChannel(m_name); };
 
 	inline static bool isChannel( const QString &s )
 		{ return sm_channelRegExp.exactMatch(s); };
+
+	inline QResolver::StatusCodes resolverStatus()
+		{ return (QResolver::StatusCodes)getResolver()->status(); }
+
+	QResolverResults resolve(bool *success = 0);
+	void resolveAsync();
+	QResolverResults resolverResults()
+		{ return getResolver()->results(); }
+
+signals:
+	void resolverResults(QResolverResults);
+
+protected:
+	static QString userInfo(const QString &s, int num_cap);
+	QResolver *getResolver();
 
 private:
 	static const QRegExp sm_userRegExp;
@@ -68,6 +95,8 @@ private:
 
 	// peer ip address if the entity is a User.
 	QString m_address;
+
+	QResolver *m_resolver;
 };
 
 #endif

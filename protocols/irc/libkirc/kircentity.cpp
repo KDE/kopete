@@ -14,9 +14,59 @@
     *                                                                       *
     *************************************************************************
 */
+#include <qt-addon/qresolver.h>
+#include <kdebug.h>
+
 #include "kircentity.h"
 
-const QRegExp KIRCEntity::sm_userRegExp(QString::fromLatin1("(.*)(?:!(.*))(?:@(.*))"));
+const QRegExp KIRCEntity::sm_userRegExp(QString::fromLatin1("^([^\\s,:!@]+)(?:(?:!([^\\s,:!@]+))?(?:@([^\\s,:!@]+)))?$"));
 const QRegExp KIRCEntity::sm_channelRegExp( QString::fromLatin1("^[#!+&][^\\s,:]+$") );
 
+QString KIRCEntity::userInfo(const QString &s, int num)
+{
+	QRegExp userRegExp(sm_userRegExp);
+	userRegExp.search(s);
+	return userRegExp.cap(num);
+}
+
+QResolverResults KIRCEntity::resolve(bool *success)
+{
+	resolveAsync();
+
+	QResolver *resolver = getResolver();
+	resolver->wait();
+	if(success) *success = resolver->status() == QResolver::Success;
+	return resolver->results();
+}
+
+void KIRCEntity::resolveAsync()
+{
+	QResolver *resolver = getResolver();
+	switch(resolver->status())
+	{
+	case QResolver::Idle:
+//	case QResolver::Canceled:
+//	case QResolver::Failed:
+		resolver->start();
+	case QResolver::Success:
+		break;
+	default:
+		kdDebug(14120) << k_funcinfo << "Resolver not started(" << resolver->status() << ")" << endl;
+	}
+}
+
+QResolver *KIRCEntity::getResolver()
+{
+	if (!m_resolver)
+	{
+		m_resolver = new QResolver(userHost(), QString::null, this);
+//		m_resolver->setFlags(flags);
+//		m_resolver->setFamily(families)
+		connect(m_resolver, SIGNAL(finished(QResolverResults)),
+			this, SIGNAL(resolverResults(QResolverResults)));
+	}
+	return m_resolver;
+}
+
 #include "kircentity.moc"
+
