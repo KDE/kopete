@@ -557,7 +557,11 @@ void OscarContact::slotParseUserInfo(const UserInfo &u)
 void OscarContact::slotRequestAuth()
 {
 	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
+	requestAuth();
+}
 
+int OscarContact::requestAuth()
+{
 #if KDE_IS_VERSION( 3, 1, 90 )
 	QString reason = KInputDialog::getText(
 		i18n("Request Authorization"),i18n("Reason for requesting authorization:"));
@@ -570,7 +574,10 @@ void OscarContact::slotRequestAuth()
 		kdDebug(14150) << k_funcinfo << "Sending auth request to '" <<
 			displayName() << "'" << endl;
 		mAccount->engine()->sendAuthRequest(contactName(), reason);
+		return(1);
 	}
+	else
+		return(0);
 }
 
 void OscarContact::slotSendAuth()

@@ -91,6 +91,8 @@ class OscarContact : public KopeteContact
 		const UserInfo &userInfo() { return mInfo; }
 		bool hasCap(DWORD cap) { return mInfo.capabilities & cap; }
 
+		int requestAuth();
+
 		/*
 		 * Encoding is a MIB, see IANA docs or QTextCodec apidocs!
 		 */

@@ -609,7 +609,7 @@ void OscarAccount::slotGotDirectIMRequest(QString sn)
 
 void OscarAccount::slotGotSSIAck(WORD result)
 {
-	QString reason;
+	//QString reason;
 	switch(result)
 	{
 		case SSIACK_LIMITEXD: case SSIACK_ICQTOAIM:
@@ -625,7 +625,12 @@ void OscarAccount::slotGotSSIAck(WORD result)
 			
 			OscarContact *contact = static_cast<OscarContact*>(contacts()[tocNormalize(bud->screenname())]);
 			contact->setWaitAuth( true );
-			engine()->sendAuthRequest( tocNormalize( buddyWaitingSSIAck.contact() ), reason );
+			if ( !contact->requestAuth() )
+			{
+				kdDebug(14150) << k_funcinfo << "Should remove contact: " << buddyWaitingSSIAck.contact() <<
+				" group: " << buddyWaitingSSIAck.group() << endl;
+				break;
+			}
 			engine()->setAddingAuthBuddy( true );
 			engine()->sendAddBuddy( tocNormalize( buddyWaitingSSIAck.contact() ), buddyWaitingSSIAck.group() );
 			engine()->sendAddBuddylist( tocNormalize( buddyWaitingSSIAck.contact() ) );
