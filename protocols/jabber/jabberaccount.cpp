@@ -302,9 +302,12 @@ void JabberAccount::connect ()
 void JabberAccount::slotPsiDebug (const QString & _msg)
 {
 	QString msg = _msg;
-	kdDebug (JABBER_DEBUG_PROTOCOL) << k_funcinfo << "Psi: "
-		<< msg.replace( QRegExp( "<password>[^<]*</password>\n" ), "<password>[Filtered]</password>\n" )
-		<< msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), "<digest>[Filtered]</digest>\n" ) << endl;
+
+	msg = msg.replace( QRegExp( "<password>[^<]*</password>\n" ), "<password>[Filtered]</password>\n" );
+	msg = msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), "<digest>[Filtered]</digest>\n" );
+
+	kdDebug (JABBER_DEBUG_PROTOCOL) << k_funcinfo << "Psi: " << msg << endl;
+
 }
 
 void JabberAccount::slotHandshaken ()
