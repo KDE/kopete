@@ -76,6 +76,8 @@ void JabberEditAccountWidget::reopen ()
 	mResource->setText (m_account->pluginData (m_protocol, "Resource"));
 	mServer->setText (m_account->pluginData (m_protocol, "Server"));
 
+	mID->setReadOnly(true); //the accountId is constant
+
 	// START Order Important =====
 	// !!! First set the checkbox, THEN the port
 	// if done the other way round: checking the checkbox triggers +/- 1 for the port-value
@@ -124,10 +126,10 @@ KopeteAccount *JabberEditAccountWidget::apply ()
 	{
 		m_account = new JabberAccount (m_protocol, mID->text ());
 	}
-	else
+	/*else
 	{
 		m_account->setAccountId (mID->text ());
-	}
+	}*/
 
 	this->writeConfig ();
 	return m_account;
@@ -225,10 +227,10 @@ void JabberEditAccountWidget::registerClicked ()
 	{
 		m_account = new JabberAccount (m_protocol, mID->text ());
 	}
-	else
+/*	else
 	{
 		m_account->setAccountId (mID->text ());
-	}
+	}*/
 
 	this->writeConfig ();
 	static_cast < JabberAccount * >(m_account)->registerUser ();

@@ -37,6 +37,10 @@ IRCEditAccountWidget::IRCEditAccountWidget(const IRCProtocol *proto, IRCAccount 
 		mServer->setText( serverInfo.section(':', 0, 0) );
 		mPort->setValue( serverInfo.section(':',1).toUInt() );
 
+		mNickName->setReadOnly(true);
+		mServer->setReadOnly(true);
+
+
 		if(m_account->rememberPassword()) mPassword->setText( m_account->getPassword() );
 	}
 }
@@ -51,8 +55,8 @@ KopeteAccount *IRCEditAccountWidget::apply()
 
 	if( !m_account )
 		m_account = new IRCAccount( mAccountId, mProtocol );
-	else
-		m_account->setAccountId( mAccountId );
+//	else
+//		m_account->setAccountId( mAccountId );
 
 	m_account->setPassword( mPassword->text() );
 	m_account->setAutoLogin( mAutoConnect->isChecked() );

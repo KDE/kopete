@@ -49,7 +49,7 @@ WPAccount::WPAccount(WPProtocol *parent, const QString &accountID, const char *n
 	if(autoLogin()) connect();
 
 	QObject::connect(theInterface, SIGNAL(newMessage(const QString &, const QDateTime &, const QString &)), this, SLOT(slotGotNewMessage(const QString &, const QDateTime &, const QString &)));
-	QObject::connect(theInterface, SIGNAL(accountIdChanged()), this, SLOT(updateAccountId()));
+//	QObject::connect(theInterface, SIGNAL(accountIdChanged()), this, SLOT(updateAccountId()));
 }
 
 // Destructor
@@ -128,12 +128,13 @@ void WPAccount::disconnect()
 	myself()->setOnlineStatus(static_cast<WPProtocol *>(protocol())->WPOffline);
 }
 
+/* I commented this code because deleting myself may have *dangerous* side effect, for example, for the status tracking.
 void WPAccount::updateAccountId()
 {
 	delete theMyself;
 	theInterface->setHostName(accountId());
 	theMyself = new WPContact(this, accountId(), accountId(), 0);
-}
+}*/
 
 void WPAccount::setAway(bool status, const QString &awayMessage)
 {

@@ -40,6 +40,7 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAc
 	theProtocol = protocol;
 	if(m_account)
 	{	mScreenName->setText(m_account->accountId());
+		mScreenName->setReadOnly(true) ; //the accountId is Constent
 		if(m_account->rememberPassword())
 			mPassword->setText(m_account->getPassword());
 		mAutoConnect->setChecked(m_account->autoLogin());
@@ -69,8 +70,8 @@ KopeteAccount *YahooEditAccount::apply()
 
 	if(!m_account)
 		m_account = new YahooAccount(theProtocol, mScreenName->text());
-	else
-		m_account->setAccountId(mScreenName->text());
+//	else
+//		m_account->setAccountId(mScreenName->text());
 	m_account->setAutoLogin(mAutoConnect->isChecked());
 	if(mRememberPassword->isChecked())
 		m_account->setPassword(mPassword->text());

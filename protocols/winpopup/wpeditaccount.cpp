@@ -43,6 +43,7 @@ WPEditAccount::WPEditAccount(WPProtocol *protocol, KopeteAccount *theAccount, QW
 	if(m_account)
 	{	mHostName->setText(m_account->accountId());
 		mAutoConnect->setChecked(m_account->autoLogin());
+		mHostName->setReadOnly(true);
 	}
 	else
 	{	QString theHostName = "";
@@ -58,7 +59,7 @@ WPEditAccount::WPEditAccount(WPProtocol *protocol, KopeteAccount *theAccount, QW
 			theHostName = "LOCALHOST";
 		mHostName->setText(theHostName);
 	}
-	
+
 	show();
 }
 
@@ -70,23 +71,23 @@ void WPEditAccount::installSamba()
 bool WPEditAccount::validateData()
 {
 	kdDebug(14180) << "WPEditAccount::validateData()";
-	
+
 	if(mHostName->text() == "")
 	{	KMessageBox::sorry(this, i18n("<qt>You must enter a valid screen name</qt>"), i18n("WP"));
 		return false;
 	}
-	
+
 	return true;
 }
 
 KopeteAccount *WPEditAccount::apply()
 {
 	kdDebug(14180) << "WPEditAccount::apply()";
-	
+
 	if(!m_account)
 		m_account = new WPAccount(theProtocol, mHostName->text());
-	else
-		m_account->setAccountId(mHostName->text());
+//	else
+//		m_account->setAccountId(mHostName->text());
 	m_account->setAutoLogin(mAutoConnect->isChecked());
 	
 	return m_account;

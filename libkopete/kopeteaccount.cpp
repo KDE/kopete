@@ -122,8 +122,11 @@ void KopeteAccount::setColor( const QColor &color )
 
 void KopeteAccount::setAccountId( const QString &accountId )
 {
-	d->id = accountId;
-	emit ( accountIdChanged() );
+	if(d->id!=accountId)
+	{
+		d->id = accountId;
+		emit ( accountIdChanged() );
+	}
 }
 
 const QDomElement KopeteAccount::toXML()

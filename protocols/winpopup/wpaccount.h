@@ -94,7 +94,7 @@ private slots:
 	 * Called when a new message arrives with the message's data.
 	 */
 	void slotGotNewMessage(const QString &Body, const QDateTime &Arrival, const QString &From);
-	void updateAccountId();
+//	void updateAccountId();
 
 private:
 	QString theAwayMessage;			// The message to give when the user is away

@@ -359,8 +359,6 @@ void KopeteMessage::setFont( const QFont &font )
 void KopeteMessage::setBody( const QString &body, MessageFormat f )
 {
 	detach();
-#if MESSAGE_QDOM
-	QDomCDATASection bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).firstChild().toCDATASection();
 
 	QString theBody = body;
 	if( f == RichText )
@@ -382,10 +380,13 @@ void KopeteMessage::setBody( const QString &body, MessageFormat f )
 		theBody.remove( QString::fromLatin1("\n") );
 	}
 
+#if MESSAGE_QDOM
+	QDomCDATASection bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).firstChild().toCDATASection();
 	bodyNode.setData( theBody );
 #else
 	d->body=body;
 #endif
+
 	d->format = f;
 }
 

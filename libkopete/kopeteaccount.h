@@ -36,12 +36,39 @@ QString cryptStr(const QString &aStr);
 
 /**
  * @author Olivier Goffart  <ogoffart@tiscalinet.be>
+ *
+ * The KopeteAccount class handle one account.
+ * Each protocol should subclass this class in their own customAccounts class.
+ * there are few pure virtual method than the protocol must implement. like
+ * @ref myslef()  @ref connect()  @ref disconnect() or @ref addContactToMetaContact()
+ *
+ * The accountId is an *constant* unique id. which represent the login.
+ * The @ref myself() contact one of the most importent contact, which represent the user
+ *
+ * All account data are automaticaly saved in a accounts.xml file. that include the
+ * accountId, the password (in a encrypted format) , the autoconnect flag, the color,
+ * and all PluginData. KopeteAccount is a @ref KopetePluginDataObject. in the account,
+ * you can call setPluginData( protocol() , "key" , "value") and pluginData( protocol , "key")
+ * see @ref KopetePluginDataObject::setPluginData() and KopetePluginDataObject::pluginData()
+ * note than plugin data are not yet availiable in the account constructor. they are
+ * only availiable after the xml file has been totaly parsed. You can reimplement
+ * @ref KopeteAccount::loaded() to do what you have to do right after the xml file is
+ * loaded. in the same way, you can't set pluginData in the destructor, because the
+ * xml file has already been writed, and new changes will not be updated on the disk.
  */
 class KopeteAccount : public KopetePluginDataObject
 {
 	Q_OBJECT
 
 public:
+	/**
+	 * constructor:
+	 * The constructor register automaticaly the account to the @ref KopeteAccountManager
+	 * @param parent it the protocol of this account. the accoun is a child object of the
+	 * protocol, so it will be automaticaly deleted with the parent.
+	 * @param accountID is the id of this protocol, it shouln't be changed after
+	 * @param name is the QObject name. it can be 0L
+	 */
 	KopeteAccount(KopeteProtocol *parent, const QString &accountID, const char *name=0L);
 	~KopeteAccount();
 
@@ -57,6 +84,11 @@ public:
 	/**
 	 * The account ID should be constant, don't use this method.
 	 * Reserved for expert usage, use it with care of risk
+	 * Changing the accountId on the fly, can result in bug and crash.
+	 * the myself contact id will never be changed (it is impossible to
+	 * change the contactId on the fly, and deleting myself is not possible
+	 * because it is connected to slot, pointer to this contact are stored
+	 * everywere, for examples, in the KMM.
 	 */
 	void setAccountId( const QString &accountId );
 
@@ -64,7 +96,8 @@ public:
 	 * Get the password for this account. Has the ability to open an input dialog
 	 * if the password is not currently set
 	 * @param error Set this value to true if you previously called getPassword and the
-	 * result was incorrect
+	 * result was incorrect (the password was wrong). It adds a label in the input
+	 * dialog saying that the password was wrong
 	 * @param ok is set to false if the user returned cancel
 	 * @return The password or QString::null if the user has canceled
 	 */
@@ -79,7 +112,8 @@ public:
 	void setPassword(const QString &pass = QString::null);
 
 	/**
-	 * say if the password is remember
+	 * say if the password is remember.
+	 * if it return false, that mean a call to @ref getPassword() will popup a window
 	 */
 	bool rememberPassword();
 
@@ -98,6 +132,8 @@ public:
 	const QColor color() const;
 	/*
 	 * Set the color this account will use to differentiate from the other accounts
+	 * normaly, this should be called by the Kopete's account config page. so you
+	 * don't have to set yourself the color.
 	 */
 	void setColor( const QColor &color);
 
@@ -127,6 +163,11 @@ public:
 	 * This function has to be reimplemented in every single protocol
 	 * and should return the KopeteContact associated with the 'home' user.
 	 * the myself contact MUST be created in the account constructor!
+	 * The myself contact Can't de deleted when kopete if this account still
+	 * exist. The myself contact is used in each KMM,
+	 * The myself contactId should be the accountID, his onlineStatus
+	 * represent the current user's status. the statusbar icon is connected
+	 * to myself.onlineStatusChanged to update the icon.
 	 *
 	 * @return contact associated with the currently logged in user
 	 */
@@ -216,7 +257,6 @@ signals:
 	 */
 	void passwordChanged();
 
-	signals:
 	/**
 	 * The myself status icon changed.
 	 */

@@ -1,7 +1,7 @@
 <!DOCTYPE kdevelop>
 <kdevelop>
   <general>
-    <author>Kopete Developers</author>
+    <author>Kopete Developpers</author>
     <email>kopete-devel@kde.org</email>
     <version>$VERSION$</version>
     <projectmanagement>KDevKDEAutoProject</projectmanagement>
