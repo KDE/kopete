@@ -38,8 +38,8 @@ James Grant <topace@lightbox.org> (irc: topace)
 Jason Keirstead <jason@keirstead.org> (irc: brunes)
 - Core developer, website
 
-
-
+Grzegorz Jaskiewicz <gj@pointblue.com.pl> (irc: gregj)
+- Gadu plugin developer
 
 Contributed patches. Thanks!
 ==============================
@@ -69,3 +69,5 @@ Richard Stellingwerff <remenic@linuxfromscratch.org> (irc: Remenic)
 Ian Renhart Geiser <geiseri@kde.org> (irc: geiseri)
 - KMM work
 
+Piotr Szymanski <djurban@gnu.univ.gda.pl> (irc: djurban)
+- Thanks to Pit we are now using external libgadu - for gadu plugin
