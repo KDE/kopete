@@ -119,6 +119,9 @@ KActionMenu *JabberAccount::actionMenu ()
 {
 	KActionMenu *m_actionMenu = new KActionMenu( accountId(), this );
 
+	m_actionMenu->popupMenu()->insertTitle(myContact->onlineStatus().iconFor(myContact), i18n( "%2 <%1>" ).
+		arg(accountId()).arg(myContact->displayName()));
+
 	m_actionMenu->insert(new KAction (i18n ("Online"), "jabber_online", 0, this, SLOT (slotGoOnline ()), this, "actionJabberConnect"));
 	m_actionMenu->insert(new KAction (i18n ("Free to Chat"), "jabber_chatty", 0, this, SLOT (slotGoChatty ()), this, "actionJabberChatty"));
 	m_actionMenu->insert(new KAction (i18n ("Away"), "jabber_away", 0, this, SLOT (slotGoAway ()), this, "actionJabberAway"));
@@ -132,9 +135,6 @@ KActionMenu *JabberAccount::actionMenu ()
 	m_actionMenu->insert(new KAction (i18n ("Services..."), "filenew", 0, this, SLOT (slotGetServices ()), this, "actionJabberServices"));
 	m_actionMenu->insert(new KAction (i18n ("Send Raw Packet to Server..."), "filenew", 0, this, SLOT (slotSendRaw ()), this, "actionJabberSendRaw"));
 	m_actionMenu->insert(new KAction (i18n ("Edit User Info..."), "identity", 0, this, SLOT (slotEditVCard ()), this, "actionEditVCard"));
-
-	m_actionMenu->popupMenu()->insertTitle(myContact->onlineStatus().iconFor(myContact), i18n( "%2 <%1>" ).
-		arg(accountId()).arg(myContact->displayName()));
 
 	return m_actionMenu;
 }
