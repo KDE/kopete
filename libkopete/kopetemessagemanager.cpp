@@ -319,7 +319,8 @@ KopeteView* KopeteMessageManager::view(bool canCreate  , KopeteMessage::MessageT
 	if(!d->view && canCreate)
 	{
 		d->view=KopeteMessageManagerFactory::factory()->createView( this , type );
-		connect( d->view->mainWidget(), SIGNAL( closing( KopeteView * ) ), this, SLOT( slotViewDestroyed( ) ) );
+		if(d->view) 
+			connect( d->view->mainWidget(), SIGNAL( closing( KopeteView * ) ), this, SLOT( slotViewDestroyed( ) ) );
 	}
 	return d->view;
 }

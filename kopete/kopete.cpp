@@ -172,6 +172,10 @@ void Kopete::slotLoadPlugins()
 
 	LibraryLoader::pluginLoader()->loadAll();
 
+	//load the default chatwindow
+	LibraryLoader::pluginLoader()->loadPlugin( "chatwindow.desktop" );
+
+
 	// --noconnect not specified?
 	if (args->isSet("connect"))
 	{
@@ -212,6 +216,7 @@ void Kopete::slotLoadPlugins()
 			}
 		}
 	}
+
 
 	if( showConfigDialog )
 		PreferencesDialog::preferencesDialog()->show();

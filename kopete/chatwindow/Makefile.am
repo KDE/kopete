@@ -1,19 +1,16 @@
-kde_module_LTLIBRARIES = libkrichtexteditpart.la
+kde_module_LTLIBRARIES = libkrichtexteditpart.la kopete_chatwindow.la
 METASOURCES = AUTO
 
-AM_CPPFLAGS = $(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private \
-	-I$(top_srcdir)/kopete/kopete/addcontactwizard -I$(top_srcdir)/kopete/kopete $(all_includes)
+AM_CPPFLAGS = $(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private    $(all_includes)
 
-noinst_LTLIBRARIES = libkopetechatwindow.la
-
-libkopetechatwindow_la_SOURCES = kopeteviewmanager.cpp kopeteemailwindow.cpp \
+kopete_chatwindow_la_SOURCES = kopeteviewmanager.cpp kopeteemailwindow.cpp \
 	kopetechatwindow.cpp chatview.cpp \
 	kopetetabwidget.cpp \
 	emoticonselector.cpp \
 	kopeteemoticonaction.cpp
 
-libkopetechatwindow_la_LDFLAGS = $(all_libraries)
-libkopetechatwindow_la_LIBADD = ../../libkopete/libkopete.la $(LIB_KDEUI)
+kopete_chatwindow_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
+kopete_chatwindow_la_LIBADD = ../../libkopete/libkopete.la $(LIB_KDEUI)
 
 libkrichtexteditpart_la_SOURCES = krichtexteditpart.cpp
 libkrichtexteditpart_la_LDFLAGS = -module $(KDE_PLUGIN)
@@ -26,5 +23,6 @@ partrc_DATA = krichtexteditpartui.rc
 rcdir = $(kde_datadir)/kopete
 rc_DATA = kopetechatwindow.rc kopeteemailwindow.rc
 
-# vim: set noet:
+service_DATA = chatwindow.desktop
+servicedir = $(kde_servicesdir)
 

@@ -53,7 +53,7 @@
 #include "kopeteprotocol.h"
 #include "kopetestatusgroupviewitem.h"
 #include "kopetestdaction.h"
-#include "kopeteviewmanager.h"
+#include "kopetemessagemanagerfactory.h"
 
 #include "kopetelviprops.h"
 
@@ -235,7 +235,7 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 		SIGNAL( groupAdded( KopeteGroup * ) ),
 		SLOT( slotGroupAdded( KopeteGroup * ) ) );
 
-	connect( KopeteViewManager::viewManager() , SIGNAL( newMessageEvent(KopeteEvent *) ),
+	connect( KopeteMessageManagerFactory::factory() , SIGNAL( newEvent(KopeteEvent *) ),
 		this, SLOT( slotNewMessageEvent(KopeteEvent *) ) );
 
 	connect( this , SIGNAL( dropped(QDropEvent *, QListViewItem *, QListViewItem*) ) ,

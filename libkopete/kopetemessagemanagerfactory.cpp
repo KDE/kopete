@@ -175,6 +175,11 @@ KopeteView * KopeteMessageManagerFactory::createView( KopeteMessageManager *kmm 
 	return newView;
 }
 
+void KopeteMessageManagerFactory::postNewEvent(KopeteEvent *e)
+{
+	emit newEvent(e);
+}
+
 #include "kopetemessagemanagerfactory.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

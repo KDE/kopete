@@ -17,7 +17,7 @@
 #ifndef KOPETEVIEWMANAGER_H
 #define KOPETEVIEWMANAGER_H
 
-#include <qobject.h>
+#include <kopeteplugin.h>
 
 #include "kopetemessage.h"
 
@@ -35,7 +35,7 @@ struct KopeteViewManagerPrivate;
 /**
  * Relates an actual chat to the means used to view it.
  */
-class KopeteViewManager : public QObject
+class KopeteViewManager : public KopetePlugin
 {
 	Q_OBJECT
 	public:
@@ -44,6 +44,7 @@ class KopeteViewManager : public QObject
 		 */
 		static KopeteViewManager *viewManager();
 
+		KopeteViewManager( QObject *parent, const char *name, const QStringList &args );
 		~KopeteViewManager();
 
 		/**
@@ -61,10 +62,7 @@ class KopeteViewManager : public QObject
 		KopeteView *activeView() const;
 
 	private:
-		/**
-	 	* Private constructor: we are a singleton
-	 	*/
-		KopeteViewManager();
+
 
 		KopeteViewManagerPrivate *d;
 		static KopeteViewManager *s_viewManager;
@@ -91,9 +89,8 @@ class KopeteViewManager : public QObject
 		void slotViewDestroyed( KopeteView *);
 		void slotMessageManagerDestroyed( KopeteMessageManager * );
 
-
 		/**
-		 * An event has been deleted. 
+		 * An event has been deleted.
 		 */
 		void slotEventDeleted( KopeteEvent * );
 
@@ -104,12 +101,6 @@ class KopeteViewManager : public QObject
 
 		//obsolete, used only by spellchecking plugin
 		void slotGetActiveView(KopeteView*&);
-
-	signals:
-		/**
-		 * A new message is received, but not yet shown in the chatwindow
-	 	 */
-		void newMessageEvent(KopeteEvent *);
 };
 
 #endif

@@ -17,6 +17,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <kgenericfactory.h>
 #include "kopetenotifyclient.h"
 
 #include "kopeteprefs.h"
@@ -25,9 +26,15 @@
 #include "kopetemetacontact.h"
 #include "chatview.h"
 #include "kopeteemailwindow.h"
-#include "systemtray.h"
+#include "kopeteevent.h"
+//#include "systemtray.h"
 
 #include "kopeteviewmanager.h"
+
+typedef KGenericFactory<KopeteViewManager> ViewManagerFactory;
+K_EXPORT_COMPONENT_FACTORY( kopete_chatwindow, ViewManagerFactory( "kopete_chatwindow" )  );
+
+
 
 typedef QMap<KopeteMessageManager*,KopeteView*> ManagerMap;
 typedef QMap<KopeteMessageManager*,KopeteEvent*> EventMap;
@@ -47,14 +54,14 @@ KopeteViewManager *KopeteViewManager::s_viewManager = 0L;
 
 KopeteViewManager *KopeteViewManager::viewManager()
 {
-	if( !s_viewManager )
-		s_viewManager = new KopeteViewManager;
-
 	return s_viewManager;
 }
 
-KopeteViewManager::KopeteViewManager() : QObject( kapp, "KopeteViewManager" )
+KopeteViewManager::KopeteViewManager (QObject *parent, const char *name, const QStringList &/*args*/ )
+	: KopetePlugin( ViewManagerFactory::instance(), parent, name )
+
 {
+	s_viewManager=this;
 	d = new KopeteViewManagerPrivate;
 	d->activeView = 0L;
 	d->foreignMessage=false;
@@ -149,7 +156,7 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 				KopeteEvent *event=new KopeteEvent(msg,manager);
 				d->eventMap.insert( manager, event );
 				connect(event, SIGNAL(done(KopeteEvent *)), this, SLOT(slotEventDeleted(KopeteEvent *)));
-				emit newMessageEvent(event);
+				KopeteMessageManagerFactory::factory()->postNewEvent(event);
 			}
 		}
 		else
@@ -169,7 +176,8 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 			if( msgText.length() > 90 )
 				msgText = msgText.left(88) + QString::fromLatin1("...");
 
-			int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
+			int winId = 0;  //TODO: use the chatwindoiws's winid
+				//KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 
 			switch( msg.importance() )
 			{
@@ -190,7 +198,7 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 #if QT_VERSION < 0x030200
 					KopeteNotifyClient::event( winId, event, body.arg( msgFrom ).arg( msgText ) ,
 #else
-					KopeteNotifyClient::event( winId, event, body.arg( msgFrom, msgText ) ,
+					KopeteNotifyClient::event(winId,  event, body.arg( msgFrom, msgText ) ,
 #endif
 						i18n("View") , const_cast<KopeteContact*>(msg.from()) , SLOT(execute()) );
 ;

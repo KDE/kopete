@@ -29,7 +29,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kiconloader.h>
-#include "kopeteviewmanager.h"
+#include "kopetemessagemanagerfactory.h"
 #include "kopeteballoon.h"
 #include "kopeteprefs.h"
 #include "kopetemetacontact.h"
@@ -59,7 +59,7 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent, const char* name)
 	mKopeteIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ), 22 ) );
 
 	connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
-	connect(KopeteViewManager::viewManager() , SIGNAL(newMessageEvent(KopeteEvent*)),
+	connect(KopeteMessageManagerFactory::factory() , SIGNAL(newEvent(KopeteEvent*)),
 		this, SLOT(slotNewEvent(KopeteEvent*)));
 	connect(KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()));
 

@@ -103,6 +103,11 @@ public:
 	 */
 	KopeteView *createView( KopeteMessageManager * , KopeteMessage::MessageType type );
 
+	/**
+	 * Post a new event. this will emit the @ref newEvent signal
+	 */
+	void postNewEvent(KopeteEvent*);
+
 signals:
 	/**
 	 * This signal is emitted whenever a message
@@ -160,10 +165,17 @@ signals:
 	 */
 	void display( KopeteMessage& message, KopeteMessageManager * );
 
+	/**
+	 * A new event has been posted.
+	 */
+	void newEvent(KopeteEvent *);
+
+
 	/*
 	 * obsolete temporary method used by the spellchecking plugin (ugly workaround)
 	 */
 	void getActiveView(KopeteView*& ); public: void activeView(KopeteView*&v) { emit getActiveView(v); }
+
 
 private:
 	KopeteMessageManagerFactory( QObject* parent = 0, const char* name = 0 );

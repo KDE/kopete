@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=Kopete ChatWindow
+ServiceTypes=Kopete/Plugin
+X-KDE-Library=kopete_chatwindow
+X-Kopete-Plugin-Id=chatwindow
+X-Kopete-Author=Kopete team
+X-Kopete-Site=http://kopete.kde.org
+X-Kopete-Email=kopete-devel@kde.org
+X-Kopete-License=GPL
+Comment=The default kopete chat window
