@@ -52,11 +52,12 @@ int main(int argc, char *argv[])
 	aboutData.addAuthor ( "Olivier Goffart", I18N_NOOP("Core developer"), "ogoffart@tiscalinet.be");
 	aboutData.addAuthor ( "Hendrik vom Lehn", I18N_NOOP("Developer"), "hennevl@hennevl.de", "http://www.hennevl.de");
 	aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("Developer"), "sgehn@gmx.net", "http://metz81.mine.nu" );
-	aboutData.addAuthor ( "Andres Krapf", I18N_NOOP("Random hacks and bugfixes"), "dae@chez.com" );
+	aboutData.addAuthor ( "Andres Krapf", I18N_NOOP("Developer"), "dae@chez.com" );
 	aboutData.addAuthor ( "Gav Wood", I18N_NOOP("Winpopup plugin"), "gjw102@york.ac.uk" );
+    aboutData.addAuthor ( "Zack Rusin", I18N_NOOP("Core developer, Gadu plugin"), "zack@kde.org" );
 
-
-	aboutData.addCredit ( "Herwin Jan Steehouwer", I18N_NOOP("KxEngine ICQ code") );
+	aboutData.addCredit ( "Vladimir Shutoff", I18N_NOOP("SIM icq library") );
+    aboutData.addCredit ( "Herwin Jan Steehouwer", I18N_NOOP("KxEngine icq code") );
 	aboutData.addCredit ( "Olaf Lueg", I18N_NOOP("Kmerlin MSN code") );
 	aboutData.addCredit ( "Neil Stevens", I18N_NOOP("TAim engine AIM code") );
 	aboutData.addCredit ( "Justin Karneges", I18N_NOOP("Psi Jabber code") );
