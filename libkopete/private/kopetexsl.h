@@ -16,9 +16,10 @@
 #ifndef _KOPETE_XSLT_H
 #define _KOPETE_XSLT_H
 
-#include <qdom.h>
 #include <qthread.h>
-#include <qobject.h>
+
+class QObject;
+class QSignal;
 
 /**
  * @author Jason Keirstead <jason@keirstead.org>
@@ -45,31 +46,10 @@ class KopeteXSL
 		 * @param xmlString The source XML
 		 * @param xslString The source XSL
 		 * @param target The QObject that contains the slot to be executed when processing is complete
-		 * @param slotCompleted A slot that accepts a QString & paramater, that is the result
+		 * @param slotCompleted A slot that accepts a QVariant & paramater, that is the result
 		 *	of the transformation
 		 */
 		static void xsltTransformAsync( const QString &xmlString, const QString &xslString,
-			QObject *target, const char* slotCompleted );
-
-		/**
-		 * Transforms the XML string using the XSL String, synchronously
-		 *
-		 * @param xmlDocument The source XML
-		 * @param xslDocument The source XSL
-		 * @return The result of the transformation
-		 */
-		static QDomDocument xsltTransform( const QDomDocument &xmlDocument, const QDomDocument &xslDocument );
-
-		/**
-		 * Transforms the XML string using the XSL String, asynchronously
-		 *
-		 * @param xmlDocument The source XML Document
-		 * @param xslDocument The source XSL Document
-		 * @param target The QObject that contains the slot to be executed when processing is complete
-		 * @param slotCompleted A slot that accepts a QDomDocument & paramater, that is the result
-		 *	of the transformation
-		 */
-		static void xsltTransformAsync( const QDomDocument &xmlDocument, const QDomDocument &xslDocument,
 			QObject *target, const char* slotCompleted );
 
 		/**
@@ -94,18 +74,19 @@ class KopeteXSL
  * The thread class that actually performs the XSL processing.
  * Using a thread allows for async operation.
  */
-class KopeteXSLThread : public QObject, public QThread
+class KopeteXSLThread : public QThread
 {
-	Q_OBJECT
-
 	public:
 		/**
 		 * Thread constructor
 		 *
 		 * @param xmlString The XML to be transformed
 		 * @param xslString The XSL string we will use to transform
+		 * @param target Target object to connect to for async operation
+		 * @param slotCompleted Slot to fire on completion in asnc operation
 		 */
-		KopeteXSLThread( const QString &xmlString, const QString &xslString );
+		KopeteXSLThread( const QString &xmlString, const QString &xslString,
+			QObject *target = 0L, const char* slotCompleted = 0L );
 
 		/**
 		 * Re implimented from QThread. Does the processing.
@@ -116,22 +97,6 @@ class KopeteXSLThread : public QObject, public QThread
 		 * Returns the result string
 		 */
 		const QString &result() { return m_resultString; };
-
-		/**
-		 * Returns the result document
-		 */
-		const QDomDocument &resultDocument() { return m_result; };
-
-	signals:
-		/**
-		 * Emits when the transformation is complete
-		 */
-		void complete( const QString & );
-
-		/**
-		 * Emits when the transformation is complete
-		 */
-		void documentComplete( const QDomDocument & );
 
 	private:
 		/**
@@ -147,7 +112,8 @@ class KopeteXSLThread : public QObject, public QThread
 		QString m_xml;
 		QString m_xsl;
 		QString m_resultString;
-		QDomDocument m_result;
+		QObject *m_target;
+		const char* m_slotCompleted;
 };
 
 #endif

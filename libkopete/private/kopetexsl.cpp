@@ -22,6 +22,7 @@
 #include <kdebug.h>
 #include <kopetexsl.h>
 #include <qregexp.h>
+#include <qsignal.h>
 
 //#define XSL_DEBUG 1
 
@@ -38,24 +39,7 @@ const QString KopeteXSL::xsltTransform( const QString &xmlString, const QString 
 void KopeteXSL::xsltTransformAsync( const QString &xmlString, const QString &xslString,
 			QObject *target, const char* slotCompleted )
 {
-	KopeteXSLThread *mThread = new KopeteXSLThread( xmlString, xslString );
-	QObject::connect( mThread, SIGNAL(complete( const QString & )), target, slotCompleted );
-	mThread->start();
-}
-
-QDomDocument KopeteXSL::xsltTransform( const QDomDocument &xmlDocument, const QDomDocument &xslDocument )
-{
-	KopeteXSLThread mThread( xmlDocument.toString(), xslDocument.toString() );
-	mThread.start();
-	mThread.wait();
-	return mThread.resultDocument();
-}
-
-void KopeteXSL::xsltTransformAsync( const QDomDocument &xmlDocument, const QDomDocument &xslDocument,
-			QObject *target, const char* slotCompleted )
-{
-	KopeteXSLThread *mThread = new KopeteXSLThread( xmlDocument.toString(), xslDocument.toString() );
-	QObject::connect( mThread, SIGNAL(documentComplete( const QString & )), target, slotCompleted );
+	KopeteXSLThread *mThread = new KopeteXSLThread( xmlString, xslString, target, slotCompleted );
 	mThread->start();
 }
 
@@ -88,10 +72,13 @@ bool KopeteXSL::isValid( const QString &xslString )
 	return retVal;
 }
 
-KopeteXSLThread::KopeteXSLThread( const QString &xmlString, const QString &xslString )
+KopeteXSLThread::KopeteXSLThread( const QString &xmlString, const QString &xslString, QObject *target, const char* slotCompleted )
 {
 	m_xml = xmlString;
 	m_xsl = xslString;
+
+	m_target = target;
+	m_slotCompleted = slotCompleted;
 }
 
 void KopeteXSLThread::run()
@@ -149,17 +136,16 @@ void KopeteXSLThread::run()
 	xmlCleanupParser();
 	xmlMemoryDump();
 
-	//Remove escaping
-	//KopeteXSL::unescape( m_resultString );
-
-	//Save the resuling DOM document
-	m_result.setContent( m_resultString );
-
 	//Signal completion
-	emit( complete( m_resultString ) );
-	emit( documentComplete( m_result ) );
+	if( m_target && m_slotCompleted )
+	{
+		QSignal completeSignal( m_target );
+		completeSignal.connect( m_target, m_slotCompleted );
+		completeSignal.setValue( m_resultString );
+		completeSignal.activate();
 
-	deleteLater();
+		delete this;
+	}
 }
 
 void KopeteXSL::unescape( QString &xml )
@@ -184,6 +170,3 @@ int KopeteXSLThread::closeQString( void * context )
 	*t += QString::fromLatin1("\n");
 	return 0;
 }
-
-#include "kopetexsl.moc"
-
