@@ -73,6 +73,12 @@ public:
 	 * because the user has not (yet) opened the wallet.
 	 */
 	bool remember() const;
+	
+	/**
+	 * Set the password stored in the widget.
+	 * @param pass The text to place in the password field.
+	 */
+	void setPassword( const QString &pass );
 
 signals:
 	/**

@@ -83,11 +83,8 @@ void Kopete::UI::PasswordWidget::receivePassword( const QString &pwd )
 	// don't uncheck the remembered field in this case.
 	if ( !pwd.isNull() && mRemembered->state() == QButton::NoChange )
 	{
-		mRemembered->setTristate( false );
 		mRemembered->setChecked( true );
-		mPassword->clear();
-		mPassword->insert( pwd );
-		mPassword->setEnabled( true );
+		setPassword( pwd );
 	}
 }
 
@@ -117,6 +114,17 @@ QString Kopete::UI::PasswordWidget::password() const
 bool Kopete::UI::PasswordWidget::remember() const
 {
 	return mRemembered->state() == QButton::On;
+}
+
+void Kopete::UI::PasswordWidget::setPassword( const QString &pass )
+{
+	// switch out of 'waiting for wallet' mode if we're in it
+	mRemembered->setTristate( false );
+
+	// fill in the password text
+	mPassword->clear();
+	mPassword->insert( pass );
+	mPassword->setEnabled( remember() );
 }
 
 #include "kopetepasswordwidget.moc"
