@@ -856,19 +856,66 @@ void ChatView::slotTextChanged()
 
 void ChatView::historyUp()
 {
-	historyPos++;
-	if(historyPos < (int)historyList.count())
-		m_edit->setText(historyList[historyPos]);
+	QString txt = m_edit->text();
+	if(editpart) //remove all <p><br> and other html tags
+		txt.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
+	bool empty=txt.stripWhiteSpace().isEmpty();
+
+	if(historyPos == -1)
+	{
+		if(!empty) //if we've typed something...
+		{
+			historyList.prepend(m_edit->text()); //...save it
+			if ((int)historyList.count() > 1)
+				historyPos = 1;
+			else
+				historyPos = 0;
+		}
+		else if ((int)historyList.count() != 0)
+			historyPos = 0;
+	}
 	else
-		historyPos = historyList.count()-1;
+	{
+		if(!empty)
+			historyList[historyPos] = m_edit->text();
+		if(historyPos < (int)historyList.count()-1)
+			historyPos++;
+	}
+	if (historyPos != -1)
+	{
+		m_edit->setText(historyList[historyPos]);
+		m_edit->moveCursor(QTextEdit::MoveEnd, false);
+	}
 }
 
 void ChatView::historyDown()
 {
-	if(historyPos > 0)
+	QString txt = m_edit->text();
+	if(editpart) //remove all <p><br> and other html tags
+		txt.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
+	bool empty=txt.stripWhiteSpace().isEmpty();
+
+
+	if (historyPos == -1)
 	{
+		if(!empty)
+		{
+			historyList.prepend(m_edit->text());
+			m_edit->setText( "" );
+		}
+	}
+	else
+	{
+		if(!empty)
+			historyList[historyPos] = m_edit->text();
 		historyPos--;
-		m_edit->setText(historyList[historyPos]);
+		if (historyPos >= 0)
+		{
+			m_edit->setText(historyList[historyPos]);
+			m_edit->moveCursor(QTextEdit::MoveEnd, false);
+		}
+		else
+			m_edit->setText( "" );
 	}
 }
 
