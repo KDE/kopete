@@ -40,7 +40,6 @@ class BehaviorConfig : public KCModule
 		void slotShowTrayChanged(bool);
 		void slotSettingsChanged(bool);
 		void slotValueChanged(int);
-		void slotEditTooltips();
 
 	private:
 		QTabWidget* mBehaviorTabCtl;

@@ -16,7 +16,6 @@
 #include "behaviorconfig.h"
 #include "behaviorconfig_general.h"
 #include "behaviorconfig_chat.h"
-#include "tooltipeditdialog.h"
 
 #include <qcheckbox.h>
 #include <qlayout.h>
@@ -78,12 +77,6 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsGeneral->mSoundIfAwayChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mTreeContactList, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mSortByGroup, SIGNAL(toggled(bool)),
-		this, SLOT(slotSettingsChanged(bool)));
-	connect(mPrfsGeneral->mEditTooltips, SIGNAL(clicked()),
-		this, SLOT(slotEditTooltips()));
 
 	// "Chat" TAB ===============================================================
 	connect( mPrfsChat->cb_RaiseMsgWindowChk, SIGNAL(toggled(bool)),
@@ -125,8 +118,6 @@ void BehaviorConfig::save()
 	p->setTrayflashNotify(mPrfsGeneral->mTrayflashNotifyChk->isChecked());
 	p->setBalloonNotify(mPrfsGeneral->mBalloonNotifyChk->isChecked());
 	p->setSoundIfAway(mPrfsGeneral->mSoundIfAwayChk->isChecked());
-	p->setTreeView(mPrfsGeneral->mTreeContactList->isChecked());
-	p->setSortByGroup(mPrfsGeneral->mSortByGroup->isChecked());
 
 
 	// "Away" TAB ===============================================================
@@ -167,8 +158,6 @@ void BehaviorConfig::load()
 	mPrfsGeneral->mBalloonNotifyChk->setChecked ( p->balloonNotify() );
 	mPrfsGeneral->mSoundIfAwayChk->setChecked( p->soundIfAway() );
 	slotShowTrayChanged( mPrfsGeneral->mShowTrayChk->isChecked() );
-	mPrfsGeneral->mTreeContactList->setChecked( p->treeView() );
-	mPrfsGeneral->mSortByGroup->setChecked( p->sortByGroup() );
 
 
 	// "Away" TAB ===============================================================
@@ -217,14 +206,6 @@ void BehaviorConfig::slotSettingsChanged(bool)
 void BehaviorConfig::slotValueChanged(int)
 {
 	emit changed( true );
-}
-
-void BehaviorConfig::slotEditTooltips()
-{
-	TooltipEditDialog *dlg = new TooltipEditDialog(this);
-	connect(dlg, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)));
-	dlg->exec();
-	delete dlg;
 }
 
 #include "behaviorconfig.moc"

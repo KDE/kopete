@@ -5,7 +5,9 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private \
 kde_module_LTLIBRARIES = kcm_kopete_appearanceconfig.la
 
 kcm_kopete_appearanceconfig_la_SOURCES = styleeditdialog.ui appearanceconfig_emoticons.ui \
-	appearanceconfig_colors.ui appearanceconfig_chatwindow.ui appearanceconfig.cpp
+	appearanceconfig_colors.ui appearanceconfig_chatwindow.ui appearanceconfig_contactlist.ui \
+	appearanceconfig.cpp tooltipeditwidget.ui tooltipeditdialog.cpp
+
 kcm_kopete_appearanceconfig_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kcm_kopete_appearanceconfig_la_LIBADD  = ../../../libkopete/libkopete.la -lktexteditor $(LIB_KOPETECOMPAT) $(LIB_KUTILS)
 

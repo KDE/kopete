@@ -18,6 +18,9 @@
 #include "appearanceconfig_emoticons.h"
 #include "appearanceconfig_chatwindow.h"
 #include "appearanceconfig_colors.h"
+#include "appearanceconfig_contactlist.h"
+
+#include "tooltipeditdialog.h"
 
 #include <qcheckbox.h>
 #include <qdir.h>
@@ -38,7 +41,7 @@
 #include <kcolorcombo.h>
 #include <kcolorbutton.h>
 #include <kdebug.h>
-#include <kfontdialog.h>
+#include <kfontrequester.h>
 #include <kgenericfactory.h>
 #include <khtmlview.h>
 #include <khtml_part.h>
@@ -127,7 +130,6 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	connect(mPrfsChatWindow->mTransparencyBgOverride, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
 
-
 	mPrfsChatWindow->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
 	QVBoxLayout *l = new QVBoxLayout(mPrfsChatWindow->htmlFrame);
 	preview = new KHTMLPart(mPrfsChatWindow->htmlFrame, "preview");
@@ -142,16 +144,31 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	htmlWidget->setSizePolicy(
 		QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 	l->addWidget(htmlWidget);
+
 	mAppearanceTabCtl->addTab( mPrfsChatWindow, i18n("Chat Window") );
 
+	// "Contact List" TAB =======================================================
+	mPrfsContactList = new AppearanceConfig_ContactList(mAppearanceTabCtl);
+	connect(mPrfsContactList->mTreeContactList, SIGNAL(toggled(bool)),
+		this, SLOT(emitChanged()));
+	connect(mPrfsContactList->mSortByGroup, SIGNAL(toggled(bool)),
+		this, SLOT(emitChanged()));
+	connect(mPrfsContactList->mEditTooltips, SIGNAL(clicked()),
+		this, SLOT(slotEditTooltips()));
+	connect(mPrfsContactList->mIndentContacts, SIGNAL(toggled(bool)),
+		this, SLOT(emitChanged()));
+	connect(mPrfsContactList->mDisplayMode, SIGNAL(clicked(int)),
+		this, SLOT(emitChanged()));
 
-	// "Colors" TAB =============================================================
+	mAppearanceTabCtl->addTab(mPrfsContactList, i18n("Contact List"));
+
+	// "Colors and Fonts" TAB ===================================================
 	mPrfsColors = new AppearanceConfig_Colors(mAppearanceTabCtl);
 	connect(mPrfsColors->foregroundColor, SIGNAL(changed(const QColor &)),
 		this, SLOT(slotHighlightChanged()));
 	connect(mPrfsColors->backgroundColor, SIGNAL(changed(const QColor &)),
 		this, SLOT(slotHighlightChanged()));
-	connect(mPrfsColors->fontFace, SIGNAL(clicked()),
+	connect(mPrfsColors->fontFace, SIGNAL(fontSelected(const QFont &)),
 		this, SLOT(slotChangeFont()));
 	connect(mPrfsColors->textColor, SIGNAL(changed(const QColor &)),
 		this, SLOT(slotUpdatePreview()));
@@ -160,13 +177,20 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 	connect(mPrfsColors->linkColor, SIGNAL(changed(const QColor &)),
 		this, SLOT(slotUpdatePreview()));
 	connect(mPrfsColors->mGreyIdleMetaContacts, SIGNAL(toggled(bool)),
-		this, SLOT(slotGreyIdleMetaContactsChanged(bool)));
-
+		this, SLOT(emitChanged()));
 	connect(mPrfsColors->idleContactColor, SIGNAL(changed(const QColor &)),
 		this, SLOT(emitChanged()));
-
+	connect(mPrfsColors->mUseCustomFonts, SIGNAL(toggled(bool)),
+		this, SLOT(emitChanged()));
+	connect(mPrfsColors->mSmallFont, SIGNAL(fontSelected(const QFont &)),
+		this, SLOT(emitChanged()));
+	connect(mPrfsColors->mNormalFont, SIGNAL(fontSelected(const QFont &)),
+		this, SLOT(emitChanged()));
+	connect(mPrfsColors->mGroupNameColor, SIGNAL(changed(const QColor &)),
+		this, SLOT(emitChanged()));
 
 	mAppearanceTabCtl->addTab(mPrfsColors, i18n("Colors && Fonts"));
+
 	// ==========================================================================
 
 	errorAlert = false;
@@ -199,6 +223,12 @@ void AppearanceConfig::save()
 	if( styleChanged || p->styleSheet() != itemMap[ mPrfsChatWindow->styleList->selectedItem() ] )
 		p->setStyleSheet( itemMap[ mPrfsChatWindow->styleList->selectedItem() ] );
 
+	// "Contact List" TAB =======================================================
+	p->setTreeView(mPrfsContactList->mTreeContactList->isChecked());
+	p->setSortByGroup(mPrfsContactList->mSortByGroup->isChecked());
+	p->setContactListIndentContacts(mPrfsContactList->mIndentContacts->isChecked());
+	p->setContactListDisplayMode(KopetePrefs::ContactDisplayMode(mPrfsContactList->mDisplayMode->selectedId()));
+
 	// "Colors & Fonts" TAB =====================================================
 	p->setHighlightBackground(mPrfsColors->backgroundColor->color());
 	p->setHighlightForeground(mPrfsColors->foregroundColor->color());
@@ -208,7 +238,11 @@ void AppearanceConfig::save()
 	p->setFontFace(mPrfsColors->fontFace->font());
 	p->setIdleContactColor(mPrfsColors->idleContactColor->color());
 	p->setGreyIdleMetaContacts(mPrfsColors->mGreyIdleMetaContacts->isChecked());
-
+	p->setContactListUseCustomFonts(mPrfsColors->mUseCustomFonts->isChecked());
+	p->setContactListCustomSmallFont(mPrfsColors->mSmallFont->font());
+	p->setContactListCustomNormalFont(mPrfsColors->mNormalFont->font());
+	p->setContactListGroupNameColor(mPrfsColors->mGroupNameColor->color());
+	
 	p->save();
 	errorAlert = false;
 	styleChanged = false;
@@ -242,10 +276,16 @@ void AppearanceConfig::load()
 		mPrfsChatWindow->styleList->insertItem( fileName, 0 );
 		itemMap.insert( mPrfsChatWindow->styleList->firstItem(), fileName );
 
-		if ( ( *it ) == p->styleSheet() )
+		if ( fileName == p->styleSheet() )
 			mPrfsChatWindow->styleList->setSelected( mPrfsChatWindow->styleList->firstItem(), true );
 	}
 	mPrfsChatWindow->styleList->sort();
+	
+	// "Contact List" TAB =======================================================
+	mPrfsContactList->mTreeContactList->setChecked( p->treeView() );
+	mPrfsContactList->mSortByGroup->setChecked( p->sortByGroup() );
+	mPrfsContactList->mIndentContacts->setChecked( p->contactListIndentContacts() );
+	mPrfsContactList->mDisplayMode->setButton( p->contactListDisplayMode() );
 
 	// "Colors & Fonts" TAB =====================================================
 	mPrfsColors->foregroundColor->setColor(p->highlightForeground());
@@ -254,10 +294,12 @@ void AppearanceConfig::load()
 	mPrfsColors->linkColor->setColor(p->linkColor());
 	mPrfsColors->bgColor->setColor(p->bgColor());
 	mPrfsColors->fontFace->setFont(p->fontFace());
-	mPrfsColors->fontFace->setText(p->fontFace().family());
 	mPrfsColors->mGreyIdleMetaContacts->setChecked(p->greyIdleMetaContacts());
 	mPrfsColors->idleContactColor->setColor(p->idleContactColor());
-	slotGreyIdleMetaContactsChanged(p->greyIdleMetaContacts());
+	mPrfsColors->mUseCustomFonts->setChecked(p->contactListUseCustomFonts());
+	mPrfsColors->mSmallFont->setFont(p->contactListCustomSmallFont());
+	mPrfsColors->mNormalFont->setFont(p->contactListCustomNormalFont());
+	mPrfsColors->mGroupNameColor->setColor(p->contactListGroupNameColor());
 }
 
 void AppearanceConfig::updateEmoticonlist()
@@ -339,13 +381,9 @@ void AppearanceConfig::slotHighlightChanged()
 
 void AppearanceConfig::slotChangeFont()
 {
-	QFont mFont = KopetePrefs::prefs()->fontFace();
-	KFontDialog::getFont( mFont );
-	KopetePrefs::prefs()->setFontFace( mFont );
-	mPrfsColors->fontFace->setFont( mFont );
-	mPrfsColors->fontFace->setText( mFont.family() );
 	currentStyle = QString::null; //force to update preview;
 	slotUpdatePreview();
+	emitChanged();
 }
 
 void AppearanceConfig::slotAddStyle()
@@ -404,7 +442,9 @@ void AppearanceConfig::updateHighlight()
 
 void AppearanceConfig::slotStyleSelected()
 {
-	QFileInfo fi(itemMap[mPrfsChatWindow->styleList->selectedItem()]);
+	QString styleName = itemMap[mPrfsChatWindow->styleList->selectedItem()];
+	QString filePath = locateLocal("appdata", QString::fromLatin1("styles/%1.xsl").arg( styleName ) );
+	QFileInfo fi( filePath );
 	if(fi.isWritable())
 	{
 		mPrfsChatWindow->editButton->setEnabled( true );
@@ -468,7 +508,10 @@ void AppearanceConfig::slotCopyStyle()
 #endif
 
 		if ( !styleName.isEmpty() )
-			addStyle( styleName, fileContents( itemMap[ copiedItem ] ) );
+		{
+			QString stylePath = locate("appdata", QString::fromLatin1("styles/%1.xsl").arg(itemMap[ copiedItem ]) );
+			addStyle( styleName, fileContents( stylePath ) );
+		}
 	}
 	else
 	{
@@ -482,7 +525,8 @@ void AppearanceConfig::slotEditStyle()
 {
 	slotAddStyle();
 	editedItem = mPrfsChatWindow->styleList->selectedItem();
-	QString model = fileContents( itemMap[ editedItem] );
+	QString stylePath = locate("appdata", QString::fromLatin1("styles/%1.xsl").arg(itemMap[ editedItem ]) );
+	QString model = fileContents( stylePath );
 	KTextEditor::editInterface( editDocument )->setText( model );
 	updateHighlight();
 	styleEditor->styleName->setText( editedItem->text() );
@@ -542,7 +586,7 @@ bool AppearanceConfig::addStyle( const QString &styleName, const QString &styleS
 			if ( newStyleName )
 			{
 				mPrfsChatWindow->styleList->insertItem( styleName, 0 );
-				itemMap.insert( mPrfsChatWindow->styleList->firstItem(), filePath );
+				itemMap.insert( mPrfsChatWindow->styleList->firstItem(), styleName );
 				mPrfsChatWindow->styleList->setSelected( mPrfsChatWindow->styleList->firstItem(), true );
 				mPrfsChatWindow->styleList->sort();
 			}
@@ -642,12 +686,6 @@ QString AppearanceConfig::fileContents( const QString &path )
 	return contents;
 }
 
-void AppearanceConfig::slotGreyIdleMetaContactsChanged(bool b)
-{
-	mPrfsColors->idleContactColor->setEnabled(b);
-	emitChanged();
-}
-
 void AppearanceConfig::emitChanged()
 {
 	emit changed( true );
@@ -698,6 +736,14 @@ void AppearanceConfig::removeSelectedTheme()
 #endif
 
 	updateEmoticonlist();
+}
+
+void AppearanceConfig::slotEditTooltips()
+{
+	TooltipEditDialog *dlg = new TooltipEditDialog(this);
+	connect(dlg, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)));
+	dlg->exec();
+	delete dlg;
 }
 
 #include "appearanceconfig.moc"

@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>305</width>
+            <width>422</width>
             <height>400</height>
         </rect>
     </property>
@@ -21,33 +21,55 @@
         </property>
         <widget class="QCheckBox">
             <property name="name">
-                <cstring>mShowTrayChk</cstring>
-            </property>
-            <property name="text">
-                <string>Show the system tray &amp;icon</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox">
-            <property name="name">
-                <cstring>mStartDockedChk</cstring>
-            </property>
-            <property name="text">
-                <string>Start &amp;hidden</string>
-            </property>
-            <property name="toolTip" stdset="0">
-                <string>Start with the main window hidden, the only visible item is the system tray icon</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox">
-            <property name="name">
                 <cstring>mUseQueueChk</cstring>
             </property>
             <property name="text">
-                <string>Use message &amp;queue</string>
+                <string>Use the message &amp;queue</string>
+            </property>
+            <property name="accel">
+                <string>Alt+Q</string>
             </property>
             <property name="whatsThis" stdset="0">
                 <string>Use a queue instead of opening a chat window on incoming messages</string>
             </property>
+        </widget>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>buttonGroup2</cstring>
+            </property>
+            <property name="title">
+                <string>System Tray</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mShowTrayChk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Show the system tray &amp;icon</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+I</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mStartDockedChk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Start with the contact list &amp;minimised to the system tray</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+M</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Start with the main window hidden, the only visible item is the system tray icon</string>
+                    </property>
+                </widget>
+            </vbox>
         </widget>
         <widget class="QButtonGroup">
             <property name="name">
@@ -111,60 +133,6 @@
                 </spacer>
             </grid>
         </widget>
-        <widget class="QGroupBox">
-            <property name="name">
-                <cstring>groupBox1</cstring>
-            </property>
-            <property name="title">
-                <string>Contact List</string>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>mTreeContactList</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Show as a t&amp;ree</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>mSortByGroup</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Sort by &amp;group</string>
-                    </property>
-                </widget>
-                <widget class="QPushButton" row="2" column="0">
-                    <property name="name">
-                        <cstring>mEditTooltips</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Edit Tooltips...</string>
-                    </property>
-                </widget>
-                <spacer row="2" column="1">
-                    <property name="name">
-                        <cstring>spacer3</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>8</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                </spacer>
-            </grid>
-        </widget>
         <spacer>
             <property name="name">
                 <cstring>spacer1</cstring>
@@ -185,9 +153,6 @@
     </vbox>
 </widget>
 <tabstops>
-    <tabstop>mShowTrayChk</tabstop>
-    <tabstop>mStartDockedChk</tabstop>
-    <tabstop>mUseQueueChk</tabstop>
     <tabstop>mBalloonNotifyChk</tabstop>
     <tabstop>mTrayflashNotifyChk</tabstop>
     <tabstop>mSoundIfAwayChk</tabstop>

@@ -34,6 +34,7 @@ class QListBoxItem;
 class AppearanceConfig_Emoticons;
 class AppearanceConfig_ChatWindow;
 class AppearanceConfig_Colors;
+class AppearanceConfig_ContactList;
 
 class KopeteAppearanceConfigPrivate;
 
@@ -74,7 +75,7 @@ private slots:
 	void slotCopyStyle();
 	void slotStyleSaved();
 	void slotStyleSelected();
-	void slotGreyIdleMetaContactsChanged(bool);
+	void slotEditTooltips();
 	void emitChanged();
 	void installNewTheme();
 	void removeSelectedTheme();
@@ -96,6 +97,7 @@ private:
 	AppearanceConfig_Emoticons *mPrfsEmoticons;
 	AppearanceConfig_ChatWindow *mPrfsChatWindow;
 	AppearanceConfig_Colors *mPrfsColors;
+	AppearanceConfig_ContactList *mPrfsContactList;
 
 	// Vars used in ChatWindow TAB
 	StyleEditDialog *styleEditor;
