@@ -14,7 +14,12 @@
     *                                                                       *
     *************************************************************************
 */
+
+#include "config.h"
+#ifdef HAVE_TGMATH_H
 #include <tgmath.h>
+#endif
+
 #include <qdatetime.h>
 #include <qfont.h>
 #include <qstylesheet.h>
