@@ -93,8 +93,6 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 
 	kdDebug(14180) << "Yahoo: this = " << this << " ( YahooSession = " << yahooSession() << ")" << endl;
 	
-	QTimer::singleShot(5000, this, SLOT(slotGotBuddiesTimeout()));
-	
 	addAddressBookField( "messaging/yahoo", KopetePlugin::MakeIndexField );
 }
 
@@ -184,6 +182,7 @@ void YahooProtocol::connect()
 
 	if (session_)
 	{
+		QTimer::singleShot(5000, this, SLOT(slotGotBuddiesTimeout()));
 		setStatusIcon( "yahoo_online" );
 		m_isConnected = true;
 

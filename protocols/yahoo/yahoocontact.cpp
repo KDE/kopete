@@ -106,6 +106,8 @@ void YahooContact::slotUpdateStatus(QString status, QString statusText = QString
 void YahooContact::syncToServer()
 {
 	kdDebug(14180) << "[YahooContact::syncToServer()]" << endl;
+	if(!static_cast<YahooProtocol *>(protocol())->isConnected()) return;
+		
 	if(!static_cast<YahooProtocol *>(protocol())->isOnServer(m_userId))
 	{	kdDebug(14180) << "Contact " << m_userId << " doesn't exist on server-side. Adding..." << endl;
 		QStringList theGroups = metaContact()->groups().toStringList();
@@ -155,9 +157,9 @@ void YahooContact::slotSendMessage(KopeteMessage &message, KopeteMessageManager 
 	KopeteContact *target = m_them.first();
 	YahooProtocol *p = static_cast<YahooProtocol*>( protocol() );
 	
-	kdDebug(14180) << "Yahoo: Sending message from " << p->myself()->identityId() << ", to " << target->identityId() << endl;
+	kdDebug(14180) << "Yahoo: Sending message from " << static_cast<YahooContact *>(p->myself())->identityId() << ", to " << static_cast<YahooContact *>(target)->identityId() << endl;
 	
-	p->yahooSession()->sendIm( p->myself()->identityId(), target->identityId(), message.escapedBody() );
+	p->yahooSession()->sendIm( static_cast<YahooContact *>(p->myself())->identityId(), static_cast<YahooContact *>(target)->identityId(), message.escapedBody() );
 
 	// append message to window
 	manager()->appendMessage(message);
@@ -169,7 +171,7 @@ void YahooContact::slotTyping(bool isTyping_ )
 	KopeteContactPtrList m_them = manager()->members();
 	KopeteContact *target = m_them.first();
 	YahooProtocol *p = static_cast<YahooProtocol*>( protocol() );
-	p->yahooSession()->sendTyping( p->myself()->identityId(), target->identityId(), isTyping_ );
+	p->yahooSession()->sendTyping( static_cast<YahooContact *>(p->myself())->identityId(), static_cast<YahooContact *>(target)->identityId(), isTyping_ );
 }
 
 void YahooContact::slotMessageManagerDestroyed()
