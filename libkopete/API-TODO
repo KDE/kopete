@@ -1,11 +1,24 @@
-KopeteMessageManager should allow any number of views to be attached, from 0
+
+ KopeteMessageManager:
+=======================
+
+KopeteMessageManager should allow any number of views to be  attached, from 0
 to infinity.
 
+A lot of code should be moved from the KopeteViewManager to the KopeteMessageManager.
+Allowing the creation of chatwindow plugin more easy
+
 The chat window should be restructured so each ChatView object has its own
-send button.
+send button.  (-that's not a part of the libkopete api-)
+
+ KopeteMessage:
+================
 
 KopeteMessage should be reorganised to use QDomDocument to store its
-contents.
+contents body.
+
+ KopeteContactList
+===================
 
 Add to KopeteMetaContact a statusPixmap() function to return the pixmap
 associated with its name. Take implementation from KopeteMetaContactLVI.
@@ -16,18 +29,43 @@ KopeteContactList::removeGroup should remove the group from all
 metacontacts. Move code from KopeteContactListView to KopeteContactList for
 this.
 
-Allow emoticons and emoticon sets to be flagged as being for only a specific protocol.
-Allow the user to have more than one emoticon set enabled at once, and to set priorities.
-This way, the user will be able to have a base theme, a set of MSN-specific emoticons, a
-set of Gadu-Gadu-specific emoticons and so on.
+KopeteContact::slotDeleteContact  should be renamed,  maybe return a bool to cancel the deletion of the contact.
 
 Add an iconName() function to contacts, metacontacts and accounts returning a string that
 can be put in an <img src="%1"> in any rich text to give the appropriate icon. See the
 MimeSourceFactory.
 
+
+ KopeteEmoticon
+================
+
+Allow emoticons and emoticon sets to be flagged as being for only a specific protocol.
+Allow the user to have more than one emoticon set enabled at once, and to set priorities.
+This way, the user will be able to have a base theme, a set of MSN-specific emoticons, a
+set of Gadu-Gadu-specific emoticons and so on.
+
+
+ KopeteOnlineStatus
+====================
+
 Add an Unknown status to KopeteOnlineStatus for when the status of a contact is unknown (in
 the case that they've not authorised you) or unknowable (in the case that your account is offline,
 etc).
+
+More granular away settings: see Bug 57297
+The number of different global status (away / busy / be right back)  should be extended
+to a configurable list where each element contains the name of the status, the default away message,
+and the KOS for every protocols)
+
+Add a way to register automaticaly KOS,  KopeteAccount should creates itself his menu in the systemtray.
+
+
+
+
+
+
+
+
 
 The DCOP interface needs to be totally re-done so as to be usefull, and to hopefully not rely on
 display names. Obsolete functions previously used only for DCOP should be removed from KopeteContactList
@@ -118,3 +156,18 @@ Richard's proposal: (email questions to the list or to kde@metafoo.co.uk)
      are already past it, it probably doesn't matter if they're dropped. we
      should somehow allow the filters to prevent destruction of the part of
      the chain before them, and if none of them does, destroy it.
+
+
+
+ Invitation Handling Proposal:
+-------------------------------
+Invitations is framework that allow others network applications (Games, Desktop
+Sharing, Video conference, [file transfer?], ...) to initiate the communication
+with kopete. (like Windows Messenger does)
+The users has two ways to initiate such as thing:  -in the application itself, it
+could, with the help of kabc) select a contactable contact, the invitaiton is
+transported to Kopete. -in kopete, in the chat window, an "tools" menu, with all
+possibles actions.
+
+
+
