@@ -673,6 +673,7 @@ void KopeteChatWindow::slotDetachChat( int newWindowIndex )
 		return;
 
 	//if we don't do this, we might crash
+	createGUI(0L);
 	guiFactory()->removeClient(detachedView->msgManager());
 
 	if( newWindowIndex == -1 )
