@@ -79,7 +79,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 
 YahooAccount::~YahooAccount()
 {
-  delete theAwayDialog;
+	delete theAwayDialog;
 }
 
 void YahooAccount::slotGoStatus( int status, const QString &awayMessage)
@@ -301,7 +301,6 @@ void YahooAccount::setAway(bool status, const QString &awayMessage)
 void YahooAccount::slotConnected()
 {
 	kdDebug(14180) << k_funcinfo << "Moved to slotLoginResponse for the moment" << endl;
-
 }
 
 void YahooAccount::slotGoOnline()
