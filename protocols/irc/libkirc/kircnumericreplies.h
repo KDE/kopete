@@ -199,11 +199,11 @@ bool KIRC::numericReply_352(const KIRCMessage &msg)
 	QStringList suffix = QStringList::split( ' ', msg.suffix() );
 
 	emit incomingWhoReply(
+		msg.args()[5],
 		msg.args()[1],
 		msg.args()[2],
 		msg.args()[3],
 		msg.args()[4],
-		msg.args()[5],
 		msg.args()[6][0] != 'H',
 		msg.args()[7],
 		suffix[0].toUInt(),

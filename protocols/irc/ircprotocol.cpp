@@ -56,8 +56,6 @@
 typedef KGenericFactory<IRCProtocol> IRCProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_irc, IRCProtocolFactory( "kopete_irc" )  );
 
-static QRegExp isChannelRegex( QString::fromLatin1("^[#!+&][^\\s,:]+$") );
-
 IRCProtocol *IRCProtocol::s_protocol = 0L;
 
 IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
@@ -384,7 +382,7 @@ void IRCProtocol::slotJoinCommand( const QString &args, KopeteMessageManager *ma
 	if( !args.isEmpty() )
 	{
 		QString chan = KopeteCommandHandler::parseArguments( args ).front();
-		if( isChannelRegex.search( chan ) != -1 )
+		if( KIRC::isChannel(chan) )
 		{
 			static_cast<IRCAccount*>( manager->account() )->
 				contactManager()->findChannel( chan )->startChat();
@@ -408,7 +406,7 @@ void IRCProtocol::slotInviteCommand( const QString &args, KopeteMessageManager *
 
 		if( argsList.count() > 1 )
 		{
-			if( isChannelRegex.search(argsList[1]) != -1 )
+			if( KIRC::isChannel(argsList[1]) )
 			{
 				c = static_cast<IRCAccount*>( manager->account() )->contactManager()->
 					findChannel( argsList[1] );
@@ -456,7 +454,7 @@ void IRCProtocol::slotQueryCommand( const QString &args, KopeteMessageManager *m
 		QString user = args.section( ' ', 0, 0 );
 		QString rest = args.section( ' ', 1 );
 
-		if( isChannelRegex.search( user ) == -1 )
+		if( !KIRC::isChannel(user) )
 		{
 			IRCUserContact *c = static_cast<IRCAccount*>( manager->account() )->
 				contactManager()->findUser( user );
@@ -543,7 +541,7 @@ void IRCProtocol::slotKickCommand( const QString &args, KopeteMessageManager *ma
 		QString reason = args.section( spaces, 1);
 		KopeteContactPtrList members = manager->members();
 		QString channel = static_cast<IRCContact*>( members.first() )->nickName();
-		if( isChannelRegex.search( channel ) != -1 )
+		if( KIRC::isChannel(channel) )
 			static_cast<IRCAccount*>( manager->account() )->engine()->kickUser( nick, channel, reason );
 	}
 }

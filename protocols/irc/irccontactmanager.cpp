@@ -35,8 +35,6 @@
 #include "irccontactmanager.h"
 #include "ircsignalhandler.h"
 
-const QRegExp IRCContactManager::isChannel( QString::fromLatin1("^[#!+&][^\\s,:]+$") );
-
 IRCContactManager::IRCContactManager(const QString &nickName, IRCAccount *account, const char *name)
 	: QObject(account, name),
 	  m_account(account),
@@ -198,7 +196,7 @@ IRCUserContact *IRCContactManager::existUser( const QString &user ) const
 
 IRCContact *IRCContactManager::existContact( const QString &id ) const
 {
-	if( isChannel.search( id ) != -1 )
+	if( KIRC::isChannel(id) )
 		return existChannel( id );
 	else
 		return existUser( id );

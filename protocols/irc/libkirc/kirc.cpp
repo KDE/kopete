@@ -49,7 +49,8 @@
 /* Please note that the regular expression "[\\r\\n]*$" is used in a QString::replace statement many times.
  * This gets rid of trailing \r\n, \r, \n, and \n\r characters.
  */
-const QRegExp KIRC::m_RemoveLinefeeds(QString::fromLatin1("[\\r\\n]*$"));
+const QRegExp KIRC::m_RemoveLinefeeds( QString::fromLatin1("[\\r\\n]*$") );
+const QRegExp KIRC::isChannelRegex( QString::fromLatin1("^[#!+&][^\\s,:]+$") );
 
 KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 	  m_status(Disconnected),
@@ -761,7 +762,10 @@ bool KIRC::modeChange(const KIRCMessage &msg)
 	 */
 	QStringList args = msg.args();
 	args.pop_front();
-	emit incomingModeChange( msg.prefix().section('!',0,0), msg.args()[0], args.join(" "));
+	if( isChannel(  msg.args()[0] ) )
+		emit incomingChannelModeChange( msg.args()[0], getNickFromPrefix(msg.prefix()), args.join(" "));
+	else
+		emit incomingUserModeChange( getNickFromPrefix(msg.prefix()), args.join(" "));
 	return true;
 }
 

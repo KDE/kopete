@@ -61,7 +61,7 @@ IRCSignalHandler::IRCSignalHandler( IRCContactManager *m ) : QObject(m), manager
 		&IRCChannelContact::topicChanged );
 
 	mapDouble<IRCChannelContact>( m,
-		SIGNAL(incomingModeChange(const QString &, const QString &,const QString &)),
+		SIGNAL(incomingChannelModeChange(const QString &, const QString &,const QString &)),
 		&IRCChannelContact::incomingModeChange );
 
 	mapDouble<IRCChannelContact>( m,

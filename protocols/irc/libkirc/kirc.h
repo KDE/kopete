@@ -187,11 +187,13 @@ signals:
 	void incomingEndOfNames(const QString &channel);
 	void incomingChannelMode(const QString &channel, const QString &mode, const QString &params);
 	void incomingCannotSendToChannel(const QString  &channel, const QString &message);
+	void incomingChannelModeChange(const QString &channel, const QString &nick, const QString &mode);
 
 	//Contact Signals
 	void incomingPrivMessage(const QString &, const QString &, const QString &);
 	void incomingQuitIRC(const QString &user, const QString &reason);
 	void incomingAction(const QString &originating, const QString &target, const QString &message);
+	void incomingUserModeChange(const QString &nick, const QString &mode);
 
 	//Response Signals
 	void incomingUserOnline(const QString &nick);
@@ -228,7 +230,6 @@ signals:
 	void incomingKick(const QString &nick, const QString &channel,
 		const QString &nickKicked, const QString &reason);
 
-	void incomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 	void incomingUserIsAway(const QString &nick, const QString &awayMessage);
 	void incomingListedChan(const QString &chan, uint users, const QString &topic);
 	void incomingEndOfList();
@@ -242,6 +243,8 @@ signals:
 	void incomingDccSendRequest(const QHostAddress &, Q_UINT16 port, const QString &nickname, const QString &, unsigned int, DCCClient &chatObject);
 
 public:
+	inline static bool isChannel( const QString &s ) { return isChannelRegex.search(s) != -1; };
+
 	KIRCMessage writeRawMessage(const QString &message, bool mustBeConnected=true);
 	KIRCMessage writeMessage(const QString &message, bool mustBeConnected=true);
 
@@ -312,8 +315,8 @@ private slots:
 	void quitTimeout();
 
 private:
-	inline static QString getNickFromPrefix(const QString &prefix)
-		{ return prefix.section('!', 0, 0); }
+	inline static QString getNickFromPrefix(const QString &prefix) { return prefix.section('!', 0, 0); }
+	static const QRegExp isChannelRegex;
 
 	typedef bool ircMethod(const KIRCMessage &msg);
 	typedef bool (KIRC::*pIrcMethod)(const KIRCMessage &msg);
