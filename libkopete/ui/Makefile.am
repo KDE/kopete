@@ -5,7 +5,7 @@ noinst_LTLIBRARIES = libkopeteui.la
 noinst_HEADERS = kopetecontactlistview.h pluginmodule.h configmodule.h \
 	kopetelistview.h preferencesdialog.h kopetewindow.h statusbaricon.h \
 	protocolboxitem.h addcontactpage.h systemtray.h chatview.h \
-	appearanceconfig.h balloonbase.h kopeteballoon.h \
+	appearanceconfig.h kopeteballoonbase.h kopeteballoon.h \
 	kopetehistorydialog.h kopetecontactviewitem.h kopetestdaction.h \
 	kopetehistorywidget.h
 
