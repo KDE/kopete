@@ -151,7 +151,10 @@ void KopeteContactList::loadXML()
 							if (tmpprot)
 							{
 								KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
-								KopeteContact *c = prot->createContact(mc, contactid, serializedData);	
+								KopeteContact *c = prot->createContact(mc, contactid, serializedData);
+								// FIXME
+								c->setId(contactid);
+								c->setProtocol(protocol);	
 								mc->addContact(c);
 							}
 							else

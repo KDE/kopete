@@ -120,6 +120,7 @@ public:
 	};
 
 	// KopeteProtocol reimplementation
+    virtual KopeteContact* createContact( KopeteMetaContact *parent, const QString &Id, const QString &serializedData );
 	virtual QString protocolIcon() const;
 	virtual AddContactPage *createAddContactWidget( QWidget *parent );
 	virtual void Connect();

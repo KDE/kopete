@@ -260,6 +260,13 @@ bool MSNProtocol::isAway(void) const
 	}
 }
 
+KopeteContact* MSNProtocol::createContact( KopeteMetaContact *parent, const QString &Id, const QString &serializedData )
+{
+	MSNContact *c = new MSNContact( Id, "FixMe", QString::null, parent );
+	return c;
+}
+	
+
 /** Get myself */
 KopeteContact* MSNProtocol::myself() const
 {
@@ -790,7 +797,7 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 	// On empty lists handle might be empty, ignore that
 	if( handle.isEmpty() )
 		return;
-
+    /*
 	QStringList groups;
 	groups = QStringList::split(",", group, false );
 	if( list == "FL" )
@@ -851,6 +858,7 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 
 		}
 	}
+	*/
 }
 
 void MSNProtocol::slotContactRemoved( QString handle, QString list,
@@ -901,6 +909,7 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list,
 void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 	QString list, uint serial, uint group )
 {
+    /*
 	m_serial = serial;
 
 	QString gn = groupName( group );
@@ -961,6 +970,7 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 		if( !m_blockList.contains( handle ) )
 			m_blockList.append( handle );
 	}
+	*/
 }
 
 void MSNProtocol::slotStatusChanged( QString status )

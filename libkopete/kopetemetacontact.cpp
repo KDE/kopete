@@ -61,7 +61,7 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 		connect( c, SIGNAL( destroyed( QObject * ) ),
 			this, SLOT( slotMetaContactDestroyed( QObject * ) ) );
 
-		setDisplayName( c->name() );
+		//setDisplayName( c->name() );
 
 		// FIXME: Group handling!!!!
         /*
@@ -377,6 +377,13 @@ QString KopeteMetaContact::toXML()
 	}
 
 	#warning FIXME KopeteMetaContact::toXML() Metadata is ignored
+
+	/* We include all groups in the XML */
+	for( QStringList::ConstIterator it = m_groups.begin(); it != m_groups.end(); ++it )
+	{
+		QString group = *it;
+		xml = xml + "\t<group name=\"" + group + "\"/>\n";                          
+	}
 
 	xml = xml + "</person>";
 	return xml;

@@ -76,6 +76,10 @@ QString KopeteContact::toXML()
 	QString xml;
 
 	xml = "<contact";
+
+	kdDebug() << "KC: " << m_id << endl;
+	kdDebug() << "KC: " << m_protocolId << endl;
+
     if ( ! m_id.isNull() && ! m_protocolId.isNull() )
 	{
     	xml = xml + " id=\"" + m_id + "\"";
