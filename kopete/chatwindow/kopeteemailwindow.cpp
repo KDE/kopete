@@ -181,7 +181,7 @@ KopeteEmailWindow::KopeteEmailWindow( KopeteMessageManager *manager, bool foreig
 	setWFlags(Qt::WDestructiveClose);
 
 	d->blnShowingMessage = false;
-
+	
 	if( foreignMessage )
 		toggleMode( Read );
 	else
@@ -201,7 +201,6 @@ KopeteEmailWindow::KopeteEmailWindow( KopeteMessageManager *manager, bool foreig
 	tmpColor = KGlobalSettings::baseColor();
 	slotSetBgColor( config->readColorEntry ( QString::fromLatin1("BackgroundColor"), &tmpColor) );
 
-	connect( manager, SIGNAL(messageSuccess()), this, SLOT(slotMessageSentSuccessfully()) );
 	connect( KopetePrefs::prefs(), SIGNAL(messageAppearanceChanged()), this, SLOT( slotRefreshAppearance() ) );
 
 	d->sendInProgress = false;
@@ -447,8 +446,6 @@ void KopeteEmailWindow::slotCopy()
 
 void KopeteEmailWindow::appendMessage(KopeteMessage &message)
 {
-//	kdDebug(14010) << k_funcinfo << endl;
-
 	if( message.from() != m_manager->user() )
 	{
 		if( d->mode == Send )
@@ -635,6 +632,7 @@ void KopeteEmailWindow::toggleMode( WindowMode newMode )
 			d->txtEntry->show();
 			d->htmlView->hide();
 			d->btnReadNext->hide();
+			d->btnReadPrev->hide();
 			break;
 		case Read:
 			d->btnReplySend->setText( i18n( "Reply" ) );
@@ -642,6 +640,7 @@ void KopeteEmailWindow::toggleMode( WindowMode newMode )
 			d->txtEntry->hide();
 			d->htmlView->show();
 			d->btnReadNext->show();
+			d->btnReadPrev->show();
 			break;
 		case Reply:
 			QValueList<int> splitPercent;
@@ -652,6 +651,7 @@ void KopeteEmailWindow::toggleMode( WindowMode newMode )
 			d->txtEntry->show();
 			d->htmlView->show();
 			d->btnReadNext->show();
+			d->btnReadPrev->show();
 			d->split->setSizes( splitPercent );
 			d->txtEntry->setFocus();
 			break;

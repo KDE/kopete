@@ -144,17 +144,17 @@ void KopeteRichTextEditPart::createActions( KActionCollection *ac )
 	action_bold = new KToggleAction( i18n("&Bold"), "text_bold", CTRL+Key_B,
 			ac, "format_bold" );
 	connect( action_bold, SIGNAL( toggled(bool) ),
-		editor, SLOT( setBold(bool) ) );
+		this, SLOT( setBold(bool) ) );
 
 	action_italic = new KToggleAction( i18n("&Italic"), "text_italic", CTRL+Key_I,
 			ac, "format_italic" );
 	connect( action_italic, SIGNAL( toggled(bool) ),
-		editor, SLOT( setItalic(bool) ) );
+		this, SLOT( setItalic(bool) ) );
 
 	action_underline = new KToggleAction( i18n("&Underline"), "text_under", CTRL+Key_U,
 				ac, "format_underline" );
 	connect( action_underline, SIGNAL( toggled(bool) ),
-		editor, SLOT( setUnderline(bool) ) );
+		this, SLOT( setUnderline(bool) ) );
 
 	connect( editor, SIGNAL( currentFontChanged( const QFont & ) ),
 		this, SLOT( updateCharFmt() ) );
@@ -366,6 +366,8 @@ void KopeteRichTextEditPart::setBgColor( const QColor &newColor )
 		editor->setPalette(pal);
 }
 
+
+
 void KopeteRichTextEditPart::setFont()
 {
 	KFontDialog::getFont(mFont, false, editor);
@@ -382,10 +384,51 @@ void KopeteRichTextEditPart::setFont( const QFont &newFont )
 
 void KopeteRichTextEditPart::setFont( const QString &newFont )
 {
-	mFont = QFont( newFont );
-	editor->setFont(mFont);
+	mFont.setFamily( newFont );
+	if( m_capabilities & KopeteProtocol::RichFont)
+		editor->setFamily( newFont );
+	else if( m_capabilities & KopeteProtocol::BaseFont)
+		editor->setFont( mFont );
 	writeConfig();
 }
+
+
+void KopeteRichTextEditPart::setBold( bool b )
+{
+	mFont.setBold(b);
+	if( m_capabilities & KopeteProtocol::RichBFormatting || m_capabilities & KopeteProtocol::BaseBFormatting ) 
+	{
+		if( m_richTextEnabled )
+			editor->setBold(b);
+		else 
+			editor->setFont(mFont);  
+	}
+}
+
+void KopeteRichTextEditPart::setItalic( bool b )
+{
+	mFont.setItalic( b );
+	if( m_capabilities & KopeteProtocol::RichIFormatting ||  m_capabilities & KopeteProtocol::BaseIFormatting ) 
+	{
+		if(m_richTextEnabled)
+			editor->setItalic(b);
+		else 
+			editor->setFont(mFont);  
+	}
+}
+
+void KopeteRichTextEditPart::setUnderline( bool b )
+{
+	mFont.setUnderline( b );
+	if( m_capabilities & KopeteProtocol::RichIFormatting ||  m_capabilities & KopeteProtocol::BaseIFormatting  )
+	{
+		if(m_richTextEnabled)
+			editor->setUnderline(b);
+		else 
+			editor->setFont(mFont);  
+	}
+}
+
 
 void KopeteRichTextEditPart::setAlignLeft( bool yes )
 {
@@ -418,3 +461,4 @@ const QString KopeteRichTextEditPart::text( Qt::TextFormat fmt ) const
 	else
 		return editor->cursor()->document()->plainText();
 }
+
