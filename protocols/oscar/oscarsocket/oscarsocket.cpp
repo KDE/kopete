@@ -168,7 +168,7 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	mCookie = NULL;
 	idle = false;
 	gotAllRights=0;
-	keepaliveTime=0; // TODO: make that an option
+	keepaliveTime=60; // TODO: make that an option
 	keepaliveTimer=0L;
 	rateClasses.setAutoDelete(TRUE);
 	// TODO: move this to OscarContact or even AIMContact, it's unused by ICQ

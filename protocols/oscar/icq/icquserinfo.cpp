@@ -39,28 +39,28 @@
 #include <kurllabel.h>
 
 
-ICQUserInfo::ICQUserInfo(ICQContact *c, ICQAccount *account, bool editable,
+ICQUserInfo::ICQUserInfo(ICQContact *c, ICQAccount *account,
 	QWidget *parent, const char* name)
 	: KDialogBase(parent, name, false, QString::null, Close | User1 | User2,
 		Close, false, i18n("&Save Nickname"), i18n("&Fetch Again"))
 {
 	mAccount = account;
 	mContact = c;
-	mEditable = editable;
 	p = ICQProtocol::protocol(); // I am SO lazy ;)
 
 	setCaption(i18n("User Info for %1").arg(c->displayName()));
 
 	mMainWidget = new ICQUserInfoWidget(this, "ICQUserInfo::mMainWidget");
-	setEditable(mEditable);
+	setReadonly();
 	setMainWidget(mMainWidget);
 
-	mMainWidget->roUIN->setText(c->contactname());
 
 	// Defaults
 	mMainWidget->rwAge->setValue(0);
 	mMainWidget->rwBday->setDate(QDate());
 	mMainWidget->roBday->setText("");
+	mMainWidget->roUIN->setText(c->contactname());
+	p->initUserinfoWidget(mMainWidget); // fill combos with values
 
 	connect(this, SIGNAL(user1Clicked()),
 		this, SLOT(slotSaveClicked()));
@@ -72,14 +72,10 @@ ICQUserInfo::ICQUserInfo(ICQContact *c, ICQAccount *account, bool editable,
 		this, SLOT(slotHomePageClicked(const QString &)));
 	connect(mMainWidget->prsEmailLabel, SIGNAL(leftClickedURL(const QString &)),
 		this, SLOT(slotEmailClicked(const QString &)));
-	connect(
-		mMainWidget->wrkHomepageLabel, SIGNAL(leftClickedURL(const QString &)),
+	connect(mMainWidget->wrkHomepageLabel, SIGNAL(leftClickedURL(const QString &)),
 		this, SLOT(slotHomePageClicked(const QString &)));
-	connect(
-		c, SIGNAL(updatedUserInfo()),
+	connect(c, SIGNAL(updatedUserInfo()),
 		this, SLOT(slotReadInfo()));
-
-	p->initUserinfoWidget(mMainWidget); // fill combos with values
 
 	slotFetchInfo();
 }
@@ -110,173 +106,72 @@ void ICQUserInfo::slotReadInfo()
 
 	setCaption(i18n("User Info for %1").arg(mContact->displayName()));
 
-	mMainWidget->setDisabled( false );
+	mMainWidget->setDisabled(false);
 	enableButton(User1,true);
 	enableButton(User2,true);
 
 	p->contactInfo2UserInfoWidget(mContact, mMainWidget, false);
 } // END slotReadInfo()
 
-/*
-void ICQUserInfo::sendInfo()
+void ICQUserInfo::setReadonly()
 {
-	kdDebug(14200) << k_funcinfo << "called." << endl;
+	mMainWidget->rwNickName->setReadOnly(true);
 
-	KMessageBox::sorry(
-		qApp->mainWidget(),
-		"<qt>Changing your own user information is not done yet.</qt>",
-		"unfinished code");
+	mMainWidget->rwAlias->setReadOnly(false);
 
-	u->Nick = mMainWidget->rwNickName->text().local8Bit();
-	u->FirstName = mMainWidget->rwFirstName->text().local8Bit();
-	u->LastName = mMainWidget->rwLastName->text().local8Bit();
-	u->City = mMainWidget->prsCityEdit->text().local8Bit();
-	u->State = mMainWidget->prsStateEdit->text().local8Bit();
-	u->Address = mMainWidget->prsAddressEdit->text().local8Bit();
-	u->Zip = mMainWidget->prsZipcodeEdit->text().local8Bit();
-	u->Country = getComboValue( mMainWidget->rwPrsCountry, countries );
-	u->TimeZone = getTZComboValue( mMainWidget->rwTimezone );
-	u->HomePhone = mMainWidget->prsPhoneEdit->text().local8Bit();
-	u->HomeFax = mMainWidget->prsFaxEdit->text().local8Bit();
-	u->PrivateCellular = mMainWidget->prsCellphoneEdit->text().local8Bit();
-	u->EMail = mMainWidget->prsEmailLabel->text().local8Bit();
+	mMainWidget->rwFirstName->setReadOnly(true);
+	mMainWidget->rwLastName->setReadOnly(true);
 
-	u->WorkCity = mMainWidget->wrkCityEdit->text().local8Bit();
-	u->WorkState = mMainWidget->wrkStateEdit->text().local8Bit();
-	u->WorkZip = mMainWidget->wrkZipcodeEdit->text().local8Bit();
-	u->WorkAddress = mMainWidget->wrkAddressEdit->text().local8Bit();
-	u->WorkName = mMainWidget->wrkNameEdit->text().local8Bit();
-	u->WorkDepartment = mMainWidget->wrkDepartmentEdit->text().local8Bit();
-	u->WorkPosition = mMainWidget->wrkPositionEdit->text().local8Bit();
-	u->WorkCountry = getComboValue( mMainWidget->rwWrkCountry, countries );
-//	u->Occupation = .local8Bit();
-	u->WorkHomepage = mMainWidget->wrkHomepageEdit->text().local8Bit();
-	u->WorkPhone = mMainWidget->wrkPhoneEdit->text().local8Bit();
-	u->WorkFax = mMainWidget->wrkFaxEdit->text().local8Bit();
+	mMainWidget->prsCityEdit->setReadOnly(true);
+	mMainWidget->prsPhoneEdit->setReadOnly(true);
+	mMainWidget->prsStateEdit->setReadOnly(true);
+	mMainWidget->prsCellphoneEdit->setReadOnly(true);
+	mMainWidget->prsFaxEdit->setReadOnly(true);
+	mMainWidget->prsZipcodeEdit->setReadOnly(true);
+	mMainWidget->prsAddressEdit->setReadOnly(true);
 
-	u->Age = mMainWidget->rwAge->text().toInt();
-	u->Gender = getComboValue( mMainWidget->rwGender, p->genders() );
-	u->Homepage = mMainWidget->prsHomepageEdit->text().local8Bit();
-	u->BirthYear = mMainWidget->rwBday->date().year();
-	u->BirthMonth = mMainWidget->rwBday->date().month();
-	u->BirthDay = mMainWidget->rwBday->date().day();
-	u->Language1 = getComboValue( mMainWidget->rwLang1, p->languages());
-	u->Language2 = getComboValue( mMainWidget->rwLang2, p->languages());
-	u->Language3 = getComboValue( mMainWidget->rwLang3, p->languages());
-//	int return = mAccount->engine()->sendAboutInfo(QString); <- string with blah blah about yourself
+	mMainWidget->wrkNameEdit->setReadOnly(true);
+	mMainWidget->wrkDepartmentEdit->setReadOnly(true);
+	mMainWidget->wrkPositionEdit->setReadOnly(true);
+	mMainWidget->wrkPhoneEdit->setReadOnly(true);
+	mMainWidget->wrkFaxEdit->setReadOnly(true);
+	mMainWidget->wrkCityEdit->setReadOnly(true);
+	mMainWidget->wrkStateEdit->setReadOnly(true);
+	mMainWidget->wrkZipcodeEdit->setReadOnly(true);
+	mMainWidget->wrkAddressEdit->setReadOnly(true);
 
-	mAccount->engine()->setInfo( u );
-	kdDebug(14200) << "[ICQUserInfo] Done sending new userinfo to server" << endl;
-}
-*/
+	mMainWidget->rwAboutUser->setReadOnly(true);
 
-void ICQUserInfo::setEditable(bool e)
-{
-	kdDebug(14200) << k_funcinfo << "called. e=" << e << endl;
+	mMainWidget->rwAlias->show();
+	mMainWidget->lblAlias->show();
 
-	// this one is only editable for setting users own info
-	// for contacts it displays their real nickname fetched from server
-	mMainWidget->rwNickName->setReadOnly ( !e );
+	mMainWidget->rwBday->hide();
+	mMainWidget->roBday->show();
 
-	// This one is editable in read-only
-	// user can set arbitrary nicknames for contacts this way
-	mMainWidget->rwAlias->setReadOnly ( e );
+	mMainWidget->rwGender->hide();
+	mMainWidget->roGender->show();
 
-	mMainWidget->rwFirstName->setReadOnly ( !e );
-	mMainWidget->rwLastName->setReadOnly ( !e );
+	mMainWidget->rwTimezone->hide();
+	mMainWidget->roTimezone->show();
 
-	mMainWidget->prsCityEdit->setReadOnly ( !e );
-	mMainWidget->prsPhoneEdit->setReadOnly ( !e );
-	mMainWidget->prsStateEdit->setReadOnly ( !e );
-	mMainWidget->prsCellphoneEdit->setReadOnly ( !e );
-	mMainWidget->prsFaxEdit->setReadOnly ( !e );
-	mMainWidget->prsZipcodeEdit->setReadOnly ( !e );
-	mMainWidget->prsAddressEdit->setReadOnly ( !e );
+	mMainWidget->rwLang1->hide();
+	mMainWidget->roLang1->show();
+	mMainWidget->rwLang2->hide();
+	mMainWidget->roLang2->show();
+	mMainWidget->rwLang3->hide();
+	mMainWidget->roLang3->show();
 
-	mMainWidget->wrkNameEdit->setReadOnly ( !e );
-	mMainWidget->wrkDepartmentEdit->setReadOnly ( !e );
-	mMainWidget->wrkPositionEdit->setReadOnly ( !e );
-	mMainWidget->wrkPhoneEdit->setReadOnly ( !e );
-	mMainWidget->wrkFaxEdit->setReadOnly ( !e );
-	mMainWidget->wrkCityEdit->setReadOnly ( !e );
-	mMainWidget->wrkStateEdit->setReadOnly ( !e );
-	mMainWidget->wrkZipcodeEdit->setReadOnly ( !e );
-	mMainWidget->wrkAddressEdit->setReadOnly ( !e );
+	mMainWidget->rwPrsCountry->hide();
+	mMainWidget->roPrsCountry->show();
+	mMainWidget->prsEmailEdit->hide();
+	mMainWidget->prsEmailLabel->show();
+	mMainWidget->prsHomepageEdit->hide();
+	mMainWidget->prsHomepageLabel->show();
 
-	mMainWidget->rwAboutUser->setReadOnly ( !e );
-
-	if(e)
-	{
-//		kdDebug(14200) << k_funcinfo << "editable mode" << endl;
-		setButtonText(User1, i18n("&Send Info"));
-		// updating userinfo impossible while being offline
-		enableButton(User1, mAccount->isConnected() );
-
-		mMainWidget->rwAlias->hide();
-		mMainWidget->lblAlias->hide();
-
-		mMainWidget->roBday->hide();
-		mMainWidget->rwBday->show();
-
-		mMainWidget->roGender->hide();
-		mMainWidget->rwGender->show();
-
-		mMainWidget->roTimezone->hide();
-		mMainWidget->rwTimezone->show();
-
-		mMainWidget->roLang1->hide();
-		mMainWidget->rwLang1->show();
-		mMainWidget->roLang2->hide();
-		mMainWidget->rwLang2->show();
-		mMainWidget->roLang3->hide();
-		mMainWidget->rwLang3->show();
-
-		mMainWidget->roPrsCountry->hide();
-		mMainWidget->rwPrsCountry->show();
-		mMainWidget->prsEmailLabel->hide();
-		mMainWidget->prsEmailEdit->show();
-		mMainWidget->prsHomepageLabel->hide();
-		mMainWidget->prsHomepageEdit->show();
-
-		mMainWidget->roWrkCountry->hide();
-		mMainWidget->rwWrkCountry->show();
-		mMainWidget->wrkHomepageLabel->hide();
-		mMainWidget->wrkHomepageEdit->show();
-	}
-	else
-	{
-//		kdDebug(14200) << k_funcinfo << "readonly mode" << endl;
-		mMainWidget->rwAlias->show();
-		mMainWidget->lblAlias->show();
-
-		mMainWidget->rwBday->hide();
-		mMainWidget->roBday->show();
-
-		mMainWidget->rwGender->hide();
-		mMainWidget->roGender->show();
-
-		mMainWidget->rwTimezone->hide();
-		mMainWidget->roTimezone->show();
-
-		mMainWidget->rwLang1->hide();
-		mMainWidget->roLang1->show();
-		mMainWidget->rwLang2->hide();
-		mMainWidget->roLang2->show();
-		mMainWidget->rwLang3->hide();
-		mMainWidget->roLang3->show();
-
-		mMainWidget->rwPrsCountry->hide();
-		mMainWidget->roPrsCountry->show();
-		mMainWidget->prsEmailEdit->hide();
-		mMainWidget->prsEmailLabel->show();
-		mMainWidget->prsHomepageEdit->hide();
-		mMainWidget->prsHomepageLabel->show();
-
-		mMainWidget->rwWrkCountry->hide();
-		mMainWidget->roWrkCountry->show();
-		mMainWidget->wrkHomepageEdit->hide();
-		mMainWidget->wrkHomepageLabel->show();
-	}
+	mMainWidget->rwWrkCountry->hide();
+	mMainWidget->roWrkCountry->show();
+	mMainWidget->wrkHomepageEdit->hide();
+	mMainWidget->wrkHomepageLabel->show();
 }
 
 void ICQUserInfo::slotEmailClicked(const QString &email)

@@ -100,8 +100,8 @@ void OscarAccount::connect()
 		if (password.isNull())
 		{
 			slotError(i18n("Kopete is unable to attempt to signon to the " \
-					"AIM network because no password was specified in the " \
-					"preferences."), 0);
+				"AIM network because no password was specified in the " \
+				"preferences."), 0);
 		}
 		else
 		{

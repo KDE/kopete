@@ -32,12 +32,11 @@ class ICQUserInfo : public KDialogBase
 	Q_OBJECT
 
 	public:
-		ICQUserInfo(ICQContact *, ICQAccount *, bool editable=false,
+		ICQUserInfo(ICQContact *, ICQAccount *,
 			QWidget *parent = 0, const char* name = "ICQUserInfo");
 
 	private:
-//		void sendInfo();
-		void setEditable(bool);
+		void setReadonly();
 
 	private slots:
 		void slotSaveClicked();
@@ -55,7 +54,6 @@ class ICQUserInfo : public KDialogBase
 		ICQProtocol *p;
 		ICQAccount *mAccount;
 		ICQContact *mContact;
-		bool mEditable;
 		ICQUserInfoWidget *mMainWidget;
 };
 #endif

@@ -228,8 +228,7 @@ void ICQContact::slotUserInfo()
 {
 	if (!infoDialog)
 	{
-		bool editable = (this == account()->myself());
-		infoDialog = new ICQUserInfo(this, static_cast<ICQAccount*>(account()), editable);
+		infoDialog = new ICQUserInfo(this, static_cast<ICQAccount*>(account()));
 		if(!infoDialog)
 			return;
 		connect(infoDialog, SIGNAL(closing()), this, SLOT(slotCloseUserInfoDialog()));
