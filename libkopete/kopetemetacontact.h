@@ -230,7 +230,13 @@ public:
 	 * Every metacontact has a unique id, set by kopete when creating the contact, or reading the contactlist
 	 */
 	QString metaContactId() const;
-
+	
+	/** 
+	 * @brief Add or change the link to a KDE addressbook (KABC) Addressee.  
+	 * FIXME: Use with care.  You could create 1 to many relationships with the current implementation
+	 */
+	void setMetaContactId( const QString& newMetaContactId ) const;
+	
 	/**
 	 * Get or set a field for the KDE address book backend. Fields not
 	 * registered during the call to KopetePlugin::addressBookFields()

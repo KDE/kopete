@@ -25,6 +25,8 @@
 
 #include <kdialogbase.h>
 #include <kicondialog.h>
+#include <kabc/addresseedialog.h>
+#include <kabc/stdaddressbook.h>
 
 #include "kopetegroup.h"
 #include "kopetegroupviewitem.h"
@@ -142,11 +144,27 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	mainWidget->icnbOnline->setIcon( onlineName );
 	mainWidget->icnbAway->setIcon( awayName );
 	mainWidget->icnbUnknown->setIcon( unknownName );
+	
+	QString kabcUid = item->metaContact()->metaContactId();
+
+	if ( !kabcUid.isEmpty() )
+	{
+		KABC::AddressBook *ab = KABC::StdAddressBook::self();
+		KABC::Addressee a = ab->findByUid( kabcUid );
+		mainWidget->edtAddressee->setText( a.realName() );
+		mainWidget->btnSelectAddressee->setEnabled( true );
+		mainWidget->edtAddressee->setEnabled( true );
+		mainWidget->lblAddressee->setEnabled( true );
+		mainWidget->chkHasAddressbookEntry->setChecked( true );
+	}
 
 	connect( this, SIGNAL(okClicked()), this, SLOT( slotOkClicked() ) );
 	connect( mainWidget->chkUseCustomIcons, SIGNAL( toggled( bool ) ),
 		this, SLOT( slotUseCustomIconsToggled( bool ) ) );
-
+	connect( mainWidget->chkHasAddressbookEntry, SIGNAL( toggled( bool ) ),
+		this, SLOT( slotHasAddressbookEntryToggled( bool ) ) );
+	connect( mainWidget->btnSelectAddressee, SIGNAL( clicked() ),
+		this, SLOT( slotSelectAddresseeClicked() ) );
 	slotUseCustomIconsToggled( mainWidget->chkUseCustomIcons->isChecked() );
 }
 
@@ -184,6 +202,9 @@ void KopeteMetaLVIProps::slotOkClicked()
 		item->metaContact()->setIcon( mainWidget->icnbUnknown->icon(),
 			KopetePluginDataObject::Unknown );
 	}
+	// if no kabc link, remove any existing link
+	if ( !mainWidget->chkHasAddressbookEntry->isChecked() )
+		item->metaContact()->setMetaContactId( QString::null );
 }
 
 void KopeteMetaLVIProps::slotUseCustomIconsToggled(bool on)
@@ -199,5 +220,22 @@ void KopeteMetaLVIProps::slotUseCustomIconsToggled(bool on)
 	mainWidget->icnbUnknown->setEnabled( on );
 }
 
+void KopeteMetaLVIProps::slotHasAddressbookEntryToggled( bool on )
+{
+	mainWidget->lblAddressee->setEnabled( on );
+	mainWidget->edtAddressee->setEnabled( on );
+	mainWidget->btnSelectAddressee->setEnabled( on );
+}
 
+void KopeteMetaLVIProps::slotSelectAddresseeClicked()
+{
+	 KABC::Addressee a = KABC::AddresseeDialog::getAddressee(this);
+	 // set the lineedit to the Addressee's name
+	 mainWidget->edtAddressee->setText( a.realName() );
+	 // set/update the MC's addressee uin field
+	 item->metaContact()->setMetaContactId( a.uid() );
+	 // set/update the Messaging/Protocol entries in the KABC
+	 
+	 // What if - messaging entries already exist...
+}
 #include "kopetelviprops.moc"

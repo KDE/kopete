@@ -14,7 +14,7 @@ libkopetecontactlist_la_SOURCES = kopetemetacontactlvi.cpp kopetestatusgroupview
 	kopetecontactlistview.cpp kopetegvipropswidget.ui kopetemetalvipropswidget.ui kopetelviprops.cpp
 
 libkopetecontactlist_la_LDFLAGS = $(all_libraries)
-libkopetecontactlist_la_LIBADD = ../../libkopete/libkopete.la ../addcontactwizard/libkopeteaddcontactwizard.la $(LIB_KDEUI)
+libkopetecontactlist_la_LIBADD = -lkabc ../../libkopete/libkopete.la ../addcontactwizard/libkopeteaddcontactwizard.la $(LIB_KDEUI)
 
 # vim: set noet:
 

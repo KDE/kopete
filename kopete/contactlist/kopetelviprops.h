@@ -59,7 +59,9 @@ class KopeteMetaLVIProps: public KDialogBase
 
 	private slots:
 		void slotOkClicked();
-		void slotUseCustomIconsToggled(bool on);
+		void slotUseCustomIconsToggled( bool on );
+		void slotHasAddressbookEntryToggled( bool on );
+		void slotSelectAddresseeClicked();
 };
 
 #endif

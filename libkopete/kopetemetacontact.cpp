@@ -597,7 +597,7 @@ const QDomElement KopeteMetaContact::toXML()
 
 	QDomElement displayName = metaContact.createElement( QString::fromLatin1("display-name" ) );
 	displayName.setAttribute( QString::fromLatin1("trackChildNameChanges"), QString::fromLatin1( d->trackChildNameChanges ? "1":"0" ) );
-	displayName.appendChild( metaContact.createTextNode(  d->displayName  ) );
+	displayName.appendChild( metaContact.createTextNode( d->displayName ) );
 	metaContact.documentElement().appendChild( displayName );
 
 	// Store groups
@@ -680,7 +680,6 @@ bool KopeteMetaContact::fromXML( const QDomElement& element )
 				group = group.nextSibling();
 			}
 		}
-
 		else if( contactElement.tagName() == QString::fromLatin1( "address-book-field" ) )
 		{
 			QString app = contactElement.attribute( QString::fromLatin1( "app" ), QString::null );
@@ -755,6 +754,11 @@ void KopeteMetaContact::slotPluginLoaded( KopetePlugin *p )
 QString KopeteMetaContact::metaContactId() const
 {
 	return d->metaContactId;
+}
+
+void KopeteMetaContact::setMetaContactId( const QString& newMetaContactId ) const
+{
+	d->metaContactId = newMetaContactId;
 }
 
 QPtrList<KopeteContact> KopeteMetaContact::contacts() const
