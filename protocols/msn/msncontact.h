@@ -120,7 +120,6 @@ public:
 
 	void setObject(const QString &obj);
 	QString object() const { return m_obj; }
-	KTempFile *displayPicture() const { return m_displayPicture; }
 
 public slots:
 	virtual void slotUserInfo();
@@ -163,12 +162,14 @@ private:
 	QString m_phoneMobile;
 	bool m_phone_mob;
 
-	QString m_obj; //the MSNObject
-	KTempFile *m_displayPicture;
-	
 	KAction *actionBlock;
 	KAction *actionShowProfile;
 	KAction *actionSendMail;
+
+	QString m_obj; //the MSNObject
+
+	//MSNProtocol::deserializeContact need to acess some contact insternals
+	friend class MSNProtocol;
 };
 
 #endif

@@ -80,10 +80,11 @@ MSNChatSession::MSNChatSession( Kopete::Protocol *protocol, const Kopete::Contac
 
 	if ( !c->object().isEmpty() )
 	{
+		
 		connect( c, SIGNAL( displayPictureChanged() ), this, SLOT( slotDisplayPictureChanged() ) );
 		m_image = new QLabel( 0L, "kde toolbar widget" );
 		new KWidgetAction( m_image, i18n( "MSN Display Picture" ), 0, this, SLOT( slotRequestPicture() ), actionCollection(), "msnDisplayPicture" );
-		if(c->displayPicture())
+		if(c->hasProperty(Kopete::Global::Properties::self()->photo().key())  )
 		{
 			//if the view doesn't exist yet, we will be unable to get the size of the toolbar
 			// so when the view will exist, we will show the displaypicture.
@@ -171,7 +172,7 @@ void MSNChatSession::slotUserJoined( const QString &handle, const QString &publi
 
 	KConfig *config = KGlobal::config();
 	config->setGroup( "MSN" );
-	if ( members().count()==1 && config->readBoolEntry( "AutoDownloadPicture", true ) && !c->object().isEmpty() && !c->displayPicture())
+	if ( members().count()==1 && config->readBoolEntry( "AutoDownloadPicture", true ) && !c->object().isEmpty() && !c->hasProperty(Kopete::Global::Properties::self()->photo().key()))
 		slotRequestPicture();
 }
 
@@ -506,7 +507,7 @@ void MSNChatSession::slotRequestPicture()
 	if(!c)
 	 return;
 	
-	if( !c->displayPicture())
+	if( !c->hasProperty(Kopete::Global::Properties::self()->photo().key()))
 	{
 		if(m_chatService)
 		{
@@ -518,7 +519,7 @@ void MSNChatSession::slotRequestPicture()
 	}
 	else
 	{ //we already have the picture, just show it.
-		KRun::runURL( KURL::fromPathOrURL( c->displayPicture()->name() ), "image/png" );
+		KRun::runURL( KURL::fromPathOrURL( c->property(Kopete::Global::Properties::self()->photo()).value().toString() ), "image/png" );
 	}
 
 }
@@ -528,7 +529,7 @@ void MSNChatSession::slotDisplayPictureChanged()
 	const MSNContact *c = static_cast<const MSNContact *>( members().getFirst() );
 	if ( c && m_image )
 	{
-		if(c->displayPicture())
+		if(c->hasProperty(Kopete::Global::Properties::self()->photo().key()))
 		{
 			int sz=22;
 			// get the size of the toolbar were the aciton is plugged.
@@ -555,10 +556,10 @@ void MSNChatSession::slotDisplayPictureChanged()
 					++it;
 				}
 			}
-			
-			QImage scaledImg = QPixmap( c->displayPicture()->name() ).convertToImage().smoothScale( sz, sz );
+			QString imgURL=c->property(Kopete::Global::Properties::self()->photo()).value().toString();
+			QImage scaledImg = QPixmap( imgURL ).convertToImage().smoothScale( sz, sz );
 			m_image->setPixmap( scaledImg );
-			QToolTip::add( m_image, "<qt><img src=\"" + c->displayPicture()->name() + "\"></qt>" );
+			QToolTip::add( m_image, "<qt><img src=\"" + imgURL + "\"></qt>" );
 		}
 		else 
 		{

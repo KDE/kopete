@@ -28,9 +28,11 @@
 #include <kfiledialog.h>
 #include <klineedit.h>
 #include <klocale.h>
+#include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <krun.h>
 #include <ktempfile.h>
+#include <qregexp.h>
 
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
@@ -47,8 +49,6 @@
 MSNContact::MSNContact( Kopete::Account *account, const QString &id, Kopete::MetaContact *parent )
 : Kopete::Contact( account, id, parent )
 {
-	m_displayPicture = 0L;
-
 	m_deleted = false;
 	m_allowed = false;
 	m_blocked = false;
@@ -78,7 +78,6 @@ MSNContact::MSNContact( Kopete::Account *account, const QString &id, Kopete::Met
 
 MSNContact::~MSNContact()
 {
-	delete m_displayPicture;
 }
 
 bool MSNContact::isReachable()
@@ -334,6 +333,7 @@ void MSNContact::serialize( QMap<QString, QString> &serializedData, QMap<QString
 	serializedData[ "PHW" ]  = m_phoneWork;
 	serializedData[ "PHM" ]  = m_phoneMobile;
 	serializedData[ "lists" ] = lists;
+	serializedData[ "obj" ] = m_obj;
 }
 
 QString MSNContact::phoneHome(){ return m_phoneHome ;}
@@ -602,10 +602,18 @@ void MSNContact::slotSendMail()
 
 void MSNContact::setDisplayPicture(KTempFile *f)
 {
-	if(m_displayPicture && m_displayPicture!=f)
-		delete m_displayPicture;
-	m_displayPicture=f;
-	emit displayPictureChanged();
+	//copy the temp file somewere else.
+	// in a better world, the file could be dirrectly wrote at the correct location.
+	// but the custom emoticon code is to deeply merged in the display picture code while it could be separated.
+	QString newlocation=locateLocal( "appdata", "msnpictures/"+ contactId().lower().replace(QRegExp("[./~]"),"-")  +".png"  ) ;
+
+	KIO::file_move( KURL::fromPathOrURL( f->name() ) , KURL::fromPathOrURL( newlocation ) , -1, true /*overwrite*/ , false /*resume*/ , false /*showProgressInfo*/ );
+	f->setAutoDelete(false);
+	delete f;
+
+	setProperty( Kopete::Global::Properties::self()->photo() , newlocation );
+
+	QTimer::singleShot( 100 , this, SIGNAL(displayPictureChanged()) ); //let the time to KIO to copy the file
 }
 
 void MSNContact::setObject(const QString &obj)
@@ -614,8 +622,8 @@ void MSNContact::setObject(const QString &obj)
 		return;
 
 	m_obj=obj;
-	delete m_displayPicture;
-	m_displayPicture=0;
+
+	removeProperty( Kopete::Global::Properties::self()->photo()  ) ;
 	emit displayPictureChanged();
 }
 

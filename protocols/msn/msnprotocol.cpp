@@ -91,6 +91,7 @@ Kopete::Contact *MSNProtocol::deserializeContact( Kopete::MetaContact *metaConta
 	for( QStringList::Iterator it = groups.begin() ; it != groups.end(); ++it )
 		c->contactAddedToGroup( ( *it ).toUInt(), 0L  /* FIXME - m_groupList[ ( *it ).toUInt() ]*/ );
 
+	c->m_obj= serializedData[ "obj" ];
 	c->setInfo( "PHH" , serializedData[ "PHH" ] );
 	c->setInfo( "PHW" , serializedData[ "PHW" ] );
 	c->setInfo( "PHM" , serializedData[ "PHM" ] );
@@ -98,6 +99,7 @@ Kopete::Contact *MSNProtocol::deserializeContact( Kopete::MetaContact *metaConta
 	c->setBlocked(  (bool)(lists.contains('B')) );
 	c->setAllowed(  (bool)(lists.contains('A')) );
 	c->setReversed( (bool)(lists.contains('R')) );
+
 	return c;
 }
 
