@@ -1,10 +1,10 @@
 /*
     addaccountwizard.cpp - Kopete Add Account Wizard
 
-    Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2004 by Olivier Goffart       <ogoffart@tiscalinet.be>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2003-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -117,9 +117,12 @@ void AddAccountWizard::accept()
 		QString protocol_name=m_proto->pluginId().remove( "Protocol" ).lower();
 		KopetePluginManager::self()->setPluginEnabled( protocol_name , true );
 	}
-
+	
 	KWizard::accept();
 
+	//Bug 76583: If "Connect automatically at startup" box is checked, Kopete should connect to that account upon creation 
+	if(account && account->autoLogin())
+		account->connect();
 }
 
 void AddAccountWizard::reject()
