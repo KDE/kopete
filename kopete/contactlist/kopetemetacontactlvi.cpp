@@ -533,6 +533,7 @@ void KopeteMetaContactLVI::slotContactAdded( KopeteContact *c )
 			const QVariant &, const QVariant & ) ),
 		this, SLOT( slotContactPropertyChanged( KopeteContact *, const QString &,
 			const QVariant &, const QVariant & ) ) );
+	connect( c->account() , SIGNAL( colorChanged(const QColor& ) ) , this, SLOT( slotUpdateIcons() ) );
 
 	updateContactIcon( c );
 
@@ -547,6 +548,7 @@ void KopeteMetaContactLVI::slotContactRemoved( KopeteContact *c )
 			const QVariant &, const QVariant & ) ),
 		this, SLOT( slotContactPropertyChanged( KopeteContact *,
 			const QString &, const QVariant &, const QVariant & ) ) );
+	disconnect( c->account() , SIGNAL( colorChanged(const QColor& ) ) , this, SLOT( slotUpdateIcons() ) );
 
 	if ( ListView::Component *comp = contactComponent( c ) )
 		delete comp;

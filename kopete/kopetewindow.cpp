@@ -77,8 +77,6 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	m_statusBarWidget->setSpacing( 1 );
 	statusBar()->addWidget(m_statusBarWidget, 0, true);
 
-	connect( KopetePrefs::prefs(), SIGNAL( saved() ), this, SLOT( slotSettingsChanged() ) );
-
 	m_pluginConfig = 0L;
 
 	// --------------------------------------------------------------------------------
@@ -486,6 +484,7 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *account )
 		this, SLOT( slotAccountStatusIconChanged( KopeteContact * ) ) );
 
 	connect( account, SIGNAL( iconAppearanceChanged() ), SLOT( slotAccountStatusIconChanged() ) );
+	connect( account, SIGNAL( colorChanged(const QColor& ) ), SLOT( slotAccountStatusIconChanged() ) );
 
 	connect( account->myself(),
 		SIGNAL(propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ),
@@ -636,23 +635,5 @@ void KopeteWindow::showAddContactDialog()
 	(new AddContactWizard(this))->show();
 }
 
-void KopeteWindow::slotSettingsChanged()
-{
-	// Account colouring may have changed, so tell our status bar to redraw
-	QMap<KPluginInfo *, KopetePlugin *> plugins = KopetePluginManager::self()->loadedPlugins( "Protocols" );
-	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
-	for ( it = plugins.begin(); it != plugins.end(); ++it )
-	{
-		KopeteProtocol *proto = static_cast<KopeteProtocol *>( it.data() );
-		QDict<KopeteAccount> dict = KopeteAccountManager::manager()->accounts( proto );
-		QDictIterator<KopeteAccount> accountIt( dict );
-		KopeteAccount *a;
-		while( ( a = accountIt.current() ) != 0 )
-		{
-			slotAccountStatusIconChanged( a->myself() );
-			++accountIt;
-		}
-	}
-}
 #include "kopetewindow.moc"
 // vim: set noet ts=4 sts=4 sw=4:
