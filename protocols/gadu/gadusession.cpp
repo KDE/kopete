@@ -80,8 +80,8 @@ GaduSession::status() const
 void
 GaduSession::login( struct gg_login_params& p )
 {
-	kdDebug()<<"Login"<<endl;
 	if ( !isConnected() ) {
+	    kdDebug()<<"Login"<<endl;
 		if ( currentServer_++ != -1 ) {
 			p.server_addr = htonl( servers_[ currentServer_ ].ip4Addr() );
 			p.server_port = 8074;
@@ -278,8 +278,6 @@ GaduSession::checkDescriptor()
 	if (!(e = gg_watch_fd(session_))) {
 		QObject::disconnect( this, SLOT(checkDescriptor()) );
 		kdDebug(14100)<<"Connection was broken for some reason"<<endl;
-		emit error( i18n("Connection broken!"),
-				i18n(strerror(errno)) );
 		delete read_;
 		delete write_;
 		read_ = 0;
