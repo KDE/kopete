@@ -42,7 +42,7 @@ signals:
 	void registeredNumber( unsigned int, QString  );
 
 protected slots:
-	void slotCancel();
+	void slotClose();
 	void displayToken( QPixmap, QString );
 	void registrationError(  const QString&, const QString& );
 	void registrationDone(  const QString&,  const QString& );

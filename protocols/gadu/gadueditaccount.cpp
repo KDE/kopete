@@ -84,12 +84,12 @@ GaduEditAccount::registerNewAccount()
 	regDialog = new GaduRegisterAccount( NULL , "Register account dialog" );
 	connect( regDialog, SIGNAL( registeredNumber( unsigned int, QString  ) ), SLOT( newUin( unsigned int, QString  ) ) );
 	if ( regDialog->exec() != QDialog::Accepted ) {
-		registerNew->setDisabled( false );
 		loginEdit_->setText( "" );
 		rememberCheck_->setChecked( true );
 		passwordEdit_->setText( "" );
 		return;
 	}
+	registerNew->setDisabled( false );
 }
 
 void 

@@ -278,7 +278,7 @@ void RegisterCommand::watcher()
 					emit done( i18n( "Registration Finished" ), i18n( "Registration has completed successfully." ) );
 				}
 				else {
-					emit error( i18n( "Registration Error" ), i18n( "Data send to server were invalid." ) );
+					emit error( i18n( "Registration Error" ), i18n( "Server rejected data sent!  Please ensure that your input is correct and you typed the verification sequence correctly." ) );
 					state = RegisterStateGotToken;
 				}
 				gg_free_register( session_ );

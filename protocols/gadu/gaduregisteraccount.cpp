@@ -34,14 +34,14 @@
 #include "gaducommands.h"
 
 GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
-: KDialogBase( parent, name, true, i18n( "Register New Account" ), KDialogBase::Apply | KDialogBase::Cancel, KDialogBase::Apply, true )
+: KDialogBase( parent, name, true, i18n( "Register New Account" ), KDialogBase::Apply | KDialogBase::Ok, KDialogBase::Apply, true )
 {
 	ui = new GaduRegisterAccountUI( this );
 	setMainWidget( ui );
 
 	ui->valueVerificationSequence->setDisabled( true );
 	setButtonText( Apply, i18n( "&Register" ) );
-	setButtonText( Cancel, i18n( "&Close" ) );
+	setButtonText( Ok, i18n( "&Close" ) );
 	enableButton( Apply, false );
 
 	cRegister = new RegisterCommand( this );
@@ -49,7 +49,7 @@ GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
 	emailRegexp = new QRegExp(  "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
 
 	connect( this, SIGNAL( applyClicked() ), SLOT( doRegister() ) );
-	connect( this, SIGNAL( cancelClicked() ), SLOT( slotCancel() ) );
+	connect( this, SIGNAL( okClicked() ), SLOT( slotClose() ) );
 
 	connect( ui->valueEmailAddress, SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
 	connect( ui->valuePassword, SIGNAL( textChanged( const QString & ) ), SLOT( inputChanged( const QString & ) ) );
@@ -182,9 +182,9 @@ GaduRegisterAccount::updateStatus( const QString status )
 }
 
 void
-GaduRegisterAccount::slotCancel()
+GaduRegisterAccount::slotClose()
 {
-	deleteLater();
+//	deleteLater();
 }
 
 GaduRegisterAccount::~GaduRegisterAccount( )
