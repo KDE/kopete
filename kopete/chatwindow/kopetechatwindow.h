@@ -65,8 +65,6 @@ public:
 	static KopeteChatWindow *window( KopeteMessageManager *manager );
 	~KopeteChatWindow();
 
-	KopeteMessage currentMessage();
-
 	/**
 	 * Attach an unattached chatview to this window
 	 * @param chat The chat view to attach
