@@ -190,9 +190,9 @@ KActionCollection *JabberContact::customContextMenuActions()
 	// depending on the window type preference,
 	// chat window or email window goes first
 	if (KGlobal::config()->readBoolEntry("EmailDefault", false))
-		actionCollection->insert(actionMessage);
-	else
 		actionCollection->insert(actionChat);
+	else
+		actionCollection->insert(actionMessage);
 
 	// if the contact is online,
 	// display the resources we have for it

@@ -417,6 +417,11 @@ private:
 	int menuTitleId;
 
 	/**
+	 * Little helper function to tell the user to connect
+	 */
+	void errorConnectFirst();
+
+	/**
 	 * Load and create icons
 	 */
 	void initIcons();

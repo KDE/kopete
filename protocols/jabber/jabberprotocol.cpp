@@ -106,6 +106,13 @@ JabberProtocol::~JabberProtocol()
 
 }
 
+void JabberProtocol::errorConnectFirst()
+{
+
+	KMessageBox::error(kopeteapp->mainWindow(), i18n("Please connect first"), i18n("Error"));
+
+}
+
 void JabberProtocol::init()
 {
 
@@ -584,16 +591,6 @@ void JabberProtocol::slotContactDestroyed(KopeteContact *contact)
 }
  
 /*
- * Return a list of address book fields we are interested in monitoring
- */
-/*
-QStringList JabberProtocol::addressBookFields() const
-{
-
-}
-*/
-
-/*
  * Notification slot in case one of the monitored address book fields changed
  */
 /*
@@ -625,7 +622,7 @@ void JabberProtocol::initIcons()
 
 void JabberProtocol::initActions()
 {
-	
+
 	actionGoOnline = new KAction(i18n("Online"), "jabber_online", 0, this, SLOT(slotGoOnline()), this, "actionJabberConnect");
 	actionGoAway = new KAction(i18n("Away"), "jabber_away", 0, this, SLOT(slotGoAway()), this, "actionJabberAway");
 	actionGoXA = new KAction(i18n("Extended Away"), "jabber_away", 0, this, SLOT(slotGoXA()), this, "actionJabberXA");
@@ -651,6 +648,7 @@ void JabberProtocol::initActions()
 	actionStatusMenu->insert(actionSendRaw);
 	actionStatusMenu->insert(actionEditVCard);
 	actionStatusMenu->plug(kopeteapp->systemTray()->contextMenu(), 1);
+
 }
 
 void JabberProtocol::slotGoOnline()
@@ -757,6 +755,12 @@ void JabberProtocol::slotGoInvisible()
 void JabberProtocol::slotSendRaw()
 {
 
+	if(!isConnected())
+	{
+		errorConnectFirst();
+		return;
+	}
+
 	// kill old dialog if it's still in memory
 	if (sendRawDialog != 0L)
 		delete sendRawDialog;
@@ -777,6 +781,12 @@ void JabberProtocol::sendRawMessage(const QString &packet)
 void JabberProtocol::subscribe(const Jabber::Jid &jid)
 {
 
+	if(!isConnected())
+	{
+		errorConnectFirst();
+		return;
+	}
+
 	Jabber::JT_Presence *task = new Jabber::JT_Presence(jabberClient->rootTask());
 
 	task->sub(jid, "subscribe");
@@ -787,6 +797,12 @@ void JabberProtocol::subscribe(const Jabber::Jid &jid)
 void JabberProtocol::subscribed(const Jabber::Jid &jid)
 {
 
+	if(!isConnected())
+	{
+		errorConnectFirst();
+		return;
+	}
+
 	Jabber::JT_Presence *task = new Jabber::JT_Presence(jabberClient->rootTask());
 
 	task->sub(jid, "subscribed");
@@ -796,6 +812,12 @@ void JabberProtocol::subscribed(const Jabber::Jid &jid)
 
 void JabberProtocol::sendPresenceToNode(const Presence &pres,const QString &userId )
 {
+
+	if(!isConnected())
+	{
+		errorConnectFirst();
+		return;
+	}
 
 	Jabber::JT_Presence *task = new Jabber::JT_Presence(jabberClient->rootTask());
 	Jabber::Jid jid(userId);
@@ -1152,6 +1174,12 @@ void JabberProtocol::slotResourceUnavailable(const Jabber::Jid &jid, const Jabbe
 void JabberProtocol::slotRetrieveVCard(const Jabber::Jid &jid)
 {
 
+	if(!isConnected())
+	{
+		errorConnectFirst();
+		return;
+	}
+
 	Jabber::JT_VCard *task = new Jabber::JT_VCard(jabberClient->rootTask());
 	
 	// signal to ourselves when the vCard data arrived
@@ -1199,6 +1227,12 @@ void JabberProtocol::slotEditVCard()
 
 void JabberProtocol::slotSaveVCard(QDomElement &vCardXML)
 {
+
+	if(!isConnected())
+	{
+		errorConnectFirst();
+		return;
+	}
 
 	Jabber::JT_VCard *task = new Jabber::JT_VCard(jabberClient->rootTask());
 	Jabber::VCard vCard = Jabber::VCard();
@@ -1272,6 +1306,12 @@ void JabberProtocol::addContact(KopeteMetaContact *mc, const QString &userId)
 void JabberProtocol::updateContact(const Jabber::RosterItem &item)
 {
 
+	if(!isConnected())
+	{
+		errorConnectFirst();
+		return;
+	}
+
 	Jabber::JT_Roster *rosterTask = new Jabber::JT_Roster(jabberClient->rootTask());
 	rosterTask->set(item.jid(), item.name(), item.groups());
 	rosterTask->go(true);
@@ -1280,6 +1320,12 @@ void JabberProtocol::updateContact(const Jabber::RosterItem &item)
 
 void JabberProtocol::removeContact(const Jabber::RosterItem &item)
 {
+
+	if(!isConnected())
+	{
+		errorConnectFirst();
+		return;
+	}
 
 	Jabber::JT_Roster *rosterTask = new Jabber::JT_Roster(jabberClient->rootTask());
 	rosterTask->remove(item.jid());
