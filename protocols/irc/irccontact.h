@@ -37,7 +37,7 @@ class IRCContact : public KopeteContact
 	Q_OBJECT
 	
 	public:
-		IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaContact *metac);
+		IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaContact *metac, QStringList identities);
 		~IRCContact();
 
 		// Checks a message for server commands

@@ -44,8 +44,8 @@ struct whoIsInfo
 	bool isOperator;
 };
 
-IRCContact::IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaContact *metac) :
-	KopeteContact((KopeteProtocol *)identity->protocol(), nick, metac )
+IRCContact::IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaContact *metac, QStringList identities) :
+	KopeteContact((KopeteProtocol *)identity->protocol(), nick, metac, identities )
 {
 	mIdentity = identity;
 	mEngine = mIdentity->engine();

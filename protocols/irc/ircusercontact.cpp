@@ -29,8 +29,8 @@
 #include <kaction.h>
 #include <qtimer.h>
 
-IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, KopeteMetaContact *m)
-	: IRCContact( identity, nickname, m )
+IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, KopeteMetaContact *m, QStringList identities)
+	: IRCContact( identity, nickname, m, identities )
 {
 	mNickName = nickname;
 

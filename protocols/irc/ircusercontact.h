@@ -34,7 +34,7 @@ class IRCUserContact : public IRCContact
 
 	public:
 		// This class provides a KopeteContact for each user on the channel.
-		IRCUserContact(IRCIdentity *, const QString &nickname,KopeteMetaContact * = 0L);
+		IRCUserContact(IRCIdentity *, const QString &nickname,KopeteMetaContact *mc, QStringList identities );
 		~IRCUserContact();
 
 		// Userclass stuff
