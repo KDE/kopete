@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>465</width>
-            <height>562</height>
+            <width>389</width>
+            <height>452</height>
         </rect>
     </property>
     <property name="caption">
@@ -23,8 +23,8 @@
             <rect>
                 <x>10</x>
                 <y>10</y>
-                <width>404</width>
-                <height>456</height>
+                <width>370</width>
+                <height>433</height>
             </rect>
         </property>
         <vbox>
