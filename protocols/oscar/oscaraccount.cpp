@@ -86,8 +86,6 @@ public:
 	QString awayMessage;
 
 	// -- MERGED DATA FROM AIMBUDDYLIST ----------------------------------
-	QPtrList<AIMBuddy> buddiesDeny;
-	QPtrList<AIMBuddy> buddiesPermit;
 	QMap<int, AIMGroup *> groupMap;
 	QMap<QString, AIMBuddy *> buddyNameMap;
 	QMap<QString, AIMGroup *> groupNameMap;
@@ -378,23 +376,15 @@ void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
 
 void OscarAccount::slotGotServerBuddyList()
 {
-	kdDebug(14150) << k_funcinfo << "account='" << accountId() << "'" << endl;
-/*
-	QValueList<AIMBuddy *> ll = buddies().values();
-	QValueList<AIMBuddy *> sl = buddyList.buddies().values();
-	for (QValueList<AIMBuddy *>::Iterator it=ll.begin(); it!=ll.end(); ++it)
-		qDebug("-- Local: %s, id: %i, groupId: %i", (*it)->screenname().latin1(), (*it)->ID(), (*it)->groupID());
-	for (QValueList<AIMBuddy *>::Iterator it=sl.begin(); it!=sl.end(); ++it)
-		qDebug("-- Server: %s, id: %i, groupId: %i", (*it)->screenname().latin1(), (*it)->ID(), (*it)->groupID());
-*/
+	kdDebug( 14150 ) << k_funcinfo << "account='" << accountId() << "'" << endl;
 
-	QValueList<AIMBuddy *> localList = buddies( ServerSideContacts ).values();
-	for ( QValueList<AIMBuddy *>::Iterator it = localList.begin(); it != localList.end(); ++it )
+	for ( QMap<QString, AIMBuddy *>::ConstIterator it = d->buddyNameMap.begin(); it != d->buddyNameMap.end(); ++it )
 	{
-		if ((*it))
-			addServerContact((*it)); // Add the server contact to Kopete list
+		if ( it.data()->isServerSide() )
+			addServerContact( it.data() ); // Add the server contact to Kopete list
 	}
-	// old locaton
+
+	// Old location
 	//syncLocalWithServerBuddyList();
 }
 
@@ -403,9 +393,19 @@ void OscarAccount::slotLoggedIn()
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
 
 	// Only call sync if we received a list on connect, does not happen on @mac AIM-accounts
-	if ( !buddies( ServerSideContacts ).isEmpty() );
+	bool haveServerSideContacts = false;
+	for ( QMap<QString, AIMBuddy *>::ConstIterator it = d->buddyNameMap.begin(); it != d->buddyNameMap.end(); ++it )
 	{
-		// FIXME: Why a 2 second delay? Is this to avoid a race condition or for the rate limiting? - Martijn
+		if ( it.data()->isServerSide() )
+		{
+			haveServerSideContacts = true;
+			break;
+		}
+	}
+
+	if ( haveServerSideContacts )
+	{
+		// FIXME: Use proper rate limiting rather than a fixed 2 second delay - Martijn
 		QTimer::singleShot( 2000, this, SLOT( slotDelayedListSync() ) );
 	}
 
@@ -964,26 +964,6 @@ AIMGroup *OscarAccount::findGroup(const QString &name)
 	if (it != d->groupNameMap.end() && (*it))
 		return (*it);
 	return 0L;
-}
-
-void OscarAccount::addBuddyDeny(AIMBuddy *buddy)
-{
-	d->buddiesDeny.insert(buddy->ID(), buddy);
-}
-
-QMap<QString, AIMBuddy *> OscarAccount::buddies( OscarContactType type ) const
-{
-	if ( type == AllContacts )
-		return d->buddyNameMap;
-
-	QMap<QString, AIMBuddy *> result;
-	for ( QMap<QString, AIMBuddy *>::ConstIterator it = d->buddyNameMap.begin(); it != d->buddyNameMap.end(); ++it )
-	{
-		if ( it.data()->isServerSide() )
-			result.insert( it.key(), it.data() );
-	}
-
-	return result;
 }
 // -- END MERGED CODE FROM AIMBUDDYLIST ------------------------------
 

@@ -120,19 +120,9 @@ public:
 	AIMGroup *findGroup( int id, OscarContactType type = AllContacts );
 
 	/**
-	 * Returns a list of all of the buddies
-	 */
-	QMap<QString, AIMBuddy * > buddies( OscarContactType type = AllContacts ) const;
-
-	/**
 	 * Adds a buddy to the buddy list
 	 */
 	void addBuddy( AIMBuddy *buddy );
-
-	/**
-	 * Adds a buddy to the deny list
-	 */
-	void addBuddyDeny( AIMBuddy *buddy );
 
 	/**
 	 * Finds a buddy in the buddy list. Returns 0L if none found.

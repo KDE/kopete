@@ -1257,12 +1257,20 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 
 			case 0x0003: // TODO deny buddy AKA invisible list
 			{
+				// FIXME: We don't support the deny list yet, so the below
+				//        (commented out) code is not used anyway. To ease
+				//        the removal of AIMBuddy I commented it out. What
+				//        we need is a list of commented out buddies. This
+				//        used to be a simple QPtrList<AIMBuddy>, but I
+				//        guess almost anything will do. - Martijn
+			/*
 				bud = new AIMBuddy(ssi->bid, ssi->gid, ssi->name);
 				kdDebug(14150) << k_funcinfo << "Adding Contact '" << ssi->name <<
 					"' to INVISIBLE/DENY list." << endl;
 				bud->setServerSide( true );
 				mAccount->addBuddyDeny( bud );
 				emit denyAdded(ssi->name);
+			*/
 				break;
 			}
 
