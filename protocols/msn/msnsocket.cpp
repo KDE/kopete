@@ -76,7 +76,7 @@ void MSNSocket::connect( const QString &server, uint port )
 
 	m_server = server;
 	m_port = port;
-	m_socket = new KExtendedSocket( server, port, 0x600000 );
+	m_socket = new KExtendedSocket( server, port, KExtendedSocket::bufferedSocket );
 	 //can this prevent the kopete frezee? (http://lists.kde.org/?l=kopete-devel&m=107117795131722&w=2)
 	m_socket->setBlockingMode( false ); 
 	
@@ -493,6 +493,7 @@ QString MSNSocket::unescape( const QString &str )
 
 void MSNSocket::slotConnectionSuccess()
 {
+	m_socket->setBlockingMode( false );
 	//kdDebug( 14140 ) << k_funcinfo << endl;
 	doneConnect();
 }
