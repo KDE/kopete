@@ -93,8 +93,7 @@ JabberContact::JabberContact(QString userId, QString nickname, QStringList group
 JabberContact::~JabberContact()
 {
 
-	if(actionCollection)
-		delete actionCollection;
+	delete actionCollection;
 
 	delete actionMessage;
 	delete actionChat;
