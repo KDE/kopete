@@ -262,7 +262,7 @@ void KopeteCommandHandler::slotSayCommand( const QString &args, KopeteMessageMan
 {
 	//Just say whatever is passed
 	KopeteMessage msg(manager->user(), manager->members(), args,
-		KopeteMessage::Internal, KopeteMessage::PlainText);
+		KopeteMessage::Outbound, KopeteMessage::PlainText);
 	manager->sendMessage(msg);
 }
 
