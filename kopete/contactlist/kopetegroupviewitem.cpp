@@ -73,6 +73,7 @@ void KopeteGroupViewItem::initLVI()
 	d->name->setColor( darkRed );
 	d->name->setFixedWidth( true );
 
+	// FIXME: this is a hack. get a smaller font a nicer way
 	QFont smallFont = listView()->font();
 	if ( smallFont.pixelSize() != -1 )
 		smallFont.setPixelSize( (font.pixelSize() * 3) / 4 );
@@ -119,8 +120,7 @@ void KopeteGroupViewItem::refreshDisplayName()
 
 	for ( QListViewItem *lvi = firstChild(); lvi; lvi = lvi->nextSibling() )
 	{
-		KopeteMetaContactLVI *kc = dynamic_cast<KopeteMetaContactLVI*>( lvi );
-		if ( kc )
+		if ( KopeteMetaContactLVI *kc = dynamic_cast<KopeteMetaContactLVI*>( lvi ) )
 		{
 			totalMemberCount++;
 			if ( kc->metaContact()->isOnline() )
@@ -139,8 +139,7 @@ void KopeteGroupViewItem::refreshDisplayName()
 	// Sorting in this slot is extremely expensive as it's called dozens of times and
 	// the sorting itself is rather slow. Therefore we call delayedSort, which tries
 	// to group multiple sort requests into one.
-	KopeteContactListView *lv = dynamic_cast<KopeteContactListView *>( listView() );
-	if ( lv )
+	if ( KopeteContactListView *lv = dynamic_cast<KopeteContactListView *>( listView() ) )
 		lv->delayedSort();
 	else
 		listView()->sort();
@@ -197,11 +196,9 @@ void KopeteGroupViewItem::updateVisibility()
 			// When calling setVisible(true) EVERY child item will be shown,
 			// even if they should be hidden.
 			// We just re-update the visibility of all child items
-			QListViewItem *lvi;
-			for ( lvi = firstChild(); lvi; lvi = lvi->nextSibling() )
+			for ( QListViewItem *lvi = firstChild(); lvi; lvi = lvi->nextSibling() )
 			{
-				KopeteMetaContactLVI *kmc = dynamic_cast<KopeteMetaContactLVI *>( lvi );
-				if ( kmc )
+				if ( KopeteMetaContactLVI *kmc = dynamic_cast<KopeteMetaContactLVI *>( lvi ) )
 					kmc->updateVisibility();
 			}
 		}

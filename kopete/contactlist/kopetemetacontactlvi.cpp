@@ -146,7 +146,6 @@ void KopeteMetaContactLVI::initLVI()
 	connect( &d->opacityTimer, SIGNAL( timeout() ), SLOT( slotOpacityTimer() ) );
 
 	setOpacity( 0.0 );
-	setVisible( false );
 
 	mBlinkTimer = new QTimer( this, "mBlinkTimer" );
 	connect( mBlinkTimer, SIGNAL( timeout() ), SLOT( slotBlink() ) );
@@ -168,6 +167,7 @@ void KopeteMetaContactLVI::initLVI()
 		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
 		d->nameText = new TextComponent( vbox, listView()->font() );
 
+		// FIXME: this is a nasty hack
 		QFont smallFont = listView()->font();
 		int size = smallFont.pixelSize();
 		if ( size != -1 )
@@ -221,6 +221,11 @@ void KopeteMetaContactLVI::setOpacityTarget( float target )
 
 	if ( target != 0.0 )
 		setVisible( true );
+	// if we're aiming at invisible, and we're already there,
+	// hide now. this happens on startup, since showing our
+	// parent group shows us too. :(
+	else if ( opacity() == 0.0 )
+		setVisible( false );
 
 	if ( opacity() != target )
 		d->opacityTimer.start( 50 );
