@@ -721,12 +721,12 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 	if ( lists & 1 )	// FL
 	{
 		QStringList contactGroups = QStringList::split( ",", group, false );
-		KopeteMetaContact *metaContact = KopeteContactList::contactList()->findContact( protocol()->pluginId(), accountId(), handle );
-		if ( metaContact )
+		KopeteContact *ct= contacts()[handle];
+		if ( ct )
 		{
 			// Contact exists, update data.
 			// Merging difference between server contact list and KopeteContact's contact list into MetaContact's contact-list
-			MSNContact *c = static_cast<MSNContact *>( metaContact->findContact( protocol()->pluginId(), accountId(), handle ) );
+			MSNContact *c = static_cast<MSNContact *>( ct);
 			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
 			c->setDisplayName( publicName );
 
@@ -739,7 +739,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 					// The contact has been added in a group by another client
 					c->contactAddedToGroup( serverGroup, m_groupList[ serverGroup ] );
 					c->setDontSync( true ); // prevent the moving of the metacontact change the server
-					metaContact->addToGroup( m_groupList[ serverGroup ] );
+					c->metaContact()->addToGroup( m_groupList[ serverGroup ] );
 				}
 			}
 
@@ -750,7 +750,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 					// The contact has been removed from a group by another client
 					c->contactRemovedFromGroup( it.key() );
 					c->setDontSync( true ); // prevent the moving of the metacontact change the server
-					metaContact->removeFromGroup( m_groupList[ it.key() ] );
+					c->metaContact()->removeFromGroup( m_groupList[ it.key() ] );
 				}
 			}
 
@@ -760,7 +760,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 		}
 		else
 		{
-			metaContact = new KopeteMetaContact();
+			KopeteMetaContact *metaContact = new KopeteMetaContact();
 
 			MSNContact *msnContact = new MSNContact( this, handle, publicName, metaContact );
 			msnContact->setOnlineStatus( MSNProtocol::protocol()->FLN );
