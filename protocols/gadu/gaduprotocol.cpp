@@ -376,7 +376,7 @@ GaduProtocol::error( const QString& title, const QString& message )
 void
 GaduProtocol::messageReceived( struct gg_event* e )
 {
-    kdDebug()<<"####"<<" Great! Message Received :: "<<((const char*)e->event.msg.message)<<endl;
+    //kdDebug()<<"####"<<" Great! Message Received :: "<<((const char*)e->event.msg.message)<<endl;
 
     if ( !e->event.msg.message )
         return;
@@ -451,7 +451,6 @@ void
 GaduProtocol::statusChanged( struct gg_event* e )
 {
     GaduContact *c = contactsMap_.find( e->event.status.uin ).data();
-    kdDebug()<<"### status changed"<<endl;
     if( !c )
         return;
     c->setGaduStatus( e->event.status.status, e->event.status.descr );

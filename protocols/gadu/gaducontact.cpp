@@ -283,8 +283,8 @@ GaduContact::initActions()
                                                       this, "actionMessage" );
     actionInfo_ = KopeteStdAction::contactInfo( this, SLOT(slotUserInfo()),
                                                 this, "actionInfo" );
-    actionRemove_ = KopeteStdAction::deleteContact( this, SLOT(removeThisUser()),
-                                                    this, "actionDelete" );
+    /*actionRemove_ = KopeteStdAction::deleteContact( this, SLOT(removeThisUser()),
+      this, "actionDelete" );*/
 }
 
 void
