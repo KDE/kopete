@@ -180,7 +180,7 @@ bool ConferenceTask::queueWhileAwaitingData( const ConferenceEvent & event )
 {
 	if ( client()->userDetailsManager()->known( event.user ) )
 	{
-		qDebug( "ConferenceTask::queueWhileAwaitingData() -	source is known!" );
+		qDebug( "ConferenceTask::queueWhileAwaitingData() - source is known!" );
 		return false;
 	}
 	else

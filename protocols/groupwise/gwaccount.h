@@ -91,7 +91,7 @@ public:
 	/**
 	 * Utility access to our protocol
 	 */
-	GroupWiseProtocol * GroupWiseAccount::protocol();
+	GroupWiseProtocol * GroupWiseAccount::protocol() const;
 	/**
 	 * Utility access to the @ref Client which is the main interface exposed by libgroupwise.
 	 * Most protocol actions are carried out using the client's member functions but the possibility exists
@@ -127,6 +127,10 @@ public:
 	 * Only works when connected - otherwise always returns false
 	 */
 	bool isContactBlocked( const QString & m_dn );
+	/**
+	 * Set up a temporary contact (not on our contact list but is messaging us or involved in a conversation that we have been invited to.
+	 */
+	GroupWiseContact * createTemporaryContact( const QString & dn );
 public slots:
 
 	void slotTestRTFize();
@@ -246,10 +250,6 @@ protected slots:
 	 * Update the local user's metadata
 	 */
 	void receiveAccountDetails( const ContactDetails & details );
-	/**
-	 * Receive a temporary contact (not on our contact list but is messaging us or involved in a conversation that we have been invited to.
-	 */
-	void receiveTemporaryContact( const ContactDetails & details );
 	/**
 	 * The TLS handshake has happened, check the result
 	 */

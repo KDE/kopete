@@ -55,18 +55,20 @@
 #include "gwconnector.h"
 #include "gwmessagemanager.h"
 #include "privacymanager.h"
+#include "qcatlshandler.h"
+#include "userdetailsmanager.h"
+#include "tasks/createcontacttask.h"
+#include "tasks/deleteitemtask.h"
 #include "ui/gwprivacy.h"
 #include "ui/gwprivacydialog.h"
 #include "ui/gwreceiveinvitationdialog.h"
-#include "qcatlshandler.h"
-#include "tasks/createcontacttask.h"
-#include "tasks/deleteitemtask.h"
 
 #include "gwaccount.h"
 
 GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& accountID, const char *name )
 : Kopete::PasswordedAccount ( parent, accountID, 0, "groupwiseaccount" )
 {
+	Q_UNUSED( name );
 	// Init the myself contact
 	// FIXME: I think we should add a global self metaContact (Olivier)
 	KopeteMetaContact *metaContact = new KopeteMetaContact;
@@ -140,7 +142,7 @@ Client * GroupWiseAccount::client() const
 	return m_client;
 }
 
-GroupWiseProtocol *GroupWiseAccount::protocol()
+GroupWiseProtocol *GroupWiseAccount::protocol() const
 {
 	return static_cast<GroupWiseProtocol *>( KopeteAccount::protocol() );
 }
@@ -509,7 +511,8 @@ void GroupWiseAccount::receiveMessage( const ConferenceEvent & event )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got a message in conference: " << event.guid << ",  from: " << event.user << ", message is: " << event.message << endl;
 	GroupWiseContact * contactFrom = contactForDN( event.user );
-	Q_ASSERT( contactFrom );
+	if ( !contactFrom )
+		contactFrom = createTemporaryContact( event.user );
 	contactFrom->handleIncomingMessage( event, false );
 }
 
@@ -517,7 +520,8 @@ void GroupWiseAccount::receiveAutoReply( const ConferenceEvent & event )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got an auto reply in conference: " << event.guid << ",  from: " << event.user << ", message is: " << event.message << endl;
 	GroupWiseContact * contactFrom = contactForDN( event.user );
-	Q_ASSERT( contactFrom );
+	if ( !contactFrom )
+		contactFrom = createTemporaryContact( event.user );
 	contactFrom->handleIncomingMessage( event, true );
 }
 /*	else
@@ -683,19 +687,18 @@ void GroupWiseAccount::receiveContactUserDetails( const ContactDetails & details
 	}
 }
 
-void GroupWiseAccount::receiveTemporaryContact( const ContactDetails & details )
+GroupWiseContact * GroupWiseAccount::createTemporaryContact( const QString & dn )
 {
+	ContactDetails details = client()->userDetailsManager()->details( dn );
 	GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts()[ details.dn.lower() ] );
 	if ( !c && details.dn != accountId() )
 	{
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Got a temporary contact DN: " << details.dn << endl;
 		// the client is telling us about a temporary contact we need to know about so add them 
 		KopeteMetaContact *metaContact = new KopeteMetaContact ();
-		// Because we never know if the details will contain a fullname
 		metaContact->setTemporary (true);
-	
 
-		GroupWiseContact * c = new GroupWiseContact( this, details.dn, metaContact, 0, 0, 0 );
+		c = new GroupWiseContact( this, details.dn, metaContact, 0, 0, 0 );
 		c->updateDetails( details );
 		QString displayName = details.fullName;
 		if ( displayName.isEmpty() )
@@ -708,6 +711,7 @@ void GroupWiseAccount::receiveTemporaryContact( const ContactDetails & details )
 	}
 	else
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Notified of existing temporary contact DN: " << details.dn << endl;
+	return c;
 }
 
 void GroupWiseAccount::receiveStatus( const QString & contactId, Q_UINT16 status, const QString &awayMessage )
@@ -833,7 +837,9 @@ void GroupWiseAccount::slotConnectedElsewhere()
 void GroupWiseAccount::receiveInvitation( const ConferenceEvent & event )
 {
 	// ask the user if they want to accept the invitation or not
-	// TODO: make a pretty KDialogBase'd solution 
+	GroupWiseContact * contactFrom = contactForDN( event.user );
+	if ( !contactFrom )
+		contactFrom = createTemporaryContact( event.user );
 	ReceiveInvitationDialog * dlg = new ReceiveInvitationDialog( this, event, Kopete::UI::Global::mainWidget(), "invitedialog" );
 	dlg->show();
 }
@@ -865,13 +871,10 @@ void GroupWiseAccount::receiveConferenceJoinNotify( const ConferenceEvent & even
 	if ( mgr )
 	{
 		GroupWiseContact * c = contactForDN( event.user );
-		if ( c )
-		{
-			mgr->addContact( c );
-			c->joinConference( event.guid );
-		}
-		else 
-			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a contact for DN: " << event.user << endl;
+		if ( !c )
+			c = createTemporaryContact( event.user );
+		mgr->addContact( c );
+		c->joinConference( event.guid );
 	}
 	else
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a GWMM for conference: " << event.guid << endl;
@@ -923,11 +926,11 @@ void GroupWiseAccount::receiveInviteNotify( const ConferenceEvent & event )
 	if ( mgr )
 	{
 		GroupWiseContact * c = contactForDN( event.user );
-		if ( c )
-		{
-			KopeteMessage declined = KopeteMessage( mgr->user(), mgr->members(), i18n("%1 has been invited to join this conversation.").arg( c->metaContact()->displayName() ), KopeteMessage::Internal, KopeteMessage::PlainText );
-			mgr->appendMessage( declined );
-		}
+		if ( !c )
+			c = createTemporaryContact( event.user );
+
+		KopeteMessage declined = KopeteMessage( mgr->user(), mgr->members(), i18n("%1 has been invited to join this conversation.").arg( c->metaContact()->displayName() ), KopeteMessage::Internal, KopeteMessage::PlainText );
+		mgr->appendMessage( declined );
 	}
 	else
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a GWMM for conference: " << event.guid << endl;
@@ -984,7 +987,7 @@ void GroupWiseAccount::slotTestRTFize()
 
 void GroupWiseAccount::slotPrivacy()
 {
-	GroupWisePrivacyDialog * privacyDialog = new GroupWisePrivacyDialog( this, Kopete::UI::Global::mainWidget(), "gwprivacydialog" );
+	new GroupWisePrivacyDialog( this, Kopete::UI::Global::mainWidget(), "gwprivacydialog" );
 }
 
 bool GroupWiseAccount::isContactBlocked( const QString & dn )

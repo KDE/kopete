@@ -34,31 +34,39 @@ void dump( QStringList & list )
 
 bool UserDetailsManager::known( const QString & dn )
 {
-	QStringList::Iterator found = m_knownDNs.find( dn );
-	return ( found != m_knownDNs.end() ) || (dn == m_client->userDN() );
+	if ( dn == m_client->userDN() )
+		return true;
+	QStringList::Iterator found = m_detailsMap.keys().find( dn );
+	// we always know the local user's details, so don't look them up
+	return ( found !=m_detailsMap.keys().end() );
+}
+
+ContactDetails UserDetailsManager::details( const QString & dn )
+{
+	return m_detailsMap[ dn ];
 }
 
 QStringList UserDetailsManager::knownDNs()
 {
-	return m_knownDNs;
+	return m_detailsMap.keys();
 }
 
-void UserDetailsManager::addContact( const QString & dn )
+void UserDetailsManager::addDetails( const ContactDetails & details )
 {
-	qDebug( "UserDetailsManager::addContact, we now know: " );
-	m_knownDNs.append( dn );
-	dump( m_knownDNs );
+	qDebug( "UserDetailsManager::addContact, got %s, we now know: ", details.dn.ascii() );
+	m_detailsMap.insert( details.dn, details );
+	QStringList keys = m_detailsMap.keys();
+	dump( keys );
 	qDebug( "UserDetailsManager::addContact, pending: " );
 	dump( m_pendingDNs );
-
 }
 
 void UserDetailsManager::removeContact( const QString & dn )
 {
-	m_knownDNs.remove( m_knownDNs.find( dn ) );
+	m_detailsMap.remove( dn );
 }
 
-void UserDetailsManager::requestDetails( const QStringList & dnList )
+void UserDetailsManager::requestDetails( const QStringList & dnList, bool onlyUnknown )
 {
 	// build a list of DNs that are not already subject to a pending request
 	QStringList requestList;
@@ -67,6 +75,9 @@ void UserDetailsManager::requestDetails( const QStringList & dnList )
 	{
 		// don't request our own details
 		if ( *it == m_client->userDN() )
+			break;
+		// don't request details we already have unless the caller specified this
+		if ( onlyUnknown && known( *it ) )
 			break;
 		QStringList::Iterator found = m_pendingDNs.find( *it );
 		if ( found == m_pendingDNs.end() )
@@ -87,25 +98,25 @@ void UserDetailsManager::requestDetails( const QStringList & dnList )
 	}
 	else
 	{
-		qDebug( "UserDetailsManager::requestDetails - all requested contacts are already pending" );
+		qDebug( "UserDetailsManager::requestDetails - all requested contacts are already available or pending" );
 	}
 }
 
-void UserDetailsManager::requestDetails( const QString & dn )
+void UserDetailsManager::requestDetails( const QString & dn, bool onlyUnknown )
 {
 	qDebug( "UserDetailsManager::requestDetails for %s", dn.ascii() );
 	QStringList list;
 	list.append( dn );
-	requestDetails( list );
+	requestDetails( list, onlyUnknown );
 }
 
 void UserDetailsManager::slotReceiveContactDetails( const GroupWise::ContactDetails & details )
 {
 	qDebug( "UserDetailsManager::slotReceiveContactDetails()");
-	m_pendingDNs.remove( m_pendingDNs.find( details.dn ) );
+	m_pendingDNs.remove( details.dn );
 	/*client()->userDetailsManager()->*/
-	addContact( details.dn );
-	emit temporaryContact( details );
+	addDetails( details );
+	//emit temporaryContact( details );
 	emit gotContactDetails( details );
 }
 

@@ -117,7 +117,7 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 			this, SIGNAL( contactUserDetailsReceived( const ContactDetails & ) ) ) ;
 
 	connect( login, SIGNAL( gotPrivacySettings( bool, bool, const QStringList &, const QStringList & ) ),
-			privacyManager(), SLOT( slotGotPrivacyDetails( bool, bool, const QStringList &, const QStringList & ) ) );
+			privacyManager(), SLOT( slotGotPrivacySettings( bool, bool, const QStringList &, const QStringList & ) ) );
 			
 	connect( login, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 	
@@ -179,7 +179,7 @@ void Client::initialiseEventTasks()
 	connect( ct, SIGNAL( invitationDeclined( const ConferenceEvent & ) ), SIGNAL( invitationDeclined( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( closed( const ConferenceEvent & ) ), SIGNAL( conferenceClosed( const ConferenceEvent & ) ) );
 	connect( ct, SIGNAL( autoReply( const ConferenceEvent & ) ), SIGNAL( autoReplyReceived( const ConferenceEvent & ) ) );
-	connect( d->userDetailsMgr, SIGNAL( temporaryContact( const ContactDetails & ) ), SIGNAL( tempContactReceived( const ContactDetails & ) ) );
+	connect( ct, SIGNAL( temporaryContact( const ContactDetails & ) ), SIGNAL( tempContactReceived( const ContactDetails & ) ) );
 	// The ConnectionTask handles incoming connection events
 	ConnectionTask* cont = new ConnectionTask( d->root );
 	connect( cont, SIGNAL( connectedElsewhere() ), SIGNAL( connectedElsewhere() ) );
@@ -296,10 +296,16 @@ void Client::lt_loginFinished()
 	if ( lt->success() )
 	{
 		qDebug( "Client::lt_loginFinished() LOGIN SUCCEEDED" );
+		// set our initial status
 		SetStatusTask * sst = new SetStatusTask( d->root );
 		sst->status( GroupWise::Available, QString::null, QString::null );
 		sst->go( true );
 		emit loggedIn();
+		// fetch details for any privacy list items that aren't in our contact list.
+		// There is a chicken-and-egg case regarding this: We need the privacy before reading the contact list so
+		// blocked contacts are shown as blocked.  But we need not fetch user details for the privacy lists
+		// before reading the contact list, as many privacy items' details are already in the contact list
+		privacyManager()->getDetailsForPrivacyLists();
 	}
 	else
 	{

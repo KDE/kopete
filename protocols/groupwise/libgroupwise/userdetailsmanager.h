@@ -12,6 +12,7 @@
 #ifndef USERDETAILSMANAGER_H
 #define USERDETAILSMANAGER_H
 
+#include <qmap.h>
 #include <qobject.h>
 #include <qstringlist.h>
 
@@ -37,10 +38,15 @@ public:
 	 * Check if we have details for a single DN
 	 */
 	bool known( const QString &dn );
-	/** 
-	 * Add a DN to the list of DNs that we have details for.  This SHOULD be called when receiving details in contactlist receive and manipulation, to prevent unnecessary additional requests.
+	/**
+	 * Get details for a given DN
 	 */
-	void addContact( const QString &dn );
+	ContactDetails details( const QString &dn );
+	/** 
+	 * Add a ContactDetails object to our cache.
+	 * This SHOULD be called when receiving details in contactlist receive and manipulation, to prevent unnecessary additional requests.
+	 */
+	void addDetails( const ContactDetails & details );
 	/**
 	 * Remove a contact from the list of known DNs.  This MUST be performed when a client removes a DN from its local contact list,
 	 * otherwise new events from this DN will not receive user details.
@@ -50,21 +56,20 @@ public:
 	 * Explicitly request details for a set of contacts from the server.
 	 * Will signal @ref gotContactUserDetails for each one when they are available.
 	 */
-	void requestDetails( const QStringList & dnList );
+	void requestDetails( const QStringList & dnList, bool onlyUnknown = true );
 	/**
 	 * Explicitly request a contact's details from the server.  Will signal @ref gotContactUserDetails when they are available.
 	 */
-	void requestDetails( const QString & dn );
+	void requestDetails( const QString & dn, bool onlyUnknown = true );
 	
 signals:
-	void temporaryContact( const ContactDetails & );
 	void gotContactDetails( const GroupWise::ContactDetails & );
 protected slots:
 	void slotReceiveContactDetails( const GroupWise::ContactDetails & );
 private:
-	QStringList m_knownDNs; 	// a list of DNs that we have details for already
 	QStringList m_pendingDNs;	// a list of DNs that have pending requests
 	Client * m_client;
+	QMap< QString, GroupWise::ContactDetails > m_detailsMap;
 };
 
 #endif

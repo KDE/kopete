@@ -10,8 +10,8 @@
 //
 //
 #include "client.h"
-
 #include "tasks/privacyitemtask.h"
+#include "userdetailsmanager.h"
 
 #include "privacymanager.h"
 
@@ -143,12 +143,22 @@ void PrivacyManager::setPrivacy( bool defaultDeny, const QStringList & allowList
 
 }
 	
-void PrivacyManager::slotGotPrivacyDetails( bool locked, bool defaultDeny, const QStringList & allowList, const QStringList & denyList )
+void PrivacyManager::slotGotPrivacySettings( bool locked, bool defaultDeny, const QStringList & allowList, const QStringList & denyList )
 {
 	m_locked = locked;
 	m_defaultDeny = defaultDeny;
 	m_allowList = allowList;
 	m_denyList = denyList;
+}
+
+void PrivacyManager::getDetailsForPrivacyLists()
+{
+	if ( !m_allowList.isEmpty() )
+	{
+		m_client->userDetailsManager()->requestDetails( m_allowList );
+	}
+	if ( !m_denyList.isEmpty() )
+		m_client->userDetailsManager()->requestDetails( m_denyList );
 }
 
 void PrivacyManager::slotDefaultPolicyChanged()

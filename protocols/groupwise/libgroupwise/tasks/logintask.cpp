@@ -14,6 +14,7 @@
 
 #include "client.h"
 #include "response.h"
+#include "privacymanager.h"
 #include "userdetailsmanager.h"
 
 #include "logintask.h"
@@ -59,7 +60,10 @@ bool LoginTask::take( Transfer * transfer )
 	
 	ContactDetails cd = extractUserDetails( loginResponseFields );
 	emit gotMyself( cd );
-	
+
+	// read the privacy settings first, because this affects all contacts' apparent status
+	extractPrivacy( loginResponseFields );
+
 	// CREATE CONTACT LIST
 	// locate contact list
 	Field::MultiField * contactList = loginResponseFields.findMultiField( NM_A_FA_CONTACT_LIST );
@@ -87,11 +91,6 @@ bool LoginTask::take( Transfer * transfer )
 		container = static_cast<Field::MultiField *>( *it );
 		extractContact( container );
 	}
-	
-	// create privacy list
-	// NOTE: It's important to do this AFTER the contact list, 
-	// because then the user details in the contact list will have been cached
-	extractPrivacy( loginResponseFields );
 	
 	setSuccess();
 	
@@ -145,10 +144,10 @@ void LoginTask::extractContact( Field::MultiField * contactContainer )
 	{
 		Field::FieldList detailsFields = details->fields();
 		ContactDetails cd = extractUserDetails( detailsFields );
+		if ( cd.dn.isEmpty() )
+			cd.dn = contact.dn;
 		// tell the UserDetailsManager that we have this contact's details
-		client()->userDetailsManager()->addContact( contact.dn );
-
-		cd.dn = contact.dn.lower(); // HACK: lowercased DN
+		client()->userDetailsManager()->addDetails( cd );
 		emit gotContactUserDetails( cd );
 	}
 }
