@@ -32,11 +32,11 @@
 #include "kopeteplugin.h"
 #include "pluginloader.h"
 
-// FIXME: Add parent!!
 KopeteMetaContact::KopeteMetaContact()
 : QObject( KopeteContactList::contactList() )
 {
-	m_trackChildNameChanges = true;
+	//TODO: implement m_trackChildNameChanges
+	m_trackChildNameChanges = false;
 	m_temporary=false;
 	m_isTopLevel=false;
 }
