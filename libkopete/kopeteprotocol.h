@@ -46,7 +46,7 @@ class KopeteProtocol : public KopetePlugin
 
 public:
 	/**
-	 * Available capabilities for the rich text widget.
+	 * @brief Available capabilities for the rich text widget.
 	 *
 	 * richTextCapabilities() returns an ORed list of these, which
 	 * the edit widget interperts to determine what buttons to show
