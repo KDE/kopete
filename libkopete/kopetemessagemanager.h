@@ -115,7 +115,7 @@ signals:
 	void remoteTyping( const KopeteContact *, bool );
 
 	void dying( QWidget* );
-
+	
 public slots:
 	/**
 	 * Got a typing notification from a user
@@ -160,10 +160,9 @@ public slots:
 	void sendMessage(KopeteMessage &message);
 
 	void typing(bool t);
-
-
-protected slots:
+	
 	void slotReadMessages();
+
 
 protected:
 	/**
@@ -180,6 +179,7 @@ protected:
 
 private:
 	KMMPrivate *d;
+
 };
 
 #endif

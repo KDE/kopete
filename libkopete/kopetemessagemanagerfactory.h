@@ -31,6 +31,7 @@ class KopeteMessageManager;
 class KopeteMessage;
 class KopeteContact;
 class KopeteProtocol;
+class KopeteEvent;
 
 typedef QPtrList<KopeteContact>        KopeteContactPtrList;
 typedef QValueList<KopeteMessage>      KopeteMessageList;
@@ -100,7 +101,7 @@ signals:
 	 * message that is being received.
 	 */
 	void aboutToReceive( KopeteMessage& message );
-
+	
 private:
 	KopeteMessageManagerFactory( QObject* parent = 0, const char* name = 0 );
 

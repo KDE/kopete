@@ -171,7 +171,6 @@ void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 
 	if( d->mLogger && d->mLog )
 		d->mLogger->append( msg );
-
 }
 
 void KopeteMessageManager::addContact( const KopeteContact *c )
