@@ -648,7 +648,9 @@ void KopeteWindow::slotTrayAboutToShowMenu( KPopupMenu * popup )
 
 }
 
-void KopeteWindow::slotProtocolStatusIconRightClicked( Kopete::Protocol *proto, const QPoint &p )
+
+
+/*void KopeteWindow::slotProtocolStatusIconRightClicked( Kopete::Protocol *proto, const QPoint &p )
 {
 	//kdDebug( 14000 ) << k_funcinfo << endl;
 	if ( Kopete::AccountManager::self()->accounts( proto ).count() > 0 )
@@ -658,7 +660,7 @@ void KopeteWindow::slotProtocolStatusIconRightClicked( Kopete::Protocol *proto, 
 		connect( menu->popupMenu(), SIGNAL( aboutToHide() ), menu, SLOT( deleteLater() ) );
 		menu->popupMenu()->popup( p );
 	}
-}
+}*/
 
 void KopeteWindow::showAddContactDialog()
 {

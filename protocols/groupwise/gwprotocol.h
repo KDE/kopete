@@ -25,6 +25,7 @@
 
 #include <kopeteprotocol.h>
 #include "kopetecontactproperty.h"
+#include "kopeteonlinestatus.h"
 
 /**
  * Encapsulates the generic actions associated with this protocol

@@ -26,6 +26,7 @@
 #include "kyahoo.h"
 
 // Kopete Includes
+#include "kopeteonlinestatus.h"
 
 // QT Includes
 #include <qpixmap.h>

@@ -23,6 +23,7 @@
 #include "kopeteprotocol.h"
 #include "kopetecontactproperty.h"
 #include "kopetemimetypehandler.h"
+#include "kopeteonlinestatus.h"
 
 class QComboBox;
 class ICQUserInfoWidget;

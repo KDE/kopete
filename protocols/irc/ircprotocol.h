@@ -24,6 +24,7 @@
 #include "kopetemimetypehandler.h"
 
 #include <dom/dom_node.h>
+#include <qdict.h>
 
 #define m_protocol ((IRCProtocol*)IRCProtocol::protocol())
 

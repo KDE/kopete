@@ -113,8 +113,7 @@ private slots:
 	/**
 	 * Show a context menu for a protocol
 	 */
-	void slotProtocolStatusIconRightClicked( Kopete::Protocol *proto,
-		const QPoint &p );
+//	void slotProtocolStatusIconRightClicked( Kopete::Protocol *proto, const QPoint &p );
 
 	/**
 	 * Show a context menu for an account

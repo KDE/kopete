@@ -21,6 +21,7 @@
 #include "kopeteprotocol.h"
 #include "kopetecontactproperty.h"
 #include "kopetemimetypehandler.h"
+#include "kopeteonlinestatus.h"
 
 #include <qmap.h>
 

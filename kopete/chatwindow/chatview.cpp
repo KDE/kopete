@@ -227,7 +227,7 @@ ChatView::ChatView( Kopete::MessageManager *mgr, const char *name )
 		0L, QString::fromLatin1("editDock"), QString::fromLatin1(" ") );
 
 	editpart = new KopeteRichTextEditPart( editDock, "kopeterichtexteditpart",
-		mgr->protocol()->richTextCapabilities() );
+		mgr->protocol()->capabilities() );
 	connect( editpart, SIGNAL( toggleToolbar(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
 	connect( this, SIGNAL( windowCreated()), editpart, SLOT(checkToolbarEnabled()) );
 
@@ -1012,7 +1012,7 @@ bool ChatView::canSend()
 		return false;
 
 	// if we can't send offline, make sure we have an online contact...
-	if ( !m_manager->protocol()->canSendOffline() )
+	if ( !( m_manager->protocol()->capabilities() & Kopete::Protocol::CanSendOffline ) )
 	{
 		bool onlineContactFound = false;
 

@@ -3,9 +3,9 @@
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @tiscalinet.be>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -21,15 +21,19 @@
 
 #include <kdebug.h>
 #include <kaction.h>
+#include <qdict.h>
 
-#include "kopetemessagemanagerfactory.h"
-#include "kopetemetacontact.h"
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
+#include "kopetecontact.h"
 #include "kopeteglobal.h"
 #include "kopetecontactproperty.h"
+#include "kopetemetacontact.h"
 
-class KopeteProtocolPrivate
+namespace Kopete
+{
+
+class Protocol::Private
 {
 public:
 	bool unloading;
@@ -38,79 +42,117 @@ public:
 	 * Make sure we always have a lastSeen and a fullname property as long as
 	 * a protocol is loaded
 	 */
-	Kopete::ContactPropertyTmpl mStickLastSeen;
-	Kopete::ContactPropertyTmpl mStickFullName;
+	ContactPropertyTmpl mStickLastSeen;
+	ContactPropertyTmpl mStickFullName;
 };
 
-Kopete::Protocol::Protocol( KInstance *instance, QObject *parent, const char *name )
-: Kopete::Plugin( instance, parent, name )
+Protocol::Protocol( KInstance *instance, QObject *parent, const char *name )
+: Plugin( instance, parent, name )
 {
-	d = new KopeteProtocolPrivate;
-	d->mStickLastSeen = Kopete::Global::Properties::self()->lastSeen();
-	d->mStickFullName = Kopete::Global::Properties::self()->fullName();
+	d = new Private;
+	d->mStickLastSeen = Global::Properties::self()->lastSeen();
+	d->mStickFullName = Global::Properties::self()->fullName();
 	d->unloading = false;
 	d->capabilities = 0;
 }
 
-Kopete::Protocol::~Protocol()
+Protocol::~Protocol()
 {
 	// Remove all active accounts
-	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
+	QDict<Account> accounts = AccountManager::self()->accounts( this );
 	if ( !accounts.isEmpty() )
 	{
 		kdWarning( 14010 ) << k_funcinfo << "Deleting protocol with existing accounts! Did the account unloading go wrong?" << endl;
 
-		for( QDictIterator<Kopete::Account> it( accounts ); it.current() ; ++it )
+		for( QDictIterator<Account> it( accounts ); it.current() ; ++it )
 			delete *it;
 	}
 
 	delete d;
 }
 
-int Kopete::Protocol::richTextCapabilities() const
+unsigned int Protocol::capabilities() const
 {
 	return d->capabilities;
 }
 
-void Kopete::Protocol::setRichTextCapabilities( int capabilities )
+void Protocol::setCapabilities( unsigned int capabilities )
 {
 	d->capabilities = capabilities;
 }
 
-KActionMenu* Kopete::Protocol::protocolActions()
+void Protocol::slotAccountOnlineStatusChanged( Contact *self )
+{//slot connected in aboutToUnload
+	if ( !self || !self->account() || self->account()->isConnected())
+		return;
+
+	connect( self->account(), SIGNAL( destroyed( QObject * ) ),
+		this, SLOT( slotAccountDestroyed( QObject * ) ) );
+
+	self->account()->deleteLater();
+}
+
+void Protocol::slotAccountDestroyed( QObject * /* account */ )
 {
-	QDict<Kopete::Account> dict=Kopete::AccountManager::self()->accounts(this);
-	QDictIterator<Kopete::Account> it( dict );
-	if(dict.count() == 1 )
+	QDict<Account> dict = AccountManager::self()->accounts( this );
+	if ( dict.isEmpty() )
 	{
-		return (it.current())->actionMenu();
+		// While at this point we are still in a stack trace from the destroyed
+		// account it's safe to emit readyForUnload already, because it uses a
+		// deleteLater rather than a delete for exactly this reason, to keep the
+		// API managable
+		emit( readyForUnload() );
 	}
+}
 
-	KActionMenu *m_menu = new KActionMenu(displayName(),pluginIcon(),this);
+void Protocol::aboutToUnload()
+{
 
-	for( ; Kopete::Account *account = it.current(); ++it )
+	d->unloading = true;
+
+	bool allDisconnected = true;
+
+	// Disconnect all accounts
+	QDict<Account> accounts = AccountManager::self()->accounts( this );
+	for ( QDictIterator<Account> it( accounts ); it.current() ; ++it )
 	{
-		KActionMenu *accountMenu = account->actionMenu();
-		if(accountMenu->parent())
-			accountMenu->parent()->removeChild( accountMenu );
-		m_menu->insertChild( accountMenu );
-		m_menu->insert( accountMenu );
-	}
+		if ( it.current()->myself() && it.current()->myself()->isOnline() )
+		{
+			kdDebug( 14010 ) << k_funcinfo << it.current()->accountId() <<
+				" is still connected, disconnecting..." << endl;
 
-	return m_menu;
+			QObject::connect( it.current()->myself(),
+				SIGNAL( onlineStatusChanged( Contact *, const OnlineStatus &, const OnlineStatus & ) ),
+				this, SLOT( slotAccountOnlineStatusChanged( Contact * ) ) );
+			it.current()->disconnect();
+
+			allDisconnected = false;
+		}
+		else
+		{
+			// Remove account, it's already disconnected
+			kdDebug( 14010 ) << k_funcinfo << it.current()->accountId() <<
+				" is already disconnected, deleting..." << endl;
+
+			QObject::connect( it.current(), SIGNAL( destroyed( QObject * ) ),
+				this, SLOT( slotAccountDestroyed( QObject * ) ) );
+			it.current()->deleteLater();
+		}
+	}
 }
 
 
-void Kopete::Protocol::slotMetaContactAboutToSave( Kopete::MetaContact *metaContact )
+
+void Protocol::slotMetaContactAboutToSave( MetaContact *metaContact )
 {
 	QMap<QString, QString> serializedData, sd;
 	QMap<QString, QString> addressBookData, ad;
 	QMap<QString, QString>::Iterator it;
 
-	//kdDebug( 14010 ) << "Kopete::Protocol::metaContactAboutToSave: protocol " << pluginId() << ": serializing " << metaContact->displayName() << endl;
+	//kdDebug( 14010 ) << "Protocol::metaContactAboutToSave: protocol " << pluginId() << ": serializing " << metaContact->displayName() << endl;
 
-	QPtrList<Kopete::Contact> contacts=metaContact->contacts();
-	for (Kopete::Contact *c=contacts.first() ; c ; c=contacts.next() )
+	QPtrList<Contact> contacts=metaContact->contacts();
+	for (Contact *c=contacts.first() ; c ; c=contacts.next() )
 	{
 		if( c->protocol()->pluginId() != pluginId() )
 			continue;
@@ -122,7 +164,7 @@ void Kopete::Protocol::slotMetaContactAboutToSave( Kopete::MetaContact *metaCont
 		// them, or use its own format, it can call clear() on the provided list
 		sd[ QString::fromLatin1( "contactId" ) ] =   c->contactId();
 		//TODO(nick) remove
-		sd[ QString::fromLatin1( "displayName" ) ] = c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+		sd[ QString::fromLatin1( "displayName" ) ] = c->property(Global::Properties::self()->nickName()).value().toString();
 		if(c->account())
 			sd[ QString::fromLatin1( "accountId" ) ] = c->account()->accountId();
 
@@ -164,7 +206,7 @@ void Kopete::Protocol::slotMetaContactAboutToSave( Kopete::MetaContact *metaCont
 
 	for( it = addressBookData.begin(); it != addressBookData.end(); ++it )
 	{
-		//kdDebug( 14010 ) << "Kopete::Protocol::metaContactAboutToSave: addressBookData: key: " << it.key() << ", data: " << it.data() << endl;
+		//kdDebug( 14010 ) << "Protocol::metaContactAboutToSave: addressBookData: key: " << it.key() << ", data: " << it.data() << endl;
 		// FIXME: This is a terrible hack to check the key name for the phrase "messaging/"
 		//        to indicate what app name to use, but for now it's by far the easiest
 		//        way to get this working.
@@ -182,9 +224,9 @@ void Kopete::Protocol::slotMetaContactAboutToSave( Kopete::MetaContact *metaCont
 	}
 }
 
-void Kopete::Protocol::deserialize( Kopete::MetaContact *metaContact, const QMap<QString, QString> &data )
+void Protocol::deserialize( MetaContact *metaContact, const QMap<QString, QString> &data )
 {
-	/*kdDebug( 14010 ) << "Kopete::Protocol::deserialize: protocol " <<
+	/*kdDebug( 14010 ) << "Protocol::deserialize: protocol " <<
 		pluginId() << ": deserializing " << metaContact->displayName() << endl;*/
 
 	QMap<QString, QStringList> serializedData;
@@ -238,10 +280,10 @@ void Kopete::Protocol::deserialize( Kopete::MetaContact *metaContact, const QMap
 		// who migrate from 0.6, as there's only one account in that case
 		if( sd[ QString::fromLatin1( "accountId" ) ].isNull() )
 		{
-			QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
+			QDict<Account> accounts = AccountManager::self()->accounts( this );
 			if ( accounts.count() > 0 )
 			{
-				sd[ QString::fromLatin1( "accountId" ) ] = QDictIterator<Kopete::Account>( accounts ).currentKey();
+				sd[ QString::fromLatin1( "accountId" ) ] = QDictIterator<Account>( accounts ).currentKey();
 			}
 			else
 			{
@@ -253,14 +295,14 @@ void Kopete::Protocol::deserialize( Kopete::MetaContact *metaContact, const QMap
 			}
 		}
 
-		Kopete::Contact *c = deserializeContact( metaContact, sd, ad );
+		Contact *c = deserializeContact( metaContact, sd, ad );
 		if (c) // should never be null but I do not like crashes
 			c->deserializeProperties( sd );
 	}
 }
 
-Kopete::Contact *Kopete::Protocol::deserializeContact(
-	Kopete::MetaContact */*metaContact */,
+Contact *Protocol::deserializeContact(
+	MetaContact */*metaContact */,
 	const QMap<QString, QString> & /* serializedData */,
 	const QMap<QString, QString> & /* addressBookData */ )
 {
@@ -268,67 +310,8 @@ Kopete::Contact *Kopete::Protocol::deserializeContact(
 	return 0;
 }
 
-void Kopete::Protocol::slotAccountOnlineStatusChanged( Kopete::Contact *self, const Kopete::OnlineStatus &newStatus,
-	const Kopete::OnlineStatus & /* old */ )
-{
-	if ( !self || !self->account() || newStatus.status() != Kopete::OnlineStatus::Offline )
-		return;
 
-	connect( self->account(), SIGNAL( destroyed( QObject * ) ),
-		this, SLOT( slotAccountDestroyed( QObject * ) ) );
-
-	self->account()->deleteLater();
-}
-
-void Kopete::Protocol::slotAccountDestroyed( QObject * /* account */ )
-{
-	QDict<Kopete::Account> dict = Kopete::AccountManager::self()->accounts( this );
-	if ( dict.isEmpty() )
-	{
-		// While at this point we are still in a stack trace from the destroyed
-		// account it's safe to emit readyForUnload already, because it uses a
-		// deleteLater rather than a delete for exactly this reason, to keep the
-		// API managable
-		emit( readyForUnload() );
-	}
-}
-
-void Kopete::Protocol::aboutToUnload()
-{
-	bool allDisconnected = true;
-
-	d->unloading = true;
-
-	// Disconnect all accounts
-	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
-	for ( QDictIterator<Kopete::Account> it( accounts ); it.current() ; ++it )
-	{
-		if ( it.current()->myself() && it.current()->myself()->isOnline() )
-		{
-			kdDebug( 14010 ) << k_funcinfo << it.current()->accountId() <<
-				" is still connected, disconnecting..." << endl;
-
-			QObject::connect( it.current()->myself(),
-				SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
-				this, SLOT( slotAccountOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
-			it.current()->disconnect();
-
-			allDisconnected = false;
-		}
-		else
-		{
-			// Remove account, it's already disconnected
-			kdDebug( 14010 ) << k_funcinfo << it.current()->accountId() <<
-				" is already disconnected, deleting..." << endl;
-
-			QObject::connect( it.current(), SIGNAL( destroyed( QObject * ) ),
-				this, SLOT( slotAccountDestroyed( QObject * ) ) );
-			it.current()->deleteLater();
-		}
-	}
-}
+} //END namespace Kopete
 
 #include "kopeteprotocol.moc"
-
-// vim: set noet ts=4 sts=4 sw=4:
 
