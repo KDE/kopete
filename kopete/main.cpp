@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 {
 	KAboutData aboutData( "kopete", I18N_NOOP("Kopete"),
 		version, description, KAboutData::License_GPL,
-		"(c) 2002, Duncan Mac-Vicar Prett", 0, 0);
+		"(c) 2002, Duncan Mac-Vicar Prett\n(c) 2002, The Kopete Development Team", "kopete-devel@kde.org", "http://www.kdedevelopers.net/kopete");
 
 	aboutData.addAuthor ( "Duncan Mac-Vicar Prett", I18N_NOOP("Author, core developer"), "duncan@kde.org", "http://www.mac-vicar.com" );
 	aboutData.addAuthor ( "Nick Betcher", I18N_NOOP("core developer, fastest plugin developer on earth."), "nbetcher@usinternet.com", "http://www.kdedevelopers.net" );
