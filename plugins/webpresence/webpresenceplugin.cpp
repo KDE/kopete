@@ -174,7 +174,7 @@ bool WebPresencePlugin::transform( KTempFile* src, KTempFile* dest )
 	// test if the stylesheet exists
 	QFile sheet;
 	if ( m_prefs->useDefaultStyleSheet() )
-		sheet.setName( locateLocal( "appdata", "webpresencedefault.xsl" ) );
+		sheet.setName( locate( "appdata", "webpresencedefault.xsl" ) );
 	else
 		sheet.setName( m_prefs->userStyleSheet() );
 	
