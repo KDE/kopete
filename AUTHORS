@@ -28,5 +28,6 @@ Contributed patches. Thanks!!!
 
 Simon Perreault <nomis80@linuxquebec.com>
 - Start docked feature.
-
+Hendrik vom Lehn <hvl@linux-4-ever.de>
+- KNotify beep support for KopeteEvent
 

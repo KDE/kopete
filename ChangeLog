@@ -6,6 +6,7 @@ o Main App
 	o Kopete API redesign/cleanup (Ryan)
 	o Added globally Away/Available (Duncan)
 	o Added Auto-Away Plugin (Duncan)
+	o KNotify beep support for KopeteEvent (Hendrik)
 	
 o IRC Plugin
 
