@@ -1,13 +1,9 @@
-
 SUBDIRS = private ui compat .
 
 METASOURCES = AUTO
 
 AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CAST \
 	$(KOPETE_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private -I$(top_srcdir)/kopete/libkopete/ui $(all_includes)
-
-update_DATA = kopete-pluginloader.upd kopete-pluginloader.pl
-updatedir = $(kde_datadir)/kconf_update
 
 lib_LTLIBRARIES = libkopete.la
 
@@ -20,7 +16,6 @@ libkopete_la_SOURCES = kopeteonlinestatus.cpp kopeteprotocol.cpp kopetecontact.c
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
 libkopete_la_LIBADD = ui/libkopeteui.la \
 	$(LIB_KOPETECOMPAT) $(LIB_KIO) $(LIB_XSS)
-
 
 servicetype_DATA = kopeteplugin.desktop kopeteprotocol.desktop
 servicetypedir = $(kde_servicetypesdir)

@@ -1,0 +1,4 @@
+Id=kopete0.7/r1
+File=kopeterc
+Script=kopete-pluginloader.pl,perl
+
