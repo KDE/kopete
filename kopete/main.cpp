@@ -22,7 +22,8 @@
 
 static const char *description =
 	I18N_NOOP("Kopete, the KDE Instant Messenger");
-static const char *version="0.3";
+
+#define VERSION "0.3 (CVS >= 20020514)"
 	
 static KCmdLineOptions options[] =
 {
@@ -32,7 +33,7 @@ static KCmdLineOptions options[] =
 int main(int argc, char *argv[])
 {
 	KAboutData aboutData( "kopete", I18N_NOOP("Kopete"),
-		version, description, KAboutData::License_GPL,
+		VERSION, description, KAboutData::License_GPL,
 		"(c) 2002, Duncan Mac-Vicar Prett\n(c) 2002, The Kopete Development Team", "kopete-devel@kde.org", "http://www.kdedevelopers.net/kopete");
 
 	aboutData.addAuthor ( "Duncan Mac-Vicar Prett", I18N_NOOP("Author, core developer"), "duncan@kde.org", "http://www.mac-vicar.com" );
