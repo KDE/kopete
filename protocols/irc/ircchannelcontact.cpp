@@ -30,6 +30,7 @@
 #include "irccontactmanager.h"
 #include "ircchannelcontact.h"
 #include "ircusercontact.h"
+#include "ircservercontact.h"
 #include "ircaccount.h"
 #include "ircprotocol.h"
 
@@ -287,16 +288,31 @@ void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString
 void IRCChannelContact::slotUserKicked(const QString &nick, const QString &channel,
 		const QString &nickKicked, const QString &reason)
 {
-	if ( m_isConnected && channel.lower() == m_nickName.lower() && nickKicked.lower() != m_engine->nickName().lower() )
+	if ( m_isConnected && channel.lower() == m_nickName.lower() )
 	{
-		KopeteContact *c = locateUser( nickKicked );
-		if ( c )
+		QString r = i18n("Kicked by %1.").arg( nick );
+		if( reason != nick )
+			r.append( i18n(" Reason: %2").arg( reason ) );
+
+
+
+		if( nickKicked.lower() != m_engine->nickName().lower() )
 		{
-			QString r = i18n("Kicked by %1.").arg( nick );
-			if( reason != nick )
-				r.append( i18n(" Reason: %2").arg( reason ) );
-			manager()->removeContact( c, r );
-			m_account->unregisterUser( nickKicked );
+			KopeteContact *c = locateUser( nickKicked );
+			if ( c )
+			{
+				manager()->removeContact( c, r );
+				m_account->unregisterUser( nickKicked );
+				KopeteMessage msg( (KopeteContact *)this, mMyself,
+					r, KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+				msg.setImportance(KopeteMessage::Low);
+				appendMessage(msg);
+			}
+		}
+		else
+		{
+			KMessageBox::error(0l, i18n("The nickname %1 is already in use").arg(nick), i18n("IRC Plugin"));
+			manager()->view()->closeView();
 		}
 	}
 }
