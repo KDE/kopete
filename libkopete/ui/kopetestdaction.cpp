@@ -84,7 +84,7 @@ KopetePreferencesAction::KopetePreferencesAction( KActionCollection *parent, con
 //#if KDE_IS_VERSION( 3, 1, 90 )
 //: KAction( KStdGuiItem::preferences(), 0, 0, 0, parent, name )
 //#else
-: KAction( KGuiItem( i18n( "Translators: No translation needed for KDE 3.2, it's only used in 3.1", "&Configure Kopete..." ),
+: KAction( KGuiItem( i18n( "&Configure Kopete..." ),
 	QString::fromLatin1( "configure" ) ), 0, 0, 0, parent, name )
 //#endif
 {
