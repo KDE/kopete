@@ -206,7 +206,7 @@ void KopeteMetaContactLVI::movedToGroup( KopeteGroup *to )
 
 	if ( m_parentGroup )
 		m_parentGroup->refreshDisplayName();
-	
+
 	// create a spacer if wanted
 	// I assume that the safety property that allows the delete in slotConfigChanged holds here - Will
 	delete d->spacerBox->component( 0 );
@@ -268,20 +268,20 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 		int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 
 		QString text = i18n( "%2 is now %1!" ).arg( m_metaContact->statusString(), m_metaContact->displayName() );
-		
-		/** 
+
+		/**
 		 * Yes, I know this is a funky order. However, it works as expected this way
 		 * although I haven't quite figured out why yet. Please don't change the order
 		 */
 		if ( m_metaContact->isOnline() && ( m_oldStatus == KopeteOnlineStatus::Offline || m_oldStatus == KopeteOnlineStatus::Away ) )
 			KNotifyClient::event( winId , "kopete_status_change", text );
-			
+
 		else if ( m_oldStatus == KopeteOnlineStatus::Online && ( m_metaContact->status() != KopeteOnlineStatus::Offline || m_metaContact->status() != KopeteOnlineStatus::Unknown ) )
 			KNotifyClient::event( winId,  "kopete_online", text, i18n( "Chat" ), this, SLOT( execute() ) );
 		else
 			KNotifyClient::event( winId , "kopete_offline", text );
-			
-			
+
+
 		if ( !mBlinkTimer->isActive() && ( m_metaContact->statusIcon() != m_oldStatusIcon ) )
 		{
 			mIsBlinkIcon = false;
@@ -319,8 +319,10 @@ void KopeteMetaContactLVI::slotRemoveThisUser()
 	kdDebug( 14000 ) << k_funcinfo << " Removing user" << endl;
 	//m_metaContact->removeThisUser();
 
-	if ( KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n( "Are you sure you want to remove %1 from your contact list?" ).
-		arg( m_metaContact->displayName() ), i18n( "Remove Contact - Kopete" ) ) == KMessageBox::Yes )
+	if ( KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
+		i18n( "Are you sure you want to remove %1 from your contact list?" ).
+		arg( m_metaContact->displayName() ), i18n( "Remove Contact - Kopete" ) )
+		== KMessageBox::Yes )
 	{
 		KopeteContactList::contactList()->removeMetaContact( m_metaContact );
 	}
@@ -520,7 +522,8 @@ void KopeteMetaContactLVI::updateVisibility()
 		setTargetVisibility( true );
 }
 
-void KopeteMetaContactLVI::slotContactPropertyChanged( KopeteContact *, const QString &key, const QVariant &old, const QVariant &newVal )
+void KopeteMetaContactLVI::slotContactPropertyChanged( KopeteContact *,
+	const QString &key, const QVariant &old, const QVariant &newVal )
 {
 	if ( key == QString::fromLatin1("awayMessage") && d->extraText && old != newVal )
 	{
@@ -533,24 +536,30 @@ void KopeteMetaContactLVI::slotContactPropertyChanged( KopeteContact *, const QS
 
 void KopeteMetaContactLVI::slotContactAdded( KopeteContact *c )
 {
-	connect( c, SIGNAL( propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ),
-	         this, SLOT( slotContactPropertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) );
+	connect( c, SIGNAL( propertyChanged( KopeteContact *, const QString &,
+			const QVariant &, const QVariant & ) ),
+		this, SLOT( slotContactPropertyChanged( KopeteContact *, const QString &,
+			const QVariant &, const QVariant & ) ) );
 
 	updateContactIcon( c );
 
-	slotContactPropertyChanged( c, QString::fromLatin1("awayMessage"), QVariant(), c->property( QString::fromLatin1("awayMessage") ).value() );
+	slotContactPropertyChanged( c, QString::fromLatin1("awayMessage"),
+		QVariant(), c->property( QString::fromLatin1("awayMessage") ).value() );
 	slotUpdateIcons();
 }
 
 void KopeteMetaContactLVI::slotContactRemoved( KopeteContact *c )
 {
-	disconnect( c, SIGNAL( propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ),
-	            this, SLOT( slotContactPropertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) );
+	disconnect( c, SIGNAL( propertyChanged( KopeteContact *, const QString &,
+			const QVariant &, const QVariant & ) ),
+		this, SLOT( slotContactPropertyChanged( KopeteContact *,
+			const QString &, const QVariant &, const QVariant & ) ) );
 
 	if ( ListView::Component *comp = contactComponent( c ) )
 		delete comp;
 
-	slotContactPropertyChanged( c, QString::fromLatin1("awayMessage"), c->property( QString::fromLatin1("awayMessage") ).value(), QVariant() );
+	slotContactPropertyChanged( c, QString::fromLatin1("awayMessage"),
+		c->property( QString::fromLatin1("awayMessage") ).value(), QVariant() );
 	slotUpdateIcons();
 }
 
@@ -565,7 +574,8 @@ void KopeteMetaContactLVI::updateContactIcons()
 void KopeteMetaContactLVI::updateContactIcon( KopeteContact *c )
 {
 	KGlobal::config()->setGroup( QString::fromLatin1("ContactList") );
-	bool bHideOffline = KGlobal::config()->readBoolEntry( QString::fromLatin1("HideOfflineContacts"), false );
+	bool bHideOffline = KGlobal::config()->readBoolEntry(
+		QString::fromLatin1("HideOfflineContacts"), false );
 	if ( KopetePrefs::prefs()->showOffline() )
 		bHideOffline = false;
 
