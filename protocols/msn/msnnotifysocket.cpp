@@ -216,7 +216,7 @@ void KMSNServiceSocket::parseCommand( const QString &cmd, uint id,
 	{
 		QString status = data.section( ' ', 0, 0 );
 		setOnlineStatus( Connected );
-		//emit statusChanged( status );
+		emit statusChanged( status );
 	}
 	else if( cmd == "REA" )
 	{
