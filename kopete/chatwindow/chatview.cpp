@@ -154,6 +154,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	isActive = false;
 	m_tabBar = 0L;
 	messageId = 0;
+	membersStatus = Smart;
 	bgChanged = false;
 	m_tabState=Normal;
 
@@ -164,7 +165,6 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	mComplete = new KCompletion();
 	mComplete->setIgnoreCase( true );
 	mComplete->setOrder( KCompletion::Weighted );
-
 
 	//initActions
 	copyAction  = KStdAction::copy( this, SLOT(copy()), actionCollection());
@@ -387,18 +387,23 @@ void ChatView::createMembersList(void)
 		KopeteContact *contact;
 		KopeteContactPtrList chatMembers = m_manager->members();
 
-						for ( contact = chatMembers.first(); contact; contact = chatMembers.next() )
+		for ( contact = chatMembers.first(); contact; contact = chatMembers.next() )
 			slotContactAdded( contact, true );
 
 		slotContactAdded( m_manager->user(), true);
 
 		membersDock->setWidget(membersList);
-
-		//Dock the chatmembers list. If this is a group chat, show it always initially
-		// TODO: Respond to member list visibility hint here
-		if ( false )
-			visibleMembers = ( (m_manager->members()).count() > 1 );
-
+		
+		KopeteContactPtrList members = m_manager->members();
+		membersStatus = static_cast<MembersListPolicy>( 
+			members.first()->metaContact()->pluginData( m_manager->protocol(),
+				QString::fromLatin1("MembersListPolicy") ).toInt() );
+		
+		if( membersStatus == Smart )
+			visibleMembers = ( memberContactMap.count() > 1 );
+		else
+			visibleMembers = ( membersStatus == Visible );
+			
 		placeMembersList( membersDockPosition );
 
 		//Connect the popup menu
@@ -407,29 +412,28 @@ void ChatView::createMembersList(void)
 	}
 }
 
-void ChatView::placeMembersList( KDockWidget::DockPosition dp )
-{
-	membersDockPosition = dp;
-	showMembersList( visibleMembers );
-	refreshView();
-}
-
 void ChatView::toggleMembersVisibility()
 {
-	bool newVisibility;
-	if ( visibleMembers )
-		newVisibility = false;
-	else
-		newVisibility = true;
-
-	showMembersList( newVisibility );
-	refreshView();
+	if( membersDock )
+	{
+		visibleMembers = !visibleMembers;
+		membersStatus = visibleMembers ? Visible : Hidden;
+		placeMembersList( membersDockPosition );
+		KopeteContactPtrList members = m_manager->members();
+		members.first()->metaContact()->setPluginData( m_manager->protocol(),
+				QString::fromLatin1("MembersListPolicy"), QString::number(membersStatus) );
+		refreshView();
+	}
 }
 
-void ChatView::showMembersList( bool visible )
+void ChatView::placeMembersList( KDockWidget::DockPosition dp )
 {
-	if ( visible )
+	kdDebug(14000) << k_funcinfo << "Members Status: " << membersStatus << ", visible:" << visibleMembers << endl;
+
+	if ( visibleMembers )
 	{
+		membersDockPosition = dp;
+		
 		// look up the dock width
 		int dockWidth;
 		KGlobal::config()->setGroup( QString::fromLatin1("ChatViewDock") );
@@ -438,7 +442,6 @@ void ChatView::showMembersList( bool visible )
 		else
 			dockWidth = KGlobal::config()->readNumEntry( QString::fromLatin1("viewDock,membersDock:sepPos"), 70);
 
-		// TODO: Why is it necessary to reset the dockings here?
 		// Make sure it is shown then place it wherever
 		membersDock->setEnableDocking( KDockWidget::DockLeft | KDockWidget::DockRight );
 		membersDock->manualDock( viewDock, membersDockPosition, dockWidth );
@@ -453,14 +456,13 @@ void ChatView::showMembersList( bool visible )
 		membersDock->hide();
 		visibleMembers = false;
 		if ( root )
-		{
-			kdDebug(14000) << "REPAINTING BACKGROUND!" << endl;
 			root->repaint( true );
-		}
-		else
-			kdDebug(14000) << "BACKGROUND NOT REPAINTED!" << endl;
-
 	}
+	
+	if( isActive )
+		m_mainWindow->updateMembersActions();
+
+	refreshView();
 }
 
 void ChatView::slotContactsContextMenu( KListView*, QListViewItem *item, const QPoint &point )
@@ -619,6 +621,12 @@ void ChatView::slotContactAdded(const KopeteContact *c, bool surpress)
 		}
 
 		memberContactMap.insert(c, new KopeteContactLVI( this, c, membersList ) );
+
+		if( membersStatus == Smart )
+		{
+			visibleMembers = ( memberContactMap.count() > 1 );
+			placeMembersList( membersDockPosition );
+		}
 	}
 	setTabState();
 	emit updateStatusIcon( this );
@@ -656,6 +664,12 @@ void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &
 
 		delete memberContactMap[ contact ];
 		memberContactMap.remove( contact );
+		
+		if( membersStatus == Smart )
+		{
+			visibleMembers = ( memberContactMap.count() > 1 );
+			placeMembersList( membersDockPosition );
+		}
 	}
 
 	setTabState();
@@ -918,13 +932,10 @@ void ChatView::saveOptions()
 	writeDockConfig ( config, QString::fromLatin1("ChatViewDock") );
 	config->setGroup( QString::fromLatin1("ChatViewDock") );
 	config->writeEntry( QString::fromLatin1("membersDockPosition"), membersDockPosition );
-	config->writeEntry( QString::fromLatin1("visibleMembers"), visibleMembers );
 	config->setGroup( QString::fromLatin1("ChatViewSettings") );
 	config->writeEntry ( QString::fromLatin1("BackgroundColor"), editpart->bgColor() );
 	config->writeEntry ( QString::fromLatin1("Font"), editpart->font() );
 	config->writeEntry ( QString::fromLatin1("TextColor"), editpart->fgColor() );
-
- //config->writeEntry ( "SplitterWidth", editDock->parent()->seperatorPos() );
 
 	config->sync();
 }
@@ -939,7 +950,6 @@ void ChatView::readOptions()
 	//Work-around to restore dock widget positions
 	config->setGroup( QString::fromLatin1("ChatViewDock") );
 	
-	visibleMembers = config->readBoolEntry( QString::fromLatin1("visibleMembers"), false );
 	membersDockPosition = static_cast<KDockWidget::DockPosition>(
 		config->readNumEntry( QString::fromLatin1("membersDockPosition"), KDockWidget::DockRight ) );
 		
@@ -953,8 +963,6 @@ void ChatView::readOptions()
 	}
 	dockKey.append( QString::fromLatin1(",editDock:sepPos") );
 
-	kdDebug(14000) << k_funcinfo << dockKey << endl;
-	
 	int splitterPos = config->readNumEntry( dockKey, 70);
 	editDock->manualDock( viewDock, KDockWidget::DockBottom, splitterPos );
 	viewDock->setDockSite(KDockWidget::DockLeft | KDockWidget::DockRight );
@@ -968,9 +976,6 @@ void ChatView::readOptions()
 	editpart->setBgColor( config->readColorEntry ( QString::fromLatin1("BackgroundColor"), &tmpColor) );
 	tmpColor = KGlobalSettings::textColor();
 	editpart->setFgColor( config->readColorEntry ( QString::fromLatin1("TextColor"), &tmpColor ) );
-
-
-	//editDock->parent()->setSeperatorPos( config->readNumEntry ( "SplitterWidth", 70 ) );
 }
 
 void ChatView::addText(const QString &text)

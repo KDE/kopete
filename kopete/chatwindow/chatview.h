@@ -132,7 +132,6 @@ public:
 	 * Sets the placement of the chat members list.
 	 * DockLeft, DockRight, or DockNone.
 	 * @param dp The dock position of the list
-	 * @param width The % width the left hand widget should take up
 	 */
 	void placeMembersList( KDockWidget::DockPosition dp = KDockWidget::DockRight );
 
@@ -386,12 +385,14 @@ private slots:
 
 private:
 	enum KopeteTabState { Normal , Highlighted , Changed , Typing , Message , Undefined };
-
+	enum MembersListPolicy { Smart = 0, Visible = 1, Hidden = 2 };
+	
 	QPtrDict<QTimer> m_remoteTypingMap;
 	KHTMLPart *chatView;
 	KHTMLView *htmlWidget;
 	bool isTyping;
 	bool scrollPressed;
+	MembersListPolicy membersStatus;
 	QStringList historyList;
 	int historyPos;
 	bool bgChanged;
@@ -404,6 +405,7 @@ private:
 	bool bgOverride;
 	bool isActive;
 	bool m_sendInProgress;
+	bool visibleMembers;
 	unsigned long messageId;
 	QString m_lastMatch;
 	QString backgroundFile;
@@ -430,7 +432,6 @@ private:
 
 	// These control the position and visibility of the chat member list
 	KDockWidget::DockPosition membersDockPosition;
-	bool visibleMembers;
 
 	KopeteChatWindow *m_mainWindow;
 
@@ -448,11 +449,6 @@ private:
 	 * Creates the members list widget
 	 */
 	void createMembersList();
-
-	/**
-	 * Shows or hides the members list
-	 */
-	void showMembersList( bool visible );
 
 	/**
 	 * Read in saved options, such as splitter positions
