@@ -448,9 +448,14 @@ void KopeteWindow::slotProtocolStatusIconChanged( KopeteProtocol * p,
 	
 	if ( mv.isNull() )
 	{
-		/* No movie found, fallback to pixmap */
-		QPixmap pm = loader->loadIcon( icon, KIcon::User, 0, KIcon::DefaultState, 0L, true );
-		
+		// No movie found, fallback to pixmap
+		QPixmap pm = SmallIcon( icon );
+	
+		// Compat for the non-themed icons
+		// FIXME: When all icons are converted, remove this - Martijn
+		if( pm.isNull() )
+			QPixmap pm = loader->loadIcon( icon, KIcon::User, 0, KIcon::DefaultState, 0L, true );
+
 		if( pm.isNull() )
 		{
 			/* No Pixmap found, fallback to Unknown */

@@ -191,7 +191,7 @@ void MSNProtocol::slotSyncContactList()
 
 const QString MSNProtocol::protocolIcon()
 {
-	return "msn_online";
+	return "msn_protocol";
 }
 
 KActionCollection * MSNProtocol::customChatActions(KopeteMessageManager * manager)
