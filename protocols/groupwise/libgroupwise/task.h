@@ -6,6 +6,7 @@
 #include <qobject.h>
 
 #include "gwerror.h"
+#include "gwfield.h"
 #include "transfer.h"
 
 class Client;
@@ -55,10 +56,13 @@ protected:
 	 */
 	virtual bool forMe( const Transfer * transfer ) const;
 	/**
-	 * Sets the transfer the task is about to send or receive
+	 * Creates a transfer with the given command and field list
 	 */
-	virtual void setTransfer( Transfer * transfer );
-	
+	void createTransfer( const QString & command, const Field::FieldList fields );
+	/**
+	 * Direct setter for Tasks which don't have any fields
+	 */
+	void setTransfer( Transfer * transfer );
 private slots:
 	void clientDisconnected();
 	void done();
