@@ -2737,10 +2737,6 @@ void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
 	{
 		kdDebug(14150) << "[OSCAR] Item with name " << budName << " and group "
 			<< budGroup << "not found" << endl;
-		emit protocolError(
-			i18n("%1 in group %2 was not found on the server's " \
-			"buddy list and cannot be deleted.").arg(budName).arg(budGroup),0);
-
 		return;
 	}
 
@@ -3091,7 +3087,6 @@ void OscarSocket::sendRemoveBlock(const QString &sname)
 	if (!delitem)
 	{
 		kdDebug(14150) << "[OSCAR] Item with name " << sname << "not found" << endl;
-		emit protocolError( i18n("%1 was not found on the server's deny list and cannot be deleted.").arg(sname),0);
 		return;
 	}
 
