@@ -426,6 +426,7 @@ void KNotifyClient::performCustomNotifications( int winId, Kopete::MetaContact *
 	//kdDebug( 14010 ) << k_funcinfo << endl;
 	if ( suppress )
 		return;
+	
 	// Anything, including the MC itself, may set suppress and prevent further notifications
 	
 	/* This is a really ugly piece of logic now.  The idea is to check for notifications
@@ -478,14 +479,17 @@ void KNotifyClient::performCustomNotifications( int winId, Kopete::MetaContact *
 			}
 		}
 
-		if ( checkingMetaContact )
+		if ( mc )
 		{
-			// only executed on first iteration
-			checkingMetaContact = false;
-			dataObj = mc->groups().first();
+			if ( checkingMetaContact )
+			{
+				// only executed on first iteration
+				checkingMetaContact = false;
+				dataObj = mc->groups().first();
+			}
+			else
+				dataObj = mc->groups().next();
 		}
-		else
-			dataObj = mc->groups().next();
 	}
 	while ( dataObj && !suppress );
 }
