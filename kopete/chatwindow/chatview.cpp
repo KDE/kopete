@@ -850,7 +850,7 @@ void ChatView::sendMessage()
 	m_mainWindow->setSendEnabled(false);
 
 	QString txt = editpart->text( Qt::PlainText );
-	if( m_lastMatch.isNull() && txt.contains( QRegExp( QString::fromLatin1("^\\w+:\\s") ) ) )
+	if( m_lastMatch.isNull() && ( txt.find( QRegExp( QString::fromLatin1("^\\w+:\\s") ) ) > -1 ) )
 	{
 		QString search = txt.left( (int)txt.find(':') );
 		if( !search.isEmpty() )
@@ -1075,7 +1075,7 @@ const QString ChatView::addNickLinks( const QString &html ) const
 	KopeteContactPtrList members = msgManager()->members();
 	for( KopeteContact *c = members.first(); c; c = members.next() )
 	{
-		if( c->displayName().length() > 0 && retVal.contains( c->displayName() ) )
+		if( c->displayName().length() > 0 && ( retVal.find( c->displayName() ) > -1 ) )
 		{
 			retVal.replace(
 				QRegExp( QString::fromLatin1("([\\s&;>])(%1)([\\s&;<:])")

@@ -281,7 +281,7 @@ void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 {
 	QString htmlString = message.escapedBody();
 
-	if( htmlString.contains( QString::fromLatin1("</span") ) )
+	if( htmlString.find( QString::fromLatin1("</span") ) > -1 )
 	{
 		QRegExp findTags( QString::fromLatin1("<span style=\"(.*)\">(.*)</span>") );
 		findTags.setMinimal( true );
@@ -322,7 +322,7 @@ void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 
 	htmlString = KopeteMessage::unescape( htmlString );
 
-	if( htmlString.contains( '\n' ) )
+	if( htmlString.find( '\n' ) > -1 )
 	{
 		QStringList messages = QStringList::split( '\n', htmlString );
 
