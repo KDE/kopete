@@ -43,7 +43,6 @@
 #include "kopeteaccountmanager.h"
 #include "irceditaccountwidget.h"
 #include "kopetemessagemanagerfactory.h"
-#include "kactioncollection.h"
 #include "kirc.h"
 #include "ksparser.h"
 
