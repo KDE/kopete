@@ -421,6 +421,9 @@ If you do not currently have an ICQ account, please click the button to create o
                                 <property name="whatsThis" stdset="0">
                                     <string>Check this box to enable Web Aware functionality, which allows people to see your online status from a web page, and send you a message without necessarily having ICQ themselves.</string>
                                 </property>
+				<property name="checked">
+                                    <bool>true</bool>
+                                </property>
                             </widget>
                         </vbox>
                     </widget>

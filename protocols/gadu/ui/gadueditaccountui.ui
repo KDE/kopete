@@ -318,6 +318,9 @@ If you do not currently have an account, please click the button to create one.<
                                 <property name="checked">
                                     <bool>true</bool>
                                 </property>
+				<property name="checked">
+                                    <bool>true</bool>
+                                </property>
                             </widget>
                             <widget class="QLayoutWidget" row="3" column="0">
                                 <property name="name">

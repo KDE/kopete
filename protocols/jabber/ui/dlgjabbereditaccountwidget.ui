@@ -270,6 +270,9 @@
                                 <property name="text">
                                     <string>&amp;Override default server information</string>
                                 </property>
+				<property name="checked">
+                                    <bool>true</bool>
+                                </property>
                             </widget>
                             <widget class="QLayoutWidget">
                                 <property name="name">

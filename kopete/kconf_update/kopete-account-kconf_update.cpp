@@ -58,7 +58,7 @@ void parseGroup( const QString &group, const QString &rawLine )
 	if ( group == "MSN" || group == "ICQ" || group == "Oscar" || group == "Gadu" || group == "Jabber" || group == "IRC" )
 	{
 		accountId = "EMPTY";
-		autoConnect = "false";
+		autoConnect = "true";
 
 		if ( group == "Oscar" )
 			protocol = "AIMProtocol";

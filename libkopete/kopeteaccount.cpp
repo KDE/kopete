@@ -50,7 +50,7 @@ public:
 	KopeteAccountPrivate( Kopete::Protocol *protocol, const QString &accountId )
 	 : protocol( protocol ), id( accountId )
 	 , password( ::configGroup( protocol, accountId ) )
-	 , autoconnect( false ), priority( 0 ), myself( 0 )
+	 , autoconnect( true ), priority( 0 ), myself( 0 )
 	 , suppressStatusTimer( 0 ), suppressStatusNotification( false )
 	 , blackList( new Kopete::BlackLister( protocol->pluginId(), accountId ) )
 	{
@@ -77,7 +77,7 @@ Kopete::Account::Account( Kopete::Protocol *parent, const QString &accountId, co
 {
 	d->configGroup=new KConfigGroup(KGlobal::config(), QString::fromLatin1( "Account_%1_%2" ).arg( d->protocol->pluginId(), d->id ));
 	
-	d->autoconnect = d->configGroup->readBoolEntry( "AutoConnect", false );
+	d->autoconnect = d->configGroup->readBoolEntry( "AutoConnect", true );
 	d->color = d->configGroup->readColorEntry( "Color", &d->color );
 	d->priority = d->configGroup->readNumEntry( "Priority", 0 );
 
