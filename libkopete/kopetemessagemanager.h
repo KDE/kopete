@@ -110,9 +110,9 @@ signals:
  	void messageSent( KopeteMessage& msg, KopeteMessageManager * = 0L );
 	void messageSuccess();
 
-	void contactAdded(const KopeteContact *);
-	void contactRemoved(const KopeteContact *);
-	
+	void contactAdded(const KopeteContact *, bool surpress);
+	void contactRemoved(const KopeteContact *, bool surpress);
+
 	void contactDisplayNameChanged(const QString &);
 
 	/**
@@ -157,12 +157,12 @@ public slots:
 	/**
 	 * Add a contact to the session
 	 */
-	void addContact( const KopeteContact *c );
+	void addContact( const KopeteContact *c, bool surpress = false );
 
 	/**
 	 * Remove a contact from the session
 	 */
-	void removeContact( const KopeteContact *c );
+	void removeContact( const KopeteContact *c, bool surpress = false );
 
 	/**
 	 * Set if the KMM will be deleted when the chatwindow is deleted

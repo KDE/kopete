@@ -196,12 +196,12 @@ void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 		d->mLogger->append( msg );
 }
 
-void KopeteMessageManager::addContact( const KopeteContact *c )
+void KopeteMessageManager::addContact( const KopeteContact *c, bool surpress )
 {
 	if ( d->mContactList.contains(c) )
 	{
 		kdDebug(14010) << k_funcinfo << "Contact already exists" <<endl;
-		emit contactAdded(c);
+		emit contactAdded(c, surpress);
 	}
 	else
 	{
@@ -213,21 +213,21 @@ void KopeteMessageManager::addContact( const KopeteContact *c )
 			d->mContactList.append(c);
 			disconnect (old, SIGNAL(displayNameChanged(const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &)));
 			connect (c, SIGNAL(displayNameChanged(const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &)));
-			emit contactAdded(c);
-			emit contactRemoved(old);
+			emit contactAdded(c, surpress);
+			emit contactRemoved(old, surpress);
 		}
 		else
 		{
 			kdDebug(14010) << k_funcinfo << "Contact Joined session : " <<c->displayName() <<endl;
 			connect (c, SIGNAL(displayNameChanged(const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &)));
 			d->mContactList.append(c);
-			emit contactAdded(c);
+			emit contactAdded(c, surpress);
 		}
 	}
 	d->isEmpty=false;
 }
 
-void KopeteMessageManager::removeContact( const KopeteContact *c )
+void KopeteMessageManager::removeContact( const KopeteContact *c, bool surpress )
 {
 	if(!c || !d->mContactList.contains(c))
 		return;
@@ -242,7 +242,7 @@ void KopeteMessageManager::removeContact( const KopeteContact *c )
 		d->mContactList.remove( c );
 		disconnect (c, SIGNAL(displayNameChanged(const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &)));
 	}
-	emit contactRemoved(c);
+	emit contactRemoved(c, surpress);
 }
 
 void KopeteMessageManager::receivedTypingMsg( const KopeteContact *c , bool t )
