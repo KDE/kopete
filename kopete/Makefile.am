@@ -1,12 +1,12 @@
-INCLUDES = -I$(srcdir)/library -I$(srcdir)/library/ui -I$(srcdir)/protocols/icq -I$(srcdir)/protocols/icq/kxengine $(all_includes)
-SUBDIRS = library protocols plugins pics
+INCLUDES = -I$(srcdir)/../libkopete -I$(srcdir)/../libkopete/ui \
+	-I$(srcdir)/../protocols/icq -I$(srcdir)/../protocols/icq/kxengine $(all_includes)
 
 KDE_ICON = AUTO
 
 lib_LTLIBRARIES = libkopetemain.la
 libkopetemain_la_SOURCES = main.cpp
 libkopetemain_la_LDFLAGS = -module -avoid-version $(all_libraries)
-libkopetemain_la_LIBADD = library/libkopete.la 
+libkopetemain_la_LIBADD = ./../libkopete/libkopete.la
 
 bin_PROGRAMS = kopete
 kopete_SOURCES = dummy.cpp
@@ -28,15 +28,6 @@ datadir = $(kde_datadir)/kopete
 # this is where the desktop file will go
 desktopdir   = $(kde_appsdir)/Internet
 desktop_DATA = kopete.desktop
-
-# don't ask me which does what, the last one seems to work for me, mETz
-
-#messages: rc.cpp
-#	$(XGETTEXT) -ki18n -kI18N_NOOP *.cpp -o $(podir)/kopete.pot
-
-#messages:
-#	$(EXTRACTRC) `find . -name "*.rc"` > rc.cpp
-#	$(XGETTEXT) rc.cpp `find . -name "*.cc" -o -name "*.cpp" -print` -o $(podir)/kopete.pot
 
 messages: rc.cpp
 	LIST=`find . -name \*.h -o -name \*.hh -o -name \*.H -o -name \*.hxx -o -name \*.hpp -o -name \*.cpp -o -name \*.cc -o -name \*.cxx -o -name \*.ecpp -o -name \*.C`; \

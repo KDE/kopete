@@ -1,7 +1,7 @@
 noinst_LTLIBRARIES = libkopeteircui.la
 INCLUDES = $(all_includes)\
-		-I$(srcdir)/../../../library\
-		-I$(srcdir)/../../../library/ui\
+		-I$(srcdir)/../../../libkopete\
+		-I$(srcdir)/../../../libkopete/ui\
 		-I$(srcdir)/..\
 		-I$(srcdir)/../libkirc
 

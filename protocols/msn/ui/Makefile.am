@@ -1,9 +1,7 @@
 noinst_LTLIBRARIES = libkopetemsnui.la
-INCLUDES = -I$(srcdir)/../../../library \
-		-I$(srcdir)/../../../library/ui \
+INCLUDES = -I$(srcdir)/../../../libkopete -I$(srcdir)/../../../libkopete/ui \
 		-I$(srcdir)/.. \
-		-I$(srcdir)/../libkmerlin \
-		-I../libkmerlin \
+		-I$(srcdir)/../libkmerlin -I../libkmerlin \
 		$(all_includes)
 
 libkopetemsnui_la_METASOURCES = AUTO
