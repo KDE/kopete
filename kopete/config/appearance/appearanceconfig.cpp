@@ -14,6 +14,10 @@
     *************************************************************************
 */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "appearanceconfig.h"
 #include "appearanceconfig_emoticons.h"
 #include "appearanceconfig_chatwindow.h"
@@ -153,6 +157,13 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(emitChanged()));
 	connect(mPrfsContactList->mDisplayMode, SIGNAL(clicked(int)),
 		this, SLOT(emitChanged()));
+	connect(mPrfsContactList->mAnimateChanges, SIGNAL(toggled(bool)),
+		this, SLOT(emitChanged()));
+	connect(mPrfsContactList->mFadeVisibility, SIGNAL(toggled(bool)),
+		this, SLOT(emitChanged()));
+
+	// don't enable the checkbox if XRender is not available
+	mPrfsContactList->mFadeVisibility->setEnabled( HAVE_XRENDER );
 
 	mAppearanceTabCtl->addTab(mPrfsContactList, i18n("Contact List"));
 
@@ -228,6 +239,8 @@ void AppearanceConfig::save()
 	p->setSortByGroup(mPrfsContactList->mSortByGroup->isChecked());
 	p->setContactListIndentContacts(mPrfsContactList->mIndentContacts->isChecked());
 	p->setContactListDisplayMode(KopetePrefs::ContactDisplayMode(mPrfsContactList->mDisplayMode->selectedId()));
+	p->setContactListAnimation(mPrfsContactList->mAnimateChanges->isChecked());
+	p->setContactListFading(mPrfsContactList->mFadeVisibility->isChecked());
 
 	// "Colors & Fonts" TAB =====================================================
 	p->setHighlightBackground(mPrfsColors->backgroundColor->color());
@@ -289,6 +302,8 @@ void AppearanceConfig::load()
 	mPrfsContactList->mSortByGroup->setChecked( p->sortByGroup() );
 	mPrfsContactList->mIndentContacts->setChecked( p->contactListIndentContacts() );
 	mPrfsContactList->mDisplayMode->setButton( p->contactListDisplayMode() );
+	mPrfsContactList->mAnimateChanges->setChecked( p->contactListAnimation() );
+	mPrfsContactList->mFadeVisibility->setChecked( p->contactListFading() && HAVE_XRENDER );
 
 	// "Colors & Fonts" TAB =====================================================
 	mPrfsColors->foregroundColor->setColor(p->highlightForeground());

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>254</width>
-            <height>350</height>
+            <width>480</width>
+            <height>475</height>
         </rect>
     </property>
     <property name="caption">
@@ -142,6 +142,41 @@
                 </widget>
             </vbox>
         </widget>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>groupBox2</cstring>
+            </property>
+            <property name="title">
+                <string>Contact List &amp;Animations</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mAnimateChanges</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Animate c&amp;hanges to contact list items</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+H</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mFadeVisibility</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Fade in / out contacts as they appear / disappear</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+F</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
         <widget class="QLayoutWidget">
             <property name="name">
                 <cstring>layout8</cstring>
@@ -192,8 +227,8 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>16</width>
-                    <height>16</height>
+                    <width>20</width>
+                    <height>80</height>
                 </size>
             </property>
         </spacer>
