@@ -15,16 +15,19 @@
     *************************************************************************
 */
 
+#include "msnmessagemanager.h"
 
+#include <qlabel.h>
+#include <qimage.h>
+#include <qtooltip.h>
+
+#include <kconfig.h>
 #include <kdebug.h>
 #include <kinputdialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
-#include <kconfig.h>
 #include <ktempfile.h>
-
-#include <qlabel.h>
 
 #include "kopetecontactaction.h"
 #include "kopetecontactlist.h"
@@ -32,7 +35,6 @@
 
 #include "msncontact.h"
 #include "msnfiletransfersocket.h"
-#include "msnmessagemanager.h"
 #include "msnaccount.h"
 #include "msnswitchboardsocket.h"
 
@@ -67,16 +69,25 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 	MSNContact *c = static_cast<MSNContact*>( others.first() );
 	(new KAction( i18n( "Request Display Picture" ), "image", 0,  this, SLOT( slotRequestPicture() ), actionCollection(), "msnRequestDisplayPicture" ))->setEnabled(!c->object().isEmpty());
 
-
-	if(!c->object().isEmpty())
+	if ( !c->object().isEmpty() )
 	{
-		connect( c, SIGNAL(displayPictureChanged()) , this , SLOT( slotDisplayPictureChanged() ) );
-		m_image=new QLabel(0L);
-		new KWidgetAction( m_image , i18n("MSN Display Picture") , 0, 0 , 0 , actionCollection() , "msnDisplayPicture");
-		if( c->displayPicture() )
-			m_image->setPixmap(c->displayPicture()->name());
+		connect( c, SIGNAL( displayPictureChanged() ), this, SLOT( slotDisplayPictureChanged() ) );
+		m_image = new QLabel( 0L, "kde toolbar widget" );
+		new KWidgetAction( m_image, i18n( "MSN Display Picture" ), 0, 0, 0, actionCollection(), "msnDisplayPicture" );
+		if ( c->displayPicture() )
+		{
+			// FIXME: don't duplicate this code with the slotDisplayPictureChanged - Martijn
+			// FIXME: don't hardcode the 22x22 geometry, but adjust to the toolbar's height - Martijn
+			// FIXME: make the tooltip center on the image rather than stay out of the way - Martijn
+			QImage scaledImg = QPixmap( c->displayPicture()->name() ).convertToImage().smoothScale( 22, 22 );
+			m_image->setPixmap( scaledImg );
+			QToolTip::add( m_image, "<qt><img src=\"" + c->displayPicture()->name() + "\"></qt>" );
+		}
 	}
-	else m_image=0L;
+	else
+	{
+		m_image = 0L;
+	}
 
 	setXMLFile("msnchatui.rc");
 }
@@ -483,12 +494,18 @@ void MSNMessageManager::slotRequestPicture()
 
 void MSNMessageManager::slotDisplayPictureChanged()
 {
-	QPtrList<KopeteContact> mb=members();
-	MSNContact *c = static_cast<MSNContact*>( mb.first() );
-	if(c && m_image)
+	const MSNContact *c = static_cast<const MSNContact *>( members().getFirst() );
+	if ( c && m_image )
 	{
-		if( c->displayPicture() )
-			m_image->setPixmap(c->displayPicture()->name());
+		if ( c->displayPicture() )
+		{
+			// FIXME: don't duplicate this code with the c'tor - Martijn
+			// FIXME: don't hardcode the 22x22 geometry, but adjust to the toolbar's height - Martijn
+			// FIXME: make the tooltip center on the image rather than stay out of the way - Martijn
+			QImage scaledImg = QPixmap( c->displayPicture()->name() ).convertToImage().smoothScale( 22, 22 );
+			m_image->setPixmap( scaledImg );
+			QToolTip::add( m_image, "<qt><img src=\"" + c->displayPicture()->name() + "\"></qt>" );
+		}
 		else
 		{
 			KConfig *config = KGlobal::config();
