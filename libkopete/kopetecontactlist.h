@@ -105,19 +105,6 @@ public:
 	QStringList contactFileProtocols( const QString &displayName);
 
 	/**
-	 * Exposed via DCOP in kopeteiface
-	 * Used to send a file to a MetaContact using the highest ranked protocol
-	 *
-	 * FIXME: We need to change this to use a unique ID instead of the displayName
-	 *
-	 * @param displayName Metacontact to send file to
-	 * @param sourceURL The file we are sending
-	 * @param altFileName (Optional) An alternate filename for the file we are sending
-	 * @param fileSize (Optional) The size of the file
-	 */
-	void sendFile(const QString &displayName, const KURL &sourceURL,
-		const QString &altFileName = QString::null, const long unsigned int fileSize = 0L);
-	/**
 	 * Return all meta contacts with their current status
 	 *
 	 * FIXME: Do we *need* this one? Sounds error prone to me, because
@@ -131,19 +118,6 @@ public:
 	QPtrList<KopeteGroup> groups() const;
 
 	/**
-	 * Add the metacontact into the contact list
-	 * When calling this method, the contact has to be already placed in the correct group.
-	 * If the contact is not in a  group, it will be added to the top-level group
-	 */
-	void addMetaContact( KopeteMetaContact *c );
-
-	/**
-	 * Remove a metacontact from the contactlist.
-	 * This method delete itself the metacontact.
-	 */
-	void removeMetaContact( KopeteMetaContact *contact );
-
-	/**
 	 * Retrieve the list of all available meta contacts.
 	 * The returned QPtrList is not the internally used variable, so changes
 	 * to it won't propagate into the actual contact list. This can be
@@ -154,17 +128,6 @@ public:
 	 * changing those *will* have the expected result :-)
 	 */
 	QPtrList<KopeteMetaContact> metaContacts() const;
-
-	/**
-	 * Add a group
-	 */
-	void addGroup(KopeteGroup *);
-
-	/**
-	 * Remove a group
-	 * this method delete the group
-	 */
-	void removeGroup(KopeteGroup *);
 
 	/**
 	 * Get a group.
@@ -197,6 +160,44 @@ public:
 	QPtrList<KopeteGroup> selectedGroups() const ;
 
 public slots:
+
+	/**
+	 * Add the metacontact into the contact list
+	 * When calling this method, the contact has to be already placed in the correct group.
+	 * If the contact is not in a  group, it will be added to the top-level group
+	 */
+	void addMetaContact( KopeteMetaContact *c );
+
+	/**
+	 * Remove a metacontact from the contactlist.
+	 * This method delete itself the metacontact.
+	 */
+	void removeMetaContact( KopeteMetaContact *contact );
+
+	/**
+	 * Add a group
+	 */
+	void addGroup(KopeteGroup *);
+
+	/**
+	 * Remove a group
+	 * this method delete the group
+	 */
+	void removeGroup(KopeteGroup *);
+
+	/**
+	 * Exposed via DCOP in kopeteiface
+	 * Used to send a file to a MetaContact using the highest ranked protocol
+	 *
+	 * FIXME: We need to change this to use a unique ID instead of the displayName
+	 *
+	 * @param displayName Metacontact to send file to
+	 * @param sourceURL The file we are sending
+	 * @param altFileName (Optional) An alternate filename for the file we are sending
+	 * @param fileSize (Optional) The size of the file
+	 */
+	void sendFile(const QString &displayName, const KURL &sourceURL,
+		const QString &altFileName = QString::null, const long unsigned int fileSize = 0L);
 
 	/**
 	 * Open a chat to a contact, and optionally set some initial text

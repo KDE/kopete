@@ -300,7 +300,7 @@ public:
 	 * The @ref KopeteMessageManager is only set if the message is already passed by the manager.
 	 * We should trust this only in aboutToSend/aboutToReceive signals
 	 */
-	 KopeteMessageManager *manager()const ;
+	 KopeteMessageManager *manager() const ;
 
 	 /**
 	  * set the kopetemessagemanager for this message.

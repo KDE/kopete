@@ -32,6 +32,10 @@ class KopeteGroupPrivate;
  */
 class KopeteGroup : public KopetePluginDataObject
 {
+	Q_PROPERTY( QString displayName READ displayName WRITE setDisplayName )
+	Q_PROPERTY( uint groupId READ groupId )
+	Q_PROPERTY( bool expanded READ isExpanded WRITE setExpanded )
+
 	Q_OBJECT
 
 public:
@@ -101,8 +105,8 @@ public:
 	void setExpanded( bool expanded );
 
 	/**
-	 * 
-	 * \return true if the group is expanded. 
+	 *
+	 * \return true if the group is expanded.
 	 * \return false otherwise
 	 */
 	bool isExpanded() const;

@@ -53,6 +53,16 @@ class KopeteMetaContact : public KopetePluginDataObject
 {
 	Q_OBJECT
 
+	Q_PROPERTY( QString displayName READ displayName WRITE setDisplayName )
+	Q_PROPERTY( QString statusString READ statusString )
+	Q_PROPERTY( QString statusIcon READ statusIcon )
+	Q_PROPERTY( bool isOnline READ isOnline )
+	Q_PROPERTY( bool isReachable READ isReachable )
+	Q_PROPERTY( bool isTopLevel READ isTopLevel )
+	Q_PROPERTY( bool canAcceptFiles READ canAcceptFiles )
+	Q_PROPERTY( QString metaContactId READ metaContactId WRITE setMetaContactId )
+	Q_PROPERTY( bool trackChildNameChanges READ trackChildNameChanges WRITE setTrackChildNameChanges )
+
 public:
 	KopeteMetaContact();
 	~KopeteMetaContact();
@@ -176,50 +186,17 @@ public:
 	bool fromXML( const QDomElement& cnode );
 
 	/**
-	 * @brief Move a contact from one group to another.
-	 */
-	void moveToGroup( KopeteGroup *from, KopeteGroup *to );
-
-	/**
-	 * @brief Remove a contact from one group
-	 */
-	void removeFromGroup( KopeteGroup *from );
-
-	/**
-	 * @brief Add a contact to another group.
-	 */
-	void addToGroup( KopeteGroup *to );
-
-	/**
 	 * Temporary contacts will not be serialized.
 	 * If they are added to the contactlist, they appears in a special "Not in your contactlist" group.
 	 * (the @ref KopeteGroup::temporary  group)
 	 */
 	bool isTemporary() const;
-	/**
-	 * Set if this is a temporary contact. (see @ref isTemporary)
-	 *
-	 * @param b if the contact is or not temporary
-	 * @param group if the contact was temporary and b is true, then the contact will be moved to this group.
-	 *  if group is null, it will be moved to top-level
-	 */
-	void setTemporary( bool b = true ,KopeteGroup *group = 0L );
 
 	/**
 	 * @brief Return true if the contact is shown at toplevel.
 	 * You may also check if @ref groups() contains @ref KopeteGroup::topLevel()
 	 */
 	bool isTopLevel();
-
-	/**
-	 * @brief remove the contact from this metacontact
-	 *
-	 * set 'deleted' to true if the KopeteContact is already deleted
-	 *
-	 * @param c is the contact to remove
-	 * @param deleted : if it is false, it will disconnect the old contact, and call some method.
-	 */
-	void removeContact( KopeteContact *c , bool deleted = false );
 
 	/**
 	 * @brief Returns this metacontact's ID.
@@ -253,6 +230,43 @@ public:
 	 *        properly :( - Martijn
 	 */
 	QString addressBookField( KopetePlugin *p, const QString &app, const QString &key ) const;
+
+public slots:
+
+	/**
+	 * @brief Move a contact from one group to another.
+	 */
+	void moveToGroup( KopeteGroup *from, KopeteGroup *to );
+
+	/**
+	 * @brief Remove a contact from one group
+	 */
+	void removeFromGroup( KopeteGroup *from );
+
+	/**
+	 * @brief Add a contact to another group.
+	 */
+	void addToGroup( KopeteGroup *to );
+
+	/**
+	 * @brief remove the contact from this metacontact
+	 *
+	 * set 'deleted' to true if the KopeteContact is already deleted
+	 *
+	 * @param c is the contact to remove
+	 * @param deleted : if it is false, it will disconnect the old contact, and call some method.
+	 */
+	void removeContact( KopeteContact *c , bool deleted = false );
+
+	/**
+	 * Set if this is a temporary contact. (see @ref isTemporary)
+	 *
+	 * @param b if the contact is or not temporary
+	 * @param group if the contact was temporary and b is true, then the contact will be moved to this group.
+	 *  if group is null, it will be moved to top-level
+	 */
+	void setTemporary( bool b = true ,KopeteGroup *group = 0L );
+
 	/**
 	 * @brief set an address book field
 	 *
@@ -261,7 +275,6 @@ public:
 	 */
 	void setAddressBookField( KopetePlugin *p, const QString &app, const QString &key, const QString &value );
 
-public slots:
 	/**
 	 * @brief Contact another user.
 	 *

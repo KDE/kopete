@@ -59,6 +59,12 @@ class KopeteAccount : public KopetePluginDataObject
 {
 	Q_OBJECT
 
+	Q_PROPERTY( QString accountId READ accountId )
+	Q_PROPERTY( QPixmap accountIcon READ accountIcon )
+	Q_PROPERTY( bool isConnected READ isConnected )
+	Q_PROPERTY( bool isAway READ isAway )
+	Q_PROPERTY( int priority READ priority )
+
 public:
 	/**
 	 * Describes what should be done when the contact is added to a metacontact
@@ -174,12 +180,6 @@ public:
 	 *
 	 */
 	QPixmap accountIcon(const int size=0) const;
-
-	/**
-	 * this will be called if main-kopete wants
-	 * the plugin to set the user's mode to away
-	 */
-	virtual void setAway( bool away, const QString &reason = QString::null ) = 0;
 
 	/**
 	 * @brief Indicate whether the account is connected at all.
@@ -318,6 +318,12 @@ public slots:
 	bool addContact( const QString &contactId, const QString &displayName = QString::null,
 		KopeteMetaContact *parentContact = 0L, const AddMode mode = DontChangeKABC,
 		const QString &groupName = QString::null, bool isTemporary = false ) ;
+
+	/**
+	 * this will be called if main-kopete wants
+	 * the plugin to set the user's mode to away
+	 */
+	virtual void setAway( bool away, const QString &reason = QString::null ) = 0;
 
 signals:
 	/**

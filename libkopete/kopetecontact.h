@@ -54,6 +54,16 @@ class KopeteContact : public QObject
 {
 	Q_OBJECT
 
+	Q_PROPERTY( QString displayName READ displayName )
+	Q_PROPERTY( QString formattedName READ formattedName )
+	Q_PROPERTY( QString formattedIdleTime READ formattedIdleTime )
+	Q_PROPERTY( bool isOnline READ isOnline )
+	Q_PROPERTY( bool isFileCapable READ isFileCapable )
+	Q_PROPERTY( bool canAcceptFiles READ canAcceptFiles )
+	Q_PROPERTY( QString contactId READ contactId )
+	Q_PROPERTY( QString icon READ icon )
+	Q_PROPERTY( QString toolTip READ toolTip )
+
 public:
 	/**
 	 * Create new contact. Supply the parent meta contact!
@@ -308,6 +318,7 @@ public:
 	 * from UI
 	 **/
 	void setProperty(const QString &key, const QVariant &value);
+
 	/**
 	 * Add or Set a property for this contact.
 	 *
