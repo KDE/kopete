@@ -53,7 +53,7 @@ private:
 	//!Handles messages from channel 4 (type 4 messages)
 	void handleType4Message();
 	
-	QTextCodec* guessCodec( const QCString& string );
+	QTextCodec* guessCodec( const QCString& string, WORD stringLength );
 private:
 	
 	QByteArray m_icbmCookie;
