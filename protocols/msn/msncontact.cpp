@@ -73,8 +73,8 @@ MSNContact::MSNContact( KopeteAccount *account, const QString &id, const QString
 	setOnlineStatus( ( parent && parent->isTemporary() ) ? MSNProtocol::protocol()->UNK : MSNProtocol::protocol()->FLN );
 
 	actionBlock = 0L;
-	
-	setProperty("emailAddress", id);
+
+	setProperty(MSNProtocol::protocol()->propEmail, id);
 }
 
 MSNContact::~MSNContact()
@@ -124,7 +124,7 @@ QPtrList<KAction> *MSNContact::customContextMenuActions()
 
 		// Send mail (only available if it is an hotmail account)
 		actionSendMail = new KAction( i18n("Send Email...") , "mail_generic",0, this, SLOT( slotSendMail() ),
-			this, "actionSendMail" );	
+			this, "actionSendMail" );
 	}
 	else
 		actionBlock->setText( label );
@@ -253,7 +253,7 @@ void MSNContact::setInfo(const  QString &type,const QString &data )
 	if( type == "PHH" )
 	{
 		m_phoneHome = data;
-		setProperty("privPhoneNum", data);
+		setProperty(MSNProtocol::protocol()->propPhoneHome, data);
 	}
 	else if( type == "PHW" )
 	{
@@ -262,7 +262,7 @@ void MSNContact::setInfo(const  QString &type,const QString &data )
 	else if( type == "PHM" )
 	{
 		m_phoneMobile = data;
-		setProperty("privMobileNum", data);
+		setProperty(MSNProtocol::protocol()->propPhoneMobile, data);
 	}
 	else if( type == "MOB" )
 	{
@@ -357,19 +357,19 @@ void MSNContact::syncGroups( )
 		{
 			int Gid=group->pluginData( protocol(), account()->accountId() + " id" ).toUInt();
 			if( !static_cast<MSNAccount*>( account() )->m_groupList.contains(Gid) )
-			{ // ohoh!   something is corrupted on the contactlist.xml  
+			{ // ohoh!   something is corrupted on the contactlist.xml
 			  // anyway, we never should add a contact to an unexisting group on the server.
-					  
+
 				//repair the problem
 				group->setPluginData( protocol() , account()->accountId() + " id" , QString::null);
 				group->setPluginData( protocol() , account()->accountId() + " displayName" , QString::null);
 				kdDebug( 14140 ) << k_funcinfo << " Group " << group->displayName() << " marked with id #" <<Gid << " does not seems to be anymore on the server" << endl;
-				
+
 				if(!group->displayName().isEmpty() && group->type() == KopeteGroup::Normal) //not the top-level
 				{
 					//Create the group and add the contact
 					static_cast<MSNAccount*>( account() )->addGroup( group->displayName(),contactId() );
-	
+
 					//WARNING: if contact is not correctly added (because the group was not aded corrdctly for hinstance),
 					// if we increment the count, the contact can be deleted from the old group, and be lost :-(
 					count++;
@@ -404,14 +404,14 @@ void MSNContact::syncGroups( )
 	for( QMap<uint, KopeteGroup*>::Iterator it = m_serverGroups.begin();(count > 1 && it != m_serverGroups.end()); ++it )
 	{
 		if( !static_cast<MSNAccount*>( account() )->m_groupList.contains(it.key()) )
-		{ // ohoh!   something is corrupted on the contactlist.xml  
+		{ // ohoh!   something is corrupted on the contactlist.xml
 		  // anyway, we never should add a contact to an unexisting group on the server.
-					
+
 			//repair the problem
 			contactRemovedFromGroup( it.key() );
-			
+
 			kdDebug( 14140 ) << k_funcinfo << "the group marked with id #" << it.key() << " does not seems to be anymore on the server" << endl;
-			
+
 			continue;
 		}
 

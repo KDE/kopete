@@ -25,6 +25,7 @@
 
 #include "kopeteprotocol.h"
 #include "kopeteonlinestatus.h"
+#include "kopetecontactproperty.h"
 
 #include "msnsocket.h"
 
@@ -99,6 +100,10 @@ public:
 	const KopeteOnlineStatus IDL;  //idle
 	const KopeteOnlineStatus UNK;  //inknown (internal)
 	const KopeteOnlineStatus CNT;  //connecting (internal)
+
+	const Kopete::ContactPropertyTmpl propEmail;
+	const Kopete::ContactPropertyTmpl propPhoneHome;
+	const Kopete::ContactPropertyTmpl propPhoneMobile;
 
 	enum List
 	{

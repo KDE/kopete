@@ -26,14 +26,15 @@
 #include <libgadu.h>
 
 #include <qmap.h>
-#include <qptrlist.h>
-#include <qpixmap.h>
+//#include <qptrlist.h>
+//#include <qpixmap.h>
 #include <qstring.h>
 #include <qstringlist.h>
-#include <qpoint.h>
+//#include <qpoint.h>
 
 #include "kopeteprotocol.h"
 #include "kopeteonlinestatus.h"
+#include "kopetecontactproperty.h"
 
 #include "gaducommands.h"
 
@@ -79,6 +80,13 @@ public:
 	bool statusWithDesciption( uint status );
 
 	uint statusToWithDescription( KopeteOnlineStatus status );
+
+	const Kopete::ContactPropertyTmpl propFirstName;
+	const Kopete::ContactPropertyTmpl propLastName;
+	const Kopete::ContactPropertyTmpl propEmail;
+	const Kopete::ContactPropertyTmpl propAwayMessage;
+	const Kopete::ContactPropertyTmpl propPhoneNr;
+	//const Kopete::ContactPropertyTmpl propIgnore;
 
 private slots:
 	void settingsChanged();

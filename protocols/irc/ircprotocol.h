@@ -3,7 +3,7 @@
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
 
-    Kopete    (c) 2002      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -20,6 +20,7 @@
 
 #include "kopeteonlinestatus.h"
 #include "kopeteprotocol.h"
+#include "kopetecontactproperty.h"
 
 #include <dom/dom_node.h>
 
@@ -86,6 +87,18 @@ public:
 	const KopeteOnlineStatus m_UserStatusOffline;
 
 	const KopeteOnlineStatus m_StatusUnknown;
+
+	// irc channnel-contact properties
+	const Kopete::ContactPropertyTmpl propChannelTopic;
+	const Kopete::ContactPropertyTmpl propChannelMembers;
+	const Kopete::ContactPropertyTmpl propHomepage;
+
+	// irc user-contact properties
+	const Kopete::ContactPropertyTmpl propLastSeen;
+	const Kopete::ContactPropertyTmpl propUserInfo;
+	const Kopete::ContactPropertyTmpl propServer;
+	const Kopete::ContactPropertyTmpl propChannels;
+	const Kopete::ContactPropertyTmpl propHops;
 
 	bool commandInProgress(){ return m_commandInProgress; }
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }

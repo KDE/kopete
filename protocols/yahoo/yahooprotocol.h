@@ -33,6 +33,7 @@
 
 // KDE Includes
 #include "kopeteprotocol.h"
+#include "kopetecontactproperty.h"
 
 class YahooContact;
 class KPopupMenu;
@@ -65,6 +66,8 @@ public:
 	const KopeteOnlineStatus Invisible;
 	const KopeteOnlineStatus Custom;
 	const KopeteOnlineStatus Idle;
+
+	const Kopete::ContactPropertyTmpl awayMessage;
 
 	/** Protocol Accessor **/
 	static YahooProtocol *protocol();

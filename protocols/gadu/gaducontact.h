@@ -63,6 +63,8 @@ public:
 
 	void	setParentIdentity( const QString& );
 	void	setDescription( const QString& );
+	void	setIgnored( bool );
+	bool ignored();
 
 	QString description() const;
 
@@ -85,6 +87,7 @@ protected:
 
 private:
 	const uin_t		uin_;
+	bool ignored_;
 
 	KopeteMessageManager*	msgManager_;
 	QString			description_;

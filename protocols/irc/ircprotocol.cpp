@@ -3,7 +3,7 @@
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
 
-    Kopete    (c) 2002      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -41,6 +41,7 @@
 #include "kopeteview.h"
 #include "ksparser.h"
 #include "kopeteuiglobal.h"
+#include "kopeteglobal.h"
 
 #include "networkconfig.h"
 #include "channellist.h"
@@ -78,7 +79,16 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	m_UserStatusConnecting(KopeteOnlineStatus::Connecting,	10, this, 1, "irc_connecting",	i18n("Connecting"),	i18n("Connecting")),
 	m_UserStatusOffline(KopeteOnlineStatus::Offline,	 0, this, 0, QString::null,	i18n("Go O&ffline"),	i18n("Offline")),
 
-	m_StatusUnknown(KopeteOnlineStatus::Unknown, 999, this, 999, "status_unknown", "FIXME: Make this unselectable", i18n("Status not available"))
+	m_StatusUnknown(KopeteOnlineStatus::Unknown, 999, this, 999, "status_unknown", "FIXME: Make this unselectable", i18n("Status not available")),
+
+	propChannelTopic(QString::fromLatin1("channelTopic"), i18n("Topic")),
+	propChannelMembers(QString::fromLatin1("channelMembers"), i18n("Members")),
+	propHomepage(QString::fromLatin1("homePage"), i18n("Home Page")),
+	propLastSeen(Kopete::Global::Properties::self()->lastSeen()),
+	propUserInfo(QString::fromLatin1("userInfo"), i18n("IRC User")),
+	propServer(QString::fromLatin1("ircServer"), i18n("IRC Server")),
+	propChannels( QString::fromLatin1("ircChannels"), i18n("IRC Channels")),
+	propHops(QString::fromLatin1("ircHops"), i18n("IRC Hops"))
 {
 //	kdDebug(14120) << k_funcinfo << endl;
 

@@ -23,6 +23,7 @@
 #include "kopetemetacontact.h"
 
 #include "gaduadd.h"
+#include "gaduprotocol.h"
 #include "gaduaccount.h"
 #include "gaduaddcontactpage.h"
 #include "gaducontact.h"
@@ -67,7 +68,7 @@ GaduAddContactPage::apply( KopeteAccount* a , KopeteMetaContact* mc )
 			QString userid	= addUI_->addEdit_->text().stripWhiteSpace();
 			QString name	= addUI_->nickEdit_->text().stripWhiteSpace();
 			if ( a != account_ ) {
-				kdDebug(14100) << "Problem since accounts differ: " << a->accountId()
+				kdDebug(14100) << "Problem because accounts differ: " << a->accountId()
 								<< " , " << account_->accountId() << endl;
 			}
 			if ( a->addContact( userid, name.isEmpty() ? userid : name, mc, KopeteAccount::ChangeKABC ) == false ) {
@@ -75,12 +76,14 @@ GaduAddContactPage::apply( KopeteAccount* a , KopeteMetaContact* mc )
 			}
 			GaduContact *contact = static_cast<GaduContact*>( a->contacts()[ userid ] );
 
-			contact->setProperty( "emailAddress", addUI_->emailEdit_->text().stripWhiteSpace() );
-			contact->setProperty( "firstName", addUI_->fornameEdit_->text().stripWhiteSpace() );
-			contact->setProperty( "lastName", addUI_->snameEdit_->text().stripWhiteSpace() );
-			contact->setProperty( "privPhoneNum", addUI_->telephoneEdit_ ->text().stripWhiteSpace() );
+			contact->setProperty( GaduProtocol::protocol()->propEmail, addUI_->emailEdit_->text().stripWhiteSpace() );
+			contact->setProperty( GaduProtocol::protocol()->propFirstName, addUI_->fornameEdit_->text().stripWhiteSpace() );
+			contact->setProperty( GaduProtocol::protocol()->propLastName, addUI_->snameEdit_->text().stripWhiteSpace() );
+			contact->setProperty( GaduProtocol::protocol()->propPhoneNr, addUI_->telephoneEdit_ ->text().stripWhiteSpace() );
+			/*
 			contact->setProperty( "ignored", i18n( "ignored" ), "false" );
 			contact->setProperty( "nickName", i18n( "nick name" ), name );
+			*/
 		}
 	}
 	else {

@@ -42,6 +42,7 @@
 #include "kopetemetacontact.h"
 #include "kopetemessagemanager.h"
 #include "kopeteaway.h"
+#include "kopeteglobal.h"
 #include "kopeteprotocol.h"
 #include "kopeteplugin.h"
 #include "addcontactpage.h"
@@ -72,7 +73,8 @@ JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStrin
 	JabberKOSDND(KopeteOnlineStatus::Away,              60, this, 4, "jabber_na",         i18n ("Set &Do not Disturb"), i18n ("Do not Disturb")),
 	JabberKOSOffline(KopeteOnlineStatus::Offline,       50, this, 5, QString::null,       i18n ("Go O&ffline"), i18n ("Offline")),
 	JabberKOSInvisible(KopeteOnlineStatus::Online,      40, this, 6, "jabber_invisible",    i18n ("Set I&nvisible"), i18n ("Invisible")),
-	JabberKOSConnecting(KopeteOnlineStatus::Connecting, 30, this, 7, "jabber_connecting", i18n ("FIXME: You should not see this"), i18n("Connecting"))
+	JabberKOSConnecting(KopeteOnlineStatus::Connecting, 30, this, 7, "jabber_connecting", i18n ("FIXME: You should not see this"), i18n("Connecting")),
+	awayMessage(Kopete::Global::Properties::self()->awayMessage())
 {
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Loading ..." << endl;

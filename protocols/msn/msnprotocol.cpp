@@ -24,6 +24,7 @@
 #include <kaboutdata.h>
 
 #include "kopeteaccountmanager.h"
+#include "kopeteglobal.h"
 
 #include "msnaddcontactpage.h"
 #include "msneditaccountwidget.h"
@@ -55,7 +56,10 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 	HDN( KopeteOnlineStatus::Away,       3, this, 8, "msn_invisible", i18n( "Set &Invisible" ),     i18n( "Invisible" ) ), //We use away because we don't want to see this state changed when autoaway.
 	IDL( KopeteOnlineStatus::Away,      10, this, 9, "msn_away",      "FIXME: Make this unselectable", i18n( "Idle" ) ),
 	UNK( KopeteOnlineStatus::Unknown,   25, this, 0, "status_unknown","FIXME: Make this unselectable", i18n( "Status not available" ) ),
-	CNT( KopeteOnlineStatus::Connecting, 2, this, 10,"msn_connecting","FIXME: Make this unselectable", i18n( "Connecting" ) )
+	CNT( KopeteOnlineStatus::Connecting, 2, this, 10,"msn_connecting","FIXME: Make this unselectable", i18n( "Connecting" ) ),
+	propEmail(Kopete::Global::Properties::self()->emailAddress()),
+	propPhoneHome(Kopete::Global::Properties::self()->privatePhone()),
+	propPhoneMobile(Kopete::Global::Properties::self()->privateMobilePhone())
 {
 	s_protocol = this;
 

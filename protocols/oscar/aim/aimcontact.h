@@ -32,7 +32,7 @@ class AIMContact : public OscarContact
 		bool isReachable();
 		QPtrList<KAction> *customContextMenuActions();
 
-		/*
+		/**
 		 * Reimplemented because AIM handles start/stop of typing
 		 */
 		KopeteMessageManager* manager(bool canCreate = false);
@@ -40,21 +40,20 @@ class AIMContact : public OscarContact
 		virtual void setStatus(const unsigned int newStatus);
 
 		const QString &userProfile() { return mUserProfile; }
-//		const UserInfo &userInfo() { return mUserInfo; }
-		const QString &awayMessage() { return mAwayMessage; }
 
 		/*
 		 * Only usable for the myself() contact
 		 */
 		void setOwnProfile(const QString &profile);
 
-		//virtual void gotIM(OscarSocket::OscarMessageType type, const QString &message);
+		virtual const QString awayMessage();
+		virtual void setAwayMessage(const QString &message);
 
 	protected:
 		/**
-		* parses HTML AIM-Clients send to us and
-		* strips off most of it
-		*/
+		 * parses HTML AIM-Clients send to us and
+		 * strips off most of it
+		 */
 		KopeteMessage parseAIMHTML(const QString &m);
 
 		AIMProtocol* mProtocol;
@@ -70,31 +69,33 @@ class AIMContact : public OscarContact
 		void updatedProfile();
 
 	private slots:
-		/*
+		/**
 		 * Called when we get a minityping notification
 		 */
 		void slotGotMiniType(const QString &screenName, int type);
 		void slotTyping(bool typing);
-		/*
+
+		/**
 		 * Called when a buddy has changed status
 		 */
 		void slotContactChanged(const UserInfo &);
 
-		/*
+		/**
 		 * Called when a buddy is going offline
 		 */
 		void slotOffgoingBuddy(QString sn);
 
-		/*
+		/**
 		 * Called when we want to send a message
 		 */
 		void slotSendMsg(KopeteMessage&, KopeteMessageManager *);
 
-		/*
+		/**
 		 * Called when the user requests a contact's user info
 		 */
 		void slotUserInfo();
-		/*
+
+		/**
 		 * Warn the user
 		 */
 		void slotWarn();
@@ -105,8 +106,6 @@ class AIMContact : public OscarContact
 
 	private:
 		QString mUserProfile;
-//		UserInfo mUserInfo;
-		QString mAwayMessage;
 		AIMUserInfoDialog *infoDialog;
 		KAction *actionRequestAuth;
 		KAction *actionSendAuth;

@@ -516,9 +516,9 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 	{
 		KopeteOnlineStatus newStatus = static_cast<YahooProtocol*>( m_protocol )->statusFromYahoo( stat );
 		if ( newStatus == static_cast<YahooProtocol*>( m_protocol )->Custom )
-			kc->setProperty( QString::fromLatin1( "awayMessage" ), msg );
+			kc->setProperty( m_protocol->awayMessage, msg );
 		else
-			kc->removeProperty( QString::fromLatin1( "awayMessage" ) );
+			kc->removeProperty( m_protocol->awayMessage );
 
 		kc->setOnlineStatus( newStatus );
 	}
@@ -631,17 +631,17 @@ void YahooAccount::slotMailNotify( const QString& from, const QString& /* subjec
 	//kdDebug(14180) << "From: " << from << endl;
 	//kdDebug(14180) << "Subject: " << subject << endl;
 	//kdDebug(14180) << "Count: " << cnt << endl;
-	
+
 	if ( cnt > m_currentMailCount && from.isEmpty() )
 	{
-		KNotifyClient::event( 0, "yahoo_mail", 
+		KNotifyClient::event( 0, "yahoo_mail",
 			i18n( "You have one unread message in your Yahoo inbox.",
 			"You have %n unread messages in your Yahoo inbox.", cnt ));
 		m_currentMailCount = cnt;
 	}
 	else if ( cnt > m_currentMailCount )
 	{
-		KNotifyClient::event( 0, "yahoo_mail", 
+		KNotifyClient::event( 0, "yahoo_mail",
 			i18n( "You have a message from %1 in your Yahoo inbox.").arg(from));
 		m_currentMailCount = cnt;
 	}

@@ -3,7 +3,7 @@
 
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
 
-    Kopete    (c) 2002      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -82,13 +82,13 @@ void IRCChannelContact::slotUpdateInfo()
 
 	if( m_isConnected )
 	{
-		setProperty( QString::fromLatin1("channelMembers"), i18n("Members"), manager()->members().count() );
+		setProperty( m_protocol->propChannelMembers, manager()->members().count() );
 		m_engine->writeMessage( QString::fromLatin1("WHO %1").arg(m_nickName) );
 	}
 	else
 	{
-		removeProperty( QString::fromLatin1("channelMembers") );
-		removeProperty( QString::fromLatin1("channelTopic") );
+		removeProperty( m_protocol->propChannelMembers );
+		removeProperty( m_protocol->propChannelTopic );
 	}
 
 	mInfoTimer->start( 45000, true );
@@ -100,8 +100,8 @@ void IRCChannelContact::slotChannelListed( const QString &channel, uint members,
 		&& channel.lower() == m_nickName.lower() )
 	{
 		mTopic = topic;
-		setProperty( QString::fromLatin1("channelTopic"), i18n("Topic"), topic );
-		setProperty( QString::fromLatin1("channelMembers"), i18n("Members"), members );
+		setProperty( m_protocol->propChannelMembers, members );
+		setProperty( m_protocol->propChannelTopic, topic );
 	}
 }
 
@@ -197,7 +197,7 @@ void IRCChannelContact::slotAddNicknames()
 void IRCChannelContact::channelTopic(const QString &topic)
 {
 	mTopic = topic;
-	setProperty( QString::fromLatin1("channelTopic"), i18n("Topic"), mTopic );
+	setProperty( m_protocol->propChannelTopic, mTopic );
 	manager()->setDisplayName( caption() );
 	KopeteMessage msg((KopeteContact*)this, mMyself, i18n("Topic for %1 is %2").arg(m_nickName).arg(mTopic),
 		KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
@@ -207,7 +207,7 @@ void IRCChannelContact::channelTopic(const QString &topic)
 void IRCChannelContact::channelHomePage(const QString &url)
 {
 	kdDebug(14120) << k_funcinfo << endl;
-	setProperty( QString::fromLatin1("homePage"), i18n("Home Page"), url );
+	setProperty( m_protocol->propHomepage, url );
 }
 
 void IRCChannelContact::slotJoin()
@@ -345,7 +345,7 @@ void IRCChannelContact::setTopic(const QString &topic)
 void IRCChannelContact::topicChanged(const QString &nick, const QString &newtopic)
 {
 	mTopic = newtopic;
-	setProperty( QString::fromLatin1("channelTopic"), i18n("Topic"), mTopic );
+	setProperty( m_protocol->propChannelTopic, mTopic );
 	manager()->setDisplayName( caption() );
 	KopeteMessage msg(m_account->myServer(), mMyself,
 		i18n("%1 has changed the topic to: %2").arg(nick).arg(newtopic),
@@ -398,7 +398,8 @@ void IRCChannelContact::incomingModeChange( const QString &nick, const QString &
 	}
 }
 
-void IRCChannelContact::incomingChannelMode( const QString &mode, const QString &params )
+void IRCChannelContact::incomingChannelMode( const QString &mode,
+	const QString &/*params*/ )
 {
 	for( uint i=1; i < mode.length(); i++ )
 	{
@@ -519,7 +520,7 @@ QPtrList<KAction> *IRCChannelContact::customContextMenuActions()
 		actionTopic = new KAction(i18n("Change &Topic..."), 0, this, SLOT(setTopic()), this, "actionTopic");
 		actionModeMenu = new KActionMenu(i18n("Channel Modes"), 0, this, "actionModeMenu");
 
-		if( !property("homePage").value().isNull() )
+		if( !property(m_protocol->propHomepage).value().isNull() )
 		{
 			actionHomePage = new KAction( i18n("Visit &Homepage"), 0, this,
 				SLOT(slotHomepage()), this, "actionHomepage");
@@ -567,7 +568,7 @@ QPtrList<KAction> *IRCChannelContact::customContextMenuActions()
 
 void IRCChannelContact::slotHomepage()
 {
-	QString homePage = property("homePage").value().toString();
+	QString homePage = property(m_protocol->propHomepage).value().toString();
 	if( !homePage.isEmpty() )
 	{
 	       new KRun( KURL( homePage ), 0, false);

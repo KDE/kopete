@@ -36,6 +36,7 @@
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
 #include "kopetemetacontact.h"
+#include "kopeteglobal.h"
 
 typedef KGenericFactory<GaduProtocol> GaduProtocolFactory;
 
@@ -45,6 +46,11 @@ GaduProtocol* GaduProtocol::protocolStatic_ = 0L;
 
 GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList& )
 :KopeteProtocol( GaduProtocolFactory::instance(), parent, name ),
+			propFirstName(Kopete::Global::Properties::self()->firstName()),
+			propLastName(Kopete::Global::Properties::self()->lastName()),
+			propEmail(Kopete::Global::Properties::self()->emailAddress()),
+			propAwayMessage(Kopete::Global::Properties::self()->awayMessage()),
+			propPhoneNr(Kopete::Global::Properties::self()->privatePhone()),
 			defaultAccount_( 0 ),
 			gaduStatusBlocked_( KopeteOnlineStatus::Away, GG_STATUS_BLOCKED, this, GG_STATUS_BLOCKED,
 				"gg_ignored", "", i18n( "Blocked" ) ),
@@ -123,12 +129,13 @@ GaduProtocol::deserializeContact( KopeteMetaContact* metaContact,
 	contact->setParentIdentity( aid );
 	gaccount->addNotify( cid.toUInt() );
 
-	contact->setProperty( "emailAddress", serializedData["email"] );
-	contact->setProperty( "firstName", serializedData["FirstName"] );
-	contact->setProperty( "lastName", serializedData["SecondName"] );
-	contact->setProperty( "nickName", i18n( "nick name" ),  serializedData["nickname"] );
-	contact->setProperty( "privPhoneNum", serializedData["telephone"] );
-	contact->setProperty( "ignored", i18n( "ignored" ), serializedData["ignored"] );
+	contact->setProperty( propEmail, serializedData["email"] );
+	contact->setProperty( propFirstName, serializedData["FirstName"] );
+	contact->setProperty( propLastName, serializedData["SecondName"] );
+	//contact->setProperty( nickName, i18n( "nick name" ),  serializedData["nickname"] );
+	contact->setProperty( propPhoneNr, serializedData["telephone"] );
+	//contact->setProperty( "ignored", i18n( "ignored" ), serializedData["ignored"] );
+	contact->setIgnored(serializedData["ignored"] == "true");
 }
 
 uint

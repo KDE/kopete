@@ -96,9 +96,9 @@ void IRCUserContact::slotUserOffline()
 	if( !metaContact()->isTemporary() )
 		m_engine->writeMessage( QString::fromLatin1("WHOWAS %1").arg(m_nickName) );
 
-	removeProperty( QString::fromLatin1("userInfo") );
-	removeProperty( QString::fromLatin1("server") );
-	removeProperty( QString::fromLatin1("channels") );
+	removeProperty( m_protocol->propUserInfo );
+	removeProperty( m_protocol->propServer );
+	removeProperty( m_protocol->propChannels );
 }
 
 void IRCUserContact::setAway(bool isAway)
@@ -128,7 +128,7 @@ void IRCUserContact::userOnline()
 		m_engine->writeMessage( QString::fromLatin1("WHOIS %1").arg(m_nickName) );
 	}
 
-	removeProperty( QString::fromLatin1("lastOnline") );
+	removeProperty( m_protocol->propLastSeen );
 }
 
 void IRCUserContact::slotUserInfo()
@@ -218,9 +218,9 @@ void IRCUserContact::newWhoIsUser(const QString &username, const QString &hostna
 
 	if( onlineStatus().status() == KopeteOnlineStatus::Offline )
 	{
-		setProperty( QString::fromLatin1("userInfo"), i18n("User"), QString::fromLatin1("%1@%2")
+		setProperty( m_protocol->propUserInfo, QString::fromLatin1("%1@%2")
 			.arg(mInfo.userName).arg(mInfo.hostName) );
-		setProperty( QString::fromLatin1("server"), i18n("Server"), mInfo.serverName );
+		setProperty( m_protocol->propServer, mInfo.serverName );
 	}
 }
 
@@ -231,8 +231,8 @@ void IRCUserContact::newWhoIsServer(const QString &servername, const QString &se
 		mInfo.serverInfo = serverinfo;
 	else
 	{
-		kdDebug(14120)<< "Setting last online: " << serverinfo << endl;
-		setProperty( QString::fromLatin1("lastOnline"), i18n("Last Online"), QDateTime::fromString( serverinfo ) );
+		//kdDebug(14120)<< "Setting last online: " << serverinfo << endl;
+		setProperty( m_protocol->propLastSeen, QDateTime::fromString( serverinfo ) );
 	}
 }
 
@@ -304,7 +304,7 @@ void IRCUserContact::whoWasComplete()
 
 		msg += i18n("Last Online: %1\n").arg(
 			KGlobal::locale()->formatDateTime(
-				property( QString::fromLatin1("lastOnline") ).value().toDateTime()
+				property( m_protocol->propLastSeen ).value().toDateTime()
 			)
 		);
 
@@ -320,11 +320,11 @@ QString IRCUserContact::formattedName() const
 
 void IRCUserContact::updateInfo()
 {
-	setProperty( QString::fromLatin1("userInfo"), i18n("User"), QString::fromLatin1("%1@%2")
+	setProperty( m_protocol->propUserInfo, QString::fromLatin1("%1@%2")
 		.arg(mInfo.userName).arg(mInfo.hostName) );
-	setProperty( QString::fromLatin1("server"), i18n("Server"), mInfo.serverName );
-	setProperty( QString::fromLatin1("channels"), i18n("Channels"), mInfo.channels.join(" ") );
-	setProperty( QString::fromLatin1("hops"), i18n("Hops"), QString::number(mInfo.hops) );
+	setProperty( m_protocol->propServer, mInfo.serverName );
+	setProperty( m_protocol->propChannels, mInfo.channels.join(" ") );
+	setProperty( m_protocol->propHops, QString::number(mInfo.hops) );
 
 	setIdleTime( mInfo.idle );
 

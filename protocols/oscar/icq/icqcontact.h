@@ -69,7 +69,7 @@ class ICQContact : public OscarContact
 
 		/** Request full user info */
 		void requestUserInfo();
-		
+
 		/** Request short user info */
 		void requestShortInfo();
 
@@ -86,7 +86,8 @@ class ICQContact : public OscarContact
 		 */
 		void setOnlineStatus(const KopeteOnlineStatus&);
 
-		//virtual void gotIM(OscarSocket::OscarMessageType type, const QString &message);
+		virtual const QString awayMessage();
+		virtual void setAwayMessage(const QString &message);
 
 	public slots:
 		virtual void slotUserInfo();
@@ -108,7 +109,7 @@ class ICQContact : public OscarContact
 		ICQInfoItemList currentBackground;
 		ICQInfoItemList pastBackground;
 		ICQSearchResult shortInfo;
-		
+
 		KAction *actionReadAwayMessage;
 		KAction *actionRequestAuth;
 		KAction *actionSendAuth;

@@ -28,6 +28,7 @@
 #include <kpopupmenu.h>
 
 #include "kopetecontact.h"
+#include "kopetecontactproperty.h"
 #include "kopetemetacontact.h"
 #include "kopeteonlinestatus.h"
 #include "addcontactpage.h"
@@ -75,6 +76,8 @@ public:
 	const KopeteOnlineStatus JabberKOSOffline;
 	const KopeteOnlineStatus JabberKOSInvisible;
 	const KopeteOnlineStatus JabberKOSConnecting;
+
+	const Kopete::ContactPropertyTmpl awayMessage;
 
 	/**
 	 * This returns our protocol instance

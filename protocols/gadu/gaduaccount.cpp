@@ -315,7 +315,7 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 	}
 
 	myself()->setOnlineStatus( status );
-	myself()->setProperty( "awayMessage", descr );
+	myself()->setProperty( GaduProtocol::protocol()->propAwayMessage, descr );
 
 	if ( status.internalStatus() == GG_STATUS_NOT_AVAIL || status.internalStatus() == GG_STATUS_NOT_AVAIL_DESCR ) {
 		if ( pingTimer_ ){
@@ -330,7 +330,7 @@ GaduAccount::slotLogin( int status, const QString& dscr )
 	lastDescription	= dscr;
 
 	myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ));
-	myself()->setProperty( "awayMessage", dscr );
+	myself()->setProperty( GaduProtocol::protocol()->propAwayMessage, dscr );
 
 
 	if ( !session_->isConnected() ) {
@@ -489,13 +489,13 @@ GaduAccount::notify( KGaduNotifyList* notifyList )
 		}
 
 		if ( (*notifyListIterator)->description.isNull() ) {
-			contact->setOnlineStatus(  GaduProtocol::protocol()->convertStatus( (*notifyListIterator)->status ) );
-			contact->removeProperty( "awayMessage" );
+			contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( (*notifyListIterator)->status ) );
+			contact->removeProperty( GaduProtocol::protocol()->propAwayMessage );
 
 		}
 		else {
 			contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( (*notifyListIterator)->status ) );
-			contact->setProperty( "awayMessage", (*notifyListIterator)->description );
+			contact->setProperty( GaduProtocol::protocol()->propAwayMessage, (*notifyListIterator)->description );
 		}
 	}
 }
@@ -514,11 +514,11 @@ GaduAccount::contactStatusChanged( KGaduNotify* gaduNotify )
 
 	if ( gaduNotify->description.isEmpty() ) {
 		contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( gaduNotify->status ) );
-		contact->removeProperty( "awayMessage" );
+		contact->removeProperty( GaduProtocol::protocol()->propAwayMessage );
 	}
 	else {
 		contact->setOnlineStatus( GaduProtocol::protocol()->convertStatus( gaduNotify->status ) );
-		contact->setProperty( "awayMessage", gaduNotify->description );
+		contact->setProperty( GaduProtocol::protocol()->propAwayMessage, gaduNotify->description );
 	}
 
 /// FIXME: again, store this information
@@ -609,7 +609,7 @@ GaduAccount::connectionSucceed( )
 	kdDebug(14100) << "#### Gadu-Gadu connected! " << endl;
 	status_ =  GaduProtocol::protocol()->convertStatus( session_->status() );
 	myself()->setOnlineStatus( status_ );
-	myself()->setProperty( "awayMessage", lastDescription );
+	myself()->setProperty( GaduProtocol::protocol()->propAwayMessage, lastDescription );
 	startNotify();
 
 	session_->requestContacts();

@@ -21,6 +21,7 @@
 #include <qmap.h>
 
 #include "kopeteprotocol.h"
+#include "kopetecontactproperty.h"
 
 class QComboBox;
 class ICQUserInfoWidget;
@@ -57,6 +58,10 @@ class ICQProtocol : public KopeteProtocol
 		const KopeteOnlineStatus statusNA;
 		const KopeteOnlineStatus statusOCC;
 		const KopeteOnlineStatus statusConnecting;
+
+		const Kopete::ContactPropertyTmpl firstName;
+		const Kopete::ContactPropertyTmpl lastName;
+		const Kopete::ContactPropertyTmpl awayMessage;
 
 		const QMap<int, QString> &genders() { return mGenders; }
 		const QMap<int, QString> &countries() { return mCountries; }

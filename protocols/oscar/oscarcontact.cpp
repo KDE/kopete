@@ -23,7 +23,6 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-//#include <kfiledialog.h>
 
 #include <kdeversion.h>
 #if KDE_IS_VERSION( 3, 1, 90 )
@@ -37,6 +36,7 @@
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
+#include <kopeteglobal.h>
 
 #include "aim.h"
 #include "aimbuddy.h"
@@ -554,12 +554,12 @@ void OscarContact::slotParseUserInfo(const UserInfo &u)
 	if(u.onlinesince.isValid())
 	{
 		//kdDebug(14150) << k_funcinfo << "onlinesince = " << u.onlinesince.toString() << endl;
-		setProperty("onlineSince", u.onlinesince);
+		setProperty(Kopete::Global::Properties::self()->onlineSince(), u.onlinesince);
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo << "invalid onlinesince, removing property!" << endl;
-		removeProperty("onlinesince");
+		//kdDebug(14150) << k_funcinfo << "invalid onlinesince, removing property!" << endl;
+		removeProperty(Kopete::Global::Properties::self()->onlineSince());
 	}
 
 	// FIXME: UserInfo was a bad idea, invent something clever instead!
@@ -679,7 +679,7 @@ void OscarContact::receivedIM(KopeteMessage &msg)
 			toContact.append(this);
 			// Display the autoresponse
 			// Make it look different
-			// FIXME: hardcoded color
+			// UGLY hardcoded color
 			QString responseDisplay =
 				"<font color='#666699'>Autoresponse: </font>" +
 				KopeteAway::getInstance()->message();
@@ -730,23 +730,6 @@ void OscarContact::setGroupId(const int newgid)
 		mGroupId = newgid;
 		//kdDebug(14150) << k_funcinfo << "updated group id to " << mGroupId << endl;
 	}
-}
-
-const QString OscarContact::awayMessage()
-{
-	QVariant v = property("awayMessage").value();
-	if(v.isNull())
-		return QString::null;
-	else
-		return v.toString();
-}
-
-void OscarContact::setAwayMessage(const QString &message)
-{
-	/*kdDebug(14150) << k_funcinfo <<
-		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;*/
-	setProperty("awayMessage", message);
-	emit awayMessageChanged();
 }
 
 void OscarContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &/*addressBookData*/)

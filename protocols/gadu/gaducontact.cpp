@@ -192,23 +192,24 @@ GaduContact::slotDeleteContact()
 void
 GaduContact::serialize( QMap<QString, QString>& serializedData, QMap<QString, QString>& )
 {
-	serializedData[ "email" ]	= property( "emailAddress" ).value().toString();
-	serializedData[ "FirstName"  ]	= property( "firstName" ).value().toString();
-	serializedData[ "SecondName" ]	= property( "lastName" ).value().toString();
-	serializedData[ "telephone" ]	= property( "privPhoneNum" ).value().toString();
-	serializedData[ "ignored" ]	= property( "ignored" ).value().toString();
-	serializedData[ "nickname" ]	= property( "nickName" ).value().toString();
+	serializedData[ "email" ]	= property( GaduProtocol::protocol()->propEmail ).value().toString();
+	serializedData[ "FirstName"  ]	= property( GaduProtocol::protocol()->propFirstName ).value().toString();
+	serializedData[ "SecondName" ]	= property( GaduProtocol::protocol()->propLastName ).value().toString();
+	serializedData[ "telephone" ]	= property( GaduProtocol::protocol()->propPhoneNr ).value().toString();
+	serializedData[ "ignored" ]	= ignored_ ? "true" : "false"; //property( "ignored" ).value().toString();
+	//serializedData[ "nickname" ]	= property( "nickName" ).value().toString();
 }
 
 bool
 GaduContact::setContactDetails( const GaduContactsList::ContactLine* cl )
 {
-	setProperty( "emailAddress", cl->email );
-	setProperty( "firstName", cl->firstname );
-	setProperty( "lastName", cl->surname );
-	setProperty( "privPhoneNum", cl->phonenr );
-	setProperty( "ignored", i18n( "ignored" ), cl->ignored ? "true" : "false" );
-	setProperty( "nickName", i18n( "nick name" ), cl->nickname );
+	setProperty( GaduProtocol::protocol()->propEmail, cl->email );
+	setProperty( GaduProtocol::protocol()->propFirstName, cl->firstname );
+	setProperty( GaduProtocol::protocol()->propLastName, cl->surname );
+	setProperty( GaduProtocol::protocol()->propPhoneNr, cl->phonenr );
+	//setProperty( "ignored", i18n( "ignored" ), cl->ignored ? "true" : "false" );
+	ignored_ = cl->ignored;
+	//setProperty( "nickName", i18n( "nick name" ), cl->nickname );
 
 	return true;
 }
@@ -221,14 +222,12 @@ GaduContact::contactDetails()
 
 	GaduContactsList::ContactLine* cl = new GaduContactsList::ContactLine;
 
-	cl->firstname	= property( "firstName" ).value().toString();
-	cl->surname	= property( "lastName" ).value().toString();
-	cl->nickname	= property( "nickName" ).value().toString();
-
-	cl->email	= property( "emailAddress" ).value().toString();
-	cl->phonenr	= property( "privPhoneNum" ).value().toString();
-
-	cl->ignored	= ( property( "ignored" ).value().toString() == "true" );
+	cl->firstname	= property( GaduProtocol::protocol()->propFirstName ).value().toString();
+	cl->surname	= property( GaduProtocol::protocol()->propLastName ).value().toString();
+	//cl->nickname	= property( "nickName" ).value().toString();
+	cl->email	= property( GaduProtocol::protocol()->propEmail ).value().toString();
+	cl->phonenr	= property( GaduProtocol::protocol()->propPhoneNr ).value().toString();
+	cl->ignored	= ignored_; //( property( "ignored" ).value().toString() == "true" );
 
 	cl->uin		= QString::number( uin_ );
 	cl->displayname	= metaContact()->displayName();
@@ -305,6 +304,16 @@ GaduContact::findBestContactName( const GaduContactsList::ContactLine* cl )
 void GaduContact::messageAck()
 {
 	manager()->messageSucceeded();
+}
+
+void	GaduContact::setIgnored( bool val )
+{
+	ignored_ = val;
+}
+
+bool GaduContact::ignored()
+{
+	return ignored_;
 }
 
 #include "gaducontact.moc"

@@ -509,11 +509,11 @@ void JabberContact::reevaluateStatus ()
 	setOnlineStatus ( status );
 
 	// remove properties first
-	removeProperty ( "awayMessage" );
+	removeProperty ( protocol()->awayMessage );
 
 	// set away message property
 	if ( !resource.status ().status ().isEmpty () )
-		setProperty ( "awayMessage", resource.status().status () );
+		setProperty ( protocol()->awayMessage, resource.status().status () );
 }
 
 QString JabberContact::fullAddress ()
