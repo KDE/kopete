@@ -83,7 +83,7 @@ ContactList::ContactList()
 	connect( d->saveTimer, SIGNAL( timeout() ), SLOT ( save() ) );
 
 	connect( this, SIGNAL( metaContactAdded( Kopete::MetaContact * ) ), SLOT( slotSaveLater() ) );
-	connect( this, SIGNAL( metaContactDeleted( Kopete::MetaContact * ) ), SLOT( slotSaveLater() ) );
+	connect( this, SIGNAL( metaContactRemoved( Kopete::MetaContact * ) ), SLOT( slotSaveLater() ) );
 	connect( this, SIGNAL( groupAdded( Kopete::Group * ) ), SLOT( slotSaveLater() ) );
 	connect( this, SIGNAL( groupRemoved( Kopete::Group * ) ), SLOT( slotSaveLater() ) );
 	connect( this, SIGNAL( groupRenamed( Kopete::Group *, const QString & ) ), SLOT( slotSaveLater() ) );
@@ -259,7 +259,7 @@ void ContactList::addGroup( Group * g )
 	{
 		d->groups.append( g );
 		emit groupAdded( g );
-		connect( g , SIGNAL ( renamed(Group* , const QString & )) , this , SIGNAL ( groupRenamed(Group* , const QString & )) ) ;
+		connect( g , SIGNAL ( renamed(Kopete::Group* , const QString & )) , this , SIGNAL ( groupRenamed(Kopete::Group* , const QString & )) ) ;
 	}
 }
 

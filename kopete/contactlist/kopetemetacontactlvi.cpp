@@ -53,6 +53,7 @@
 #include "kopetestdaction.h"
 #include "systemtray.h"
 #include "kopeteglobal.h"
+#include "kopetecontact.h"
 
 #include <memory>
 

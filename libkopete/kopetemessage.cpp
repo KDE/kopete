@@ -33,6 +33,7 @@
 #include "kopeteprotocol.h"
 #include "kopetemessagemanager.h"
 #include "kopeteprefs.h"
+#include "kopetecontact.h"
 
 class Kopete::Message::Private
 {

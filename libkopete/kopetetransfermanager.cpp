@@ -24,6 +24,7 @@
 #include <kio/observer.h>
 
 #include "kopetemetacontact.h"
+#include "kopetecontact.h"
 #include "kopeteuiglobal.h"
 
 #include "kopetetransfermanager.h"

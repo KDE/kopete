@@ -24,6 +24,7 @@
 #include "kopetemessageevent.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
+#include "kopetecontact.h"
 
 namespace Kopete
 {

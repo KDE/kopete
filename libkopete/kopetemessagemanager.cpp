@@ -40,6 +40,7 @@
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 #include "kopeteview.h"
+#include "kopetecontact.h"
 
 class KMMPrivate
 {

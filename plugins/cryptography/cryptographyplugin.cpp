@@ -31,6 +31,7 @@
 #include "kopetemessagemanagerfactory.h"
 #include "kopetesimplemessagehandler.h"
 #include "kopeteuiglobal.h"
+#include "kopetecontact.h"
 
 #include "cryptographyplugin.h"
 #include "cryptographyselectuserkey.h"

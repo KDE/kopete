@@ -426,7 +426,7 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 	         SIGNAL( metaContactAdded( Kopete::MetaContact * ) ),
 	         SLOT( slotMetaContactAdded( Kopete::MetaContact * ) ) );
 	connect( Kopete::ContactList::self(),
-	         SIGNAL( metaContactDeleted( Kopete::MetaContact * ) ),
+	         SIGNAL( metaContactRemoved( Kopete::MetaContact * ) ),
 	         SLOT( slotMetaContactDeleted( Kopete::MetaContact * ) ) );
 	connect( Kopete::ContactList::self(), SIGNAL( groupAdded( Kopete::Group * ) ),
 	         SLOT( slotGroupAdded( Kopete::Group * ) ) );

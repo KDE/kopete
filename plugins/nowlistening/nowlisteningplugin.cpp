@@ -28,6 +28,7 @@
 #include "config.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
+#include "kopetecontact.h"
 #include "nowlisteningconfig.h"
 #include "nowlisteningplugin.h"
 #include "nlmediaplayer.h"

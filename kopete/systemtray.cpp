@@ -35,6 +35,7 @@
 #include "kopetemetacontact.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
+#include "kopetecontact.h"
 
 
 KopeteSystemTray* KopeteSystemTray::s_systemTray = 0L;

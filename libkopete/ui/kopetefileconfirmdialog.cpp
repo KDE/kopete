@@ -29,6 +29,7 @@
 #include "kopetefileconfirmdialog.h"
 
 #include "kopetemetacontact.h"
+#include "kopetecontact.h"
 
 KopeteFileConfirmDialog::KopeteFileConfirmDialog(const Kopete::FileTransferInfo &info,const QString& description,QWidget *parent, const char *name )
 : KDialogBase( parent, name, true, i18n( "A User Would Like to Send You a File" ),

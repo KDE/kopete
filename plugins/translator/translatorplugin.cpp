@@ -34,6 +34,7 @@
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
+#include "kopetecontact.h"
 
 #include "translatorplugin.h"
 #include "translatordialog.h"

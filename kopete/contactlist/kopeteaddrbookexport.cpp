@@ -30,6 +30,7 @@
 #include "kopeteaccount.h"
 #include "kopeteglobal.h"
 #include "kopetemetacontact.h"
+#include "kopetecontact.h"
 
 #include "kopeteaddrbookexport.h"
 #include "kopeteaddrbookexportui.h"

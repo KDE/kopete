@@ -309,7 +309,7 @@ public: //TODO I think all theses method should be moved to the decop interface.
 	
 	
 
-public:  //TODO
+public slots:
 	/**
 	 * @internal
 	 * Load the contact list
@@ -320,6 +320,7 @@ public:  //TODO
 
 	void save();
 	
+private:
 	/**
 	 * Return a XML representation of the contact list
 	 */

@@ -20,6 +20,7 @@
 
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
+#include "kopetecontact.h"
 
 #include <klocale.h>
 

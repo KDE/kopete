@@ -3,10 +3,10 @@
 
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart @tiscalinet.be>
     Copyright (c) 2003      by Will Stephenson        <will@stevello.free-online.co.uk>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -18,93 +18,186 @@
     *************************************************************************
 */
 
-#ifndef __kopetemetacontact_h__
-#define __kopetemetacontact_h__
+#ifndef kopetemetacontact_h__
+#define kopetemetacontact_h__
 
-#include <qdom.h>
-#include <qobject.h>
+#include "kopetecontactlistelement.h"
 #include <qptrlist.h>
 
 #include <kabc/addressbook.h>
 #include <kdemacros.h>
 
-#include "kopetecontact.h"
 #include "kopetenotifydataobject.h"
-#include "kopeteonlinestatus.h"
 #include "kopetecontactlistelement.h"
+#include "kopeteonlinestatus.h"  
 
 class QDomNode;
 
 class KURL;
 
-struct KopeteMetaContactPrivate;
+namespace Kopete {
 
-namespace Kopete
-{
+
+class Plugin;
+class Group;
 
 /**
  * @author Will Stephenson <will@stevello.free-online.co.uk>
  * @author Martijn Klingens <klingens@kde.org>
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
- * @author Olivier Goffart <ogoffart@tiscalinet.be>
+ * @author Olivier Goffart <ogoffart @tiscalinet.be>
  *
  * A metacontact represent a person. This is a kind of entry to
  * the contactlist. All information of a contact is contained in
  * the metacontact. Plugins can store data in it with all
- * @ref Kopete::ContactListElement methods
+ * @ref ContactListElement methods
  */
 class MetaContact : public ContactListElement, public NotifyDataObject
 {
 	Q_OBJECT
 
 	Q_PROPERTY( QString displayName READ displayName WRITE setDisplayName )
-	Q_PROPERTY( QString statusString READ statusString )
-	Q_PROPERTY( QString statusIcon READ statusIcon )
-	Q_PROPERTY( bool isOnline READ isOnline )
-	Q_PROPERTY( bool isReachable READ isReachable )
-	Q_PROPERTY( bool isTopLevel READ isTopLevel )
-	Q_PROPERTY( bool canAcceptFiles READ canAcceptFiles )
+//	Q_PROPERTY( QString statusString READ statusString )
+//	Q_PROPERTY( QString statusIcon READ statusIcon )
+//	Q_PROPERTY( bool isOnline READ isOnline )
+//	Q_PROPERTY( bool isReachable READ isReachable )
+//	Q_PROPERTY( bool isTopLevel READ isTopLevel )
+//	Q_PROPERTY( bool canAcceptFiles READ canAcceptFiles )
 	Q_PROPERTY( QString metaContactId READ metaContactId WRITE setMetaContactId )
 	Q_PROPERTY( bool trackChildNameChanges READ trackChildNameChanges WRITE setTrackChildNameChanges )
 
 public:
-	enum GroupSyncMode { SyncGroups, DontSyncGroups };
 
+	/** 
+	 * constructor
+	 */
 	MetaContact();
+	/**
+	 * destructor
+	 */
 	~MetaContact();
+	
+	/**
+	 * @brief Returns this metacontact's ID.
+	 *
+	 * Every metacontact has a unique id, set by  when creating the contact, or reading the contactlist
+	 * TODO: make it real
+	 */
+	QString metaContactId() const;
+
+	/**
+	 * @brief Add or change the link to a KDE addressbook (KABC) Addressee.
+	 * FIXME: Use with care.  You could create 1 to many relationships with the current implementation
+	 */
+	void setMetaContactId( const QString& newMetaContactId );
 
 	/**
 	 * @brief Retrieve the list of contacts that are part of the meta contact
 	 */
 	QPtrList<Contact> contacts() const;
-
+	
 	/**
-	 * @brief Add a brand new contact to the meta contact.  Updates KABC
-	 * @param c The Kopete::Contact being added
+	 * @brief The groups the contact is stored in
 	 */
-	void addContact( Contact *c );
+	QPtrList<Group> groups() const;
 
 	/**
-	 * Find the Kopete::Contact to a given contact. If contact
+	 * Find the Contact to a given contact. If contact
 	 * is not found, a null pointer is returned.
+	 * if @p protocolId or @p accountId are null, it is searched over all protocols/accounts
 	 */
 	Contact *findContact( const QString &protocolId, const QString &accountId, const QString &contactId );
+	
+	
+	/**
+	 * @return the display name showed in the contactlist window, or in the chatwindow
+	 */
+	QString displayName() const;
+
+	/**
+	 * @brief Set the displayName.
+	 *
+	 * this metohd may emit @ref displayNameChanged signal.
+	 * If @ref trackChildNameChanges was true, this will automatically set it to false
+	 */
+	void setDisplayName( const QString &name );
+	
+	/**
+	 * @brief get the tracking of contact names
+	 *
+	 * The MetaContact will adjust its displayName() every time the contact
+	 * inside changes its name.
+	 * This should only work for MCs with exactly ONE contact inside in order
+	 * to not confuse users (think about 4 subcontacts and what happens if one
+	 * changes nickname...)
+	 */
+	bool trackChildNameChanges() const;
+	/**
+	 * @brief set if the metacontact displayname follow subcontacts displayname
+	 *
+	 * When setting it to true, it will refresh the dysplayname to the subcontactone instentaneous,
+	 * and each time the contact change.
+	 *
+	 * Note that this method has an effect only if there is exactly one subcontact.
+	 *
+	 * @see @ref trackChildNameChanges , @ref setDisplayName
+	 */
+	void setTrackChildNameChanges( bool track );
+	
+	
+	/**
+	 * Temporary contacts will not be serialized.
+	 * If they are added to the contactlist, they appears in a special "Not in your contactlist" group.
+	 * (the @ref Group::temporary  group)
+	 */
+	bool isTemporary() const;
+
+
+	/**
+	 * @brief Add a brand new contact to the meta contact. 
+	 *  Updates KABC
+	 * @param c The Contact being added
+	 */
+	void addContact( Contact *c );
+	
+	/**
+	 * @brief remove the contact from this metacontact
+	 *
+	 * set 'deleted' to true if the Contact is already deleted
+	 *
+	 * @param c is the contact to remove
+	 * @param deleted : if it is false, it will disconnect the old contact, and call some method.
+	 */
+	void removeContact( Contact *c , bool deleted = false );
+	
+	
+	
+	
+	/**
+	 * @return the preferred child Contact for communication, or 0 if none is suitable (all unreachable).
+	 */
+	Contact *preferredContact();
+
+	
+
+public: 
+
 	/**
 	 * @brief The name of the icon associated with the contact's status
+	 * @todo improve with OnlineStatus
 	 */
-	virtual QString statusIcon() const;
+	QString statusIcon() const;
 
 	/**
 	 * @brief The status string of the contact
 	 *
 	 * @see @ref status()
+	 * @todo improve with OnlineStatus
 	 */
 	QString statusString() const;
 
 	/**
 	 * Returns whether this contact can be reached online for at least one
-	 * protocol. Protocols are processed in loading order.
-	 * FIXME: Make that user preference order!
 	 * FIXME: Make that an enum, because status can be unknown for certain
 	 *        protocols
 	 */
@@ -127,8 +220,8 @@ public:
 	 * Like isOnline, but returns true even if the contact is not online, but
 	 * can be reached trough offline-messages.
 	 * it it return false, you are unable to open a chatwindow
-	 * FIXME: Here too, use preference order, not append order!
-	 * FIXME: Here too an enum.
+	 * @todo : Here too, use preference order, not append order!
+	 * @todo : Here too an enum.
 	 */
 	bool isReachable() const;
 
@@ -137,44 +230,7 @@ public:
 	 */
 	unsigned long int idleTime() const;
 
-	/**
-	 * @return the display name showed in the contactlist window, or in the chatwindow
-	 */
-	QString displayName() const;
-	/**
-	 * @brief Set the displayName.
-	 *
-	 * this metohd may emit @ref displayNameChanged signal.
-	 * If @ref trackChildNameChanges was true, this will automatically set it to false
-	 */
-	void setDisplayName( const QString &name );
 
-	/**
-	 * @brief get the tracking of contact names
-	 *
-	 * The MetaContact will adjust its displayName() every time the contact
-	 * inside changes its name.
-	 * This should only work for MCs with exactly ONE contact inside in order
-	 * to not confuse users (think about 4 subcontacts and what happens if one
-	 * changes nickname...)
-	 */
-	bool trackChildNameChanges() const;
-	/**
-	 * @brief set if the metacontact displayname follow subcontacts displayname
-	 *
-	 * When setting it to true, it will refresh the dysplayname to the subcontactone instentaneous,
-	 * and each time the contact change.
-	 *
-	 * Note that this method has an effect only if there is exactly one subcontact.
-	 *
-	 * @see @ref trackChildNameChanges , @ref setDisplayName
-	 */
-	void setTrackChildNameChanges( bool track );
-
-	/**
-	 * @brief The groups the contact is stored in
-	 */
-	GroupList groups() const;
 
 	/**
 	 * Return a XML representation of the metacontact
@@ -191,133 +247,41 @@ public:
 	 */
 	bool fromXML( const QDomElement& cnode );
 
-	/**
-	 * Temporary contacts will not be serialized.
-	 * If they are added to the contactlist, they appears in a special "Not in your contactlist" group.
-	 * (the @ref Kopete::Group::temporary  group)
-	 */
-	bool isTemporary() const;
-
-	/**
-	 * @brief Return true if the contact is shown at toplevel.
-	 * You may also check if @ref groups() contains @ref Kopete::Group::topLevel()
-	 */
-	bool isTopLevel() const;
-
-	/**
-	 * @brief Returns this metacontact's ID.
-	 *
-	 * Every metacontact has a unique id, set by kopete when creating the contact, or reading the contactlist
-	 */
-	QString metaContactId() const;
-
-	/**
-	 * @brief Add or change the link to a KDE addressbook (KABC) Addressee.
-	 * FIXME: Use with care.  You could create 1 to many relationships with the current implementation
-	 */
-	void setMetaContactId( const QString& newMetaContactId );
 
 	/**
 	 * Get or set a field for the KDE address book backend. Fields not
-	 * registered during the call to Kopete::Plugin::addressBookFields()
+	 * registered during the call to Plugin::addressBookFields()
 	 * cannot be altered!
 	 *
-	 * @param p The Kopete::Plugin by which uses this field
+	 * @param p The Plugin by which uses this field
 	 * @param app refers to the application id in the libkabc database.
 	 * This should be a standardized format to make sense in the address
-	 * book in the first place - if you could use "kopete" as application
+	 * book in the first place - if you could use "" as application
 	 * then probably you should use the plugin data API instead of the
 	 * address book fields.
 	 *
-	 * FIXME: In the code the requirement that fields are registered first
+	 * @todo: In the code the requirement that fields are registered first
 	 *        is already lifted, but the API needs some review before we
 	 *        can remove it here too.
 	 *        Probably it requires once more some rewrites to get it working
 	 *        properly :( - Martijn
 	 */
 	QString addressBookField( Plugin *p, const QString &app, const QString &key ) const;
-
-public slots:
-
-	/**
-	 * @brief Move a contact from one group to another.
-	 */
-	void moveToGroup( Kopete::Group *from, Kopete::Group *to, GroupSyncMode syncMode = SyncGroups );
-
-	/**
-	 * @brief Remove a contact from one group
-	 */
-	void removeFromGroup( Kopete::Group *from, GroupSyncMode syncMode = SyncGroups );
-
-	/**
-	 * @brief Add a contact to another group.
-	 */
-	void addToGroup( Kopete::Group *to, GroupSyncMode syncMode = SyncGroups );
-
-	/**
-	 * @brief remove the contact from this metacontact
-	 *
-	 * set 'deleted' to true if the Kopete::Contact is already deleted
-	 *
-	 * @param c is the contact to remove
-	 * @param deleted : if it is false, it will disconnect the old contact, and call some method.
-	 */
-	void removeContact( Kopete::Contact *c , bool deleted = false );
-
-	/**
-	 * @brief Set if this is a temporary contact. (see @ref isTemporary)
-	 *
-	 * @param b if the contact is or not temporary
-	 * @param group if the contact was temporary and b is true, then the contact will be moved to this group.
-	 *  if group is null, it will be moved to top-level
-	 */
-	void setTemporary( bool b = true, Kopete::Group *group = 0L );
-
+	
 	/**
 	 * @brief set an address book field
 	 *
 	 * @see also @ref addressBookField()
-	 * @param p The Kopete::Plugin by which uses this field
+	 * @param p The Plugin by which uses this field
 	 */
-	void setAddressBookField( Kopete::Plugin *p, const QString &app, const QString &key, const QString &value );
-
-	/**
-	 * @brief Contact another user.
-	 *
-	 * Depending on the config settings, call sendMessage() or
-	 * startChat()
-	 *
-	 * returns the Kopete::Contact that was chosen as the preferred
-	 */
-	Contact *execute();
-
-	/**
-	 * @brief Send a single message, classic ICQ style.
-	 *
-	 * The actual sending is done by the Kopete::Contact, but the meta contact
-	 * does the GUI side of things.
-	 * This is a slot to allow being called easily from e.g. a GUI.
-	 *
-	 * returns the Kopete::Contact that was chosen as the preferred
-	 */
-	Contact *sendMessage();
-
-	/**
-	 * @brief Start a chat in a persistent chat window
-	 *
-	 * Like sendMessage, but this time a full-blown chat will be opened.
-	 * Most protocols can't distinguish between the two and are either
-	 * completely session based like MSN or completely message based like
-	 * ICQ the only true difference is the GUI shown to the user.
-	 *
-	 * returns the Kopete::Contact that was chosen as the preferred
-	 */
-	Contact *startChat();
-
+	void setAddressBookField( Plugin *p, const QString &app, const QString &key, const QString &value );
+	
+public slots:
+	
 	/**
 	 * @brief Send a file to this metacontact
 	 *
-	 * This is the Kopete::MetaContact level slot for sending files. It may be called through the
+	 * This is the MetaContact level slot for sending files. It may be called through the
 	 * "Send File" entry in the GUI, or over DCOP. If the function is called through the GUI,
 	 * no parameters are sent and they assume default values. This slot calls the slotSendFile
 	 * with identical params of the highest ranked contact capable of sending files (if any)
@@ -350,17 +314,86 @@ public slots:
 	 */
 	bool syncWithKABC();
 
+	
+signals:
 	/**
-	 * @return the preferred child Kopete::Contact for communication, or 0 if none is suitable (all unreachable).
+	 * This metaContact is going to be saved to the contactlist. Plugins should
+	 * connect to this signal to update data with setPluginData()
 	 */
-	Contact *preferredContact();
+	void aboutToSave( Kopete::MetaContact *metaContact );
+
+	/**
+	 * One of the subcontacts' idle status has changed.  As with online status,
+	 * this can occur without the metacontact changing idle state
+	 */
+	void contactIdleStateChanged( Kopete::Contact *contact );
+
+
+	
+
+public slots:
+
+	/**
+	 * @brief Move a contact from one group to another.
+	 */
+	void moveToGroup( Kopete::Group *from, Kopete::Group *to );
+
+	/**
+	 * @brief Remove a contact from one group
+	 */
+	void removeFromGroup( Kopete::Group *from );
+
+	/**
+	 * @brief Add a contact to another group.
+	 */
+	void addToGroup( Kopete::Group *to );
+
+	/**
+	 * @brief Set if this is a temporary contact. (see @ref isTemporary)
+	 *
+	 * @param b if the contact is or not temporary
+	 * @param group if the contact was temporary and b is true, then the contact will be moved to this group.
+	 *  if group is null, it will be moved to top-level
+	 */
+	void setTemporary( bool b = true, Kopete::Group *group = 0L );
+	
+	/**
+	 * @brief Contact another user.
+	 *
+	 * Depending on the config settings, call sendMessage() or
+	 * startChat()
+	 *
+	 * returns the Contact that was chosen as the preferred
+	 */
+	Contact *execute();
+
+	/**
+	 * @brief Send a single message, classic ICQ style.
+	 *
+	 * The actual sending is done by the Contact, but the meta contact
+	 * does the GUI side of things.
+	 * This is a slot to allow being called easily from e.g. a GUI.
+	 *
+	 * returns the Contact that was chosen as the preferred
+	 */
+	Contact *sendMessage();
+
+	/**
+	 * @brief Start a chat in a persistent chat window
+	 *
+	 * Like sendMessage, but this time a full-blown chat will be opened.
+	 * Most protocols can't distinguish between the two and are either
+	 * completely session based like MSN or completely message based like
+	 * ICQ the only true difference is the GUI shown to the user.
+	 *
+	 * returns the Contact that was chosen as the preferred
+	 */
+	Contact *startChat();
+
+
 signals:
 	/**
 	 *  @brief The MetaContact online status changed
-	 *
-	 * Do *NOT* emit this signal directly, unless you also update the
-	 * cache m_onlineStatus value! In all other cases, just call
-	 * updateOnlineStatus() instead.
 	 */
 	void onlineStatusChanged( Kopete::MetaContact *contact, Kopete::OnlineStatus::StatusType status );
 
@@ -406,24 +439,12 @@ signals:
 	 * This signal is emitted when a contact is removed from this metacontact
 	 */
 	void contactRemoved( Kopete::Contact *c );
-
-	/**
-	 * This metaContact is going to be saved to the contactlist. Plugins should
-	 * connect to this signal to update data with setPluginData()
-	 */
-	void aboutToSave( Kopete::MetaContact *metaContact );
-
-	/**
-	 * One of the subcontacts' idle status has changed.  As with online status,
-	 * this can occur without the metacontact changing idle state
-	 */
-	void contactIdleStateChanged( Kopete::Contact *contact );
-
+	
 	/**
 	 * Some part of this object's persistent data (as returned by toXML) has changed.
 	 */
-	void persistentDataChanged( Kopete::MetaContact *metaContact );
-
+	void persistentDataChanged(  );
+	
 private slots:
 	/**
 	 * Update the contact's online status and emit onlineStatusChanged
@@ -440,7 +461,7 @@ private slots:
 	 * One of the child contact's property changed
 	 */
 	void slotPropertyChanged( Kopete::Contact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
-
+	
 	/**
 	 * A child contact was deleted, remove it from the list, if it's still
 	 * there
@@ -457,13 +478,10 @@ private slots:
 	 */
 	void slotWriteAddressBook();
 
-	/**
-	 * Emits the persistentDataChanged signal, passing this as the Kopete::MetaContact* argument
-	 */
-	void emitPersistentDataChanged();
 private:
 
-	KopeteMetaContactPrivate *d;
+	class Private;
+	Private *d;
 
 	/**
 	 * Request an address book write, will be delayed to bundle any others happening around the same time
@@ -477,7 +495,9 @@ private:
 	static KABC::AddressBook* m_addressBook;
 };
 
-}
+
+} //END namespace Kopete
+
 
 #endif
 
