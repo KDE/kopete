@@ -57,9 +57,6 @@ JabberContact::JabberContact(QString userId, QString nickname, QStringList group
 
 	parentMetaContact = mc;
 
-	mMsgManagerKCW = 0L;
-	mMsgManagerKEW = 0L;
-
 	actionCollection = 0L;
 
 	resourceOverride = false;
@@ -573,7 +570,7 @@ JabberResource *JabberContact::bestResource()
 
 }
 
-void JabberContact::slotResourceAvailable(const Jabber::Jid &jid, const Jabber::Resource &resource)
+void JabberContact::slotResourceAvailable(const Jabber::Jid &, const Jabber::Resource &resource)
 {
 
 	kdDebug() << "[JabberContact] Adding new resource '" << resource.name() << "' for "
@@ -591,7 +588,6 @@ void JabberContact::slotResourceAvailable(const Jabber::Jid &jid, const Jabber::
 	 */
 	for (JabberResource *tmpResource = resources.first(); tmpResource; tmpResource = resources.next())
 	{
-		// FIXME: shouldn't this be resource instead of jid.resource?
 		if (tmpResource->resource() == resource.name())
 		{
 			kdDebug() << "[JabberContact] Resource " << tmpResource->resource() << " already added, removing instance with older timestamp" << endl;

@@ -51,6 +51,7 @@ class JabberProtocol : public KopeteProtocol
 	friend class DlgJabberServices;
 	friend class DlgJabberRegister;
 	friend class DlgJabberBrowse;
+	friend class DlgJabberChatJoin;
 
 public:
 	/*********************************************************************
@@ -297,6 +298,16 @@ private slots:
 	 */
 	void slotEmptyMail();
 	void slotOpenEmptyMail();
+
+	/**
+	 * Slot for joining a new group chat
+	 */
+	void slotJoinNewChat();
+	void slotJoinChat();
+	void slotGroupChatJoined(const Jid &jid);
+	void slotGroupChatLeft(const Jid &jid);
+	void slotGroupChatPresence(const Jid &jid);
+	void slotGroupChatError(const Jid &jid, int error, QString &reason);
 	
 	/**
 	 * Slot for sending a chat message to a user
@@ -413,11 +424,11 @@ private:
 	KAction *actionGoDND;
 	KAction *actionGoInvisible;
 	KAction *actionGoOffline;
+	KAction *actionJoinChat;
 	KAction *actionServices;
 	KAction *actionSendRaw;
 	KAction *actionEditVCard;
 	KAction *actionEmptyMail;
-//	KPopupMenu *popup;
 	KActionMenu *actionStatusMenu;
 
 	dlgJabberStatus *reasonDialog;

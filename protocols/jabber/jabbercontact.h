@@ -343,9 +343,6 @@ class JabberContact : public KopeteContact
 
 		dlgJabberVCard *dlgVCard;
 
-		KopeteMessageManager *mMsgManagerKCW;
-		KopeteMessageManager *mMsgManagerKEW;
-
 };
 
 #endif

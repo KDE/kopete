@@ -55,6 +55,7 @@
 #include "dlgjabberstatus.h"
 #include "dlgjabbersendraw.h"
 #include "dlgjabberservices.h"
+#include "dlgjabberchatjoin.h"
 #include "jabberaddcontactpage.h"
 #include "jabbermap.h"
 #include "jabbermessagemanager.h"
@@ -131,6 +132,7 @@ void JabberProtocol::initActions()
 	actionGoDND = new KAction(i18n("Do Not Disturb"), "jabber_na", 0, this, SLOT(slotGoDND()), this, "actionJabberDND");
 	actionGoInvisible = new KAction(i18n("Invisible"), "jabber_offline", 0, this, SLOT(slotGoInvisible()), this, "actionJabberInvisible");
 	actionGoOffline = new KAction(i18n("Offline"), "jabber_offline", 0, this, SLOT(slotGoOffline()), this, "actionJabberDisconnect");
+	actionJoinChat = new KAction(i18n("Join Groupchat..."), "filenew", 0, this, SLOT(slotJoinNewChat()), this, "actionJoinChat");
 	actionServices = new KAction(i18n("Services..."), "filenew", 0, this, SLOT(slotGetServices()), this, "actionJabberServices");
 	actionSendRaw = new KAction(i18n("Send raw packet to Server..."), "filenew", 0, this, SLOT(slotSendRaw()), this, "actionJabberSendRaw");
 	actionEditVCard = new KAction(i18n("Edit User Info..."), "identity", 0, this, SLOT(slotEditVCard()), this, "actionEditVCard");
@@ -138,7 +140,7 @@ void JabberProtocol::initActions()
 
 	actionStatusMenu = new KActionMenu("Jabber", this);
 
-	// will be overwritten in slotSettingsChanged, maybe there is a better way (gogo) ??? -DS
+	// will be overwritten in slotSettingsChanged to contain the active JID
 	menuTitleId = actionStatusMenu->popupMenu()->insertTitle("");
 
 	actionStatusMenu->insert(actionGoOnline);
@@ -147,7 +149,8 @@ void JabberProtocol::initActions()
 	actionStatusMenu->insert(actionGoDND);
 	actionStatusMenu->insert(actionGoInvisible);
 	actionStatusMenu->insert(actionGoOffline);
-
+	actionStatusMenu->popupMenu()->insertSeparator();
+	actionStatusMenu->insert(actionJoinChat);
 	actionStatusMenu->popupMenu()->insertSeparator();
 	actionStatusMenu->insert(actionServices);
 	actionStatusMenu->insert(actionSendRaw);
@@ -265,6 +268,11 @@ void JabberProtocol::Connect()
 
 		connect(jabberClient, SIGNAL(messageReceived(const Message &)), this, SLOT(slotNewMessage(const Message &)));
 
+		connect(jabberClient, SIGNAL(groupChatJoined(const Jid &)), this, SLOT(slotGroupChatJoined(const Jid &)));
+		connect(jabberClient, SIGNAL(groupChatLeft(const Jid &)), this, SLOT(slotGroupChatLeft(const Jid &)));
+		connect(jabberClient, SIGNAL(groupChatPresence(const Jid &)), this, SLOT(slotGroupChatPresence(const Jid &)));
+		connect(jabberClient, SIGNAL(groupChatError(const Jid &, int, QString &)), this, SLOT(slotGroupChatError(const Jid &, int, QString &)));
+		
 		connect(jabberClient, SIGNAL(error(const StreamError &)), this, SLOT(slotError(const StreamError &)));
 
 		connect(jabberClient, SIGNAL(debugText(const QString &)), this, SLOT(slotPsiDebug(const QString &)));
@@ -1253,10 +1261,17 @@ void JabberProtocol::slotNewMessage(const Jabber::Message &message)
 		// see if the contact is actually in our roster
 		if (!contactMap.contains(message.from().userHost()))
 		{
-			// this should never happen - but _could_ happen if we are getting a message from
-			// someone via a transport who hasn't previously subscribed with us (FIXME?)
-			kdDebug() << "[JabberProtocol] Message received from an unknown contact, ignoring." << endl;
-			return;
+			// this case happens if we are getting a message from a chat room
+			// FIXME: this can also happen with contacts we did not previously subscribe
+			//        to! (especially via transports etc)
+			kdDebug() << "[JabberProtocol] Message received from an unknown contact, is it groupchat?" << endl;
+
+			if(!messageManagerMap.contains(message.from().userHost()))
+			{
+				kdDebug() << "[JabberProtocol] Not a groupchat message either (no message manager found), ignoring." << endl;
+				return;
+			}
+
 		}
 
 		// now we know that the contact is in our roster, see
@@ -1302,7 +1317,6 @@ void JabberProtocol::slotNewMessage(const Jabber::Message &message)
 
 		KopeteMessage newMessage(message.timeStamp(), contactMap[message.from().userHost()], contactList, message.body(), message.subject(), KopeteMessage::Inbound, KopeteMessage::PlainText);
 
-			
 		// pass the message on to the manager
 		manager->appendMessage(newMessage);
 
@@ -1340,6 +1354,65 @@ void JabberProtocol::slotOpenEmptyMail()
 	messageManagerMap[contact->id()] = createMessageManager(contact, KopeteMessageManager::Email);
 
 	messageManagerMap[contact->id()]->readMessages();
+
+}
+
+void JabberProtocol::slotJoinNewChat()
+{
+
+	if(!isConnected())
+	{
+		errorConnectFirst();
+		return;
+	}
+
+	DlgJabberChatJoin *dlg = new DlgJabberChatJoin(qApp->mainWidget());
+	connect(dlg, SIGNAL(okClicked()), this, SLOT(slotJoinChat()));
+	dlg->show();
+	dlg->raise();
+
+}
+
+void JabberProtocol::slotJoinChat()
+{
+	kdDebug() << "[JabberProtocol] Trying to join groupchat" << endl;
+
+	DlgJabberChatJoin *dlg = (DlgJabberChatJoin *)sender();
+
+	if(!isConnected())
+	{
+		errorConnectFirst();
+		return;
+	}
+
+	jabberClient->groupChatJoin(dlg->host(), dlg->room(), dlg->nick());
+
+}
+
+void JabberProtocol::slotGroupChatJoined(const Jabber::Jid &jid)
+{
+	kdDebug() << "[JabberProtocol] Joined group chat " << jid.full() << endl;
+
+	messageManagerMap[jid.userHost()] = createMessageManager(myContact, KopeteMessageManager::ChatWindow);
+	messageManagerMap[jid.userHost()]->readMessages();
+
+}
+
+void JabberProtocol::slotGroupChatLeft(const Jabber::Jid &jid)
+{
+	kdDebug() << "[JabberProtocol] Left group chat " << jid.full() << endl;
+
+}
+
+void JabberProtocol::slotGroupChatPresence(const Jabber::Jid &jid)
+{
+	kdDebug() << "[JabberProtocol] Received group chat presence: " << jid.full() << endl;
+
+}
+
+void JabberProtocol::slotGroupChatError(const Jabber::Jid &jid, int error, QString &reason)
+{
+	kdDebug() << "[JabberProtocol] Group chat error!" << endl;
 
 }
 
