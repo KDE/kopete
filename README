@@ -1,7 +1,16 @@
-kopete v0.1
+Kopete, The KDE Messenger
 Duncan Mac-Vicar Prett <duncan@kdedevelopers.net>
 ----------------------------------------------------------------------
 
 Kopete is a IM client being designed to be
 modular and plugin based.
+
+It requires the KDE Desktop, version 3 or higher.
+
+Currently supported protocol plugins are
+MSN, ICQ, AIM and Nick is working in IRC right now.
+
+Enjoy!
+Duncan
+
 
