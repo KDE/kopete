@@ -8,3 +8,4 @@ coreprotocol_test_SOURCES = coreprotocol_test.cpp
 coreprotocol_test_LDADD = \
 	../../../../protocols/groupwise/libgroupwise/libgwtest.la -lqt-mt
 
+

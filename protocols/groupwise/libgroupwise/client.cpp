@@ -1,0 +1,166 @@
+#include <qapplication.h>
+
+#include "gwclientstream.h"
+#include "task.h"
+
+#include "client.h"
+
+class Client::ClientPrivate
+{
+public:
+	ClientPrivate() {}
+
+	ClientStream *stream;
+	int id_seed;
+	Task *root;
+	QString host, user, pass, resource;
+	QString osname, tzname, clientName, clientVersion;
+	int tzoffset;
+	bool active;
+
+/*	LiveRoster roster;
+	ResourceList resourceList;
+	QValueList<GroupChat> groupChatList;*/
+};
+
+Client::Client(QObject *par)
+:QObject(par)
+{
+	d = new ClientPrivate;
+	d->tzoffset = 0;
+	d->active = false;
+	d->osname = "N/A";
+	d->clientName = "N/A";
+	d->clientVersion = "0.0";
+
+	d->root = new Task(this, true);
+
+	d->stream = 0;
+}
+
+Client::~Client()
+{
+	close();
+	delete d->root;
+	delete d;
+}
+
+void Client::connectToServer( ClientStream *s, const NovellDN &server, bool auth )
+{
+	d->stream = s;
+	//connect(d->stream, SIGNAL(connected()), SLOT(streamConnected()));
+	//connect(d->stream, SIGNAL(handshaken()), SLOT(streamHandshaken()));
+	connect(d->stream, SIGNAL(error(int)), SLOT(streamError(int)));
+	//connect(d->stream, SIGNAL(sslCertificateReady(const QSSLCert &)), SLOT(streamSSLCertificateReady(const QSSLCert &)));
+	connect(d->stream, SIGNAL(readyRead()), SLOT(streamReadyRead()));
+	//connect(d->stream, SIGNAL(closeFinished()), SLOT(streamCloseFinished()));
+
+	d->stream->connectToServer(server, auth);
+}
+
+void Client::start( const QString &host, const QString &user, const QString &pass )
+{
+	d->host = host;
+	d->user = user;
+	d->pass = pass;
+
+// 	Status stat;
+// 	stat.setIsAvailable(false);
+// 
+// 	JT_PushPresence *pp = new JT_PushPresence(rootTask());
+// 	connect(pp, SIGNAL(subscription(const Jid &, const QString &)), SLOT(ppSubscription(const Jid &, const QString &)));
+// 	connect(pp, SIGNAL(presence(const Jid &, const Status &)), SLOT(ppPresence(const Jid &, const Status &)));
+// 
+// 	JT_PushMessage *pm = new JT_PushMessage(rootTask());
+// 	connect(pm, SIGNAL(message(const Message &)), SLOT(pmMessage(const Message &)));
+// 
+// 	JT_PushRoster *pr = new JT_PushRoster(rootTask());
+// 	connect(pr, SIGNAL(roster(const Roster &)), SLOT(prRoster(const Roster &)));
+// 
+// 	new JT_ServInfo(rootTask());
+
+	d->active = true;
+
+}
+
+void Client::close()
+{
+	qDebug( "TODO: close()" );
+	if(d->stream) {
+		if(d->active) {
+/*			for(QValueList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {
+				GroupChat &i = *it;
+				i.status = GroupChat::Closing;
+
+				JT_Presence *j = new JT_Presence(rootTask());
+				Status s;
+				s.setIsAvailable(false);
+				j->pres(i.j, s);
+				j->go(true);
+			}*/
+		}
+
+		d->stream->disconnect(this);
+		d->stream->close();
+		d->stream = 0;
+	}
+// 	disconnected();
+// 	cleanup();
+}
+
+void Client::setPresence( const Status &status )
+{
+	//TODO Implement setPresence
+	qDebug( "TODO: setPresence" );
+}
+
+void Client::sendMessage( const Message &message )
+{
+	//TODO Implement sendMessage
+	qDebug( "TODO: sendMessage" );
+}
+
+void Client::sendTyping( /*Conference &conference ,*/ bool typing )
+{
+	//TODO Implement sendTyping
+	qDebug( "TODO: sendTyping" );
+}
+
+// SLOTS //
+void Client::streamError( int error )
+{
+	qDebug( "CLIENT ERROR (Error %i)", error );
+}
+
+void Client::streamReadyRead()
+{
+	qDebug( "CLIENT STREAM READY READ" );
+}
+
+// INTERNALS //
+void Client::send( Request * request )
+{
+	if( !d->stream )
+		return;
+
+// 	QString out = request.toString();
+// 	debug(QString("Client: outgoing: [\n%1]\n").arg(out));
+// 	xmlOutgoing(out);
+
+	d->stream->write( request );
+}
+
+void Client::debug(const QString &str)
+{
+	qDebug( "CLIENT: %s", str.ascii() );
+}
+
+QString Client::genUniqueId()
+{
+	QString s;
+	s.sprintf("a%x", d->id_seed);
+	d->id_seed += 0x10;
+	return s;
+}
+
+#include "client.moc"

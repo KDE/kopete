@@ -11,6 +11,7 @@
 // forward defines
 class ByteStream;
 class Connector;
+class Request;
 class TLSHandler;
 
 typedef struct NovellDN
@@ -21,6 +22,7 @@ typedef struct NovellDN
 
 class ClientStream : public Stream
 {
+	Q_OBJECT
 	class Buffer : public QByteArray
 	{
 	public:
@@ -30,7 +32,6 @@ class ClientStream : public Stream
 		QByteArray take( unsigned size );
 	};
 
-	Q_OBJECT
 public:
 	enum Error {
 		ErrConnection = ErrCustom,  // Connection error, ask Connector-subclass what's up
@@ -131,7 +132,7 @@ public:
 	/**
 	 * Send a message to the server
 	 */
-	NMERR_T write(const Field::FieldList &fields);	// ", ends up on a send queue, by a very roundabout way, see analysis at bottom of Account/Client/ClientStream architecture page
+	void write( Request * request );
 
 	int errorCondition() const;
 	QString errorText() const;
@@ -156,7 +157,11 @@ public slots:
 private slots:
 	void cr_connected();
 	void cr_error();
-
+	/**
+	 * collects wire ready outgoing data from the core protocol and sends
+	 */ 
+	void cp_outgoingData( const QCString & );
+	
 	void bs_connectionClosed();
 	void bs_delayedCloseFinished();
 	void bs_error(int); // server only

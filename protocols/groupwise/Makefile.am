@@ -1,6 +1,6 @@
 METASOURCES = ignore_global_warming.moc
 
-SUBDIRS = . icons libgroupwise ui
+SUBDIRS = . icons libgroupwise ui tests
 
 AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes)
 

@@ -17,8 +17,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef JABBERCONNECTOR_H
-#define JABBERCONNECTOR_H
+#ifndef GWCONNECTOR_H
+#define GWCONNECTOR_H
 
 #include "gwbytestream.h"
 
@@ -39,7 +39,7 @@ Q_OBJECT
 public:
 	KNetworkConnector ( QObject *parent = 0, const char *name = 0 );
 
-	~KNetworkConnector ();
+	virtual ~KNetworkConnector ();
 
 	virtual void connectToServer ( const QString &server );
 	virtual ByteStream *stream () const;

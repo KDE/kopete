@@ -12,7 +12,8 @@
 
 CoreProtocol::CoreProtocol() : QObject()
 {
-	connect( this, SIGNAL( outgoingData( const QCString & )), SLOT( slotOutgoingData( const QCString & ) ) );
+	// debug
+	// connect( this, SIGNAL( outgoingData( const QCString & )), SLOT( slotOutgoingData( const QCString & ) ) );
 }
 
 CoreProtocol::~CoreProtocol() 

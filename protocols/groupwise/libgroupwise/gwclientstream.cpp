@@ -13,6 +13,7 @@
 // #include"securestream.h"
 // #include"protocol.h"
 
+#include <qapplication.h>  // for qdebug
 #include <qguardedptr.h> 
 #include <qobject.h>
 #include <qtimer.h>
@@ -20,6 +21,7 @@
 #include "bytestream.h"
 #include "connector.h"
 #include "coreprotocol.h"
+#include "request.h"
 #include "securestream.h"
 #include "tlshandler.h"
 
@@ -123,11 +125,14 @@ public:
 ClientStream::ClientStream(Connector *conn, TLSHandler *tlsHandler, QObject *parent)
 :Stream(parent)
 {
+	qDebug("CLIENTSTREAM::ClientStream");
+
 	d = new Private;
 	d->mode = Client;
 	d->conn = conn;
-	connect(d->conn, SIGNAL(connected()), SLOT(cr_connected()));
-	connect(d->conn, SIGNAL(error()), SLOT(cr_error()));
+	connect( d->conn, SIGNAL(connected()), SLOT(cr_connected()) );
+	connect( d->conn, SIGNAL(error()), SLOT(cr_error()) );
+	connect( &d->client, SIGNAL( outgoingData( const QCString & ) ), SLOT ( cp_outgoingData( const QCString & ) ) );
 
 	d->noop_time = 0;
 	connect(&d->noopTimer, SIGNAL(timeout()), SLOT(doNoop()));
@@ -334,7 +339,7 @@ QString ClientStream::errorText() const
 
 // QDomElement ClientStream::errorAppSpec() const
 // {
-// 	return d->errAppSpec;
+// 	return d->errAppSpec;cr_error
 // }
 
 // bool ClientStream::old() const
@@ -385,17 +390,21 @@ Field::FieldList ClientStream::read()
 	if(d->in.isEmpty())	
 		return Field::FieldList(); //first from queue...
 	else {
-		// read from secure socket
-		
+		// TODO: read from secure socket
+		return Field::FieldList();
 	}
 }
 
-NMERR_T ClientStream::write(const Field::FieldList &fields)
+void ClientStream::write( Request *request )
 {
-	// test output for comparison with Gaim
-	
-	// write to secure socket
-	
+	// pass to CoreProtocol for transformation into wire format
+	d->client.outgoingTransfer( request );
+}
+
+void ClientStream::cp_outgoingData( const QCString & outgoingBytes )
+{
+	// take formatted bytes from CoreProtocol and put them on the wire
+	d->ss->write( outgoingBytes );
 }
 
 void ClientStream::cr_connected()
@@ -447,8 +456,9 @@ void ClientStream::cr_connected()
 
 void ClientStream::cr_error()
 {
+	qDebug("CLIENTSTREAM: cr_error()");
 	reset();
-	error(ErrConnection);
+	emit error(ErrConnection);
 }
 
 void ClientStream::bs_connectionClosed()
@@ -1362,7 +1372,7 @@ bool ClientStream::handleNeed()
 				QByteArray a = d->srv.saslStep();
 				QCString cs(a.data(), a.size()+1);
 				printf("[%s]\n", cs.data());
-				d->sasl->putStep(a);
+				d->sasl->putretrStep(a);
 			}
 			else if(need == CoreProtocol::NSASLLayer) {
 			}
@@ -1506,6 +1516,7 @@ bool ClientStream::handleNeed()
 	}
 
 	return true;*/
+	return false;
 }
 
 // int ClientStream::convertedSASLCond() const

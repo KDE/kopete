@@ -17,8 +17,8 @@
     *                                                                       *
     *************************************************************************
 */
-#ifndef GWCONNECTOR_H
-#define GWCONNECTOR_H
+#ifndef LIBGW_CONNECTOR_H
+#define LIBGW_CONNECTOR_H
 
 #include <qhostaddress.h>
 #include <qobject.h>

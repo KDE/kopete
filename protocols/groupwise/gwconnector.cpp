@@ -36,7 +36,7 @@ KNetworkConnector::KNetworkConnector ( QObject *parent, const char */*name*/ )
 
 	connect ( mByteStream, SIGNAL ( connected () ), this, SLOT ( slotConnected () ) );
 	connect ( mByteStream, SIGNAL ( error ( int ) ), this, SLOT ( slotError ( int ) ) );
-
+	mPort = 0;
 }
 
 KNetworkConnector::~KNetworkConnector ()
@@ -48,8 +48,9 @@ KNetworkConnector::~KNetworkConnector ()
 
 void KNetworkConnector::connectToServer ( const QString &server )
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Initiating connection to " << server << endl;
-
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Initiating connection to " << mHost << endl;
+	Q_ASSERT( !mHost.isNull() );
+	Q_ASSERT( mPort );
 	/*
 	 * FIXME: we should use a SRV lookup to determine the
 	 * actual server to connect to. As this is currently

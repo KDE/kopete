@@ -5,6 +5,7 @@
 
 #include "gwerror.h"
 #include "gwfield.h"
+#include "request.h"
 
 #ifndef GW_STREAM_H
 #define GW_STREAM_H
@@ -47,7 +48,7 @@ public:
 	/**
 	 * Send a message to the server
 	 */
-	virtual NMERR_T write(const Field::FieldList &fields) = 0;	// ", ends up on a send queue, by a very roundabout way, see analysis at bottom of 
+	virtual void write( Request *request) = 0;	// ", ends up on a send queue, by a very roundabout way, see analysis at bottom of 
 	
 // #	virtual bool stanzaAvailable() const=0;
 // #	virtual Stanza read()=0;
