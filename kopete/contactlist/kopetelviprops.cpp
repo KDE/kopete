@@ -424,7 +424,7 @@ void KopeteMetaLVIProps::slotImportClicked()
 {
 	if ( Kopete::KABCPersistence::self()->syncWithKABC( item->metaContact() ) )
 		KMessageBox::queuedMessageBox( this, KMessageBox::Information,
-																	 i18n( "No contacts were imported from the address book" ),
+																	 i18n( "No contacts were imported from the address book." ),
 																	 i18n( "No Change" ) );
 }
 

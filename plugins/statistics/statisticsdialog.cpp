@@ -213,10 +213,10 @@ void StatisticsDialog::generatePageFromQStringList(QStringList values, const QSt
 	"</span></div><br>"));
 	
 	mainWidget->listView->addColumn(i18n("Status"));
-	mainWidget->listView->addColumn(i18n("Start date"));
-	mainWidget->listView->addColumn(i18n("End date"));
-	mainWidget->listView->addColumn(i18n("Start date"));
-	mainWidget->listView->addColumn(i18n("End date"));
+	mainWidget->listView->addColumn(i18n("Start Date"));
+	mainWidget->listView->addColumn(i18n("End Date"));
+	mainWidget->listView->addColumn(i18n("Start Date"));
+	mainWidget->listView->addColumn(i18n("End Date"));
 	
 	
 	
