@@ -21,6 +21,9 @@
 #include <qstring.h>
 #include <qfont.h>
 #include <qcolor.h>
+#include "kopetecontact.h"
+
+typedef QPtrList<KopeteContact> KopeteContactList;
 
 class KopeteMessage
 {
@@ -37,13 +40,17 @@ public:
 		characters must be escaped.
 	*/
 	KopeteMessage();
-	KopeteMessage(QString from, QString to, QString body, MessageDirection direction, QColor fg = QColor(), QColor bg = QColor(), QFont fnt = QFont() );
-	KopeteMessage(QDateTime timestamp, QString from, QString to, QString body, MessageDirection direction, QColor fg = QColor(), QColor bg = QColor(), QFont fnt = QFont() );
+	KopeteMessage(const KopeteContact *, KopeteContactList, QString, MessageDirection );
+	KopeteMessage(const KopeteContact*, KopeteContact*, QString, MessageDirection );
 
+	KopeteMessage(QDateTime, const KopeteContact *, KopeteContactList, QString, MessageDirection);
+	KopeteMessage(QDateTime, const KopeteContact *, KopeteContact *, QString, MessageDirection);
+
+	// Accessors
 	QDateTime timestamp() const { return mTimestamp; }
 
-	QString from() const { return mFrom; }
-	QString to() const { return mTo; }
+	const KopeteContact *from() const { return mFrom; }
+	KopeteContactList to() const { return mTo; }
 	QColor fg() const { return mFg; }
 	QColor bg() const { return mBg; }
 	QFont font() const { return mFont; }
@@ -51,17 +58,31 @@ public:
 
 	MessageDirection direction() const { return mDirection; }
 
+	// Mutators
+	void setFg(QColor color);
+	void setBg(QColor color);
+	void setFont(QFont font);
+
 protected:
+	// Helper for constructors
+	void init(
+			QDateTime timeStamp,
+			const KopeteContact * from,
+			KopeteContactList to,
+			QString body,
+			MessageDirection direction
+	);
+
 	QDateTime mTimestamp;
 
-	QString mFrom;
-	QString mTo;
+	const KopeteContact *mFrom;
+	QPtrList<KopeteContact> mTo;
 	QString mBody;
 	QFont mFont;
-	QColor mFg;
-	QColor mBg;
+	QColor mFg, mBg;
 
 	MessageDirection mDirection;
+
 };
 
 #endif

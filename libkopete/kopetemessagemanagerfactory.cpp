@@ -17,6 +17,7 @@
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemessagemanagerfactory.moc"
 #include "kopetemessagemanager.h"
+#include "kopeteprotocol.h"
 
 #include <kdebug.h>
 
@@ -31,21 +32,33 @@ KopeteMessageManagerFactory::~KopeteMessageManagerFactory()
 }
 
 KopeteMessageManager *KopeteMessageManagerFactory::create(
-	const KopeteContact *user, KopeteContactList contacts,
-	QString logFile )
+	const KopeteContact *user, KopeteContactList _contacts, /* Touch that underscore and you die, along with ICQ not compiling. Fuck the underscore, that BLOWS CHUNKS. */
+	KopeteProtocol *protocol, QString logFile , int widget, int capabilities )
 {
 	bool createNewSession = false;
 	KopeteMessageManager *tmp;
+	KopeteMessageManagerList this_protocol_sessions;
+
+	/* We build the sessions list for this protocol */
 	for ( tmp = mSessionList.first(); tmp ; tmp = mSessionList.next() )
 	{
-    	if ( user == tmp->user() )
+		if ( tmp->protocol() == protocol )
+		{
+			this_protocol_sessions.append(tmp);
+		}
+	}
+
+	for ( tmp = this_protocol_sessions.first(); tmp ; tmp = this_protocol_sessions.next() )
+	{
+    	/* This way we support profiles for each protocol */
+		if ( user == tmp->user() )
 		{
 			kdDebug() << "[KopeteMessageManagerFactory] User match, looking session members" << endl;	
-			KopeteContact *tmp_contact;
-			KopeteContactList contactlist = tmp->contacts();
-            for (  tmp_contact = contactlist.first(); tmp_contact ; tmp_contact = contactlist.next() )
+			KopeteContactList contactlist = tmp->members();
+			KopeteContact *tmp_contact = contactlist.first();
+			for( ; tmp_contact; tmp_contact = contactlist.next() )
 			{
-				if ( !contacts.containsRef( tmp_contact ) )
+				if ( !_contacts.containsRef( tmp_contact ) )
 				{
 					kdDebug() << "[KopeteMessageManagerFactory] create() Oops, contact not found! new session needed!" << endl;	
 					createNewSession = true;
@@ -64,7 +77,7 @@ KopeteMessageManager *KopeteMessageManagerFactory::create(
 		}
 	}
 	
-	KopeteMessageManager *session = new KopeteMessageManager ( user, contacts , logFile);
+	KopeteMessageManager *session = new KopeteMessageManager(user, _contacts, protocol, logFile, widget, capabilities);
 	connect( session, SIGNAL(dying(KopeteMessageManager*)), this, SLOT(slotRemoveSession(KopeteMessageManager*)));
 	(mSessionList).append(session);
 	return (session);

@@ -2,9 +2,8 @@
 	kopetemessagemanager.cpp - Manages all chats
 
 	Copyright   : (c) 2002 by Martijn Klingens <klingens@kde.org>
-                  (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-
-	Thanks to Daniel Stone for heavy bugfixing and testing.	
+                      (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+		      (c) 2002 by Daniel Stone <dstone@kde.org>
 
 	*************************************************************************
 	*                                                                       *
@@ -27,16 +26,20 @@
 #include <klocale.h>
 
 KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteContactList others,
-		QString logFile, QObject *parent, const char *name) : QObject( parent, name)
+		KopeteProtocol *protocol, QString logFile, int widget, int capabilities,
+		QObject *parent, const char *name) : QObject( parent, name)
 {
 
 	mContactList = others;
 	mUser = user;
 	mChatWindow = 0L;
 	mUnreadMessageEvent = 0L;
-
+	mProtocol = protocol;
+	mWidget = widget;
+	mCapabilities = capabilities;
+	
 	readModeChanged();
-	connect( kopeteapp->appearance(), SIGNAL(queueChanged()), this, SLOT(readModeChanged()) );
+	connect(kopeteapp->appearance(), SIGNAL(queueChanged()), this, SLOT(readModeChanged()));
 	
 	if (!logFile.isEmpty())
 	{
@@ -47,7 +50,6 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteCon
 	{
 		mLogger = 0L;
 	}
-
 }
 
 KopeteMessageManager::~KopeteMessageManager()
@@ -55,10 +57,25 @@ KopeteMessageManager::~KopeteMessageManager()
 	emit dying(this);
 }
 
-void KopeteMessageManager::setReadMode( int mode )
-{
+void KopeteMessageManager::newChatWindow() {
+	mChatWindow = new KopeteChatWindow(mCapabilities);
+	if (mContactList.first() != 0L)
+		mChatWindow->setCaption(mContactList.first()->name()); //TODO: add multi-user support
+	for (KopeteContact *it = mContactList.first(); it; it = mContactList.next()) {
+		for (QStringList::Iterator it2 = (resources[it]).begin(); it2 != (resources[it]).end(); it2++) {
+			mChatWindow->addResource(it, *it2);
+		}
+	}
+	/* When the window is shown, we have to delete this contact event */
+	kdDebug() << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
+	connect (mChatWindow, SIGNAL(shown()), this, SLOT(cancelUnreadMessageEvent()));
+	connect (mChatWindow, SIGNAL(sendMessage(const QString &)), this, SLOT(messageSentFromWindow(const QString &)));
+	connect (mChatWindow, SIGNAL(closeClicked()), this, SLOT(chatWindowClosing()));
+}
 
-	if ( (mode == Queued) || (mode == Popup) )
+void KopeteMessageManager::setReadMode(int mode)
+{
+	if ((mode == Queued) || (mode == Popup))
 	{
 		mReadMode = mode;
 	}
@@ -71,33 +88,28 @@ void KopeteMessageManager::setReadMode( int mode )
 
 void KopeteMessageManager::readMessages()
 {
-	if ( mChatWindow != 0L )	// We still have our messagebox
-	{
-		kdDebug() << "[KopeteMessageManager] mChatWindow has already been created" << endl;
-		if (mChatWindow->isMinimized() )
+	if (mWidget == WIDGET_OLDSCHOOL) {
+		if (mChatWindow == 0L) {
+			kdDebug() << "[KopeteMessageManager] mChatWindow just doesn't exist" << endl;
+			newChatWindow();
+		}
+		if (mChatWindow->isMinimized())
 			kdDebug() << "[KopeteMessageManager] mChatWindow is minimized" << endl;
-		if (mChatWindow->isHidden() )
+		if (mChatWindow->isHidden())
 			kdDebug() << "[KopeteMessageManager] mChatWindow is hidden" << endl;
 		mChatWindow->raise();	// make it top window
+		for (KopeteMessageList::Iterator it = mMessageQueue.begin(); it != mMessageQueue.end(); it++)
+		{
+			kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from()->name() << endl;
+			mChatWindow->messageReceived((*it));
+		}
+		mChatWindow->show();	// show message window again
 	}
-	else
-	{
-		/* We create the chat window */
-		mChatWindow = new KopeteChatWindow ();
-		/* When the window is shown, we have to delete tjis contact event */
-		kdDebug() << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
-		connect ( mChatWindow, SIGNAL(shown()), this, SLOT(cancelUnreadMessageEvent()) );
-		connect ( mChatWindow, SIGNAL(sendMessage(const QString &)), this, SLOT(messageSentFromWindow(const QString &)) );
-		connect ( mChatWindow, SIGNAL(closeClicked()), this, SLOT(chatWindowClosing()) );
+	else {
+		kdDebug() << "[KopeteMessageManager] Widget is non-oldschool: " << mWidget << endl;
 	}
 	
-	for (KopeteMessageList::Iterator it = mMessageQueue.begin(); it != mMessageQueue.end(); it++)
-	{
-		kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from() << endl;
-		mChatWindow->messageReceived((*it));
-	}
 	mMessageQueue.clear();
-	mChatWindow->show();	// show message window again
 }
 
 void KopeteMessageManager::slotReadMessages()
@@ -108,8 +120,9 @@ void KopeteMessageManager::slotReadMessages()
 void KopeteMessageManager::messageSentFromWindow(const QString &message)
 {
 	QString body = message;
-	KopeteMessage tmpmessage(mUser->userID(), (*(mContactList.first())).userID(), body, KopeteMessage::Outbound);
-	emit messageSent ( tmpmessage );
+	KopeteMessage tmpmessage(mUser, mContactList, body, KopeteMessage::Outbound);
+	emit messageSent(tmpmessage);
+	readMessages();
 }
 
 void KopeteMessageManager::chatWindowClosing()
@@ -129,30 +142,67 @@ void KopeteMessageManager::cancelUnreadMessageEvent()
 		kdDebug() << "[KopeteMessageManager] cancelUnreadMessageEvent Deleting Event" << endl;
 		delete mUnreadMessageEvent;
 		mUnreadMessageEvent = 0L;
+		kdDebug() << "[KopeteMessageManager] cancelUnreadMessageEvent Event Deleted" << endl;
 	}		
 }
+
+void KopeteMessageManager::slotEventDeleted(KopeteEvent *e)
+{
+	kdDebug() << "[KopeteMessageManager] Event done(), now 0L" << endl;	
+	if ( e == mUnreadMessageEvent)
+		mUnreadMessageEvent = 0L;
+}
+
 
 
 void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 {
-	//mMessageQueue.append( KopeteMessage( msg.timestamp(), msg.from(), msg.to(), msg.body(), msg.direction(),msg.fg(), msg.bg(), msg.font()));
+	bool isvisible = false;
+
 	mMessageQueue.append(msg);
+
 	if( mLogger )
 	{
 		mLogger->append( msg );
 	}
 
-	/* We dont need an event if it already exits or if we are in popup mode */
-	if ( (mUnreadMessageEvent == 0L) && ( mReadMode != Popup) && (msg.direction() == KopeteMessage::Inbound) )
-	{
-		mUnreadMessageEvent = new KopeteEvent( i18n("Message from %1").arg(msg.from()), "kopete/pics/newmsg.png", this, SLOT(slotReadMessages()));
-		kopeteapp->notifyEvent( mUnreadMessageEvent );
-	}
-
 	if (mReadMode == Popup)
 	{
-		readMessages();
+    	readMessages();
 	}
+	else if ( mReadMode == Queued )
+	{
+    	/* First stage, see what to do */
+		if ( mChatWindow == 0L )
+		{
+			isvisible = false;
+		}
+		else if (  (mChatWindow != 0L) && ( mChatWindow->isHidden() || mChatWindow->isMinimized()) )
+        {
+			isvisible = false;
+		}
+		else
+		{
+			isvisible = true;
+		}
+
+		/* Second stage, do it */
+		if ( isvisible )
+		{
+			readMessages();	
+		}
+		else
+		{
+			/* Create an event if a prevoius one not exist */
+			if ( (mUnreadMessageEvent == 0L) && (msg.direction() == KopeteMessage::Inbound) )
+			{
+		 		mUnreadMessageEvent = new KopeteEvent( i18n("Message from %1").arg(msg.from()->name()), "kopete/pics/newmsg.png", this, SLOT(slotReadMessages()));
+				connect(mUnreadMessageEvent, SIGNAL(done(KopeteEvent *)), this, SLOT(slotEventDeleted(KopeteEvent *)));
+				kopeteapp->notifyEvent( mUnreadMessageEvent );
+			}
+		}
+	}
+
 }
 void KopeteMessageManager::addContact( const KopeteContact *c )
 {
@@ -182,8 +232,61 @@ void KopeteMessageManager::readModeChanged()
 	{
 		mReadMode = Queued;
 	}
-        else
+	else
 	{
-                mReadMode = Popup;
+		mReadMode = Popup;
 	}
 }
+
+void KopeteMessageManager::addResource(const KopeteContact *c, QString resource)
+{
+	if (mWidget == WIDGET_OLDSCHOOL) {
+		kdDebug() << "[KopeteMessageManager] Adding new resource to KCW: " << resource << endl;
+		if (mChatWindow != 0L) {
+			kdDebug() << "[KopeteMessageManager] mChatWindow != 0L!" << endl;
+			mChatWindow->addResource(c, resource);
+		}
+		(resources[c]).append(resource);
+	}
+	else {
+		kdDebug() << "[KopeteMessageManager] Adding new resource to other widget: " << resource << endl;
+		(resources[c]).append(resource);
+	}
+}
+
+void KopeteMessageManager::removeResource(const KopeteContact *c, QString resource) {
+	if (mWidget == WIDGET_OLDSCHOOL) {
+		kdDebug() << "[KopeteMessageManager] Removing resource from KCW: " << resource << endl;
+		if (mChatWindow != 0L) {
+			mChatWindow->removeResource(c, resource);
+		}
+		QStringList tmpResources = resources[c];
+		if (&tmpResources == NULL) {
+			kdDebug() << "[KopeteMessageManager] ->rR(): Eeks, no tmpResource!" << endl;
+		}
+		else {
+			for (QStringList::Iterator it = tmpResources.begin(); it != tmpResources.end(); ++it) {
+				if ((*it) == resource) {
+					tmpResources.remove(it);
+					break;
+				}
+			}
+		}
+	}
+	else {
+		kdDebug() << "[KopeteMessageManager] Removing resource from other widget: " << resource << endl;
+	}
+}
+
+bool KopeteMessageManager::serverChecked()
+{
+	return	mChatWindow->cbServer->isChecked();
+}
+
+void KopeteMessageManager::checkServer(bool check)
+{
+	mChatWindow->cbServer->setChecked(check);
+}
+
+// vim: set noet ts=4 sts=4 sw=4:
+

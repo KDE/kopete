@@ -55,10 +55,6 @@ class KopeteContact : public QObject
 		**/
 		virtual QString name() const;
 		/**
-		* User ID of a KopeteContact
-		**/
-		virtual QString userID() const;
-		/**
 		* return status of an KopeteContact
 		**/
 		virtual ContactStatus status() const;
@@ -121,6 +117,5 @@ class KopeteContact : public QObject
 		
 	private:
 		QString mName;
-		QString mUserID;
 };
 #endif

@@ -21,12 +21,15 @@
 #include <qptrlist.h>
 #include <qvaluelist.h>
 
+#include "kopetemessagemanager.h"
+
 /**
  * @author Duncan Mac-Vicar Prett
  */
 class KopeteMessageManager;
 class KopeteMessage;
 class KopeteContact;
+class KopeteProtocol;
 
 typedef QPtrList<KopeteContact>        KopeteContactList;
 typedef QValueList<KopeteMessage>        KopeteMessageList;
@@ -45,8 +48,10 @@ public:
 	 * the session. If a session with exactly these contacts already exists,
 	 * it will be reused. Otherwise a new session is created.
 	 */
-	KopeteMessageManager* create( const KopeteContact *user,
-		KopeteContactList contacts , QString logFile = QString::null );
+	KopeteMessageManager* create(const KopeteContact *user,
+		KopeteContactList _contacts, KopeteProtocol *protocol,
+		QString logFile = QString::null,
+		int widget = WIDGET_OLDSCHOOL, int capabilities = 0);
 	
 	/**
 	 * Get a list of all open sessions

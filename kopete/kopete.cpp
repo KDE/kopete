@@ -5,7 +5,7 @@
 
  ***************************************************************************
 
-/***************************************************************************
+ ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -279,6 +279,7 @@ void Kopete::initEmoticons()
 	if ( mEmoticons.unhappy.isNull() )
 		mEmoticons.unhappy = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/unhappy.png");
 
+	/* Boo hoo hoo. */
 	mEmoticons.cry = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/cry.mng");
 	if ( mEmoticons.cry.isNull() )
 		mEmoticons.cry = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/cry.png");
@@ -289,9 +290,20 @@ void Kopete::initEmoticons()
 		mEmoticons.oh = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/oh.png");
 }
 
-/** Parse emoticons in a string, returns html/qt rich text */
+/**
+	Parse emoticons in a string, returns html/qt rich text
+	If emoticons are activated in preferences it
+	replaces known emoticons with themed images.
+	If not, it returns the string back.
+ */
 QString Kopete::parseEmoticons( QString message )
 {
+	/* if emoticons are disabled, we do nothing */
+	if ( ! appearance()->useEmoticons() )
+	{
+		return message;
+	}
+
 	if ( !mEmoticons.smile.isNull() )
 	{
 		message = message.replace(QRegExp(":-\\)"),"<img src=\""+mEmoticons.smile+"\">");

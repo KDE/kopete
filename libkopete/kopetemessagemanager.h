@@ -3,6 +3,7 @@
 
 	Copyright   : (c) 2002 by Martijn Klingens <klingens@kde.org>
                   (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+				  (c) 2002 by Daniel Stone <dstone@kde.org>
 
 	*************************************************************************
 	*                                                                       *
@@ -23,6 +24,8 @@
 
 #include "kopetemessage.h"
 #include "kopetecontact.h"
+#include "kopetechatwindow.h"
+#include "kopeteprotocol.h"
 
 class KopeteContact;
 class KopeteMessage;
@@ -52,6 +55,11 @@ public:
 	~KopeteMessageManager();
 
 	/**
+	 * Fire up a new KopeteChatWindow
+	 */
+	void newChatWindow();
+	
+	/**
 	 * Append a message to the queue
 	 */
 	void appendMessage( const KopeteMessage &msg );
@@ -66,6 +74,16 @@ public:
 	 */
 	void removeContact( const KopeteContact *c );
 
+	/**
+	 * Add a resource to the session
+	 */
+	void addResource(const KopeteContact *c, QString resource);
+
+	/**
+	 * Remove a resource from the session
+	 */
+	void removeResource(const KopeteContact *c, QString resource);
+	
 	/**
 	 * Set Reading mode
 	 */
@@ -85,11 +103,15 @@ public:
 	/**
 	 * Get a list of all contacts in the session
 	 */
-	const KopeteContactList& contacts() const { return mContactList; };
+	const KopeteContactList& members() const { return mContactList; }; /* Sorry, had to change this to members(), it was conflicting with kxContact */
     /**
-	 * Get athe local user in the session
+	 * Get the local user in the session
 	 */
 	const KopeteContact* user() const { return mUser; };
+    const KopeteProtocol* protocol() const { return mProtocol; };
+
+	bool serverChecked(); //return if the send through server checkbox for icq is checked
+	void checkServer(bool state); //Set the send through server checkbox for icq
 
 signals:
 	/**
@@ -104,6 +126,7 @@ public slots:
 	
 protected slots:
 	void cancelUnreadMessageEvent();
+	void slotEventDeleted(KopeteEvent *);
     void chatWindowClosing();
 	void messageSentFromWindow( const QString &message);
 	void slotReadMessages();
@@ -114,7 +137,8 @@ private:
 	 * not create instances yourself directly!
 	 */
 	KopeteMessageManager( const KopeteContact *user, KopeteContactList others,
-		QString logFile = QString::null, QObject *parent = 0, const char *name = 0 );
+		KopeteProtocol *protocol, QString logFile = QString::null, int widget = 0, int capabilities = 0,
+		QObject *parent = 0, const char *name = 0 );
 
 	KopeteContactList mContactList;
 	const KopeteContact *mUser;
@@ -122,7 +146,9 @@ private:
 	KopeteEvent *mUnreadMessageEvent;
 	KopeteMessageList mMessageQueue;
 	KopeteMessageLog *mLogger;
-	int mReadMode;
+	int mReadMode, mWidget, mCapabilities;
+	QMap<const KopeteContact *, QStringList> resources;
+	KopeteProtocol *mProtocol;
 };
 
 #endif

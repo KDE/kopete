@@ -19,8 +19,6 @@
 KopeteMessage::KopeteMessage()
 {
 	mTimestamp = QDateTime::currentDateTime();
-	mFrom = "Unknown";
-	mTo = "Unknown";
 	mBody = "Body not set";
 	mDirection = Outbound;
 	mBg = QColor();
@@ -29,28 +27,64 @@ KopeteMessage::KopeteMessage()
 }
 
 
-KopeteMessage::KopeteMessage(QString from, QString to, QString body, MessageDirection direction, QColor fg, QColor bg, QFont fnt)
+KopeteMessage::KopeteMessage(const KopeteContact *fromKC,
+		KopeteContactList toKC, QString body, MessageDirection direction)
 {
-	mTimestamp = QDateTime::currentDateTime();
-	mFrom = from;
-	mTo = to;
-	mBody = body;
-	mDirection = direction;
-	mBg = bg;
-	mFg = fg;
-	mFont = fnt;
+	init(QDateTime::currentDateTime(), fromKC, toKC, body, direction);
 }
 
-KopeteMessage::KopeteMessage(QDateTime timestamp, QString from, QString to, QString body, MessageDirection direction, QColor fg, QColor bg, QFont fnt)
+KopeteMessage::KopeteMessage(const KopeteContact *fromKC,
+		KopeteContact* toKC, QString body, MessageDirection direction)
 {
-	mTimestamp = timestamp;
+	KopeteContactList kcl;
+	kcl.append(toKC);
+	init(QDateTime::currentDateTime(), fromKC, kcl, body, direction);
+}
+
+KopeteMessage::KopeteMessage(QDateTime timeStamp,
+		const KopeteContact *fromKC, KopeteContactList toKC, QString body,
+		MessageDirection direction)
+{
+	init(timeStamp, fromKC, toKC, body, direction);
+}
+
+KopeteMessage::KopeteMessage(QDateTime timeStamp,
+		const KopeteContact *fromKC, KopeteContact* toKC, QString body,
+		MessageDirection direction)
+{
+	KopeteContactList kcl;
+	kcl.append(toKC);
+	init(timeStamp, fromKC, kcl, body, direction);
+}
+
+void KopeteMessage::setFg(QColor color) {
+	mFg = color;
+}
+
+void KopeteMessage::setBg(QColor color) {
+	mBg = color;
+}
+
+void KopeteMessage::setFont(QFont font) {
+	mFont = font;
+}
+
+void KopeteMessage::init(
+		QDateTime timeStamp,
+		const KopeteContact * from,
+		KopeteContactList to,
+		QString body,
+		MessageDirection direction) {
+
+	mTimestamp = timeStamp;
 	mFrom = from;
 	mTo = to;
 	mBody = body;
 	mDirection = direction;
-	mBg = bg;
-	mFg = fg;
-	mFont = fnt;
+	mFg = QColor();
+	mBg = QColor();
+	mFont = QFont();
+
 }
 
 // vim: set noet ts=4 sts=4 sw=4:
