@@ -196,10 +196,17 @@ bool LibraryLoader::loadSO(const QString &spec)
 			KParts::ComponentFactory::createInstanceFromFactory<Plugin>
 			( listitem->library->factory(), 0L /* FIXME: parent object */ );
 
+		connect( listitem->plugin, SIGNAL( destroyed( QObject * ) ),
+			SLOT( slotPluginDestroyed( QObject * ) ) );
+
 		// Automatically load the i18n catalogue for the plugin
 		KGlobal::locale()->insertCatalogue( info.filename );
 
 		listitem->plugin->init();
+
+		m_addressBookFields.insert( listitem->plugin,
+			listitem->plugin->addressBookFields() );
+
 		kdDebug() << "[LibraryLoader] loadSO(), loading " << spec << " successful"<< endl;
 		return true;
 	}
@@ -334,7 +341,27 @@ Plugin* LibraryLoader::searchByID( QString &Id )
 	return NULL;
 }
 
+void LibraryLoader::slotPluginDestroyed( QObject *o )
+{
+	Plugin *p = dynamic_cast<Plugin *>( o );
+	if( p )
+	{
+		m_addressBookFields.remove( p );
 
+		// FIXME: Most likely most data structures here leak and are bound
+		// to cause crashes. Find and identify those.
+	}
+}
+
+QStringList LibraryLoader::addressBookFields( Plugin *p ) const
+{
+	if( m_addressBookFields.contains( p ) )
+		return m_addressBookFields[ p ];
+	else
+		return QStringList();
+}
+
+#include <pluginloader.moc>
 
 /*
  * Local variables:
@@ -343,5 +370,6 @@ Plugin* LibraryLoader::searchByID( QString &Id )
  * indent-tabs-mode: t
  * End:
  */
+
 // vim: set noet ts=4 sts=4 sw=4:
 

@@ -17,6 +17,7 @@
 #define PLUGIN_LOADER_H
 
 #include <qdict.h>
+#include <qmap.h>
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qvaluelist.h>
@@ -42,8 +43,11 @@ bool operator ==(const KopeteLibraryInfo &, const KopeteLibraryInfo &);
 class KopeteProtocol;
 class Plugin;
 
-class LibraryLoader
+class LibraryLoader : public QObject
 {
+	Q_OBJECT
+
+private:
 	friend class Kopete;
 	friend class Plugin;
 	friend class KopeteProtocol;
@@ -61,7 +65,7 @@ public:
 	QValueList<KopeteLibraryInfo> available() const;
 	QValueList<KopeteLibraryInfo> loaded() const;
 
-    /**
+	/**
 	 * Search by Id
 	 */
 	Plugin *searchByID( QString &Id );
@@ -84,8 +88,6 @@ public:
 	 */
 	bool remove(const LibraryLoader::PluginLibrary *plugin);
 	bool remove(const Plugin *plugin);
-	
-	//Playlist *playlist() const;
 
 	/**
 	 * This is needed for the Plugin-List-View
@@ -94,19 +96,33 @@ public:
 	**/
 	KopeteLibraryInfo getInfo(const QString &spec) const;
 	QList<Plugin> plugins() const;
-	
+
+	/**
+	 * Return all registered address book fields for a given plugin.
+	 *
+	 * Returns an empty QStringList if the plugin is invalid.
+	 */
+	QStringList addressBookFields( Plugin *p ) const;
+
+private slots:
+	/**
+	 * Cleanup some references if the plugin is destroyed
+	 */
+	void slotPluginDestroyed( QObject *o );
+
 private:
 	bool loadSO(const QString &spec);
 	void removeNow(const QString &spec);
 
-private:
 	QDict<LibraryLoader::PluginLibrary> mLibHash;
-	//Playlist *mPlaylist;
+
+	/**
+	 * The list of all address book keys used by each plugin
+	 */
+	QMap<Plugin *, QStringList> m_addressBookFields;
 };
 
 #endif
-
-
 
 /*
  * Local variables:
@@ -115,5 +131,6 @@ private:
  * indent-tabs-mode: t
  * End:
  */
+
 // vim: set noet ts=4 sts=4 sw=4:
 

@@ -394,6 +394,19 @@ QString KopeteMetaContact::toXML()
 	return xml;
 }
 
+QString KopeteMetaContact::addressBookField( Plugin * /* p */,
+	const QString & /* key */ ) const
+{
+	// FIXME: IMPLEMENT!!!
+	return QString::null;
+}
+
+void KopeteMetaContact::setAddressBookField( Plugin * /* p */,
+	const QString & /* key */, const QString & /* value */ )
+{
+	// FIXME: IMPLEMENT!!!
+}
+
 #include "kopetemetacontact.moc"
 
 /*

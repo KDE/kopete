@@ -2,7 +2,7 @@
     kopetemetacontact.h - Kopete Meta Contact
 
     Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
-	Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -27,12 +27,14 @@
 
 #include "kopetecontact.h"
 
-/**
- * @author Martijn Klingens <klingens@kde.org>
- *
- */
 class QStringList;
 
+class KopetePlugin;
+class Plugin;
+
+/**
+ * @author Martijn Klingens <klingens@kde.org>
+ */
 class KopeteMetaContact : public QObject
 {
 	Q_OBJECT
@@ -157,6 +159,15 @@ public slots:
 	 */
 	void addToGroup( const QString &to );
 
+	/**
+	 * Get or set a field for the KDE address book backend. Fields not
+	 * registered during the call to KopetePlugin::addressBookFields()
+	 * cannot be altered!
+	 */
+	QString addressBookField( Plugin *p, const QString &key ) const;
+	void setAddressBookField( Plugin *p, const QString &key,
+		const QString &value );
+
 signals:
 	/**
 	 * The contact's online status changed
@@ -226,8 +237,6 @@ private:
 
 #endif
 
-
-
 /*
  * Local variables:
  * c-indentation-style: k&r
@@ -235,5 +244,6 @@ private:
  * indent-tabs-mode: t
  * End:
  */
+
 // vim: set noet ts=4 sts=4 sw=4:
 
