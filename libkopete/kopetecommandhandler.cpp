@@ -176,7 +176,7 @@ void KopeteCommandHandler::slotExecCommand( const QString &args, KopeteMessageMa
 	{
 		KProcess *proc = 0L;
 		#if KDE_IS_VERSION( 3, 1, 90 )
-			if( kapp->authorized("shell_access") )
+			if ( kapp->authorize( QString::fromLatin1( "shell_access" ) ) )
 				proc = new KProcess(manager);
 		#else
 			proc = new KProcess();
