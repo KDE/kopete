@@ -134,6 +134,9 @@ YahooSession::YahooSession(int id, const QString username, const QString passwor
 	m_connId = id;
 	m_Username = username;
 	m_Password = password;
+	
+	m_socket = NULL;
+	
 }
 
 int YahooSession::sessionId() const
@@ -165,8 +168,11 @@ void YahooSession::logOff()
 	yahoo_logoff(m_connId);
 	if ( m_socket ) 
 	{
-	    m_socket->close();
-	    m_socket->reset();
+	    if ( m_socket->isOpen() )
+	    {
+		m_socket->close();
+		m_socket->reset();
+	    }
 	}
 }
 
@@ -986,6 +992,7 @@ int YahooSession::_hostAsyncConnectReceiver(char *host, int port,  yahoo_connect
 	{
 		kdDebug(14180) << k_funcinfo << " Failed!" << endl;
 		m_socket->close();
+		delete m_socket;
 		m_socket = NULL;
 		return -1;
 	}
