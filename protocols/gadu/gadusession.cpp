@@ -150,13 +150,13 @@ GaduSession::login( uin_t uin, const QString& password, bool useTls,
 {
 	memset( &params_, 0, sizeof(params_) );
 
-	params_.uin = uin;
-	params_.password = (char *)password.ascii();
-	params_.status = status;
-	params_.status_descr = (char *)statusDescr.ascii();
-	params_.async = 1;
-	params_.tls = useTls;
-	params_ .server_addr = server;
+	params_.uin		= uin;
+	params_.password	= (char *)password.ascii();
+	params_.status		= status;
+	params_.status_descr	= (char *)statusDescr.ascii();
+	params_.async		= 1;
+	params_.tls		= useTls;
+	params_ .server_addr	= server;
 	
 	if ( useTls ) {
 		params_.server_port = GG_HTTPS_PORT;
@@ -389,7 +389,7 @@ GaduSession::sendResult( gg_pubdir50_t result )
 		resultLine->surname	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_LASTNAME ));
 		resultLine->nickname	= textcodec->toUnicode( gg_pubdir50_get(result, i, GG_PUBDIR50_NICKNAME ) );
 		resultLine->age		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_BIRTHYEAR ) );
-		resultLine->city		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_CITY ) );
+		resultLine->city	= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_CITY ) );
 		QString stat		= textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_STATUS ) );
 		resultLine->status	= stat.toInt();
 		age = resultLine->age.toInt();
@@ -539,13 +539,13 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactsList , const QStrin
 			cl = new contactLine;
 		}
 
-		cl->firstname	= (*stringIterator);
-		cl->surname	= (*++stringIterator);
-		cl->nickname	= (*++stringIterator);
-		cl->displayname	= (*++stringIterator);
-		cl->phonenr	= (*++stringIterator);
-		cl->group	= (*++stringIterator);
-		cl->uin		= (*++stringIterator);
+		cl->firstname		= (*stringIterator);
+		cl->surname		= (*++stringIterator);
+		cl->nickname		= (*++stringIterator);
+		cl->displayname		= (*++stringIterator);
+		cl->phonenr		= (*++stringIterator);
+		cl->group		= (*++stringIterator);
+		cl->uin			= (*++stringIterator);
 		if ( email ) {
 			cl->email	= (*++stringIterator);
         	}
@@ -718,13 +718,13 @@ GaduSession::notify60( gg_event* event )
 
 	for( n=0 ; event->event.notify60[n].uin ; n++ ) {
 		gn = new KGaduNotify;
-		gn->contact_id = event->event.notify60[n].uin;
-		gn->status = event->event.notify60[n].status;
-		gn->remote_ip = event->event.notify60[n].remote_ip;
-		gn->remote_port = event->event.notify60[n].remote_port;
-		gn->version = event->event.notify60[n].version;
-		gn->image_size = event->event.notify60[n].image_size;
-		gn->description = textcodec->toUnicode( event->event.notify60[n].descr );
+		gn->contact_id	= event->event.notify60[n].uin;
+		gn->status	= event->event.notify60[n].status;
+		gn->remote_ip	= event->event.notify60[n].remote_ip;
+		gn->remote_port	= event->event.notify60[n].remote_port;
+		gn->version	= event->event.notify60[n].version;
+		gn->image_size	= event->event.notify60[n].image_size;
+		gn->description	= textcodec->toUnicode( event->event.notify60[n].descr );
 		nl.append( gn );
 	}
 	if ( n ) {
@@ -780,28 +780,28 @@ GaduSession::checkDescriptor()
 			else {
 				gaduNotify.description = QString::null;
 			}
-			gaduNotify.remote_ip = 0;
-			gaduNotify.remote_port = 0;
-			gaduNotify.version = 0;			
-			gaduNotify.image_size = 0;
-			gaduNotify.time = 0;
+			gaduNotify.remote_ip	= 0;
+			gaduNotify.remote_port	= 0;
+			gaduNotify.version	= 0;
+			gaduNotify.image_size	= 0;
+			gaduNotify.time		= 0;
 
 			emit contactStatusChanged( &gaduNotify );
 		break;
 		case GG_EVENT_STATUS60:
-			gaduNotify.status = event->event.status60.status;
-			gaduNotify.contact_id = event->event.status60.uin;
+			gaduNotify.status	= event->event.status60.status;
+			gaduNotify.contact_id	= event->event.status60.uin;
 			if ( event->event.status60.descr ) {
 				gaduNotify.description = textcodec->toUnicode( event->event.status60.descr );
 			}
 			else {
 				gaduNotify.description = QString::null;
 			}
-			gaduNotify.remote_ip		= event->event.status60.remote_ip;
+			gaduNotify.remote_ip	= event->event.status60.remote_ip;
 			gaduNotify.remote_port	= event->event.status60.remote_port;
-			gaduNotify.version		= event->event.status60.version;			
+			gaduNotify.version	= event->event.status60.version;			
 			gaduNotify.image_size	= event->event.status60.image_size;
-			gaduNotify.time			= event->event.status60.time;
+			gaduNotify.time		= event->event.status60.time;
 
 			emit contactStatusChanged( &gaduNotify );
 		break;
