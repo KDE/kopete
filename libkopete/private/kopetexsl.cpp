@@ -21,11 +21,12 @@
 #include <libxml/globals.h>
 #include <libxml/parser.h>
 
+// Don't try to sort the libxslt includes alphabetically!
+// transform.h _HAS_ to be after xsltInternals.h and xsltconfig.h _HAS_ to be
+// the first libxslt include or it will break the compilation on some
+// libxslt versions
 #include <libxslt/xsltconfig.h>
 #include <libxslt/xsltInternals.h>
-
-// transform.h _HAS_ to be after xsltInternals.h or it will break the compile,
-// so unfortunately we can't sort these includes alphabetically
 #include <libxslt/transform.h>
 
 // Solaris Fix
