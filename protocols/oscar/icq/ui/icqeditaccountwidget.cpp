@@ -25,6 +25,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
+#include <kiconloader.h>
 #include <kjanuswidget.h>
 #include <kurllabel.h>
 #include <kdatewidget.h>
@@ -50,14 +51,16 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	// ==========================================================================
 
 	QFrame *acc = mTop->addPage(i18n("Account"),
-		i18n("ICQ Account Settings used for connecting to the ICQ Server"));
+		i18n("ICQ Account Settings used for connecting to the ICQ Server"),
+		KGlobal::iconLoader()->loadIcon(QString::fromLatin1("connect_no"), KIcon::Desktop));
 	QVBoxLayout *accLay = new QVBoxLayout(acc);
 	mAccountSettings = new ICQEditAccountUI(acc,
 		"ICQEditAccountWidget::mAccountSettings");
 	accLay->addWidget(mAccountSettings);
 
 	QFrame *det = mTop->addPage(i18n("Contact Details"),
-		i18n("ICQ Contact Details shown to other users"));
+		i18n("ICQ Contact Details shown to other users"),
+		KGlobal::iconLoader()->loadIcon(QString::fromLatin1("identity"), KIcon::Desktop));
 	QVBoxLayout *detLay = new QVBoxLayout(det);
 	mUserInfoSettings = new ICQUserInfoWidget(det,
 		"ICQEditAccountWidget::mUserInfoSettings");
