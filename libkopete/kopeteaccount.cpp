@@ -16,15 +16,11 @@
 */
 
 #include <qapplication.h>
-#include <qcheckbox.h>
-#include <qlabel.h>
-#include <qlineedit.h>
 #include <qtimer.h>
 
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kdeversion.h>
-#include <kdialogbase.h>
 #include <klocale.h>
 #include <kiconloader.h> 
 #include <kiconeffect.h> 
@@ -33,19 +29,37 @@
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 #include "kopetemetacontact.h"
-#include "kopetepassworddialog.h"
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
 #include "kopetegroup.h"
 #include "kopetepassword.h"
 
+namespace
+{
+QString configGroup( KopeteProtocol *protocol, const QString &accountId )
+{
+#if QT_VERSION < 0x030200
+	return QString::fromLatin1( "Account_%2_%1" ).arg( accountId ).arg( protocol->pluginId() );
+#else
+	return QString::fromLatin1( "Account_%2_%1" ).arg( accountId, protocol->pluginId() );
+#endif
+}
+
+}
+
 class KopeteAccountPrivate
 {
 public:
-	~KopeteAccountPrivate() { delete password; }
+	KopeteAccountPrivate( KopeteProtocol *protocol, const QString &accountId )
+	 : protocol( protocol ), id( accountId )
+	 , password( configGroup( protocol, accountId ), accountId, accountId )
+	 , autologin( false ), priority( 0 ), myself( 0 )
+	{
+	}
+
 	KopeteProtocol *protocol;
 	QString id;
-	KopetePassword *password;
+	KopetePassword password;
 	bool autologin;
 	uint priority;
 	QDict<KopeteContact> contacts;
@@ -54,15 +68,8 @@ public:
 };
 
 KopeteAccount::KopeteAccount( KopeteProtocol *parent, const QString &accountId, const char *name )
-: KopetePluginDataObject( parent, name )
+ : KopetePluginDataObject( parent, name ), d( new KopeteAccountPrivate( parent, accountId ) )
 {
-	d = new KopeteAccountPrivate;
-	d->protocol = parent;
-	d->id = accountId;
-	d->autologin = false;
-	d->password = 0L;
-	d->myself = 0L;
-
 	KopeteAccountManager::manager()->registerAccount( this );
 	QTimer::singleShot( 0, this, SLOT( slotAccountReady() ) );
 }
@@ -79,7 +86,6 @@ KopeteAccount::~KopeteAccount()
 
 void KopeteAccount::slotAccountReady()
 {
-	d->password = new KopetePassword( configGroup(), accountId(), protocol()->displayName() );
 	KopeteAccountManager::manager()->notifyAccountReady( this );
 }
 
@@ -141,11 +147,7 @@ QPixmap KopeteAccount::accountIcon(const int size) const
 
 QString KopeteAccount::configGroup() const
 {
-#if QT_VERSION < 0x030200
-	return QString::fromLatin1( "Account_%2_%1" ).arg( accountId() ).arg( protocol()->pluginId() );
-#else
-	return QString::fromLatin1( "Account_%2_%1" ).arg( accountId(), protocol()->pluginId() );
-#endif
+	return ::configGroup( protocol(), accountId() );
 }
 
 void KopeteAccount::writeConfig( const QString &configGroupName )
@@ -216,14 +218,12 @@ void KopeteAccount::loaded()
 
 QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 {
-	if ( !d->password ) return QString::null;
-	return d->password->retrieve( error, ok, maxLength );
+	return d->password.retrieve( error, ok, maxLength );
 }
 
 void KopeteAccount::setPassword( const QString &pass )
 {
-	if ( !d->password ) return;
-	d->password->set( pass );
+	d->password.set( pass );
 }
 
 void KopeteAccount::setAutoLogin( bool b )
@@ -238,8 +238,7 @@ bool KopeteAccount::autoLogin() const
 
 bool KopeteAccount::rememberPassword()
 {
-	if ( !d->password ) return false;
-	return d->password->remembered();
+	return d->password.remembered();
 }
 
 void KopeteAccount::registerContact( KopeteContact *c )
