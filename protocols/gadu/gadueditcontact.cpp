@@ -89,7 +89,7 @@ void
 GaduEditContact::fillIn()
 {
 // grey it out, it shouldn't be editable
-	ui_->addEdit_->setDisabled( true );
+	ui_->addEdit_->setReadOnly( true );
 	ui_->addEdit_->setText( cl_->uin );
 
 	ui_->fornameEdit_->setText( cl_->firstname );
