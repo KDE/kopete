@@ -37,7 +37,7 @@ class MSNAuthSocket : public MSNSocket
 	Q_OBJECT
 
 public:
-	MSNAuthSocket( const QString &msnId );
+	MSNAuthSocket( const QString &msnId , QObject* parent=0L);
 	~MSNAuthSocket();
 
 	QString msnId() { return m_msnId; }

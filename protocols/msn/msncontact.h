@@ -19,8 +19,6 @@
 #define MSNCONTACT_H
 
 #include "kopetecontact.h"
-#include "kopetehistorydialog.h"
-#include "kopetegroup.h"
 #include "msnprotocol.h"
 
 class QListView;

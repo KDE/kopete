@@ -34,7 +34,7 @@ class MSNDispatchSocket : public MSNAuthSocket
 	Q_OBJECT
 
 public:
-	MSNDispatchSocket( const QString &msnId );
+	MSNDispatchSocket( const QString &msnId , QObject* parent=0L);
 	~MSNDispatchSocket();
 
 	/**

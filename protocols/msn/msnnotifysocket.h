@@ -32,7 +32,7 @@ class MSNNotifySocket : public MSNAuthSocket
 	Q_OBJECT
 
 public:
-	MSNNotifySocket( const QString &msnId );
+	MSNNotifySocket( const QString &msnId);
 	~MSNNotifySocket();
 
 	void connect( const QString &password );
@@ -100,7 +100,7 @@ private slots:
 	 */
 	void slotReadMessage( const QString &msg );
 	
-	void slotDispatchFailed();
+	void slotDispatchClosed();
 
 private:
 	unsigned int mailCount;

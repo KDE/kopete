@@ -19,8 +19,8 @@
 
 #include "msndispatchsocket.h"
 
-MSNDispatchSocket::MSNDispatchSocket( const QString &msnId )
-: MSNAuthSocket( msnId )
+MSNDispatchSocket::MSNDispatchSocket( const QString &msnId , QObject* parent)
+: MSNAuthSocket( msnId , parent)
 {
 }
 

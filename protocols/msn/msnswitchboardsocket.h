@@ -43,7 +43,7 @@ public:
 
 protected:
 	QString m_myHandle; // our handle
-	QString m_msgHandle; // the other side's handle
+	QString m_msgHandle; // the other side's handle (the latest)
 	QString m_ID;
 	QString m_auth;
 
@@ -70,7 +70,6 @@ protected:
 
 public:
 	void connectToSwitchBoard( QString ID, QString address, QString auth );
-	void callUser();
 	void setHandle( QString handle ) { m_myHandle = handle; }
 	void setMsgHandle( QString handle ) { m_msgHandle = handle; }
 
@@ -87,14 +86,14 @@ public slots:
 
 private slots:
 	void slotOnlineStatusChanged( MSNSocket::OnlineStatus status );
-	void slotSocketClosed( int state );
+	void slotSocketClosed(  );
 
 signals:
 	void msgReceived( const KopeteMessage &msg );
 	//void startChat(MSNSwitchBoardSocket* switchoard);
 	void userTypingMsg(QString );
 	void msgAcknowledgement(bool);
-	void switchBoardIsActive(bool);
+	//void switchBoardIsActive(bool);
 	/**
 	 *  updateChatMember();
 	 *  	if add=true, the contact join the chat, else, the contact leave.

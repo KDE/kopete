@@ -37,12 +37,13 @@
 
 
 
-MSNSwitchBoardSocket::MSNSwitchBoardSocket()
+MSNSwitchBoardSocket::MSNSwitchBoardSocket() : MSNSocket( MSNProtocol::protocol() )
 {
 }
 
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
 {
+	kdDebug() <<"MSNSwitchBoardSocket::~MSNSwitchBoardSocket" <<endl;
 }
 
 void MSNSwitchBoardSocket::connectToSwitchBoard(QString ID, QString address, QString auth)
@@ -57,7 +58,7 @@ void MSNSwitchBoardSocket::connectToSwitchBoard(QString ID, QString address, QSt
 		this, SLOT( slotOnlineStatusChanged( MSNSocket::OnlineStatus ) ) );
 
 	QObject::connect( this, SIGNAL( socketClosed( int ) ),
-		this, SLOT( slotSocketClosed( int ) ) );
+		this, SLOT( slotSocketClosed( ) ) );
 
 	connect( server, port );
 
@@ -76,12 +77,14 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 			QString msg = i18n( "Invalid user! \n"
 				"This MSN user does not exist. Please check the MSN ID." );
 			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+			userLeftChat(m_msgHandle);
 			break;
 		}
 		case 215:
 		{
 			QString msg = i18n( "The user %1 is already on this chat.\n" ).arg( m_msgHandle );
 			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+			userLeftChat(m_msgHandle);
 			break;
 		}
 		case 216:
@@ -89,7 +92,7 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 			QString msg = i18n( "The user %1 is online but has blocked you.\n"
 				"You can't start to chat with them." ).arg( m_msgHandle );
 			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
-//			slotSocketClosed( 0 ); // emit signal to get ourselves removed...
+			userLeftChat(m_msgHandle);
 			break;
 		}
 		case 217:
@@ -98,7 +101,7 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 			QString msg = i18n( "The user %1 is currently not signed in.\n"
 				"Messages will not be delivered." ).arg( m_msgHandle );
 			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
-//			slotSocketClosed( 0 ); // emit signal to get ourselves removed...
+			userLeftChat(m_msgHandle);
 			break;
 		}
 		default:
@@ -121,7 +124,6 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 	else if( cmd == "JOI" )
 	{
 		// new user joins the chat, update user in chat list
-		emit switchBoardIsActive(true);   
 		QString handle = data.section( ' ', 0, 0 );
 		QString screenname = unescape(data.section( ' ', 1, 1 ));
 		emit updateChatMember( handle, screenname, true );
@@ -134,7 +136,6 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 	else if( cmd == "IRO" )
 	{
 		// we have joined a multi chat session- this are the users in this chat
-		emit switchBoardIsActive(true);
 		QString handle = data.section( ' ', 2, 2 );  
 		if( !m_chatMembers.contains( handle ) )
 			m_chatMembers.append( handle );
@@ -144,7 +145,7 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint /* id */,
 	}
 	else if( cmd == "USR" )
 	{
-		callUser();
+		slotInviteContact(m_msgHandle);
 	}
 	else if( cmd == "BYE" )
 	{
@@ -362,6 +363,7 @@ void MSNSwitchBoardSocket::slotTypingMsg()
 // this Invites an Contact
 void MSNSwitchBoardSocket::slotInviteContact(const QString &handle)
 {
+	m_msgHandle=handle;
 	sendCommand( "CAL", handle );
 }
 
@@ -403,7 +405,7 @@ void MSNSwitchBoardSocket::slotSendMsg( const KopeteMessage &msg )
 	// send the own msg to chat window
 }
 
-void MSNSwitchBoardSocket::slotSocketClosed( int /*state */)
+void MSNSwitchBoardSocket::slotSocketClosed( )
 {
 	for( QStringList::Iterator it = m_chatMembers.begin(); it != m_chatMembers.end(); ++it )
 	{
@@ -411,18 +413,14 @@ void MSNSwitchBoardSocket::slotSocketClosed( int /*state */)
 	}
 
 	// we have lost the connection, send a message to chatwindow (this will not displayed)
-	emit switchBoardIsActive(false);
+//	emit switchBoardIsActive(false);
 	emit switchBoardClosed( );
 }
 
 void MSNSwitchBoardSocket::slotCloseSession()
 {
 	sendCommand( "OUT", QString::null, false );
-}
-
-void MSNSwitchBoardSocket::callUser()
-{
-	sendCommand( "CAL", m_msgHandle );
+	disconnect();
 }
 
 // Check if we are connected. If so, then send the handshake.
@@ -444,8 +442,6 @@ void MSNSwitchBoardSocket::slotOnlineStatusChanged( MSNSocket::OnlineStatus stat
 			args = m_myHandle + " " + m_auth + " " + m_ID;
 		}
 		sendCommand( command, args );
-		// send active message
-		emit switchBoardIsActive(true);
 	}
 }
 
@@ -468,10 +464,10 @@ void MSNSwitchBoardSocket::userLeftChat( QString handle ) //O.G.
 		if( m_chatMembers.contains( handle ) )
 			m_chatMembers.remove( handle );
 
-		kdDebug() << "MSNSwitchBoardSocket::parseCommand: " <<
-			handle << " left the chat." << endl;
+		kdDebug() << "MSNSwitchBoardSocket::userLeftChat: " << handle << " left the chat." << endl;
 
-		if(m_chatMembers.empty()) disconnect();
+		if(m_chatMembers.isEmpty())
+			disconnect();
 }
 
 

@@ -33,7 +33,7 @@
 #include <kapplication.h>
 
 MSNNotifySocket::MSNNotifySocket( const QString &msnId )
-: MSNAuthSocket( msnId )
+: MSNAuthSocket( msnId ,  MSNProtocol::protocol())
 {
 	QObject::connect( this, SIGNAL( blockRead( const QString & ) ),
 		this, SLOT( slotReadMessage( const QString & ) ) );
@@ -53,20 +53,20 @@ void MSNNotifySocket::connect( const QString &pwd )
 	dispatchOK=false;
 	m_isHotmailAccount=false;
 
-	m_dispatchSocket = new MSNDispatchSocket( msnId() );
+	m_dispatchSocket = new MSNDispatchSocket( msnId() ,this);
 	QObject::connect( m_dispatchSocket,
 		SIGNAL( receivedNotificationServer( const QString &, uint ) ),
 		this,
 		SLOT( slotReceivedServer( const QString &, uint ) ) );
 
-	QObject::connect( m_dispatchSocket,
+/*	QObject::connect( m_dispatchSocket,
 		SIGNAL( connectionFailed( ) ),
 		this,
-		SLOT( slotDispatchFailed( ) ) );
+		SLOT( slotDispatchFailed( ) ) );*/
 	QObject::connect( m_dispatchSocket,
 		SIGNAL( socketClosed( int ) ),
 		this,
-		SLOT( slotDispatchFailed( ) ) );
+		SLOT( slotDispatchClosed( ) ) );
 
 
 	m_dispatchSocket->connect();
@@ -76,13 +76,11 @@ void MSNNotifySocket::slotReceivedServer( const QString &server, uint port )
 {
 	dispatchOK=true;
 	MSNAuthSocket::connect( server, port );
-	m_dispatchSocket->deleteLater();
-	m_dispatchSocket = 0L;
 }
 
 void MSNNotifySocket::disconnect()
 {
-	if( onlineStatus() != Disconnected )
+	if( onlineStatus() == Connected )
 		sendCommand( "OUT", QString::null, false );
 
 	MSNAuthSocket::disconnect();
@@ -241,13 +239,11 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "OUT" )
 	{
+		disconnect();
 		if( data.section( ' ', 0, 0 ) == "OTH" )
 		{
-			kdDebug() << "[MSN-PLUGIN] You have connected from another client" << endl;
-			KMessageBox::information( 0, i18n( "You have connected from another client" ) );
+			KMessageBox::information( 0, i18n( "You have connected from another client" ) , i18n ("MSN Plugin") );
 		}
-
-		disconnect();
 	}
 	else if( cmd == "CHG" )
 	{
@@ -548,13 +544,16 @@ QString MSNNotifySocket::statusToString( int status ) const
 	}
 }
 
-void MSNNotifySocket::slotDispatchFailed()
+void MSNNotifySocket::slotDispatchClosed()
 {
+	delete m_dispatchSocket;
+	m_dispatchSocket = 0L;
 	if(!dispatchOK)
 	{
-		emit( onlineStatusChanged( Disconnected ) );
-		m_dispatchSocket->deleteLater();
-		m_dispatchSocket = 0L;
+		KMessageBox::error( 0, i18n( "Connection failed\n Try later" ) , i18n ("MSN Plugin") );
+		//because "this socket" isn't already connected, doing this manualy
+		emit onlineStatusChanged( Disconnected );
+		emit socketClosed(-1);
 	}
 }
 

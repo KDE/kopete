@@ -206,7 +206,7 @@ private slots:
 
 	void slotIconRightClicked( const QPoint& );
 
-	void slotOnlineStatusChanged( MSNSocket::OnlineStatus );
+	void slotNotifySocketStatusChanged( MSNSocket::OnlineStatus );
 
 	void slotGoOnline();
 	void slotGoOffline();

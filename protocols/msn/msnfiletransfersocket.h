@@ -32,7 +32,7 @@ class KopeteTransfer;
 class MSNFileTransferSocket : public MSNSocket  {
    Q_OBJECT
 public:
-	MSNFileTransferSocket(const QString msnid, const QString cook, const QString filename);
+	MSNFileTransferSocket(const QString msnid, const QString cook, const QString filename, QObject* parent=0L);
 	~MSNFileTransferSocket();
   /** No descriptions */
   void setKopeteTransfer(KopeteTransfer *kt);
@@ -72,7 +72,7 @@ private:
 
 private slots: // Private slots
   /** No descriptions */
-  void slotSocketClosed(int);
+  void slotSocketClosed();
   /** No descriptions */
   void slotReadBlock(const QByteArray &);
 };

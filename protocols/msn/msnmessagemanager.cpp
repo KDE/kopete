@@ -19,6 +19,7 @@
 #include <klocale.h>
 #include <kaction.h>
 #include <klineeditdlg.h>
+#include <kmessagebox.h>
  
 #include "kopete.h"
 #include "kopetemessagemanagerfactory.h"
@@ -114,14 +115,15 @@ void MSNMessageManager::slotUpdateChatMember(QString handle, QString publicName,
 
 	if(add)
 		addContact(c);
-	else
+	else if(c)
 		removeContact(c);
 
 }
 
 void MSNMessageManager::slotSwitchBoardClosed()
 {
-	m_chatService->deleteLater();
+	kdDebug() << "MSNMessageManager::slotSwitchBoardClosed"  << endl;
+	delete m_chatService; //->deleteLater();
 	m_chatService=0l;
 	setCanBeDeleted(true);
 }
@@ -201,7 +203,7 @@ void MSNMessageManager::slotCloseSession()
 
 void MSNMessageManager::slotInviteContact(const QString &_handle)
 {
-	QString handle=_handle.lower();
+	QString handle=_handle;
 	if(handle==otherString)
 	{
 		bool ok;
@@ -211,6 +213,12 @@ void MSNMessageManager::slotInviteContact(const QString &_handle)
 		if( !ok )
 			return;
 	}
+	if( handle.contains('@') != 1 || handle.contains('.') <1)
+	{
+			KMessageBox::error(0l, i18n("<qt>You must enter a valide e-mail adress</qt>"), i18n("MSN Plugin"));
+			return;
+	}
+	handle=handle.lower();
 	if(m_chatService)
 		m_chatService->slotInviteContact(handle);
 	else

@@ -18,6 +18,7 @@
 */
 
 #include "msnsocket.h"
+//#include "msnprotocol.h"
 
 #include <qregexp.h>
 #include <qtimer.h>
@@ -29,7 +30,7 @@
 #include <kurl.h>
 
 
-MSNSocket::MSNSocket()
+MSNSocket::MSNSocket(QObject* parent)  : QObject (parent)
 {
 	m_onlineStatus = Disconnected;
 	m_socket = 0L;
@@ -37,8 +38,12 @@ MSNSocket::MSNSocket()
 
 MSNSocket::~MSNSocket()
 {
-	if( m_onlineStatus != Disconnected )
-		disconnect();
+/*	if( m_onlineStatus != Disconnected )
+		disconnect();*/
+	doneDisconnect();
+	delete m_socket;
+	/*if(m_socket)
+		m_socket->deleteLater();*/
 }
 
 void MSNSocket::connect( const QString &server, uint port )
@@ -92,12 +97,10 @@ void MSNSocket::connect( const QString &server, uint port )
 
 void MSNSocket::disconnect()
 {
-	delete m_socket;
-	m_socket = 0L;
-	m_buffer = Buffer(0);
-
-	kdDebug() << "MSNSocket::disconnect: Socket closed" << endl;
-	doneDisconnect();
+	if(m_socket)
+		m_socket->closeNow();
+	else
+		emit socketClosed(-1);
 }
 
 void MSNSocket::aboutToConnect()
@@ -126,8 +129,9 @@ void MSNSocket::setOnlineStatus( MSNSocket::OnlineStatus status )
 
 void MSNSocket::slotSocketError( int error )
 {
-	m_socket->cancelAsyncConnect();
 	kdDebug() << "MSNSocket::slotSocketError: error: " << error << endl;
+
+	m_socket->cancelAsyncConnect();
 
 	QString errormsg = i18n( "There was an error while connecting to the MSN server.\nError message:\n" );
 
@@ -139,12 +143,17 @@ void MSNSocket::slotSocketError( int error )
 	KMessageBox::error( 0, errormsg, i18n( "MSN Plugin - Kopete" ) );
 
 	// Emit the signal even if we still were disconnected.
-	if ( onlineStatus() == Disconnected )
-		emit( onlineStatusChanged( Disconnected ) );
+//	if ( onlineStatus() == Disconnected )
+//		emit( onlineStatusChanged( Disconnected ) );
 
 	setOnlineStatus( Disconnected );
 
+	delete m_socket;
+	m_socket = 0L;
+
+
 	emit connectionFailed();
+	emit socketClosed(-1); //like the socket is closed
 }
 
 void MSNSocket::slotDataReceived()
@@ -393,7 +402,6 @@ void MSNSocket::sendCommand( const QString &cmd, const QString &args,
 			<< "added to send queue with id " << m_id << endl;
 		m_sendQueue.insert( m_id, data );
 	}
-
 	m_id++;
 }
 
@@ -426,10 +434,21 @@ void MSNSocket::slotSocketClosed( int state )
 	kdDebug() << "MSNSocket::slotSocketClosed: socket closed. State: 0x" <<
 		QString::number( state, 16 ) << endl;
 
-	setOnlineStatus( Disconnected );
-	
+	if(!m_socket ||  m_onlineStatus == Disconnected )
+	{
+		kdDebug() << "MSNSocket::slotSocketClosed: socket already deleted or already disconnected" << endl;
+		return;
+	}
+
+	doneDisconnect();
+
+//	kdDebug() << "MSNSocket::slotSocketClosed: delete socket " << m_socket << endl;
+	m_buffer = Buffer(0);
+	delete m_socket;
+	//m_socket->deleteLater();
+	m_socket = 0L;
+
 	emit( socketClosed( state ) );
-	kdDebug() << "MSNSocket::slotSocketClosed: done" << endl;
 }
 
 

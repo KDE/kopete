@@ -26,7 +26,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 
-MSNAuthSocket::MSNAuthSocket( const QString &msnId )
+MSNAuthSocket::MSNAuthSocket( const QString &msnId , QObject* parent) : MSNSocket(parent)
 {
 	m_msnId = msnId;
 	m_msgBoxShown = false;
@@ -38,8 +38,8 @@ MSNAuthSocket::~MSNAuthSocket()
 
 void MSNAuthSocket::reconnect()
 {
-	connect( server(),port() );
-}
+//	connect( server(),port() );
+} 
 
 void MSNAuthSocket::handleError( uint code, uint id )
 {
@@ -48,17 +48,13 @@ void MSNAuthSocket::handleError( uint code, uint id )
 	case 600:
 	{
 		disconnect();
-		QTimer::singleShot( 10, this, SLOT( reconnect() ) );
-
+	// FIXME: when disconnecting, this is deleted. impossible to reconnect
+/*	//	QTimer::singleShot( 10, this, SLOT( reconnect() ) );
 		if( !m_msgBoxShown )
 		{
-			QString msg =
-				i18n( "The MSN server is busy.\n"
-					"Trying to reconnect every 10 seconds. Please be patient..." );
-			m_msgBoxShown = true;
-	
-			KMessageBox::information( 0, msg, i18n( "MSN Plugin - Kopete" ) );
-		}
+			m_msgBoxShown = true;*/
+		KMessageBox::information( 0, i18n( "The MSN server is busy.\n"
+				"Please retry." ) , i18n( "MSN Plugin - Kopete" ) );
 		break;
 	}
 

@@ -33,7 +33,7 @@
 
 
 
-MSNFileTransferSocket::MSNFileTransferSocket(const QString msnid, const QString cook, const QString filename) : MSNSocket()
+MSNFileTransferSocket::MSNFileTransferSocket(const QString msnid, const QString cook, const QString filename , QObject* parent) : MSNSocket(parent)
 {
   m_msnId=msnid;
   m_authcook=cook;
@@ -41,7 +41,7 @@ MSNFileTransferSocket::MSNFileTransferSocket(const QString msnid, const QString 
 
   m_kopeteTransfer=0l;
 
-  QObject::connect( this, SIGNAL( socketClosed( int ) ), this, SLOT( slotSocketClosed( int ) ) );
+  QObject::connect( this, SIGNAL( socketClosed( int ) ), this, SLOT( slotSocketClosed( ) ) );
 
  	QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),	this, SLOT(slotReadBlock( const QByteArray & ) ) );
 
@@ -104,10 +104,11 @@ void MSNFileTransferSocket::bytesReceived(const QByteArray & head)
 
 }
 /** No descriptions */
-void MSNFileTransferSocket::slotSocketClosed(int)
+void MSNFileTransferSocket::slotSocketClosed()
 {
 		kdDebug() << "MSNFileTransferSocket::slotSocketClose "<<  endl;
     m_file->close();
+    delete this;
 }
 /** No descriptions */
 void MSNFileTransferSocket::slotReadBlock(const QByteArray &block)

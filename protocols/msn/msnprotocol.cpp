@@ -124,6 +124,12 @@ MSNProtocol::~MSNProtocol()
 	m_allowList.clear();
 	m_blockList.clear();
 
+	if(m_notifySocket)
+	{
+		kdDebug() << "MSNProtocol::~MSNProtocol: WARNING NotifySocket was not deleted" <<endl;
+		delete m_notifySocket;
+	}
+
 	s_protocol = 0L;
 }
 
@@ -137,21 +143,11 @@ void MSNProtocol::init()
 bool MSNProtocol::unload()
 {
 	kdDebug() << "MSNProtocol::unload" << endl;
+
+	//FIXME: Disconnect mean that m_notyfysocket is 'deletedLater' in slotNotitfySocketClose()
+	//But if we're closing kopete, deleteLater has no effect.
 	Disconnect();
 	
-	// Delete all MSNContacts from the meta contacts. Not doing this will
-	// cause all kinds of memory overrun crashes ;-)
-//	while( m_metaContacts.count() )
-//		delete ( QPtrDictIterator<MSNContact>( m_metaContacts ) ).current();
-//	m_metaContacts.clear();
-	for ( QMap<QString,MSNContact*>::iterator it = m_contacts.begin(); it!=m_contacts.end(); it = m_contacts.begin() )
-	{
-		m_contacts.remove(it);  
-		delete (*it);
-	}
-   m_contacts.clear();
-
-
 	if( kopeteapp->statusBar() )
 	{
 		kopeteapp->statusBar()->removeWidget(statusBarIcon);
@@ -193,6 +189,12 @@ void MSNProtocol::Connect()
 		return;
 	}
 
+	if(m_notifySocket)
+	{
+		kdDebug() << "MSNProtocol::connect: WARNING NotifySocket was not deleted"  <<endl;
+		delete m_notifySocket;
+	}
+
 	kdDebug() << "MSNProtocol::connect: Connecting to MSN with Passport "
 		<< m_msnId << endl;
 	m_notifySocket = new MSNNotifySocket( m_msnId );
@@ -216,7 +218,7 @@ void MSNProtocol::Connect()
 	connect( m_notifySocket, SIGNAL( statusChanged( QString ) ),
 		this, SLOT( slotStatusChanged( QString ) ) );
 	connect( m_notifySocket, SIGNAL( onlineStatusChanged( MSNSocket::OnlineStatus ) ),
-		this, SLOT( slotOnlineStatusChanged( MSNSocket::OnlineStatus ) ) );
+		this, SLOT( slotNotifySocketStatusChanged( MSNSocket::OnlineStatus ) ) );
 	connect( m_notifySocket, SIGNAL( publicNameChanged( QString ) ),
 		this, SLOT( slotPublicNameChanged( QString ) ) );
 	connect( m_notifySocket, SIGNAL( invitedToChat( QString, QString, QString, QString, QString ) ),
@@ -241,13 +243,9 @@ void MSNProtocol::Disconnect()
 		m_notifySocket->disconnect();
 
 		//delete m_notifySocket;
-		m_notifySocket->deleteLater();
-		m_notifySocket = 0L;
+//		m_notifySocket->deleteLater();
+//		m_notifySocket = 0L;
 	}
-	
-/*	m_switchBoardSockets.setAutoDelete( true );
-	m_switchBoardSockets.clear();
-	m_switchBoardSockets.setAutoDelete( false );*/
 }
 
 bool MSNProtocol::isConnected() const
@@ -556,8 +554,9 @@ void MSNProtocol::slotStartChat()
 	}
 }
 
-void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
+void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status )
 {
+//	kdDebug() << "MSNProtocol::slotOnlineStatusChanged: " << status <<endl;
 	mIsConnected = (status == MSNSocket::Connected);
 	if ( mIsConnected )
 	{
@@ -576,7 +575,7 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 				<< m_publicName << endl;
 		}
 
-//		mIsConnected = true;
+		mIsConnected = true;
 
 		// Now pending changes are updated we want to sync both ways
 		m_publicNameSyncMode = SyncBoth;
@@ -627,8 +626,7 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 	}
 	else if( status == MSNSocket::Disconnected )
 	{
-
-/*		QIntDictIterator<KopeteMessageManager> kmmIt( kopeteapp->sessionFactory()->protocolSessions( this ) );
+	/*		QIntDictIterator<KopeteMessageManager> kmmIt( kopeteapp->sessionFactory()->protocolSessions( this ) );
 		for ( ; kmmIt.current() ; ++kmmIt )
 		{
 			kmmIt.current()->slotSendEnabled(false);
@@ -649,7 +647,7 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 		m_blockList.clear();
 		m_groupList.clear();
 
-//		mIsConnected = false;
+		mIsConnected = false;
 		statusBarIcon->setPixmap(offlineIcon);
 		m_openInboxAction->setEnabled(false);
 
@@ -906,55 +904,6 @@ MSNProtocol::Status MSNProtocol::convertStatus( QString status )
 	else
 		return FLN;
 }
-
-/*void MSNProtocol::slotContactStatus( QString handle, QString publicName,
-	QString status )
-{
-	kdDebug() << "MSNProtocol::slotContactStatus: " << handle << " (" <<
-		publicName << ") has status " << status << endl;
-
-	if( m_contacts.contains( handle ) )
-	{
-		m_contacts[ handle ]->setMsnStatus( convertStatus( status ) );
-		m_contacts[ handle ]->setDisplayName( publicName );
-	}
-}*/
-
-/*void MSNProtocol::slotContactStatusChanged( const QString &handle,
-	const QString &publicName, MSNProtocol::Status status )
-{
-	kdDebug() << "MSNProtocol::slotContactStatusChanged: " << handle << " (" <<
-		publicName << ") has status " << status << endl;
-
-	if( m_contacts.contains( handle ) )
-	{
-		m_contacts[ handle ]->setMsnStatus( status );
-		if(publicName)
-			m_contacts[ handle ]->setDisplayName( publicName );
-
-		if( status == FLN )
-		{
-			bool done;
-			do
-			{
-				done = true;
-				QPtrDictIterator<MSNSwitchBoardSocket> it( m_switchBoardSockets );
-				for( ; m_switchBoardSockets.count() && it.current(); ++it )
-				{
-					if( ( *it ).chatMembers().contains( handle ) )
-					{
-						kdDebug() << "MSNProtocol::slotContactStatusChanged: "
-							<< "Removing stale switchboard from offline user "
-							<< handle << endl;
-						(*it).userLeftChat(handle);
-						done = false;
-						break;
-					}
-				}
-			} while( !done );
-		}
-	}
-}      */
 
 void MSNProtocol::slotContactList( QString handle, QString publicName,
 	QString group, QString list )
@@ -1384,6 +1333,11 @@ void MSNProtocol::slotChangePublicName()
 
 void MSNProtocol::slotDebugRawCommand()
 {
+	if ( !isConnected() )
+	{
+		return;
+	}
+
 	MSNDebugRawCmdDlg *dlg = new MSNDebugRawCmdDlg( 0L );
 	int result = dlg->exec();
 	if( result == QDialog::Accepted && m_notifySocket )
@@ -1394,38 +1348,33 @@ void MSNProtocol::slotDebugRawCommand()
 	delete dlg;
 }
 
-void MSNProtocol::slotNotifySocketClosed( int state )
+void MSNProtocol::slotNotifySocketClosed( int /*state*/ )
 {
-	if ( state == 0x10 ) // connection died unexpectedly
+	kdDebug() << "MSNProtocol::slotNotifySocketClosed" << endl;
+	//FIXME: Kopete crash when i show this message box...
+/*	if ( state == 0x10 ) // connection died unexpectedly
 	{
-		KMessageBox::error( 0, i18n( "Connection with the MSN server was lost unexpectedly.\nIf you are unable to reconnect, please try again later." ), i18n( "Connection lost - MSN Plugin - Kopete" ) );
-		//Disconnect();
-		//kdDebug() << "MSNProtocol::slotNotifySocketClosed: Done." << endl;
-	}
+		KMessageBox::error( kopeteapp->mainWindow(), i18n( "Connection with the MSN server was lost unexpectedly.\nIf you are unable to reconnect, please try again later." ), i18n( "Connection lost - MSN Plugin - Kopete" ) );
+	}*/
+	//m_notifySocket->deleteLater();
+	delete m_notifySocket;
+	m_notifySocket=0l;
+	mIsConnected = false;
+	statusBarIcon->setPixmap(offlineIcon);
+	m_openInboxAction->setEnabled(false);
+	kdDebug() << "MSNProtocol::slotNotifySocketClosed - done" << endl;
 }
 
 
 void MSNProtocol::slotContactDestroyed( KopeteContact *c )
 {
 	//kdDebug() << "MSNProtocol::slotContactDestroyed " << endl;
-	//m_metaContacts.remove( c->metaContact() );
 	for ( QMap<QString,MSNContact*>::iterator it = m_contacts.begin(); it!=m_contacts.end(); ++it  )
 	{
 		if(*it == c)
 			m_contacts.remove(it);
 	}
 }
-
-/*void MSNProtocol::slotRecievedInfo(QString handle,QString type,QString data)
-{
-	MSNContact *c=m_contacts[handle];
-	if(!c)
-	{
-		kdDebug() << "MSNProtocol::slotRecievedInfo : WARNING - KopeteContact not found "  << handle << endl;
-		return;
-	}
-	c->setInfo(type,data);
-} */
 
 KActionCollection * MSNProtocol::customChatActions(KopeteMessageManager * manager)
 {

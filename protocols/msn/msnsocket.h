@@ -37,7 +37,7 @@ class MSNSocket : public QObject
 	Q_OBJECT
 
 public:
-	MSNSocket();
+	MSNSocket(QObject* parent=0l);
 	~MSNSocket();
 
 	/**

@@ -28,6 +28,8 @@
 #include "kopetestdaction.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
+#include "kopetehistorydialog.h"
+#include "kopetegroup.h"
 #include "msncontact.h"
 #include "msnprotocol.h"
 #include "msnnotifysocket.h"
