@@ -192,6 +192,12 @@ QString KIRCMessage::quote(const QString &str)
 // FIXME: The unquote system is buggy.
 QString KIRCMessage::unquote(const QString &str)
 {
+#if !KDE_IS_VERSION( 3, 1, 90 )
+	// Workaround a KStringHandler bug.
+	if (str.isEmpty())
+		return QString::fromLatin1("");
+#endif
+
 	QString tmp = str;
 
 	char b[3];
