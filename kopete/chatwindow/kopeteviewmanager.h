@@ -21,11 +21,6 @@
 
 #include "kopetemessage.h"
 
-#define NEW_WINDOW 0
-#define GROUP_BY_ACCOUNT 1
-#define GROUP_ALL 2
-
-
 class KopeteMessageManager;
 class KopeteProtocol;
 class KopeteContact;

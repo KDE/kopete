@@ -49,6 +49,8 @@ class KopeteChatWindow : public KParts::MainWindow
 {
 	Q_OBJECT
 
+	enum {NEW_WINDOW, GROUP_BY_ACCOUNT, GROUP_ALL};
+
 public:
 	/**
 	 * Find the appropriate window for a ChatView of the given protocol to
