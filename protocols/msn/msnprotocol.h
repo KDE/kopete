@@ -55,6 +55,36 @@ public:
 	typedef QMap<QString, MSNContact*> ContactList;
 
 	/**
+	 * SyncMode indicates whether settings differing between client and
+	 * server should be propagated to keep them in sync.
+	 * SyncToServer   - Ignore the server setting when sent. Instead, push
+	 *                  the local setting to the server. Used when changing
+	 *                  settings offline.
+	 * SyncFromServer - Update locally stored settings with the value sent
+	 *                  by the server. Used when connecting to the server if
+	 *                  no offline changes are pending to force a sync.
+	 * SyncBoth       - Changes are updated both ways. This is truly a
+	 *                  'first come, first serve' scenario, which breaks if
+	 *                  the 'old' value is sent by one peer before the other
+	 *                  end is able to push the new value. An example of this
+	 *                  is changing the MSN nickname offline - the server can
+	 *                  only be updated after it has sent the old value to
+	 *                  the client during connect, destroying the new setting.
+	 *                  Once connected this is often the most useful setting.
+	 * DontSync       - Do not sync values at all. This is used if settings
+	 *                  are overridden locally, but should not be sent to the
+	 *                  server, nor should the client update server-pushed
+	 *                  values. This can be useful for e.g. contact lists.
+	 */
+	enum SyncMode
+	{
+		DontSync       = 0x00,
+		SyncToServer   = 0x01,
+		SyncFromServer = 0x02,
+		SyncBoth       = 0x03
+	};
+
+	/**
 	 * Get group by number and vice versa.
 	 * Returns -1 resp QString::null if the search term was not found
 	 *
@@ -199,11 +229,6 @@ private slots:
 	void slotGroupListed( QString groupName, uint group );
 
 	/**
-	 * MSN has send the current publicName
-	 */
-	void slotPublicNameReceived(QString publicName);
-
-	/**
 	 * Contact was removed from the list
 	 */
 	void slotContactRemoved(QString handle, QString list, uint serial, uint group );
@@ -233,6 +258,14 @@ private slots:
      * FIXME: The chat session needs an update
 	 */
 	void slotStartChatSession( QString handle );
+
+	/**
+	 * Set our public name
+	 * FIXME: This should be 'setPublicName( foo )' instead of course with
+	 *        the GUI being defined elsewhere. Time to think about more
+	 *        API fixes :(
+	 */
+	void slotChangePublicName();
 
 private:
 	/**
@@ -266,6 +299,7 @@ private:
 	KAction* actionDisconnect;
 	KAction* actionPrefs;
 	KAction* actionUnload;
+	int m_menuTitleId;
 
 	MSNPreferences *mPrefs;
 
@@ -280,6 +314,7 @@ private:
 	QString m_msnId;
 	QString m_password;
 	QString m_publicName;
+	SyncMode m_publicNameSyncMode;
 	QString m_msgHandle;
 
 	KMSNServiceSocket *m_serviceSocket;

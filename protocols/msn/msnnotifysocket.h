@@ -107,7 +107,6 @@ signals:
 	void invitedToChat(QString, QString, QString, QString, QString );
 	void startChat( QString, QString );
 
-	void newPublicName(QString);
 	void publicNameChanged( QString, QString );
 	void newSerial( uint );
 	void statusChanged( QString );

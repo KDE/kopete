@@ -326,7 +326,7 @@ void KMSNServiceSocket::parseCommand(QString str)
 			// do some nice things with it  :-)
 			_publicName = data.section( ' ', 2, 2 ).replace(
 				QRegExp( "%20" ), " " );
-			emit newPublicName(_publicName);
+			emit publicNameChanged( _handle, _publicName );
 		}
 	}
 	else if( cmd == "NLN" )
@@ -441,12 +441,14 @@ void KMSNServiceSocket::parseCommand(QString str)
 	}
 	else if( cmd == "CHG" )
 	{
-		if( !isConnected )
-		{
+		QString status = data.section( ' ', 0, 0 );
+		if( status == "FLN" )
+			isConnected = false;
+		else
 			isConnected = true;
-			emit connected( true );
-		}
-		statusChanged( data.section( ' ', 0, 0 ) );
+
+		emit connected( isConnected );
+		emit statusChanged( status );
 	}
 	else if( cmd == "REA" )
 	{

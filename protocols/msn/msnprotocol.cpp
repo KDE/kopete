@@ -19,6 +19,7 @@
 
 #include <kdebug.h>
 #include <kiconloader.h>
+#include <klineeditdlg.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <ksimpleconfig.h>
@@ -67,7 +68,8 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 	// FIXME: Duplicated, needs to get proper code!
 	m_msnId      = KGlobal::config()->readEntry( "UserID", "" );
 	m_password   = KGlobal::config()->readEntry( "Password", "" );
-	m_publicName = KGlobal::config()->readEntry( "Nick", "" );
+	m_publicName = KGlobal::config()->readEntry( "Nick", "Kopete User" );
+	m_publicNameSyncMode = SyncFromServer;
 
 	initActions();
 
@@ -108,8 +110,6 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 		this, SLOT( slotConnected( bool ) ) );
 	connect( m_serviceSocket, SIGNAL( publicNameChanged( QString, QString ) ),
 		this, SLOT( slotPublicNameChanged( QString, QString ) ) );
-	connect( m_serviceSocket, SIGNAL( newPublicName( QString ) ),
-		this, SLOT( slotPublicNameReceived( QString ) ) );
 	connect( m_serviceSocket,
 		SIGNAL( invitedToChat( QString, QString, QString, QString, QString ) ),
 		this,
@@ -184,7 +184,6 @@ void MSNProtocol::Connect()
 
 		m_msnId      = KGlobal::config()->readEntry( "UserID", "" );
 		m_password   = KGlobal::config()->readEntry( "Password", "" );
-		m_publicName = KGlobal::config()->readEntry( "Nick", "" );
 		m_serviceSocket->connectToMSN( m_msnId, m_password, m_serial,
 			m_silent );
 		statusBarIcon->setMovie( connectingIcon );
@@ -273,11 +272,12 @@ void MSNProtocol::initActions()
 	actionGoOnline = new KAction ( i18n("Go o&nline"), "msn_online", 0, this, SLOT(slotGoOnline()), this, "actionMSNConnect" );
 	actionGoOffline = new KAction ( i18n("Go &Offline"), "msn_offline", 0, this, SLOT(slotGoOffline()), this, "actionMSNConnect" );
 	actionGoAway = new KAction ( i18n("Go &Away"), "msn_away", 0, this, SLOT(slotGoAway()), this, "actionMSNConnect" );
-	m_renameAction = new KAction ( i18n( "&Change Public Name..." ),
+	m_renameAction = new KAction ( i18n( "&Change Nickname..." ),
 		QString::null, 0, this, SLOT( slotChangePublicName() ),
 		this, "m_renameAction" );
 	actionStatusMenu = new KActionMenu( "MSN", this );
-	actionStatusMenu->popupMenu()->insertTitle( *( statusBarIcon->pixmap() ),
+	m_menuTitleId = actionStatusMenu->popupMenu()->insertTitle(
+		*( statusBarIcon->pixmap() ),
 		i18n( "%1 (%2)" ).arg( m_publicName ).arg( m_msnId ) );
 	actionStatusMenu->insert( actionGoOnline );
 	actionStatusMenu->insert( actionGoOffline );
@@ -337,18 +337,29 @@ void MSNProtocol::slotGoAway()
 	m_serviceSocket->setStatus( AWY );
 }
 
-void MSNProtocol::slotPublicNameReceived(QString publicName)
-{
-	m_publicName = publicName;
-}
-
 void MSNProtocol::slotConnected( bool c )
 {
 	mIsConnected = c;
 	if ( c )
 	{
-		m_publicName = m_serviceSocket->_publicName;
+		// Sync public name when needed
+		if( ( m_publicNameSyncMode & SyncToServer ) &&
+			m_publicName != m_serviceSocket->_publicName )
+		{
+			kdDebug() << "MSNProtocol::slotConnected: Syncing public name to "
+				<< m_publicName << endl;
+			setPublicName( m_publicName );
+		}
+		else
+		{
+			kdDebug() << "MSNProtocol::slotConnected: Leaving public name as "
+				<< m_publicName << endl;
+		}
+
 		mIsConnected = true;
+
+		// Now pending changes are updated we want to sync both ways
+		m_publicNameSyncMode = SyncBoth;
 
 		QStringList contacts;
 		QString group, publicname, userid;
@@ -411,6 +422,12 @@ void MSNProtocol::slotConnected( bool c )
 
 		m_status = FLN;
 		m_serial = 0;
+
+		// Reset flags. They can't be set in the connect method, because
+		// offline changes might have been made before. Instead the c'tor
+		// sets the defaults, and the disconnect slot resets those defaults
+		// FIXME: Can't we share this code?
+		m_publicNameSyncMode = SyncFromServer;
 	}
 }
 
@@ -864,12 +881,29 @@ void MSNProtocol::slotStatusChanged( QString status )
 
 void MSNProtocol::slotPublicNameChanged(QString handle, QString publicName)
 {
-	if( handle == m_msnId )
+	if( handle == m_msnId && ( m_publicNameSyncMode & SyncFromServer ) )
+	{
 		m_publicName = publicName;
+		m_publicNameSyncMode = SyncBoth;
+
+		actionStatusMenu->popupMenu()->changeTitle( m_menuTitleId,
+			*( statusBarIcon->pixmap() ),
+			i18n( "%1 (%2)" ).arg( m_publicName ).arg( m_msnId ) );
+
+		// Also sync the config file
+		KConfig *config=KGlobal::config();
+		config->setGroup( "MSN" );
+		config->writeEntry( "Nick", m_publicName );
+		config->sync();
+		emit settingsChanged();
+	}
 }
 
 void MSNProtocol::setPublicName( const QString &publicName )
 {
+	kdDebug() << "MSNProtocol::setPublicName: Setting name to "
+		<< publicName << "..." << endl;
+
 	m_serviceSocket->changePublicName( publicName );
 }
 
@@ -967,6 +1001,42 @@ void MSNProtocol::slotStartChatSession( QString handle )
 void MSNProtocol::contactUnBlock( QString handle )
 {
 	m_serviceSocket->removeContact( handle, 0, BL );
+}
+
+void MSNProtocol::slotChangePublicName()
+{
+	bool ok;
+	QString name = KLineEditDlg::getText(
+		i18n( "Change Nickname - MSN Plugin - Kopete" ),
+		i18n( "Please enter the new public name by which you want to be "
+			"visible to your friends on MSN." ),
+		m_publicName, &ok );
+
+	if( ok )
+	{
+		// For some stupid reasons the public name is not allowed to contain
+		// the text 'msn'. It would result in an error 209 from the server.
+		if( name.contains( "msn", false ) )
+		{
+			KMessageBox::error( 0L,
+				i18n( "Sorry, but your nickname is "
+					"not allowed to contain the text 'MSN'.\n"
+					"Your nickname has not been changed." ),
+				i18n( "Change Nickname - MSN Plugin - Kopete" ) );
+			return;
+		}
+
+		if( isConnected() )
+			setPublicName( name );
+		else
+		{
+			// Bypass the protocol, it doesn't work, call the slot
+			// directly. Upon connect the name will be synced.
+			// FIXME: Use a single code path instead!
+			slotPublicNameChanged( m_msnId, name );
+			m_publicNameSyncMode = SyncToServer;
+		}
+	}
 }
 
 #include "msnprotocol.moc"
