@@ -29,7 +29,7 @@
 
 KopeteAwayAction::KopeteAwayAction(const QString &text, const QIconSet &pix, const KShortcut &cut, 
 	const QObject *receiver, const char *slot, QObject *parent, const char *name ) :
-	KSelectAction(text, pix, cut, receiver, slot, parent, name )
+	KSelectAction(text, pix, cut, parent, name )
 {
 	QObject::connect( KopeteAway::getInstance(), SIGNAL( messagesChanged() ), 
 		this, SLOT( slotAwayChanged() ) );
