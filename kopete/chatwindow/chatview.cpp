@@ -561,7 +561,6 @@ void ChatView::nickComplete()
 			QString rightText = fullText.right( fullText.length() - lastSpace );
 			if( para == 0 && firstSpace == 0 )
 			{
-				m_Match += QString::fromLatin1(": ");
 				rightText = m_Match + QString::fromLatin1(": ");
 				parIdx += 2;
 			}
