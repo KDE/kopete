@@ -732,10 +732,6 @@ void ChatView::appendMessage(KopeteMessage &message)
 		{
 			case KopeteMessage::Highlight:
 				setTabState( Highlighted );
-#if KDE_IS_VERSION( 3, 1, 90 )
-				if( m_mainWindow )
-					KWin::setState( m_mainWindow->winId(), NET::DemandsAttention );
-#endif
 				break;
 			case KopeteMessage::Normal:
 				if(m.direction() == KopeteMessage::Inbound || m.direction() == KopeteMessage::Action)

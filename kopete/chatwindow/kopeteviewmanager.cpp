@@ -180,8 +180,11 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 			if( msgText.length() > 90 )
 				msgText = msgText.left(88) + QString::fromLatin1("...");
 
-			int winId = 0;  //TODO: use the chatwindoiws's winid
-				//KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
+			int winId = 0;  //KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
+			QWidget *w=dynamic_cast<QWidget*>(manager->view(false));
+			while(w && !w->isTopLevel())
+				w=w->parentWidget(true);
+			if(w) winId=w->winId();
 
 			switch( msg.importance() )
 			{

@@ -238,7 +238,7 @@ Comment[ru]=Сообщение было подчеркнуто, поскольк
 Comment[sr]=Порука је истакнута зато што је садржала ваш надимак
 Comment[sv]=Ett meddelande markerades eftersom det innehöll ditt smeknamn
 default_sound=Kopete_Received.ogg
-default_presentation=1
+default_presentation=65
 
 
 [msn_mail]

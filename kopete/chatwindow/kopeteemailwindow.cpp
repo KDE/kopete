@@ -412,9 +412,6 @@ void KopeteEmailWindow::appendMessage(KopeteMessage &message)
 
 		d->unreadMessageFrom = message.from()->displayName();
 		QTimer::singleShot( 1000, this, SLOT(slotMarkMessageRead()) );
-#if KDE_IS_VERSION( 3, 1, 90 )
-		KWin::setState( winId(), NET::DemandsAttention );
-#endif
 	}
 }
 
