@@ -18,6 +18,19 @@
 
 #include "kopetemessage.moc"
 
+KopeteMessage::KopeteMessage()
+{
+	mTimestamp = QDateTime::currentDateTime();
+	mFrom = "Unknown";
+	mTo = "Unknown";
+	mBody = "Body not set";
+	mDirection = Outbound;
+	mBg = QColor();
+	mFg = QColor();
+	mFont = QFont();
+}
+
+
 KopeteMessage::KopeteMessage(QString from, QString to, QString body, MessageDirection direction, QColor fg, QColor bg, QFont fnt)
 {
 	mTimestamp = QDateTime::currentDateTime();

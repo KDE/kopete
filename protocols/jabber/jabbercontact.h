@@ -73,7 +73,7 @@ class JabberContact:public KopeteContact {
     void slotNewMessage(const JabMessage &);
     void slotCloseHistoryDialog();
     void slotViewHistory();
-    void slotSendMsg(const KopeteMessage &);
+    void slotSendMsg(const KopeteMessage);
     void slotResourceAvailable(const Jid &, const JabResource &);
     void slotResourceUnavailable(const Jid &);
     void slotRemoveFromGroup();

@@ -77,20 +77,25 @@ void KopeteMessageManager::readMessages()
 		connect ( mChatWindow, SIGNAL(destroyed()), this, SLOT(chatWindowClosing()) );
 	}
 	
-	KopeteMessage *tmp;
-	while ( tmp = mMessageQueue.take() )
+	for (KopeteMessageList::Iterator it = mMessageQueue.begin(); it != mMessageQueue.end(); ++it)
 	{
-			mChatWindow->messageReceived( *(tmp) );
+		KopeteMessage tmp = (*it);
+		mChatWindow->messageReceived( tmp );
+		mMessageQueue.remove(it);
 	}
 	mChatWindow->show();	// show message window again
-	
+}
+
+void KopeteMessageManager::slotReadMessages()
+{
+	readMessages();
 }
 
 void KopeteMessageManager::messageSentFromWindow(const QString &message)
 {
 	QString body = message;
 	KopeteMessage tmpmessage(mUser->userID(), (mContactList.first())->userID(), body, KopeteMessage::Outbound);
-	emit messageSent (tmpmessage);
+	emit messageSent ( tmpmessage );
 }
 
 void KopeteMessageManager::chatWindowClosing()
@@ -115,7 +120,8 @@ void KopeteMessageManager::cancelUnreadMessageEvent()
 
 void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 {
-	mMessageQueue.append( &msg);
+	//mMessageQueue.append( KopeteMessage( msg.timestamp(), msg.from(), msg.to(), msg.body(), msg.direction(),msg.fg(), msg.bg(), msg.font()));
+	mMessageQueue.append(msg);
 	if( mLogger )
 	{
 		mLogger->append( msg );
@@ -124,7 +130,7 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 	/* We dont need an event if it already exits or if we are in popup mode */
 	if ( (mUnreadMessageEvent == 0L) && ( mReadMode != Popup) && (msg.direction() == KopeteMessage::Inbound) )
 	{
-		mUnreadMessageEvent = new KopeteEvent( msg.from(), "newmsg", this, SLOT(readMessages()));
+		mUnreadMessageEvent = new KopeteEvent( msg.from(), "newmsg", this, SLOT(slotReadMessages()));
 		kopeteapp->notifyEvent( mUnreadMessageEvent );
 	}
 

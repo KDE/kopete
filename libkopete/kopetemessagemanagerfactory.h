@@ -19,6 +19,7 @@
 
 #include <qobject.h>
 #include <qptrlist.h>
+#include <qvaluelist.h>
 
 /**
  * @author Duncan Mac-Vicar Prett
@@ -28,7 +29,7 @@ class KopeteMessage;
 class KopeteContact;
 
 typedef QPtrList<KopeteContact>        KopeteContactList;
-typedef QPtrList<KopeteMessage>        KopeteMessageList;
+typedef QValueList<KopeteMessage>        KopeteMessageList;
 typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
 
 class KopeteMessageManagerFactory : public QObject

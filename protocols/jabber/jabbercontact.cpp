@@ -57,7 +57,7 @@ void JabberContact::initContact(QString, QString name) {
     slotUpdateContact(mUserID, "", STATUS_OFFLINE, "");
 	theContacts.append(this);
 	msgManager = kopeteapp->sessionFactory()->create(mProtocol->myself(), theContacts);
-	connect(msgManager, SIGNAL(messageSent(const KopeteMessage &)), this, SLOT(slotSendMsg(const KopeteMessage &)));
+	connect(msgManager, SIGNAL(messageSent(const KopeteMessage)), this, SLOT(slotSendMsg(const KopeteMessage)));
 }
 
 void JabberContact::initActions() {
@@ -235,7 +235,7 @@ void JabberContact::slotCloseHistoryDialog() {
 	historyDialog = 0L;
 }
 
-void JabberContact::slotSendMsg(const KopeteMessage &message) {
+void JabberContact::slotSendMsg(const KopeteMessage message) {
 	kdDebug() << "Jabber contact: slotSendMsg called: to " << message.to() << ", from " << message.from() << ", body: " << message.body() << "." << endl;
 	JabMessage jabMessage;
 	jabMessage.to = message.to();

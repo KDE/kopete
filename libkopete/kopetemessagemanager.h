@@ -18,6 +18,7 @@
 #define __KOPETEMESSAGEMANAGER_H__
 
 #include <qptrlist.h>
+#include <qvaluelist.h>
 #include <qobject.h>
 
 #include "kopetemessage.h"
@@ -33,7 +34,7 @@ class KopeteMessageLog;
 
 
 typedef QPtrList<KopeteContact>        KopeteContactList;
-typedef QPtrList<KopeteMessage>        KopeteMessageList;
+typedef QValueList<KopeteMessage>        KopeteMessageList;
 typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
 
 class KopeteMessageManager : public QObject
@@ -95,13 +96,14 @@ signals:
 	 * A message has been sent by the user or a plugin. The protocol should
 	 * connect to this signal to actually send the message over the wire.
 	 */
-	void messageSent( const KopeteMessage &msg );
+	void messageSent( const KopeteMessage msg );
 	void dying( KopeteMessageManager *);
 
 protected slots:
 	void cancelUnreadMessageEvent();
     void chatWindowClosing();
 	void messageSentFromWindow( const QString &message);
+	void slotReadMessages();
 private:
 	/**
 	 * Create a message manager. This constructor is private, because the

@@ -23,9 +23,8 @@
 #include <qfont.h>
 #include <qcolor.h>
 
-class KopeteMessage : public QObject
+class KopeteMessage
 {
-	Q_OBJECT
 public:
 	/**
 		Direction of a message. Inbound is from the chat partner, Outbound is
@@ -38,6 +37,7 @@ public:
 		Please note that body -must- be valid HTML, so all HTML control
 		characters must be escaped.
 	*/
+	KopeteMessage();
 	KopeteMessage(QString from, QString to, QString body, MessageDirection direction, QColor fg = QColor(), QColor bg = QColor(), QFont fnt = QFont() );
 	KopeteMessage(QDateTime timestamp, QString from, QString to, QString body, MessageDirection direction, QColor fg = QColor(), QColor bg = QColor(), QFont fnt = QFont() );
 
