@@ -32,7 +32,6 @@
 #include "ircusercontact.h"
 #include "ircaccount.h"
 #include "ircprotocol.h"
-#include "ksparser.h"
 
 IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QString &channel, KopeteMetaContact *metac)
 	: IRCContact(contactManager, channel, metac, "irc_channel")
@@ -190,8 +189,7 @@ void IRCChannelContact::slotChannelTopic(const QString &channel, const QString &
 		mTopic = topic;
 		manager()->setDisplayName( caption() );
 		KopeteMessage msg((KopeteContact*)this, mMyself, i18n("Topic for %1 is %2").arg(m_nickName).arg(mTopic), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		msg.setImportance( KopeteMessage::Low); //set the importance manualy to low
-		manager()->appendMessage(msg);
+		/*manager()->*/appendMessage(msg);
 	}
 }
 
@@ -511,7 +509,6 @@ void IRCChannelContact::privateMessage(IRCContact *from, IRCContact *to, const Q
 	if(to == this)
 	{
 		KopeteMessage msg(from, manager()->members(), message, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat);
-		msg.setBody( KSParser::parse( msg.escapedBody() ), KopeteMessage::RichText );
 		/*to->*/appendMessage(msg);
 	}
 }
@@ -521,7 +518,6 @@ void IRCChannelContact::action(IRCContact *from, IRCContact *to, const QString &
 	if(to == this)
 	{
 		KopeteMessage msg(from, manager()->members(), action, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat);
-		msg.setBody( KSParser::parse( msg.escapedBody() ), KopeteMessage::RichText );
 		/*to->*/appendMessage(msg);
 	}
 }

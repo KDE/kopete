@@ -150,6 +150,7 @@ void IRCServerContact::slotIncomingMotd( const QStringList &motd )
 
 void IRCServerContact::appendMessage( KopeteMessage &msg )
 {
+	msg.setBody( KSParser::parse( msg.escapedBody() ), KopeteMessage::RichText );
 	msg.setImportance( KopeteMessage::Low ); //to don't distrub the user
 
 	if( m_msgManager && m_msgManager->view(false) )

@@ -84,6 +84,12 @@ public:
 private slots:
 	void slotMessageFilter( KopeteMessage &msg );
 
+	void slotRawCommand( const QString &args, KopeteMessageManager *manager );
+	void slotQuoteCommand( const QString &args, KopeteMessageManager *manager );
+	void slotCtcpCommand( const QString &args, KopeteMessageManager *manager );
+
+	void slotMotdCommand( const QString &args, KopeteMessageManager *manager);
+	void slotListCommand( const QString &args, KopeteMessageManager *manager);
 	void slotTopicCommand( const QString &args, KopeteMessageManager *manager);
 	void slotJoinCommand( const QString &args, KopeteMessageManager *manager);
 	void slotNickCommand( const QString &args, KopeteMessageManager *manager);
@@ -100,8 +106,6 @@ private slots:
 	void slotDevoiceCommand( const QString &args, KopeteMessageManager *manager);
 	void slotQuitCommand( const QString &args, KopeteMessageManager *manager);
 	void slotPartCommand( const QString &args, KopeteMessageManager *manager);
-	void slotQuoteCommand( const QString &args, KopeteMessageManager *manager);
-	void slotMotdCommand( const QString &args, KopeteMessageManager *manager);
 	void slotInviteCommand( const QString &args, KopeteMessageManager *manager);
 
 private:

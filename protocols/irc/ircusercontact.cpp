@@ -26,7 +26,6 @@
 #include "ircchannelcontact.h"
 #include "ircaccount.h"
 #include "ircprotocol.h"
-#include "ksparser.h"
 #include "kopetemetacontact.h"
 
 IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString &nickname, KopeteMetaContact *m )
@@ -251,7 +250,6 @@ void IRCUserContact::privateMessage(IRCContact *from, IRCContact *to, const QStr
 		if(to==account()->myself())
 		{
 			KopeteMessage msg(from, from->manager()->members(), message, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat);
-			msg.setBody( KSParser::parse( msg.escapedBody() ), KopeteMessage::RichText );
 			from->appendMessage(msg);
 		}
 		else
@@ -268,14 +266,12 @@ void IRCUserContact::action(IRCContact *from, IRCContact *to, const QString &act
 	if( to == this && from == m_account->mySelf() )
 	{
 		KopeteMessage msg(from, to->manager()->members(), action, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat);
-		msg.setBody( KSParser::parse( msg.escapedBody() ), KopeteMessage::RichText );
-		to->manager()->appendMessage(msg);
+		to->appendMessage(msg);
 	}
 	else if( from == this && to == m_account->mySelf() )
 	{
 		KopeteMessage msg(from, from->manager()->members(), action, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat);
-		msg.setBody( KSParser::parse( msg.escapedBody() ), KopeteMessage::RichText );
-		from->manager()->appendMessage(msg);
+		from->appendMessage(msg);
 	}
 }
 

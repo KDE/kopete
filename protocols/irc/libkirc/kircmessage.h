@@ -38,12 +38,23 @@ public:
 
 	~KIRCMessage();
 
-	static KIRCMessage writeString(QIODevice *dev, const QString &str, QTextCodec *codec=0);
+	static KIRCMessage writeRawMessage(QIODevice *dev, const QString &str, QTextCodec *codec=0);
+	static KIRCMessage writeMessage(QIODevice *dev, const QString &str, QTextCodec *codec=0);
+
+	static KIRCMessage writeMessage(QIODevice *dev,
+			const QString &command, const QString &arg, const QString &suffix,
+			QTextCodec *codec=0);
 	static KIRCMessage writeMessage(QIODevice *dev,
 			const QString &command, const QStringList &args, const QString &suffix,
 			QTextCodec *codec=0);
-	static KIRCMessage writeMessage(QIODevice *dev,
-			const QString &command, const QString &arg, const QString &suffix,
+
+	static KIRCMessage writeCtcpMessage(QIODevice *dev,
+			const QString &command, const QString &to /*prefix*/, const QString &suffix,
+			const QString &ctcpMessage,
+			QTextCodec *codec=0);
+	static KIRCMessage writeCtcpMessage(QIODevice *dev,
+			const QString &command, const QString &to /*prefix*/, const QString &suffix,
+			const QString &ctcpCommand, const QString &ctcpArg, const QString &ctcpSuffix,
 			QTextCodec *codec=0);
 	static KIRCMessage writeCtcpMessage(QIODevice *dev,
 			const QString &command, const QString &to /*prefix*/, const QString &suffix,

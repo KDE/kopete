@@ -357,13 +357,13 @@ void IRCContact::listedChannel(const QString &channel, uint users, const QString
 	{
 		QString message = i18n("%1\t(%2 Users) Topic is %3").arg(channel).arg(users).arg(topic);
 		KopeteMessage msg(this, manager()->members(), message, KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		msg.setBody( KSParser::parse( msg.escapedBody() ), KopeteMessage::RichText );
 		appendMessage(msg);
 	}
 }
 
 void IRCContact::appendMessage( KopeteMessage &msg )
 {
+	msg.setBody( KSParser::parse( msg.escapedBody() ), KopeteMessage::RichText );
 	manager()->appendMessage(msg);
 }
 

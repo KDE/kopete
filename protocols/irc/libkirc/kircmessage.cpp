@@ -77,10 +77,10 @@ KIRCMessage::~KIRCMessage()
 	if(m_ctcpMessage) delete m_ctcpMessage;
 }
 
-KIRCMessage KIRCMessage::writeString(QIODevice *dev, const QString &str, QTextCodec *codec)
+KIRCMessage KIRCMessage::writeRawMessage(QIODevice *dev, const QString &message, QTextCodec *codec)
 {
 	QCString s;
-	QString txt = str + QString::fromLatin1("\r\n");
+	QString txt = message + QString::fromLatin1("\r\n");
 
 	// FIXME: codecForContent() is useless on QStrings, they are already unicode!
 	// Pass a REAL char* like QSocket::readBlock() provides before doing any
@@ -97,22 +97,12 @@ KIRCMessage KIRCMessage::writeString(QIODevice *dev, const QString &str, QTextCo
 	kdDebug(14121) << ">> " << s;
 	// FIXME: Should check the amount of data really writen.
 	dev->writeBlock(s.data(), s.length());
-	return parse(str);
+	return parse(message);
 }
 
-KIRCMessage KIRCMessage::writeMessage(QIODevice *dev,
-		const QString &command, const QStringList &args, const QString &suffix,
-		QTextCodec *codec)
+KIRCMessage KIRCMessage::writeMessage(QIODevice *dev, const QString &message, QTextCodec *codec)
 {
-	QString msg = command;
-	for (QStringList::ConstIterator it = args.begin(); it != args.end(); ++it)
-		msg += QChar(' ') + *it;
-	if (!suffix.isNull())
-		msg += QString::fromLatin1(" :") + suffix;
-
-	msg = quote(ctcpQuote(msg));
-
-	return writeString(dev, msg, codec);
+	return writeRawMessage(dev, quote(message), codec);
 }
 
 KIRCMessage KIRCMessage::writeMessage(QIODevice *dev,
@@ -125,9 +115,36 @@ KIRCMessage KIRCMessage::writeMessage(QIODevice *dev,
 	if (!suffix.isNull())
 		msg += QString::fromLatin1(" :") + suffix;
 
-	msg = quote(ctcpQuote(msg));
+	return writeMessage(dev, msg, codec);
+}
 
-	return writeString(dev, msg, codec);
+KIRCMessage KIRCMessage::writeMessage(QIODevice *dev,
+		const QString &command, const QStringList &args, const QString &suffix,
+		QTextCodec *codec)
+{
+	return writeMessage(dev, command, args.join(QChar(' ')), suffix, codec);
+}
+
+KIRCMessage KIRCMessage::writeCtcpMessage(QIODevice *dev,
+		const QString &command, const QString &to /*prefix*/, const QString &suffix,
+		const QString &ctcpMessage,
+		QTextCodec *codec)
+{
+	return writeMessage(dev, command, to, suffix + QChar(0x01) + ctcpQuote(ctcpMessage) + QChar(0x01), codec);
+}
+
+KIRCMessage KIRCMessage::writeCtcpMessage(QIODevice *dev,
+		const QString &command, const QString &to /*prefix*/, const QString &suffix,
+		const QString &ctcpCommand, const QString &ctcpArg, const QString &ctcpSuffix,
+		QTextCodec *codec)
+{
+	QString ctcpMsg = ctcpCommand;
+	if (!ctcpArg.isNull())
+		ctcpMsg += QChar(' ') + ctcpArg;
+	if (!ctcpSuffix.isNull())
+		ctcpMsg += QString::fromLatin1(" :") + ctcpSuffix;
+
+	return writeCtcpMessage(dev, command, to, suffix, ctcpMsg, codec);
 }
 
 KIRCMessage KIRCMessage::writeCtcpMessage(QIODevice *dev,
@@ -135,20 +152,7 @@ KIRCMessage KIRCMessage::writeCtcpMessage(QIODevice *dev,
 		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix,
 		QTextCodec *codec)
 {
-	QString msg = command+QChar(' ')+getNickFromPrefix(to)+QString::fromLatin1(" :");
-	if (!suffix.isNull())
-		msg += suffix;
-	msg = ctcpQuote(msg);
-
-	QString ctcpMsg = ctcpCommand;
-	for (QStringList::ConstIterator it = ctcpArgs.begin(); it != ctcpArgs.end(); ++it)
-		ctcpMsg += QChar(' ') + *it;
-	if (!ctcpSuffix.isNull())
-		ctcpMsg += QString::fromLatin1(" :") + ctcpSuffix;
-	ctcpMsg = ctcpQuote(ctcpMsg);
-
-	msg = quote(msg + QChar(0x01) + ctcpMsg + QChar(0x01));
-	return writeString(dev, msg, codec);
+	return writeCtcpMessage(dev, command, to, suffix, ctcpCommand, ctcpArgs.join(QChar(' ')), ctcpSuffix, codec);
 }
 
 // if codec==0 => autodetect
@@ -247,8 +251,6 @@ QString KIRCMessage::unquote(const QString &str)
 
 QString KIRCMessage::ctcpQuote(const QString &str)
 {
-	return str;
-	
 	QString tmp = str;
 	tmp.replace( QChar('\\'), QString::fromLatin1("\\\\"));
 	tmp.replace( QChar((uchar)0x01), QString::fromLatin1("\\1"));
@@ -258,8 +260,6 @@ QString KIRCMessage::ctcpQuote(const QString &str)
 // FIXME: The unquote system is buggy.
 QString KIRCMessage::ctcpUnquote(const QString &str)
 {
-	return str;
-	
 	QString tmp = str;
 	tmp.replace(QString::fromLatin1("\\\\"), QChar('\\'));
 	tmp.replace(QString::fromLatin1("\\1"), QChar((uchar)0x01));

@@ -95,7 +95,7 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 
 //	Miscellaneous messages
 	addIrcMethod("PING",	&KIRC::ping,	0,	0);
-//	addIrcMethod("PONG",	&KIRC::pong,	0,	0);
+	addIrcMethod("PONG",	&KIRC::pong,	0,	0);
 //	addIrcMethod("ERROR",	new KIRCMethodFunctor_SS_PrefixSuffix<KIRC>(this, &KIRC::incomingError,		0,	0));
 
 //	Optional features
@@ -256,16 +256,17 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 
 //	CTCP Queries
 	addCtcpQueryIrcMethod("ACTION",		&KIRC::CtcpQuery_action,	-1,	-1,	"");
-	addCtcpQueryIrcMethod("PING",		&KIRC::CtcpQuery_pingPong,	1,	1,	"");
-	addCtcpQueryIrcMethod("VERSION",	&KIRC::CtcpQuery_version,	-1,	0,	"");
-	addCtcpQueryIrcMethod("USERINFO",	&KIRC::CtcpQuery_userInfo,	-1,	0,	"");
 	addCtcpQueryIrcMethod("CLIENTINFO",	&KIRC::CtcpQuery_clientInfo,	-1,	1,	"");
-	addCtcpQueryIrcMethod("TIME",		&KIRC::CtcpQuery_time,		-1,	0,	"");
-	addCtcpQueryIrcMethod("SOURCE",		&KIRC::CtcpQuery_source,	-1,	0,	"");
-	addCtcpQueryIrcMethod("FINGER",		&KIRC::CtcpQuery_finger,	-1,	0,	"");
 	addCtcpQueryIrcMethod("DCC",		&KIRC::CtcpQuery_dcc,		4,	5,	"");
+	addCtcpQueryIrcMethod("FINGER",		&KIRC::CtcpQuery_finger,	-1,	0,	"");
+	addCtcpQueryIrcMethod("PING",		&KIRC::CtcpQuery_pingPong,	1,	1,	"");
+	addCtcpQueryIrcMethod("SOURCE",		&KIRC::CtcpQuery_source,	-1,	0,	"");
+	addCtcpQueryIrcMethod("TIME",		&KIRC::CtcpQuery_time,		-1,	0,	"");
+	addCtcpQueryIrcMethod("USERINFO",	&KIRC::CtcpQuery_userInfo,	-1,	0,	"");
+	addCtcpQueryIrcMethod("VERSION",	&KIRC::CtcpQuery_version,	-1,	0,	"");
 
 //	CTCP Replies
+	addCtcpReplyIrcMethod("ERRMSG",		&KIRC::CtcpReply_errorMsg,	1,	-1,	"");
 	addCtcpReplyIrcMethod("PING",		&KIRC::CtcpReply_pingPong,	1,	1,	"");
 	addCtcpReplyIrcMethod("VERSION",	&KIRC::CtcpReply_version,	-1,	-1,	"");
 
@@ -350,7 +351,7 @@ void KIRC::slotConnectionClosed()
 	m_sock.reset();
 }
 
-void KIRC::error(int)
+void KIRC::error(int /*errCode*/)
 {
 	if (m_sock.socketStatus () != KExtendedSocket::connecting)
 	{
@@ -405,15 +406,31 @@ bool KIRC::canSend( bool mustBeConnected ) const
 		(!mustBeConnected && m_status==Authentifying);
 }
 
-KIRCMessage KIRC::writeString(const QString &str, bool mustBeConnected)
+/* Message will be send as passed.
+ */
+KIRCMessage KIRC::writeRawMessage(const QString &rawMsg, bool mustBeConnected)
 {
 	if(canSend(mustBeConnected))
 	{
-		KIRCMessage ircmsg = KIRCMessage::writeString(&m_sock, str);
+		KIRCMessage ircmsg = KIRCMessage::writeRawMessage(&m_sock, rawMsg);
 		emit sentMessage(ircmsg);
 		return ircmsg;
 	}
-	kdDebug(14120) << "Must be connected error:" << str << endl;
+	kdDebug(14120) << "Must be connected error:" << rawMsg << endl;
+	return KIRCMessage();
+}
+
+/* Message will be quoted before behing send.
+ */
+KIRCMessage KIRC::writeMessage(const QString &msg, bool mustBeConnected)
+{
+	if(canSend(mustBeConnected))
+	{
+		KIRCMessage ircmsg = KIRCMessage::writeMessage(&m_sock, msg);
+		emit sentMessage(ircmsg);
+		return ircmsg;
+	}
+	kdDebug(14120) << "Must be connected error:" << msg << endl;
 	return KIRCMessage();
 }
 
@@ -442,10 +459,36 @@ KIRCMessage KIRC::writeMessage(const QString &command, const QString &arg, const
 }
 
 KIRCMessage KIRC::writeCtcpMessage(const char *command, const QString &to /* prefix */, const QString &suffix,
+		const QString &ctcpMessage, bool emitRepliedCtcp)
+{
+	KIRCMessage msg = KIRCMessage::writeCtcpMessage(&m_sock,
+			QString::fromLatin1(command), getNickFromPrefix(to), suffix, ctcpMessage);
+
+	emit sentMessage(msg);
+	if(emitRepliedCtcp && msg.isValid() && msg.hasCtcpMessage())
+		emit repliedCtcp(msg.ctcpMessage().command(), msg.ctcpMessage().ctcpRaw());
+
+	return msg;
+}
+
+KIRCMessage KIRC::writeCtcpMessage(const char *command, const QString &to /* prefix */, const QString &suffix,
+		const QString &ctcpCommand, const QString &ctcpArg, const QString &ctcpSuffix, bool emitRepliedCtcp)
+{
+	KIRCMessage msg = KIRCMessage::writeCtcpMessage(&m_sock,
+			QString::fromLatin1(command), getNickFromPrefix(to), suffix, ctcpCommand, ctcpArg, ctcpSuffix);
+
+	emit sentMessage(msg);
+	if(emitRepliedCtcp && msg.isValid() && msg.hasCtcpMessage())
+		emit repliedCtcp(msg.ctcpMessage().command(), msg.ctcpMessage().ctcpRaw());
+
+	return msg;
+}
+
+KIRCMessage KIRC::writeCtcpMessage(const char *command, const QString &to /* prefix */, const QString &suffix,
 		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix, bool emitRepliedCtcp)
 {
 	KIRCMessage msg = KIRCMessage::writeCtcpMessage(&m_sock,
-			QString::fromLatin1(command), to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix);
+			QString::fromLatin1(command), getNickFromPrefix(to), suffix, ctcpCommand, ctcpArgs, ctcpSuffix);
 
 	emit sentMessage(msg);
 	if(emitRepliedCtcp && msg.isValid() && msg.hasCtcpMessage())
@@ -460,13 +503,14 @@ void KIRC::slotReadyRead()
 	// close the socket unexpectedly
 	bool parseSuccess;
 
-	while(	m_sock.socketStatus()==KExtendedSocket::connected &&
+//	while(	m_sock.socketStatus()==KExtendedSocket::connected &&
+//		m_sock.canReadLine())
+	if(	m_sock.socketStatus()==KExtendedSocket::connected &&
 		m_sock.canReadLine())
 	{
 		KIRCMessage msg = KIRCMessage::parse(&m_sock, &parseSuccess);
 		if(parseSuccess)
 		{
-//			msg.dump();
 			KIRCMethodFunctorCall *method = m_IrcMethods[msg.command()];
 			if(method && method->isValid())
 			{
@@ -479,29 +523,26 @@ void KIRC::slotReadyRead()
 					{
 						kdDebug(14120) << "Method error for line:" << msg.raw() << endl;
 						emit internalError(MethodFailed, msg);
-//						KMessageBox::error(0, msg.raw(), "Method error");
 					}
 				}
 				else
 				{
 					kdDebug(14120) << "Args are invalid for line:" << msg.raw() << endl;
 					emit internalError(InvalidNumberOfArguments, msg);
-//					KMessageBox::error(0, msg.raw(), "Invalid args");
 				}
 			}
 			else
 			{
 				kdDebug(14120) << "Unknown IRC command for line:" << msg.raw() << endl;
 				emit internalError(UnknownCommand, msg);
-//				KMessageBox::error(0, msg.raw(), "Unknown IRC line");
 			}
 		}
 		else
 		{
 			emit incomingUnknown(msg.raw());
 			emit internalError(ParsingFailed, msg);
-//			KMessageBox::error(0, msg.raw(), "Parse Failed");
 		}
+		QTimer::singleShot(0, this, SLOT(slotReadyRead())); // Event loop.
 	}
 
 	if(m_sock.socketStatus()!=KExtendedSocket::connected)
@@ -680,13 +721,19 @@ void KIRC::names(const QStringList &channels)
 	if( channel.size()>0 )
 		while()
 			arg += "," + channel(index)
-	writeMessage("NAMES");
+	writeMessage("NAMES", QString::null);
 }
 */
 void KIRC::list()
 {
-	writeMessage("LIST");
+	writeMessage("LIST", QString::null);
 }
+
+void KIRC::motd(const QString &server)
+{
+	writeMessage("MOTD", server);
+}
+
 /*
 void KIRC::invite()
 {
@@ -849,7 +896,7 @@ void KIRC::killUser(const QString &nickname, const QString &comment)
 //	FIXME: <server1> [ <server2> ]
 void KIRC::ping(const QString &server1, const QString &server2)
 {
-	writeMessage("PING", server1 << server2);
+	writeMessage("PING", QStringList(server1) << server2);
 }
 */
 bool KIRC::ping(const KIRCMessage &msg)
@@ -858,14 +905,14 @@ bool KIRC::ping(const KIRCMessage &msg)
 	// maybe should emit one signal.
 	return true;
 }
-/*
+
 //	received after a ping command
-bool KIRC::pong(const KIRCMessage &msg)
+bool KIRC::pong(const KIRCMessage &/*msg*/)
 {
 	// maybe should emit one signal.
 	return true;
 }
-*/
+
 void KIRC::setAway(bool isAway, const QString &awayMessage)
 {
 	if(isAway)
@@ -874,7 +921,7 @@ void KIRC::setAway(bool isAway, const QString &awayMessage)
 		else
 			writeMessage("AWAY", QString::null, QString::fromLatin1("I'm away."));
 	else
-		writeMessage("AWAY");
+		writeMessage("AWAY", QString::null);
 }
 /*
 bool KIRC::away(const KIRCMessage &msg)
@@ -889,13 +936,13 @@ bool KIRC::away(const KIRCMessage &msg)
 void KIRC::serverRehash()
 {
 	// FIXME: should we check operator rigth to avoid one error msg?
-	writeMessage("REHASH");
+	writeMessage("REHASH", QString::null);
 }
 
 void KIRC::serverRestart()
 {
 	// FIXME: should we check operator rigth to avoid one error msg?
-	writeMessage("RESTART");
+	writeMessage("RESTART", QString::null);
 }
 
 void KIRC::summonUser(const QString &user, const QString &server) //server=QString::null
@@ -944,13 +991,13 @@ void KIRC::isOn(const QStringList &nickList)
 		{
 			if ((statement.length()+(*it).length())>509) // 512(max buf)-2("\r\n")-1(<space separator>)
 			{
-				writeString(statement);
+				writeMessage(statement);
 				statement = QString::fromLatin1("ISON ") +  (*it);
 			}
 			else
 				statement.append(QChar(' ') + (*it));
 		}
-		writeString(statement);
+		writeMessage(statement);
 	}
 }
 
@@ -1179,7 +1226,7 @@ bool KIRC::numericReply_433(const KIRCMessage &msg)
 	return true;
 }
 
-bool KIRC::numericReply_464(const KIRCMessage &)
+bool KIRC::numericReply_464(const KIRCMessage &/*msg*/)
 {
 	/* Server need pass.. Call disconnect */
 	emit incomingFailedServerPassword();
@@ -1208,6 +1255,15 @@ bool KIRC::numericReply_475(const KIRCMessage &msg)
 {
 	emit incomingFailedChankey(msg.args()[1]);
 	return true;
+}
+
+void KIRC::sendCtcpCommand(const QString &contact, const QString &command)
+{
+	if(m_status == Connected)
+	{
+		writeCtcpQueryMessage(contact, QString::null, command);
+//		emit ctcpCommandMessage( contact, command );
+	}
 }
 
 void KIRC::sendCtcpAction(const QString &contact, const QString &message)
@@ -1241,14 +1297,14 @@ void KIRC::sendCtcpPing(const QString &target)
 		// FIXME: the time code is wrong for usec
 		QString timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
 		writeCtcpQueryMessage(	target, QString::null,
-					"PING", QStringList(timeReply));
+					"PING", timeReply);
 	}
 }
 
 bool KIRC::CtcpQuery_pingPong(const KIRCMessage &msg)
 {
 	writeCtcpReplyMessage(	msg.prefix(), QString::null,
-				msg.ctcpMessage().command(), QStringList(msg.ctcpMessage().args()[0]));
+				msg.ctcpMessage().command(), msg.ctcpMessage().args()[0]);
 	return true;
 }
 
@@ -1409,7 +1465,7 @@ bool KIRC::CtcpQuery_dcc(const KIRCMessage &msg)
 
 	if (dccCommand == QString::fromLatin1("CHAT"))
 	{
-		if(msg.args().size()!=4) return false;
+		if(ctcpMsg.args().size()!=4) return false;
 
 		/* DCC CHAT type longip port
 		 *
@@ -1423,6 +1479,7 @@ bool KIRC::CtcpQuery_dcc(const KIRCMessage &msg)
 		unsigned int port = ctcpMsg.args()[3].toUInt(&okayPort);
 		if (okayHost && okayPort)
 		{
+			kdDebug(14120) << "Starting DCC chat window." << endl;
 			DCCClient *chatObject = new DCCClient(address, port, 0, DCCClient::Chat);
 			emit incomingDccChatRequest(address, port, getNickFromPrefix(msg.prefix()), *chatObject);
 			return true;
@@ -1430,7 +1487,7 @@ bool KIRC::CtcpQuery_dcc(const KIRCMessage &msg)
 	}
 	else if (dccCommand == QString::fromLatin1("SEND"))
 	{
-		if(msg.args().size()!=5) return false;
+		if(ctcpMsg.args().size()!=5) return false;
 
 		/* DCC SEND (filename) (longip) (port) (filesize)
 		 *
@@ -1446,6 +1503,7 @@ bool KIRC::CtcpQuery_dcc(const KIRCMessage &msg)
 		unsigned int size = ctcpMsg.args()[4].toUInt(&okaySize);
 		if (okayHost && okayPort && okaySize)
 		{
+			kdDebug(14120) << "Starting DCC send file transfert." << endl;
 			DCCClient *chatObject = new DCCClient(address, port, size, DCCClient::File);
 			emit incomingDccSendRequest(address, port, getNickFromPrefix(msg.prefix()), realfile.fileName(), size, *chatObject);
 			return true;
@@ -1479,21 +1537,18 @@ bool KIRC::invokeCtcpCommandOfMessage(const KIRCMessage &msg, const QDict<KIRCMe
 				else
 				{
 					kdDebug(14120) << "Method error for line:" << ctcpMsg.raw();
-//					KMessageBox::error(0, msg.ctcpRaw(), "Method error");
 					writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(), "Internal error");
 				}
 			}
 			else
 			{
 				kdDebug(14120) << "Args are invalid for line:" << ctcpMsg.raw();
-//				KMessageBox::error(0, msg.ctcpRaw(), "Invalid args");
 				writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(), "Invalid number of arguments");
 			}
 		}
 		else
 		{
 			kdDebug(14120) << "Unknow IRC/CTCP command for line:" << ctcpMsg.raw();
-//			KMessageBox::error(0, msg.ctcpRaw(), "Unknow IRC line");
 			writeCtcpErrorMessage(msg.prefix(), msg.ctcpRaw(), "Unknown CTCP command");
 
 			emit incomingUnknownCtcp(msg.ctcpRaw());
@@ -1504,6 +1559,12 @@ bool KIRC::invokeCtcpCommandOfMessage(const KIRCMessage &msg, const QDict<KIRCMe
 		kdDebug(14120) << "Message do not embed a CTCP message:" << msg.raw();
 	}
 	return false;
+}
+
+bool KIRC::CtcpReply_errorMsg(const KIRCMessage &msg)
+{
+	// should emit one signal
+	return true;
 }
 
 #include "kirc.moc"
