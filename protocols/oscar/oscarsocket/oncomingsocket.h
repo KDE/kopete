@@ -20,20 +20,25 @@
 
 #include <qwidget.h>
 #include <qserversocket.h>
+#include <qlist.h>
+#include "servicesocket.h"
 
 /**Handles oncoming connections
   *@author twl6
   */
 
+class ServiceSocket;
+
 class OncomingSocket : public QServerSocket  {
    Q_OBJECT
 public: 
 	OncomingSocket(QObject *parent=0, const char *name=0);
-	OncomingSocket(const QHostAddress &address, Q_UINT16 port=0,
+	OncomingSocket(QList<ServiceSocket> *socketz,const QHostAddress &address, Q_UINT16 port=4443,
 		int backlog=5, QObject *parent=0, const char *name=0);
 	~OncomingSocket();
   /** Called when someone connects to the serversocket */
   virtual void newConnection( int socket );
+  QList<ServiceSocket> *conns;
 };
 
 #endif

@@ -21,7 +21,7 @@
 #include "protocolsocket.h"
 #include <qlist.h>
 #include "buffer.h"
-#include "servicesocket.h"
+#include "oncomingsocket.h"
 #include "ssidata.h"
 
 struct FLAP { //flap header
@@ -47,6 +47,8 @@ struct RateClass { //rate info
 	BYTE unknown[5];
 	QList<SnacPair> members;
 };
+
+class ServiceSocket;
 
 #define OSCAR_SERVER 	"login.oscar.aol.com"
 #define OSCAR_PORT 		5190
@@ -99,6 +101,10 @@ public:
   void sendChatJoin(const QString &name, const int exchange);
   /** Sends a request for direct IM */
   void sendDirectIMRequest(const QString &sn);
+  /** Sends a direct IM denial */
+  void sendDirectIMDeny(const QString &sn);
+  /** Sends a direct IM accept */
+  void sendDirectIMAccept(const QString &sn);
   /** Sends our capabilities to the server */
   void sendCapabilities(unsigned long caps);
   /** Signs the user off */
@@ -195,6 +201,15 @@ private: // Private methods
   void parseSSIAck(Buffer &inbuf);
 	/** Parses a warning notification */
 	void parseWarningNotify(Buffer &inbuf);
+	/** Parses a message sending error */
+	void parseError(Buffer &inbuf);
+	/** Parses a missed message notification */
+	void parseMissedMessage(Buffer &inbuf);
+  /** Request, deny, or accept a direct IM session with someone
+		type == 0: request
+		type == 1: deny
+		type == 2: accept  */
+  void sendDirectIMInit(const QString &sn, WORD type);
 private slots: // Private slots
   /** Called when a connection has been closed */
   void OnConnectionClosed(void);
@@ -243,11 +258,13 @@ private: // Private attributes
   /** A collections of the sockets we are connected with */
   QList<ServiceSocket> sockets;
   /** A temp socket, used for making temporary connectionz */
-  QSocket * tmpSocket;
+//  QSocket * tmpSocket;
   /** Socket for direct connections */
   OncomingSocket *serverSocket;
   /** SSI server stored data */
   SSIData ssiData;
+  /** Socket for direct connections */
+  QSocket * connsock;
 signals: // Signals
   /** Called when an SSI acknowledgement is recieved */
   void SSIAck();

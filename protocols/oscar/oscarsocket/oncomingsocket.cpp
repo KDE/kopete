@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <kdebug.h>
 #include "oncomingsocket.h"
 #include "oncomingsocket.moc"
 
@@ -23,10 +24,11 @@ OncomingSocket::OncomingSocket(QObject *parent, const char *name )
 {
 }
 
-OncomingSocket::OncomingSocket(const QHostAddress &address, Q_UINT16 port,
-	int backlog, QObject *parent, const char *name)
+OncomingSocket::OncomingSocket(QList<ServiceSocket> *socketz, const QHostAddress &address,
+	Q_UINT16 port, int backlog, QObject *parent, const char *name)
 : QServerSocket(address,port,backlog,parent,name)
 {
+	conns = socketz;
 }
 
 OncomingSocket::~OncomingSocket()
@@ -36,5 +38,11 @@ OncomingSocket::~OncomingSocket()
 /** Called when someone connects to the serversocket */
 void OncomingSocket::newConnection( int socket )
 {
-	printf("newConnection called!  socket %d\n",socket);fflush(stdout);
+	ServiceSocket *newsock = new ServiceSocket;
+	newsock->setSocket(socket);
+	if (conns)
+		conns->append(newsock);
+	else
+		kdDebug() << "[Oscar] Oncomingsocket::newConnection: conns is NULL!" << endl;
+	kdDebug() << "[Oscar][OncomingSocket]newConnection called!  socket " << socket << endl;
 }

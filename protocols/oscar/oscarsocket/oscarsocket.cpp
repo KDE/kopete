@@ -28,14 +28,16 @@ extern "C" {
 #include <kdebug.h>
 #include <klocale.h>
 #define DIRECTCONNECT		0x0f1f
+#define DIRECTIM_PORT		4443
 
 #define AIM_MD5_STRING "AOL Instant Messenger (SM)"
-#define AIM_CLIENTSTRING "AOL Instant Messenger (SM), version 3.5.1670/WIN32"
-#define AIM_CLIENTID 0x0004
-#define AIM_MAJOR 0x0003
-#define AIM_MINOR 0x0005
+#define AIM_CLIENTSTRING "AOL Instant Messenger, version 5.1.3036/WIN32"
+
+#define AIM_CLIENTID 0x0109
+#define AIM_MAJOR 0x0005
+#define AIM_MINOR 0x0001
 #define AIM_POINT 0x0000
-#define AIM_BUILD 0x0686
+#define AIM_BUILD 0x0bdc
 #define AIM_COUNTRY "us"
 #define AIM_LANG "en"
 
@@ -155,6 +157,36 @@ static const struct {
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}
 };
 
+static const char *msgerrreason[] = {
+	"Invalid error",
+	"Invalid SNAC",
+	"Rate to host",
+	"Rate to client",
+	"Not logged in",
+	"Service unavailable",
+	"Service not defined",
+	"Obsolete SNAC",
+	"Not supported by host",
+	"Not supported by client",
+	"Refused by client",
+	"Reply too big",
+	"Responses lost",
+	"Request denied",
+	"Busted SNAC payload",
+	"Insufficient rights",
+	"In local permit/deny",
+	"Too evil (sender)",
+	"Too evil (receiver)",
+	"User temporarily unavailable",
+	"No match",
+	"List overflow",
+	"Request ambiguous",
+	"Queue full",
+	"Not while on AOL"
+};
+
+static const int msgerrreasonlen = 25;
+
 OscarSocket::OscarSocket(QObject *parent, const char *name)
     : ProtocolSocket(parent,name)
 {
@@ -168,9 +200,8 @@ OscarSocket::OscarSocket(QObject *parent, const char *name)
     key = NULL;
     cookie = NULL;
     idle = false;
-    tmpSocket = NULL;
+//    tmpSocket = NULL;
     rateClasses.setAutoDelete(TRUE);
-    serverSocket = new OncomingSocket(address());
 }
 
 OscarSocket::~OscarSocket(void)
@@ -183,6 +214,8 @@ void OscarSocket::OnConnect(void)
 {
     QString tmp = QString("Connected to " + peerName() + ", port %1").arg(peerPort());
     kdDebug() << "[OSCAR][OnConnect] Connected to " << peerName() << ", port " << peerPort() << endl;
+    serverSocket = new OncomingSocket(&sockets,address(),DIRECTIM_PORT);
+    kdDebug() << "[OSCAR] address() is " << address().toString() << " serverSocket->address() is " << serverSocket->address().toString() << endl;
     emit connectionChanged(1,tmp);
 }
 
@@ -290,11 +323,17 @@ void OscarSocket::OnRead(void)
 						break;
 				case 0x0004: //msg services
 						switch(s.subtype) {
+						case 0x0001: //msg error
+								parseError(inbuf);
+								break;
 						case 0x0005: //msg rights
 								parseMsgRights(inbuf);
 								break;
 						case 0x0007: //incoming IM
 								parseIM(inbuf);
+								break;
+						case 0x000a: //missed messages
+								parseMissedMessage(inbuf);
 								break;
 						case 0x000c: //message ack
 								parseMsgAck(inbuf);
@@ -609,7 +648,9 @@ void OscarSocket::sendRateAck()
     Buffer outbuf;
     outbuf.addSnac(0x0001,0x0008,0x0000,0x00000000);
     for (RateClass *rc=rateClasses.first();rc;rc=rateClasses.next())
-	if (rc->classid<0x0005) outbuf.addWord(rc->classid);
+    {
+			outbuf.addWord(rc->classid);
+		}
     sendBuf(outbuf,0x02);
     requestInfo();
 }
@@ -756,7 +797,7 @@ void OscarSocket::sendClientReady(void)
 void OscarSocket::sendVersions(const WORD *families, const int len)
 {
     Buffer outbuf;
-    outbuf.addSnac(0x0001,0x0017,0x0000,0x00000000);
+    outbuf.addSnac(0x0001,0x0017,0x0000,0x00000003);
     for(int i=len-1;i>=0;i--)
 	{
 	    outbuf.addWord(families[i]);
@@ -1065,12 +1106,12 @@ void OscarSocket::parseIM(Buffer &inbuf)
     // never be two TLVs of the same type in one block.
     UserInfo u = parseUserInfo(inbuf);
     TLV tlv;
-    int remotePort = 0;
+    unsigned int remotePort = 0;
     QHostAddress qh;
     QString message;
     QSocket *s = new QSocket;
-
-		switch(channel)
+    WORD msgtype; //used to tell whether it is a direct IM requst, deny, or accept
+    switch(channel)
 		{
  		case 0x0001: //normal IM
 		{
@@ -1118,7 +1159,6 @@ void OscarSocket::parseIM(Buffer &inbuf)
 								} else {
 										moreTLVs = false;
 								}
-
 								break;
 						}
 						case 0x0004: // Away message
@@ -1163,35 +1203,35 @@ void OscarSocket::parseIM(Buffer &inbuf)
 				}
 				break;
 		};
-		case 0x0002: //rendezvous channel
-				kdDebug() << "[OSCAR] IM recieved on channel 2 from " << u.sn << endl;
-				tlv = inbuf.getTLV();
-				kdDebug() << "[OSCAR] The first TLV is of type " << tlv.type;
-				if (tlv.type == 0x0005) //connection info
+	case 0x0002: //rendezvous channel
+	    kdDebug() << "[OSCAR] IM recieved on channel 2 from " << u.sn << endl;
+	    tlv = inbuf.getTLV();
+	    kdDebug() << "[OSCAR] The first TLV is of type " << tlv.type;
+	    if (tlv.type == 0x0005) //connection info
+		{
+		    tmpbuf.setBuf(tlv.data,tlv.length);
+		    //embedded in the type 5 tlv are more tlv's
+		    //first 2 bytes are the request status
+		    // 0 - Request
+		    // 1 - Deny
+		    // 2 - Accept
+		    msgtype = tmpbuf.getWord();
+		    //next comes the cookie, which should match the ICBM cookie
+		    char * cook = tmpbuf.getBlock(8);
+		    delete cook;
+		    //the next 16 bytes are the capability block (what kind of request is this?)
+		    char *cap = tmpbuf.getBlock(0x10);
+		    int identified = 0;
+		    DWORD capflag = 0;
+		    for (int i = 0; !(aim_caps[i].flag & AIM_CAPS_LAST); i++)
+			{
+			    if (memcmp(&aim_caps[i].data, cap, 0x10) == 0)
 				{
-						tmpbuf.setBuf(tlv.data,tlv.length);
-						//embedded in the type 5 tlv are more tlv's
-						//first 2 bytes are the request status
-						// 0 - Request
-						// 1 - Deny
-						// 2 - Accept
-						/*WORD status = */tmpbuf.getWord();
-						//next comes the cookie, which should match the ICBM cookie
-						char * cook = tmpbuf.getBlock(8);
-						delete cook;
-						//the next 16 bytes are the capability block (what kind of request is this?)
-						char *cap = tmpbuf.getBlock(0x10);
-						int identified = 0;
-						DWORD capflag = 0;
-						for (int i = 0; !(aim_caps[i].flag & AIM_CAPS_LAST); i++)
-						{
-								if (memcmp(&aim_caps[i].data, cap, 0x10) == 0)
-								{
-										capflag |= aim_caps[i].flag;
-										identified++;
-										break; /* should only match once... */
-								}
+				    capflag |= aim_caps[i].flag;
+				    identified++;
+				    break; /* should only match once... */
 						}
+			}
 						if (!identified){
 								printf("unknown capability: {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}\n",
 												cap[0], cap[1], cap[2], cap[3],
@@ -1616,57 +1656,13 @@ void OscarSocket::parseRedirect(Buffer &inbuf)
     kdDebug() << "[OSCAR] Socket added to connection list!" << endl;
 }
 
-/** Request a direct IM session with someone */
+/** Request a direct IM session with someone
+	type == 0: request
+	type == 1: deny
+	type == 2 :accept */
 void OscarSocket::sendDirectIMRequest(const QString &sn)
 {
-    Buffer outbuf;
-    outbuf.addSnac(0x0004,0x0006,0x0000,0x00000000);
-    char ck[8];
-    //generate a random message cookie
-    for (int i=0;i<8;i++)
-	{
-	    ck[i] = static_cast<BYTE>(rand());
-	}
-    outbuf.addString(ck,8);
-    //channel 2
-    outbuf.addWord(0x0002);
-    //destination sn
-    outbuf.addByte(sn.length());
-    outbuf.addString(sn.latin1(),sn.length());
-    //add a blank TLV of type 3
-    outbuf.addTLV(0x0003,0x0000,NULL);
-    //add a huge TLV of type 5
-    outbuf.addWord(0x0005);
-    outbuf.addWord(2+8+16+6+8+6+4);
-    outbuf.addWord(0x0000); //2
-    outbuf.addString(ck,8); //8
-    for (int i=0;aim_caps[i].flag != AIM_CAPS_LAST;i++)
-	{
-	    if (aim_caps[i].flag & AIM_CAPS_IMIMAGE)
-		{
-		    outbuf.addString(aim_caps[i].data,0x10);
-		    break;
-		}
-	} //16
-    //TLV (type a)
-    outbuf.addWord(0x000a);
-    outbuf.addWord(0x0002);
-    outbuf.addWord(0x0001); //6
-    //TLV (type 3)
-    outbuf.addWord(0x0003);
-    outbuf.addWord(0x0004);
-    while (!serverSocket->ok()) //make sure the socket stuff is properly set up
-	usleep(100);
-    outbuf.addDWord(static_cast<DWORD>(serverSocket->address().ip4Addr())); //8
-    //TLV (type 5)
-    outbuf.addWord(0x0005);
-    outbuf.addWord(0x0002);
-    outbuf.addWord(serverSocket->port()); //6
-    //TLV (type f)
-    outbuf.addTLV(0x000f,0x0000,NULL); //4
-
-    kdDebug() << "[OSCAR] Sending direct IM request..." << endl;
-    sendBuf(outbuf,0x02);
+	sendDirectIMInit(sn,0x0000);
 }
 
 /** Parses a message ack from the server */
@@ -1787,6 +1783,7 @@ void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
 	{
 	    kdDebug() << "[OSCAR] Item with name " << budName << " and group "
 		      << budGroup << "not found" << endl;
+	    emit protocolError(budName + " in group " + budGroup + " was not found on the server's buddy list and cannot be deleted.",0);
 	    return;
 	}
     kdDebug() << "[OSCAR] Deleting " << delitem->name << ", gid " << delitem->gid
@@ -1809,6 +1806,144 @@ void OscarSocket::parseWarningNotify(Buffer &inbuf)
 	}
 	else
 		emit gotWarning(newevil,QString::null);
+}
+
+/** Parses a message error */
+void OscarSocket::parseError(Buffer &inbuf)
+{
+	QString msg = "Your message did not get sent: ";
+	WORD reason = inbuf.getWord();
+	kdDebug() << "[OSCAR] Got an error: " << QTextStream::hex << reason << endl;
+	if (reason < msgerrreasonlen)
+		msg += msgerrreason[reason];
+	else
+		msg += "Unknown reason.";
+	emit protocolError(msg,reason);
+}
+
+/** Request, deny, or accept a direct IM session with someone
+type == 0: request
+type == 1: deny
+type == 2: accept  */
+void OscarSocket::sendDirectIMInit(const QString &sn, WORD type)
+{
+    Buffer outbuf;
+    outbuf.addSnac(0x0004,0x0006,0x0000,0x00000000);
+    char ck[8];
+    //generate a random message cookie
+    for (int i=0;i<8;i++)
+	{
+	    ck[i] = static_cast<BYTE>(rand());
+	}
+    outbuf.addString(ck,8);
+    //channel 2
+    outbuf.addWord(0x0002);
+    //destination sn
+    outbuf.addByte(sn.length());
+    outbuf.addString(sn.latin1(),sn.length());
+    //add a blank TLV of type 3
+    outbuf.addTLV(0x0003,0x0000,NULL);
+    //add a huge TLV of type 5
+    outbuf.addWord(0x0005);
+    outbuf.addWord(2+8+16+6+8+6+4);
+    outbuf.addWord(type); //2
+    outbuf.addString(ck,8); //8
+    for (int i=0;aim_caps[i].flag != AIM_CAPS_LAST;i++)
+	{
+	    if (aim_caps[i].flag & AIM_CAPS_IMIMAGE)
+		{
+		    outbuf.addString(aim_caps[i].data,0x10);
+		    break;
+		}
+	} //16
+    //TLV (type a)
+    outbuf.addWord(0x000a);
+    outbuf.addWord(0x0002);
+    outbuf.addWord(0x0001); //6
+    //TLV (type 3)
+    outbuf.addWord(0x0003);
+    outbuf.addWord(0x0004);
+    if (!serverSocket->ok()) //make sure the socket stuff is properly set up
+    {
+    	kdDebug() << "[Oscar] SERVER SOCKET NOT SET UP... returning from directiminit" << endl;
+			return;
+		}
+    outbuf.addDWord(static_cast<DWORD>(serverSocket->address().ip4Addr())); //8
+    //TLV (type 5)
+    outbuf.addWord(0x0005);
+    outbuf.addWord(0x0002);
+    outbuf.addWord(serverSocket->port()); //6
+    //TLV (type f)
+    outbuf.addTLV(0x000f,0x0000,NULL); //4
+
+    kdDebug() << "[OSCAR] Sending direct IM, type " << type << " from " << serverSocket->address().toString() << ", port " << serverSocket->port() << endl;
+    sendBuf(outbuf,0x02);
+}
+
+/** Sends a direct IM denial */
+void OscarSocket::sendDirectIMDeny(const QString &sn)
+{
+	sendDirectIMInit(sn,0x0001);
+}
+
+/** Sends a direct IM accept */
+void OscarSocket::sendDirectIMAccept(const QString &sn)
+{
+	sendDirectIMInit(sn,0x0002);
+}
+
+/** Parses a missed message notification */
+void OscarSocket::parseMissedMessage(Buffer &inbuf)
+{
+	while (inbuf.getLength() > 0)
+	{
+		// get the channel (this isn't used anywhere)
+		/*WORD channel =*/ inbuf.getWord();
+
+		// get user info 
+		UserInfo u = parseUserInfo(inbuf);
+
+		// get number of missed messages 
+		WORD nummissed = inbuf.getWord();
+
+		//the number the aol servers report seems to be one too many
+		nummissed--;
+
+		// get reason for missed messages 
+		WORD reason = inbuf.getWord();
+
+		QString errstring = QString(i18n("You missed %1 ")).arg(nummissed);
+		errstring += (nummissed == 1) ?
+			i18n("message ") :
+			i18n("messages ");
+		errstring += i18n("from ") + u.sn + i18n(" becuase ");
+		switch (reason)
+		{
+			case 0: //invalid message
+				errstring += (nummissed == 1) ?
+					i18n("it was invalid.") :
+					i18n("they were invalid.");
+				break;
+			case 1: //message(s) too large
+				errstring += (nummissed == 1) ?
+					i18n("it was too large.") :
+					i18n("they were too large.");
+				break;
+			case 2: //rate limit exceeded
+				errstring += i18n("the client exceeded the rate limit.");
+				break;
+			case 3: //evil sender
+				errstring += i18n("the sender's warning level is too high.");
+				break;
+			case 4: //evil receiver
+				errstring += i18n("your warning level is too high.");
+				break;
+			default: //unknown reason
+				errstring += i18n("of unknown reasons.");
+				break;
+		};
+		emit protocolError(errstring,0);
+	}
 }
 
 

@@ -394,6 +394,9 @@ void OscarContact::slotDeleteContact(void)
 
 void OscarContact::slotWarn()
 {
+	//this is here for testing purposes
+	//mProtocol->engine->sendDirectIMRequest(mName);
+
 	QString message = i18n( "<qt>Would you like to warn %1 anonymously?" \
 	" Select \"Yes\" to warn anonymously, \"No\" to warn" \
 	" the user showing them your name, or \"Cancel\" to abort" \
@@ -411,7 +414,7 @@ void OscarContact::slotWarn()
 	else if (result == KMessageBox::No)
 	{
 		mProtocol->engine->sendWarning(mName, false);
-	}
+	} 
 }
 
 
