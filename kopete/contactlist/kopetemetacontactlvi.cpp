@@ -182,11 +182,18 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 
 void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 {
+	m_oldStatus = m_metaContact->status();
+	slotUpdateIcons();
+
 	// FIXME: All this code should be in kopetemetacontact.cpp.. having it in the LVI makes it all fire
 	// multiple times if the user is in multiple groups - Jason
-	if ( !c->account()->suppressStatusNotification() &&
-		c->account()->myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting &&
-		( !c->account()->isAway() || KopetePrefs::prefs()->soundIfAway() ) )
+	if ( c->account()->suppressStatusNotification() )
+		return;
+
+	if ( c->account()->myself()->onlineStatus().status() == KopeteOnlineStatus::Connecting )
+		return;
+
+	if ( !c->account()->isAway() || KopetePrefs::prefs()->soundIfAway() )
 	{
 		int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 
@@ -203,7 +210,6 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 		else if ( m_oldStatus != KopeteOnlineStatus::Unknown )
 			KNotifyClient::event( winId , "kopete_status_change", text, i18n( "Chat" ), this, SLOT( execute() ) );
 
-
 		if ( !mBlinkTimer->isActive() &&
 			( m_metaContact->statusIcon() != m_oldStatusIcon ) )
 		{
@@ -212,21 +218,10 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 			mBlinkTimer->start( 400, false );
 		}
 	}
-
-	m_oldStatus = m_metaContact->status();
-	slotUpdateIcons();
 }
 
 void KopeteMetaContactLVI::slotUpdateIcons()
 {
-/*
-	kdDebug( 14000 ) << k_funcinfo << m_metaContact->displayName() <<
-		": new status " << m_metaContact->status() << ", init=" << init << endl;
-
-	if ( sender() )
-		kdDebug( 14000 ) << k_funcinfo << "sender name: " << sender()->name() << endl;
-*/
-
 	QPixmap statusIcon = SmallIcon( m_metaContact->statusIcon() );
 	if ( KopetePrefs::prefs()->greyIdleMetaContacts() && ( m_metaContact->idleTime() >= 10 * 60 ) )
 		KIconEffect::semiTransparent( statusIcon );
