@@ -902,7 +902,12 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 			//kdDebug(14150) << k_funcinfo << "messagetext='" << messagetext << "'" << endl;
 
 			OscarContact *contact = static_cast<OscarContact*>(mAccount->contacts()[tocNormalize(user.sn)]);
-			oMsg.setText(ServerToQString(messagetext, contact, utf), OscarMessage::Rtf);
+
+			QString msgText = ServerToQString(messagetext, contact, utf);
+			if (msgText.startsWith("{\\rtf"))
+				oMsg.setText(msgText, OscarMessage::Rtf);
+			else
+				oMsg.setText(msgText, OscarMessage::Plain);
 
 			if(!oMsg.text().isEmpty())
 				parseMessage(user, oMsg, msgType, msgFlags);
