@@ -50,6 +50,7 @@
 #include "kopetecontactlistview.h"
 #include "kopeteglobalawaydialog.h"
 #include "kopetemessagemanagerfactory.h"
+#include "kopetepluginconfig.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
@@ -71,6 +72,8 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	statusBar()->addWidget(m_statusBarWidget, 0, true);
 
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ), this, SLOT( slotSettingsChanged() ) );
+
+	m_pluginConfig = 0L;
 
 	// --------------------------------------------------------------------------------
 	initView();
@@ -160,9 +163,11 @@ void KopeteWindow::initActions()
 	setStandardToolBarMenuEnabled(true);
 	statusbarAction = KStdAction::showStatusbar(this, SLOT(showStatusbar()), actionCollection(), "settings_showstatusbar");
 
-	KStdAction::keyBindings(this, SLOT(slotConfKeys()), actionCollection(), "settings_keys");
-	new KAction(i18n("Configure &Global Shortcuts"), "configure_shortcuts", 0, this,
-			SLOT(slotConfGlobalKeys()), actionCollection(), "settings_global");
+	KStdAction::keyBindings( this, SLOT( slotConfKeys() ), actionCollection(), "settings_keys" );
+	new KAction( i18n( "Configure Plugins..." ), "input_devices_settings", 0, this,
+		SLOT( slotConfigurePlugins() ), actionCollection(), "settings_plugins" );
+	new KAction( i18n( "Configure &Global Shortcuts..." ), "configure_shortcuts", 0, this,
+		SLOT( slotConfGlobalKeys() ), actionCollection(), "settings_global" );
 
 	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), actionCollection(), "settings_toolbars" );
 
@@ -225,20 +230,14 @@ void KopeteWindow::initSystray()
 
 KopeteWindow::~KopeteWindow()
 {
-//	delete tray;
-//	kdDebug(14000) << "[KopeteWindow] ~KopeteWindow()" << endl;
+	delete m_pluginConfig;
 }
 
 bool KopeteWindow::queryExit()
 {
-//	kdDebug(14000) << "[KopeteWindow] queryExit()" << endl;
 	saveOptions();
-	//Now in Kopete::~Kopete().
-	// (KDE3.1 beta2 didn't save contact-list on exit)
-	/*	KopeteContactList::contactList()->save();*/
 	return true;
 }
-
 
 void KopeteWindow::loadOptions()
 {
@@ -367,6 +366,13 @@ void KopeteWindow::slotConfigChanged()
 void KopeteWindow::slotConfKeys()
 {
 	KKeyDialog::configure(actionCollection(), this, true);
+}
+
+void KopeteWindow::slotConfigurePlugins()
+{
+	if ( !m_pluginConfig )
+		m_pluginConfig = new KopetePluginConfig( this );
+	m_pluginConfig->show();
 }
 
 void KopeteWindow::slotConfGlobalKeys()

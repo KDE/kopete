@@ -9,6 +9,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(kopete_srcdir)/libkopete/ui \
 	-I$(kopete_srcdir)/kopete/contactlist \
 	-I$(kopete_srcdir)/kopete/chatwindow \
+	-I$(kopete_srcdir)/kopete/config/plugins \
 	-I$(kopete_builddir)/kopete/conf \
 	-I$(kopete_srcdir)/libkopete/private \
 	-I$(kopete_srcdir) \
@@ -28,7 +29,7 @@ kopete_SOURCES = main.cpp \
 kopete_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH) -lktexteditor
 kopete_LDADD = \
 	addcontactwizard/libkopeteaddcontactwizard.la contactlist/libkopetecontactlist.la \
-	../libkopete/libkopete.la
+	../libkopete/libkopete.la config/plugins/libkopetepluginconfig.la
 
 mydatadir = $(kde_datadir)/kopete
 mydata_DATA = kopeteui.rc eventsrc

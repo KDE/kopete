@@ -1,5 +1,5 @@
 /*
-    kopetepluginpage.cpp - Kopete Plugin Loader KCM
+    kopetepluginconfig.h - Configure the Kopete plugins
 
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
@@ -15,23 +15,42 @@
     *************************************************************************
 */
 
-#include "kopetepluginpage.h"
+#ifndef KOPETEPLUGINCONFIG_H
+#define KOPETEPLUGINCONFIG_H
 
-#include <kgenericfactory.h>
-#include <kplugininfo.h>
-#include <kpluginselector.h>
-#include <ktrader.h>
+#include <kdialogbase.h>
 
-#include "kopetepluginmanager.h"
+class KopetePluginConfigPrivate;
 
-typedef KGenericFactory<KopetePluginConfig, QWidget> KopetePluginConfigFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_pluginconfig, KopetePluginConfigFactory( "kcm_kopete_pluginconfig" ) )
-
-KopetePluginConfig::KopetePluginConfig( QWidget *parent, const char * /* name */, const QStringList &args )
-: KSettings::PluginPage( KopetePluginConfigFactory::instance(), parent, args )
+/**
+ * Plugin selector. See KPluginSelector in kdelibs for documentation.
+ *
+ * @author Martijn Klingens <klingens@kde.org>
+ */
+class KopetePluginConfig : public KDialogBase
 {
-	pluginSelector()->addPlugins( KopetePluginManager::self()->availablePlugins( "Protocols" ), i18n( "Protocols" ), "Protocols" );
-}
+	Q_OBJECT
+
+public:
+	KopetePluginConfig( QWidget *parent, const char *name = 0L );
+
+	void apply();
+
+public slots:
+	void setChanged( bool c );
+
+	virtual void slotDefault();
+	virtual void slotUser1();
+	virtual void slotApply();
+	virtual void slotOk();
+	virtual void slotHelp();
+	virtual void show();
+
+private:
+	KopetePluginConfigPrivate *d;
+};
+
+#endif // KOPETEPLUGINCONFIG_H
 
 // vim: set noet ts=4 sts=4 sw=4:
 

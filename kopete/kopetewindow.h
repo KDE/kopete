@@ -40,15 +40,16 @@ namespace KSettings
 	class Dialog;
 }
 
-class KopeteContactListView;
-class KopetePlugin;
-class KopeteProtocol;
 class KopeteAccount;
-class KopeteContact;
-class KopeteSystemTray;
-class KopeteGlobalAwayDialog;
 class KopeteAccountStatusBarIcon;
+class KopeteContact;
+class KopeteContactListView;
+class KopeteGlobalAwayDialog;
 class KopeteOnlineStatus;
+class KopetePlugin;
+class KopetePluginConfig;
+class KopeteProtocol;
+class KopeteSystemTray;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -160,6 +161,7 @@ public:
 private slots:
 //	void slotAddAccount();
 	void slotSaveContactList();
+	void slotConfigurePlugins();
 	void slotConfGlobalKeys();
 	void slotShowHide();
 
@@ -175,6 +177,8 @@ private:
 	int deskRight;
 	QPoint position;
 	QHBox *m_statusBarWidget;
+
+	KopetePluginConfig *m_pluginConfig;
 
 	/**
 	 * This is really a dictionary of KopeteAccountStatusBarIcon objects, but
