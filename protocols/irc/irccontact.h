@@ -63,6 +63,7 @@ class IRCContact : public KopeteContact
 		void slotNewWhoIsChannels(const QString &nickname, const QString &channel);
 		void slotWhoIsComplete(const QString &nickname);
 		void slotNewNickChange( const QString &oldnickname, const QString &newnickname);
+		void slotUserDisconnected( const QString &nickname, const QString &reason);
 
 	protected:
 		QPtrList<KopeteContact> mContact;

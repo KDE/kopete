@@ -64,6 +64,7 @@ IRCContact::IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaCon
 	QObject::connect(mEngine, SIGNAL(incomingWhoIsChannels(const QString &, const QString &)), this, SLOT(slotNewWhoIsChannels(const QString &, const QString &)));
 	QObject::connect(mEngine, SIGNAL(incomingEndOfWhois(const QString &)), this, SLOT( slotWhoIsComplete(const QString &)));
 	QObject::connect(mEngine, SIGNAL(incomingNickChange(const QString &, const QString &)), this, SLOT( slotNewNickChange(const QString&, const QString&)));
+	QObject::connect(mEngine, SIGNAL(incomingQuitIRC(const QString &, const QString &)), this, SLOT( slotUserDisconnected(const QString&, const QString&)));
 }
 
 KopeteMessageManager* IRCContact::manager(bool)
@@ -114,6 +115,27 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 	}
 
 	return true;
+}
+
+void IRCContact::slotUserDisconnected( const QString &user, const QString &reason)
+{
+	QString nickname = user.section('!', 0, 0);
+	if ( nickname.lower() == mEngine->nickName().lower() )
+	{
+		mMsgManager->setCanBeDeleted(true);
+		setOnlineStatus( KopeteContact::Offline ); // We parted the channel, change status
+	}
+	else
+	{
+		KopeteContact *user = locateUser( nickname );
+		if ( user )
+		{
+			manager()->removeContact( user );
+			delete user;
+		}
+		KopeteMessage msg((KopeteContact *)this, mContact, i18n(QString("User %1 has quit (\"%2\")").arg(nickname).arg(reason)), KopeteMessage::Internal);
+		manager()->appendMessage(msg);
+	}
 }
 
 void IRCContact::slotNewMessage(const QString &originating, const QString &target, const QString &message)
@@ -223,12 +245,15 @@ void IRCContact::slotWhoIsComplete(const QString &nickname)
 
 void IRCContact::slotNewNickChange( const QString &oldnickname, const QString &newnickname)
 {
-	IRCContact *c = static_cast<IRCContact*>( locateUser( oldnickname) );
-	if( c )
+	IRCContact *user = static_cast<IRCContact*>( locateUser( oldnickname) );
+	if( user )
 	{
-		c->setNickName( newnickname );
+		user->setNickName( newnickname );
 		//If we are tracking name changes...
-		c->setDisplayName( newnickname );
+		user->setDisplayName( newnickname );
+
+		KopeteMessage msg((KopeteContact *)this, mContact, i18n("%1 is now known as %2").arg(oldnickname).arg(newnickname), KopeteMessage::Internal);
+		manager()->appendMessage(msg);
 	}
 }
 
