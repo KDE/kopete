@@ -25,8 +25,7 @@ libkopete_la_SOURCES = kopeteonlinestatus.cpp kopeteonlinestatusmanager.cpp \
 	kopeteeventpresentation.cpp kopetenotifyevent.cpp kopetenotifydataobject.cpp kopeteblacklister.cpp \
 	kopetemessageevent.cpp kopetemessagehandler.cpp kopetemessagehandlerchain.cpp \
 	kopetesimplemessagehandler.cpp kopeteproperties.cpp kabcpersistence.cpp connectionmanager.skel \
-	connectionmanager.cpp clientiface.stub managedconnectionaccount.cpp
-	networkstatuscommon.h
+	connectionmanager.cpp clientiface.stub managedconnectionaccount.cpp networkstatuscommon.h
 
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
 libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(LIB_KIO) $(LIB_XSS) $(LIBXML_LIBS) $(LIBXSLT_LIBS)
