@@ -18,6 +18,7 @@
 //#define OSCAR_PACKETLOG 1
 
 #include "oscarsocket.h"
+#include "oscarsocket.icq.h"
 
 #include <stdlib.h>
 
@@ -856,7 +857,7 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 		delete[] mCookie;
 
 	if (err)
-   {
+	{
 		QString errorString;
 		int errorCode = 0;
 
@@ -1995,34 +1996,6 @@ void OscarSocket::parseUserProfile(Buffer &inbuf)
 	emit gotUserProfile(u,profile);
 }
 
-void OscarSocket::sendAway(bool away, const QString &message)
-{
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
-
-	if(mIsICQ)
-	{
-		kdDebug(14150) << k_funcinfo << "This is AIM only!" << endl;
-		return;
-	}
-
-	Buffer outbuf;
-	outbuf.addSnac(0x0002,0x0004,0x0000,0x00000000);
-
-	if (away && message)
-	{ // Check to see that we're sending away
-		static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
-		outbuf.addTLV(0x0003,defencoding.length(),defencoding.latin1());
-		outbuf.addTLV(0x0004,message.length(),message.local8Bit());
-		emit statusChanged(OSCAR_AWAY);
-	}
-	else //if we send it a tlv with length 0, we become unaway
-	{
-		outbuf.addTLV(0x0004,0,"");
-		emit statusChanged(OSCAR_ONLINE);
-	}
-	sendBuf(outbuf,0x02);
-}
-
 /** Sends someone a warning */
 void OscarSocket::sendWarning(const QString &target, bool isAnonymous)
 {
@@ -2171,22 +2144,27 @@ void OscarSocket::sendCapabilities(unsigned long caps)
 		if (oscar_caps[i].flag & caps)
 			outbuf.addString(oscar_caps[i].data,16);
 	}
+
+	outbuf.print();
+
 	sendBuf(outbuf,0x02);
 }
 
 // Parses a rate change
 void OscarSocket::parseRateChange(Buffer &inbuf)
 {
-    /*WORD code = */inbuf.getWord();
-    /*WORD rateclass = */inbuf.getWord();
-    /*DWORD windowsize = */inbuf.getDWord();
-    /*DWORD clear = */inbuf.getDWord();
-    /*DWORD alert = */inbuf.getDWord();
-    /*DWORD limit = */inbuf.getDWord();
-    /*DWORD disconnect = */inbuf.getDWord();
-    /*DWORD currentavg = */inbuf.getDWord();
-    /*DWORD maxavg = */inbuf.getDWord();
-    //there might be stuff that can be done w/ this crap
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
+	/*WORD code = */inbuf.getWord();
+	/*WORD rateclass = */inbuf.getWord();
+	/*DWORD windowsize = */inbuf.getDWord();
+	/*DWORD clear = */inbuf.getDWord();
+	/*DWORD alert = */inbuf.getDWord();
+	/*DWORD limit = */inbuf.getDWord();
+	/*DWORD disconnect = */inbuf.getDWord();
+	/*DWORD currentavg = */inbuf.getDWord();
+	/*DWORD maxavg = */inbuf.getDWord();
+
+	//there might be stuff that can be done with this crap
 }
 
 // Signs the user off
@@ -2205,29 +2183,30 @@ void OscarSocket::doLogoff()
 /** Adds a buddy to the server side buddy list */
 void OscarSocket::sendAddBuddy(const QString &name, const QString &group)
 {
-    kdDebug(14150) << "[OSCAR] Sending add buddy" << endl;
-    SSI *newitem = ssiData.addBuddy(name,group);
-    if (!newitem)
+	kdDebug(14150) << k_funcinfo << "Sending add buddy" << endl;
+	SSI *newitem = ssiData.addBuddy(name,group);
+
+	if (!newitem)
 	{
-	    sendAddGroup(group);
-	    newitem = ssiData.addBuddy(name,group);
+		sendAddGroup(group);
+		newitem = ssiData.addBuddy(name,group);
 	}
-    kdDebug(14150) << "[OSCAR] Adding " << newitem->name << ", gid " << newitem->gid
-	      << ", bid " << newitem->bid << ", type " << newitem->type
-	      << ", datalength " << newitem->tlvlength << endl;
-    sendSSIAddModDel(newitem,0x0008);
-    //now we need to modify the group our buddy is in
+
+	kdDebug(14150) << k_funcinfo << "Adding " << newitem->name << ", gid " << newitem->gid
+		<< ", bid " << newitem->bid << ", type " << newitem->type
+		<< ", datalength " << newitem->tlvlength << endl;
+
+	sendSSIAddModDel(newitem,0x0008);
+	//now we need to modify the group our buddy is in
 }
 
 // Changes the group a buddy is in on the server
 void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
-									   const QString &oldGroup,
-									   const QString &newGroup)
+	const QString &oldGroup, const QString &newGroup)
 {
-	kdDebug(14150) << k_funcinfo
-				   << ": Moving " << buddyName
-				   << " into group " << newGroup
-				   << endl;
+	kdDebug(14150) << k_funcinfo <<
+			"Moving " << buddyName << " into group " << newGroup << endl;
+
 	// Check to make sure that the group has actually changed
 	SSI *buddyItem = ssiData.findBuddy(buddyName, oldGroup);
 	SSI *groupItem = ssiData.findGroup(newGroup);
@@ -2242,8 +2221,7 @@ void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
 	if (buddyItem->gid != groupItem->gid)
 	{ // The buddy isn't in the group
 		kdDebug(14150) << k_funcinfo
-					   << ": Modifying buddy's group number in the SSI Data"
-					   << endl;
+			<< ": Modifying buddy's group number in the SSI Data" << endl;
 		// Change the buddy's group number
 		buddyItem->gid = groupItem->gid;
 
@@ -2691,10 +2669,9 @@ void OscarSocket::sendInfo(void)
 
 	sendIdleTime(0); // CLI_SNAC1_11, sent before CLI_SETSTATUS
 
-	if(mIsICQ)
-		sendStatus(0x00000000); // CLI_SETSTATUS
-	else
-		sendAway(false, 0L); // FIXME: is this allowed while logging into AIM? This is just here to state that we're online
+	// FIXME: is this allowed while logging into AIM?
+	// This is just here to state that we're online
+	sendStatus(OSCAR_ONLINE); // CLI_SETSTATUS for ICQ, weird away SNAC for AIM
 
 	if (!mIsICQ)
 	{
@@ -2939,6 +2916,42 @@ OncomingSocket *OscarSocket::serverSocket(DWORD capflag)
 		return mDirectIMMgr;
 	else  //must be a file transfer?
 		return mFileTransferMgr;
+}
+
+void OscarSocket::sendStatus(const unsigned int status, const QString &awayMessage)
+{
+	if(mIsICQ)
+	{
+		kdDebug(14150) << k_funcinfo << "Called for ICQ, status=" <<  status << endl;
+		switch(status)
+		{
+			case OSCAR_AWAY:
+				sendICQStatus(ICQ_STATUS_AWAY);
+				break;
+			case OSCAR_DND:
+				sendICQStatus(ICQ_STATUS_DND);
+				break;
+			case OSCAR_NA:
+				sendICQStatus(ICQ_STATUS_NA);
+				break;
+			case OSCAR_OCC:
+				sendICQStatus(ICQ_STATUS_OCC);
+				break;
+			case OSCAR_FFC:
+				sendICQStatus(ICQ_STATUS_FFC);
+				break;
+			default:
+				sendICQStatus(ICQ_STATUS_ONLINE);
+		}
+	}
+	else // AIM
+	{
+		kdDebug(14150) << k_funcinfo << "Called for AIM, status=" <<  status << endl;
+		if (status == OSCAR_AWAY)
+			sendAIMAway(true, awayMessage);
+		else
+			sendAIMAway(false, awayMessage);
+	}
 }
 
 #include "oscarsocket.moc"

@@ -32,13 +32,13 @@
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopetestdaction.h"
+#include "kopeteawaydialog.h"
 
 // TODO: remove the next include
 #include "aim.h" // For tocNormalize()
 
-#include "aimbuddylist.h"
+#include "aimbuddylist.h" // TODO: remove buddylist
 #include "oscarsocket.h"
-#include "oscarchangestatus.h"
 #include "oscarcontact.h"
 
 #include <klineeditdlg.h>
@@ -255,7 +255,7 @@ void OscarAccount::slotGoAway()
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away) // Away could also be a different AWAY mode (like NA or OCC)
 		)
 	{
-		mAwayDialog->show();
+		mAwayDialog->show(OSCAR_AWAY);
 	}
 }
 

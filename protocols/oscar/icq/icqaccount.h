@@ -47,7 +47,6 @@ class ICQAccount : public OscarAccount
 
 		KActionMenu* actionMenu();
 		virtual void setAway( bool away, const QString &awayReason );
-	
 
 	public slots:
 		void slotGoNA();
@@ -56,7 +55,6 @@ class ICQAccount : public OscarAccount
 		void slotGoDND();
 
 	protected:
-
 		 virtual OscarContact *createNewContact( const QString &contactId, const QString &displayName,
 			KopeteMetaContact *parentContact ) ;
 };

@@ -30,9 +30,8 @@ class KopeteMetaContact;
 AIMAccount::AIMAccount(KopeteProtocol *parent, QString accountID, const char *name)
 	: OscarAccount(parent, accountID, name, false)
 {
-	kdDebug(14190) << k_funcinfo << endl;
-	mMyself = new AIMContact( accountID, accountID, this, 0L );
-	// Instantiate the away dialog
+	kdDebug(14190) << k_funcinfo << accountID << ": Called."<< endl;
+	mMyself = new AIMContact(accountID, accountID, this, 0L);
 	mAwayDialog = new AIMChangeStatus(getEngine());
 }
 
@@ -49,49 +48,49 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId,
 
 KActionMenu* AIMAccount::actionMenu()
 {
+	kdDebug(14190) << k_funcinfo << accountId() << ": Called." << endl;
 	// mActionMenu is managed by KopeteAccount.  It is deleted when
 	// it is no longer shown, so we can (safely) just make a new one here.
-	KActionMenu *mActionMenu =
-		new KActionMenu(accountId(), this, "OscarAccount::mActionMenu");
+	KActionMenu *mActionMenu = new KActionMenu(accountId(),
+		"aim_protocol", this, "AIMAccount::mActionMenu");
 
-	kdDebug(14190) << k_funcinfo << "for AIM account '"
-				<< accountId() << "'" << endl;
+	AIMProtocol *p = AIMProtocol::protocol();
 
 	mActionMenu->popupMenu()->insertTitle(
-			mMyself->onlineStatus().iconFor( mMyself ),
-			i18n( "%2 <%1>" ).arg(accountId()).arg(mMyself->displayName()) );
+		mMyself->onlineStatus().iconFor(mMyself),
+		i18n("%2 <%1>").arg(accountId()).arg(mMyself->displayName()));
 
 	mActionMenu->insert(
-		new KAction(i18n("Go O&nline"),
-					AIMProtocol::protocol()->statusOnline.iconFor( this ),
-					0, this, SLOT(slotGoOnline()), mActionMenu,
-					"mActionGoOnline"));
+		new KAction(p->statusOnline.caption(),
+			p->statusOnline.iconFor(this), 0,
+			this, SLOT(slotGoOnline()), mActionMenu,
+			"AIMAccount::mActionOnline"));
 
 	mActionMenu->insert(
-		new KAction(i18n("Go &Offline"),
-					AIMProtocol::protocol()->statusOffline.iconFor( this ),
-					0, this, SLOT(slotGoOffline()), mActionMenu,
-					"mActionGoOffline"));
+		new KAction(p->statusAway.caption(),
+			p->statusAway.iconFor(this), 0,
+			this, SLOT(slotGoAway()), mActionMenu,
+			"AIMAccount::mActionAway"));
 
 	mActionMenu->insert(
-		new KAction(i18n("Go &Away"),
-					AIMProtocol::protocol()->statusAway.iconFor( this ),
-					0, this, SLOT(slotGoAway()), mActionMenu,
-					"mActionGoAway"));
+		new KAction(p->statusOffline.caption(),
+			p->statusOffline.iconFor(this),
+			0, this, SLOT(slotGoOffline()), mActionMenu,
+			"AIMAccount::mActionOffline"));
 
 	mActionMenu->popupMenu()->insertSeparator();
 
 	mActionMenu->insert(
 		KopeteStdAction::contactInfo(this, SLOT(slotEditInfo()),
-									mActionMenu,
-									"mActionEditInfo"));
+			mActionMenu, "AIMAccount::mActionEditInfo"));
 
 	mActionMenu->popupMenu()->insertSeparator();
 
+	// DEBUG ACTION TO BE REMOVED!
 	mActionMenu->insert(
 		new KAction(i18n("Fast add a Contact"), "", 0, this,
 					SLOT(slotFastAddContact()), mActionMenu,
-					"actionFastAddContact" ) );
+					"AIMAccount::actionFastAddContact"));
 
 	return mActionMenu;
 }
@@ -99,12 +98,13 @@ KActionMenu* AIMAccount::actionMenu()
 void AIMAccount::initSignals()
 {
 	// Got my user info
-	QObject::connect( getEngine(), SIGNAL(gotMyUserInfo(UserInfo)),
-					  this, SLOT(slotGotMyUserInfo(UserInfo)));
+	QObject::connect(
+		getEngine(), SIGNAL(gotMyUserInfo(UserInfo)),
+		this, SLOT(slotGotMyUserInfo(UserInfo)));
 
 	// Got warning
-	QObject::connect( getEngine(),
-		SIGNAL(gotWarning(int,QString)),
+	QObject::connect(
+		getEngine(), SIGNAL(gotWarning(int,QString)),
 		this, SLOT(slotGotWarning(int,QString)));
 }
 
@@ -163,12 +163,12 @@ void AIMAccount::slotEditInfo()
 
 void AIMAccount::setAway(bool away, const QString &awayReason)
 {
-	kdDebug(14180) << k_funcinfo << " " << accountId() << "] setAway()" << endl;
+	kdDebug(14180) << k_funcinfo << accountId() << ": setAway()" << endl;
 
 	if(away)
-		mEngine->sendAway(true, awayReason);
+		mEngine->sendStatus(OSCAR_AWAY, awayReason);
 	else
-		mEngine->sendAway(false, QString::null);
+		mEngine->sendStatus(OSCAR_ONLINE, QString::null);
 }
 
 #include "aimaccount.moc"

@@ -61,30 +61,64 @@ ICQAccount::~ICQAccount()
 	delete mAwayDialog;
 }
 
-
 KActionMenu* ICQAccount::actionMenu()
 {
-	KActionMenu* mActionMenu=new KActionMenu(accountId(), "icq_online", this, "ICQAccount::mActionMenu");
+	// mActionMenu is managed by KopeteAccount.  It is deleted when
+	// it is no longer shown, so we can (safely) just make a new one here.
 
-	KAction* mActionGoOnline	= new KAction(i18n("Online"), static_cast<ICQProtocol*>(protocol())->statusOnline.iconFor( this ) , 0, this, SLOT(slotGoOnline()), this, "mActionGoOnline");
-	KAction* mActionGoOffline	= new KAction(i18n("Offline"), static_cast<ICQProtocol*>(protocol())->statusOffline.iconFor( this ), 0, this, SLOT(slotGoOffline()), this, "mActionGoOffline");
-	KAction* mActionGoAway		= new KAction(i18n("Away"),static_cast<ICQProtocol*>(protocol())->statusAway.iconFor( this ), 0, this, SLOT(slotGoAway()), this, "mActionGoAway");
-	KAction* mActionGoNA			= new KAction(i18n("Not Available"), static_cast<ICQProtocol*>(protocol())->statusNA.iconFor( this ), 0, this, SLOT(slotGoNA()), this, "mActionGoNA");
-	KAction* mActionGoDND		= new KAction(i18n("Do Not Disturb"), static_cast<ICQProtocol*>(protocol())->statusDND.iconFor( this ), 0, this, SLOT(slotGoDND()), this, "mActionGoDND");
-	KAction* mActionGoOccupied	= new KAction(i18n("Occupied"), static_cast<ICQProtocol*>(protocol())->statusOCC.iconFor( this ), 0, this, SLOT(slotGoOCC()), this, "mActionGoOccupied");
-	KAction* mActionGoFFC		= new KAction(i18n("Free For Chat"), static_cast<ICQProtocol*>(protocol())->statusFFC.iconFor( this ), 0, this, SLOT(slotGoFFC()), this, "mActionGoFFC");
+	KActionMenu* mActionMenu = new KActionMenu(accountId(),
+		"icq_protocol", this, "ICQAccount::mActionMenu");
+
+	ICQProtocol *p = ICQProtocol::protocol();
+
+	KAction* mActionOnline = new KAction(p->statusOnline.caption(),
+		p->statusOnline.iconFor(this), 0,
+		this, SLOT(slotGoOnline()), this, "ICQAccount::mActionOnline");
+
+	KAction* mActionOffline = new KAction(p->statusOffline.caption(),
+		p->statusOffline.iconFor(this), 0,
+		this, SLOT(slotGoOffline()), this, "ICQAccount::mActionOffline");
+
+	KAction* mActionAway		= new KAction(p->statusAway.caption(),
+		p->statusAway.iconFor(this), 0,
+		this, SLOT(slotGoAway()), this, "ICQAccount::mActionAway");
+
+	KAction* mActionNA = new KAction(p->statusNA.caption(),
+		p->statusNA.iconFor(this), 0,
+		this, SLOT(slotGoNA()), this, "ICQAccount::mActionNA");
+
+	KAction* mActionDND = new KAction(p->statusDND.caption(),
+		p->statusDND.iconFor(this), 0,
+		this, SLOT(slotGoDND()), this, "ICQAccount::mActionDND");
+
+	KAction* mActionOccupied = new KAction(p->statusOCC.caption(),
+		p->statusOCC.iconFor(this), 0,
+		this, SLOT(slotGoOCC()), this, "ICQAccount::mActionOccupied");
+
+	KAction* mActionFFC = new KAction(p->statusFFC.caption(),
+		p->statusFFC.iconFor(this), 0,
+		this, SLOT(slotGoFFC()), this, "ICQAccount::mActionFFC");
+
 //	mActionEditInfo = 0L; // TODO: can't send/retrieve info yet so no menuitem
-	KAction* mActionFastAddContact = new KAction(i18n("Fast add a Contact"), "", 0, this, SLOT(slotFastAddContact()), this, "actionFastAddContact" );
 
-	mActionMenu->insert(mActionGoOnline); // always first
-	mActionMenu->insert(mActionGoFFC);
-	mActionMenu->insert(mActionGoAway);
-	mActionMenu->insert(mActionGoNA);
-	mActionMenu->insert(mActionGoDND);
-	mActionMenu->insert(mActionGoOccupied);
-	mActionMenu->insert(mActionGoOffline);
+	// DEBUG ACTION TO BE REMOVED!
+	KAction* mActionFastAddContact = new KAction(i18n("Fast add a Contact"), "", 0,
+		this, SLOT(slotFastAddContact()), this, "ICQAccount::actionFastAddContact");
+
+
+	mActionMenu->popupMenu()->insertTitle(
+		mMyself->onlineStatus().iconFor(mMyself),
+		i18n("%2 <%1>").arg(accountId()).arg(mMyself->displayName()));
+
+	mActionMenu->insert(mActionOnline); // always first
+	mActionMenu->insert(mActionFFC);
+	mActionMenu->insert(mActionAway);
+	mActionMenu->insert(mActionNA);
+	mActionMenu->insert(mActionDND);
+	mActionMenu->insert(mActionOccupied);
+	mActionMenu->insert(mActionOffline);
 	mActionMenu->popupMenu()->insertSeparator();
-	mActionMenu->insert(mActionFastAddContact);
+	mActionMenu->insert(mActionFastAddContact); // DEBUG ACTION
 
 	return mActionMenu;
 }
@@ -97,7 +131,9 @@ void ICQAccount::slotGoNA()
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
 		)
-		mEngine->sendStatus(ICQ_STATUS_NA);
+	{
+		mAwayDialog->show(OSCAR_NA);
+	}
 }
 
 void ICQAccount::slotGoOCC()
@@ -108,7 +144,9 @@ void ICQAccount::slotGoOCC()
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
 		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
 		)
-		mEngine->sendStatus(ICQ_STATUS_OCC);
+	{
+		mAwayDialog->show(OSCAR_OCC);
+	}
 }
 
 void ICQAccount::slotGoFFC()

@@ -184,7 +184,10 @@ void ICQContact::setStatus(const unsigned int newStatus)
 		case OSCAR_OCC:
 			setOnlineStatus(mProtocol->statusOCC);
 			break;
-		default: // emergency choose, also gets used on OSCAR_ONLINE
+		case OSCAR_CONNECTING:
+			setOnlineStatus(mProtocol->statusConnecting); // ONLY for myself() contact
+			break;
+		default: // emergency choose, also OSCAR_ONLINE
 			setOnlineStatus(mProtocol->statusOnline);
 	}
 

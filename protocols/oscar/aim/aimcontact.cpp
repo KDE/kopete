@@ -96,9 +96,6 @@ void AIMContact::setStatus(const unsigned int newStatus)
 
 	switch(newStatus)
 	{
-		case OSCAR_ONLINE:
-			setOnlineStatus(mProtocol->statusOnline);
-			break;
 		case OSCAR_OFFLINE:
 			setOnlineStatus(mProtocol->statusOffline);
 			break;
@@ -108,7 +105,7 @@ void AIMContact::setStatus(const unsigned int newStatus)
 		case OSCAR_CONNECTING:
 			setOnlineStatus(mProtocol->statusConnecting);
 			break;
-		default: // emergency choose
+		default: // emergency choose, also OSCAR_ONLINE
 			setOnlineStatus(mProtocol->statusOnline);
 	}
 

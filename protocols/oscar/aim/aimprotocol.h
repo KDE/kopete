@@ -42,7 +42,7 @@ class AIMProtocol : public KopeteProtocol
 		* because it's a singleton, can only be used inside AIM classes, not in oscar lib
 		*/
 		static AIMProtocol *protocol();
-		
+
 		bool canSendOffline() const { return false; }
 
 		void deserializeContact( KopeteMetaContact *metaContact,
@@ -63,7 +63,6 @@ class AIMProtocol : public KopeteProtocol
 	private:
 		/** The active instance of oscarprotocol */
 		static AIMProtocol *protocolStatic_;
-
 };
 
 #endif

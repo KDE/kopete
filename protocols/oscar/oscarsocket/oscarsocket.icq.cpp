@@ -281,7 +281,7 @@ void OscarSocket::parseICQ_CLI_META(Buffer &inbuf)
 */
 } // END OscarSocket::parseICQ_CLI_META()
 
-void OscarSocket::sendStatus(unsigned long status)
+void OscarSocket::sendICQStatus(unsigned long status)
 {
 	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_SETSTATUS)" << endl;
 
@@ -297,7 +297,9 @@ void OscarSocket::sendStatus(unsigned long status)
 	outbuf.addWord(0x0006);
 	outbuf.addWord(0x0004);
 	outbuf.addDWord(status);
-
+	outbuf.addWord(0x0008); // TLV(8)
+	outbuf.addWord(0x0002); // length 2
+	outbuf.addWord(0x0000); // error code - 0
 //	outbuf.print();
 
 	sendBuf(outbuf, 0x2);
@@ -621,4 +623,3 @@ bool requestAutoReply(unsigned long uin, unsigned long status)
 }
 */
 // vim: set noet ts=4 sts=4 sw=4:
-

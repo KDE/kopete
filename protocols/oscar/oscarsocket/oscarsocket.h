@@ -165,8 +165,6 @@ class OscarSocket : public OscarConnection
 	void sendIM(const QString &message, const QString &dest, bool isAuto);
 	/** Requests sn's user info */
 	void sendUserProfileRequest(const QString &sn);
-	/** Sets the away message, makes user away */
-	void sendAway(bool away, const QString &message=0L);
 	/** Sends someone a warning */
 	void sendWarning(const QString &target, bool isAnonymous);
 	/** Changes a user's password (AIM Method) */
@@ -200,6 +198,12 @@ class OscarSocket : public OscarConnection
 	virtual void sendDelBuddy(const QString &budName, const QString &budGroup);
 	/** Sends the server lots of  information about the currently logged in user */
 	void sendInfo();
+
+	/* sends a status change, status is one of OSCAR_
+	 * awayMessage is only used for AIM currently
+	 */
+	void sendStatus(const unsigned int status, const QString &awayMessage = QString::null);
+
 	/** Sends the user's profile to the server */
 	void sendMyProfile();
 	/** Sets the user's profile */
@@ -223,8 +227,6 @@ class OscarSocket : public OscarConnection
 	/** Accepts a file transfer from sn, returns OscarConnection created */
 	OscarConnection *sendFileSendAccept(const QString &sn, const QString &fileName);
 
-	/** send status (ICQ method) */
-	void sendStatus(unsigned long status);
 	/** send request for offline messages (ICQ method) */
 	void sendReqOfflineMessages();
 	/** send acknowledgment for offline messages (ICQ method) */
@@ -338,7 +340,6 @@ class OscarSocket : public OscarConnection
 	/** Parses a minityping notification from server */
 	void parseMiniTypeNotify(Buffer &);
 
-
 	void parseICQ_CLI_META(Buffer &);
 	void parseAdvanceMessage(Buffer &, UserInfo &);
 
@@ -369,6 +370,11 @@ class OscarSocket : public OscarConnection
 	void sendMsgParams();
 	/** Returns the appropriate server socket, based on the capability flag it is passed. */
 	OncomingSocket * serverSocket(DWORD capflag);
+
+	/** Sets the away message for AIM, makes user away */
+	void sendAIMAway(bool away, const QString &message=0L);
+	/** send status, i.e. AWAY, NA, OCC (ICQ method) */
+	void sendICQStatus(unsigned long status);
 
 	void startKeepalive();
 	void stopKeepalive();
