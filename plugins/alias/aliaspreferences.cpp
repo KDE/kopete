@@ -270,7 +270,7 @@ void AliasPreferences::slotAddAlias()
 			}
 			else
 			{
-				KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. This"
+				KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. This "
 					"command is already being handled by either another alias or "
 					"Kopete itself.</qt>").arg(alias),i18n("Could Not Add Alias") );
 			}
