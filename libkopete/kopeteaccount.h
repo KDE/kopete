@@ -20,6 +20,7 @@
 #define KOPETEACCOUNT_H
 
 #include "kopeteplugindataobject.h"
+#include <kdemacros.h>
 #include <qdict.h>
 
 class QDomNode;
@@ -75,6 +76,15 @@ public:
 	 * \brief Describes what should be done when the contact is added to a metacontact
 	 */
 	enum AddMode { ChangeKABC=0, DontChangeKABC=1 };
+	
+	/**
+	 * \brief Describes how the account was disconnected
+	 *
+	 * Manual means that the disconnection was done by the user and no reconnection
+	 * will take place. Any other value will reconnect the account on disconnection.
+	 * The case where the password is wrong will be handled differently. 
+	 */
+	enum DisconnectReason { Manual = 0, ConnectionReset, Unknown };
 	
 	/**
 	 * constructor:
@@ -308,9 +318,17 @@ public slots:
 
 	/**
 	 * @brief Disconnect from this service.
-	 *
+	 * \deprecated
 	 */
-	virtual void disconnect() = 0;
+	virtual void disconnect() = 0 ; 
+	
+	/**
+	 * \brief Disconnect from this service with the specified reason
+	 *
+	 * \todo Merge this method and \ref disconnect when we decide to
+	 * break binary compatibility
+	 */
+	virtual void disconnect( DisconnectReason reason );
 
 	/**
 	 * Adds a contact to this protocol with the specified details

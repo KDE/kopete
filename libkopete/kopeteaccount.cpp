@@ -34,6 +34,7 @@
 #include "kopetepluginmanager.h"
 #include "kopetegroup.h"
 #include "kopetepassword.h"
+#include "kopeteprefs.h"
 
 namespace
 {
@@ -97,6 +98,13 @@ void KopeteAccount::slotAccountReady()
 void KopeteAccount::connect( const KopeteOnlineStatus& )
 {
 	//do nothing
+}
+
+void KopeteAccount::disconnect( DisconnectReason reason )
+{
+	//reconnect if needed
+	if ( KopetePrefs::prefs()->reconnectOnDisconnect() == true && reason != Manual )
+		connect();
 }
 
 KopeteProtocol *KopeteAccount::protocol() const

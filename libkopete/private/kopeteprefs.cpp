@@ -132,6 +132,11 @@ void KopetePrefs::load()
 		font.setPointSizeFloat( font.pointSizeFloat() * 0.75 );
 	mContactListSmallFont = config->readFontEntry("SmallFont", &font);
 	mContactListGroupNameColor = config->readColorEntry("GroupNameColor", &darkRed);
+	
+	//Load the reconnection setting
+	config->setGroup("General");
+	mReconnectOnDisconnect = config->readBoolEntry("ReconnectOnDisconnect", true);
+	
 
 	mWindowAppearanceChanged = false;
 	mTransparencyChanged = false;
@@ -194,6 +199,10 @@ void KopetePrefs::save()
 	config->writeEntry("NormalFont", mContactListNormalFont);
 	config->writeEntry("SmallFont", mContactListSmallFont);
 	config->writeEntry("GroupNameColor", mContactListGroupNameColor);
+	
+	//Save the reconnection setting
+	config->setGroup("General");
+	config->writeEntry("ReconnectOnDisconnect", mReconnectOnDisconnect);
 
 	config->sync();
 	emit saved();
@@ -501,5 +510,9 @@ void KopetePrefs::setContactListGroupNameColor( const QColor & v )
 	mContactListGroupNameColor = v;
 }
 
+void KopetePrefs::setReconnectOnDisconnect( bool newSetting )
+{
+	mReconnectOnDisconnect = newSetting;
+}
 #include "kopeteprefs.moc"
 // vim: set noet ts=4 sts=4 sw=4:

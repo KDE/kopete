@@ -104,6 +104,8 @@ public:
 	QFont contactListCustomSmallFont() const { return mContactListSmallFont; }
 	QFont contactListSmallFont() const;
 	QColor contactListGroupNameColor() const { return mContactListGroupNameColor; }
+	
+	bool reconnectOnDisconnect() const { return mReconnectOnDisconnect; }
 
 	void setIconTheme(const QString &value);
 	void setUseEmoticons(bool value);
@@ -149,6 +151,7 @@ public:
 	void setContactListCustomNormalFont( const QFont & v );
 	void setContactListCustomSmallFont( const QFont & v );
 	void setContactListGroupNameColor( const QColor & v );
+	void setReconnectOnDisconnect( bool newSetting );
 
 signals:
 	/**
@@ -231,6 +234,8 @@ private:
 	QFont mContactListNormalFont;
 	QFont mContactListSmallFont;
 	QColor mContactListGroupNameColor;
+	
+	bool mReconnectOnDisconnect;
 
 	QString fileContents(const QString &path);
 	void _setStyleSheet (const QString &);
