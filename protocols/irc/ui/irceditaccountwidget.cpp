@@ -23,6 +23,8 @@
 #include <qlineedit.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>
+#include <kextsock.h>
+#include <qconnection.h>
 
 #include "kirc.h"
 #include "ircaccount.h"
@@ -142,7 +144,17 @@ bool IRCEditAccountWidget::validateData()
 	else if( mServer->text().isEmpty() )
 		KMessageBox::sorry(this, i18n("<qt>You must enter a server.</qt>"), i18n("Kopete"));
 	else
-		return true;
+	{
+		int error;
+		QPtrList<KAddressInfo> address = KExtendedSocket::lookup( 
+			mServer->text(), QString::number( mPort->value() ), 0, &error );
+		address.setAutoDelete(true);
+		if( !address.isEmpty() )
+			return true;
+		
+		KMessageBox::sorry(this, i18n("<qt>The server/port combination you entered is invalid. Please double-check your values.</qt>"), i18n("Kopete"));
+
+	}
 
 	return false;
 }
