@@ -191,27 +191,7 @@ AIMBuddy::AIMBuddy(const int buddyID, const int groupID, const QString &screenNa
 	mWaitAuth = false;
 }
 
-AIMBuddyCaps::AIMBuddyCaps()
-{
-	buddyicon = false;
-	voice = false;
-	imimage = false;
-	chat = false;
-	getfile = false;
-	sendfile = false;
-	games = false;
-	savestocks = false;
-	sendbuddylist = false;
-	games2 = false;
-	icq = false;
-	apinfo = false;
-	icqrtf = false;
-	empty = false;
-	icqserverrelay = false;
-	icqunknown = false;
-	trilliancrypt = false;
-	last = false;
-}
-
 #include "aimbuddylist.moc"
+
 // vim: set noet ts=4 sts=4 sw=4:
+

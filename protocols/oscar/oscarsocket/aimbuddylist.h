@@ -32,30 +32,6 @@
 #include "aimbuddy.h"
 #include "aimgroup.h"
 
-class AIMBuddyCaps
-{
-public:
-	AIMBuddyCaps();
-	bool buddyicon;
-	bool voice;
-	bool imimage;
-	bool chat;
-	bool getfile;
-	bool sendfile;
-	bool games;
-	bool savestocks;
-	bool sendbuddylist;
-	bool games2;
-	bool icq;
-	bool apinfo;
-	bool icqrtf;
-	bool empty;
-	bool icqserverrelay;
-	bool icqunknown;
-	bool trilliancrypt;
-	bool last;
-};
-
 class AIMBuddyList : public QObject
 {
 	Q_OBJECT
