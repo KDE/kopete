@@ -94,6 +94,7 @@ private:
 	StyleEditDialog *styleEditor;
 	QListBoxItem *editedItem;
 	QMap<QListBoxItem*,QString> itemMap;
+	QString currentStyle;
 
 	void updateHighlight();
 	bool errorAlert;

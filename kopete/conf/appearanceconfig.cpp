@@ -157,12 +157,9 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	// ===========================================================================
 
 	errorAlert = false;
-	reopen(); // load settings from config
+//	reopen(); // load settings from config  //WHY? theses are loaded when we need it
 	slotTransparencyChanged(mPrfsChatWindow->mTransparencyEnabled->isChecked());
 	slotShowTrayChanged();
-
-	// sync actions, config and prefs-dialog
-	connect(KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()));
 }
 
 AppearanceConfig::~AppearanceConfig()
@@ -271,6 +268,7 @@ void AppearanceConfig::reopen()
 			}
 		}
 	}
+
 	// Where is that theme in our big-list-o-themes?
 	QListBoxItem *item = icon_theme_list->findItem( p->iconTheme() );
 
@@ -306,10 +304,12 @@ void AppearanceConfig::reopen()
 
 	QStringList mChatStyles = KGlobal::dirs()->findAllResources("appdata", QString::fromLatin1("styles/*.xsl") );
 	mPrfsChatAppearance->styleList->clear();
+
 	for( QStringList::Iterator it = mChatStyles.begin(); it != mChatStyles.end(); ++it)
 	{
 		QFileInfo fi( *it );
 		QString fileName = fi.fileName().section('.',0,0);
+
 		mPrfsChatAppearance->styleList->insertItem( fileName, 0 );
 		itemMap.insert( mPrfsChatAppearance->styleList->firstItem(), *it );
 
@@ -546,26 +546,28 @@ void AppearanceConfig::addStyle( const QString &styleName, const QString &xslStr
 
 void AppearanceConfig::slotUpdatePreview()
 {
-	KopeteContact *cFrom = new KopeteContact((KopeteAccount*)0L, QString::fromLatin1("UserFrom"), 0L);
-	KopeteContact *cTo = new KopeteContact((KopeteAccount*)0L, QString::fromLatin1("UserTo"), 0L);
-
-	KopeteContactPtrList toList = KopeteContactPtrList();
-	toList.append( cTo );
-
-	KopeteMessage msgIn( cFrom, toList, QString::fromLatin1("This is an incoming message"),KopeteMessage::Inbound );
-	KopeteMessage msgOut( cFrom, toList, QString::fromLatin1("This is an outgoing message"),KopeteMessage::Outbound );
-	KopeteMessage msgInt( cFrom, toList, QString::fromLatin1("This is an internal message"),KopeteMessage::Internal );
-	KopeteMessage msgHigh( cFrom, toList, QString::fromLatin1("This is a highlighted message"),KopeteMessage::Inbound );
-	KopeteMessage msgAct( cFrom, toList, QString::fromLatin1("This is an action message"),KopeteMessage::Action );
-
 	QString model;
 	QListBoxItem *style = mPrfsChatAppearance->styleList->selectedItem();
-	if( style )
+	if( style && itemMap[style] != currentStyle )
 	{
-		model = fileContents( itemMap[ style ] );
+		currentStyle=itemMap[style];
+		QString model = fileContents( currentStyle );
 
 		if( !model.isEmpty() )
 		{
+
+			KopeteContact *cFrom = new KopeteContact((KopeteAccount*)0L, QString::fromLatin1("UserFrom"), 0L);
+			KopeteContact *cTo = new KopeteContact((KopeteAccount*)0L, QString::fromLatin1("UserTo"), 0L);
+
+			KopeteContactPtrList toList = KopeteContactPtrList();
+			toList.append( cTo );
+
+			KopeteMessage msgIn( cFrom, toList, QString::fromLatin1("This is an incoming message"),KopeteMessage::Inbound );
+			KopeteMessage msgOut( cFrom, toList, QString::fromLatin1("This is an outgoing message"),KopeteMessage::Outbound );
+			KopeteMessage msgInt( cFrom, toList, QString::fromLatin1("This is an internal message"),KopeteMessage::Internal );
+			KopeteMessage msgHigh( cFrom, toList, QString::fromLatin1("This is a highlighted message"),KopeteMessage::Inbound );
+			KopeteMessage msgAct( cFrom, toList, QString::fromLatin1("This is an action message"),KopeteMessage::Action );
+
 			preview->begin();
 			preview->write( QString::fromLatin1( "<html><head><style>body{font-family:%1;color:%2;}td{font-family:%3;color:%4;}.highlight{color:%5;background-color:%6}</style></head><body bgcolor=\"%7\" vlink=\"%8\" link=\"%9\">" )
 				.arg( mPrfsChatAppearance->fontFace->font().family() )
@@ -578,26 +580,25 @@ void AppearanceConfig::slotUpdatePreview()
 				.arg( mPrfsChatAppearance->linkColor->color().name() )
 				.arg( mPrfsChatAppearance->linkColor->color().name() ) );
 
-			// incoming messages
-			preview->write( KopeteXSL::xsltTransform( msgIn.asXML().toString(), model ) );
-			msgIn.setFg(Qt::white);
+			preview->write( KopeteXSL::xsltTransform( msgIn.asXML().toString(), model )) ;
+			msgIn.setFg(Qt::red);
 			msgIn.setBg(Qt::blue);
 			msgIn.setBody( QString::fromLatin1("This is a colored incoming message (random color)") );
-
 			preview->write( KopeteXSL::xsltTransform( msgIn.asXML().toString(), model ) );
-			preview->write( KopeteXSL::xsltTransform( msgOut.asXML().toString(), model ) );
+			preview->write( KopeteXSL::xsltTransform( msgOut.asXML().toString(), model)  );
 			preview->write( KopeteXSL::xsltTransform( msgInt.asXML().toString(), model ) );
 			preview->write( KopeteXSL::xsltTransform( msgAct.asXML().toString(), model ) );
 			msgHigh.setImportance( KopeteMessage::Highlight );
-			preview->write( KopeteXSL::xsltTransform( msgHigh.asXML().toString(), model ) );
+			preview->write( KopeteXSL::xsltTransform( msgHigh.asXML().toString(), model )) ;
 
 			preview->write( QString::fromLatin1( "</body></html>" ) );
 			preview->end();
+
+			delete cFrom;
+			delete cTo;
+
 		}
 	}
-
-	delete cFrom;
-	delete cTo;
 }
 
 QString AppearanceConfig::fileContents( const QString &path )
