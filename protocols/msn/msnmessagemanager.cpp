@@ -207,6 +207,11 @@ void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageMana
 			m_messagesQueue.append(message);
 			kdDebug(14140) << "MSNMessageManager::slotMessageSent: message added to the queue" <<endl;
 		}
+		else if( id== -2 ) //the message has not been sent
+		{
+			//FIXME:  tell the what window the message has been processed. but we havent't sent it 
+			messageSucceeded();
+		}
 		else
 		{
 			m_messagesSent.insert( id, message );

@@ -22,6 +22,7 @@
 #include "msnswitchboardsocket.h"
 
 #include <time.h>
+#include <cmath>
 
 // qt
 #include <qstylesheet.h>
@@ -463,9 +464,58 @@ int MSNSwitchBoardSocket::sendMsg( const KopeteMessage &msg )
 	head += "; CS=0; PF=0\r\n"
 		"\r\n";
 
-	head += msg.plainBody().replace(  "\n" , "\r\n" );
+	QString message= msg.plainBody().replace(  "\n" , "\r\n" );
+		
+	//-- Check if the message isn't too big,  TODO: do that at the libkopete level.
+	int len_H=head.utf8().length();	// != head.length()  because i need the size in butes and
+	int len_M=message.utf8().length();	//    some utf8 char may be longer than one byte
+	if( len_H+len_M >= 1664 ) //1664 is the maximum size of messages allowed by the server
+	{
+		//this is the size of each part of the message (excluding the header)
+		int futurmessages_size=1664-len_H; 
+		
+		int nb=(int)ceil((float)(len_M)/(float)(futurmessages_size));
 
-	return sendCommand( "MSG", "A", true, head.utf8() );
+		if(KMessageBox::warningContinueCancel(0L /* FIXME: we should try to find a parent somewere*/ ,
+			i18n("The message you are trying to send is too long. It will be split in to %1 messages").arg(nb) , 
+			i18n("Message too big - MSN Plugin" ), KStdGuiItem::cont() , "SendLongMessages" )
+				== KMessageBox::Continue )
+		{
+			int place=0;
+			int result;
+			do
+			{
+				QString m=message.mid(place, futurmessages_size);
+				place += futurmessages_size;
+				
+				//make sure the size is not too big because of utf8
+				int d=m.utf8().length() + len_H -1664;
+				if( d > 0 )
+				{//it contains some utf8 chars, so we strip the string a bit.
+					m=m.left( futurmessages_size - d );
+					place -= d;
+				}
+				
+				//try to snip on space if possible
+				int len=m.length();
+				d=0;
+				while(d<200 && !m[len-d].isSpace() )
+					d++; 
+				if(d<200)
+				{
+					m=m.left(len-d);
+					place -= d;
+				}
+
+				result=sendCommand( "MSG", "A", true, (head+m).utf8() );
+
+			}
+			while(place < len_M) ;
+			return result;
+		}
+		return -2;  //the message hasn't been sent.
+	}
+	return sendCommand( "MSG", "A", true, (head+ message).utf8() );
 }
 
 void MSNSwitchBoardSocket::slotSocketClosed( )
@@ -562,7 +612,7 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 		{
 			QString es=QStyleSheet::escape(it.data().first);
 			KTempFile *f=it.data().second;
-			kdDebug(14140) << "MSNSwitchBoardSocket::slotEmoticonReceived: search for " << es << "  in "<< message <<  endl;
+//			kdDebug(14140) << "MSNSwitchBoardSocket::slotEmoticonReceived: search for " << es << "  in "<< message <<  endl;
 			if(message.contains(es) && f)
 			{
 				hasEmoticon=true;
