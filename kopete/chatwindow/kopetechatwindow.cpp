@@ -145,22 +145,18 @@ KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KParts::
 	mainArea->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	mainLayout = new QVBoxLayout( mainArea );
 
-	statusArea = new QWidget(vBox);
-	statusArea->setSizePolicy( QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum) );
-
-	//Layout for status label and send button
-	QHBoxLayout *h = new QHBoxLayout( statusArea, 4, 4 );
+	statusArea = new QHBox(vBox);
+	statusArea->setSizePolicy( QSizePolicy(QSizePolicy::Minimum , QSizePolicy::Minimum) );
 
 	//Status label
 	m_status = new KSqueezedTextLabel( i18n("Ready."), statusArea );
-	m_status->setSizePolicy( QSizePolicy( QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding ) );
+	m_status->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Minimum ) );
 	QToolTip::add( m_status, m_status->text() );
-	h->addWidget( m_status, 0, Qt::AlignLeft | Qt::AlignVCenter );
 
 	//Send Button
 	m_button_send = new KPushButton( i18n("Send"), statusArea );
 	m_button_send->setEnabled( false );
-	h->addWidget(m_button_send, 0, Qt::AlignRight | Qt::AlignVCenter);
+//	h->addWidget(m_button_send, 0, Qt::AlignRight | Qt::AlignVCenter);
 
 	connect( m_button_send, SIGNAL( pressed() ), this, SLOT( slotSendMessage() ) );
 
