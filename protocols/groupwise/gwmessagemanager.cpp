@@ -120,6 +120,7 @@ bool GroupWiseMessageManager::secure()
 
 void GroupWiseMessageManager::setClosed()
 {
+	m_guid = QString::null;
 	m_flags = m_flags | GroupWise::Closed;
 }
 
@@ -218,13 +219,13 @@ void GroupWiseMessageManager::slotMessageSent( KopeteMessage & message, KopeteMe
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	if( account()->isConnected() )
 	{
-		if ( closed() )
+		/*if ( closed() )
 		{
 			KopeteMessage failureNotify = KopeteMessage( user(), members(), i18n("Your message could not be sent. This conversation has been closed by the server, because all the other participants left or declined invitations. "), KopeteMessage::Internal, KopeteMessage::PlainText);
 			appendMessage( failureNotify );
 			messageSucceeded();
 		}
-		else if ( account()->myself()->onlineStatus() == ( static_cast<GroupWiseProtocol *>( protocol() ) )->groupwiseAppearOffline )
+		else*/ if ( account()->myself()->onlineStatus() == ( static_cast<GroupWiseProtocol *>( protocol() ) )->groupwiseAppearOffline )
 		{
 			KopeteMessage failureNotify = KopeteMessage( user(), members(), i18n("Your message could not be sent. You cannot send messages while your status is Appear Offline. "), KopeteMessage::Internal, KopeteMessage::PlainText);
 			appendMessage( failureNotify );
@@ -412,6 +413,12 @@ void GroupWiseMessageManager::addInvitee( const KopeteContact * c )
 
 void GroupWiseMessageManager::joined( GroupWiseContact * c )
 {
+	// we add the real contact before removing the placeholder, 
+	// because otherwise KMM will delete itself when the last member leaves.
+	addContact( c );
+
+	c->joinConference( m_guid );
+	
 	// look for the invitee and remove it
 	KopeteContact * pending;
 	for ( pending = m_invitees.first(); pending; pending = m_invitees.next() )
@@ -425,10 +432,6 @@ void GroupWiseMessageManager::joined( GroupWiseContact * c )
 
 	m_invitees.remove( pending );
 
-	addContact( c );
-
-	c->joinConference( m_guid );
-	
 	updateArchiving();
 	
 	++m_memberCount;
