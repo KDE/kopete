@@ -589,7 +589,7 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 			if ( grp->pluginData( protocol(), accountId() + " objectId" ).toInt() == contact.parentId )
 			{
 				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - matches, adding." << endl;
-				metaContact->addToGroup( grp ); //addToGroup() is safe to call if already a member
+				metaContact->addToGroup( grp, KopeteMetaContact::DontSyncGroups ); //addToGroup() is safe to call if already a member
 				break;
 			}
 		}
@@ -601,13 +601,12 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 		metaContact->setDisplayName( contact.displayName );
 		// HACK: lowercased DN
 		c = new GroupWiseContact( this, contact.dn, metaContact, contact.id, contact.parentId, contact.sequence );
-		c->setProperty( Kopete::Global::Properties::self()->nickName(), contact.displayName );
 		KopeteGroupList groupList = KopeteContactList::contactList()->groups();
 		for ( KopeteGroup *grp = groupList.first(); grp; grp = groupList.next() )
 		{
 			if ( grp->pluginData( protocol(), accountId() + " objectId" ).toInt() == contact.parentId )
 			{
-				metaContact->addToGroup( grp );
+				metaContact->addToGroup( grp, KopeteMetaContact::DontSyncGroups );
 				break;
 			}
 		}
@@ -638,7 +637,7 @@ void GroupWiseAccount::receiveAccountDetails( const ContactDetails & details )
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " - got our details in contact list, updating them" << endl;
 		GroupWiseContact * detailsOwner= static_cast<GroupWiseContact *>( myself() );
 		detailsOwner->updateDetails( details );
-		detailsOwner->setProperty( Kopete::Global::Properties::self()->nickName(), details.fullName );
+		//detailsOwner->setProperty( Kopete::Global::Properties::self()->nickName(), details.fullName );
 
 		// Very important, without knowing our DN we can't do much else
 		Q_ASSERT( !details.dn.isEmpty() );
