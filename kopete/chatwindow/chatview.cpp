@@ -169,7 +169,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	bgChanged = false;
 	m_tabState=Normal;
 	//valgrind complained about this - initialize it to true
-	visibleMembers = true;
+	visibleMembers = false;
 
 //	m_icon = SmallIcon( mgr->protocol()->pluginIcon() );
 //	m_iconLight = KIconEffect().apply( m_icon, KIconEffect::ToGamma, 0.5, Qt::white, true );
@@ -239,11 +239,13 @@ void ChatView::raise(bool activate)
 
 	//Will not activate window if user was typing
 	if(activate)
+	{
 #if KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
 		KWin::setActiveWindow( m_mainWindow->winId() );
 #else
 		KWin::activateWindow( m_mainWindow->winId() );
 #endif
+	}
 }
 
 void ChatView::slotScrollingTo( int /*x*/, int y)
@@ -877,11 +879,12 @@ void ChatView::slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args
 
 void ChatView::sendInternalMessage(const QString &msg)
 {
-	                               //when closing kopete, some internal message may be send because some contact are deleted
-                                   //theses contact can already been deleted
+	// When closing kopete, some internal message may be sent because some contact are deleted
+	// these contacts can already be deleted
 	KopeteMessage m = KopeteMessage(/*m_manager->user(),  m_manager->members()*/ 0L,0L, msg, KopeteMessage::Internal);
-	//(in many case, this is useless to set myself as contact
-	//TODO: set the contact which initiate the internal messae, so we can later show a icon of it (for example, when he join a chat
+	// (in many cases, this is useless to set myself as contact)
+	// TODO: set the contact which initiate the internal message,
+	// so we can later show a icon of it (for example, when he join a chat)
 	addChatMessage(m);
 }
 
