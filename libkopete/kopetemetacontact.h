@@ -91,6 +91,11 @@ public:
 	enum OnlineStatus { Online, Away, Offline, Unknown };
 
 	/**
+	 * Contact's idle state
+	 */
+	enum IdleState { Unspecified, Idle, Active };
+
+	/**
 	 * Return more fine-grained status.
 	 * Online means at least one sub-contact is online, away means at least
 	 * one is away, but nobody is online and offline speaks for itself
@@ -104,6 +109,13 @@ public:
 	 * FIXME: Here too an enum.
 	 */
 	bool isReachable() const;
+
+	/**
+	 * Unspecified means that none of the contacts' protocols advertise idle time
+	 * Idle means that at least one sub-contact is idle
+	 * Active means that no subcontacts are idle and at least one are active
+	 */
+	IdleState idleState() const;
 
 	/**
 	 * Get/set the display name
@@ -279,12 +291,33 @@ signals:
 	 */
 	void aboutToSave(KopeteMetaContact*);
 
+	/**
+		* The metacontact's idle status changed.  KopeteMetaContactLVI should
+		* connect to this signal
+		*/
+	void idleStateChanged( KopeteMetaContact *contact,
+		KopeteMetaContact::IdleState newState );
+
+  /**
+  	* One of the subcontacts' idle status has changed.  As with online status,
+    * this can occur without the metacontact changing idle state
+    */
+  void contactIdleStateChanged( KopeteContact *contact,
+   	KopeteContact::IdleState newState );
+
 private slots:
 	/**
 	 * Update the contact's online status and emit onlineStatusChanged
 	 * when appropriate
 	 */
 	void updateOnlineStatus();
+
+	/**
+	  * Update the contact's idle status and emit idleStateChanged when
+	  * appropriate
+	  */
+	void updateIdleState();
+
 
 	/**
 	 * One of the child contact's online status changed
@@ -307,7 +340,13 @@ private slots:
 	 * If a plugin is loaded, maybe dada about this plugins are already cached in the metacontact
 	 */
 	void slotPluginLoaded(KopetePlugin *p);
-		
+
+	/**
+	 * One of the child contact's idle state changed
+	 */
+	void slotContactIdleStateChanged( KopeteContact *c,
+		KopeteContact::IdleState s );
+
 private:
 	QPtrList<KopeteContact> m_contacts;
 
@@ -336,6 +375,8 @@ private:
 	bool m_dirty;
 
 	OnlineStatus m_onlineStatus;
+
+	IdleState m_idleState;
 };
 
 #endif

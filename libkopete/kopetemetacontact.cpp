@@ -49,6 +49,7 @@ KopeteMetaContact::KopeteMetaContact()
 //	m_isTopLevel=false;
 
 	m_onlineStatus = Unknown;
+	m_idleState = Unspecified;
 }
 
 KopeteMetaContact::~KopeteMetaContact()
@@ -77,6 +78,9 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 
 		connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 			this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
+
+		connect( c, SIGNAL( idleStateChanged( KopeteContact *, KopeteContact::IdleState ) ),
+			this, SLOT( slotContactIdleStateChanged( KopeteContact *, KopeteContact::IdleState ) ) );
 
 		if (m_displayName == QString::null)
 		{
@@ -127,6 +131,35 @@ void KopeteMetaContact::updateOnlineStatus()
 	}
 }
 
+void KopeteMetaContact::updateIdleState()
+{
+	IdleState newStatus = Unspecified;
+
+	QPtrListIterator<KopeteContact> it( m_contacts );
+	for( ; it.current(); ++it )
+	{
+		KopeteContact::IdleState s = it.current()->idleState();
+
+		if ( s == KopeteContact::Active )
+		{
+			newStatus = Active;
+			break;
+		}
+		else if ( s == KopeteContact::Idle )
+		{
+			// Set status, but don't stop searching, since 'Active' overrules
+			// 'Idle'
+			newStatus = Idle;
+		}
+	}
+
+	if( newStatus != m_idleState )
+	{
+		m_idleState = newStatus;
+		emit idleStateChanged( this, m_idleState );
+	}
+}
+
 void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 {
 	if( !m_contacts.contains( c ) )
@@ -149,6 +182,9 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 
 			disconnect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 				this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
+
+			disconnect( c, SIGNAL( idleStateChanged( KopeteContact *, KopeteContact::IdleState ) ),
+				this, SLOT( slotContactIdleStateChanged( KopeteContact *, KopeteContact::IdleState ) ) );
 
 			kdDebug() << "KopeteMetaContact::removeContact: Contact disconected" << endl;
 		}
@@ -764,6 +800,17 @@ QStringList KopeteMetaContact::pluginData(KopetePlugin *p)
 		(*it2)=(*it2).replace(QRegExp("\\\\\\|;"),"|").replace(QRegExp("\\\\\\\\"),"\\");
 	}
 	return strList;
+}
+
+KopeteMetaContact::IdleState KopeteMetaContact::idleState() const
+{
+	return m_idleState;
+}
+
+void KopeteMetaContact::slotContactIdleStateChanged( KopeteContact *c,	KopeteContact::IdleState s )
+{
+	emit contactIdleStateChanged(c,s);
+	updateIdleState();
 }
 
 #include "kopetemetacontact.moc"

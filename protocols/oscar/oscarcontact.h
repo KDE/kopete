@@ -91,11 +91,14 @@ private: // Private attributes
 
 	OscarProtocol *mProtocol;
 
+	/** The contact's idle time */
+	int mIdle;
+
 private slots: // Private slots
 	/** Called when a buddy changes */
-	void slotBuddyChanged(int buddyNum);
-	/** Called when a buddy is oncoming */
-	void slotOncomingBuddy(UserInfo u);
+	void slotUpdateBuddy(int buddyNum);
+	/** Called when a buddy has changed status */
+	void slotBuddyChanged(UserInfo u);
 	/** Called when a buddy is offgoing */
 	void slotOffgoingBuddy(QString sn);
 	/** Called when user info is requested */

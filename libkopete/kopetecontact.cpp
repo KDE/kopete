@@ -31,6 +31,7 @@
 #include <kpopupmenu.h>
 #include <kaction.h>
 #include <klineeditdlg.h>
+#include <kiconeffect.h>
 
 #include "kopetecontactlist.h"
 #include "kopetehistorydialog.h"
@@ -51,6 +52,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	contextMenu = 0L;
 	mFileCapable = false;
 	m_historyDialog = 0L;
+	m_idleState = Unspecified;
 
 	if( protocol )
 		protocol->registerContact( this );
@@ -133,18 +135,21 @@ QString KopeteContact::statusIcon() const
 
 QPixmap KopeteContact::scaledStatusIcon(int size)
 {
-    if ( (this->status() != m_cachedOldStatus) || ( size != m_cachedSize ) )
+	QPixmap tmp;
+	if ( (this->status() != m_cachedOldStatus) || ( size != m_cachedSize ) )
 	{
 		QImage afScal = ((QPixmap(SmallIcon(this->statusIcon()))).convertToImage()).smoothScale( size, size );
 		m_cachedScaledIcon = QPixmap(afScal);
 		m_cachedOldStatus = this->status();
 		m_cachedSize = size;
-		return m_cachedScaledIcon;
 	}
-	else
+	if ( m_idleState == Idle ) //if we are idle, make icon semi-transparent
 	{
-		return m_cachedScaledIcon;
+		tmp = m_cachedScaledIcon;
+		KIconEffect::semiTransparent(tmp);
+		return tmp;
 	}
+	return m_cachedScaledIcon;
 }
 
 int KopeteContact::importance() const
@@ -344,6 +349,13 @@ QString KopeteContact::contactId() const
 {
 	return m_contactId;
 }
+
+void KopeteContact::setIdleState( KopeteContact::IdleState newState )
+{
+	m_idleState = newState;
+	emit idleStateChanged( this, m_idleState );
+}
+
 
 #include "kopetecontact.moc"
 

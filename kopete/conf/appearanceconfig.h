@@ -81,6 +81,7 @@ private:
 	QCheckBox *mTreeContactList;
 	QCheckBox *mSortByGroup;
 	QCheckBox *mHideMetaContacts;
+	QCheckBox *mGreyIdleMetaContacts;
 
 	// Widgets for Emoticon TAB
 	QFrame* mEmoticonsTab;

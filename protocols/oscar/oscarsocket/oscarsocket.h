@@ -196,7 +196,7 @@ private: // Private methods
   /** Activates the SSI list on the server */
   void sendSSIActivate(void);
   /** Parses the oncoming buddy server notification */
-  void parseOncomingBuddy(Buffer &inbuf);
+  void parseBuddyChange(Buffer &inbuf);
   /** Parses offgoing buddy message from server */
   void parseOffgoingBuddy(Buffer &inbuf);
   /** Parses someone's user info */

@@ -100,10 +100,12 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	contactListLayout->addWidget( mShowOfflineUsers, 2, 0 );
 	mHideMetaContacts = new QCheckBox ( i18n("&Hide meta contact which contains only one subcontact"), mContactListTab );
 	contactListLayout->addWidget( mHideMetaContacts, 3, 0 );
+	mGreyIdleMetaContacts = new QCheckBox ( i18n("Grey idle meta contacts"), mContactListTab );
+	contactListLayout->addWidget( mGreyIdleMetaContacts, 4, 0 );
 
 	#if KDE_VERSION >= 306
 	mNotifyOnlineUsers = new QCheckBox ( i18n("Notify when a user comes online"), mContactListTab );
-	contactListLayout->addWidget( mNotifyOnlineUsers, 4, 0 );
+	contactListLayout->addWidget( mNotifyOnlineUsers, 5, 0 );
 	#endif
 
 	QSpacerItem* spacer2 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
@@ -161,6 +163,7 @@ void AppearanceConfig::save()
 	p->setShowOffline ( mShowOfflineUsers->isChecked() );
 	p->setSortByGroup ( mSortByGroup->isChecked() );
 	p->setHideMetaContacts( mHideMetaContacts->isChecked() );
+	p->setGreyIdleMetaContacts( mGreyIdleMetaContacts->isChecked() );
 	#if KDE_VERSION >= 306
 	p->setNotifyOnline ( mNotifyOnlineUsers->isChecked() );
 	#endif
@@ -233,6 +236,7 @@ void AppearanceConfig::reopen()
 
 	mShowOfflineUsers->setChecked( p->showOffline() );
 	mHideMetaContacts->setChecked( p->hideMetaContacts() );
+	mGreyIdleMetaContacts->setChecked( p->greyIdleMetaContacts() );
 	#if KDE_VERSION >= 306
 	mNotifyOnlineUsers->setChecked( p->notifyOnline() );
 	#endif

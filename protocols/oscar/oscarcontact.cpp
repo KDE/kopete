@@ -45,7 +45,8 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	mName = name;
 	mProtocol = protocol;
 	mMsgManager = 0L;
-	QObject::connect(mProtocol->engine, SIGNAL(gotOncomingBuddy(UserInfo)),this,SLOT(slotOncomingBuddy(UserInfo)));
+	mIdle = 0;
+	QObject::connect(mProtocol->engine, SIGNAL(gotBuddyChange(UserInfo)),this,SLOT(slotBuddyChanged(UserInfo)));
 	QObject::connect(mProtocol->engine, SIGNAL(gotOffgoingBuddy(QString)),this,SLOT(slotOffgoingBuddy(QString)));
 	QObject::connect(mProtocol->engine, SIGNAL(gotIM(QString,QString,bool)),this,SLOT(slotIMReceived(QString,QString,bool)));
 	QObject::connect(mProtocol->engine, SIGNAL(statusChanged(int)), this, SLOT(slotMainStatusChanged(int)));
@@ -67,7 +68,7 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 		else
 			setDisplayName(tmpBuddy.name);
 
-		slotBuddyChanged(num);
+		slotUpdateBuddy(num);
 	}
 	else
 	{
@@ -141,7 +142,7 @@ void OscarContact::slotMainStatusChanged(int newStatus)
 }
 
 /** Called when a buddy changes */
-void OscarContact::slotBuddyChanged(int buddyNum)
+void OscarContact::slotUpdateBuddy(int buddyNum)
 {
 	TBuddy tmpBuddy;
 
@@ -158,9 +159,22 @@ void OscarContact::slotBuddyChanged(int buddyNum)
 	if ( mStatus == tmpBuddy.status )
 		return;
 
-	mStatus = tmpBuddy.status;
+	// if we have become idle
+	if ( tmpBuddy.idleTime > 0 )
+	{
+		kdDebug() << "[OscarContact] setting " << mName << " idle! Idletime: " << tmpBuddy.idleTime << endl;
+		setIdleState(Idle);			
+	}
+	// we have become un-idle
+	else 
+	{
+		kdDebug() << "[OscarContact] setting " << mName << " active!" << endl;
+		setIdleState(Active);
+	}
 
-	kdDebug() << "[OscarContact] slotBuddyChanged(), Contact " << mName << " is now " << mStatus << endl;
+	mStatus = tmpBuddy.status;
+  mIdle = tmpBuddy.idleTime;
+	kdDebug() << "[OscarContact] slotUpdateBuddy(), Contact " << mName << " is now " << mStatus << endl;
 
 	if ( mProtocol->isConnected() ) // oscar-plugin is online
 	{
@@ -227,10 +241,10 @@ QString OscarContact::statusIcon(void) const
 }
 
 /** Called when a buddy is oncoming */
-void OscarContact::slotOncomingBuddy(UserInfo u)
+void OscarContact::slotBuddyChanged(UserInfo u)
 {
 	if (tocNormalize(u.sn) == tocNormalize(mName))
-	//if we are teh contact that is oncoming
+	//if we are the contact that is oncoming
 	{
 		TBuddy *tmpBuddy;
 		int num = mProtocol->buddyList()->getNum(mName);
@@ -242,7 +256,10 @@ void OscarContact::slotOncomingBuddy(UserInfo u)
 				tmpBuddy->status = OSCAR_AWAY;
 			else
 				tmpBuddy->status = OSCAR_ONLINE;
-			slotBuddyChanged(num);
+			tmpBuddy->evil = u.evil;
+			tmpBuddy->idleTime = u.idletime;
+			tmpBuddy->signonTime = u.onlinesince;
+			slotUpdateBuddy(num);
 		}
 		else
 			kdDebug() << "[OscarContact] Buddy is oncoming but is not in buddy list" << endl;
@@ -260,7 +277,7 @@ void OscarContact::slotOffgoingBuddy(QString sn)
 		if ( (tmpBuddy = mProtocol->buddyList()->getByNum(num)) != NULL )
 		{
 			tmpBuddy->status = OSCAR_OFFLINE;
-			slotBuddyChanged(num);
+			slotUpdateBuddy(num);
 		}
 		else
 			kdDebug() << "[OscarContact] Buddy is offgoing but not in buddy list" << endl;

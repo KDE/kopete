@@ -62,6 +62,11 @@ public:
 	enum ContactStatus { Online, Away, Offline, Unknown };
 
 	/**
+	 * Contact's idle status
+	 */
+	enum IdleState { Unspecified, Idle, Active };
+
+	/**
 	 * Return whether this contact is online or not.
 	 * @return bool indicating whhether the contact is online
 	 * FIXME: When all plugins support this, make this pure virtual!
@@ -262,6 +267,18 @@ public:
 	  */
 	  bool canAcceptFiles() const { return isOnline() && mFileCapable; }
 
+	 /**
+	  * Accessor function for the idle state of the contact
+	  * @return Idle state of the contact
+	  */
+	 IdleState idleState() const { return m_idleState; };
+
+	 /**
+	 	* Sets the idle state to newState
+	  * If this function is not called by a plugin, the idle state is set to Unknown
+	  */
+	 void setIdleState( KopeteContact::IdleState newState );
+
 public slots:
 	/**
 	 * This should typically pop up a KopeteChatWindow
@@ -344,6 +361,12 @@ signals:
 	 */
 	void moved(KopeteMetaContact *from , KopeteContact *)  ;
 
+	/**
+	 * The contact's idle state changed
+	 */
+	void idleStateChanged( KopeteContact *contact,
+		KopeteContact::IdleState newState );
+
 private:
 	KopeteHistoryDialog *m_historyDialog;
 	QString m_displayName;
@@ -356,6 +379,9 @@ private:
 	QPixmap m_cachedScaledIcon;
 	int m_cachedSize;
 	ContactStatus m_cachedOldStatus;
+
+	//idle state
+	IdleState m_idleState;
 
 	KopeteMetaContact *m_metaContact;
 

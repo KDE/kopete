@@ -314,8 +314,8 @@ void OscarSocket::OnRead(void)
 						case 0x0003: //buddy list rights
 								parseBuddyRights(inbuf);
 								break;
-						case 0x000b: //oncoming buddy
-								parseOncomingBuddy(inbuf);
+						case 0x000b: //buddy changed status
+								parseBuddyChange(inbuf);
 								break;
 						case 0x000c: //offgoing buddy
 								parseOffgoingBuddy(inbuf);
@@ -696,7 +696,6 @@ void OscarSocket::parseMyUserInfo(Buffer &inbuf)
     kdDebug() << "[OSCAR] Parsing my user info" << endl;
     UserInfo u = parseUserInfo(inbuf);
     emit gotMyUserInfo(u);
-    requestLocateRights();
 }
 
 /** parse the server's authorization response (which hopefully contains the cookie) */
@@ -1414,6 +1413,10 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 								u.sessionlen = (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
 										| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
 								break;
+						case 0x0010: //session length (for AOL users)
+								u.sessionlen = (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
+										| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
+            		break;
 						default: //unknown info type
 								kdDebug() << "[OSCAR][parseUserInfo] invalid tlv type " << t.type << endl;
 						};
@@ -1498,11 +1501,11 @@ void OscarSocket::sendSSIActivate(void)
 }
 
 /** Parses the oncoming buddy server notification */
-void OscarSocket::parseOncomingBuddy(Buffer &inbuf)
+void OscarSocket::parseBuddyChange(Buffer &inbuf)
 {
     UserInfo u = parseUserInfo(inbuf);
     kdDebug() << "[OSCAR] Got an oncoming buddy, ScreenName: " << u.sn << endl;
-    emit gotOncomingBuddy(u);
+    emit gotBuddyChange(u);
 }
 
 /** Parses offgoing buddy message from server */
