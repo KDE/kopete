@@ -20,6 +20,7 @@
 
 #include "kopetecontact.h"
 #include "jabberprotocol.h"
+#include "jabbermessagedialog.h"
 #include "dlgrename.h"
 
 #include <kopete.h>
@@ -28,6 +29,7 @@
 #include <qvaluestack.h>
 #include <qlabel.h>
 #include <qlineedit.h>
+#include <qcursor.h>
 
 
 class QTimer;
@@ -47,7 +49,7 @@ class JabberContact : public KopeteContact
 		JabberContact (QString userid, QString name, QString group, JabberProtocol *protocol);
 		
 		void initContact (QString userid, QString name);
-		virtual void showContextMenu (QPoint, QString);
+		void showContextMenu (QPoint, QString);
 
 		QString mUserID;
 		QString mName;
@@ -57,9 +59,12 @@ class JabberContact : public KopeteContact
 		ContactStatus status() const;
 		QString statusText() const;
 		QString statusIcon() const;
-        int importance() const;
+    int importance() const;
+    void execute();
 
 		void setResource(QString);
+    QString userID();
+    QString nickname();
 
 	public slots:
 	private slots:
@@ -69,6 +74,8 @@ class JabberContact : public KopeteContact
 		void slotRenameContact();
 		void slotDoRenameContact();
 		void slotMoveThisUser();
+    void slotChatThisUser();
+    void slotNewMessage(QString, QString);
 
 	private:
 		void initActions();
@@ -87,9 +94,11 @@ class JabberContact : public KopeteContact
 		KListAction *actionContactMove;
 		KListAction *actionContactCopy;
 		dlgJabberRename *dlgRename;
+    JabberMessageDialog *msgDialog;
 
 	signals:
 		void statusChanged();
+    void msgRecieved(QString, QString, QString, QString, QFont, QColor);
 };
 
 #endif

@@ -39,6 +39,7 @@ JabberProtocol::JabberProtocol(): QObject(0, "JabberProtocol"), KopeteProtocol()
 	connect(protocol, SIGNAL(contactUpdated(QString, QString, QString, QString)), this, SLOT(slotContactUpdated(QString, QString, QString, QString)));
 	connect(protocol, SIGNAL(userWantsAuth(QString)), this, SLOT(slotUserWantsAuth(QString)));
 	connect(protocol, SIGNAL(newContact(QString, QString, QString)), this, SLOT(slotNewContact(QString, QString, QString)));
+  connect(protocol, SIGNAL(gotMessage(QString, QString)), this, SLOT(slotNewMessage(QString, QString)));
 
 	statusBarIcon = new StatusBarIcon();
 	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)), this, SLOT(slotIconRightClicked(const QPoint)));
@@ -285,6 +286,13 @@ void JabberProtocol::slotSettingsChanged() {
 	m_Resource = KGlobal::config()->readEntry("Resource", "Kopete");
 	m_Server = KGlobal::config()->readEntry("Server", "jabber.org");
 	m_Port = KGlobal::config()->readNumEntry("Port", 5222);
+}
+
+void JabberProtocol::slotSendMsg(QString userID, QString message) const { protocol->slotSendMsg(userID, message); }
+
+void JabberProtocol::slotNewMessage(QString userID, QString message) {
+  kdDebug() << "Jabber protocol: New message for " << userID << endl;
+  emit newMessage(userID, message);
 }
 
 #include "jabberprotocol.moc"

@@ -17,9 +17,11 @@
 
 #include <kdebug.h>
 #include <klocale.h>
+#include <qfont.h>
 
 #include "kopetestdaction.h"
 #include "jabbercontact.h"
+#include "jabbermessagedialog.h"
 
 // Constructor for no-groups
 JabberContact::JabberContact(QString userid, QString name, QString group, JabberProtocol *protocol)
@@ -30,8 +32,9 @@ JabberContact::JabberContact(QString userid, QString name, QString group, Jabber
 	mUserID = userid;
 	hasLocalGroup = false;
 
-	connect (protocol, SIGNAL(contactUpdated(QString, QString, QString, QString)), this, SLOT(slotUpdateContact(QString, QString, QString, QString)));
-	connect (protocol, SIGNAL(nukeContacts(bool)), this, SLOT(slotDeleteMySelf(bool)));
+	connect(protocol, SIGNAL(contactUpdated(QString, QString, QString, QString)), this, SLOT(slotUpdateContact(QString, QString, QString, QString)));
+	connect(protocol, SIGNAL(nukeContacts(bool)), this, SLOT(slotDeleteMySelf(bool)));
+  connect(protocol, SIGNAL(newMessage(QString, QString)), this, SLOT(slotNewMessage(QString, QString)));
 
 	initContact(userid, name);
 }
@@ -66,7 +69,7 @@ void JabberContact::showContextMenu(QPoint point, QString /*group*/) {
 	actionContactCopy->plug(popup);
 	actionRemoveFromGroup->plug(popup);
 	actionRemove->plug(popup);
-	popup->popup(point);
+	popup->popup(QCursor::pos());
 }
 
 void JabberContact::slotUpdateContact (QString handle, QString resource, QString status, QString reason) {
@@ -98,7 +101,6 @@ void JabberContact::slotDoRenameContact() {
 }
 
 void JabberContact::slotDeleteMySelf(bool connected) {
-
 	delete this;
 }
 
@@ -131,7 +133,6 @@ void JabberContact::slotMoveThisUser() {
 }
 
 int JabberContact::importance() const {
-
 	if (mStatus == QString("online")) { return 20; }
 	if (mStatus == QString("away")) { return 15; }
 	if (mStatus == QString("xa")) { return 10; }
@@ -139,6 +140,25 @@ int JabberContact::importance() const {
 	return 0;
 }
 
+void JabberContact::slotChatThisUser() {
+  kdDebug() << "Jabber plugin: Opening chat with user " << mUserID << endl;
+  msgDialog = new JabberMessageDialog(this, mProtocol);
+  connect(this, SIGNAL(msgRecieved(QString, QString, QString, QString, QFont, QColor)), msgDialog, SLOT(slotMessageRecieved(QString, QString, QString, QString, QFont, QColor)));
+  msgDialog->show();
+}
+
+void JabberContact::execute() { slotChatThisUser(); }
+
+QString JabberContact::userID() { return mUserID; }
+QString JabberContact::nickname() { return mName; }
+
+void JabberContact::slotNewMessage (QString userID, QString message) {
+  kdDebug() << "Jabber contact: Message recieved for " << userID << endl;
+  if (userID != mUserID) { return; }
+  kdDebug() << "Jabber contact: It's for us! *swoon*" << endl;
+  emit msgRecieved(userID, mName, mName, message, QFont(), QColor());
+  kdDebug() << "Jabber contact: end slotNewMessage" << endl;
+}
 
 #include "jabbercontact.moc"
 

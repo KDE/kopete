@@ -90,10 +90,14 @@ public slots:
   void slotUserWantsAuth(QString);
   void slotSettingsChanged(void);
 
+  void slotSendMsg(QString, QString) const;
+  void slotNewMessage(QString, QString);
+
 signals:
   void protocolUnloading();
   void contactUpdated(QString, QString, QString, QString);
   void nukeContacts(bool);
+  void newMessage(QString, QString);
 
 private:
 	void initIcons();
