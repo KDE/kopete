@@ -75,9 +75,9 @@ public:
 	KopeteAccount* findAccount( const QString &protocolId, const QString &accountId );
 
 	/**
-	 * Tries to guess a color for this account based on the already registered ones
+	 * Tries to guess a color for the next account in the given protocol based on the already registered ones
 	 */
-	QColor guessColor( KopeteAccount* account );
+	QColor guessColor( KopeteProtocol* protocol );
 
 public slots:
 	/**

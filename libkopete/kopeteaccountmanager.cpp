@@ -101,14 +101,16 @@ void KopeteAccountManager::setAvailableAll()
 	}
 }
 
-QColor KopeteAccountManager::guessColor( KopeteAccount* account )
+QColor KopeteAccountManager::guessColor( KopeteProtocol* protocol )
 {
+	//TODO: use a different algoritm. It should realy check if the color is realy not used
+
 	/* counter for accounts of this protocol */
 	int thisProtocolCounter = 0;
 
 	for ( KopeteAccount *acc = m_accounts.first() ; acc ; acc = m_accounts.next() )
 	{
-		if(  account->protocol() == acc->protocol() )
+		if(  acc->protocol()->pluginId() == protocol->pluginId() )
 		{
 			thisProtocolCounter++;
 		}
@@ -116,7 +118,7 @@ QColor KopeteAccountManager::guessColor( KopeteAccount* account )
 
 	QColor color;
 	/* lets figure a color */
-	switch ( thisProtocolCounter )
+	switch ( thisProtocolCounter % 7 )
 	{
 		case 0:
 		color = QColor();
