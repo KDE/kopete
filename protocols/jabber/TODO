@@ -21,3 +21,6 @@ TODO for Jabber:
 - support advanced auth methods
 - subclass TLS to make use of KDE classes
 - allow SSL fallback with setOptProbe
+- support account deletion
+- factor out client backend to single class JabberClient
+- make vCard dialog better, maybe use KIMProxy somehow
