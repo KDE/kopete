@@ -44,7 +44,7 @@ typedef void (*YListFunc) (void *, void *);
 
 YList *y_list_append(YList * list, void *data);
 YList *y_list_prepend(YList * list, void *data);
-YList *y_list_remove_link(YList * list, const YList * link);
+YList *y_list_remove_link(YList * list, const YList * lnk);
 YList *y_list_remove(YList * list, void *data);
 
 YList *y_list_insert_sorted(YList * list, void * data, YListCompFunc comp);

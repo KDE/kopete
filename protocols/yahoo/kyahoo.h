@@ -114,7 +114,7 @@ public:
 	/* Private Receivers for libyahoo callbacks, we capture them  and emit signals
 	   called only by libyahoo callbacks, don't use them */
 
-	void _loginResponseReceiver(int succ, char *url);
+	void _loginResponseReceiver(int succ, const char *url);
 	void _gotIgnoreReceiver(YList *igns);
 	void _gotBuddiesReceiver(YList *buds);
 	void _gotidentitiesReceiver(char *who, int stat, char *msg, int away);

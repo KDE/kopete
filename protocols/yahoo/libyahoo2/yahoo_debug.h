@@ -19,7 +19,7 @@
  *
  */
 
-extern int yahoo_log_message(char *fmt, ...);
+extern int yahoo_log_message(const char *fmt, ...);
 
 #define NOTICE(x) if(yahoo_get_log_level() >= YAHOO_LOG_NOTICE) { yahoo_log_message x; yahoo_log_message("\n"); }
 

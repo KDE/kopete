@@ -159,7 +159,7 @@ char *yahoo_urlencode(const char *instr)
 	int len = strlen(instr);
 
 	if(!(str = y_new(char, 3*len + 1) ))
-		return "";
+		return strdup("");
 
 	while(instr[ipos]) {
 		while(isurlchar(instr[ipos]))
@@ -189,7 +189,7 @@ char *yahoo_urldecode(const char *instr)
 	int len = strlen(instr);
 
 	if(!(str = y_new(char, len+1) ))
-		return "";
+		return strdup("");
 
 	while(instr[ipos]) {
 		while(instr[ipos] && instr[ipos]!='%')
@@ -225,7 +225,7 @@ char *yahoo_xmldecode(const char *instr)
 	int ipos=0, bpos=0, epos=0;
 	char *str = NULL;
 	char entity[4]={0,0,0,0};
-	char *entitymap[5][2]={
+	const char *entitymap[5][2]={
 		{"amp;",  "&"}, 
 		{"quot;", "\""},
 		{"lt;",   "<"}, 
@@ -236,7 +236,7 @@ char *yahoo_xmldecode(const char *instr)
 	int len = strlen(instr);
 
 	if(!(str = y_new(char, len+1) ))
-		return "";
+		return strdup("");
 
 	while(instr[ipos]) {
 		while(instr[ipos] && instr[ipos]!='&')

@@ -39,7 +39,7 @@ char *strchr (), *strrchr ();
 
 #include "yahoo_util.h"
 
-char * y_string_append(char * string, char * append)
+char * y_string_append(char * string, const char * append)
 {
 	int size = strlen(string) + strlen(append) + 1;
 	char * new_string = y_renew(char, string, size);
@@ -55,7 +55,7 @@ char * y_string_append(char * string, char * append)
 	return new_string;
 }
 
-char * y_str_to_utf8(const char *in)
+const char * y_str_to_utf8(const char *in)
 {
 	unsigned int n, i = 0;
 	char *result = NULL;
@@ -80,7 +80,7 @@ char * y_str_to_utf8(const char *in)
 	return result;
 }
 
-char * y_utf8_to_str(const char *in)
+const char * y_utf8_to_str(const char *in)
 {
 	int i = 0;
 	unsigned int n;
@@ -116,17 +116,17 @@ void y_strfreev(char ** vector)
 	FREE(vector);
 }
 
-char ** y_strsplit(char * str, char * sep, int nelem)
+char ** y_strsplit(const char * str, const char * sep, int nelem)
 {
 	char ** vector;
-	char *s, *p;
+	const char *s, *p;
 	int i=0;
 	int l = strlen(sep);
 	if(nelem <= 0) {
-		char * s;
+		char * s2;
 		nelem=0;
 		if (*str) {
-			for(s=strstr(str, sep); s; s=strstr(s+l, sep),nelem++)
+			for(s2=strstr(str, sep); s2; s2=strstr(s2+l, sep),nelem++)
 				;
 			if(strcmp(str+strlen(str)-l, sep))
 				nelem++;

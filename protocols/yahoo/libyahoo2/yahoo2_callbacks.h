@@ -95,7 +95,7 @@ struct yahoo_callbacks {
  * 	succ - enum yahoo_login_status
  * 	url  - url to reactivate account if locked
  */
-void YAHOO_CALLBACK_TYPE(ext_yahoo_login_response)(int id, int succ, char *url);
+void YAHOO_CALLBACK_TYPE(ext_yahoo_login_response)(int id, int succ, const char *url);
 
 
 
@@ -598,7 +598,7 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_webcam_data_request)(int id, int send);
  * Returns:
  * 	0
  */
-int YAHOO_CALLBACK_TYPE(ext_yahoo_log)(char *fmt, ...);
+int YAHOO_CALLBACK_TYPE(ext_yahoo_log)(const char *fmt, ...);
 
 
 
