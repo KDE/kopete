@@ -133,14 +133,10 @@ public:
 	 */
 	void setMetaContact(MetaContact *m);
 
-	
-	
-	
 
 	/**
-	 * \brief Get whether this contact is online
-	 * @return true if the contact is online
-	 * @return false if the contact is not online
+	 * @brief Get whether this contact is online.
+	 * @return @c true if the contact is online, @c false otherwise.
 	 */
 	bool isOnline() const;
 
@@ -208,9 +204,7 @@ public:
 	 */
 	void setOnlineStatus(const OnlineStatus &status);
 
-	
-	
-	
+
 	/**
 	 * \brief Get the set of custom menu items for this contact
 	 *
@@ -237,7 +231,6 @@ public:
 	 */
 	KPopupMenu *popupMenu( ChatSession *manager = 0L );
 	
-
 
 	/**
 	 * \brief Get whether or not this contact is capable of file transfers
