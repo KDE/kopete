@@ -929,7 +929,32 @@ void MSNProtocol::slotMessageReceived( const KopeteMessage &msg )
 {
 	kdDebug() << "MSNProtocol::slotMessageReceived: Message received from " <<
 		msg.from()->name() << endl;
-	m_manager->appendMessage( msg );
+
+    KopeteContactList chatmembers;	
+
+	if ( msg.direction() == KopeteMessage::Inbound )
+	{
+		kdDebug() << "MSNProtocol::slotMessageReceived: Looking for session (Inbound)";
+		chatmembers.append( msg.from() );
+		m_manager = kopeteapp->sessionFactory()->create( m_myself,
+		chatmembers, this );
+		if ( m_manager )
+		{
+			m_manager->appendMessage( msg );
+		}
+	}
+	else if ( msg.direction() == KopeteMessage::Outbound )
+    {
+		kdDebug() << "MSNProtocol::slotMessageReceived: Looking for session (Outbound)";
+		chatmembers = msg.to();
+		m_manager = kopeteapp->sessionFactory()->create( m_myself,
+		chatmembers, this );
+		if ( m_manager )
+		{
+			m_manager->appendMessage( msg );
+		}
+	}
+			
 }
 
 void MSNProtocol::slotMessageSent( const KopeteMessage msg )
