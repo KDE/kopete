@@ -21,12 +21,13 @@
 #include <kdebug.h>
 
 #include "kopeteaccountmanager.h"
+#include "kopeteglobal.h"
 
 #include "gwaccount.h"
 #include "gwcontact.h"
 #include "gwprotocol.h"
-#include "gwaddcontactpage.h"
-#include "gweditaccountwidget.h"
+#include "ui/gwaddcontactpage.h"
+#include "ui/gweditaccountwidget.h"
 
 typedef KGenericFactory<GroupWiseProtocol> GroupWiseProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_groupwise, GroupWiseProtocolFactory( "kopete_groupwise" )  )
@@ -35,14 +36,30 @@ GroupWiseProtocol *GroupWiseProtocol::s_protocol = 0L;
 
 GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const char *name, const QStringList &/*args*/ )
 	: KopeteProtocol( GroupWiseProtocolFactory::instance(), parent, name ),
-	  groupwiseOnline(  KopeteOnlineStatus::Online, 25, this, 0,  QString::null,  i18n( "Go O&nline" ),   i18n( "Online" ) ),
-	  groupwiseAway(  KopeteOnlineStatus::Away, 25, this, 1, "msn_away",  i18n( "Go &Away" ),   i18n( "Away" ) ),
-	  groupwiseOffline(  KopeteOnlineStatus::Offline, 25, this, 2,  QString::null,  i18n( "Go O&ffline" ),   i18n( "Offline" ) )
-
+	  groupwiseUnknown    ( KopeteOnlineStatus::Unknown, 25, this, 0, "status_unknown",
+	  		"FIXME: Make this unselectable", i18n( "Unknown" ) ),
+	  groupwiseOffline ( KopeteOnlineStatus::Offline,    0,  this, 1, QString::null, 
+	  		i18n( "O&ffline" ), i18n( "Offline" ) ),
+	  groupwiseAvailable  ( KopeteOnlineStatus::Online,  25, this, 2, QString::null, 
+	  		i18n( "A&vailable" ),   i18n( "Available" ) ),
+	  groupwiseBusy       ( KopeteOnlineStatus::Away,    20, this, 3, "msn_busy", 
+	  		i18n( "&Busy" ), i18n( "Busy" ) ),
+	  groupwiseAway       ( KopeteOnlineStatus::Away,    18, this, 4, "msn_away", 
+	  		i18n( "Go &Away" ), i18n( "Away" ) ),
+	  groupwiseAwayIdle   ( KopeteOnlineStatus::Away,    15, this, 5, "msn_away", 
+	  		"FIXME: Make this unselectable", i18n( "Idle" ) ),
+	  groupwiseInvalid( KopeteOnlineStatus::Unknown, 25, this, 6, "status_unknown",
+	  		"FIXME: Make this unselectable", i18n( "Invalid Status" ) ),
+	  propGivenName( Kopete::Global::Properties::self()->firstName() ),
+	  propLastName( Kopete::Global::Properties::self()->lastName() ),
+	  propFullName( Kopete::Global::Properties::self()->fullName() ),
+	  propAwayMessage( Kopete::Global::Properties::self()->awayMessage() ),
+	  propCN( "groupwiseCommonName", i18n( "Common Name" ), QString::null, true, false )
 {
-	kdDebug( 14210 ) << k_funcinfo << endl;
+	kdDebug( 14220 ) << k_funcinfo << endl;
 
 	s_protocol = this;
+	
 }
 
 GroupWiseProtocol::~GroupWiseProtocol()
@@ -56,37 +73,31 @@ KopeteContact *GroupWiseProtocol::deserializeContact(
 	QString contactId = serializedData[ "contactId" ];
 	QString accountId = serializedData[ "accountId" ];
 	QString displayName = serializedData[ "displayName" ];
-	QString type = serializedData[ "contactType" ];
-
-	GroupWiseContact::GroupWiseContactType tbcType;
-	if ( type == QString::fromLatin1( "echo" ) )
-		tbcType = GroupWiseContact::Echo;
-	if ( type == QString::fromLatin1( "null" ) )
-		tbcType = GroupWiseContact::Null;
-	else
-		tbcType = GroupWiseContact::Null;
-
+	int objectId = serializedData[ "objectId" ].toInt();
+	int parentId = serializedData[ "parentId" ].toInt();
+	int sequence = serializedData[ "sequenceNumber" ].toInt();
+	
 	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
 
 	KopeteAccount *account = accounts[ accountId ];
 	if ( !account )
 	{
-		kdDebug(14210) << "Account doesn't exist, skipping" << endl;
+		kdDebug(14220) << "Account doesn't exist, skipping" << endl;
 		return 0;
 	}
 
-	return new GroupWiseContact(account, contactId, tbcType, displayName, metaContact);
+	return new GroupWiseContact(account, contactId, metaContact, displayName, objectId, parentId, sequence );
 }
 
 AddContactPage * GroupWiseProtocol::createAddContactWidget( QWidget *parent, KopeteAccount * /* account */ )
 {
-	kdDebug( 14210 ) << "Creating Add Contact Page" << endl;
+	kdDebug( 14220 ) << "Creating Add Contact Page" << endl;
 	return new GroupWiseAddContactPage( parent );
 }
 
 KopeteEditAccountWidget * GroupWiseProtocol::createEditAccountWidget( KopeteAccount *account, QWidget *parent )
 {
-	kdDebug(14210) << "Creating Edit Account Page" << endl;
+	kdDebug(14220) << "Creating Edit Account Page" << endl;
 	return new GroupWiseEditAccountWidget( parent, account );
 }
 

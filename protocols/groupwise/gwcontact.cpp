@@ -18,8 +18,6 @@
     *************************************************************************
 */
 
-#include "gwcontact.h"
-
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -32,20 +30,84 @@
 #include "gwfakeserver.h"
 #include "gwprotocol.h"
 
-GroupWiseContact::GroupWiseContact( KopeteAccount* _account, const QString &uniqueName,
-		const GroupWiseContactType type, const QString &displayName, KopeteMetaContact *parent )
-: KopeteContact( _account, uniqueName, parent )
-{
-	kdDebug( 14210 ) << k_funcinfo << " uniqueName: " << uniqueName << ", displayName: " << displayName << endl;
-	m_type = type;
-	setDisplayName( displayName );
-	m_msgManager = 0L;
+#include "gwcontact.h"
 
-	setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
+GroupWiseContact* GroupWiseContact::contactFromFields( KopeteAccount* account, KopeteMetaContact *parent, const Field::MultiField & contact )
+{
+	if ( contact.tag() != NM_A_FA_CONTACT )
+		return 0;
+
+	Field::FieldList fields = contact.fields();
+	Field::FieldBase* current = 0;
+	int objectId, parentId, sequence;
+	QString displayName, dn;
+	// sequence number, object and parent IDs are a numeric values but are stored as strings...
+	Q_ASSERT( current = fields.locate( NM_A_SZ_OBJECT_ID ) );
+	objectId = static_cast<Field::SingleField*>( current )->value().toString().toInt();
+	Q_ASSERT( current = fields.locate( NM_A_SZ_PARENT_ID ) );
+	parentId = static_cast<Field::SingleField*>( current )->value().toString().toInt();
+	Q_ASSERT( current = fields.locate( NM_A_SZ_SEQUENCE_NUMBER ) );
+	sequence = static_cast<Field::SingleField*>( current )->value().toString().toInt();
+	Q_ASSERT( current = fields.locate( NM_A_SZ_DISPLAY_NAME ) );
+	displayName = static_cast<Field::SingleField*>( current )->value().toString();
+	Q_ASSERT( current = fields.locate( NM_A_SZ_DN ) );
+	dn = static_cast<Field::SingleField*>( current )->value().toString();
+
+	return new GroupWiseContact( account, dn, parent, displayName, objectId, parentId, sequence );
+}
+
+GroupWiseContact::GroupWiseContact( KopeteAccount* account, const QString &dn, 
+			KopeteMetaContact *parent, 
+			const QString &displayName, const int objectId, const int parentId, const int sequence )
+: KopeteContact( account, dn, parent ), m_objectId( objectId ), m_parentId( parentId ),
+  m_sequence( sequence )
+{
+	kdDebug( 14220 ) << k_funcinfo << " dn: " << dn << endl;
+	rename( displayName );
 }
 
 GroupWiseContact::~GroupWiseContact()
 {
+}
+
+void GroupWiseContact::updateDetailsFromFields( const Field::MultiField & details )
+{
+	// read the supplied fields, set metadata and status.
+	if ( details.tag() != NM_A_FA_USER_DETAILS )
+		return;
+	Field::FieldList fields = details.fields();
+	Field::FieldBase* current = 0;
+	QString cn, dn, givenName, surname, fullName, awayMessage, authAttribute;
+	int status;
+	
+	Q_ASSERT( current = fields.locate( NM_A_SZ_AUTH_ATTRIBUTE ) );
+	// TODO: not sure what this means, ask Mike
+	authAttribute= static_cast<Field::SingleField*>( current )->value().toString();
+	Q_ASSERT( current = fields.locate( NM_A_SZ_DN ) );
+	dn = static_cast<Field::SingleField*>( current )->value().toString();
+	Q_ASSERT( current = fields.locate( "CN" ) );
+	cn = static_cast<Field::SingleField*>( current )->value().toString();
+	Q_ASSERT( current = fields.locate( "Given Name" ) );
+	givenName = static_cast<Field::SingleField*>( current )->value().toString();
+	Q_ASSERT( current = fields.locate( "Surname" ) );
+	surname = static_cast<Field::SingleField*>( current )->value().toString();
+	Q_ASSERT( current = fields.locate( "Full Name" ) );
+	fullName = static_cast<Field::SingleField*>( current )->value().toString();
+	Q_ASSERT( current = fields.locate( NM_A_SZ_STATUS ) );
+	status = static_cast<Field::SingleField*>( current )->value().toString().toInt();
+	Q_ASSERT( current = fields.locate( NM_A_SZ_MESSAGE_BODY ) );
+	awayMessage = static_cast<Field::SingleField*>( current )->value().toString();
+	
+	setProperty( protocol()->propCN, cn );
+	setProperty( protocol()->propGivenName, givenName );
+	setProperty( protocol()->propLastName, surname );
+	setProperty( protocol()->propFullName, fullName );
+	setProperty( protocol()->propAwayMessage, awayMessage );
+}
+
+GroupWiseProtocol *GroupWiseContact::protocol()
+{
+	return static_cast<GroupWiseProtocol *>( KopeteContact::protocol() );
 }
 
 bool GroupWiseContact::isReachable()
@@ -55,7 +117,7 @@ bool GroupWiseContact::isReachable()
 
 void GroupWiseContact::serialize( QMap< QString, QString > &serializedData, QMap< QString, QString > & /* addressBookData */ )
 {
-    QString value;
+/*    QString value;
 	switch ( m_type )
 	{
 	case Null:
@@ -63,12 +125,12 @@ void GroupWiseContact::serialize( QMap< QString, QString > &serializedData, QMap
 	case Echo:
 		value = "echo";
 	}
-	serializedData[ "contactType" ] = value;
+	serializedData[ "contactType" ] = value;*/
 }
 
 KopeteMessageManager* GroupWiseContact::manager( bool )
 {
-	kdDebug( 14210 ) << k_funcinfo << endl;
+	kdDebug( 14220 ) << k_funcinfo << endl;
 	if ( m_msgManager )
 	{
 		return m_msgManager;
@@ -105,13 +167,13 @@ void GroupWiseContact::showContactSettings()
 
 void GroupWiseContact::sendMessage( KopeteMessage &message )
 {
-	kdDebug( 14210 ) << k_funcinfo << endl;
+	kdDebug( 14220 ) << k_funcinfo << endl;
 	// convert to the what the server wants
 	// For this 'protocol', there's nothing to do
 	// send it
-	static_cast<GroupWiseAccount *>( account() )->server()->sendMessage(
+/*	static_cast<GroupWiseAccount *>( account() )->server()->sendMessage(
 			message.to().first()->contactId(),
-			message.plainBody() );
+			message.plainBody() );*/
 	// give it back to the manager to display
 	manager()->appendMessage( message );
 	// tell the manager it was sent successfully

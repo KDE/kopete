@@ -1,7 +1,7 @@
 INCLUDES = -I$(top_srcdir)/protocols/groupwise/libgroupwise/qca/src \
 	-I$(top_srcdir)/kopete/protocols/groupwise/libgroupwise/qca/src $(all_includes)
 METASOURCES = coreprotocol.moc task.moc client.moc safedelete.moc gwclientstream.moc
-lib_LTLIBRARIES = libgroupwise.la libgwtest.la
+noinst_LTLIBRARIES = libgroupwise.la libgwtest.la
 libgroupwise_la_LDFLAGS = -no-undefined $(KDE_PLUGIN) $(all_libraries)
 noinst_HEADERS = connector.h tlshandler.h qcatlshandler.h bytestream.h \
 	gwclientstream.h securestream.h stream.h coreprotocol.h gwfield.h gwerror.h \
@@ -22,7 +22,8 @@ libgwtest_la_SOURCES = coreprotocol.cpp eventtransfer.cpp \
 libgwtest_la_LIBADD = qca/src/libqca.la \
 	$(top_builddir)/kopete/protocols/groupwise/libgroupwise/tasks/libgroupwise_tasks.la -lqt-mt
 libgwtest_la_LDFLAGS = $(all_libraries)
-libgroupwise_la_LIBADD = -lqt-mt qca/src/libqca.la -lkdecore
+libgroupwise_la_LIBADD = tasks/libgroupwise_tasks.la -lqt-mt qca/src/libqca.la \
+	-lkdecore
 
 libgroupwise_la_COMPILE_FIRST = securestream.moc
 

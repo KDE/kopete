@@ -48,8 +48,15 @@ bool LoginTask::take( Transfer * transfer )
 {
 	if ( !forMe( transfer ) )
 		return false;
+/*	// read in myself()'s metadata fields and emit signal
+	Field::MultiField myselfFields();
+	emit gotMyself( );	
 	
-	// process the incoming contact list and spam libkopete with new contacts :D
+	// create contact list
+	// locate contact list 
+	// create folders
+	// create privacy list
+	// process the incoming contact list and spam libkopete with new contacts :D*/
 	return true;
 }
 

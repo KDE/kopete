@@ -37,42 +37,47 @@ GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& ac
 {
 	// Init the myself contact
 	// FIXME: I think we should add a global self metaContact (Olivier)
-	setMyself( new GroupWiseContact( this, accountId(), GroupWiseContact::Null, accountId(), 0L ) );
+	KopeteMetaContact *metaContact = new KopeteMetaContact;
+	setMyself( new GroupWiseContact( this, accountId(), metaContact, "myself", 0, 0, 0 ) );
 	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
-	m_server = new GroupWiseFakeServer();;
 }
 
 GroupWiseAccount::~GroupWiseAccount()
 {
-	delete m_server;
 }
 
 KActionMenu* GroupWiseAccount::actionMenu()
 {
 	KActionMenu *theActionMenu = new KActionMenu(accountId(), myself()->onlineStatus().iconFor(this) , this);
 	theActionMenu->popupMenu()->insertTitle(myself()->icon(), i18n("GroupWise (%1)").arg(accountId()));
-	// NEED FSCKING GO ONLINE OFFLINE ACTIONS HERE!
-	theActionMenu->insert(new KAction (GroupWiseProtocol::protocol()->groupwiseOnline.caption(),
-		GroupWiseProtocol::protocol()->groupwiseOnline.iconFor(this), 0, this, SLOT (slotGoOnline ()), this,
-		"actionGroupWiseConnect"));
-
-	theActionMenu->insert(new KAction (GroupWiseProtocol::protocol()->groupwiseAway.caption(),
-		GroupWiseProtocol::protocol()->groupwiseAway.iconFor(this), 0, this, SLOT (slotGoAway ()), this,
-		"actionGroupWiseAway"));
-
-	theActionMenu->insert(new KAction (GroupWiseProtocol::protocol()->groupwiseOffline.caption(),
-		GroupWiseProtocol::protocol()->groupwiseOffline.iconFor(this), 0, this, SLOT (slotGoOffline ()), this,
-		"actionGroupWiseOfflineDisconnect"));
 	
+	theActionMenu->insert( new KAction (GroupWiseProtocol::protocol()->groupwiseAvailable.caption(),
+		GroupWiseProtocol::protocol()->groupwiseAvailable.iconFor(this), 0, this, SLOT ( slotGoOnline() ), this,
+		"actionGroupWiseConnect") );
+	theActionMenu->insert( new KAction (GroupWiseProtocol::protocol()->groupwiseAway.caption(),
+		GroupWiseProtocol::protocol()->groupwiseAway.iconFor(this), 0, this, SLOT ( slotGoAway() ), this,
+		"actionGroupWiseAway") );
+	// CUSTOMS GO HERE ?
+	theActionMenu->insert( new KAction (GroupWiseProtocol::protocol()->groupwiseBusy.caption(),
+		GroupWiseProtocol::protocol()->groupwiseBusy.iconFor(this), 0, this, SLOT ( slotGoBusy() ), this,
+		"actionGroupWiseBusy") );
+	theActionMenu->insert( new KAction ( "A&ppear Offline", "jabber_invisible", 0, this, 
+		SLOT( slotGoAppearOffline() ), this, 
+		"actionGroupWiseAppearOffline") );
+	theActionMenu->insert( new KAction (GroupWiseProtocol::protocol()->groupwiseOffline.caption(),
+		GroupWiseProtocol::protocol()->groupwiseOffline.iconFor(this), 0, this, SLOT ( slotGoOffline() ), this,
+		"actionGroupWiseOfflineDisconnect") );
+
 	return theActionMenu;
 }
 
 bool GroupWiseAccount::addContactToMetaContact(const QString& contactId, const QString& displayName, KopeteMetaContact* parentContact)
 {
-	kdDebug ( 14210 ) << k_funcinfo << "contactId: " << contactId << " displayName: " << displayName
+	kdDebug ( 14220 ) << k_funcinfo << "contactId: " << contactId << " displayName: " << displayName
 			<< endl;
-	GroupWiseContact* newContact = new GroupWiseContact( this, contactId, GroupWiseContact::Echo, displayName, parentContact );
-	return newContact != 0L;
+	//GroupWiseContact* newContact = new GroupWiseContact( this, contactId, GroupWiseContact::Echo, displayName, parentContact );
+	//return newContact != 0L;
+	return false;
 }
 
 void GroupWiseAccount::setAway( bool away, const QString & /* reason */ )
@@ -85,37 +90,30 @@ void GroupWiseAccount::setAway( bool away, const QString & /* reason */ )
 
 void GroupWiseAccount::connect()
 {
-	kdDebug ( 14210 ) << k_funcinfo << endl;
-	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOnline );
-	QObject::connect ( m_server, SIGNAL ( messageReceived( const QString & ) ),
-			this, SLOT ( receivedMessage( const QString & ) ) );
+	//client->connectToServer()
+	kdDebug ( 14220 ) << k_funcinfo << endl;
+	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAvailable );
 }
 
 void GroupWiseAccount::disconnect()
 {
-	kdDebug ( 14210 ) << k_funcinfo << endl;
+	kdDebug ( 14220 ) << k_funcinfo << endl;
 	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
-	QObject::disconnect ( m_server, 0, 0, 0 );
-}
-
-GroupWiseFakeServer * GroupWiseAccount::server()
-{
-	return m_server;
 }
 
 void GroupWiseAccount::slotGoOnline ()
 {
-	kdDebug ( 14210 ) << k_funcinfo << endl;
+	kdDebug ( 14220 ) << k_funcinfo << endl;
 
 	if (!isConnected ())
 		connect ();
 	else
-		myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOnline );
+		myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAvailable );
 	updateContactStatus();
 }
 void GroupWiseAccount::slotGoAway ()
 {
-	kdDebug ( 14210 ) << k_funcinfo << endl;
+	kdDebug ( 14220 ) << k_funcinfo << endl;
 
 	if (!isConnected ())
 		connect();
@@ -127,7 +125,7 @@ void GroupWiseAccount::slotGoAway ()
 
 void GroupWiseAccount::slotGoOffline ()
 {
-	kdDebug ( 14210 ) << k_funcinfo << endl;
+	kdDebug ( 14220 ) << k_funcinfo << endl;
 
 	if (isConnected ())
 		disconnect ();
@@ -144,7 +142,7 @@ void GroupWiseAccount::receivedMessage( const QString &message )
 	//from = QString::fromLatin1("echo");
 	messageSender = static_cast<GroupWiseContact *>( contacts ()[ from ] );
 	
-	kdDebug( 14210 ) << k_funcinfo << " got a message from " << from << ", " << messageSender << ", is: " << message << endl;
+	kdDebug( 14220 ) << k_funcinfo << " got a message from " << from << ", " << messageSender << ", is: " << message << endl;
 	// Pass it on to the contact to process and display via a KMM
 	messageSender->receivedMessage( message );
 }

@@ -32,7 +32,7 @@
 GroupWiseAddContactPage::GroupWiseAddContactPage( QWidget* parent, const char* name )
 		: AddContactPage(parent, name)
 {
-	kdDebug(14210) << k_funcinfo << endl;
+	kdDebug(14220) << k_funcinfo << endl;
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	m_gwAddUI = new GroupWiseAddUI( this );
 }

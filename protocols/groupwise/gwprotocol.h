@@ -22,7 +22,7 @@
 #define TESTBEDPROTOCOL_H
 
 #include <kopeteprotocol.h>
-
+#include "kopetecontactproperty.h"
 
 /**
  * Encapsulates the generic actions associated with this protocol
@@ -60,17 +60,26 @@ public:
 	 */
 	static GroupWiseProtocol *protocol();
 	/**
-	 * Represents contacts that are Online
+	 * Online statuses used for contacts' presence
 	 */
-	const KopeteOnlineStatus groupwiseOnline;
+	const KopeteOnlineStatus groupwiseUnknown;
+	const KopeteOnlineStatus groupwiseOffline;
+	const KopeteOnlineStatus groupwiseAvailable;
+	const KopeteOnlineStatus groupwiseBusy;
+	const KopeteOnlineStatus groupwiseAway;
+	const KopeteOnlineStatus groupwiseAwayIdle;
+	const KopeteOnlineStatus groupwiseInvalid;
+
 	/**
 	 * Represents contacts that are Away
 	 */
-	const KopeteOnlineStatus groupwiseAway;
-	/**
-	 * Represents contacts that are Offline
-	 */
-	const KopeteOnlineStatus groupwiseOffline;
+	const Kopete::ContactPropertyTmpl propGivenName;
+	const Kopete::ContactPropertyTmpl propLastName;
+	const Kopete::ContactPropertyTmpl propFullName;
+	const Kopete::ContactPropertyTmpl propAwayMessage;
+	const Kopete::ContactPropertyTmpl propCN;
+	
+	
 protected:
 	static GroupWiseProtocol *s_protocol;
 };

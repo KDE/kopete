@@ -31,7 +31,7 @@
 GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, KopeteAccount* account)
 : QWidget( parent ), KopeteEditAccountWidget( account )
 {
-	kdDebug(14210) << k_funcinfo << endl;
+	kdDebug(14220) << k_funcinfo << endl;
 	m_layout = new QVBoxLayout( this );
 	m_preferencesDialog = new GroupWiseAccountPreferences( this );
 	m_layout->addWidget( m_preferencesDialog );

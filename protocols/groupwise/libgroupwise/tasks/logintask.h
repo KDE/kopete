@@ -16,7 +16,7 @@
 
 #include "requesttask.h"
 
-typedef QString ContactListItem; // temp typdef pending impl
+typedef QString ContactListItem; // temp typedef pending impl
 
 /**
 @author Kopete Developers
@@ -43,6 +43,7 @@ public:
 	
 signals:
 	void contactListItemAdded( ContactListItem & );
+	//void userRecord( UserRecord &, bool myself );
 };
 
 #endif

@@ -29,7 +29,6 @@ class KopeteMetaContact;
 
 class GroupWiseContact;
 class GroupWiseProtocol;
-class GroupWiseFakeServer;
 
 /**
  * This represents an account connected to GroupWise
@@ -63,10 +62,6 @@ public:
 	 * Disconnect from the server.  Only sets myself() offline.
 	 */
 	virtual void disconnect();
-	/**
-	 * Return a reference to the server stub
-	 */
-	GroupWiseFakeServer* server();
 public slots:
 	/**
 	 * Called by the server when it has a message for us.  
@@ -79,7 +74,6 @@ protected:
 	 * This simulates contacts going on and offline in sync with the account's status changes
 	 */
 	void updateContactStatus();
-	GroupWiseFakeServer* m_server;
 
 protected slots:
 	/**

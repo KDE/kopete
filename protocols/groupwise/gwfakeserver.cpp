@@ -37,10 +37,10 @@ void GroupWiseFakeServer::sendMessage( QString contactId, QString message )
 {
 	// see what contact the message is for
 	// if it's for Echo, respond immediately
-	kdDebug( 14210 ) << k_funcinfo << "Message for: " << contactId << ", is: " << message << endl;
+	kdDebug( 14220 ) << k_funcinfo << "Message for: " << contactId << ", is: " << message << endl;
 	if ( contactId == QString::fromLatin1( "echo" ) )
 	{
-		kdDebug( 14210 ) << "recipient is echo, coming back at you." << endl;
+		kdDebug( 14220 ) << "recipient is echo, coming back at you." << endl;
 		// put the message in a map and start a timer to tell it to deliver itself.
 		//emit messageReceived( QString::fromLatin1( "echo: " ) + message );
 		GroupWiseIncomingMessage* msg = new GroupWiseIncomingMessage( this, QString::fromLatin1( "echo: " ) + message );
@@ -48,7 +48,7 @@ void GroupWiseFakeServer::sendMessage( QString contactId, QString message )
 		QTimer::singleShot( 3000, msg, SLOT( deliver() ) );
 	}
 	else
-		kdWarning( 14210 ) << "message recipient: " << contactId << " is unknown." << endl;
+		kdWarning( 14220 ) << "message recipient: " << contactId << " is unknown." << endl;
 	
 	// This removes any delivered messages 
 	purgeMessages();
