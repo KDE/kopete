@@ -482,14 +482,14 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	}
 	else if(succ == YAHOO_LOGIN_LOCK)
 	{
-		errorMsg = i18n("Could not log into Yahoo service.  Your account has been locked.\nVisit %1 to reactivate it.").arg(url);
+		errorMsg = i18n("Could not log into Yahoo service: your account has been locked.\nVisit %1 to reactivate it.").arg(url);
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 		return;
 	}
 	else if ( succ == YAHOO_LOGIN_UNAME )
 	{
-		errorMsg = i18n("Could not log into the Yahoo service. The username specified was invalid.");
+		errorMsg = i18n("Could not log into the Yahoo service: the username specified was invalid.");
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 	}
