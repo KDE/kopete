@@ -26,16 +26,17 @@ AddContactPage::~AddContactPage()
 {
 
 }
-/** No descriptions */
+
 void AddContactPage::slotFinish()
 {
 
 }
-
-bool AddContactPage::validateData()
+void AddContactPage::slotFinish(KopeteMetaContact*)
 {
-	return false;
+
 }
+
+
 /*
  * Local variables:
  * c-indentation-style: k&r

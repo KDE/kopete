@@ -25,8 +25,7 @@ public:
 	bool canadd;
 	virtual bool validateData();
 public slots: // Public slots
-  /** No descriptions */
-  virtual void slotFinish();
+  virtual void slotFinish(KopeteMetaContact*);
 
 };
 

@@ -84,7 +84,9 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	m_publicName = KGlobal::config()->readEntry( "Nick", "Kopete User" );
 	m_publicNameSyncMode = SyncFromServer;
 	m_publicNameSyncNeeded = false;
+	
 	m_msgQueued=0L;
+	m_addWizard_metaContact=0L;
 
 	initActions();
 
@@ -327,7 +329,9 @@ void MSNProtocol::deserialize( KopeteMetaContact *metaContact,
 		for( ; it != groups.end(); ++it )
 			c->addToGroup( groupName( (*it).toUInt() ) );
 
-		metaContact->addContact( c, c->groups() );
+		//The groups of MSN are not always the same as those of the metacontact. Only the groups of the metacontact count here
+		metaContact->addContact( c, QStringList() );
+		//	metaContact->addContact( c, c->groups() ); 
 
 		// FIXME: Try to remove this
 		m_contacts.insert( c->msnId(), c );
@@ -608,10 +612,11 @@ void MSNProtocol::blockContact( QString handle ) const
 	m_notifySocket->addContact( handle, handle, 0, BL );
 }
 
-void MSNProtocol::addContact( const QString &userID )
+void MSNProtocol::addContact( const QString &userID , KopeteMetaContact *m )
 {
 	if( isConnected() )
 	{
+		m_addWizard_metaContact=m;
 		m_notifySocket->addContact( userID, userID, 0, AL );
 		m_notifySocket->addContact( userID, userID, 0, FL );
 	}
@@ -1002,11 +1007,11 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 	{
 		// contact not found, create new one
 		if( list == "FL" )
-		{
+		{        
 			KopeteContactList *l = KopeteContactList::contactList();
 			KopeteMetaContact *m = l->findContact( this->id(), QString::null, handle );
 
-			if( m )
+			if(m)
 			{
 				// Existing contact, update data
 				// FIXME: TODO!
@@ -1018,15 +1023,27 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 			}
 			else
 			{
-                QString protocol = this->id();
+				QString protocol = this->id();
 
-				MSNContact *c = new MSNContact( protocol, handle, publicName,
-					gn, m );
+				if(m_addWizard_metaContact)
+					m=m_addWizard_metaContact;
+				else
+					m=new KopeteMetaContact();
+
+				MSNContact *c = new MSNContact( protocol, handle, publicName, gn, m );
 				connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 					SLOT( slotContactDestroyed( KopeteContact * ) ) );
 				m_metaContacts.insert( m, c );
-				m->addContact( c, gn );
-				KopeteContactList::contactList()->addMetaContact(m);
+
+				if(!m_addWizard_metaContact)
+				{
+					m->addContact( c, gn );
+					KopeteContactList::contactList()->addMetaContact(m);
+				}
+				else
+					m->addContact( c, QStringList() );
+
+				m_addWizard_metaContact=0L;
 
 				// FIXME: Try to remove this
 				m_contacts.insert( c->msnId(), c );

@@ -33,10 +33,11 @@ public:
 	AddContactPage(QWidget *parent=0, const char *name=0);
 	~AddContactPage();
 	//KopeteProtocol *protocol;
-	virtual bool validateData();
+	virtual bool validateData()=0;
 public slots: // Public slots
   /** No descriptions */
-  virtual void slotFinish();
+  virtual void slotFinish(); //OBSOLETE
+  virtual void slotFinish(KopeteMetaContact*);   //TODO: make this pure virtual
 };
 #endif
 /*

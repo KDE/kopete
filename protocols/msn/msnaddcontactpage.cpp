@@ -33,8 +33,8 @@ MSNAddContactPage::MSNAddContactPage(MSNProtocol *owner, QWidget *parent, const 
 MSNAddContactPage::~MSNAddContactPage()
 {
 }
-/** No descriptions */
-void MSNAddContactPage::slotFinish()
+
+void MSNAddContactPage::slotFinish(KopeteMetaContact *m)
 {
 	if ( canadd )
 	{
@@ -47,13 +47,14 @@ void MSNAddContactPage::slotFinish()
 		}
 		*/
 		QString userid = msndata->addID->text();
-		plugin->addContact( userid );
+		plugin->addContact( userid , m );
 	}
 	else
 	{
 		return;
 	}
 }
+
 
 bool MSNAddContactPage::validateData()
 {

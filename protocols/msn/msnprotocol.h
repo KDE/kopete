@@ -35,6 +35,7 @@ class KActionMenu;
 class MSNSwitchBoardSocket;
 class MSNNotifySocket;
 class KopeteContact;
+class KopeteMetaContact;
 class KopeteMessage;
 class KopeteMessageManager;
 class MSNContact;
@@ -134,7 +135,7 @@ public:
 	virtual void setAvailable();
 	virtual bool isAway() const;
 
-	void addContact( const QString &userID );
+	void addContact( const QString &userID , KopeteMetaContact *m=0L);
 	void removeContact( const MSNContact *c ) const;
 	void removeFromGroup( const MSNContact *c, const QString &group ) const;
 	void moveContact( const MSNContact *c, const QString &oldGroup,
@@ -342,7 +343,8 @@ private:
 	SyncMode m_publicNameSyncMode;
 	bool m_publicNameSyncNeeded;
 	QString m_msgHandle;
-  KopeteMessage *m_msgQueued; 
+	KopeteMessage *m_msgQueued;
+	KopeteMetaContact *m_addWizard_metaContact;
 
 	MSNNotifySocket *m_notifySocket;
 	KopeteContact *m_myself;
