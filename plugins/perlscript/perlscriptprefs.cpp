@@ -92,6 +92,8 @@ void PerlScriptPreferences::slotSelectionChanged( QListViewItem *selectedScript 
 
 void PerlScriptPreferences::reopen()
 {
+	emit( loaded() );
+	
 	KConfig *config = KGlobal::config();
 	config->setGroup( QString::fromLatin1("Perl Scripting Plugin") );
 	m_scripts.clear();

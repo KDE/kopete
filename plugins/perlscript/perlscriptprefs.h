@@ -36,6 +36,7 @@ public:
 	virtual void reopen();
 	
 signals:
+	void loaded();
 	void saved();
 	void scriptAdded( const QString &scriptPath, const QString &scriptName, const QString &scriptDesc );
 	void scriptRemoved( const QString &scriptPath );

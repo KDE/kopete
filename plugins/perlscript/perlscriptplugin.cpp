@@ -63,7 +63,7 @@ PerlPlugin::PerlPlugin( QObject *parent, const char *name, const QStringList &) 
 	
 	connect( m_prefs, SIGNAL(scriptAdded( const QString &, const QString &, const QString & )), this, SLOT( slotAddScript( const QString &, const QString &, const QString & ) ));
 	connect( m_prefs, SIGNAL(scriptRemoved( const QString &)), this, SLOT(slotRemoveScript( const QString & )) );
-	connect( m_prefs, SIGNAL(saved()), this, SLOT(slotClearScripts()) );
+	connect( m_prefs, SIGNAL(loaded()), this, SLOT(slotClearScripts()) );
 	
 	m_prefs->reopen();
 	
