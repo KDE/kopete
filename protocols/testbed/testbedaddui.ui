@@ -1,6 +1,6 @@
 <!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>TestbedAddUI</class>
-<widget class="QDialog">
+<widget class="QWidget">
     <property name="name">
         <cstring>TestbedAddUI</cstring>
     </property>
@@ -8,19 +8,16 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>406</width>
-            <height>343</height>
+            <width>375</width>
+            <height>241</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>TestbedAddUI</string>
     </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <property name="spacing">
-            <number>0</number>
         </property>
         <widget class="QLayoutWidget">
             <property name="name">
@@ -35,7 +32,7 @@
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Account name:</string>
+                        <string>&amp;Contact name:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>m_uniqueName</cstring>
@@ -78,6 +75,9 @@
                     <property name="text">
                         <string>&amp;Echo</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+E</string>
+                    </property>
                     <property name="checked">
                         <bool>true</bool>
                     </property>
@@ -103,7 +103,7 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>100</height>
+                    <height>252</height>
                 </size>
             </property>
         </spacer>

@@ -46,8 +46,7 @@ public:
 	virtual bool validateData();
 protected:
 	KopeteAccount *m_account;
-	QVBoxLayout *m_layout;
-	TestbedAccountPreferences *m_preferencesDialog;
+	TestbedAccountPreferences *m_preferencesWidget;
 };
 
 #endif

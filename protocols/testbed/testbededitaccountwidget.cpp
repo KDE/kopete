@@ -27,10 +27,9 @@
 TestbedEditAccountWidget::TestbedEditAccountWidget( QWidget* parent, KopeteAccount* account)
 : QWidget( parent ), KopeteEditAccountWidget( account )
 {
-	kdDebug(14210) << k_funcinfo << endl;
-	m_layout = new QVBoxLayout( this );
-	m_preferencesDialog = new TestbedAccountPreferences( this );
-	m_layout->addWidget( m_preferencesDialog );
+	( new QVBoxLayout( this ) )->setAutoAdd( true );
+				kdDebug(14210) << k_funcinfo << endl;
+	m_preferencesWidget = new TestbedAccountPreferences( this );
 }
 
 TestbedEditAccountWidget::~TestbedEditAccountWidget()
@@ -40,10 +39,10 @@ TestbedEditAccountWidget::~TestbedEditAccountWidget()
 KopeteAccount* TestbedEditAccountWidget::apply()
 {
 	QString accountName;
-	if ( m_preferencesDialog->m_acctName->text().isEmpty() )
+	if ( m_preferencesWidget->m_acctName->text().isEmpty() )
 		accountName = "Testbed Account";
 	else
-		accountName = m_preferencesDialog->m_acctName->text();
+		accountName = m_preferencesWidget->m_acctName->text();
 	
 	if ( account() )
 		account()->setAccountId( accountName );
@@ -55,7 +54,7 @@ KopeteAccount* TestbedEditAccountWidget::apply()
 
 bool TestbedEditAccountWidget::validateData()
 {
-    //return !( m_preferencesDialog->m_acctName->text().isEmpty() );
+    //return !( m_preferencesWidget->m_acctName->text().isEmpty() );
 	return true;
 }
 

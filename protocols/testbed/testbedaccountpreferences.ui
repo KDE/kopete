@@ -1,6 +1,6 @@
 <!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>TestbedAccountPreferences</class>
-<widget class="QDialog">
+<widget class="QWidget">
     <property name="name">
         <cstring>TestbedAccountPreferences</cstring>
     </property>
@@ -8,19 +8,16 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>640</width>
-            <height>480</height>
+            <width>374</width>
+            <height>334</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>Form1</string>
     </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <property name="spacing">
-            <number>6</number>
         </property>
         <widget class="QTabWidget">
             <property name="name">
@@ -39,7 +36,7 @@
                     </property>
                     <widget class="QGroupBox">
                         <property name="name">
-                            <cstring>groupBox55</cstring>
+                            <cstring>groupBox55_2</cstring>
                         </property>
                         <property name="title">
                             <string>Account Information</string>
@@ -50,7 +47,7 @@
                             </property>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout1</cstring>
+                                    <cstring>layout1_2</cstring>
                                 </property>
                                 <hbox>
                                     <property name="name">
@@ -58,13 +55,13 @@
                                     </property>
                                     <widget class="QLabel">
                                         <property name="name">
-                                            <cstring>textLabel1</cstring>
+                                            <cstring>accountLabel</cstring>
                                         </property>
                                         <property name="text">
                                             <string>&amp;Account name:</string>
                                         </property>
                                         <property name="buddy" stdset="0">
-                                            <cstring>m_acctName</cstring>
+                                            <cstring>m_acctName_2</cstring>
                                         </property>
                                         <property name="toolTip" stdset="0">
                                             <string>The account name of your account.</string>
@@ -90,7 +87,7 @@
                     </widget>
                     <widget class="QLabel">
                         <property name="name">
-                            <cstring>textLabel12</cstring>
+                            <cstring>textLabel12_2</cstring>
                         </property>
                         <property name="sizePolicy">
                             <sizepolicy>
