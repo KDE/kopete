@@ -1,4 +1,5 @@
 SUBDIRS = ccmathteam.com Default greggman.com phpBB \
 	plain redones set1 BoxedEmoticonSet \
-	KMess KMess-Blue KMess-Violet YazooSmileys16 \
-	YazooSmileys22
+	KMess KMess-Blue KMess-Violet KMess-Cartoon \
+	YazooSmileys16 YazooSmileys22
+
