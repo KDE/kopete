@@ -161,7 +161,7 @@ void WPAccount::setAway(bool status, const QString &awayMessage)
 {
 	DEBUG(WPDMETHOD, "WPAccount::setAway()");
 
-	theAwayMessage = awayMessage.isNull() ? "I'm away at the moment." : awayMessage;
+	theAwayMessage = awayMessage.isNull() ? QString::fromLatin1("I'm away at the moment.") : awayMessage;
 
 	if(!isConnected())
 		theInterface->goOnline();

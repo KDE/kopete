@@ -206,7 +206,7 @@ void YahooSession::setAway( enum yahoo_status state, const QString &msg, int awa
 {
 	kdDebug(14180)<<"[YahooSession::setAway" << state << ", " << msg << ", " << away << "]" << m_connId << endl;
 
-	yahoo_set_away(m_connId, state, msg.isNull() ? 0 : msg.local8Bit(), away);
+	yahoo_set_away(m_connId, state, msg.isNull() ? QCString() : msg.local8Bit(), away);
 }
 
 void YahooSession::addBuddy( const QString &who, const QString &group)
