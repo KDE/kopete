@@ -808,7 +808,7 @@ class OscarSocket : public OscarConnection
 	/** called when a conn ack is received for the BOS connection */
 	void OnBosConnAckReceived();
 	/** Called when the server is ready for normal commands */
-	void OnServerReady();
+	//void OnServerReady();
 	/** Called on connection to bos server */
 	void OnBosConnect();
 	/** Called when a direct IM is received */
@@ -852,7 +852,7 @@ class OscarSocket : public OscarConnection
 	/*
 	 * The bos server is ready to be sent commands
 	 */
-	void serverReady();
+	//void serverReady();
 	/*
 	 * A contact went offline
 	 */
@@ -932,6 +932,7 @@ class OscarSocket : public OscarConnection
 		 * This function is called when there is data to be read from the socket
 		 */
 		virtual void slotRead();
+		void slotDelayConnectingPhaseTimeout();
 
 	protected:
 		ICQInfoItemList extractICQItemList( Buffer& theBuffer );

@@ -22,8 +22,9 @@
 
 #include "oscaraccount.h"
 
-#include <qtextcodec.h>
 #include <qobject.h>
+#include <qtextcodec.h>
+#include <qtimer.h>
 
 #include <kdebug.h>
 #include <kextsock.h>
@@ -60,7 +61,7 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	socket()->enableRead(true);
 	// from KExtenedSocket
 	QObject::connect(socket(), SIGNAL(closed(int)), this, SLOT(slotConnectionClosed()));
-	QObject::connect(this, SIGNAL(serverReady()), this, SLOT(OnServerReady()));
+	//QObject::connect(this, SIGNAL(serverReady()), this, SLOT(OnServerReady()));
 	QObject::connect(this, SIGNAL(moreToRead()), this, SLOT(slotRead()));
 }
 
@@ -522,7 +523,7 @@ void OscarSocket::slotRead()
 
 		if(awaitingFirstPresenceBlock == OscarSocket::GotSome)
 		{
-			kdDebug(14150) << k_funcinfo << "Got all initial presence status ===========" << endl;
+			kdDebug(14150) << k_funcinfo << "Got all initial presence status =======================" << endl;
 			awaitingFirstPresenceBlock = OscarSocket::GotAll;
 			requestMyUserInfo();
 		}
@@ -688,11 +689,11 @@ void OscarSocket::sendCookie()
 	sendBuf(outbuf, 0x01);
 }
 
-void OscarSocket::OnServerReady()
+/*void OscarSocket::OnServerReady()
 {
-//	kdDebug(14150) << k_funcinfo << "What is this? [mETz] ==================" << endl;
-//	emit connectionChanged(6,"Authorization successful, getting info from server");
-}
+	kdDebug(14150) << k_funcinfo << "What is this? [mETz] ==================" << endl;
+	emit connectionChanged(6,"Authorization successful, getting info from server");
+}*/
 
 void OscarSocket::sendRateInfoRequest(void)
 {
@@ -984,13 +985,8 @@ void OscarSocket::sendClientReady(void)
 	}
 	sendBuf(outbuf,0x02);
 
-	kdDebug(14150) << "======================================================================" << endl;
-	kdDebug(14150) << "======================================================================" << endl;
-
-	// FIXME: is this needed for AIM?
-	// ICQ surely doesn't need that, it gets a reply for changing status
-	/*if(!mIsICQ)
-		emit statusChanged(OSCAR_ONLINE);*/
+	kdDebug(14150) << "============================================================================" << endl;
+	kdDebug(14150) << "============================================================================" << endl;
 
 	isLoggedIn = true;
 	emit loggedIn();
@@ -1345,14 +1341,15 @@ void OscarSocket::parseServerReady(Buffer &inbuf)
 	kdDebug(14150) << k_funcinfo << "RECV (SRV_FAMILIES), got list of families" << endl;
 
 	int famcount; //the number of families received
-	WORD *families = new WORD[inbuf.length()];
+	//WORD *families = new WORD[inbuf.length()];
+	WORD *families = new WORD[(int)inbuf.length()/2];
 	for (famcount=0; inbuf.length() > 1; famcount++)
 	{
 		families[famcount] = inbuf.getWord();
 	}
 
 	sendVersions(families, famcount); // send back a CLI_FAMILIES packet
-	emit serverReady(); // What is this exactly used for? [mETz]
+	//emit serverReady(); // What is this exactly used for? [mETz]
 	delete [] families;
 }
 
@@ -3339,6 +3336,25 @@ void OscarSocket::sendInfo()
 		sendReqOfflineMessages(); // CLI_REQOFFLINEMSGS
 		startKeepalive();
 	}
+	// FIXME: If nobody on your list is online you'll never come to the state where we
+	// re-request own userinfo that results in properly updating your own status.
+	// This 4 second timer checks if the initial presence info came in, if not it just
+	// goes and requests your online-status.
+	// If anybody knows a better way to handle this please mail me [mETz]
+	QTimer::singleShot(4000, this, SLOT(slotDelayConnectingPhaseTimeout()));
+}
+
+void OscarSocket::slotDelayConnectingPhaseTimeout()
+{
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
+
+	if(awaitingFirstPresenceBlock == OscarSocket::Waiting)
+	{
+		kdDebug(14150) << k_funcinfo << "Didn't get any initial presence status =======================" << endl;
+		awaitingFirstPresenceBlock = OscarSocket::GotAll;
+		requestMyUserInfo();
+	}
+
 }
 
 // Sends parameters for ICBM messages (CLI_SETICBM)
