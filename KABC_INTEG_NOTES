@@ -31,7 +31,8 @@ Goals (-ve):
 *) don't store information that's not worth sharing in the address book
 
 gregj's goals
-kopete should not replace  server side data with kabc derived data?
+kopete should not replace  server side data with kabc derived data nor upload information that wasn't present on the server before. 
+E.g. we know someones telephone nr. but we don't want to put this information back on server if it was not present there before. Update IMO is ok.  
 
 Syncing policies
 KABC->kopete ok, what about server side metadata
