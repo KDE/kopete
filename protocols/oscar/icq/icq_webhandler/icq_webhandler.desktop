@@ -1,0 +1,8 @@
+[Desktop Entry]
+Exec=icq_webhandler
+InitialPreference=2
+MimeType=application/x-icq
+Name=icq_webhandler
+Name[sv]=ICQ-webbhantering
+Terminal=false
+Type=Application
