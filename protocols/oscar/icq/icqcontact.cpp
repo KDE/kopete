@@ -84,11 +84,11 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 		acc->engine(), SIGNAL(gotICQInfoItemList(const int, const ICQInfoItemList &, const ICQInfoItemList & )),
 		this, SLOT(slotUpdBackgroundUserInfo(const int, const ICQInfoItemList &, const ICQInfoItemList & ) ) );
 
-/*	if(name == displayName && account()->isConnected())
+	if(name == displayName && account()->isConnected())
 	{
 		kdDebug(14200) << k_funcinfo << "ICQ Contact with no nickname, grabbing userinfo" << endl;
 		requestUserInfo();
-	}*/
+	}
 
 	actionReadAwayMessage = 0L;
 }
