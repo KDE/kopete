@@ -103,6 +103,7 @@ public:
 	const KopeteOnlineStatus JabberDND;
 	const KopeteOnlineStatus JabberOffline;
 	const KopeteOnlineStatus JabberInvisible;
+	const KopeteOnlineStatus JabberConnecting;
 
 	/**
 	 * This returns our protocol instance

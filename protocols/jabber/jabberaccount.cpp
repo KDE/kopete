@@ -309,7 +309,7 @@ void JabberAccount::slotHandshaken ()
 
 	}
 
-	isConnecting = true;
+	setPresence(protocol()->JabberConnecting, "");
 
 }
 
@@ -343,8 +343,6 @@ void JabberAccount::slotConnected (bool success, int statusCode, const QString &
 
 		KMessageBox::error (qApp->mainWidget (), i18n ("Connection failed with reason \"%1\"").arg (statusString, 1), i18n ("Connection Failed"));
 	}
-
-	isConnecting = false;
 
 }
 
@@ -386,8 +384,6 @@ void JabberAccount::slotDisconnect ()
 void JabberAccount::slotDisconnected ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Disconnected from Jabber server." << endl;
-
-	isConnecting = false;
 
 	/* FIXME:
 	 * We should delete the Jabber::Client instance here,
@@ -483,7 +479,8 @@ void JabberAccount::setPresence (const KopeteOnlineStatus & status, const QStrin
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting new presence." << endl;
 	
-	if (isConnected () || isConnecting)
+	if (isConnected () || (status == protocol()->JabberConnecting) ||
+	   (myContact->onlineStatus() == protocol()->JabberConnecting))
 	{
 		Jabber::Status presence;
 
@@ -491,7 +488,7 @@ void JabberAccount::setPresence (const KopeteOnlineStatus & status, const QStrin
 		presence.setStatus (reason);
 		presence.setIsAvailable (true);
 
-		if (status == protocol()->JabberOnline)
+		if ((status == protocol()->JabberOnline) || (status == protocol()->JabberConnecting))
 			presence.setShow ("");
 		else if (status == protocol()->JabberChatty)
 			presence.setShow ("chat");

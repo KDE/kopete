@@ -69,13 +69,14 @@ JabberProtocol *JabberProtocol::protocolInstance = 0;
 K_EXPORT_COMPONENT_FACTORY (kopete_jabber, KGenericFactory < JabberProtocol >);
 
 JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStringList &) : KopeteProtocol (parent, name),
-	JabberOnline(KopeteOnlineStatus::Online, 25, this, 0, "jabber_online", i18n ("Go O&nline"), i18n ("Online")),
-	JabberChatty(KopeteOnlineStatus::Online, 20, this, 1, "jabber_chatty", i18n ("Set F&ree to Chat"), i18n ("Free to Chat")),
-	JabberAway(KopeteOnlineStatus::Away, 25, this, 2, "jabber_away", i18n ("Set A&way"), i18n ("Away")),
-	JabberXA(KopeteOnlineStatus::Away, 20, this, 3, "jabber_away", i18n ("Set E&xtended Away"), i18n ("Extended Away")),
-	JabberDND(KopeteOnlineStatus::Away, 15, this, 4, "jabber_na", i18n ("Set &Do not Disturb"), i18n ("Do not Disturb")),
-	JabberOffline(KopeteOnlineStatus::Offline, 20, this, 5, "jabber_offline", i18n ("Go O&ffline"), i18n ("Offline")),
-	JabberInvisible(KopeteOnlineStatus::Online, 5, this, 6, "jabber_offline", i18n ("Set I&nvisible"), i18n ("Invisible"))
+	JabberOnline(KopeteOnlineStatus::Online,         25, this, 0, "jabber_online",     i18n ("Go O&nline"), i18n ("Online")),
+	JabberChatty(KopeteOnlineStatus::Online,         20, this, 1, "jabber_chatty",     i18n ("Set F&ree to Chat"), i18n ("Free to Chat")),
+	JabberAway(KopeteOnlineStatus::Away,             25, this, 2, "jabber_away",       i18n ("Set A&way"), i18n ("Away")),
+	JabberXA(KopeteOnlineStatus::Away,               20, this, 3, "jabber_away",       i18n ("Set E&xtended Away"), i18n ("Extended Away")),
+	JabberDND(KopeteOnlineStatus::Away,              15, this, 4, "jabber_na",         i18n ("Set &Do not Disturb"), i18n ("Do not Disturb")),
+	JabberOffline(KopeteOnlineStatus::Offline,       20, this, 5, "jabber_offline",    i18n ("Go O&ffline"), i18n ("Offline")),
+	JabberInvisible(KopeteOnlineStatus::Online,       5, this, 6, "jabber_offline",    i18n ("Set I&nvisible"), i18n ("Invisible")),
+	JabberConnecting(KopeteOnlineStatus::Connecting,  2, this, 7, "jabber_connecting", i18n ("FIXME: You should not see this"), i18n("Connecting"))
 {
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Loading ..." << endl;

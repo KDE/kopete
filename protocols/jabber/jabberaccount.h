@@ -163,8 +163,6 @@ private:
 	/* Caches the title ID of the account context menu. */
 	int menuTitleId;
 
-	bool isConnecting;
-
 	/*
 	 * Create a new JabberContact
 	 */
