@@ -108,13 +108,14 @@ KopeteView *KopeteViewManager::view( Kopete::ChatSession* session, const QString
 		Kopete::PluginManager *pluginManager = Kopete::PluginManager::self();
 		Kopete::ViewPlugin *viewPlugin = 0L;
 
-		if( !requestedPlugin.isNull() )
+		QString pluginName = requestedPlugin.isEmpty() ? KopetePrefs::prefs()->interfacePreference() : requestedPlugin;
+		if( !pluginName.isEmpty() )
 		{
-			viewPlugin = (Kopete::ViewPlugin*)pluginManager->loadPlugin( requestedPlugin );
+			viewPlugin = (Kopete::ViewPlugin*)pluginManager->loadPlugin( pluginName );
 
 			if( !viewPlugin )
 			{
-				kdWarning(14000) << "Requested view plugin, " << requestedPlugin <<
+				kdWarning(14000) << "Requested view plugin, " << pluginName <<
 				    ", was not found. Falling back to chat window plugin" << endl;
 			}
 		}
