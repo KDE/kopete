@@ -837,6 +837,7 @@ void JabberProtocol::slotUserDeletedAuth(const Jid &jid)
 	// a dir "Need Authorization" like in psi? ....
 	// btw it's just a notification, so can also send a unsubscribe message
 	// without to "unsubscribed user"! ,)
+	// FIXME: this needs a checkbox to determine if we delete the contact forever
 	contactList[jidString]->slotUpdateContact("", STATUS_OFFLINE, "");
 
 	KMessageBox::information(0L, i18n("%1 unsubscribed you!").arg(jidString), i18n("Notification"));
