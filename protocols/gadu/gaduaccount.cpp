@@ -506,7 +506,7 @@ void
 GaduAccount::messageReceived( KGaduMessage* gaduMessage )
 {
 	GaduContact* contact = 0;
-	Kopete::ContactPtrList contactsListTmp;
+	QPtrList<Kopete::Contact> contactsListTmp;
 
 	// FIXME:check for ignored users list
 	// FIXME:anonymous (those not on the list) users should be ignored, as an option

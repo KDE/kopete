@@ -102,7 +102,7 @@ private:
 	KAction*		actionInfo_;
 	KAction*		actionRemove_;
 
-	Kopete::ContactPtrList	thisContact_;
+	QPtrList<Kopete::Contact>	thisContact_;
 
 
 	QHostAddress remote_ip;
