@@ -94,7 +94,8 @@ void AutoReplacePlugin::autoReplaceMessage( KopeteMessage & msg )
 	AutoReplacePreferences::WordsToReplace::Iterator it;
 		for ( it = map.begin(); it != map.end(); ++it )
 			replaced_message.replace(QRegExp( 
-					match.arg(QRegExp(it.key()) ) ), map.find( it.key() ).data() );
+					match.arg(QRegExp::escape(it.key()) ) ),
+					map.find( it.key() ).data() );
 
 	// eventually add . at the end of the lines, sent lines only
 	if( m_prefs->getAddDot() && msg.direction()!=KopeteMessage::Inbound )

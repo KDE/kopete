@@ -97,14 +97,26 @@ void AutoReplacePreferences::reopen()
 	preferencesDialog->m_cb_upper->setChecked(
 		KGlobal::config()->readBoolEntry( "CapitalizeBeginningSentence" , false ) );
 
-	// MAP NEEDS TO BE FIRST CREATED HERE
+	/* MAP NEEDS TO BE FIRST CREATED HERE
 	QStringList::Iterator itl = wordsList.begin();
 	while( itl != wordsList.end() ) {
 		k = *itl;
 		v = *(++itl);
 		map.insert( k, v );
 		++itl;
-	}
+	}*/
+	AutoReplacePreferences::string2list( wordsList, map );
+}
+
+void AutoReplacePreferences::string2list( QStringList & l, QMap & m )
+{
+	QString k, v;
+	QStringList::Iterator itl = l.begin();
+	while( itl != l.end() ) {
+		k = *itl;
+		v = *(++itl);
+		m.insert( k, v );
+		++itl;
 }
 
 // save list to kopeterc and creates map out of it
