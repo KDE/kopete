@@ -302,7 +302,6 @@ void MSNProtocol::slotContactListed( QString handle, QString publicName, QString
 	{
 		if(identity->notifySocket())
 		{
-			identity->slotStartChatSession(handle);
 			break;
 		}
 	}
@@ -376,7 +375,6 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 	{
 		if(identity->notifySocket())
 		{
-			identity->slotStartChatSession(handle);
 			break;
 		}
 	}
