@@ -35,7 +35,7 @@ static KCmdLineOptions options[] =
 	{ "noplugins", I18N_NOOP("Do not load plugins"), 0 },
 	{ "disable <plugin>", I18N_NOOP("Do not load specified plugin"), 0 },
 	{ "!+[plugin]", I18N_NOOP("Load specified plugins"), 0 },
-	{ 0, 0, 0 }
+	KCmdLineLastOption
 };
 
 int main(int argc, char *argv[])
