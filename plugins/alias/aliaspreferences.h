@@ -17,31 +17,36 @@ typedef QValueList<KopeteProtocol*> ProtocolList;
 class AliasDialogBase;
 class KopeteProtocol;
 class ProtocolItem;
+class AliasItem;
+class KopetePlugin;
 
 class AliasPreferences : public KCModule
 {
 	Q_OBJECT
 
 	public:
-		AliasPreferences( QWidget *parent = 0, const char *name = 0, 
+		AliasPreferences( QWidget *parent = 0, const char *name = 0,
 			const QStringList &args = QStringList() );
 		~AliasPreferences();
-	
+
 		virtual void save();
 		virtual void load();
-	
+
 	private slots:
 		void slotAddAlias();
 		void slotEditAlias();
 		void slotDeleteAliases();
 		void slotCheckAliasSelected();
-		
+		void slotPluginLoaded( KopetePlugin * );
+
 	private:
 		AliasDialogBase * preferencesDialog;
 		void addAlias( QString &alias, QString &command, const ProtocolList &p, uint id = 0 );
 		void loadProtocols( AliasDialog *dialog );
 		const ProtocolList selectedProtocols( AliasDialog *dialog );
 		QMap<KopeteProtocol*,ProtocolItem*> itemMap;
+		QMap<QPair<KopeteProtocol*,QString>, bool> protocolMap;
+		QMap<QString,AliasItem*> aliasMap;
 };
 
 #endif

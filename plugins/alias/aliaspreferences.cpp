@@ -17,13 +17,15 @@
 #include <kconfig.h>
 #include <qregexp.h>
 #include <qlayout.h>
-#include <kplugininfo.h> 
+#include <kplugininfo.h>
 #include <kiconloader.h>
 #include <qpainter.h>
 
 #include "kopetecommandhandler.h"
 #include "kopetepluginmanager.h"
+#include "kopeteaccount.h"
 #include "kopeteprotocol.h"
+
 #include "aliasdialogbase.h"
 #include "aliasdialog.h"
 #include "aliaspreferences.h"
@@ -35,17 +37,17 @@ class AliasItem : public QListViewItem
 	public:
 		AliasItem( QListView *parent,
 			uint number,
-			const QString &alias, 
+			const QString &alias,
 			const QString &command, const ProtocolList &p ) :
 		QListViewItem( parent, alias, command )
 		{
 			protocolList = p;
 			id = number;
 		}
-		
+
 		ProtocolList protocolList;
 		uint id;
-		
+
 	protected:
 		void paintCell( QPainter *p, const QColorGroup &cg,
 			int column, int width, int align )
@@ -70,7 +72,7 @@ class AliasItem : public QListViewItem
 					QPalette::backgroundRoleFromMode( bgmode );
 				p->fillRect( cellWidth, 0, width - cellWidth, height(),
 					cg.brush( crole ) );
-		
+
 				if ( isSelected() && ( column == 0 || listView()->allColumnsShowFocus() ) )
 				{
 					p->fillRect( QMAX( cellWidth, r - marg ), 0,
@@ -81,11 +83,11 @@ class AliasItem : public QListViewItem
 					else if ( !isEnabled() && lv )
 						p->setPen( lv->palette().disabled().highlightedText() );
 				}
-		
+
 				// And last, draw the online status icons
 				int mc_x = 0;
 
-				for ( ProtocolList::Iterator it = protocolList.begin(); 
+				for ( ProtocolList::Iterator it = protocolList.begin();
 					it != protocolList.end(); ++it )
 				{
 					QPixmap icon = SmallIcon( (*it)->pluginIcon() );
@@ -111,7 +113,7 @@ class ProtocolItem : public QListViewItem
 			this->setPixmap( 0, SmallIcon( p->icon() ) );
 			id = p->pluginName();
 		}
-		
+
 		QString id;
 };
 
@@ -122,12 +124,14 @@ AliasPreferences::AliasPreferences( QWidget *parent, const char *, const QString
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	preferencesDialog = new AliasDialogBase( this );
-	
+
 	connect( preferencesDialog->addButton, SIGNAL(clicked()), this, SLOT( slotAddAlias() ) );
 	connect( preferencesDialog->editButton, SIGNAL(clicked()), this, SLOT( slotEditAlias() ) );
 	connect( preferencesDialog->deleteButton, SIGNAL(clicked()), this, SLOT( slotDeleteAliases() ) );
+	connect( KopetePluginManager::self(), SIGNAL( pluginLoaded( KopetePlugin * ) ),
+		this, SLOT( slotPluginLoaded( KopetePlugin * ) ) );
 
-	connect( preferencesDialog->aliasList, SIGNAL(selectionChanged()), 
+	connect( preferencesDialog->aliasList, SIGNAL(selectionChanged()),
 		this, SLOT( slotCheckAliasSelected() ) );
 
 	load();
@@ -162,18 +166,68 @@ void AliasPreferences::load()
 			uint aliasNumber = config->readUnsignedNumEntry( (*it) + "_id" );
 			QString aliasCommand = config->readEntry( (*it) + "_command" );
 			QStringList protocols = config->readListEntry( (*it) + "_protocols" );
-			
+
 			ProtocolList protocolList;
 			for( QStringList::Iterator it2 = protocols.begin(); it2 != protocols.end(); ++it2 )
 			{
 				KopetePlugin *p = KopetePluginManager::self()->plugin( *it2 );
 				protocolList.append( (KopeteProtocol*)p );
 			}
-			
+
 			addAlias( *it, aliasCommand, protocolList, aliasNumber );
 		}
-		
+
 		slotCheckAliasSelected();
+	}
+}
+
+void AliasPreferences::slotPluginLoaded( KopetePlugin *plugin )
+{
+	KopeteProtocol *protocol = static_cast<KopeteProtocol*>( plugin );
+	if( protocol )
+	{
+		KConfig *config = KGlobal::config();
+		if( config->hasGroup( "AliasPlugin" ) )
+		{
+			config->setGroup("AliasPlugin");
+			QStringList aliases = config->readListEntry("AliasNames");
+			for( QStringList::Iterator it = aliases.begin(); it != aliases.end(); ++it )
+			{
+				uint aliasNumber = config->readUnsignedNumEntry( (*it) + "_id" );
+				QString aliasCommand = config->readEntry( (*it) + "_command" );
+				QStringList protocols = config->readListEntry( (*it) + "_protocols" );
+
+				for( QStringList::iterator it2 = protocols.begin(); it2 != protocols.end(); ++it )
+				{
+					if( *it2 == protocol->pluginId() )
+					{
+						QPair<KopeteProtocol*, QString> pr( protocol, *it );
+						if( protocolMap.find( pr ) == protocolMap.end() )
+						{
+							KopeteCommandHandler::commandHandler()->registerAlias(
+								protocol,
+								*it,
+								aliasCommand,
+								QString::fromLatin1("Custom alias for %1").arg(aliasCommand),
+								KopeteCommandHandler::UserAlias
+							);
+
+							protocolMap.insert( pr, true );
+
+							AliasItem *item = aliasMap[ *it ];
+							if( item )
+								item->protocolList.append( protocol );
+							else
+							{
+								ProtocolList pList;
+								pList.append( protocol );
+								aliasMap.insert( *it, new AliasItem( preferencesDialog->aliasList, aliasNumber, *it, aliasCommand, pList ) );
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -183,24 +237,24 @@ void AliasPreferences::save()
 	KConfig *config = KGlobal::config();
 	config->deleteGroup( QString::fromLatin1("AliasPlugin") );
 	config->setGroup( QString::fromLatin1("AliasPlugin") );
-	
+
 	QStringList aliases;
 	AliasItem *item = (AliasItem*)preferencesDialog->aliasList->firstChild();
         while( item )
 	{
 		QStringList protocols;
-		for( ProtocolList::Iterator it = item->protocolList.begin(); 
+		for( ProtocolList::Iterator it = item->protocolList.begin();
 			it != item->protocolList.end(); ++it )
 		{
 			protocols += (*it)->pluginId();
 		}
-		
+
 		aliases += item->text(0);
-		
+
 		config->writeEntry( item->text(0) + "_id", item->id );
 		config->writeEntry( item->text(0) + "_command", item->text(1) );
 		config->writeEntry( item->text(0) + "_protocols", protocols );
-		
+
 		item = (AliasItem*)item->nextSibling();
         }
 
@@ -212,12 +266,12 @@ void AliasPreferences::save()
 void AliasPreferences::addAlias( QString &alias, QString &command, const ProtocolList &p, uint id )
 {
 	QRegExp spaces( QString::fromLatin1("\\s+") );
-	
+
 	if( alias.startsWith( QString::fromLatin1("/") ) )
 		alias = alias.section( '/', 1 );
 	if( command.startsWith( QString::fromLatin1("/") ) )
 		command = command.section( '/', 1 );
-	
+
 	if( id == 0 )
 	{
 		if( preferencesDialog->aliasList->lastItem() )
@@ -225,10 +279,10 @@ void AliasPreferences::addAlias( QString &alias, QString &command, const Protoco
 		else
 			id = 1;
 	}
-	
+
 	QString newAlias = command.section( spaces, 0, 0 );
 
-	new AliasItem( preferencesDialog->aliasList, id, alias, command, p );
+	aliasMap.insert( alias, new AliasItem( preferencesDialog->aliasList, id, alias, command, p ) );
 
 	for( ProtocolList::ConstIterator it = p.begin(); it != p.end(); ++it )
 	{
@@ -239,6 +293,8 @@ void AliasPreferences::addAlias( QString &alias, QString &command, const Protoco
 			QString::fromLatin1("Custom alias for %1").arg(command),
 			KopeteCommandHandler::UserAlias
 		);
+
+		protocolMap.insert( QPair<KopeteProtocol*,QString>( *it, alias ), true );
 	}
 }
 
@@ -246,13 +302,13 @@ void AliasPreferences::slotAddAlias()
 {
 	AliasDialog addDialog;
 	loadProtocols( &addDialog );
-	
+
 	if( addDialog.exec() == QDialog::Accepted )
 	{
 		QString alias = addDialog.alias->text();
 		if( alias.startsWith( QString::fromLatin1("/") ) )
 			alias = alias.section( '/', 1 );
-		
+
 		if( alias.contains( QRegExp("[_=]") ) )
 		{
 			KMessageBox::error( this, i18n("<qt>Could not add alias <b>%1</b>. An"
@@ -262,7 +318,7 @@ void AliasPreferences::slotAddAlias()
 		else
 		{
 			QString command = addDialog.command->text();
-			
+
 			if( !KopeteCommandHandler::commandHandler()->commandHandled( alias ) )
 			{
 				addAlias( alias, command, selectedProtocols( &addDialog) );
@@ -282,7 +338,7 @@ const ProtocolList AliasPreferences::selectedProtocols( AliasDialog *dialog )
 {
 	ProtocolList protocolList;
 	QListViewItem *item = dialog->protocolList->firstChild();
-	
+
 	while( item )
 	{
 		if( item->isSelected() )
@@ -293,7 +349,7 @@ const ProtocolList AliasPreferences::selectedProtocols( AliasDialog *dialog )
 		}
 		item = item->nextSibling();
 	}
-	
+
 	return protocolList;
 }
 
@@ -311,7 +367,7 @@ void AliasPreferences::slotEditAlias()
 {
 	AliasDialog editDialog;
 	loadProtocols( &editDialog );
-	
+
 	QListViewItem *item = preferencesDialog->aliasList->selectedItems().first();
 	if( item )
 	{
@@ -323,7 +379,7 @@ void AliasPreferences::slotEditAlias()
 		{
 			itemMap[ *it ]->setSelected( true );
 		}
-		
+
 		if( editDialog.exec() == QDialog::Accepted )
 		{
 			QString alias = editDialog.alias->text();
@@ -338,7 +394,7 @@ void AliasPreferences::slotEditAlias()
 			else
 			{
 				QString command = editDialog.command->text();
-				
+
 				if( alias == oldAlias ||
 					!KopeteCommandHandler::commandHandler()->commandHandled( alias ) )
 				{
@@ -349,9 +405,9 @@ void AliasPreferences::slotEditAlias()
 							oldAlias
 						);
 					}
-					
+
 					delete item;
-	
+
 					addAlias( alias, command, selectedProtocols( &editDialog ) );
 					emit KCModule::changed(true);
 				}
@@ -378,12 +434,15 @@ void AliasPreferences::slotDeleteAliases()
 					*it,
 					i->text(0)
 				);
+
+				protocolMap.erase( QPair<KopeteProtocol*,QString>( *it, i->text(0) ) );
 			}
 
+			aliasMap.erase( i->text(0) );
 			delete i;
 			emit KCModule::changed(true);
 		}
-		
+
 		save();
 	}
 }
