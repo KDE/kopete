@@ -56,6 +56,7 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	mDirectIMMgr=0L;
 	mFileTransferMgr=0L;
 	awaitingFirstPresenceBlock = OscarSocket::Waiting;
+	mBlockSend = false;
 
 	socket()->enableWrite(false); // don't spam us with readyWrite() signals
 	socket()->enableRead(true);
@@ -117,6 +118,14 @@ DWORD OscarSocket::setIPv4Address(const QString &address)
 			return newAddr;
 	}
 	return 0;
+}
+
+void OscarSocket::slotToggleSend()
+{
+	if (mBlockSend)
+		mBlockSend = false;
+	else
+		mBlockSend = true;
 }
 
 void OscarSocket::slotConnected()
@@ -565,7 +574,7 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 	kdDebug(14150) << "--- OUTPUT ---" << outbuf.toString() << endl;
 #endif
 
-	if(socket()->socketStatus() != KExtendedSocket::connected)
+	if(socket()->socketStatus() != KExtendedSocket::connected || mBlockSend)
 		kdDebug(14150) << k_funcinfo << "Socket is NOT open, can't write to it right now" << endl;
 	else
 	{
@@ -2632,6 +2641,14 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 
 	BYTE currentState = inbuf.getByte();
 	kdDebug(14150) << k_funcinfo << "currentState=" << currentState << endl;
+
+	if (code == 0x0002) //we've been warned about exceeding the rate limit
+	{
+		slotToggleSend();
+		kdDebug(14150) << "Warning about the rate limit received. Waiting "
+						<< currentLevel / 2 << "milliseconds" << endl;
+		QTimer::singleShot( currentLevel / 2, this, SLOT(slotToggleSend()));
+	}
 
 /*
  Docs from http://iserverd.khstu.ru/oscar/snac_01_0a.html

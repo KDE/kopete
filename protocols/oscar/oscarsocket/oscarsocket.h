@@ -841,6 +841,12 @@ class OscarSocket : public OscarConnection
 */
 	void slotKeepaliveTimer();
 
+	/**
+	 * Called by the singleshot timer that is set when we've reached
+	 * the rate limit warning
+	 */
+	void slotToggleSend();
+
 	signals:
 
 	/**
@@ -995,6 +1001,8 @@ class OscarSocket : public OscarConnection
 		KExtendedSocket * connsock;
 		// Tells if we are connected to the server and ready to operate
 		bool isLoggedIn;
+		// Tells if we can send data to the server or not
+		bool mBlockSend;
 
 		/*
 		 * counter to find out if we got all packets needed before sending
