@@ -68,25 +68,17 @@ LibraryLoader::LibraryLoader()
 LibraryLoader::~LibraryLoader()
 {
 	QDictIterator<KopetePlugin> i( mLibHash );
-	bool removedElement = false;
-	// Only update the iterator if we didn't remove an element, since
-	// removing it will cause QDict to auto-increment the dict.
-	for( ; i.current(); removedElement || ( ++i ) )
+	while( i.current() )
 	{
+		// Remove causes the iterator to auto-increment, so
+		// only increment explicitly when not removing
 		if( getInfo( i.currentKey() ).type != "protocol" )
-		{
 			remove( i.current() );
-			removedElement = true;
-		}
 		else
-		{
-			removedElement = false;
-		}
+			++i;
 	}
-
 	i.toFirst();
-	// Don't update the pointer, since it's auto-incremented by the remove
-	for( ; i.current(); /* empty */ )
+	while( i.current() )
 		remove( i.current() );
 }
 
