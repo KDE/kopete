@@ -464,7 +464,7 @@ QString KopeteMessage::escapedBody() const
 
 QString KopeteMessage::parsedBody() const
 {
-	kdDebug(14000) << k_funcinfo << "messageformat: " << d->format << endl;
+	//kdDebug(14000) << k_funcinfo << "messageformat: " << d->format << endl;
 
 	if( d->format == ParsedHTML )
 	{
@@ -501,7 +501,7 @@ QString KopeteMessage::parseLinks( const QString &message, MessageFormat format 
 		QStringList entries = QStringList::split( QChar('<'), message, true );
 
 		QStringList::Iterator it = entries.begin();
-		
+
 		// first one is different: it doesn't start with an HTML tag.
 		if ( it != entries.end() )
 		{
@@ -520,7 +520,7 @@ QString KopeteMessage::parseLinks( const QString &message, MessageFormat format 
 			QString tag = curr.left( tagclose + 1 );
 			QString body = curr.mid( tagclose + 1 );
 			*it = tag + parseLinks( body, PlainText );
-		}  
+		}
 		return entries.join(QString::fromLatin1("<"));
 	}
 
@@ -641,19 +641,28 @@ const QDomDocument KopeteMessage::asXML() const
 {
 #if MESSAGE_QDOM
 	QDomDocument doc = d->xmlDoc.cloneNode().toDocument();
-	QDomCDATASection bodyText = doc.elementsByTagName( QString::fromLatin1("body") ).item(0).firstChild().toCDATASection();
+	QDomCDATASection bodyText = doc.elementsByTagName(
+		QString::fromLatin1("body") ).item(0).firstChild().toCDATASection();
 	bodyText.setData( parsedBody() );
 	return doc;
 #else
 
 	QDomDocument doc;
 	QDomElement messageNode = doc.createElement( QString::fromLatin1("message") );
-	messageNode.setAttribute( QString::fromLatin1("time"), KGlobal::locale()->formatTime(d->timeStamp.time(), true) );
-	messageNode.setAttribute( QString::fromLatin1("timestamp"), KGlobal::locale()->formatDateTime(d->timeStamp) );
+	messageNode.setAttribute( QString::fromLatin1("time"),
+		KGlobal::locale()->formatTime(d->timeStamp.time(), true) );
+	messageNode.setAttribute( QString::fromLatin1("timestamp"),
+		KGlobal::locale()->formatDateTime(d->timeStamp) );
 	if( d->timeStamp.date() == QDate::currentDate() )
-		messageNode.setAttribute( QString::fromLatin1("formattedTimestamp"), KGlobal::locale()->formatTime(d->timeStamp.time(), true) );
+	{
+		messageNode.setAttribute( QString::fromLatin1("formattedTimestamp"),
+			KGlobal::locale()->formatTime(d->timeStamp.time(), true) );
+	}
 	else
-		messageNode.setAttribute( QString::fromLatin1("formattedTimestamp"), KGlobal::locale()->formatDateTime(d->timeStamp) );
+	{
+		messageNode.setAttribute( QString::fromLatin1("formattedTimestamp"),
+			KGlobal::locale()->formatDateTime(d->timeStamp) );
+	}
 	messageNode.setAttribute( QString::fromLatin1("subject"), QStyleSheet::escape( d->subject ) );
 	messageNode.setAttribute( QString::fromLatin1("direction"), d->direction );
 	messageNode.setAttribute( QString::fromLatin1("importance"), d->importance );
@@ -661,7 +670,11 @@ const QDomDocument KopeteMessage::asXML() const
 
 	//build the <from> and <to>  node
 	if( d->direction == Inbound ? d->from : d->to.first() )
-		messageNode.setAttribute( QString::fromLatin1("mainContactId"), d->direction == Inbound ? d->from->contactId() : d->to.first()->contactId() );
+	{
+		messageNode.setAttribute( QString::fromLatin1("mainContactId"),
+			(d->direction == Inbound) ? d->from->contactId() :
+				d->to.first()->contactId() );
+	}
 
 	doc.appendChild( messageNode );
 

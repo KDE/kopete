@@ -204,8 +204,11 @@ void KopeteMessageManager::sendMessage( KopeteMessage &message )
 	{
 		emit messageSent( sentMessage, this );
 		if ( !account()->isAway() || KopetePrefs::prefs()->soundIfAway() )
-			KNotifyClient::event( QString::fromLatin1( "kopete_outgoing" ), i18n( "Outgoing Message Sent" ) );
-
+		{
+			KNotifyClient::event(Kopete::UI::Global::mainWidget()->winId(),
+				QString::fromLatin1( "kopete_outgoing" ),
+				i18n( "Outgoing Message Sent" ) );
+		}
 	}
 	else
 	{
