@@ -1,0 +1,67 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>CryptographyPrefsUI</class>
+<author>Olivier Goffart</author>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>CryptographyPrefsUI</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>401</width>
+            <height>398</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Form1</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>TextLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Your PGP key:</string>
+            </property>
+        </widget>
+        <widget class="KLineEdit" row="0" column="1">
+            <property name="name">
+                <cstring>m_editOwnKey</cstring>
+            </property>
+            <property name="readOnly">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="0" column="2">
+            <property name="name">
+                <cstring>m_selectOwnKey</cstring>
+            </property>
+            <property name="text">
+                <string>Select</string>
+            </property>
+        </widget>
+        <spacer row="1" column="1">
+            <property name="name">
+                <cstring>Spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
