@@ -57,3 +57,11 @@ Comment[sv]=Utgående meddelande har skickats
 default_sound=kopete_outgoing.wav
 default_presentation=0
 
+
+[kopete_online]
+Name=Online
+Comment=User goes online
+default_sound=kopete_online.wav
+default_presentation=1
+
+
