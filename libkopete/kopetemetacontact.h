@@ -19,6 +19,8 @@
 
 #include <qobject.h>
 #include <qptrlist.h>
+#include <qmap.h>
+#include <qpair.h>
 
 #include "kopetecontact.h"
 
@@ -51,7 +53,7 @@ public:
 	 * FIXME: Also take protocol and identity into account!
 	 */
 	KopeteContact *findContact( const QString &contactId );
-
+	KopeteContact *findContact( const QString &protocolId, const QString &contactId );
 	/**
 	 * The name of the icon associated with the contact's status
 	 */
@@ -182,6 +184,14 @@ private:
 	bool m_trackChildNameChanges;
 
 	QStringList m_groups;
+
+
+	/**
+	 * Plugins can set whatever metadata and associate it with a metacontact
+	 * This is just a hash ( pluginid, key ) -> value
+	 */
+	QMap<QPair<QString, QString>, QString> m_metadata;
+	
 };
 
 #endif

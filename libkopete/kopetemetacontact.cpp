@@ -86,6 +86,20 @@ KopeteContact *KopeteMetaContact::findContact( const QString &contactId )
 	return 0L;
 }
 
+KopeteContact *KopeteMetaContact::findContact( const QString &ProtocolId, const QString &contactId )
+{
+	QPtrListIterator<KopeteContact> it( m_contacts );
+	for( ; it.current(); ++it )
+	{
+		if( it.current()->id() == contactId )
+			return it.current();
+	}
+
+	// Contact not found
+	return 0L;
+}
+
+
 void KopeteMetaContact::sendMessage()
 {
 	kdDebug() << "KopeteMetaContact::sendMessage() not implemented!" << endl;

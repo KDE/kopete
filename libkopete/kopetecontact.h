@@ -149,6 +149,18 @@ public:
 		 */
 		QString id() const { return m_id; }
 		void setId( const QString &id ) { m_id = id; }
+		
+		/**
+		 * Return the protocol id that identifies a contact. Id is required
+		 * to be unique per protocol and per identity. Across those boundaries
+		 * ids may occur multiple times.
+		 * The id is solely for comparing items safely (using pointers is
+		 * more crash-prone). DO NOT assume anything regarding the id's
+		 * value! Even if it may look like an ICQ UIN or an MSN passport,
+		 * this is undefined and may change at any time!
+		 */
+		QString protocol() const { return m_protocolId; }
+		void setProtocol( const QString &id ) { m_protocolId = id; }
 
 signals:
 	/**
@@ -177,5 +189,6 @@ signals:
 		QString mName;
 
 		QString m_id;
+		QString m_protocolId;
 };
 #endif
