@@ -99,57 +99,68 @@ bool Properties::isRegistered(const QString &key)
 
 const ContactPropertyTmpl &Properties::fullName() const
 {
-	return createProp(QString::fromLatin1("FormattedName"), QString::fromLatin1("Full Name"));
+	return createProp(QString::fromLatin1("FormattedName"),
+		QString::fromLatin1("Full Name"));
 }
 
 const ContactPropertyTmpl &Properties::idleTime() const
 {
-	return createProp(QString::fromLatin1("idleTime"), QString::fromLatin1("Idle Time"));
+	return createProp(QString::fromLatin1("idleTime"),
+		QString::fromLatin1("Idle Time"));
 }
 
 const ContactPropertyTmpl &Properties::onlineSince() const
 {
-	return createProp(QString::fromLatin1("onlineSince"), QString::fromLatin1("Online Since"));
+	return createProp(QString::fromLatin1("onlineSince"),
+		QString::fromLatin1("Online Since"));
 }
 
 const ContactPropertyTmpl &Properties::lastSeen() const
 {
-	return createProp(QString::fromLatin1("lastSeen"), QString::fromLatin1("Last Seen"));
+	return createProp(QString::fromLatin1("lastSeen"),
+		QString::fromLatin1("Last Seen"), QString::null, true);
 }
 
 const ContactPropertyTmpl &Properties::awayMessage() const
 {
-	return createProp(QString::fromLatin1("awayMessage"), QString::fromLatin1("Away Message"));
+	return createProp(QString::fromLatin1("awayMessage"),
+		QString::fromLatin1("Away Message"));
 }
 
 const ContactPropertyTmpl &Properties::firstName() const
 {
-	return createProp(QString::fromLatin1("firstName"), QString::fromLatin1("First Name"));
+	return createProp(QString::fromLatin1("firstName"),
+		QString::fromLatin1("First Name"), QString::null, true);
 }
 
 const ContactPropertyTmpl &Properties::lastName() const
 {
-	return createProp(QString::fromLatin1("lastName"), QString::fromLatin1("Last Name"));
+	return createProp(QString::fromLatin1("lastName"),
+		QString::fromLatin1("Last Name"), QString::null, true);
 }
 
 const ContactPropertyTmpl &Properties::privatePhone() const
 {
-	return createProp(QString::fromLatin1("privatePhoneNumber"), i18n("Private Phone"));
+	return createProp(QString::fromLatin1("privatePhoneNumber"),
+		i18n("Private Phone"));
 }
 
 const ContactPropertyTmpl &Properties::privateMobilePhone() const
 {
-	return createProp(QString::fromLatin1("privateMobilePhoneNumber"), i18n("Private Mobile Phone"));
+	return createProp(QString::fromLatin1("privateMobilePhoneNumber"),
+		i18n("Private Mobile Phone"));
 }
 
 const ContactPropertyTmpl &Properties::workPhone() const
 {
-	return createProp(QString::fromLatin1("workPhoneNumber"), i18n("Work Phone"));
+	return createProp(QString::fromLatin1("workPhoneNumber"),
+		i18n("Work Phone"));
 }
 
 const ContactPropertyTmpl &Properties::workMobilePhone() const
 {
-	return createProp(QString::fromLatin1("workMobilePhoneNumber"), i18n("Work Mobile Phone"));
+	return createProp(QString::fromLatin1("workMobilePhoneNumber"),
+		i18n("Work Mobile Phone"));
 }
 
 
@@ -160,7 +171,7 @@ const ContactPropertyTmpl &Properties::emailAddress() const
 }
 
 const ContactPropertyTmpl &Properties::createProp(const QString &key,
-	const QString &label, const QString &icon) const
+	const QString &label, const QString &icon, bool persistent) const
 {
 	/*kdDebug(14000) << k_funcinfo <<
 		"key = " << key  << ", label = " << label << endl;*/
@@ -169,8 +180,8 @@ const ContactPropertyTmpl &Properties::createProp(const QString &key,
 	{
 		kdDebug(14000) << k_funcinfo <<
 			"CREATING NEW ContactPropertyTmpl WITH key = " << key  <<
-			", label = " << label << endl;
-		new ContactPropertyTmpl(key, label, icon);
+			", label = " << label << ", persisten = " << persistent << endl;
+		new ContactPropertyTmpl(key, label, icon, persistent);
 	}
 	return tmpl(key);
 }

@@ -403,10 +403,57 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 	syncGroups();
 }
 
-void KopeteContact::serialize( QMap<QString, QString> & /*serializedData */,
+void KopeteContact::serialize( QMap<QString, QString> &serializedData,
 	QMap<QString, QString> & /* addressBookData */ )
 {
-	// Do nothing in the default implementation
+#if 0
+	kdDebug(14010) << k_funcinfo << "for contact " << d->displayName << endl;
+
+	Kopete::ContactProperty::Map::ConstIterator it;// = d->properties.ConstIterator;
+	for (it=d->properties.begin(); it != d->properties.end(); ++it)
+	{
+		if (!it.data().tmpl().persistent())
+			continue;
+
+		QVariant val = it.data().value();
+		switch (val.type())
+		{
+			case QVariant::CString:
+			case QVariant::String:
+				serializedData[it.key()] = val.toString();
+				break;
+
+			case QVariant::StringList:
+				serializedData[it.key()] = val.toStringList().join(QString::fromLatin1(","));
+				break;
+
+			case QVariant::Color:
+				serializedData[it.key()] = val.toColor().name();
+				break;
+
+			case QVariant::Int:
+			case QVariant::UInt:
+			case QVariant::Bool:
+			case QVariant::Double:
+			case QVariant::LongLong:
+			case QVariant::ULongLong:
+				serializedData[it.key()] = val.toString();
+				break;
+
+			case QVariant::Date:
+			case QVariant::Time:
+			case QVariant::DateTime:
+				serializedData[it.key()] = val.toString();
+				break;
+
+			default:
+				kdDebug(14010) << k_funcinfo <<
+					"UNHANDLED property type, saving as generic string!" << endl;
+				serializedData[it.key()] = val.toString();
+				break;
+		} // switch()
+	} // for()
+#endif
 }
 
 bool KopeteContact::isReachable()
@@ -549,9 +596,6 @@ void KopeteContact::setIcon( const QString& icon )
 	return;
 }
 
-
-
-
 QStringList KopeteContact::properties() const
 {
 	return d->properties.keys();
@@ -617,10 +661,6 @@ void KopeteContact::removeProperty(const Kopete::ContactPropertyTmpl &tmpl)
 		d->properties.remove(tmpl.key());
 	}
 }
-
-
-
-
 
 
 QString KopeteContact::toolTip() const

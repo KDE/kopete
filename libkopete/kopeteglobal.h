@@ -139,7 +139,8 @@ namespace Global
 			void unregisterTemplate(const QString &key);
 
 			const ContactPropertyTmpl &createProp(const QString &key,
-				const QString &label, const QString &icon=QString::null) const;
+				const QString &label, const QString &icon=QString::null,
+				bool persistent = false) const;
 
 		private:
 			ContactPropertyTmpl::Map mTemplates;
