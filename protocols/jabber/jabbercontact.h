@@ -51,12 +51,16 @@ class KPopupMenu;
 class JabberProtocol;
 class JabberResource;
 
-class JabberContact:public KopeteContact {
-  Q_OBJECT
-  public:
-    JabberContact( QString userid, QString name, QString group,
-		  JabberProtocol *protocol, KopeteMetaContact *mc);
-    void initContact(QString &userID, QString &name, QString &group);
+class JabberContact:public KopeteContact
+{
+	Q_OBJECT
+  
+	  public:
+
+		JabberContact( QString userid, QString name, QString group,
+				JabberProtocol *protocol, KopeteMetaContact *mc);
+
+		void initContact(QString &userID, QString &name, QString &group);
 
 
 	// Reimplementations of the (uninteresting)

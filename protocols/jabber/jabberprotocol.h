@@ -125,6 +125,8 @@ signals:
 	void protocolUnloading();
 
 private:
+	typedef QMap<QString, JabberContact*> JabberContactList;
+
 	void initIcons();
 	void initActions();
 	bool mIsConnected;
@@ -160,7 +162,7 @@ private:
 	
 	// this is the local contact list used to keep Jabber contacts in
 	// synch with the related meta-contacts
-	QMap<QString, JabberContact> contactList;
+	JabberContactList contactList;
 };
 
 #endif

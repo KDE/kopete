@@ -108,6 +108,12 @@ JabberProtocol::~JabberProtocol()
 	// we should at least disconnect here
 	Disconnect();
 	
+	for(JabberContactList::iterator it = contactList.begin(); it != contactList.end(); it++)
+	{
+		delete it.data();
+		it.data() = 0;
+	}
+	
 	// clear the contact list
 	contactList.clear();
 
@@ -449,7 +455,7 @@ void JabberProtocol::initActions()
 	
 	actionStatusMenu = new KActionMenu("Jabber", this);
 	
-	actionStatusMenu->insertTitle = mUsername + "@" + mServer;
+	actionStatusMenu->popupMenu()->insertTitle(mUsername + "@" + mServer);
 	
 	actionStatusMenu->insert(actionGoOnline);
 	actionStatusMenu->insert(actionGoAway);
@@ -632,6 +638,7 @@ void JabberProtocol::removeUser(QString userID)
 		mProtocol->unsubscribe(userID);
 		
 		// remove account from local list
+		delete contactList[userID];
 		contactList.remove(userID);
 	}
 	
@@ -649,7 +656,7 @@ void JabberProtocol::renameContact(QString userID, QString name, QString group)
 
 		mProtocol->setRoster(userID, name, group);
 		
-		contactList[userID].setDisplayName(name);
+		contactList[userID]->setDisplayName(name);
 	}
 
 }
@@ -708,8 +715,9 @@ void JabberProtocol::slotUserWantsAuth(const Jid &jid)
 	
 	kdDebug() << "[JabberProtocol] " << userID << " wants auth!" << endl;
 	
-	if (authContact->questionYesNo(kopeteapp->mainWindow(), i18n("The Jabber user %1 wants to add you to their contact list. Do you want to authorize them?").arg(userID, 1), i18n("Authorize Jabber User?")) == 3)
-			mProtocol->subscribed(userID);
+	if (KMessageBox::questionYesNo(kopeteapp->mainWindow(),
+	    i18n("The Jabber user %1 wants to add you to their contact list. Do you want to authorize them?").arg(userID, 1), i18n("Authorize Jabber User?")) == 3)
+		mProtocol->subscribed(userID);
 
 }
 
@@ -719,18 +727,13 @@ void JabberProtocol::slotUserWantsAuth(const Jid &jid)
 void JabberProtocol::slotContactUpdated(JabRosterEntry *contact)
 {
 	
-	JabberContact *newContact;
-
 	// sanity check
 	if(contactList.contains(contact->jid.latin1()))
 		return;
 
-	// update the contact data    
-	newContact->slotUpdateContact(contact->nick.latin1(), contact->localStatus(), contact->unavailableStatusString.latin1());
+	// update the contact data
+	contactList[contact->jid.latin1()]->slotUpdateContact(contact->nick.latin1(), contact->localStatus(), contact->unavailableStatusString.latin1());
 	
-	// assign it back to the list
-	contactList[contact->jid.latin1()] = newContact;
-
 }
 
 /*
@@ -739,7 +742,7 @@ void JabberProtocol::slotContactUpdated(JabRosterEntry *contact)
 void JabberProtocol::slotNewContact(JabRosterEntry *contact)
 {
 	
-	if (contactList.contains(contact->jid)
+	if (contactList.contains(contact->jid))
 	{
 		kdDebug() << "[JabberProtocol] Entry already exists for " << contact->jid << endl;
 		return;
@@ -754,7 +757,7 @@ void JabberProtocol::slotNewContact(JabRosterEntry *contact)
 	if (c)
 	{
 		// existing contact, update data
-		kdDebug() << "[JabberProtocol] Contact << " contact->jid << " already exists, updating" << endl;
+		kdDebug() << "[JabberProtocol] Contact " << contact->jid << " already exists, updating" << endl;
 		
 		QString tmpGroup = (!group.isNull() ? group : QString("") );
 		((JabberContact *)c)->initContact(contact->jid, contact->nick, tmpGroup);
@@ -763,16 +766,13 @@ void JabberProtocol::slotNewContact(JabRosterEntry *contact)
 	{
 		kdDebug() << "[JabberProtocol] Adding contact " << contact->jid << " ..." << endl;
 		
-		JabberContact jabContact(contact->jid, contact->nick, group ? group : QString(""), this, 0L);
+		JabberContact *jabContact = new JabberContact(contact->jid, contact->nick, group ? group : QString(""), this, 0L);
 		contactList[contact->jid] = jabContact;
 
-		QMap<QString, JabberContact>::Iterator it = contactList.find(contact->jid);
-		c = it.pointer;
-		
 		kdDebug() << "[JabberProtocol] Contact has been added to contactList[]" << endl;
-		kdDebug() << "[JabberProtocol] New Contact's userID is " << (contactList[contact->jid])->userID() << endl;
+		kdDebug() << "[JabberProtocol] New Contact's userID is " << contactList[contact->jid]->userID() << endl;
 		
-		m->addContact(c, group ? QStringList(group) : QStringList("Unknown"));
+		m->addContact(jabContact, group ? QStringList(group) : QStringList("Unknown"));
 	}
 
 	slotContactUpdated(contact); /* More kludges! Ugh. */
@@ -788,15 +788,11 @@ KopeteContact *JabberProtocol::createContact(KopeteMetaContact *parent, const QS
 	// assumption: data is just the JID; this could change at some stage
 	addContact(data);
 	
-	JabberContact contact(data, "", QString(""), this, parent);
+	JabberContact *contact = new JabberContact(data, "", QString(""), this, parent);
 	
 	contactList[data] = contact;
 	
-	// this is a bit clumsy as we just assigned the contact,
-	// should be improved later on maybe
-	QMap<QString, JabberContact>::Iterator it = contactList.find(data);
-	
-	return it.pointer;
+	return contact;
 
 }
 
@@ -856,7 +852,7 @@ void JabberProtocol::slotNewMessage(const JabMessage &message)
 		}
 		
 		// pass the message on to the contact
-		contactList[jid].slotNewMessage(message);
+		contactList[jid]->slotNewMessage(message);
 
 	}
 
@@ -868,7 +864,9 @@ void JabberProtocol::slotNewMessage(const JabMessage &message)
  */
 void JabberProtocol::slotResourceAvailable(const Jid &jid, const JabResource &resource)
 {
-	QString jidString("%1@%2").arg(jid.user(), 1).arg(jid.host(), 2);
+	QString jidString;
+	
+	jidString = QString("%1@%2").arg(jid.user(), 1).arg(jid.host(), 2);
 	
 	kdDebug() << "[JabberProtocol] New resource available for " << jidString << endl;
 	
@@ -878,7 +876,7 @@ void JabberProtocol::slotResourceAvailable(const Jid &jid, const JabResource &re
 		return;
 	}
 	
-	contactList[jidString].slotResourceAvailable(jid, resource);
+	contactList[jidString]->slotResourceAvailable(jid, resource);
 
 }
 
@@ -888,7 +886,9 @@ void JabberProtocol::slotResourceAvailable(const Jid &jid, const JabResource &re
  */
 void JabberProtocol::slotResourceUnavailable(const Jid &jid)
 {
-	QString jidString("%1@%2").arg(jid.user(), 1).arg(jid.host(), 2);
+	QString jidString;
+	
+	jidString = QString("%1@%2").arg(jid.user(), 1).arg(jid.host(), 2);
 	
 	kdDebug() << "[JabberProtocol] Resource now unavailable for " << jidString << endl;
 
@@ -898,7 +898,7 @@ void JabberProtocol::slotResourceUnavailable(const Jid &jid)
 		return;
 	}
 	
-	contactList[jidString].slotResourceUnavailable(jid);
+	contactList[jidString]->slotResourceUnavailable(jid);
 
 }
 
@@ -935,7 +935,7 @@ void JabberProtocol::slotGotVCard(JabTask *task)
 		return;
 	}
 	
-	contactList[vCard->jid].slotGotVCard(vCard);
+	contactList[vCard->jid]->slotGotVCard(vCard);
 
 	// FIXME: this should be done here, have to check dialog first for copying the data correctly though
 //	delete vCard;
