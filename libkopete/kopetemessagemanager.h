@@ -29,6 +29,7 @@ class KopeteMessageManager;
 class QObject;
 class KopeteChatWindow;
 class KopeteEvent;
+class KopeteMessageLog;
 
 
 typedef QPtrList<KopeteContact>        KopeteContactList;
@@ -52,7 +53,7 @@ public:
 	/**
 	 * Append a message to the queue
 	 */
-	void appendMessage( const KopeteMessage *msg );
+	void appendMessage( const KopeteMessage &msg );
 
 	/**
 	 * Add a contact to the session
@@ -92,19 +93,23 @@ signals:
 	 */
 	void messageSent( const KopeteMessage &msg );
 
+protected slots:
+	void cancelUnreadMessageEvent();
+    void chatWindowClosing();
 private:
 	/**
 	 * Create a message manager. This constructor is private, because the
 	 * static factory method createSession() creates the object. You may
 	 * not create instances yourself directly!
 	 */
-	KopeteMessageManager( const KopeteContactList &contacts,
-		QObject *parent = 0, const char *name = 0 );
+	KopeteMessageManager( const KopeteContact *user, KopeteContactList &others,
+		QString logFile = QString::null, QObject *parent = 0, const char *name = 0 );
 
 	KopeteContactList mContactList;
 	KopeteChatWindow *mChatWindow;
 	KopeteEvent *mUnreadMessageEvent;
 	KopeteMessageList mMessageQueue;
+	KopeteMessageLog *mLogger;
 	int mReadMode;
 };
 

@@ -5,12 +5,23 @@ This is a very rough draft, so we have something. Feel free to add or modify
 your entries, or to beautify this file a bit ;-) - Martijn
 
 
-- framework
-  + better chatwindow
-    -> In progress, will become future KopeteChatWindow class
-       ASSIGNED: Martijn Klingens ('spaze') and Ryan Cumming ('Phalynx')
-  + contact list functionality sharing among plugins
-    -> Part of API restructuring
+Framework
+=========
+
+o KopeteMessageManager, integration of chat sessions, chat window
+  managment, notifier display, message queues.
+  
+  Status: In progress.
+  Assigned: Duncan Mac-Vicar (BaRRiL)
+
+o Better chatwindow
+  
+  Status: Almost finished
+  Assigned: Martijn Klingens ('spaze') and Ryan Cumming ('Phalynx')
+  
++ contact list functionality sharing among plugins
+  
+  Status: Part of API restructuring
        ASSIGNED: Martijn Klingens ('spaze') and Ryan Cumming ('Phalynx')
   + unified support for groups (icq can move users to any groups, but aim
     can't...)
@@ -25,7 +36,7 @@ your entries, or to beautify this file a bit ;-) - Martijn
        ASSIGNED: Martijn Klingens ('spaze') and Ryan Cumming ('Phalynx')
   + support for file transfer
     UNASSIGNED
-  + add sound support
+  + add sound support to KopeteEvent
     UNASSIGNED
   + Split KopeteProtocol into KopeteProtocol and KopeteIdentity to allow
     multiple identities using the same protocol

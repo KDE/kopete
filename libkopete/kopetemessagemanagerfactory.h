@@ -43,7 +43,7 @@ public:
 	 * the session. If a session with exactly these contacts already exists,
 	 * it will be reused. Otherwise a new session is created.
 	 */
-	KopeteMessageManager* create( const KopeteContactList &contacts );
+	KopeteMessageManager* create( const KopeteContact *user, KopeteContactList &contacts , QString logFile = QString::null);
 	
 	/**
 	 * Get a list of all open sessions

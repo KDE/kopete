@@ -9,10 +9,10 @@ KopeteMessageManagerFactory::~KopeteMessageManagerFactory()
 {
 }
 
-KopeteMessageManager *KopeteMessageManagerFactory::create( const KopeteContactList &contacts )
+KopeteMessageManager *KopeteMessageManagerFactory::create( const KopeteContact *user,KopeteContactList &contacts ,QString logFile = QString::null )
 {
 
-	KopeteMessageManager *session = new KopeteMessageManager ( contacts );
+	KopeteMessageManager *session = new KopeteMessageManager ( user, contacts , logFile);
 	(mSessionList).append(session);
 	return (session);
 
