@@ -15,6 +15,9 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "kopete.h"
+#include "kopete.moc"
+
 #include <qvaluelist.h>
 #include <qlist.h>
 #include <qlayout.h>
@@ -27,7 +30,6 @@
 #include <kiconloader.h>
 #include <kstandarddirs.h>
 
-#include <kopete.h>
 #include <preferencesdialog.h>
 #include <kopetewindow.h>
 
@@ -45,15 +47,16 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 	//plugins = new PluginManager;
 	allConnected = false;
     initEmoticons();
-	mLibraryLoader = new LibraryLoader;
+
+	mLibraryLoader = new LibraryLoader();
 	mIconLoader = KGlobal::iconLoader();
-	mPref=new PreferencesDialog;
+	mPref = new PreferencesDialog();
+	mPref->hide();
+
 	Plugins *blah = new Plugins(this);
 
-	mainwindow = new KopeteWindow;
+	mainwindow = new KopeteWindow();
 	setMainWidget(mainwindow);
-	mainwindow->statusBar()->show();
-  	mPref->hide();
 
 	mAppearance = new AppearanceConfig(mainwindow);
 
@@ -67,53 +70,72 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 		modules.append("msn.plugin");
 		config->writeEntry("Modules", modules);
 	}
+
 	tray = new KopeteSystemTray();
 	tray->getContextMenu()->insertSeparator();
 	mainwindow->actionAddContact->plug( tray->getContextMenu() );
 	tray->getContextMenu()->insertSeparator();
 	mainwindow->actionConnect->plug( tray->getContextMenu() );
 	mainwindow->actionDisconnect->plug( tray->getContextMenu() );
-  	mainwindow->actionPrefs->plug( tray->getContextMenu() );
+	mainwindow->actionPrefs->plug( tray->getContextMenu() );
 	tray->getContextMenu()->insertSeparator();
+
 	/* Ok, load saved plugins */
 	loadPlugins();
 }
 
+
 Kopete::~Kopete()
 {
-	delete mPref;
-	delete mLibraryLoader;
-	delete mainwindow;
+	kdDebug() << "Kopete::~Kopete()" << endl;
+
+	if (mPref)
+		delete mPref;
+
+	if (mLibraryLoader)
+		delete mLibraryLoader;
+
+	if (tray)
+	{
+		delete tray;
+	}
+
+	if (mainwindow)
+		delete mainwindow;
+
 
 	// Only use this if cant find crash cause :-)
 	//KCrash::setCrashHandler(Kopete::cleverKCrashHack);
+	kdDebug() << "END OF Kopete::~Kopete()" << endl;
 }
+
+
 void Kopete::slotPreferences()
 {
-  mPref->show();
-  mPref->raise();
+	mPref->show();
+	mPref->raise();
 }
+
+
 /** No descriptions */
 void Kopete::slotExit()
 {
+	kdDebug() << "Kopete::slotExit()" << endl;
 	quit();
 }
 
-KopeteSystemTray *Kopete::systemTray()
-{
-	return tray;
-}
 
 /** No descriptions */
 void Kopete::readOptions()
 {
-	/*
-  KConfig *config = KGlobal::config();
-  config->setGroup("General");
+	kdDebug() << "Kopete::readOptions()" << endl;
+/*
+	KConfig *config = KGlobal::config();
+	config->setGroup("General");
 	visible = config->readBoolEntry("Visible",true);
 	QSize size          = config->readSizeEntry("Geometry");
-  config->readBoolEntry("Idle Detection",false);
-  config->readNumEntry("MaxIdle",15);
+	config->readBoolEntry("Idle Detection",false);
+	config->readNumEntry("MaxIdle",15);
 
   if(!size.isEmpty())
   {
@@ -123,7 +145,7 @@ void Kopete::readOptions()
   if(!pos.isNull())
   {
     move(pos);
-  }	
+  }
   config->setGroup("ICQ");
   QString icqNick = config->readEntry( "icqNick" );
   QString icqUIN = config->readEntry( "icqUIN" );
@@ -159,21 +181,21 @@ void Kopete::readOptions()
 	autoConnect=i;
     }
   }
-
-
 */
 }
+
 /** No descriptions */
-void Kopete::saveOptions(){
+void Kopete::saveOptions()
+{
 }
 
-/** Connect to all loaded protocol plugins */
+/** Connect all loaded protocol plugins */
 void Kopete::slotConnectAll()
 {
 	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
     for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
-		kdDebug() << "Kopete: [Connect All]: "<<(*i).name <<"\n";
+		kdDebug() << "Kopete: Connect All: "<<(*i).name << endl;
 		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;				
 		IMProtocol *prot =  static_cast<IMProtocol*>(tmpprot);
 		if ( !(prot->isConnected()))
@@ -183,14 +205,14 @@ void Kopete::slotConnectAll()
 	}
 }
 
-/** Connect to all loaded protocol plugins */
+/** Disconnect all loaded protocol plugins */
 void Kopete::slotDisconnectAll()
 {
 	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
     for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
-		kdDebug() << "Kopete: [Disconnect All]: "<<(*i).name <<"\n";
-		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;				
+		kdDebug() << "Kopete: Disconnect All: "<<(*i).name << endl;
+		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
 		IMProtocol *prot =  static_cast<IMProtocol*>(tmpprot);
 		if (prot->isConnected())
 		{
@@ -205,23 +227,25 @@ void Kopete::slotAboutPlugins()
 	AboutPlugins *aboutPl;
 	aboutPl = new AboutPlugins(mainwindow);
 	aboutPl->show();
-
 }
+
 /** Add a contact through Wizard */
 void Kopete::slotAddContact()
 {
-	AddWizardImpl *tmpdialog = new AddWizardImpl(this->mainWindow());
+	AddWizardImpl *tmpdialog = new AddWizardImpl( mainWindow() );
 	tmpdialog->show();
 }
 
 /** No descriptions */
 void Kopete::slotSetAway()
 {
-}/** No descriptions */
+}
+
+/** No descriptions */
 void Kopete::initPlugins()
 {
-	
 }
+
 /** No descriptions */
 void Kopete::loadPlugins()
 {
@@ -241,17 +265,6 @@ void Kopete::cleverKCrashHack(int)
 	// someone fix the libraries.
 	kdDebug() << "Crashed.\n" << endl;
 	_exit(255);
-}
-/** No descriptions */
-KStatusBar *Kopete::statusBar()
-{
-	return mainwindow->statusBar();
-}
-/** No descriptions */
-ContactList *Kopete::contactList()
-{
-	return mainwindow->contactlist;
-
 }
 
 void Kopete::initEmoticons()

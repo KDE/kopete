@@ -70,15 +70,18 @@ class Kopete : public KUniqueApplication
 {
   Q_OBJECT
   public:
-    Kopete();
-    ~Kopete();
+	Kopete();
+	~Kopete();
 
 	PreferencesDialog *preferencesBox() const { return mPref; }
-	KopeteWindow *popupMenu() const { /*return mainwidget->popupmenu;*/ };
+	//KopeteWindow *popupMenu() const { /*return mainwidget->popupmenu;*/ };
 	//PluginManager *Plugins() const { return plugins; }
 	LibraryLoader *libraryLoader() const { return mLibraryLoader; }
 	KIconLoader *iconLoader() const { return mIconLoader; }
 	KopeteWindow *mainWindow() const { return mainwindow; };
+	ContactList *contactList() const { return mainwindow->contactlist; };
+	KStatusBar *statusBar() const { return mainwindow->statusBar(); };
+	KopeteSystemTray *systemTray() const {return tray; };
 
 	/** No descriptions */
 	void saveOptions();
@@ -92,34 +95,34 @@ class Kopete : public KUniqueApplication
 	QString parseHTML(QString);
 	QString parseURL(QString);
 
-	KStatusBar *statusBar();
-  /** No descriptions */
-  ContactList *contactList();
-	/** No descriptions */
 	PluginManager *plugins;
 	PreferencesDialog *mPref;
 
-	/** Some bool stuff */
+	/*
+	 * is true if all plugins are connected to their servers
+	 * currently unused !!!
+	 */
 	bool allConnected;
-	KopeteSystemTray *systemTray();
-	private:
+
+private:
 	KopeteWindow *mainwindow;
 	LibraryLoader *mLibraryLoader;
 	KIconLoader *mIconLoader;
 	KopeteEmoticons mEmoticons;
 	AppearanceConfig *mAppearance;
+	KopeteSystemTray *tray;
 	QString mEmoticonTheme;
+
 	static void cleverKCrashHack(int);
 	void loadPlugins();
-	KopeteSystemTray *tray;
 
 public slots:
-  void slotPreferences();
-  void slotExit();
-  void slotConnectAll();
-  void slotDisconnectAll();
-  void slotAboutPlugins();
-  void slotAddContact();
+	void slotPreferences();
+	void slotExit();
+	void slotConnectAll();
+	void slotDisconnectAll();
+	void slotAboutPlugins();
+	void slotAddContact();
 	void slotSetAway();
 };
 

@@ -87,11 +87,10 @@ bool LibraryLoader::loadAll(const QStringList &modules)
 		KopeteLibraryInfo info=getInfo(*i);
 		if (!info.type.contains("sm"))
 			continue;
-
 		loadSO(*i);
 	}
 
-	// load all the playlists in the first
+	// load all the protocols in the first
 	for(QStringList::ConstIterator i=modules.begin(); i!=modules.end(); ++i)
 	{
 		KopeteLibraryInfo info=getInfo(*i);
@@ -101,27 +100,6 @@ bool LibraryLoader::loadAll(const QStringList &modules)
 		loadSO(*i);
 	}
 
-	// load all the user interfaces now
-	/*
-	for(QStringList::ConstIterator i=modules.begin(); i!=modules.end(); ++i)
-	{
-		KopeteLibraryInfo info=getInfo(*i);
-		if (!info.type.contains("userinterface"))
-			continue;
-		loadSO(*i);
-	}
-
-	for(QStringList::ConstIterator i=modules.begin(); i!=modules.end(); ++i)
-	{
-		KopeteLibraryInfo info=getInfo(*i);
-		if((!info.type.contains("playlist")) 
-		&& (!info.type.contains("userinterface"))
-		&& (!info.type.contains("sm")))
-		{
-		    loadSO(*i);
-		}
-	}
-	*/
 	return true;
 }
 
@@ -162,15 +140,15 @@ bool LibraryLoader::loadSO(const QString &spec)
 		KopeteLibraryInfo info = getInfo(spec);
 		if (info.specfile != spec)
 			return false;
-	
+
 		for (QStringList::ConstIterator it = info.require.begin(); it != info.require.end(); ++it)
 			loadSO(*it);
-	
+
 		// get the library loader instance
 		KLibLoader *loader = KLibLoader::self();
 
 		PluginLibrary *listitem=mLibHash[spec];
-	
+
 		if (!listitem)
 		{
 			KLibrary *lib = loader->library(QFile::encodeName(info.filename));
@@ -191,9 +169,8 @@ bool LibraryLoader::loadSO(const QString &spec)
 
 		//if (getInfo(spec).type=="playlist")
 		//	mPlaylist=listitem->plugin->playlist();
-		
-	listitem->plugin->init();
-	
+
+		listitem->plugin->init();
 		return true;
 	}
 	else
@@ -212,7 +189,7 @@ void LibraryLoader::add(const QString &spec)
 void LibraryLoader::setModules(const QStringList &mods)
 {
 	KConfig *config=KGlobal::config();
-	config->setGroup(0);
+	config->setGroup("");
 	config->writeEntry("Modules", mods);
 	KGlobal::config()->sync();
 }
@@ -231,7 +208,7 @@ bool LibraryLoader::remove(const QString &spec)
 		{
 			if ((*i).specfile!=spec && (*i).type=="userinterface")
 				isanotherui=true;
-		}		
+		}
 		if (!isanotherui)
 			kapp->exit();
 	}

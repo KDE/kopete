@@ -1,5 +1,6 @@
 
 #include "addcontactpage.h"
+#include "addcontactpage.moc"
 
 AddContactPage::AddContactPage(QWidget *parent, const char *name ) : QWidget(parent,name)
 {
