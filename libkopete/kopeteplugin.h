@@ -25,6 +25,7 @@
 class KopeteMetaContact;
 class KopeteMessageManager;
 class KActionCollection;
+class KMainWindow;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -87,6 +88,8 @@ public:
 	 * Returns a set of action items for the chatWindows
 	 */
 	virtual KActionCollection *customChatActions(KopeteMessageManager*) { return 0l; };
+
+	virtual KActionCollection *customToolbarActions() { return 0L; };
 
 	/**
 	 * Get the name of the icon for this plugin. The icon name is taken
