@@ -54,7 +54,7 @@ public:
 	MSNProtocol( QObject *parent, const char *name, const QStringList &args );
 	~MSNProtocol();
 
-	static const MSNProtocol *protocol();
+	static MSNProtocol *protocol();
 
 	typedef QMap<QString, MSNContact*> ContactList;
 
@@ -136,11 +136,10 @@ public:
 	virtual bool isAway() const;
 
 	void addContact( const QString &userID , KopeteMetaContact *m=0L);
-	void removeContact( const MSNContact *c ) const;
-	void removeFromGroup( const MSNContact *c, const QString &group ) const;
-	void moveContact( const MSNContact *c, const QString &oldGroup,
-		const QString &newGroup ) const;
-	void copyContact( const MSNContact *c, const QString &newGroup ) const;
+	void addContactToGroup( MSNContact * , QString group)  ;
+	void removeContact( MSNContact *c )  ;
+	void removeContactFromGroup( MSNContact *c, const QString &group ) ;
+	void moveContact( MSNContact *c, const QString &oldGroup, const QString &newGroup ) ;
 
 	void addGroup( const QString &groupName );
 	void renameGroup( const QString &oldGroup, const QString &newGroup );
@@ -262,7 +261,6 @@ private slots:
 
 	/**
 	 * Start a new chat session: the result is an XFR command, see above
-     * FIXME: The chat session needs an update
 	 */
 	void slotStartChatSession( QString handle );
 
@@ -351,7 +349,7 @@ private:
 
 	QMap<uint, QString> m_groupList;
 
-	static const MSNProtocol *s_protocol;
+	static MSNProtocol *s_protocol;
 	Status m_status;
 	Status m_connectstatus;
 	QString m_msnId;
@@ -371,11 +369,15 @@ private:
 
 	/**
 	 * Mapping of meta contacts to MSN contacts
+	 * I removed this: I think it is not needed.
+	 * that can provoque problem with several MSN contact in the same protocol
 	 */
-	QPtrDict<MSNContact> m_metaContacts;
+	//QPtrDict<MSNContact> m_metaContacts;
 
 	QStringList m_allowList;
 	QStringList m_blockList;
+
+	QString tmp_addToNewGroup;
 
 };
 

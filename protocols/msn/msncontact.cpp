@@ -31,13 +31,6 @@ MSNContact::MSNContact( QString &protocolId, const QString &msnId,
 	KopeteMetaContact *parent )
 : KopeteContact( protocolId, parent )
 {
-	//m_actionRemove = 0L;
-	//m_actionRemoveFromGroup = 0L;
-	//m_actionChat = 0L;
-	//m_actionInfo = 0L;
-	//m_actionHistory = 0L;
-	//m_actionMove = 0L;
-	//m_actionCopy = 0L;
 	m_actionBlock = 0L;
 	m_actionCollection=0L;
 
@@ -46,6 +39,8 @@ MSNContact::MSNContact( QString &protocolId, const QString &msnId,
 	m_deleted = false;
 	m_allowed = false;
 	m_blocked = false;
+
+	m_moving=false;
 
 	historyDialog = 0L;
 
@@ -59,6 +54,11 @@ MSNContact::MSNContact( QString &protocolId, const QString &msnId,
 		SLOT( slotStartChatSession( QString ) ) );
 
 	setDisplayName( displayName );
+}
+
+MSNContact::~MSNContact()
+{
+	kdDebug() << "MSNContact::~MSNContact" << endl;
 }
 
 KActionCollection *MSNContact::customContextMenuActions()
@@ -97,12 +97,6 @@ QString MSNContact::data() const
 void MSNContact::execute()
 {
 	emit chatToUser( m_msnId );
-}
-
-
-void MSNContact::moveToGroup( const QString &from, const QString &to )
-{
-	MSNProtocol::protocol()->moveContact( this, from, to );
 }
 
 void MSNContact::slotBlockUser()
@@ -381,20 +375,35 @@ QStringList MSNContact::groups()
 	return m_groups;
 }
 
+void MSNContact::moveToGroup( const QString &from, const QString &to )
+{
+	m_moving=true;
+	MSNProtocol::protocol()->moveContact( this, from, to );
+}
+
 void MSNContact::addToGroup( const QString &group )
 {
-	m_groups.append( group );
-	if( m_movingToGroup == group )
-	{
-		m_movingToGroup = QString::null;
-		m_movingFromGroup = QString::null;
-	}
+	if(!m_groups.contains(group))
+		MSNProtocol::protocol()->addContactToGroup( this, group );
 }
 
 void MSNContact::removeFromGroup( const QString &group )
 {
-	m_groups.remove( group );
+	m_moving=false;
+	if(m_groups.contains(group))
+		MSNProtocol::protocol()->removeContactFromGroup( this, group );
 }
+
+void MSNContact::addedToGroup(QString group)
+{
+	m_moving=false;
+	m_groups.append(group);
+}
+void MSNContact::removedFromGroup(QString group)
+{
+	m_groups.remove(group);
+}
+
 
 #include "msncontact.moc"
 

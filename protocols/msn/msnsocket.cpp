@@ -235,7 +235,7 @@ void MSNSocket::slotReadLine()
 			QString command = QString::fromUtf8(QCString(m_buffer.take(index+2)).left(index));
 
 			command.replace( QRegExp( "\r\n" ), "" );
-			kdDebug() << "MSNSocket::slotReadLine: " << command << endl;
+//			kdDebug() << "MSNSocket::slotReadLine: " << command << endl;
 
 			parseLine(command);
 
@@ -323,8 +323,8 @@ void MSNSocket::parseLine( const QString &str )
 	if( isNum && id )
 		m_lastId = id;
 
-	kdDebug() << "MSNSocket::parseCommand: Parsing command " << cmd <<
-		" (ID " << id << "): '" << data << "'" << endl;
+//	kdDebug() << "MSNSocket::parseCommand: Parsing command " << cmd <<
+//		" (ID " << id << "): '" << data << "'" << endl;
 
 	data.replace( QRegExp( "\r\n" ), "" );
 	bool isError;

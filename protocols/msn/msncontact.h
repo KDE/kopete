@@ -41,7 +41,7 @@ public:
 	MSNContact( QString &protocolId, const QString &msnId,
 		const QString &displayName, const QString &group,
 		KopeteMetaContact *parent );
-
+	~MSNContact();
 
 	virtual QString id() const;
 	virtual QString data() const;
@@ -78,6 +78,14 @@ public:
 	void setAllowed( bool d );
 
 	/**
+	 * Indicate whether this contact is currently moving to another group
+	 * Flag needed for don't delete the contact if he is removed from a group
+	 *  and not yet add to the other group  ( when the group doesn't exists yet)
+	 */
+	bool isMoving() { return m_moving; }
+	void setMoving(bool b=true) { m_moving=b; }
+	
+	/**
 	 * The groups in which the user is located.
 	 * Not the whole API supports multi-group membership yet, be careful
 	 * relying on this for now!
@@ -110,6 +118,9 @@ public slots:
 	virtual void execute();
 	virtual void slotViewHistory();
 
+	void removedFromGroup(QString group);
+	void addedToGroup(QString group);
+
 signals:
 	void chatToUser( QString );
 
@@ -135,28 +146,9 @@ private:
 	KopeteHistoryDialog *historyDialog;
 
 	KActionCollection* m_actionCollection;
-//	KAction* m_actionRemove;
-//	KAction* m_actionRemoveFromGroup;
-//	KAction* m_actionChat;
-//	KAction* m_actionInfo;
 	KAction* m_actionBlock;
-//	KAction* m_actionHistory;
-//	KListAction *m_actionMove;
-//	KListAction *m_actionCopy;
 
-	/**
-	 * Most ugly hack ever. You're not seeing this. Nothing to see here.
-	 * I plead the fifth if questions are asked.
-	 * The contact list overhaul planned for Kopete 0.5 will hopefully fix
-	 * this. 'nuff said.
-	 */
-	QString m_movingToGroup;
-
-	/**
-	 * Slightly less hacky, but still ugly: the group we're moving FROM. We
-	 * need that to signal the completed move to libkopete when done.
-	 */
-	QString m_movingFromGroup;
+	bool m_moving;
 };
 
 #endif
