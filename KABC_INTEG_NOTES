@@ -51,7 +51,7 @@ Implementation notes
 
 7) Deferred association accessed via MC properties dialog
 
-8) Don't remove the kabc fields, other IM clients might be using them.
+8) Don't remove the kabc fields, other IM clients might be using them.  (and the user might still want to have other data like the phone number)
 
 Therefore we need an Association Dialog accessed in wizard and from the MC properties dialog.  Note, this name sucks, don't write any classes using it.
 
@@ -93,6 +93,15 @@ Something like X-MESSAGING-MSN:bob@hotmail.com for each protocol account that co
 
 We should keep the extra stuff in kabc to a minimum.  We can store nicknames in contactlist.xml.
 
+We should allow plugins to save some data:
+Some protocol allow to reach phone numbers, or more (see the ICQ info page)
+It would be usefull if KABC could remember what application writes an entry. so when ICQ try to modify an e-mail, only the "icq-email" is affected
+
+Or like the language or the PGP public key
+
+
+
+
 KABC Participation modes
 ------------------------
 
@@ -121,7 +130,9 @@ For/In Favour
 Against
 ~~~~~~~
 .) less consistent
+	(can someone explain me this? -Olivier)
 .) may confuse user?
+	how?
 
 Mandatory
 ~~~~~~~~~
@@ -149,7 +160,7 @@ KDE PIM Apps' use of Kopete
 
 Use cases
 
-1) Email client or contact management app displays email sender's IM status if known.  
+1) Email client or contact management app displays email sender's IM status if known.
 
 2) Email client or contact management app wants to use Kopete as transport for something (vCard?).
 
@@ -183,9 +194,26 @@ Use cases
 
 Notes
 
-As above, client must identify IM contactable addressbook entries, obtain status information and get the IM app to send the invite (inline/file transfer).  Some protocols may not support file transfer though.  Do we need a capabilities interface on the IM apps, or just use the lowest common denominator?  
+As above, client must identify IM contactable addressbook entries, obtain status information and get the IM app to send the invite (inline/file transfer).  Some protocols may not support file transfer though.  Do we need a capabilities interface on the IM apps, or just use the lowest common denominator?
 
 On receipt of the invitation, IM app needs to recognise the invite and relay it to the recipient (similar lazy loose binding?).  In Kopete we could do this in a plugin, quite neatly.
+
+Some problem:
+  Each protocol does that in a different way.  The Game/Application  need to know some protocol specific stuff (the MSN application ID for example)
+
+
+
+ 'myself' integration
+=======================
+
+Some protocols allow to send some personale information like real name, phone number, adress, ...   (see icq user info)
+It would be cool if theses information about the users itself could be obtained from KAB.
+
+see also Bug 63297: "meta-contact" global(local) display nickname for all accounts
+
+Notes: some user might don't want to export their info the the server.
+
+
 
 What about the API?
 =====================
@@ -226,7 +254,13 @@ messenging/msn         =>   xxx@msn.com ; yyy@msn.com   (it's a StringList)
 messenging/nickname    =>    Mr. X ; Mr. Y
 
 that looks fine, but how to make sure than Mr. X is for xxx@msn.com, imagine if we have icq contact, or other? (Gof)
-
 We should never store nicknames in kabc.  The metacontact name should be taken from the kabc formatted name (Will)
+
+
+Of course every fields shouldn't be stored in KABC (for example: MSN's groups, or others)
+to know what can be saved or not in kabc, i see two ways:
+1) KopeteMetaContact::setData( QString key , QString data , bool saveToKAB);
+2) if the key is or not recognised by KABC. example, if i save  "messanging/msn-groups"  KAB is not able to store it, so don't store it in KABC
+
 
 Syncing contactlist info currently takes place when Kopete exits.  other kabc apps write kabc during their runs.  We will have to make changes to do this and to make sure that we don't try to write 200 kabc entries simultaneously with individual tickets after fetching the SSCL for a new account.
