@@ -1,4 +1,4 @@
 #KDE_ICON = icq_online icq_offline
 icondir = $(kde_datadir)/kopete/pics
-icon_DATA = irc_join.xpm irc_privmsg.xpm irc_quit.xpm irc_part.xpm irc_yousay.xpm irc_topic.xpm irc_nickchange.xpm irc_protocol.xpm irc_protocol_small.xpm irc_servermsg.xpm irc_motdmsg.xpm irc_info.xpm irc_action.xpm irc_unknowncmd.xpm irc_querymsg.xpm irc_ctcp.xpm irc_dcc.xpm
+icon_DATA = irc_join.png irc_privmsg.png irc_quit.png irc_part.png irc_yousay.png irc_topic.png irc_nickchange.png irc_protocol.png irc_protocol_small.png irc_servermsg.png irc_motdmsg.png irc_info.png irc_action.png irc_unknowncmd.png irc_querymsg.png irc_ctcp.png irc_dcc.png
 

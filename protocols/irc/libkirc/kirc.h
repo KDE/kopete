@@ -52,6 +52,7 @@ public:
 	void sendCtcpPing(const QString &target);
 	void setTopic(const QString &channel, const QString &topic);
 	void kickUser(const QString &user, const QString &channel, const QString &reason);
+	void whoisUser(const QString &user);
 	void requestDccConnect(const QString &, const QString &, unsigned int port, DCCClient::Type type);
 enum UserClass
 {
@@ -102,6 +103,10 @@ signals:
 	void incomingNoNickChan(const QString &);
 	void incomingWasNoNick(const QString &);
 	void incomingWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
+	void incomingWhoIsServer(const QString &nickname, const QString &server, const QString &serverInfo);
+	void incomingWhoIsOperator(const QString &nickname);
+	void incomingWhoIsIdle(const QString &nickname, unsigned long seconds);
+	void incomingWhoIsChannels(const QString &nickname, const QString &channel);
 	void incomingUnknown(const QString &);
 	void incomingPrivAction(const QString &, const QString &, const QString &);
 	void incomingPrivMessage(const QString &, const QString &, const QString &);

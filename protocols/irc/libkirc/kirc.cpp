@@ -493,6 +493,55 @@ void KIRC::slotReadyRead()
 					emit incomingWhoIsUser(line.section(' ', 3, 3), line.section(' ', 4, 4), line.section(' ', 5, 5), realName);
 					break;
 				}
+				case 312:
+				{
+					/*
+					Show info about a server (part of a /whois) in the form of:
+					"<nick> <server> :<server info>"
+					*/
+					QString serverInfo = line.section(' ', 5, 5);
+					serverInfo.remove(0, 1);
+					emit incomingWhoIsServer(line.section(' ', 3, 3), line.section(' ', 4, 4), serverInfo);
+					break;
+				}
+				case 313:
+				{
+					/*
+					Show info about an operator (part of a /whois) in the form of:
+					"<nick> :is an IRC operator"
+					*/
+					emit incomingWhoIsOperator(line.section(' ', 3, 3));
+					break;
+				}
+				case 317:
+				{
+					/*
+					Show info about someone who is idle (part of a /whois) in the form of:
+					"<nick> <integer> :seconds idle"
+					*/
+					emit incomingWhoIsIdle(line.section(' ', 3, 3), line.section(' ', 4, 4).toULong());
+					break;
+				}
+				case 318:
+				{
+					/*
+					Receive end of WHOIS in the form of
+					"<nick> :End of /WHOIS list"
+					*/
+					emit incomingEndOfWhois(line.section(' ', 3, 3));
+					break;
+				}
+				case 319:
+				{
+					/*
+					Show info a channel a user is logged in (part of a /whois) in the form of:
+					"<nick> :{[@|+]<channel><space>}"
+					*/
+					QString channel = line.section(' ', 4, 4);
+					channel.remove(0, 1);
+					emit incomingWhoIsChannels(line.section(' ', 3, 3), channel);
+					break;
+				}
 				case 332:
 				{
 					/*
@@ -809,6 +858,13 @@ void KIRC::setTopic(const QString &channel, const QString &topic)
 void KIRC::kickUser(const QString &user, const QString &channel, const QString &reason)
 {
 	QString command = "KICK " + channel + " " + user + " :" + reason + "\r\n";
+
+	writeString(command);
+}
+
+void KIRC::whoisUser(const QString &user)
+{
+	QString command = "WHOIS " + user + "\r\n";
 
 	writeString(command);
 }
