@@ -54,7 +54,7 @@ void Engine::away(bool isAway, const QString &awayMessage)
 }
 
 // FIXME: Really handle this message
-void Engine::error(Message &msg)
+void Engine::error(Message &)
 {
 	setStatus(Closing);
 }
@@ -191,7 +191,7 @@ void Engine::pong(Message &/*msg*/)
 {
 }
 
-void Engine::quit(const QString &reason, bool now)
+void Engine::quit(const QString &reason, bool /*now*/)
 {
 	kdDebug(14120) << k_funcinfo << reason << endl;
 
@@ -293,8 +293,10 @@ void Engine::notice(const QString &target, const QString &message)
 
 void Engine::notice(Message &msg)
 {
-	if(!msg.suffix().isEmpty())
-		emit incomingNotice(msg.prefix(), msg.suffix());
+    kdDebug() << k_funcinfo << endl;
+    msg.dump();
+    if(!msg.suffix().isEmpty())
+	emit incomingNotice(msg.arg(0), msg.suffix());
 
 	if(msg.hasCtcpMessage())
 		invokeCtcpCommandOfMessage(m_ctcpReplies, msg);

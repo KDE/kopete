@@ -143,7 +143,13 @@ void IRCServerContact::appendMessage( const QString &message )
 
 void IRCServerContact::slotIncomingNotice( const QString &orig, const QString &notice )
 {
-	ircAccount()->appendMessage(i18n("NOTICE from %1: %2").arg(orig.section('!',0,0)).arg(notice), IRCAccount::NoticeReply);
+	QString originator = orig.contains('!') ? orig.section('!',0,1) : orig;
+	ircAccount()->appendMessage(
+		i18n("NOTICE from %1: %2").arg(
+			originator == ircAccount()->mySelf()->nickName() ? kircEngine()->currentHost() : originator, notice
+		),
+		IRCAccount::NoticeReply
+	);
 }
 
 void IRCServerContact::slotIncomingUnknown(const QString &message)

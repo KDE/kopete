@@ -75,10 +75,10 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 
 		KConfigGroup *config = account()->configGroup();
 
-		serverNotices->setCurrentItem( config->readNumEntry( "ServerNotices", 2 ) );
-		serverMessages->setCurrentItem( config->readNumEntry( "ServerMessages", 2 ) );
-		informationReplies->setCurrentItem( config->readNumEntry( "InformationReplies", 1 ) );
-		errorMessages->setCurrentItem( config->readNumEntry( "ErrorMessages", 2 ) );
+		serverNotices->setCurrentItem( config->readNumEntry( "ServerNotices", IRCAccount::ServerWindow ) );
+		serverMessages->setCurrentItem( config->readNumEntry( "ServerMessages", IRCAccount::ServerWindow ) );
+		informationReplies->setCurrentItem( config->readNumEntry( "InformationReplies", IRCAccount::ActiveWindow ) );
+		errorMessages->setCurrentItem( config->readNumEntry( "ErrorMessages", IRCAccount::ActiveWindow ) );
 
 		account()->setMessageDestinations( serverNotices->currentItem(), serverMessages->currentItem(),
 		informationReplies->currentItem(), errorMessages->currentItem()
@@ -244,8 +244,8 @@ Kopete::Account *IRCEditAccountWidget::apply()
 	account()->setDefaultPart( partMessage->text() );
 	account()->setDefaultQuit( quitMessage->text() );
 	account()->setExcludeConnect( autoConnect->isChecked() );
-	account()->setMessageDestinations( serverNotices->currentItem(), serverMessages->currentItem(),
-		informationReplies->currentItem(), errorMessages->currentItem()
+	account()->setMessageDestinations( serverNotices->currentItem() + 1, serverMessages->currentItem() + 1,
+		informationReplies->currentItem() + 1, errorMessages->currentItem() + 1
 	);
 
 	account()->configGroup()->writeEntry("PreferSSL", preferSSL->isChecked());

@@ -113,9 +113,9 @@ public:
 	{
 		ActiveWindow = 1,
 		ServerWindow = 2,
-		AnonymousWindow = 4,
-		KNotify = 8,
-		Ignore = 16
+		AnonymousWindow = 3,
+		KNotify = 4,
+		Ignore = 5
 	};
 
 	IRCAccount(IRCProtocol *p, const QString &accountid, const QString &autoConnect = QString::null);
@@ -211,6 +211,7 @@ private slots:
 	void slotNickInUse( const QString &nick );
 	void slotNickInUseAlert( const QString &nick );
 	void slotServerBusy();
+	void slotNoSuchNickname( const QString &nick );
 	void slotSearchChannels();
 	void slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
 	void slotJoinedUnknownChannel( const QString &channel, const QString &nick );

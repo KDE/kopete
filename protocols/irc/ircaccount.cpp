@@ -136,6 +136,9 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	QObject::connect(m_engine, SIGNAL(incomingServerLoadTooHigh()),
 		this, SLOT(slotServerBusy()));
 
+	QObject::connect(m_engine, SIGNAL(incomingNoSuchNicknanme(const QString &)),
+			 this, SLOT(slotNoSuchNickname(const QString &)));
+
 	mAwayAction = new Kopete::AwayAction ( i18n("Set Away"),
 		m_protocol->m_UserStatusAway.iconFor( this ), 0, this,
 		SLOT(slotGoAway( const QString & )), this );
@@ -148,10 +151,10 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	QString codecMib = config->readEntry(CONFIG_CODECMIB);
 	//	int codecMib = config->readNumEntry(CONFIG_CODECMIB, UTF-8);
 
-	m_serverNotices = (MessageDestination)config->readNumEntry( "ServerNotices", 2 );
-	m_serverMessages = (MessageDestination)config->readNumEntry( "ServerMessages", 2 );
-	m_informationReplies = (MessageDestination)config->readNumEntry( "InformationReplies", 1 );
-	m_errorMessages = (MessageDestination)config->readNumEntry( "ErrorMessages", 2 );
+	m_serverNotices = (MessageDestination)config->readNumEntry( "ServerNotices", ServerWindow );
+	m_serverMessages = (MessageDestination)config->readNumEntry( "ServerMessages", ServerWindow );
+	m_informationReplies = (MessageDestination)config->readNumEntry( "InformationReplies", ActiveWindow );
+	m_errorMessages = (MessageDestination)config->readNumEntry( "ErrorMessages", ActiveWindow );
 
 	if( !codecMib.isEmpty() )
 	{
@@ -528,7 +531,6 @@ void IRCAccount::engineStatusChanged(KIRC::Engine::Status newStatus)
 		// Do nothing.
 		break;
 	case KIRC::Engine::Connecting:
-		// Do nothing.
 		break;
 	case KIRC::Engine::Authentifying:
 		break;
@@ -778,9 +780,17 @@ void IRCAccount::slotJoinChannel()
 	}
 }
 
-void IRCAccount::slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived)
+void IRCAccount::slotNewCtcpReply(const QString &type, const QString &/*target*/, const QString &messageReceived)
 {
 	appendMessage( i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived), InfoReply );
+}
+
+void IRCAccount::slotNoSuchNickname( const QString &nick )
+{
+	if( KIRC::Entity::isChannel(nick) )
+		appendMessage( i18n("The channel \"%1\" does not exist").arg(nick), UnknownReply );
+	else
+		appendMessage( i18n("The nickname \"%1\" does not exist").arg(nick), UnknownReply );
 }
 
 void IRCAccount::appendMessage( const QString &message, MessageType type )
@@ -809,7 +819,6 @@ void IRCAccount::appendMessage( const QString &message, MessageType type )
 			destination = ActiveWindow;
 			break;
 	}
-
 
 	if( destination == ActiveWindow )
 	{

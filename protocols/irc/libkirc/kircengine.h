@@ -304,6 +304,7 @@ signals:
 	void incomingPrivMessage(const QString &, const QString &, const QString &);
 	void incomingQuitIRC(const QString &user, const QString &reason);
 	void incomingUserModeChange(const QString &nick, const QString &mode);
+	void incomingNoSuchNickname(const QString &nick);
 
 	// CTCP Signals
 //	void action(const QString &from, const QString &to, const QString &message);
@@ -362,8 +363,7 @@ private slots:
 	void slotConnectionClosed();
 	void error(int errCode = 0);
 
-//	void echo(KIRC::Message &msg);
-//	void ignore(KIRC::Message &msg);
+	inline void ignoreMessage(KIRC::Message &){}
 
 	void error(KIRC::Message &msg);
 	void join(KIRC::Message &msg);
@@ -379,19 +379,20 @@ private slots:
 	void quit(KIRC::Message &msg);
 	void topic(KIRC::Message &msg);
 
-
-//	void numericReply_echo(KIRC::Message &msg);
-//	void numericReply_ignore(KIRC::Message &msg);
-
 	void numericReply_001(KIRC::Message &msg);
+	void numericReply_002(KIRC::Message &msg);
+	void numericReply_003(KIRC::Message &msg);
 	void numericReply_004(KIRC::Message &msg);
-
-//	void numericReply_251(KIRC::Message &msg);
+	void numericReply_005(KIRC::Message &msg);
+	void numericReply_250(KIRC::Message &msg);
+	void numericReply_251(KIRC::Message &msg);
 	void numericReply_252(KIRC::Message &msg);
 	void numericReply_253(KIRC::Message &msg);
 	void numericReply_254(KIRC::Message &msg);
-//	void numericReply_265(KIRC::Message &msg);
-//	void numericReply_266(KIRC::Message &msg);
+	void numericReply_255(KIRC::Message &msg);
+	void numericReply_263(KIRC::Message &msg);
+	void numericReply_265(KIRC::Message &msg);
+	void numericReply_266(KIRC::Message &msg);
 	void numericReply_301(KIRC::Message &msg);
 	void numericReply_303(KIRC::Message &msg);
 //	void numericReply_305(KIRC::Message &msg);
@@ -417,6 +418,8 @@ private slots:
 	void numericReply_372(KIRC::Message &msg);
 //	void numericReply_376(KIRC::Message &msg);
 
+	void numericReply_401(KIRC::Message &msg);
+	void numericReply_406(KIRC::Message &msg);
 	void numericReply_433(KIRC::Message &msg);
 	void numericReply_464(KIRC::Message &msg);
 	void numericReply_471(KIRC::Message &msg);

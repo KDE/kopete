@@ -814,7 +814,7 @@ void IRCProtocol::slotUpdateNetworkHostConfig()
 			netConf->useSSL->setChecked( host->ssl );
 
 			netConf->upButton->setEnabled( netConf->hostList->currentItem() > 0 );
-			netConf->downButton->setEnabled( netConf->hostList->currentItem() < ( netConf->hostList->count() - 1 ) );
+			netConf->downButton->setEnabled( netConf->hostList->currentItem() < (int)( netConf->hostList->count() - 1 ) );
 		}
 	}
 	else

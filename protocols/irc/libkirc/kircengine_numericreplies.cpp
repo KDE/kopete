@@ -32,20 +32,21 @@ using namespace KIRC;
 void Engine::bindNumericReplies()
 {
 	bind(1, this, SLOT(numericReply_001(KIRC::Message &)), 1, 1);
-//	bind(2, this, SLOT(numericReply_002(KIRC::Message &)), 1, 1); // incomingConnectString
-//	bind(3, this, SLOT(numericReply_003(KIRC::Message &)), 1, 1); // incomingConnectString
+	bind(2, this, SLOT(numericReply_002(KIRC::Message &)), 1, 1); // incomingConnectString
+	bind(3, this, SLOT(numericReply_003(KIRC::Message &)), 1, 1); // incomingConnectString
 	bind(4, this, SLOT(numericReply_004(KIRC::Message &)), 5, 5);
+	bind(5, this, SLOT(numericReply_004(KIRC::Message &)), 1, 1);
 
-//	bind(250, this, SLOT(numericReply_250(KIRC::Message &)));
-//	bind(251, this, SLOT(numericReply_251(KIRC::Message &)));
-//	bind(252, this, SLOT(numericReply_252(KIRC::Message &)), 2, 2);
-//	bind(253, this, SLOT(numericReply_253(KIRC::Message &)), 2, 2);
-//	bind(254, this, SLOT(numericReply_254(KIRC::Message &)), 2, 2);
-//	bind(255, this, SLOT(numericReply_255(KIRC::Message &)), 1, 1); // incomingConnectString
+	bind(250, this, SLOT(numericReply_250(KIRC::Message &)));
+	bind(251, this, SLOT(numericReply_251(KIRC::Message &)));
+	bind(252, this, SLOT(numericReply_252(KIRC::Message &)), 2, 2);
+	bind(253, this, SLOT(numericReply_253(KIRC::Message &)), 2, 2);
+	bind(254, this, SLOT(numericReply_254(KIRC::Message &)), 2, 2);
+	bind(255, this, SLOT(numericReply_255(KIRC::Message &)), 1, 1); // incomingConnectString
 
-//	bind(263, this, SLOT(numericReply_263(KIRC::Message &))); // incomingServerLoadTooHigh
-//	bind(265, this, SLOT(numericReply_265(KIRC::Message &)));
-//	bind(266, this, SLOT(numericReply_266(KIRC::Message &)));
+	bind(263, this, SLOT(numericReply_263(KIRC::Message &))); // incomingServerLoadTooHigh
+	bind(265, this, SLOT(numericReply_265(KIRC::Message &)));
+	bind(266, this, SLOT(numericReply_266(KIRC::Message &)));
 
 	bind(301, this, SLOT(numericReply_301(KIRC::Message &)), 2, 2); // incomingUserIsAway
 	bind(303, this, SLOT(numericReply_303(KIRC::Message &)), 1, 1); // incomingUserOnline
@@ -75,12 +76,12 @@ void Engine::bindNumericReplies()
 	bind(366, this, SLOT(numericReply_366(KIRC::Message &)), 2, 2); // incomingEndOfNames
 //	bind(369, this, SLOT(numericReply_369(KIRC::Message &)), 2, 2); // incomingEndOfWhoWas
 	bind(372, this, SLOT(numericReply_372(KIRC::Message &)), 1, 1);
-//	bind(375, Engine::IgnoreMethod );
-//	bind(376, Engine::IgnoreMethod );
+	bind(375, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 );
+	bind(376, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 );
 
-//	bind(401, this, SLOT(numericReply_401(KIRC::Message &)), 2, 2); // incomingNoNickChan
+	bind(401, this, SLOT(numericReply_401(KIRC::Message &)), 2, 2); // incomingNoNickChan
 //	bind(404, this, SLOT(numericReply_404(KIRC::Message &)), 2, 2); // incomingCannotSendToChannel
-//	bind(406, this, SLOT(numericReply_406(KIRC::Message &)), 2, 2); // incomingWasNoNick
+	bind(406, this, SLOT(numericReply_406(KIRC::Message &)), 2, 2); // incomingWasNoNick
 	bind(433, this, SLOT(numericReply_433(KIRC::Message &)), 2, 2);
 //	bind(442, this, SLOT(numericReply_442(KIRC::Message &)), 2, 2); // incomingCannotSendToChannel
 	bind(464, this, SLOT(numericReply_464(KIRC::Message &)), 1, 1);
@@ -118,17 +119,19 @@ void Engine::numericReply_001(Message &msg)
 /* 002: ":Your host is <servername>, running version <ver>"
  * Gives information about the host. The given informations are close to 004.
  */
-// void Engine::numericReply_002(Message &msg)
-// {
-// }
+void Engine::numericReply_002(Message &msg)
+{
+	emit incomingConnectString( msg.suffix() );
+}
 
 /* 003: "This server was created <date>"
  * Gives the date that this server was created.
  * NOTE: This is useful for determining the uptime of the server).
  */
-// void Engine::numericReply_003(Message &msg)
-// {
-// }
+void Engine::numericReply_003(Message &msg)
+{
+	emit incomingConnectString( msg.suffix() );
+}
 
 /* 004: "<servername> <version> <available user modes> <available channel modes>"
  * Gives information about the servername, version, available modes, etc.
@@ -138,23 +141,37 @@ void Engine::numericReply_004(Message &msg)
 	emit incomingHostInfo(msg.arg(1),msg.arg(2),msg.arg(3),msg.arg(4));
 }
 
+/* 005:
+ * Gives capability information. TODO: This is important!
+ */
+void Engine::numericReply_005(Message &msg)
+{
+	emit incomingConnectString( msg.toString() );
+}
+
 /* 250: ":Highest connection count: <integer> (<integer> clients)
  *       (<integer> since server was (re)started)"
  * Tells connections statistics about the server for the uptime activity.
  * NOT IN RFC1459 NOR RFC2812
  */
+void Engine::numericReply_250(Message &msg)
+{
+	emit incomingConnectString( msg.suffix() );
+}
 
 /* 251: ":There are <integer> users and <integer> services on <integer> servers"
  * Tells how many user there are on all the different servers in the form of:
  */
-
+void Engine::numericReply_251(Message &msg)
+{
+	emit incomingConnectString( msg.suffix() );
+}
 /* 252: "<integer> :operator(s) online"
  * Issues a number of operators on the server in the form of:
  */
 void Engine::numericReply_252(Message &msg)
 {
-	// FIXME: send an integer instead of a QString
-	emit incomingConnectString( msg.toString() );
+	emit incomingConnectString( msg.arg(1) + ' ' + msg.suffix() );
 }
 
 /* 253: "<integer> :unknown connection(s)"
@@ -162,43 +179,48 @@ void Engine::numericReply_252(Message &msg)
  */
 void Engine::numericReply_253(Message &msg)
 {
-	// FIXME: send an integer instead of a QString
-	emit incomingConnectString( msg.toString() );
+	emit incomingConnectString( msg.arg(1) + ' ' + msg.suffix() );
 }
 
 /* Tells how many total channels there are on this network in the form of:
  * "<integer> :channels formed" */
 void Engine::numericReply_254(Message &msg)
 {
-	// FIXME: send an integer instead of a QString
-	emit incomingConnectString( msg.toString() );
+	emit incomingConnectString( msg.arg(1) + ' ' + msg.suffix() );
 }
 
 /* 255: ":I have <integer> clients and <integer> servers"
  * Tells how many clients and servers *this* server handles.
  */
-// void Engine::numericReply_255(Message &)
-// {
-// }
+void Engine::numericReply_255(Message &msg)
+{
+	emit incomingConnectString( msg.suffix() );
+}
 
 /* 263:
  * Server is too busy.
  */
+void Engine::numericReply_263(Message &)
+{
+	emit incomingServerLoadTooHigh();
+}
 
 /* 265: ":Current local  users: <integer>  Max: <integer>"
  * Tells statistics about the current local server state.
  * NOT IN RFC2812
  */
-// void Engine::numericReply_265(Message &)
-// {
-// }
+void Engine::numericReply_265(Message &msg)
+{
+	emit incomingConnectString( msg.suffix() );
+}
 
 /* 266: ":Current global users: <integer>  Max: <integer>"
  * Tells statistics about the current global(the whole irc server chain) server state:
  */
-// void Engine::numericReply_266(Message &)
-// {
-// }
+void Engine::numericReply_266(Message &msg)
+{
+	emit incomingConnectString( msg.suffix() );
+}
 
 /* 301: "<nick> :<away message>"
  */
@@ -436,10 +458,18 @@ void Engine::numericReply_372(Message &msg)
  * Gives a signal to indicate that the command issued failed because the person/channel not being on IRC.
  *  - Used to indicate the nickname parameter supplied to a command is currently unused.
  */
+void Engine::numericReply_401(Message &msg)
+{
+	emit incomingNoSuchNickname( msg.arg(1) );
+}
 
 /* 406: "<nickname> :There was no such nickname"
  * Like case 401, but when there *was* no such nickname.
  */
+void Engine::numericReply_406(Message &msg)
+{
+	emit incomingNoSuchNickname( msg.arg(1) );
+}
 
 /* 433: "<nick> :Nickname is already in use"
  * Tells us that our nickname is already in use.
