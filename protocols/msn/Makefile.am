@@ -18,7 +18,7 @@ kopete_msn_la_SOURCES = msnprotocol.cpp msnidentity.cpp \
 kopete_msn_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN)
 kopete_msn_la_LIBADD  = ./ui/libkopetemsnui.la \
 	./libkmerlin/libkmerlin.la \
-	../../libkopete/libkopete.la
+	../../libkopete/libkopete.la  $(LIB_KIO)
 
 data_DATA = msn.plugin
 datadir = $(kde_datadir)/kopete

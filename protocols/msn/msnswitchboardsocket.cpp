@@ -32,6 +32,7 @@
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
+#include <kfiledialog.h>
 
 
 
@@ -183,11 +184,13 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			kdDebug() << "MSNSwitchBoardSocket::slotReadMessage : filetransfer: - ip:" <<ip_adress <<" : " <<port <<" -authcook: " <<authcook<<  endl;
 
 			MSNFileTransferSocket *MFTS=new  MSNFileTransferSocket(m_myHandle,authcook,m_filetransferName);
-			MFTS->setKopeteTransfer(kopeteapp->transferManager()->addTransfer(MSNProtocol::protocol()->contacts()[ m_msgHandle ]->metaContact(),m_filetransferName,0,i18n("Kopete")));
+			//FIXME: i think current KopeteFileTransferInfo and KopeteTransfer is not perfect:
+			// missing:	-a signal when the transfer is aborted
+			//         	-a flag to precies if it is an outgoing or an incomming transfer
+			// I would like set the size later in the MSNFileTransferSocket.  (current size is set to 0)
+			MFTS->setKopeteTransfer(kopeteapp->transferManager()->addTransfer(MSNProtocol::protocol()->contacts()[ m_msgHandle ]->metaContact(),
+						m_filetransferName, 0,  MSNProtocol::protocol()->contacts()[ m_msgHandle ]->displayName()));
 			MFTS->connect(ip_adress, port.toUInt());
-
-			m_lastId++;  //FIXME:  there is no ACK for prev command ; without m_lastId++, future messages are queued  (MSNSocket::m_lastId should be private)
-  
 		}
 		else  if( msg.contains("Application-File:") )  //not "Application-Name: File Transfer" because the File Transfer label is sometimes translate 
 		{ 
@@ -207,6 +210,14 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 				"Would you like to accept?\n").arg( contact).arg( filename).arg( filesize );
 
 			int r=KMessageBox::questionYesNo (0l, txt, i18n( "MSN Plugin - Kopete" ), i18n( "Accept" ), i18n( "Refuse" ));
+
+			if(r== KMessageBox::Yes)
+			{
+				QString saveFileName = KFileDialog::getSaveFileName( filename,"*.*", 0l  , i18n( "MSN File transfer" ) );
+				if ( saveFileName == QString::null )
+					r=KMessageBox::Cancel;
+				else filename=saveFileName;
+			}
        
 			if(r== KMessageBox::Yes)
 			{
@@ -223,7 +234,6 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 				QCString args = QString( "N" ).utf8();
 				sendCommand( command , args, true, message );
 				m_filetransferName=filename;
-                               
 			}
 			else
 			{
@@ -238,6 +248,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 				QCString args = QString( "N" ).utf8();
 				sendCommand( command , args, true, message );
 			}
+			m_lastId++;  //FIXME:  there is no ACK for prev command ; without m_lastId++, future messages are queued  (MSNSocket::m_lastId should be private)
 		}
 	}
 	else if(msg.contains("MIME-Version: 1.0\r\nContent-Type: text/x-msmsgscontrol\r\nTypingUser:"))
