@@ -24,7 +24,7 @@
 #include "jabberaccount.h"
 #include "jabbercontact.h"
 
-JabberMessageManager::JabberMessageManager ( JabberProtocol *protocol, const JabberContact *user,
+JabberMessageManager::JabberMessageManager ( JabberProtocol *protocol, const JabberBaseContact *user,
 											 KopeteContactPtrList others, const QString &resource, const char *name )
 											 : KopeteMessageManager ( user, others, protocol, 0, name )
 {
@@ -48,16 +48,15 @@ JabberMessageManager::JabberMessageManager ( JabberProtocol *protocol, const Jab
 
 }
 
-JabberMessageManager::~JabberMessageManager ()
-{
-
-}
-
 void JabberMessageManager::updateDisplayName ()
 {
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
 	KopeteContactPtrList chatMembers = members ();
+
+	// make sure we do have members in the chat
+	if ( !chatMembers.first () )
+		return;
 
 	XMPP::Jid jid ( chatMembers.first()->contactId () );
 
@@ -71,10 +70,10 @@ void JabberMessageManager::updateDisplayName ()
 
 }
 
-const JabberContact *JabberMessageManager::user () const
+const JabberBaseContact *JabberMessageManager::user () const
 {
 
-	return static_cast<const JabberContact *>(KopeteMessageManager::user());
+	return static_cast<const JabberBaseContact *>(KopeteMessageManager::user());
 
 }
 
@@ -105,6 +104,7 @@ void JabberMessageManager::appendMessage ( KopeteMessage &msg, const QString &fr
 
 void JabberMessageManager::slotSendTypingNotification ( bool typing )
 {
+
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Sending out typing notification (" << typing << ") to all chat members." << endl;
 
 	if ( !account()->isConnected () )
@@ -196,11 +196,11 @@ void JabberMessageManager::slotMessageSent ( KopeteMessage &message, KopeteMessa
 		// determine type of the widget and set message type accordingly
         if ( view()->viewType () == KopeteMessage::Chat)
 		{
-			jabberMessage.setType ("chat");
+			jabberMessage.setType ( "chat" );
 		}
         else
 		{
-			jabberMessage.setType ("normal");
+			jabberMessage.setType ( "normal" );
 		}
 
 		// send the message
@@ -226,4 +226,3 @@ void JabberMessageManager::slotMessageSent ( KopeteMessage &message, KopeteMessa
 #include "jabbermessagemanager.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-

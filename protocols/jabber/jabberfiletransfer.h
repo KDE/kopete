@@ -25,7 +25,7 @@ class QString;
 class JabberAccount;
 class KopeteTransfer;
 class KopeteFileTransferInfo;
-class JabberContact;
+class JabberBaseContact;
 
 class JabberFileTransfer : public QObject
 {
@@ -41,7 +41,7 @@ public:
 	/**
 	 * Constructor for an outgoing transfer
 	 */
-	JabberFileTransfer ( JabberAccount *account, JabberContact *contact, const QString &file );
+	JabberFileTransfer ( JabberAccount *account, JabberBaseContact *contact, const QString &file );
 
 	~JabberFileTransfer ();
 

@@ -2,7 +2,6 @@ TODO for Jabber:
 
 - support for public channels
 - implement support for transports/agents
-- support for file transfers
 - allow synchronization of offline changes / online changes
   (only lacks group synch)
 - support all message types (chat/ticker/etc)

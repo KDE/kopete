@@ -43,12 +43,15 @@
 #include "kopeteuiglobal.h"
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
+#include "jabberprotocol.h"
 #include "jabberresourcepool.h"
 #include "jabbercontactpool.h"
 #include "jabberfiletransfer.h"
-
+#include "jabbercontact.h"
+#include "jabbergroupcontact.h"
 #include "dlgjabbersendraw.h"
 #include "dlgjabberservices.h"
+#include "dlgjabberchatjoin.h"
 
 #include <sys/utsname.h>
 
@@ -141,7 +144,7 @@ void JabberAccount::addS5bAddress ( const QString &address )
 			newList.append ( *it );
 	}
 
-	m_s5bServer->setHostList ( newList );
+	s5bServer()->setHostList ( newList );
 
 }
 
@@ -165,7 +168,7 @@ void JabberAccount::removeS5bAddress ( const QString &address )
 				newList.append ( *it );
 		}
 
-		m_s5bServer->setHostList ( newList );
+		s5bServer()->setHostList ( newList );
 	}
 
 }
@@ -212,9 +215,10 @@ KActionMenu *JabberAccount::actionMenu ()
 
 	m_actionMenu->popupMenu()->insertSeparator();
 
-//	m_actionMenu->insert(new KAction (i18n ("Join Groupchat..."), "jabber_group", 0,
-//		this, SLOT (slotJoinNewChat ()), this, "actionJoinChat"));
-//	m_actionMenu->popupMenu()->insertSeparator();
+	m_actionMenu->insert(new KAction (i18n ("Join Groupchat..."), "jabber_group", 0,
+		this, SLOT (slotJoinNewChat ()), this, "actionJoinChat"));
+
+	m_actionMenu->popupMenu()->insertSeparator();
 
 	m_actionMenu->insert ( new KAction ( i18n ("Services..."), "jabber_serv_on", 0,
 										 this, SLOT ( slotGetServices () ), this, "actionJabberServices") );
@@ -488,9 +492,6 @@ void JabberAccount::connect ()
 	 */
 	jabberClient = new XMPP::Client (this);
 
-	jabberClient->setFileTransferEnabled ( true );
-	jabberClient->s5bManager()->setServer ( s5bServer () );
-
 	/* This should only be done here to connect the signals, otherwise it is a
 	 * bad idea.
 	 */
@@ -699,7 +700,12 @@ void JabberAccount::slotCSAuthenticated ()
 		}
 	}
 
+	/**
+	 * Setup file transfer
+	 */
 	addS5bAddress ( localAddress );
+	jabberClient->setFileTransferEnabled ( true );
+	jabberClient->s5bManager()->setServer ( s5bServer () );
 
 	/* start the client operation */
 	XMPP::Jid jid(accountId());
@@ -1498,36 +1504,62 @@ void JabberAccount::slotReceivedMessage (const XMPP::Message & message)
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New message from " << message.from().full () << endl;
 
-	// try to locate an exact match in our pool first
-	JabberContact *contactFrom = contactPool()->findExactMatch ( message.from () );
+	JabberBaseContact *contactFrom;
 
-	if ( !contactFrom )
+	if ( message.type() == "groupchat" )
 	{
-		// we have no exact match, try a broader search
-		contactFrom = contactPool()->findRelevantRecipient ( message.from () );
-	}
-
-	// see if we found the contact in our pool
-	if ( !contactFrom )
-	{
-		// eliminate the resource from this contact,
-		// otherwise we will add the contact with the
-		// resource to our list
-		// NOTE: This is a stupid way to do it, but
-		// message.from().setResource("") had no
-		// effect. Iris bug?
+		// this is a group chat message, forward it to the group contact
+		// (the one without resource name)
 		XMPP::Jid jid ( message.from().userHost () );
 
-		// the contact is not in our pool, add it as a temporary contact
-		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << jid.full () << " is unknown to us, creating temporary contact." << endl;
+		// try to locate an exact match in our pool first
+		contactFrom = contactPool()->findExactMatch ( jid );
 
-		KopeteMetaContact *metaContact = new KopeteMetaContact ();
+		/**
+		 * If there was no exact match, something is really messed up.
+		 * We can't receive group chat messages from rooms that we are
+		 * not a member of and if the room contact vanished somehow,
+		 * we're in deep trouble.
+		 */
+		if ( !contactFrom )
+		{
+			kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "WARNING: Received a groupchat message but couldn't find room contact. Ignoring message." << endl;
+			return;
+		}
+	}
+	else
+	{
+		// try to locate an exact match in our pool first
+		contactFrom = contactPool()->findExactMatch ( message.from () );
 
-		metaContact->setTemporary (true);
+		if ( !contactFrom )
+		{
+			// we have no exact match, try a broader search
+			contactFrom = contactPool()->findRelevantRecipient ( message.from () );
+		}
 
-		contactFrom = contactPool()->addContact ( XMPP::RosterItem ( jid ), metaContact, false );
+		// see if we found the contact in our pool
+		if ( !contactFrom )
+		{
+			// eliminate the resource from this contact,
+			// otherwise we will add the contact with the
+			// resource to our list
+			// NOTE: This is a stupid way to do it, but
+			// message.from().setResource("") had no
+			// effect. Iris bug?
+			XMPP::Jid jid ( message.from().userHost () );
 
-		KopeteContactList::contactList ()->addMetaContact (metaContact);
+			// the contact is not in our pool, add it as a temporary contact
+			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << jid.full () << " is unknown to us, creating temporary contact." << endl;
+
+			KopeteMetaContact *metaContact = new KopeteMetaContact ();
+
+			metaContact->setTemporary (true);
+
+			contactFrom = contactPool()->addContact ( XMPP::RosterItem ( jid ), metaContact, false );
+
+			KopeteContactList::contactList ()->addMetaContact (metaContact);
+		}
 	}
 
 	// pass the message on to the contact
@@ -1537,46 +1569,87 @@ void JabberAccount::slotReceivedMessage (const XMPP::Message & message)
 
 void JabberAccount::slotJoinNewChat ()
 {
-/*	if (!isConnected ())
+
+	if (!isConnected ())
 	{
 		errorConnectFirst ();
 		return;
 	}
 
-	dlgJabberChatJoin *dlg = new dlgJabberChatJoin (this, Kopete::UI::Global::mainWidget ());
+	dlgJabberChatJoin *joinDialog = new dlgJabberChatJoin ( this, Kopete::UI::Global::mainWidget () );
+	joinDialog->show ();
 
-	dlg->show ();
-	dlg->raise ();*/
 }
 
 void JabberAccount::slotGroupChatJoined (const XMPP::Jid & jid)
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Joined group chat " << jid.full () << endl;
-//
-// 	/* Create new meta contact that holds the group chat contact. */
-// 	KopeteMetaContact *mc = new KopeteMetaContact ();
-//
-// 	mc->setTemporary (true);
-//
-// 	/* The group chat object basically works like a JabberContact. */
-// 	JabberGroupChat *groupChat = new JabberGroupChat (jid, QStringList (), this, mc);
-//
-// 	/* Add the group chat class to the meta contact. */
-// 	mc->addContact (groupChat);
-//
-// 	KopeteContactList::contactList ()->addMetaContact (mc);
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Joined group chat " << jid.full () << endl;
+
+	// Create new meta contact that holds the group chat contact.
+	KopeteMetaContact *metaContact = new KopeteMetaContact ();
+
+	metaContact->setTemporary ( true );
+
+	// Create a groupchat contact for this room
+	JabberGroupContact *groupContact = dynamic_cast<JabberGroupContact *>( contactPool()->addGroupContact ( XMPP::RosterItem ( jid ), true, metaContact, false ) );
+
+	// Add the groupchat contact to the meta contact.
+	metaContact->addContact ( groupContact );
+
+	KopeteContactList::contactList ()->addMetaContact ( metaContact );
+
+	// lock the room to our own status
+	resourcePool()->lockToResource ( jid, jid.resource () );
+
 }
 
 void JabberAccount::slotGroupChatLeft (const XMPP::Jid & jid)
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Left groupchat " << jid.full () << endl;
-// 	delete static_cast < JabberGroupChat * >(contacts ()[jid.userHost().lower()]);
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo "Left groupchat " << jid.full () << endl;
+
+	// remove group contact from list
+	KopeteMetaContact *metaContact = KopeteContactList::contactList()->findMetaContactByContactId ( jid.userHost () );
+
+	if ( metaContact )
+		KopeteContactList::contactList()->removeMetaContact ( metaContact );
+
+	// now remove it from our pool, which should clean up all subcontacts as well
+	contactPool()->removeContact ( XMPP::Jid ( jid.userHost () ) );
+
 }
 
 void JabberAccount::slotGroupChatPresence (const XMPP::Jid & jid, const XMPP::Status & status)
 {
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Received groupchat presence for room " << jid.full () << endl;
-// 	static_cast < JabberGroupChat * >(contacts ()[jid.userHost().lower()])->updatePresence (jid, status);
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Received groupchat presence for room " << jid.full () << endl;
+
+	// fetch room contact (the one without resource)
+	JabberGroupContact *groupContact = dynamic_cast<JabberGroupContact *>( contactPool()->findExactMatch ( XMPP::Jid ( jid.userHost () ) ) );
+
+	if ( !groupContact )
+	{
+		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "WARNING: Groupchat presence signalled, but we don't have a room contact?" << endl;
+		return;
+	}
+
+	if ( !status.isAvailable () )
+	{
+		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << jid.full () << " has become unavailable, removing from room" << endl;
+
+		// remove the resource from the pool
+		resourcePool()->removeResource ( jid, XMPP::Resource ( jid.resource (), status ) );
+
+		// the person has become unavailable, remove it
+		groupContact->removeSubContact ( XMPP::RosterItem ( jid ) );
+	}
+	else
+	{
+		// make sure the contact exists in the room (if it exists already, it won't be added twice)
+		groupContact->addSubContact ( XMPP::RosterItem ( jid ) );
+
+		// add a resource for this contact to the pool (existing resources will be updated)
+		resourcePool()->addResource ( jid, XMPP::Resource ( jid.resource (), status ) );
+	}
+
 }
 
 void JabberAccount::slotGroupChatError (const XMPP::Jid & jid, int error, const QString & reason)
@@ -1597,7 +1670,7 @@ void JabberAccount::slotResourceAvailable (const XMPP::Jid & jid, const XMPP::Re
 void JabberAccount::slotResourceUnavailable (const XMPP::Jid & jid, const XMPP::Resource & resource)
 {
 
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Resource now unavailable for " << jid.userHost () << endl;
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Resource now unavailable for " << jid.userHost () << endl;
 
 	resourcePool()->removeResource ( jid, resource );
 
@@ -1647,4 +1720,3 @@ void JabberAccount::slotGetServices ()
 #include "jabberaccount.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-

@@ -19,6 +19,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "dlgjabbervcard.h"
+
 #include <qtextedit.h>
 
 #include <qapplication.h>
@@ -36,10 +38,10 @@
 #include "xmpp.h"
 #include "xmpp_tasks.h"
 
+#include "jabberprotocol.h"
 #include "jabberaccount.h"
-#include "jabbercontact.h"
+#include "jabberbasecontact.h"
 #include "dlgvcard.h"
-#include "dlgjabbervcard.h"
 
 /*
  *  Constructs a dlgJabberVCard which is a child of 'parent', with the
@@ -224,7 +226,7 @@ void dlgJabberVCard::assignVCard (const XMPP::VCard &vCard)
 void dlgJabberVCard::slotSaveNickname ()
 {
 
-	JabberContact *jc = static_cast<JabberContact *>(m_account->contacts()[m_jid]);
+	JabberBaseContact *jc = static_cast<JabberBaseContact *>(m_account->contacts()[m_jid]);
 
 	if(!jc)
 	{

@@ -20,7 +20,7 @@
 #include "jabberresourcepool.h"
 #include "jabberresource.h"
 #include "jabbercontactpool.h"
-#include "jabbercontact.h"
+#include "jabberbasecontact.h"
 #include "jabberaccount.h"
 
 /**
@@ -58,9 +58,9 @@ void JabberResourcePool::slotResourceDestroyed (QObject *sender)
 void JabberResourcePool::notifyRelevantContacts ( const XMPP::Jid &jid )
 {
 
-	QPtrList<JabberContact> list = mAccount->contactPool()->findRelevantSources ( jid );
+	QPtrList<JabberBaseContact> list = mAccount->contactPool()->findRelevantSources ( jid );
 
-	for(JabberContact *mContact = list.first (); mContact; mContact = list.next ())
+	for(JabberBaseContact *mContact = list.first (); mContact; mContact = list.next ())
 	{
 		mContact->reevaluateStatus ();
 	}
@@ -75,7 +75,7 @@ void JabberResourcePool::addResource ( const XMPP::Jid &jid, const XMPP::Resourc
 	{
 		if ( (mResource->jid().userHost().lower() == jid.userHost().lower()) && (mResource->resource().name().lower() == resource.name().lower()) )
 		{
-			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating existing resource " << resource.name() << " for " << jid.full() << endl;
+			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating existing resource " << resource.name() << " for " << jid.userHost() << endl;
 
 			// It exists, update it. Don't do a "lazy" update by deleting
 			// it here and readding it with new parameters later on,
@@ -90,7 +90,7 @@ void JabberResourcePool::addResource ( const XMPP::Jid &jid, const XMPP::Resourc
 		}
 	}
 
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Adding new resource " << resource.name() << " for " << jid.full() << endl;
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Adding new resource " << resource.name() << " for " << jid.userHost() << endl;
 
 	// create new resource instance and add it to the dictionary
 	JabberResource *newResource = new JabberResource(jid, resource);
@@ -105,7 +105,7 @@ void JabberResourcePool::addResource ( const XMPP::Jid &jid, const XMPP::Resourc
 
 void JabberResourcePool::removeResource ( const XMPP::Jid &jid, const XMPP::Resource &resource )
 {
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing resource " << resource.name() << " from " << jid.full() << endl;
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing resource " << resource.name() << " from " << jid.userHost() << endl;
 
 	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
 	{
@@ -182,7 +182,7 @@ void JabberResourcePool::lockToResource ( const XMPP::Jid &jid, const XMPP::Reso
 	// find the resource in our dictionary that matches
 	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())
 	{
-		if ( (mResource->jid().userHost().lower() == jid.userHost().lower()) && (mResource->resource().name().lower() == resource.name().lower()) )
+		if ( (mResource->jid().userHost().lower() == jid.full().lower()) && (mResource->resource().name().lower() == resource.name().lower()) )
 		{
 			mLockList.append ( mResource );
 			return;
@@ -195,7 +195,7 @@ void JabberResourcePool::lockToResource ( const XMPP::Jid &jid, const XMPP::Reso
 
 void JabberResourcePool::removeLock ( const XMPP::Jid &jid )
 {
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing resource lock for " << jid.full() << endl;
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Removing resource lock for " << jid.userHost() << endl;
 
 	// find the resource in our dictionary that matches
 	for(JabberResource *mResource = mPool.first (); mResource; mResource = mPool.next ())

@@ -51,7 +51,6 @@
 #include "dlgjabberservices.h"
 #include "dlgjabberchatjoin.h"
 #include "jabberaddcontactpage.h"
-#include "jabbergroupchat.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
 #include "kopeteaccountmanager.h"

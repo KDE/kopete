@@ -22,7 +22,7 @@
 
 class JabberProtocol;
 class JabberAccount;
-class JabberContact;
+class JabberBaseContact;
 class KopeteMessage;
 class QString;
 
@@ -34,16 +34,15 @@ class JabberMessageManager : public KopeteMessageManager
 	Q_OBJECT
 
 public:
-	JabberMessageManager ( JabberProtocol *protocol, const JabberContact *user,
+	JabberMessageManager ( JabberProtocol *protocol, const JabberBaseContact *user,
 						   KopeteContactPtrList others, const QString &resource = "",
 						   const char *name = 0 );
-	~JabberMessageManager ();
 
 	/**
 	 * @brief Get the local user in the session
 	 * @return the local user in the session, same as account()->myself()
 	 */
-	const JabberContact *user () const;
+	const JabberBaseContact *user () const;
 
 	/**
 	 * @brief get the account
@@ -71,7 +70,7 @@ public slots:
 	 * This is an overloaded version of the original implementation which
 	 * also accepts a resource the message originates from. The message manager
 	 * will set its own resource to the resource the message was received from.
-	 * See @ref JabberContact::manager() about how to deal with instantiating
+	 * See @ref JabberBaseContact::manager() about how to deal with instantiating
 	 * new message managers for messages not originating from the same resource
 	 * a manager already exists for.
 	 */

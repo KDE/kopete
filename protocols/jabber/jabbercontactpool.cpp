@@ -15,10 +15,17 @@
   * *************************************************************************
   */
 
+#include "jabbercontactpool.h"
+
 #include <qptrlist.h>
 #include <kdebug.h>
-#include "jabbercontactpool.h"
+#include <kmessagebox.h>
+#include "kopeteuiglobal.h"
+#include "jabberprotocol.h"
+#include "jabberbasecontact.h"
 #include "jabbercontact.h"
+#include "jabbergroupcontact.h"
+#include "jabbergroupmembercontact.h"
 #include "jabberresourcepool.h"
 #include "jabberaccount.h"
 
@@ -36,7 +43,7 @@ JabberContactPool::~JabberContactPool ()
 {
 }
 
-JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, KopeteMetaContact *metaContact, bool dirty )
+JabberContactPoolItem *JabberContactPool::findPoolItem ( const XMPP::RosterItem &contact )
 {
 
 	// see if the contact already exists
@@ -44,14 +51,38 @@ JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, 
 	{
 		if ( mContactItem->contact()->contactId().lower() == contact.jid().full().lower() )
 		{
-			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating existing contact " << contact.jid().full() << endl;
-
-			// It exists, updateit.
-			mContactItem->contact()->updateContact ( contact );
-			mContactItem->setDirty ( dirty );
-
-			return mContactItem->contact ();
+			return mContactItem;
 		}
+	}
+
+	return 0;
+
+}
+
+JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, KopeteMetaContact *metaContact, bool dirty )
+{
+
+	// see if the contact already exists
+	JabberContactPoolItem *mContactItem = findPoolItem ( contact );
+	if ( mContactItem)
+	{
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating existing contact " << contact.jid().full() << endl;
+
+		// It exists, update it.
+		mContactItem->contact()->updateContact ( contact );
+		mContactItem->setDirty ( dirty );
+
+		JabberContact *retval = dynamic_cast<JabberContact *>(mContactItem->contact ());
+
+		if ( !retval )
+		{
+			KMessageBox::error ( Kopete::UI::Global::mainWidget (),
+								 "Fatal error in the Jabber contact pool. Please restart Kopete and submit a debug log "
+								 "of your session to http://bugs.kde.org.",
+								 "Fatal Jabber Error" );
+		}
+
+		return retval;
 	}
 
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Adding new contact " << contact.jid().full() << endl;
@@ -60,6 +91,45 @@ JabberContact *JabberContactPool::addContact ( const XMPP::RosterItem &contact, 
 	JabberContact *newContact = new JabberContact ( contact, mAccount, metaContact );
 	JabberContactPoolItem *newContactItem = new JabberContactPoolItem ( newContact );
 	connect ( newContact, SIGNAL ( contactDestroyed ( KopeteContact * ) ), this, SLOT ( slotContactDestroyed ( KopeteContact * ) ) );
+	newContactItem->setDirty ( dirty );
+	mPool.append ( newContactItem );
+
+	return newContact;
+
+}
+
+JabberBaseContact *JabberContactPool::addGroupContact ( const XMPP::RosterItem &contact, bool roomContact, KopeteMetaContact *metaContact, bool dirty )
+{
+
+	XMPP::RosterItem mContact ( roomContact ? contact.jid().userHost () : contact.jid().full() );
+
+	// see if the contact already exists
+	JabberContactPoolItem *mContactItem = findPoolItem ( mContact );
+	if ( mContactItem)
+	{
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating existing contact " << mContact.jid().full() << endl;
+
+		// It exists, update it.
+		mContactItem->contact()->updateContact ( mContact );
+		mContactItem->setDirty ( dirty );
+
+		return mContactItem->contact ();
+	}
+
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Adding new contact " << mContact.jid().full() << endl;
+
+	// create new contact instance and add it to the dictionary
+	JabberBaseContact *newContact;
+
+	if ( roomContact )
+		newContact = new JabberGroupContact ( contact, mAccount, metaContact );
+	else
+		newContact = new JabberGroupMemberContact ( contact, mAccount, metaContact );
+
+	JabberContactPoolItem *newContactItem = new JabberContactPoolItem ( newContact );
+
+	connect ( newContact, SIGNAL ( contactDestroyed ( KopeteContact * ) ), this, SLOT ( slotContactDestroyed ( KopeteContact * ) ) );
+
 	newContactItem->setDirty ( dirty );
 	mPool.append ( newContactItem );
 
@@ -92,7 +162,7 @@ void JabberContactPool::slotContactDestroyed ( KopeteContact *contact )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Contact deleted, collecting the pieces..." << endl;
 
-	JabberContact *jabberContact = static_cast<JabberContact *>( contact );
+	JabberBaseContact *jabberContact = static_cast<JabberBaseContact *>( contact );
 
 	// remove contact from the pool
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
@@ -162,7 +232,7 @@ void JabberContactPool::cleanUp ()
 
 }
 
-JabberContact *JabberContactPool::findExactMatch ( const XMPP::Jid &jid )
+JabberBaseContact *JabberContactPool::findExactMatch ( const XMPP::Jid &jid )
 {
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
@@ -177,7 +247,7 @@ JabberContact *JabberContactPool::findExactMatch ( const XMPP::Jid &jid )
 
 }
 
-JabberContact *JabberContactPool::findRelevantRecipient ( const XMPP::Jid &jid )
+JabberBaseContact *JabberContactPool::findRelevantRecipient ( const XMPP::Jid &jid )
 {
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
@@ -192,9 +262,9 @@ JabberContact *JabberContactPool::findRelevantRecipient ( const XMPP::Jid &jid )
 
 }
 
-QPtrList<JabberContact> JabberContactPool::findRelevantSources ( const XMPP::Jid &jid )
+QPtrList<JabberBaseContact> JabberContactPool::findRelevantSources ( const XMPP::Jid &jid )
 {
-	QPtrList<JabberContact> list;
+	QPtrList<JabberBaseContact> list;
 
 	for(JabberContactPoolItem *mContactItem = mPool.first (); mContactItem; mContactItem = mPool.next ())
 	{
@@ -208,7 +278,7 @@ QPtrList<JabberContact> JabberContactPool::findRelevantSources ( const XMPP::Jid
 
 }
 
-JabberContactPoolItem::JabberContactPoolItem ( JabberContact *contact )
+JabberContactPoolItem::JabberContactPoolItem ( JabberBaseContact *contact )
 {
 	mDirty = true;
 	mContact = contact;
@@ -228,7 +298,7 @@ bool JabberContactPoolItem::dirty ()
 	return mDirty;
 }
 
-JabberContact *JabberContactPoolItem::contact ()
+JabberBaseContact *JabberContactPoolItem::contact ()
 {
 	return mContact;
 }

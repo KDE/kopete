@@ -9,6 +9,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(srcdir)/libiris/cutestuff/network \
 	-I$(srcdir)/ui \
 	-I./ui \
+	$(IDN_CPPFLAGS) \
 	$(all_includes)
 
 kde_module_LTLIBRARIES = kopete_jabber.la
@@ -18,14 +19,18 @@ kopete_jabber_la_SOURCES = \
 	jabberaccount.cpp \
 	jabberresource.cpp \
 	jabberresourcepool.cpp \
-	jabbercontact.cpp \
+	jabberbasecontact.cpp \
+ 	jabbercontact.cpp \
+	jabbergroupcontact.cpp \
+	jabbergroupmembercontact.cpp \
 	jabbercontactpool.cpp \
 	jabberformtranslator.cpp \
 	jabberformlineedit.cpp \
 	jabbermessagemanager.cpp \
+	jabbergroupchatmanager.cpp \
 	jabberfiletransfer.cpp
 
-kopete_jabber_la_LDFLAGS = -no-undefined -module -lidn $(KDE_PLUGIN) $(all_libraries)
+kopete_jabber_la_LDFLAGS = -no-undefined -module $(IDN_LDFLAGS) $(KDE_PLUGIN) $(all_libraries)
 kopete_jabber_la_LIBADD  = $(top_builddir)/kopete/libkopete/libkopete.la \
 	ui/libkopetejabberui.la \
 	libiris/iris/include/libiris.la \
@@ -39,4 +44,4 @@ kopete_jabber_la_LIBADD  = $(top_builddir)/kopete/libkopete/libkopete.la \
 service_DATA = kopete_jabber.desktop
 servicedir = $(kde_servicesdir)
 
-noinst_HEADERS =  jabberresourcepool.h
+noinst_HEADERS = jabberresourcepool.h jabbercontact.h jabbergroupcontact.h

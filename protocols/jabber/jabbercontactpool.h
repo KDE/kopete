@@ -20,11 +20,14 @@
 
 #include <qobject.h>
 #include <im.h>
-#include <jabbercontact.h>
 
 class KopeteMetaContact;
 class KopeteContact;
 class JabberContactPoolItem;
+class JabberBaseContact;
+class JabberContact;
+class JabberGroupContact;
+class JabberAccount;
 
 /**
  * @author Till Gerken <till@tantalo.net>
@@ -49,6 +52,7 @@ public:
 	 * Add a contact to the pool
 	 */
 	JabberContact *addContact ( const XMPP::RosterItem &contact, KopeteMetaContact *metaContact, bool dirty = true );
+	JabberBaseContact *addGroupContact ( const XMPP::RosterItem &contact, bool roomContact, KopeteMetaContact *metaContact, bool dirty = true );
 
 	/**
 	 * Remove a contact from the pool
@@ -74,25 +78,27 @@ public:
 	/**
 	 * Find an exact match in the pool by full JID.
 	 */
-	JabberContact *findExactMatch ( const XMPP::Jid &jid );
+	JabberBaseContact *findExactMatch ( const XMPP::Jid &jid );
 
 	/**
 	 * Find a relevant recipient for a given JID.
 	 * This will match user@domain for a given user@domain/resource,
 	 * but NOT user@domain/resource for a given user@domain.
 	 */
-	JabberContact *findRelevantRecipient ( const XMPP::Jid &jid );
+	JabberBaseContact *findRelevantRecipient ( const XMPP::Jid &jid );
 
 	/**
 	 * Find relevant sources for a given JID.
 	 * This will match user@domain/resource for a given user@domain.
 	 */
-	QPtrList<JabberContact> findRelevantSources ( const XMPP::Jid &jid );
+	QPtrList<JabberBaseContact> findRelevantSources ( const XMPP::Jid &jid );
 
 private slots:
 	void slotContactDestroyed ( KopeteContact *contact );
 
 private:
+	JabberContactPoolItem *findPoolItem ( const XMPP::RosterItem &contact );
+
 	QPtrList<JabberContactPoolItem> mPool;
 	JabberAccount *mAccount;
 
@@ -102,16 +108,16 @@ class JabberContactPoolItem : QObject
 {
 Q_OBJECT
 public:
-	JabberContactPoolItem ( JabberContact *contact );
+	JabberContactPoolItem ( JabberBaseContact *contact );
 	~JabberContactPoolItem ();
 
 	void setDirty ( bool dirty );
 	bool dirty ();
-	JabberContact *contact ();
+	JabberBaseContact *contact ();
 
 private:
 	bool mDirty;
-	JabberContact *mContact;
+	JabberBaseContact *mContact;
 };
 
 #endif

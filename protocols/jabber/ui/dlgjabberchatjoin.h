@@ -19,25 +19,24 @@
 #ifndef DLGJABBERCHATJOIN_H
 #define DLGJABBERCHATJOIN_H
 
-#include <qwidget.h>
+#include <kdialogbase.h>
 #include "jabberaccount.h"
-#include "dlgchatjoin.h"
 
 /**
   *@author Till Gerken <till@tantalo.net>
   */
 
-class dlgJabberChatJoin:public dlgChatJoin
+class dlgJabberChatJoin : public KDialogBase
 {
 
 	Q_OBJECT
 
 public:
 	  dlgJabberChatJoin (JabberAccount *account, QWidget * parent = 0, const char *name = 0);
-	 ~dlgJabberChatJoin ();
 
 private slots:
-	void slotDialogDone ();
+	void slotOk ();
+	void slotCancel ();
 
 private:
 	JabberAccount *m_account;

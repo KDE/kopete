@@ -20,12 +20,11 @@
 #define DLGJABBERVCARD_H
 
 #include <kdialogbase.h>
-#include <jabberaccount.h>
-#include <qstring.h>
-#include "dlgvcard.h"
-#include "im.h"
-#include "xmpp.h"
 #include "xmpp_vcard.h"
+
+class JabberAccount;
+class QString;
+class dlgVCard;
 
 class dlgJabberVCard : public KDialogBase
 {

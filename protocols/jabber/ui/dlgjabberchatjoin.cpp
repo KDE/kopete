@@ -16,22 +16,28 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include "jabberaccount.h"
 #include "dlgjabberchatjoin.h"
 
+#include <kdebug.h>
+#include <klocale.h>
+#include <kdialogbase.h>
+#include <qlineedit.h>
+#include "jabberaccount.h"
+#include "dlgchatjoin.h"
+
 dlgJabberChatJoin::dlgJabberChatJoin (JabberAccount *account, QWidget * parent, const char *name)
-									: dlgChatJoin (parent, name)
+									: KDialogBase (parent, name, false,
+												   i18n("Join Jabber Groupchat"),
+												   KDialogBase::Ok | KDialogBase::Cancel)
 {
 
 	m_account = account;
 
-	connect (buttonOk, SIGNAL (clicked ()), this, SLOT (slotDialogDone ()));
+	setMainWidget ( new dlgChatJoin ( this ) );
 
 }
 
-void dlgJabberChatJoin::slotDialogDone ()
+void dlgJabberChatJoin::slotOk ()
 {
 
 	if(!m_account->isConnected())
@@ -40,13 +46,20 @@ void dlgJabberChatJoin::slotDialogDone ()
 		return;
 	}
 
+	dlgChatJoin *widget = dynamic_cast<dlgChatJoin *>(mainWidget ());
+
 	// send the join request
-	m_account->client()->groupChatJoin(leServer->text(), leRoom->text(), leNick->text());
+	m_account->client()->groupChatJoin(widget->leServer->text(), widget->leRoom->text(), widget->leNick->text());
+
+	delete this;
 
 }
 
-dlgJabberChatJoin::~dlgJabberChatJoin ()
+void dlgJabberChatJoin::slotCancel ()
 {
+
+	delete this;
+
 }
 
 #include "dlgjabberchatjoin.moc"

@@ -26,6 +26,7 @@
 #include "jabberaccount.h"
 #include "jabberprotocol.h"
 #include "jabbercontactpool.h"
+#include "jabberbasecontact.h"
 #include "jabbercontact.h"
 
 JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, XMPP::FileTransfer *incomingTransfer )
@@ -39,7 +40,7 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, XMPP::FileTrans
 	mBytesTransferred = 0;
 
 	// try to locate an exact match in our pool first
-	JabberContact *contact = mAccount->contactPool()->findExactMatch ( mXMPPTransfer->peer () );
+	JabberBaseContact *contact = mAccount->contactPool()->findExactMatch ( mXMPPTransfer->peer () );
 
 	if ( !contact )
 	{
@@ -71,7 +72,7 @@ JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, XMPP::FileTrans
 
 }
 
-JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberContact *contact, const QString &file )
+JabberFileTransfer::JabberFileTransfer ( JabberAccount *account, JabberBaseContact *contact, const QString &file )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "New outgoing transfer for " << contact->contactId() << ": " << file << endl;
 

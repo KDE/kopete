@@ -1,8 +1,7 @@
  /*
-  * jabbercontact.h  -  Base class for the Kopete Jabber protocol contact
+  * jabbercontact.cpp  -  Regular Kopete Jabber protocol contact
   *
-  * Copyright (c) 2002-2003 by Till Gerken <till@tantalo.net>
-  * Copyright (c) 2002 by Daniel Stone <dstone@kde.org>
+  * Copyright (c) 2002-2004 by Till Gerken <till@tantalo.net>
   *
   * Kopete    (c) by the Kopete developers  <kopete-devel@kde.org>
   *
@@ -19,89 +18,32 @@
 #ifndef JABBERCONTACT_H
 #define JABBERCONTACT_H
 
-#include "jabberaccount.h"
-#include "jabberresource.h"
-#include "kopetecontact.h"
+#include "jabberbasecontact.h"
 
+#include "kopetemessagemanager.h" // needed for silly KopeteContactPtrList
 
-class KAction;
-class KPopupMenu;
-class KSelectAction;
-
-class dlgJabberRename;
-class dlgJabberVCard;
-class JabberProtocol;
-class JabberResource;
-class JabberMessage;
 class JabberMessageManager;
-class KopeteMessage;
-class KopeteMessageManager;
-class KopeteMetaContact;
-class KopeteGroup;
 
-class XMPP::Jid;
-class XMPP::Message;
-
-class JabberContact:public KopeteContact
+class JabberContact : public JabberBaseContact
 {
-	Q_OBJECT
 
-	 friend class JabberAccount;	/* Friends can touch each other's private parts. */
+Q_OBJECT
 
 public:
+
 	JabberContact (const XMPP::RosterItem &rosterItem,
 				   JabberAccount *account, KopeteMetaContact * mc);
-
-	/********************************************************************
-	 *
-	 * KopeteContact reimplementation start
-	 *
-	 ********************************************************************/
-
-	/**
-	 * Return the protocol instance associated with this contact
-	 */
-	JabberProtocol *protocol ();
-
-	/**
-	 * Return the account instance associated with this contact
-	 */
-	JabberAccount *account ();
-
-	/**
-	 * Return if the contact is reachable (this is true if the account
-	 * is online)
-	 */
-	virtual bool isReachable ();
 
 	/**
 	 * Create custom context menu items for the contact
 	 * FIXME: implement manager version here?
 	 */
-	virtual QPtrList<KAction> *customContextMenuActions ();
-
-	/**
-	 * Serialize contact
-	 */
-	virtual void serialize (QMap < QString, QString > &serializedData, QMap < QString, QString > &addressBookData);
-
-	/**
-	 * Create a message manager for this contact
-	 */
-	virtual KopeteMessageManager *manager ( bool canCreate = false );
-
-	JabberMessageManager *manager ( const QString &resource, bool canCreate = false );
+	QPtrList<KAction> *customContextMenuActions ();
 
 	/**
 	 * Start a rename request.
 	 */
-	virtual void rename ( const QString &newName );
-
-	/**
-	 * Update contact if a roster item has been
-	 * received for it. (used during login)
-	 */
-	void updateContact ( const XMPP::RosterItem &item );
+	void rename ( const QString &newName );
 
 	/**
 	 * Deal with an incoming message for this contact.
@@ -109,35 +51,24 @@ public:
 	void handleIncomingMessage ( const XMPP::Message &message );
 
 	/**
-	 * Re-evaluate online status. Gets called
-	 * whenever a resource is added, removed, or
-	 * changed in the resource pool.
+	 * Create a message manager for this contact.
+	 * This variant is a pure single-contact version and
+	 * not suitable for groupchat, as it only looks for
+	 * managers with ourselves in the contact list.
 	 */
-	void reevaluateStatus ();
-
-	/**
-	 * Return current full address.
-	 * Uses bestResource() if no presubscribed
-	 * address exists.
-	 */
-	QString fullAddress ();
+	KopeteMessageManager *manager ( bool canCreate = false );
 
 public slots:
 
 	/**
 	 * Remove this contact from the roster
 	 */
-	virtual void slotDeleteContact ();
-
-	/**
-	 * Retrieve a vCard for the contact
-	 */
-	virtual void slotUserInfo ();
+	void slotDeleteContact ();
 
 	/**
 	 * Sync Groups with server
 	 */
-	virtual void syncGroups ();
+	void syncGroups ();
 
 	/**
 	 * This is the JabberContact level slot for sending files.
@@ -152,11 +83,12 @@ public slots:
 		const QString &fileName = QString::null, uint fileSize = 0L );
 
 	/**
-	* Select a new resource for the contact
-	*/
-	void slotSelectResource ();
+	 * Retrieve a vCard for the contact
+	 */
+	void slotUserInfo ();
 
 private slots:
+
 	/**
 	 * Send type="subscribed" to contact
 	 */
@@ -182,9 +114,34 @@ private slots:
 	void slotStatusDND ();
 	void slotStatusInvisible ();
 
+	/**
+	* Select a new resource for the contact
+	*/
+	void slotSelectResource ();
+
 	void slotMessageManagerDeleted ( QObject *sender );
 
 private:
+
+	/**
+	 * Create a message manager for this contact.
+	 * This variant is a pure single-contact version and
+	 * not suitable for groupchat, as it only looks for
+	 * managers with ourselves in the contact list.
+	 * Additionally to the version above, this one adds
+	 * a resource constraint that has to be matched by
+	 * the manager. If a new manager is created, the given
+	 * resource is preselected.
+	 */
+	JabberMessageManager *manager ( const QString &resource, bool canCreate = false );
+
+	/**
+	 * Create a message manager for this contact.
+	 * This version is suitable for group chat as it
+	 * looks for a message manager with a given
+	 * list of contacts as members.
+	 */
+	JabberMessageManager *manager ( KopeteContactPtrList chatMembers, bool canCreate = false );
 
 	/**
 	 * Sends subscription messages.
@@ -197,25 +154,18 @@ private:
 	void sendPresence ( const XMPP::Status status );
 
 	/**
-	 * Construct best address out of
-	 * eventually preselected resource
-	 * (due to subscription) and best
-	 * available resource.
+	 * This variable keeps a list of message managers.
+	 * It is required to locate message managers by
+	 * resource name, if one account is interacting
+	 * with several resources of the same contact
+	 * at the same time. Note that this does *not*
+	 * apply to group chats, so this variable
+	 * only contains classes of type JabberMessageManager.
+	 * The casts in manager() and slotMessageManagerDeleted()
+	 * are thus legal.
 	 */
-	XMPP::Jid bestAddress ();
-
-	/**
-	 * This will simply cache all
-	 * relevant data for this contact.
-	 */
-	XMPP::RosterItem mRosterItem;
-
 	QPtrList<JabberMessageManager> mManagers;
-
-	dlgJabberVCard *dlgVCard;
 
 };
 
 #endif
-
-// vim: set noet ts=4 sts=4 sw=4:
