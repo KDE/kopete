@@ -76,6 +76,22 @@ public:
 	int askIncomingTransfer( KopeteContact *contact, const QString& file, const unsigned long size, const QString& description=QString::null, void *internalId=0L);
 	void removeTransfer( unsigned int id );
 
+	/**
+	 * Possibly ask the user which file to send when they click Send File. Sends a signal indicating KURL to
+	 * send when the local user accepts the transfer.
+	 * @param file If valid, the user will not be prompted for a URL, and this one will be used instead.
+	 *  If it refers to a remote file and mustBeLocal is true, the file will be transferred to the local
+	 *  filesystem.
+	 * @param localFile file name to display if file is a valid URL
+	 * @param fileSize file size to send if file is a valid URL
+	 * @param mustBeLocal If the protocol can only send files on the local filesystem, this flag
+	 *  allows you to ensure the filename will be local.
+	 * @param sendTo The object to send the signal to
+	 * @param slot The slot to send the signal to. Signature: sendFile(const KURL &file)
+	 */
+	void sendFile( const KURL &file, const QString &localFile, unsigned long fileSize,
+		bool mustBeLocal, QObject *sendTo, const char *slot );
+
 signals:
 	void done( KopeteTransfer* );
 	void canceled( KopeteTransfer* );
@@ -83,12 +99,15 @@ signals:
 	void accepted(KopeteTransfer*, const QString &fileName);
 	void refused(const KopeteFileTransferInfo& );
 
+	void sendFile(const KURL &file, const QString &localFile, unsigned int fileSize);
+
 private slots:
 	void slotAccepted(const KopeteFileTransferInfo&, const QString&);
 	void slotComplete(KopeteTransfer*);
 
 private:
 	KopeteTransferManager( QObject *parent );
+	static KopeteTransferManager *s_transferManager;
 
 	int nextID;
 	QMap<unsigned int, KopeteTransfer *> mTransfersMap;

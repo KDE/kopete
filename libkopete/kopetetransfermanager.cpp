@@ -15,22 +15,26 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "kopetetransfermanager.h"
-#include "kopetefileconfirmdialog.h"
+#include <qpainter.h>
+#include <qpixmap.h>
+#include <qfontmetrics.h>
+
+#include <klocale.h>
+#include <kpushbutton.h>
+#include <kdialogbase.h>
+#include <kstaticdeleter.h>
+#include <kfiledialog.h>
+#include <kfileitem.h>
+#include <kmessagebox.h>
+#include <kio/observer.h>
 
 #include "kopetecontactlist.h"
 #include "kopeteprotocol.h"
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
 
-#include <klocale.h>
-#include <kpushbutton.h>
-#include <kdialogbase.h>
-#include <qpainter.h>
-#include <qpixmap.h>
-#include <qfontmetrics.h>
-
-#include <kio/observer.h>
+#include "kopetetransfermanager.h"
+#include "kopetefileconfirmdialog.h"
 
 /***************************
  *  KopeteFileTransferInfo *
@@ -185,11 +189,15 @@ void KopeteTransfer::slotResultEmitted()
  *  KopeteTransferManager  *
  ***************************/
 
+static KStaticDeleter<KopeteTransferManager> deleteManager;
+KopeteTransferManager *KopeteTransferManager::s_transferManager = 0;
+
 KopeteTransferManager* KopeteTransferManager::transferManager()
 {
-	static KopeteTransferManager transferManager(0);
+	if(!s_transferManager)
+		deleteManager.setObject(s_transferManager, new KopeteTransferManager(0));
 
-	return &transferManager;
+	return s_transferManager;
 }
 
 KopeteTransferManager::KopeteTransferManager( QObject *parent ) : QObject( parent )
@@ -249,6 +257,47 @@ void KopeteTransferManager::slotComplete(KopeteTransfer *transfer)
 		{
 			mTransfersMap.remove( it.key() );
 			break;
+		}
+	}
+}
+
+void KopeteTransferManager::sendFile( const KURL &file, const QString &fname, unsigned long sz,
+	 bool mustBeLocal,	QObject *sendTo, const char *slot )
+{
+	KURL url(file);
+	QString filename;
+	unsigned int size = 0;
+
+	//If the file location is null, then get it from a file open dialog
+	if( !url.isValid() )
+		url = KFileDialog::getOpenURL( QString::null, QString::fromLatin1("*"), 0l, i18n( "Kopete File Transfer" ));
+	else
+	{
+		filename = fname;
+		size = sz;
+	}
+
+	if( filename.isEmpty() )
+		filename = url.fileName();
+
+	if( size == 0 )
+	{
+		KFileItem finfo(KFileItem::Unknown, KFileItem::Unknown, url);
+		size = (unsigned long)finfo.size();
+	}
+
+	if( !url.isEmpty() )
+	{
+		if( mustBeLocal && !url.isLocalFile() )
+		{
+			KMessageBox::sorry( 0, i18n("Sorry, sending files which aren't stored locally is not yet supported by "
+				"this protocol. You will have to copy this file to your computer before you can send it.") );
+		}
+		else
+		{
+			connect( this, SIGNAL(sendFile(const KURL&, const QString&, unsigned int)), sendTo, slot );
+			emit sendFile( url, filename, size );
+			disconnect( this, SIGNAL(sendFile(const KURL&, const QString&, unsigned int)), sendTo, slot );
 		}
 	}
 }
