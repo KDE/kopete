@@ -31,6 +31,7 @@ class QDomNode;
 
 class KopeteGroup : public QObject 
 {
+	Q_OBJECT
 public:
 	enum GroupType { Classic, Temporary, TopLevel};
 
@@ -58,7 +59,9 @@ private:
 	QString m_displayName;
 	GroupType m_type;
 	bool m_expanded;
-	
+
+signals: 
+  void renamed(KopeteGroup* , const QString& );
 };
 
 class KopeteGroupList : public  QPtrList<KopeteGroup>

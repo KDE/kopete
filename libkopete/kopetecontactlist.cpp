@@ -304,6 +304,7 @@ void KopeteContactList::addGroup( KopeteGroup * g)
 	{
 		m_groupList.append( g );
 		emit groupAdded( g );
+		connect( g , SIGNAL ( renamed(KopeteGroup* , const QString & )) , this , SIGNAL ( groupRenamed(KopeteGroup* , const QString & )) ) ;
 	}
 }
 
@@ -311,6 +312,7 @@ void KopeteContactList::removeGroup( KopeteGroup *g)
 {
 	m_groupList.remove( g );
 	emit groupRemoved( g );
+	delete g;
 }
 
 KopeteGroup * KopeteContactList::getGroup(const QString& displayName, KopeteGroup::GroupType type)

@@ -134,7 +134,12 @@ bool KopeteGroup::fromXML(const QDomNode& data)
 
 void KopeteGroup::setDisplayName(const QString &s)
 {
-	m_displayName=s;
+	if(m_displayName!=s)
+	{
+		QString oldname=m_displayName;
+		m_displayName=s;
+		emit renamed(this,oldname);
+	}
 }
 QString KopeteGroup::displayName() const
 {
@@ -151,4 +156,4 @@ void KopeteGroup::setType(GroupType t)
 	m_type=t;
 }
 
-
+#include "kopetegroup.moc"

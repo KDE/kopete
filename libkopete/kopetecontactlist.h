@@ -144,9 +144,9 @@ signals:
 	void metaContactAdded( KopeteMetaContact *mc );
 	void metaContactDeleted( KopeteMetaContact *mc );
 
-	void groupAdded(  KopeteGroup * );
-	void groupRemoved(  KopeteGroup * );
-//	void groupRenamed( const QString &from, const QString &to );
+	void groupAdded( KopeteGroup * );
+	void groupRemoved( KopeteGroup * );
+	void groupRenamed(KopeteGroup *, const QString & oldname);
 
 
 	/* Not used yet.... */
