@@ -219,7 +219,23 @@ QString KopeteEmoticons::parseEmoticons( QString message )
 
 	QStringList emoticons = KopeteEmoticons::emoticons()->emoticonList();
 
-
+	/*
+	 * FIXME: do proper emoticon support
+	 * Testcase:
+	 *
+	 * All emoticons:
+	 *		:-):-(:-):-):-) :-)
+	 *
+	 * M$N & gaim see the :p emoticon, we should see it too
+	 *		msn:possible
+	 *
+	 * Display the emoticon without breaking the link
+	 *		http://blah.com/something:-)
+	 *
+	 * Show the trailing emoticon
+	 *		funny:-)
+	 *
+	 */
 	for ( QStringList::Iterator it = emoticons.begin(); it != emoticons.end(); ++it )
 	{
 		QString es=QStyleSheet::escape(*it);
