@@ -82,7 +82,7 @@ signals:
 protected slots:
     void watcher();
 private:
-    struct gg_search_request *request_;
+    const struct gg_search_request *request_;
     struct gg_http  *session_;
 };
 
