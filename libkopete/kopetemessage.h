@@ -19,6 +19,8 @@
 #ifndef __KOPETE_MESSAGE_H__
 #define __KOPETE_MESSAGE_H__
 
+#include "kopetecontact.h"
+
 #include <qptrlist.h>
 #include <qstring.h>
 #include <qdom.h>
