@@ -78,23 +78,6 @@
                                     <string>The Jabber ID for the account you would like to use.  Note that this must include the username and the domain (like an E-mail address), as there are many Jabber servers.</string>
                                 </property>
                             </widget>
-                            <widget class="QLineEdit" row="1" column="1">
-                                <property name="name">
-                                    <cstring>mPass</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
-                                <property name="echoMode">
-                                    <enum>Password</enum>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>The password for your account.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>The password for your account.  You may optionally leave this blank and enter it when you wish to connect.</string>
-                                </property>
-                            </widget>
                             <widget class="QLayoutWidget" row="0" column="1">
                                 <property name="name">
                                     <cstring>layout61</cstring>
@@ -159,6 +142,14 @@
                                 </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>The password for your account.  You may optionally leave this blank and enter it when you wish to connect.</string>
+                                </property>
+                            </widget>
+                            <widget class="KPasswordEdit" row="1" column="1">
+                                <property name="name">
+                                    <cstring>mPass</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>false</bool>
                                 </property>
                             </widget>
                         </grid>
@@ -766,7 +757,6 @@
 <tabstops>
     <tabstop>mID</tabstop>
     <tabstop>cbRemPass</tabstop>
-    <tabstop>mPass</tabstop>
     <tabstop>btnRegister</tabstop>
     <tabstop>tabWidget10</tabstop>
     <tabstop>cbAutoConnect</tabstop>
@@ -782,4 +772,7 @@
     <tabstop>leProxyJID</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kpassdlg.h</includehint>
+</includehints>
 </UI>

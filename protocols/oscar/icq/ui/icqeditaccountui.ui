@@ -53,32 +53,12 @@
                             </property>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout174</cstring>
+                                    <cstring>layout143</cstring>
                                 </property>
                                 <grid>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="QLineEdit" row="1" column="1">
-                                        <property name="name">
-                                            <cstring>edtPassword</cstring>
-                                        </property>
-                                        <property name="enabled">
-                                            <bool>false</bool>
-                                        </property>
-                                        <property name="maxLength">
-                                            <number>8</number>
-                                        </property>
-                                        <property name="echoMode">
-                                            <enum>Password</enum>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The password for your account.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The password for your account.  You may optionally leave this blank and enter it when you wish to connect.</string>
-                                        </property>
-                                    </widget>
                                     <widget class="QLabel" row="1" column="0">
                                         <property name="name">
                                             <cstring>lblPassword</cstring>
@@ -97,6 +77,14 @@
                                         </property>
                                         <property name="whatsThis" stdset="0">
                                             <string>The password for your account.  You may optionally leave this blank and enter it when you wish to connect.</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="KPasswordEdit" row="1" column="1">
+                                        <property name="name">
+                                            <cstring>edtPassword</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
                                         </property>
                                     </widget>
                                     <widget class="QLabel" row="0" column="0">
@@ -156,6 +144,9 @@
                             <widget class="QCheckBox">
                                 <property name="name">
                                     <cstring>chkAutoLogin</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>true</bool>
                                 </property>
                                 <property name="text">
                                     <string>Connect automatically at &amp;startup</string>
@@ -508,7 +499,6 @@ If you do not currently have an ICQ account, please click the button to create o
     <tabstop>tabWidget7</tabstop>
     <tabstop>edtAccountId</tabstop>
     <tabstop>chkSavePassword</tabstop>
-    <tabstop>edtPassword</tabstop>
     <tabstop>chkAutoLogin</tabstop>
     <tabstop>buttonRegister</tabstop>
     <tabstop>optionOverrideServer</tabstop>
@@ -519,4 +509,7 @@ If you do not currently have an ICQ account, please click the button to create o
     <tabstop>chkWebAware</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kpassdlg.h</includehint>
+</includehints>
 </UI>

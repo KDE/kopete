@@ -210,29 +210,12 @@
                             </widget>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout57</cstring>
+                                    <cstring>layout120</cstring>
                                 </property>
                                 <hbox>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <spacer>
-                                        <property name="name">
-                                            <cstring>spacer19</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>Fixed</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>17</width>
-                                                <height>20</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
                                     <widget class="QLabel">
                                         <property name="name">
                                             <cstring>passwordLabel</cstring>
@@ -247,29 +230,12 @@
                                             <cstring>mPassword</cstring>
                                         </property>
                                     </widget>
-                                    <widget class="QLineEdit">
+                                    <widget class="KPasswordEdit">
                                         <property name="name">
                                             <cstring>mPassword</cstring>
                                         </property>
                                         <property name="enabled">
                                             <bool>false</bool>
-                                        </property>
-                                        <property name="sizePolicy">
-                                            <sizepolicy>
-                                                <hsizetype>7</hsizetype>
-                                                <vsizetype>0</vsizetype>
-                                                <horstretch>0</horstretch>
-                                                <verstretch>0</verstretch>
-                                            </sizepolicy>
-                                        </property>
-                                        <property name="echoMode">
-                                            <enum>Password</enum>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>If the IRC server requires a password, you may enter it here.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>If the IRC server requires a password, you may enter it here.  Normally, you may leave this field blank.</string>
                                         </property>
                                     </widget>
                                 </hbox>
@@ -885,7 +851,6 @@
     <tabstop>mAltNickname</tabstop>
     <tabstop>mUserName</tabstop>
     <tabstop>mRememberPassword</tabstop>
-    <tabstop>mPassword</tabstop>
     <tabstop>network</tabstop>
     <tabstop>editButton</tabstop>
     <tabstop>preferSSL</tabstop>
@@ -903,6 +868,7 @@
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>kpassdlg.h</includehint>
     <includehint>klistview.h</includehint>
     <includehint>klistview.h</includehint>
 </includehints>

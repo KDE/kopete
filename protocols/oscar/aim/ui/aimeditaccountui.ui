@@ -61,28 +61,54 @@
                             </property>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout12</cstring>
+                                    <cstring>layout138</cstring>
                                 </property>
                                 <grid>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="QLineEdit" row="1" column="1">
+                                    <widget class="KPasswordEdit" row="1" column="1">
                                         <property name="name">
                                             <cstring>edtPassword</cstring>
                                         </property>
                                         <property name="enabled">
                                             <bool>false</bool>
                                         </property>
-                                        <property name="echoMode">
-                                            <enum>Password</enum>
+                                    </widget>
+                                    <widget class="QLayoutWidget" row="0" column="1">
+                                        <property name="name">
+                                            <cstring>layout11</cstring>
                                         </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The password for your account.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The password for your account.  You may optionally leave this blank and enter it when you wish to connect.</string>
-                                        </property>
+                                        <hbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>edtAccountId</cstring>
+                                                </property>
+                                                <property name="toolTip" stdset="0">
+                                                    <string>The screen name of your AIM account.</string>
+                                                </property>
+                                                <property name="whatsThis" stdset="0">
+                                                    <string>The screen name of your AIM account.  This should be in the form of an alphanumeric string (spaces allowed, not case sensitive).</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QCheckBox">
+                                                <property name="name">
+                                                    <cstring>mSavePassword</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Remember &amp;password</string>
+                                                </property>
+                                                <property name="toolTip" stdset="0">
+                                                    <string>Check to save your password.</string>
+                                                </property>
+                                                <property name="whatsThis" stdset="0">
+                                                    <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
+                                                </property>
+                                            </widget>
+                                        </hbox>
                                     </widget>
                                     <widget class="QLabel" row="0" column="0">
                                         <property name="name">
@@ -120,41 +146,6 @@
                                         <property name="whatsThis" stdset="0">
                                             <string>The password for your account.  You may optionally leave this blank and enter it when you wish to connect.</string>
                                         </property>
-                                    </widget>
-                                    <widget class="QLayoutWidget" row="0" column="1">
-                                        <property name="name">
-                                            <cstring>layout11</cstring>
-                                        </property>
-                                        <hbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QLineEdit">
-                                                <property name="name">
-                                                    <cstring>edtAccountId</cstring>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>The screen name of your AIM account.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>The screen name of your AIM account.  This should be in the form of an alphanumeric string (spaces allowed, not case sensitive).</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QCheckBox">
-                                                <property name="name">
-                                                    <cstring>mSavePassword</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Remember &amp;password</string>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>Check to save your password.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
-                                                </property>
-                                            </widget>
-                                        </hbox>
                                     </widget>
                                 </grid>
                             </widget>
@@ -444,7 +435,6 @@
     <tabstop>tabWidget6</tabstop>
     <tabstop>edtAccountId</tabstop>
     <tabstop>mSavePassword</tabstop>
-    <tabstop>edtPassword</tabstop>
     <tabstop>mAutoLogon</tabstop>
     <tabstop>buttonRegister</tabstop>
     <tabstop>optionOverrideServer</tabstop>
@@ -452,4 +442,7 @@
     <tabstop>sbxServerPort</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kpassdlg.h</includehint>
+</includehints>
 </UI>
