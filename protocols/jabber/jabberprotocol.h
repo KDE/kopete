@@ -3,7 +3,7 @@
                              -------------------
     begin                : Fri Apr 12 2002
     copyright            : (C) 2002 by Daniel Stone
-    email                : daniel@raging.dropbear.id.au
+    email                : dstone@kde.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -56,18 +56,27 @@ class JabberProtocol:public QObject, public KopeteProtocol {
 
     QString protocolIcon() const;
     AddContactPage *createAddContactWidget(QWidget * parent);
-    void Connect();
+
+	void Connect();
     void Disconnect();
-    bool isConnected() const;
-    void setAway();
-    void setAvailable();
+   
+	bool isConnected() const;
     bool isAway() const;
-    void removeUser(QString);
+    
+	void setAway();
+    void setAvailable();
+
+	JabberContact *myself() { return myContact; }
+    
+	void removeUser(QString);
     void renameContact(QString, QString);
     void moveUser(QString, QString, QString, JabberContact * contact);
     void addContact(QString);
 
-    public slots: void slotConnected();
+  public slots:
+    void slotConnect();
+    void slotDisconnect();
+	void slotConnected();
     void slotDisconnected();
 
     void slotGoOnline();
@@ -78,8 +87,6 @@ class JabberProtocol:public QObject, public KopeteProtocol {
     void slotConnecting();
 
     void slotIconRightClicked(const QPoint);
-    void slotConnect();
-    void slotDisconnect();
 
     void slotNewContact(QString, QString, QString);
     void slotContactUpdated(QString, QString, QString, QString);
@@ -89,7 +96,8 @@ class JabberProtocol:public QObject, public KopeteProtocol {
     void slotSendMsg(QString, QString) const;
     void slotNewMessage(QString, QString);
 
-     signals: void protocolUnloading();
+  signals:
+	void protocolUnloading();
     void contactUpdated(QString, QString, QString, QString);
     void nukeContacts(bool);
     void newMessage(QString, QString);
@@ -106,25 +114,22 @@ class JabberProtocol:public QObject, public KopeteProtocol {
     QPixmap awayIcon;
     QPixmap naIcon;
     QMovie connectingIcon;
-    QString m_Username, m_Password, m_Server, m_Resource;
-    int m_Port;
 
-    KAction *actionGoOnline;
-    KAction *actionGoOffline;
-    KAction *actionGoAway;
-    KAction *actionGoXA;
-    KAction *actionGoDND;
-
-    KActionMenu *actionStatusMenu;
-    KAction *actionConnect;
-    KAction *actionDisconnect;
-    KPopupMenu *popup;
-
-    KMessageBox *authContact;
+	KAction *actionGoOnline;
+	KAction *actionGoAway;
+	KAction *actionGoXA;
+	KAction *actionGoDND;
+	KAction *actionGoOffline;
+	KPopupMenu *popup;
+	KActionMenu *actionStatusMenu;
+  
+	QString mUsername, mPassword, mServer, mResource;
+    int mPort;
 
     JabberPreferences *mPrefs;
-
     KJabber *protocol;
+	JabberContact *myContact;
+	KMessageBox *authContact;
 };
 
 #endif
