@@ -856,8 +856,8 @@ void MSNP2POutgoing::slotSendData()
 //		kd(14140) << "MSNP2PDisplatcher::slotSendData: FINISHED! wait for the BYE message" <<   endl;
 		delete m_Sfile;
 		m_Sfile=0L;
-		m_sessionId=0;
 		m_imageToSend=QByteArray();
+		m_footer='\0';
 	}
 	else
 		QTimer::singleShot( 10, this, SLOT(slotSendData()) );
@@ -957,9 +957,11 @@ void MSNP2PDisplatcher::sendImage(const QString& fileName)
 
 void MSNP2PDisplatcher::finished( MSNP2P *f)
 {
-	m_p2pList.remove(f->m_sessionId);
 	if(f!=this)
+	{
+		m_p2pList.remove(f->m_sessionId);
 		f->deleteLater();
+	}
 }
 
 
@@ -1010,12 +1012,10 @@ void MSNP2PIncoming::abortCurrentTransfer()
 		//this need to be reseted before sending the BYE message.
 		m_totalDataSize=0;
 		m_offset=0;
+		m_footer='\0';
 
 		//FIXME: i'm not sure it's like that i should abort the transfer.
 		makeMSNSLPMessage(BYE, "\r\n\r\n" );
-
-		m_sessionId=0;
-		m_msgIdentifier=0;
 	}
 	m_parent->finished(this);
 }
