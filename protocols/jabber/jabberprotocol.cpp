@@ -168,11 +168,9 @@ void JabberProtocol::initActions()
 	actionStatusMenu->insert(actionGoOffline);
 	actionStatusMenu->popupMenu()->insertSeparator();
 
-	/* The following lines have been disabled for the 0.6 release ONLY
 	actionStatusMenu->insert(actionJoinChat);
 	actionStatusMenu->popupMenu()->insertSeparator();
 	actionStatusMenu->insert(actionServices);
-	*/
 
 	actionStatusMenu->insert(actionSendRaw);
 	actionStatusMenu->insert(actionEditVCard);
