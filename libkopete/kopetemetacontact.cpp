@@ -204,9 +204,11 @@ KopeteMetaContact::OnlineStatus KopeteMetaContact::status() const
 {
 	bool awayFound = false;
 
+//	kdDebug() << "KopeteMetaContact::status() for " << displayName() << endl;
 	QPtrListIterator<KopeteContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
+//		kdDebug() << "checking status for contact-pointer " << (it.current()) << endl;
 		KopeteContact::ContactStatus s = it.current()->status();
 
 		if ( s == KopeteContact::Online )
@@ -345,9 +347,19 @@ QStringList KopeteMetaContact::groups() const
 
 void KopeteMetaContact::slotMetaContactDestroyed( QObject *obj )
 {
+//	kdDebug() << "slotMetaContactDestroyed() in metacontact " << displayName() << endl;
+//	kdDebug() << "removing contact with contact-pointer " << (obj) << endl;
+
 	// Try removing the item. The contact might be removed already, but
 	// that's safely handled inside QPtrList::remove()
-	m_contacts.remove( dynamic_cast<KopeteContact *>( obj ) );
+	KopeteContact *contact = static_cast<KopeteContact *>( obj );
+//	kdDebug() << "casted QObject to KopeteContact has pointer " << (contact) << endl;
+	
+	bool ret = m_contacts.remove( contact );
+	if ( !ret )
+	{
+		kdDebug() << "REMOVAL of Contact failed !!! going to crash soon" << endl;
+	}
 
 	// If a contact has been removed, we need to re-evaluate the
 	// online status

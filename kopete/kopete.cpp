@@ -70,8 +70,6 @@ Kopete::Kopete()
 
 void Kopete::initialize()
 {
-//	initEmoticons();
-
 	mLibraryLoader = new LibraryLoader();
 	mIconLoader = KGlobal::iconLoader();
 
@@ -246,7 +244,6 @@ void Kopete::slotAddContact()
 	tmpdialog->show();
 }
 
-
 /** Load all plugins */
 void Kopete::loadPlugins()
 {
@@ -259,6 +256,7 @@ void Kopete::notifyEvent( KopeteEvent *event)
 	/* See KopeteNotifier and KopeteEvent class */
 	mNotifier->notifyEvent( event );
 }
+
 /** Cancel an event */
 void Kopete::cancelEvent( KopeteEvent *event)
 {
@@ -266,21 +264,18 @@ void Kopete::cancelEvent( KopeteEvent *event)
 	delete event;
 }
 
-
-/**
-	Parse emoticons in a string, returns html/qt rich text
+/*
+	Parse emoticons in a string, returns html/qt richtext.
 	If emoticons are activated in preferences it
-	replaces known emoticons with themed images.
-	If not, it returns the string back.
- */
+	replaces known emoticons with themed images,
+	if not, it returns the unchanged string.
+*/
 QString Kopete::parseEmoticons( QString message )
 {
 	kdDebug() << "[Kopete] parseEmoticons()" << endl;
 	/* if emoticons are disabled, we do nothing */
 	if ( !KopetePrefs::prefs()->useEmoticons() )
-	{
 		return message;
-	}
 
 	QStringList emoticons = KopeteEmoticons::emoticons()->emoticonList();
 	QString em;
@@ -600,4 +595,3 @@ void Kopete::slotShowTransfers()
 #include "kopete.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-
