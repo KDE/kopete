@@ -18,6 +18,7 @@
 #define __kopetemetacontact_h__
 
 #include <qobject.h>
+#include <qptrlist.h>
 
 #include "kopetecontact.h"
 
