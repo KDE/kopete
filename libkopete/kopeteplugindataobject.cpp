@@ -24,6 +24,7 @@
 
 KopetePluginDataObject::KopetePluginDataObject(QObject *parent, const char *name) : QObject (parent, name)
 {
+	m_useCustomIcon=false;
 }
 
 KopetePluginDataObject::~KopetePluginDataObject()
@@ -110,11 +111,52 @@ const QValueList<QDomElement> KopetePluginDataObject::toXML()
 			pluginNodes.append( pluginElement );
 		}
 	}
+	if( !m_icons.isEmpty() )
+	{
+		QDomElement iconsElement = pluginData.createElement( QString::fromLatin1("custom-icons") );
+		iconsElement.setAttribute( QString::fromLatin1("use"), m_useCustomIcon ?  QString::fromLatin1("1") : QString::fromLatin1("0")   );
 
+		QMap<iconState, QString >::ConstIterator it;
+		for( it = m_icons.begin(); it != m_icons.end(); ++it )
+		{
+			QDomElement iconElement = pluginData.createElement( QString::fromLatin1("icon") );
+			QString stateStr;
+			switch ( it.key() )
+			{
+			case Open:
+				stateStr=QString::fromLatin1("open");
+				break;
+			case Closed:
+				stateStr=QString::fromLatin1("closed");
+				break;
+			case Online:
+				stateStr=QString::fromLatin1("online");
+				break;
+			case Away:
+				stateStr=QString::fromLatin1("away");
+				break;
+			case Offline:
+				stateStr=QString::fromLatin1("offline");
+				break;
+			case Unknown:
+				stateStr=QString::fromLatin1("unknown");
+				break;
+			case None:
+			default:
+				stateStr=QString::fromLatin1("none");
+				break;
+			}
+			iconElement.setAttribute( QString::fromLatin1("state"), stateStr );
+			iconElement.appendChild( pluginData.createTextNode( it.data() )  );
+			iconsElement.appendChild(iconElement);
+		}
+		pluginData.documentElement().appendChild( iconsElement );
+		pluginNodes.append( iconsElement );
+	}
 	return pluginNodes;
 }
 
-void KopetePluginDataObject::fromXML( const QDomElement& element )
+bool KopetePluginDataObject::fromXML( const QDomElement& element )
 {
 	if( element.tagName() == QString::fromLatin1( "plugin-data" ) )
 	{
@@ -138,6 +180,66 @@ void KopetePluginDataObject::fromXML( const QDomElement& element )
 		}
 		m_pluginData.insert( pluginId, pluginData );
 	}
+	else if (element.tagName() == QString::fromLatin1( "custom-icons" ) )
+	{
+		m_useCustomIcon= element.attribute( QString::fromLatin1( "use" ), QString::fromLatin1("1") ) == QString::fromLatin1("1");
+		QDomNode ic = element.firstChild();
+		while( !ic.isNull() )
+		{
+			QDomElement iconElement = ic.toElement();
+			if( iconElement.tagName() == QString::fromLatin1( "icon" ) )
+			{
+				QString stateStr = iconElement.attribute( QString::fromLatin1( "state" ), QString::null );
+				QString icon=iconElement.text();
+				iconState state=None;
+
+				if(stateStr == QString::fromLatin1("open") )
+					state=Open;
+				if(stateStr == QString::fromLatin1("closed") )
+					state=Closed;
+				if(stateStr == QString::fromLatin1("online") )
+					state=Online;
+				if(stateStr == QString::fromLatin1("offline") )
+					state=Offline;
+				if(stateStr == QString::fromLatin1("away") )
+					state=Away;
+				if(stateStr == QString::fromLatin1("unknown") )
+					state=Unknown;
+
+				m_icons[state]=icon;
+			}
+			ic = ic.nextSibling();
+		}
+	}
+	else
+		return false;
+	return true;
+}
+
+QString KopetePluginDataObject::icon(KopetePluginDataObject::iconState state) const
+{
+	if(m_icons.contains(state))
+		return m_icons[state];
+
+	return m_icons[None];
+}
+
+
+void KopetePluginDataObject::setIcon( const QString& icon , KopetePluginDataObject::iconState state )
+{
+	if(icon.isNull())
+		m_icons.remove(state);
+	else
+		m_icons[state]=icon;
+}
+
+bool KopetePluginDataObject::useCustomIcon() const
+{
+	return m_useCustomIcon;
+}
+void KopetePluginDataObject::setUseCustomIcon(bool b)
+{
+	m_useCustomIcon=b;
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -676,7 +676,7 @@ bool KopeteMetaContact::fromXML( const QDomElement& element )
 			QString val = contactElement.text();
 			d->addressBook[ app ][ key ] = val;
 		}
-		else if( contactElement.tagName() == QString::fromLatin1( "plugin-data" ) )
+		else //if( groupElement.tagName() == QString::fromLatin1( "plugin-data" ) || groupElement.tagName() == QString::fromLatin1( "custom-icons" ))
 		{
 			KopetePluginDataObject::fromXML(contactElement);
 		}

@@ -30,6 +30,9 @@ class QDomElement;
  *
  * this class handles the saving of the plugin data to xml files.
  * KopeteMetaContact, KopeteGroup, and KopeteAccount inherits from it
+ *
+ * It also allow to store an icon for this element.
+ * Note than the icon support is not availiable  for KopeteAccount
  */
 
 class KopetePluginDataObject : public QObject
@@ -77,6 +80,37 @@ public:
 	 */
 	QString pluginData( KopetePlugin *p, const QString &key ) const;
 
+
+	/**
+	 * This represent all icon state. Some state are reserved for Groups, other for metacontact.
+	 * None is the default icon.
+	 */
+	enum iconState { None, Open, Closed, Online, Away, Offline, Unknown };
+
+	/**
+	 * return the icon for this object, in the given state.
+	 * if there is no icon registered for this state, the None icon is used if available
+	 */
+	QString icon(iconState state=None) const;
+
+	/**
+	 * Set the icon in the given state
+	 * To clear an entry, set a QString::null
+	 */
+	void setIcon(const QString& icon , iconState=None);
+
+	/**
+	 * return if yes or no the user wants to display some custom icon.
+	 * you can use @ref icon() to know the icons to uses
+	 */
+	bool useCustomIcon() const ;
+	/**
+	 * set if the user want to show custom icon he set with @ref setIcon
+	 * this does not clear icons string if you set false
+	 */
+	void setUseCustomIcon(bool);
+
+
 protected:
 
 	/**
@@ -91,12 +125,15 @@ protected:
 
 	/**
 	 * Load plugin data from one Dom Element:
-	 * It has to be a <plugin-data> element
+	 * It should be a <plugin-data> element or a <custom-icons> element. if not, nothing will happends
+	 * @return true if something has ben loaded. false if the element was not a fine
 	 */
-	void fromXML( const QDomElement& element );
+	bool fromXML( const QDomElement& element );
 
 private:
 	QMap<QString, QMap<QString, QString> > m_pluginData;
+	QMap<iconState, QString> m_icons;
+	bool m_useCustomIcon;
 };
 
 #endif

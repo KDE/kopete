@@ -150,7 +150,7 @@ bool KopeteGroup::fromXML( const QDomElement& data )
 		{
 			d->parentGroupId = groupElement.attribute( QString::fromLatin1( "groupId" ) , QString::fromLatin1( "0" ) ).toUInt();
 		}*/
-		else if( groupElement.tagName() == QString::fromLatin1( "plugin-data" ) )
+		else //if( groupElement.tagName() == QString::fromLatin1( "plugin-data" ) || groupElement.tagName() == QString::fromLatin1( "custom-icons" ))
 		{
 			KopetePluginDataObject::fromXML(groupElement);
 		}
