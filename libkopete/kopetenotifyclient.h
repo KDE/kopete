@@ -19,6 +19,7 @@
 #ifndef _KOPETENOTIFY_CLIENT_
 #define _KOPETENOTIFY_CLIENT_
 
+
 #include <kguiitem.h>
 #include <knotifyclient.h>
 

@@ -209,19 +209,18 @@ static bool notifyByStderr(const QString &text)
     return true;
 }
 
+#if KDE_IS_VERSION( 3, 1, 90 )
 static bool notifyByTaskbar( WId win )
 {
     if( win == 0 )
 	return false;
 
-#if KDE_IS_VERSION( 3, 1, 90 )
     KWin::demandAttention( win );
     return true;
-#else
-    return false;
-#endif
 }
+#endif
 
+/*
 int KNotifyClient::event( int winId, StandardEvent type, const QString& text )
 {
     QString message;
@@ -258,7 +257,7 @@ int KNotifyClient::userEvent(int winId, const QString &text, int present,
                               const QString &sound, const QString &file)
 {
     return userEvent(winId, text,  present , level, sound, file, QString::null , KGuiItem() , 0L , 0L);
-}
+}*/
 
 int KNotifyClient::event(int winId, const QString &message, const QString &text,
                     const KGuiItem &action , QObject* receiver , const char* slot)
@@ -344,8 +343,10 @@ int KNotifyClient::userEvent(int winId, const QString &text, int present, int le
     if ( present & KNotifyClient::Execute )
 	notifyByExecute( commandline );
 
+#if KDE_IS_VERSION( 3, 1, 90 )
     if ( present & KNotifyClient::Taskbar )
 	notifyByTaskbar( winId );
+#endif
 
     return uniqueId;
 }
