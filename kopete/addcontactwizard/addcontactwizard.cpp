@@ -45,11 +45,7 @@
 #include <kiconloader.h>
 
 #include <kdeversion.h>
-#if KDE_IS_VERSION( 3, 1, 90 )
 #include <kinputdialog.h>
-#else
-#include <klineeditdlg.h>
-#endif
 
 #include <kpushbutton.h>
 #include <kdebug.h>
@@ -75,7 +71,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	{
 		QString groupname = it->displayName();
 		if ( !groupname.isEmpty() )
-			new QCheckListItem( groupList, groupname, QCheckListItem::CheckBox);
+			m_groupItems.insert(new QCheckListItem( groupList, groupname, QCheckListItem::CheckBox) , it ) ;
 	}
 
 	protocolListView->clear();
@@ -105,7 +101,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	}
 
 	setNextEnabled( selectAddressee, false );
-	setNextEnabled(selectService, (accounts.count() == 1));
+//	setNextEnabled(selectService, (accounts.count() == 1));
 	setFinishEnabled(finis, true);
 
 	// FIXME: steal/add a create addressee widget
@@ -141,7 +137,7 @@ void AddContactWizard::loadAddressees()
 	KABC::StdAddressBook::setAutomaticSave( false );
 	KABC::AddressBook::Iterator it;
 	for( it = ab->begin(); it != ab->end(); ++it )
-		KABC::AddresseeItem *item = new KABC::AddresseeItem( addresseeListView, (*it) );
+		/*KABC::AddresseeItem *item =*/ new KABC::AddresseeItem( addresseeListView, (*it) );
 }
 
 void AddContactWizard::slotAddAddresseeClicked()
@@ -173,17 +169,10 @@ void AddContactWizard::slotAddresseeListClicked( QListViewItem *addressee )
 
 void AddContactWizard::slotAddGroupClicked()
 {
-#if KDE_IS_VERSION( 3, 1, 90 )
 	QString groupName = KInputDialog::getText(
 		i18n( "New Group" ),
 		i18n( "Please enter the name for the new group:" )
 		);
-#else
-	QString groupName = KLineEditDlg::getText(
-		i18n( "New Group" ),
-		i18n( "Please enter the name for the new group:" )
-		);
-#endif
 	if ( !groupName.isNull() )
 		new QCheckListItem( groupList, groupName, QCheckListItem::CheckBox );
 }
@@ -191,7 +180,7 @@ void AddContactWizard::slotAddGroupClicked()
 void AddContactWizard::slotProtocolListClicked( QListViewItem *)
 {
 	// Just makes sure a protocol is selected before allowing the user to continue
-	bool oneIsChecked = false;
+/*	bool oneIsChecked = false;
 
 	for (QListViewItemIterator it(protocolListView); it.current(); ++it)
 	{
@@ -203,7 +192,7 @@ void AddContactWizard::slotProtocolListClicked( QListViewItem *)
 		}
 	}
 
-	setNextEnabled(selectService, oneIsChecked);
+	setNextEnabled(selectService, oneIsChecked);*/
 }
 
 void AddContactWizard::accept()
@@ -230,19 +219,22 @@ void AddContactWizard::accept()
 		QCheckListItem *check = dynamic_cast<QCheckListItem *>( it.current() );
 		if ( check && check->isOn() )
 		{
-			metaContact->addToGroup( KopeteContactList::contactList()->getGroup( check->text() ) );
+			if(m_groupItems.contains(check))
+				metaContact->addToGroup(m_groupItems[check]);
+			else //it's a new group
+				metaContact->addToGroup( KopeteContactList::contactList()->getGroup( check->text() ) );
 			topLevel = false;
 		}
 	}
 	metaContact->setTopLevel( topLevel );
 
-	bool ok = false;
+	bool ok = protocolPages.isEmpty();
 
 	// get each protocol's contact
 	QMap <KopeteAccount*,AddContactPage*>::Iterator it;
-	for ( it = protocolPages.begin(); it != protocolPages.end(); ++it ) 
-		ok |= it.data()->apply( it.key(), metaContact ); 
-	
+	for ( it = protocolPages.begin(); it != protocolPages.end(); ++it )
+		ok |= it.data()->apply( it.key(), metaContact );
+
 	if ( ok )
 	{
 		// set the KABC uid in the metacontact

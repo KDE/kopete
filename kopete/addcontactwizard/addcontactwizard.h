@@ -32,6 +32,7 @@ class AddContactPage;
 class KopeteProtocol;
 class QCheckListItem;
 class KopeteAccount;
+class KopeteGroup;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -44,12 +45,13 @@ public:
 	AddContactWizard( QWidget *parent = 0, const char *name = 0 );
 	~AddContactWizard();
 	virtual void showPage( QWidget *page );
-	
+
 private:
 	//KopeteProtocol *currentProtocol;
 	//AddContactPage *currentDataWidget;
 	QMap <KopeteAccount*,AddContactPage*> protocolPages;
 	QMap <QCheckListItem*,KopeteAccount*> m_accountItems;
+	QMap <QCheckListItem*,KopeteGroup*> m_groupItems;
 	/**
 	 * Utility function, populates the addressee list
 	 */
