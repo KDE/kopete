@@ -48,6 +48,8 @@ AccountConfig::AccountConfig(QWidget * parent) :
 
 	connect(m_view->mButtonNew, SIGNAL(clicked()),
 		this, SLOT(slotAddAccount()));
+	connect(m_view->mAccountList, SIGNAL(doubleClicked(QListViewItem*)),
+		this, SLOT(slotEditAccount()));
 	connect(m_view->mButtonEdit, SIGNAL(clicked()),
 		this, SLOT(slotEditAccount()));
 	connect(m_view->mButtonRemove, SIGNAL(clicked()),
@@ -55,15 +57,18 @@ AccountConfig::AccountConfig(QWidget * parent) :
 	connect(m_view->mAccountList, SIGNAL(selectionChanged()),
 		this, SLOT(slotItemSelected()));
 	connect(m_view->mButtonUp, SIGNAL(clicked()),
-		this, SLOT( slotAccountUp()));
+		this, SLOT(slotAccountUp()));
 	connect(m_view->mButtonDown, SIGNAL(clicked()),
-		this, SLOT( slotAccountDown()));
+		this, SLOT(slotAccountDown()));
 }
 
 void AccountConfig::save()
 {
 	if(previousAccount)
-		previousAccount->setColor( m_view->mUseColor->isChecked() ? m_view->mColorButton->color() : QColor() );
+	{
+		previousAccount->setColor(
+			m_view->mUseColor->isChecked() ? m_view->mColorButton->color() : QColor() );
+	}
 
 	KopeteAccountManager::manager()->save();
 }
@@ -108,15 +113,19 @@ void AccountConfig::slotItemSelected()
 
 	//we shouldn't realy save data before apply :-s
 	if(previousAccount)
-		previousAccount->setColor( m_view->mUseColor->isChecked() ? m_view->mColorButton->color() : QColor() );
+	{
+		previousAccount->setColor(
+			m_view->mUseColor->isChecked() ? m_view->mColorButton->color() : QColor() );
+	}
 
-	KopeteAccount *a=m_accountItems[itemSelected];
-	previousAccount=a;
+	KopeteAccount *a = m_accountItems[itemSelected];
+	previousAccount = a;
 	if(a)
 	{
 		m_view->mUseColor->setEnabled(true);
-		m_view->mColorButton->setColor(a->color());
 		m_view->mUseColor->setChecked(a->color().isValid());
+		m_view->mColorButton->setColor(a->color());
+		m_view->mColorButton->setEnabled(m_view->mUseColor->isChecked());
 	}
 	else
 	{

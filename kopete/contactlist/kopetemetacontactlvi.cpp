@@ -327,7 +327,6 @@ void KopeteMetaContactLVI::slotContactStatusChanged()
 {
 	slotUpdateIcons();
 
-#if KDE_VERSION > 0x030100
 	// FIXME: All this code should be in kopetemetacontact.cpp.. having it in the LVI makes it all fire
 	// multiple times if the user is in multiple groups - Jason
 	QString event = (m_metaContact->status() == KopeteOnlineStatus::Online) ?
@@ -336,40 +335,11 @@ void KopeteMetaContactLVI::slotContactStatusChanged()
 	int winId = KopeteSystemTray::systemTray() ?
 		KopeteSystemTray::systemTray()->winId() : 0;
 
-	KNotifyClient::event( winId, event,
-		i18n( "%2 is now %1!" )
-			.arg( m_metaContact->statusString() )
-			.arg( m_metaContact->displayName() ) );
-#else
-	// TODO: All this should go away ASAP.
-	#if KDE_VERSION >= 0x030006
-	// Show passive popup when requested and the user's KDE version
-	// supports it.
-	// FIXME: when a contact is in several groups, this popup is
-	// shown multiple times
-	if( m_metaContact->status() == KopeteOnlineStatus::Online )
-	{
-		if( prefs->showTray() )
-		{
-			KPassivePopup::message( i18n( "%2 is now %1!" ).
-				arg( m_metaContact->statusString() ).
-				arg( m_metaContact->displayName() ),
-				QString::null, statusIcon, KopeteSystemTray::systemTray() );
-		}
-	}
-	#endif
-	if(
-		(m_metaContact->status() != KopeteOnlineStatus::Away) ||
-		(prefs->soundIfAway()) )
-	{
-		KNotifyClient::event( "kopete_online",
-			i18n( "%2 is now %1!" ).arg( m_metaContact->statusString() ).
-			arg( m_metaContact->displayName() ) );
-	}
-#endif
-
+	KNotifyClient::event(winId, event,
+		i18n("%2 is now %1!")
+			.arg(m_metaContact->statusString())
+			.arg(m_metaContact->displayName()));
 }
-
 
 void KopeteMetaContactLVI::slotUpdateIcons()
 {
