@@ -430,6 +430,16 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 			saveAutoSaveSettings();
 
 		e->accept();
+		
+		//If we're not showing the tray, and they close the window (via the 'X' in the titlebar),
+		//workaround the fact that accepting the close event doesn't cause kopete to shutdown
+		if ( !app->isShuttingDown() )
+		{	
+			queryExit();
+			slotQuit();
+		}
+
+		//may never get called
 		return;
 	}
 
