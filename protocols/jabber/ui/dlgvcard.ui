@@ -8,511 +8,447 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>540</width>
-            <height>419</height>
+            <width>518</width>
+            <height>460</height>
         </rect>
     </property>
     <property name="caption">
         <string>Jabber vCard</string>
     </property>
-    <widget class="QGroupBox">
+    <vbox>
         <property name="name">
-            <cstring>grpUserInfo</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>10</y>
-                <width>520</width>
-                <height>150</height>
-            </rect>
+        <property name="margin">
+            <number>11</number>
         </property>
-        <property name="frameShape">
-            <enum>Box</enum>
+        <property name="spacing">
+            <number>6</number>
         </property>
-        <property name="frameShadow">
-            <enum>Sunken</enum>
-        </property>
-        <property name="title">
-            <string>User Info</string>
-        </property>
-        <widget class="QLabel">
+        <widget class="QGroupBox">
             <property name="name">
-                <cstring>lblNickname</cstring>
+                <cstring>grpUserInfo</cstring>
             </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>20</y>
-                    <width>65</width>
-                    <height>20</height>
-                </rect>
+            <property name="frameShape">
+                <enum>Box</enum>
             </property>
-            <property name="text">
-                <string>Nickname:</string>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
             </property>
+            <property name="title">
+                <string>User Info</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>Layout18</cstring>
+                    </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="KLineEdit" row="1" column="3">
+                            <property name="name">
+                                <cstring>leGender</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>true</bool>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="1" column="2">
+                            <property name="name">
+                                <cstring>lblGender</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Gender:</string>
+                            </property>
+                        </widget>
+                        <widget class="KLineEdit" row="2" column="1">
+                            <property name="name">
+                                <cstring>leBirthday</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>true</bool>
+                            </property>
+                        </widget>
+                        <widget class="KLineEdit" row="0" column="3">
+                            <property name="name">
+                                <cstring>leJID</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>true</bool>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="0" column="2">
+                            <property name="name">
+                                <cstring>lblJID</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Jabber ID:</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="2" column="0">
+                            <property name="name">
+                                <cstring>lblBirthday</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Birthday:</string>
+                            </property>
+                        </widget>
+                        <widget class="KLineEdit" row="1" column="1">
+                            <property name="name">
+                                <cstring>leName</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>true</bool>
+                            </property>
+                        </widget>
+                        <widget class="KLineEdit" row="0" column="1">
+                            <property name="name">
+                                <cstring>leNickname</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>true</bool>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="1" column="0">
+                            <property name="name">
+                                <cstring>lblName</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Name:</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="0" column="0">
+                            <property name="name">
+                                <cstring>lblNickname</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Nickname:</string>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>Layout11</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>lblHomepage</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Homepage:</string>
+                            </property>
+                        </widget>
+                        <widget class="KURLLabel">
+                            <property name="name">
+                                <cstring>urlHomepage</cstring>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="url" stdset="0">
+                                <string></string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+            </vbox>
         </widget>
-        <widget class="QLabel">
+        <widget class="QGroupBox">
             <property name="name">
-                <cstring>lblName</cstring>
+                <cstring>grpContactInfo</cstring>
             </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>50</y>
-                    <width>39</width>
-                    <height>20</height>
-                </rect>
+            <property name="title">
+                <string>Contact Information</string>
             </property>
-            <property name="text">
-                <string>Name:</string>
-            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>Layout20</cstring>
+                    </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QLayoutWidget" row="0" column="1">
+                            <property name="name">
+                                <cstring>Layout15</cstring>
+                            </property>
+                            <grid>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <property name="margin">
+                                    <number>0</number>
+                                </property>
+                                <property name="spacing">
+                                    <number>6</number>
+                                </property>
+                                <widget class="KLineEdit" row="1" column="1">
+                                    <property name="name">
+                                        <cstring>leCity</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>true</bool>
+                                    </property>
+                                </widget>
+                                <widget class="QLabel" row="4" column="0">
+                                    <property name="name">
+                                        <cstring>lblPhone</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Phone:</string>
+                                    </property>
+                                </widget>
+                                <widget class="KLineEdit" row="3" column="1">
+                                    <property name="name">
+                                        <cstring>leCountry</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>true</bool>
+                                    </property>
+                                </widget>
+                                <widget class="KLineEdit" row="0" column="1">
+                                    <property name="name">
+                                        <cstring>leZIP</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>true</bool>
+                                    </property>
+                                </widget>
+                                <widget class="QLabel" row="1" column="0">
+                                    <property name="name">
+                                        <cstring>lblCity</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>City:</string>
+                                    </property>
+                                </widget>
+                                <widget class="KLineEdit" row="4" column="1">
+                                    <property name="name">
+                                        <cstring>lePhone</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>true</bool>
+                                    </property>
+                                </widget>
+                                <widget class="KLineEdit" row="2" column="1">
+                                    <property name="name">
+                                        <cstring>leState</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>true</bool>
+                                    </property>
+                                </widget>
+                                <widget class="QLabel" row="3" column="0">
+                                    <property name="name">
+                                        <cstring>lblCountry</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Country:</string>
+                                    </property>
+                                </widget>
+                                <widget class="QLabel" row="0" column="0">
+                                    <property name="name">
+                                        <cstring>lblZIP</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>ZIP:</string>
+                                    </property>
+                                </widget>
+                                <widget class="QLabel" row="2" column="0">
+                                    <property name="name">
+                                        <cstring>lblState</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>State:</string>
+                                    </property>
+                                </widget>
+                            </grid>
+                        </widget>
+                        <widget class="QLayoutWidget" row="0" column="0">
+                            <property name="name">
+                                <cstring>Layout9</cstring>
+                            </property>
+                            <vbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <property name="margin">
+                                    <number>0</number>
+                                </property>
+                                <property name="spacing">
+                                    <number>6</number>
+                                </property>
+                                <widget class="QLabel">
+                                    <property name="name">
+                                        <cstring>lblAddress</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>Address:</string>
+                                    </property>
+                                </widget>
+                                <widget class="QTextEdit">
+                                    <property name="name">
+                                        <cstring>teAddress</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                </widget>
+                            </vbox>
+                        </widget>
+                    </grid>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>Layout12</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>lblEmail</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Email:</string>
+                            </property>
+                        </widget>
+                        <widget class="KURLLabel">
+                            <property name="name">
+                                <cstring>urlEmail</cstring>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="url" stdset="0">
+                                <string></string>
+                            </property>
+                        </widget>
+                        <spacer>
+                            <property name="name">
+                                <cstring>Spacer5</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>21</width>
+                                    <height>0</height>
+                                </size>
+                            </property>
+                        </spacer>
+                    </hbox>
+                </widget>
+            </vbox>
         </widget>
-        <widget class="QLabel">
+        <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>lblJID</cstring>
+                <cstring>Layout14</cstring>
             </property>
-            <property name="geometry">
-                <rect>
-                    <x>250</x>
-                    <y>20</y>
-                    <width>65</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Jabber ID:</string>
-            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <spacer>
+                    <property name="name">
+                        <cstring>Spacer10</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>250</width>
+                            <height>0</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>btnSaveNickname</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Save Nickname</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>btnClose</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Close</string>
+                    </property>
+                </widget>
+            </hbox>
         </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblGender</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>250</x>
-                    <y>50</y>
-                    <width>50</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Gender:</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblBirthday</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>80</y>
-                    <width>65</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Birthday:</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblHomepage</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>110</y>
-                    <width>65</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Homepage:</string>
-            </property>
-        </widget>
-        <widget class="KURLLabel">
-            <property name="name">
-                <cstring>urlHomepage</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>80</x>
-                    <y>110</y>
-                    <width>380</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-            <property name="url" stdset="0">
-                <string></string>
-            </property>
-        </widget>
-        <widget class="KLineEdit">
-            <property name="name">
-                <cstring>leNickname</cstring>
-            </property>
-            <property name="enabled">
-                <bool>true</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>80</x>
-                    <y>20</y>
-                    <width>140</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="KLineEdit">
-            <property name="name">
-                <cstring>leName</cstring>
-            </property>
-            <property name="enabled">
-                <bool>true</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>80</x>
-                    <y>50</y>
-                    <width>140</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="KLineEdit">
-            <property name="name">
-                <cstring>leBirthday</cstring>
-            </property>
-            <property name="enabled">
-                <bool>true</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>80</x>
-                    <y>80</y>
-                    <width>140</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="KLineEdit">
-            <property name="name">
-                <cstring>leJID</cstring>
-            </property>
-            <property name="enabled">
-                <bool>true</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>320</x>
-                    <y>20</y>
-                    <width>180</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="KLineEdit">
-            <property name="name">
-                <cstring>leGender</cstring>
-            </property>
-            <property name="enabled">
-                <bool>true</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>320</x>
-                    <y>50</y>
-                    <width>180</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-    </widget>
-    <widget class="QGroupBox">
-        <property name="name">
-            <cstring>grpContactInfo</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>170</y>
-                <width>520</width>
-                <height>200</height>
-            </rect>
-        </property>
-        <property name="title">
-            <string>Contact Information</string>
-        </property>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblAddress</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>20</y>
-                    <width>53</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Address:</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblPhone</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>270</x>
-                    <y>160</y>
-                    <width>43</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Phone:</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblEmail</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>160</y>
-                    <width>40</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Email:</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblState</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>270</x>
-                    <y>100</y>
-                    <width>35</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>State:</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblCity</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>270</x>
-                    <y>70</y>
-                    <width>29</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>City:</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblZIP</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>270</x>
-                    <y>40</y>
-                    <width>30</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>ZIP:</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblCountry</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>270</x>
-                    <y>130</y>
-                    <width>51</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Country:</string>
-            </property>
-        </widget>
-        <widget class="QTextEdit">
-            <property name="name">
-                <cstring>teAddress</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>40</y>
-                    <width>241</width>
-                    <height>102</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="KURLLabel">
-            <property name="name">
-                <cstring>urlEmail</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>50</x>
-                    <y>160</y>
-                    <width>200</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-            <property name="url" stdset="0">
-                <string></string>
-            </property>
-        </widget>
-        <widget class="KLineEdit">
-            <property name="name">
-                <cstring>leZIP</cstring>
-            </property>
-            <property name="enabled">
-                <bool>true</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>330</x>
-                    <y>40</y>
-                    <width>170</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="KLineEdit">
-            <property name="name">
-                <cstring>leCity</cstring>
-            </property>
-            <property name="enabled">
-                <bool>true</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>330</x>
-                    <y>70</y>
-                    <width>170</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="KLineEdit">
-            <property name="name">
-                <cstring>leState</cstring>
-            </property>
-            <property name="enabled">
-                <bool>true</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>330</x>
-                    <y>100</y>
-                    <width>170</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="KLineEdit">
-            <property name="name">
-                <cstring>leCountry</cstring>
-            </property>
-            <property name="enabled">
-                <bool>true</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>330</x>
-                    <y>130</y>
-                    <width>170</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="KLineEdit">
-            <property name="name">
-                <cstring>lePhone</cstring>
-            </property>
-            <property name="enabled">
-                <bool>true</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>330</x>
-                    <y>160</y>
-                    <width>170</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-    </widget>
-    <widget class="QPushButton">
-        <property name="name">
-            <cstring>btnSaveNickname</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>260</x>
-                <y>380</y>
-                <width>120</width>
-                <height>27</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Save Nickname</string>
-        </property>
-    </widget>
-    <widget class="QPushButton">
-        <property name="name">
-            <cstring>btnClose</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>410</x>
-                <y>380</y>
-                <width>108</width>
-                <height>27</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Close</string>
-        </property>
-    </widget>
+    </vbox>
 </widget>
 <connections>
 </connections>
-<includes>
-    <include location="local" impldecl="in implementation">dlgvcard.ui.h</include>
-</includes>
 <slots>
     <slot>btnClose_clicked()</slot>
 </slots>
