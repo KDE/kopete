@@ -311,8 +311,8 @@ bool MSNSocket::pollReadBlock()
 //	kdDebug(14140) << "MSNSocket::pollReadBlock: Successfully read block of size " << m_waitBlockSize << endl;
 
 	m_waitBlockSize = 0;
-	emit blockRead( baBlock );
 	emit blockRead( block );
+	emit blockRead( baBlock );
 
 	return false;
 }

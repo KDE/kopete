@@ -22,8 +22,12 @@
 #include <qgroupbox.h>
 #include <qlistbox.h>
 #include <qpushbutton.h>
+#include <qimage.h>
+
 
 #include <klocale.h>
+#include <kfiledialog.h>
+#include <kstandarddirs.h>
 #include <kmessagebox.h>
 
 #include "msneditaccountwidget.h"
@@ -98,6 +102,9 @@ MSNEditAccountWidget::MSNEditAccountWidget(MSNProtocol *proto, KopeteAccount *id
 		tab_info->setDisabled(true);
 		tab_contacts->setDisabled(true);
 	}
+
+	connect(m_selectImage , SIGNAL(pressed()) , this , SLOT(slotSelectImage()));
+	m_displayPicture->setPixmap(locateLocal( "appdata", QString::fromLatin1( "msnpicture.png" )));
 }
 
 MSNEditAccountWidget::~MSNEditAccountWidget()
@@ -193,6 +200,17 @@ void MSNEditAccountWidget::slotShowReverseList()
 {
 	QStringList reverseList=QStringList::split(',' ,m_account->pluginData(m_protocol,QString::fromLatin1("reverseList")) );
 	KMessageBox::informationList( this, i18n("Here you can see a list of contact which added you in their contactlist") , reverseList , i18n("Reverse List - MSN Plugin") );
+}
+
+void MSNEditAccountWidget::slotSelectImage()
+{
+	QString filePath = KFileDialog::getOpenFileName( QString::null ,"*", 0l  , i18n( "MSN Display Picture" ));
+	if(filePath.isEmpty())
+		return;
+	QImage img(filePath);
+	img=img.smoothScale(96,96);
+	img.save(locateLocal( "appdata", QString::fromLatin1( "msnpicture.png" )) , "PNG");
+	m_displayPicture->setPixmap(locateLocal( "appdata", QString::fromLatin1( "msnpicture.png" )));
 }
 
 #include "msneditaccountwidget.moc"

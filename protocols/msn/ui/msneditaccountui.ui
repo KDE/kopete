@@ -9,9 +9,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>488</width>
-            <height>411</height>
+            <width>429</width>
+            <height>470</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>Form1</string>
     </property>
     <vbox>
         <property name="name">
@@ -278,6 +281,111 @@
                             </widget>
                         </grid>
                     </widget>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>groupBox2</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Display Picture</string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
+                                <property name="name">
+                                    <cstring>m_useDisplayPicture</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Export a display picture</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="0" column="2" rowspan="4" colspan="1">
+                                <property name="name">
+                                    <cstring>m_displayPicture</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>5</hsizetype>
+                                        <vsizetype>5</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                    <size>
+                                        <width>96</width>
+                                        <height>96</height>
+                                    </size>
+                                </property>
+                                <property name="maximumSize">
+                                    <size>
+                                        <width>96</width>
+                                        <height>96</height>
+                                    </size>
+                                </property>
+                                <property name="frameShape">
+                                    <enum>GroupBoxPanel</enum>
+                                </property>
+                                <property name="scaledContents">
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                            <widget class="QPushButton" row="2" column="0">
+                                <property name="name">
+                                    <cstring>m_selectImage</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Select Image</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
+                                <property name="name">
+                                    <cstring>textLabel1_2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Please select a square image.  The image will be scalled to 96x96</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>WordBreak|AlignVCenter</set>
+                                </property>
+                            </widget>
+                            <spacer row="3" column="0">
+                                <property name="name">
+                                    <cstring>spacer4</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Vertical</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Minimum</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>5</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <spacer row="2" column="1">
+                                <property name="name">
+                                    <cstring>spacer5</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>61</width>
+                                        <height>21</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </grid>
+                    </widget>
                     <spacer>
                         <property name="name">
                             <cstring>spacer16</cstring>
@@ -291,7 +399,7 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>20</height>
+                                <height>50</height>
                             </size>
                         </property>
                     </spacer>
@@ -505,6 +613,14 @@
         </widget>
     </vbox>
 </widget>
+<connections>
+    <connection>
+        <sender>m_useDisplayPicture</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_selectImage</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kactivelabel.h</includehint>

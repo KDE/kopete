@@ -71,6 +71,9 @@ public:
 	 */
 	bool isHotmail() const;
 
+
+	QString pictureObject();
+
 public slots:
 	virtual void connect() ;
 	virtual void disconnect() ;
@@ -187,6 +190,8 @@ private:
 	KopeteMetaContact *m_addWizard_metaContact;
 
 	QString m_awayReason;
+
+	QString m_pictureObj;
 };
 
 #endif

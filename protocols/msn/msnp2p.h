@@ -24,6 +24,7 @@ class KopeteMessage;
 class MSNAccount;
 
 class KTempFile;
+class QFile;
 
 /**
  * @author Olivier Goffart
@@ -44,9 +45,6 @@ public slots:
 	 */
 	void slotReadMessage( const QByteArray &msg );
 
-public:
-	unsigned long int m_msgIdentifier;
-
 signals:
 	/**
 	 * should be connected to the MSNSwitchBoardSocket's sendCommand function
@@ -57,13 +55,23 @@ signals:
 private:
 	/**
 	 * send the MSNSLP command in a msn p2p message
+	 * dataMessage cen be a QCString in case of text message
 	 */
-	void sendP2PMessage( const QCString& dataMessage );
+	void sendP2PMessage( const QByteArray& dataMessage );
 
 	/**
 	 * send the ACK
 	 */
 	void sendP2PAck( const char * originalHeader) ;
+
+
+	unsigned long int m_msgIdentifier;
+	unsigned long int m_sessionId;
+	unsigned long int m_totalDataSize;
+	unsigned long int m_offset;
+
+private slots:
+	void slotSendData();
 
 public slots:
 	/**
@@ -73,10 +81,11 @@ public slots:
 private:
 	//for the display image
 	KTempFile *m_file;
-	unsigned int m_Tsize;
+	QFile *m_Sfile;
 
 	QString m_myHandle;
 	QString m_msgHandle;
+
 
 
 

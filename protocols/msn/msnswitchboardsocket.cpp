@@ -296,6 +296,16 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 
 		emit msgReceived( kmsg );
 	}
+	else if( type== "application/x-msnmsgrp2p" )
+	{
+		if(!m_p2p)
+		{
+			m_p2p=new MSNP2P(this , "msnp2p protocol" );
+			QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
+			QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
+				this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
+		}
+	}
 	else
 	{
 //		kdDebug(14140) << "MSNSwitchBoardSocket::slotReadMessage: Unknown type '" << type << "' message: \n"<< msg <<endl;
@@ -434,13 +444,15 @@ void MSNSwitchBoardSocket::requestDisplayPicture()
 	if(c)
 		msnObject= c->object().utf8();
 
-	m_p2p=new MSNP2P(this , "msnp2p protocol" );
-	QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
-	QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
-			this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
+	if(!m_p2p)
+	{
+		m_p2p=new MSNP2P(this , "msnp2p protocol" );
+		QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
+		QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
+				this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
+	}
 
 	m_p2p->requestDisplayPicture( m_myHandle, m_msgHandle, msnObject);
-
 }
 
 

@@ -50,6 +50,7 @@ class MSNEditAccountWidget : public MSNEditAccountUI, public EditAccountWidget
 		void slotAllow();
 		void slotBlock();
 		void slotShowReverseList();
+		void slotSelectImage();
 };
 
 

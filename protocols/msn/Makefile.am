@@ -10,12 +10,14 @@ lib_LTLIBRARIES = libkopete_msn.la
 
 libkopete_msn_la_SOURCES = msnprotocol.cpp msnaccount.cpp msnaddcontactpage.cpp msncontact.cpp \
 	msnsocket.cpp msnauthsocket.cpp msndispatchsocket.cpp msnmessagemanager.cpp msndebugrawcmddlg.cpp \
-	msnnotifysocket.cpp msnswitchboardsocket.cpp msnfiletransfersocket.cpp msninvitation.cpp msnp2p.cpp
+	msnnotifysocket.cpp msnswitchboardsocket.cpp msnfiletransfersocket.cpp msninvitation.cpp msnp2p.cpp sha1.cpp
+
 libkopete_msn_la_LIBADD  = ./ui/libkopetemsnui.la ../../libkopete/libkopete.la $(LIB_KIO)
 libkopete_msn_la_LDFLAGS = -version-info 0:0:0 -no-undefined $(all_libraries)
 
 kopete_msn_la_SOURCES = dummy.cpp
 kopete_msn_la_LIBADD = libkopete_msn.la
+
 kopete_msn_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 
 dummy.cpp:

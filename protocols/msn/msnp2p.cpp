@@ -37,13 +37,17 @@ MSNP2P::MSNP2P( QObject *parent , const char * name )
 : QObject( parent , name )
 {
 	m_file=0l;
-	m_Tsize=0;
+	m_Sfile=0L;
 	m_msgIdentifier=0;
+	m_sessionId=0;
+	m_totalDataSize=0;
+	m_offset=0;
 }
 
 MSNP2P::~MSNP2P()
 {
 	delete m_file;
+	delete m_Sfile;
 }
 
 
@@ -84,29 +88,83 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 			kdDebug(14140) << "MSNP2P::slotReadMessage: I do not care, it's a ACK"  << endl;
 			return;
 		}
-		else
+
+		QString dataMessage=QCString((msg.data()+startBinHeader+48) , dataMessageSize);
+
+		if(m_msgHandle.isEmpty())
 		{
-			if(dataOffset+dataMessageSize>=totalSize)
-				sendP2PAck( (msg.data()+startBinHeader) );
+			QRegExp rx("To: <msnmsgr:([^>]*)>");
+			if( rx.search( dataMessage ) != -1 )
+				m_myHandle=rx.cap(1);
+
+			rx=QRegExp("From: <msnmsgr:([^>]*)>");
+			if( rx.search( dataMessage ) != -1 )
+				m_msgHandle=rx.cap(1);
 		}
+
+		//first of all, send the ACK
+		if(dataOffset+dataMessageSize>=totalSize)
+			sendP2PAck( (msg.data()+startBinHeader) );
+
 
 		if(!m_file)
 		{
-			QString dataMessage=QCString((msg.data()+startBinHeader+48) , dataMessageSize);
 			kdDebug(14140) << "MSNP2P::slotReadMessage: dataMessage: "  << dataMessage << endl;
 
 			if(msg.data()[startBinHeader+48] == '\0' )
 			{
 				m_file=new KTempFile( locateLocal( "tmp", "msnpicture" ), ".png" );
 			}
+   			else if (dataMessage.contains("INVITE"))
+			{
+				QRegExp rx(";branch=\\{([0-9A-F\\-]*)\\}\r\n");
+				rx.search( dataMessage );
+				QString branch=rx.cap(1);
+
+				rx=QRegExp("Call-ID: \\{([0-9A-F\\-]*)\\}\r\n");
+				rx.search( dataMessage );
+				QString callid=rx.cap(1);
+
+				unsigned long int sessID=rand()%0xFFFFFF00+4;
+
+				QString content="SessionID: " + QString::number( sessID ) ;
+
+				QCString dataMessage= QString(
+						"MSNSLP/1.0 200 OK\r\n"
+						"To: <msnmsgr:"+m_msgHandle+">\r\n"
+						"From: <msnmsgr:"+m_myHandle+">\r\n"
+						"Via: MSNSLP/1.0/TLP ;branch={"+ branch +"}\r\n"
+						"CSeq: 1\r\n"
+						"Call-ID: {"+callid+"}\r\n"
+						"Max-Forwards: 0\r\n"
+						"Content-Type: application/x-msnmsgr-sessionreqbody\r\n"
+						"Content-Length: "+ QString::number(content.length()+5)+"\r\n"
+						"\r\n" + content + "\r\n\r\n").utf8(); //\0
+
+				sendP2PMessage(dataMessage);
+
+				m_sessionId=sessID;
+				QByteArray initM(4);
+				initM.fill('\0');
+
+				sendP2PMessage(initM);
+
+				m_Sfile = new QFile( locateLocal( "appdata", QString::fromLatin1( "msnpicture.png" ) ) );
+				if(!m_Sfile->open(IO_ReadOnly))  {/*error?*/}
+    			m_totalDataSize=  m_Sfile->size();
+
+				QTimer::singleShot( 10, this, SLOT(slotSendData()) );
+			}
+			else if (dataMessage.contains("BYE"))
+			{
+				//deleteLater();
+			}
 		}
 		else
 		{
-			m_Tsize+=dataMessageSize;
-			kdDebug(14140) << "MSNP2P::slotReadMessage: Tsize: " << m_Tsize << "     totalSize: " << totalSize <<endl;
 			m_file->file()->writeBlock( (msg.data()+startBinHeader+48) , dataMessageSize );
 
-			if(m_Tsize >= totalSize)
+			if(dataOffset+dataMessageSize >= totalSize)
 			{
 				m_file->close();
 
@@ -136,7 +194,7 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
  						"Content-Length: 3\r\n\r\n" ).utf8();
 				sendP2PMessage(dataMessage);
 
-				deleteLater();
+				//deleteLater();
 			}
 		}
 	}
@@ -175,13 +233,12 @@ void MSNP2P::requestDisplayPicture( const QString &myHandle, const QString &msgH
 			"\r\n" + content + "\r\n\r\n").utf8(); //\0
 
 	sendP2PMessage(dataMessage);
-
 }
 
 
-void MSNP2P::sendP2PMessage(const QCString &dataMessage)
+void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 {
-	kdDebug(14140) << k_funcinfo << dataMessage << endl;
+	kdDebug(14140) << k_funcinfo << QCString(dataMessage.data() , dataMessage.size()) << endl;
 
 	QCString messageHeader=QString(
 				"MIME-Version: 1.0\r\n"
@@ -197,11 +254,47 @@ void MSNP2P::sendP2PMessage(const QCString &dataMessage)
 	else
 		m_msgIdentifier++;
 
+	//SessionID
+	binHeader[0]=(char)(m_sessionId%256);
+	binHeader[1]=(char)((unsigned long int)(m_sessionId/256)%256);
+	binHeader[2]=(char)((unsigned long int)(m_sessionId/(256*256))%256);
+	binHeader[3]=(char)((unsigned long int)(m_sessionId/(256*256*256))%256);
+
 	//MessageID
 	binHeader[4]=(char)(m_msgIdentifier%256);
 	binHeader[5]=(char)((unsigned long int)(m_msgIdentifier/256)%256);
 	binHeader[6]=(char)((unsigned long int)(m_msgIdentifier/(256*256))%256);
 	binHeader[7]=(char)((unsigned long int)(m_msgIdentifier/(256*256*256))%256);
+
+	binHeader[8]=(char)(m_offset%256);
+	binHeader[9]=(char)((unsigned long int)(m_offset/256)%256);
+	binHeader[10]=(char)((unsigned long int)(m_offset/(256*256))%256);
+	binHeader[11]=(char)((unsigned long int)(m_offset/(256*256*256))%256);
+
+	unsigned int size=dataMessage.size();
+
+	if(m_totalDataSize)
+	{
+		binHeader[16]=(char)(m_totalDataSize%256);
+		binHeader[17]=(char)((unsigned long int)(m_totalDataSize/256)%256);
+		binHeader[18]=(char)((unsigned long int)(m_totalDataSize/(256*256))%256);
+		binHeader[19]=(char)((unsigned long int)(m_totalDataSize/(256*256*256))%256);
+
+		m_offset+=size;
+		if(m_offset>=m_totalDataSize)
+		{
+			m_offset=0;
+			m_totalDataSize=0;
+		}
+	}
+	else
+	{
+		binHeader[16]=(char)size%256;
+		binHeader[17]=(int)size/256;
+	}
+
+	binHeader[24]=(char)size%256;
+	binHeader[25]=(int)size/256;
 
 	//Ack sessionID
 	binHeader[32]=(char)(rand()%256);
@@ -209,20 +302,23 @@ void MSNP2P::sendP2PMessage(const QCString &dataMessage)
 	binHeader[34]=(char)(rand()%256);
 	binHeader[35]=(char)(rand()%256);
 
-	unsigned int size=dataMessage.size();
 
-	binHeader[16]=binHeader[24]=(char)size%256;
-	binHeader[17]=binHeader[25]=(int)size/256;
 
-	QByteArray data( messageHeader.length() + binHeader.size() + dataMessage.length() + 5 );
+	QByteArray data( messageHeader.length() + binHeader.size() + dataMessage.size() + 4 );
 	for(unsigned int f=0; f< messageHeader.length() ; f++)
 		data[f]=messageHeader[f];
 	for(unsigned int f=0; f< binHeader.size() ; f++)
 		data[messageHeader.length()+f]=binHeader[f];
-	for(unsigned int f=0; f< dataMessage.length() ; f++)
+	for(unsigned int f=0; f< dataMessage.size() ; f++)
 		data[messageHeader.length()+binHeader.size()+f]=dataMessage[f];
-	for(unsigned int f=0; f< 5 ; f++)
-		data[messageHeader.length()+binHeader.size()+dataMessage.length()+f]='\0';
+	for(unsigned int f=0; f< 4 ; f++)
+		data[messageHeader.length()+binHeader.size()+dataMessage.size()+f]='\0';
+
+	if(m_sessionId!=0)
+	{ //then, the footer ends with \1
+		data[messageHeader.length()+binHeader.size() + dataMessage.size()  +3 ]='\1';
+	}
+
 
 	emit sendCommand("MSG", "D" , true , data , true );
 }
@@ -246,11 +342,21 @@ void MSNP2P::sendP2PAck( const char* originalHeader )
 	binHeader[3]=originalHeader[3];
 
 	//MessageID
-	m_msgIdentifier++;
+	bool a=false;
+	if(m_msgIdentifier==0)
+	{
+		m_msgIdentifier=rand()%0xFFFFFE00+10;
+		a=true;
+	}
+	else
+		m_msgIdentifier++;
 	binHeader[4]=(char)(m_msgIdentifier%256);
 	binHeader[5]=(char)((unsigned long int)(m_msgIdentifier/256)%256);
 	binHeader[6]=(char)((unsigned long int)(m_msgIdentifier/(256*256))%256);
 	binHeader[7]=(char)((unsigned long int)(m_msgIdentifier/(256*256*256))%256);
+
+	if(a)
+		m_msgIdentifier-=4;
 
 	//total size
 	binHeader[16]=originalHeader[16];//[24];
@@ -298,6 +404,35 @@ void MSNP2P::sendP2PAck( const char* originalHeader )
 
 	emit sendCommand("MSG", "D" , true , data , true );
 }
+
+
+void MSNP2P::slotSendData()
+{
+	if(!m_Sfile)
+		return;
+
+	char data[1200];
+	int bytesRead = m_Sfile->readBlock( data,1200 );
+
+	QByteArray dataBA(bytesRead);
+	for (  int f = 0; f < bytesRead; f++ )
+		dataBA[f] = data[f];
+
+	kdDebug(14140) << "MSNP2P::slotSendData: offset="  << m_offset << "  size=" << bytesRead << "   totalSize=" << m_totalDataSize << "     sent=" << m_offset+bytesRead <<   endl;
+
+	sendP2PMessage(dataBA);
+
+	if( m_totalDataSize == 0  ) //this has been reseted bacause the file is completely send
+	{
+		kdDebug(14140) << "MSNP2P::slotSendData: FINISHED! wait for the BYE message" <<   endl;
+		delete m_Sfile;
+		m_Sfile=0L;
+	}
+	else
+		QTimer::singleShot( 10, this, SLOT(slotSendData()) );
+}
+
+
 
 
 #include "msnp2p.moc"
