@@ -87,6 +87,27 @@ class UserInfo
 		unsigned long icqextstatus;
 };
 
+class OscarMessage
+{
+	public:
+		enum MessageFormat
+		{
+			Plain=0, Rtf, AimHtml
+		};
+
+		OscarMessage();
+		void setText(const QString &txt, MessageFormat format);
+		const QString &text();
+
+	public:
+		QDateTime timestamp;
+		QColor fgColor;
+		QColor bgColor;
+
+	private:
+		QString mText;
+};
+
 
 const DWORD AIM_CAPS_BUDDYICON 		= 0x00000001;
 const DWORD AIM_CAPS_VOICE			= 0x00000002;
@@ -548,6 +569,14 @@ class OscarSocket : public OscarConnection
 		void sendAuthRequest(const QString &contact, const QString &reason);
 		void sendAuthReply(const QString &contact, const QString &reason, bool grant);
 
+
+		/*
+		 * Methods to convert incoming/outgoing text to/from the encoding needed.
+		 */
+		const QString ServerToQString(const char* string, OscarContact *contact, bool isUtf8=false);
+		//const char *QStringtoServer(const char* string, OscarContact *contact);
+
+
 	public slots:
 		/*
 		 * This is called when a connection is established
@@ -705,7 +734,7 @@ class OscarSocket : public OscarConnection
 		*/
 		void parseServerIM(Buffer &inbuf, const UserInfo &u);
 
-		void parseMessage(const UserInfo &u, const QString &message, const BYTE type, const BYTE flags);
+		void parseMessage(const UserInfo &u, OscarMessage &message, const BYTE type, const BYTE flags);
 
 		/** parses the aim standard user info block */
 		bool parseUserInfo(Buffer &inbuf, UserInfo &u);
@@ -882,7 +911,7 @@ class OscarSocket : public OscarConnection
 		 * @p message contains the message as received
 		 * @p type describes the message type, i.e. normal-msg, away-msg, sms-msg ...
 		 */
-		void receivedMessage(const QString &contact, const QString &message, OscarSocket::OscarMessageType type);
+		void receivedMessage(const QString &contact, OscarMessage &message, OscarSocket::OscarMessageType type);
 
 		void receivedAwayMessage(const QString &contact, const QString &message);
 
@@ -1068,11 +1097,11 @@ class OscarSocket : public OscarConnection
 		bool isLoggedIn;
 		// Tells if we can send data to the server or not
 		bool mBlockSend;
-		
+
 		/** Packet Queue for delayed sending. nuff said. :) */
 		QValueList<Buffer> mPacketQueue;
-		
-		
+
+
 		/**
 		 * counter to find out if we got all packets needed before sending
 		 * out more info and the final CLI_READY command which is the end

@@ -19,4 +19,10 @@
  */
 //#define BUFFER_DEBUG 1
 
+/*
+ * Define this if you want to debug encoding/decoding of strings
+ * Handy if you wonder why your cyrillic only consists of questionmarks ;)
+ */
+//#define CHARSET_DEBUG 1
+
 #endif

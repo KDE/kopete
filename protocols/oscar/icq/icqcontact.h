@@ -82,7 +82,7 @@ class ICQContact : public OscarContact
 		 */
 		void setOnlineStatus(const KopeteOnlineStatus&);
 
-		virtual void gotIM(OscarSocket::OscarMessageType type, const QString &message);
+		//virtual void gotIM(OscarSocket::OscarMessageType type, const QString &message);
 
 	public slots:
 		virtual void slotUserInfo();

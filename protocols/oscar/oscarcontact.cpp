@@ -147,10 +147,16 @@ OscarContact::~OscarContact()
 {
 }
 
-KopeteMessageManager* OscarContact::manager(bool canCreate)
+KopeteMessageManager* OscarContact::manager(bool /*canCreate*/)
 {
-	if(!mMsgManager && canCreate)
+
+	// FIXME: What was this canCreate for, we only allow one
+	// manager and create it if necessary so why use this bool? [mETz, 26.10.2003]
+	if(!mMsgManager /*&& canCreate*/)
 	{
+		/*kdDebug(14190) << k_funcinfo <<
+			"Creating new MessageManager for contact '" << displayName() << "'" << endl;*/
+
 		QPtrList<KopeteContact> theContact;
 		theContact.append(this);
 
@@ -167,6 +173,8 @@ KopeteMessageManager* OscarContact::manager(bool canCreate)
 
 void OscarContact::slotMessageManagerDestroyed()
 {
+	/*kdDebug(14190) << k_funcinfo <<
+		"MessageManager for contact '" << displayName() << "' destroyed" << endl;*/
 	mMsgManager = 0L;
 }
 
@@ -594,6 +602,9 @@ void OscarContact::slotGotAuthReply(const QString &contact, const QString &reaso
 		reason << "' granted=" << granted << endl;
 
 	setWaitAuth(granted);
+
+	// FIXME: remove this method and handle auth in oscaraccount already!
+	/*
 	if(granted)
 	{
 		QString message = i18n("<b>[Granted Authorization:]</b> %1").arg(reason);
@@ -604,6 +615,60 @@ void OscarContact::slotGotAuthReply(const QString &contact, const QString &reaso
 		QString message = i18n("<b>[Declined Authorization:]</b> %1").arg(reason);
 		gotIM(OscarSocket::DeclinedAuth, message);
 	}
+	*/
+}
+
+//void OscarContact::receivedIM(OscarSocket::OscarMessageType type, const OscarMessage &msg)
+void OscarContact::receivedIM(KopeteMessage &msg)
+{
+	kdDebug(14190) << k_funcinfo << "called" << endl;
+	// Tell the message manager that the buddy is done typing
+	manager()->receivedTypingMsg(this, false);
+
+/*
+	// Build a KopeteMessage and set the body as Rich Text
+	KopeteContactPtrList tmpList;
+	tmpList.append(account()->myself());
+	KopeteMessage kmsg(this, tmpList, msg.text, KopeteMessage::Inbound,
+		KopeteMessage::RichText);
+	manager()->appendMessage(kmsg);
+*/
+	manager()->appendMessage(msg);
+
+
+	// TODO: make it configurable
+#if 0
+	// send our away message in fire-and-forget-mode :)
+	if(mAccount->isAway())
+	{
+		// Compare current time to last time we sent a message
+		// We'll wait 2 minutes between responses
+		if((time(0L) - mLastAutoResponseTime) > 120)
+		{
+			kdDebug(14190) << k_funcinfo << " while we are away, " \
+				"sending away-message to annoy buddy :)" << endl;
+			// Send the autoresponse
+			mAccount->engine()->sendIM(KopeteAway::getInstance()->message(), this, true);
+			// Build a pointerlist to insert this contact into
+			KopeteContactPtrList toContact;
+			toContact.append(this);
+			// Display the autoresponse
+			// Make it look different
+			// FIXME: hardcoded color
+			QString responseDisplay =
+				"<font color='#666699'>Autoresponse: </font>" +
+				KopeteAway::getInstance()->message();
+
+			KopeteMessage message(mAccount->myself(), toContact,
+				responseDisplay, KopeteMessage::Outbound, KopeteMessage::RichText);
+
+			manager()->appendMessage(message);
+			// Set the time we last sent an autoresponse
+			// which is right now
+			mLastAutoResponseTime = time(0L);
+		}
+	}
+#endif
 }
 
 bool OscarContact::waitAuth() const

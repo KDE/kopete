@@ -25,6 +25,8 @@
 #include <qobject.h>
 #include <qtextcodec.h>
 #include <qtimer.h>
+#include <qregexp.h>
+#include <qstylesheet.h>
 
 #include <kdebug.h>
 #include <kextsock.h>
@@ -585,7 +587,7 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 		kdDebug(14150) << k_funcinfo << "Socket is NOT open, can't write to it right now" << endl;
 		return;
 	}
-	
+
 	if(mBlockSend)
 	{
 		//add the packet to the queue (at the end)
@@ -598,7 +600,7 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 			mPacketQueue.push_back(outbuf);
 			outbuf = mPacketQueue.first();
 		}
-		
+
 		if(socket()->writeBlock(outbuf.buffer(), outbuf.length()) == -1)
 		{
 			kdDebug(14150) << k_funcinfo << "writeBlock() call failed!" << endl;
@@ -607,9 +609,9 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 				<< endl;
 		}
 		outbuf.clear(); // get rid of the buffer contents
-		
+
 	}
-	
+
 }
 
 // Logs in the user!
@@ -1094,10 +1096,12 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 	while(inbuf.length() > 4) //the last 4 bytes are the timestamp
 	{
 		SSI *ssi = new SSI;
-		char *name = inbuf.getBSTR(); //name
-		ssi->name = QString::fromLocal8Bit(name); // TODO: check encoding
-		if (name)
-			delete [] name;
+		const char *itemName = inbuf.getBSTR(); //name
+		ssi->name = ServerToQString(itemName, 0L, false); // just guess encoding
+		//ssi->name = QString::fromLocal8Bit(itemName);
+		if (itemName)
+			delete [] itemName;
+
 		ssi->gid = inbuf.getWord();
 		ssi->bid = inbuf.getWord();
 		ssi->type = inbuf.getWord(); //type of the entry
@@ -1120,6 +1124,10 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 			case 0x0000: // normal contact
 			{
 				bud = new AIMBuddy(ssi->bid, ssi->gid, ssi->name);
+
+				// In case we already know that contact
+				OscarContact *contact = static_cast<OscarContact*>(mAccount->contacts()[ssi->name]);
+
 				AIMGroup *group = blist.findGroup(ssi->gid);
 				QString groupName = "\"Group not found\"";
 				if (group)
@@ -1140,7 +1148,10 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 						case 0x0131: // nickname
 						{
 							if(t->length > 0)
-								bud->setAlias(QString::fromLocal8Bit(t->data));
+							{
+								bud->setAlias(ServerToQString(t->data, contact, false));
+								//bud->setalias(QString::fromLocal8Bit(t->data));
+							}
 							break;
 						}
 
@@ -1175,6 +1186,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 
 						default:
 						{
+							/*
 							kdDebug(14150) << k_funcinfo <<
 								"UNKNOWN TLV(" << t->type << "), length=" << t->length << endl;
 							QString tmpStr;
@@ -1187,6 +1199,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 									tmpStr += QString("\n");
 							}
 							kdDebug(14150) << k_funcinfo << tmpStr << endl;
+							*/
 							break;
 						}
 					} // END switch()
@@ -1238,7 +1251,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 				break;
 			}
 
-			case 0x0004:
+			case 0x0004: // Visibility Setting (probably ICQ only!)
 			{
 				Buffer tmpBuf(ssi->tlvlist, ssi->tlvlength);
 				QPtrList<TLV> lst = tmpBuf.getTLVList();
@@ -1299,8 +1312,9 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 	} // END while(inbuf.length() > 4)
 
 	blist.timestamp = inbuf.getDWord();
-	kdDebug(14150) << k_funcinfo << "Finished getting contact list, timestamp=" <<
-		blist.timestamp << endl;
+
+	kdDebug(14150) << k_funcinfo <<
+		"Finished getting contact list, timestamp=" << blist.timestamp << endl;
 
 	sendSSIActivate(); // send CLI_ROSTERACK
 	emit gotConfig(blist);
@@ -1318,7 +1332,8 @@ void OscarSocket::parseRosterOk(Buffer &inbuf)
 	kdDebug(14150) << k_funcinfo << "RECV (SRV_REPLYROSTEROK) " \
 		"received ack for contactlist timestamp/size" << endl;
 
-	//TODO: REPLYROSTEROK can happen on login if timestamp and length are both zero
+	// TODO: REPLYROSTEROK can happen on login if timestamp and length
+	// are both zero.
 	// That means the user has no serverside contactlist at all!
 	// I hope just going on with login works fine [mETz, 22.06.2003]
 
@@ -1596,9 +1611,9 @@ void OscarSocket::parseIM(Buffer &inbuf)
 		{
 			if (mIsICQ) // TODO: unify AIM and ICQ in this place
 			{
-				kdDebug(14150) << k_funcinfo << "IM received on channel 2 from " << u.sn << endl;
+				//kdDebug(14150) << k_funcinfo << "IM received on channel 2 from '" << u.sn << "'" << endl;
 				TLV tlv5tlv = inbuf.getTLV();
-				kdDebug(14150) << k_funcinfo << "The first TLV is of type " << tlv5tlv.type << endl;
+				//kdDebug(14150) << k_funcinfo << "The first TLV is of type " << tlv5tlv.type << endl;
 				if (tlv5tlv.type != 0x0005)
 				{
 					kdDebug(14150) << k_funcinfo << "Aborting because first TLV != TLV(5)" << endl;
@@ -1637,7 +1652,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 						if (len != 0x001b)
 							kdDebug(14150) << k_funcinfo << "wrong len till SEQ1!" << endl;
 						WORD tcpVer = messageBuf.getLEWord();
-						kdDebug(14150) << k_funcinfo << "len=" << len << ", tcpver=" << tcpVer << endl;
+						//kdDebug(14150) << k_funcinfo << "len=" << len << ", tcpver=" << tcpVer << endl;
 						char *cap=messageBuf.getBlock(16);
 						WORD unk1 = messageBuf.getLEWord();
 						DWORD unk2 = messageBuf.getLEDWord();
@@ -1665,7 +1680,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 					}
 					default: // TODO
 						break;
-				}
+				} // END switch(capFlag)
 
 				break;
 			}
@@ -1852,9 +1867,9 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 {
 	OscarContact *contact = static_cast<OscarContact*>(mAccount->contacts()[tocNormalize(u.sn)]);
 
-	bool moreTLVs=true; // Flag to indicate if there are more TLV's to parse
-	bool isAutoResponse=false; // This gets set if we are notified of an auto response
-	WORD length=0;
+	bool moreTLVs = true; // Flag to indicate if there are more TLV's to parse
+	bool isAutoResponse = false; // This gets set if we are notified of an auto response
+	WORD length = 0;
 
 	kdDebug(14150) << k_funcinfo << "RECV TYPE-1 IM from '" << u.sn << "'" << endl;
 
@@ -1869,14 +1884,14 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 				// This is the total length of the rest of this message TLV
 				length = inbuf.getWord();
 				TLV caps = inbuf.getTLV(); // TLV(1281), CAPABILITIES
-				if (caps.type==1281)
+				if (caps.type == 1281)
 				{
 					//kdDebug(14150) << k_funcinfo << "TLV(1281), CAPABILITIES" << endl;
 					Buffer capBuf(caps.data, caps.length);
+					/*
 					while(capBuf.length() > 0)
 					{
 						BYTE capPart = capBuf.getByte();
-						/*
 						kdDebug(14150) << k_funcinfo <<
 							"capPart = '" << capPart << "'" << endl;
 
@@ -1885,8 +1900,8 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 							kdDebug(14150) << k_funcinfo <<
 								"TLV(1281) says sender does UTF-8 :)" << endl;
 						}
-						*/
 					}
+					*/
 					capBuf.clear();
 				}
 				delete [] caps.data;
@@ -1903,93 +1918,34 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 					if (messageLength < 1)
 						break;
 
-					QTextCodec *codec = 0L;
-					QString message;
+					OscarMessage oMsg;
+
 					if (charsetNumber == 0x0002) // UCS-2BE (or UTF-16)
 					{
 						//kdDebug(14150) << k_funcinfo << "UTF-16BE message" << endl;
-						unsigned short *txt = msgBuf.getWordBlock((int)messageLength/2);
-						message = QString::fromUcs2(txt);
+						const unsigned short *txt = msgBuf.getWordBlock((int)messageLength/2);
+						oMsg.setText(QString::fromUcs2(txt), mIsICQ ? OscarMessage::Plain : OscarMessage::AimHtml);
 						delete [] txt;
 					}
 					else if (charsetNumber == 0x0003) // local encoding, usually iso8859-1
 					{
 						//kdDebug(14150) << k_funcinfo << "ISO8859-1 message" << endl;
 						const char *messagetext = msgBuf.getBlock(messageLength);
-						message = QString::fromLatin1(messagetext);
+						oMsg.setText(QString::fromLatin1(messagetext), mIsICQ ? OscarMessage::Plain : OscarMessage::AimHtml);
 						delete [] messagetext;
 					}
 					else
-					{	// BEGIN unknown or us-ascii
+					{ // BEGIN unknown or us-ascii
 						/*kdDebug(14150) << k_funcinfo <<
 							"Unknown encoding or US-ASCII, guessing encoding" << endl;*/
 						const char *messagetext = msgBuf.getBlock(messageLength);
-
-						if(contact)
-						{
-							if(contact->encoding() != 0)
-								codec=QTextCodec::codecForMib(contact->encoding());
-							else
-								codec=0L;
-
-							if(codec)
-							{
-								kdDebug(14150) << k_funcinfo <<
-									"using per-contact encoding, MIB=" << contact->encoding() << endl;
-							}
-						}
-
-						if(!codec) // no per-contact codec
-						{
-							int cresult = -1;
-							codec=QTextCodec::codecForMib(3); // US-ASCII
-
-							if(codec)
-							{
-								cresult=codec->heuristicContentMatch(messagetext, messageLength);
-								/*kdDebug(14150) << k_funcinfo <<
-									"result for US-ASCII=" << cresult <<
-									", message length=" << messageLength << endl;*/
-								if(cresult < messageLength-1)
-									codec=0L; // codec not appropriate
-							}
-
-							if(!codec)
-							{
-								codec=QTextCodec::codecForMib(106); //UTF-8
-								if(codec)
-								{
-									cresult=codec->heuristicContentMatch(messagetext, messageLength);
-									/*kdDebug(14150) << k_funcinfo <<
-										"result for UTF-8=" << cresult <<
-										", message length=" << messageLength << endl;*/
-									if(cresult < (messageLength/2)-1)
-										codec=0L;
-								}
-							}
-
-							if(!codec)
-							{
-								kdDebug(14150) << k_funcinfo <<
-									"Couldn't find suitable encoding for incoming message, " <<
-									"encoding using local system-encoding, TODO: sane fallback?" << endl;
-								codec=QTextCodec::codecForLocale();
-								// TODO: optionally have a per-account encoding as fallback!
-							}
-						}
-
-						kdDebug(14150) << k_funcinfo <<
-							"Decoding using codec '" << codec->name() << "'" << endl;
-
-						message = codec->toUnicode(messagetext);
+						oMsg.setText(ServerToQString(messagetext, contact, false),
+							mIsICQ ? OscarMessage::Plain : OscarMessage::AimHtml);
 						delete [] messagetext;
 					} // END unknown or us-ascii
 
-					/*kdDebug(14150) << k_funcinfo <<
-						"emit receivedMessage(), contact='" << u.sn <<
-						"', message='" << message << "'" << endl;*/
 
-					parseMessage(u, message, isAutoResponse ? MSG_AUTO : MSG_NORM, 0);
+					parseMessage(u, oMsg, isAutoResponse ? MSG_AUTO : MSG_NORM, 0);
 
 					msgBuf.clear();
 				}
@@ -2078,54 +2034,61 @@ void OscarSocket::parseServerIM(Buffer &inbuf, const UserInfo &u)
 		", type=" << msgtype <<
 		", flags=" << msgflags << endl;
 
-	char *msgText = tlv5.getLNTS();
-	QString message = QString::fromLatin1(msgText); // TODO: guess encoding (it's undefined)
+	// can be NULL if contact is not in contactlist!
+	OscarContact *contact = static_cast<OscarContact*>(mAccount->contacts()[u.sn]);
+
+	const char *msgText = tlv5.getLNTS();
+
+	OscarMessage oMsg;
+	oMsg.setText(ServerToQString(msgText, contact, false), OscarMessage::Plain);
+
 	delete [] msgText; // getBlock allocates memory, we HAVE to free it again!
 
-	parseMessage(u, message, msgtype, msgflags);
+	if(!oMsg.text().isEmpty())
+		parseMessage(u, oMsg, msgtype, msgflags);
 
-	kdDebug(14150) << k_funcinfo << "END" << endl;
+	//kdDebug(14150) << k_funcinfo << "END" << endl;
 } // END parseServerIM()
 
 
-void OscarSocket::parseMessage(const UserInfo &u, const QString &message, const BYTE type, const BYTE /*flags*/)
+void OscarSocket::parseMessage(const UserInfo &u, OscarMessage &message, const BYTE type, const BYTE /*flags*/)
 {
 	switch(type)
 	{
 		case MSG_AUTO:
 			kdDebug(14150) << k_funcinfo <<
-				"Got an automatic message: " << message << endl;
-			emit receivedAwayMessage(u.sn, message); // only sets contacts away message var
+				"Got an automatic message: " << message.text() << endl;
+			emit receivedAwayMessage(u.sn, message.text()); // only sets contacts away message var
 			emit receivedMessage(u.sn, message, Away); // also displays message in chatwin
 			break;
 		case MSG_NORM:
 			kdDebug(14150) << k_funcinfo <<
-				"Got a normal message: " << message << endl;
+				"Got a normal message: " << message.text() << endl;
 			emit receivedMessage(u.sn, message, Normal);
 			break;
 		case MSG_URL:
 			kdDebug(14150) << k_funcinfo <<
-				"Got an URL message: " << message << endl;
+				"Got an URL message: " << message.text() << endl;
 			emit receivedMessage(u.sn, message, URL);
 			break;
 		case MSG_AUTHREJ:
 			kdDebug(14150) << k_funcinfo <<
-				"Got an 'auth rejected' message: " << message << endl;
+				"Got an 'auth rejected' message: " << message.text() << endl;
 			emit receivedMessage(u.sn, message, DeclinedAuth);
 			break;
 		case MSG_AUTHACC:
 			kdDebug(14150) << k_funcinfo <<
-				"Got an 'auth granted' message: " << message << endl;
+				"Got an 'auth granted' message: " << message.text() << endl;
 			emit receivedMessage(u.sn, message, GrantedAuth);
 			break;
 		case MSG_WEB:
 			kdDebug(14150) << k_funcinfo <<
-				"Got a web panel message: " << message << endl;
+				"Got a web panel message: " << message.text() << endl;
 			emit receivedMessage(u.sn, message, WebPanel);
 			break;
 		case MSG_EMAIL:
 			kdDebug(14150) << k_funcinfo <<
-				"Got an email message: " << message << endl;
+				"Got an email message: " << message.text() << endl;
 			emit receivedMessage(u.sn, message, EMail);
 			break;
 		case MSG_CHAT:
@@ -2133,14 +2096,14 @@ void OscarSocket::parseMessage(const UserInfo &u, const QString &message, const 
 		case MSG_CONTACT:
 		case MSG_EXTENDED:
 			kdDebug(14150) << k_funcinfo <<
-				"Got an unsupported message, dropping: " << message << endl;
+				"Got an unsupported message, dropping: " << message.text() << endl;
 			break; // TODO: unsupported and for now dropped messages
 		default:
 			kdDebug(14150) << k_funcinfo <<
-				"Got unknown message type, treating as normal: " << message << endl;
+				"Got unknown message type, treating as normal: " << message.text() << endl;
 			emit receivedMessage(u.sn, message, Normal);
 			break;
-	}
+	} // END switch
 }
 
 
@@ -3767,15 +3730,17 @@ FLAP OscarSocket::getFLAP()
 }
 
 // Called when a direct IM is received
-void OscarSocket::OnDirectIMReceived(QString message, QString sender,
-	bool isAuto)
+void OscarSocket::OnDirectIMReceived(QString message, QString sender, bool isAuto)
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
-	//for now, let's just emit a gotIM as though it came from the server
+
+	OscarMessage oMsg;
+	oMsg.setText(message, OscarMessage::Plain);
+
 	if(isAuto)
-		emit receivedMessage(sender, message, Away);
+		emit receivedMessage(sender, oMsg, Away);
 	else
-		emit receivedMessage(sender, message, Normal);
+		emit receivedMessage(sender, oMsg, Normal);
 }
 
 // Called when a direct IM connection suffers an error
@@ -4007,15 +3972,18 @@ void OscarSocket::parseAuthReply(Buffer &inbuf)
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 
-	char *cb=inbuf.getBUIN();
-	QString contact=QString::fromLocal8Bit(cb); // TODO: encoding
-	delete [] cb;
+	char *tmp = 0L;
+	BYTE grant = 0;
 
-	BYTE grant=inbuf.getByte();
+	tmp = inbuf.getBUIN();
+	QString contact = ServerToQString(tmp, 0L, false);
+	delete [] tmp;
 
-	char *r=inbuf.getBSTR();
-	QString reason=QString::fromLocal8Bit(r); // TODO: encoding
-	delete []r;
+	grant = inbuf.getByte();
+
+	tmp = inbuf.getBSTR();
+	QString reason = ServerToQString(tmp, 0L, false);
+	delete [] tmp;
 
 	emit gotAuthReply(contact, reason, (grant==0x01));
 }
@@ -4034,6 +4002,145 @@ void OscarSocket::sendBuddylistAdd(QStringList &contacts)
 		outbuf.addString(contact, contact.length());
 	}
 	sendBuf(outbuf,0x02);
+}
+
+
+
+const QString OscarSocket::ServerToQString(const char* string, OscarContact *contact, bool isUtf8)
+{
+	//kdDebug(14150) << k_funcinfo << "called" << endl;
+
+	int length = strlen(string);
+	int cresult = -1;
+	QTextCodec *codec = 0L;
+
+	if(contact != 0L)
+	{
+		if(contact->encoding() != 0)
+			codec = QTextCodec::codecForMib(contact->encoding());
+		else
+			codec = 0L;
+#ifdef CHARSET_DEBUG
+		if(codec)
+		{
+			kdDebug(14150) << k_funcinfo <<
+				"using per-contact encoding, MIB=" << contact->encoding() << endl;
+		}
+#endif
+	}
+
+	if(!codec && isUtf8) // in case the per-contact codec didn't work we check if the caller thinks this message is utf8
+	{
+		codec = QTextCodec::codecForMib(106); //UTF-8
+		if(codec)
+		{
+			cresult = codec->heuristicContentMatch(string, length);
+#ifdef CHARSET_DEBUG
+			kdDebug(14150) << k_funcinfo <<
+				"result for FORCED UTF-8 = " << cresult <<
+				", message length = " << length << endl;
+#endif
+			/*if(cresult < (length/2)-1)
+				codec = 0L;*/
+		}
+	}
+
+	if(!codec) // no per-contact codec, guessing starts here :)
+	{
+		codec = QTextCodec::codecForMib(3); // US-ASCII
+
+		if(codec)
+		{
+			cresult=codec->heuristicContentMatch(string, length);
+#ifdef CHARSET_DEBUG
+			kdDebug(14150) << k_funcinfo <<
+				"result for US-ASCII=" << cresult <<
+				", message length=" << length << endl;
+#endif
+			if(cresult < length-1)
+				codec=0L; // codec not appropriate
+		}
+
+		if(!codec)
+		{
+			codec = QTextCodec::codecForMib(106); //UTF-8
+			if(codec)
+			{
+				cresult = codec->heuristicContentMatch(string, length);
+#ifdef CHARSET_DEBUG
+				kdDebug(14150) << k_funcinfo <<
+					"result for UTF-8=" << cresult <<
+					", message length=" << length << endl;
+#endif
+				if(cresult < (length/2)-1)
+					codec = 0L;
+			}
+		}
+
+		if(!codec)
+		{
+			kdDebug(14150) << k_funcinfo <<
+				"Couldn't find suitable encoding for incoming message, " <<
+				"encoding using local system-encoding, TODO: sane fallback?" << endl;
+			codec = QTextCodec::codecForLocale();
+			// TODO: optionally have a per-account encoding as fallback!
+		}
+	}
+
+#ifdef CHARSET_DEBUG
+	kdDebug(14150) << k_funcinfo <<
+		"Decoding using codec '" << codec->name() << "'" << endl;
+#endif
+
+	return codec->toUnicode(string);
+}
+
+
+OscarMessage::OscarMessage()
+{
+	timestamp = QDateTime::currentDateTime();
+}
+
+void OscarMessage::setText(const QString &txt, MessageFormat format)
+{
+	if(format == AimHtml)
+	{
+		mText = txt;
+		mText.replace( QRegExp(
+			QString::fromLatin1("<[hH][tT][mM][lL].*>(.*)</[hH][tT][mM][lL]>") ),
+			QString::fromLatin1("\\1") );
+		mText.replace( QRegExp(
+			QString::fromLatin1("<[bB][oO][dD][yY].*>(.*)</[bB][oO][dD][yY]>") ),
+			QString::fromLatin1("\\1") );
+		mText.replace( QRegExp(
+			QString::fromLatin1("<[bB][rR]>") ),
+			QString::fromLatin1("<br />") );
+		mText.replace( QRegExp(
+			QString::fromLatin1("<[fF][oO][nN][tT].*[bB][aA][cC][kK]=(.*).*>") ),
+			QString::fromLatin1("<span style=\"background-color:\\1 ;\"") );
+		mText.replace( QRegExp(
+			QString::fromLatin1("</[fF][oO][nN][tT]>") ),
+			QString::fromLatin1("</span>") );
+	}
+	else if (format == Plain)
+	{
+		mText = QStyleSheet::escape(txt);
+		mText.replace(QString::fromLatin1("\n"),
+			QString::fromLatin1("<br/>"));
+		mText.replace(QString::fromLatin1("\t"),
+			QString::fromLatin1("&nbsp;&nbsp;&nbsp;&nbsp; "));
+		mText.replace(QRegExp(QString::fromLatin1("\\s\\s")),
+			QString::fromLatin1("&nbsp; "));
+	}
+	else
+	{
+	// TODO: rtf
+	}
+}
+
+const QString &OscarMessage::text()
+{
+	return mText;
 }
 
 #include "oscarsocket.moc"

@@ -67,7 +67,9 @@ class OscarContact : public KopeteContact
 		const QString &contactName() const { return mName; };
 		OscarAccount *account() const { return mAccount; };
 
-		virtual void gotIM(OscarSocket::OscarMessageType type, const QString &message) = 0;
+		//virtual void gotIM(OscarSocket::OscarMessageType type, const QString &message) = 0;
+		//void receivedIM(OscarSocket::OscarMessageType type, const OscarMessage &msg);
+		void receivedIM(KopeteMessage &msg);
 
 		/*
 		 * Convert between internal status representation
@@ -218,7 +220,7 @@ class OscarContact : public KopeteContact
 		bool mDirectlyConnected;
 
 		int mEncoding;
-		int mGroupId; 
+		int mGroupId;
 
 		QString mAwayMessage;
 };

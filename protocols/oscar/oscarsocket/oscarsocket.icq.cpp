@@ -209,23 +209,36 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 		case 0x0041: //SRV_OFFLINEMSG
 		{
-			QString uin = QString::number(fromicqsrv.getLEDWord());
-			/*WORD year =*/ fromicqsrv.getLEWord();
-			/*BYTE month =*/ fromicqsrv.getLEByte();
-			/*BYTE day =*/ fromicqsrv.getLEByte();
-			/*BYTE hour =*/ fromicqsrv.getLEByte();
-			/*BYTE minute =*/ fromicqsrv.getLEByte();
+			OscarMessage oMsg;
+			UserInfo u;
+
+			u.sn = QString::number(fromicqsrv.getLEDWord());
+			// !Can be NULL if contact is not in contactlist
+			OscarContact *contact = static_cast<OscarContact*>(mAccount->contacts()[u.sn]);
+
+
+			// BEGIN packet parsing
+			WORD year = fromicqsrv.getLEWord();
+			BYTE month = fromicqsrv.getLEByte();
+			BYTE day = fromicqsrv.getLEByte();
+			BYTE hour = fromicqsrv.getLEByte();
+			BYTE minute = fromicqsrv.getLEByte();
 			BYTE msgtype = fromicqsrv.getByte();
 			BYTE msgflags = fromicqsrv.getByte();
+			const char *msgString = fromicqsrv.getLELNTS(); // Get the message
+			// END packet parsing
 
-			char *msg = fromicqsrv.getLELNTS(); // Get the message
-			QString message = QString::fromLocal8Bit(msg); // TODO: convert undefined encoding to QString
-			delete [] msg;
+			QDate date;
+			date.setYMD((int)year,(int)month,(int)day);
+			QTime time;
+			time.setHMS((int)hour, (int)minute, 0);
+			oMsg.timestamp.setDate(date);
+			oMsg.timestamp.setTime(time);
+			oMsg.setText(ServerToQString(msgString, contact, false), OscarMessage::Plain);
 
-			UserInfo u;
-			u.sn = uin;
+			delete [] msgString;
 
-			parseMessage(u, message, msgtype, msgflags);
+			parseMessage(u, oMsg, msgtype, msgflags);
 			break;
 		}
 
@@ -319,48 +332,66 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					char *tmptxt;
 					ICQGeneralUserInfo res;
 
+					// FIXME: we need to know the oscarcontact this packet was received for!
+					OscarContact *contact = 0L;
+
 					tmptxt = fromicqsrv.getLELNTS();
-					res.nickName = QString::fromLocal8Bit(tmptxt);
+					kdDebug(14150) << k_funcinfo << "converting nickname string" << endl;
+					res.nickName = ServerToQString(tmptxt, contact);
+					//res.nickName = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
-					res.firstName = QString::fromLocal8Bit(tmptxt);
+					kdDebug(14150) << k_funcinfo << "converting firstname string" << endl;
+					res.firstName = ServerToQString(tmptxt, contact);
+					//res.firstName = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
-					res.lastName = QString::fromLocal8Bit(tmptxt);
+					kdDebug(14150) << k_funcinfo << "converting lastname string" << endl;
+					res.lastName = ServerToQString(tmptxt, contact);
+					//res.lastName = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
-					res.eMail = QString::fromLocal8Bit(tmptxt);
+					kdDebug(14150) << k_funcinfo << "converting email string" << endl;
+					res.eMail = ServerToQString(tmptxt, contact);
+					//res.eMail = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
-					res.city = QString::fromLocal8Bit(tmptxt);
+					res.city = ServerToQString(tmptxt, contact);
+					//res.city = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
-					res.state = QString::fromLocal8Bit(tmptxt);
+					res.state = ServerToQString(tmptxt, contact);
+					//res.state = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
-					res.phoneNumber = QString::fromLocal8Bit(tmptxt);
+					res.phoneNumber = ServerToQString(tmptxt, contact);
+					//res.phoneNumber = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
-					res.faxNumber = QString::fromLocal8Bit(tmptxt);
+					res.faxNumber = ServerToQString(tmptxt, contact);
+					//res.faxNumber = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
-					res.street = QString::fromLocal8Bit(tmptxt);
+					res.street = ServerToQString(tmptxt, contact);
+					//res.street = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
-					res.cellularNumber = QString::fromLocal8Bit(tmptxt);
+					res.cellularNumber = ServerToQString(tmptxt, contact);
+					//res.cellularNumber = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
-					res.zip = QString::fromLocal8Bit(tmptxt);
+					res.zip = ServerToQString(tmptxt, contact);
+					//res.zip = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					res.countryCode = fromicqsrv.getLEWord();
@@ -766,7 +797,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 		", status=" << status <<
 		", priority=" << priority << endl;
 
-	char *messagetext = messageBuf.getLNTS();
+	const char *messagetext = messageBuf.getLNTS();
 
 	switch(msgType)
 	{
@@ -785,36 +816,46 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 		case MSG_URL:
 		{
 			kdDebug(14150) << k_funcinfo << "RECV TYPE-2 IM, normal/auto message" << endl;
+			OscarMessage oMsg;
 
-			/*DWORD fgColor =*/ messageBuf.getLEDWord();
-			/*DWORD bgColor =*/ messageBuf.getLEDWord();
+			BYTE r = messageBuf.getLEByte();
+			BYTE g = messageBuf.getLEByte();
+			BYTE b = messageBuf.getLEByte();
+			/*BYTE n =*/ messageBuf.getLEByte();
+			//kdDebug(14150) << k_funcinfo << "fg color=(" << r << ", " << g << ", " << b << ", " << n << ")" << endl;
+			oMsg.fgColor.setRgb((int)r, (int)g, (int)b);
+
+			r = messageBuf.getLEByte();
+			g = messageBuf.getLEByte();
+			b = messageBuf.getLEByte();
+			/*n =*/ messageBuf.getLEByte();
+			oMsg.bgColor.setRgb((int)r, (int)g, (int)b);
 
 			bool utf = false;
 			if(messageBuf.length() > 0)
 			{
 				DWORD guidlen = messageBuf.getLEDWord();
 				char *guid = messageBuf.getBlock(guidlen);
-				kdDebug(14150) << k_funcinfo <<
-					"TYPE-2 guid='" << guid << "'" << endl;
-
 				if(QString::fromLatin1(guid) == QString::fromLatin1("{0946134E-4C7F-11D1-8222-444553540000}"))
 				{
-					kdDebug(14150) << k_funcinfo << "Peer announces message is UTF!" << endl;
+					//kdDebug(14150) << k_funcinfo << "Peer announces message is UTF!" << endl;
 					utf = true;
+				}
+				else
+				{
+					kdDebug(14150) << k_funcinfo <<
+					"TYPE-2 guid (not UTF GUID!) = '" << guid << "'" << endl;
 				}
 				delete [] guid;
 			}
 
-			kdDebug(14150) << k_funcinfo << "messagetext='" << messagetext << "'" << endl;
+			//kdDebug(14150) << k_funcinfo << "messagetext='" << messagetext << "'" << endl;
 
-			QString message;
-			if(utf)
-				message = QString::fromUtf8(messagetext);
-			else
-				message = QString::fromLatin1(messagetext); // TODO: encoding
+			OscarContact *contact = static_cast<OscarContact*>(mAccount->contacts()[tocNormalize(user.sn)]);
+			oMsg.setText(ServerToQString(messagetext, contact, utf), OscarMessage::Plain);
 
-			if(!message.isEmpty())
-				parseMessage(user, message, msgType, msgFlags);
+			if(!oMsg.text().isEmpty())
+				parseMessage(user, oMsg, msgType, msgFlags);
 
 			kdDebug(14150) << k_funcinfo <<
 				"SEND ACKMSG, status=" << ackStatus <<
@@ -972,14 +1013,13 @@ bool OscarSocket::sendType2IM(OscarContact *c, const QString &text, WORD type)
 			tlv10001.addWord(status); // own status + a bit of bit-fscking
 			tlv10001.addWord(flags); // message flags/priority
 
-			const char *str = text.latin1();
+			const char *str = text.latin1(); // TODO: encoding
 
 			int len = strlen(str);
 			tlv10001.addLEWord(len+1);
 			tlv10001.addString(str, len);
 			tlv10001.addByte(0x00);
 
-			//tlv10001.addLNTS(text.latin1()); // TODO: encoding
 			if(type == MSG_NORM)
 			{
 				tlv10001.addDWord(0x00000000); // fg color

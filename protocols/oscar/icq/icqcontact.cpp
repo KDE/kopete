@@ -136,6 +136,7 @@ void ICQContact::slotOffgoingBuddy(QString sender)
 	slotUpdateBuddy();
 }
 
+#if 0
 void ICQContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &message)
 {
 	// Build a KopeteMessage and set the body as Rich Text
@@ -145,6 +146,7 @@ void ICQContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &me
 		KopeteMessage::RichText);
 	manager(true)->appendMessage(msg);
 }
+#endif
 
 void ICQContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 {

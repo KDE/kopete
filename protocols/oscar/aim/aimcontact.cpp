@@ -119,13 +119,14 @@ KActionCollection *AIMContact::customContextMenuActions()
 
 KopeteMessageManager* AIMContact::manager(bool)
 {
+	//kdDebug(14190) << k_funcinfo << "called" << endl;
 	// Check to see if we already have a message manager
 	if (!mMsgManager)
 	{
 		// The true flag here is to tell OscarContact that
 		// it can create the message mananger if it
 		// doesn't exist, which is the case here.
-		OscarContact::manager( true );
+		OscarContact::manager(true);
 
 		// Connect the typing signal to the slot here
 		QObject::connect(mMsgManager, SIGNAL(typingMsg(bool)),
@@ -177,7 +178,7 @@ void AIMContact::slotGotMiniType(const QString &screenName, int type)
 //	kdDebug(14190) << k_funcinfo << "Got minitype notification for " << contactName() << endl;
 
 	// Only if we already have a message manager
-	if(!mMsgManager)
+	if(mMsgManager == 0L)
 		return;
 
 	switch(type)
@@ -247,9 +248,7 @@ void AIMContact::slotOffgoingBuddy(QString sn)
 	slotUpdateBuddy();
 }
 
-// Called when an IM is received
-
-//void AIMContact::slotIMReceived( QString message, QString sender, bool /* isAuto */ )
+#if 0
 void AIMContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &message)
 {
 	// Tell the message manager that the buddy is done typing
@@ -290,6 +289,7 @@ void AIMContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &me
 		}
 	}
 }
+#endif
 
 void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 {
@@ -349,6 +349,7 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	manager()->messageSucceeded();
 }
 
+#if 0
 KopeteMessage AIMContact::parseAIMHTML(const QString &m)
 {
 /* ========================================================================================
@@ -412,6 +413,7 @@ AIM 5.2 with fg and bg set for some text: --------------------------------------
 
 	return msg;
 }
+#endif
 
 void AIMContact::slotUserInfo()
 {

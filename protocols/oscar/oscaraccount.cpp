@@ -85,8 +85,8 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 		this, SLOT(slotError(QString, int)));
 
 	QObject::connect(
-		engine(), SIGNAL(receivedMessage(const QString &, const QString &, OscarSocket::OscarMessageType)),
-		this, SLOT(slotReceivedMessage(const QString &, const QString &, OscarSocket::OscarMessageType)));
+		engine(), SIGNAL(receivedMessage(const QString &, OscarMessage &, OscarSocket::OscarMessageType)),
+		this, SLOT(slotReceivedMessage(const QString &, OscarMessage &, OscarSocket::OscarMessageType)));
 
 	QObject::connect(
 		engine(), SIGNAL(receivedAwayMessage(const QString &, const QString &)),
@@ -180,13 +180,13 @@ void OscarAccount::slotError(QString errmsg, int errorCode)
 		i18n("Connection Lost - ICQ Plugin"), KMessageBox::Notify);
 }
 
-void OscarAccount::slotReceivedMessage(const QString &sender, const QString &incomingMessage, OscarSocket::OscarMessageType type)
+void OscarAccount::slotReceivedMessage(const QString &sender, OscarMessage &incomingMessage, OscarSocket::OscarMessageType type)
 {
 	kdDebug(14150) << k_funcinfo << "account='" << accountId() <<
 		"', type=" << static_cast<int>(type) << ", sender='" << sender << "'" << endl;
 
 	OscarContact *contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
-	QString message = incomingMessage;
+	QString text = incomingMessage.text();
 
 	if(!contact && !mIgnoreUnknownContacts)
 	{
@@ -205,57 +205,56 @@ void OscarAccount::slotReceivedMessage(const QString &sender, const QString &inc
 			return; // adding contact failed for whatever reason!
 	}
 
-	// AIM usually contains HTML, do not escape then
-	if(mEngine->isICQ())
-	{
-		message = QStyleSheet::escape(message);
-		message.replace(QString::fromLatin1("\n"),
-			QString::fromLatin1("<br/>"));
-		message.replace(QString::fromLatin1("\t"),
-			QString::fromLatin1("&nbsp;&nbsp;&nbsp;&nbsp;"));
-		message.replace(QRegExp(QString::fromLatin1("\\s\\s")),
-			QString::fromLatin1("&nbsp; "));
-	}
-
 	if (contact)
 	{
 		switch(type)
 		{
 			case OscarSocket::Away:
-				message=i18n("<b>[Away Message:]</b> %1").arg(message);
+				text = i18n("<b>[Away Message:]</b> %1").arg(text);
 				break;
 
 			case OscarSocket::URL:
-				message.replace("þ", "<br />");
-				message=i18n("<b>[URL Message:]</b> %1").arg(message);
+				text.replace("þ", "<br />");
+				text=i18n("<b>[URL Message:]</b> %1").arg(text);
 				break;
 
 			case OscarSocket::SMS:
-				message=i18n("<b>[SMS Message:]</b> %1").arg(message);
+				text=i18n("<b>[SMS Message:]</b> %1").arg(text);
 				break;
 
 			case OscarSocket::EMail:
-				message=i18n("<b>[Email Message:]</b> %1").arg(message);
+				text=i18n("<b>[Email Message:]</b> %1").arg(text);
 				break;
 
 			case OscarSocket::WebPanel:
-				message.replace(QString::fromLatin1("þþþ"), QString::fromLatin1("<br />"));
-				message.replace(QString::fromLatin1("þ3þ"), QString::fromLatin1("<br />"));
-				message=i18n("<b>[WebPanel Message:]</b> %1").arg(message);
+				text.replace(QString::fromLatin1("þþþ"), QString::fromLatin1("<br />"));
+				text.replace(QString::fromLatin1("þ3þ"), QString::fromLatin1("<br />"));
+				text=i18n("<b>[WebPanel Message:]</b> %1").arg(text);
 				break;
 
 			case OscarSocket::Normal:
 				break;
 
 			case OscarSocket::GrantedAuth:
-				message=i18n("<b>[Granted authentication:]</b> %1").arg(message);
+				text=i18n("<b>[Granted authentication:]</b> %1").arg(text);
 				break;
 
 			case OscarSocket::DeclinedAuth:
-				message=i18n("<b>[Declined authentication:]</b> %1").arg(message);
+				text=i18n("<b>[Declined authentication:]</b> %1").arg(text);
 				break;
 		}
-		contact->gotIM(type, message);
+
+		KopeteContactPtrList tmpList;
+		tmpList.append(myself());
+
+		KopeteMessage kmsg(
+			incomingMessage.timestamp, contact, tmpList, text, KopeteMessage::Inbound,
+			KopeteMessage::RichText);
+
+		kmsg.setFg(incomingMessage.fgColor);
+		kmsg.setBg(incomingMessage.bgColor);
+
+		contact->receivedIM(kmsg);
 	}
 }
 

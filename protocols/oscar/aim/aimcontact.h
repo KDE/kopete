@@ -48,7 +48,7 @@ class AIMContact : public OscarContact
 		 */
 		void setOwnProfile(const QString &profile);
 
-		virtual void gotIM(OscarSocket::OscarMessageType type, const QString &message);
+		//virtual void gotIM(OscarSocket::OscarMessageType type, const QString &message);
 
 	protected:
 		/**
