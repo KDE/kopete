@@ -102,6 +102,7 @@ class JabberContact:public KopeteContact {
     void slotChatThisUser();
     void slotEmailUser();
     void slotSnarfVCard();
+	void slotUpdateNickname(const QString);
 
   signals:
 //    void statusChanged();

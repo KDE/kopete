@@ -96,7 +96,7 @@ void dlgJabberVCard::slotClose()
  */
 void dlgJabberVCard::slotSaveNickname()
 {
-
+	emit updateNickname(leNickname->text());
 }
 
 #include "dlgjabbervcard.moc"

@@ -17,6 +17,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 #include <qfont.h>
 #include <kconfig.h>
 
@@ -449,6 +450,7 @@ void JabberContact::slotSnarfVCard() {
 void JabberContact::slotGotVCard(JT_VCard *vCard) {
 	kdDebug() << "[JabberContact] Got vCard for user " << vCard->jid << ", displaying." << endl;
 	dlgVCard = new dlgJabberVCard(kopeteapp->mainWindow(), "dlgJabberVCard", vCard);
+	QObject::connect(dlgVCard, SIGNAL(updateNickname(const QString)), SLOT(slotUpdateNickname(const QString)));
 	dlgVCard->show();
 	dlgVCard->raise();
 }
@@ -488,6 +490,21 @@ QString JabberContact::data() const { return mUserID; }
 
 JabberResource::JabberResource() {
 	kdDebug() << "Jabber resource: New Jabber resource (no params)." << endl;
+}
+
+void JabberContact::slotUpdateNickname(const QString newNickname)
+{
+	kdDebug() << "JabberContact::slotUpdateNickname( " << newNickname << " )" << endl;
+	
+	if ( newNickname == displayName() ) // no changes in nick
+		return;
+	if (newNickname == "")
+	{
+		KMessageBox::sorry(0L, i18n("There should be at least one character for the nickname!"), i18n("No nickname"));
+		return;
+	}	
+	mProtocol->renameContact(mUserID, newNickname, mGroup);
+	setDisplayName( newNickname );
 }
 
 JabberResource::JabberResource(const QString &resource, const int &priority, const QDateTime &timestamp, const int &status, const QString &reason) {

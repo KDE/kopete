@@ -35,6 +35,9 @@ class dlgJabberVCard : public dlgVCard
 	public slots:
 		void slotClose();
 		void slotSaveNickname();
+
+	signals:
+		void updateNickname(const QString);		
 };
 
 #endif // DLGJABBERVCARD_H
