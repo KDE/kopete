@@ -97,6 +97,8 @@ Account::~Account()
 
 	emit accountDestroyed(this);
 
+/*	if ( d->myself )
+		delete d->myself;*/
 	delete d->configGroup;
 	delete d;
 }
@@ -370,6 +372,8 @@ void Account::setMyself( Contact *myself )
 
 	d->myself = myself;
 
+	d->contacts.remove( myself->contactId() );
+	
 	QObject::connect( d->myself, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 		this, SLOT( slotOnlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
 
