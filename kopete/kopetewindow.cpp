@@ -80,7 +80,7 @@ void KopeteWindow::initActions ( void )
 
 	actionConnectionMenu = new KActionMenu( i18n("Connection"),"connect_established",
 							actionCollection(), "Connection" );
-	
+
 	actionConnectionMenu->insert(actionConnect);
 	actionConnectionMenu->insert(actionDisconnect);
 
@@ -101,7 +101,7 @@ void KopeteWindow::initActions ( void )
 	actionShowTransfers = new KAction( i18n("Show &File Transfers"),"network", 0 ,
 							kopeteapp, SLOT(slotShowTransfers()),
 							actionCollection(), "ShowTransfers" );
-	
+
 	actionPrefs = KStdAction::preferences(kopeteapp, SLOT(slotPreferences()), actionCollection());
 
 //	actionQuit = KStdAction::quit(kopeteapp, SLOT(slotExit()), actionCollection());
@@ -151,14 +151,14 @@ bool KopeteWindow::queryExit()
 void KopeteWindow::loadOptions(void)
 {
 	KConfig *config = KGlobal::config();
-  
+
 	toolBar("mainToolBar")->applySettings( config, "ToolBar Settings" );
 
 	applyMainWindowSettings ( config, "General Options" );
 
 	QPoint pos = config->readPointEntry("Position");
 	move(pos);
-	
+
 	QSize size = config->readSizeEntry("Geometry");
 	if(!size.isEmpty())
 	{
@@ -181,7 +181,7 @@ void KopeteWindow::loadOptions(void)
 		if ( !config->readBoolEntry("StartDocked", false) )
 			show();
 	}
-	
+
 	toolbarAction->setChecked( !toolBar("mainToolBar")->isHidden() );
 }
 
@@ -228,7 +228,7 @@ void KopeteWindow::slotExecuted( QListViewItem *item )
 		contactvi->contact()->execute();
 }
 
-void KopeteWindow::closeEvent(QCloseEvent *e)
+void KopeteWindow::closeEvent(QCloseEvent */*e*/)
 {
 #if KDE_VERSION >= 305
         KMessageBox::information(this,

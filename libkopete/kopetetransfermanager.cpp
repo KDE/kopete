@@ -58,7 +58,7 @@ void KopeteTransfer::slotPercentCompleted(unsigned int percent)
 		setText(3, i18n("Finished"));
 	else
 		setText(3, i18n("Transferring"));
-		
+
 	kopeteapp->transferManager()->paintProgressBar(this, percent);
 }
 
@@ -77,21 +77,21 @@ void KopeteTransferManager::paintProgressBar(QListViewItem *item, const int curr
 	QPixmap pixmap(width, (item->height() - 4));
 	pixmap.fill(QColor(255,255,255));
 	QPainter p(&pixmap);
-	int fillWidth = (width * ( (double)currentPercent/100 ) );
-	
+	int fillWidth = static_cast<int>(width * ( (double)currentPercent/100 ) );
+
 	// This makes the percentage bar colored coded according to how far it is in the transfer
 	QColor blendColor;
 	blendColor.setHsv(currentPercent, 255, 204); // Oh, I know, I'm good :)
 	p.fillRect(0, 0, fillWidth, item->height(), blendColor);
-	
+
 	// The following is to align and draw the percentage text in the center
 	QString percentText = QString(QString::number(currentPercent) + "%");
 	int textWidth = (item->listView()->fontMetrics().width(percentText) / 2);
 	int newWidth = ( width / 2 );
-	int startPosY = ((double)item->height() /2) + 2;
+	int startPosY = static_cast<int>(((double)item->height() /2) + 2);
 	int startPosX = newWidth - textWidth;
 	p.drawText(startPosX, startPosY, percentText);
-	
+
 	p.end();
 	item->setPixmap(4, pixmap);
 }
