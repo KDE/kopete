@@ -91,17 +91,10 @@ void YahooContact::syncToServer()
 
 	if(!static_cast<YahooAccount *>(account())->isOnServer(m_userId))
 	{	kdDebug(14180) << "Contact " << m_userId << " doesn't exist on server-side. Adding..." << endl;
+
 		KopeteGroupList groupList = metaContact()->groups();
-		QStringList theGroups;
-
 		for( KopeteGroup *g = groupList.first(); g; g = groupList.next() )
-		{
-			theGroups.append( g->displayName() );
-		}
-
-		if(!theGroups.size()) theGroups += "Exported Kopete contacts";
-		for(unsigned j = 0; j < theGroups.size(); j++)
-			static_cast<YahooAccount *>(account())->yahooSession()->addBuddy(m_userId, theGroups[j]);
+			static_cast<YahooAccount *>(account())->yahooSession()->addBuddy(m_userId, g->displayName() );
 	}
 }
 

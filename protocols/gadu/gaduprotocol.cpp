@@ -196,13 +196,6 @@ bool GaduProtocol::addContactToMetaContact( const QString &contactId, const QStr
 {
     uin_t uinNumber = contactId.toUInt();
 
-    KopeteGroupList groupList = parentContact->groups();
-    QStringList l;
-
-    for ( KopeteGroup *g = groupList.first(); g; g = groupList.next() ) {
-        l.append( g->displayName() );
-    }
-
     if ( !parentContact->findContact( pluginId(), myself_->contactId(), contactId ) ) {
         GaduContact *newContact = new GaduContact( pluginId(), uinNumber, displayName, parentContact );
         newContact->setParentIdentity( QString::number( userUin_ ) );
