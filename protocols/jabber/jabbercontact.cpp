@@ -370,18 +370,8 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 
 	if ( !vCard.fullName().isEmpty () && vCard.givenName().isEmpty () && vCard.familyName().isEmpty () )
 	{
-		QString firstName = vCard.fullName().section ( ' ', 0, 0 );
-		QString lastName = vCard.fullName().section ( ' ', 1, 1 );
-		
-		// if a "," is found, remove it and switch names
-		// (format was then probably "Lastname, Firstname")
-		if ( firstName.find ( ',' ) != -1 )
-		{
-			firstName = firstName.remove ( ',' );
-			QString tmp = lastName;
-			lastName = firstName;
-			firstName = tmp;
-		}
+		QString lastName = vCard.fullName().section ( ' ', 0, -1 );
+		QString firstName = vCard.fullName().left(vCard.fullName().length () - lastName.length ()).stripWhiteSpace ();
 		
 		setProperty ( protocol()->propFirstName, firstName );
 		setProperty ( protocol()->propLastName, lastName );
