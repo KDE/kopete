@@ -21,6 +21,7 @@ class KPushButton;
 namespace KTextEditor {
 	class View;
 	class Document;
+	class ClipboardInterface;
 }
 
 class QListViewItem;
@@ -39,7 +40,17 @@ public:
     KListView* scriptView;
     KTextEditor::View* editArea;
     KTextEditor::Document* editDocument;
-
+    
+    void setHighlight();
+    
+private:
+    KTextEditor::ClipboardInterface *cp;
+    
+private slots:
+    void slotCut();
+    void slotCopy();
+    void slotPaste();
+    
 protected:
 
 protected slots:

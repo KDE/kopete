@@ -6,7 +6,7 @@ kopete_perlscript_la_SOURCES     = perlscriptplugin.cpp perlscriptprefs.cpp perl
 	addscriptdialog.cpp addscriptdialog.h
 kopete_perlscript_la_METASOURCES = AUTO
 kopete_perlscript_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
-kopete_perlscript_la_LIBADD      = ../../libkopete/libkopete.la $(LIBPERL_LIBS)
+kopete_perlscript_la_LIBADD      = ../../libkopete/libkopete.la $(LIBPERL_LIBS) -lktexteditor
 
 data_DATA = perlscript.plugin
 datadir = $(kde_datadir)/kopete

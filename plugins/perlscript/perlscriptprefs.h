@@ -25,7 +25,7 @@
 
 class PerlScriptPrefsUI;
 class QListViewItem;
-
+class PerlPlugin;
 class PerlScriptPreferences : public ConfigModule
 {
 Q_OBJECT
@@ -46,6 +46,7 @@ private:
 	PerlScriptPrefsUI *preferencesDialog;
 	int scriptsLoaded;
 	QStringList m_scripts;
+	PerlPlugin *m_parent;
 
 private slots:
 	void slotAddScript( const QString &scriptPath, const QString &scriptName, const QString &scriptDesc, bool init = false );

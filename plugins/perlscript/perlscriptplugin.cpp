@@ -270,10 +270,10 @@ void PerlPlugin::executeScript( const QString &scriptText, const QString &subNam
 	PUTBACK;					//make local stack pointer global
 
 	//This should always return 2	
-	call_pv(subName.local8Bit(), G_ARRAY);		//call the function
+	int vars = call_pv(subName.local8Bit(), G_ARRAY);		//call the function
 	SPAGAIN;					//refresh stack pointer
-
-	if( msg )
+	
+	if( msg && vars > 0 )
 	{
 		//Pop the return values from stack
 		QString tmpStr;
@@ -281,16 +281,22 @@ void PerlPlugin::executeScript( const QString &scriptText, const QString &subNam
 		tmpStr = QString::fromLocal8Bit( POPp ).stripWhiteSpace();
 		if( !tmpStr.isNull() && !tmpStr.isEmpty() )
 			msg->setBg( QColor(tmpStr) );
-		
-		tmpStr = QString::fromLocal8Bit( POPp ).stripWhiteSpace();
-		if( !tmpStr.isNull() && !tmpStr.isEmpty() )
-			msg->setFg( QColor(tmpStr) );
-		
-		tmpStr = QString::fromLocal8Bit( POPp ).stripWhiteSpace();
-		if( !tmpStr.isNull() && !tmpStr.isEmpty() )
-			msg->setBody( tmpStr );
-		
+
+		if( vars > 1 )
+		{	
+			tmpStr = QString::fromLocal8Bit( POPp ).stripWhiteSpace();
+			if( !tmpStr.isNull() && !tmpStr.isEmpty() )
+				msg->setFg( QColor(tmpStr) );
+
+			if( vars > 2 )
+			{
+				tmpStr = QString::fromLocal8Bit( POPp ).stripWhiteSpace();
+				if( !tmpStr.isNull() && !tmpStr.isEmpty() )
+					msg->setBody( tmpStr );
+			}
+		}
 	}
+
 	PUTBACK;
 	FREETMPS;					//free that return value
 	LEAVE;						//...and the XPUSHed "mortal" args.
@@ -326,14 +332,19 @@ void PerlScript::load()
 	//If this isn't a local file, make a temp copy so we can read it
 	if( !KURL(path).isLocalFile() )
 	{
-		m_localFile = new KTempFile( QString::null, ".pl" );
-		m_localPath = m_localFile->name();
-		if ( !KIO::NetAccess::download(KURL(path), m_localPath) )
+		if( !m_localFile )
 		{
-			KNotifyClient::event("cannotopenfile");
-			return;
+			m_localFile = new KTempFile( QString::null, ".pl" );
+			m_localPath = m_localFile->name();
+			if ( !KIO::NetAccess::download(KURL(path), m_localPath) )
+			{
+				KNotifyClient::event("cannotopenfile");
+				return;
+			}
+			m_localFile->close();
 		}
-		m_localFile->close();
+		else
+			m_localPath = m_localFile->name();
 	}
 	else
 	{

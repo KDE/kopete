@@ -95,6 +95,7 @@ void PerlScriptPreferences::slotAddScript( const QString &scriptPath, const QStr
 void PerlScriptPreferences::slotSelectionChanged( QListViewItem *selectedScript )
 {
 	preferencesDialog->editDocument->openURL( KURL( selectedScript->text(2) ) );
+	preferencesDialog->setHighlight();
 }
 
 void PerlScriptPreferences::reopen()

@@ -18,12 +18,14 @@ sub OutgoingMessage
 		$messageText = reverse( $messageText );
 		$messageBg = "blue";
 		$messageFg = "green";
+	
+		return ($messageText, $messageFg, $messageBg);
 	}
 	
-	#Return array format is ("Message Text", "Foreground Color", "Background Color")
-	#If you do not want to modify a paramater return empty string, or dont return anything
+	#Return array format is ("New Message Text", "Foreground Color", "Background Color")
+	#If you do not want to modify a paramater return empty string in that place
+	#If you dont return anything, message is unmodified.
 	
-	return ($messageText, $messageFg, $messageBg);
 }
 
 sub ContactContextMenu
@@ -33,4 +35,6 @@ sub ContactContextMenu
 	
 	#Do some stuff
 	`xmms-shell -e play`;
+	
+	#No return for context menu scripts
 }

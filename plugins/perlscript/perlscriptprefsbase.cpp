@@ -14,12 +14,17 @@
 #include <klistview.h>
 #include <ktrader.h>
 #include <klibloader.h>
+#include <qhbox.h>
 #include <kpushbutton.h>
 #include <qheader.h>
 #include <qlayout.h>
 #include <qtooltip.h>
 #include <qwhatsthis.h>
+#include <kstdaction.h>
+#include <kactioncollection.h>
 
+#include <ktexteditor/clipboardinterface.h>
+#include <ktexteditor/highlightinginterface.h>
 #include <ktexteditor/document.h>
 #include <ktexteditor/view.h>
 /* 
@@ -52,14 +57,25 @@ PerlScriptPrefsUI::PerlScriptPrefsUI( QWidget* parent, const char* name, WFlags 
 	addButton->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
 	h->addWidget( addButton );
 	v->addLayout( h );
-
+	
+	QHBox *f = new QHBox( this );
+	f->setFrameStyle( QFrame::WinPanel | QFrame::Sunken );
 	KTrader::OfferList offers = KTrader::self()->query( "KTextEditor/Document" );
 	KService::Ptr service = *offers.begin();
 	KLibFactory *factory = KLibLoader::self()->factory( service->library() );
-	editDocument = static_cast<KTextEditor::Document *>( factory->create( this, 0, "KTextEditor::Document" ) );
-	editArea = editDocument->createView( this, 0 );
+	editDocument = static_cast<KTextEditor::Document *>( factory->create( f, 0, "KTextEditor::Document" ) );
+	editArea = editDocument->createView( f, 0 );
+	setHighlight();
+	//v->addWidget( editArea );
+	v->addWidget( f );
 	
-	v->addWidget( editArea );
+	cp = KTextEditor::clipboardInterface( editArea );	
+	
+	KActionCollection *coll = new KActionCollection(this);
+
+	KStdAction::cut( this, SLOT(slotCut()), coll);
+	KStdAction::copy( this, SLOT(slotCopy()), coll);
+	KStdAction::paste( this, SLOT(slotPaste()), coll);
 	
 	QHBoxLayout *h2 = new QHBoxLayout( this, 4 );
 	h2->insertStretch(0);
@@ -77,6 +93,35 @@ PerlScriptPrefsUI::PerlScriptPrefsUI( QWidget* parent, const char* name, WFlags 
 PerlScriptPrefsUI::~PerlScriptPrefsUI()
 {
     // no need to delete child widgets, Qt does it all for us
+}
+
+void PerlScriptPrefsUI::setHighlight()
+{
+	KTextEditor::HighlightingInterface *hi = KTextEditor::highlightingInterface( editDocument );
+	int count = hi->hlModeCount();
+	for( int i=0; i < count; i++ )
+	{
+		if( hi->hlModeName(i) == QString::fromLatin1("Perl") )
+		{
+			hi->setHlMode(i);
+			break;
+		}
+	}
+}
+
+void PerlScriptPrefsUI::slotCut()
+{
+	cp->cut();
+}
+
+void PerlScriptPrefsUI::slotCopy()
+{
+	cp->copy();
+}
+
+void PerlScriptPrefsUI::slotPaste()
+{
+	cp->paste();
 }
 
 /*
