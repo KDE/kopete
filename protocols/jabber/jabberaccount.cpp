@@ -34,6 +34,8 @@
 #include <kpopupmenu.h>
 #include <kstandarddirs.h>
 #include <klineeditdlg.h>
+#include <kapplication.h>
+#include <kaboutdata.h>
 
 #include "../kopete/kopete.h"
 #include "kopetecontact.h"
@@ -321,7 +323,7 @@ void JabberAccount::connect ()
 	uname (&utsBuf);
 
 	jabberClient->setClientName ("Kopete (using libpsi)");
-	jabberClient->setClientVersion ("KOPETE_VERSION");
+	jabberClient->setClientVersion (kapp->aboutData()->version());
 	jabberClient->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2));
 
 

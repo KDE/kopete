@@ -255,7 +255,7 @@ public slots:
 	 * Called when a message is recieved from someone
 	 * @param message The message recieved
 	 */
-	virtual void messageReceived( KopeteMessage &message );
+	virtual void appendMessage( KopeteMessage &message );
 
 	/**
 	 * Called when a typing event is recieved from a contact

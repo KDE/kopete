@@ -141,7 +141,7 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 	if( !outgoingMessage || d->managerMap.contains( manager ) )
 	{
 		d->foreignMessage=!outgoingMessage;
-		manager->view(true)->messageReceived( msg );
+		manager->view(true)->appendMessage( msg );
 
 		if ( !outgoingMessage && d->useQueue && !view( manager, outgoingMessage )->isVisible()  )
 		{
@@ -191,14 +191,10 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 						body = i18n( "<qt>A highlighted message arrived from %1<br>\"%2\"</qt>" );
 					}
 
-#if KDE_VERSION > 0x030100
 #if QT_VERSION < 0x030200
 					KNotifyClient::event( winId, event, body.arg( msgFrom ).arg( msgText ) );
 #else
 					KNotifyClient::event( winId, event, body.arg( msgFrom, msgText ) );
-#endif
-#else
-					KNotifyClient::event( event, body.arg( msgFrom ).arg( msgText ) );
 #endif
 					break;
 				}

@@ -19,9 +19,11 @@
 #define KOPETEVIEW_H
 
 #include "kopetemessage.h"
+#include <qvaluelist.h>
 
 class KopeteMessageManager;
 class QTextEdit;
+class KopeteMessage;
 
 
 /**
@@ -34,12 +36,15 @@ class QTextEdit;
 class KopeteView
 {
 	public:
+		/**
+		 * @brief constructor
+		 */
 		KopeteView( KopeteMessageManager *manager );
 
 		/**
-		* Returns the message currently in the edit area
-		* @return The message
-		*/
+		 * Returns the message currently in the edit area
+		 * @return The message
+		 */
 		virtual KopeteMessage currentMessage() = 0;
 		/**
 		 * Set the message that the view is currently editing.
@@ -52,6 +57,9 @@ class KopeteView
 		 * with.
 		 */
 		KopeteMessageManager *msgManager();
+		/**
+		 * same function as above
+		 */
 		const KopeteMessageManager *msgManager() const;
 
 		/**
@@ -60,33 +68,21 @@ class KopeteView
 		KopeteMessage::MessageType viewType();
 
 		/**
-		 * SIGNAL Emitted when the message is sent.
-		 * This signal fires *BEFORE* the KopeteMessageManager::messageSent() signal.
-		 * The window remains open until the KopeteMessageManager::messageSentSuccessfully()
-		 * signal is emitted
+		 * SLOT append a message (and show it) to the view
 		 */
-		virtual void messageSent( KopeteMessage & ) = 0;
-
+		virtual void appendMessage( KopeteMessage & ) = 0;
 		/**
-		 * SLOT called to pass a received message to the view.
+		 * Same function as above, but append multiple message.
+		 * The default implementation just call @ref appendMessage() X times
+		 * but you can reimplement it if it is faster to apend several messages
+		 * in the same time
 		 */
-		virtual void messageReceived( KopeteMessage & ) = 0;
-
-		/**
-		 * SIGNAL Emitted when the chat view is shown.
-		 * FIXME: IS THIS IN USE ANYWHERE?
-		 */
-		virtual void shown() = 0;
+		virtual void appendMessages( QValueList<KopeteMessage> );
 
 		/**
 		 * SLOT Sends the view's current message.
 		 */
-		virtual void sendMessage() = 0;
-
-		/**
-		 * SIGNAL Emitted when the view is closing.
-		 */
-		virtual void closing( KopeteView * ) = 0;
+		//virtual void sendMessage() = 0;
 
 		/**
 		 * Raises the view to the top of the screen.
@@ -116,17 +112,13 @@ class KopeteView
 		virtual bool isVisible() = 0;
 
 		/**
-		 * SIGNAL Emitted when the view is activated ( raised by the user )
-		 */
-		virtual void activated( KopeteView * ) = 0;
-
-		/**
 		 * Returns the widget used to compose messages
 		 */
 		virtual QTextEdit *editWidget() = 0;
 
 		/**
 		 * Returns the view widget this class is wrapping
+		 * Can be simply reimplemented to return this if this is a widget
 		 */
 		virtual QWidget *mainWidget() = 0;
 
@@ -134,6 +126,25 @@ class KopeteView
 		 * SLOT to inform the view that the message was sent successfully.
 		 */
 		virtual void messageSentSuccessfully() = 0;
+
+		/**
+		 * SIGNAL Emitted when the message is sent.
+		 * This signal fires *BEFORE* the KopeteMessageManager::messageSent() signal.
+		 * The window remains open until the KopeteMessageManager::messageSentSuccessfully()
+		 * signal is emitted
+		 */
+		virtual void messageSent( KopeteMessage & ) = 0;
+
+		/**
+		 * SIGNAL Emitted when the view is closing.
+		 */
+		virtual void closing( KopeteView * ) = 0;
+
+		/**
+		 * SIGNAL Emitted when the view is activated ( raised by the user )
+		 */
+		virtual void activated( KopeteView * ) = 0;
+
 
 	protected:
 		KopeteMessageManager *m_manager;

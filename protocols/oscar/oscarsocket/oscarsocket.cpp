@@ -2555,7 +2555,13 @@ void OscarSocket::sendRenameBuddy(const QString &budName,
 
 		emit protocolError(
 			i18n("%1 in group %2 was not found on the server's " \
-			"contact list and cannot be renamed.").arg(budName).arg(budGroup),0);
+			"contact list and cannot be renamed.")
+#if QT_VERSION < 0x030200
+			.arg(budName).arg(budGroup)
+#else
+			.arg(budName,budGroup)
+#endif
+			,0);
 		return;
 	}
 

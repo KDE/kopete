@@ -62,7 +62,13 @@ KActionMenu* AIMAccount::actionMenu()
 
 	mActionMenu->popupMenu()->insertTitle(
 		mMyself->onlineStatus().iconFor(mMyself),
-		i18n("%2 <%1>").arg(accountId()).arg(mMyself->displayName()));
+		i18n("%2 <%1>")
+#if QT_VERSION < 0x030200
+			.arg(accountId()).arg(mMyself->displayName()));
+#else
+			.arg(accountId(), mMyself->displayName()));
+#endif
+
 
 	mActionMenu->insert(
 		new KAction(p->statusOnline.caption(),

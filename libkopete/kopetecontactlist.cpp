@@ -121,7 +121,7 @@ void KopeteContactList::loadXML()
 	QString versionString = list.attribute( QString::fromLatin1( "version" ), QString::null );
 	uint version = 0;
 	if( QRegExp( QString::fromLatin1( "[0-9]+\\.[0-9]" ) ).exactMatch( versionString ) )
-		version = versionString.replace( QRegExp( QString::fromLatin1( "\\." ) ), QString::null ).toUInt();
+		version = versionString.replace( QString::fromLatin1( "." ), QString::null ).toUInt();
 
 	if( version < ContactListVersion )
 	{
@@ -553,11 +553,8 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 	contactListFile.open( IO_WriteOnly );
 	QTextStream stream( &contactListFile );
 	stream.setEncoding( QTextStream::UnicodeUTF8 );
-#if QT_VERSION < 0x030100
-	stream << newList.toString();
-#else
 	stream << newList.toString( 2 );
-#endif
+
 	contactListFile.flush();
 	contactListFile.close();
 }

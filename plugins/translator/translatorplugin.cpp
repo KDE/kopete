@@ -445,7 +445,12 @@ void TranslatorPlugin::sendTranslation(KopeteMessage &msg, const QString &transl
 			msg.setBody(translated, msg.format());
 			break;
 		case ShowOriginal:
-			msg.setBody(i18n("%2\nAuto Translated: %1").arg(translated).arg(msg.plainBody()), msg.format());
+			msg.setBody(i18n("%2\nAuto Translated: %1")
+#if QT_VERSION < 0x030200
+					.arg(translated).arg(msg.plainBody()), msg.format());
+#else
+					.arg(translated , msg.plainBody()), msg.format());
+#endif
 			break;
 		case ShowDialog:
 		{

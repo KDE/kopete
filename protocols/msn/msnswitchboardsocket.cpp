@@ -186,7 +186,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	{
 		QString message;
 		message = msg.right( msg.length() - msg.findRev( " " ) - 1 );
-		message = message.replace( QRegExp( "\r\n" ),"" );
+		message = message.replace(  "\r\n" ,"" );
 		emit receivedTypingMsg( message, true );
 	}
 	else// if(msg.contains("Content-Type: text/plain;"))
@@ -233,7 +233,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 				}
 			}
 
-			fontName = parseFontAttr(fontInfo, "FN").replace( QRegExp( "%20" ), " " );
+			fontName = parseFontAttr(fontInfo, "FN").replace(  "%20" , " " );
 
 			// Some clients like Trillian and Kopete itself send a font
 			// name of 'MS Serif' since MS changed the server to
@@ -357,7 +357,7 @@ int MSNSwitchBoardSocket::sendMsg( const KopeteMessage &msg )
 	head += "; CS=0; PF=0\r\n"
 		"\r\n";
 
-	head += msg.plainBody().replace( QRegExp( "\n" ), "\r\n" );
+	head += msg.plainBody().replace(  "\n" , "\r\n" );
 
 	return sendCommand( "MSG", "A", true, head );
 }

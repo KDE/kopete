@@ -29,6 +29,7 @@
 #include <klineeditdlg.h>
 #include <knotifyclient.h>
 #include <kiconeffect.h>
+#include <kpassivepopup.h>
 
 #include "kopetecontactlistview.h"
 #include "kopeteaccountmanager.h"
@@ -41,12 +42,10 @@
 #include "pluginloader.h"
 #include "kopeteaccount.h"
 #include "kopeteprefs.h"
+#include "systemtray.h"
 
 #include <kdeversion.h>
-#if KDE_VERSION >= 0x030006
-#include "systemtray.h"
-#include "kpassivepopup.h"
-#endif
+
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, KopeteGroupViewItem *parent )
 	: QObject( contact, "KopeteMetaContactLVI" ), KListViewItem( parent )

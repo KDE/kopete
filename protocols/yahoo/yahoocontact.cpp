@@ -137,7 +137,7 @@ void YahooContact::slotSendMessage(KopeteMessage &message)
 	kdDebug(14180) << "[YahooContact::slotSendMessage(...)]" << endl;
 
 	QString taintedHTML = message.escapedBody();
-	taintedHTML = taintedHTML.replace(QRegExp(QString::fromLatin1("<br/>")), QString::fromLatin1("<br>"));
+	taintedHTML = taintedHTML.replace(QString::fromLatin1("<br/>"), QString::fromLatin1("<br>"));
 
 	kdDebug(14180) << "Sending message: " << taintedHTML << endl;
 

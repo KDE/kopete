@@ -319,7 +319,12 @@ void OscarContact::slotDirectConnect()
 		qApp->mainWidget(),
 		i18n("<qt>Are you sure you want to establish a direct connection to %1? \
 		This will allow %2 to know your IP address, which can be dangerous if \
-		you do not trust this contact</qt>").arg(mName).arg(mName),
+		you do not trust this contact</qt>")
+#if QT_VERSION < 0x030200
+			.arg(mName).arg(mName),
+#else
+			.arg(nName).arg(mName),
+#endif
 		i18n("Request Direct IM with %1?").arg(mName));
 	if(result == KMessageBox::Yes)
 	{

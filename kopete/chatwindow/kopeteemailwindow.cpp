@@ -421,7 +421,7 @@ void KopeteEmailWindow::slotCopy()
 }
 
 
-void KopeteEmailWindow::messageReceived(KopeteMessage &message)
+void KopeteEmailWindow::appendMessage(KopeteMessage &message)
 {
 //	kdDebug(14010) << k_funcinfo << endl;
 
@@ -521,7 +521,7 @@ void KopeteEmailWindow::writeMessage( KopeteMessage &msg )
 	const QString model = KopetePrefs::prefs()->styleContents();
 
 	d->htmlPart->begin();
-	d->htmlPart->write( QString::fromLatin1( "<html><head><style>body{font-family:%1;font-size:%2pt;color:%3}td{font-family:%4;font-size:%5pt;color:%6}</style></head><body style=\"background-repeat:no-repeat;background-attachment:fixed\" bgcolor=\"%7\" vlink=\"%9\" link=\"%9\">%10</body></html>" )
+	d->htmlPart->write( QString::fromLatin1( "<html><head><style>body{font-family:%1;font-size:%2pt;color:%3}td{font-family:%4;font-size:%5pt;color:%6}</style></head><body style=\"background-repeat:no-repeat;background-attachment:fixed\" bgcolor=\"%7\" vlink=\"%8\" link=\"%9\">%10</body></html>" )
 		.arg( KopetePrefs::prefs()->fontFace().family() )
 		.arg( KopetePrefs::prefs()->fontFace().pointSize() )
 		.arg( KopetePrefs::prefs()->textColor().name() )

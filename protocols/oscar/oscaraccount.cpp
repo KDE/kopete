@@ -502,7 +502,14 @@ void OscarAccount::slotGotDirectIMRequest(QString sn)
 		"Direct IM sessions allow the remote user to see your IP " \
 		"address, which can lead to security problems if you don't " \
 		"trust him/her. Do you want to establish a direct connection " \
-		"to %2?").arg(sn).arg(sn);
+		"to %2?")
+#if QT_VERSION < 0x030200
+			.arg(sn).arg(sn);
+#else
+			.arg(sn,sn);
+#endif
+
+
 
 	int result = KMessageBox::questionYesNo(qApp->mainWidget(), message, title);
 

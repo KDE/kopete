@@ -64,7 +64,7 @@ public:
 
 public slots:
 	virtual void sendMessage();
-	virtual void messageReceived( KopeteMessage &message );
+	virtual void appendMessage( KopeteMessage &message );
 	virtual void messageSentSuccessfully();
 
 signals:

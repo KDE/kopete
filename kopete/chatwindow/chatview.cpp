@@ -688,7 +688,7 @@ void ChatView::setCaption( const QString &text, bool modified )
 	emit( captionChanged( isActive ) );
 }
 
-void ChatView::messageReceived(KopeteMessage &message)
+void ChatView::appendMessage(KopeteMessage &message)
 {
 	remoteTyping( message.from(), false );
 
@@ -730,7 +730,6 @@ void ChatView::slotMarkMessageRead()
 
 void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus & /* newStatus */ , const KopeteOnlineStatus & /* oldstatus */)
 {
-	// %2 before %1 because displayName can contains '%' . And i don't think the status can
 	if(KopetePrefs::prefs()->showEvents())
 	{
 		if( contact->metaContact() )

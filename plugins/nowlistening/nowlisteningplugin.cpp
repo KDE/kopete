@@ -18,9 +18,6 @@
 */
 
 #include <qtimer.h>
-#if QT_VERSION < 0x030100
-#include <qregexp.h>
-#endif
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
@@ -283,38 +280,22 @@ QString NowListeningPlugin::substDepthFirst( NLMediaPlayer *player,
 	bool done = false;
 	if ( in.contains ( "%track" ) && !track.isEmpty() )
 	{
-#if QT_VERSION < 0x030100
-		in.replace( QRegExp( "%track" ), track );
-#else
 		in.replace( "%track", track );
-#endif
 		done = true;
 	}
 	if ( in.contains ( "%artist" ) && !artist.isEmpty() )
 	{
-#if QT_VERSION < 0x030100
-		in.replace( QRegExp( "%artist" ), artist );
-#else
 		in.replace( "%artist", artist );
-#endif
 		done = true;
 	}
 	if ( in.contains ( "%album" ) && !album.isEmpty() )
 	{
-#if QT_VERSION < 0x030100
-		in.replace( QRegExp( "%album" ), album );
-#else
 		in.replace( "%album", album );
-#endif
 		done = true;
 	}
 	if ( in.contains ( "%player" ) && !playerName.isEmpty() )
 	{
-#if QT_VERSION < 0x030100
-		in.replace( QRegExp( "%player" ), playerName );
-#else
 		in.replace( "%player", playerName );
-#endif
 		done = true;
 	}
 	//kdDebug(14307) << "Result is: " << in << endl;
@@ -331,7 +312,7 @@ void NowListeningPlugin::advertiseToChat( KopeteMessageManager *theChat, QString
 	// reduce the recipients to the set of members who are interested
 	// in our output
 	KopeteContactPtrList pl = theChat->members();
-	
+
 	// avoid skipping one member when removing
 	// (old version's pl.remove(); pl.next() skipped because
 	// remove() moves on to next for you.

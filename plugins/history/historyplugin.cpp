@@ -238,7 +238,7 @@ void HistoryPlugin::addMessage( KopeteMessage::MessageDirection dir, QString /* 
 	QPtrList<KopeteContact> mb=m_currentMessageManager->members();
 	KopeteMessage msg( (dir==KopeteMessage::Inbound) ? mb.first() : m_currentMessageManager->user() , m_currentMessageManager->members() , body , dir );
 	msg.setFg(m_prefs->historyColor());
-	m_currentView->messageReceived(msg);
+	m_currentView->appendMessage(msg);
 }
 
 void HistoryPlugin::slotViewCreated( KopeteView* v )

@@ -130,7 +130,7 @@ const QString KopeteMessageManager::displayName()
 
 void KopeteMessageManager::setDisplayName( const QString &newName )
 {
-	kdDebug(14010) << k_funcinfo << endl;
+//	kdDebug(14010) << k_funcinfo << endl;
 	disconnect( this, SIGNAL( contactChanged() ), this, SLOT( slotUpdateDisplayName() ) );
 
 	d->displayName = newName;
@@ -140,7 +140,7 @@ void KopeteMessageManager::setDisplayName( const QString &newName )
 
 void KopeteMessageManager::slotUpdateDisplayName()
 {
-	kdDebug(14010) << k_funcinfo << endl;
+//	kdDebug(14010) << k_funcinfo << endl;
 
 	QString nextDisplayName;
 
@@ -197,11 +197,10 @@ void KopeteMessageManager::setMMId( int id )
 
 void KopeteMessageManager::sendMessage(KopeteMessage &message)
 {
-
+	message.setManager(this);
 	KopeteMessage sentMessage = message;
 	if( !KopeteCommandHandler::commandHandler()->processMessage( message, this ) )
 	{
-		sentMessage.setManager(this);
 		emit messageSent(sentMessage, this);
 		if ( !account()->isAway() || KopetePrefs::prefs()->soundIfAway() )
 			KNotifyClient::event( QString::fromLatin1( "kopete_outgoing"), i18n("Outgoing Message Sent") );
@@ -265,6 +264,7 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool supress )
 		connect (c, SIGNAL(contactDestroyed(KopeteContact*)) , this , SLOT(slotContactDestroyed(KopeteContact*)));
 	}
 	d->isEmpty=false;
+	slotUpdateDisplayName();
 }
 
 void KopeteMessageManager::removeContact( const KopeteContact *c, const QString& raison )
@@ -287,6 +287,7 @@ void KopeteMessageManager::removeContact( const KopeteContact *c, const QString&
 		c->setConversations( c->conversations() - 1 );
 	}
 	emit contactRemoved(c, raison);
+	slotUpdateDisplayName();
 }
 
 void KopeteMessageManager::receivedTypingMsg( const KopeteContact *c , bool t )

@@ -265,7 +265,7 @@ void MSNSocket::slotReadLine()
 			//(placed here and not in the end on the fuction for prevent crash)
 
 			QString command = QString::fromUtf8(m_buffer.take(index+2), index);
-			command.replace( QRegExp( "\r\n" ), "" );
+			command.replace( "\r\n" , "" );
 //			kdDebug(14140) << "MSNSocket::slotReadLine: " << command << endl;
 
 			parseLine(command);
@@ -320,7 +320,7 @@ bool MSNSocket::pollReadBlock()
 void MSNSocket::parseLine( const QString &str )
 {
 	QString cmd  = str.section( ' ', 0, 0 );
-	QString data = str.section( ' ', 2 ).replace( QRegExp( "\r\n" ), "" );
+	QString data = str.section( ' ', 2 ).replace( "\r\n" , "" );
 
 	bool isNum;
 	uint id = str.section( ' ', 1, 1 ).toUInt( &isNum );
@@ -336,7 +336,7 @@ void MSNSocket::parseLine( const QString &str )
 //	kdDebug(14140) << "MSNSocket::parseCommand: Parsing command " << cmd <<
 //		" (ID " << id << "): '" << data << "'" << endl;
 
-	data.replace( QRegExp( "\r\n" ), "" );
+	data.replace(  "\r\n", "" );
 	bool isError;
 	uint errorCode = cmd.toUInt( &isError );
 	if( isError )
@@ -588,7 +588,7 @@ QString MSNSocket::getLocalIP()
 		return QString::null;
 	}
 	QString ip = address->pretty();
-	ip = ip.replace( QRegExp("-"), " " );
+	ip = ip.replace( "-", " " );
 	if ( ip.contains(" ") )
 	{
 		ip = ip.left( ip.find(" ") );

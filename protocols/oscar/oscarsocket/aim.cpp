@@ -13,7 +13,7 @@
 
 QString tocNormalize(const QString &oldstr)
 {
-	return oldstr.lower().replace(QRegExp(" "),"");
+	return oldstr.lower().replace(" ","");
 }
 /*
 QString tocRoast(const QString &oldstr)
