@@ -4,5 +4,8 @@ TODO for Jabber:
 - check renaming
 - check moving between groups
 - check if pending subscriptions are displayed
+  + they should be displayed as offline. status icon for this, maybe? -DS
 - check if incoming auth requests are properly added
+  + last time I checked, yes -DS
 - implement support for transports/agents
+  + Psi has support for this, should be reasonably easy -DS
