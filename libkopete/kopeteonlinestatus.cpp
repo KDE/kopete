@@ -2,7 +2,8 @@
     kopeteonlinestatus.cpp - Kopete Online Status
 
     Copyright (c) 2003      by Martijn Klingens       <klingens@kde.org>
-
+			  (c) 2003		by Will Stephenson		  <lists@stevello.free-online.co.uk>
+			  				(icon generating code)
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -40,11 +41,10 @@ struct KopeteOnlineStatusPrivate
 	QString caption;
 	QString description;
 	unsigned refCount;
-	static QMap<QString, QPixmap>* iconCache;
+	static QDict< QPixmap > iconCache;
 };
 
-
-QMap<QString, QPixmap>* KopeteOnlineStatusPrivate::iconCache = 0;
+QDict< QPixmap > KopeteOnlineStatusPrivate::iconCache = QDict< QPixmap >();
 
 KopeteOnlineStatus::KopeteOnlineStatus( OnlineStatus status, unsigned weight, KopeteProtocol *protocol,
 	unsigned internalStatus, const QString &overlayIcon, const QString &caption, const QString &description )
@@ -60,9 +60,7 @@ KopeteOnlineStatus::KopeteOnlineStatus( OnlineStatus status, unsigned weight, Ko
 	d->caption = caption;
 	d->protocol = protocol;
 	d->description = description;
-	if ( !d->iconCache )
-		d->iconCache = new QMap<QString, QPixmap>();
-
+	d->iconCache.setAutoDelete( true );
 }
 
 KopeteOnlineStatus::KopeteOnlineStatus( OnlineStatus status )
@@ -75,8 +73,7 @@ KopeteOnlineStatus::KopeteOnlineStatus( OnlineStatus status )
 	d->internalStatus = 0;
 	d->weight = 0;
 	d->protocol = 0L;
-	if ( !d->iconCache )
-		d->iconCache = new QMap<QString, QPixmap>();
+	d->iconCache.setAutoDelete( true );
 
 	switch( status )
 	{
@@ -114,6 +111,7 @@ KopeteOnlineStatus::KopeteOnlineStatus()
 	d->internalStatus = 0;
 	d->weight = 0;
 	d->protocol = 0L;
+	d->iconCache.setAutoDelete( true );
 }
 
 KopeteOnlineStatus::KopeteOnlineStatus( const KopeteOnlineStatus &other )
@@ -219,7 +217,7 @@ QPixmap KopeteOnlineStatus::iconFor( const KopeteContact *contact, int size ) co
 	else
 		iconName = contact->icon();
 
-	return cacheLookup( iconName, size, contact->idleState() == KopeteContact::Idle );
+	return *cacheLookup( iconName, size, contact->idleState() == KopeteContact::Idle );
 
 }
 
@@ -232,7 +230,7 @@ QPixmap KopeteOnlineStatus::iconFor( const KopeteAccount *account, int size ) co
 	else
 		iconName = QString::fromLatin1( "unknown" );
 
-	return cacheLookup( iconName, size );
+	return *cacheLookup( iconName, size );
 }
 
 QPixmap KopeteOnlineStatus::protocolIcon() const
@@ -243,43 +241,52 @@ QPixmap KopeteOnlineStatus::protocolIcon() const
 	else
 		iconName = QString::fromLatin1( "unknown" );
 
-	return cacheLookup( iconName, 16 );
+	return *cacheLookup( iconName, 16 );
 }
 
-QPixmap KopeteOnlineStatus::cacheLookup( const QString& icon, const int size, const bool idle ) const
+QPixmap* KopeteOnlineStatus::cacheLookup( const QString& icon, const int size, const bool idle ) const
 {
 	// create a 'fingerprint' to use as a hash key
-	QString fingerprint = d->caption;
+	QString fingerprint;
 
-	// fingerprint consists of caption/icon name/overlay name/size/idle state
-	fingerprint.append( '/' ).append( icon ).append( '/' ).append( d->overlayIcon ).append( '/' ).append(
-			size ).append( '/' ).append(idle ? 'i' : 'a' );
+	// fingerprint consists of description/icon name/overlay name/size/idle state
+	fingerprint.sprintf( "%s/%s/%s/%i/%c",
+			d->description.latin1(),
+			icon.latin1(),
+			d->overlayIcon.latin1(),
+			size,
+			idle ? 'i' : 'a' );
 
 	// look it up in the cache
-	if ( d->iconCache->contains( fingerprint ) )
-		return (*(d->iconCache))[ fingerprint ];		// cache hit
+	QPixmap* theIcon;
+
+	if ( ( theIcon = d->iconCache.find( fingerprint ) ) ) //return (*(d->iconCache))[ fingerprint ];		// cache hit
+	{
+		kdDebug(14010) << k_funcinfo << "Found " << fingerprint << " in icon cache!" << endl;
+	}
 	else
 	{
 		// cache miss
-		QPixmap newIcon = renderIcon( icon, size, idle );
-		d->iconCache->insert( fingerprint, newIcon );
-		return newIcon;
+		kdDebug(14010) << k_funcinfo << "Missed " << fingerprint << " in icon cache!" << endl;
+		theIcon = renderIcon( icon, size, idle );
+		d->iconCache.insert( fingerprint, theIcon );
 	}
+	return theIcon;
 }
 
-QPixmap KopeteOnlineStatus::renderIcon( const QString& baseIcon, const int size, const bool idle ) const
+QPixmap* KopeteOnlineStatus::renderIcon( const QString& baseIcon, const int size, const bool idle ) const
 {
 	// create an icon suiting the status from the base icon
 	// use reasonable defaults if not provided or protocol not set
-	QPixmap basis;
+	QPixmap* basis = new QPixmap();
 
 	if ( baseIcon.isNull() )
 		if ( d->protocol )
-			basis = SmallIcon( d->protocol->pluginIcon() );
+			*basis = SmallIcon( d->protocol->pluginIcon() );
 		else
-			basis = SmallIcon( QString::fromLatin1( "unknown" ) );
+			*basis = SmallIcon( QString::fromLatin1( "unknown" ) );
 	else
-		basis = SmallIcon( baseIcon );
+		*basis = SmallIcon( baseIcon );
 
 	//composite the iconOverlay for this status and the supplied baseIcon
 	if ( !( d->overlayIcon.isNull() ) ) // otherwise leave the basis as-is
@@ -290,14 +297,14 @@ QPixmap KopeteOnlineStatus::renderIcon( const QString& baseIcon, const int size,
 			// first combine the masks of both pixmaps
 			if ( overlay.mask() )
 			{
-				QBitmap mask = *basis.mask();
+				QBitmap mask = *(basis->mask());
 				bitBlt( &mask, 0, 0, const_cast<QBitmap *>(overlay.mask()),
 					0, 0, overlay.width(), overlay.height(), Qt::OrROP );
 
-				basis.setMask(mask);
+				basis->setMask(mask);
 			}
 			// draw the overlay on top of it
-			QPainter p( &basis );
+			QPainter p( basis );
 			p.drawPixmap( 0, 0, overlay );
 		}
 	}
@@ -308,19 +315,19 @@ QPixmap KopeteOnlineStatus::renderIcon( const QString& baseIcon, const int size,
 		// This will probably look crap on the Unknown icon
 		// FIXME This won't return icons that are not installed using Martijn's
 		// automake magic so we'd have to use UserIcon instead of SmallIcon
-		basis = KIconEffect().apply( basis, KIcon::Small, KIcon::DisabledState );
+		*basis = KIconEffect().apply( *basis, KIcon::Small, KIcon::DisabledState );
 	}
 
 	// no need to scale if the icon is already of the required size (assuming height == width!)
-	if ( basis.width() != size )
+	if ( basis->width() != size )
 	{
-		QImage scaledImg = basis.convertToImage().smoothScale( size, size );
-		basis = QPixmap( scaledImg );
+		QImage scaledImg = basis->convertToImage().smoothScale( size, size );
+		*basis = QPixmap( scaledImg );
 	}
 
 	// if idle, apply effects
 	if ( idle )
-		KIconEffect::semiTransparent( basis );
+		KIconEffect::semiTransparent( *basis );
 
 	return basis;
 }

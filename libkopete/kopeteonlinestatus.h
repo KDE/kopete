@@ -2,6 +2,8 @@
     kopeteonlinestatus.h - Kopete Online Status
 
     Copyright (c) 2003      by Martijn Klingens       <klingens@kde.org>
+			  (c) 2003		by Will Stephenson		  <lists@stevello.free-online.co.uk>
+			  				(icon generating code)
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -240,8 +242,8 @@ public:
 
 private:
 	KopeteOnlineStatusPrivate *d;
-	QPixmap cacheLookup( const QString& icon, const int size, const bool idle = false ) const;
-	QPixmap renderIcon( const QString& baseicon, const int size, const bool idle = false ) const;
+	QPixmap* cacheLookup( const QString& icon, const int size, const bool idle = false ) const;
+	QPixmap* renderIcon( const QString& baseicon, const int size, const bool idle = false ) const;
 };
 
 #endif
