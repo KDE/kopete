@@ -373,7 +373,7 @@ void YahooAccount::slotGotFile( const QString & /* who */, const QString & /* ur
 //	kdDebug(14180) << k_funcinfo << endl;
 }
 
-void YahooAccount::slotContactAdded( const QString &  myid , const QString &  who , const QString &  msg  )
+void YahooAccount::slotContactAdded( const QString & /* myid */, const QString & /* who */, const QString & /* msg */ )
 {
 //	kdDebug(14180) << k_funcinfo << myid << " " << who << " " << msg << endl;
 }
@@ -398,7 +398,7 @@ void YahooAccount::slotMailNotify( const QString & /* from */, const QString & /
 //	kdDebug(14180) << k_funcinfo << endl;
 }
 
-void YahooAccount::slotSystemMessage( const QString &msg )
+void YahooAccount::slotSystemMessage( const QString & /* msg */ )
 {
 //	kdDebug(14180) << k_funcinfo << msg << endl;
 }
