@@ -294,6 +294,10 @@ signals: // Signals
   void SSIAck();
   /** emitted when BOS rights are received */
   void gotBOSRights(WORD,WORD);
+  /** emitted when a buddy gets blocked */
+  void denyAdded(QString);
+  /** emitted when a block is removed on a buddy */
+  void denyRemoved(QString);
 };
 
 #endif

@@ -705,6 +705,7 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
     QList<TLV> lst = inbuf.getTLVList();
     lst.setAutoDelete(TRUE);
     TLV *sn = findTLV(lst,0x0001);  //screen name
+    TLV *url = findTLV(lst,0x0004);  //error url
     TLV *bosip = findTLV(lst,0x0005); //bos server address
     TLV *cook = findTLV(lst,0x0006); //authorization cookie
     TLV *email = findTLV(lst,0x0007); //the e-mail address attached to the account
@@ -720,6 +721,11 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 	{
 		case 1: { errorString = i18n("Sign on failed because the screen name you provided is not registered on the AIM network. Please visit http://aim.aol.com to create a screen name for use on the AIM network."); errorCode = 1; break;  }
 		case 5: { errorString = i18n("Sign on failed because the password supplied for this screen name is invalid. Please check your password and try again."); errorCode = 5; break; }
+		case 0x11: { errorString = i18n("Sign on failed because your account is currently suspended."); errorCode = 0x11; break; }
+		case 0x14: { errorString = i18n("The AOL Instant Messenger service is temporarily unavailable.  Please try again later."); errorCode = 0x14; break; }
+		case 0x18: { errorString = i18n("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."); errorCode = 0x18; break; }
+		case 0x1c: { errorString = i18n("The client you are using is too old.  Please upgrade."); errorCode = 0x1c; break; }
+		default: { errorString = i18n("Authentication failed."); errorCode = (err->data[0] << 8) | err->data[1]; break; }
 	}
 	emit protocolError(errorString, errorCode);
      }
@@ -748,6 +754,8 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
     if (regstatus)
 	delete regstatus->data;
     lst.clear();
+    if (url)
+    	delete url->data;
 }
 
 /** finds a tlv of type typ in the list */
@@ -961,6 +969,7 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 				bud->name = ssi->name;
 				kdDebug() << "[OSCAR] Adding " << ssi->name <<  "to deny list." << endl;
 				blist.denyList.add(bud);
+				emit denyAdded(ssi->name);
 				break;	    	
 	    case 0x0004: // TODO permit-deny setting
 				break;
@@ -2074,6 +2083,9 @@ void OscarSocket::sendBlock(const QString &sname)
 	      << ", bid " << newitem->bid << ", type " << newitem->type
 	      << ", datalength " << newitem->tlvlength << endl;
   sendSSIAddModDel(newitem,0x0008);
+  
+  // NOTE TO TOM: use snac headers and SSI acks to do this more correctly
+  emit denyAdded(sname);
 }
 
 /** Removes the block on user sname */
@@ -2094,6 +2106,9 @@ void OscarSocket::sendRemoveBlock(const QString &sname)
   if (!ssiData.remove(delitem))
 		kdDebug() << "[OSCAR][sendRemoveBlock] delitem was not found in the SSI list" << endl;
 	ssiData.print();
+
+	// NOTE TO TOM: use snac headers and SSI acks to do this more correctly
+	emit denyRemoved(sname);
 }
 
 /*
