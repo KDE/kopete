@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Icon=history
+Name=History
+ServiceTypes=Kopete/Plugin
+X-KDE-Library=kopete_history
+X-Kopete-Plugin-Id=history
+X-Kopete-Author=Olivier Goffart
+X-Kopete-Site=http://kopete.kde.org
+X-Kopete-Email=ogoffart@tiscalinet.be
+X-Kopete-License=GPL
+Comment=Log every messages in order to keep track of your conversation
