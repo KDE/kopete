@@ -189,7 +189,7 @@ KPopupMenu* Contact::popupMenu( ChatSession *manager )
 	d->actionUserInfo    = KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ),          menu, "actionUserInfo" );
 	d->actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ),           menu, "actionSendMessage" );
 	d->actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT( slotDelete() ),        menu, "actionDeleteContact" );
-	d->actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( slotChangeMetaContact() ), menu, "actionChangeMetaContact" );
+	d->actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( changeMetaContact() ), menu, "actionChangeMetaContact" );
 	d->actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "bookmark_add" ), 0,
 		this, SLOT( slotAddContact() ), menu, "actionAddContact" );
 	d->actionBlock = account()->isBlocked( d->contactId ) ? KopeteStdAction::unblockContact( this, SLOT( slotUnblock() ), menu, "actionUnblockContact" ) : KopeteStdAction::blockContact( this, SLOT( slotBlock() ), menu, "actionBlockContact" );
@@ -254,7 +254,7 @@ KPopupMenu* Contact::popupMenu( ChatSession *manager )
 	return menu;
 }
 
-void Contact::slotChangeMetaContact()
+void Contact::changeMetaContact()
 {
 	KDialogBase *moveDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "moveDialog", true, i18n( "Move Contact" ),
 		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );

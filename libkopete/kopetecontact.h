@@ -428,7 +428,7 @@ public slots:
 	 * is called by the KAction changeMetaContact that is part of the context
 	 * menu.
 	 */
-	void slotChangeMetaContact();
+	void changeMetaContact();
 
 	/**
 	 * Method to retrieve user information.  Should be implemented by
