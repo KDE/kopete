@@ -37,11 +37,9 @@
 #include "yahoocontact.h"
 
 /* Kopete Includes */
-#include "kopete.h"
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
-#include "systemtray.h"
 
 K_EXPORT_COMPONENT_FACTORY( kopete_yahoo, KGenericFactory<YahooProtocol> );
 
@@ -370,7 +368,6 @@ void YahooProtocol::initActions()
 	actionStatusMenu->insert(actionGoStatus012);
 	actionStatusMenu->insert(actionGoStatus099);
 	actionStatusMenu->insert(actionGoStatus999);
-	actionStatusMenu->plug(kopeteapp->systemTray()->contextMenu(), 1);
 }
 
 

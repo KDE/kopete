@@ -22,9 +22,6 @@
 #include "yahoostatus.h"
 #include "yahoocontact.h"
 
-// Kopete Includes
-#include "kopete.h"
-
 // QT Includes
 #include <qstring.h>
 
@@ -50,7 +47,7 @@ YahooContact::YahooContact(QString userID, QString fullName, QString group,
 	setDisplayName(mFullName);
 	emit statusChanged(this, status());
 
-    // XXX initActions();
+	// XXX initActions();
 
 	connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ), this, SLOT (slotMovedToMetaContact() ));
 	connect (metaContact , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol, SLOT (serialize(KopeteMetaContact*) ));
@@ -164,15 +161,15 @@ void YahooContact::slotUpdateStatus(QString status, QString statusText == NULL)
 {
 	DEBUG(YDMETHOD, "Yahoo::slotUpdateStatus(" << status << ")");
 
-    DEBUG(YDINFO, "Buddy  - updating " << handle << " to "
+	DEBUG(YDINFO, "Buddy  - updating " << handle << " to "
 			<< status << "." << endl;
 
-    if (status != QString("")) {
+	if (status != QString("")) {
 		mStatus = status;
 		kdDebug() << "Yahoo plugin: Updating status." << endl;
-    }
+	}
 	mStatusText = statusText;
-    emit statusChanged();
+	emit statusChanged();
 }
 */
 
@@ -254,15 +251,7 @@ void YahooContact::slotMovedToMetaContact()
 	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol(), SLOT (serialize(KopeteMetaContact*) ));
 }
 
-
 #include "yahoocontact.moc"
 
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 
