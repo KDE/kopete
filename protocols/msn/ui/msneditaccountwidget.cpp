@@ -42,6 +42,8 @@
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 
+#include "kopetepasswordwidget.h"
+
 #include "msnaccount.h"
 #include "msncontact.h"
 #include "msneditaccountui.h"
@@ -76,12 +78,8 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, KopeteAccount *a
 	// default fields
 	if ( account )
 	{
-		if ( account->rememberPassword() )
-		{
-			d->ui->m_rememberpasswd->setChecked( true );
-			d->ui->m_password->setText( account->password() );
-		}
 		d->ui->m_login->setText( account->accountId() );
+		d->ui->m_password->load( &static_cast<MSNAccount *>(account)->password() );
 
 		//remove me after we can change account ids (Matt)
 		d->ui->m_login->setDisabled( true );
@@ -137,7 +135,6 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, KopeteAccount *a
 	}
 	else
 	{
-		d->ui->m_rememberpasswd->setChecked( false );
 		d->ui->tab_contacts->setDisabled( true );
 		d->ui->tab_info->setDisabled( true );
 	}
@@ -155,12 +152,9 @@ KopeteAccount * MSNEditAccountWidget::apply()
 	if ( !account() )
 		setAccount( new MSNAccount( d->protocol, d->ui->m_login->text() ) );
 
-	if ( d->ui->m_rememberpasswd->isChecked() )
-		account()->setPassword( d->ui->m_password->text() );
-	else
-		account()->setPassword( QString::null );
-
 	account()->setAutoLogin( d->ui->m_autologin->isChecked() );
+	d->ui->m_password->save( &static_cast<MSNAccount *>(account())->password() );
+
 	account()->setPluginData( d->protocol, "exportCustomPicture", d->ui->m_useDisplayPicture->isChecked() ? "1" : QString::null );
 	if (d->ui->optionOverrideServer->isChecked() ) {
 		account()->setPluginData( d->protocol, "serverName", d->ui->m_serverName->text() );

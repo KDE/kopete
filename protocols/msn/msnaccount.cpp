@@ -37,6 +37,7 @@
 #include "kopetecontactlist.h"
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
+#include "kopetepassword.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
 
@@ -49,12 +50,11 @@
 #endif
 
 MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const char *name )
-: KopeteAccount ( parent, AccountID, name )
+: Kopete::PasswordedAccount ( parent, AccountID, 0, name )
 {
 	m_notifySocket = 0L;
 	m_connectstatus = MSNProtocol::protocol()->NLN;
 	m_addWizard_metaContact = 0L;
-	m_badpassword = false;
 
 	// Init the myself contact
 	// FIXME: I think we should add a global self metaContact ( Olivier )
@@ -125,7 +125,7 @@ void MSNAccount::setAway( bool away, const QString & awayReason )
 		setOnlineStatus( MSNProtocol::protocol()->NLN );
 }
 
-void MSNAccount::connect()
+void MSNAccount::connectWithPassword( const QString &passwd )
 {
 	if ( isConnected() )
 	{
@@ -139,8 +139,8 @@ void MSNAccount::connect()
 		kdDebug( 14140 ) << k_funcinfo <<"Ignoring Connect request (Already connecting)"  << endl;
 		return;
 	}
-	m_password = password( m_badpassword ); 
-	m_badpassword=false;
+
+	m_password = passwd; 
 
 	if ( m_password.isNull() )
 	{
@@ -497,11 +497,11 @@ void MSNAccount::slotNotifySocketClosed()
 {
 	kdDebug( 14140 ) << k_funcinfo << endl;
 
-	m_badpassword = m_notifySocket->badPassword();
+	password().setWrong( m_notifySocket->badPassword() );
 	m_notifySocket->deleteLater();
 	m_notifySocket = 0l;
 	myself()->setOnlineStatus( MSNProtocol::protocol()->FLN );
-	if ( m_badpassword )
+	if ( password().isWrong() )
 		connect();
 
 #if 0

@@ -19,7 +19,7 @@
 
 #include <qobject.h>
 
-#include "kopeteaccount.h"
+#include "kopetepasswordedaccount.h"
 
 #include "msnprotocol.h"
 
@@ -35,7 +35,7 @@ class MSNContact;
  * info are stored in the account, whereas the protocol is only the
  * 'manager' class that creates and manages accounts.
  */
-class MSNAccount : public KopeteAccount
+class MSNAccount : public Kopete::PasswordedAccount
 {
 	Q_OBJECT
 
@@ -93,7 +93,7 @@ public:
 	void resetPictureObject(bool silent=false);
 
 public slots:
-	virtual void connect() ;
+	virtual void connectWithPassword( const QString &password ) ;
 	virtual void disconnect() ;
 
 	/**
@@ -198,8 +198,6 @@ private:
 
 	QString m_msgHandle;
 
-	bool m_badpassword;
-	
 public: //FIXME: should be private
 	QMap<unsigned int, KopeteGroup*> m_groupList;
 
