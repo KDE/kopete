@@ -83,7 +83,7 @@ void UserDetailsManager::requestDetails( const QStringList & dnList )
 		connect( gdt, SIGNAL( gotContactUserDetails( const GroupWise::ContactDetails & ) ), 
 			SLOT( slotReceiveContactDetails( const GroupWise::ContactDetails & ) ) );
 		// TODO: connect to gdt's finished() signal, check for failures, expand gdt to maintain a list of not found DNs?
-		gdt->go();
+		gdt->go( true );
 	}
 	else
 	{

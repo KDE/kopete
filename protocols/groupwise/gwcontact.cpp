@@ -334,7 +334,7 @@ void GroupWiseContact::slotDeleteContact()
 		DeleteContactTask * dct = new DeleteContactTask( account()->client()->rootTask() );
 		dct->contact( (*it).parentId, (*it).objectId );
 		connect( dct, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
-		dct->go();
+		dct->go( true );
 	}
 }
 
