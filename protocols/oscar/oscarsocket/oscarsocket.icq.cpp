@@ -277,14 +277,11 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					// STATUS; 0 = Offline, 1 = Online, 2 = not webaware.
 					searchResult.status = fromicqsrv.getLEWord();
 
-					// FIXME: said to be the last searchresult
-					// unfortunately I still get some results afterwards
-					if (type==0x01ae)
+					if (type==0x01ae) // Last search result
 					{
 						// MISSED
 						// The number of users not returned that matched this search.
 						DWORD missed = fromicqsrv.getLEDWord();
-//						kdDebug(14150) << "!LAST search result, missed=" << missed << endl;
 						emit gotSearchResult(searchResult,missed);
 					}
 					else
@@ -1104,7 +1101,7 @@ void OscarSocket::sendCLI_SEARCHWP(
 	int minage,
 	int maxage,
 	int sex,
-	int lang, // TODO: unused
+	int lang,
 	const QString &city,
 	const QString state,
 	int country,
@@ -1112,7 +1109,7 @@ void OscarSocket::sendCLI_SEARCHWP(
 	const QString &department,
 	const QString &position,
 	int occupation,
-	bool onlineOnly) /*TODO: add all fields or make this somehow clever*/
+	bool onlineOnly) /* TODO: add all fields or make this somehow clever */
 {
 	kdDebug(14150) << k_funcinfo << "SEND CLI_SEARCHWP (CLI_META)" << endl;
 

@@ -18,9 +18,8 @@
 
 #include "icqadd.h"
 #include "icqaccount.h"
+#include "icqprotocol.h"
 #include <klistview.h>
-
-//#include <kopetecontactlist.h>
 
 #include <qlayout.h>
 #include <qpushbutton.h>
@@ -51,11 +50,12 @@ ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent, const c
 	icqdata->resultView->addColumn( i18n("UIN") );
 	icqdata->resultView->addColumn( i18n("Email") );
 
-	//TODO
-/*	initCombo( icqdata->gender, 0, genders );
-	initCombo( icqdata->age, 0, ages );
-	initCombo( icqdata->country, 0, countries );
-	initCombo( icqdata->language, 0, languages );*/
+	ICQProtocol *p = ICQProtocol::protocol();
+	p->fillComboFromTable(icqdata->gender, p->genders());
+	//p->fillComboFromTable(icqdata->age, p->genders());
+	icqdata->age->setEnabled(false); // TODO
+	p->fillComboFromTable(icqdata->country, p->countries());
+	p->fillComboFromTable(icqdata->language, p->languages());
 
 	icqdata->progressText->setText("");
 	icqdata->progressPixmap->setPixmap(SmallIcon("icq_offline"));
@@ -105,6 +105,8 @@ void ICQAddContactPage::slotTextChanged()
 
 void ICQAddContactPage::slotStartSearch()
 {
+	ICQProtocol *p = ICQProtocol::protocol();
+
 	kdDebug(14200) << k_funcinfo << "Called; searchmode= " << searchMode << endl;
 	switch(searchMode)
 	{
@@ -115,12 +117,12 @@ void ICQAddContactPage::slotStartSearch()
 				icqdata->lastName->text(),
 				icqdata->nickName->text(),
 				icqdata->email->text(),
-				0/*icqdata->age->currentItem()*/, 0,
-				icqdata->gender->currentItem(),
-				0/*icqdata->language->currentItem()*/,
-				icqdata->city->text(),
+				0/*icqdata->age->currentItem()*/, 0, // min and max age
+				icqdata->gender->currentItem(), // Gender
+				p->getCodeForCombo(icqdata->language, p->languages()), // Lang
+				icqdata->city->text(), // City
 				QString::null, // State
-				0 /*getComboValue( icqdata->country, countries )*/,
+				p->getCodeForCombo(icqdata->country, p->countries()), // country code
 				QString::null, // company
 				QString::null, // department
 				QString::null, // position
@@ -192,7 +194,10 @@ void ICQAddContactPage::slotSearchResult (ICQSearchResult &res, const int missed
 	if(missed != -1)
 	{
 		removeSearch();
-		icqdata->progressText->setText(i18n("Search finished"));
+		if(missed == 0)
+			icqdata->progressText->setText(i18n("Search finished"));
+		else
+			icqdata->progressText->setText(i18n("Search finished, %1 search results not shown").arg(missed));
 
 		if(icqdata->resultView->childCount() == 1)
 			icqdata->resultView->firstChild()->setSelected(true);
