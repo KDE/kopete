@@ -97,6 +97,8 @@ private: // Private members
 	unsigned long mFileSize;
   /** The read buffer (for file data) */
   Buffer mBuffer;
+  /** The name (from peer) of the file to be transferred */
+  QString mFileName;
 
 private slots: // Private slots
   /** Called when the kio job is done */

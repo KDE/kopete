@@ -73,7 +73,7 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	QObject::connect(mProtocol->engine, SIGNAL(gotMiniTypeNotification(QString, int)),
 					this, SLOT(slotGotMiniType(QString, int)));
   // New direct connection
-  QObject::connect(mProtocol->engine, SIGNAL(directIMReady(QString)),
+  QObject::connect(mProtocol->engine, SIGNAL(connectionReady(QString)),
   	this, SLOT(slotDirectIMReady(QString)));
   // Direct connection closed
   QObject::connect(mProtocol->engine, SIGNAL(directIMConnectionClosed(QString)),

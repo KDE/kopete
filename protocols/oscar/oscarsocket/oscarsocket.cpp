@@ -1394,16 +1394,17 @@ void OscarSocket::parseIM(Buffer &inbuf)
 				
 				if (msgtype == 0x0000) // initiate
 				{
+					kdDebug(14150) << k_funcinfo << "adding " << u.sn << " to pending list." << endl;
 					if ( capflag & AIM_CAPS_IMIMAGE ) //if it is a direct IM rendezvous
 					{
+						sockToUse->addPendingConnection(u.sn, cook, 0L, qh.toString(), 4443);
 						emit gotDirectIMRequest(u.sn);
 					}
 					else // file send
 					{
+						sockToUse->addPendingConnection(u.sn, cook, 0L, qh.toString(), remotePort);
 						emit gotFileSendRequest(u.sn, message, fileName, fileSize);
 					}
-					kdDebug(14150) << k_funcinfo << "adding " << u.sn << " to pending list." << endl;
-					sockToUse->addPendingConnection(u.sn, cook, 0L, qh.toString(), remotePort);
 				}
 				else if (msgtype == 0x0001) //deny
 				{
@@ -1994,18 +1995,10 @@ void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousT
     Buffer outbuf;
     outbuf.addSnac(0x0004,0x0006,0x0000,0x00000000);
     char ck[8];
-    if ( type == 1 ) //we need to send the same cookie if it's an accept
-    {
-    	if ( !sockToUse->getPendingCookie(sn, ck) )
-     		kdDebug() << k_funcinfo << sn << " not found in list of pending connections..." << endl;
-    }
-    else
-    {
-    	//generate a random message cookie
-    	for (int i=0;i<8;i++)
-			{
-	   	 ck[i] = static_cast<BYTE>(rand());
-			}
+   	//generate a random message cookie
+   	for (int i=0;i<8;i++)
+		{
+   	 ck[i] = static_cast<BYTE>(rand());
 		}
 
 		//add this to the list of pending connections if it is a request
@@ -2095,6 +2088,8 @@ void OscarSocket::sendDirectIMDeny(const QString &sn)
 void OscarSocket::sendDirectIMAccept(const QString &sn)
 {
 	sendRendezvous(sn,0x0002,AIM_CAPS_IMIMAGE);
+	if ( !mDirectIMMgr->establishOutgoingConnection(sn) )
+		kdDebug(14150) << k_funcinfo << sn << " not found in pending connection list" << endl;
 }
 
 /** Parses a missed message notification */

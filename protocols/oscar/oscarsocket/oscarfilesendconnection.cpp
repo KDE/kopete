@@ -290,6 +290,7 @@ void OscarFileSendConnection::sendAcceptTransfer(OFT2 &hdr)
 	hdr.channel = 0x0202; //this means accept the transfer
 
 	mFileSize = hdr.size;
+	mFileName = hdr.filename;
 	kdDebug(14150) << "[OscarFileSendConnection] Accepting transfer of " << hdr.filename << ", size: " << mFileSize << endl;
 
 	Buffer outbuf;
@@ -368,12 +369,12 @@ void OscarFileSendConnection::sendReadConfirm()
 	oft.encode = 0x0000;
 	oft.language = 0x0000;
 	oft.filename = new char[64];
-//	for (unsigned int i=0;i<mFile.name().length();i++)
-//	{
-//		oft.filename[i] = mFile.name()[i].latin1();
-//	}
-//	for (unsigned int i=mFile.name().length();i<64;i++)
-//		oft.filename[i] = 0;
+	for (unsigned int i=0;i<mFileName.length();i++)
+	{
+		oft.filename[i] = mFileName[i].latin1();
+	}
+	for (unsigned int i=mFileName.length();i<64;i++)
+		oft.filename[i] = 0;
 
 	Buffer thebuf;
 	sendOFT2Block(oft, thebuf, false);
