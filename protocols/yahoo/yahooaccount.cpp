@@ -467,7 +467,7 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 	QString newMsg = kmsg.plainBody();
 	
 	kmsg.setFg(getMsgColor(msg));
-	kdDebug(14180) << "Message color is " << getMsgColor(msg) << endl;
+//	kdDebug(14180) << "Message color is " << getMsgColor(msg) << endl;
 	
 	if (newMsg.find("<font") != -1)
 	{
