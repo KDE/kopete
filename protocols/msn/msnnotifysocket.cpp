@@ -32,9 +32,17 @@
 
 
 
-KMSNServiceSocket::KMSNServiceSocket(){
+KMSNServiceSocket::KMSNServiceSocket()
+{
+	if( !s_kmsnServiceSocket )
+		s_kmsnServiceSocket = this;
+	else
+		kdDebug() << "KMSNServiceSocket::KMSNServiceSocket: WARNING! s_kmsnServiceSocket already defined!!!" << endl;
 }
-KMSNServiceSocket::~KMSNServiceSocket(){
+
+KMSNServiceSocket::~KMSNServiceSocket()
+{
+	s_kmsnServiceSocket = 0L;
 }
 
 /* Connect to MSN Service */
@@ -668,6 +676,13 @@ void KMSNServiceSocket::createChatSession()
 	QString command;
 	command.sprintf("XFR %lu SB\r\n",ID);
 	socket->writeBlock(command,command.length());
+}
+
+KMSNServiceSocket* KMSNServiceSocket::s_kmsnServiceSocket = 0L;
+
+KMSNServiceSocket* KMSNServiceSocket::kmsnServiceSocket()
+{
+	return s_kmsnServiceSocket;
 }
 
 #include "kmsnservicesocket.moc"

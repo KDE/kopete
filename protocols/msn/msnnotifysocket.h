@@ -40,6 +40,16 @@ public:
 	KMSNServiceSocket();
 	~KMSNServiceSocket();
 
+	/**
+	 * Treat the service socket as singleton.
+	 * WARNING: This is no longer true when Kopete supports multiple
+	 *          identities per protocol. By then the KMSNService class should
+	 *          either be phased out completely or another solution must be
+	 *          found! Let's hope I make it in time to get the former result :)
+	 * FIXME: Hide this again ASAP, this is dangerous! - Martijn
+	 */
+	static KMSNServiceSocket *kmsnServiceSocket();
+
 	QString _publicName;
 	QString buffer;
 	
@@ -121,6 +131,9 @@ signals:
 	void publicNameChanged( QString, QString );
 	void newSerial( uint );
 	void statusChanged( QString );
+
+private:
+	static KMSNServiceSocket *s_kmsnServiceSocket;
 };
 
 #endif
