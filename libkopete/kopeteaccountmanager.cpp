@@ -14,7 +14,7 @@
 	* (at your option) any later version.                                   *
 	*                                                                       *
 	*************************************************************************
-	*/
+*/
 
 #include "kopeteaccountmanager.h"
 
@@ -36,20 +36,20 @@ KopeteAccountManager* KopeteAccountManager::s_manager = 0L;
 
 KopeteAccountManager* KopeteAccountManager::manager()
 {
-		if( !s_manager )
-				s_manager = new KopeteAccountManager;
+	if( !s_manager )
+			s_manager = new KopeteAccountManager;
 
-		return s_manager;
+	return s_manager;
 }
 
 KopeteAccountManager::KopeteAccountManager()
-				: QObject( qApp, "KopeteAccountManager" )
+: QObject( qApp, "KopeteAccountManager" )
 {
 }
 
 KopeteAccountManager::~KopeteAccountManager()
 {
-		s_manager = 0L;
+	s_manager = 0L;
 }
 
 
@@ -60,23 +60,22 @@ void KopeteAccountManager::connectAll()
 		i->connect();
 	}
 
+	//------ OBSOLETE
+	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
+	for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
+	{
+			KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
+			if( !proto )
+					continue;
 
-//------ OBSOLETE
-		QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
-		for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
-		{
-				KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
-				if( !proto )
-						continue;
+			if( !proto->isConnected() )
+			{
+					kdDebug(14010) << "KopeteAccountManager::connectAll: "
+												 << "Connecting plugin: " << proto->pluginId() << endl;
 
-				if( !proto->isConnected() )
-				{
-						kdDebug(14010) << "KopeteAccountManager::connectAll: "
-													 << "Connecting plugin: " << proto->pluginId() << endl;
-
-						proto->connect();
-				}
-		}
+					proto->connect();
+			}
+	}
 }
 
 void KopeteAccountManager::disconnectAll()
@@ -86,23 +85,22 @@ void KopeteAccountManager::disconnectAll()
 		i->disconnect();
 	}
 
+	//------ OBSOLETE
+	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
+	for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
+	{
+			KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
+			if( !proto )
+					continue;
 
-//------ OBSOLETE
-		QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
-		for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
-		{
-				KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
-				if( !proto )
-						continue;
+			if( proto->isConnected() )
+			{
+					kdDebug(14010) << "KopeteAccountManager::disconnectAll: "
+												 << "Disonnecting plugin: " << proto->pluginId() << endl;
 
-				if( proto->isConnected() )
-				{
-						kdDebug(14010) << "KopeteAccountManager::disconnectAll: "
-													 << "Disonnecting plugin: " << proto->pluginId() << endl;
-
-						proto->disconnect();
-				}
-		}
+					proto->disconnect();
+			}
+	}
 }
 
 void KopeteAccountManager::setAwayAll( const QString &awayReason )
@@ -115,24 +113,22 @@ void KopeteAccountManager::setAwayAll( const QString &awayReason )
 			i->setAway(true, awayReason);
 	}
 
+	//------ OBSOLETE
+	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
+	for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
+	{
+		KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
+		if( !proto )
+				continue;
 
-//------ OBSOLETE
-
-		QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
-		for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
+		if( proto->isConnected() && !proto->isAway() )
 		{
-				KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
-				if( !proto )
-						continue;
+				kdDebug(14010) << "KopeteAccountManager::setAwayAll: "
+											 << "Setting plugin to away: " << proto->pluginId() << endl;
 
-				if( proto->isConnected() && !proto->isAway() )
-				{
-						kdDebug(14010) << "KopeteAccountManager::setAwayAll: "
-													 << "Setting plugin to away: " << proto->pluginId() << endl;
-
-						proto->setAway();
-				}
+				proto->setAway();
 		}
+	}
 }
 
 void KopeteAccountManager::setAvailableAll()
@@ -145,23 +141,22 @@ void KopeteAccountManager::setAvailableAll()
 			i->setAway(false);
 	}
 
+	//------ OBSOLETE
+	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
+	for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
+	{
+			KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
+			if( !proto )
+					continue;
 
-//------ OBSOLETE
-		QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
-		for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
-		{
-				KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
-				if( !proto )
-						continue;
+			if( proto->isConnected() && proto->isAway() )
+			{
+					kdDebug(14010) << "KopeteAccountManager::setAvailableAll: "
+												 << "Setting plugin to available: " << proto->pluginId() << endl;
 
-				if( proto->isConnected() && proto->isAway() )
-				{
-						kdDebug(14010) << "KopeteAccountManager::setAvailableAll: "
-													 << "Setting plugin to available: " << proto->pluginId() << endl;
-
-						proto->setAvailable();
-				}
-		}
+					proto->setAvailable();
+			}
+	}
 }
 
 void KopeteAccountManager::registerAccount(KopeteAccount *i)
