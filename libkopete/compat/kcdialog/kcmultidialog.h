@@ -47,7 +47,7 @@ public:
     /**
      * Constructs a new KCMultiDialog
      *
-     * @param parent The parent Widget
+     * @param parent The parent widget
      * @param name The widget name
      * @param baseGroup The baseGroup, if you want to call a module out of
      *                  kcontrol, just keep "settings"
@@ -91,7 +91,7 @@ public:
     /**
      * Add a module.
      *
-     * @param moduleinfo Pass a @ref KCModuleInfo object which will be
+     * @param moduleinfo Pass a KCModuleInfo object which will be
      *                   used for creating the module. It will be added
      *                   to the list of modules the dialog will show.
      *
@@ -160,7 +160,7 @@ private:
     };
     QPtrList<KCModule> modules;
     QPtrDict<LoadInfo> moduleDict;
-    QPtrDict<QStringList>  modulePrefParent;
+    QPtrDict<QStringList> moduleParentComponents;
     QString _docPath;
     QString _baseGroup;
     bool createTreeList;

@@ -29,7 +29,7 @@ class KCModuleInfo;
 
 /**
  * This is a widget to configure what Plugins should be loaded. This widget is
- * used by @ref KPluginSelector and has no direct use.
+ * used by KPluginSelector and has no direct use.
  *
  * @internal
  * @see KPluginSelector
@@ -52,7 +52,7 @@ class KPluginSelectionWidget : public QWidget
          * share/apps/&lt;instancename&gt;/kpartplugins directory.
          *
          * @param instanceName The name of the plugin's parent.
-         * @param kps          A @ref KPluginSelector object.
+         * @param kps          A KPluginSelector object.
          * @param parent       The parent widget.
          * @param catname      The translated name of the category.
          * @param category     The unstranslated category key name.
@@ -73,10 +73,10 @@ class KPluginSelectionWidget : public QWidget
          * types of plugins use the following constructor.
          * Using this constructor the Type field will be ignored.
          *
-         * @param plugininfos  A list of @ref KPluginInfo objects containing the
+         * @param plugininfos  A list of KPluginInfo objects containing the
          *                     necessary information for the plugins you want to
          *                     add the selector's list.
-         * @param kps          A @ref KPluginSelector object.
+         * @param kps          A KPluginSelector object.
          * @param parent       The parent widget.
          * @param catname      The translated name of the category.
          * @param category     The unstranslated category key name.
@@ -129,10 +129,17 @@ class KPluginSelectionWidget : public QWidget
          */
         void changed( bool );
 
+        /**
+         * Emitted after the config of an embedded KCM has been saved. The
+         * argument is the name of the parent component that needs to reload
+         * its config
+         */
+        void configCommitted( const QCString & instanceName );
+
     protected:
         /**
          * Reimplement in your subclass if you have special needs: The standard
-         * implementation looks at the @ref KPluginInfo objects to find the
+         * implementation looks at the KPluginInfo objects to find the
          * needed information. But if, for some reason, your program doesn't
          * work with that here's your chance to get it working.
          *
@@ -185,6 +192,13 @@ class KPluginSelectionWidget : public QWidget
          * @internal
          */
         QWidget * insertKCM( QWidget * parent, const KCModuleInfo & );
+
+        /**
+         * Embed the KCMs for the plugin into the widgetstack
+         *
+         * @internal
+         */
+        void embeddPluginKCMs( KPluginInfo *, bool );
 
         QValueList<KPluginInfo*> kpartsPluginInfos() const;
         void init( const QValueList<KPluginInfo*> & plugininfos, const QString & );
