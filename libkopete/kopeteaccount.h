@@ -113,11 +113,11 @@ public:
 	void setPassword(const QString &pass = QString::null);
 
 	/**
-	 * @brief say if the password is remember.
+	 * @brief say if the password is remembered.
 	 *
 	 * if it return false, that mean a call to @ref getPassword() will popup a window.
 	 *
-	 * This fucntion should be used by the editAccountPage (and only by the editAccountPage)
+	 * This function should be used by the editAccountPage (and only by the editAccountPage)
 	 */
 	bool rememberPassword();
 
@@ -125,7 +125,7 @@ public:
 	 * Set if the account should log in automatically or not
 	 *
 	 * This function can be used by the editaccountPage (and only by it)
-	 * Remember than kopete handle autoconnection itself
+	 * Remember that kopete handles autoconnection itself
 	 */
 	void setAutoLogin(bool);
 	/**
@@ -185,10 +185,10 @@ public:
 	virtual KopeteContact* myself() const = 0;
 
 	/**
-	 * @bried Return the menu for this account
+	 * @brief Return the menu for this account
 	 *
 	 * You have to reimplement this method to return the custom action menu which will
-	 * be shown in the statusbar. Kopete take care of the deletion of the menu. Actions
+	 * be shown in the statusbar. Kopete takes care of the deletion of the menu. Actions
 	 * should have the menu as parent.
 	 */
 	virtual KActionMenu* actionMenu() ;
@@ -228,11 +228,11 @@ protected:
 	/**
 	 * Create a new contact in the specified metacontact
 	 *
-	 * You shouldn't never call yourself this method, For adding contact see @ref addContact()
+	 * You shouldn't ever call this method yourself, For adding contacts see @ref addContact()
 	 *
 	 * This method is called by @ref KopeteAccount::addContact() in this method, you should
 	 * simply create the new custom @ref KopeteContact in the given metacontact. And you can
-	 * add the contact to the server if the protocol support it
+	 * add the contact to the server if the protocol supports it
 	 *
 	 * @param contactId The unique ID for this protocol
 	 * @param displayName The displayname of the contact (may equal userId for some protocols)
@@ -284,7 +284,7 @@ signals:
 
 protected slots:
 	/**
-	 * This method is called at the end of the  fromXML function
+	 * This method is called at the end of the fromXML function
 	 * since pluginData are not accessible yet in the constructor
 	 */
 	virtual void loaded();
@@ -296,8 +296,8 @@ private slots:
 	void slotKopeteContactDestroyed( KopeteContact * );
 
 	/**
-	 * Called by a single shot hack to indicate that the account is
-	 * fully created and ready to use.
+	 * Called by a single shot hack to make the account tell its @ref KopeteAccountManager
+	 * to signal that the account is fully created and ready to use.
 	 */
 	void slotAccountReady();
 
