@@ -26,8 +26,8 @@
 
 #include "jabbereditaccountwidget.h"
 
-JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, JabberAccount * ident, QWidget * parent, const char *name):DlgPreferences (parent, name),
-EditAccountWidget (ident)
+JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, JabberAccount * ident, QWidget * parent, const char *name)
+						: DlgJabberEditAccountWidget (parent, name), EditAccountWidget (ident)
 {
 	m_protocol = proto;
 

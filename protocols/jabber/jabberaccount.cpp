@@ -69,6 +69,7 @@
 
 JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId, const char *name):KopeteAccount (parent, accountId, name)
 {
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Instantiating new account " << accountId;
 
 
 	mProtocol = parent;
@@ -192,30 +193,10 @@ void JabberAccount::initActions ()
 	actionStatusMenu->popupMenu ()->insertSeparator ();
 	//actionStatusMenu->insert(actionEmptyMail);
 
-	/* make sure we load the SSL library if required. */
-	if (pluginData (protocol (), "UseSSL") == "true")
-	{
-		/* Try to load QSSL library needed by libpsi.  FIXME: this is ugly
-		 * because it uses fixed dirs!  FIXME FIXME FIXME FIXME FIXME FIXME
-		 * PLEASE.  should check ldconfig or something.
-		 *
-		 * well, the real solution is the kde ssl stuff, but that's in the
-		 * future. -ds */
-		QStringList dirs;
-
-		dirs += "/usr/lib";
-		dirs += "/usr/local/lib";
-		dirs += QStringList::split (":", QString (getenv ("LD_LIBRARY_PATH")));
-
-		Jabber::Stream::loadSSL (dirs);
-	}
-
 	/* If we need to connect on startup, do it now. */
 	if (pluginData (protocol (), "AutoConnect") == "true")
 		QTimer::singleShot (0, this, SLOT (connect ()));
 
-	//myContact = new JabberContact(userID, userID, QStringList(i18n("Unknown")),
-	//this, 0L, QString::null); }
 }
 
 KActionMenu *JabberAccount::actionMenu ()
@@ -348,7 +329,17 @@ void JabberAccount::connect ()
 	/* Check if we are capable of using SSL if requested. */
 	if (pluginData (protocol (), "UseSSL") == "true")
 	{
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "We are to use SSL, try to load the QSSL library\n";
+
+		// the string list is just a dummy, QSSL is linked statically
+		QStringList dirs = "/usr/lib";
+		bool result = Jabber::Stream::loadSSL (dirs);
+
 		bool sslPossible = jabberClient->setSSLEnabled (true);
+
+		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Jabber::Stream::loadSSL() returned " << result <<
+									 "(Reason: " << Jabber::Stream::SSLUnsupportedReason() << "), sslPossible is " <<
+									 sslPossible << "\n";
 
 		if (!sslPossible)
 		{
