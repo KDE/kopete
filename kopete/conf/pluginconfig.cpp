@@ -142,25 +142,14 @@ void PluginConfig::reopen()
 
 	for(QValueList<KopeteLibraryInfo>::Iterator i = available.begin(); i != available.end(); ++i)
 	{
-		PluginListView *parent;
 		bool exclusive = false;
+		PluginListView *parent = ( *i ).type == "Kopete/Protocol" ? protocolList : otherList;
 
-		if((*i).type == "protocol")
-		{
-			parent = protocolList;
-		}
-		else
-		{
-			parent = otherList;
-		}
-		if(parent)
-		{
-			PluginListItem *item = new PluginListItem(exclusive, loaded.contains(*i), *i, parent);
-			item->setText(0, (*i).name);
-			item->setText(1, (*i).comment);
-			item->setText(2, (*i).author);
-			item->setText(3, (*i).license);
-		}
+		PluginListItem *item = new PluginListItem( exclusive, loaded.contains( *i ), *i, parent );
+		item->setText( 0, ( *i ).name );
+		item->setText( 1, ( *i ).comment );
+		item->setText( 2, ( *i ).author );
+		item->setText( 3, ( *i ).license );
 	}
 }
 
