@@ -515,6 +515,7 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 		default:
 			if ( connectWithSSL ) {
 				if ( useTls() != TLS_only ) {
+					slotCommandDone( QString::null, i18n( "connection using SSL was not possible, retrying without." ) );
 					kdDebug( 14100 ) << "try without tls now" << endl;
 					connectWithSSL = false;
 					tryReconnect = true;
