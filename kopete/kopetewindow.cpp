@@ -374,6 +374,10 @@ void KopeteWindow::slotPluginLoaded( KopetePlugin *p )
 	m_statusBarIcons.insert( proto, i );
 
 	slotProtocolStatusIconChanged( proto, proto->statusIcon() );
+
+	KActionMenu *menu = proto->protocolActions();
+	if( menu )
+		menu->plug( tray->contextMenu(), 1 );
 }
 
 void KopeteWindow::slotProtocolDestroyed( QObject *o )
