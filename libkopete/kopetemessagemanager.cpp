@@ -71,7 +71,6 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	connect( user, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ), this,
 		SLOT( slotStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
-	connect( this, SIGNAL( contactChanged() ), this, SLOT( slotUpdateDisplayName() ) );
 	slotUpdateDisplayName();
 }
 
@@ -128,7 +127,6 @@ const QString KopeteMessageManager::displayName()
 {
 	if ( d->displayName.isNull() )
 	{
-		connect( this, SIGNAL( contactChanged() ), this, SLOT( slotUpdateDisplayName() ) );
 		slotUpdateDisplayName();
 	}
 
@@ -137,8 +135,6 @@ const QString KopeteMessageManager::displayName()
 
 void KopeteMessageManager::setDisplayName( const QString &newName )
 {
-	disconnect( this, SIGNAL( contactChanged() ), this, SLOT( slotUpdateDisplayName() ) );
-
 	d->displayName = newName;
 
 	emit displayNameChanged();
@@ -258,12 +254,14 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool suppress )
 			KopeteContact *old = d->mContactList.first();
 			d->mContactList.remove( old );
 			d->mContactList.append( c );
-			//disconnect( old, SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SIGNAL( contactChanged() ) );
+
 			disconnect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
 			this, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ) );
 
 			if ( old->metaContact() )
-				disconnect( old->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SIGNAL( contactChanged() ) );
+				disconnect( old->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
+			else
+				disconnect( old, SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
 			emit contactAdded( c, suppress );
 			emit contactRemoved( old, QString::null );
 		}
@@ -277,7 +275,9 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool suppress )
 			this, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ) );
 ;
 		if ( c->metaContact() )
-			connect( c->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SIGNAL( contactChanged() ) );
+			connect( c->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
+		else
+			connect( c, SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
 		connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ), this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
 	}
 	d->isEmpty = false;
@@ -296,14 +296,15 @@ void KopeteMessageManager::removeContact( const KopeteContact *c, const QString&
 	else
 	{
 		d->mContactList.remove( c );
-		//disconnect( c, SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SIGNAL( contactChanged() ) );
+
 		disconnect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
 			this, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ) );
 
 		if ( c->metaContact() )
-			disconnect( c->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SIGNAL( contactChanged() ) );
+			disconnect( c->metaContact(), SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
+		else
+			disconnect( c, SIGNAL( displayNameChanged( const QString &, const QString & ) ), this, SLOT( slotUpdateDisplayName() ) );
 		disconnect( c, SIGNAL( contactDestroyed( KopeteContact * ) ), this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
-		//c->setConversations( c->conversations() - 1 );
 	}
 
 	d->contactStatus.remove( c );
