@@ -85,7 +85,7 @@ KopeteMetaContact::KopeteMetaContact()
 	connect( this, SIGNAL( addedToGroup( KopeteMetaContact *, KopeteGroup * ) ), SLOT( emitPersistentDataChanged() ) );
 	connect( this, SIGNAL( contactAdded( KopeteContact * ) ), SLOT( emitPersistentDataChanged() ) );
 	connect( this, SIGNAL( contactRemoved( KopeteContact * ) ), SLOT( emitPersistentDataChanged() ) );
-	
+
 	// make sure KopeteMetaContact is at least in one group
 	addToGroup( KopeteGroup::topLevel() );
 }
@@ -300,47 +300,59 @@ KopeteContact *KopeteMetaContact::startChat()
 KopeteContact *KopeteMetaContact::preferredContact()
 {
 	/*
-		Algorithm:
-		1. Determine the protocol as described in sendMessage(), with a
-		   small difference:
-		   If a contact can *only* be reached by using offline messages,
-		   notify the user and switch to sendMessage() mode. Interactive
-		   chats with offline users are a bit pointless after all...
-		2. Show the chat dialog
-		3. Open the session in the background
-		4. Send messages, until the dialog is closed
-		5. Close the chat session
+		This function will determine what contact will be used to reach the contact.
 
-		Caveats:
-		- while connecting in protocols like MSN, messages might get 'sent'
-		  by the user before the connection is open. Until the connection
-		  signals a 'ready' condition all messages should be queued. This
-		  should be done here to avoid code duplication
-		- while sending messages you have to wait for the server confirmation
-		  with most protocols. In MSN this latency is small enough to not
-		  notice and MSN also requires a builtin queue for protocol-specific
-		  reasons, but in general the queuing should be done here. Until the
-		  chat session signals a 'message sent' condition any subsequent
-		  messages should be put on hold and queued. Kopete should also show
-		  a simple spinning hour glass animation or something similar to
-		  indicate that messages are still pending.
+		The prefered contact is choose with the following criterias:  (in that order)
+		1) If a contact was an open chatwindow already, we will use that one.
+		2) The contact with the better online status is used. But if that
+		    contact is not reachable, we prefer return no contact.
+		3) If all the criterias aboxe still gives ex-eaquo, we use the preffered
+		    account as selected in the account preferances (with the arrows)
 	*/
 
 	KopeteContact *contact = 0;
+	bool hasOpenView=false; //has the selected contact already an open chatwindow
 
 	for ( QPtrListIterator<KopeteContact> it( d->contacts ); it.current(); ++it )
 	{
+		KopeteContact *c=it.current();
+
+		//Has the contact an open chatwindow?
+		 if( c->manager(false) /*&& c->manager()->view(false)*/)
+		 {      //there is no need of having a view() i consider already having a manager
+		        // is enough to give the priority to that contact
+		 	if( !hasOpenView )
+			{ //the selected contact has not an openview
+				contact=c;
+				hasOpenView=true;
+				if( c->isOnline() )
+					continue;
+			} //else, several contact might have an open view, uses following criterias
+		 }
+		 else if( hasOpenView && contact->isOnline() )
+		 	continue; //This contact has not open view, but the selected contact has, and is reachable
+
+
 		// FIXME: The isConnected call should be handled in KopeteContact::isReachable
 		//        after KDE 3.2 - Martijn
-		if ( !it.current()->account() || !it.current()->account()->isConnected() || !it.current()->isReachable() )
-			continue;
+		if ( !c->account() || !c->account()->isConnected() || !c->isReachable() )
+			continue; //if this contact is not reachable, we ignore it.
 
-		if ( !contact ||
-		     it.current()->onlineStatus().status() > contact->onlineStatus().status() ||
-		     ( it.current()->onlineStatus().status() == contact->onlineStatus().status() &&
-		       it.current()->account()->priority() > contact->account()->priority() ) )
+		if ( !contact )
+		{  //this is the first contact.
+			contact= c;
+		    continue;
+		}
+
+		if( c->onlineStatus().status() > contact->onlineStatus().status()  )
+			contact=c; //this contact has a better status
+		else if ( c->onlineStatus().status() == contact->onlineStatus().status() )
 		{
-			contact = *it;
+			if( c->account()->priority() > contact->account()->priority() )
+				contact=c;
+			else if(  c->account()->priority() == contact->account()->priority()
+					&& c->onlineStatus().weight() > contact->onlineStatus().weight() )
+				contact = c;  //the weight is not supposed to follow the same scale for each protocol
 		}
 	}
 
@@ -496,8 +508,8 @@ void KopeteMetaContact::setDisplayName( const QString &name )
 
 	for( QPtrListIterator<KopeteContact> it( d->contacts ) ; it.current(); ++it )
 		( *it )->syncGroups();
-	
-	
+
+
 }
 
 QString KopeteMetaContact::displayName() const
@@ -584,10 +596,10 @@ void KopeteMetaContact::removeFromGroup( KopeteGroup *group, GroupSyncMode syncM
 	{
 		return;
 	}
-	
+
 	d->groups.remove( group );
 
-	// make sure KopeteMetaContact is at least in one group	
+	// make sure KopeteMetaContact is at least in one group
 	if ( d->groups.isEmpty() )
 	{
 		d->groups.append( KopeteGroup::topLevel() );
@@ -671,7 +683,7 @@ const QDomElement KopeteMetaContact::toXML()
 	QValueList<QDomElement> pluginData = KopetePluginDataObject::toXML();
 	for( QValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
 		metaContact.documentElement().appendChild( metaContact.importNode( *it, true ) );
-	
+
 	// Store custom notification data
 	QDomElement notifyData = KopeteNotifyDataObject::notifyDataToXML();
 	if ( notifyData.hasChildNodes() )
@@ -970,14 +982,14 @@ bool KopeteMetaContact::syncWithKABC()
 		KABC::Addressee addr  = ab->findByUid( metaContactId() );
 		// load the set of addresses from KABC
 		QStringList customs = addr.customs();
-	
+
 		QStringList::ConstIterator it;
 		for ( it = customs.begin(); it != customs.end(); ++it )
 		{
 			QString app, name, value;
 			splitField( *it, app, name, value );
 			kdDebug( 14010 ) << "app=" << app << " name=" << name << " value=" << value << endl;
-	
+
 			if ( app.startsWith( QString::fromLatin1( "messaging/" ) ) )
 			{
 				if ( name == QString::fromLatin1( "All" ) )
@@ -989,7 +1001,7 @@ bool KopeteMetaContact::syncWithKABC()
 					// munge Jabber hack
 					if ( protocolName == QString::fromLatin1( "xmpp" ) )
 						protocolName = QString::fromLatin1( "jabber" );
-					
+
 					// Check Kopete supports it
 					KopeteProtocol * proto = dynamic_cast<KopeteProtocol*>( KopetePluginManager::self()->loadPlugin( QString::fromLatin1( "kopete_" ) + protocolName ) );
 					if ( !proto )
@@ -999,7 +1011,7 @@ bool KopeteMetaContact::syncWithKABC()
 								i18n( "Could Not Sync with KDE Address Book" )  );
 						continue;
 					}
-					
+
 					// See if we need to add each contact in this protocol
 					QStringList addresses = QStringList::split( QChar( 0xE000 ), value );
 					QStringList::iterator end = addresses.end();
@@ -1011,7 +1023,7 @@ bool KopeteMetaContact::syncWithKABC()
 						QDictIterator<KopeteAccount> acs(accounts);
 						KopeteMetaContact *mc = 0;
 						for ( acs.toFirst(); acs.current(); ++acs )
-							if ( ( mc = KopeteContactList::contactList()->findContact( 
+							if ( ( mc = KopeteContactList::contactList()->findContact(
 									proto->pluginId(), acs.current()->accountId(), *it ) ) )
 								break;
 
@@ -1031,7 +1043,7 @@ bool KopeteMetaContact::syncWithKABC()
 						{
 							// if not, prompt to add it
 							kdDebug( 14010 ) << proto->pluginId() << "://" << *it << " was not found in the contact list.  Prompting to add..." << endl;
-							if ( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), 
+							if ( KMessageBox::Yes == KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
 															 i18n( "<qt>An address was added to this contact by another application.<br>Would you like to use it in Kopete?<br><b>Protocol:</b> %1<br><b>Address:</b> %2</qt>" ).arg( proto->displayName() ).arg( *it ), i18n( "Import Address From Address Book" ), i18n("&Yes"), i18n("&No"), QString::fromLatin1( "ImportFromKABC" ) ) )
 							{
 								// Check the accounts for this protocol are all connected
@@ -1063,7 +1075,7 @@ bool KopeteMetaContact::syncWithKABC()
 										"accSelector");
 									chooser->setMainWidget(accSelector);
 									if ( chooser->exec() == QDialog::Rejected )
-										continue; 
+										continue;
 									chosen = accSelector->selectedItem();
 
 									delete chooser;
@@ -1100,7 +1112,7 @@ bool KopeteMetaContact::syncWithKABC()
 				}
 				else
 					kdDebug( 14010 ) << "not interested in name=" << name << endl;
-					
+
 			}
 			else
 				kdDebug( 14010 ) << "not interested in app=" << app << endl;
@@ -1119,7 +1131,7 @@ void KopeteMetaContact::splitField( const QString &str, QString &app, QString &n
 
     int dash = tmp.find( '-' );
     if ( dash != -1 ) {
-      app = tmp.left( dash ); 	
+      app = tmp.left( dash );
       name = tmp.mid( dash + 1 );
     }
   }
