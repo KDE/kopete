@@ -115,19 +115,23 @@ bool KopeteCommandHandler::processMessage( KopeteMessage &msg, KopeteMessageMana
 {
 	QRegExp spaces( QString::fromLatin1("\\s+") );
 	QString messageBody = msg.plainBody();
-	QString command = messageBody.section( spaces, 0, 0).section('/',1).lower();
+	QString command = messageBody.section(spaces, 0, 0).section('/',1).lower();
+
+	if(command.isEmpty())
+		return false;
+
 	QString args = messageBody.section( spaces, 1 );
+
 
 	//Try to find a plugin specified command first
 	CommandList mCommands = commands( msg.from()->protocol() );
 	KopeteCommand *c = mCommands[ command ];
-	if( c )
+	if(c)
 	{
 		kdDebug(14010) << k_funcinfo << "Handled Command" << endl;
 		c->processCommand( args, manager );
 		return true;
 	}
-
 	return false;
 }
 
