@@ -1,13 +1,16 @@
-AM_CPPFLAGS = -I$(top_srcdir)/kopete/conf \
-	-I$(top_srcdir)/kopete/addcontactwizard \
-	-I$(top_builddir)/kopete/addcontactwizard \
-	-I$(top_builddir)/kopete/libkopete/ui \
-        -I$(top_srcdir)/kopete/libkopete/ui \
-        -I$(top_srcdir)/kopete/contactlist \
-	-I$(top_srcdir)/kopete/chatwindow \
-        -I$(top_srcdir)/kopete/conf \
-        -I$(top_builddir)/kopete/conf \
-        -I$(top_srcdir)/kopete/libkopete/private \
+kopete_srcdir=$(top_srcdir)/kopete
+kopete_builddir=$(top_builddir)/kopete
+
+AM_CPPFLAGS = -I$(kopete_srcdir)/kopete/conf \
+	-I$(kopete_srcdir)/kopete/addcontactwizard \
+	-I$(kopete_builddir)/kopete/addcontactwizard \
+	-I$(kopete_builddir)/libkopete/ui \
+        -I$(kopete_srcdir)/libkopete/ui \
+        -I$(kopete_srcdir)/kopete/contactlist \
+	-I$(kopete_srcdir)/kopete/chatwindow \
+        -I$(kopete_srcdir)/kopete/conf \
+        -I$(kopete_builddir)/kopete/conf \
+        -I$(kopete_srcdir)/libkopete/private \
 	$(KOPETE_INCLUDES) \
 	$(all_includes)
 KDE_ICON = AUTO
