@@ -219,7 +219,7 @@ void MSNFileTransferSocket::abort()
 //	emit done(this);
 }
 
-void MSNFileTransferSocket::setFile(const QString &fn, long unsigned int fileSize = 0L)
+void MSNFileTransferSocket::setFile( const QString &fn, long unsigned int fileSize )
 {
 	m_fileName=fn;
 	if(!m_incoming)
