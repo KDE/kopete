@@ -1001,6 +1001,7 @@ void JabberProtocol::slotSubscription(const Jabber::Jid &jid, const QString &typ
 		JabberContact *jc = contactMap[jid.userHost()];
 
 		// delete contact
+		metaContactMap.remove(jc);
 		contactMap.remove(jid.userHost());
 
 		// this will also cause the contact to disappear from the metacontact
@@ -1326,6 +1327,18 @@ void JabberProtocol::removeContact(const Jabber::RosterItem &item)
 		errorConnectFirst();
 		return;
 	}
+
+	if(!contactMap.contains(item.jid().userHost()))
+	{
+		kdDebug() << "[JabberProtocl] WARNING: removeContact() was asked to delete a non-existing contact." << endl;
+		return;
+	}
+
+	JabberContact *jc = contactMap[item.jid().userHost()];
+
+	// delete contact
+	metaContactMap.remove(jc);
+	contactMap.remove(item.jid().userHost());
 
 	Jabber::JT_Roster *rosterTask = new Jabber::JT_Roster(jabberClient->rootTask());
 	rosterTask->remove(item.jid());

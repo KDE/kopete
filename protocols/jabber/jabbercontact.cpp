@@ -443,7 +443,9 @@ void JabberContact::slotDeleteContact()
 	// unsubscribe
 	protocol->removeContact(rosterItem);
 
-	delete this;
+	// should only delete if we are connected (until we support synching)
+	if(protocol->isConnected())
+		delete this;
 
 }
 
