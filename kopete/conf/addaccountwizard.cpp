@@ -34,6 +34,7 @@
 AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool modal )
 	: KWizard(parent, name, modal)
 {
+	kdDebug(14100) << k_funcinfo << "Called." << endl;
 	accountPage = 0L;
 	int pluginCount = 0;
 	QListViewItem *pluginItem=0L;
@@ -42,25 +43,25 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 	selectService = new AddAccountWizardPage2(this);
 	finish = new AddAccountWizardPage3(this);
 
-	addPage( intro, i18n("Introduction") );
-	addPage( selectService, i18n("Step One: Select the messaging service(s)") );
-	addPage( finish, i18n("Finished!") );
+	addPage( intro, intro->caption() );
+	addPage( selectService, selectService->caption() );
+	addPage( finish, finish->caption() );
 
 	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
-	for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
+	for(KopetePlugin *p = plugins.first(); p; p = plugins.next())
 	{
-		KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
+		KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>(p);
 		if( proto )
 		{
-			pluginItem = new QListViewItem( selectService->protocolListView );
+			pluginItem = new QListViewItem(selectService->protocolListView);
 			pluginItem->setText(0, proto->displayName());
-			pluginItem->setPixmap( 0, SmallIcon( proto->pluginIcon() ) );
+			pluginItem->setPixmap(0, SmallIcon(proto->pluginIcon()));
 			pluginCount++;
 			m_protocolItems.insert(pluginItem, proto);
 		}
 	}
 
-	if ( pluginCount == 1 )
+	if(pluginCount == 1)
 	{
 		pluginItem->setSelected( true );
 		// I think it is important to select one protocol to make sure.
@@ -76,10 +77,12 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 
 AddAccountWizard::~AddAccountWizard()
 {
+	kdDebug(14100) << k_funcinfo << "Called." << endl;
 }
 
 void AddAccountWizard::slotProtocolListClicked( QListViewItem *)
 {
+	kdDebug(14100) << k_funcinfo << "Called." << endl;
 	// Just makes sure only one protocol is selected before allowing the user to continue
 	setNextEnabled(
 		selectService,
@@ -89,11 +92,29 @@ void AddAccountWizard::slotProtocolListClicked( QListViewItem *)
 
 void AddAccountWizard::accept()
 {
+	kdDebug(14100) << k_funcinfo << "Called." << endl;
 	KopeteAccount *a = accountPage->apply();
 	if(a)
 		a->setColor( finish->mUseColor->isChecked() ? finish->mColorButton->color() : QColor() );
 	deleteLater();
 }
+
+void AddAccountWizard::back()
+{
+	if (currentPage() == dynamic_cast<QWidget*>(accountPage))
+	{
+		kdDebug(14100) << k_funcinfo << "deleting accountPage..." << endl;
+		// deletes accountPage actually, KWizard does not like deleting pages
+		// using different pointers, it only seems to watch its own pointer
+		delete(currentPage());
+//		removePage(dynamic_cast<QWidget*>(accountPage));
+//		delete accountPage;
+		accountPage = 0L;
+		return; // removePage() already goes back to previous page, no back() needed
+	}
+	KWizard::back();
+}
+
 
 void AddAccountWizard::next()
 {
@@ -101,33 +122,48 @@ void AddAccountWizard::next()
 		(currentPage() == intro && !appropriate(selectService)))
 	{
 		if(accountPage)
+		{
+			kdDebug(14100) << k_funcinfo << "accountPage still valid, part1!" << endl;
+/*			kdDebug(14100) << k_funcinfo << "deleting accountPage, first part" << endl;
+			removePage(dynamic_cast<QWidget*>(accountPage));
 			delete accountPage;
+			accountPage = 0L;
+			*/
+		}
 
 		QListViewItem *lvi = selectService->protocolListView->selectedItem();
-		if( lvi && m_protocolItems[lvi] )
+		if(lvi && m_protocolItems[lvi])
 		{
-			if( accountPage )
+			if(accountPage)
+			{
+				kdDebug(14100) << k_funcinfo << "accountPage still valid, part2!" << endl;
+/*				kdDebug(14100) << k_funcinfo << "deleting accountPage after finding selected Protocol" << endl;
+				removePage(dynamic_cast<QWidget*>(accountPage));
 				delete accountPage;
+				accountPage = 0L;*/
+			}
 
-			accountPage = m_protocolItems[lvi]->createEditAccountWidget(0L,this);
+			accountPage = m_protocolItems[lvi]->createEditAccountWidget(0L, this);
 
 			if (!accountPage)
 			{
 				KMessageBox::error(this,
-					i18n("The author of this protocol hasn't implemented Adding of Accounts"),
+					i18n("The author of this protocol hasn't implemented adding of accounts"),
 					i18n("Error while adding account") );
-				return;
 			}
-
-			insertPage(
-				dynamic_cast<QWidget*>(accountPage),
-				i18n( "Step Two: Account Information" ), indexOf(finish)
-			);
-			KWizard::next();
+			else
+			{
+				kdDebug(14100) << k_funcinfo << "Adding Step Two page and switching to that one" << endl;
+				insertPage(
+					dynamic_cast<QWidget*>(accountPage),
+					i18n("Step Two: Account Information"), indexOf(finish)
+				);
+				KWizard::next();
+			}
 		}
 		return;
 	}
-	else if( indexOf(currentPage()) == 2 )
+	else if(indexOf(currentPage()) == 2)
 	{
 		if(!accountPage->validateData())
 			return;
@@ -144,9 +180,5 @@ void AddAccountWizard::next()
 		KWizard::next();
 	}
 }
-
-
 #include "addaccountwizard.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
-

@@ -8,21 +8,18 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>515</width>
-            <height>366</height>
+            <width>530</width>
+            <height>318</height>
         </rect>
     </property>
     <property name="caption">
-        <string>AddAccountWizardPage1</string>
+        <string>Introduction</string>
     </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
         <property name="margin">
-            <number>0</number>
-        </property>
-        <property name="spacing">
             <number>0</number>
         </property>
         <spacer row="1" column="1">
@@ -37,20 +34,14 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>16</width>
-                    <height>16</height>
+                    <width>20</width>
+                    <height>20</height>
                 </size>
             </property>
         </spacer>
         <widget class="QLabel" row="0" column="0">
             <property name="name">
                 <cstring>PixmapLabel1</cstring>
-            </property>
-            <property name="frameShape">
-                <enum>NoFrame</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Plain</enum>
             </property>
             <property name="pixmap">
                 <pixmap>image0</pixmap>

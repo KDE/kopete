@@ -8,12 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>616</width>
-            <height>417</height>
+            <width>597</width>
+            <height>377</height>
         </rect>
     </property>
     <property name="caption">
-        <string>AddAccountWizardPage2</string>
+        <string>Step One: Select the messaging service(s)</string>
     </property>
     <grid>
         <property name="name">
@@ -22,21 +22,73 @@
         <property name="margin">
             <number>0</number>
         </property>
-        <property name="spacing">
-            <number>0</number>
-        </property>
-        <widget class="QLabel" row="0" column="0" rowspan="2" colspan="1">
+        <widget class="QLayoutWidget" row="0" column="0" rowspan="3" colspan="1">
             <property name="name">
-                <cstring>PixmapLabel1_2_2</cstring>
+                <cstring>layout1</cstring>
             </property>
-            <property name="pixmap">
-                <pixmap>image0</pixmap>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>PixmapLabel1_2_2</cstring>
+                    </property>
+                    <property name="pixmap">
+                        <pixmap>image0</pixmap>
+                    </property>
+                    <property name="scaledContents">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer3</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>21</width>
+                            <height>51</height>
+                        </size>
+                    </property>
+                </spacer>
+            </vbox>
+        </widget>
+        <spacer row="3" column="1">
+            <property name="name">
+                <cstring>Spacer7</cstring>
             </property>
-            <property name="scaledContents">
-                <bool>false</bool>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLabel" row="1" column="1">
+            <property name="name">
+                <cstring>TextLabel5_2</cstring>
+            </property>
+            <property name="text">
+                <string>&lt;qt&gt;&lt;u&gt;Note&lt;/u&gt;: If a messaging service is missing from the list, please confirm that it is enabled in the Kopete configuration window.&lt;/qt&gt;</string>
+            </property>
+            <property name="alignment">
+                <set>WordBreak|AlignVCenter</set>
             </property>
         </widget>
-        <widget class="KListView" row="1" column="1" rowspan="1" colspan="2">
+        <widget class="KListView" row="2" column="1">
             <column>
                 <property name="text">
                     <string>Services</string>
@@ -55,35 +107,17 @@
                 <bool>true</bool>
             </property>
         </widget>
-        <widget class="QLabel" row="0" column="1" rowspan="1" colspan="2">
+        <widget class="QLabel" row="0" column="1">
             <property name="name">
                 <cstring>TextLabel5</cstring>
             </property>
             <property name="text">
-                <string>&lt;p&gt;Select the messaging service(s) for which you would like to add accounts from the list below.&lt;/p&gt;
-&lt;p&gt;&lt;u&gt;Note&lt;/u&gt;: If a messaging service is missing from the list, please confirm that it is enabled in the Kopete configuration window&lt;/p&gt;</string>
+                <string>&lt;qt&gt;Select the messaging service(s) for which you would like to add accounts from the list below.&lt;/qt&gt;</string>
             </property>
             <property name="alignment">
                 <set>WordBreak|AlignVCenter</set>
             </property>
         </widget>
-        <spacer row="2" column="2">
-            <property name="name">
-                <cstring>Spacer7</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
     </grid>
 </widget>
 <images>

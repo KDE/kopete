@@ -8,21 +8,18 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>561</width>
-            <height>480</height>
+            <width>525</width>
+            <height>356</height>
         </rect>
     </property>
     <property name="caption">
-        <string>AddAccountWizardPage3</string>
+        <string>Finished!</string>
     </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
         <property name="margin">
-            <number>0</number>
-        </property>
-        <property name="spacing">
             <number>0</number>
         </property>
         <widget class="KColorButton" row="1" column="2">
@@ -100,7 +97,7 @@
             </property>
             <property name="text">
                 <string>&lt;h2&gt;Congratulations!&lt;/h2&gt; 
-&lt;p&gt;You have finished configuring the account. Please click the finish button and your contact will be added to your contact list.&lt;/p&gt;
+&lt;p&gt;You have finished configuring the account. Please click the "Finish" button and your contact will be added to your contact list.&lt;/p&gt;
 
 </string>
             </property>

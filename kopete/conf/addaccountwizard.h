@@ -42,6 +42,7 @@ class AddAccountWizard : public KWizard
 		void slotProtocolListClicked( QListViewItem * );
 
 	protected slots:
+		virtual void back();
 		virtual void next();
 		virtual void accept();
 
@@ -54,6 +55,4 @@ class AddAccountWizard : public KWizard
 };
 
 #endif
-
 // vim: set noet ts=4 sts=4 sw=4:
-
