@@ -38,7 +38,7 @@
                         <string>Number of away messages to remember:</string>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Kopete will remember this manyaway messages to use at a later date. Once this limit is exceeded, the least used message will be removed.</string>
+                        <string>Kopete will remember this many away messages for use at a later date; if this limit is exceeded, the least-used message will be removed.</string>
                     </property>
                 </widget>
                 <widget class="QSpinBox" row="1" column="1">
