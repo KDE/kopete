@@ -244,6 +244,9 @@ void OscarSocket::OnRead(void)
 		case 0x000a: //rate change
 		    parseRateChange(inbuf);
 		    break;
+		case 0x0010: //warning notification
+				parseWarningNotify(inbuf);
+				break;
 		case 0x0013: //message of the day
 		    parseMessageOfTheDay(inbuf);
 		    break;
@@ -626,6 +629,7 @@ void OscarSocket::parseMyUserInfo(Buffer &inbuf)
 {
     kdDebug() << "[OSCAR] Parsing my user info" << endl;
     UserInfo u = parseUserInfo(inbuf);
+    emit gotMyUserInfo(u);
     requestLocateRights();
 }
 
@@ -1215,7 +1219,7 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
     BYTE len = inbuf.getByte();
     char *cb = inbuf.getBlock(len);
     u.sn = cb;
-    u.evil = inbuf.getWord();
+    u.evil = inbuf.getWord() / 10; //for some reason aol multiplies the warning level by 10
     WORD tlvlen = inbuf.getWord(); //the number of TLV's that follow
     kdDebug() << "[OSCAR] ScreenName length: " << len << ", sn: " << u.sn << ", evil: " << u.evil
 	      << ", tlvlen: " << tlvlen << endl;
@@ -1698,6 +1702,21 @@ void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
     if (!ssiData.remove(delitem))
 	kdDebug() << "[OSCAR][sendDelBuddy] delitem was not found in the SSI list" << endl;
 }
+
+/** Parses a warning notification */
+void OscarSocket::parseWarningNotify(Buffer &inbuf)
+{
+	int newevil = inbuf.getWord() / 10; //aol multiplies warning % by 10, don't know why
+	kdDebug() << "[OSCAR} Got a warning: new warning level is " << newevil << endl;
+	if (inbuf.getLength() != 0)
+	{
+	 	UserInfo u = parseUserInfo(inbuf);
+	  emit gotWarning(newevil,u.sn);
+	}
+	else
+		emit gotWarning(newevil,QString::null);
+}
+
 
 /*
  * Local variables:

@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <stdio.h>
+#include <kdebug.h>
 #include <string.h>
 #include "buffer.h"
 
@@ -133,12 +133,14 @@ int Buffer::addFlap(const BYTE channel)
 /** Prints out the buffer */
 void Buffer::print()
 {
+	QString output;
 	for (int i=0;i<length;i++)
-		if ((buf[i] < 0x10)&&(buf[i] >= 0x00))
-			printf("0%x ", (unsigned char)buf[i]);
-		else
-			printf("%x ", (unsigned char)buf[i]);
-	printf("\n");
+	{
+		if (static_cast<unsigned char>(buf[i]) < 0x10)
+			output += "0";
+		output += QString("%1 ").arg(static_cast<unsigned char>(buf[i]),0,16);
+	}
+	kdDebug() << output << endl;
 }
 
 /** Adds a SNAC to the end of the buffer with given family, subtype, flags, and request ID */

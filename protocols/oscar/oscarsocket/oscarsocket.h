@@ -193,6 +193,8 @@ private: // Private methods
   void sendSSIAddModDel(SSI *item, WORD request_type);
   /** Parses the SSI acknowledgement */
   void parseSSIAck(Buffer &inbuf);
+	/** Parses a warning notification */
+	void parseWarningNotify(Buffer &inbuf);
 private slots: // Private slots
   /** Called when a connection has been closed */
   void OnConnectionClosed(void);
