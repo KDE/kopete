@@ -32,7 +32,6 @@ class QRadioButton;
 class QCheckBox;
 class QFrame;
 class QPushButton;
-class KProcess;
 
 class AppearanceConfig_ChatWindow;
 
@@ -109,7 +108,6 @@ private:
 	QFrame* mChatAppearanceTab;
 	
 	bool mQueueChanged;
-	KProcess *kcm;
 };
 
 #endif

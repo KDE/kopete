@@ -40,7 +40,11 @@
 #include <klistbox.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#if KDE_VERSION >= 306
+#include <knotifydialog.h>
+#else
 #include <kprocess.h>
+#endif
 #include <kstddirs.h>
 #include <ktabctl.h>
 
@@ -84,9 +88,6 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 		
 	connect(configSound, SIGNAL(clicked()), this, SLOT(slotConfigSound()));
 	connect(mSoundNotifyChk, SIGNAL(clicked()), this, SLOT(slotSoundChanged()));
-
-	kcm = new KProcess;
-	*kcm << "kcmshell" << "Sound/kcmnotify";
 
 	mAppearanceTab->addTab ( mGeneralTab, i18n("&General") );
 	/* ============================================================== */
@@ -173,8 +174,6 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 
 AppearanceConfig::~AppearanceConfig()
 {
-	delete kcm;
-	kcm = 0L;
 }
 
 void AppearanceConfig::save()
@@ -295,12 +294,19 @@ void AppearanceConfig::reopen()
 
 void AppearanceConfig::slotConfigSound()
 {
-	if (!kcm->start(KProcess::DontCare))
+#if KDE_VERSION >= 306
+	KNotifyDialog::configure(this);
+#else
+	KProcess kcm;
+	kcm << "kcmshell" << "Sound/kcmnotify";
+	if (!kcm.start(KProcess::DontCare))
+	{
 		KMessageBox::information( this,
 		i18n( "<qt>The KControl Module to configure event notifications did not start.\n"
-			"Make sure \"kcmshell\" is in your PATH and is working properly</qt>" ),
+		"Make sure \"kcmshell\" is in your PATH and is working properly</qt>" ),
 		i18n( "KControl Launch failed" ) );
-;
+	}
+#endif
 }
 
 void AppearanceConfig::slotSoundChanged()
