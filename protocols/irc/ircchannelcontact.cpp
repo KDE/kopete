@@ -75,6 +75,8 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 	QObject::connect(identity->engine(), SIGNAL(incomingChannelMode(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingChannelMode(const QString&,const QString&, const QString&)));
 	QObject::connect(identity->engine(), SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
 	QObject::connect( this, SIGNAL( endSession() ), this, SLOT( slotPart() ) );
+
+	isConnected = false;
 }
 
 IRCChannelContact::~IRCChannelContact()
@@ -106,6 +108,7 @@ void IRCChannelContact::slotMessageManagerDestroyed()
 	}
 
 	emit( endSession() );
+	isConnected = false;
 	mMsgManager = 0L;
 }
 
@@ -116,7 +119,7 @@ void IRCChannelContact::slotConnectedToServer()
 
 void IRCChannelContact::slotNamesList(const QString &channel, const QStringList &nicknames)
 {
-	if ( channel.lower() == mNickName.lower())
+	if ( isConnected && channel.lower() == mNickName.lower())
 	{
 		kdDebug(14120) << k_funcinfo << "Names List:" << channel << endl;
 
@@ -162,13 +165,14 @@ void IRCChannelContact::slotChannelTopic(const QString &channel, const QString &
 
 void IRCChannelContact::slotJoin()
 {
-	if ( onlineStatus() == KopeteContact::Online )
+	if ( !isConnected && onlineStatus() == KopeteContact::Online )
 		mEngine->joinChannel(mNickName);
 }
 
 void IRCChannelContact::slotPart()
 {
-	mEngine->partChannel(mNickName, QString("Kopete %1 : http://kopete.kde.org").arg(KOPETE_VERSION) );
+	if( isConnected )
+		mEngine->partChannel(mNickName, QString("Kopete %1 : http://kopete.kde.org").arg(KOPETE_VERSION) );
 }
 
 void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString &channel)
@@ -224,15 +228,18 @@ void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString
 
 void IRCChannelContact::setTopic( const QString &topic )
 {
-	bool okPressed = true;
-	QString newTopic = topic;
-	if( newTopic.isNull() )
-		newTopic = KLineEditDlg::getText( i18n("New Topic"), i18n("Enter the new topic:"), mTopic, &okPressed, 0L );
-
-	if( okPressed )
+	if ( isConnected )
 	{
-		mTopic = newTopic;
-		mEngine->setTopic( mNickName, newTopic );
+		bool okPressed = true;
+		QString newTopic = topic;
+		if( newTopic.isNull() )
+			newTopic = KLineEditDlg::getText( i18n("New Topic"), i18n("Enter the new topic:"), mTopic, &okPressed, 0L );
+
+		if( okPressed )
+		{
+			mTopic = newTopic;
+			mEngine->setTopic( mNickName, newTopic );
+		}
 	}
 }
 
@@ -390,9 +397,15 @@ QString IRCChannelContact::statusIcon() const
 
 const QString IRCChannelContact::caption() const
 {
-	QString cap = QString::fromLatin1("%1 @ %2").arg(mNickName).arg(mEngine->host());
-	if( !mTopic.isNull() && !mTopic.isEmpty() )
-		cap.append( QString::fromLatin1(" - %1").arg(mTopic) );
+	QString cap;
+	if ( isConnected )
+	{
+		cap = QString::fromLatin1("%1 @ %2").arg(mNickName).arg(mEngine->host());
+		if( !mTopic.isNull() && !mTopic.isEmpty() )
+			cap.append( QString::fromLatin1(" - %1").arg(mTopic) );
+	}
+	else
+		cap = QString::null;
 
 	return cap;
 }
