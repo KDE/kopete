@@ -51,7 +51,12 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 
 	QObject::connect(m_engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)),
 			this, SLOT(successfullyChangedNick(const QString &, const QString &)));
-
+	
+	QObject::connect(m_engine, SIGNAL(incomingNickInUse(const QString &)),
+			this, SLOT(slotNickInUseAlert( const QString &)) );
+	
+	QObject::connect(m_engine, SIGNAL(incomingFailedNickOnLogin(const QString &)),
+			this, SLOT(slotNickInUse( const QString &)) );
 
 	m_contactManager = new IRCContactManager(mNickName, m_server, this);
 	m_mySelf = m_contactManager->mySelf();
@@ -89,6 +94,18 @@ void IRCAccount::loaded()
 		m_engine->setReqsPassword(false);
 	}
 
+}
+
+void IRCAccount::slotNickInUse( const QString &nick )
+{
+	QString newNick = KInputDialog::getText( i18n( "IRC Plugin" ),
+		i18n( "The nickname %1 is already in use. Please enter an alternate nickname:" ).arg( nick ), QString::null);
+	m_engine->changeNickname( newNick );
+}
+
+void IRCAccount::slotNickInUseAlert( const QString &nick )
+{
+	KMessageBox::error(0l, i18n("The nickname %1 is already in use").arg(nick), i18n("IRC Plugin"));
 }
 
 QString IRCAccount::userName()
@@ -200,9 +217,6 @@ void IRCAccount::successfullyChangedNick(const QString &/*oldnick*/, const QStri
 {
 	kdDebug(14120) << k_funcinfo << "Changing nick to " << newnick << endl;
 	m_mySelf->manager()->setDisplayName( m_mySelf->caption() );
-
-	if( isConnected() )
-		m_engine->changeNickname( newnick );
 }
 
 bool IRCAccount::addContactToMetaContact( const QString &contactId, const QString &displayName,

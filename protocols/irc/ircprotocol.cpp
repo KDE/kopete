@@ -290,7 +290,7 @@ void IRCProtocol::slotNickCommand( const QString &args, KopeteMessageManager *ma
 	if( !args.isEmpty() )
 	{
 		QStringList argsList = KopeteCommandHandler::parseArguments( args );
-		static_cast<IRCAccount*>( manager->account() )->successfullyChangedNick( QString::null, argsList.front() );
+		static_cast<IRCAccount*>( manager->account() )->engine()->changeNickname( argsList.front() );
 	}
 }
 

@@ -134,6 +134,8 @@ private slots:
 	void slotGoAway();
 	void slotJoinChannel();
 	void slotShowServerWindow();
+	void slotNickInUse( const QString &nick );
+	void slotNickInUseAlert( const QString &nick );
 
 private:
 	IRCProtocol *m_protocol;
