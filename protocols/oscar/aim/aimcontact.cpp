@@ -108,24 +108,25 @@ KActionCollection *AIMContact::customContextMenuActions()
 
 	return actionCollection;
 }
-/*
+
 KopeteMessageManager* AIMContact::manager(bool)
 {
 	// Check to see if we already have a message manager
-	if (mMsgManager == 0L)
-	{  // We don't have one, so create it
+	if (!mMsgManager)
+	{
 		// The true flag here is to tell OscarContact that
 		// it can create the message mananger if it
 		// doesn't exist, which is the case here.
 		OscarContact::manager( true );
+
 		// Connect the typing signal to the slot here
-		QObject::connect( mMsgManager, SIGNAL(typingMsg(bool)),
-						  this, SLOT(slotTyping(bool)));
+		QObject::connect(mMsgManager, SIGNAL(typingMsg(bool)),
+			this, SLOT(slotTyping(bool)));
 	}
 
 	// Return the message manager
 	return mMsgManager;
-}*/
+}
 
 void AIMContact::setStatus(const unsigned int newStatus)
 {

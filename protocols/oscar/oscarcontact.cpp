@@ -157,7 +157,6 @@ KopeteMessageManager* OscarContact::manager(bool canCreate)
 		QObject::connect(mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
 	}
 	return mMsgManager;
-
 }
 
 void OscarContact::slotMessageManagerDestroyed()

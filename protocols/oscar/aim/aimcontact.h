@@ -32,7 +32,12 @@ class AIMContact : public OscarContact
 
 		bool isReachable();
 		KActionCollection *customContextMenuActions();
-//		KopeteMessageManager* manager( bool canCreate = false );
+
+		/*
+		 * Reimplemented because AIM handles start/stop of typing
+		 */
+		KopeteMessageManager* manager( bool canCreate = false );
+
 		virtual void setStatus(const unsigned int newStatus);
 
 		const QString &userProfile() { return mUserProfile; }
