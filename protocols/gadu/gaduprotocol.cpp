@@ -45,6 +45,7 @@ GaduProtocol* GaduProtocol::protocolStatic_ = 0L;
 
 GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList& )
 :KopeteProtocol( GaduProtocolFactory::instance(), parent, name ),
+			defaultAccount_( 0 ),
 			gaduStatusBlocked_( KopeteOnlineStatus::Away, GG_STATUS_BLOCKED, this, GG_STATUS_BLOCKED,
 				"gg_ignored", "", i18n( "Blocked" ) ),
 			gaduStatusOffline_( KopeteOnlineStatus::Offline, GG_STATUS_NOT_AVAIL, this, GG_STATUS_NOT_AVAIL,
@@ -64,8 +65,7 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
 			gaduStatusAvailDescr_(KopeteOnlineStatus::Online, GG_STATUS_AVAIL_DESCR, this, GG_STATUS_AVAIL_DESCR,
 				"gg_online_d", i18n( "Go &Online" ), i18n( "Online" ) ),
 			gaduConnecting_(KopeteOnlineStatus::Offline, GG_STATUS_CONNECTING, this, GG_STATUS_CONNECTING,
-				"gg_con", i18n( "Connect" ), i18n( "Connecting" ) ),
-			defaultAccount_( 0 )
+				"gg_con", i18n( "Connect" ), i18n( "Connecting" ) )
 {
 	if ( protocolStatic_ ) {
 		kdDebug(14100)<<"####"<<"GaduProtocol already initialized"<<endl;

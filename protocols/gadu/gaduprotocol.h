@@ -86,7 +86,7 @@ private slots:
 private:
 	static GaduProtocol*	protocolStatic_;
 	GaduAccount*		defaultAccount_;
-	GaduPreferences*	prefs_;
+	//GaduPreferences*	prefs_;
 
 	const KopeteOnlineStatus gaduStatusBlocked_;
 	const KopeteOnlineStatus gaduStatusOffline_;

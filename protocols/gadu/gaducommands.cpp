@@ -116,12 +116,12 @@ GaduCommand::forwarder()
 
 
 RegisterCommand::RegisterCommand( QObject* parent, const char* name )
-:GaduCommand( parent, name ), session_( 0 ), state( RegisterStateNoToken ), uin( 0 )
+:GaduCommand( parent, name ), state( RegisterStateNoToken ), session_( 0 ), uin( 0 )
 {
 }
 
 RegisterCommand::RegisterCommand( const QString& email, const QString& password, QObject* parent, const char* name )
-:GaduCommand( parent, name ), email_( email ), password_( password ), session_( 0 ), state( RegisterStateNoToken ), uin( 0 )
+:GaduCommand( parent, name ), state( RegisterStateNoToken ), email_( email ), password_( password ), session_( 0 ), uin( 0 )
 {
 }
 

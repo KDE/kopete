@@ -476,51 +476,37 @@ GaduSession::stateDescription( int state )
 	switch( state ) {
 		case GG_STATE_IDLE:
 			return i18n( "idle" );
-			break;
 		case GG_STATE_RESOLVING:
 			return i18n( "resolving host" );
-			break;
 		case GG_STATE_CONNECTING:
 			return i18n( "connecting" );
-			break;
 		case GG_STATE_READING_DATA:
 			return i18n( "reading data" );
-			break;
 		case GG_STATE_ERROR:
 			return i18n( "error" );
-			break;
 		case GG_STATE_CONNECTING_HUB:
 			return i18n( "connecting to hub" );
-			break;
 		case GG_STATE_CONNECTING_GG:
 			return i18n( "connecting to server" );
-			break;
 		case GG_STATE_READING_KEY:
 			return i18n( "retriving key" );
-			break;
 		case GG_STATE_READING_REPLY:
 			return i18n( "waiting for reply" );
-			break;
 		case GG_STATE_CONNECTED:
 			return i18n( "connected" );
-			break;
 		case GG_STATE_SENDING_QUERY:
 			return i18n( "sending query" );
-			break;
 		case GG_STATE_READING_HEADER:
 			return i18n( "reading header" );
-			break;
 		case GG_STATE_PARSING:
 			return i18n( "parse data" );
-			break;
 		case GG_STATE_DONE:
 			return i18n( "done" );
-			break;
 		case GG_STATE_TLS_NEGOTIATION:
 			return i18n( "Tls connection negotiation" );
-			break;
+		default:
+			return i18n( "unknown" );
 	}
-	return i18n( "unknown" );
 }
 QString
 GaduSession::errorDescription( int err )
@@ -528,18 +514,15 @@ GaduSession::errorDescription( int err )
 	switch( err ){
 		case GG_ERROR_RESOLVING:
 			return i18n( "Resolving error." );
-		break;
 		case GG_ERROR_CONNECTING:
 			return i18n( "Connecting error." );
-		break;
 		case GG_ERROR_READING:
 			return i18n( "Reading error." );
-		break;
 		case GG_ERROR_WRITING:
 			return i18n( "Writing error." );
-		break;
+		default:
+			return i18n( "Unknown error number %1." ).arg( QString::number( (unsigned int)err ) );
 	}
-	return i18n( "Unknown error number %1." ).arg( QString::number( (unsigned int)err ) );
 }
 
 QString
@@ -548,31 +531,23 @@ GaduSession::failureDescription( gg_failure_t f )
 	switch( f ) {
 		case GG_FAILURE_RESOLVING:
 			return i18n( "Unable to resolve server address. DNS failure." );
-			break;
 		case GG_FAILURE_CONNECTING:
 			return i18n( "Unable to connect to server." );
-			break;
 		case GG_FAILURE_INVALID:
 			return i18n( "Server send incorrect data. Protocol error." );
-			break;
 		case GG_FAILURE_READING:
 			return i18n( "Problem reading data from server." );
-			break;
 		case GG_FAILURE_WRITING:
 			return i18n( "Problem sending data to server." );
-			break;
 		case GG_FAILURE_PASSWORD:
 			return i18n( "Incorrect password." );
-			break;
 		case GG_FAILURE_404:
 			return QString::fromAscii( "404." );
-			break;
 		case GG_FAILURE_TLS:
 			return i18n( "Unable to connect over encrypted channel.\nTry to turn off encryption support in Gadu account settings and reconnect." );
-			break;
+		default:
+			return i18n( "Unknown error number %1." ).arg( QString::number( (unsigned int)f ) );
 	}
-
-	return i18n( "Unknown error number %1." ).arg( QString::number( (unsigned int)f ) );
 }
 
 void
