@@ -21,6 +21,7 @@
 #define JABBEREDITACCOUNTWIDEGET_H
 
 #include <qwidget.h>
+#include <kprogress.h>
 #include "editaccountwidget.h"
 #include "jabberaccount.h"
 #include "dlgjabbereditaccountwidget.h"
@@ -47,15 +48,32 @@ public:
 	bool settings_changed;
 
 private:
+	JabberProtocol *m_protocol;
+	KProgressDialog *progressDialog;
+
+	QCA::TLS *jabberTLS;
+	XMPP::QCATLSHandler *jabberTLSHandler;
+	XMPP::AdvancedConnector *jabberClientConnector;
+	XMPP::ClientStream *jabberClientStream;
+	XMPP::Client *jabberClient;
+
 	void reopen ();
 	void writeConfig ();
-	JabberProtocol *m_protocol;
+	void cleanup ();
 
 private slots:
 	void registerClicked ();
 	void sslToggled (bool);
 	void configChanged ();
 	void updateServerField ();
+	void slotRegisterUserDone ();
+
+	void slotTLSHandshaken ();
+	void slotCSAuthenticated ();
+	void slotCSWarning ();
+	void slotCSError (int error);
+
+	void disconnect ();
 
 };
 

@@ -51,8 +51,6 @@ public:
 	/* Returns the action menu for this account. */
 	virtual KActionMenu *actionMenu ();
 
-	void registerUser ();
-
 	virtual void setAway (bool away, const QString & reason = QString::null);
 
 	void setPresence (const KopeteOnlineStatus & status, const QString & reason = 0, int priority = 5);
@@ -73,6 +71,18 @@ public:
 	/* Tells the user to connect first before they can do whatever it is
 	 * that they want to do. */
 	void errorConnectFirst ();
+
+	/*
+	 * Handle TLS warnings. Displays a dialog and returns the user's choice.
+	 * Parameters: Warning code from QCA::TLS, server name
+	 * Returns KMessageBox::ButtonCode
+	 */
+	static int handleTLSWarning (int warning, QString server);
+
+	/*
+	 * Handle stream errors. Displays a dialog and returns.
+	 */
+	static void handleStreamError (int streamError, int streamCondition, int connectorCode, QString server);
 
 public slots:
 	/* Connects to the server. */
@@ -140,9 +150,6 @@ private:
 
 	/* Initial presence to set after connecting. */
 	KopeteOnlineStatus initialPresence;
-
-	/* Do we need to register on connection? */
-	int registerFlag;
 
 	/* Caches the title ID of the account context menu. */
 	int menuTitleId;
@@ -236,9 +243,6 @@ private slots:
 
 	/* Displays a new message. */
 	void slotReceivedMessage (const Message &);
-
-	/* Checks if we registered OK; proceeds if we did. */
-	void slotRegisterUserDone ();
 
 	/* Gets the user's vCard from the server for editing. */
 	void slotEditVCard ();

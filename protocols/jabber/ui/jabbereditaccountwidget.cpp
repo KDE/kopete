@@ -25,13 +25,26 @@
 #include <qcombobox.h>
 #include <kmessagebox.h>
 #include <klocale.h>
+#include <qtimer.h>
 
+#include "kopeteuiglobal.h"
+
+#include "qca.h"
+#include "xmpp.h"
+#include "xmpp_tasks.h"
 
 #include "jabbereditaccountwidget.h"
 
 JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, JabberAccount * ident, QWidget * parent, const char *name)
 						: DlgJabberEditAccountWidget (parent, name), KopeteEditAccountWidget (ident)
 {
+
+	jabberTLS = 0L;
+	jabberTLSHandler = 0L;
+	jabberClientConnector = 0L;
+	jabberClientStream = 0L;
+	jabberClient = 0L;
+
 	m_protocol = proto;
 
 	connect (mID, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
@@ -251,7 +264,12 @@ void JabberEditAccountWidget::updateServerField ()
 
 	if(!cbCustomServer->isChecked())
 	{
-		mServer->setText(mID->text().section("@", 1));
+		QString newServer = mID->text().section("@", 1);
+
+		if(newServer.isEmpty ())
+			newServer = QString::fromLatin1("jabber.org");
+
+		mServer->setText(newServer);
 		mServer->setEnabled(false);
 	}
 	else
@@ -267,14 +285,258 @@ void JabberEditAccountWidget::registerClicked ()
 	if(!validateData())
 		return;
 
-	if (!account())
+	kdDebug() << k_funcinfo << "Registering a new Jabber account." << endl;
+
+	btnRegister->setEnabled(false);
+
+	progressDialog = new KProgressDialog(this, "jabberAccountRegistration",
+					     i18n("Registering new Jabber Account"),
+					     i18n("Please wait, trying to register your account."), true);
+	progressDialog->show ();
+
+	/*
+	 * Setup authentication layer
+	 */
+	bool trySSL = false;
+	if (cbUseSSL->isChecked ())
 	{
-		setAccount(new JabberAccount (m_protocol, mID->text ()));
+		bool sslPossible = QCA::isSupported(QCA::CAP_TLS);
+
+		if (!sslPossible)
+		{
+			KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget (), KMessageBox::Error,
+								i18n ("SSL is not supported. This is most likely because the QCA TLS plugin is not installed on your system."), i18n ("SSL Error"));
+			return;
+		}
+		else
+		{
+			trySSL = true;
+
+			jabberTLS = new QCA::TLS;
+			jabberTLSHandler = new XMPP::QCATLSHandler(jabberTLS);
+
+			{
+				using namespace XMPP;
+				QObject::connect(jabberTLSHandler, SIGNAL(tlsHandshaken()), this, SLOT(slotTLSHandshaken()));
+			}
+		}
 	}
 
-	this->writeConfig ();
+	/*
+	 * Setup proxy layer
+	 */
+	int proxyType = XMPP::AdvancedConnector::Proxy::None;
+	switch(cbProxyType->currentItem ())
+	{
+		case 1:
+			proxyType = XMPP::AdvancedConnector::Proxy::HttpConnect;
+			break;
 
-	static_cast < JabberAccount * >(account())->registerUser ();
+		case 2:
+			proxyType = XMPP::AdvancedConnector::Proxy::HttpPoll;
+			break;
+
+		case 3:
+			proxyType = XMPP::AdvancedConnector::Proxy::Socks;
+			break;
+	}
+
+	XMPP::AdvancedConnector::Proxy proxy;
+
+	switch(proxyType)
+	{
+		case XMPP::AdvancedConnector::Proxy::None:
+			// no proxy
+			break;
+
+		case XMPP::AdvancedConnector::Proxy::HttpConnect:
+			// use HTTP
+			proxy.setHttpConnect( leProxyName->text (), spbProxyPort->value () );
+			break;
+
+		case XMPP::AdvancedConnector::Proxy::HttpPoll:
+			// use HTTP polling
+			proxy.setHttpPoll ( leProxyName->text (), spbProxyPort->value (), leProxyUrl->text () );
+			proxy.setPollInterval (2);
+			break;
+
+		case XMPP::AdvancedConnector::Proxy::Socks:
+			// use socks
+			proxy.setSocks( leProxyName->text (), spbProxyPort->value () );
+			break;
+	}
+
+	if (cbProxyAuth->isChecked ())
+		proxy.setUserPass (leProxyUser->text (), leProxyPass->text ());
+
+	/*
+	 * Instantiate connector, responsible for dealing with the socket.
+	 * This class makes use of the proxy layer created above.
+	 */
+	jabberClientConnector = new XMPP::AdvancedConnector;
+	jabberClientConnector->setOptHostPort (mServer->text (), mPort->value ());
+	jabberClientConnector->setProxy(proxy);
+	jabberClientConnector->setOptSSL(trySSL);
+
+	/*
+	 * Instantiate client stream which handles the network communication by referring
+	 * to a connector (proxying etc.) and a TLS handler (security layer)
+	 */
+	jabberClientStream = new XMPP::ClientStream(jabberClientConnector, jabberTLSHandler);
+
+	{
+		using namespace XMPP;
+		QObject::connect (jabberClientStream, SIGNAL (authenticated()),
+				  this, SLOT (slotCSAuthenticated ()));
+		QObject::connect (jabberClientStream, SIGNAL (warning (int)),
+				  this, SLOT (slotCSWarning ()));
+		QObject::connect (jabberClientStream, SIGNAL (error (int)),
+				  this, SLOT (slotCSError (int)));
+	}
+
+	/*
+	 * FIXME: This is required until we fully support XMPP 1.0
+	 *        Upon switching to XMPP 1.0, add full TLS capabilities
+	 *        with fallback (setOptProbe()) and remove the call below.
+	 */
+	jabberClientStream->setOldOnly(true);
+
+	/*
+	 * Initiate anti-idle timer (will be triggered every 55 seconds).
+	 */
+	jabberClientStream->setNoopTime(55000);
+
+	jabberClient = new XMPP::Client (this);
+
+	/*
+	 * Start connection, no authentication
+	 */
+	jabberClient->connectToServer (jabberClientStream, XMPP::Jid(mID->text ()), false);
+
+
+}
+
+void JabberEditAccountWidget::cleanup ()
+{
+
+	delete jabberClient;
+	delete jabberClientStream;
+	delete jabberClientConnector;
+	delete jabberTLSHandler;
+	delete jabberTLS;
+
+	jabberTLS = 0L;
+	jabberTLSHandler = 0L;
+	jabberClientConnector = 0L;
+	jabberClientStream = 0L;
+	jabberClient = 0L;
+
+}
+
+void JabberEditAccountWidget::disconnect ()
+{
+
+	if(jabberClient)
+		jabberClient->close(true);
+
+	cleanup ();
+
+}
+
+void JabberEditAccountWidget::slotTLSHandshaken ()
+{
+	kdDebug() << k_funcinfo << "TLS handshake done, testing certificate validity..." << endl;
+
+	progressDialog->progressBar()->setProgress(25);
+
+	int validityResult = jabberTLS->certificateValidityResult ();
+
+	if(validityResult == QCA::TLS::Valid)
+	{
+		kdDebug() << k_funcinfo << "Certificate is valid, continuing." << endl;
+
+		// valid certificate, continue
+		jabberTLSHandler->continueAfterHandshake ();
+	}
+	else
+	{
+		kdDebug() << k_funcinfo << "Certificate is not valid, asking user what to do next." << endl;
+
+		// certificate is not valid, query the user
+		if(JabberAccount::handleTLSWarning (validityResult, mServer->text ()) == KMessageBox::Continue)
+		{
+			jabberTLSHandler->continueAfterHandshake ();
+		}
+		else
+		{
+			disconnect ();
+		}
+	}
+
+}
+
+void JabberEditAccountWidget::slotCSWarning ()
+{
+
+	// FIXME: with the next synch point of Iris, this should
+	//        have become a slot, so simply connect it through.
+	jabberClientStream->continueAfterWarning ();
+
+}
+
+void JabberEditAccountWidget::slotCSError (int error)
+{
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Error in stream signalled, disconnecting." << endl;
+
+	// display message to user
+	JabberAccount::handleStreamError (error, jabberClientStream->errorCondition (), jabberClientConnector->errorCode (), mServer->text ());
+
+	disconnect ();
+
+}
+
+void JabberEditAccountWidget::slotCSAuthenticated ()
+{
+
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Launching registration task..." << endl;
+
+	progressDialog->progressBar()->setProgress(75);
+
+	/* slow down the polling interval for HTTP Poll proxies */
+	jabberClientConnector->changePollInterval (10);
+
+	/* start the client operation */
+	XMPP::Jid jid(mID->text ());
+	jabberClient->start ( jid.domain (), jid.node (), "", "" );
+
+	XMPP::JT_Register * task = new XMPP::JT_Register (jabberClient->rootTask ());
+	QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotRegisterUserDone ()));
+	task->reg (mID->text().section("@", 0, 0), mPass->text ());
+	task->go (true);
+
+}
+
+void JabberEditAccountWidget::slotRegisterUserDone ()
+{
+	XMPP::JT_Register * task = (XMPP::JT_Register *) sender ();
+
+	progressDialog->progressBar()->setProgress(100);
+
+	if (task->success ())
+		KMessageBox::information (Kopete::UI::Global::mainWidget (), i18n ("Account successfully registered."), i18n ("Account Registration"));
+	else
+	{
+		KMessageBox::information (Kopete::UI::Global::mainWidget (), i18n ("Unable to create account on the server."), i18n ("Account Registration"));
+
+	}
+
+	// FIXME: this is required because Iris crashes if we try
+	//        to disconnect here. Hopefully Justin can fix this.
+	QTimer::singleShot(0, this, SLOT(disconnect ()));
+
+	delete progressDialog;
+
+	btnRegister->setEnabled(true);
 
 }
 

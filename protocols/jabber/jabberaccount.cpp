@@ -78,8 +78,6 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	jabberTLS = 0L;
 	jabberTLSHandler = 0L;
 
-	registerFlag = 0;
-
 	awayDialog = new JabberAwayDialog(this);
 
 	initialPresence = protocol()->JabberKOSOnline;
@@ -341,7 +339,7 @@ void JabberAccount::connect ()
 	/*
 	 * Allow plaintext password authentication or not?
 	 */
-	jabberClientStream->setAllowPlain(pluginData (protocol (), "AllowPlainTextPassword"));
+	jabberClientStream->setAllowPlain(pluginData (protocol (), "AllowPlainTextPassword") == QString::fromLatin1("true"));
 
 	/*
 	 * Setup client layer.
@@ -384,10 +382,9 @@ void JabberAccount::connect ()
 
 	setPresence(protocol()->JabberKOSConnecting, "");
 
-	//jabberClientStream->connectToServer ( XMPP::Jid(accountId() + QString("/") + pluginData( protocol (), "Resource")) );
 	jabberClient->connectToServer (jabberClientStream,
 				       XMPP::Jid(accountId() + QString("/") + pluginData( protocol (), "Resource")),
-				       !registerFlag);
+				       true);
 
 }
 
@@ -399,6 +396,74 @@ void JabberAccount::slotPsiDebug (const QString & _msg)
 	msg = msg.replace( QRegExp( "<digest>[^<]*</digest>\n" ), "<digest>[Filtered]</digest>\n" );
 
 	kdDebug (JABBER_DEBUG_PROTOCOL) << k_funcinfo << "Psi: " << msg << endl;
+
+}
+
+int JabberAccount::handleTLSWarning (int warning, QString server)
+{
+	QString validityString, code;
+
+	switch(warning)
+	{
+		case QCA::TLS::NoCert:
+			validityString = i18n("No certificate was presented.");
+			code = "NoCert";
+			break;
+		case QCA::TLS::HostMismatch:
+			validityString = i18n("The hostname does not match the one in the certificate.");
+			code = "HostMismatch";
+			break;
+		case QCA::TLS::Rejected:
+			validityString = i18n("The Certificate Authority rejected the certificate.");
+			code = "Rejected";
+			break;
+		case QCA::TLS::Untrusted:
+			// FIXME: write better error message here
+			validityString = i18n("The certificate is untrusted.");
+			code = "Untrusted";
+			break;
+		case QCA::TLS::SignatureFailed:
+			validityString = i18n("The signature is invalid.");
+			code = "SignatureFailed";
+			break;
+		case QCA::TLS::InvalidCA:
+			validityString = i18n("The Certificate Authority is invalid.");
+			code = "InvalidCA";
+			break;
+		case QCA::TLS::InvalidPurpose:
+			// FIXME: write better error  message here
+			validityString = i18n("Invalid certificate purpose.");
+			code = "InvalidPurpose";
+			break;
+		case QCA::TLS::SelfSigned:
+			validityString = i18n("The certificate is self-signed.");
+			code = "SelfSigned";
+			break;
+		case QCA::TLS::Revoked:
+			validityString = i18n("The certificate has been revoked.");
+			code = "Revoked";
+			break;
+		case QCA::TLS::PathLengthExceeded:
+			validityString = i18n("Maximum certificate chain length was exceeded.");
+			code = "PathLengthExceeded";
+			break;
+		case QCA::TLS::Expired:
+			validityString = i18n("The certificate has expired.");
+			code = "Expired";
+			break;
+		case QCA::TLS::Unknown:
+		default:
+			validityString = i18n("An unknown error occured trying to validate the certificate.");
+			code = "Unknown";
+			break;
+		}
+
+	return KMessageBox::warningContinueCancel(Kopete::UI::Global::mainWidget (),
+						  i18n("The server's certificate could not be validated: %1").
+						  arg(validityString),
+						  i18n("Connection Certificate Problem"),
+						  KStdGuiItem::cont(),
+						  QString("KopeteTLSWarning") + server + code);
 
 }
 
@@ -421,69 +486,7 @@ void JabberAccount::slotTLSHandshaken ()
 		kdDebug() << k_funcinfo << "Certificate is not valid, asking user what to do next." << endl;
 
 		// certificate is not valid, query the user
-		QString validityString;
-		QString code;
-		switch(validityResult)
-		{
-			case QCA::TLS::NoCert:
-				validityString = i18n("No certificate was presented.");
-				code = "NoCert";
-				break;
-			case QCA::TLS::HostMismatch:
-				validityString = i18n("The hostname does not match the one in the certificate.");
-				code = "HostMismatch";
-				break;
-			case QCA::TLS::Rejected:
-				validityString = i18n("The Certificate Authority rejected the certificate.");
-				code = "Rejected";
-				break;
-			case QCA::TLS::Untrusted:
-				// FIXME: write better error message here
-				validityString = i18n("The certificate is untrusted.");
-				code = "Untrusted";
-				break;
-			case QCA::TLS::SignatureFailed:
-				validityString = i18n("The signature is invalid.");
-				code = "SignatureFailed";
-				break;
-			case QCA::TLS::InvalidCA:
-				validityString = i18n("The Certificate Authority is invalid.");
-				code = "InvalidCA";
-				break;
-			case QCA::TLS::InvalidPurpose:
-				// FIXME: write better error  message here
-				validityString = i18n("Invalid certificate purpose.");
-				code = "InvalidPurpose";
-				break;
-			case QCA::TLS::SelfSigned:
-				validityString = i18n("The certificate is self-signed.");
-				code = "SelfSigned";
-				break;
-			case QCA::TLS::Revoked:
-				validityString = i18n("The certificate has been revoked.");
-				code = "Revoked";
-				break;
-			case QCA::TLS::PathLengthExceeded:
-				validityString = i18n("Maximum certificate chain length was exceeded.");
-				code = "PathLengthExceeded";
-				break;
-			case QCA::TLS::Expired:
-				validityString = i18n("The certificate has expired.");
-				code = "Expired";
-				break;
-			case QCA::TLS::Unknown:
-			default:
-				validityString = i18n("An unknown error occured trying to validate the certificate.");
-				code = "Unknown";
-				break;
-		}
-
-		if(KMessageBox::warningContinueCancel(Kopete::UI::Global::mainWidget (),
-						      i18n("The server's certificate could not be validated: %1").
-						      arg(validityString),
-						      i18n("Connection Certificate Problem"),
-						      KStdGuiItem::cont(),
-						      QString("KopeteTLSWarning") + server() + QString(code)) == KMessageBox::Continue)
+		if(handleTLSWarning (validityResult, server ()) == KMessageBox::Continue)
 		{
 			jabberTLSHandler->continueAfterHandshake ();
 		}
@@ -498,39 +501,26 @@ void JabberAccount::slotTLSHandshaken ()
 void JabberAccount::slotCSNeedAuthParams (bool user, bool pass, bool realm)
 {
 
-	if (registerFlag)
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Sending auth credentials..." << endl;
+
+	XMPP::Jid jid(accountId());
+
+	if(user)
 	{
-		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Registering a new account..." << endl;
-
-		XMPP::JT_Register * task = new XMPP::JT_Register (jabberClient->rootTask ());
-		QObject::connect (task, SIGNAL (finished ()), this, SLOT (slotRegisterUserDone ()));
-		task->reg (accountId().section("@", 0, 0), password());
-		task->go (true);
+		jabberClientStream->setUsername(jid.node());
 	}
-	else
+
+	if(pass)
 	{
-		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Sending auth credentials..." << endl;
-
-		XMPP::Jid jid(accountId());
-
-		if(user)
-		{
-			jabberClientStream->setUsername(jid.node());
-		}
-
-		if(pass)
-		{
-			jabberClientStream->setPassword(password());
-		}
-
-		if(realm)
-		{
-			jabberClientStream->setRealm(jid.domain());
-		}
-
-		jabberClientStream->continueAfterParams();
-
+		jabberClientStream->setPassword(password());
 	}
+
+	if(realm)
+	{
+		jabberClientStream->setRealm(jid.domain());
+	}
+
+	jabberClientStream->continueAfterParams();
 
 }
 
@@ -632,10 +622,8 @@ void JabberAccount::slotCSWarning (int warning)
 
 }
 
-void JabberAccount::slotCSError (int error)
+void JabberAccount::handleStreamError (int streamError, int streamCondition, int connectorCode, QString server)
 {
-	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Error in stream signalled, disconnecting." << endl;
-
 	QString errorText;
 	QString errorCondition;
 
@@ -643,7 +631,7 @@ void JabberAccount::slotCSError (int error)
 	 * Display error to user.
 	 * FIXME: for unknown errors, maybe add error codes?
 	 */
-	switch(error)
+	switch(streamError)
 	{
 		case XMPP::Stream::ErrParse:
 			errorText = i18n("Malformed packet received.");
@@ -654,7 +642,7 @@ void JabberAccount::slotCSError (int error)
 			break;
 
 		case XMPP::Stream::ErrStream:
-			switch(jabberClientStream->errorCondition ())
+			switch(streamCondition)
 			{
 				case XMPP::Stream::GenericStreamError:
 					errorCondition = i18n("Generic stream error (sorry, I don't know any more detailed reason)");
@@ -696,7 +684,7 @@ void JabberAccount::slotCSError (int error)
 			break;
 
 		case XMPP::ClientStream::ErrConnection:
-			switch(jabberClientConnector->errorCode ())
+			switch(connectorCode)
 			{
 				case XMPP::AdvancedConnector::ErrConnectionRefused:
 					errorCondition = i18n("Connection refused.");
@@ -722,7 +710,7 @@ void JabberAccount::slotCSError (int error)
 			break;
 
 		case XMPP::ClientStream::ErrNeg:
-			switch(jabberClientStream->errorCondition())
+			switch(streamCondition)
 			{
 				case XMPP::ClientStream::HostUnknown:
 					// FIXME: need a better error message here
@@ -733,7 +721,7 @@ void JabberAccount::slotCSError (int error)
 					errorCondition = i18n("Could not connect to a required remote resource.");
 					break;
 				case XMPP::ClientStream::SeeOtherHost:
-					errorCondition = i18n("Seems we have been redirected to %1. Don't know how to handle this.").arg(jabberClientStream->errorText ());
+					errorCondition = i18n("Seems we have been redirected to another server. Don't know how to handle this.");
 					break;
 				case XMPP::ClientStream::UnsupportedVersion:
 					errorCondition = i18n("Unsupported protocol version.");
@@ -747,7 +735,7 @@ void JabberAccount::slotCSError (int error)
 			break;
 
 		case XMPP::ClientStream::ErrTLS:
-			switch(jabberClientStream->errorCondition())
+			switch(streamCondition)
 			{
 				case XMPP::ClientStream::TLSStart:
 					errorCondition = i18n("Server rejected our request to start the TLS handshake.");
@@ -764,7 +752,7 @@ void JabberAccount::slotCSError (int error)
 			break;
 
 		case XMPP::ClientStream::ErrAuth:
-			switch(jabberClientStream->errorCondition())
+			switch(streamCondition)
 			{
 				case XMPP::ClientStream::GenericAuthError:
 					errorCondition = i18n("Login failed with unknown reason.");
@@ -808,7 +796,7 @@ void JabberAccount::slotCSError (int error)
 			break;
 
 		case XMPP::ClientStream::ErrSecurityLayer:
-			switch(jabberClientStream->errorCondition())
+			switch(streamCondition)
 			{
 				case XMPP::ClientStream::LayerTLS:
 					errorCondition = i18n("Transport Layer Security (TLS) problem.");
@@ -825,7 +813,7 @@ void JabberAccount::slotCSError (int error)
 			break;
 
 		case XMPP::ClientStream::ErrBind:
-			switch(jabberClientStream->errorCondition())
+			switch(streamCondition)
 			{
 				case XMPP::ClientStream::BindNotAllowed:
 					errorCondition = i18n("No permission to bind the resource.");
@@ -849,7 +837,17 @@ void JabberAccount::slotCSError (int error)
 	KMessageBox::queuedMessageBox (Kopete::UI::Global::mainWidget (),
 								   KMessageBox::Error,
 								   errorText,
-								   i18n("Connection problem with Jabber server %1").arg(server()));
+								   i18n("Connection problem with Jabber server %1").arg(server));
+
+
+}
+
+void JabberAccount::slotCSError (int error)
+{
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Error in stream signalled, disconnecting." << endl;
+
+	// display message to user
+	handleStreamError (error, jabberClientStream->errorCondition (), jabberClientConnector->errorCode (), server ());
 
 	disconnect ();
 
@@ -1524,36 +1522,6 @@ void JabberAccount::slotResourceUnavailable (const XMPP::Jid & jid, const XMPP::
 void JabberAccount::slotEditVCard ()
 {
 	static_cast<JabberContact *>( myself() )->slotEditVCard ();
-}
-
-void JabberAccount::registerUser ()
-{
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Registering user " << accountId() << " on server " << server() << "." << endl;
-
-	/* Save the current preferences. */
-	//preferences->save();
-
-	/* Set the flag to register an account during registration. */
-	registerFlag = 1;
-
-	/* Now connect, initiating the registration. */
-	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Register: Connect() " << endl;
-	connect ();
-}
-
-void JabberAccount::slotRegisterUserDone ()
-{
-	XMPP::JT_Register * task = (XMPP::JT_Register *) sender ();
-
-	if (task->success ())
-		KMessageBox::information (Kopete::UI::Global::mainWidget (), i18n ("Account successfully registered."), i18n ("Account Registration"));
-	else
-	{
-		KMessageBox::information (Kopete::UI::Global::mainWidget (), i18n ("Unable to create account on the server."), i18n ("Account Registration"));
-
-	}
-	disconnect ();
-	registerFlag = 0;
 }
 
 bool JabberAccount::addContact( const QString &contactId, const QString &displayName,
