@@ -19,7 +19,7 @@
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
-
+#include <klocale.h>
 #include "msnprotocol.h"
 #include "msncontact.h"
 #include <msnadd.h>
@@ -32,6 +32,7 @@
 
 MSNProtocol::MSNProtocol(): QObject(0, "MSN"), IMProtocol()
 {
+	connected = 0;
 	// Remember to move all this to init()
 
 	kdDebug() << "\nMSN Plugin Loading\n";
@@ -48,13 +49,15 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSN"), IMProtocol()
 	new MSNPreferences(protocolIcon, this);
 	
 	kdDebug() << "MSN Protocol Plugin: Creating MSN Engine\n";
-	engine = new MSN;
-	connect(engine, SIGNAL(connectedToMsn(bool)), this, SLOT(slotConnectedToMSN(bool)));
-	connect(engine, SIGNAL(userStateChange (QString, QString, QString)), this, SIGNAL(userStateChange (QString, QString, QString) ) );
+	engine = new KMSNService;
+	connect(engine, SIGNAL(connectedToService(bool)), this, SLOT(slotConnectedToMSN(bool)));
+	connect(engine, SIGNAL(contactStatusChanged(QString, QString, int)), this, SIGNAL(userStateChange (QString, QString, int) ) );
 	//connect(engine, SIGNAL(userStateChange (QString, QString, QString)), this, SLOT(slotUserStateChange (QString, QString, QString) ) );
 	//connect(engine, SIGNAL(userStateChange (QString, QString, QString)), this, SLOT(slotInitContacts(QString, QString, QString) ) );
 	//connect(engine, SIGNAL(userSetOffline (QString) ), this, SLOT(slotUserSetOffline(QString) ) );
-	connect(engine, SIGNAL(newUserFound (QString, QString) ), this, SLOT(slotNewUserFound(QString, QString) ) );
+	// Someone unknown talk to us
+	connect(engine, SIGNAL( newContact(QString) ), this, SLOT(slotAuthenticate(QString) ) );
+	
 	kdDebug() << "MSN Protocol Plugin: Done\n";
 
 	KGlobal::config()->setGroup("MSN");
@@ -104,11 +107,10 @@ void MSNProtocol::Connect()
 		kdDebug() << "Using Micro$oft UserID " << KGlobal::config()->readEntry("UserID", "0") << " with password " << KGlobal::config()->readEntry("Password", "") << endl;
 		KGlobal::config()->setGroup("MSN");
 
-		engine->setUser(KGlobal::config()->readEntry("UserID", "")
-			,KGlobal::config()->readEntry("Password", "")
-			,KGlobal::config()->readEntry("Nick", "")
-			);
-		engine->slotConnect();
+		engine->setMyContactInfo( KGlobal::config()->readEntry("UserID", "")
+								, KGlobal::config()->readEntry("Password", ""));
+		//engine->setMyPublicName(KGlobal::config()->readEntry("Nick", ""));
+		engine->connectToService();
 	}
 	else
 	{
@@ -120,7 +122,7 @@ void MSNProtocol::Disconnect()
 {
 	if ( isConnected() )
 	{
-		engine->slotDisconnect();
+		engine->disconnect();
 	}
 	else
 	{
@@ -131,7 +133,7 @@ void MSNProtocol::Disconnect()
 
 bool MSNProtocol::isConnected()
 {
-	return engine->isConnected;	
+	return connected;	
 }
 
 /** This i used for al protocol selection dialogs */
@@ -161,10 +163,85 @@ void MSNProtocol::initIcons()
 	naIcon = QPixmap(loader->loadIcon("msn_na", KIcon::User));
 }
 
-/** No descriptions */
+/** OK! We are connected , let's do some work */
 void MSNProtocol::slotConnected()
 {
-		statusBarIcon->setPixmap(&onlineIcon);
+ 	MSNContact *tmpcontact;
+		
+ 	QStringList groups, contacts;
+ 	QString group, publicname, userid;
+ 	uint status;
+ 	// First, we change status bar icon
+ 	statusBarIcon->setPixmap(&onlineIcon);
+     // We get the group list
+ 	groups = engine->getGroups();
+ 	for ( QStringList::Iterator it = groups.begin(); it != groups.end(); ++it )
+ 	{
+ 		//item=  new QListViewItem(ListView,(*it).latin1() ,"","1");
+ 		//item->setPixmap(0,expandedPixmap);
+ 		//item->setOpen(true);
+	
+ 		// We get the contacts for this group
+ 		contacts = engine->getContacts( (*it).latin1() );
+ 		for ( QStringList::Iterator it1 = contacts.begin(); it1 != contacts.end(); ++it1 )
+ 	 	{
+ 	 		userid = (*it1).latin1();
+ 			publicname = engine->getPublicName((*it1).latin1());
+ 			tmpcontact = new MSNContact( userid , publicname , this );
+ 			//item1= new QListViewItem(item, engine->getPublicName((*it1).latin1())  , (*it1).latin1() ,"1");
+ 	 		status = engine->getStatus( userid );
+ 	 		kdDebug() << "MSN Plugin: Created contact " << userid << " " << publicname << " with status " << status << endl;
+			switch(status)
+ 			{
+  				case NLN:
+  				{
+  					tmpcontact->setPixmap(0, onlineIcon);
+  					break;
+  				}
+  				case FLN:
+  				{
+  					tmpcontact->setPixmap(0, offlineIcon);
+  					break;
+  				}
+  				case BSY:
+  				{
+  					tmpcontact->setPixmap(0, onlineIcon);
+  					break;
+  				}
+  				case IDL:
+  				{
+  					tmpcontact->setPixmap(0, onlineIcon);
+  					break;
+  				}
+  				case AWY:
+  				{
+  					tmpcontact->setPixmap(0, awayIcon);
+  					break;
+  				}
+  				case PHN:
+  				{
+  					tmpcontact->setPixmap(0, onlineIcon);
+  					break;
+  				}
+  				case BRB:
+  				{
+  					tmpcontact->setPixmap(0, onlineIcon);
+  					break;
+  				}
+  				case LUN:
+  				{
+  					tmpcontact->setPixmap(0, onlineIcon);
+  					break;
+  				}
+ 			}
+ 	 		if( engine->isBlocked( userid ) )
+ 	 		{
+ 	 			tmpcontact->setText(0,  publicname + i18n(" Blocked") );
+ 	 			tmpcontact->setPixmap(0, onlineIcon);
+ 	 		}
+
+ 	 	}
+ 	}
 }
 
 void MSNProtocol::slotDisconnected()
@@ -174,6 +251,7 @@ void MSNProtocol::slotDisconnected()
 
 void MSNProtocol::slotConnectedToMSN(bool c)
 {
+		connected = c;
 		if (c)
 		{
 			slotConnected();
@@ -184,9 +262,9 @@ void MSNProtocol::slotConnectedToMSN(bool c)
 		}
 }
 
-void MSNProtocol::slotUserStateChange (QString st1, QString st2, QString st3)
+void MSNProtocol::slotUserStateChange (QString st1, QString st2, int i3)
 {
-	kdDebug() << "MSN Plugin: User State change " << st1 << " " << st2 << " " << st3 <<"\n";
+	kdDebug() << "MSN Plugin: User State change " << st1 << " " << st2 << " " << i3 <<"\n";
 }
 
 void MSNProtocol::slotInitContacts (QString status, QString userid, QString nick)
@@ -205,11 +283,41 @@ void MSNProtocol::slotUserSetOffline (QString str)
 	kdDebug() << "MSN Plugin: User Set Offline " << str << "\n";
 		
 }
-
-void MSNProtocol::slotNewUserFound (QString userid, QString nick)
+// Dont use this for now
+void MSNProtocol::slotNewUserFound (QString userid )
 {
-	kdDebug() << "MSN Plugin: User found " << userid << " " << nick <<"\n";
-	MSNContact *newContact = new MSNContact(userid, nick, this);
+	QString tmpnick = engine->getPublicName(userid);
+	kdDebug() << "MSN Plugin: User found " << userid << " " << tmpnick <<"\n";
+	MSNContact *newContact = new MSNContact(userid, tmpnick, this);
 	newContact->setPixmap(0,offlineIcon);		
 
+}
+// Dont use this for now
+void MSNProtocol::slotNewUser (QString userid )
+{
+	QString tmpnick = engine->getPublicName(userid);
+	kdDebug() << "MSN Plugin: User found " << userid << " " << tmpnick <<"\n";
+	MSNContact *newContact = new MSNContact(userid, tmpnick, this);
+	newContact->setPixmap(0,offlineIcon);		
+
+}
+
+void MSNProtocol::slotAuthenticate( QString handle )
+{
+	NewUserImpl *authDlg = new NewUserImpl(0);
+	authDlg->setHandle(handle);
+	connect( authDlg, SIGNAL(addUser( QString )), this, SLOT(slotAddContact( QString )));
+	connect( authDlg, SIGNAL(blockUser( QString )), this, SLOT(slotBlockContact( QString )));
+	authDlg->show();
+}
+
+void MSNProtocol::slotAddContact( QString handle )
+{
+	engine->contactAdd( handle );
+}
+
+void MSNProtocol::slotBlockContact( QString handle)
+{
+	engine->contactBlock( handle );
 }		
+		

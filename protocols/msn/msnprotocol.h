@@ -20,12 +20,13 @@
 
 #include <qpixmap.h>
 #include <qwidget.h>
+#include <qstringlist.h>
 #include "msnpreferences.h"
 #include <statusbaricon.h>
 #include <addcontactpage.h>
 #include <improtocol.h>
-#include <msn.h>
-
+#include <kmsnservice.h>
+#include <newuserimpl.h>
 
 /**
   *@author duncan
@@ -46,10 +47,11 @@ public:
 	virtual void Connect();
 	virtual void Disconnect();
 	virtual bool isConnected();
+	bool connected;
 	/** Internal */
 	StatusBarIcon *statusBarIcon;
 	/** The MSN Engine */
-	MSN *engine;
+	KMSNService *engine;
 	QPixmap protocolIcon;
 	QPixmap onlineIcon;
 	QPixmap offlineIcon;
@@ -59,13 +61,18 @@ private:
 	void initIcons();
 public slots: // Public slots
   /** No descriptions */
-  void slotConnected();
-  void slotDisconnected();
-  void slotConnectedToMSN(bool c);
-  void slotUserStateChange (QString, QString, QString);
-  void slotUserSetOffline( QString );
-  void slotInitContacts (QString, QString, QString);
-  void slotNewUserFound (QString, QString);
+	void slotConnected();
+	void slotDisconnected();
+	void slotConnectedToMSN(bool c);
+	void slotUserStateChange (QString, QString, int);
+	void slotUserSetOffline( QString );
+	void slotInitContacts (QString, QString, QString);
+	void slotNewUserFound (QString);
+	
+	void slotNewUser(QString);	// Someone tries to talk with us
+	void slotAuthenticate(QString);	// Ask user to auth the new contact
+    void slotAddContact(QString);	// Add a Contact
+	void slotBlockContact(QString);	// Block a Contact
 signals:
 	void userStateChange (QString, QString, QString);	
 };

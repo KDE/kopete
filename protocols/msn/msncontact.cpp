@@ -18,8 +18,8 @@
 #include "msncontact.h"
 #include <kmessagebox.h>
 #include <kdebug.h>
-#include "msnuser.h"
-#include <switchboard.h>
+#include "kmsncontact.h"
+#include <kmsnchatservice.h>
 
 MSNContact::MSNContact(QString userid, const QString name, MSNProtocol *protocol)
 	: IMContact(kopeteapp->contactList())
@@ -30,12 +30,10 @@ MSNContact::MSNContact(QString userid, const QString name, MSNProtocol *protocol
 	messageTimer = new QTimer();
 	messageQueue = new QValueStack<MSNMessageStruct>;
 	isMessageIcon = false;
-	mBoard = new SwitchBoard;
-	mBoard->setHandle(mUserID);
 	// We connect this signal so that we can tell when a user's status changes
-	QObject::connect(protocol, SIGNAL(userStateChange(QString, QString, QString)), this, SLOT(slotUserStateChange (QString, QString, QString) ));
-	 QObject::connect(protocol->engine, SIGNAL(startChat(SwitchBoard *, QString)), this, SLOT(slotIncomingChat (SwitchBoard *, QString) ));
-	//QObject::connect(protocol->engine->switchboard, SIGNAL(messageReceived(QString ,QString) ), this, SLOT(slotNewMessage(QString, QString)));
+	QObject::connect(protocol->engine, SIGNAL(updateContact(QString, uint)), this, SLOT(slotUpdateContact (QString, uint) ));
+	QObject::connect(protocol->engine, SIGNAL(startChat(KMSNChatService *, QString)), this, SLOT(slotIncomingChat (KMSNChatService *, QString) ));
+	QObject::connect(this, SIGNAL(chatToUser(QString)), protocol->engine, SLOT( slotStartChatSession(QString)) );
 	QObject::connect(messageTimer, SIGNAL(timeout()), this, SLOT(slotFlashIcon()));
 
 	QString tmp = name;
@@ -54,24 +52,26 @@ void MSNContact::rightButtonPressed(const QPoint &point)
 
 void MSNContact::leftButtonDoubleClicked()
 {
-	mProtocol->engine->wantSwitchboard(mUserID);
+	emit chatToUser( mUserID );
 }
 
-void MSNContact::slotIncomingChat(SwitchBoard *newboard, QString reqUserID)
+void MSNContact::slotIncomingChat(KMSNChatService *newboard, QString reqUserID)
 {
-	kdDebug() << "MSN Plugin: Incoming chat " << reqUserID <<"\n";
 	if ( reqUserID == mUserID )
 	{
  		if (messageBoxInited == true && messageBox->isVisible() == true)
  		{
- 			messageBox->raise();
+ 			kdDebug() << "MSN Plugin: Incoming chat but Window opened for " << reqUserID <<"\n";
+			messageBox->mBoard = newboard;
+			connect(newboard,SIGNAL(msgReceived(QString,QString,QString)),messageBox,SLOT(slotMsgReceived(QString,QString,QString)));
+					
+			messageBox->raise();
  			return;
  		}
- 		messageBox = new MSNMessage(this, mUserID, mName, mStatus, newboard,mProtocol);
- 		messageBoxInited = true;
- 		QObject::connect(newboard, SIGNAL(messageReceived(QString ,QString )), messageBox, SLOT(messageReceived(QString, QString)));
- 		QObject::connect(newboard, SIGNAL( switchBoardIsActive(bool) ), messageBox, SLOT( slotSwitchBoardIsActive(bool) ));
-		QObject::connect(this, SIGNAL(userStateChanged(QString)), messageBox, SLOT(slotUserStateChanged(QString)));
+ 		kdDebug() << "MSN Plugin: Incoming chat , no window, creating window for " << reqUserID <<"\n";
+		messageBox = new MSNMessage(this, mUserID, mName, mStatus, newboard,mProtocol);
+ 		QObject::connect(this, SIGNAL(userStateChanged(QString)), messageBox, SLOT(slotUserStateChanged(QString)));
+		messageBoxInited = true;
  		messageBox->show();
 	}
 }
@@ -87,43 +87,79 @@ void MSNContact::slotMessageBoxClosing()
 
 void MSNContact::removeThisUser()
 {
-	mProtocol->engine->slotRemoveUser(mUserID);
+	mProtocol->engine->contactDelete(mUserID);
 	delete this;
 }
 
-
-void MSNContact::slotUserStateChange (QString state, QString handle, QString publicname)
+void MSNContact::slotUpdateContact (QString handle , uint status)
 {
 	if (handle == mUserID)
 	{
-		mStatus = state;
+		kdDebug() << "MSN Plugin: Contact " << handle <<" request update (" << status << ")\n";
+		//mStatus = state;
 		isMessageIcon = false;
-		if (state == "NLN")
+        QString tmppublicname = mProtocol->engine->getPublicName( handle);
+		switch(status)
 		{
-			//kopeteapp->contactList()->offlineBranch->takeItem(this);
-			//kopeteapp->contactList()->onlineBranch->insertItem(this);
-			setPixmap(0, mProtocol->onlineIcon);
+   			case BLO:
+   			{
+   				setText(0,  tmppublicname + " ( " + i18n("Blocked") + " )" );
+   				setPixmap(0, mProtocol->onlineIcon);
+   				break;
+   			}
+   			case NLN:
+   			{
+   				setText(0, tmppublicname );
+   				setPixmap(0, mProtocol->onlineIcon );
+   				break;
+   			}
+   			case FLN:
+   			{
+				setText(0, tmppublicname );
+   				setPixmap(0, mProtocol->offlineIcon );
+   				break;
+   			}
+   			case BSY:
+   			{
+				setText(0, tmppublicname );
+   				setPixmap(0, mProtocol->onlineIcon );
+   				break;
+   			}
+   			case IDL:
+   			{
+				setText(0, tmppublicname );
+   				setPixmap(0, mProtocol->onlineIcon );
+   				break;
+   			}
+   			case AWY:
+   			{
+				setText(0, tmppublicname );
+   				setPixmap(0, mProtocol->onlineIcon );
+   				break;
+   			}
+   			case PHN:
+   			{
+				setText(0, tmppublicname );
+   				setPixmap(0, mProtocol->onlineIcon );
+   				break;
+   			}
+   			case BRB:
+   			{
+				setText(0, tmppublicname );
+   				setPixmap(0, mProtocol->onlineIcon );
+   				break;
+   			}
+   			case LUN:
+   			{
+				setText(0, tmppublicname );
+   				setPixmap(0, mProtocol->onlineIcon );
+   				break;
+   			}
 		}
-		if ( state == "FLN")
-		{
-			//kopeteapp->contactList()->onlineBranch->takeItem(this);
-			//kopeteapp->contactList()->offlineBranch->insertItem(this);
-			setPixmap(0, mProtocol->offlineIcon);
-		}
-		
-		/*
-		else
-		{
-			//kopeteapp->contactList()->onlineBranch->insertItem(this);
-			setPixmap(0, mProtocol->awayIcon);
-		}
-		*/
-		
 	}
 }
 
-
-void MSNContact::slotNewMessage(QString userid, QString message)
+void MSNContact::slotNewMessage(QString userid, QString publicname, QString message)
 {
 	/*
 	if (uin == mUIN)

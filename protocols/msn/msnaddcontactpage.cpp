@@ -22,5 +22,5 @@ void MSNAddContactPage::slotFinish()
 {
 	QString nick = msndata->addNick->text();
 	QString userid = msndata->addID->text();
-	plugin->engine->slotAddUser(userid,nick);
+	plugin->engine->contactAdd(userid);
 }

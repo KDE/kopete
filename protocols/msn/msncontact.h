@@ -29,7 +29,7 @@
 #include "kopete.h"
 #include "msnprotocol.h"
 #include "msnmessage.h"
-#include <switchboard.h>
+#include <kmsnchatservice.h>
 
 struct MSNMessageStruct
 {
@@ -47,20 +47,20 @@ class MSNContact : public IMContact
 		MSNContact(QString userid, const QString name, MSNProtocol *protocol);
 		virtual void rightButtonPressed(const QPoint &);
 		virtual void leftButtonDoubleClicked();
-		SwitchBoard *mBoard;
+		QString mUserID;
+		QString mName;
 	public slots:
 		void slotMessageBoxClosing();
-		void slotIncomingChat(SwitchBoard *, QString);
+		void slotIncomingChat(KMSNChatService *, QString);
 	private slots:
 		void removeThisUser();
-		void slotUserStateChange (QString str, QString str1, QString str2);
-		void slotNewMessage(QString, QString);
+		void slotUpdateContact (QString, uint);
+		void slotNewMessage(QString, QString, QString);
 		void slotFlashIcon();
 	private:
 		QString mStatus;
+		uint mStatus_n;
 		bool isMessageIcon;
-		QString mUserID;
-		QString mName;
 		//QPixmap onlineIcon;
 		//QPixmap offlineIcon;
 		MSNProtocol *mProtocol;
@@ -68,6 +68,8 @@ class MSNContact : public IMContact
 		QTimer *messageTimer;
 		MSNMessage *messageBox;
 		bool messageBoxInited;
+	signals:
+		void chatToUser( QString );
 };
 
 #endif
