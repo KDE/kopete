@@ -115,6 +115,23 @@ const QMimeSource *MimeSourceFactory::data( const QString &abs_name ) const
 			kdDebug( 14010 ) << k_funcinfo << "kopete-metacontact-icon: insufficient information in abs_name: " << parts << endl;
 	}
 
+	if ( parts[0] == QString::fromLatin1("kopete-metacontact-photo") )
+	{
+		if ( parts.size() >= 2 )
+		{
+			MetaContact *mc = ContactList::self()->metaContact( parts[1] );
+			if ( mc )
+			{
+				QImage photo = mc->photo();
+				delete d->lastMimeSource;
+				d->lastMimeSource = new QImageDrag( photo );
+				return d->lastMimeSource;	
+			}
+		}
+		else 
+			kdDebug( 14010 ) << k_funcinfo << "kopete-metacontact-photo: insufficient information in abs_name: " << parts << endl;
+	}
+	
 	if ( parts[0] == QString::fromLatin1("kopete-onlinestatus-icon") )
 	{
 		if ( parts.size() >= 2 )
