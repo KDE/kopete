@@ -108,9 +108,9 @@ void KopeteGroupViewItem::refreshDisplayName()
 QString KopeteGroupViewItem::key( int, bool ) const
 {
 	//Groups are placed after topLevel contact.
-	//Temporary group is the first group
+	//Exepted Temporary group which is the first group
 	if ( group()->type() != KopeteGroup::Normal )
-		return "L" + text( 0 );
+		return "0" + text( 0 );
 	return "M" + text( 0 );
 }
 
