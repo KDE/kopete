@@ -175,7 +175,7 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 
 				toolTip += i18n("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
 					"<tr><td><img src=\"%1\">&nbsp;<b>%2</b>&nbsp;(%3)</td><td align=\"right\">%4</td></tr>")
-					.arg( iconName, c->protocol()->displayName(), c->contactId(), c->onlineStatus().description() );
+					.arg( iconName, c->displayName(), c->contactId(), c->onlineStatus().description() );
 			}
 
 			toolTip += QString::fromLatin1("</table></qt>");
