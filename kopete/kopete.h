@@ -91,7 +91,7 @@ class Kopete : public KUniqueApplication
 	void initEmoticons();
 	QString parseEmoticons(QString);
 	QString parseHTML(QString);
-	QString parseURL(QString);
+//	QString parseURL(QString);
 
 	/*
 	 * is true if all plugins are connected to their servers

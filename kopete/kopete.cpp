@@ -356,13 +356,207 @@ QString Kopete::parseHTML( QString message )
 				lastReplacement=idx;
 				result += "<br>";
 				break;
-			case '\t':	// tab == 4 spaces
+			case '\t':		// tab == 4 spaces
 				lastReplacement=idx;
 				result += "&nbsp;&nbsp;&nbsp;&nbsp;";
 				break;
+
+// BROKEN, WILL FIX, mETz, 18.03.2002
+/*			case '@':		// email-addresses or message-ids
+			{
+				uint startIdx = idx;
+				// move backwards to the begin of the address, stop when
+				// the end of the last replacement is reached. (
+				while ( (startIdx>0) && (startIdx>lastReplacement+1)
+					&& (text[startIdx-1]!=' ') && (text[startIdx-1]!='\t')
+					&& (text[startIdx-1]!=',') && (text[startIdx-1]!='<')
+					&& (text[startIdx-1]!='>') && (text[startIdx-1]!='(')
+					&& (text[startIdx-1]!=')') && (text[startIdx-1]!='[')
+					&& (text[startIdx-1]!=']') && (text[startIdx-1]!='{')
+					&& (text[startIdx-1]!='}') )
+				{
+						startIdx--;
+				}
+
+				regExp.setPattern("[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
+				if ( regExp.search(text,startIdx) != -1 )
+				{
+					matchLen = regExp.matchedLength();
+					if (text[startIdx+matchLen-1]=='.')   // remove trailing dot
+						matchLen--;
+					else if (text[startIdx+matchLen-1]==',')   // remove trailing comma
+						matchLen--;
+					else if (text[startIdx+matchLen-1]==':')   // remove trailing colon
+						matchLen--;
+
+					if (matchLen < 3)
+						result += text[idx];
+					else
+					{
+						result.remove(result.length()-(idx-startIdx), idx-startIdx);
+						result +=
+							QString::fromLatin1("<a href=\"addrOrId://")
+							+ parseHTML ( text.mid(startIdx,matchLen) )
+							+ QString::fromLatin1("\">")
+							+ parseHTML ( text.mid(startIdx,matchLen) )
+							+ QString::fromLatin1("</a>");
+						idx = startIdx+matchLen-1;
+						lastReplacement=idx;
+					}
+					break;
+				}
+				result += text[idx];
+				break;
+			}
+*/
+
+			case 'h' :
+			{
+				if( (text[idx+1].latin1()=='t'))
+				{   // don't do all the stuff for every 'h'
+					regExp.setPattern("https?://[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
+					if ( regExp.search(text,idx) == (int)idx )
+					{
+						matchLen = regExp.matchedLength();
+
+						if (text[idx+matchLen-1]=='.')			// remove trailing dot
+							matchLen--;
+						else if (text[idx+matchLen-1]==',')		// remove trailing comma
+							matchLen--;
+						else if (text[idx+matchLen-1]==':')		// remove trailing colon
+							matchLen--;
+
+						result += 
+							QString::fromLatin1("<a href=\"")
+							+ text.mid(idx,matchLen)
+							+ QString::fromLatin1("\">")
+							+ text.mid(idx,matchLen)
+							+ QString::fromLatin1("</a>");
+						idx += matchLen-1;
+						lastReplacement = idx;
+						break;
+					}
+				}
+				result += text[idx];
+				break;
+			}
+
+			case 'w':
+			{
+				if( (text[idx+1].latin1()=='w'))
+				{   // don't do all the stuff for every 'w'
+					regExp.setPattern("www\\.[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+\\.[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
+					if (regExp.search(text,idx)==(int)idx)
+					{
+						matchLen = regExp.matchedLength();
+						if (text[idx+matchLen-1]=='.')   // remove trailing dot
+							matchLen--;
+						else if (text[idx+matchLen-1]==',')   // remove trailing comma
+							matchLen--;
+						else if (text[idx+matchLen-1]==':')   // remove trailing colon
+							matchLen--;
+
+						result +=
+							QString::fromLatin1("<a href=\"http://")
+							+ text.mid(idx,matchLen)
+							+ QString::fromLatin1("\">")
+							+ text.mid(idx,matchLen)
+							+ QString::fromLatin1("</a>");
+						idx += matchLen-1;
+						lastReplacement=idx;
+						break;
+					}
+				}
+				result+=text[idx];
+				break;
+			}
+
+			case 'f' :
+			{
+				if( text[idx+1].latin1()=='t' )
+				{   // don't do all the stuff for every 'f'
+					regExp.setPattern("ftp://[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
+					if ( regExp.search(text,idx)==(int)idx )
+					{
+						matchLen = regExp.matchedLength();
+						if (text[idx+matchLen-1]=='.')   // remove trailing dot
+							matchLen--;
+						else if (text[idx+matchLen-1]==',')   // remove trailing comma
+							matchLen--;
+						else if (text[idx+matchLen-1]==':')   // remove trailing colon
+							matchLen--;
+
+						result += 
+							QString::fromLatin1("<a href=\"")
+							+ text.mid(idx,matchLen)
+							+ QString::fromLatin1("\">")
+							+ text.mid(idx,matchLen)
+							+ QString::fromLatin1("</a>");
+						idx += matchLen-1;
+						lastReplacement = idx;
+						break;
+					}
+
+					regExp.setPattern("ftp\\.[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+\\.[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
+					if ( regExp.search(text,idx)==(int)idx )
+					{
+						matchLen = regExp.matchedLength();
+						if (text[idx+matchLen-1]=='.')   // remove trailing dot
+						matchLen--;
+						else if (text[idx+matchLen-1]==',')   // remove trailing comma
+						matchLen--;
+						else if (text[idx+matchLen-1]==':')   // remove trailing colon
+						matchLen--;
+
+						result += 
+							QString::fromLatin1("<a href=\"ftp://")
+							+ text.mid(idx,matchLen)
+							+ QString::fromLatin1("\">")
+							+ text.mid(idx,matchLen)
+							+ QString::fromLatin1("</a>");
+						idx += matchLen-1;
+						lastReplacement = idx;
+						break;
+					}
+				}
+				result+=text[idx];
+				break;
+			}
+
+			case 'm' :
+			{
+				if( (text[idx+1].latin1()=='a') && (text[idx+2].latin1()=='i') )
+				{   // don't do all the stuff for every 'm'
+					regExp.setPattern("mailto:[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
+					if (regExp.search(text,idx)==(int)idx)
+					{
+						matchLen = regExp.matchedLength();
+						if (text[idx+matchLen-1]=='.')   // remove trailing dot
+						matchLen--;
+						else if (text[idx+matchLen-1]==',')   // remove trailing comma
+						matchLen--;
+						else if (text[idx+matchLen-1]==':')   // remove trailing colon
+						matchLen--;
+
+						result +=
+							QString::fromLatin1("<a href=\"")
+							+ text.mid(idx,matchLen)
+							+ QString::fromLatin1("\">")
+							+ text.mid(idx,matchLen)
+							+ QString::fromLatin1("</a>");
+						idx += matchLen-1;
+						lastReplacement = idx;
+						break;
+					}
+				}
+				result += text[idx];
+				break;
+			}
+
 			case '_' :
 			case '/' :
 			case '*' :
+			{
 				regExp = QString("\\%1[^\\s%2]+\\%3").arg(text[idx]).arg(text[idx]).arg(text[idx]);
 				if ( regExp.search(text,idx) == (int)idx )
 				{
@@ -391,6 +585,7 @@ QString Kopete::parseHTML( QString message )
 				}
 				result += text[idx];
 				break;
+			}
 			default:
 				result += text[idx];
 		}
@@ -398,6 +593,8 @@ QString Kopete::parseHTML( QString message )
 	return result;
 }
 
+/*
 QString Kopete::parseURL( QString message )
 {
 }
+*/
