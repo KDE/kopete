@@ -469,7 +469,7 @@ public:
 	 * @todo remove
 	 * @deprecated  use configGroup
 	 */
-	KDE_DEPRECATED void setPluginData( Plugin *plugin, const QString &key, const QString &value )
+	KDE_DEPRECATED void setPluginData( Plugin* /*plugin*/, const QString &key, const QString &value )
 		{  configGroup()->writeEntry(key,value);  }
 
 
@@ -477,7 +477,7 @@ public:
 	 * @todo remove
 	 * @deprecated  use configGroup
 	 */
-	KDE_DEPRECATED QString pluginData( Plugin *plugin, const QString &key ) const
+	KDE_DEPRECATED QString pluginData( Plugin* /*plugin*/, const QString &key ) const
 		{ return configGroup()->readEntry(key); }
 //MOC_SKIP_END//
 };
