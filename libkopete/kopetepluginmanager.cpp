@@ -246,23 +246,23 @@ void KopetePluginManager::slotLoadNextPlugin()
 		QTimer::singleShot( 0, this, SLOT( slotLoadNextPlugin() ) );
 }
 
-KopetePlugin *KopetePluginManager::loadPlugin( const QString &spec_ )
+KopetePlugin *KopetePluginManager::loadPlugin( const QString &_pluginId )
 {
-	QString spec = spec_;
+	QString pluginId = _pluginId;
 
 	// Try to find legacy code
-	if ( spec.endsWith( QString::fromLatin1( ".desktop" ) ) )
+	if ( pluginId.endsWith( QString::fromLatin1( ".desktop" ) ) )
 	{
 		kdWarning( 14010 ) << "Trying to use old-style API!" << endl << kdBacktrace() << endl;
-		spec = spec.remove( QRegExp( QString::fromLatin1( ".desktop$" ) ) );
+		pluginId = pluginId.remove( QRegExp( QString::fromLatin1( ".desktop$" ) ) );
 	}
 
-	kdDebug( 14010 ) << k_funcinfo << spec << endl;
+	kdDebug( 14010 ) << k_funcinfo << pluginId << endl;
 
-	KPluginInfo *info = infoForPluginId( spec );
+	KPluginInfo *info = infoForPluginId( pluginId );
 	if ( !info )
 	{
-		kdWarning( 14010 ) << k_funcinfo << "Unable to find a plugin named '" << spec << "'!" << endl;
+		kdWarning( 14010 ) << k_funcinfo << "Unable to find a plugin named '" << pluginId << "'!" << endl;
 		return 0L;
 	}
 
@@ -270,9 +270,8 @@ KopetePlugin *KopetePluginManager::loadPlugin( const QString &spec_ )
 		return d->loadedPlugins[ info ];
 
 	int error = 0;
-	KopetePlugin *plugin = KParts::ComponentFactory::createInstanceFromQuery<KopetePlugin>(
-		QString::fromLatin1( "Kopete/Plugin" ),
-		QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( spec ), this, 0, QStringList(), &error );
+	KopetePlugin *plugin = KParts::ComponentFactory::createInstanceFromQuery<KopetePlugin>( QString::fromLatin1( "Kopete/Plugin" ),
+		QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( pluginId ), this, 0, QStringList(), &error );
 
 	if ( plugin )
 	{
@@ -284,7 +283,7 @@ KopetePlugin *KopetePluginManager::loadPlugin( const QString &spec_ )
 
 		d->addressBookFields.insert( plugin, plugin->addressBookFields() );
 
-		kdDebug( 14010 ) << k_funcinfo << "Successfully loaded plugin '" << spec << "'" << endl;
+		kdDebug( 14010 ) << k_funcinfo << "Successfully loaded plugin '" << pluginId << "'" << endl;
 
 		emit pluginLoaded( plugin );
 	}
@@ -314,7 +313,7 @@ KopetePlugin *KopetePluginManager::loadPlugin( const QString &spec_ )
 			break;
 		}
 
-		kdDebug( 14010 ) << k_funcinfo << "Loading plugin '" << spec << "' failed, KLibLoader reported error: '" << endl <<
+		kdDebug( 14010 ) << k_funcinfo << "Loading plugin '" << pluginId << "' failed, KLibLoader reported error: '" << endl <<
 			KLibLoader::self()->lastErrorMessage() << "'" << endl;
 	}
 
