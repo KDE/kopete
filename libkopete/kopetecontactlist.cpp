@@ -44,6 +44,8 @@ KopeteContactList *KopeteContactList::contactList()
 KopeteContactList::KopeteContactList()
 : QObject( kapp, "KopeteContactList" )
 {
+	//no contactlist loaded yet, don't save them
+	m_loaded=false;
 }
 
 KopeteContactList::~KopeteContactList()
@@ -103,7 +105,10 @@ void KopeteContactList::loadXML()
 
 	QString filename = locateLocal( "appdata", QString::fromLatin1( "contactlist.xml" ) );
 	if( filename.isEmpty() )
+	{
+		m_loaded=true;
 		return ;
+	}
 
 	QDomDocument contactList( QString::fromLatin1( "kopete-contact-list" ) );
 
@@ -179,6 +184,7 @@ void KopeteContactList::loadXML()
 		element = element.nextSibling().toElement();
 	}
 	contactListFile.close();
+	m_loaded=true;
 }
 
 void KopeteContactList::convertContactList( const QString &fileName, uint /* fromVersion */, uint /* toVersion */ )
@@ -558,6 +564,12 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 
 void KopeteContactList::saveXML()
 {
+	if(!m_loaded)
+	{
+		kdDebug(14010) << "KopeteContactList::saveXML: contactlist not loaded, abort saving" << endl;
+		return;
+	}
+
 	QString contactListFileName = locateLocal( "appdata", QString::fromLatin1( "contactlist.xml" ) );
 	KSaveFile contactListFile( contactListFileName );
 	if( contactListFile.status() == 0 )
@@ -568,12 +580,12 @@ void KopeteContactList::saveXML()
 
 		if ( !contactListFile.close() )
 		{
-			kdDebug(14010) << "failed to write contactlist, error code is: " << contactListFile.status() << endl;
+			kdDebug(14010) << "KopeteContactList::saveXML: failed to write contactlist, error code is: " << contactListFile.status() << endl;
 		}
 	}
 	else
 	{
-		kdWarning(14010) << "Couldn't open contact list file "
+		kdWarning(14010) << "KopeteContactList::saveXML: Couldn't open contact list file "
 			<< contactListFileName << ". Contact list not saved." << endl;
 	}
 }

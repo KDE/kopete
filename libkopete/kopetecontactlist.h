@@ -269,6 +269,11 @@ private:
 	 * Convert the contact list from an older version
 	 */
 	void convertContactList( const QString &fileName, uint fromVersion, uint toVersion );
+
+	/**
+	 * flag to don't save the contactlist when it is not completly loaded
+	 */
+	bool m_loaded;
 };
 
 #endif
