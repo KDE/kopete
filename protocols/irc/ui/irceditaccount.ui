@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>434</width>
-            <height>581</height>
+            <height>434</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -29,17 +29,11 @@
     <property name="caption">
         <string>IRCEditAccountBase</string>
     </property>
-    <vbox>
+    <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <property name="spacing">
-            <number>0</number>
-        </property>
-        <widget class="QTabWidget">
+        <widget class="QTabWidget" row="0" column="0">
             <property name="name">
                 <cstring>tabWidget2</cstring>
             </property>
@@ -50,151 +44,11 @@
                 <attribute name="title">
                     <string>B&amp;asic Setup</string>
                 </attribute>
-                <vbox>
+                <grid>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <property name="margin">
-                        <number>6</number>
-                    </property>
-                    <property name="spacing">
-                        <number>6</number>
-                    </property>
-                    <widget class="QGroupBox">
-                        <property name="name">
-                            <cstring>groupBox59</cstring>
-                        </property>
-                        <property name="frameShape">
-                            <enum>GroupBoxPanel</enum>
-                        </property>
-                        <property name="frameShadow">
-                            <enum>Sunken</enum>
-                        </property>
-                        <property name="title">
-                            <string>Account Information</string>
-                        </property>
-                        <vbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout19</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout18</cstring>
-                                        </property>
-                                        <vbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>textLabel4</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>N&amp;ickname:</string>
-                                                </property>
-                                                <property name="buddy" stdset="0">
-                                                    <cstring>mNickName</cstring>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>textLabel1_2</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Alternate ni&amp;ckname:</string>
-                                                </property>
-                                                <property name="buddy" stdset="0">
-                                                    <cstring>mAltNickname</cstring>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLabel">
-                                                <property name="name">
-                                                    <cstring>textLabel5</cstring>
-                                                </property>
-                                                <property name="text">
-                                                    <string>&amp;Username:</string>
-                                                </property>
-                                                <property name="buddy" stdset="0">
-                                                    <cstring>mUserName</cstring>
-                                                </property>
-                                            </widget>
-                                        </vbox>
-                                    </widget>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout17</cstring>
-                                        </property>
-                                        <vbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
-                                            <widget class="QLineEdit">
-                                                <property name="name">
-                                                    <cstring>mNickName</cstring>
-                                                </property>
-                                                <property name="sizePolicy">
-                                                    <sizepolicy>
-                                                        <hsizetype>7</hsizetype>
-                                                        <vsizetype>0</vsizetype>
-                                                        <horstretch>0</horstretch>
-                                                        <verstretch>0</verstretch>
-                                                    </sizepolicy>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>The alias you would like to use on IRC.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>The alias you would like to use on IRC.  You may change this once online with the /nick command.</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLineEdit">
-                                                <property name="name">
-                                                    <cstring>mAltNickname</cstring>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>The nickname to fall back on if your first choice is in use by someone else</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>The nickname to fall back on if your first choice is in use by someone else</string>
-                                                </property>
-                                            </widget>
-                                            <widget class="QLineEdit">
-                                                <property name="name">
-                                                    <cstring>mUserName</cstring>
-                                                </property>
-                                                <property name="sizePolicy">
-                                                    <sizepolicy>
-                                                        <hsizetype>7</hsizetype>
-                                                        <vsizetype>0</vsizetype>
-                                                        <horstretch>0</horstretch>
-                                                        <verstretch>0</verstretch>
-                                                    </sizepolicy>
-                                                </property>
-                                                <property name="echoMode">
-                                                    <enum>Normal</enum>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>The username you would prefer to use on IRC, if your system does not have identd support.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>The username you would prefer to use on IRC, if your system does not have identd support.  Leave blank to use your system account name.</string>
-                                                </property>
-                                            </widget>
-                                        </vbox>
-                                    </widget>
-                                </hbox>
-                            </widget>
-                        </vbox>
-                    </widget>
-                    <widget class="QGroupBox">
+                    <widget class="QGroupBox" row="1" column="0">
                         <property name="name">
                             <cstring>groupBox3</cstring>
                         </property>
@@ -417,20 +271,23 @@
                             </widget>
                         </vbox>
                     </widget>
-                    <widget class="QCheckBox">
+                    <widget class="QCheckBox" row="2" column="0">
                         <property name="name">
                             <cstring>mAutoConnect</cstring>
                         </property>
                         <property name="sizePolicy">
                             <sizepolicy>
                                 <hsizetype>3</hsizetype>
-                                <vsizetype>5</vsizetype>
+                                <vsizetype>1</vsizetype>
                                 <horstretch>0</horstretch>
                                 <verstretch>0</verstretch>
                             </sizepolicy>
                         </property>
                         <property name="text">
                             <string>Connect automatically at &amp;startup</string>
+                        </property>
+                        <property name="accel">
+                            <string>Alt+S</string>
                         </property>
                         <property name="toolTip" stdset="0">
                             <string>Check to connect automatically when Kopete is started.</string>
@@ -439,34 +296,9 @@
                             <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
                         </property>
                     </widget>
-                    <widget class="QLabel">
+                    <spacer row="4" column="0">
                         <property name="name">
-                            <cstring>textLabel3</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>5</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="maximumSize">
-                            <size>
-                                <width>32767</width>
-                                <height>100</height>
-                            </size>
-                        </property>
-                        <property name="text">
-                            <string>&lt;i&gt;Note: Most IRC servers do not require a password, and only a nickname of your choosing is required to connect.</string>
-                        </property>
-                        <property name="alignment">
-                            <set>WordBreak|AlignTop</set>
-                        </property>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer2</cstring>
+                            <cstring>spacer8</cstring>
                         </property>
                         <property name="orientation">
                             <enum>Vertical</enum>
@@ -477,11 +309,170 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>150</height>
+                                <height>141</height>
                             </size>
                         </property>
                     </spacer>
-                </vbox>
+                    <widget class="QGroupBox" row="0" column="0">
+                        <property name="name">
+                            <cstring>groupBox59</cstring>
+                        </property>
+                        <property name="frameShape">
+                            <enum>GroupBoxPanel</enum>
+                        </property>
+                        <property name="frameShadow">
+                            <enum>Sunken</enum>
+                        </property>
+                        <property name="title">
+                            <string>Account Information</string>
+                        </property>
+                        <vbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout19</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLayoutWidget">
+                                        <property name="name">
+                                            <cstring>layout18</cstring>
+                                        </property>
+                                        <vbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>textLabel4</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>N&amp;ickname:</string>
+                                                </property>
+                                                <property name="buddy" stdset="0">
+                                                    <cstring>mNickName</cstring>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>textLabel1_2</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Alternate ni&amp;ckname:</string>
+                                                </property>
+                                                <property name="buddy" stdset="0">
+                                                    <cstring>mAltNickname</cstring>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>textLabel5</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>&amp;Username:</string>
+                                                </property>
+                                                <property name="buddy" stdset="0">
+                                                    <cstring>mUserName</cstring>
+                                                </property>
+                                            </widget>
+                                        </vbox>
+                                    </widget>
+                                    <widget class="QLayoutWidget">
+                                        <property name="name">
+                                            <cstring>layout17</cstring>
+                                        </property>
+                                        <vbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>mNickName</cstring>
+                                                </property>
+                                                <property name="sizePolicy">
+                                                    <sizepolicy>
+                                                        <hsizetype>7</hsizetype>
+                                                        <vsizetype>0</vsizetype>
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                                <property name="toolTip" stdset="0">
+                                                    <string>The alias you would like to use on IRC.</string>
+                                                </property>
+                                                <property name="whatsThis" stdset="0">
+                                                    <string>The alias you would like to use on IRC.  You may change this once online with the /nick command.</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>mAltNickname</cstring>
+                                                </property>
+                                                <property name="toolTip" stdset="0">
+                                                    <string>The nickname to fall back on if your first choice is in use by someone else</string>
+                                                </property>
+                                                <property name="whatsThis" stdset="0">
+                                                    <string>The nickname to fall back on if your first choice is in use by someone else</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>mUserName</cstring>
+                                                </property>
+                                                <property name="sizePolicy">
+                                                    <sizepolicy>
+                                                        <hsizetype>7</hsizetype>
+                                                        <vsizetype>0</vsizetype>
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                                <property name="echoMode">
+                                                    <enum>Normal</enum>
+                                                </property>
+                                                <property name="toolTip" stdset="0">
+                                                    <string>The username you would prefer to use on IRC, if your system does not have identd support.</string>
+                                                </property>
+                                                <property name="whatsThis" stdset="0">
+                                                    <string>The username you would prefer to use on IRC, if your system does not have identd support.  Leave blank to use your system account name.</string>
+                                                </property>
+                                            </widget>
+                                        </vbox>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                        </vbox>
+                    </widget>
+                    <widget class="QLabel" row="3" column="0">
+                        <property name="name">
+                            <cstring>textLabel3</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>1</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="maximumSize">
+                            <size>
+                                <width>32767</width>
+                                <height>40</height>
+                            </size>
+                        </property>
+                        <property name="text">
+                            <string>&lt;i&gt;Note: Most IRC servers do not require a password, and only a nickname of your choosing is required to connect.</string>
+                        </property>
+                        <property name="alignment">
+                            <set>WordBreak|AlignTop</set>
+                        </property>
+                    </widget>
+                </grid>
             </widget>
             <widget class="QWidget">
                 <property name="name">
@@ -490,28 +481,22 @@
                 <attribute name="title">
                     <string>A&amp;dvanced Configuration</string>
                 </attribute>
-                <vbox>
+                <grid>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <property name="margin">
-                        <number>6</number>
-                    </property>
-                    <property name="spacing">
-                        <number>6</number>
-                    </property>
-                    <widget class="QGroupBox">
+                    <widget class="QGroupBox" row="0" column="0">
                         <property name="name">
                             <cstring>groupBox5</cstring>
                         </property>
                         <property name="title">
                             <string>Custom Default Messages</string>
                         </property>
-                        <vbox>
+                        <grid>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLayoutWidget">
+                            <widget class="QLayoutWidget" row="0" column="0">
                                 <property name="name">
                                     <cstring>layout44</cstring>
                                 </property>
@@ -585,114 +570,211 @@
                                     </widget>
                                 </hbox>
                             </widget>
-                        </vbox>
+                        </grid>
                     </widget>
-                    <widget class="QGroupBox">
+                    <spacer row="3" column="0">
+                        <property name="name">
+                            <cstring>spacer9</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>171</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QGroupBox" row="1" column="0">
                         <property name="name">
                             <cstring>groupBox6</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                            <size>
+                                <width>0</width>
+                                <height>130</height>
+                            </size>
                         </property>
                         <property name="title">
                             <string>Custom CTCP Replies</string>
                         </property>
-                        <grid>
+                        <widget class="QLabel">
                             <property name="name">
-                                <cstring>unnamed</cstring>
+                                <cstring>textLabel3_2</cstring>
                             </property>
-                            <widget class="QPushButton" row="1" column="4">
-                                <property name="name">
-                                    <cstring>addReply</cstring>
-                                </property>
+                            <property name="geometry">
+                                <rect>
+                                    <x>11</x>
+                                    <y>84</y>
+                                    <width>36</width>
+                                    <height>27</height>
+                                </rect>
+                            </property>
+                            <property name="text">
+                                <string>&amp;CTCP:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>newCTCP</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLineEdit">
+                            <property name="name">
+                                <cstring>newCTCP</cstring>
+                            </property>
+                            <property name="geometry">
+                                <rect>
+                                    <x>53</x>
+                                    <y>88</y>
+                                    <width>87</width>
+                                    <height>19</height>
+                                </rect>
+                            </property>
+                        </widget>
+                        <widget class="QLineEdit">
+                            <property name="name">
+                                <cstring>newReply</cstring>
+                            </property>
+                            <property name="geometry">
+                                <rect>
+                                    <x>186</x>
+                                    <y>88</y>
+                                    <width>87</width>
+                                    <height>19</height>
+                                </rect>
+                            </property>
+                        </widget>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>addReply</cstring>
+                            </property>
+                            <property name="geometry">
+                                <rect>
+                                    <x>279</x>
+                                    <y>84</y>
+                                    <width>93</width>
+                                    <height>27</height>
+                                </rect>
+                            </property>
+                            <property name="text">
+                                <string>Add Repl&amp;y</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+Y</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel4_2</cstring>
+                            </property>
+                            <property name="geometry">
+                                <rect>
+                                    <x>146</x>
+                                    <y>84</y>
+                                    <width>34</width>
+                                    <height>27</height>
+                                </rect>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Reply:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>newReply</cstring>
+                            </property>
+                        </widget>
+                        <widget class="KListView">
+                            <column>
                                 <property name="text">
-                                    <string>Add Repl&amp;y</string>
+                                    <string>CTCP</string>
                                 </property>
-                            </widget>
-                            <widget class="KListView" row="0" column="0" rowspan="1" colspan="5">
-                                <column>
-                                    <property name="text">
-                                        <string>CTCP</string>
-                                    </property>
-                                    <property name="clickable">
-                                        <bool>true</bool>
-                                    </property>
-                                    <property name="resizable">
-                                        <bool>true</bool>
-                                    </property>
-                                </column>
-                                <column>
-                                    <property name="text">
-                                        <string>Reply</string>
-                                    </property>
-                                    <property name="clickable">
-                                        <bool>true</bool>
-                                    </property>
-                                    <property name="resizable">
-                                        <bool>true</bool>
-                                    </property>
-                                </column>
-                                <property name="name">
-                                    <cstring>ctcpList</cstring>
-                                </property>
-                                <property name="allColumnsShowFocus">
+                                <property name="clickable">
                                     <bool>true</bool>
                                 </property>
-                                <property name="defaultRenameAction">
-                                    <enum>Accept</enum>
-                                </property>
-                                <property name="fullWidth">
+                                <property name="resizable">
                                     <bool>true</bool>
                                 </property>
-                                <property name="itemsRenameable" stdset="0">
+                            </column>
+                            <column>
+                                <property name="text">
+                                    <string>Reply</string>
+                                </property>
+                                <property name="clickable">
                                     <bool>true</bool>
                                 </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>You can use this dialog to add custom replies for when people send CTCP requests to you. You can also use this dialog to override the built-in replies for VERSION, USERINFO, and CLIENTINFO.</string>
+                                <property name="resizable">
+                                    <bool>true</bool>
                                 </property>
-                            </widget>
-                            <widget class="QLineEdit" row="1" column="3">
-                                <property name="name">
-                                    <cstring>newReply</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="1" column="2">
-                                <property name="name">
-                                    <cstring>textLabel4_2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Reply:</string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>newReply</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="1" column="1">
-                                <property name="name">
-                                    <cstring>newCTCP</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="1" column="0">
-                                <property name="name">
-                                    <cstring>textLabel3_2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;CTCP:</string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>newCTCP</cstring>
-                                </property>
-                            </widget>
-                        </grid>
+                            </column>
+                            <property name="name">
+                                <cstring>ctcpList</cstring>
+                            </property>
+                            <property name="geometry">
+                                <rect>
+                                    <x>11</x>
+                                    <y>20</y>
+                                    <width>361</width>
+                                    <height>58</height>
+                                </rect>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>1</hsizetype>
+                                    <vsizetype>3</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>32767</width>
+                                    <height>58</height>
+                                </size>
+                            </property>
+                            <property name="allColumnsShowFocus">
+                                <bool>true</bool>
+                            </property>
+                            <property name="defaultRenameAction">
+                                <enum>Accept</enum>
+                            </property>
+                            <property name="fullWidth">
+                                <bool>true</bool>
+                            </property>
+                            <property name="itemsRenameable">
+                                <bool>true</bool>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>You can use this dialog to add custom replies for when people send CTCP requests to you. You can also use this dialog to override the built-in replies for VERSION, USERINFO, and CLIENTINFO.</string>
+                            </property>
+                        </widget>
                     </widget>
-                    <widget class="QGroupBox">
+                    <widget class="QGroupBox" row="2" column="0">
                         <property name="name">
                             <cstring>groupBox60</cstring>
                         </property>
                         <property name="sizePolicy">
                             <sizepolicy>
-                                <hsizetype>5</hsizetype>
-                                <vsizetype>4</vsizetype>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>3</vsizetype>
                                 <horstretch>0</horstretch>
                                 <verstretch>0</verstretch>
                             </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                            <size>
+                                <width>0</width>
+                                <height>130</height>
+                            </size>
                         </property>
                         <property name="title">
                             <string>Run Following Commands on Connect</string>
@@ -701,28 +783,7 @@
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLineEdit" row="2" column="0">
-                                <property name="name">
-                                    <cstring>commandEdit</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>3</hsizetype>
-                                        <vsizetype>0</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                            </widget>
-                            <widget class="QPushButton" row="2" column="1">
-                                <property name="name">
-                                    <cstring>addButton</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Add Co&amp;mmand</string>
-                                </property>
-                            </widget>
-                            <widget class="KListView" row="1" column="0" rowspan="1" colspan="2">
+                            <widget class="KListView" row="0" column="0" rowspan="1" colspan="2">
                                 <column>
                                     <property name="text">
                                         <string>Command</string>
@@ -745,6 +806,12 @@
                                         <verstretch>0</verstretch>
                                     </sizepolicy>
                                 </property>
+                                <property name="maximumSize">
+                                    <size>
+                                        <width>32767</width>
+                                        <height>58</height>
+                                    </size>
+                                </property>
                                 <property name="allColumnsShowFocus">
                                     <bool>true</bool>
                                 </property>
@@ -754,7 +821,7 @@
                                 <property name="fullWidth">
                                     <bool>true</bool>
                                 </property>
-                                <property name="itemsRenameable" stdset="0">
+                                <property name="itemsRenameable">
                                     <bool>true</bool>
                                 </property>
                                 <property name="toolTip" stdset="0">
@@ -764,12 +831,33 @@
                                     <string>Any commands added here will be run as soon as you are connected to the IRC server.</string>
                                 </property>
                             </widget>
+                            <widget class="QLineEdit" row="1" column="0">
+                                <property name="name">
+                                    <cstring>commandEdit</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                            </widget>
+                            <widget class="QPushButton" row="1" column="1">
+                                <property name="name">
+                                    <cstring>addButton</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Add Co&amp;mmand</string>
+                                </property>
+                            </widget>
                         </grid>
                     </widget>
-                </vbox>
+                </grid>
             </widget>
         </widget>
-    </vbox>
+    </grid>
 </widget>
 <connections>
     <connection>
