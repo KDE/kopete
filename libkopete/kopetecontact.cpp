@@ -245,10 +245,12 @@ KPopupMenu* Contact::popupMenu( ChatSession *manager )
 
 	KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), menu, "actionUserInfo" )->plug( menu );
 
+#if 0 //this is not fully implemented yet (and doesn't work).  disable for now   - Olivier 2005-01-11
 	if ( account()->isBlocked( d->contactId ) )
 		KopeteStdAction::unblockContact( this, SLOT( slotUnblock() ), menu, "actionUnblockContact" )->plug( menu );
 	else
 		KopeteStdAction::blockContact( this, SLOT( slotBlock() ), menu, "actionBlockContact" )->plug( menu );
+#endif
 
 	if( metaContact() && !metaContact()->isTemporary() )
 		KopeteStdAction::deleteContact( this, SLOT( slotDelete() ), menu, "actionDeleteContact" )->plug( menu );
