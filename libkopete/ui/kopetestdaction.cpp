@@ -20,6 +20,7 @@
 
 #include "kopete.h"
 #include "kopetestdaction.h"
+#include "kopetecontactlist.h"
 #include "kopetestdaction.moc"
 #include "kopetecontactlistview.h"
 
@@ -40,7 +41,7 @@ KopeteGroupList::~KopeteGroupList()
 
 void KopeteGroupList::slotUpdateList()
 {
-	setItems(kopeteapp->contactList()->groups());
+	setItems( KopeteContactList::contactList()->groups() );
 }
 
 KAction* KopeteStdAction::chat( const QObject *recvr, const char *slot,

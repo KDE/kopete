@@ -152,7 +152,10 @@ public slots:
 	 * Move a contact from one group to another.
 	 */
 	void moveToGroup( const QString &from, const QString &to );
-
+    /**
+	 * Remove a contact from one group
+	 */
+	void removeFromGroup( const QString &from);
 	/**
 	 * Add a contact to another group.
 	 */
@@ -186,14 +189,17 @@ signals:
 	void displayNameChanged( KopeteMetaContact *c, const QString &name );
 
 	/**
-	 * The contact was moved
+	 * The contact was moved, be carefull, also removed and added will be wmited when moving
 	 */
-	void movedToGroup( const QString &from, const QString &to );
-
+	void movedToGroup( KopeteMetaContact *contact, const QString &from, const QString &to );
+    /**
+	 * The contact was removed from group
+	 */
+	void removedFromGroup( KopeteMetaContact *contact, const QString &from);
 	/**
 	 * The contact was added to another group
 	 */
-	void addedToGroup( const QString &to );
+	void addedToGroup( KopeteMetaContact *contact, const QString &to );
 
 private slots:
 	/**

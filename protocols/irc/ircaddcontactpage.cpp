@@ -13,7 +13,7 @@
 #include "ircadd.h"
 #include "ircprotocol.h"
 #include "kopete.h"
-#include "kopetecontactlistview.h"
+#include "kopetecontactlist.h"
 
 IRCAddContactPage::IRCAddContactPage(IRCProtocol *owner, QWidget *parent, const char *name )
 				  : AddContactPage(parent,name)
@@ -22,7 +22,7 @@ IRCAddContactPage::IRCAddContactPage(IRCProtocol *owner, QWidget *parent, const 
 	ircdata = new ircAddUI(this);
 	plugin = owner;
 	QObject::connect(ircdata->chkConnectNow, SIGNAL(clicked()), this, SLOT(connectNowClicked()));
-	ircdata->cmbGroup->insertStringList(kopeteapp->contactList()->groups());
+	ircdata->cmbGroup->insertStringList(KopeteContactList::contactList()->groups());
 	ircdata->cmbGroup->setCurrentItem(0);
 }
 IRCAddContactPage::~IRCAddContactPage()
