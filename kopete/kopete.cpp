@@ -33,6 +33,7 @@
 #include "kopetecommandhandler.h"
 #include "kopetewindow.h"
 #include "pluginconfig.h"
+#include "preferencesdialog.h"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -107,6 +108,7 @@ void Kopete::slotLoadPlugins()
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
 	QStringList modules;
+	bool showConfigDialog = false;
 
 	if( config->hasKey( "Plugins" ) )
 	{
@@ -114,11 +116,19 @@ void Kopete::slotLoadPlugins()
 	}
 	else
 	{
-		// Ups! the user does not have plugins selected.
-		// TODO: show "first time" wizard and let user decide which modules to load
-		modules.append("history.desktop");
-		modules.append("contactnotes.desktop");
-		// Other modules to load for the first time?
+		// No plugins specified. Show the config dialog.
+		// FIXME: Although it's a bit stupid it is theoretically possible that a user
+		//        explicitly configured Kopete to not load plugins on startup. In this
+		//        case we don't want this dialog. We need some other config setting
+		//        like a bool hasRunKopeteBefore or so to trigger the loading of the
+		//        wizard. Maybe using the last run version number is more useful even
+		//        as it also allows for other features. - Martijn
+		// FIXME: Of course this is not a too-good GUI because a first-timer would need
+		//        some kind of "welcome" dialog or wizard. But for now it's better than
+		//        nothing at all. - Martijn
+		// FIXME: Possibly we need to influence the showConfigDialog bool based on the
+		//        command line arguments processed below. But how exactly? - Martijn
+		showConfigDialog = true;
 	}
 
 	// Listen to arguments
@@ -161,6 +171,8 @@ void Kopete::slotLoadPlugins()
 		KopeteAccountManager::manager()->autoConnect();
 	}
 
+	if( showConfigDialog )
+		PreferencesDialog::preferencesDialog()->show();
 }
 
 void Kopete::slotMainWindowDestroyed()
@@ -177,3 +189,4 @@ void Kopete::commitData( QSessionManager &sm )
 #include "kopete.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
+
