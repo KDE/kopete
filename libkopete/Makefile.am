@@ -3,7 +3,7 @@ COMPAT_DIR = compat
 COMPAT_LIBS = compat/libkopetecompat.la
 endif
 
-SUBDIRS = private ui $(COMPAT_DIR) .
+SUBDIRS = private ui $(COMPAT_DIR) . tests
 
 METASOURCES = AUTO
 
