@@ -316,17 +316,20 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 	setSelectionMode( QListView::Extended );
 
 	clearWFlags( WStaticContents );
+	setWFlags( WNoAutoErase );
 
 	// clear the appropriate flags from the viewport - qt docs say we have to mask
 	// these flags out of the QListView to make weirdly painted list items work, but
 	// that doesn't do the job. this does.
 //	class MyWidget : public QWidget { public: using QWidget::clearWFlags; };
 //	static_cast<MyWidget*>( viewport() )->clearWFlags( WStaticContents );
+//	static_cast<MyWidget*>( viewport() )->setWFlags( WNoAutoErase );
 
 	// The above causes compiler errors with the (broken) native TRU64 and IRIX compilers.
 	// This should make it compile for both platforms and still seems to work.
 	// This is, of course, a nasty hack, but it works, so...
-	static_cast<KopeteContactListView*>(viewport())->clearWFlags( WStaticContents | WNoAutoErase );
+	static_cast<KopeteContactListView*>(viewport())->clearWFlags( WStaticContents );
+	static_cast<KopeteContactListView*>(viewport())->setWFlags( WNoAutoErase );
 
 	// Load in the user's initial settings
 	slotSettingsChanged();
