@@ -127,7 +127,7 @@ void SMSSendProvider::send(const KopeteMessage& msg)
 		{
 			canSend = false;
 			KMessageBox::error(0L, i18n("Could not determine which argument which should contain the message"),
-				i18n("Could not send message"));
+				i18n("Could Not Send Message"));
 			return;
 		}
 		if ( telPos == -1 )
@@ -135,7 +135,7 @@ void SMSSendProvider::send(const KopeteMessage& msg)
 			canSend = false;
 
 			KMessageBox::error(0L, i18n("Could not determine which argument which should contain the number"),
-				i18n("Could not send message"));
+				i18n("Could Not Send Message"));
 			return;
 		}
 	}
@@ -169,14 +169,14 @@ void SMSSendProvider::slotSendFinished(KProcess* p)
 {
 	if (p->exitStatus() == 0)
 	{
-		KMessageBox::information(0L, i18n("Message sent"), output.join("\n"), i18n("Message sent"));
+		KMessageBox::information(0L, i18n("Message sent"), output.join("\n"), i18n("Message Sent"));
 
 		emit messageSent(m_msg);
 	}
 	else
 	{
 		KMessageBox::detailedError(0L, i18n("Something went wrong when sending message"), output.join("\n"),
-				i18n("Could not send message"));
+				i18n("Could Not Send Message"));
 	}
 }
 

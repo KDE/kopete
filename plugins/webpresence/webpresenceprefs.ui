@@ -12,7 +12,7 @@
             <x>0</x>
             <y>0</y>
             <width>444</width>
-            <height>399</height>
+            <height>405</height>
         </rect>
     </property>
     <property name="caption">
@@ -33,7 +33,7 @@
                 <enum>Sunken</enum>
             </property>
             <property name="title">
-                <string>Uploading:</string>
+                <string>Uploading</string>
             </property>
             <grid>
                 <property name="name">
@@ -44,7 +44,7 @@
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>Upload &amp;To:</string>
+                        <string>Upload &amp;to:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>m_url</cstring>
@@ -55,7 +55,7 @@
                         <cstring>textLabel2</cstring>
                     </property>
                     <property name="text">
-                        <string>Upload &amp;Every: </string>
+                        <string>Upload &amp;every: </string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>m_freq</cstring>
@@ -113,7 +113,7 @@
                 <cstring>buttonGroup2_2</cstring>
             </property>
             <property name="title">
-                <string>Formatting:</string>
+                <string>Formatting</string>
             </property>
             <grid>
                 <property name="name">
@@ -178,7 +178,7 @@
                 <cstring>buttonGroup2</cstring>
             </property>
             <property name="title">
-                <string>Show your name as:</string>
+                <string>Show Your Name As</string>
             </property>
             <grid>
                 <property name="name">
@@ -214,7 +214,7 @@
                         <cstring>m_addresses</cstring>
                     </property>
                     <property name="text">
-                        <string>Include &amp;IM Addresses</string>
+                        <string>Include &amp;IM addresses</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="2">

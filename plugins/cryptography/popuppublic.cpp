@@ -111,7 +111,7 @@ defaultName="";
 
   KButtonBox *boutonbox=new KButtonBox(this,KButtonBox::Horizontal,15,10);
 
-  checkbox1=new QCheckBox(i18n("ASCII Armored encryption"),this);
+  checkbox1=new QCheckBox(i18n("ASCII armored encryption"),this);
   checkbox2=new QCheckBox(i18n("Allow encryption with untrusted keys"),this);
 
    QWhatsThis::add(keysList,i18n("<b>Public keys list</b>: select the key that will be used for encryption."));

@@ -141,12 +141,12 @@ void JabberProtocol::initActions()
 					this, SLOT(slotJoinNewChat()), this, "actionJoinChat");
 	actionServices = new KAction(i18n("Services..."), "filenew", 0,
 					this, SLOT(slotGetServices()), this, "actionJabberServices");
-	actionSendRaw = new KAction(i18n("Send raw packet to Server..."),
+	actionSendRaw = new KAction(i18n("Send Raw Packet to Server..."),
 					"filenew", 0, this, SLOT(slotSendRaw()),
 					this, "actionJabberSendRaw");
 	actionEditVCard = new KAction(i18n("Edit User Info..."), "identity", 0,
 					this, SLOT(slotEditVCard()), this, "actionEditVCard");
-	actionEmptyMail = new KAction(i18n("New email message..."), "filenew", 0,
+	actionEmptyMail = new KAction(i18n("New Email Message..."), "filenew", 0,
 					this, SLOT(slotEmptyMail()), this, "actionEmptyMail");
 
 	actionStatusMenu = new KActionMenu("Jabber", this);
@@ -1390,7 +1390,7 @@ void JabberProtocol::slotEmptyMail()
 				return;
 		}
 
-		KLineEditDlg *dlg = new KLineEditDlg(i18n("Please enter a recipient"),
+		KLineEditDlg *dlg = new KLineEditDlg(i18n("Please enter a recipient:"),
 						QString::null, qApp->mainWidget());
 		
 		QObject::connect(dlg, SIGNAL(okClicked()),

@@ -265,7 +265,7 @@ QString KgpgInterface::KgpgDecryptText(QString text,QString userID)
 
 Md5Widget::Md5Widget(QWidget *parent, const char *name,KURL url):KDialogBase( parent, name, true,i18n("MD5 Checksum"),Apply | Close)
   {
-setButtonApplyText(i18n("Compare MD5 with clipboard"));
+setButtonApplyText(i18n("Compare MD5 With Clipboard"));
 mdSum="";
 QFile f(url.path().local8Bit());
 f.open( IO_ReadOnly);
@@ -326,7 +326,7 @@ void Md5Widget::slotApply()
          text=text.stripWhiteSpace();
          while (text.find(' ')!=-1) text.remove(text.find(' '),1);
          if (text==mdSum) {TextLabel1_2->setText("<b>Correct checksum</b>, file is ok");  KLed1->setColor(QColor(0,255,0));KLed1->on();}//KMessageBox::sorry(0,"OK");
-         else if (text.length()!=mdSum.length()) KMessageBox::sorry(0,"Clipboard content is not a MD5 sum...");
+         else if (text.length()!=mdSum.length()) KMessageBox::sorry(0,"Clipboard content is not a MD5 sum.");
          else
          {TextLabel1_2->setText("<b>Wrong checksum, FILE CORRUPTED</b>");  KLed1->setColor(QColor(255,0,0));KLed1->on();}
      }
@@ -433,7 +433,7 @@ void KgpgInterface::verifyfin(KProcess *)
         keyMail=message;
         KMessageBox::information(0,i18n("Good signature from %1\nKey ID: %2").arg(keyMail).arg(keyID));
     }
-    else if (message.find("UNEXPECTED")!=-1) KMessageBox::sorry(0,i18n("No signature found..."));
+    else if (message.find("UNEXPECTED")!=-1) KMessageBox::sorry(0,i18n("No signature found."));
     else if (message.find("BADSIG")!=-1)
     {
         message.remove(0,message.find("BADSIG")+7);
@@ -453,7 +453,7 @@ void KgpgInterface::verifyfin(KProcess *)
 
 void KgpgInterface::KgpgSignKey(QString keyID,QString signKeyID,QString signKeyMail,bool local)
 {
-if (checkuid(keyID)>0){KMessageBox::sorry(0,i18n("This key has more than one user ID...\nEdit the key manually to sign it."));return;}
+if (checkuid(keyID)>0){KMessageBox::sorry(0,i18n("This key has more than one user ID.\nEdit the key manually to sign it."));return;}
 signSuccess=0;
 step=0;
 message="sign";
@@ -499,7 +499,7 @@ emit signatureFinished(signSuccess);
 
 void KgpgInterface::KgpgDelSignature(QString keyID,QString signKeyID)
 {
-if (checkuid(keyID)>0){KMessageBox::sorry(0,i18n("This key has more than one user id...\nEdit the key manually to delete signature."));return;}
+if (checkuid(keyID)>0){KMessageBox::sorry(0,i18n("This key has more than one user id.\nEdit the key manually to delete signature."));return;}
 
 message=signKeyID.remove(0,2);
 deleteSuccess=false;

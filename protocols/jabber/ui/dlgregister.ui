@@ -8,12 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>274</width>
+            <width>338</width>
             <height>158</height>
         </rect>
     </property>
     <property name="caption">
-        <string>Register with a Jabber Service</string>
+        <string>Register with Jabber Service</string>
     </property>
     <property name="sizeGripEnabled">
         <bool>false</bool>

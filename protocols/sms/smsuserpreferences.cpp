@@ -10,7 +10,7 @@
 #include <klineedit.h>
 
 SMSUserPreferences::SMSUserPreferences( SMSContact* contact )
-	: KDialogBase( 0L, "userPrefs", true, i18n("User preferences"), Ok|Apply|Cancel, Ok, true )
+	: KDialogBase( 0L, "userPrefs", true, i18n("User Preferences"), Ok|Apply|Cancel, Ok, true )
 {
 	m_contact = contact;
 	topWidget = makeVBoxMainWidget();

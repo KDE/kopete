@@ -97,7 +97,7 @@ void SMSContact::slotSendMessage(const KopeteMessage &msg)
 		s->send(msg);
 	else if (s->maxSize() < msgLength)
 	{
-		int res = KMessageBox::questionYesNo( 0L, i18n("This message is longer than the maximum length (%1). Should it be divided to %2 messages?").arg(s->maxSize()).arg(msgLength/(s->maxSize())+1), i18n("Message too long") );
+		int res = KMessageBox::questionYesNo( 0L, i18n("This message is longer than the maximum length (%1). Should it be divided to %2 messages?").arg(s->maxSize()).arg(msgLength/(s->maxSize())+1), i18n("Message Too Long") );
 		switch (res)
 		{
 		case KMessageBox::Yes:
@@ -219,7 +219,7 @@ void SMSContact::setServicePrefs(QStringList prefs)
 void SMSContact::initActions()
 {
 	m_actionCollection = 0L;
-	m_actionPrefs = new KAction(i18n("&User preferences"), 0, this, SLOT(userPrefs()), m_actionCollection, "userPrefs");
+	m_actionPrefs = new KAction(i18n("&User Preferences"), 0, this, SLOT(userPrefs()), m_actionCollection, "userPrefs");
 }
 
 KActionCollection* SMSContact::customContextMenuActions()

@@ -134,7 +134,7 @@ void KopeteWindow::initActions ( void )
 		this, SLOT( slotShowPreferencesDialog() ),
 		actionCollection() );
 
-	actionSave = new KAction( i18n("Save &ContactList"), "filesave", KStdAccel::shortcut(KStdAccel::Save),
+	actionSave = new KAction( i18n("Save &Contact List"), "filesave", KStdAccel::shortcut(KStdAccel::Save),
 							KopeteContactList::contactList(), SLOT(save()),
 							actionCollection(), "save_contactlist" );
 

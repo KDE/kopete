@@ -72,7 +72,7 @@
                 <cstring>dynamicForm</cstring>
             </property>
             <property name="title">
-                <string>Search for...</string>
+                <string>Search For</string>
             </property>
             <vbox>
                 <property name="name">

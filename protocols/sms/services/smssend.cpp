@@ -32,14 +32,14 @@ void SMSSend::send(const KopeteMessage& msg)
 
 	if (provider.length() < 1)
 	{
-		KMessageBox::error(0L, i18n("No provider configured"), i18n("Could not send message"));
+		KMessageBox::error(0L, i18n("No provider configured"), i18n("Could Not Send Message"));
 		return;
 	}
 
 	QString prefix = SMSGlobal::readConfig("SMSSend", "Prefix", m_contact);
 	if (prefix == QString::null)
 	{
-		KMessageBox::error(0L, i18n("No prefix set for SMSSend, please change it in the configuration dialog"), i18n("No prefix"));
+		KMessageBox::error(0L, i18n("No prefix set for SMSSend, please change it in the configuration dialog"), i18n("No Prefix"));
 		return;
 	}
 

@@ -161,13 +161,13 @@ void JabberContact::initActions()
 	actionMessage = new KAction(i18n("Send Email Message"), "mail_generic", 0, this, SLOT(slotEmailUser()), this, "actionMessage");
 	actionRename = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");
 	actionSelectResource = new KSelectAction(i18n("Select Resource"), "selectresource", 0, this, SLOT(slotSelectResource()), this, "actionSelectResource");
-	actionSendAuth = new KAction(i18n("(Re)send authorization to"), "", 0, this, SLOT(slotSendAuth()), this, "actionSendAuth");
-	actionRequestAuth = new KAction(i18n("(Re)request authorization from"), "", 0, this, SLOT(slotRequestAuth()), this, "actionRequestAuth");
-	actionSetAvailability = new KActionMenu(i18n("Set availability"), "jabber_online");
-	actionStatusChat = new KAction(i18n("Free to chat"), "jabber_online", 0, this, SLOT(slotStatusChat()), this, "actionChat");
+	actionSendAuth = new KAction(i18n("(Re)send Authorization To"), "", 0, this, SLOT(slotSendAuth()), this, "actionSendAuth");
+	actionRequestAuth = new KAction(i18n("(Re)request Authorization From"), "", 0, this, SLOT(slotRequestAuth()), this, "actionRequestAuth");
+	actionSetAvailability = new KActionMenu(i18n("Set Availability"), "jabber_online");
+	actionStatusChat = new KAction(i18n("Free to Chat"), "jabber_online", 0, this, SLOT(slotStatusChat()), this, "actionChat");
 	actionStatusAway = new KAction(i18n("Away"), "jabber_away", 0, this,SLOT(slotStatusAway()), this,  "actionAway");
-	actionStatusXA = new KAction(i18n("Extended away"), "jabber_away", 0, this, SLOT(slotStatusXA()),this, "actionXA");
-	actionStatusDND = new KAction(i18n("Do not Disturb"), "jabber_na", 0, this, SLOT(slotStatusDND()), this, "actionDND");
+	actionStatusXA = new KAction(i18n("Extended Away"), "jabber_away", 0, this, SLOT(slotStatusXA()),this, "actionXA");
+	actionStatusDND = new KAction(i18n("Do Not Disturb"), "jabber_na", 0, this, SLOT(slotStatusDND()), this, "actionDND");
 	actionStatusInvisible = new KAction(i18n("Invisible"), "jabber_offline", 0, this, SLOT(slotStatusInvisible()), this, "actionInvisible");
 
 	actionSetAvailability->insert(actionStatusChat);

@@ -30,7 +30,7 @@ void SMSClient::send(const KopeteMessage& msg)
 
 	if (provider == QString::null)
 	{
-		KMessageBox::error(0L, i18n("No provider configured"), i18n("Could not send message"));
+		KMessageBox::error(0L, i18n("No provider configured"), i18n("Could Not Send Message"));
 		return;
 	}
 
@@ -119,14 +119,14 @@ void SMSClient::slotSendFinished(KProcess* p)
 {
 	if (p->exitStatus() == 0)
 	{
-		KMessageBox::information(0L, i18n("Message sent"), output.join("\n"), i18n("Message sent"));
+		KMessageBox::information(0L, i18n("Message sent"), output.join("\n"), i18n("Message Sent"));
 
 		emit messageSent(m_msg);
 	}
 	else
 	{
 		KMessageBox::detailedError(0L, i18n("Something went wrong when sending message"), output.join("\n"),
-				i18n("Could not send message"));
+				i18n("Could Not Send Message"));
 	}
 }
 

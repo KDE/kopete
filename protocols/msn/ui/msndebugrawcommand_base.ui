@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>MSNDebugRawCommand_base</class>
 <widget class="QWidget">
     <property name="name">
@@ -67,13 +67,19 @@
             <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
         </spacer>
         <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>m_addNewline</cstring>
             </property>
             <property name="text">
-                <string>Add &amp;newline</string>
+                <string>Add &amp;new line</string>
             </property>
             <property name="checked">
                 <bool>true</bool>

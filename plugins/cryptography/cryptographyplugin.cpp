@@ -88,7 +88,7 @@ KActionCollection *CryptographyPlugin::customContextMenuActions(KopeteMetaContac
 
 	m_collection = new KActionCollection(this);
 
-	KAction *action=new KAction( i18n("&Select Cryptography public key"), "kgpg", 0, this, SLOT (slotSelectContactKey()), m_collection);
+	KAction *action=new KAction( i18n("&Select Cryptography Public Key"), "kgpg", 0, this, SLOT (slotSelectContactKey()), m_collection);
 
 	m_collection->insert(action);
 	m_currentMetaContact=m;
