@@ -27,6 +27,7 @@
 #include "kopetenotifyclient.h"
 #include <kdebug.h>
 #include <kiconeffect.h>
+#include <kimageeffect.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -240,6 +241,9 @@ void KopeteMetaContactLVI::initLVI()
 		SLOT( slotDisplayNameChanged() ) );
 	
 	connect( m_metaContact, SIGNAL( photoChanged() ),
+		SLOT( slotPhotoChanged() ) );
+		
+	connect( m_metaContact, SIGNAL( onlineStatusChanged( Kopete::MetaContact *, Kopete::OnlineStatus::StatusType ) ),
 		SLOT( slotPhotoChanged() ) );
 
 	connect( m_metaContact, SIGNAL( onlineStatusChanged( Kopete::MetaContact *, Kopete::OnlineStatus::StatusType ) ),
@@ -510,12 +514,30 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 			
 			if ( photoImg.width() > photoImg.height() )
 			{
-				photoPixmap = photoImg.smoothScale( photoSize, newsize );
+				photoImg = photoImg.smoothScale( photoSize, newsize );
 			}
 			else
 			{
-				photoPixmap = photoImg.smoothScale( newsize, photoSize );
+				photoImg = photoImg.smoothScale( newsize, photoSize );
 			}
+			
+			KImageEffect *effect = 0L;
+			switch ( m_metaContact->status() )
+			{
+				case Kopete::OnlineStatus::Away:
+					effect = new KImageEffect();
+					effect->fade(photoImg, 0.5, Qt::white);
+				break;
+				case Kopete::OnlineStatus::Offline:
+					effect = new KImageEffect();
+					effect->toGray(photoImg);
+				break;
+				case Kopete::OnlineStatus::Unknown:
+					effect = new KImageEffect();
+					effect->fade(photoImg, 0.8, Qt::white);
+			}
+			delete effect;
+			photoPixmap = photoImg;
 			QPainter p(&photoPixmap);
 			p.setPen(Qt::black);
 			p.drawLine(0, 0, photoPixmap.width()-1, 0);
@@ -686,7 +708,7 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 		d->buddyIcon = new ImageComponent( hbox );
 		d->iconSize = IconSize( KIcon::Toolbar );
 	}
-	else if( mode == KopetePrefs::Yagami )             // just for Yagami :)
+	else if( mode == KopetePrefs::Yagami )             // Style with metacontact photo
 	{
 		d->contactIconSize = IconSize( KIcon::Small );
 		Component *imageBox = new BoxComponent( hbox, BoxComponent::Vertical );
