@@ -151,7 +151,7 @@ void OscarAccount::disconnect()
 
 void OscarAccount::initEngine(bool icq)
 {
-	kdDebug(14150) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
+	//kdDebug(14150) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 
 	QByteArray cook;
 	cook.duplicate("01234567",8);
@@ -161,10 +161,7 @@ void OscarAccount::initEngine(bool icq)
 
 void OscarAccount::slotGoOffline()
 {
-	// This will ask the server to log us off
-	// and then when that is complete, engine
-	// will notify us of a status change
-	engine()->doLogoff();
+	OscarAccount::disconnect();
 }
 
 void OscarAccount::slotGoAway()
@@ -182,11 +179,7 @@ void OscarAccount::slotError(QString errmsg, int errorCode)
 	// 1 = username unknown to server
 	// 5 = wrong password
 	if (errorCode == 1 || errorCode == 5)
-	{
 		OscarAccount::disconnect();
-	}
-	// FIXME: maybe doLogoff() instead to properly shutdown the connection
-	// No, doLogoff() only works perfectly for logged in connections
 
 	KMessageBox::error(qApp->mainWidget(), errmsg);
 }
@@ -265,10 +258,6 @@ void OscarAccount::slotReceivedMessage(const QString &sender, const QString &inc
 			case OscarSocket::DeclinedAuth:
 				message=i18n("<b>[Declined authentication:]</b> %1").arg(message);
 				break;
-
-			/* TODO: For now I prefer 'unhandled in case-statement' warnings on compilation
-			default:
-				break;*/
 		}
 		contact->gotIM(type, message);
 	}
@@ -281,9 +270,7 @@ void OscarAccount::slotReceivedAwayMessage(const QString &sender, const QString 
 
 	OscarContact *contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
 	if(contact)
-	{
 		contact->setAwayMessage(message);
-	}
 }
 
 // Called when a group is added by adding a contact
@@ -495,10 +482,6 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 	if (contact)
 	{
 		// Contact existed in the list already, sync information
-		// FIXME: is this needed? won't work anymore as AIMBuddy doesn't return a KOS on status()!
-//		contact->setOnlineStatus( buddy->status() );
-// 		kdDebug(14150) << k_funcinfo <<
-// 			"serverside contact already in kopete, his status=" << buddy->status() << endl;
 
 		if(buddy->waitAuth())
 			kdDebug(14150) << k_funcinfo << "setting WAITAUTH on '" << contact->displayName() << "'" << endl;
@@ -700,8 +683,6 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			{
 				kdDebug(14150) << k_funcinfo
 					<< "Contact with no group, adding to group 'Buddies'" << endl;
-				// happens for temporary contacts
-				// TODO: support for temp contacts is screwed by design [mETz]
 				groupName="Buddies";
 			}
 			else
@@ -767,23 +748,21 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			kdDebug(14150) << "Temporary new contact, only adding him to local list" << endl;
 			// This is a temporary contact, so don't add it to the server list
 			// Create the contact, which adds it to the parent contact
-			if(createNewContact(contactId, displayName, parentContact))
-			{
-				// Set it's initial status
-				// This requests the buddy's info from the server
-				// I'm not sure what it does if they're offline, but there
-				// is code in oscarcontact to handle the signal from
-				// the engine that this causes
-				if(!mEngine->isICQ())
-				{
-					kdDebug(14150) << k_funcinfo <<
-						"Requesting user info for '" << contactId << "'" << endl;
-						engine()->sendUserProfileRequest(tocNormalize(contactId));
-				}
-				return true;
-			}
-			else
+			if(!createNewContact(contactId, displayName, parentContact))
 				return false;
+
+			// Set it's initial status
+			// This requests the buddy's info from the server
+			// I'm not sure what it does if they're offline, but there
+			// is code in oscarcontact to handle the signal from
+			// the engine that this causes
+			//if(!mEngine->isICQ())
+			{
+				kdDebug(14150) << k_funcinfo <<
+					"Requesting user info for '" << contactId << "'" << endl;
+				engine()->sendLocationInfoRequest(tocNormalize(contactId), AIM_LOCINFO_SHORTINFO);
+			}
+			return true;
 		}
 	} // END not internalBuddy
 

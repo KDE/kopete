@@ -240,25 +240,16 @@ void OscarSocket::parseWarningNotify(Buffer &inbuf)
 		emit gotWarning(newevil,QString::null);
 }
 
-void OscarSocket::sendUserProfileRequest(const QString &sn)
+void OscarSocket::sendLocationInfoRequest(const QString &name, WORD type)
 {
 	// docs: http://iserverd.khstu.ru/oscar/snac_02_05.html
-
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"SEND CLI_LOCATIONINFOREQ for '" << name << "'" << endl;
 
 	Buffer outbuf;
-	outbuf.addSnac(0x0002,0x0005,0x0000,0x00000000);
-
-	/*
-	AIM_GETINFO_GENERALINFO 0x00001
-	AIM_GETINFO_AWAYMESSAGE 0x00003
-	AIM_GETINFO_CAPABILITIES 0x0004
-	*/
-	outbuf.addWord(0x0005);
-
-	outbuf.addByte(sn.length());
-	outbuf.addString(sn.latin1(),sn.length());
-
+	outbuf.addSnac(0x0002, 0x0005, 0x0000, 0x00000000);
+	outbuf.addWord(type);
+	outbuf.addBUIN(name.latin1());
 	sendBuf(outbuf,0x02);
 }
 
@@ -268,12 +259,16 @@ void OscarSocket::parseUserProfile(Buffer &inbuf)
 
 	UserInfo u;
 	parseUserInfo(inbuf, u);
+
+	kdDebug(14150) << k_funcinfo <<
+		"RECV SRV_LOCATIONINFOREQ for '" << u.sn << "'" << endl;
+
 	QPtrList<TLV> tl = inbuf.getTLVList();
 	tl.setAutoDelete(TRUE);
 
 	QString profile;
 	QString away;
-	for (TLV *cur = tl.first();cur;cur = tl.next())
+	for(TLV *cur = tl.first(); cur; cur = tl.next())
 	{
 		switch(cur->type)
 		{
@@ -282,8 +277,8 @@ void OscarSocket::parseUserProfile(Buffer &inbuf)
 				break;
 
 			case 0x0002: //profile text
-				kdDebug(14150) << k_funcinfo <<
-					"The profile is: '" << cur->data << "'" << endl;
+				/*kdDebug(14150) << k_funcinfo <<
+					"The profile is: '" << cur->data << "'" << endl;*/
 				profile += QString::fromAscii(cur->data); // aim always seems to use us-ascii encoding
 				break;
 
@@ -293,12 +288,12 @@ void OscarSocket::parseUserProfile(Buffer &inbuf)
 				break;
 
 			case 0x0004: //away message
-				kdDebug(14150) << k_funcinfo << "Away message is: " << cur->data << endl;
+				//kdDebug(14150) << k_funcinfo << "Away message is: " << cur->data << endl;
 				away += QString::fromAscii(cur->data); // aim always seems to use us-ascii encoding
 				break;
 
 			case 0x0005: //capabilities
-				kdDebug(14150) << k_funcinfo << "Got capabilities" << endl;
+				//kdDebug(14150) << k_funcinfo << "Got capabilities" << endl;
 				break;
 
 			default: //unknown

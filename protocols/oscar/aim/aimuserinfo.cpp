@@ -101,16 +101,13 @@ AIMUserInfoDialog::AIMUserInfoDialog(AIMContact *c, AIMAccount *acc, bool modal,
 		setEscapeButton(Ok);
 		l->addWidget(userInfoView);
 
-		if(mAccount->isConnected())
-		{  // And our buddy is not offline
-			if(mContact->onlineStatus() != AIMProtocol::protocol()->statusOffline)
-			{
-				// Update the user view to indicate that we're requesting the user's profile
-				userInfoView->setText(i18n("Requesting User Profile, please wait"));
+		if(mContact->isOnline())
+		{
+			// Update the user view to indicate that we're requesting the user's profile
+			userInfoView->setText(i18n("Requesting User Profile, please wait..."));
 
-				// Ask the engine for the profile
-				mAccount->engine()->sendUserProfileRequest(mContact->contactName());
-			}
+			// Ask the engine for the profile
+			mAccount->engine()->sendLocationInfoRequest(mContact->contactName(), 0x0005);
 		}
 	}
 }

@@ -445,10 +445,7 @@ void OscarSocket::slotRead()
 					switch(s.subtype)
 					{
 						case 0x0001:
-							kdDebug(14150) << k_funcinfo <<
-								"TODO: parse SRV_FROMICQERR packet!!" << endl;
-							kdDebug(14150) << "errorcode=" << inbuf.getWord() << endl;
-							//parseSRV_FROMICQERR(inbuf);
+							parseError(s.family, inbuf);
 							break;
 						case 0x0003:
 							parseSRV_FROMICQSRV(inbuf);
@@ -465,7 +462,7 @@ void OscarSocket::slotRead()
 					switch(s.subtype)
 					{
 						case 0x0001: //registration refused!
-							emit protocolError(i18n("Registration refused!"),0);
+							emit protocolError(i18n("Registration refused!"), 0);
 							break;
 						case 0x0003: //authorization response (and hash) is being sent
 							parseAuthResponse(inbuf);
@@ -3292,8 +3289,8 @@ void OscarSocket::parseError(WORD family, Buffer &inbuf)
 {
 	QString msg;
 	WORD reason = inbuf.getWord();
-	kdDebug(14150) << k_funcinfo << "Got an error: " << QTextStream::hex <<
-		reason << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"Got an error, SNAC family=" << family << ", reason=" << reason << endl;
 
 	if (reason < msgerrreasonlen)
 	{

@@ -14,39 +14,43 @@
     *************************************************************************
 */
 
-#ifndef ICQREADAWAY_H
-#define ICQREADAWAY_H
+#ifndef ICQSENDSMSDIALOG_H
+#define ICQSENDSMSDIALOG_H
 
 #include <kdebug.h>
 #include <kdialogbase.h>
 
+class ICQProtocol;
 class ICQAccount;
 class ICQContact;
-class KTextBrowser;
+class KLineEdit;
+class KTextEdit;
 class QVBox;
 
-class ICQReadAway : public KDialogBase
+class ICQSendSMSDialog : public KDialogBase
 {
 	Q_OBJECT
 
 	public:
-		ICQReadAway(ICQContact *, QWidget *parent = 0, const char* name = "ICQReadAway");
+		ICQSendSMSDialog(ICQAccount *, ICQContact *, QWidget *parent = 0, const char* name = "ICQSendSMSDialog");
 
 	private slots:
-		void slotFetchAwayMessage();
-		void slotAwayMessageChanged();
+		void slotSendShortMessage();
 		void slotCloseClicked();
-		void slotUrlClicked(const QString &url);
-		void slotMailClicked(const QString&, const QString &address);
 
 	signals:
 		void closing();
 
 	private:
+		ICQProtocol *p;
 		ICQAccount *mAccount;
 		ICQContact *mContact;
+
 		QVBox *mMainWidget;
-		KTextBrowser *awayMessageBrowser;
+		QLabel *lblNumber;
+		KLineEdit *edtNumber;
+		QLabel *lblMessage;
+		KTextEdit *edtMessage;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

@@ -61,6 +61,7 @@ class ICQAccount : public OscarAccount
 		// called after XML is read in, cannot access pluginData in constructor
 		virtual void loaded();
 		void slotAwayDialogReturned(const int, const QString&);
+		void slotSendSMS();
 
 	protected:
 		virtual OscarContact *createNewContact(const QString &contactId,

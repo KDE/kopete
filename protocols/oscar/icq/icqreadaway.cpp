@@ -37,7 +37,6 @@ ICQReadAway::ICQReadAway(ICQContact *c, QWidget *parent, const char* name)
 
 	mAccount = static_cast<ICQAccount*>(c->account());
 	mContact = c;
-	p = ICQProtocol::protocol(); // I am SO lazy ;)
 	setCaption(i18n("'%2' Message for %1").arg(c->displayName()).arg(c->onlineStatus().description()));
 
 	QVBox *mMainWidget = makeVBoxMainWidget();

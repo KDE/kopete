@@ -224,24 +224,24 @@ const QString msgerrreason[] =
 {
 	I18N_NOOP("Invalid error"),
 	I18N_NOOP("Invalid SNAC"),
-	I18N_NOOP("Rate to host"),
+	I18N_NOOP("Rate to server"),
 	I18N_NOOP("Rate to client"),
-	I18N_NOOP("Not logged in"),
+	I18N_NOOP("Recipient is not logged in"),
 	I18N_NOOP("Service unavailable"),
 	I18N_NOOP("Service not defined"),
 	I18N_NOOP("Obsolete SNAC"),
-	I18N_NOOP("Not supported by host"),
+	I18N_NOOP("Not supported by server"),
 	I18N_NOOP("Not supported by client"),
 	I18N_NOOP("Refused by client"),
 	I18N_NOOP("Reply too big"),
 	I18N_NOOP("Responses lost"),
 	I18N_NOOP("Request denied"),
-	I18N_NOOP("Busted SNAC payload"),
+	I18N_NOOP("Broken packet format, report a bug at http://bugs.kde.org"),
 	I18N_NOOP("Insufficient rights"),
 	I18N_NOOP("In local permit/deny"),
-	I18N_NOOP("Too evil (sender)"),
-	I18N_NOOP("Too evil (receiver)"),
-	I18N_NOOP("User temporarily unavailable"),
+	I18N_NOOP("Sender is too evil"),
+	I18N_NOOP("Receiver too evil"),
+	I18N_NOOP("User is temporarily unavailable"),
 	I18N_NOOP("No match"),
 	I18N_NOOP("List overflow"),
 	I18N_NOOP("Request ambiguous"),
@@ -392,8 +392,12 @@ class OscarSocket : public OscarConnection
 
 		void requestAwayMessage(OscarContact *c);
 
-		/** Requests sn's user info */
-		void sendUserProfileRequest(const QString &sn);
+		/*
+		 * Request user info [AIM]
+		 * @p name is the contact name
+		 * @p type is one of AIM_LOCINFO_* (see oscartypes.h)
+		 */
+		void sendLocationInfoRequest(const QString &name, WORD type);
 
 		/** Sends someone a warning */
 		void sendWarning(const QString &target, bool isAnonymous);
@@ -571,6 +575,8 @@ class OscarSocket : public OscarConnection
 
 
 		void sendCLI_METASETSECURITY(bool requireauth, bool webaware, BYTE direct);
+
+		void sendCLI_SENDSMS(const QString &, const QString &, const QString &, const QString &);
 
 		void sendAuthRequest(const QString &contact, const QString &reason);
 		void sendAuthReply(const QString &contact, const QString &reason, bool grant);

@@ -26,7 +26,7 @@
 #include "oscarcontact.h"
 #include <kopeteonlinestatus.h>
 
-#include <netinet/in.h> // for htons()
+#include <qtextcodec.h>
 #include <stdlib.h>
 #include <qtimer.h>
 #include <kdebug.h>
@@ -236,6 +236,17 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 			switch(type)
 			{
+				case 1:
+				{
+		 			kdDebug(14150) << k_funcinfo << "RECV SRV_METAERROR, result=" << (int)result << endl;
+
+					char *errorstring = fromicqsrv.getBlock(fromicqsrv.length());
+					QString error = QString::fromLatin1(errorstring);
+					delete [] errorstring;
+
+					emit protocolError(i18n("An error occured. Message was: %1").arg(error), (int)result);
+					break;
+				}
 				case 0x01a4: // SRV_METAFOUND
 				case 0x01ae: // SRV_METALAST
 				{
@@ -589,8 +600,7 @@ ICQInfoItemList OscarSocket::extractICQItemList(Buffer& theBuffer)
 	}
 
 	BYTE numItems = theBuffer.getLEByte(); //get the number of items to read
-	kdDebug(14150) << k_funcinfo <<
-		numItems << " items received." << endl;
+	//kdDebug(14150) << k_funcinfo << numItems << " items received." << endl;
 
 	if(numItems > 0)
 	{
@@ -782,7 +792,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 			bool utf = false;
 			if(messageBuf.length() > 0)
 			{
-				DWORD guidlen = htonl(messageBuf.getDWord());
+				DWORD guidlen = messageBuf.getLEDWord();
 				char *guid = messageBuf.getBlock(guidlen);
 				kdDebug(14150) << k_funcinfo <<
 					"TYPE-2 guid='" << guid << "'" << endl;
@@ -1283,4 +1293,42 @@ void OscarSocket::sendCLI_METASETSECURITY(bool requireauth, bool webaware,
 
 	sendCLI_TOICQSRV(0x07d0, req);
 }
+
+void OscarSocket::sendCLI_SENDSMS(const QString &phonenumber, const QString &message, const QString &senderUIN, const QString &senderNick)
+{
+	kdDebug(14150) << k_funcinfo <<
+		"SEND (CLI_SENDSMS), sending SMS to '" << phonenumber << "', message=" << message << endl;
+
+	QTextCodec *codec = QTextCodec::codecForMib(2252);
+	if(!codec)
+		return;
+
+	QString time = QDateTime::currentDateTime(Qt::UTC).toString("dddd, dd MMM yyyy hh::mm:ss GMT");
+
+	QCString xml = "<icq_sms_message>";
+	xml += "<destination>";
+	xml += phonenumber.latin1();
+	xml += "</destination>";
+	xml += "<text>" + message.utf8() +"</text>";
+	xml += "<codepage>1252</codepage><encoding>utf8</encoding>";
+	xml += "<senders_UIN>" + senderUIN.utf8() + "</senders_UIN><senders_name>" + senderNick.utf8() + "</senders_name>";
+	xml += "<delivery_receipt>Yes</delivery_receipt><time>" + time.utf8() + "</time>";
+	xml += "</icq_sms_message>";
+
+	Buffer req; // ! LITTLE-ENDIAN
+	req.addLEWord(5250); // subtype: 5250
+	req.addWord(0x0001);
+	req.addWord(0x0016);
+	req.addDWord(0x00000000);
+	req.addDWord(0x00000000);
+	req.addDWord(0x00000000);
+	req.addDWord(0x00000000);
+	req.addWord(0x0000); // TLV(0)
+	req.addLEWord(xml.length()+1);
+	req.addLEString(xml, xml.length()+1);
+
+	sendCLI_TOICQSRV(2000, req);
+}
+
+
 // vim: set noet ts=4 sts=4 sw=4:

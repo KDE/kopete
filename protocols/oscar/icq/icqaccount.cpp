@@ -12,20 +12,19 @@
   * (at your option) any later version.                                   *
   *                                                                       *
   *************************************************************************
-
 */
 
 #include "icqaccount.h"
 #include "icqcontact.h"
 #include "icqprotocol.h"
+#include "icqsendsmsdialog.h"
 #include "oscarchangestatus.h"
+#include "oscarcontact.h"
 
 #include <kdebug.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
 
-
-#include <oscarcontact.h>
 
 ICQAccount::ICQAccount(KopeteProtocol *parent, QString accountID, const char *name)
 	: OscarAccount(parent, accountID, name, true)
@@ -102,6 +101,9 @@ KActionMenu* ICQAccount::actionMenu()
 		"icq_invisible", 0, this, SLOT(slotToggleInvisible()), this, "ICQAccount::mActionInvisible");
 	mActionInvisible->setChecked(mInvisible);
 
+	KToggleAction* mActionSendSMS = new KToggleAction(i18n("Send SMS..."),
+		0, 0, this, SLOT(slotSendSMS()), this, "ICQAccount::mActionSendSMS");
+
 	mActionOffline->setEnabled(isConnected());
 
 	mActionMenu->popupMenu()->insertTitle(
@@ -117,6 +119,8 @@ KActionMenu* ICQAccount::actionMenu()
 	mActionMenu->insert(mActionOffline);
 	mActionMenu->popupMenu()->insertSeparator();
 	mActionMenu->insert(mActionInvisible);
+	mActionMenu->popupMenu()->insertSeparator();
+	mActionMenu->insert(mActionSendSMS);
 
 	return mActionMenu;
 }
@@ -334,6 +338,17 @@ void ICQAccount::slotAwayDialogReturned(const int awaytype, const QString &messa
 			setStatus(ICQ_STATUS_SET_FFC, message);
 			break;
 	}
+}
+
+void ICQAccount::slotSendSMS()
+{
+	kdDebug(14200) << k_funcinfo << endl;
+
+	ICQSendSMSDialog *smsDialog = new ICQSendSMSDialog(this, 0L, 0L, "smsDialog");
+	if(!smsDialog)
+		return;
+	smsDialog->exec();
+	delete smsDialog;
 }
 
 void ICQAccount::reloadPluginData()
