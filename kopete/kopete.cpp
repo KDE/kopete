@@ -165,10 +165,10 @@ void Kopete::slotLoadPlugins()
 
 	config->writeEntry( "Plugins", modules );
 
-	LibraryLoader::pluginLoader()->loadAll();
+	LibraryLoader::self()->loadAll();
 
 	//load the default chatwindow
-	LibraryLoader::pluginLoader()->loadPlugin( "chatwindow.desktop" );
+	LibraryLoader::self()->loadPlugin( "chatwindow.desktop" );
 
 
 	// --noconnect not specified?

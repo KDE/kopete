@@ -45,7 +45,7 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 	addPage( selectService, selectService->caption() );
 	addPage( finish, finish->caption() );
 
-	/*QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
+	/*QPtrList<KopetePlugin> plugins = LibraryLoader::self()->plugins();
 	for(KopetePlugin *p = plugins.first(); p; p = plugins.next())
 	{
 		KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>(p);
@@ -62,7 +62,7 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 	int pluginCount = 0;
 	QListViewItem *pluginItem=0L;
 
-	QValueList<KopeteLibraryInfo> available = LibraryLoader::pluginLoader()->available();
+	QValueList<KopeteLibraryInfo> available = LibraryLoader::self()->available();
 
 	for(QValueList<KopeteLibraryInfo>::Iterator i = available.begin(); i != available.end(); ++i)
 	{
@@ -165,12 +165,12 @@ void AddAccountWizard::next()
 		if(lvi)
 		{
 			kdDebug( 14100 ) << k_funcinfo << "Trying to load plugin " << m_protocolItems[ lvi ].name << " by name" << endl;
-			KopetePlugin *pl = LibraryLoader::pluginLoader()->searchByName( m_protocolItems[ lvi ].name );
+			KopetePlugin *pl = LibraryLoader::self()->searchByName( m_protocolItems[ lvi ].name );
 			if( !pl )
 			{
 				kdDebug( 14100 ) << k_funcinfo << "Unable to load by name. Trying to load plugin " <<
 					m_protocolItems[ lvi ].specfile << "by specfile" << endl;
-				pl = LibraryLoader::pluginLoader()->loadPlugin( m_protocolItems[ lvi ].specfile );
+				pl = LibraryLoader::self()->loadPlugin( m_protocolItems[ lvi ].specfile );
 			}
 			prot = dynamic_cast <KopeteProtocol*> (pl);
 			if(prot)

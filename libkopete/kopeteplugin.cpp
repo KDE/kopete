@@ -38,12 +38,12 @@ QString KopetePlugin::pluginId() const
 
 QString KopetePlugin::displayName() const
 {
-	return LibraryLoader::pluginLoader()->pluginName( this );
+	return LibraryLoader::self()->pluginName( this );
 }
 
 QString KopetePlugin::pluginIcon() const
 {
-	return LibraryLoader::pluginLoader()->pluginIcon( this );
+	return LibraryLoader::self()->pluginIcon( this );
 }
 
 void KopetePlugin::deserialize( KopeteMetaContact * /* metaContact */,

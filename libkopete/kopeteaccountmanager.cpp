@@ -237,7 +237,7 @@ void KopeteAccountManager::save()
 
 void KopeteAccountManager::load()
 {
-	connect( LibraryLoader::pluginLoader(), SIGNAL( pluginLoaded( KopetePlugin* ) ), SLOT( slotPluginLoaded( KopetePlugin * ) ) );
+	connect( LibraryLoader::self(), SIGNAL( pluginLoaded( KopetePlugin* ) ), SLOT( slotPluginLoaded( KopetePlugin * ) ) );
 }
 
 void KopeteAccountManager::slotPluginLoaded( KopetePlugin *plugin )

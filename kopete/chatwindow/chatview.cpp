@@ -1109,7 +1109,7 @@ void ChatView::slotRightClick( const QString &, const QPoint &point )
 	{
 		if( !n.isNull() && msgManager()->members().contains( m.from() ) )
 		{
-			QPtrList<KopetePlugin> ps = LibraryLoader::pluginLoader()->plugins();
+			QPtrList<KopetePlugin> ps = LibraryLoader::self()->plugins();
 			bool actions = false;
 			int j = 0;
 			for( KopetePlugin *p = ps.first() ; p ; p = ps.next() )

@@ -81,7 +81,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	// --------------------------------------------------------------------------------
 
 	// Trap all loaded plugins, so we can add their status bar icons accordingly , also used to add XMLGUIClient
-	connect( LibraryLoader::pluginLoader(), SIGNAL( pluginLoaded( KopetePlugin * ) ),
+	connect( LibraryLoader::self(), SIGNAL( pluginLoaded( KopetePlugin * ) ),
 		this, SLOT( slotPluginLoaded( KopetePlugin * ) ) );
 	// And accounts too
 	connect( KopeteAccountManager::manager(), SIGNAL(accountReady(KopeteAccount*)),
@@ -95,7 +95,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	loadOptions();
 
 	//-- if some plugins are already loaded, merge the GUI
-	QPtrList<KopetePlugin> ps = LibraryLoader::pluginLoader()->plugins();
+	QPtrList<KopetePlugin> ps = LibraryLoader::self()->plugins();
 	for( KopetePlugin *p = ps.first() ; p ; p = ps.next() )
 	{
 		slotPluginLoaded(p);
@@ -692,7 +692,7 @@ void KopeteWindow::slotSettingsChanged()
 	// Account colouring may have changed, so tell our status bar to redraw
 //	kdDebug(14000) << k_funcinfo << endl;
 
-	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
+	QPtrList<KopetePlugin> plugins = LibraryLoader::self()->plugins();
 	QPtrListIterator<KopetePlugin> it( plugins );
 	KopetePlugin *plugin = 0L;
 

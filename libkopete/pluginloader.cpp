@@ -52,9 +52,9 @@ bool operator ==(const KopeteLibraryInfo &a, const KopeteLibraryInfo &b)
 
 LibraryLoader* LibraryLoader::s_pluginLoader = 0L;
 
-LibraryLoader* LibraryLoader::pluginLoader()
+LibraryLoader* LibraryLoader::self()
 {
-	if( !s_pluginLoader )
+	if ( !s_pluginLoader )
 		sd.setObject( s_pluginLoader, new LibraryLoader() );
 
 	return s_pluginLoader;

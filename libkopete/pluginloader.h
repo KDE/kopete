@@ -58,7 +58,7 @@ public:
 	/**
 	 * Retrieve the plugin loader instance.
 	 */
-	static LibraryLoader* pluginLoader();
+	static LibraryLoader* self();
 
 	~LibraryLoader();
 

@@ -77,7 +77,7 @@ KopeteCommandHandler::KopeteCommandHandler() : QObject( qApp )
 		i18n("USAGE: /exec [-o] <command> - Executes the specified command and displays output in the chat buffer. If"
 		" -o is specified, the output is sent to all members of the chat.") );
 
-	connect( LibraryLoader::pluginLoader(), SIGNAL( pluginLoaded( KopetePlugin*) ), this, SLOT(slotPluginLoaded(KopetePlugin*)) );
+	connect( LibraryLoader::self(), SIGNAL( pluginLoaded( KopetePlugin*) ), this, SLOT(slotPluginLoaded(KopetePlugin*)) );
 }
 
 KopeteCommandHandler::~KopeteCommandHandler()

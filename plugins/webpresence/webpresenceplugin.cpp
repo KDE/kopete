@@ -323,7 +323,7 @@ QPtrList<KopeteProtocol> WebPresencePlugin::allProtocols()
 {
 	kdDebug(14309) << k_funcinfo << endl;
 	QPtrList<KopeteProtocol> protos;
-	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
+	QPtrList<KopetePlugin> plugins = LibraryLoader::self()->plugins();
 
 	for( KopetePlugin *p = plugins.first(); p; p = plugins.next() )
 	{

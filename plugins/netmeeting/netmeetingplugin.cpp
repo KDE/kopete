@@ -38,7 +38,7 @@ NetMeetingPlugin::NetMeetingPlugin( QObject *parent, const char *name, const QSt
 	if(MSNProtocol::protocol())
 		slotPluginLoaded(MSNProtocol::protocol());
 	else
-		connect(LibraryLoader::pluginLoader() , SIGNAL(pluginLoaded(KopetePlugin*) ), this, SLOT(slotPluginLoaded(KopetePlugin*)));
+		connect(LibraryLoader::self() , SIGNAL(pluginLoaded(KopetePlugin*) ), this, SLOT(slotPluginLoaded(KopetePlugin*)));
 
 
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( messageManagerCreated( KopeteMessageManager * )) , SLOT( slotNewKMM( KopeteMessageManager * ) ) );

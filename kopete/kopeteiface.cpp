@@ -177,12 +177,12 @@ void KopeteIface::disconnect(const QString &protocolId, const QString &accountId
 
 bool KopeteIface::loadPlugin( const QString& name )
 {
-	return LibraryLoader::pluginLoader()->loadPlugin(name);
+	return LibraryLoader::self()->loadPlugin(name);
 }
 
 bool KopeteIface::unloadPlugin( const QString& name )
 {
-	return LibraryLoader::pluginLoader()->remove( name );
+	return LibraryLoader::self()->remove( name );
 }
 
 

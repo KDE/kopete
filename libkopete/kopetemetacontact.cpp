@@ -699,7 +699,7 @@ bool KopeteMetaContact::fromXML( const QDomElement& element )
 	}
 
 	// If a plugin is loaded, load data cached
-	connect( LibraryLoader::pluginLoader(), SIGNAL( pluginLoaded(KopetePlugin*) ),
+	connect( LibraryLoader::self(), SIGNAL( pluginLoaded(KopetePlugin*) ),
 		this, SLOT( slotPluginLoaded(KopetePlugin*) ) );
 
 	// track changes only works if ONE Contact is inside the MetaContact
