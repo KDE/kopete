@@ -7,12 +7,14 @@ Goals:
 *) This enables PIM apps like KMail to use a KDE IM service (Kopete) to display IM status or perform IM actions (chatting)
 *) Or games, desktop sharing
 *) Ability to put IM-delivered contact data into the KDE addressbook
+*) send vcards via kopete
 
 Spaze's goals
 1. Share data with the other PIM apps. Notably groups, display names, GPG keys, email addresses and other IM UIDs
 2. Allow other apps to retrieve all IM-enabled contacts and their online status for e.g. presence display in kmail or invitations for desktop sharing
 3. Allow other IM apps to share the same data that Kopete uses in a standardized way
 4. Allow other apps to start a chat with selected persons in a standardized way _regardless of client used_
+5. in the longer run i would like to add,say, an ICQ UIN from kaddressbook and Kopete automatically picks up the change, adds it to the server side contact list and does all other kind of syncing of changes made in kaddressbook as well. for the short term one way kopete->kabc is ok, but the API should be prepared for full bidi comms. ideally kopete, libkabc and all server side contact lists are always 100% in sync as much as possible for each.
 
 mETz' goals
 1. well, I just think Kopete should never edit my addressbook without me knowing
@@ -31,6 +33,10 @@ Goals (-ve):
 gregj's goals
 kopete should not replace  server side data with kabc derived data?
 
+Syncing policies
+KABC->kopete ok, what about server side metadata
+
+Priority: Goals for 3.2
 Use cases
 
 1) Add new metacontact + contacts using Add Contact Wizard
