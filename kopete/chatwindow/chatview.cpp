@@ -113,13 +113,9 @@ KopeteChatViewTip::KopeteChatViewTip( ChatView *c ) : QToolTip( c->htmlWidget->v
 void KopeteChatViewTip::maybeTip( const QPoint &p )
 {
 	DOM::Node n = m_chat->chatView->nodeUnderMouse();
-	while( n.nodeType() == Node::TEXT_NODE )
-		n = n.parentNode();
+	KopeteContact *c = m_chat->contactFromNode( n );
 
-	DOM::HTMLElement e = n;
-	KopeteContact *c = m_chat->contactFromNode( e );
-
-	QRect r = e.getRect();
+	QRect r = n.getRect();
 
 	//FIXME: Why do I need to call this??? This rect is in a weird
 	// location relative to the point. Dunno whats up here.
@@ -132,11 +128,12 @@ void KopeteChatViewTip::maybeTip( const QPoint &p )
 	else
 	{
 		//Fall back to the title attribute
+		DOM::HTMLElement e = n;
 		while( !e.isNull() )
 		{
-			if( e.hasAttribute( QString::fromLatin1("title") ) )
+			if( e.hasAttribute( "title" ) )
 			{
-				tip( r, QString( e.getAttribute( QString::fromLatin1("title") ).string() ) );
+				tip( r, QString( e.getAttribute( "title" ).string() ) );
 				break;
 			}
 
@@ -1367,21 +1364,38 @@ KopeteContact *ChatView::contactFromNode( const Node &n ) const
 
 	if( !node.isNull() )
 	{
-		while( node.nodeType() == Node::TEXT_NODE )
+		while( !node.isNull() && ( node.nodeType() == Node::TEXT_NODE || ((DOM::HTMLElement)node).className() != "KopeteDisplayName" ) )
 			node = node.parentNode();
 
-		DOM::HTMLElement e = node;
-
-		if( !e.isNull() )
+		if( !node.isNull() )
 		{
-			if( e.className() == QString::fromLatin1("KopeteDisplayName") )
+			DOM::HTMLElement e = node;
+
+			if( e.className() == "KopeteDisplayName" )
 			{
+				QString nick;
 				KopeteContactPtrList members = msgManager()->members();
-				for( c = members.first(); c; c = members.next() )
+
+				if( e.hasAttribute( "contactid" ) )
 				{
-					if( c->displayName() == e.innerText() )
-						break;
+					nick = e.getAttribute( "contactid" ).string();
+					for( c = members.first(); c; c = members.next() )
+					{
+						if( c->contactId() == nick )
+							break;
+					}
 				}
+				else
+				{
+					nick = e.innerText().string().stripWhiteSpace();
+					for( c = members.first(); c; c = members.next() )
+					{
+						if( c->displayName() == nick )
+							break;
+					}
+				}
+
+				kdDebug() << k_funcinfo << nick << endl;
 			}
 		}
 	}
@@ -1413,7 +1427,7 @@ void ChatView::slotRightClick( const QString &, const QPoint &point )
 	{
 		KPopupMenu *chatWindowPopup = new KPopupMenu();
 
-		if( activeElement.className() == QString::fromLatin1("KopeteDisplayName") )
+		if( activeElement.className() == "KopeteDisplayName" )
 		{
 			chatWindowPopup->insertItem( i18n("User Has Left"), 1 );
 			chatWindowPopup->setItemEnabled( 1, false );
