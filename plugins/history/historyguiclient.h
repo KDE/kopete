@@ -43,9 +43,9 @@ private slots:
 private:
 	HistoryLogger *m_logger;
 	KopeteMessageManager *m_manager;
-	bool m_autoChatWindow;
+	//bool m_autoChatWindow;
 	//int m_nbAutoChatWindow;
-	unsigned int m_nbChatWindow;
+	//unsigned int m_nbChatWindow;
 
 	KAction *actionPrev;
 	KAction *actionNext;

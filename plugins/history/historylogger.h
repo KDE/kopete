@@ -2,7 +2,7 @@
     historylogger.cpp
 
     Copyright (c) 2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
-    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -43,7 +43,7 @@ public:
 	enum Sens { Default , Chronological , AntiChronological };
 
 	/**
-	 * constructor: it take the contacvt, and the color of messages
+	 * Constructor, takes the contact, and the color of messages
 	 */
 	HistoryLogger( KopeteMetaContact *m , QObject *parent = 0, const char *name = 0);
 	HistoryLogger( KopeteContact *c , QObject *parent = 0, const char *name = 0);
@@ -79,14 +79,18 @@ public:
 	void appendMessage( const KopeteMessage &msg , const KopeteContact *c=0L );
 
 	/**
-	 * read @param nb message from the current position, from the given contact, in the given sens
+	 * read @param lines message from the current position
+	 * from KopeteContact @param c in the given @param sens
 	 */
-	QValueList<KopeteMessage> readMessages( unsigned int nb , const KopeteContact *c=0L , Sens sens=Default, bool reverseOrder=false );
+	QValueList<KopeteMessage> HistoryLogger::readMessages(unsigned int lines,
+		const KopeteContact *c=0, Sens sens=Default,
+		bool reverseOrder=false, bool colorize=true);
 
 	/**
 	 * The pausition is set to the last message
 	 */
 	void setPositionToLast();
+
 	/**
 	 * The position is set to the first message
 	 */
@@ -125,8 +129,8 @@ private:
 	/**
 	 * look over files to get the last month for this contact
 	 */
-	unsigned int getFistMonth(const KopeteContact *c) ;
-	unsigned int getFistMonth() ;
+	unsigned int getFirstMonth(const KopeteContact *c);
+	unsigned int getFirstMonth();
 
 
 	/*
@@ -140,7 +144,8 @@ private:
 	int m_cachedMonth;
 
 	/*
-	 * get the filename of the xml file which contains the history from the contact in the specified month
+	 * get the filename of the xml file which contains the history from the
+	 * contact in the specified month
 	 */
 	static QString getFileName(const KopeteContact* , unsigned int month);
 
@@ -156,11 +161,11 @@ private:
 	 unsigned int m_oldMonth;
 	 Sens m_oldSens;
 
-
-
 	/*
+	 * FIXME:
 	 * WORKAROUND
-	 * due to a bug in QT, i have to keep the document element in the memory to prevent crashes
+	 * due to a bug in QT, i have to keep the document element in the memory to
+	 * prevent crashes
 	 */
 	QValueList<QDomElement> workaround;
 

@@ -1,8 +1,9 @@
 /*
     historyplugin.h
 
-    Copyright (c) 2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
-    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2003 by Olivier Goffart             <ogoffart@tiscalinet.be>
+              (c) 2003 by Stefan Gehn                 <metz AT gehn.net>
+    Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -30,10 +31,8 @@ class KopeteView;
 class KActionCollection;
 class KopeteMetaContact;
 class KopeteMessageManager;
-//class HistoryLogger;
 class HistoryPreferences;
 class HistoryGUIClient;
-
 
 /**
   * @author Olivier Goffart
@@ -41,30 +40,29 @@ class HistoryGUIClient;
 class HistoryPlugin : public KopetePlugin
 {
 	Q_OBJECT
-public:
-	HistoryPlugin( QObject *parent, const char *name, const QStringList &args );
-	~HistoryPlugin();
+	public:
+		HistoryPlugin( QObject *parent, const char *name, const QStringList &args );
+		~HistoryPlugin();
 
-	/*
-	 * convert the Kopete 0.6 / 0.5 history to the new format
-	 */
-	static void convertOldHistory();
-	/**
-	 * return true if an old history has been detected, and no new ones
-	 */
-	static bool detectOldHistory();
+		/**
+		 * convert the Kopete 0.6 / 0.5 history to the new format
+		 */
+		static void convertOldHistory();
+		/**
+		 * return true if an old history has been detected, and no new ones
+		 */
+		static bool detectOldHistory();
 
+	private slots:
+		void slotMessageDisplayed(KopeteMessage &msg);
+		void slotViewCreated( KopeteView* );
+		void slotViewHistory();
+		void slotKMMClosed( KopeteMessageManager* );
+		void slotSettingsChanged();
 
-private slots:
-	void slotMessageDisplayed(KopeteMessage &msg);
-	void slotViewCreated( KopeteView* );
-	void slotViewHistory();
-
-	void slotKMMClosed( KopeteMessageManager* );
-
-private:
-	QMap<KopeteMessageManager*,HistoryGUIClient*> m_loggers;
-	KopeteMessage m_lastmessage;
+	private:
+		QMap<KopeteMessageManager*,HistoryGUIClient*> m_loggers;
+		KopeteMessage m_lastmessage;
 };
 
 #endif

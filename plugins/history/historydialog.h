@@ -2,8 +2,9 @@
     kopetehistorydialog.h - Kopete History Dialog
 
     Copyright (c) 2002 by  Richard Stellingwerff <remenic@linuxfromscratch.org>
+    Copyright (c) 2004 by  Stefan Gehn <metz AT gehn.net>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -23,150 +24,90 @@
 
 #include "kopetemessage.h"
 
-class QGridLayout;
-class QPushButton;
-class KTextBrowser;
-class QDomDocument;
-class QFile;
-class QProgressBar;
-class QLabel;
-class QLineEdit;
-class QGroupBox;
-class QCheckBox;
-class QBoxLayout;
+class HistoryViewer;
 
-
-class KDialogBase;
-class HistoryWidget;
-class KopeteContact;
+//class HistoryWidget;
 class KopeteMetaContact;
+class KopeteXSLT;
 class HistoryLogger;
+class KHTMLView;
+class KHTMLPart;
+
+class KURL;
+namespace KParts { struct URLArgs; class Part; }
 
 /**
  * @author Richard Stellingwerff <remenic@linuxfromscratch.org>
- *
+ * @author Stefan Gehn <metz AT gehn.net>
  */
 
 class HistoryDialog : public KDialogBase
 {
 	Q_OBJECT
-public:
-	HistoryDialog( KopeteContact *mContact, bool showclose = true, int count = 50, QWidget* parent=0, const char* name="HistoryDialog");
-	HistoryDialog( KopeteMetaContact *mContact, bool showclose = true, int count = 50, QWidget* parent=0, const char* name="HistoryDialog");
 
-	void init();
+	public:
+		HistoryDialog(KopeteMetaContact *mc, int count=50, QWidget* parent=0,
+			const char* name="HistoryDialog");
 
-signals:
-	void closing();
+		void init();
 
-private slots:
-	/**
-	 * < button clicked
-	 */
-	void slotPrevClicked();
+	signals:
+		void closing();
 
-	/**
-	 * > button clicked
-	 */
-	void slotNextClicked();
+	private slots:
+		/**
+		* < button clicked
+		*/
+		void slotPrevClicked();
 
-	/**
-	 * << pressed
-	 */
-	void slotBackClicked();
+		/**
+		* > button clicked
+		*/
+		void slotNextClicked();
 
-	/**
-	 * >> pressed
-	 */
-	void slotForwardClicked();
+		/**
+		* << button clicked
+		*/
+		void slotBackClicked();
 
-	/**
-	 * search button clicked
-	 */
-	void slotSearchClicked();
+		/**
+		* >> button clicked
+		*/
+		void slotForwardClicked();
 
-	/**
-	 * checkbox mReversed toggled
-	 */
-	void slotReversedToggled( bool toggled );
+		/**
+		* search button clicked
+		*/
+		void slotSearchClicked();
 
-	/**
-	 * checkbox mIncoming toggled
-	 */
-	void slotIncomingToggled( bool toggled );
+		/**
+		* checkbox mReversed toggled
+		*/
+		void slotReversedToggled( bool toggled );
 
-//	void addMessage( KopeteMessage::MessageDirection dir, QString nick, QString date, QString body );
+		/**
+		* checkbox mIncoming toggled
+		*/
+		void slotIncomingToggled( bool toggled );
 
+		void slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args*/);
 
+	private:
+		enum Disabled { Prev=1, Next=2 };
+		void refreshEnabled( /*Disabled*/ uint disabled );
 
-private:
-	void buildWidget( int count );
+		void setMessages(QValueList<KopeteMessage> m);
 
+		// amount of entries to read at once
+		unsigned int msgCount;
 
-
-	enum Disabled { Prev=1 , Next=2 };
-	void refreshEnabled( /*Disabled*/ uint disabled );
-
-	void setMessages(QValueList<KopeteMessage> m);
-
-
-	// the actual log view
-	KTextBrowser *mHistoryView;
-
-	// amount of entries to read at once
-	unsigned int msgCount;
-
-	// main layout
-	QGridLayout *layout;
-
-	// BASIC CONTROLS
-	// previous button "<"
-	QPushButton *mPrevious;
-	// next button ">"
-	QPushButton *mNext;
-	// all the way back "<<"
-	QPushButton *mBack;
-	// all the way forward ">>"
-	QPushButton *mForward;
-
-	// search button
-	QPushButton *mSearchButton;
-	// progress bar
-	QProgressBar *mProgress;
-
-	// "Search: " label
-	QLabel *mSearchLabel;
-	// input field for search
-	QLineEdit *mSearchInput;
-
-	// the options groupbox
-	QGroupBox *optionsBox;
-	// the main layout for the options groupbox
-	QGridLayout *optionsLayout;
-	// check boxes layout
-	QBoxLayout *optionsCBLayout;
-
-	// show oldest message first
-	QCheckBox *mReverse;
-	// only show incoming messages
-	QCheckBox *mIncoming;
-
-	// A buffer speeds up a lot
-	QString mSuperBuffer;
-	// Nickname of the user.
-	QString mUser;
-
-	// List of logFileNames
-	QStringList logFileNames;
-
-	HistoryLogger *m_logger;
-
-
-	KopeteContact *m_contact;
-	KopeteMetaContact *m_metaContact;
-
+		HistoryLogger *mLogger;
+		KopeteMetaContact *mMetaContact;
+		// History View
+		KHTMLView *mHtmlView;
+		KHTMLPart *mHtmlPart;
+		HistoryViewer *mMainWidget;
+		KopeteXSLT *mXsltParser;
 };
 
 #endif
-
-

@@ -2,8 +2,9 @@
     kopetehistorydialog.cpp - Kopete History Dialog
 
     Copyright (c) 2002 by  Richard Stellingwerff <remenic@linuxfromscratch.org>
+    Copyright (c) 2004 by  Stefan Gehn <metz AT gehn.net>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -17,175 +18,117 @@
 
 
 #include "historydialog.h"
-
 #include "historylogger.h"
+#include "historyviewer.h"
 #include "kopetemetacontact.h"
+#include "kopetexsl.h"
 
-#include <sys/time.h>
+#include <dom/dom_doc.h>
+#include <dom/dom_element.h>
+#include <dom/html_document.h>
+#include <dom/html_element.h>
+#include <khtml_part.h>
+#include <khtmlview.h>
 
-
-#include <kdebug.h>
-#include <klocale.h>
-#include <kiconloader.h>
+#include <qfile.h>
 #include <qpushbutton.h>
-#include <qprogressbar.h>
 #include <qlineedit.h>
-#include <qlabel.h>
 #include <qcheckbox.h>
-#include <qgroupbox.h>
 #include <qlayout.h>
 
-#include <ktextbrowser.h>
+#include <kapplication.h>
+#include <kdebug.h>
+#include <kiconloader.h>
+#include <klocale.h>
+#include <krun.h>
+#include <kstandarddirs.h>
 
-#define CBUFLENGTH 512 // buffer length for fgets()
 
-HistoryDialog::HistoryDialog( KopeteContact *mContact, bool showclose, int count, QWidget* parent, const char* name )
-	: KDialogBase( KDialogBase::Plain, i18n("History for %1").arg( mContact->displayName() ), KDialogBase::Close, KDialogBase::Close , parent, name, false)
+HistoryDialog::HistoryDialog(KopeteMetaContact *mc, int count, QWidget* parent,
+	const char* name) : KDialogBase(parent, name, false,
+		i18n("History for %1").arg(mc->displayName()), Close, Close)
 {
-	kdDebug(14010) << k_funcinfo << "called." << endl;
+	kdDebug(14310) << k_funcinfo << "called." << endl;
 	setWFlags(Qt::WDestructiveClose);	// send SIGNAL(closing()) on quit
 
-	showButton(KDialogBase::Close, showclose); // hide Close button if showClose is false
+	mMetaContact = mc;
+	msgCount = count;
+	mLogger= new HistoryLogger(mMetaContact, this);
+	// BEGIN TODO: add to history-prefs
+ 	QString styleContents;
+	QFile file(locate("appdata", QString::fromLatin1("styles/Kopete.xsl")));
+	if (file.open(IO_ReadOnly))
+	{
+		QTextStream stream(&file);
+		styleContents = stream.read();
+		file.close();
+	}
+	// END TODO
 
-	m_logger= new HistoryLogger(mContact,this);
+	mXsltParser = new KopeteXSLT(styleContents);
 
-	m_metaContact=mContact->metaContact();
-	m_contact=mContact;
+	mMainWidget = new HistoryViewer(this, "HistoryDialog::mMainWidget");
+	setMainWidget(mMainWidget);
 
-
-	buildWidget(count);
-
-	// show the dialog before people get impatient
-	show();
-
-	init();
-}
-
-HistoryDialog::HistoryDialog( KopeteMetaContact *mContact, bool showClose, int count, QWidget* parent, const char* name )
-	: KDialogBase( Plain, i18n("History for %1").arg( mContact->displayName() ), Close, Close, parent, name, false)
-{
-	kdDebug(14010) << k_funcinfo << "called." << endl;
-	setWFlags(Qt::WDestructiveClose);	// send SIGNAL(closing()) on quit
-
-	showButton(KDialogBase::Close, showClose); // hide Close button if showClose is false
-
-	m_logger= new HistoryLogger(mContact,this);
-
-	m_metaContact=mContact;
-	m_contact=0L;
+	mMainWidget->mBack->setPixmap(SmallIcon("2leftarrow"));
+	mMainWidget->mPrevious->setPixmap(SmallIcon(QString::fromLatin1("1leftarrow")));
+	mMainWidget->mNext->setPixmap(SmallIcon(QString::fromLatin1("1rightarrow")));
+	mMainWidget->mForward->setPixmap(SmallIcon(QString::fromLatin1("2rightarrow")));
 
 
-	buildWidget(count);
+	mMainWidget->htmlFrame->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
+	QVBoxLayout *l = new QVBoxLayout(mMainWidget->htmlFrame);
+	mHtmlPart = new KHTMLPart(mMainWidget->htmlFrame, "htmlHistoryView");
+	//Security settings, we don't need this stuff
+	mHtmlPart->setJScriptEnabled(false);
+	mHtmlPart->setJavaEnabled(false);
+	mHtmlPart->setPluginsEnabled(false);
+	mHtmlPart->setMetaRefreshEnabled(false);
 
-	// show the dialog before people get impatient
-	show();
+	mHtmlView = mHtmlPart->view();
+	mHtmlView->setMarginWidth(4);
+	mHtmlView->setMarginHeight(4);
+	mHtmlView->setFocusPolicy(NoFocus);
+	mHtmlView->setSizePolicy(
+		QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+	l->addWidget(mHtmlView);
 
-	init();
+	mHtmlPart->begin();
+	mHtmlPart->write( QString::fromLatin1( "<html><head></head><body></body></html>") );
+	mHtmlPart->end();
 
-}
+	connect(mHtmlPart->browserExtension(), SIGNAL(openURLRequestDelayed(const KURL &, const KParts::URLArgs &)),
+		this, SLOT(slotOpenURLRequest(const KURL &, const KParts::URLArgs &)));
+	/*
+	connect(mHtmlPart, SIGNAL(popupMenu(const QString &, const QPoint &)),
+		this, SLOT(slotRightClick(const QString &, const QPoint &)) );
+	connect(htmlView, SIGNAL(contentsMoving(int,int)),
+		this, SLOT(slotScrollingTo(int,int)) );
+	*/
 
 
+	connect(mMainWidget->mNext, SIGNAL(clicked()),
+		this, SLOT(slotNextClicked()));
+	connect(mMainWidget->mPrevious, SIGNAL(clicked()),
+		this, SLOT(slotPrevClicked()));
+	connect(mMainWidget->mForward, SIGNAL(clicked()),
+		this, SLOT(slotForwardClicked()));
+	connect(mMainWidget->mBack, SIGNAL(clicked()),
+		this, SLOT(slotBackClicked()));
 
-
-void HistoryDialog::buildWidget(int count)
-{
-//	msgStart = 0; // always display newest message first
-	msgCount = count; // 50 by default
-	mUser = "";
-	mSuperBuffer = "";
-
- 	QHBoxLayout *alayout = new QHBoxLayout( plainPage() );
-	QWidget *mHistoryWidget = new QWidget( plainPage(), "mHistoryWidget" );
-	alayout->addWidget( mHistoryWidget );
-	mHistoryWidget->setMinimumHeight(400);
-	setMainWidget(mHistoryWidget);
-
-	layout = new QGridLayout( mHistoryWidget, 1, 1, 6, 6 );
-	mHistoryView = new KTextBrowser(mHistoryWidget, "mHistoryView");
-
-	layout->addMultiCellWidget( mHistoryView, 0, 0, 0, 5);
-
-	optionsBox = new QGroupBox(mHistoryWidget, "optionsBox");
-	optionsBox->setTitle( i18n("Options") );
-	optionsBox->setColumnLayout(0, Qt::Vertical);
-	optionsBox->layout()->setSpacing( 6 );
-	optionsBox->layout()->setMargin( 11 );
-
-	optionsLayout = new QGridLayout( optionsBox->layout() );
-	optionsLayout->setAlignment( Qt::AlignTop );
-
-	optionsCBLayout = new QHBoxLayout(0, 0, 6, "optionsCBLayout");
-
-	mSearchLabel = new QLabel(optionsBox, "mSearchLabel");
-	mSearchLabel->setText( i18n("Search:") );
-	optionsCBLayout->addWidget(mSearchLabel);
-
-	mSearchInput = new QLineEdit(optionsBox, "mSearchInput");
-	optionsCBLayout->addWidget(mSearchInput);
-	mSearchInput->setFocus();
-
-	mSearchButton = new QPushButton( optionsBox, "mSearchButton" );
-	mSearchButton->setText( i18n("&Search") );
-	mSearchButton->setDefault( true );
-
-	optionsCBLayout->addWidget( mSearchButton );
-
-	optionsLayout->addMultiCellLayout( optionsCBLayout, 0, 0, 0, 1 );
-
-	mReverse = new QCheckBox( optionsBox, "mReverse" );
-	mReverse->setText( i18n("Show &oldest message first") );
-
-	optionsLayout->addWidget( mReverse, 1, 0 );
-
-	mIncoming = new QCheckBox( optionsBox, "mIncoming" );
-	mIncoming->setText( i18n("Only show &incoming messages") );
-
-	optionsLayout->addWidget( mIncoming, 1, 1 );
-
-	layout->addMultiCellWidget( optionsBox, 1, 1, 0, 5 );
-
-	mBack = new QPushButton( mHistoryWidget, "mBack" );
-	mBack->setPixmap( SmallIcon( QString::fromLatin1( "2leftarrow" ) ) );
-
-	layout->addWidget( mBack, 2, 0 );
-
-	mPrevious = new QPushButton(mHistoryWidget, "mPrevious");
-	mPrevious->setPixmap( SmallIcon( QString::fromLatin1( "1leftarrow" ) ) );
-
-	layout->addWidget( mPrevious, 2, 1 );
-
-	mNext = new QPushButton(mHistoryWidget, "mNext");
-	mNext->setPixmap( SmallIcon( QString::fromLatin1( "1rightarrow" ) ) );
-
-	layout->addWidget( mNext, 2, 2 );
-
-	mForward = new QPushButton(mHistoryWidget, "mForward");
-	mForward->setPixmap( SmallIcon( QString::fromLatin1( "2rightarrow" ) ) );
-
-	layout->addWidget( mForward, 2, 3 );
-
-	mProgress = new QProgressBar(50, mHistoryWidget, "progress");
-	mProgress->setCenterIndicator( true );
-
-	layout->addMultiCellWidget(mProgress, 2, 2, 4, 5);
-
-	// all buttons disabled by default
-/*	mNext->setEnabled( false );
-	mPrevious->setEnabled( false );
-	mBack->setEnabled( false );
-	mForward->setEnabled( false );
-	optionsBox->setEnabled( false );*/
-
-	connect( mNext, SIGNAL(clicked()), this, SLOT(slotNextClicked()));
-	connect( mPrevious, SIGNAL(clicked()), this, SLOT(slotPrevClicked()));
-	connect( mForward, SIGNAL(clicked()), this, SLOT(slotForwardClicked()));
-	connect( mBack, SIGNAL(clicked()), this, SLOT(slotBackClicked()));
-
-	connect( mReverse, SIGNAL(toggled(bool)), this, SLOT(slotReversedToggled(bool)));
-	connect( mIncoming, SIGNAL(toggled(bool)), this, SLOT(slotIncomingToggled(bool)));
-	connect( mSearchButton, SIGNAL(clicked()), this, SLOT(slotSearchClicked()));
+	connect(mMainWidget->chkOldestFirst, SIGNAL(toggled(bool)),
+		this, SLOT(slotReversedToggled(bool)));
+	connect(mMainWidget->chkIncomingOnly, SIGNAL(toggled(bool)),
+		this, SLOT(slotIncomingToggled(bool)));
+	connect(mMainWidget->btnSearch, SIGNAL(clicked()),
+		this, SLOT(slotSearchClicked()));
 
 	refreshEnabled(Prev|Next);
+
+	// show the dialog before people get impatient
+	show();
+	// Load history data
+	init();
 }
 
 void HistoryDialog::init()
@@ -193,44 +136,40 @@ void HistoryDialog::init()
 	slotBackClicked();
 }
 
+
 void HistoryDialog::setMessages(QValueList<KopeteMessage> msgs)
 {
-	QString mSuperBuffer;
+	// Clear View
+	DOM::HTMLElement htmlBody = mHtmlPart->htmlDocument().body();
+	while(htmlBody.hasChildNodes())
+		htmlBody.removeChild(htmlBody.childNodes().item(htmlBody.childNodes().length() - 1));
+	// ----
+
+	QString dir = (QApplication::reverseLayout() ? QString::fromLatin1("rtl") :
+		QString::fromLatin1("ltr"));
+
 	QValueList<KopeteMessage>::iterator it;
-    for ( it = msgs.begin(); it != msgs.end(); ++it )
+
+	for ( it = msgs.begin(); it != msgs.end(); ++it )
 	{
-		KopeteMessage msg=*it;
+		QDomDocument message = (*it).asXML();
+		QString resultHTML = mXsltParser->transform(message.toString());
 
-		QString message = QString::fromLatin1( "<table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">" );
+		DOM::HTMLElement newNode = mHtmlPart->document().createElement(QString::fromLatin1("span"));
+			newNode.setAttribute(QString::fromLatin1("dir"), dir);
+			newNode.setInnerHTML(resultHTML);
 
-		if( msg.direction() == KopeteMessage::Inbound )
-		{
-			message += QString::fromLatin1( "<tr><td><font color=\"#0360B1\"><b>" ) +
-				i18n( "Message from %1 at %2:" ).arg( msg.from()->displayName() ).arg( msg.timestamp().toString() );
-		}
-		else
-		{
-			message += QString::fromLatin1( "<tr><td><font color=\"#E11919\"><b>" ) +
-				i18n( "Message to %1 at %2:" ).arg( msg.to().first()->displayName() ).arg( msg.timestamp().toString() );
-		}
-
-		message += QString::fromLatin1(
-			"</b></font></td></tr></table>\n"
-			"<table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\"><tr><td>" ) + msg.parsedBody().stripWhiteSpace()
-			 + QString::fromLatin1( "</tr></td></table>" );
-
-		if( mSuperBuffer.isEmpty() )
-			mSuperBuffer = message + QString::fromLatin1( "\n" );
-		else
-			mSuperBuffer += message + '\n';
+		mHtmlPart->htmlDocument().body().appendChild(newNode);
 	}
-	mHistoryView->setText(mSuperBuffer);
 }
 
 
 void HistoryDialog::slotPrevClicked()
 {
-	QValueList<KopeteMessage> msgs=m_logger->readMessages(msgCount, m_contact, !mReverse->isChecked() ? HistoryLogger::Chronological : HistoryLogger::AntiChronological , true );
+	QValueList<KopeteMessage> msgs = mLogger->readMessages(msgCount, 0,
+		!mMainWidget->chkOldestFirst->isChecked() ? HistoryLogger::Chronological :
+		HistoryLogger::AntiChronological, true, false);
+
 	if(msgs.count() < msgCount)
 		refreshEnabled(Prev);
 	else
@@ -241,9 +180,10 @@ void HistoryDialog::slotPrevClicked()
 
 void HistoryDialog::slotNextClicked()
 {
-	QTime t;
-	t.start();
-	QValueList<KopeteMessage> msgs=m_logger->readMessages(msgCount, m_contact, mReverse->isChecked() ? HistoryLogger::Chronological : HistoryLogger::AntiChronological , false );
+	QValueList<KopeteMessage> msgs = mLogger->readMessages(msgCount,
+		0, mMainWidget->chkOldestFirst->isChecked() ? HistoryLogger::Chronological :
+		HistoryLogger::AntiChronological , false, false);
+
 	if(msgs.count() < msgCount)
 		refreshEnabled(Next);
 	else
@@ -254,11 +194,15 @@ void HistoryDialog::slotNextClicked()
 
 void HistoryDialog::slotBackClicked()
 {
-	if(mReverse->isChecked())
-		m_logger->setPositionToFirst();
+	if(mMainWidget->chkOldestFirst->isChecked())
+		mLogger->setPositionToFirst();
 	else
-		m_logger->setPositionToLast();
-	QValueList<KopeteMessage> msgs=m_logger->readMessages(msgCount, m_contact, mReverse->isChecked() ? HistoryLogger::Chronological : HistoryLogger::AntiChronological  , false );
+		mLogger->setPositionToLast();
+
+	QValueList<KopeteMessage> msgs=mLogger->readMessages(msgCount, 0,
+		mMainWidget->chkOldestFirst->isChecked() ? HistoryLogger::Chronological :
+		HistoryLogger::AntiChronological, false, false);
+
 	if(msgs.count() < msgCount)
 		refreshEnabled(Next | Prev);
 	else
@@ -269,11 +213,15 @@ void HistoryDialog::slotBackClicked()
 
 void HistoryDialog::slotForwardClicked()
 {
-	if(!mReverse->isChecked())
-		m_logger->setPositionToFirst();
+	if(!mMainWidget->chkOldestFirst->isChecked())
+		mLogger->setPositionToFirst();
 	else
-		m_logger->setPositionToLast();
-	QValueList<KopeteMessage> msgs=m_logger->readMessages(msgCount, m_contact, !mReverse->isChecked() ? HistoryLogger::Chronological : HistoryLogger::AntiChronological  , true );
+		mLogger->setPositionToLast();
+
+	QValueList<KopeteMessage> msgs=mLogger->readMessages(msgCount, 0,
+		!mMainWidget->chkOldestFirst->isChecked() ? HistoryLogger::Chronological :
+		HistoryLogger::AntiChronological, true, false);
+
 	if(msgs.count() < msgCount)
 		refreshEnabled(Next | Prev);
 	else
@@ -284,78 +232,39 @@ void HistoryDialog::slotForwardClicked()
 
 void HistoryDialog::slotSearchClicked()
 {
-	if (mSearchInput->text().stripWhiteSpace().isEmpty())
-		m_logger->setFilter( QString::null ); //cancel the search
+	if (mMainWidget->txtSearch->text().stripWhiteSpace().isEmpty())
+		mLogger->setFilter(QString::null); //cancel the search
 	else
-		m_logger->setFilter( mSearchInput->text().stripWhiteSpace() );
+		mLogger->setFilter(mMainWidget->txtSearch->text().stripWhiteSpace());
 
 	slotBackClicked();
 }
 
-void HistoryDialog::slotReversedToggled( bool    )
+void HistoryDialog::slotReversedToggled(bool /*b*/)
 {
-/*	mSuperBuffer = "";
-	msgStart = 0;
-	m_logger->readLog(msgStart,msgCount);
-	mHistoryView->setText(mSuperBuffer);
-	refreshEnabled();*/
 	slotBackClicked();
 }
 
-void HistoryDialog::slotIncomingToggled( bool  b  )
+void HistoryDialog::slotIncomingToggled(bool b)
 {
-	m_logger->setHideOutgoing( b );
+	mLogger->setHideOutgoing( b );
 	slotBackClicked();
 }
 
 
-void HistoryDialog::refreshEnabled( /*Disabled */ uint disabled)
+void HistoryDialog::refreshEnabled(uint disabled)
 {
-	if ( disabled & Prev)
-	{
-		mPrevious->setEnabled(false);
-		mBack->setEnabled(false);
-	}
-	else
-	{
-		mPrevious->setEnabled(true);
-		mBack->setEnabled(true);
-	}
+	mMainWidget->mPrevious->setEnabled(!(disabled & Prev));
+	mMainWidget->mBack->setEnabled(!(disabled & Prev));
 
-	if ( disabled & Next)
-	{
-		mNext->setEnabled( false );
-		mForward->setEnabled( false );
-	}
-	else
-	{
-		mForward->setEnabled( true );
-		mNext->setEnabled(true);
-	}
-/*
-	if ( m_logger->totalMessages() == 0 )
-	{
-		//There are no messages for this contact
-		mHistoryView->setText(i18n("No history for user %1.").arg(mUser));
-		optionsBox->setEnabled( false );
-	}
-	else
-	{*/
-		// enable the options GroupBox
-		optionsBox->setEnabled( true );
-	//}
-
+	mMainWidget->mNext->setEnabled(!(disabled & Next));
+	mMainWidget->mForward->setEnabled(!(disabled & Next));
 }
 
+void HistoryDialog::slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args*/)
+{
+	kdDebug(14310) << k_funcinfo << "url=" << url.url() << endl;
+	new KRun(url, 0, false); // false = non-local files
+}
 
 #include "historydialog.moc"
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
-// vim: set noet ts=4 sts=4 sw=4:
-
