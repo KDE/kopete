@@ -164,10 +164,10 @@ void JabberProtocol::slotConnected()
 {
     mIsConnected = true;
     kdDebug() << "Jabber plugin: Connected to Jabber server." << endl;
-	int status = mProtocol->status();
-	if (status == JABBER_ONLINE) { statusBarIcon->setPixmap(onlineIcon); }
-	if (status == JABBER_AWAY || status == JABBER_XA) { statusBarIcon->setPixmap(awayIcon); }
-	if (status == JABBER_DND) { statusBarIcon->setPixmap(naIcon); }
+	int status = protocol->status();
+	if (status == STATUS_ONLINE) { statusBarIcon->setPixmap(onlineIcon); }
+	if (status == STATUS_AWAY || status == STATUS_XA) { statusBarIcon->setPixmap(awayIcon); }
+	if (status == STATUS_DND) { statusBarIcon->setPixmap(naIcon); }
 	myContact = new JabberContact(QString("%1@%2").arg(mUsername, 1).arg(mServer, 2), mUsername, i18n("Unknown"), this);
 }
 
