@@ -228,6 +228,7 @@ KPopupMenu* KopeteContact::popupMenu( KopeteMessageManager *manager )
 	d->actionAddContact = new KAction( i18n( "Add to Your Contact List" ), QString::fromLatin1( "bookmark_add" ), 0,
 		this, SLOT( slotAddContact() ), menu, "actionAddContact" );
 
+	// FIXME: After KDE 3.2 we should make isReachable do the isConnected call so it can be removed here - Martijn
 	bool reach = isReachable() && d->account->isConnected(); // save calling a method several times
 	d->actionChat->setEnabled( reach );
 	d->actionSendFile->setEnabled( reach && d->fileCapable );
@@ -429,7 +430,9 @@ void KopeteContact::serialize( QMap<QString, QString> & /*serializedData */,
 
 bool KopeteContact::isReachable()
 {
-	return false;
+	// The default implementation returns false when offline and true
+	// otherwise. Subclass if you need more control over the process.
+	return onlineStatus().status() != KopeteOnlineStatus::Offline;
 }
 
 void KopeteContact::startChat()
@@ -448,16 +451,25 @@ void KopeteContact::sendMessage()
 
 void KopeteContact::execute()
 {
-	switch( KopetePrefs::prefs()->interfacePreference() )
+	// FIXME: After KDE 3.2 remove the isConnected check and move it to isReachable - Martijn
+	if ( account()->isConnected() && isReachable() )
 	{
-	case EMAIL_WINDOW:
-		sendMessage();
-		break;
-
-	case CHAT_WINDOW:
-	default:
-		startChat();
-		break;
+		switch ( KopetePrefs::prefs()->interfacePreference() )
+		{
+		case EMAIL_WINDOW:
+			sendMessage();
+			break;
+		case CHAT_WINDOW:
+		default:
+			startChat();
+			break;
+		}
+	}
+	else
+	{
+		KMessageBox::queuedMessageBox( qApp->mainWidget(), KMessageBox::Sorry,
+			i18n( "This user is not reachable at the moment. Please try a protocol that supports offline sending, or wait "
+			"until this user comes online." ), i18n( "User is Not Reachable" ) );
 	}
 }
 

@@ -314,11 +314,14 @@ KopeteContact *KopeteMetaContact::preferredContact()
 	KopeteContact *contact = 0L;
 
 	QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
-	for( QPtrListIterator<KopeteContact> it( d->contacts ) ; it.current(); ++it )
+	for ( QPtrListIterator<KopeteContact> it( d->contacts ); it.current(); ++it )
 	{
-		if( ( *it )->isReachable() && ( !contact || ( *it )->onlineStatus() > contact->onlineStatus()  ||
-				( (*it)->account() && (*it)->onlineStatus() == contact->onlineStatus() &&
-				(*it)->account()->priority() < contact->account()->priority() ) ) )
+		// FIXME: The isConnected call should be handled in KopeteContact::isReachable
+		//        after KDE 3.2 - Martijn
+		if ( it.current()->account() && it.current()->account()->isConnected() && it.current()->isReachable() &&
+			( !contact || it.current()->onlineStatus() > contact->onlineStatus()  ||
+			( it.current()->onlineStatus() == contact->onlineStatus() &&
+			it.current()->account()->priority() < contact->account()->priority() ) ) )
 		{
 			contact = *it;
 		}
@@ -407,13 +410,12 @@ bool KopeteMetaContact::isOnline() const
 
 bool KopeteMetaContact::isReachable() const
 {
-	if( isOnline() )
+	if ( isOnline() )
 		return true;
 
-	QPtrListIterator<KopeteContact> it( d->contacts );
-	for( ; it.current(); ++it )
+	for ( QPtrListIterator<KopeteContact> it( d->contacts ); it.current(); ++it )
 	{
-		if( it.current()->isReachable() && it.current()->account()->isConnected() )
+		if ( it.current()->account()->isConnected() && it.current()->isReachable() )
 			return true;
 	}
 	return false;

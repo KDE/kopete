@@ -86,6 +86,10 @@ public:
 	 *
 	 * @return bool indicating whether or not the contact is reachable (can send a message to it)
 	 */
+	// FIXME: After KDE 3.2 we should split this into a public, NON-virtual
+	//        isReachable() accessor that checks for account->isConnected()
+	//        and then calls a new virtual method that does the
+	//        protocol-specific work, like 'doIsUnreachable' or so - Martijn
 	virtual bool isReachable();
 
 	/**
