@@ -136,7 +136,7 @@ void IRCServerContact::slotConnectNow()
 	}
 	if (mServer == "(Console)")
 	{
-		QString message = i18n("Sorry, you need to specify a server before trying to connect. The syntax is: /server irc.yourserver.com");
+		QString message = i18n("You need to specify a server before trying to connect. The syntax is: /server irc.yourserver.com");
 		messenger->displayMessage(MessageTransport(message, QString(""), QString(""), QString(""), engine->nickName(), IRCMessage::UnknownMsg, mServer, mConsoleView->chatView));
 		mConsoleView->messageBox->setText("");
 		return;
@@ -282,9 +282,9 @@ void IRCServerContact::nickInUseOnLogin(const QString &oldNickname)
 	bool okay = false;
 	QString message = i18n("<qt>The nickname ");
 	message.append(oldNickname);
-	message.append(i18n(" is currently in use by another user. Please enter a new nickname you would like to use:"));
+	message.append(i18n(" is currently in use by another user. Enter a new nickname you would like to use:"));
 	QString title = i18n(oldNickname);
-	title.append(i18n(" is currently in use, chose another</qt>"));
+	title.append(i18n(" is currently in use, choose another</qt>"));
 	QString suggested = oldNickname;
 	suggested.append("-");
 	QString newNick = QInputDialog::getText(title, message, QLineEdit::Normal, suggested, &okay);

@@ -1195,7 +1195,7 @@ void MSNProtocol::slotChangePublicName()
 	bool ok;
 	QString name = KLineEditDlg::getText(
 		i18n( "Change Nickname - MSN Plugin - Kopete" ),
-		i18n( "Please enter the new public name by which you want to be "
+		i18n( "Enter the new public name by which you want to be "
 			"visible to your friends on MSN." ),
 		m_publicName, &ok );
 
@@ -1206,7 +1206,7 @@ void MSNProtocol::slotChangePublicName()
 		if( name.contains( "msn", false ) )
 		{
 			KMessageBox::error( 0L,
-				i18n( "Sorry, but your display name is "
+				i18n( "Your display name is "
 					"not allowed to contain the text 'MSN'.\n"
 					"Your display name has not been changed." ),
 				i18n( "Change Nickname - MSN Plugin - Kopete" ) );

@@ -86,14 +86,14 @@ void MSNNotifySocket::handleError( uint code, uint id )
 			"in multiple groups yet!\n"
 			"If this is not the case, please send us a detailed bug report "
 			"at kopete-devel@kde.org containing the raw output on the "
-			"console (in gzipped format, as it is probably a lot of output!" );
+			"console (in gzipped format, as it is probably a lot of output!)" );
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 		break;
 	}
 	case 911:
 	{
 		QString msg = i18n( "Authentication failed.\n"
-			"Please check your username and password in the "
+			"Check your username and password in the "
 			"MSN Preferences dialog." );
 		disconnect();
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
@@ -213,7 +213,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		if( data.section( ' ', 0, 0 ) == "OTH" )
 		{
 			KMessageBox::information( 0,
-				i18n( "You have connected from an other client" ) );
+				i18n( "You have connected from another client" ) );
 		}
 
 		disconnect();

@@ -22,7 +22,7 @@ JabberAddContactPage::JabberAddContactPage(JabberProtocol * owner,
 	noaddMsg1 =
 	    new
 	    QLabel(i18n
-		   ("Sorry, you need to be connected to be able to add contacts."),
+		   ("You need to be connected to be able to add contacts."),
 		   this);
 	noaddMsg2 =
 	    new
