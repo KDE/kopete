@@ -680,6 +680,13 @@ void MSNAccount::slotKopeteGroupRenamed( Kopete::Group *g )
 
 void MSNAccount::slotKopeteGroupRemoved( Kopete::Group *g )
 {
+	//The old gorup list is only used whe syncing the contactlist.
+	//We can assume the contactlist is already fully synced at this time.
+	//The group g is maybe in the oldGroupList.  We remove everithing since
+	//we don't need it anymore, no need to search it
+	m_oldGroupList.clear();
+
+	
 	if ( !g->pluginData( protocol(), accountId() + " id" ).isEmpty() )
 	{
 		unsigned int groupNumber = g->pluginData( protocol(), accountId() + " id" ).toUInt();
@@ -689,6 +696,10 @@ void MSNAccount::slotKopeteGroupRemoved( Kopete::Group *g )
 			slotGroupRemoved( groupNumber );
 			return;
 		}
+
+		//this is also done later, but he have to do it now!
+		// (in slotGroupRemoved)
+		m_groupList.remove(groupNumber);
 
 		if ( groupNumber == 0 )
 		{
@@ -723,19 +734,6 @@ void MSNAccount::slotKopeteGroupRemoved( Kopete::Group *g )
 			}
 			if(!still_have_contact)
 				m_notifySocket->removeGroup( groupNumber );
-		}
-		//this is also done later, but he have to do it now!
-		// (in slotGroupRemoved)
-		m_groupList.remove(groupNumber);
-	}
-
-	//remove it from the old list
-	for(QMap<unsigned int, Kopete::Group*>::Iterator it=m_oldGroupList.begin() ; it != m_oldGroupList.end() ; ++it )
-	{
-		if(g==it.data())
-		{
-			m_oldGroupList.remove(it);
-			break;
 		}
 	}
 }
