@@ -30,7 +30,7 @@
 
 KopeteFileConfirmDialog::KopeteFileConfirmDialog(const KopeteFileTransferInfo &info,const QString& description,QWidget *parent, const char *name )
 : KDialogBase( parent, name, true, i18n( "A User Would Like to Send You a File" ),
-	KDialogBase::User1 | KDialogBase::User2, KDialogBase::User1, true, i18n( "&Refuse" ), i18n( "&Accept" ) ),
+	KDialogBase::User1 | KDialogBase::User2, KDialogBase::User1, true, i18n( "&Accept" ), i18n( "&Refuse" ) ),
 	m_info( info )
 {
 	setWFlags( WDestructiveClose );
