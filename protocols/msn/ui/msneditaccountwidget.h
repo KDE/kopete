@@ -1,9 +1,10 @@
 /*
     msneditaccountwidget.h - MSN Account Widget
 
-    Copyright (c) 2003 by Olivier Goffart  <ogoffart@tiscalinet.be>
+    Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -15,43 +16,43 @@
     *************************************************************************
 */
 
-
-
 #ifndef MSNEDITACCOUNTWIDEGET_H
 #define MSNEDITACCOUNTWIDEGET_H
 
+#include <qwidget.h>
+
 #include "editaccountwidget.h"
 
-#include "msneditaccountui.h"
-
-
-/**
-  *@author Olivier Goffart <ogoffart@tiscalinet.be>
-  */
+class KopeteAccount;
 
 class MSNProtocol;
-class KAutoConfig;
 
-class MSNEditAccountWidget : public MSNEditAccountUI, public KopeteEditAccountWidget
+class MSNEditAccountWidgetPrivate;
+
+/**
+ * @author Olivier Goffart <ogoffart@tiscalinet.be>
+ */
+class MSNEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
 	Q_OBJECT
 
-	public:
-		MSNEditAccountWidget(MSNProtocol *proto, KopeteAccount *, QWidget *parent=0, const char *name=0);
-		~MSNEditAccountWidget();
-		virtual bool validateData();
-		virtual KopeteAccount *apply();
+public:
+	MSNEditAccountWidget( MSNProtocol *proto, KopeteAccount *account, QWidget *parent = 0, const char *name = 0 );
+	~MSNEditAccountWidget();
+	virtual bool validateData();
+	virtual KopeteAccount * apply();
 
-	private:
-		MSNProtocol *m_protocol;
-		KAutoConfig *kautoconfig;
+private slots:
+	void slotAllow();
+	void slotBlock();
+	void slotShowReverseList();
+	void slotSelectImage();
 
-	private slots:
-		void slotAllow();
-		void slotBlock();
-		void slotShowReverseList();
-		void slotSelectImage();
+private:
+	MSNEditAccountWidgetPrivate *d;
 };
 
-
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:
+
