@@ -168,7 +168,7 @@ void GroupWiseAddContactPage::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_searchUI->m_userId->text();
-		arg.field = "UserID";
+		arg.field = NM_A_SZ_USERID;
 		arg.operation = searchOperation( m_searchUI->m_userIdOperation->currentItem() );
 		searchTerms.append( arg );
 	}
@@ -176,7 +176,7 @@ void GroupWiseAddContactPage::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_searchUI->m_title->text();
-		arg.field = "Title";
+		arg.field = NM_A_SZ_TITLE;
 		arg.operation = searchOperation( m_searchUI->m_titleOperation->currentItem() );
 		searchTerms.append( arg );
 	}
@@ -184,7 +184,7 @@ void GroupWiseAddContactPage::slotDoSearch()
 	{
 		GroupWise::UserSearchQueryTerm arg;
 		arg.argument = m_searchUI->m_dept->text();
-		arg.field = "Department";
+		arg.field = NM_A_SZ_DEPARTMENT;
 		arg.operation = searchOperation( m_searchUI->m_deptOperation->currentItem() );
 		searchTerms.append( arg );
 	}
