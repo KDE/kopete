@@ -465,7 +465,7 @@ GaduAccount::slotLogoff()
 void
 GaduAccount::slotGoOnline()
 {
-	connect( GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ) );
+	changeStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ) );
 }
 void
 GaduAccount::slotGoOffline()
