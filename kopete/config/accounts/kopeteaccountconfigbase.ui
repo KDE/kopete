@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>397</width>
-            <height>357</height>
+            <height>351</height>
         </rect>
     </property>
     <property name="caption">
@@ -23,18 +23,15 @@
         <property name="margin">
             <number>0</number>
         </property>
-        <widget class="QPushButton" row="0" column="1" rowspan="1" colspan="3">
+        <widget class="QPushButton" row="0" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>mButtonNew</cstring>
             </property>
             <property name="text">
                 <string>&amp;New...</string>
             </property>
-            <property name="accel">
-                <string>Alt+N</string>
-            </property>
         </widget>
-        <widget class="QPushButton" row="1" column="1" rowspan="1" colspan="3">
+        <widget class="QPushButton" row="1" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>mButtonEdit</cstring>
             </property>
@@ -42,7 +39,7 @@
                 <string>&amp;Modify...</string>
             </property>
         </widget>
-        <widget class="QPushButton" row="2" column="1" rowspan="1" colspan="3">
+        <widget class="QPushButton" row="2" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>mButtonRemove</cstring>
             </property>
@@ -50,7 +47,7 @@
                 <string>&amp;Remove</string>
             </property>
         </widget>
-        <widget class="QPushButton" row="9" column="1" rowspan="1" colspan="3">
+        <widget class="QPushButton" row="7" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>mButtonUp</cstring>
             </property>
@@ -58,7 +55,7 @@
                 <string></string>
             </property>
         </widget>
-        <widget class="KListView" row="0" column="0" rowspan="11" colspan="1">
+        <widget class="KListView" row="0" column="0" rowspan="9" colspan="1">
             <column>
                 <property name="text">
                     <string>Protocol</string>
@@ -88,7 +85,7 @@
                 <bool>true</bool>
             </property>
         </widget>
-        <widget class="QCheckBox" row="4" column="1" rowspan="1" colspan="3">
+        <widget class="QCheckBox" row="4" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>mUseColor</cstring>
             </property>
@@ -96,7 +93,24 @@
                 <string>Use custom color</string>
             </property>
         </widget>
-        <spacer row="3" column="3">
+        <spacer row="6" column="2">
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <spacer row="3" column="2">
             <property name="name">
                 <cstring>spacer3</cstring>
             </property>
@@ -113,7 +127,7 @@
                 </size>
             </property>
         </spacer>
-        <widget class="QPushButton" row="10" column="1" rowspan="1" colspan="3">
+        <widget class="QPushButton" row="8" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>mButtonDown</cstring>
             </property>
@@ -121,15 +135,7 @@
                 <string></string>
             </property>
         </widget>
-        <widget class="QCheckBox" row="6" column="1" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>mUseStylesheet</cstring>
-            </property>
-            <property name="text">
-                <string>Use custom style</string>
-            </property>
-        </widget>
-        <widget class="KColorButton" row="5" column="3">
+        <widget class="KColorButton" row="5" column="2">
             <property name="name">
                 <cstring>mColorButton</cstring>
             </property>
@@ -137,29 +143,7 @@
                 <string></string>
             </property>
         </widget>
-        <widget class="KComboBox" row="7" column="2" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>mStylesheet</cstring>
-            </property>
-        </widget>
-        <spacer row="8" column="3">
-            <property name="name">
-                <cstring>spacer1</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>50</height>
-                </size>
-            </property>
-        </spacer>
-        <spacer row="5" column="1" rowspan="1" colspan="2">
+        <spacer row="5" column="1">
             <property name="name">
                 <cstring>spacer3_2</cstring>
             </property>
@@ -176,38 +160,13 @@
                 </size>
             </property>
         </spacer>
-        <spacer row="7" column="1">
-            <property name="name">
-                <cstring>spacer4</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Minimum</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
     </grid>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>mUseColor</sender>
         <signal>toggled(bool)</signal>
         <receiver>mColorButton</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>mUseStylesheet</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>mStylesheet</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
@@ -223,6 +182,5 @@
 <includehints>
     <includehint>klistview.h</includehint>
     <includehint>kcolorbutton.h</includehint>
-    <includehint>kcombobox.h</includehint>
 </includehints>
 </UI>

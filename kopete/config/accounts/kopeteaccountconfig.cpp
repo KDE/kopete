@@ -26,9 +26,6 @@
 #include <kgenericfactory.h>
 #include <ktrader.h>
 #include <kdebug.h>
-#include <qfileinfo.h>
-#include <kstandarddirs.h>
-#include <kcombobox.h>
 
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
@@ -69,17 +66,6 @@ KopeteAccountConfig::KopeteAccountConfig(QWidget *parent, const char * /* name *
 	connect(m_view->mButtonDown, SIGNAL(clicked()),
 		this, SLOT(slotAccountDown()));
 
-	QStringList mChatStyles = KGlobal::dirs()->findAllResources(
-		"appdata", QString::fromLatin1("styles/*.xsl") );
-	m_view->mStylesheet->clear();
-	for( QStringList::Iterator it = mChatStyles.begin(); it != mChatStyles.end(); ++it)
-	{
-		QFileInfo fi( *it );
-		QString fileName = fi.fileName().section('.',0,0);
-		m_view->mStylesheet->insertItem( fileName );
-		itemMap.insert(fileName, *it);
-	}
-		
 	setButtons(Help);
 	load();
 }
@@ -90,8 +76,6 @@ void KopeteAccountConfig::save()
 	{
 		previousAccount->setColor(
 			m_view->mUseColor->isChecked() ? m_view->mColorButton->color() : QColor() );
-		previousAccount->setStylesheet(
-			m_view->mUseStylesheet->isChecked() ? itemMap[ m_view->mStylesheet->currentText() ] : QString::null );
 	}
 
 	KopeteAccountManager::manager()->save();
@@ -140,9 +124,6 @@ void KopeteAccountConfig::slotItemSelected()
 	{
 		previousAccount->setColor(
 			m_view->mUseColor->isChecked() ? m_view->mColorButton->color() : QColor() );
-			
-		previousAccount->setStylesheet(
-			m_view->mUseStylesheet->isChecked() ? itemMap[ m_view->mStylesheet->currentText() ] : QString::null );
 	}
 
 	KopeteAccount *a = m_accountItems[itemSelected];
@@ -150,20 +131,14 @@ void KopeteAccountConfig::slotItemSelected()
 	if(a)
 	{
 		m_view->mUseColor->setEnabled(true);
-		m_view->mUseStylesheet->setEnabled(true);
 		m_view->mUseColor->setChecked(a->color().isValid());
-		m_view->mUseStylesheet->setChecked( !(a->styleSheet().isNull() || a->styleSheet().isEmpty()) );
 		m_view->mColorButton->setColor(a->color());
-		m_view->mStylesheet->setCurrentItem( QFileInfo(a->styleSheet()).fileName().section('.',0,0) );
 		m_view->mColorButton->setEnabled(m_view->mUseColor->isChecked());
-		m_view->mStylesheet->setEnabled( m_view->mUseStylesheet->isChecked() );
 	}
 	else
 	{
 		m_view->mUseColor->setEnabled(false);
 		m_view->mColorButton->setEnabled(false);
-		m_view->mStylesheet->setEnabled(false);
-		m_view->mUseStylesheet->setEnabled(false);
 	}
 }
 

@@ -39,8 +39,7 @@ public:
 
 private:
 	KopeteAccountConfigBase *m_view;
-	QMap<QListViewItem*,KopeteAccount*> m_accountItems;
-	QMap<QString,QString> itemMap;
+	QMap <QListViewItem*,KopeteAccount*> m_accountItems;
 	KopeteAccount *previousAccount;
 
 

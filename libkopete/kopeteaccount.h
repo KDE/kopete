@@ -231,21 +231,6 @@ public:
 	 * @return the name of the config group to be used
 	 */
 	QString configGroup() const;
-	
-	/**
-	 * @return The XSL of the custom account style, if any
-	 */
-	const QString styleContents() const;
-	
-	/**
-	 * @return The path of the custom account style, if any
-	 */
-	 const QString styleSheet() const;
-	
-	/**
-	 * Set the custom style
-	 */
-	void setStylesheet( const QString &stylePath );
 
 protected:
 	/**
@@ -297,11 +282,6 @@ signals:
 	 * The accountId should be constant, see @ref KopeteAccount::setAccountId()
 	 */
 	void accountIdChanged();
-	
-	/**
-	 * The account custom style changed
-	 */
-	void accountStyleChanged();
 
 protected slots:
 	/**

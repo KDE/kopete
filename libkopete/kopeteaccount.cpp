@@ -20,7 +20,6 @@
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qtimer.h>
-#include <qfile.h>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -63,8 +62,6 @@ struct KopeteAccountPrivate
 	bool autologin;
 	QDict<KopeteContact> contacts;
 	QColor color;
-	QString stylesheet;
-	QString styleContents;
 #if KDE_IS_VERSION( 3, 1, 90 )
 	KWallet::Wallet *wallet;
 #endif
@@ -102,33 +99,6 @@ KopeteAccount::~KopeteAccount()
 #endif
 
 	delete d;
-}
-
-void KopeteAccount::setStylesheet( const QString &stylesheet )
-{
-	d->stylesheet = stylesheet;
-	if( !( stylesheet.isNull() || stylesheet.isEmpty() ) )
-	{
-		QFile file( stylesheet );
-		if ( file.open( IO_ReadOnly ) )
-		{
-			QTextStream stream( &file );
-			d->styleContents = stream.read();
-			file.close();
-		}
-	}
-	
-	emit( accountStyleChanged() );
-}
-
-const QString KopeteAccount::styleSheet() const
-{
-	return d->stylesheet;
-}
-
-const QString KopeteAccount::styleContents() const
-{
-	return d->styleContents;
 }
 
 void KopeteAccount::slotAccountReady()
@@ -193,11 +163,6 @@ void KopeteAccount::writeConfig( const QString &configGroupName )
 		config->writeEntry( "Color", d->color );
 	else
 		config->deleteEntry( "Color" );
-		
-	if ( d->stylesheet.isNull() )
-		config->deleteEntry( "Stylesheet" );
-	else
-		config->writeEntry( "Stylesheet", d->stylesheet );
 
 	// Store other plugin data
 	KopetePluginDataObject::writeConfig( configGroupName );
@@ -211,7 +176,6 @@ void KopeteAccount::readConfig( const QString &configGroupName )
 	d->password  = cryptStr( config->readEntry( "Password" ) );
 	d->autologin = config->readBoolEntry( "AutoConnect", false );
 	d->color     = config->readColorEntry( "Color", &d->color );
-	setStylesheet( config->readEntry( "Stylesheet", QString::null ) );
 
 	// Handle the plugin data, if any
 	QMap<QString, QString> entries = config->entryMap( configGroupName );
