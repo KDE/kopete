@@ -89,8 +89,6 @@ JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : Kop
 
 	// read the Jabber ID from Kopete's configuration
 	KGlobal::config()->setGroup("Jabber");
-/*	if ((KGlobal::config()->readEntry("UserID", "") == "") || (KGlobal::config()->readEntry("Password", "") == ""))
-		KMessageBox::error(kopeteapp->mainWindow(), i18n("<qt>If you have a Jabber account, please configure it in the Kopete Settings dialog. If you don't, you can register from there as well.</qt>"), i18n("No Jabber Configuration Found!"));*/
 
 	// setup icons and actions
 	initIcons();
@@ -143,6 +141,16 @@ bool JabberProtocol::unload()
 		delete statusBarIcon;
 	}
 
+	// delete all contacts
+	for(JabberContactMap::iterator it = contactMap.begin(); it != contactMap.end(); it++)
+	{
+		delete it.data();
+	}
+
+	// make sure that the next attempt to load Jabber
+	// re-initializes the protocol class
+	protocolInstance = 0L;
+	
 	emit protocolUnloading();
 	return true;
 
