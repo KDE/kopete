@@ -10,8 +10,11 @@
             <x>0</x>
             <y>0</y>
             <width>640</width>
-            <height>550</height>
+            <height>552</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>DlgJabberEditAccountWidget</string>
     </property>
     <property name="whatsThis" stdset="0">
         <string></string>
@@ -442,6 +445,9 @@
                                 </property>
                                 <property name="accel">
                                     <string></string>
+                                </property>
+                                <property name="checked">
+                                    <bool>true</bool>
                                 </property>
                             </widget>
                             <widget class="QLayoutWidget" row="1" column="0">
@@ -1006,8 +1012,6 @@
         </widget>
     </grid>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>cbRemPass</sender>
