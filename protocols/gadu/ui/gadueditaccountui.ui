@@ -536,7 +536,7 @@
                                                     <cstring>textLabel1_4</cstring>
                                                 </property>
                                                 <property name="text">
-                                                    <string>&lt;qt&gt;&lt;p align="center"&gt;&lt;font color="#ff0000"&gt;This options affect &lt;b&gt;all&lt;/b&gt; Gadu-Gadu accounts.&lt;/font&gt;&lt;/p&gt;&lt;/qt&gt;</string>
+                                                    <string>&lt;qt&gt;&lt;p align="center"&gt;&lt;font color="#ff0000"&gt;These options affect &lt;b&gt;all&lt;/b&gt; Gadu-Gadu accounts.&lt;/font&gt;&lt;/p&gt;&lt;/qt&gt;</string>
                                                 </property>
                                             </widget>
                                             <widget class="QLayoutWidget">
