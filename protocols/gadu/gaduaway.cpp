@@ -33,6 +33,9 @@
 #include <qradiobutton.h>
 #include <qlineedit.h>
 
+#include "gaduawayui.h"
+#include "gaduaway.h"
+
 GaduAway::GaduAway( GaduAccount* account, QWidget* parent, const char* name )
 : KDialogBase( parent, name, true, i18n( "Away Dialog" ),
 			 KDialogBase::Ok | KDialogBase::Cancel,

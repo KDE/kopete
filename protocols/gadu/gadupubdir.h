@@ -28,7 +28,9 @@
 #include <kdebug.h>
 #include <kdialogbase.h>
 
+class GaduAccount;
 class GaduProtocol;
+class GaduContact;
 class GaduAccount;
 class GaduPublicDirectory;
 class QListViewItem;

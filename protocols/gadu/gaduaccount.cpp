@@ -23,6 +23,7 @@
 #include "gaduaccount.h"
 #include "gaducontact.h"
 #include "gaduprotocol.h"
+#include "gaduawayui.h"
 #include "gaduaway.h"
 #include "gadupubdir.h"
 
