@@ -195,7 +195,7 @@ void MeanwhileAccount::meanwhileGoOnline()
     }
 
     QString passwd = password().cachedValue();
-    if (passwd != QString::null)
+    if (!passwd.isNull())
     {
         INIT_SERVER()
         {
