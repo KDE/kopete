@@ -455,10 +455,24 @@ void GroupWiseContact::slotBlock()
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	if ( account()->isConnected() )
 	{
+		connect( account()->client()->privacyManager(), SIGNAL( privacyChanged( const QString &, bool ) ),
+				SLOT( receivePrivacyChanged( const QString &, bool ) ) );
 		if ( account()->isContactBlocked( m_dn ) )
-			account()->client()->privacyManager()->addAllow( m_dn );
+			account()->client()->privacyManager()->setAllow( m_dn );
 		else
-			account()->client()->privacyManager()->addDeny( m_dn );
+			account()->client()->privacyManager()->setDeny( m_dn );
+	}
+}
+
+void GroupWiseContact::receivePrivacyChanged( const QString & dn, bool allow )
+{
+	Q_UNUSED( allow );
+	if ( dn == m_dn )
+	{
+		disconnect( account()->client()->privacyManager(), SIGNAL( privacyChanged( const QString &, bool ) ),
+					this, SLOT( receivePrivacyChanged( const QString &, bool ) ) );
+		// set the online status back to itself. this will reset the blocking state
+		setOnlineStatus( this->onlineStatus() );
 	}
 }
 
@@ -479,19 +493,19 @@ void GroupWiseContact::setOnlineStatus( const KopeteOnlineStatus& status )
 				case 0:
 					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseUnknown );
 					break;
-				case 2:
+				case 1:
 					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
 					break;
-				case 3:
+				case 2:
 					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAvailable );
 					break;
-				case 4:
+				case 3:
 					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseBusy );
 					break;
-				case 5:
+				case 4:
 					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAway );
 					break;
-				case 6:
+				case 5:
 					KopeteContact::setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAwayIdle );
 					break;
 				default:

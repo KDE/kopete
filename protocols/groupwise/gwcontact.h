@@ -195,6 +195,10 @@ protected slots:
 	 * Block or unblock the contact, toggle its current blocking state
 	 */
 	void slotBlock();
+	/**
+	 * Receive notification that this contact's privacy setting changed - update status
+	 */
+	void receivePrivacyChanged( const QString &, bool );
 protected:
 	KActionCollection* m_actionCollection;
 	

@@ -51,18 +51,40 @@ bool PrivacyManager::isPrivacyLocked()
 
 bool PrivacyManager::isBlocked( const QString & dn )
 {
-	
+	if ( m_defaultDeny )
+		return !m_allowList.contains( dn );
+	else
+		return m_denyList.contains( dn );
+}
+
+void PrivacyManager::setAllow( const QString & dn )
+{
 	if ( m_defaultDeny )
 	{
-		qDebug( "PrivacyManager::isBlocked() %s %s blocked", dn.ascii(), ( !m_allowList.contains( dn ) ? "is" : " is not " ) );
-		return !m_allowList.contains( dn );
+		if ( !m_allowList.contains( dn ) )
+			addAllow( dn );
 	}
 	else
 	{
-		qDebug( "PrivacyManager::isBlocked() %s %s blocked", ( m_denyList.contains( dn ) ? "is" : " is not " ) );
-		return m_denyList.contains( dn );
+		if ( m_denyList.contains( dn ) )
+			removeDeny( dn );
 	}
 }
+
+void PrivacyManager::setDeny( const QString & dn )
+{
+	if ( m_defaultDeny )
+	{
+		if ( m_allowList.contains( dn ) )
+			removeAllow( dn );
+	}
+	else
+	{
+		if ( !m_denyList.contains( dn ) )
+			addDeny( dn );
+	}
+}
+
 
 void PrivacyManager::setDefaultAllow( bool allow )
 {
@@ -102,7 +124,7 @@ void PrivacyManager::removeAllow( const QString & dn )
 {
 	PrivacyItemTask * pit = new PrivacyItemTask( m_client->rootTask() );
 	pit->removeAllow( dn );
-	connect( pit, SIGNAL( finished() ), SLOT( slotAllowRemoved()() ) );
+	connect( pit, SIGNAL( finished() ), SLOT( slotAllowRemoved() ) );
 	pit->go( true );
 }
 
@@ -140,27 +162,39 @@ void PrivacyManager::slotAllowAdded()
 {
 	PrivacyItemTask * pit = ( PrivacyItemTask * )sender();
 	if ( pit->success() )
+	{
 		m_allowList.append( pit->dn() );
+		emit privacyChanged( pit->dn(), isBlocked( pit->dn() ) );
+	}
 }
 
 void PrivacyManager::slotDenyAdded()
 {
 	PrivacyItemTask * pit = ( PrivacyItemTask * )sender();
 	if ( pit->success() )
+	{
 		m_denyList.append( pit->dn() );
+		emit privacyChanged( pit->dn(), isBlocked( pit->dn() ) );
+	}
 }
 
 void PrivacyManager::slotAllowRemoved()
 {
 	PrivacyItemTask * pit = ( PrivacyItemTask * )sender();
 	if ( pit->success() )
+	{
 		m_allowList.remove( pit->dn() );
+		emit privacyChanged( pit->dn(), isBlocked( pit->dn() ) );
+	}
 }
 
 void PrivacyManager::slotDenyRemoved()
 {	PrivacyItemTask * pit = ( PrivacyItemTask * )sender();
 	if ( pit->success() )
+	{
 		m_denyList.remove( pit->dn() );
+		emit privacyChanged( pit->dn(), isBlocked( pit->dn() ) );
+	}
 }
 
 #include "privacymanager.moc"

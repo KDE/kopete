@@ -36,8 +36,6 @@
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 
-#include "gwaccount.h"
-
 #include <kopeteuiglobal.h>
 #include <kopeteawayaction.h>
 #include <kopetecontactlist.h>
@@ -58,10 +56,13 @@
 #include "gwmessagemanager.h"
 #include "privacymanager.h"
 #include "ui/gwprivacy.h"
+#include "ui/gwprivacydialog.h"
 #include "ui/gwreceiveinvitationdialog.h"
 #include "qcatlshandler.h"
 #include "tasks/createcontacttask.h"
 #include "tasks/deleteitemtask.h"
+
+#include "gwaccount.h"
 
 GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& accountID, const char *name )
 : Kopete::PasswordedAccount ( parent, accountID, 0, "groupwiseaccount" )
@@ -109,12 +110,14 @@ KActionMenu* GroupWiseAccount::actionMenu()
 	theActionMenu->insert( new KAction (GroupWiseProtocol::protocol()->groupwiseOffline.caption(),
 		GroupWiseProtocol::protocol()->groupwiseOffline.iconFor(this), 0, this, SLOT ( slotGoOffline() ), this,
 		"actionGroupWiseOfflineDisconnect") );
-	theActionMenu->insert( new KAction ( "&Set Auto-Reply...", QString::null, 0, this,
-		SLOT( slotSetAutoReply() ), this,
-		"actionSetAutoReply") );
-	theActionMenu->insert( new KAction ( "&Manage Privacy...", QString::null, 0, this,
-		SLOT( slotPrivacy() ), this,
-		"actionPrivacy") );
+	KAction * autoReply = new KAction ( "&Set Auto-Reply...", QString::null, 0, this,
+		SLOT( slotSetAutoReply() ), this, "actionSetAutoReply");
+	autoReply->setEnabled( isConnected() );
+	theActionMenu->insert( autoReply );
+	KAction * managePrivacy = new KAction ( "&Manage Privacy...", QString::null, 0, this,
+		SLOT( slotPrivacy() ), this, "actionPrivacy");
+	managePrivacy->setEnabled( isConnected() );
+	theActionMenu->insert( managePrivacy );
 /// 	theActionMenu->insert( new KAction ( "Test rtfize()", QString::null, 0, this,
 // 		SLOT( slotTestRTFize() ), this,
 // 		"actionTestRTFize") );
@@ -981,9 +984,7 @@ void GroupWiseAccount::slotTestRTFize()
 
 void GroupWiseAccount::slotPrivacy()
 {
-	KDialogBase * privacyDialog = new KDialogBase( Kopete::UI::Global::mainWidget(), "gwprivacydialog", false, i18n( "Account specific privacy settings", "Manage Privacy for %1" ).arg( accountId() ), KDialogBase::Ok );
-	privacyDialog->setMainWidget( new GroupWisePrivacyWidget( privacyDialog ) );
-	privacyDialog->show();
+	GroupWisePrivacyDialog * privacyDialog = new GroupWisePrivacyDialog( this, Kopete::UI::Global::mainWidget(), "gwprivacydialog" );
 }
 
 bool GroupWiseAccount::isContactBlocked( const QString & dn )

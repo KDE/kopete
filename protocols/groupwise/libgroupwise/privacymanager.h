@@ -38,6 +38,16 @@ public:
 	// mutators
 	void setDefaultAllow( bool allow );
 	void setDefaultDeny( bool deny );
+	void setAllow( const QString & dn );
+	void setDeny( const QString & dn );
+signals:
+	void privacyChanged( const QString &dn, bool allowed );
+public slots:
+	/** 
+	 * Used to initialise the privacy manager using the server side privacy list
+	 */
+	void slotGotPrivacyDetails( bool locked, bool defaultDeny, const QStringList & allowList, const QStringList & denyList );
+protected:
 	void addAllow( const QString & dn );
 	void addDeny( const QString & dn );
 	void removeAllow( const QString & dn );
@@ -45,11 +55,6 @@ public:
 	// change everything at once
 	void setPrivacy( bool defaultDeny, const QStringList & allowList, const QStringList & denyList );
 
-public slots: 
-	/** 
-	 * Used to initialise the privacy manager using the server side privacy list
-	 */
-	void slotGotPrivacyDetails( bool locked, bool defaultDeny, const QStringList & allowList, const QStringList & denyList );
 protected slots:
 	// Receive the results of Tasks manipulating the privacy lists
 	void slotDefaultPolicyChanged();
