@@ -27,6 +27,7 @@
 
 class QStringList;
 class QString;
+class QTimer;
 class KListAction;
 
 class KopeteMessage;
@@ -59,9 +60,7 @@ public:
 	virtual KActionCollection *customContextMenuActions(KopeteMetaContact*);
 //	virtual KActionCollection *customChatActions(KopeteMessageManager*);
 
-	/***************************************************************************
-	 *   Plugin's API (used by preferences)                                    *
-	 ***************************************************************************/
+
 
 public slots:
 
@@ -71,10 +70,12 @@ public slots:
 private slots:
 
 	void slotSelectContactKey();
+	void slotForgetCachedPass();
 
 private:
 	static CryptographyPlugin* pluginStatic_;
 	QCString m_cachedPass;
+	QTimer *m_cachedPass_timer;
 	CryptographyPreferences *m_prefs;
 
 	//cache messages for showing

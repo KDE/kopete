@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include <qstylesheet.h>
+#include <qtimer.h>
 
 #include <kdebug.h>
 #include <kaction.h>
@@ -55,7 +56,8 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name,
 
 	m_collection=0l;
 	m_currentMetaContact=0L;
-
+	m_cachedPass_timer = new QTimer(this, "m_cachedPass_timer" );
+	QObject::connect(m_cachedPass_timer, SIGNAL(timeout()), this, SLOT(slotForgetCachedPass() ));
 }
 
 CryptographyPlugin::~CryptographyPlugin()
@@ -78,6 +80,11 @@ QCString CryptographyPlugin::cachedPass()
 
 void CryptographyPlugin::setCachedPass(const QCString& p)
 {
+	if(pluginStatic_->m_prefs->cacheMode()==CryptographyPreferences::Never)
+		return;
+	if(pluginStatic_->m_prefs->cacheMode()==CryptographyPreferences::Time)
+		pluginStatic_->m_cachedPass_timer->start(pluginStatic_->m_prefs->cacheTime() * 60000, false);
+
 	pluginStatic_->m_cachedPass=p;
 }
 
@@ -110,26 +117,31 @@ KActionCollection *CryptographyPlugin::customContextMenuActions(KopeteMetaContac
 
 void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 {
- QString body=msg.plainBody();
+ 	QString body=msg.plainBody();
 	if(!body.startsWith("-----BEGIN PGP MESSAGE----"))
 		return;
 
 	if(msg.direction() != KopeteMessage::Inbound)
 	{
-		kdDebug(14303) << "CryptographyPlugin::slotIncomingMessage: inbound messages" <<endl;
 		QString plainBody;
-		if ( m_cachedMessages.contains( body ) ) {
+		if ( m_cachedMessages.contains( body ) )
+		{
 			plainBody = m_cachedMessages[ body ];
 			m_cachedMessages.remove( body );
-		} else {
+		}
+		else
+		{
 			plainBody = KgpgInterface::KgpgDecryptText( body, m_prefs->privateKey() );
 		}
-
-		msg.setBody("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FFFF\"><td><font size=\"-1\"><b>"+i18n("Outgoing Encrypted Message")+"</b></font></td></tr><tr bgcolor=\"#DDFFFF\"><td>"+QStyleSheet::escape(plainBody)+"</td></tr></table>"
-			,KopeteMessage::RichText);
+		
+		if(!plainBody.isEmpty())
+		{
+			msg.setBody("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FFFF\"><td><font size=\"-1\"><b>"+i18n("Outgoing Encrypted Message")+"</b></font></td></tr><tr bgcolor=\"#DDFFFF\"><td>"+QStyleSheet::escape(plainBody)+"</td></tr></table>"
+				,KopeteMessage::RichText);
+		}
 
 		//if there are too messages in cache, clear the cache
-		if(m_cachedMessages.count()>10)
+		if(m_cachedMessages.count()>5)
 			m_cachedMessages.clear();
 		return;
 	}
@@ -162,7 +174,9 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 		keys.append( tmpKey );
 	}
 	// always encrypt to self, too
-	keys.append( m_prefs->privateKey() );
+	if(m_prefs->alsoMyKey())
+		keys.append( m_prefs->privateKey() );
+
 	QString key = keys.join( " " );
 
 	if(key.isEmpty())
@@ -213,6 +227,12 @@ void CryptographyPlugin::slotSelectContactKey()
 		m_currentMetaContact->setPluginData( this, "gpgKey", key );
 	}
 	delete opts;
+}
+
+void CryptographyPlugin::slotForgetCachedPass()
+{
+	m_cachedPass=QCString();
+	m_cachedPass_timer->stop();
 }
 
 #include "cryptographyplugin.moc"

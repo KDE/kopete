@@ -29,6 +29,15 @@ class CryptographyPrefsUI;
 class CryptographyPreferences : public ConfigModule  {
    Q_OBJECT
 public:
+	enum CacheMode
+	{
+		Keep	= 0,
+		Time	= 1,
+		Never	= 2
+	};
+
+
+
 	CryptographyPreferences(const QString &pixmap, QObject *parent=0);
 	~CryptographyPreferences();
 
@@ -36,14 +45,16 @@ public:
 	virtual void reopen();
 
 	const QString &privateKey();
-
+	
+	CacheMode cacheMode();
+	unsigned int cacheTime();
+	bool alsoMyKey();
 private:
 	CryptographyPrefsUI *preferencesDialog;
 	QString m_signKeyID;
 	QString m_signKeyMail;
 public slots: // Public slots
-  /** No descriptions */
-  void slotSelectPressed();
+	void slotSelectPressed();
 };
 
 #endif
