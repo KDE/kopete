@@ -644,7 +644,7 @@ void MSNAccount::addGroup( const QString &groupName, const QString& contactToAdd
 
 void MSNAccount::slotKopeteGroupRenamed( KopeteGroup *g )
 {
-	if ( g->type() == KopeteGroup::Normal )
+	if ( notifySocket() && g->type() == KopeteGroup::Normal )
 	{
 		if ( !g->pluginData( protocol(), accountId() + " id" ).isEmpty() &&
 			g->displayName() != g->pluginData( protocol(), accountId() + " displayName" ) && 
