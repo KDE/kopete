@@ -203,7 +203,7 @@ void IRCContact::slotExecReturnedData()
 			buff = proc->readLineStdout();
 		else if( proc->canReadLineStderr() )
 			buff = proc->readLineStderr();
-		KopeteMessage msg((KopeteContact*)this, mContact, buff, execDir, KopeteMessage::PlainText, KopeteMessage::Chat);
+		KopeteMessage msg(mAccount->myself(), mContact, buff, execDir, KopeteMessage::PlainText, KopeteMessage::Chat);
 		manager()->appendMessage(msg);
 	}
 }
