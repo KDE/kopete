@@ -1,68 +1,95 @@
-History plugin: show correct date of old catch-up messages
-Re: [Kopete-devel] Kopete 0.7
+These are random snippets that should give developers a clue of what we have
+to fix before the next release.
 
-From: 
-Stefan Gehn <sgehn@gmx.net>
+Beware: It's totally unsorted ;)
 
+================================================================================
 
-To: 
-kopete-devel@kde.org
+- The history plugin is not finished and has got bugs, for cartman
+  (he's on #kde-devel) it duplicates every incoming icq message.
 
+- fix account pluginData() handling, it obviously gets lost somehow sometimes
 
-Date: 
-Yesterday 15:30:05
+- Fix the chatwindow (i think the richedit component is still not
+  stable enough)
 
+- Fix the segfault-on-exit that's been around for years. Unfortunately nobody
+  knows if this is still valid and what segfaults where or why ;)
 
-On Wednesday June 18 2003 13:49, Daniel Stone wrote:
-> On Wed, Jun 18, 2003 at 01:44:45PM +0200, Olivier Goffart wrote:
-> > I realy think it is possible to release 0.7 in the end of july, to have
-> > enough time to enter in the kopete 1.0's feature frezee in september.
+- Load protocol-plugins on demand (i.e. when an account needs it)
 
-> >
-> > Here is a few list of what we need to do:
-> >
-> > * OSCAR!!!!!!!!!!
+================================================================================
 
-So make it work untiul end of July, don't count on me though :P
+OSCAR ICQ/AIM TODO ITEMS (generously added by mETz *g*)
 
-> > * The history plugin is not finished
-And has got bugs, for cartman (#kde-devel) it duplicates every incoming icq message.
+	OSCAR in general=============================================================
+	- switch from QSocket to KExtendedSocket,
+	  this means rewriting most of oscarsocket
+	  The biggest problem I see so far is OscarConnection::setSocket(int socket)
+	  because you cannot assign a new socket to a KExtendedSocket AFAICS (I don't
+	  like this idea anyway)
+	  Also I don't think we need an OscarConnection base class for outgoing
+	  connections, we could handle FileConnections, DirectConnections and
+	  normal connections by casting, there aren't many areas where one could have
+	  a choice of connection type anyway (only thing I see so far is sending an
+	  IM, it can be either through-server or through direct connection.
 
-> > * Fix the account loading
->
-> As well as the fact that ICQ contacts appear as both AIM and ICQ, even
-> after nuking accounts.xml.
+	- don't inherit from a socket class but base our classes on QObject and
+	  have a socket() function instead if socket-access is needed.
 
-Better try to find out why it does that for you because it doesn't do that over here (I use both aim and icq).
+	- get rid of AIMContactList, AIMBuddy (almost gone already) and AIMGroup.
 
-> > * Fix the fonts chatwindow  (i think the richedit component is still not
-> > stable enough)
->
-> No.
+	- save groupID in KopeteGroups
 
-What no? Could you please be a bit more verbose? IMO that richtexteditor is unusable and doesn't give us any benefits currently.
+	- somehow sync server and local list, this is not as trivial as everybody
+	  always thinks it is because you cannot sure if local changes or
+	  serverside-changes caused the difference (think about two clients being used
+	  for the same account, one at home and one at work).
+	  Update: Actually it might be possible by saving two timestamp/size values
+	  for the account. Serverside and local values.
+	  Also I'm much in favor of hindering the user from offline editing the
+	  contactlist.
 
-> > * some few bugfixings
-> Like the segfault-on-exit that's been around for years.
+	- make renaming serverside contacts possible (function is there but fails due
+	  to massive contactlist crappyness caused by above mentioned classes)
 
-Which one? Backtrace?
+	- fix adding contacts for both addcontactwizard and serverside list
 
-> > Anyone see other important thing?
-> Making it so you don't have to select which protocol plugins to load.
-> Just load them if an account needs them - it's that simple.
+	- error handling on channel 0x04 messages. properly disconnect and emit a
+	  signal in oscarsocket.
 
-So code it yourself if it's that simple, Olivier will help you too as he said it's easy as well.
+	ICQ specific ================================================================
+	- general support for SNAC (0x15,y)
+	- read away reasons
+	- own away-reasons
+	- use html/rtf in own messages (i.e. support type-2 messages, BIG ONE)
+	X keepalive for connection to server (icq has ping packets)
+	- STOP stupid users from adding their own UIN to the userlist
+	- honor encodings for both sides (I need more knowledge about this!)
+	- Option: Allow access from contacts on my contact list only
+	- group handling
+	  (signals: KopeteMetaContact::movedToGroup , addedToGroup , removedToGroup )
+	- ignore lists (needs proper group-handling)
+	- invisible list (needs proper group-handling)
+	X invisible mode
 
-> > So the big problem is Oscar! we absolutely need at least one more
-> > developper to help Stephan (one active developer)
-> > can someone xhich have a write acces to the website make the anounce
+	- support simple icq type-2 messages so we can send/receive away messages
+	  (yes, I even see this as a point for not releasing 0.7, away messages ARE
+	  important or else I could take out away modes altogether)
 
-That's in the topic of #kopete for days, still Duncan didn't react to it :P
+	- support login with something different than "online" status, both for
+	  AIM and ICQ. I thought about changing OscarSocket::doLogin but the var
+	  would either contain an icq status long or a simple number for aim, not
+	  sure if mixing icq-specific values and plain numbers is a good idea
+	  (although possible, we have an isICQ() function anyway)
 
--- 
-sgehn_AT_gmx.net | ICQ#51123152 | Moege der Pinguin mit euch sein
+	- finish icq userinfo dialog and sending your own icq userinfo to the server,
+	  it's easy to do for me but because of the mass of items takes lots of time
+	  and is extremely boring.
 
-_______________________________________________
-Kopete-devel mailing list
-Kopete-devel@mail.kde.org
-http://mail.kde.org/mailman/listinfo/kopete-devel
+	AIM specific ================================================================
+	- Nothing in here yet, I'd appreciate somebody with more extensive use of
+	  AIM to take over just that part of the plugin.
+
+================================================================================
+
