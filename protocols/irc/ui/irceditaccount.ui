@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>434</width>
-            <height>550</height>
+            <height>581</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -109,7 +109,7 @@
                                                     <cstring>textLabel1_2</cstring>
                                                 </property>
                                                 <property name="text">
-                                                    <string>Alternate Ni&amp;ckname</string>
+                                                    <string>Alternate ni&amp;ckname:</string>
                                                 </property>
                                                 <property name="buddy" stdset="0">
                                                     <cstring>mAltNickname</cstring>
@@ -538,7 +538,7 @@
                                                     <cstring>textLabel1</cstring>
                                                 </property>
                                                 <property name="text">
-                                                    <string>&amp;Part Message:</string>
+                                                    <string>&amp;Part message:</string>
                                                 </property>
                                                 <property name="buddy" stdset="0">
                                                     <cstring>partMessage</cstring>
@@ -549,7 +549,7 @@
                                                     <cstring>textLabel2</cstring>
                                                 </property>
                                                 <property name="text">
-                                                    <string>&amp;Quit Message:</string>
+                                                    <string>&amp;Quit message:</string>
                                                 </property>
                                                 <property name="buddy" stdset="0">
                                                     <cstring>quitMessage</cstring>
@@ -650,7 +650,7 @@
                                 <property name="fullWidth">
                                     <bool>true</bool>
                                 </property>
-                                <property name="itemsRenameable">
+                                <property name="itemsRenameable" stdset="0">
                                     <bool>true</bool>
                                 </property>
                                 <property name="whatsThis" stdset="0">
@@ -704,7 +704,7 @@
                             </sizepolicy>
                         </property>
                         <property name="title">
-                            <string>Run the following commands on connect:</string>
+                            <string>Run Following Commands on Connect</string>
                         </property>
                         <grid>
                             <property name="name">
@@ -766,7 +766,7 @@
                                 <property name="fullWidth">
                                     <bool>true</bool>
                                 </property>
-                                <property name="itemsRenameable">
+                                <property name="itemsRenameable" stdset="0">
                                     <bool>true</bool>
                                 </property>
                                 <property name="toolTip" stdset="0">

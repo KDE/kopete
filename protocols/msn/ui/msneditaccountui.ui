@@ -9,7 +9,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>604</width>
+            <width>791</width>
             <height>524</height>
         </rect>
     </property>
@@ -385,7 +385,7 @@
                             <cstring>m_blp</cstring>
                         </property>
                         <property name="text">
-                            <string>Block all users not in Allowed &amp;list</string>
+                            <string>Block all users not in 'Allowed' &amp;list</string>
                         </property>
                         <property name="accel">
                             <string>Alt+L</string>
@@ -818,7 +818,7 @@
                                     <cstring>useCustomEmoticons</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Download and show c&amp;ustom emoticons (Experimental)</string>
+                                    <string>Download and show c&amp;ustom emoticons (experimental)</string>
                                 </property>
                                 <property name="accel">
                                     <string>Alt+U</string>

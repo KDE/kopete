@@ -414,9 +414,9 @@ void KopeteChatWindow::initActions(void)
 	KStdAction::showMenubar( this, SLOT(slotViewMenuBar()), coll );
 	viewStatusBar = KStdAction::showStatusbar( this, SLOT(slotViewStatusBar()), coll );
 
-	membersLeft = new KToggleAction( i18n( "Place to the Left of the Chat Area" ), QString::null, 0,
+	membersLeft = new KToggleAction( i18n( "Place to Left of Chat Area" ), QString::null, 0,
 		this, SLOT( slotViewMembersLeft() ), coll, "options_membersleft" );
-	membersRight = new KToggleAction( i18n( "Place to the Right of the Chat Area" ), QString::null, 0,
+	membersRight = new KToggleAction( i18n( "Place to Right of Chat Area" ), QString::null, 0,
 		this, SLOT( slotViewMembersRight() ), coll, "options_membersright" );
 	toggleMembers = new KToggleAction( i18n( "Show" ), QString::null, 0,
 		this, SLOT( slotToggleViewMembers() ), coll, "options_togglemembers" );
