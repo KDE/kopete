@@ -22,12 +22,14 @@
 #include "kopetemessagemanagerfactory.h"
 #include "irccontact.h"
 
-class IRCAccount;
+class QTimer;
+
 class KActionCollection;
 class KAction;
 class KActionMenu;
+
+class IRCContactManager;
 class IRCChannelContact;
-class QTimer;
 
 /**
  * @author Jason Keirstead <jason@keirstead.org
@@ -35,37 +37,41 @@ class QTimer;
  * This class is the @ref KopeteContact object representing IRC Users, not channels.
  * It is derrived from IRCContact where much of its functionality is shared with @ref IRCChannelContact.
  */
-class IRCUserContact : public IRCContact
+class IRCUserContact
+	: public IRCContact
 {
 	Q_OBJECT
 
 public:
 	// This class provides a KopeteContact for each user on the channel.
-	IRCUserContact(IRCAccount *, const QString &nickname,KopeteMetaContact *mc  );
+	IRCUserContact(IRCContactManager *, const QString &nickname, KopeteMetaContact *mc);
 
 	// KopeteContact stuff
 	virtual KActionCollection *customContextMenuActions();
 	virtual const QString caption() const;
-	virtual KopeteMessageManager* manager( bool canCreate = false );
 
 private slots:
-	void slotMessageManagerDestroyed();
+	virtual void updateStatus();
+
 	void slotOp();
 	void slotDeop();
 	void slotVoice();
 	void slotDevoice();
 	void slotCtcpPing();
 	void slotCtcpVersion();
-	void slotUserOffline();
 	void slotBanHost();
 	void slotBanUserHost();
 	void slotBanDomain();
 	void slotBanUserDomain();
 	void slotKick();
 	void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
-	void slotUserOnline( const QString &nick );
+	void slotUserOnline(const QString &nick);
 
 	virtual void slotUserInfo();
+
+protected slots:
+	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
+	virtual void action(IRCContact *from, IRCContact *to, const QString &action);
 
 private:
 	KActionCollection *mCustomActions;
@@ -75,7 +81,7 @@ private:
 	KActionMenu *actionBanMenu;
 	QTimer *mOnlineTimer;
 
-	void contactMode( const QString &mode );
+	void contactMode(const QString &mode);
 };
 
 #endif

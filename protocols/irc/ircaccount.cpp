@@ -15,249 +15,177 @@
     *************************************************************************
 */
 #include <kaction.h>
-#include <kpopupmenu.h>
-#include <kapplication.h>
 #include <kaboutdata.h>
+#include <kapplication.h>
+#include <kdebug.h>
 #include <klineeditdlg.h>
 #include <kmessagebox.h>
-
-#include "ircaccount.h"
-#include "ircprotocol.h"
-#include "ircusercontact.h"
-#include "ircchannelcontact.h"
+#include <kpopupmenu.h>
 
 #include "kopeteaway.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
-#include "kdebug.h"
+
+#include "ircaccount.h"
+#include "ircprotocol.h"
+#include "irccontactmanager.h"
+#include "ircservercontact.h"
+#include "ircchannelcontact.h"
+#include "ircusercontact.h"
 #include "ksparser.h"
 
-IRCAccount::IRCAccount(const QString &accountId, const IRCProtocol *protocol) : KopeteAccount( (KopeteProtocol*)protocol, accountId )
+IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
+	: KopeteAccount(protocol, accountId)
 {
-	mManager = 0L;
-	mProtocol = protocol;
+	m_manager = 0L;
+	m_protocol = protocol;
 
 	mNickName = accountId.section('@',0,0);
 	QString serverInfo = accountId.section('@',1);
-	mServer = serverInfo.section(':',0,0);
-	mPort = serverInfo.section(':',1).toUInt();
+	m_server = serverInfo.section(':',0,0);
+	m_port = serverInfo.section(':',1).toUInt();
 
-	mEngine = new KIRC( mServer, mPort );
+	m_engine = new KIRC( m_server, m_port );
 	QString version=i18n("Kopete IRC Plugin %1 [http://kopete.kde.org]").arg(kapp->aboutData()->version());
-	mEngine->setVersionString( version  );
+	m_engine->setVersionString( version  );
 	if( rememberPassword() )
-		mEngine->setPassword( getPassword() );
+		m_engine->setPassword( getPassword() );
 
-	QObject::connect(mEngine, SIGNAL(successfullyChangedNick(const QString &, const QString &)), this, SLOT(successfullyChangedNick(const QString &, const QString &)));
-	QObject::connect(mEngine, SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)), this, SLOT(slotNewPrivMessage(const QString &, const QString &, const QString &)));
-	QObject::connect(mEngine, SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
-	QObject::connect(mEngine, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
+	QObject::connect(m_engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)),
+			this, SLOT(successfullyChangedNick(const QString &, const QString &)));
 
-	mMySelf = findUser( mNickName );
+	m_contactManager = new IRCContactManager(mNickName, m_server, this);
+	m_mySelf = m_contactManager->mySelf();
+	m_myServer = m_contactManager->myServer();
+
 }
 
 IRCAccount::~IRCAccount()
 {
-	kdDebug(14120) << k_funcinfo << endl;
-	if ( engine()->state() != QSocket::Idle )
-		engine()->quitIRC( i18n("Plugin Unloaded") );
+//	kdDebug(14120) << k_funcinfo << mServer << " " << engine() << endl;
+	if ( engine()->isConnected() )
+		engine()->quitIRC(i18n("Plugin Unloaded"), true);
 
-	delete engine();
+	delete m_contactManager;
+	delete m_engine;
 }
 
 KActionMenu *IRCAccount::actionMenu()
 {
-	QString menuTitle = QString::fromLatin1( " %1 <%2> " ).arg( accountId() ).arg( mMySelf->onlineStatus().description() );
+	QString menuTitle = QString::fromLatin1( " %1 <%2> " ).arg( accountId() ).arg( m_mySelf->onlineStatus().description() );
 
 	KActionMenu *mActionMenu = new KActionMenu( accountId(), this );
-	mActionMenu->popupMenu()->insertTitle( mMySelf->onlineStatus().iconFor( mMySelf ), menuTitle, 1 );
-	mActionMenu->setIconSet( QIconSet ( mMySelf->onlineStatus().iconFor( mMySelf ) ) );
+	mActionMenu->popupMenu()->insertTitle( m_mySelf->onlineStatus().iconFor( m_mySelf ), menuTitle, 1 );
+	mActionMenu->setIconSet( QIconSet ( m_mySelf->onlineStatus().iconFor( m_mySelf ) ) );
 
-	mActionMenu->insert( new KAction ( i18n("Online"), IRCProtocol::IRCUserOnline().iconFor( mMySelf ), 0, this, SLOT(connect()), mActionMenu ) );
-	mActionMenu->insert( new KAction ( i18n("Away"), IRCProtocol::IRCUserAway().iconFor( mMySelf ), 0, this, SLOT(slotGoAway()), mActionMenu ) );
-	mActionMenu->insert( new KAction ( i18n("Offline"), IRCProtocol::IRCUserOffline().iconFor( mMySelf ), 0, this, SLOT(disconnect()), mActionMenu ) );
+	mActionMenu->insert( new KAction ( i18n("Online"), IRCProtocol::IRCUserOnline().iconFor( this ), 0, this, SLOT(connect()), mActionMenu ) );
+	mActionMenu->insert( new KAction ( i18n("Away"), IRCProtocol::IRCUserAway().iconFor( this ), 0, this, SLOT(slotGoAway()), mActionMenu ) );
+	mActionMenu->insert( new KAction ( i18n("Offline"), IRCProtocol::IRCUserOffline().iconFor( this ), 0, this, SLOT(disconnect()), mActionMenu ) );
 	mActionMenu->popupMenu()->insertSeparator();
 	mActionMenu->insert( new KAction ( i18n("Join Channel..."), "", 0, this, SLOT(slotJoinChannel()), mActionMenu ) );
+	mActionMenu->insert( new KAction ( i18n("Show Server Window"), "", 0, this, SLOT(slotShowServerWindow()), mActionMenu ) );
 
 	return mActionMenu;
 }
 
-void IRCAccount::slotNewPrivMessage(const QString &originating, const QString &, const QString &message)
-{
-	//kdDebug(14120) << k_funcinfo << "o:" << originating << "; t:" << target << endl;
-	KopeteContactPtrList others;
-	others.append( myself() );
-	IRCUserContact *c = findUser(  originating.section('!',0,0) );
-	KopeteMessage msg( (KopeteContact*)c, others, message, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat );
-	msg.setBody( mProtocol->parser()->parse( msg.escapedBody() ), KopeteMessage::RichText );
-	c->manager()->appendMessage(msg);
-}
-
 void IRCAccount::connect()
 {
-	if( engine()->isLoggedIn() )
+	if( m_engine->isConnected() )
 	{
 		if( isAway() )
 			setAway( false );
 	}
-	else
+	else if( m_engine->isDisconnected() )
 	{
-		mMySelf->setOnlineStatus( IRCProtocol::IRCUserConnecting() );
-		engine()->connectToServer( mMySelf->nickName() );
+		m_mySelf->setOnlineStatus( IRCProtocol::IRCUserConnecting() );
+		m_engine->connectToServer( m_mySelf->nickName() );
 	}
 }
 
 void IRCAccount::disconnect()
 {
-	engine()->quitIRC("Kopete IRC [http://kopete.kde.org]");
+	m_engine->quitIRC("Kopete IRC [http://kopete.kde.org]");
 }
 
 void IRCAccount::setAway( bool isAway, const QString &awayMessage )
 {
-	if( engine()->isLoggedIn() )
+	if(m_engine->isConnected())
 	{
 		if( isAway )
-			mySelf()->setOnlineStatus( IRCProtocol::IRCUserAway() );
+			m_mySelf->setOnlineStatus( IRCProtocol::IRCUserAway() );
 		else
-			mySelf()->setOnlineStatus( IRCProtocol::IRCUserOnline() );
+			m_mySelf->setOnlineStatus( IRCProtocol::IRCUserOnline() );
 		engine()->setAway( isAway, awayMessage );
 	}
 }
 
 void IRCAccount::slotGoAway()
 {
-	if( engine()->isLoggedIn() )
+	if(engine()->isConnected())
 	{
-		mySelf()->setOnlineStatus( IRCProtocol::IRCUserAway() );
+		m_mySelf->setOnlineStatus( IRCProtocol::IRCUserAway() );
 		engine()->setAway( true, KopeteAway::message() );
 	}
 }
 
-bool IRCAccount::isConnected()
+void IRCAccount::slotShowServerWindow()
 {
-	return (mMySelf->onlineStatus().status() == KopeteOnlineStatus::Online);
+	m_myServer->startServerChat();
 }
 
-IRCChannelContact *IRCAccount::findChannel(const QString &name, KopeteMetaContact *m  )
+bool IRCAccount::isConnected()
 {
-	if( !m )
-	{
-		m = new KopeteMetaContact();
-		m->setTemporary( true );
-	}
+	return (m_mySelf->onlineStatus().status() == KopeteOnlineStatus::Online);
+}
 
-	QString lowerName = name.lower();
-	IRCChannelContact *channel = 0L;
-	if ( !mChannels.contains( lowerName ) )
-	{
-		channel = new IRCChannelContact(this, name, m);
-		mChannels.insert( lowerName, channel );
-		if( mEngine->isLoggedIn() )
-			channel->setOnlineStatus( IRCProtocol::IRCChannelOnline() );
-		QObject::connect(channel, SIGNAL(contactDestroyed(KopeteContact *)), this,
-			SLOT(slotContactDestroyed(KopeteContact *)));
-	}
-	else
-	{
-		channel = mChannels[ lowerName ];
-//		kdDebug(14120) << k_funcinfo << lowerName << " conversations:" << channel->conversations() << endl;
-	}
+void IRCAccount::unregister(KopeteContact *contact)
+{
+	m_contactManager->unregister(contact);
+}
 
-	return channel;
+IRCServerContact *IRCAccount::findServer( const QString &name, KopeteMetaContact *m )
+{
+	return m_contactManager->findServer(name, m);
+}
+
+void IRCAccount::unregisterServer( const QString &name )
+{
+	m_contactManager->unregisterServer(name);
+}
+
+IRCChannelContact *IRCAccount::findChannel( const QString &name, KopeteMetaContact *m )
+{
+	return m_contactManager->findChannel(name, m);
 }
 
 void IRCAccount::unregisterChannel( const QString &name )
 {
-	QString lowerName = name.lower();
-	if( mChannels.contains( lowerName ) )
-	{
-		IRCChannelContact *channel = mChannels[lowerName];
-		if( !channel->isChatting() && channel->metaContact()->isTemporary() )
-		{
-			kdDebug(14120) << k_funcinfo << name << endl;
-			delete channel->metaContact();
-		}
-	}
+	m_contactManager->unregisterChannel(name);
 }
 
 IRCUserContact *IRCAccount::findUser(const QString &name, KopeteMetaContact *m)
 {
-	if( !m )
-	{
-		m = new KopeteMetaContact();
-		m->setTemporary( true );
-	}
-
-	QString lowerName = name.lower();
-	IRCUserContact *user = 0L;
-	if ( !mUsers.contains( lowerName ) )
-	{
-		user = new IRCUserContact(this, name, m);
-		mUsers.insert( lowerName, user );
-		QObject::connect(user, SIGNAL(contactDestroyed(KopeteContact *)), this,
-			SLOT(slotContactDestroyed(KopeteContact *)));
-	}
-	else
-	{
-		user = mUsers[ lowerName ];
-//		kdDebug(14120) << k_funcinfo << lowerName << " conversations:" << user->conversations() << endl;
-	}
-
-	return user;
+	return m_contactManager->findUser(name, m);
 }
 
 void IRCAccount::unregisterUser( const QString &name )
 {
-	QString lowerName = name.lower();
-	if( lowerName != mNickName.lower() && mUsers.contains( lowerName ) )
-	{
-		IRCUserContact *user = mUsers[lowerName];
-		if( !user->isChatting() && user->metaContact()->isTemporary() )
-		{
-			kdDebug(14120) << k_funcinfo << name << endl;
-			delete user->metaContact();
-		}
-	}
-}
-
-void IRCAccount::slotContactDestroyed(KopeteContact *contact)
-{
-	kdDebug(14120) << k_funcinfo << endl;
-	const QString nickname = static_cast<IRCContact*>( contact )->nickName().lower();
-
-	if ( nickname.startsWith( QString::fromLatin1("#") ) )
-		mChannels.remove( nickname );
-	else
-	{
-		mUsers.remove(nickname);
-		engine()->removeFromNotifyList( nickname );
-	}
-}
-
-void IRCAccount::slotConnectedToServer()
-{
-	kdDebug(14120) << k_funcinfo << endl;
-	mMySelf->setOnlineStatus( IRCProtocol::IRCUserOnline() );
-}
-
-void IRCAccount::slotConnectionClosed()
-{
-	kdDebug(14120) << k_funcinfo << endl;
-	mMySelf->setOnlineStatus( IRCProtocol::IRCUserOffline() );
+	m_contactManager->unregisterUser(name);
 }
 
 void IRCAccount::successfullyChangedNick(const QString &/*oldnick*/, const QString &newnick)
 {
 	kdDebug(14120) << k_funcinfo << "Changing nick to " << newnick << endl;
-	mMySelf->manager()->setDisplayName( mMySelf->caption() );
+	m_mySelf->manager()->setDisplayName( m_mySelf->caption() );
 
 	if( isConnected() )
-		engine()->changeNickname( newnick );
+		m_engine->changeNickname( newnick );
 }
 
 bool IRCAccount::addContactToMetaContact( const QString &contactId, const QString &displayName,
 	 KopeteMetaContact *m )
 {
+//	kdDebug(14120) << k_funcinfo << contactId << "|" << displayName << endl;
 	//FIXME: I think there are too many tests in this functions.  This fuction should be called ONLY by
 	// KopeteAccount::addContact, where all test are already done. Can a irc developer look at this?   -Olivier
 	IRCContact *c;
@@ -273,7 +201,7 @@ bool IRCAccount::addContactToMetaContact( const QString &contactId, const QStrin
 		c = static_cast<IRCContact*>( findChannel(contactId, m) );
 	else
 	{
-		engine()->addToNotifyList( contactId );
+		m_contactManager->addToNotifyList( contactId );
 		c = static_cast<IRCContact*>( findUser(contactId, m) );
 	}
 
@@ -305,6 +233,21 @@ void IRCAccount::slotJoinChannel()
 		else
 			KMessageBox::error(0l, i18n("<qt>\"%1\" is an invalid channel. Channels must start with '#'.</qt>").arg(chan), i18n("Kopete IRC Plugin"));
 	}
+}
+
+KopeteContact *IRCAccount::myself() const
+{
+	return m_mySelf;
+}
+
+IRCUserContact *IRCAccount::mySelf() const
+{
+	return m_mySelf;
+}
+
+IRCServerContact *IRCAccount::myServer() const
+{
+	return m_myServer;
 }
 
 #include "ircaccount.moc"

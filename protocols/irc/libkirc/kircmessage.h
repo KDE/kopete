@@ -31,11 +31,8 @@
 
 class KIRCMessage
 {
-protected:
-	KIRCMessage()
-			: m_ctcpMessage(0)
-		{}
 public:
+	KIRCMessage();
 	KIRCMessage(const KIRCMessage &obj);
 	KIRCMessage(const KIRCMessage *obj);
 
@@ -62,8 +59,13 @@ public:
 protected:
 	static KIRCMessage parse(const QString &line, bool *parseSuccess=0);
 
+	// low level quoting, message quoting
 	static QString quote(const QString &str);
 	static QString unquote(const QString &str);
+
+	// ctcp level quoting
+	static QString ctcpQuote(const QString &str);
+	static QString ctcpUnquote(const QString &str);
 
 protected:
 	static bool extractCtcpCommand(QString &str, QString &ctcpline);
@@ -100,15 +102,32 @@ public:
 		{ return *m_ctcpMessage; }
 
 protected:
+	/**
+	 * Contains the low level dequoted message.
+	 */
 	QCString m_raw;
 
+	/**
+	 * Contains the completely dequoted prefix.
+	 */
 	QString m_prefix;
+	/**
+	 * Contains the completely dequoted command.
+	 */
 	QString m_command;
+	/**
+	 * Contains the completely dequoted args.
+	 */
 	QStringList m_args;
+	/**
+	 * Contains the completely dequoted suffix.
+	 */
 	QString m_suffix;
 
-	// If it is a message contains the rawCtcpLine
-	// If it is a ctcp message contains the rawCtcpArgsLine
+	/**
+	 * If it is a message contains the completely dequoted rawCtcpLine.
+	 * If it is a ctcp message contains the completely dequoted rawCtcpArgsLine.
+	 */
 	QString m_ctcpRaw;
 
 	class KIRCMessage *m_ctcpMessage;

@@ -18,37 +18,38 @@
 #ifndef IRCACCOUNT_H
 #define IRCACCOUNT_H
 
-#include "kopeteaccount.h"
-
 #include <qstring.h>
 
-class IRCProtocol;
-class IRCChannelContact;
-class IRCUserContact;
+#include "kopeteaccount.h"
+
+class KAction;
+class KActionMenu;
+
 class KopeteMetaContact;
 class KopeteMessage;
 class KopeteContact;
 class KopeteMessageManager;
-class KIRC;
-class KAction;
-class KActionMenu;
 
-class IRCAccount : public KopeteAccount
+class KIRC;
+
+class IRCProtocol;
+class IRCContactManager;
+class IRCChannelContact;
+class IRCServerContact;
+class IRCUserContact;
+
+class IRCAccount
+	: public KopeteAccount
 {
 	Q_OBJECT
 
 public:
-	IRCAccount(const QString &accountid, const IRCProtocol *p);
+	IRCAccount(IRCProtocol *p, const QString &accountid);
 	~IRCAccount();
 
-	// Returns the KopeteContact of the user
-	IRCUserContact *mySelf() { return mMySelf; }
+	void unregister(KopeteContact *);
 
-	// Returns the KIRC engine instance
-	KIRC *engine() { return mEngine; }
-
-	// Returns the IRCProtocol instance for contacts
-	const IRCProtocol *protocol() { return mProtocol; }
+	IRCServerContact *findServer(const QString &name, KopeteMetaContact *m = 0L);
 
 	/**
 	 * Attempts to find a IRCChannelContact with the specified name in
@@ -70,6 +71,8 @@ public:
 	 */
 	IRCUserContact *findUser(const QString &name, KopeteMetaContact *m = 0L);
 
+	void unregisterServer(const QString &name);
+
 	/**
 	 * Unregisters a channel contact. This function checks the channels conversation
 	 * count (the number of conversations it is taking part in), and if it is 0, it deletes the
@@ -88,8 +91,6 @@ public:
 
 	virtual KActionMenu *actionMenu();
 
-	virtual KopeteContact *myself() const { return (KopeteContact*)mMySelf; }
-
 	virtual void setAway( bool isAway, const QString &awayMessage = QString::null );
 
 	virtual bool isConnected();
@@ -103,23 +104,44 @@ public slots:
 	virtual void disconnect();
 
 private slots:
-	void slotConnectedToServer();
-	void slotConnectionClosed();
-	void slotNewPrivMessage(const QString &originating, const QString &target, const QString &message);
-	void slotContactDestroyed(KopeteContact *);
 	void slotGoAway();
 	void slotJoinChannel();
+	void slotShowServerWindow();
+
+public:
+	// Returns the KIRC engine instance
+	KIRC *engine() const
+		{ return m_engine; }
+
+	// Returns the IRCProtocol instance for contacts
+	IRCProtocol *protocol() const
+		{ return m_protocol; }
+
+	IRCContactManager *contactManager() const
+		{ return m_contactManager; }
+
+	virtual KopeteContact *myself() const;
+
+	// Returns the KopeteContact of the user
+	IRCUserContact *mySelf() const;
+
+	// Returns the KopeteContact of the server of the user
+	IRCServerContact *myServer() const;
 
 private:
-	const IRCProtocol *mProtocol;
-	KopeteMessageManager *mManager;
+	IRCProtocol *m_protocol;
+	KopeteMessageManager *m_manager;
+
 	QString mNickName;
-	QString mServer;
-	uint mPort;
-	IRCUserContact *mMySelf;
-	KIRC *mEngine;
-	QMap<QString, IRCChannelContact * > mChannels;
-	QMap<QString, IRCUserContact * > mUsers;
+
+	QString m_server;
+	uint m_port;
+
+	KIRC *m_engine;
+
+	IRCContactManager *m_contactManager;
+	IRCServerContact *m_myServer;
+	IRCUserContact *m_mySelf;
 };
 
 #endif

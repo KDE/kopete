@@ -15,78 +15,74 @@
     *************************************************************************
 */
 
-#include "ircusercontact.h"
-#include "ircchannelcontact.h"
-#include "ircaccount.h"
-#include "ircprotocol.h"
-
-
 #include <kdebug.h>
 #include <klocale.h>
 #include <kaction.h>
 #include <qtimer.h>
 
-IRCUserContact::IRCUserContact(IRCAccount *account, const QString &nickname, KopeteMetaContact *m)
-	: IRCContact( account, nickname, m )
+#include "ircusercontact.h"
+#include "ircchannelcontact.h"
+#include "ircaccount.h"
+#include "ircprotocol.h"
+#include "ksparser.h"
+
+IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString &nickname, KopeteMetaContact *m)
+	: IRCContact(contactManager, nickname, m, QString::fromLatin1("irc_contact_user_")+nickname)
 {
-	mNickName = nickname;
+	m_nickName = nickname;
 
 	mOnlineTimer = new QTimer( this );
-	connect( mOnlineTimer, SIGNAL(timeout()), this, SLOT( slotUserOffline() ) );
 
-	QObject::connect(account->engine(), SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
-	QObject::connect(account->engine(), SIGNAL(userOnline( const QString & )), this, SLOT(slotUserOnline(const QString &)));
+	QObject::connect(m_engine, SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)),
+		this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
+	QObject::connect(m_engine, SIGNAL(userOnline( const QString & )),
+		this, SLOT(slotUserOnline(const QString &)));
 
-	isConnected = false;
-
-	setOnlineStatus( IRCProtocol::IRCUserOffline() );
+	updateStatus();
 }
 
-KopeteMessageManager* IRCUserContact::manager(bool)
+void IRCUserContact::updateStatus()
 {
-	if (!mMsgManager)
+	KIRC::EngineStatus status = m_engine->status();
+	KopeteOnlineStatus kopeteStatus;
+	switch( status )
 	{
-		kdDebug(14120) << k_funcinfo << "Creating new KMM for " << mNickName << endl;
-
-		mMsgManager = KopeteMessageManagerFactory::factory()->create( mAccount->myself(), mMyself, (KopeteProtocol *)mAccount->protocol());
-		mMsgManager->setDisplayName( caption() );
-		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
-		QObject::connect( mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
-		isConnected = true;
+	case KIRC::Disconnected:
+		kopeteStatus = IRCProtocol::IRCUserOffline();
+		break;
+	case KIRC::Connecting:
+	case KIRC::Authentifying:
+		kopeteStatus = IRCProtocol::IRCUserConnecting();
+		break;
+	case KIRC::Connected:
+	case KIRC::Closing:
+		// FIXME: should make some extra check here
+		kopeteStatus = IRCProtocol::IRCUserOnline();
+		break;
+	default:
+		kopeteStatus = IRCProtocol::IRCUnknown();
 	}
-	return mMsgManager;
-}
-
-void IRCUserContact::slotMessageManagerDestroyed()
-{
-	mAccount->unregisterUser( mNickName );
-	mMsgManager = 0L;
-	isConnected = false;
+	setOnlineStatus( kopeteStatus );
 }
 
 void IRCUserContact::slotUserOnline( const QString &nick )
 {
-	if( nick.lower() == mNickName.lower() )
+	if( nick.lower() == m_nickName.lower() )
 	{
 		setOnlineStatus( IRCProtocol::IRCUserOnline() );
 		mOnlineTimer->start( 60000, true );
 	}
 }
 
-void IRCUserContact::slotUserOffline()
-{
-	setOnlineStatus( IRCProtocol::IRCUserOffline() );
-}
-
 void IRCUserContact::slotUserInfo()
 {
 	if( isChatting() )
-		mEngine->whoisUser( mNickName );
+		m_engine->whoisUser( m_nickName );
 }
 
 const QString IRCUserContact::caption() const
 {
-	return i18n("%1 @ %2").arg(mNickName).arg(mEngine->host());
+	return i18n("%1 @ %2").arg(m_nickName).arg(m_engine->host());
 }
 
 void IRCUserContact::slotOp()
@@ -153,12 +149,12 @@ void IRCUserContact::contactMode( const QString & /* mode */ )
 
 void IRCUserContact::slotCtcpPing()
 {
-	mEngine->sendCtcpPing(mNickName);
+	m_engine->sendCtcpPing(m_nickName);
 }
 
 void IRCUserContact::slotCtcpVersion()
 {
-	mEngine->sendCtcpVersion(mNickName);
+	m_engine->sendCtcpVersion(m_nickName);
 }
 
 KActionCollection *IRCUserContact::customContextMenuActions()
@@ -196,12 +192,12 @@ KActionCollection *IRCUserContact::customContextMenuActions()
 
 void IRCUserContact::slotIncomingModeChange( const QString &, const QString &channel, const QString &mode )
 {
-	IRCChannelContact *chan = mAccount->findChannel( channel );
-	if( chan->locateUser( mNickName ) )
+	IRCChannelContact *chan = m_account->findChannel( channel );
+	if( chan->locateUser( m_nickName ) )
 	{
 		QString user = mode.section(' ', 1, 1);
-		kdDebug(14120) << k_funcinfo << user << ", " << mNickName << endl;
-		if( user == mNickName )
+		kdDebug(14120) << k_funcinfo << user << ", " << m_nickName << endl;
+		if( user == m_nickName )
 		{
 			QString modeChange = mode.section(' ', 0, 0);
 			if(modeChange == QString::fromLatin1("+o"))
@@ -212,6 +208,42 @@ void IRCUserContact::slotIncomingModeChange( const QString &, const QString &cha
 				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserVoice() );
 			else if(modeChange == QString::fromLatin1("-v"))
 				chan->manager()->setContactOnlineStatus( static_cast<const KopeteContact*>(this), IRCProtocol::IRCUserOnline() );
+		}
+	}
+}
+
+void IRCUserContact::privateMessage(IRCContact *from, IRCContact *to, const QString &message)
+{
+	if(to == this)
+	{
+		if(to==account()->myself())
+		{
+			KopeteMessage msg(from, from->manager()->members(), message, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat);
+			msg.setBody( m_account->protocol()->parser()->parse( msg.escapedBody() ), KopeteMessage::RichText );
+			from->appendMessage(msg);
+		}
+		else
+		{
+			kdDebug(14120) << "IRC Server error: Received a private message for " << to->nickName() << ":" << message << endl;
+			// emit/call something on main ircservercontact
+		}
+	}
+}
+
+void IRCUserContact::action(IRCContact *from, IRCContact *to, const QString &action)
+{
+	if(to == this)
+	{
+		if(to==account()->myself())
+		{
+			KopeteMessage msg(from, from->manager()->members(), action, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat);
+			msg.setBody( m_account->protocol()->parser()->parse( msg.escapedBody() ), KopeteMessage::RichText );
+			from->appendMessage(msg);
+		}
+		else
+		{
+			kdDebug(14120) << "IRC Server error: Received an action message for " << to->nickName() << ":" << action << endl;
+			// emit/call something on main ircservercontact
 		}
 	}
 }

@@ -15,80 +15,93 @@
     *************************************************************************
 */
 
-#include "ircchannelcontact.h"
-#include "ircusercontact.h"
-#include "ircaccount.h"
-#include "ircprotocol.h"
-
-#include "kopeteview.h"
-#include "kopetestdaction.h"
+#include <qtimer.h>
 
 #include <kdebug.h>
 #include <klineeditdlg.h>
 #include <kapplication.h>
 #include <kaboutdata.h>
-#include <qtimer.h>
 
-IRCChannelContact::IRCChannelContact(IRCAccount *account, const QString &channel, KopeteMetaContact *metac) :
-		IRCContact( account, channel, metac, QString::fromLatin1( "irc_channel" ) )
+#include "kopeteview.h"
+#include "kopetestdaction.h"
+
+#include "irccontactmanager.h"
+#include "ircchannelcontact.h"
+#include "ircusercontact.h"
+#include "ircaccount.h"
+#include "ircprotocol.h"
+#include "ksparser.h"
+
+IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QString &channel, KopeteMetaContact *metac)
+	: IRCContact( contactManager, channel, metac, QString::fromLatin1("irc_contact_channel_")+channel )
 {
-	// Variable assignments
-	mNickName = channel;
-
 	// KIRC Engine stuff
-	QObject::connect(account->engine(), SIGNAL(userJoinedChannel(const QString &, const QString &)), this, SLOT(slotUserJoinedChannel(const QString &, const QString &)));
-	QObject::connect(account->engine(), SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), this, SLOT(slotUserPartedChannel(const QString &, const QString &, const QString &)));
-	QObject::connect(account->engine(), SIGNAL(incomingNamesList(const QString &, const QStringList &)), this, SLOT(slotNamesList(const QString &, const QStringList &)));
-	QObject::connect(account->engine(), SIGNAL(incomingExistingTopic(const QString &, const QString &)), this, SLOT( slotChannelTopic(const QString&, const QString &)));
-	QObject::connect(account->engine(), SIGNAL(incomingTopicChange(const QString &, const QString &, const QString &)), this, SLOT( slotTopicChanged(const QString&,const QString&,const QString&)));
-	QObject::connect(account->engine(), SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
-	QObject::connect(account->engine(), SIGNAL(incomingChannelMode(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingChannelMode(const QString&,const QString&, const QString&)));
-	QObject::connect(account->engine(), SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
+	QObject::connect(m_engine, SIGNAL(userJoinedChannel(const QString &, const QString &)),
+		this, SLOT(slotUserJoinedChannel(const QString &, const QString &)));
+	QObject::connect(m_engine, SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)),
+		this, SLOT(slotUserPartedChannel(const QString &, const QString &, const QString &)));
+	QObject::connect(m_engine, SIGNAL(incomingNamesList(const QString &, const QStringList &)),
+		this, SLOT(slotNamesList(const QString &, const QStringList &)));
+	QObject::connect(m_engine, SIGNAL(incomingExistingTopic(const QString &, const QString &)),
+		this, SLOT(slotChannelTopic(const QString&, const QString &)));
+	QObject::connect(m_engine, SIGNAL(incomingTopicChange(const QString &, const QString &, const QString &)),
+		this, SLOT(slotTopicChanged(const QString&,const QString&,const QString&)));
+	QObject::connect(m_engine, SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)),
+		this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
+	QObject::connect(m_engine, SIGNAL(incomingChannelMode(const QString&, const QString&, const QString&)),
+		this, SLOT(slotIncomingChannelMode(const QString&,const QString&, const QString&)));
+	QObject::connect(m_engine, SIGNAL(connectedToServer()),
+		this, SLOT(slotConnectedToServer()));
 
-	isConnected = false;
-
-	setOnlineStatus( IRCProtocol::IRCChannelOffline() );
+	updateStatus();
 }
 
 IRCChannelContact::~IRCChannelContact()
 {
 }
 
-KopeteMessageManager* IRCChannelContact::manager(bool)
+void IRCChannelContact::updateStatus()
 {
-	if( !mEngine->isLoggedIn() )
-		mAccount->connect();
+	kdDebug(14120) << k_funcinfo << "for:" << m_nickName << endl;
 
-	if ( !mMsgManager && mEngine->isLoggedIn() )
+	KIRC::EngineStatus status = m_engine->status();
+	KopeteOnlineStatus kopeteStatus;
+	switch( status )
 	{
-		mMsgManager = KopeteMessageManagerFactory::factory()->create( mAccount->myself(), mMyself, (KopeteProtocol *)mAccount->protocol());
-		mMsgManager->setDisplayName( caption() );
-		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
-		QObject::connect( mMsgManager, SIGNAL(closing(KopeteMessageManager*)), this, SLOT(slotMessageManagerDestroyed()));
-		isConnected = true;
-		QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL(viewCreated(KopeteView*)),this, SLOT( slotJoinChannel(KopeteView*) ) );
+	case KIRC::Disconnected:
+	case KIRC::Connecting:
+	case KIRC::Authentifying:
+		kopeteStatus = IRCProtocol::IRCChannelOffline();
+		break;
+	case KIRC::Connected:
+	case KIRC::Closing:
+		kopeteStatus = IRCProtocol::IRCChannelOnline();
+		break;
+	default:
+		kopeteStatus = IRCProtocol::IRCUnknown();
 	}
-	return mMsgManager;
+	setOnlineStatus( kopeteStatus );
 }
 
-void IRCChannelContact::slotMessageManagerDestroyed()
+void IRCChannelContact::messageManagerDestroyed()
 {
-	KopeteContactPtrList contacts = mMsgManager->members();
-	for( KopeteContact *c = contacts.first(); c; c = contacts.next() )
-		mAccount->unregisterUser( static_cast<IRCContact*>(c)->nickName() );
+	kdDebug(14120) << k_funcinfo << "for:" << m_nickName << endl;
+	if(manager(false))
+	{
+		slotPart();
+		KopeteContactPtrList contacts = manager()->members();
+		for( KopeteContact *c = contacts.first(); c; c = contacts.next() )
+			m_account->contactManager()->unregisterUser(c);
+	}
 
-	mAccount->unregisterChannel( mNickName );
-	slotPart();
-	isConnected = false;
-	mMsgManager = 0L;
+	IRCContact::messageManagerDestroyed();
 }
 
 void IRCChannelContact::slotJoinChannel( KopeteView *view )
 {
-	if( view->msgManager() == mMsgManager )
+	if( view->msgManager() == manager(false) )
 	{
-		mEngine->joinChannel(mNickName);
-		QObject::disconnect( KopeteMessageManagerFactory::factory(), SIGNAL(viewCreated(KopeteView*)),this, SLOT( slotJoinChannel(KopeteView*) ) );
+		m_engine->joinChannel(m_nickName);
 	}
 }
 
@@ -100,7 +113,7 @@ void IRCChannelContact::slotConnectedToServer()
 
 void IRCChannelContact::slotNamesList(const QString &channel, const QStringList &nicknames)
 {
-	if ( isConnected && channel.lower() == mNickName.lower() )
+	if ( m_isConnected && channel.lower() == m_nickName.lower() )
 	{
 		kdDebug(14120) << k_funcinfo << "Names List:" << channel << endl;
 
@@ -112,19 +125,19 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QStringList 
 
 void IRCChannelContact::slotAddNicknames()
 {
-	if( !isConnected || mJoinedNicks.isEmpty() )
+	if( !m_isConnected || mJoinedNicks.isEmpty() )
 		return;
 
 	QString nickToAdd = mJoinedNicks.front();
 	mJoinedNicks.pop_front();
 
-	if (nickToAdd.lower() != mNickName.lower())
+	if (nickToAdd.lower() != m_nickName.lower())
 	{
 		QChar firstChar = nickToAdd[0];
 		if( firstChar == '@' || firstChar == '+' )
 			nickToAdd = nickToAdd.remove(0, 1);
 
-		IRCContact *user = mAccount->findUser( nickToAdd );
+		IRCContact *user = m_account->findUser( nickToAdd );
 		user->setOnlineStatus( IRCProtocol::IRCUserOnline() );
 
 		if ( firstChar == '@' )
@@ -139,11 +152,11 @@ void IRCChannelContact::slotAddNicknames()
 
 void IRCChannelContact::slotChannelTopic(const QString &channel, const QString &topic)
 {
-	if( isConnected && mNickName.lower() == channel.lower() )
+	if( m_isConnected && m_nickName.lower() == channel.lower() )
 	{
 		mTopic = topic;
 		manager()->setDisplayName( caption() );
-		KopeteMessage msg((KopeteContact*)this, mMyself, i18n("Topic for %1 is %2").arg(mNickName).arg(mTopic), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+		KopeteMessage msg((KopeteContact*)this, mMyself, i18n("Topic for %1 is %2").arg(m_nickName).arg(mTopic), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 		msg.setImportance( KopeteMessage::Low); //set the importance manualy to low
 		manager()->appendMessage(msg);
 	}
@@ -151,27 +164,28 @@ void IRCChannelContact::slotChannelTopic(const QString &channel, const QString &
 
 void IRCChannelContact::slotJoin()
 {
-	if ( !isConnected && onlineStatus().status() == KopeteOnlineStatus::Online )
+	if ( !m_isConnected && onlineStatus().status() == KopeteOnlineStatus::Online )
 		execute();
 }
 
 void IRCChannelContact::slotPart()
 {
-	if( isConnected )
-		mEngine->partChannel(mNickName, QString("Kopete %1 : http://kopete.kde.org").arg(kapp->aboutData()->version()) );
+	kdDebug(14120) << k_funcinfo << "Part channel:" << m_nickName << endl;
+	if( m_isConnected )
+		m_engine->partChannel(m_nickName, QString("Kopete %1 : http://kopete.kde.org").arg(kapp->aboutData()->version()));
 }
 
 void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString &channel)
 {
-	if( isConnected && (channel.lower() == mNickName.lower()) )
+	if( m_isConnected && (channel.lower() == m_nickName.lower()) )
 	{
 		QString nickname = user.section('!', 0, 0);
-		if ( nickname.lower() == mEngine->nickName().lower() )
+		if ( nickname.lower() == m_engine->nickName().lower() )
 		{
-			KopeteMessage msg((KopeteContact *)this, mMyself, i18n("You have joined channel %1").arg(mNickName),
+			KopeteMessage msg((KopeteContact *)this, mMyself, i18n("You have joined channel %1").arg(m_nickName),
 					KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 			msg.setImportance( KopeteMessage::Low); //set the importance manualy to low
-			manager()->appendMessage(msg);
+			appendMessage(msg);
 			while( !messageQueue.isEmpty() )
 			{
 				slotSendMsg( messageQueue.front(), manager() );
@@ -181,10 +195,10 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 		}
 		else
 		{
-			IRCUserContact *contact = mAccount->findUser( nickname );
+			IRCUserContact *contact = m_account->findUser( nickname );
 			contact->setOnlineStatus( IRCProtocol::IRCUserOnline() );
 			manager()->addContact((KopeteContact *)contact, true);
-			KopeteMessage msg((KopeteContact *)this, mMyself, i18n("User <b>%1</b> [%2] joined channel %3").arg(nickname).arg(user.section('!', 1)).arg(mNickName), KopeteMessage::Internal, KopeteMessage::RichText, KopeteMessage::Chat);
+			KopeteMessage msg((KopeteContact *)this, mMyself, i18n("User <b>%1</b> [%2] joined channel %3").arg(nickname).arg(user.section('!', 1)).arg(m_nickName), KopeteMessage::Internal, KopeteMessage::RichText, KopeteMessage::Chat);
 			msg.setImportance( KopeteMessage::Low); //set the importance manualy to low
 			manager()->appendMessage(msg);
 		}
@@ -194,20 +208,20 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString &channel, const QString &reason)
 {
 	QString nickname = user.section('!', 0, 0);
-	if ( isConnected && channel.lower() == mNickName.lower() && nickname.lower() != mEngine->nickName().lower() )
+	if ( m_isConnected && channel.lower() == m_nickName.lower() && nickname.lower() != m_engine->nickName().lower() )
 	{
 		KopeteContact *c = locateUser( nickname );
 		if ( c )
 		{
 			manager()->removeContact( c, reason );
-			mAccount->unregisterUser( nickname );
+			m_account->unregisterUser( nickname );
 		}
 	}
 }
 
-void IRCChannelContact::setTopic( const QString &topic )
+void IRCChannelContact::setTopic(const QString &topic)
 {
-	if ( isConnected )
+	if ( m_isConnected )
 	{
 		bool okPressed = true;
 		QString newTopic = topic;
@@ -217,30 +231,31 @@ void IRCChannelContact::setTopic( const QString &topic )
 		if( okPressed )
 		{
 			mTopic = newTopic;
-			mEngine->setTopic( mNickName, newTopic );
+			m_engine->setTopic( m_nickName, newTopic );
 		}
 	}
 }
 
-void IRCChannelContact::slotTopicChanged( const QString &channel, const QString &nick, const QString &newtopic )
+void IRCChannelContact::slotTopicChanged(const QString &channel, const QString &nick, const QString &newtopic)
 {
-	if( isConnected && mNickName.lower() == channel.lower() )
+	if( m_isConnected && m_nickName.lower() == channel.lower() )
 	{
 		mTopic = newtopic;
-		mMsgManager->setDisplayName( caption() );
+		manager()->setDisplayName( caption() );
 		KopeteMessage msg((KopeteContact *)this, mMyself, i18n("%1 has changed the topic to %2").arg(nick).arg(newtopic), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		msg.setImportance( KopeteMessage::Low); //set the importance manualy to low
-		manager()->appendMessage(msg);
+		msg.setImportance(KopeteMessage::Low); //set the importance manualy to low
+		appendMessage(msg);
 	}
 }
 
 void IRCChannelContact::slotIncomingModeChange( const QString &nick, const QString &channel, const QString &mode )
 {
-	if( isConnected && mNickName.lower() == channel.lower() )
+	if( m_isConnected && m_nickName.lower() == channel.lower() )
 	{
-		KopeteMessage msg((KopeteContact *)this, mMyself, i18n("%1 sets mode %2 %3").arg(nick).arg(mode).arg(mNickName), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+		KopeteMessage msg((KopeteContact *)this, mMyself, i18n("%1 sets mode %2 %3").arg(nick).arg(mode).arg(m_nickName), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 		msg.setImportance( KopeteMessage::Low); //set the importance manualy to low
-		manager()->appendMessage(msg);
+		appendMessage(msg);
+
 		bool inParams = false;
 		bool modeEnabled = false;
 		QString params = QString::null;
@@ -272,7 +287,7 @@ void IRCChannelContact::slotIncomingModeChange( const QString &nick, const QStri
 
 void IRCChannelContact::slotIncomingChannelMode( const QString &channel, const QString &mode, const QString &params )
 {
-	if( isConnected && channel.lower() == mNickName.lower() )
+	if( m_isConnected && channel.lower() == m_nickName.lower() )
 	{
 		kdDebug(14120) << k_funcinfo << channel << " : " << mode << " : " << params << endl;
 		for( uint i=1; i < mode.length(); i++ )
@@ -285,8 +300,8 @@ void IRCChannelContact::slotIncomingChannelMode( const QString &channel, const Q
 
 void IRCChannelContact::setMode( const QString &mode )
 {
-	if( isConnected )
-		mEngine->changeMode( mNickName, mode );
+	if( m_isConnected )
+		m_engine->changeMode( m_nickName, mode );
 }
 
 void IRCChannelContact::slotModeChanged()
@@ -300,7 +315,7 @@ void IRCChannelContact::slotModeChanged()
 
 void IRCChannelContact::toggleMode( QChar mode, bool enabled, bool update )
 {
-	if( isConnected )
+	if( m_isConnected )
 	{
 		/*switch( mode )
 		{
@@ -365,12 +380,12 @@ KActionCollection *IRCChannelContact::customContextMenuActions()
 	actionModeMenu->insert( actionModeI );
 	actionModeMenu->setEnabled( true );
 
-	bool isOperator = isConnected && ( manager()->contactOnlineStatus( mAccount->mySelf() ) == IRCProtocol::IRCUserOp() );
+	bool isOperator = m_isConnected && ( manager()->contactOnlineStatus( m_account->myself() ) == IRCProtocol::IRCUserOp() );
 
-	actionJoin->setEnabled( !isConnected );
-	actionPart->setEnabled( isConnected );
+	actionJoin->setEnabled( !m_isConnected );
+	actionPart->setEnabled( m_isConnected );
 
-	actionTopic->setEnabled( isConnected && ( !modeEnabled('t') || isOperator ) );
+	actionTopic->setEnabled( m_isConnected && ( !modeEnabled('t') || isOperator ) );
 
 	actionModeT->setEnabled(isOperator);
 	actionModeN->setEnabled(isOperator);
@@ -384,9 +399,9 @@ KActionCollection *IRCChannelContact::customContextMenuActions()
 const QString IRCChannelContact::caption() const
 {
 	QString cap;
-	if ( isConnected )
+	if ( m_isConnected )
 	{
-		cap = QString::fromLatin1("%1 @ %2").arg(mNickName).arg(mEngine->host());
+		cap = QString::fromLatin1("%1 @ %2").arg(m_nickName).arg(m_engine->host());
 		if( !mTopic.isNull() && !mTopic.isEmpty() )
 			cap.append( QString::fromLatin1(" - %1").arg(mTopic) );
 	}
@@ -394,6 +409,26 @@ const QString IRCChannelContact::caption() const
 		cap = QString::null;
 
 	return cap;
+}
+
+void IRCChannelContact::privateMessage(IRCContact *from, IRCContact *to, const QString &message)
+{
+	if(to == this)
+	{
+		KopeteMessage msg(from, manager()->members(), message, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat);
+		msg.setBody( m_account->protocol()->parser()->parse( msg.escapedBody() ), KopeteMessage::RichText );
+		/*to->*/appendMessage(msg);
+	}
+}
+
+void IRCChannelContact::action(IRCContact *from, IRCContact *to, const QString &action)
+{
+	if(to == this)
+	{
+		KopeteMessage msg(from, manager()->members(), action, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat);
+		msg.setBody( m_account->protocol()->parser()->parse( msg.escapedBody() ), KopeteMessage::RichText );
+		/*to->*/appendMessage(msg);
+	}
 }
 
 #include "ircchannelcontact.moc"

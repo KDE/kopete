@@ -23,18 +23,22 @@
 
 #ifndef _IRC_STRICTNESS_
 const QRegExp KIRCMessage::m_IRCCommandType1(QString::fromLatin1(
-	"^(?::([^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*)*) ?(?: :([^\\r\\n]*))?\\r\\n$"));
+	"^(?::([^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*)*) ?(?: :(.*))?$"));
 	// Extra end arg space check -------------------------^
-	// Buggy here --------------------------------------------------^
 #else // _IRC_STRICTNESS_
 const QRegExp KIRCMessage::m_IRCCommandType1(QString::fromLatin1(
-	"^(?::([^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*){0,14})(?: :([^\\r\\n]*))?\\r\\n$"));
+	"^(?::([^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*){0,13})(?: :(.*))?$"));
 const QRegExp KIRCMessage::m_IRCCommandType2(QString::fromLatin1(
-	"^(?::[[^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*){14,14})(?: ([^\\r\\n])*)?\\r\\n$"));
+	"^(?::[[^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*){14,14})(?: (.*))?$"));
 #endif // _IRC_STRICTNESS_
 
 const QRegExp KIRCMessage::m_IRCNumericCommand(QString::fromLatin1("^\\d{3,3}$"));
 
+
+KIRCMessage::KIRCMessage()
+	: m_ctcpMessage(0)
+{
+}
 
 KIRCMessage::KIRCMessage(const KIRCMessage &obj)
 	: m_ctcpMessage(0)
@@ -87,7 +91,7 @@ KIRCMessage KIRCMessage::writeString(QIODevice *dev, const QString &str, QTextCo
 	kdDebug(14121) << ">> " << s;
 	// FIXME: Should check the amount of data really writen.
 	dev->writeBlock(s.data(), s.length());
-	return parse(txt);
+	return parse(str);
 }
 
 KIRCMessage KIRCMessage::writeMessage(QIODevice *dev,
@@ -98,7 +102,9 @@ KIRCMessage KIRCMessage::writeMessage(QIODevice *dev,
 	for (QStringList::ConstIterator it = args.begin(); it != args.end(); ++it)
 		msg += QChar(' ') + *it;
 	if (!suffix.isNull())
-		msg += QString::fromLatin1(" :") + quote(suffix);
+		msg += QString::fromLatin1(" :") + suffix;
+
+	msg = quote(ctcpQuote(msg));
 
 	return writeString(dev, msg, codec);
 }
@@ -111,7 +117,9 @@ KIRCMessage KIRCMessage::writeMessage(QIODevice *dev,
 	if (!arg.isNull())
 		msg += QChar(' ') + arg;
 	if (!suffix.isNull())
-		msg += QString::fromLatin1(" :") + quote(suffix);
+		msg += QString::fromLatin1(" :") + suffix;
+
+	msg = quote(ctcpQuote(msg));
 
 	return writeString(dev, msg, codec);
 }
@@ -121,16 +129,20 @@ KIRCMessage KIRCMessage::writeCtcpMessage(QIODevice *dev,
 		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix,
 		QTextCodec *codec)
 {
-	QString ctcpMessage = ctcpCommand;
-	for (QStringList::ConstIterator it = ctcpArgs.begin(); it != ctcpArgs.end(); ++it)
-		ctcpMessage += QChar(' ') + *it;
-	if (!ctcpSuffix.isNull())
-		ctcpMessage += QChar(' ') + ctcpSuffix;
-	if (!ctcpSuffix.isNull())
-		ctcpMessage += QString::fromLatin1(" :") + ctcpSuffix;
+	QString msg = command+QChar(' ')+getNickFromPrefix(to)+QString::fromLatin1(" :");
+	if (!suffix.isNull())
+		msg += suffix;
+	msg = ctcpQuote(msg);
 
-	return writeMessage(	dev, command, getNickFromPrefix(to),
-				suffix + QChar(0x01) + quote(ctcpMessage) + QChar(0x01), codec);
+	QString ctcpMsg = ctcpCommand;
+	for (QStringList::ConstIterator it = ctcpArgs.begin(); it != ctcpArgs.end(); ++it)
+		ctcpMsg += QChar(' ') + *it;
+	if (!ctcpSuffix.isNull())
+		ctcpMsg += QString::fromLatin1(" :") + ctcpSuffix;
+	ctcpMsg = ctcpQuote(ctcpMsg);
+
+	msg = quote(msg + QChar(0x01) + ctcpMsg + QChar(0x01));
+	return writeString(dev, msg, codec);
 }
 
 // if codec==0 => autodetect
@@ -147,8 +159,8 @@ KIRCMessage KIRCMessage::parse(KBufferedIO *dev, bool *parseSuccess, QTextCodec 
 		if (length > -1)
 		{
 			raw.resize(length);
-			raw = unquote(raw);
-			kdDebug(14121) << "<< " << raw; //endl already included
+			raw.replace("\r\n",""); //remove the trailling \r\n if any(there must be in fact)
+			kdDebug(14121) << "<< " << raw << endl;
 
 			QTextCodec *_codec = codec?codec:QTextCodec::codecForContent(raw.data(), raw.length());
 
@@ -172,26 +184,33 @@ KIRCMessage KIRCMessage::parse(const QString &line, bool *parseSuccess)
 	KIRCMessage msg;
 
 	if(parseSuccess) *parseSuccess=false;
-	if(matchForIRCRegExp(line,msg))
+	msg.m_raw = unquote(line);
+	if(matchForIRCRegExp(msg.m_raw, msg))
 	{
+		msg.m_prefix = ctcpUnquote(msg.m_prefix);
+		msg.m_command = ctcpUnquote(msg.m_command);
+		for (QStringList::Iterator it = msg.m_args.begin(); it != msg.m_args.end(); ++it)
+			(*it) = ctcpUnquote(*it);
+
 		if(extractCtcpCommand(msg.m_suffix, msg.m_ctcpRaw))
 		{
-			msg.m_raw = unquote(msg.m_ctcpRaw);
+			msg.m_ctcpRaw = ctcpUnquote(msg.m_ctcpRaw);
 			kdDebug(14121) << "Found CTCP command:\"" << msg.m_ctcpRaw << "\"" << endl;
 			msg.m_ctcpMessage = new KIRCMessage();
-			QString tmpCtcpLine = msg.m_ctcpRaw + QString::fromLatin1("\r\n");
-			msg.m_ctcpMessage->m_raw = tmpCtcpLine.latin1();
-			if(!matchForIRCRegExp(tmpCtcpLine, *msg.m_ctcpMessage))
+			msg.m_ctcpMessage->m_raw = msg.m_ctcpRaw;
+			if(!matchForIRCRegExp(msg.m_ctcpRaw, *msg.m_ctcpMessage))
 			{
 				msg.m_ctcpMessage->m_command = msg.m_ctcpRaw.section(' ', 0, 0).upper();
 			}
 			msg.m_ctcpMessage->m_ctcpRaw = msg.m_ctcpRaw.section(' ', 1);
 		}
+		msg.m_suffix = ctcpUnquote(msg.m_suffix);
+
 		if(parseSuccess) *parseSuccess=true;
 	}
 	else
 	{
-		KMessageBox::error(0, "\"" + line + "\"", "Unmatched line");
+//		KMessageBox::error(0, "\"" + line + "\"", "Unmatched line");
 		kdDebug(14120) << "Unmatched line:\"" << line << "\"" << endl;
 	}
 	return msg;
@@ -200,25 +219,40 @@ KIRCMessage KIRCMessage::parse(const QString &line, bool *parseSuccess)
 QString KIRCMessage::quote(const QString &str)
 {
 	QString tmp = str;
-	tmp.replace( QChar('\\'), QString::fromLatin1("\\\\") );
-	tmp.replace( QChar('\0'), QString::fromLatin1("\\0") );
-	tmp.replace( QChar((uchar)0x01), QString::fromLatin1("\\1") );
-	tmp.replace( QChar('\n'), QString::fromLatin1("\\n") );
-	tmp.replace( QChar('\r'), QString::fromLatin1("\\r") );
-//	tmp.replace( QChar(' '), QString::fromLatin1("\\@") );
+	QChar q('\020');
+	tmp.replace(q, q+QString(q));
+	tmp.replace(QChar('\r'), q+QString::fromLatin1("r"));
+	tmp.replace(QChar('\n'), q+QString::fromLatin1("n"));
+	tmp.replace(QChar('\0'), q+QString::fromLatin1("0"));
 	return tmp;
 }
 
+// FIXME: The unquote system is buggy.
 QString KIRCMessage::unquote(const QString &str)
 {
-	// FIXME: The unquote system is buggy. ex "\\return to daddy" gives "\015eturn to daddy"
+	QString tmp = str;
+	QChar q('\020');
+	tmp.replace(q+QString(q), q);
+	tmp.replace(q+QString::fromLatin1("r"), QChar('\r'));
+	tmp.replace(q+QString::fromLatin1("n"), QChar('\n'));
+	tmp.replace(q+QString::fromLatin1("0"), QChar('\0'));
+	return tmp;
+}
+
+QString KIRCMessage::ctcpQuote(const QString &str)
+{
+	QString tmp = str;
+	tmp.replace( QChar('\\'), QString::fromLatin1("\\\\"));
+	tmp.replace( QChar((uchar)0x01), QString::fromLatin1("\\1"));
+	return tmp;
+}
+
+// FIXME: The unquote system is buggy.
+QString KIRCMessage::ctcpUnquote(const QString &str)
+{
 	QString tmp = str;
 	tmp.replace(QString::fromLatin1("\\\\"), QChar('\\'));
-//	tmp.replace(QString::fromLatin1("\\@"), QChar(' '));
-	tmp.replace(QString::fromLatin1("\\r"), QChar('\r'));
-	tmp.replace(QString::fromLatin1("\\n"), QChar('\n'));
 	tmp.replace(QString::fromLatin1("\\1"), QChar((uchar)0x01));
-	tmp.replace(QString::fromLatin1("\\0"), QChar('\0'));
 	return tmp;
 }
 
@@ -304,7 +338,7 @@ bool KIRCMessage::extractCtcpCommand(QString &str, QString &ctcpline)
 
 void KIRCMessage::dump() const
 {
-	kdDebug(14120)	<< "Raw:" << m_raw
+	kdDebug(14120)	<< "Raw:" << m_raw << endl
 			<< "Prefix:" << m_prefix << endl
 			<< "Command:" << m_command << endl
 //			<< "Args:" << m_args << endl   //this does not compile on KDE 3.1

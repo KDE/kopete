@@ -24,6 +24,7 @@
 #include <qstring.h>
 #include <qstringlist.h>
 
+#include <kdebug.h>
 #include <kextsock.h>
 #include <ksockaddr.h>
 
@@ -40,12 +41,12 @@ class KIRCMethodFunctorCall;
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
  */
 class KIRC
-	: public KExtendedSocket
+	: public QObject
 {
 	Q_OBJECT
 
 public:
-	KIRC(const QString &host, const Q_UINT16 port);
+	KIRC(const QString &host, const Q_UINT16 port, QObject *parent=0, const char *name=0);
 	~KIRC();
 
 	const QString &host() { return m_Host; };
@@ -55,35 +56,63 @@ public:
 	const QString &password() { return m_Passwd; }
 	void setPassword(const QString &passwd) { m_Passwd = passwd; };
 
-	bool isLoggedIn() { return m_LoggedIn; };
+public:
+	typedef enum EngineError
+	{
+		ParsingFailed,
+		UnknownCommand,
+		InvalidNumberOfArguments,
+		MethodFailed
+	};
+signals:
+	void internalError(KIRC::EngineError, KIRCMessage &);
+
+public:
+	typedef enum EngineStatus
+	{
+		Disconnected,
+		Connecting,
+		Authentifying,
+		Connected,
+		Closing
+	};
+	EngineStatus status() { return m_status; }
+	inline bool isDisconnected() { return m_status == Disconnected; }
+	inline bool isConnected() { return m_status == Connected; }
+private:
+	void setStatus(EngineStatus status);
+signals:
+	void statusChanged(KIRC::EngineStatus newStatus);
 
 private slots:
 	void slotHostFound();
 	void slotConnected();
 	void slotConnectionClosed();
 	void slotReadyRead();
-	void slotError(int);
+	void error();
 	void quitTimeout();
-	void slotCheckOnline(); // OBSOLETE: this simple code should be externalised: this code is replaced by isOn(QStringList)
 
 protected:
-	inline KIRCMessage writeString(const QString &str);
+	bool canSend( bool mustBeConnected );
 
-	KIRCMessage writeMessage(const QString &command, const QStringList &args, const QString &suffix = QString::null);
-	inline KIRCMessage writeMessage(const char *command, const QStringList &args, const QString &suffix = QString::null)
-		{ return writeMessage(QString::fromLatin1(command), args, suffix); }
+	KIRCMessage writeString(const QString &str, bool mustBeConnected=true);
 
-	KIRCMessage writeMessage(const QString &command, const QString &args = QString::null, const QString &suffix = QString::null);
-	inline KIRCMessage writeMessage(const char *command, const QString &args = QString::null, const QString &suffix = QString::null)
-		{ return writeMessage(QString::fromLatin1(command), args, suffix); }
+	KIRCMessage writeMessage(const QString &command, const QStringList &args, const QString &suffix = QString::null, bool mustBeConnected=true);
+	inline KIRCMessage writeMessage(const char *command, const QStringList &args, const QString &suffix = QString::null, bool mustBeConnected=true)
+		{ return writeMessage(QString::fromLatin1(command), args, suffix, mustBeConnected); }
 
-	inline KIRCMessage writeCtcpMessage(const char *command, const QString &to /* prefix */, const QString &suffix,
+	inline KIRCMessage writeMessage(const QString &command, const QString &arg = QString::null, const QString &suffix = QString::null, bool mustBeConnected=true);
+	inline KIRCMessage writeMessage(const char *command, const QString &arg = QString::null, const QString &suffix = QString::null, bool mustBeConnected=true)
+		{ return writeMessage(QString::fromLatin1(command), arg, suffix, mustBeConnected); }
+
+	KIRCMessage writeCtcpMessage(const char *command, const QString &to /* prefix */, const QString &suffix,
 			const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
 			bool emitRepliedCtcp = true);
 
 	KIRCMessage writeCtcpQueryMessage(const QString &to /* prefix */, const QString &suffix,
 			const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
-			bool emitRepliedCtcp = true);
+			bool emitRepliedCtcp = true)
+		{ return writeCtcpMessage("PRIVMSG", to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
 	inline KIRCMessage writeCtcpQueryMessage(const QString &to /* prefix */, const QString &suffix,
 			const char *ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
 			bool emitRepliedCtcp = true)
@@ -91,7 +120,8 @@ protected:
 
 	KIRCMessage writeCtcpReplyMessage(const QString &to /* prefix */, const QString &suffix,
 			const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
-			 bool emitRepliedCtcp = true);
+			bool emitRepliedCtcp = true)
+		{ return writeCtcpMessage("NOTICE", to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
 	inline KIRCMessage writeCtcpReplyMessage(const QString &to /* prefix */, const QString &suffix,
 			const char *ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
 			bool emitRepliedCtcp = true)
@@ -99,7 +129,10 @@ protected:
 
 	inline KIRCMessage writeCtcpErrorMessage(const QString &to /*prefix*/,
 			const QString &ctcpLine, const char *errorMsg,
-			bool emitRepliedCtcp=true);
+			bool emitRepliedCtcp=true)
+		{ return writeCtcpReplyMessage(to, QString::null,
+			"ERRMSG", QStringList(ctcpLine), QString::fromLatin1(errorMsg),
+			emitRepliedCtcp); }
 
 	// FIXME: short term solution move me to the the KIRCEntity class
 	inline static QString getNickFromPrefix(const QString &prefix)
@@ -123,12 +156,13 @@ public slots:
 	void kickUser(const QString &user, const QString &channel, const QString &reason);
 	void partChannel(const QString &name, const QString &reason);
 	// void pingUser ??
-	void quitIRC(const QString &reason);
+	void quitIRC(const QString &reason, bool now=false);
 
 	void requestDccConnect(const QString &, const QString &, unsigned int port, DCCClient::Type type);
 
 	/* IRC with numeric replies only */
 	void isOn(const QStringList &nickList); /* 303 */
+	/* An awayMessage set to QString::null means not away anymore. */
 	void setAway(bool isAway, const QString &awayMessage); /* 301-305-306 */
 	void whoisUser(const QString &user); /* 311-312-313-317-318-319 */
 	void list(); /* 321-322-323 */
@@ -140,13 +174,7 @@ public slots:
 	void sendCtcpPing(const QString &target);
 	void sendCtcpVersion(const QString &target);
 
-	void addToNotifyList(const QString &nick); // OBSOLETE: this simple code should be externalised
-	void removeFromNotifyList(const QString &nick); // OBSOLETE: this simple code should be externalised
 signals:
-	void connectionClosed(); // For QSocket Compatibility mode
-
-	void connecting();
-
 	void incomingNotice(const QString &originating, const QString &message);
 	void incomingTopicChange(const QString &, const QString &, const QString &); /* */
 	void successfulQuit();
@@ -254,8 +282,8 @@ protected:
 	ircMethod numericReply_311; ircMethod numericReply_312;
 	ircMethod numericReply_317;
 	ircMethod numericReply_319;
-	ircMethod numericReply_321; ircMethod numericReply_322;
-	ircMethod numericReply_323; ircMethod numericReply_324;
+	ircMethod numericReply_322;
+	ircMethod numericReply_324;
 	ircMethod numericReply_329;
 	ircMethod numericReply_331; ircMethod numericReply_332;
 	ircMethod numericReply_333;
@@ -304,6 +332,8 @@ protected:
 
 	static const QRegExp m_RemoveLinefeeds;
 
+	KExtendedSocket m_sock;
+	EngineStatus m_status;
 	// put this in a QMap<QString, QVariant> ?
 	QString m_Host;
 	Q_UINT16 m_Port;
@@ -317,13 +347,7 @@ protected:
 	QString m_UserString;
 	QString m_SourceString;
 
-//	bool m_WaitingFinishMotd; // Removed not significant
-	bool m_LoggedIn;
-	bool m_FailedNickOnLogin;
 	QString m_PendingNick;
-	bool m_AttemptingQuit;
-	QStringList m_NotifyList; // OBSOLETE: this simple code should be externalised
-	QTimer *m_NotifyTimer; // OBSOLETE: this simple code should be externalised
 
 	QDict<KIRCMethodFunctorCall> m_IrcMethods;
 
@@ -332,12 +356,3 @@ protected:
 };
 
 #endif // KIRC_H
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
-// vim: set noet ts=4 sts=4 sw=4:

@@ -38,35 +38,28 @@ K_EXPORT_COMPONENT_FACTORY( kopete_irc, KGenericFactory<IRCProtocol> );
 
 IRCProtocol *IRCProtocol::s_protocol = 0L;
 
-KopeteOnlineStatus IRCProtocol::m_ChannelOnline;
-KopeteOnlineStatus IRCProtocol::m_ChannelOffline;
-KopeteOnlineStatus IRCProtocol::m_UserOnline;
-KopeteOnlineStatus IRCProtocol::m_UserOp;
-KopeteOnlineStatus IRCProtocol::m_UserVoice;
-KopeteOnlineStatus IRCProtocol::m_UserOffline;
-KopeteOnlineStatus IRCProtocol::m_UserAway;
-KopeteOnlineStatus IRCProtocol::m_UserConnecting;
-KopeteOnlineStatus IRCProtocol::m_Unknown;
-
 IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
-: KopeteProtocol( parent, name )
+	: KopeteProtocol( parent, name ),
+	// FIXME: get a real icons for this.
+	m_ServerOnline( KopeteOnlineStatus( KopeteOnlineStatus::Online, 90, this, 1, "irc_server", QString::null, i18n("Online"))),
+	m_ServerOffline( KopeteOnlineStatus( KopeteOnlineStatus::Offline, 80, this, 0, "irc_server", QString::null, i18n("Offline"))),
+
+	m_ChannelOnline( KopeteOnlineStatus( KopeteOnlineStatus::Online, 70, this, 1, "irc_channel", i18n("Go O&nline"), i18n("Online"))),
+	m_ChannelOffline( KopeteOnlineStatus( KopeteOnlineStatus::Offline, 60, this, 0, "irc_channel", i18n("Go O&ffline"), i18n("Offline"))),
+
+	m_UserOp( KopeteOnlineStatus( KopeteOnlineStatus::Online, 50, this, 1, "irc_op", QString::null, i18n("Online"))),
+	m_UserVoice( KopeteOnlineStatus( KopeteOnlineStatus::Online, 40, this, 1, "irc_voice", QString::null, i18n("Online"))),
+	m_UserOnline( KopeteOnlineStatus( KopeteOnlineStatus::Online, 30, this, 1, "irc_online", i18n("Go O&nline"), i18n("Online"))),
+	m_UserAway( KopeteOnlineStatus( KopeteOnlineStatus::Away, 20, this, 1, "irc_away", i18n("Go &Away"), i18n("Away"))),
+	m_UserConnecting( KopeteOnlineStatus( KopeteOnlineStatus::Connecting, 10, this, 0, "irc_connecting", i18n("Connecting"), i18n("Connecting"))),
+	m_UserOffline( KopeteOnlineStatus( KopeteOnlineStatus::Offline, 0, this, 0, "irc_online", i18n("Go O&ffline"), i18n("Offline"))),
+
+	m_Unknown( KopeteOnlineStatus( KopeteOnlineStatus::Unknown, 0, this, 0, "status_unknown", "FIXME: Make this unselectable", i18n("Status not available")))
 {
 	s_protocol = this;
 	mActions = 0L;
 
-	kdDebug(14120) << k_funcinfo << endl;
-	// Load all ICQ icons from KDE standard dirs
-
-	m_ChannelOnline = KopeteOnlineStatus( KopeteOnlineStatus::Online,  50, this, 0, QString::null,   i18n( "Go O&nline" ),  i18n( "Online" ));
-	m_ChannelOffline = KopeteOnlineStatus( KopeteOnlineStatus::Offline, 40, this, 1, QString::null, i18n( "Go O&ffline" ), i18n( "Offline" ));
-
-	m_UserOp = KopeteOnlineStatus( KopeteOnlineStatus::Online,  30, this, 1, "irc_op",   QString::null,  i18n( "Online" ));
-	m_UserVoice = KopeteOnlineStatus( KopeteOnlineStatus::Online,  20, this, 2, "irc_voice",   QString::null,  i18n( "Online" ));
-	m_UserOnline = KopeteOnlineStatus( KopeteOnlineStatus::Online,  10, this, 0, QString::null,   i18n( "Go O&nline" ),  i18n( "Online" ));
-	m_UserOffline = KopeteOnlineStatus( KopeteOnlineStatus::Offline, 5, this, 3, QString::null, i18n( "Go O&ffline" ), i18n( "Offline" ));
-	m_UserAway = KopeteOnlineStatus( KopeteOnlineStatus::Away, 5, this, 5, "irc_away", i18n( "Go &Away" ), i18n( "Away" ));
-	m_UserConnecting = KopeteOnlineStatus( KopeteOnlineStatus::Connecting, 1, this, 4, QString::null, i18n( "Connecting" ), i18n( "Connecting" ));
-	m_Unknown = KopeteOnlineStatus( KopeteOnlineStatus::Unknown, 0, this, 6, "status_unknown", "FIXME: Make this unselectable", i18n( "Status not available") );
+//	kdDebug(14120) << k_funcinfo << endl;
 
 	//m_status = m_unknownStatus = m_Unknown;
 
@@ -88,6 +81,10 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		cfg->deleteEntry("AutoConnect");
 		cfg->sync();
 	}
+
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("list"),
+		SLOT( slotListCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /list - List the public channels on the server.") );
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("join"),
 		SLOT( slotJoinCommand( const QString &, KopeteMessageManager*) ),
@@ -139,10 +136,10 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("devoice"),
 		SLOT( slotDevoiceCommand( const QString &, KopeteMessageManager*) ),
-		i18n("USAGE: /devoice <nickname> - Remove channel voice status from someone (Requires operator status).") );
+		i18n("USAGE: /devoice <nickanme> - Remove channel voice status from someone (Requires operator status).") );
 
-
-	QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL(aboutToDisplay(KopeteMessage &)), this, SLOT(slotMessageFilter(KopeteMessage &)) );
+	QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL(aboutToDisplay(KopeteMessage &)),
+		this, SLOT(slotMessageFilter(KopeteMessage &)) );
 }
 
 IRCProtocol * IRCProtocol::protocol()
@@ -201,7 +198,7 @@ EditAccountWidget *IRCProtocol::createEditAccountWidget(KopeteAccount *account, 
 
 KopeteAccount *IRCProtocol::createNewAccount(const QString &accountId)
 {
-	return new IRCAccount( accountId, this );
+	return new IRCAccount( this, accountId );
 }
 
 void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
@@ -227,6 +224,11 @@ void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	}
 	else
 		kdDebug(14120) << k_funcinfo << "No accounts loaded!" << endl;
+}
+
+void IRCProtocol::slotListCommand( const QString &/*args*/, KopeteMessageManager *manager )
+{
+	static_cast<IRCAccount*>( manager->account() )->engine()->list();
 }
 
 void IRCProtocol::slotTopicCommand( const QString &args, KopeteMessageManager *manager )

@@ -24,19 +24,26 @@
 class KSParser
 {
 public:
-    QString parse(const QString &);
-    int colorForHTML( const QString &html );
+	QString parse(const QString &);
+	static int colorForHTML( const QString &html );
 
 private:
-    QString pushTag(const QString &, const QString & = QString::null);
-    QString popTag(const QString &);
-    QString toggleTag(const QString &);
-    QString popAll();
-    QColor ircColor(int);
+	QString pushTag(const QString &, const QString & = QString::null);
+	QString popTag(const QString &);
+	QString toggleTag(const QString &);
+	QString popAll();
+
+	static inline QColor ircColor(unsigned int color)
+	{
+		unsigned int maxcolor = sizeof(IRC_Colors)/sizeof(QColor);
+		return color<=maxcolor?IRC_Colors[color]:IRC_Colors[maxcolor];
+	}
 
 private:
-    QValueStack<QString> m_tags;
-    QMap<QString, QString> m_attributes;
+	static const QColor IRC_Colors[17];
+
+	QValueStack<QString> m_tags;
+	QMap<QString, QString> m_attributes;
 };
 
 #endif

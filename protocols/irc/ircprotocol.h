@@ -68,18 +68,25 @@ public:
 
 	static IRCProtocol *protocol();
 
-	static KopeteOnlineStatus IRCChannelOnline() { return m_ChannelOnline; };
-	static KopeteOnlineStatus IRCUserConnecting() { return m_UserConnecting; };
-	static KopeteOnlineStatus IRCUserOnline() { return m_UserOnline; };
-	static KopeteOnlineStatus IRCChannelOffline() { return m_ChannelOffline; };
-	static KopeteOnlineStatus IRCUserOffline() { return m_UserOffline; };
-	static KopeteOnlineStatus IRCUserOp() { return m_UserOp; };
-	static KopeteOnlineStatus IRCUserVoice() { return m_UserVoice; };
-	static KopeteOnlineStatus IRCUserAway() { return m_UserAway; };
+	static KopeteOnlineStatus IRCServerOnline() { return s_protocol->m_ServerOnline; };
+	static KopeteOnlineStatus IRCServerOffline() { return s_protocol->m_ServerOffline; };
+
+	static KopeteOnlineStatus IRCChannelOnline() { return s_protocol->m_ChannelOnline; };
+	static KopeteOnlineStatus IRCChannelOffline() { return s_protocol->m_ChannelOffline; };
+
+	static KopeteOnlineStatus IRCUserOnline() { return s_protocol->m_UserOnline; };
+	static KopeteOnlineStatus IRCUserOp() { return s_protocol->m_UserOp; };
+	static KopeteOnlineStatus IRCUserVoice() { return s_protocol->m_UserVoice; };
+	static KopeteOnlineStatus IRCUserOffline() { return s_protocol->m_UserOffline; };
+	static KopeteOnlineStatus IRCUserAway() { return s_protocol->m_UserAway; };
+	static KopeteOnlineStatus IRCUserConnecting() { return s_protocol->m_UserConnecting; };
+
+	static KopeteOnlineStatus IRCUnknown() { return s_protocol->m_Unknown; }
 
 private slots:
 	void slotMessageFilter( KopeteMessage &msg );
 
+	void slotListCommand( const QString &args, KopeteMessageManager *manager);
 	void slotTopicCommand( const QString &args, KopeteMessageManager *manager);
 	void slotJoinCommand( const QString &args, KopeteMessageManager *manager);
 	void slotNickCommand( const QString &args, KopeteMessageManager *manager);
@@ -97,20 +104,22 @@ private slots:
 
 
 private:
-	/** FIXME: Do something with this when Account support is added!!!!!!!! */
-	IRCAccount *account;
-
 	static IRCProtocol *s_protocol;
 
-	static KopeteOnlineStatus m_ChannelOnline;
-	static KopeteOnlineStatus m_ChannelOffline;
-	static KopeteOnlineStatus m_UserOnline;
-	static KopeteOnlineStatus m_UserOp;
-	static KopeteOnlineStatus m_UserVoice;
-	static KopeteOnlineStatus m_UserOffline;
-	static KopeteOnlineStatus m_UserAway;
-	static KopeteOnlineStatus m_UserConnecting;
-	static KopeteOnlineStatus m_Unknown;
+	const KopeteOnlineStatus m_ServerOnline;
+	const KopeteOnlineStatus m_ServerOffline;
+
+	const KopeteOnlineStatus m_ChannelOnline;
+	const KopeteOnlineStatus m_ChannelOffline;
+
+	const KopeteOnlineStatus m_UserOp;
+	const KopeteOnlineStatus m_UserVoice;
+	const KopeteOnlineStatus m_UserOnline;
+	const KopeteOnlineStatus m_UserAway;
+	const KopeteOnlineStatus m_UserConnecting;
+	const KopeteOnlineStatus m_UserOffline;
+
+	const KopeteOnlineStatus m_Unknown;
 
 	KActionCollection *mActions;
 
