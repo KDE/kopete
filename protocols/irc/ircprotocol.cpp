@@ -143,6 +143,12 @@ IRCProtocol::~IRCProtocol()
 {
 }
 
+bool IRCProtocol::supportsRichText()
+{
+	//We support rich text
+	return true;
+}
+
 void IRCProtocol::slotMessageFilter( KopeteMessage &msg )
 {
 	if( msg.from()->protocol() == this )

@@ -27,12 +27,10 @@
 #include <dom/html_document.h>
 #include <dom/html_inline.h>
 #include <kapplication.h>
-#include <kcolordialog.h>
 #include <kcompletion.h>
 #include <kdebug.h>
 #include <kdeversion.h>
 #include <kfiledialog.h>
-#include <kfontdialog.h>
 #include <khtml_part.h>
 #include <khtmlview.h>
 #include <kiconeffect.h>
@@ -47,6 +45,7 @@
 #include <kwin.h>
 
 #include "kopetechatwindow.h"
+#include "krichtexteditpart.cpp"
 #include "kopetemessagemanager.h"
 #include "kopetemetacontact.h"
 #include "kopetepluginmanager.h"
@@ -86,36 +85,9 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	editDock = createDockWidget( QString::fromLatin1( "editDock" ), QPixmap(),
 		0L, QString::fromLatin1("editDock"), QString::fromLatin1(" ") );
 
-	if(KopetePrefs::prefs()->richText())
-	{
-		KLibFactory *factory = KLibLoader::self()->factory("libkrichtexteditpart");
-		if ( factory )
-		{
-			editpart = dynamic_cast<KParts::Part*> (
-				factory->create( editDock, "krichtexteditpart",
-					"KParts::ReadWritePart" ) );
-		}
-	}
+	editpart = new KopeteRichTextEditPart( editDock, "kopeterichtexteditpart", mgr->protocol()->supportsRichText() );
 
-	// FIXME: This can't be a sane way to customize a KPart, find something better
-	if ( editpart )
-	{
-		QDomDocument doc = editpart->domDocument();
-		QDomNode menu = doc.documentElement().firstChild();
-		menu.removeChild( menu.firstChild() ); // Remove File
-		menu.removeChild( menu.firstChild() ); // Remove Edit
-		menu.removeChild( menu.firstChild() ); // Remove View
-		menu.removeChild( menu.lastChild() ); //Remove Help
-
-		doc.documentElement().removeChild( doc.documentElement().childNodes().item(1) ); //Remove MainToolbar
-		doc.documentElement().removeChild( doc.documentElement().lastChild() ); // Remove Edit popup
-
-		m_edit = static_cast<KTextEdit*>( editpart->widget() );
-	}
-	else
-	{
-		m_edit = new KTextEdit( editDock, "m_edit" );
-	}
+	m_edit = static_cast<KTextEdit*>( editpart->widget() );
 
 	//Set params on the edit widget
 	m_edit->setMinimumSize( QSize( 75, 20 ) );
@@ -947,9 +919,9 @@ void ChatView::saveOptions()
 	config->writeEntry( QString::fromLatin1("membersDockPosition"), membersDockPosition );
 	config->writeEntry( QString::fromLatin1("visibleMembers"), visibleMembers );
 	config->setGroup( QString::fromLatin1("ChatViewSettings") );
-	config->writeEntry ( QString::fromLatin1("BackgroundColor"), mBgColor );
-	config->writeEntry ( QString::fromLatin1("Font"), mFont );
-	config->writeEntry ( QString::fromLatin1("TextColor"), mFgColor );
+	config->writeEntry ( QString::fromLatin1("BackgroundColor"), editpart->bgColor() );
+	config->writeEntry ( QString::fromLatin1("Font"), editpart->font() );
+	config->writeEntry ( QString::fromLatin1("TextColor"), editpart->fgColor() );
 
  //config->writeEntry ( "SplitterWidth", editDock->parent()->seperatorPos() );
 
@@ -976,11 +948,11 @@ void ChatView::readOptions()
 	config->setGroup( QString::fromLatin1("ChatViewSettings") );
 
 	QFont tmpFont = KGlobalSettings::generalFont();
-	setFont( config->readFontEntry( QString::fromLatin1("Font"), &tmpFont) );
+	editpart->setFont( config->readFontEntry( QString::fromLatin1("Font"), &tmpFont) );
 	QColor tmpColor = KGlobalSettings::baseColor();
-	setBgColor( config->readColorEntry ( QString::fromLatin1("BackgroundColor"), &tmpColor) );
+	editpart->setBgColor( config->readColorEntry ( QString::fromLatin1("BackgroundColor"), &tmpColor) );
 	tmpColor = KGlobalSettings::textColor();
-	setFgColor( config->readColorEntry ( QString::fromLatin1("TextColor"), &tmpColor ) );
+	editpart->setFgColor( config->readColorEntry ( QString::fromLatin1("TextColor"), &tmpColor ) );
 
 
 	//editDock->parent()->setSeperatorPos( config->readNumEntry ( "SplitterWidth", 70 ) );
@@ -1244,11 +1216,11 @@ void ChatView::setCurrentMessage( const KopeteMessage &message )
 
 KopeteMessage ChatView::currentMessage()
 {
-	KopeteMessage currentMsg = KopeteMessage( m_manager->user(), m_manager->members(), m_edit->text(), KopeteMessage::Outbound, editpart ? KopeteMessage::RichText : KopeteMessage::PlainText );
+	KopeteMessage currentMsg = KopeteMessage( m_manager->user(), m_manager->members(), m_edit->text(), KopeteMessage::Outbound, editpart->simple() ? KopeteMessage::PlainText : KopeteMessage::RichText );
 
-	currentMsg.setBg( mBgColor );
-	currentMsg.setFg( mFgColor );
-	currentMsg.setFont( mFont );
+	currentMsg.setBg( editpart->bgColor() );
+	currentMsg.setFg( editpart->fgColor() );
+	currentMsg.setFont( editpart->font() );
 
 	return currentMsg;
 }
@@ -1286,57 +1258,22 @@ void ChatView::selectAll()
 
 void ChatView::setBgColor( const QColor &newColor )
 {
-	if( newColor == QColor() )
-		KColorDialog::getColor( mBgColor, this );
-	else
-		mBgColor = newColor;
-
-	QPalette pal = m_edit->palette();
-	pal.setColor(QPalette::Active, QColorGroup::Base, mBgColor );
-	pal.setColor(QPalette::Inactive, QColorGroup::Base, mBgColor );
-	pal.setColor(QPalette::Disabled, QColorGroup::Base, mBgColor );
-
-	// unsetPalette() so that color changes in kcontrol are honoured
-	// if we ever have a subclass of KTextEdit, reimplement setPalette()
-	// and check it there.
-	if ( pal == QApplication::palette( m_edit ) )
-		m_edit->unsetPalette();
-	else
-		m_edit->setPalette(pal);
+	editpart->setBgColor( newColor );
 }
 
-void ChatView::setFont(  )
+void ChatView::setFont()
 {
-	KFontDialog::getFont(mFont, false, this);
-	setFont(mFont);
+	editpart->setFont();
 }
 
-void ChatView::setFont( const QFont &newFont )
+void ChatView::setFont( const QFont &font )
 {
-	mFont=newFont;
-	m_edit->setFont(mFont);
+	editpart->setFont( font );
 }
 
 void ChatView::setFgColor( const QColor &newColor )
 {
-	if( newColor == QColor() )
-		KColorDialog::getColor( mFgColor, this );
-	else
-		mFgColor = newColor;
-
-	m_edit->setColor( mFgColor);
-
-	QPalette pal = m_edit->palette();
-	pal.setColor(QPalette::Active, QColorGroup::Text, mFgColor );
-	pal.setColor(QPalette::Inactive, QColorGroup::Text, mFgColor );
-
-	// unsetPalette() so that color changes in kcontrol are honoured
-	// if we ever have a subclass of KTextEdit, reimplement setPalette()
-	// and check it there.
-	if ( pal == QApplication::palette( m_edit ) )
-		m_edit->unsetPalette();
-	else
-		m_edit->setPalette(pal);
+	editpart->setFgColor( newColor );
 }
 
 

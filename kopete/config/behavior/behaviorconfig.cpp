@@ -98,7 +98,6 @@ void BehaviorConfig::save()
 	p->setRaiseMsgWindow(mPrfsChat->cb_RaiseMsgWindowChk->isChecked());
 	p->setShowEvents(mPrfsChat->cb_ShowEventsChk->isChecked());
 	p->setHighlightEnabled(mPrfsChat->highlightEnabled->isChecked());
-	p->setRichText(mPrfsChat->cb_RichText->isChecked());
 	p->setChatWindowPolicy(mPrfsChat->chatWindowGroup->id(
 			mPrfsChat->chatWindowGroup->selected()));
 	p->setInterfacePreference(mPrfsChat->interfaceGroup->id(
@@ -141,7 +140,6 @@ void BehaviorConfig::load()
 	mPrfsChat->cb_RaiseMsgWindowChk->setChecked(p->raiseMsgWindow());
 	mPrfsChat->cb_ShowEventsChk->setChecked(p->showEvents());
 	mPrfsChat->highlightEnabled->setChecked(p->highlightEnabled());
-	mPrfsChat->cb_RichText->setChecked(p->richText());
 	mPrfsChat->chatWindowGroup->setButton(p->chatWindowPolicy());
 	mPrfsChat->interfaceGroup->setButton(p->interfacePreference());
 	mPrfsChat->mChatViewBufferSize->setValue(p->chatViewBufferSize());

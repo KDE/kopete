@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui version="21" name="kopetechatwindow">
+<kpartgui version="22" name="kopetechatwindow">
 	<MenuBar>
 		<Menu noMerge="1" name="file">
 			<text>&amp;Chat</text>
@@ -16,9 +16,6 @@
 
 		<Menu name="format" >
 			<text>&amp;Format</text>
-			<Action name="format_bgcolor" append="show_merge"/>
-			<Action name="format_fgcolor" append="show_merge"/>
-			<Action name="format_font" append="show_merge"/>
 			<Action name="format_smiley"/>
 		</Menu>
 

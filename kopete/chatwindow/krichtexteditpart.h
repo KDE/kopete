@@ -13,124 +13,89 @@ class KToggleAction;
 /**
  * KParts wrapper for QTextEdit.
  *
- * @version $Id$
- * @author Richard Moore, rich@kde.org
+ * Originally by Richard Moore, rich@kde.org
+ * forked by Jason Keirstead
  */
-class KRichTextEditPart : public KParts::ReadWritePart
+class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 {
-    Q_OBJECT
+	Q_OBJECT
+	
+	public:
+		KopeteRichTextEditPart( QWidget *wparent, const char *wname, QObject*, const char*, const QStringList& );
+		KopeteRichTextEditPart( QWidget *wparent, const char *wname, bool supportsRichText );
+		
+		/**
+		* Returns the current editor widget.
+		*/
+		KTextEdit *widget() const { return editor; }
+		
+		const QString text( Qt::TextFormat = Qt::AutoText ) const;
+		
+		const QFont &font() { return mFont; }
+		
+		const QColor &fgColor() { return mFgColor; }
+		
+		const QColor &bgColor() { return mBgColor; }
+		
+		bool simple() { return simpleMode; }
+		
+		static KAboutData *createAboutData();
+		
+		virtual bool openFile() { return false; };
 
-public:
-    KRichTextEditPart( QWidget *wparent, const char *wname,
-		       QObject *parent, const char *name,
-		       const QStringList &/*args*/ );
-    virtual ~KRichTextEditPart();
-
-    /**
-     * Returns the current filename.
-     */
-    QString filename() const { return m_file; }
-
-    /**
-     * Returns the current editor widget.
-     */
-    KTextEdit *widget() const { return editor; }
-
-    /**
-     * Returns the data for the About dialog.
-     */
-    static KAboutData *createAboutData();
-
-public slots:
-
-    /**
-     * Displays a file dialog and loads the selected file.
-     */
-    bool open();
-
-    /**
-     * Displays a file dialog and saves to the selected file.
-     */
-    bool saveAs();
-
-    /**
-     * Prints the current document
-     */
-    bool print();
-
-    /**
-     * Enables and disables edits.
-     */
-    virtual void setReadWrite( bool rw );
-
-    /**
-     * Displays a color dialog and sets the text color to the selected value.
-     */
-    void formatColor();
-
-    void checkSpelling();
-
-    /**
-     * @internal
-     */
-    void setAlignLeft( bool yes );
-
-    /**
-     * @internal
-     */
-    void setAlignRight( bool yes );
-
-    /**
-     * @internal
-     */
-    void setAlignCenter( bool yes );
-
-    /**
-     * @internal
-     */
-    void setAlignJustify( bool yes );
-
-protected:
-    /**
-     * Creates the part's actions in the specified action collection.
-     */
-    virtual void createActions( KActionCollection *ac );
-
-protected slots:
-    virtual bool openFile();
-    virtual bool saveFile();
-
-    /**
-     * Creates the part's actions in the part's action collection.
-     */
-    void createActions();
-
-    void updateActions();
-
-    void updateFont();
-    void updateCharFmt();
-    void updateAligment();
-
-private:
-    KTextEdit *editor;
-    KToggleAction *action_bold;
-    KToggleAction *action_italic;
-    KToggleAction *action_underline;
-
-    KFontAction *action_font;
-    KFontSizeAction *action_font_size;
-
-    KToggleAction *action_align_left;
-    KToggleAction *action_align_right;
-    KToggleAction *action_align_center;
-    KToggleAction *action_align_justify;
-
-    struct Data *d;
+	public slots:
+	
+		void setFgColor();
+		void setFgColor( const QColor & );
+		
+		void setBgColor();
+		void setBgColor( const QColor & );
+		
+		void setFont();
+		void setFont( const QFont & );
+		void setFont( const QString & );
+		
+		void setAlignLeft( bool yes );
+		void setAlignRight( bool yes );
+		void setAlignCenter( bool yes );
+		void setAlignJustify( bool yes );
+	
+	protected:
+		/**
+		* Creates the part's actions in the specified action collection.
+		*/
+		virtual void createActions( KActionCollection *ac );
+	
+	protected slots:
+	
+		/**
+		* Creates the part's actions in the part's action collection.
+		*/
+		void createActions();
+		
+		void updateFont();
+		void updateCharFmt();
+		void updateAligment();
+		
+	private:
+		KTextEdit *editor;
+		KToggleAction *action_bold;
+		KToggleAction *action_italic;
+		KToggleAction *action_underline;
+		
+		KFontAction *action_font;
+		KFontSizeAction *action_font_size;
+		
+		KToggleAction *action_align_left;
+		KToggleAction *action_align_right;
+		KToggleAction *action_align_center;
+		KToggleAction *action_align_justify;
+		
+		bool simpleMode;
+		
+		QFont mFont;
+		QColor mBgColor;
+		QColor mFgColor;
 };
 
 #endif // KRICHTEXTEDITPART_H
-
-
-// Local Variables:
-// c-basic-offset: 4
-// End:

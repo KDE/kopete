@@ -123,6 +123,11 @@ public:
 	 */
 	virtual void deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
 		const QMap<QString, QString> &addressBookData );
+		
+	/**
+	 * Return if this protocol supports advanced rich text (HTML returned from chat widget)
+	 */
+	 virtual bool supportsRichText() const;
 
 public slots:
 	/**

@@ -53,6 +53,12 @@ KopeteOnlineStatus KopeteProtocol::status() const
 	return m_status;
 }
 
+bool KopeteProtocol::supportsRichText() const
+{
+	//Return false by default
+	return false;
+}
+
 KActionMenu* KopeteProtocol::protocolActions()
 {
 	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts(this);

@@ -37,10 +37,11 @@ class QTimer;
 class KHTMLPart;
 class KHTMLView;
 class KRootPixmap;
-
+class KRichTextEditPart;
 
 class KopeteChatWindow;
 class KTabWidget;
+class KopeteRichTextEditPart;
 class KopeteMessageManager;
 class KCompletion;
 class KURL;
@@ -281,7 +282,7 @@ public slots:
 
 	virtual bool closeView( bool force = false );
 
-	KParts::Part *part() const { return editpart; }
+	KParts::Part *part() const { return (KParts::Part*)( editpart ); }
 
 signals:
 	/**
@@ -392,9 +393,6 @@ private:
 	QString unreadMessageFrom;
 	QMap<const KopeteContact *, KopeteContactLVI *> memberContactMap;
 	KTextEdit* m_edit;
-	QColor mBgColor;
-	QColor mFgColor;
-	QFont mFont;
 	KListView *membersList;
 	bool transparencyEnabled;
 	bool bgOverride;
@@ -416,7 +414,7 @@ private:
 	KDockWidget *membersDock;
 	KDockWidget *editDock;
 	KTabWidget *m_tabBar;
-	KParts::Part *editpart;
+	KopeteRichTextEditPart *editpart;
 
 	KAction *copyAction;
 	KAction  *saveAction;

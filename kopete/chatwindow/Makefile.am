@@ -16,9 +16,9 @@ libkrichtexteditpart_la_LDFLAGS = -module $(KDE_PLUGIN)
 libkrichtexteditpart_la_LIBADD = $(KDE_RPATH) $(all_libraries) $(LIB_KPARTS) \
         $(LIB_KSPELL) $(LIB_KDEPRINT)
 
-partrcdir = $(kde_datadir)/krichtexteditpart
-partrc_DATA = krichtexteditpartui.rc
-
+partdir = $(kde_datadir)/kopeterichtexteditpart
+part_DATA = kopeterichtexteditpartsimple.rc kopeterichtexteditpartfull.rc
+	
 rcdir = $(kde_datadir)/kopete
 rc_DATA = kopetechatwindow.rc kopeteemailwindow.rc
 

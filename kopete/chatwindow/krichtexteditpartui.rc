@@ -32,6 +32,7 @@
     <Action name="format_italic"/>
     <Action name="format_underline"/>
     <Action name="format_color"/>
+    <Action name="format_bgcolor"/>
     <DefineGroup name="format_chars_group" />
     <Separator/>
     <Menu name="alignment"><text>&amp;Alignment</text>
