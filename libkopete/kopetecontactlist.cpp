@@ -83,7 +83,6 @@ KopeteContactList::KopeteContactList()
 	connect( this, SIGNAL( groupAdded( KopeteGroup * ) ), SLOT( slotSaveLater() ) );
 	connect( this, SIGNAL( groupRemoved( KopeteGroup * ) ), SLOT( slotSaveLater() ) );
 	connect( this, SIGNAL( groupRenamed( KopeteGroup *, const QString & ) ), SLOT( slotSaveLater() ) );
-	connect( KopetePluginManager::self(), SIGNAL( allPluginsLoaded() ), this, SLOT( slotKABCChanged() ) );
 }
 
 KopeteContactList::~KopeteContactList()
