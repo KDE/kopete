@@ -35,17 +35,20 @@ JabberContact::JabberContact(QString userid, QString name, QString group,
     mName = name;
     mGroup = group;
     mUserID = userid;
-    hasLocalGroup = false;
+    if (mGroup == QString("")) { hasLocalGroup = false; }
+	else { hasLocalGroup = true; }
     connect(protocol,
-	    SIGNAL(contactUpdated(QString, QString, QString, QString)),
+	    SIGNAL(contactUpdated(QString, QString, int, QString)),
 	    this,
-	    SLOT(slotUpdateContact(QString, QString, QString, QString)));
+	    SLOT(slotUpdateContact(QString, QString, int, QString)));
     connect(protocol, SIGNAL(nukeContacts(bool)), this,
 	    SLOT(slotDeleteMySelf(bool)));
 	connect(protocol, SIGNAL(resourceAvailable(const Jid &, const JabResource &)), this,
 		SLOT(slotResourceAvailable(const Jid &, const JabResource &)));
-    connect(protocol, SIGNAL(newMessage(QString, QString)), this,
-	    SLOT(slotNewMessage(QString, QString)));
+	connect(protocol, SIGNAL(resourceUnavailable(const Jid &)), this,
+		SLOT(slotResourceUnavailable(const Jid &)));
+    connect(protocol, SIGNAL(newMessage(const JabMessage &)), this,
+	    SLOT(slotNewMessage(const JabMessage &)));
 
 	historyDialog = 0L;
 	msgDialog = 0L;
@@ -101,7 +104,7 @@ void JabberContact::slotUpdateContact(QString handle, QString resource,
 				      int status, QString reason) {
     if (handle != mUserID)
 		return;
-    kdDebug() << "Jabber plugin: Contact - updating " << handle << " to " << status << "." << endl;
+    kdDebug() << "Jabber contact: Contact - updating " << handle << " to " << status << "." << endl;
 	if (status != -1) {
 		mStatus = status;
 	}
@@ -116,7 +119,7 @@ void JabberContact::slotUpdateContact(QString handle, QString resource,
 
 void JabberContact::slotRenameContact()
 {
-    kdDebug() << "Jabber plugin: Renaming contact." << endl;
+    kdDebug() << "Jabber contact: Renaming contact." << endl;
     dlgRename = new dlgJabberRename;
     dlgRename->lblUserID->setText(mUserID);
     dlgRename->leNickname->setText(mName);
@@ -130,7 +133,12 @@ void JabberContact::slotDoRenameContact()
     mName = dlgRename->leNickname->text();
     setName(mName);
     delete dlgRename;
-    mProtocol->renameContact(mUserID, mName);
+    if (hasLocalGroup) { 
+		mProtocol->renameContact(mUserID, mName, mGroup);
+	}
+	else {
+		mProtocol->renameContact(mUserID, mName, "");
+	}
 }
 
 void JabberContact::slotDeleteMySelf(bool)
@@ -182,28 +190,29 @@ void JabberContact::slotMoveThisUser()
     mProtocol->moveUser(mUserID, actionContactMove->currentText(), mName,
 			this);
     mGroup = actionContactMove->currentText();
+	hasLocalGroup = true;
 }
 
 int JabberContact::importance() const
 {
-    if (mStatus == QString("online")) {
-	return 20;
+    if (mStatus == STATUS_ONLINE) {
+		return 20;
     }
-    if (mStatus == QString("away")) {
-	return 15;
+    if (mStatus == STATUS_AWAY) {
+		return 15;
     }
-    if (mStatus == QString("xa")) {
-	return 10;
+    if (mStatus == STATUS_XA) {
+		return 12;
     }
-    if (mStatus == QString("dnd")) {
-	return 12;
+    if (mStatus == STATUS_DND) {
+		return 10;
     }
     return 0;
 }
 
 void JabberContact::slotChatThisUser()
 {
-    kdDebug() << "Jabber plugin: Opening chat with user " << mUserID <<
+    kdDebug() << "Jabber contact: Opening chat with user " << mUserID <<
 	endl;
 	kdDebug() << "Jabber contact: It's for us! *swoon*" << endl;
 
@@ -220,11 +229,12 @@ void JabberContact::execute()
     slotChatThisUser();
 }
 
-void JabberContact::slotNewMessage(QString userID, QString body)
+void JabberContact::slotNewMessage(const JabMessage &message)
 {
-	JabberMessage message(this, mProtocol->myself()->userID(), "", body);
+	QString userID = QString("%1@%2").arg(message.from.user(), 1).arg(message.from.host());
+	JabberMessage jabberMessage(this, userID, message.subject, message.body);
 	
-	kdDebug() << "Jabber contact: Message recieved for " << userID << endl;
+	kdDebug() << "Jabber contact: Message recieved from " << userID << endl;
     if (userID != mUserID) {
 		return;
     }
@@ -236,7 +246,7 @@ void JabberContact::slotNewMessage(QString userID, QString body)
 	}
 
 	msgDialog->show();
-	msgDialog->messageReceived(message);
+	msgDialog->messageReceived(jabberMessage);
 	kdDebug() << "Jabber contact: end slotNewMessage" << endl;
 }
 
@@ -259,21 +269,65 @@ void JabberContact::slotCloseHistoryDialog()
 }
 
 void JabberContact::slotSendMsg(const QString &message) {
-	mProtocol->slotSendMsg(mUserID, message);
+	JabMessage jabMessage;
+	jabMessage.to = mUserID;
+	jabMessage.from = mProtocol->myself()->userID();
+	jabMessage.subject = "";
+	jabMessage.body = message;
+	mProtocol->slotSendMsg(jabMessage);
 	JabberMessage jMessage(this, mProtocol->myself()->userID(), "", message, JabberMessage::Outbound);
 	msgDialog->messageReceived(jMessage);
 }
 
 void JabberContact::slotResourceAvailable(const Jid &jid, const JabResource &resource) {
 	QString theirJID = QString("%1@%2").arg(jid.user(), 1).arg(jid.host(), 2);
-	kdDebug() << "Jabber plugin: New resource - they want " << theirJID << ", we're " << mUserID << endl;
+	kdDebug() << "Jabber contact: New resource - they want " << theirJID << ", we're " << mUserID << endl;
 	if (theirJID != mUserID) { return; }
-	kdDebug() << "Jabber plugin: Adding new resource for " << mUserID << endl;
+	kdDebug() << "Jabber contact: Adding new resource '" << resource.name << "' for " << mUserID << endl;
+	for (JabberResource *tmpResource = resources.first(); tmpResource; tmpResource = resources.next()) {
+		if (tmpResource->resource() == jid.resource()) {
+			/* Yes, it's a hack. AIUI, Psi will emit resourceAvailable() whenever a certain resource
+			 * changes status, which means we can't really avoid this, unless we want multiple instances
+			 * of the same resource in this list, every single time. Ugh, no thanks. I want my programs
+			 * to *work*, thankyouverymuch. */
+			kdDebug() << "Jabber contact: Resource " << tmpResource->resource() << " already added ... b0rk b0rk b0rk!" << endl;
+			resources.remove();
+		}
+	}
 	resources.append(new JabberResource(resource.name, resource.priority, resource.timeStamp, resource.status, resource.statusString));	
 	JabberResource *newResource = bestResource();
 	kdDebug() << "Jabber contact: Best resource is now " << newResource->resource() << "." << endl;
 	slotUpdateContact(theirJID, newResource->resource(), newResource->status(), newResource->reason());
-}	
+}
+
+void JabberContact::slotResourceUnavailable(const Jid &jid) {
+	QString theirJID = QString("%1@%2").arg(jid.user(), 1).arg(jid.host(), 2);
+	kdDebug() << "Jabber contact: Removing resource - they want " << theirJID << ", we're " << mUserID << endl;
+	if (theirJID != mUserID) { return; }
+	kdDebug() << "Jabber contact: Removing resource '" << jid.resource() << "' for " << mUserID << endl;
+	JabberResource *resource;
+	for (resource = resources.first(); resource; resource = resources.next()) {
+		if (resource->resource() == jid.resource()) {
+			kdDebug() << "Jabber contact: Got a match in " << resource->resource() << ", removing." << endl;
+			if (resources.remove()) {
+				kdDebug() << "Jabber contact: Successfully removed, there are now " << resources.count() << "resources!" << endl;
+			}
+			else {
+				kdDebug() << "Jabber contact: Ack! Couldn't remove the resource. Bugger!" << endl;
+			}
+			break;
+		}
+	}
+	JabberResource *newResource = bestResource();
+	if (!newResource) {
+		kdDebug() << "Jabber contact: No best resource! User is offline." << endl;
+		slotUpdateContact("", "", 0, "");
+	}
+	else {
+		kdDebug() << "Jabber contact: Best resource is now " << newResource->resource() << "." << endl;
+		slotUpdateContact(theirJID, newResource->resource(), newResource->status(), newResource->reason());
+	}
+}
 
 JabberResource *JabberContact::bestResource() {
 	JabberResource *resource, *tmpResource;
@@ -299,12 +353,17 @@ JabberResource *JabberContact::bestResource() {
 	return resource;
 }
 
+void JabberContact::slotRemoveFromGroup() {
+	mProtocol->moveUser(mUserID, mGroup = "", mName, this);
+	hasLocalGroup = false;
+}
+
 JabberResource::JabberResource() { 
-	kdDebug() << "Jabber plugin: New Jabber resource (no params)." << endl;
+	kdDebug() << "Jabber resource: New Jabber resource (no params)." << endl;
 }
 
 JabberResource::JabberResource(const QString &resource, const int &priority, const QDateTime &timestamp, const int &status, const QString &reason) {
-	kdDebug() << QString("Jabber plugin: New Jabber resource (resource %1, priority %2, timestamp %3).").arg(resource, 1).arg(priority, 2).arg(timestamp.toString("yyyyMMddhhmmss"), 3) << endl;
+	kdDebug() << QString("Jabber resource: New Jabber resource (resource %1, priority %2, timestamp %3).").arg(resource, 1).arg(priority, 2).arg(timestamp.toString("yyyyMMddhhmmss"), 3) << endl;
 	mResource = resource;
 	mPriority = priority;
 	mTimestamp = timestamp;

@@ -2,8 +2,8 @@
                           jabbercontact.h  -  description
                              -------------------
     begin                : Fri Apr 12 2002
-    copyright            : (C) 2002 by Duncan Mac-Vicar Prett
-    email                : duncan@kde.org
+    copyright            : (C) 2002 by Daniel Stone
+    email                : dstone@kde.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -63,6 +63,7 @@ class JabberContact:public KopeteContact {
     QString userID() { return mUserID; }
     QString nickname() { return mName; }
     QString resource() { return mResource; }
+    QString group() { return mGroup; }
     bool localGroup() { return hasLocalGroup; }
     
     virtual void showContextMenu(QPoint, QString);
@@ -70,12 +71,14 @@ class JabberContact:public KopeteContact {
     JabberResource *bestResource();
 
   public slots:
-    void slotNewMessage(QString, QString);
+    void slotNewMessage(const JabMessage &);
     void slotCloseHistoryDialog();
     void slotViewHistory();
     void slotSendMsg(const QString &);
     void slotResourceAvailable(const Jid &, const JabResource &);
-    
+    void slotResourceUnavailable(const Jid &);
+    void slotRemoveFromGroup();
+
   private slots:
     void slotUpdateContact(QString, QString, int, QString);
     void slotDeleteMySelf(bool);

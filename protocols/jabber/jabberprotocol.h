@@ -41,6 +41,8 @@ class KPopupMenu;
 class KSimpleConfig;
 
 class JabberContact;
+class JabberPreferences;
+class dlgJabberStatus;
 
 class StatusBarIcon;
 
@@ -70,39 +72,42 @@ class JabberProtocol:public QObject, public KopeteProtocol {
 	JabberContact *myself() { return myContact; }
     
 	void removeUser(QString);
-    void renameContact(QString, QString);
+    void renameContact(QString, QString, QString);
     void moveUser(QString, QString, QString, JabberContact * contact);
     void addContact(QString);
+	void registerUser();
 
   public slots:
     void slotConnect();
     void slotDisconnect();
 	void slotConnected();
     void slotDisconnected();
+    void slotConnecting();
 
     void slotGoOnline();
     void slotGoOffline();
     void slotSetAway();
     void slotSetXA();
     void slotSetDND();
-    void slotConnecting();
-
+	void setPresence(int, QString, int = 0);
+	
     void slotIconRightClicked(const QPoint);
 
     void slotNewContact(JabRosterEntry *);
     void slotContactUpdated(JabRosterEntry *);
-    void slotUserWantsAuth(QString);
+    void slotUserWantsAuth(const Jid &);
     void slotSettingsChanged(void);
 
-    void slotSendMsg(QString, QString) const;
-    void slotNewMessage(QString, QString);
+    void slotSendMsg(JabMessage);
+    void slotNewMessage(const JabMessage &);
 
   signals:
 	void protocolUnloading();
-    void contactUpdated(QString, QString, QString, QString);
+    void contactUpdated(QString, QString, int, QString);
     void nukeContacts(bool);
-    void newMessage(QString, QString);
+    void newMessage(const JabMessage &);
 	void resourceAvailable(const Jid &, const JabResource &);
+	void resourceUnavailable(const Jid &);
 
   private:
     void initIcons();
@@ -127,11 +132,13 @@ class JabberProtocol:public QObject, public KopeteProtocol {
   
 	QString mUsername, mPassword, mServer, mResource;
     int mPort;
+	bool doRegister;
 
     JabberPreferences *mPrefs;
     Jabber *protocol;
 	JabberContact *myContact;
 	KMessageBox *authContact;
+	dlgJabberStatus *reasonDialog;
 };
 
 #endif
