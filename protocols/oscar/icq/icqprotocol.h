@@ -72,6 +72,7 @@ class ICQProtocol : public KopeteProtocol
 		const Kopete::ContactPropertyTmpl firstName;
 		const Kopete::ContactPropertyTmpl lastName;
 		const Kopete::ContactPropertyTmpl awayMessage;
+		const Kopete::ContactPropertyTmpl emailAddress;
 		const Kopete::ContactPropertyTmpl clientFeatures;
 
 		const QMap<int, QString> &genders() { return mGenders; }

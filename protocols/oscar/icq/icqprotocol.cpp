@@ -150,11 +150,8 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KURL & url) co
 			contact->setProperty(Kopete::Global::Properties::self()->firstName(), first);
 		if (!last.isEmpty())
 			contact->setProperty(Kopete::Global::Properties::self()->lastName(), last);
-		/*
-		// TODO: email prop in icq missing so far
 		if (!email.isEmpty())
 			contact->setProperty(Kopete::Global::Properties::self()->emailAddress(), email);
-		*/
 	}
 }
 
@@ -173,6 +170,7 @@ ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 	firstName(Kopete::Global::Properties::self()->firstName()),
 	lastName(Kopete::Global::Properties::self()->lastName()),
 	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
+	emailAddress(Kopete::Global::Properties::self()->emailAddress()),
 	clientFeatures("clientFeatures", i18n("Client Features"), 0, false)
 {
 	if (protocolStatic_)

@@ -484,12 +484,11 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 	else
 		removeProperty(mProtocol->lastName);
 
-	/*
 	if(!generalInfo.eMail.isEmpty())
-		setProperty("emailAddress", generalInfo.eMail);
+		setProperty(mProtocol->emailAddress, generalInfo.eMail);
 	else
-		removeProperty("emailAddress");
-
+		removeProperty(mProtocol->emailAddress);
+	/*
 	if(!generalInfo.phoneNumber.isEmpty())
 		setProperty("privPhoneNum", generalInfo.phoneNumber);
 	else
