@@ -63,15 +63,6 @@ public:
 	/* Tells the user to connect first before they can do whatever it is
 	 * that they want to do. */
 	void errorConnectFirst ();
-
-	/* Asks the specified JID for authorization. */
-	void subscribe (const Jid & jid);
-
-	/* Accepts another JID's request for authorization. */
-	void subscribed (const Jid & jid);
-
-	/* Removes another JID's authorization. */
-	void unsubscribed (const Jid & jid);
 	
 public slots:
 	/* Connects to the server. */
@@ -121,6 +112,15 @@ private:
 
 	/* Psi backend for this account. */
 	Jabber::Client *jabberClient;
+
+	/* Asks the specified JID for authorization. */
+	void subscribe (const Jid & jid);
+
+	/* Accepts another JID's request for authorization. */
+	void subscribed (const Jid & jid);
+
+	/* Removes another JID's authorization. */
+	void unsubscribed (const Jid & jid);
 
 	void setAvailable ();
 	void removeContact (const RosterItem &);

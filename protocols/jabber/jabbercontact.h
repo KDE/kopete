@@ -211,6 +211,11 @@ private:
 	void km2jm (const KopeteMessage & km, Jabber::Message & jm);
 
 	/**
+	 * Sends subscription messages.
+	 */
+	void sendSubscription (const QString& subType);
+
+	/**
 	 * The metacontact that this contact belongs
 	 * to.
 	 */

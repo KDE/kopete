@@ -278,30 +278,37 @@ void JabberContact::slotDeleteContact ()
 
 void JabberContact::slotSendAuth ()
 {
-
 	kdDebug (14130) << "[JabberContact] (Re)send auth " << userId () << endl;
-
-	static_cast<JabberAccount *>(account())->subscribed (Jabber::Jid (userId ()));
-
+	sendSubscription ("subscribed");
 }
 
 void JabberContact::slotRequestAuth ()
 {
-
 	kdDebug (14130) << "[JabberContact] (Re)request auth " << userId () << endl;
-
-	static_cast<JabberAccount *>(account())->subscribe (Jabber::Jid (userId ()));
-
+	sendSubscription ("subscribe");
 }
 
 void JabberContact::slotRemoveAuth ()
 {
-
 	kdDebug (14130) << "[JabberContact] Remove auth " << userId () << endl;
+	sendSubscription ("unsubscribed");
+}
 
-	static_cast<JabberAccount *>(account())->unsubscribed (Jabber::Jid (userId ()));
+void JabberContact::sendSubscription (const QString& subType)
+{
+	if (!account()->isConnected())
+	{
+		static_cast<JabberAccount *>(account())->errorConnectFirst();
+		return;
+	}
+
+	Jabber::JT_Presence * task = new Jabber::JT_Presence (static_cast<JabberAccount *>(account())->client()->rootTask ());
+	
+	task->sub (userId(), subType);
+	task->go (true);
 
 }
+
 void JabberContact::syncGroups ()
 {
 	QStringList groups;
