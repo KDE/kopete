@@ -27,10 +27,6 @@ SMSSendProvider::SMSSendProvider(QString providerName, QString prefixValue, QStr
 #if KDE_VERSION > 305
 	KProcIO* p = new KProcIO;
 	p->setUseShell(true);
-#else
-	KMessageBox::error(0L, "Can't send messages in KDE 3.0 yet", "Could not send message");
-	return;
-#endif
 	*p << QString("%1/bin/smssend").arg(prefix) << provider << "-help";
 	p->start(KProcess::Block);
 
@@ -74,6 +70,10 @@ SMSSendProvider::SMSSendProvider(QString providerName, QString prefixValue, QStr
 
 	delete p;
 }
+#else
+	KMessageBox::error(0L, "Can't send messages in KDE 3.0 yet", "Could not send message");
+	return;
+#endif
 
 SMSSendProvider::~SMSSendProvider()
 {
@@ -127,10 +127,6 @@ bool SMSSendProvider::send(QString nr, QString message)
 #if KDE_VERSION > 305
 	KProcIO* p = new KProcIO;
 	p->setUseShell(true);
-#else
-	KMessageBox::error(0L, "Can't send messages in KDE 3.0 yet", "Could not send message");
-	return false;
-#endif
 	*p << QString("%1/bin/smssend").arg(prefix) << provider << args;
 	p->start(KProcess::Block);
 	if (p->normalExit())
@@ -158,6 +154,10 @@ bool SMSSendProvider::send(QString nr, QString message)
 	}
 	return false;
 }
+#else
+	KMessageBox::error(0L, "Can't send messages in KDE 3.0 yet", "Could not send message");
+	return false;
+#endif
 
 
 
