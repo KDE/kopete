@@ -1,8 +1,10 @@
 /*
-    kopeteawaydialog.cpp  -  Kopete Away Dialog
+    kopeteawaydialog.cpp - Kopete Away Dialog
 
-    Copyright (c) 2002 by Hendrik vom Lehn <hvl@linux-4-ever.de>
-    Kopete    (c) 2002-2003 The Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2002      by Hendrik vom Lehn       <hvl@linux-4-ever.de>
+    Copyright (c) 2003      by Martijn Klingens       <klingens@kde.org>
+
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -16,57 +18,51 @@
 
 #include "kopeteawaydialog.h"
 
-#include <qpushbutton.h>
-
 #include <kcombobox.h>
-#include <klineedit.h>
 #include <kdebug.h>
+#include <klineedit.h>
+#include <klocale.h>
 
 #include "kopeteaway.h"
+#include "kopeteawaydialogbase.h"
 
-KopeteAwayDialog::KopeteAwayDialog(QWidget *parent, const char *name)
-	: KopeteAwayBase(parent, name)
+class KopeteAwayDialogPrivate
 {
-//	kdDebug(14010) << "[KopeteAwayDialog] Building KopeteAwayDialog..." << endl;
+public:
+	KopeteAwayDialog_Base *base;
+};
 
-	// Connect the buttons to actions
-	QObject::connect( cmdCancel, SIGNAL(clicked()),
-		this, SLOT(slotCancelClicked()) );
-	QObject::connect( cmdOkay, SIGNAL(clicked()),
-		this, SLOT(slotOkayClicked()) );
+KopeteAwayDialog::KopeteAwayDialog( QWidget *parent, const char *name )
+: KDialogBase( parent, name, true, i18n( "Global Away Message" ),
+	KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true )
+{
+	//kdDebug( 14010 ) << k_funcinfo << "Building KopeteAwayDialog..." << endl;
 
-	// Connect the user input widgets with their slots
-	// These objects are inherited from KopeteAwayBase
-	// Which is built using QT Designer
-	QObject::connect( cmbHistory, SIGNAL(activated(int)),
-		this, SLOT(slotComboBoxSelection(int)));
+	d = new KopeteAwayDialogPrivate;
 
-	// Get the KopeteAway instance
+	d->base = new KopeteAwayDialog_Base( this );
+	setMainWidget( d->base );
+
+	QObject::connect( d->base->cmbHistory, SIGNAL( activated( int ) ), this, SLOT( slotComboBoxSelection( int ) ) );
+
 	awayInstance = KopeteAway::getInstance();
-
-	// The last user entered away message is blank by default
-	mLastUserAwayMessage = "";
-
-	// Set the extended away type
 	mExtendedAwayType = 0;
-
-	// Call the init method
 	init();
 
-	// Set us modal
-	setWFlags( Qt::WType_Dialog | Qt::WShowModal );
-
-//	kdDebug(14010) << "[KopeteAwayDialog] KopeteAwayDialog Created." << endl;
+	//kdDebug( 14010 ) << k_funcinfo << "KopeteAwayDialog created." << endl;
 }
 
-KopeteAwayDialog::~KopeteAwayDialog() {}
+KopeteAwayDialog::~KopeteAwayDialog()
+{
+	delete d;
+}
 
-void KopeteAwayDialog::slotComboBoxSelection(int /*index*/)
+void KopeteAwayDialog::slotComboBoxSelection( int /* index */ )
 {
 	// If they selected something out of the combo box
 	// They probably want to use it
-	txtOneShot->setText( awayInstance->getMessage( cmbHistory->currentText() ) );
-	txtOneShot->setCursorPosition(0);
+	d->base->txtOneShot->setText( awayInstance->getMessage( d->base->cmbHistory->currentText() ) );
+	d->base->txtOneShot->setCursorPosition( 0 );
 }
 
 void KopeteAwayDialog::show()
@@ -78,65 +74,63 @@ void KopeteAwayDialog::show()
 	// Reinit the GUI
 	init();
 
-//	kdDebug(14010) << "[KopeteAwayDialog] Showing Dialog with no " << "extended away type" << endl;
+	//kdDebug( 14010 ) << k_funcinfo << "Showing Dialog with no extended away type" << endl;
 
-	// Call the parent class' show method
-	KopeteAwayBase::show();
+	KDialogBase::show();
 }
 
-void KopeteAwayDialog::show(int awayType)
+void KopeteAwayDialog::show( int awayType )
 {
-	// Save the away message
 	mExtendedAwayType = awayType;
 
 	// Reinit the GUI to set it up correctly
 	init();
 
-	// Print a debug statement telling what's going on
-	kdDebug(14010) << k_funcinfo << "Showing Dialog with extended away type " <<
-		awayType << endl;
+	kdDebug( 14010 ) << k_funcinfo << "Showing Dialog with extended away type " << awayType << endl;
 
-	// Call the parent class' show method
-	KopeteAwayBase::show();
+	KDialogBase::show();
+}
+
+void KopeteAwayDialog::cancelAway( int /* awayType */ )
+{
+	/* Empty default implementation */
 }
 
 void KopeteAwayDialog::init()
 {
-	// Clear out the list of titles
-	cmbHistory->clear();
-	// Insert the string list of titles
-	cmbHistory->insertStringList(awayInstance->getTitles());
-	// Fill in the text they typed last
-	txtOneShot->setText( awayInstance->getMessage( cmbHistory->currentText() ) );
-	// Give it the focus so they can just begin
-	// typing if they want
-	txtOneShot->setFocus();
-	txtOneShot->setCursorPosition(0);
+	d->base->cmbHistory->clear();
+	d->base->cmbHistory->insertStringList( awayInstance->getTitles() );
+	d->base->txtOneShot->setText( awayInstance->getMessage( d->base->cmbHistory->currentText() ) );
+
+	d->base->txtOneShot->setFocus();
+	d->base->txtOneShot->setCursorPosition( 0 );
 }
 
 QString KopeteAwayDialog::getSelectedAwayMessage()
 {
-	mLastUserAwayMessage = txtOneShot->text();
+	mLastUserAwayMessage = d->base->txtOneShot->text();
 	return mLastUserAwayMessage;
 }
 
-void KopeteAwayDialog::slotOkayClicked()
+void KopeteAwayDialog::slotOk()
 {
 	// Save the text the user typed
-	mLastUserTypedMessage = txtOneShot->text();
-	// Call the virtual function with the type of away
-	setAway(mExtendedAwayType);
-	// Close the window
-	close();
+	mLastUserTypedMessage = d->base->txtOneShot->text();
+
+	setAway( mExtendedAwayType );
+
+	KDialogBase::slotOk();
 }
 
-void KopeteAwayDialog::slotCancelClicked()
+void KopeteAwayDialog::slotCancel()
 {
 	// Call the virtual function with the type of away
-	cancelAway(mExtendedAwayType);
-	// Close the window
-	close();
+	cancelAway( mExtendedAwayType );
+
+	KDialogBase::slotCancel();
 }
 
 #include "kopeteawaydialog.moc"
+
 // vim: set noet ts=4 sts=4 sw=4:
+

@@ -1,29 +1,28 @@
 <!DOCTYPE UI><UI version="3.1" stdsetdef="1">
-<class>KopeteAwayBase</class>
-<widget class="QDialog">
+<class>KopeteAwayDialog_Base</class>
+<widget class="QWidget">
     <property name="name">
-        <cstring>KopeteAwayBase</cstring>
+        <cstring>KopeteAwayDialog_Base</cstring>
     </property>
     <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
             <width>322</width>
-            <height>187</height>
+            <height>192</height>
         </rect>
     </property>
     <property name="caption">
-        <string>Global Away Message</string>
+        <string>Form1</string>
     </property>
-    <property name="layoutMargin" stdset="0">
-    </property>
-    <property name="layoutSpacing" stdset="0">
-    </property>
-    <grid>
+    <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="3">
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <widget class="QLabel">
             <property name="name">
                 <cstring>TextLabel1</cstring>
             </property>
@@ -36,7 +35,7 @@
             <property name="wordwrap" stdset="0">
             </property>
         </widget>
-        <widget class="KLineEdit" row="1" column="0" rowspan="1" colspan="3">
+        <widget class="KLineEdit">
             <property name="name">
                 <cstring>txtOneShot</cstring>
             </property>
@@ -55,7 +54,7 @@
                 </size>
             </property>
         </widget>
-        <widget class="KComboBox" row="2" column="0" rowspan="1" colspan="3">
+        <widget class="KComboBox">
             <property name="name">
                 <cstring>cmbHistory</cstring>
             </property>
@@ -66,47 +65,24 @@
                 <enum>AtCurrent</enum>
             </property>
         </widget>
-        <widget class="QPushButton" row="3" column="0">
+        <spacer>
             <property name="name">
-                <cstring>cmdOkay</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;OK</string>
-            </property>
-            <property name="default">
-                <bool>true</bool>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="3" column="2">
-            <property name="name">
-                <cstring>cmdCancel</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Cancel</string>
-            </property>
-        </widget>
-        <spacer row="3" column="1">
-            <property name="name">
-                <cstring>Spacer1</cstring>
+                <cstring>spacer2</cstring>
             </property>
             <property name="orientation">
-                <enum>Horizontal</enum>
+                <enum>Vertical</enum>
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>138</width>
-                    <height>16</height>
+                    <width>20</width>
+                    <height>40</height>
                 </size>
             </property>
         </spacer>
-    </grid>
+    </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>klineedit.h</includehint>
-    <includehint>kcombobox.h</includehint>
-</includehints>
 </UI>
