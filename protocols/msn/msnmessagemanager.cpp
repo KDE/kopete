@@ -202,10 +202,12 @@ KActionCollection * MSNMessageManager::chatActions()
 	QPtrListIterator<KopeteContact> it( availableContacts );
 	for( ; it.current(); ++it )
 	{
-		actionInvite->insert( new KopeteContactAction( it.current(), this,
-			SLOT( slotInviteContact( KopeteContact * ) ), actionInvite ) );
+		if( !members().contains( it.current() ) )
+		{
+			actionInvite->insert( new KopeteContactAction( it.current(), this,
+				SLOT( slotInviteContact( KopeteContact * ) ), actionInvite ) );
+		}
 	}
-	// FIXME: Remove the currently active members from this list again!
 	// TODO: invite other contact 
 	//sl.append( otherString = i18n( "Other..." ) );
 	//actionInvite->setItems( sl );
