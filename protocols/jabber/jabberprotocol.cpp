@@ -74,6 +74,7 @@ JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : Kop
 	protocolInstance = this;
 
 	jabberClient = 0L;
+	registerFlag = 0;
 
 	// these dialogs will be re-instantiated when needed and deleted after
 	// they have served their purpose
@@ -277,10 +278,22 @@ void JabberProtocol::slotHandshaken()
 
 	kdDebug() << "[JabberProtocol] Performing login..." << endl;
 
-	KGlobal::config()->setGroup("Jabber");
-	jabberClient->authDigest(KGlobal::config()->readEntry("UserID", ""),
-				KGlobal::config()->readEntry("Password", ""),
-				KGlobal::config()->readEntry("Resource", "Kopete"));
+	if(registerFlag)
+	{
+		Jabber::JT_Register *task = new Jabber::JT_Register(jabberClient->rootTask());
+		connect(task, SIGNAL(finished()), this, SLOT(slotRegisterUserDone()));
+
+		task->reg(KGlobal::config()->readEntry("UserID", ""), KGlobal::config()->readEntry("Password", ""));
+
+		task->go(true);
+	}
+	else
+	{
+		KGlobal::config()->setGroup("Jabber");
+		jabberClient->authDigest(KGlobal::config()->readEntry("UserID", ""),
+					KGlobal::config()->readEntry("Password", ""),
+					KGlobal::config()->readEntry("Resource", "Kopete"));
+	}
 
 }
 
@@ -1257,15 +1270,14 @@ void JabberProtocol::registerUser()
 
 	kdDebug() << "[JabberProtocol] Registering user" << endl;
 
+	// save the current preferences
 	preferences->save();
 
-	Jabber::JT_Register *task = new Jabber::JT_Register(jabberClient->rootTask());
-	connect(task, SIGNAL(finished()), this, SLOT(slotRegisterUserDone()));
-	
-	task->reg(KGlobal::config()->readEntry("UserID", ""), KGlobal::config()->readEntry("Password", ""));
+	// set the flag to register an account during registration
+	registerFlag = 1;
 
-	task->go(true);
-
+	// now connect, initiating the registration
+	Connect();
 }
 
 void JabberProtocol::slotRegisterUserDone()
@@ -1273,18 +1285,13 @@ void JabberProtocol::slotRegisterUserDone()
 	Jabber::JT_Register *task = (Jabber::JT_Register *)sender();
 
 	if(task->success())
-	{
-		// reconnect
-		Disconnect();
-		Connect();
 		KMessageBox::information(kopeteapp->mainWindow(), i18n("Account successfully registered."), i18n("Account Registration"));
-	}
 	else
-	{
-		// make sure we are disconnected
-		Disconnect();
 		KMessageBox::information(kopeteapp->mainWindow(), i18n("Unable to create account on the server."), i18n("Account Registration"));
-	}
+
+	registerFlag = 0;
+		
+	Disconnect();
 
 }
 

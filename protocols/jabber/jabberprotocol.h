@@ -410,6 +410,11 @@ private:
 	 */
     Jabber::Client *jabberClient;
 
+    /**
+     * Flag whether we are to register upon connect
+     */
+    int registerFlag;
+    
 	/**
 	 * Cache for the title ID of the status bar context
 	 * menu to reflect changes in the user@host settings
