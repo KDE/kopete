@@ -24,6 +24,7 @@
 #include <qdom.h>
 
 #include "kopetecontact.h"
+#include "kopeteonlinestatus.h"
 #include "kopeteplugindataobject.h"
 
 class QDomNode;
@@ -86,11 +87,6 @@ public:
 	bool canAcceptFiles() const;
 
 	/**
-	 * Contact's status
-	 */
-	enum OnlineStatus { Unknown, Offline, Online, Away };
-
-	/**
 	 * Contact's idle state
 	 */
 	enum IdleState { Unspecified, Idle, Active };
@@ -100,7 +96,7 @@ public:
 	 * Online means at least one sub-contact is online, away means at least
 	 * one is away, but nobody is online and offline speaks for itself
 	 */
-	OnlineStatus status() const;
+	KopeteOnlineStatus::OnlineStatus status() const;
 
 	/**
 	 * Like isOnline, but returns true even if the contact is not online, but
@@ -270,7 +266,7 @@ signals:
 	 * cache m_onlineStatus value! In all other case, just call
 	 * updateOnlineStatus() instead.
 	 */
-	void onlineStatusChanged( KopeteMetaContact *contact, KopeteMetaContact::OnlineStatus status );
+	void onlineStatusChanged( KopeteMetaContact *contact, KopeteOnlineStatus::OnlineStatus status );
 
 	/**
 	 * A contact's online status changed

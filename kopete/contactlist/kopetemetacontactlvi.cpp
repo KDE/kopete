@@ -40,6 +40,7 @@
 #include "kopetemetacontactlvi.h"
 #include "kopetegroupviewitem.h"
 #include "kopetecontactlist.h"
+#include "kopeteonlinestatus.h"
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
 #include "addcontactpage.h"
@@ -111,7 +112,7 @@ void KopeteMetaContactLVI::initLVI()
 	connect( m_metaContact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
 		SLOT( slotDisplayNameChanged() ) );
 
-	connect( m_metaContact, SIGNAL( onlineStatusChanged( KopeteMetaContact *, KopeteMetaContact::OnlineStatus ) ),
+	connect( m_metaContact, SIGNAL( onlineStatusChanged( KopeteMetaContact *, KopeteOnlineStatus::OnlineStatus ) ),
 		SLOT( slotContactStatusChanged() ) );
 
 	connect( m_metaContact, SIGNAL( contactStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ),
@@ -342,7 +343,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged()
 		m_parentGroup->refreshDisplayName();
 
 #if KDE_VERSION > 0x030100
-	QString event = (m_metaContact->status() == KopeteMetaContact::Online) ? "kopete_online" : "kopete_status_change";
+	QString event = (m_metaContact->status() == KopeteOnlineStatus::Online) ? "kopete_online" : "kopete_status_change";
 	int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 	KNotifyClient::event( winId, event,
 		i18n( "%2 is now %1!" ).arg( m_metaContact->statusString() ).arg( m_metaContact->displayName() ) );
@@ -351,7 +352,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged()
   #if KDE_VERSION >= 0x030006
 	// Show passive popup when requested and the user's KDE version supports it
 	// FIXME: when a contact is in several groups, this popup is showed multiple times
-	if( m_metaContact->status() == KopeteMetaContact::Online )
+	if( m_metaContact->status() == KopeteOnlineStatus::Online )
 	{
 		if( prefs->showTray() )
 		{
@@ -361,7 +362,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged()
 	}
   #endif
 
-	if( m_metaContact->status() != KopeteMetaContact::Away || prefs->soundIfAway() )
+	if( m_metaContact->status() != KopeteOnlineStatus::Away || prefs->soundIfAway() )
 	{
 		KNotifyClient::event( "kopete_online",
             i18n( "%2 is now %1!" ).arg( m_metaContact->statusString() ).arg( m_metaContact->displayName() ) );
@@ -514,7 +515,7 @@ void KopeteMetaContactLVI::updateVisibility()
 {
 	if ( KopetePrefs::prefs()->showOffline() /*|| mEventCount */)
 		setVisible(true);
-	else if ( m_metaContact->status() == KopeteMetaContact::Offline )
+	else if ( m_metaContact->status() == KopeteOnlineStatus::Offline )
 		setVisible(false);
 	else
 		setVisible(true);
@@ -660,16 +661,16 @@ QString KopeteMetaContactLVI::key( int, bool ) const
 	char importance_char;
 	switch (m_metaContact->status())
 	{
-	 case KopeteMetaContact::Online:
+	 case KopeteOnlineStatus::Online:
 		importance_char = 'A';
 		break;
-	 case KopeteMetaContact::Away:
+	 case KopeteOnlineStatus::Away:
 		importance_char = 'B';
 		break;
-	 case KopeteMetaContact::Offline:
+	 case KopeteOnlineStatus::Offline:
 		importance_char = 'C';
 		break;
-	 case KopeteMetaContact::Unknown:
+	 case KopeteOnlineStatus::Unknown:
 	 default:
 		importance_char = 'D';
 	}

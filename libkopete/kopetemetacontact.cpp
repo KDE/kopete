@@ -52,7 +52,7 @@ struct KopeteMetaContactPrivate
 	bool temporary;
 	bool dirty;
 	ulong contactId;
-	KopeteMetaContact::OnlineStatus onlineStatus;
+	KopeteOnlineStatus::OnlineStatus onlineStatus;
 	KopeteMetaContact::IdleState    idleState;
 	KopeteHistoryDialog *historyDialog;
 
@@ -71,7 +71,7 @@ KopeteMetaContact::KopeteMetaContact()
 	d->temporary = false;
 //	m_isTopLevel=false;
 
-	d->onlineStatus = Unknown;
+	d->onlineStatus = KopeteOnlineStatus::Unknown;
 	d->idleState = Unspecified;
 	d->historyDialog = 0L;
 	d->contactId = 0;
@@ -127,7 +127,7 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 
 void KopeteMetaContact::updateOnlineStatus()
 {
-	OnlineStatus newStatus = Unknown;
+	KopeteOnlineStatus::OnlineStatus newStatus = KopeteOnlineStatus::Unknown;
 	KopeteOnlineStatus mostSignificantStatus;
 
 	QPtrListIterator<KopeteContact> it( d->contacts );
@@ -138,7 +138,7 @@ void KopeteMetaContact::updateOnlineStatus()
 			mostSignificantStatus = it.current()->onlineStatus();
 	}
 
-	newStatus = (OnlineStatus) mostSignificantStatus.status();
+	newStatus = (KopeteOnlineStatus::OnlineStatus) mostSignificantStatus.status();
 
 	if( newStatus != d->onlineStatus )
 	{
@@ -349,13 +349,13 @@ QString KopeteMetaContact::statusIcon() const
 {
 	switch( status() )
 	{
-		case Online:
+		case KopeteOnlineStatus::Online:
 			return QString::fromLatin1( "metacontact_online" );
-		case Away:
+		case KopeteOnlineStatus::Away:
 			return QString::fromLatin1( "metacontact_away" );
-		case Unknown:
+		case KopeteOnlineStatus::Unknown:
 			return QString::fromLatin1( "metacontact_unknown" );
-		case Offline:
+		case KopeteOnlineStatus::Offline:
 		default:
 			return QString::fromLatin1( "metacontact_offline" );
 	}
@@ -365,19 +365,19 @@ QString KopeteMetaContact::statusString() const
 {
 	switch( status() )
 	{
-		case Online:
+		case KopeteOnlineStatus::Online:
 			return i18n("Online");
-		case Away:
+		case KopeteOnlineStatus::Away:
 			return i18n("Away");
-		case Offline:
+		case KopeteOnlineStatus::Offline:
 			return i18n("Offline");
-		case Unknown:
+		case KopeteOnlineStatus::Unknown:
 		default:
 			return i18n("Status not available");
 	}
 }
 
-KopeteMetaContact::OnlineStatus KopeteMetaContact::status() const
+KopeteOnlineStatus::OnlineStatus KopeteMetaContact::status() const
 {
 	return d->onlineStatus;
 }

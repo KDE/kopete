@@ -79,8 +79,8 @@ KopeteContactListView::KopeteContactListView( QWidget *parent,
 	}
 	else
 	{
-		m_offlineItem = new KopeteStatusGroupViewItem( KopeteMetaContact::Offline, this );
-		m_onlineItem = new KopeteStatusGroupViewItem( KopeteMetaContact::Online, this );
+		m_offlineItem = new KopeteStatusGroupViewItem( KopeteOnlineStatus::Offline, this );
+		m_onlineItem = new KopeteStatusGroupViewItem( KopeteOnlineStatus::Online, this );
 		m_onlineItem->setOpen(true);
 		m_offlineItem->setOpen(true);
 	}
@@ -193,7 +193,7 @@ void KopeteContactListView::slotMetaContactAdded( KopeteMetaContact *mc )
 	}
 	else
 	{
-		if(mc->status() == KopeteMetaContact::Offline )
+		if(mc->status() == KopeteOnlineStatus::Offline )
 			m_metaContacts.append( new KopeteMetaContactLVI( mc, m_offlineItem ) );
 		else
 			m_metaContacts.append( new KopeteMetaContactLVI( mc, m_onlineItem ) );
@@ -211,7 +211,7 @@ void KopeteContactListView::slotMetaContactAdded( KopeteMetaContact *mc )
 		SLOT( slotMovedToGroup( KopeteMetaContact *, KopeteGroup *, KopeteGroup * ) ) );
 
 	connect( mc,
-		SIGNAL( onlineStatusChanged( KopeteMetaContact *, KopeteMetaContact::OnlineStatus ) ),
+		SIGNAL( onlineStatusChanged( KopeteMetaContact *, KopeteOnlineStatus::OnlineStatus ) ),
 		SLOT( slotContactStatusChanged( KopeteMetaContact * ) ) );
 }
 
@@ -801,12 +801,12 @@ void KopeteContactListView::slotContactStatusChanged( KopeteMetaContact *mc )
 
 	if(!m_offlineItem)
 	{
-		m_offlineItem=new KopeteStatusGroupViewItem( KopeteMetaContact::Offline, this );
+		m_offlineItem=new KopeteStatusGroupViewItem( KopeteOnlineStatus::Offline, this );
 		m_offlineItem->setOpen(true);
 	}
 	if(!m_onlineItem)
 	{
-		m_onlineItem = new KopeteStatusGroupViewItem( KopeteMetaContact::Online, this );
+		m_onlineItem = new KopeteStatusGroupViewItem( KopeteOnlineStatus::Online, this );
 		m_onlineItem->setOpen(true);
 	}
 	if(mc)
