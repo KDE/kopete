@@ -113,8 +113,14 @@ void KPluginListViewToolTip::maybeTip( const QPoint &pos )
         "<tr><td><b>Description:</b></td><td>%1</td></tr>"
         "<tr><td><b>Author:</b></td><td>%2</td></tr>"
         "<tr><td><b>Version:</b></td><td>%3</td></tr>"
-        "<tr><td><b>License:</b></td><td>%4</td></tr></table></qt>" ).arg( item->pluginInfo()->comment(),
-        item->pluginInfo()->author(), item->pluginInfo()->version(), item->pluginInfo()->license() );
+        "<tr><td><b>License:</b></td><td>%4</td></tr></table></qt>" )
+#if QT_VERSION < 0x030200
+        .arg( item->pluginInfo()->comment() ).arg( item->pluginInfo()->author() )
+        .arg( item->pluginInfo()->version() ).arg( item->pluginInfo()->license() );
+#else
+        .arg( item->pluginInfo()->comment(), item->pluginInfo()->author(),
+        item->pluginInfo()->version(), item->pluginInfo()->license() );
+#endif
 
     //kdDebug( 702 ) << k_funcinfo << "Adding tooltip: itemRect: " << itemRect << ", tooltip:  " << toolTip << endl;
     tip( m_listView->itemRect( item ), toolTip );
