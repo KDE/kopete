@@ -182,7 +182,7 @@ void WPAccount::initActions()
 {
 	DEBUG(WPDMETHOD, "WPAccount::initActions()");
 
-	actionGoAvailable = new KAction("Online", "wp_available", 0, this, SLOT(goAvailable()), this, "actionGoAvailable");
+	actionGoAvailable = new KAction("Online", "wp_available", 0, this, SLOT(connect()), this, "actionGoAvailable");
 	actionGoOffline = new KAction("Offline", "wp_offline", 0, this, SLOT(disconnect()), this, "actionGoOffline");
 	actionGoAway = new KAction("Away", "wp_away", 0, this, SLOT(goAway()), this, "actionGoAway");
 

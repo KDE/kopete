@@ -79,6 +79,7 @@ public:
 	WPProtocol(QObject *parent, QString name, QStringList);
 	~WPProtocol();
 
+	virtual const QString protocolIcon();
 	virtual AddContactPage *createAddContactWidget(QWidget *parent) { return new WPAddContact(this, parent); }
 	virtual EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
 	virtual KopeteAccount *createNewAccount(const QString &accountId);

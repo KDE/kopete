@@ -58,9 +58,9 @@ K_EXPORT_COMPONENT_FACTORY(kopete_wp, KGenericFactory<WPProtocol>);
 
 // WP Protocol
 WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProtocol(parent, name),
-	WPOnline(  KopeteOnlineStatus::Online,  25, this, 0,  "wp_available", i18n( "Go O&nline" ),   i18n( "Online" ) ),
-	WPAway(    KopeteOnlineStatus::Away,    25, this, 1,  "wp_away",      i18n( "Go &Away" ),     i18n( "Away" ) ),
-	WPOffline( KopeteOnlineStatus::Offline, 25, this, 2,  "wp_offline",   i18n( "Go O&ffline" ),  i18n( "Offline" ) )
+	WPOnline(  KopeteOnlineStatus::Online,  25, this, 0,  "wp_online",    i18n( "Go O&nline" ),   i18n( "Online" ) ),
+	WPAway(    KopeteOnlineStatus::Away,    20, this, 1,  "wp_away",      i18n( "Go &Away" ),     i18n( "Away" ) ),
+	WPOffline( KopeteOnlineStatus::Offline, 0,  this, 2,  "wp_offline",   i18n( "Go O&ffline" ),  i18n( "Offline" ) )
 {
 	DEBUG(WPDMETHOD, "WPProtocol::WPProtocol()");
 	
@@ -135,6 +135,13 @@ void WPProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<
 	}
 
 	theAccount->addContact(contactId, serializedData["displayName"], metaContact, serializedData["group"]);
+}
+
+const QString WPProtocol::protocolIcon()
+{
+	DEBUG(WPDMETHOD, "WPProtocol::protocolIcon()");
+
+	return "wp_available";
 }
 
 EditAccountWidget *WPProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
