@@ -53,6 +53,9 @@
 #include "kopeteglobal.h"
 #include "kopeteemoticons.h"
 
+// uncomment this to transform all messages every time, for styles where
+// messages aren't processed independently (eg, Adium) to work.
+//#define TRANSFORM_ALL_MESSAGES
 
 //From  kdelibs/khtml/misc/htmltags.h
 //  used in ChatMessagePart::copy()
@@ -313,13 +316,20 @@ void ChatMessagePart::slotAppearanceChanged()
 
 void ChatMessagePart::appendMessage( Kopete::Message &message )
 {
+	messageMap.insert( ++messageId, message );
+	
+	// transform all messages every time. needed for Adium style.
+#ifdef TRANSFORM_ALL_MESSAGES
+	slotRefreshNodes();
+	return;
+#endif
+	
 	uint bufferLen = (uint)KopetePrefs::prefs()->chatViewBufferSize();
-
+	
 	message.setBgOverride( d->bgOverride );
 	message.setFgOverride( d->fgOverride );
 	message.setRtfOverride( d->rtfOverride );
 
-	messageMap.insert( ++messageId, message );
 	QDomDocument domMessage = message.asXML();
 	domMessage.documentElement().setAttribute( QString::fromLatin1( "id" ), QString::number( messageId ) );
 	QString resultHTML = addNickLinks( d->xsltParser->transform( domMessage.toString() ) );
@@ -370,31 +380,28 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 	QString nick = m_manager->user()->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
 	retVal.replace( QRegExp( QString::fromLatin1("([\\s&;>])%1([\\s&;<:])")
 		.arg( QRegExp::escape( KopeteEmoticons::parseEmoticons( nick ) ) )  ), QString::fromLatin1("\\1%1\\2").arg( nick ) );
-
-
+	
 	return retVal;
 }
 
 void ChatMessagePart::slotRefreshNodes()
 {
 	DOM::HTMLBodyElement bodyElement = htmlDocument().body();
-
-	QString xmlString;
+	
+	QString xmlString = QString::fromLatin1( "<document>" );
 	for( MessageMap::Iterator it = messageMap.begin(); it != messageMap.end(); ++it)
 	{
 		(*it).setBgOverride( d->bgOverride );
 		(*it).setFgOverride( d->fgOverride );
 		(*it).setRtfOverride( d->rtfOverride );
-
+		
 		QDomDocument message = (*it).asXML();
-	        message.documentElement().setAttribute( QString::fromLatin1( "id" ), QString::number( it.key() ) );
+		message.documentElement().setAttribute( QString::fromLatin1( "id" ), QString::number( it.key() ) );
 		xmlString += message.toString();
 	}
-
-	d->xsltParser->transformAsync(
-		QString::fromLatin1( "<document>" ) + xmlString + QString::fromLatin1( "</document>" ),
-		this, SLOT( slotTransformComplete( const QVariant & ) )
-	);
+	xmlString += QString::fromLatin1( "</document>" );
+	
+	d->xsltParser->transformAsync( xmlString, this, SLOT( slotTransformComplete( const QVariant & ) ) );
 }
 
 void ChatMessagePart::slotRefreshView()
@@ -404,7 +411,7 @@ void ChatMessagePart::slotRefreshView()
 	DOM::HTMLElement styleElement = headElement.getElementsByTagName( QString::fromLatin1( "style" ) ).item(0);
 	if ( !styleElement.isNull() )
 		styleElement.setInnerText( styleHTML() );
-
+	
 	DOM::HTMLBodyElement bodyElement = htmlDocument().body();
 	bodyElement.setBgColor( KopetePrefs::prefs()->bgColor().name() );
 }
@@ -412,7 +419,7 @@ void ChatMessagePart::slotRefreshView()
 void ChatMessagePart::slotTransformComplete( const QVariant &result )
 {
 	htmlDocument().body().setInnerHTML( addNickLinks( result.toString() ) );
-
+	
 	if ( !scrollPressed )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
 }
