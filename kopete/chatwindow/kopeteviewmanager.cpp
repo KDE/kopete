@@ -84,6 +84,12 @@ KopeteViewManager::KopeteViewManager (QObject *parent, const char *name, const Q
 KopeteViewManager::~KopeteViewManager()
 {
 //	kdDebug( 14000) << k_funcinfo << endl;
+
+	//delete all open chatwindow.
+	ManagerMap::Iterator it;
+	for ( it = d->managerMap.begin(); it != d->managerMap.end(); ++it )
+		it.data()->closeView( true ); //this does not clean the map, but we don't care
+
 	delete d;
 }
 
