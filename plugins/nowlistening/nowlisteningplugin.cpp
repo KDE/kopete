@@ -161,7 +161,7 @@ QString NowListeningPlugin::allPlayerAdvert() const
 	// Since we can't stop a message send in a plugin, add some message text to
 	// prevent us sending an empty message
 	if ( message.isEmpty() )
-		message = i18n("Message from Kopete user to another user; used when sending media information even though there are no songs playing or no media players running", "Now Listening for Kopete - it would tell you what I'm listening to, if I was listening to something on a supported media player! ;-)");
+		message = i18n("Message from Kopete user to another user; used when sending media information even though there are no songs playing or no media players running", "Now Listening for Kopete - it would tell you what I am listening to, if I was listening to something on a supported media player.");
 		
 	return message;
 }
