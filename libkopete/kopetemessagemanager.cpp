@@ -152,22 +152,26 @@ const QString KopeteMessageManager::chatName()
 	return chatName;
 }
 
-KopeteChatWindow *KopeteMessageManager::mainWindow(bool remove)
+KopeteChatWindow *KopeteMessageManager::mainWindow(bool addNewWindow, bool removeWindow)
 {
 	static KopeteChatWindow *mainWindow = 0L;
 	static QMap<KopeteProtocol*,KopeteChatWindow*> chatWindowMap;
 	
-	if( !remove )
+	if( !removeWindow )
 	{
 		//Determine tabbed window settings
 		switch( KopetePrefs::prefs()->chatWindowPolicy() )
 		{
 			case NEW_WINDOW: //Open every chat in a new window
-				mainWindow = new KopeteChatWindow();
-				connect (mainWindow, SIGNAL(Closing()), this, SLOT(slotChatWindowClosing()));
+				if( addNewWindow )
+				{	kdDebug(14010) << "KopeteMessageManager::mainWindow() : Always open new window" << endl;
+					mainWindow = new KopeteChatWindow();
+					connect (mainWindow, SIGNAL(Closing()), this, SLOT(slotChatWindowClosing()));
+				}
 				break;
 
 			case GROUP_BY_PROTOCOL: //Open chats in the same protocol in the same window
+				kdDebug(14010) << "KopeteMessageManager::mainWindow() : Group by protocol" << endl;
 				if( chatWindowMap.contains( d->mProtocol ) )
 					mainWindow = chatWindowMap[d->mProtocol];
 				else
@@ -178,8 +182,8 @@ KopeteChatWindow *KopeteMessageManager::mainWindow(bool remove)
 				break;
 
 			case GROUP_ALL: //Open all chats in the same window
+				kdDebug(14010) << "KopeteMessageManager::mainWindow() : Group all" << endl;
 				if( mainWindow == 0L ) {
-					kdDebug(14010) << "KopeteMessageManager::mainWindow() : Creating new chat window" << endl;
 					mainWindow = new KopeteChatWindow();
 					connect (mainWindow, SIGNAL(Closing()), this, SLOT(slotChatWindowClosing()));
 				}
@@ -209,10 +213,10 @@ void KopeteMessageManager::newChatWindow()
 		if(d->mView == 0L)
 		{
 			kdDebug(14010) << "KopeteMessageManager::newChatWindow() : Adding a new chat window/view" << endl;
-			d->mView = mainWindow()->addChatView( this );
+			d->mView = mainWindow(true)->addChatView( this );
 		} else {
 			kdDebug(14010) << "KopeteMessageManager::newChatWindow() : Adding a new chat view" << endl;
-			d->mView = mainWindow()->addChatView( this );
+			d->mView = mainWindow(true)->addChatView( this );
 		}
 		
 		/* When the window is shown, we have to delete this contact event */
@@ -426,7 +430,7 @@ void KopeteMessageManager::slotChatWindowClosing()
 {
 	if (d->mWidget == ChatWindow)
 	{
-		mainWindow(true); // Delete this mainWindow
+		mainWindow(false, true); // Delete this mainWindow
 		d->mView = 0L;
 		kdDebug(14010) << "KopeteMessageManager::slotChatWindowClosing" << endl;
 	}

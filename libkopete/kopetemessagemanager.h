@@ -221,7 +221,7 @@ private:
 	 */
 	bool emptyMessageBuffer();
 	bool dockChatWindows;
-	KopeteChatWindow *mainWindow(bool remove = false);
+	KopeteChatWindow *mainWindow(bool addNewWindow = false, bool removeWindow = false);
 			
 	KMMPrivate *d;
 };
