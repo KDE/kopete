@@ -57,11 +57,13 @@ bool YahooEditAccount::validateData()
 	kdDebug(14180) << k_funcinfo << endl;
 
 	if(mScreenName->text() == "")
-	{	KMessageBox::sorry(this, i18n("<qt>You must enter a valid screen name.</qt>"), i18n("Yahoo"));
+	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry, 
+			i18n("<qt>You must enter a valid screen name.</qt>"), i18n("Yahoo"));
 		return false;
 	}
 	if(mPassword->text() == "")
-	{	KMessageBox::sorry(this, i18n("<qt>You must enter a valid password.</qt>"), i18n("Yahoo"));
+	{	KMessageBox::queuedMessageBox(this, KMessageBox::Sorry, 
+			i18n("<qt>You must enter a valid password.</qt>"), i18n("Yahoo"));
 		return false;
 	}
 	return true;
