@@ -1,18 +1,19 @@
-/***************************************************************************
-                          connectionstatusplugin.h
-                             -------------------
-    begin                : 26th Oct 2002
-    copyright            : (C) 2002-2003 Chris Howells
-    email                : howells@kde.org
- ***************************************************************************/
+/*
+    connectionstatusplugin.h
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; version 2 of the License.               *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002-2003 by Chris Howells         <howells@kde.org>
+    Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
+
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; version 2 of the License.               *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #ifndef CONNECTIONSTATUSPLUGIN_H
 #define CONNECTIONSTATUSPLUGIN_H
@@ -30,23 +31,24 @@ class ConnectionStatusPlugin : public KopetePlugin
 	Q_OBJECT
 
 public:
-
-	ConnectionStatusPlugin(QObject *parent, const char *name, const QStringList &args);
+	ConnectionStatusPlugin( QObject *parent, const char *name, const QStringList &args );
 	~ConnectionStatusPlugin();
 
 private slots:
-
 	void slotCheckStatus();
-	void slotProcessStdout(KProcess *, char *, int);
+	void slotProcessStdout( KProcess *process, char *buffer, int len );
+
+	/**
+	 * Notify when the netstat process has exited
+	 */
+	void slotProcessExited( KProcess *process );
 
 private:
+	void setConnectedStatus( bool newStatus );
 
-	void setConnectedStatus(bool);
-	bool m_boolPluginConnected;
-	QString m_qsInterface;
-	KProcess *kpIfconfig;
-	QTimer *qtTimer;
-
+	bool m_pluginConnected;
+	KProcess *m_process;
+	QTimer *m_timer;
 };
 
 #endif
