@@ -116,7 +116,6 @@ public:
 	 */
 	Contact *findContact( const QString &protocolId, const QString &accountId, const QString &contactId );
 	
-	
 	/**
 	 * @return the display name showed in the contactlist window, or in the chatwindow
 	 */
@@ -163,7 +162,6 @@ public:
 	 */
 	bool isTemporary() const;
 
-
 	/**
 	 * @brief Add a brand new contact to the meta contact. 
 	 *  Updates KABC
@@ -185,8 +183,6 @@ public:
 	 * @return the preferred child Contact for communication, or 0 if none is suitable (all unreachable).
 	 */
 	Contact *preferredContact();
-
-public: 
 
 	/**
 	 * @brief The name of the icon associated with the contact's status
@@ -236,8 +232,6 @@ public:
 	 */
 	unsigned long int idleTime() const;
 
-
-
 	/**
 	 * Return a XML representation of the metacontact
 	 * @internal
@@ -252,7 +246,6 @@ public:
 	 * @internal
 	 */
 	bool fromXML( const QDomElement& cnode );
-
 
 	/**
 	 * Get or set a field for the KDE address book backend. Fields not
@@ -333,8 +326,6 @@ signals:
 	 * this can occur without the metacontact changing idle state
 	 */
 	void contactIdleStateChanged( Kopete::Contact *contact );
-
-
 	
 
 public slots:
