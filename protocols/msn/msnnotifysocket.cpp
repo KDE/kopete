@@ -280,12 +280,8 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 
 			KIO::Job *job = KIO::get( KURL( authURL ), true, false );
 			job->addMetaData("cookies", "manual");
-			/* FIXME: This should force kio to download the page even is we are in the
-			 * konqueror offline mode.  But it does not seems to have any effect
-			 * [see bug #68483]
+			// This should force kio to download the page even is we are in the konqueror offline mode.  [see bug #68483]
 			job->addMetaData("cache", "reload");
-			job->addMetaData("no-cache", "true");
-			 */
 			QObject::connect( job, SIGNAL(result( KIO::Job *)), this, SLOT(slotAuthJobDone( KIO::Job *)) );
 		}
 		else
@@ -324,11 +320,11 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ data.section( ' ', 1, 1 ) ] );
 		if( c )
 		{
-			c->setOnlineStatus( convertOnlineStatus( data.section( ' ', 0, 0 ) ) );
 			QString publicName=unescape( data.section( ' ', 2, 2 ) );
 			if (publicName!=c->property( Kopete::Global::Properties::self()->nickName()).value().toString())
 				changePublicName(publicName,c->contactId());
 			c->setObject( unescape(data.section( ' ', 4, 4 )) );
+			c->setOnlineStatus( convertOnlineStatus( data.section( ' ', 0, 0 ) ) );
 		}
 	}
 	else if( cmd == "FLN" )
@@ -622,6 +618,7 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 		job = KIO::get( KURL( authURL ), false, false );
 		job->addMetaData("cookies", "manual");
 		job->addMetaData("setcookies", cookies);
+		job->addMetaData("cache", "reload");
 
 		QObject::connect( job, SIGNAL(data( KIO::Job *,const QByteArray&)), this, SLOT(slotAuthJobDataReceived( KIO::Job *,const QByteArray&)) );
 		QObject::connect( job, SIGNAL(result( KIO::Job *)), this, SLOT(slotAuthJobDone( KIO::Job *)) );
