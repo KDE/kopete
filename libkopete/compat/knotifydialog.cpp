@@ -26,7 +26,7 @@
 #include <kfiledialog.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
-#include <knotifyclient.h>
+#include "knotifyclient.h"
 #include "knotifydialog.h"
 #include <kstandarddirs.h>
 #include <kurlrequester.h>

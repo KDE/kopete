@@ -20,7 +20,7 @@
 #include <qwidget.h>
 #include <kopeteawaydialog.h>
 #include <kopeteonlinestatus.h>
-#include <jabberaccount.h>
+#include "jabberaccount.h"
 
 // forward declaration required due to cyclic includes
 class JabberAccount;
