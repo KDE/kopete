@@ -21,6 +21,9 @@ dummy.cpp:
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kopete.pot
 
+data_DATA = kopeteui.rc
+datadir = $(kde_datadir)/kopete
+
 # this is where the desktop file will go
 desktopdir   = $(kde_appsdir)/Utilities
 desktop_DATA = kopete.desktop
