@@ -29,10 +29,12 @@
 
 #include <kconfig.h>
 #include <kdialogbase.h>
+#include <kfiledialog.h>
 #include <kicondialog.h>
 #include <kabc/addresseedialog.h>
 #include <kabc/stdaddressbook.h>
 #include <kabc/addressee.h>
+#include <kstandarddirs.h>
 #include <kurlrequester.h>
 
 #include "kopeteaddrbookexport.h"
@@ -195,6 +197,8 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 		this, SLOT( slotMergeClicked() ) );
 	connect( mainWidget->btnFromKABC, SIGNAL( clicked() ),
 		this, SLOT( slotFromKABCClicked() ) );
+    connect( mainWidget->customSound, SIGNAL( openFileDialog( KURLRequester * )),
+             SLOT( openSoundDialog( KURLRequester * )));
 	slotUseCustomIconsToggled( mainWidget->chkUseCustomIcons->isChecked() );
 
 	populateEventsCombo();
@@ -418,6 +422,42 @@ void KopeteMetaLVIProps::storeCurrentCustoms()
 void KopeteMetaLVIProps::slotFromKABCClicked()
 {
 	mainWidget->customSound->setURL( mSound.url() );
+}
+
+void KopeteMetaLVIProps::slotOpenSoundDialog( KURLRequester *requester )
+{
+	// taken from kdelibs/kio/kfile/knotifydialog.cpp
+    // only need to init this once
+    requester->disconnect( SIGNAL( openFileDialog( KURLRequester * )),
+                           this, SLOT( openSoundDialog( KURLRequester * )));
+
+    KFileDialog *fileDialog = requester->fileDialog();
+    //fileDialog->setCaption( i18n("Select Sound File") );
+    QStringList filters;
+    filters << "audio/x-wav" << "audio/x-mp3" << "application/ogg"
+            << "audio/x-adpcm";
+    fileDialog->setMimeFilter( filters );
+
+    // find the first "sound"-resource that contains files
+    QStringList soundDirs =
+        KGlobal::dirs()->findDirs("data", "kopete/sounds");
+    soundDirs += KGlobal::dirs()->resourceDirs( "sound" );
+
+    if ( !soundDirs.isEmpty() ) {
+        KURL soundURL;
+        QDir dir;
+        dir.setFilter( QDir::Files | QDir::Readable );
+        QStringList::ConstIterator it = soundDirs.begin();
+        while ( it != soundDirs.end() ) {
+            dir = *it;
+            if ( dir.isReadable() && dir.count() > 2 ) {
+                soundURL.setPath( *it );
+                fileDialog->setURL( soundURL );
+                break;
+            }
+            ++it;
+        }
+    }
 }
 
 #include "kopetelviprops.moc"

@@ -78,6 +78,7 @@ class KopeteMetaLVIProps: public KDialogBase
 		void slotMergeClicked();
 		void slotFromKABCClicked();
 		void slotEventsComboChanged( int item );
+		void slotOpenSoundDialog( KURLRequester *requester );
 };
 
 #endif
