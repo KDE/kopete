@@ -18,7 +18,11 @@ Untar into your kopete build tree in kopete/plugins.
 Edit kopete/plugins/Makefile.am to include nowlistening in the SUBDIRS
 
 REQUIREMENTS
-Requires Xmms remote control header xmmsctrl.h - in SuSE's base xmms rpm at least
+Requires XMMS remote control header xmmsctrl.h
+(can be found in:
+* SuSE's base xmms rpm
+* Mandrake's libxmms1-devel rpm
+* RedHat, TurboLinux, Conectiva: xmms-devel )
 Which in turn requires glib-devel and gtk-devel to build.
 Configure test doesn't tell us that this is why it bails.
 
