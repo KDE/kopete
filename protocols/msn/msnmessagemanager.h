@@ -60,6 +60,11 @@ private slots:
 	void slotInvitation( const QString &handle, const QString &msg );
 
 	void slotFileTransferDone( MSNFileTransferSocket* MFTS );
+
+	/**
+	 * (debug)
+	 */
+	void slotDebugRawCommand();
 private:
 
 	MSNSwitchBoardSocket *m_chatService;

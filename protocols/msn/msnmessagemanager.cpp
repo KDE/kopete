@@ -35,6 +35,10 @@
 #include "msnaccount.h"
 #include "msnswitchboardsocket.h"
 
+#if !defined NDEBUG
+#include "msndebugrawcmddlg.h"
+#endif
+
 MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteContact *user,
 	KopeteContactPtrList others, const char *name )
 : KopeteMessageManager( user, others, protocol, 0, protocol, name )
@@ -178,8 +182,13 @@ KActionCollection * MSNMessageManager::chatActions()
 		}
 	}
 	actionInvite->insert( new KAction( i18n ("Other ..."), 0, this, SLOT( slotInviteOtherContact() ), actionInvite, "actionOther" ));
-
 	m_actions->insert( actionInvite );
+
+	#if !defined NDEBUG
+	KActionMenu *debugMenu = new KActionMenu( "Debug", m_actions );
+	debugMenu->insert( new KAction( i18n( "Send Raw C&ommand..." ), 0, this, SLOT( slotDebugRawCommand() ), debugMenu, "m_debugRawCommand" ) );
+	m_actions->insert( debugMenu );
+	#endif
 
 	return m_actions;
 }
@@ -347,6 +356,23 @@ void MSNMessageManager::sendFile(const QString &fileLocation, const QString &/*f
 
 		m_chatService->sendCommand( "MSG" , "N", true, MFTS->invitationHead() );
 	}
+}
+
+void MSNMessageManager::slotDebugRawCommand()
+{
+#if !defined NDEBUG
+	if ( !m_chatService )
+		return;
+
+	MSNDebugRawCmdDlg *dlg = new MSNDebugRawCmdDlg( 0L );
+	int result = dlg->exec();
+	if( result == QDialog::Accepted && m_chatService )
+	{
+		m_chatService->sendCommand( dlg->command(), dlg->params(),
+					dlg->addId(), dlg->msg().replace("\n","\r\n") );
+	}
+	delete dlg;
+#endif
 }
 
 

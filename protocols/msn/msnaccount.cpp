@@ -22,8 +22,6 @@
 #include <kmessagebox.h>
 #include <kiconloader.h>
 
-#include "kopeteonlinestatus.h"
-
 #include "msnaccount.h"
 #include "msnprotocol.h"
 #include "msncontact.h"
@@ -31,10 +29,15 @@
 #include "msnmessagemanager.h"
 #include "msnpreferences.h"
 #include "newuserimpl.h"
-#include "kopetecontactlist.h"
-#include "kopetemetacontact.h"
 #include "kopetegroup.h"
 #include "kopetemessage.h"
+#include "kopetecontactlist.h"
+#include "kopetemetacontact.h"
+#include "kopeteonlinestatus.h"
+
+#if !defined NDEBUG
+#include "msndebugrawcmddlg.h"
+#endif
 
 MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const char *name )
 : KopeteAccount ( parent, AccountID , name )
@@ -282,20 +285,17 @@ void MSNAccount::slotStartChat()
 void MSNAccount::slotDebugRawCommand()
 {
 #if !defined NDEBUG
-//TODO:
-/*	if ( !isConnected() )
-	{
+	if ( !isConnected() )
 		return;
-	}
 
 	MSNDebugRawCmdDlg *dlg = new MSNDebugRawCmdDlg( 0L );
 	int result = dlg->exec();
 	if( result == QDialog::Accepted && m_notifySocket )
 	{
 		m_notifySocket->sendCommand( dlg->command(), dlg->params(),
-					     dlg->addId() );
+					dlg->addId(), dlg->msg().replace("\n","\r\n")  );
 	}
-	delete dlg;*/
+	delete dlg;
 #endif
 }
 

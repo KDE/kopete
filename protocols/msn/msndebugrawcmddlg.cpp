@@ -23,6 +23,7 @@
 
 #include <qcheckbox.h>
 #include <qlineedit.h>
+#include <ktextedit.h>
 
 #include <klocale.h>
 
@@ -60,6 +61,13 @@ bool MSNDebugRawCmdDlg::addId()
 {
 	return m_main->m_addId->isChecked();
 }
+
+QString MSNDebugRawCmdDlg::msg()
+{
+	return m_main->m_msg->text();
+}
+
+
 
 #include "msndebugrawcmddlg.moc"
 

@@ -41,6 +41,7 @@ public:
 	QString params();
 	bool addNewline();
 	bool addId();
+	QString msg();
 
 private:
 	MSNDebugRawCommand_base *m_main;
