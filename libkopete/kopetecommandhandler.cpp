@@ -19,6 +19,8 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kprocess.h>
+#include <kdeversion.h>
+
 
 #include "kopetemessagemanager.h"
 #include "kopeteprotocol.h"
@@ -172,7 +174,13 @@ void KopeteCommandHandler::reservedCommand( const QString &command, const QStrin
 	{
 		kdDebug(14010) << k_funcinfo << "Execute Command:" << args << endl;
 
+		#if KDE_VERSION > 0x030190
 		KProcess *proc = new KProcess(manager);
+		#else
+		KProcess *proc = new KProcess();
+		connect( manager , SIGNAL (destroyed() ) , proc , SLOT(deleteLater()));
+		#endif
+
 		*proc << QString::fromLatin1("sh") << QString::fromLatin1("-c");
 
 		if( argsList.front() == QString::fromLatin1("-o") )
