@@ -107,8 +107,6 @@ void YahooAccount::loaded()
 	if (newPluginData.lower() == "true")
 		m_importContacts = true;
 
-	m_session = YahooSessionManager::manager()->createSession(accountId(), password());
-
 }
 
 YahooSession *YahooAccount::yahooSession()
@@ -139,7 +137,7 @@ void YahooAccount::connect()
 	int port = 5050;
 
 	YahooSessionManager::manager()->setPager(server, port);
-
+	m_session = YahooSessionManager::manager()->createSession(accountId(), password());
 
 	if(!isConnected())
 	{
