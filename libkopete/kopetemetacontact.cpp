@@ -333,8 +333,9 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * /* c */,
 	updateOnlineStatus();
 }
 
-void KopeteMetaContact::setDisplayName( const QString &name )
+void KopeteMetaContact::setDisplayName( const QString &name, bool trackNameChanges )
 {
+	m_trackChildNameChanges = trackNameChanges;
 	m_displayName = name;
 	emit displayNameChanged( this, name );
 }

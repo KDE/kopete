@@ -28,6 +28,7 @@
 #include "kirc.h"
 #include "kopete.h"
 #include "kopetecontactlist.h"
+#include "kopetemetacontact.h"
 #include "tabcompleter.h"
 
 #include <kaction.h>
@@ -43,8 +44,6 @@
 #include <qlayout.h>
 #include <qtextedit.h>
 #include <qvbox.h>
-
-
 
 IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, QString &protocolID)
 	: KopeteContact(protocolID, parent),
@@ -88,6 +87,10 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 		delete this;
 		return;
 	}
+
+	parent->setDisplayName(m_serverName, false);
+	parent->addContact( this, QStringList() );
+	setDisplayName(target);
 
 	connect(m_serverContact->engine(), SIGNAL(connectionClosed()), this, SLOT(unloading()));
 
@@ -147,6 +150,10 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 		delete this;
 		return;
 	}
+
+	parent->setDisplayName(m_serverName, false);
+	parent->addContact( this, QStringList() );
+	setDisplayName(target);
 
 	connect(m_serverContact->engine(), SIGNAL(connectionClosed()), this, SLOT(unloading()));
 
@@ -212,8 +219,10 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 	m_serverContact->protocol()->config()->writeEntry("Server", m_serverName);
 	m_serverContact->protocol()->config()->writeEntry("Group", groupName);
 	m_serverContact->protocol()->config()->sync();
-
-	setDisplayName(QString("%1@%2").arg(target).arg(m_serverName));
+	
+	parent->setDisplayName(m_serverName, false);
+	parent->addContact( this, QStringList(groupName) );
+	setDisplayName(target);
 
 	connect(m_serverContact->engine(), SIGNAL(connectionClosed()), this, SLOT(unloading()));
 
@@ -328,7 +337,7 @@ KActionCollection* IRCContact::customContextMenuActions()
 
 	if (isChannel())
 	{
-		if (mTabPage != 0)
+		if (mTabPage)
 		{
 			new KAction(i18n("Part"), KShortcut(),
 				    this, SLOT(slotPart()),
@@ -338,14 +347,14 @@ KActionCollection* IRCContact::customContextMenuActions()
 	}
 	else
 	{
-		if (mTabPage != 0)
+		if (mTabPage)
 		{
 			new KAction(i18n("Close"), KShortcut(),
 				    this, SLOT(unloading()),
 				    m_pActionCollection, "close");
 		}
 	}
-	if (mTabPage == 0)
+	if (!mTabPage)
 	{
 		if (m_serverContact->engine()->isLoggedIn())
 		{
