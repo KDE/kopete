@@ -123,9 +123,11 @@ KopeteMessageManager *YahooContact::manager( bool )
 	{
 		KopeteContactPtrList m_them;
 		m_them.append( this );
-		m_manager = KopeteMessageManagerFactory::factory()->create(protocol()->myself(), m_them, protocol() );
+		m_manager = KopeteMessageManagerFactory::factory()->create( protocol()->myself(), m_them, protocol() );
 		connect( m_manager, SIGNAL( destroyed() ), this, SLOT( slotMessageManagerDestroyed() ) );
 		connect( m_manager, SIGNAL( messageSent(KopeteMessage &, KopeteMessageManager *) ), this, SLOT( slotSendMessage(KopeteMessage &) ) );
+		connect( m_manager, SIGNAL( typingMsg(bool) ), this, SLOT(slotTyping(bool) ) );
+		connect( static_cast<YahooAccount *>(account()), SIGNAL( receivedTypingMsg(const QString &, bool) ), m_manager, SLOT( receivedTypingMsg(const QString &, bool) ) );
 	}
 
 	return m_manager;

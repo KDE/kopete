@@ -358,6 +358,8 @@ void YahooAccount::slotRejected( const QString & /* who */, const QString & /* m
 void YahooAccount::slotTypingNotify( const QString &who, int what )
 {
 	kdDebug(14180) << "[YahooAccount::slotTypingNotify] " << who << " " << what << endl;
+
+	emit receivedTypingMsg(who, what);
 }
 
 void YahooAccount::slotGameNotify( const QString & /* who */, int /* stat */ )

@@ -56,6 +56,9 @@ public slots:
 	virtual void connect();
 	virtual void disconnect();
 
+signals:
+	void receivedTypingMsg(const QString &contactId, bool isTyping);// fires when contact given starts/stops typing
+
 protected:
 	virtual bool addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact);
 
