@@ -181,7 +181,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 
 	editpart = new KopeteRichTextEditPart( editDock, "kopeterichtexteditpart",
 		mgr->protocol()->richTextCapabilities() );
-	connect( editpart, SIGNAL( toggleToolbar(const bool &)), this, SLOT(slotToggleRtfToolbar( const bool & )) );
+	connect( editpart, SIGNAL( toggleToolbar(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
 	connect( this, SIGNAL( windowCreated()), editpart, SLOT(checkToolbarEnabled()) );
 
 	m_edit = static_cast<KTextEdit*>( editpart->widget() );
@@ -910,7 +910,7 @@ void ChatView::slotMarkMessageRead()
 	unreadMessageFrom = QString::null;
 }
 
-void ChatView::slotToggleRtfToolbar( const bool &enabled )
+void ChatView::slotToggleRtfToolbar( bool enabled )
 {
 	if( enabled )
 		m_mainWindow->toolBar("formatToolBar")->show();

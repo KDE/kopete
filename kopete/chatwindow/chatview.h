@@ -406,7 +406,7 @@ private slots:
 
 	void slotCopyURL();
 
-	void slotToggleRtfToolbar( const bool &enabled );
+	void slotToggleRtfToolbar( bool enabled );
 
 private:
 	enum KopeteTabState { Normal , Highlighted , Changed , Typing , Message , Undefined };
