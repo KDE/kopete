@@ -23,9 +23,16 @@ class SetStatusTask : public RequestTask
 Q_OBJECT
 public:
 	SetStatusTask(Task* parent);
+	~SetStatusTask();
 	void status( GroupWise::Status newStatus, const QString &awayMessage, const QString &autoReply );
 	void onGo();
-	~SetStatusTask();
+	GroupWise::Status requestedStatus() const;
+	QString awayMessage() const;
+	QString autoReply() const; 
+private:
+	GroupWise::Status m_status;
+	QString m_awayMessage;
+	QString m_autoReply;
 };
 
 #endif

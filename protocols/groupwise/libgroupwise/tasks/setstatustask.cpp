@@ -17,6 +17,8 @@
 
 #include "setstatustask.h"
 
+using namespace GroupWise; 
+
 SetStatusTask::SetStatusTask(Task* parent): RequestTask(parent)
 {
 }
@@ -25,13 +27,18 @@ SetStatusTask::~SetStatusTask()
 {
 }
 
-void SetStatusTask::status( GroupWise::Status newStatus, const QString &awayMessage, const QString &autoReply )
+void SetStatusTask::status( Status newStatus, const QString &awayMessage, const QString &autoReply )
 {
 	if ( newStatus > GroupWise::Invalid )
 	{
 		setError( 1, "Invalid Status" );
 		return;
 	}
+	
+	m_status = newStatus;
+	m_awayMessage = awayMessage;
+	m_autoReply = autoReply;
+	
 	QCString command("setstatus");
 	Request * setStatus = client()->requestFactory()->request( command );
 	Field::FieldList lst;
@@ -48,6 +55,21 @@ void SetStatusTask::onGo()
 {
 	//cout << "SetStatusTask::onGo() - sending status fields" << endl;
 	send( static_cast<Request *>( transfer() ) );
+}
+
+Status SetStatusTask::requestedStatus() const
+{
+	return m_status;
+}
+
+QString SetStatusTask::awayMessage() const
+{
+	return m_awayMessage;
+}
+
+QString SetStatusTask::autoReply() const 
+{
+	return m_autoReply;
 }
 
 #include "setstatustask.moc"
