@@ -41,7 +41,7 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 	mainWidget = new StatisticsWidget(this);
 	setMainWidget(mainWidget);
 	
-	setMinimumWidth(300);
+	setMinimumWidth(640);
 	setMinimumHeight(400);
 	adjustSize();
 
@@ -163,13 +163,17 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	
 	generalHTMLPart->begin();
 	generalHTMLPart->write(QString("<html><head><style>.bar { margin:0px;} "
-	".chart"
+	"body"
+	"{"
+	"font-size:11px"
+	"}"
+	".chart"								// Style for the charts
 	"{ height:100px;"
 	"border-left:1px solid #999;"
 	"border-bottom:1px solid #999;"
 	"vertical-align:bottom;"
 	"}"
-	".statgroup"
+	".statgroup"							// Style for groups of similar statistics
 	 "{ margin-bottom:10px;"
 	 "background-color:white;"
 	"border-left: 5px solid #369;"

@@ -46,7 +46,9 @@ static const KAboutData aboutdata("kopete_statistics", I18N_NOOP("Statistics") ,
 K_EXPORT_COMPONENT_FACTORY( kopete_statistics, StatisticsPluginFactory( &aboutdata )  )
 
 StatisticsPlugin::StatisticsPlugin( QObject *parent, const char *name, const QStringList &)
-							: Kopete::Plugin( StatisticsPluginFactory::instance(), parent, name )
+	: Kopete::Plugin( StatisticsPluginFactory::instance(), parent, name ),
+      DCOPObject("StatisticsDCOPIface")
+
 {
 	KAction *viewMetaContactStatistics = new KAction( i18n("View &Statistics" ),
 		QString::fromLatin1( "log" ), 0, this, SLOT(slotViewStatistics()),
@@ -138,6 +140,84 @@ void StatisticsPlugin::slotMetaContactAdded(Kopete::MetaContact *mc)
 	
 	if (!mc->metaContactId().isEmpty())
 		statisticsContactMap[mc->metaContactId()] = new StatisticsContact(mc, db());
+}
+
+void StatisticsPlugin::dcopStatisticsDialog(QString id)
+{
+	kdDebug() << k_funcinfo << "statistics - DCOP dialog :" << id << endl;
+	
+	if (statisticsContactMap[id])
+	{
+		(new StatisticsDialog(statisticsContactMap[id], db()))->show();
+	}	
+}
+
+bool StatisticsPlugin::dcopWasOnline(QString id, int timeStamp)
+{
+	QDateTime dt;
+	dt.setTime_t(timeStamp);	
+	return dcopWasStatus(id, dt, Kopete::OnlineStatus::Online); 
+}
+
+bool StatisticsPlugin::dcopWasOnline(QString id, QString dateTime)
+{
+	return dcopWasStatus(id, QDateTime::fromString(dateTime), Kopete::OnlineStatus::Online);
+}
+
+bool StatisticsPlugin::dcopWasAway(QString id, int timeStamp)
+{
+	QDateTime dt;
+	dt.setTime_t(timeStamp);	
+	return dcopWasStatus(id, dt, Kopete::OnlineStatus::Away); 
+}
+
+bool StatisticsPlugin::dcopWasAway(QString id, QString dateTime)
+{
+	return dcopWasStatus(id, QDateTime::fromString(dateTime), Kopete::OnlineStatus::Away);
+}
+
+bool StatisticsPlugin::dcopWasOffline(QString id, int timeStamp)
+{
+	QDateTime dt;
+	dt.setTime_t(timeStamp);	
+	return dcopWasStatus(id, dt, Kopete::OnlineStatus::Offline); 
+}
+
+bool StatisticsPlugin::dcopWasOffline(QString id, QString dateTime)
+{
+	return dcopWasStatus(id, QDateTime::fromString(dateTime), Kopete::OnlineStatus::Offline);
+}
+
+bool StatisticsPlugin::dcopWasStatus(QString id, QDateTime dateTime, Kopete::OnlineStatus::StatusType status)
+{
+	kdDebug() << k_funcinfo << "statistics - DCOP wasOnline :" << id << endl;
+	
+	if (dateTime.isValid() && statisticsContactMap[id])
+	{
+		return statisticsContactMap[id]->wasStatus(dateTime, status);
+	}
+	
+	return false;	
+}
+
+QString StatisticsPlugin::dcopStatus(QString id, int timeStamp)
+{
+	QDateTime dt;
+	dt.setTime_t(timeStamp);
+	return dcopStatus(id, dt.toString());
+
+}
+
+QString StatisticsPlugin::dcopStatus(QString id, QString dateTime)
+{
+	QDateTime dt = QDateTime::fromString(dateTime);
+	
+	if (dt.isValid() && statisticsContactMap[id])
+	{
+		return statisticsContactMap[id]->statusAt(dt);
+	}
+	
+	return "";
 }
 
 

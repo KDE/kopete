@@ -25,16 +25,21 @@ using namespace std;
 #include <qstring.h>
 #include <qstringlist.h>
 
+#include <dcopobject.h>
+
 #include "kopeteplugin.h"
 
 #include "kopetemessage.h"
 #include "kopetemessagehandler.h"
 #include "kopeteonlinestatus.h"
 
+#include "statisticsdcopiface.h"
+
 class QString;
 
 class StatisticsDB;
 class StatisticsContact;
+class StatisticsDCOPIface;
 
 class KopeteView;
 class KActionCollection;
@@ -94,7 +99,7 @@ class KActionCollection;
  * StatisticsPlugin is the main Statistics plugin class.
  * Contains mainly slots.
  */
-class StatisticsPlugin : public Kopete::Plugin
+class StatisticsPlugin : public Kopete::Plugin, virtual public StatisticsDCOPIface
 {
 	Q_OBJECT
 public:
@@ -153,12 +158,50 @@ public slots:
 	 * This function is also called when we loop over the contact list in the constructor.
  	*/
 	void slotMetaContactAdded(Kopete::MetaContact *mc);
+
+
+	/* DCOP functions */
+	void dcopStatisticsDialog(QString id);
+	
+	/**
+	 * \returns true if contact was online at time timeStamp, false else. Returns false if contact does not exist.
+	 */
+	bool dcopWasOnline(QString id, int timeStamp);
+	/**
+	 * \returns true if contact was online at dt, false else. Returns false if contact does not exist.
+	 */
+	bool dcopWasOnline(QString id, QString dt);
+	/**
+	 * \returns true if contact was away at time timeStamp, false else. Returns false if contact does not exist.
+	 */
+	bool dcopWasAway(QString id, int timeStamp);
+	/**
+	 * \returns true if contact was away at dt, false else. Returns false if contact does not exist.
+	 */
+	bool dcopWasAway(QString id, QString dt);
+	/**
+	 * \returns true if contact was offline at time timeStamp, false else. Returns false if contact does not exist.
+	 */
+	bool dcopWasOffline(QString id, int timeStamp);
+	/**
+	 * \returns true if contact was offline at dt, false else. Returns false if contact does not exist.
+	 */
+	bool dcopWasOffline(QString id, QString dt);
+	
+	bool dcopWasStatus(QString id, QDateTime dateTime, Kopete::OnlineStatus::StatusType status);
+	
+	QString dcopStatus(QString id, QString datetime);
+	QString dcopStatus(QString id, int timeStamp);
+
+	
 private:	
 	StatisticsDB *m_db;
 	/** Associate a StatisticsContact to a Kopete::MetaContact id to retrieve
 	* the StatisticsContact corresponding to the MetaContact in the slots
 	*/
 	map<QString, StatisticsContact*> statisticsContactMap; 
+
+
 	
 };
 

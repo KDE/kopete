@@ -176,7 +176,7 @@ void StatisticsContact::onlineStatusChanged(Kopete::OnlineStatus::StatusType sta
 	if (m_oldStatus != Kopete::OnlineStatus::Unknown)
 	{
 		
-		kdDebug() << "statistics - status change for "<< metaContact()->displayName() << " : "<< QString::number(m_oldStatus) << endl;
+		kdDebug() << "statistics - status change for "<< metaContact()->metaContactId() << " : "<< QString::number(m_oldStatus) << endl;
 		m_db->query(QString("INSERT INTO contactstatus "
 		"(metacontactid, status, datetimebegin, datetimeend) "
 				"VALUES('%1', '%2', '%3', '%4'" ");").arg(m_metaContact->metaContactId()).arg(Kopete::OnlineStatus::statusTypeToString(m_oldStatus)).arg(QString::number(m_oldStatusDateTime.toTime_t())).arg(QString::number(currentDateTime.toTime_t())));
@@ -193,6 +193,31 @@ void StatisticsContact::onlineStatusChanged(Kopete::OnlineStatus::StatusType sta
 	m_oldStatusDateTime = currentDateTime;
 
 }
+
+bool StatisticsContact::wasStatus(QDateTime dt, Kopete::OnlineStatus::StatusType status)
+{
+	QStringList values = m_db->query(QString("SELECT status, datetimebegin, datetimeend "
+			"FROM contactstatus WHERE metacontactid LIKE '%1' AND datetimebegin <= %2 AND datetimeend >= %3 "
+			"AND status LIKE '%4' "
+			"ORDER BY datetimebegin;"
+		).arg(metaContact()->metaContactId()).arg(dt.toTime_t()).arg(dt.toTime_t()).arg(Kopete::OnlineStatus::statusTypeToString(status)));	
+	
+	if (!values.isEmpty()) return true;
+	
+	return false;
+}
+
+QString StatisticsContact::statusAt(QDateTime dt)
+{
+	QStringList values = m_db->query(QString("SELECT status, datetimebegin, datetimeend "
+			"FROM contactstatus WHERE metacontactid LIKE '%1' AND datetimebegin <= %2 AND datetimeend >= %3 "
+			"ORDER BY datetimebegin;"
+			).arg(metaContact()->metaContactId()).arg(dt.toTime_t()).arg(dt.toTime_t()));	
+	
+	if (!values.isEmpty()) return values[0];
+	else return "";
+}
+
 
 // QDateTime StatisticsContact::nextOfflineEvent()
 // {
