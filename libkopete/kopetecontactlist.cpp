@@ -18,24 +18,25 @@
 
 #include "kopetecontactlist.h"
 
+#include <qdom.h>
+#include <qfile.h>
+#include <qptrlist.h>
+#include <qstringlist.h>
+#include <qstylesheet.h>
+
+#include <kapplication.h>
+#include <kdebug.h>
+#include <kglobal.h>
+#include <klocale.h>
+#include <ksavefile.h>
+#include <kstandarddirs.h>
+
 #include "kopete.h"
 #include "kopetecontactlistview.h"
 #include "kopetemetacontact.h"
 #include "kopetemetacontactlvi.h"
 #include "kopeteprotocol.h"
 #include "pluginloader.h"
-
-#include <qptrlist.h>
-#include <qstringlist.h>
-#include <qstylesheet.h>
-
-#include <klocale.h>
-#include <kapplication.h>
-#include <kdebug.h>
-#include <kglobal.h>
-#include <kstandarddirs.h>
-
-#include <ksavefile.h>
 
 KopeteContactList *KopeteContactList::s_contactList = 0L;
 

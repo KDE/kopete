@@ -465,8 +465,6 @@ void MSNContact::addToGroup( const QString &group )
 	m_groups.append( group );
 	if( m_movingToGroup == group )
 	{
-		kopeteapp->contactList()->moveContact( this, m_movingFromGroup, group );
-
 		m_movingToGroup = QString::null;
 		m_movingFromGroup = QString::null;
 	}
@@ -479,14 +477,5 @@ void MSNContact::removeFromGroup( const QString &group )
 
 #include "msncontact.moc"
 
-// vim: noet ts=4 sts=4 sw=4:
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 

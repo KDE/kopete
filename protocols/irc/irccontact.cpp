@@ -211,7 +211,9 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 		return;
 	}
 
-	kopeteapp->contactList()->addContact(this, groupName);
+	// FIXME: addContact no longer allows adding KopeteContacts. Convert this
+	// to use meta contacts!
+	//kopeteapp->contactList()->addContact(this, groupName);
 	m_serverContact->protocol()->config()->setGroup(m_targetName.lower());
 	m_serverContact->protocol()->config()->writeEntry("Server", m_serverName);
 	m_serverContact->protocol()->config()->writeEntry("Group", groupName);
@@ -510,8 +512,6 @@ void IRCContact::joinNow()
 
 void IRCContact::slotMoveThisUser() {
 	QString mGroup = actionContactMove->currentText();
-
-	kopeteapp->contactList()->moveContact(this, mGroup);
 
 	m_serverContact->protocol()->config()->setGroup(m_targetName.lower());
 	m_serverContact->protocol()->config()->writeEntry("Group", mGroup);
