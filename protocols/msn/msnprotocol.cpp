@@ -98,7 +98,9 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	m_myself = new MSNContact( m_msnId,m_publicName, "", 0L );
 
 	if ( mPrefs->autoConnect() )
-		Connect();             
+		Connect();
+
+	connect ( KopeteContactList::contactList() , SIGNAL(groupRenamed(KopeteGroup*,const QString&)) , SLOT (groupRenamed(KopeteGroup*,const QString&)));
 
 	/*if( ( cfg->readEntry( "UserID", "" ).isEmpty() ) ||
 		( cfg->readEntry( "Password", "" ).isEmpty() ) )
@@ -881,6 +883,14 @@ void MSNProtocol::addGroup( const QString &groupName , const QString& contactToA
 	if( !( groups().contains( groupName ) ) )
 		m_notifySocket->addGroup( groupName );
 }
+
+void MSNProtocol::groupRenamed(KopeteGroup *g,const QString& oldname)
+{
+	if(g->type()==KopeteGroup::Classic)
+	{
+		renameGroup(oldname,g->displayName());
+	}
+}     
 
 void MSNProtocol::renameGroup( const QString &oldGroup,
 	const QString &newGroup )

@@ -220,6 +220,12 @@ private slots:
 
 	void slotOpenInbox();
 
+
+	/**
+	 * A kopetegroup is renamed, just call renameGroup
+	 **/
+	void groupRenamed(KopeteGroup *g,const QString& oldname);
+
 	/**
 	 * The group has successful renamed
 	 * groupName: is new new group name
