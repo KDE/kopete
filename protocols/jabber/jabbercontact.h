@@ -381,13 +381,14 @@ class JabberContact : public KopeteContact
 		KActionCollection *actionCollection;
 		
 		KAction *actionMessage, *actionChat,
-				*actionHistory, *actionRetrieveVCard,
-				*actionRename,
+				*actionHistory, *actionRename,
 	 			*actionSendAuth, *actionRequestAuth,
-				*actionRemove, *actionInfo,
-				*actionStatusAway, *actionStatusChat, *actionStatusXA, *actionStatusDND;
+				*actionInfo, *actionStatusAway,
+				*actionStatusChat, *actionStatusXA,
+				*actionStatusDND;
 		
 		KSelectAction *actionSelectResource;
+		KActionMenu *actionSetAvailability;
 
 		dlgJabberVCard *dlgVCard;
 

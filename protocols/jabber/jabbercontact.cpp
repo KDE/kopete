@@ -94,13 +94,12 @@ JabberContact::~JabberContact()
 {
 
 	delete actionCollection;
-
 	delete actionMessage;
 	delete actionChat;
 	delete actionHistory;
 	delete actionRename;
 	delete actionSelectResource;
-	//delete actionRetrieveVCard;
+	delete actionSetAvailability;
 	delete actionSendAuth;
 	delete actionStatusAway;
 	delete actionStatusChat;
@@ -159,62 +158,30 @@ KopeteMessageManager* JabberContact::msgManagerKCW()
 void JabberContact::initActions()
 {
 
-	actionChat = KopeteStdAction::sendMessage(this, SLOT(slotChatUser()), this, "actionChat");
+	actionChat = new KAction(i18n("Send Chat Message"), "mail_generic", 0, this, SLOT(slotChatUser()), this, "actionChat");
 	actionMessage = new KAction(i18n("Send Email Message"), "mail_generic", 0, this, SLOT(slotEmailUser()), this, "actionMessage");
-	actionRemove = KopeteStdAction::deleteContact(this, SLOT(slotRemoveThisUser()), this, "actionDelete");
 	actionHistory = KopeteStdAction::viewHistory(this, SLOT(slotViewHistory()), this, "actionHistory");
 	actionRename = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");
 	actionSelectResource = new KSelectAction(i18n("Select Resource"), "selectresource", 0, this, SLOT(slotSelectResource()), this, "actionSelectResource");
-	//actionRetrieveVCard = new KAction(i18n("Get vCard"), "identity", 0, this, SLOT(slotRetrieveVCard()), this, "actionRetrieveVCard");
 	actionSendAuth = new KAction(i18n("(Re)send authorization to"), "", 0, this, SLOT(slotSendAuth()), this, "actionSendAuth");
 	actionRequestAuth = new KAction(i18n("(Re)request authorization from"), "", 0, this, SLOT(slotRequestAuth()), this, "actionRequestAuth");
+	actionSetAvailability = new KActionMenu(i18n("Set availability"), "jabber_online");
 	actionStatusAway = new KAction(i18n("Away"), "jabber_away", 0, this,SLOT(slotStatusAway()), this,  "actionAway");
 	actionStatusChat = new KAction(i18n("Free to chat"), "jabber_online", 0, this, SLOT(slotStatusChat()), this, "actionChat");
 	actionStatusXA = new KAction(i18n("Extended away"), "jabber_away", 0, this, SLOT(slotStatusXA()),this, "actionXA");
 	actionStatusDND = new KAction(i18n("Do not Disturb"), "jabber_na", 0, this, SLOT(slotStatusDND()), this, "actionDND");
 
+	actionSetAvailability->insert(actionStatusAway);
+	actionSetAvailability->insert(actionStatusChat);
+	actionSetAvailability->insert(actionStatusXA);
+	actionSetAvailability->insert(actionStatusDND);
+	
 }
-
-/**
- * Popup the context menu
- */
-/*
-void JabberContact::showContextMenu(const QPoint& point, const QString&)
-{
-
-	KPopupMenu *popup = new KPopupMenu();
-	popup->insertTitle(userId() + " (" + activeResource->resource() + ")");
-
-	popup->insertSeparator();
-
-	actionSendAuth->plug(popup);
-	actionRequestAuth->plug(popup);
-
-	// Availability popup menu
-	KPopupMenu *popup_status = new KPopupMenu();
-	popup->insertItem("Set availabilty", popup_status);
-
-	actionStatusChat->plug(popup_status);
-	actionStatusAway->plug(popup_status);
-	actionStatusXA->plug(popup_status);
-	actionStatusDND->plug(popup_status);
-	// Remove
-	popup->insertSeparator();
-	actionRemove->plug(popup);
-
-	popup->exec( point );
-
-	delete popup;
-	delete popup_status;
-
-}
-*/
 
 KActionCollection *JabberContact::customContextMenuActions()
 {
 
-	if(actionCollection)
-		delete actionCollection;
+	delete actionCollection;
 
 	actionCollection = new KActionCollection(this);
 
@@ -223,15 +190,9 @@ KActionCollection *JabberContact::customContextMenuActions()
 	// depending on the window type preference,
 	// chat window or email window goes first
 	if (KGlobal::config()->readBoolEntry("EmailDefault", false))
-	{
 		actionCollection->insert(actionMessage);
-		actionCollection->insert(actionChat);
-	}
 	else
-	{
 		actionCollection->insert(actionChat);
-		actionCollection->insert(actionMessage);
-	}
 
 	// if the contact is online,
 	// display the resources we have for it
@@ -285,14 +246,7 @@ KActionCollection *JabberContact::customContextMenuActions()
 	actionCollection->insert(actionRequestAuth);
 
 	// Availability popup menu
-	// FIXME: this leaks!
-	KPopupMenu *popup_status = new KPopupMenu();
-//	actionCollection->insertItem("Set availabilty", popup_status);
-
-	actionStatusChat->plug(popup_status);
-	actionStatusAway->plug(popup_status);
-	actionStatusXA->plug(popup_status);
-	actionStatusDND->plug(popup_status);
+	actionCollection->insert(actionSetAvailability);
 
 	return actionCollection;
 
