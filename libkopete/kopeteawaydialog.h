@@ -20,8 +20,8 @@
 
 class QString;
 class KopeteAway;
-class KConfig;
 
+#include <qstring.h>
 #include "kopeteawaydialogbase.h"
    
 /**
@@ -34,22 +34,37 @@ class KopeteAwayDialog : public KopeteAwayBase
 	Q_OBJECT
 
 	public:
-	KopeteAwayDialog();
+	    KopeteAwayDialog(QWidget *parent=0, const char *name=0);
+	    virtual ~KopeteAwayDialog();
 	
-	private:
-	KopeteAway *awayInstance;
-	KConfig *config;
-	
-	private slots:
-		void slotOkayClicked();
-		void slotCancelClicked();
+	protected:
+			/**
+			 * Do not delete this, this instance will
+			 * deleted when the application closes
+			 */
+	    KopeteAway *awayInstance;
+
+			/**
+			 * Gets the away message the user selected
+			 */
+			QString getSelectedAwayMessage();
+			
+	protected slots:
+			/**
+			 * This method, which is virtual, is in charge
+			 * of actually making the user away.  When this
+			 * is called, you should gather data from the
+			 * GUI (the away message) and set yourself away
+			 */
+			virtual void slotOkayClicked();
+	    void slotCancelClicked();
 };
 
 #endif
 /*
  * Local variables:
  * c-indentation-style: k&r
- * c-basic-offset: 8
+ * c-basic-offset: 4
  * indent-tabs-mode: t
  * End:
  */
