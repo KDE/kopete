@@ -5,7 +5,7 @@
     Viva Chile Mierda!
     Started at Wed Dec 26 03:12:10 CLST 2001, Santiago de Chile
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -28,7 +28,7 @@
 static const char *description =
 	I18N_NOOP("Kopete, the KDE Instant Messenger");
 
-#define KOPETE_VERSION "0.5.8cvs >= 20021020"
+#define KOPETE_VERSION "0.5.8cvs >= 20030131"
 
 static KCmdLineOptions options[] =
 {
@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
 	aboutData.addAuthor ( "Chris TenHarmsel", I18N_NOOP("Developer"), "tenharmsel@users.sourceforge.net", "http://bemis.kicks-ass.net");
 	aboutData.addAuthor ( "Chris Howells", I18N_NOOP("Connection status plugin author"), "howells@kde.org", "http://chrishowells.co.uk");
 	aboutData.addAuthor ( "Jason Keirstead", I18N_NOOP("Developer"), "jason@keirstead.org", "http://www.keirstead.org");
+	aboutData.addAuthor ( "Andy Goossens", I18N_NOOP("Developer"), "andygoossens@pandora.be" );
 	
 	aboutData.addCredit ( "Luciash d' Being", I18N_NOOP("Icon Author") );
 	aboutData.addCredit ( "Vladimir Shutoff", I18N_NOOP("SIM icq library") );
