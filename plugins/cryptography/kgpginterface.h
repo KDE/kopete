@@ -21,7 +21,6 @@
 #define KGPGINTERFACE_H
 
 
-#include <qobject.h>
 #include <kurl.h>
 
 /**

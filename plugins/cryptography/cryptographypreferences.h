@@ -1,6 +1,6 @@
 /***************************************************************************
-                          cryptographypreferences.h  -  description
-                             -------------------
+                          cryptographypreferences.h
+						  -------------------
     begin                : jeu nov 14 2002
     copyright            : (C) 2002 by Olivier Goffart
     email                : ogoffart@tiscalinet.be
@@ -21,28 +21,29 @@
 #include "kcmodule.h"
 
 class CryptographyPrefsUI;
-class CryptographyConfig;
+class KAutoConfig;
 
 /**
-  *@author Olivier Goffart
-  */
-
+ * Preference widget for the Cryptography plugin
+ * @author Olivier Goffart
+ */
 class CryptographyPreferences : public KCModule  {
    Q_OBJECT
-public:
 
+public:
 	CryptographyPreferences(QWidget *parent = 0, const char *name = 0, const QStringList &args = QStringList());
-	~CryptographyPreferences();
 
 	virtual void save();
-	virtual void load();
+	virtual void defaults();
 
 private:
 	CryptographyPrefsUI *preferencesDialog;
-	CryptographyConfig *m_config;
-	QString m_signKeyMail;
-public slots: // Public slots
+	KAutoConfig *kautoconfig;
+
+private slots: // Public slots
 	void slotSelectPressed();
+	void widgetModified();
+
 };
 
 #endif

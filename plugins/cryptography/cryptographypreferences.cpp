@@ -17,18 +17,13 @@
 
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qspinbox.h>
-#include <qbuttongroup.h>
-#include <qcheckbox.h>
 
-#include <klocale.h>
 #include <klineedit.h>
-#include <kconfig.h>
 #include <kgenericfactory.h>
+#include <kautoconfig.h>
 
 #include "cryptographyprefsbase.h"
 #include "cryptographypreferences.h"
-#include "cryptographyconfig.h"
 #include "kgpgselkey.h"
 
 typedef KGenericFactory<CryptographyPreferences> CryptographyPreferencesFactory;
@@ -37,61 +32,41 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_cryptography, CryptographyPreferencesFact
 CryptographyPreferences::CryptographyPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
 							: KCModule(CryptographyPreferencesFactory::instance(), parent, args)
 {
+	// Add actuall widget generated from ui file.
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
-
 	preferencesDialog = new CryptographyPrefsUI(this);
-	m_config = new CryptographyConfig();
-
-	connect (preferencesDialog->m_selectOwnKey , SIGNAL(pressed()) , this , SLOT(slotSelectPressed()));
-
-	load();
-
+	connect (preferencesDialog->m_selectOwnKey , SIGNAL(pressed()) ,
+			this , SLOT(slotSelectPressed()));
+	
+	// KAutoConfig stuff
+	kautoconfig = new KAutoConfig(KGlobal::config(), this, "kautoconfig");
+	connect(kautoconfig, SIGNAL(widgetModified()), SLOT(widgetModified()));
+	connect(kautoconfig, SIGNAL(settingsChanged()), SLOT(widgetModified()));
+    kautoconfig->addWidget(preferencesDialog, "Cryptography Plugin");
+	kautoconfig->retrieveSettings(true);
 }
 
-CryptographyPreferences::~CryptographyPreferences()
+void CryptographyPreferences::widgetModified()
 {
-	save();
-	delete preferencesDialog;
-	delete m_config;
-}
-
-
-void CryptographyPreferences::load()
-{
-	m_config->load();
-	preferencesDialog->m_editOwnKey->setText(m_config->privateKey());
-	preferencesDialog->m_noPassphrase->setChecked(m_config->askPassPhrase());
-	preferencesDialog->m_cache->setButton(m_config->cacheMode());
-	preferencesDialog->m_alsoMyKey->setChecked(m_config->encrypt());
-	preferencesDialog->m_time->setValue(m_config->cacheTime());
-	setChanged(false);
+	setChanged(kautoconfig->hasChanged());
 }
 
 void CryptographyPreferences::save()
 {
-	m_config->setCacheMode(preferencesDialog->m_cache->id(preferencesDialog->m_cache->selected()));
-	m_config->setCacheTime(preferencesDialog->m_time->value());
-	m_config->setEncrypt(preferencesDialog->m_alsoMyKey->isChecked());
-	m_config->setAskPassPhrase(preferencesDialog->m_noPassphrase->isChecked());
-	m_config->setPrivateKey(preferencesDialog->m_editOwnKey->text());
-	m_config->save();
-	setChanged(false);
+	kautoconfig->saveSettings();
 }
 
+void CryptographyPreferences::defaults ()
+{
+	kautoconfig->resetSettings();
+}
 
 void CryptographyPreferences::slotSelectPressed()
 {
-
-	KgpgSelKey *opts=new KgpgSelKey(this,0,false);
-	opts->exec();
-	if (opts->result()==true)
-	{
-		m_config->setPrivateKey(opts->getkeyID());
-		m_signKeyMail=opts->getkeyMail();
-		preferencesDialog->m_editOwnKey->setText(m_config->privateKey());
-
-	}
-	delete opts;
+	KgpgSelKey opts(this,0,false);
+	opts.exec();
+	if (opts.result()==QDialog::Accepted)
+		preferencesDialog->PGP_private_key->setText(opts.getkeyID());
 }
 
 #include "cryptographypreferences.moc"

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>CryptographyPrefsUI</class>
 <author>Olivier Goffart</author>
 <widget class="QWidget">
@@ -9,9 +9,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>395</width>
-            <height>398</height>
+            <width>403</width>
+            <height>285</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>CryptographyPrefsUI</string>
     </property>
     <grid>
         <property name="name">
@@ -35,7 +38,7 @@
         </widget>
         <widget class="KLineEdit" row="0" column="1">
             <property name="name">
-                <cstring>m_editOwnKey</cstring>
+                <cstring>PGP_private_key</cstring>
             </property>
             <property name="readOnly">
                 <bool>true</bool>
@@ -43,10 +46,10 @@
         </widget>
         <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="3">
             <property name="name">
-                <cstring>m_alsoMyKey</cstring>
+                <cstring>Encrypt</cstring>
             </property>
             <property name="text">
-                <string>Encrypt message also with my key</string>
+                <string>Encrypt message with the key</string>
             </property>
         </widget>
         <spacer row="5" column="1">
@@ -79,15 +82,18 @@
                 </property>
                 <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="3">
                     <property name="name">
-                        <cstring>m_cache_kopete</cstring>
+                        <cstring>Cache_Till_App_Close</cstring>
                     </property>
                     <property name="text">
                         <string>Until Kopete closes</string>
                     </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
                 </widget>
                 <widget class="QSpinBox" row="2" column="1">
                     <property name="name">
-                        <cstring>m_time</cstring>
+                        <cstring>Cache_Time</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -125,7 +131,7 @@
                 </widget>
                 <widget class="QRadioButton" row="2" column="0">
                     <property name="name">
-                        <cstring>m_cache_time</cstring>
+                        <cstring>Cache_Till_Time</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -141,7 +147,7 @@
                 </widget>
                 <widget class="QRadioButton" row="3" column="0" rowspan="1" colspan="3">
                     <property name="name">
-                        <cstring>m_cache_never</cstring>
+                        <cstring>Cache_Never</cstring>
                     </property>
                     <property name="text">
                         <string>Never</string>
@@ -168,7 +174,7 @@
         </spacer>
         <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="3">
             <property name="name">
-                <cstring>m_noPassphrase</cstring>
+                <cstring>No_Passphrase_Handling</cstring>
             </property>
             <property name="text">
                 <string>Don't ask the passphrase (when using gpg-agent)</string>
@@ -176,23 +182,25 @@
         </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
-        <sender>m_noPassphrase</sender>
+        <sender>No_Passphrase_Handling</sender>
         <signal>toggled(bool)</signal>
         <receiver>m_cache</receiver>
         <slot>setDisabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>
-    <tabstop>m_editOwnKey</tabstop>
+    <tabstop>PGP_private_key</tabstop>
     <tabstop>m_selectOwnKey</tabstop>
-    <tabstop>m_alsoMyKey</tabstop>
-    <tabstop>m_noPassphrase</tabstop>
-    <tabstop>m_cache_kopete</tabstop>
-    <tabstop>m_cache_time</tabstop>
-    <tabstop>m_time</tabstop>
-    <tabstop>m_cache_never</tabstop>
+    <tabstop>Encrypt</tabstop>
+    <tabstop>No_Passphrase_Handling</tabstop>
+    <tabstop>Cache_Till_App_Close</tabstop>
+    <tabstop>Cache_Till_Time</tabstop>
+    <tabstop>Cache_Time</tabstop>
+    <tabstop>Cache_Never</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

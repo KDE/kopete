@@ -18,11 +18,7 @@
 #ifndef CryptographyPLUGIN_H
 #define CryptographyPLUGIN_H
 
-#include <qobject.h>
-#include <qmap.h>
-#include <qstring.h>
 
-#include "kopetemessage.h"
 #include "kopeteplugin.h"
 
 class QStringList;
@@ -34,8 +30,6 @@ class KopeteMessage;
 class KopeteMetaContact;
 class KopeteMessageManager;
 
-class CryptographyConfig;
-
 /**
   * @author Olivier Goffart
   */
@@ -45,6 +39,13 @@ class CryptographyPlugin : public KopetePlugin
 	Q_OBJECT
 
 public:
+	enum CacheMode
+	{
+		Keep	= 0,
+		Time	= 1,
+		Never	= 2
+	};
+	
 	static CryptographyPlugin  *plugin();
 	static QCString cachedPass();
 	static void setCachedPass(const QCString &pass);
@@ -62,15 +63,23 @@ private slots:
 
 	void slotSelectContactKey();
 	void slotForgetCachedPass();
+	void loadSettings();
 
 private:
 	static CryptographyPlugin* pluginStatic_;
 	QCString m_cachedPass;
 	QTimer *m_cachedPass_timer;
-	CryptographyConfig *m_config;
 
 	//cache messages for showing
 	QMap<QString, QString> m_cachedMessages;
+
+	//Settings
+	QString mPrivateKeyID;
+	int mCacheMode;
+	unsigned int mCacheTime;
+	bool mEncrypt;
+	bool mAskPassPhrase;
+	bool mCachePassPhrase;
 };
 
 #endif

@@ -20,7 +20,6 @@
 #define POPUPPUBLIC_H
 
 #include <qdialog.h>
-#include <qpixmap.h>
 
 class KListView;
 class QCheckBox;
