@@ -429,23 +429,13 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 	kdDebug( 14010 ) << k_funcinfo << endl;
 
 	KopeteMetaContact *old = d->metaContact;
-	KopeteGroupList newGroups;
-	if( m )
-		newGroups = m->groups();
 
 	if( old )
 	{
 		d->metaContact->removeContact( this );
-		KopeteGroupList oldGroups = d->metaContact->groups();
 		disconnect( old, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
 			protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
-
-		for( KopeteGroup *group = oldGroups.first(); group; group = oldGroups.next() )
-		{
-			if( oldGroups.contains( group ) && !newGroups.contains( group ) )
-				removeFromGroup( group );
-		}
-
+		
 		if( !old->contacts().isEmpty() )
 			protocol()->slotMetaContactAboutToSave( old );
 			
@@ -462,14 +452,8 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 
 		connect( d->metaContact, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
 		protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
-
-		// Sync groups //FIXME: for msn that can be done in only one line. (Olivier)
-		for( KopeteGroup *group = newGroups.first(); group; group = newGroups.next() )
-		{
-			if(!old || !old->groups().contains( group ) )
-				addToGroup( group );
-		}
 	}
+	syncGroups();
 }
 
 MetaContactListViewItem::MetaContactListViewItem( KopeteMetaContact *m, QListView *p )
@@ -508,16 +492,6 @@ void KopeteContact::setIdleState( KopeteContact::IdleState newState )
 {
 	d->idleState = newState;
 	emit idleStateChanged( this, d->idleState );
-}
-
-void KopeteContact::addToGroup( KopeteGroup * /* newGroup */ )
-{
-	/* Default implementation does nothing */
-}
-
-void KopeteContact::removeFromGroup( KopeteGroup * /* group */ )
-{
-	/* Default implementation does nothing */
 }
 
 bool KopeteContact::isReachable()
@@ -559,18 +533,13 @@ KopeteMessageManager *KopeteContact::manager( bool )
 void KopeteContact::slotDeleteContact()
 {
 	/* Default implementation does nothing */
+	//FIXME: shouldn't we simply delete the contact here? (Olivier)
 }
 
 void KopeteContact::slotUserInfo()
 {
 	/* Default implementation does nothing */
 }
-
-void KopeteContact::moveToGroup( KopeteGroup * /* from */, KopeteGroup * /* to */ )
-{
-	/* Default implementation does nothing */
-}
-
 
 bool KopeteContact::isOnline() const
 {
@@ -599,9 +568,6 @@ KopeteAccount * KopeteContact::account() const
 	return d->account;
 }
 
-
-
-
 KActionCollection * KopeteContact::customContextMenuActions()
 {
 	return 0L;
@@ -625,6 +591,11 @@ bool KopeteContact::canAcceptFiles() const
 KopeteContact::IdleState KopeteContact::idleState() const
 {
 	return d->idleState;
+}
+
+void KopeteContact::syncGroups()
+{
+	/* Default implementation does nothing */
 }
 
 #include "kopetecontact.moc"
