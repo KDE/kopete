@@ -118,7 +118,8 @@ private:
 	const KopeteContact *m_us;
 	bool updateBg;
 	KTabWidget *m_tabBar;
-	KPushButton* m_button_send;
+	KPushButton *m_button_send;
+	KSqueezedTextLabel *m_status_text;
 	QVBox *vBox;
 	QVBoxLayout *mainLayout;
 	QFrame *mainArea;
