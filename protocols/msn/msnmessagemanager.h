@@ -61,7 +61,8 @@ private slots:
 	void slotMessageSent( KopeteMessage &message, KopeteMessageManager *kmm );
 	void slotMessageReceived( KopeteMessage &message );
 
-	void slotUpdateChatMember( const QString &handle, const QString &publicName, bool add );
+	void slotUserJoined( const QString &handle, const QString &publicName, bool IRO );
+	void slotUserLeft( const QString &handle, const QString &reason );
 	void slotSwitchBoardClosed();
 	void slotInviteContact( KopeteContact *contact );
 	void slotAcknowledgement( unsigned int id, bool ack );

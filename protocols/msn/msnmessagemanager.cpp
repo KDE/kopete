@@ -85,8 +85,10 @@ void MSNMessageManager::createChat( const QString &handle,
 	m_chatService->setMsgHandle( handle );
 	m_chatService->connectToSwitchBoard( ID, address, auth );
 
-	connect( m_chatService, SIGNAL( updateChatMember(const QString&,const QString&,bool)),
-		this, SLOT( slotUpdateChatMember(const QString&,const QString&,bool) ) );
+	connect( m_chatService, SIGNAL( userJoined(const QString&,const QString&,bool)),
+		this, SLOT( slotUserJoined(const QString&,const QString&,bool) ) );
+	connect( m_chatService, SIGNAL( userLeft(const QString&,const QString&)),
+		this, SLOT( slotUserLeft(const QString&,const QString&) ) );
 	connect( m_chatService, SIGNAL( msgReceived( KopeteMessage & ) ),
 		this, SLOT( slotMessageReceived( KopeteMessage & ) ) );
 	connect( m_chatService, SIGNAL( switchBoardClosed() ),
@@ -101,28 +103,29 @@ void MSNMessageManager::createChat( const QString &handle,
 		this, SLOT( slotInvitation( const QString&, const QString& ) ) );
 }
 
-void MSNMessageManager::slotUpdateChatMember(const QString &handle, const QString &publicName, bool add)
+void MSNMessageManager::slotUserJoined( const QString &handle, const QString &publicName, bool IRO )
 {
-	if( add && !user()->account()->contacts()[ handle ] )
-		user()->account()->addContact( handle, publicName, 0L, QString::null, true );
+	if( !account()->contacts()[ handle ] )
+		account()->addContact( handle, publicName, 0L, QString::null, true );
 
-	MSNContact *c = static_cast<MSNContact*>( user()->account()->contacts()[ handle ] );
+	MSNContact *c = static_cast<MSNContact*>( account()->contacts()[ handle ] );
 
-	if( add && c->displayName() != publicName)
-	{
+	if( c->displayName() != publicName)
 		c->rename(publicName);
-	}
 
-
-	if(add)
-	{
-		addContact(c);
-		if(!m_messagesQueue.empty())
-			sendMessageQueue();
-	}
-	else if(c)
-		removeContact(c);
+	addContact(c , IRO); // dont show notificaions when we join wesalef
+	if(!m_messagesQueue.empty())
+		sendMessageQueue();
 }
+
+void MSNMessageManager::slotUserLeft( const QString &handle, const QString& reason )
+{
+	MSNContact *c = static_cast<MSNContact*>( user()->account()->contacts()[ handle ] );
+	if(c)
+		removeContact(c, reason );
+}
+
+
 
 void MSNMessageManager::slotSwitchBoardClosed()
 {

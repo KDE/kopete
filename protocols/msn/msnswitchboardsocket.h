@@ -81,7 +81,7 @@ public:
 
 	const QStringList &chatMembers() { return m_chatMembers; }
 
-	void userLeftChat( QString handle );
+	void userLeftChat( const QString &handle , const QString &reason );
 	int sendMsg( const KopeteMessage &msg );
 
 public slots:
@@ -102,12 +102,9 @@ signals:
 	void msgReceived( KopeteMessage &msg );
 	void receivedTypingMsg( const QString &contactId, bool isTyping );
 	void msgAcknowledgement(unsigned int, bool);
-	/**
-	 *  updateChatMember();
-	 *  	if add=true, the contact join the chat, else, the contact leave.
-	 */
-	void updateChatMember(const QString &handle,const QString &plublicName, bool add  );
-	
+	void userJoined(const QString& handle , const QString &publicName , bool IRO);
+	void userLeft(const QString& handle , const QString &reason);
+
 	void switchBoardClosed(  );
 	void invitation(const QString& handle, const QString& msg);
 

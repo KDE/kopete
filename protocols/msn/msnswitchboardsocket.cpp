@@ -80,14 +80,14 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 			QString msg = i18n( "Invalid user! \n"
 				"This MSN user does not exist. Please check the MSN ID." );
 			KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
-			userLeftChat(m_msgHandle);
+			userLeftChat(m_msgHandle , i18n("user never joined"));
 			break;
 		}
 		case 215:
 		{
 			QString msg = i18n( "The user %1 is already on this chat." ).arg( m_msgHandle );
 			KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
-			userLeftChat(m_msgHandle);
+			//userLeftChat(m_msgHandle , i18n("user was twice in this chat") ); //(the user shouln't join there
 			break;
 		}
 		case 216:
@@ -95,7 +95,7 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 			QString msg = i18n( "The user %1 is online but has blocked you. \n"
 				"You can't start to chat with them." ).arg( m_msgHandle );
 			KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
-			userLeftChat(m_msgHandle);
+			userLeftChat(m_msgHandle, i18n("user never joined"));
 			break;
 		}
 		case 217:
@@ -104,7 +104,7 @@ void MSNSwitchBoardSocket::handleError( uint code, uint id )
 			QString msg = i18n( "The user %1 is currently not signed in. \n"
 				"Messages will not be delivered." ).arg( m_msgHandle );
 			KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
-			userLeftChat(m_msgHandle);
+			userLeftChat(m_msgHandle, i18n("user disconected"));
 			break;
 		}
 		default:
@@ -131,7 +131,7 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint  id ,
 		QString screenname = unescape(data.section( ' ', 1, 1 ));
 		if( !m_chatMembers.contains( handle ) )
 			m_chatMembers.append( handle );
-		emit updateChatMember( handle, screenname, true );
+		emit userJoined( handle, screenname, false );
 	}
 	else if( cmd == "IRO" )
 	{
@@ -141,7 +141,7 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint  id ,
 			m_chatMembers.append( handle );
 
 		QString screenname = unescape(data.section( ' ', 3, 3));
-		emit updateChatMember( handle,  screenname, true);
+		emit userJoined( handle, screenname, true );
 	}
 	else if( cmd == "USR" )
 	{
@@ -150,9 +150,9 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint  id ,
 	else if( cmd == "BYE" )
 	{
 		// some has disconnect from chat, update user in chat list
-		QString handle = data.section( ' ', 0, 0 ).replace( QRegExp( "\r\n" ), "" );
+		QString handle = data.section( ' ', 0, 0 ).replace( "\r\n" , "" );
 
-		userLeftChat(handle);
+		userLeftChat( handle,  (data.section( ' ', 1, 1 ) == "1" ) ? i18n("timeout") : QString::null   );
 	}
 	else if( cmd == "MSG" )
 	{
@@ -369,7 +369,7 @@ void MSNSwitchBoardSocket::slotSocketClosed( )
 {
 	for( QStringList::Iterator it = m_chatMembers.begin(); it != m_chatMembers.end(); ++it )
 	{
-		emit updateChatMember( (*it), QString::null, false);
+		emit userLeft( (*it), i18n("socket closed"));
 	}
 
 	// we have lost the connection, send a message to chatwindow (this will not displayed)
@@ -405,17 +405,15 @@ void MSNSwitchBoardSocket::slotOnlineStatusChanged( MSNSocket::OnlineStatus stat
 	}
 }
 
-
-void MSNSwitchBoardSocket::userLeftChat( QString handle ) //O.G.
+void MSNSwitchBoardSocket::userLeftChat(const QString& handle , const QString &reason)
 {
-		emit updateChatMember( handle, QString::null, false );
-		if( m_chatMembers.contains( handle ) )
-			m_chatMembers.remove( handle );
+	emit userLeft( handle,  reason );
 
-		kdDebug(14140) << "MSNSwitchBoardSocket::userLeftChat: " << handle << " left the chat." << endl;
+	if( m_chatMembers.contains( handle ) )
+		m_chatMembers.remove( handle );
 
-		if(m_chatMembers.isEmpty())
-			disconnect();
+	if(m_chatMembers.isEmpty())
+		disconnect();
 }
 
 
