@@ -126,12 +126,12 @@ class KopeteXSLThread : public QObject, public QThread
 		/**
 		 * Emits when the transformation is complete
 		 */
-		void complete( QString & );
+		void complete( const QString & );
 
 		/**
 		 * Emits when the transformation is complete
 		 */
-		void documentComplete( QDomDocument & );
+		void documentComplete( const QDomDocument & );
 
 	private:
 		/**
