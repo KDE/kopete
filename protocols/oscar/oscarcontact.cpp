@@ -24,6 +24,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 //#include <kfiledialog.h>
+
 #include <kdeversion.h>
 #if KDE_IS_VERSION( 3, 1, 90 )
 #include <kinputdialog.h>
@@ -443,9 +444,10 @@ void OscarContact::syncGroups()
 				<< "asking server to create it first"
 				<< endl;
 			// Ask the server to create the group
-			setGroupId(newOscarGroup->ID());
 			mAccount->engine()->sendAddGroup(firstKopeteGroup->displayName());
 		}
+
+		// TODO: update groupID in OscarContact
 
 		// The group has changed, so ask the engine to change
 		// our group on the server
@@ -589,6 +591,7 @@ void OscarContact::slotParseUserInfo(const UserInfo &u)
 void OscarContact::slotRequestAuth()
 {
 	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
+
 #if KDE_IS_VERSION( 3, 1, 90 )
 	QString reason = KInputDialog::getText(
 		i18n("Request Authorization"),i18n("Reason for requesting authorization"));

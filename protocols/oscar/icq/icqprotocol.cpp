@@ -416,6 +416,21 @@ void ICQProtocol::initEncodings()
 	mEncodings.insert(2084, i18n("KOI8-R Russian"));
 	mEncodings.insert(2088, i18n("KOI8-U Ukrainian"));
 
+	mEncodings.insert(4, i18n("ISO-8859-1 Western"));
+	mEncodings.insert(5, i18n("ISO-8859-2 Central European"));
+	mEncodings.insert(6, i18n("ISO-8859-3 Central European"));
+	mEncodings.insert(7, i18n("ISO-8859-4 Baltic"));
+	mEncodings.insert(8, i18n("ISO-8859-5 Cyrillic"));
+	mEncodings.insert(9, i18n("ISO-8859-6 Arabic"));
+	mEncodings.insert(10, i18n("ISO-8859-7 Greek"));
+	mEncodings.insert(11, i18n("ISO-8859-8 Hebrew, visually ordered"));
+	mEncodings.insert(85, i18n("ISO-8859-8-I Hebrew, logically ordered"));
+	mEncodings.insert(12, i18n("ISO-8859-9 Turkish"));
+	mEncodings.insert(13, i18n("ISO-8859-10"));
+	mEncodings.insert(109, i18n("ISO-8859-13"));
+	mEncodings.insert(110, i18n("ISO-8859-14"));
+	mEncodings.insert(111, i18n("ISO-8859-15 Western"));
+
 	mEncodings.insert(2250, i18n("Windows-1250 Central European"));
 	mEncodings.insert(2251, i18n("Windows-1251 Cyrillic"));
 	mEncodings.insert(2252, i18n("Windows-1252 Western"));
@@ -436,20 +451,6 @@ Missing ones (copied from qtextcodec doc):
 TSCII -- Tamil
 utf8 -- Unicode, 8-bit
 utf16 -- Unicode
-ISO8859-1 -- Western
-ISO8859-2 -- Central European
-ISO8859-3 -- Central European
-ISO8859-4 -- Baltic
-ISO8859-5 -- Cyrillic
-ISO8859-6 -- Arabic
-ISO8859-7 -- Greek
-ISO8859-8 -- Hebrew, visually ordered
-ISO8859-8-i -- Hebrew, logically ordered
-ISO8859-9 -- Turkish
-ISO8859-10
-ISO8859-13
-ISO8859-14
-ISO8859-15 -- Western
 CP874
 Apple Roman
 */
@@ -574,6 +575,8 @@ void ICQProtocol::contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *w
 
 	if(c->userInfo().onlinesince.isValid())
 		widget->roSignonTime->setText(c->userInfo().onlinesince.toString(Qt::LocalDate));
+	if(c->userInfo().membersince.isValid())
+		widget->roCreationTime->setText(c->userInfo().membersince.toString(Qt::LocalDate));
 
 	widget->rwNickName->setText(c->generalInfo.nickName);
 	widget->rwAlias->setText(c->displayName());

@@ -79,8 +79,13 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	mUserInfoSettings->rwAlias->hide();
 	mUserInfoSettings->lblAlias->hide();
 
+	mUserInfoSettings->cmbEncoding->hide();
+	mUserInfoSettings->lblEncoding->hide();
+
 	mUserInfoSettings->roSignonTime->hide();
 	mUserInfoSettings->lblSignonTime->hide();
+	mUserInfoSettings->roCreationTime->hide();
+	mUserInfoSettings->lblCreationTime->hide();
 
 	mUserInfoSettings->roUIN->hide();
 	mUserInfoSettings->lblICQUIN->hide();
@@ -198,11 +203,8 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		send->setDisabled(!mAccount->isConnected());
 
 		connect(fetch, SIGNAL(clicked()), this, SLOT(slotFetchInfo()));
-		// TODO: support sending userinfo
- 		connect(send, SIGNAL(clicked()), this, SLOT(slotSend()));
-		connect(
-			mAccount->myself(), SIGNAL(updatedUserInfo()),
-			this, SLOT(slotReadInfo()));
+		connect(send, SIGNAL(clicked()), this, SLOT(slotSend()));
+		connect(mAccount->myself(), SIGNAL(updatedUserInfo()), this, SLOT(slotReadInfo()));
 	}
 	else
 	{
@@ -225,6 +227,8 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	connect(mUserInfoSettings->prsAddressEdit, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
 	connect(mUserInfoSettings->prsHomepageEdit, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
 	connect(mUserInfoSettings->prsEmailEdit, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
+	connect(mUserInfoSettings->rwBday, SIGNAL(changed(QDate)), this, SLOT(slotRecalcAge(QDate)));
+	connect(mUserInfoSettings->rwBday, SIGNAL(changed(QDate)), this, SLOT(slotModified()));
 }
 
 KopeteAccount *ICQEditAccountWidget::apply()
@@ -397,7 +401,7 @@ void ICQEditAccountWidget::slotSend()
 	if(!mAccount->isConnected())
 		return;
 
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
+	kdDebug(14200) << k_funcinfo << "Called." << endl;
 
 	ICQGeneralUserInfo generalInfo;
 	ICQWorkUserInfo workInfo;
@@ -445,7 +449,7 @@ void ICQEditAccountWidget::slotSend()
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo <<
+		kdDebug(14200) << k_funcinfo <<
 			"Failed to fetch engine pointer, cannot send userinfo" << endl;
 	}
 
@@ -455,6 +459,32 @@ void ICQEditAccountWidget::slotSend()
 void ICQEditAccountWidget::slotModified()
 {
 	mModified=true;
+}
+
+void ICQEditAccountWidget::slotRecalcAge(QDate bday)
+{
+	QDate now = QDate::currentDate();
+	kdDebug(14200) << k_funcinfo << "current year=" << now.year() << " bday year=" << bday.year() << endl;
+
+	if(bday.year() < now.year())
+	{
+		int age = now.year() - bday.year();
+
+		if(now.month() < bday.month()) // didn't have his birthday this year
+		{
+			kdDebug(14200) << k_funcinfo << "didn't have his birthday this year" << endl;
+			age--;
+		}
+		else if(now.month() == bday.month()) // his birthday is in the current month
+		{
+			kdDebug(14200) << k_funcinfo << "birthday is in the current month" << endl;
+
+			if(now.day() < bday.day()) // didn't have his birthday this month yet
+				age--;
+		}
+		kdDebug(14200) << k_funcinfo << "age calculated from birthday is " << age << endl;
+		mUserInfoSettings->rwAge->setValue(age);
+	}
 }
 
 #include "icqeditaccountwidget.moc"

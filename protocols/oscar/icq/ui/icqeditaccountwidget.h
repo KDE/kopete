@@ -18,6 +18,7 @@
 #define ICQEDITACCOUNTWIDGET_H
 
 #include <qwidget.h>
+#include <qdatetime.h>
 #include "editaccountwidget.h"
 
 class KopeteAccount;
@@ -45,6 +46,7 @@ class ICQEditAccountWidget : public QWidget, public EditAccountWidget
 		void slotSetDefaultServer();
 		void slotSend();
 		void slotModified();
+		void slotRecalcAge(QDate);
 
 	protected:
 		/*
