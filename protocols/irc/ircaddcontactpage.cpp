@@ -37,10 +37,6 @@ IRCAddContactPage::IRCAddContactPage(IRCProtocol *owner, QWidget *parent, const 
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	ircdata = new ircAddUI(this);
 	plugin = owner;
-
-	KGlobal::config()->setGroup("IRC");
-	QString server = KGlobal::config()->readEntry("Server", "irc.freenode.net");
-	ircdata->ircServer->lineEdit()->setText(server);
 }
 IRCAddContactPage::~IRCAddContactPage()
 {
@@ -50,7 +46,7 @@ void IRCAddContactPage::slotFinish(KopeteMetaContact *m)
 {
 	QString server = ircdata->ircServer->lineEdit()->text();
 	QString name = ircdata->addID->text();
-	plugin->addContact(server, name, name, m);
+	plugin->addContact(name, name, m);
 }
 
 bool IRCAddContactPage::validateData()

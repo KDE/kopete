@@ -5,5 +5,6 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	$(all_includes)
 
 libkopeteircui_la_METASOURCES = AUTO
-libkopeteircui_la_SOURCES = ircadd.ui ircprefs.ui empty.cpp
+libkopeteircui_la_SOURCES = ircadd.ui ircprefs.ui empty.cpp irceditidentitywidget.cpp \
+	irceditidentity.ui
 EXTRA_DIST = ircadd.ui ircprefs.ui empty.cpp

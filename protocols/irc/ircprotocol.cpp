@@ -34,11 +34,13 @@
 #include <kstandarddirs.h>
 
 #include "ircadd.h"
+#include "ircidentity.h"
 #include "ircaddcontactpage.h"
 #include "ircpreferences.h"
-#include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 #include "ircchannelcontact.h"
+#include "kopeteidentitymanager.h"
+#include "irceditidentitywidget.h"
 #include "kirc.h"
 
 K_EXPORT_COMPONENT_FACTORY( kopete_irc, KGenericFactory<IRCProtocol> );
@@ -60,18 +62,12 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 
 	KConfig *cfg = KGlobal::config();
 	cfg->setGroup("IRC");
-	identity = new IRCIdentity(cfg->readEntry("Server", "irc.freenode.net"), cfg->readEntry("Port", "6667").toUInt(), cfg->readEntry("Nickname", "KopeteUser"), cfg->readEntry("Password", ""), this);
-	QObject::connect(identity->engine(), SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
-	QObject::connect(identity->engine(), SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
-
-	/** Autoconnect if is selected in config */
-	if ( cfg->readBoolEntry( "AutoConnect", false ) )
-		connect();
+	identity = new IRCIdentity( cfg->readEntry("Nickname", "KopeteUser") + "@" + cfg->readEntry("Server", "irc.freenode.net") + ":" + cfg->readEntry("Port", "6667"), this);
 }
 
 IRCProtocol::~IRCProtocol()
 {
-	delete identity;
+	//delete identity;
 }
 
 KActionMenu* IRCProtocol::protocolActions()
@@ -91,104 +87,35 @@ const QString IRCProtocol::protocolIcon()
 	return "irc_protocol_small";
 }
 
-void IRCProtocol::addContact(  const QString &server, const QString &contact, const QString &displayName, KopeteMetaContact *m)
-{
-	kdDebug(14120) << "[IRCProtocol] addContact called" << endl;
-	IRCContact *c;
-
-	if( !m )
-	{
-		m = new KopeteMetaContact();
-		KopeteContactList::contactList()->addMetaContact(m);
-	}
-
-	if ( contact.startsWith( QString::fromLatin1("#") ) )
-		c = static_cast<IRCContact*>( identity->findChannel(contact, m) );
-	else
-	{
-		identity->engine()->addToNotifyList( contact );
-		c = static_cast<IRCContact*>( identity->findUser(contact, m) );
-	}
-
-	if( c->metaContact() != m )
-	{
-		KopeteMetaContact *old = c->metaContact();
-		c->setMetaContact( m );
-		KopeteContactPtrList children = old->contacts();
-		if( children.isEmpty() )
-			KopeteContactList::contactList()->removeMetaContact( old );
-	}
-	else if( c->metaContact()->isTemporary() )
-		m->setTemporary(false);
-}
-
-void IRCProtocol::slotConnectedToServer()
-{
-	setStatusIcon( "irc_protocol_small" );
-}
-
-void IRCProtocol::slotConnectionClosed()
-{
-	setStatusIcon( "irc_protocol_offline" );
-}
-
-///////////////////////////////////////////////////
-//           Plugin Class reimplementation
-///////////////////////////////////////////////////
-
 void IRCProtocol::init()
 {
 
 }
 
-///////////////////////////////////////////////////
-//           KopeteProtocol Class reimplementation
-///////////////////////////////////////////////////
-
-void IRCProtocol::connect()
-{
-	KConfig *cfg = KGlobal::config();
-	cfg->setGroup("IRC");
-	identity->engine()->connectToServer(cfg->readEntry("Nickname", "KopeteUser"));
-}
-
-void IRCProtocol::disconnect()
-{
- 	identity->engine()->quitIRC("Kopete IRC 2.0. http://kopete.kde.org");
-}
-
-
-bool IRCProtocol::isConnected() const
-{
-	return identity->engine()->isLoggedIn();
-}
-
-void IRCProtocol::setAway(void)
-{
-// TODO
-}
-
-void IRCProtocol::setAvailable(void)
-{
-// TODO
-}
-
-bool IRCProtocol::isAway(void) const
-{
-// TODO
-	return false;
-}
-
 AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent)
 {
-	return (new IRCAddContactPage(this,parent));
+	return new IRCAddContactPage(this,parent);
+}
+
+EditIdentityWidget *IRCProtocol::createEditIdentityWidget(KopeteIdentity *identity, QWidget *parent)
+{
+	return new IRCEditIdentityWidget(this, static_cast<IRCIdentity*>(identity),parent);
+}
+
+KopeteIdentity *IRCProtocol::createNewIdentity(const QString &identityId)
+{
+	if( !mIdentityMap.contains( identityId ) )
+	{
+		IRCIdentity *id = new IRCIdentity( identityId, this );
+		mIdentityMap[ identityId ] = id;
+	}
+
+	return mIdentityMap[ identityId ];
 }
 
 void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
 	const QMap<QString, QString> & /* addressBookData */ )
 {
-/* TODO: FIXME:*/
-
 	QString contactId = serializedData[ "contactId" ];
 	if( !contacts()[ contactId ] )
 	{
@@ -196,7 +123,7 @@ void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 		if( displayName.isEmpty() )
 			displayName = contactId;
 
-		addContact( serializedData[ "serverName" ], contactId, displayName, metaContact );
+		identity->addContact( contactId, displayName, metaContact );
 	}
 }
 

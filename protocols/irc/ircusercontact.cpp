@@ -36,28 +36,24 @@ IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, K
 
 	mCustomActions = new KActionCollection(this);
 
-	actionCtcpMenu = new KActionMenu(i18n("C&TCP"), 0, this );
+	actionCtcpMenu = new KActionMenu(i18n("C&TCP"), 0, mCustomActions );
 	actionCtcpMenu->insert( new KAction(i18n("&Version"), 0, this, SLOT(slotCtcpVersion()), this) );
 	actionCtcpMenu->insert(  new KAction(i18n("&Ping"), 0, this, SLOT(slotCtcpPing()), this) );
-	mCustomActions->insert( actionCtcpMenu );
 
-	actionModeMenu = new KActionMenu(i18n("&Modes"), 0, this, "actionModeMenu");
+	actionModeMenu = new KActionMenu(i18n("&Modes"), 0, mCustomActions, "actionModeMenu");
 	actionModeMenu->insert( new KAction(i18n("&Op"), 0, this, SLOT(slotOp()), this, "actionOp") );
 	actionModeMenu->insert( new KAction(i18n("&Deop"), 0, this, SLOT(slotDeop()), this, "actionDeop") );
 	actionModeMenu->insert( new KAction(i18n("&Voice"), 0, this, SLOT(slotVoice()), this, "actionVoice") );
 	actionModeMenu->insert( new KAction(i18n("Devoice"), 0, this, SLOT(slotDevoice()), this, "actionDevoice") );
 	actionModeMenu->setEnabled( false );
-	mCustomActions->insert( actionModeMenu );
 
-	actionKick = new KAction(i18n("&Kick"), 0, this, SLOT(slotKick()), this);
-	mCustomActions->insert( actionKick );
+	actionKick = new KAction(i18n("&Kick"), 0, this, SLOT(slotKick()), mCustomActions);
 
-	actionBanMenu = new KActionMenu(i18n("&Ban"), 0, this, "actionBanMenu");
+	actionBanMenu = new KActionMenu(i18n("&Ban"), 0, mCustomActions, "actionBanMenu");
 	actionBanMenu->insert( new KAction(i18n("Ban *!*@*.host"), 0, this, SLOT(slotBanHost()), this ) );
 	actionBanMenu->insert( new KAction(i18n("Ban *!*@domain"), 0, this, SLOT(slotBanDomain()), this ) );
 	actionBanMenu->insert( new KAction(i18n("Ban *!*user@*.host"), 0, this, SLOT(slotBanUserHost()), this ) );
 	actionBanMenu->insert( new KAction(i18n("Ban *!*user@domain"), 0, this, SLOT(slotBanUserDomain()), this ) );
-	mCustomActions->insert( actionBanMenu );
 
 	mOnlineTimer = new QTimer( this );
 	connect( mOnlineTimer, SIGNAL(timeout()), this, SLOT( slotUserOffline() ) );

@@ -19,19 +19,16 @@
 #define IRCPROTOCOL_H
 
 #include "kopeteprotocol.h"
-#include "ircidentity.h"
-#include "ircusercontact.h"
-
-#include <qpixmap.h>
 
 class KopeteMetaContact;
 class AddContactPage;
-class IRCServerManager;
 class KIRC;
 
 class KAction;
 class KActionMenu;
-class KSimpleConfig;
+class EditIdentityWidget;
+class KopeteIdentity;
+class IRCIdentity;
 
 class QStringList;
 class QWidget;
@@ -39,7 +36,7 @@ class QWidget;
 /**
  * @author Nick Betcher <nbetcher@kde.org>
  */
- 
+
 class IRCProtocol : public KopeteProtocol
 {
 	Q_OBJECT
@@ -52,16 +49,7 @@ public:
 
 	/** KopeteProtocol reimplementation */
 	virtual AddContactPage *createAddContactWidget(QWidget *parent);
-	virtual bool isConnected() const;
-	virtual void setAway(void);
-	virtual void setAvailable(void);
-	virtual bool isAway(void) const;
 	virtual KActionMenu* protocolActions();
-
-	// FIXME WHEN IDENTITY SUPPORT IS ADDED:
-	virtual KopeteContact *myself() const { return static_cast<KopeteContact*>( identity->mySelf() ); }
-
-	void addContact(const QString &, const QString &, const QString &, KopeteMetaContact *m=0l);
 
 	/**
 	 * Deserialize contact data
@@ -70,19 +58,19 @@ public:
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 	virtual const QString protocolIcon();
 
-public slots:
-	virtual void connect();
-	virtual void disconnect();
-private slots:
-	void slotConnectedToServer();
-	void slotConnectionClosed();
+	virtual EditIdentityWidget* createEditIdentityWidget(KopeteIdentity *identity, QWidget *parent);
+
+	virtual KopeteIdentity* createNewIdentity(const QString &identityId);
+
 private:
 	KActionMenu *m_actionMenu;
-	bool m_isConnected;
+
 	/** FIXME: Do something with this when Identity support is added!!!!!!!! */
 	IRCIdentity *identity;
 	KAction *actionDisconnect;
 	KAction *actionConnect;
+
+	QMap<QString,IRCIdentity*> mIdentityMap;
 };
 
 #endif

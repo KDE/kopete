@@ -42,15 +42,10 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 
 	// KAction stuff
 	mCustomActions = new KActionCollection(this);
-	actionJoin = new KAction(i18n("&Join"), 0, this, SLOT(slotJoin()), this, "actionJoin");
-	actionPart = new KAction(i18n("&Part"), 0, this, SLOT(slotPart()), this, "actionPart");
-	actionTopic = new KAction(i18n("Change &Topic..."), 0, this, SLOT(setTopic()), this, "actionTopic");
-	actionModeMenu = new KActionMenu(i18n("Channel Modes"), 0, this, "actionModeMenu");
-
-	mCustomActions->insert( actionJoin );
-	mCustomActions->insert( actionPart );
-	mCustomActions->insert( actionTopic );
-	mCustomActions->insert( actionModeMenu );
+	actionJoin = new KAction(i18n("&Join"), 0, this, SLOT(slotJoin()), mCustomActions, "actionJoin");
+	actionPart = new KAction(i18n("&Part"), 0, this, SLOT(slotPart()), mCustomActions, "actionPart");
+	actionTopic = new KAction(i18n("Change &Topic..."), 0, this, SLOT(setTopic()), mCustomActions, "actionTopic");
+	actionModeMenu = new KActionMenu(i18n("Channel Modes"), 0, mCustomActions, "actionModeMenu");
 
 	actionModeT = new KToggleAction(i18n("Only Operators Can Change &Topic"), 0, this, SLOT(slotModeChanged()), actionModeMenu );
 	actionModeN = new KToggleAction(i18n("&No Outside Messages"), 0, this, SLOT(slotModeChanged()), actionModeMenu );
