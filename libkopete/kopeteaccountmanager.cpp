@@ -269,6 +269,7 @@ void AccountManager::removeAccount( Account *account )
 void AccountManager::save()
 {
 	//kdDebug( 14010 ) << k_funcinfo << endl;
+	d->accounts.sort();
 	
 	for ( QPtrListIterator<Account> it( d->accounts ); it.current(); ++it )
 	{
