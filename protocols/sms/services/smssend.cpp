@@ -38,7 +38,10 @@ void SMSSend::send(const KopeteMessage& msg)
 
 	QString prefix = SMSGlobal::readConfig("SMSSend", "Prefix", m_contact);
 	if (prefix == QString::null)
-		prefix = "/usr/";
+	{
+		KMessageBox::error(0L, i18n("No prefix set for SMSSend, please change it in the configuration dialog"), i18n("No prefix"));
+		return;
+	}
 
 	SMSSendProvider* s = new SMSSendProvider(provider, prefix, m_contact, this);
 
@@ -55,7 +58,21 @@ QWidget* SMSSend::configureWidget(QWidget* parent)
 	prefWidget->program->setMode(KFile::Directory);
 	QString prefix = SMSGlobal::readConfig("SMSSend", "Prefix", m_contact);
 	if (prefix == QString::null)
+	{
+		QDir d("/usr/share/smssend");
+		if (d.exists())
+		{
+			prefix = "/usr";
+			break;
+		}
+		d = "/usr/local/share/smssend";
+		if (d.exists())
+		{
+			prefix="/usr/local";
+			break;
+		}
 		prefix = "/usr";
+	}
 	
 	connect (prefWidget->program, SIGNAL(textChanged(const QString &)),
 		this, SLOT(loadProviders(const QString&)));
