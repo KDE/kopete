@@ -22,15 +22,9 @@ class JabberAddContactPage:public AddContactPage
 	virtual bool validateData ();
 	virtual bool apply (KopeteAccount *, KopeteMetaContact *);
 	dlgAddContact *jabData;
-	JabberAccount *plugin;
 	QLabel *noaddMsg1;
 	QLabel *noaddMsg2;
 	bool canadd;
-	public slots:				// Public slots
-
-  /** No descriptions */
-	  virtual void slotFinish (KopeteMetaContact * mc);
-
 };
 
 

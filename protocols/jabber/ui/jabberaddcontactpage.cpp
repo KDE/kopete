@@ -12,7 +12,7 @@ JabberAddContactPage::JabberAddContactPage (KopeteAccount * owner, QWidget * par
 	  {
 		  jabData = new dlgAddContact (this);
 		  jabData->show ();
-		  plugin = owner;
+
 		  canadd = true;
 
 	  }
@@ -34,19 +34,6 @@ bool JabberAddContactPage::validateData ()
 	return true;
 }
 
-void JabberAddContactPage::slotFinish (KopeteMetaContact * mc)
-{
-	if (canadd)
-	  {
-		  QString userID = jabData->addID->text ();
-
-		  //plugin->addContact(mc, userID);
-	  }
-	else
-	  {
-		  return;
-	  }
-}
 
 bool JabberAddContactPage::apply (KopeteAccount * i, KopeteMetaContact * m)
 {
