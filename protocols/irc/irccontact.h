@@ -58,8 +58,8 @@ public:
 	IRCChatView *getChatView() { return chatView; };
 	QStringList mPendingMessage;
 	QString mServer;
-private:
 	QString mTarget;
+private:
 	unsigned int mPort;
 	QString mUsername;
 	QString mNickname;
@@ -70,16 +70,19 @@ private:
 	IRCQueryView *queryView;
 	void init();
 private slots:
-	void joinNow();
 	void slotQuitServer();
 //	void slotHop();
 	void slotPartedChannel(const QString &, const QString &, const QString &);
 	void slotServerIsQuitting();
 	void slotServerHasQuit();
 	void slotRemoveThis();
+	void slotClose();
 	void slotServerQuit();
+	void slotOpen();
+	void slotOpenConnect();
 public slots:
 	void slotPart();
+	void joinNow();
 };
 
 #endif

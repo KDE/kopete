@@ -44,7 +44,7 @@ class IRCServerContact : public QObject
 Q_OBJECT
 public:
 	IRCServerContact(const QString &, const QString &, bool, IRCProtocol *protocol);
-	IRCServerContact(IRCProtocol *protocol);
+	IRCServerContact(IRCProtocol *protocol, bool connectNow = true);
 	KIRC *engine;
 	const QString &nickName() { return mNickname; };
 	const QString &serverName() { return mServer; };

@@ -64,6 +64,11 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 	mNickname = nick;
 	mJoinOnConnect = joinOnConnect;
 
+	// Just to be safe!
+	mTabPage = 0L;
+	queryView = 0L;
+	chatView = 0L;
+
 	mContact->activeContacts.append(this);
 
 	init();
@@ -111,12 +116,18 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 	mNickname = nick;
 	mJoinOnConnect = joinOnConnect;
 
+	// Just to be safe!
+	mTabPage = 0L;
+	queryView = 0L;
+	chatView = 0L;
+
 	mContact->activeContacts.append(this);
 
 	init();
 
 	connect(mContact->engine, SIGNAL(connectionClosed()), this, SLOT(slotServerQuit()));
-	connect(mContact->engine, SIGNAL(connectedToServer()), this, SLOT(slotServerReady()));
+
+	mPendingMessage = pendingMessage;
 
 	if (joinOnConnect == true)
 	{
@@ -127,8 +138,6 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 			QObject::connect(mContact->engine, SIGNAL(connectedToServer()), this, SLOT(joinNow()));
 		}
 	}
-
-	mPendingMessage = pendingMessage;
 }
 
 IRCContact::IRCContact(const QString &groupName, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact)
@@ -160,6 +169,11 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 	mNickname = nick;
 	mJoinOnConnect = joinOnConnect;
 
+	// Just to be safe!
+	mTabPage = 0L;
+	queryView = 0L;
+	chatView = 0L;
+
 	mContact->activeContacts.append(this);
 
 	init();
@@ -168,7 +182,6 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 	setName(QString("%1@%2").arg(target).arg(mServer));
 
 	connect(mContact->engine, SIGNAL(connectionClosed()), this, SLOT(slotServerQuit()));
-	connect(mContact->engine, SIGNAL(connectedToServer()), this, SLOT(slotServerReady()));
 
 	if (joinOnConnect == true)
 	{
@@ -205,6 +218,9 @@ void IRCContact::slotServerQuit()
 	if (mTabPage != 0)
 	{
 		delete mTabPage;
+		mTabPage = 0L;
+		queryView = 0L;
+		chatView = 0L;
 	}
 }
 
@@ -290,10 +306,12 @@ void IRCContact::slotRemoveThis()
 			if (page != 0)
 			{
 				mContact->mWindow->mTabWidget->removePage(page);
-				mContact->activeQueries.remove(mTarget);
-				if (queryView !=0)
+				if (mTabPage !=0)
 				{
-					delete queryView;
+					delete mTabPage;
+					mTabPage = 0L;
+					queryView = 0L;
+					chatView = 0L;
 				}
 				delete this;
 				return;
@@ -304,6 +322,45 @@ void IRCContact::slotRemoveThis()
 			// just make sure that it doesn't cause an infinite loop, and since people aren't going to be in 1000 channel or queries on server, it's okay
 			break;
 		}
+	}
+	delete this;
+}
+
+void IRCContact::slotClose()
+{
+	if (mTabPage != 0)
+	{
+		delete mTabPage;
+		mTabPage = 0L;
+		queryView = 0L;
+		chatView = 0L;
+	}
+}
+
+void IRCContact::slotOpen()
+{
+	if (!mContact->engine->isLoggedIn())
+	{
+		slotOpenConnect();
+	} else {
+		if (mContact->mWindow != 0)
+		{
+			mContact->mWindow->show();
+		}
+		joinNow();
+	}
+}
+
+void IRCContact::slotOpenConnect()
+{
+	if (!mContact->engine->isLoggedIn())
+	{
+		QObject::disconnect(mContact->engine, SIGNAL(connectedToServer()), this, SLOT(joinNow()));
+		QObject::connect(mContact->engine, SIGNAL(connectedToServer()), this, SLOT(joinNow()));
+		mContact->connectNow();
+		mContact->mWindow->show();
+	} else {
+		slotOpen();
 	}
 }
 
@@ -317,7 +374,18 @@ void IRCContact::showContextMenu(QPoint point)
 // TODO:	popup->insertItem("Hop (Part and Re-join)", this, SLOT(slotHop()));
 // TODO:	popup->insertItem("Remove", this, SLOT(slotRemoveThis()));
 	} else {
-		popup->insertItem("Close and Remove", this, SLOT(slotRemoveThis()));
+		if (mTabPage != 0)
+		{
+			popup->insertItem("Close", this, SLOT(slotClose()));
+		} else {
+			if (mContact->engine->isLoggedIn())
+			{
+				popup->insertItem("Open", this, SLOT(slotOpen()));
+			} else {
+				popup->insertItem("Open and Connect", this, SLOT(slotOpenConnect()));
+			}
+		}
+		popup->insertItem("Remove", this, SLOT(slotRemoveThis()));
 	}
 	popup->popup(point);
 }
@@ -330,21 +398,23 @@ void IRCContact::slotQuitServer()
 
 void IRCContact::execute()
 {
-	// Null pointer paranoia city, check out IRCServerContact, it's pretty h4x0r too :)
-	if (chatView != 0)
+	if (mContact->mWindow != 0)
 	{
-		if (mContact != 0)
+		mContact->mWindow->raise();
+		if (mTabPage !=0)
 		{
-			if (mContact->mWindow != 0)
-			{
-				mContact->mWindow->raise();
-				if (mTabPage !=0)
-				{
-					mContact->mWindow->mTabWidget->showPage(mTabPage);
-				}
-			}
+			mContact->mWindow->mTabWidget->showPage(mTabPage);
 		}
+	}
+	if (chatView !=0)
+	{
 		chatView->messageBox->setFocus();
+		return;
+	}
+	if (queryView !=0)
+	{
+		queryView->messageBox->setFocus();
+		return;
 	}
 }
 
@@ -380,6 +450,9 @@ void IRCContact::slotPartedChannel(const QString &originating, const QString &ch
 IRCContact::~IRCContact()
 {
 	mContact->activeContacts.remove(this);
+	kopeteapp->contactList()->removeContact(this);
+	mContact->activeQueries.remove(mTarget);
+
 }
 
 void IRCContact::unloading()
@@ -387,12 +460,13 @@ void IRCContact::unloading()
 	if (mTabPage !=0)
 	{
 		delete mTabPage;
+		mTabPage = 0L;
 	}
-	delete this;
 }
 
 void IRCContact::joinNow()
 {
+	kdDebug() << "IRC Plugin: IRCContact::joinNow() creating mTabPage!" << endl;
 	mTabPage = new QVBox(mContact->mWindow->mTabWidget);
 	if (mTarget[0] == '#' || mTarget[0] == '!' || mTarget[0] == '&')
 	{
