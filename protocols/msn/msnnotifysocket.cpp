@@ -555,7 +555,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 		if(mailCount > 0 )
 		{
-			KopeteNotifyClient::event( 0 , "msn_mail" , i18n( "You have one unread message in your MSN inbox.", "You have %n unread messages in your MSN inbox." , mailCount),
+			KNotifyClient::event( 0 , "msn_mail" , i18n( "You have one unread message in your MSN inbox.", "You have %n unread messages in your MSN inbox." , mailCount),
 				i18n("Open &inbox") , this , SLOT(slotOpenInbox()) );
 		}
 
@@ -576,7 +576,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 		mailCount++;
 
-		KopeteNotifyClient::event( 0 , "msn_mail" , i18n( "You have one new email from %1 in your MSN inbox." ).arg(m) ,
+		KNotifyClient::event( 0 , "msn_mail" , i18n( "You have one new email from %1 in your MSN inbox." ).arg(m) ,
 			i18n("Open &inbox") , this , SLOT(slotOpenInbox()) );
 	}
 	else if(msg.contains("text/x-msmsgsprofile"))

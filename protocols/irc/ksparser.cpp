@@ -116,7 +116,7 @@ QString KSParser::_parse(const QString &message)
 		case 6:		//Invert Colors
 			break;
 		case 7:		//System bell
-			KopeteNotifyClient::beep( QString::fromLatin1("IRC beep event received in a message") );
+			KNotifyClient::beep( QString::fromLatin1("IRC beep event received in a message") );
 			break;
 		case 15:	//Plain Text, close all tags
 			res.append( popAll() );

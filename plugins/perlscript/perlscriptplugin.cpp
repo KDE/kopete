@@ -340,7 +340,7 @@ void PerlScript::load()
 			m_localPath = m_localFile->name();
 			if ( !KIO::NetAccess::download(KURL(path), m_localPath) )
 			{
-				KopeteNotifyClient::event("cannotopenfile");
+				KNotifyClient::event("cannotopenfile");
 				return;
 			}
 			m_localFile->close();
@@ -357,7 +357,7 @@ void PerlScript::load()
 	QFile f(m_localPath);
 	if ( !f.open(IO_ReadOnly) )
 	{
-		KopeteNotifyClient::event("cannotopenfile");
+		KNotifyClient::event("cannotopenfile");
 	}
 	else
 	{

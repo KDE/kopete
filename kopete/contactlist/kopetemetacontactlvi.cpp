@@ -192,7 +192,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged(KopeteContact *c)
 		int winId = KopeteSystemTray::systemTray() ?
 			KopeteSystemTray::systemTray()->winId() : 0;
 
-		KopeteNotifyClient::event(winId, event,
+		KNotifyClient::event(winId, event,
 			i18n("%2 is now %1!").arg(m_metaContact->statusString()).arg(m_metaContact->displayName()),
 			i18n("Chat") , this, SLOT(execute()));
 

@@ -200,9 +200,9 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 					}
 
 #if QT_VERSION < 0x030200
-					KopeteNotifyClient::event( winId, event, body.arg( msgFrom ).arg( msgText ) ,
+					KNotifyClient::event( winId, event, body.arg( msgFrom ).arg( msgText ) ,
 #else
-					KopeteNotifyClient::event(winId,  event, body.arg( msgFrom, msgText ) ,
+					KNotifyClient::event(winId,  event, body.arg( msgFrom, msgText ) ,
 #endif
 						i18n("View") , const_cast<KopeteContact*>(msg.from()) , SLOT(execute()) );
 ;
