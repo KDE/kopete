@@ -92,8 +92,6 @@ void YahooContact::slotUpdateStatus(QString status, QString statusText)
 
 void YahooContact::syncToServer()
 {
-	
-
 	kdDebug(14180) << k_funcinfo<< endl;
 	if(!m_account->isConnected()) return;
 
