@@ -4,7 +4,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes)
 
 kde_module_LTLIBRARIES = kopete_cryptography.la kcm_kopete_cryptography.la
 
-kopete_cryptography_la_SOURCES     = cryptographyplugin.cpp kgpginterface.cpp cryptographyselectuserkey.cpp cryptographyuserkey_ui.ui popuppublic.cpp kgpgselkey.cpp
+kopete_cryptography_la_SOURCES     = cryptographyplugin.cpp kgpginterface.cpp cryptographyguiclient.cpp cryptographyselectuserkey.cpp cryptographyuserkey_ui.ui popuppublic.cpp kgpgselkey.cpp
 kopete_cryptography_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN)
 kopete_cryptography_la_LIBADD      = ../../libkopete/libkopete.la
 
@@ -20,4 +20,7 @@ kcmdir = $(kde_servicesdir)/kconfiguredialog
 
 mydatadir = $(kde_datadir)/kopete_cryptography
 mydata_DATA = cryptographyui.rc
+
+mydata2dir = $(kde_datadir)/kopete
+mydata2_DATA = cryptographychatui.rc
 

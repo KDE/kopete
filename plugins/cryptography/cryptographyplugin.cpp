@@ -2,7 +2,7 @@
                           cryptographyplugin.cpp  -  description
                              -------------------
     begin                : jeu nov 14 2002
-    copyright            : (C) 2002 by Olivier Goffart
+    copyright            : (C) 2002-2004 by Olivier Goffart
     email                : ogoffart@tiscalinet.be
  ***************************************************************************/
 
@@ -31,6 +31,7 @@
 
 #include "cryptographyplugin.h"
 #include "cryptographyselectuserkey.h"
+#include "cryptographyguiclient.h"
 
 #include "kgpginterface.h"
 
@@ -64,6 +65,16 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 	setXMLFile("cryptographyui.rc");
 	loadSettings();
 	connect(this, SIGNAL(settingsChanged()), this, SLOT( loadSettings() ) );
+	
+	connect( KopeteMessageManagerFactory::factory(), SIGNAL( messageManagerCreated( KopeteMessageManager * )) , SLOT( slotNewKMM( KopeteMessageManager * ) ) );
+	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
+	QIntDict<KopeteMessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();
+	QIntDictIterator<KopeteMessageManager> it( sessions );
+	for ( ; it.current() ; ++it )
+	{
+		slotNewKMM(it.current());
+	}
+
 }
 
 CryptographyPlugin::~CryptographyPlugin()
@@ -213,10 +224,14 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 	{
 		QString tmpKey;
 		if( c->metaContact() )
+		{
+			if(c->metaContact()->pluginData( this, "encrypt_messages"  ) == "off" )
+				return;
 			tmpKey = c->metaContact()->pluginData( this, "gpgKey" );
+		}
 		if( tmpKey.isEmpty() )
 		{
-			kdDebug( 14303 ) << "CryptographyPlugin::slotOutgoingMessage: no key selected for one contact" <<endl;
+		//	kdDebug( 14303 ) << "CryptographyPlugin::slotOutgoingMessage: no key selected for one contact" <<endl;
 			return;
 		}
 		keys.append( tmpKey );
@@ -284,6 +299,14 @@ void CryptographyPlugin::slotForgetCachedPass()
 	m_cachedPass=QCString();
 	m_cachedPass_timer->stop();
 }
+
+void CryptographyPlugin::slotNewKMM(KopeteMessageManager *KMM) 
+{
+	connect(this , SIGNAL( destroyed(QObject*)) ,
+			new CryptographyGUIClient(KMM) , SLOT(deleteLater()));
+}
+
+
 
 #include "cryptographyplugin.moc"
 

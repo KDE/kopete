@@ -2,7 +2,7 @@
                           cryptographyplugin.h  -  description
                              -------------------
     begin                : jeu nov 14 2002
-    copyright            : (C) 2002 by Olivier Goffart
+    copyright            : (C) 2002-2004 by Olivier Goffart
     email                : ogoffart@tiscalinet.be
  ***************************************************************************/
 
@@ -64,6 +64,8 @@ private slots:
 	void slotSelectContactKey();
 	void slotForgetCachedPass();
 	void loadSettings();
+	
+	void slotNewKMM(KopeteMessageManager *);
 
 private:
 	static CryptographyPlugin* pluginStatic_;
