@@ -18,6 +18,8 @@
 #ifndef KOPETEGLOBAL_H
 #define KOPETEGLOBAL_H
 
+class QString;
+
 namespace Kopete
 {
 
@@ -26,11 +28,22 @@ namespace Kopete
  */
 namespace Global
 {
-} //Global
+	/**
+	 * \brief Installs one or more kopete emoticon themes from a tarball
+	 * (either .kopete-emoticons or tar.gz or tar.bz2)
+	 *
+	 * @p archiveName Full path to a local emoticon archive, use KIO to download
+	 * files in case their are non-local.
+	 *
+	 * @return true in case install was successful, false otherwise. Errors are
+	 * displayed by either KIO or by using KMessagebox directly.
+	 *
+	 * TODO: If possible, port it to KIO instead of using ugly blocking KTar
+	 **/
+	bool installTheme(const QString &archiveName);
+} // Global
 
-}
+} // Kopete
 
 #endif
-
 // vim: set noet ts=4 sts=4 sw=4:
-

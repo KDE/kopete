@@ -27,11 +27,15 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kcmdlineargs.h>
+#include <kio/netaccess.h>
+#include <kmimetype.h>
+#include <kmessagebox.h>
 
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 #include "kopetecommandhandler.h"
 #include "kopetecontactlist.h"
+#include "kopeteglobal.h"
 #include "kopeteuiglobal.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
@@ -124,12 +128,16 @@ void KopeteApplication::slotLoadPlugins()
 		showConfigDialog = true;
 
 	// Listen to arguments
+	/*
+	// TODO: conflicts with emoticon installer and the general meaning
+	// of %U in kopete.desktop
 	if ( args->count() > 0 )
 	{
 		showConfigDialog = false;
 		for ( int i = 0; i < args->count(); i++ )
 			KopetePluginManager::self()->setPluginEnabled( args->arg( i ), true );
 	}
+	*/
 
 	// Prevent plugins from loading? (--disable=foo,bar)
 	QStringList disableArgs = QStringList::split( ',', args->getOption( "disable" ) );
@@ -231,6 +239,83 @@ void KopeteApplication::slotAllPluginsLoaded()
 			}
 		}
 	}
+
+	// Parse any passed URLs/files
+	handleURLArgs();
+}
+
+int KopeteApplication::newInstance()
+{
+	kdDebug(14000) << k_funcinfo << endl;
+	handleURLArgs();
+	return KUniqueApplication::newInstance();
+}
+
+void KopeteApplication::handleURLArgs()
+{
+	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+	kdDebug(14000) << k_funcinfo << "called with " << args->count() <<
+		" arguments to handle." << endl;
+
+	if ( args->count() > 0 )
+	{
+		for ( int i = 0; i < args->count(); i++ )
+		{
+			KURL u( args->url( i ) );
+			if ( !u.isValid() )
+				continue;
+
+			QString type;
+			if( u.isLocalFile() )
+				type = KMimeType::findByFileContent( u.path() )->name();
+			else
+				type = KMimeType::findByURL( u, 0, false )->name();
+
+			// emoticon theme archive
+			if( type == "application/x-kopete-emoticons" ||
+				 type == "application/x-gzip" ||
+				 type == "application/x-bzip2" )
+			{
+				QString file;
+				#if KDE_IS_VERSION( 3, 1, 90 )
+				if( !KIO::NetAccess::download( u, file,
+					Kopete::UI::Global::mainWidget() ) )
+				#else
+				if( !KIO::NetAccess::download( u, file ) )
+				#endif
+				{
+					QString sorryText;
+					if ( u.isLocalFile() )
+					{
+						sorryText =
+							i18n("Unable to find the emoticon theme archive %1!");
+					}
+					else
+					{
+						sorryText = i18n( "<qt>Unable to download the emoticon " \
+							"theme archive!<br>Please check that address %1 is " \
+							"correct.</qt>");
+					}
+					KMessageBox::sorry( Kopete::UI::Global::mainWidget(),
+						sorryText.arg( u.prettyURL() ) );
+					continue;
+				}
+
+				if ( !Kopete::Global::installTheme( file ) )
+				{
+					KMessageBox::error( Kopete::UI::Global::mainWidget(),
+						i18n( "<qt>A problem occurred during the installation " \
+						"process. However, most of the emoticon themes in the " \
+						"archive have been installed</qt>" ) );
+				}
+				KIO::NetAccess::removeTempFile( file );
+			}
+			else
+			{
+				kdDebug( 14000 ) << "URL with unhandled mimetype passed!" << endl;
+			}
+		} // END for()
+	} // END args->count() > 0
 }
 
 void KopeteApplication::quitKopete()
@@ -263,8 +348,8 @@ void KopeteApplication::quitKopete()
 	if ( !m_mainWindow.isNull() )
 		m_mainWindow->close();
 
-	// save the contact list now, just in case a change was made very recently and
-	// it hasn't autosaved yet.
+	// save the contact list now, just in case a change was made very recently
+	// and it hasn't autosaved yet
 	KopeteContactList::contactList()->save();
 	KopeteAccountManager::manager()->save();
 
@@ -279,6 +364,4 @@ void KopeteApplication::commitData( QSessionManager &sm )
 }
 
 #include "kopeteapplication.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
-

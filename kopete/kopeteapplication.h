@@ -48,6 +48,8 @@ public:
 	 */
 	bool isShuttingDown() const { return m_isShuttingDown; }
 
+	virtual int newInstance();
+
 public slots:
 	/**
 	 * Quit Kopete. This method marks Kopete as 'shutting down' to avoid
@@ -73,6 +75,9 @@ private:
 	// so use a guarded pointer
 	QGuardedPtr<KopeteWindow> m_mainWindow;
 	bool m_isShuttingDown;
+
+private:
+	void handleURLArgs();
 };
 
 #endif

@@ -1,8 +1,11 @@
 [Desktop Entry]
+MimeType=application/x-kopete-emoticons
 Name=Kopete
 Name[hi]=के-ऑप्टी
 Name[xx]=xxKopetexx
 GenericName=Instant Messenger
+GenericName[bg]=Съобщения в реално време
+GenericName[ca]=Missatger a l'instant
 GenericName[cy]=Negesydd Chwim
 GenericName[es]=Mensajería instantánea
 GenericName[et]=Kiirsuhtlemisrakendus
@@ -46,8 +49,9 @@ Comment[ta]=உடனடி தூதர்
 Comment[uz]=Хабар алмашиш
 Comment[xx]=xxInstant Messengerxx
 Comment[zh_CN]=即时消息客户程序
-Exec=kopete %i %m -caption "%c"
+Exec=kopete -caption "%c" %i %m %u
 Type=Application
 Terminal=0
 Icon=kopete
 Categories=Qt;KDE;Network
+X-DCOP-ServiceType=Unique

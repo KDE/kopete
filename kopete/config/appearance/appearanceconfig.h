@@ -83,8 +83,6 @@ private:
 	void updateHighlight();
 	QString fileContents(const QString &path);
 	bool addStyle(const QString &styleName, const QString &xslString);
-	QStringList findThemeDirs(const QString &archiveName);
-	bool installThemes(const QStringList &themes, const QString &archiveName);
 	void updateEmoticonlist();
 
 private:

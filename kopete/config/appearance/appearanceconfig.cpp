@@ -35,27 +35,23 @@
 #endif
 
 #include <kapplication.h>
-#include <klineedit.h>
 #include <kcolorcombo.h>
 #include <kcolorbutton.h>
 #include <kdebug.h>
+#include <kfontdialog.h>
+#include <kgenericfactory.h>
 #include <khtmlview.h>
 #include <khtml_part.h>
+#include <kio/netaccess.h>
+#include <klineedit.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kio/netaccess.h>
-#include <kstandarddirs.h>
-#include <kurlrequesterdlg.h>
 #include <kpushbutton.h>
-#include <kfontdialog.h>
-#include <ktrader.h>
+#include <kstandarddirs.h>
 #include <klibloader.h>
-#include <ktextedit.h>
-#include <kgenericfactory.h>
 #include <ktrader.h>
-#include <kprogress.h>
-#include <ktar.h>
-#include <kio/netaccess.h>
+#include <ktextedit.h>
+#include <kurlrequesterdlg.h>
 
 #include <ktexteditor/highlightinginterface.h>
 #include <ktexteditor/editinterface.h>
@@ -67,8 +63,8 @@
 #include "styleeditdialog.h"
 #include "kopetexsl.h"
 #include "kopetecontact.h"
-
 #include "kopeteemoticons.h"
+#include "kopeteglobal.h"
 
 #include <qtabwidget.h>
 
@@ -310,7 +306,7 @@ void AppearanceConfig::slotSelectedEmoticonsThemeChanged()
 {
 	QString themeName = mPrfsEmoticons->icon_theme_list->currentText();
 	QFileInfo fileInf(KGlobal::dirs()->findResource("data",
-		"kopete/pics/emoticons/"+themeName+"/"));	
+		"kopete/pics/emoticons/"+themeName+"/"));
 	mPrfsEmoticons->btnRemoveTheme->setEnabled( fileInf.isWritable() );
 
 	KopeteEmoticons emoticons( themeName );
@@ -652,7 +648,6 @@ void AppearanceConfig::slotGreyIdleMetaContactsChanged(bool b)
 	emitChanged();
 }
 
-
 void AppearanceConfig::emitChanged()
 {
 	emit changed( true );
@@ -662,10 +657,11 @@ void AppearanceConfig::installNewTheme()
 {
 	KURL themeURL = KURLRequesterDlg::getURL(QString::null, this,
 			i18n("Drag or Type Emoticon Theme URL"));
-	kdDebug(14000) << k_funcinfo << "Selected URL:" << themeURL.prettyURL() << endl;
-
 	if (themeURL.url().isEmpty())
 		return;
+
+	kdDebug(14000) <<
+		k_funcinfo << "Selected URL:" << themeURL.prettyURL() << endl;
 
 	QString themeTmpFile;
 	// themeTmpFile contains the name of the downloaded file
@@ -677,118 +673,22 @@ void AppearanceConfig::installNewTheme()
 	{
 		QString sorryText;
 		if (themeURL.isLocalFile())
+		{
 			sorryText = i18n("Unable to find the emoticon theme archive %1!");
+		}
 		else
 		{
-			sorryText = i18n("<qt>Unable to download the emoticon theme archive!<br>"
-				"Please check that address %1 is correct.</qt>");
+			sorryText = i18n("<qt>Unable to download the emoticon theme " \
+				"archive!<br>Please check that address %1 is correct.</qt>");
 		}
 		KMessageBox::sorry(this, sorryText.arg(themeURL.prettyURL()));
 		return;
 	}
 
-	QStringList themeNames = findThemeDirs(themeTmpFile);
-	if (themeNames.isEmpty())
-	{
-		KMessageBox::error(this, i18n("<qt>The file is not a valid emoticon theme archive!</qt>"));
-		KIO::NetAccess::removeTempFile(themeTmpFile);
-		return;
-	}
+	if (Kopete::Global::installTheme(themeTmpFile))
+		updateEmoticonlist();
 
-	if (!installThemes(themeNames, themeTmpFile))
-	{
-		KMessageBox::error(this, i18n("<qt>A problem occurred during the installation process. "
-			"However, most of the themes in the archive have been installed</qt>"));
-	}
 	KIO::NetAccess::removeTempFile(themeTmpFile);
-
-	updateEmoticonlist();
-}
-
-QStringList AppearanceConfig::findThemeDirs(const QString &archiveName)
-{
-	QStringList foundThemes;
-	KTar archive(archiveName);
-	archive.open(IO_ReadOnly);
-	const KArchiveDirectory* themeDir = archive.directory();
-
-	KArchiveEntry* possibleDir = 0L;
-	KArchiveDirectory* subDir = 0L;
-
-	// iterate all the dirs looking for an emoticons.xml file
-	QStringList entries = themeDir->entries();
-	for (QStringList::Iterator it = entries.begin(); it != entries.end(); ++it)
-	{
-		possibleDir = const_cast<KArchiveEntry*>(themeDir->entry(*it));
-		if (possibleDir->isDirectory())
-		{
-			subDir = dynamic_cast<KArchiveDirectory*>( possibleDir );
-			if (subDir && (subDir->entry("emoticons.xml") != NULL))
-				foundThemes.append(subDir->name());
-		}
-	}
-	archive.close();
-	return foundThemes;
-}
-
-
-bool AppearanceConfig::installThemes(const QStringList &themes, const QString &archiveName)
-{
-	bool everythingOk = true;
-	QString localThemesDir(locateLocal("data", "kopete/pics/emoticons/"));
-
-	if(localThemesDir.isEmpty())
-		return false;
-
-	KProgressDialog progressDiag(this, "emoticonthemeinstallprogress",
-		i18n("Installing emoticon themes"),
-		QString::null, true);
-	progressDiag.setAutoClose(true);
-	progressDiag.progressBar()->setTotalSteps(themes.count());
-	progressDiag.show();
-
-	KTar archive(archiveName);
-	archive.open(IO_ReadOnly);
-	kapp->processEvents();
-
-	const KArchiveDirectory* rootDir = archive.directory();
-
-	KArchiveEntry *currentEntry;
-	KArchiveDirectory* currentThemeDir;
-	for (QStringList::ConstIterator it = themes.begin(); it != themes.end(); ++it)
-	{
-		progressDiag.setLabel(
-			i18n("<qt>Installing <strong>%1</strong> theme</qt>")
-			.arg(*it));
-		kapp->processEvents();
-
-		if (progressDiag.wasCancelled())
-			break;
-
-		currentEntry = const_cast<KArchiveEntry *>(rootDir->entry(*it));
-		if (currentEntry == 0)
-		{
-			kdDebug(14000) << k_funcinfo << "couldn't get next archive entry" << endl;
-			everythingOk = false;
-			continue;
-		}
-
-		if(currentEntry->isDirectory())
-		{
-			currentThemeDir = dynamic_cast<KArchiveDirectory*>(currentEntry);
-			if (currentThemeDir == 0)
-			{
-				kdDebug(14000) << k_funcinfo << "couldn't cast archive entry to KArchiveDirectory" << endl;
-				everythingOk = false;
-				continue;
-			}
-			currentThemeDir->copyTo(localThemesDir + *it);
-			progressDiag.progressBar()->advance(1);
-		}
-	}
-
-	archive.close();
-	return everythingOk;
 }
 
 void AppearanceConfig::removeSelectedTheme()
@@ -821,4 +721,3 @@ void AppearanceConfig::removeSelectedTheme()
 
 #include "appearanceconfig.moc"
 // vim: set noet ts=4 sts=4 sw=4:
-

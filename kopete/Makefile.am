@@ -16,7 +16,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 KDE_ICON = AUTO
 METASOURCES = AUTO
 
-SUBDIRS = addcontactwizard contactlist config . chatwindow kconf_update 
+SUBDIRS = addcontactwizard contactlist config . chatwindow kconf_update
 
 bin_PROGRAMS = kopete
 kopete_SOURCES = main.cpp \
@@ -27,18 +27,21 @@ kopete_SOURCES = main.cpp \
 
 kopete_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH) -lktexteditor
 kopete_LDADD = \
-	addcontactwizard/libkopeteaddcontactwizard.la contactlist/libkopetecontactlist.la \
-	../libkopete/libkopete.la config/plugins/libkopetepluginconfig.la
+	addcontactwizard/libkopeteaddcontactwizard.la \
+	contactlist/libkopetecontactlist.la \
+	config/plugins/libkopetepluginconfig.la \
+	../libkopete/libkopete.la
 
-mydatadir = $(kde_datadir)/kopete
-mydata_DATA = kopeteui.rc eventsrc
+mydatadir    = $(kde_datadir)/kopete
+mydata_DATA  = kopeteui.rc eventsrc
 
-# please remove the following 2 lines for the KDE 3.2 release...
+mimedir      = $(kde_mimedir)/application
+mime_DATA    = x-kopete-emoticons.desktop
+
+# TODO: Remove the following 2 lines after we drop KDE 3.1 compat
 desktopdir   = $(kde_appsdir)/Internet
 desktop_DATA = kopete.desktop
-
 # ... and uncomment the following line instead
 # xdg_apps_DATA = kopete.desktop
 
 # vim: set noet:
-
