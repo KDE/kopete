@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>360</width>
-            <height>406</height>
+            <height>408</height>
         </rect>
     </property>
     <property name="minimumSize">
@@ -180,17 +180,13 @@
                 <set>AlignTop</set>
             </property>
         </widget>
-        <widget class="QFrame">
+        <widget class="KTextBrowser">
             <property name="name">
-                <cstring>htmlAwayMessage</cstring>
+                <cstring>txtAwayMessage</cstring>
             </property>
-            <property name="minimumSize">
-                <size>
-                    <width>64</width>
-                    <height>8</height>
-                </size>
+            <property name="enabled">
+                <bool>false</bool>
             </property>
-
             <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>7</hsizetype>
@@ -199,14 +195,8 @@
                     <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property name="frameShape">
-                <enum>NoFrame</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Plain</enum>
-            </property>
-            <property name="lineWidth">
-                <number>0</number>
+            <property name="textFormat">
+                <enum>AutoText</enum>
             </property>
         </widget>
         <widget class="QLabel">
@@ -247,15 +237,13 @@
         </widget>
     </vbox>
 </widget>
-<customwidgets>
-</customwidgets>
 <tabstops>
     <tabstop>txtNickName</tabstop>
     <tabstop>txtScreenName</tabstop>
     <tabstop>txtWarnLevel</tabstop>
     <tabstop>txtIdleTime</tabstop>
     <tabstop>txtOnlineSince</tabstop>
-    <tabstop>htmlAwayMessage</tabstop>
+    <tabstop>txtAwayMessage</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
