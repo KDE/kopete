@@ -94,6 +94,7 @@ void Kopete::initialize()
 		QStringList modules;
 		modules.append("icq.plugin");
 		modules.append("msn.plugin");
+		modules.append("autoaway.plugin");
 		config->writeEntry("Modules", modules);
 	}
 
