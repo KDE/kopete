@@ -21,6 +21,7 @@
 
 #include <qvariant.h>
 #include <kextsock.h>
+#include <kio/slavebase.h>
 
 class KSSLSocketPrivate;
 class SSLPollThread;
@@ -53,6 +54,9 @@ class KSSLSocket : public KExtendedSocket
 
 	private:
 		int verifyCertificate();
+		int messageBox( KIO::SlaveBase::MessageBoxType type, const QString &text,
+			const QString &caption,	const QString &buttonYes, const QString &buttonNo );
+
 
 		//Copied frm tcpslavebase to simply integrating their dialog function
 		void setMetaData( const QString &, const QVariant & );

@@ -25,8 +25,8 @@
 #include <ksslpeerinfo.h>
 #include <ksslcertchain.h>
 #include <ksslcertificatecache.h>
-#include <kmessagebox.h>
 #include <kapplication.h>
+#include <kmessagebox.h>
 
 #include "ksslsocket.h"
 
@@ -204,19 +204,47 @@ QString KSSLSocket::metaData( const QString &key )
 }
 
 /*
-I basically copied the below from tcpslavebase.hpp, with some modificaions and formatting.
+I basically copied the below from tcpKIO::SlaveBase.hpp, with some modificaions and formatting.
 
  * Copyright (C) 2000 Alex Zepeda <zipzippy@sonic.net
  * Copyright (C) 2001-2003 George Staikos <staikos@kde.org>
  * Copyright (C) 2001 Dawit Alemayehu <adawit@kde.org>
 */
 
+int KSSLSocket::messageBox( KIO::SlaveBase::MessageBoxType type, const QString &text, const QString &caption,
+	const QString &buttonYes, const QString &buttonNo )
+{
+	kdDebug(14120) << "messageBox " << type << " " << text << " - " << caption << buttonYes << buttonNo << endl;
+	QByteArray data, result;
+	QCString returnType;
+	QDataStream arg(data, IO_WriteOnly);
+	arg << (int)1 << (int)type << text << caption << buttonYes << buttonNo;
+
+	if (!d->dcc->isApplicationRegistered("kio_uiserver"))
+	{
+		KApplication::startServiceByDesktopPath("kio_uiserver.desktop",QStringList());
+	}
+
+	d->dcc->call("kio_uiserver", "UIServer",
+			"messageBox(int,int,QString,QString,QString,QString)", data, returnType, result);
+
+	if( returnType == "int" )
+	{
+		int res;
+		QDataStream r(result, IO_ReadOnly);
+		r >> res;
+		return res;
+	}
+	else
+		return 0; // communication failure
+}
+
+
 //  Returns 0 for failed verification, -1 for rejected cert and 1 for ok
 int KSSLSocket::verifyCertificate()
 {
 	int rc = 0;
 	bool permacache = false;
-	bool isChild = false;
 	bool _IPmatchesCN = false;
 	int result;
 	bool doAddHost = false;
@@ -330,7 +358,7 @@ int KSSLSocket::verifyCertificate()
 						QString msg = i18n("The IP address of the host %1 "
 								"does not match the one the "
 								"certificate was issued to.");
-						result = KMessageBox::messageBox( 0L, KMessageBox::WarningYesNoCancel,
+						result = messageBox( KIO::SlaveBase::WarningYesNoCancel,
 						msg.arg(ourHost),
 						i18n("Server Authentication"),
 						i18n("&Details"),
@@ -340,7 +368,7 @@ int KSSLSocket::verifyCertificate()
 					{
 						QString msg = i18n("The server certificate failed the "
 							"authenticity test (%1).");
-						result = KMessageBox::messageBox( 0L, KMessageBox::WarningYesNoCancel,
+						result = messageBox( KIO::SlaveBase::WarningYesNoCancel,
 						msg.arg(ourHost),
 						i18n("Server Authentication"),
 						i18n("&Details"),
@@ -359,7 +387,7 @@ int KSSLSocket::verifyCertificate()
 					rc = 1;
 					cp = KSSLCertificateCache::Accept;
 					doAddHost = true;
-					result = KMessageBox::messageBox( 0L, KMessageBox::WarningYesNo,
+					result = messageBox( KIO::SlaveBase::WarningYesNo,
 							i18n("Would you like to accept this "
 							"certificate forever without "
 							"being prompted?"),
