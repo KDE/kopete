@@ -332,6 +332,7 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	if(message.fg().isValid())
 		finalMessage += "</FONT>";
 	finalMessage += "</BODY></HTML>";
+	finalMessage.replace("&nbsp;", " ");
 
 	// ===================================================================================
 
