@@ -196,7 +196,7 @@ GaduDCCTransaction::slotIncomingTransferAccepted ( KopeteTransfer* transfer, con
 			break;
 
 			case KMessageBox::No:		// overwrite
-				if ( localFile_.open( IO_WriteOnly ) ) {
+				if ( localFile_.open( IO_ReadWrite ) ) {
 					dccSock_->offset  = 0;
 					dccSock_->file_fd = localFile_.handle();
 				}
@@ -208,10 +208,15 @@ GaduDCCTransaction::slotIncomingTransferAccepted ( KopeteTransfer* transfer, con
 				return;
 			break;
 		}
+		if ( localFile_.handle() < 1 ) {
+			closeDCC();
+			deleteLater();
+			return;								
+		}
 	}
 	else {
 		// overwrite by default
-		if ( localFile_.open( IO_WriteOnly ) ) {
+		if ( localFile_.open( IO_ReadWrite ) == FALSE ) {
 			transfer->slotError ( KIO::ERR_COULD_NOT_WRITE, fileName );
 			closeDCC();
 			deleteLater ();
