@@ -539,7 +539,7 @@ QString KopeteMetaContact::toXML()
 
 		if( !plugin )
 		{
-			xml += "    <plugin-data plugin-id=\"" + it.key() + "\">"
+			xml += "    <plugin-data plugin-id=\"" + QStyleSheet::escape(it.key()) + "\">"
 				+ it.data() + "</plugin-data>\n";
 		}
 	}
