@@ -47,7 +47,8 @@ void KMSNChatService::connectToSwitchBoard(QString ID, QString address, QString 
 {
 	m_id = 1;
 
-	QString command, args;
+	QCString command;
+	QString args;
 	QString server = address.left( address.find( ":" ) );
 	uint port = address.right( address.length() - address.findRev( ":" ) - 1 ).toUInt();
 	msgSocket = new KExtendedSocket( server, port, 0x600000 );
@@ -67,7 +68,7 @@ void KMSNChatService::connectToSwitchBoard(QString ID, QString address, QString 
 		command = "ANS";
 		args = myHandle + " " + auth + " " + ID;
 	}
-	sendCommand( command, args );
+	sendCommand( command, args.utf8() );
 	// send active message
 	emit switchBoardIsActive(true);
 	/** FIXME : we have no socketClosed signal */
@@ -306,18 +307,18 @@ redo:
 						QString cocki = miss.right(miss.length() - miss.find("Invitation-Cookie:")-19);
 						cocki = cocki.left(cocki.find("\r\n"));
 						kdDebug() << "cookie: " << cocki << endl;
-						QString message =
+						QCString message=QString(
 							"MIME-Version: 1.0\r\n"
 							"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
 							"\r\n"
-							"Invitation-Command: ACCEPT\r\n";
+							"Invitation-Command: ACCEPT\r\n"
 							"Invitation-Cookie: " + cocki + "\r\n"
 							"Launch-Application: FALSE\r\n"
 							"Request-Data: IP-Address: 192.168.0.2\r\n"
-							"Port: 6891";
+							"Port: 6891").utf8();
 							//Application-Name: FileTransfer\r\nApplication-GUID: {5D3E02AB-6190-11d3-BBBB-00C04F795683}\r\nInvitation-Command: INVITE\r\nInvitation-Cookie: 58273\r\nApplication-File: lvback.gif\r\nApplication-FileSize: 4256\r\n\r\n";
-						QString command = "MSG";
-						QString args = QString( "N %1\r\n" ).arg( message.length() );
+						QCString command = "MSG";
+						QCString args = QString( "N %1\r\n" ).arg( message.length() ).utf8();
 						command += message;
 						sendCommand( command, args + message, false );
 					}
@@ -341,28 +342,27 @@ redo:
 // this sends the user is typing msg
 void KMSNChatService::slotTypingMsg()
 {
-	QString message =
-		"MIME-Version: 1.0\r\n"
-		"Content-Type: text/x-msmsgscontrol\r\n"
-		"TypingUser: " + myHandle + "\r\n"
-		"\r\n";
-	QString args = QString( "U %1 \r\n" ).arg( message.length() );
+        QCString message = QString("MIME-Version: 1.0\r\n"
+				   "Content-Type: text/x-msmsgscontrol\r\n"
+				   "TypingUser: " + myHandle + "\r\n"
+				   "\r\n").utf8();
+	QCString args = QString( "U %1 \r\n" ).arg( message.length() ).utf8();
 	sendCommand( "MSG", args + message, false );
 }
 
 // this Invites an Contact
 void KMSNChatService::slotInviteContact(QString handle)
 {
-	sendCommand( "CAL", handle );
+	sendCommand( "CAL", handle.utf8());
 }
 
 // this sends a short message to the server
 void KMSNChatService::slotSendMsg( const KopeteMessage &msg )
 {
-	QString head =
+        QCString head = QString(
 		"MIME-Version: 1.0\r\n"
 		"Content-Type: text/plain; charset=UTF-8\r\n"
-		"X-MMS-IM-Format: FN=MS%20Serif; EF=; ";
+		"X-MMS-IM-Format: FN=MS%20Serif; EF=; ").utf8();
 
 	// Color support
 	if (msg.fg().isValid()) {
@@ -375,8 +375,8 @@ void KMSNChatService::slotSendMsg( const KopeteMessage &msg )
 	head += "; CS=0; PF=0\r\n"
 			"\r\n";
 
-	head += msg.body();
-	QString args = QString( "A %1\r\n" ).arg( head.length() );
+	head += msg.body().utf8();
+	QCString args = QString( "A %1\r\n" ).arg( head.length() ).utf8();
 	sendCommand( "MSG", args + head, false );
 
 	// TODO: send our fonts and colors as well
@@ -385,10 +385,11 @@ void KMSNChatService::slotSendMsg( const KopeteMessage &msg )
 	emit msgReceived( msg );    // send the own msg to chat window
 }
 
-void KMSNChatService::sendCommand( const QString &cmd, const QString &args,
+void KMSNChatService::sendCommand( const QCString &cmd, const QCString &args,
 	bool addNewLine )
 {
-	QString data = cmd + " " + QString::number( m_id );
+	QCString data = cmd + " ";
+	data+= QString::number( m_id );
 	if( !args.isEmpty() )
 		data += " " + args;
 	if( addNewLine )
@@ -417,7 +418,7 @@ void KMSNChatService::slotCloseSession()
 
 void KMSNChatService::callUser()
 {
-	sendCommand( "CAL", msgHandle );
+	sendCommand( "CAL",msgHandle.utf8() );
 }
 
 QString KMSNChatService::parseFontAttr(QString str, QString attr)

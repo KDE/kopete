@@ -85,7 +85,7 @@ private:
 	/**
 	 * Send an MSN command to the socket
 	 */
-	void sendCommand( const QString &cmd, const QString &args = QString::null,
+	void sendCommand( const QCString &cmd, const QCString &args = "",
 		bool addNewLine = true );
 
 	QStringList m_chatMembers;

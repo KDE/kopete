@@ -215,12 +215,12 @@ void MSNSocket::slotReadLine()
 		int index = m_buffer.find( "\r\n" );
 		if( index != -1 )
 		{
-			QString command = m_buffer.left( index );
+			QString command = QString::fromUtf8(m_buffer.left(index));
 			m_buffer = m_buffer.remove( 0, index + 2 );
 			command.replace( QRegExp( "\r\n" ), "" );
 			kdDebug() << "MSNSocket::slotReadLine: " << command << endl;
 
-			parseLine( command );
+			parseLine(command);
 
 			// See if we have pending changes in the queue...
 			if( !m_sendQueue.isEmpty() )
@@ -228,7 +228,7 @@ void MSNSocket::slotReadLine()
 				kdDebug() << "MSNSocket::slotReadLine: Send queue not "
 					<< "empty, attempting to flush first item. m_lastId: "
 					<< m_lastId << endl;
-				QMap<uint, QString>::Iterator it = m_sendQueue.begin();
+				QMap<uint, QCString>::Iterator it = m_sendQueue.begin();
 				if( m_lastId >= it.key() - 1 )
 				{
 					kdDebug() << "MSNSocket::slotReadLine: "
@@ -333,11 +333,11 @@ void MSNSocket::handleError( uint code, uint id )
 void MSNSocket::sendCommand( const QString &cmd, const QString &args,
 	bool addNewLine, bool addId )
 {
-	QString data = cmd;
+	QCString data = cmd.utf8();
 	if( addId )
 		data += " " + QString::number( m_id );
 	if( !args.isEmpty() )
-		data += " " + args;
+		data += " " + args.utf8();
 
 	kdDebug() << "MSNSocket::sendCommand: Sending command " << data << endl;
 

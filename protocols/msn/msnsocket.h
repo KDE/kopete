@@ -178,7 +178,7 @@ private:
 	 * Queue of pending commands (should be mostly empty, but is needed to
 	 * send more than one command to the server)
 	 */
-	QMap<uint, QString> m_sendQueue;
+	QMap<uint, QCString> m_sendQueue;
 
 	/**
 	 * Parse a single line of data.
@@ -190,7 +190,7 @@ private:
 	KExtendedSocket *m_socket;
 	OnlineStatus m_onlineStatus;
 
-	QString m_buffer;
+	QCString m_buffer;
 	QString m_server;
 	uint m_port;
 
