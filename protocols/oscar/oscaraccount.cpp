@@ -90,8 +90,8 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 
 	// Got IM
 	QObject::connect(
-		engine(), SIGNAL(gotIM(OscarSocket::OscarMessageType, QString &, QString &)),
-		this, SLOT(slotGotIM(OscarSocket::OscarMessageType, QString &, QString &)));
+		engine(), SIGNAL(gotIM(OscarSocket::OscarMessageType, QString &, const QString &)),
+		this, SLOT(slotGotIM(OscarSocket::OscarMessageType, QString &, const QString &)));
 
 	// Got Config (Buddy List)
 	QObject::connect(
@@ -213,10 +213,11 @@ void OscarAccount::slotError(QString errmsg, int errorCode)
 	KMessageBox::error(qApp->mainWidget(), errmsg);
 }
 
-void OscarAccount::slotGotIM(OscarSocket::OscarMessageType type, QString &message, QString &sender)
+void OscarAccount::slotGotIM(OscarSocket::OscarMessageType type, QString &message,
+	const QString &sender)
 {
-	kdDebug(14150) << k_funcinfo << "account='" << accountId() << "', type=" << static_cast<int>(type) <<
-		", sender='" << sender << "'" << endl;
+	kdDebug(14150) << k_funcinfo << "account='" << accountId() <<
+		"', type=" << static_cast<int>(type) << ", sender='" << sender << "'" << endl;
 
 	OscarContact *contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
 
@@ -238,10 +239,17 @@ void OscarAccount::slotGotIM(OscarSocket::OscarMessageType type, QString &messag
 		}
 	}
 
-	message = QStyleSheet::escape( message );
-	message.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) );
-	message.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
-	message.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
+	// AIM usually contains HTML, do not escape then
+	if(mEngine->isICQ())
+	{
+		message = QStyleSheet::escape(message);
+		message.replace(QString::fromLatin1("\n"),
+			QString::fromLatin1("<br/>"));
+		message.replace(QString::fromLatin1("\t"),
+			QString::fromLatin1("&nbsp;&nbsp;&nbsp;&nbsp;"));
+		message.replace(QRegExp(QString::fromLatin1("\\s\\s")),
+			QString::fromLatin1("&nbsp; "));
+	}
 
 	if (contact)
 	{

@@ -31,16 +31,14 @@ SSIData::~SSIData()
 
 SSI * SSIData::addBuddy(const QString &name, const QString &group)
 {
- 	SSI *newitem = new SSI;
-	newitem->name = name;
 	SSI *tmp = findGroup(group);
+	if(!tmp) //the group does not exist
+		return 0L;
 
-	if (!tmp) { //the group does not exist
-		delete newitem;
-		return 0;
-	}
-
+	SSI *newitem = new SSI;
+	newitem->name = name;
 	newitem->gid = tmp->gid;
+
 	//find the largest bid (=buddy id) in our group
 	unsigned short maxbid = 0;
 	for (SSI *i=first(); i; i = next())
@@ -48,10 +46,12 @@ SSI * SSIData::addBuddy(const QString &name, const QString &group)
 		if ((newitem->gid == i->gid) && (i->bid > maxbid))
 			maxbid = i->bid;
 	}
+
 	newitem->bid = maxbid + 1;
 	newitem->type = 0x0000; // the type here is buddy
-	newitem->tlvlist = NULL;
+	newitem->tlvlist = 0L;
 	newitem->tlvlength = 0;
+
 	append(newitem);
 	return newitem;
 }
@@ -70,7 +70,7 @@ SSI * SSIData::addGroup(const QString &name)
 {
 	SSI *newitem = new SSI;
 	newitem->name = name;
-	if (!name.isEmpty())
+	if(!name.isEmpty())
 	{
 		unsigned short maxgid = 0;
 		//find the highest gid, add 1 to it, and assign it to this group

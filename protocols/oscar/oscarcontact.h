@@ -28,7 +28,6 @@
 
 class AIMBuddy;
 
-struct UserInfo;
 class KAction;
 class KopeteMessageManager;
 class KopeteOnlineStatus;
@@ -123,7 +122,7 @@ class OscarContact : public KopeteContact
 		 */
 		AIMBuddy *mListContact;
 
-	private slots:
+	protected slots:
 		/** Called when a buddy has changed status */
 //		void slotBuddyChanged(UserInfo u);
 		/**
@@ -170,8 +169,10 @@ class OscarContact : public KopeteContact
 		void slotTransferBegun(OscarConnection *con, const QString& file,
 			const unsigned long size, const QString &recipient);
 */
-		/** Called when a contact from the Kopete contact list has been removed */
-		void slotGroupRemoved( KopeteGroup * );
+		/*
+		 * Called when a contact from the Kopete contact list has been removed
+		 */
+		void slotGroupRemoved(KopeteGroup *);
 
 		void slotParseUserInfo(const UserInfo &);
 
@@ -192,19 +193,10 @@ class OscarContact : public KopeteContact
 		void initActions();
 
 	private:
-		/*
-		 * stuff filled from UserInfo
-		 */
-//		unsigned int mIdle;
-//		unsigned long mRealIP;
-//		unsigned long mLocalIP;
-//		unsigned int mPort;
-//		unsigned int mFwType;
-//		unsigned int mTcpVersion;
-//		QDateTime mSignonTime;
 		UserInfo mInfo;
-
-		/** Tells whether or not we have a direct connection with the contact */
+		/*
+		 * Tells whether or not we have a direct connection with the contact
+		 */
 		bool mDirectlyConnected;
 
 		int groupID; // TODO: move the server groupid to OscarContact!

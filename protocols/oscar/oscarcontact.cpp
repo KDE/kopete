@@ -188,9 +188,11 @@ void OscarContact::slotUpdateBuddy()
 	}
 	else // oscar-account is offline so all users are offline too
 	{
-		setIdleTime(0);
 		mListContact->setStatus(OSCAR_OFFLINE); // TODO: remove AIMBuddy
 		setStatus(OSCAR_OFFLINE);
+		mInfo.idletime = 0;
+		setIdleTime(0);
+		emit idleStateChanged(this);
 	}
 }
 
@@ -198,9 +200,11 @@ void OscarContact::slotMainStatusChanged(const unsigned int newStatus)
 {
 	if(newStatus == OSCAR_OFFLINE)
 	{
-		setIdleTime(0);
 		setStatus(OSCAR_OFFLINE);
 		slotUpdateBuddy();
+		mInfo.idletime = 0;
+		setIdleTime(0);
+		emit idleStateChanged(this);
 	}
 }
 
@@ -208,9 +212,11 @@ void OscarContact::slotOffgoingBuddy(QString sn)
 {
 	if(tocNormalize(sn) == mName) //if we are the contact that is offgoing
 	{
-		setIdleTime(0);
 		setStatus(OSCAR_OFFLINE);
 		slotUpdateBuddy();
+		mInfo.idletime = 0;
+		setIdleTime(0);
+		emit idleStateChanged(this);
 	}
 }
 
@@ -503,7 +509,7 @@ void OscarContact::rename(const QString &newNick)
 
 void OscarContact::slotParseUserInfo(const UserInfo &u)
 {
-	if(tocNormalize(u.sn) != mName)
+	if(tocNormalize(u.sn) != contactName())
 		return;
 
 	if (mInfo.idletime != u.idletime)
@@ -518,6 +524,11 @@ void OscarContact::slotParseUserInfo(const UserInfo &u)
 	}
 
 	mInfo = u;
+//	kdDebug(14150) << k_funcinfo << "Contact '" << displayName() <<
+//		"', mInfo.sn=" << mInfo.sn << ", u.sn=" << u.sn << endl;
+
+	if(mInfo.capabilities & AIM_CAPS_UTF8)
+		kdDebug(14150) << k_funcinfo << "Contact '" << displayName() << "' announced UTF support!" << endl;
 	/*mRealIP = u.realip;
 	mLocalIP = u.localip;
 	mPort = u.port;
@@ -587,7 +598,8 @@ void OscarContact::slotGotAuthReply(const QString &contact, const QString &reaso
 bool OscarContact::waitAuth() const
 {
 	// TODO: move var to OscarContact
-	kdDebug(14150) << k_funcinfo << "returning " << mListContact->waitAuth() << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"for contact '" << displayName() << "' returning " << mListContact->waitAuth() << endl;
 	return mListContact->waitAuth();
 }
 

@@ -40,7 +40,7 @@ class AIMContact : public OscarContact
 		virtual void setStatus(const unsigned int newStatus);
 
 		const QString &userProfile() { return mUserProfile; }
-		const UserInfo &userInfo() { return mUserInfo; }
+//		const UserInfo &userInfo() { return mUserInfo; }
 		const QString &awayMessage() { return mAwayMessage; }
 
 		/*
@@ -55,7 +55,7 @@ class AIMContact : public OscarContact
 		* parses HTML AIM-Clients send to us and
 		* strips off most of it
 		*/
-		KopeteMessage parseAIMHTML ( QString m );
+		KopeteMessage parseAIMHTML(const QString &m);
 
 		AIMProtocol* mProtocol;
 
@@ -105,7 +105,7 @@ class AIMContact : public OscarContact
 
 	private:
 		QString mUserProfile;
-		UserInfo mUserInfo;
+//		UserInfo mUserInfo;
 		QString mAwayMessage;
 		AIMUserInfoDialog *infoDialog;
 };

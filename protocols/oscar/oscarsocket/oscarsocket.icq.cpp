@@ -198,10 +198,17 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 	switch(subcmd)
 	{
+		case 0x0042: //SRV_DONEOFFLINEMSGS
+		{
+//			kdDebug(14150) << k_funcinfo << "RECV (SRV_DONEOFFLINEMSG), last offline message" << endl;
+			sendAckOfflineMessages();
+			break;
+		}
+
 		case 0x0041: //SRV_OFFLINEMSG
 		{
 //			kdDebug(14150) << k_funcinfo << "RECV (SRV_OFFLINEMSG), got an offline message" << endl;
-			DWORD UIN = fromicqsrv.getLEDWord();
+			QString UIN = QString::number(fromicqsrv.getLEDWord());
 			/*WORD year =*/ fromicqsrv.getLEWord();
 			/*BYTE month =*/ fromicqsrv.getLEByte();
 			/*BYTE day =*/ fromicqsrv.getLEByte();
@@ -216,15 +223,7 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 			kdDebug(14150) << k_funcinfo << "Offline message from '" << UIN <<
 				"' type=" << (type & 0xFF) << ", message='" << message << "'" << endl;
 
-			QString num = QString::number(UIN);
-			emit gotIM(Normal, message, num);
-			break;
-		}
-
-		case 0x0042: //SRV_DONEOFFLINEMSGS
-		{
-//			kdDebug(14150) << k_funcinfo << "RECV (SRV_DONEOFFLINEMSG), last offline message" << endl;
-			sendAckOfflineMessages();
+			emit gotIM(Normal, message, UIN);
 			break;
 		}
 
@@ -934,10 +933,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 			}
 		}
 
-		if(buf.length() > 0)
-			moreTLVs=true;
-		else
-			moreTLVs=false;
+		moreTLVs=(buf.length() > 0);
 	} // END while(moreTLVs)
 
 	kdDebug(14150) << k_funcinfo << "END" << endl;

@@ -309,6 +309,8 @@ class OscarSocket : public OscarConnection
 
 		~OscarSocket();
 
+		bool isICQ() { return mIsICQ; }
+
 		/*
 		 * Sends an authorization request to the server
 		 */
@@ -362,7 +364,7 @@ class OscarSocket : public OscarConnection
 		/*
 		 * Sends message to dest
 		 */
-		void sendIM(const QString &message, const UserInfo &u, bool isAuto);
+		void sendIM(const QString &message, const UserInfo &uInfo, bool isAuto);
 		/** Requests sn's user info */
 		void sendUserProfileRequest(const QString &sn);
 		/** Sends someone a warning */
@@ -665,15 +667,16 @@ class OscarSocket : public OscarConnection
 	 * parses a type-1 message
 	 * called by parseIM
 	 */
-	void parseSimpleIM(Buffer &inbuf, UserInfo &u);
+	void parseSimpleIM(Buffer &inbuf, const UserInfo &u);
 	/*
 	 * parses a type-4 message
 	 * called by parseIM
 	 */
-	void parseServerIM(Buffer &inbuf, UserInfo &u);
+	void parseServerIM(Buffer &inbuf, const UserInfo &u);
 
 	/** parses the aim standard user info block */
-	UserInfo parseUserInfo(Buffer &inbuf);
+	//UserInfo parseUserInfo(Buffer &inbuf);
+	bool parseUserInfo(Buffer &inbuf, UserInfo &u);
 
 	/*
 	 * parses a capabilities block contained in inbuf
@@ -783,7 +786,7 @@ class OscarSocket : public OscarConnection
 	 * @p message contains the message as received
 	 * @p user contains the screenname/UIN of the sender
 	 */
-	void gotIM(OscarSocket::OscarMessageType type, QString &message, QString &user);
+	void gotIM(OscarSocket::OscarMessageType type, QString &message, const QString &user);
 
 	/*
 	 * The server has sent the key with which to encrypt the password

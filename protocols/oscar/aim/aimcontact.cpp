@@ -83,7 +83,7 @@ void AIMContact::slotGotProfile(const UserInfo &user, const QString &profile, co
 	kdDebug(14200) << k_funcinfo << "Called for contact '" << displayName() << "'" << endl;
 	mUserProfile = profile;
 	mAwayMessage = away;
-	mUserInfo = user;
+//	mUserInfo = user;
 	emit updatedProfile();
 }
 
@@ -231,7 +231,7 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 	else
 		setStatus(OSCAR_ONLINE);
 
-	mUserInfo = u;
+//	mUserInfo = u;
 
 	slotUpdateBuddy();
 }
@@ -252,16 +252,10 @@ void AIMContact::slotOffgoingBuddy(QString sn)
 //void AIMContact::slotIMReceived( QString message, QString sender, bool /* isAuto */ )
 void AIMContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &message)
 {
-	// Check if we're the one who sent the message
-/*	if(tocNormalize(sender) != contactName())
-		return;*/
-
 	// Tell the message manager that the buddy is done typing
 	manager()->receivedTypingMsg(this, false);
 
 	// Build a KopeteMessage and set the body as Rich Text
-	KopeteContactPtrList tmpList;
-	tmpList.append(mAccount->myself());
 	KopeteMessage msg = parseAIMHTML(message);
 	manager()->appendMessage(msg);
 
@@ -339,24 +333,43 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	manager()->messageSucceeded();
 }
 
-KopeteMessage AIMContact::parseAIMHTML(QString m)
+KopeteMessage AIMContact::parseAIMHTML(const QString &m)
 {
-/*	============================================================================================
-	Original AIM-Messages, just a few to get the idea of the weird format[tm]:
+/* ========================================================================================
+Original AIM-Messages, just a few to get the idea of the weird format[tm]:
 
-	From original AIM: --------------------------------------------------------------------
-	<HTML><BODY BGCOLOR="#ffffff"><FONT FACE="Verdana" SIZE=4>some text message</FONT></BODY></HTML>
-	From Trillian 0.7something: ---------------------------------------------
-	<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><b>bin ich ueberhaupt ein standard?</b></BODY></HTML>
-	<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><font color="#ffff00">ups</BODY></HTML>
-	<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><font back="#00ff00">bggruen</BODY></HTML>
-	<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><font back="#00ff00"><font color="#ffff00">both</BODY></HTML>
-	<HTML><BODY BGCOLOR="#ffffff"><font face="Arial">LOL</BODY></HTML>
-	From GAIM: ----------------------------------------------------------
-	<FONT COLOR="#0002A6"><FONT SIZE="2">cool cool</FONT></FONT>
-	============================================================================================ */
+From original AIM: ------------------------------------------------------------------------
+<HTML><BODY BGCOLOR="#ffffff"><FONT FACE="Verdana" SIZE=4>some text message</FONT></BODY></HTML>
 
-	kdDebug(14190) << k_funcinfo << "Original MSG: " << m << endl;
+From Trillian 0.7something: ---------------------------------------------------------------
+<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><font color="#ffff00">ups</BODY></HTML>
+<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><font back="#00ff00">bggruen</BODY></HTML>
+<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><font back="#00ff00"><font color="#ffff00">both</BODY></HTML>
+
+From GAIM: --------------------------------------------------------------------------------
+<FONT COLOR="#0002A6"><FONT SIZE="2">cool cool</FONT></FONT>
+
+Original AIM 5.2 message: -----------------------------------------------------------------
+<HTML><BODY BGCOLOR="#ffffff">
+<FONT LANG="0" SIZE=2>t</FONT>
+<FONT BACK="#ffffff" SIZE=3>h</FONT>
+<FONT SIZE=4>i</FONT>
+<FONT SIZE=5>s</FONT>
+<FONT SIZE=6> i</FONT>
+<FONT SIZE=7>s <B><I><U>a </B></I></U> </FONT>
+<FONT BACK="#008000" SIZE=7>test</FONT>
+<FONT BACK="#ffffff" SIZE=7> <I></FONT>
+<FONT SIZE=3>of <B>h</I>t<U>m</U>l</B></FONT>
+<FONT COLOR="#008000"> formatting</FONT>
+</BODY></HTML>
+
+AIM 5.2 with fg and bg set for some text: -------------------------------------------------
+<HTML><BODY BGCOLOR="#ffffff">
+<FONT COLOR="#00ff00" BACK="#800080" LANG="0">test</FONT>
+</BODY></HTML>
+=========================================================================================== */
+
+//	kdDebug(14190) << k_funcinfo << "Original MSG: '" << m << "'" << endl;
 
 	QString result = m;
 	result.replace( QRegExp(
@@ -367,13 +380,14 @@ KopeteMessage AIMContact::parseAIMHTML(QString m)
 		QString::fromLatin1("\\1") );
 	result.replace( QRegExp(
 		QString::fromLatin1("<[bB][rR]>") ),
-		QString::fromLatin1("<br/>") );
+		QString::fromLatin1("<br />") );
+
+//	kdDebug(14190) << k_funcinfo << "Final MSG: '" << result << "'" << endl;
 
 	KopeteContactPtrList tmpList;
 	tmpList.append(mAccount->myself());
 	KopeteMessage msg(this, tmpList, result, KopeteMessage::Inbound, KopeteMessage::RichText);
 
-	// We don't actually do anything in there yet, but we might eventually
 	return msg;
 }
 

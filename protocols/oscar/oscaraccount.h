@@ -149,7 +149,7 @@ protected slots:
 	/*
 	 * Called when we've received an IM
 	 */
-	void slotGotIM(OscarSocket::OscarMessageType type, QString &message, QString &sender);
+	void slotGotIM(OscarSocket::OscarMessageType type, QString &message, const QString &sender);
 	//void slotGotIM(QString message, QString sender, bool isAuto);
 
 	/*

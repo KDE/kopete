@@ -232,7 +232,8 @@ void OscarSocket::parseWarningNotify(Buffer &inbuf)
 
 	if (inbuf.length() != 0)
 	{
-		UserInfo u = parseUserInfo(inbuf);
+		UserInfo u;
+		parseUserInfo(inbuf, u);
 		emit gotWarning(newevil,u.sn);
 	}
 	else
@@ -265,7 +266,8 @@ void OscarSocket::parseUserProfile(Buffer &inbuf)
 {
 	// docs: http://iserverd.khstu.ru/oscar/snac_02_06.html
 
-	UserInfo u = parseUserInfo(inbuf);
+	UserInfo u;
+	parseUserInfo(inbuf, u);
 	QPtrList<TLV> tl = inbuf.getTLVList();
 	tl.setAutoDelete(TRUE);
 

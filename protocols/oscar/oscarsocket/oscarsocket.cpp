@@ -738,7 +738,8 @@ void OscarSocket::parseMyUserInfo(Buffer &inbuf)
 	if (gotAllRights > 7)
 	{
 		kdDebug(14150) << k_funcinfo "RECV (SRV_REPLYINFO) Parsing OWN user info" << endl;
-		UserInfo u = parseUserInfo(inbuf);
+		UserInfo u;
+		parseUserInfo(inbuf, u);
 		emit gotMyUserInfo(u);
 	}
 	else
@@ -1452,7 +1453,8 @@ void OscarSocket::parseIM(Buffer &inbuf)
 	// That also means that TLV types can be duplicated between the
 	// userinfo block and the rest of the message, however there should
 	// never be two TLVs of the same type in one block.
-	UserInfo u = parseUserInfo(inbuf);
+	UserInfo u;
+	parseUserInfo(inbuf, u);
 
 	switch(channel)
 	{
@@ -1656,7 +1658,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 
 
 
-void OscarSocket::parseSimpleIM(Buffer &inbuf, UserInfo &u)
+void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 {
 	bool moreTLVs=true; // Flag to indicate if there are more TLV's to parse
 	bool isAutoResponse=false; // This gets set if we are notified of an auto response
@@ -1792,18 +1794,7 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, UserInfo &u)
 				//kdDebug(14150) << k_funcinfo << "deleting data from TLV(257)" << endl;
 				delete [] tlvMessage.data; // getTLV uses getBlock() internally! same as aboves delete applies
 
-				if(inbuf.length() > 0)
-				{
-					moreTLVs = true;
-					kdDebug(14150) << k_funcinfo <<
-						"remaining length after reading message=" << inbuf.length() << endl;
-
-					kdDebug(14150) << k_funcinfo << inbuf.toString() << endl;
-				}
-				else
-				{
-					moreTLVs = false;
-				}
+				moreTLVs = (inbuf.length() > 0);
 				break;
 			} // END TLV(0x0002), normal message block
 
@@ -1816,11 +1807,7 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, UserInfo &u)
 				// Set the autoresponse flag
 				isAutoResponse = true;
 
-				// Check to see if there's more
-				if(inbuf.length() > 0)
-					moreTLVs = true;
-				else
-					moreTLVs = false;
+				moreTLVs = (inbuf.length() > 0);
 				break;
 			} // END TLV(0x0004), AIM away message
 
@@ -1830,14 +1817,15 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, UserInfo &u)
 				// TODO support this
 				// The length of the TLV
 				length = inbuf.getWord();
-				// Get the block
 				/*char *msg =*/ inbuf.getBlock(length);
+				moreTLVs = (inbuf.length() > 0);
+				break;
+			}
 
-				// Check to see if there are more TLVs
-				if(inbuf.length() > 0)
-					moreTLVs = true;
-				else
-					moreTLVs = false;
+			case 0x000b: // unknown
+			{
+				/*length = */inbuf.getWord();
+				moreTLVs = (inbuf.length() > 0);
 				break;
 			}
 
@@ -1845,10 +1833,8 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, UserInfo &u)
 			{
 				kdDebug(14150) << k_funcinfo <<
 					"Unknown message type, type=" << type << endl;
-				if(inbuf.length() > 0)
-					moreTLVs = true;
-				else
-					moreTLVs = false;
+				moreTLVs = (inbuf.length() > 0);
+				break;
 			}
 		};
 	}
@@ -1856,7 +1842,7 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, UserInfo &u)
 
 
 
-void OscarSocket::parseServerIM(Buffer &inbuf, UserInfo &u)
+void OscarSocket::parseServerIM(Buffer &inbuf, const UserInfo &u)
 {
 	kdDebug(14150) << k_funcinfo << "message format = MSGFORMAT_SERVER" << endl;
 	bool moreTLVs = true; // Flag to indicate if there are more TLV's to parse
@@ -1927,10 +1913,10 @@ void OscarSocket::parseServerIM(Buffer &inbuf, UserInfo &u)
 
 
 // parses the aim standard user info block
-UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
+bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 {
-	UserInfo u;
-	u.userclass = 0;
+//	UserInfo u;
+	u.userclass=0;
 	u.evil=0;
 	//u.membersince = QDateTime();
 	//u.onlinesince = QDateTime();
@@ -1942,107 +1928,101 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 	u.fwType = 0;
 	u.version = 0;
 	u.icqextstatus=0;
+	u.capabilities=0;
 
-	if(inbuf.length() > 0)
-	{
-		BYTE len = inbuf.getByte();
-		// First comes their screen name/UIN
-		char *cb = inbuf.getBlock(len);
-		u.sn = QString::fromLocal8Bit(cb); // TODO: Check Encoding
-		delete [] cb;
-
-		// Next comes the warning level
-		//for some reason aol multiplies the warning level by 10
-		u.evil = inbuf.getWord() / 10;
-
-		//the number of TLV's that follow
-		WORD tlvlen = inbuf.getWord();
-
-/*		kdDebug(14150) << k_funcinfo << "Screenname '" << u.sn << "', length " <<
-			(int)len << ", evil " << u.evil
-			<< ", number of TLVs following " << tlvlen << endl;*/
-
-//		delete [] cb;
-		for (unsigned int i=0; i<tlvlen; i++)
-		{
-			TLV t = inbuf.getTLV();
-			Buffer tlvBuf(t.data,t.length);
-
-			switch(t.type)
-			{
-				case 0x0001: //user class
-				{
-					u.userclass = tlvBuf.getWord();
-					break;
-				}
-				case 0x0002: //member since time
-				case 0x0005: // member since time (again)
-				{
-					u.membersince.setTime_t(tlvBuf.getDWord());
-					break;
-				}
-				case 0x0003: //online since time
-				{
-					u.onlinesince.setTime_t(tlvBuf.getDWord());
-					break;
-				}
-				case 0x0004: //idle time
-				{
-					u.idletime = tlvBuf.getWord();
-					break;
-				}
-				case 0x0006:
-				{
-					u.icqextstatus = tlvBuf.getDWord();
-					break;
-				}
-				case 0x000a: // IP in a DWORD [ICQ]
-				{
-					u.realip = htonl(tlvBuf.getDWord());
-					break;
-				}
-				case 0x000c: // CLI2CLI
-				{
-					u.localip = htonl(tlvBuf.getDWord());
-					u.port = tlvBuf.getDWord();
-					u.fwType = static_cast<int>(tlvBuf.getWord());
-					u.version = tlvBuf.getWord();
-					// ignore the rest of the packet for now
-					break;
-				}
-				case 0x000d: //capability info
-				{
-					u.capabilities = parseCapabilities(tlvBuf);
-					break;
-				}
-				case 0x0010: //session length (for AOL users, in seconds)
-				case 0x000f: //session length (for AIM users, in seconds)
-				{
-					u.sessionlen = tlvBuf.getDWord();
-					break;
-				}
-				case 0x001e: // unknown, empty
-					break;
-				default: // unknown info type
-				{
-					kdDebug(14150) << k_funcinfo << "Unknown TLV(" << t.type <<
-						") length=" << t.length << " in userinfo for user '" <<
-						u.sn << "'" << tlvBuf.toString() << endl;
-				}
-			}; // END switch()
-			tlvBuf.clear(); // unlink tmpBuf from tlv data
-			delete [] t.data; // get rid of tlv data.
-		} // END for (unsigned int i=0; i<tlvlen; i++)
-	}
-	else // Never seen this happening [mETz]
+	if(inbuf.length() == 0)
 	{
 		kdDebug(14150) << k_funcinfo << "ZERO sized userinfo!" << endl;
-		// Buffer had length of zero for some reason, so
-		u.userclass=-1;
-		u.capabilities=0;
-		u.sessionlen=-1;
+		return false;
 	}
-	return u;
+
+	BYTE len = inbuf.getByte();
+	char *cb = inbuf.getBlock(len); // screenname/uin
+	u.sn = QString::fromLocal8Bit(cb); // TODO: Check Encoding
+	delete [] cb;
+
+	// Next comes the warning level
+	//for some reason aol multiplies the warning level by 10
+	u.evil = inbuf.getWord() / 10;
+
+	WORD tlvlen = inbuf.getWord(); //the number of TLV's that follow
+
+	/*kdDebug(14150) << k_funcinfo <<
+		"Contact: '" << u.sn <<
+		"', number of TLVs following: " << tlvlen << endl;*/
+
+	for (unsigned int i=0; i<tlvlen; i++)
+	{
+		TLV t = inbuf.getTLV();
+		Buffer tlvBuf(t.data,t.length);
+
+		switch(t.type)
+		{
+			case 0x0001: //user class
+			{
+				u.userclass = tlvBuf.getWord();
+				break;
+			}
+			case 0x0002: //member since time
+			case 0x0005: // member since time (again)
+			{
+				u.membersince.setTime_t(tlvBuf.getDWord());
+				break;
+			}
+			case 0x0003: //online since time
+			{
+				u.onlinesince.setTime_t(tlvBuf.getDWord());
+				break;
+			}
+			case 0x0004: //idle time
+			{
+				u.idletime = tlvBuf.getWord();
+				break;
+			}
+			case 0x0006:
+			{
+				u.icqextstatus = tlvBuf.getDWord();
+				break;
+			}
+			case 0x000a: // IP in a DWORD [ICQ]
+			{
+				u.realip = htonl(tlvBuf.getDWord());
+				break;
+			}
+			case 0x000c: // CLI2CLI
+			{
+				u.localip = htonl(tlvBuf.getDWord());
+				u.port = tlvBuf.getDWord();
+				u.fwType = static_cast<int>(tlvBuf.getWord());
+				u.version = tlvBuf.getWord();
+				// ignore the rest of the packet for now
+				break;
+			}
+			case 0x000d: //capability info
+			{
+				u.capabilities = parseCapabilities(tlvBuf);
+				break;
+			}
+			case 0x0010: //session length (for AOL users, in seconds)
+			case 0x000f: //session length (for AIM users, in seconds)
+			{
+				u.sessionlen = tlvBuf.getDWord();
+				break;
+			}
+			case 0x001e: // unknown, empty
+				break;
+			default: // unknown info type
+			{
+				kdDebug(14150) << k_funcinfo << "Unknown TLV(" << t.type <<
+					") length=" << t.length << " in userinfo for user '" <<
+					u.sn << "'" << tlvBuf.toString() << endl;
+			}
+		}; // END switch()
+		tlvBuf.clear(); // unlink tmpBuf from tlv data
+		delete [] t.data; // get rid of tlv data.
+	} // END for (unsigned int i=0; i<tlvlen; i++)
+
+	return true;
 }
 
 
@@ -2145,19 +2125,19 @@ const DWORD OscarSocket::parseCapabilities(Buffer &inbuf)
 
 
 // FIXME: This func is just plain ugly, unreadable and incomplete! [mETz]
-void OscarSocket::sendIM(const QString &message, const UserInfo &u, bool isAuto)
+void OscarSocket::sendIM(const QString &message, const UserInfo &uInfo, bool isAuto)
 {
 	//check to see if we have a direct connection to the contact
-	OscarConnection *dc = mDirectIMMgr->findConnection(u.sn);
+	OscarConnection *dc = mDirectIMMgr->findConnection(uInfo.sn);
 	if (dc)
 	{
-		kdDebug(14150) << k_funcinfo << "Sending direct IM " << message << " to " << u.sn << endl;
-		dc->sendIM(message,isAuto);
+		kdDebug(14150) << k_funcinfo << "Sending direct IM " << message << " to " << uInfo.sn << endl;
+		dc->sendIM(message, isAuto);
 		return;
 	}
 
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_SENDMSG), msg='" << message <<
-		"' to '" << u.sn << "'" << endl;
+		"' to '" << uInfo.sn << "'" << endl;
 
 	// Old features data
 	//static const char deffeatures[] = { 0x01, 0x01, 0x01, 0x02 };
@@ -2176,8 +2156,8 @@ void OscarSocket::sendIM(const QString &message, const UserInfo &u, bool isAuto)
 	// 2 -> special messages (also known as advanced messages)
 	// 4 -> url etc.
 
-	outbuf.addByte((u.sn).length()); //dest sn length
-	outbuf.addString((u.sn).latin1(), (u.sn).length()); //dest sn
+	outbuf.addByte((uInfo.sn).length()); //dest sn length
+	outbuf.addString((uInfo.sn).latin1(), (uInfo.sn).length()); //dest sn
 
 	// ====================================================================================
 	Buffer tlv2;
@@ -2196,7 +2176,7 @@ void OscarSocket::sendIM(const QString &message, const UserInfo &u, bool isAuto)
 	{
 		charset=0x0003;
 	}
-	else if(u.capabilities & AIM_CAPS_UTF8)
+	else if(uInfo.capabilities & AIM_CAPS_UTF8)
 	{
 		length=message.length()*2;
 		utfMessage=new unsigned char[length];
@@ -2266,16 +2246,22 @@ void OscarSocket::sendSSIActivate(void)
 
 void OscarSocket::parseUserOnline(Buffer &inbuf)
 {
-	UserInfo u = parseUserInfo(inbuf);
-//	kdDebug(14150) << k_funcinfo << "got an oncoming contact, screenname/UIN=" << u.sn << endl;
-	emit gotBuddyChange(u);
+	UserInfo u;
+	if (parseUserInfo(inbuf, u))
+	{
+//		kdDebug(14150) << k_funcinfo << "RECV SRV_USERONLINE, name=" << u.sn << endl;
+		emit gotBuddyChange(u);
+	}
 }
 
 void OscarSocket::parseUserOffline(Buffer &inbuf)
 {
-	UserInfo u = parseUserInfo(inbuf);
-//	kdDebug(14150) << k_funcifo << "contact left, screenname/UIN=" << u.sn << endl;
-	emit gotOffgoingBuddy(u.sn);
+	UserInfo u;
+	if(parseUserInfo(inbuf, u))
+	{
+//		kdDebug(14150) << k_funcinfo << "RECV SRV_USEROFFLINE, name=" << u.sn << endl;
+		emit gotOffgoingBuddy(u.sn);
+	}
 }
 
 void OscarSocket::sendWarning(const QString &target, bool isAnonymous)
@@ -3117,7 +3103,8 @@ void OscarSocket::parseMissedMessage(Buffer &inbuf)
 		/*WORD channel =*/ inbuf.getWord();
 
 		// get user info
-		UserInfo u = parseUserInfo(inbuf);
+		UserInfo u;
+		parseUserInfo(inbuf, u);
 
 		// get number of missed messages
 		WORD nummissed = inbuf.getWord();
