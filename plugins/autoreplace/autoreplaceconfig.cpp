@@ -46,7 +46,10 @@ void AutoReplaceConfig::load()
 	for ( QStringList::Iterator it = wordsList.begin(); it != wordsList.end(); ++it )
 	{
 		k = *it;
-		v = *( ++it );
+		++it;
+		if( it == wordsList.end() )
+			break;
+		v = *it;
 		m_map.insert( k, v );
 	}
 
