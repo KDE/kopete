@@ -421,6 +421,7 @@ private slots:
 	void slotHostFound();
 	void slotConnected();
 	void slotConnectionClosed();
+	void slotAuthFailed();
 	void slotReadyRead();
 	void error(int errCode = 0);
 	void quitTimeout();

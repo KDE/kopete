@@ -319,13 +319,14 @@ void KIRC::connectToServer(const QString &nickname, const QString &host, Q_UINT1
 	kdDebug(14120) << "Sock status: " << m_sock.socketStatus() << endl;
 	if (!m_sock.setAddress(m_Host, m_Port))
 		kdDebug(14120) << k_funcinfo << "setAddress failed. Status:  " << m_sock.socketStatus() << endl;
-	if (m_sock.lookup())		// necessary to avoid QDns
+	if (m_sock.lookup()) // necessary to avoid QDns
 		kdDebug(14120) << k_funcinfo << "lookup() failed. Status: " << m_sock.socketStatus() << endl;
 	if(m_sock.startAsyncConnect()==0) {
 		kdDebug(14120) << k_funcinfo << "startAsyncConnect() success!. Status: " << m_sock.socketStatus() << endl;
 		setStatus(Connecting);
 	} else {
 		kdDebug(14120) << k_funcinfo << "startAsyncConnect() failed. Status: " << m_sock.socketStatus() << endl;
+		setStatus(Disconnected);
 	}
 
 }
@@ -333,6 +334,16 @@ void KIRC::connectToServer(const QString &nickname, const QString &host, Q_UINT1
 void KIRC::slotHostFound()
 {
 	kdDebug(14120) << "Host Found" << endl;
+}
+
+void KIRC::slotAuthFailed()
+{
+ 	if( m_status != Connected )
+	{
+		setStatus(Disconnected);
+		m_sock.close();
+		m_sock.reset();
+	}
 }
 
 void KIRC::slotConnected()
@@ -347,6 +358,9 @@ void KIRC::slotConnected()
 
 	changeUser(m_Username, 0, QString::fromLatin1("Kopete User"));
 	changeNickname(m_Nickname);
+
+	//If we don't get a reply within 15 seconds, give up
+	QTimer::singleShot(15000, this, SLOT(slotAuthFailed()));
 }
 
 void KIRC::slotConnectionClosed()
