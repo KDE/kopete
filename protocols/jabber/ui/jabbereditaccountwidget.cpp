@@ -93,17 +93,18 @@ void JabberEditAccountWidget::reopen ()
 
 	mID->setText (account()->accountId ());
 	mPass->load (&account()->password ());
-	mResource->setText (account()->pluginData (m_protocol, "Resource"));
-	mPriority->setValue (account()->pluginData (m_protocol, "Priority").toInt ());
-	mServer->setText (account()->pluginData (m_protocol, "Server"));
+	
+	mResource->setText (account()->configGroup()->readEntry ("Resource", QString::fromLatin1("Kopete")));
+	mPriority->setValue (account()->configGroup()->readNumEntry ("Priority", 5));
+	mServer->setText (account()->configGroup()->readEntry ("Server", QString::null));
 
-	cbUseSSL->setChecked (account()->pluginData (m_protocol, "UseSSL") == QString::fromLatin1("true"));
+	cbUseSSL->setChecked (account()->configGroup()->readBoolEntry( "UseSSL", false));
 
-	mPort->setValue (account()->pluginData (m_protocol, "Port").toInt ());
+	mPort->setValue (account()->configGroup()->readNumEntry("Port", 5222));
 
-	QString auth = account()->pluginData (m_protocol, "AuthType");
+	QString auth = account()->configGroup()->readEntry("AuthType", QString::null);
 
-	cbCustomServer->setChecked (account()->pluginData(m_protocol, "CustomServer") == QString::fromLatin1 ("true"));
+	cbCustomServer->setChecked (account()->configGroup()->readBoolEntry("CustomServer",false));
 
 	if(cbCustomServer->isChecked ())
 	{
@@ -115,13 +116,13 @@ void JabberEditAccountWidget::reopen ()
 		mServer->setText(mID->text().section("@", 1));
 	}
 
-	cbAllowPlainTextPassword->setChecked (account()->pluginData (m_protocol, "AllowPlainTextPassword") == QString::fromLatin1 ("true"));
+	cbAllowPlainTextPassword->setChecked (account()->configGroup()->readBoolEntry("AllowPlainTextPassword", true));
 
 	KGlobal::config()->setGroup("Jabber");
 	leLocalIP->setText (KGlobal::config()->readEntry("LocalIP", ""));
 	sbLocalPort->setValue (KGlobal::config()->readNumEntry("LocalPort", 8010));
 
-	leProxyJID->setText (account()->pluginData (m_protocol, "ProxyJID"));
+	leProxyJID->setText (account()->configGroup()->readEntry("ProxyJID", QString::null));
 
 }
 
@@ -151,36 +152,21 @@ Kopete::Account *JabberEditAccountWidget::apply ()
 
 void JabberEditAccountWidget::writeConfig ()
 {
-
-	if (cbUseSSL->isChecked ())
-		account()->setPluginData (m_protocol, "UseSSL", "true");
-	else
-		account()->setPluginData (m_protocol, "UseSSL", "false");
+	account()->configGroup()->writeEntry("UseSSL", cbUseSSL->isChecked());
 
 	mPass->save(&account()->password ());
 
-	if (cbCustomServer->isChecked ())
-	{
-		account()->setPluginData (m_protocol, "CustomServer", "true");
-	}
-	else
-	{
-		account()->setPluginData (m_protocol, "CustomServer", "false");
-	}
+	account()->configGroup()->writeEntry("CustomServer", cbCustomServer->isChecked());
 
 	// FIXME: The call below represents a flaw in the current Kopete API.
 	// Once the API is cleaned up, this will most likely require a change.
 	//account()->setAccountId(mID->text());
 
-	if (cbAllowPlainTextPassword->isChecked ())
-		account()->setPluginData (m_protocol, "AllowPlainTextPassword", "true");
-	else
-		account()->setPluginData (m_protocol, "AllowPlainTextPassword", "false");
-
-	account()->setPluginData (m_protocol, "Server", mServer->text ());
-	account()->setPluginData (m_protocol, "Resource", mResource->text ());
-	account()->setPluginData (m_protocol, "Priority", QString::number (mPriority->value ()));
-	account()->setPluginData (m_protocol, "Port", QString::number (mPort->value ()));
+	account()->configGroup()->writeEntry("AllowPlainTextPassword", cbAllowPlainTextPassword->isChecked());
+	account()->configGroup()->writeEntry("Server", mServer->text ());
+	account()->configGroup()->writeEntry("Resource", mResource->text ());
+	account()->configGroup()->writeEntry("Priority", QString::number (mPriority->value ()));
+	account()->configGroup()->writeEntry("Port", QString::number (mPort->value ()));
 
 	account()->setExcludeConnect(cbAutoConnect->isChecked());
 
@@ -188,7 +174,7 @@ void JabberEditAccountWidget::writeConfig ()
 	KGlobal::config()->writeEntry("LocalIP", leLocalIP->text());
 	KGlobal::config()->writeEntry("LocalPort", sbLocalPort->value());
 
-	account()->setPluginData (m_protocol, "ProxyJID", leProxyJID->text());
+	account()->configGroup()->writeEntry("ProxyJID", leProxyJID->text());
 
 	settings_changed = false;
 }
