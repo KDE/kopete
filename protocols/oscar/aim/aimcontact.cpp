@@ -38,18 +38,18 @@ AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount
 	mUserProfile="";
 	infoDialog=0L;
 
-	if(name == account()->accountId())
+	/*if(name == account()->accountId())
 	{
 		kdDebug(14200) << k_funcinfo << "Called for MYSELF contact" << endl;
 		QObject::connect(
 			acc->engine(), SIGNAL(gotMyUserInfo(const UserInfo &)),
 			this, SLOT(slotContactChanged(const UserInfo &)));
 	}
-	else
+	else*/
 	{
 		// Buddy Changed
 		QObject::connect(
-			acc->engine(), SIGNAL(gotBuddyChange(const UserInfo &)),
+			acc->engine(), SIGNAL(gotContactChange(const UserInfo &)),
 			this, SLOT(slotContactChanged(const UserInfo &)));
 	}
 
@@ -210,8 +210,8 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 	if (tocNormalize(u.sn) != contactName())
 		return; //this is not this contact
 
-	kdDebug(14190) << k_funcinfo << "Called for '"
-		<< displayName() << "', userclass=" << u.userclass << endl;
+	/*kdDebug(14190) << k_funcinfo << "Called for '"
+		<< displayName() << "', contactName()=" << contactName() << endl;*/
 
 	QString uclass = "";
 	if(u.userclass & CLASS_AWAY)
@@ -239,8 +239,6 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 		setStatus(OSCAR_AWAY);
 	else
 		setStatus(OSCAR_ONLINE);
-
-//	mUserInfo = u;
 
 	slotUpdateBuddy();
 }

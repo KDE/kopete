@@ -825,7 +825,7 @@ void OscarSocket::parseMyUserInfo(Buffer &inbuf)
 		kdDebug(14150) << k_funcinfo "RECV (SRV_REPLYINFO) Parsing OWN user info" << endl;
 		UserInfo u;
 		parseUserInfo(inbuf, u);
-		emit gotMyUserInfo(u);
+		emit gotContactChange(u); // gotMyUserInfo(u);
 		return;
 	}
 
@@ -2149,7 +2149,7 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 
 	WORD tlvlen = inbuf.getWord(); //the number of TLV's that follow
 
-/*	kdDebug(14150) << k_funcinfo
+	/*kdDebug(14150) << k_funcinfo
 		<< "Contact: '" << u.sn <<
 		"', number of TLVs following " << tlvlen << endl;*/
 
@@ -2502,7 +2502,7 @@ void OscarSocket::parseUserOnline(Buffer &inbuf)
 	if (parseUserInfo(inbuf, u))
 	{
 		//kdDebug(14150) << k_funcinfo << "RECV SRV_USERONLINE, name=" << u.sn << endl;
-		emit gotBuddyChange(u);
+		emit gotContactChange(u);
 	}
 }
 

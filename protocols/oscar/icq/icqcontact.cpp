@@ -75,17 +75,17 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 	workInfo.occupation=0;
 	workInfo.homepage="";
 
-	if(name == account()->accountId())
+	/*if(name == account()->accountId())
 	{
 		QObject::connect(
 			acc->engine(), SIGNAL(gotMyUserInfo(const UserInfo &)),
 			this, SLOT(slotContactChanged(const UserInfo &)));
 	}
-	else
+	else*/
 	{
 		// Buddy Changed
 		QObject::connect(
-			acc->engine(), SIGNAL(gotBuddyChange(const UserInfo &)),
+			acc->engine(), SIGNAL(gotContactChange(const UserInfo &)),
 			this, SLOT(slotContactChanged(const UserInfo &)));
 	}
 
@@ -130,6 +130,9 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 {
 	if (u.sn != contactName())
 		return;
+
+	/*kdDebug(14190) << k_funcinfo << "Called for '"
+		<< displayName() << "', contactName()=" << contactName() << endl;*/
 
 	mInvisible = (u.icqextstatus & ICQ_STATUS_IS_INVIS);
 

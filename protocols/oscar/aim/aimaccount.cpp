@@ -116,9 +116,9 @@ KActionMenu* AIMAccount::actionMenu()
 void AIMAccount::initSignals()
 {
 	// Got my user info
-	QObject::connect(
+	/*QObject::connect(
 		engine(), SIGNAL(gotMyUserInfo(UserInfo &)),
-		this, SLOT(slotGotMyUserInfo(UserInfo &)));
+		this, SLOT(slotGotMyUserInfo(UserInfo &)));*/
 
 	// Got warning
 	QObject::connect(
@@ -126,11 +126,11 @@ void AIMAccount::initSignals()
 		this, SLOT(slotGotWarning(int,QString)));
 }
 
-void AIMAccount::slotGotMyUserInfo(UserInfo &newInfo)
+/*void AIMAccount::slotGotMyUserInfo(UserInfo &newInfo)
 {
 	kdDebug(14190) << k_funcinfo << "Called" << endl;
 	mUserInfo = newInfo;
-}
+}*/
 
 void AIMAccount::setUserProfile(const QString &profile)
 {
@@ -145,7 +145,7 @@ void AIMAccount::slotGotWarning(int newlevel, QString warner)
 	kdDebug(14190) << k_funcinfo << "Called." << endl;
 
 	//this is not a natural decrease in level
-	if (mUserInfo.evil < newlevel)
+	if (mMyself->userInfo().evil < newlevel)
 	{
 		QString warnMessage;
 		if(warner.isNull())
@@ -163,7 +163,10 @@ void AIMAccount::slotGotWarning(int newlevel, QString warner)
 				warnMessage, newlevel));
 #endif
 	}
-	mUserInfo.evil = newlevel;
+
+	// FIXME: How does this evil thing work?
+	// We cannot set UserInfo in our myself contact right now!
+	//mUserInfo.evil = newlevel;
 }
 
 void AIMAccount::slotEditInfo()

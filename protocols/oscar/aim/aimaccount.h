@@ -70,7 +70,7 @@ class AIMAccount : public OscarAccount
 		// Called when we have been warned
 		void slotGotWarning(int newlevel, QString warner);
 
-		void slotGotMyUserInfo(UserInfo &);
+		//void slotGotMyUserInfo(UserInfo &);
 		void slotAwayDialogReturned(const int, const QString&);
 
 	protected:
@@ -91,7 +91,7 @@ class AIMAccount : public OscarAccount
 		void connect(const unsigned long status, const QString &awMessage);
 
 	private:
-		UserInfo mUserInfo;
+		//UserInfo mUserInfo;
 		unsigned long mStatus;
 };
 #endif

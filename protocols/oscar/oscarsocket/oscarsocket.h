@@ -917,7 +917,9 @@ class OscarSocket : public OscarConnection
 		/*
 		 * A contact changed his status to something else then offline
 		 */
-		void gotBuddyChange(const UserInfo &);
+		//void gotBuddyChange(const UserInfo &);
+		void gotContactChange(const UserInfo &);
+
 		/*
 		 * A user profile was received
 		 */
@@ -930,7 +932,7 @@ class OscarSocket : public OscarConnection
 		/*
 		 * Emitted when my user info is received
 		 */
-		void gotMyUserInfo(const UserInfo &);
+		//void gotMyUserInfo(const UserInfo &);
 		/*
 		 * A buddy list has been received
 		 */

@@ -98,7 +98,7 @@ void OscarContact::initSignals()
 		this, SLOT(slotMainStatusChanged(const unsigned int)));
 
 	QObject::connect(
-		mAccount->engine(), SIGNAL(gotBuddyChange(const UserInfo &)),
+		mAccount->engine(), SIGNAL(gotContactChange(const UserInfo &)),
 		this, SLOT(slotParseUserInfo(const UserInfo &)));
 	// Got IM
 /*
@@ -575,18 +575,11 @@ void OscarContact::slotParseUserInfo(const UserInfo &u)
 	}
 
 	mInfo = u;
-//	kdDebug(14150) << k_funcinfo << "Contact '" << displayName() <<
-//		"', mInfo.sn=" << mInfo.sn << ", u.sn=" << u.sn << endl;
+	/*kdDebug(14150) << k_funcinfo << "Contact '" << displayName() <<
+		"', mInfo.sn=" << mInfo.sn << ", u.sn=" << u.sn << endl;
 
 	if(mInfo.capabilities & AIM_CAPS_UTF8)
-		kdDebug(14150) << k_funcinfo << "Contact '" << displayName() << "' announced UTF support!" << endl;
-	/*mRealIP = u.realip;
-	mLocalIP = u.localip;
-	mPort = u.port;
-	mFwType = u.fwType;
-	mTcpVersion = u.version;
-	mSignonTime.setTime_t(u.onlinesince);
-	*/
+		kdDebug(14150) << k_funcinfo << "Contact '" << displayName() << "' announced UTF support!" << endl;*/
 }
 
 void OscarContact::slotRequestAuth()
