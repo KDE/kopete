@@ -22,6 +22,7 @@
 
 #include <kdebug.h>
 #include <kspell.h>
+#undef KDE_NO_COMPAT
 #include <kaction.h>
 #include <kmessagebox.h>
 #include <kgenericfactory.h>

@@ -29,6 +29,7 @@
 #include <ktempfile.h>
 #include <kgenericfactory.h>
 #include <kio/netaccess.h>
+#undef KDE_NO_COMPAT
 #include <kaction.h>
 
 #include "kopetemetacontact.h"

@@ -14,6 +14,7 @@
     *************************************************************************
 */
 
+#undef KDE_NO_COMPAT
 #include <kaction.h>
 #include <kpopupmenu.h>
 #include <kprocess.h>

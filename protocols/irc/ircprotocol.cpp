@@ -19,6 +19,7 @@
 
 #include <qregexp.h>
 #include <dom/html_element.h>
+#undef KDE_NO_COMPAT
 #include <kaction.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>

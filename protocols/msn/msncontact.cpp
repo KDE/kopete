@@ -22,6 +22,7 @@
 
 #include <qcheckbox.h>
 
+#undef KDE_NO_COMPAT
 #include <kaction.h>
 #include <kdebug.h>
 #include <kfiledialog.h>

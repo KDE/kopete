@@ -22,6 +22,7 @@
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteaccount.h"
 
+#undef KDE_NO_COMPAT
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>

@@ -18,6 +18,7 @@
 #ifndef KOPETESTDACTION_H
 #define KOPETESTDACTION_H
 
+#undef KDE_NO_COMPAT
 #include <kaction.h>
 #include <qobject.h>
 

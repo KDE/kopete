@@ -17,6 +17,8 @@
 
 #include <kdebug.h>
 #include <klocale.h>
+
+#undef KDE_NO_COMPAT
 #include <kaction.h>
 #include <qtimer.h>
 

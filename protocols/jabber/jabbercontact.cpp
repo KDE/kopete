@@ -22,6 +22,7 @@
 #include <qptrlist.h>
 #include <qstrlist.h>
 
+#undef KDE_NO_COMPAT
 #include <kaction.h>
 #include <kconfig.h>
 #include <kdebug.h>

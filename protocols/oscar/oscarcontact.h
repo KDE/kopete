@@ -19,6 +19,7 @@
 
 #include <qwidget.h>
 #include <qdatetime.h>
+#undef KDE_NO_COMPAT
 #include <kaction.h>
 //#include "kopetetransfermanager.h"
 #include "kopetecontact.h"
