@@ -20,12 +20,9 @@
 #include "kopetecontact.h"
 
 #include <qapplication.h>
-#include <qlabel.h>
-#include <qvbox.h>
 
 #include <kdebug.h>
 #include <klineeditdlg.h>
-#include <klistview.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
 #include <kmessagebox.h>
@@ -38,6 +35,15 @@
 #include "kopetemessagemanager.h"
 #include "kopeteview.h"
 #include "kopetemetacontact.h"
+
+
+//For the moving to another metacontact dialog
+#include <qlabel.h>
+#include <qvbox.h>
+#include <klistview.h>
+#include <qcheckbox.h>
+#include <qwhatsthis.h>
+
 
 // FIXME: What are these doing here and why are they #defines and not const ints? - Martijn
 #define EMAIL_WINDOW 0
@@ -310,10 +316,19 @@ void KopeteContact::slotChangeMetaContact()
 
 	selectMetaContactListBox->sort();
 
+	QCheckBox *chkCreateNew=new QCheckBox(i18n( "Or create a new empty metacontact to contains it" ), w );
+	QWhatsThis::add( chkCreateNew , i18n( "If you select this option, a new metacontact will be created at top-level with the name of this contact. And the contact will be moved on it." ) );
+	QObject::connect( chkCreateNew , SIGNAL( toggled(bool) ) ,  selectMetaContactListBox , SLOT ( setDisabled(bool) ) ) ;
+
 	moveDialog->setMainWidget( w );
 	if( moveDialog->exec() == QDialog::Accepted )
 	{
 		KopeteMetaContact *mc = map[selectMetaContactListBox->currentItem()];
+		if(chkCreateNew->isChecked())
+		{
+			mc=new KopeteMetaContact();
+			KopeteContactList::contactList()->addMetaContact(mc);
+		}
 		if( mc )
 		{
 			setMetaContact( mc );

@@ -15,6 +15,7 @@ o Main Application
 	o URLs in the new message balloon are now clickable links that don't open
 	  a chat window. (Will)
 	o Allow to use customs icon for groups and metacontacts (Stephan / Olivier)
+	o Allow the user to move a contact to a new metacontact (Olivier)
 
 
 Kopete 0.7 (released 2003/08/04)
