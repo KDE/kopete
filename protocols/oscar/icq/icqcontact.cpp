@@ -433,6 +433,14 @@ QPtrList<KAction> *ICQContact::customContextMenuActions()
 	}
 
 */
+	QString i1 = i18n("&Ignore");
+	QString i2 = i18n("Always &Visible To");
+	QString i3 = i18n("Always &Invisible To");
+
+	Q_UNUSED( i1 );
+	Q_UNUSED( i2 );
+	Q_UNUSED( i3 );
+		
 	
 	bool on = account()->isConnected();
 	if ( m_ssiItem.waitingAuth() )
