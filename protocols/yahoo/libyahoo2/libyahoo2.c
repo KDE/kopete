@@ -80,7 +80,7 @@ char *strchr (), *strrchr ();
 #include "yahoo2.h"
 #include "yahoo_httplib.h"
 #include "yahoo_util.h"
-#include "yahoo_fn.h"
+#include "yahoo_auth.h"
 
 #include "yahoo2_callbacks.h"
 #include "yahoo_debug.h"
