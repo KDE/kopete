@@ -152,7 +152,13 @@ default_presentation=16
 
 [kopete_offline]
 Name=Offline
+Name[es]=Desconectar
+Name[sr]=Није на вези
+Name[sv]=Nerkopplad
 Comment=User goes offline
+Comment[es]=El usuario se desconecta
+Comment[sr]=Корисник се повезао
+Comment[sv]=Användaren kopplar ner
 default_sound=Kopete_Event.ogg
 default_presentation=0
 
@@ -170,6 +176,9 @@ Name[sr]=Промена статуса
 Name[sv]=Statusändring
 Name[wa]=Candjmint di statut
 Comment=User changed his online status.
+Comment[es]=El usuario cambió su estado de conexión.
+Comment[sr]=Корисник је променио свој статус на вези.
+Comment[sv]=Användaren ändrade uppkopplingsstatus.
 default_sound=Kopete_Event.ogg
 default_presentation=0
 
@@ -178,6 +187,7 @@ Name=Highlight
 Name[be]=Падсьветка
 Name[ca]=Ressaltat
 Name[da]=Fremhæv
+Name[es]=Resaltar
 Name[hu]=Kiemelés
 Name[pt_BR]=Destaque
 Name[sr]=Истицање
@@ -186,6 +196,7 @@ Name[wa]=E sorbiyance
 Comment=A message was highlighted because it contained your nickname
 Comment[ca]=S'ha ressaltat un missatge degut a que conté el vostre sobrenom
 Comment[da]=En besked blev fremhævet fordi den indeholdt dit alias
+Comment[es]=Se resaltó un mensaje debido a que aparecía su apodo
 Comment[hu]=Egy üzenet ki lett emelve, mert az Ön beceneve szerepel benne
 Comment[pt_BR]=Uma mensagem foi destacada pois continha seu apelido
 Comment[ru]=Сообщение было подчеркнуто, поскольку оно содержит ваш псевдоним
