@@ -296,6 +296,11 @@ private slots:
 	 */
 	void slotUpdateChatMember(QString handle, QString publicName,bool, MSNSwitchBoardSocket* service);
 
+	/**
+	 * Recieved phone numbers
+	 */
+	void slotRecievedInfo(QString handle,QString type,QString data);;
+
 private:
 	/**
 	 * Get group by name.

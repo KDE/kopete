@@ -71,6 +71,8 @@ signals:
 	void publicNameChanged( QString, QString );
 	void statusChanged( QString );
 
+	void recievedInfo(QString, QString , QString);
+
 protected:
 	/**
 	 * Handle an MSN command response line.
@@ -98,7 +100,7 @@ private slots:
 	void slotDispatchFailed();
 
 private:
-//	uint mailCount;
+	unsigned int mailCount;
 	QString m_password;
 	
 	int m_newstatus;

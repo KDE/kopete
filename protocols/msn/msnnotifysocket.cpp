@@ -19,6 +19,7 @@
 #include "msndispatchsocket.h"
 #include "msnprotocol.h"
 
+#include <kconfig.h>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -288,6 +289,10 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		// set the status 
 		setStatus(m_newstatus);
 	}
+	else if( cmd == "BPR" )
+	{
+		emit recievedInfo(data.section( ' ', 0, 0 ), data.section( ' ', 1, 1 ) , unescape(data.section( ' ', 2, 2 )));
+	}
 	else
 	{
 		// Let the base class handle the rest
@@ -299,31 +304,41 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 {
 	if(msg.contains("Inbox-Unread:"))
 	{
-/*			 //this sends the server if we are going online, contains the unread message count
-		 msg = msg.right(msg.length() - msg.find("Inbox-Unread:") );
-		 msg = msg.left(msg.find("\r\n"));
-		 mailCount = msg.right(msg.length() -msg.find(" ")-1).toUInt();
-		 emit newMail("",mailCount);*/
-		 return;
+		 //this sends the server if we are going online, contains the unread message count
+		QString m = msg.right(msg.length() - msg.find("Inbox-Unread:") );
+		m = m.left(msg.find("\r\n"));
+		mailCount = m.right(m.length() -m.find(" ")-1).toUInt();
+
+		KGlobal::config()->setGroup( "MSN" );
+		if(KGlobal::config()->readBoolEntry( "MailNotifications", true ))
+		{
+			KMessageBox::information( 0l, i18n( "<qt>You have %1 unread messages in your mailbox</qt>" ).arg(mailCount), i18n( "MSN Plugin" ) );
+		}
+//		 emit newMail("",mailCount);
 	}
-	if(msg.contains("Message-Delta:"))
+	else if(msg.contains("Message-Delta:"))
 	{
-/*			 //this sends the server if mails are deleted
-		 msg = msg.right(msg.length() - msg.find("Message-Delta:") );
-		 msg = msg.left(msg.find("\r\n"));
-		 mailCount = mailCount - msg.right(msg.length() -msg.find(" ")-1).toUInt();
-		 emit newMail("",mailCount);*/
-		 return;
+		 //this sends the server if mails are deleted
+		 QString m = msg.right(msg.length() - msg.find("Message-Delta:") );
+		 m = m.left(msg.find("\r\n"));
+		 mailCount = mailCount - m.right(m.length() -m.find(" ")-1).toUInt();
+//		 emit newMail("",mailCount);
 	}
-	if(msg.contains("From-Addr:"))
+	else if(msg.contains("From-Addr:"))
 	{
-/*			 //this sends the server if a new mail has arrived
-		 msg = msg.right(msg.length() - msg.find("From-Addr:") );
-		 msg = msg.left(msg.find("\r\n"));
-		 mailCount++;
-		 msg = msg.right(msg.length() -msg.find(" ")-1);
-		 emit newMail(msg,mailCount);*/
-		 return;
+			 //this sends the server if a new mail has arrived
+		QString m = msg.right(msg.length() - msg.find("From-Addr:") );
+		m = m.left(msg.find("\r\n"));
+		mailCount++;
+		m = m.right(m.length() -m.find(" ")-1);
+
+		KGlobal::config()->setGroup( "MSN" );
+		if(KGlobal::config()->readBoolEntry( "MailNotifications", true ))
+		{
+			KMessageBox::information( 0l, i18n( "<qt>You have one new e-mail from %1</qt>" ).arg(m),i18n( "MSN Plugin" ) );
+		}
+
+//		 emit newMail(msg,mailCount);
 	}
 }
 

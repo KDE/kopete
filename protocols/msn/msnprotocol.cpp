@@ -247,6 +247,9 @@ void MSNProtocol::Connect()
 		SLOT( slotCreateChat( QString, QString, QString, QString, QString ) ) );
 	connect( m_notifySocket, SIGNAL( startChat( QString, QString ) ),
 		this, SLOT( slotCreateChat( QString, QString ) ) );
+	connect( m_notifySocket, SIGNAL( recievedInfo( QString, QString,QString ) ),
+		this, SLOT( slotRecievedInfo( QString, QString,QString ) ) );
+
 
 	connect( m_notifySocket, SIGNAL( socketClosed( int ) ),
 		this, SLOT( slotNotifySocketClosed( int ) ) );
@@ -1140,6 +1143,7 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 			KopeteContactList::contactList()->addMetaContact(m);
 
 			m_contacts.insert( msnContact->msnId(), msnContact );
+			
 		}
 	}
 	else if( list == "BL" )
@@ -1174,6 +1178,9 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 			connect( authDlg, SIGNAL(blockUser( QString )), this, SLOT(slotBlockContact( QString )));
 			authDlg->show();
 		}
+
+		if(m_contacts.contains( handle ))
+			m_contacts[ handle ]->setReversed( true );
 	}
 }
 
@@ -1196,10 +1203,10 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list,
 	{
 		if( list == "RL" )
 		{
-/*
 			// Contact is removed from the reverse list
 			// only MSN can do this, so this is currently not supported
-
+			m_contacts[ handle ]->setReversed( false );
+/*
 			InfoWidget *info = new InfoWidget(0);
 			info->title->setText("<b>" + i18n( "Contact removed!" ) +"</b>" );
 			QString dummy;
@@ -1210,6 +1217,7 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list,
 			info->setCaption("KMerlin - Info");
 			info->show();
 */
+			
 		}
 		else if( list == "FL" )
 		{
@@ -1314,9 +1322,11 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 			connect( authDlg, SIGNAL(blockUser( QString )), this, SLOT(slotBlockContact( QString )));
 			authDlg->show();
 		}
+		else
+		{
+			m_contacts[ handle ]->setReversed( true );
+		}
 	}
-
-
 }
 
 void MSNProtocol::slotStatusChanged( QString status )
@@ -1435,7 +1445,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 		chatmembers.append(c);
 
 		KopeteMessageManager *manager = kopeteapp->sessionFactory()->create(
-			m_myself, chatmembers, this, QString( "msn_logs/" + ID + ".log" ) );
+			m_myself, chatmembers, this, QString( "msn_logs/" + handle + ".log" ) );
 
 		// FIXME: Don't we leak this ?
 		MSNSwitchBoardSocket *chatService = new MSNSwitchBoardSocket(manager->id());
@@ -1461,8 +1471,12 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 			this, SLOT( slotMessageSent( const KopeteMessage& , KopeteMessageManager*) ) );
 		connect( manager, SIGNAL( messageSent( const KopeteMessage&, KopeteMessageManager* ) ),
 			this, SLOT( slotMessageSent( const KopeteMessage& , KopeteMessageManager*) ) );
-		manager->readMessages();
 
+		KGlobal::config()->setGroup( "MSN" );
+		if(KGlobal::config()->readBoolEntry( "OpenWindow", true ) || !ID)
+		{
+			manager->readMessages();
+		}
 
 		if(m_msgQueued)
 		{
@@ -1652,6 +1666,16 @@ void MSNProtocol::slotUpdateChatMember(QString handle, QString publicName, bool 
 	
 }
 
+void MSNProtocol::slotRecievedInfo(QString handle,QString type,QString data)
+{
+	MSNContact *c=m_contacts[handle];
+	if(!c)
+	{
+		kdDebug() << "MSNProtocol::slotRecievedInfo : WARNING - KopeteContact not found "  << handle << endl;
+		return;
+	}
+	c->setInfo(type,data);
+}
 
 #include "msnprotocol.moc"
 

@@ -65,17 +65,24 @@ public:
 
 	/**
 	 * Indicate whether this contact is deleted
-	 * FIXME: What does this mean??? For now, just port from KMSNContact
 	 */
-	bool isDeleted() const;
-	void setDeleted( bool d );
+/*	bool isDeleted() const;
+	void setDeleted( bool d );*/
+	
 
 	/**
 	 * Indicate whether this contact is allowed
-	 * FIXME: What does this mean??? For now, just port from KMSNContact
 	 */
 	bool isAllowed() const;
 	void setAllowed( bool d );
+
+	/**
+	 * Indicate whether this contact is on the reversed list
+	 */
+	bool isReversed() const;
+	void setReversed( bool d );
+
+
 
 	/**
 	 * Indicate whether this contact is currently moving to another group
@@ -84,6 +91,14 @@ public:
 	 */
 	bool isMoving() { return m_moving; }
 	void setMoving(bool b=true) { m_moving=b; }
+
+
+	/**
+	 * set one phone number
+	 */
+	void setInfo(QString type, QString data);
+
+
 	
 	/**
 	 * The groups in which the user is located.
@@ -140,7 +155,8 @@ private:
 
 	bool m_blocked;
 	bool m_allowed;
-	bool m_deleted;
+//	bool m_deleted;
+	bool m_reversed;
 
 	MSNProtocol::Status m_status;
 
@@ -150,6 +166,11 @@ private:
 	KAction* m_actionBlock;
 
 	bool m_moving;
+
+	QString m_phoneHome;
+	QString m_phoneWork;
+	QString m_phoneMobile;
+	bool m_phone_mob;
 };
 
 #endif

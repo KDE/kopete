@@ -15,6 +15,9 @@
     *************************************************************************
 */
 
+#include <qlineedit.h>
+#include <qcheckbox.h>
+#include <kdialogbase.h>
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -26,6 +29,8 @@
 #include "msncontact.h"
 #include "msnprotocol.h"
 
+#include "msninfo.h"
+
 MSNContact::MSNContact( QString &protocolId, const QString &msnId,
 	const QString &displayName, const QString &group,
 	KopeteMetaContact *parent )
@@ -36,9 +41,10 @@ MSNContact::MSNContact( QString &protocolId, const QString &msnId,
 
 	m_status = MSNProtocol::FLN;
 
-	m_deleted = false;
+//	m_deleted = false;
 	m_allowed = false;
 	m_blocked = false;
+	m_reversed = false;
 
 	m_moving=false;
 
@@ -140,7 +146,18 @@ void MSNContact::slotHistoryDialogClosing()
 
 void MSNContact::slotUserInfo()
 {
-	//TODO: show a dialog box with names, phone number and other info
+	KDialogBase *infoDialog=new KDialogBase( 0l, "infoDialog", /*modal = */false, QString::null, KDialogBase::Close , KDialogBase::Close, false );
+	MSNInfo *info=new MSNInfo ( infoDialog,"info");
+	info->m_id->setText(m_msnId);
+	info->m_displayName->setText(displayName());
+	info->m_phh->setText(m_phoneHome);
+	info->m_phw->setText(m_phoneWork);
+	info->m_phm->setText(m_phoneMobile);
+	info->m_reversed->setChecked(m_reversed);
+
+	infoDialog->setMainWidget(info);
+	infoDialog->setCaption(displayName());
+	infoDialog->show();
 }
 
 void MSNContact::slotDeleteContact()
@@ -355,7 +372,7 @@ void MSNContact::setBlocked( bool blocked )
 	}
 }
 
-bool MSNContact::isDeleted() const
+/*bool MSNContact::isDeleted() const
 {
 	return m_deleted;
 }
@@ -363,7 +380,7 @@ bool MSNContact::isDeleted() const
 void MSNContact::setDeleted( bool deleted )
 {
 	m_deleted = deleted;
-}
+} */
 
 bool MSNContact::isAllowed() const
 {
@@ -374,6 +391,47 @@ void MSNContact::setAllowed( bool allowed )
 {
 	m_allowed = allowed;
 }
+
+bool MSNContact::isReversed() const
+{
+	return m_reversed;
+}
+
+void MSNContact::setReversed( bool reversed )
+{
+	m_reversed= reversed;
+}
+
+
+void MSNContact::setInfo(QString type, QString data)
+{
+	if( type == "PHH")
+	{
+		m_phoneHome=data;
+	}
+	else if( type == "PHW")
+	{
+		m_phoneWork=data;
+	}
+	else if( type == "PHM")
+	{
+		m_phoneMobile=data;
+	}
+	else if( type == "MOB")
+	{
+		if(data=="Y")
+			m_phone_mob=true;
+		else if (data=="N")
+			m_phone_mob=false;
+		else
+			kdDebug() <<"MSNContact::setInfo : unknow MOB " << data <<endl;
+	}
+	else
+		kdDebug() <<"MSNContact::setInfo : unknow info " << type << " " <<data <<endl;
+
+	
+}
+
 
 QStringList MSNContact::groups()
 {

@@ -9,6 +9,7 @@ INCLUDES = -I$(srcdir)/../../../libkopete \
 noinst_LTLIBRARIES = libkopetemsnui.la
 
 libkopetemsnui_la_SOURCES = msnadd.ui msnprefs.ui msndebugrawcommand_base.ui \
-    empty.cpp
+    empty.cpp msninfo.ui
 
-EXTRA_DIST = msnadd.ui msnprefs.ui empty.cpp
+EXTRA_DIST = msnadd.ui msnprefs.ui empty.cpp msninfo.ui
+          
