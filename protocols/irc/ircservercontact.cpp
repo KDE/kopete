@@ -39,7 +39,8 @@ IRCServerContact::IRCServerContact(const QString &server, const QString &nicknam
 	QFrame *mChatViewContainer = new QFrame(mWindow->mChannelsTabCtl);
 	mChatViewContainer->sizeHint();
 	QVBoxLayout *containerLayout = new QVBoxLayout(mChatViewContainer);
-
+	containerLayout->setMargin(KDialog::marginHint());
+	
 	IRCConsoleView *consoleView = new IRCConsoleView(mServer, engine, mChatViewContainer, this);
 	QObject::connect(consoleView, SIGNAL(quitRequested()), this, SLOT(slotQuitServer()));
 	QObject::connect(this, SIGNAL(connecting()), consoleView, SLOT(slotConnecting()));

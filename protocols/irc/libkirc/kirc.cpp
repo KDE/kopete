@@ -179,7 +179,6 @@ void KIRC::slotReadyRead()
 						QString message = line.section(' ', 3);
 						message.remove(0, 1);
 						emit incomingMotd(message);
-						waitingFinishMotd = false;
 					}
 					break;
 				}
