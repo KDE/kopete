@@ -60,6 +60,7 @@
 #include "kopeteprotocol.h"
 #include "kopetestdaction.h"
 #include "kopeteawayaction.h"
+#include "kopeteuiglobal.h"
 #include "systemtray.h"
 
 
@@ -223,6 +224,7 @@ void KopeteWindow::slotShowHide()
 void KopeteWindow::initSystray()
 {
 	m_tray = KopeteSystemTray::systemTray( this, "KopeteSystemTray" );
+	Kopete::UI::Global::setSysTrayWId( m_tray->winId() );
 	KPopupMenu *tm = m_tray->contextMenu();
 
 	// NOTE: This is in reverse order because we insert

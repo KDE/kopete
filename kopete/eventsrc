@@ -412,7 +412,7 @@ Comment[fr]=Un nouveau message est arrivé dans votre boîte aux lettres Yahoo
 Comment[sv]=Ett nytt brev har anlänt i din Yahoo-inkorg
 Comment[ta]=உங்கள் மின் அஞ்சல் பெட்டிக்குள் புதிய மின்னஞ்சல் ஒன்று வந்துள்ளது
 Comment[xx]=xxNew email has arrived in your Yahoo inboxxx
-
+default_presentation=16
 
 [msn_mail]
 Name=MSN Mail

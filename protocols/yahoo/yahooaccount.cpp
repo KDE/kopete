@@ -267,6 +267,7 @@ void YahooAccount::disconnect()
 {
 //	kdDebug(14180) << k_funcinfo << endl;
 
+	m_currentMailCount = 0;
 	if ( isConnected() )
 	{
 		kdDebug(14180) <<  "Attempting to disconnect from Yahoo server " << endl;
@@ -627,21 +628,18 @@ void YahooAccount::slotGameNotify( const QString & /* who */, int /* stat */ )
 
 void YahooAccount::slotMailNotify( const QString& from, const QString& /* subject */, int cnt )
 {
-	kdDebug(14180) << k_funcinfo << endl;
-	//kdDebug(14180) << "From: " << from << endl;
-	//kdDebug(14180) << "Subject: " << subject << endl;
-	//kdDebug(14180) << "Count: " << cnt << endl;
+	kdDebug(14180) << k_funcinfo << "Mail count: " << cnt << endl;
 
 	if ( cnt > m_currentMailCount && from.isEmpty() )
 	{
-		KNotifyClient::event( 0, "yahoo_mail",
+		KNotifyClient::event( Kopete::UI::Global::sysTrayWId(), "yahoo_mail",
 			i18n( "You have one unread message in your Yahoo inbox.",
 			"You have %n unread messages in your Yahoo inbox.", cnt ));
 		m_currentMailCount = cnt;
 	}
 	else if ( cnt > m_currentMailCount )
-	{
-		KNotifyClient::event( 0, "yahoo_mail",
+	{	kdDebug(14180) << k_funcinfo << "attempting to trigger event" << endl;
+		KNotifyClient::event( Kopete::UI::Global::sysTrayWId(), "yahoo_mail",
 			i18n( "You have a message from %1 in your Yahoo inbox.").arg(from));
 		m_currentMailCount = cnt;
 	}

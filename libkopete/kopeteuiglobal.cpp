@@ -27,7 +27,7 @@ namespace Kopete
 namespace
 {
 	QGuardedPtr<QWidget> g_mainWidget;
-	WId g_sysTrayWId;
+	int g_sysTrayWId;
 }
 
 void UI::Global::setMainWidget( QWidget *widget )
@@ -40,12 +40,12 @@ QWidget *UI::Global::mainWidget()
 	return g_mainWidget;
 }
 
-void UI::Global::setSysTrayWId( WId newWinId )
+void UI::Global::setSysTrayWId( int newWinId )
 {
 	g_sysTrayWId = newWinId;
 }
 
-WId UI::Global::sysTrayWId()
+int UI::Global::sysTrayWId()
 {
 	if ( g_sysTrayWId == 0 )
 		return g_mainWidget->winId();

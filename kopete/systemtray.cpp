@@ -74,7 +74,6 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent, const char* name)
 	slotConfigChanged();
 
 	m_balloon=0l;
-	Kopete::UI::Global::setSysTrayWId( winId() );
 }
 
 KopeteSystemTray::~KopeteSystemTray()

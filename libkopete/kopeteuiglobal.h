@@ -49,7 +49,7 @@ namespace Global
 	 * \return the WId of the system tray. Returns the WId of the main
 	 * widget if there's no system tray.
 	 */ 
-	WId sysTrayWId();
+	int sysTrayWId();
 
 	/**
 	 * \brief Set the WId of the system tray.
@@ -57,7 +57,7 @@ namespace Global
 	 * Called by the KopeteSystemTray constructor and destructor to 
 	 * set the WId for the system tray appropriately
 	 */
-	void setSysTrayWId( WId newWinId );
+	void setSysTrayWId( int newWinId );
 } //Global::UI
 
 } //UI
