@@ -1,21 +1,24 @@
+<!DOCTYPE kpartgui>
 <kpartgui name="kkopete" version="0.1">
 	<MenuBar>
-		<Menu name="file">
-			 <Action name="Connect"/>
+		<Menu name="file" noMerge="1"><text>&amp;File</text>
+			<Action name="Connect"/>
 			<Action name="Disconnect"/>
 			<Action name="AddContact"/>
-			<Separator/>
-                        <Action name="Quit"/>
+			<Separator lineSeparator="true"/>
+			<Action name="file_quit"/>
 		</Menu>
-		<Menu name="settings">
-			<Action name="Preferences"/>
+		<Menu name="settings" noMerge="1"><text>&amp;Settings</text>
+			<Action name="options_show_toolbar"/>
+			<Separator lineSeparator="true"/>
+			<Action name="options_configure"/>
 		</Menu>
 	</MenuBar>
 	<ToolBar fullWidth="true" name="mainToolBar">
-		 <Action name="Connect"/>
+		<Action name="Connect"/>
 		<Action name="Disconnect"/>
 		<Action name="AddContact"/>
-		 <Action name="Preferences"/>
-		<Action name="Quit"/>
+		<Action name="options_configure"/>
+		<Action name="file_quit"/>
 	</ToolBar>
 </kpartgui>
