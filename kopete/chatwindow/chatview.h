@@ -345,7 +345,7 @@ private slots:
 	/**
 	 * Called when KopetePrefs are saved
 	 */
-	void slotTransparancyChanged();
+	void slotTransparencyChanged();
 	void slotMarkMessageRead();
 
 	/**
@@ -393,8 +393,8 @@ private:
 	QString m_lastMatch;
 	QString backgroundFile;
 	QString m_status;
-	QPixmap m_icon;
-	QPixmap m_iconLight;
+//	QPixmap m_icon;
+//	QPixmap m_iconLight;
 	KCompletion *mComplete;
 	HTMLElement activeElement;
 	QValueList<KopeteMessage> messageList;

@@ -84,7 +84,7 @@ void AccountConfig::reopen()
 	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
 	{
 		lvi=new QListViewItem(m_view->mAccountList);
-		lvi->setText(0, i->protocol()->displayName() /*+ QString::fromLatin1(" ")*/);
+		lvi->setText(0, i->protocol()->displayName());
 		lvi->setPixmap(0, SmallIcon(i->protocol()->pluginIcon()));
 		lvi->setText(1, i->accountId());
 		m_accountItems.insert(lvi,i);

@@ -347,7 +347,7 @@ void AppearanceConfig::slotAddStyle()
 	(new QHBoxLayout( styleEditor->editFrame ))->setAutoAdd( true );
 	KTrader::OfferList offers = KTrader::self()->query( "KTextEditor/Document" );
 	KService::Ptr service = *offers.begin();
-	KLibFactory *factory = KLibLoader::self()->factory( service->library() );
+	KLibFactory *factory = KLibLoader::self()->factory( service->library().latin1() );
 	editDocument = static_cast<KTextEditor::Document *>( factory->create( styleEditor->editFrame, 0, "KTextEditor::Document" ) );
 	editDocument->createView( styleEditor->editFrame, 0 )->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding) );
 	KTextEditor::editInterface( editDocument )->setText(

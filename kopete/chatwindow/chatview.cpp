@@ -55,13 +55,14 @@
 
 
 ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
-	 : KDockMainWindow( 0L, name, 0L ), KopeteView( mgr )
+	 : KDockMainWindow( 0L, name, 0L ), KopeteView( mgr ), editpart(0)
 {
 	hide();
 
 	//Create the view dock widget (KHTML Part), and set it to no docking (lock it in place)
-	viewDock = createDockWidget( QString::fromLatin1( "viewDock" ), QPixmap(), 0L, QString::fromLatin1( "viewDock" ), QString::fromLatin1( " " ) );
-	chatView = new KHTMLPart( this, "view" );
+	viewDock = createDockWidget(QString::fromLatin1( "viewDock" ), QPixmap(),
+		0L,QString::fromLatin1("viewDock"), QString::fromLatin1(" "));
+	chatView = new KHTMLPart( viewDock, "chatView" );
 
 	//Security settings, we don't need this stuff
 	chatView->setJScriptEnabled( false ) ;
@@ -71,7 +72,8 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 
 
 	chatView->begin();
-	chatView->write( QString::fromLatin1( "<html><head><style>") + styleHTML() + QString::fromLatin1("</style></head><body></body></html>") );
+	chatView->write( QString::fromLatin1( "<html><head><style>") + styleHTML() +
+		QString::fromLatin1("</style></head><body></body></html>") );
 	chatView->end();
 
 	htmlWidget = chatView->view();
@@ -79,19 +81,22 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	viewDock->setDockSite(KDockWidget::DockBottom);
 	viewDock->setEnableDocking(KDockWidget::DockNone);
 
-	//Create the botttom dock widget, with the edit area, statusbar and send button
-	editDock = createDockWidget( QString::fromLatin1( "editDock" ), QPixmap(), 0L, QString::fromLatin1( "editDock" ), QString::fromLatin1( " " ) );
-
-	editpart = 0L;
+	//Create the bottom dock widget, with the edit area, statusbar and send button
+	editDock = createDockWidget( QString::fromLatin1( "editDock" ), QPixmap(),
+		0L, QString::fromLatin1("editDock"), QString::fromLatin1(" ") );
 
 	if(KopetePrefs::prefs()->richText())
 	{
-
 		KLibFactory *factory = KLibLoader::self()->factory("libkrichtexteditpart");
 		if ( factory )
-			editpart = dynamic_cast<KParts::Part*> (factory->create( editDock, "krichtexteditpart", "KParts::ReadWritePart" ) );
+		{
+			editpart = dynamic_cast<KParts::Part*> (
+				factory->create( editDock, "krichtexteditpart",
+					"KParts::ReadWritePart" ) );
+		}
 	}
 
+	// FIXME: This can't be a sane way to customize a KPart, find something better
 	if ( editpart )
 	{
 		QDomDocument doc = editpart->domDocument();
@@ -103,6 +108,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 
 		doc.documentElement().removeChild( doc.documentElement().childNodes().item(1) ); //Remove MainToolbar
 		doc.documentElement().removeChild( doc.documentElement().lastChild() ); // Remove Edit popup
+
 		m_edit = static_cast<KTextEdit*>( editpart->widget() );
 	}
 	else
@@ -127,27 +133,38 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 
 	// some signals and slots connections
 	connect( m_edit, SIGNAL( textChanged()), this, SLOT( slotTextChanged() ) );
-	connect( KopetePrefs::prefs(), SIGNAL(transparancyChanged()), this, SLOT( slotTransparancyChanged() ) );
-	connect( KopetePrefs::prefs(), SIGNAL(messageAppearanceChanged()), this, SLOT( slotRefreshNodes() ) );
-	connect( KopetePrefs::prefs(), SIGNAL(windowAppearanceChanged()), this, SLOT( slotRefreshView() ) );
+	connect( KopetePrefs::prefs(), SIGNAL(transparencyChanged()),
+		this, SLOT( slotTransparencyChanged() ) );
+	connect( KopetePrefs::prefs(), SIGNAL(messageAppearanceChanged()),
+		this, SLOT( slotRefreshNodes() ) );
+	connect( KopetePrefs::prefs(), SIGNAL(windowAppearanceChanged()),
+		this, SLOT( slotRefreshView() ) );
 
 	// Timers for typing notifications
-	m_typingRepeatTimer = new QTimer;
-	m_typingStopTimer   = new QTimer;
+	m_typingRepeatTimer = new QTimer(this, "m_typingRepeatTimer");
+	m_typingStopTimer   = new QTimer(this, "m_typingStopTimer");
 
 	m_remoteTypingMap.setAutoDelete( true );
 
-	connect( m_typingRepeatTimer, SIGNAL( timeout() ), SLOT( slotRepeatTimer() ) );
-	connect( m_typingStopTimer,   SIGNAL( timeout() ), SLOT( slotStopTimer() ) );
-	connect( mgr, SIGNAL( displayNameChanged() ), this, SLOT( slotChatDisplayNameChanged() ) );
-	connect( mgr, SIGNAL( contactAdded(const KopeteContact*, bool) ), this, SLOT( slotContactAdded(const KopeteContact*, bool) ) );
-	connect( mgr, SIGNAL( contactRemoved(const KopeteContact*, const QString&) ), this, SLOT( slotContactRemoved(const KopeteContact*, const QString&) ) );
+	connect( m_typingRepeatTimer, SIGNAL( timeout() ),
+		this, SLOT( slotRepeatTimer() ) );
+	connect( m_typingStopTimer,   SIGNAL( timeout() ),
+		this, SLOT( slotStopTimer() ) );
+
+	connect( mgr, SIGNAL( displayNameChanged() ),
+		this, SLOT( slotChatDisplayNameChanged() ) );
+	connect( mgr, SIGNAL( contactAdded(const KopeteContact*, bool) ),
+		this, SLOT( slotContactAdded(const KopeteContact*, bool) ) );
+	connect( mgr, SIGNAL( contactRemoved(const KopeteContact*, const QString&) ),
+		this, SLOT( slotContactRemoved(const KopeteContact*, const QString&) ) );
 
 	connect ( chatView->browserExtension(), SIGNAL( openURLRequestDelayed( const KURL &, const KParts::URLArgs & ) ),
-		SLOT( slotOpenURLRequest( const KURL &, const KParts::URLArgs & ) ) );
+		this, SLOT( slotOpenURLRequest( const KURL &, const KParts::URLArgs & ) ) );
 
-	connect( chatView, SIGNAL(popupMenu(const QString &, const QPoint &)), this, SLOT(slotRightClick(const QString &, const QPoint &)) );
-	connect( htmlWidget, SIGNAL(contentsMoving(int,int)), this, SLOT(slotScrollingTo(int,int)) );
+	connect( chatView, SIGNAL(popupMenu(const QString &, const QPoint &)),
+		this, SLOT(slotRightClick(const QString &, const QPoint &)) );
+	connect( htmlWidget, SIGNAL(contentsMoving(int,int)),
+		this, SLOT(slotScrollingTo(int,int)) );
 
 	htmlWidget->setFocusPolicy( NoFocus );
 	setFocusProxy( m_edit );
@@ -165,8 +182,8 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	messageId = 0;
 	bgChanged = false;
 
-	m_icon = SmallIcon( mgr->protocol()->pluginIcon() );
-	m_iconLight = KIconEffect().apply( m_icon, KIconEffect::ToGamma, 0.5, Qt::white, true );
+//	m_icon = SmallIcon( mgr->protocol()->pluginIcon() );
+//	m_iconLight = KIconEffect().apply( m_icon, KIconEffect::ToGamma, 0.5, Qt::white, true );
 	m_sendInProgress = false;
 	scrollPressed = false;
 	mComplete = new KCompletion();
@@ -189,7 +206,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	//Show chat members
 	createMembersList();
 
-	slotTransparancyChanged();
+	slotTransparencyChanged();
 }
 
 ChatView::~ChatView()
@@ -198,8 +215,6 @@ ChatView::~ChatView()
 
 	saveOptions();
 
-	delete m_typingRepeatTimer;
-	delete m_typingStopTimer;
 	delete mComplete;
 }
 
@@ -377,7 +392,7 @@ void ChatView::setMainWindow( KopeteChatWindow* parent )
 		disconnect(root, SIGNAL(backgroundUpdated(const QPixmap &)), this, SLOT(slotUpdateBackground(const QPixmap &)));
 		delete root;
 		root = 0L;
-		slotTransparancyChanged();
+		slotTransparencyChanged();
 	}
 }
 
@@ -1264,7 +1279,7 @@ void ChatView::slotStopTimer()
 	emit typing( false );
 }
 
-void ChatView::slotTransparancyChanged()
+void ChatView::slotTransparencyChanged()
 {
 	transparencyEnabled = KopetePrefs::prefs()->transparencyEnabled();
 	bgOverride = KopetePrefs::prefs()->bgOverride();
@@ -1325,11 +1340,14 @@ KopeteContactLVI::KopeteContactLVI( KopeteView *view, const KopeteContact *conta
 	m_view = view;
 
 	setText( 1, QString::fromLatin1( " " ) + m_contact->displayName() );
-	connect( m_contact, SIGNAL( displayNameChanged( const QString &, const QString & ) ), SLOT( slotDisplayNameChanged(const QString &, const QString &) ) );
+	connect( m_contact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
+		this, SLOT( slotDisplayNameChanged(const QString &, const QString &) ) );
 
 	connect( m_contact, SIGNAL( destroyed() ), this, SLOT( deleteLater() ) );
-	connect( m_contact, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ), SLOT( slotStatusChanged() ) );
-	connect( m_parentView, SIGNAL( executed( QListViewItem* ) ), this, SLOT( slotExecute( QListViewItem * ) ) );
+	connect( m_contact, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
+		this, SLOT( slotStatusChanged() ) );
+	connect( m_parentView, SIGNAL( executed( QListViewItem* ) ),
+		this, SLOT( slotExecute( QListViewItem * ) ) );
 
 	slotStatusChanged();
 }
