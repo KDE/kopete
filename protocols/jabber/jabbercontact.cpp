@@ -118,50 +118,6 @@ JabberContact::~JabberContact()
 }
 
 /**
- * Factory for a Kopete Email Window
- */
-KopeteMessageManager* JabberContact::msgManagerKEW()
-{
-	QPtrList<KopeteContact>contacts;
-
-	contacts.append(this);
-
-	if (!mMsgManagerKEW)
-	{
-		// get new instance
-		mMsgManagerKEW = kopeteapp->sessionFactory()->create(protocol->myself(), contacts, protocol, KopeteMessageManager::Email);
-
-		connect(mMsgManagerKEW, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager*)),
-				this, SLOT(slotSendMsgKEW(const KopeteMessage&)));
-	}
-
-	return mMsgManagerKEW;
-
-}
-
-/**
- * Factory for a Kopete Chat Window
- */
-KopeteMessageManager* JabberContact::msgManagerKCW()
-{
-	QPtrList<KopeteContact>contacts;
-
-	contacts.append(this);
-
-	if (!mMsgManagerKCW)
-	{
-		// get new instance
-		mMsgManagerKCW = kopeteapp->sessionFactory()->create(protocol->myself(), contacts, protocol, KopeteMessageManager::ChatWindow);
-
-		connect(mMsgManagerKCW, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager*)),
-				this, SLOT(slotSendMsgKCW(const KopeteMessage&)));
-	}
-
-	return mMsgManagerKCW;
-
-}
-
-/**
  * Create actions
  */
 void JabberContact::initActions()
@@ -543,7 +499,7 @@ void JabberContact::slotChatUser()
 
 	kdDebug() << "[JabberContact] Opening chat with user " << userId() << endl;
 
-	msgManagerKCW()->readMessages();
+	emit chatUser(this);
 
 }
 
@@ -552,8 +508,7 @@ void JabberContact::slotEmailUser()
 
 	kdDebug() << "[JabberContact] Opening message with user " << userId() << endl;
 
-	msgManagerKEW()->readMessages();
-	msgManagerKEW()->slotSendEnabled(true);
+	emit emailUser(this);
 
 }
 
@@ -568,89 +523,6 @@ void JabberContact::execute()
 	else
 		// user selected chat window as preference
 		slotChatUser();
-
-}
-
-void JabberContact::slotNewMessage(const Jabber::Message &message)
-{
-	KopeteContactPtrList contactList;
-
-	contactList.append(protocol->myself());
-
-	KopeteMessage newMessage(this, contactList, message.body(), message.subject(), KopeteMessage::Inbound, KopeteMessage::PlainText);
-
-	// depending on the incoming message type,
-	// append it to the correct widget
-	if (message.type() == "email")
-	{
-		msgManagerKEW()->appendMessage(newMessage);
-		msgManagerKEW()->slotSendEnabled(false);
-	}
-	else
-	{
-		msgManagerKCW()->appendMessage(newMessage);
-	}
-
-}
-
-void JabberContact::km2jm(const KopeteMessage &km, Jabber::Message &jm)
-{
-	JabberContact *to = dynamic_cast<JabberContact *>(km.to().first());
-	const JabberContact *from = dynamic_cast<const JabberContact *>(km.from());
-
-	// ugly hack, Jabber::Message does not have a setFrom() method
-	Jabber::Message jabMessage(Jabber::Jid(from->userId()));
-
-	// if a resource has been selected for this contact,
-	// send to this special resource - otherwise,
-	// just send to the server and let the server decide
-	if (activeResource->resource() != QString::null)
-		jabMessage.setTo(Jabber::Jid(QString("%1/%2").arg(to->userId(), 1).arg(activeResource->resource(), 2)));
-	else
-		jabMessage.setTo(Jabber::Jid(to->userId()));
-
-	//jabMessage.setFrom(from->userId();
-	jabMessage.setBody(km.plainBody());
-	jabMessage.setType("chat");
-	jabMessage.setSubject(km.subject());
-
-	jm = jabMessage;
-
-}
-
-void JabberContact::slotSendMsgKEW(const KopeteMessage& message)
-{
-	Jabber::Message jabMessage;
-
-	kdDebug() << "[JabberContact] slotSendMsgKEW called: " << message.body() << "." << endl;
-
-	km2jm(message, jabMessage);
-
-	jabMessage.setType("normal");
-
-	// pass message on to protocol backend
-	protocol->slotSendMessage(jabMessage);
-
-	// append message to window
-	msgManagerKEW()->appendMessage(message);
-
-}
-
-void JabberContact::slotSendMsgKCW(const KopeteMessage& message)
-{
-	Jabber::Message jabMessage;
-
-	kdDebug() << "[JabberContact] slotSendMsgKCW called: " << message.body() << "." << endl;
-
-    km2jm(message, jabMessage);
-
-	jabMessage.setType("chat");
-
-	// pass message on to protocol backend
-	protocol->slotSendMessage(jabMessage);
-
-	// append message to window
-	msgManagerKCW()->appendMessage(message);
 
 }
 

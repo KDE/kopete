@@ -159,22 +159,11 @@ class JabberContact : public KopeteContact
 		/*
 		 * *** New API implementation ***
 		 */
-		
-		/**
-		 * Add contact to a group
-		 */
-//		virtual void addToGroup( const QString &group );
 
-		/**
-		 * Remove contact from a group
-		 */
-//		virtual void removeFromGroup( const QString &group );
+	signals:
+		void chatUser(JabberContact *contact);
+		void emailUser(JabberContact *contact);
 		
-		/**
-		 * Move contact to a different group
-		 */
-//		virtual void moveToGroup( const QString &from, const QString &to );
-
 	public slots:
 
 		/**
@@ -182,11 +171,6 @@ class JabberContact : public KopeteContact
 		 */
 		virtual void slotDeleteContact();
 
-		/*
-		 * Handle incoming message
-		 */
-		void slotNewMessage(const Jabber::Message &message);
-		
 		/**
 		 * Retrieve a vCard for the contact
 		 */
@@ -278,13 +262,6 @@ class JabberContact : public KopeteContact
 		void slotSaveVCard(QDomElement &);
 		
 		/**
-		 * Append a message to the appropriate widgets
-		 * and send it.
-		 */
-		void slotSendMsgKEW(const KopeteMessage &message);
-		void slotSendMsgKCW(const KopeteMessage &message);
-
-		/**
 		 * Send type="subscribed" to contact
 		 */
 		void slotSendAuth();
@@ -303,34 +280,15 @@ class JabberContact : public KopeteContact
 		/**
 		 *  the contact is moved to another metaContact
 		 */
-	  void slotMoved(KopeteMetaContact* from);
-
-		
-	signals:
-		void msgReceived(QString, QString, QString, QString, QFont, QColor);
+		void slotMoved(KopeteMetaContact* from);
 
 	private:
-
-		/**
-		 * Factory for a Kopete Email Window
-		 */
-		KopeteMessageManager *msgManagerKEW();
-
-		/**
-		* Factory for a Kopete Chat Window
-		*/
-		KopeteMessageManager *msgManagerKCW();
 
 		/**
 		 * Initialize popup menu
 		 */
 		void initActions();
 
-		/**
-		 * Convert a KopeteMessage to a Jabber::Message
-		 */
-		void km2jm(const KopeteMessage &km, Jabber::Message &jm);
-		
 		/**
 		 * Protocol identity (user ID) that this
 		 * contact belongs to. Basically identifies

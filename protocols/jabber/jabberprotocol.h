@@ -35,6 +35,7 @@
 #include "statusbaricon.h"
 #include "jabberprefs.h"
 #include "jabbermap.h"
+#include "jabbermessagemanager.h"
 
 class JabberContact;
 class dlgJabberStatus;
@@ -213,7 +214,6 @@ public slots:
 	void slotRetrieveVCard (const Jid &);
 
 signals:
-//	void protocolUnloading();
 	void settingsChanged();
 
 private slots:
@@ -288,6 +288,21 @@ private slots:
 	void slotSendRaw();
 
 	/**
+	 * Slot for sending a chat message to a user
+	 */
+	void slotChatUser(JabberContact *contact);
+
+	/**
+	 * Slot for sending an email message to a user
+	 */
+	void slotEmailUser(JabberContact *contact);
+
+	/**
+	 * Slot to catch a dying message manager
+	 */
+	void slotMessageManagerDeleted(KopeteMessageManager *manager);
+	
+	/**
 	 * Create popup menu for right clicks on status icon
 	 */
 	void slotIconRightClicked(const QPoint&);
@@ -356,6 +371,7 @@ private slots:
 private:
 	typedef JabberMap<JabberContact*, KopeteMetaContact*> JabberMetaContactMap;
 	typedef QMap<QString, JabberContact*> JabberContactMap;
+	typedef QMap<QString, JabberMessageManager*> JabberMessageManagerMap;
 
 	/**
 	 * Singleton instance of our protocol class
@@ -373,6 +389,12 @@ private:
 	 * roster items in synch with the related JabberContacts
 	 */
 	JabberContactMap contactMap;
+
+	/**
+	 * This map associates message managers to
+	 * a contact's (or chatroom's) userhost
+	 */
+	JabberMessageManagerMap messageManagerMap;
 
 	QPixmap onlineIcon;
 	QPixmap offlineIcon;
@@ -441,6 +463,11 @@ private:
 	 * Note: this does not affect the Jabber roster at all
 	 */
 	void createAddContact(KopeteMetaContact *mc, const Jabber::RosterItem &item);
+
+	/**
+	 * Creates a new message manager
+	 */
+	JabberMessageManager *createMessageManager(JabberContact *to, KopeteMessageManager::WidgetType type);
 
 	/**
 	 * Sends a presence element with
