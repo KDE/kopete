@@ -70,7 +70,7 @@ Emoticon::Emoticon( const QString &filename, const QString &matchText )
 	//                             HTML tag.
 	m_regExp = QRegExp( QString::fromLatin1( "(?![^<]+>)(?!(https?://|mailto:))(%1)%2" )
 	                  .arg( QRegExp::escape( m_matchTextEscaped ), endLookahead ) );
-	m_replacement = QString::fromLatin1( "<img align=\"center\" width=\"%1\" height=\"%2\" src=\"%3\" title=\"%4\"" )
+	m_replacement = QString::fromLatin1( "<img align=\"center\" width=\"%1\" height=\"%2\" src=\"%3\" title=\"%4\"/>" )
 		.arg( QString::number( width ), QString::number( height ), m_filename, m_matchTextEscaped );
 	
 	// FIXME: It would seem to me a more correct way of doing things
