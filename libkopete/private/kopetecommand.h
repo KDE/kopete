@@ -21,7 +21,6 @@
 #include <qobject.h>
 
 class KopeteMessageManager;
-class KopetePlugin;
 
 class KopeteCommand : public QObject
 {
@@ -39,7 +38,7 @@ class KopeteCommand : public QObject
 		 * @param help An optional help string to be shown when the user uses
 		 *   /help <command>
 		 */
-		 KopeteCommand( KopetePlugin *parent, const QString &command, const char* handlerSlot,
+		 KopeteCommand( QObject *parent, const QString &command, const char* handlerSlot,
 		 	const QString &help );
 
 		/**
@@ -68,7 +67,6 @@ class KopeteCommand : public QObject
 	private:
 		QString m_command;
 		QString m_help;
-		KopetePlugin *m_plugin;
 };
 
 #endif

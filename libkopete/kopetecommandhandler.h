@@ -21,7 +21,6 @@
 #include <qdict.h>
 #include "kopetemessage.h"
 
-class KopetePlugin;
 class KopeteMessageManager;
 class KopeteCommand;
 class KProcess;
@@ -46,8 +45,7 @@ class KopeteCommandHandler : public QObject
 		 * if the first plugin is unloaded, the next handler in the sequence
 		 * will handle the command. However, there are certain commands which
 		 * are reserved (internally handled by the KopeteCommandHandler). These
-		 * commands can also be overridden by registering a new suplicate command.
-		 * Reserved commands can be discovered using @ref reserved() if needed.
+		 * commands can also be overridden by registering a new duplicate command.
 		 *
 		 * @param parent The plugin who owns this command
 		 * @param command The command we want to handle, not including the '/'
@@ -57,7 +55,7 @@ class KopeteCommandHandler : public QObject
 		 * @param help An optional help string to be shown when the user uses
 		 *   /help <command>
 		 */
-		void registerCommand( KopetePlugin *parent, const QString &command, const char* handlerSlot,
+		void registerCommand( QObject *parent, const QString &command, const char* handlerSlot,
 			const QString &help = QString::null );
 
 		/**
@@ -69,7 +67,7 @@ class KopeteCommandHandler : public QObject
 		 * @param parent The plugin who owns this command
 		 * @param command The command to unload
 		 */
-		void unregisterCommand( KopetePlugin *parent, const QString &command );
+		void unregisterCommand( QObject *parent, const QString &command );
 
 		/**
 		 * Processes a message to see if any commands should be handled
@@ -94,30 +92,30 @@ class KopeteCommandHandler : public QObject
 		 */
 		bool commandHandled( const QString &command );
 
-		/**
-		 * Returns the list of reserved (internal) commands.
-		 *
-		 * @return A list of commands reserved for internal Kopete use
-		 */
-		const QStringList reserved() const;
-
 	private slots:
 		void slotPluginLoaded( KopetePlugin * );
 		void slotPluginDestroyed( QObject * );
 		void slotExecReturnedData(KProcess *proc, char *buff, int bufflen );
 		void slotExecFinished(KProcess *proc);
 
-	private:
-		/**
-		 * Function to run a reserved (internal) command
-		 */
-		void reservedCommand( const QString &command, const QString &args, KopeteMessageManager *manager );
+		void slotHelpCommand( const QString & args, KopeteMessageManager *manager );
+		void slotClearCommand( const QString & args, KopeteMessageManager *manager );
+		void slotPartCommand( const QString & args, KopeteMessageManager *manager );
+		void slotCloseCommand( const QString & args, KopeteMessageManager *manager );
+		void slotMeCommand( const QString & args, KopeteMessageManager *manager );
+		void slotExecCommand( const QString & args, KopeteMessageManager *manager );
 
+	private:
 		/**
 		 * Helper function. Returns all the commands that can be used by a KMM of this protocol
 		 * (all non-protocol commands, plus this protocols commands)
 		 */
 		CommandList commands( KopeteProtocol * );
+
+		/**
+		 * Helper function for commands()
+		 */
+		void addCommands( CommandList &from, CommandList &to );
 
 		KopeteCommandHandler();
 		~KopeteCommandHandler();

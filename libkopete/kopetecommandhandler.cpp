@@ -33,13 +33,12 @@
 
 #include "kopetecommandhandler.h"
 
-typedef QMap<KopetePlugin*, CommandList> PluginCommandMap;
+typedef QMap<QObject*, CommandList> PluginCommandMap;
 typedef QMap<QString,QString> CommandMap;
 typedef QPair<KopeteMessageManager*, KopeteMessage::MessageDirection> ManagerPair;
 
 struct CommandHandlerPrivate
 {
-	CommandMap reservedCommands;
 	PluginCommandMap pluginCommands;
 	KopeteCommandHandler *s_handler;
 	QMap<KProcess*,ManagerPair> processMap;
@@ -51,17 +50,26 @@ KopeteCommandHandler::KopeteCommandHandler() : QObject( qApp )
 {
 	p->s_handler = this;
 
-	p->reservedCommands.insert( QString::fromLatin1("help"),
+	CommandList mCommands(63, false);
+	mCommands.setAutoDelete( true );
+	p->pluginCommands.insert( this, mCommands );
+
+	registerCommand( this, QString::fromLatin1("help"), SLOT( slotHelpCommand( const QString &, KopeteMessageManager * ) ),
 		i18n("USAGE: /help [<command>] - Used to list avaialble commands, or show help for a specified command.") );
-	p->reservedCommands.insert( QString::fromLatin1("close"),
+
+	registerCommand( this, QString::fromLatin1("close"), SLOT( slotCloseCommand( const QString &, KopeteMessageManager * ) ),
 		i18n("USAGE: /close - Closes the current view.") );
-	p->reservedCommands.insert( QString::fromLatin1("part"),
+
+	registerCommand( this, QString::fromLatin1("part"), SLOT( slotPartCommand( const QString &, KopeteMessageManager * ) ),
 		i18n("USAGE: /part - Closes the current view.") );
-	p->reservedCommands.insert( QString::fromLatin1("clear"),
+
+	registerCommand( this, QString::fromLatin1("clear"), SLOT( slotClearCommand( const QString &, KopeteMessageManager * ) ),
 		i18n("USAGE: /clear - Clears the active view's chat buffer.") );
-	p->reservedCommands.insert( QString::fromLatin1("me"),
+
+	registerCommand( this, QString::fromLatin1("me"), SLOT( slotMeCommand( const QString &, KopeteMessageManager * ) ),
 		i18n("USAGE: /me <text> - Formats message as in \"<nickname> went to the store\".") );
-	p->reservedCommands.insert( QString::fromLatin1("exec"),
+
+	registerCommand( this, QString::fromLatin1("exec"), SLOT( slotExecCommand( const QString &, KopeteMessageManager * ) ),
 		i18n("USAGE: /exec [-o] <command> - Executes the specified command and displays output in the chat buffer. If"
 		" -o is specified, the results are output to all members of the chat.") );
 
@@ -84,7 +92,7 @@ KopeteCommandHandler *KopeteCommandHandler::commandHandler()
 	return p->s_handler;
 }
 
-void KopeteCommandHandler::registerCommand( KopetePlugin *parent, const QString &command, const char* handlerSlot,
+void KopeteCommandHandler::registerCommand( QObject *parent, const QString &command, const char* handlerSlot,
 	const QString &help )
 {
 	QString lowerCommand = command.lower();
@@ -93,7 +101,7 @@ void KopeteCommandHandler::registerCommand( KopetePlugin *parent, const QString 
 	p->pluginCommands[ parent ].insert( lowerCommand, mCommand );
 }
 
-void KopeteCommandHandler::unregisterCommand( KopetePlugin *parent, const QString &command )
+void KopeteCommandHandler::unregisterCommand( QObject *parent, const QString &command )
 {
 	if( p->pluginCommands[ parent ].find(command) )
 		p->pluginCommands[ parent ].remove( command );
@@ -119,75 +127,54 @@ bool KopeteCommandHandler::processMessage( KopeteMessage &msg, KopeteMessageMana
 		}
 	}
 
-	//No plugin specified command. See if it is a reserved command
-	if( p->reservedCommands.contains( command ) )
-	{
-		kdDebug(14010) << k_funcinfo << "Reserved Command" << endl;
-		//Reserved command. Process it internally.
-		reservedCommand( command, args, manager );
-		return true;
-	}
-
 	return false;
 }
 
-void KopeteCommandHandler::reservedCommand( const QString &command, const QString &args, KopeteMessageManager *manager )
+void KopeteCommandHandler::slotHelpCommand( const QString &args, KopeteMessageManager *manager )
 {
-	QStringList argsList = parseArguments( args );
-	if( command == QString::fromLatin1("help") )
+	QString output;
+	if( args.isEmpty() )
 	{
-		QString output;
-		if( argsList.isEmpty() )
-		{
-			int commandCount = 0;
-			output = i18n("Available Commands:\n");
-			for( CommandMap::Iterator it = p->reservedCommands.begin(); it != p->reservedCommands.end(); ++it )
-			{
-				output.append( it.key().upper() + '\t' );
-				if( commandCount++ == 5 )
-				{
-					commandCount = 0;
-					output.append( '\n' );
-				}
-			}
+		int commandCount = 0;
+		output = i18n("Available Commands:\n");
 
-			CommandList mCommands = commands( manager->user()->protocol() );
-			QDictIterator<KopeteCommand> it( mCommands );
-			for( ; it.current(); ++it )
-			{
-				output.append( it.current()->command().upper() + '\t' );
-				if( commandCount++ == 5 )
-				{
-					commandCount = 0;
-					output.append( '\n' );
-				}
-			}
-			output.append( i18n("\nType /help <command> for more information.") );
-		}
-		else
+		CommandList mCommands = commands( manager->user()->protocol() );
+		QDictIterator<KopeteCommand> it( mCommands );
+		for( ; it.current(); ++it )
 		{
-			QString command = argsList.front().lower();
-			KopeteCommand *c = commands( manager->user()->protocol() )[ command ];
-			if( c && !c->help().isNull() )
-				output = c->help();
-			else if( p->reservedCommands.contains( command ) )
-				output = p->reservedCommands[ command ];
-			else
-				output = i18n("%1 has no help available.").arg( command );
+			output.append( it.current()->command().upper() + '\t' );
+			if( commandCount++ == 5 )
+			{
+				commandCount = 0;
+				output.append( '\n' );
+			}
 		}
-
-		KopeteMessage msg(manager->user(), manager->members(), output, KopeteMessage::Internal, KopeteMessage::PlainText);
-		manager->appendMessage(msg);
+		output.append( i18n("\nType /help <command> for more information.") );
 	}
-	else if( command == QString::fromLatin1("exec") )
+	else
 	{
-		kdDebug(14010) << k_funcinfo << "Execute Command:" << args << endl;
+		QString command = parseArguments( args ).front().lower();
+		KopeteCommand *c = commands( manager->user()->protocol() )[ command ];
+		if( c && !c->help().isNull() )
+			output = c->help();
+		else
+			output = i18n("%1 has no help available.").arg( command );
+	}
 
+	KopeteMessage msg(manager->user(), manager->members(), output, KopeteMessage::Internal, KopeteMessage::PlainText);
+	manager->appendMessage(msg);
+}
+
+void KopeteCommandHandler::slotExecCommand( const QString &args, KopeteMessageManager *manager )
+{
+	if( !args.isEmpty() )
+	{
+		QStringList argsList = parseArguments( args );
 		#if KDE_VERSION > 0x030190
-		KProcess *proc = new KProcess(manager);
+			KProcess *proc = new KProcess(manager);
 		#else
-		KProcess *proc = new KProcess();
-		connect( manager , SIGNAL (destroyed() ) , proc , SLOT(deleteLater()));
+			KProcess *proc = new KProcess();
+			connect( manager , SIGNAL (destroyed() ) , proc , SLOT(deleteLater()));
 		#endif
 
 		*proc << QString::fromLatin1("sh") << QString::fromLatin1("-c");
@@ -207,16 +194,28 @@ void KopeteCommandHandler::reservedCommand( const QString &command, const QStrin
 		connect(proc, SIGNAL(receivedStderr(KProcess *, char *, int)), this, SLOT(slotExecReturnedData(KProcess *, char *, int)));
 		proc->start( KProcess::NotifyOnExit, KProcess::AllOutput );
 	}
-	else if( command == QString::fromLatin1("clear") )
-		manager->view()->clear();
-	else if( command == QString::fromLatin1("part") || command == QString::fromLatin1("close") )
-		manager->view()->closeView();
-	else if( command == QString::fromLatin1("me") )
-	{
-		QString output = manager->user()->displayName() + QChar(' ') + args;
-		KopeteMessage msg(manager->user(), manager->members(), output, KopeteMessage::Outbound, KopeteMessage::PlainText);
-		manager->sendMessage(msg);
-	}
+}
+
+void KopeteCommandHandler::slotClearCommand( const QString &, KopeteMessageManager *manager )
+{
+	manager->view()->clear();
+}
+
+void KopeteCommandHandler::slotPartCommand( const QString &, KopeteMessageManager *manager )
+{
+	manager->view()->closeView();
+}
+
+void KopeteCommandHandler::slotCloseCommand( const QString &, KopeteMessageManager *manager )
+{
+	manager->view()->closeView();
+}
+
+void KopeteCommandHandler::slotMeCommand( const QString &args, KopeteMessageManager *manager )
+{
+	QString output = manager->user()->displayName() + QChar(' ') + args;
+	KopeteMessage msg(manager->user(), manager->members(), output, KopeteMessage::Outbound, KopeteMessage::PlainText);
+	manager->sendMessage(msg);
 }
 
 void KopeteCommandHandler::slotExecReturnedData(KProcess *proc, char *buff, int bufflen )
@@ -268,26 +267,37 @@ bool KopeteCommandHandler::commandHandled( const QString &command )
 		}
 	}
 
-	if( p->reservedCommands.contains( command ) )
-		return true;
-
 	return false;
 }
 
 CommandList KopeteCommandHandler::commands( KopeteProtocol *protocol )
 {
 	CommandList commandList;
+
+	//Add the commands for this protocol *first*
+	addCommands( p->pluginCommands[protocol], commandList );
+
+	//Add plugin commands
 	for( PluginCommandMap::Iterator it = p->pluginCommands.begin(); it != p->pluginCommands.end(); ++it )
 	{
-		if( !it.key()->inherits("KopeteProtocol") || it.key() == protocol )
-		{
-			QDictIterator<KopeteCommand> itDict( it.data() );
-			for( ; itDict.current(); ++itDict )
-				commandList.insert( itDict.currentKey(), itDict.current() );
-		}
+		if( !it.key()->inherits("KopeteProtocol") && it.key()->inherits("KopetePlugin") )
+			addCommands( it.data(), commandList );
 	}
 
+	//Add the internal commands *last*
+	addCommands( p->pluginCommands[this], commandList );
+
 	return commandList;
+}
+
+void KopeteCommandHandler::addCommands( CommandList &from, CommandList &to )
+{
+	QDictIterator<KopeteCommand> itDict( from );
+	for( ; itDict.current(); ++itDict )
+	{
+		if( !to[ itDict.currentKey() ] )
+			to.insert( itDict.currentKey(), itDict.current() );
+	}
 }
 
 void KopeteCommandHandler::slotPluginLoaded( KopetePlugin *plugin )
@@ -305,11 +315,6 @@ void KopeteCommandHandler::slotPluginLoaded( KopetePlugin *plugin )
 void KopeteCommandHandler::slotPluginDestroyed( QObject *plugin )
 {
 	p->pluginCommands.remove( static_cast<KopetePlugin*>(plugin)  );
-}
-
-const QStringList KopeteCommandHandler::reserved() const
-{
-	return QStringList( p->reservedCommands.keys() );
 }
 
 #include "kopetecommandhandler.moc"
