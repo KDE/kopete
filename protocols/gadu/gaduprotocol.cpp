@@ -46,7 +46,7 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
     session_ = new GaduSession( this, "GaduSession" );
 
     KGlobal::config()->setGroup("Gadu");
-    userUin_ = KGlobal::config()->readEntry("Uin", "").toUInt();
+    userUin_ = KGlobal::config()->readEntry("Uin", "0").toUInt();
     password_= KGlobal::config()->readEntry("Password", "");
     nick_    = KGlobal::config()->readEntry("Nick", "");
     myself_ = new GaduContact( this->id(), userUin_, nick_,
@@ -234,7 +234,7 @@ GaduProtocol::addContact( const QString& uin, const QString& nick,
 
     if( !c ) {
         uin_t uinNumber = uin.toUInt();
-        QString uins = parent->addressBookField( this, "messaging/gadu" )
+        QString uins = m->addressBookField( this, "messaging/gadu" )
                        + "\n" + uin;
         m->setAddressBookField( this, "messaging/gadu", uins );
         GaduContact *contact = new GaduContact( this->id(), uinNumber,

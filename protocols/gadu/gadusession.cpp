@@ -42,10 +42,10 @@ GaduSession::login( const struct gg_login_params& p )
 {
     if ( !isConnected() ) {
 	if ( !(session_ = gg_login( &p ))) {
-		emit connectionFailed( 0L );
-		gg_free_session( session_ );
-		session_ = 0;
-                return;
+            emit connectionFailed( 0L );
+            gg_free_session( session_ );
+            session_ = 0;
+            return;
 	}
 	read_ = new QSocketNotifier( session_->fd, QSocketNotifier::Read, this );
 	read_->setEnabled( false );
@@ -57,10 +57,10 @@ GaduSession::login( const struct gg_login_params& p )
 	QObject::connect( write_, SIGNAL(activated(int)),
 			  SLOT(checkDescriptor()) );
 	if( session_->check & GG_CHECK_READ ) {
-		read_->setEnabled( true );
+            read_->setEnabled( true );
 	}
 	if( session_->check & GG_CHECK_WRITE ) {
-		write_->setEnabled( true );
+            write_->setEnabled( true );
 	}
     }
 }
@@ -79,8 +79,8 @@ GaduSession::enableNotifiers( int checkWhat )
 void
 GaduSession::disableNotifiers()
 {
-	read_->setEnabled( false );
-	write_->setEnabled( false );
+    read_->setEnabled( false );
+    write_->setEnabled( false );
 }
 
 void
@@ -239,7 +239,6 @@ GaduSession::checkDescriptor()
         emit disconnect();
         return;
     }
-    kdDebug()<<"HERE"<<endl;
     switch( e->type ) {
     case GG_EVENT_MSG:
         emit messageReceived( e );
