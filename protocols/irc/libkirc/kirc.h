@@ -203,10 +203,12 @@ signals:
 	void incomingWhoWasUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
 	void incomingWhoIsServer(const QString &nickname, const QString &server, const QString &serverInfo);
 	void incomingWhoIsOperator(const QString &nickname);
+	void incomingWhoIsIdentified(const QString &nickname);
 	void incomingWhoIsChannels(const QString &nickname, const QString &channel);
 	void incomingWhoIsIdle(const QString &nickname, unsigned long seconds); /* 317 */
 	void incomingSignOnTime(const QString &nickname, unsigned long seconds); /* 317 */
 	void incomingEndOfWhois(const QString &nickname);
+	void incomingEndOfWhoWas(const QString &nickname);
 
 	void incomingWhoReply( const QString &nick, const QString &channel, const QString &user, const QString &host,
 		const QString &server,bool away, const QString &flag, uint hops, const QString &realName );

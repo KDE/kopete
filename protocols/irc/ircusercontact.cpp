@@ -48,6 +48,7 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 	actionCtcpMenu = 0L;
 
 	mInfo.isOperator = false;
+	mInfo.isIdentified = false;
 	mInfo.idle = 0;
 	mInfo.hops = 0;
 	mInfo.away = false;
@@ -240,6 +241,11 @@ void IRCUserContact::newWhoIsOperator()
 	mInfo.isOperator = true;
 }
 
+void IRCUserContact::newWhoIsIdentified()
+{
+	mInfo.isIdentified = true;
+}
+
 void IRCUserContact::newWhoIsChannels(const QString &channel)
 {
 	mInfo.channels.append( channel );
@@ -258,6 +264,9 @@ void IRCUserContact::whoIsComplete()
 			.arg(mInfo.hostName)
 			.arg(mInfo.realName);
 
+		if( mInfo.isIdentified )
+			msg += i18n("%1 is authenticated with NICKSERV\n").arg(m_nickName);
+
 		if( mInfo.isOperator )
 			msg += i18n("%1 is an IRC operator\n").arg(m_nickName);
 
@@ -272,6 +281,28 @@ void IRCUserContact::whoIsComplete()
 		msg += i18n("idle: %2\n").arg( idleTime.isEmpty() ? QString::number(0) : idleTime );
 
 		//End
+		m_account->appendMessage(msg, IRCAccount::InfoReply );
+		m_protocol->setCommandInProgress(false);
+	}
+}
+
+void IRCUserContact::whoWasComplete()
+{
+	if( m_protocol->commandInProgress() )
+	{
+		//User info
+		QString msg = i18n("%1 was (%2@%3): %4\n")
+			.arg(m_nickName)
+			.arg(mInfo.userName)
+			.arg(mInfo.hostName)
+			.arg(mInfo.realName);
+
+		msg += i18n("Last Online: %1\n").arg(
+			KGlobal::locale()->formatDateTime(
+				property( QString::fromLatin1("lastOnline") ).value().toDateTime()
+			)
+		);
+
 		m_account->appendMessage(msg, IRCAccount::InfoReply );
 		m_protocol->setCommandInProgress(false);
 	}
@@ -317,7 +348,6 @@ void IRCUserContact::newWhoReply( const QString &channel, const QString &user, c
 		m_protocol->setCommandInProgress(false);
 	}
 }
-
 
 QPtrList<KAction> *IRCUserContact::customContextMenuActions( KopeteMessageManager *manager )
 {
@@ -388,7 +418,7 @@ QPtrList<KAction> *IRCUserContact::customContextMenuActions( KopeteMessageManage
 	return 0L;
 }
 
-void IRCUserContact::slotIncomingModeChange( const QString &channel, const QString &nick, const QString &mode )
+void IRCUserContact::slotIncomingModeChange( const QString &channel, const QString &, const QString &mode )
 {
 	IRCChannelContact *chan = m_account->contactManager()->findChannel( channel );
 	if( chan->locateUser( m_nickName ) )

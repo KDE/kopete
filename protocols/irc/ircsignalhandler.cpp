@@ -86,7 +86,11 @@ IRCSignalHandler::IRCSignalHandler( IRCContactManager *m ) : QObject(m), manager
 
 	map<IRCUserContact>( m, SIGNAL(incomingWhoIsOperator( const QString & )), &IRCUserContact::newWhoIsOperator );
 
+	map<IRCUserContact>( m, SIGNAL(incomingWhoIsIdentified( const QString & )), &IRCUserContact::newWhoIsIdentified );
+
 	map<IRCUserContact>( m, SIGNAL(incomingEndOfWhois( const QString & )), &IRCUserContact::whoIsComplete );
+
+	map<IRCUserContact>( m, SIGNAL(incomingEndOfWhoWas( const QString & )), &IRCUserContact::whoWasComplete );
 
 	mapSingle<IRCUserContact>( m, SIGNAL(incomingUserIsAway( const QString &, const QString & )),
 		&IRCUserContact::incomingUserIsAway );
@@ -130,7 +134,7 @@ void IRCSignalHandler::slotTopicUser(const QString &chan, const QString &user,co
 
 void IRCSignalHandler::slotNewWhoIsIdle(const QString &nick, unsigned long val )
 {
-	IRCUserContact *c = manager->existUser( nick );
+	IRCUserContact *c = manager->findUser( nick );
 	if( c )
 		c->newWhoIsIdle( val );
 }
@@ -138,7 +142,7 @@ void IRCSignalHandler::slotNewWhoIsIdle(const QString &nick, unsigned long val )
 void IRCSignalHandler::slotNewWhoReply(const QString &nick, const QString &arg1, const QString &arg2,
 	const QString &arg3, const QString &arg4, bool arg5, const QString &arg6, uint arg7, const QString &arg8 )
 {
-	IRCUserContact *c = manager->existUser( nick );
+	IRCUserContact *c = manager->findUser( nick );
 	if( c )
 		c->newWhoReply( arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 );
 }

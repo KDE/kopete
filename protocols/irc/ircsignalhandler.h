@@ -163,7 +163,7 @@ class IRCSignalMapping : public IRCSignalMappingT
 
 		void exec( const QString &id )
 		{
-			TClass *c = (TClass*)manager->existContact( id );
+			TClass *c = (TClass*)manager->findContact( id );
 			if( c )
 			{
 				void (TClass::*tmp)() = (void (TClass::*)())method;
@@ -185,7 +185,7 @@ class IRCSignalMappingSingle : public IRCSignalMappingSingleT
 
 		void exec( const QString &id, const QString &arg )
 		{
-			TClass *c = (TClass*)manager->existContact( id );
+			TClass *c = (TClass*)manager->findContact( id );
 			if( c )
 			{
 				void (TClass::*tmp)(const QString&) = (void (TClass::*)(const QString&))method;
@@ -207,7 +207,7 @@ class IRCSignalMappingDouble : public IRCSignalMappingDoubleT
 
 		void exec( const QString &id,const QString &arg, const QString &arg2 )
 		{
-			TClass *c = (TClass*)manager->existContact( id );
+			TClass *c = (TClass*)manager->findContact( id );
 			if( c )
 			{
 				void (TClass::*tmp)(const QString&,const QString&) =
@@ -231,7 +231,7 @@ class IRCSignalMappingTriple : public IRCSignalMappingTripleT
 
 		void exec( const QString &id,const QString&arg, const QString &arg2, const QString &arg3 )
 		{
-			TClass *c = (TClass*)manager->existContact( id );
+			TClass *c = (TClass*)manager->findContact( id );
 			if( c )
 			{
 				void (TClass::*tmp)(const QString&,const QString&,const QString&) =

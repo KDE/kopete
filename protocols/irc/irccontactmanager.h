@@ -60,6 +60,7 @@ class IRCContactManager
 		IRCUserContact *findUser(const QString &nick, KopeteMetaContact *m=0);
 		IRCUserContact *existUser(const QString &nick) const;
 
+		IRCContact *findContact(const QString &nick, KopeteMetaContact *m=0);
 		IRCContact *existContact( const QString &id ) const;
 
 	public slots:

@@ -43,6 +43,7 @@ struct IRCUserInfo
 	QStringList channels;
 	unsigned long idle;
 	bool isOperator;
+	bool isIdentified;
 	bool away;
 	uint hops;
 	QDateTime lastOnline;
@@ -77,9 +78,11 @@ public:
 	void newWhoIsUser(const QString &username, const QString &hostname, const QString &realname);
 	void newWhoIsServer(const QString &server, const QString &serverInfo);
 	void newWhoIsOperator();
+	void newWhoIsIdentified();
 	void newWhoIsIdle(unsigned long seconds);
 	void newWhoIsChannels(const QString &channel);
 	void whoIsComplete();
+	void whoWasComplete();
 	void newWhoReply( const QString &channel, const QString &user, const QString &host,
 		const QString &server, bool away, const QString &flags, uint hops,
 		const QString &realName );

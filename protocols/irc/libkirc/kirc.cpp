@@ -174,6 +174,9 @@ KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 
 	addIrcMethod("319",	&KIRC::numericReply_319,	2,	2);
 
+	/* Indicates that this user is identified with NICSERV */
+	addIrcMethod("320",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWhoIsIdentified, 2, 2));
+
 	/* RFC1459: "<channel> :Users  Name" ("Channel :Users  Name")
 	 * RFC2812: Obsolete. Not used. */
 	addIrcMethod("321",	new KIRCMethodFunctor_Ignore());
@@ -201,6 +204,9 @@ KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 	/* Gives a signal to indicate that the NAMES list has ended for a certain channel in the form of:
 	 * "<channel> :End of NAMES list" */
 	addIrcMethod("366",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingEndOfNames, 2, 2));
+
+	/* End of WHOWAS Request */
+	addIrcMethod("369",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingEndOfWhoWas, 2, 2));
 
 	/* Part of the MOTD.
 	 * ":- <text>" */

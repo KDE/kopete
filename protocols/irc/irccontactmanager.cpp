@@ -194,6 +194,14 @@ IRCUserContact *IRCContactManager::existUser( const QString &user ) const
 	return m_users[ user ];
 }
 
+IRCContact *IRCContactManager::findContact( const QString &id, KopeteMetaContact *m )
+{
+	if( KIRC::isChannel(id) )
+		return findChannel( id, m );
+	else
+		return findUser( id, m );
+}
+
 IRCContact *IRCContactManager::existContact( const QString &id ) const
 {
 	if( KIRC::isChannel(id) )
