@@ -94,7 +94,7 @@ int event( int winId, const QString& message, const QString& text, KopeteMetaCon
 			 const QString &sound, const QString &file, const QString &commandline,
 			 const KGuiItem &action = KGuiItem() , QObject *receiver=0L, const char *slot=0L);
 
-	void performCustomNotifications( int winId, KopeteNotifyDataObject *dataObj, const QString &message, bool& suppress);
+	void performCustomNotifications( int winId, KopeteMetaContact * mc, const QString &message, bool& suppress);
 }
 
 #endif
