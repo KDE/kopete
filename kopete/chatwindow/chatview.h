@@ -202,6 +202,16 @@ public:
 
 	void setStylesheet( const QString &style  );
 
+	/**
+	 * Can we send messages now?
+	 */
+	bool canSend();
+
+	/**
+	 * Is the user typing right now?
+	 */
+	bool isTyping();
+
 public slots:
 	/**
 	 * Initiates a cut action on the edit area of the chat view
@@ -317,6 +327,11 @@ signals:
 
 	void updateStatusIcon( const ChatView * );
 
+	/**
+	 * Our send-button-enabled flag has changed
+	 */
+	void canSendChanged();
+
 private slots:
 	void slotOpenURLRequest( const KURL &url, const KParts::URLArgs &args );
 	void slotContactsContextMenu( KListView*, QListViewItem *item, const QPoint &point );
@@ -394,7 +409,6 @@ private:
 	QPtrDict<QTimer> m_remoteTypingMap;
 	KHTMLPart *chatView;
 	KHTMLView *htmlWidget;
-	bool isTyping;
 	bool scrollPressed;
 	MembersListPolicy membersStatus;
 	QStringList historyList;

@@ -521,8 +521,11 @@ void KopeteChatWindow::slotStopAnimation( ChatView* view )
 		anim->setPixmap( normalIcon );
 }
 
-void KopeteChatWindow::setSendEnabled( bool enabled )
+void KopeteChatWindow::slotUpdateSendEnabled()
 {
+	if ( !m_activeView ) return;
+
+	bool enabled = m_activeView->canSend();
 	chatSend->setEnabled( enabled );
 	if(m_button_send)
 		m_button_send->setEnabled( enabled );
@@ -871,7 +874,11 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 		return;
 
 	if(m_activeView)
+	{
+		disconnect( m_activeView, SIGNAL( canSendChanged() ), this, SLOT( slotUpdateSendEnabled() ) );
 		guiFactory()->removeClient(m_activeView->msgManager());
+	}
+
 	guiFactory()->addClient(view->msgManager());
 	createGUI( view->part() );
 
@@ -882,6 +889,8 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 
 	if( !chatViewList.contains( view ) )
 		attachChatView( view );
+
+	connect( m_activeView, SIGNAL( canSendChanged() ), this, SLOT( slotUpdateSendEnabled() ) );
 
 	//Tell it it is active
 	m_activeView->setActive( true );
@@ -914,6 +923,8 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	setCaption( m_activeView->caption() );
 	setStatus( m_activeView->status() );
 	m_activeView->setFocus();
+
+	slotUpdateSendEnabled();
 }
 
 void KopeteChatWindow::slotUpdateCaptionIcons( const ChatView *view )
@@ -956,7 +967,7 @@ void KopeteChatWindow::slotPrepareDetachMenu(void)
 
 void KopeteChatWindow::slotSendMessage()
 {
-	if ( m_activeView )
+	if ( m_activeView && m_activeView->canSend() )
 	{
 		anim->setMovie( animIcon );
 		animIcon.unpause();

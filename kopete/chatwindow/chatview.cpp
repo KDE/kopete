@@ -888,7 +888,39 @@ void ChatView::slotMarkMessageRead()
 	unreadMessageFrom = QString::null;
 }
 
-void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &newStatus, const KopeteOnlineStatus & /* oldstatus */)
+bool ChatView::canSend()
+{
+	if ( !msgManager() ) return false;
+
+	KopeteContactPtrList members = msgManager()->members();
+
+	// can't send if there's nothing *to* send...
+	if ( !isTyping() ) return false;
+
+	// if we can't send offline, make sure we have an online contact...
+	if ( !msgManager()->protocol()->canSendOffline() )
+	{
+		bool onlineContactFound = false;
+
+		//TODO: does this perform badly in large / busy IRC channels?
+		for( KopeteContact *contact = members.first(); contact; contact = members.next() )
+		{
+			if ( contact->isReachable() )
+			{
+				onlineContactFound = true;
+				break;
+			}
+		}
+
+		// no online contact found and can't send offline? can't send.
+		if ( !onlineContactFound )
+			return false;
+	}
+
+	return true;
+}
+
+void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &newStatus, const KopeteOnlineStatus &oldStatus )
 {
 	if ( contact && KopetePrefs::prefs()->showEvents() )
 	{
@@ -896,17 +928,7 @@ void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnl
 		{
 			// Separate notification for the 'self' contact
 			if ( newStatus.status() != KopeteOnlineStatus::Connecting )
-			{
-				if ( mainWindow() )
-				{
-					if ( newStatus.status() == KopeteOnlineStatus::Offline )
-						mainWindow()->setSendEnabled( false );
-					else
-						mainWindow()->setSendEnabled( true );
-				}
-
 				sendInternalMessage( i18n( "You are now marked as %1." ).arg( newStatus.description() ) );
-			}
 		}
 		else if ( !contact->account() || !contact->account()->suppressStatusNotification() )
 		{
@@ -947,6 +969,12 @@ void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnl
 			m_tabBar->setTabIconSet( this , msgManager()->contactOnlineStatus( c ).iconFor( c ) );
 	}
 	emit updateStatusIcon( this );
+
+	if ( ( oldStatus.status() == KopeteOnlineStatus::Offline )
+	  != ( newStatus.status() == KopeteOnlineStatus::Offline ) )
+	{
+		emit canSendChanged();
+	}
 }
 
 void ChatView::slotOpenURLRequest(const KURL &url, const KParts::URLArgs &/*args*/)
@@ -977,7 +1005,6 @@ void ChatView::sendInternalMessage(const QString &msg)
 void ChatView::sendMessage()
 {
 	m_sendInProgress = true;
-	m_mainWindow->setSendEnabled(false);
 
 	QString txt = editpart->text( Qt::PlainText );
 	if( m_lastMatch.isNull() && ( txt.find( QRegExp( QString::fromLatin1("^\\w+:\\s") ) ) > -1 ) )
@@ -1002,6 +1029,7 @@ void ChatView::sendMessage()
 	historyList.prepend(m_edit->text());
 	historyPos = -1;
 	editpart->clear();
+	emit canSendChanged();
 	slotStopTimer();
 }
 
@@ -1011,16 +1039,18 @@ void ChatView::messageSentSuccessfully()
 	emit ( messageSuccess( this ) );
 }
 
-void ChatView::slotTextChanged()
+bool ChatView::isTyping()
 {
 	QString txt = m_edit->text();
 	if(!editpart->simple()) //remove all <p><br> and other html tags
 		txt.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
 
-	bool typing=!txt.stripWhiteSpace().isEmpty();
-	m_mainWindow->setSendEnabled( typing );
+	return !txt.stripWhiteSpace().isEmpty();
+}
 
-	if(typing)
+void ChatView::slotTextChanged()
+{
+	if(isTyping())
 	{
 		// And they were previously typing
 		if( !m_typingRepeatTimer->isActive() )
@@ -1032,6 +1062,8 @@ void ChatView::slotTextChanged()
 		// Reset the stop timer again, regardless of status
 		m_typingStopTimer->start( 4500, true );
 	}
+
+	canSendChanged();
 }
 
 void ChatView::historyUp()
