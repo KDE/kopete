@@ -18,6 +18,8 @@
 #ifndef AIMCONTACT_H
 #define AIMCONTACT_H
 
+#include <qdatetime.h>
+
 #include "oscarcontact.h"
 
 
@@ -48,6 +50,15 @@ public:
 	virtual void setAwayMessage( const QString &message );
 	
 	int warningLevel() const;
+	
+	/**
+	 * Gets the last time an autoresponse was sent to this contact
+	 * @returns QDateTime Object that represents the date/time
+	 */
+	 QDateTime lastAutoResponseTime() {return m_lastAutoresponseTime;}	
+	
+	/** Sends an auto response to this contact */
+	virtual void sendAutoResponse(Kopete::Message& msg);
 
 public slots:
 	void updateSSIItem();
@@ -71,6 +82,7 @@ private:
 	AIMUserInfoDialog* m_infoDialog;
 	QString mUserProfile;
 	bool m_haveAwayMessage;
+	QDateTime m_lastAutoresponseTime;
 	
 	KAction* m_warnUserAction;
 };

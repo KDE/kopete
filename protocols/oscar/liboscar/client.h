@@ -135,8 +135,9 @@ public:
 	/** 
 	 * Send a message to a contact
 	 * \param msg the message to be sent
+	 * \param auto the message is an autoresponse message, default to false
 	 */
-	void sendMessage( const Oscar::Message& msg );
+	void sendMessage( const Oscar::Message& msg, bool isAuto = false );
 	
 	/**
 	 * Request authorization from a contact

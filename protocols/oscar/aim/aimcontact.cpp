@@ -50,6 +50,8 @@ AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::M
 	m_warnUserAction = 0L;
 	mUserProfile="";
 	m_haveAwayMessage = false;
+	// Set the last autoresponse time to the current time yesterday
+	m_lastAutoresponseTime = QDateTime::currentDateTime().addDays(-1);
 	
 	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
 	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
@@ -263,5 +265,40 @@ void AIMContact::warnUser()
 		mAccount->engine()->sendWarning( contactId(), false);
 }
 
+void AIMContact::sendAutoResponse(Kopete::Message& msg)
+{
+	// The target time is 2 minutes later than the last message
+	int delta = m_lastAutoresponseTime.secsTo( QDateTime::currentDateTime() );
+	kdDebug(14152) << k_funcinfo << "Last autoresponse time: " << m_lastAutoresponseTime << endl;
+	kdDebug(14152) << k_funcinfo << "Current time: " << QDateTime::currentDateTime() << endl;
+	kdDebug(14152) << k_funcinfo << "Difference: " << delta << endl;
+	// Check to see if we're past that time
+	if(delta > 120)
+	{
+		kdDebug(14152) << k_funcinfo << "Sending auto response" << endl;
+		// This code was yoinked straight from OscarContact::slotSendMsg()
+		// If only that slot wasn't private, but I'm not gonna change it right now.
+		Oscar::Message message;
+	
+		message.setText( msg.plainBody() );
+		
+		message.setTimestamp( msg.timestamp() );
+		message.setSender( mAccount->accountId() );
+		message.setReceiver( mName );
+		message.setType( 0x01 );
+		
+		// isAuto defaults to false
+		mAccount->engine()->sendMessage( message, true);
+		kdDebug(14152) << k_funcinfo << "Sent auto response" << endl;
+		manager(Kopete::Contact::CanCreate)->appendMessage(msg);
+		manager(Kopete::Contact::CanCreate)->messageSucceeded();
+		// Update the last autoresponse time
+		m_lastAutoresponseTime = QDateTime::currentDateTime();
+	}
+	else
+	{
+		kdDebug(14152) << k_funcinfo << "Not enough time since last autoresponse, NOT sending" << endl;
+	}
+}
 #include "aimcontact.moc"
 //kate: tab-width 4; indent-mode csands;

@@ -112,7 +112,7 @@ private:
 	void initActions();
 
 private slots:
-	void slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session );
+	void slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session);
 	void chatSessionDestroyed();
 	
 };

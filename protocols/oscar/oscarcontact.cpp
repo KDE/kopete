@@ -176,7 +176,7 @@ void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& d
 	m_warningLevel = details.warningLevel();
 }
 
-void OscarContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session )
+void OscarContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session)
 {
 	//Why is this unused?
 	Q_UNUSED( session );
@@ -196,6 +196,7 @@ void OscarContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* sessi
 		message.setType( 0x02 );*/
 	//TODO: we need to check for channel 0x04 messages too;
 	
+	// isAuto defaults to false
 	mAccount->engine()->sendMessage( message );
 	manager(Kopete::Contact::CanCreate)->appendMessage(msg);
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();

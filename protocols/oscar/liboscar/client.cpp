@@ -432,9 +432,11 @@ QCString Client::ipAddress() const
 	return "127.0.0.1";
 }
 
-void Client::sendMessage( const Oscar::Message& msg )
+void Client::sendMessage( const Oscar::Message& msg, bool isAuto)
 { 
 	SendMessageTask *sendMsgTask = new SendMessageTask( d->connections.first()->rootTask() );
+	// Set whether or not the message is an automated response
+	sendMsgTask->setAutoResponse( isAuto );
 	sendMsgTask->setMessage( msg );
 	sendMsgTask->go( true );
 }

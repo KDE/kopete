@@ -113,7 +113,7 @@ protected slots:
 	void kopeteGroupAdded( Kopete::Group* g );
 	void kopeteGroupRenamed( Kopete::Group* g, const QString& oldName );
 
-	void messageReceived( const Oscar::Message& message );
+	virtual void messageReceived( const Oscar::Message& message );
 	
 	void updateContact( Oscar::SSI );
 	

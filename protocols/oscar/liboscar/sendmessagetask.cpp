@@ -116,15 +116,29 @@ void SendMessageTask::onGo()
 		
 	}
 	
-	
+	// Add the actual message TLV
 	TLV tlv2( 0x0002, tlv2buffer.length(), tlv2buffer.buffer() );
 	b->addTLV( tlv2 );
-	b->addDWord( 0x00030000 ); //empty TLV 3 to get an ack from the server
+
+	// Add the TLV to indicate if this is an autoresponse: 0x00040000
+	// Right now, only supported for the AIM client, I'm not sure about ICQ
+	// For some reason you can't have both a 0x0004 and 0x0003 TLV in the same
+	// SNAC, if you do the AIM server complains
+	if ( !client()->isIcq() && (m_autoResponse == true) )
+	{
+		TLV tlv4( 0x0004, 0, NULL);
+		b->addTLV( tlv4 );
+	}
+	else
+	{
+		b->addDWord( 0x00030000 ); //empty TLV 3 to get an ack from the server
+	}
 	
 	if ( client()->isIcq() )
 		b->addDWord( 0x00060000 ); //empty TLV 6 to store message on the server if not online
 
 	Transfer* t = createTransfer( f, s, b );
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "SENDING: " << t->toString() << endl;
 	send( t );
 }
 

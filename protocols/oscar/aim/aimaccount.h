@@ -46,10 +46,17 @@ public:
 	void userInfoUpdated();
 	void setOwnProfile( const QString& newProfile );
 	QString userProfile();
+	void setLastAwayMessage( const QString& msg) {m_lastAwayMessage = msg;}
+	QString lastAwayMessage() { return m_lastAwayMessage; };
 	
 private:
 	QString m_profileString;
 	AIMAccount* m_acct;
+	/**
+	 * There has GOT to be a better way to get this away message
+	 */
+	QString m_lastAwayMessage;
+
 };
 
 class AIMAccount : public OscarAccount
@@ -81,6 +88,8 @@ protected slots:
 	
 	virtual void disconnected( Kopete::Account::DisconnectReason reason );
 	
+	virtual void messageReceived( const Oscar::Message& message );
+	
 protected:
 	
 	/**
@@ -90,7 +99,8 @@ protected:
 	OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const SSI& ssiItem );
 
 	QString sanitizedMessage( const Oscar::Message& message );
-
+	
+	
 };
 #endif
 //kate: tab-width 4; indent-mode csands;

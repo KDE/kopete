@@ -30,6 +30,7 @@
 #include "aimuserinfo.h"
 #include "oscarmyselfcontact.h"
 
+#include "oscarutils.h"
 #include "client.h"
 
 
@@ -132,9 +133,15 @@ void AIMAccount::setAway(bool away, const QString &awayReason)
 {
 // 	kdDebug(14152) << k_funcinfo << accountId() << "reason is " << awayReason << endl;
 	if ( away )
+	{
 		engine()->setStatus( Client::Away, awayReason );
+		AIMMyselfContact* me = static_cast<AIMMyselfContact *> ( myself() );
+		me->setLastAwayMessage(awayReason);
+	}
 	else
+	{
 		engine()->setStatus( Client::Online );
+	}
 }
 
 void AIMAccount::setUserProfile(const QString &profile)
@@ -182,6 +189,49 @@ void AIMAccount::disconnected( DisconnectReason reason )
 	kdDebug( OSCAR_AIM_DEBUG ) << k_funcinfo << "Attempting to set status offline" << endl;
 	myself()->setOnlineStatus( static_cast<AIMProtocol*>( protocol() )->statusOffline );
 	OscarAccount::disconnected( reason );
+}
+
+void AIMAccount::messageReceived( const Oscar::Message& message )
+{
+	kdDebug(14152) << k_funcinfo << " Got a message, calling OscarAccount::messageReceived" << endl;
+	// Want to call the parent to do everything else
+	OscarAccount::messageReceived(message);
+	
+	// Check to see if our status is away, and send an away message
+	// Might be duplicate code from the parent class to get some needed information
+	// Perhaps a refactoring is needed.
+	kdDebug(14152) << k_funcinfo << "Checking to see if I'm online.." << endl;
+	if( myself()->onlineStatus().status() == Kopete::OnlineStatus::Away )
+	{
+		kdDebug(14152) << k_funcinfo << "I'm AWAY, getting the sender" << endl;
+		QString sender = Oscar::normalize( message.sender() );
+		AIMContact* aimSender = static_cast<AIMContact *> ( contacts()[sender] ); //should exist now
+		if ( !aimSender )
+		{
+			kdWarning(OSCAR_RAW_DEBUG) << "For some reason, could not get the contact "
+				<< "That this message is from: " << message.sender() << ", Discarding message" << endl;
+			return;
+		}
+		
+		kdDebug(14152) << k_funcinfo << "Got sender, getting chat session" << endl;
+		
+		// Create, or get, a chat session with the contact
+		Kopete::ChatSession* chatSession = aimSender->manager( Kopete::Contact::CanCreate );
+		
+		kdDebug(14152) << k_funcinfo << "Getting my away message" << endl;
+		// get the away message we have set
+		AIMMyselfContact* myContact = static_cast<AIMMyselfContact *> ( myself() );
+		kdDebug(14152) << k_funcinfo << "Got myself, getting away message" << endl;
+		QString msg = myContact->lastAwayMessage();
+		kdDebug(14152) << k_funcinfo << "Got away message: " << msg << endl;
+		// Create the message
+		kdDebug(14152) << k_funcinfo << "Creating chat message" << endl;
+		Kopete::Message chatMessage( myself(), aimSender, msg, Kopete::Message::Outbound,
+		                             Kopete::Message::RichText );
+		kdDebug(14152) << k_funcinfo << "Sending autoresponse" << endl;
+		// Send the message
+		aimSender->sendAutoResponse( chatMessage );
+	}
 }
 
 void AIMAccount::connectWithPassword( const QString & )
