@@ -423,6 +423,8 @@ void KopeteWindow::slotGlobalAwayMessageSelect( const QString &awayReason )
 
 void KopeteWindow::closeEvent( QCloseEvent *e )
 {
+	// Note that KSystemTray closes all windows when you select quit()
+	// from it. This means that closeEvent will be called twice on exit.
 	Kopete *app = static_cast<Kopete *>( kapp );
 
 	// also close if our tray icon is hidden!
