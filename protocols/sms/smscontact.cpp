@@ -16,7 +16,6 @@
 #include "smsuserpreferences.h"
 #include "smsglobal.h"
 
-#include "kopetehistorydialog.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopete.h"
@@ -34,8 +33,6 @@ SMSContact::SMSContact( SMSProtocol *protocol, const QString &phoneNumber,
 	const QString &displayName, KopeteMetaContact *parent )
 : KopeteContact( protocol, parent )
 {
-	m_historyDialog = 0L;
-
 	setPhoneNumber( phoneNumber );
 	setDisplayName( displayName );
 	m_serviceName = QString::null;
@@ -123,25 +120,6 @@ void SMSContact::slotSendMessage(const KopeteMessage &msg)
 void SMSContact::messageSent(const KopeteMessage& msg)
 {
 	msgManager()->appendMessage(msg);
-}
-
-void SMSContact::slotViewHistory()
-{
-	if (m_historyDialog != 0L)
-	{
-		m_historyDialog->raise();
-	}
-	else
-	{
-		m_historyDialog = new KopeteHistoryDialog(QString("sms_logs/%1.log").arg(id()), displayName(), true, 50, 0, "SMSHistoryDialog");
-		connect ( m_historyDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()) );
-	}
-}
-
-void SMSContact::slotCloseHistoryDialog()
-{
-	delete m_historyDialog;
-	m_historyDialog = 0L;
 }
 
 void SMSContact::slotUserInfo()

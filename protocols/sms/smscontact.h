@@ -18,7 +18,6 @@
 #include <qstring.h>
 
 class SMSProtocol;
-class KopeteHistoryDialog;
 class KopeteMessageManager;
 class KopeteMetaContact;
 
@@ -62,8 +61,6 @@ public slots:
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
 	virtual void execute();
-	virtual void slotViewHistory();
-	void slotCloseHistoryDialog();
 	void slotSendMessage(const KopeteMessage &msg);
 
 private slots:
@@ -81,8 +78,6 @@ private:
 	QString m_serviceName;
 	QMap<QString, QString> m_servicePrefs;
 	SMSProtocol* m_protocol;
-
-	KopeteHistoryDialog* m_historyDialog;
 
 	KopeteMessageManager* m_msgManager;
 };
