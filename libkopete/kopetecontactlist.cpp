@@ -2,7 +2,7 @@
     kopetecontactlist.cpp - Kopete's Contact List backend
 
     Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -56,6 +56,24 @@ KopeteMetaContact *KopeteContactList::findContact( const QString &contactId )
 	KopeteMetaContact *c = new KopeteMetaContact();
 	m_contacts.append( c );
 	return c;
+}
+
+void KopeteContactList::loadXML()
+{
+	QString xml_filename;
+
+	m_dom = new QDomDocument("ContactList");
+	xml_filename = "/home/duncan/contacts.xml";
+
+	QFile xml_file(xml_filename);
+	xml_file.open(IO_ReadWrite);
+	m_dom->setContent(&xml_file);
+
+	QDomElement list = m_dom->documentElement();
+	QDomNode node_person;
+	QDomNode node_contact;
+	node_person = list.firstChild();
+
 }
 
 #include "kopetecontactlist.moc"

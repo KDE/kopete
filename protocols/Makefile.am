@@ -1,2 +1,2 @@
-SUBDIRS = aim icq irc msn jabber winpopup
+SUBDIRS = aim icq irc msn jabber
 

@@ -19,6 +19,7 @@
 
 #include <qobject.h>
 #include <qptrlist.h>
+#include <qdom.h>
 
 class KopeteMetaContact;
 
@@ -52,7 +53,12 @@ private:
 	 * Private constructor: we are a singleton
 	 */
 	KopeteContactList();
-
+	
+	/**
+	 * Load the contact list from XML file [NON-FINISHED YET]
+	 */
+    void loadXML();
+	
 	/**
 	 * The list of contacts embodied in the meta contact
 	 */
@@ -62,6 +68,10 @@ private:
 	 * Our contact list instance
 	 */
 	static KopeteContactList *s_contactList;
+	/**
+	 * The DOM representation of the contact list.
+	 */
+	QDomDocument *m_dom;
 };
 
 #endif
