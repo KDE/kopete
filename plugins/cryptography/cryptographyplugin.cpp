@@ -132,7 +132,8 @@ bool CryptographyPlugin::passphraseHandling()
 void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 {
  	QString body = msg.plainBody();
-	if( !body.startsWith( QString::fromLatin1("-----BEGIN PGP MESSAGE----") ) )
+	if( !body.startsWith( QString::fromLatin1("-----BEGIN PGP MESSAGE----") )
+		 || !body.contains( QString::fromLatin1("-----END PGP MESSAGE----") ) )
 		return;
 
 	if( msg.direction() != KopeteMessage::Inbound )
@@ -154,7 +155,7 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 			if( !isHTML.exactMatch( plainBody ) )
 			{
 				plainBody = QStyleSheet::escape( plainBody );
-			
+
 				//this is the same algoritm as in KopeteMessage::escapedBody();
 				plainBody.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) )
 					.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) )
@@ -172,7 +173,7 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 		//if there are too messages in cache, clear the cache
 		if(m_cachedMessages.count() > 5)
 			m_cachedMessages.clear();
-		
+
 		return;
 	}
 
@@ -191,9 +192,9 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 		}
 
 		msg.setBody( QString::fromLatin1("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr><td class=\"highlight\"><font size=\"-1\"><b>")
-			+ i18n("Incoming Encrypted Message: ") 
+			+ i18n("Incoming Encrypted Message: ")
 			+ QString::fromLatin1("</b></font></td></tr><tr><td class=\"highlight\">")
-			+ body 
+			+ body
 			+ QString::fromLatin1(" </td></tr></table>")
 			, KopeteMessage::RichText );
 	}
