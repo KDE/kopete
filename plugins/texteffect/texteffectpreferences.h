@@ -44,10 +44,13 @@ public:
 	bool lamer();
 	bool waves();
 
-
 private:
 	TextEffectPrefs *preferencesDialog;
-public slots: // Public slots
+private slots: // Public slots
+	void slotAddPressed();
+	void slotRemovePressed();
+	void slotUpPressed();
+	void slotDownPressed();
 
 };
 

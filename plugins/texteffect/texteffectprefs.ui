@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>280</width>
-            <height>387</height>
+            <width>302</width>
+            <height>379</height>
         </rect>
     </property>
     <property name="caption">
@@ -37,35 +37,78 @@
                 <attribute name="title">
                     <string>&amp;Colors</string>
                 </attribute>
-                <grid>
+                <vbox>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QCheckBox" row="5" column="0">
+                    <widget class="QGroupBox">
                         <property name="name">
-                            <cstring>m_words</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Change color every words</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="4" column="0">
-                        <property name="name">
-                            <cstring>m_char</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Change color every charactères</string>
-                        </property>
-                    </widget>
-                    <widget class="KEditListBox" row="0" column="0">
-                        <property name="name">
-                            <cstring>m_editColors</cstring>
+                            <cstring>groupBox1</cstring>
                         </property>
                         <property name="title">
                             <string>Colors</string>
                         </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="KListBox" row="0" column="0" rowspan="5" colspan="1">
+                                <property name="name">
+                                    <cstring>mColorsListBox</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QPushButton" row="0" column="1">
+                                <property name="name">
+                                    <cstring>mColorsAdd</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;Add ...</string>
+                                </property>
+                            </widget>
+                            <widget class="QPushButton" row="1" column="1">
+                                <property name="name">
+                                    <cstring>mColorsRemove</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;Remove</string>
+                                </property>
+                            </widget>
+                            <widget class="QPushButton" row="2" column="1">
+                                <property name="name">
+                                    <cstring>mColorsUp</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Move &amp;Up</string>
+                                </property>
+                            </widget>
+                            <widget class="QPushButton" row="3" column="1">
+                                <property name="name">
+                                    <cstring>mColorsDown</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Move &amp;Down</string>
+                                </property>
+                            </widget>
+                            <spacer row="4" column="1">
+                                <property name="name">
+                                    <cstring>spacer2</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Vertical</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>21</width>
+                                        <height>81</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </grid>
                     </widget>
-                    <widget class="QCheckBox" row="1" column="0">
+                    <widget class="QCheckBox">
                         <property name="name">
                             <cstring>m_colorRandom</cstring>
                         </property>
@@ -73,15 +116,7 @@
                             <string>Random order</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="3" column="0">
-                        <property name="name">
-                            <cstring>m_fg</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Change global text foreground color</string>
-                        </property>
-                    </widget>
-                    <widget class="Line" row="2" column="0">
+                    <widget class="Line">
                         <property name="name">
                             <cstring>Line1</cstring>
                         </property>
@@ -95,7 +130,31 @@
                             <enum>Horizontal</enum>
                         </property>
                     </widget>
-                </grid>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>m_fg</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Change global text foreground color</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>m_char</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Change color every letters</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox">
+                        <property name="name">
+                            <cstring>m_words</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Change color every words</string>
+                        </property>
+                    </widget>
+                </vbox>
             </widget>
             <widget class="QWidget">
                 <property name="name">
@@ -170,7 +229,6 @@
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>keditlistbox.h</includehint>
-    <includehint>klineedit.h</includehint>
+    <includehint>klistbox.h</includehint>
 </includehints>
 </UI>
