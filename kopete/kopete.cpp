@@ -103,7 +103,6 @@ void Kopete::initialize()
 	// Ok, load saved plugins
 
 	KopeteContactList::contactList()->load();
-	mTransferManager = KopeteTransferManager::transferManager();
 }
 
 Kopete::~Kopete()
@@ -303,11 +302,6 @@ void Kopete::cancelEvent( KopeteEvent *event)
 	delete event;
 }
 
-KopeteSystemTray* Kopete::systemTray() const
-{
-	return m_mainWindow ? m_mainWindow->tray : 0L;
-}
-
 void Kopete::slotMainWindowDestroyed()
 {
 	m_mainWindow = 0L;
@@ -315,9 +309,10 @@ void Kopete::slotMainWindowDestroyed()
 
 void Kopete::slotShowTransfers()
 {
-	transferManager()->show();
+	KopeteTransferManager::transferManager()->show();
 }
 
 #include "kopete.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
+

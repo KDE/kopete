@@ -28,14 +28,9 @@
 
 #include "kopetemessage.h"
 
-class KIconLoader;
-
 class AppearanceConfig;
-class KopeteContactListView;
 class KopeteEvent;
 class KopeteNotifier;
-class KopeteSystemTray;
-class KopeteTransferManager;
 class KopeteUserPreferencesConfig;
 class KopeteWindow;
 class LibraryLoader;
@@ -68,21 +63,10 @@ public:
 	{ return mLibraryLoader; }
 
 	/**
-	 * Use it to access Kopete's system tray
-	 */
-	KopeteSystemTray *systemTray() const;
-
-	/**
 	 * Like slotSetAwayAll, but don't pops up the dialog
 	 * (for the autowayplugin)
 	 */
-	void setAwayAll( void );
-
-	/**
-	 * This returns the active transferview window, if any.
-	 */
-	KopeteTransferManager *transferManager()
-	{ return mTransferManager; };
+	void setAwayAll();
 
 public slots:
 	/**
@@ -103,8 +87,8 @@ public slots:
 	void slotConnectAll();
 	void slotDisconnectAll();
 	void slotAddContact();
-	void slotSetAwayAll(void);
-	void slotSetAvailableAll(void);
+	void slotSetAwayAll();
+	void slotSetAvailableAll();
 	void slotShowTransfers();
 
 signals:
@@ -147,7 +131,6 @@ private:
 	//User preferences config module
 	KopeteUserPreferencesConfig *mUserPreferencesConfig;
 	KopeteNotifier *mNotifier;
-	KopeteTransferManager *mTransferManager;
 };
 
 #define kopeteapp (static_cast<Kopete*>(kapp))

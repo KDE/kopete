@@ -40,6 +40,7 @@
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
+#include "kopeteevent.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "pluginloader.h"
@@ -150,7 +151,8 @@ void KopeteWindow::initActions ( void )
 
 void KopeteWindow::initSystray ( void )
 {
-	tray = new KopeteSystemTray(this, "KopeteSystemTray");
+	tray = KopeteSystemTray::systemTray( this, "KopeteSystemTray" );
+
 	KPopupMenu *tm = tray->contextMenu();
 
 	tm->insertSeparator();
@@ -174,7 +176,6 @@ KopeteWindow::~KopeteWindow()
 //	delete tray;
 	kdDebug() << "[KopeteWindow] ~KopeteWindow()" << endl;
 }
-
 
 bool KopeteWindow::queryExit()
 {
@@ -347,7 +348,7 @@ void KopeteWindow::slotQuit()
 	// but when this slot is called by the system try, the closeEvent's message is showed
 	isClosing=true;
 	
-	kopeteapp->quit();
+	qApp->quit();
 }
 
 void KopeteWindow::slotPluginLoaded( KopetePlugin *p )

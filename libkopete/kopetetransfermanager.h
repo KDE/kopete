@@ -62,7 +62,11 @@ class KopeteTransferManager : public KopeteFileTransferUI
 	Q_OBJECT
 
 public:
+	/**
+	 * Retrieve the transfer manager instance
+	 */
 	static KopeteTransferManager* transferManager();
+
 	~KopeteTransferManager(){};
 	KopeteTransfer *addTransfer( KopeteContact *contact, const QString& file, const unsigned long size, const QString &recipient , KopeteFileTransferInfo::KopeteTransferDirection di);
 	int askIncommingTransfer( KopeteContact *contact, const QString& file, const unsigned long size, const QString& description=QString::null, void *internalId=0L);

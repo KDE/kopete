@@ -377,7 +377,11 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 	{
 		#if KDE_VERSION >= 306
 		if ( KopetePrefs::prefs()->notifyOnline() )
-			KPassivePopup::message(i18n("%2 is now %1!").arg(statusString()).arg(displayName()), kopeteapp->systemTray());
+		{
+			KPassivePopup::message( i18n( "%2 is now %1!" ).arg(
+				statusString() ).arg( displayName() ),
+				KopeteSystemTray::systemTray() );
+		}
 		#endif
 
 		KopeteProtocol* p = dynamic_cast<KopeteProtocol*>(c->protocol());

@@ -54,7 +54,7 @@ KopeteFileTransferInfo::KopeteFileTransferInfo(  KopeteContact *contact, const Q
 
 KopeteTransfer::KopeteTransfer( const KopeteFileTransferInfo &kfti, QObject *parent, const char *name)
 	: QObject(parent, name),
-	  QListViewItem(kopeteapp->transferManager()->mListView)
+	  QListViewItem( KopeteTransferManager::transferManager()->mListView)
 {
 //	if (!kfti)
 //		kfti = new KopeteFileTransferInfo(0L, QString("Unknown"), 0, QString("Unknown"), 0); // icky
@@ -74,7 +74,7 @@ void KopeteTransfer::slotPercentCompleted(unsigned int percent)
 	else
 		setText(3, i18n("Transferring"));
 
-	kopeteapp->transferManager()->paintProgressBar(this, percent);
+	KopeteTransferManager::transferManager()->paintProgressBar(this, percent);
 }
 
 void KopeteTransfer::setError(KopeteTransferError error)
