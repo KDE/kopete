@@ -319,7 +319,11 @@ void AppearanceConfig::load()
 	mPrfsContactList->mIndentContacts->setChecked( p->contactListIndentContacts() );
 	mPrfsContactList->mDisplayMode->setButton( p->contactListDisplayMode() );
 	mPrfsContactList->mAnimateChanges->setChecked( p->contactListAnimation() );
-	mPrfsContactList->mFadeVisibility->setChecked( p->contactListFading() && HAVE_XRENDER );
+#ifdef HAVE_XRENDER
+	mPrfsContactList->mFadeVisibility->setChecked( p->contactListFading() );
+#else
+	mPrfsContactList->mFadeVisibility->setChecked( false );
+#endif
 	mPrfsContactList->mFoldVisibility->setChecked( p->contactListFolding() );
 
 	// "Colors & Fonts" TAB =====================================================
