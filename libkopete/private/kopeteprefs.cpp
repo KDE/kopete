@@ -511,6 +511,18 @@ void KopetePrefs::setContactListGroupNameColor( const QColor & v )
 	mContactListGroupNameColor = v;
 }
 
+void KopetePrefs::setContactListAnimation( bool n )
+{
+	mContactListAppearanceChanged = mContactListAppearanceChanged || !(n == mContactListAnimation);
+	mContactListAnimation = n;
+}
+
+void KopetePrefs::setContactListFading( bool n )
+{
+	mContactListAppearanceChanged = mContactListAppearanceChanged || !(n == mContactListFading);
+	mContactListFading = n;
+}
+
 void KopetePrefs::setReconnectOnDisconnect( bool newSetting )
 {
 	mReconnectOnDisconnect = newSetting;
