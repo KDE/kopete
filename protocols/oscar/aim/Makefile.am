@@ -3,9 +3,9 @@ METASOURCES = AUTO
 AM_CPPFLAGS = -I$(srcdir)/ \
 	-I$(srcdir)/../ \
 	-I$(srcdir)/ui/ \
-        -I$(builddir)/ui \
-        -I$(builddir)/../aim/ui \
-        -I$(builddir)/../ \
+        -I./ui \
+        -I../aim/ui \
+        -I.. \
 	-I$(srcdir)/../oscarsocket \
 	-I$(top_builddir)/kopete/protocols/oscar/aim/ui \
 	$(KOPETE_INCLUDES) \
