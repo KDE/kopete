@@ -35,6 +35,7 @@
 #include "kopeteprotocol.h"
 #include "pluginloader.h"
 #include "kopetegroup.h"
+#include "kopetemessage.h"
 
 KopeteContactList *KopeteContactList::s_contactList = 0L;
 
@@ -757,48 +758,57 @@ QStringList KopeteContactList::fileTransferContacts() const
 
 void KopeteContactList::sendFile( const QString &displayName, const KURL &sourceURL, 
 	const QString &altFileName, const long unsigned int fileSize)
-{	/*
-	 * FIXME: We should be using either some kind of unique ID (kabc ID?)
-	 * here, or force user to only enter unique display names. A
-	 * unique identifier is needed for external DCOP refs like this!
-	 */
-	 
+{
 //	kdDebug(14010) << "Send To Display Name: " << displayName << "\n";
 
+	KopeteMetaContact *c = findContactByDisplayName( displayName );
+	if( c )
+		c->sendFile( sourceURL, altFileName, fileSize );
+}
+
+void KopeteContactList::messageContact( const QString &displayName, const QString &messageText )
+{
+	KopeteMetaContact *c = findContactByDisplayName( displayName );
+	if( c )
+		c->execute();
+
+	// TODO: Add the message text
+}
+
+KopeteMetaContact *KopeteContactList::findContactByDisplayName( const QString &displayName )
+{
 	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
 //		kdDebug(14010) << "Display Name: " << it.current()->displayName() << "\n";
 		if( it.current()->displayName() == displayName ) {
-			it.current()->sendFile( sourceURL, altFileName, fileSize );
-			return;
+			return it.current();
 		}
 	}
+
+	return 0L;
 }
 
-QStringList KopeteContactList::contactFileProtocols(QString displayName)
+QStringList KopeteContactList::contactFileProtocols(const QString &displayName)
 {
 //	kdDebug(14010) << "Get contacts for: " << displayName << "\n";
 	QStringList protocols;
 
-	QPtrListIterator<KopeteMetaContact> it( m_contacts );
-	for( ; it.current(); ++it )
+	KopeteMetaContact *c = findContactByDisplayName( displayName );
+	if( c )
 	{
-		if( it.current()->displayName() == displayName ) {
-//			kdDebug(14010) << "Found them!" << endl;
-			QPtrList<KopeteContact> mContacts = it.current()->contacts();
-			kdDebug(14010) << mContacts.count() << endl;
-			QPtrListIterator<KopeteContact> jt( mContacts );
-			for ( ; jt.current(); ++jt )
-			{
-				kdDebug(14010) << "1" << jt.current()->protocol()->pluginId() << "\n";
-				if( jt.current()->canAcceptFiles() ) {
-					kdDebug(14010) << jt.current()->protocol()->pluginId() << "\n";
-					protocols.append ( QString::fromLatin1( jt.current()->protocol()->pluginId() ) );
-				}
+		QPtrList<KopeteContact> mContacts = c->contacts();
+		kdDebug(14010) << mContacts.count() << endl;
+		QPtrListIterator<KopeteContact> jt( mContacts );
+		for ( ; jt.current(); ++jt )
+		{
+			kdDebug(14010) << "1" << jt.current()->protocol()->pluginId() << "\n";
+			if( jt.current()->canAcceptFiles() ) {
+				kdDebug(14010) << jt.current()->protocol()->pluginId() << "\n";
+				protocols.append ( QString::fromLatin1( jt.current()->protocol()->pluginId() ) );
 			}
-			return protocols;
 		}
+		return protocols;
 	}
 	return QStringList();
 }

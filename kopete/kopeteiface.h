@@ -37,7 +37,7 @@ k_dcop:
 	QStringList reachableContacts();
 	QStringList onlineContacts();
 	QStringList fileTransferContacts();
-	QStringList contactFileProtocols(QString displayName);
+	QStringList contactFileProtocols(const QString &displayName);
 	/*void sendFile(const QString &displayName, const KURL &sourceURL,
 		const QString &altFileName, const unsigned long fileSize);*/
 
@@ -45,6 +45,11 @@ k_dcop:
 	// nicknames can contain parentheses too.
 	// Better add a contactStatus( const QString id ) I'd say - Martijn
 	QStringList contactsStatus();
+
+	/**
+	 * Open a chat to a contact, and optionally set some initial text
+	 */
+	 void messageContact( const QString &displayName, const QString &messageText = QString::null );
 
 	/**
 	 * Adds a contact with the specified params.

@@ -96,7 +96,7 @@ public:
 	 */
 	QStringList fileTransferContacts() const;
 
-	QStringList contactFileProtocols(QString displayName);
+	QStringList contactFileProtocols( const QString &displayName);
 
 	/**
 	 * Exposed via DCOP in kopeteiface
@@ -169,6 +169,16 @@ public:
 	 */
 	bool dcopAddContact( const QString &protocolName, const QString &contactId, const QString &displayName,
 		KopeteMetaContact *parentContact = 0L, const QString &groupName = QString::null, bool isTemporary = false );
+
+	/**
+	 * Find a contact by display name. Returns the first match.
+	 */
+	KopeteMetaContact *findContactByDisplayName( const QString &displayName );
+
+	/**
+	 * Open a chat to a contact, and optionally set some initial text
+	 */
+	void messageContact( const QString &displayName, const QString &messageText = QString::null );
 
 public slots:
 //	void slotRemovedFromGroup( KopeteMetaContact *mc, const QString &from );

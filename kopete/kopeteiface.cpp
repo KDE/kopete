@@ -17,6 +17,8 @@
 
 #include "kopeteiface.h"
 #include "kopetecontactlist.h"
+#include "kopetecontact.h"
+#include "kopetemessage.h"
 
 
 KopeteIface::KopeteIface() : DCOPObject( "KopeteIface" )
@@ -54,9 +56,14 @@ QStringList KopeteIface::fileTransferContacts()
 	return KopeteContactList::contactList()->fileTransferContacts();
 }
 
-QStringList KopeteIface::contactFileProtocols(QString displayName)
+QStringList KopeteIface::contactFileProtocols(const QString &displayName)
 {
-	return KopeteContactList::contactList()->contactFileProtocols(displayName); 
+	return KopeteContactList::contactList()->contactFileProtocols(displayName);
+}
+
+void KopeteIface::messageContact( const QString &displayName, const QString &messageText )
+{
+	KopeteContactList::contactList()->messageContact( displayName, messageText );
 }
 /*
 void KopeteIface::sendFile(const QString &displayName, const KURL &sourceURL,
