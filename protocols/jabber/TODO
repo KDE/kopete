@@ -21,7 +21,6 @@ TODO for Jabber:
 - going away globally does not allow returning to online mode
 - should the away dialog pop up when going away using the account context menu?
 - verify FIXMEs in JabberContact
-- save "auto connect" in account preferences
 - group chat needs a bit of rework
 - ignore presence information from other resources of myContact
   (using Psi with the same account and going offline in Psi causes Kopete

@@ -113,7 +113,7 @@ void JabberEditAccountWidget::reopen ()
 	cbProxyAuth->setChecked (m_account->pluginData (m_protocol, "ProxyAuth") == QString::fromLatin1 ("true"));
 	leProxyUser->setText (m_account->pluginData (m_protocol, "ProxyUser"));
 	leProxyPass->setText (m_account->pluginData (m_protocol, "ProxyPass"));
-	mAutoConnect->setChecked ((m_account->pluginData (m_protocol, "AutoConnect").toUInt () == 1));
+	mAutoConnect->setChecked (m_account->autoLogin());
 
 	if (m_account->pluginData (m_protocol, "LogAll") == "true")
 		mLogAll->setChecked (true);
@@ -157,6 +157,8 @@ void JabberEditAccountWidget::writeConfig ()
 		m_account->setPluginData (m_protocol, "RemPass", "false");
 		m_account->setPassword (NULL);
 	}
+
+	m_account->setAutoLogin(mAutoConnect->isChecked());
 
 	if (mLogAll->isChecked ())
 		m_account->setPluginData (m_protocol, "LogAll", "true");
