@@ -40,8 +40,9 @@ public:
 
 	virtual bool isReachable() { return true; };
 
-	QString phoneNumber();
+	const QString &phoneNumber();
 	void setPhoneNumber( const QString phoneNumber );
+	const QString qualifiedNumber();
 
 	/**
 	 * Serialize contact

@@ -133,7 +133,14 @@ void SMSContact::slotDeleteContact()
 	deleteLater();
 }
 
-QString SMSContact::phoneNumber()
+const QString SMSContact::qualifiedNumber()
+{
+	QString number = m_phoneNumber;
+	dynamic_cast<SMSProtocol *>(protocol())->translateNumber(number);
+	return number;
+}
+
+const QString &SMSContact::phoneNumber()
 {
 	return m_phoneNumber;
 }
