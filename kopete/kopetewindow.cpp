@@ -36,6 +36,13 @@ KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(pare
 {
 	kdDebug() << "[KopeteWindow] KopeteWindow()" << endl;
 
+	// Applications should ensure that their StatusBar exists before calling createGUI()
+	// so that the StatusBar is always correctly positioned when KDE is configured to use
+	// a MacOS-style MenuBar.
+	// This fixes a "statusbar drawn over the top of the toolbar" bug
+	// e.g. it can happen when you switch desktops on Kopete startup
+	statusBar();
+
 	/* -------------------------------------------------------------------------------- */
 	initView();
 	initActions();
