@@ -27,6 +27,7 @@
 #include <qdatetime.h>
 #include <qfont.h>
 #include <qcolor.h>
+#include <qstylesheet.h>
 // kde
 #include <klocale.h>
 #include <kglobal.h>

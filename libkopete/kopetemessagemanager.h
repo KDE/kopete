@@ -24,9 +24,6 @@
 
 #include "kopetemessage.h"
 #include "kopetecontact.h"
-#include "kopetechatwindow.h"
-#include "kopeteemailwindow.h"
-#include "kopeteprotocol.h"
 
 class KopeteContact;
 class KopeteMessage;
@@ -35,6 +32,7 @@ class QObject;
 class KopeteChatWindow;
 class KopeteEvent;
 class KopeteMessageLog;
+class KopeteProtocol;
 
 
 typedef QPtrList<KopeteContact>        KopeteContactPtrList;

@@ -20,7 +20,8 @@
 #include "kopeteevent.h"
 #include "kopete.h"
 #include "kopeteprefs.h"
-
+#include "kopeteemailwindow.h"
+#include "kopeteprotocol.h"
 #include "kopetemessagelog.h"
 
 #include <kcolorbutton.h>
@@ -164,10 +165,14 @@ void KopeteMessageManager::readMessages()
 		newChatWindow();
 	}
 
-	// for some reason gcc 2.96 doesn't like the line below
+	// for some reason gcc 2.96 doesn't like the line below (and gcc 2.65.3 give a warnign) 
 	//QWidget *window = (d->mWidget == ChatWindow) ? d->mChatWindow : ((d->mWidget == Email) ? d->mEmailWindow : 0L);
-	QWidget *window = (d->mWidget == ChatWindow) ? d->mChatWindow : 0L;
-	if (!window) window = (d->mWidget == Email) ? d->mEmailWindow : 0L;
+	QWidget *window=0l;
+	if (d->mWidget == ChatWindow)
+		window=d->mChatWindow;
+	if(d->mWidget == Email)
+		window=d->mEmailWindow;
+
 	if ( !window ) {
 		kdDebug() << "[KopeteMessageManager] Widget is non-oldschool: " << d->mWidget << endl;
 		d->mMessageQueue.clear();

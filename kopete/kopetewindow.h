@@ -20,16 +20,16 @@
 #define KOPETEWINDOW_H
 
 #include <kmainwindow.h>
-#include <kopetecontactlistview.h>
+
 
 class QLabel;
 class KAction;
 class KActionMenu;
 class KToggleAction;
 class KSelectAction;
-class KopeteContactListView;
 class KopeteSystemTray;
 class QListViewItem;
+class KopeteContactListView;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>

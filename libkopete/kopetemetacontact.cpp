@@ -218,8 +218,18 @@ void KopeteMetaContact::startChat()
 	*/
 
 	// FIXME: Implement the above!
-	if( !m_contacts.isEmpty() )
-		m_contacts.first()->execute();
+	//now just select the highter status importance
+	if( m_contacts.isEmpty() )
+		return;
+
+	KopeteContact *c=m_contacts.first();
+	for(QPtrListIterator<KopeteContact> it( m_contacts ) ; it.current(); ++it )
+	{
+		if( (*it)->importance() > c->importance())
+			c=*it;
+	}
+	
+	c->execute();
 }
 
 void KopeteMetaContact::execute()
