@@ -249,6 +249,7 @@ void KopeteProtocol::deserializeContact( KopeteMetaContact * /* metaContact */, 
 	/* Default implementation does nothing */
 }
 
+//-------- OBSOLETE
 bool KopeteProtocol::addContact( const QString &contactId, const QString &displayName,
 	KopeteMetaContact *parentContact, const QString &groupName, bool isTemporary )
 {
@@ -299,6 +300,7 @@ bool KopeteProtocol::addContact( const QString &contactId, const QString &displa
 		return false;
 }
 
+//-------- OBSOLETE
 bool KopeteProtocol::addContactToMetaContact( const QString &, const QString &, KopeteMetaContact *)
 {
 	kdDebug(14010) << "KopeteProtocol::addContactToMetaContact() Not Implemented!!!" << endl;
@@ -358,6 +360,7 @@ KopeteContact* KopeteProtocol::myself() const
 	return 0L;
 }
 
+//-------- OBSOLETE
 void KopeteProtocol::setStatusIcon( const QString &icon )
 {
 	if( icon != m_statusIcon )
@@ -367,14 +370,20 @@ void KopeteProtocol::setStatusIcon( const QString &icon )
 	}
 }
 
+//-------- OBSOLETE
 bool KopeteProtocol::isConnected() const
 {
-    return myself()->onlineStatus().status() != KopeteOnlineStatus::Offline;
+    if(myself())
+		return myself()->onlineStatus().status() != KopeteOnlineStatus::Offline;
+	return false;
 }
 
+//-------- OBSOLETE
 bool KopeteProtocol::isAway() const
 {
-    return myself()->onlineStatus().status() == KopeteOnlineStatus::Away;
+    if(myself())
+    	return myself()->onlineStatus().status() == KopeteOnlineStatus::Away;
+	return false;
 }
 
 #include "kopeteprotocol.moc"
