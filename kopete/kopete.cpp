@@ -41,6 +41,30 @@ class Plugins;
 
 Kopete::Kopete(): KUniqueApplication(true, true, true)
 {
+    /*
+     * This is a workaround for a quite odd problem:
+     * When starting up kopete and the msn plugin gets loaded it can bring up
+     * a messagebox, in case the msg configuration is missing. This messagebox
+     * will result in a QApplication::enter_loop() call, an event loop is 
+     * created. At this point however the loop_level is 0, because this is all
+     * still inside the Kopete constructor, before the exec() call from main.
+     * When the messagebox is finished the loop_level will drop down to zero and
+     * QApplication thinks the application shuts down (this is usually the case
+     * when the loop_level goes down to zero) . So it emits aboutToQuit(), to
+     * which KApplication is connected and re-emits shutdown() , to which again
+     * KMainWindow (a KopeteWindow instance exists already) is connected. KMainWindow's
+     * shuttingDown() slot calls queryExit() which results in KopeteWindow::queryExit()
+     * calling unloadPlugins() . This of course is wrong and just shouldn't happen.
+     * The workaround is to simply delay the initialization of all this to a point
+     * where the loop_level is already > 0 . That is why I moved all the code from
+     * the constructor to the initialize() method and added this single-shot-timer
+     * setup. (Simon)
+     */
+    QTimer::singleShot( 0, this, SLOT( initialize() ) );
+}
+
+void Kopete::initialize()
+{
     initEmoticons();
 
 	mLibraryLoader = new LibraryLoader();

@@ -113,6 +113,9 @@ public slots:
 
 signals:
 	void signalSettingsChanged();
+
+private slots:
+    	void initialize();
 };
 
 #define kopeteapp (static_cast<Kopete*>(kapp))
