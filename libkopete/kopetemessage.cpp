@@ -335,14 +335,17 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 				result += "&nbsp;&nbsp;&nbsp;&nbsp;";
 				break;
 			case ' ':		// convert doubles spaces to HTML
+			{
 				if( (idx>0) && (text[idx-1]==' '))
 					result += "&nbsp;";
 				else
 					result += " ";
 				lastReplacement = idx;
 				break;
+			}
 
 			case '@':		// email-addresses or message-ids
+			{
 				if ( parseURLs )
 				{
 					startIdx = idx;
@@ -360,8 +363,7 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 //						kdDebug(14010) << "searching start of email addy at: " << startIdx << endl;
 						startIdx--;
 					}
-
-					kdDebug(14010) << "found start of email addy at:" << startIdx << endl;
+//					kdDebug(14010) << "found start of email addy at:" << startIdx << endl;
 
 					regExp.setPattern("[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
 					if ( regExp.search(text,startIdx) != -1 )
@@ -396,8 +398,8 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 								parseHTML(text.mid(startIdx,matchLen),false) +
 								QString::fromLatin1("</a>"); */
 							idx = startIdx + matchLen - 1;
-							kdDebug(14010) << "index is now: " << idx << endl;
-							kdDebug(14010) << "result is: " << result << endl;
+//							kdDebug(14010) << "index is now: " << idx << endl;
+//							kdDebug(14010) << "result is: " << result << endl;
 							lastReplacement = idx;
 						}
 						break;
@@ -405,6 +407,7 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 				}
 				result += text[idx];
 				break;
+			}
 
 			case 'h' :
 			{
@@ -548,6 +551,9 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 				result += text[idx];
 				break;
 			}
+//TODO: Get a real RTF-Editor for Kopete and send html-ized texts out, this pseudo formatting
+//      using ASCII-chars is ONLY common for UseNet.
+//      And yes, I was the one who introduced it, now I think it's the wrong way ;) mETz [03.01.2003]
 
 			case '_' :
 			case '/' :
@@ -582,10 +588,11 @@ QString KopeteMessage::parseHTML( QString message, bool parseURLs )
 				result += text[idx];
 				break;
 			}
+
 			default:
 				result += text[idx];
 				break;
-		}
+		} // END switch( text[idx].latin1() )
 	}
 	return result;
 }
