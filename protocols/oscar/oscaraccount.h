@@ -88,7 +88,7 @@ public:
 	 * in disconnected state it just updates the local status variable that
 	 * gets used on connect
 	 */
-	virtual void setStatus(const unsigned long status,
+	virtual void setStatus(unsigned long status,
 		const QString &awayMessage = QString::null) =0;
 
 public slots:

@@ -149,7 +149,7 @@ void ICQAccount::setAway(bool away, const QString &awayReason)
 }
 
 
-const unsigned long ICQAccount::fullStatus(const unsigned long plainStatus)
+unsigned long ICQAccount::fullStatus(unsigned long plainStatus)
 {
 	unsigned long sendStatus = plainStatus;
 
@@ -174,7 +174,7 @@ const unsigned long ICQAccount::fullStatus(const unsigned long plainStatus)
 }
 
 
-void ICQAccount::setStatus(const unsigned long status,
+void ICQAccount::setStatus(unsigned long status,
 	const QString &awayMessage)
 {
 	kdDebug(14153) << k_funcinfo <<

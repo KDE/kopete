@@ -41,7 +41,7 @@ class ICQAccount : public OscarAccount
 		KActionMenu* actionMenu();
 		virtual void setAway(bool away, const QString &awayReason);
 
-		virtual void setStatus(const unsigned long status,
+		virtual void setStatus(unsigned long status,
 			const QString &awayMessage = QString::null);
 
 		void connectWithPassword(const QString &password);
@@ -68,7 +68,7 @@ class ICQAccount : public OscarAccount
 			const QString &displayName, Kopete::MetaContact *parentContact, bool isOnSSI = false);
 
 	private:
-		const unsigned long fullStatus(const unsigned long plainStatus);
+		unsigned long fullStatus(unsigned long plainStatus);
 
 	private:
 		unsigned long mStatus; // icq status minux flags for web-aware, hide-ip and invisible

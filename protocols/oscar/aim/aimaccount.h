@@ -51,7 +51,7 @@ class AIMAccount : public OscarAccount
 
 		void setAway(bool away, const QString &awayReason);
 
-		virtual void setStatus(const unsigned long status,
+		virtual void setStatus(unsigned long status,
 			const QString &awayMessage = QString::null);
 
 		virtual void connectWithPassword( const QString &password );
@@ -85,7 +85,7 @@ class AIMAccount : public OscarAccount
 			const QString &displayName, Kopete::MetaContact *parentContact, bool isOnSSI = false );
 
 	private:
-		void connect(const unsigned long status, const QString &awMessage);
+		void connect(unsigned long status, const QString &awMessage);
 
 	private:
 		//UserInfo mUserInfo;

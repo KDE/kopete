@@ -157,7 +157,7 @@ void AIMAccount::setAway(bool away, const QString &awayReason)
 }
 
 
-void AIMAccount::setStatus(const unsigned long status,
+void AIMAccount::setStatus(unsigned long status,
 	const QString &awayMessage)
 {
 	kdDebug(14152) << k_funcinfo << "new status=" << status <<
@@ -206,7 +206,7 @@ void AIMAccount::connectWithPassword( const QString & )
 	setStatus(OSCAR_ONLINE, QString::null);
 }
 
-void AIMAccount::connect(const unsigned long status, const QString &awMessage)
+void AIMAccount::connect(unsigned long status, const QString &awMessage)
 {
 	kdDebug(14152) << k_funcinfo << "accountId='" << accountId() <<
 		"', status=" << status << ", awaymessage=" << awMessage << endl;
