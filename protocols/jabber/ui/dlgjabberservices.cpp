@@ -84,10 +84,10 @@ void DlgJabberServices::slotSetSelection(int row, int, int, const QPoint &)
 #if QT_VERSION >= 0x030100
 	tblServices->addSelection(QTableSelection(row, 0, row, 1));
 #else
-	QTableSelection *selection = new QTableSelection();
-	selection->init(row, 0);
-	selection->expandTo(row, 1);
-	tblServices->addSelection(*selection);
+	QTableSelection selection;
+	selection.init(row, 0);
+	selection.expandTo(row, 1);
+	tblServices->addSelection(selection);
 #endif
 
 	// query the agent list about the selected item
