@@ -192,165 +192,165 @@ void OscarSocket::OnRead(void)
     char *buf = new char[fl.length];
     Buffer inbuf;
     if (bytesAvailable() < fl.length)
-	{
-	    while (waitForMore(500) < fl.length)
-		kdDebug() << "[OSCAR][OnRead()] not enough data read yet... waiting" << endl;
-	}
+		{
+				while (waitForMore(500) < fl.length)
+						kdDebug() << "[OSCAR][OnRead()] not enough data read yet... waiting" << endl;
+		}
     int bytesread = readBlock(buf,fl.length);
     if (fl.length < bytesAvailable())
-	emit readyRead(); //there is another packet waiting to be read
+				emit readyRead(); //there is another packet waiting to be read
     inbuf.setBuf(buf,bytesread);
     kdDebug() << "[OSCAR] Input: " << endl;
     inbuf.print();
     switch(fl.channel)
-	{
-	case 0x01: //new connection negotiation channel
-	    DWORD flapversion;
-	    flapversion = inbuf.getDWord();
-	    if (flapversion == 0x00000001)
 		{
-		    emit connAckReceived();
-		}
-	    else
-		{
-		    kdDebug() << "[OSCAR][OnRead()] could not read flapversion on channel 0x01" << endl;
-		    return;
-		}
-	    break;
-	case 0x02: //snac data channel
-	    SNAC s;
-	    s = inbuf.getSnacHeader();
-	    //printf("Snac family is %x, subtype is %x, flags are %x, id is %x\n",s.family,s.subtype,s.flags,s.id);
-	    switch(s.family) {
-	    case 0x0001: //generic service controls
-		switch(s.subtype) {
-		case 0x0001:  //error
-		    kdDebug() << "[OSCAR] Generic service error.. remaining data is:" << endl;
-		    inbuf.print();
-		    emit protocolError(i18n("An unknown error occured. Please report this to the Kopete development team by visiting http://kopete.kde.org. The error message was: \"Generic service error: 0x0001/0x0001\""), 0);
-		    break;
-		case 0x0003: //server ready
-		    parseServerReady(inbuf);
-		    break;
-		case 0x0005: //redirect
-		    parseRedirect(inbuf);
-		    break;
-		case 0x0007: //rate info request response
-		    parseRateInfoResponse(inbuf);
-		    break;
-		case 0x000f: //my user info
-		    parseMyUserInfo(inbuf);
-		    break;
-		case 0x000a: //rate change
-		    parseRateChange(inbuf);
-		    break;
-		case 0x0010: //warning notification
-				parseWarningNotify(inbuf);
+		case 0x01: //new connection negotiation channel
+				DWORD flapversion;
+				flapversion = inbuf.getDWord();
+				if (flapversion == 0x00000001)
+				{
+						emit connAckReceived();
+				}
+				else
+				{
+						kdDebug() << "[OSCAR][OnRead()] could not read flapversion on channel 0x01" << endl;
+						return;
+				}
 				break;
-		case 0x0013: //message of the day
-		    parseMessageOfTheDay(inbuf);
-		    break;
-		case 0x0018: //server versions
-		    parseServerVersions(inbuf);
-		    break;
-		case 0x001f: //requests a memory segment, part of aim.exe  EVIL AOL!!!
-		    parseMemRequest(inbuf);
-		    break;
-		default:
-		    kdDebug() << "[OSCAR] Error: unknown family/subtype " << s.family << "/" << s.subtype << endl;
-		};
-		break;
-	    case 0x0002: //locate service
-		switch(s.subtype) {
-		case 0x0003: //locate rights
-		    parseLocateRights(inbuf);
-		    break;
-		case 0x0006: //user profile
-		    parseUserProfile(inbuf);
-		    break;
-		default: //invalid subtype
-		    kdDebug() << "[OSCAR] Error: unknown subtype " << s.family << "/" << s.subtype << endl;
-		};
-		break;
-	    case 0x0003: //buddy services
-		switch(s.subtype) {
-		case 0x0003: //buddy list rights
-		    parseBuddyRights(inbuf);
-		    break;
-		case 0x000b: //oncoming buddy
-		    parseOncomingBuddy(inbuf);
-		    break;
-		case 0x000c: //offgoing buddy
-		    parseOffgoingBuddy(inbuf);
-		    break;
-		default: //invalid subtype
-		    kdDebug() << "[OSCAR] Error: unknown subtype " << s.family << "/" << s.subtype << endl;
-		};
-		break;
-	    case 0x0004: //msg services
-		switch(s.subtype) {
-		case 0x0005: //msg rights
-		    parseMsgRights(inbuf);
-		    break;
-		case 0x0007: //incoming IM
-		    parseIM(inbuf);
-		    break;
-		case 0x000c: //message ack
-		    parseMsgAck(inbuf);
-		    break;
-		default: //invalid subtype
-		    kdDebug() << "[OSCAR] Error: unknown subtype " << s.family << "/" << s.subtype << endl;
-		};
-		break;
-	    case 0x0009: //bos service
-		switch(s.subtype) {
-		case 0x0003: //bos rights incoming
-		    parseBOSRights(inbuf);
-		    break;
-		};
-		break;
-	    case 0x0013: //buddy list management
-		switch(s.subtype) {
-		case 0x0006: //buddy list
-		    parseSSIData(inbuf);
-		    break;
-		case 0x000e: //server ack
-		    parseSSIAck(inbuf);
-		    break;
-		default:
-		    kdDebug() << "[OSCAR] Error: unknown family/subtype " << s.family << "/" << s.subtype << endl;
-		};
-		break;
-	    case 0x0017: //authorization family
-		switch(s.subtype) {
-		case 0x0003: //authorization response (and hash) is being sent
-		    parseAuthResponse(inbuf);
-		    break;
-		case 0x0007: //encryption key is being sent
-		    WORD keylen;
-		    keylen = inbuf.getWord();
-		    if (key)
-			delete key;
-		    key = inbuf.getBlock(keylen);
-		    emit keyReceived();
-		    break;
-		default: //unknown subtype	
-		    kdDebug() << "[OSCAR] Error: unknown family/subtype " << s.family << "/" << s.subtype << endl;
-		};
-		break;
-	    default: //unknown family
-		kdDebug() << "[OSCAR] Error: unknown family " << s.family << "/" << s.subtype << endl;
-	    };
-	    break;
-	    //		case 0x03: //FLAP error channel
-	    //			break;
-	    //		case 0x04: //close connection negotiation channel
-	    //			break;
-	default: //oh, crap, something's wrong
-	    kdDebug() << "[OSCAR] Error: channel " << fl.channel << " does not exist" << endl;
-	    kdDebug() << "Input: " << endl;
-	    inbuf.print();
-	}
+		case 0x02: //snac data channel
+				SNAC s;
+				s = inbuf.getSnacHeader();
+				//printf("Snac family is %x, subtype is %x, flags are %x, id is %x\n",s.family,s.subtype,s.flags,s.id);
+				switch(s.family) {
+				case 0x0001: //generic service controls
+						switch(s.subtype) {
+						case 0x0001:  //error
+								kdDebug() << "[OSCAR] Generic service error.. remaining data is:" << endl;
+								inbuf.print();
+								emit protocolError(i18n("An unknown error occured. Please report this to the Kopete development team by visiting http://kopete.kde.org. The error message was: \"Generic service error: 0x0001/0x0001\""), 0);
+								break;
+						case 0x0003: //server ready
+								parseServerReady(inbuf);
+								break;
+						case 0x0005: //redirect
+								parseRedirect(inbuf);
+								break;
+						case 0x0007: //rate info request response
+								parseRateInfoResponse(inbuf);
+								break;
+						case 0x000f: //my user info
+								parseMyUserInfo(inbuf);
+								break;
+						case 0x000a: //rate change
+								parseRateChange(inbuf);
+								break;
+						case 0x0010: //warning notification
+								parseWarningNotify(inbuf);
+								break;
+						case 0x0013: //message of the day
+								parseMessageOfTheDay(inbuf);
+								break;
+						case 0x0018: //server versions
+								parseServerVersions(inbuf);
+								break;
+						case 0x001f: //requests a memory segment, part of aim.exe  EVIL AOL!!!
+								parseMemRequest(inbuf);
+								break;
+						default:
+								kdDebug() << "[OSCAR] Error: unknown family/subtype " << s.family << "/" << s.subtype << endl;
+						};
+						break;
+				case 0x0002: //locate service
+						switch(s.subtype) {
+						case 0x0003: //locate rights
+								parseLocateRights(inbuf);
+								break;
+						case 0x0006: //user profile
+								parseUserProfile(inbuf);
+								break;
+						default: //invalid subtype
+								kdDebug() << "[OSCAR] Error: unknown subtype " << s.family << "/" << s.subtype << endl;
+						};
+						break;
+				case 0x0003: //buddy services
+						switch(s.subtype) {
+						case 0x0003: //buddy list rights
+								parseBuddyRights(inbuf);
+								break;
+						case 0x000b: //oncoming buddy
+								parseOncomingBuddy(inbuf);
+								break;
+						case 0x000c: //offgoing buddy
+								parseOffgoingBuddy(inbuf);
+								break;
+						default: //invalid subtype
+								kdDebug() << "[OSCAR] Error: unknown subtype " << s.family << "/" << s.subtype << endl;
+						};
+						break;
+				case 0x0004: //msg services
+						switch(s.subtype) {
+						case 0x0005: //msg rights
+								parseMsgRights(inbuf);
+								break;
+						case 0x0007: //incoming IM
+								parseIM(inbuf);
+								break;
+						case 0x000c: //message ack
+								parseMsgAck(inbuf);
+								break;
+						default: //invalid subtype
+								kdDebug() << "[OSCAR] Error: unknown subtype " << s.family << "/" << s.subtype << endl;
+						};
+						break;
+				case 0x0009: //bos service
+						switch(s.subtype) {
+						case 0x0003: //bos rights incoming
+								parseBOSRights(inbuf);
+								break;
+						};
+						break;
+				case 0x0013: //buddy list management
+						switch(s.subtype) {
+						case 0x0006: //buddy list
+								parseSSIData(inbuf);
+								break;
+						case 0x000e: //server ack
+								parseSSIAck(inbuf);
+								break;
+						default:
+								kdDebug() << "[OSCAR] Error: unknown family/subtype " << s.family << "/" << s.subtype << endl;
+						};
+						break;
+				case 0x0017: //authorization family
+						switch(s.subtype) {
+						case 0x0003: //authorization response (and hash) is being sent
+								parseAuthResponse(inbuf);
+								break;
+						case 0x0007: //encryption key is being sent
+								WORD keylen;
+								keylen = inbuf.getWord();
+								if (key)
+										delete key;
+								key = inbuf.getBlock(keylen);
+								emit keyReceived();
+								break;
+						default: //unknown subtype	
+								kdDebug() << "[OSCAR] Error: unknown family/subtype " << s.family << "/" << s.subtype << endl;
+						};
+						break;
+				default: //unknown family
+						kdDebug() << "[OSCAR] Error: unknown family " << s.family << "/" << s.subtype << endl;
+				};
+				break;
+				//		case 0x03: //FLAP error channel
+				//			break;
+				//		case 0x04: //close connection negotiation channel
+				//			break;
+		default: //oh, crap, something's wrong
+				kdDebug() << "[OSCAR] Error: channel " << fl.channel << " does not exist" << endl;
+				kdDebug() << "Input: " << endl;
+				inbuf.print();
+		}
     delete buf;
 }
 
@@ -361,29 +361,43 @@ FLAP OscarSocket::getFLAP(void)
     int theword, theword2;
     int start;
     int chan;
-    if ((start = getch()) == 0x2a) //the FLAP start byte
-	{
-	    if ( (chan = getch()) == -1) //get the channel ID
-		kdDebug() << "[OSCAR] Error reading channel ID: nothing to be read" << endl;
-	    else
-		{
-		    fl.channel = chan;
+		//the FLAP start byte
+    if ((start = getch()) == 0x2a){
+				//get the channel ID
+				if ( (chan = getch()) == -1) {
+						kdDebug() << "[OSCAR] Error reading channel ID: nothing to be read" << endl;
+						fl.channel = 0x00;
+				} else {
+						fl.channel = chan;
+				}
+
+				//get the sequence number
+				if((theword = getch()) == -1){
+						kdDebug() << "[OSCAR] Error reading sequence number: nothing to be read" << endl;;
+						fl.sequence_number = 0x00;
+				} else if((theword2 = getch()) == -1){
+						kdDebug() << "[OSCAR] Error reading data field length: nothing to be read" << endl;
+						fl.sequence_number = 0x00;
+				} else {
+						// Got both pieces of info we need...
+						fl.sequence_number = (theword << 8) | theword2;
+				}
+				
+				
+				//get the data field length
+				if ((theword = getch()) == -1) {
+						kdDebug() << "[OSCAR] Error reading sequence number: nothing to be read" << endl;
+						fl.length = 0x00;
+				} else if((theword2 = getch()) == -1){
+						kdDebug() << "[OSCAR] Error reading data field length: nothing to be read" << endl;
+						fl.length = 0x00;
+				} else {
+						fl.length = (theword << 8) | theword2;
+				}
+				
+		} else {
+				kdDebug() << "[OSCAR] Error reading FLAP... start byte is " << start << endl;
 		}
-	    if ((theword = getch()) == -1) //get the sequence number
-		kdDebug() << "[OSCAR] Error reading sequence number: nothing to be read" << endl;;
-	    if ((theword2 = getch()) == -1)
-		kdDebug() << "[OSCAR] Error reading data field length: nothing to be read" << endl;
-	    fl.sequence_number = (theword << 8) | theword2;
-	    if ((theword = getch()) == -1) //get the data field length
-		kdDebug() << "[OSCAR] Error reading sequence number: nothing to be read" << endl;
-	    if ((theword2 = getch()) == -1)
-		kdDebug() << "[OSCAR] Error reading data field length: nothing to be read" << endl;
-	    fl.length = (theword << 8) | theword2;
-	}
-    else
-	{
-	    kdDebug() << "[OSCAR] Error reading FLAP... start byte is " << start << endl;
-	}
     return fl;
 }
 
@@ -542,46 +556,46 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
     RateClass *rc = NULL;
     WORD numclasses = inbuf.getWord();
     for (unsigned int i=0;i<numclasses;i++)
-	{
-	    rc = new RateClass;
-	    rc->classid = inbuf.getWord();
-	    rc->windowsize = inbuf.getDWord();
-	    rc->clear = inbuf.getDWord();
-	    rc->alert = inbuf.getDWord();
-	    rc->limit = inbuf.getDWord();
-	    rc->disconnect = inbuf.getDWord();
-	    rc->current = inbuf.getDWord();
-	    rc->max = inbuf.getDWord();
-	    //5 unknown bytes, depending on the 0x0001/0x0017 you send
-	    for (int j=0;j<5;j++)
-		rc->unknown[j] = inbuf.getByte();
-	    rateClasses.append(rc);
-	}
+		{
+				rc = new RateClass;
+				rc->classid = inbuf.getWord();
+				rc->windowsize = inbuf.getDWord();
+				rc->clear = inbuf.getDWord();
+				rc->alert = inbuf.getDWord();
+				rc->limit = inbuf.getDWord();
+				rc->disconnect = inbuf.getDWord();
+				rc->current = inbuf.getDWord();
+				rc->max = inbuf.getDWord();
+				//5 unknown bytes, depending on the 0x0001/0x0017 you send
+				for (int j=0;j<5;j++)
+						rc->unknown[j] = inbuf.getByte();
+				rateClasses.append(rc);
+		}
     kdDebug() << "[OSCAR] The buffer is " << inbuf.getLength() << " bytes long after reading the classes" << endl;;
     kdDebug() << "[OSCAR] It looks like this: " << endl;
     inbuf.print();
     //now here come the members of each class
     for (unsigned int i=0;i<numclasses;i++)
-	{
-	    WORD classid = inbuf.getWord();
-	    WORD count = inbuf.getWord();
-	    kdDebug() << "[OSCAR] Classid: " << classid << ", Count: " << count << endl;
-	    RateClass *tmp;
-	    for (tmp=rateClasses.first();tmp;tmp=rateClasses.next())  //find the class we're talking about
-		if (tmp->classid == classid)
-		    {
-			rc = tmp;
-			break;
-		    }
-	    for (WORD j=0;j<count;j++)
 		{
-		    SnacPair *s = new SnacPair;
-		    s->group = inbuf.getWord();
-		    s->type = inbuf.getWord();
-		    if (rc)
-			rc->members.append(s);
+				WORD classid = inbuf.getWord();
+				WORD count = inbuf.getWord();
+				kdDebug() << "[OSCAR] Classid: " << classid << ", Count: " << count << endl;
+				RateClass *tmp;
+				for (tmp=rateClasses.first();tmp;tmp=rateClasses.next())  //find the class we're talking about
+						if (tmp->classid == classid)
+						{
+								rc = tmp;
+								break;
+						}
+				for (WORD j=0;j<count;j++)
+				{
+						SnacPair *s = new SnacPair;
+						s->group = inbuf.getWord();
+						s->type = inbuf.getWord();
+						if (rc)
+								rc->members.append(s);
+				}
 		}
-	}
     kdDebug() << "[OSCAR] The buffer is " << inbuf.getLength() << " bytes long after reading the rate info" << endl;
     sendRateAck();
 }
@@ -1016,7 +1030,15 @@ void OscarSocket::parseMsgRights(Buffer &/*inbuf*/)
 /** Parses an incoming IM */
 void OscarSocket::parseIM(Buffer &inbuf)
 {
-    Buffer tmpbuf;
+
+		// For some reason, we're getting empty buffers....
+		// This checks for them, I hope
+		if(inbuf.getLength() == 0){
+				kdDebug() << "Got imcoming message length of zero" << endl;
+				return;
+		}
+		
+		Buffer tmpbuf;
     WORD type = 0;
     WORD length = 0;
     //This is probably the hardest thing to do in oscar
@@ -1055,156 +1077,156 @@ void OscarSocket::parseIM(Buffer &inbuf)
     QString message;
     QSocket *s = new QSocket;
     switch(channel)
-	{
-	case 0x0001: //normal IM
-	    kdDebug() << "[OSCAR] got a normal IM from " << u.sn << endl;
-	    type = inbuf.getWord();
-	    length = inbuf.getWord();
-	    switch(type) {
-	    case 0x0002: //message block
-		//first comes 0x0501 (don't know what it is)
-		inbuf.getWord();
-		//next comes the features length, followed by the features
-		int featureslen;
-		featureslen = inbuf.getWord();
-		inbuf.getBlock(featureslen);
-		while (inbuf.getLength() > 0)
-		    {
-			//then comes 0x0101 (don't know what that is either)
-			inbuf.getWord();
-			//length of the message
-			WORD msglen = inbuf.getWord();
-			//unicode encoding of the message
-			/*WORD flag1 = */inbuf.getWord();
-			/*WORD flag2 = */inbuf.getWord();
-			msglen -= 4; //strip off the unicode info
-			char *msg = inbuf.getBlock(msglen);
-			message = msg;
-			delete msg;
-			kdDebug() << "[OSCAR] IM text: " << message << endl;
-			emit gotIM(message,u.sn,false);
-		    }
-		break;
-	    default: //unknown type
-		kdDebug() << "[OSCAR][parseIM] unknown msg tlv type " << type;
-	    };
-	    break;
-	case 0x0002: //rendezvous channel
-	    kdDebug() << "[OSCAR] IM recieved on channel 2 from " << u.sn << endl;
-	    tlv = inbuf.getTLV();
-	    kdDebug() << "[OSCAR] The first TLV is of type " << tlv.type;
-	    if (tlv.type == 0x0005) //connection info
 		{
-		    tmpbuf.setBuf(tlv.data,tlv.length);
-		    //embedded in the type 5 tlv are more tlv's
-		    //first 2 bytes are the request status
-		    // 0 - Request
-		    // 1 - Deny
-		    // 2 - Accept
-		    /*WORD status = */tmpbuf.getWord();
-		    //next comes the cookie, which should match the ICBM cookie
-		    char * cook = tmpbuf.getBlock(8);
-		    delete cook;
-		    //the next 16 bytes are the capability block (what kind of request is this?)
-		    char *cap = tmpbuf.getBlock(0x10);
-		    int identified = 0;
-		    DWORD capflag = 0;
-		    for (int i = 0; !(aim_caps[i].flag & AIM_CAPS_LAST); i++)
-			{
-			    if (memcmp(&aim_caps[i].data, cap, 0x10) == 0)
+		case 0x0001: //normal IM
+				kdDebug() << "[OSCAR] got a normal IM from " << u.sn << endl;
+				type = inbuf.getWord();
+				length = inbuf.getWord();
+				switch(type) {
+				case 0x0002: //message block
+						//first comes 0x0501 (don't know what it is)
+						inbuf.getWord();
+						//next comes the features length, followed by the features
+						int featureslen;
+						featureslen = inbuf.getWord();
+						inbuf.getBlock(featureslen);
+						while (inbuf.getLength() > 0)
+						{
+								//then comes 0x0101 (don't know what that is either)
+								inbuf.getWord();
+								//length of the message
+								WORD msglen = inbuf.getWord();
+								//unicode encoding of the message
+								/*WORD flag1 = */inbuf.getWord();
+								/*WORD flag2 = */inbuf.getWord();
+								msglen -= 4; //strip off the unicode info
+								char *msg = inbuf.getBlock(msglen);
+								message = msg;
+								delete msg;
+								kdDebug() << "[OSCAR] IM text: " << message << endl;
+								emit gotIM(message,u.sn,false);
+						}
+						break;
+				default: //unknown type
+						kdDebug() << "[OSCAR][parseIM] unknown msg tlv type " << type;
+				};
+				break;
+		case 0x0002: //rendezvous channel
+				kdDebug() << "[OSCAR] IM recieved on channel 2 from " << u.sn << endl;
+				tlv = inbuf.getTLV();
+				kdDebug() << "[OSCAR] The first TLV is of type " << tlv.type;
+				if (tlv.type == 0x0005) //connection info
 				{
-				    capflag |= aim_caps[i].flag;
-				    identified++;
-				    break; /* should only match once... */
-				}
-			}
-		    if (!identified){
-			printf("unknown capability: {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}\n",
-			       cap[0], cap[1], cap[2], cap[3],
-			       cap[4], cap[5],
-			       cap[6], cap[7],
-			       cap[8], cap[9],
-			       cap[10], cap[11], cap[12], cap[13],
-			       cap[14], cap[15]);
-		    }
-		    delete cap;
-		    //Next comes a big TLV chain of stuff that may or may not exist
-		    QList<TLV> tlvlist = tmpbuf.getTLVList();
-		    TLV *cur;
-		    tlvlist.setAutoDelete(true);
-		    for (cur = tlvlist.first();cur;cur = tlvlist.next())
-			{
-			    //IP address from the perspective of the client
-			    if (cur->type == 0x0002)
-				{
-				    kdDebug() << "[OSCAR] ClientIP1: " << cur->data[0] << "."
-					      << cur->data[1] << "." << cur->data[2] << "."
-					      << cur->data[3]  << endl;
+						tmpbuf.setBuf(tlv.data,tlv.length);
+						//embedded in the type 5 tlv are more tlv's
+						//first 2 bytes are the request status
+						// 0 - Request
+						// 1 - Deny
+						// 2 - Accept
+						/*WORD status = */tmpbuf.getWord();
+						//next comes the cookie, which should match the ICBM cookie
+						char * cook = tmpbuf.getBlock(8);
+						delete cook;
+						//the next 16 bytes are the capability block (what kind of request is this?)
+						char *cap = tmpbuf.getBlock(0x10);
+						int identified = 0;
+						DWORD capflag = 0;
+						for (int i = 0; !(aim_caps[i].flag & AIM_CAPS_LAST); i++)
+						{
+								if (memcmp(&aim_caps[i].data, cap, 0x10) == 0)
+								{
+										capflag |= aim_caps[i].flag;
+										identified++;
+										break; /* should only match once... */
+								}
+						}
+						if (!identified){
+								printf("unknown capability: {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}\n",
+												cap[0], cap[1], cap[2], cap[3],
+												cap[4], cap[5],
+												cap[6], cap[7],
+												cap[8], cap[9],
+												cap[10], cap[11], cap[12], cap[13],
+												cap[14], cap[15]);
+						}
+						delete cap;
+						//Next comes a big TLV chain of stuff that may or may not exist
+						QList<TLV> tlvlist = tmpbuf.getTLVList();
+						TLV *cur;
+						tlvlist.setAutoDelete(true);
+						for (cur = tlvlist.first();cur;cur = tlvlist.next())
+						{
+								//IP address from the perspective of the client
+								if (cur->type == 0x0002)
+								{
+										kdDebug() << "[OSCAR] ClientIP1: " << cur->data[0] << "."
+															<< cur->data[1] << "." << cur->data[2] << "."
+															<< cur->data[3]  << endl;
 						
+								}
+								//Secondary IP address from the perspective of the client
+								else if (cur->type == 0x0003)
+								{
+										kdDebug() << "[OSCAR] ClientIP2: " << cur->data[0] << "." 
+															<< cur->data[1] << "." << cur->data[2] << "." 
+															<< cur->data[3] << endl;
+								}
+								//Verified IP address (from perspective of oscar server)
+								else if (cur->type == 0x0004)
+								{
+										DWORD tmpaddr = 0;
+										for (int i=0;i<4;i++)
+										{
+												tmpaddr = (tmpaddr*0x100) + static_cast<unsigned char>(cur->data[i]);
+										}
+										qh.setAddress(tmpaddr);
+										kdDebug() << "[OSCAR] OscarIPRaw: " << cur->data[0] << "." << cur->data[1] << "."
+															<< cur->data[2] << "." << cur->data[3] << endl;
+										kdDebug() << "[OSCAR] OscarIP: " << qh.toString() << endl;
+								}
+								//Port number 
+								else if (cur->type == 0x0005)
+								{
+										remotePort = (cur->data[1] << 8) | cur->data[0];
+										kdDebug() << "[OSCAR] Port# " << remotePort << endl;
+								}
+								//Error code
+								else if (cur->type == 0x000b)
+								{
+										kdDebug() << "[OSCAR] ICBM ch 2 error code " <<  ((cur->data[1] << 8) | cur->data[0]) << endl;
+										emit protocolError(i18n("Rendezvous with buddy failed. Please check your internet connection or try the operation again later. Error code %1.\n").arg((cur->data[1] << 8) | cur->data[0]), 0);
+								}
+								//Invitation message/ chat description
+								else if (cur->type == 0x000c)
+								{
+										kdDebug() << "[OSCAR] Invited to chat " << cur->data << endl;
+								}
+								//Character set
+								else if (cur->type == 0x000d)
+								{
+										kdDebug() << "[OSCAR] Using character set " << cur->data << endl;
+								}
+								//Language
+								else if (cur->type == 0x000e)
+								{
+										kdDebug() << "[OSCAR] Using language " << cur->data << endl;
+								}
+								else
+										kdDebug() << "[OSCAR] ICBM ch2: unknown tlv type " << cur->type << endl;
+								delete cur->data;
+						}
 				}
-			    //Secondary IP address from the perspective of the client
-			    else if (cur->type == 0x0003)
+				else
 				{
-				    kdDebug() << "[OSCAR] ClientIP2: " << cur->data[0] << "." 
-					      << cur->data[1] << "." << cur->data[2] << "." 
-					      << cur->data[3] << endl;
+						kdDebug() << "[OSCAR] Ch 2 IM: unknown TLV type " << type << endl;
 				}
-			    //Verified IP address (from perspective of oscar server)
-			    else if (cur->type == 0x0004)
-				{
-				    DWORD tmpaddr = 0;
-				    for (int i=0;i<4;i++)
-					{
-					    tmpaddr = (tmpaddr*0x100) + static_cast<unsigned char>(cur->data[i]);
-					}
-				    qh.setAddress(tmpaddr);
-				    kdDebug() << "[OSCAR] OscarIPRaw: " << cur->data[0] << "." << cur->data[1] << "."
-					      << cur->data[2] << "." << cur->data[3] << endl;
-				    kdDebug() << "[OSCAR] OscarIP: " << qh.toString() << endl;
-				}
-			    //Port number 
-			    else if (cur->type == 0x0005)
-				{
-				    remotePort = (cur->data[1] << 8) | cur->data[0];
-				    kdDebug() << "[OSCAR] Port# " << remotePort << endl;
-				}
-			    //Error code
-			    else if (cur->type == 0x000b)
-				{
-				    kdDebug() << "[OSCAR] ICBM ch 2 error code " <<  ((cur->data[1] << 8) | cur->data[0]) << endl;
-				    emit protocolError(i18n("Rendezvous with buddy failed. Please check your internet connection or try the operation again later. Error code %1.\n").arg((cur->data[1] << 8) | cur->data[0]), 0);
-				}
-			    //Invitation message/ chat description
-			    else if (cur->type == 0x000c)
-				{
-				    kdDebug() << "[OSCAR] Invited to chat " << cur->data << endl;
-				}
-			    //Character set
-			    else if (cur->type == 0x000d)
-				{
-				    kdDebug() << "[OSCAR] Using character set " << cur->data << endl;
-				}
-			    //Language
-			    else if (cur->type == 0x000e)
-				{
-				    kdDebug() << "[OSCAR] Using language " << cur->data << endl;
-				}
-			    else
-				kdDebug() << "[OSCAR] ICBM ch2: unknown tlv type " << cur->type << endl;
-			    delete cur->data;
-			}
+				connect(s,SIGNAL(connected()),this,SLOT(OnConnect()));
+				kdDebug() << "[OSCAR] Connecting to " << qh.toString() << ":" << remotePort << endl;
+				s->connectToHost(qh.toString(),remotePort);
+				break;
+		default: //unknown channel
+				kdDebug() << "[OSCAR] Error: unknown ICBM channel " << channel << endl;
 		}
-	    else
-		{
-		    kdDebug() << "[OSCAR] Ch 2 IM: unknown TLV type " << type << endl;
-		}
-	    connect(s,SIGNAL(connected()),this,SLOT(OnConnect()));
-	    kdDebug() << "[OSCAR] Connecting to " << qh.toString() << ":" << remotePort << endl;
-	    s->connectToHost(qh.toString(),remotePort);
-	    break;
-	default: //unknown channel
-	    kdDebug() << "[OSCAR] Error: unknown ICBM channel " << channel << endl;
-	}
 }
 
 /** parses the aim standard user info block */
@@ -1216,52 +1238,65 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
     u.onlinesince = 0;
     u.idletime = 0;
     u.sessionlen = 0;
-    BYTE len = inbuf.getByte();
-    char *cb = inbuf.getBlock(len);
-    u.sn = cb;
-    u.evil = inbuf.getWord() / 10; //for some reason aol multiplies the warning level by 10
-    WORD tlvlen = inbuf.getWord(); //the number of TLV's that follow
-    kdDebug() << "[OSCAR] ScreenName length: " << len << ", sn: " << u.sn << ", evil: " << u.evil
-	      << ", tlvlen: " << tlvlen << endl;
-    delete cb;
-    for (int i=0;i<tlvlen;i++)
-	{
-	    TLV t = inbuf.getTLV();
-	    switch(t.type) {
-	    case 0x0001: //user class
-		u.userclass = (t.data[0] << 8) | t.data[1];
-		break;
-	    case 0x0002: //member since
-		u.membersince = (t.data[0] << 24) | (t.data[1] << 16)
-		    | (t.data[2] << 8) | t.data[3];
-		break;
-	    case 0x0003: //online since
-		u.onlinesince = (t.data[0] << 24) | (t.data[1] << 16)
-		    | (t.data[2] << 8) | t.data[3];
-		break;
-	    case 0x0004: //idle time
-		u.idletime = (WORD) ((t.data[0] << 8) | t.data[1]);
-		break;
-		//case 0x000d: //capability info
-				
-		//break;
-	    case 0x000f: //session length (in seconds)
-		u.sessionlen = (t.data[0] << 24) | (t.data[1] << 16)
-		    | (t.data[2] << 8) | t.data[3];
-		break;
-	    default: //unknown info type
-		kdDebug() << "[OSCAR][parseUserInfo] invalid tlv type " << t.type << endl;
-	    };
-	    delete t.data;
-	}
-    // TODO [Sept 27 2002] gives compilation warning on third argument 
-    // (warning: unsigned int format, long unsigned int arg (arg 3))
-    kdDebug() << "[OSCAR], userclass: " << u.userclass << ", membersince: " << u.membersince
-	      << ", onlinesince: " << u.onlinesince << ", idletime: " << u.idletime << endl;
-    // (unsigned char)u.userclass, u.membersince,(unsigned short)u.onlinesince, u.idletime);
-    return u;
+		//Do some sanity checking on the length of the buffer
+		if(inbuf.getLength() > 0){
+				BYTE len = inbuf.getByte();
+				kdDebug() << "[OSCAR] Finished getting user info" << endl;
+				char *cb = inbuf.getBlock(len);
+				u.sn = cb;
+				u.evil = inbuf.getWord() / 10; //for some reason aol multiplies the warning level by 10
+				WORD tlvlen = inbuf.getWord(); //the number of TLV's that follow
+				kdDebug() << "[OSCAR] ScreenName length: " << len << ", sn: " << u.sn << ", evil: " << u.evil
+									<< ", tlvlen: " << tlvlen << endl;
+				delete cb;
+				for (int i=0;i<tlvlen;i++)
+				{
+						TLV t = inbuf.getTLV();
+						switch(t.type) {
+						case 0x0001: //user class
+								u.userclass = (t.data[0] << 8) | t.data[1];
+								break;
+						case 0x0002: //member since
+								u.membersince = (t.data[0] << 24) | (t.data[1] << 16)
+										| (t.data[2] << 8) | t.data[3];
+								break;
+						case 0x0003: //online since
+								u.onlinesince = (t.data[0] << 24) | (t.data[1] << 16)
+										| (t.data[2] << 8) | t.data[3];
+								break;
+						case 0x0004: //idle time
+								u.idletime = (WORD) ((t.data[0] << 8) | t.data[1]);
+								break;
+								//case 0x000d: //capability info
+								
+								//break;
+						case 0x000f: //session length (in seconds)
+								u.sessionlen = (t.data[0] << 24) | (t.data[1] << 16)
+										| (t.data[2] << 8) | t.data[3];
+								break;
+						default: //unknown info type
+								kdDebug() << "[OSCAR][parseUserInfo] invalid tlv type " << t.type << endl;
+						};
+						delete t.data;
+						
+				}
+				// TODO [Sept 27 2002] gives compilation warning on third argument 
+				// (warning: unsigned int format, long unsigned int arg (arg 3))
+				kdDebug() << "[OSCAR], userclass: " << u.userclass << ", membersince: " << u.membersince
+									<< ", onlinesince: " << u.onlinesince << ", idletime: " << u.idletime << endl;
+				// (unsigned char)u.userclass, u.membersince,(unsigned short)u.onlinesince, u.idletime);
+		} else {
+				// Buffer had length of zero for some reason, so 
+				u.userclass = -1;
+				u.membersince = -1;
+				u.onlinesince = -1;
+				u.idletime = -1;
+				u.sessionlen = -1;
+		}
+		return u;
 }
 
+		
 /** Sends message to dest */
 void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAuto)
 {
