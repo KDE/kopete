@@ -33,20 +33,28 @@
 AccountConfig::AccountConfig(QWidget * parent) :
 	ConfigModule (i18n("Accounts"),i18n("Here You Can Manage Your Accounts"),"personal", parent )
 {
-	QVBoxLayout *topLayout = new QVBoxLayout( this );
-	m_view=new AccountConfigBase(this);
+	QVBoxLayout *topLayout = new QVBoxLayout(this);
+	m_view=new AccountConfigBase(this, "AccountConfig::m_view");
 	topLayout->add(m_view);
 
-	m_view->mButtonUp->setPixmap( SmallIcon("up") );
-	m_view->mButtonDown->setPixmap( SmallIcon("down") );
-	m_view->mAccountList->setSorting( -1 );
+	m_view->mButtonUp->setPixmap(SmallIcon("up"));
+	m_view->mButtonDown->setPixmap(SmallIcon("down"));
+	m_view->mAccountList->setSorting(-1);
 
-	connect( m_view->mButtonNew , SIGNAL(clicked() ) , this , SLOT( slotAddAccount()));
-	connect( m_view->mButtonEdit , SIGNAL(clicked() ) , this , SLOT( slotEditAccount()));
-	connect( m_view->mButtonRemove , SIGNAL(clicked() ) , this , SLOT( slotRemoveAccount()));
-	connect( m_view->mAccountList , SIGNAL(selectionChanged() ) , this , SLOT( slotItemSelected()));
-	connect( m_view->mButtonUp , SIGNAL(clicked() ) , this , SLOT( slotAccountUp()));
-	connect( m_view->mButtonDown , SIGNAL(clicked() ) , this , SLOT( slotAccountDown()));
+	connect(m_view->mButtonNew, SIGNAL(clicked()),
+		this, SLOT(slotAddAccount()));
+	connect(m_view->mButtonEdit, SIGNAL(clicked()),
+		this, SLOT(slotEditAccount()));
+	connect(m_view->mButtonRemove, SIGNAL(clicked()),
+		this, SLOT(slotRemoveAccount()));
+	connect(m_view->mAccountList, SIGNAL(selectionChanged()),
+		this, SLOT(slotItemSelected()));
+	connect(m_view->mAccountList, SIGNAL(executed(QListViewItem*)),
+		this, SLOT(slotEditAccount()));
+	connect(m_view->mButtonUp, SIGNAL(clicked()),
+		this, SLOT( slotAccountUp()));
+	connect(m_view->mButtonDown, SIGNAL(clicked()),
+		this, SLOT( slotAccountDown()));
 
 	slotItemSelected();
 //	m_addwizard=0L;
@@ -63,15 +71,17 @@ void AccountConfig::save()
 
 void AccountConfig::reopen()
 {
+	QListViewItem* lvi;
+
 	m_view->mAccountList->clear();
 	m_accountItems.clear();
 
-	QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
+	QPtrList<KopeteAccount> accounts=KopeteAccountManager::manager()->accounts();
 	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
 	{
-		QListViewItem* lvi= new QListViewItem(m_view->mAccountList);
-		lvi->setText(0,i->protocol()->displayName() + QString::fromLatin1(" ") );
-		lvi->setPixmap( 0, SmallIcon( i->protocol()->pluginIcon() ) );
+		lvi=new QListViewItem(m_view->mAccountList);
+		lvi->setText(0, i->protocol()->displayName() /*+ QString::fromLatin1(" ")*/);
+		lvi->setPixmap(0, SmallIcon(i->protocol()->pluginIcon()));
 		lvi->setText(1, i->accountId());
 		m_accountItems.insert(lvi,i);
 	}
@@ -115,8 +125,8 @@ void AccountConfig::slotAccountDown()
 void AccountConfig::slotAddAccount()
 {
 	AddAccountWizard *m_addwizard;
-	m_addwizard= new AddAccountWizard( this , "addAccountWizard" , true);
-	connect(m_addwizard, SIGNAL( destroyed(QObject*)) , this, SLOT (slotAddWizardDone()));
+	m_addwizard= new AddAccountWizard(this, "addAccountWizard", true);
+	connect(m_addwizard, SIGNAL(destroyed(QObject*)), this, SLOT(slotAddWizardDone()));
 	m_addwizard->show();
 }
 
@@ -128,18 +138,20 @@ void AccountConfig::slotEditAccount()
 
 	KopeteAccount *ident=m_accountItems[lvi];
 	KopeteProtocol *proto=ident->protocol();
-	
-	KDialogBase *editDialog= new KDialogBase( this,"editDialog", true, i18n( "Edit Account" ),
-				KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true );
-	editDialog->resize( 525, 400 );
-	EditAccountWidget *m_accountWidget = proto->createEditAccountWidget(ident,editDialog);
-	QWidget *qWidget = dynamic_cast<QWidget*>( m_accountWidget );
 
+	KDialogBase *editDialog=new KDialogBase(this,"AccountConfig::editDialog",
+		true, i18n("Edit Account"),
+		KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true );
+
+//	editDialog->resize( 525, 400 ); // EEEEK [mETz]
+	EditAccountWidget *m_accountWidget = proto->createEditAccountWidget(ident,editDialog);
 	if (!m_accountWidget)
 		return;
 
+	QWidget *qWidget = dynamic_cast<QWidget*>(m_accountWidget);
+
 	editDialog->setMainWidget(qWidget);
-	if(editDialog->exec() == QDialog::Accepted )
+	if(editDialog->exec() == QDialog::Accepted)
 	{
 		if(m_accountWidget->validateData())
 		{
@@ -153,16 +165,18 @@ void AccountConfig::slotEditAccount()
 void AccountConfig::slotRemoveAccount()
 {
 	QListViewItem *lvi=m_view->mAccountList->selectedItem();
-	if(lvi)
+	if(!lvi)
+		return;
+
+	KopeteAccount *i=m_accountItems[lvi];
+	if(KMessageBox::warningContinueCancel(this,
+		i18n("Are you sure you want to remove the account \"%1\"?").arg(i->accountId()),
+		i18n("Remove Account"),
+		i18n("Remove Account")) == KMessageBox::Continue )
 	{
-		KopeteAccount *i=m_accountItems[lvi];
-		if( KMessageBox::warningContinueCancel( this, i18n("Are you sure you want to remove the account \"%1\"?").arg( i->accountId() ),
-			 i18n("Remove Account"), i18n("Remove Account")) == KMessageBox::Continue )
-		{
-			m_accountItems.remove(lvi);
-			i->deleteLater();
-			delete lvi;
-		}
+		m_accountItems.remove(lvi);
+		i->deleteLater();
+		delete lvi;
 	}
 }
 
@@ -172,5 +186,4 @@ void AccountConfig::slotAddWizardDone()
 }
 
 #include "accountconfig.moc"
-
-
+// vim: set noet ts=4 sts=4 sw=4:
