@@ -203,7 +203,9 @@ void ICQAddContactPage::slotSearchResult (ICQSearchResult &res, const int missed
 		if(missed == 0)
 			icqdata->progressText->setText(i18n("Search finished"));
 		else
-			icqdata->progressText->setText(i18n("Search finished, %1 search results not shown").arg(missed));
+			icqdata->progressText->setText(i18n("Search finished. %n search result not shown",
+							    "Search finished. %n search results not shown",
+							     missed));
 
 		if(icqdata->resultView->childCount() == 1)
 			icqdata->resultView->firstChild()->setSelected(true);
