@@ -195,9 +195,6 @@ public slots:
 protected:
 	virtual bool createContact( const QString &contactId, Kopete::MetaContact *parentContact ) ;
 
-protected slots:
-	virtual void loaded();
-
 private slots:
 	void engineStatusChanged(KIRC::Engine::Status newStatus);
 

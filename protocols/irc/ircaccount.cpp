@@ -152,16 +152,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 		SLOT(slotGoAway( const QString & )), this );
 
 	currentHost = 0;
-}
 
-IRCAccount::~IRCAccount()
-{
-	if (m_engine->isConnected())
-		m_engine->quit(i18n("Plugin Unloaded"), true);
-}
-
-void IRCAccount::loaded()
-{
 	KConfigGroup *config = configGroup();
 	QString networkName = config->readEntry(CONFIG_NETWORKNAME);
 	mNickName = config->readEntry(CONFIG_NICKNAME);
@@ -176,7 +167,7 @@ void IRCAccount::loaded()
 	else
 		mCodec = 0;
 
-	QString m_accountId = accountId();
+	QString m_accountId = this->accountId();
 	if( networkName.isEmpty() && QRegExp( "[^#+&\\s]+@[\\w-\\.]+:\\d+" ).exactMatch( m_accountId ) )
 	{
 		kdDebug(14120) << "Creating account from " << m_accountId << endl;
@@ -237,6 +228,12 @@ void IRCAccount::loaded()
 	m_contactManager = new IRCContactManager(mNickName, this);
 	setMyself( m_contactManager->mySelf() );
 	m_myServer = m_contactManager->myServer();
+}
+
+IRCAccount::~IRCAccount()
+{
+	if (m_engine->isConnected())
+		m_engine->quit(i18n("Plugin Unloaded"), true);
 }
 
 void IRCAccount::slotNickInUse( const QString &nick )
