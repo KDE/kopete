@@ -76,9 +76,6 @@ KopeteAccount::~KopeteAccount()
 	while ( !d->contacts.isEmpty() )
 		delete *QDictIterator<KopeteContact>( d->contacts );
 
-	if( !d->contacts.isEmpty() )
-		kdDebug() << k_funcinfo << "?????????? Contact list not empty ???" << endl;
-
 	KopeteAccountManager::manager()->unregisterAccount( this );
 
 	delete d;

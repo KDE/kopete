@@ -50,9 +50,6 @@ KopeteProtocol::~KopeteProtocol()
 	while ( !m_contacts.isEmpty() )
 		delete *QDictIterator<KopeteContact>( m_contacts );
 
-	if( !m_contacts.isEmpty() )
-		kdDebug() << k_funcinfo << "?????????? Contact list not empty ???" << endl;
-
 	KopeteMessageManagerFactory::factory()->cleanSessions(this);
 }
 
