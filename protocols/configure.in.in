@@ -29,7 +29,8 @@ AC_MSG_CHECKING([for libgadu >= 1.0])
 	[
 	#include <libgadu.h>
 	#include <stdio.h>
-	
+	#include <string.h>
+		
 	int main()
 	{
 #ifdef __GG_LIBGADU_HAVE_PTHREAD
