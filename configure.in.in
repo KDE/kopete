@@ -13,7 +13,7 @@ fi
 
 KDE_CHECK_HEADERS(knotifydialog.h)
 
-KOPETE_INCLUDES='-I$(top_srcdir)/kopete/libkopete -I$(top_srcdir)/kopete/libkopete/ui -I$(top_builddir)/kopete/libkopete/ui'
+KOPETE_INCLUDES='-I$(top_srcdir)/kopete/libkopete -I$(top_srcdir)/kopete/libkopete/ui -I$(top_builddir)/kopete/libkopete/ui -I$(top_builddir)/kopete/libkopete'
 
 # -- Check for KDE 3.2 and enable the compat dir --------------------
 
