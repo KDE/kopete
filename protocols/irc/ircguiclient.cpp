@@ -20,7 +20,14 @@
 #if KDE_IS_VERSION( 3, 1, 90 )
 	#include <kactioncollection.h>
 #else
-	#include <kaction.h>
+// ------------------------------------------------------------
+// TODO: UGLY HACK, remove when we drop KDE 3.1 compatibility
+#ifdef KDE_NO_COMPAT
+#undef KDE_NO_COMPAT
+#include <kaction.h>
+#define KDE_NO_COMPAT 1
+#endif
+// ------------------------------------------------------------
 #endif
 
 #include <qptrlist.h>
