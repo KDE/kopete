@@ -13,5 +13,4 @@ TODO for Jabber:
 - fix server browsing
 - make warning about changed preferences while being online work again
   (JabberPreferences::save())
-- fix default preferences, they are a mess
-- kill Jabber configuration widget and make it part of the account setup
+- fix initial presence notification (is set to offline - myContact problem?)
