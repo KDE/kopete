@@ -53,9 +53,8 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name,
 	const QStringList & /* args */ )
 : KopeteProtocol( parent, name )
 {
-	DEBUG(YDMETHOD, "YahooProtocol::YahooProtocol()");
-
-	DEBUG(YDINFO, "Loading Yahoo Plugin...");
+	kdDebug() << "YahooProtocol::YahooProtocol()" << endl;
+	kdDebug() << "Loading Yahoo Plugin..." << endl;
 
 	if ( !protocolStatic_ )
 		protocolStatic_ = this;
@@ -70,6 +69,7 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name,
 
 	// Create statusbar Icon
     statusBarIcon = new StatusBarIcon();
+
     QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint&)),
 		     this, SLOT(slotIconRightClicked(const QPoint&)));
     statusBarIcon->setPixmap(offlineIcon);
@@ -219,19 +219,23 @@ KopeteContact *YahooProtocol::myself() const
 // Connect to server
 void YahooProtocol::Connect()
 {
-	DEBUG(YDMETHOD, "YahooProtocol::Connect()");
+    YahooSession *session_;
+	kdDebug() << "YahooProtocol::Connect()" << endl;
 
-    if (!isConnected()) {
-		DEBUG(YDINFO, "Attempting to connect to Yahoo server <"
-			<< mServer << ":" << mPort << "< with user <" << mUsername << ">");
-		//m_engine->Connect(mServer, mPort, mUsername, mPassword);
+    if (!isConnected())
+	{
+		kdDebug() << "Attempting to connect to Yahoo server <"
+			<< mServer << ":" << mPort << "< with user <" << mUsername << ">" << endl;
+
+		session_ = YahooSessionManager::manager()->login( mPrefs->username(), mPrefs->password(), YAHOO_STATUS_AVAILABLE);
     }
-	else if (isAway()) {	// They're really away, and they want to un-away.
+	else if (isAway())
+	{	// They're really away, and they want to un-away.
 		// XXX slotGoOnline();
     }
-	else {			// Nope, just your regular crack junky.
-		DEBUG(YDINFO,
-		"Yahoo plugin: Ignoring connect request (already connected).");
+	else
+	{			// Nope, just your regular crack junky.
+		kdDebug() << "Yahoo plugin: Ignoring connect request (already connected)." <<endl;
     }
 }
 

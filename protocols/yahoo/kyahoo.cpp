@@ -30,10 +30,11 @@
 #include "libyahoo2/yahoo2_callbacks.h"
 
 /* Those gave me undefined reference errors */
-char pager_host[400];
-char pager_port[400];
-char filetransfer_host[400];
-char filetransfer_port[400];
+#define MAX_PREF_LEN 255
+char pager_host[MAX_PREF_LEN]="scs.yahoo.com";
+char pager_port[MAX_PREF_LEN]="5050";
+char filetransfer_host[MAX_PREF_LEN]="filetransfer.msg.yahoo.com";
+char filetransfer_port[MAX_PREF_LEN]="80";
 
 YahooSessionManager::YahooSessionManager()
 {
@@ -52,8 +53,9 @@ YahooSession* YahooSessionManager::login(const QString username, const QString p
 {
 	int id;
     YahooSession *session;
-
+	kdDebug() << "[YahooSessionManager::login] login!!!..." << endl;
 	id = yahoo_login( username.latin1() , password.latin1(), initial);
+    kdDebug() << "[YahooSessionManager::login] got id "<< id << " !, creating session" << endl;
 	session = new YahooSession( id, username, password, initial);
 	m_sessionsMap[id] = session;
 	return session;
@@ -381,7 +383,7 @@ void YAHOO_CALLBACK_TYPE(ext_yahoo_remove_handler)(int id, int fd)
 
 int YAHOO_CALLBACK_TYPE(ext_yahoo_connect)(char *host, int port)
 {
-	/* Do nothing? */	
+	return YahooSessionManager::manager()->hostConnectReceiver(host,port);
 }
 
 /* End of extern C */
@@ -392,6 +394,7 @@ int YAHOO_CALLBACK_TYPE(ext_yahoo_connect)(char *host, int port)
 
 void YahooSessionManager::loginResponseReceiver( int id, int succ, char *url)
 {
+    kdDebug() << "[YahooSessionManager::loginResponseReceiver]" << endl;
 	YahooSession *session = getSession(id);
 	emit session->loginResponse(succ, url);
 }
@@ -512,19 +515,41 @@ int YahooSessionManager::logReceiver(char *fmt, ...)
 
 void YahooSessionManager::addHandlerReceiver(int id, int fd, yahoo_input_condition cond)
 {
+    kdDebug() << "[YahooSessionManager::addHandlerReceiver]" << endl;
 	YahooSession *session = getSession(id);
-	emit session->addHandler(fd, cond);	
+    if ( cond == YAHOO_INPUT_READ )
+	{
+		yahoo_read_ready(id, fd);
+	}
+	else if ( cond == YAHOO_INPUT_WRITE )
+	{
+		yahoo_write_ready(id, fd);
+    }
+	//emit session->addHandler(fd, cond);	
 }
 
 void YahooSessionManager::removeHandlerReceiver(int id, int fd)
 {
+    kdDebug() << "[YahooSessionManager::removeHandlerReceiver]" << endl;
 	YahooSession *session = getSession(id);
-	emit session->removeHandler(fd);	
+	//emit session->removeHandler(fd);	
 }
 
 int YahooSessionManager::hostConnectReceiver(char *host, int port)
 {
-	// heh
+	kdDebug() << "[YahooSessionManager::hostConnectReceiver]" << endl;
+    KExtendedSocket *_socket;
+	_socket = new KExtendedSocket( host, port );
+	if (! _socket->connect() )
+	{
+		kdDebug() << "[YahooSessionManager::hostConnectReceiver] Connected!" << endl;
+		return _socket->fd();
+	}
+	else
+	{
+		kdDebug() << "[YahooSessionManager::hostConnectReceiver] Failed!" << endl;
+		return -1;
+	}
 }
 
 

@@ -47,22 +47,22 @@ YahooPreferences::YahooPreferences(const QString & pixmap,
 	DEBUG(YDMETHOD, "YahooPreferences::YahooPreferences(" << pixmap << 
 			", <parent>)");
 
-    (new QVBoxLayout(this))->setAutoAdd(true);
-    preferencesDialog = new dlgPreferences(this);
-    preferencesDialog->show();
+	(new QVBoxLayout(this))->setAutoAdd(true);
+	m_preferencesDialog = new dlgPreferences(this);
+	m_preferencesDialog->show();
 
-    KGlobal::config()->setGroup("Yahoo");
-    preferencesDialog->mID->setText(KGlobal::config()->
+	KGlobal::config()->setGroup("Yahoo");
+	m_preferencesDialog->mID->setText(KGlobal::config()->
 			readEntry("UserID", "<your Yahoo ID>"));
-    preferencesDialog->mPass->setText(KGlobal::config()->
+	m_preferencesDialog->mPass->setText(KGlobal::config()->
 			readEntry("Password", "<your Yahoo password>"));
-    preferencesDialog->mServer->setText(KGlobal::config()->
+	m_preferencesDialog->mServer->setText(KGlobal::config()->
 			readEntry("Server", "cs.yahoo.com"));
-    preferencesDialog->mPort->setValue(KGlobal::config()->
+	m_preferencesDialog->mPort->setValue(KGlobal::config()->
 			readNumEntry("Port", 5050));
-    preferencesDialog->mAutoConnect->setChecked(KGlobal::config()->
+	m_preferencesDialog->mAutoConnect->setChecked(KGlobal::config()->
 			readBoolEntry ("AutoConnect", false));
-    preferencesDialog->mLogAll->setChecked(KGlobal::config()->
+	m_preferencesDialog->mLogAll->setChecked(KGlobal::config()->
 			readBoolEntry("LogAll", true));
 }
 
@@ -80,13 +80,13 @@ void YahooPreferences::save()
 	DEBUG(YDMETHOD, "YahooPreferences::save()");
     KConfig *config = KGlobal::config();
     config->setGroup("Yahoo");
-    config->writeEntry("UserID", preferencesDialog->mID->text());
-    config->writeEntry("Password", preferencesDialog->mPass->text());
-    config->writeEntry("Server", preferencesDialog->mServer->text());
-    config->writeEntry("Port", preferencesDialog->mPort->text());
+    config->writeEntry("UserID", m_preferencesDialog->mID->text());
+    config->writeEntry("Password", m_preferencesDialog->mPass->text());
+    config->writeEntry("Server", m_preferencesDialog->mServer->text());
+    config->writeEntry("Port", m_preferencesDialog->mPort->text());
     config->writeEntry("AutoConnect",
-		       preferencesDialog->mAutoConnect->isChecked());
-    config->writeEntry("LogAll", preferencesDialog->mLogAll->isChecked());
+		       m_preferencesDialog->mAutoConnect->isChecked());
+    config->writeEntry("LogAll", m_preferencesDialog->mLogAll->isChecked());
     config->sync();
     emit saved();
 

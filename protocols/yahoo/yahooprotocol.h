@@ -89,6 +89,8 @@ protected slots:
 	void slotConnected();
 
 private:
+	int m_sessionId;	
+	
 	bool mIsConnected;				// Am I connected ?
 	QString mUsername, mPassword, mServer; int mPort;
 									// Configuration data

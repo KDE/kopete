@@ -25,7 +25,7 @@
 
 // QT Includes
 #include <qobject.h>
-#include <qsocket.h>
+#include <kextendedsocket.h>
 #include <qstring.h>
 #include <qmap.h>
 
@@ -35,6 +35,7 @@
 // KDE Includes
 
 class YahooSession;
+class KExtendedSocket;
 
 /* Yahoo Protocol Connection Manager */
 class YahooSessionManager : public QObject
@@ -77,6 +78,7 @@ public:
 	
 private:
 	QMap< int, YahooSession*> m_sessionsMap;
+	QMap< int, KExtendedSocket *> m_socketsMap;
 	static YahooSessionManager *managerStatic_;
 };
 
@@ -88,7 +90,9 @@ friend class YahooSessionManager;
 public:
 
 	~YahooSession();
-
+	int Id()
+	{ return m_connId; };
+	
 	int getFd();
 	int setLogLevel(enum yahoo_log_level level);
 	void logOff();
