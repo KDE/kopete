@@ -5,14 +5,13 @@
 #include <qstring.h>
 
 #include "gwclientstream.h"
+#include "gwerror.h"
 #include "transfer.h"
-
-// temporary typedefs pending implementation
-typedef QString Message;
-typedef QString Status;
 
 class Task;
 class RequestFactory;
+
+using namespace GroupWise;
 
 class Client : public QObject
 {
@@ -59,7 +58,7 @@ Q_OBJECT
 		 * Protocol action P2
 		 * @param status class containing status, away message.
 		 */
-		void setPresence( const Status &status );
+		void setStatus( GroupWise::Status status, const QString & reason );
 
 		/**
 		 * Send a message 
@@ -134,12 +133,46 @@ Q_OBJECT
 		RequestFactory * requestFactory();
 	signals:
 		/**
+		 * Notifies that the login process has succeeded.
+		 */
+		void loggedIn();
+		/**
 		 * Notifies tasks and account so they can react properly
 		 */
 		void disconnected();
+		/** 
+		 * Notify that we've just received a message 
+		 */
+		void messageReceived( const ConferenceEvent &, const Message & );
+		/**
+		 * We've just got the user's own details from the server.
+		 */
+		void accountDataReceived( const ContactItem & );
+		/** 
+		 * We've just found out about a folder from the server.
+		 */
+		void folderReceived( const FolderItem & );
+		/** 
+		 * We've just found out about a folder from the server.
+		 */
+		void contactReceived( const ContactItem & );
+		/** 
+		 * We've just received a contact's metadata from the server.
+		 */
+		void contactUserDetailsReceived( const ContactDetails & );
+		/** 
+		 * A remote contact changed status
+		 */
+		void statusReceived( const QString & contactId, Q_UINT16 status, const QString & statusText );
+		/** 
+		 * Our status changed on the server
+		 */
+		void ourStatusChanged( GroupWise::Status status, const QString & statusText, const QString & autoReply );
 	public slots:
 		// INTERNAL, FOR USE BY TASKS' SIGNALS //
-		void lt_LoginFinished();
+		void lt_loginFinished();
+		void slotMessageReceived( const ConferenceEvent &, const Message & );
+		void sst_statusChanged();
 	protected:
 		/**
 		 * Instantiate all the event handling tasks

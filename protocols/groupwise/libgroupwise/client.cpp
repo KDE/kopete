@@ -29,7 +29,7 @@ public:
 };
 
 Client::Client(QObject *par)
-:QObject(par)
+:QObject(par, "groupwiseclient" )
 {
 	d = new ClientPrivate;
 	d->tzoffset = 0;
@@ -73,16 +73,20 @@ void Client::start( const QString &host, const QString &user, const QString &pas
 	initialiseEventTasks();
 	
 	LoginTask * login = new LoginTask( d->root );
-	connect( login, SIGNAL( gotMyself( Field::FieldList & ) ), 
-			this, SIGNAL( gotMyself( Field::FieldList & ) ) );
-	connect( login, SIGNAL( gotFolder( GWFolderItem &  ) ), 
-			this, SIGNAL( gotFolder( GWFolderItem &  ) ) );
-	connect( login, SIGNAL( gotContact( Field::FieldList & ) ), 
-			this, SIGNAL( gotContact( Field::FieldList & ) ) );
-	connect( login, SIGNAL( gotContactUserRecord( Field::FieldList & ) ), 
-			this, SIGNAL( gotContactUserRecord( Field::FieldList & ) ) ) ;
+	
+	connect( login, SIGNAL( gotMyself( const ContactItem &  ) ), 
+			this, SIGNAL( accountDataReceived( const ContactItem & ) ) );
 			
-	connect( login, SIGNAL( finished() ), this, SLOT( lt_LoginFinished() ) );
+	connect( login, SIGNAL( gotFolder( const FolderItem & ) ), 
+			this, SIGNAL( folderReceived( const FolderItem & ) ) );
+			
+	connect( login, SIGNAL( gotContact( const ContactItem &  ) ), 
+			this, SIGNAL( contactReceived( const ContactItem &  ) ) );
+			
+	connect( login, SIGNAL( gotContactUserDetails( const ContactDetails & ) ), 
+			this, SIGNAL( contactUserDetailsReceived( const ContactDetails & ) ) ) ;
+			
+	connect( login, SIGNAL( finished() ), this, SLOT( lt_loginFinished() ) );
 	
 	login->initialise();
 	login->go( true );
@@ -133,14 +137,22 @@ void Client::close()
 
 void Client::initialiseEventTasks()
 {
-	new StatusTask( d->root ); // FIXME - add an additional EventRoot?
-	new ConferenceTask( d->root ); 
+	StatusTask * st = new StatusTask( d->root ); // FIXME - add an additional EventRoot?
+	connect( st, SIGNAL( gotStatus( const QString &, Q_UINT16, const QString & ) ), SIGNAL( statusReceived( const QString &, Q_UINT16, const QString & ) ) );
+	ConferenceTask * ct = new ConferenceTask( d->root ); 
+	connect( ct, SIGNAL( message( const ConferenceEvent &, const Message & ) ), SLOT( slotMessageReceived( const ConferenceEvent &, const Message & ) ) );
+	
 }
 
-void Client::setPresence( const Status &status )
+void Client::setStatus( GroupWise::Status status, const QString & reason )
 {
-	//TODO Implement setPresence
-	qDebug( "TODO: setPresence" );
+	SetStatusTask * sst = new SetStatusTask( d->root );
+	sst->status( status, reason, QString::null );
+	sst->go( true );
+	// set status change in progress signal
+	
+	// TODO: catch finished and set our status locally
+	connect( sst, SIGNAL( finished() ), this, SLOT( sst_statusChanged() ) );
 }
 
 void Client::sendMessage( const Message &message )
@@ -169,18 +181,37 @@ void Client::streamReadyRead()
 	distribute( transfer );
 }
 
-void Client::lt_LoginFinished()
+void Client::lt_loginFinished()
 {
 	qDebug( "got login finished" );
 	const LoginTask * lt = (LoginTask *)sender();
 	if ( lt->success() )
 	{
-		qDebug( "LOGIN FINISHED" );
+		qDebug( "LOGIN SUCCEEDED" );
 		SetStatusTask * sst = new SetStatusTask( d->root );
 		sst->status( GroupWise::Available, QString::null, QString::null );
 		sst->go( true );
+		emit loggedIn();
+	}
+	// otherwise client should disconnect and signal failure that way??
+}
+
+void Client::sst_statusChanged()
+{
+	const SetStatusTask * sst = (SetStatusTask *)sender();
+	if ( sst->success() )
+	{
+		qDebug( "status change succeeded" );
+		emit ourStatusChanged( sst->requestedStatus(), sst->awayMessage(), sst->autoReply() );
 	}
 }
+
+void Client::slotMessageReceived( const ConferenceEvent & event, const Message & msg )
+{
+	qDebug( "got message signal" );
+	emit messageReceived( event, msg );
+}
+
 // INTERNALS //
 
 QString Client::userId()
