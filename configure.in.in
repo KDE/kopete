@@ -15,39 +15,6 @@ KDE_CHECK_HEADERS(knotifydialog.h)
 
 KOPETE_INCLUDES='-I$(top_srcdir)/kopete/libkopete -I$(top_srcdir)/kopete/libkopete/ui -I$(top_builddir)/kopete/libkopete/ui'
 
-# -- Check for KDE 3.2 and enable the compat dir --------------------
-
-AC_MSG_CHECKING([for kdelibs newer than 3.2.x])
-
-AC_LANG_SAVE
-AC_LANG_CPLUSPLUS
-kcompat_save_CXXFLAGS="$CXXFLAGS"
-kcompat_safe_LIBS="$LIBS"
-LIBS="$LIBS $X_EXTRA_LIBS"
-CXXFLAGS="$CXXFLAGS $all_includes"
-
-AC_TRY_COMPILE([
-#include <kdeversion.h>
-#if !( KDE_IS_VERSION( 3, 2, 90 ) )
-#error Need to enable libkopete/compat/
-#endif
-],
-[
-],
-	AC_MSG_RESULT(yes)
-,
-	KOPETE_COMPAT_INCLUDES='-I$(top_srcdir)/kopete/libkopete/compat -I$(top_srcdir)/kopete/libkopete/compat/kcdialog'
-	KOPETE_INCLUDES=$KOPETE_INCLUDES' $(KOPETE_COMPAT_INCLUDES)'
-	LIB_KOPETECOMPAT='$(top_builddir)/kopete/libkopete/libkopete.la'
-	AC_MSG_RESULT(no)
-)
-CXXFLAGS="$kcompat_save_CXXFLAGS"
-LIBS="$kcompat_safe_LIBS"
-AC_LANG_RESTORE
-
-AM_CONDITIONAL(compile_LIBKOPETE_COMPAT, test -n "$LIB_KOPETECOMPAT")
-
-# -- End KDE 3.2 check ----------------------------------------------
 
 KDE_FIND_PATH(xml2-config, XML_CONFIG, [${prefix}/bin ${exec_prefix}/bin /usr/local/bin /opt/local/bin /usr/bin], [
   AC_MSG_WARN([libxml2 not found anywhere, check ftp://xmlsoft.org/ for libxml >= 2.4.8. ])
