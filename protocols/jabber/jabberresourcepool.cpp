@@ -204,7 +204,7 @@ void JabberResourcePool::removeLock ( const XMPP::Jid &jid )
 	{
 		if ( (mResource->jid().userHost().lower() == jid.userHost().lower()) )
 		{
-			mLockList.remove ();
+			mLockList.remove (mResource);
 		}
 	}
 
