@@ -312,6 +312,8 @@ public:
 	 */
 	static void setEffects( bool animation, bool fading, bool folding );
 
+	int width( const QFontMetrics & fm, const QListView * lv, int c ) const;
+
 protected:
 	void componentAdded( Component *component );
 	void componentRemoved( Component *component );
