@@ -23,6 +23,8 @@
 #include <qdatetime.h>
 #include <qsocket.h>
 #include <kextsock.h>
+#include <qfont.h>
+#include <qcolor.h>
 // kde
 #include <klocale.h>
 #include <kglobal.h>
@@ -169,17 +171,45 @@ redo:
 		if(str.left(3) == "MSG")
 		{
 			kdDebug() << "MSG Plugin: ChatBoard: Received data MSG" << endl;
+
 			len = kstr.word(str,3);
 			miss = readBlock(len.toUInt());
 			miss = miss.left(len.toUInt());
+
 			if(miss.contains("Content-Type: text/plain;"))
 			{
+				QString fontinfo = miss.left(miss.find("\r\n\r\n"));
+				QString tmp = parseFontAttr(fontinfo, "CO");
+				QFont font = QFont();
+				QColor fg = QColor();
+
+				if (!tmp.isEmpty())
+				{
+					if (tmp.length() == 2) // only #RR (red color) given
+						fg.setRgb(tmp.mid(0,2).toInt(0,16), 0, 0);
+					else if (tmp.length() == 4) // #GGRR (green, red) given.
+						fg.setRgb(tmp.mid(2,2).toInt(0,16), tmp.mid(0,2).toInt(0,16), 0);
+					else if (tmp.length() == 6) // full #BBGGRR given
+						fg.setRgb(tmp.mid(4,2).toInt(0, 16), tmp.mid(2,2).toInt(0,16), tmp.mid(0,2).toInt(0,16));
+				}
+
+				// if FN= is supplied, then i assume the rest is too...
+				if (fontinfo.contains("FN"))
+				{
+					font = QFont(
+								parseFontAttr(fontinfo, "FN").replace(QRegExp("%20"), " "), // font family
+								parseFontAttr(fontinfo, "PF").toInt(), // font size
+								parseFontAttr(fontinfo, "EF").contains('B') ? QFont::Bold : QFont::Normal, // bold?
+								parseFontAttr(fontinfo, "EF").contains('I') ? true : false ); // italic?
+				}
+
+				kdDebug() << "MSN Plugin: PLAIN TExT; -" << miss << "-" << endl;
 				miss = miss.right(miss.length() -miss.findRev("\r\n\r\n") - 4); // we wanna get rid of the \r\n\r\n as well...
 				kdDebug() << "MSG Plugin: ChatBoard: miss seria " << miss << endl;
 				QString handle = kstr.word(str,1);
 				kdDebug() << "MSG Plugin: ChatBoard: handle seria " << handle << endl;
 
-				emit msgReceived(handle,imService->getPublicName(handle), miss);//.replace(QRegExp("\r\n"),""));
+				emit msgReceived(handle,imService->getPublicName(handle), miss, font, fg);//.replace(QRegExp("\r\n"),""));
 				//emit msgReceived(handle,"Nick", miss);//.replace(QRegExp("\r\n"),""));
 			}
 			// incoming message for File-transfer
@@ -252,7 +282,8 @@ void KMSNChatService::slotSendMsg(QString message)
 	command.sprintf("MSG %lu A %d\r\n",Tr_ID,head.length());
 	command += head;
 	msgSocket->writeBlock(command,command.length());
-	emit msgReceived(myHandle, imService->getPublicName(), message);    // send the own msg to chat window
+#warning TODO: send our colors as well
+	emit msgReceived(myHandle, imService->getPublicName(), message, QFont(), QColor() );    // send the own msg to chat window
 }
 
 void KMSNChatService::slotSocketClosed()
@@ -275,5 +306,25 @@ void KMSNChatService::callUser()
 	command.sprintf("CAL %lu ",Tr_ID);
 	command += msgHandle+"\r\n";
 	msgSocket->writeBlock(command,command.length());
+}
+
+QString KMSNChatService::parseFontAttr(QString str, QString attr)
+{
+	QString tmp;
+	int pos1=0, pos2=0;
+
+	pos1 = str.find(attr + "=");
+
+	if (pos1 == -1)
+		return "";
+
+	pos2 = str.find(";", pos1+3);
+
+	if (pos2 == -1)
+		tmp = str.mid(pos1+3, str.length() - pos1 - 3);
+	else
+		tmp = str.mid(pos1+3, pos2 - pos1 - 3);
+
+	return tmp;
 }
 

@@ -52,11 +52,12 @@ protected:
 	bool canReadLine();
 	QString readBlock(uint len);
 	void timerEvent(QTimerEvent *ev);
+	QString parseFontAttr(QString str, QString attr);
 public:
 	void connectToSwitchBoard(QString ID, QString address, QString auth);
 	void callUser();
 	void setHandle(QString handle){myHandle = handle;}
-// slots	
+// slots
 public slots:
 	void slotDataReceived();
 	void slotSendMsg(QString message);
@@ -68,7 +69,7 @@ public slots:
 
 // signals	
 signals:
-  	void msgReceived(QString, QString, QString );
+  	void msgReceived(QString, QString, QString , QFont, QColor);
 	void startChat(KMSNChatService* switchoard);
   	void userTypingMsg(QString);
   	void msgAcknowledgement(bool);
