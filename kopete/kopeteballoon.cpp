@@ -150,8 +150,8 @@ void KopeteBalloon::updateMask()
 	mask += arrow;
 	setMask(mask);
 
-	move(right ? mAnchor.x() - width() : mAnchor.x(),
-	     bottom ? mAnchor.y() - height() : mAnchor.y());
+	move(right ? mAnchor.x() - width() : ( mAnchor.x() < 0 ? 0 : mAnchor.x() ),
+	     bottom ? mAnchor.y() - height() : ( mAnchor.y() < 0 ? 0 : mAnchor.y() ) );
 }
 
 #include "kopeteballoon.moc"
