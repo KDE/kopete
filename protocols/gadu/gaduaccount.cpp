@@ -43,16 +43,6 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
 void
 GaduAccount::initActions()
 {
-	onlineAction    = new KAction( i18n("Go O&nline"), "gg_online", 0, this,
-                                          SLOT(slotGoOnline()), this, "actionGaduConnect" );
-	offlineAction   = new KAction( i18n("Go &Offline"), "gg_offline", 0, this,
-                                      SLOT(slotGoOffline()), this, "actionGaduConnect" );
-	busyAction      = new KAction( i18n("Set &Busy"), "gg_busy", 0, this,
-                                          SLOT(slotGoBusy()), this, "actionGaduConnect" );
-	invisibleAction = new KAction( i18n("Set &Invisible"), "gg_invi", 0, this,
-                                          SLOT(slotGoInvisible()), this, "actionGaduConnect" );
-	descrAction     = new KAction( i18n("Set &Description"), "info", 0, this,
-					 SLOT(slotDescription()), this, "actionGaduDescription" );
 	searchAction	= new KAction( i18n("&Search for friends"), "", 0, this,
 				SLOT(slotSearch()), this, "actionSearch" );
 	listputAction	= new KAction( i18n("Export contacts on server"), "", 0, this,
@@ -90,12 +80,12 @@ void GaduAccount::loaded()
     QString nick;
     nick 	= pluginData(protocol(), QString::fromLatin1("nickName"));
     isUsingTls	= (bool)(pluginData(protocol(), QString::fromLatin1("useEncryptedConnection")).toInt());
-    
+
     if (!nick.isNull())
     {
 	myself_->rename(nick);
     }
-       
+
 }
 
 void GaduAccount::setAway( bool isAway, const QString& awayMessage )
@@ -130,7 +120,7 @@ KActionMenu* GaduAccount::actionMenu()
 #else
 	arg( myself_->displayName(), accountId() ) );
 #endif
-	
+
 	if (session_->isConnected()){
 		searchAction->setEnabled(TRUE);
 		listputAction->setEnabled(TRUE);
@@ -139,18 +129,27 @@ KActionMenu* GaduAccount::actionMenu()
 		searchAction->setEnabled(FALSE);
 		listputAction->setEnabled(FALSE);
 	}
-	
-	actionMenu_->insert( onlineAction );
-	actionMenu_->insert( busyAction );
-	actionMenu_->insert( invisibleAction );
-	actionMenu_->insert( offlineAction );
-	actionMenu_->insert( descrAction );
-	actionMenu_->insert( listputAction );
+
+	actionMenu_->insert( new KAction( i18n("Go O&nline"), 
+						GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ).iconFor( this ) , 0, this,
+						SLOT(slotGoOnline()), this, "actionGaduConnect" ) );
+		actionMenu_->insert( new KAction( i18n("Set &Busy"), 
+						GaduProtocol::protocol()->convertStatus( GG_STATUS_BUSY ).iconFor( this ) , 0, this,
+						SLOT(slotGoBusy()), this, "actionGaduConnect" ) );
+		actionMenu_->insert( new KAction( i18n("Set &Invisible"), 
+						GaduProtocol::protocol()->convertStatus( GG_STATUS_INVISIBLE ).iconFor( this ) , 0, this,
+						SLOT(slotGoInvisible()), this, "actionGaduConnect" ) );
+		actionMenu_->insert( new KAction( i18n("Go &Offline"), 
+						GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ).iconFor( this ) , 0, this,
+						SLOT(slotGoOffline()), this, "actionGaduConnect" ) );
+		actionMenu_->insert( new KAction( i18n("Set &Description"), "info", 0, this,
+						SLOT(slotDescription()), this, "actionGaduDescription" ));
 
 	actionMenu_->popupMenu()->insertSeparator();
 
+	actionMenu_->insert( listputAction );
 	actionMenu_->insert( searchAction );
-	
+
 //  actionMenu_->insert( new KAction( i18n("Change Password"), "", 0, this,
 //		SLOT(slotChangePassword()), this, "actionChangePassword" ) );
 
@@ -171,9 +170,9 @@ bool GaduAccount::addContactToMetaContact( const QString& contactId, const QStri
 					 KopeteMetaContact* parentContact )
 {
 	kdDebug(14100) << "addContactToMetaContact " << contactId << endl;
-	
+
 	uin_t uinNumber = contactId.toUInt();
-	
+
 	GaduContact *newContact = new GaduContact( uinNumber, displayName, this, parentContact );
 	newContact->setParentIdentity( accountId() );
 	addNotify( uinNumber );
@@ -387,9 +386,9 @@ GaduAccount::notify( struct gg_event* e )
 {
 	GaduContact *c;
 	unsigned int n;
-	
+
 	for( n=0 ; e->event.notify60[n].uin ; n++ ) {
-		
+
 		kdDebug(14100)<<"### NOTIFY "<<e->event.notify60[n].uin<< " " << e->event.notify60[n].status << endl;
 		c = static_cast<GaduContact *>(contacts()[QString::number( e->event.notify60[n].uin )]);
 
@@ -425,11 +424,11 @@ GaduAccount::statusChanged( struct gg_event* e )
 	kdDebug(14100)<<"####"<<" status changed, uin:"<< e->event.status60.uin <<endl;
 
 	GaduContact *c;
-	
+
 	c = static_cast<GaduContact *>(contacts()[QString::number( e->event.status60.uin )]);
 	if( !c )
 		return;
-	
+
 	if (e->event.status60.descr){
 		c->setDescription( textcodec_->toUnicode( e->event.status60.descr ) );
 		c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( e->event.status60.status ),
@@ -440,12 +439,12 @@ GaduAccount::statusChanged( struct gg_event* e )
 		c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( e->event.status60.status )  );
 	}
 
-/// XXX: again, store this information 
+/// XXX: again, store this information
 //	e->event.status60.remote_ip;
 //	e->event.status60.remote_port;
 //	e->event.status60.version;
 //	e->event.status60.image_size;
-    
+
 }
 
 void
@@ -470,11 +469,11 @@ GaduAccount::connectionSucceed( struct gg_event* /*e*/ )
     status_ =  GaduProtocol::protocol()->convertStatus( session_->status() );
     myself_->setOnlineStatus( status_ );
     startNotify();
-    
+
     QObject::connect( session_, SIGNAL(userListRecieved( const QString& )),
     			SLOT( userlist( const QString& )) );
     session_->requestContacts();
-    
+
     if ( !pingTimer_ ) {
 	pingTimer_ = new QTimer( this );
 	QObject::connect( pingTimer_, SIGNAL(timeout()),
@@ -490,16 +489,16 @@ GaduAccount::startNotify()
     if (!contacts().count()){
 	return;
     }
-    
+
     QDictIterator<KopeteContact> it( contacts() );
-    
+
     uin_t *userlist = 0;
     userlist = new uin_t[contacts().count()];
 
     for( i=0 ; it.current() ; ++it ) {
 	userlist[i++] = static_cast<GaduContact *>((*it))->uin();
     }
-    
+
     session_->notify( userlist, contacts().count() );
 }
 
@@ -529,12 +528,14 @@ void
 GaduAccount::userlist( const QString& list )
 {
 	kdDebug(14100)<<"### Got userlist - gadu account"<<endl;
-	
+
 	gaduContactsList u;
 	QString contactname;
 	int i;
 	GaduContact *ucontact;
-	
+	KopeteMetaContact *metac;
+	QStringList groupsl;
+
 	// XXX: give feedback about error
 	if ( session_->stringToContacts( u , list ) == false ){
 		return;
@@ -542,19 +543,19 @@ GaduAccount::userlist( const QString& list )
 
 	QPtrListIterator< contactLine > loo(u);
 
-	for ( i=u.count() ; i-- ; ){ 
+	for ( i=u.count() ; i-- ; ){
 	    kdDebug(14100)<<"uin "<< (*loo)->uin << endl;
-	    
+
 	    if ( (*loo)->uin.isNull() ){
 		kdDebug(14100) << "no Uin, strange.. "<<endl;
 		goto next_cont;
 	    }
 
  	    if ( contacts()[ (*loo)->uin ] ){
-		kdDebug(14100) << "UIN already exists in contacts "<< (*loo)->uin << endl; 
+		kdDebug(14100) << "UIN already exists in contacts "<< (*loo)->uin << endl;
 	    }
 	    else{
-    
+
 		if ((*loo)->name.length()){
 		    contactname=(*loo)->name;
 		}
@@ -588,33 +589,44 @@ GaduAccount::userlist( const QString& list )
 		else{
 		    contactname=(*loo)->nickname;
 		}
-	    
+
 		if (addContact( (*loo)->uin, contactname, 0L, KopeteAccount::DontChangeKABC, QString::null, false)==false){
-		    kdDebug(14100) << "There was a problem adding UIN "<< (*loo)->uin << "to users list" << endl; 
+		    kdDebug(14100) << "There was a problem adding UIN "<< (*loo)->uin << "to users list" << endl;
 		    goto next_cont;
 		}
-	    }
+	}
 	    ucontact = static_cast<GaduContact*>(contacts()[ (*loo)->uin ]);
-	    
+
 	    // update/add infor for contact
-	    ucontact->setInfo( (*loo)->email, (*loo)->firstname, (*loo)->surname,
-			    (*loo)->nickname, (*loo)->phonenr );
-	    
+		ucontact->setInfo( (*loo)->email, (*loo)->firstname, (*loo)->surname,
+					(*loo)->nickname, (*loo)->phonenr );
+
+		if ( !((*loo)->group.isEmpty()) ){
+			metac = ucontact->metaContact();
+			metac->removeFromGroup( KopeteGroup::topLevel() );
+		    
+			// put him in all groups:
+			groupsl = QStringList::split( ",", (*loo)->group );
+			for ( QStringList::Iterator g = groupsl.begin(); g != groupsl.end(); ++g ) {
+				metac->addToGroup( KopeteContactList::contactList ()->getGroup ( *g ) );
+			}
+		}
+
 next_cont:
 	    ++loo;
 	}
 
 }
 
-void 
+void
 GaduAccount::slotExportContactsList()
 {
-	
+
 	session_->exportContacts( userlist() );
-	
+
 //	QObject::connect( session_, SIGNAL(),
 //					SLOT( ) );
- 
+
 }
 
 
@@ -622,7 +634,7 @@ gaduContactsList *
 GaduAccount::userlist()
 {
 	GaduContact *contact;
-	gaduContactsList *gaducontactslist=new gaduContactsList; 
+	gaduContactsList *gaducontactslist=new gaduContactsList;
 	contactLine cl;
 	int i;
 
@@ -696,14 +708,14 @@ GaduAccount::slotDescription()
 	delete away;
 }
 
-bool GaduAccount::pubDirSearch(QString &name, QString &surname, QString &nick, 
-			    int UIN, QString &city, int gender, 
+bool GaduAccount::pubDirSearch(QString &name, QString &surname, QString &nick,
+			    int UIN, QString &city, int gender,
 			    int ageFrom, int ageTo, bool onlyAlive)
 {
-    return session_->pubDirSearch( name, surname, nick, UIN, city, gender, 
+    return session_->pubDirSearch( name, surname, nick, UIN, city, gender,
 				    ageFrom, ageTo, onlyAlive );
 }
-                            
+
 void GaduAccount::pubDirSearchClose()
 {
     session_->pubDirSearchClose();

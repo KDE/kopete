@@ -183,18 +183,19 @@ GaduContact::contactDetails()
 	cl->phonenr	= phonenr_;
 	cl->uin		= QString::number( uin_ );
 	cl->email		= email_;
-	cl->name	= displayName();
+	cl->name		= displayName();
 	
 	groupList = metaContact ()->groups ();
 	
 	KopeteGroup * gr;
 	for ( gr = groupList.first (); gr ; gr = groupList.next ()){
-		groups += gr->displayName()+",";
+		if ( gr!=KopeteGroup::topLevel() ){
+			groups += gr->displayName()+",";
+		}
 	}
 	
 	if (groups.length()){
-		
-	groups.truncate( groups.length()-1 );
+		groups.truncate( groups.length()-1 );
 	}
 	cl->group	= groups;
 	

@@ -140,11 +140,6 @@ private:
 	
 	QTextCodec *textcodec_;
 
-	KAction* onlineAction;
-	KAction* offlineAction;
-	KAction* busyAction;
-	KAction* invisibleAction;
-	KAction* descrAction;
 	KAction* searchAction;
 	KAction* listputAction;
 	
