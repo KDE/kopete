@@ -47,8 +47,9 @@ struct whoIsInfo
 	bool isOperator;
 };
 
-IRCContact::IRCContact(IRCAccount *account, const QString &nick, KopeteMetaContact *metac) :
-	KopeteContact(account, nick, metac )
+IRCContact::IRCContact(IRCAccount *account, const QString &nick, KopeteMetaContact *metac,
+		 const QString& icon ) :
+	KopeteContact(account, nick, metac, icon )
 {
 	mAccount = account;
 	mEngine = mAccount->engine();

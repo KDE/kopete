@@ -34,7 +34,7 @@
 #include <qapplication.h>
 #include <qtimer.h>
 IRCChannelContact::IRCChannelContact(IRCAccount *account, const QString &channel, KopeteMetaContact *metac) :
-		IRCContact( account, channel, metac )
+		IRCContact( account, channel, metac, QString::null )
 {
 	// Variable assignments
 	mNickName = channel;
