@@ -23,6 +23,8 @@
 #include <klocale.h>
 #include <kdialogbase.h>
 #include <qtimer.h>
+#include <qmap.h>
+
 
 #include "kopetecontactlist.h"
 #include "kopeteaccount.h"
@@ -51,7 +53,14 @@ struct KopeteAccountPrivate
 	QString password;
 	bool autologin;
 	QDict<KopeteContact> contacts;
+	static QMap<KopeteProtocol *, int> accountCounter;
+	/*
+	 * This is the account number X for the parent protocol
+	 */
+	int count;
 };
+
+QMap<KopeteProtocol *, int> KopeteAccountPrivate::accountCounter = QMap<KopeteProtocol *, int>();
 
 KopeteAccount::KopeteAccount(KopeteProtocol *parent, const QString& _accountId , const char *name):  KopetePluginDataObject (parent, name)
 {
@@ -61,6 +70,16 @@ KopeteAccount::KopeteAccount(KopeteProtocol *parent, const QString& _accountId ,
 	d->autologin=false;
 	d->password=QString::null;
 
+	if ( ! (d->accountCounter).contains(parent) )
+	{
+		d->accountCounter[parent] = 1;
+	}
+	else
+	{
+		(d->accountCounter[parent])++;
+	}
+
+	d->count = d->accountCounter[parent];
 	KopeteAccountManager::manager()->registerAccount(this);
 
 	//the prococol need to acess to myself, which is create later, in the customAccount constructor
@@ -105,6 +124,12 @@ QString KopeteAccount::accountId()
 {
 	return d->id;
 }
+
+int KopeteAccount::count()
+{
+	return d->count;
+}
+
 
 void KopeteAccount::setAccountId( const QString &accountId )
 {

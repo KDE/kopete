@@ -53,6 +53,11 @@ public:
 	 * return the unique id of this account used as the login
 	 */
 	QString accountId();
+	/**
+	 * return the account sequence number for this protocol
+	 */
+	int count();
+
 
 	/**
 	 * The account ID should be constant, don't use this method.
