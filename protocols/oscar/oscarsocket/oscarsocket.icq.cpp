@@ -1118,13 +1118,12 @@ WORD OscarSocket::sendCLI_TOICQSRV(const WORD subcommand, Buffer &data)
 	outbuf.addLEWord(tlvLen-2); // length of data inside TLV, 8 if no data
 	outbuf.addLEDWord(getSN().toULong()); // own uin
 	outbuf.addLEWord(subcommand); // subcommand
-
-	// TODO: make this the snac sequence's upper Word minus 1!
 	outbuf.addLEWord(toicqsrv_seq);
 
 	if (data.length() > 0)
 		outbuf.addString(data.buffer(), data.length());
 
+	//kdDebug(14150) << "sendCLI_TOICQSRV packet:" << endl << outbuf.toString() << endl;
 	sendBuf(outbuf, 0x02);
 	return (toicqsrv_seq);
 }
@@ -1282,6 +1281,9 @@ void OscarSocket::sendReqOfflineMessages()
 
 void OscarSocket::sendAckOfflineMessages()
 {
+	if (!mIsICQ) // NOT ON AIM
+		return;
+
 	kdDebug(14150) << k_funcinfo <<
 		"SEND (CLI_ACKOFFLINEMSGS), acknowledging offline messages" << endl;
 

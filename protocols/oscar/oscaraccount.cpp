@@ -210,12 +210,20 @@ void OscarAccount::slotError(QString errmsg, int errorCode, bool isFatal)
 		"' errmsg=" << errmsg <<
 		", errorCode=" << errorCode << "." << endl;
 
+	QString caption;
 	if (isFatal)
+	{
 		OscarAccount::disconnect(KopeteAccount::Manual);
-
-	QString caption = engine()->isICQ() ?
-		i18n("Connection Lost - ICQ Plugin") :
-		i18n("Connection Lost - AIM Plugin");
+		caption = engine()->isICQ() ?
+			i18n("Connection Lost - ICQ Plugin") :
+			i18n("Connection Lost - AIM Plugin");
+	}
+	else
+	{
+		caption = engine()->isICQ() ?
+			i18n("Network Protocol Problem - ICQ Plugin") :
+			i18n("Network Protocol Problem - AIM Plugin");
+	}
 
 	KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(),
 		KMessageBox::Error, errmsg, caption, KMessageBox::Notify);

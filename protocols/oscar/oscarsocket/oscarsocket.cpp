@@ -39,7 +39,7 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 //		QString::fromLatin1( isicq?" ICQ":" AIM" ) << endl;
 
 	mIsICQ=isicq;
-	toicqsrv_seq=1;
+	toicqsrv_seq=0;
 	type2SequenceNum=0xFFFF;
 	flapSequenceNum=rand() & 0x7FFF; // value taken from libicq
 	mPwEncryptionKey=0L;
@@ -1600,6 +1600,7 @@ void OscarSocket::parseError(WORD family, WORD snacID, Buffer &inbuf)
 		switch (family)
 		{
 			case OSCAR_FAM_2:
+			{
 				// Ignores recipient is not logged in errors, usually caused by querying aim userinfo
 				if (reason == 4)
 				{
@@ -1607,9 +1608,13 @@ void OscarSocket::parseError(WORD family, WORD snacID, Buffer &inbuf)
 						"IGNORED Family 2 error, recipient not logged in" << endl;
 					return;
 				}
-				msg = i18n("Sending userprofile failed: %1").arg(msgerrreason[reason]);
+				msg = i18n("Sending userprofile for account %1 failed because " \
+					"the following error occured:\n%2")
+					.arg(getSN(), msgerrreason[reason]);
 				break;
+			}
 			case OSCAR_FAM_4:
+			{
 				// Ignores rate to client errors, usually caused by querying away messages
 				if (reason == 3)
 				{
@@ -1617,44 +1622,51 @@ void OscarSocket::parseError(WORD family, WORD snacID, Buffer &inbuf)
 						"IGNORED Family 4 error, rate to client" << endl;
 					return;
 				}
-				msg = i18n("Your message did not get sent because the following" \
-					" error occurred: %1").arg(msgerrreason[reason]);
+				msg = i18n("Your message for account %1 did not get sent because" \
+					" the following error occurred: %2")
+					.arg(getSN(), msgerrreason[reason]);
 				break;
-			case OSCAR_FAM_21:
+			}
+			case OSCAR_FAM_21: // ICQ specific packets
 			{
 				if (reason == 2)
 				{
-					msg = i18n("Your ICQ information request was denied by the " \
-						"ICQ-Server, please try again later.");
+					msg = i18n("Your ICQ information request for account %1 was"
+						" denied by the ICQ-Server, please try again later.")
+						.arg(getSN());
 				}
 				else
 				{
-					msg = i18n("Your ICQ information request failed.\n" \
-						"%1").arg(msgerrreason[reason]);
+					msg = i18n("Your ICQ information request for account %1 failed " \
+						"because of the following error:\n%2")
+						.arg(getSN(), msgerrreason[reason]);
 				}
 				break;
 			}
 			default:
-				msg = i18n("Generic Packet error: %1").arg(msgerrreason[reason]);
+			{
+				msg = i18n("Generic Packet error for account %1:\n%2")
+					.arg(getSN(), msgerrreason[reason]);
 				break;
+			}
 		}
 	}
 	else
 	{
 		if (family == OSCAR_FAM_2)
 		{
-			msg = i18n("Sending userprofile failed: Unknown Error.\n" \
-				"Please report a bug at http://bugs.kde.org");
+			msg = i18n("Sending userprofile for account %1 failed: Unknown Error.\n" \
+				"Please report a bug at http://bugs.kde.org").arg(getSN());
 		}
 		else if (family == OSCAR_FAM_4)
 		{
-			msg = i18n("Your message did not get sent: Unknown Error.\n" \
-				"Please report a bug at http://bugs.kde.org");
+			msg = i18n("Your message for account %1 did not get sent: Unknown Error.\n" \
+				"Please report a bug at http://bugs.kde.org").arg(getSN());
 		}
 		else
 		{
-			msg = i18n("Generic Packet error: Unknown Error.\n" \
-				"Please report a bug at http://bugs.kde.org");
+			msg = i18n("Generic Packet error for account %1: Unknown Error.\n" \
+				"Please report a bug at http://bugs.kde.org").arg(getSN());
 		}
 	}
 
@@ -1667,7 +1679,7 @@ void OscarSocket::parseError(WORD family, WORD snacID, Buffer &inbuf)
 
 void OscarSocket::sendInfo()
 {
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
+	//kdDebug(14150) << k_funcinfo << "Called." << endl;
 
 	// greater 7 and thus sendInfo() is not getting called again
 	// except on reconnnect

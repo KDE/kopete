@@ -214,11 +214,15 @@ void OscarConnection::slotSocketClosed()
 
 void OscarConnection::slotSocketError(int errornum)
 {
+#ifndef USE_KEXTSOCK
+	if (errornum == KNetwork::KSocketBase::WouldBlock)
+		return;
+#endif
+
 	kdDebug(14150) << k_funcinfo << "SOCKET ERROR: " << errornum << endl;
 	mSocket->closeNow();
 	emit socketError(connectionName(), errornum);
 }
-
 
 #include "oscarconnection.moc"
 // vim: set noet ts=4 sts=4 sw=4:

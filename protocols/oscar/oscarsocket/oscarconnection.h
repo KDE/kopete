@@ -17,7 +17,7 @@
 #ifndef OSCARCONNECTION_H
 #define OSCARCONNECTION_H
 
-#define USE_KEXTSOCK 1
+//#define USE_KEXTSOCK 1
 
 #ifdef USE_KEXTSOCK
 #include <kextsock.h>
