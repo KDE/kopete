@@ -1,0 +1,8 @@
+ClassName=MotionAwayConfig
+File=motionawayconfig.kcfg
+GlobalEnums=true
+ItemAccessors=true
+MemberVariables=private
+Mutators=true
+SetUserTexts=false
+Singleton=true

@@ -1,27 +1,31 @@
-/***************************************************************************
-                          motionawaypreferences.cpp  -  description
-                             -------------------
-    begin                : jeu nov 14 2002
-    copyright            : (C) 2002 by Olivier Goffart
-    email                : ogoffart@tiscalinet.be
- ***************************************************************************/
+/*
+    Kopete Motion Detector Auto-Away plugin
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002-2004 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    
+    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #include <qlayout.h>
+#include <qobject.h>
+#include <qcheckbox.h>
 
 #include <kgenericfactory.h>
-#include <kautoconfig.h>
+#include <klineedit.h>
+#include <knuminput.h>
 
 #include "motionawayprefs.h"
 #include "motionawaypreferences.h"
+#include "motionawayconfig.h"
 
 typedef KGenericFactory<MotionAwayPreferences> MotionAwayPreferencesFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kopete_motionaway, MotionAwayPreferencesFactory("kcm_kopete_motionaway"))
@@ -32,28 +36,33 @@ MotionAwayPreferences::MotionAwayPreferences(QWidget *parent, const char* /*name
 	// Add actuall widget generated from ui file.
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	preferencesDialog = new motionawayPrefsUI(this);
-	
-	// KAutoConfig stuff
-	kautoconfig = new KAutoConfig(KGlobal::config(), this, "kautoconfig");
-	connect(kautoconfig, SIGNAL(widgetModified()), SLOT(widgetModified()));
-	connect(kautoconfig, SIGNAL(settingsChanged()), SLOT(widgetModified()));
-    kautoconfig->addWidget(preferencesDialog, "MotionAway Plugin");
-	kautoconfig->retrieveSettings(true);
+	connect(preferencesDialog->BecomeAvailableWithActivity, SIGNAL(toggled(bool)), this, SLOT(slotWidgetModified()));
+	connect(preferencesDialog->AwayTimeout, SIGNAL(valueChanged(int)), this, SLOT(slotWidgetModified()));
+	connect(preferencesDialog->VideoDevice, SIGNAL(textChanged(const QString &)), this, SLOT(slotWidgetModified()));
+	load();
 }
 
-void MotionAwayPreferences::widgetModified()
+void MotionAwayPreferences::load()
 {
-	setChanged(kautoconfig->hasChanged());
+	MotionAwayConfig::self()->readConfig();
+	preferencesDialog->AwayTimeout->setValue(MotionAwayConfig::self()->awayTimeout());
+	preferencesDialog->BecomeAvailableWithActivity->setChecked(MotionAwayConfig::self()->becomeAvailableWithActivity());
+	preferencesDialog->VideoDevice->setText(MotionAwayConfig::self()->videoDevice());
+	emit KCModule::changed(false);
+}
+
+void MotionAwayPreferences::slotWidgetModified()
+{
+	emit KCModule::changed(true);
 }
 
 void MotionAwayPreferences::save()
 {
-	kautoconfig->saveSettings();
-}
-
-void MotionAwayPreferences::defaults ()
-{
-	kautoconfig->resetSettings();
+	MotionAwayConfig::self()->setAwayTimeout(preferencesDialog->AwayTimeout->value());
+	MotionAwayConfig::self()->setBecomeAvailableWithActivity(preferencesDialog->BecomeAvailableWithActivity->isChecked());
+	MotionAwayConfig::self()->setVideoDevice(preferencesDialog->VideoDevice->text());
+	MotionAwayConfig::self()->writeConfig();
+	emit KCModule::changed(false);
 }
 
 #include "motionawaypreferences.moc"
