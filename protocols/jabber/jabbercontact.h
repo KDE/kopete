@@ -72,7 +72,7 @@ class JabberContact:public KopeteContact {
     QString group() const { return mGroup; }
     QString userID() const { return mUserID; }
     bool localGroup() { return hasLocalGroup; }
-    
+
     virtual void showContextMenu(QPoint, QString);
 
     JabberResource *bestResource();
@@ -84,8 +84,8 @@ class JabberContact:public KopeteContact {
     void slotNewMessage(const JabMessage &);
     void slotCloseHistoryDialog();
     void slotViewHistory();
-    void slotSendMsgKCW(const KopeteMessage);
-    void slotSendMsgKEW(const KopeteMessage);
+    void slotSendMsgKCW(const KopeteMessage&);
+    void slotSendMsgKEW(const KopeteMessage&);
     void slotResourceAvailable(const Jid &, const JabResource &);
     void slotResourceUnavailable(const Jid &);
     void slotRemoveFromGroup();
@@ -109,22 +109,22 @@ class JabberContact:public KopeteContact {
 
   private:
     void initActions();
-    
+
     JabberProtocol *mProtocol;
     JabberResource *activeResource;
 
     QPtrList<JabberResource> resources;
     QPtrList<KopeteContact> theContacts;
-    
+
     bool hasLocalName, hasLocalGroup, hasResource;
     QString mUserID, mResource, mGroup, mReason;
     int mStatus;
-    
+
     KPopupMenu *popup;
     KAction *actionMessage, *actionRemove, *actionRemoveFromGroup, *actionChat, *actionInfo, *actionHistory, *actionRename, *actionSnarfVCard;
     KListAction *actionContactMove;
     KSelectAction *actionSelectResource;
-    
+
     dlgJabberRename *dlgRename;
     dlgJabberVCard *dlgVCard;
     KopeteMessageManager *mMsgManagerKCW, *mMsgManagerKEW;
@@ -140,7 +140,7 @@ class JabberResource : public QObject {
     JabberResource();
     JabberResource(const QString &, const int &, const QDateTime &, const int &, const QString &);
     ~JabberResource();
-    
+
     QString resource() { return mResource; }
     int priority() { return mPriority; }
     QDateTime timestamp() { return mTimestamp; }

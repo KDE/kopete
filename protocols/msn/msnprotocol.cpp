@@ -1077,7 +1077,7 @@ void MSNProtocol::slotMessageReceived( const KopeteMessage &msg )
 		manager->appendMessage( msg );
 }
 
-void MSNProtocol::slotMessageSent( const KopeteMessage msg )
+void MSNProtocol::slotMessageSent( const KopeteMessage& msg )
 {
 	kdDebug() << "MSNProtocol::slotMessageSent: Message sent to " <<
 		msg.to().first()->displayName() << endl;
@@ -1099,7 +1099,7 @@ void MSNProtocol::slotMessageSent( const KopeteMessage msg )
 				"new switchboard!" << endl;
 			return;
 		}
-		
+
 		kdDebug() << "MSNProtocol::slotMessageSent: Creating new "
 			<< "SwitchBoardSocket for " << contact->msnId() << "!" << endl;
 
@@ -1145,10 +1145,10 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 		// We may have a new KMM here, but it could just as well be an
 		// existing instance. To avoid connecting multiple times, try to
 		// disconnect the existing connection first
-		disconnect( manager, SIGNAL( messageSent( const KopeteMessage ) ),
-			this, SLOT( slotMessageSent( const KopeteMessage ) ) );
-		connect( manager, SIGNAL( messageSent( const KopeteMessage ) ),
-			this, SLOT( slotMessageSent( const KopeteMessage ) ) );
+		disconnect( manager, SIGNAL( messageSent( const KopeteMessage& ) ),
+			this, SLOT( slotMessageSent( const KopeteMessage& ) ) );
+		connect( manager, SIGNAL( messageSent( const KopeteMessage& ) ),
+			this, SLOT( slotMessageSent( const KopeteMessage& ) ) );
 		manager->readMessages();
 	}
 }

@@ -34,7 +34,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteCon
 		KopeteProtocol *protocol, QString logFile, enum WidgetType widget,
 		QObject *parent, const char *name) : QObject( parent, name)
 {
-    mSendEnabled = true;
+	mSendEnabled = true;
 	mContactList = others;
 	mUser = user;
 	mChatWindow = 0L;
@@ -43,10 +43,10 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteCon
 	mUnreadMessageEvent = 0L;
 	mProtocol = protocol;
 	mWidget = widget;
-	
+
 	readModeChanged();
 	connect( KopetePrefs::prefs(), SIGNAL(queueChanged()), this, SLOT(readModeChanged()));
-	
+
 	if (!logFile.isEmpty())	{
 		QString logFileName = "kopete/" + logFile;
 		mLogger = new KopeteMessageLog(logFileName, this);
@@ -76,7 +76,7 @@ void KopeteMessageManager::slotSendEnabled(bool e)
 void KopeteMessageManager::newChatWindow() {
 	if (mWidget == ChatWindow) {
 		mChatWindow = new KopeteChatWindow(mUser, mContactList);
-		mChatWindow->setSendEnabled(mSendEnabled);	
+		mChatWindow->setSendEnabled(mSendEnabled);
 
 		/* When the window is shown, we have to delete this contact event */
 		kdDebug() << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
@@ -160,7 +160,7 @@ void KopeteMessageManager::readMessages()
 	else {
 		kdDebug() << "[KopeteMessageManager] Widget is non-oldschool: " << mWidget << endl;
 	}
-	
+
 	mMessageQueue.clear();
 }
 
@@ -188,7 +188,7 @@ void KopeteMessageManager::slotMessageSent(const KopeteMessage &message) {
 
 void KopeteMessageManager::slotChatWindowClosing() {
 	if (mWidget == ChatWindow) {
-		kdDebug() << "[KopeteMessageManager] Chat Window closed, now 0L" << endl;	
+		kdDebug() << "[KopeteMessageManager] Chat Window closed, now 0L" << endl;
 		mChatWindow = 0L;
 	}
 	else if (mWidget == Email) {
@@ -220,7 +220,7 @@ void KopeteMessageManager::slotCancelUnreadMessageEvent() {
 }
 
 void KopeteMessageManager::slotEventDeleted(KopeteEvent *e) {
-	kdDebug() << "[KopeteMessageManager] Event done(), now 0L" << endl;	
+	kdDebug() << "[KopeteMessageManager] Event done(), now 0L" << endl;
 	if ( e == mUnreadMessageEvent)
 		mUnreadMessageEvent = 0L;
 }
@@ -261,7 +261,7 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg ) {
 	else if (mReadMode == Queued) {
 		/* Second stage, do it */
 		if (isvisible) {
-			readMessages();	
+			readMessages();
 		}
 		else { /* Bug, WHOOHOO! If a window's on another desktop, we queue regardless. Grrr. */
 			/* Create an event if a prevoius one not exist */

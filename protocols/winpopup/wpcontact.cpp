@@ -74,7 +74,7 @@ KopeteMessageManager *WPContact::msgManagerKEW()
 	{	QPtrList<KopeteContact> singleContact;
 		singleContact.append(this);
 		mMsgManagerKEW = kopeteapp->sessionFactory()->create(mProtocol->myself(), singleContact, mProtocol, "wp_logs/" + mUserID +".log", KopeteMessageManager::Email);
-		connect(mMsgManagerKEW, SIGNAL(messageSent(const KopeteMessage)), this, SLOT(slotSendMsgKEW(const KopeteMessage)));
+		connect(mMsgManagerKEW, SIGNAL(messageSent(const KopeteMessage&)), this, SLOT(slotSendMsgKEW(const KopeteMessage&)));
 	}
 	return mMsgManagerKEW;
 }
@@ -87,7 +87,7 @@ KopeteMessageManager *WPContact::msgManagerKCW()
 	{	QPtrList<KopeteContact> singleContact;
 		singleContact.append(this);
 		mMsgManagerKCW = kopeteapp->sessionFactory()->create(mProtocol->myself(), singleContact, mProtocol, "wp_logs/" + mUserID +".log", KopeteMessageManager::ChatWindow);
-		connect(mMsgManagerKCW, SIGNAL(messageSent(const KopeteMessage)), this, SLOT(slotSendMsgKCW(const KopeteMessage)));
+		connect(mMsgManagerKCW, SIGNAL(messageSent(const KopeteMessage&)), this, SLOT(slotSendMsgKCW(const KopeteMessage&)));
 	}
 	return mMsgManagerKCW;
 }
@@ -102,7 +102,7 @@ void WPContact::initActions()
 	actionRemove = KopeteStdAction::deleteContact(this, SLOT(slotRemoveThisUser()), this, "actionDelete");
 //	actionContactMove = KopeteStdAction::moveContact(this, SLOT(slotMoveThisUser()), this, "actionMove");
 	actionHistory = KopeteStdAction::viewHistory(this, SLOT(slotViewHistory()), this, "actionHistory");
-//	actionRedisplayName() = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");	
+//	actionRedisplayName() = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");
 }
 
 void WPContact::showContextMenu(QPoint position, QString group)
@@ -296,7 +296,7 @@ void WPContact::slotCloseHistoryDialog()
 	historyDialog = 0;
 }
 
-void WPContact::slotSendMsgKEW(const KopeteMessage message)
+void WPContact::slotSendMsgKEW(const KopeteMessage& message)
 {
 	DEBUG(WPDMETHOD, "WPContact::slotSendMsg(<message>)");
 	QString Message = message.body();
@@ -306,7 +306,7 @@ void WPContact::slotSendMsgKEW(const KopeteMessage message)
 	msgManagerKEW()->appendMessage(message);
 }
 
-void WPContact::slotSendMsgKCW(const KopeteMessage message)
+void WPContact::slotSendMsgKCW(const KopeteMessage& message)
 {
 	DEBUG(WPDMETHOD, "WPContact::slotSendMsg(<message>)");
 	mProtocol->slotSendMessage(message.body(), dynamic_cast<WPContact *>(message.to().first())->userID());

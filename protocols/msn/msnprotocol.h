@@ -204,7 +204,7 @@ private slots:
 	 * We received a message
 	 */
 	void slotMessageReceived( const KopeteMessage &msg );
-	void slotMessageSent( const KopeteMessage msg );
+	void slotMessageSent( const KopeteMessage& msg );
 
 	/**
 	 * Open the chat window for a specific user
@@ -274,7 +274,7 @@ private slots:
 	 * Show simple debugging aid
 	 */
 	void slotDebugRawCommand();
-	
+
 	/**
 	 * The Notify socket might have closed unexpectedly...
 	 */

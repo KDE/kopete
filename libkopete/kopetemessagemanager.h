@@ -65,7 +65,7 @@ public:
 	 */
 	void newChatWindow();
 	void newReplyWindow();
-	
+
 	/**
 	 * Append a message to the queue
 	 */
@@ -109,14 +109,14 @@ public:
 	 * Get the local user in the session
 	 */
 	const KopeteContact* user() const { return mUser; };
-    const KopeteProtocol* protocol() const { return mProtocol; };
+	const KopeteProtocol* protocol() const { return mProtocol; };
 
 signals:
 	/**
 	 * A message has been sent by the user or a plugin. The protocol should
 	 * connect to this signal to actually send the message over the wire.
 	 */
-	void messageSent(const KopeteMessage msg);
+	void messageSent(const KopeteMessage& msg);
 	void dying(KopeteMessageManager *);
 
 public slots:
@@ -125,12 +125,12 @@ public slots:
 protected slots:
 	void slotCancelUnreadMessageEvent();
 	void slotEventDeleted(KopeteEvent *);
-    void slotChatWindowClosing();
+	void slotChatWindowClosing();
 	void slotReplyWindowClosing();
 	void slotMessageSent(const KopeteMessage &message);
 	void slotReadMessages();
 	void slotReply();
-	
+
 private:
 	/**
 	 * Create a message manager. This constructor is private, because the

@@ -31,7 +31,7 @@ JabberContact::JabberContact(QString userID, QString nickname, QString group, Ja
     mProtocol = protocol;
 	hasResource = false;
 	historyDialog = 0L;
-	
+
     initContact(userID, nickname, group);
 }
 
@@ -54,7 +54,7 @@ KopeteMessageManager* JabberContact::msgManagerKEW() {
 		return mMsgManagerKEW;
 	else {
 		mMsgManagerKEW = kopeteapp->sessionFactory()->create(mProtocol->myself(), theContacts, mProtocol, "jabber_logs/" + mUserID +".log", KopeteMessageManager::Email);
-		connect(mMsgManagerKEW, SIGNAL(messageSent(const KopeteMessage)), this, SLOT(slotSendMsgKEW(const KopeteMessage)));
+		connect(mMsgManagerKEW, SIGNAL(messageSent(const KopeteMessage&)), this, SLOT(slotSendMsgKEW(const KopeteMessage&)));
 		return mMsgManagerKEW;
 	}
 }
@@ -64,7 +64,7 @@ KopeteMessageManager* JabberContact::msgManagerKCW() {
 		return mMsgManagerKCW;
 	else {
 		mMsgManagerKCW = kopeteapp->sessionFactory()->create(mProtocol->myself(), theContacts, mProtocol, "jabber_logs/" + mUserID +".log", KopeteMessageManager::ChatWindow);
-		connect(mMsgManagerKCW, SIGNAL(messageSent(const KopeteMessage)), this, SLOT(slotSendMsgKCW(const KopeteMessage)));
+		connect(mMsgManagerKCW, SIGNAL(messageSent(const KopeteMessage&)), this, SLOT(slotSendMsgKCW(const KopeteMessage&)));
 		return mMsgManagerKCW;
 	}
 }
@@ -85,7 +85,7 @@ void JabberContact::showContextMenu(QPoint, QString)
 {
 	popup = new KPopupMenu();
 	popup->insertTitle(userID() + " (" + mResource + ")");
-	
+
 	KGlobal::config()->setGroup("Jabber");
 	if (KGlobal::config()->readBoolEntry("EmailDefault", false)) {
 		actionMessage->plug(popup);
@@ -95,7 +95,7 @@ void JabberContact::showContextMenu(QPoint, QString)
 		actionChat->plug(popup);
 		actionMessage->plug(popup);
 	}
-	
+
 	if (mStatus != STATUS_OFFLINE) {
 		QStringList items;
 		int activeItem = 0;
@@ -103,7 +103,7 @@ void JabberContact::showContextMenu(QPoint, QString)
 		JabberResource *tmpBestResource = bestResource();
 		items.append(tmpBestResource->resource());
 		int i = 1;
-		for (JabberResource *tmpResource = resources.first(); tmpResource; tmpResource = resources.next(), i++) {                                    
+		for (JabberResource *tmpResource = resources.first(); tmpResource; tmpResource = resources.next(), i++) {
 			if (tmpResource != tmpBestResource)
 				items.append(tmpResource->resource());
 			if (hasResource && (tmpResource->resource() == activeResource->resource())) {
@@ -162,7 +162,7 @@ void JabberContact::slotDoRenameContact() {
 	if (name == QString("")) { hasLocalName = false; name = mUserID; }
 	else { hasLocalName = true; }
 	setDisplayName(displayName());
-    
+
 	delete dlgRename;
 	mProtocol->renameContact(userID(), hasLocalName ? name : QString(""), hasLocalGroup ? mGroup : QString(""));
 }
@@ -184,7 +184,7 @@ JabberContact::ContactStatus JabberContact::status() const {
 QString JabberContact::statusText() const
 {
 	QString txt;
-	
+
 	switch ( mStatus )
 	{
 		case STATUS_ONLINE:
@@ -277,7 +277,7 @@ void JabberContact::execute() {
 
 void JabberContact::slotNewMessage(const JabMessage &message) {
 	QString theirUserID = QString("%1@%2").arg(message.from.user(), 1).arg(message.from.host());
-	
+
     if (theirUserID != userID()) {
 		return;
     }
@@ -305,7 +305,7 @@ void JabberContact::slotCloseHistoryDialog() {
 	historyDialog = 0L;
 }
 
-void JabberContact::slotSendMsgKEW(const KopeteMessage message) {
+void JabberContact::slotSendMsgKEW(const KopeteMessage& message) {
 	JabMessage jabMessage;
 	JabberContact *to = dynamic_cast<JabberContact *>(message.to().first());
 	const JabberContact *from = dynamic_cast<const JabberContact *>(message.from());
@@ -323,7 +323,7 @@ void JabberContact::slotSendMsgKEW(const KopeteMessage message) {
 	msgManagerKEW()->appendMessage(message);
 }
 
-void JabberContact::slotSendMsgKCW(const KopeteMessage message) {
+void JabberContact::slotSendMsgKCW(const KopeteMessage& message) {
 	JabMessage jabMessage;
 	JabberContact *to = dynamic_cast<JabberContact *>(message.to().first());
 	const JabberContact *from = dynamic_cast<const JabberContact *>(message.from());
@@ -494,7 +494,7 @@ QString JabberContact::id() const {	return mUserID; }
 
 QString JabberContact::data() const { return mUserID; }
 
-JabberResource::JabberResource() { 
+JabberResource::JabberResource() {
 	kdDebug() << "Jabber resource: New Jabber resource (no params)." << endl;
 }
 

@@ -67,8 +67,8 @@ private:
 
 	QTimer checkStatus;
 	KPopupMenu *popup;
-    KopeteMessageManager *mMsgManagerKCW, *mMsgManagerKEW;
-    KopeteMessageManager *msgManagerKCW(), *msgManagerKEW();
+	KopeteMessageManager *mMsgManagerKCW, *mMsgManagerKEW;
+	KopeteMessageManager *msgManagerKCW(), *msgManagerKEW();
 
 	KAction *actionRemove, *actionRemoveFromGroup, *actionChat, *actionMessage, *actionInfo, *actionHistory, *actionRename;
 	KListAction *actionContactMove;
@@ -95,8 +95,8 @@ public:
 
 public slots:
 	void slotNewMessage(const QString &Body, const QDateTime &Arrival);
-	void slotSendMsgKEW(const KopeteMessage);
-	void slotSendMsgKCW(const KopeteMessage);
+	void slotSendMsgKEW(const KopeteMessage&);
+	void slotSendMsgKCW(const KopeteMessage&);
 	void slotRemoveFromGroup();
 
 private slots:
