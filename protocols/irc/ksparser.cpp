@@ -81,13 +81,14 @@ QString KSParser::_parse(const QString &message)
 			{
 				QString tagStyle;
 				QString fgColor = QString( message[i] );
-				while( message[++i].digitValue() > -1 )
+				if( message[++i].digitValue() > -1 )
 					fgColor += message[i];
 
 				QString bgColor;
 				if( message[i] == ',' )
 				{
-					while( message[++i].digitValue() > -1 )
+					bgColor = QString( message[i] );
+					if( message[++i].digitValue() > -1 )
 						bgColor += message[i];
 				}
 
