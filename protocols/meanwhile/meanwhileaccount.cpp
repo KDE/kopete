@@ -147,7 +147,32 @@ void MeanwhileAccount::setAway(
 
 KActionMenu * MeanwhileAccount::actionMenu()
 {
-    KActionMenu * theMenu = Kopete::Account::actionMenu();
+    KActionMenu * theMenu =
+            new KActionMenu(accountId(),
+                            myself()->onlineStatus().iconFor(this),
+                            this);
+    theMenu->popupMenu()->insertTitle(
+                            myself()->icon(),
+                            i18n("Meanwhile (%1)").arg(accountId()));
+    theMenu->insert(
+           new KAction( i18n( "Go Online" ),
+                        MeanwhileProtocol::protocol()->meanwhileOnline.iconFor(this),
+                        0, this, SLOT(meanwhileGoOnline()), this, "meanwhileGoOnline"));
+
+    theMenu->insert(
+           new KAction( i18n( "Go Offline" ),
+                        MeanwhileProtocol::protocol()->meanwhileOffline.iconFor(this),
+                        0, this, SLOT(meanwhileGoOffline()), this, "meanwhileGoOffline"));
+
+    theMenu->insert(
+           new KAction( i18n( "Go Away" ),
+                        MeanwhileProtocol::protocol()->meanwhileAway.iconFor(this),
+                        0, this, SLOT(meanwhileGoAway()), this, "meanwhileGoAway"));
+
+    theMenu->insert(
+           new KAction( i18n( "Mark as Busy" ),
+                        MeanwhileProtocol::protocol()->meanwhileBusy.iconFor(this),
+                        0, this, SLOT(meanwhileGoDND()), this, "meanwhileGoDND"));
 
     theMenu->popupMenu()->insertSeparator();
 
