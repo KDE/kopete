@@ -31,7 +31,7 @@
 
 SMSContact::SMSContact( SMSProtocol* _protocol, const QString &phoneNumber,
 	const QString &displayName, KopeteMetaContact *parent )
-: KopeteContact( _protocol, parent )
+: KopeteContact( _protocol, phoneNumber, parent )
 {
 	setPhoneNumber( phoneNumber );
 	setDisplayName( displayName );
@@ -50,11 +50,6 @@ SMSContact::~SMSContact()
 {
 }
 
-
-QString SMSContact::contactId() const
-{
-	return m_phoneNumber;
-}
 
 void SMSContact::execute()
 {

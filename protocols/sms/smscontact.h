@@ -33,8 +33,6 @@ public:
 		const QString &displayName, KopeteMetaContact *parent );
 	~SMSContact();
 
-	virtual QString contactId() const;
-
 	KActionCollection* customContextMenuActions();
 
 	ContactStatus status() const;
