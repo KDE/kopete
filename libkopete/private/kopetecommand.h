@@ -96,6 +96,7 @@ class Command : public KAction
 		QString m_formatString;
 		uint m_minArgs;
 		int m_maxArgs;
+		bool m_processing;
 		CommandHandler::CommandType m_type;
 };
 

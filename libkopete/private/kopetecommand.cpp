@@ -43,6 +43,7 @@ void Kopete::Command::init( const QString &command, const char* slot, const QStr
 	m_formatString = formatString;
 	m_minArgs = minArgs;
 	m_maxArgs = maxArgs;
+	m_processing = false;
 
 	if(  m_type == Kopete::CommandHandler::Normal )
 	{
@@ -71,7 +72,11 @@ void Kopete::Command::slotAction()
 void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *manager, bool gui )
 {
 	QStringList mArgs = Kopete::CommandHandler::parseArguments( args );
-	if( mArgs.count() < m_minArgs )
+	if( m_processing )
+	{
+		printError( i18n("Alias \"%1\" expands to itself.").arg( text() ), manager, gui );
+	}
+	else if( mArgs.count() < m_minArgs )
 	{
 		printError( i18n("\"%1\" requires at least %n argument.",
 			"\"%1\" requires at least %n arguments.", m_minArgs)
@@ -89,6 +94,7 @@ void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *
 	}
 	else
 	{
+		m_processing = true;
 		if( m_type == Kopete::CommandHandler::UserAlias ||
 			m_type == Kopete::CommandHandler::SystemAlias )
 		{
@@ -112,6 +118,7 @@ void Kopete::Command::processCommand( const QString &args, Kopete::ChatSession *
 		{
 			emit( handleCommand( args, manager ) );
 		}
+		m_processing = false;
 	}
 }
 
