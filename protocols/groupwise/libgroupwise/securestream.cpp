@@ -30,34 +30,11 @@
 #include<qvaluelist.h>
 #include<qtimer.h>
 
-#include "qca.h"
-#include "tlshandler.h"
-
 #include"securestream.h"
 
 //----------------------------------------------------------------------------
 // LayerTracker
 //----------------------------------------------------------------------------
-class LayerTracker
-{
-public:
-	struct Item
-	{
-		int plain;
-		int encoded;
-	};
-USE_TLSHANDLER
-	LayerTracker();
-
-	void reset();
-	void addPlain(int plain);
-	void specifyEncoded(int encoded, int plain);
-	int finished(int encoded);
-
-	int p;
-	QValueList<Item> list;
-};
-
 LayerTracker::LayerTracker()
 {
 	p = 0;
@@ -108,200 +85,175 @@ int LayerTracker::finished(int encoded)
 //----------------------------------------------------------------------------
 // SecureStream
 //----------------------------------------------------------------------------
-class SecureLayer : public QObject
+
+SecureLayer::SecureLayer(QCA::TLS *t)
 {
-	Q_OBJECT
-public:
-	enum { TLS, SASL, TLSH };
-	int type;
-	union {
-		QCA::TLS *tls;
-		QCA::SASL *sasl;
-#ifdef USE_TLSHANDLER
-		TLSHandler *tlsHandler;
-#endif
-	} p;
-	LayerTracker layer;
-	bool tls_done;
-	int prebytes;
+	type = TLS;
+	p.tls = t;
+	init();
+	connect(p.tls, SIGNAL(handshaken()), SLOT(tls_handshaken()));
+	connect(p.tls, SIGNAL(readyRead()), SLOT(tls_readyRead()));
+	connect(p.tls, SIGNAL(readyReadOutgoing(int)), SLOT(tls_readyReadOutgoing(int)));
+	connect(p.tls, SIGNAL(closed()), SLOT(tls_closed()));
+	connect(p.tls, SIGNAL(error(int)), SLOT(tls_error(int)));
+}
 
-	SecureLayer(QCA::TLS *t)
-	{
-		type = TLS;
-		p.tls = t;
-		init();
-		connect(p.tls, SIGNAL(handshaken()), SLOT(tls_handshaken()));
-		connect(p.tls, SIGNAL(readyRead()), SLOT(tls_readyRead()));
-		connect(p.tls, SIGNAL(readyReadOutgoing(int)), SLOT(tls_readyReadOutgoing(int)));
-		connect(p.tls, SIGNAL(closed()), SLOT(tls_closed()));
-		connect(p.tls, SIGNAL(error(int)), SLOT(tls_error(int)));
-	}
-
-	SecureLayer(QCA::SASL *s)
-	{
-		type = SASL;
-		p.sasl = s;
-		init();
-		connect(p.sasl, SIGNAL(readyRead()), SLOT(sasl_readyRead()));
-		connect(p.sasl, SIGNAL(readyReadOutgoing(int)), SLOT(sasl_readyReadOutgoing(int)));
-		connect(p.sasl, SIGNAL(error(int)), SLOT(sasl_error(int)));
-	}
+SecureLayer::SecureLayer(QCA::SASL *s)
+{
+	type = SASL;
+	p.sasl = s;
+	init();
+	connect(p.sasl, SIGNAL(readyRead()), SLOT(sasl_readyRead()));
+	connect(p.sasl, SIGNAL(readyReadOutgoing(int)), SLOT(sasl_readyReadOutgoing(int)));
+	connect(p.sasl, SIGNAL(error(int)), SLOT(sasl_error(int)));
+}
 
 #ifdef USE_TLSHANDLER
-	SecureLayer(TLSHandler *t)
-	{
-		type = TLSH;
-		p.tlsHandler = t;
-		init();
-		connect(p.tlsHandler, SIGNAL(success()), SLOT(tlsHandler_success()));
-		connect(p.tlsHandler, SIGNAL(fail()), SLOT(tlsHandler_fail()));
-		connect(p.tlsHandler, SIGNAL(closed()), SLOT(tlsHandler_closed()));
-		connect(p.tlsHandler, SIGNAL(readyRead(const QByteArray &)), SLOT(tlsHandler_readyRead(const QByteArray &)));
-		connect(p.tlsHandler, SIGNAL(readyReadOutgoing(const QByteArray &, int)), SLOT(tlsHandler_readyReadOutgoing(const QByteArray &, int)));
-	}
+SecureLayer::SecureLayer(TLSHandler *t)
+{
+	type = TLSH;
+	p.tlsHandler = t;
+	init();
+	connect(p.tlsHandler, SIGNAL(success()), SLOT(tlsHandler_success()));
+	connect(p.tlsHandler, SIGNAL(fail()), SLOT(tlsHandler_fail()));
+	connect(p.tlsHandler, SIGNAL(closed()), SLOT(tlsHandler_closed()));
+	connect(p.tlsHandler, SIGNAL(readyRead(const QByteArray &)), SLOT(tlsHandler_readyRead(const QByteArray &)));
+	connect(p.tlsHandler, SIGNAL(readyReadOutgoing(const QByteArray &, int)), SLOT(tlsHandler_readyReadOutgoing(const QByteArray &, int)));
+}
 #endif
 
-	void init()
-	{
-		tls_done = false;
-		prebytes = 0;
-	}
+void SecureLayer::init()
+{
+	tls_done = false;
+	prebytes = 0;
+}
 
-	void write(const QByteArray &a)
-	{
-		layer.addPlain(a.size());
-		switch(type) {
-			case TLS:  { p.tls->write(a); break; }
-			case SASL: { p.sasl->write(a); break; }
+void SecureLayer::write(const QByteArray &a)
+{
+	layer.addPlain(a.size());
+	switch(type) {
+		case TLS:  { p.tls->write(a); break; }
+		case SASL: { p.sasl->write(a); break; }
 #ifdef USE_TLSHANDLER
-			case TLSH: { p.tlsHandler->write(a); break; }
+		case TLSH: { p.tlsHandler->write(a); break; }
 #endif
-		}
 	}
+}
 
-	void writeIncoming(const QByteArray &a)
-	{
-		switch(type) {
-			case TLS:  { p.tls->writeIncoming(a); break; }
-			case SASL: { p.sasl->writeIncoming(a); break; }
+void SecureLayer::writeIncoming(const QByteArray &a)
+{
+	switch(type) {
+		case TLS:  { p.tls->writeIncoming(a); break; }
+		case SASL: { p.sasl->writeIncoming(a); break; }
 #ifdef USE_TLSHANDLER
 			case TLSH: { p.tlsHandler->writeIncoming(a); break; }
 #endif
+	}
+}
+
+int SecureLayer::finished(int plain)
+{
+	int written = 0;
+
+	// deal with prebytes (bytes sent prior to this security layer)
+	if(prebytes > 0) {
+		if(prebytes >= plain) {
+			written += plain;
+			prebytes -= plain;
+			plain = 0;
+		}
+		else {
+			written += prebytes;
+			plain -= prebytes;
+			prebytes = 0;
 		}
 	}
 
-	int finished(int plain)
-	{
-		int written = 0;
+	// put remainder into the layer tracker
+	if(type == SASL || tls_done)
+		written += layer.finished(plain);
 
-		// deal with prebytes (bytes sent prior to this security layer)
-		if(prebytes > 0) {
-			if(prebytes >= plain) {
-				written += plain;
-				prebytes -= plain;
-				plain = 0;
-			}
-			else {
-				written += prebytes;
-				plain -= prebytes;
-				prebytes = 0;
-			}
-		}
+	return written;
+}
 
-		// put remainder into the layer tracker
-		if(type == SASL || tls_done)
-			written += layer.finished(plain);
+void SecureLayer::tls_handshaken()
+{
+	tls_done = true;
+	tlsHandshaken();
+}
 
-		return written;
-	}
+void SecureLayer::tls_readyRead()
+{
+	QByteArray a = p.tls->read();
+	readyRead(a);
+}
 
-signals:
-	void tlsHandshaken();
-	void tlsClosed(const QByteArray &);
-	void readyRead(const QByteArray &);
-	void needWrite(const QByteArray &);
-	void error(int);
-
-private slots:
-	void tls_handshaken()
-	{
-		tls_done = true;
-		tlsHandshaken();
-	}
-
-	void tls_readyRead()
-	{
-		QByteArray a = p.tls->read();
-		readyRead(a);
-	}
-
-	void tls_readyReadOutgoing(int plainBytes)
-	{
-		QByteArray a = p.tls->readOutgoing();
-		if(tls_done)
-			layer.specifyEncoded(a.size(), plainBytes);
-		needWrite(a);
-	}
-
-	void tls_closed()
-	{
-		QByteArray a = p.tls->readUnprocessed();
-		tlsClosed(a);
-	}
-
-	void tls_error(int x)
-	{
-		error(x);
-	}
-
-	void sasl_readyRead()
-	{
-		QByteArray a = p.sasl->read();
-		readyRead(a);
-	}
-
-	void sasl_readyReadOutgoing(int plainBytes)
-	{
-		QByteArray a = p.sasl->readOutgoing();
+void SecureLayer::tls_readyReadOutgoing(int plainBytes)
+{
+	QByteArray a = p.tls->readOutgoing();
+	if(tls_done)
 		layer.specifyEncoded(a.size(), plainBytes);
-		needWrite(a);
-	}
+	needWrite(a);
+}
 
-	void sasl_error(int x)
-	{
-		error(x);
-	}
+void SecureLayer::tls_closed()
+{
+	QByteArray a = p.tls->readUnprocessed();
+	tlsClosed(a);
+}
+
+void SecureLayer::tls_error(int x)
+{
+	error(x);
+}
+
+void SecureLayer::sasl_readyRead()
+{
+	QByteArray a = p.sasl->read();
+	readyRead(a);
+}
+
+void SecureLayer::sasl_readyReadOutgoing(int plainBytes)
+{
+	QByteArray a = p.sasl->readOutgoing();
+	layer.specifyEncoded(a.size(), plainBytes);
+	needWrite(a);
+}
+
+void SecureLayer::sasl_error(int x)
+{
+	error(x);
+}
 
 #ifdef USE_TLSHANDLER
-	void tlsHandler_success()
-	{
-		tls_done = true;
-		tlsHandshaken();
-	}
+void SecureLayer::tlsHandler_success()
+{
+	tls_done = true;
+	tlsHandshaken();
+}
 
-	void tlsHandler_fail()
-	{
-		error(0);
-	}
+void SecureLayer::tlsHandler_fail()
+{
+	error(0);
+}
 
-	void tlsHandler_closed()
-	{
-		tlsClosed(QByteArray());
-	}
+void SecureLayer::tlsHandler_closed()
+{
+	tlsClosed(QByteArray());
+}
 
-	void tlsHandler_readyRead(const QByteArray &a)
-	{
-		readyRead(a);
-	}
+void SecureLayer::tlsHandler_readyRead(const QByteArray &a)
+{
+	readyRead(a);
+}
 
-	void tlsHandler_readyReadOutgoing(const QByteArray &a, int plainBytes)
-	{
-		if(tls_done)
-			layer.specifyEncoded(a.size(), plainBytes);
-		needWrite(a);
-	}
+void SecureLayer::tlsHandler_readyReadOutgoing(const QByteArray &a, int plainBytes)
+{
+	if(tls_done)
+		layer.specifyEncoded(a.size(), plainBytes);
+	needWrite(a);
+}
 #endif
-};
 
 class SecureStream::Private
 {

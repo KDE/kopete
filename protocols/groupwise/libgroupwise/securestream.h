@@ -22,6 +22,7 @@
 #define SECURESTREAM_H
 
 #include<qca.h>
+#include "tlshandler.h"
 #include"bytestream.h"
 
 #define USE_TLSHANDLER
@@ -76,6 +77,80 @@ private:
 
 	class Private;
 	Private *d;
+};
+
+class LayerTracker
+{
+public:
+	struct Item
+	{
+		int plain;
+		int encoded;
+	};
+USE_TLSHANDLER
+	LayerTracker();
+
+	void reset();
+	void addPlain(int plain);
+	void specifyEncoded(int encoded, int plain);
+	int finished(int encoded);
+
+	int p;
+	QValueList<Item> list;
+};
+
+
+class SecureLayer : public QObject
+{
+	Q_OBJECT
+public:
+	SecureLayer(QCA::TLS *t);
+	SecureLayer(QCA::SASL *s);
+#ifdef USE_TLSHANDLER
+	SecureLayer(TLSHandler *t);
+#endif
+	void init();
+	void write(const QByteArray &a);
+	void writeIncoming(const QByteArray &a);
+	int finished(int plain);
+
+	enum { TLS, SASL, TLSH };
+	int type;
+	union {
+		QCA::TLS *tls;
+		QCA::SASL *sasl;
+#ifdef USE_TLSHANDLER
+		TLSHandler *tlsHandler;
+#endif
+	} p;
+	LayerTracker layer;
+	bool tls_done;
+	int prebytes;
+
+signals:
+        void tlsHandshaken();
+        void tlsClosed(const QByteArray &);
+        void readyRead(const QByteArray &);
+        void needWrite(const QByteArray &);
+        void error(int);
+
+private slots:
+        void tls_handshaken();
+        void tls_readyRead();
+        void tls_readyReadOutgoing(int plainBytes);
+        void tls_closed();
+        void tls_error(int x);
+        void sasl_readyRead();
+        void sasl_readyReadOutgoing(int plainBytes);
+        void sasl_error(int x);
+#ifdef USE_TLSHANDLER
+	void tlsHandler_success();
+	void tlsHandler_fail();
+	void tlsHandler_closed();
+	void tlsHandler_readyRead(const QByteArray &a);
+	void tlsHandler_readyReadOutgoing(const QByteArray &a, int plainBytes);
+#endif
+	
 };
 
 #endif

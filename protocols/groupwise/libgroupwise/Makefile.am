@@ -1,7 +1,7 @@
 INCLUDES = -I$(top_srcdir)/kopete/protocols/groupwise/libgroupwise/qca/src \
 		   -I$(top_srcdir)/kopete/protocols/groupwise \
 		   $(all_includes)
-METASOURCES = coreprotocol.moc task.moc client.moc safedelete.moc gwclientstream.moc userdetailsmanager.moc
+METASOURCES = AUTO
 
 AM_CFLAGS = -DUSE_TLSHANDLER
 
@@ -10,10 +10,6 @@ CLEANFILES = securestream.moc
 SUBDIRS = qca tasks
 
 KDE_OPTIONS = nofinal
-
-securestream.moc: $(srcdir)/securestream.cpp $(srcdir)/securestream.h
-	${MOC} $(srcdir)/securestream.h > $@
-	${MOC} $(srcdir)/securestream.cpp >> $@
 
 noinst_HEADERS = connector.h tlshandler.h qcatlshandler.h bytestream.h \
 			gwclientstream.h securestream.h stream.h coreprotocol.h gwfield.h gwerror.h \
