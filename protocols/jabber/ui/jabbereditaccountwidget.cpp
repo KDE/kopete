@@ -75,6 +75,10 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (btnRegister, SIGNAL (clicked ()), this, SLOT (registerClicked ()));
 	connect (cbUseSSL, SIGNAL (toggled (bool)), this, SLOT (sslToggled (bool)));
 
+	connect (leLocalIP, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
+	connect (sbLocalPort, SIGNAL (valueChanged (int)), this, SLOT (configChanged ()));
+	connect (leProxyJID, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
+
 	if (account())
 	{
 		this->reopen ();
@@ -137,6 +141,12 @@ void JabberEditAccountWidget::reopen ()
 	leProxyUser->setText (account()->pluginData (m_protocol, "ProxyUser"));
 	leProxyPass->setText (account()->pluginData (m_protocol, "ProxyPass"));
 	cbAutoConnect->setChecked (account()->autoLogin());
+
+	KGlobal::config()->setGroup("Jabber");
+	leLocalIP->setText (KGlobal::config()->readEntry("LocalIP", ""));
+	sbLocalPort->setValue (KGlobal::config()->readNumEntry("LocalPort", 8001));
+
+	leProxyJID->setText (account()->pluginData (m_protocol, "ProxyJID"));
 
 }
 
@@ -237,7 +247,13 @@ void JabberEditAccountWidget::writeConfig ()
 
 	account()->setPluginData (m_protocol, "ProxyUser", leProxyUser->text ());
 	account()->setPluginData (m_protocol, "ProxyPass", leProxyPass->text ());
-	//config->sync();
+
+	KGlobal::config()->setGroup("Jabber");
+	KGlobal::config()->writeEntry("LocalIP", leLocalIP->text());
+	KGlobal::config()->writeEntry("LocalPort", sbLocalPort->value());
+
+	account()->setPluginData (m_protocol, "ProxyJID", leProxyJID->text());
+
 	settings_changed = false;
 }
 

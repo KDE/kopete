@@ -21,6 +21,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
+#include <kfiledialog.h>
 
 #include "xmpp_tasks.h"
 
@@ -28,12 +29,10 @@
 #include "jabbercontact.h"
 #include "jabberprotocol.h"
 #include "jabberresourcepool.h"
-#include "kopetestdaction.h"
+#include "jabberfiletransfer.h"
 #include "kopetemessage.h"
-#include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteuiglobal.h"
-#include "kopeteview.h"
 #include "kopetemetacontact.h"
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
@@ -55,6 +54,8 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 	// (we'll only be once we returned from this constructor),
 	// we need to force an update to our status here
 	reevaluateStatus ();
+
+	setFileCapable ( true );
 
 }
 
@@ -386,6 +387,26 @@ void JabberContact::syncGroups ()
 
 }
 
+void JabberContact::sendFile ( const KURL &sourceURL, const QString &fileName, uint fileSize )
+{
+	QString filePath;
+
+	// if the file location is null, then get it from a file open dialog
+	if ( !sourceURL.isValid () )
+		filePath = KFileDialog::getOpenFileName( QString::null , "*", 0L, i18n ( "Kopete File Transfer" ) );
+	else
+		filePath = sourceURL.path(-1);
+
+	QFile file ( filePath );
+
+	if ( file.exists () )
+	{
+		// send the file
+		new JabberFileTransfer ( account (), this, filePath );
+	}
+
+}
+
 void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 {
 	KopeteMessage::MessageType type;
@@ -486,6 +507,20 @@ void JabberContact::reevaluateStatus ()
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New status for " << contactId () << " is " << status.description () << endl;
 	setOnlineStatus ( status );
+
+}
+
+QString JabberContact::fullAddress ()
+{
+
+	XMPP::Jid jid ( contactId () );
+
+	if ( jid.resource().isEmpty () )
+	{
+		jid.setResource ( account()->resourcePool()->bestResource ( jid ).name () );
+	}
+
+	return jid.full ();
 
 }
 

@@ -26,6 +26,7 @@
 // include these because of namespace reasons
 #include <im.h>
 #include <xmpp.h>
+#include <s5b.h>
 
 // we need these for type reasons
 #include <kopeteaccount.h>
@@ -102,6 +103,13 @@ public:
 	 */
 	static void handleStreamError (int streamError, int streamCondition, int connectorCode, QString server);
 
+	/**
+	 * Return the current, shared S5B server instance.
+	 */
+	static XMPP::S5BServer *s5bServer ();
+	static void addS5bAddress ( const QString &address );
+	static void removeS5bAddress ( const QString &address );
+
 public slots:
 	/* Connects to the server. */
 	void connect ();
@@ -141,6 +149,8 @@ private:
 	JabberResourcePool *mResourcePool;
 	JabberContactPool *mContactPool;
 
+	QString localAddress;
+
 	void setAvailable ();
 
 	/* Set up our actions for the status menu. */
@@ -155,6 +165,9 @@ private:
 
 	/* Caches the title ID of the account context menu. */
 	int menuTitleId;
+
+	static XMPP::S5BServer *m_s5bServer;
+	static QStringList m_s5bAddressList;
 
 	/**
 	 * Sets our own presence. Updates our resource in the
@@ -191,6 +204,9 @@ private slots:
 
 	/* Called from Psi: roster request finished */
 	void slotRosterRequestFinished ( bool success, int statusCode, const QString &statusString );
+
+	/* Called from Psi: incoming file transfer */
+	void slotIncomingFileTransfer ();
 
 	/* Called from Psi: debug messages from the backend. */
 	void slotPsiDebug (const QString & msg);
@@ -237,7 +253,6 @@ private slots:
 	 * delete it from our contact pool.
 	 */
 	void slotContactDeleted (const RosterItem &);
-
 
 	/* Update a contact's details. */
 	void slotContactUpdated (const RosterItem &);

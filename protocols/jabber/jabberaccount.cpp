@@ -21,9 +21,11 @@
  ***************************************************************************/
 
 #include "im.h"
+#include "filetransfer.h"
 #include "xmpp.h"
 #include "xmpp_tasks.h"
 #include "qca.h"
+#include "bsocket.h"
 
 #include "jabberaccount.h"
 
@@ -43,12 +45,15 @@
 #include "kopetecontactlist.h"
 #include "jabberresourcepool.h"
 #include "jabbercontactpool.h"
+#include "jabberfiletransfer.h"
 
 #include "dlgjabbersendraw.h"
 #include "dlgjabberservices.h"
 
 #include <sys/utsname.h>
 
+XMPP::S5BServer *JabberAccount::m_s5bServer = 0L;
+QStringList JabberAccount::m_s5bAddressList;
 
 JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId, const char *name):KopeteAccount (parent, accountId, name)
 {
@@ -95,6 +100,62 @@ void JabberAccount::cleanup ()
 	jabberClientConnector = 0L;
 	jabberTLS = 0L;
 	jabberTLSHandler = 0L;
+
+}
+
+XMPP::S5BServer *JabberAccount::s5bServer ()
+{
+
+	if ( !m_s5bServer )
+	{
+		KGlobal::config()->setGroup("Jabber");
+		m_s5bServer = new XMPP::S5BServer ();
+		m_s5bServer->start ( KGlobal::config()->readNumEntry ( "LocalPort", 8001 ) );
+	}
+
+	return m_s5bServer;
+
+}
+
+void JabberAccount::addS5bAddress ( const QString &address )
+{
+	QStringList newList;
+
+	m_s5bAddressList.append ( address );
+
+	// now filter the list without dupes
+	for ( QStringList::Iterator it = m_s5bAddressList.begin (); it != m_s5bAddressList.end (); ++it )
+	{
+		if ( !newList.contains ( *it ) )
+			newList.append ( *it );
+	}
+
+	m_s5bServer->setHostList ( newList );
+
+}
+
+void JabberAccount::removeS5bAddress ( const QString &address )
+{
+	QStringList newList;
+
+	m_s5bAddressList.remove ( address );
+
+	if ( m_s5bAddressList.isEmpty () )
+	{
+		delete m_s5bServer;
+		m_s5bServer = 0L;
+	}
+	else
+	{
+		// now filter the list without dupes
+		for ( QStringList::Iterator it = m_s5bAddressList.begin (); it != m_s5bAddressList.end (); ++it )
+		{
+			if ( !newList.contains ( *it ) )
+				newList.append ( *it );
+		}
+
+		m_s5bServer->setHostList ( newList );
+	}
 
 }
 
@@ -398,6 +459,9 @@ void JabberAccount::connect ()
 	 */
 	jabberClient = new XMPP::Client (this);
 
+	jabberClient->setFileTransferEnabled ( true );
+	jabberClient->s5bManager()->setServer ( s5bServer () );
+
 	/* This should only be done here to connect the signals, otherwise it is a
 	 * bad idea.
 	 */
@@ -415,6 +479,7 @@ void JabberAccount::connect ()
 		QObject::connect (jabberClient, SIGNAL (resourceUnavailable (const Jid &, const Resource &)), this,
 						SLOT (slotResourceUnavailable (const Jid &, const Resource &)));
 		QObject::connect (jabberClient, SIGNAL (messageReceived (const Message &)), this, SLOT (slotReceivedMessage (const Message &)));
+		QObject::connect (jabberClient->fileTransferManager(), SIGNAL (incomingReady()), this, SLOT (slotIncomingFileTransfer ()));
 		QObject::connect (jabberClient, SIGNAL (groupChatJoined (const Jid &)), this, SLOT (slotGroupChatJoined (const Jid &)));
 		QObject::connect (jabberClient, SIGNAL (groupChatLeft (const Jid &)), this, SLOT (slotGroupChatLeft (const Jid &)));
 		QObject::connect (jabberClient, SIGNAL (groupChatPresence (const Jid &, const Status &)), this,
@@ -585,6 +650,17 @@ void JabberAccount::slotCSAuthenticated ()
 	/* slow down the polling interval for HTTP Poll proxies */
 	jabberClientConnector->changePollInterval (10);
 
+	/*
+	 * Determine local IP address.
+	 * FIXME: This is ugly!
+	 */
+	ByteStream *byteStream = jabberClientConnector->stream();
+	if( byteStream->inherits ( "BSocket" ) || byteStream->inherits ( "XMPP::BSocket" ) )
+	{
+		localAddress = ( (BSocket *)byteStream )->address().toString ();
+		addS5bAddress ( localAddress );
+	}
+
 	/* start the client operation */
 	XMPP::Jid jid(accountId());
 	jabberClient->start ( jid.domain(), jid.node(), password(), pluginData( protocol (), "Resource") );
@@ -613,6 +689,14 @@ void JabberAccount::slotRosterRequestFinished ( bool success, int /*statusCode*/
 		// all "dirty" items from the contact list
 		contactPool()->cleanUp ();
 	}
+
+}
+
+void JabberAccount::slotIncomingFileTransfer ()
+{
+
+	// delegate the work to a file transfer object
+	new JabberFileTransfer ( this, client()->fileTransferManager()->takeIncoming () );
 
 }
 
@@ -666,6 +750,9 @@ void JabberAccount::slotCSDisconnected ()
 	/* It seems that we don't get offline notifications when going offline
 	 * with the protocol, so clear all resources manually. */
 	resourcePool()->clear();
+
+	// delete local address from S5B server
+	removeS5bAddress ( localAddress );
 
 }
 

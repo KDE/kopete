@@ -115,6 +115,13 @@ public:
 	 */
 	void reevaluateStatus ();
 
+	/**
+	 * Return current full address.
+	 * Uses bestResource() if no presubscribed
+	 * address exists.
+	 */
+	QString fullAddress ();
+
 public slots:
 
 	/**
@@ -131,6 +138,18 @@ public slots:
 	 * Sync Groups with server
 	 */
 	virtual void syncGroups ();
+
+	/**
+	 * This is the JabberContact level slot for sending files.
+	 *
+	 * @param sourceURL The actual KURL of the file you are sending
+	 * @param fileName (Optional) An alternate name for the file - what the
+	 *                 receiver will see
+	 * @param fileSize (Optional) Size of the file being sent. Used when sending
+	 *                 a nondeterminate file size (such as over a socket)
+	 */
+	virtual void sendFile( const KURL &sourceURL = KURL(),
+		const QString &fileName = QString::null, uint fileSize = 0L );
 
 	/**
 	* Select a new resource for the contact

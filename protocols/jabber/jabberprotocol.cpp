@@ -57,7 +57,6 @@
 #include "jabbereditaccountwidget.h"
 #include "kopetecommandhandler.h"
 
-
 JabberProtocol *JabberProtocol::protocolInstance = 0;
 
 typedef KGenericFactory<JabberProtocol> JabberProtocolFactory;
@@ -87,9 +86,6 @@ JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStrin
 	}
 
 	protocolInstance = this;
-
-	// read the Jabber ID from Kopete's configuration
-	KGlobal::config ()->setGroup ("Jabber");
 
 	addAddressBookField ("messaging/xmpp", KopetePlugin::MakeIndexField);
 }
