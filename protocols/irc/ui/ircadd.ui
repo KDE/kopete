@@ -68,7 +68,7 @@
                                     <string>The name of the IRC contact or channel you would like to add.</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>The name of the IRC contact or channel you would like to add.  You may type simply the text of a person's nickname, or you may type a channel name, preceeded by a pound sign ('#').</string>
+                                    <string>The name of the IRC contact or channel you would like to add.  You may type simply the text of a person's nickname, or you may type a channel name, preceded by a pound sign ('#').</string>
                                 </property>
                             </widget>
                             <widget class="QLineEdit">
@@ -79,7 +79,7 @@
                                     <string>The name of the IRC contact or channel you would like to add.</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>The name of the IRC contact or channel you would like to add.  You may type simply the text of a person's nickname, or you may type a channel name, preceeded by a pound sign ('#')</string>
+                                    <string>The name of the IRC contact or channel you would like to add.  You may type simply the text of a person's nickname, or you may type a channel name, preceded by a pound sign ('#')</string>
                                 </property>
                             </widget>
                         </hbox>

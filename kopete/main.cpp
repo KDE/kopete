@@ -58,7 +58,7 @@ int main( int argc, char *argv[] )
 	aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("Developer, Oscar Maintainer"), "metz@gehn.net", "http://metz.gehn.net" );
 	aboutData.addAuthor ( "Gav Wood", I18N_NOOP("WinPopup plugin maintainer"), "gjw102@york.ac.uk" );
 	aboutData.addAuthor ( "Grzegorz Jaskiewicz", I18N_NOOP("Developer, Gadu plugin maintainer"), "gj@pointblue.com.pl" );
-	aboutData.addAuthor ( "Zack Rusin", I18N_NOOP("Developer, orginal Gadu plugin author"), "zack@kde.org" );
+	aboutData.addAuthor ( "Zack Rusin", I18N_NOOP("Developer, original Gadu plugin author"), "zack@kde.org" );
 	aboutData.addAuthor ( "Chris TenHarmsel", I18N_NOOP("Developer, Oscar"), "tenharmsel@users.sourceforge.net", "http://bemis.kicks-ass.net");
 	aboutData.addAuthor ( "Jason Keirstead", I18N_NOOP("Developer, IRC maintainer"), "jason@keirstead.org", "http://www.keirstead.org");
 	aboutData.addAuthor ( "Chris Howells", I18N_NOOP("Connection status plugin author"), "howells@kde.org", "http://chrishowells.co.uk");
@@ -80,7 +80,7 @@ int main( int argc, char *argv[] )
 	aboutData.addCredit ( "Richard Stellingwerff", I18N_NOOP("Former developer"), "remenic@linuxfromscratch.org");
 	aboutData.addCredit ( "Hendrik vom Lehn", I18N_NOOP("Former developer"), "hennevl@hennevl.de", "http://www.hennevl.de");
 	aboutData.addCredit ( "Andres Krapf", I18N_NOOP("Former developer"), "dae@chez.com" );
-	aboutData.addCredit ( "Carsten Pfeiffer", I18N_NOOP("Misc bugfixes and enhancelets"), "pfeiffer@kde.org" );
+	aboutData.addCredit ( "Carsten Pfeiffer", I18N_NOOP("Misc bugfixes and enhancements"), "pfeiffer@kde.org" );
 
 	aboutData.setTranslator( I18N_NOOP("_: NAME OF TRANSLATORS\nYour names"),
 		I18N_NOOP("_: EMAIL OF TRANSLATORS\nYour emails") );

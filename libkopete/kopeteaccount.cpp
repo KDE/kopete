@@ -344,7 +344,7 @@ void KopeteAccount::setPassword( const QString &pass )
 		// Ask the user what to do now.
 		if ( KMessageBox::warningContinueCancel( qApp->mainWidget(),
 			i18n( "<qt>Kopete is unable to save your password securely in your wallet!<br>"
-			"Do you want to want to save the password in the <b>unsafe</b> configuration file instead?</qt>" ),
+			"Do you want to to save the password in the <b>unsafe</b> configuration file instead?</qt>" ),
 			i18n( "Unable to Store Secure Password" ),
 			KGuiItem( i18n( "Store &Unsafe" ), QString::fromLatin1( "unlock" ) ),
 			QString::fromLatin1( "KWalletFallbackToKConfig" ) ) != KMessageBox::Continue )
