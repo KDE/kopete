@@ -133,14 +133,8 @@ KActionMenu *JabberAccount::actionMenu ()
 	m_actionMenu->insert(new KAction (i18n ("Services..."), "filenew", 0, this, SLOT (slotGetServices ()), this, "actionJabberServices"));
 	m_actionMenu->insert(new KAction (i18n ("Send Raw Packet to Server..."), "filenew", 0, this, SLOT (slotSendRaw ()), this, "actionJabberSendRaw"));
 	m_actionMenu->insert(new KAction (i18n ("Edit User Info..."), "identity", 0, this, SLOT (slotEditVCard ()), this, "actionEditVCard"));
-	m_actionMenu->insert(new KAction (i18n ("QUIT"), "filenew", 0, this, SLOT(slotQuit()), this, "actionQUIT"));
 
 	return m_actionMenu;
-}
-
-void JabberAccount::slotQuit()
-{
-	::exit(0);
 }
 
 /*

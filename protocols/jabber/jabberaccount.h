@@ -235,8 +235,6 @@ private slots:
 	/* Get the services list from the server for management. */
 	void slotGetServices ();
 
-	void slotQuit();
-
 };
 
 #endif
