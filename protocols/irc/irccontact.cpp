@@ -17,9 +17,13 @@
 
 #include "irccontact.h"
 #include <kmessagebox.h>
+#include <qlayout.h>
+#include <kdialog.h>
 #include <kdebug.h>
 #include <kconfig.h>
+#include <ktabctl.h>
 #include <kstddirs.h>
+#include <ircchatwindow.h>
 
 IRCContact::IRCContact(QListViewItem *parent, const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact)
 	: IMContact(parent)
@@ -114,9 +118,9 @@ void IRCContact::leftButtonDoubleClicked()
 {
 	if (chatView != 0)
 	{
-		if (chatView->isVisible() == true)
+		if (mContact->mWindow->isVisible() == true)
 		{
-			chatView->raise();
+			mContact->mWindow->raise();
 			chatView->setFocus();
 			chatView->messageBox->setFocus();
 		}
@@ -163,8 +167,16 @@ void IRCContact::slotIncomingMotd(const QString &motd)
 
 void IRCContact::joinNow()
 {
-	chatView = new IRCChatView(mServer, mTarget, this);
-	chatView->show();
+	mChatViewContainer = new QFrame(mContact->mWindow->mChannelsTabCtl);
+	kdDebug() << "FUCK PART 1" << endl;
+	(new QVBoxLayout(mChatViewContainer, KDialog::marginHint(), KDialog::spacingHint()))->setAutoAdd(true);
+	(void)new QLabel(i18n("<b>Test :-):</b>"),mChatViewContainer );	
+    kdDebug() << "FUCK PART 2" << endl;
+	chatView = new IRCChatView(mServer, mTarget, this, mChatViewContainer);
+	kdDebug() << "FUCK PART 3" << endl;
+	mContact->mWindow->mChannelsTabCtl->addTab(mChatViewContainer, mTarget);
+
+	kdDebug() << "FUCK PART 4" << endl;
 	QObject::connect(mContact->engine, SIGNAL(userJoinedChannel(const QString &, const QString &)), chatView, SLOT(userJoinedChannel(const QString &, const QString &)));
 	QObject::connect(mContact->engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), chatView, SLOT(incomingMessage(const QString &, const QString &, const QString &)));
 	QObject::connect(mContact->engine, SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), chatView, SLOT(userPartedChannel(const QString &, const QString &, const QString &)));

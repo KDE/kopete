@@ -21,6 +21,7 @@
 #include <qlistview.h>
 #include "imcontact.h"
 #include <qobject.h>
+#include <qframe.h>
 #include <qpixmap.h>
 #include <qstring.h>
 #include <qtimer.h>
@@ -51,6 +52,7 @@ private:
 	QString mNickname;
 	bool mJoinOnConnect;
 	IRCChatView *chatView;
+	QFrame *mChatViewContainer;
 	KPopupMenu *popup;
 private slots:
 	void slotIncomingMotd(const QString &);

@@ -164,7 +164,7 @@ email=duncan@tarro
 kdevprj_version=1.3
 lfv_open_groups=
 make_options=\s-j1
-makefiles=./Makefile.am,po/Makefile.am,kopete/Makefile.am,kopete/templates/Makefile.am,kopete/protocols/Makefile.am,kopete/protocols/msn/Makefile.am,kopete/protocols/msn/libkmsn/Makefile.am,kopete/protocols/icq/Makefile.am,kopete/protocols/icq/kxengine/Makefile.am,kopete/pixmaps/Makefile.am,kopete/pixmaps/.pics/Makefile.am,kopete/pixmaps/.pics/small/Makefile.am,kopete/library/Makefile.am,kopete/library/ui/Makefile.am,kopete/gui/Makefile.am,doc-api/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,admin/Makefile.am,kopete/protocols/irc/Makefile.am,kopete/protocols/irc/libkirc/Makefile.am,kopete/protocols/aim/Makefile.am,kopete/protocols/msn/ui/Makefile.am,kopete/protocols/msn/libkmerlin/Makefile.am
+makefiles=./Makefile.am,po/Makefile.am,kopete/Makefile.am,kopete/templates/Makefile.am,kopete/protocols/Makefile.am,kopete/protocols/msn/Makefile.am,kopete/protocols/msn/libkmsn/Makefile.am,kopete/protocols/icq/Makefile.am,kopete/protocols/icq/kxengine/Makefile.am,kopete/pixmaps/Makefile.am,kopete/pixmaps/.pics/Makefile.am,kopete/pixmaps/.pics/small/Makefile.am,kopete/library/Makefile.am,kopete/library/ui/Makefile.am,kopete/gui/Makefile.am,doc-api/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,admin/Makefile.am,kopete/protocols/irc/Makefile.am,kopete/protocols/irc/libkirc/Makefile.am,kopete/protocols/aim/Makefile.am,kopete/protocols/msn/ui/Makefile.am,kopete/protocols/msn/libkmerlin/Makefile.am,kopete/protocols/irc/ui/Makefile.am
 modifyMakefiles=false
 project_name=kopete
 project_type=normal_empty
@@ -1000,10 +1000,10 @@ install_location=
 type=SOURCE
 
 [kopete/protocols/irc/Makefile.am]
-files=kopete/protocols/irc/ircprotocol.cpp,kopete/protocols/irc/ircprotocol.h,kopete/protocols/irc/ircpreferences.h,kopete/protocols/irc/ircpreferences.cpp,kopete/protocols/irc/ircmessage.cpp,kopete/protocols/irc/ircmessage.h,kopete/protocols/irc/irccontact.h,kopete/protocols/irc/irccontact.cpp,kopete/protocols/irc/ircaddcontactpage.h,kopete/protocols/irc/ircaddcontactpage.cpp,kopete/protocols/irc/protocol.cpp
+files=kopete/protocols/irc/ircprotocol.cpp,kopete/protocols/irc/ircprotocol.h,kopete/protocols/irc/ircpreferences.h,kopete/protocols/irc/ircpreferences.cpp,kopete/protocols/irc/ircmessage.cpp,kopete/protocols/irc/ircmessage.h,kopete/protocols/irc/irccontact.h,kopete/protocols/irc/irccontact.cpp,kopete/protocols/irc/ircaddcontactpage.h,kopete/protocols/irc/ircaddcontactpage.cpp,kopete/protocols/irc/protocol.cpp,kopete/protocols/irc/ircchatview.cpp,kopete/protocols/irc/ircchatview.h,kopete/protocols/irc/ircservercontact.cpp,kopete/protocols/irc/ircservercontact.h,kopete/protocols/irc/ircservermanager.cpp,kopete/protocols/irc/ircservermanager.h
 sharedlib_LDFLAGS=-version-info 0:0:0
 sharedlib_rootname=irc
-sub_dirs=libkirc
+sub_dirs=libkirc,ui
 type=static_library
 
 [kopete/protocols/irc/ircaddcontactpage.cpp]
@@ -1013,6 +1013,18 @@ install_location=
 type=SOURCE
 
 [kopete/protocols/irc/ircaddcontactpage.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/protocols/irc/ircchatview.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/irc/ircchatview.h]
 dist=true
 install=false
 install_location=
@@ -1066,6 +1078,30 @@ install=false
 install_location=
 type=HEADER
 
+[kopete/protocols/irc/ircservercontact.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/irc/ircservercontact.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/protocols/irc/ircservermanager.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/irc/ircservermanager.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
 [kopete/protocols/irc/libkirc/Makefile.am]
 files=kopete/protocols/irc/libkirc/kirc.cpp,kopete/protocols/irc/libkirc/kirc.h
 sharedlib_LDFLAGS=-version-info 0:0:0
@@ -1086,6 +1122,49 @@ install_location=
 type=HEADER
 
 [kopete/protocols/irc/protocol.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/irc/ui/Makefile.am]
+files=kopete/protocols/irc/ui/ircadd.ui,kopete/protocols/irc/ui/ircchatviewbase.ui,kopete/protocols/irc/ui/ircmessagebase.ui,kopete/protocols/irc/ui/ircprefs.ui,kopete/protocols/irc/ui/ircchatwindow.cpp,kopete/protocols/irc/ui/ircchatwindow.h
+sharedlib_LDFLAGS=-version-info 0:0:0
+sharedlib_rootname=ui
+sub_dirs=
+type=static_library
+
+[kopete/protocols/irc/ui/ircadd.ui]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/irc/ui/ircchatviewbase.ui]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/irc/ui/ircchatwindow.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/irc/ui/ircchatwindow.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/protocols/irc/ui/ircmessagebase.ui]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/irc/ui/ircprefs.ui]
 dist=true
 install=false
 install_location=

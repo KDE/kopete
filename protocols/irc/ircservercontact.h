@@ -24,6 +24,7 @@
 #include <klistview.h>
 #include "ircservermanager.h"
 #include <qtimer.h>
+#include <ircchatwindow.h>
 
 #include "kirc.h"
 
@@ -37,6 +38,7 @@ public:
 	const QString &serverName() { return mServer; };
 	void newNickname(const QString &newNick);
 	IRCServerManager *mManager;
+	IRCChatWindow *mWindow;
 	QString mNickname;
 	QString mServer;
 private:
