@@ -89,9 +89,13 @@ void GaduEditAccount::registerNewAccount()
 	kdDebug( 14100 ) << "dupa123" << endl;
 }
 
+void GaduEditAccount::registrationFailed()
+{
+	KMessageBox::sorry( this, i18n( "<b>Registration FAILED.</b>" ), i18n( "Gadu-Gadu" ) );
+}
+
 void GaduEditAccount::newUin()
 {
-KMessageBox::sorry( this, i18n( "<b>Registration FAILED.</b>" ), i18n( "Gadu-Gadu" ) );
 }
 
 bool GaduEditAccount::validateData()

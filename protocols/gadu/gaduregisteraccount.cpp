@@ -56,6 +56,8 @@ void GaduRegisterAccount::displayToken( QPixmap image, QString tokenId )
 	ui->pixmapToken->setPixmap( image );
 }
 
+
+
 void GaduRegisterAccount::slotApply()
 {
 }

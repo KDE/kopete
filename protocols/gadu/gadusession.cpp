@@ -580,6 +580,26 @@ GaduSession::handleUserlist( gg_event* e )
 }
 
 QString
+GaduSession::errorDescription( int err )
+{
+	switch( err ){
+		case GG_ERROR_RESOLVING:
+			return i18n( "Resolving error." );
+		break;
+		case GG_ERROR_CONNECTING:
+			return i18n( "Connecting error." );
+		break;
+		case GG_ERROR_READING:
+			return i18n( "Reading error." );
+		break;
+		case GG_ERROR_WRITING:
+			return i18n( "Writing error." );
+		break;
+	}
+	return i18n( "Unknown error number %1." ).arg( QString::number( (unsigned int)err ) );
+}
+
+QString
 GaduSession::failureDescription( gg_failure_t f )
 {
 	switch( f ) {

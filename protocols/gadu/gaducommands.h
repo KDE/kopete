@@ -80,7 +80,7 @@ public:
 					QObject* parent = 0, const char* name = 0 );
 	~RegisterCommand();
 
-	void setUserinfo( const QString& email, const QString& password );
+	void setUserinfo( const QString& email, const QString& password, const QString& token );
 	void execute();
 	unsigned int newUin();
 	void requestToken();
@@ -100,6 +100,7 @@ private:
 	int 			uin;
 	QPixmap*		tokenImg;
 	QString		tokenId;
+	QString		tokenString;
 };
 
 class RemindPasswordCommand : public GaduCommand

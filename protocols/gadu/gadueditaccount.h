@@ -44,6 +44,7 @@ public:
 private slots:
 	void registerNewAccount();
 	void newUin();
+	void registrationFailed();
 
 private:
 	GaduProtocol*		protocol_;

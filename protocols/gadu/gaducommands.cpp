@@ -25,6 +25,7 @@
 // 02111-1307, USA.
 
 #include "gaducommands.h"
+#include "gadusession.h"
 
 #include <qsocketnotifier.h>
 #include <qregexp.h>
@@ -111,21 +112,23 @@ GaduCommand::forwarder()
 
 
 RegisterCommand::RegisterCommand( QObject* parent, const char* name )
-:GaduCommand( parent, name ), session_( 0 ), tokenImg( 0 ), state( RegisterStateNoToken )
+:GaduCommand( parent, name ), session_( 0 ), tokenImg( 0 ), state( RegisterStateNoToken ), uin( 0 )
 {
-	uin = 0;
 }
 
 RegisterCommand::RegisterCommand( const QString& email, const QString& password, QObject* parent, const char* name )
-:GaduCommand( parent, name ), email_( email ), password_( password ), session_( 0 ), tokenImg( 0 ), state( RegisterStateNoToken )
+:GaduCommand( parent, name ), email_( email ), password_( password ), session_( 0 ), tokenImg( 0 ), state( RegisterStateNoToken ), uin( 0 )
 {
-	uin = 0;
 }
 
 
 unsigned int RegisterCommand::newUin()
 {
-	return uin;
+	if ( state == RegisterStateDone ) {
+		return uin;
+	}
+//	else
+	return 0;
 }
 
 RegisterCommand::~RegisterCommand()
@@ -143,7 +146,7 @@ RegisterCommand::requestToken()
 	state = RegisterStateWaitingForToken;
 
 	if ( !( session_ = gg_token( 1 ) ) ) {
-		emit error("tokenB0rked", "tokenB0rked");
+		emit error( i18n( "Gadu-Gadu" ), i18n( "unable to retrive token" ) );
 		state = RegisterStateNoToken;
 		return;
 	}
@@ -155,21 +158,26 @@ RegisterCommand::requestToken()
 }
 
 void
-RegisterCommand::setUserinfo( const QString& email, const QString& password )
+RegisterCommand::setUserinfo( const QString& email, const QString& password, const QString& token )
 {
 	email_ = email;
 	password_ = password;
+	tokenString = token;
 }
 
 void
 RegisterCommand::execute()
 {
-	if ( tokenImg == NULL ) {
-		// get token first
+	if ( state == RegisterStateGotToken || email_.isEmpty() || password_.isEmpty() || tokenString.isEmpty() ) {
+		// get token first || fill information
 		return;
 	}
-
-	session_ = gg_register( email_.ascii(), password_.ascii(), 1 );
+	session_ = gg_register3( email_.ascii(), password_.ascii(), tokenId.ascii(), tokenString.ascii(), 1 );
+	if ( !session_ ) {
+		error( i18n( "Gadu-Gadu" ), i18n( "Registration FAILED" ) );
+		return;
+	}
+	state = RegisterStateWaitingForNumber;
 	connect( this, SIGNAL( socketReady() ), SLOT( watcher() ) );
 	checkSocket( session_->fd, session_->check );
 }
@@ -180,15 +188,16 @@ void RegisterCommand::watcher()
 	gg_pubdir* gg_pub;
 
 	kdDebug( 14100 ) << "4" << endl;
-	if ( state == RegisterStateWaitingForToken  ){
-		if (gg_token_watch_fd( session_ ) == -1) {
+	if ( state == RegisterStateWaitingForToken  ) {
+		if ( gg_token_watch_fd( session_ ) == -1 ) {
 			deleteNotifiers();
-			emit error( "", "" );
+			emit error( i18n( "Gadu-Gadu" ), i18n( "Unknown connection error while retriving token" ) );
 			gg_token_free( session_ );
 			session_ = NULL;
 			state = RegisterStateNoToken;
 			return;
 		}
+
 		gg_pub = (struct gg_pubdir *)session_->data;
 		switch ( session_->state ) {
 			case GG_STATE_CONNECTING:
@@ -198,7 +207,7 @@ void RegisterCommand::watcher()
 				break;
 			case GG_STATE_ERROR:
 				deleteNotifiers();
-				emit error(  "", ""  );
+				emit error( i18n( "Gadu-Gadu token retrive problem" ), GaduSession::errorDescription(  session_->error )  );
 				gg_token_free( session_ );
 				session_ = NULL;
 				state = RegisterStateNoToken;
@@ -217,7 +226,7 @@ void RegisterCommand::watcher()
 					emit tokenRecieved( *tokenImg, tokenId );
 				}
 				else {
-					emit error("tokenB0rked", "tokenB0rked");
+					emit error( i18n( "Gadu-Gadu" ), i18n( "unable to retrive token" ) );
 				}
 				deleteNotifiers();
 				gg_token_free( session_ );
@@ -230,55 +239,42 @@ void RegisterCommand::watcher()
 	}
 	if ( state == RegisterStateWaitingForNumber ) {
 		if ( gg_register_watch_fd( session_ ) == -1 ) {
-			gg_free_register( session_ );
-			emit error( i18n( "Connection Error" ),
-					i18n( "Unknown connection error while registering" ) );
-			done_ = true;
-			deleteLater();
-			return;
-		}
-	
-		if ( session_->state == GG_STATE_ERROR ) {
-			gg_free_register( session_ );
-			emit error( i18n( "Registration Error" ),
-					i18n( "There was an unknown registration error. ") );
-			switch( session_->error ){
-				case GG_ERROR_RESOLVING:
-					kdDebug(14100713)<<"Resolving error."<<endl;
-				break;
-				case GG_ERROR_CONNECTING:
-					kdDebug(14100713)<<"Connecting error."<<endl;
-				break;
-				case GG_ERROR_READING:
-					kdDebug(14100713)<<"Reading error."<<endl;
-				break;
-				case GG_ERROR_WRITING:
-					kdDebug(14100713)<<"Writing error."<<endl;
-				break;
-				default:
-					kdDebug(14100713)<<"Freaky error = "<<session_->state<<" "<<strerror(errno)<<endl;
-				break;
-			}
-			done_ = true;
-			deleteLater();
-			return;
-		}
-	
-		if ( session_->state == GG_STATE_DONE ) {
-			gg_pub = (gg_pubdir*) session_->data;
-			if (gg_pub) {
-				uin= gg_pub->uin;
-				emit done( i18n( "Registration Finished" ), i18n( "Registration has completed successfully." ) );
-			}
-			else {
-				emit error( i18n( "Registration Error" ), i18n( "Data send to server were invalid." ) );
-			}
 			deleteNotifiers();
+			emit error( i18n( "Gadu-Gadu" ), i18n( "Unknown connection error while registering" ) );
 			gg_free_register( session_ );
-			session_=NULL;
-			done_ = true;			
-			deleteLater();
+			session_ = NULL;
+			state = RegisterStateGotToken;
 			return;
+		}
+		gg_pub = (gg_pubdir*) session_->data;
+		switch ( session_->state ) {
+			case GG_STATE_CONNECTING:
+				kdDebug( 14100 ) << "Recreating notifiers " << endl;
+				deleteNotifiers();
+				checkSocket( session_->fd, 0);
+				break;
+			case GG_STATE_ERROR:
+				deleteNotifiers();
+				emit error( i18n( "Gadu-Gadu Registration Error" ), GaduSession::errorDescription(  session_->error ) );
+				gg_free_register( session_ );
+				session_ = NULL;
+				state = RegisterStateGotToken;
+				break;
+	
+			case GG_STATE_DONE:
+				if (gg_pub) {
+					uin= gg_pub->uin;
+					emit done( i18n( "Registration Finished" ), i18n( "Registration has completed successfully." ) );
+				}
+				else {
+					emit error( i18n( "Registration Error" ), i18n( "Data send to server were invalid." ) );
+				}
+				deleteNotifiers();
+				gg_free_register( session_ );
+				session_ = NULL;
+				state = RegisterStateGotToken;
+				return;
+				break;
 		}
 		enableNotifiers( session_->check );
 		return;
