@@ -280,54 +280,74 @@ void IRCContact::slotNewCtcpReply(const QString &type, const QString &target, co
 void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 {
 	QString htmlString = message.escapedBody();
-	QRegExp findTags( QString::fromLatin1("<span style=\"(.*)\">(.*)</span>") );
-	findTags.setMinimal( true );
-	int pos = 0;
 
-	while ( pos >= 0 )
+	if( htmlString.contains( QString::fromLatin1("</span") ) )
 	{
-		pos = findTags.search( htmlString );
-		if ( pos > -1 )
+		QRegExp findTags( QString::fromLatin1("<span style=\"(.*)\">(.*)</span>") );
+		findTags.setMinimal( true );
+		int pos = 0;
+
+		while ( pos >= 0 )
 		{
-			QString styleHTML = findTags.cap(1);
-			QString replacement = findTags.cap(2);
-			QStringList styleAttrs = QStringList::split( ';', styleHTML );
-
-			for( QStringList::Iterator attrPair = styleAttrs.begin(); attrPair != styleAttrs.end(); ++attrPair )
+			pos = findTags.search( htmlString );
+			if ( pos > -1 )
 			{
-				QString attribute = (*attrPair).section(':',0,0);
-				QString value = (*attrPair).section(':',1);
+				QString styleHTML = findTags.cap(1);
+				QString replacement = findTags.cap(2);
+				QStringList styleAttrs = QStringList::split( ';', styleHTML );
 
-				if( attribute == QString::fromLatin1("color") )
+				for( QStringList::Iterator attrPair = styleAttrs.begin(); attrPair != styleAttrs.end(); ++attrPair )
 				{
-					int ircColor = KSParser::colorForHTML( value );
-					if( ircColor > -1 )
-						replacement.prepend( QString( QChar(0x03) ).append( QString::number(ircColor) ) ).append( QChar( 0x03 ) );
-				}
-				else if( attribute == QString::fromLatin1("font-weight") && value == QString::fromLatin1("600") )
-					replacement.prepend( QChar(0x02) ).append( QChar(0x02) );
-				else if( attribute == QString::fromLatin1("text-decoration")  && value == QString::fromLatin1("underline") )
-					replacement.prepend( QChar(31) ).append( QChar(31) );
-			}
+					QString attribute = (*attrPair).section(':',0,0);
+					QString value = (*attrPair).section(':',1);
 
-			QRegExp rx( QString::fromLatin1("<span style=\"%1\">.*</span>" ).arg( styleHTML ) );
-			rx.setMinimal( true );
-			htmlString.replace( rx, replacement );
+					if( attribute == QString::fromLatin1("color") )
+					{
+						int ircColor = KSParser::colorForHTML( value );
+						if( ircColor > -1 )
+							replacement.prepend( QString( QChar(0x03) ).append( QString::number(ircColor) ) ).append( QChar( 0x03 ) );
+					}
+					else if( attribute == QString::fromLatin1("font-weight") && value == QString::fromLatin1("600") )
+						replacement.prepend( QChar(0x02) ).append( QChar(0x02) );
+					else if( attribute == QString::fromLatin1("text-decoration")  && value == QString::fromLatin1("underline") )
+						replacement.prepend( QChar(31) ).append( QChar(31) );
+				}
+
+				QRegExp rx( QString::fromLatin1("<span style=\"%1\">.*</span>" ).arg( styleHTML ) );
+				rx.setMinimal( true );
+				htmlString.replace( rx, replacement );
+			}
 		}
 	}
 
-	QStringList messages = QStringList::split( '\n', KopeteMessage::unescape( htmlString ) );
-	for( QStringList::Iterator it = messages.begin(); it != messages.end(); ++it )
+	htmlString = KopeteMessage::unescape( htmlString );
+
+	if( htmlString.contains( '\n' ) )
 	{
-		KopeteMessage msg(message.from(), message.to(), *it, message.direction(),
-			KopeteMessage::RichText, message.type() );
+		QStringList messages = QStringList::split( '\n', htmlString );
 
-		m_engine->messageContact(m_nickName, *it );
+		for( QStringList::Iterator it = messages.begin(); it != messages.end(); ++it )
+		{
+			KopeteMessage msg(message.from(), message.to(), *it, message.direction(),
+				KopeteMessage::RichText, message.type() );
 
-		msg.setBg( QColor() );
-		msg.setFg( QColor() );
+			m_engine->messageContact(m_nickName, *it );
 
-		appendMessage(msg);
+			msg.setBg( QColor() );
+			msg.setFg( QColor() );
+
+			appendMessage(msg);
+			manager()->messageSucceeded();
+		}
+	}
+	else
+	{
+		m_engine->messageContact(m_nickName, htmlString );
+
+		message.setBg( QColor() );
+		message.setFg( QColor() );
+
+		appendMessage(message);
 		manager()->messageSucceeded();
 	}
 }
