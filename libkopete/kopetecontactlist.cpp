@@ -130,24 +130,26 @@ void KopeteContactList::loadXML()
 				//TODO: id isn't used
 				QString id = element.attribute( "id", QString::null );
 				KopeteMetaContact *metaContact = new KopeteMetaContact();
+            	
 				QDomNode contactNode = node.firstChild();
-				if ( !metaContact->fromXML( contactNode ) ) {
+				if ( !metaContact->fromXML( contactNode ) )
+				{
 					delete metaContact;
 					metaContact = 0;
-				} else
+				}
+				else
 					KopeteContactList::contactList()->addMetaContact( metaContact );
-						}
+			}
 			else
-						{
+			{
 				kdDebug() << "KopeteContactList::loadXML: Warning: "
 					  << "Unknown element '" << element.tagName()
 					  << "' in contact list!" << endl;
-				}
-
 			}
-		node = node.nextSibling();
-		}
 
+		}
+		node = node.nextSibling();
+	}
 	contactListFile.close();
 }
 

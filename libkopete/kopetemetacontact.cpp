@@ -419,11 +419,13 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 			else if( contactElement.tagName() == "groups" )
 			{
 				QDomNode group = contactElement.firstChild();
-				while( !group.isNull() ) {
+				while( !group.isNull() )
+				{
 					m_groups << group.toElement().text();
 					group = group.nextSibling();
 				}
-	}
+			}
+
 			else if( contactElement.tagName() ==
 				 "address-book-field" )
 			{
