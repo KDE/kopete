@@ -146,8 +146,6 @@ public:
 ClientStream::ClientStream(Connector *conn, TLSHandler *tlsHandler, QObject *parent)
 :Stream(parent)
 {
-	qDebug("CLIENTSTREAM::ClientStream");
-
 	d = new Private;
 	d->mode = Client;
 	d->conn = conn;
@@ -372,8 +370,6 @@ Transfer * ClientStream::read()
 
 void ClientStream::write( Request *request )
 {
-	qDebug( "ClientStream::write()" );
-
 	// pass to CoreProtocol for transformation into wire format
 	d->client.outgoingTransfer( request );
 }
@@ -381,7 +377,7 @@ void ClientStream::write( Request *request )
 void cs_dump( const QByteArray &bytes )
 {
 #ifdef GW_CLIENTSTREAM_DEBUG
-	qDebug( "contains: %i bytes ", bytes.count() );
+	CoreProtocol::debug( QString( "contains: %1 bytes " ).arg( bytes.count() ) );
 	uint count = 0;
 	while ( count < bytes.count() )
 	{
@@ -425,7 +421,7 @@ void ClientStream::cp_outgoingData( const QByteArray& outgoingBytes )
 {
 	// take formatted bytes from CoreProtocol and put them on the wire
 #ifdef LIBGW_DEBUG
-	qDebug( "ClientStream::cp_outgoingData:" );
+	CoreProtocol::debug( "ClientStream::cp_outgoingData:" );
 	cs_dump( outgoingBytes );
 #endif	
 	d->ss->write( outgoingBytes );
@@ -433,17 +429,17 @@ void ClientStream::cp_outgoingData( const QByteArray& outgoingBytes )
 
 void ClientStream::cp_incomingData()
 {
-	qDebug( "ClientStream::cp_incomingData:" );
+	CoreProtocol::debug( "ClientStream::cp_incomingData:" );
 	Transfer * incoming = d->client.incomingTransfer();
 	if ( incoming )
 	{
-		qDebug( " - got a new transfer" );
+		CoreProtocol::debug( " - got a new transfer" );
 		d->in.enqueue( incoming );
 		d->newTransfers = true;
 		emit doReadyRead();
 	}
 	else
-		qDebug( " - client signalled incomingData but none was available, state is: %i", d->client.state() );
+		CoreProtocol::debug( QString( " - client signalled incomingData but none was available, state is: %1" ).arg( d->client.state() ) );
 }
 
 void ClientStream::cr_connected()
@@ -484,7 +480,7 @@ void ClientStream::cr_connected()
 
 	// immediate SSL?
 	if(d->conn->useSSL()) {
-		qDebug("CLIENTSTREAM: cr_connected(), starting TLS");
+		CoreProtocol::debug( "CLIENTSTREAM: cr_connected(), starting TLS" );
 		d->using_tls = true;
 		d->ss->startTLSClient(d->tlsHandler, d->server, spare);
 	}
@@ -496,7 +492,6 @@ void ClientStream::cr_connected()
 
 void ClientStream::cr_error()
 {
-	qDebug("CLIENTSTREAM: cr_error()");
 	reset();
 	emit error(ErrConnection);
 }
@@ -520,13 +515,11 @@ void ClientStream::bs_error(int)
 void ClientStream::ss_readyRead()
 {
 	QByteArray a;
-	//qDebug( "size of storage for incoming data is %i bytes.", a.size() );
 	a = d->ss->read();
 
 #ifdef LIBGW_DEBUG
 	QCString cs(a.data(), a.size()+1);
-	//qDebug("ClientStream: recv: %d [%s]\n", a.size(), cs.data());
-	qDebug("ClientStream: ss_readyRead() recv: %d bytes\n", a.size() );
+	CoreProtocol::debug( QString( "ClientStream: ss_readyRead() recv: %1 bytes" ).arg( a.size() ) );
 	cs_dump( a );
 #endif
 
@@ -538,7 +531,7 @@ void ClientStream::ss_readyRead()
 void ClientStream::ss_bytesWritten(int bytes)
 {
 #ifdef LIBGW_DEBUG
-	qDebug( "ClientStream::ss_bytesWritten: %i bytes written", bytes );
+	CoreProtocol::debug( QString( "ClientStream::ss_bytesWritten: %1 bytes written" ).arg( bytes ) );
 #else
 	Q_UNUSED( bytes );
 #endif
@@ -555,14 +548,14 @@ void ClientStream::ss_tlsHandshaken()
 
 void ClientStream::ss_tlsClosed()
 {
-	qDebug( "ClientStream::ss_tlsClosed()" );
+	CoreProtocol::debug( "ClientStream::ss_tlsClosed()" );
 	reset();
 	emit connectionClosed();
 }
 
 void ClientStream::ss_error(int x)
 {
-	qDebug( "ClientStream::ss_error() x=%i ", x );
+	CoreProtocol::debug( QString( "ClientStream::ss_error() x=%1 ").arg( x ) );
 	if(x == SecureStream::ErrTLS) {
 		reset();
 		d->errCond = TLSFail;

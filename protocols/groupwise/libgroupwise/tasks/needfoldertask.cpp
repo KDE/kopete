@@ -38,7 +38,7 @@ void NeedFolderTask::slotFolderAdded( const FolderItem & addedFolder )
 	// if this is the folder we were trying to create
 	if ( m_folderDisplayName == addedFolder.name )
 	{
-		qDebug( "NeedFolderTask::slotFolderAdded() - Folder %s was created on the server, now has objectId %i", addedFolder.name.ascii(), addedFolder.id );
+		client()->debug( QString( "NeedFolderTask::slotFolderAdded() - Folder %1 was created on the server, now has objectId %2" ).arg( addedFolder.name ).arg( addedFolder.id ) );
 		m_folderId = addedFolder.id;
 	}
 }

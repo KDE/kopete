@@ -40,7 +40,6 @@ bool EventTask::forMe( Transfer * transfer, EventTransfer*& event ) const
 	{
 		// see if we are supposed to handle this kind of event
 		// consider speeding this up by having 1 handler per event
-		//qDebug( "EventTask::forMe - do I handle event %i?", event->event() );
 		return ( m_eventCodes.find( event->eventType() ) != m_eventCodes.end() );
 	}
 	return false;

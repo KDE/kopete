@@ -58,7 +58,7 @@ void MoveContactTask::moveContact( const ContactItem & contact, const int newPar
 
 void MoveContactTask::moveContactToNewFolder( const ContactItem & contact, const int newSequenceNumber, const QString & folderDisplayName )
 {
-	qDebug("MoveContactTask::moveContactToNewFolder - NOT_IMPLEMENTED" );
+	client()->debug("MoveContactTask::moveContactToNewFolder - NOT_IMPLEMENTED" );
 }
 
 void MoveContactTask::onGo()

@@ -46,7 +46,7 @@ bool JoinConferenceTask::take( Transfer * transfer )
 {
 	if ( forMe( transfer ) )
 	{
-		qDebug( "JoinConferenceTask::take()" );
+		client()->debug( "JoinConferenceTask::take()" );
 		Response * response = dynamic_cast<Response *>( transfer );
 		Field::FieldList responseFields = response->fields();
 		// if the request was successful
@@ -106,12 +106,12 @@ bool JoinConferenceTask::take( Transfer * transfer )
 
 			if ( m_unknowns.empty() )	// ready to chat
 			{
-				qDebug( "JoinConferenceTask::finished()" );
+				client()->debug( "JoinConferenceTask::finished()" );
 				finished();	
 			}
 			else								// need to get some more details first
 			{
-				qDebug( "JoinConferenceTask::slotReceiveUserDetails(), requesting details" );
+				client()->debug( "JoinConferenceTask::slotReceiveUserDetails(), requesting details" );
 				connect( client()->userDetailsManager(), 
 						SIGNAL( gotContactDetails( const GroupWise::ContactDetails & ) ),
 						SLOT( slotReceiveUserDetails( const GroupWise::ContactDetails & ) ) );
@@ -128,30 +128,30 @@ bool JoinConferenceTask::take( Transfer * transfer )
 
 void JoinConferenceTask::slotReceiveUserDetails( const ContactDetails & details )
 {
-	qDebug( "JoinConferenceTask::slotReceiveUserDetails() - got %s", details.dn.ascii() );
+	client()->debug( QString( "JoinConferenceTask::slotReceiveUserDetails() - got %1" ).arg( details.dn ) );
 	QStringList::Iterator it = m_unknowns.begin();
 	QStringList::Iterator end = m_unknowns.end();
 	while( it != end )
 	{
 		QString current = *it;
 		++it;
-		qDebug( " - can we remove %s?", current.ascii() );
+		client()->debug( QString( " - can we remove %1?" ).arg(current ) );
 		if ( current == details.dn )
 		{
-			qDebug( " - it's gone!" );
+			client()->debug( " - it's gone!" );
 			m_unknowns.remove( current );
 			break;
 		}
 	}
-	qDebug( " - now %u unknowns", m_unknowns.count() );
+	client()->debug( QString( " - now %1 unknowns").arg( m_unknowns.count() ) );
 	if ( m_unknowns.empty() )
 	{
-		qDebug( " - finished()" );
+		client()->debug( " - finished()" );
 		finished();
 	}
 	else
 	{
-		qDebug( " - ERROR - we requested details for the list of chat participants/invitees, but the server did not send us all the details! - setting finished() anyway, so the chat can take place." );
+		client()->debug( " - ERROR - we requested details for the list of chat participants/invitees, but the server did not send us all the details! - setting finished() anyway, so the chat can take place." );
 		finished();
 	}
 }

@@ -17,6 +17,7 @@
     *                                                                       *
     *************************************************************************
 */
+#include "client.h"
 
 #include "connectiontask.h"
 
@@ -36,7 +37,7 @@ bool ConnectionTask::take( Transfer * transfer )
 	EventTransfer * incomingEvent;
 	if ( forMe( transfer, incomingEvent ) )
 	{
-		qDebug( "Got a connection event:" );
+		client()->debug( "Got a connection event:" );
 		switch ( incomingEvent->eventType() )
 		{
 			case GroupWise::UserDisconnect:

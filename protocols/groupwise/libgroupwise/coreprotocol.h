@@ -121,7 +121,11 @@ public:
 	CoreProtocol();
 	
 	virtual ~CoreProtocol();
-	
+	/**
+	 * Debug output
+	 */
+	static void debug(const QString &str);
+
 	/**
 	 * Reset the protocol, clear buffers
 	 */
