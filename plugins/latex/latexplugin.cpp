@@ -49,17 +49,14 @@ LatexPlugin::LatexPlugin( QObject *parent, const char *name, const QStringList &
 	mMagickNotFoundShown = false;
 	connect( Kopete::ChatSessionManager::self(), SIGNAL( aboutToDisplay( Kopete::Message & ) ), SLOT( slotHandleLatex( Kopete::Message & ) ) );
 	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
-
-	m_config = new LatexConfig;
-	m_config->load();
 	
 	m_convScript = KStandardDirs::findExe("kopete_latexconvert.sh");
+	slotSettingsChanged();
 }
 
 LatexPlugin::~LatexPlugin()
 {
 	s_pluginStatic = 0L;
-	delete m_config;
 }
 
 LatexPlugin* LatexPlugin::plugin()
@@ -127,9 +124,14 @@ void LatexPlugin::slotHandleLatex( Kopete::Message& msg )
 			
 			fileName = tempFile.name();
 			
-//			kdDebug() << k_funcinfo  << " Rendering " << latexFormula << " to: " << fileName<< endl;
-
-			p << m_convScript << "-o " + fileName << latexFormula  ;
+			QString argumentRes = "-r %1x%2";
+			QString argumentOut = "-o %1";
+			int hDPI, vDPI;
+			hDPI = LatexConfig::self()->horizontalDPI();
+			vDPI = LatexConfig::self()->verticalDPI();
+			p << m_convScript <<  argumentRes.arg(QString::number(hDPI), QString::number(vDPI)) << argumentOut.arg(fileName) << latexFormula  ;
+			
+			kdDebug() << k_funcinfo  << " Rendering " << m_convScript << " " <<  argumentRes.arg(QString::number(hDPI), QString::number(vDPI)) << " " << argumentOut.arg(fileName);
 			
 			// FIXME our sucky sync filter API limitations :-)
 			p.start(KProcess::Block);
@@ -180,7 +182,7 @@ void LatexPlugin::slotHandleLatex( Kopete::Message& msg )
 
 void LatexPlugin::slotSettingsChanged()
 {
-	m_config->load();
+	LatexConfig::self()->readConfig();
 }
 
 #include "latexplugin.moc"

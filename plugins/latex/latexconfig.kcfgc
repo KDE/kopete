@@ -1,0 +1,7 @@
+# Code generation options for kconfig_compiler
+File=latexconfig.kcfg
+ClassName=LatexConfig
+Singleton=true
+Mutators=true
+MemberVariables=private
+GlobalEnums=true

@@ -41,9 +41,8 @@ public:
 
 private:
 	LatexPrefsUI *m_preferencesDialog;
-	LatexConfig *m_config;
-	bool m_mutex;
 private slots:
+	void slotModified();
 };
 
 #endif

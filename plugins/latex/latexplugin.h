@@ -30,7 +30,6 @@ class QStringList;
 class QString;
 
 namespace Kopete { class Message; }
-class LatexConfig;
 
 /**
   * @author Duncan Mac-Vicar Prett
@@ -54,7 +53,6 @@ public slots:
 private:
 	static LatexPlugin* s_pluginStatic;
 	QString m_convScript;
-	LatexConfig *m_config;
 	bool mMagickNotFoundShown;
 };
 

@@ -20,6 +20,7 @@
 #include <klocale.h>
 #include <kgenericfactory.h>
 #include <kdebug.h>
+#include <knuminput.h>
 
 #include "latexplugin.h"
 #include "latexconfig.h"
@@ -32,36 +33,41 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kopete_latex, LatexPreferencesFactory( "kcm_kope
 LatexPreferences::LatexPreferences(QWidget *parent, const char* /*name*/, const QStringList &args)
 							: KCModule(LatexPreferencesFactory::instance(), parent, args)
 {
-	m_mutex=true;
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
 	m_preferencesDialog = new LatexPrefsUI(this);
-	m_config = new LatexConfig;
-
 	// connect widget signals here
+	m_preferencesDialog->horizontalDPI->setMinValue(1);
+	m_preferencesDialog->verticalDPI->setMinValue(1);
+	
+	connect(m_preferencesDialog->horizontalDPI, SIGNAL(valueChanged(int)), this, SLOT(slotModified()));
+	connect(m_preferencesDialog->verticalDPI, SIGNAL(valueChanged(int)), this, SLOT(slotModified()));
 	
 	load();
-	m_mutex=false;
 }
 
 LatexPreferences::~LatexPreferences()
 {
-	delete m_config;
 }
 
 void LatexPreferences::load()
 {
-	m_config->load();
-	m_mutex=true;
-
+	LatexConfig::self()->readConfig();
 	// load widgets here
-	
-	m_mutex=false;
+	m_preferencesDialog->horizontalDPI->setValue(LatexConfig::self()->horizontalDPI());
+	m_preferencesDialog->verticalDPI->setValue(LatexConfig::self()->verticalDPI());
 	emit KCModule::changed(false);
+}
+
+void LatexPreferences::slotModified()
+{
+	emit KCModule::changed(true);
 }
 
 void LatexPreferences::save()
 {
-	m_config->save();
+	LatexConfig::self()->setHorizontalDPI(m_preferencesDialog->horizontalDPI->value());
+	LatexConfig::self()->setVerticalDPI(m_preferencesDialog->verticalDPI->value());
+	LatexConfig::self()->writeConfig();
 	emit KCModule::changed(false);
 }
 
