@@ -1,23 +1,19 @@
-/***************************************************************************
-                          yahooprotocol.cpp  -  Yahoo Plugin
-                             -------------------
-    begin                : Fri Apr 26 2002
-    copyright            : (C) 2002 by Bruno Rodrigues
-    email                : bruno.rodrigues@litux.org
+/*
+    yahooprotocol.cpp - Yahoo Plugin for Kopete
 
-    Based on code from   : (C) 2002 by Duncan Mac-Vicar Prett
-    email                : duncan@kde.org
- ***************************************************************************
+    Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
 
- ***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 // QT Includes
 #include <qcursor.h>
@@ -65,11 +61,6 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name,
 		protocolStatic_ = this;
 	else
 		kdDebug() << "YahooProtocol already initialized" << endl;
-
-	// Create Connection
-    m_engine = new KYahoo;
-    connect(m_engine, SIGNAL(newContact(QString, QString, QString)), this,
-	    SLOT(slotNewContact(QString, QString, QString)));
 
 	// Load icons
     initIcons();
@@ -233,7 +224,7 @@ void YahooProtocol::Connect()
     if (!isConnected()) {
 		DEBUG(YDINFO, "Attempting to connect to Yahoo server <"
 			<< mServer << ":" << mPort << "< with user <" << mUsername << ">");
-		m_engine->Connect(mServer, mPort, mUsername, mPassword);
+		//m_engine->Connect(mServer, mPort, mUsername, mPassword);
     }
 	else if (isAway()) {	// They're really away, and they want to un-away.
 		// XXX slotGoOnline();
@@ -253,7 +244,7 @@ void YahooProtocol::Disconnect()
     if (isConnected()) {
 		DEBUG(YDINFO, "Attempting to disconnect from Yahoo server "
 			<< mServer);
-		m_engine->Disconnect();
+		//m_engine->Disconnect();
     }
 	else {			// Again, what's with the crack? Sheez.
 		DEBUG(YDINFO,
