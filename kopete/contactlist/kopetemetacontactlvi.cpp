@@ -589,7 +589,12 @@ void KopeteMetaContactLVI::slotEventDone( KopeteEvent * /* event */ )
 {
 	m_event = 0L;
 	if ( mBlinkTimer->isActive() )
+	{
 		mBlinkTimer->stop();
+		//If the contact gone offline while the timer was actif,
+		//the visibility has not been correctly updated. so do it now
+		updateVisibility(); 
+	}
 
 	setPixmap( 0, SmallIcon( m_metaContact->statusIcon() ) );
 	mIsBlinkIcon = false;
