@@ -236,10 +236,10 @@ void KopeteSystemTray::addBalloon()
 		if( msg.from() && msg.from()->metaContact() )
 		{
 			m_balloon= new KopeteBalloon(
-				i18n("<qt><nobr>Message from %1</nobr><br>'%2'</qt>")
-					.arg(msg.from()->metaContact()->displayName())
-					.arg((msg.plainBody()).left(12)),
-				QString::fromLatin1( "kopete/pics/newmsg.png" ));
+				i18n("<qt><nobr><b>New Message from %1:</b></nobr><br><br><nobr>\"%2\"</nobr></qt>")
+					.arg( msg.from()->metaContact()->displayName() )
+					.arg( msg.plainBody().left(30).append(QString::fromLatin1("...")) ),
+				QString::null );
 			connect(m_balloon, SIGNAL(signalBalloonClicked()), mEventList.first() , SLOT(apply()));
 			connect(m_balloon, SIGNAL(signalButtonClicked()), mEventList.first() , SLOT(apply()));
 			m_balloon->setAnchor( KopeteSystemTray::systemTray()->mapToGlobal(pos()) );
@@ -257,7 +257,6 @@ void KopeteSystemTray::slotConfigChanged()
 	else
 		hide(); // for users without kicker or a similar docking app
 }
-
 
 #include "systemtray.moc"
 
