@@ -68,7 +68,7 @@ JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStrin
 	JabberKOSChatty(KopeteOnlineStatus::Online,        100, this, 1, "jabber_chatty",     i18n ("Set F&ree to Chat"), i18n ("Free to Chat")),
 	JabberKOSOnline(KopeteOnlineStatus::Online,         90, this, 0, QString::null,       i18n ("Go O&nline"), i18n ("Online")),
 	JabberKOSAway(KopeteOnlineStatus::Away,             80, this, 2, "jabber_away",       i18n ("Set A&way"), i18n ("Away")),
-	JabberKOSXA(KopeteOnlineStatus::Away,               70, this, 3, "jabber_away",       i18n ("Set E&xtended Away"), i18n ("Extended Away")),
+	JabberKOSXA(KopeteOnlineStatus::Away,               70, this, 3, "jabber_xa",       i18n ("Set E&xtended Away"), i18n ("Extended Away")),
 	JabberKOSDND(KopeteOnlineStatus::Away,              60, this, 4, "jabber_na",         i18n ("Set &Do not Disturb"), i18n ("Do not Disturb")),
 	JabberKOSOffline(KopeteOnlineStatus::Offline,       50, this, 5, QString::null,       i18n ("Go O&ffline"), i18n ("Offline")),
 	JabberKOSInvisible(KopeteOnlineStatus::Invisible,   40, this, 6, "jabber_invisible",  i18n ("Set I&nvisible"), i18n ("Invisible")),
