@@ -1342,8 +1342,11 @@ void ChatView::slotRefreshNodes()
 
 void ChatView::slotRefreshView()
 {
-	HTMLElement styleElement = chatView->document().documentElement().firstChild().firstChild();
-	styleElement.setInnerText( styleHTML() );
+	Element htmlElement = chatView->document().documentElement();
+	Element headElement = htmlElement.getElementsByTagName( QString::fromLatin1("head") ).item(0);
+	HTMLElement styleElement = headElement.getElementsByTagName( QString::fromLatin1("style") ).item(0);
+	if ( !styleElement.isNull() )
+		styleElement.setInnerText( styleHTML() );
 
 	HTMLBodyElement bodyElement = chatView->htmlDocument().body();
 	bodyElement.setBgColor( KopetePrefs::prefs()->bgColor().name() );
