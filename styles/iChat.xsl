@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html"/>
   <xsl:param name="appdata"/>
-  
+
   <!-- You need a trailing slash on directories for the following 5 options -->
   <!-- Change iChat to iChat-Trans for the transparent images -->
   <xsl:variable name="image-location"><xsl:value-of select="$appdata"/>/iChat-Trans/</xsl:variable>
@@ -11,7 +11,7 @@
   <xsl:variable name="action-color-scheme">purple/</xsl:variable>
   <xsl:variable name="system-color-scheme">clear/</xsl:variable>
   <xsl:variable name="highlight-color-scheme">yellow/</xsl:variable>
-  
+
   <xsl:variable name="allow-user-colors">yes</xsl:variable>
   <xsl:variable name="public-names">yes</xsl:variable>
   <xsl:variable name="show-timestamps">yes</xsl:variable>
@@ -49,6 +49,9 @@
             </tr>
             <tr>
               <td width="32" valign="bottom">
+	        <a class="KopeteDisplayName">
+		<xsl:attribute name="href">kopetemessage://<xsl:value-of select="from/contact/contactDisplayName/@text"/></xsl:attribute>
+		<xsl:attribute name="contactid"><xsl:value-of select="from/contact/@contactId"/></xsl:attribute>
                 <img height="32" width="32">
                   <xsl:attribute name="src">
                    <xsl:value-of select="$image-location" />
@@ -59,6 +62,7 @@
                     <xsl:value-of select="from/contact/contactDisplayName/@text"/>
                   </xsl:attribute>
                 </img>
+		</a>
               </td>
               <td>
                 <table cellpadding="0" cellspacing="0" border="0" align="left">
@@ -384,6 +388,9 @@
                 </table>
               </td>
               <td width="32" valign="bottom">
+	        <a class="KopeteDisplayName">
+		<xsl:attribute name="href">kopetemessage://<xsl:value-of select="from/contact/contactDisplayName/@text"/></xsl:attribute>
+		<xsl:attribute name="contactid"><xsl:value-of select="from/contact/@contactId"/></xsl:attribute>
                 <img height="32" width="32">
                   <xsl:attribute name="src">
                    <xsl:value-of select="$image-location" />
@@ -394,6 +401,7 @@
                     <xsl:value-of select="from/contact/contactDisplayName/@text"/>
                   </xsl:attribute>
                 </img>
+		</a>
               </td>
             </tr>
           </table>
@@ -529,7 +537,10 @@
                 </tr>
                 <tr>
                   <td width="32" valign="bottom">
-                    <img height="32" width="32">
+                    <a class="KopeteDisplayName">
+		    <xsl:attribute name="href">kopetemessage://<xsl:value-of select="from/contact/contactDisplayName/@text"/></xsl:attribute>
+		    <xsl:attribute name="contactid"><xsl:value-of select="from/contact/@contactId"/></xsl:attribute>
+		    <img height="32" width="32">
                       <xsl:attribute name="src">
                        <xsl:value-of select="$image-location" />
                        <xsl:value-of select="$from-color-scheme" />
@@ -537,10 +548,9 @@
                       </xsl:attribute>
                       <xsl:attribute name="title">
                         <xsl:value-of select="from/contact/contactDisplayName/@text"/>
-			<xsl:value-of select="from/contact/@color"/>
-			<xsl:value-of select="to/contact/@color"/>
                       </xsl:attribute>
                     </img>
+		    </a>
                   </td>
                   <td>
                     <table cellpadding="0" cellspacing="0" border="0" align="left">
