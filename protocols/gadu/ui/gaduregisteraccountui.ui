@@ -1,15 +1,15 @@
 <!DOCTYPE UI><UI version="3.1" stdsetdef="1">
-<class>GaduRegisterAccount</class>
+<class>GaduRegisterAccountUI</class>
 <widget class="QDialog">
     <property name="name">
-        <cstring>GaduRegisterAccount</cstring>
+        <cstring>GaduRegisterAccountUI</cstring>
     </property>
     <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
             <width>315</width>
-            <height>277</height>
+            <height>279</height>
         </rect>
     </property>
     <property name="sizePolicy">
