@@ -283,13 +283,7 @@ KPopupMenu* KopeteContact::createContextMenu()
 	d->actionChat->plug( menu );
 	d->actionSendFile->setEnabled( d->fileCapable );
 	d->actionSendFile->plug( menu );
-
 	d->actionViewHistory->plug( menu );
-	menu->insertSeparator();
-	d->actionChangeMetaContact->plug( menu );
-	d->actionUserInfo->plug( menu );
-	d->actionChangeAlias->plug( menu );
-	d->actionDeleteContact->plug( menu );
 
 	// Protocol specific options will go below this separator
 	// through the use of the customContextMenuActions() function
@@ -306,6 +300,12 @@ KPopupMenu* KopeteContact::createContextMenu()
 			customActions->action( i )->plug( menu );
 		}
 	}
+
+	menu->insertSeparator();
+	d->actionChangeMetaContact->plug( menu );
+	d->actionUserInfo->plug( menu );
+	d->actionChangeAlias->plug( menu );
+	d->actionDeleteContact->plug( menu );
 
 	return menu;
 }
