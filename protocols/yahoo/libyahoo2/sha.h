@@ -9,10 +9,10 @@ typedef unsigned int uint32;
 int strprintsha(char *dest, int *hashval);
  
 typedef struct {
-  unsigned long H[5];
-  unsigned long W[80];
+  uint32 H[5];
+  uint32 W[80];
   int lenW;
-  unsigned long sizeHi,sizeLo;
+  uint32 sizeHi,sizeLo;
 } SHA_CTX;
  
 void shaInit(SHA_CTX *ctx);
