@@ -157,7 +157,7 @@ GaduSession::sendMessage( uin_t recipient, const QString& msg,
         return gg_send_message( session_,
                                 msgClass,
                                 recipient,
-                                msg.local8Bit().data() );
+                                reinterpret_cast<const unsigned char *>(msg.local8Bit().data()) );
     else
         emit error( i18n("Not Connected..."),
                     i18n("You are not connected to the server!") );
@@ -172,7 +172,7 @@ GaduSession::sendMessageCtcp( uin_t recipient, const QString& msg,
         return gg_send_message_ctcp( session_,
                                      msgClass,
                                      recipient,
-                                     msg.local8Bit().data(),
+                                     reinterpret_cast<const unsigned char *>( msg.local8Bit().data() ),
                                      msg.length() );
     else
         emit error( i18n("Not Connected..."),
