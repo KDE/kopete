@@ -81,49 +81,48 @@ OscarContact::OscarContact(const QString name, const QString displayName,
 //	kdDebug(14150) << "[OscarContact] Status set to Offline" << endl;
 
 	// Sets our display name (from KopeteContact)
-	if (displayName!=QString::null)
+	if (!displayName.isEmpty())
 	{
-		kdDebug(14150) << "[OscarContact] Setting display name to: " << displayName << endl;
+		kdDebug(14150) << "[OscarContact] Setting display name to displayname var: " << displayName << endl;
 		setDisplayName(displayName);
 	}
 	else
 	{
-		kdDebug(14150) << "[OscarContact] Setting display name to: " << name << endl;
+		kdDebug(14150) << "[OscarContact] Setting display name to name var: " << name << endl;
 		setDisplayName(name);
 	}
 
 	if (!mListContact)
 	{
-		kdDebug(14150) << "[OscarContact] Internal buddy list did not contain this contact, creating " << endl;
+		kdDebug(14150) << "[OscarContact] Internal buddy list did not contain this contact, creating it..." << endl;
 		mListContact = new AIMBuddy(mAccount->randomNewBuddyNum(), 0, mName);
 		mAccount->internalBuddyList()->addBuddy(mListContact);
-		// Do a double check
-		if (!mListContact)
+		if (!mListContact) // Do a double check
 			kdDebug(14150) << "[OSCAR] ERROR, mListContact is *STILL* NULL! Prepare to crash!!!" << endl;
 	}
 
 	initSignals();
 	initActions();
+/*
+	if ( !(mListContact->alias().isEmpty()) )
+	{
+		kdDebug(14150) << "[OscarContact] Setting display name to: " << mListContact->alias() << endl;
+		setDisplayName( mListContact->alias() );
+	}
+	else
+	{
+		kdDebug(14150) << "[OscarContact] Setting display name to: " << mListContact->screenname() << endl;
+		setDisplayName( mListContact->screenname() );
+	}
 
-//     if ( !(mListContact->alias().isEmpty()) )
-//     {
-// 	kdDebug(14150) << "[OscarContact] Setting display name to: " << mListContact->alias() << endl;
-// 	setDisplayName( mListContact->alias() );
-//     }
-//     else
-//     {
-// 	kdDebug(14150) << "[OscarContact] Setting display name to: " << mListContact->screenname() << endl;
-// 	setDisplayName( mListContact->screenname() );
-//     }
-
-    // Can't update buddy when buddy doesn't exist yet....
-    //kdDebug(14150) << "[OscarContact] Updating buddy" << endl;
-    //slotUpdateBuddy();
+	 Can't update buddy when buddy doesn't exist yet....
+	kdDebug(14150) << "[OscarContact] Updating buddy" << endl;
+	slotUpdateBuddy();
+*/
 
 //	kdDebug(14150) << "[OscarContact]  " << mName << endl;
 	theContacts.append( this );
 }
-
 
 void OscarContact::initSignals()
 {
@@ -236,11 +235,17 @@ void OscarContact::slotMainStatusChanged(const KopeteOnlineStatus &newStatus)
 	if(newStatus == OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE))
 	{
 		if(mAccount->isICQ())
+		{
+			// Try to do this, otherwise no big deal
+			mListContact->setStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQOFFLINE));
 			setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQOFFLINE));
+		}
 		else
+		{
+			// Try to do this, otherwise no big deal
+			mListContact->setStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE));
 			setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE));
-		// Try to do this, otherwise no big deal
-		mListContact->setStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE));
+		}
 	}
 }
 
@@ -250,30 +255,27 @@ void OscarContact::slotUpdateBuddy()
 	if( onlineStatus() == mListContact->status() && mIdle == mListContact->idleTime() )
 		return;
 
+	setOnlineStatus( mListContact->status() );
+	kdDebug( 14150 ) << k_funcinfo << "Contact '" << mName << "' is now " << onlineStatus().description() << endl;
+
 	// if we have become idle
-	if ( mAccount->isConnected() )
+	if (mAccount->isConnected())
 	{
 		if ( mListContact->idleTime() > 0 )
 		{
-			kdDebug(14150) << "[OscarContact] setting " << mName << " idle! Idletime: " << mListContact->idleTime() << endl;
+			kdDebug(14150) << "[OscarContact] '" << mName << "' IDLE, idletime=" << mListContact->idleTime() << endl;
 			setIdleState(Idle);
 		}
 		else // we are not idling anymore
 		{
-			kdDebug(14150) << "[OscarContact] setting " << mName << " active!" << endl;
+			kdDebug(14150) << "[OscarContact] '" << mName << "' ACTIVE" << endl;
 			setIdleState(Active);
 		}
 		mIdle = mListContact->idleTime();
-	}
 
-	setOnlineStatus( mListContact->status() );
-	kdDebug( 14150 ) << k_funcinfo << "Contact '" << mName << "' is now " << onlineStatus().description() << endl;
-
-	if(mAccount->isConnected()) // oscar-plugin is online
-	{
-		if ( mName != mListContact->screenname() ) // contact changed his nickname
+		if (mName!=mListContact->screenname()) // contact changed his nickname
 		{
-			if ( !mListContact->alias().isEmpty() )
+			if (!mListContact->alias().isEmpty())
 				setDisplayName(mListContact->alias());
 			else
 				setDisplayName(mListContact->screenname());
@@ -284,13 +286,13 @@ void OscarContact::slotUpdateBuddy()
 		if(mAccount->isICQ())
 		{
 			mListContact->setStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQOFFLINE) );
+			setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQOFFLINE) );
 		}
 		else
 		{
 			mListContact->setStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE) );
+			setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE) );
 		}
-		setOnlineStatus(
-			OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE) );
    }
 }
 
@@ -554,32 +556,36 @@ void OscarContact::slotUpdateNickname(const QString newNickname)
 /** Return whether or not this contact is REACHABLE. */
 bool OscarContact::isReachable()
 {
-	// With AIM  you have to be online to be reachable
-	return isOnline();
+	// With AIM you have to be online to be reachable
+	if(mAccount->isICQ())
+		return true;
+	else
+		return isOnline();
 }
 
 /** Returns a set of custom menu items for the context menu */
 KActionCollection *OscarContact::customContextMenuActions(void)
 {
-    if( actionCollection != 0L )
+	if( actionCollection != 0L )
 	delete actionCollection;
 
-    actionCollection = new KActionCollection(this);
-    actionCollection->insert( actionWarn );
-    actionCollection->insert( actionBlock );
-    //experimental
-    actionCollection->insert( actionDirectConnect );
-    return actionCollection;
+	actionCollection = new KActionCollection(this);
+	actionCollection->insert( actionWarn );
+	actionCollection->insert( actionBlock );
+	actionCollection->insert( actionDirectConnect ); // experimental
+	return actionCollection;
 }
 
 /** Method to delete a contact from the contact list */
 void OscarContact::slotDeleteContact(void)
 {
-    AIMGroup *group = mAccount->internalBuddyList()->findGroup(mListContact->groupID());
-    if (!group) return;
-    mAccount->internalBuddyList()->removeBuddy(mListContact);
-    mAccount->getEngine()->sendDelBuddy(mListContact->screenname(),group->name());
-    deleteLater();
+	AIMGroup *group = mAccount->internalBuddyList()->findGroup(mListContact->groupID());
+	if (!group)
+		return;
+
+	mAccount->internalBuddyList()->removeBuddy(mListContact);
+	mAccount->getEngine()->sendDelBuddy(mListContact->screenname(),group->name());
+	deleteLater();
 }
 
 void OscarContact::slotContactDestroyed(KopeteContact */*contact*/)
@@ -824,12 +830,12 @@ void OscarContact::slotTransferAccepted(KopeteTransfer *tr, const QString &fileN
 /** Called when we deny a transfer */
 void OscarContact::slotTransferDenied(const KopeteFileTransferInfo &tr)
 {
-    // Check if we're the one who is directly connected
-    if ( tr.contact() != this )
+	// Check if we're the one who is directly connected
+	if ( tr.contact() != this )
 	return;
 
-    kdDebug(14150) << k_funcinfo << "Transfer denied." << endl;
-    mAccount->getEngine()->sendFileSendDeny(mName);
+	kdDebug(14150) << k_funcinfo << "Transfer denied." << endl;
+	mAccount->getEngine()->sendFileSendDeny(mName);
 }
 
 /** Called when a file transfer begins */
@@ -846,28 +852,14 @@ void OscarContact::slotTransferBegun(OscarConnection *con, const QString& file, 
 		      tr, SLOT(slotPercentCompleted( unsigned int )) );
 }
 
-/*	if ( (status() != m_cachedOldStatus) || ( size != m_cachedSize ) )
-	{
-	QImage afScal = ((QPixmap(SmallIcon(statusIcon()))).convertToImage()).smoothScale( size, size );
-	m_cachedScaledIcon = QPixmap(afScal);
-	m_cachedOldStatus = status();
-	m_cachedSize = size;
-	}
-	if ( m_idleState == Idle || mDirectlyConnected )
-	{
-	QImage tmp;
-	QPixmap pm;
-	tmp = m_cachedScaledIcon.convertToImage();
-	if ( m_idleState == Idle ) // if this contact is idle, make its icon semi-transparent
-	KIconEffect::semiTransparent(tmp);
-	if ( mDirectlyConnected ) //if we are directly connected, change color of icon
-	KIconEffect::colorize(tmp, red, 1.0F);
-	pm.convertFromImage(tmp);
-	return pm;
-	}
-	return m_cachedScaledIcon; */
+void OscarContact::rename(const QString &newNick)
+{
+	kdDebug(14150) << k_funcinfo << "rename to '" << newNick << "'" << endl;
 
-// vim: set noet ts=4 sts=4 sw=4:
+	mListContact->setAlias(newNick);
+	setDisplayName(newNick);
+}
 
 #include "oscarcontact.moc"
 
+// vim: set noet ts=4 sts=4 sw=4:

@@ -747,7 +747,14 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 		debugDialog()->addMessageFromClient(outbuf.toString(), connectionName());
 
 	outbuf.addFlap(chan);
-	writeBlock(outbuf.getBuf(),outbuf.getLength());
+	if(state() != QSocket::Connected)
+	{
+		kdDebug(14150) << k_funcinfo << "Socket is NOT open, can't write to it right now" << endl;
+	}
+	else
+	{
+		writeBlock(outbuf.getBuf(),outbuf.getLength());
+	}
 	outbuf.clear();
 }
 
@@ -1256,11 +1263,11 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 		if (ssi->tlvlength) //sometimes there is additional info
 				ssi->tlvlist = inbuf.getBlock(ssi->tlvlength);
 		ssiData.append(ssi);
-
-		kdDebug(14150) << "[OSCAR] Read server-side list-entry. name: " << ssi->name << ", gid: " << ssi->gid
-				<< ", bid: " << ssi->bid << ", type: " << ssi->type << ", tbslen: " << ssi->tlvlength
+/*
+		kdDebug(14150) << "[OSCAR] Read server-side list-entry. name: " << ssi->name << ", group: " << ssi->gid
+				<< ", id: " << ssi->bid << ", type: " << ssi->type << ", TLV length: " << ssi->tlvlength
 				<< endl;
-
+*/
 		AIMBuddy *bud;
 		switch (ssi->type)
 		{
@@ -1273,21 +1280,46 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 					groupName = group->name();
 				kdDebug(14150) << "[OSCAR] Adding Buddy " << ssi->name <<  " to group " << ssi->gid
 						<< " (" <<  groupName << ")" << endl;
+
+				Buffer tmpBuf;
+				tmpBuf.setBuf(ssi->tlvlist, ssi->tlvlength);
+				QPtrList<TLV> lst = tmpBuf.getTLVList();
+/*				kdDebug(14150) << "[OSCAR] BUDDY entry contained TLVs:" << endl;
+				TLV *t;
+				for(t=lst.first(); t; t=lst.next())
+					kdDebug(14150) << "TLV(" << t->type << ") with length " << t->length << endl;*/
+				lst.setAutoDelete(TRUE);
+				TLV *nick = findTLV(lst,0x0131);
+				if(nick && nick->length > 0)
+				{
+					kdDebug(14150) << "[OSCAR] Buddy nickname='" << nick->data << "'" << endl;
+					bud->setAlias(QString::fromLatin1(nick->data));
+				}
+
 				blist.addBuddy(bud);
 				break;
 			}
 
 			case 0x0001: //group
 			{
+				Buffer tmpBuf;
+				tmpBuf.setBuf(ssi->tlvlist, ssi->tlvlength);
+				QPtrList<TLV> lst = tmpBuf.getTLVList();
+				kdDebug(14150) << "[OSCAR] GROUP entry contained TLVs:" << endl;
+				TLV *t;
+				for(t=lst.first(); t; t=lst.next())
+					kdDebug(14150) << "TLV(" << t->type << ") with length " << t->length << endl;
+				lst.setAutoDelete(TRUE);
+
 				if (namelen) //if it's not the master group
 					blist.addGroup(ssi->gid, ssi->name);
 				break;
 			}
 
-			case 0x0002: // TODO permit buddy
+			case 0x0002: // TODO permit buddy/visible list
 				break;
 
-			case 0x0003: // TODO deny buddy
+			case 0x0003: // TODO deny buddy/invisible list
 			{
 				bud = new AIMBuddy(ssi->bid, ssi->gid, ssi->name);
 				kdDebug(14150) << "[OSCAR] Adding Buddy " << ssi->name << " to deny list." << endl;
@@ -1297,6 +1329,9 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 			}
 
 			case 0x0004: // TODO permit-deny setting
+				break;
+
+			case 0x000e: // TODO contact on ignore list
 				break;
 		} // END switch (ssi->type)
 
@@ -1846,7 +1881,6 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 						cap[10], cap[11], cap[12], cap[13],
 						cap[14], cap[15]);
 					kdDebug(14150) << k_funcinfo << "TLV(13) [CAPABILITIES], " << capstring << endl;
-
 					break;
 				}
 				case 0x000f: //session length (in seconds)
@@ -2461,6 +2495,54 @@ void OscarSocket::sendAddBuddy(const QString &name, const QString &group)
     //now we need to modify the group our buddy is in
 }
 
+/** Renames a buddy on the server side buddy list */
+/*
+void OscarSocket::sendRenameBuddy(const QString &budName, const QString &budGroup, const QString &newAlias)
+{
+	kdDebug(14150) << k_funcinfo << "Sending rename buddy..." << endl;
+	SSI *renameitem = ssiData.findBuddy(budName,budGroup);
+	ssiData.print();
+
+	if (!renameitem)
+	{
+		kdDebug(14150) << k_funcinfo << "Item with name " << budName << " and group "
+			<< budGroup << "not found" << endl;
+
+		emit protocolError(
+			i18n("%1 in group %2 was not found on the server's " \
+			"buddy list and cannot be renamed.").arg(budName).arg(budGroup),0);
+		return;
+	}
+
+	Buffer buf;
+	buf.setBuf(ssi->tlvlist,ssi->tlvlength);
+	QPtrList<TLV> lst = buf.getTLVList();
+
+	kdDebug(14150) << k_funcinfo << "contained TLVs:" << endl;
+	TLV *t;
+	for(t=lst.first(); t; t=lst.next())
+	{
+		kdDebug(14150) << k_funcinfo << "TLV(" << t->type << ") with length " << t->length << endl;
+	}
+	lst.setAutoDelete(TRUE);
+	TLV *nick= findTLV(lst,0x0131);
+	if(nick && nick->length > 0)
+	{
+
+    //ATÜ
+	kdDebug(14150) << k_funcinfo << "Renaming " << renameitem->name << ", gid " << renameitem->gid
+			<< ", bid " << renameitem->bid << ", type " << renameitem->type
+			<< ", datalength " << renameitem->tlvlength << endl;
+
+	sendSSIAddModDel(renameitem,0x0009);
+	}
+	else
+	{
+		kdDebug(14150) << k_funcinfo << "FIXME: cannot rename a buddy without an alias set on the server!" << endl;
+	}
+}
+*/
+
 /** Adds a group to the server side buddy list */
 void OscarSocket::sendAddGroup(const QString &name)
 {
@@ -2478,19 +2560,19 @@ void OscarSocket::sendAddGroup(const QString &name)
 /** Sends SSI add, modify, or delete request, to reuse code */
 void OscarSocket::sendSSIAddModDel(SSI *item, WORD request_type)
 {
-    Buffer outbuf;
-    outbuf.addSnac(0x0013,request_type,0x0000,0x00000000);
-    //name length
-    outbuf.addWord(item->name.length());
-    if (item->name.length())
-			outbuf.addString(item->name, item->name.length());
-    outbuf.addWord(item->gid);
-    outbuf.addWord(item->bid);
-    outbuf.addWord(item->type);
-    outbuf.addWord(item->tlvlength);
-    if (item->tlvlength)
-			outbuf.addString(item->tlvlist,item->tlvlength);
-    sendBuf(outbuf,0x02);
+	Buffer outbuf;
+	outbuf.addSnac(0x0013,request_type,0x0000,0x00000000);
+	//name length
+	outbuf.addWord(item->name.length());
+	if (item->name.length())
+		outbuf.addString(item->name, item->name.length());
+	outbuf.addWord(item->gid);
+	outbuf.addWord(item->bid);
+	outbuf.addWord(item->type);
+	outbuf.addWord(item->tlvlength);
+	if (item->tlvlength)
+		outbuf.addString(item->tlvlist,item->tlvlength);
+	sendBuf(outbuf,0x02);
 }
 
 /** Parses the SSI acknowledgement */
