@@ -29,6 +29,6 @@ libkopeteui_la_SOURCES = configmodule.cpp\
 			protocolboxitem.cpp addcontactpage.cpp\
 			systemtray.cpp chatview.cpp appearanceconfig.cpp\
 			groupseparator.cpp balloonbase.cpp kopeteballoon.cpp \
-			historydialog.cpp
+			historydialog.cpp kopetechatwindow.cpp
 
 libkopeteui_la_METASOURCES = AUTO
