@@ -34,15 +34,15 @@ MSNEditAccountWidget::MSNEditAccountWidget(MSNProtocol *proto, KopeteAccount *id
 	QVBoxLayout *layout=new QVBoxLayout(this);
 	layout->setAutoAdd(true);
 
-	new QLabel( i18n ("Login") , this );
+	new QLabel( i18n ("Login:") , this );
 	m_login = new QLineEdit( this );
 
-	new QLabel( i18n("Password"), this);
+	new QLabel( i18n("Password:"), this);
 	m_password = new QLineEdit( this );
 	m_password->setEchoMode( QLineEdit::Password );
 
-	m_rememberpasswd = new QCheckBox( i18n("Remember Password") , this );
-	m_autologin = new QCheckBox( i18n("Auto Login") , this );
+	m_rememberpasswd = new QCheckBox( i18n("Remember password") , this );
+	m_autologin = new QCheckBox( i18n("Auto login") , this );
 	
 
 	layout->addItem( new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding ));

@@ -83,7 +83,7 @@ KActionMenu *IRCAccount::actionMenu()
 	mActionMenu->insert( new KAction ( i18n("Offline"), IRCProtocol::IRCUserOffline().iconFor( mMySelf ), 0, this, SLOT(disconnect()), mActionMenu ) );
 	mActionMenu->insert( new KAction ( i18n("Away"), IRCProtocol::IRCUserAway().iconFor( mMySelf ), 0, this, SLOT(slotGoAway()), mActionMenu ) );
 	mActionMenu->popupMenu()->insertSeparator();
-	mActionMenu->insert( new KAction ( i18n("Join channel"), "", 0, this, SLOT(slotJoinChannel()), mActionMenu ) );
+	mActionMenu->insert( new KAction ( i18n("Join Channel..."), "", 0, this, SLOT(slotJoinChannel()), mActionMenu ) );
 
 	return mActionMenu;
 }
@@ -307,7 +307,7 @@ void IRCAccount::slotJoinChannel()
 		if( chan.startsWith( QString::fromLatin1("#") ) )
 			findChannel( chan )->startChat();
 		else
-			KMessageBox::error(0l, i18n("<qt>\"%1\" is an invaid channel. Channels must start with '#'.</qt>").arg(chan), i18n("Kopete IRC Plugin"));
+			KMessageBox::error(0l, i18n("<qt>\"%1\" is an invalid channel. Channels must start with '#'.</qt>").arg(chan), i18n("Kopete IRC Plugin"));
 	}
 }
 

@@ -82,7 +82,7 @@
                 <cstring>textLabel1</cstring>
             </property>
             <property name="text">
-                <string>Search Channels For:</string>
+                <string>Search channels for:</string>
             </property>
         </widget>
         <widget class="QLineEdit" row="1" column="1">
@@ -112,4 +112,7 @@
     <tabstop>addID</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>qwidget.h</includehint>
+</includehints>
 </UI>

@@ -268,7 +268,7 @@ void IRCProtocol::slotJoinCommand( const QString &args, KopeteMessageManager *ma
 			static_cast<IRCAccount*>( manager->account() )->findChannel( argsList.front() )->startChat();
 		else
 		{
-			KopeteMessage msg(manager->user(), manager->members(), i18n("\"%1\" is an invaid channel. Channels must start with '#'.").arg(argsList.front()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+			KopeteMessage msg(manager->user(), manager->members(), i18n("\"%1\" is an invalid channel. Channels must start with '#'.").arg(argsList.front()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 			manager->appendMessage(msg);
 		}
 	}
@@ -283,7 +283,7 @@ void IRCProtocol::slotQueryCommand( const QString &args, KopeteMessageManager *m
 			static_cast<IRCAccount*>( manager->account() )->findUser( argsList.front() )->startChat();
 		else
 		{
-			KopeteMessage msg(manager->user(), manager->members(), i18n("\"%1\" is an invaid nickname. Nicknames must not start with '#'.").arg(argsList.front()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+			KopeteMessage msg(manager->user(), manager->members(), i18n("\"%1\" is an invalid nickname. Nicknames must not start with '#'.").arg(argsList.front()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 			manager->appendMessage(msg);
 		}
 	}

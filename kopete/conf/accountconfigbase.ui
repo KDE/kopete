@@ -28,7 +28,7 @@
                 <cstring>mButtonNew</cstring>
             </property>
             <property name="text">
-                <string>&amp;New ...</string>
+                <string>&amp;New...</string>
             </property>
         </widget>
         <widget class="QPushButton" row="4" column="1">
@@ -122,6 +122,7 @@
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>qwidget.h</includehint>
     <includehint>klistview.h</includehint>
 </includehints>
 </UI>

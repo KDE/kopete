@@ -176,7 +176,7 @@ QString KopeteAccount::getPassword( bool error, bool *ok )
 		}
 	}
 
-	KDialogBase *passwdDialog= new KDialogBase( qApp->mainWidget() ,"passwdDialog", true, i18n( "Password needed" ),
+	KDialogBase *passwdDialog= new KDialogBase( qApp->mainWidget() ,"passwdDialog", true, i18n( "Password Needed" ),
 				KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true );
 
 	KopetePasswordDialog *view = new KopetePasswordDialog(passwdDialog);

@@ -110,7 +110,7 @@
                         <cstring>m_setFG</cstring>
                     </property>
                     <property name="text">
-                        <string>Change Foreground color into</string>
+                        <string>Change foreground color into</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
@@ -228,7 +228,7 @@
                 </sizepolicy>
             </property>
             <property name="title">
-                <string>Avaliable Filters</string>
+                <string>Available Filters</string>
             </property>
             <grid>
                 <property name="name">
@@ -255,7 +255,7 @@
                         <cstring>m_rename</cstring>
                     </property>
                     <property name="text">
-                        <string>Rename</string>
+                        <string>Rename...</string>
                     </property>
                 </widget>
                 <widget class="QPushButton" row="1" column="2" rowspan="1" colspan="2">
@@ -296,6 +296,7 @@
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>qwidget.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>kcombobox.h</includehint>
     <includehint>kcolorcombo.h</includehint>

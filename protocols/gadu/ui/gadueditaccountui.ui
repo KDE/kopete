@@ -32,7 +32,7 @@
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>Login</string>
+                        <string>Login:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>kLineEdit1</cstring>
@@ -58,7 +58,7 @@
                         <cstring>textLabel2</cstring>
                     </property>
                     <property name="text">
-                        <string>Password</string>
+                        <string>Password:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>kLineEdit1_2</cstring>
@@ -79,7 +79,7 @@
                 <cstring>rememberCheck_</cstring>
             </property>
             <property name="text">
-                <string>Remember Password</string>
+                <string>Remember password</string>
             </property>
         </widget>
         <widget class="QCheckBox">
@@ -87,13 +87,14 @@
                 <cstring>autoLoginCheck_</cstring>
             </property>
             <property name="text">
-                <string>Auto Login</string>
+                <string>Auto login</string>
             </property>
         </widget>
     </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>qwidget.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>klineedit.h</includehint>
 </includehints>

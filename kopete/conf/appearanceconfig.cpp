@@ -85,7 +85,7 @@
 
 AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	ConfigModule (
-		i18n("Behaviour"),
+		i18n("Behavior"),
 		i18n("Here You Can Personalize Kopete"),
 		"appearance",
 		parent )

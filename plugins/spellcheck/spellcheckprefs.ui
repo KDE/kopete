@@ -47,7 +47,7 @@
                 </sizepolicy>
             </property>
             <property name="title">
-                <string>Spell Checker Behaviour</string>
+                <string>Spell Checker Behavior</string>
             </property>
             <grid>
                 <property name="name">
@@ -185,4 +185,7 @@
     <include location="global" impldecl="in implementation">knuminput.h</include>
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>qwidget.h</includehint>
+</includehints>
 </UI>

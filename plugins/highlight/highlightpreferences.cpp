@@ -185,7 +185,7 @@ void HighlightPreferences::slotRenameFilter()
 		
 	bool ok;
 	QString newname = KLineEditDlg::getText(
-		i18n( "Rename Filter" ), i18n( "Please enter the new name for the Filter" ), current->displayName, &ok );
+		i18n( "Rename Filter" ), i18n( "Please enter the new name for the filter:" ), current->displayName, &ok );
 	if( !ok )
 		return;
 	current->displayName=newname;

@@ -373,7 +373,7 @@ KActionMenu* OscarAccount::actionMenu()
 					 "actionShowDebug") );
 
 	mActionMenu->insert(
-		new KAction(i18n("Fast add a Contact"), "", 0, this,
+		new KAction(i18n("Add Contact Fast"), "", 0, this,
 					SLOT(slotFastAddContact()), mActionMenu,
 					"actionFastAddContact" ) );
 
