@@ -1,11 +1,11 @@
 /*
     chatmessagepart.cpp - Chat Message KPart
 
-    Copyright (c) 2002-2004 by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2005 by Olivier Goffart       <ogoffart@tiscalinet.be>
     Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
 
-    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -58,6 +58,7 @@
 // messages aren't processed independently (eg, Adium) to work.
 #define TRANSFORM_ALL_MESSAGES
 
+#if !(KDE_IS_VERSION(3,3,90))
 //From  kdelibs/khtml/misc/htmltags.h
 //  used in ChatMessagePart::copy()
 #define ID_BLOCKQUOTE 12
@@ -83,6 +84,7 @@
 #define ID_TR 96
 #define ID_TT 97
 #define ID_UL 99
+#endif
 
 
 class ChatMessagePart::Private
@@ -613,18 +615,18 @@ void ChatMessagePart::slotScrollView()
 void ChatMessagePart::copy()
 {
 	/*
-		* The objective of this function is to keep the text of emoticons (of or latex image) when copying.
-		*   see Bug 61676
-		* It could be done in a single line if  RangeImpl::toHTML  was implemented (see the #if 0 bellow)
-		* But since it doesn't work, i have to handle it myself with KHTML some internals.
-		* I copied a big part of the code bellow from KHTMLPart::selectedText.  only a bit modified to add the img's title
-		*/
+	* The objective of this function is to keep the text of emoticons (of or latex image) when copying.
+	*   see Bug 61676
+	* RangeImpl::toHTML  was not implemented before KDE 3.4
+	*/
 
 	QString text;
 
-	#if 0 //This doesn't work because   RangeImpl::toHTML   is not yet implemented
-	text=Kopete::Message::unescape( selection().toHTML().string() );
-	#endif
+#if KDE_IS_VERSION(3,3,90)
+	text=Kopete::Message::unescape( selection().toHTML().string() ).stripWhiteSpace();
+	// Message::unsescape will replace image by his title attribute
+	// stripWhiteSpace is for removing the newline added by the <!DOCTYPE> and other xml things of RangeImpl::toHTML
+#else
 
 	DOM::Node startNode, endNode;
 	long startOffset, endOffset;
@@ -733,6 +735,7 @@ void ChatMessagePart::copy()
 	text=text.mid(start, end-start);
 
 	//END: copied from KHTMLPart::selectedText
+#endif
 
 	QApplication::clipboard()->setText( text, QClipboard::Clipboard );
 	QApplication::clipboard()->setText( text, QClipboard::Selection );
