@@ -57,7 +57,7 @@ KActionMenu* KopeteProtocol::protocolActions()
 	return 0L;
 }
 
-QDict<KopeteContact>& KopeteProtocol::contacts()
+const QDict<KopeteContact>& KopeteProtocol::contacts()
 {
 	return m_contacts;
 }
