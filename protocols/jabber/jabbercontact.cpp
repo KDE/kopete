@@ -19,8 +19,6 @@
 
 #include "xmpp_tasks.h"
 
-#include <math.h>
-
 #include <qtimer.h>
 #include <qdatetime.h>
 
@@ -246,10 +244,8 @@ void JabberContact::slotCheckVCard ()
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Scheduling update." << endl;
 
-		double randTime = (double)KApplication::random () / (double)RAND_MAX * 10.0 * 60.0 * 1000.0;
-
 		// current data is older than 24 hours, request a new one
-		QTimer::singleShot ( lround ( randTime ), this, SLOT ( slotGetTimedVCard () ) );
+		QTimer::singleShot ( account()->getPenaltyTime () * 1000, this, SLOT ( slotGetTimedVCard () ) );
 	}
 
 }
@@ -261,9 +257,7 @@ void JabberContact::slotGetTimedVCard ()
 	if ( ( account()->myself()->onlineStatus().status () != KopeteOnlineStatus::Online ) &&
 		 ( account()->myself()->onlineStatus().status () != KopeteOnlineStatus::Away ) )
 	{
-		// we are not connected, reinitiate timer
-		double randTime = (double)KApplication::random () / (double)RAND_MAX * 10.0 * 60.0 * 1000.0;
-		QTimer::singleShot ( lround ( randTime ), this, SLOT ( slotGetTimedVCard () ) );
+		// we are not connected, discard this update
 		return;
 	}
 

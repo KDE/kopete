@@ -31,6 +31,7 @@
 
 #include <qstring.h>
 #include <qregexp.h>
+#include <qtimer.h>
 
 #include <kdebug.h>
 #include <kmessagebox.h>
@@ -73,11 +74,16 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	mResourcePool = 0L;
 	mContactPool = 0L;
 
+	mCurrentPenaltyTime = 0;
+
 	// add our own contact to the pool
 	JabberContact *myContact = contactPool()->addContact ( XMPP::RosterItem ( accountId ), 0L, false );
 	setMyself( myContact );
 
 	initialPresence = XMPP::Status ( "", "", 5, true );
+
+	// initiate penalty timer
+	QTimer::singleShot ( JABBER_PENALTY_TIME * 1000, this, SLOT ( slotUpdatePenaltyTime () ) );
 
 }
 
@@ -1687,6 +1693,29 @@ void JabberAccount::slotResourceUnavailable (const XMPP::Jid & jid, const XMPP::
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Resource now unavailable for " << jid.userHost () << endl;
 
 	resourcePool()->removeResource ( jid, resource );
+
+}
+
+int JabberAccount::getPenaltyTime ()
+{
+
+	int currentTime = mCurrentPenaltyTime;
+
+	mCurrentPenaltyTime += JABBER_PENALTY_TIME;
+
+	return currentTime;
+
+}
+
+void JabberAccount::slotUpdatePenaltyTime ()
+{
+
+	if ( mCurrentPenaltyTime >= JABBER_PENALTY_TIME )
+		mCurrentPenaltyTime -= JABBER_PENALTY_TIME;
+	else
+		mCurrentPenaltyTime = 0;
+
+	QTimer::singleShot ( JABBER_PENALTY_TIME * 1000, this, SLOT ( slotUpdatePenaltyTime () ) );
 
 }
 

@@ -41,6 +41,8 @@ class JabberResourcePool;
 class JabberContact;
 class JabberContactPool;
 
+#define JABBER_PENALTY_TIME	3
+
 using namespace XMPP;
 
 /* @author Daniel Stone, Till Gerken */
@@ -110,6 +112,17 @@ public:
 	void addS5bAddress ( const QString &address );
 	void removeS5bAddress ( const QString &address );
 
+	/**
+	 * As the Jabber servers shouldn't be bombarded with
+	 * requests, time intensive queries and mass queries
+	 * should be slowed down to reasonable intervals.
+	 * The method here offers a penalty service that
+	 * returns a time in seconds a query should be
+	 * delayed in order to not flood the server.
+	 * Current hard-coded interval is 3 seconds.
+	 */
+	int getPenaltyTime ();
+
 public slots:
 	/* Connects to the server. */
 	void connect ();
@@ -151,6 +164,11 @@ private:
 
 	QString localAddress;
 	QString cachedPassword;
+
+	/*
+	 * Current penalty time
+	 */
+	int mCurrentPenaltyTime;
 
 	void setAvailable ();
 
@@ -274,6 +292,11 @@ private slots:
 	void slotGetServices ();
 
 	void slotS5bServerGone ();
+	
+	/*
+	 * Update penalty timer
+	 */
+	void slotUpdatePenaltyTime ();
 
 };
 
