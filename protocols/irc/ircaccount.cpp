@@ -74,8 +74,8 @@ KActionMenu *IRCAccount::actionMenu()
 	mActionMenu->setIconSet( QIconSet ( mMySelf->onlineStatus().iconFor( mMySelf ) ) );
 
 	mActionMenu->insert( new KAction ( i18n("Online"), IRCProtocol::IRCUserOnline().iconFor( mMySelf ), 0, this, SLOT(connect()), mActionMenu ) );
-	mActionMenu->insert( new KAction ( i18n("Offline"), IRCProtocol::IRCUserOffline().iconFor( mMySelf ), 0, this, SLOT(disconnect()), mActionMenu ) );
 	mActionMenu->insert( new KAction ( i18n("Away"), IRCProtocol::IRCUserAway().iconFor( mMySelf ), 0, this, SLOT(slotGoAway()), mActionMenu ) );
+	mActionMenu->insert( new KAction ( i18n("Offline"), IRCProtocol::IRCUserOffline().iconFor( mMySelf ), 0, this, SLOT(disconnect()), mActionMenu ) );
 	mActionMenu->popupMenu()->insertSeparator();
 	mActionMenu->insert( new KAction ( i18n("Join Channel..."), "", 0, this, SLOT(slotJoinChannel()), mActionMenu ) );
 
