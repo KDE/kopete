@@ -131,7 +131,7 @@ defaultName="";
   }
 
   boutonbox->addStretch(1);
-  bouton1=boutonbox->addButton(i18n("&Encrypt"),TRUE);
+  bouton1=boutonbox->addButton(i18n("&OK"),TRUE);
   bouton2=boutonbox->addButton(i18n("&Cancel"),TRUE);
 
   if (isascii==true) checkbox1->setChecked(true);
