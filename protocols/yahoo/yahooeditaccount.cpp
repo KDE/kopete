@@ -21,11 +21,13 @@
 #include <qlineedit.h>
 #include <qgroupbox.h>
 #include <qlayout.h>
+#include <qpushbutton.h>
 
 // KDE Includes
 #include <klocale.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
+#include <krun.h>
 
 // Kopete Includes
 #include <addcontactpage.h>
@@ -52,6 +54,8 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAc
 		mAutoConnect->setChecked(acct->autoLogin());
 		mPasswordWidget->load( &acct->password() );
 	}
+
+	QObject::connect(buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
 
 	show();
 }
@@ -87,6 +91,11 @@ KopeteAccount *YahooEditAccount::apply()
 	mPasswordWidget->save( &yahooAccount->password() );
 
 	return yahooAccount;
+}
+
+void YahooEditAccount::slotOpenRegister()
+{
+    KRun::runURL( "http://edit.yahoo.com/config/eval_register?new=1", "text/html" );
 }
 
 #include "yahooeditaccount.moc"

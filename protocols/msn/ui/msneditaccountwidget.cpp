@@ -37,6 +37,7 @@
 #include <kio/netaccess.h>
 #include <kdebug.h>
 #include <kpassdlg.h>
+#include <krun.h>
 
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
@@ -130,6 +131,7 @@ MSNEditAccountWidget::MSNEditAccountWidget( MSNProtocol *proto, KopeteAccount *a
 		connect( d->ui->m_blockButton, SIGNAL( pressed() ), this, SLOT( slotBlock() ) );
 		connect( d->ui->m_selectImage, SIGNAL( pressed() ), this, SLOT( slotSelectImage() ) );
 		connect( d->ui->m_RLButton, SIGNAL( pressed() ), this, SLOT( slotShowReverseList() ) );
+		QObject::connect( d->ui->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
 
 		d->ui->m_useDisplayPicture->setChecked( account->pluginData( d->protocol, "exportCustomPicture" ) == "1" );
 	}
@@ -289,6 +291,11 @@ void MSNEditAccountWidget::slotSelectImage()
 			"Make sure that you have selected a correct image file</qt>" ), i18n( "MSN Plugin" ) );
 	}
 	if( remoteFile ) KIO::NetAccess::removeTempFile( path );
+}
+
+void MSNEditAccountWidget::slotOpenRegister()
+{
+	KRun::runURL( "http://register.passport.net/", "text/html" );
 }
 
 #include "msneditaccountwidget.moc"

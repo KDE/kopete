@@ -47,6 +47,9 @@ public:
 
 public slots:
 	virtual KopeteAccount *apply();
+
+private slots:
+	void slotOpenRegister();
 };
 
 #endif

@@ -47,6 +47,7 @@ private slots:
 	void slotBlock();
 	void slotShowReverseList();
 	void slotSelectImage();
+	void slotOpenRegister();
 
 private:
 	MSNEditAccountWidgetPrivate *d;
