@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>GaduAccountEditUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>640</width>
-            <height>480</height>
+            <height>484</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -36,6 +36,9 @@
         <widget class="QTabWidget">
             <property name="name">
                 <cstring>tabWidget4</cstring>
+            </property>
+            <property name="enabled">
+                <bool>true</bool>
             </property>
             <widget class="QWidget">
                 <property name="name">
@@ -321,27 +324,47 @@
                 <attribute name="title">
                     <string>Connection</string>
                 </attribute>
-                <vbox>
+                <grid>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QGroupBox">
+                    <spacer row="1" column="0">
+                        <property name="name">
+                            <cstring>spacer16</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>300</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QGroupBox" row="0" column="0">
                         <property name="name">
                             <cstring>groupBox64</cstring>
                         </property>
                         <property name="title">
                             <string>Connection Preferences</string>
                         </property>
-                        <vbox>
+                        <grid>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QCheckBox">
+                            <widget class="QCheckBox" row="0" column="0">
                                 <property name="name">
                                     <cstring>autoLoginCheck_</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Connect automatically at &amp;startup</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+S</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to connect automatically when Kopete is started.</string>
@@ -350,7 +373,7 @@
                                     <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
                                 </property>
                             </widget>
-                            <widget class="QCheckBox">
+                            <widget class="QCheckBox" row="1" column="0">
                                 <property name="name">
                                     <cstring>cacheServersCheck__</cstring>
                                 </property>
@@ -359,6 +382,9 @@
                                 </property>
                                 <property name="text">
                                     <string>C&amp;ache server information</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+A</string>
                                 </property>
                                 <property name="checked">
                                     <bool>true</bool>
@@ -370,7 +396,30 @@
                                     <string>This option is used whenever the primary Gadu-Gadu load-balancing server fails.  If this is checked, Kopete will try to connect to the actual servers directly using cached information about them.  This prevents connection errors when the main load-balancing server does not answer. In practice it only helps very rarely.</string>
                                 </property>
                             </widget>
-                            <widget class="QLayoutWidget">
+                            <widget class="QCheckBox" row="2" column="0">
+                                <property name="name">
+                                    <cstring>dccCheck_</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;Use direct connections (DCC).</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+U</string>
+                                </property>
+                                <property name="checked">
+                                    <bool>true</bool>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Cache connection information for each server connected to in case the main load-balancing server fails.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>This option is used whenever the primary Gadu-Gadu load-balancing server fails.  If this is checked, Kopete will try to connect to the actual servers directly using cached information about them.  This prevents connection errors when the main load-balancing server does not answer. In practice it only helps very rarely.</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget" row="3" column="0">
                                 <property name="name">
                                     <cstring>layout65</cstring>
                                 </property>
@@ -429,26 +478,266 @@
                                     </widget>
                                 </hbox>
                             </widget>
+                        </grid>
+                    </widget>
+                </grid>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>TabPage</cstring>
+                </property>
+                <attribute name="title">
+                    <string>DCC global options</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLayoutWidget" row="0" column="0">
+                        <property name="name">
+                            <cstring>layout14</cstring>
+                        </property>
+                        <vbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QGroupBox">
+                                <property name="name">
+                                    <cstring>dcc</cstring>
+                                </property>
+                                <property name="enabled">
+                                    <bool>false</bool>
+                                </property>
+                                <property name="title">
+                                    <string>Global DCC options</string>
+                                </property>
+                                <grid>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLabel" row="1" column="0">
+                                        <property name="name">
+                                            <cstring>textLabel5</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Fancy description</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLayoutWidget" row="0" column="0">
+                                        <property name="name">
+                                            <cstring>layout12</cstring>
+                                        </property>
+                                        <vbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>textLabel1_4</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>&lt;qt&gt;&lt;p align="center"&gt;&lt;font color="#ff0000"&gt;This options affect &lt;b&gt;all&lt;/b&gt; Gadu-Gadu accounts.&lt;/font&gt;&lt;/p&gt;&lt;/qt&gt;</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLayoutWidget">
+                                                <property name="name">
+                                                    <cstring>layout11</cstring>
+                                                </property>
+                                                <hbox>
+                                                    <property name="name">
+                                                        <cstring>unnamed</cstring>
+                                                    </property>
+                                                    <spacer>
+                                                        <property name="name">
+                                                            <cstring>spacer7</cstring>
+                                                        </property>
+                                                        <property name="orientation">
+                                                            <enum>Horizontal</enum>
+                                                        </property>
+                                                        <property name="sizeType">
+                                                            <enum>Expanding</enum>
+                                                        </property>
+                                                        <property name="sizeHint">
+                                                            <size>
+                                                                <width>71</width>
+                                                                <height>20</height>
+                                                            </size>
+                                                        </property>
+                                                    </spacer>
+                                                    <widget class="QLayoutWidget">
+                                                        <property name="name">
+                                                            <cstring>layout9</cstring>
+                                                        </property>
+                                                        <hbox>
+                                                            <property name="name">
+                                                                <cstring>unnamed</cstring>
+                                                            </property>
+                                                            <widget class="QLayoutWidget">
+                                                                <property name="name">
+                                                                    <cstring>layout7</cstring>
+                                                                </property>
+                                                                <hbox>
+                                                                    <property name="name">
+                                                                        <cstring>unnamed</cstring>
+                                                                    </property>
+                                                                    <widget class="QLabel">
+                                                                        <property name="name">
+                                                                            <cstring>textLabel2</cstring>
+                                                                        </property>
+                                                                        <property name="text">
+                                                                            <string>Your IP address:</string>
+                                                                        </property>
+                                                                    </widget>
+                                                                    <widget class="KRestrictedLine">
+                                                                        <property name="name">
+                                                                            <cstring>ipAddress</cstring>
+                                                                        </property>
+                                                                        <property name="text">
+                                                                            <string>0.0.0.0</string>
+                                                                        </property>
+                                                                    </widget>
+                                                                </hbox>
+                                                            </widget>
+                                                            <spacer>
+                                                                <property name="name">
+                                                                    <cstring>spacer4</cstring>
+                                                                </property>
+                                                                <property name="orientation">
+                                                                    <enum>Horizontal</enum>
+                                                                </property>
+                                                                <property name="sizeType">
+                                                                    <enum>Expanding</enum>
+                                                                </property>
+                                                                <property name="sizeHint">
+                                                                    <size>
+                                                                        <width>21</width>
+                                                                        <height>20</height>
+                                                                    </size>
+                                                                </property>
+                                                            </spacer>
+                                                            <widget class="QLayoutWidget">
+                                                                <property name="name">
+                                                                    <cstring>layout8</cstring>
+                                                                </property>
+                                                                <hbox>
+                                                                    <property name="name">
+                                                                        <cstring>unnamed</cstring>
+                                                                    </property>
+                                                                    <widget class="QLabel">
+                                                                        <property name="name">
+                                                                            <cstring>textLabel2_3</cstring>
+                                                                        </property>
+                                                                        <property name="text">
+                                                                            <string>Port</string>
+                                                                        </property>
+                                                                    </widget>
+                                                                    <widget class="KRestrictedLine">
+                                                                        <property name="name">
+                                                                            <cstring>dccPort</cstring>
+                                                                        </property>
+                                                                        <property name="text">
+                                                                            <string>1550</string>
+                                                                        </property>
+                                                                    </widget>
+                                                                </hbox>
+                                                            </widget>
+                                                        </hbox>
+                                                    </widget>
+                                                    <spacer>
+                                                        <property name="name">
+                                                            <cstring>spacer8</cstring>
+                                                        </property>
+                                                        <property name="orientation">
+                                                            <enum>Horizontal</enum>
+                                                        </property>
+                                                        <property name="sizeType">
+                                                            <enum>Expanding</enum>
+                                                        </property>
+                                                        <property name="sizeHint">
+                                                            <size>
+                                                                <width>141</width>
+                                                                <height>20</height>
+                                                            </size>
+                                                        </property>
+                                                    </spacer>
+                                                </hbox>
+                                            </widget>
+                                            <widget class="QLayoutWidget">
+                                                <property name="name">
+                                                    <cstring>layout10</cstring>
+                                                </property>
+                                                <hbox>
+                                                    <property name="name">
+                                                        <cstring>unnamed</cstring>
+                                                    </property>
+                                                    <spacer>
+                                                        <property name="name">
+                                                            <cstring>spacer5</cstring>
+                                                        </property>
+                                                        <property name="orientation">
+                                                            <enum>Horizontal</enum>
+                                                        </property>
+                                                        <property name="sizeType">
+                                                            <enum>Expanding</enum>
+                                                        </property>
+                                                        <property name="sizeHint">
+                                                            <size>
+                                                                <width>471</width>
+                                                                <height>20</height>
+                                                            </size>
+                                                        </property>
+                                                    </spacer>
+                                                    <widget class="QPushButton">
+                                                        <property name="name">
+                                                            <cstring>dccSetDefaults</cstring>
+                                                        </property>
+                                                        <property name="text">
+                                                            <string>return to defaults</string>
+                                                        </property>
+                                                    </widget>
+                                                    <spacer>
+                                                        <property name="name">
+                                                            <cstring>spacer6</cstring>
+                                                        </property>
+                                                        <property name="orientation">
+                                                            <enum>Horizontal</enum>
+                                                        </property>
+                                                        <property name="sizeType">
+                                                            <enum>Expanding</enum>
+                                                        </property>
+                                                        <property name="sizeHint">
+                                                            <size>
+                                                                <width>31</width>
+                                                                <height>20</height>
+                                                            </size>
+                                                        </property>
+                                                    </spacer>
+                                                </hbox>
+                                            </widget>
+                                        </vbox>
+                                    </widget>
+                                </grid>
+                            </widget>
+                            <spacer>
+                                <property name="name">
+                                    <cstring>spacer9</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Vertical</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>180</height>
+                                    </size>
+                                </property>
+                            </spacer>
                         </vbox>
                     </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer16</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>21</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </vbox>
+                </grid>
             </widget>
         </widget>
     </vbox>
@@ -482,5 +771,7 @@
     <includehint>klineedit.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>klineedit.h</includehint>
+    <includehint>krestrictedline.h</includehint>
+    <includehint>krestrictedline.h</includehint>
 </includehints>
 </UI>
