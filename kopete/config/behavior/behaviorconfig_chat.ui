@@ -189,7 +189,7 @@
                         <cstring>truncateContactNameEnabled</cstring>
                     </property>
                     <property name="text">
-                        <string>Truncate contact name with more characters than</string>
+                        <string>Truncate contact name with more characters than:</string>
                     </property>
                 </widget>
                 <spacer>

@@ -177,7 +177,7 @@
                         <cstring>mAutoHide</cstring>
                     </property>
                     <property name="text">
-                        <string>A&amp;uto-Hide Contact List</string>
+                        <string>A&amp;uto-hide contact list</string>
                     </property>
                 </widget>
                 <spacer row="1" column="0">
@@ -260,7 +260,7 @@
                         <cstring>mEditTooltips</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Tooltip Contents...</string>
+                        <string>Change &amp;Tooltip Contents...</string>
                     </property>
                 </widget>
                 <spacer>

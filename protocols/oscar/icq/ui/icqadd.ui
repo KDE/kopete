@@ -109,9 +109,6 @@
                     <property name="text">
                         <string>&amp;Search</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
-                    </property>
                     <property name="iconSet">
                         <iconset>image0</iconset>
                     </property>

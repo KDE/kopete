@@ -20,7 +20,7 @@
             <cstring>page</cstring>
         </property>
         <attribute name="title">
-            <string>Export contacts to address book</string>
+            <string>Export Contacts to Address Book</string>
         </attribute>
         <vbox>
             <property name="name">
@@ -58,7 +58,7 @@
                     </sizepolicy>
                 </property>
                 <property name="title">
-                    <string>&amp;Select address book:</string>
+                    <string>&amp;Select Address Book</string>
                 </property>
                 <widget class="QListBox">
                     <property name="name">
@@ -89,7 +89,7 @@
             <cstring>WizardPage</cstring>
         </property>
         <attribute name="title">
-            <string>Select contacts to export</string>
+            <string>Select Contacts to Export</string>
         </attribute>
         <vbox>
             <property name="name">
@@ -108,7 +108,7 @@
                     </sizepolicy>
                 </property>
                 <property name="text">
-                    <string>Selected contacts will be added to the KDE address book</string>
+                    <string>Selected contacts will be added to the KDE address book.</string>
                 </property>
             </widget>
             <widget class="QListView">
@@ -142,9 +142,6 @@
                         <property name="text">
                             <string>Select &amp;All</string>
                         </property>
-                        <property name="accel">
-                            <string>Alt+A</string>
-                        </property>
                     </widget>
                     <widget class="QPushButton">
                         <property name="name">
@@ -152,9 +149,6 @@
                         </property>
                         <property name="text">
                             <string>&amp;Deselect All</string>
-                        </property>
-                        <property name="accel">
-                            <string>Alt+D</string>
                         </property>
                     </widget>
                     <spacer>

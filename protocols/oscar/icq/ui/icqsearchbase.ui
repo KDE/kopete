@@ -12,9 +12,6 @@
             <height>394</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>ICQSearchBase</string>
-    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -409,9 +406,6 @@
             </property>
             <property name="text">
                 <string>&amp;Close</string>
-            </property>
-            <property name="accel">
-                <string>Alt+C</string>
             </property>
             <property name="stdItem" stdset="0">
                 <number>13</number>
