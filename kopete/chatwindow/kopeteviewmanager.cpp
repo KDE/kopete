@@ -74,6 +74,10 @@ KopeteViewManager::KopeteViewManager (QObject *parent, const char *name, const Q
 	connect( KopeteMessageManagerFactory::factory() , SIGNAL ( getActiveView(KopeteView*&  ) ) ,
 		this, SLOT (slotGetActiveView(KopeteView*&)));
 
+	connect( KopeteMessageManagerFactory::factory() , SIGNAL( readMessage() ),
+		this, SLOT ( nextEvent() ) );
+
+
 	slotPrefsChanged();
 }
 

@@ -170,6 +170,10 @@ signals:
 	 */
 	void newEvent(KopeteEvent *);
 
+	/**
+	 * The global shortcut for sending message has been used
+	 */
+	void readMessage();
 
 	/*
 	 * obsolete temporary method used by the spellchecking plugin (ugly workaround)

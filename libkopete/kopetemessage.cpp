@@ -404,7 +404,7 @@ QString KopeteMessage::unescape( const QString &xml )
 	QString data = xml;
 
 	data.replace( QRegExp( QString::fromLatin1( "< *img[^>]*title=\"([^>\"]*)\"[^>]*>" ) , false ), QString::fromLatin1( "\\1" ) );  //escape smeleys, return to the original code
-	data.replace( QRegExp( QString::fromLatin1( "< *p[^>/]*/ *>" ) , false ), QString::fromLatin1( "\n" ) );
+	data.replace( QRegExp( QString::fromLatin1( "< */ *p[^>]*>" ) , false ), QString::fromLatin1( "\n" ) );
 	data.replace( QRegExp( QString::fromLatin1( "< *br */? *>" ) , false ), QString::fromLatin1( "\n" ) );
 	data.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
 

@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Type=Service
 Name=Kopete ChatWindow
-ServiceTypes=Kopete/Plugin
+ServiceTypes=Kopete/UI
 X-KDE-Library=kopete_chatwindow
 X-Kopete-Plugin-Id=chatwindow
 X-Kopete-Author=Kopete team
