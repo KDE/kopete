@@ -50,7 +50,7 @@ class JabberContact:public KopeteContact
 
 public:
 	JabberContact (QString userid, QString name, QStringList groups,
-				   JabberAccount * protocol, KopeteMetaContact * mc, QString identity, const QString & icon = QString::null);
+				   JabberAccount * protocol, KopeteMetaContact * mc);
 
 	/********************************************************************
 	 *

@@ -72,7 +72,7 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 
 	/* Create a new JabberContact for this account, to be returned from
 	 * myself(). */
-	myContact = new JabberContact (accountId, accountId.section('@', 0, 0), QStringList (), this, 0L, accountId, "jabber_offline");
+	myContact = new JabberContact (accountId, accountId.section('@', 0, 0), QStringList (), this, 0L);
 
 	jabberClient = 0L;
 	registerFlag = 0;
@@ -772,7 +772,7 @@ void JabberAccount::sendPresenceToNode (const KopeteOnlineStatus & pres, const Q
 JabberContact *JabberAccount::createContact (const QString & jid, const QString & alias, const QStringList & groups, KopeteMetaContact * metaContact)
 {
 
-	JabberContact *jc = new JabberContact (jid, alias, groups, this, metaContact, accountId());
+	JabberContact *jc = new JabberContact (jid, alias, groups, this, metaContact);
 
 	return jc;
 
@@ -1079,7 +1079,7 @@ void JabberAccount::slotGroupChatJoined (const Jabber::Jid & jid)
 	mc->setTemporary (true);
 
 	/* The group chat object basically works like a JabberContact. */
-	JabberGroupChat *groupChat = new JabberGroupChat (jid, QStringList (), this, mc, accountId ());
+	JabberGroupChat *groupChat = new JabberGroupChat (jid, QStringList (), this, mc);
 
 	/* Add the group chat class to the meta contact. */
 	mc->addContact (groupChat);

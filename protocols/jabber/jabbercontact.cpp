@@ -48,8 +48,8 @@
 /**
  * JabberContact constructor
  */
-JabberContact::JabberContact (QString userId, QString nickname, QStringList groups, JabberAccount * p, KopeteMetaContact * mc, QString /* identity */, const QString & icon)
-				: KopeteContact (p, userId.lower(), mc, icon)
+JabberContact::JabberContact (QString userId, QString nickname, QStringList groups, JabberAccount * p, KopeteMetaContact * mc)
+				: KopeteContact (p, userId.lower(), mc)
 {
 
 	parentMetaContact = mc;

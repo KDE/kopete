@@ -30,7 +30,7 @@ class JabberGroupChat:public JabberContact
 {
 
   public:
-	JabberGroupChat (Jabber::Jid room, QStringList groups, JabberAccount * p, KopeteMetaContact * mc, QString identity);
+	JabberGroupChat (Jabber::Jid room, QStringList groups, JabberAccount * p, KopeteMetaContact * mc);
 	~JabberGroupChat ();
 
 	void updatePresence (const Jabber::Jid & jid, const Jabber::Status & status);
