@@ -184,12 +184,17 @@ void MSNProtocol::Connect()
 	m_msnId      = KGlobal::config()->readEntry( "UserID", "" );
 	m_password   = KGlobal::config()->readEntry( "Password", "" );
 
-	if(m_msnId.isEmpty())
-	{        
-		int r=KMessageBox::warningContinueCancel(kopeteapp->mainWindow(),
-			i18n("<qt>You have not yet specified a username for MSN, please do so in the Kopete configuration<br>Do you want to configure now?</qt>"),
-			i18n("MSN not yet configured"), KGuiItem(i18n("C&onfigure")));
-		if(r!=KMessageBox::Cancel)
+	if( m_msnId.isEmpty() )
+	{
+		int r = KMessageBox::warningContinueCancel(kopeteapp->mainWindow(),
+			i18n("<qt>You have not yet specified a username for MSN. "
+				"You can specify your MSN settings in the Kopete "
+				"configuration dialog<br>"
+				"Do you want to configure MSN now?</qt>" ),
+			i18n( "MSN plugin not configured yet" ),
+			KGuiItem( i18n( "C&onfigure" ), "configure" ) );
+
+		if( r != KMessageBox::Cancel )
 		{
 			m_configModule->activate();
 		}
