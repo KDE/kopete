@@ -109,6 +109,8 @@ void MSNAccount::loaded()
 	QString publicName= pluginData(protocol(),QString::fromLatin1("displayName"));
 	if(!publicName.isNull())
 		m_myself->setDisplayName(publicName);
+	m_blockList=QStringList::split(',' ,pluginData(protocol(),QString::fromLatin1("blockList")) );
+	m_allowList=QStringList::split(',' ,pluginData(protocol(),QString::fromLatin1("allowList")) );
 }
 
 void MSNAccount::setAway( bool away )
@@ -792,14 +794,20 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 		if( contacts()[ handle ] )
 			static_cast<MSNContact *>( contacts()[ handle ] )->setBlocked( true );
 		if( !m_blockList.contains( handle ) )
+		{
 			m_blockList.append( handle );
+			setPluginData(protocol(),QString::fromLatin1("blockList") , m_blockList.join(",") ) ;
+		}
 	}
 	else if( list == "AL" )
 	{
 		if( contacts()[ handle ] )
 			static_cast<MSNContact *>( contacts()[ handle ] )->setAllowed( true );
 		if( !m_allowList.contains( handle ) )
+		{
 			m_allowList.append( handle );
+			setPluginData(protocol(),QString::fromLatin1("allowList") , m_allowList.join(",") ) ;
+		}
 	}
 	else if( list == "RL" )
 	{
@@ -831,6 +839,7 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 	if( list == "BL" )
 	{
 		m_blockList.remove(handle);
+		setPluginData(protocol(),QString::fromLatin1("blockList") , m_blockList.join(",") ) ;
 		if(!m_allowList.contains(handle))
 			notifySocket()->addContact( handle, handle, 0, MSNProtocol::AL );
 	}
@@ -838,6 +847,7 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 	if( list == "AL" )
 	{
 		m_allowList.remove(handle);
+		setPluginData(protocol(),QString::fromLatin1("allowList") , m_allowList.join(",") ) ;
 		if(!m_blockList.contains(handle))
 			notifySocket()->addContact( handle, handle, 0, MSNProtocol::BL );
 	}

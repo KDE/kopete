@@ -327,6 +327,11 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			emit newContactList();  // remove all contacts datas, msn sends a new contact list
 			m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 0, 0 ) );
 		}
+		else //we have already the contactlist
+		{
+			//recieve even the grouplist, since it is not correctly saved
+			sendCommand( "LSG" );
+		}
 
 		// set the status
 		setStatus( m_newstatus );
