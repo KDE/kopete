@@ -9,7 +9,6 @@ TODO for Jabber:
 - support all message types (chat/ticker/etc)
 - do a std translation of resource.status().show() to JabberProtocol::Presence
 - verify sane state of a) metacontact handling (adding to list) b) contact handling (tracking changes)
-- in JabberAccount::disconnect(), the iteration about the contacts to set the offline should be obsolete and incorrect
 - JabberAccount::slotGoAway() etc. don't use the global away dialog
 - should the away dialog pop up when going away using the account context menu?
 - verify FIXMEs in JabberContact
