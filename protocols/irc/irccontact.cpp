@@ -153,15 +153,17 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 			{
 				if( !proc )
 				{
+					proc = new QProcess( QString::fromLatin1("sh"), this);
+					proc->addArgument( QString::fromLatin1("-c") );
 					if( *commandLine.at(1) == QString::fromLatin1("-o") )
 					{
 						execDir = KopeteMessage::Outbound;
-						proc = new QProcess( QStringList::split( whiteSpace, commandArgs.section( whiteSpace, 1 ) ) );
+						proc->addArgument( commandArgs.section( whiteSpace, 1 ) );
 					}
 					else
 					{
 						execDir = KopeteMessage::Internal;
-						proc = new QProcess( QStringList::split( whiteSpace, commandArgs ) );
+						proc->addArgument( commandArgs );
 					}
 					connect(proc, SIGNAL(readyReadStdout()), this, SLOT(slotExecReturnedData()));
 					connect(proc, SIGNAL(readyReadStderr()), this, SLOT(slotExecReturnedData()));
