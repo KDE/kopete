@@ -18,20 +18,28 @@
 
 #include "kopetemessage.moc"
 
-KopeteMessage::KopeteMessage(QString from, QString to, QString body, MessageDirection direction) {
+KopeteMessage::KopeteMessage(QString from, QString to, QString body, MessageDirection direction, QColor fg, QColor bg, QFont fnt)
+{
 	mTimestamp = QDateTime::currentDateTime();
 	mFrom = from;
 	mTo = to;
 	mBody = body;
 	mDirection = direction;
+	mBg = bg;
+	mFg = fg;
+	mFont = fnt;
 }
 
-KopeteMessage::KopeteMessage(QDateTime timestamp, QString from, QString to, QString body, MessageDirection direction) {
+KopeteMessage::KopeteMessage(QDateTime timestamp, QString from, QString to, QString body, MessageDirection direction, QColor fg, QColor bg, QFont fnt)
+{
 	mTimestamp = timestamp;
 	mFrom = from;
 	mTo = to;
 	mBody = body;
 	mDirection = direction;
+	mBg = bg;
+	mFg = fg;
+	mFont = fnt;
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -20,6 +20,8 @@
 #include <qobject.h>
 #include <qdatetime.h>
 #include <qstring.h>
+#include <qfont.h>
+#include <qcolor.h>
 
 class KopeteMessage : public QObject
 {
@@ -36,14 +38,16 @@ public:
 		Please note that body -must- be valid HTML, so all HTML control
 		characters must be escaped.
 	*/
-	KopeteMessage(QString from, QString to, QString body, MessageDirection direction);
-	KopeteMessage(QDateTime timestamp, QString from, QString to, QString body, MessageDirection direction);
+	KopeteMessage(QString from, QString to, QString body, MessageDirection direction, QColor fg = QColor(), QColor bg = QColor(), QFont fnt = QFont() );
+	KopeteMessage(QDateTime timestamp, QString from, QString to, QString body, MessageDirection direction, QColor fg = QColor(), QColor bg = QColor(), QFont fnt = QFont() );
 
 	QDateTime timestamp() const { return mTimestamp; }
 
 	QString from() const { return mFrom; }
 	QString to() const { return mTo; }
-
+	QColor fg() const { return mFg; }
+	QColor bg() const { return mBg; }
+	QFont font() const { return mFont; }
 	QString body() const { return mBody; }
 
 	MessageDirection direction() const { return mDirection; }
@@ -54,6 +58,9 @@ protected:
 	QString mFrom;
 	QString mTo;
 	QString mBody;
+	QFont mFont;
+	QColor mFg;
+	QColor mBg;
 
 	MessageDirection mDirection;
 };

@@ -24,7 +24,6 @@
 
 #include <kconfig.h>
 #include <kdebug.h>
-#include <kcrash.h>
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <kstandarddirs.h>
@@ -244,14 +243,14 @@ QString Kopete::parseEmoticons( QString message )
 
 QString Kopete::parseHTML( QString message )
 {
-	QString text, result, enc;
+	QString text, result;
 	QRegExp regExp;
 	uint len = message.length();
 	int matchLen;
+	uint lastReplacement = 0;
 	text = message;
 
-	uint lastReplacement = 0;
-	for ( uint idx=0; idx<len; idx++)
+	for ( uint idx=0; idx<len; idx++ )
 	{
 		switch( text[idx].latin1() )
 		{
@@ -467,7 +466,7 @@ QString Kopete::parseHTML( QString message )
 				if ( regExp.search(text,idx) == (int)idx )
 				{
 					matchLen = regExp.matchedLength();
-					if (( matchLen > 2 ) &&
+					if ((matchLen>2) &&
 					((idx==0)||text[idx-1].isSpace()||(text[idx-1] == '(')) &&
 					((idx+matchLen==len)||text[idx+matchLen].isSpace()||(text[idx+matchLen]==',')||
 					(text[idx+matchLen]=='.')||(text[idx+matchLen]==')')))
@@ -494,6 +493,7 @@ QString Kopete::parseHTML( QString message )
 			}
 			default:
 				result += text[idx];
+				break;
 		}
 	}
 	return result;
