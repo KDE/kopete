@@ -426,9 +426,9 @@ void ChatView::createMembersList(void)
 		membersDock->setWidget(membersList);
 
 		KopeteContactPtrList members = m_manager->members();
-		membersStatus = static_cast<MembersListPolicy>(
+		membersStatus = members.first()->metaContact() ?  static_cast<MembersListPolicy>(
 			members.first()->metaContact()->pluginData( m_manager->protocol(),
-				QString::fromLatin1("MembersListPolicy") ).toInt() );
+				QString::fromLatin1("MembersListPolicy") ).toInt() )        : Smart;
 
 		if( membersStatus == Smart )
 			visibleMembers = ( memberContactMap.count() > 2 );
@@ -451,7 +451,8 @@ void ChatView::toggleMembersVisibility()
 		membersStatus = visibleMembers ? Visible : Hidden;
 		placeMembersList( membersDockPosition );
 		KopeteContactPtrList members = m_manager->members();
-		members.first()->metaContact()->setPluginData( m_manager->protocol(),
+		if(members.first()->metaContact())
+			members.first()->metaContact()->setPluginData( m_manager->protocol(),
 				QString::fromLatin1("MembersListPolicy"), QString::number(membersStatus) );
 		refreshView();
 	}
