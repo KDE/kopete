@@ -227,8 +227,8 @@ void KopeteSystemTray::addBalloon()
 	if( !m_balloon && KopetePrefs::prefs()->showTray() && KopetePrefs::prefs()->balloonNotify() && !mEventList.isEmpty() )
 	{
 		KopeteMessage msg = mEventList.first()->message();
-		if( (!msg.from()->account()->isAway() || KopetePrefs::prefs()->soundIfAway()) &&
-			msg.from() )
+
+		if( msg.from() )  
 		{
 			QString msgText = msg.plainBody();
 			kdDebug(14010) << k_funcinfo << "msgText=" << msgText << endl;
