@@ -14,7 +14,7 @@
     *                                                                       *
     *************************************************************************
 */
-
+#include <tgmath.h>
 #include <qdatetime.h>
 #include <qfont.h>
 #include <qstylesheet.h>
@@ -40,6 +40,8 @@ public:
 	KopeteContactPtrList to;
 	QColor bgColor;
 	QColor fgColor;
+	QColor contactColor;
+
 	QDateTime timeStamp;
 	QFont font;
 	QString body;
@@ -125,12 +127,26 @@ void KopeteMessage::setFg( const QColor &color )
 {
 	detach();
 	d->fgColor = color;
+	compareColors( d->fgColor, d->bgColor );
 }
 
 void KopeteMessage::setBg( const QColor &color )
 {
 	detach();
 	d->bgColor = color;
+	compareColors( d->fgColor, d->bgColor );
+	compareColors( d->contactColor, d->bgColor );
+}
+
+void KopeteMessage::compareColors( QColor &colorFg, QColor &colorBg )
+{
+	int h1, s1, v1, h2, s2, v2, vDiff;
+	colorFg.hsv( &h1, &s1, &v1 );
+	colorBg.hsv( &h2, &s2, &v2 );
+	vDiff = v1 - v2;
+
+	if( h1 == s1 && h2 == s2 && ( abs(vDiff) <= 150 ) )
+		colorFg = QColor( h2, s2, (v1 + 127) % 255, QColor::Hsv );
 }
 
 void KopeteMessage::setFont( const QFont &font )
@@ -176,6 +192,9 @@ void KopeteMessage::setBody( const QString &body, MessageFormat f )
 void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from, const KopeteContactPtrList &to,
 	const QString &body, const QString &subject, MessageDirection direction, MessageFormat f, MessageType type )
 {
+	static QMap<QString,QColor> colorMap;
+	static int lastColor;
+
 	d->refCount = 1;
 	d->timeStamp = timeStamp;
 	d->from = from;
@@ -189,6 +208,59 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 	d->bgOverride = false;
 	d->type = type;
 	d->highlighted = false;
+
+	if( from )
+	{
+		QString fromName = d->from->metaContact() ? d->from->metaContact()->displayName() : d->from->displayName();
+
+		if( !colorMap.contains( fromName ) )
+		{
+			QColor newColor;
+			switch( (lastColor++) % 12 )
+			{
+				case 0:
+					newColor = Qt::red;
+					break;
+				case 1:
+					newColor =  Qt::green;
+					break;
+				case 2:
+					newColor =  Qt::blue;
+					break;
+				case 3:
+					newColor =  Qt::cyan;
+					break;
+				case 4:
+					newColor =  Qt::magenta;
+					break;
+				case 5:
+					newColor =  Qt::yellow;
+					break;
+				case 6:
+					newColor =  Qt::darkRed;
+					break;
+				case 7:
+					newColor =  Qt::darkGreen;
+					break;
+				case 8:
+					newColor =  Qt::darkBlue;
+					break;
+				case 9:
+					newColor =  Qt::darkCyan;
+					break;
+				case 10:
+					newColor =  Qt::darkMagenta;
+					break;
+				case 11:
+					newColor =  Qt::darkYellow;
+					break;
+			}
+
+			colorMap.insert( fromName, newColor );
+		}
+
+		d->contactColor = colorMap[ fromName ];
+	}
 }
 
 QString KopeteMessage::plainBody() const
@@ -265,6 +337,7 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 {
 	QString message;
 	bool F_first = true;
+	bool L_first = true;
 	unsigned int f = 0;
 
 	do
@@ -313,6 +386,19 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 
 						message += QString::fromLatin1( "</font>" );
 						F_first=true;
+					}
+					break;
+
+				case 'L':  //insert Contact color
+					if( L_first ) // <font>....
+					{
+						message += QString::fromLatin1( "<font color=\"%1\">" ).arg( d->contactColor.name() );
+						L_first = false;
+					}
+					else            // </font>
+					{
+						message += QString::fromLatin1( "</font>" );
+						L_first = true;
 					}
 					break;
 

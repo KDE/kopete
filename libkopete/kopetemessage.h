@@ -271,6 +271,13 @@ private:
 	void detach();
 
 	KopeteMessagePrivate *d;
+
+	/**
+	 * Compares colors. If the colors are too simmilar (they are deemed
+	 * not be readable on top of eachother), then colorFg is adjusted to become
+	 * readable.
+	 */
+	void compareColors( QColor &colorFg, QColor &colorBg );
 };
 
 #endif
