@@ -30,6 +30,7 @@ MSNAuthSocket::MSNAuthSocket( const QString &msnId , QObject* parent) : MSNSocke
 {
 	m_msnId = msnId;
 	m_msgBoxShown = false;
+	m_badPassword=false;
 }
 
 MSNAuthSocket::~MSNAuthSocket()
@@ -60,11 +61,12 @@ void MSNAuthSocket::handleError( uint code, uint id )
 
 	case 911:
 	{
-		QString msg = i18n( "Authentication failed.\n"
+/*		QString msg = i18n( "Authentication failed.\n"
 			"Check your username and password in the "
-			"MSN Preferences dialog." );
+			"MSN Preferences dialog." );*/
+		m_badPassword=true;
 		disconnect();
-		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		//KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 		break;
 	}
 	default:

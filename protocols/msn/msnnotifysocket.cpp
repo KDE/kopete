@@ -603,10 +603,12 @@ QString MSNNotifySocket::statusToString( const KopeteOnlineStatus &status ) cons
 void MSNNotifySocket::slotDispatchClosed()
 {
 	delete m_dispatchSocket;
+	m_badPassword=m_dispatchSocket->badPassword();
 	m_dispatchSocket = 0L;
 	if(!dispatchOK)
 	{
-		KMessageBox::error( 0, i18n( "Connection failed\nTry again later." ) , i18n ("MSN Plugin") );
+		if(!badPassword())
+			KMessageBox::error( 0, i18n( "Connection failed\nTry again later." ) , i18n ("MSN Plugin") );
 		//because "this socket" isn't already connected, doing this manualy
 		emit onlineStatusChanged( Disconnected );
 		emit socketClosed(-1);

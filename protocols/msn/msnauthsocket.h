@@ -41,6 +41,7 @@ public:
 	~MSNAuthSocket();
 
 	QString msnId() { return m_msnId; }
+	bool badPassword() { return m_badPassword; }
 
 protected:
 	/**
@@ -63,6 +64,9 @@ protected:
 	 */
 	virtual void parseCommand( const QString &cmd, uint id,
 		const QString &data );
+		
+
+	bool m_badPassword;
 
 private slots:
 	void reconnect();

@@ -43,6 +43,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 	m_notifySocket = 0L;
 	m_connectstatus = MSNProtocol::protocol()->NLN;
 	m_addWizard_metaContact=0L;
+	m_badpassword=false;
 
 	// Init the myself contact
 	// FIXME: I think we should add a global self metaContact (Olivier)
@@ -142,14 +143,14 @@ void MSNAccount::connect()
 	}
 
 
-	QString passwd=getPassword();
+	QString passwd=getPassword(m_badpassword);
 	if(passwd.isNull())
 	{
 		kdDebug(14140) << "MSNAccount::connect: Abort connection (null password)"  <<endl;
 		return;
 	}
+	m_badpassword=false;
 
-	//FIXME: don't use protocol here
 	m_notifySocket = new MSNNotifySocket( this, accountId() );
 
 	QObject::connect( m_notifySocket, SIGNAL( groupAdded( const QString&, uint ) ),
@@ -441,10 +442,13 @@ void MSNAccount::slotNotifySocketClosed( int /*state*/ )
 	{
 		KMessageBox::error( qApp->mainWidget(), i18n( "Connection with the MSN server was lost unexpectedly.\nIf you are unable to reconnect, please try again later." ), i18n( "Connection lost - MSN Plugin - Kopete" ) );
 	}*/
+	m_badpassword=m_notifySocket->badPassword();
 	m_notifySocket->deleteLater();
 	m_notifySocket=0l;
 	m_myself->setOnlineStatus( MSNProtocol::protocol()->FLN );
 	m_openInboxAction->setEnabled(false);
+	if(m_badpassword)
+		connect();
 //	kdDebug(14140) << "MSNAccount::slotNotifySocketClosed - done" << endl;
 }
 

@@ -163,6 +163,8 @@ private:
 	KopeteOnlineStatus m_connectstatus;
 
 	QString m_msgHandle;
+	
+	bool m_badpassword;
 
 public: //FIXME: should be private
 	QValueList< QPair<QString,QString> > tmp_addToNewGroup;
