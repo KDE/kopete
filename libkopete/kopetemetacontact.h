@@ -3,6 +3,7 @@
 
     Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -37,6 +38,11 @@ struct KopeteMetaContactPrivate;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
+ * @author Olivier Goffart <ogoffart@tiscalinet.be>
+ *
+ * A metacontact represent a persone. This is a kind of entry to
+ * the contactlist. All information of a contact is contains into the metacontact.
+ * plugins can store data in it with all @KopetePluginData method
  */
 class KopeteMetaContact : public KopetePluginDataObject
 {
@@ -185,6 +191,8 @@ public:
 
 	/**
 	 * add or remove from top-level
+	 * @obsolete
+	 * use @ref addToGroup() with KopeteGroup::topLevel
 	 */
 	void setTopLevel( bool b = true );
 
@@ -216,6 +224,11 @@ public:
 	 *        properly :( - Martijn
 	 */
 	QString addressBookField( KopetePlugin *p, const QString &app, const QString &key ) const;
+	/**
+	 * set an adress book field
+	 *
+	 * see also @ref addressBookField()
+	 */
 	void setAddressBookField( KopetePlugin *p, const QString &app, const QString &key, const QString &value );
 
 public slots:

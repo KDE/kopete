@@ -165,19 +165,23 @@ public:
 	 */
 	long int idleTime();
 
-
-
+	/**
+	 * set go avaliable when detect activity
+	 */
+	void setGoAvailable(bool );
 	/**
 	 *  Go avaliable when detect activity
 	 */
-	void setGoAvailable(bool );
 	bool goAvailable();
 
 	/**
-	 * time befaure going automaticaly away
+	 * set the time before going automaticaly away.
 	 * set to 0 to not going away
 	 */
 	void setAutoAwayTimeout(int );
+	/**
+	 *  the time before going automaticaly away.
+	 */
 	int autoAwayTimeout();
 
 private:

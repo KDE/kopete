@@ -1,9 +1,10 @@
 /*
     kopetecontactlist.h - Kopete's Contact List backend
 
-    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -130,6 +131,10 @@ public:
 	 */
 	void addMetaContact( KopeteMetaContact *c );
 
+	/**
+	 * Remove a metacontact from the contactlist.
+	 * This method delete itself the metacontact.
+	 */
 	void removeMetaContact( KopeteMetaContact *contact );
 
 	/**
@@ -151,6 +156,7 @@ public:
 
 	/**
 	 * Remove a group
+	 * this method delete the group
 	 */
 	void removeGroup(KopeteGroup *);
 
@@ -178,7 +184,7 @@ public:
 	void messageContact( const QString &displayName, const QString &messageText = QString::null );
 
 public slots:
-//	void slotRemovedFromGroup( KopeteMetaContact *mc, const QString &from );
+
 
 	/**
 	 * Load the contact list
@@ -195,10 +201,22 @@ signals:
 	 * the newly added contacts.
 	 */
 	void metaContactAdded( KopeteMetaContact *mc );
+	/**
+	 * a metacontact has just been removed
+	 */
 	void metaContactDeleted( KopeteMetaContact *mc );
 
+	/**
+	 * A group has just been added
+	 */
 	void groupAdded( KopeteGroup * );
+	/**
+	 * A group has just been removed
+	 */
 	void groupRemoved( KopeteGroup * );
+	/**
+	 * A group has just been renamed
+	 */
 	void groupRenamed(KopeteGroup *, const QString & oldname);
 
 	/* Not used yet.... */

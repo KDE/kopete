@@ -22,6 +22,7 @@
 #include <qpainter.h>
 #include <qbitmap.h>
 #include "kopeteprotocol.h"
+#include "kopetecontact.h"
 #include <kiconloader.h>
 #include <kiconeffect.h>
 #include <kdebug.h>

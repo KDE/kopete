@@ -53,6 +53,10 @@ public:
 	 */
 	QString accountId();
 
+	/**
+	 * The account ID should be constant, don't use this method.
+	 * Reserved for expert usage, use it with care of risk
+	 */
 	void setAccountId( const QString &accountId );
 
 	/**
@@ -130,22 +134,6 @@ public:
 	const QDict<KopeteContact>& contacts();
 
 	/**
-	 * Retrieve the list of contacts for this protocol and the given meta
-	 * contact.
-	 *
-	 * The list is guaranteed to contain only contacts for this protocol,
-	 * and only for the specified meta contact, so you can safely use
-	 * static_cast to your own derived contact class if needed.
-	 *
-	 * Note that unlike the void method @ref contacts() this method doesn't
-	 * returns a reference to the dictionary, because the protocol has no
-	 * internal data structure to reference. This makes the method slower
-	 * than @ref contacts(). Generally you don't need to use this method
-	 * very often, so it shouldn't really matter in practice.
-	 */
-	//QDict<KopeteContact> contacts( KopeteMetaContact *mc );
-
-	/**
 	 * Save the account to an XML string. Only used internaly
 	 */
 	const QDomElement toXML();
@@ -202,8 +190,16 @@ public slots:
 		KopeteMetaContact *parentContact = 0L, const QString &groupName = QString::null, bool isTemporary = false) ;
 
 signals:
+	/**
+	 * The accoutId should be constant, see @ref KopeteAccount::setAccountId()
+	 */
 	void accountIdChanged();
 
+	/**
+	 * The pasword has changed. Praticaly, you shouldn't keep the password in memory, but you should
+	 * call @ref getPassword() which take care of user preferences to ask the password. Reserve this for
+	 * expert usage.
+	 */
 	void passwordChanged();
 
 protected slots:

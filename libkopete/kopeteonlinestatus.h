@@ -31,6 +31,7 @@ struct KopeteOnlineStatusPrivate;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
+ * @author Will Stephenson (icon generating code)
  *
  * KopeteOnlineStatus is a class that encapsulates all information about the
  * various online states that a protocol can be in in a single class. The

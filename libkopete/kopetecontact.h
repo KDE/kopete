@@ -3,6 +3,7 @@
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -42,6 +43,7 @@ typedef QPtrList<KopeteGroup> KopeteGroupList;
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  * @author Martijn Klingens <klingens@kde.org>
+ * @author Olivier Goffart <ogoffart@tiscalinet.be>
  *
  * This class abstracts a generic contact/buddie.
  * Use it for inserting contacts in the contact list for example.
@@ -240,8 +242,15 @@ public:
 	 */
 	virtual KopeteMessageManager * manager( bool canCreate = false );
 
+	/**
+	 * ??? what is this method?
+	 * FIXME: document
+	 */
 	const int conversations() const;
-
+	/**
+	 * ??? what is this method?
+	 * FIXME: document
+	 */
 	void setConversations( int ) const;
 
 public slots:

@@ -27,6 +27,7 @@
 #include "kopeteemoticons.h"
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
+#include "kopetecontact.h"
 #include "kopeteprefs.h"
 
 struct KopeteMessagePrivate

@@ -29,6 +29,7 @@
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
 #include "kopetecommandhandler.h"
+#include "kopetecontact.h"
 
 typedef QMap<QObject*, CommandList> PluginCommandMap;
 typedef QMap<QString,QString> CommandMap;

@@ -25,9 +25,6 @@
 #include "kopetemessagemanager.h"
 #include "kopetemessage.h"
 
-/**
- * @author Duncan Mac-Vicar Prett
- */
 class KopeteMessageManager;
 class KopeteMessage;
 class KopeteContact;
@@ -40,6 +37,7 @@ typedef QValueList<KopeteMessage>      KopeteMessageList;
 typedef QIntDict<KopeteMessageManager> KopeteMessageManagerDict;
 
 /**
+ * @author Duncan Mac-Vicar Prett
  * KopeteMessageManagerFactory is responsible for creating and tracking KopeteMessageManager
  * instances for each chat.
  */
@@ -100,6 +98,10 @@ public:
 	 */
 	void cleanSessions( KopeteProtocol *);
 
+	/**
+	 * @internal
+	 * called by the kmm itself when it gets deleted
+	 */
 	void removeSession( KopeteMessageManager *session );
 
 	/**
@@ -130,6 +132,8 @@ signals:
 	 * Plugins may connect to this signal
 	 * to manipulate the contents of the
 	 * message that is being received.
+	 *
+	 * This signal is emit before @ref aboutToDisplay()
 	 */
 	void aboutToReceive( KopeteMessage& message );
 

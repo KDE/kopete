@@ -21,15 +21,16 @@
 #include <qptrlist.h>
 #include <qstring.h>
 #include <qdom.h>
+#include <qcolor.h>
+#include <qfont.h>
+#include <qdatetime.h>
 
-#include "kopetecontact.h"
-
-typedef QPtrList<KopeteContact> KopeteContactPtrList;
-
+class KopeteContact;
 class QDateTime;
 class KopeteMessageManager;
-
 struct KopeteMessagePrivate;
+
+typedef QPtrList<KopeteContact> KopeteContactPtrList;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>

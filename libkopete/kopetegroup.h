@@ -38,6 +38,10 @@ public:
 	enum GroupType { Classic, Temporary, TopLevel};
 
 	KopeteGroup();
+	/**
+	 * Constructor: not that the constructor don't add the group automaticaly to the contactlist.
+	 * use @ref KopeteContactList::addGroup() to add it
+	 */
 	KopeteGroup(QString name, GroupType type=Classic);
 //	KopeteGroup(const KopeteGroup &);
 	~KopeteGroup();
@@ -75,8 +79,13 @@ public:
 	 */
 	bool fromXML( const QDomElement &data );
 
-
+	/**
+	 * set if the group is expended. this is saved to the xml contactlist file
+	 */
 	void setExpanded(bool in_expanded) ;
+	/**
+	 * say if the group is expended or not,
+	 */
 	bool expanded() ;
 
 	/**
@@ -90,8 +99,13 @@ public:
 	//KopeteGroup* parentGroup();
 
 
-
+	/**
+	 * a link to the toplevel group
+	 */
 	static KopeteGroup *toplevel;
+	/**
+	 * a ling to the temporary group
+	 */
 	static KopeteGroup *temporary;
 
 signals:

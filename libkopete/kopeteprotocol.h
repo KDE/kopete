@@ -3,7 +3,7 @@
 
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
-
+    Copyright (c) 2002-2003 by Olivier Goffart  <ogoffart@tiscalinet.be>
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -36,6 +36,8 @@ class KopeteAccount;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
+ * @author Martijn Klingens   <klingens@kde.org>
+ * @author Olivier Goffart  <ogoffart@tiscalinet.be>
  */
 class KopeteProtocol : public KopetePlugin
 {

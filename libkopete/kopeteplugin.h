@@ -23,19 +23,18 @@
 #include <qstringlist.h>
 
 #include <dom/dom_node.h>
-#include "kopetemessage.h"
 
 class KopeteMetaContact;
 class KopeteMessageManager;
 class KActionCollection;
 class KMainWindow;
+class KopeteMessage;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  *
  * KopetePlugin is the base class for all Kopete plugins, and can implement
- * virtually anything you like. Currently not the full Kopete API allows it
- * to have plugins hooked into it, but that will hopefully change soon.
+ * virtually anything you like.
  */
 class KopetePlugin : public QObject
 {
@@ -45,6 +44,10 @@ public:
 	KopetePlugin( QObject *parent = 0L, const char *name = 0L );
 	virtual ~KopetePlugin();
 
+	/**
+	 * return the plugin id. this is paraticaly the name of the class.
+	 * see @ref QObject::className()
+	 */
 	QString pluginId() const;
 
 	/**
@@ -83,19 +86,25 @@ public:
 	/**
 	 * Returns a set of custom menu items for the meta contact's context menu
 	 */
-	virtual KActionCollection *customContextMenuActions(KopeteMetaContact*) { return 0l; };
+	virtual KActionCollection *customContextMenuActions(KopeteMetaContact*) ;
+
 
 	/**
 	 * Returns a set of action items for the chatWindows
 	 */
-	virtual KActionCollection *customChatActions(KopeteMessageManager*) { return 0l; };
+	virtual KActionCollection *customChatActions(KopeteMessageManager*) ;
 
 	/**
 	 * Returns a set of action items to be shown on chat window toolbars
 	 */
-	virtual KActionCollection *customToolbarActions() { return 0L; };
+	virtual KActionCollection *customToolbarActions();
 
-	virtual KActionCollection *customChatWindowPopupActions( const KopeteMessage &, DOM::Node & ) { return 0L; };
+
+	/**
+	 * The user right-click on the chatwindow
+	 */
+	virtual KActionCollection *customChatWindowPopupActions( const KopeteMessage &, DOM::Node & ) ;
+
 
 	/**
 	 * Get the name of the icon for this plugin. The icon name is taken from the
@@ -117,7 +126,7 @@ public:
 
 public slots:
 	/**
-	 * deserialize() does the opposite of serialize() and tells the plugin
+	 * deserialize() and tells the plugin
 	 * to apply the previously stored data again.
 	 * This method is also responsible for retrieving the settings from the
 	 * address book. Settings that were registered can be retrieved with

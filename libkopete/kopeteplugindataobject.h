@@ -45,7 +45,8 @@ public:
 	 * Note that protocol plugins usually shouldn't use this method, but
 	 * reimplement @ref KopeteContact::serialize() instead. This method
 	 * is called by @ref KopeteProtocol for those classes.
-	 * It is fine to call this method from non-protocol plugins.
+	 * You maybe should use the other @ref setPluginData function in your plugin
+	 * WARNING: this errase all old data stored for this object.
 	 */
 	void setPluginData( KopetePlugin *p, const QMap<QString, QString> &value );
 
@@ -61,8 +62,9 @@ public:
 	 * Convenience method to store or change only a single field of the
 	 * plugin data. As with the other @ref setPluginData() method, protocols
 	 * are advised not to use this method and reimplement
-	 * @ref KopeteContact::serialize() instead. This method is meant for use
-	 * by non-protocol plugins.
+	 * @ref KopeteContact::serialize() instead.
+	 *
+	 * Note that it is quite useless to add date after the last saving to the file.
 	 */
 	void setPluginData( KopetePlugin *p, const QString &key, const QString &value );
 
@@ -70,8 +72,8 @@ public:
 	 * Convenience method to retrieve only a single field from the plugin
 	 * data. See @ref setPluginData().
 	 *
-	 * Note that calling this method for protocol plugins that use the
-	 * @ref KopeteContact::serialize() API may yield unexpected results.
+	 * Note that date are accessible only after the load from the XML file.
+	 * Take care to don't call this function before (example, from the constructor)
 	 */
 	QString pluginData( KopetePlugin *p, const QString &key ) const;
 

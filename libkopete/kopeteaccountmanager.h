@@ -69,6 +69,9 @@ public:
 	 */
 	QDict<KopeteAccount> accounts( const KopeteProtocol *p );
 
+	/**
+	 * Return the account asked
+	 */
 	KopeteAccount* findAccount( const QString &protocolId, const QString &accountId );
 
 public slots:

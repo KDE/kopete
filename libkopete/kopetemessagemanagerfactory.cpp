@@ -17,6 +17,7 @@
 #include "kopetemessagemanagerfactory.h"
 
 #include <kapplication.h>
+#include "kopetecontact.h"
 
 
 #include <kdebug.h>
