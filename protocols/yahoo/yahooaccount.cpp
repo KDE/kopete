@@ -86,8 +86,6 @@ YahooAccount::~YahooAccount()
 
 void YahooAccount::slotGoStatus( int status, const QString &awayMessage)
 {
-	kdDebug(14180) << k_funcinfo << endl;
-
 	if( !isConnected() )
 	{
 		connect( m_protocol->statusFromYahoo( status ) );
