@@ -244,8 +244,8 @@ void KopeteEmailWindow::initActions(void)
 
 	d->chatSend = new KAction( i18n( "&Send Message" ), QString::fromLatin1( "mail_send" ), 0,
 		this, SLOT( sendMessage() ), coll, "chat_send" );
-	//Default to "send" shortcut as used by KMail and KNode
-	d->chatSend->setShortcut( QKeySequence( CTRL + Key_Return ) );
+	//Default to 'Return' for sending messages
+	d->chatSend->setShortcut( QKeySequence( Key_Return ) );
 	d->chatSend->setEnabled( false );
 
 	KStdAction::quit ( this, SLOT( slotCloseView() ), coll );
