@@ -38,11 +38,6 @@ class KHTMLPart;
 class KHTMLView;
 class KRootPixmap;
 
-#include <kdeversion.h>
-#if KDE_IS_VERSION(3,1,90)
-#else
-	#define KTabWidget KopeteTabWidget
-#endif
 
 class KopeteChatWindow;
 class KTabWidget;

@@ -18,11 +18,6 @@
 #ifndef KOPETECHATWINDOW_H
 #define KOPETECHATWINDOW_H
 
-#if KDE_IS_VERSION(3,1,90)
-#else
-	#define KTabWidget KopeteTabWidget
-#endif
-
 #include <kparts/mainwindow.h>
 #include <qmovie.h>
 #include "kopetecontact.h"

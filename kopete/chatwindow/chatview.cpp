@@ -55,11 +55,7 @@
 #include "kopetexsl.h"
 #include "kopeteaccount.h"
 
-#if KDE_IS_VERSION(3,1,90)
-	#include <ktabwidget.h>
-#else
-	#include "kopetetabwidget.cpp"
-#endif
+#include <ktabwidget.h>
 
 ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	 : KDockMainWindow( 0L, name, 0L ), KopeteView( mgr ), editpart(0)
