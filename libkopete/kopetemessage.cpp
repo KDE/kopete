@@ -306,14 +306,19 @@ QString Kopete::Message::parsedBody() const
 	else
 	{
 		QStringList member_nicks;
-		ContactPtrList members = manager()->members();
+		ContactPtrList members;
 		
-		for( Kopete::Contact* c = members.first() ; c ; c = members.next() )
+		if( manager() )
 		{
-			member_nicks += c->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+			members = manager()->members();
+			for( Kopete::Contact* c = members.first() ; c ; c = members.next() )
+			{
+				member_nicks += c->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+			}
+			member_nicks += manager()->user()->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+			return KopeteEmoticons::parseEmoticons(parseLinks(escapedBody(), d->format), &member_nicks);
 		}
-		member_nicks += manager()->user()->property( Kopete::Global::Properties::self()->nickName() ).value().toString();
-		return KopeteEmoticons::parseEmoticons(parseLinks(escapedBody(), d->format), &member_nicks);
+		return KopeteEmoticons::parseEmoticons(parseLinks(escapedBody(), d->format));
 	}
 }
 
