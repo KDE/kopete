@@ -20,12 +20,11 @@
 #ifndef IRCCONTACT_H
 #define IRCCONTACT_H
 
-#include <qptrlist.h>
-#include <qmap.h>
-
-#include "kirc.h"
 #include "kopetecontact.h"
 #include "kopetemessage.h"
+
+#include <qptrlist.h>
+#include <qmap.h>
 
 #define MYACCOUNT ((IRCAccount*)account())
 

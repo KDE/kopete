@@ -18,11 +18,14 @@
 #ifndef IRCSERVERCONTACT_H
 #define IRCSERVERCONTACT_H
 
-#include <qvaluelist.h>
-#include <qstringlist.h>
+#include "irccontact.h"
+
+#include "kircengine.h"
 
 #include "kopetemessagemanagerfactory.h"
-#include "irccontact.h"
+
+#include <qvaluelist.h>
+#include <qstringlist.h>
 
 class KActionCollection;
 class KAction;

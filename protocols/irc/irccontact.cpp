@@ -154,6 +154,7 @@ void IRCContact::slotUserDisconnected(const QString &user, const QString &reason
 
 void IRCContact::setNickName( const QString &nickname )
 {
+	kdDebug(14120) << k_funcinfo << m_nickName << " changed to " << nickname << endl;
 	m_nickName = nickname;
 	setProperty( Kopete::Global::Properties::self()->nickName(), nickname);
 }
@@ -273,6 +274,9 @@ Kopete::Contact *IRCContact::locateUser( const QString &nick )
 
 bool IRCContact::isChatting(Kopete::MessageManager *avoid) const
 {
+	if (!MYACCOUNT)
+		return false;
+
 	QIntDict<Kopete::MessageManager> sessions = Kopete::MessageManagerFactory::factory()->sessions();
 	for (QIntDictIterator<Kopete::MessageManager> it( sessions ); it.current() ; ++it)
 	{
@@ -319,7 +323,7 @@ KopeteView *IRCContact::view()
 }
 void IRCContact::serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData )
 {
-	// write the 
+	// write the
 	addressBookData[ protocol()->addressBookIndexField() ] = ( contactId() + QChar(0xE120) + account()->accountId() );
 }
 

@@ -15,16 +15,17 @@
     *************************************************************************
 */
 
+#include "kircengine.h"
+#include "kircmessage.h"
+
+// FIXME: Remove the following dependencies.
+#include "kopetemessage.h"
+#include "ksparser.h"
+
 #include <kdebug.h>
 #include <kextsock.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-
-#include "kopetemessage.h"
-
-#include "kirc.h"
-#include "ksparser.h"
-#include "kircmessage.h"
 
 #ifndef _IRC_STRICTNESS_
 QRegExp KIRCMessage::m_IRCNumericCommand("^\\d{1,3}$");

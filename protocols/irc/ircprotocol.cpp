@@ -15,6 +15,29 @@
     *************************************************************************
 */
 
+#include "ircprotocol.h"
+
+#include "kircengine.h"
+
+#include "ksparser.h"
+#include "ircaccount.h"
+#include "ircaddcontactpage.h"
+#include "ircchannelcontact.h"
+#include "irccontactmanager.h"
+
+#include "networkconfig.h"
+#include "channellist.h"
+#include "ircguiclient.h"
+#include "ircusercontact.h"
+#include "irceditaccountwidget.h"
+#include "irctransferhandler.h"
+
+#include "kopeteaccountmanager.h"
+#include "kopetecommandhandler.h"
+#include "kopeteview.h"
+#include "kopeteuiglobal.h"
+#include "kopeteglobal.h"
+
 #include <qregexp.h>
 #include <dom/html_element.h>
 #undef KDE_NO_COMPAT
@@ -39,26 +62,6 @@
 #include <qspinbox.h>
 #include <qcheckbox.h>
 #include <qvalidator.h>
-
-#include "kopeteaccountmanager.h"
-#include "kopetecommandhandler.h"
-#include "kopeteview.h"
-#include "ksparser.h"
-#include "kopeteuiglobal.h"
-#include "kopeteglobal.h"
-
-#include "networkconfig.h"
-#include "channellist.h"
-#include "ircaccount.h"
-#include "ircaddcontactpage.h"
-#include "ircchannelcontact.h"
-#include "irccontactmanager.h"
-#include "ircguiclient.h"
-#include "ircusercontact.h"
-#include "irceditaccountwidget.h"
-#include "irctransferhandler.h"
-
-#include "ircprotocol.h"
 
 typedef KGenericFactory<IRCProtocol> IRCProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_irc, IRCProtocolFactory( "kopete_irc" )  )
@@ -731,7 +734,7 @@ void IRCProtocol::slotUpdateNetworkConfig()
 		slotUpdateNetworkHostConfig();
 		connect( netConf->hostList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkHostConfig() ) );
 	}
-	
+
 	// record the current selection
 	m_uiCurrentNetworkSelection = netConf->networkList->currentText();
 }
@@ -822,7 +825,7 @@ void IRCProtocol::slotDeleteNetwork()
 		delete net;
 		netConf->networkList->removeItem( netConf->networkList->currentItem() );
 		slotUpdateNetworkHostConfig();
-		
+
 	}
 }
 
@@ -842,11 +845,11 @@ void IRCProtocol::slotDeleteHost()
 			QListBoxItem * justAdded = netConf->hostList->findItem( entryText );
 			netConf->hostList->removeItem( netConf->hostList->index( justAdded ) );
 			connect( netConf->hostList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkHostConfig() ) );
-			
+
 			// remove from network as well
 			IRCNetwork *net = m_networks[ m_uiCurrentNetworkSelection ];
 			net->hosts.remove( host );
-			
+
 			m_hosts.remove( host->host );
 			delete host;
 		}
@@ -854,10 +857,10 @@ void IRCProtocol::slotDeleteHost()
 }
 
 void IRCProtocol::slotNewNetwork()
-{ 
+{
 	// create a new network struct
 	IRCNetwork *net = new IRCNetwork;
-	// give it the name of 'New Network' (incrementing number if needed) 
+	// give it the name of 'New Network' (incrementing number if needed)
 	QString netName = QString::fromLatin1( "New Network" );
 	if ( m_networks.find( netName ) )
 	{
@@ -902,7 +905,7 @@ void IRCProtocol::slotNewHost()
 		// add it to the network!
 		IRCNetwork *net = m_networks[ netConf->networkList->currentText() ];
 		net->hosts.append( host );
-		// add it to the gui 
+		// add it to the gui
 		QString entryText = host->host + QString::fromLatin1(":") + QString::number(host->port);
 		netConf->hostList->insertItem( entryText );
 		// select it in the gui
@@ -942,7 +945,7 @@ void IRCProtocol::slotRenameNetwork()
 				netConf->networkList->sort();
 			}
 		}
-	} 
+	}
 }
 
 void IRCProtocol::addNetwork( IRCNetwork *network )
@@ -957,7 +960,7 @@ void IRCProtocol::slotSaveNetworkConfig()
 	storeCurrentNetwork();
 	kdDebug( 14120 ) <<  k_funcinfo << m_uiCurrentHostSelection << endl;
 	storeCurrentHost();
-	
+
 	QDomDocument doc("irc-networks");
 	QDomNode root = doc.appendChild( doc.createElement("networks") );
 

@@ -15,6 +15,15 @@
     *                                                                       *
     *************************************************************************
 */
+
+#include "irceditaccountwidget.h"
+
+#include "ircaccount.h"
+#include "ircusercontact.h"
+#include "ircprotocol.h"
+
+#include "kircengine.h"
+
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <klistview.h>
@@ -33,12 +42,6 @@
 #include <qcombobox.h>
 #include <qlistbox.h>
 #include <qlineedit.h>
-
-#include "kirc.h"
-#include "ircaccount.h"
-#include "ircusercontact.h"
-#include "ircprotocol.h"
-#include "irceditaccountwidget.h"
 
 IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident, QWidget *parent, const char * )
 				  : IRCEditAccountBase(parent), KopeteEditAccountWidget(ident)
@@ -199,7 +202,7 @@ QString IRCEditAccountWidget::generateAccountId( const QString &network )
 {
 	KConfig *config = KGlobal::config();
 	QString nextId = network;
-	
+
 	uint accountNumber = 1;
 	while( config->hasGroup( QString("Account_%1_%2").arg( m_protocol->pluginId() ).arg( nextId ) ) )
 	{
@@ -232,14 +235,14 @@ Kopete::Account *IRCEditAccountWidget::apply()
 	account()->setDefaultQuit( quitMessage->text() );
 	account()->setAutoLogin( autoConnect->isChecked() );
 	// what about?:
-	// password - No time to sort out the password handling or move to KopetePasswordedAccount before 3.3 
+	// password - No time to sort out the password handling or move to KopetePasswordedAccount before 3.3
 	// remember password cb - disabling the UI for this.
-	
+
 	if ( preferSSL->isChecked () )
 		account()->setPluginData (m_protocol, "PreferSSL", "true");
 	else
 		account()->setPluginData (m_protocol, "PreferSSL", "false");
-	
+
 	QStringList cmds;
 	for( QListViewItem *i = commandList->firstChild(); i; i = i->nextSibling() )
 		cmds.append( i->text(0) );

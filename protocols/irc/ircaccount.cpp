@@ -491,8 +491,7 @@ void IRCAccount::slotDisconnected()
 {
 	triedAltNick = false;
 	mySelf()->setOnlineStatus( m_protocol->m_UserStatusOffline );
-	if (m_contactManager)
-		m_contactManager->removeFromNotifyList( m_engine->nickName() );
+	m_contactManager->removeFromNotifyList( m_engine->nickName() );
 
 //	if (m_contactManager && !autoConnect.isNull())
 //		Kopete::AccountManager::manager()->removeAccount( this );

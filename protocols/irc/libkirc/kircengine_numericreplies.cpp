@@ -18,11 +18,10 @@
     *************************************************************************
 */
 
-#include <qtimer.h>
-
+#include "kircengine.h"
 #include "kircfunctors.h"
 
-#include "kirc.h"
+#include <qtimer.h>
 
 void KIRC::registerNumericReplies()
 {

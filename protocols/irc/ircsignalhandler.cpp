@@ -16,11 +16,11 @@
     *************************************************************************
 */
 
-#include "kirc.h"
-
 #include "ircusercontact.h"
 #include "ircchannelcontact.h"
 #include "ircsignalhandler.h"
+
+#include "kircengine.h"
 
 IRCSignalHandler::IRCSignalHandler( IRCContactManager *m ) : QObject(m), manager(m)
 {

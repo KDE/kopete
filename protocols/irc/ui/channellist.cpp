@@ -3,7 +3,7 @@
 
     Copyright (c) 2004      by Jason Keirstead <jason@keirstead.org>
 
-    Kopete    (c) 2002      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -14,6 +14,10 @@
     *                                                                       *
     *************************************************************************
 */
+
+#include "channellist.h"
+
+#include "kircengine.h"
 
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -29,9 +33,6 @@
 #include <qtimer.h>
 #include <qspinbox.h>
 #include <qwhatsthis.h>
-
-#include "kirc.h"
-#include "channellist.h"
 
 class ChannelListItem : public QListViewItem
 {

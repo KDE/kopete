@@ -15,6 +15,14 @@
     *************************************************************************
 */
 
+#include "ircadd.h"
+#include "ircaddcontactpage.h"
+#include "channellist.h"
+
+#include "kircengine.h"
+
+#include "ircaccount.h"
+
 #include <qlayout.h>
 #include <qlineedit.h>
 #include <qframe.h>
@@ -22,12 +30,6 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-
-#include "ircaddcontactpage.h"
-#include "ircadd.h"
-#include "ircaccount.h"
-#include "kirc.h"
-#include "channellist.h"
 
 IRCAddContactPage::IRCAddContactPage( QWidget *parent, IRCAccount *a ) : AddContactPage(parent, 0)
 {

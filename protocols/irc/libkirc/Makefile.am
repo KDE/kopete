@@ -2,10 +2,10 @@ KDE_OPTIONS = nofinal
 noinst_LTLIBRARIES = libkirc.la
 
 libkirc_la_SOURCES = \
-	kirc.cpp \
-	kirc_commands.cpp \
-	kirc_ctcp.cpp \
-	kirc_numericreplies.cpp \
+	kircengine.cpp \
+	kircengine_commands.cpp \
+	kircengine_ctcp.cpp \
+	kircengine_numericreplies.cpp \
 	kircentity.cpp \
 	kircmessage.cpp \
 	kirctransfer.cpp \

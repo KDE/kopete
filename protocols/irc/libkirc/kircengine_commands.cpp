@@ -1,7 +1,7 @@
 /*
     kirc_commands.h - IRC Client
 
-    Copyright (c) 2003      by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2003-2004 by Michel Hermier <michel.hermier@wanadoo.fr>
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
     Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
 
@@ -17,13 +17,13 @@
     *************************************************************************
 */
 
-#include <qtimer.h>
+#include "kircengine.h"
+#include "kircfunctors.h"
 
 #include <kextsock.h>
 
-#include "kircfunctors.h"
-#include "kopetemessage.h"
-#include "kirc.h"
+#include <qtimer.h>
+
 
 void KIRC::registerCommands()
 {

@@ -24,7 +24,7 @@
 #include <kopetemetacontact.h>
 #include <kopeteview.h>
 
-#include "kirc.h"
+#include "kircengine.h"
 
 #include "ircaccount.h"
 #include "ircprotocol.h"

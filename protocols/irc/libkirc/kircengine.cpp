@@ -20,24 +20,23 @@
 #include <config.h>
 #endif
 
-//Needed for getuid / getpwuid
-#include <unistd.h>
-#include <sys/types.h>
-#include <pwd.h>
+#include "kircengine.h"
+#include "kircfunctors.h"
+#include "ksslsocket.h"
+
+#include <kconfig.h>
+#include <kdebug.h>
+#include <kextsock.h>
+#include <klocale.h>
+#include <kstandarddirs.h>
 
 #include <qtextcodec.h>
 #include <qtimer.h>
 
-#include <kdebug.h>
-#include <kconfig.h>
-#include <klocale.h>
-#include <kstandarddirs.h>
-#include <kextsock.h>
-
-#include "kircfunctors.h"
-#include "ksslsocket.h"
-
-#include "kirc.h"
+//Needed for getuid / getpwuid
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
 
 /* Please note that the regular expression "[\\r\\n]*$" is used in a QString::replace statement many times.
  * This gets rid of trailing \r\n, \r, \n, and \n\r characters.
@@ -454,5 +453,5 @@ bool KIRC::invokeCtcpCommandOfMessage(const KIRCMessage &msg, const QDict<KIRCMe
 	return false;
 }
 
-#include "kirc.moc"
+#include "kircengine.moc"
 
