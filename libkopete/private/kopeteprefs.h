@@ -99,6 +99,7 @@ public:
 	///
 	enum ContactDisplayMode { Classic, RightAligned, Detailed, Yagami, Default = Classic };
 	bool contactListIndentContacts() const { return mContactListIndentContacts; }
+	bool contactListHideVerticalScrollBar() const { return mContactListHideVerticalScrollBar; }
 	ContactDisplayMode contactListDisplayMode() const { return mContactListDisplayMode; }
 	bool contactListUseCustomFonts() const { return mContactListUseCustomFonts; }
 	QFont contactListCustomNormalFont() const { return mContactListNormalFont; }
@@ -108,7 +109,9 @@ public:
 	bool contactListAnimation() const { return mContactListAnimation; }
 	bool contactListFading() const { return mContactListFading; }
 	bool contactListFolding() const { return mContactListFolding; }
+	bool contactListMouseNavigation() const { return mContactListMouseNavigation; }
 	bool contactListAutoHide() const { return mContactListAutoHide; }
+	bool contactListAutoHideVScroll() const { return mContactListAutoHideVScroll; }
 	unsigned int contactListAutoHideTimeout() const { return mContactListAutoHideTimeout; }
 
 	bool reconnectOnDisconnect() const { return mReconnectOnDisconnect; }
@@ -154,6 +157,7 @@ public:
 	void setRememberedMessages(int);
 	void setToolTipContents(const QStringList &);
 	void setContactListIndentContacts( bool v );
+	void setContactListHideVerticalScrollBar( bool v );
 	void setContactListDisplayMode( ContactDisplayMode v );
 	void setContactListUseCustomFonts( bool v );
 	void setContactListCustomNormalFont( const QFont & v );
@@ -162,7 +166,9 @@ public:
 	void setContactListAnimation( bool );
 	void setContactListFading( bool );
 	void setContactListFolding( bool );
+	void setContactListMouseNavigation( bool );
 	void setContactListAutoHide( bool );
+	void setContactListAutoHideVScroll( bool );
 	void setContactListAutoHideTimeout( unsigned int );
 	void setReconnectOnDisconnect( bool newSetting );
 	void setTruncateContactNames( bool );
@@ -248,6 +254,7 @@ private:
 	QStringList mToolTipContents;
 
 	bool mContactListIndentContacts;
+	bool mContactListHideVerticalScrollBar;
 	ContactDisplayMode mContactListDisplayMode;
 	bool mContactListUseCustomFonts;
 	QFont mContactListNormalFont;
@@ -256,7 +263,9 @@ private:
 	bool mContactListAnimation;
 	bool mContactListFading;
 	bool mContactListFolding;
+	bool mContactListMouseNavigation;
 	bool mContactListAutoHide;
+	bool mContactListAutoHideVScroll;
 	unsigned int mContactListAutoHideTimeout;
 
 	bool mReconnectOnDisconnect;

@@ -48,19 +48,63 @@ public:
 	 */
 	void setShowTreeLines( bool bShowAsTree );
 
+	/**
+	 * Sets the smooth scrolling.
+	 */
+	void setSmoothScrolling( bool );
+
+	/**
+	 * Gets the smooth scrolling status
+	 */
+	bool smoothScrolling();
+
+	/**
+	 * Sets the update interval of smooth scrolling animation.
+	 * @param interval is the interval in ms.
+	 */
+	void setSmoothScrollingTimerInterval( int interval );
+
+	/**
+	 * Gets the current update interval.
+	 */
+	int smoothScrollingTimerInterval();
+
 public slots:
 	/**
 	 * Calls QListView::sort()
 	 */
 	void slotSort() { sort(); }
 
+	/**
+	 * The function to be triggered when the configuration is changed
+	 */
+	void slotConfigChanged();
+
 protected:
 	virtual void keyPressEvent( QKeyEvent *e );
+	/**
+	 * Invoked on each timeout of a QTimer of this listview,
+	 * This will manage the smooth scrolling animation.
+	 */
+	virtual void timerEvent( QTimerEvent *e );
+	
+	/**
+	 * To make smooth scrolling work well, we need extensive event intercepting.
+	 * This event filter is suppposed to achive that.
+	 */
+	virtual bool eventFilter( QObject *o, QEvent *e );
 
 private slots:
 	void slotContextMenu(KListView*,QListViewItem *item, const QPoint &point );
 	void slotDoubleClicked( QListViewItem *item );
-
+	/**
+	 * To enable smooth scroll to focus on highlighted items when they are highlighted
+	 * by a key press we use this slot. slotCurrentChanged is connected to the currentChanged
+	 * signal, it's being invoked in every selection change. If the selection change was made
+	 * by the mouse, then we don't do anything, since the item is on the viewable are already.
+	 * Otherwise, we focus (bring it to the center of the list) smoothly.
+	 */
+	void slotCurrentChanged( QListViewItem *item );
 private:
 	struct Private;
 	Private *d;

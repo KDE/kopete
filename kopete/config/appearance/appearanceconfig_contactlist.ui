@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>480</width>
-            <height>610</height>
+            <height>638</height>
         </rect>
     </property>
     <property name="caption">
@@ -26,52 +26,85 @@
             <property name="title">
                 <string>La&amp;yout</string>
             </property>
-            <grid>
+            <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
+                <widget class="QCheckBox">
                     <property name="name">
                         <cstring>mSortByGroup</cstring>
                     </property>
                     <property name="text">
                         <string>Arrange metacontacts by &amp;group</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+G</string>
+                    </property>
                 </widget>
-                <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
+                <widget class="QCheckBox">
                     <property name="name">
                         <cstring>mTreeContactList</cstring>
                     </property>
                     <property name="text">
                         <string>Show tree &amp;branch lines</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+B</string>
+                    </property>
                 </widget>
-                <spacer row="2" column="0">
+                <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>spacer3_2</cstring>
+                        <cstring>layout3</cstring>
                     </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Fixed</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>16</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QCheckBox" row="2" column="1">
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer3_2</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Fixed</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>16</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QCheckBox">
+                            <property name="name">
+                                <cstring>mIndentContacts</cstring>
+                            </property>
+                            <property name="text">
+                                <string>In&amp;dent contacts</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+D</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mIndentContacts</cstring>
+                        <cstring>mHideVerticalScrollBar</cstring>
                     </property>
                     <property name="text">
-                        <string>In&amp;dent contacts</string>
+                        <string>&amp;Hide vertical scrollbar</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+H</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>&lt;b&gt;Always&lt;/b&gt; disables the vetical scrollbar</string>
                     </property>
                 </widget>
-            </grid>
+            </vbox>
         </widget>
         <widget class="QButtonGroup">
             <property name="name">
@@ -91,6 +124,9 @@
                     <property name="text">
                         <string>&amp;Classic, left-aligned status icons</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+C</string>
+                    </property>
                     <property name="checked">
                         <bool>true</bool>
                     </property>
@@ -101,6 +137,9 @@
                     </property>
                     <property name="text">
                         <string>&amp;Right-aligned status icons</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+R</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton">
@@ -137,7 +176,10 @@
                         <cstring>mAnimateChanges</cstring>
                     </property>
                     <property name="text">
-                        <string>Animate c&amp;hanges to contact list items</string>
+                        <string>&amp;Animate changes to contact list items</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+A</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -145,7 +187,7 @@
                         <cstring>mFadeVisibility</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Fade in / out contacts as they appear / disappear</string>
+                        <string>Fade in / out contacts as the&amp;y appear / disappear</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -154,6 +196,23 @@
                     </property>
                     <property name="text">
                         <string>Fo&amp;ld in / out contacts as they appear / disappear</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+L</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mMouseNavigation</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use mouse &amp;navigation instead of scroll-bars</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+N</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>This navigation scheme is supposed to remove vertical scrollbar. Instead of dragging the scrollbar you just move your mouse on the list in Y axis. As you move your mouse upwards the list will come in opposite direction and you'll catch the your target contact. Evert contact list item collides with mouse cursor at one certain point.</string>
                     </property>
                 </widget>
             </vbox>
@@ -168,84 +227,115 @@
             <property name="whatsThis" stdset="0">
                 <string>When enabled, the contact list will automatically be hidden a fixed amount of time after the mouse cursor leaves the window. You can set the amount of time in the 'Time until autohide' box below.</string>
             </property>
-            <grid>
+            <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
+                <widget class="QCheckBox">
                     <property name="name">
                         <cstring>mAutoHide</cstring>
                     </property>
                     <property name="text">
                         <string>A&amp;uto-hide contact list</string>
                     </property>
-                </widget>
-                <spacer row="1" column="0">
-                    <property name="name">
-                        <cstring>spacer4</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Fixed</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>16</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QSpinBox" row="1" column="1">
-                    <property name="name">
-                        <cstring>mAutoHideTimeout</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="suffix">
-                        <string> Sec</string>
-                    </property>
-                    <property name="maxValue">
-                        <number>300</number>
-                    </property>
-                    <property name="minValue">
-                        <number>3</number>
-                    </property>
-                    <property name="value">
-                        <number>30</number>
+                    <property name="accel">
+                        <string>Alt+U</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="1" column="2">
+                <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>textLabel1</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
+                        <cstring>mAutoHideVScroll</cstring>
                     </property>
                     <property name="text">
-                        <string>after the cursor left the window</string>
+                        <string>Auto-hide vertical &amp;scrollbar</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+S</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Since vertical scrollbars occupy space, we introduced this auto-hide feature. The vertical scrollbar won't be available untill you move your mouse over the contact list.&lt;br&gt;
+(&lt;b&gt;Disabled&lt;/b&gt; if "&lt;b&gt;Hide vertical scrollbar&lt;/b&gt;" option is selected above.)</string>
                     </property>
                 </widget>
-                <spacer row="1" column="3">
+                <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>spacer5</cstring>
+                        <cstring>layout2</cstring>
                     </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>81</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-            </grid>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer4</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Fixed</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>16</width>
+                                    <height>16</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QSpinBox">
+                            <property name="name">
+                                <cstring>mAutoHideTimeout</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>true</bool>
+                            </property>
+                            <property name="suffix">
+                                <string> Sec</string>
+                            </property>
+                            <property name="maxValue">
+                                <number>300</number>
+                            </property>
+                            <property name="minValue">
+                                <number>3</number>
+                            </property>
+                            <property name="value">
+                                <number>30</number>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The timeout value for both contact list and scrollbar auto-hiding.</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel1</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>true</bool>
+                            </property>
+                            <property name="text">
+                                <string>after the cursor left the window</string>
+                            </property>
+                        </widget>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer5</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>81</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                    </hbox>
+                </widget>
+            </vbox>
         </widget>
         <widget class="QLayoutWidget">
             <property name="name">
@@ -295,7 +385,7 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>100</height>
+                    <height>40</height>
                 </size>
             </property>
         </spacer>
@@ -309,16 +399,10 @@
         <slot>setDisabled(bool)</slot>
     </connection>
     <connection>
-        <sender>mAutoHide</sender>
+        <sender>mHideVerticalScrollBar</sender>
         <signal>toggled(bool)</signal>
-        <receiver>mAutoHideTimeout</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>mAutoHide</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>textLabel1</receiver>
-        <slot>setEnabled(bool)</slot>
+        <receiver>mAutoHideVScroll</receiver>
+        <slot>setDisabled(bool)</slot>
     </connection>
 </connections>
 <layoutdefaults spacing="6" margin="11"/>

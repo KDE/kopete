@@ -244,6 +244,8 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(slotEditTooltips()));
 	connect(mPrfsContactList->mIndentContacts, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
+	connect(mPrfsContactList->mHideVerticalScrollBar, SIGNAL(toggled(bool)),
+		this, SLOT(emitChanged()) );
 	connect(mPrfsContactList->mDisplayMode, SIGNAL(clicked(int)),
 		this, SLOT(emitChanged()));
 	connect(mPrfsContactList->mAnimateChanges, SIGNAL(toggled(bool)),
@@ -252,7 +254,11 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(emitChanged()));
 	connect(mPrfsContactList->mFoldVisibility, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
+	connect(mPrfsContactList->mMouseNavigation, SIGNAL(toggled(bool)),
+		this, SLOT(emitChanged()));
 	connect(mPrfsContactList->mAutoHide, SIGNAL(toggled(bool)),
+		this, SLOT(emitChanged()));
+	connect(mPrfsContactList->mAutoHideVScroll, SIGNAL(toggled(bool)),
 		this, SLOT(emitChanged()));
 	connect(mPrfsContactList->mAutoHideTimeout, SIGNAL(valueChanged(int)),
 		this, SLOT(emitChanged()));
@@ -338,10 +344,12 @@ void AppearanceConfig::save()
 	p->setTreeView(mPrfsContactList->mTreeContactList->isChecked());
 	p->setSortByGroup(mPrfsContactList->mSortByGroup->isChecked());
 	p->setContactListIndentContacts(mPrfsContactList->mIndentContacts->isChecked());
+	p->setContactListHideVerticalScrollBar(mPrfsContactList->mHideVerticalScrollBar->isChecked());
 	p->setContactListDisplayMode(KopetePrefs::ContactDisplayMode(mPrfsContactList->mDisplayMode->selectedId()));
 	p->setContactListAnimation(mPrfsContactList->mAnimateChanges->isChecked());
 	p->setContactListFading(mPrfsContactList->mFadeVisibility->isChecked());
 	p->setContactListFolding(mPrfsContactList->mFoldVisibility->isChecked());
+	p->setContactListMouseNavigation(mPrfsContactList->mMouseNavigation->isChecked());
 
 	// "Colors & Fonts" TAB =====================================================
 	p->setHighlightBackground(mPrfsColors->backgroundColor->color());
@@ -357,6 +365,7 @@ void AppearanceConfig::save()
 	p->setContactListCustomNormalFont(mPrfsColors->mNormalFont->font());
 	p->setContactListGroupNameColor(mPrfsColors->mGroupNameColor->color());
 	p->setContactListAutoHide(mPrfsContactList->mAutoHide->isChecked());
+	p->setContactListAutoHideVScroll(mPrfsContactList->mAutoHideVScroll->isChecked());
 	p->setContactListAutoHideTimeout(mPrfsContactList->mAutoHideTimeout->value());
 
 	p->setBgOverride( mPrfsColors->mBgOverride->isChecked() );
@@ -391,6 +400,7 @@ void AppearanceConfig::load()
 	mPrfsContactList->mTreeContactList->setChecked( p->treeView() );
 	mPrfsContactList->mSortByGroup->setChecked( p->sortByGroup() );
 	mPrfsContactList->mIndentContacts->setChecked( p->contactListIndentContacts() );
+	mPrfsContactList->mHideVerticalScrollBar->setChecked( p->contactListHideVerticalScrollBar() );
 	mPrfsContactList->mDisplayMode->setButton( p->contactListDisplayMode() );
 	mPrfsContactList->mAnimateChanges->setChecked( p->contactListAnimation() );
 #ifdef HAVE_XRENDER
@@ -399,7 +409,9 @@ void AppearanceConfig::load()
 	mPrfsContactList->mFadeVisibility->setChecked( false );
 #endif
 	mPrfsContactList->mFoldVisibility->setChecked( p->contactListFolding() );
+	mPrfsContactList->mMouseNavigation->setChecked( p->contactListMouseNavigation() );
 	mPrfsContactList->mAutoHide->setChecked( p->contactListAutoHide() );
+	mPrfsContactList->mAutoHideVScroll->setChecked( p->contactListAutoHideVScroll() );
 	mPrfsContactList->mAutoHideTimeout->setValue( p->contactListAutoHideTimeout() );
 
 	// "Colors & Fonts" TAB =====================================================
