@@ -504,12 +504,12 @@ KActionMenu * KopeteAccount::actionMenu()
 
 bool KopeteAccount::isConnected() const
 {
-	return d->myself ? ( d->myself->onlineStatus().status() != KopeteOnlineStatus::Offline ) : false;
+	return d->myself && ( d->myself->onlineStatus().status() != KopeteOnlineStatus::Offline ) ;
 }
 
 bool KopeteAccount::isAway() const
 {
-	return d->myself->onlineStatus().status() == KopeteOnlineStatus::Away;
+	return d->myself && ( d->myself->onlineStatus().status() == KopeteOnlineStatus::Away );
 }
 
 KopeteContact * KopeteAccount::myself() const
