@@ -71,7 +71,7 @@ KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 	m_SourceString = QString::fromLatin1("Unknown client, known source.");
 
 	defaultCodec = QTextCodec::codecForMib(4);
-	kdDebug(14120) << "Setting defualt engine codec, " << defaultCodec->name() << endl;
+	kdDebug(14120) << "Setting default engine codec, " << defaultCodec->name() << endl;
 
 	m_sock = 0L;
 

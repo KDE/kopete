@@ -1,9 +1,9 @@
 /*
     kirctransfer.h - DCC Handler
 
-    Copyright (c) 2003      by Michel Hermier <michel.hermier@wanadoo.fr>
+    Copyright (c) 2003-2004 by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2003      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2003-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *

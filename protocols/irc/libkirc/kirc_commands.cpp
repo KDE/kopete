@@ -113,7 +113,7 @@ void KIRC::changeUser(const QString &newUsername, Q_UINT8 mode, const QString &n
 
 void KIRC::quitIRC(const QString &reason, bool now)
 {
-	kdDebug(14120) << k_funcinfo << endl;
+	kdDebug(14120) << k_funcinfo << reason << endl;
 
 	if(isDisconnected())
 		return;
