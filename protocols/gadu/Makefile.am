@@ -1,6 +1,7 @@
 METASOURCES = AUTO
-SUBDIRS = lib ui . pixmaps
+SUBDIRS = lib ui pixmaps
 INCLUDES = -I$(srcdir)/ui \
+	 -I./ui \
 	 -I$(srcdir)/lib  \
 	 -I$(top_srcdir)/kopete/libkopete \
 	 -I$(top_srcdir)/kopete/libkopete/ui \
