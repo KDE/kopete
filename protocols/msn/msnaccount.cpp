@@ -106,7 +106,7 @@ MSNAccount::~MSNAccount()
 
 void MSNAccount::loaded()
 {
-	QString publicName= pluginData(protocol(),accountId() + QString::fromLatin1(" displayName"));
+	QString publicName= pluginData(protocol(),QString::fromLatin1("displayName"));
 	if(!publicName.isNull())
 		m_myself->setDisplayName(publicName);
 }
@@ -459,7 +459,7 @@ void MSNAccount::slotPublicNameChanged( const QString& publicName )
 		//if( m_publicNameSyncMode & SyncFromServer )
 		//{
 			m_myself->setDisplayName( publicName );
-			setPluginData( protocol(),accountId() + QString::fromLatin1( " displayName" ), publicName );
+			setPluginData( protocol(),QString::fromLatin1( "displayName" ), publicName );
 
 /*			m_publicNameSyncMode = SyncBoth;
 		}
