@@ -468,8 +468,8 @@ static QDomElement contactNode( QDomDocument doc, const Contact *contact )
 	{
 		"red", "blue" , "gray", "magenta", "violet", "olive", "yellowgreen",
 		"darkred", "darkgreen", "darksalmon", "darkcyan", "darkyellow",
-		"mediumpurple", "peru", "olivedrab", "royalred", "darkorange", "stateblue",
-		"stategray", "goldenrod", "orangered", "tomato", "dogderblue", "steelblue",
+		"mediumpurple", "peru", "olivedrab", "royalred", "darkorange", "slateblue",
+		"slategray", "goldenrod", "orangered", "tomato", "dogderblue", "steelblue",
 		"deeppink", "saddlebrown", "coral", "royalblue"
 	};
 
