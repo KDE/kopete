@@ -33,7 +33,6 @@
 
 // Kopete Includes
 #include "kopetecontact.h"
-#include "kopete.h"
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemessagemanager.h"

@@ -26,6 +26,7 @@
 
 // KDE Includes
 #include <kaction.h>
+#include <kapplication.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>
 #include <kiconloader.h>
@@ -45,10 +46,8 @@
 #include "wppreferences.h"
 
 // Kopete Includes
-#include "kopete.h"
 #include "kopetecontactlistview.h"
 #include "kopetemetacontact.h"
-#include "systemtray.h"
 
 class KPopupMenu;
 
@@ -328,7 +327,6 @@ void WPProtocol::initActions()
 	actionStatusMenu->insert(actionGoAvailable);
 	actionStatusMenu->insert(actionGoAway);
 	actionStatusMenu->insert(actionGoOffline);
-	actionStatusMenu->plug(kopeteapp->systemTray()->contextMenu(), 1);
 }
 
 void WPProtocol::installSamba()
@@ -343,4 +341,5 @@ void WPProtocol::installSamba()
 
 #include "wpprotocol.moc"
 
+// vim: set noet ts=4 sts=4 sw=4:
 
