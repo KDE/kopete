@@ -30,7 +30,7 @@ class dlgJabberChatJoin:public dlgChatJoin
 {
 
   Q_OBJECT public:
-	dlgJabberChatJoin (QWidget * parent = 0, const char *name = 0);
+	  dlgJabberChatJoin (QWidget * parent = 0, const char *name = 0);
 	 ~dlgJabberChatJoin ();
 
 	private slots:void slotDialogDone ();

@@ -47,13 +47,13 @@ void dlgJabberRegister::slotGotForm ()
 	delete lblWait;
 
 	if (!task->success ())
-	  {
-		  KMessageBox::error (this, i18n ("Unable to retrieve registration form.\nReason: \"%1\"").arg (task->statusString (), 1), i18n ("Jabber Error"));
+	{
+		KMessageBox::error (this, i18n ("Unable to retrieve registration form.\nReason: \"%1\"").arg (task->statusString (), 1), i18n ("Jabber Error"));
 
-		  deleteLater ();
+		deleteLater ();
 
-		  return;
-	  }
+		return;
+	}
 
 	// translate the form and create it inside the box widget
 	translator = new JabberFormTranslator (grpForm);
@@ -87,19 +87,19 @@ void dlgJabberRegister::slotSentForm ()
 	Jabber::JT_Register * task = (Jabber::JT_Register *) sender ();
 
 	if (task->success ())
-	  {
-		  KMessageBox::information (this, i18n ("Registration sent successfully"), i18n ("Jabber Registration"));
+	{
+		KMessageBox::information (this, i18n ("Registration sent successfully"), i18n ("Jabber Registration"));
 
-		  deleteLater ();
-	  }
+		deleteLater ();
+	}
 	else
-	  {
-		  KMessageBox::error (this,
-							  i18n ("The server denied the registration form.\nReason: \"%1\"").arg (task->statusString (), 1), i18n ("Jabber Registration"));
+	{
+		KMessageBox::error (this,
+							i18n ("The server denied the registration form.\nReason: \"%1\"").arg (task->statusString (), 1), i18n ("Jabber Registration"));
 
-		  btnRegister->setEnabled (true);
-		  btnRegister->setEnabled (true);
-	  }
+		btnRegister->setEnabled (true);
+		btnRegister->setEnabled (true);
+	}
 
 }
 

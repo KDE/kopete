@@ -39,7 +39,7 @@ class dlgJabberRegister:public dlgRegister
 
   Q_OBJECT public:
 
-	dlgJabberRegister (const Jabber::Jid & jid, QWidget * parent = 0, const char *name = 0);
+	  dlgJabberRegister (const Jabber::Jid & jid, QWidget * parent = 0, const char *name = 0);
 	 ~dlgJabberRegister ();
 
 	private slots:void slotGotForm ();

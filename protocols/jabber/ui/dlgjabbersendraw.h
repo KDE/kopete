@@ -36,7 +36,7 @@
 class dlgJabberSendRaw:public dlgSendRaw
 {
   Q_OBJECT public:
-	dlgJabberSendRaw (Jabber::Client * engine, QWidget * parent = 0, const char *name = 0);
+	  dlgJabberSendRaw (Jabber::Client * engine, QWidget * parent = 0, const char *name = 0);
 	  virtual ~ dlgJabberSendRaw ();
 
 	public slots:void slotFinish ();

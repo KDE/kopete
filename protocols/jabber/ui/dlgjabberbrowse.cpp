@@ -55,11 +55,11 @@ void dlgJabberBrowse::slotGotForm ()
 	delete lblWait;
 
 	if (!task->success ())
-	  {
-		  KMessageBox::information (this, i18n ("Unable to retrieve search form"), i18n ("Jabber Error"));
+	{
+		KMessageBox::information (this, i18n ("Unable to retrieve search form"), i18n ("Jabber Error"));
 
-		  return;
-	  }
+		return;
+	}
 
 
 	// translate the form and create it inside the display widget
@@ -74,10 +74,10 @@ void dlgJabberBrowse::slotGotForm ()
 	tblResults->setNumCols (5);
 
 	for (int i = 0; i < 5; i++)
-	  {
-		  // allow autostretching
-		  tblResults->setColumnStretchable (i, true);
-	  }
+	{
+		// allow autostretching
+		tblResults->setColumnStretchable (i, true);
+	}
 
 	connect (btnSearch, SIGNAL (clicked ()), this, SLOT (slotSendForm ()));
 
@@ -106,26 +106,26 @@ void dlgJabberBrowse::slotSentForm ()
 	btnClose->setEnabled (true);
 
 	if (!task->success ())
-	  {
-		  KMessageBox::error (this, i18n ("The Jabber server declined the search"), i18n ("Jabber Search"));
+	{
+		KMessageBox::error (this, i18n ("The Jabber server declined the search"), i18n ("Jabber Search"));
 
-		  return;
-	  }
+		return;
+	}
 
 	tblResults->setNumRows (task->results ().count ());
 
 	int row = 0;
 
 	for (QValueList < Jabber::SearchResult >::const_iterator it = task->results ().begin (); it != task->results ().end (); it++)
-	  {
-		  tblResults->setText (row, 0, (*it).jid ().userHost ());
-		  tblResults->setText (row, 1, (*it).first ());
-		  tblResults->setText (row, 2, (*it).last ());
-		  tblResults->setText (row, 3, (*it).nick ());
-		  tblResults->setText (row, 4, (*it).email ());
+	{
+		tblResults->setText (row, 0, (*it).jid ().userHost ());
+		tblResults->setText (row, 1, (*it).first ());
+		tblResults->setText (row, 2, (*it).last ());
+		tblResults->setText (row, 3, (*it).nick ());
+		tblResults->setText (row, 4, (*it).email ());
 
-		  row++;
-	  }
+		row++;
+	}
 
 }
 

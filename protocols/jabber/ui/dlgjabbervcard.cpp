@@ -39,10 +39,10 @@ dlgJabberVCard::dlgJabberVCard (QWidget * parent, const char *name, Jabber::JT_V
 {
 
 	if (vCard != NULL)
-	  {
-		  // populate all fields from the vCard
-		  assignVCard (vCard);
-	  }
+	{
+		// populate all fields from the vCard
+		assignVCard (vCard);
+	}
 
 	connect (btnClose, SIGNAL (clicked ()), this, SLOT (slotClose ()));
 	connect (btnSaveNickname, SIGNAL (clicked ()), this, SLOT (slotSaveNickname ()));
@@ -140,21 +140,21 @@ void dlgJabberVCard::setReadOnly (bool b)
 	leGender->setReadOnly (b);
 
 	if (b == false)
-	  {
-		  urlEmail->hide ();
-		  urlHomepage->hide ();
-		  leEmail->show ();
-		  leHomepage->show ();
-		  leEmail->setText (urlEmail->text ());
-		  leHomepage->setText (urlHomepage->text ());
-	  }
+	{
+		urlEmail->hide ();
+		urlHomepage->hide ();
+		leEmail->show ();
+		leHomepage->show ();
+		leEmail->setText (urlEmail->text ());
+		leHomepage->setText (urlHomepage->text ());
+	}
 	else
-	  {
-		  urlEmail->show ();
-		  urlHomepage->show ();
-		  leEmail->hide ();
-		  leHomepage->hide ();
-	  }
+	{
+		urlEmail->show ();
+		urlHomepage->show ();
+		leEmail->hide ();
+		leHomepage->hide ();
+	}
 
 	teAddress->setReadOnly (b);
 	leCity->setReadOnly (b);

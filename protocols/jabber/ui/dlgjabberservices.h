@@ -34,7 +34,7 @@ class dlgJabberServices:public dlgServices
 {
 
   Q_OBJECT public:
-	dlgJabberServices (QWidget * parent = 0, const char *name = 0);
+	  dlgJabberServices (QWidget * parent = 0, const char *name = 0);
 	 ~dlgJabberServices ();
 
 	private slots:void slotSetSelection (int row, int, int, const QPoint &);

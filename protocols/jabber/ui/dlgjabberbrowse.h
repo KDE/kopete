@@ -35,7 +35,7 @@ class dlgJabberBrowse:public dlgBrowse
 {
 
   Q_OBJECT public:
-	dlgJabberBrowse (const Jabber::Jid & jid, QWidget * parent = 0, const char *name = 0);
+	  dlgJabberBrowse (const Jabber::Jid & jid, QWidget * parent = 0, const char *name = 0);
 	 ~dlgJabberBrowse ();
 
 	private slots:void slotGotForm ();

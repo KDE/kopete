@@ -38,7 +38,7 @@ class QLineEdit;
 class JabberEditAccountWidget:public DlgPreferences, public EditAccountWidget
 {
   Q_OBJECT public:
-	JabberEditAccountWidget (JabberProtocol * proto, JabberAccount *, QWidget * parent = 0, const char *name = 0);
+	  JabberEditAccountWidget (JabberProtocol * proto, JabberAccount *, QWidget * parent = 0, const char *name = 0);
 	 ~JabberEditAccountWidget ();
 	virtual bool validateData ();
 	virtual KopeteAccount *apply ();
@@ -50,10 +50,10 @@ class JabberEditAccountWidget:public DlgPreferences, public EditAccountWidget
 	JabberProtocol *m_protocol;
 	DlgPreferences *jabData;
 
-	public slots: virtual void registerClicked ();
+	public slots:virtual void registerClicked ();
 	virtual void sslToggled (bool);
 
-	private slots: void configChanged ();
+	private slots:void configChanged ();
 };
 
 #endif

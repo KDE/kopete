@@ -121,21 +121,21 @@ void dlgJabberServices::slotQueryFinished ()
 	Jabber::JT_GetServices * task = (Jabber::JT_GetServices *) sender ();
 
 	if (!task->success ())
-	  {
-		  KMessageBox::error (this, i18n ("Unable to retrieve the list of services"), i18n ("Jabber Error"));
-		  return;
-	  }
+	{
+		KMessageBox::error (this, i18n ("Unable to retrieve the list of services"), i18n ("Jabber Error"));
+		return;
+	}
 
 	tblServices->setNumRows (task->agents ().count ());
 
 	int row = 0;
 
 	for (Jabber::AgentList::const_iterator it = task->agents ().begin (); it != task->agents ().end (); it++)
-	  {
-		  tblServices->setText (row, 0, (*it).name ());
-		  tblServices->setText (row, 1, (*it).jid ().userHost ());
-		  row++;
-	  }
+	{
+		tblServices->setText (row, 0, (*it).name ());
+		tblServices->setText (row, 1, (*it).jid ().userHost ());
+		row++;
+	}
 
 }
 

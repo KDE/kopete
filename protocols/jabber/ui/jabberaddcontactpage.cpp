@@ -9,19 +9,19 @@ JabberAddContactPage::JabberAddContactPage (KopeteAccount * owner, QWidget * par
 {
 	(new QVBoxLayout (this))->setAutoAdd (true);
 	if (owner->isConnected ())
-	  {
-		  jabData = new dlgAddContact (this);
-		  jabData->show ();
+	{
+		jabData = new dlgAddContact (this);
+		jabData->show ();
 
-		  canadd = true;
+		canadd = true;
 
-	  }
+	}
 	else
-	  {
-		  noaddMsg1 = new QLabel (i18n ("You need to be connected to be able to add contacts."), this);
-		  noaddMsg2 = new QLabel (i18n ("Connect to the Jabber network and try again."), this);
-		  canadd = false;
-	  }
+	{
+		noaddMsg1 = new QLabel (i18n ("You need to be connected to be able to add contacts."), this);
+		noaddMsg2 = new QLabel (i18n ("Connect to the Jabber network and try again."), this);
+		canadd = false;
+	}
 
 }
 
@@ -38,11 +38,11 @@ bool JabberAddContactPage::validateData ()
 bool JabberAddContactPage::apply (KopeteAccount * i, KopeteMetaContact * m)
 {
 	if (validateData ())
-	  {
-		  QString userid = i->myself ()->contactId ();
+	{
+		QString userid = i->myself ()->contactId ();
 
-		  return i->addContact (userid, userid, m);
-	  }
+		return i->addContact (userid, userid, m);
+	}
 	return false;
 }
 

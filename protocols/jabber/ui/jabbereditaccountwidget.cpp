@@ -58,9 +58,9 @@ EditAccountWidget (ident)
 	connect (chkUseSSL, SIGNAL (toggled (bool)), this, SLOT (sslToggled (bool)));
 
 	if (m_account)
-	  {
-		  this->reopen ();
-	  }
+	{
+		this->reopen ();
+	}
 }
 
 JabberEditAccountWidget::~JabberEditAccountWidget ()
@@ -108,10 +108,10 @@ void JabberEditAccountWidget::reopen ()
 
 	leProxyName->setText (m_account->pluginData (m_protocol, "ProxyName"));
 	spbProxyPort->setValue (m_account->pluginData (m_protocol, "ProxyPort").toInt ());
-	cbProxyAuth->setChecked (m_account->pluginData (m_protocol, "ProxyAuth")==QString::fromLatin1("true"));
+	cbProxyAuth->setChecked (m_account->pluginData (m_protocol, "ProxyAuth") == QString::fromLatin1 ("true"));
 	leProxyUser->setText (m_account->pluginData (m_protocol, "ProxyUser"));
 	leProxyPass->setText (m_account->pluginData (m_protocol, "ProxyPass"));
-	mAutoConnect->setChecked ((m_account->pluginData (m_protocol, "AutoConnect").toUInt()==1));
+	mAutoConnect->setChecked ((m_account->pluginData (m_protocol, "AutoConnect").toUInt () == 1));
 
 	if (m_account->pluginData (m_protocol, "LogAll") == "true")
 		mLogAll->setChecked (true);
@@ -121,13 +121,13 @@ KopeteAccount *JabberEditAccountWidget::apply ()
 {
 	kdDebug (14180) << "JabberEditAccount::apply()" << endl;
 	if (!m_account)
-	  {
-		  m_account = new JabberAccount (m_protocol, mID->text ());
-	  }
+	{
+		m_account = new JabberAccount (m_protocol, mID->text ());
+	}
 	else
-	  {
-		  m_account->setAccountId (mID->text ());
-	  }
+	{
+		m_account->setAccountId (mID->text ());
+	}
 
 	this->writeConfig ();
 	return m_account;
@@ -146,15 +146,15 @@ void JabberEditAccountWidget::writeConfig ()
 		m_account->setPluginData (m_protocol, "UseSSL", "false");
 
 	if (chkRemPass->isChecked ())
-	  {
-		  m_account->setPluginData (m_protocol, "RemPass", "true");
-		  m_account->setPassword (mPass->text ());
-	  }
+	{
+		m_account->setPluginData (m_protocol, "RemPass", "true");
+		m_account->setPassword (mPass->text ());
+	}
 	else
-	  {
-		  m_account->setPluginData (m_protocol, "RemPass", "false");
-		  m_account->setPassword (NULL);
-	  }
+	{
+		m_account->setPluginData (m_protocol, "RemPass", "false");
+		m_account->setPassword (NULL);
+	}
 
 	if (mLogAll->isChecked ())
 		m_account->setPluginData (m_protocol, "LogAll", "true");
@@ -162,38 +162,38 @@ void JabberEditAccountWidget::writeConfig ()
 		m_account->setPluginData (m_protocol, "LogAll", "false");
 
 	switch (cmbAuth->currentItem ())
-	  {
-	  case 0:
-		  m_account->setPluginData (m_protocol, "AuthType", "digest");
-		  break;
-	  case 1:
-		  m_account->setPluginData (m_protocol, "AuthType", "plain");
-		  break;
-	  default:					// this case should never happen, just
-		  // implemented for safety
-		  m_account->setPluginData (m_protocol, "AuthType", "digest");
-		  break;
-	  }
+	{
+	case 0:
+		m_account->setPluginData (m_protocol, "AuthType", "digest");
+		break;
+	case 1:
+		m_account->setPluginData (m_protocol, "AuthType", "plain");
+		break;
+	default:					// this case should never happen, just
+		// implemented for safety
+		m_account->setPluginData (m_protocol, "AuthType", "digest");
+		break;
+	}
 
 	switch (cbProxyType->currentItem ())
-	  {
-	  case 0:
-		  m_account->setPluginData (m_protocol, "ProxyType", "None");
-		  break;
-	  case 1:
-		  m_account->setPluginData (m_protocol, "ProxyType", "HTTPS");
-		  break;
-	  case 2:
-		  m_account->setPluginData (m_protocol, "ProxyType", "SOCKS4");
-		  break;
-	  case 3:
-		  m_account->setPluginData (m_protocol, "ProxyType", "SOCKS5");
-		  break;
-	  default:					// this case should never happen, just
-		  // implemented for safety
-		  m_account->setPluginData (m_protocol, "ProxyType", "None");
-		  break;
-	  }
+	{
+	case 0:
+		m_account->setPluginData (m_protocol, "ProxyType", "None");
+		break;
+	case 1:
+		m_account->setPluginData (m_protocol, "ProxyType", "HTTPS");
+		break;
+	case 2:
+		m_account->setPluginData (m_protocol, "ProxyType", "SOCKS4");
+		break;
+	case 3:
+		m_account->setPluginData (m_protocol, "ProxyType", "SOCKS5");
+		break;
+	default:					// this case should never happen, just
+		// implemented for safety
+		m_account->setPluginData (m_protocol, "ProxyType", "None");
+		break;
+	}
 
 	m_account->setPluginData (m_protocol, "ProxyName", leProxyName->text ());
 	m_account->setPluginData (m_protocol, "ProxyPort", QString::number (spbProxyPort->value ()));
@@ -222,13 +222,13 @@ void JabberEditAccountWidget::configChanged ()
 void JabberEditAccountWidget::registerClicked ()
 {
 	if (!m_account)
-	  {
-		  m_account = new JabberAccount (m_protocol, mID->text ());
-	  }
+	{
+		m_account = new JabberAccount (m_protocol, mID->text ());
+	}
 	else
-	  {
-		  m_account->setAccountId (mID->text ());
-	  }
+	{
+		m_account->setAccountId (mID->text ());
+	}
 
 	this->writeConfig ();
 	static_cast < JabberAccount * >(m_account)->registerUser ();
