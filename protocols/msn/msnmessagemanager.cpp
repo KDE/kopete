@@ -318,7 +318,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 						"Launch-Application: FALSE\r\n"
 						"Request-Data: IP-Address:\r\n\r\n").utf8();
 				m_chatService->sendCommand( "MSG" , "N", true, message );
-
+				
 				MFTS->listen(6891);
 
 			}
@@ -344,7 +344,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 	}
 	else  if( msg.contains("Invitation-Command: INVITE") )
 	{
-		if( msg.contains("Application-File:") )  //not "Application-Name: File Transfer" because the File Transfer label is sometimes translate
+		if( msg.contains("5D3E02AB-6190-11d3-BBBB-00C04F795683") )  //not "Application-Name: File Transfer" because the File Transfer label is sometimes translate
 		{
 			rx=QRegExp("Application-File: ([^\\r\\n]*)");
 			rx.search(msg);
@@ -368,6 +368,17 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			QString body=i18n("%1 has sent an unimplemented invitation, the invitation was rejected.\nThe invitation was: %2").arg(c->displayName()).arg(invitname);
 			KopeteMessage tmpMsg = KopeteMessage( c , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
 			appendMessage(tmpMsg);
+			
+			QCString message=QString(
+				"MIME-Version: 1.0\r\n"
+				"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
+				"\r\n"
+				"Invitation-Command: CANCEL\r\n"
+				"Cancel-Code: REJECT_NOT_INSTALLED\r\n"
+				"Invitation-Cookie: " + QString::number(cookie) + "\r\n"
+				"Session-ID: {120019D9-C3F5-4F94-978D-CB33534C3309}\r\n\r\n").utf8();  //FIXME: i don't know at all what Seession-ID is
+			m_chatService->sendCommand( "MSG" , "N", true, message );
+
 		}
 	}
 }
