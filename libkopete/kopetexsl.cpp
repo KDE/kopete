@@ -152,17 +152,19 @@ QString KopeteXSLThread::xsltTransform( const QString &xmlString, const QCString
 		}
 		else
 		{
-			errorMsg = i18n( "XSL document could not be parsed!" );
+			errorMsg = i18n( "The XSL document could not be parsed!" );
 		}
 		xmlFreeDoc( xmlDoc );
 	}
 	else
 	{
-		errorMsg = i18n( "XML document could not be parsed!" );
+		errorMsg = i18n( "XML document could not be parsed. This is likely due to an encoding problem. Please ensure you have selected the correct encoding for this contact." );
 	}
 
 	if ( resultString.isEmpty() )
-		resultString = i18n( "<div><b>An internal Kopete error occurred while parsing a message:</b><br />%1</div>" ).arg( errorMsg );
+	{
+		resultString = i18n( "<div><b>Kopete encountered the following error while parsing a message:</b><br />%1</div>" ).arg( errorMsg );
+	}
 
 	#ifdef RAWXSL
 		kdDebug(14000) << k_funcinfo << resultString << endl;
