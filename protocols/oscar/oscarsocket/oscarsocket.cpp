@@ -2811,43 +2811,37 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 	}
 
 	WORD rateclass = inbuf.getWord();
-	kdDebug(14150) << k_funcinfo << "rate applies to classId " << rateclass << endl;
 
 	DWORD windowSize = inbuf.getDWord();
-	kdDebug(14150) << k_funcinfo << "windowSize=" << windowSize << endl;
 	DWORD clearLevel = inbuf.getDWord();
-	kdDebug(14150) << k_funcinfo << "clearLevel=" << clearLevel << endl;
 	DWORD alertLevel = inbuf.getDWord();
-	kdDebug(14150) << k_funcinfo << "alertLevel=" << alertLevel << endl;
 	DWORD limitLevel = inbuf.getDWord();
-	kdDebug(14150) << k_funcinfo << "limitLevel=" << limitLevel << endl;
 	DWORD disconnectLevel = inbuf.getDWord();
-	kdDebug(14150) << k_funcinfo << "disconnectLevel=" << disconnectLevel << endl;
 	DWORD currentLevel = inbuf.getDWord();
-	kdDebug(14150) << k_funcinfo << "currentLevel=" << currentLevel << endl;
-
 	DWORD maxLevel = inbuf.getDWord();
-	kdDebug(14150) << k_funcinfo << "maxLevel=" << maxLevel << endl;
-
 	DWORD lastTime = inbuf.getDWord();
-	kdDebug(14150) << k_funcinfo << "lastTime=" << lastTime << endl;
-
 	BYTE currentState = inbuf.getByte();
-	kdDebug(14150) << k_funcinfo << "currentState=" << (WORD)currentState << endl;
 
-	//Predict the new rate level
-	//int newLevel = ((windowSize - 1) / windowSize) * ((currentLevel + 1) / windowSize);
-	//if (newLevel <= 0)
-	//	newLevel = 250; //seems like a good default
-
-	//kdDebug(14150) << "New Level is: " << newLevel << endl;
+	if (code != 0x0002) // do not spam me just with warnings, only critical limits please
+	{
+		kdDebug(14150) << k_funcinfo <<
+		"RATE LIMIT DATA (class id " << rateclass << ") -----" << endl <<
+		"  windowSize= " << windowSize << endl <<
+		"  clearLevel= " << clearLevel << endl <<
+		"  alertLevel= " << alertLevel << endl <<
+		"  limitLevel= " << limitLevel << endl <<
+		"  disconnectLevel= " << disconnectLevel << endl <<
+		"  currentLevel= " << currentLevel << endl <<
+		"  maxLevel= " << maxLevel << endl <<
+		"  lastTime= " << lastTime << endl <<
+		"  currentState= " << (WORD)currentState << endl;
+	}
 
 	if (currentLevel <= disconnectLevel)
 	{
 		emit protocolError(i18n("The account %1 will be disconnected for exceeding the rate limit." \
-					"Please wait approximately 10 minutes before reconnecting.")
-					.arg(mAccount->accountId()), 0);
-
+			"Please wait approximately 10 minutes before reconnecting.")
+			.arg(mAccount->accountId()), 0);
 		//let the account properly clean itself up
 		mAccount->disconnect();
 	}
