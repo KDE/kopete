@@ -43,6 +43,7 @@ struct KopeteMessagePrivate
 	KopeteMessage::MessageType type;
 	KopeteMessage::MessageImportance importance;
 	QDateTime timeStamp;
+	QFont font;
 
 	bool bgOverride;
 };
@@ -145,6 +146,7 @@ void KopeteMessage::setFont( const QFont &font )
 	QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
 	bodyNode.setAttribute( QString::fromLatin1("font"), font.family() );
 	bodyNode.setAttribute( QString::fromLatin1("fontsize"), font.pointSize() );
+	d->font = font;
 }
 
 void KopeteMessage::setBody( const QString &body, MessageFormat f )
@@ -391,8 +393,9 @@ QColor KopeteMessage::bg() const
 
 QFont KopeteMessage::font() const
 {
-	QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
-	return QFont( bodyNode.attribute( QString::fromLatin1("font") ), bodyNode.attribute( QString::fromLatin1("font") ).toInt() );
+	//QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
+	//return QFont( bodyNode.attribute( QString::fromLatin1("font") ), bodyNode.attribute( QString::fromLatin1("fontsize") ).toInt() );
+	return d->font;
 }
 
 QString KopeteMessage::subject() const
