@@ -204,7 +204,8 @@ void IRCAccount::loaded()
 			IRCHost *host = new IRCHost;
 			host->host = hostName;
 			host->port = serverInfo.section(':',1).toInt();
-			host->password = password();
+			if( rememberPassword() )
+				host->password = password();
 			host->ssl = false;
 
 			m_network->hosts.append( host );
