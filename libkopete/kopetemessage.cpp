@@ -185,7 +185,7 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 	QDomElement messageNode = d->xmlDoc.createElement( QString::fromLatin1("message") );
 	messageNode.setAttribute( QString::fromLatin1("time"), KGlobal::locale()->formatTime(timeStamp.time(), true) );
 	messageNode.setAttribute( QString::fromLatin1("timestamp"), timeStamp.toString() );
-	messageNode.setAttribute( QString::fromLatin1("subject"), subject );
+	messageNode.setAttribute( QString::fromLatin1("subject"), QStyleSheet::escape( subject ) );
 	messageNode.setAttribute( QString::fromLatin1("direction"), direction );
 	messageNode.setAttribute( QString::fromLatin1("importance"), d->importance );
 	if( from )
@@ -198,9 +198,9 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 		QDomElement fromNode = d->xmlDoc.createElement( QString::fromLatin1("from") );
 		QDomElement fromContactNode = d->xmlDoc.createElement( QString::fromLatin1("contact") );
 		fromContactNode.setAttribute( QString::fromLatin1("contactId"), from->contactId() );
-		fromContactNode.setAttribute( QString::fromLatin1("contactDisplayName"), from->displayName() );
+		fromContactNode.setAttribute( QString::fromLatin1("contactDisplayName"), QStyleSheet::escape( from->displayName() ) );
 		QString fromName = from->metaContact() ? from->metaContact()->displayName() : from->displayName();
-		fromContactNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), fromName );
+		fromContactNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), QStyleSheet::escape( fromName ) );
 		fromNode.appendChild( fromContactNode );
 
 		if( !colorMap.contains( fromName ) )
@@ -221,8 +221,9 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 	{
 		QDomElement cNode = d->xmlDoc.createElement( QString::fromLatin1("contact") );
 		cNode.setAttribute( QString::fromLatin1("contactId"), c->contactId() );
-		cNode.setAttribute( QString::fromLatin1("contactDisplayName"), c->displayName() );
-		cNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), c->metaContact() ? c->metaContact()->displayName() : c->displayName() );
+		cNode.setAttribute( QString::fromLatin1("contactDisplayName"), QStyleSheet::escape( c->displayName() ) );
+		cNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), c->metaContact() ?
+			QStyleSheet::escape( c->metaContact()->displayName() ) : QStyleSheet::escape( c->displayName() ) );
 		toNode.appendChild( cNode );
 	}
 	messageNode.appendChild( toNode );
