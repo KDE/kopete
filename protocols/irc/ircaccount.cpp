@@ -198,7 +198,7 @@ bool IRCAccount::addContactToMetaContact( const QString &contactId, const QStrin
 	IRCContact *c;
 
 	if( !m )
-	{//This should NEVER happends
+	{//This should NEVER happen
 		m = new KopeteMetaContact();
 		KopeteContactList::contactList()->addMetaContact(m);
 		m->setDisplayName( displayName );
@@ -213,7 +213,7 @@ bool IRCAccount::addContactToMetaContact( const QString &contactId, const QStrin
 	}
 
 	if( c->metaContact() != m )
-	{//This should NEVER happends
+	{//This should NEVER happen
 		KopeteMetaContact *old = c->metaContact();
 		c->setMetaContact( m );
 		KopeteContactPtrList children = old->contacts();

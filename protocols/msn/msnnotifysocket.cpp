@@ -140,7 +140,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	}
 	case 216:
 	{
-		//This might happends is you rename an user if he is not in the contactlist
+		//This might happen is you rename an user if he is not in the contactlist
 		//currently, we just iniore;
 		//TODO: try to don't rename user not in the list
 		//actualy, the bug is in MSNMessageManager::slotUserJoined()
@@ -162,7 +162,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 800:
 	{
 		QString msg = i18n( "You are trying to change your status, or your nickname too rapidely.\n"
-		 		"This might happends if you added yourself on your contact list" );
+		 		"This might happen if you added yourself on your contact list" );
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin" ) );
 		//FIXME: try to fix this problem
 		break;

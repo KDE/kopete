@@ -96,7 +96,7 @@ void HistoryLogger::setCurrentMonth(int month)
 QDomDocument HistoryLogger::getDocument(const KopeteContact *c, unsigned int month , bool canLoad , bool* contain)
 {
 	if(!m_metaContact)
-	{ //this may happends if the contact has been moved, and the MC deleted
+	{ //this may happen if the contact has been moved, and the MC deleted
 		if(c && c->metaContact())
 			m_metaContact=c->metaContact();
 		else
@@ -157,7 +157,7 @@ void HistoryLogger::appendMessage( const KopeteMessage &msg , const KopeteContac
 	const KopeteContact *c=ct?ct:(  msg.direction()==KopeteMessage::Outbound?msg.to().first():msg.from()  );
 
 	if(!m_metaContact)
-	{ //this may happends if the contact has been moved, and the MC deleted
+	{ //this may happen if the contact has been moved, and the MC deleted
 		if(c && c->metaContact())
 			m_metaContact=c->metaContact();
 		else
@@ -236,7 +236,7 @@ QValueList<KopeteMessage> HistoryLogger::readMessages( unsigned int nb , const K
 	QValueList<KopeteMessage> messages;
 
 	if(!m_metaContact)
-	{ //this may happends if the contact has been moved, and the MC deleted
+	{ //this may happen if the contact has been moved, and the MC deleted
 		if(c && c->metaContact())
 			m_metaContact=c->metaContact();
 		else
