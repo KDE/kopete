@@ -1362,7 +1362,7 @@ void ChatView::slotUpdateBackground(const QPixmap &pm)
 
 KopeteContactLVI::KopeteContactLVI( KopeteView *view, const KopeteContact *contact, KListView *parent ) : KListViewItem( parent )
 {
-	m_contact = contact;
+	m_contact = (KopeteContact*)contact;
 	m_parentView = parent;
 	m_view = view;
 
