@@ -159,12 +159,16 @@ GaduSession::dccRequest( const unsigned int uin )
 void
 GaduSession::login( KGaduLoginParams* loginp )
 {
+	QCString desc = textcodec->fromUnicode( loginp->statusDescr );
+
 	memset( &params_, 0, sizeof(params_) );
+
+	params_.status_descr	= new char[ desc.length() + 1 ];
+	qstrcpy( params_.status_descr, desc );
 
 	params_.uin		= loginp->uin;
 	params_.password	= (char *)( loginp->password.ascii() );
-	params_.status		= loginp->status | ( loginp->forFriends ? GG_STATUS_FRIENDS_MASK : 0);
-	params_.status_descr	= ( textcodec->fromUnicode( loginp->statusDescr ).data() );
+	params_.status		= loginp->status | ( loginp->forFriends ? GG_STATUS_FRIENDS_MASK : 0 );
 	params_.async		= 1;
 	params_.tls		= loginp->useTls;
 	params_ .server_addr	= loginp->server;
@@ -184,6 +188,8 @@ GaduSession::login( KGaduLoginParams* loginp )
 
 	kdDebug(14100)<<"gadusession::login, server ( " << loginp->server << " ), tls(" << loginp->useTls << ") " <<endl;
 	login( &params_ );
+
+	delete params_.status_descr;
 }
 
 void
