@@ -27,6 +27,7 @@ Kopete 0.7.1
 o Main Application
 	o Actually _store_ the password after you type it in the dialog (the config
 	  was never synced!) (Martijn)
+	o fix Drag and Dorp (Olivier)
 o Translator
 	o Fix BabbleFish "protocol?" change (Olivier)
 o MSN
