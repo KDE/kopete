@@ -18,7 +18,6 @@ TODO for Jabber:
 - "Remove Authorization From" in contact popup menu has wrong position
 - support different icons for contacts from servers with broken connections etc.
 - show (i.e. with a QToolTip) the subscription status: both, to, from
-- vCard doesn't save address and gender (is gender supported?)
 - remove ugly cyclic includes/forward declarations in jabberawaydialog.h and jabberaccount.h
 - display error messages in JabberContact::slotReceivedMessage()
 - make awaydialog autodelete itself
