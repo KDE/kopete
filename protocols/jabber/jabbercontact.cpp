@@ -94,11 +94,10 @@ QString JabberContact::resource () const
 	return activeResource->resource ();
 }
 
-KopeteMessageManager *JabberContact::manager (bool)
+KopeteMessageManager *JabberContact::manager( bool canCreate )
 {
-
 	// create a new message manager if there is none
-	if (!messageManager)
+	if ( !messageManager && canCreate )
 	{
 		kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Creating new message manager." << endl;
 
@@ -112,7 +111,7 @@ KopeteMessageManager *JabberContact::manager (bool)
 		QObject::connect (messageManager, SIGNAL (messageSent (KopeteMessage &, KopeteMessageManager *)), this, SLOT (slotSendMessage (KopeteMessage &)));
 	}
 
-	return static_cast < KopeteMessageManager * >(messageManager);
+	return messageManager;
 
 }
 
@@ -466,8 +465,8 @@ void JabberContact::slotReceivedMessage (const Jabber::Message & message)
 				  KopeteMessage::PlainText, type);
 	}
 
-	// add it to the manager
-	manager ()->appendMessage (*newMessage);
+	// add it to the manager (create a new manager when needed)
+	manager (true)->appendMessage (*newMessage);
 
 	delete newMessage;
 
