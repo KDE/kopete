@@ -641,8 +641,11 @@ void JabberProtocol::slotGoOnline()
 	kdDebug() << "[JabberProtocol] Going online!" << endl;
 
 	if (!isConnected())
+	{
 		// we are not connected yet, so connect now
+		initialPresence = STATUS_ONLINE;
 		Connect();
+	}
 
 	setPresence(STATUS_ONLINE, "");
 
@@ -661,7 +664,14 @@ void JabberProtocol::slotGoAway()
 {
 	
 	kdDebug() << "[JabberProtocol] Setting away mode." << endl;
-	
+
+	if (!isConnected())
+	{
+		// we are not connected yet, so connect now
+		initialPresence = STATUS_AWAY;
+		Connect();
+	}
+
 	// kill old reason dialog if it's still in memory
 	if (reasonDialog != 0L)
 		delete reasonDialog;
@@ -674,6 +684,13 @@ void JabberProtocol::slotGoXA()
 {
 
 	kdDebug() << "[JabberProtocol] Setting extended away mode." << endl;
+
+	if (!isConnected())
+	{
+		// we are not connected yet, so connect now
+		initialPresence = STATUS_XA;
+		Connect();
+	}
 
 	// kill old reason dialog if it's still in memory
 	if (reasonDialog != 0L)
@@ -688,6 +705,13 @@ void JabberProtocol::slotGoDND()
     
 	kdDebug() << "[JabberProtocol] Setting do not disturb mode." << endl;
 
+	if (!isConnected())
+	{
+		// we are not connected yet, so connect now
+		initialPresence = STATUS_DND;
+		Connect();
+	}
+
 	// kill old reason dialog if it's still in memory
 	if (reasonDialog != 0L)
 		delete reasonDialog;
@@ -700,6 +724,13 @@ void JabberProtocol::slotGoInvisible()
 {
 
 	kdDebug() << "[JabberProtocol] Setting invisible mode." << endl;
+
+	if (!isConnected())
+	{
+		// we are not connected yet, so connect now
+		initialPresence = STATUS_INVISIBLE;
+		Connect();
+	}
 
 	setPresence(STATUS_INVISIBLE);
 

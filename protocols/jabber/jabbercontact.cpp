@@ -924,28 +924,48 @@ QString JabberContact::data() const
 void JabberContact::slotStatusChat()
 {
 
-	protocol->sendPresenceToNode(JabberProtocol::STATUS_ONLINE, userId());
+	QString id = userId();
+
+	if(resourceOverride)
+		id += activeResource->resource();
+
+	protocol->sendPresenceToNode(JabberProtocol::STATUS_ONLINE, id);
 
 }
 
 void JabberContact::slotStatusAway()
 {
 
-	protocol->sendPresenceToNode(JabberProtocol::STATUS_AWAY, userId());
+	QString id = userId();
+
+	if(resourceOverride)
+		id += activeResource->resource();
+
+	protocol->sendPresenceToNode(JabberProtocol::STATUS_AWAY, id);
 
 }
 
 void JabberContact::slotStatusXA()
 {
 
-	protocol->sendPresenceToNode(JabberProtocol::STATUS_XA, userId());
+	QString id = userId();
+
+	if(resourceOverride)
+		id += activeResource->resource();
+
+	protocol->sendPresenceToNode(JabberProtocol::STATUS_XA, id);
 
 }
 
 void JabberContact::slotStatusDND()
 {
 
-	protocol->sendPresenceToNode(JabberProtocol::STATUS_DND, userId());
+	QString id = userId();
+
+	if(resourceOverride)
+		id += activeResource->resource();
+
+	protocol->sendPresenceToNode(JabberProtocol::STATUS_DND, id);
 
 }
 
