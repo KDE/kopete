@@ -1,5 +1,5 @@
 /*
-   ircguiclient.h
+   kcodecaction.h
 
     Copyright (c) 2003 by Jason Keirstead        <jason@keirstead.org>
     Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
@@ -13,30 +13,25 @@
     *                                                                       *
     *************************************************************************
 */
-#ifndef IRCGUICLIENT_H
-#define IRCGUICLIENT_H
+#ifndef KCODECACTION_H
+#define KCODECACTION_H
 
-#include <qobject.h>
-#include <kxmlguiclient.h>
+#include <kactionclasses.h>
 
-class KopeteMessageManager;
-class IRCContact;
-
-/**
- *@author Jason Keirstead
- */
-class IRCGUIClient : public QObject , public KXMLGUIClient
+class KCodecAction : public KSelectAction
 {
 	Q_OBJECT
 	public:
-		IRCGUIClient( KopeteMessageManager *parent = 0 );
-		~IRCGUIClient();
-	
-	private slots:
-		void slotSelectCodec( const QTextCodec *codec );
+		KCodecAction( const QString &text, const KShortcut &cut = KShortcut(), 
+			QObject *parent = 0, const char *name = 0 );
+			
+		void setCodec( const QTextCodec *codec );
+
+	signals:
+		void activated( const QTextCodec * );
 		
-	private:
-		IRCContact *m_user;
+	private slots:
+		void slotActivated( const QString & );
 };
 
 #endif

@@ -88,11 +88,12 @@ class IRCContact : public KopeteContact
 		
 		virtual void appendMessage( KopeteMessage & );
 		
-		void setCodec( const QTextCodec *codec );
-		
 		const QTextCodec *codec();
 	
 		KopeteView *view();
+		
+	public slots:
+		void setCodec( const QTextCodec *codec );
 	
 	protected slots:
 		virtual void slotSendMsg(KopeteMessage &message, KopeteMessageManager *);

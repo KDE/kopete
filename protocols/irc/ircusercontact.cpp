@@ -27,6 +27,7 @@
 #include "ircaccount.h"
 #include "ircprotocol.h"
 #include "kopetemetacontact.h"
+#include "kcodecaction.h"
 
 IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString &nickname, KopeteMetaContact *m )
 	: IRCContact(contactManager, nickname, m ),
@@ -231,6 +232,11 @@ KActionCollection *IRCUserContact::customContextMenuActions( KopeteMessageManage
 			actionKick->setEnabled(isOperator);
 		}
 	
+		KCodecAction *c = new KCodecAction( i18n("Select Charset"), 0, mCustomActions, "selectcharset" );
+		connect( c, SIGNAL( activated( const QTextCodec * ) ), 
+			this, SLOT( setCodec( const QTextCodec *) ) );
+		c->setCodec( codec() );
+		
 		return mCustomActions;
 	}
 	
