@@ -61,6 +61,8 @@ JabberContact::JabberContact(QString userId, QString nickname, QStringList group
 	mMsgManagerKCW = 0L;
 	mMsgManagerKEW = 0L;
 
+	actionCollection = 0L;
+
 	resourceOverride = false;
 
 	mIdentityId = identity;
@@ -90,6 +92,9 @@ JabberContact::JabberContact(QString userId, QString nickname, QStringList group
  */
 JabberContact::~JabberContact()
 {
+
+	if(actionCollection)
+		delete actionCollection;
 
 	delete actionMessage;
 	delete actionChat;
@@ -181,75 +186,8 @@ void JabberContact::showContextMenu(const QPoint& point, const QString&)
 	KPopupMenu *popup = new KPopupMenu();
 	popup->insertTitle(userId() + " (" + activeResource->resource() + ")");
 
-	KGlobal::config()->setGroup("Jabber");
-	
-	// depending on the window type preference,
-	// chat window or email window goes first
-	if (KGlobal::config()->readBoolEntry("EmailDefault", false))
-	{
-		actionMessage->plug(popup);
-		actionChat->plug(popup);
-	}
-	else
-	{
-		actionChat->plug(popup);
-		actionMessage->plug(popup);
-	}
-
-	// if the contact is online,
-	// display the resources we have for it
-	if (status() != Offline)
-	{
-		QStringList items;
-		int activeItem = 0;
-		JabberResource *tmpBestResource = bestResource();
-		
-		// put best resource first
-		items.append("Automatic (best resource)");
-
-		if(tmpBestResource->resource() != QString::null)
-			items.append(tmpBestResource->resource());
-		
-		// iterate through available resources
-		int i = 1;
-		for (JabberResource *tmpResource = resources.first(); tmpResource; tmpResource = resources.next(), i++)
-		{
-			// skip the default (empty) resource
-			if(tmpResource->resource() == QString::null)
-			{
-				i--;
-				continue;
-			}
-
-			// only add the item if it is not the best resource
-			// (which we already added above)
-			if (tmpResource != tmpBestResource)
-				items.append(tmpResource->resource());
-				
-			// mark the currently active resource
-			if (tmpResource->resource() == activeResource->resource() && resourceOverride)
-			{
-				kdDebug() << "[JabberContact] Activating item " << i << " as active resource." << endl;
-				activeItem = i;
-			}
-		}
-		
-		// attach list to the menu action
-		actionSelectResource->setItems(items);
-		
-		// make sure the active item is selected
-		actionSelectResource->setCurrentItem(activeItem);
-		
-		// plug it to the menu
-		actionSelectResource->plug(popup);
-	}
-	
 	popup->insertSeparator();
 
-	actionRetrieveVCard->plug(popup);
-	actionHistory->plug(popup);
-	popup->insertSeparator();
-	actionRename->plug(popup);
 	actionSendAuth->plug(popup);
 	actionRequestAuth->plug(popup);
 
@@ -276,7 +214,88 @@ void JabberContact::showContextMenu(const QPoint& point, const QString&)
 KActionCollection *JabberContact::customContextMenuActions()
 {
 
-	return 0L;
+	if(actionCollection)
+		delete actionCollection;
+
+	actionCollection = new KActionCollection(this);
+
+	KGlobal::config()->setGroup("Jabber");
+
+	// depending on the window type preference,
+	// chat window or email window goes first
+	if (KGlobal::config()->readBoolEntry("EmailDefault", false))
+	{
+		actionCollection->insert(actionMessage);
+		actionCollection->insert(actionChat);
+	}
+	else
+	{
+		actionCollection->insert(actionChat);
+		actionCollection->insert(actionMessage);
+	}
+
+	// if the contact is online,
+	// display the resources we have for it
+	if (status() != Offline)
+	{
+		QStringList items;
+		int activeItem = 0;
+		JabberResource *tmpBestResource = bestResource();
+
+		// put best resource first
+		items.append("Automatic (best resource)");
+
+		if(tmpBestResource->resource() != QString::null)
+			items.append(tmpBestResource->resource());
+
+		// iterate through available resources
+		int i = 1;
+		for (JabberResource *tmpResource = resources.first(); tmpResource; tmpResource = resources.next(), i++)
+		{
+			// skip the default (empty) resource
+			if(tmpResource->resource() == QString::null)
+			{
+				i--;
+				continue;
+			}
+
+			// only add the item if it is not the best resource
+			// (which we already added above)
+			if (tmpResource != tmpBestResource)
+				items.append(tmpResource->resource());
+
+			// mark the currently active resource
+			if (tmpResource->resource() == activeResource->resource() && resourceOverride)
+			{
+				kdDebug() << "[JabberContact] Activating item " << i << " as active resource." << endl;
+				activeItem = i;
+			}
+		}
+
+		// attach list to the menu action
+		actionSelectResource->setItems(items);
+
+		// make sure the active item is selected
+		actionSelectResource->setCurrentItem(activeItem);
+
+		// plug it to the menu
+		actionCollection->insert(actionSelectResource);
+	}
+
+	actionCollection->insert(actionSendAuth);
+	actionCollection->insert(actionRequestAuth);
+
+	// Availability popup menu
+	// FIXME: this leaks!
+	KPopupMenu *popup_status = new KPopupMenu();
+//	actionCollection->insertItem("Set availabilty", popup_status);
+
+	actionStatusChat->plug(popup_status);
+	actionStatusAway->plug(popup_status);
+	actionStatusXA->plug(popup_status);
+	actionStatusDND->plug(popup_status);
+
+	return actionCollection;
 
 }
 

@@ -378,6 +378,8 @@ class JabberContact : public KopeteContact
 		 */
 		bool resourceOverride, mEditingVCard;
 
+		KActionCollection *actionCollection;
+		
 		KAction *actionMessage, *actionChat,
 				*actionHistory, *actionRetrieveVCard,
 				*actionRename,
