@@ -468,7 +468,7 @@ void MSNMessageManager::sendFile(const QString &fileLocation, const QString &fil
 		}
 			
 		unsigned long int cookie = (rand()%(999999))+1;
-		MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(false,this);
+		MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(m_protocol,false,this);
 		MFTS->setCookie(cookie);
 		connect(MFTS, SIGNAL( done(MSNFileTransferSocket*) ) , this , SLOT( slotFileTransferDone(MSNFileTransferSocket*) ));
 		m_invitations.insert( cookie  , MFTS);
