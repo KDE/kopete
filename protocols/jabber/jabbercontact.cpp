@@ -1,20 +1,20 @@
-/***************************************************************************
-                          jabbercontact.cpp  -  description
-                             -------------------
-    begin                : Fri Apr 12 2002
-    copyright            : (C) 2002 by Daniel Stone, Till Gerken,
-                           The Kopete Development Team
-    email                : dstone@kde.org, till@tantalo.net
- ***************************************************************************/
+ /*
+    jabbercontact.cpp  -  Base class for the Kopete Jabber protocol contact
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002 by Daniel Stone <dstone@kde.org>
+    Copyright (c) 2002 by Till Gerken <till@tantalo.net>
+
+    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #include <qapplication.h>
 #include <qcursor.h>
@@ -100,6 +100,56 @@ JabberContact::~JabberContact()
 	delete actionStatusXA;
 	delete actionStatusDND;
 	delete actionStatusInvisible;
+}
+
+
+
+/* Return the identity ID */
+QString JabberContact::identityId() const
+{
+	return mIdentityId;
+}
+
+/* Return the user ID */
+QString JabberContact::userId() const
+{
+	return rosterItem.jid().userHost();
+}
+
+/* Return the currently used resource for this contact */
+QString JabberContact::resource() const
+{
+	return activeResource->resource();
+}
+
+/* Return the group this contact resides in */
+KopeteGroupList JabberContact::groups() const
+{
+	QStringList groupStrings;
+	groupStrings = rosterItem.groups();
+
+	KopeteGroupList result;
+	for( QStringList::ConstIterator it = groupStrings.begin(); it != groupStrings.end(); ++it )
+	{
+		KopeteGroup *group_;
+		group_ = KopeteContactList::contactList()->getGroup( *it, KopeteGroup::Classic);
+		if ( group_ )
+			result.append( group_ );
+	}
+	return result;
+}
+
+/* Return the reason why we are away */
+QString JabberContact::reason() const
+{
+	return awayReason;
+}
+
+/* Return if we are reachable (defaults to true because
+   we can send on- and offline */
+bool JabberContact::isReachable()
+{
+	return true;
 }
 
 /**
@@ -304,18 +354,18 @@ JabberContact::ContactStatus JabberContact::status() const
 	switch(presence)
 	{
 		case JabberProtocol::STATUS_ONLINE:
-					retval = Online;
-					break;
+		retval = Online;
+		break;
 
 		case JabberProtocol::STATUS_AWAY:
 		case JabberProtocol::STATUS_XA:
 		case JabberProtocol::STATUS_DND:
-					retval = Away;
-					break;
+		retval = Away;
+		break;
 
 		default:
-					retval = Offline;
-					break;
+		retval = Offline;
+		break;
 	}
 
 	return retval;
@@ -792,7 +842,7 @@ void JabberContact::serialize( QMap<QString, QString> &serializedData,
 {
 	// Contact id and display name are already set for us, only add the rest
 	serializedData[ "identityId" ] = identityId();
-	serializedData[ "groups" ]     = groups().join( "," );
+	serializedData[ "groups" ]     = groups().toStringList().join( "," );
 }
 
 #include "jabbercontact.moc"

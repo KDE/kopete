@@ -1,20 +1,20 @@
-/***************************************************************************
-                          jabbercontact.h  -  description
-                             -------------------
-    begin                : Fri Apr 12 2002
-    copyright            : (C) 2002 by Daniel Stone, Till Gerken,
-                           The Kopete Development Team
-    email                : dstone@kde.org, till@tantalo.net
- ***************************************************************************/
+ /*
+    jabbercontact.h  -  Base class for the Kopete Jabber protocol contact
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002 by Daniel Stone <dstone@kde.org>
+    Copyright (c) 2002 by Till Gerken <till@tantalo.net>
+
+    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #ifndef JABBERCONTACT_H
 #define JABBERCONTACT_H
@@ -38,6 +38,7 @@ class KopeteMessage;
 class KopeteMessageManager;
 class KopeteMetaContact;
 class KopeteGroup;
+class KopeteGroupList;
 
 class Jabber::Jid;
 class Jabber::Message;
@@ -99,51 +100,33 @@ public:
 	/**
 	 * Return the identity ID
 	 */
-	virtual QString identityId() const
-	{
-		return mIdentityId;
-	}
+	virtual QString identityId() const;
 
 	/**
 	 * Return the user ID
 	 */
-	QString userId() const
-	{
-		return rosterItem.jid().userHost();
-	}
+	QString userId() const;
 
 	/*
 	 * Return the currently used resource for this contact
 	 */
-	QString resource() const
-	{
-		return activeResource->resource();
-	}
+	QString resource() const;
 
 	/*
 	 * Return the group this contact resides in
 	 */
-	virtual QStringList groups() const
-	{
-		return rosterItem.groups();
-	}
+	virtual KopeteGroupList groups() const;
 
 	/**
 	 * Return the reason why we are away
 	 */
-	QString reason() const
-	{
-		return awayReason;
-	}
+	QString reason() const;
 
 	/**
 	 * Return if we are reachable (defaults to
 	 * true because we can send on- and offline
 	 */
-	virtual bool isReachable()
-	{
-		return true;
-	}
+	virtual bool isReachable();
 
 	/**
 	 * Create custom context menu items for the contact
