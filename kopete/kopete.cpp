@@ -186,29 +186,12 @@ void Kopete::slotSetAwayAll(void)
 {
 	KopeteAway::setGlobalAway(true);
 	KopeteAway::show();
-	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
-	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
-	{
-		kdDebug() << "[Kopete] slotSetAwayAll() for plugin: " << (*i).name << endl;
-		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
-		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
-
-		if (!prot)
-			continue;
-
-		if ( prot->isConnected() && !prot->isAway() )
-		{
-			kdDebug() << "[Kopete] setting away-mode for: " << (*i).name << endl;
-			prot->setAway(); // sets protocol-plugin into away-mode
-		}
-	}
+	setAwayAll();
 }
 
 // Set a meta-away in all protocol plugins without showing the dialog
 void Kopete::setAwayAll(void)
 {
-//	KopeteAway::setGlobalAway(true);
-//	KopeteAway::show();
 	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
 	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
