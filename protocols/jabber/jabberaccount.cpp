@@ -158,10 +158,10 @@ KActionMenu *JabberAccount::actionMenu ()
 		"actionJabberDisconnect"));
 
 	m_actionMenu->popupMenu()->insertSeparator();
-	m_actionMenu->insert(new KAction (i18n ("Join Groupchat..."), "personal", 0,
+	m_actionMenu->insert(new KAction (i18n ("Join Groupchat..."), "jabber_group", 0,
 		this, SLOT (slotJoinNewChat ()), this, "actionJoinChat"));
 	m_actionMenu->popupMenu()->insertSeparator();
-	m_actionMenu->insert(new KAction (i18n ("Services..."), "network", 0,
+	m_actionMenu->insert(new KAction (i18n ("Services..."), "jabber_serv_on", 0,
 		this, SLOT (slotGetServices ()), this, "actionJabberServices"));
 	m_actionMenu->insert(new KAction (i18n ("Send Raw Packet to Server..."), "mail_new", 0,
 		this, SLOT (slotSendRaw ()), this, "actionJabberSendRaw"));
