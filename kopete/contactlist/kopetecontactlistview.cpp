@@ -185,30 +185,9 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 	setAlternateBackground( QColor() ); // no alternate color, looks ugly
 	setFullWidth( true );
 
-	/*
-		The below QTooltip::remove() call seems silly, but is need to work around a Qt bug
-		that's present at least in all Qt 3.1.x versions and in 3.2.0. Qt allocates a
-		tooltip that covers the entire viewport, which is used by QListView's own tooltips
-		if setShowToolTips is set to true (the default) for the tooltips on truncated
-		list view items.
-
-		However, this tooltip overrides the custom tooltip that Kopete wants to create
-		for itself. As such our own tooltip code is never called and the custom tooltips
-		don't appear. To work around the problem we simply remove the existing tooltip
-		that QListView creates on the viewport.
-
-		I committed a patch to qt-copy (http://lists.kde.org/?l=kde-cvs&m=105992758126841&w=2),
-		but haven't received a reaction from TrollTech yet. Hopefully it will be in upcoming
-		Qt versions. In the mean time we check for the presence of the #define that I added
-		in the patch.
-
-		Note that Qt 3.0.x is not affected by this bug, but Kopete no longer supports it,
-		so there's no #if for that. - Martijn
-	*/
+	// We have our own tooltips, don't use the default QListView ones
 	setShowToolTips( false );
-#ifndef QT_QLISTVIEW_FIXED_TOOLTIPS
-	QToolTip::remove( viewport() );
-#endif
+
 	m_tooltip = new KopeteContactListViewToolTip( viewport(), this );
 
 	connect( this,
