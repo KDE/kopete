@@ -617,6 +617,7 @@ bool MSNProtocol::addContactToMetaContact( const QString &contactId, const QStri
 	{
 		if( !metaContact->isTemporary() )
 		{
+			m_addWizard_metaContact=metaContact;
 			//This is a normal contact. Get all the groups this MetaContact is in
 			QPtrList<KopeteGroup> groupList = metaContact->groups();
 			if( !groupList.isEmpty() )
