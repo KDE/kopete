@@ -42,6 +42,8 @@
 #include <signal.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
+#include <sys/poll.h>
+
 /* The following is a mandrake 9 hack. Mandrake 9
  * doesn't define this 64 bit types (we need GNU C lib
  * because we use long long and warning - gcc extensions.
@@ -54,34 +56,39 @@ typedef unsigned long long __u64;
 //#warning "defining __s64"
 typedef __signed__ long long __s64;
 #endif
+
+#include <linux/version.h>
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,50)
+#define _LINUX_TIME_H
+#endif
 #include <linux/videodev.h>
 
-#define DEF_WIDTH	352
-#define DEF_HEIGHT	288
-#define DEF_QUALITY	50
-#define DEF_CHANGES	5000
+#define DEF_WIDTH			352
+#define DEF_HEIGHT		288
+#define DEF_QUALITY		50
+#define DEF_CHANGES		5000
 
 #define DEF_POLL_INTERVAL 1500
 
-#define DEF_GAP		60*5 /* 5 minutes */
+#define DEF_GAP			60*5 /* 5 minutes */
 
-#define NORM_DEFAULT	0
-#define IN_DEFAULT	8
+#define NORM_DEFAULT		0
+#define IN_DEFAULT		8
 
 K_EXPORT_COMPONENT_FACTORY( kopete_motionaway, KGenericFactory<MotionAwayPlugin> );
 
 MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name,
-	const QStringList & /* args */ )
-: KopetePlugin( parent, name )
+	const QStringList &/*args*/ )
+	: KopetePlugin( parent, name )
 {
-   
+	kdDebug(14305) << k_funcinfo << "Called." << endl;
 	/* This should be read from config someday may be */
 	m_width = DEF_WIDTH;
 	m_height = DEF_HEIGHT;
 	m_quality = DEF_QUALITY;
 	m_maxChanges = DEF_CHANGES;
 	m_gap = DEF_GAP;
-	
+
 	/* We haven't took the first picture yet */
 	m_tookFirst = false;
 
@@ -101,17 +108,17 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name,
 	m_imageOut.resize( m_width * m_height * 3);
 
 
-	kdDebug(14305) << "[MotionAway Plugin] : Opening Video4Linux Device" << endl;
+	kdDebug(14305) << k_funcinfo << "Opening Video4Linux Device" << endl;
 
 	m_deviceHandler = open( (mPrefs->device()).latin1() , O_RDWR);
 
 	if (m_deviceHandler < 0)
 	{
-		kdDebug(14305) << "[MotionAway Plugin] : Can't open Video4Linux Device" << endl;
+		kdDebug(14305) << k_funcinfo k_funcinfo << "Can't open Video4Linux Device" << endl;
 	}
 	else
 	{
-        kdDebug(14305) << "[MotionAway Plugin] : Worked! Setting Capture timers!" << endl;
+        kdDebug(14305) k_funcinfo << "Worked! Setting Capture timers!" << endl;
 		/* Capture first image, or we will get a alarm on start */
 		getImage (m_deviceHandler, m_imageRef, DEF_WIDTH, DEF_HEIGHT, IN_DEFAULT, NORM_DEFAULT,
 	    	VIDEO_PALETTE_RGB24);
@@ -119,7 +126,7 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name,
         /* We have the first image now */
 		m_tookFirst = true;
 		m_wentAway = false;
-     
+
 		m_captureTimer->start( DEF_POLL_INTERVAL );
 		m_awayTimer->start( mPrefs->awayTimeout() * 60 * 1000 );
 	}
@@ -127,9 +134,9 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name,
 
 MotionAwayPlugin::~MotionAwayPlugin()
 {
-    kdDebug(14305) << "[MotionAway Plugin] : Closing Video4Linux Device" << endl;
+    kdDebug(14305) k_funcinfo << "Closing Video4Linux Device" << endl;
 	close (m_deviceHandler);
-	kdDebug(14305) << "[MotionAway Plugin] : Freeing memory" << endl;
+	kdDebug(14305) k_funcinfo << "Freeing memory" << endl;
 }
 
 int MotionAwayPlugin::getImage(int _dev, QByteArray &_image, int _width, int _height, int _input, int _norm,  int _fmt)
@@ -137,6 +144,7 @@ int MotionAwayPlugin::getImage(int _dev, QByteArray &_image, int _width, int _he
 	struct video_capability vid_caps;
 	struct video_channel vid_chnl;
 	struct video_window vid_win;
+	struct pollfd video_fd;
 
 	// Just to avoid a warning
 	_fmt = 0;
@@ -159,7 +167,7 @@ int MotionAwayPlugin::getImage(int _dev, QByteArray &_image, int _width, int _he
 		{
 			vid_chnl.channel = _input;
 			vid_chnl.norm    = _norm;
-	
+
 			if (ioctl (_dev, VIDIOCSCHAN, &vid_chnl) == -1)
 			{
 				perror ("ioctl (VIDIOCSCHAN)");
@@ -177,8 +185,20 @@ int MotionAwayPlugin::getImage(int _dev, QByteArray &_image, int _width, int _he
 	if (ioctl (_dev, VIDIOCSWIN, &vid_win) == -1)
 		return (-1);
 
-	/* Read an image */
-	return read (_dev, _image.data() , _width * _height * 3);
+	/* Check if data available on the video device */
+	video_fd.fd = _dev;
+	video_fd.events = 0;
+	video_fd.events |= POLLIN;
+	video_fd.revents = 0;
+
+	poll(&video_fd, 1, 0);
+
+	if (video_fd.revents & POLLIN) {
+		/* Read an image */
+		return read (_dev, _image.data() , _width * _height * 3);
+	} else {
+		return (-1);
+	}
 }
 
 void MotionAwayPlugin::slotCapture()
@@ -209,13 +229,13 @@ void MotionAwayPlugin::slotCapture()
 		{
 			/* First picture: new image is now the old */
 			for (int i=0; i< m_width * m_height * 3; i++)
-				m_imageOld[i] = m_imageNew[i];		
+				m_imageOld[i] = m_imageNew[i];
 		}
 
 		/* The cat just walked in :) */
 		if (diffs > m_maxChanges)
 		{
-            kdDebug(14305) << "[MotionAway Plugin] : Motion Detected. [" << diffs << "] Reseting Timeout" << endl;
+            kdDebug(14305) k_funcinfo << "Motion Detected. [" << diffs << "] Reseting Timeout" << endl;
 
 			/* If we were away, now we are available again */
 			if ( mPrefs->goAvailable() && !KopeteAway::globalAway() && m_wentAway)
@@ -225,13 +245,12 @@ void MotionAwayPlugin::slotCapture()
 
 			/* We reset the away timer */
             m_awayTimer->stop();
-			m_awayTimer->start( mPrefs->awayTimeout() * 60 * 1000 );	
+			m_awayTimer->start( mPrefs->awayTimeout() * 60 * 1000 );
 		}
 
 		/* Old image slowly decays, this will make it even harder on
 			slow moving object to stay undetected */
-
-        /*
+		/*
 		for (i=0; i<m_width*m_height*3; i++)
 		{
 			image_ref[i]=(image_ref[i]+image_new[i])/2;
@@ -246,16 +265,16 @@ void MotionAwayPlugin::slotCapture()
 
 void MotionAwayPlugin::slotActivity()
 {
-		kdDebug(14305) << "[MotionAway Plugin] : User activity!, going available" << endl;
-		m_wentAway = false;
-		KopeteAccountManager::manager()->setAvailableAll();
+	kdDebug(14305) k_funcinfo << "User activity!, going available" << endl;
+	m_wentAway = false;
+	KopeteAccountManager::manager()->setAvailableAll();
 }
 
 void MotionAwayPlugin::slotTimeout()
 {
-	if ( !KopeteAway::globalAway() && ! m_wentAway )
+	if(!KopeteAway::globalAway() && !m_wentAway)
 	{
-		kdDebug(14305) << "[MotionAway Plugin] : Timeout and no user activity, going away" << endl;
+		kdDebug(14305) k_funcinfo << "Timeout and no user activity, going away" << endl;
 		m_wentAway = true;
 		KopeteAccountManager::manager()->setAwayAll();
 	}
@@ -263,10 +282,8 @@ void MotionAwayPlugin::slotTimeout()
 
 void MotionAwayPlugin::slotSettingsChanged()
 {
-	m_awayTimer->changeInterval( mPrefs->awayTimeout() * 60 * 1000);
+	m_awayTimer->changeInterval(mPrefs->awayTimeout() * 60 * 1000);
 }
 
 #include "motionawayplugin.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
-
