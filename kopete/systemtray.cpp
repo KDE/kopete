@@ -28,12 +28,14 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kiconloader.h>
+#include "kopeteuiglobal.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteballoon.h"
 #include "kopeteprefs.h"
 #include "kopetemetacontact.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
+
 
 KopeteSystemTray* KopeteSystemTray::s_systemTray = 0L;
 
@@ -72,12 +74,14 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent, const char* name)
 	slotConfigChanged();
 
 	m_balloon=0l;
+	Kopete::UI::Global::setSysTrayWId( winId() );
 }
 
 KopeteSystemTray::~KopeteSystemTray()
 {
 //	kdDebug(14010) << "[KopeteSystemTray] ~KopeteSystemTray" << endl;
 //	delete mBlinkTimer;
+	Kopete::UI::Global::setSysTrayWId( 0 );
 }
 
 void KopeteSystemTray::mousePressEvent( QMouseEvent *me )

@@ -18,7 +18,7 @@
 #ifndef KOPETEUIGLOBAL_H
 #define KOPETEUIGLOBAL_H
 
-class QWidget;
+#include <qwidget.h>
 
 namespace Kopete
 {
@@ -40,6 +40,24 @@ namespace Global
 	 * and KNotify stuff should use as a parent.
 	 */
 	QWidget *mainWidget();
+
+	/**
+	 * \brief Returns the WId of the system tray.
+	 *
+	 * Allows developers easy access to the WId of the system tray so
+	 * that it can be used for passive popups in the protocols
+	 * \return the WId of the system tray. Returns the WId of the main
+	 * widget if there's no system tray.
+	 */ 
+	WId sysTrayWId();
+
+	/**
+	 * \brief Set the WId of the system tray.
+	 *
+	 * Called by the KopeteSystemTray constructor and destructor to 
+	 * set the WId for the system tray appropriately
+	 */
+	void setSysTrayWId( WId newWinId );
 } //Global::UI
 
 } //UI
