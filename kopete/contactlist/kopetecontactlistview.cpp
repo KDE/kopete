@@ -789,10 +789,10 @@ void KopeteContactListView::slotExecuted( QListViewItem *item,
 	}
 }
 
-void KopeteContactListView::slotShowOffline( bool p )
+/*void KopeteContactListView::slotShowOffline( bool p )
 {
 	KopetePrefs::prefs()->setShowOffline( p );
-}
+}*/
 
 void KopeteContactListView::slotContactStatusChanged( KopeteMetaContact *mc )
 {

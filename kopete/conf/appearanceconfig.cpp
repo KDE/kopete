@@ -223,16 +223,8 @@ void AppearanceConfig::save()
 	KopeteAway::getInstance()->save();
 
 	// disconnect or else we will end up in an endless loop
-	disconnect(KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()));
 	p->save();
-	connect(KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()));
 	errorAlert = false;
-}
-
-void AppearanceConfig::slotConfigChanged()
-{
-//	kdDebug(14000) << k_funcinfo << "calling reopen() now..." << endl;
-	reopen(); // I am lazy :P
 }
 
 void AppearanceConfig::reopen()

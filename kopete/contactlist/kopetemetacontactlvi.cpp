@@ -510,7 +510,7 @@ void KopeteMetaContactLVI::slotConfigChanged()
 {
 	updateVisibility();
 	slotIdleStateChanged();
-	repaint();
+//	repaint();
 }
 
 void KopeteMetaContactLVI::updateVisibility()
@@ -705,11 +705,9 @@ void KopeteMetaContactLVI::slotIdleStateChanged()
 	{
 		KIconEffect::semiTransparent(theIcon);
 	}
-
 	setPixmap( 0, theIcon );
-
-	if ( m_parentGroup )
-		m_parentGroup->refreshDisplayName();
+/*	if ( m_parentGroup )
+		m_parentGroup->refreshDisplayName();*/
 }
 
 void KopeteMetaContactLVI::catchEvent(KopeteEvent *event)

@@ -61,7 +61,6 @@ public:
 private slots:
 	void slotConfigSound();
 	void slotUseEmoticonsChanged(bool);
-	void slotConfigChanged();
 	void slotTransparencyChanged(bool);
 	void slotUpdatePreview();
 	void slotShowTrayChanged();

@@ -97,7 +97,7 @@ public:
 
 	void movedToGroup(KopeteGroup * );
 	void rename( const QString& name );
-	
+
 	KopeteGroup *group();
 
 	/**
@@ -109,7 +109,7 @@ public:
 	KopeteContact *getContactFromIcon(const QPoint &p);
 
 	bool isGrouped();
-	
+
 	void catchEvent(KopeteEvent *);
 
 private slots:
@@ -139,7 +139,6 @@ private slots:
 protected:
 	virtual void okRename(int col);
 
-	
 private:
 	void initLVI();
 	QString key( int column, bool ascending ) const;
@@ -165,7 +164,7 @@ private:
 	KopeteGroupViewItem *m_parentGroup;
 	QListView *m_parentView;
 	bool m_isTopLevel;
-	
+
 	AddContactPage *m_addContactPage;
 
 	int m_pixelWide;

@@ -131,11 +131,6 @@ void KopeteWindow::initActions ( void )
 	actionAwayMenu->setDelayed( false );
 	actionAwayMenu->insert(actionSetAvailable);
 	actionAwayMenu->insert(actionSetAway);
-/*
-	actionShowTransfers = new KAction( i18n( "Show &File Transfers" ),
-		"network", 0, KopeteTransferManager::transferManager(),
-		SLOT( show() ), actionCollection(), "ShowTransfers" );
-*/
 	actionPrefs = KStdAction::preferences(
 		this, SLOT( slotShowPreferencesDialog() ),
 		actionCollection(), "settings_prefs" );
@@ -373,8 +368,6 @@ void KopeteWindow::slotGlobalAwayMessageSelect(){
 
 void KopeteWindow::closeEvent( QCloseEvent *e )
 {
-	kdDebug(14000) << k_funcinfo << "called." << endl;
-
 	Kopete *kopeteapp = static_cast<Kopete*>(kapp);
 	if (!kopeteapp)
 		return;
@@ -401,7 +394,6 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 
 void KopeteWindow::slotQuit()
 {
-	kdDebug(14000) << k_funcinfo << "called." << endl;
 	qApp->quit();
 }
 

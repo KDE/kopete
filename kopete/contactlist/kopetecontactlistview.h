@@ -88,7 +88,7 @@ private slots:
 	void removeGroup();
 	void slotSettingsChanged( void );
 	void slotExecuted( QListViewItem *item, const QPoint &pos, int c );
-	void slotShowOffline( bool );
+//	void slotShowOffline( bool );
 
 	void slotAddedToGroup( KopeteMetaContact *mc, KopeteGroup *to );
 	void slotRemovedFromGroup( KopeteMetaContact *mc, KopeteGroup *from );
