@@ -505,9 +505,8 @@ void GroupWiseAccount::slotConnConnected()
 void GroupWiseAccount::slotCSDisconnected()
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Disconnected from Groupwise server." << endl;
-	// and set the contacts offline
-	for ( QDictIterator<Kopete::Contact> i( contacts() ); i.current(); ++i )
-		static_cast<GroupWiseContact *>( i.current() )->setOnlineStatus( protocol()->groupwiseOffline );
+	myself()->setOnlineStatus( protocol()->groupwiseOffline );
+	setAllContactsStatus( protocol()->groupwiseOffline );
 }
 
 void GroupWiseAccount::slotCSConnected()
