@@ -24,6 +24,8 @@
 
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
+#include "kopeteonlinestatus.h"
+#include "kopetecontact.h"
 #include "kopeteprefs.h"
 
 #include <kconfig.h>
@@ -389,7 +391,7 @@ void KopeteAway::setAutoAway()
 	QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
 	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
 	{
-		if(i->isConnected() && !i->isAway())
+		if(i->myself()->onlineStatus().status() == KopeteOnlineStatus::Online)
 		{
 			d->autoAwayAccounts.append(i);
 			i->setAway( true, getInstance()->d->awayMessage);
