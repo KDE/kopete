@@ -12,5 +12,5 @@ libiris_xmpp_im_la_SOURCES = \
 
 CLEANFILES = types.moc
 types.lo: types.moc
-types.moc: Makefile
-	${MOC} -o types.moc types.cpp
+types.moc: $(top_builddir)/kopete/protocols/jabber/libiris/iris/xmpp-im/Makefile
+	${MOC} -o types.moc $(srcdir)/../xmpp-im/types.cpp
