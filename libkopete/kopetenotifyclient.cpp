@@ -42,9 +42,7 @@
 #include <kdeversion.h>
 #include <kiconloader.h>
 #include <klocale.h>
-#if KDE_IS_VERSION( 3, 1, 90 )
 #include <kmacroexpander.h>
-#endif
 #include <kmessagebox.h>
 #include <kpassivepopup.h>
 #include <kprocess.h>
@@ -73,16 +71,12 @@ static int notifyBySound( const QString &filename , const QString &appname, int 
   QDataStream ds(data, IO_WriteOnly);
 
 
-#if 0   //TODO: when knotify support it, use this method insteads of the following
+#if 0   //TODO: when knotify support it, use this method instead of the following
   ds << filename << appname << uniqueId;
   if ( client->send(daemonName, "Notify", "notifyBySound(QString,QString,int)", data) )
-#elif KDE_IS_VERSION( 3, 1, 90 )
+#else
   ds << QString::null << appname << QString::null << filename << QString::null << 1 << KNotifyClient::Default << 0 << uniqueId;
   if ( client->send(daemonName, "Notify", "notify(QString,QString,QString,QString,QString,int,int,int,int)", data) )
-      return uniqueId;
-#else
-  ds << QString::null << appname << QString::null << filename << QString::null << 1 << KNotifyClient::Default << 0 ;
-  if ( client->send(daemonName, "Notify", "notify(QString,QString,QString,QString,QString,int,int,int)", data) )
       return uniqueId;
 #endif
 
@@ -102,7 +96,6 @@ static bool notifyByMessagebox(const QString &text, int level, WId winId, const 
 		switch( level )
 		{
 		default:
-#if KDE_IS_VERSION( 3, 1, 90 )
 		case KNotifyClient::Notification:
 			KMessageBox::informationWId( winId, text, i18n( "Notification" ) );
 			break;
@@ -115,20 +108,6 @@ static bool notifyByMessagebox(const QString &text, int level, WId winId, const 
 		case KNotifyClient::Catastrophe:
 			KMessageBox::errorWId( winId, text, i18n( "Fatal" ) );
 			break;
-#else
-		case KNotifyClient::Notification:
-			KMessageBox::information( Kopete::UI::Global::mainWidget(), text, i18n( "Notification" ) );
-			break;
-		case KNotifyClient::Warning:
-			KMessageBox::sorry( Kopete::UI::Global::mainWidget(), text, i18n( "Warning" ) );
-			break;
-		case KNotifyClient::Error:
-			KMessageBox::error( Kopete::UI::Global::mainWidget(), text, i18n( "Error" ) );
-			break;
-		case KNotifyClient::Catastrophe:
-			KMessageBox::error( Kopete::UI::Global::mainWidget(), text, i18n( "Fatal" ) );
-			break;
-#endif
 		}
 	}
 	else
@@ -199,7 +178,6 @@ static bool notifyByExecute( const QString &command, const QString& event,
 		int winId, int eventId ) {
     if (!command.isEmpty()) {
 		QString execLine;
-#if KDE_IS_VERSION( 3, 1, 90 )
 	// kdDebug(14010) << "executing command '" << command << "'" << endl;
 		QMap<QChar,QString> subst;
 		subst.insert( 'e', event );
@@ -208,7 +186,7 @@ static bool notifyByExecute( const QString &command, const QString& event,
 		subst.insert( 'w', QString::number( winId ) );
 		subst.insert( 'i', QString::number( eventId ) );
 		execLine = KMacroExpander::expandMacrosShellQuote( command, subst );
-#endif
+
 		if ( execLine.isEmpty() )
 			execLine = command; // fallback
 		KProcess p;
@@ -258,7 +236,6 @@ static bool notifyByStderr(const QString &text)
     return true;
 }
 
-#if KDE_IS_VERSION( 3, 1, 90 )
 static bool notifyByTaskbar( WId win )
 {
     if( win == 0 )
@@ -267,7 +244,6 @@ static bool notifyByTaskbar( WId win )
     KWin::demandAttention( win );
     return true;
 }
-#endif
 
 /*
 int KNotifyClient::event( int winId, StandardEvent type, const QString& text )
@@ -415,10 +391,8 @@ int KNotifyClient::userEvent(int winId, const QString &message, const QString &t
     if ( present & KNotifyClient::Execute )
 	notifyByExecute( commandline, message, appname, text, winId, uniqueId );
 
-#if KDE_IS_VERSION( 3, 1, 90 )
     if ( present & KNotifyClient::Taskbar )
 	notifyByTaskbar( winId );
-#endif
 
     return uniqueId;
 }
