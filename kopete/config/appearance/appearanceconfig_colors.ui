@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>AppearanceConfig_Colors</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>383</width>
-            <height>339</height>
+            <width>595</width>
+            <height>341</height>
         </rect>
     </property>
     <property name="caption">
@@ -164,7 +164,7 @@
                         <cstring>mGreyIdleMetaContacts</cstring>
                     </property>
                     <property name="text">
-                        <string>Re-color contacts marked as idle:</string>
+                        <string>Recolor contacts marked as idle:</string>
                     </property>
                 </widget>
                 <widget class="KColorButton">
@@ -196,6 +196,8 @@
         </spacer>
     </vbox>
 </widget>
+<customwidgets>
+</customwidgets>
 <tabstops>
     <tabstop>bgColor</tabstop>
     <tabstop>textColor</tabstop>
@@ -204,12 +206,6 @@
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kcolorbutton.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
 </includehints>
 </UI>

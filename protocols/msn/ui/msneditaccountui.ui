@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>MSNEditAccountUI</class>
 <author>Olivier Goffart</author>
 <widget class="QWidget">
@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>651</width>
-            <height>470</height>
+            <height>472</height>
         </rect>
     </property>
     <property name="caption">
@@ -115,7 +115,7 @@
                             <cstring>m_rememberpasswd</cstring>
                         </property>
                         <property name="text">
-                            <string>Remember Password</string>
+                            <string>Remember password</string>
                         </property>
                     </widget>
                     <widget class="QCheckBox">
@@ -613,6 +613,8 @@
         </widget>
     </vbox>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>m_useDisplayPicture</sender>

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>NewUser</class>
 <widget class="QDialog">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>372</width>
-            <height>296</height>
+            <width>459</width>
+            <height>298</height>
         </rect>
     </property>
     <property name="caption">
@@ -130,7 +130,10 @@
                         <cstring>PushButton1</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Ok</string>
+                        <string>&amp;OK</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+O</string>
                     </property>
                     <property name="default">
                         <bool>true</bool>
