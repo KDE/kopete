@@ -29,6 +29,7 @@ class KopeteMessage;
 class KSpell;
 class KopeteView;
 class QTextEdit;
+class SpellCheckPreferences;
 
 typedef QMap<QString,QStringList> ReplacementMap;
 
@@ -51,22 +52,24 @@ class SpellCheckPlugin : public KopetePlugin
 		KopeteMessage mBuffer;
 		ReplacementMap mReplacements;
 		QRegExp mBound;
-		QStringList mApproved;
+		QStringList *words;
 		QString currentWord;
-		bool spellCheckComplete;
 		bool singleSpellCheckerReady;
+		bool wordChecked;
+		SpellCheckPreferences *mPrefs;
 
 	private slots:
 		void slotCheckSpelling();
 		void slotBindToView( KopeteView * );
 		void slotSpellCheckerReady(KSpell *);
 		void slotSingleSpellCheckerReady(KSpell *);
-		void slotSingleCorrection( const QString &, const QString &, unsigned int );
+		void slotSingleCorrection( const QString &, const QStringList &, unsigned int );
 		void slotCorrection( const QString &, const QString &, unsigned int );
 		void slotMisspelling( const QString &, const QStringList &, unsigned int );
 		void slotSpellDone( const QString & );
 		void slotUpdateTextEdit();
-		//void slotSpellCheckCorrection();
+		void slotPrefsSaved();
+
 	protected:
 		virtual bool eventFilter( QObject *watched, QEvent *e );
 };
