@@ -66,6 +66,7 @@ class KopeteContactListViewToolTip : public QToolTip
 {
 public:
 	KopeteContactListViewToolTip( QWidget *parent, KopeteContactListView *lv );
+	virtual ~KopeteContactListViewToolTip();
 
 	void maybeTip( const QPoint &pos );
 
@@ -74,9 +75,15 @@ private:
 };
 
 KopeteContactListViewToolTip::KopeteContactListViewToolTip( QWidget *parent,
-	KopeteContactListView *lv ) : QToolTip( parent )
+	KopeteContactListView *lv )
+: QToolTip( parent )
 {
 	m_listView = lv;
+}
+
+KopeteContactListViewToolTip::~KopeteContactListViewToolTip()
+{
+	QMimeSourceFactory::defaultFactory()->setImage( "kopete:icon", 0 );
 }
 
 void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
@@ -106,12 +113,12 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 		uint yAdjust = itemRect.top();
 		QPoint relativePos( pos.x() - xAdjust, pos.y() - yAdjust );
 		contact = metaLVI->contactForPoint( relativePos );
-		if( contact )
+		if ( contact )
 		{
 			QRect iconRect = metaLVI->contactRect( contact );
 			itemRect = QRect( iconRect.left() + xAdjust,
 				iconRect.top() + yAdjust, iconRect.width(), iconRect.height() );
-			toolTip = i18n( "<b>%3</b><br>%2<br>%1" ).
+			toolTip = i18n( "<b>%3</b><br>%2<br><img src=\"kopete:icon\">&nbsp;%1" ).
 #if QT_VERSION < 0x030200
 				arg( contact->onlineStatus().description() ).arg( QStyleSheet::escape( contact->contactId() ) ).
 				arg( QStyleSheet::escape( contact->displayName() ) );
@@ -119,20 +126,26 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 				arg( contact->onlineStatus().description(), QStyleSheet::escape( contact->contactId() ),
 					QStyleSheet::escape( contact->displayName() ) );
 #endif
-			if(contact->idleTime() !=0)
-				toolTip+=i18n("<br>Idle: %1'%2").arg(contact->idleTime()/60).arg(contact->idleTime()%60);
+			QMimeSourceFactory::defaultFactory()->setImage( "kopete:icon",
+				contact->onlineStatus().iconFor( contact ).convertToImage() );
+
+			if ( contact->idleTime() != 0 )
+				toolTip += i18n( "<br>Idle: %1'%2" ).arg( contact->idleTime() / 60 ).arg( contact->idleTime() % 60 );
 		}
 		else
 		{
 			KopeteMetaContact *mc = metaLVI->metaContact();
-			toolTip = i18n( "<b>%2</b><br>%1" ).
+			toolTip = i18n( "<b>%2</b><br><img src=\"kopete:icon\">&nbsp;%1" ).
 #if QT_VERSION < 0x030200
 				arg( mc->statusString() ).arg( QStyleSheet::escape( mc->displayName() ) );
 #else
 				arg( mc->statusString(), QStyleSheet::escape( mc->displayName() ) );
 #endif
-			if(mc->idleTime() !=0)
-				toolTip+=i18n("<br>Idle: %1'%2").arg(mc->idleTime()/60).arg(mc->idleTime()%60);
+			QMimeSourceFactory::defaultFactory()->setImage( "kopete:icon",
+				SmallIcon( mc->statusIcon() ).convertToImage() );
+
+			if( mc->idleTime() != 0 )
+				toolTip += i18n( "<br>Idle: %1'%2" ).arg( mc->idleTime() / 60 ).arg( mc->idleTime() % 60 );
 
 			// Adjust the item rect on the right
 			uint first = metaLVI->firstContactIconX();
@@ -158,8 +171,6 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 	//kdDebug( 14000 ) << k_funcinfo << "Adding tooltip: itemRect: " << itemRect << ", tooltip:  " << toolTip << endl;
 	tip( itemRect, toolTip );
 }
-
-
 
 KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name )
 	: KListView( parent, name )
