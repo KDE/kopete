@@ -95,9 +95,7 @@ void IRCContact::slotUserDisconnected( const QString &user, const QString &reaso
 		KopeteContact *c = locateUser( nickname );
 		if ( c )
 		{
-			KopeteMessage msg(c, mMyself, i18n("User %1 has quit (\"%2\")").arg(nickname).arg(reason), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-			manager()->appendMessage(msg);
-			manager()->removeContact( c, true );
+			manager()->removeContact( c, i18n("Quit: \"%1\" ").arg(reason) );
 			c->setOnlineStatus( IRCProtocol::IRCUserOffline() );
 			mAccount->unregisterUser( nickname );
 		}
@@ -187,40 +185,27 @@ void IRCContact::slotWhoIsComplete(const QString &nickname)
 	if( isConnected && mWhoisMap.contains(nickname) )
 	{
 		whoIsInfo *w = mWhoisMap[nickname];
-		KopeteMessage msg;
-		KopeteContact *c = locateUser( nickname );
 
 		//User info
-		msg = KopeteMessage( c, mMyself, QString::fromLatin1("[%1] (%2@%3) : %4\n").arg(nickname).arg(w->userName).arg(w->hostName).arg(w->realName), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
-		manager()->appendMessage(msg);
-
+		QString msg=i18n("%1 is (%2@%3) : %4\n").arg(nickname).arg(w->userName).arg(w->hostName).arg(w->realName);
 		if( w->isOperator )
-		{
-			msg = KopeteMessage( c, mMyself, i18n("[%1] is an IRC operator").arg(nickname), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
-			manager()->appendMessage(msg);
-		}
+			msg += i18n("%1 is an IRC operator\n").arg(nickname);
 
 		//Channels
-		QString channelText;
-		for(QStringList::Iterator it = w->channels.begin(); it != w->channels.end(); ++it)
-			channelText += *it + QString::fromLatin1(" \n");
-
-		msg = KopeteMessage( c, mMyself, QString::fromLatin1("[%1] %2").arg(nickname).arg(channelText), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
-		manager()->appendMessage(msg);
+		msg += i18n("on channels %1\n").arg(w->channels.join(" ; "));
 
 		//Server
-		msg = KopeteMessage( c, mMyself, QString::fromLatin1("[%1] %2 : %3\n").arg(nickname).arg(w->serverName).arg(w->serverInfo), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
-		manager()->appendMessage(msg);
+		msg += i18n("on IRC via server %1 ( %2 )\n").arg(w->serverName).arg(w->serverInfo);
 
 		//Idle
-		msg = KopeteMessage( c, mMyself, i18n("[%1] idle %2\n").arg(nickname).arg( QString::number(w->idle) ), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
-		manager()->appendMessage(msg);
+		msg += i18n("idle: %2\n").arg( QString::number(w->idle) );
 
 		//End
-		msg = KopeteMessage( c, mMyself,  i18n("[%1] End of WHOIS list.").arg(nickname), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
-		manager()->appendMessage(msg);
+		KopeteMessage m( locateUser(nickname), mMyself, msg, KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
+		manager()->appendMessage(m);
 
 		delete w;
+		mWhoisMap.remove(nickname);
 	}
 }
 

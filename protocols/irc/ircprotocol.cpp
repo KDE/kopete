@@ -240,6 +240,7 @@ void IRCProtocol::slotTopicCommand( const QString &args, KopeteMessageManager *m
 		else
 		{
 			KopeteMessage msg(manager->user(), manager->members(), i18n("Topic for %1 is %2").arg(chan->nickName()).arg(chan->topic()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+			msg.setImportance( KopeteMessage::Low); //set the importance manualy to low
 			manager->appendMessage(msg);
 		}
 	}
@@ -256,6 +257,7 @@ void IRCProtocol::slotJoinCommand( const QString &args, KopeteMessageManager *ma
 		{
 			KopeteMessage msg(manager->user(), manager->members(), i18n("\"%1\" is an invalid channel. Channels must start with '#'.").arg(argsList.front()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 			manager->appendMessage(msg);
+			//TODO: join the user
 		}
 	}
 }

@@ -230,12 +230,12 @@ void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 	emit messageAppended( msg, this );
 }
 
-void KopeteMessageManager::addContact( const KopeteContact *c, bool surpress )
+void KopeteMessageManager::addContact( const KopeteContact *c, bool supress )
 {
 	if ( d->mContactList.contains(c) )
 	{
 		kdDebug(14010) << k_funcinfo << "Contact already exists" <<endl;
-		emit contactAdded(c, surpress);
+		emit contactAdded(c, supress);
 	}
 	else
 	{
@@ -246,21 +246,21 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool surpress )
 			d->mContactList.append(c);
 			disconnect (old, SIGNAL(displayNameChanged(const QString &, const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &, const QString &)));
 			connect (c, SIGNAL(displayNameChanged(const QString &,const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &, const QString &)));
-			emit contactAdded(c, surpress);
-			emit contactRemoved(old, surpress);
+			emit contactAdded(c, supress);
+			emit contactRemoved(old, QString::null);
 		}
 		else
 		{
 			connect (c, SIGNAL(displayNameChanged(const QString &,const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &, const QString &)));
 			d->mContactList.append(c);
-			emit contactAdded(c, surpress);
+			emit contactAdded(c, supress);
 		}
 		c->setConversations( c->conversations() + 1 );
 	}
 	d->isEmpty=false;
 }
 
-void KopeteMessageManager::removeContact( const KopeteContact *c, bool surpress )
+void KopeteMessageManager::removeContact( const KopeteContact *c, const QString& raison )
 {
 	if(!c || !d->mContactList.contains(c))
 		return;
@@ -276,7 +276,7 @@ void KopeteMessageManager::removeContact( const KopeteContact *c, bool surpress 
 		disconnect (c, SIGNAL(displayNameChanged(const QString &, const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &, const QString &)));
 		c->setConversations( c->conversations() - 1 );
 	}
-	emit contactRemoved(c, surpress);
+	emit contactRemoved(c, raison);
 }
 
 void KopeteMessageManager::receivedTypingMsg( const KopeteContact *c , bool t )

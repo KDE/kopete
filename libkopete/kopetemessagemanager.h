@@ -162,11 +162,11 @@ signals:
 	/**
 	 * a new contact is now in the chat
 	 */
-	void contactAdded(const KopeteContact *, bool surpress);
+	void contactAdded(const KopeteContact *, bool supress);
 	/**
 	 * a contact is no longer in this chat
 	 */
-	void contactRemoved(const KopeteContact *, bool surpress);
+	void contactRemoved(const KopeteContact *, const QString& raison);
 
 	/**
 	 * a contact in this chat has changed his displayname
@@ -211,13 +211,19 @@ public slots:
 
 	/**
 	 * Add a contact to the session
+	 * @param c is the contact
+	 * @param supress mean the there will be no automatic notifications in the chatwindow.
+	 *  (note that i don't like the param supress at all. it is used in irc to show a different notification (with an info text)
+	 *   a QStrin info yould be more interesting, but it is also used to don't show the notification when entering in a channel)
 	 */
-	void addContact( const KopeteContact *c, bool surpress = false );
+	void addContact( const KopeteContact *c, bool supress = false );
 
 	/**
 	 * Remove a contact from the session
+	 * @param c is the contact
+	 * @param raison is the optional raison message showed in the chatwindow
 	 */
-	void removeContact( const KopeteContact *c, bool surpress = false );
+	void removeContact( const KopeteContact *c, const QString& raison=QString::null );
 
 	/**
 	 * Set if the KMM will be deleted when the chatwindow is deleted

@@ -303,6 +303,7 @@ private slots:
 	 * Called when a contact is added to the KMM instance (A new person joins the chat).
 	 * Adds this contact to the typingMap and the contact list view
 	 * @param c The contact that joined the chat
+	 * @param supress mean that no notifications are showed
 	 */
 	void slotContactAdded( const KopeteContact *c, bool surpress );
 
@@ -310,8 +311,9 @@ private slots:
 	 * Called when a contact is removed from the KMM instance (A person left the chat).
 	 * Removes this contact from typingMap and the contact list view
 	 * @param c The contact left the chat
+	 * @param raison is the raison message
 	 */
-	void slotContactRemoved( const KopeteContact *c, bool surpress );
+	void slotContactRemoved( const KopeteContact *c, const QString& raison );
 
 	/**
 	 * Called when a contact changes status, updates the contact list view and

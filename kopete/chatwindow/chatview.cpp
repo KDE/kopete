@@ -133,7 +133,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	connect( m_typingStopTimer,   SIGNAL( timeout() ), SLOT( slotStopTimer() ) );
 	connect( mgr, SIGNAL( displayNameChanged() ), this, SLOT( slotChatDisplayNameChanged() ) );
 	connect( mgr, SIGNAL( contactAdded(const KopeteContact*, bool) ), this, SLOT( slotContactAdded(const KopeteContact*, bool) ) );
-	connect( mgr, SIGNAL( contactRemoved(const KopeteContact*, bool) ), this, SLOT( slotContactRemoved(const KopeteContact*, bool) ) );
+	connect( mgr, SIGNAL( contactRemoved(const KopeteContact*, const QString&) ), this, SLOT( slotContactRemoved(const KopeteContact*, const QString&) ) );
 
 	connect ( chatView->browserExtension(), SIGNAL( openURLRequestDelayed( const KURL &, const KParts::URLArgs & ) ),
 		SLOT( slotOpenURLRequest( const KURL &, const KParts::URLArgs & ) ) );
@@ -596,17 +596,14 @@ void ChatView::slotContactAdded(const KopeteContact *c, bool surpress)
 
 		mComplete->addItem( contactName );
 
-		if( !surpress )
-		{
-			connect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & , const KopeteOnlineStatus &) ),
-				this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
-		}
+		connect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & , const KopeteOnlineStatus &) ),
+			this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
 		typingMap.insert( c, false );
 
 		if( !surpress && memberContactMap.count() > 1 )
 		{
-			sendInternalMessage(i18n("%1 has joined the chat.").arg( contactName ) );
+			sendInternalMessage(  i18n("%1 has joined the chat.").arg(contactName) );
 		}
 
 		memberContactMap.insert(c, new KopeteContactLVI( this, c, membersList ) );
@@ -614,7 +611,7 @@ void ChatView::slotContactAdded(const KopeteContact *c, bool surpress)
 	setTabState();
 }
 
-void ChatView::slotContactRemoved(const KopeteContact *c, bool surpress)
+void ChatView::slotContactRemoved(const KopeteContact *c, const QString& raison)
 {
 	if( memberContactMap.contains(c) && (c != m_manager->user()) )
 	{
@@ -628,13 +625,12 @@ void ChatView::slotContactRemoved(const KopeteContact *c, bool surpress)
 
 		mComplete->removeItem( contactName );
 
-		if( !surpress )
-		{
-			disconnect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
-				this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
-			sendInternalMessage(i18n("%1 has left the chat.").arg( contactName ));
-		}
+		disconnect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
+			this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
+
+		//FIXME: bugs if the nickname contains %1 again
+		sendInternalMessage(  (raison.isNull() ? i18n("%1 has left the chat.") : i18n("%1 has left the chat. ( %2 )")  ).arg(contactName).arg(raison)  );
 
 		delete memberContactMap[c];
 		memberContactMap.remove(c);
