@@ -155,9 +155,8 @@ void AddAccountWizard::next()
 		if ( lvi )
 		{
 			kdDebug( 14100 ) << k_funcinfo << "Trying to load plugin " << m_protocolItems[ lvi ]->pluginName() << " by name" << endl;
-			KopetePlugin *pl = KopetePluginManager::self()->loadPlugin( m_protocolItems[ lvi ]->pluginName() );
-
-			m_proto = dynamic_cast<KopeteProtocol *>( pl );
+			KopetePluginManager::self()->setPluginEnabled( m_protocolItems[ lvi ]->pluginName() );
+			m_proto = dynamic_cast<KopeteProtocol *>( KopetePluginManager::self()->loadPlugin( m_protocolItems[ lvi ]->pluginName() ) );
 			if ( m_proto )
 			{
 				if ( m_accountPage )
@@ -189,15 +188,15 @@ void AddAccountWizard::next()
 			}
 			else
 			{
-				KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n( "Impossible to load the protocol `%1'." ).arg( m_protocolItems[ lvi ]->name() ),
-					i18n( "Error While Adding Account" ) );
+				KMessageBox::queuedMessageBox( this, KMessageBox::Error,
+					i18n( "Impossible to load the protocol '%1'." ).arg( m_protocolItems[ lvi ]->name() ), i18n( "Error While Adding Account" ) );
 			}
 		}
 		return;
 	}
-	else if( indexOf( currentPage() ) == 2 )
+	else if ( indexOf( currentPage() ) == 2 )
 	{
-		if( !m_accountPage->validateData() )
+		if ( !m_accountPage->validateData() )
 			return;
 
 		QColor col = KopeteAccountManager::manager()->guessColor( m_proto );

@@ -186,20 +186,34 @@ void KopeteIface::disconnect(const QString &protocolId, const QString &accountId
 	}
 }
 
-bool KopeteIface::loadPlugin( const QString& name )
+bool KopeteIface::loadPlugin( const QString &name )
 {
-	QString argument=name;
-	if ( !argument.startsWith( "kopete_" ) )
-		argument.prepend( "kopete_" );
-	return KopetePluginManager::self()->loadPlugin(argument);
+	if ( KopetePluginManager::self()->setPluginEnabled( name ) )
+	{
+		QString argument = name;
+		if ( !argument.startsWith( "kopete_" ) )
+			argument.prepend( "kopete_" );
+		return KopetePluginManager::self()->loadPlugin( argument );
+	}
+	else
+	{
+		return false;
+	}
 }
 
-bool KopeteIface::unloadPlugin( const QString& name )
+bool KopeteIface::unloadPlugin( const QString &name )
 {
-	QString argument=name;
-	if ( !argument.startsWith( "kopete_" ) )
-		argument.prepend( "kopete_" );
-	return KopetePluginManager::self()->unloadPlugin( argument );
+	if ( KopetePluginManager::self()->setPluginEnabled( name, false ) )
+	{
+		QString argument = name;
+		if ( !argument.startsWith( "kopete_" ) )
+			argument.prepend( "kopete_" );
+		return KopetePluginManager::self()->unloadPlugin( argument );
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void KopeteIface::setAway()
