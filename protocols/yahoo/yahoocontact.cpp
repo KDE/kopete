@@ -24,6 +24,7 @@
 #include "yahoodebug.h"
 #include "yahoostatus.h"
 #include "yahoocontact.h"
+#include "yahooaccount.h"
 
 // QT Includes
 #include <qstring.h>
@@ -32,11 +33,10 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 
-YahooContact::YahooContact(QString userId, QString fullName,
-			     YahooProtocol *pluginInstance, KopeteMetaContact *metaContact)
-:  KopeteContact( pluginInstance, userId, metaContact)
+YahooContact::YahooContact(KopeteAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact)
+	: KopeteContact(account, userId, metaContact)
 {
-	kdDebug(14180) << "YahooContact::YahooContact("<< userId << ", " << fullName << ")" << endl;
+	kdDebug(14180) << "YahooContact::YahooContact(" << userId << ", " << fullName << ")" << endl;
 
 	m_fullName = fullName;
 	m_userId = userId;
@@ -50,9 +50,10 @@ YahooContact::YahooContact(QString userId, QString fullName,
 	// XXX initActions();
 
 	QObject::connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ), this, SLOT (slotMovedToMetaContact() ));
-	QObject::connect (metaContact , SIGNAL( aboutToSave(KopeteMetaContact*) ), pluginInstance, SLOT (serialize(KopeteMetaContact*) ));	
-	
-	if(static_cast<YahooProtocol *>(protocol())->haveContactList())
+//	QObject::connect (metaContact , SIGNAL( aboutToSave(KopeteMetaContact*) ), pluginInstance, SLOT (serialize(KopeteMetaContact*) ));	
+	//TODO: Probably doesn't save contacts now!
+
+	if(static_cast<YahooAccount *>(account)->haveContactList())
 		syncToServer();
 }
 
@@ -85,14 +86,14 @@ void YahooContact::slotUpdateStatus(QString status, QString statusText = QString
 void YahooContact::syncToServer()
 {
 	kdDebug(14180) << "[YahooContact::syncToServer()]" << endl;
-	if(!static_cast<YahooProtocol *>(protocol())->isConnected()) return;
+	if(!static_cast<YahooAccount *>(account())->isConnected()) return;
 		
-	if(!static_cast<YahooProtocol *>(protocol())->isOnServer(m_userId))
+	if(!static_cast<YahooAccount *>(account())->isOnServer(m_userId))
 	{	kdDebug(14180) << "Contact " << m_userId << " doesn't exist on server-side. Adding..." << endl;
 		QStringList theGroups = metaContact()->groups().toStringList();
 		if(!theGroups.size()) theGroups += "Exported Kopete contacts";
 		for(unsigned j = 0; j < theGroups.size(); j++)
-			static_cast<YahooProtocol *>(protocol())->yahooSession()->addBuddy(m_userId, theGroups[j]);
+			static_cast<YahooAccount *>(account())->yahooSession()->addBuddy(m_userId, theGroups[j]);
 	}
 }
 
@@ -108,12 +109,12 @@ bool YahooContact::isReachable()
 	return true;
 }
 
-QString YahooContact::identityId() const
+/*QString YahooContact::accountId() const
 {
-	kdDebug(14180) << "[YahooContact::identityId()]" << endl;
+	kdDebug(14180) << "[YahooContact::accountId()]" << endl;
 	return m_userId;
 }
-
+*/
 KopeteMessageManager *YahooContact::manager( bool )
 {
 	if( !m_manager )
@@ -134,11 +135,10 @@ void YahooContact::slotSendMessage(KopeteMessage &message, KopeteMessageManager 
 	
 	KopeteContactPtrList m_them = manager()->members();
 	KopeteContact *target = m_them.first();
-	YahooProtocol *p = static_cast<YahooProtocol*>( protocol() );
-	
-	kdDebug(14180) << "Yahoo: Sending message from " << static_cast<YahooContact *>(p->myself())->identityId() << ", to " << static_cast<YahooContact *>(target)->identityId() << endl;
-	
-	p->yahooSession()->sendIm( static_cast<YahooContact *>(p->myself())->identityId(), static_cast<YahooContact *>(target)->identityId(), message.escapedBody() );
+	YahooAccount *i = static_cast<YahooAccount *>(account());
+		
+	kdDebug(14180) << "Yahoo: Sending message from " << static_cast<YahooContact *>(i->myself())->m_userId << ", to " << static_cast<YahooContact *>(target)->m_userId << endl;
+	i->yahooSession()->sendIm( static_cast<YahooContact *>(i->myself())->m_userId, static_cast<YahooContact *>(target)->m_userId, message.escapedBody() );
 
 	// append message to window
 	manager()->appendMessage(message);
@@ -149,8 +149,10 @@ void YahooContact::slotTyping(bool isTyping_ )
 {
 	KopeteContactPtrList m_them = manager()->members();
 	KopeteContact *target = m_them.first();
-	YahooProtocol *p = static_cast<YahooProtocol*>( protocol() );
-	p->yahooSession()->sendTyping( static_cast<YahooContact *>(p->myself())->identityId(), static_cast<YahooContact *>(target)->identityId(), isTyping_ );
+	YahooAccount *i = static_cast<YahooAccount *>(account());
+	
+	kdDebug(14180) << "Yahoo: Sending typing notification from " << static_cast<YahooContact *>(i->myself())->m_userId << ", to " << static_cast<YahooContact *>(target)->m_userId << endl;
+	i->yahooSession()->sendTyping( static_cast<YahooContact *>(i->myself())->m_userId, static_cast<YahooContact *>(target)->m_userId, isTyping_ );
 }
 
 void YahooContact::slotMessageManagerDestroyed()

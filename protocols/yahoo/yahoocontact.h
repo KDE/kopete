@@ -38,12 +38,11 @@ class YahooContact : public KopeteContact
 {
 	Q_OBJECT public:
 
-	YahooContact(QString userId, QString fullName, YahooProtocol *protocol, KopeteMetaContact *metaContact);
+	YahooContact(KopeteAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact);
 	~YahooContact();
 
 	virtual bool isOnline() const;
 	virtual bool isReachable();
-	virtual QString identityId() const;
 	virtual KActionCollection *customContextMenuActions();
 	virtual KopeteMessageManager *manager( bool canCreate = false );
 

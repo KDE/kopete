@@ -1,0 +1,143 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>YahooEditAccountBase</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>YahooEditAccountBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>569</width>
+            <height>399</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Edit A Yahoo Account</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>TextLabel1_2</cstring>
+            </property>
+            <property name="font">
+                <font>
+                    <bold>1</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>Account Information</string>
+            </property>
+        </widget>
+        <widget class="QFrame">
+            <property name="name">
+                <cstring>Frame3_2</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout1</cstring>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLineEdit" row="1" column="1">
+                    <property name="name">
+                        <cstring>mPassword</cstring>
+                    </property>
+                    <property name="echoMode">
+                        <enum>Password</enum>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="0" column="1">
+                    <property name="name">
+                        <cstring>mScreenName</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>label2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Your &amp;Password:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>lineEdit2</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>label1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Your Yahoo Screen &amp;Name:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>lineEdit1</cstring>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>TextLabel1_2_2</cstring>
+            </property>
+            <property name="font">
+                <font>
+                    <bold>1</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>Preferences</string>
+            </property>
+        </widget>
+        <widget class="QFrame">
+            <property name="name">
+                <cstring>Frame3_2_2</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>mAutoConnect</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Auto-connect</string>
+            </property>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer4</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>21</width>
+                    <height>151</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

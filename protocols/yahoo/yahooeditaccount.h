@@ -1,12 +1,9 @@
 /***************************************************************************
-                          yahooprefs.h  -  description
+                          yahooaddcontact.h  -  description
                              -------------------
-    begin                : Fri Apr 26 2002
-    copyright            : (C) 2002 by Bruno Rodrigues
-    email                : bruno.rodrigues@litux.org
-
-    Based on code from   : (C) 2002 by Duncan Mac-Vicar Prett
-    email                : duncan@kde.org
+    begin                : Wed Jan 23 2002
+    copyright            : (C) 2002 by Gav Wood
+    email                : gav@kde.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -18,40 +15,38 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef YAHOOPREFS_H
-#define YAHOOPREFS_H
-
-
-// Local Includes
-
-// Kopete Includes
-#include <configmodule.h>
-#include <qlineedit.h>
-#include <dlgpreferences.h>
-
-// QT Includes
+#ifndef __YAHOOEDITIDENTITY_H
+#define __YAHOOEDITIDENTITY_H
 
 // KDE Includes
 
+// QT Includes
 
-// Yahoo Preferences
-class YahooPreferences : public ConfigModule {
-	Q_OBJECT public:
-		YahooPreferences(const QString & pixmap, QObject * parent = 0);
-								// Constructor
-	~YahooPreferences();	// Destructor
-	virtual void save();	// save preferences method
+// Kopete Includes
+#include "editaccountwidget.h"
 
-	signals: 
-		void saved();	// Parent slot saved
+// Local Includes
+#include "yahooeditaccountbase.h"
 
-	private:
-		dlgPreferences *m_preferencesDialog;	// Preferences Dialog
+class KopeteAccount;
+
+class YahooEditAccount: public YahooEditAccountBase, public EditAccountWidget
+{
+	Q_OBJECT
+
+private:
+	YahooProtocol *theProtocol;
+
+public:
+	YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAccount, QWidget *parent = 0, const char *name = 0);
+
+	virtual bool validateData();
+	
+public slots:
+	virtual KopeteAccount *apply();
 };
 
 #endif
-
-
 /*
  * Local variables:
  * c-indentation-style: k&r

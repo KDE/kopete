@@ -18,15 +18,6 @@
  *                                                                         *
  ***************************************************************************/
 
-// Local Includes
-#include "yahooadd.h"
-#include "yahooprotocol.h"
-#include "yahooaddcontact.h"
-#include "yahoocontact.h"
-
-// Kopete Includes
-#include <addcontactpage.h>
-
 // QT Includes
 #include <qwidget.h>
 #include <qlayout.h>
@@ -43,40 +34,62 @@
 #include <klocale.h>
 #include <kurlrequester.h>
 #include <klineedit.h>
+#include <kmessagebox.h>
 
+// Kopete Includes
+#include <addcontactpage.h>
+#include <kopeteaccount.h>
+
+// Local Includes
+#include "yahooadd.h"
+#include "yahooprotocol.h"
+#include "yahooaccount.h"
+#include "yahoocontact.h"
+#include "yahooeditaccount.h"
 
 // Yahoo Add Contact page
-YahooAddContact::YahooAddContact(YahooProtocol *owner, QWidget *parent, const char *name): AddContactPage(parent, name)
+YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAccount, QWidget *parent, const char *name): YahooEditAccountBase(parent), EditAccountWidget(theAccount)
 {
-	kdDebug(14180) << "YahooAddContact::YahooAddContact(<owner>, <parent>, " << name << ")";
+	kdDebug(14180) << "YahooEditAccount::YahooEditAccount(<protocol>, <theAccount>, <parent>, " << name << ")";
 
-	(new QVBoxLayout(this))->setAutoAdd(true);
-	theDialog = new YahooAddContactBase(this);
-	theDialog->show();
-	theProtocol = owner;
+	theProtocol = protocol;
+	if(m_account)
+	{	mScreenName->setText(m_account->accountId());
+		if(m_account->rememberPassword())
+			mPassword->setText(m_account->getPassword());
+		mAutoConnect->setChecked(m_account->autoLogin());
+	}
+	show();
 }
 
-// Destructor
-YahooAddContact::~YahooAddContact()
+bool YahooEditAccount::validateData()
 {
-	kdDebug(14180) << "YahooAddContact::~YahooAddContact()";
+	kdDebug(14180) << "YahooEditAccount::validateData()";
+	
+	if(mScreenName->text() == "")
+	{	KMessageBox::sorry(this, i18n("<qt>You must enter a valid screen name</qt>"), i18n("Yahoo"));
+		return false;
+	}
+	if(mPassword->text() == "")
+	{	KMessageBox::sorry(this, i18n("<qt>You must enter a valid password</qt>"), i18n("Yahoo"));
+		return false;
+	}
+	return true;
 }
 
-bool YahooAddContact::validateData()
+KopeteAccount *YahooEditAccount::apply()
 {
-	kdDebug(14180) << "YahooAddContact::validateData()";
-    
-	return theDialog->contactID->text() != "";
+	kdDebug(14180) << "YahooEditAccount::apply()";
+	
+	if(!m_account)
+		m_account = new YahooAccount(theProtocol, mScreenName->text());
+	m_account->setPassword(mPassword->text());
+	m_account->setAutoLogin(mAutoConnect->isChecked());
+
+	return m_account;
 }
 
-void YahooAddContact::slotFinish(KopeteMetaContact *theMetaContact)
-{
-	kdDebug(14180) << "YahooAddContact::slotFinish()";
-
-	theProtocol->addContact(theDialog->contactID->text(), theDialog->displayName->text() == "" ? theDialog->contactID->text() : theDialog->displayName->text(), theMetaContact);
-}
-
-#include "yahooaddcontact.moc"
+#include "yahooeditaccount.moc"
 /*
  * Local variables:
  * c-indentation-style: k&r

@@ -52,16 +52,10 @@ YahooPreferences::YahooPreferences(const QString & pixmap,
 	m_preferencesDialog->show();
 
 	KGlobal::config()->setGroup("Yahoo");
-	m_preferencesDialog->mID->setText(KGlobal::config()->
-			readEntry("UserID", i18n("<your Yahoo ID>")));
-	m_preferencesDialog->mPass->setText(KGlobal::config()->
-			readEntry("Password", i18n("<your Yahoo password>")));
 	m_preferencesDialog->mServer->setText(KGlobal::config()->
 			readEntry("Server", "cs.yahoo.com"));
 	m_preferencesDialog->mPort->setValue(KGlobal::config()->
 			readNumEntry("Port", 5050));
-	m_preferencesDialog->mAutoConnect->setChecked(KGlobal::config()->
-			readBoolEntry ("AutoConnect", false));
 	m_preferencesDialog->mLogAll->setChecked(KGlobal::config()->
 			readBoolEntry("LogAll", true));
 }
@@ -78,18 +72,13 @@ YahooPreferences::~YahooPreferences()
 void YahooPreferences::save()
 {
 	DEBUG(YDMETHOD, "YahooPreferences::save()");
-    KConfig *config = KGlobal::config();
-    config->setGroup("Yahoo");
-    config->writeEntry("UserID", m_preferencesDialog->mID->text());
-    config->writeEntry("Password", m_preferencesDialog->mPass->text());
-    config->writeEntry("Server", m_preferencesDialog->mServer->text());
-    config->writeEntry("Port", m_preferencesDialog->mPort->text());
-    config->writeEntry("AutoConnect",
-		       m_preferencesDialog->mAutoConnect->isChecked());
-    config->writeEntry("LogAll", m_preferencesDialog->mLogAll->isChecked());
-    config->sync();
-    emit saved();
-
+	KConfig *config = KGlobal::config();
+	config->setGroup("Yahoo");
+	config->writeEntry("Server", m_preferencesDialog->mServer->text());
+	config->writeEntry("Port", m_preferencesDialog->mPort->text());
+	config->writeEntry("LogAll", m_preferencesDialog->mLogAll->isChecked());
+	config->sync();
+	emit saved();
 }
 
 #include "yahooprefs.moc"

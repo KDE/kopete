@@ -40,118 +40,48 @@ class KActionMenu;
 class KAction;
 class KopeteMetaContact;
 class KopeteMessage;
+class YahooPreferences;
 
 // Yahoo Protocol
 class YahooProtocol : public KopeteProtocol
 {
 	Q_OBJECT
-
 public:
+	YahooProtocol( QObject *parent, const char *name, const QStringList &args );
+	~YahooProtocol();
+	
 	static YahooProtocol *protocol();
 
 	/* Plugin reimplementation */
+	virtual void init();
+	virtual bool unload();
+
+	virtual const QString protocolIcon() { return "yahoo_online"; }
+	virtual KActionMenu* protocolActions() { return 0; }
 	virtual void deserializeContact( KopeteMetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
-
-	YahooProtocol( QObject *parent, const char *name, const QStringList &args );
-	~YahooProtocol();
-
-	KopeteContact* myself() const;
-	bool addContactToMetaContact(const QString &contactId, const QString &displayName,
-	KopeteMetaContact *parentContact);
-
-	virtual KActionMenu* protocolActions();
-	YahooContact *contact( const QString &id );
-	YahooSession *yahooSession();
-
-	bool isOnServer(const QString &id) { return IDs.contains(id); }	// returns true is contact id is on SS contact list
-	bool haveContactList() { return theHaveContactList; }
+	
+	QString server() { return m_server; }
+	int port() { return m_port; }
 
 public slots:
-	void connect();			// Connect to server
-	void disconnect();		// Disconnect from server
-	void setAvailable();	// Set user Available
-	void setAway();			// Set user away
-
-	AddContactPage *createAddContactWidget(QWidget * parent); // Return "add contact" dialog
+	virtual AddContactPage *createAddContactWidget(QWidget * parent); // Return "add contact" dialog
+	virtual EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
+	virtual KopeteAccount *createNewAccount(const QString &accountId);
 
 	void slotSettingsChanged(void);
 						// Callback when settings changed
-	//void slotConnect();
-	void slotGoOffline();
-
-	void slotLoginResponse( int succ, const QString &url);
-	void slotGotBuddies(const YList * buds);
-	void slotGotBuddy(const QString &userid, const QString &alias, const QString &group);
-	void slotGotIgnore( YList * igns);
-	void slotGotIdentities( const QStringList &);
-	void slotStatusChanged( const QString &who, int stat, const QString &msg, int away);
-	void slotGotIm( const QString &who, const QString &msg, long tm, int stat);
-	void slotGotConfInvite( const QString &who, const QString &room, const QString &msg, const QStringList &members);
-	void slotConfUserDecline( const QString &who, const QString &room, const QString &msg);
-	void slotConfUserJoin( const QString &who, const QString &room);
-	void slotConfUserLeave( const QString &who, const QString &room);
-	void slotConfMessage( const QString &who, const QString &room, const QString &msg);
-	void slotGotFile( const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize);
-	void slotContactAdded( const QString &myid, const QString &who, const QString &msg);
-	void slotRejected( const QString &, const QString &);
-	void slotGameNotify( const QString &, int);
-	/**
-	 * Mail Notification
-	 */
-	void slotMailNotify( const QString &, const QString &, int);
-	void slotSystemMessage( const QString &);
-	void slotError( const QString &, int);
-	void slotRemoveHandler( int fd);
-	//void slotHostConnect(const QString &host, int port);
-
-	void slotGotBuddiesTimeout();				// timeout for reception of buddies list
-
 signals:
 //	void protocolUnloading();	// Unload Protocol
 
-protected slots:
-	void slotConnected();
-
 private:
-	QMap <QString, YahooContact *> m_contactsMap;
-	QMap<QString, QPair<QString, QString> > IDs;	// this should be kept in sync with server - if a buddy is removed, this should be changed accordingly.
-	bool theHaveContactList;
-
-	int m_sessionId;
-
-	bool m_isConnected;				// Am I connected ?
-	QString m_userId, m_password, m_server; int m_port;
-									// Configuration data
-	YahooPreferences *m_prefs;		// Preferences Object
-	YahooSession *m_session;			// Connection Object
-	YahooContact *m_myself;
-
-	void initActions();	// Load Status Actions
-
-	KActionMenu *actionStatusMenu; // Statusbar Popup
-	KAction *actionGoOnline;	// Available
-	KAction *actionGoOffline;	// Disconnected
-	KAction *actionGoStatus001; // Be Right Back
-	KAction *actionGoStatus002; // Busy
-	KAction *actionGoStatus003; // Not At Home
-	KAction *actionGoStatus004; // Not At My Desk
-	KAction *actionGoStatus005; // Not In The Office
-	KAction *actionGoStatus006; // On The Phone
-	KAction *actionGoStatus007; // On Vacation
-	KAction *actionGoStatus008; // Out To Lunch
-	KAction *actionGoStatus009; // Stepped Out
-	KAction *actionGoStatus012; // Invisible
-	KAction *actionGoStatus099; // Custom
-	KAction *actionGoStatus999; // Idle
-
 	static YahooProtocol* s_protocolStatic_;
-
-	/** The contact's idle time */
-	int m_idle;
-	/** Timer for sending typing notifications */
-	QTimer* m_typingTimer;
-
+	YahooPreferences *m_prefs;
+	
+	// Configuration data
+	QString m_server;
+	int m_port;
+	bool m_logAll;
 };
 
 #endif
