@@ -958,7 +958,7 @@ void OscarSocket::sendIM(const QString &message, OscarContact *contact, bool isA
 
 	if(codec)
 	{
-		if(codec->canEncode(message))
+		if(codec->canEncode(message)) // this returns true for some accented western european chars but kopete can't decode on receipt
 		{
 			//kdDebug(14150) << k_funcinfo << "Going to encode as US-ASCII" << endl;
 			charset=0x0000; // send US-ASCII
@@ -969,8 +969,10 @@ void OscarSocket::sendIM(const QString &message, OscarContact *contact, bool isA
 			//kdDebug(14150) << k_funcinfo << "Cannot encode as US-ASCII" << endl;
 		}
 	}
-
-	if(!codec && contact->hasCap(CAP_UTF8))
+	
+	// if we couldn't encode it as ascii, and either the client says it can do UTF8, or we have no 
+	// contact specific encoding set, might as well send it as UTF-16BE as as ISO-8859-1
+	if ( !codec && ( contact->hasCap(CAP_UTF8) || !contact->encoding() ) )
 	{
 		// use UTF is peer supports it and encoding as US-ASCII failed
 		length=message.length()*2;
