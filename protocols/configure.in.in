@@ -65,17 +65,17 @@ AC_MSG_CHECKING([libgadu version 1.4rc2, 1.4, 1.5(rcX) with pthread support])
 	AC_SUBST(LIBGG_LIBS)
 	COMPILE_GADU=true
 	AC_SUBST(COMPILE_GADU)
-	use_libgadu_copy=no
+	use_libgadu_copy=
 	], [
 	if test "$kde_use_threading" = "yes" ; then
 	AC_MSG_RESULT([no, falling back on supplied libgadu-copy])
 	use_libgadu_copy=yes
 	COMPILE_GADU=true
 	else
-	use_libgadu_copy=no
+	use_libgadu_copy=
 	AC_MSG_RESULT([no, cannot fall back on libgadu-copy (no threads)])
 	COMPILE_GADU=	
-	use_libgadu_copy=no
+	use_libgadu_copy=
 	fi
 	AC_SUBST(COMPILE_GADU)	
 	])
