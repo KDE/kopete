@@ -172,14 +172,18 @@ public slots:
 	void kickUser(const QString &user, const QString &channel, const QString &reason);
 	void partChannel(const QString &name, const QString &reason);
 	// void pingUser ??
+	/**
+	 * Send a quit message for the given reason.
+	 * If now is set to true the connection is closed and no event message is sent.
+	 * Therefore setting now to true should only be used while destroying the object.
+	 */
 	void quitIRC(const QString &reason, bool now=false);
 
 	void requestDccConnect(const QString &, const QString &, unsigned int port, DCCClient::Type type);
 
 	/* IRC with numeric replies only */
 	void isOn(const QStringList &nickList); /* 303 */
-	/* An awayMessage set to QString::null means not away anymore. */
-	void setAway(bool isAway, const QString &awayMessage); /* 301-305-306 */
+	void setAway(bool isAway, const QString &awayMessage = QString::null); /* 301-305-306 */
 	void whoisUser(const QString &user); /* 311-312-313-317-318-319 */
 	void list(); /* 321-322-323 */
 

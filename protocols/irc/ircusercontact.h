@@ -52,7 +52,10 @@ public:
 
 private slots:
 	virtual void updateStatus();
+public:
+	void setAway(bool isAway);
 
+private slots:
 	void slotOp();
 	void slotDeop();
 	void slotVoice();
@@ -80,6 +83,8 @@ private:
 	KAction *actionKick;
 	KActionMenu *actionBanMenu;
 	QTimer *mOnlineTimer;
+
+	bool m_isAway;
 
 	void contactMode(const QString &mode);
 };

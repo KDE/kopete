@@ -124,12 +124,10 @@ void IRCAccount::disconnect()
 
 void IRCAccount::setAway( bool isAway, const QString &awayMessage )
 {
+	kdDebug(14120) << k_funcinfo << isAway << " " << awayMessage << endl;
 	if(m_engine->isConnected())
 	{
-		if( isAway )
-			m_mySelf->setOnlineStatus( IRCProtocol::IRCUserAway() );
-		else
-			m_mySelf->setOnlineStatus( IRCProtocol::IRCUserOnline() );
+		m_mySelf->setAway( isAway );
 		engine()->setAway( isAway, awayMessage );
 	}
 }

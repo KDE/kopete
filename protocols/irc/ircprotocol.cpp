@@ -41,20 +41,20 @@ IRCProtocol *IRCProtocol::s_protocol = 0L;
 IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
 	: KopeteProtocol( parent, name ),
 	// FIXME: get a real icons for this.
-	m_ServerOnline( KopeteOnlineStatus( KopeteOnlineStatus::Online, 90, this, 1, "irc_server", QString::null, i18n("Online"))),
-	m_ServerOffline( KopeteOnlineStatus( KopeteOnlineStatus::Offline, 80, this, 0, "irc_server", QString::null, i18n("Offline"))),
+	m_ServerOnline(KopeteOnlineStatus::Online, 90, this, 2, "irc_server", QString::null, i18n("Online")),
+	m_ServerOffline(KopeteOnlineStatus::Offline, 80, this, 0, "irc_server", QString::null, i18n("Offline")),
 
-	m_ChannelOnline( KopeteOnlineStatus( KopeteOnlineStatus::Online, 70, this, 1, "irc_channel", i18n("Go O&nline"), i18n("Online"))),
-	m_ChannelOffline( KopeteOnlineStatus( KopeteOnlineStatus::Offline, 60, this, 0, "irc_channel", i18n("Go O&ffline"), i18n("Offline"))),
+	m_ChannelOnline(KopeteOnlineStatus::Online, 70, this, 2, "irc_channel", i18n("Go O&nline"), i18n("Online")),
+	m_ChannelOffline(KopeteOnlineStatus::Offline, 60, this, 0, "irc_channel", i18n("Go O&ffline"), i18n("Offline")),
 
-	m_UserOp( KopeteOnlineStatus( KopeteOnlineStatus::Online, 50, this, 1, "irc_op", QString::null, i18n("Online"))),
-	m_UserVoice( KopeteOnlineStatus( KopeteOnlineStatus::Online, 40, this, 1, "irc_voice", QString::null, i18n("Online"))),
-	m_UserOnline( KopeteOnlineStatus( KopeteOnlineStatus::Online, 30, this, 1, "irc_online", i18n("Go O&nline"), i18n("Online"))),
-	m_UserAway( KopeteOnlineStatus( KopeteOnlineStatus::Away, 20, this, 1, "irc_away", i18n("Go &Away"), i18n("Away"))),
-	m_UserConnecting( KopeteOnlineStatus( KopeteOnlineStatus::Connecting, 10, this, 0, "irc_connecting", i18n("Connecting"), i18n("Connecting"))),
-	m_UserOffline( KopeteOnlineStatus( KopeteOnlineStatus::Offline, 0, this, 0, "irc_online", i18n("Go O&ffline"), i18n("Offline"))),
+	m_UserOp(KopeteOnlineStatus::Online, 50, this, 4, "irc_op", QString::null, i18n("Online")),
+	m_UserVoice(KopeteOnlineStatus::Online, 40, this, 3, "irc_voice", QString::null, i18n("Online")),
+	m_UserOnline(KopeteOnlineStatus::Online, 30, this, 2, "irc_online", i18n("Go O&nline"), i18n("Online")),
+	m_UserAway(KopeteOnlineStatus::Away, 20, this, 1, "irc_away", i18n("Go &Away"), i18n("Away")),
+	m_UserConnecting(KopeteOnlineStatus::Connecting, 10, this, 0, "irc_connecting", i18n("Connecting"), i18n("Connecting")),
+	m_UserOffline(KopeteOnlineStatus::Offline, 0, this, 0, "irc_online", i18n("Go O&ffline"), i18n("Offline")),
 
-	m_Unknown( KopeteOnlineStatus( KopeteOnlineStatus::Unknown, 0, this, 0, "status_unknown", "FIXME: Make this unselectable", i18n("Status not available")))
+	m_Unknown(KopeteOnlineStatus::Unknown, 0, this, 0, "status_unknown", "FIXME: Make this unselectable", i18n("Status not available"))
 {
 	s_protocol = this;
 	mActions = 0L;

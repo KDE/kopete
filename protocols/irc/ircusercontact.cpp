@@ -27,10 +27,9 @@
 #include "ksparser.h"
 
 IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString &nickname, KopeteMetaContact *m)
-	: IRCContact(contactManager, nickname, m, QString::fromLatin1("irc_contact_user_")+nickname)
+	: IRCContact(contactManager, nickname, m, QString::fromLatin1("irc_contact_user_")+nickname),
+	  m_isAway(false)
 {
-	m_nickName = nickname;
-
 	mOnlineTimer = new QTimer( this );
 
 	QObject::connect(m_engine, SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)),
@@ -57,12 +56,24 @@ void IRCUserContact::updateStatus()
 	case KIRC::Connected:
 	case KIRC::Closing:
 		// FIXME: should make some extra check here
-		kopeteStatus = IRCProtocol::IRCUserOnline();
+//		if(m_isOnline)
+//			kopeteStatus = IRCProtocol::IRCUserOnline();
+		if(m_isAway)
+			kopeteStatus = IRCProtocol::IRCUserAway();
+		else
+//			kopeteStatus = IRCProtocol::IRCUserOffline();
+			kopeteStatus = IRCProtocol::IRCUserOnline();
 		break;
 	default:
 		kopeteStatus = IRCProtocol::IRCUnknown();
 	}
 	setOnlineStatus( kopeteStatus );
+}
+
+void IRCUserContact::setAway(bool isAway)
+{
+	m_isAway = isAway;
+	updateStatus();
 }
 
 void IRCUserContact::slotUserOnline( const QString &nick )

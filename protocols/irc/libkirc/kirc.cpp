@@ -540,20 +540,21 @@ void KIRC::changeUser(const QString &newUsername, Q_UINT8 mode, const QString &n
 
 void KIRC::quitIRC(const QString &reason, bool now)
 {
-	/* This will quit IRC.
-	 */
-	if(	m_status != Disconnected &&
-		m_status != Closing)
-	{
-		setStatus(Closing);
-		writeMessage("QUIT", QString::null, reason, false);
-		if(!now)
-			QTimer::singleShot(10000, this, SLOT(quitTimeout()));
-	}
 	if(now)
 	{
 		setStatus(Disconnected);
 		m_sock.close();
+	}
+	else
+	{
+		if(	m_status != Disconnected &&
+			m_status != Closing)
+		{
+			setStatus(Closing);
+		}
+
+		writeMessage("QUIT", QString::null, reason, false);
+		QTimer::singleShot(10000, this, SLOT(quitTimeout()));
 	}
 }
 
@@ -840,7 +841,10 @@ bool KIRC::pong(const KIRCMessage &msg)
 void KIRC::setAway(bool isAway, const QString &awayMessage)
 {
 	if(isAway)
-		writeMessage("AWAY", QString::null, awayMessage);
+		if( !awayMessage.isEmpty() )
+			writeMessage("AWAY", QString::null, awayMessage);
+		else
+			writeMessage("AWAY", QString::null, QString::fromLatin1("I'm away."));
 	else
 		writeMessage("AWAY");
 }
