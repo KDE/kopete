@@ -94,7 +94,7 @@ public:
 		**/
 		virtual void setName( const QString &name );
 		/**
-		* return name of an KopeteContact
+		* Display name, known as nick
 		**/
 		virtual QString name() const;
 		/**
@@ -171,6 +171,12 @@ public:
 		QString protocol() const { return m_protocolId; }
 		void setProtocol( const QString &id ) { m_protocolId = id; }
 
+		/**
+		 * Return the protocol specific serialized data
+		 * that a plugin may want to store here.
+		 */
+		QString data() const { return m_data; }
+		void setData( const QString &data ) { m_data = data; }
 
 		/**
 		 * Return a XML representation of the contact
@@ -201,10 +207,11 @@ signals:
 		void incomingEvent(KopeteEvent *);
 
 	private:
-		QString mName;
+		QString m_name;
 
 		QString m_id;
 		QString m_protocolId;
+		QString m_data;
 
 		/**
 		* Scaled icon cache

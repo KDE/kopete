@@ -82,12 +82,12 @@ public:
 	QString toXML();
 
     /**
-	 * Load the contact list from XML file [NON-FINISHED YET]
+	 * Load the contact list from XML file
 	 */
     void loadXML();
 
 	/**
-	 * Save the contact list to XML file [NON-FINISHED YET]
+	 * Save the contact list to XML file
 	 */
     void saveXML();
 

@@ -39,13 +39,13 @@ KopeteContact::~KopeteContact()
 
 void KopeteContact::setName( const QString &name )
 {
-	mName = name;
+	m_name = name;
 	emit nameChanged(name);
 }
 
 QString KopeteContact::name() const
 {
-	return mName;
+	return m_name;
 }
 
 KopeteContact::ContactStatus KopeteContact::status() const
@@ -84,9 +84,11 @@ QString KopeteContact::toXML()
 	{
     	xml = xml + " id=\"" + m_id + "\"";
 		xml = xml + " protocol=\"" + m_protocolId + "\"";
-
-		if ( ! mName.isNull() )
-			xml = xml + " name=\"" + mName + "\"";			
+        
+		if ( ! m_name.isNull() )
+			xml = xml + " name=\"" + m_name + "\"";
+		if ( ! m_data.isNull() )
+			xml = xml + " data=\"" + m_data + "\"";						
 	}
 	else
 	{
