@@ -82,6 +82,13 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 		connect( parent, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
 			protocol, SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
 
+		connect( parent, SIGNAL( addedToGroup( KopeteMetaContact *, KopeteGroup * ) ),
+			this, SLOT( addToGroup( KopeteMetaContact *, KopeteGroup * ) ) );
+		connect( parent, SIGNAL( removedFromGroup( KopeteMetaContact *, KopeteGroup * ) ),
+			this, SLOT( removeFromGroup( KopeteMetaContact *, KopeteGroup * ) ) );
+		connect( parent, SIGNAL( movedToGroup( KopeteMetaContact *, KopeteGroup *, KopeteGroup * ) ),
+			this, SLOT( moveToGroup( KopeteMetaContact *, KopeteGroup *, KopeteGroup * ) ) );
+
 		parent->addContact( this );
 	}
 }
@@ -315,8 +322,21 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 	// Reconnect signals to the new meta contact
 	disconnect( old, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
 		protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
+	disconnect( old, SIGNAL( addedToGroup( KopeteMetaContact *, KopeteGroup * ) ),
+		this, SLOT( addToGroup( KopeteMetaContact *, KopeteGroup * ) ) );
+	disconnect( old, SIGNAL( removedFromGroup( KopeteMetaContact *, KopeteGroup * ) ),
+		this, SLOT( removeFromGroup( KopeteMetaContact *, KopeteGroup * ) ) );
+	connect( old, SIGNAL( movedToGroup( KopeteMetaContact *, KopeteGroup *, KopeteGroup * ) ),
+		this, SLOT( moveToGroup( KopeteMetaContact *, KopeteGroup *, KopeteGroup * ) ) );
+
 	connect( m_metaContact, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
 		protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
+	connect( m_metaContact, SIGNAL( addedToGroup( KopeteMetaContact *, KopeteGroup * ) ),
+		this, SLOT( addToGroup( KopeteMetaContact *, KopeteGroup * ) ) );
+	connect( m_metaContact, SIGNAL( removedFromGroup( KopeteMetaContact *, KopeteGroup * ) ),
+		this, SLOT( removeFromGroup( KopeteMetaContact *, KopeteGroup * ) ) );
+	connect( m_metaContact, SIGNAL( movedToGroup( KopeteMetaContact *, KopeteGroup *, KopeteGroup * ) ),
+		this, SLOT( moveToGroup( KopeteMetaContact *, KopeteGroup *, KopeteGroup * ) ) );
 
 	// Sync groups
 	for( KopeteGroup *group = newGroups.first(); group; group = newGroups.next() )
