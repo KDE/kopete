@@ -19,11 +19,8 @@
 #define OSCARCONTACT_H
 
 #include <qwidget.h>
-#include <kopetecontact.h>
-#include "kopetemessagemanager.h"
-#include "kopetemessagemanagerfactory.h"
-#include "kopetehistorydialog.h"
-#include "oscarprotocol.h"
+#include "kopetecontact.h"
+#include "kopetemessage.h"
 
 /**Contact for oscar protocol
   *@author twl6
@@ -31,6 +28,9 @@
 
 struct UserInfo;
 class OscarProtocol;
+class KopeteMessageManager;
+class OscarProtocol;
+class  KopeteHistoryDialog;
 
 class OscarContact : public KopeteContact  {
    Q_OBJECT

@@ -24,8 +24,12 @@
 #include "kopetestdaction.h"
 #include "kopetewindow.h"
 #include "kopeteaway.h"
+#include "kopetemessagemanager.h"
+#include "kopetemessagemanagerfactory.h"
+#include "kopetehistorydialog.h"
 #include "oscarsocket.h"
 #include "oscaruserinfo.h"
+#include "oscarprotocol.h"
 #include "aim.h"
 
 OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
@@ -119,12 +123,12 @@ KopeteMessageManager* OscarContact::msgManager()
 {
 	if ( mMsgManager )
 	{
-		printf("REturning a mmsgmanager: %d\n",mMsgManager);fflush(stdout);
+		//printf("REturning a mmsgmanager: %d\n",mMsgManager);fflush(stdout);
 		return mMsgManager;
 	}
 	else
 	{
-		printf("Creating a mmsgmanager: %d\n",mProtocol->myself());fflush(stdout);
+		//printf("Creating a mmsgmanager: %d\n",mProtocol->myself());fflush(stdout);
 		mMsgManager = kopeteapp->sessionFactory()->create(mProtocol->myself(), theContacts, mProtocol, "aim_logs/" + mName +".log", KopeteMessageManager::ChatWindow);
 		connect(mMsgManager, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(const KopeteMessage&, KopeteMessageManager *)));
 		return mMsgManager;
