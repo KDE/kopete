@@ -258,6 +258,11 @@ const QDict<KopeteContact>& KopeteAccount::contacts()
 bool KopeteAccount::addContact( const QString &contactId, const QString &displayName,
 	KopeteMetaContact *parentContact, const QString &groupName, bool isTemporary )
 {
+	if(contactId==accountId())
+	{
+		kdDebug(14010) << "KopeteAccount::addContact: WARNING: the user try to add myself to his contactlist - abort" << endl;
+		return false;
+	}
 	KopeteContact *c=d->contacts[contactId];
 	if(c && c->metaContact())
 	{

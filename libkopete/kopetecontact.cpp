@@ -460,10 +460,11 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 
 		if( !old->contacts().isEmpty() )
 			protocol()->slotMetaContactAboutToSave( old );
+			
+		// Reparent the contact
+		old->removeChild( this );
 	}
 
-	// Reparent the contact
-	d->metaContact->removeChild( this );
 	d->metaContact = m;
 
 	if( m )
