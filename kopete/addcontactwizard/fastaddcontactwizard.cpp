@@ -131,3 +131,5 @@ void FastAddContactWizard::accept()
 	
 	deleteLater();
 }
+
+#include "fastaddcontactwizard.moc"
