@@ -112,7 +112,8 @@ void KMSNServiceSocket::parseCommand( const QString &cmd, uint id,
 	{
 		// handle, publicName, status
 		emit contactStatusChanged( data.section( ' ', 1, 1 ),
-			unescape( data.section( ' ', 2, 2 ) ), data.section( ' ', 0, 0 ) );
+			unescape( data.section( ' ', 2, 2 ) ),
+			MSNProtocol::convertStatus( data.section( ' ', 0, 0 ) ) );
 	}
 	else if( cmd == "LST" )
 	{
@@ -127,7 +128,8 @@ void KMSNServiceSocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "FLN" )
 	{
-		emit contactStatusChanged( data.section( ' ', 0, 0 ), "", "FLN" );
+		emit contactStatusChanged( data.section( ' ', 0, 0 ),
+			data.section( ' ', 0, 0 ), MSNProtocol::FLN );
 	}
 	else if( cmd == "ILN" )
 	{

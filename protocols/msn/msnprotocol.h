@@ -148,7 +148,7 @@ public:
 	 * Convert string-like status to Status enum
 	 * FIXME: should be made private again when possible
 	 */
-	Status convertStatus( QString status ) const;
+	static Status convertStatus( QString status );
 	Status status() const;
 
 	QStringList groups() const;
@@ -238,7 +238,8 @@ private slots:
 	void slotContactAdded(QString handle, QString publicName, QString list, uint serial, uint group );
 
 	void slotContactList(QString handle, QString publicName, QString group, QString list );
-	void slotContactStatusChanged( QString handle, QString publicName, QString status );
+	void slotContactStatusChanged( const QString &msnId,
+		const QString &publicName, MSNProtocol::Status status );
 	void slotStatusChanged( QString status );
 
 	/**

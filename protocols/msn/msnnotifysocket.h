@@ -20,6 +20,7 @@
 #define KMSNSERVICESOCKET_H
 
 #include "msnauthsocket.h"
+#include "msnprotocol.h"
 
 class MSNDispatchSocket;
 
@@ -53,7 +54,8 @@ signals:
 //	void newMail(QString, uint);
 	void contactList(QString, QString, QString, QString);
 	void contactList(QString, QString, uint);
-	void contactStatusChanged( QString, QString, QString );
+	void contactStatusChanged( const QString &msnId, const QString &publicName,
+		MSNProtocol::Status status );
 	void contactStatus(QString, QString, QString );
 	void contactAdded(QString, QString, QString, uint, uint);
 	void contactRemoved(QString, QString, uint, uint);

@@ -162,9 +162,9 @@ void MSNProtocol::Connect()
 	connect( m_serviceSocket, SIGNAL( statusChanged( QString ) ),
 				this, SLOT( slotStateChanged( QString ) ) );
 	connect( m_serviceSocket,
-		SIGNAL( contactStatusChanged( QString, QString, QString ) ),
+		SIGNAL( contactStatusChanged( const QString &, const QString &, MSNProtocol::Status ) ),
 		this,
-		SLOT( slotContactStatusChanged( QString, QString, QString ) ) );
+		SLOT( slotContactStatusChanged( const QString &, const QString &, MSNProtocol::Status ) ) );
 	connect( m_serviceSocket,
 		SIGNAL( contactList( QString, QString, QString, QString ) ),
 		this, SLOT( slotContactList( QString, QString, QString, QString ) ) );
@@ -678,7 +678,7 @@ MSNProtocol::Status MSNProtocol::status() const
 	return m_status;
 }
 
-MSNProtocol::Status MSNProtocol::convertStatus( QString status ) const
+MSNProtocol::Status MSNProtocol::convertStatus( QString status )
 {
 	if( status == "NLN" )
 		return NLN;
@@ -715,21 +715,16 @@ void MSNProtocol::slotContactStatus( QString handle, QString publicName,
 	}
 }
 
-void MSNProtocol::slotContactStatusChanged( QString handle, QString publicName,
-	QString status )
+void MSNProtocol::slotContactStatusChanged( const QString &handle,
+	const QString &publicName, MSNProtocol::Status status )
 {
 	kdDebug() << "MSNProtocol::slotContactStatusChanged: " << handle << " (" <<
 		publicName << ") has status " << status << endl;
 
 	if( m_contacts.contains( handle ) )
 	{
-		if( status == "FLN" )
-			m_contacts[ handle ]->setMsnStatus( FLN );
-		else
-		{
-			m_contacts[ handle ]->setMsnStatus( convertStatus( status ) );
-			m_contacts[ handle ]->setNickname( publicName );
-		}
+		m_contacts[ handle ]->setMsnStatus( status );
+		m_contacts[ handle ]->setNickname( publicName );
 	}
 }
 
