@@ -41,9 +41,6 @@ public:
 
 	QString _publicName;
 	QString buffer;
-
-	QString readLine();
-	bool canReadLine();
 	QString readBlock(uint len);
 
 protected:
@@ -58,7 +55,11 @@ protected:
 protected slots:
 	void slotDataReceived();
 	void slotSocketError(int error);
-	void slotSocketClose();
+
+	/**
+	 * Check if new lines of data are available and process the first line
+	 */
+	void slotReadLine();
 
 protected:
 	void sendProtocol();
@@ -71,7 +72,6 @@ public:
 	void connectToMSN( const QString &handle, const QString &password,
 		uint serial, bool silent );
 	void close();
-	void kill();
 	void closeService();
 
 	void setStatus( int status );
@@ -122,7 +122,8 @@ private:
 	/**
 	 * Send an MSN command to the socket
 	 */
-	void sendCommand( const QString &cmd, const QString &args = QString::null );
+	void sendCommand( const QString &cmd, const QString &args = QString::null,
+		bool addNewLine = true );
 
 	/**
 	 * The id of the message sent to the MSN server. This ID will increment
@@ -134,6 +135,8 @@ private:
 	 * Convert an entry of the Status enum back to a string
 	 */
 	QString statusToString( int status ) const;
+
+	void closeSocket();
 };
 
 #endif

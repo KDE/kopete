@@ -24,15 +24,18 @@
 #include <qptrlist.h>
 
 #include "kopeteprotocol.h"
+#include "kopetecontact.h"
 
 class KAction;
 class KActionMenu;
 
 class KMSNChatService;
 class KMSNServiceSocket;
+class KopeteContact;
+class KopeteMessage;
+class KopeteMessageManager;
 class MSNContact;
 class MSNIdentity;
-class MSNMessageDialog;
 class MSNPreferences;
 class StatusBarIcon;
 
@@ -107,6 +110,8 @@ public:
 	void renameGroup( const QString &oldGroup, const QString &newGroup );
 	void removeGroup( const QString &groupName );
 
+	KopeteContact *myself() const;
+
 	/**
 	 * Convert string-like status to Status enum
 	 * FIXME: should be made private again when possible
@@ -135,8 +140,6 @@ public:
 	const ContactList& contacts() const { return m_contacts; }
 
 public slots:
-	void slotMessageDialogClosing( QString );
-
 	void slotSyncContactList();
 
 	// To go online we need to check if connected
@@ -165,6 +168,17 @@ signals:
 	void settingsChanged( void );
 
 private slots:
+	/**
+	 * We received a message
+	 */
+	void slotMessageReceived( const KopeteMessage &msg );
+	void slotMessageSent( const KopeteMessage msg );
+
+	/**
+	 * Open the chat window for a specific user
+	 */
+    void slotExecute( QString handle );
+		
 	/**
 	 * The group has successful renamed
 	 * groupName: is new new group name
@@ -245,14 +259,13 @@ private:
 	KAction* actionGoOnline;
 	KAction* actionGoOffline;
 	KAction* actionGoAway;
+	KAction* m_renameAction;
 
 	KActionMenu *actionStatusMenu;
 	KAction* actionConnect;
 	KAction* actionDisconnect;
 	KAction* actionPrefs;
 	KAction* actionUnload;
-
-	QPtrList<MSNMessageDialog> mChatWindows;
 
 	MSNPreferences *mPrefs;
 
@@ -270,8 +283,11 @@ private:
 	QString m_msgHandle;
 
 	KMSNServiceSocket *m_serviceSocket;
+	KopeteContact *m_myself;
 
 	MSNIdentity *m_identity;
+	KopeteMessageManager *m_manager;
+	KMSNChatService *m_chatService;
 };
 
 #endif

@@ -30,6 +30,7 @@
 
 class QSocket;
 class KExtendedSocket;
+class KopeteMessage;
 
 class KMSNChatService : public QObject  {
 Q_OBJECT
@@ -58,7 +59,7 @@ public:
 // slots
 public slots:
 	void slotDataReceived();
-	void slotSendMsg(QString message);
+	void slotSendMsg( const KopeteMessage &msg );
 	void slotSocketClosed();
 	void slotCloseSession();
 	void slotInviteContact(QString handle);
@@ -67,7 +68,7 @@ public slots:
 
 // signals	
 signals:
-  	void msgReceived(QString, QString, QString , QFont, QColor);
+  	void msgReceived( const KopeteMessage &msg );
 	void startChat(KMSNChatService* switchoard);
   	void userTypingMsg(QString);
   	void msgAcknowledgement(bool);
@@ -75,6 +76,15 @@ signals:
   	void chatWith(QString,bool);
   	void switchBoardIsActive(bool);
   	void updateChatMember(QString,QString,bool);
+
+private:
+	uint m_id;
+
+	/**
+	 * Send an MSN command to the socket
+	 */
+	void sendCommand( const QString &cmd, const QString &args = QString::null,
+		bool addNewLine = true );
 };
 
 #endif

@@ -29,6 +29,7 @@
 
 //qt
 #include <qregexp.h>
+#include <qtimer.h>
 
 KMSNServiceSocket::KMSNServiceSocket()
 {
@@ -75,27 +76,24 @@ void KMSNServiceSocket::close()
 {
 }
 
-void KMSNServiceSocket::kill()
-{
-	emit connected(false);
-
-	isConnected = false;
-	delete socket;
-	socket = 0L;
-}
-
 void KMSNServiceSocket::closeService()
 {
-	QString command = "OUT\r\n";
-	socket->writeBlock(command,command.length());
-	slotSocketClose();
+	if( isConnected )
+	{
+		QString command = "OUT\r\n";
+		socket->writeBlock(command,command.length());
+	}
+	closeSocket();
 }
 
-void KMSNServiceSocket::slotSocketClose()
+void KMSNServiceSocket::closeSocket()
 {
-	kdDebug() << "socket closed" << endl;
-	emit connected(false);
+	kdDebug() << "KMSNServiceSocket::closeSocket: Socket closed" << endl;
 	isConnected = false;
+	emit connected( isConnected );
+	delete socket;
+	socket = 0L;
+	buffer = QString::null;
 }
 
 /** FIME for KExtendedSocket */
@@ -129,46 +127,86 @@ void KMSNServiceSocket::slotSocketError(int error)
 /* new data has received */
 void KMSNServiceSocket::slotDataReceived()
 {
+	int avail = socket->bytesAvailable();
+	int toRead = avail;
+	if( avail == 0 )
+	{
+		kdDebug() << "KMSNServiceSocket::slotDataReceived:\n"
+			"** WARNING ** bytesAvailable() returned 0!\n"
+			"If you are running KDE 3.0, please upgrade to current CVS or to\n"
+			"KDE 3.0.1 to fix a bug in KExtendedSocket always returning 0.\n"
+			"Trying to read 4kb blocks instead, but be prepared for problems!"
+			<< endl;
+		toRead = 4096;
+	}
+
 	// incoming data
-	char buf[1025];
-	int ret = socket->readBlock(buf,1024);
-	if( ret <= 0 )
+	char *buf = new char[ toRead + 1 ];
+	int ret = socket->readBlock( buf, toRead );
+	if( ret < 0 )
+	{
+		kdDebug() << "KMSNServiceSocket:slotDataReceived: WARNING: "
+			"readBlock() returned " << ret << "!" <<endl;
+	}
+	else if( ret == 0 )
+	{
+		kdDebug() << "KMSNServiceSocket:slotDataReceived: WARNING: "
+			"readBlock() returned no data!" <<endl;
+	}
+	else
+	{
+		if( avail )
+		{
+			if( ret != avail)
+			{
+				kdDebug() << "KMSNServiceSocket:slotDataReceived: WARNING: "
+					<< avail << " bytes were reported available, "
+					<< "but readBlock() returned only " << ret
+					<< " bytes! Proceeding anyway." << endl;
+			}
+		}
+		else
+		{
+			kdDebug() << "KMSNServiceSocket:slotDataReceived: Info: "
+				<< "Read " << ret << " bytes into 4kb block." << endl;
+		}
+
+		buf[ ret ] = '\0'; // Make it properly null-terminated
+		QString data = QString::fromUtf8( buf );
+		kdDebug() << QTime::currentTime().toString() <<
+			" - KMSNServiceSocket::slotDataReceived: Received '" <<
+			data << "'" << endl;
+	//	showError(data);
+
+		buffer += data; // fill the buffer with the received data
+		slotReadLine();
+	}
+
+	// Cleanup
+	delete[] buf;
+}
+
+void KMSNServiceSocket::slotReadLine()
+{
+	// If there's no CR/LF waiting, just stop and wait for new data to arrive
+	if( !buffer.contains( "\r\n" ) )
 		return;
-	buf[ ret ] = '\0'; // Make it properly null-terminated
-	QString data = QString::fromUtf8( buf );
-	kdDebug() << QTime::currentTime().toString() <<
-		" - KMSNServiceSocket::slotDataReceived: Received '" <<
-		data << "'" << endl;
-//	showError(data);
 
-	buffer += data; // fill the buffer with the received data
-	while(canReadLine()) // if we have a complete command in the buffer - parseCommand
-	{
-		parseCommand(readLine());
-	}
-}
-
-/* reads a line from the buffer */
-QString KMSNServiceSocket::readLine()
-{
+	// We have data, handle one line
 	QString command;
-	int index = buffer.find("\r\n");
-	if(index != -1 )
+	int index = buffer.find( "\r\n" );
+	if( index != -1 )
 	{
-		command = buffer.left(index );
-		buffer = buffer.remove(0,index+2 );
-		command.replace(QRegExp("\r\n"),"");
-	}
-	kdDebug() <<  command << endl;
-	return command;
-}
+		command = buffer.left( index );
+		buffer = buffer.remove( 0, index + 2 );
+		command.replace( QRegExp( "\r\n" ), "" );
+		kdDebug() << "KMSNServiceSocket::slotReadLine: " << command << endl;
 
-/* check if a new line is in the buffer */
-bool KMSNServiceSocket::canReadLine()
-{
-	if(buffer.contains("\r\n") )
-		return true;
-	return false;
+		parseCommand( command );
+
+		// Don't block the GUI while parsing data, only do a single line!
+		QTimer::singleShot( 0, this, SLOT( slotReadLine() ) );
+	}
 }
 
 /* reads a block of data from the buffer from  ( 0 to len ) */
@@ -185,22 +223,55 @@ void KMSNServiceSocket::parseCommand(QString str)
 	QString cmd  = str.section( ' ', 0, 0 );
 	QString data = str.section( ' ', 2 ).replace( QRegExp( "\r\n" ), "" );
 
+/*
 	// For some reason the RNG command doesn't send a valid id as second
 	// argument, but a session id instead. As long as that's the only command
 	// suffering from this the below will work, otherwise we might be in
 	// need for a better solution...
-	if( cmd != "RNG" )
-		m_id = str.section( ' ', 1, 1 ).toUInt();
+*/
+	uint id = str.section( ' ', 1, 1 ).toUInt();
 
 	kdDebug() << "KMSNServiceSocket::parseCommand: Parsing command " << cmd <<
-		" (ID " << m_id << "): '" << data << "'" << endl;
+		" (ID " << id << "): '" << data << "'" << endl;
 
 	str.replace( QRegExp( "\r\n" ), "" );
-	if( cmd == "911" )
+	bool isError;
+	uint errorCode = cmd.toUInt( &isError );
+	if( isError )
 	{
-		emit connected(false);
-		if(!_silent)
-			KMessageBox::error(0,i18n("Authentication failed"));
+		// See http://www.hypothetic.org/docs/msn/basics.php for a
+		// description of all possible error codes.
+		// TODO: Add support for all of these!
+		QString msg;
+		bool isFatal = false;
+		switch( errorCode )
+		{
+		case 600:
+			msg = i18n( "The MSN server is busy.\n"
+				"Please try again later." );
+			isFatal = true;
+			break;
+		case 911:
+			msg = i18n( "Authentication failed.\n"
+				"Please check your username and password in the "
+				"MSN Preferences dialog." );
+			isFatal = true;
+			break;
+		default:
+			msg = i18n( "Unhandled MSN error code %1.\n"
+				"Please mail kopete-devel@kde.org to ask for an "
+				"implementation or send in a patch yourself ;-).\n"
+				"See http://www.hypothetic.org/docs/msn/basics.php "
+				"for a description of all error codes." ).arg( errorCode );
+			isFatal = true;
+			break;
+		}
+
+		if( isFatal )
+			closeService();
+
+		if( !_silent )
+			KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 	}
 	else if( cmd == "XFR" )
 	{
@@ -211,7 +282,7 @@ void KMSNServiceSocket::parseCommand(QString str)
 		{
 			// Address, AuthInfo
 			emit startChat( data.section( ' ', 1, 1 ),
-				data.section( ' ', 2, 2 ) );
+				data.section( ' ', 3, 3 ) );
 		}
 		else
 		{
@@ -326,7 +397,7 @@ void KMSNServiceSocket::parseCommand(QString str)
 	else if( cmd == "RNG" )
 	{
 		// SessionID, Address, AuthInfo, handle, publicName
-		emit invitedToChat( str.section( ' ', 1, 1 ),
+		emit invitedToChat( QString::number( id ),
 			data.section( ' ', 0, 0 ), data.section( ' ', 2, 2 ),
 			data.section( ' ', 3, 3 ),
 			data.section( ' ', 4, 4 ).replace( QRegExp( "%20" ), " " ) );
@@ -365,7 +436,7 @@ void KMSNServiceSocket::parseCommand(QString str)
 				i18n( "You have connected from an other client" ) );
 		}
 
-		slotSocketClose();
+		closeSocket();
 		emit sessionClosed( str.section( ' ', 1, 1 ) );
 	}
 	else if( cmd == "CHG" )
@@ -422,7 +493,7 @@ void KMSNServiceSocket::parseCommand(QString str)
 			data.section( ' ', 0, 0 ).replace( QRegExp( "\r\n" ), "" ) +
 			"Q1P7W2E4J9R8U3S5" );
 		sendCommand( "QRY", "msmsgs@msnmsgr.com 32\r\n" +
-			context.hexDigest() );
+			context.hexDigest(), false );
 	}
 	else if( cmd == "SYN" )
 	{
@@ -443,7 +514,7 @@ void KMSNServiceSocket::parseCommand(QString str)
 	else
 	{
 		kdDebug() << "KMSNServiceSocket::parseCommand: Unknown command '" <<
-			cmd << " " << m_id << " " << data << "'!" << endl;
+			cmd << " " << id << " " << data << "'!" << endl;
 	}
 }
 
@@ -452,12 +523,14 @@ void KMSNServiceSocket::sendCVR()
 
 }
 
-void KMSNServiceSocket::sendCommand( const QString &cmd, const QString &args )
+void KMSNServiceSocket::sendCommand( const QString &cmd, const QString &args,
+	bool addNewLine )
 {
 	QString data = cmd + " " + QString::number( m_id );
 	if( !args.isEmpty() )
 		data += " " + args;
-	data += "\r\n";
+	if( addNewLine )
+		data += "\r\n";
 
 	kdDebug() << "KMSNServiceSocket::sendCommand: Sending command " << data;
 

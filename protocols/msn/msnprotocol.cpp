@@ -30,7 +30,8 @@
 #include "msnaddcontactpage.h"
 #include "msncontact.h"
 #include "msnidentity.h"
-#include "msnmessagedialog.h"
+#include "kopetemessagemanager.h"
+#include "kopetemessagemanagerfactory.h"
 #include "msnpreferences.h"
 #include "msnprotocol.h"
 #include "newuserimpl.h"
@@ -54,20 +55,25 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 	kdDebug() << "MSNProtocol::MSNProtocol: MSN Plugin Loading" << endl;
 
 	initIcons();
-	initActions();
 
 	kdDebug() << "MSN Protocol Plugin: Creating Status Bar icon\n";
 	statusBarIcon = new StatusBarIcon();
-	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)), this, SLOT(slotIconRightClicked(const QPoint)));
-	statusBarIcon->setPixmap( offlineIcon );
 
 	kdDebug() << "MSN Protocol Plugin: Creating Config Module\n";
 	mPrefs = new MSNPreferences( "msn_protocol", this );
 	connect( mPrefs, SIGNAL( saved( void ) ),
 		this, SIGNAL( settingsChanged( void ) ) );
 
-	// Connect to the signals from the serviceSocket, which is possible now
-	// the service has created the socket for us.
+	// FIXME: Duplicated, needs to get proper code!
+	m_msnId      = KGlobal::config()->readEntry( "UserID", "" );
+	m_password   = KGlobal::config()->readEntry( "Password", "" );
+	m_publicName = KGlobal::config()->readEntry( "Nick", "" );
+
+	initActions();
+
+	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)), this, SLOT(slotIconRightClicked(const QPoint)));
+	statusBarIcon->setPixmap( offlineIcon );
+
 	connect( m_serviceSocket, SIGNAL( groupAdded( QString, uint,uint ) ),
 		this, SLOT( slotGroupAdded( QString, uint, uint ) ) );
 	connect( m_serviceSocket, SIGNAL( groupRenamed( QString, uint, uint ) ),
@@ -129,6 +135,9 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 			emptyText, emptyCaption );
 	}
 
+	m_myself = new KopeteContact(this);
+	m_myself->setName( cfg->readEntry( "Nick", "" ) );
+
 	if ( cfg->readBoolEntry( "AutoConnect", "0" ) )
 		Connect();
 }
@@ -173,9 +182,9 @@ void MSNProtocol::Connect()
 		kdDebug() << "Using Microsoft UserID " << KGlobal::config()->readEntry("UserID", "0") << " with password (hidden)" << endl;
 		KGlobal::config()->setGroup("MSN");
 
-		m_msnId = KGlobal::config()->readEntry( "UserID", "" );
-		m_password = KGlobal::config()->readEntry( "Password", "" );
-		//m_msnService->setMyPublicName(KGlobal::config()->readEntry("Nick", ""));
+		m_msnId      = KGlobal::config()->readEntry( "UserID", "" );
+		m_password   = KGlobal::config()->readEntry( "Password", "" );
+		m_publicName = KGlobal::config()->readEntry( "Nick", "" );
 		m_serviceSocket->connectToMSN( m_msnId, m_password, m_serial,
 			m_silent );
 		statusBarIcon->setMovie( connectingIcon );
@@ -188,16 +197,8 @@ void MSNProtocol::Connect()
 
 void MSNProtocol::Disconnect()
 {
-	if ( isConnected() )
-	{
-		m_serviceSocket->closeService();
-	}
-	else
-	{
-    	kdDebug() << "MSN Plugin: Ignoring Disconnect request (Im not Connected)" << endl;
-	}
+	m_serviceSocket->closeService();
 }
-
 
 bool MSNProtocol::isConnected() const
 {
@@ -234,6 +235,12 @@ bool MSNProtocol::isAway(void) const
 	}
 }
 
+/** Get myself */
+KopeteContact* MSNProtocol::myself() const
+{
+	return m_myself;
+}
+
 /** This i used for al protocol selection dialogs */
 QString MSNProtocol::protocolIcon() const
 {
@@ -263,13 +270,20 @@ void MSNProtocol::initIcons()
 
 void MSNProtocol::initActions()
 {
-	actionGoOnline = new KAction ( i18n("Go online"), "msn_online", 0, this, SLOT(slotGoOnline()), this, "actionMSNConnect" );
-	actionGoOffline = new KAction ( i18n("Go Offline"), "msn_offline", 0, this, SLOT(slotGoOffline()), this, "actionMSNConnect" );
-	actionGoAway = new KAction ( i18n("Go Away"), "msn_away", 0, this, SLOT(slotGoAway()), this, "actionMSNConnect" );
-	actionStatusMenu = new KActionMenu("MSN",this);
+	actionGoOnline = new KAction ( i18n("Go o&nline"), "msn_online", 0, this, SLOT(slotGoOnline()), this, "actionMSNConnect" );
+	actionGoOffline = new KAction ( i18n("Go &Offline"), "msn_offline", 0, this, SLOT(slotGoOffline()), this, "actionMSNConnect" );
+	actionGoAway = new KAction ( i18n("Go &Away"), "msn_away", 0, this, SLOT(slotGoAway()), this, "actionMSNConnect" );
+	m_renameAction = new KAction ( i18n( "&Change Public Name..." ),
+		QString::null, 0, this, SLOT( slotChangePublicName() ),
+		this, "m_renameAction" );
+	actionStatusMenu = new KActionMenu( "MSN", this );
+	actionStatusMenu->popupMenu()->insertTitle( *( statusBarIcon->pixmap() ),
+		i18n( "%1 (%2)" ).arg( m_publicName ).arg( m_msnId ) );
 	actionStatusMenu->insert( actionGoOnline );
 	actionStatusMenu->insert( actionGoOffline );
 	actionStatusMenu->insert( actionGoAway );
+	actionStatusMenu->popupMenu()->insertSeparator();
+	actionStatusMenu->insert( m_renameAction );
 
 	actionStatusMenu->plug( kopeteapp->systemTray()->contextMenu(), 1 );
 }
@@ -279,12 +293,7 @@ void MSNProtocol::slotIconRightClicked( const QPoint /* point */ )
 	KGlobal::config()->setGroup("MSN");
 	QString handle = KGlobal::config()->readEntry("UserID", i18n("(User ID not set)"));
 
-	KPopupMenu *popup = new KPopupMenu(statusBarIcon);
-	popup->insertTitle(handle);
-	actionGoOnline->plug( popup );
-	actionGoOffline->plug( popup );
-	actionGoAway->plug( popup );
-	popup->popup(QCursor::pos());
+	actionStatusMenu->popup( QCursor::pos() );
 }
 
 /** NOTE: CALL THIS ONLY BEING CONNECTED */
@@ -307,19 +316,6 @@ void MSNProtocol::slotSyncContactList()
 */
 }
 
-void MSNProtocol::slotMessageDialogClosing(QString handle)
-{
-	mChatWindows.setAutoDelete(true);
-	MSNMessageDialog *messageDialog = mChatWindows.first();
-	for ( ; messageDialog; messageDialog = mChatWindows.next() )
-	{
-		if ( messageDialog->contact()->msnId() == handle )
-		{
-			mChatWindows.remove(messageDialog);
-		}
-	}
-}
-
 void MSNProtocol::slotGoOnline()
 {
 	kdDebug() << "MSN Plugin: Going Online" << endl;
@@ -330,14 +326,7 @@ void MSNProtocol::slotGoOnline()
 }
 void MSNProtocol::slotGoOffline()
 {
-	kdDebug() << "MSN Plugin: Going Offline" << endl;
-	if (isConnected() )
-		Disconnect();
-	else // disconnect while trying to connect. Anyone know a better way? (remenic)
-	{
-		m_serviceSocket->kill();
-		statusBarIcon->setPixmap(offlineIcon);
-	}
+	Disconnect();
 }
 
 void MSNProtocol::slotGoAway()
@@ -535,6 +524,9 @@ void MSNProtocol::moveContact( const MSNContact *c,
 {
 	int og = groupNumber( oldGroup );
 	int ng = groupNumber( newGroup );
+
+	kdDebug() << "MSNProtocol::moveContact: Moving contact "
+		<< c->msnId() << " from group #" << og << " to #" << ng << endl;
 
 	if( og != -1 && ng != -1 )
 	{
@@ -751,7 +743,7 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 			// FIXME: Proper MSNContact ctor required!
 			c = new MSNContact( handle, publicName, QString::null, 0L );
 			c->setDeleted( true );
-			addToContactList( c, "UNKNOWN GROUP!" );
+			addToContactList( c, "Unknown" );
 		}
 	}
 	else if( list == "RL" )
@@ -886,28 +878,65 @@ void MSNProtocol::slotCreateChat( QString address, QString auth)
 	slotCreateChat( 0L, address, auth, m_msgHandle, publicName() );
 }
 
+void MSNProtocol::slotExecute( QString userid )
+{
+	if ( m_contacts.contains( userid ) && m_myself )
+	{
+		KopeteContactList chatmembers;
+
+		chatmembers.append( m_contacts[ userid ] );
+		m_manager = kopeteapp->sessionFactory()->create( m_myself,
+			chatmembers, this, QString( "msnlogs/" + userid + ".log" ) );
+		m_manager->readMessages();
+	}
+}
+
+void MSNProtocol::slotMessageReceived( const KopeteMessage &msg )
+{
+	kdDebug() << "MSNProtocol::slotMessageReceived: Message received from " <<
+		msg.from()->name() << endl;
+	m_manager->appendMessage( msg );
+}
+
+void MSNProtocol::slotMessageSent( const KopeteMessage msg )
+{
+	kdDebug() << "MSNProtocol::slotMessageSent: Message sent to " <<
+		msg.to().first()->name() << endl;
+	m_chatService->slotSendMsg( msg );
+}
+
 void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 	QString handle, QString /* publicName */ )
 {
+	kdDebug() << "MSNProtocol::slotCreateChat: Creating chat for " <<
+		handle << endl;
+
 	// FIXME: Don't we leak this ?
-	KMSNChatService *chatService = new KMSNChatService();
-	chatService->setHandle( m_msnId );
-	chatService->connectToSwitchBoard( ID, address, auth );
+	m_chatService = new KMSNChatService();
+	m_chatService->setHandle( m_msnId );
+	m_chatService->msgHandle = handle;
+	m_chatService->connectToSwitchBoard( ID, address, auth );
 
-	MSNMessageDialog *messageDialog;
-
-	// Maybe we have a copy of us in another group
-	for( messageDialog = mChatWindows.first() ; messageDialog; messageDialog = mChatWindows.next() )
+	KopeteContact *c = m_contacts[ handle ];
+	if ( c && m_myself )
 	{
-		if ( messageDialog->contact()->msnId() == handle )
-			break;
-	}
+		KopeteContactList chatmembers;
 
-	if( messageDialog && messageDialog->isVisible() )
+		chatmembers.append(c);
+		m_manager = kopeteapp->sessionFactory()->create(m_myself, chatmembers, this,QString("msnlogs/"+ ID +".log") );
+
+		connect( m_chatService, SIGNAL( msgReceived( const KopeteMessage & ) ),
+			this, SLOT( slotMessageReceived( const KopeteMessage & ) ) );
+		connect( m_manager, SIGNAL( messageSent( const KopeteMessage ) ),
+			this, SLOT( slotMessageSent( const KopeteMessage ) ) );
+		m_manager->readMessages();
+	}
+	// Maybe we have a copy of us in another group
+
+/*	if( messageDialog && messageDialog->isVisible() )
 	{
 		kdDebug() << "MSN Plugin: Incoming chat but Window already opened for " << handle <<"\n";
 		messageDialog->setBoard( chatService );
-		connect( chatService, SIGNAL(msgReceived(QString,QString,QString, QFont, QColor)),messageDialog,SLOT(slotMessageReceived(QString,QString,QString, QFont, QColor)));
 		messageDialog->raise();
 	}
 	else
@@ -921,7 +950,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 
 		mChatWindows.append( messageDialog );
 		messageDialog->show();
-	}
+	}*/
 }
 
 void MSNProtocol::slotStartChatSession( QString handle )
