@@ -146,7 +146,6 @@ void
 RegisterCommand::requestToken()
 {
 	kdDebug( 14100 ) << "requestToken Initialisation" << endl;
-
 	state = RegisterStateWaitingForToken;
 
 	if ( !( session_ = gg_token( 1 ) ) ) {
@@ -190,7 +189,6 @@ void RegisterCommand::watcher()
 {
 	gg_pubdir* gg_pub;
 
-	kdDebug( 14100 ) << "4  " << session_->state << endl;
 	if ( state == RegisterStateWaitingForToken  ) {
 		disableNotifiers();
 		if ( gg_token_watch_fd( session_ ) == -1 ) {
@@ -202,6 +200,7 @@ void RegisterCommand::watcher()
 			return;
 		}
 
+		kdDebug( 14100 ) << "4  " << session_->state << endl;
 		gg_pub = (struct gg_pubdir *)session_->data;
 		switch ( session_->state ) {
 			case GG_STATE_CONNECTING:
@@ -251,6 +250,7 @@ void RegisterCommand::watcher()
 			state = RegisterStateGotToken;
 			return;
 		}
+		kdDebug( 14100 ) << "4  " << session_->state << endl;
 		gg_pub = (gg_pubdir*) session_->data;
 		switch ( session_->state ) {
 			case GG_STATE_CONNECTING:
