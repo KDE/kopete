@@ -56,6 +56,11 @@ public:
 	void disconnect();
 
 	/*
+	 * Was the password wrong last time we tried to connect?
+	 */
+	bool passwordWasWrong();
+
+	/*
 	 * Sets the account away
 	 */
 	virtual void setAway(bool away, const QString &awayMessage = QString::null)=0;

@@ -91,6 +91,8 @@ public:
 	QMap<QString, AIMBuddy *> buddyNameMap;
 	QMap<QString, AIMGroup *> groupNameMap;
 	// -- END MERGED DATA FROM AIMBUDDYLIST ------------------------------
+
+	bool passwordWrong;
 };
 
 OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, const char *name, bool isICQ)
@@ -109,6 +111,7 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 	d->isIdle = false;
 	d->lastIdleValue = 0;
 	d->awayMessage = "";
+	d->passwordWrong = false;
 
 	initEngine(isICQ); // Initialize the backend
 
@@ -190,6 +193,11 @@ void OscarAccount::disconnect()
 	d->engine->doLogoff();
 }
 
+bool OscarAccount::passwordWasWrong()
+{
+	return d->passwordWrong;
+}
+
 void OscarAccount::initEngine(bool icq)
 {
 	//kdDebug(14150) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
@@ -212,12 +220,19 @@ void OscarAccount::slotError(QString errmsg, int errorCode)
 		", errorCode=" << errorCode << "." << endl;
 
 	// 1 = username unknown to server
-	// 5 = wrong password
-	if (errorCode == 1 || errorCode == 5 || errorCode == 24)
+	// 5 = wrong password for AIM
+	// 0 = wrong password for ICQ
+	if (errorCode == 1 || errorCode == 0 || errorCode == 5 || errorCode == 24)
 		OscarAccount::disconnect();
 
 	KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errmsg,
 		i18n("Connection Lost - ICQ Plugin"), KMessageBox::Notify);
+
+	if (errorCode == 0 || errorCode == 5)
+	{
+		d->passwordWrong = true;
+		connect();
+	}
 }
 
 void OscarAccount::slotReceivedMessage(const QString &sender, OscarMessage &incomingMessage, OscarSocket::OscarMessageType type)
@@ -392,6 +407,8 @@ void OscarAccount::slotGotServerBuddyList()
 void OscarAccount::slotLoggedIn()
 {
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
+
+	d->passwordWrong = false;
 
 	// Only call sync if we received a list on connect, does not happen on @mac AIM-accounts
 	bool haveServerSideContacts = false;

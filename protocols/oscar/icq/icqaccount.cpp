@@ -150,7 +150,7 @@ void ICQAccount::connect(const unsigned long status, const QString &awMessage)
 	}
 	else if (screenName != i18n("(No Screen Name Set)") ) // FIXME: Is this needed at all?
 	{
-		QString _password = password(false, 0L, 16);
+		QString _password = password(passwordWasWrong(), 0L, 8);
 		if (_password.isEmpty())
 		{
 			slotError(i18n("Kopete is unable to attempt to sign-on to the " \
