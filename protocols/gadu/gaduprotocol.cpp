@@ -126,7 +126,7 @@ GaduProtocol::deserializeContact( KopeteMetaContact* metaContact,
 	contact->setProperty( "emailAddress", serializedData["email"] );
 	contact->setProperty( "firstName", serializedData["FirstName"] );
 	contact->setProperty( "lastName", serializedData["SecondName"] );
-//	contact->rename( serializedData["NickName"] );
+	contact->setProperty( "nickName", i18n( "nick name" ),  serializedData["nickname"] );
 	contact->setProperty( "privPhoneNum", serializedData["telephone"] );
 	contact->setProperty( "ignored", i18n( "ignored" ), serializedData["ignored"] );
 }

@@ -203,9 +203,9 @@ GaduContact::contactDetails()
 	cl->ignored	= ( property( "ignored" ).value().toString() == "true" );
 	
 	cl->uin		= QString::number( uin_ );
-	cl->displayname	= displayName();
+	cl->displayname	= metaContact()->displayName();
 
-	groupList = metaContact ()->groups ();
+	groupList = metaContact()->groups();
 
 	KopeteGroup* gr;
 	for ( gr = groupList.first (); gr ; gr = groupList.next () ) {
