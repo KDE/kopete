@@ -419,13 +419,17 @@ void
 GaduAccount::statusChanged( struct gg_event* e )
 {
     kdDebug(14100)<<"####"<<" status changed, uin:"<< e->event.status.uin <<endl;
+
+	QTextCodec *textcodec = QTextCodec::codecForName("CP1250");
+    
     GaduContact *c;
     c = static_cast<GaduContact *>(contacts()[QString::number( e->event.status.uin )]);
     if( !c )
 	return;
-    c->setDescription( e->event.status.descr );
+
+    c->setDescription( textcodec->toUnicode( e->event.status.descr  ) );
     c->setOnlineStatus( GaduProtocol::protocol()->convertStatus( e->event.status.status ),
-			e->event.status.descr  );
+			c->description()  );
 }
 
 void
