@@ -341,8 +341,19 @@ void KMSNChatService::slotSendMsg( const KopeteMessage &msg )
 	QString head =
 		"MIME-Version: 1.0\r\n"
 		"Content-Type: text/plain; charset=UTF-8\r\n"
-		"X-MMS-IM-Format: FN=MS%20Sans%20Serif; EF=; CO=0; CS=0; PF=0\r\n"
-		"\r\n";
+		"X-MMS-IM-Format: FN=MS%20Sans%20Serif; EF=; ";
+
+	// Color support
+	if (msg.fg().isValid()) {
+		QString colorCode = msg.fg().name().remove(0,1);
+		head += "CO=" + colorCode;
+	} else {
+		head += "CO=0";
+	}
+
+	head += "; CS=0; PF=0\r\n"
+			"\r\n";
+
 	head += msg.body();
 	QString args = QString( "A %1\r\n" ).arg( head.length() );
 	sendCommand( "MSG", args + head, false );
