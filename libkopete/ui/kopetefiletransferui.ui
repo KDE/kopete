@@ -35,7 +35,7 @@
                 </font>
             </property>
             <property name="text">
-                <string>Currently transfering files:</string>
+                <string>Currently transferring files:</string>
             </property>
         </widget>
         <widget class="KPushButton" row="2" column="0">
