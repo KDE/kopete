@@ -314,11 +314,6 @@ int KNotifyClient::event(int winId, const QString &message, const QString &text,
     
     bool suppress = false;
     performCustomNotifications( winId, mc, message, suppress);
-	// perform notifications for each group this MC is in.
-	// Anything, including the MC itself, may set suppress and prevent further notifications
-	KopeteGroupList groups = mc->groups();
-	for( KopeteGroup *it = groups.first(); it; it = groups.next() )
-		performCustomNotifications( winId, it, message, suppress );
 		 
     if ( suppress )
 	{
@@ -426,12 +421,24 @@ int KNotifyClient::userEvent(int winId, const QString &message, const QString &t
     return uniqueId;
 }
 
-void KNotifyClient::performCustomNotifications( int winId, KopeteNotifyDataObject *dataObj, const QString &message, bool& suppress)
+void KNotifyClient::performCustomNotifications( int winId, KopeteMetaContact * mc, const QString &message, bool& suppress)
 {
 	//kdDebug( 14010 ) << k_funcinfo << endl;
 	if ( suppress )
 		return;
+	// Anything, including the MC itself, may set suppress and prevent further notifications
 
+	/* This is a really ugly piece of logic now.  The idea is to check for notifications
+	 * first on the metacontact, then on each of its groups, until something suppresses
+	 * any further notifications.
+	 * So on the first run round this loop, dataObj points to the metacontact, and on subsequent
+	 * iterations it points to one of the contact's groups.  The metacontact pointer is maintained
+	 * so that if a group has a chat notification set for this event, we can call execute() on the MC.
+	 */
+
+	bool checkingMetaContact = true;
+	KopeteNotifyDataObject * dataObj = mc;
+	do {
 	QString sound;
 	QString text;
 
@@ -462,8 +469,6 @@ void KNotifyClient::performCustomNotifications( int winId, KopeteNotifyDataObjec
 			if ( ( pres = evt->presentation( KopeteEventPresentation::Chat ) )
 				&& pres->enabled() )
 			{
-				// start a chat with the mc here
-				KopeteMetaContact *mc = static_cast<KopeteMetaContact*>(dataObj);
 				if ( mc )
 					mc->execute();
 				evt->firePresentation( KopeteEventPresentation::Chat );
@@ -472,6 +477,17 @@ void KNotifyClient::performCustomNotifications( int winId, KopeteNotifyDataObjec
 			userEvent( winId, message, text, present, 0, sound, QString(), QString() );
 		}
 	}
+
+		if ( checkingMetaContact )
+		{
+			// only executed on first iteration
+			checkingMetaContact = false;
+			dataObj = mc->groups().first();
+		}
+		else
+			dataObj = mc->groups().next();
+	}
+	while ( dataObj && !suppress );
 }
 // vim: set noet ts=8 sts=4 sw=4:
 
