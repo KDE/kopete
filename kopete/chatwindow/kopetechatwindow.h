@@ -132,23 +132,12 @@ private:
 	KAction *historyDown;
 	KAction *nickComplete;
 
-	KAction* editCut;
-	KAction* editCopy;
-	KAction* editPaste;
-	KAction* editBgColor;
-
-	KAction* chatSave;
-	KAction* chatPrint;
-	KAction* chatCloseAll;
+	KToggleAction *viewStatusBar;
 
 	KAction *tabLeft;
 	KAction *tabRight;
 	KAction *tabDetach;
 	KAction* tabClose;
-
-	KToggleAction* viewToolBar;
-	KToggleAction* viewMenuBar;
-	KToggleAction* viewStatusBar;
 
 	KToggleAction* membersLeft;
 	KToggleAction* membersRight;
@@ -195,7 +184,6 @@ private slots:
 	void slotPlaceTabs( int tabPlacement );
 
 	void slotViewMenuBar();
-	void slotViewToolBar();
 	void slotViewStatusBar();
 
 	void slotConfKeys();

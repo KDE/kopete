@@ -173,6 +173,8 @@ KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KParts::
 	toolBar()->insertWidget( 99, anim->width(), anim );
 	toolBar()->alignItemRight( 99 );
 
+	setStandardToolBarMenuEnabled( true );
+
 	readOptions();
 	setWFlags(Qt::WDestructiveClose);
 
@@ -322,9 +324,9 @@ void KopeteChatWindow::initActions(void)
 	chatSend->setShortcut( QKeySequence(CTRL + Key_Return) );
 	chatSend->setEnabled( false );
 
-	chatSave = KStdAction::save ( this, SLOT(slotChatSave()), coll );
-	chatPrint = KStdAction::print ( this, SLOT(slotChatPrint()), coll );
-	chatCloseAll = KStdAction::quit ( this, SLOT(close()), coll );
+	KStdAction::save ( this, SLOT(slotChatSave()), coll );
+	KStdAction::print ( this, SLOT(slotChatPrint()), coll );
+	KStdAction::quit ( this, SLOT(close()), coll );
 
 	tabClose = KStdAction::close ( this, SLOT(slotChatClosed()), coll, "tabs_close" );
 	tabClose->setIcon( QString::fromLatin1("tab_remove") );
@@ -359,11 +361,11 @@ void KopeteChatWindow::initActions(void)
 
 	tabDetach->setShortcut( QKeySequence(CTRL + SHIFT + Key_B) );
 
-	editCut = KStdAction::cut( this, SLOT(slotCut()), coll);
-	editCopy = KStdAction::copy( this, SLOT(slotCopy()), coll);
-	editPaste = KStdAction::paste( this, SLOT(slotPaste()), coll);
+	KStdAction::cut( this, SLOT(slotCut()), coll);
+	KStdAction::copy( this, SLOT(slotCopy()), coll);
+	KStdAction::paste( this, SLOT(slotPaste()), coll);
 
-	editBgColor = new KAction( i18n( "Set &Background Color..." ), QString::fromLatin1( "fill" ), 0,
+	new KAction( i18n( "Set &Background Color..." ), QString::fromLatin1( "fill" ), 0,
 		this, SLOT( slotSetBgColor() ), coll, "format_bgcolor" );
 
 	historyUp = new KAction( i18n( "Previous History" ), QString::null, 0,
@@ -376,8 +378,7 @@ void KopeteChatWindow::initActions(void)
 
 	// BEGIN OF KDE < 3.1 SPECIFIC CODE
 	// maybe #if KDE_VERSION < 310 around it?
-	viewMenuBar = KStdAction::showMenubar( this, SLOT(slotViewMenuBar()), coll );
-	viewToolBar = KStdAction::showToolbar( this, SLOT(slotViewToolBar()), coll );
+	KStdAction::showMenubar( this, SLOT(slotViewMenuBar()), coll );
 	viewStatusBar = KStdAction::showStatusbar( this, SLOT(slotViewStatusBar()), coll );
 
 	// END OF KDE < 3.1 SPECIFIC CODE
@@ -955,14 +956,6 @@ void KopeteChatWindow::slotChatPrint()
 	m_activeView->print();
 }
 
-void KopeteChatWindow::slotViewToolBar()
-{
-	if(toolBar()->isVisible())
-		toolBar()->hide();
-	else
-		toolBar()->show();
-}
-
 void KopeteChatWindow::slotViewStatusBar()
 {
 	if( statusArea->isVisible() )
@@ -1019,16 +1012,24 @@ void KopeteChatWindow::closeEvent( QCloseEvent *e )
 
 void KopeteChatWindow::slotConfKeys()
 {
-	KKeyDialog::configureKeys(actionCollection(), xmlFile(), true, this);
+	KKeyDialog dlg( true, this );
+	dlg.insert( actionCollection() );
+	if( m_activeView && m_activeView->part() )
+		dlg.insert( m_activeView->part()->actionCollection(), m_activeView->part()->name() );
+
+	dlg.configure();
 }
 
 void KopeteChatWindow::slotConfToolbar()
 {
 	saveMainWindowSettings(KGlobal::config(), QString::fromLatin1( "KopeteChatWindow" ));
-	KEditToolbar *dlg = new KEditToolbar(actionCollection(), QString::fromLatin1("kopetechatwindow.rc") );
+	KEditToolbar *dlg = new KEditToolbar(factory(), this );
 	if (dlg->exec())
 	{
-		createGUI( 0L );
+		if( m_activeView )
+			createGUI( m_activeView->part() );
+		else
+			createGUI( 0L );
 		applyMainWindowSettings(KGlobal::config(), QString::fromLatin1( "KopeteChatWindow" ));
 	}
 	delete dlg;
