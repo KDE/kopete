@@ -467,10 +467,11 @@ void JabberProtocol::initActions()
 	actionStatusMenu->insert(actionGoXA);
 	actionStatusMenu->insert(actionGoDND);
 	actionStatusMenu->insert(actionGoOffline);
-	actionStatusMenu->insert(actionSendRaw);
 	
-	actionStatusMenu->plug(kopeteapp->systemTray()->contextMenu(), 1);
+	actionStatusMenu->popupMenu()->insertSeparator();
+	actionStatusMenu->insert(actionSendRaw);
 
+	actionStatusMenu->plug(kopeteapp->systemTray()->contextMenu(), 1);
 }
 
 /*
