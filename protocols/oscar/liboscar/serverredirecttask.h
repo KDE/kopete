@@ -31,6 +31,7 @@ class Transfer;
 
 class ServerRedirectTask : public Task
 {
+Q_OBJECT
 public:
 	ServerRedirectTask( Task* parent );
 
@@ -46,6 +47,10 @@ public:
 
 	QByteArray cookie() const;
 	QString newHost() const;
+	WORD service() const;
+
+signals:
+	void haveServer( const QString&, const QByteArray&, WORD );
 
 private:
 	WORD m_service;

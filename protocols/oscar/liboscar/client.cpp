@@ -26,6 +26,7 @@
 #include <klocale.h>
 
 #include "buddyicontask.h"
+#include "clientreadytask.h"
 #include "changevisibilitytask.h"
 #include "errortask.h"
 #include "icquserinfo.h"
@@ -314,6 +315,7 @@ void Client::lt_loginFinished()
 		connect( ssTask, SIGNAL( finished() ), this, SLOT( serviceSetupFinished() ) );
 		ssTask->go( true ); //fire and forget
 		m_loginTaskTwo->deleteLater();
+		m_loginTaskTwo = 0;
 	}
 	else if ( d->stage == ClientPrivate::StageOne ) //object's existence determines the stage we just finished
 	{
@@ -339,6 +341,7 @@ void Client::lt_loginFinished()
 		}
 		
 		m_loginTask->deleteLater();
+		m_loginTask = 0;
 	}
 	
 }
@@ -346,12 +349,7 @@ void Client::lt_loginFinished()
 void Client::startStageTwo()
 {
 	//create a new connection and set it up
-	KNetworkConnector* knc = new KNetworkConnector( this );
-	knc->setOptHostPort( d->host, d->port );
-	ClientStream* cs = new ClientStream( knc, knc );
-	Connection* c = new Connection( knc, cs, "BOS" );
-	cs->setConnection( c );
-	c->setClient( this );
+	Connection* c = createConnection( d->host, QString::number( d->port ) );
 	d->closeConnectionTask = new CloseConnectionTask( c->rootTask() );
 	QObject::connect( d->closeConnectionTask, SIGNAL( disconnected( int, const QString& ) ),
 	                  this, SLOT( disconnectionError( int, const QString& ) ) );
@@ -708,6 +706,7 @@ void Client::requestBuddyIcon( const QString& user, const QByteArray& hash )
 	if ( !d->connections.iconConnection() )
 	{
 		emit haveIconForContact( user, QByteArray() );
+		requestServerRedirect( 0x0010 );
 		return;
 	}
 
@@ -731,10 +730,58 @@ void Client::requestServerRedirect( WORD family )
 
 void Client::haveServerForRedirect( const QString& host, const QByteArray& cookie, WORD family )
 {
-//some magic
+	//create a new connection and set it up
+	int colonPos = host.find(':');
+	QString realHost, realPort;
+	if ( colonPos != -1 )
+	{
+		realHost = host.left( colonPos );
+		realPort = host.right(4); //we only need 4 bytes
+	}
+	else
+	{
+		realHost = host;
+		realPort = QString::fromLatin1("5190");
+}
+
+	Connection* c = createConnection( realHost, realPort );
+
+	//create the new login task
+	m_loginTaskTwo = new StageTwoLoginTask( c->rootTask() );
+	m_loginTaskTwo->setCookie( cookie );
+	QObject::connect( m_loginTaskTwo, SIGNAL( finished() ), this, SLOT( serverRedirectFinished() ) );
+
+	
+	//connect
+	connectToServer( c, d->host, false ) ;
+	QObject::connect( c, SIGNAL( connected() ), this, SLOT( streamConnected() ) );
+}
+
+void Client::serverRedirectFinished( )
+{
+	if ( m_loginTaskTwo->statusCode() == 0 )
+	{ //stage two was successful
+		ClientReadyTask* crt = new ClientReadyTask( d->connections.iconConnection()->rootTask() );
+		QValueList<int> families;
+		families.append( 0x0001 );
+		families.append( 0x0010 ); //FIXME un-hardcode icon connection family
+		crt->setFamilies( families );
+		crt->go( true );
+	}
+
+	emit iconServerConnected();
+}
+
+Connection* Client::createConnection( const QString& host, const QString& port )
+{
+	KNetworkConnector* knc = new KNetworkConnector( this );
+	knc->setOptHostPort( host, port.toUInt() );
+	ClientStream* cs = new ClientStream( knc, knc );
+	Connection* c = new Connection( knc, cs, "BOS" );
+	cs->setConnection( c );
+	c->setClient( this );
+	return c;
 }
 
 #include "client.moc"
 //kate: tab-width 4; indent-mode csands; space-indent off; replace-tabs off;
-
-

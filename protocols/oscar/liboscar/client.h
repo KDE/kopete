@@ -331,6 +331,8 @@ signals:
 
 	/* Buddy icons */
 	void haveIconForContact( const QString&, const QByteArray& iconData );
+	void iconServerConnected();
+	
 
 protected slots:
 	// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
@@ -376,12 +378,16 @@ protected slots:
 	
 	void haveServerForRedirect( const QString& host, const QByteArray& cookie, WORD family );
 
+	void serverRedirectFinished();
+
 private:
 	/** Delete the connections */
 	void deleteConnections();
 	
 	/** Initialize some static tasks */
 	void initializeStaticTasks();
+	
+	Connection* createConnection( const QString& host, const QString& port );
 	
 private:
 	class ClientPrivate;

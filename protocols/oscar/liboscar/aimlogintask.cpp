@@ -184,8 +184,6 @@ void AimLoginTask::handleLoginResponse()
 
 	if ( !st )
 	{
-		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo 
-			<< "Could not convert transfer object to type SnacTransfer!!"  << endl;
 		setError( -1 , QString::null );
 		return;
 	}

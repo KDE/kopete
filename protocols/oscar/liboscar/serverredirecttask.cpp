@@ -60,8 +60,7 @@ bool ServerRedirectTask::take( Transfer* transfer )
 		return false;
 
 	setTransfer( transfer );
-	handleRedirect();
-	return true;
+	return handleRedirect();
 }
 
 void ServerRedirectTask::requestNewService()
@@ -96,8 +95,10 @@ bool ServerRedirectTask::handleRedirect()
 
 	TLV server = b->getTLV();
 	m_newHost = QString( server.data );
-	kdDebug(OSCAR_RAW_DEBUG) << "Host for service " << m_service << " is "
-			 << m_newHost << endl;
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Host for service " << m_service
+	                         << " is " << m_newHost << endl;
+	if ( m_newHost.isEmpty() )
+		return false;
 
 	TLV cookie = b->getTLV();
 	
@@ -106,6 +107,7 @@ bool ServerRedirectTask::handleRedirect()
 	else
 		m_cookie = cookie.data;
 	
+	emit haveServer( m_newHost, m_cookie, m_service );
 	return true;
 }
 
@@ -118,3 +120,10 @@ QString ServerRedirectTask::newHost() const
 {
 	return m_newHost;
 }
+
+WORD ServerRedirectTask::service() const
+{
+	return m_service;
+}
+//kate: indent-mode csands; tab-width 4;
+
