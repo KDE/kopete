@@ -1181,7 +1181,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 
 	KopeteMetaContactLVI *dest_metaLVI=dynamic_cast<KopeteMetaContactLVI*>(afterme);
 
-	if( e->source() == this )
+	if( const_cast<const QWidget *>( e->source() ) == this )
 	{
 		KopeteMetaContactLVI *source_metaLVI=dynamic_cast<KopeteMetaContactLVI*>(source);
 		KopeteGroupViewItem *dest_groupLVI=dynamic_cast<KopeteGroupViewItem*>(afterme);
