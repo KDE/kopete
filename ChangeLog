@@ -8,6 +8,14 @@ o Main App
 o IRC Plugin
 
 	o Updated for globally Away/Vailable
+	o Added support for:
+		o /server
+		o Loading a console at IRC plugin load
+		o Turning on/off left side icons in chat messages
+		o Turning on/off timestamping
+		o Colors, bold, and underlining in messages
+	o Many bug fixes
+
 
 o ICQ Plugin
 
