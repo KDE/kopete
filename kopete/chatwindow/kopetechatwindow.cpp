@@ -639,11 +639,14 @@ void KopeteChatWindow::attachChatView( ChatView* newView )
 
 	if ( !m_alwaysShowTabs && chatViewList.count() == 1 )
 		setPrimaryChatView( newView );
-	else if ( !m_tabBar )
-		createTabBar();
-	else
-		addTab( newView );
-
+	else 
+	{
+		if ( !m_tabBar )
+			createTabBar();
+		else
+			addTab( newView );
+		newView->setActive( false );
+	}
 	newView->setMainWindow( this );
 
 	newView->editWidget()->installEventFilter( this );
