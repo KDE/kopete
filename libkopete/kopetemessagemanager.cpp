@@ -384,7 +384,7 @@ void KopeteMessageManager::readMessages()
 			
 			//Raise the tab if needed
 			if (d->mWidget == ChatWindow)
-				static_cast<KopeteChatWindow*>(myWindow)->makeWidgetDockVisible(mainView);
+				static_cast<KopeteChatWindow*>(myWindow)->setActiveView( static_cast<ChatView*>(mainView)->dockWidget() );
 			
 			//Only grab focus if we opened the chat ourselves
 			if ( queueEmpty )
