@@ -27,7 +27,7 @@ class QDomElement;
 
 /**
  * @author Olivier Goffart  <ogoffart@tiscalinet.be>
- * this class hanlde the saving to xml's file plugin data.
+ * this class handles the saving of the plugin data to xml files.
  * KopeteMetaContact, KopeteGroup, and KopeteAccount inherits from it
  */
 
@@ -45,7 +45,7 @@ public:
 	 * reimplement @ref KopeteContact::serialize() instead. This method
 	 * is called by @ref KopeteProtocol for those classes.
 	 * You maybe should use the other @ref setPluginData function in your plugin
-	 * WARNING: this errase all old data stored for this object.
+	 * WARNING: this erase all old data stored for this object.
 	 */
 	void setPluginData( KopetePlugin *p, const QMap<QString, QString> &value );
 
@@ -72,19 +72,19 @@ public:
 	 * data. See @ref setPluginData().
 	 *
 	 * Note that date are accessible only after the load from the XML file.
-	 * Take care to don't call this function before (example, from the constructor)
+	 * Take care to don't call this function before the data has been loaded (example, from the constructor)
 	 */
 	QString pluginData( KopetePlugin *p, const QString &key ) const;
 
 protected:
 
 	/**
-	 * Return a XML representation of plugin datas
+	 * Return a XML representation of plugin data
 	 */
 	const QValueList<QDomElement> toXML();
 
 	/**
-	 * Load plugin datas from one Dom Element:
+	 * Load plugin data from one Dom Element:
 	 * It has to be a <plugin-data> element
 	 */
 	void fromXML( const QDomElement& element );

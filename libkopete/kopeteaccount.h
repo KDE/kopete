@@ -84,11 +84,11 @@ public:
 	bool rememberPassword();
 
 	/*
-	 * Set if the account should log in automaticaly or not
+	 * Set if the account should log in automatically or not
 	 */
 	void setAutoLogin(bool);
 	/*
-	 * Say if the account should log in automaticaly
+	 * Say if the account should log in automatically
 	 */
 	bool autoLogin() const;
 
@@ -97,7 +97,7 @@ public:
 	 */
 	const QColor color() const;
 	/*
-	 * Set the color this account will use to differenciatte from the other accounts
+	 * Set the color this account will use to differenciate from the other accounts
 	 */
 	void setColor( const QColor &color);
 
@@ -124,8 +124,8 @@ public:
 	bool isAway() const;
 
 	/**
-	 * Function has to be reimplemented in every single protocol
-	 * and return the KopeteContact associated with the 'home' user.
+	 * This function has to be reimplemented in every single protocol
+	 * and should return the KopeteContact associated with the 'home' user.
 	 * the myself contact MUST be created in the account constructor!
 	 *
 	 * @return contact associated with the currently logged in user
@@ -147,7 +147,7 @@ public:
 	const QDict<KopeteContact>& contacts();
 
 	/**
-	 * Save the account to an XML string. Only used internaly
+	 * Save the account to an XML string. Only used internally
 	 */
 	const QDomElement toXML();
 
@@ -179,14 +179,14 @@ protected:
 public slots:
 	/**
 	 * Go online for this service.
-	 * This is a slot, so it can be called directly from e.g. a KAction.
+	 * This is a slot, so it can be called directly from a KAction, for example.
 	 */
 
 	virtual void connect() = 0;
 
 	/**
 	 * Disconnect from this service.
-	 * This is a slot, so it can be called directly from e.g. a KAction.
+	 * This is a slot, so it can be called directly from a KAction, for example.
 	 */
 	virtual void disconnect() = 0;
 
@@ -205,13 +205,13 @@ public slots:
 
 signals:
 	/**
-	 * The accoutId should be constant, see @ref KopeteAccount::setAccountId()
+	 * The accountId should be constant, see @ref KopeteAccount::setAccountId()
 	 */
 	void accountIdChanged();
 
 	/**
-	 * The pasword has changed. Praticaly, you shouldn't keep the password in memory, but you should
-	 * call @ref getPassword() which take care of user preferences to ask the password. Reserve this for
+	 * The password has changed. Practically, you shouldn't keep the password in memory, but you should
+	 * call @ref getPassword() which takes care of asking for the password. Reserved only for
 	 * expert usage.
 	 */
 	void passwordChanged();
@@ -224,8 +224,8 @@ signals:
 
 protected slots:
 	/*
-	 * This method is called at the end on fromXML fucntion
-	 * since pluginDatas are not accessible yest in constructor
+	 * This method is called at the end of the  fromXML function
+	 * since pluginData are not accessible yet in the constructor
 	 */
 	virtual void loaded();
 

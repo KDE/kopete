@@ -39,7 +39,7 @@ public:
 
 	KopeteGroup();
 	/**
-	 * Constructor: not that the constructor don't add the group automaticaly to the contactlist.
+	 * Constructor: note that the constructor doesn't add the group automatically to the contactlist.
 	 * use @ref KopeteContactList::addGroup() to add it
 	 */
 	KopeteGroup(QString name, GroupType type=Classic);
@@ -80,21 +80,21 @@ public:
 	bool fromXML( const QDomElement &data );
 
 	/**
-	 * set if the group is expended. this is saved to the xml contactlist file
+	 * set if the group is expanded. this is saved to the xml contactlist file
 	 */
 	void setExpanded(bool in_expanded) ;
 	/**
-	 * say if the group is expended or not,
+	 * say if the group is expanded or not,
 	 */
 	bool expanded() ;
 
 	/**
-	 * set the parrent group
-	 * a group = 0l equal the top-level group
+	 * set the parent group
+	 * a group = 0L means the top-level group
 	 */
 	//void setParentGroup(KopeteGroup*);
 	/**
-	 * Acessor to the parrent group.
+	 * Accessor to the parent group.
 	 */
 	//KopeteGroup* parentGroup();
 
@@ -104,7 +104,7 @@ public:
 	 */
 	static KopeteGroup *toplevel;
 	/**
-	 * a ling to the temporary group
+	 * a link to the temporary group
 	 */
 	static KopeteGroup *temporary;
 
@@ -114,7 +114,7 @@ signals:
 	 */
 	void renamed(KopeteGroup* , const QString& );
 	/**
-	 * The group has changed parent group
+	 * The group has changed parents 
 	 */
 	//void movedToGroup( KopeteGroup *from , KopeteGroup *to, KopeteGroup *this_one );
 

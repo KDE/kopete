@@ -37,7 +37,7 @@ struct KopeteOnlineStatusPrivate;
  * KopeteOnlineStatus is a class that encapsulates all information about the
  * various online states that a protocol can be in in a single class. The
  * online status consists of both a 'global' status as it's known to libkopete
- * and used for going online or away, and which non-protocol plugins can use
+ * and used for going online or away, which non-protocol plugins can use,
  * and the 'private' status, which is simply an unsigned int and is only
  * useful for the actual protocol plugin that uses the status.
  *

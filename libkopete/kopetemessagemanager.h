@@ -26,7 +26,7 @@
 #include <qvaluelist.h>
 #include <qmap.h>
 
-//FIXME: get ride of this include in header
+//FIXME: get rid of this include in header
 #include "kopetemessage.h"
 
 class KopeteContact;
@@ -54,8 +54,8 @@ struct  KMMPrivate;
  *
  * The KopeteMessageManager (also called KMM for simplicity) manages a single chat.
  * It is an interface between the protocol, and the chatwindow.
- * Protocol can connect to @ref messageSent() signals to send the message, and can
- * appen received message with @ref messageReceived()
+ * The protocol can connect to @ref messageSent() signals to send the message, and can
+ * append received message with @ref messageReceived()
  *
  */
 class KopeteMessageManager : public QObject
@@ -187,10 +187,10 @@ signals:
 	void displayNameChanged();
 
 	/**
-	 * @brief emiting a typing notification
-	 * The user is typing a message, or just stopped to typing
+	 * @brief emitting a typing notification
+	 * The user is typing a message, or just stopped typing
 	 * the protocol should connect to this signal to signal to others
-	 * that the user is typing if the user support this
+	 * that the user is typing if the protocol supports this
 	 * @param isTyping say if the user is typing or not
 	 */
 	void typingMsg( bool isTyping );
@@ -225,7 +225,7 @@ public slots:
 	 * @param c is the contact
 	 * @param supress mean the there will be no automatic notifications in the chatwindow.
 	 *  (note that i don't like the param supress at all. it is used in irc to show a different notification (with an info text)
-	 *   a QStrin info yould be more interesting, but it is also used to don't show the notification when entering in a channel)
+	 *   a QStringinfo would be more interesting, but it is also used to don't show the notification when entering in a channel)
 	 */
 	void addContact( const KopeteContact *c, bool supress = false );
 
@@ -237,7 +237,7 @@ public slots:
 	void removeContact( const KopeteContact *c, const QString& raison=QString::null );
 
 	/**
-	 * Set if the KMM will be deleted when the chatwindow is deleted. It is usefull if you want
+	 * Set if the KMM will be deleted when the chatwindow is deleted. It is useful if you want
 	 * to keep the KMM alive even if the chatwindow is closed.
 	 * Warning: if you set it to false, please keep in mind that you have to reset it to true
 	 *  later to delete it. In many case, you should never delete yourself the KMM, just call this
@@ -252,8 +252,8 @@ public slots:
 	 */
 	void sendMessage(KopeteMessage &message);
 	/**
-	 * Tell the KMM that the useris typing
-	 * This method should be called only by a chatwindow. It emit @ref typingMsg signal
+	 * Tell the KMM that the user is typing
+	 * This method should be called only by a chatwindow. It emits @ref typingMsg signal
 	 */
 	void typing(bool t);
 

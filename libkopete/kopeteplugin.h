@@ -37,7 +37,7 @@ class KopeteMessage;
  * KopetePlugin is the base class for all Kopete plugins, and can implement
  * virtually anything you like.
  * KopetePlugin inherits from KXMLGUIClient. it is used in the contactlist.
- * please not the the client is added *RIGHT* after the plugin is created.
+ * please note the the client is added *RIGHT* after the plugin is created.
  * so you have to make every actions in the constructor
  */
 class KopetePlugin : public QObject , public KXMLGUIClient
@@ -49,7 +49,7 @@ public:
 	virtual ~KopetePlugin();
 
 	/**
-	 * return the plugin id. this is paraticaly the name of the class.
+	 * return the plugin id. this is practically the name of the class.
 	 * see @ref QObject::className()
 	 */
 	QString pluginId() const;
@@ -124,7 +124,7 @@ public:
 
 public slots:
 	/**
-	 * deserialize() and tells the plugin
+	 * deserialize() and tell the plugin
 	 * to apply the previously stored data again.
 	 * This method is also responsible for retrieving the settings from the
 	 * address book. Settings that were registered can be retrieved with

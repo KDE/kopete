@@ -64,7 +64,7 @@ class KopeteCommandHandler : public QObject
 		 * Unregisters a command. When a plugin unloads, all commands are
 		 * automaticlly unregistered and deleted. This function should only
 		 * be called in the case of a plugin which loads and unloads commands
-		 * dynamicly.
+		 * dynamically.
 		 *
 		 * @param parent The plugin who owns this command
 		 * @param command The command to unload

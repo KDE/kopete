@@ -81,7 +81,7 @@ public:
 	/**
 	 * Find the idth KopeteMessageManager that the factory knows of.
 	 * @param id The number of the desired KopeteMessageManager.
-	 * @returnA pointer to the KopeteMessageManager, or 0 if it was not found.
+	 * @return A pointer to the KopeteMessageManager, or 0 if it was not found.
 	 */
 	KopeteMessageManager *findKopeteMessageManager( int id );
 
@@ -98,7 +98,7 @@ public:
 
 	/**
 	 * create a new view for the manager.
-	 * only the manager should call this fuction
+	 * only the manager should call this function
 	 */
 	KopeteView *createView( KopeteMessageManager * , KopeteMessage::MessageType type );
 
@@ -125,7 +125,7 @@ signals:
 	 * to manipulate the contents of the
 	 * message that is being received.
 	 *
-	 * This signal is emit before @ref aboutToDisplay()
+	 * This signal is emitted before @ref aboutToDisplay()
 	 */
 	void aboutToReceive( KopeteMessage& message );
 
@@ -135,7 +135,7 @@ signals:
 	void viewCreated( KopeteView * );
 
 	/*
-	 *	Request the creation of a new view
+	 * Request the creation of a new view
 	 */
 	void requestView(KopeteView*& , KopeteMessageManager * , KopeteMessage::MessageType type );
 

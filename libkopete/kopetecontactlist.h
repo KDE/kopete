@@ -103,7 +103,7 @@ public:
 	 * Exposed via DCOP in kopeteiface
 	 * Used to send a file to a MetaContact using the highest ranked protocol
 	 *
-	 * FIXME: We need to change this to us ea unique ID instea dof displayName
+	 * FIXME: We need to change this to use a unique ID instead of the displayName
 	 *
 	 * @param displayName Metacontact to send file to
 	 * @param sourceURL The file we are sending
@@ -127,8 +127,8 @@ public:
 
 	/**
 	 * Add the metacontact into the contact list
-	 * When calling this method, the contact has to be already placed in correct group,
-	 * if the contact is in no group, it will be added to the top-level group
+	 * When calling this method, the contact has to be already placed in the correct group.
+	 * If the contact is not in a  group, it will be added to the top-level group
 	 */
 	void addMetaContact( KopeteMetaContact *c );
 
@@ -163,13 +163,13 @@ public:
 
 	/**
 	 * Get a group.
-	 * If a group already exist with the given name and the given type, it return this one.
-	 * else, it create a new one.
+	 * If a group already exists with the given name and the given type, the existing group will be returned.
+ 	 * Otherwise, a new group will be created.
 	 */
 	KopeteGroup * getGroup(const QString& displayName, KopeteGroup::GroupType type=KopeteGroup::Classic);
 
 	/**
-	 * return the group with the given unique id. if non is found return 0L
+	 * return the group with the given unique id. if none is found return 0L
 	 */
 	KopeteGroup * getGroup(unsigned int groupId);
 
@@ -180,7 +180,7 @@ public:
 
 
 	/**
-	 * return the list of metacontact actualy selected in the contactlist UI
+	 * return the list of metacontact actually selected in the contactlist UI
 	 */
 	QPtrList<KopeteMetaContact> selectedMetaContacts() const;
 
@@ -198,8 +198,8 @@ public slots:
 
 	/**
 	 * Set which items are selected in the ContactList GUI.
-	 * This method has to be call by the contactlist UI side.
-	 * it store selected items, and emits signals
+	 * This method has to be called by the contactlist UI side.
+	 * it stores the selected items, and emits signals
 	 */
 	 void setSelectedItems(QPtrList<KopeteMetaContact> metaContacts , KopeteGroupList groups);
 
@@ -242,12 +242,12 @@ signals:
 
 
 	/**
-	 * This signal is emit when the selection has changed, it is emited after the following slot
+	 * This signal is emit when the selection has changed, it is emitted after the following slot
 	 * Warning: Do not delete any contacts in slots connected to this signal.  (it is the warning in the QListView::selectionChanged() doc)
 	 */
 	void selectionChanged();
 	/**
-	 * This slot is emit each time the selection changed. the bool is set to true if one single meta contact has been selected,
+	 * This signal is emitted each time the selection has changed. the bool is set to true if only one meta contact has been selected,
 	 * and set to false if none, or several contacts are selected
 	 * you can connect this signal to KAction::setEnabled if you have an action which is applied to only one contact
 	 */

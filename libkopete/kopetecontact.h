@@ -189,7 +189,7 @@ public:
 	void setMetaContact(KopeteMetaContact *m);
 
 	/**
-	 * Returns whether or not this contact is capable of file transfers or not
+	 * Returns whether or not this contact is capable of file transfers
 	 */
 	bool isFileCapable() const;
 
@@ -234,7 +234,7 @@ public:
 	 * Although a contact can have more than one active message manager
 	 * (as is the case with MSN at least), only one message manager will
 	 * ever be the contacts "primary" message manager.. aka the 1 on 1 chat.
-	 * This function should always returnt that instance.
+	 * This function should always return that instance.
 	 *
 	 * @param canCreate If a new message manager can be created in addition
 	 * to any existing managers. Current;y, this is only set to true when
@@ -308,12 +308,12 @@ public slots:
 	 * sync the server groups with the metaContact groups.
 	 * This method is called everytime the metacontact has been moved
 	 *
-	 * default implementation do nothing
+	 * default implementation does nothing
 	 */
 	virtual void syncGroups();
 
 	/**
-	 * Changet the icon to use for this contact
+	 * Change the icon to use for this contact
 	 */
 	void setIcon( const QString& icon );
 
@@ -334,7 +334,7 @@ private slots:
 	void slotChangeDisplayName();
 
 	/**
-	 * This add the contact totaly in the list if it was a temporary contact
+	 * This add the contact totally in the list if it was a temporary contact
 	 */
 	void slotAddContact();
 

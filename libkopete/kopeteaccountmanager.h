@@ -33,7 +33,7 @@ class KopetePlugin;
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  *
  * KopeteAccountManager manages all defined accounts in Kopete. You can
- * query them, and globally set them all online or offline from here.
+ * query them and globally set them all online or offline from here.
  */
 class KopeteAccountManager : public QObject
 {
@@ -87,13 +87,13 @@ public slots:
 
 	/**
 	 * Connect all accounts at once.
-	 * This is a slot, so you can connect directly to it from e.g. a KAction.
+	 * This is a slot, so you can connect directly to it from a KAction, for example.
 	 */
 	void connectAll();
 
 	/**
 	 * Disconnect all accounts at once.
-	 * This is a slot, so you can connect directly to it from e.g. a KAction.
+	 * This is a slot, so you can connect directly to it from a KAction, for example.
 	 */
 	void disconnectAll();
 

@@ -127,7 +127,7 @@ public:
 	  * @return true if away message was successfully added
 	  * @return false if away message was not added (already exists)
 	  *
-	  * This function will add an away message with given title to the list of user defined
+	  * This function will add an away message with the given title to the list of user defined
 	  * away messages.  If the title conflicts with an already defined away message, nothing
 	  * will be changed and the return value will be false.  Otherwise, the away message will
 	  * be added and true will be returned.  save() should be called when finished adding messages
@@ -160,16 +160,16 @@ public:
 	bool updateMessage(const QString &title, const QString &message);
 
 	/**
-	 * time in seconds since the user is idle
+	 * time in seconds the user has been idle
 	 */
 	long int idleTime();
 
 	/**
-	 * set go avaliable when detect activity
+	 * set go available when we detect activity
 	 */
 	void setGoAvailable(bool );
 	/**
-	 *  Go avaliable when detect activity
+	 *  Go available when we detect activity
 	 */
 	bool goAvailable() const;
 
@@ -200,7 +200,7 @@ private slots:
 public slots:
 	/**
 	 * Set the activity
-	 * Plugins can set the activity if they discover activity bu another way that the mouse
+	 * Plugins can set the activity if they discover activity by another way than the mouse
 	 */
 	void setActivity();
 

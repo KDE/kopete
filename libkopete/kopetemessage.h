@@ -63,7 +63,7 @@ public:
 	enum MessageType { Undefined, Chat, Email };
 
 	/**
-	* Specifies the type of notification will be send with this message
+	* Specifies the type of notification that will be sent with this message
 	* - Low: almost no notifications used in groupChat
 	* - Normal: default notification
 	* - Highlight: Highlight notification
@@ -174,7 +174,7 @@ public:
 	MessageType type() const;
 
 	/**
-	 * Acessor method for the foreground color
+	 * Accessor method for the foreground color
 	 * @return The message's foreground color
 	 */
 	QColor fg() const;
@@ -267,9 +267,9 @@ public:
 
 	/**
 	 * Get the related kopete message manager.
-	 * If it is not set, return 0l
+	 * If it is not set, returns 0L
 	 * The kopeteMessagemanager is only set if the message is already passed by the manager.
-	 * we should trust this only in aboutToSend/aboutToReceive signals
+	 * We should trust this only in aboutToSend/aboutToReceive signals
 	 */
 	 KopeteMessageManager *manager()const ;
 
@@ -285,8 +285,8 @@ public:
 	const QDomDocument asXML() const;
 
 	/**
-	 * ?
-	 * //FIXME:  please docuement
+	 * Enables the use of a background for a message
+	 * @param enable A flag to indicate if the background should be enabled or disabled.
 	 */
 	void setBgOverride( bool enable );
 

@@ -42,9 +42,9 @@ struct KopeteMetaContactPrivate;
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  *
  * A metacontact represent a person. This is a kind of entry to
- * the contactlist. All information of a contact is contains into
+ * the contactlist. All information of a contact is contained in 
  * the metacontact. Plugins can store data in it with all
- * @KopetePluginData method
+ * @KopetePluginData methods
  */
 class KopeteMetaContact : public KopetePluginDataObject
 {
@@ -60,7 +60,7 @@ public:
 	QPtrList<KopeteContact> contacts() const;
 
 	/**
-	 * Add contact to the meta contact
+	 * Add a contact to the meta contact
 	 */
 	void addContact( KopeteContact *c );
 
@@ -75,7 +75,7 @@ public:
 	virtual QString statusIcon() const;
 
 	/**
-	 * The status-string of the contact
+	 * The status string of the contact
 	 */
 	QString statusString() const;
 
@@ -89,7 +89,7 @@ public:
 	bool isOnline() const;
 
 	/**
-	 * Returns weather this contact can accept files
+	 * Returns whether this contact can accept files
 	 * @return True if the user is online with a file capable protocol, false otherwise
 	 */
 	bool canAcceptFiles() const;
@@ -100,7 +100,7 @@ public:
 	enum IdleState { Unspecified, Idle, Active };
 
 	/**
-	 * Return more fine-grained status.
+	 * Return a more fine-grained status.
 	 * Online means at least one sub-contact is online, away means at least
 	 * one is away, but nobody is online and offline speaks for itself
 	 */
@@ -118,6 +118,7 @@ public:
 	 * Unspecified means that none of the contacts' protocols advertise idle time
 	 * Idle means that at least one sub-contact is idle
 	 * Active means that no subcontacts are idle and at least one are active
+	 * @return the idle state of the meta contact
 	 */
 	IdleState idleState() const;
 
@@ -172,7 +173,7 @@ public:
 	void addToGroup( KopeteGroup *to );
 
 	/**
-	 * Temporary contacts will not be sarialized
+	 * Temporary contacts will not be serialized
 	 */
 	bool isTemporary() const;
 	void setTemporary( bool b = true ,KopeteGroup *group = 0L );
@@ -184,7 +185,7 @@ public:
 	//bool isDirty() const;
 	/**
 	 * Plugins should set the metacontact to dirty
-	 * as a save-me request
+	 * as a "save me" request
 	 */
 	//void setDirty( bool b = true );
 
@@ -230,7 +231,7 @@ public:
 	 */
 	QString addressBookField( KopetePlugin *p, const QString &app, const QString &key ) const;
 	/**
-	 * set an adress book field
+	 * set an address book field
 	 *
 	 * see also @ref addressBookField()
 	 */
@@ -319,12 +320,12 @@ signals:
 	void addedToGroup( KopeteMetaContact *contact, KopeteGroup *to );
 
 	/**
-	 * This signal is emmited when a contact is added to this metacontact
+	 * This signal is emitted when a contact is added to this metacontact
 	 */
 	void contactAdded( KopeteContact *c );
 
 	/**
-	 * This signal is emmited when a contact is removed from this metacontact
+	 * This signal is emitted when a contact is removed from this metacontact
 	 */
 	void contactRemoved( KopeteContact *c );
 
@@ -335,9 +336,9 @@ signals:
 	void aboutToSave(KopeteMetaContact*);
 
 	/**
-		* The metacontact's idle status changed.  KopeteMetaContactLVI should
-		* connect to this signal
-		*/
+	 * The metacontact's idle status changed.  KopeteMetaContactLVI should
+	 * connect to this signal
+	 */
 	void idleStateChanged( KopeteMetaContact *contact, KopeteMetaContact::IdleState newState );
 
 	/**
@@ -376,7 +377,7 @@ private slots:
 	void slotContactDestroyed( KopeteContact* );
 
 	/**
-	 * If a plugin is loaded, maybe dada about this plugins are already cached in the metacontact
+	 * If a plugin is loaded, maybe data about this plugin are already cached in the metacontact
 	 */
 	void slotPluginLoaded(KopetePlugin *p);
 

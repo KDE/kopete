@@ -64,7 +64,7 @@ public:
 
 	/**
 	 * create a new empty KopeteAccount with the id accountId
-	 * this method is called durring the loading from the xml file
+	 * this method is called during the loading from the xml file
 	 */
 	virtual KopeteAccount *createNewAccount( const QString &  accountId  ) =0L;
 
@@ -91,7 +91,7 @@ public:
 
 
 	/**
-	 * Deserialize plugin-data for a meta contact. This method splits up the
+	 * Deserialize plugin data for a meta contact. This method splits up the
 	 * data into the independent KopeteContacts and calls @ref deserializeContact()
 	 * for each contact.
 	 *

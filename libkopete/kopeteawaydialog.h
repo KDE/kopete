@@ -80,24 +80,24 @@ class KopeteAwayDialog : public KopeteAwayBase
 		/**
 		* This method is called when the user clicks
 		* OK in the GUI, signalling that they wish
-		* to set the away message that they chose.
+		* to set the away message that they have chosen.
 		* Please reimplement this method to do protocol
 		* specific things, and use getSelectedAwayMessage()
 		* to get the text of the message that the user
 		* selected.
 		*
 		* @param awayType This is the away type specified
-		* if show was called with a parameter, if show() was called
+		* if show was called with a parameter. If show() was called
 		* instead, this parameter will be the empty string. You
-				* will need to compare it to an enum that you declare
-				* in your subclass.
+		* will need to compare it to an enum that you declare
+		* in your subclass.
 		*/
 		virtual void setAway( int/*awayType*/ ) = 0;
 
 		/**
 		* This method is called when the user clicks
 		* Cancel in the GUI, signalling that they
-		* canceled their request to mark themselves as
+		* cancelled their request to mark themselves as
 		* away.  If your implementation finds this
 		* information useful, implement this method
 		* to handle this info.  By default it does nothing
