@@ -182,9 +182,7 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 
 			int winId = 0;  //KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 			QWidget *w=dynamic_cast<QWidget*>(manager->view(false));
-			while(w && !w->isTopLevel())
-				w=w->parentWidget(true);
-			if(w) winId=w->winId();
+			if(w) winId=w->topLevelWidget()->winId();
 
 			switch( msg.importance() )
 			{
