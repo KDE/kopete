@@ -37,12 +37,13 @@
 #include <qvaluelist.h>
 
 #include <kopeteuiglobal.h>
-#include "kopeteawayaction.h"
-#include "kopetecontactlist.h"
-#include "kopetegroup.h"
-#include "kopetemessagemanagerfactory.h"
-#include "kopetemetacontact.h"
-#include "kopetepassword.h"
+#include <kopeteawayaction.h>
+#include <kopetecontactlist.h>
+#include <kopetegroup.h>
+#include <kopetemessagemanagerfactory.h>
+#include <kopetemetacontact.h>
+#include <kopetepassword.h>
+#include <kopeteview.h>
 
 #include "client.h"
 #include "qca.h"
@@ -138,8 +139,14 @@ GroupWiseMessageManager * GroupWiseAccount::messageManager( const KopeteContact*
 	if ( !mgr )
 	{
 		mgr = new GroupWiseMessageManager( user, others, protocol, guid );
-		m_managers.insert( guid, mgr );
+		// if we don't have a guid yet, after we emit conferenceCreated, 
+		// we will receive a conferenceCreated signal back from the correct manager
+		// and insert the guid into the map 
+		if ( !guid.isEmpty() )
+			m_managers.insert( guid, mgr );
 		QObject::connect( mgr, SIGNAL( destroyed( QObject * ) ), SLOT( slotMessageManagerDestroyed( QObject * ) ) );
+		QObject::connect( mgr, SIGNAL( conferenceCreated() ), SLOT( slotMessageManagerGotGuid() ) );
+
 	}
 	return mgr;
 }
@@ -214,6 +221,9 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	QObject::connect( m_client, SIGNAL( invitationReceived( const ConferenceEvent & ) ), SLOT( receiveInvitation( const ConferenceEvent & ) ) );
 	QObject::connect( m_client, SIGNAL( conferenceLeft( const ConferenceEvent & ) ), SLOT( receiveConferenceLeft( const ConferenceEvent & ) ) );
 	QObject::connect( m_client, SIGNAL( conferenceJoinNotifyReceived( const ConferenceEvent & ) ), SLOT( receiveConferenceJoinNotify( const ConferenceEvent & ) ) );
+	QObject::connect( m_client, SIGNAL( inviteNotifyReceived( const ConferenceEvent & ) ), SLOT( receiveInviteNotify( const ConferenceEvent & ) ) );
+	QObject::connect( m_client, SIGNAL( invitationDeclined( const ConferenceEvent & ) ), SLOT( receiveInviteDeclined( const ConferenceEvent & ) ) );
+
 	QObject::connect( m_client, SIGNAL( conferenceJoined( const QString &, const QStringList & ) ), SLOT( receiveConferenceJoin( const QString &, const QStringList & ) ) );
 
 	// typing events
@@ -298,6 +308,16 @@ void GroupWiseAccount::createConference( const int clientId, const QStringList& 
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	// TODO: remove this it prevents sending a list of participants with the createconf
 	m_client->createConference( clientId , invitees );
+}
+
+void GroupWiseAccount::sendInvitation( const QString & guid, const GroupWiseContact * contact/*, const message*/ )
+{
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	GroupWise::OutgoingMessage msg;
+	msg.guid = guid;
+	msg.message = "Default invitation message";
+	msg.rtfMessage = protocol()->rtfizeText( msg.message );
+	m_client->sendInvitation( guid, contact->contactId(), msg );
 }
 
 void GroupWiseAccount::slotGoOnline()
@@ -500,7 +520,6 @@ void GroupWiseAccount::receiveContact( const ContactItem & contact )
 	}
 }
 
-
 void GroupWiseAccount::receiveAccountDetails( const ContactDetails & details )
 {
 	if ( details.cn == accountId() )
@@ -680,7 +699,7 @@ void GroupWiseAccount::receiveConferenceJoin( const QString & guid, const QStrin
 		else
 			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a contact for DN: " << *it << endl;
 	}
-	mgr->view( true );
+	mgr->view( true )->raise( false );
 }
 
 void GroupWiseAccount::receiveConferenceJoinNotify( const ConferenceEvent & event )
@@ -722,12 +741,52 @@ void GroupWiseAccount::receiveConferenceLeft( const ConferenceEvent & event )
 
 }
 
+void GroupWiseAccount::receiveInviteDeclined( const ConferenceEvent & event )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	GroupWiseMessageManager * mgr = m_managers[ event.guid ];
+	if ( mgr )
+	{
+		GroupWiseContact * c = static_cast< GroupWiseContact *>( contacts()[ event.user ] );
+		if ( c )
+		{
+			KopeteMessage declined = KopeteMessage( mgr->user(), mgr->members(), i18n("%1 has rejected an invitation to join this conversation.").arg( c->displayName() ), KopeteMessage::Internal, KopeteMessage::PlainText );
+			mgr->appendMessage( declined );
+		}
+	}
+	else
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a GWMM for conference: " << event.guid << endl;
+}
+
+void GroupWiseAccount::receiveInviteNotify( const ConferenceEvent & event )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	GroupWiseMessageManager * mgr = m_managers[ event.guid ];
+	if ( mgr )
+	{
+		GroupWiseContact * c = static_cast< GroupWiseContact *>( contacts()[ event.user ] );
+		if ( c )
+		{
+			KopeteMessage declined = KopeteMessage( mgr->user(), mgr->members(), i18n("%1 has been invited to join this conversation.").arg( c->displayName() ), KopeteMessage::Internal, KopeteMessage::PlainText );
+			mgr->appendMessage( declined );
+		}
+	}
+	else
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a GWMM for conference: " << event.guid << endl;
+}
+
+void GroupWiseAccount::slotMessageManagerGotGuid()
+{
+	GroupWiseMessageManager * mgr = ( GroupWiseMessageManager * )sender();
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "registering message manager" << mgr->guid() << endl;
+	m_managers.insert( mgr->guid(), mgr );
+}
+
 void GroupWiseAccount::slotMessageManagerDestroyed( QObject * obj )
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " address is: " << obj << endl;
 	// the message manager is one of ours
 	GroupWiseMessageManager * mgr = static_cast< GroupWiseMessageManager* >( obj );
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " it's one of ours, got its deleted signal" << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "unregistering message manager" << endl;
 	// leave the conference
 	m_client->leaveConference( mgr->guid() );
 	m_managers.remove( mgr->guid() );

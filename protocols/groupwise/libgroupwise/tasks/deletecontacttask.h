@@ -22,9 +22,8 @@ class DeleteContactTask : public ModifyContactListTask
 Q_OBJECT
 public:
 	DeleteContactTask(Task* parent);
-
 	~DeleteContactTask();
-
+	void contact( const int parentFolder, const int objectId );
 };
 
 #endif

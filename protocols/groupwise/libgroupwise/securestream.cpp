@@ -533,7 +533,7 @@ void SecureStream::writeRawData(const QByteArray &a)
 void SecureStream::incomingData(const QByteArray &a)
 {
 	appendRead(a);
-	qDebug( "SecureStream::incomingData() got %i bytes ", a.size() );
+	//qDebug( "SecureStream::incomingData() got %i bytes ", a.size() );
 
 	if(bytesAvailable())
 		readyRead();

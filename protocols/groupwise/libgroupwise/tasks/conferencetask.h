@@ -38,7 +38,7 @@ signals:
 	void left( const ConferenceEvent &);
 	void invited( const ConferenceEvent & );
 	void otherInvited( const ConferenceEvent & );
-	void invitationRejected( const ConferenceEvent & );
+	void invitationDeclined( const ConferenceEvent & );
 	void closed( const ConferenceEvent & );
 	void message( const ConferenceEvent &);
 	void autoReply( const ConferenceEvent & );

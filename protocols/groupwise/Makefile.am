@@ -22,3 +22,5 @@ servicedir = $(kde_servicesdir)
 INCLUDES = -I$(top_srcdir)/kopete/protocols/groupwise/libgroupwise/tasks \
 	-I$(top_srcdir)/kopete/protocols/groupwise/libgroupwise/qca/src -I$(top_srcdir)/kopete/protocols/groupwise/libgroupwise
 
+mydatadir = $(kde_datadir)/kopete_groupwise
+mydata_DATA = gwchatui.rc

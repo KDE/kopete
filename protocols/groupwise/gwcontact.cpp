@@ -57,7 +57,7 @@ GroupWiseContact::~GroupWiseContact()
 	// would not fetch details for this contact if they contact you
 	// again from off-contact-list.
 	if ( metaContact()->isTemporary() )
-		static_cast< GroupWiseAccount *>( account() )->client()->userDetailsManager()->removeContact( contactId() );
+		account()->client()->userDetailsManager()->removeContact( contactId() );
 }
 
 void GroupWiseContact::updateDetails( const ContactDetails & details )
@@ -86,6 +86,11 @@ void GroupWiseContact::updateDetails( const ContactDetails & details )
 GroupWiseProtocol *GroupWiseContact::protocol()
 {
 	return static_cast<GroupWiseProtocol *>( KopeteContact::protocol() );
+}
+
+GroupWiseAccount *GroupWiseContact::account()
+{
+	return static_cast<GroupWiseAccount *>( KopeteContact::account() );
 }
 
 bool GroupWiseContact::isReachable()
@@ -145,7 +150,7 @@ GroupWiseMessageManager * GroupWiseContact::manager( KopeteContactPtrList chatMe
 	 */
 	if ( !mgr && canCreate )
 	{
-		mgr = new GroupWiseMessageManager( static_cast<GroupWiseContact *>( account()->myself() ), chatMembers, protocol(), QString::null );
+		mgr = account()->messageManager( account()->myself(), chatMembers, protocol(), QString::null );
 		connect( mgr, SIGNAL( destroyed ( QObject * ) ), SLOT( slotMessageManagerDeleted ( QObject * ) ) );
 		connect( mgr, SIGNAL( conferenceCreated() ), SLOT( slotConferenceCreated() ) );
 		//m_pendingManagers.append( mgr );
@@ -168,7 +173,7 @@ GroupWiseMessageManager * GroupWiseContact::manager( const QString & guid, bool 
 			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - this GroupWiseMessageManager is new to us. " << endl;
 			KopeteContactPtrList chatMembers;
 			chatMembers.append ( this );
-			mgr = ( static_cast<GroupWiseAccount *>( account() ) )->messageManager( account()->myself(), chatMembers, protocol(), guid );
+			mgr = account()->messageManager( account()->myself(), chatMembers, protocol(), guid );
 			connect( mgr, SIGNAL( destroyed( QObject * ) ), this, SLOT( slotMessageManagerDeleted ( QObject * ) ) );
 			m_msgManagers.insert( guid, mgr );
 		}

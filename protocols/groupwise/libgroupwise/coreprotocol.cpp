@@ -267,11 +267,11 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 								+ GW_URLVAR_VAL + (const char *)valString 
 								+ GW_URLVAR_TYPE + typeString;
 								
-		cout << "outgoing data: " << outgoing.data() << endl;
+		cout << "CoreProtocol::fieldsToWire - outgoing data: " << outgoing.data() << endl;
 		dout.writeRawBytes( outgoing.data(), outgoing.length() );
 		// write what we have so far, we may be calling this function recursively
 		//kdDebug( 14999 ) << k_funcinfo << "writing \'" << bout << "\'" << endl;
-		cout << " - signalling data" << endl;
+		//cout << " - signalling data" << endl;
 		emit outgoingData( bytesOut );
 
 		// write fields of subarray, if that's what the current field is
@@ -291,9 +291,9 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		dout.setByteOrder( QDataStream::LittleEndian );
 		dout.writeRawBytes( "\r\n", 2 );
 		emit outgoingData( bytesOut );
-		cout << " - request sent, end via qbytearray..." << endl;
+		cout << "CoreProtocol::fieldsToWire - request completed" << endl;
 	}
-	cout << " - method done" << endl;
+	//cout << " - method done" << endl;
 }
 
 void CoreProtocol::wireToTransfer( const QByteArray& wire )
@@ -402,7 +402,7 @@ bool CoreProtocol::readResponse()
 			break;
 		line = readGroupWiseLine();
 		headerRest.append( line );
-		cout << "- read header line " << safetyCheck << " (" << line.length() <<"):" << line.data() << endl;
+		cout << "- read header line " << safetyCheck << " (" << line.length() <<"):" << line.data();
 		safetyCheck++;
 	}
 /*	while ( !qstrcmp( buffer, "\r\n" ) && safetyCheck < 100 )

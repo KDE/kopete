@@ -116,7 +116,7 @@ bool ConferenceTask::take( Transfer * transfer )
 				break;
 			case GroupWise::ConferenceReject:
 				qDebug( "ConferenceReject" );
-				emit invitationRejected( event );
+				emit invitationDeclined( event );
 				break;
 			case GroupWise::ReceiveAutoReply:
 				event.flags = readFlags( din );

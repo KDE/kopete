@@ -18,17 +18,21 @@
 
 #include "gwerror.h"
 
+class QLabel;
+class KAction;
+class KActionMenu;
 class GroupWiseAccount;
+
 /**
-@author SUSE AG
+ * Specialised message manager, which tracks the GUID used by GroupWise to uniquely identify a given chat, and provides invite actions and logging and security indicators.  To instantiate call @ref GroupWiseAccount::messageManager().
+ * @author SUSE AG
 */
 class GroupWiseMessageManager : public KopeteMessageManager
 {
 Q_OBJECT
 
-friend class GroupWiseMessageManagerFactory;
+friend class GroupWiseAccount;
 public:
-	GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const QString & guid, int id = 0, const char* name = 0);
 	~GroupWiseMessageManager();
 	/**
 	 * The conference's globally unique identifier, which is given to it by the server
@@ -91,11 +95,27 @@ protected slots:
 	// TODO: slots for us leaving conference, us inviting someone, someone joining, someone leaving, someone sending an invitation, getting typing?
 	void slotGotTypingNotification( const GroupWise::ConferenceEvent & );
 	void slotGotNotTypingNotification( const GroupWise::ConferenceEvent & );
+	/**
+	 * Popupulate the menu of invitable contacts
+	 */
+	void slotActionInviteAboutToShow();
+	/**
+	 * Invite a contact to join this chat
+	 */
+	void slotInviteContact( KopeteContact * );
 private:
+	
+	GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const QString & guid, int id = 0, const char* name = 0);
+	
 	QString m_guid; // The conference's globally unique identifier, which is given to it by the server
 	int m_flags; // flags for secure connections, central logging and "conference closed" as given by the server
 	
 	QValueList< KopeteMessage > m_pendingOutgoingMessages; // messages queued while we wait for the server to tell us the conference is created.
+	KActionMenu *m_actionInvite;
+	QPtrList<KAction> m_inviteActions;
+	// labels showing secure and logging status
+	KAction *m_secure;
+	KAction *m_logging;
 };
 
 #endif

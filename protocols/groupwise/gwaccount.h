@@ -38,8 +38,6 @@ class KopeteMetaContact;
 
 class GroupWiseContact;
 class GroupWiseProtocol;
-class GroupWiseMessageManagerFactory;
-
 class KNetworkConnector;
 namespace QCA {
 	class TLS;
@@ -110,6 +108,11 @@ public:
 	 * Send a message
 	 */ 
 	void sendMessage( const QString & guid, const KopeteMessage & message );
+	
+	/**
+	 * Invite someone to join a conference
+	 */
+	void sendInvitation( const QString & guid, const GroupWiseContact * contact/*, const message */);
 public slots:
 
 	void slotTestRTFize();
@@ -123,8 +126,8 @@ public slots:
 signals: 
 	void conferenceCreated( const int mmId, const QString & guid );
 	void conferenceCreationFailed( const int mmId, const int statusCode );
-	void contactTyping( const ConferenceEvent & );
-	void contactNotTyping( const ConferenceEvent & );
+	void contactTyping( const GroupWise::ConferenceEvent & );
+	void contactNotTyping( const GroupWise::ConferenceEvent & );
 protected slots:
 	/**
 	 * Change the account's status.  Called by KActions and internally.
@@ -193,11 +196,11 @@ protected slots:
 	/**
 	 * Notification that a third party was invited to join conference
 	 */
-// 	void receiveInviteNotify( const ConferenceEvent & );
+ 	void receiveInviteNotify( const ConferenceEvent & );
 	/**
 	 * Notification that a third party declined an invitation
 	 */
-// 	void receiveInvitationDeclined( const ConferenceEvent & );
+ 	void receiveInviteDeclined( const ConferenceEvent & );
 	/**
 	 * A conference was closed by the server because everyone has left or declined invitations
 	 * Prevents any further messages to this conference
@@ -230,6 +233,12 @@ protected slots:
 	void slotCSWarning( int warning );
 	
 	// HOUSEKEEPING
+	/**
+	 * Because a message manager that we create will get a GUID from the server some time after it is created,
+	 * when we get a GUID back after a successful conference create, we signal the GUID and the message manager's internal ID
+	 * using conferenceCreated, then listen for a conferenceCreated signal back from the manager, and register it in this slot
+	 */
+	void slotMessageManagerGotGuid();
 	/**
 	 * We listen for the destroyed() signal and leave any conferences we
 	 * might have been in, and remove it from our map.

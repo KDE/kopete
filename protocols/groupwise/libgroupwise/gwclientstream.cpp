@@ -434,8 +434,8 @@ void cs_dump( const QByteArray &bytes )
 void ClientStream::cp_outgoingData( const QByteArray& outgoingBytes )
 {
 	// take formatted bytes from CoreProtocol and put them on the wire
-	qDebug( "ClientStream::cp_outgoingData:" );
 #ifdef LIBGW_DEBUG
+	qDebug( "ClientStream::cp_outgoingData:" );
 	cs_dump( outgoingBytes );
 #endif	
 	d->ss->write( outgoingBytes );
@@ -529,7 +529,7 @@ void ClientStream::bs_error(int)
 void ClientStream::ss_readyRead()
 {
 	QByteArray a;
-	qDebug( "size of storage for incoming data is %i bytes.", a.size() );
+	//qDebug( "size of storage for incoming data is %i bytes.", a.size() );
 	a = d->ss->read();
 
 #ifdef LIBGW_DEBUG
@@ -546,7 +546,9 @@ void ClientStream::ss_readyRead()
 
 void ClientStream::ss_bytesWritten(int bytes)
 {
-	qDebug( "CLIENTSTREAM::ss_bytesWritten: %i bytes written", bytes );
+#ifdef LIBGW_DEBUG
+	qDebug( "ClientStream::ss_bytesWritten: %i bytes written", bytes );
+#endif
 /*	if(d->mode == Client)
 		d->client.outgoingDataWritten(bytes);
 	else

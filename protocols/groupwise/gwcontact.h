@@ -59,6 +59,11 @@ public:
     ~GroupWiseContact();
 
 	/** 
+	 * Access this contact's KopeteAccount subclass
+	 */
+	GroupWiseAccount * account();
+
+	/** 
 	 * Access this contact's KopeteProtocol subclass
 	 */
 	GroupWiseProtocol * protocol();

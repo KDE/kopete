@@ -25,7 +25,7 @@ Q_OBJECT
 public:
 	CreateFolderTask(Task* parent);
 	~CreateFolderTask();
-
+	void contact( const int parentId, const int sequence, const QString & displayName );
 };
 
 #endif

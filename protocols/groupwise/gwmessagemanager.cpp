@@ -10,15 +10,21 @@
 //
 //
 
+#include <qlabel.h>
 #include <kdebug.h>
+#include <kiconloader.h>
 #include <klocale.h>
+#include <kpopupmenu.h>
+#include <kshortcut.h>
 
 #include <kopetecontact.h>
+#include <kopetecontactaction.h>
 #include <kopetemessagemanagerfactory.h>
 #include <kopeteprotocol.h>
 
 #include "client.h"
 #include "gwaccount.h"
+#include "gwcontact.h"
 #include "gwerror.h"
 
 #include "gwmessagemanager.h"
@@ -26,18 +32,31 @@
 GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const QString & guid, int id, const char* name): KopeteMessageManager(user, others, protocol, 0, name), m_guid( guid ), m_flags( 0 )
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId() << endl;
-
+	
+	// Needed because this is (indirectly) a KXMLGuiClient, so it can find the gui description .rc file
+	setInstance( protocol->instance() );
+	
 	// make sure Kopete knows about this instance
 	KopeteMessageManagerFactory::factory()->addKopeteMessageManager ( this );
 
 	connect ( this, SIGNAL( messageSent ( KopeteMessage &, KopeteMessageManager * ) ),
 			  SLOT( slotMessageSent ( KopeteMessage &, KopeteMessageManager * ) ) );
 	connect( this, SIGNAL( typingMsg ( bool ) ), SLOT( slotSendTypingNotification ( bool ) ) );
-	connect( account(), SIGNAL( contactTyping( const ConferenceEvent & ) ), SLOT( slotGotTypingNotification( const ConferenceEvent & ) ) );
-	connect( account(), SIGNAL( contactNotTyping( const ConferenceEvent & ) ), SLOT( slotGotNotTypingNotification( const ConferenceEvent & ) ) );
+	connect( account(), SIGNAL( contactTyping( const GroupWise::ConferenceEvent & ) ), 
+						SLOT( slotGotTypingNotification( const GroupWise::ConferenceEvent & ) ) );
+	connect( account(), SIGNAL( contactNotTyping( const GroupWise::ConferenceEvent & ) ), 
+						SLOT( slotGotNotTypingNotification( const GroupWise::ConferenceEvent & ) ) );
 	
+	// Set up the Invite menu
+	m_actionInvite = new KActionMenu( i18n( "&Invite" ), actionCollection() , "gwInvite" );
+	connect( m_actionInvite->popupMenu(), SIGNAL( aboutToShow() ), this, SLOT(slotActionInviteAboutToShow() ) ) ;
+	
+	m_secure = new KAction( i18n( "Secure Connection Status" ), "encrypted", 0, this, 0, actionCollection(), "gwSecureChat" );
+	m_logging = new KAction( i18n( "Logged Chat" ), "logchat", 0, this, 0, actionCollection(), "gwLoggingChat" );
+
 	if ( m_guid.isEmpty() )
 		createConference();
+	setXMLFile("gwchatui.rc");
 
 	updateDisplayName();
 }
@@ -145,7 +164,7 @@ void GroupWiseMessageManager::slotCreationFailed( const int failedId, const int 
 	{
 		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't start a chat, no GUID.\n" << endl;
 		//emit creationFailed();
-		KopeteMessage failureNotify = KopeteMessage(/*m_manager->user(),  m_manager->members()*/ user(), members(), i18n("An error occurred when trying to start a chat: %1").arg( statusCode ), KopeteMessage::Internal, KopeteMessage::PlainText);
+		KopeteMessage failureNotify = KopeteMessage( user(), members(), i18n("An error occurred when trying to start a chat: %1").arg( statusCode ), KopeteMessage::Internal, KopeteMessage::PlainText);
 		appendMessage( failureNotify );
 		setClosed();
 	}
@@ -165,7 +184,7 @@ void GroupWiseMessageManager::slotMessageSent( KopeteMessage & message, KopeteMe
 	{
 		if ( closed() )
 		{
-			KopeteMessage failureNotify = KopeteMessage(/*m_manager->user(),  m_manager->members()*/ user(), members(), i18n("Your message could not be sent. This conversation has been closed by the server, because all the other participants left or declined invitations. "), KopeteMessage::Internal, KopeteMessage::PlainText);
+			KopeteMessage failureNotify = KopeteMessage( user(), members(), i18n("Your message could not be sent. This conversation has been closed by the server, because all the other participants left or declined invitations. "), KopeteMessage::Internal, KopeteMessage::PlainText);
 			appendMessage( failureNotify );
 			messageSucceeded();
 		}
@@ -212,4 +231,39 @@ void GroupWiseMessageManager::dequeMessages()
 		slotMessageSent( *it, this );
 	}
 }
+
+void GroupWiseMessageManager::slotActionInviteAboutToShow()
+{
+	// We can't simply insert  KAction in this menu bebause we don't know when to delete them.
+	//  items inserted with insert items are automatically deleted when we call clear
+
+	m_inviteActions.setAutoDelete(true);
+	m_inviteActions.clear();
+
+	m_actionInvite->popupMenu()->clear();
+
+	
+	QDictIterator<KopeteContact> it( account()->contacts() );
+	for( ; it.current(); ++it )
+	{
+		if( !members().contains( it.current() ) && it.current()->isOnline() && it.current() != user() )
+		{
+			KAction *a=new KopeteContactAction( it.current(), this,
+				SLOT( slotInviteContact( KopeteContact * ) ), m_actionInvite );
+			m_actionInvite->insert( a );
+			m_inviteActions.append( a ) ;
+		}
+	}
+	// Invite someone off-list
+/*	KAction *b=new KAction( i18n ("Other..."), 0, this, SLOT( slotInviteOtherContact() ), m_actionInvite, "actionOther" );
+	m_actionInvite->insert( b );
+	m_inviteActions.append( b ) ;*/
+}
+
+void GroupWiseMessageManager::slotInviteContact( KopeteContact * contact )
+{
+	GroupWiseContact * gwc = static_cast< GroupWiseContact *>( contact );
+	static_cast< GroupWiseAccount * >(account())->sendInvitation( m_guid, gwc );
+}
+
 #include "gwmessagemanager.moc"
