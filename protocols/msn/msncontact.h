@@ -55,9 +55,10 @@ public:
 
 	/**
 	 * Indicate whether this contact is deleted
+	 *   (not on the serverside list)
 	 */
-/*	bool isDeleted() const;
-	void setDeleted( bool d );*/
+	bool isDeleted() const;
+	void setDeleted( bool d );
 
 	/**
 	 * Indicate whether this contact is allowed
@@ -151,7 +152,7 @@ private:
 
 	bool m_blocked;
 	bool m_allowed;
-//	bool m_deleted;
+	bool m_deleted;
 	bool m_reversed;
 
 	bool m_moving;

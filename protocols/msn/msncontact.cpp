@@ -49,7 +49,7 @@ MSNContact::MSNContact( Kopete::Account *account, const QString &id, Kopete::Met
 {
 	m_displayPicture = 0L;
 
-	//m_deleted = false;
+	m_deleted = false;
 	m_allowed = false;
 	m_blocked = false;
 	m_reversed = false;
@@ -261,6 +261,18 @@ void MSNContact::setReversed( bool reversed )
 	m_reversed= reversed;
 }
 
+bool MSNContact::isDeleted() const
+{
+	return m_deleted;
+}
+
+void MSNContact::setDeleted( bool deleted )
+{
+	m_deleted= deleted;
+}
+
+
+
 void MSNContact::setInfo(const  QString &type,const QString &data )
 {
 	if( type == "PHH" )
@@ -355,7 +367,7 @@ void MSNContact::syncGroups( )
 		kdDebug( 14140 ) << k_funcinfo << " This contact is already moving. Abort sync    id: " << contactId() << endl;
 		return;
 	}
-
+	
 	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
 	if( !notify )
 	{
@@ -364,6 +376,9 @@ void MSNContact::syncGroups( )
 		account()->configGroup()->writeEntry("serial", 0 );
 		return;
 	}
+	
+	if(m_deleted)  //the contact hasn't been synced from server yet.
+		return; 
 
 	unsigned int count=m_serverGroups.count();
 

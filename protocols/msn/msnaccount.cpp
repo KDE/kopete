@@ -774,6 +774,7 @@ void MSNAccount::slotNewContactList()
 			c->setBlocked( false );
 			c->setAllowed( false );
 			c->setReversed( false );
+			c->setDeleted( true );
 			c->setInfo( "PHH", QString::null );
 			c->setInfo( "PHW", QString::null );
 			c->setInfo( "PHM", QString::null );
@@ -817,7 +818,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 				if( !c->metaContact()->groups().contains(newServerGroup) )
 				{
 					// The contact has been added in a group by another client
-					c->metaContact()->addToGroup( newServerGroup , Kopete::MetaContact::DontSyncGroups  );
+					c->metaContact()->addToGroup( newServerGroup   );
 				}
 			}
 
@@ -830,10 +831,12 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 					if ( !oldnewID.isEmpty() && contactGroups.contains( oldnewID ) )
 						continue; //ok, it's correctn no need to do anything.
 
-					c->metaContact()->removeFromGroup( old_group , Kopete::MetaContact::DontSyncGroups );
+					c->metaContact()->removeFromGroup( old_group );
 				}
 			}
 
+			c->setDeleted(false);
+			
 			// Update server if the contact has been moved to another group while MSN was offline
 			c->syncGroups();
 		}
@@ -842,6 +845,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 			Kopete::MetaContact *metaContact = new Kopete::MetaContact();
 
 			c = new MSNContact( this, handle, metaContact );
+			c->setDeleted(true); //we don't want to sync
 			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
 			c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName );
 
@@ -853,6 +857,8 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 				metaContact->addToGroup( m_groupList[ groupNumber ] );
 			}
 			Kopete::ContactList::self()->addMetaContact( metaContact );
+			
+			c->setDeleted(false);
 		}
 	}
 	else //the contact is _not_ in the FL, it has been removed
