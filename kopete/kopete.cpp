@@ -241,13 +241,14 @@ QString Kopete::parseEmoticons( QString message )
 	return message;
 }
 
-QString Kopete::parseHTML( QString message )
+QString Kopete::parseHTML( QString message, bool parseURLs )
 {
 	QString text, result;
 	QRegExp regExp;
 	uint len = message.length();
 	int matchLen;
-	uint lastReplacement = 0;
+	uint startIdx;
+	int lastReplacement = -1;
 	text = message;
 
 	for ( uint idx=0; idx<len; idx++ )
@@ -255,69 +256,90 @@ QString Kopete::parseHTML( QString message )
 		switch( text[idx].latin1() )
 		{
 			case '\r':
-				lastReplacement=idx;
+				lastReplacement = idx;
 				break;
 			case '\n':
-				lastReplacement=idx;
+				lastReplacement = idx;
 				result += "<br>";
 				break;
 			case '\t':		// tab == 4 spaces
-				lastReplacement=idx;
+				lastReplacement = idx;
 				result += "&nbsp;&nbsp;&nbsp;&nbsp;";
 				break;
 
-// BROKEN, WILL FIX, mETz, 18.03.2002
-/*			case '@':		// email-addresses or message-ids
-			{
-				uint startIdx = idx;
-				// move backwards to the begin of the address, stop when
-				// the end of the last replacement is reached. (
-				while ( (startIdx>0) && (startIdx>lastReplacement+1)
-					&& (text[startIdx-1]!=' ') && (text[startIdx-1]!='\t')
-					&& (text[startIdx-1]!=',') && (text[startIdx-1]!='<')
-					&& (text[startIdx-1]!='>') && (text[startIdx-1]!='(')
-					&& (text[startIdx-1]!=')') && (text[startIdx-1]!='[')
-					&& (text[startIdx-1]!=']') && (text[startIdx-1]!='{')
-					&& (text[startIdx-1]!='}') )
+			case '@':		// email-addresses or message-ids
+				if ( parseURLs )
 				{
-						startIdx--;
-				}
-
-				regExp.setPattern("[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
-				if ( regExp.search(text,startIdx) != -1 )
-				{
-					matchLen = regExp.matchedLength();
-					if (text[startIdx+matchLen-1]=='.')   // remove trailing dot
-						matchLen--;
-					else if (text[startIdx+matchLen-1]==',')   // remove trailing comma
-						matchLen--;
-					else if (text[startIdx+matchLen-1]==':')   // remove trailing colon
-						matchLen--;
-
-					if (matchLen < 3)
-						result += text[idx];
-					else
+					startIdx = idx;
+					while (
+						(startIdx>0) &&
+						(startIdx>(uint)(lastReplacement+1)) &&
+						(text[startIdx-1]!=' ') &&
+						(text[startIdx-1]!='\t') &&
+						(text[startIdx-1]!=',') &&
+						(text[startIdx-1]!='<') &&
+						(text[startIdx-1]!='>') &&
+						(text[startIdx-1]!='(') &&
+						(text[startIdx-1]!=')') &&
+						(text[startIdx-1]!='[') &&
+						(text[startIdx-1]!=']') &&
+						(text[startIdx-1]!='{') &&
+						(text[startIdx-1]!='}')
+						)
 					{
-						result.remove(result.length()-(idx-startIdx), idx-startIdx);
-						result +=
-							QString::fromLatin1("<a href=\"addrOrId://")
-							+ parseHTML ( text.mid(startIdx,matchLen) )
-							+ QString::fromLatin1("\">")
-							+ parseHTML ( text.mid(startIdx,matchLen) )
-							+ QString::fromLatin1("</a>");
-						idx = startIdx+matchLen-1;
-						lastReplacement=idx;
+						kdDebug() << "searching start of email addy at: " << startIdx << endl;
+						startIdx--;
 					}
-					break;
+
+					kdDebug() << "found start of email addy at:" << startIdx << endl;
+
+					regExp.setPattern("[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
+					if ( regExp.search(text,startIdx) != -1 )
+					{
+						matchLen = regExp.matchedLength();
+						if (text[startIdx+matchLen-1]=='.')   // remove trailing dot
+						{
+							matchLen--;
+						}
+						else if (text[startIdx+matchLen-1]==',')   // remove trailing comma
+						{
+							matchLen--;
+						}
+						else if (text[startIdx+matchLen-1]==':')   // remove trailing colon
+						{
+							matchLen--;
+						}
+
+						if ( matchLen < 3 )
+						{
+							result += text[idx];
+						}
+						else
+						{
+							kdDebug() << "adding email link starting at: " << result.length()-(idx-startIdx) << endl;
+							result.remove( result.length()-(idx-startIdx), idx-startIdx );
+							result +=
+//								QString::fromLatin1("<a href=\"addrOrId://") + // What is this weird adress?
+								QString::fromLatin1("<a href=\"mailto:%1\">%1</a>").arg( parseHTML(text.mid(startIdx,matchLen),false) );
+/*								parseHTML(text.mid(startIdx,matchLen),false) +
+								QString::fromLatin1("\">") +
+								parseHTML(text.mid(startIdx,matchLen),false) +
+								QString::fromLatin1("</a>"); */
+
+							idx = startIdx + matchLen - 1;
+							kdDebug() << "index is now: " << idx << endl;
+							kdDebug() << "result is: " << result << endl;
+							lastReplacement = idx;
+						}
+						break;
+					}
 				}
 				result += text[idx];
 				break;
-			}
-*/
 
 			case 'h' :
 			{
-				if( (text[idx+1].latin1()=='t'))
+				if( (parseURLs) && (text[idx+1].latin1()=='t') )
 				{   // don't do all the stuff for every 'h'
 					regExp.setPattern("https?://[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
 					if ( regExp.search(text,idx) == (int)idx )
@@ -348,7 +370,7 @@ QString Kopete::parseHTML( QString message )
 
 			case 'w':
 			{
-				if( (text[idx+1].latin1()=='w'))
+				if( (parseURLs) && (text[idx+1].latin1()=='w') && (text[idx+2].latin1()=='w') )
 				{   // don't do all the stuff for every 'w'
 					regExp.setPattern("www\\.[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+\\.[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
 					if (regExp.search(text,idx)==(int)idx)
@@ -368,7 +390,7 @@ QString Kopete::parseHTML( QString message )
 							+ text.mid(idx,matchLen)
 							+ QString::fromLatin1("</a>");
 						idx += matchLen-1;
-						lastReplacement=idx;
+						lastReplacement = idx;
 						break;
 					}
 				}
@@ -378,7 +400,7 @@ QString Kopete::parseHTML( QString message )
 
 			case 'f' :
 			{
-				if( text[idx+1].latin1()=='t' )
+				if( (parseURLs) && (text[idx+1].latin1()=='t') && (text[idx+2].latin1()=='p') )
 				{   // don't do all the stuff for every 'f'
 					regExp.setPattern("ftp://[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
 					if ( regExp.search(text,idx)==(int)idx )
@@ -430,7 +452,7 @@ QString Kopete::parseHTML( QString message )
 
 			case 'm' :
 			{
-				if( (text[idx+1].latin1()=='a') && (text[idx+2].latin1()=='i') )
+				if( (parseURLs) && (text[idx+1].latin1()=='a') && (text[idx+2].latin1()=='i') )
 				{   // don't do all the stuff for every 'm'
 					regExp.setPattern("mailto:[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+");
 					if (regExp.search(text,idx)==(int)idx)
@@ -474,17 +496,17 @@ QString Kopete::parseHTML( QString message )
 						switch (text[idx].latin1())
 						{
 							case '_' :
-								result += QString("<u>%1</u>").arg(parseHTML(text.mid(idx+1,matchLen-2)));
+								result += QString("<u>%1</u>").arg( parseHTML(text.mid(idx+1,matchLen-2),parseURLs) );
 								break;
 							case '/' :
-								result += QString("<i>%1</i>").arg(parseHTML(text.mid(idx+1,matchLen-2)));
+								result += QString("<i>%1</i>").arg( parseHTML(text.mid(idx+1,matchLen-2),parseURLs) );
 								break;
 							case '*' :
-								result += QString("<b>%1</b>").arg(parseHTML(text.mid(idx+1,matchLen-2)));
+								result += QString("<b>%1</b>").arg( parseHTML(text.mid(idx+1,matchLen-2),parseURLs) );
 								break;
 						}
 						idx += matchLen-1;
-						lastReplacement=idx;
+						lastReplacement = idx;
 						break;
 					}
 				}

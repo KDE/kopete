@@ -78,7 +78,7 @@ class Kopete : public KUniqueApplication
 	KopeteSystemTray *systemTray() const {return mainwindow->tray; };
 
 	QString parseEmoticons(QString);
-	QString parseHTML(QString);
+	QString parseHTML( QString message, bool parseURLs = true );
 	void initEmoticons();
 
 private:
