@@ -1,6 +1,9 @@
 Kopete Messenger ChangeLog
 --------------------------
 
+16-Jun-2002 Released Kopete 0.4.1
+=================================
+
 o Main App
 	o Now it uses standard KDE method to load plugins (Faure, Simon, Martijn)
 	 
