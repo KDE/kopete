@@ -380,7 +380,7 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 		return;
 
 	// also close if our tray icon is hidden!
-	if(kopeteapp->isShuttingDown() || !KopetePrefs::prefs()->showTray() || isHidden() )
+	if(kopeteapp->isShuttingDown() || !KopetePrefs::prefs()->showTray() || !isShown() )
 	{
 		KMainWindow::closeEvent( e );
 		return;
