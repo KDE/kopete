@@ -34,4 +34,4 @@ TODO for Jabber:
 - ask if authorization should be removed if a contact is deleted from the
   list
 - provide better feedback for dialogs querying the server
-- nickname for myself() doesn't seem to work
+- try to find a way to read a nickname for yourself from the Jabber roster
