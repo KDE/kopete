@@ -33,6 +33,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 
+#ifdef HAVE_XSLT
 #include <libxml/xmlmemory.h>
 #include <libxml/debugXML.h>
 #include <libxml/HTMLtree.h>
@@ -44,6 +45,7 @@
 #include <libxslt/xsltInternals.h>
 #include <libxslt/transform.h>
 #include <libxslt/xsltutils.h>
+#endif
 
 #include "kopetecontactlist.h"
 #include "pluginloader.h"
@@ -182,6 +184,8 @@ KTempFile* WebPresencePlugin::generateFile()
 
 bool WebPresencePlugin::transform( KTempFile* src, KTempFile* dest )
 {
+#ifdef HAVE_XSLT
+	QString error = "";
 	xmlSubstituteEntitiesDefault( 1 );
 	xmlLoadExtDtdDefaultValue = 1;
 	// test if the stylesheet exists
@@ -191,12 +195,11 @@ bool WebPresencePlugin::transform( KTempFile* src, KTempFile* dest )
 	else
 		sheet.setName( m_prefs->userStyleSheet() );
 	
-	QString error = "";
 	if ( sheet.exists() )
 	{
 		// and if it is a valid stylesheet
 		xsltStylesheetPtr cur = NULL;
-		if ( ( cur = xsltParseStylesheetFile( 
+		if ( ( cur = xsltParseStylesheetFile(
 					( const xmlChar *) sheet.name().latin1() ) ) )
 		{
 			// and if we can parse the input XML
@@ -246,6 +249,9 @@ bool WebPresencePlugin::transform( KTempFile* src, KTempFile* dest )
 			<< error << endl;
 		return false;
 	}
+#else
+	return false;
+#endif
 }
 
 QPtrList<KopeteProtocol> WebPresencePlugin::allProtocols()

@@ -51,6 +51,12 @@ WebPresencePreferences::WebPresencePreferences( const QString &pixmap, QObject *
 		else if ( format == "UserStyleSheet" )
 				m_prefsDialog->m_rbUserStyleSheet->setChecked( true );
 
+#ifndef HAVE_XSLT
+	m_prefsDialog->m_rbNoFormat->setChecked( true );
+	m_prefsDialog->m_rbDefaultStyleSheet->setEnabled( false );
+	m_prefsDialog->m_rbUserStyleSheet->setEnabled( false );
+#endif
+
 	if ( theConfig->readBoolEntry( "UseIMName" ) )
 	{
 		m_prefsDialog->m_rbUseImName->setChecked( true );
