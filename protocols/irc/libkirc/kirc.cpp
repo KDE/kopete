@@ -310,10 +310,10 @@ void KIRC::slotConnected()
 {
 	kdDebug(14120) << "Connected" << endl;
 	setStatus(Authentifying);
+	m_sock.enableRead(true);
+
 	changeUser(m_Username, 0, QString::fromLatin1("Kopete User"));
 	changeNickname(m_Nickname);
-
-	m_sock.enableRead(true);
 }
 
 void KIRC::slotConnectionClosed()
@@ -323,7 +323,8 @@ void KIRC::slotConnectionClosed()
 		emit successfulQuit();
 //	else
 //		emit connectionUnexpectedlyClosedByPeer();
-	setStatus(Disconnected);
+	if(m_status!=Disconnected)
+		setStatus(Disconnected);
 	m_sock.reset();
 }
 
@@ -375,8 +376,8 @@ void KIRC::addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str,
 
 bool KIRC::canSend( bool mustBeConnected ) const
 {
-	return	(mustBeConnected && m_status==Connected) ||
-		(!mustBeConnected);
+	return	(m_status==Connected) ||
+		(!mustBeConnected && m_status==Authentifying);
 }
 
 KIRCMessage KIRC::writeString(const QString &str, bool mustBeConnected)
@@ -540,9 +541,12 @@ void KIRC::changeUser(const QString &newUsername, Q_UINT8 mode, const QString &n
 
 void KIRC::quitIRC(const QString &reason, bool now)
 {
+	if(!now || canSend(now))
+		writeMessage("QUIT", QString::null, reason, false);
 	if(now)
 	{
-		setStatus(Disconnected);
+//		setStatus(Disconnected); // This segfaults while deleteing the KIRC object.
+		m_status = Disconnected;
 		m_sock.close();
 	}
 	else
@@ -552,8 +556,6 @@ void KIRC::quitIRC(const QString &reason, bool now)
 		{
 			setStatus(Closing);
 		}
-
-		writeMessage("QUIT", QString::null, reason, false);
 		QTimer::singleShot(10000, this, SLOT(quitTimeout()));
 	}
 }
