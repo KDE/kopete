@@ -124,6 +124,9 @@ void dlgJabberVCard::slotSaveNickname()
 
 		emit saveAsXML(element);
 	}
+
+	delete this;
+
 }
 
 void dlgJabberVCard::setReadOnly(bool b)
