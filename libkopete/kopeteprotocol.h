@@ -190,7 +190,7 @@ signals:
 	 * This signal is only emitted if the new icon is different from
 	 * the previous icon.
 	 */
-	void statusIconChanged( KopeteOnlineStatus& );
+	void statusIconChanged( const KopeteOnlineStatus& );
 
 private slots:
 	/**
