@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>552</width>
-            <height>656</height>
+            <height>659</height>
         </rect>
     </property>
     <property name="caption">
@@ -138,6 +138,14 @@
                     </property>
                     <property name="text">
                         <string>Group messages from contacts in the same group in the same chat window</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>mTabMetaContact</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Group messages from the same metacontact in the same chat window</string>
                     </property>
                 </widget>
             </vbox>

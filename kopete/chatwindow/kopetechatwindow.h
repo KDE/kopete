@@ -54,7 +54,7 @@ class KopeteChatWindow : public KParts::MainWindow
 {
 	Q_OBJECT
 
-	enum {NEW_WINDOW, GROUP_BY_ACCOUNT, GROUP_ALL, GROUP_BY_GROUP};
+	enum {NEW_WINDOW, GROUP_BY_ACCOUNT, GROUP_ALL, GROUP_BY_GROUP, GROUP_BY_METACONTACT};
 
 public:
 	/**

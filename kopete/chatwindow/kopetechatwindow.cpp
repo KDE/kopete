@@ -65,12 +65,14 @@
 
 typedef QMap<KopeteAccount*,KopeteChatWindow*> AccountMap;
 typedef QMap<KopeteGroup*,KopeteChatWindow*> GroupMap;
+typedef QMap<KopeteMetaContact*,KopeteChatWindow*> MetaContactMap;
 typedef QPtrList<KopeteChatWindow> WindowList;
 
 namespace
 {
 	AccountMap accountMap;
 	GroupMap groupMap;
+	MetaContactMap mcMap;
 	WindowList windows;
 }
 
@@ -83,6 +85,8 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteMessageManager *manager )
 	KopeteGroup *g = 0L;
 	KopeteContactPtrList members = manager->members();
 	KopeteMetaContact *m = members.first()->metaContact();
+	
+	//Don't do group by group for temporary contacts
 	if( !m->isTemporary() )
 	{
 		KopeteGroupList gList = m->groups();
@@ -107,12 +111,23 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteMessageManager *manager )
 					windowCreated = true;
 				break;
 			}
+			
+		case GROUP_BY_METACONTACT: //Open chats in the same metacontact in the same window
+			if( mcMap.contains( m ) )
+				myWindow = mcMap[ m ];
+			else
+				windowCreated = true;
+			break;
 		
 		case GROUP_ALL: //Open all chats in the same window
 			if( windows.isEmpty() )
 				windowCreated = true;
 			else
 			{
+				//Here we are finding the window with the most tabs and
+				//putting it there. Need this for the cases where config changes
+				//midstream
+				
 				int viewCount = -1;
 				for ( KopeteChatWindow *thisWindow = windows.first(); thisWindow; thisWindow = windows.next() )
 				{
@@ -137,12 +152,12 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteMessageManager *manager )
 		
 		if( !accountMap.contains( manager->account() ) )
 			accountMap.insert( manager->account(), myWindow );
+			
+		if( !mcMap.contains( m ) )
+			mcMap.insert( m, myWindow );
 		
-		if( g )
-		{
-			if( !groupMap.contains( g ) )
-				groupMap.insert( g, myWindow );
-		}
+		if( g && !groupMap.contains( g ) )
+			groupMap.insert( g, myWindow );
 	}
 
 //	kdDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
