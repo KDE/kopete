@@ -262,7 +262,7 @@ void Kopete::initEmoticons()
     /* :-P */
 	mEmoticons.tongue = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/tongue.png");
 	/* :-D*/
-	mEmoticons.biggrin = findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/bigrin.png");
+	mEmoticons.biggrin = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/bigrin.png");
 	
 	/* Sad emoticons */
     mEmoticons.unhappy = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/unhappy.png");
