@@ -2,10 +2,10 @@
     kopetemessagemanager.h - Manages all chats
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2002      by Daniel Stone <dstone@kde.org>
-    Copyright (c) 2002      by Martijn Klingens <klingens@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart <ogoffart@tiscalinet.be>
-    Copyright (c) 2003      by Jason Keirstead   <jason@keirstead.org>
+    Copyright (c) 2002      by Daniel Stone           <dstone@kde.org>
+    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2003      by Jason Keirstead        <jason@keirstead.org>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -22,37 +22,33 @@
 #ifndef __KOPETEMESSAGEMANAGER_H__
 #define __KOPETEMESSAGEMANAGER_H__
 
+#include <qobject.h>
 #include <qptrlist.h>
 #include <qvaluelist.h>
-#include <qmap.h>
-
-//FIXME: get rid of this include in header
-#include "kopetemessage.h"
 
 #include <kxmlguiclient.h>
 
+// FIXME: get rid of this include in header
+#include "kopetemessage.h"
+
 class KopeteContact;
-class KopeteMessageManager;
 class KopeteMessage;
-class KopeteEvent;
-class KopeteMessageLog;
 class KopeteProtocol;
 class KopeteView;
 class KopeteOnlineStatus;
 class KopeteAccount;
 
-typedef QPtrList<KopeteContact>        KopeteContactPtrList;
-typedef QValueList<KopeteMessage>        KopeteMessageList;
-typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
+typedef QPtrList<KopeteContact>   KopeteContactPtrList;
+typedef QValueList<KopeteMessage> KopeteMessageList;
 
-struct  KMMPrivate;
+class KMMPrivate;
 
 /**
  * @author Duncan Mac-Vicar Prett <duncan@kde.org>
- * @author Daniel Stone <dstone@kde.org>
- * @author Martijn Klingens <klingens@kde.org>
- * @author Olivier Goffart <ogoffart@tiscalinet.be>
- * @author Jason Keirstead   <jason@keirstead.org>
+ * @author Daniel Stone           <dstone@kde.org>
+ * @author Martijn Klingens       <klingens@kde.org>
+ * @author Olivier Goffart        <ogoffart@tiscalinet.be>
+ * @author Jason Keirstead        <jason@keirstead.org>
  *
  * The KopeteMessageManager (also called KMM for simplicity) manages a single chat.
  * It is an interface between the protocol, and the chatwindow.
@@ -65,6 +61,8 @@ struct  KMMPrivate;
  */
 class KopeteMessageManager : public QObject , public KXMLGUIClient
 {
+	// FIXME: Why is this a friend? Please document the use so we don't have to check the
+	//        code to find out - Martijn
 	friend class KopeteMessageManagerFactory;
 
 	Q_OBJECT
@@ -118,7 +116,7 @@ public:
 	 *
 	 * change the display name of the chat
 	 */
-	void setDisplayName( const QString & );
+	void setDisplayName( const QString &displayName );
 
 	/**
 	 * @brief set a specified KOS for specified contact in this KMM
@@ -126,14 +124,14 @@ public:
 	 * Set a special icon for a contact in this kmm only.
 	 * by default, all contact have their own status
 	 */
-	void setContactOnlineStatus( const KopeteContact*, const KopeteOnlineStatus & );
+	void setContactOnlineStatus( const KopeteContact *contact, const KopeteOnlineStatus &newStatus );
 
 	/**
 	 * @brief get the status of a contact.
 	 *
 	 * see @ref setContactOnlineStatus()
 	 */
-	const KopeteOnlineStatus contactOnlineStatus( const KopeteContact* ) const;
+	const KopeteOnlineStatus contactOnlineStatus( const KopeteContact *contact ) const;
 
 	/**
 	 * @brief the manager's view
@@ -144,26 +142,28 @@ public:
 	 * @param canCreate create a new one if it does not exist
 	 * @param type Specifies the type of view if we have to create one.
 	 */
-	KopeteView* view(bool canCreate=false  , KopeteMessage::MessageType type = KopeteMessage::Undefined);
-
+	// FIXME: canCreate should definitely be an enum and not a bool - Martijn
+	KopeteView* view( bool canCreate = false, KopeteMessage::MessageType type = KopeteMessage::Undefined );
 
 signals:
 	/**
 	 * @brief the KMM will be deleted
 	 * Used by a KopeteMessageManager to signal that it is closing.
 	 */
-	 void closing(KopeteMessageManager *);
+	void closing( KopeteMessageManager *kmm );
 
 	/**
 	 * a message will be soon shown in the chatwindow.
 	 * See @ref KopeteMessageManagerFactory::aboutToShow() signal
 	 */
-	void messageAppended( KopeteMessage& msg, KopeteMessageManager * = 0L );
+	void messageAppended( KopeteMessage &msg, KopeteMessageManager *kmm = 0L );
+
 	/**
 	 * a message will be soon received
 	 * See @ref KopeteMessageManagerFactory::aboutToReceive() signal
 	 */
-	void messageReceived( KopeteMessage& msg, KopeteMessageManager * = 0L );
+	void messageReceived( KopeteMessage &msg, KopeteMessageManager *kmm = 0L );
+
 	/**
 	 * @brief a message is going to be sent
 	 *
@@ -172,7 +172,8 @@ signals:
 	 * the protocol have also to call @ref appendMessage() and @ref messageSucceeded()
 	 * See also @ref KopeteMessageManagerFactory::aboutToSend() signal
 	 */
- 	void messageSent( KopeteMessage& msg, KopeteMessageManager * = 0L );
+	void messageSent( KopeteMessage &msg, KopeteMessageManager *kmm = 0L );
+
 	/**
 	 * The last message has finaly successfully been sent
 	 */
@@ -181,11 +182,13 @@ signals:
 	/**
 	 * @brief a new contact is now in the chat
 	 */
-	void contactAdded(const KopeteContact *, bool suppress);
+	// FIXME: What's 'suppress'? Shouldn't this be an enum? - Martijn
+	void contactAdded( const KopeteContact *contact, bool suppress );
+
 	/**
 	 * @brief a contact is no longer in this chat
 	 */
-	void contactRemoved(const KopeteContact *, const QString& raison);
+	void contactRemoved( const KopeteContact *contact, const QString &reason );
 
 	/**
 	 * @brief a contact in this chat has changed his displayname or his status
@@ -206,17 +209,18 @@ signals:
 	 * @param isTyping say if the user is typing or not
 	 */
 	void typingMsg( bool isTyping );
+
 	/**
 	 * Signals that a remote user is typing a message.
 	 * the chatwindow connects to this signal to update the statusbar
 	 */
-	void remoteTyping( const KopeteContact *, bool );
+	void remoteTyping( const KopeteContact *contact, bool isTyping );
 
 public slots:
 	/**
 	 * @brief Got a typing notification from a user
 	 */
-	void receivedTypingMsg( const KopeteContact *c , bool isTyping = true );
+	void receivedTypingMsg( const KopeteContact *contact , bool isTyping = true );
 
 	/**
 	 * Got a typing notification from a user. This is a convenience version
@@ -246,7 +250,7 @@ public slots:
 	 * @param c is the contact
 	 * @param raison is the optional raison message showed in the chatwindow
 	 */
-	void removeContact( const KopeteContact *c, const QString& raison=QString::null );
+	void removeContact( const KopeteContact *contact, const QString& reason = QString::null );
 
 	/**
 	 * Set if the KMM will be deleted when the chatwindow is deleted. It is useful if you want
@@ -257,17 +261,18 @@ public slots:
 	 * default is true.
 	 * If there are no chatwindow when setting it to true, the kmm will be deleted.
 	 */
-	void setCanBeDeleted ( bool ) ;
+	void setCanBeDeleted ( bool canBeDeleted );
 
 	/**
 	 * Send a message to the user
 	 */
-	void sendMessage(KopeteMessage &message);
+	void sendMessage( KopeteMessage &message );
+
 	/**
 	 * Tell the KMM that the user is typing
 	 * This method should be called only by a chatwindow. It emits @ref typingMsg signal
 	 */
-	void typing(bool t);
+	void typing( bool t );
 
 	/**
 	 * Protocols have to call this method when the last message sent has been correctly sent
@@ -279,7 +284,7 @@ private slots:
 	void slotUpdateDisplayName();
 	void slotViewDestroyed();
 	void slotStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus );
-	void slotContactDestroyed(KopeteContact*);
+	void slotContactDestroyed( KopeteContact *contact );
 
 protected:
 	/**
@@ -294,7 +299,6 @@ protected:
 
 private:
 	KMMPrivate *d;
-
 };
 
 #endif
