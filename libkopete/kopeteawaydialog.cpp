@@ -41,8 +41,6 @@ KopeteAwayDialog::KopeteAwayDialog(QWidget *parent, const char *name)
 	// Connect the user input widgets with their slots
 	// These objects are inherited from KopeteAwayBase
 	// Which is built using QT Designer
-	QObject::connect( txtOneShot, SIGNAL(textChanged(const QString &)),
-		this, SLOT(slotSingleShotTextChanged(const QString &)));
 	QObject::connect( cmbHistory, SIGNAL(activated(int)),
 		this, SLOT(slotComboBoxSelection(int)));
 
@@ -51,7 +49,6 @@ KopeteAwayDialog::KopeteAwayDialog(QWidget *parent, const char *name)
 
 	// The last user entered away message is blank by default
 	mLastUserAwayMessage = "";
-	mUseSingleShot = false;
 
 	// Set the extended away type
 	mExtendedAwayType = "";
@@ -67,23 +64,12 @@ KopeteAwayDialog::KopeteAwayDialog(QWidget *parent, const char *name)
 
 KopeteAwayDialog::~KopeteAwayDialog(){}
 
-void KopeteAwayDialog::slotSingleShotTextChanged(const QString &/*newString*/)
-{
-	// If the last thing they do is edit the field,
-	// They probably want to use it
-	if(!mUseSingleShot)
-	{
-//		kdDebug(14011) << "[KopeteAwayDialog] Text Changed, flagging user "	 << "entered away text" << endl;
-		mUseSingleShot = true;
-	}
-}
-
 void KopeteAwayDialog::slotComboBoxSelection(int /*index*/)
 {
 	// If they selected something out of the combo box
 	// They probably want to use it
-//	kdDebug(14011) << "[KopeteAwayDialog] Text Changed, flagging saved " << "away text" << endl;
-	mUseSingleShot = false;
+	txtOneShot->setText( awayInstance->getMessage( cmbHistory->currentText() ) );
+	txtOneShot->setCursorPosition(0);
 }
 
 void KopeteAwayDialog::show()
@@ -124,33 +110,17 @@ void KopeteAwayDialog::init()
 	// Insert the string list of titles
 	cmbHistory->insertStringList(awayInstance->getTitles());
 	// Fill in the text they typed last
-	txtOneShot->setText(mLastUserTypedMessage);
-	// Select it all
-	txtOneShot->selectAll();
+	txtOneShot->setText( awayInstance->getMessage( cmbHistory->currentText() ) );
 	// Give it the focus so they can just begin
 	// typing if they want
 	txtOneShot->setFocus();
+	txtOneShot->setCursorPosition(0);
 }
 
 QString KopeteAwayDialog::getSelectedAwayMessage()
 {
-	// Figure out which one we're using, and return it
-	if(mUseSingleShot)
-	{
-//		kdDebug(14011) << "KopeteAwayDialog: Sending user message: " << mLastUserAwayMessage << endl;
-
-		mLastUserAwayMessage = txtOneShot->text();
-		return mLastUserAwayMessage;
-	}
-	else
-	{
-		// Get the text out of the combo box
-		mLastUserAwayMessage = cmbHistory->currentText();
-
-//		kdDebug(14011) << "KopeteAwayDialog: Sending saved message: " << mLastUserAwayMessage << endl;
-
-		return awayInstance->getMessage( mLastUserAwayMessage );
-	}
+	mLastUserAwayMessage = txtOneShot->text();
+	return mLastUserAwayMessage;
 }
 
 void KopeteAwayDialog::slotOkayClicked()

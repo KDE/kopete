@@ -28,7 +28,7 @@
                 <cstring>TextLabel1</cstring>
             </property>
             <property name="text">
-                <string>Please specify an away message to be shown to users who view your status.</string>
+                <string>Please specify an away message, or choose a predefined one from the dropdown.</string>
             </property>
             <property name="alignment">
                 <set>WordBreak|AlignVCenter|AlignLeft</set>
