@@ -58,12 +58,26 @@ public:
 		Chat = 0,
 		File = 1
 	};
-	DCCServer(Type type);
+	DCCServer(Type type, const QString filename = "");
 	virtual void newConnection(int socket);
 	bool sendMessage(const QString &message);
 	DCCClient *mClient;
+	void abort();
+private:
+	Type mType;
+	QSocket *mSocket;
+	QFile *mFile;
+	void sendNextPacket();
+private slots:
+	void slotConnectionClosed();
+	void slotReadyRead();
+	void slotError(int);
 signals:
 	void clientConnected();
+	void terminating();
+	void incomingAckPercent(const QString &);
+	void sendingNonAckPercent(const QString &);
+	void sendFinished();
 };
 
 #endif

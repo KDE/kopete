@@ -30,6 +30,7 @@
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <qstringlist.h>
+#include <kfiledialog.h>
 #include <kstddirs.h>
 #include "kirc.h"
 #include "ircmessage.h"
@@ -37,6 +38,7 @@
 #include "irccontact.h"
 #include "ircservermanager.h"
 #include "ircmessage.h"
+#include "ircdccsend.h"
 #include "ircdccview.h"
 #include "dccconfirm.h"
 
@@ -169,20 +171,32 @@ void IRCServerContact::disconnectNow()
 
 void IRCServerContact::initiateDcc(const QString &nickname, DCCServer::Type type)
 {
-	if (type == DCCServer::Chat)
+	QString filename;
+	if (type == DCCServer::File)
 	{
-		DCCServer *dccServer = new DCCServer(type);
-		kdDebug() << "IRC Plugin: dccServer->ok() == " << dccServer->ok() << endl;
-		if (dccServer->ok())
+		filename = KFileDialog::getOpenFileName(QString::null, "*.*", mWindow);
+		if (filename.isEmpty())
 		{
-			unsigned int port = dccServer->port();
-			QVBox *parent = new QVBox(mWindow->mTabWidget);
-			IRCDCCView *dccView = new IRCDCCView(nickname, this, parent, dccServer);
-			mWindow->mTabWidget->addTab(parent, SmallIconSet("irc_dcc"),nickname);
-			mWindow->mTabWidget->showPage(parent);
-		} else {
-			delete dccServer;
+			return;
 		}
+	}
+	DCCServer *dccServer = new DCCServer(type, filename);
+	kdDebug() << "IRC Plugin: dccServer->ok() == " << dccServer->ok() << endl;
+	if (dccServer->ok())
+	{
+		unsigned int port = dccServer->port();
+		QVBox *parent = new QVBox(mWindow->mTabWidget);
+		if (type == DCCServer::Chat)
+		{
+			IRCDCCView *dccView = new IRCDCCView(nickname, this, parent, dccServer);
+		} else if (type == DCCServer::File)
+		{
+			IRCDCCSend *dccView = new IRCDCCSend(nickname, filename, this, parent, dccServer);
+		}
+		mWindow->mTabWidget->addTab(parent, SmallIconSet("irc_dcc"),nickname);
+		mWindow->mTabWidget->showPage(parent);
+	} else {
+		delete dccServer;
 	}
 }
 

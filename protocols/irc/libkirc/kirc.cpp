@@ -24,6 +24,7 @@
 #include <qdatetime.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <qfileinfo.h>
 #include "dcchandler.h"
 
 KIRC::KIRC()
@@ -659,7 +660,7 @@ void KIRC::actionContact(const QString &contact, const QString &message)
 	}
 }
 
-void KIRC::requestDccConnect(const QString &nickname, unsigned int port, DCCClient::Type type)
+void KIRC::requestDccConnect(const QString &nickname, const QString &filename, unsigned int port, DCCClient::Type type)
 {
 	if (state() == QSocket::Connected && loggedIn == true)
 	{
@@ -675,6 +676,16 @@ void KIRC::requestDccConnect(const QString &nickname, unsigned int port, DCCClie
 			if (type == DCCClient::Chat)
 			{
 				QString message = QString("PRIVMSG %1 :%2DCC CHAT chat %3 %4%5\r\n").arg(nickname).arg(QChar(0x01)).arg(host.ip4Addr()).arg(port).arg(QChar(0x01));
+				writeBlock(message.local8Bit(), message.length());
+			} else if (type == DCCClient::File)
+			{
+				QFileInfo file(filename);
+				QString noWhiteSpace = file.fileName();
+				if (noWhiteSpace.contains(' ') > 0)
+				{
+					noWhiteSpace.replace(QRegExp("\\s+"), "-");
+				}
+				QString message = QString("PRIVMSG %1 :%2DCC SEND %3 %4 %5 %6 %7\r\n").arg(nickname).arg(QChar(0x01)).arg(noWhiteSpace).arg(host.ip4Addr()).arg(port).arg(file.size()).arg(QChar(0x01));
 				writeBlock(message.local8Bit(), message.length());
 			}
 		}

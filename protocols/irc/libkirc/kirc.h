@@ -51,7 +51,7 @@ public:
 	void sendCtcpPing(const QString &target);
 	void setTopic(const QString &channel, const QString &topic);
 	void kickUser(const QString &user, const QString &channel, const QString &reason);
-	void requestDccConnect(const QString &, unsigned int port, DCCClient::Type type);
+	void requestDccConnect(const QString &, const QString &, unsigned int port, DCCClient::Type type);
 enum UserClass
 {
 	Normal = 0,
