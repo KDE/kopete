@@ -89,8 +89,8 @@ JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : Kop
 
 	// read the Jabber ID from Kopete's configuration
 	KGlobal::config()->setGroup("Jabber");
-	if ((KGlobal::config()->readEntry("UserID", "") == "") || (KGlobal::config()->readEntry("Password", "") == ""))
-		KMessageBox::error(kopeteapp->mainWindow(), i18n("<qt>If you have a Jabber account, please configure it in the Kopete Settings dialog. If you don't, you can register from there as well.</qt>"), i18n("No Jabber Configuration Found!"));
+/*	if ((KGlobal::config()->readEntry("UserID", "") == "") || (KGlobal::config()->readEntry("Password", "") == ""))
+		KMessageBox::error(kopeteapp->mainWindow(), i18n("<qt>If you have a Jabber account, please configure it in the Kopete Settings dialog. If you don't, you can register from there as well.</qt>"), i18n("No Jabber Configuration Found!"));*/
 
 	// setup icons and actions
 	initIcons();
@@ -210,8 +210,12 @@ void JabberProtocol::Connect()
 	if(userId.isEmpty())
 	{
 		int r=KMessageBox::warningContinueCancel(kopeteapp->mainWindow(),
-			i18n("<qt>You have not yet configure Jabber, please do so in the Kopete configuration<br>Do you want to configure now?</qt>"),
-			i18n("Jabber not yet configured"), KGuiItem(i18n("C&onfigure")));
+				i18n("<qt>You have not yet specified your Jabber username. "
+					"You can specify your Jabber settings in the Kopete "
+					"configuration dialog<br>"
+					"Do you want to configure Jabber now?</qt>" ),
+				i18n( "Jabber plugin not configured yet" ),
+				KGuiItem( i18n( "C&onfigure..." ), "configure" ) );
 		if(r!=KMessageBox::Cancel)
 		{
 			preferences->activate();

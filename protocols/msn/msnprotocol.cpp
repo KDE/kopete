@@ -98,7 +98,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	KConfig *cfg = KGlobal::config();
 	cfg->setGroup( "MSN" );
 
-	if( ( cfg->readEntry( "UserID", "" ).isEmpty() ) ||
+	/*if( ( cfg->readEntry( "UserID", "" ).isEmpty() ) ||
 		( cfg->readEntry( "Password", "" ).isEmpty() ) )
 	{
 		QString emptyText =
@@ -113,7 +113,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 			emptyText, emptyCaption, QString::null,
 			KMessageBox::AllowLink );
 	}
-
+	*/
 	// FIXME: Is 'self' supposed to be a KopeteMetaContact? I guess so.
 	// Fix that. - Martijn
 	m_myself = new MSNContact( protocolId, cfg->readEntry( "UserID", "" ),
@@ -188,11 +188,12 @@ void MSNProtocol::Connect()
 	{
 		int r = KMessageBox::warningContinueCancel(kopeteapp->mainWindow(),
 			i18n("<qt>You have not yet specified a username for MSN. "
-				"You can specify your MSN settings in the Kopete "
-				"configuration dialog<br>"
+				"You can specify your MSN settings in the Kopete configuration dialog<br>"
+				"Get an MSN account <a href=\"http://login.hotmail.passport.com/cgi-bin/register/en/default.asp\">here</a><br>"
 				"Do you want to configure MSN now?</qt>" ),
 			i18n( "MSN plugin not configured yet" ),
-			KGuiItem( i18n( "C&onfigure..." ), "configure" ) );
+			KGuiItem( i18n( "C&onfigure..." ), "configure" ),  QString::null,
+			KMessageBox::AllowLink );
 
 		if( r != KMessageBox::Cancel )
 		{
