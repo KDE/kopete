@@ -51,7 +51,7 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, QWidget* parent, const char*
 
 	setButtonText( User1, i18n( "&New Search" ) );
 	setButtonText( User2, i18n( "S&earch" ) );
-	setButtonText( User3, i18n( "&Add user..." ) );
+	setButtonText( User3, i18n( "&Add User..." ) );
 	setButtonText( Cancel, i18n( "&Close" ) );
 
 	showButton( User1, false );
@@ -165,7 +165,7 @@ void GaduPublicDir::slotSearch()
 		// Search for more
 	}
 
-	setButtonText( User2, "Search &more..." );
+	setButtonText( User2, i18n( "Search &more..." ) );
 	showButton( User3, true );
 	showButton( User1, true );
 	enableButton( User3, false );
