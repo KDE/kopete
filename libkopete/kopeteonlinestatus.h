@@ -122,6 +122,20 @@ public:
 	// the metacontact status from the contact status starts from Unknown, and
 	// takes a contact only if its status is greater
 
+	/**
+	 * Reserved internal status values
+	 *
+	 * Any internal status value > 0x80000000 is reserved for internal
+	 * libkopete use. This enumeration lists the currently known values.
+	 */
+	enum ReservedInternalStatus
+	{
+		/**
+		 * The account this contact belongs to is offline. Used with
+		 * the Unknown StatusType.
+		 */
+		AccountOffline = 0x80000001
+	};
 	
 	
 	/**
