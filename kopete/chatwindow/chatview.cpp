@@ -737,7 +737,7 @@ void ChatView::slotChatDisplayNameChanged()
 void ChatView::slotContactNameChanged( const QString &oldName, const QString &newName )
 {
 	if( KopetePrefs::prefs()->showEvents() )
-		sendInternalMessage( i18n( "%1 has changed their nickname to %2" ).
+		sendInternalMessage( i18n( "%1 is now known as %2" ).
 #if QT_VERSION < 0x030200
 			arg( oldName ).arg( newName )
 #else
@@ -896,14 +896,14 @@ void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnl
 		{
 			// Separate notification for the 'self' contact
 			if ( newStatus.status() != KopeteOnlineStatus::Connecting )
-				sendInternalMessage( i18n( "You have changed your status to %1." ).arg( newStatus.description() ) );
+				sendInternalMessage( i18n( "You are now marked as %1." ).arg( newStatus.description() ) );
 		}
 		else if ( !contact->account() || !contact->account()->suppressStatusNotification() )
 		{
 			// Don't send notifications when we just connected ourselves, i.e. when suppressions are still active
 			if( contact->metaContact() )
 			{
-				sendInternalMessage( i18n( "%2 has changed their status to %1." )
+				sendInternalMessage( i18n( "%2 is now %1." )
 #if QT_VERSION < 0x030200
 					.arg( newStatus.description() ).arg( contact->metaContact()->displayName() )
 #else
@@ -913,7 +913,7 @@ void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnl
 			}
 			else
 			{
-				sendInternalMessage( i18n( "%2 has changed their status to %1." )
+				sendInternalMessage( i18n( "%2 is now %1." )
 #if QT_VERSION < 0x030200
 					.arg( newStatus.description() ).arg( contact->displayName() )
 #else
