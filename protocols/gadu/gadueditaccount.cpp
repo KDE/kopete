@@ -47,6 +47,9 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, KopeteAccount* ident, QWi
 	isSsl = false;
 #endif
 
+	connect( rememberCheck_, SIGNAL( toggled( bool ) ),
+		this, SLOT( pswdChecked( bool ) ) );
+
 	useTls_->setDisabled( !isSsl );
 
 	if ( !m_account ) {
@@ -68,6 +71,16 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, KopeteAccount* ident, QWi
 		rememberCheck_->setChecked( m_account->rememberPassword() );
 		autoLoginCheck_->setChecked( m_account->autoLogin() );
 		useTls_->setCurrentItem( isSsl ? ( static_cast<GaduAccount*> (m_account) )->isConnectionEncrypted() : 2 );
+	}
+}
+
+void GaduEditAccount::pswdChecked( bool on )
+{
+	if ( on ) {
+		passwordEdit_->setDisabled( false );
+	}
+	else {
+		passwordEdit_->setDisabled( true );
 	}
 }
 
@@ -120,3 +133,4 @@ KopeteAccount* GaduEditAccount::apply()
 }
 
 #include "gadueditaccount.moc"
+

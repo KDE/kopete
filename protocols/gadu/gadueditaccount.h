@@ -40,6 +40,9 @@ public:
 	virtual bool validateData();
 	KopeteAccount* apply();
 
+public slots:
+	void pswdChecked( bool );
+
 private:
 	GaduProtocol*		protocol_;
 	bool				reg_in_progress;
