@@ -169,6 +169,10 @@ void GroupWiseContact::slotMessageManagerDestroyed()
 	m_msgManager = 0L;
 }
 
+void GroupWiseContact::handleIncomingMessage( const ConferenceEvent & event )
+{
+	//TODO: implement
+}
 #include "gwcontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

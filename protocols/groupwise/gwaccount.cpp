@@ -20,6 +20,8 @@
 
 #include "gwaccount.h"
 
+#include <qvaluelist.h>
+
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -172,7 +174,7 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	// contact status changed
 	QObject::connect( m_client, SIGNAL( statusReceived( const QString &, Q_UINT16, const QString & ) ), SLOT( receiveStatus( const QString &, Q_UINT16 , const QString & ) ) );
 	// incoming message
-	QObject::connect( m_client, SIGNAL( messageReceived( const ConferenceEvent &, const Message & ) ), SLOT( receiveMessage( const ConferenceEvent &, const Message & ) ) );
+	QObject::connect( m_client, SIGNAL( messageReceived( const ConferenceEvent & ) ), SLOT( receiveMessage( const ConferenceEvent & ) ) );
 	
 	QObject::connect( m_client, SIGNAL( ourStatusChanged( GroupWise::Status, const QString &, const QString & ) ), SLOT( changeOurStatus( GroupWise::Status, const QString &, const QString & ) ) );
 	
@@ -320,16 +322,25 @@ void GroupWiseAccount::slotTLSReady( int secLayerCode )
 	m_client->start( server(), accountId(), password().cachedValue() );
 }
 
-void GroupWiseAccount::receiveMessage( const ConferenceEvent & event, const Message & message )
+void GroupWiseAccount::receiveMessage( const ConferenceEvent & event )
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got a message in conference: " << event.guid << ",  from: " << event.user << ", message is: " << message << endl;
-
-	// Look up the contact the message is from in the contact list
-	//GroupWiseContact* messageSender;
-	//messageSender = static_cast<GroupWiseContact *>( contacts ()[ from ] );
-	// if not found, create a new temporary contactt
-	// Pass it on to the contact to process and display via a KMM
-	//messageSender->receivedMessage( message );
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got a message in conference: " << event.guid << ",  from: " << event.user << ", message is: " << event.message << endl;
+	GroupWiseContact * contactFrom = static_cast<GroupWiseContact *>( contacts()[ event.user ] );
+	if ( contactFrom )
+	{
+		contactFrom->handleIncomingMessage( event );
+	}
+	else
+	{
+		kdDebug (GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << event.user << " is unknown to us, requesting details so we can create a temporary contact." << endl;
+		m_pendingEvents.append( event );
+		// get their details
+		QStringList userDNsList;
+		userDNsList.append( event.user );
+		// the client will signal contactUserDetailsReceived when the details arrive, 
+		// and we'll add a temporary contact in receiveContactUserDetails, before coming back to this method
+		m_client->requestDetails( userDNsList );
+	}
 }
 
 void GroupWiseAccount::updateContactStatus()
@@ -341,7 +352,7 @@ void GroupWiseAccount::updateContactStatus()
 
 void GroupWiseAccount::slotGotMyDetails( Field::FieldList & fields )
 {
-	Field::FieldBase* current = 0;
+/*	Field::FieldBase* current = 0;
 	QString cn, dn, givenName, surname, fullName, awayMessage, authAttribute;
 	int status;
 	Field::FieldListIterator it;
@@ -367,7 +378,7 @@ void GroupWiseAccount::slotGotMyDetails( Field::FieldList & fields )
 	myself()->setProperty( GroupWiseProtocol::protocol()->propGivenName, givenName );
 	myself()->setProperty( GroupWiseProtocol::protocol()->propLastName, surname );
 	myself()->setProperty( GroupWiseProtocol::protocol()->propFullName, fullName );
-	myself()->setProperty( GroupWiseProtocol::protocol()->propAwayMessage, awayMessage );
+	myself()->setProperty( GroupWiseProtocol::protocol()->propAwayMessage, awayMessage );*/
 }
 
 void GroupWiseAccount::receiveFolder( const FolderItem & folder )
@@ -455,18 +466,59 @@ void GroupWiseAccount::receiveContactUserDetails( const ContactDetails & details
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo 
 		<< "Auth attribute: " << details.authAttribute
-		<< "Away message: " << details.awayMessage
-		<< "CN" << details.cn
-		<< "DN" << details.dn
-		<< "fullName" << details.fullName
-		<< "surname" << details.surname
-		<< "givenname" << details.givenName
-		<< "status" << details.status
+		<< ", Away message: " << details.awayMessage
+		<< ", CN" << details.cn
+		<< ", DN" << details.dn
+		<< ", fullName" << details.fullName
+		<< ", surname" << details.surname
+		<< ", givenname" << details.givenName
+		<< ", status" << details.status
 		<< endl;
-	// HACK: lowercased DN
-	GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts()[ details.dn.lower() ] );
-	Q_ASSERT( c );
-	c->updateDetails( details );
+	// HACK: lowercased DN 
+	if ( !details.dn.isNull() )
+	{
+		GroupWiseContact * detailsOwner= static_cast<GroupWiseContact *>( contacts()[ details.dn ] );
+		if( detailsOwner )
+		{
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - updating details for " << details.dn << endl;
+			detailsOwner->updateDetails( details );
+		}
+		else
+		{
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - got details for " << details.dn << ", now creating a temporary contact and delivering any pending messages" << endl;
+			// we asked for the user's details because we got a message from them out of the blue
+			// look for any events from this user, add the user and deliver the event(s)
+			QValueListIterator< ConferenceEvent > it;
+			bool handledDetails = false;
+			for ( it = m_pendingEvents.begin(); it != m_pendingEvents.end(); ++it )
+			{
+				ConferenceEvent event = *it;
+				if ( !( event.user.isNull() || event.user != details.dn ) )
+				{
+					// we may have multiple events for this contact, but only create one temporary contact
+					if ( !detailsOwner )
+					{
+						KopeteMetaContact *metaContact = new KopeteMetaContact ();
+		
+						metaContact->setTemporary (true);
+		
+						detailsOwner = new GroupWiseContact( this, details.dn, metaContact, details.fullName, 0, 0, 0 );
+						KopeteContactList::contactList ()->addMetaContact (metaContact);
+						// the contact details probably don't contain status - but we can ask for it
+						if ( details.status == GroupWise::Invalid )
+							m_client->requestStatus( details.dn );
+					}
+					// now the message can be received
+					receiveMessage( event );
+					handledDetails = true;
+				}
+				else
+					kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - user DN: " << event.user << " received DN: " << details.dn << endl;
+			}
+			if ( !handledDetails )
+				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - received details, but there was no pending event matching them" << endl;
+		}
+	}
 }
 
 void GroupWiseAccount::receiveStatus( const QString & contactId, Q_UINT16 status, const QString &awayMessage )
@@ -475,6 +527,7 @@ void GroupWiseAccount::receiveStatus( const QString & contactId, Q_UINT16 status
 	GroupWiseContact * c = static_cast<GroupWiseContact *>( contacts()[ contactId ] );
 	if ( c )
 	{
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - their KOS is: " << protocol()->gwStatusToKOS( status ).description() << endl;
 		c->setOnlineStatus( protocol()->gwStatusToKOS( status ) );
 		c->setProperty( protocol()->propAwayMessage, awayMessage );
 	}

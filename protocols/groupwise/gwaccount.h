@@ -18,8 +18,10 @@
     *************************************************************************
 */
 
-#ifndef TESTBEDACCOUNT_H
-#define TESTBEDACCOUNT_H
+#ifndef GW_ACCOUNT_H
+#define GW_ACCOUNT_H
+
+#include <qvaluelist.h>
 
 #include <kopeteaccount.h>
 #include <kopetepasswordedaccount.h>
@@ -101,7 +103,7 @@ public slots:
 	 * This identifies the sending KopeteContact and passes the message on to it,
 	 * in order to locate the MessageManager and finally pass to the GUI.
 	 */
-	void receiveMessage( const ConferenceEvent & event, const Message & message );
+	void receiveMessage( const ConferenceEvent & event );
 	/** 
 	 * Called when we receive a FOLDER from the server side contact list
 	 * Adds to the Kopete contact list if not already present.
@@ -183,6 +185,7 @@ private:
 	//QMap<unsigned int, KopeteGroup*> m_groupList;
 	GroupWise::Status m_initialStatus;
 	QString m_initialReason;
+	QValueList<ConferenceEvent> m_pendingEvents; // events for which we need the source's details before we can deal with them
 };
 
 #endif

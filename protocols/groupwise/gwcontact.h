@@ -81,6 +81,12 @@ public:
 	 * Returns a KopeteMessageManager associated with this contact
 	 */
 	virtual KopeteMessageManager *manager( bool canCreate = false );
+	
+	/**
+	 * Received a message from the server.
+	 * Find the conversation that this message belongs to, and display it there.
+	 */
+	void handleIncomingMessage( const ConferenceEvent & event );
 
 public slots:
 	/**
