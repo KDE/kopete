@@ -74,11 +74,19 @@
 				<!-- Yahoo gubbins here -->
 				<img src="images/yahoo_protocol_32.png"/>
 			</xsl:when>
-			<xsl:when test=".='OscarProtocol'">
+			<xsl:when test=".='AIMProtocol'">
 				<!-- Oscar gubbins here -->
-				<img src="images/oscar_protocol.png"/>
+				<img src="images/aim_protocol.png"/>
 			</xsl:when>
 			<xsl:when test=".='IRCProtocol'">
+				<!-- IRC gubbins here -->
+				<img src="images/irc_protocol.png"/>
+			</xsl:when>
+			<xsl:when test=".='SMSProtocol'">
+				<!-- IRC gubbins here -->
+				<img src="images/irc_protocol.png"/>
+			</xsl:when>
+			<xsl:when test=".='GaduProtocol'">
 				<!-- IRC gubbins here -->
 				<img src="images/irc_protocol.png"/>
 			</xsl:when>

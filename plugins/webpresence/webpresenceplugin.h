@@ -52,24 +52,38 @@ public:
 	WebPresencePlugin( QObject *parent, const char *name, const QStringList &args );
 	virtual ~WebPresencePlugin();
 
-public slots:
-	/**
-	 * Apply updated preference dialog settings
-	 */
-	void slotSettingsChanged();
 protected slots:
 	/**
-	 * Write a file to the specified location
+	 * Write a file to the specified location,
 	 */
 	void slotWriteFile();
 	/**
 	 * Called when an upload finished, displays error if needed
 	 */
 	 void slotUploadJobResult( KIO::Job * );
+	/**
+	 * Ugly hack to get around partially created accounts when the
+	 * account manager signals they're created.
+	 */
+	void slotKludgeWaitAccountFullyCreated();
+	/**
+	 * Called to schedule a write, after waiting to see if more changes
+	 * occur (accounts tend to change status together)
+	 */
+	void slotWaitMoreStatusChanges();
+	/**
+	 * Sets us up to respond to account status changes
+	 */
+	void listenToAllAccounts();
+	/**
+	 * Sets us up to respond to a new account
+	 */
+	void listenToAccount( KopeteAccount* account );
+
 protected:
 	/**
 	 * Generate the file (HTML, text) to be uploaded
-	 */	
+	 */
 	KTempFile* generateFile();
 	/**
 	* Apply named stylesheet to get content and presentation
@@ -79,14 +93,15 @@ protected:
 	 * Helper method, generates list of all IM protocols
 	 */
 	QPtrList<KopeteProtocol> allProtocols();
-
 	/**
 	 * Converts numeric status to a string
 	 */
 	QString statusAsString( const KopeteOnlineStatus &newStatus );
+	/**
+     * Schedules writes
+	 */
+	QTimer* m_writeScheduler;
 
-	// Triggers a write of the current contactlist
-	QTimer *m_timer;
 	// Interface to the preferences GUI
 	WebPresencePreferences* m_prefs;
 	// The file to be uploaded to the WWW

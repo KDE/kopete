@@ -55,15 +55,71 @@ K_EXPORT_COMPONENT_FACTORY( kopete_webpresence, KGenericFactory<WebPresencePlugi
 WebPresencePlugin::WebPresencePlugin( QObject *parent, const char *name, const QStringList& /*args*/ )
 : KopetePlugin( parent, name )
 {
+	m_writeScheduler = new QTimer( this );
+	connect ( m_writeScheduler, SIGNAL( timeout() ), this, SLOT( slotWriteFile() ) );
 	m_prefs = new WebPresencePreferences( "", this );
-	connect ( m_prefs, SIGNAL( saved() ), this, SLOT( slotSettingsChanged() ) );
-	m_timer = new QTimer();
-	connect ( m_timer, SIGNAL( timeout() ), this, SLOT( slotWriteFile() ) );
-	m_timer->start( m_prefs->frequency() * 1000 * 60 );
+	connect( KopeteAccountManager::manager(), SIGNAL(accountRegistered(KopeteAccount*)),
+				this, SLOT( slotKludgeWaitAccountFullyCreated() ) );
+	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)),
+				this, SLOT( slotKludgeWaitAccountFullyCreated() ) );
+
 }
 
 WebPresencePlugin::~WebPresencePlugin()
-{}
+{
+}
+
+void WebPresencePlugin::slotKludgeWaitAccountFullyCreated()
+{
+	// If we knew the order in which plugins are loaded, this wouldn't be necessary
+	// this function needs access to myself, which is created later, in the customAccount constructor
+	QTimer::singleShot( 0, this, SLOT( listenToAllAccounts() ) );
+}
+
+void WebPresencePlugin::listenToAllAccounts()
+{
+	// connect to signals notifying of all accounts' status changes
+	QPtrList<KopeteProtocol> protocols = allProtocols();
+	for ( KopeteProtocol *p = protocols.first();
+			p; p = protocols.next() )
+	{
+		QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts( p );
+		QDictIterator<KopeteAccount> it( dict );
+		for( ; KopeteAccount *account=it.current(); ++it )
+		{
+			 listenToAccount( account );
+		}
+ 	}
+	slotWaitMoreStatusChanges();
+}
+
+void WebPresencePlugin::listenToAccount( KopeteAccount* account )
+{
+	if(account->myself())
+	{
+		// Connect to the account's status changed signal
+		// because we can't know if the account has already connected
+		QObject::disconnect( account->myself(),
+						SIGNAL(onlineStatusChanged( KopeteContact *,
+								const KopeteOnlineStatus &,
+								const KopeteOnlineStatus & ) ),
+						this,
+						SLOT( slotWaitMoreStatusChanges() ) ) ;
+		QObject::connect( account->myself(),
+						SIGNAL(onlineStatusChanged( KopeteContact *,
+								const KopeteOnlineStatus &,
+								const KopeteOnlineStatus & ) ),
+						this,
+						SLOT( slotWaitMoreStatusChanges() ) );
+	}
+}
+
+void WebPresencePlugin::slotWaitMoreStatusChanges()
+{
+	if ( !m_writeScheduler->isActive() )
+		 m_writeScheduler->start( m_prefs->frequency() * 1000);
+
+}
 
 void WebPresencePlugin::slotWriteFile()
 {
@@ -72,12 +128,11 @@ void WebPresencePlugin::slotWriteFile()
 	KTempFile* xml = generateFile();
 	xml->setAutoDelete( true );
 
-	kdDebug(14309) << "WebPresencePlugin::slotWriteFile() : " << xml->name() 
-		<< endl;
-	
+	kdDebug(14309) << k_funcinfo << " " << xml->name() << endl;
+
 	if ( m_prefs->justXml() )
 	{
-	    m_output = xml;
+		m_output = xml;
 		xml = 0L;
 	}
 	else
@@ -101,6 +156,7 @@ void WebPresencePlugin::slotWriteFile()
 		connect( job, SIGNAL( result( KIO::Job * ) ),
 				SLOT(  slotUploadJobResult( KIO::Job * ) ) );
 	}
+	m_writeScheduler->stop();
 }
 
 void WebPresencePlugin::slotUploadJobResult( KIO::Job *job )
@@ -116,7 +172,7 @@ void WebPresencePlugin::slotUploadJobResult( KIO::Job *job )
 KTempFile* WebPresencePlugin::generateFile()
 {
 	// generate the (temporary) file representing the current contactlist
-	kdDebug( 14309 ) << "WebPresencePlugin::generateFile()" << endl;
+	kdDebug( 14309 ) << k_funcinfo << endl;
 
 	KTempFile* theFile = new KTempFile();
 	QTextStream* qout =  theFile->textStream() ;
@@ -148,6 +204,9 @@ KTempFile* WebPresencePlugin::generateFile()
 	{
 		// get all the accounts per protocol
 		QDict<KopeteAccount> dict = KopeteAccountManager::manager()->accounts( p );
+		// If no accounts, stop here
+		if ( dict.isEmpty() )
+			continue;
 
 		output += h.openTag( "protocol" );
 		output += h.oneLineTag( "protoname", p->pluginId() );
@@ -254,7 +313,7 @@ bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 		return true;
 	else
 	{
-		kdDebug(14309) << "WebPresencePlugin::transform() - couldn't "
+		kdDebug(14309) << k_funcinfo << " - couldn't "
 			<< error << endl;
 		return false;
 	}
@@ -268,7 +327,7 @@ bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 
 QPtrList<KopeteProtocol> WebPresencePlugin::allProtocols()
 {
-	kdDebug(14309) << "WebPresencePlugin::allProtocols()" << endl;
+	kdDebug(14309) << k_funcinfo << endl;
 	QPtrList<KopeteProtocol> protos;
 	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
 
@@ -301,11 +360,6 @@ QString WebPresencePlugin::statusAsString( const KopeteOnlineStatus &newStatus )
 	}
 
 	return status;
-}
-
-void WebPresencePlugin::slotSettingsChanged()
-{
-	m_timer->start( m_prefs->frequency() * 1000 * 60);
 }
 
 WebPresencePlugin::XMLHelper::XMLHelper()

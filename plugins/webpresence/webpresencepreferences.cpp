@@ -39,7 +39,6 @@ WebPresencePreferences::WebPresencePreferences( const QString &pixmap, QObject *
 	m_prefsDialog = new WebPresencePrefsUI( this );
 	KConfig *theConfig = KGlobal::config();
 	theConfig->setGroup( "Web Presence Plugin" );
-	m_prefsDialog->m_freq->setValue( theConfig->readNumEntry( "UploadFrequency" , 60 ) );
 	m_prefsDialog->m_url->setURL( theConfig->readEntry( "DestinationURL", QString::null ) );
 	m_prefsDialog->m_addresses->setChecked( theConfig->readBoolEntry( "ShowAddresses", false ) );
 	m_prefsDialog->m_userName->setText( theConfig->readEntry( "UserName" , QString::null ) );
@@ -78,7 +77,6 @@ void WebPresencePreferences::save()
 {
 	KConfig *theConfig = KGlobal::config();
 	theConfig->setGroup( "Web Presence Plugin" );
-	theConfig->writeEntry( "UploadFrequency", m_prefsDialog->m_freq->value() );
 	theConfig->writeEntry( "DestinationURL", m_prefsDialog->m_url->url() );
 	theConfig->writeEntry( "ShowAddresses", m_prefsDialog->m_addresses->isChecked() );
 	theConfig->writeEntry( "UseIMName", m_prefsDialog->m_rbUseImName->isChecked() );
@@ -99,7 +97,7 @@ void WebPresencePreferences::save()
 
 int WebPresencePreferences::frequency() const
 {
-	return m_prefsDialog->m_freq->value();
+	return KGlobal::config()->readNumEntry( "UploadFrequency" , 15 );
 }
 
 QString WebPresencePreferences::url() const
