@@ -350,6 +350,7 @@ void JabberAccount::slotConnected (bool success, int statusCode, const QString &
 		kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberAccount] Connection failed! Status: " << statusCode << ", " << statusString << endl;
 
 		KMessageBox::queuedMessageBox(qApp->mainWidget (), KMessageBox::Error, i18n ("Connection failed with reason \"%1\".").arg (statusString, 1), i18n ("Connection Failed"));
+		disconnect();
 	}
 
 }
