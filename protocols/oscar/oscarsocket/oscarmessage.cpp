@@ -27,8 +27,9 @@ void OscarMessage::setText(const QString &txt, MessageFormat format)
 			QRegExp("<body.*>(.*)</body>", false),
 			"\\1");
 
-		mText.replace(
-			QRegExp("<font(.*)back=\"(.*)\"(.*)>(.*)</font>", false),
+		QRegExp re("<font(.*)back=\"(.*)\"(.*)>(.*)</font>", false);
+		re.setMinimal(true);
+		mText.replace(re,
 			"<font\\1style=\"background-color:\\2\"\\3>\\4</font>");
 	}
 	else if (format == Plain)
