@@ -187,17 +187,6 @@ QStringList YahooProtocol::addressBookFields() const
     return QStringList("messaging/yahoo");
 }
 
-/*********************************************************************/
-
-// Destructor
-YahooProtocol::~YahooProtocol()
-{
-	DEBUG(YDMETHOD, "YahooProtocol::~YahooProtocol()");
-	protocolStatic_ = 0L;
-}
-
-YahooProtocol* YahooProtocol::protocolStatic_ = 0L;
-
 // Unload statusbar icon
 bool YahooProtocol::unload()
 {
@@ -213,6 +202,20 @@ bool YahooProtocol::unload()
     return true;
 }
 
+void YahooProtocol::init()
+{
+}
+
+/*********************************************************************/
+
+// Destructor
+YahooProtocol::~YahooProtocol()
+{
+	DEBUG(YDMETHOD, "YahooProtocol::~YahooProtocol()");
+	protocolStatic_ = 0L;
+}
+
+YahooProtocol* YahooProtocol::protocolStatic_ = 0L;
 
 KopeteContact *YahooProtocol::myself() const
 {

@@ -86,7 +86,17 @@ void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups 
 	}
 }
 
+bool KopeteMetaContact::isTopLevel() const
+{
+	return m_isTopLevel;
+}
 
+void KopeteMetaContact::setTopLevel( bool b )
+{
+	m_isTopLevel = b;
+	emit topLevel(this, b);
+}
+ 
 KopeteContact *KopeteMetaContact::findContact( const QString &protocolId, const QString &identityId, const QString &contactId )
 {
 	//kdDebug() << "*** Num contacts: " << m_contacts.count() << endl;
@@ -316,7 +326,6 @@ void KopeteMetaContact::removeFromGroup( const QString &from)
 		c->removeFromGroup(from);
 	}
 
-
 	emit removedFromGroup( this, from);
 
 }
@@ -386,7 +395,26 @@ QString KopeteMetaContact::toXML()
 				xml += "      <group>" + QStyleSheet::escape( i18n("Unknown") ) +
 				       "</group>\n";
 		}
+
+		// The contact is also at top-level
+		if ( m_isTopLevel )
+		{
+			xml += "      <top-level/>\n";
+		}
+		
 		xml += "    </groups>\n";
+	}
+	else
+	{
+		/*
+		   Rare case to prevent bug, if contact has no groups
+		   and it is not at top level it should have been deleted.
+		   But we didn't, so we put it in toplevel to prevent a
+		   hided contact, also for toplevel contacts saved before
+		   we added the <top-level> tag.
+		*/
+		if ( ! m_isTopLevel )
+			xml += "    <groups><top-level/></groups>\n";
 	}
 
 	QPtrList<KopetePlugin> ps = kopeteapp->libraryLoader()->plugins();
@@ -435,6 +463,8 @@ QString KopeteMetaContact::toXML()
 
 bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 {
+    m_isTopLevel = false;
+
 	QDomNode contactNode = cnode;
 	while( !contactNode.isNull() )
 	{
@@ -452,7 +482,16 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 				QDomNode group = contactElement.firstChild();
 				while( !group.isNull() )
 				{
-					m_groups << group.toElement().text();
+                    QDomElement groupElement = group.toElement();
+					if ( groupElement.tagName() == "group" )
+					{
+						m_groups << groupElement.text();
+					}
+					else if ( groupElement.tagName() == "top-level" )
+					{
+						m_isTopLevel = true;
+					}
+	
 					group = group.nextSibling();
 				}
 			}
@@ -486,6 +525,9 @@ bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 		if( plugin )
 			plugin->deserialize( this, strList );
 	}
+
+	if ( m_groups.isEmpty() && ! m_isTopLevel )
+		m_isTopLevel = true;	
 
 	return true;
 }

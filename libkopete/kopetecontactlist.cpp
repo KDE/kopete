@@ -103,9 +103,10 @@ void KopeteContactList::slotRemovedFromGroup( KopeteMetaContact *mc,
 	if( mc->groups().isEmpty() )
 	{
 		kdDebug() << "KopeteContactList::slotRemovedFromGroup: "
-			<< "contact removed from all groups: remove contact." << endl;
-		m_contacts.remove( mc );
-		mc->deleteLater();
+			<< "contact removed from all groups: now toplevel." << endl;
+		//m_contacts.remove( mc );
+		//mc->deleteLater();
+		
 	}
 }
 

@@ -144,6 +144,16 @@ public:
 	bool isTemporary() const;
 	void setTemporary( bool b = true );
 
+	/**
+	 * Return true if the contact is shown at toplevel
+	 */
+	bool isTopLevel() const;
+
+	/**
+	 * Return true if the contact is shown at toplevel
+	 */
+	void setTopLevel( bool b = true );
+
 public slots:
 	/**
 	 * Contact another user.
@@ -183,7 +193,6 @@ public slots:
 	 */
 	AddressBookFields addressBookFields() const;
 
-
 signals:
 	/**
 	 * The contact's online status changed
@@ -211,6 +220,11 @@ signals:
 
 
 	void contactAdded (KopeteContact *) ;
+
+	/**
+	 * The metacontact is at top level
+	 */
+	void topLevel ( KopeteMetaContact *contact, const bool b);
 
 private slots:
 	/**
@@ -247,6 +261,7 @@ private:
 	bool m_trackChildNameChanges;
 
 	QStringList m_groups;
+	bool m_isTopLevel;
                 
 	/**
 	 * Data to store in the XML file
