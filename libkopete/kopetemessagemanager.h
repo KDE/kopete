@@ -101,7 +101,7 @@ public:
 	 * Get the local user in the session
 	 */
 	const KopeteContact* user() const;
-	const KopeteProtocol* protocol() const;
+	KopeteProtocol* protocol() const;
 
 	/**
 	 * @return Returns a unique identifier associated with this

@@ -291,7 +291,7 @@ const KopeteContact* KopeteMessageManager::user() const
 	return d->mUser;
 }
 
-const KopeteProtocol* KopeteMessageManager::protocol() const
+KopeteProtocol* KopeteMessageManager::protocol() const
 {
 	return d->mProtocol;
 }
