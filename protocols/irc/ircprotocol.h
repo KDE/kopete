@@ -49,8 +49,6 @@ public:
 
 	/** KopeteProtocol reimplementation */
 	virtual AddContactPage *createAddContactWidget(QWidget *parent);
-	virtual void Connect();
-	virtual void Disconnect();
 	virtual bool isConnected() const;
 	virtual void setAway(void);
 	virtual void setAvailable(void);
@@ -67,6 +65,8 @@ public:
 
 public slots:
 	void serialize(KopeteMetaContact * metaContact);
+	virtual void connect();
+	virtual void disconnect();
 
 private slots:
 	void slotNewConsole();

@@ -56,8 +56,6 @@ public:
     // {
     void init();
 
-    void Connect();
-    void Disconnect();
     bool isConnected() const;
     KopeteContact* createContact( KopeteMetaContact *parent,
                                           const QString &serializedData );
@@ -79,6 +77,8 @@ public:
                      KopeteMetaContact* parent = 0L, const QString& group = QString::null );
     void removeContact( const GaduContact *c );
 public slots:
+    virtual void connect();
+    virtual void disconnect();
     void slotLogin();
     void slotLogoff();
     void addNotify( uin_t uin );
@@ -107,7 +107,7 @@ protected slots:
     void pong();
     void connectionFailed( struct gg_event* );
     void connectionSucceed( struct gg_event* );
-    void disconnect();
+    void slotSessionDisconnect();
     void userlist( const QStringList& );
     void pingServer();
 

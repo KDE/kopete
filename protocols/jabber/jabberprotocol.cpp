@@ -89,7 +89,7 @@ JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : Kop
 	initialPresence = STATUS_ONLINE;
 
 	preferences = new JabberPreferences("jabber_protocol_32", this);
-	connect (preferences, SIGNAL(saved()), this, SLOT(slotSettingsChanged()));
+	QObject::connect( preferences, SIGNAL(saved()), this, SLOT(slotSettingsChanged()));
 
 	// read the Jabber ID from Kopete's configuration
 	KGlobal::config()->setGroup("Jabber");
@@ -181,7 +181,7 @@ void JabberProtocol::init()
 
 	// if we need to connect on startup, do it now
 	if (KGlobal::config()->readBoolEntry( "AutoConnect", false ) )
-		Connect();
+		connect();
 
 }
 
@@ -189,7 +189,7 @@ bool JabberProtocol::unload()
 {
 	kdDebug() << "[JabberProtocol] Unload..." << endl;
 
-	Disconnect();
+	disconnect();
 
 	// kick the SSL library
 	Jabber::Stream::unloadSSL();
@@ -216,9 +216,9 @@ bool JabberProtocol::unload()
 
 }
 
-void JabberProtocol::Connect()
+void JabberProtocol::connect()
 {
-	kdDebug() << "[JabberProtocol] Connect()" << endl;
+	kdDebug() << "[JabberProtocol] connect()" << endl;
 
 	// don't do anything if we are already connected
 	if (isConnected())
@@ -247,30 +247,30 @@ void JabberProtocol::Connect()
 		// otherwise it is a bad idea
 		using namespace Jabber;
 
-		connect(jabberClient, SIGNAL(handshaken()), this, SLOT(slotHandshaken()));
-		connect(jabberClient, SIGNAL(authFinished(bool, int, const QString &)), this, SLOT(slotConnected(bool, int, const QString &)));
+		QObject::connect(jabberClient, SIGNAL(handshaken()), this, SLOT(slotHandshaken()));
+		QObject::connect(jabberClient, SIGNAL(authFinished(bool, int, const QString &)), this, SLOT(slotConnected(bool, int, const QString &)));
 
-		connect(jabberClient, SIGNAL(closeFinished()), this, SLOT(slotDisconnected()));
+		QObject::connect(jabberClient, SIGNAL(closeFinished()), this, SLOT(slotDisconnected()));
 
-		connect(jabberClient, SIGNAL(subscription(const Jid &, const QString &)), this, SLOT(slotSubscription(const Jid &, const QString &)));
+		QObject::connect(jabberClient, SIGNAL(subscription(const Jid &, const QString &)), this, SLOT(slotSubscription(const Jid &, const QString &)));
 
-		connect(jabberClient, SIGNAL(rosterItemAdded(const RosterItem &)), this, SLOT(slotNewContact(const RosterItem &)));
-		connect(jabberClient, SIGNAL(rosterItemUpdated(const RosterItem &)), this, SLOT(slotContactUpdated(const RosterItem &)));
-		connect(jabberClient, SIGNAL(rosterItemRemoved(const RosterItem &)), this, SLOT(slotContactDeleted(const RosterItem &)));
+		QObject::connect(jabberClient, SIGNAL(rosterItemAdded(const RosterItem &)), this, SLOT(slotNewContact(const RosterItem &)));
+		QObject::connect(jabberClient, SIGNAL(rosterItemUpdated(const RosterItem &)), this, SLOT(slotContactUpdated(const RosterItem &)));
+		QObject::connect(jabberClient, SIGNAL(rosterItemRemoved(const RosterItem &)), this, SLOT(slotContactDeleted(const RosterItem &)));
 
-		connect(jabberClient, SIGNAL(resourceAvailable(const Jid &, const Resource &)), this, SLOT(slotResourceAvailable(const Jid &, const Resource &)));
-		connect(jabberClient, SIGNAL(resourceUnavailable(const Jid &, const Resource &)), this, SLOT(slotResourceUnavailable(const Jid &, const Resource &)));
+		QObject::connect(jabberClient, SIGNAL(resourceAvailable(const Jid &, const Resource &)), this, SLOT(slotResourceAvailable(const Jid &, const Resource &)));
+		QObject::connect(jabberClient, SIGNAL(resourceUnavailable(const Jid &, const Resource &)), this, SLOT(slotResourceUnavailable(const Jid &, const Resource &)));
 
-		connect(jabberClient, SIGNAL(messageReceived(const Message &)), this, SLOT(slotNewMessage(const Message &)));
+		QObject::connect(jabberClient, SIGNAL(messageReceived(const Message &)), this, SLOT(slotNewMessage(const Message &)));
 
-		connect(jabberClient, SIGNAL(groupChatJoined(const Jid &)), this, SLOT(slotGroupChatJoined(const Jid &)));
-		connect(jabberClient, SIGNAL(groupChatLeft(const Jid &)), this, SLOT(slotGroupChatLeft(const Jid &)));
-		connect(jabberClient, SIGNAL(groupChatPresence(const Jid &)), this, SLOT(slotGroupChatPresence(const Jid &)));
-		connect(jabberClient, SIGNAL(groupChatError(const Jid &, int, QString &)), this, SLOT(slotGroupChatError(const Jid &, int, QString &)));
+		QObject::connect(jabberClient, SIGNAL(groupChatJoined(const Jid &)), this, SLOT(slotGroupChatJoined(const Jid &)));
+		QObject::connect(jabberClient, SIGNAL(groupChatLeft(const Jid &)), this, SLOT(slotGroupChatLeft(const Jid &)));
+		QObject::connect(jabberClient, SIGNAL(groupChatPresence(const Jid &)), this, SLOT(slotGroupChatPresence(const Jid &)));
+		QObject::connect(jabberClient, SIGNAL(groupChatError(const Jid &, int, QString &)), this, SLOT(slotGroupChatError(const Jid &, int, QString &)));
 
-		connect(jabberClient, SIGNAL(error(const StreamError &)), this, SLOT(slotError(const StreamError &)));
+		QObject::connect(jabberClient, SIGNAL(error(const StreamError &)), this, SLOT(slotError(const StreamError &)));
 
-		connect(jabberClient, SIGNAL(debugText(const QString &)), this, SLOT(slotPsiDebug(const QString &)));
+		QObject::connect(jabberClient, SIGNAL(debugText(const QString &)), this, SLOT(slotPsiDebug(const QString &)));
 
 		utsname utsBuf;
 		uname(&utsBuf);
@@ -378,7 +378,7 @@ void JabberProtocol::slotHandshaken()
 	if(registerFlag)
 	{
 		Jabber::JT_Register *task = new Jabber::JT_Register(jabberClient->rootTask());
-		connect(task, SIGNAL(finished()), this, SLOT(slotRegisterUserDone()));
+		QObject::connect(task, SIGNAL(finished()), this, SLOT(slotRegisterUserDone()));
 
 		task->reg(KGlobal::config()->readEntry("UserID", ""), KGlobal::config()->readEntry("Password", ""));
 
@@ -442,7 +442,7 @@ JabberProtocol *JabberProtocol::protocol()
 	return protocolInstance;
 }
 
-void JabberProtocol::Disconnect()
+void JabberProtocol::disconnect()
 {
 	if (isConnected())
 	{
@@ -468,13 +468,13 @@ void JabberProtocol::Disconnect()
 
 void JabberProtocol::slotConnect()
 {
-	Connect();
+	connect();
 }
 
 void JabberProtocol::slotDisconnect()
 {
 
-	Disconnect();
+	disconnect();
 
 }
 
@@ -540,7 +540,7 @@ void JabberProtocol::slotError(const Jabber::StreamError &error)
 			break;
 	}
 
-	Disconnect();
+	disconnect();
 }
 
 bool JabberProtocol::isConnected() const
@@ -676,9 +676,9 @@ void JabberProtocol::deserialize(KopeteMetaContact *contact, const QStringList &
 		metaContactMap.insert(jc, contact);
 		contactMap.insert(userId, jc);
 
-		connect(jc, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact*)));
-		connect(jc, SIGNAL(chatUser(JabberContact *)), this, SLOT(slotChatUser(JabberContact *)));
-		connect(jc, SIGNAL(emailUser(JabberContact *)), this, SLOT(slotEmailUser(JabberContact *)));
+		QObject::connect(jc, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact*)));
+		QObject::connect(jc, SIGNAL(chatUser(JabberContact *)), this, SLOT(slotChatUser(JabberContact *)));
+		QObject::connect(jc, SIGNAL(emailUser(JabberContact *)), this, SLOT(slotEmailUser(JabberContact *)));
 
 		contact->addContact(jc);
 	}
@@ -721,7 +721,7 @@ void JabberProtocol::slotGoOnline()
 	{
 		// we are not connected yet, so connect now
 		initialPresence = STATUS_ONLINE;
-		Connect();
+		connect();
 	}
 
 	setPresence(STATUS_ONLINE, "");
@@ -732,7 +732,7 @@ void JabberProtocol::slotGoOffline()
 {
 	kdDebug() << "[JabberProtocol] Going offline." << endl;
 
-	Disconnect();
+	disconnect();
 }
 
 void JabberProtocol::slotGoAway()
@@ -743,7 +743,7 @@ void JabberProtocol::slotGoAway()
 	{
 		// we are not connected yet, so connect now
 		initialPresence = STATUS_AWAY;
-		Connect();
+		connect();
 	}
 
 	// kill old reason dialog if it's still in memory
@@ -762,7 +762,7 @@ void JabberProtocol::slotGoXA()
 	{
 		// we are not connected yet, so connect now
 		initialPresence = STATUS_XA;
-		Connect();
+		connect();
 	}
 
 	// kill old reason dialog if it's still in memory
@@ -781,7 +781,7 @@ void JabberProtocol::slotGoDND()
 	{
 		// we are not connected yet, so connect now
 		initialPresence = STATUS_DND;
-		Connect();
+		connect();
 	}
 
 	// kill old reason dialog if it's still in memory
@@ -801,7 +801,7 @@ void JabberProtocol::slotGoInvisible()
 	{
 		// we are not connected yet, so connect now
 		initialPresence = STATUS_INVISIBLE;
-		Connect();
+		connect();
 	}
 
 	setPresence(STATUS_INVISIBLE);
@@ -912,9 +912,9 @@ JabberContact *JabberProtocol::createContact(const QString &jid, const QString &
 
 	JabberContact *jc = new JabberContact(jid, alias, groups, this, metaContact, identity);
 
-	connect(jc, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact *)));
-	connect(jc, SIGNAL(chatUser(JabberContact *)), this, SLOT(slotChatUser(JabberContact *)));
-	connect(jc, SIGNAL(emailUser(JabberContact *)), this, SLOT(slotEmailUser(JabberContact *)));
+	QObject::connect(jc, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact *)));
+	QObject::connect(jc, SIGNAL(chatUser(JabberContact *)), this, SLOT(slotChatUser(JabberContact *)));
+	QObject::connect(jc, SIGNAL(emailUser(JabberContact *)), this, SLOT(slotEmailUser(JabberContact *)));
 
 	metaContact->addContact(jc );
 
@@ -1174,7 +1174,7 @@ JabberMessageManager *JabberProtocol::createMessageManager(JabberContact *to, Ko
 
 	JabberMessageManager *manager = new JabberMessageManager(myself(), chatMembers, type);
 
-	connect(manager, SIGNAL(dying(KopeteMessageManager *)), this, SLOT(slotMessageManagerDeleted(KopeteMessageManager *)));
+	QObject::connect(manager, SIGNAL(dying(KopeteMessageManager *)), this, SLOT(slotMessageManagerDeleted(KopeteMessageManager *)));
 
 	return manager;
 
@@ -1287,7 +1287,7 @@ void JabberProtocol::slotEmptyMail()
 	}
 
 	KLineEditDlg *dlg = new KLineEditDlg(i18n("Please enter a recipient"), QString::null, qApp->mainWidget());
-	connect(dlg, SIGNAL(okClicked()), this, SLOT(slotOpenEmptyMail()));
+	QObject::connect(dlg, SIGNAL(okClicked()), this, SLOT(slotOpenEmptyMail()));
 	dlg->show();
 	dlg->raise();
 
@@ -1320,7 +1320,7 @@ void JabberProtocol::slotJoinNewChat()
 	}
 
 	DlgJabberChatJoin *dlg = new DlgJabberChatJoin(qApp->mainWidget());
-	connect(dlg, SIGNAL(okClicked()), this, SLOT(slotJoinChat()));
+	QObject::connect(dlg, SIGNAL(okClicked()), this, SLOT(slotJoinChat()));
 	dlg->show();
 	dlg->raise();
 
@@ -1441,7 +1441,7 @@ void JabberProtocol::slotRetrieveVCard(const Jabber::Jid &jid)
 	Jabber::JT_VCard *task = new Jabber::JT_VCard(jabberClient->rootTask());
 
 	// signal to ourselves when the vCard data arrived
-	connect(task, SIGNAL(finished()), this, SLOT(slotGotVCard()));
+	QObject::connect(task, SIGNAL(finished()), this, SLOT(slotGotVCard()));
 
 	task->get(jid);
 
@@ -1514,7 +1514,7 @@ void JabberProtocol::registerUser()
 	registerFlag = 1;
 
 	// now connect, initiating the registration
-	Connect();
+	connect();
 }
 
 void JabberProtocol::slotRegisterUserDone()
@@ -1528,7 +1528,7 @@ void JabberProtocol::slotRegisterUserDone()
 
 	registerFlag = 0;
 
-	Disconnect();
+	disconnect();
 
 }
 

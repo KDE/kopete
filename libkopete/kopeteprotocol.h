@@ -37,26 +37,24 @@ class KopeteProtocol : public KopetePlugin
 	Q_OBJECT
 
 public:
-	KopeteProtocol(QObject *parent = 0L, const char *name = 0L);
+	KopeteProtocol( QObject *parent = 0L, const char *name = 0L );
 	virtual ~KopeteProtocol();
 
 	/**
 	 * Protocol API. Must be reimplemented
 	 */
 	virtual bool unload();
-	virtual void Connect()=0;
-	virtual void Disconnect()=0;
 	virtual bool isConnected() const = 0;
 
 	// this will be called if main-kopete wants
 	// the plugin to set the user's mode to away or something similar
-	virtual void setAway(void)=0;
+	virtual void setAway() = 0;
 	// this will be called if main-kopete wants
 	// the plugin to set the user's mode to online or something similar
-	virtual void setAvailable(void)=0;
+	virtual void setAvailable() = 0;
 	// plugin has to return wether it is away or not
 	// plugins should also return TRUE for modes like occupied not-vailable etc.
-	virtual bool isAway(void) const = 0;
+	virtual bool isAway() const = 0;
 
 	virtual AddContactPage *createAddContactWidget(QWidget *parent)=0;
 
@@ -92,7 +90,7 @@ public:
 	 *
 	 * @return contact associated with the currently logged in user
 	 */
-	virtual KopeteContact* myself() const=0;
+	virtual KopeteContact* myself() const = 0;
 
 	/**
 	 * Retrieve the list of contacts for this protocol
@@ -103,6 +101,18 @@ public:
 	 */
 	const QDict<KopeteContact>& contacts();
 
+public slots:
+	/**
+	 * Go online for this service.
+	 * This is a slot, so it can be called directly from e.g. a KAction.
+	 */
+	virtual void connect() = 0;
+
+	/**
+	 * Disconnect from this service.
+	 * This is a slot, so it can be called directly from e.g. a KAction.
+	 */
+	virtual void disconnect() = 0;
 signals:
 	/**
 	 * The status icon changed. See also @ref setStatusIcon().

@@ -97,7 +97,7 @@ WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProto
 
 	// Create preferences menu
 	mPrefs = new WPPreferences("wp_icon", this);
-	connect(mPrefs, SIGNAL(saved(void)), this, SLOT(slotSettingsChanged(void)));
+	QObject::connect( mPrefs, SIGNAL(saved(void)), this, SLOT(slotSettingsChanged(void)));
 
 	// ask for installation.
 	if(KMessageBox::questionYesNo(mPrefs, i18n("The Samba configuration file needs to be modified in order for Kopete to receive WinPopup messages. Would you like to do this now?"), i18n("Modify Samba Configuration Now?"), KGuiItem(), KGuiItem(), "WPFirstTime") == KMessageBox::Yes)
@@ -110,11 +110,11 @@ WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProto
 	slotSettingsChanged();
 
 	setAvailable();
-	Connect();
+	QObject::connect( );
 
 	// FIXME: I guess 'myself' should be a metacontact as well...
 	theMyself = new WPContact(theHostName, this, 0L);		// XXX: Should be from config file!!!
-	connect(theInterface, SIGNAL(newMessage(const QString &, const QDateTime &, const QString &)), this, SLOT(slotGotNewMessage(const QString &, const QDateTime &, const QString &)));
+	QObject::connect( theInterface, SIGNAL(newMessage(const QString &, const QDateTime &, const QString &)), this, SLOT(slotGotNewMessage(const QString &, const QDateTime &, const QString &)));
 }
 
 // Destructor
@@ -243,7 +243,7 @@ bool WPProtocol::unload()
 	return KopeteProtocol::unload();
 }
 
-void WPProtocol::Connect()
+void WPProtocol::connect()
 {
 	DEBUG(WPDMETHOD, "WPProtocol::Connect()");
 
@@ -253,7 +253,7 @@ void WPProtocol::Connect()
 	setStatusIcon( "wp_available" );
 }
 
-void WPProtocol::Disconnect()
+void WPProtocol::disconnect()
 {
 	DEBUG(WPDMETHOD, "WPProtocol::Disconnect()");
 
@@ -312,8 +312,8 @@ void WPProtocol::initActions()
 {
 	DEBUG(WPDMETHOD, "WPProtocol::initActions()");
 
-	actionGoAvailable = new KAction("Online", "wp_available", 0, this, SLOT(Connect()), this, "actionGoAvailable");
-	actionGoOffline = new KAction("Offline", "wp_offline", 0, this, SLOT(Disconnect()), this, "actionGoOffline");
+	actionGoAvailable = new KAction("Online", "wp_available", 0, this, SLOT(connect()), this, "actionGoAvailable");
+	actionGoOffline = new KAction("Offline", "wp_offline", 0, this, SLOT(disconnect()), this, "actionGoOffline");
 	actionGoAway = new KAction("Away", "wp_away", 0, this, SLOT(setAway()), this, "actionGoAway");
 
 	KGlobal::config()->setGroup("WinPopup");

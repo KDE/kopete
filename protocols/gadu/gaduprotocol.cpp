@@ -69,7 +69,7 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
                                new KopeteMetaContact() );
 
     prefs_ = new GaduPreferences( "gadu_protocol", this );
-    connect( prefs_, SIGNAL(saved()), this, SLOT(settingsChanged()) );
+    QObject::connect( prefs_, SIGNAL(saved()), this, SLOT(settingsChanged()) );
 
     initActions();
     initConnections();
@@ -130,7 +130,7 @@ GaduProtocol::initConnections()
     QObject::connect( session_, SIGNAL(connectionSucceed( struct gg_event* )),
                       SLOT(connectionSucceed(struct gg_event*)) );
     QObject::connect( session_, SIGNAL(disconnect()),
-                      SLOT(disconnect()) );
+                      SLOT(slotSessionDisconnect()) );
     QObject::connect( session_, SIGNAL(ackReceived(struct gg_event*)),
                       SLOT(ackReceived(struct gg_event*)) );
 
@@ -148,13 +148,13 @@ GaduProtocol::init()
 }
 
 void
-GaduProtocol::Connect()
+GaduProtocol::connect()
 {
     slotGoOnline();
 }
 
 void
-GaduProtocol::Disconnect()
+GaduProtocol::disconnect()
 {
     slotGoOffline();
 }
@@ -470,7 +470,7 @@ GaduProtocol::connectionSucceed( struct gg_event* /*e*/ )
     kdDebug()<<"#### Gadu-Gadu connected!"<<endl;
     UserlistGetCommand *cmd = new UserlistGetCommand( this );
     cmd->setInfo( userUin_, password_ );
-    connect( cmd, SIGNAL(done(const QStringList&)),
+    QObject::connect( cmd, SIGNAL(done(const QStringList&)),
              SLOT(userlist(const QStringList&)) );
     cmd->execute();
     if ( !pingTimer_ ) {
@@ -482,7 +482,7 @@ GaduProtocol::connectionSucceed( struct gg_event* /*e*/ )
 }
 
 void
-GaduProtocol::disconnect()
+GaduProtocol::slotSessionDisconnect()
 {
     pingTimer_->stop();
     changeStatus( 0 );

@@ -64,8 +64,8 @@ public:
 						// Protocol-specific actions for status bar
 
 public slots:
-	void Connect();			// Connect to server
-	void Disconnect();		// Disconnect from server
+	void connect();			// Connect to server
+	void disconnect();		// Disconnect from server
 	void setAvailable();	// Set user Available
 	void setAway();			// Set user away
 

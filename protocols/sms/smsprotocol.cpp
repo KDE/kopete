@@ -43,11 +43,11 @@ bool SMSProtocol::unload()
 	return KopeteProtocol::unload();
 }
 
-void SMSProtocol::Connect()
+void SMSProtocol::connect()
 {
 }
 
-void SMSProtocol::Disconnect()
+void SMSProtocol::disconnect()
 {
 }
 

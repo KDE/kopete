@@ -97,7 +97,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 	/** Autoconnect if is selected in config */
 	if ( KGlobal::config()->readBoolEntry( "AutoConnect", false ) )
 	{
-		Connect();
+		connect();
 	}
 }
 
@@ -199,12 +199,12 @@ void IRCProtocol::init()
 //           KopeteProtocol Class reimplementation
 ///////////////////////////////////////////////////
 
-void IRCProtocol::Connect()
+void IRCProtocol::connect()
 {
 
 }
 
-void IRCProtocol::Disconnect()
+void IRCProtocol::disconnect()
 {
 
 }

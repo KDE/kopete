@@ -66,7 +66,7 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 
 	/* Create preferences menu */
 	mPrefs = new YahooPreferences("yahoo_protocol_32", this);
-	connect(mPrefs, SIGNAL(saved(void)), this, SLOT(slotSettingsChanged(void)));
+	QObject::connect( mPrefs, SIGNAL(saved(void)), this, SLOT(slotSettingsChanged(void)));
 
 	mIsConnected = false;
 
@@ -75,7 +75,7 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 
 	if (KGlobal::config()->readBoolEntry( "AutoConnect", false ) )
 	{
-		Connect();
+		connect();
 	}
 }
 
@@ -182,12 +182,12 @@ KopeteContact *YahooProtocol::myself() const
 	return 0L;
 }
 
-void YahooProtocol::Connect()
+void YahooProtocol::connect()
 {
 	YahooSession *session_;
 	session_ = 0L;
 
-	kdDebug() << "YahooProtocol::Connect()" << endl;
+	kdDebug() << "YahooProtocol::connect()" << endl;
 
 	if ( ! isConnected() )
 	{
@@ -236,9 +236,9 @@ void YahooProtocol::Connect()
 
 }
 
-void YahooProtocol::Disconnect()
+void YahooProtocol::disconnect()
 {
-	kdDebug() << "YahooProtocol::Disconnect()" << endl;
+	kdDebug() << "YahooProtocol::disconnect()" << endl;
 
 	if (isConnected())
 	{
@@ -308,7 +308,7 @@ void YahooProtocol::slotConnected()
 
 void YahooProtocol::slotGoOffline()
 {
-	Disconnect();
+	disconnect();
 }
 
 void YahooProtocol::initActions()
@@ -316,33 +316,33 @@ void YahooProtocol::initActions()
 	kdDebug() << "YahooProtocol::initActions()" << endl;
 
 	actionGoOnline = new KAction(i18n(YSTAvailable), "yahoo_online",
-				0, this, SLOT(Connect()), this, "actionYahooConnect");
+				0, this, SLOT(connect()), this, "actionYahooConnect");
 	actionGoOffline = new KAction(i18n("Offline"), "yahoo_offline",
-				0, this, SLOT(Disconnect()), this, "actionYahooDisconnect");
+				0, this, SLOT(disconnect()), this, "actionYahooDisconnect");
 	actionGoStatus001 = new KAction(i18n(YSTBeRightBack), "yahoo_busy",
-				0, this, SLOT(Connect()), this, "actionYahooConnect");
+				0, this, SLOT(connect()), this, "actionYahooConnect");
 	actionGoStatus002 = new KAction(i18n(YSTBusy), "yahoo_busy",
-				0, this, SLOT(Connect()), this, "actionYahooConnect");
+				0, this, SLOT(connect()), this, "actionYahooConnect");
 	actionGoStatus003 = new KAction(i18n(YSTNotAtHome), "yahoo_busy",
-				0, this, SLOT(Connect()), this, "actionYahooConnect");
+				0, this, SLOT(connect()), this, "actionYahooConnect");
 	actionGoStatus004 = new KAction(i18n(YSTNotAtMyDesk), "yahoo_busy",
-				0, this, SLOT(Connect()), this, "actionYahooConnect");
+				0, this, SLOT(connect()), this, "actionYahooConnect");
 	actionGoStatus005 = new KAction(i18n(YSTNotInTheOffice), "yahoo_busy",
-				0, this, SLOT(Connect()), this, "actionYahooConnect");
+				0, this, SLOT(connect()), this, "actionYahooConnect");
 	actionGoStatus006 = new KAction(i18n(YSTOnThePhone), "yahoo_busy",
-				0, this, SLOT(Connect()), this, "actionYahooConnect");
+				0, this, SLOT(connect()), this, "actionYahooConnect");
 	actionGoStatus007 = new KAction(i18n(YSTOnVacation), "yahoo_busy",
-				0, this, SLOT(Connect()), this, "actionYahooConnect");
+				0, this, SLOT(connect()), this, "actionYahooConnect");
 	actionGoStatus008 = new KAction(i18n(YSTOutToLunch), "yahoo_busy",
-				0, this, SLOT(Connect()), this, "actionYahooConnect");
+				0, this, SLOT(connect()), this, "actionYahooConnect");
 	actionGoStatus009 = new KAction(i18n(YSTSteppedOut), "yahoo_busy",
-				0, this, SLOT(Connect()), this, "actionYahooConnect");
+				0, this, SLOT(connect()), this, "actionYahooConnect");
 	actionGoStatus012 = new KAction(i18n("Invisible"), "yahoo_offline",
-				0, this, SLOT(Connect()), this, "actionYahooConnect"); // XXX Connect with invisible on
+				0, this, SLOT(connect()), this, "actionYahooConnect"); // XXX Connect with invisible on
 	actionGoStatus099 = new KAction(i18n("Custom"), "yahoo_online",
-				0, this, SLOT(Connect()), this, "actionYahooConnect"); // XXX Get some dialogbox
+				0, this, SLOT(connect()), this, "actionYahooConnect"); // XXX Get some dialogbox
 	actionGoStatus999 = new KAction(i18n(YSTIdle), "yahoo_idle",
-				0, this, SLOT(Connect()), this, "actionYahooConnect");
+				0, this, SLOT(connect()), this, "actionYahooConnect");
 
 	QString handle = mUsername + "@" + mServer;
 	actionStatusMenu = new KActionMenu("Yahoo", this);

@@ -68,7 +68,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	kdDebug() << "MSNProtocol::MSNProtocol: MSN Plugin Loading" << endl;
 
 	mPrefs= new MSNPreferences( "msn_protocol", this );
-	connect( mPrefs, SIGNAL(saved()) , this , SLOT ( slotPreferencesSaved() ));
+	QObject::connect( mPrefs, SIGNAL(saved()) , this , SLOT ( slotPreferencesSaved() ));
 	slotPreferencesSaved();
 
 	m_publicNameSyncMode = SyncFromServer;
@@ -85,19 +85,16 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	m_myself = new MSNContact( this, m_msnId, m_publicName, 0L );
 
 	if ( mPrefs->autoConnect() )
-		Connect();
+		connect();
 
-	connect ( KopeteContactList::contactList() , SIGNAL(groupRenamed(KopeteGroup*,const QString&)) , SLOT (slotKopeteGroupRenamed(KopeteGroup*)));
-	connect ( KopeteContactList::contactList() , SIGNAL(groupRemoved(KopeteGroup*)) , SLOT (slotKopeteGroupRemoved(KopeteGroup*)));
+	QObject::connect( KopeteContactList::contactList() , SIGNAL(groupRenamed(KopeteGroup*,const QString&)) , SLOT (slotKopeteGroupRenamed(KopeteGroup*)));
+	QObject::connect( KopeteContactList::contactList() , SIGNAL(groupRemoved(KopeteGroup*)) , SLOT (slotKopeteGroupRemoved(KopeteGroup*)));
 }
 
 MSNProtocol::~MSNProtocol()
 {
 }
 
-/*
- * Plugin Class reimplementation
- */
 void MSNProtocol::init()
 {
 }
@@ -106,7 +103,7 @@ bool MSNProtocol::unload()
 {
 	kdDebug() << "MSNProtocol::unload" << endl;
 
-	Disconnect();
+	disconnect();
 
 	m_groupList.clear();
 	m_allowList.clear();
@@ -121,10 +118,7 @@ bool MSNProtocol::unload()
 	return KopeteProtocol::unload();
 }
 
-/*
- * KopeteProtocol Class reimplementation
- */
-void MSNProtocol::Connect()
+void MSNProtocol::connect()
 {
 	if( isConnected() )
 	{
@@ -161,35 +155,35 @@ void MSNProtocol::Connect()
 		<< m_msnId << endl;
 	m_notifySocket = new MSNNotifySocket( this, m_msnId );
 
-	connect( m_notifySocket, SIGNAL( groupAdded( QString, uint,uint ) ),
+	QObject::connect( m_notifySocket, SIGNAL( groupAdded( QString, uint,uint ) ),
 		this, SLOT( slotGroupAdded( QString, uint ) ) );
-	connect( m_notifySocket, SIGNAL( groupRenamed( QString, uint, uint ) ),
+	QObject::connect( m_notifySocket, SIGNAL( groupRenamed( QString, uint, uint ) ),
 		this, SLOT( slotGroupRenamed( QString, uint ) ) );
-	connect( m_notifySocket, SIGNAL( groupListed( QString, uint ) ),
+	QObject::connect( m_notifySocket, SIGNAL( groupListed( QString, uint ) ),
 		this, SLOT( slotGroupAdded( QString, uint ) ) );
-	connect( m_notifySocket, SIGNAL(groupRemoved( uint, uint ) ),
+	QObject::connect( m_notifySocket, SIGNAL(groupRemoved( uint, uint ) ),
 		this, SLOT( slotGroupRemoved( uint ) ) );
-//	connect( m_notifySocket, SIGNAL( statusChanged( QString ) ),
+//	QObject::connect( m_notifySocket, SIGNAL( statusChanged( QString ) ),
 //		this, SLOT( slotStateChanged( QString ) ) );
-	connect( m_notifySocket, SIGNAL( contactList( QString, QString, QString, QString ) ),
+	QObject::connect( m_notifySocket, SIGNAL( contactList( QString, QString, QString, QString ) ),
 		this, SLOT( slotContactList( QString, QString, QString, QString ) ) );
-	connect( m_notifySocket, SIGNAL( contactAdded( QString, QString, QString, uint, uint ) ),
+	QObject::connect( m_notifySocket, SIGNAL( contactAdded( QString, QString, QString, uint, uint ) ),
 		this,	SLOT( slotContactAdded( QString, QString, QString, uint, uint ) ) );
-	connect( m_notifySocket, SIGNAL( contactRemoved( QString, QString, uint, uint ) ),
+	QObject::connect( m_notifySocket, SIGNAL( contactRemoved( QString, QString, uint, uint ) ),
 		this,	SLOT( slotContactRemoved( QString, QString, uint, uint ) ) );
-	connect( m_notifySocket, SIGNAL( statusChanged( QString ) ),
+	QObject::connect( m_notifySocket, SIGNAL( statusChanged( QString ) ),
 		this, SLOT( slotStatusChanged( QString ) ) );
-	connect( m_notifySocket, SIGNAL( onlineStatusChanged( MSNSocket::OnlineStatus ) ),
+	QObject::connect( m_notifySocket, SIGNAL( onlineStatusChanged( MSNSocket::OnlineStatus ) ),
 		this, SLOT( slotNotifySocketStatusChanged( MSNSocket::OnlineStatus ) ) );
-	connect( m_notifySocket, SIGNAL( publicNameChanged( QString ) ),
+	QObject::connect( m_notifySocket, SIGNAL( publicNameChanged( QString ) ),
 		this, SLOT( slotPublicNameChanged( QString ) ) );
-	connect( m_notifySocket, SIGNAL( invitedToChat( QString, QString, QString, QString, QString ) ),
+	QObject::connect( m_notifySocket, SIGNAL( invitedToChat( QString, QString, QString, QString, QString ) ),
 		this, SLOT( slotCreateChat( QString, QString, QString, QString, QString ) ) );
-	connect( m_notifySocket, SIGNAL( startChat( QString, QString ) ),
+	QObject::connect( m_notifySocket, SIGNAL( startChat( QString, QString ) ),
 		this, SLOT( slotCreateChat( QString, QString ) ) );
-	connect( m_notifySocket, SIGNAL( socketClosed( int ) ),
+	QObject::connect( m_notifySocket, SIGNAL( socketClosed( int ) ),
 		this, SLOT( slotNotifySocketClosed( int ) ) );
-	connect( m_notifySocket, SIGNAL( hotmailSeted( bool ) ),
+	QObject::connect( m_notifySocket, SIGNAL( hotmailSeted( bool ) ),
 		m_openInboxAction, SLOT( setEnabled( bool ) ) );
 
 	m_notifySocket->setStatus( m_connectstatus );
@@ -198,7 +192,7 @@ void MSNProtocol::Connect()
 	m_openInboxAction->setEnabled(false);
 }
 
-void MSNProtocol::Disconnect()
+void MSNProtocol::disconnect()
 {
 	if( m_notifySocket )
 	{
@@ -406,14 +400,14 @@ void MSNProtocol::slotGoOnline()
 	m_connectstatus=NLN;
 	kdDebug() << "MSN Plugin: Going Online" << endl;
 	if (!isConnected() )
-		Connect();
+		connect();
 	else
 		setStatus( NLN );
 }
 
 void MSNProtocol::slotGoOffline()
 {
-	Disconnect();
+	disconnect();
 	m_connectstatus=NLN;
 }
 
@@ -453,7 +447,7 @@ void MSNProtocol::setStatus(Status s)
 	else
 	{
 		m_connectstatus=s;
-		Connect();
+		connect();
 	}
 }
 
@@ -539,7 +533,7 @@ void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status 
 					}
 				}
 
-				// Groups doesnt match any server group 
+				// Groups doesnt match any server group
 				if ( exists == 0 )
 				{
 					kdDebug() << "MSNProtocol::slotOnlineStatusChanged: Sync: Local group " << localgroup << " doesn't exist on server!" << endl;
@@ -679,7 +673,7 @@ void MSNProtocol::addContact( const QString &userID , KopeteMetaContact *m,
 		{
 			m_notifySocket->addContact( userID, userID, 0, FL );
 		  //TODO:
-		  /*if(!group.isNull()) 
+		  /*if(!group.isNull())
 		  {
 			int g = groupNumber( group );
 			if(g==-1) {
@@ -977,8 +971,8 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 
 			NewUserImpl *authDlg = new NewUserImpl(0);
 			authDlg->setHandle(handle, publicName);
-			connect( authDlg, SIGNAL(addUser( QString )), this, SLOT(slotAddContact( QString )));
-			connect( authDlg, SIGNAL(blockUser( QString )), this, SLOT(slotBlockContact( QString )));
+			QObject::connect( authDlg, SIGNAL(addUser( QString )), this, SLOT(slotAddContact( QString )));
+			QObject::connect( authDlg, SIGNAL(blockUser( QString )), this, SLOT(slotBlockContact( QString )));
 			authDlg->show();
 		}
 
@@ -1122,8 +1116,8 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 		{
 			NewUserImpl *authDlg = new NewUserImpl(0);
 			authDlg->setHandle(handle, publicName);
-			connect( authDlg, SIGNAL(addUser( QString )), this, SLOT(slotAddContact( QString )));
-			connect( authDlg, SIGNAL(blockUser( QString )), this, SLOT(slotBlockContact( QString )));
+			QObject::connect( authDlg, SIGNAL(addUser( QString )), this, SLOT(slotAddContact( QString )));
+			QObject::connect( authDlg, SIGNAL(blockUser( QString )), this, SLOT(slotBlockContact( QString )));
 			authDlg->show();
 		}
 		else
@@ -1255,7 +1249,7 @@ void MSNProtocol::slotStartChatSession( QString handle )
 			kdDebug() << "MSNProtocol::slotStartChatSession: "
 				<< "Creating new switchboard connection" << endl;
 
-       	//FIXME: what's happend when the user try to open two socket in the same time????  can the m_msgHandle be altered??
+			//FIXME: what's happend when the user try to open two socket in the same time????  can the m_msgHandle be altered??
 			m_msgHandle = handle;
 			m_notifySocket->createChatSession();
 		}
@@ -1351,7 +1345,7 @@ void MSNProtocol::slotPreferencesSaved()
 		m_msnId  = mPrefs->msnId();
 		if( m_myself && m_myself->contactId() != m_msnId )
 		{
-			Disconnect();
+			disconnect();
 			delete m_myself;
 			m_myself = new MSNContact( this, m_msnId, m_publicName, 0L );
 		}

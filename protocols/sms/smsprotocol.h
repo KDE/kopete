@@ -45,8 +45,6 @@ public:
 		const QStringList &strList );
 
 	virtual AddContactPage *createAddContactWidget( QWidget *parent );
-	virtual void Connect();
-	virtual void Disconnect();
 	virtual bool isConnected() const;
 	virtual void setAway();
 	virtual void setAvailable();
@@ -58,6 +56,8 @@ public:
 
 public slots:
 	void serialize( KopeteMetaContact *metaContact);
+	virtual void connect();
+	virtual void disconnect();
 
 private:
 	static SMSProtocol* s_protocol;

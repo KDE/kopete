@@ -118,8 +118,6 @@ public:
 		const QStringList &strList );
 
 	virtual AddContactPage *createAddContactWidget( QWidget *parent );
-	virtual void Connect();
-	virtual void Disconnect();
 	virtual bool isConnected() const;
 	virtual void setAway();
 	virtual void setAvailable();
@@ -158,6 +156,9 @@ public:
 	virtual KActionMenu* protocolActions();
 
 public slots:
+	virtual void connect();
+	virtual void disconnect();
+
 	/**
 	 * Start a new chat session: the result is an XFR command, see above
 	 */

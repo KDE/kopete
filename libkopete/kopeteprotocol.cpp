@@ -65,7 +65,7 @@ const QDict<KopeteContact>& KopeteProtocol::contacts()
 void KopeteProtocol::registerContact( KopeteContact *c )
 {
 	m_contacts.insert( c->contactId(), c );
-	connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
+	QObject::connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 		SLOT( slotKopeteContactDestroyed( KopeteContact * ) ) );
 }
 

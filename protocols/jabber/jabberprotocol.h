@@ -86,16 +86,6 @@ public:
 	AddContactPage *createAddContactWidget(QWidget * parent);
 
 	/**
-	 * Function to connect to the server
-	 */
-	void Connect();
-
-	/**
-	 * Function to disconnect from server
-	 */
-	void Disconnect();
-
-	/**
 	 * Set Stats to "Away"
 	 */
 	void setAway();
@@ -195,6 +185,16 @@ public:
 	void slotSaveVCard(QDomElement &);
 
 public slots:
+	/**
+	 * Function to connect to the server
+	 */
+	virtual void connect();
+
+	/**
+	 * Function to disconnect from server
+	 */
+	virtual void disconnect();
+
 	void setPresence(Presence status, const QString &reason = 0, int priority = 5);
 
 	/**
