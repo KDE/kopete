@@ -804,7 +804,7 @@ void YahooSession::_gotIdentitiesReceiver( YList *ids )
 
 void YahooSession::_statusChangedReceiver( char *who, int stat, char *msg, int away )
 {
-	kdDebug(14181) << k_funcinfo << endl;
+//	kdDebug(14181) << k_funcinfo << endl;
 
 	emit statusChanged( QString::fromLocal8Bit( who ), stat, QString::fromLocal8Bit( msg ), away );
 }

@@ -527,7 +527,7 @@ void YahooAccount::slotGotIdentities( const QStringList & /* ids */ )
 
 void YahooAccount::slotStatusChanged( const QString &who, int stat, const QString &msg, int /* away */)
 {
-	kdDebug(14180) << k_funcinfo << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 	KopeteContact *kc = contact( who );
 	if ( kc )
 	{
@@ -644,7 +644,7 @@ void YahooAccount::slotGameNotify( const QString & /* who */, int /* stat */ )
 
 void YahooAccount::slotMailNotify( const QString& from, const QString& /* subject */, int cnt )
 {
-	kdDebug(14180) << k_funcinfo << "Mail count: " << cnt << endl;
+//	kdDebug(14180) << k_funcinfo << "Mail count: " << cnt << endl;
 
 	if ( cnt > m_currentMailCount && from.isEmpty() )
 	{
