@@ -72,7 +72,7 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 	QObject::connect(m_cachedPass_timer, SIGNAL(timeout()), this, SLOT(slotForgetCachedPass() ));
 
 
-	KAction *action=new KAction( i18n("&Select Cryptography Public Key..."), "kgpg", 0, this, SLOT (slotSelectContactKey()), actionCollection() , "contactSelectKey");
+	KAction *action=new KAction( i18n("&Select Cryptography Public Key..."), "encrypted", 0, this, SLOT (slotSelectContactKey()), actionCollection() , "contactSelectKey");
 	connect ( Kopete::ContactList::self() , SIGNAL( metaContactSelected(bool)) , action , SLOT(setEnabled(bool)));
 	action->setEnabled(Kopete::ContactList::self()->selectedMetaContacts().count()==1 );
 
