@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>468</width>
-            <height>512</height>
+            <height>514</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -180,6 +180,12 @@
                             <property name="buddy" stdset="0">
                                 <cstring>ifMessageTooLong</cstring>
                             </property>
+                            <property name="toolTip" stdset="0">
+                                <string>What should happen if you type a message that is too long to fit in a single SMS message.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>What should happen if you type a message that is too long to fit in a single SMS message.  You can either choose to break it up into smaller messages automatically, cancel the message from being sent entirely, or have Kopete prompt you each time you enter a message that is too long.</string>
+                            </property>
                         </widget>
                         <widget class="QComboBox">
                             <item>
@@ -199,6 +205,12 @@
                             </item>
                             <property name="name">
                                 <cstring>ifMessageTooLong</cstring>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>What should happen if you type a message that is too long to fit in a single SMS message.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>What should happen if you type a message that is too long to fit in a single SMS message.  You can either choose to break it up into smaller messages automatically, cancel the message from being sent entirely, or have Kopete prompt you each time you enter a message that is too long.</string>
                             </property>
                         </widget>
                     </hbox>
