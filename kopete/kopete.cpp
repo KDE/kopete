@@ -29,6 +29,7 @@
 #include "appearanceconfig.h"
 #include "identityconfig.h"
 #include "kopetecontactlist.h"
+#include "kopeteidentitymanager.h"
 #include "kopetewindow.h"
 #include "pluginloader.h"
 #include "pluginconfig.h"
@@ -85,6 +86,7 @@ Kopete::Kopete()
 Kopete::~Kopete()
 {
 	KopeteContactList::contactList()->save();
+	KopeteIdentityManager::manager()->save();
 	delete m_mainWindow;
 //	kdDebug(14000) << "Kopete::~Kopete: done" <<endl;
 }
@@ -109,8 +111,8 @@ void Kopete::slotLoadPlugins()
 	{
 		// Ups! the user does not have plugins selected.
 		// TODO: show "first time" wizard and let user decide which modules to load
-		modules.append("autoaway.plugin");
-		modules.append("contactnotes.plugin");
+		modules.append("autoaway.desktop");
+		modules.append("contactnotes.desktop");
 		// Other modules to load for the first time?
 	}
 
@@ -132,8 +134,8 @@ void Kopete::slotLoadPlugins()
 	for (QCStringList::ConstIterator i = disableArgs.begin(); i != disableArgs.end(); ++i)
 	{
 		QString argument = QString::fromLatin1(*i);
-		if (!argument.endsWith(".plugin"))
-			argument.append(".plugin");
+		if (!argument.endsWith(".desktop"))
+			argument.append(".desktop");
 
 		modules.remove(argument);
 	}
@@ -147,6 +149,12 @@ void Kopete::slotLoadPlugins()
 	config->writeEntry( "Plugins", modules );
 
 	LibraryLoader::pluginLoader()->loadAll();
+	
+	//FIXME: identities should be loaded before contacts
+	KopeteIdentityManager::manager()->load();
+	
+	KopeteIdentityManager::manager()->autoConnect();
+	
 }
 
 void Kopete::slotMainWindowDestroyed()

@@ -69,6 +69,13 @@ public:
 	 */
 	virtual EditIdentityWidget *createEditIdentityWidget(KopeteIdentity *identity, QWidget *parent)
 		{ return 0L; }  //TODO: make this pure virtual
+		
+	/**
+	 * create a new empty KopeteIdentity with the id identityId
+	 * this method is called durring the loading from the xml file
+	 */
+	virtual KopeteIdentity *createNewIdentity(const QString &identityId)
+		{ return 0L; }  //TODO: make this pure virtual
 
 	/**
 	 * The icon of the plugin as shown in the status bar. .mng animations

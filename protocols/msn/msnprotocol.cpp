@@ -275,6 +275,11 @@ EditIdentityWidget *MSNProtocol::createEditIdentityWidget(KopeteIdentity *identi
 	return new MSNEditIdentityWidget(this,identity,parent);
 }
 
+KopeteIdentity *MSNProtocol::createNewIdentity(const QString &identityId)
+{
+	return new MSNIdentity(this, identityId);
+}
+
 void MSNProtocol::slotOpenInbox()
 {
 	if(m_notifySocket)

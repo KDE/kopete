@@ -116,6 +116,7 @@ public:
 
 	virtual AddContactPage *createAddContactWidget( QWidget *parent );
 	virtual EditIdentityWidget *createEditIdentityWidget(KopeteIdentity *identity, QWidget *parent);
+	virtual KopeteIdentity *createNewIdentity(const QString &identityId);
 
 	virtual bool isConnected() const;
 	virtual void setAway();
