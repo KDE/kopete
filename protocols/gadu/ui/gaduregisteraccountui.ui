@@ -71,10 +71,10 @@
                                         <cstring>kLineEdit1_2</cstring>
                                     </property>
                                     <property name="toolTip" stdset="0">
-                                        <string>The possword you would like to use.</string>
+                                        <string>The password you would like to use.</string>
                                     </property>
                                     <property name="whatsThis" stdset="0">
-                                        <string>The possword you would like to use for this account.</string>
+                                        <string>The password you would like to use for this account.</string>
                                     </property>
                                 </widget>
                                 <widget class="QLabel">
@@ -85,10 +85,10 @@
                                         <string>Repeat password:</string>
                                     </property>
                                     <property name="toolTip" stdset="0">
-                                        <string>A confirmation of the possword you would like to use.</string>
+                                        <string>A confirmation of the password you would like to use.</string>
                                     </property>
                                     <property name="whatsThis" stdset="0">
-                                        <string>A confirmation of the possword you would like to use for this account.</string>
+                                        <string>A confirmation of the password you would like to use for this account.</string>
                                     </property>
                                 </widget>
                             </vbox>
