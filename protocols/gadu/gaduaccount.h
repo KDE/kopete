@@ -109,6 +109,8 @@ private:
 	GaduContact* myself_;
 	KopeteOnlineStatus status_;
 	QString	nick_;
+	
+	QTextCodec *textcodec_;
 };
 
 #endif

@@ -26,6 +26,7 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
   : KopeteAccount( parent, accountID, name ), pingTimer_(0)
 {
 
+	textcodec_ = QTextCodec::codecForName("CP1250");
 
 	session_ = new GaduSession( this, "GaduSession" );
 
@@ -278,12 +279,11 @@ GaduAccount::notify( uin_t* userlist, int count )
 void
 GaduAccount::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 {
-    QTextCodec *codec = QTextCodec::codecForName("CP1250");
     QString sendMsg, cpmsg;
 	if ( session_->isConnected() ){
 	    sendMsg = msg;
 	    sendMsg.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "\r\n" ) );
-            cpmsg = codec->fromUnicode(sendMsg);
+            cpmsg = textcodec_->fromUnicode(sendMsg);
 	    session_->sendMessage( recipient, cpmsg, msgClass );
 	}
 }
@@ -299,12 +299,11 @@ GaduAccount::messageReceived( struct gg_event* e )
 {
     GaduContact *c = 0;
     QString message;
-    QTextCodec *codec = QTextCodec::codecForName("CP1250");
 
     if ( !e->event.msg.message )
 	return;
 
-    message = codec->toUnicode((const char*)e->event.msg.message);
+    message = textcodec_->toUnicode((const char*)e->event.msg.message);
 
     if ( e->event.msg.sender == 0 ) {
 	//system message, display them or not?
