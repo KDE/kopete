@@ -8,5 +8,5 @@ noinst_LTLIBRARIES = libgaduui.la
 libgaduui_la_SOURCES = gaduadd.ui gaduprefs.ui gadueditaccountui.ui gaduawayui.ui  \
 	empty.cpp
 
-EXTRA_DIST = gaduadd.ui gaduprefs.ui gadusearch.ui gadueditaccountui.ui gaduawayui.ui \
+EXTRA_DIST = gaduadd.ui gaduprefs.ui gadueditaccountui.ui gaduawayui.ui \
 	 empty.cpp
