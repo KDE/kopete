@@ -10,17 +10,12 @@ METASOURCES = AUTO
 
 SUBDIRS = conf addcontactwizard
 
-noinst_HEADERS = \
-	kopetewindow.h kopete.h \
-	kopetemetacontactlvi.h kopetegroupviewitem.h kopetecontactlistview.h \
-	statusbaricon.h systemtray.h kopeteballoon.h
-
 bin_PROGRAMS = kopete
 kopete_SOURCES = main.cpp \
 	kopetewindow.cpp kopete.cpp kopeteiface.cpp kopeteiface.skel \
 	kopetemetacontactlvi.cpp kopetestatusgroupviewitem.cpp kopetegroupviewitem.cpp \
 	statusbaricon.cpp kopetecontactlistview.cpp systemtray.cpp \
-	kopeteballoon.cpp
+	kopeteballoon.cpp kopeteglobalawaydialog.cpp
 
 kopete_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH) -lktexteditor
 kopete_LDADD = ../libkopete/libkopete.la conf/libkopeteconf.la \
