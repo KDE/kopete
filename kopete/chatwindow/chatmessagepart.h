@@ -141,8 +141,7 @@ private:
 	Kopete::ChatSession *m_manager;
 
 	unsigned long messageId;
-	typedef QMap<unsigned long,Kopete::Message> MessageMap;
-	MessageMap messageMap;
+	QStringList messageMap;
 
 	bool scrollPressed;
 	bool bgChanged;

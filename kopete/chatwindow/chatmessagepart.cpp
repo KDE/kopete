@@ -264,16 +264,18 @@ void ChatMessagePart::save()
 		if ( dlg.currentFilter() == QString::fromLatin1( "text/xml" ) )
 		{
 			stream << QString::fromLatin1( "<document>" );
-			for ( MessageMap::Iterator it = messageMap.begin(); it != messageMap.end(); ++it )
-				stream << (*it).asXML().toString();
+			stream << messageMap.join("\n");
 			stream << QString::fromLatin1( "</document>\n" );
 		}
 		else if ( dlg.currentFilter() == QString::fromLatin1( "text/plain" ) )
 		{
-			for( MessageMap::Iterator it = messageMap.begin(); it != messageMap.end(); ++it)
+			for( QStringList::Iterator it = messageMap.begin(); it != messageMap.end(); ++it)
 			{
-				stream << "[" << KGlobal::locale()->formatDateTime( (*it).timestamp(), true, true );
-				stream << "] " << (*it).plainBody() << '\n';
+				QDomDocument doc;
+				doc.setContent(*it);
+				stream << "[" << doc.elementsByTagName("message").item(0).toElement().attribute("formattedTimestamp");
+				stream << "] " << doc.elementsByTagName("contact").item(0).toElement().attribute("contactId") ;
+				stream << ": " << doc.elementsByTagName("body").item(0).toElement().text() << "\n";
 			}
 		}
 		else
@@ -344,19 +346,22 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 	//parse emoticons and URL now.
 	message.setBody( message.parsedBody() , Kopete::Message::ParsedHTML );
 
-	messageMap.insert( ++messageId, message );
-
-	// transform all messages every time. needed for Adium style.
-#ifdef TRANSFORM_ALL_MESSAGES
-	d->refreshtimer.start(50,true); //let 50ms delay in the case several message are appended in the same time.
-	return;
-#else
-
-	uint bufferLen = (uint)KopetePrefs::prefs()->chatViewBufferSize();
-
 	message.setBgOverride( d->bgOverride );
 	message.setFgOverride( d->fgOverride );
 	message.setRtfOverride( d->rtfOverride );
+
+	messageMap.append(  message.asXML().toString() );
+
+	uint bufferLen = (uint)KopetePrefs::prefs()->chatViewBufferSize();
+
+	// transform all messages every time. needed for Adium style.
+#ifdef TRANSFORM_ALL_MESSAGES
+	if ( messageMap.count() >= bufferLen )
+		messageMap.pop_front();
+
+	d->refreshtimer.start(50,true); //let 50ms delay in the case several message are appended in the same time.
+	return;
+#else
 
 	QDomDocument domMessage = message.asXML();
 	domMessage.documentElement().setAttribute( QString::fromLatin1( "id" ), QString::number( messageId ) );
@@ -421,16 +426,7 @@ void ChatMessagePart::slotRefreshNodes()
 	DOM::HTMLBodyElement bodyElement = htmlDocument().body();
 
 	QString xmlString = QString::fromLatin1( "<document>" );
-	for( MessageMap::Iterator it = messageMap.begin(); it != messageMap.end(); ++it)
-	{
-		(*it).setBgOverride( d->bgOverride );
-		(*it).setFgOverride( d->fgOverride );
-		(*it).setRtfOverride( d->rtfOverride );
-
-		QDomDocument message = (*it).asXML();
-		message.documentElement().setAttribute( QString::fromLatin1( "id" ), QString::number( it.key() ) );
-		xmlString += message.toString();
-	}
+	xmlString += messageMap.join("\n");
 	xmlString += QString::fromLatin1( "</document>" );
 
 	d->xsltParser->transformAsync( xmlString, this, SLOT( slotTransformComplete( const QVariant & ) ) );
