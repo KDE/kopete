@@ -46,11 +46,11 @@
                 <cstring>Also_my_key</cstring>
             </property>
             <property name="text">
-                <string>Encrypt message also with this key</string>
+                <string>Encrypt outgoing messages with this key</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>&lt;qt&gt;Check this box if you want encrypt outgoing messages also with your key. So you will be able to decrypt it yourself later.&lt;br&gt;
-&lt;b&gt;Warning:&lt;/b&gt; This can grow the size of messages, and some protocols will refuse to send your messages because they are too big.</string>
+                <string>&lt;qt&gt;Check this box if you want to encrypt outgoing messages with this key, so that you will be able to decrypt them yourself later.&lt;br&gt;
+&lt;b&gt;Warning:&lt;/b&gt; This can increase the size of messages, and some protocols will refuse to send your messages because they are too large.</string>
             </property>
         </widget>
         <spacer row="5" column="1">

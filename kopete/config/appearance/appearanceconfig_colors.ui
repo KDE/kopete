@@ -164,7 +164,7 @@
                         <cstring>mGreyIdleMetaContacts</cstring>
                     </property>
                     <property name="text">
-                        <string>Recolor idle contacts:</string>
+                        <string>Re-color contacts marked as idle:</string>
                     </property>
                 </widget>
                 <widget class="KColorButton">

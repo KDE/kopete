@@ -154,7 +154,7 @@
                         <cstring>m_cb_incoming</cstring>
                     </property>
                     <property name="text">
-                        <string>Autoreplace incoming messages</string>
+                        <string>Auto replace on incoming messages</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -162,7 +162,7 @@
                         <cstring>m_cb_outgoing</cstring>
                     </property>
                     <property name="text">
-                        <string>Autoreplace outgoing messages</string>
+                        <string>Auto replace on outgoing messages</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">
@@ -178,7 +178,7 @@
                         <cstring>m_cb_upper</cstring>
                     </property>
                     <property name="text">
-                        <string>Start each sent line with capital letter</string>
+                        <string>Start each sent line with a capital letter</string>
                     </property>
                 </widget>
             </vbox>

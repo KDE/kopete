@@ -11,8 +11,25 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Plugins
+Name[be]=Дапаўненьні
 Name[bs]=Dodaci
+Name[ca]=Connectors
 Name[cs]=Moduly
+Name[da]=Plugin
 Name[fi]=Sovelmat
-Comment=Select and configure your plugins:
+Name[hu]=Bővítőmodulok
+Name[pt_BR]=Plug-ins
+Name[ru]=Модули
+Name[sr]=Додаци
+Name[sv]=Insticksprogram
+Name[tr]=Eklentiler
+Name[wa]=Tchôke-divins
+Comment=Hete You Can Select And Configure Your Plugins:
+Comment[be]=Выбраць і настроіць Вашыя дапаўненьні:
+Comment[ca]=Selecciona i configura els vostres connectors:
+Comment[da]=Vælg og indstil dine plugin:
+Comment[hu]=Végezze el a bővítőmodulok beállítását:
+Comment[pt_BR]=Selecione e configure seus plug-ins:
+Comment[sr]=Одабирање и подешавање ваших додатака:
+Comment[sv]=Välj och anpassa dina insticksprogram
 

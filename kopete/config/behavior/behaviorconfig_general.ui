@@ -81,7 +81,7 @@
                         <cstring>mSoundIfAwayChk</cstring>
                     </property>
                     <property name="text">
-                        <string>Enable events if away</string>
+                        <string>Enable events while away</string>
                     </property>
                 </widget>
                 <widget class="QPushButton" row="3" column="0">

@@ -199,7 +199,7 @@
                                 <cstring>m_setBG</cstring>
                             </property>
                             <property name="text">
-                                <string>Change background color into:</string>
+                                <string>Change background color to:</string>
                             </property>
                         </widget>
                         <widget class="KColorButton">
@@ -242,7 +242,7 @@
                                 <cstring>m_setFG</cstring>
                             </property>
                             <property name="text">
-                                <string>Change foreground color into:</string>
+                                <string>Change foreground color to:</string>
                             </property>
                         </widget>
                         <widget class="KColorButton">

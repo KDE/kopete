@@ -57,7 +57,7 @@
                 <cstring>NotifyNewChat</cstring>
             </property>
             <property name="text">
-                <string>&amp;Show me when someone open a chat</string>
+                <string>&amp;Automatically open a chat window when someone starts a conversation</string>
             </property>
         </widget>
         <widget class="QCheckBox">
