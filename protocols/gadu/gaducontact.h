@@ -58,8 +58,9 @@ public:
     virtual QString identityId() const;
 
     void  setParentIdentity( const QString& );
-    void  setGaduStatus( Q_UINT32 );
+    void  setGaduStatus( Q_UINT32, const QString& descr = QString::null );
     Q_UINT32  gaduStatus() const;
+    QString   description() const;
     uin_t uin() const;
 public slots:
     void showContextMenu(const QPoint& p, const QString& group);
@@ -82,6 +83,7 @@ private:
     KopeteMessageManager *msgManager_;
     uin_t                 uin_;
     QString               name_;
+    QString               description_;
     QStringList           groups_;
     QString               parentIdentity_;
     GaduProtocol         *protocol_;

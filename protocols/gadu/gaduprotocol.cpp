@@ -439,17 +439,17 @@ void
 GaduProtocol::notifyDescription( struct gg_event* e )
 {
     GaduContact *c;
-    struct gg_notify_reply *n = e->event.notify_descr.notify;
+    struct gg_notify_reply *n;
 
-    while( n->uin ) {
-        if ( !(c=contactsMap_.find(n->uin).data()) ) {
-            ++n;
+    n =  e->event.notify_descr.notify;
+
+    for( ; n->uin ; n++ ) {
+        char *descr = (e->type == GG_EVENT_NOTIFY_DESCR) ? e->event.notify_descr.descr : NULL;
+        if ( !(c=contactsMap_.find( n->uin ).data()) )
             continue;
-        }
         if ( c->gaduStatus() == (Q_UINT32)n->status )
             continue;
-        c->setGaduStatus( n->status );
-        ++n;
+        c->setGaduStatus( n->status, descr );
     }
 }
 
@@ -460,7 +460,7 @@ GaduProtocol::statusChanged( struct gg_event* e )
     kdDebug()<<"### status changed"<<endl;
     if( !c )
         return;
-    c->setGaduStatus( e->event.status.status );
+    c->setGaduStatus( e->event.status.status, e->event.status.descr );
 }
 
 void

@@ -232,10 +232,17 @@ GaduContact::setParentIdentity( const QString& id)
 }
 
 void
-GaduContact::setGaduStatus( Q_UINT32 status )
+GaduContact::setGaduStatus( Q_UINT32 status, const QString& descr )
 {
     status_ = status;
+    description_ = descr;
     emit statusChanged( this, GaduContact::status() );
+}
+
+QString
+GaduContact::description() const
+{
+    return description_;
 }
 
 Q_UINT32
