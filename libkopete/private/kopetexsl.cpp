@@ -31,7 +31,6 @@ const QString KopeteXSL::transform( const QString &xmlString, const QString &xsl
 
 	if( xslDoc != NULL && xmlDoc != NULL )
 	{
-		//Crash Here!
 		style_sheet = xsltParseStylesheetDoc( xslDoc );
 		resultDoc = xsltApplyStylesheet(style_sheet, xmlDoc, NULL);
 		if( resultDoc != NULL )
