@@ -30,9 +30,10 @@ namespace Kopete
 class MessageHandlerChainTerminator : public MessageHandler
 {
 public:
-	void handleMessage( MessageEvent * )
+	void handleMessage( MessageEvent *event )
 	{
 		kdError( 14010 ) << k_funcinfo << "message got to end of chain!" << endl;
+		event->ignore();
 	}
 	int capabilities()
 	{
