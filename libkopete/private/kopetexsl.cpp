@@ -60,6 +60,35 @@ void KopeteXSL::xsltTransformAsync( const QDomDocument &xmlDocument, const QDomD
 	mThread->start();
 }
 
+bool KopeteXSL::isValid( const QString &xslString )
+{
+	xsltStylesheetPtr style_sheet = NULL;
+	xmlDocPtr xslDoc = NULL;
+	bool retVal = false;
+
+	// Convert QString into a C string
+	QCString xslCString = xslString.utf8();
+
+	xslDoc = xmlParseMemory( xslCString, xslCString.length() );
+
+	if( xslDoc != NULL )
+	{
+		style_sheet = xsltParseStylesheetDoc( xslDoc );
+		if( style_sheet != NULL )
+		{
+			retVal = true;
+			xsltFreeStylesheet(style_sheet);
+		}
+	}
+
+	//Cleanup
+	xsltCleanupGlobals();
+	xmlCleanupParser();
+	xmlMemoryDump();
+
+	return retVal;
+}
+
 KopeteXSLThread::KopeteXSLThread( const QString &xmlString, const QString &xslString )
 {
 	m_xml = xmlString;
@@ -76,11 +105,6 @@ void KopeteXSLThread::run()
 	xmlLoadExtDtdDefaultValue = 0;
 	xmlSubstituteEntitiesDefault(1);
 
-	#ifdef XSL_DEBUG
-		kdDebug() << m_xml << endl;
-		kdDebug() << m_xsl << endl;
-	#endif
-
 	// Convert QString into a C string
 	QCString xmlCString = m_xml.utf8();
 	QCString xslCString = m_xsl.utf8();
@@ -92,22 +116,29 @@ void KopeteXSLThread::run()
 	if( xslDoc != NULL && xmlDoc != NULL )
 	{
 		style_sheet = xsltParseStylesheetDoc( xslDoc );
-		resultDoc = xsltApplyStylesheet(style_sheet, xmlDoc, NULL);
-		if( resultDoc != NULL )
+		if( style_sheet != NULL )
 		{
-			//Save the result into the QString
-			xmlOutputBufferPtr outp = xmlOutputBufferCreateIO( writeToQString, (xmlOutputCloseCallback)closeQString, &m_resultString, 0);
-			outp->written = 0;
-			xsltSaveResultTo ( outp, resultDoc, style_sheet );
-			xmlOutputBufferFlush(outp);
-			xmlFreeDoc(resultDoc);
+			resultDoc = xsltApplyStylesheet(style_sheet, xmlDoc, NULL);
+			if( resultDoc != NULL )
+			{
+				//Save the result into the QString
+				xmlOutputBufferPtr outp = xmlOutputBufferCreateIO( writeToQString, (xmlOutputCloseCallback)closeQString, &m_resultString, 0);
+				outp->written = 0;
+				xsltSaveResultTo ( outp, resultDoc, style_sheet );
+				xmlOutputBufferFlush(outp);
+				xmlFreeDoc(resultDoc);
+			}
+			else
+			{
+				kdDebug() << "Transformed document is null!!!" << endl;
+			}
+			xmlFreeDoc(xmlDoc);
+			xsltFreeStylesheet(style_sheet);
 		}
 		else
 		{
-			kdDebug() << "Transformed document is null!!!" << endl;
+			kdDebug() << "Document is not valid XSL!!!" << endl;
 		}
-		xmlFreeDoc(xmlDoc);
-		xsltFreeStylesheet(style_sheet);
 	}
 	else
 	{

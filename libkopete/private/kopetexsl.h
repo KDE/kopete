@@ -78,6 +78,14 @@ class KopeteXSL
 		 * @param xml The string you want to unescape
 		 */
 		static void unescape( QString &xml );
+
+		/**
+		 * Check if a string is a valid XSL stylesheet
+		 *
+		 * @param xslString The string you want to check
+		 * @return If this string represents a valid XSL stylesheet
+		 */
+		 static bool isValid( const QString &xslString );
 };
 
 /**

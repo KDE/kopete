@@ -18,7 +18,6 @@
 
 #include <qcheckbox.h>
 #include <qframe.h>
-#include <qxml.h>
 #include <qlabel.h>
 #include <qdir.h>
 #include <qtextstream.h>
@@ -468,13 +467,11 @@ void AppearanceConfig::slotDeleteStyle()
 
 void AppearanceConfig::slotStyleSaved()
 {
+	QString fileSource = KTextEditor::editInterface( editDocument )->text();
 	QString filePath = itemMap[ editedItem ];
 	delete editedItem;
 
-	QXmlInputSource src;
-	QXmlSimpleReader reader;
-	src.setData( KTextEditor::editInterface( editDocument )->text() );
-	if( !reader.parse(&src,false) )
+	if( !KopeteXSL::isValid( fileSource ) )
 		KMessageBox::error( this, i18n("This is not a valid XSL document. Please double check your modifications."), i18n("Invalid Style") );
 
 	if( !filePath.isNull() )
@@ -490,7 +487,7 @@ void AppearanceConfig::slotStyleSaved()
 	if ( out.open( IO_WriteOnly ) )
 	{
 		QTextStream stream( &out );
-		stream << src.data();
+		stream << fileSource;
 		out.close();
 
 		mPrfsChatAppearance->styleList->insertItem( styleEditor->styleName->text(), 0 );
