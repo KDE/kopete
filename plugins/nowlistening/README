@@ -2,11 +2,14 @@ README for Now Listening Plugin
 
 AUTHOR Will Stephenson <will@stevello.free-online.co.uk>
 
-This plugin tells (currently ALL) your live chats what you're currently listening to.
+This plugin tells selected live chats what you're currently listening to.
+To enable it for a contact, use the metacontact's context menu->Now Listening or Chat->Contacts->Now Listening entry.  It will then send them a (configurable) periodic message when you have a new track playing.
 
-Caveat: It currently only works with KsCD.  Other media players will be supported shortly.
+Caveat: It currently only works with KsCD, Xmms and Noatun.  Other media players will be supported shortly.
 
 Caveat 2: It relies on DCOP - I doubt much will happen if you're not running the rest of KDE.
+
+Caveat 3: There's no escaping of the substituted strings, so you might get it stuck in a loop...
 
 INSTALLATION
 
@@ -27,6 +30,8 @@ make
 USE
 
 Enable the plugin in Configure Kopete...->Plugins.  You may wish to change the default message and frequency at which it checks for a changed song.
+
+You can force a notification by typing the string "/media" at the start of a new message, which will be substituted, or by using the Chat->Actions->Send Media Info menu item.
 
 BUGS
 

@@ -49,6 +49,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char *name, const
 	m_actionCollection = 0L;
 	m_actionWantsAdvert = 0L;
 	m_currentMetaContact = 0L;
+	m_currentMessageManager = 0L;
 
 	// initialise preferences
 	
@@ -70,8 +71,27 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char *name, const
 	
 	// connect timer signals to dcop poll methods
 	connect( m_pollTimer, SIGNAL( timeout() ),
-			this, SLOT( slotPollPlayers() ) );
+			this, SLOT( slotChangesToAllChats() ) );
 	m_pollTimer->start( m_prefs->pollFrequency() * 1000 );
+
+	// watch for '/media' getting typed
+	connect(  KopeteMessageManagerFactory::factory(),
+			SIGNAL(  aboutToSend(  KopeteMessage & ) ),
+			SLOT(  slotOutgoingMessage(  KopeteMessage & ) ) );
+}
+
+NowListeningPlugin::~NowListeningPlugin()
+{
+	kdDebug() << "NowListeningPlugin::~NowListeningPlugin()" << endl;
+	// clean up our array of media player instances
+	for ( int i = 0; i < NO_PLAYERS; i++ )
+	{
+		delete m_mediaPlayer[ i ];
+	}
+	delete m_mediaPlayer;
+	
+	// cleanly end DCOP
+	m_client->detach();
 }
 
 KActionCollection *NowListeningPlugin::customContextMenuActions( KopeteMetaContact *m )
@@ -80,8 +100,9 @@ KActionCollection *NowListeningPlugin::customContextMenuActions( KopeteMetaConta
 		m->displayName() << endl;
 	delete m_actionCollection;
 	m_actionCollection = new KActionCollection( this );
-	m_actionWantsAdvert = new KToggleAction( "Now Listening", KStdGuiItem::ok().iconName(),
-			0, m_actionCollection, "actionWantsAdvert" );
+	m_actionWantsAdvert = new KToggleAction( "Now Listening",
+			KStdGuiItem::ok().iconName(), 0, m_actionCollection,
+			"actionWantsAdvert" );
 	m_actionWantsAdvert->setChecked( m->pluginData( this ).first() == "true" );
 	connect( m_actionWantsAdvert, SIGNAL( toggled( bool ) ),
 			this, SLOT( slotContactWantsToggled( bool ) ) );
@@ -90,30 +111,38 @@ KActionCollection *NowListeningPlugin::customContextMenuActions( KopeteMetaConta
 	return m_actionCollection;
 }
 
+KActionCollection *NowListeningPlugin::customChatActions(  KopeteMessageManager* kmm )
+{
+	kdDebug() << "NowListeningPlugin::customChatActions()" << endl;
+	delete m_actionCollection;
+	m_actionCollection = new KActionCollection( this );
+	KAction *actionSendAdvert = new KAction( "Send Media Info", 0, this,
+			SLOT( slotSendAdvert() ), m_actionCollection, "actionSendAdvert" );
+	m_actionCollection->insert( actionSendAdvert );
+	m_currentMessageManager = kmm;
+	return m_actionCollection;
+}
+
 void NowListeningPlugin::slotContactWantsToggled( bool on )
 {
 	kdDebug() << "NowListeningPlugin::slotContactsWantsToggled()" << endl;
 	if ( m_actionWantsAdvert && m_currentMetaContact )
 	{
-		/*
-		kdDebug() << "NowListeningPlugin::slotContactsWantsToggled()" << 
-			" - setting PLD for " << m_currentMetaContact->displayName() << " to " << ( on ? "true" : "false" ) << endl;
-		*/
 		m_currentMetaContact->setPluginData( this, ( on ? "true" : "false" ) );
-		/*
-		//kdDebug() << "NowListeningPlugin::slotContactsWantsToggled()" <<
-			" - PLD reads as " << m_currentMetaContact->pluginData( this ).first() << endl;
-		*/
 	}
 }
 
-void NowListeningPlugin::slotPollPlayers()
+void NowListeningPlugin::slotSendAdvert()
 {
-	kdDebug() << "NowListeningPlugin::slotPollPlayers()" << endl;
+	//advertise  to a single chat
+	advertiseToChat( m_currentMessageManager, allPlayerAdvert() );
+}	
+
+void NowListeningPlugin::slotChangesToAllChats()
+{
+	kdDebug() << "NowListeningPlugin::slotChangesToAllChats()" << endl;
 	bool sthToAdvertise = false;
-	QString header = m_prefs->header();
-	QString message = header;
-	QString conjunction = m_prefs->conjunction();
+	QString message = m_prefs->header();
 	QString perTrack = m_prefs->perTrack();
 
 	// see if there is something new
@@ -128,8 +157,8 @@ void NowListeningPlugin::slotPollPlayers()
 			//	<< "a " << ( m_mediaPlayer[ i ]->newTrack() ? "new" : "old" )  << " track" << endl;
 			// CLEVER SUBSTITUTION WITH DEPTH FIRST SEARCH FOR 
 			// INCLUSION CONDITIONAL ON SUBSTITUTION BEING MADE
-			if (  message != header ) // > 1 track playing!
-				message = message + conjunction;
+			if (  message != m_prefs->header() ) // > 1 track playing!
+				message = message + m_prefs->conjunction();
 			//kdDebug() << m_mediaPlayer[ i ]->track() << m_mediaPlayer[ i ]->artist() << m_mediaPlayer[ i ]->album() << m_mediaPlayer[ i ]->name() << endl;
 			message = message + substDepthFirst( m_mediaPlayer[ i ], 
 					perTrack, false );
@@ -137,7 +166,57 @@ void NowListeningPlugin::slotPollPlayers()
 	}
 	// tell anyone who is interested
 	if ( sthToAdvertise )
-		advertiseNewTracks( message );
+	{
+		// tell each active chat about the new song 
+
+		// get the list of active chats
+		KopeteMessageManagerDict allsessions = 
+			KopeteMessageManagerFactory::factory()->sessions();
+		// for each active chat
+		for ( QIntDictIterator<KopeteMessageManager> it( allsessions );
+				it.current();
+				++it )
+		{
+			advertiseToChat( it.current(), message );
+		}
+	}
+}
+
+void NowListeningPlugin::slotOutgoingMessage( KopeteMessage& msg )
+{
+	QString originalBody = msg.plainBody();
+	// look for messages that we've generated and ignore them
+	if ( !originalBody.startsWith( m_prefs->header() ) )
+	{
+		// look for the string '/media'
+		if ( originalBody.startsWith( "/media" ) )
+		{
+			// replace it with media advert
+			QString newBody = allPlayerAdvert() + originalBody.right( 
+					originalBody.length() - 6 );
+			msg.setBody( newBody, KopeteMessage::RichText );
+		}	
+		return;
+	}
+}
+
+QString NowListeningPlugin::allPlayerAdvert()
+{
+	// generate message for all players
+	QString message = m_prefs->header();
+	QString perTrack = m_prefs->perTrack();
+	for ( int i = 0; i < NO_PLAYERS; i++ )
+	{
+		m_mediaPlayer[ i ]->update();
+		if ( m_mediaPlayer[ i ]->playing() )
+		{
+			if (  message != m_prefs->header() ) // > 1 track playing!
+				message = message + m_prefs->conjunction();
+			message = message + substDepthFirst( m_mediaPlayer[ i ], 
+					perTrack, false );
+		}
+	}
+	return message;
 }
 
 QString NowListeningPlugin::substDepthFirst( NLMediaPlayer *player,
@@ -213,9 +292,8 @@ QString NowListeningPlugin::substDepthFirst( NLMediaPlayer *player,
 	else
 		return in;
 }
-	
 
-void NowListeningPlugin::advertiseNewTracks(QString message)
+/*void NowListeningPlugin::advertiseNewTracks(QString message)
 {
 	// tell each active chat about the new song 
 	
@@ -227,65 +305,57 @@ void NowListeningPlugin::advertiseNewTracks(QString message)
 			it.current();
 			++it )
 	{
-		if ( it.current()->widget() != 0L )
-		{
-			// then we have a live session?
-
-			// reduce the recipients to the set of members who are interested
-			// in our output
-			KopeteContactPtrList pl = it.current()->members();
-			QStringList myData;
-			// avoid skipping one member when removing 
-			// (old version's pl.remove(); pl.next() skipped because 
-			// remove() moves on to next for you.
-			pl.first();
-			while ( pl.current() )
-			{
-				myData = pl.current()->metaContact()->pluginData( this );
-				if ( myData.isEmpty() || myData.first() != "true" )
-					pl.remove();
-				else
-					pl.next();
-			}
-			// get on with it
-			kdDebug() << "NowListeningPlugin::advertiseNewTracks() - " <<
-				( pl.isEmpty() ? "has no " : "has " ) << "interested recipients: " << endl;
-			for ( pl.first(); pl.current(); pl.next() )
-				kdDebug() << "NowListeningPlugin::advertiseNewTracks() " << pl.current()->displayName() << endl;
-			// if no-one in this KMM wants to be advertised to, don't send
-			// any message
-			if ( pl.isEmpty() )
-				break;
-			KopeteMessage msg( it.current()->user(),
-					pl,
-					message,
-					KopeteMessage::Outbound,
-					KopeteMessage::RichText );
-			it.current()->slotMessageSent( msg );
-		}
+		advertiseToChat( it.current() );
 	}
 	// for now, just print a debug message
 	kdDebug() << "NowListeningPlugin::advertiseNewTracks() - " << 
 		message << endl;
 }
+*/
 
+void NowListeningPlugin::advertiseToChat( KopeteMessageManager *theChat, QString message )
+{
+	if ( theChat->widget() != 0L )
+	{
+		// then we have a live session?
+
+		// reduce the recipients to the set of members who are interested
+		// in our output
+		KopeteContactPtrList pl = theChat->members();
+		QStringList myData;
+		// avoid skipping one member when removing 
+		// (old version's pl.remove(); pl.next() skipped because 
+		// remove() moves on to next for you.
+		pl.first();
+		while ( pl.current() )
+		{
+			myData = pl.current()->metaContact()->pluginData( this );
+			if ( myData.isEmpty() || myData.first() != "true" )
+				pl.remove();
+			else
+				pl.next();
+		}
+		// get on with it
+		kdDebug() << "NowListeningPlugin::advertiseNewTracks() - " <<
+			( pl.isEmpty() ? "has no " : "has " ) << "interested recipients: " << endl;
+		for ( pl.first(); pl.current(); pl.next() )
+			kdDebug() << "NowListeningPlugin::advertiseNewTracks() " << pl.current()->displayName() << endl;
+		// if no-one in this KMM wants to be advertised to, don't send
+		// any message
+		if ( pl.isEmpty() )
+			return;
+		KopeteMessage msg( theChat->user(),
+				pl,
+				message,
+				KopeteMessage::Outbound,
+				KopeteMessage::RichText );
+		theChat->slotMessageSent( msg );
+	}
+	return;
+}
 void NowListeningPlugin::slotSettingsChanged()
 {
 	m_pollTimer->start( m_prefs->pollFrequency() * 1000 );
-}
-
-NowListeningPlugin::~NowListeningPlugin()
-{
-	kdDebug() << "NowListeningPlugin::~NowListeningPlugin()" << endl;
-	// clean up our array of media player instances
-	for ( int i = 0; i < NO_PLAYERS; i++ )
-	{
-		delete m_mediaPlayer[ i ];
-	}
-	delete m_mediaPlayer;
-	
-	// cleanly end DCOP
-	m_client->detach();
 }
 
 #include "nowlisteningplugin.moc"

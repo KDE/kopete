@@ -59,6 +59,9 @@ QCString NLNoatun::find()
 		
 void NLNoatun::update()
 {
+	// TODO: Fix to use currentProperty - author, title etc
+	// Thanks mETz
+	//
 	m_playing = false;
 	QString newTrack;
 	// see if it's registered with DCOP

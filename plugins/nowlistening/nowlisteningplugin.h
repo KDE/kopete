@@ -36,45 +36,67 @@ class NLMediaPlayer;
  */
 class NowListeningPlugin : public KopetePlugin
 {
-		Q_OBJECT
-		public:
-			NowListeningPlugin(  QObject *parent, const char *name, const QStringList &args );
-			virtual ~NowListeningPlugin();
-			virtual KActionCollection *customContextMenuActions( KopeteMetaContact* );
-//			virtual KActionCollection *customChatActions( KopeteMessageManager* );
+	Q_OBJECT
+	public:
+		NowListeningPlugin(  QObject *parent, const char *name, const QStringList &args );
+		virtual ~NowListeningPlugin();
+		virtual KActionCollection *customContextMenuActions( KopeteMetaContact* );
+		virtual KActionCollection *customChatActions( KopeteMessageManager* );
 
 
-		public slots:
-			/**
-			 * Apply updated settings from preferences instance
-			 */
-			void slotSettingsChanged();
-			void slotContactWantsToggled( bool on );
-		protected:
-			/** 
-			 * Constructs and sends the message
-			 */
-			QString substDepthFirst( NLMediaPlayer *player, QString in, bool );
-			void advertiseNewTracks( QString message );
-		protected slots:
-			/**
-			 * Polls all players for current state and sends "now listening" message
-			 */
-			 void slotPollPlayers();
-		private:
-			// Points to the preferences instance
-			NowListeningPreferences *m_prefs;
-			// Array of pointers to media player interfaces
-			NLMediaPlayer **m_mediaPlayer;
-			// Triggers slotPollPlayers
-			QTimer *m_pollTimer;
-			// The initial part of the "now listening" message
-			//QString m_message;
-			// Needed for DCOP interprocess communication
-			DCOPClient *m_client;
-			KActionCollection *m_actionCollection;
-			KToggleAction *m_actionWantsAdvert;
-			KopeteMetaContact *m_currentMetaContact;
+	public slots:
+		/**
+		 * Apply updated settings from preferences instance
+		 */
+		void slotSettingsChanged();
+		void slotOutgoingMessage( KopeteMessage& msg );
+	protected:
+		/** 
+		 * Constructs a string containing the track information for all
+		 * players
+		 */
+		QString allPlayerAdvert();
+		/** 
+		 * Constructs and sends the message
+		 */
+		QString substDepthFirst( NLMediaPlayer *player, QString in, bool );
+		/**
+		 * Sends a message to a single chat
+		 */
+		void advertiseToChat( KopeteMessageManager* theChat, QString message );
+	protected slots:
+		/**
+		 * Polls all players for current state and sends "now listening" message
+		 */
+		//void slotPollPlayers();
+		/**
+		 * called to change whether a contact should receive adverts
+		 */
+		void slotContactWantsToggled( bool on );
+		/**
+		 * called to reactively send an advert
+		 */
+		void slotSendAdvert();
+		/** 
+		 * informs all active chats of any changes since last
+		 */
+		void slotChangesToAllChats();
+	private:
+		// Points to the preferences instance
+		NowListeningPreferences *m_prefs;
+		// Array of pointers to media player interfaces
+		NLMediaPlayer **m_mediaPlayer;
+		// Triggers slotPollPlayers
+		QTimer *m_pollTimer;
+		// The initial part of the "now listening" message
+		//QString m_message;
+		// Needed for DCOP interprocess communication
+		DCOPClient *m_client;
+		// Support GUI actions
+		KActionCollection *m_actionCollection;
+		KopeteMessageManager *m_currentMessageManager;
+		KToggleAction *m_actionWantsAdvert;
+		KopeteMetaContact *m_currentMetaContact;
 };
 
 #endif
