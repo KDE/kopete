@@ -45,8 +45,6 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (chkRemPass, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
 
 	// Chat TAB
-	connect (mLogAll, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
-
 	connect (cmbAuth, SIGNAL (activated (int)), this, SLOT (configChanged ()));
 
 	connect (cbProxyType, SIGNAL (activated (int)), this, SLOT (configChanged ()));
@@ -114,8 +112,6 @@ void JabberEditAccountWidget::reopen ()
 	leProxyPass->setText (m_account->pluginData (m_protocol, "ProxyPass"));
 	mAutoConnect->setChecked (m_account->autoLogin());
 
-	if (m_account->pluginData (m_protocol, "LogAll") == "true")
-		mLogAll->setChecked (true);
 }
 
 KopeteAccount *JabberEditAccountWidget::apply ()
@@ -170,11 +166,6 @@ void JabberEditAccountWidget::writeConfig ()
 	}
 
 	m_account->setAutoLogin(mAutoConnect->isChecked());
-
-	if (mLogAll->isChecked ())
-		m_account->setPluginData (m_protocol, "LogAll", "true");
-	else
-		m_account->setPluginData (m_protocol, "LogAll", "false");
 
 	switch (cmbAuth->currentItem ())
 	{
