@@ -299,7 +299,6 @@ GaduRichTextFormat::insertRtf( uint position)
 				kdDebug( 14100 ) << "problem allocating memory, message cannot be sent" << endl;
 				return false;
 			};
-			kdDebug(14100)<<"dodajemy kolorek " << endl;
 			memcpy( rtf.data() + csize, &rtcs, sizeof( rtcs ) );
 		}
 	}
