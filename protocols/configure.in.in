@@ -1,0 +1,34 @@
+AC_DEFUN(AC_CHECK_GLIB,
+[
+  AC_MSG_CHECKING([for GLib 1.x])
+  AC_CACHE_VAL(ac_cv_have_glib,
+  [
+    ac_save_libs="$LIBS"
+    LIBS="`glib-config --libs`"
+    ac_CPPFLAGS_save="$CPPFLAGS"
+    CPPFLAGS="$CPPFLAGS $all_includes `glib-config --cflags`"
+    ac_LDFLAGS_save="$LDFLAGS"
+    LDFLAGS="$LDFLAGS $all_libraries"
+    AC_TRY_LINK(
+      [#include <glib.h>],
+      [if (glib_major_version > 1 ) return(-1);],
+      [ac_cv_have_glib="yes"],
+      [ac_cv_have_glib="no"]
+    )
+    LIBS="$ac_save_libs"
+    LDFLAGS="$ac_LDFLAGS_save"
+    CPPFLAGS="$ac_CPPFLAGS_save"
+  ])
+  AC_MSG_RESULT($ac_cv_have_glib)
+  if test "$ac_cv_have_glib" = "yes"; then
+    GLIB_LIBADD="`glib-config --libs`"
+    GLIB_CFLAGS="`glib-config --cflags`"
+    YAHOO_PROTOCOL="yahoo"
+    AC_DEFINE(HAVE_GLIB, 1, [Define if you have glib libraries and header files.])
+  fi
+])
+
+AC_CHECK_GLIB
+AC_SUBST(GLIB_LIBADD)
+AC_SUBST(GLIB_CFLAGS)
+AC_SUBST(YAHOO_PROTOCOL)

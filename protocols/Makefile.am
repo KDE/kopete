@@ -1,1 +1,1 @@
-SUBDIRS = icq_new icq  msn aim jabber winpopup irc gadu
+SUBDIRS = aim gadu icq icq_new irc jabber msn winpopup $(YAHOO_PROTOCOL)
