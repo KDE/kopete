@@ -33,6 +33,37 @@ const unsigned short ICQ_SEARCHSTATE_ONLINE = 1;
 const unsigned short ICQ_SEARCHSTATE_DISABLED = 2;
 
 const unsigned char ICQ_TCP_VERSION = 0x0008;
+const char ICQ_CLIENTSTRING[] = "ICQ Inc. - Product of ICQ (TM).2002a.5.37.1.3728.85";
+const WORD ICQ_CLIENTID = 0x010A;
+const WORD ICQ_MAJOR = 0x0005;
+const WORD ICQ_MINOR = 0x0025;
+const WORD ICQ_POINT = 0x0001;
+const WORD ICQ_BUILD = 0x0e90;
+const char ICQ_OTHER[] = { 0x00, 0x00, 0x00, 0x55 };
+const char ICQ_COUNTRY[] = "us";
+const char ICQ_LANG[] = "en";
+
+// Taken from libicq, not sure if we ever support these requests
+const unsigned char PHONEBOOK_SIGN[16] =
+{
+	0x90, 0x7C, 0x21, 0x2C, 0x91, 0x4D, 0xD3, 0x11,
+	0xAD, 0xEB, 0x00, 0x04, 0xAC, 0x96, 0xAA, 0xB2
+};
+
+const unsigned char PLUGINS_SIGN[16] =
+{
+	0xF0, 0x02, 0xBF, 0x71, 0x43, 0x71, 0xD3, 0x11,
+	0x8D, 0xD2, 0x00, 0x10, 0x4B, 0x06, 0x46, 0x2E
+};
+
+/*
+const unsigned char SHARED_FILES_SIGN[16] =
+{
+	0xF0, 0x2D, 0x12, 0xD9, 0x30, 0x91, 0xD3, 0x11,
+	0x8D, 0xD7, 0x00, 0x10, 0x4B, 0x06, 0x46, 0x2E
+};
+*/
+// ==================================================================
 
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

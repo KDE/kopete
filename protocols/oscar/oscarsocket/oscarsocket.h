@@ -250,7 +250,7 @@ class OscarSocket : public OscarConnection
 		/** same as above but for icq which needs a XOR method to encode the password
 		*  returns the encoded password
 		*/
-		QCString encodePasswordXOR();
+		void encodePasswordXOR(const QString &password, QCString &encodedPassword);
 
 		/**
 		 * Logs in the user!

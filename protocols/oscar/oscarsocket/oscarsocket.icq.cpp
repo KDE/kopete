@@ -18,40 +18,9 @@
 #include "oscarsocket.icq.h"
 
 #include <netinet/in.h> // for htons()
-
 #include <stdlib.h>
-
 #include <qtimer.h>
-
 #include <kdebug.h>
-
-#define ICQ_CLIENTSTRING			"ICQ Inc. - Product of ICQ (TM).2002a.5.37.1.3728.85"
-#define ICQ_CLIENTID				0x010A
-#define ICQ_MAJOR					0x0005
-#define ICQ_MINOR					0x0025
-#define ICQ_POINT					0x0001
-#define ICQ_BUILD					0x0e90
-static const char ICQ_OTHER[] = { 0x00, 0x00, 0x00, 0x55 };
-#define ICQ_COUNTRY					"us"
-#define ICQ_LANG					"en"
-
-const unsigned char PHONEBOOK_SIGN[16] =
-{
-	0x90, 0x7C, 0x21, 0x2C, 0x91, 0x4D, 0xD3, 0x11,
-	0xAD, 0xEB, 0x00, 0x04, 0xAC, 0x96, 0xAA, 0xB2
-};
-
-const unsigned char PLUGINS_SIGN[16] =
-{
-	0xF0, 0x02, 0xBF, 0x71, 0x43, 0x71, 0xD3, 0x11,
-	0x8D, 0xD2, 0x00, 0x10, 0x4B, 0x06, 0x46, 0x2E
-};
-
-const unsigned char SHARED_FILES_SIGN[16] =
-{
-	0xF0, 0x2D, 0x12, 0xD9, 0x30, 0x91, 0xD3, 0x11,
-	0x8D, 0xD7, 0x00, 0x10, 0x4B, 0x06, 0x46, 0x2E
-};
 
 /**
  * taken from libfaim !!!
@@ -65,11 +34,10 @@ const unsigned char SHARED_FILES_SIGN[16] =
  * This buffer should be the exact length of the password without
  * the null. The encoded password buffer /is not %NULL terminated/.
  */
-QCString OscarSocket::encodePasswordXOR()
+void OscarSocket::encodePasswordXOR(const QString &originalPassword, QCString &encodedPassword)
 {
 	// TODO: check if latin1 is the right conversion
-	const char *password = loginPassword.latin1();
-	QCString encodedPass;
+	const char *password = originalPassword.latin1();
 
 	kdDebug(14150) << k_funcinfo << endl;
 //	kdDebug(14150) << " unencoded pw='" << password << "'" << endl;
@@ -99,18 +67,17 @@ QCString OscarSocket::encodePasswordXOR()
 		char enc = (password[i] ^ encoding_table[i]);
 		if (enc == 0)
 		{
-			encodedPass += "\\";
+			encodedPassword += "\\";
 			enc = '0';
 		}
 		else if (enc == '\\')
 		{
-			encodedPass += "\\";
+			encodedPassword += "\\";
         }
-		encodedPass += enc;
+		encodedPassword += enc;
 	}
 
-//	kdDebug(14150) << " encoded pw='" << encodedPass << "', length=" << encodedPass.length() << endl;
-	return encodedPass;
+	kdDebug(14150) << " encoded pw='" << encodedPassword << "', length=" << encodedPassword.length() << endl;
 }
 
 void OscarSocket::sendLoginICQ()
@@ -120,25 +87,27 @@ void OscarSocket::sendLoginICQ()
 	Buffer outbuf;
 
 	putFlapVer(outbuf); // FLAP Version
-	outbuf.addTLV(0x0001,getSN().length(),getSN().latin1()); // login name, i.e. ICQ UIN
+	outbuf.addTLV(0x0001, getSN().length(), getSN().latin1()); // login name, i.e. ICQ UIN
 
-	QCString encodedPassword = encodePasswordXOR();
-	outbuf.addTLV(0x0002,encodedPassword.length(),encodedPassword);
+	QCString encodedPassword;
+	encodePasswordXOR(loginPassword, encodedPassword);
 
-	outbuf.addTLV(0x0003,strlen(ICQ_CLIENTSTRING),ICQ_CLIENTSTRING);
-	outbuf.addTLV16(0x0016,ICQ_CLIENTID);
-	outbuf.addTLV16(0x0017,ICQ_MAJOR);
-	outbuf.addTLV16(0x0018,ICQ_MINOR);
-	outbuf.addTLV16(0x0019,ICQ_POINT);
-	outbuf.addTLV16(0x001a,ICQ_BUILD);
-	outbuf.addTLV(0x0014,0x0004,ICQ_OTHER); // distribution chan
-	outbuf.addTLV(0x000e,0x0002,ICQ_COUNTRY);
-	outbuf.addTLV(0x000f,0x0002,ICQ_LANG);
+	outbuf.addTLV(0x0002, encodedPassword.length(), encodedPassword);
 
-//	kdDebug(14150) << "Outbuf length before flap is: " << outbuf.length() << endl;
+	outbuf.addTLV(0x0003, strlen(ICQ_CLIENTSTRING), ICQ_CLIENTSTRING);
+	outbuf.addTLV16(0x0016, ICQ_CLIENTID);
+	outbuf.addTLV16(0x0017, ICQ_MAJOR);
+	outbuf.addTLV16(0x0018, ICQ_MINOR);
+	outbuf.addTLV16(0x0019, ICQ_POINT);
+	outbuf.addTLV16(0x001a, ICQ_BUILD);
+	outbuf.addTLV(0x0014, 0x0004, ICQ_OTHER); // distribution chan
+	outbuf.addTLV(0x000e, 0x0002, ICQ_COUNTRY);
+	outbuf.addTLV(0x000f, 0x0002, ICQ_LANG);
+
+	kdDebug(14150) << "CLI_COOKIE packet:" << endl << outbuf.toString() << endl;
 
 	sendBuf(outbuf,0x01);
-	//kdDebug(14150) << k_funcinfo << "emitting connectionChanged" << endl;
+
 //	emit connectionChanged(3,"Sending username and password...");
 }
 
