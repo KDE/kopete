@@ -30,6 +30,7 @@
 #include <qrect.h>
 #include <qtooltip.h>
 #include <qstylesheet.h>
+#include <qdragobject.h>
 
 #include <kapplication.h>
 #include <kconfig.h>
@@ -42,6 +43,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
+#include <kurl.h>
 
 #include "addcontactwizard.h"
 #include "kopetecontact.h"
@@ -899,18 +901,29 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/
 			source_metaLVI->metaContact()->moveToGroup(source_metaLVI->group() , KopeteGroup::toplevel);
 		}
 	}
-	else
+	else if( e->provides( "text/uri-list" ) )
 	{
-		kdDebug(14000) << "KopeteContactListView::slotDropped : WARNING: this drop is not allowed" <<endl;
+		if ( !QUriDrag::canDecode( e ) )
+		{
+			e->ignore();
+			return;
+		}
+
+		QStrList urlList;
+		QUriDrag::decode( e, urlList );
+
+		for ( char* url = urlList.first(); url; url = urlList.next() )
+		{
+			dest_metaLVI->metaContact()->sendFile( KURL( QString::fromLatin1( url ) ) );
+		}
+
+		e->acceptAction();
 	}
 
 }
 
 bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 {
-	if (e->source()!=viewport())
-		return false;
-
 	QListViewItem *source=currentItem();
 	QListViewItem *parent;
 	QListViewItem *afterme;
@@ -923,27 +936,35 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 		parent, afterme );
 
 	KopeteMetaContactLVI *dest_metaLVI=dynamic_cast<KopeteMetaContactLVI*>(afterme);
-	KopeteMetaContactLVI *source_metaLVI=dynamic_cast<KopeteMetaContactLVI*>(source);
 	KopeteGroupViewItem *dest_groupLVI=dynamic_cast<KopeteGroupViewItem*>(afterme);
 
-	if( source_metaLVI && dest_groupLVI )
+	if( e->source() == viewport() )
 	{
-		if(source_metaLVI->group() == dest_groupLVI->group())
-			return false;
-		if(dest_groupLVI->group() == KopeteGroup::temporary)
-			return false;
-//		if(source_metaLVI->metaContact()->isTemporary())
-//			return false;
-		return true;
-	}
-	else if(source_metaLVI  && !dest_metaLVI && !dest_groupLVI)
-	{
-		if(source_metaLVI->group() == KopeteGroup::toplevel)
-			return false;
-//		if(source_metaLVI->metaContact()->isTemporary())
-//			return false;
+		KopeteMetaContactLVI *source_metaLVI=dynamic_cast<KopeteMetaContactLVI*>(source);
+		if( source_metaLVI && dest_groupLVI )
+		{
+			if(source_metaLVI->group() == dest_groupLVI->group())
+				return false;
+			if(dest_groupLVI->group() == KopeteGroup::temporary)
+				return false;
+	//		if(source_metaLVI->metaContact()->isTemporary())
+	//			return false;
+			return true;
+		}
+		else if(source_metaLVI  && !dest_metaLVI && !dest_groupLVI)
+		{
+			if(source_metaLVI->group() == KopeteGroup::toplevel)
+				return false;
+	//		if(source_metaLVI->metaContact()->isTemporary())
+	//			return false;
 
-		return true;
+			return true;
+		}
+	}
+	else
+	{
+		if ( e->provides( "text/uri-list" )  && dest_metaLVI && dest_metaLVI->metaContact()->canAcceptFiles() )
+			return true;
 	}
 
 	return false;
