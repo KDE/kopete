@@ -53,7 +53,8 @@ void MSNContact::initContact( const QString &msnId, const QString &nickname,
 
 	m_msnId = msnId;
 	m_nickname = nickname;
-	m_groups = group;
+	if( !group.isEmpty() )
+		m_groups = group;
 	hasLocalGroup = false;
 
 	connect ( this, SIGNAL( chatToUser( QString ) ),
@@ -65,7 +66,7 @@ void MSNContact::initContact( const QString &msnId, const QString &nickname,
 
 void MSNContact::showContextMenu(QPoint point, QString /*group*/)
 {
-	popup = new KPopupMenu();
+	KPopupMenu *popup = new KPopupMenu();
 	popup->insertTitle( i18n( "%1 (%2)" ).arg( name() ).arg( msnId() ) );
 
 	// Chat with user
@@ -120,7 +121,8 @@ void MSNContact::showContextMenu(QPoint point, QString /*group*/)
 	}
 	m_actionRemove->plug( popup );
 
-	popup->popup( point );
+	popup->exec( point );
+	delete popup;
 }
 
 void MSNContact::execute()
@@ -152,6 +154,7 @@ void MSNContact::slotMoveThisUser()
 	// FIXME: originating group should also be provided!
 	if( m_actionMove )
 	{
+		kdDebug() << "***** MOVE: Groups: " << m_groups.join( ", " ) << endl;
 		MSNProtocol::protocol()->moveContact( this, m_groups.first(),
 			m_actionMove->currentText() );
 	}

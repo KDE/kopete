@@ -29,7 +29,6 @@ class QTimer;
 
 class KAction;
 class KListAction;
-class KPopupMenu;
 
 class KopeteHistoryDialog;
 
@@ -141,7 +140,6 @@ private:
 	MSNProtocol::Status m_status;
 
 	KopeteHistoryDialog *historyDialog;
-	KPopupMenu *popup;
 
 	KAction* m_actionRemove;
 	KAction* m_actionRemoveFromGroup;

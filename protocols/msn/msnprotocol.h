@@ -268,6 +268,11 @@ private slots:
 	 */
 	void slotChangePublicName();
 
+	/**
+	 * Show simple debugging aid
+	 */
+	void slotDebugRawCommand();
+
 private:
 	/**
 	 * Get group by name.
@@ -300,6 +305,9 @@ private:
 	KAction* actionGoOffline;
 	KAction* actionGoAway;
 	KAction* m_renameAction;
+
+	KActionMenu *m_debugMenu;
+	KAction *m_debugRawCommand;
 
 	KActionMenu *actionStatusMenu;
 	KAction* actionConnect;

@@ -57,7 +57,10 @@ void MSNSocket::connect( const QString &server, uint port )
 
 	setOnlineStatus( Connecting );
 	m_id = 0;
+	m_lastId = 0;
 	m_waitBlockSize = 0L;
+
+	m_sendQueue.clear();
 
 	m_server = server;
 	m_port = port;
@@ -216,6 +219,23 @@ void MSNSocket::slotReadLine()
 
 			parseLine( command );
 
+			// See if we have pending changes in the queue...
+			if( !m_sendQueue.isEmpty() )
+			{
+				kdDebug() << "MSNSocket::slotReadLine: Send queue not "
+					<< "empty, attempting to flush first item. m_lastId: "
+					<< m_lastId << endl;
+				QMap<uint, QString>::Iterator it = m_sendQueue.begin();
+				if( m_lastId >= it.key() - 1 )
+				{
+					kdDebug() << "MSNSocket::slotReadLine: "
+						<< "Flushing entry from send queue: "
+						<< it.data() << endl;
+					m_socket->writeBlock( it.data(), it.data().length() );
+					m_sendQueue.remove( it );
+				}
+			}
+
 			// Don't block the GUI while parsing data, only do a single line!
 			QTimer::singleShot( 0, this, SLOT( slotReadLine() ) );
 		}
@@ -268,6 +288,8 @@ void MSNSocket::parseLine( const QString &str )
 	if( !isNum )
 		data = str.section( ' ', 1, 1 ) + " " + data;
 
+	if( isNum && id )
+		m_lastId = id;
 
 	kdDebug() << "MSNSocket::parseCommand: Parsing command " << cmd <<
 		" (ID " << id << "): '" << data << "'" << endl;
@@ -308,7 +330,18 @@ void MSNSocket::sendCommand( const QString &cmd, const QString &args,
 	if( addNewLine )
 		data += "\r\n";
 
-	m_socket->writeBlock( data, data.length() );
+	// If the last confirmed Id is the last we sent, sent directly.
+	// Otherwise, queue. Command without Id are always sent.
+	// In case of queuing it is reasonable to assume the server will send
+	// a response, so the queue handling can be done in the read handler.
+	if( !m_lastId || !addId || ( m_lastId && m_lastId >= m_id - 1 ) )
+		m_socket->writeBlock( data, data.length() );
+	else
+	{
+		kdDebug() << "MSNSocket::sendCommand: Not sending directly. Entry "
+			<< "added to send queue with id " << m_id << endl;
+		m_sendQueue.insert( m_id, data );
+	}
 
 	m_id++;
 }

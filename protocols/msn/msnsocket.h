@@ -21,6 +21,7 @@
 #define MSNSOCKET_H
 
 #include <qobject.h>
+#include <qmap.h>
 
 class KExtendedSocket;
 
@@ -67,6 +68,15 @@ public:
 
 	OnlineStatus onlineStatus() { return m_onlineStatus; }
 
+	/**
+	 * Send an MSN command to the socket
+	 *
+	 * For debugging it's convenient to have this method public, but using
+	 * it outside this class is deprecated for any other use!
+	 */
+	void sendCommand( const QString &cmd, const QString &args = QString::null,
+		bool addNewLine = true, bool addId = true );
+
 signals:
 	/**
 	 * A block read is ready.
@@ -90,12 +100,6 @@ protected:
 	 * And the other way round...
 	 */
 	QString unescape( const QString &str );
-
-	/**
-	 * Send an MSN command to the socket
-	 */
-	void sendCommand( const QString &cmd, const QString &args = QString::null,
-		bool addNewLine = true, bool addId = true );
 
 	/**
 	 * Set the online status. Emits onlineStatusChanged.
@@ -164,6 +168,17 @@ private:
 	 * for each subsequent message sent.
 	 */
 	uint m_id;
+
+	/**
+	 * The last confirmed ID by the server
+	 */
+	uint m_lastId;
+
+	/**
+	 * Queue of pending commands (should be mostly empty, but is needed to
+	 * send more than one command to the server)
+	 */
+	QMap<uint, QString> m_sendQueue;
 
 	/**
 	 * Parse a single line of data.

@@ -68,6 +68,17 @@ void KMSNServiceSocket::handleError( uint code, uint id )
 	// TODO: Add support for all of these!
 	switch( code )
 	{
+	case 215:
+	{
+		QString msg = i18n( "This MSN user already exists in this group!\n"
+			"Please note that Kopete doesn't really handle users that exist "
+			"in multiple groups yet!\n"
+			"If this is not the case, please send us a detailed bug report "
+			"at kopete-devel@kde.org containing the raw output on the "
+			"console (in gzipped format, as it is probably a lot of output!" );
+		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
+		break;
+	}
 	case 911:
 	{
 		QString msg = i18n( "Authentication failed.\n"
@@ -160,15 +171,22 @@ void KMSNServiceSocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "ADD" )
 	{
+		QString msnId = data.section( ' ', 2, 2 );
 		uint group;
 		if( data.section( ' ', 0, 0 ) == "FL" )
+		{
 			group = data.section( ' ', 4, 4 ).toUInt();
+
+			// After succesfully adding a user to the Friends List, add to
+			// the Allow List as well. This can't be done in one shot, or
+			// the MSN server would respond with a 215 error (race condition)
+			addContact( msnId, msnId, 0, MSNProtocol::AL );
+		}
 		else
 			group = 0;
 
 		// handle, publicName, List, serial , group
-		emit contactAdded( data.section( ' ', 2, 2 ),
-			unescape( data.section( ' ', 2, 2 ) ),
+		emit contactAdded( msnId, unescape( msnId ),
 			data.section( ' ', 0, 0 ), data.section( ' ', 1, 1 ).toUInt(),
 			group );
 	}

@@ -5,5 +5,6 @@ INCLUDES = -I$(srcdir)/../../../libkopete -I$(srcdir)/../../../libkopete/ui \
 		$(all_includes)
 
 libkopetemsnui_la_METASOURCES = AUTO
-libkopetemsnui_la_SOURCES = msnadd.ui msnprefs.ui empty.cpp
+libkopetemsnui_la_SOURCES = msnadd.ui msnprefs.ui msndebugrawcommand_base.ui \
+		empty.cpp
 EXTRA_DIST = msnadd.ui msnprefs.ui empty.cpp

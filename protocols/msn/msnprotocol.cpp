@@ -30,6 +30,7 @@
 #include "kopete.h"
 #include "msnaddcontactpage.h"
 #include "msncontact.h"
+#include "msndebugrawcmddlg.h"
 #include "msnidentity.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
@@ -285,6 +286,11 @@ void MSNProtocol::initActions()
 		QString::null, 0, this, SLOT( slotChangePublicName() ),
 		this, "m_renameAction" );
 	actionStatusMenu = new KActionMenu( "MSN", this );
+
+	m_debugMenu = new KActionMenu( "Debug", this );
+	m_debugRawCommand = new KAction( i18n( "Send &Raw Command..." ), 0,
+		this, SLOT( slotDebugRawCommand() ), this, "m_debugRawCommand" );
+
 	m_menuTitleId = actionStatusMenu->popupMenu()->insertTitle(
 		*( statusBarIcon->pixmap() ),
 		i18n( "%1 (%2)" ).arg( m_publicName ).arg( m_msnId ) );
@@ -293,6 +299,11 @@ void MSNProtocol::initActions()
 	actionStatusMenu->insert( actionGoAway );
 	actionStatusMenu->popupMenu()->insertSeparator();
 	actionStatusMenu->insert( m_renameAction );
+
+	actionStatusMenu->popupMenu()->insertSeparator();
+	actionStatusMenu->insert( m_debugMenu );
+
+	m_debugMenu->insert( m_debugRawCommand );
 
 	actionStatusMenu->plug( kopeteapp->systemTray()->contextMenu(), 1 );
 }
@@ -507,13 +518,14 @@ void MSNProtocol::addContact( const QString &userID )
 			kdDebug() << "MSNProtocol::addContact: WARNING: MSN ID " << userID
 				<< " not found in contact list!" << endl;
 			m_serviceSocket->addContact( userID, userID, 0, FL );
-			m_serviceSocket->addContact( userID, userID, 0, AL );
 		}
 		else
-		{
 			m_serviceSocket->addContact( userID, userID, 0, FL );
-			m_serviceSocket->addContact( userID, userID, 0, AL );
-		}
+
+		// Note that the user also needs to be added to the Allow List, but
+		// that is something we can't do in a single shot or the server
+		// would give us a 215 error. Instead let the service socket handle
+		// this...
 	}
 }
 
@@ -1113,6 +1125,18 @@ void MSNProtocol::slotChangePublicName()
 			m_publicNameSyncMode = SyncToServer;
 		}
 	}
+}
+
+void MSNProtocol::slotDebugRawCommand()
+{
+	MSNDebugRawCmdDlg *dlg = new MSNDebugRawCmdDlg( 0L );
+	int result = dlg->exec();
+	if( result == QDialog::Accepted )
+	{
+		m_serviceSocket->sendCommand( dlg->command(), dlg->params(),
+			dlg->addNewline(), dlg->addId() );
+	}
+	delete dlg;
 }
 
 #include "msnprotocol.moc"
