@@ -37,6 +37,7 @@
 #include "xmpp_tasks.h"
 
 #include "kopeteuiglobal.h"
+#include "kopetepasswordwidget.h"
 #include "jabberprotocol.h"
 #include "jabberaccount.h"
 #include "jabberconnector.h"
@@ -77,8 +78,8 @@ JabberRegisterAccount::JabberRegisterAccount ( JabberEditAccountWidget *parent, 
 	// get all settings from the main dialog
 	mMainWidget->leServer->setText ( parent->mServer->text () );
 	mMainWidget->leJID->setText ( parent->mID->text () );
-	mMainWidget->lePassword->setText ( parent->mPass->text () );
-	mMainWidget->lePasswordVerify->setText ( parent->mPass->text () );
+	mMainWidget->lePassword->setText ( parent->mPass->password () );
+	mMainWidget->lePasswordVerify->setText ( parent->mPass->password () );
 	mMainWidget->sbPort->setValue ( parent->mPort->value () );
 	mMainWidget->cbUseSSL->setChecked ( parent->cbUseSSL->isChecked () );
 
@@ -442,7 +443,7 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 		// save settings to parent
 		mParentWidget->mServer->setText ( mMainWidget->leServer->text () );
 		mParentWidget->mID->setText ( mMainWidget->leJID->text () );
-		mParentWidget->mPass->setText ( mMainWidget->lePassword->password () );
+		mParentWidget->mPass->setPassword ( mMainWidget->lePassword->password () );
 		mParentWidget->mPort->setValue ( mMainWidget->sbPort->value () );
 		mParentWidget->cbUseSSL->setChecked ( mMainWidget->cbUseSSL->isChecked () );
 

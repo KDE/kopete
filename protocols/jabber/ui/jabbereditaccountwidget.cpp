@@ -1,6 +1,6 @@
 
 /***************************************************************************
-                   jabberaccountwidget.h  -  Account widget for Jabber
+                   jabberaccountwidget.cpp  -  Account widget for Jabber
                              -------------------
     begin                : Mon Dec 9 2002
     copyright            : (C) 2002-2003 by Till Gerken <till@tantalo.net>
@@ -30,6 +30,7 @@
 #include <kpassdlg.h>
 
 #include "kopeteuiglobal.h"
+#include "kopetepasswordwidget.h"
 
 #include "jabbereditaccountwidget.h"
 #include "jabberregisteraccount.h"
@@ -39,9 +40,10 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 {
 
 	m_protocol = proto;
+	m_account = ident;
 
 	connect (mID, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
-	connect (mPass, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
+	connect (mPass, SIGNAL (changed ()), this, SLOT (configChanged ()));
 	connect (mResource, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 	connect (mPriority, SIGNAL (valueChanged (const QString &)), this, SLOT (configChanged ()));
 	connect (mServer, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
@@ -51,7 +53,6 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (cbUseSSL, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
 	connect (cbCustomServer, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
 	connect (cbAllowPlainTextPassword, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
-	connect (cbRemPass, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
 
 	connect (mID, SIGNAL (textChanged (const QString &)), this, SLOT (updateServerField ()));
 	connect (cbCustomServer, SIGNAL (toggled (bool)), this, SLOT (updateServerField ()));
@@ -66,10 +67,7 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	{
 		this->reopen ();
 		btnRegister->setEnabled ( false );
-/*		connect (btnRegister, SIGNAL (clicked ()), this, SLOT (deleteClicked ()));
-		lblRegistration->setText ( i18n ( "<i>Use this button to delete your account from the server. Please note that your contact list will be deleted permanently and you will not be able to log in again.</i>" ) );
-		btnRegister->setText ( i18n ( "&Delete Account" ) );
-*/	}
+	}
 	else
 	{
 		connect (btnRegister, SIGNAL (clicked ()), this, SLOT (registerClicked ()));
@@ -80,6 +78,12 @@ JabberEditAccountWidget::~JabberEditAccountWidget ()
 {
 }
 
+JabberAccount *JabberEditAccountWidget::account ()
+{
+
+	return m_account;
+
+}
 
 void JabberEditAccountWidget::reopen ()
 {
@@ -88,7 +92,7 @@ void JabberEditAccountWidget::reopen ()
 	mID->setDisabled(true);
 
 	mID->setText (account()->accountId ());
-	mPass->setText (account()->password ());
+	mPass->load (&account()->password ());
 	mResource->setText (account()->pluginData (m_protocol, "Resource"));
 	mPriority->setValue (account()->pluginData (m_protocol, "Priority").toInt ());
 	mServer->setText (account()->pluginData (m_protocol, "Server"));
@@ -96,8 +100,6 @@ void JabberEditAccountWidget::reopen ()
 	cbUseSSL->setChecked (account()->pluginData (m_protocol, "UseSSL") == QString::fromLatin1("true"));
 
 	mPort->setValue (account()->pluginData (m_protocol, "Port").toInt ());
-
-	cbRemPass->setChecked (account()->pluginData (m_protocol, "RemPass") == QString::fromLatin1("true"));
 
 	QString auth = account()->pluginData (m_protocol, "AuthType");
 
@@ -155,16 +157,7 @@ void JabberEditAccountWidget::writeConfig ()
 	else
 		account()->setPluginData (m_protocol, "UseSSL", "false");
 
-	if (cbRemPass->isChecked ())
-	{
-		account()->setPluginData (m_protocol, "RemPass", "true");
-		account()->setPassword (mPass->text ());
-	}
-	else
-	{
-		account()->setPluginData (m_protocol, "RemPass", "false");
-		account()->setPassword (NULL);
-	}
+	mPass->save(&account()->password ());
 
 	if (cbCustomServer->isChecked ())
 	{

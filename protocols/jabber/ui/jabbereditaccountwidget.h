@@ -42,6 +42,7 @@ public:
 	virtual bool validateData ();
 	virtual KopeteAccount *apply ();
 	bool settings_changed;
+	JabberAccount *account ();
 
 private slots:
 	void registerClicked ();
@@ -54,6 +55,7 @@ private slots:
 
 private:
 	JabberProtocol *m_protocol;
+	JabberAccount *m_account;
 
 	void reopen ();
 	void writeConfig ();
