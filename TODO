@@ -18,21 +18,23 @@ Beware: It's totally unsorted ;)
 
 - Prevent attempting to send while offline where appropriate
 
-- First time wizard (mETz)
+- First time wizard (mETz, low priority)
 
-- Import emoticon themes and/or styles (mETz)
+- Import emoticon themes and/or styles (mETz, low priority)
 
-- Save the account order in the config file !!!!!!
+- Save the account order in the config file (IMPORTANT)
 
 - Interface for application invitations, and better filetransfers support
+
 - KAB integration
+
 
 ================================================================================
 
-OSCAR ICQ/AIM TODO ITEMS (generously added by mETz *g*)
 
-	OSCAR in general=============================================================
-For 0.7
+OSCAR ICQ/AIM TODO ITEMS
+
+	OSCAR in general========================================================
 	- somehow sync server and local list, this is not as trivial as everybody
 	  always thinks it is because you cannot sure if local changes or
 	  serverside-changes caused the difference (think about two clients being used
@@ -40,63 +42,50 @@ For 0.7
 	  Update: Actually it might be possible by saving two timestamp/size values
 	  for the account. Serverside and local values.
 	  Also I'm much in favor of hindering the user from offline editing the
-	  contactlist. (Probably just this for 0.7, this is all Jabber allows, anyway)
-
-	- save groupID in KopeteGroups
-
-	- make renaming serverside contacts possible (function is there but fails due
-	  to massive contactlist crappyness caused by above mentioned classes)
-
-For 1.0/kdenetwork:
+	  contactlist.
+	X save groupID in KopeteGroups
+	X make renaming serverside contacts possible
+	  (should work if kopete groupname == serverside groupname)
+	X Base Buffer class on something like QDataStream (if possible),
+	  I don't like all the pointer stuff in here
 	- get rid of AIMContactList, AIMBuddy (almost gone already) and AIMGroup.
 
-	- Maybe base Buffer class on something like QDataStream (if possible),
-	  I don't like all the pointer stuff in here
-
-	- possible switch to a libfaim based backend (for both ICQ and AOL)
-	  (rather no :P)
-
-
-	ICQ specific ================================================================
-For 0.7:
-	- support simple icq type-2 messages so we can send/receive away
-	messages (yes, I even see this as a point for not releasing 0.7, away
-	messages ARE important or else I could take out away modes altogether)
-
-	- prevent passwords longer than 8 chars, it upsets the server (wrong, 16 are allowed afaics)
+	ICQ specific ===========================================================
+	X support simple icq type-2 messages so we can send/receive away
+	  messages (yes, I even see this as a point for not releasing 0.7, away
+	  messages ARE important or else I could take out away modes altogether)
+	X prevent passwords longer than 8 chars, it upsets the server
 	- general support for SNAC (0x15,y)
-	- read away reasons
-	- own away-reasons
-	- use html/rtf in own messages (i.e. support type-2 messages, BIG ONE)
-	- honor encodings for both sides (I need more knowledge about this!)
+	X read away reasons
+	X own away-reasons
+	- Support RTF
+	X honor encodings for both sides (done but incomplete)
 	- Option: Allow access from contacts on my contact list only
 	- group handling
-	  (signals: KopeteMetaContact::movedToGroup , addedToGroup , removedToGroup )
+	  (signals: KopeteMetaContact::movedToGroup, addedToGroup, removedToGroup)
 	  I'm not sure what this item means, none of the other protocols listen to
 	  these signals.
 	- ignore lists (needs proper group-handling)
 	- invisible list (needs proper group-handling)
 	- support sending your own icq userinfo to the server,
-	  it's easy to do for me but because of the mass of items takes lots of time
-	  and is extremely boring.
+	  it's easy to do for me but because of the mass of items takes lots of
+	  time and is extremely boring.
 
-For 1.0/kdenetwork:
-	What's not achievable in the above?  Move it down here...
-	AIM specific ================================================================
-	- Nothing in here yet, I'd appreciate somebody with more extensive use of
-	  AIM to take over just that part of the plugin.
-
-================================================================================
+	AIM specific ===========================================================
+	- Nothing in here yet, I'd appreciate somebody with more extensive use
+	  of AIM to take over just that part of the plugin.
 
 
 ================================================================================
+
+
  MSN TODO  (for the Kopete 1.0 release)
 ---------------------------------------
 
 	- Handle the MSN PLUS! color codes
-	- Show internals messages in chat window when filetransfers (go with the new
-	    interface for invitation in libkopete)
+	- Show internals messages in chat window when filetransfers (go with
+	  the new interface for invitation in libkopete)
 
-	- Search for an MSN User	  (not for Kopete 1.0)
+	- Search for an MSN User (not for Kopete 1.0)
 
 ================================================================================
