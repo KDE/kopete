@@ -209,10 +209,16 @@ KActionCollection *JabberContact::customContextMenuActions ()
 		i = 0;
 		for(QStringList::iterator it = items.begin(); it != items.end(); it++)
 		{
-			if(i == activeItem)
-				actionSelectResource->insert(new KAction ((*it), "button_ok", 0, this, SLOT (slotSelectResource ()), actionSelectResource, QString("%1").arg(i)));
+			if( i == activeItem )
+			{
+				actionSelectResource->insert( new KAction( ( *it ), "button_ok", 0, this, SLOT( slotSelectResource() ),
+					actionSelectResource, QString::number( i ).latin1() ) );
+			}
 			else
-				actionSelectResource->insert(new KAction ((*it), "", 0, this, SLOT (slotSelectResource ()), actionSelectResource, QString("%1").arg(i)));
+			{
+				actionSelectResource->insert( new KAction( ( *it ), "", 0, this, SLOT( slotSelectResource() ),
+					actionSelectResource, QString::number( i ).latin1() ) );
+			}
 
 			i++;
 		}

@@ -62,6 +62,7 @@
 #include<windows.h>
 #endif
 
+#include <qmutex.h>
 
 //! \if _hide_doc_
 class NDnsWorkerEvent : public QEvent

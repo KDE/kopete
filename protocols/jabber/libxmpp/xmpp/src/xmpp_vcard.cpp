@@ -439,7 +439,7 @@ QDomElement VCard::toXml(QDomDocument *doc) const
 			if ( e.x400 )
 				w.appendChild( emptyTag(doc, "X400") );
 
-			if ( e.userid )
+			if ( !e.userid.isEmpty() )
 				w.appendChild( textTag(doc, "USERID",	e.userid) );
 
 			v.appendChild(w);
