@@ -14,8 +14,11 @@
     *************************************************************************
 */
 
+#include <stdlib.h>
+
 #include <qvaluelist.h>
 
+#include <kdebug.h>
 #include <klocale.h>
 
 #include "kopetemetacontact.h"
