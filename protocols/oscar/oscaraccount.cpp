@@ -382,8 +382,11 @@ void OscarAccount::slotGotServerBuddyList()
 	//SSI in slotKopeteGroupAdded
 	
 
-	QPtrList<SSI> list = engine()->ssiData().list();
-	QPtrListIterator<SSI> git( list );
+	//If we get mysterious results (or crashes) here, it's because the SSIData object
+	//was mysteriously destroyed and since engine()->ssiData() returns a reference
+	//we'll need to start saving the result of engine()->ssiData() so that we 
+	//make sure it lives long enough.
+	QPtrListIterator<SSI> git( engine()->ssiData() );
 	for ( ; git.current(); ++git )
 	{
 		kdDebug(14150) << "Looking at " << git.count() << " items" << endl;
@@ -398,7 +401,7 @@ void OscarAccount::slotGotServerBuddyList()
 	}
 	
 	//groups are added. Add the contacts
-	QPtrListIterator<SSI> bit( list );
+	QPtrListIterator<SSI> bit( engine()->ssiData() );
 	for ( ; bit.current(); ++bit )
 	{
 		kdDebug(14150) << "Looking at " << bit.count() << " items" << endl;
@@ -427,7 +430,7 @@ void OscarAccount::slotLoggedIn()
 	d->passwordWrong = false;
 
 	// Only call sync if we received a list on connect, does not happen on @mac AIM-accounts
-	if ( engine()->ssiData().list().isEmpty() )
+	if ( engine()->ssiData().isEmpty() )
 	{
 		// FIXME: Use proper rate limiting rather than a fixed 2 second delay - Martijn
 		QTimer::singleShot( 2000, this, SLOT( slotDelayedListSync() ) );

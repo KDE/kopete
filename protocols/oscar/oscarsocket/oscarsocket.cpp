@@ -125,7 +125,7 @@ DWORD OscarSocket::setIPv4Address(const QString &address)
 	return 0;
 }
 
-SSIData OscarSocket::ssiData()
+SSIData& OscarSocket::ssiData()
 {
 	return mSSIData;
 }
@@ -1135,7 +1135,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 		else
 			ssi->tlvlist = 0L;
 		ssi->waitingAuth = false;
-		mSSIData.addContact(ssi);
+		mSSIData.append(ssi);
 
 		kdDebug(14150) << k_funcinfo << "Read server-side list-entry. name='" <<
 			ssi->name << "', groupId=" << ssi->gid << ", id=" << ssi->bid <<
@@ -2882,8 +2882,6 @@ void OscarSocket::doLogoff()
 		/*if(mIsICQ) // Done in slotConnectionClosed()
 			stopKeepalive();
 		*/
-		//Clear the SSIData
-		mSSIData.clear();
 		kdDebug(14150) << k_funcinfo << "Sending sign off request" << endl;
 		Buffer outbuf;
 		sendBuf(outbuf,0x04);
@@ -2894,7 +2892,6 @@ void OscarSocket::doLogoff()
 		if(socket()->socketStatus() == KExtendedSocket::connecting ||
 			socket()->socketStatus() == KExtendedSocket::connected )
 		{
-			
 			kdDebug(14150) << k_funcinfo <<
 				"we're either not logged in correctly or something" <<
 				"wicked happened, closing down socket..." << endl;
@@ -3087,7 +3084,7 @@ void OscarSocket::sendChangeVisibility(BYTE value)
 		visibility->data[0] = value;
 		newSSITLV->addTLV(visibility->type, visibility->length, visibility->data);
 
-		if (!mSSIData.removeItem(ssi))
+		if (!mSSIData.remove(ssi))
 		{
 			kdDebug(14150) << k_funcinfo <<
 				"Couldn't remove old ssi containing visibility value" << endl;
@@ -3098,7 +3095,7 @@ void OscarSocket::sendChangeVisibility(BYTE value)
 		newSSI->tlvlist = newSSITLV->buffer();
 		newSSI->tlvlength = newSSITLV->length();
 
-		mSSIData.addContact(newSSI);
+		mSSIData.append(newSSI);
 
 		kdDebug(14150) << k_funcinfo <<
 			"new visibility value=" << visibility->data[0] << endl;
@@ -3181,7 +3178,7 @@ void OscarSocket::sendRenameBuddy(const QString &budName,
 	//const char *newNickData = newAlias.local8Bit().copy();
 	newSSIdata->addTLV(0x0131, newAlias.local8Bit().length(), newAlias.local8Bit());
 
-	if (!mSSIData.removeItem(ssi))
+	if (!mSSIData.remove(ssi))
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"Couldn't remove old ssi containing contact" << endl;
@@ -3192,7 +3189,7 @@ void OscarSocket::sendRenameBuddy(const QString &budName,
 	newSSI->tlvlist = newSSIdata->buffer();
 	newSSI->tlvlength = newSSIdata->length();
 
-	mSSIData.addContact(newSSI);
+	mSSIData.append(newSSI);
 
 	kdDebug(14150) << k_funcinfo << "Renaming, new SSI block: name=" << newSSI->name <<
 		", gid=" << newSSI->gid << ", bid=" << newSSI->bid <<
@@ -3274,7 +3271,7 @@ void OscarSocket::sendDelGroup(const QString &groupName)
 
 	// Remove it from the internal Server Side Information
 	// list
-	if (!mSSIData.removeItem(delGroup))
+	if (!mSSIData.remove(delGroup))
 	{
 		kdDebug(14150) << k_funcinfo << delGroup 
 			<< " was not found in the SSI list" << endl;
@@ -3411,7 +3408,7 @@ void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
 
 	sendSSIAddModDel(delitem,0x000a);
 
-	if (!mSSIData.removeItem(delitem))
+	if (!mSSIData.remove(delitem))
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"delitem was not found in the SSI list" << endl;
@@ -3791,7 +3788,7 @@ void OscarSocket::sendRemoveBlock(const QString &sname)
 
 	sendSSIAddModDel(delitem,0x000a);
 
-	if (!mSSIData.removeItem(delitem))
+	if (!mSSIData.remove(delitem))
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"delitem was not found in the SSI list" << endl;

@@ -305,7 +305,7 @@ class OscarSocket : public OscarConnection
 		/**
 		 * \brief Get the SSI List
 		 */
-		SSIData ssiData();
+		SSIData& ssiData();
 
 		/** \return true if we're in ICQ mode, false if not */
 		bool isICQ() { return mIsICQ; }
