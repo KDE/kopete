@@ -55,18 +55,37 @@ public:
 	{
 		BaseFgColor = 1,     // Setting the bg color of the whole edit widget / message
 		BaseBgColor = 2,     // Setting the fg color of the whole edit widget / message
-		RichColor = 4,       // Setting the fg/bg color of text portions individually
-		BaseFont = 8,        // Setting the font of the whole edit widget / message
-		RichFont = 16,       // Setting the font of text portions individually
-		BaseFormatting = 32, // Setting the formattinng of the whole edit widget / message
-		RichFormatting = 64, // Setting the formatting of text portions individually
-		Alignment = 128,     // Setting the alignment of text portions
+		RichFgColor = 4,       // Setting the fg/bg color of text portions individually
+		RichBgColor = 8,       // Setting the fg/bg color of text portions individually
+		// Combination of two above
+		RichColor = RichBgColor | RichFgColor,
+
+		BaseFont = 16,        // Setting the font of the whole edit widget / message
+		RichFont = 32,       // Setting the font of text portions individually
+
+		// Setting the formatting of the whole edit widget / message
+		BaseUFormatting = 64,
+		BaseIFormatting = 128,
+		BaseBFormatting = 256,
+
+		// Setting the formatting of text portions individually
+		RichUFormatting = 512,
+		RichIFormatting = 1024,
+		RichBFormatting = 2048,
+
+		// Setting the formatting of the whole edit widget / message
+		BaseFormatting = BaseIFormatting | BaseUFormatting | BaseBFormatting,
+
+		// Setting the formatting of text portions individually
+		RichFormatting = RichIFormatting | RichUFormatting | RichBFormatting,
+
+		Alignment = 4096,     // Setting the alignment of text portions
 
 		//Shortcut for base properties only - basically MSN
 		BaseRTF = BaseFgColor | BaseBgColor | BaseFont | BaseFormatting ,
 
 		//Shortcut for All of the above - full HTML
-		FullRTF =  255
+		FullRTF =  65535
 	};
 
 	/**

@@ -193,27 +193,26 @@ void KopeteRichTextEditPart::createActions( KActionCollection *ac )
 
 void KopeteRichTextEditPart::updateActions()
 {
-	actionFgColor->setEnabled( buttonsEnabled() &&
-		( m_capabilities & KopeteProtocol::BaseFgColor || m_capabilities & KopeteProtocol::RichColor )
-	);
+	bool buttonsEnabled = this->buttonsEnabled();
+	bool enableFgColor = m_capabilities & KopeteProtocol::BaseFgColor || m_capabilities & KopeteProtocol::RichFgColor;
+	bool enableBGColor = m_capabilities & KopeteProtocol::BaseBgColor || m_capabilities & KopeteProtocol::RichBgColor;
+	bool activateAlignment = buttonsEnabled && ( m_capabilities & KopeteProtocol::Alignment );
+	bool activateFont = m_capabilities & KopeteProtocol::BaseFont || m_capabilities & KopeteProtocol::RichFont;
 
-	actionBgColor->setEnabled( buttonsEnabled() &&
-		( m_capabilities & KopeteProtocol::BaseBgColor || m_capabilities & KopeteProtocol::RichColor )
-	);
+	bool activateBFormat = m_capabilities & KopeteProtocol::BaseBFormatting || m_capabilities & KopeteProtocol::RichBFormatting;
+	bool activateUFormat = m_capabilities & KopeteProtocol::BaseUFormatting || m_capabilities & KopeteProtocol::RichUFormatting;
+	bool activateIFormat = m_capabilities & KopeteProtocol::BaseIFormatting || m_capabilities & KopeteProtocol::RichIFormatting;
 
-	bool activateFont = buttonsEnabled() &&
-		( m_capabilities & KopeteProtocol::BaseFont || m_capabilities & KopeteProtocol::RichFont );
-	action_font->setEnabled( activateFont );
-	action_font_size->setEnabled( activateFont );
+	actionFgColor->setEnabled( buttonsEnabled && enableFgColor );
+	actionBgColor->setEnabled( buttonsEnabled && enableBGColor );
 
-	bool activateFormat = buttonsEnabled() && (
-		m_capabilities & KopeteProtocol::BaseFormatting ||
-		m_capabilities & KopeteProtocol::RichFormatting );
-	action_bold->setEnabled( activateFormat );
-	action_italic->setEnabled(activateFormat);
-	action_underline->setEnabled(activateFormat);
+	action_font->setEnabled( buttonsEnabled && activateFont );
+	action_font_size->setEnabled( buttonsEnabled && activateFont );
 
-	bool activateAlignment = buttonsEnabled() && ( m_capabilities & KopeteProtocol::Alignment );
+	action_bold->setEnabled( buttonsEnabled && activateBFormat );
+	action_italic->setEnabled( buttonsEnabled && activateIFormat );
+	action_underline->setEnabled( buttonsEnabled && activateUFormat );
+
 	action_align_left->setEnabled( activateAlignment );
 	action_align_center->setEnabled( activateAlignment );
 	action_align_right->setEnabled( activateAlignment );
@@ -233,10 +232,16 @@ void KopeteRichTextEditPart::clear()
 	setFont( mFont );
 	setFgColor( mFgColor );
 
-	if( m_capabilities & KopeteProtocol::BaseFormatting || m_capabilities & KopeteProtocol::RichFormatting )
+	if( m_capabilities & KopeteProtocol::BaseBFormatting || m_capabilities & KopeteProtocol::RichBFormatting )
 	{
 		editor->setBold( action_bold->isChecked() );
+	}
+	if( m_capabilities & KopeteProtocol::BaseIFormatting || m_capabilities & KopeteProtocol::RichIFormatting )
+	{
 		editor->setItalic( action_italic->isChecked() );
+	}
+	if( m_capabilities & KopeteProtocol::BaseUFormatting || m_capabilities & KopeteProtocol::RichUFormatting )
+	{
 		editor->setUnderline( action_underline->isChecked() );
 	}
 }
