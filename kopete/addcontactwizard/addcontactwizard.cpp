@@ -91,23 +91,16 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	bool useKABC = config->readBoolEntry( "UseAddressBook", false );
 	chkAddressee->setChecked( useKABC );
 	setAppropriate( selectAddressee, useKABC );
-	m_usedAccounts = config->readListEntry( "AccountsUsedLast" );
 	
 	// Populate the accounts list
 	QCheckListItem* accountLVI = 0;
 	QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
-	bool foundUsedAccount = false;
 	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
 	{
 		accountLVI= new QCheckListItem( protocolListView, i->accountId(), QCheckListItem::CheckBox);
 		accountLVI->setText(1,i->protocol()->displayName() + QString::fromLatin1(" ") );
 		//FIXME - I'm not sure the column 1 is a right place for the colored icon -Olivier
 		accountLVI->setPixmap( 1, i->accountIcon() );
-		if ( m_usedAccounts.contains( i->protocol()->pluginId() +  i->accountId() ) )
-		{
-			accountLVI->setOn( true );
-			foundUsedAccount = true;
-		}
 		m_accountItems.insert(accountLVI,i);
 	}
 	protocolListView->setCurrentItem( protocolListView->firstChild() );
@@ -119,7 +112,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 		setAppropriate( selectService, false );
 	}
 
-	setNextEnabled( selectService, ( accounts.count() == 1 ) || foundUsedAccount );
+	setNextEnabled( selectService, accounts.count() == 1 );
 	setNextEnabled( selectAddressee, false );
 	setFinishEnabled( finis, true );
 
@@ -303,7 +296,6 @@ void AddContactWizard::accept()
 	KConfig *config = kapp->config();
 	config->setGroup("Add Contact Wizard");
 	config->writeEntry( "UseAddressBook", chkAddressee->isChecked() );
-	config->writeEntry( "AccountsUsedLast", m_usedAccounts );
 	config->sync();
 	deleteLater();
 }
@@ -322,8 +314,7 @@ void AddContactWizard::next()
 	if (currentPage() == selectService ||
 		(currentPage() == intro && !appropriate( selectService )))
 	{
-		// reset the list of last used accounts
-		m_usedAccounts.clear();
+		QStringList usedAccounts;
 		// We don't keep track of this pointer because it gets deleted when the wizard does (which is what we want)
 		for (QListViewItemIterator it(protocolListView); it.current(); ++it)
 		{
@@ -335,7 +326,7 @@ void AddContactWizard::next()
 				if (!i)
 					continue;
 					
-				m_usedAccounts.append( i->protocol()->pluginId() + i->accountId() );
+				usedAccounts.append( i->protocol()->pluginId() + i->accountId() );
 				
 				if(protocolPages.contains(i))
 					continue;
@@ -359,7 +350,7 @@ void AddContactWizard::next()
 		for ( it = protocolPages.begin(); it != protocolPages.end(); ++it )
 		{
 			KopeteAccount *i=it.key();
-			if( !i || !m_usedAccounts.contains( i->protocol()->pluginId() + i->accountId() ) )
+			if( !i || !usedAccounts.contains( i->protocol()->pluginId() + i->accountId() ) )
 			{
 				delete it.data();
 				protocolPages.remove(it);

@@ -53,7 +53,6 @@ private:
 	QMap <QCheckListItem*,KopeteAccount*> m_accountItems;
 	QMap <QCheckListItem*,KopeteGroup*> m_groupItems;
 	KABC::AddressBook* m_addressBook;
-	QStringList m_usedAccounts;
 
 public slots:
 	virtual void accept();
