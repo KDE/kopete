@@ -46,7 +46,7 @@ KopeteMetaContact::~KopeteMetaContact()
 
 void KopeteMetaContact::addContact( KopeteContact *c )
 {
-	addContact(c,c->groups());
+	addContact(c,QStringList());
 }
 
 
@@ -290,6 +290,12 @@ void KopeteMetaContact::moveToGroup( const QString &from, const QString &to )
  
 	m_groups.remove( from );
 	m_groups.append( to );
+
+	for( 	KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
+	{
+		c->moveToGroup(from,to);
+	}
+
 	emit movedToGroup( this, from, to );
 }
 
@@ -302,6 +308,12 @@ void KopeteMetaContact::removeFromGroup( const QString &from)
 		return;
 
 	m_groups.remove( from );
+
+	for( 	KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
+	{
+		c->removeFromGroup(from);
+	}
+
 
 	emit removedFromGroup( this, from);
 
@@ -316,6 +328,11 @@ void KopeteMetaContact::addToGroup( const QString &to )
 		return ;
 
 	m_groups.append( to );
+
+	for( 	KopeteContact *c = m_contacts.first(); c ; c = m_contacts.next() )
+	{
+		c->addToGroup(to);
+	}
 
 	emit addedToGroup( this, to );
 
@@ -506,6 +523,8 @@ void KopeteMetaContact::setTemporary( bool b  )
 				removeFromGroup("temporaryGroup");
 		}
 	}
+	else
+		moveToGroup("temporaryGroup",QString::null);  //move to top-level
 }
 
 #include "kopetemetacontact.moc"

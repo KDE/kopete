@@ -120,11 +120,10 @@ void KopeteContactList::slotAddedToGroup( KopeteMetaContact *mc, const QString &
 {
 	kopeteapp->contactList()->addContact( mc, to );
 
-	/* //this provoque crashing
 	if ( (mc->groups()).count() == 1 )
 	{
-		kopeteapp->contactList()->removeTopLevel(mc);
-	}*/  
+		kopeteapp->contactList()->removeContact(mc,QString::null);
+	}  
 }
 
 void KopeteContactList::slotRemovedFromGroup(KopeteMetaContact *mc, const QString &from )
