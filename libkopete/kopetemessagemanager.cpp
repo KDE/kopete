@@ -343,23 +343,19 @@ KopeteAccount *KopeteMessageManager::account() const
 	return user()->account();
 }
 
-void KopeteMessageManager::slotContactDestroyed(KopeteContact* c)
+void KopeteMessageManager::slotContactDestroyed( KopeteContact *contact )
 {
-	if(!c || !d->mContactList.contains(c))
+	if( !contact || !d->mContactList.contains( contact ) )
 		return;
 
-	if(d->mContactList.count()==1)
-	{
-		deleteLater(); //the contact has been deleted, it is better to delete this
-	}
-	else
-	{
-		d->mContactList.remove( c );
-		emit contactRemoved(c , QString::null);
-	}
+	d->mContactList.remove( contact );
+	emit contactRemoved( contact, QString::null );
+
+	if ( d->mContactList.isEmpty() )
+		deleteLater();
 }
 
 #include "kopetemessagemanager.moc"
 
-
 // vim: set noet ts=4 sts=4 sw=4:
+
