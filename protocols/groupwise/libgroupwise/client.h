@@ -128,6 +128,11 @@ Q_OBJECT
 		 * for this connection
 		 */
 		RequestFactory * requestFactory();
+	signals:
+		/**
+		 * Notifies tasks and account so they can react properly
+		 */
+		void disconnected();
 	public slots:
 		// INTERNAL, FOR USE BY TASKS' SIGNALS //
 		void lt_LoginFinished();

@@ -114,10 +114,13 @@ void KNetworkByteStream::slotConnectionClosed ()
 	// depending on who closed the socket, emit different signals
 	if ( mClosing )
 	{
+		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "..by ourselves!" << endl;
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "socket error is " << socket()->errorString( socket()->error() ) << endl;
 		emit connectionClosed ();
 	}
 	else
 	{
+		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "..by the other end" << endl;
 		emit delayedCloseFinished ();
 	}
 

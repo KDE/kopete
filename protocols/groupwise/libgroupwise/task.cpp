@@ -181,6 +181,7 @@ void Task::setError(int code, const QString &str)
 
 void Task::done()
 {
+	debug("Task::done()");
 	if(d->done || d->insignificant)
 		return;
 	d->done = true;
@@ -189,6 +190,7 @@ void Task::done()
 		d->deleteme = true;
 
 	d->insignificant = true;
+	debug("emitting finished");
 	finished();
 	d->insignificant = false;
 

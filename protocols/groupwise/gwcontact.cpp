@@ -27,6 +27,7 @@
 #include "kopetemetacontact.h"
 
 #include "gwaccount.h"
+#include "gwerror.h"
 #include "gwfakeserver.h"
 #include "gwprotocol.h"
 
@@ -64,7 +65,7 @@ GroupWiseContact::GroupWiseContact( KopeteAccount* account, const QString &dn,
 : KopeteContact( account, dn, parent ), m_objectId( objectId ), m_parentId( parentId ),
   m_sequence( sequence )
 {
-	kdDebug( 14220 ) << k_funcinfo << " dn: " << dn << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " dn: " << dn << endl;
 	rename( displayName );
 }
 
@@ -133,7 +134,7 @@ void GroupWiseContact::serialize( QMap< QString, QString > &serializedData, QMap
 
 KopeteMessageManager* GroupWiseContact::manager( bool )
 {
-	kdDebug( 14220 ) << k_funcinfo << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	if ( m_msgManager )
 	{
 		return m_msgManager;
@@ -170,7 +171,7 @@ void GroupWiseContact::showContactSettings()
 
 void GroupWiseContact::sendMessage( KopeteMessage &message )
 {
-	kdDebug( 14220 ) << k_funcinfo << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	// convert to the what the server wants
 	// For this 'protocol', there's nothing to do
 	// send it

@@ -6,7 +6,7 @@
 #include <qglobal.h>
 
 typedef Q_UINT16 NMERR_T;
-#define GROUPWISE_DEBUG_GLOBAL 14400
+#define GROUPWISE_DEBUG_GLOBAL 14220
 
 #define	NM_STATUS_UNKNOWN			0
 #define	NM_STATUS_OFFLINE			1

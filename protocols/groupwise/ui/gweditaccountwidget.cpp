@@ -18,20 +18,21 @@
     *************************************************************************
 */
 
-#include "gweditaccountwidget.h"
-
 #include <qlayout.h>
 #include <qlineedit.h>
 #include <kdebug.h>
 #include "kopeteaccount.h"
 #include "gwaccountpreferences.h"
 #include "gwaccount.h"
+#include "gwerror.h"
 #include "gwprotocol.h"
+
+#include "gweditaccountwidget.h"
 
 GroupWiseEditAccountWidget::GroupWiseEditAccountWidget( QWidget* parent, KopeteAccount* account)
 : QWidget( parent ), KopeteEditAccountWidget( account )
 {
-	kdDebug(14220) << k_funcinfo << endl;
+	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
 	m_layout = new QVBoxLayout( this );
 	m_preferencesDialog = new GroupWiseAccountPreferences( this );
 	m_layout->addWidget( m_preferencesDialog );

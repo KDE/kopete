@@ -86,7 +86,7 @@ KActionMenu* GroupWiseAccount::actionMenu()
 
 bool GroupWiseAccount::addContactToMetaContact(const QString& contactId, const QString& displayName, KopeteMetaContact* parentContact)
 {
-	kdDebug ( 14220 ) << k_funcinfo << "contactId: " << contactId << " displayName: " << displayName
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "contactId: " << contactId << " displayName: " << displayName
 			<< endl;
 	//GroupWiseContact* newContact = new GroupWiseContact( this, contactId, GroupWiseContact::Echo, displayName, parentContact );
 	//return newContact != 0L;
@@ -125,12 +125,15 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	m_tlsHandler = new QCATLSHandler( m_QCATLS );
 	m_clientStream = new ClientStream( m_connector, m_tlsHandler, 0);
 	
-	QObject::connect (m_clientStream, SIGNAL (connectionClosed ()),
-				this, SLOT (slotCSDisconnected ()));
-	QObject::connect (m_clientStream, SIGNAL (delayedCloseFinished ()),
-				this, SLOT (slotCSDisconnected ()));
+	QObject::connect( m_connector, SIGNAL( error() ), this, SLOT( slotConnError() ) );
+	QObject::connect( m_connector, SIGNAL( connected() ), this, SLOT( slotConnConnected() ) );
+	
+	QObject::connect (m_clientStream, SIGNAL (connectionClosed()),
+				this, SLOT (slotCSDisconnected()));
+	QObject::connect (m_clientStream, SIGNAL (delayedCloseFinished()),
+				this, SLOT (slotCSDisconnected()));
 	// Notify us when the transport layer is connected
-	QObject::connect( m_clientStream, SIGNAL( connected() ), SLOT( slotConnected() ) );
+	QObject::connect( m_clientStream, SIGNAL( connected() ), SLOT( slotCSConnected() ) );
 	// it's necessary to catch this signal and tell the TLS handler to proceed
 	// even if we don't check cert validity
 	QObject::connect( m_tlsHandler, SIGNAL(tlsHandshaken()), SLOT( slotTLSHandshaken()) );
@@ -144,9 +147,9 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	//			this, SLOT (slotCSNeedAuthParams (bool, bool, bool)));
 	
 	// not implemented: warning 
-	QObject::connect( m_clientStream, SIGNAL( warning(int) ), SLOT( slotWarning(int) ) );
+	QObject::connect( m_clientStream, SIGNAL( warning(int) ), SLOT( slotCSWarning(int) ) );
 	// not implemented: error 
-	QObject::connect( m_clientStream, SIGNAL( error(int) ), SLOT( slotError(int) ) );
+	QObject::connect( m_clientStream, SIGNAL( error(int) ), SLOT( slotCSError(int) ) );
 	
 	m_client = new Client( this );
 	
@@ -160,7 +163,7 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	jabberClient->setClientVersion (kapp->aboutData ()->version ());
 	jabberClient->setOSName (QString ("%1 %2").arg (utsBuf.sysname, 1).arg (utsBuf.release, 2)); */
 
-	kdDebug ( 14220 ) << k_funcinfo << "Connecting to GroupWise server " << server() << ":" << port() << endl;
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Connecting to GroupWise server " << server() << ":" << port() << endl;
 
 	NovellDN dn;
 	dn.dn = "maeuschen";
@@ -170,13 +173,13 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 
 void GroupWiseAccount::disconnect()
 {
-	kdDebug ( 14220 ) << k_funcinfo << endl;
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
 }
 
-void GroupWiseAccount::slotGoOnline ()
+void GroupWiseAccount::slotGoOnline()
 {
-	kdDebug ( 14220 ) << k_funcinfo << endl;
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
 	if (!isConnected ())
 		connect ();
@@ -184,9 +187,9 @@ void GroupWiseAccount::slotGoOnline ()
 		myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAvailable );
 }
 
-void GroupWiseAccount::slotGoAway ()
+void GroupWiseAccount::slotGoAway()
 {
-	kdDebug ( 14220 ) << k_funcinfo << endl;
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
 	if (!isConnected ())
 		connect();
@@ -194,9 +197,9 @@ void GroupWiseAccount::slotGoAway ()
 	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseAway );
 }
 
-void GroupWiseAccount::slotGoBusy ()
+void GroupWiseAccount::slotGoBusy()
 {
-	kdDebug ( 14220 ) << k_funcinfo << endl;
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
 	if (!isConnected ())
 		connect();
@@ -204,37 +207,67 @@ void GroupWiseAccount::slotGoBusy ()
 	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseBusy );
 }
 
-void GroupWiseAccount::slotGoAppearOffline ()
+void GroupWiseAccount::slotGoAppearOffline()
 {
-	kdDebug ( 14220 ) << k_funcinfo << endl;
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
 	if (!isConnected ())
 		connect();
 }
 
-void GroupWiseAccount::slotGoOffline ()
+void GroupWiseAccount::slotGoOffline()
 {
-	kdDebug ( 14220 ) << k_funcinfo << endl;
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
 	if (isConnected ())
 		disconnect ();
 	updateContactStatus();
 }
 
+void GroupWiseAccount::slotConnError()
+{
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+}
+
+void GroupWiseAccount::slotConnConnected()
+{
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+}
+
+void GroupWiseAccount::slotCSDisconnected()
+{
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Disconnected from Groupwise server." << endl;
+}
+
+void GroupWiseAccount::slotCSConnected()
+{
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Connected to Groupwise server." << endl;
+}
+
+void GroupWiseAccount::slotCSError( int error )
+{
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Got error from ClientStream:" << error << endl;
+}
+
+void GroupWiseAccount::slotCSWarning( int warning )
+{
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Got warning from ClientStream:" << warning << endl;
+}
+
 void GroupWiseAccount::slotTLSHandshaken()
 {
-	kdDebug ( 14220 ) << k_funcinfo << "TLS handshake complete" << endl;
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "TLS handshake complete" << endl;
 	int validityResult = m_QCATLS->certificateValidityResult ();
 
 	if( validityResult == QCA::TLS::Valid )
 	{
-		kdDebug ( 14220 ) << "Certificate is valid, continuing." << endl;
+		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "Certificate is valid, continuing." << endl;
 		// valid certificate, continue
 		m_tlsHandler->continueAfterHandshake ();
 	}
 	else
 	{
-		kdDebug ( 14220 ) << "Certificate is not valid, continuing anyway" << endl;
+		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "Certificate is not valid, continuing anyway" << endl;
 		// certificate is not valid, query the user
 		/*			if(handleTLSWarning (validityResult, server (), myself()->contactId ()) == KMessageBox::Continue)
 					{*/
@@ -252,7 +285,7 @@ void GroupWiseAccount::slotTLSHandshaken()
 void GroupWiseAccount::slotTLSReady( int secLayerCode )
 {
 	// i don't know what secLayerCode is for...
-	kdDebug( 14220 ) << k_funcinfo << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	m_client->start( server(), accountId(), password().cachedValue() );
 }
 
@@ -266,7 +299,7 @@ void GroupWiseAccount::receivedMessage( const QString &message )
 	//from = QString::fromLatin1("echo");
 	messageSender = static_cast<GroupWiseContact *>( contacts ()[ from ] );
 	
-	kdDebug( 14220 ) << k_funcinfo << " got a message from " << from << ", " << messageSender << ", is: " << message << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got a message from " << from << ", " << messageSender << ", is: " << message << endl;
 	// Pass it on to the contact to process and display via a KMM
 	messageSender->receivedMessage( message );
 }

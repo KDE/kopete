@@ -105,9 +105,8 @@ ByteStream *KNetworkConnector::stream () const
 
 void KNetworkConnector::done ()
 {
-
+	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	mByteStream->close ();
-
 }
 
 void KNetworkConnector::setOptHostPort ( const QString &host, Q_UINT16 port )

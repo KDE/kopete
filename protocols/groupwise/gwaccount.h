@@ -92,6 +92,18 @@ public slots:
 	 * This identifies the sending KopeteContact and passes it a KopeteMessage
 	 */
 	void receivedMessage( const QString &message );
+	
+	void slotCSConnected();
+	/**
+	 * Performs necessary actions when the client stream has been disconnected
+	 */
+	void slotCSDisconnected();
+	void slotCSError( int error );
+	void slotCSWarning( int warning );
+
+	/** Debug slots */
+	void slotConnError();
+	void slotConnConnected();
 
 protected:
 	/**

@@ -24,6 +24,7 @@
 #include "kopeteglobal.h"
 
 #include "gwaccount.h"
+#include "gwerror.h"
 #include "gwcontact.h"
 #include "gwprotocol.h"
 #include "ui/gwaddcontactpage.h"
@@ -56,7 +57,7 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const char *name, const Q
 	  propAwayMessage( Kopete::Global::Properties::self()->awayMessage() ),
 	  propCN( "groupwiseCommonName", i18n( "Common Name" ), QString::null, true, false )
 {
-	kdDebug( 14220 ) << k_funcinfo << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
 	s_protocol = this;
 	
@@ -82,7 +83,7 @@ KopeteContact *GroupWiseProtocol::deserializeContact(
 	KopeteAccount *account = accounts[ accountId ];
 	if ( !account )
 	{
-		kdDebug(14220) << "Account doesn't exist, skipping" << endl;
+		kdDebug(GROUPWISE_DEBUG_GLOBAL) << "Account doesn't exist, skipping" << endl;
 		return 0;
 	}
 
@@ -91,13 +92,13 @@ KopeteContact *GroupWiseProtocol::deserializeContact(
 
 AddContactPage * GroupWiseProtocol::createAddContactWidget( QWidget *parent, KopeteAccount * /* account */ )
 {
-	kdDebug( 14220 ) << "Creating Add Contact Page" << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Creating Add Contact Page" << endl;
 	return new GroupWiseAddContactPage( parent );
 }
 
 KopeteEditAccountWidget * GroupWiseProtocol::createEditAccountWidget( KopeteAccount *account, QWidget *parent )
 {
-	kdDebug(14220) << "Creating Edit Account Page" << endl;
+	kdDebug(GROUPWISE_DEBUG_GLOBAL) << "Creating Edit Account Page" << endl;
 	return new GroupWiseEditAccountWidget( parent, account );
 }
 
