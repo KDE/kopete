@@ -27,6 +27,7 @@
 #include "kopeteview.h"
 #include "kopetecontactlist.h"
 #include "kopeteuiglobal.h"
+#include "kopetemessageevent.h"
 
 #include "historydialog.h"
 #include "historyplugin.h"
@@ -43,7 +44,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory("kopete_history
 #endif
 
 HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
-: Kopete::Plugin( HistoryPluginFactory::instance(), parent, name )
+: Kopete::Plugin( HistoryPluginFactory::instance(), parent, name ), m_loggerFactory( this )
 {
 	KAction *viewMetaContactHistory = new KAction( i18n("View &History" ),
 		QString::fromLatin1( "history" ), 0, this, SLOT(slotViewHistory()),
@@ -54,8 +55,6 @@ HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringLi
 	connect(Kopete::ContactList::contactList(), SIGNAL(metaContactSelected(bool)),
 		viewMetaContactHistory, SLOT(setEnabled(bool)));
 
-	connect(Kopete::MessageManagerFactory::factory(), SIGNAL(aboutToDisplay(Kopete::Message &)),
-		this, SLOT(slotMessageDisplayed(Kopete::Message &)));
 	connect(Kopete::MessageManagerFactory::factory(), SIGNAL(viewCreated(KopeteView*)),
 		this, SLOT(slotViewCreated(KopeteView*)));
 
@@ -95,7 +94,13 @@ HistoryPlugin::~HistoryPlugin()
 }
 
 
-void HistoryPlugin::slotMessageDisplayed(Kopete::Message &m)
+void HistoryMessageLogger::handleMessage( Kopete::MessageEvent *event )
+{
+	history->messageDisplayed( event->message() );
+	MessageHandler::handleMessage( event );
+}
+
+void HistoryPlugin::messageDisplayed(const Kopete::Message &m)
 {
 	if(m.direction()==Kopete::Message::Internal || !m.manager())
 		return;

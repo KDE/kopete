@@ -25,14 +25,48 @@
 #include "kopeteplugin.h"
 
 #include "kopetemessage.h"
+#include "kopetemessagehandler.h"
 
-namespace Kopete { class Message; }
 class KopeteView;
 class KActionCollection;
-namespace Kopete { class MetaContact; }
-namespace Kopete { class MessageManager; }
+
+namespace Kopete
+{
+class MetaContact;
+class MessageManager;
+}
+
 class HistoryPreferences;
 class HistoryGUIClient;
+class HistoryPlugin;
+
+/**
+ * @author Richard Smith
+ */
+class HistoryMessageLogger : public Kopete::MessageHandler
+{
+	HistoryPlugin *history;
+public:
+	HistoryMessageLogger( HistoryPlugin *history ) : history(history) {}
+	void handleMessage( Kopete::MessageEvent *event );
+};
+
+class HistoryMessageLoggerFactory : public Kopete::MessageHandlerFactory
+{
+	HistoryPlugin *history;
+public:
+	HistoryMessageLoggerFactory( HistoryPlugin *history ) : history(history) {}
+	Kopete::MessageHandler *create( Kopete::MessageManager *manager, Kopete::Message::MessageDirection direction )
+	{
+		if( direction != Kopete::Message::Inbound )
+			return 0;
+		return new HistoryMessageLogger(history);
+	}
+	int filterPosition( Kopete::MessageManager *, Kopete::Message::MessageDirection )
+	{
+		return InStageStart;
+	}
+};
 
 /**
   * @author Olivier Goffart
@@ -52,15 +86,17 @@ class HistoryPlugin : public Kopete::Plugin
 		 * return true if an old history has been detected, and no new ones
 		 */
 		static bool detectOldHistory();
-
+		
+		void messageDisplayed(const Kopete::Message &msg);
+		
 	private slots:
-		void slotMessageDisplayed(Kopete::Message &msg);
 		void slotViewCreated( KopeteView* );
 		void slotViewHistory();
 		void slotKMMClosed( Kopete::MessageManager* );
 		void slotSettingsChanged();
 
 	private:
+		HistoryMessageLoggerFactory m_loggerFactory;
 		QMap<Kopete::MessageManager*,HistoryGUIClient*> m_loggers;
 		Kopete::Message m_lastmessage;
 };
