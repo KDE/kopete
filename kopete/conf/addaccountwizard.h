@@ -18,10 +18,10 @@
 
 #include <qptrlist.h>
 #include <qvaluelist.h>
+#include <qmap.h>
 #include <klistview.h>
 
 #include "addaccountwizard_base.h"
-
 
 class EditAccountWidget;
 class KopeteProtocol;

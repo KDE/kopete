@@ -39,6 +39,7 @@
 
 #include "addcontactwizard.h"
 #include "kopete.h"
+#include "kopeteaccount.h"
 #include "kopeteballoon.h"
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
@@ -55,6 +56,9 @@
 #include "preferencesdialog.h"
 #include "systemtray.h"
 #include "statusbaricon.h"
+
+//#include "addaccountwizard.h"
+
 
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 : KMainWindow( parent, name )
@@ -429,7 +433,7 @@ void KopeteWindow::slotProtocolDestroyed( QObject *o )
 void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& status )
 /*KopeteProtocol * p,	const QString &icon )*/
 {
-//	kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged() Icon: " << icon << endl;
+	kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged() Icon: " << endl;
 
 	StatusBarIcon *i = static_cast<StatusBarIcon *>( m_statusBarIcons[ status.protocol() ] );
 	if( !i )
@@ -477,13 +481,40 @@ void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
 	const QPoint &p )
 {
 //	kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconRightClicked()" << endl;
-	KActionMenu *menu = proto->protocolActions();
+	// if the protocol has accounts, show its menu
+	// otherwise just show a menu containing "Add New Account"
+	KActionMenu *menu = 0L;
+
+	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts( proto );
+	if ( dict.count() > 0 )
+		menu = proto->protocolActions();
+	else
+	{
+		menu = new KActionMenu( proto->displayName(), proto->pluginIcon(), this);
+		// FIXME: use the commented out KAction when we've solved using the addaccountwizard from
+		// this class
+		//menu->insert( new KAction( i18n("Create an account"), QString::null, 0, qApp->mainWidget(), SLOT( slotAddAccount() ), menu, "actionKWAddAccount" ) );
+		KAction dummy( i18n("Create an Account!") );
+		dummy.setEnabled( false );
+		menu->insert( &dummy );
+	}
+
 	if( menu )
 	{
 		menu->popupMenu()->exec( p );
 		delete menu;
 	}
 }
+
+// FIXME: find out why using AddAccountWizard from this class causes monster compile failures
+// and uncomment!
+// void KopeteWindow::slotAddAccount()
+// {
+// 	AddAccountWizard *m_addwizard;
+// 	m_addwizard  = new AddAccountWizard( this , "addAccountWizard" , true);
+// 	//connect(m_addwizard, SIGNAL( destroyed(QObject*)) , this, SLOT (slotAddWizardDone()));
+// 	m_addwizard->show();
+// }
 
 void KopeteWindow::slotShowPreferencesDialog()
 {

@@ -181,7 +181,6 @@ private slots:
 
 protected:
 	KopeteOnlineStatus m_status;
-	const KopeteOnlineStatus m_unknownStatus;
 
 private:
 	/**

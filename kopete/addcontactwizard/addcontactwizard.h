@@ -21,6 +21,7 @@
 
 #include <qptrlist.h>
 #include <qvaluelist.h>
+#include <qmap.h>
 
 #include <kdebug.h>
 

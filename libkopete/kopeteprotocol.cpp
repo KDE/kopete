@@ -35,8 +35,11 @@
 KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
     : KopetePlugin( parent, name )
 {
+	// FIXME: avoid having to use an arbitrary number like 765
+	// and *hope* that protocols won't declare their own KOS with
+	// the same internalStatus
 	m_status = KopeteOnlineStatus( KopeteOnlineStatus::Unknown, 0,
-			this, 0, QString::fromLatin1( "status_unknown" )
+			this, 765, QString::fromLatin1( "status_unknown" )
 			, QString::null, QString::null );
 }
 
@@ -72,24 +75,13 @@ KActionMenu* KopeteProtocol::protocolActions()
 
 	KActionMenu *m_menu = new KActionMenu(displayName(),pluginIcon(),this);
 
-	bool accountsFound = false;
 	for( ; KopeteAccount *account = it.current(); ++it )
 	{
-		accountsFound = true;
 		KActionMenu *accountMenu = account->actionMenu();
 		if(accountMenu->parent())
 			accountMenu->parent()->removeChild( accountMenu );
 		m_menu->insertChild( accountMenu );
 		m_menu->insert( accountMenu );
-	}
-
-	// if no accounts exist, insert a dummy disabled action
-	// so as not to confuse the user
-	if ( !accountsFound )
-	{
-		KAction dummy( i18n("Create an Account!") );
-		dummy.setEnabled( false );
-		m_menu->insert( &dummy );
 	}
 
 	return m_menu;
@@ -301,7 +293,9 @@ void KopeteProtocol::slotRefreshStatus()
 	}
 
 	if ( !accountsFound )
-		newStatus = m_unknownStatus;
+		newStatus = KopeteOnlineStatus( KopeteOnlineStatus::Unknown, 0,
+			this, 765, QString::fromLatin1( "status_unknown" ),
+			QString::null, QString::null );
 
 	if( newStatus != m_status )
 	{
