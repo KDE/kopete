@@ -125,6 +125,7 @@ signals:
 	/* Not used yet.... */
 	void addedToGroup( KopeteMetaContact *mc, const QString &to );
 	void removedFromGroup( KopeteMetaContact *mc, const QString &from );
+	void metaContactDeleted( KopeteMetaContact *mc );
 
 private:
 	/**

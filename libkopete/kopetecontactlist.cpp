@@ -294,7 +294,7 @@ void KopeteContactList::removeMetaContact(KopeteMetaContact *m)
 		c->slotDeleteContact();
 	}
 
-	kopeteapp->contactList()->removeContact(m);
+	emit metaContactDeleted( m );
 	m_contacts.remove( m );
 	delete m;
 }
