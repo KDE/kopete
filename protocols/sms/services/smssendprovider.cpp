@@ -48,6 +48,19 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 	{
 		QTextStream t(&f);
 		QString group = QString("SMSSend-%1").arg(provider);
+		bool exactNumberMatch = false;
+		QStringList numberWords;
+		numberWords.append("Tel");
+                numberWords.append("Number");
+		numberWords.append("number");
+		numberWords.append("TelNum");
+		numberWords.append("Recipient");
+		numberWords.append("Tel1");
+		numberWords.append("To");
+		numberWords.append("nummer");
+		numberWords.append("telefone");
+		numberWords.append("ToPhone");
+
 		while( !t.eof())
 		{
 			QString s = t.readLine();
@@ -65,6 +78,10 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 						break;
 					}
 				isHiddens.append(hidden);
+
+				// Strip trailing whitespace in the end
+				// and '%' in the beginning
+				args[0] = args[0].simplifyWhiteSpace().mid(1);
 
 				descriptions.append(args[1]);
 				if (m_account)
@@ -87,13 +104,21 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 					}
 					messagePos = names.count()-1;
 				}
-				else if ( args[0].contains("Tel") || args[0].contains("Number")
-					|| args[0].contains("number") || args[0].contains("TelNum")
-					|| args[0].contains("Recipient") || args[0].contains("Tel1")
-					|| args[0].contains("To") || args[0].contains("nummer")
-					|| args[0].contains("telefone") || args[0].contains("ToPhone") )
+				else if (!exactNumberMatch)
 				{
-					telPos = names.count() - 1;
+					for (QStringList::Iterator it=numberWords.begin(); it != numberWords.end(); ++it)
+					{
+						if (args[0].contains(*it))
+						{
+							telPos = names.count() - 1;
+							if (args[0] == *it)
+							{
+//								kdDebug(14160) << "Exact match for " << args[0] << endl;
+								exactNumberMatch = true;
+							}
+//							kdDebug(14160) << "args[0] (" << args[0] << ") contains " << *it << endl;
+						}
+					}
 				}
 			}
 		}
@@ -144,17 +169,31 @@ const bool SMSSendProvider::isHidden(int i)
 
 void SMSSendProvider::save(QPtrList<KLineEdit>& args)
 {
-	kdWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
+	kdDebug( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
 	if (!m_account) return;		// prevent crash in worst case
 
 	QString group = QString("SMSSend-%1").arg(provider);
+	unsigned namesI=0;
 
 	for (unsigned i=0; i < args.count(); i++)
 	{
-		if (!args.at(i)->text().isEmpty())
-		{	values[i] = args.at(i)->text();
-			m_account->setPluginData(SMSProtocol::protocol(), QString("%1:%2").arg(group).arg(names[i]), values[i]);
+	        if (telPos == namesI || messagePos == namesI)
+		{
+//		    kdDebug(14160) << k_funcinfo << "Skipping pos " << namesI << endl;
+		    namesI++;
+		    if (telPos == namesI || messagePos == namesI)
+		    {
+//		        kdDebug(14160) << k_funcinfo << "Skipping pos " << namesI << endl;
+		        namesI++;
+		    }
 		}
+
+//                kdDebug(14160) << k_funcinfo << "saving " << args.at(i) << " to " << names[namesI] << endl;
+		if (!args.at(i)->text().isEmpty())
+		{	values[namesI] = args.at(i)->text();
+			m_account->setPluginData(SMSProtocol::protocol(), QString("%1:%2").arg(group).arg(names[namesI]), values[namesI]);
+		}
+	        namesI++;
 	}
 }
 

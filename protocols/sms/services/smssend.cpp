@@ -88,7 +88,7 @@ void SMSSend::setWidgetContainer(QWidget* parent, QGridLayout* layout)
 	QString prefix = QString::null;
 
 	if (m_account)
-		prefix = m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSSend").arg("Prefix"));
+		prefix = m_account->pluginData(SMSProtocol::protocol(), QString("SMSSend:Prefix"));
 	if (prefix.isNull())
 	{
 		QDir d("/usr/share/smssend");
@@ -122,8 +122,8 @@ void SMSSend::savePreferences()
 {
 	if (prefWidget != 0L && m_account != 0L && m_provider != 0L )
 	{
-		m_account->setPluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSSend").arg("Prefix"), prefWidget->program->url());
-		m_account->setPluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSSend").arg("ProviderName"), prefWidget->provider->currentText());
+		m_account->setPluginData(SMSProtocol::protocol(), QString("SMSSend:Prefix"), prefWidget->program->url());
+		m_account->setPluginData(SMSProtocol::protocol(), QString("SMSSend:ProviderName"), prefWidget->provider->currentText());
 		m_provider->save(args);
 	}
 }
@@ -159,7 +159,7 @@ void SMSSend::loadProviders(const QString &prefix)
 
 	bool found = false;
 	if (m_account)
-	{	QString pName = m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSSend").arg("ProviderName"));
+	{	QString pName = m_account->pluginData(SMSProtocol::protocol(), QString("SMSSend:ProviderName"));
 		for (int i=0; i < prefWidget->provider->count(); i++)
 		{
 			if (prefWidget->provider->text(i) == pName)
@@ -221,10 +221,10 @@ int SMSSend::maxSize()
 {
 	kdWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
 
-	QString pName = m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSSend").arg("ProviderName"));
+	QString pName = m_account->pluginData(SMSProtocol::protocol(), QString("SMSSend:ProviderName"));
 	if (pName.length() < 1)
 		return 160;
-	QString prefix = m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSSend").arg("Prefix"));
+	QString prefix = m_account->pluginData(SMSProtocol::protocol(), QString("SMSSend:Prefix"));
 	if (prefix.isNull())
 		prefix = "/usr";
 	// quick sanity check
