@@ -10,7 +10,8 @@
 		<xsl:text disable-output-escaping="yes">&#160;&#160;&#160;&#160;</xsl:text>
 	</xsl:if>
 	<span>
-	<xsl:attribute name="style">		<xsl:if test="body/@color"><xsl:text>color:</xsl:text><xsl:value-of select="body/@color"/><xsl:text>;</xsl:text></xsl:if><xsl:if test="body/@bgcolor"><xsl:text>background-color:</xsl:text><xsl:value-of select="body/@bgcolor"/></xsl:if></xsl:attribute>
+	<xsl:attribute name="style">		<xsl:if test="body/@color"><xsl:text>color:</xsl:text><xsl:value-of select="body/@color"/><xsl:text>;</xsl:text></xsl:if><xsl:if test="body/@bgcolor"><xsl:text>background-color:</xsl:text><xsl:value-of select="body/@bgcolor"/></xsl:if>
+						 <xsl:if test="body/@font"><xsl:text>; </xsl:text><xsl:value-of select="body/@font"/></xsl:if> </xsl:attribute>
 	<xsl:if test="@direction='3'">
 		<xsl:attribute name="style"><xsl:text>color:darkGreen;bold</xsl:text></xsl:attribute>
 		<xsl:text>* </xsl:text><span class="KopeteDisplayName"><xsl:value-of disable-output-escaping="yes" select="from/contact/@contactDisplayName"/></span><xsl:text> </xsl:text>

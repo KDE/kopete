@@ -43,7 +43,7 @@ struct KopeteMessagePrivate
 	QDateTime timeStamp;
 	QFont font;
 
-	bool bgOverride;
+	bool bgOverride; //C'est quoi ça bgOverride????????
 };
 
 KopeteMessage::KopeteMessage()
@@ -120,31 +120,59 @@ void KopeteMessage::setBgOverride( bool enabled )
 
 void KopeteMessage::setFg( const QColor &color )
 {
+	detach();
+	QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
 	if( color.isValid() )
 	{
-		detach();
-		QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
 		bodyNode.setAttribute( QString::fromLatin1("color"), color.name() );
+	}
+	else
+	{
+		bodyNode.removeAttribute( QString::fromLatin1("color") );
 	}
 }
 
 void KopeteMessage::setBg( const QColor &color )
 {
-	if( !d->bgOverride && color.isValid() )
-	{
-		detach();
-		QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
+	detach();
+	QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
+	if( d->bgOverride && color.isValid() )
 		bodyNode.setAttribute( QString::fromLatin1("bgcolor"), color.name() );
-	}
+	else
+		bodyNode.removeAttribute( QString::fromLatin1("bgcolor") );
+
 }
 
 void KopeteMessage::setFont( const QFont &font )
 {
 	detach();
-	QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
-	bodyNode.setAttribute( QString::fromLatin1("font"), font.family() );
-	bodyNode.setAttribute( QString::fromLatin1("fontsize"), font.pointSize() );
 	d->font = font;
+	QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
+
+
+	if(font!=QFont())
+	{
+		QString fontstr;
+		if(!font.family().isNull())
+			fontstr+=QString::fromLatin1("font-family: ")+font.family()+QString::fromLatin1("; ");
+		if(font.italic())
+			fontstr+=QString::fromLatin1("font-style: italic; ");
+		if(font.strikeOut())
+			fontstr+=QString::fromLatin1("text-decoration: line-through; ");
+		if(font.underline())
+			fontstr+=QString::fromLatin1("text-decoration: underline; ");
+		if(font.bold())
+			fontstr+=QString::fromLatin1("font-weight: bold;");
+
+		//TODO: font size
+
+//		kdDebug() << k_funcinfo << fontstr <<endl;
+
+		bodyNode.setAttribute( QString::fromLatin1("font"), fontstr );
+		//bodyNode.setAttribute( QString::fromLatin1("fontsize"), font.pointSize() );
+	}
+	else
+		bodyNode.removeAttribute( QString::fromLatin1("font") );
 }
 
 void KopeteMessage::setBody( const QString &body, MessageFormat f )
