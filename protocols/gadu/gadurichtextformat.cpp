@@ -25,6 +25,8 @@
 
 #include <qstring.h>
 
+#include <libgadu.h>
+
 GaduRichTextFormat::GaduRichTextFormat()
 {
 }
