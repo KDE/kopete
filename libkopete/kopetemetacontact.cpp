@@ -513,7 +513,7 @@ void KopeteMetaContact::slotContactNameChanged( const QString &name )
 	}
 	else
 	{
-		kdDebug(14010) << "[KopeteMetaContact] slotContactNameChanged(); IGNORED contact namechange. "<< endl;
+		kdDebug( 14010 ) << k_funcinfo << "Tracking is off, ignored KopeteContact name change" << endl;
 	}
 }
 
