@@ -42,6 +42,12 @@ class MSNContact : public KopeteContact
 	 */
 	friend class MSNNotifySocket;
 
+	/**
+	 * MSNProtocol needs to change the display name of mySelf() when it's
+	 * received from the server
+	 */
+	friend class MSNProtocol;
+
 public:
 	MSNContact( KopeteProtocol *protocol, const QString &id,
 		const QString &displayName, KopeteMetaContact *parent );

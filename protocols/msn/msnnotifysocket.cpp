@@ -187,10 +187,12 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		MSNContact *c = static_cast<MSNContact*>( m_protocol->contacts()[ data.section( ' ', 1, 1 ) ] );
 		if( c )
 		{
-			c->setMsnStatus( MSNProtocol::convertStatus(data.section( ' ', 0, 0 )));
-			QString publicName=unescape( data.section( ' ', 2, 2 ) );
-			if (publicName!=c->displayName())
-				changePublicName(publicName,c->contactId());
+			c->setMsnStatus( MSNProtocol::convertStatus( data.section( ' ', 0, 0 ) ) );
+			QString publicName = unescape( data.section( ' ', 2, 2 ) );
+			// FIXME: We may want to save the remote user's display name somewhere, but
+			// don't enforce it over a custom name if one has already been set - Martijn
+			if( publicName != c->displayName() && c->displayName() == c->contactId() )
+				changePublicName( publicName, c->contactId() );
 		}
 	}
 	else if( cmd == "LST" )

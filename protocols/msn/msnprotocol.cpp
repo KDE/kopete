@@ -1099,7 +1099,7 @@ void MSNProtocol::slotPublicNameChanged( QString publicName )
 			m_publicName = publicName;
 			m_publicNameSyncMode = SyncBoth;
 
-			m_myself->rename( publicName );
+			m_myself->setDisplayName( publicName );
 
 			// Also sync the config file
 			mPrefs->setPublicName(m_publicName);
