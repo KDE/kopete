@@ -679,9 +679,11 @@ void JabberProtocol::sendPresenceToNode(const int &status,const QString &toUser 
 		case 3: status_str = "dnd"; break;
 	}
 
-	 ;
-	mProtocol->insertXml( QString("<presence to=\"%1\" from=\"%2\">\n<priority>0</priority>\n<status></status>\n<show>%3</show>\n</presence>").arg(toUser).arg(mUsername+"@"+mServer).arg(status_str));
-	
+	QString package ;
+	if ( status < 4 )
+		package = QString("<presence to=\"%1\" from=\"%2\">\n<priority>0</priority>\n<status></status>\n<show>%3</show>\n</presence>").arg(toUser).arg(mUsername+"@"+mServer).arg(status_str);
+	else package = QString("<presence type=\"invisible\" to=\"%1\"/>").arg(toUser);
+	mProtocol->insertXml( package ); 
 	}
 
 /*

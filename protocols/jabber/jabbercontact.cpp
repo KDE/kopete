@@ -54,7 +54,7 @@ JabberContact::JabberContact(QString userID, QString nickname, QString group, Ja
 	actionSendAuth = 0L;
 	
 	actionRemoveFromGroup = actionRemove = actionInfo = 0L;
-	actionStatusAway = actionStatusChat = actionStatusXA = actionStatusDND = 0L;
+	actionStatusAway = actionStatusChat = actionStatusXA = actionStatusDND = actionStatusInvisible = 0L;
 	
 	actionContactMove = 0L;
 	actionSelectResource = 0L;
@@ -96,6 +96,7 @@ JabberContact::~JabberContact()
 	delete actionStatusChat; 
 	delete actionStatusXA; 
 	delete actionStatusDND;
+	delete actionStatusInvisible;
 
 
 }
@@ -217,6 +218,8 @@ void JabberContact::initActions()
 		actionStatusXA = new KAction(i18n("Extended away"), "jabber_away", 0, this, SLOT(slotStatusXA()),this, "actionXA");
 	if (!actionStatusDND)
 		actionStatusDND = new KAction(i18n("Do not Disturb"), "jabber_na", 0, this, SLOT(slotStatusDND()), this, "actionDND");
+	if (!actionStatusInvisible)
+		actionStatusInvisible = new KAction(i18n("Invisible"), "jabber_offline", 0, this, SLOT(slotStatusInvisible()), this, "actionDND");
 }
 
 void JabberContact::showContextMenu(const QPoint& point, const QString&)
@@ -306,6 +309,7 @@ void JabberContact::showContextMenu(const QPoint& point, const QString&)
 	actionStatusAway->plug(popup_status);
 	actionStatusXA->plug(popup_status);
 	actionStatusDND->plug(popup_status);
+	actionStatusInvisible->plug(popup_status);
 	// Remove
 	popup->insertSeparator();
 	actionRemoveFromGroup->plug(popup);
@@ -937,14 +941,20 @@ void JabberContact::slotUpdateNickname(const QString newNickname)
 
 }
 
+
+void JabberContact::slotStatusAway()
+{
+	mProtocol->sendPresenceToNode(1, mUserID);
+}
+
 void JabberContact::slotStatusChat()
 {
 	mProtocol->sendPresenceToNode(0, mUserID);
 }
 
-void JabberContact::slotStatusAway()
+void JabberContact::slotStatusInvisible()
 {
-	mProtocol->sendPresenceToNode(1, mUserID);
+	mProtocol->sendPresenceToNode(5, mUserID);
 }
 
 void JabberContact::slotStatusXA()

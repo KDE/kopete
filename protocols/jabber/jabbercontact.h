@@ -285,8 +285,9 @@ class JabberContact : public KopeteContact
 		 */
 		void slotSendAuth();
 
-		void slotStatusChat();
 		void slotStatusAway();
+		void slotStatusChat();
+		void slotStatusInvisible();
 		void slotStatusXA();
 		void slotStatusDND();
 
@@ -326,7 +327,7 @@ class JabberContact : public KopeteContact
 				*actionRename,
 	 			*actionSendAuth,
 				*actionRemoveFromGroup, *actionRemove, *actionInfo,
-				*actionStatusAway, *actionStatusChat, *actionStatusXA, *actionStatusDND;
+				*actionStatusAway, *actionStatusChat, *actionStatusInvisible, *actionStatusXA, *actionStatusDND;
 		KListAction *actionContactMove;
 		
 		KSelectAction *actionSelectResource;
