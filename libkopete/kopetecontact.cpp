@@ -190,13 +190,14 @@ void KopeteContact::showContextMenu(const QPoint& p)
 	actionUserInfo->plug( contextMenu );
 	actionChangeAlias->plug( contextMenu );
 	actionDeleteContact->plug( contextMenu );
-	contextMenu->insertSeparator();
 	/* Protocol specific options will go below this separator
 	 * through the use of the customContextMenuActions() function
 	 */
 	/* Get the custom actions from the protocols (pure virtual function) */
 	KActionCollection *customActions = customContextMenuActions();
 	if(customActions != 0L){
+		if ( !customActions->isEmpty() )
+			contextMenu->insertSeparator();
 		for(unsigned int i = 0; i < customActions->count(); i++){
 			customActions->action(i)->plug( contextMenu );
 		}
