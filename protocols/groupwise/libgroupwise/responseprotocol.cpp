@@ -85,14 +85,14 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 	// other header processing ( 500! )
 	if ( ok && rtnCode == 500 )
 	{
-		debug( QString( "- server error %i" ).arg( rtnCode ) );
+		debug( QString( "- server error %1" ).arg( rtnCode ) );
 		packetState = ServerError;
 		m_din.unsetDevice();
 		return 0;
 	}
 	if ( ok && rtnCode == 404 )
 	{
-		debug( QString( "- server error %i" ).arg( rtnCode ) );
+		debug( QString( "- server error %1" ).arg( rtnCode ) );
 		packetState = ServerError;
 		m_din.unsetDevice();
 		return 0;
