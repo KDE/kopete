@@ -16,6 +16,8 @@
     *************************************************************************
 */
 
+#include <qbuffer.h>
+
 #include "gwerror.h"
 
 #include "eventtransfer.h"
@@ -35,14 +37,20 @@ EventProtocol::~EventProtocol()
 Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 {
 	m_bytes = 0;
-	m_din = new QDataStream( wire, IO_ReadOnly );
-	m_din->setByteOrder( QDataStream::LittleEndian );
+	//m_din = new QDataStream( wire, IO_ReadOnly );
+	QBuffer inBuf( wire );
+	inBuf.open( IO_ReadOnly); 
+	m_din.setDevice( &inBuf );
+	m_din.setByteOrder( QDataStream::LittleEndian );
 	Q_UINT32 type;
 
 	if ( !okToProceed() )
+	{
+		m_din.unsetDevice();
 		return 0;
+	}
 	// read the event type
-	*m_din >> type;
+	m_din >> type;
 	m_bytes += sizeof( Q_UINT32 );
 	
 	qDebug( "EventProtocol::parse() Reading event of type %i", type );
@@ -56,7 +64,10 @@ Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 	// read the event source
 	QString source;
 	if ( !readString( source ) )
+	{
+		m_din.unsetDevice();
 		return 0;
+	}
 	
 	// now create an event object
 	//HACK: lowercased DN
@@ -74,11 +85,17 @@ Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 	{
 		case StatusChange: //103 - STATUS + STATUSTEXT
 			if ( !okToProceed() )
+			{
+				m_din.unsetDevice();
 				return 0;
-			*m_din >> status;
+			}
+			m_din >> status;
 			m_bytes += sizeof( Q_UINT16 );
 			if ( !readString( statusText ) )
+			{
+				m_din.unsetDevice();
 				return 0;
+			}
 			qDebug( "got status: %i", status );
 			tentative->setStatus( status );
 			qDebug( "tentative status: %i", tentative->status() );
@@ -87,10 +104,16 @@ Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 		case ConferenceJoined:		// 106 - GUID + FLAGS
 		case ConferenceLeft:		// 107
 			if ( !readString( guid ) )
+			{
+				m_din.unsetDevice();
 				return 0;
+			}
 			tentative->setGuid( guid );
 			if ( !readFlags( flags ) )
+			{
+				m_din.unsetDevice();
 				return 0;
+			}
 			tentative->setFlags( flags );
 			break;
 		case UndeliverableStatus:	//102 - GUID
@@ -100,32 +123,50 @@ Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 		case UserTyping:			//112
 		case UserNotTyping:			//113
 			if ( !readString( guid ) )
+			{
+				m_din.unsetDevice();
 				return 0;
+			}
 			tentative->setGuid( guid );
 			break;
 		case ReceiveAutoReply:		//121 - GUID + FLAGS + MESSAGE
 		case ReceiveMessage:		//108
 			// guid
 			if ( !readString( guid ) )
+			{
+				m_din.unsetDevice();
 				return 0;
+			}
 			tentative->setGuid( guid );
 			// flags
 			if ( !readFlags( flags ) )
+			{
+				m_din.unsetDevice();
 				return 0;
+			}
 			tentative->setFlags( flags );
 			// message
 			if ( !readString( message ) )
+			{
+				m_din.unsetDevice();
 				return 0;
+			}
 			tentative->setMessage( message );
 			break;
 		case ConferenceInvite:		//117 GUID + MESSAGE
 			// guid
 			if ( !readString( guid ) )
+			{
+				m_din.unsetDevice();
 				return 0;
+			}
 			tentative->setGuid( guid );
 			// message
 			if ( !readString( message ) )
+			{
+				m_din.unsetDevice();
 				return 0;
+			}
 			tentative->setMessage( message );
 			break;
 		case UserDisconnect:		//114 (NOTHING)
@@ -144,8 +185,9 @@ Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 	}
 	// if we got this far, the parse succeeded, return the Transfer
 	m_state = Success;
-	delete m_din;
+	//delete m_din;
 	bytes = m_bytes;
+	m_din.unsetDevice();
 	return tentative;
 }
 
@@ -153,12 +195,11 @@ bool EventProtocol::readFlags( Q_UINT32 &flags)
 {
 	if ( okToProceed() )
 	{
-		*m_din >> flags;
+		m_din >> flags;
 		m_bytes += sizeof( Q_UINT32 );
 		return true;
 	}
 	return false;
 }
-
 
 #include "eventprotocol.moc"

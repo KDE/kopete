@@ -16,6 +16,8 @@
     *************************************************************************
 */
 
+#include <qbuffer.h>
+
 #include "response.h"
 
 #include "responseprotocol.h"
@@ -33,10 +35,15 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 {
 	m_bytes = 0;
 	m_collatingFields.clear();
-	m_din = new QDataStream( wire, IO_ReadOnly );
-	m_din->setByteOrder( QDataStream::LittleEndian );
+	//m_din = new QDataStream( wire, IO_ReadOnly );
+	QBuffer inBuf( wire );
+	inBuf.open( IO_ReadOnly); 
+	m_din.setDevice( &inBuf );
+	m_din.setByteOrder( QDataStream::LittleEndian );
+	
+	// check that this begins with a HTTP (is a response)
 	Q_UINT32 val;
-	*m_din >> val;
+	m_din >> val;
 	m_bytes += sizeof( Q_UINT32 );
 	
 	Q_ASSERT( qstrncmp( (const char *)&val, "HTTP", strlen( "HTTP" ) ) == 0 );
@@ -59,7 +66,10 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 	while ( line != "\r\n" )
 	{
 		if ( !readGroupWiseLine( line ) )
+		{
+			m_din.unsetDevice();
 			return 0;
+		}
 		headerRest.append( line );
 		qDebug( "- read header line - (%i) : %s", line.length(), line.data() );
 	}
@@ -69,6 +79,7 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 	{	
 		qDebug( "- server redirect " );
 		packetState = ServerRedirect;
+		m_din.unsetDevice();
 		return 0;
 	}
 	// other header processing ( 500! )
@@ -76,24 +87,30 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 	{
 		qDebug( "- server error %i", rtnCode );
 		packetState = ServerError;
+		m_din.unsetDevice();
 		return 0;
 	}
 	if ( ok && rtnCode == 404 )
 	{
 		qDebug( "- server error %i", rtnCode );
 		packetState = ServerError;
+		m_din.unsetDevice();
 		return 0;
 	}
-	if ( m_din->atEnd() )
+	if ( m_din.atEnd() )
 	{
 		qDebug( "- no fields" );
 		packetState = ProtocolError;
+		m_din.unsetDevice();
 		return 0;
 	}
 	
 	// read fields
 	if ( !readFields( -1 ) )
+	{
+		m_din.unsetDevice();
 		return 0;
+	}
 	// find transaction id field and create Response object if nonzero
 	int tId = 0;
 	int resultCode = 0;
@@ -108,6 +125,7 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 			tId = sf->value().toInt();
 			qDebug( "CoreProtocol::readResponse() - transaction ID is %i", tId );
 			m_collatingFields.remove( it );
+			delete *it;
 		}
 	}
 	it = m_collatingFields.find( NM_A_SZ_RESULT_CODE );
@@ -119,6 +137,7 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 			resultCode = sf->value().toInt();
 			qDebug( "CoreProtocol::readResponse() - result code is %i", resultCode );
 			m_collatingFields.remove( it );
+			delete *it;
 		}
 	}
 	// append to inQueue
@@ -127,16 +146,17 @@ Transfer * ResponseProtocol::parse( const QByteArray & wire, uint & bytes )
 		qDebug( "CoreProtocol::readResponse() - setting state Available, got %i fields in base array", m_collatingFields.count() );
 		packetState = Available;
 		bytes = m_bytes;
+		m_din.unsetDevice();
 		return new Response( tId, resultCode, m_collatingFields );
 	}
 	else
 	{
 		qDebug( "- WARNING - NO TRANSACTION ID FOUND!" );
 		m_state = ProtocolError;
+		m_din.unsetDevice();
+		m_collatingFields.purge();
 		return 0;
 	}
-
-	delete m_din;
 }
 
 bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
@@ -161,8 +181,11 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 		QCString tag;
 		// read uint8 type
 		if ( !okToProceed() )
+		{
+			currentList.purge();
 			return false;
-		*m_din >> type;
+		}
+		m_din >> type;
 		m_bytes += sizeof( Q_UINT8 );
 		// if type is 0 SOMETHING_INVALID, we're at the end of the fields
 		if ( type == 0 ) /*&& m_din->atEnd() )*/
@@ -174,21 +197,30 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 		}
 		// read uint8 method
 		if ( !okToProceed() )
+		{
+			currentList.purge();
 			return false;
-		*m_din >> method;
+		}
+		m_din >> method;
 		m_bytes += sizeof( Q_UINT8 );
 		// read tag and length
 		if ( !safeReadBytes( tag, val ) )
+		{
+			currentList.purge();
 			return false;
-			
+		}
+
 		qDebug( "- type: %i, method: %i, tag: %s,", type, method, tag.data() );
 		// if multivalue or array
 		if ( type == NMFIELD_TYPE_MV || type == NMFIELD_TYPE_ARRAY )
 		{
 			// read length uint32
 			if ( !okToProceed() )
+			{
+				currentList.purge();
 				return false;
-			*m_din >> val;
+			}
+			m_din >> val;
 			m_bytes += sizeof( Q_UINT32 );
 
 			// create multifield
@@ -196,7 +228,10 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 			Field::MultiField* m = new Field::MultiField( tag, method, 0, type );
 			currentList.append( m );
 			if ( !readFields( val, &currentList) )
+			{
+				currentList.purge();
 				return false;
+			}
 		}
 		else 
 		{
@@ -205,7 +240,10 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 			{
 				QCString rawData;
 				if( !safeReadBytes( rawData, val ) )
+				{
+					currentList.purge();
 					return false;
+				}
 				if ( val > NMFIELD_MAX_STR_LENGTH )
 				{
 					m_packetState = ProtocolError;
@@ -223,8 +261,11 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 				// otherwise ( numeric )
 				// read value uint32
 				if ( !okToProceed() )
+				{
+					currentList.purge();
 					return false;
-				*m_din >> val;
+				}
+				m_din >> val;
 				m_bytes += sizeof( Q_UINT32 );
 				qDebug( "- numeric field: %i\n", val );
 				Field::SingleField* s = new Field::SingleField( tag, method, 0, type, val );
@@ -262,7 +303,7 @@ bool ResponseProtocol::readGroupWiseLine( QCString & line )
 		
 		if (! okToProceed() )
 			return false;
-		*m_din >> c;
+		m_din >> c;
 		m_bytes++;
 		line += QChar(c);
 		if ( c == '\n' )

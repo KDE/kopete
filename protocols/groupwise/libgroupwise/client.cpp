@@ -424,6 +424,8 @@ void Client::distribute( Transfer * transfer )
 {
 	if( !rootTask()->take( transfer ) )
 		qDebug( "CLIENT: root task refused transfer" );
+	// at this point the transfer is no longer needed
+	delete transfer;
 }
 
 void Client::send( Request * request )

@@ -51,19 +51,19 @@
 #define GW_URLVAR_TYPE "&type="
 
 //#define GW_COREPROTOCOL_DEBUG
-static char *
+QCString
 url_escape_string( const char *src)
 {
 	uint escape = 0;
 	const char *p;
-	char *q;
-	char *encoded = NULL;
+	uint q;
+	//char *encoded = NULL;
 	int ch;
 
 	static const char hex_table[17] = "0123456789abcdef";
 
 	if (src == NULL) {
-		return NULL;
+		return QCString();
 	}
 
 	/* Find number of chars to escape */
@@ -74,31 +74,31 @@ url_escape_string( const char *src)
 		}
 	}
 
-	encoded = (char*)malloc((p - src) + (escape * 2) + 1);
+	QCString encoded((p - src) + (escape * 2) + 1);
 
 	/* Escape the string */
-	for (p = src, q = encoded; *p != '\0'; p++) {
+	for (p = src, q = 0; *p != '\0'; p++) {
 		ch = (uchar) * p;
 		if (NO_ESCAPE(ch)) {
 			if (ch != 0x20) {
-				*q = ch;
+				encoded.insert( q, (char)ch );
 				q++;
 			} else {
-				*q = '+';
+				encoded.insert( q, '+' );
 				q++;
 			}
 		} else {
-			*q = '%';
+			encoded.insert( q, '%' );
 			q++;
 
-			*q = hex_table[ch >> 4];
+			encoded.insert( q, hex_table[ch >> 4] );
 			q++;
 
-			*q = hex_table[ch & 15];
+			encoded.insert( q, hex_table[ch & 15] );
 			q++;
 		}
 	}
-	*q = '\0';
+	encoded.insert( q, '\0' );
 
 	return encoded;
 }
@@ -201,8 +201,9 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 		return;*/
 	}
 	// Append field containing transaction id
-	fields.append( new Field::SingleField( NM_A_SZ_TRANSACTION_ID, NMFIELD_METHOD_VALID, 
-					0, NMFIELD_TYPE_UTF8, request->transactionId() ) );
+	Field::SingleField * fld = new Field::SingleField( NM_A_SZ_TRANSACTION_ID, NMFIELD_METHOD_VALID, 
+					0, NMFIELD_TYPE_UTF8, request->transactionId() ); 
+	fields.append( fld );
 	
 	// convert to QByteArray
 	QByteArray bytesOut;
@@ -236,13 +237,14 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 	}
 	else
 		dout <<  "\r\n";
-	
-		
-	printf( "data out: %s", bytesOut.data() );
-	
+
+	qDebug( "data out: %s", bytesOut.data() );
+
 	emit outgoingData( bytesOut );
 	// now convert 
 	fieldsToWire( fields );
+	delete request;
+	delete fld;
 	return;
 }
 
@@ -293,7 +295,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 // 				encoded.replace( "%20", "+" );
 // 				dout <<  encoded.ascii();
 
-				snprintf( valString, NMFIELD_MAX_STR_LENGTH, "%s", url_escape_string( sField->value().toString().utf8() ) );
+				snprintf( valString, NMFIELD_MAX_STR_LENGTH, "%s", url_escape_string( sField->value().toString().utf8() ).data() );
 				//dout <<  sField->value().toString().ascii();
 				break;
 			}

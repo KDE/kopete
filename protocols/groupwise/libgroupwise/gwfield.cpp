@@ -28,12 +28,6 @@ using namespace std;
 /* === FieldList ==================================================== */
 FieldList::~FieldList()
 {
-	// This isn't going to work, we need to delete on the shared inner's destruction, not on the outer class
-// 	FieldListIterator it = begin();
-// 	FieldListIterator theEnd = end();
-// 	int index = 0;
-// 	for ( ; it != theEnd; ++it, ++index )
-// 		delete *it;
 }
 
 FieldListIterator FieldList::find( QCString tag )
@@ -91,6 +85,16 @@ void FieldList::dump( bool recursive, int offset )
 		}
 	}
 }
+
+void FieldList::purge()
+{
+	Field::FieldListIterator it = begin();
+	Field::FieldListIterator theEnd = end();
+	int index = 0;
+	for ( ; it != theEnd; ++it, ++index )
+		delete *it;
+}
+
 // THIS IS AN ATTEMPT TO HIDE THE POLYMORPHISM INSIDE THE LIST
 // HOWEVER IT FAILS BECAUSE WE NEED BOTH THE ITERATOR AND THE CASTED Single|MultiField it points to
 
@@ -194,6 +198,11 @@ MultiField::MultiField( QCString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 typ
 MultiField::MultiField( QCString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type )
 : FieldBase( tag, method, flags, type )
 {
+}
+
+MultiField::~MultiField()
+{
+	m_fields.purge();
 }
 
 FieldList MultiField::fields() const

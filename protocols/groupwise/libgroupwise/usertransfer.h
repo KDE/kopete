@@ -31,7 +31,7 @@ class UserTransfer : public Transfer
 {
 public:
     UserTransfer( int transactionId );
-    ~UserTransfer();
+    virtual ~UserTransfer();
 	int transactionId();
 	Field::FieldList fields();
 	void setFields( Field::FieldList fields );

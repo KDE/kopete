@@ -48,9 +48,9 @@ bool InputProtocolBase::readString( QString &message )
 
 bool InputProtocolBase::okToProceed()
 {
-	if ( m_din )
+	if ( m_din.device() )
 	{
-		if ( m_din->atEnd() )
+		if ( m_din.atEnd() )
 		{
 			m_state = NeedMore;
 			qDebug( "InputProtocol::okToProceed() - Server message ended prematurely!" );
@@ -67,7 +67,7 @@ bool InputProtocolBase::safeReadBytes( QCString & data, uint & len )
 	Q_UINT32 val;
 	if ( !okToProceed() )
 		return false;
-	*m_din >> val;
+	m_din >> val;
 	m_bytes += sizeof( Q_UINT32 );
 	if ( val > NMFIELD_MAX_STR_LENGTH )
 		return false;
@@ -79,7 +79,7 @@ bool InputProtocolBase::safeReadBytes( QCString & data, uint & len )
 			return false;
 		// if the server splits packets here we are in trouble,
 		// as there is no way to see how much data was actually read
-		m_din->readRawBytes( temp.data(), val );
+		m_din.readRawBytes( temp.data(), val );
 		// the rest of the string will be filled with FF,
 		// so look for that in the last position instead of \0
 		// this caused a crash - guessing that temp.length() is set to the number of bytes actually read...
