@@ -667,7 +667,7 @@ void KIRC::requestDccConnect(const QString &nickname, unsigned int port, DCCClie
 		sending the connecting client the proper IP address that they need to connect to. */
 		struct sockaddr_in name;
 		int sockfd = socket();
-		int len = sizeof(name);
+		socklen_t len = sizeof(name);
 		if (getsockname(sockfd, (struct sockaddr *)&name,&len) == 0)
 		{
 			// refer to the ntohl man page for more info, but what it basicly does is flips the numbers around (e.g. from 1.0.0.10 to 10.0.0.1) since it's in "network order" right now
