@@ -78,7 +78,9 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 	jabberClient = 0L;
 	registerFlag = 0;
 
-	initialPresence = protocol()->JabberOnline;
+	awayDialog = new JabberAwayDialog(this);
+
+	initialPresence = protocol()->JabberKOSOnline;
 
 	/*
 	 * Load the SSL support library. We need to that here as
@@ -104,7 +106,9 @@ JabberAccount::~JabberAccount ()
 		jabberClient = 0L;
 	}
 
+	delete awayDialog;
 	delete myContact;
+
 }
 
 KopeteContact *JabberAccount::myself () const
@@ -125,32 +129,32 @@ KActionMenu *JabberAccount::actionMenu ()
 			.arg(accountId(), myContact->displayName()));
 #endif
 
-	m_actionMenu->insert(new KAction (mProtocol->JabberOnline.caption(),
-		mProtocol->JabberOnline.iconFor(this), 0, this, SLOT (slotGoOnline ()), this,
+	m_actionMenu->insert(new KAction (mProtocol->JabberKOSOnline.caption(),
+		mProtocol->JabberKOSOnline.iconFor(this), 0, this, SLOT (slotGoOnline ()), this,
 		"actionJabberConnect"));
 
-	m_actionMenu->insert(new KAction (mProtocol->JabberChatty.caption(),
-		mProtocol->JabberChatty.iconFor(this), 0, this, SLOT (slotGoChatty ()), this,
+	m_actionMenu->insert(new KAction (mProtocol->JabberKOSChatty.caption(),
+		mProtocol->JabberKOSChatty.iconFor(this), 0, this, SLOT (slotGoChatty ()), this,
 		"actionJabberChatty"));
 
-	m_actionMenu->insert(new KAction (mProtocol->JabberAway.caption(),
-		mProtocol->JabberAway.iconFor(this), 0, this, SLOT (slotGoAway ()), this,
+	m_actionMenu->insert(new KAction (mProtocol->JabberKOSAway.caption(),
+		mProtocol->JabberKOSAway.iconFor(this), 0, this, SLOT (slotGoAway ()), this,
 		"actionJabberAway"));
 
-	m_actionMenu->insert(new KAction (mProtocol->JabberXA.caption(),
-		mProtocol->JabberXA.iconFor(this), 0, this, SLOT (slotGoXA ()), this,
+	m_actionMenu->insert(new KAction (mProtocol->JabberKOSXA.caption(),
+		mProtocol->JabberKOSXA.iconFor(this), 0, this, SLOT (slotGoXA ()), this,
 		"actionJabberXA"));
 
-	m_actionMenu->insert(new KAction (mProtocol->JabberDND.caption(),
-		mProtocol->JabberDND.iconFor(this), 0, this, SLOT (slotGoDND ()), this,
+	m_actionMenu->insert(new KAction (mProtocol->JabberKOSDND.caption(),
+		mProtocol->JabberKOSDND.iconFor(this), 0, this, SLOT (slotGoDND ()), this,
 		"actionJabberDND"));
 
-	m_actionMenu->insert(new KAction (mProtocol->JabberInvisible.caption(),
-		mProtocol->JabberInvisible.iconFor(this), 0, this, SLOT (slotGoInvisible ()), this,
+	m_actionMenu->insert(new KAction (mProtocol->JabberKOSInvisible.caption(),
+		mProtocol->JabberKOSInvisible.iconFor(this), 0, this, SLOT (slotGoInvisible ()), this,
 		"actionJabberInvisible"));
 
-	m_actionMenu->insert(new KAction (mProtocol->JabberOffline.caption(),
-		mProtocol->JabberOffline.iconFor(this), 0, this,SLOT (slotGoOffline ()), this,
+	m_actionMenu->insert(new KAction (mProtocol->JabberKOSOffline.caption(),
+		mProtocol->JabberKOSOffline.iconFor(this), 0, this,SLOT (slotGoOffline ()), this,
 		"actionJabberDisconnect"));
 
 	m_actionMenu->popupMenu()->insertSeparator();
@@ -288,7 +292,7 @@ void JabberAccount::connect ()
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Connecting to Jabber server " << server() << ":" << port() << " with jidDomain " << jidDomain << endl;
 
-	setPresence(protocol()->JabberConnecting, "");
+	setPresence(protocol()->JabberKOSConnecting, "");
 
 	jabberClient->connectToHost (server(), port(), jidDomain);
 
@@ -397,7 +401,7 @@ void JabberAccount::slotDisconnected ()
 	/* It seems that we don't get offline notifications when going offline
 	 * with the protocol, so update all contacts manually. */
 	for (QDictIterator < KopeteContact > it (contacts ()); it.current (); ++it)
-		static_cast < JabberContact * >(*it)->slotUpdatePresence (protocol()->JabberOffline, "disconnected");
+		static_cast < JabberContact * >(*it)->slotUpdatePresence (protocol()->JabberKOSOffline, "disconnected");
 }
 
 void JabberAccount::slotError (const Jabber::StreamError & error)
@@ -483,7 +487,7 @@ void JabberAccount::setPresence (const KopeteOnlineStatus & status, const QStrin
 	 * If we are in the process of connecting, only update our local presence
 	 * and don't send anything across the wire.
 	 */
-	if(status == protocol()->JabberConnecting)
+	if(status == protocol()->JabberKOSConnecting)
 	{
 		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting new presence locally (-> connecting)." << endl;
 
@@ -507,17 +511,17 @@ void JabberAccount::setPresence (const KopeteOnlineStatus & status, const QStrin
 			presence.setStatus (reason);
 			presence.setIsAvailable (true);
 
-			if (status == protocol()->JabberOnline)
+			if (status == protocol()->JabberKOSOnline)
 				presence.setShow ("");
-			else if (status == protocol()->JabberChatty)
+			else if (status == protocol()->JabberKOSChatty)
 				presence.setShow ("chat");
-			else if (status == protocol()->JabberAway)
+			else if (status == protocol()->JabberKOSAway)
 				presence.setShow ("away");
-			else if (status == protocol()->JabberXA)
+			else if (status == protocol()->JabberKOSXA)
 				presence.setShow ("xa");
-			else if (status == protocol()->JabberDND)
+			else if (status == protocol()->JabberKOSDND)
 				presence.setShow ("dnd");
-			else if (status == protocol()->JabberInvisible)
+			else if (status == protocol()->JabberKOSInvisible)
 				presence.setIsInvisible (true);
 			else
 			{
@@ -547,9 +551,9 @@ void JabberAccount::setAway (bool away, const QString & reason)
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Setting away mode: " << away << endl;
 
 	if(away)
-		setPresence (protocol()->JabberAway, reason);
+		setPresence (protocol()->JabberKOSAway, reason);
 	else
-		setPresence (protocol()->JabberOnline, reason);
+		setPresence (protocol()->JabberKOSOnline, reason);
 
 }
 
@@ -566,12 +570,12 @@ void JabberAccount::slotGoOnline ()
 	if (!isConnected ())
 	{
 		/* We are not connected yet, so connect now. */
-		initialPresence = protocol()->JabberOnline;
+		initialPresence = protocol()->JabberKOSOnline;
 		connect ();
 	}
 	else
 	{
-		setPresence (protocol()->JabberOnline, "");
+		setPresence (protocol()->JabberKOSOnline, "");
 	}
 
 }
@@ -590,12 +594,12 @@ void JabberAccount::slotGoChatty ()
 	if (!isConnected ())
 	{
 		/* We are not connected yet, so connect now. */
-		initialPresence = protocol()->JabberChatty;
+		initialPresence = protocol()->JabberKOSChatty;
 		connect ();
 	}
 	else
 	{
-		setPresence (protocol()->JabberChatty, "");
+		setPresence (protocol()->JabberKOSChatty, "");
 	}
 
 }
@@ -607,12 +611,12 @@ void JabberAccount::slotGoAway ()
 	if (!isConnected ())
 	{
 		/* We are not connected yet, so connect now. */
-		initialPresence = protocol()->JabberAway;
+		initialPresence = protocol()->JabberKOSAway;
 		connect ();
 	}
 	else
 	{
-		setPresence (protocol()->JabberAway, KopeteAway::message());
+		awayDialog->show(JabberProtocol::JabberAway);
 	}
 
 }
@@ -624,12 +628,12 @@ void JabberAccount::slotGoXA ()
 	if (!isConnected ())
 	{
 		/* We are not connected yet, so connect now. */
-		initialPresence = protocol()->JabberXA;
+		initialPresence = protocol()->JabberKOSXA;
 		connect ();
 	}
 	else
 	{
-		setPresence (protocol()->JabberXA, KopeteAway::message());
+		awayDialog->show(JabberProtocol::JabberXA);
 	}
 
 }
@@ -641,12 +645,12 @@ void JabberAccount::slotGoDND ()
 	if (!isConnected ())
 	{
 		/* We are not connected yet, so connect now. */
-		initialPresence = protocol()->JabberDND;
+		initialPresence = protocol()->JabberKOSDND;
 		connect ();
 	}
 	else
 	{
-		setPresence (protocol()->JabberDND, KopeteAway::message());
+		awayDialog->show(JabberProtocol::JabberDND);
 	}
 
 }
@@ -658,12 +662,12 @@ void JabberAccount::slotGoInvisible ()
 	if (!isConnected ())
 	{
 		/* We are not connected yet, so connect now. */
-		initialPresence = protocol()->JabberInvisible;
+		initialPresence = protocol()->JabberKOSInvisible;
 		connect ();
 	}
 	else
 	{
-		setPresence (protocol()->JabberInvisible, "");
+		setPresence (protocol()->JabberKOSInvisible, "");
 	}
 
 }
@@ -738,17 +742,17 @@ void JabberAccount::sendPresenceToNode (const KopeteOnlineStatus & pres, const Q
 	Jabber::Jid jid (userID);
 	Jabber::Status status;
 
-	if (pres == protocol()->JabberOnline)
+	if (pres == protocol()->JabberKOSOnline)
 		status.setShow ("");
-	else if (pres == protocol()->JabberChatty)
+	else if (pres == protocol()->JabberKOSChatty)
 		status.setShow ("chat");
-	else if (pres == protocol()->JabberAway)
+	else if (pres == protocol()->JabberKOSAway)
 		status.setShow ("away");
-	else if (pres == protocol()->JabberXA)
+	else if (pres == protocol()->JabberKOSXA)
 		status.setShow ("xa");
-	else if (pres == protocol()->JabberDND)
+	else if (pres == protocol()->JabberKOSDND)
 		status.setShow ("dnd");
-	else if (pres == protocol()->JabberInvisible)
+	else if (pres == protocol()->JabberKOSInvisible)
 	{
 		status.setShow ("away");
 		status.setIsInvisible (true);

@@ -26,6 +26,7 @@
 #include <qwidget.h>
 #include <kaction.h>
 #include "kopeteaccount.h"
+#include "jabberawaydialog.h"
 #include "jabbercontact.h"
 #include "jabberprotocol.h"
 #include "kopeteonlinestatus.h"
@@ -34,9 +35,10 @@
 #include "client.h"
 #include "types.h"
 
-/* @author Daniel Stone, Till Gerken */
+// forward declaration required due to cyclic includes
+class JabberAwayDialog;
 
-using namespace Jabber;
+/* @author Daniel Stone, Till Gerken */
 
 class JabberAccount:public KopeteAccount
 {
@@ -57,6 +59,8 @@ public:
 
 	virtual void setAway (bool away, const QString & reason = QString::null);
 
+	void setPresence (const KopeteOnlineStatus & status, const QString & reason = 0, int priority = 5);
+
 	/* Return the resource of the client */
 	const QString resource () const;
 	const QString server () const;
@@ -64,10 +68,16 @@ public:
 
 	Jabber::Client *client();
 
+	/* to get the protocol from the account */
+	JabberProtocol *protocol () const
+	{
+		return mProtocol;
+	}
+
 	/* Tells the user to connect first before they can do whatever it is
 	 * that they want to do. */
 	void errorConnectFirst ();
-	
+
 public slots:
 	/* Connects to the server. */
 	void connect ();
@@ -108,7 +118,8 @@ private:
 	/* Psi backend for this account. */
 	Jabber::Client *jabberClient;
 
-	void setPresence (const KopeteOnlineStatus & status, const QString & reason = 0, int priority = 5);
+	/* away dialog instance */
+	JabberAwayDialog *awayDialog;
 
 	/* Asks the specified JID for authorization. */
 	void subscribe (const Jid & jid);
@@ -124,12 +135,6 @@ private:
 
 	/* Set up our actions for the status menu. */
 	void initActions ();
-
-	/* to get the protocol from the account */
-	JabberProtocol *protocol () const
-	{
-		return mProtocol;
-	}
 
 	JabberProtocol *mProtocol;
 

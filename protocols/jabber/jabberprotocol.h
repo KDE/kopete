@@ -70,14 +70,17 @@ public:
 	virtual void deserializeContact (KopeteMetaContact * metaContact,
 									 const QMap < QString, QString > &serializedData, const QMap < QString, QString > &addressBookData);
 
-	const KopeteOnlineStatus JabberOnline;
-	const KopeteOnlineStatus JabberChatty;
-	const KopeteOnlineStatus JabberAway;
-	const KopeteOnlineStatus JabberXA;
-	const KopeteOnlineStatus JabberDND;
-	const KopeteOnlineStatus JabberOffline;
-	const KopeteOnlineStatus JabberInvisible;
-	const KopeteOnlineStatus JabberConnecting;
+	enum OnlineStatus { JabberOnline, JabberChatty, JabberAway, JabberXA, JabberDND,
+						JabberOffline, JabberInvisible, JabberConnecting };
+
+	const KopeteOnlineStatus JabberKOSOnline;
+	const KopeteOnlineStatus JabberKOSChatty;
+	const KopeteOnlineStatus JabberKOSAway;
+	const KopeteOnlineStatus JabberKOSXA;
+	const KopeteOnlineStatus JabberKOSDND;
+	const KopeteOnlineStatus JabberKOSOffline;
+	const KopeteOnlineStatus JabberKOSInvisible;
+	const KopeteOnlineStatus JabberKOSConnecting;
 
 	/**
 	 * This returns our protocol instance

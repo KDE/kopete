@@ -64,9 +64,9 @@ JabberContact::JabberContact (QString userId, QString nickname, QStringList grou
 
 	// create a default (empty) resource for the contact
 	JabberResource *defaultResource = new JabberResource (QString::null, -1, QDateTime::currentDateTime (),
-														  static_cast<JabberProtocol *>(protocol())->JabberOffline, "");
+														  static_cast<JabberProtocol *>(protocol())->JabberKOSOffline, "");
 
-	//JabberProtocol::JabberOffline(), "");
+	//JabberProtocol::JabberKOSOffline(), "");
 
 	resources.append (defaultResource);
 
@@ -76,7 +76,7 @@ JabberContact::JabberContact (QString userId, QString nickname, QStringList grou
 	setDisplayName (rosterItem.name ());
 
 	// specifically cause this instance to update this contact as offline
-	slotUpdatePresence (static_cast<JabberProtocol *>(protocol())->JabberOffline, QString::null);
+	slotUpdatePresence (static_cast<JabberProtocol *>(protocol())->JabberKOSOffline, QString::null);
 
 	connect(this, SIGNAL(displayNameChanged(const QString &, const QString &)), this, SLOT(slotRenameContact(const QString &, const QString &)));
 
@@ -150,12 +150,12 @@ KActionCollection *JabberContact::customContextMenuActions ()
 
 	KActionMenu *actionSetAvailability = new KActionMenu (i18n ("Set Availability"), "kopeteavailable", actionCollection, "jabber_online");
 
-	actionSetAvailability->insert(new KAction (i18n ("Online"),         static_cast<JabberProtocol *>(protocol())->JabberOnline.iconFor(this), 0, this, SLOT (slotStatusOnline ()), actionSetAvailability, "actionOnline"));
-	actionSetAvailability->insert(new KAction (i18n ("Free to Chat"),   static_cast<JabberProtocol *>(protocol())->JabberChatty.iconFor(this), 0, this, SLOT (slotStatusChatty ()), actionSetAvailability, "actionChatty"));
-	actionSetAvailability->insert(new KAction (i18n ("Away"),           static_cast<JabberProtocol *>(protocol())->JabberAway.iconFor(this), 0, this, SLOT (slotStatusAway ()), actionSetAvailability, "actionAway"));
-	actionSetAvailability->insert(new KAction (i18n ("Extended Away"),  static_cast<JabberProtocol *>(protocol())->JabberXA.iconFor(this), 0, this, SLOT (slotStatusXA ()), actionSetAvailability, "actionXA"));
-	actionSetAvailability->insert(new KAction (i18n ("Do Not Disturb"), static_cast<JabberProtocol *>(protocol())->JabberDND.iconFor(this), 0, this, SLOT (slotStatusDND ()), actionSetAvailability, "actionDND"));
-	actionSetAvailability->insert(new KAction (i18n ("Invisible"),      static_cast<JabberProtocol *>(protocol())->JabberInvisible.iconFor(this), 0, this, SLOT (slotStatusInvisible ()), actionSetAvailability, "actionInvisible"));
+	actionSetAvailability->insert(new KAction (i18n ("Online"),         static_cast<JabberProtocol *>(protocol())->JabberKOSOnline.iconFor(this), 0, this, SLOT (slotStatusOnline ()), actionSetAvailability, "actionOnline"));
+	actionSetAvailability->insert(new KAction (i18n ("Free to Chat"),   static_cast<JabberProtocol *>(protocol())->JabberKOSChatty.iconFor(this), 0, this, SLOT (slotStatusChatty ()), actionSetAvailability, "actionChatty"));
+	actionSetAvailability->insert(new KAction (i18n ("Away"),           static_cast<JabberProtocol *>(protocol())->JabberKOSAway.iconFor(this), 0, this, SLOT (slotStatusAway ()), actionSetAvailability, "actionAway"));
+	actionSetAvailability->insert(new KAction (i18n ("Extended Away"),  static_cast<JabberProtocol *>(protocol())->JabberKOSXA.iconFor(this), 0, this, SLOT (slotStatusXA ()), actionSetAvailability, "actionXA"));
+	actionSetAvailability->insert(new KAction (i18n ("Do Not Disturb"), static_cast<JabberProtocol *>(protocol())->JabberKOSDND.iconFor(this), 0, this, SLOT (slotStatusDND ()), actionSetAvailability, "actionDND"));
+	actionSetAvailability->insert(new KAction (i18n ("Invisible"),      static_cast<JabberProtocol *>(protocol())->JabberKOSInvisible.iconFor(this), 0, this, SLOT (slotStatusInvisible ()), actionSetAvailability, "actionInvisible"));
 
 	KGlobal::config ()->setGroup ("Jabber");
 
@@ -527,23 +527,23 @@ void JabberContact::slotResourceAvailable (const Jabber::Jid &, const Jabber::Re
 		}
 	}
 
-	KopeteOnlineStatus status = static_cast<JabberProtocol *>(protocol())->JabberOnline;
+	KopeteOnlineStatus status = static_cast<JabberProtocol *>(protocol())->JabberKOSOnline;
 
 	if (resource.status ().show () == "chat")
 	{
-		status = static_cast<JabberProtocol *>(protocol())->JabberChatty;
+		status = static_cast<JabberProtocol *>(protocol())->JabberKOSChatty;
 	}
 	else if (resource.status ().show () == "away")
 	{
-		status = static_cast<JabberProtocol *>(protocol())->JabberAway;
+		status = static_cast<JabberProtocol *>(protocol())->JabberKOSAway;
 	}
 	else if (resource.status ().show () == "xa")
 	{
-		status = static_cast<JabberProtocol *>(protocol())->JabberXA;
+		status = static_cast<JabberProtocol *>(protocol())->JabberKOSXA;
 	}
 	else if (resource.status ().show () == "dnd")
 	{
-		status = static_cast<JabberProtocol *>(protocol())->JabberDND;
+		status = static_cast<JabberProtocol *>(protocol())->JabberKOSDND;
 	}
 
 	JabberResource *newResource = new JabberResource (resource.name (), resource.priority (),
@@ -718,7 +718,7 @@ void JabberContact::slotStatusOnline ()
 	if (resourceOverride)
 		id += activeResource->resource ();
 
-	static_cast<JabberAccount *>(account())->sendPresenceToNode (static_cast<JabberProtocol *>(protocol())->JabberOnline, id);
+	static_cast<JabberAccount *>(account())->sendPresenceToNode (static_cast<JabberProtocol *>(protocol())->JabberKOSOnline, id);
 
 }
 
@@ -730,7 +730,7 @@ void JabberContact::slotStatusChatty ()
 	if (resourceOverride)
 		id += activeResource->resource ();
 
-	static_cast<JabberAccount *>(account())->sendPresenceToNode (static_cast<JabberProtocol *>(protocol())->JabberChatty, id);
+	static_cast<JabberAccount *>(account())->sendPresenceToNode (static_cast<JabberProtocol *>(protocol())->JabberKOSChatty, id);
 
 }
 
@@ -742,7 +742,7 @@ void JabberContact::slotStatusAway ()
 	if (resourceOverride)
 		id += activeResource->resource ();
 
-	static_cast<JabberAccount *>(account())->sendPresenceToNode (static_cast<JabberProtocol *>(protocol())->JabberAway, id);
+	static_cast<JabberAccount *>(account())->sendPresenceToNode (static_cast<JabberProtocol *>(protocol())->JabberKOSAway, id);
 
 }
 
@@ -754,7 +754,7 @@ void JabberContact::slotStatusXA ()
 	if (resourceOverride)
 		id += activeResource->resource ();
 
-	static_cast<JabberAccount *>(account())->sendPresenceToNode (static_cast<JabberProtocol *>(protocol())->JabberXA, id);
+	static_cast<JabberAccount *>(account())->sendPresenceToNode (static_cast<JabberProtocol *>(protocol())->JabberKOSXA, id);
 
 }
 
@@ -765,7 +765,7 @@ void JabberContact::slotStatusDND ()
 	if (resourceOverride)
 		id += activeResource->resource ();
 
-	static_cast<JabberAccount *>(account())->sendPresenceToNode (static_cast<JabberProtocol *>(protocol())->JabberDND, id);
+	static_cast<JabberAccount *>(account())->sendPresenceToNode (static_cast<JabberProtocol *>(protocol())->JabberKOSDND, id);
 
 }
 
@@ -776,7 +776,7 @@ void JabberContact::slotStatusInvisible ()
 	if (resourceOverride)
 		id += activeResource->resource ();
 
-	static_cast<JabberAccount *>(account())->sendPresenceToNode (static_cast<JabberProtocol *>(protocol())->JabberInvisible, id);
+	static_cast<JabberAccount *>(account())->sendPresenceToNode (static_cast<JabberProtocol *>(protocol())->JabberKOSInvisible, id);
 }
 
 void JabberContact::serialize (QMap < QString, QString > &serializedData, QMap < QString, QString > & /* addressBookData */ )
