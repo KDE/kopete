@@ -21,17 +21,16 @@
 
 #include <qobject.h>
 #include <qptrlist.h>
-//#include <qstringlist.h>
-#include <qmap.h>
 
-#include <kurl.h>
 #include "kopetecontact.h"
-#include "kopetegroup.h"
 
 class QDomNode;
-class QStringList;
 
-class KopetePlugin;
+class KURL;
+
+class KopeteGroup;
+
+class KopeteMetaContactPrivate;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -47,12 +46,12 @@ public:
 	/**
 	 * Retrieve the list of contacts that are part of the meta contact
 	 */
-	QPtrList<KopeteContact> contacts() const { return m_contacts; }
+	QPtrList<KopeteContact> contacts() const;
 
 	/**
 	 * Add contact to the meta contact
 	 */
-	void addContact( KopeteContact *c);
+	void addContact( KopeteContact *c );
 
 	/**
 	 * Find the KopeteContact to a given contact. If contact
@@ -119,7 +118,7 @@ public:
 	 * Get/set the display name
 	 */
 	QString displayName() const;
-	void setDisplayName( const QString &name);
+	void setDisplayName( const QString &name );
 
 	/**
 	 * Get/set the tracking of contact names
@@ -128,7 +127,7 @@ public:
 	 * (think about 4 subcontacts and what happens if one changes nickname...)
 	 */
 	bool trackChildNameChanges() const;
-	void setTrackChildNameChanges(bool track);
+	void setTrackChildNameChanges( bool track );
 
 	/**
 	 * The groups the contact is stored in
@@ -156,7 +155,7 @@ public:
 	/**
 	 * Remove a contact from one group
 	 */
-	void removeFromGroup( KopeteGroup *from);
+	void removeFromGroup( KopeteGroup *from );
 
 	/**
 	 * Add a contact to another group.
@@ -167,7 +166,7 @@ public:
 	 * Temporary contacts will not be sarialized
 	 */
 	bool isTemporary() const;
-	void setTemporary( bool b = true ,KopeteGroup *group=0l );
+	void setTemporary( bool b = true ,KopeteGroup *group = 0L );
 
 	/**
 	 * When true, the meta-contact needs to be serialized
@@ -194,7 +193,7 @@ public:
 	 * remove the contact from this metacontact
 	 * set 'deleted' to true if the KopeteContact is already deleted
 	 */
-	void removeContact(KopeteContact *c , bool deleted=false);
+	void removeContact( KopeteContact *c , bool deleted = false );
 
 	/**
 	 * Set the plugin-specific data.
@@ -288,8 +287,8 @@ public slots:
 	 *                file size (such as over a socket)
 	 *
 	 */
-	void sendFile(const KURL &sourceURL, const QString &altFileName = QString::null,
-		unsigned long fileSize = 0L);
+	void sendFile( const KURL &sourceURL, const QString &altFileName = QString::null,
+		unsigned long fileSize = 0L );
 
 signals:
 	/**
@@ -306,8 +305,7 @@ signals:
 	 * this signal differs from onlineStatusChanged because a contact can
 	 * change his status without changing MetaContact status
 	 */
-	void contactStatusChanged( KopeteContact *contact,
-		KopeteContact::ContactStatus status );
+	void contactStatusChanged( KopeteContact *contact, KopeteContact::ContactStatus status );
 
 	/**
 	 * The meta contact's display name changed
@@ -401,37 +399,9 @@ private slots:
 		KopeteContact::IdleState s );
 
 private:
-	QPtrList<KopeteContact> m_contacts;
-
-	/**
-	 * Display name as shown
-	 */
-	QString m_displayName;
-
-	/**
-	 * When true, track changes in child contact's display name and update
-	 * the meta contact's display name too
-	 */
-	bool m_trackChildNameChanges;
-
-	KopeteGroupList m_groups;
-//	bool m_isTopLevel;
-
-	/**
-	 * Data to store in the XML file
-	 */
-	QMap<QString, QMap<QString, QString> > m_pluginData;
-	QMap<QString, QMap<QString, QString> > m_addressBook;
-
-	bool m_temporary;
-
-	bool m_dirty;
-
-	OnlineStatus m_onlineStatus;
-
 	KopeteContact *preferredContact();
 
-	IdleState m_idleState;
+	KopeteMetaContactPrivate *d;
 };
 
 #endif
