@@ -52,7 +52,9 @@ public:
 		void remove( const ConferenceGuid & k );
 	};
 
-
+	/** 
+	 * The destructor emits leavingConference so that the account can tell the server that the user has left the chat
+	 */
 	~GroupWiseMessageManager();
 	/**
 	 * The conference's globally unique identifier, which is given to it by the server
@@ -108,6 +110,10 @@ signals:
 	 * Tell the contact that the server wouldn't create a conference
 	 */
 	// NOT DECIDED IF WE NEED THIS YET
+	/**
+	 * Tell the account that the GroupWiseMessageManager is closing so it can tell the server that the user has left the conference
+	 */
+	void leavingConference( GroupWiseMessageManager * );
 protected:
 	/**
 	 * Start the process of creating a conference for this GWMM on the server.

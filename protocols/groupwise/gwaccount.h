@@ -282,7 +282,7 @@ protected slots:
 	 * We listen for the destroyed() signal and leave any conferences we
 	 * might have been in, and remove it from our map.
 	 */
-	void slotMessageManagerDestroyed( QObject * );
+	void slotLeavingConference( GroupWiseMessageManager * );
 	
 	/** Debug slots */
 	void slotConnError();

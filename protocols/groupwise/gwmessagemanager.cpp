@@ -90,6 +90,7 @@ GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, Kope
 
 GroupWiseMessageManager::~GroupWiseMessageManager()
 {
+	emit leavingConference( this );
 }
 
 void GroupWiseMessageManager::setGuid( const GroupWise::ConferenceGuid & guid )

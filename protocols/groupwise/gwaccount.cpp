@@ -160,9 +160,10 @@ GroupWiseMessageManager * GroupWiseAccount::messageManager( const KopeteContact*
 		// and insert the guid into the map 
 		if ( !guid.isEmpty() )
 			m_managers.insert( guid, mgr );
-		QObject::connect( mgr, SIGNAL( destroyed( QObject * ) ), SLOT( slotMessageManagerDestroyed( QObject * ) ) );
+		
 		QObject::connect( mgr, SIGNAL( conferenceCreated() ), SLOT( slotMessageManagerGotGuid() ) );
-
+		// connecting to KopeteMessageManager::closing() is no use to us as it is only emitted in the dtor.  We need to know that a GWMM is about to close 
+		QObject::connect( mgr, SIGNAL( leavingConference( GroupWiseMessageManager * ) ), SLOT( slotLeavingConference( GroupWiseMessageManager * ) ) );
 	}
 	return mgr;
 }
@@ -1046,14 +1047,13 @@ void GroupWiseAccount::slotMessageManagerGotGuid()
 	m_managers.insert( mgr->guid(), mgr );
 }
 
-void GroupWiseAccount::slotMessageManagerDestroyed( QObject * obj )
+void GroupWiseAccount::slotLeavingConference( GroupWiseMessageManager * mgr )
 {
-	// the message manager is one of ours
-	GroupWiseMessageManager * mgr = static_cast< GroupWiseMessageManager* >( obj );
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "unregistering message manager" << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "unregistering message manager:" << mgr->guid()<< endl;
 	// leave the conference
 	m_client->leaveConference( mgr->guid() );
 	m_managers.remove( mgr->guid() );
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "m_managers now contains:" << m_managers.count() << " managers" << endl;
 }
 
 void GroupWiseAccount::slotSetAutoReply()
