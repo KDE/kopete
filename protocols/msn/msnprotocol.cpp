@@ -52,7 +52,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	const QStringList & /* args */ )
 : KopeteProtocol( parent, name )
 {
-	QString protocolId = this->pluginId();
+	QString protocolId = pluginId();
 
 	// Go in experimental mode: enable the new API :-)
 	//enableStreaming( true );
@@ -1007,11 +1007,11 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 		bool new_contact=false;
 		if( !contacts()[ handle ] )
 		{
-			KopeteMetaContact *m = KopeteContactList::contactList()->findContact( this->pluginId(), QString::null, handle );
+			KopeteMetaContact *m = KopeteContactList::contactList()->findContact( pluginId(), QString::null, handle );
 			if(m)
 			{
 				kdDebug(14140) << "MSNProtocol::slotContactAdded: Warning: the contact was found in the contactlist but not referanced in the protocol" <<endl;
-				MSNContact *c = static_cast<MSNContact*>(m->findContact( this->pluginId(), QString::null, handle ));
+				MSNContact *c = static_cast<MSNContact*>(m->findContact( pluginId(), QString::null, handle ));
 				c->slotAddedToGroup( group );
 			}
 			else
@@ -1145,7 +1145,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 		{
 			m = new KopeteMetaContact();
 			m->setTemporary(true);
-			QString protocolid = this->pluginId();
+			QString protocolid = pluginId();
 
 			MSNContact *msnContact = new MSNContact( this, handle, publicName, m );
 

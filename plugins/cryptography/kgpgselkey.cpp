@@ -184,7 +184,7 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal):KDialog
   keysListpr->setSelected(keysListpr->firstChild(),true);
 
   page->show();
-  resize(this->minimumSize());
+  resize(minimumSize());
   setMainWidget(page);
 }
 

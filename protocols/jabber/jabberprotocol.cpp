@@ -864,11 +864,11 @@ void JabberProtocol::createAddContact(KopeteMetaContact *mc, const Jabber::Roste
 {
 	if(!mc)
 	{
-		mc = KopeteContactList::contactList()->findContact(this->pluginId(), myContact->userId(), item.jid().userHost());
+		mc = KopeteContactList::contactList()->findContact(pluginId(), myContact->userId(), item.jid().userHost());
 
 		if(mc)
 		{
-			JabberContact *jc = (JabberContact *)mc->findContact(this->pluginId(), myContact->userId(), item.jid().userHost());
+			JabberContact *jc = (JabberContact *)mc->findContact(pluginId(), myContact->userId(), item.jid().userHost());
 
 			if(jc)
 			{
@@ -936,7 +936,7 @@ void JabberProtocol::slotSubscription(const Jabber::Jid &jid, const QString &typ
 					subscribed(jid);
 
 					// is the user already in our contact list?
-					mc = KopeteContactList::contactList()->findContact(this->pluginId(), myContact->userId(), jid.userHost());
+					mc = KopeteContactList::contactList()->findContact(pluginId(), myContact->userId(), jid.userHost());
 
 					// if it is not, ask the user if he wants to subscribe in return
 					if(!mc && (KMessageBox::questionYesNo(qApp->mainWidget(),

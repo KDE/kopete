@@ -140,11 +140,11 @@ QString KopeteContact::statusIcon() const
 
 QPixmap KopeteContact::scaledStatusIcon(int size)
 {
-	if ( (this->status() != m_cachedOldStatus) || ( size != m_cachedSize ) )
+	if ( (status() != m_cachedOldStatus) || ( size != m_cachedSize ) )
 	{
-		QImage afScal = ((QPixmap(SmallIcon(this->statusIcon()))).convertToImage()).smoothScale( size, size );
+		QImage afScal = ((QPixmap(SmallIcon(statusIcon()))).convertToImage()).smoothScale( size, size );
 		m_cachedScaledIcon = QPixmap(afScal);
-		m_cachedOldStatus = this->status();
+		m_cachedOldStatus = status();
 		m_cachedSize = size;
 	}
 	if ( m_idleState == Idle )

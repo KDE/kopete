@@ -39,7 +39,7 @@ bool KopetePlugin::unload()
 
 const char *KopetePlugin::pluginId() const
 {
-	return this->className();
+	return className();
 }
 
 QString KopetePlugin::displayName()

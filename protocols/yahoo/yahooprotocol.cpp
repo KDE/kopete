@@ -333,7 +333,7 @@ void YahooProtocol::slotGotBuddies( YList * /* buds */ )
 void YahooProtocol::slotGotBuddy( const QString &userid, const QString &alias, const QString &group )
 {
 	kdDebug(14180) << "[YahooProtocol::slotGotBuddy]" << endl;
-	this->addContact(userid, alias, 0L, group);
+	addContact(userid, alias, 0L, group);
 }
 
 YahooContact *YahooProtocol::contact( const QString &id )

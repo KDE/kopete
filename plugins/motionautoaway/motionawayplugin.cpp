@@ -113,7 +113,7 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name,
 	{
         kdDebug(14305) << "[MotionAway Plugin] : Worked! Setting Capture timers!" << endl;
 		/* Capture first image, or we will get a alarm on start */
-		this->getImage (m_deviceHandler, m_imageRef, DEF_WIDTH, DEF_HEIGHT, IN_DEFAULT, NORM_DEFAULT,
+		getImage (m_deviceHandler, m_imageRef, DEF_WIDTH, DEF_HEIGHT, IN_DEFAULT, NORM_DEFAULT,
 	    	VIDEO_PALETTE_RGB24);
 
         /* We have the first image now */

@@ -65,7 +65,7 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
     userUin_ = KGlobal::config()->readEntry("Uin", "0").toUInt();
     password_= KGlobal::config()->readEntry("Password", "");
     nick_    = KGlobal::config()->readEntry("Nick", "");
-    myself_ = new GaduContact( this->pluginId(), userUin_, nick_,
+    myself_ = new GaduContact( pluginId(), userUin_, nick_,
                                new KopeteMetaContact() );
 
     prefs_ = new GaduPreferences( "gadu_protocol", this );
@@ -202,7 +202,7 @@ bool GaduProtocol::addContactToMetaContact( const QString &contactId, const QStr
 {
     uin_t uinNumber = contactId.toUInt();
 
-    GaduContact *newContact = new GaduContact( this->pluginId(), uinNumber, displayName, parentContact );
+    GaduContact *newContact = new GaduContact( pluginId(), uinNumber, displayName, parentContact );
     newContact->setParentIdentity( QString::number( userUin_ ) );
     contactsMap_.insert( uinNumber, newContact );
     addNotify( uinNumber );

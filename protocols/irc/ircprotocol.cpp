@@ -130,7 +130,7 @@ void IRCProtocol::slotNewConsole()
 
 void IRCProtocol::addContact(  const QString &server, const QString &contact, bool connectNow, bool joinNow, KopeteMetaContact *meta)
 {
-	QString protocolID = this->pluginId();
+	QString protocolID = pluginId();
 	QString contactID=contact+"@"+server;
 
 	KopeteContact *c = contacts()[contactID];

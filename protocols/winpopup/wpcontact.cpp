@@ -55,7 +55,7 @@ WPContact::WPContact(WPProtocol *protocol, const QString &host, KopeteMetaContac
 
 	// Initialise and start the periodical checking for contact's status
 	myIsOnline = true;
-	emit statusChanged(this, this->status());
+	emit statusChanged(this, status());
 	slotCheckStatus();
 	connect(&checkStatus, SIGNAL(timeout()), this, SLOT(slotCheckStatus()));
 	checkStatus.start(1000, false);
