@@ -386,29 +386,33 @@ QValueList<KopeteMessage> HistoryLogger::readMessages( unsigned int nb , const K
 
 			if(!m_hideOutgoing || dir != KopeteMessage::Outbound)
 			{ //parse only if we don't hide it
-				QString f=msgElem.attribute("from" );
-				const KopeteContact *from=f.isNull()? 0L : currentContact->account()->contacts()[f];
-				if(!from)
-					from= dir==KopeteMessage::Inbound ? currentContact : currentContact->account()->myself();
 
-				KopeteContactPtrList to;
-				to.append( dir==KopeteMessage::Inbound ? currentContact->account()->myself() : currentContact );
+				if( m_filter.isNull() || ( m_filterRegExp? msgElem.text().contains(QRegExp(m_filter,m_filterCaseSensitive)) : msgElem.text().contains(m_filter,m_filterCaseSensitive) ))
+				{
+					QString f=msgElem.attribute("from" );
+					const KopeteContact *from=f.isNull()? 0L : currentContact->account()->contacts()[f];
+					if(!from)
+						from= dir==KopeteMessage::Inbound ? currentContact : currentContact->account()->myself();
 
-				if(!timestamp.isValid())
-				{ //parse timestamp only if it was not already parsed
-					QRegExp rx("(\\d+) (\\d+):(\\d+)");
-					rx.search(msgElem.attribute("time"));
-					QDate d=QDate::currentDate().addMonths(0-m_currentMonth);
-					timestamp=QDateTime( QDate(d.year() , d.month() , rx.cap(1).toUInt()), QTime( rx.cap(2).toUInt() , rx.cap(3).toUInt() ) );
+					KopeteContactPtrList to;
+					to.append( dir==KopeteMessage::Inbound ? currentContact->account()->myself() : currentContact );
+
+					if(!timestamp.isValid())
+					{ //parse timestamp only if it was not already parsed
+						QRegExp rx("(\\d+) (\\d+):(\\d+)");
+						rx.search(msgElem.attribute("time"));
+						QDate d=QDate::currentDate().addMonths(0-m_currentMonth);
+						timestamp=QDateTime( QDate(d.year() , d.month() , rx.cap(1).toUInt()), QTime( rx.cap(2).toUInt() , rx.cap(3).toUInt() ) );
+					}
+
+					KopeteMessage msg(timestamp,from,to, msgElem.text() , dir);
+					msg.setFg(FGcolor);
+	//kdDebug() << "HistoryLogger::readMessages: message: " << msg.plainBody() << endl;
+					if(reverseOrder)
+						messages.prepend(msg);
+					else
+						messages.append(msg);
 				}
-
-				KopeteMessage msg(timestamp,from,to, msgElem.text() , dir);
-				msg.setFg(FGcolor);
-//kdDebug() << "HistoryLogger::readMessages: message: " << msg.plainBody() << endl;
-				if(reverseOrder)
-					messages.prepend(msg);
-				else
-					messages.append(msg);
 			}
 
 			//here is the point of workaround.  if i drop the root element, this crashes
@@ -526,5 +530,26 @@ void HistoryLogger::slotMCDeleted()
 {
 	m_metaContact=0L;
 }
+
+
+void HistoryLogger::setFilter(const QString& filter, bool caseSensitive , bool isRegExp)
+{
+	m_filter=filter;
+	m_filterCaseSensitive=caseSensitive;
+	m_filterRegExp=isRegExp;
+}
+QString HistoryLogger::filter() const
+{
+	return m_filter;
+}
+bool HistoryLogger::filterCaseSensitive() const
+{
+	return m_filterCaseSensitive;
+}
+bool HistoryLogger::filterRegExp() const
+{
+	return m_filterRegExp;
+}
+
 
 #include "historylogger.moc"

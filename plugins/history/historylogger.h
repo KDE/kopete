@@ -37,12 +37,12 @@ Q_OBJECT
 public:
 
 	/**
-	 * Chronological: messages are read from the first to the last, in the time order
-	 * AntiChronological: messages are read from the last to the first, in the time reversed order
+	 * - Chronological: messages are read from the first to the last, in the time order
+	 * - AntiChronological: messages are read from the last to the first, in the time reversed order
 	 */
 	enum Sens { Default , Chronological , AntiChronological };
 
-	/*
+	/**
 	 * constructor: it take the contacvt, and the color of messages
 	 */
 	HistoryLogger( KopeteMetaContact *m , QObject *parent = 0, const char *name = 0);
@@ -51,8 +51,23 @@ public:
 
 	~HistoryLogger();
 
+	/**
+	 * return or setif yes or no outgoing message are hidden (and not parsed)
+	 */
 	bool hideOutgoing() const { return m_hideOutgoing; }
 	void setHideOutgoing(bool);
+
+	/**
+	 * set a searching  filter
+	 * @param filter is the string to search
+	 * @param caseSensitive say if the case is important
+	 * @param isRegExp say if the filter is a QRegExp, or a simle string
+	 */
+	 void setFilter(const QString& filter, bool caseSensitive=false , bool isRegExp=false);
+	 QString filter() const;
+	 bool filterCaseSensitive() const ;
+	 bool filterRegExp() const;
+
 
 
 	//----------------------------------
@@ -84,23 +99,15 @@ public:
 
 
 private:
-//	QFile m_file;
-	// xml stuff
-//	QDomDocument *xmllist;
-
-	// total amount of messages in the log
-//	int messages;
-
-//	int m_currentPos;
 	bool m_hideOutgoing;
-//	bool m_reversed;
+	bool m_filterCaseSensitive;
+	bool m_filterRegExp;
+	QString m_filter;
 
-//	QString m_logFileName;
 
 	/*
 	 *contais all QDomDocument, for a KC, for a specified Month
 	 */
-
 	QMap<const KopeteContact*,QMap<unsigned int , QDomDocument> > m_documents;
 
 	/**

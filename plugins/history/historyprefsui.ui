@@ -137,17 +137,6 @@
                 </size>
             </property>
         </spacer>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel2</cstring>
-            </property>
-            <property name="text">
-                <string>&lt;b&gt;Todo&lt;/b&gt;:
-&lt;ul&gt;&lt;li&gt;add a selection of differents accounts here&lt;/li&gt;
-&lt;li&gt;improve the history dialog, make the search field working, use XSLT, ...&lt;/li&gt;&lt;/ul&gt;
-Help is welcome</string>
-            </property>
-        </widget>
     </vbox>
 </widget>
 <connections>
