@@ -125,6 +125,11 @@ DWORD OscarSocket::setIPv4Address(const QString &address)
 	return 0;
 }
 
+SSIData OscarSocket::ssiData()
+{
+	return mSSIData;
+}
+
 void OscarSocket::slotConnected()
 {
 	kdDebug(14150) << k_funcinfo << 
@@ -1129,7 +1134,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 			ssi->tlvlist = inbuf.getBlock(ssi->tlvlength);
 		else
 			ssi->tlvlist = 0L;
-		ssiData.append(ssi);
+		mSSIData.append(ssi);
 
 
 		kdDebug(14150) << k_funcinfo << "Read server-side list-entry. name='" <<
@@ -2899,14 +2904,14 @@ void OscarSocket::sendAddBuddy(const QString &contactName, const QString &groupN
 
 	kdDebug(14150) << k_funcinfo << "Sending SSI add buddy" << endl;
 
-	group = ssiData.findGroup(groupName);
+	group = mSSIData.findGroup(groupName);
 	if (!group)
 	{
-		group = ssiData.addGroup(groupName);
+		group = mSSIData.addGroup(groupName);
 		sendAddGroup(groupName);
 	}
 
-	newContact = ssiData.addContact(contactName, groupName, addingAuthBuddy);
+	newContact = mSSIData.addContact(contactName, groupName, addingAuthBuddy);
 
 	kdDebug(14150) << k_funcinfo << "Adding " << newContact->name << ", gid " <<
 		newContact->gid << ", bid " << newContact->bid << ", type " << newContact->type
@@ -2944,8 +2949,8 @@ void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
 			"Moving " << buddyName << " into group " << newGroup << endl;
 
 	// Check to make sure that the group has actually changed
-	SSI *buddyItem = ssiData.findContact(buddyName, oldGroup);
-	SSI *groupItem = ssiData.findGroup(newGroup);
+	SSI *buddyItem = mSSIData.findContact(buddyName, oldGroup);
+	SSI *groupItem = mSSIData.findGroup(newGroup);
 	if (buddyItem == 0L || groupItem == 0L)
 	{
 		kdDebug(14150) << k_funcinfo <<
@@ -3027,7 +3032,7 @@ void OscarSocket::sendChangeVisibility(BYTE value)
 	kdDebug(14150) << k_funcinfo << "Setting visibility to " << value << endl;
 
 	// Check to make sure that the group has actually changed
-	SSI *ssi = ssiData.findVisibilitySetting();
+	SSI *ssi = mSSIData.findVisibilitySetting();
 	if (!ssi)
 	{
 		kdDebug(14150) << k_funcinfo <<
@@ -3076,7 +3081,7 @@ void OscarSocket::sendChangeVisibility(BYTE value)
 		visibility->data[0] = value;
 		newSSITLV->addTLV(visibility->type, visibility->length, visibility->data);
 
-		if (!ssiData.remove(ssi))
+		if (!mSSIData.remove(ssi))
 		{
 			kdDebug(14150) << k_funcinfo <<
 				"Couldn't remove old ssi containing visibility value" << endl;
@@ -3087,7 +3092,7 @@ void OscarSocket::sendChangeVisibility(BYTE value)
 		newSSI->tlvlist = newSSITLV->buffer();
 		newSSI->tlvlength = newSSITLV->length();
 
-		ssiData.append(newSSI);
+		mSSIData.append(newSSI);
 
 		kdDebug(14150) << k_funcinfo <<
 			"new visibility value=" << visibility->data[0] << endl;
@@ -3113,7 +3118,7 @@ void OscarSocket::sendRenameBuddy(const QString &budName,
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 
-	SSI *ssi = ssiData.findContact(budName, budGroup);
+	SSI *ssi = mSSIData.findContact(budName, budGroup);
 
 	if (!ssi)
 	{
@@ -3170,7 +3175,7 @@ void OscarSocket::sendRenameBuddy(const QString &budName,
 	//const char *newNickData = newAlias.local8Bit().copy();
 	newSSIdata->addTLV(0x0131, newAlias.local8Bit().length(), newAlias.local8Bit());
 
-	if (!ssiData.remove(ssi))
+	if (!mSSIData.remove(ssi))
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"Couldn't remove old ssi containing contact" << endl;
@@ -3181,7 +3186,7 @@ void OscarSocket::sendRenameBuddy(const QString &budName,
 	newSSI->tlvlist = newSSIdata->buffer();
 	newSSI->tlvlength = newSSIdata->length();
 
-	ssiData.append(newSSI);
+	mSSIData.append(newSSI);
 
 	kdDebug(14150) << k_funcinfo << "Renaming, new SSI block: name=" << newSSI->name <<
 		", gid=" << newSSI->gid << ", bid=" << newSSI->bid <<
@@ -3196,7 +3201,7 @@ int OscarSocket::sendAddGroup(const QString &name)
 {
 	kdDebug(14150) << k_funcinfo << "Called. Adding group to SSI" << endl;
 
-	SSI *newitem = ssiData.addGroup(name);
+	SSI *newitem = mSSIData.addGroup(name);
 	if(!newitem)
 	{
 		kdDebug(14150) << k_funcinfo <<
@@ -3228,7 +3233,7 @@ void OscarSocket::sendChangeGroupName(const QString &currentName,
 
 	// Get the SSI data item to send using the
 	// sendSSIAddModDel method
-	SSI *updatedItem = ssiData.renameGroup(currentName, newName);
+	SSI *updatedItem = mSSIData.renameGroup(currentName, newName);
 	// Make the call to sendSSIAddModDel requesting a "modify"
 	// SNAC (0x0009)
 	sendSSIAddModDel(updatedItem, 0x0009);
@@ -3240,10 +3245,10 @@ void OscarSocket::sendDelGroup(const QString &groupName)
 		<< "Removing group " << groupName << "from SSI" << endl;
 
 	// Get the SSIData for this operation
-	SSI *delGroup = ssiData.findGroup(groupName);
+	SSI *delGroup = mSSIData.findGroup(groupName);
 
 	// Print out the SSI Data for debugging purposes
-	ssiData.print();
+	mSSIData.print();
 
 	if (!delGroup)
 	{	// There was an error finding the group
@@ -3263,7 +3268,7 @@ void OscarSocket::sendDelGroup(const QString &groupName)
 
 	// Remove it from the internal Server Side Information
 	// list
-	if (!ssiData.remove(delGroup))
+	if (!mSSIData.remove(delGroup))
 	{
 		kdDebug(14150) << k_funcinfo << delGroup 
 			<< " was not found in the SSI list" << endl;
@@ -3382,8 +3387,8 @@ void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
 {
 	kdDebug(14150) << k_funcinfo << "Sending del contact" << endl;
 
-	SSI *delitem = ssiData.findContact(budName,budGroup);
-	ssiData.print();
+	SSI *delitem = mSSIData.findContact(budName,budGroup);
+	mSSIData.print();
 	if (!delitem)
 	{
 		kdDebug(14150) << "Item with name " << budName << " and group "
@@ -3397,7 +3402,7 @@ void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
 
 	sendSSIAddModDel(delitem,0x000a);
 
-	if (!ssiData.remove(delitem))
+	if (!mSSIData.remove(delitem))
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"delitem was not found in the SSI list" << endl;
@@ -3743,7 +3748,7 @@ void OscarSocket::sendMsgParams()
 
 void OscarSocket::sendBlock(const QString &sname)
 {
-	SSI *newitem = ssiData.addInvis(sname);
+	SSI *newitem = mSSIData.addInvis(sname);
 	if (!newitem)
 		return;
 
@@ -3762,7 +3767,7 @@ void OscarSocket::sendRemoveBlock(const QString &sname)
 	kdDebug(14150) << k_funcinfo << "Removing DENY for contact '" <<
 		sname << "'" << endl;
 
-	SSI *delitem = ssiData.findInvis(sname);
+	SSI *delitem = mSSIData.findInvis(sname);
 	if (!delitem)
 	{
 		kdDebug(14150) << k_funcinfo << "Item with name " << sname <<
@@ -3777,13 +3782,13 @@ void OscarSocket::sendRemoveBlock(const QString &sname)
 
 	sendSSIAddModDel(delitem,0x000a);
 
-	if (!ssiData.remove(delitem))
+	if (!mSSIData.remove(delitem))
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"delitem was not found in the SSI list" << endl;
 	}
 
-	ssiData.print();
+	mSSIData.print();
 
 	// FIXME: Use SNAC headers and SSI acks to do this more correctly
 	emit denyRemoved(sname);

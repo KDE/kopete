@@ -301,6 +301,11 @@ class OscarSocket : public OscarConnection
 		 * required QHostAddress::setAddress in the past
 		 */
 		DWORD setIPv4Address(const QString &address);
+		
+		/**
+		 * \brief Get the SSI List
+		 */
+		SSIData ssiData();
 
 		/** \return true if we're in ICQ mode, false if not */
 		bool isICQ() { return mIsICQ; }
@@ -1102,7 +1107,7 @@ class OscarSocket : public OscarConnection
 		/** Socket for file transfers */
 		OncomingSocket *mFileTransferMgr;
 		/** SSI server stored data */
-		SSIData ssiData;
+		SSIData mSSIData;
 		/** Socket for direct connections */
 		KExtendedSocket * connsock;
 		// Tells if we are connected to the server and ready to operate
