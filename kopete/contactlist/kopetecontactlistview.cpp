@@ -122,27 +122,40 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 	KopeteContact *contact = 0L;
 	QString toolTip;
 	QRect itemRect = m_listView->itemRect( item );
+
 	if( metaLVI )
 	{
-		// Check if we are hovering over a protocol icon. If so, use that
-		// tooltip in the code below
 		uint leftMargin = m_listView->treeStepSize() *
-			( item->depth() + ( m_listView->rootIsDecorated() ? 1 : 0 ) ) + m_listView->itemMargin();
-		uint xAdjust = itemRect.left() + leftMargin;
-		uint yAdjust = itemRect.top();
-		QPoint relativePos( pos.x() - xAdjust, pos.y() - yAdjust );
-		contact = metaLVI->contactForPoint( relativePos );
+				( item->depth() + ( m_listView->rootIsDecorated() ? 1 : 0 ) ) +
+				m_listView->itemMargin();
+
+		if( metaLVI->metaContact()->contacts().count() == 1 )
+		{
+			contact = metaLVI->metaContact()->contacts().first();
+		}
+		else
+		{
+			// Check if we are hovering over a protocol icon. If so, use that
+			// tooltip in the code below
+			uint xAdjust = itemRect.left() + leftMargin;
+			uint yAdjust = itemRect.top();
+			QPoint relativePos( pos.x() - xAdjust, pos.y() - yAdjust );
+			contact = metaLVI->contactForPoint( relativePos );
+
+			if( contact )
+			{
+				QRect iconRect = metaLVI->contactRect( contact );
+
+				itemRect = QRect(
+					iconRect.left() + xAdjust,
+					iconRect.top() + yAdjust,
+					iconRect.width(),
+					iconRect.height() );
+			}
+		}
 
 		if ( contact )
 		{
-			QRect iconRect = metaLVI->contactRect( contact );
-
-			itemRect = QRect(
-				iconRect.left() + xAdjust,
-				iconRect.top() + yAdjust,
-				iconRect.width(),
-				iconRect.height() );
-
 			if ( !contact->toolTip().isNull() )
 				toolTip = contact->toolTip();
 		}
