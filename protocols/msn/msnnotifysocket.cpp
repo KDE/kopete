@@ -471,7 +471,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 		if(mailCount > 0 )
 		{
-			KNotifyClient::event( 0 , "msn_mail" , i18n( "You have %1 unread messages in your MSN inbox." ).arg(mailCount) ,
+			KNotifyClient::event( 0 , "msn_mail" , i18n( "You have one unread message in your MSN inbox.", "You have %n unread messages in your MSN inbox." ).arg(mailCount) ,
 				i18n("Open &inbox") , this , SLOT(slotOpenInbox()) );
 		}
 
@@ -671,7 +671,7 @@ void MSNNotifySocket::slotSendKeepAlive()
 	if(m_ping)
 	{
 		disconnect();
-		KMessageBox::information( 0, i18n( "Conneciton with the MSN network has been lost" ) , i18n ("MSN Plugin") );
+		KMessageBox::information( 0, i18n( "Connection with the MSN network has been lost" ) , i18n ("MSN Plugin") );
 		return;
 	}
 	else
