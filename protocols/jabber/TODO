@@ -35,3 +35,5 @@ TODO for Jabber:
 - port dialogs to KDialogBase
 - <your_account@here> in the default account creation window needs to be deleted,
   better add a text label instead
+- individual presence setting does not work
+- make sure that contact context menus use the same terms (email message vs. chat message)
