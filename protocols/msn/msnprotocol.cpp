@@ -119,7 +119,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	m_myself = new MSNContact( protocolId, cfg->readEntry( "UserID", "" ),
 		cfg->readEntry( "Nick", "" ), "", 0L );
 
-	if ( cfg->readBoolEntry( "AutoConnect", "0" ) )
+	if ( cfg->readBoolEntry( "AutoConnect", false ) )
 		Connect();
 }
 
