@@ -53,7 +53,7 @@ class Kopete : public KUniqueApplication
 	
 	PreferencesDialog *preferencesBox() const { return mPref; }
   KopeteWindow *popupMenu() const { /*return mainwidget->popupmenu;*/ };
-	PluginManager *Plugins() const { return plugins; }
+	//PluginManager *Plugins() const { return plugins; }
 	LibraryLoader *libraryLoader() const { return mLibraryLoader; }
 	/** No descriptions */
   void saveOptions();

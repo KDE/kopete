@@ -29,10 +29,10 @@ class Plugins;
 
 Kopete::Kopete(): KUniqueApplication(true, true, true)
 {
-	plugins = new PluginManager;
+	//plugins = new PluginManager;
 	mLibraryLoader = new LibraryLoader;
 	mPref=new PreferencesDialog;
-	//new Plugins(this);
+	Plugins *blah = new Plugins(this);
 
 	mainwindow = new KopeteWindow;
 	setMainWidget(mainwindow);
