@@ -42,6 +42,21 @@ class IRCServerContact;
 class IRCUserContact;
 class ChannelList;
 
+struct IRCHost
+{
+	QString host;
+	uint port;
+	QString password;
+	bool ssl;
+};
+
+struct IRCNetwork
+{
+	QString name;
+	QString description;
+	QValueList<IRCHost*> hosts;
+};
+
 class ChannelListDialog : public KDialogBase
 {
 	Q_OBJECT
@@ -97,17 +112,27 @@ public:
 
 	void setDefaultPart( const QString & );
 
+	void setNetwork( const QString & );
+
 	void setDefaultQuit( const QString & );
 
 	void setUserName( const QString & );
 
+	void setNickName( const QString & );
+
 	void setAltNick( const QString & );
+
+	void setCodec( QTextCodec *codec );
+
+	QTextCodec *codec() const;
 
 	const QString defaultPart() const;
 
 	const QString defaultQuit() const;
 
 	const QString altNick() const;
+
+	const QString networkName() const;
 
 	QMap< QString, QString > customCtcp() const;
 
@@ -163,6 +188,7 @@ private slots:
 	void slotConnectedToServer();
 	void slotDisconnected();
 	void slotServerBusy();
+	void slotUpdateNetwork();
 	void slotSearchChannels();
 	void slotJoinedUnknownChannel( const QString &user,  const QString &channel );
 
@@ -172,11 +198,13 @@ private:
 	QString mNickName;
 	KopeteAwayAction *mAwayAction;
 
-	QString m_server;
-	uint m_port;
+	QString m_networkName;
 	bool triedAltNick;
 
 	KIRC *m_engine;
+	IRCNetwork *m_network;
+	uint currentHost;
+	QTextCodec *mCodec;
 
 	ChannelListDialog *m_channelList;
 

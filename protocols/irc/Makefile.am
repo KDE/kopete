@@ -20,3 +20,8 @@ kopete_irc_la_LIBADD      = ../../libkopete/libkopete.la \
 
 service_DATA = kopete_irc.desktop
 servicedir = $(kde_servicesdir)
+
+xmldata_DATA = ircnetworks.xml
+xmldatadir = $(kde_datadir)/kopete
+
+EXTRA_DIST = $(xmldata_DATA)

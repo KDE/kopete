@@ -18,18 +18,25 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <klistview.h>
+#include <kdebug.h>
+#include <kextsock.h>
+#include <kconfig.h>
+#include <kglobal.h>
+#include <kcharsets.h>
+
+#include <qlabel.h>
 #include <qpopupmenu.h>
 #include <qpushbutton.h>
-#include <kdebug.h>
-#include <qlineedit.h>
-#include <qspinbox.h>
 #include <qcheckbox.h>
-#include <kextsock.h>
 #include <qconnection.h>
 #include <qvalidator.h>
+#include <qcombobox.h>
+#include <qlistbox.h>
+#include <qlineedit.h>
 
 #include "kirc.h"
 #include "ircaccount.h"
+#include "ircprotocol.h"
 #include "irceditaccountwidget.h"
 
 IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident, QWidget *parent, const char * )
@@ -38,25 +45,23 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 	mProtocol = proto;
 
 	m_IRCAccount = (IRCAccount *)ident;
+	int currentCodec = 4;
+
 	if( m_IRCAccount )
 	{
 		QString nickName = m_IRCAccount->accountId().section( '@', 0, 0);
 		QString serverInfo = m_IRCAccount->accountId().section( '@', 1);
 
 		mNickName->setText( nickName );
-		mServer->setText( serverInfo.section(':', 0, 0) );
-		mPort->setValue( serverInfo.section(':',1).toUInt() );
-
-		mNickName->setDisabled(true);
-		mServer->setDisabled(true);
-		mPort->setDisabled(true);
 
 		mUserName->setText( m_IRCAccount->userName() );
 		mAltNickname->setText( m_IRCAccount->altNick() );
 		partMessage->setText( m_IRCAccount->defaultPart() );
 		quitMessage->setText( m_IRCAccount->defaultQuit() );
+		if( m_IRCAccount->codec() )
+			currentCodec = m_IRCAccount->codec()->mibEnum();
 
-		if(account()->rememberPassword()) mPassword->setText( m_IRCAccount->password() );
+		//if(account()->rememberPassword()) mPassword->setText( m_IRCAccount->password() );
 
 		QStringList cmds = m_IRCAccount->connectCommands();
 		for( QStringList::Iterator i = cmds.begin(); i != cmds.end(); ++i )
@@ -68,9 +73,20 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 	}
 
 	mUserName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^\\s]*$"), mUserName ) );
-	mServer->setValidator( new QRegExpValidator( QString::fromLatin1("^[\\w-\\.]*$"), mUserName ) );
 	mNickName->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mUserName ) );
 	mAltNickname->setValidator( new QRegExpValidator( QString::fromLatin1("^[^#+&][^\\s]*$"), mUserName ) );
+
+	KCharsets *c = KGlobal::charsets();
+	charset->insertStringList( c->availableEncodingNames() );
+
+	for( int i = 0; i < charset->count(); ++i )
+	{
+		if( c->codecForName( charset->text(i) )->mibEnum() == currentCodec )
+		{
+			charset->setCurrentItem( i );
+			break;
+		}
+	}
 
 	connect( commandList, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
 		this, SLOT( slotContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
@@ -79,12 +95,44 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		this, SLOT( slotContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
 
 	connect( addButton, SIGNAL( clicked() ), this, SLOT( slotAddCommand() ) );
-
+	connect( editButton, SIGNAL( clicked() ), IRCProtocol::protocol(), SLOT(editNetworks() ) );
 	connect( addReply, SIGNAL( clicked() ), this, SLOT( slotAddCtcp() ) );
+
+	connect( network, SIGNAL( activated( const QString & ) ),
+		this, SLOT( slotUpdateNetworkDescription( const QString &) ) );
+
+	connect( IRCProtocol::protocol(), SIGNAL( networkConfigUpdated() ),
+		this, SLOT( slotUpdateNetworks() ) );
+
+	slotUpdateNetworks();
 }
 
 IRCEditAccountWidget::~IRCEditAccountWidget()
 {
+}
+
+void IRCEditAccountWidget::slotUpdateNetworks()
+{
+	network->clear();
+
+	uint i = 0;
+	for( QDictIterator<IRCNetwork> it( IRCProtocol::protocol()->networks() ); it.current(); ++it )
+	{
+		network->insertItem( it.current()->name );
+		if( m_IRCAccount && m_IRCAccount->networkName() == it.current()->name )
+		{
+			network->setCurrentItem( i );
+			description->setText( it.current()->description );
+		}
+		++i;
+	}
+}
+
+void IRCEditAccountWidget::slotUpdateNetworkDescription( const QString &network )
+{
+	description->setText(
+		IRCProtocol::protocol()->networks()[ network ]->description
+	);
 }
 
 void IRCEditAccountWidget::slotContextMenu( KListView *, QListViewItem *item, const QPoint &p )
@@ -114,24 +162,35 @@ void IRCEditAccountWidget::slotAddCtcp()
     }
 }
 
-KopeteAccount *IRCEditAccountWidget::apply()
+QString IRCEditAccountWidget::generateAccountId( const QString &network )
 {
-	QString mAccountId = mNickName->text() + QString::fromLatin1("@") + mServer->text() + QString::fromLatin1(":") + QString::number( mPort->value() );
+	KConfig *config = KGlobal::config();
+	QString nextId = QString::fromLatin1("Account_IRCProtocol_%1").arg(network);
 
-	if( !m_IRCAccount )
-		m_IRCAccount = new IRCAccount( mProtocol, mAccountId );
-//	else
-//		m_IRCAccount->setAccountId( mAccountId );
-
-	if (mRememberPassword->isChecked()) {
-		kdDebug(14120) << k_funcinfo << "Saving password '" << mPassword->text() << "' empty: " << mPassword->text().isEmpty() << " null: " <<  mPassword->text().isNull() << endl;
-		m_IRCAccount->setPassword( mPassword->text() );
+	uint accountNumber = 1;
+	while( config->hasGroup( nextId ) )
+	{
+		nextId = QString::fromLatin1("Account_IRCProtocol_%1 %2").arg(network).arg(++accountNumber);
+		accountNumber++;
 	}
 
+	return nextId;
+}
+
+KopeteAccount *IRCEditAccountWidget::apply()
+{
+	QString nickName = mNickName->text();
+	QString networkName = network->currentText();
+
+	if( !m_IRCAccount )
+		m_IRCAccount = new IRCAccount( mProtocol, generateAccountId(networkName) );
+
+	m_IRCAccount->setNickName( nickName );
+	m_IRCAccount->setNetwork( networkName );
 	m_IRCAccount->setUserName( mUserName->text() );
 	m_IRCAccount->setDefaultPart( partMessage->text() );
 	m_IRCAccount->setDefaultQuit( quitMessage->text() );
-	m_IRCAccount->setAutoLogin( mAutoConnect->isChecked() );
+	m_IRCAccount->setAutoLogin( autoConnect->isChecked() );
 	m_IRCAccount->setAltNick( mAltNickname->text() );
 
 	QStringList cmds;
@@ -143,9 +202,10 @@ KopeteAccount *IRCEditAccountWidget::apply()
 		replies[ i->text(0) ] = i->text(1);
 
 	m_IRCAccount->setCustomCtcpReplies( replies );
-
-
 	m_IRCAccount->setConnectCommands( cmds );
+
+	KCharsets *c = KGlobal::charsets();
+	m_IRCAccount->setCodec( c->codecForName( c->encodingForName( charset->currentText() ) ) );
 
 	return m_IRCAccount;
 }
@@ -155,20 +215,8 @@ bool IRCEditAccountWidget::validateData()
 {
 	if( mNickName->text().isEmpty() )
 		KMessageBox::sorry(this, i18n("<qt>You must enter a nickname.</qt>"), i18n("Kopete"));
-	else if( mServer->text().isEmpty() )
-		KMessageBox::sorry(this, i18n("<qt>You must enter a server.</qt>"), i18n("Kopete"));
 	else
-	{
-		int error;
-		QPtrList<KAddressInfo> address = KExtendedSocket::lookup(
-			mServer->text(), QString::number( mPort->value() ), 0, &error );
-		address.setAutoDelete(true);
-		if( !address.isEmpty() )
-			return true;
-
-		KMessageBox::sorry(this, i18n("<qt>The server/port combination you entered is invalid. Please double-check your values.</qt>"), i18n("Kopete"));
-
-	}
+		return true;
 
 	return false;
 }

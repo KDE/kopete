@@ -605,7 +605,7 @@ QPtrList<KAction> *IRCChannelContact::customContextMenuActions()
 
 const QString IRCChannelContact::caption() const
 {
-	QString cap = QString::fromLatin1("%1 @ %2").arg(m_nickName).arg(m_engine->host());
+	QString cap = QString::fromLatin1("%1 @ %2").arg(m_nickName).arg(m_engine->currentHost());
 		if( !mTopic.isNull() && !mTopic.isEmpty() )
 			cap.append( QString::fromLatin1(" - %1").arg(mTopic) );
 

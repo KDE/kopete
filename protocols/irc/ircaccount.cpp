@@ -82,14 +82,74 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	m_protocol = protocol;
 	m_channelList = 0L;
 
-	mNickName = accountId.section('@',0,0);
-	QString serverInfo = accountId.section('@',1);
-	m_server = serverInfo.section(':',0,0);
-	m_port = serverInfo.section(':',1).toUInt();
+	m_networkName = pluginData( m_protocol, QString::fromLatin1("NetworkName"));
+	mNickName = pluginData( m_protocol, QString::fromLatin1("NickName"));
+	QString codecMib = pluginData( m_protocol, QString::fromLatin1("Codec"));
+
+	if( m_networkName.isEmpty() && QRegExp( "[^#+&][^\\s]+@[\\w-\\.]+:\\d+" ).exactMatch( accountId ) )
+	{
+		/*
+		Test for backwards compatability. If the account ID matches this,
+		then we have an old account. First, try to find it in an existing
+		network, and use that. if we can't, then add a new network.
+		*/
+
+		mNickName = accountId.section('@',0,0);
+		QString serverInfo = accountId.section('@',1);
+		QString hostName = serverInfo.section(':',0,0);
+
+		for( QDictIterator<IRCNetwork> it( m_protocol->networks() ); it.current(); ++it )
+		{
+			IRCNetwork *net = it.current();
+			for( QValueList<IRCHost*>::iterator it2 = net->hosts.begin(); it2 != net->hosts.end(); ++it2 )
+			{
+				if( (*it2)->host == hostName )
+				{
+					m_networkName = net->name;
+					break;
+				}
+			}
+
+			if( !m_networkName.isEmpty() )
+				break;
+		}
+
+		if( m_networkName.isEmpty() )
+		{
+			/* Could not find this host. Add it to the networks structure */
+
+			IRCNetwork *net = new IRCNetwork;
+			net->name = i18n("Imported Network");
+			net->description = i18n("Network imported from previous version of Kopete");
+
+			IRCHost *host = new IRCHost;
+			host->host = hostName;
+			host->port = serverInfo.section(':',1).toInt();
+			host->password = password();
+			host->ssl = false;
+
+			net->hosts.append( host );
+			m_protocol->networks().insert( net->name, net );
+
+			m_networkName = net->name;
+
+			setPluginData(m_protocol, QString::fromLatin1( "NickName" ), mNickName );
+			setPluginData(m_protocol, QString::fromLatin1( "NetworkName" ), m_networkName );
+		}
+	}
+
+	slotUpdateNetwork();
 
 	triedAltNick = false;
 
-	m_engine = new KIRC( m_server, m_port );
+	m_engine = new KIRC(this);
+	if( !codecMib.isEmpty() )
+	{
+		mCodec = QTextCodec::codecForMib( codecMib.toInt() );
+		m_engine->setDefaultCodec( mCodec );
+	}
+	else
+		mCodec = 0L;
 
 	QMap< QString, QString> replies = customCtcpReplies();
 	for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
@@ -125,13 +185,15 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	QObject::connect(m_engine, SIGNAL(incomingServerLoadTooHigh()),
 		this, SLOT(slotServerBusy()));
 
-	m_contactManager = new IRCContactManager(mNickName, m_server, this);
+	m_contactManager = new IRCContactManager(mNickName, this);
 	setMyself( m_contactManager->mySelf() );
 	m_myServer = m_contactManager->myServer();
 
 	mAwayAction = new KopeteAwayAction ( i18n("Set Away"),
 		m_protocol->m_UserStatusAway.iconFor( this ), 0, this,
 		SLOT(slotGoAway( const QString & )), this );
+
+	currentHost = 0;
 }
 
 IRCAccount::~IRCAccount()
@@ -150,8 +212,6 @@ IRCAccount::~IRCAccount()
 void IRCAccount::loaded()
 {
 	m_engine->setUserName(userName());
-	if( rememberPassword() )
-		m_engine->setPassword( password() );
 
 }
 
@@ -187,6 +247,11 @@ const QString IRCAccount::altNick() const
 	return pluginData(protocol(), QString::fromLatin1("altNick"));
 }
 
+const QString IRCAccount::networkName() const
+{
+	return m_networkName;
+}
+
 void IRCAccount::setUserName( const QString &userName )
 {
 	m_engine->setUserName(userName);
@@ -198,6 +263,41 @@ const QString IRCAccount::userName() const
 	return pluginData(protocol(), QString::fromLatin1("userName"));
 }
 
+void IRCAccount::slotUpdateNetwork()
+{
+	IRCNetwork *net = m_protocol->networks()[ m_networkName ];
+	if( net )
+		m_network = net;
+	else
+		m_network = 0L;
+}
+
+void IRCAccount::setNetwork( const QString &network )
+{
+	m_networkName = network;
+	setPluginData(protocol(), QString::fromLatin1( "NetworkName" ), m_networkName );
+	slotUpdateNetwork();
+}
+
+void IRCAccount::setNickName( const QString &nick )
+{
+	mNickName = nick;
+	setPluginData(protocol(), QString::fromLatin1( "NickName" ), mNickName );
+	mySelf()->setNickName( mNickName );
+}
+
+void IRCAccount::setCodec( QTextCodec *codec )
+{
+	mCodec = codec;
+	setPluginData( protocol(), QString::fromLatin1( "Codec" ), QString::number(codec->mibEnum()) );
+	if( mCodec )
+		m_engine->setDefaultCodec( mCodec );
+}
+
+QTextCodec *IRCAccount::codec() const
+{
+	return mCodec;
+}
 
 void IRCAccount::setDefaultPart( const QString &defaultPart )
 {
@@ -297,7 +397,23 @@ void IRCAccount::connect()
 	}
 	else if( m_engine->isDisconnected() )
 	{
-		m_engine->connectToServer( static_cast<IRCUserContact *>( myself() )->nickName() );
+		const QValueList<IRCHost*> &hosts = m_network->hosts;
+		if( hosts.count() == 0 )
+		{
+			KMessageBox::queuedMessageBox(
+				0L, KMessageBox::Error,
+				i18n("The network associated with this account, <b>%1</b>, no longer exists. Please"
+				" ensure that the account has a valid network."),
+				i18n("Network No Longer Exists"), 0 );
+		}
+		else
+		{
+			if( currentHost == hosts.count() )
+				currentHost = 0;
+
+			IRCHost *host = hosts[ currentHost++ ];
+			m_engine->connectToServer( host->host, host->port, mySelf()->nickName() );
+		}
 	}
 }
 
@@ -325,6 +441,7 @@ void IRCAccount::slotJoinedUnknownChannel( const QString &user, const QString &c
 void IRCAccount::slotDisconnected()
 {
 	triedAltNick = false;
+	mySelf()->setOnlineStatus( m_protocol->m_UserStatusOffline );
 }
 
 void IRCAccount::disconnect()
@@ -345,7 +462,7 @@ void IRCAccount::slotSearchChannels()
 	if( !m_channelList )
 	{
 		m_channelList = new ChannelListDialog( m_engine,
-			i18n("Channel list for %1").arg(m_server), this,
+			i18n("Channel list for %1").arg( m_engine->currentHost() ), this,
 			SLOT( slotJoinNamedChannel( const QString & ) ) );
 	}
 	else

@@ -30,6 +30,7 @@
 // This is due to some changes of the message encoding with 14 arguments.(not very frequent :)
 // #define _IRC_STRICTNESS_
 
+class KIRC;
 class KIRCMessage
 {
 public:
@@ -39,34 +40,32 @@ public:
 
 	~KIRCMessage();
 
-	static KIRCMessage writeRawMessage(QIODevice *dev, const QString &str, QTextCodec *codec=0);
-	static KIRCMessage writeMessage(QIODevice *dev, const QString &str, QTextCodec *codec=0);
+	static KIRCMessage writeRawMessage(KIRC *engine, const QString &str, const QTextCodec *codec);
+	static KIRCMessage writeMessage(KIRC *engine, const QString &str, const QTextCodec *codec);
 
-	static KIRCMessage writeMessage(QIODevice *dev,
+	static KIRCMessage writeMessage(KIRC *engine,
 			const QString &command, const QString &arg, const QString &suffix,
-			QTextCodec *codec=0);
-	static KIRCMessage writeMessage(QIODevice *dev,
+			const QTextCodec *codec);
+	static KIRCMessage writeMessage(KIRC *engine,
 			const QString &command, const QStringList &args, const QString &suffix,
-			QTextCodec *codec=0);
+			const QTextCodec *codec);
 
-	static KIRCMessage writeCtcpMessage(QIODevice *dev,
+	static KIRCMessage writeCtcpMessage(KIRC *engine,
 			const QString &command, const QString &to /*prefix*/, const QString &suffix,
 			const QString &ctcpMessage,
-			QTextCodec *codec=0);
-	static KIRCMessage writeCtcpMessage(QIODevice *dev,
+			const QTextCodec *codec);
+	static KIRCMessage writeCtcpMessage(KIRC *engine,
 			const QString &command, const QString &to /*prefix*/, const QString &suffix,
 			const QString &ctcpCommand, const QString &ctcpArg, const QString &ctcpSuffix,
-			QTextCodec *codec=0);
-	static KIRCMessage writeCtcpMessage(QIODevice *dev,
+			const QTextCodec *codec);
+	static KIRCMessage writeCtcpMessage(KIRC *engine,
 			const QString &command, const QString &to /*prefix*/, const QString &suffix,
 			const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix,
-			QTextCodec *codec=0);
+			const QTextCodec *codec);
 
 	// FIXME: short term solution move me to the the KIRCUser class
 	inline static QString getNickFromPrefix(const QString &prefix)
 		{ return prefix.section('!', 0, 0); }
-
-	static KIRCMessage parse(KBufferedIO *dev, bool *parseSuccess=0, QTextCodec *codec=0);
 
 	QString toString() const;
 
@@ -95,8 +94,9 @@ public:
 		{ return *m_ctcpMessage; }
 
 	static KIRCMessage parse(const QString &line, bool *parseSuccess=0);
+	static KIRCMessage parse(KIRC *engine, const QTextCodec *codec, bool *parseSuccess=0);
 
-protected:
+private:
 	/**
 	 * Contains the low level dequoted message.
 	 */

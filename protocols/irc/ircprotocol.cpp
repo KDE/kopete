@@ -15,8 +15,6 @@
     *************************************************************************
 */
 
-#include "ircprotocol.h"
-
 #include <qregexp.h>
 #include <dom/html_element.h>
 #undef KDE_NO_COMPAT
@@ -24,7 +22,26 @@
 #include <kdebug.h>
 #include <kgenericfactory.h>
 #include <ksimpleconfig.h>
+#include <kiconloader.h>
+#include <kstandarddirs.h>
+#include <kglobal.h>
+#include <kcharsets.h>
+#include <kmessagebox.h>
 
+#include <qlineedit.h>
+#include <qdom.h>
+#include <qfile.h>
+#include <qpushbutton.h>
+#include <qspinbox.h>
+#include <qcheckbox.h>
+#include <qvalidator.h>
+
+#include "kopeteaccountmanager.h"
+#include "kopetecommandhandler.h"
+#include "kopeteview.h"
+#include "ksparser.h"
+
+#include "networkconfig.h"
 #include "channellist.h"
 #include "ircaccount.h"
 #include "ircaddcontactpage.h"
@@ -32,11 +49,9 @@
 #include "irccontactmanager.h"
 #include "ircguiclient.h"
 #include "ircusercontact.h"
-#include "kopeteaccountmanager.h"
 #include "irceditaccountwidget.h"
-#include "kopetecommandhandler.h"
-#include "kopeteview.h"
-#include "ksparser.h"
+
+#include "ircprotocol.h"
 
 typedef KGenericFactory<IRCProtocol> IRCProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_irc, IRCProtocolFactory( "kopete_irc" )  );
@@ -185,6 +200,12 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 		this, SLOT( slotViewCreated( KopeteView* ) ) );
 
 	m_commandInProgress = false;
+
+	m_networks.setAutoDelete(true);
+	m_hosts.setAutoDelete(true);
+	netConf = 0L;
+
+	slotReadNetworks();
 }
 
 IRCProtocol * IRCProtocol::protocol()
@@ -587,6 +608,252 @@ void IRCProtocol::simpleModeChange( const QString &args, KopeteMessageManager *m
 			chan->setMode( QString::fromLatin1("%1 %2").arg( mode ).arg( argsList.front() ) );
 	}
 }
+
+
+void IRCProtocol::editNetworks()
+{
+	if( !netConf )
+	{
+		netConf = new NetworkConfig( 0L, "network_config", true );
+		netConf->host->setValidator( new QRegExpValidator( QString::fromLatin1("^[\\w-\\.]*$"), netConf ) );
+		netConf->upButton->setPixmap( SmallIcon( "up" )  );
+		netConf->downButton->setPixmap( SmallIcon( "down" ) );
+
+		connect( netConf->networkList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkConfig() ) );
+		connect( netConf->hostList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkHostConfig() ) );
+		connect( netConf, SIGNAL( accepted() ), this, SLOT( slotSaveNetworkConfig() ) );
+		connect( netConf, SIGNAL( rejected() ), this, SLOT( slotReadNetworks() ) );
+		connect( netConf->upButton, SIGNAL( clicked() ), this, SLOT( slotMoveServerUp() ) );
+		connect( netConf->downButton, SIGNAL( clicked() ), this, SLOT( slotMoveServerDown() ) );
+		connect( netConf->removeNetwork, SIGNAL( clicked() ), this, SLOT( slotDeleteNetwork() ) );
+		connect( netConf->removeButton, SIGNAL( clicked() ), this, SLOT( slotDeleteHost() ) );
+	}
+
+	netConf->networkList->clear();
+
+	for( QDictIterator<IRCNetwork> it( m_networks ); it.current(); ++it )
+	{
+		IRCNetwork *net = it.current();
+		netConf->networkList->insertItem( net->name );
+	}
+
+	netConf->networkList->sort();
+
+	slotUpdateNetworkConfig();
+
+	netConf->show();
+}
+
+void IRCProtocol::slotUpdateNetworkConfig()
+{
+	IRCNetwork *net = m_networks[ netConf->networkList->currentText() ];
+	if( net )
+	{
+		netConf->description->setText( net->description );
+		netConf->hostList->clear();
+
+		for( QValueList<IRCHost*>::iterator it = net->hosts.begin(); it != net->hosts.end(); ++it )
+			netConf->hostList->insertItem( (*it)->host );
+
+		netConf->hostList->setSelected( 0, true );
+		slotUpdateNetworkHostConfig();
+	}
+}
+
+void IRCProtocol::slotUpdateNetworkHostConfig()
+{
+	IRCHost *host = m_hosts[ netConf->hostList->currentText() ];
+	if( host )
+	{
+		netConf->host->setText( host->host );
+		netConf->password->setText( host->password );
+		netConf->port->setValue( host->port );
+		netConf->useSSL->setChecked( host->ssl );
+	}
+}
+
+void IRCProtocol::slotDeleteNetwork()
+{
+	QString network = netConf->networkList->currentText();
+	if( KMessageBox::warningContinueCancel(
+		0L, i18n("<qt>Are you sure you want to delete the network <b>%1</b>?<br>"
+		"Any accounts which use this network will have to be modified.</qt>")
+		.arg(network), i18n("Deleting Network"),
+		i18n("&Delete Network"), QString::fromLatin1("AskIRCDeleteNetwork") ) == KMessageBox::Continue )
+	{
+		IRCNetwork *net = m_networks[ network ];
+		for( QValueList<IRCHost*>::iterator it = net->hosts.begin(); it != net->hosts.end(); ++it )
+			m_hosts.remove( (*it)->host );
+
+		m_networks.remove( network );
+		netConf->networkList->removeItem( netConf->networkList->currentItem() );
+		slotUpdateNetworkHostConfig();
+	}
+}
+
+void IRCProtocol::slotDeleteHost()
+{
+	QString hostName = netConf->host->text();
+	if( KMessageBox::warningContinueCancel(
+		0L, i18n("<qt>Are you sure you want to delete the host <b>%1</b>?</qt>")
+		.arg(hostName), i18n("Deleting Host"),
+		i18n("&Delete Host"), QString::fromLatin1("AskIRCDeleteHost")) == KMessageBox::Continue )
+	{
+
+	}
+}
+
+void IRCProtocol::slotSaveNetworkConfig()
+{
+	QDomDocument doc("irc-networks");
+	QDomNode root = doc.appendChild( doc.createElement("networks") );
+
+	for( QDictIterator<IRCNetwork> it( m_networks ); it.current(); ++it )
+	{
+		IRCNetwork *net = it.current();
+
+		QDomNode networkNode = root.appendChild( doc.createElement("network") );
+		QDomNode nameNode = networkNode.appendChild( doc.createElement("name") );
+		nameNode.appendChild( doc.createTextNode( net->name ) );
+
+		QDomNode descNode = networkNode.appendChild( doc.createElement("description") );
+		descNode.appendChild( doc.createTextNode( net->description ) );
+
+		QDomNode serversNode = networkNode.appendChild( doc.createElement("servers") );
+
+		for( QValueList<IRCHost*>::iterator it2 = net->hosts.begin(); it2 != net->hosts.end(); it2++ )
+		{
+			QDomNode serverNode = serversNode.appendChild( doc.createElement("server") );
+
+			QDomNode hostNode = serverNode.appendChild( doc.createElement("host") );
+			hostNode.appendChild( doc.createTextNode( (*it2)->host ) );
+
+			QDomNode portNode = serverNode.appendChild( doc.createElement("port" ) );
+			portNode.appendChild( doc.createTextNode( QString::number( (*it2)->port ) ) );
+
+			QDomNode sslNode = serverNode.appendChild( doc.createElement("useSSL") );
+			sslNode.appendChild( doc.createTextNode( (*it2)->ssl ? "true" : "false" ) );
+		}
+	}
+
+	kdDebug() << k_funcinfo << doc.toString(4) << endl;
+	QFile xmlFile( locateLocal( "appdata", "ircnetworks.xml" ) );
+	QTextStream stream( &xmlFile );
+
+	xmlFile.open( IO_WriteOnly );
+	stream << doc.toString(4);
+	xmlFile.close();
+
+	emit networkConfigUpdated();
+}
+
+void IRCProtocol::slotReadNetworks()
+{
+	m_networks.clear();
+	m_hosts.clear();
+
+	QFile xmlFile( locate( "appdata", "ircnetworks.xml" ) );
+	xmlFile.open( IO_ReadOnly );
+
+	QDomDocument doc;
+	doc.setContent( &xmlFile );
+	QDomElement networkNode = doc.documentElement().firstChild().toElement();
+	while( !networkNode.isNull () )
+	{
+		IRCNetwork *net = new IRCNetwork;
+
+		QDomElement networkChild = networkNode.firstChild().toElement();
+		while( !networkChild.isNull() )
+		{
+			if( networkChild.tagName() == "name" )
+				net->name = networkChild.text();
+			else if( networkChild.tagName() == "description" )
+				net->description = networkChild.text();
+			else if( networkChild.tagName() == "servers" )
+			{
+				QDomElement server = networkChild.firstChild().toElement();
+				while( !server.isNull() )
+				{
+					IRCHost *host = new IRCHost;
+
+					QDomElement serverChild = server.firstChild().toElement();
+					while( !serverChild.isNull() )
+					{
+						if( serverChild.tagName() == "host" )
+							host->host = serverChild.text();
+						else if( serverChild.tagName() == "port" )
+							host->port = serverChild.text().toInt();
+						else if( serverChild.tagName() == "SSLEnabled" )
+							host->ssl = ( serverChild.text() == "true" );
+
+						serverChild = serverChild.nextSibling().toElement();
+					}
+
+					net->hosts.append( host );
+					m_hosts.insert( host->host, host );
+					server = server.nextSibling().toElement();
+				}
+			}
+			networkChild = networkChild.nextSibling().toElement();
+		}
+
+		m_networks.insert( net->name, net );
+		networkNode = networkNode.nextSibling().toElement();
+	}
+
+	xmlFile.close();
+}
+
+void IRCProtocol::slotMoveServerUp()
+{
+	IRCHost *selectedHost = m_hosts[ netConf->hostList->currentText() ];
+	IRCNetwork *selectedNetwork = m_networks[ netConf->networkList->currentText() ];
+
+	if( selectedNetwork && selectedHost )
+	{
+		QValueList<IRCHost*>::iterator pos = selectedNetwork->hosts.find( selectedHost );
+		if( pos != selectedNetwork->hosts.begin() )
+		{
+			QValueList<IRCHost*>::iterator lastPos = pos;
+			lastPos--;
+			selectedNetwork->hosts.insert( lastPos, selectedHost );
+			selectedNetwork->hosts.remove( pos );
+		}
+	}
+
+	int currentPos = netConf->hostList->currentItem();
+	if( currentPos > 0 )
+	{
+		netConf->hostList->removeItem( currentPos );
+		netConf->hostList->insertItem( selectedHost->host, --currentPos );
+		netConf->hostList->setSelected( currentPos, true );
+	}
+}
+
+void IRCProtocol::slotMoveServerDown()
+{
+	IRCHost *selectedHost = m_hosts[ netConf->hostList->currentText() ];
+	IRCNetwork *selectedNetwork = m_networks[ netConf->networkList->currentText() ];
+
+	if( selectedNetwork && selectedHost )
+	{
+		QValueList<IRCHost*>::iterator pos = selectedNetwork->hosts.find( selectedHost );
+		if( *pos != selectedNetwork->hosts.back() )
+		{
+			QValueList<IRCHost*>::iterator nextPos = pos;
+			nextPos++; nextPos++;
+			selectedNetwork->hosts.insert( nextPos, selectedHost );
+			selectedNetwork->hosts.remove( pos );
+		}
+	}
+
+	int currentPos = netConf->hostList->currentItem();
+	netConf->hostList->removeItem( currentPos );
+	netConf->hostList->insertItem( selectedHost->host, ++currentPos );
+	netConf->hostList->setSelected( currentPos, true );
+}
+
+
 
 #include "ircprotocol.moc"
 

@@ -19,19 +19,19 @@
 
 #include "kcodecaction.h"
 
-KCodecAction::KCodecAction( const QString &text, const KShortcut &cut, 
+KCodecAction::KCodecAction( const QString &text, const KShortcut &cut,
 		QObject *parent, const char *name ) : KSelectAction( text, "", cut, parent, name )
 {
-	QObject::connect( this, SIGNAL( activated( const QString & ) ), 
+	QObject::connect( this, SIGNAL( activated( const QString & ) ),
 		this, SLOT(slotActivated( const QString & )) );
-	
-	setItems( KGlobal::charsets()->descriptiveEncodingNames() );
+
+	setItems( KGlobal::charsets()->availableEncodingNames() );
 }
 
 void KCodecAction::slotActivated( const QString &codec )
 {
 	KCharsets *c = KGlobal::charsets();
-	emit activated( c->codecForName( c->encodingForName( codec ) ) );
+	emit activated( c->codecForName( codec ) );
 }
 
 void KCodecAction::setCodec( const QTextCodec *codec )
@@ -40,7 +40,7 @@ void KCodecAction::setCodec( const QTextCodec *codec )
 	KCharsets *c = KGlobal::charsets();
 	for( uint i = 0; i < myItems.count(); i++ )
 	{
-		if( c->codecForName( c->encodingForName( myItems[i] ) ) == codec )
+		if( c->codecForName( myItems[i] ) == codec )
 			setCurrentItem( i );
 	}
 }

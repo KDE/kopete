@@ -91,7 +91,7 @@ void IRCServerContact::updateStatus()
 
 const QString IRCServerContact::caption() const
 {
-	return i18n("%1 @ %2").arg( m_account->mySelf()->nickName() ).arg( m_engine->host() );
+	return i18n("%1 @ %2").arg( m_account->mySelf()->nickName() ).arg( m_engine->currentHost() );
 }
 
 void IRCServerContact::engineInternalError( KIRC::EngineError engineError, const KIRCMessage &ircmsg )

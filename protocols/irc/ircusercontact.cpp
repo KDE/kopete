@@ -159,7 +159,7 @@ void IRCUserContact::slotUserInfo()
 
 const QString IRCUserContact::caption() const
 {
-	return i18n("%1 @ %2").arg(m_nickName).arg(m_engine->host());
+	return i18n("%1 @ %2").arg(m_nickName).arg( m_engine->currentHost() );
 }
 
 void IRCUserContact::slotOp()

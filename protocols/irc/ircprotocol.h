@@ -36,6 +36,10 @@ class QWidget;
 class KSParser;
 class KopeteView;
 
+class IRCNetwork;
+class IRCHost;
+class NetworkConfig;
+
 /**
  * @author Nick Betcher <nbetcher@kde.org>
  */
@@ -86,7 +90,24 @@ public:
 	bool commandInProgress(){ return m_commandInProgress; }
 	void setCommandInProgress( bool ip ) { m_commandInProgress = ip; }
 
+	QDict<IRCNetwork> &networks(){ return m_networks; }
+
+public slots:
+	void editNetworks();
+
+signals:
+	void networkConfigUpdated();
+
 private slots:
+	void slotUpdateNetworkConfig();
+	void slotUpdateNetworkHostConfig();
+	void slotMoveServerUp();
+	void slotMoveServerDown();
+	void slotSaveNetworkConfig();
+	void slotReadNetworks();
+	void slotDeleteNetwork();
+	void slotDeleteHost();
+
 	void slotMessageFilter( KopeteMessage &msg );
 
 	void slotRawCommand( const QString &args, KopeteMessageManager *manager );
@@ -126,6 +147,10 @@ private:
 	IRCAccount *activeAccount;
 
 	bool m_commandInProgress;
+
+	QDict<IRCNetwork> m_networks;
+	QDict<IRCHost> m_hosts;
+	NetworkConfig *netConf;
 };
 
 #endif

@@ -47,7 +47,7 @@ class IRCContactManager
 	Q_OBJECT
 
 	public:
-		IRCContactManager(const QString &nickName, const QString &serverName, IRCAccount *account, const char *name=0);
+		IRCContactManager(const QString &nickName, IRCAccount *account, const char *name=0);
 
 		IRCAccount *account() const { return m_account; }
 		IRCServerContact *myServer() const { return m_myServer; }

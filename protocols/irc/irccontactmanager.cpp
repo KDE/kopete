@@ -31,7 +31,7 @@
 
 #include "irccontactmanager.h"
 
-IRCContactManager::IRCContactManager(const QString &nickName, const QString &serverName, IRCAccount *account, const char *name)
+IRCContactManager::IRCContactManager(const QString &nickName, IRCAccount *account, const char *name)
 	: QObject(account, name),
 	  m_account(account),
 	  m_engine(account->engine())
@@ -40,7 +40,7 @@ IRCContactManager::IRCContactManager(const QString &nickName, const QString &ser
 
 	KopeteMetaContact *m = new KopeteMetaContact();
 	m->setTemporary( true );
-	m_myServer = new IRCServerContact(this, serverName.lower(), m);
+	m_myServer = new IRCServerContact(this, account->engine()->currentHost(), m);
 
 	QObject::connect(m_engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewMessage(const QString &, const QString &, const QString &)));

@@ -41,8 +41,13 @@ class IRCEditAccountWidget : public IRCEditAccountBase, public KopeteEditAccount
 		void slotContextMenu( KListView*, QListViewItem*, const QPoint & );
 		void slotAddCommand();
 		void slotAddCtcp();
+		void slotUpdateNetworks();
+		void slotUpdateNetworkDescription( const QString & );
 
 	private:
+		void readNetworks();
+		QString generateAccountId( const QString &network );
+
 		IRCProtocol *mProtocol;
 		IRCAccount *m_IRCAccount;
 };

@@ -47,8 +47,7 @@ class KIRCMethodFunctorCall;
  * @author Nick Betcher <nbetcher@kde.org>
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
  */
-class KIRC
-	: public QObject
+class KIRC : public QObject
 {
 	Q_OBJECT
 
@@ -70,12 +69,12 @@ public:
 		Closing = 4
 	};
 
-	KIRC(const QString &host, const Q_UINT16 port, QObject *parent=0, const char *name=0);
+	KIRC( QObject *parent = 0, const char* name = 0 );
 	~KIRC();
 
-	const QString &host() const { return m_Host; };
+	const QString &currentHost() const { return m_Host; };
 
-	Q_UINT16 port() { return m_Port; }
+	Q_UINT16 currentPort() { return m_Port; }
 
 	const QString &nickName() const { return m_Nickname; };
 
@@ -88,8 +87,16 @@ public:
 	const bool reqsPassword() const { return m_ReqsPasswd; };
 	void setReqsPassword(bool b) { m_ReqsPasswd = b; };
 
+	const QTextCodec *codec() const { return defaultCodec; };
+	const QTextCodec *codecForNick( const QString &nick ) const;
+	void setDefaultCodec( QTextCodec* codec ) { defaultCodec = codec; };
+
+	KExtendedSocket *socket() { return &m_sock; };
+
 	EngineStatus status() const { return m_status; }
+
 	inline bool isDisconnected() const { return m_status == Disconnected; }
+
 	inline bool isConnected() const { return m_status == Connected; }
 
 	inline void setCodec( const QString &nick, const QTextCodec *codec )
@@ -129,7 +136,7 @@ public:
 	void setVersionString(const QString &versionString);
 	void setUserString(const QString &userString);
 	void setSourceString(const QString &sourceString);
-	void connectToServer(const QString &nickname=QString::null, const QString &host=QString::null, Q_UINT16 port=0);
+	void connectToServer(const QString &host, Q_UINT16 port, const QString &nickname);
 
 	void changeUser(const QString &newUsername, const QString &hostname, const QString &newRealname);
 	void changeUser(const QString &newUsername, Q_UINT8 mode, const QString &newRealname);
@@ -226,9 +233,6 @@ signals:
 	void incomingDccChatRequest(const QHostAddress &, Q_UINT16 port, const QString &nickname, DCCClient &chatObject);
 	void incomingDccSendRequest(const QHostAddress &, Q_UINT16 port, const QString &nickname, const QString &, unsigned int, DCCClient &chatObject);
 
-protected:
-	bool canSend( bool mustBeConnected ) const;
-
 public:
 	KIRCMessage writeRawMessage(const QString &message, bool mustBeConnected=true);
 	KIRCMessage writeMessage(const QString &message, bool mustBeConnected=true);
@@ -291,8 +295,16 @@ public:
 			bool emitRepliedCtcp=true)
 		{ return writeCtcpReplyMessage(to, QString::null, "ERRMSG", ctcpLine, QString::fromLatin1(errorMsg), emitRepliedCtcp); }
 
-protected:
-	// FIXME: short term solution move me to the the KIRCEntity class
+private slots:
+	void slotConnected();
+	void slotConnectionClosed();
+	void slotAuthFailed();
+	void slotIsonCheck();
+	void slotReadyRead();
+	void error(int errCode = 0);
+	void quitTimeout();
+
+private:
 	inline static QString getNickFromPrefix(const QString &prefix)
 		{ return prefix.section('!', 0, 0); }
 
@@ -432,20 +444,11 @@ protected:
 	QDict<KIRCMethodFunctorCall> m_IrcCTCPReplyMethods;
 	QMap<QString, QString> customCtcpMap;
 	QDict<QTextCodec> codecs;
+	QTextCodec *defaultCodec;
 
-private slots:
-	void slotHostFound();
-	void slotConnected();
-	void slotConnectionClosed();
-	void slotAuthFailed();
-	void slotIsonCheck();
-	void slotReadyRead();
-	void error(int errCode = 0);
-	void quitTimeout();
-
-private:
 	void setStatus(EngineStatus status);
 	bool isonRecieved;
+	bool canSend( bool mustBeConnected ) const;
 
 
 };

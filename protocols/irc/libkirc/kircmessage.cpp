@@ -3,7 +3,7 @@
 
     Copyright (c) 2003      by Michel Hermier <michel.hermier@wanadoo.fr>
 
-    Kopete    (c) 2003      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2003      by the Kopete engineelopers <kopete-engineel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -18,7 +18,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-
+#include "kirc.h"
 #include "kircmessage.h"
 
 #ifndef _IRC_STRICTNESS_
@@ -34,13 +34,11 @@ const QRegExp KIRCMessage::m_IRCCommandType2(QString::fromLatin1(
 
 const QRegExp KIRCMessage::m_IRCNumericCommand(QString::fromLatin1("^\\d{3,3}$"));
 
-KIRCMessage::KIRCMessage()
-	: m_ctcpMessage(0)
+KIRCMessage::KIRCMessage() : m_ctcpMessage(0)
 {
 }
 
-KIRCMessage::KIRCMessage(const KIRCMessage &obj)
-	: m_ctcpMessage(0)
+KIRCMessage::KIRCMessage(const KIRCMessage &obj) : m_ctcpMessage(0)
 {
 	m_raw = obj.m_raw;
 
@@ -55,8 +53,7 @@ KIRCMessage::KIRCMessage(const KIRCMessage &obj)
 		m_ctcpMessage = new KIRCMessage(obj.m_ctcpMessage);
 }
 
-KIRCMessage::KIRCMessage(const KIRCMessage *obj)
-	: m_ctcpMessage(0)
+KIRCMessage::KIRCMessage(const KIRCMessage *obj) : m_ctcpMessage(0)
 {
 	m_raw = obj->m_raw;
 
@@ -76,30 +73,28 @@ KIRCMessage::~KIRCMessage()
 	if(m_ctcpMessage) delete m_ctcpMessage;
 }
 
-KIRCMessage KIRCMessage::writeRawMessage(QIODevice *dev, const QString &message, QTextCodec *codec)
+KIRCMessage KIRCMessage::writeRawMessage(KIRC *engine, const QString &message, const QTextCodec *codec)
 {
 	QCString s;
 	QString txt = message + QString::fromLatin1("\r\n");
 
-	if( !codec ) // FIXME: Per-convo. Codec selector
-		codec = QTextCodec::codecForName("utf8");
-
 	s = codec->fromUnicode(txt);
 
 	kdDebug(14121) << ">> " << s;
+
 	// FIXME: Should check the amount of data really writen.
-	dev->writeBlock(s.data(), s.length());
+	engine->socket()->writeBlock(s.data(), s.length());
 	return parse(message);
 }
 
-KIRCMessage KIRCMessage::writeMessage(QIODevice *dev, const QString &message, QTextCodec *codec)
+KIRCMessage KIRCMessage::writeMessage(KIRC *engine, const QString &message, const QTextCodec *codec)
 {
-	return writeRawMessage(dev, quote(message), codec);
+	return writeRawMessage(engine, quote(message), codec);
 }
 
-KIRCMessage KIRCMessage::writeMessage(QIODevice *dev,
+KIRCMessage KIRCMessage::writeMessage(KIRC *engine,
 		const QString &command, const QString &arg, const QString &suffix,
-		QTextCodec *codec)
+		const QTextCodec *codec)
 {
 	QString msg = command;
 	if (!arg.isNull())
@@ -107,28 +102,28 @@ KIRCMessage KIRCMessage::writeMessage(QIODevice *dev,
 	if (!suffix.isNull())
 		msg += QString::fromLatin1(" :") + suffix;
 
-	return writeMessage(dev, msg, codec);
+	return writeMessage(engine, msg, codec);
 }
 
-KIRCMessage KIRCMessage::writeMessage(QIODevice *dev,
+KIRCMessage KIRCMessage::writeMessage(KIRC *engine,
 		const QString &command, const QStringList &args, const QString &suffix,
-		QTextCodec *codec)
+		const QTextCodec *codec)
 {
-	return writeMessage(dev, command, args.join(QChar(' ')), suffix, codec);
+	return writeMessage(engine, command, args.join(QChar(' ')), suffix, codec);
 }
 
-KIRCMessage KIRCMessage::writeCtcpMessage(QIODevice *dev,
+KIRCMessage KIRCMessage::writeCtcpMessage(KIRC *engine,
 		const QString &command, const QString &to /*prefix*/, const QString &suffix,
 		const QString &ctcpMessage,
-		QTextCodec *codec)
+		const QTextCodec *codec)
 {
-	return writeMessage(dev, command, to, suffix + QChar(0x01) + ctcpQuote(ctcpMessage) + QChar(0x01), codec);
+	return writeMessage(engine, command, to, suffix + QChar(0x01) + ctcpQuote(ctcpMessage) + QChar(0x01), codec);
 }
 
-KIRCMessage KIRCMessage::writeCtcpMessage(QIODevice *dev,
+KIRCMessage KIRCMessage::writeCtcpMessage(KIRC *engine,
 		const QString &command, const QString &to /*prefix*/, const QString &suffix,
 		const QString &ctcpCommand, const QString &ctcpArg, const QString &ctcpSuffix,
-		QTextCodec *codec)
+		const QTextCodec *codec)
 {
 	QString ctcpMsg = ctcpCommand;
 	if (!ctcpArg.isNull())
@@ -136,41 +131,37 @@ KIRCMessage KIRCMessage::writeCtcpMessage(QIODevice *dev,
 	if (!ctcpSuffix.isNull())
 		ctcpMsg += QString::fromLatin1(" :") + ctcpSuffix;
 
-	return writeCtcpMessage(dev, command, to, suffix, ctcpMsg, codec);
+	return writeCtcpMessage(engine, command, to, suffix, ctcpMsg, codec);
 }
 
-KIRCMessage KIRCMessage::writeCtcpMessage(QIODevice *dev,
+KIRCMessage KIRCMessage::writeCtcpMessage(KIRC *engine,
 		const QString &command, const QString &to /*prefix*/, const QString &suffix,
 		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix,
-		QTextCodec *codec)
+		const QTextCodec *codec)
 {
-	return writeCtcpMessage(dev, command, to, suffix, ctcpCommand, ctcpArgs.join(QChar(' ')), ctcpSuffix, codec);
+	return writeCtcpMessage(engine, command, to, suffix, ctcpCommand, ctcpArgs.join(QChar(' ')), ctcpSuffix, codec);
 }
 
-// if codec==0 => autodetect
-KIRCMessage KIRCMessage::parse(KBufferedIO *dev, bool *parseSuccess, QTextCodec *codec)
+KIRCMessage KIRCMessage::parse(KIRC *engine, const QTextCodec *codec, bool *parseSuccess)
 {
 	if(parseSuccess)
-	*parseSuccess=false;
+		*parseSuccess=false;
 
-	if( dev->canReadLine() )
+	if( engine->socket()->canReadLine() )
 	{
 		QCString raw;
 		QString line;
 
-		raw.resize(dev->bytesAvailable()+1);
-		Q_LONG length = dev->readLine(raw.data(), raw.count());
+		raw.resize(engine->socket()->bytesAvailable()+1);
+		Q_LONG length = engine->socket()->readLine(raw.data(), raw.count());
 		if( length > -1 )
 		{
 			raw.resize(length);
 			raw.replace("\r\n",""); //remove the trailling \r\n if any(there must be in fact)
 
-			if( !codec ) // FIXME: Per-convo. Codec selector
-				codec = QTextCodec::codecForName("utf8");
-
 			line = codec->toUnicode(raw);
 
-			kdDebug(14121) << "<< Using codec " << codec->name() << " << " << line << endl;
+			kdDebug(14121) << "<< " << line << endl;
 
 			KIRCMessage msg = parse( line, parseSuccess );
 			msg.m_raw = raw;

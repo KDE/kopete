@@ -50,21 +50,18 @@
  */
 const QRegExp KIRC::m_RemoveLinefeeds(QString::fromLatin1("[\\r\\n]*$"));
 
-KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char *name)
-	: QObject( parent, name ),
-	  m_sock(host, port, KExtendedSocket::bufferedSocket | KExtendedSocket::inetSocket),
+KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 	  m_status(Disconnected),
 	  m_IrcMethods(101, false),
 	  m_IrcCTCPQueryMethods(17, false),
 	  m_IrcCTCPReplyMethods(17, false)
 {
 	m_IrcMethods.setAutoDelete(true);
+	m_sock.setSocketFlags( KExtendedSocket::bufferedSocket | KExtendedSocket::inetSocket );
 
 	m_IrcCTCPQueryMethods.setAutoDelete(true);
 	m_IrcCTCPReplyMethods.setAutoDelete(true);
 
-	m_Host = host;
-	m_Port = (port==0)?6667:port;
 	setUserName(QString::null);
 
 //	The following order is based on the RFC2812.
@@ -265,16 +262,16 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 	addCtcpReplyIrcMethod("PING",		&KIRC::CtcpReply_pingPong,	1,	1,	"");
 	addCtcpReplyIrcMethod("VERSION",	&KIRC::CtcpReply_version,	-1,	-1,	"");
 
-	QObject::connect(&m_sock, SIGNAL(lookupFinished(int)), this, SLOT(slotHostFound()));
-	QObject::connect(&m_sock, SIGNAL(connectionSuccess()), this, SLOT(slotConnected()));
 	QObject::connect(&m_sock, SIGNAL(closed(int)), this, SLOT(slotConnectionClosed()));
-
 	QObject::connect(&m_sock, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
+	QObject::connect(&m_sock, SIGNAL(connectionSuccess()), this, SLOT(slotConnected()));
 	QObject::connect(&m_sock, SIGNAL(connectionFailed(int)), this, SLOT(error(int)));
 
 	m_VersionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
 	m_UserString = QString::fromLatin1("Response not supplied by user.");
 	m_SourceString = QString::fromLatin1("Unknown client, known source.");
+
+	defaultCodec = QTextCodec::codecForMib(4);
 }
 
 KIRC::~KIRC()
@@ -294,36 +291,31 @@ void KIRC::setStatus(EngineStatus status)
 	emit statusChanged(status);
 }
 
-
-void KIRC::connectToServer(const QString &nickname, const QString &host, Q_UINT16 port)
+void KIRC::connectToServer(const QString &host, Q_UINT16 port, const QString &nickname)
 {
-	if (!nickname.isNull())
-		m_Nickname = nickname;
-	if (!host.isNull())
-	{
-		m_Host = host;
-		m_Port = (port==0)?6667:port;
-	}
+	m_Nickname = nickname;
+	m_Host = host;
+	m_Port = port;
 
 	kdDebug(14120) << "Trying to connect to server " << m_Host << ":" << m_Port << endl;
 	kdDebug(14120) << "Sock status: " << m_sock.socketStatus() << endl;
-	if (!m_sock.setAddress(m_Host, m_Port))
+
+	if( !m_sock.setAddress(m_Host, m_Port) )
 		kdDebug(14120) << k_funcinfo << "setAddress failed. Status:  " << m_sock.socketStatus() << endl;
-	if (m_sock.lookup()) // necessary to avoid QDns
+
+	if( m_sock.lookup() ) // necessary to avoid QDns
 		kdDebug(14120) << k_funcinfo << "lookup() failed. Status: " << m_sock.socketStatus() << endl;
-	if(m_sock.startAsyncConnect()==0) {
-		kdDebug(14120) << k_funcinfo << "startAsyncConnect() success!. Status: " << m_sock.socketStatus() << endl;
+
+	if( m_sock.startAsyncConnect() == 0 )
+	{
+		kdDebug(14120) << k_funcinfo << "Success!. Status: " << m_sock.socketStatus() << endl;
 		setStatus(Connecting);
-	} else {
-		kdDebug(14120) << k_funcinfo << "startAsyncConnect() failed. Status: " << m_sock.socketStatus() << endl;
+	}
+	else
+	{
+		kdDebug(14120) << k_funcinfo << "Failed. Status: " << m_sock.socketStatus() << endl;
 		setStatus(Disconnected);
 	}
-
-}
-
-void KIRC::slotHostFound()
-{
-	kdDebug(14120) << "Host Found" << endl;
 }
 
 void KIRC::slotAuthFailed()
@@ -342,7 +334,8 @@ void KIRC::slotConnected()
 	setStatus(Authentifying);
 	m_sock.enableRead(true);
 	// If password is given for this server, send it now, and don't expect a reply
-	if (!(password()).isEmpty()) {
+	if (!(password()).isEmpty())
+	{
 		writeMessage("PASS", QStringList(password()) , m_Realname, false);
 	}
 
@@ -424,7 +417,7 @@ KIRCMessage KIRC::writeRawMessage(const QString &rawMsg, bool mustBeConnected)
 {
 	if(canSend(mustBeConnected))
 	{
-		KIRCMessage ircmsg = KIRCMessage::writeRawMessage(&m_sock, rawMsg);
+		KIRCMessage ircmsg = KIRCMessage::writeRawMessage(this, rawMsg, defaultCodec);
 		emit sentMessage(ircmsg);
 		return ircmsg;
 	}
@@ -438,7 +431,7 @@ KIRCMessage KIRC::writeMessage(const QString &msg, bool mustBeConnected)
 {
 	if(canSend(mustBeConnected))
 	{
-		KIRCMessage ircmsg = KIRCMessage::writeMessage(&m_sock, msg);
+		KIRCMessage ircmsg = KIRCMessage::writeMessage(this, msg, defaultCodec);
 		emit sentMessage(ircmsg);
 		return ircmsg;
 	}
@@ -450,7 +443,7 @@ KIRCMessage KIRC::writeMessage(const QString &command, const QStringList &args, 
 {
 	if(canSend(mustBeConnected))
 	{
-		KIRCMessage ircmsg = KIRCMessage::writeMessage(&m_sock, command, args, suffix);
+		KIRCMessage ircmsg = KIRCMessage::writeMessage(this, command, args, suffix, defaultCodec);
 		emit sentMessage(ircmsg);
 		return ircmsg;
 	}
@@ -462,8 +455,8 @@ KIRCMessage KIRC::writeMessage(const QString &command, const QString &arg, const
 {
 	if(canSend(mustBeConnected))
 	{
-		KIRCMessage ircmsg = KIRCMessage::writeMessage(&m_sock, command, arg,
-			suffix, codecs[ arg ] );
+		KIRCMessage ircmsg = KIRCMessage::writeMessage(this, command, arg,
+			suffix, codecForNick( arg ) );
 		emit sentMessage(ircmsg);
 		return ircmsg;
 	}
@@ -475,8 +468,8 @@ KIRCMessage KIRC::writeCtcpMessage(const char *command, const QString &to, const
 		const QString &ctcpMessage, bool emitRepliedCtcp)
 {
 	QString nick =  getNickFromPrefix(to);
-	KIRCMessage msg = KIRCMessage::writeCtcpMessage(&m_sock, QString::fromLatin1(command),
-		nick, suffix, ctcpMessage, codecs[ nick ] );
+	KIRCMessage msg = KIRCMessage::writeCtcpMessage(this, QString::fromLatin1(command),
+		nick, suffix, ctcpMessage, codecForNick( nick ) );
 
 	emit sentMessage(msg);
 	if(emitRepliedCtcp && msg.isValid() && msg.hasCtcpMessage())
@@ -489,8 +482,8 @@ KIRCMessage KIRC::writeCtcpMessage(const char *command, const QString &to, const
 		const QString &ctcpCommand, const QString &ctcpArg, const QString &ctcpSuffix, bool emitRepliedCtcp)
 {
 	QString nick =  getNickFromPrefix(to);
-	KIRCMessage msg = KIRCMessage::writeCtcpMessage(&m_sock, QString::fromLatin1(command),
-		nick, suffix, ctcpCommand, ctcpArg, ctcpSuffix, codecs[ nick ] );
+	KIRCMessage msg = KIRCMessage::writeCtcpMessage(this, QString::fromLatin1(command),
+		nick, suffix, ctcpCommand, ctcpArg, ctcpSuffix, codecForNick( nick ) );
 
 	emit sentMessage(msg);
 	if(emitRepliedCtcp && msg.isValid() && msg.hasCtcpMessage())
@@ -503,8 +496,8 @@ KIRCMessage KIRC::writeCtcpMessage(const char *command, const QString &to, const
 		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix, bool emitRepliedCtcp)
 {
 	QString nick =  getNickFromPrefix(to);
-	KIRCMessage msg = KIRCMessage::writeCtcpMessage(&m_sock, QString::fromLatin1(command),
-		nick, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, codecs[ nick ] );
+	KIRCMessage msg = KIRCMessage::writeCtcpMessage(this, QString::fromLatin1(command),
+		nick, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, codecForNick( nick ) );
 
 	emit sentMessage(msg);
 	if(emitRepliedCtcp && msg.isValid() && msg.hasCtcpMessage())
@@ -519,12 +512,9 @@ void KIRC::slotReadyRead()
 	// close the socket unexpectedly
 	bool parseSuccess;
 
-//	while(	m_sock.socketStatus()==KExtendedSocket::connected &&
-//		m_sock.canReadLine())
-	if(	m_sock.socketStatus()==KExtendedSocket::connected &&
-		m_sock.canReadLine())
+	if( m_sock.socketStatus() == KExtendedSocket::connected && m_sock.canReadLine())
 	{
-		KIRCMessage msg = KIRCMessage::parse(&m_sock, &parseSuccess);
+		KIRCMessage msg = KIRCMessage::parse(this, defaultCodec, &parseSuccess);
 		if(parseSuccess)
 		{
 			KIRCMethodFunctorCall *method = m_IrcMethods[msg.command()];
@@ -558,17 +548,13 @@ void KIRC::slotReadyRead()
 			emit incomingUnknown(msg.raw());
 			emit internalError(ParsingFailed, msg);
 		}
+
 		QTimer::singleShot(0, this, SLOT(slotReadyRead())); // Event loop.
 	}
 
 	if(m_sock.socketStatus()!=KExtendedSocket::connected)
 		error();
 }
-/*
-void KIRC::setPassword(const QString &passord)
-{
-}
-*/
 
 void KIRC::changeNickname(const QString &newNickname)
 {
@@ -600,6 +586,15 @@ bool KIRC::nickChange(const KIRCMessage &msg)
 	return true;
 }
 
+const QTextCodec *KIRC::codecForNick( const QString &nick ) const
+{
+	QTextCodec *codec = codecs[ nick ];
+	if( !codec )
+		return defaultCodec;
+	else
+		return codec;
+}
+
 void KIRC::changeUser(const QString &newUsername, const QString &hostname, const QString &newRealname)
 {
 	/* RFC1459: "<username> <hostname> <servername> <realname>"
@@ -627,22 +622,17 @@ void KIRC::changeUser(const QString &newUsername, Q_UINT8 mode, const QString &n
 
 void KIRC::quitIRC(const QString &reason, bool now)
 {
-	if(!now || canSend(now))
-		writeMessage("QUIT", QString::null, reason, false);
-	if(now)
+	if( now || !canSend(true) )
 	{
-//		setStatus(Disconnected); // This segfaults while deleteing the KIRC object.
-		m_status = Disconnected;
+		setStatus(Disconnected);
 		m_sock.close();
+		m_sock.reset();
 	}
 	else
 	{
-		if(	m_status != Disconnected &&
-			m_status != Closing)
-		{
-			setStatus(Closing);
-		}
-		QTimer::singleShot(10000, this, SLOT(quitTimeout()));
+		writeMessage("QUIT", QString::null, reason, false);
+		setStatus(Closing);
+		QTimer::singleShot(5000, this, SLOT(quitTimeout()));
 	}
 }
 
@@ -654,6 +644,7 @@ void KIRC::quitTimeout()
 	{
 		setStatus(Disconnected);
 		m_sock.close();
+		m_sock.reset();
 	}
 }
 
@@ -668,14 +659,10 @@ bool KIRC::quitIRC(const KIRCMessage &msg)
 
 void KIRC::joinChannel(const QString &name, const QString &key)
 {
-	/* This will join a channel
-	 */
-	if (!key.isNull()) {
+	if ( !key.isNull() )
 		writeMessage("JOIN", QStringList(name) << key);
-	} else {
+	else
 		writeMessage("JOIN", name);
-	}
-
 }
 
 bool KIRC::joinChannel(const KIRCMessage &msg)
@@ -738,17 +725,7 @@ bool KIRC::topicChange(const KIRCMessage &msg)
 	emit incomingTopicChange(msg.prefix().section('!',0,0), msg.args()[0], msg.suffix());
 	return true;
 }
-/*
-// Show visible users in the channel list
-void KIRC::names(const QStringList &channels)
-{
-	QString arg;
-	if( channel.size()>0 )
-		while()
-			arg += "," + channel(index)
-	writeMessage("NAMES", QString::null);
-}
-*/
+
 void KIRC::list()
 {
 	writeMessage("LIST", QString::null);
@@ -759,16 +736,7 @@ void KIRC::motd(const QString &server)
 	writeMessage("MOTD", server);
 }
 
-/*
-void KIRC::invite()
-{
-}
 
-bool KIRC::invite(const KIRCMessage &msg)
-{
-	emit incomingInvitation(prefix() who, m_arg[0] from, m_arg[1] to_channel);
-}
-*/
 void KIRC::kickUser(const QString &user, const QString &channel, const QString &reason)
 {
 	writeMessage("KICK", QStringList(channel) << user, reason);
@@ -797,10 +765,7 @@ bool KIRC::privateMessage(const KIRCMessage &msg)
 	if (!m.suffix().isEmpty())
 	{
 		QString user = m.args()[0];
-		if( codecs[ user ] )
-		{
-			m = KIRCMessage::parse( codecs[user]->toUnicode( m.raw() ) );
-		}
+		m = KIRCMessage::parse( codecForNick( user )->toUnicode( m.raw() ) );
 
 		QString message = m.suffix();
 		QChar tmpChar = user[0];

@@ -96,16 +96,28 @@ void IRCContact::action(IRCContact *, IRCContact *, const QString &)
 void IRCContact::setCodec( const QTextCodec *codec )
 {
 	m_engine->setCodec( m_nickName, codec );
-	metaContact()->setPluginData( m_protocol, QString::fromLatin1("Codec"), codec->name() );
+	metaContact()->setPluginData( m_protocol, QString::fromLatin1("Codec"), QString::number(codec->mibEnum()) );
 }
 
 const QTextCodec *IRCContact::codec()
 {
-	QString codecName = metaContact()->pluginData( m_protocol, QString::fromLatin1("Codec") );
-	if( codecName.isEmpty() )
-		return QTextCodec::codecForName( "utf8" );
-	else
-		return QTextCodec::codecForName( codecName.latin1() );
+	QString codecId = metaContact()->pluginData( m_protocol, QString::fromLatin1("Codec") );
+	QTextCodec *codec = m_account->codec();
+
+	if( !codecId.isEmpty() )
+	{
+		bool test = true;
+		uint mib = codecId.toInt(&test);
+		if( test )
+			codec = QTextCodec::codecForMib( mib );
+		else
+			codec = QTextCodec::codecForName( codecId.latin1() );
+	}
+
+	if( !codec )
+		codec = QTextCodec::codecForMib( 4 );
+
+	return codec;
 }
 
 KopeteMessageManager *IRCContact::manager(bool canCreate)
