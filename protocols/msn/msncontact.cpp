@@ -385,7 +385,7 @@ void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, ui
 
 	//If the file location is null, then get it from a file open dialog
 	if( !sourceURL.isValid() )
-		filePath = KFileDialog::getOpenFileName( QString::null ,"*.*", 0l  , i18n( "Kopete File Transfer" ));
+		filePath = KFileDialog::getOpenFileName( QString::null ,"*", 0l  , i18n( "Kopete File Transfer" ));
 	else
 		filePath = sourceURL.path(-1);
 		
