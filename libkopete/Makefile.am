@@ -14,9 +14,10 @@ lib_LTLIBRARIES = libkopete.la
 
 libkopete_la_SOURCES = kopeteonlinestatus.cpp kopeteprotocol.cpp kopetecontact.cpp kopetepluginmanager.cpp kopeteplugin.cpp \
 	kopetemessage.cpp kopetemessagemanager.cpp kopetemessagemanagerfactory.cpp kopetecontactlist.cpp kopetemetacontact.cpp \
-	kopeteaway.cpp kopeteawaydialog.cpp kopetetransfermanager.cpp kopetegroup.cpp \
+	kopeteawaydialog.cpp kopetetransfermanager.cpp kopetegroup.cpp \
 	kopeteaccountmanager.cpp kopeteaccount.cpp kopeteplugindataobject.cpp \
-	kopetecommandhandler.cpp kopetenotifyclient.cpp 
+	kopetecommandhandler.cpp kopetenotifyclient.cpp kopeteaway.cpp
+
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
 libkopete_la_LIBADD = -lkabc ui/libkopeteui.la $(COMPAT_LIBS) $(LIB_KIO) $(LIB_XSS)
 

@@ -427,7 +427,7 @@ int MSNSocket::sendCommand( const QString &cmd, const QString &args,
 	if(!binary)
 	{
 		if( !body.isEmpty() )
-			data += QCString(body);
+			data += QCString(body,body.size()+1);
 
 	//	kdDebug(14140) << "MSNSocket::sendCommand: Sending command " << data << endl;
 
