@@ -446,7 +446,6 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 			KPassivePopup::message(
 				i18n( "%2 is now %1!" ).arg(statusString()).arg(displayName()),
 				QString(),
-/*				QPixmap(KGlobal::iconLoader()->locate("appdata",QString::fromLatin1("pics/")+statusIcon()+QString::fromLatin1(".png"))),*/
 				QPixmap( KGlobal::iconLoader()->iconPath(statusIcon(), KIcon::Small) ),
 				KopeteSystemTray::systemTray() );
 		}

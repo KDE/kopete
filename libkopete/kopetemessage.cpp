@@ -20,6 +20,7 @@
 #include <kglobal.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
+#include <kiconloader.h>
 
 #include "kopetemessage.h"
 #include "kopeteemoticons.h"
@@ -335,7 +336,7 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 
 				case 'I': //insert the statusicon path
 				{
-					QString icoPath = locate("appdata",QString::fromLatin1("pics/")+mFrom->statusIcon()+QString::fromLatin1(".png"));
+					QString icoPath = KGlobal::iconLoader()->iconPath(mFrom->statusIcon(), KIcon::Small);
 					if (!icoPath.isNull())
 						message.append( QStyleSheet::escape(icoPath) );
 					break;
