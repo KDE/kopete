@@ -125,7 +125,7 @@ void SMSSendProvider::slotSendFinished(KProcess* p)
 	kdDebug() << "SMSSendProvider::slotSendFinished()" << endl;
 	if (p->exitStatus() == 0)
 	{
-		KMessageBox::informationList(0L, i18n("Message sent"), output, i18n("Message sent"));
+		KMessageBox::information(0L, i18n("Message sent"), output.join("\n"), i18n("Message sent"));
 
 		emit messageSent(m_msg);
 	}
