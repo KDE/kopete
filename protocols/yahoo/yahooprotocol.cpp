@@ -131,7 +131,6 @@ AddContactPage *YahooProtocol::createAddContactWidget( QWidget * parent )
 {
 	kdDebug(14180) << "YahooProtocol::createAddContactWidget(<parent>)" << endl;
 	return new YahooAddContact(this, parent);
-	return 0L;
 }
 
 EditAccountWidget *YahooProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)

@@ -48,7 +48,6 @@ public:
 	virtual void setAway(bool);					// set away status
 	
 	YahooSession *yahooSession();					// the session
-	virtual const QString protocolIcon();				// the current protocol icon (TODO: make it work!)
 	
 	bool isOnServer(const QString &id) { return IDs.contains(id); }	// returns true is contact id is on SS contact list
 	bool haveContactList() { return theHaveContactList; }		// returns true if we have the SS contact list
@@ -84,6 +83,7 @@ protected slots:
 	void slotGotFile( const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize);
 	void slotContactAdded( const QString &myid, const QString &who, const QString &msg);
 	void slotRejected( const QString &, const QString &);
+	void slotTypingNotify( const QString &, int );
 	void slotGameNotify( const QString &, int);
 	void slotMailNotify( const QString &, const QString &, int);
 	void slotSystemMessage( const QString &);

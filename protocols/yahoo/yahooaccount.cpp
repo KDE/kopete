@@ -68,12 +68,6 @@ void YahooAccount::loaded()
 		m_myself->rename(publicName);		//TODO: might cause problems depending on rename semantics
 }
 
-const QString YahooAccount::protocolIcon()
-{
-	// TODO: Make it work!
-	return "yahoo_online";
-}
-
 YahooSession *YahooAccount::yahooSession()
 {
 	return m_session ? m_session : 0L;
@@ -105,16 +99,16 @@ void YahooAccount::connect()
 			/* We have a session, time to connect its signals to our plugin slots */
 			QObject::connect( session_ , SIGNAL(loginResponse( int,  const QString &)), this , SLOT(slotLoginResponse( int, const QString &)) );
 			QObject::connect( session_ , SIGNAL(gotBuddy(const QString &, const QString &, const QString &)), this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
-			QObject::connect( session_ , SIGNAL(gotIgnore( YList *)), this , SLOT(void slotGotIgnore( YList * )) );
-			QObject::connect( session_ , SIGNAL(gotIdentities( YList *)), this , SLOT(slotGotIdentities( YList *)) );
+			QObject::connect( session_ , SIGNAL(gotIgnore( const QStringList & )), this , SLOT(void slotGotIgnore( const QStringList & )) );
+			QObject::connect( session_ , SIGNAL(gotIdentities( const QStringList & )), this , SLOT(slotGotIdentities( const QStringList & )) );
 			QObject::connect( session_ , SIGNAL(statusChanged( const QString &, int, const QString &, int)), this , SLOT(slotStatusChanged( const QString &, int , const QString &, int )) );
 			QObject::connect( session_ , SIGNAL(gotIm( const QString &, const QString &, long, int )), this , SLOT(slotGotIm( const QString &, const QString &, long, int)) );
-			QObject::connect( session_ , SIGNAL(gotConfInvite( const QString &, const QString &, const QString &, YList *)), this , SLOT(slotGotConfInvite( const QString &, const QString &, const QString &, YList *)) );
+			QObject::connect( session_ , SIGNAL(gotConfInvite( const QString &, const QString &, const QString &, const QStringList &)), this , SLOT(slotGotConfInvite( const QString &, const QString &, const QString &, const QStringList &)) );
 			QObject::connect( session_ , SIGNAL(confUserDecline( const QString &, const QString &, const QString &)), this , SLOT(slotConfUserDecline( const QString &, const QString &, const QString &)) );
 			QObject::connect( session_ , SIGNAL(confUserJoin( const QString &, const QString &)), this , SLOT(slotConfUserJoin( const QString &, const QString &)) );
 			QObject::connect( session_ , SIGNAL(confUserLeave( const QString &, const QString &)), this , SLOT(slotConfUserLeave( const QString &, const QString &)) );
 			QObject::connect( session_ , SIGNAL(confMessage( const QString &, const QString &, const QString &)), this , SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
-			QObject::connect( session_ , SIGNAL(gotFile( const QString &, const QString &, long expires, const QString &, const QString &, unsigned long)), this , SLOT(slotGotFile( const QString &, const QString &, long , const QString &, const QString &, unsigned long )) );
+			QObject::connect( session_ , SIGNAL(gotFile( const QString &, const QString &, long, const QString &, const QString &, unsigned long)), this , SLOT(slotGotFile( const QString &, const QString &, long, const QString &, const QString &, unsigned long )) );
 			QObject::connect( session_ , SIGNAL(contactAdded( const QString &, const QString &, const QString &)), this , SLOT(slotContactAdded( const QString &, const QString &, const QString &)) );
 			QObject::connect( session_ , SIGNAL(rejected( const QString &, const QString &)), this , SLOT(slotRejected( const QString &, const QString &)) );
 			QObject::connect( session_ , SIGNAL(typingNotify( const QString &, int)), this , SLOT(slotTypingNotify( const QString &, int )) );
@@ -360,6 +354,11 @@ void YahooAccount::slotContactAdded( const QString &  myid , const QString &  wh
 void YahooAccount::slotRejected( const QString & /* who */, const QString & /* msg */ )
 {
 	kdDebug(14180) << "[YahooAccount::slotRejected]" << endl;
+}
+
+void YahooAccount::slotTypingNotify( const QString &who, int what )
+{
+	kdDebug(14180) << "[YahooAccount::slotTypingNotify] " << who << " " << what << endl;
 }
 
 void YahooAccount::slotGameNotify( const QString & /* who */, int /* stat */ )
