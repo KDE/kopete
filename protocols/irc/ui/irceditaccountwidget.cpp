@@ -170,12 +170,12 @@ void IRCEditAccountWidget::slotAddCtcp()
 QString IRCEditAccountWidget::generateAccountId( const QString &network )
 {
 	KConfig *config = KGlobal::config();
-	QString nextId = QString::fromLatin1("Account_IRCProtocol_%1").arg(network);
+	QString nextId = network;
 
 	uint accountNumber = 1;
 	while( config->hasGroup( nextId ) )
 	{
-		nextId = QString::fromLatin1("Account_IRCProtocol_%1 %2").arg(network).arg(++accountNumber);
+		nextId = QString::fromLatin1("%1_%2").arg(network).arg(++accountNumber);
 		accountNumber++;
 	}
 

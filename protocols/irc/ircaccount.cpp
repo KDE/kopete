@@ -45,7 +45,7 @@
 #include "channellist.h"
 
 ChannelListDialog::ChannelListDialog( KIRC *engine, const QString &caption, QObject *target, const char* slotJoinChan )
- : KDialogBase( 0, "channel_list_widget", false, caption, Close )
+ : KDialogBase( Kopete::UI::Global::mainWidget(), "channel_list_widget", false, caption, Close )
 {
 	m_engine = engine;
 	m_list = new ChannelList( this, engine );
@@ -165,7 +165,7 @@ void IRCAccount::loaded()
 		mCodec = 0L;
 
 	QString m_accountId = accountId();
-	if( networkName.isEmpty() && QRegExp( "[^#+&][^\\s]+@[\\w-\\.]+:\\d+" ).exactMatch( m_accountId ) )
+	if( networkName.isEmpty() && QRegExp( "[^#+&\\s]+@[\\w-\\.]+:\\d+" ).exactMatch( m_accountId ) )
 	{
 		/*
 		Test for backwards compatability. If the account ID matches this,
@@ -568,9 +568,7 @@ void IRCAccount::successfullyChangedNick(const QString &oldnick, const QString &
 bool IRCAccount::addContactToMetaContact( const QString &contactId, const QString &displayName,
 	 KopeteMetaContact *m )
 {
-//	kdDebug(14120) << k_funcinfo << contactId << "|" << displayName << endl;
-	//FIXME: I think there are too many tests in this functions.  This function should be called ONLY by
-	// KopeteAccount::addContact, where all test are already done. Can a irc developer look at this?   -Olivier
+	kdDebug(14120) << k_funcinfo << contactManager() << endl;
 	IRCContact *c;
 
 	if( !m )
@@ -596,7 +594,7 @@ bool IRCAccount::addContactToMetaContact( const QString &contactId, const QStrin
 		if( children.isEmpty() )
 			KopeteContactList::contactList()->removeMetaContact( old );
 	}
-	else if( c->metaContact()->isTemporary() ) //FIXME: if the metacontact is temporary, that mean this is a temporary contact
+	else if( c->metaContact()->isTemporary() )
 		m->setTemporary(false);
 
 	return true;

@@ -53,7 +53,7 @@ KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 	  m_IrcNumericMethods(101),
 	  m_IrcCTCPQueryMethods(17, false),
 	  m_IrcCTCPReplyMethods(17, false),
-	  codecs( QDict<QTextCodec>(577,false) )
+	  codecs(577,false)
 {
 	m_IrcMethods.setAutoDelete(true);
 	m_IrcCTCPQueryMethods.setAutoDelete(true);

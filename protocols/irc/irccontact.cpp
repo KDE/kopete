@@ -113,7 +113,7 @@ const QTextCodec *IRCContact::codec()
 	}
 
 	if( !codec )
-		codec = QTextCodec::codecForMib( 4 );
+		return m_engine->codec();
 
 	return codec;
 }

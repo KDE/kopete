@@ -17,6 +17,7 @@
 #define KCODECACTION_H
 
 #include <kdeversion.h>
+#include <qintdict.h>
 
 #if KDE_IS_VERSION( 3, 1, 90 )
 	#include <kactionclasses.h>
@@ -37,7 +38,10 @@ class KCodecAction : public KSelectAction
 		void activated( const QTextCodec * );
 
 	private slots:
-		void slotActivated( const QString & );
+		void slotActivated( int );
+
+	private:
+		QIntDict<QTextCodec> codecMap;
 };
 
 #endif
