@@ -481,7 +481,8 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 	if ( htmlStart == 0 && htmlEnd == (result.length()-7) )
 	{
 		result.remove ( htmlStart, 6 );
-		result.remove ( htmlEnd, 7 );
+		// Have to modify this a bit since we just took off the first 6 chars
+		result.remove ( htmlEnd - 6, 7 );
 
 		kdDebug() << "AIM Plugin: message after HTML removal: " << result << endl;
 
