@@ -21,6 +21,7 @@
 #include <qwidget.h>
 
 #include "msnsocket.h"
+#include "msninvitation.h"
 
 class QFile;
 
@@ -28,28 +29,32 @@ class KExtendedSocket;
 
 class KopeteTransfer;
 class KopeteProtocol;
+class KopeteContact;
 
 /**
  * @author Olivier Goffart
  */
-class MSNFileTransferSocket : public MSNSocket
+class MSNFileTransferSocket : public MSNSocket , public MSNInvitation
 {
 	Q_OBJECT
 
 public:
-	MSNFileTransferSocket( KopeteProtocol *protocol, bool incoming, QObject* parent = 0L );
+	MSNFileTransferSocket(const QString &myID,KopeteContact* c, bool incoming, QObject* parent = 0L );
 	~MSNFileTransferSocket();
+
+	static QString applicationID() { return "5D3E02AB-6190-11d3-BBBB-00C04F795683"; }
+	QCString invitationHead();
+
 
 	void setKopeteTransfer( KopeteTransfer *kt );
 	KopeteTransfer* kopeteTransfer() { return m_kopeteTransfer; }
 	void setFile( const QString &fn, long unsigned int fileSize = 0L );
 	void setAuthCookie( const QString &c ) { m_authcook = c; }
-	void setCookie( long unsigned int c ) { m_cookie = c; }
-	long unsigned int cookie() { return m_cookie; }
-	bool incoming() { return m_incoming; }
 	QString fileName() { return m_fileName;}
 	long unsigned int size() { return m_size;}
 	void listen( int port );
+
+	virtual void parseInvitation(const QString& invitation);
 
 public slots:
 	void abort();
@@ -82,19 +87,19 @@ private slots:
 	void slotSendFile();
 
 private:
-	KopeteProtocol *m_protocol;
+	QString m_handle;
+	KopeteContact *m_contact;
 
-	long unsigned int m_cookie;
 	long unsigned int m_size;
 	long unsigned int m_downsize;
 	QString m_authcook;
 	QString m_fileName;
-	bool m_incoming;
 	KopeteTransfer* m_kopeteTransfer;
 	QFile *m_file ;
 	KExtendedSocket *m_server;
 
 	bool ready;
+
 };
 
 #endif

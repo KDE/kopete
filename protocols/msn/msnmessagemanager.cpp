@@ -40,7 +40,6 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 	KopeteContactPtrList others, const char *name )
 : KopeteMessageManager( user, others, protocol, 0, protocol, name )
 {
-	m_protocol = protocol;
 	KopeteMessageManagerFactory::factory()->addKopeteMessageManager( this );
 	m_chatService = 0l;
 //	m_msgQueued = 0L;
@@ -285,20 +284,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			MSNFileTransferSocket *MFTS=m_invitations[cookie];
 			if(MFTS && MFTS->incoming())
 			{
-				rx=QRegExp("IP-Address: ([0-9\\.]*)");
-				rx.search(msg);
-				QString ip_adress = rx.cap(1);
-				rx=QRegExp("AuthCookie: ([0-9]*)");
-				rx.search(msg);
-				QString authcook = rx.cap(1);
-				rx=QRegExp("Port: ([0-9]*)");
-				rx.search(msg);
-				QString port = rx.cap(1);
-
-				kdDebug(14140) << " MSNMessageManager::slotInvitation: filetransfer: - ip:" <<ip_adress <<" : " <<port <<" -authcook: " <<authcook<<  endl;
-
-				MFTS->setAuthCookie(authcook);
-				MFTS->connect(ip_adress, port.toUInt());
+				MFTS->parseInvitation(msg);
 			}
 			else
 			{
@@ -321,7 +307,6 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 				m_chatService->sendCommand( "MSG" , "N", true, message );
 
 				MFTS->listen(6891);
-
 			}
 		}
 	}
@@ -331,6 +316,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 		{
 			kdDebug(14140) << " MSNMessageManager::slotInvitation: canceled "<<  endl;
 			MSNFileTransferSocket *MFTS=m_invitations[cookie];
+			MFTS->parseInvitation(msg);
 			if(MFTS && MFTS->incoming())
 			{
 				MFTS->setCookie(0);
@@ -345,20 +331,13 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 	}
 	else  if( msg.contains("Invitation-Command: INVITE") )
 	{
-		if( msg.contains("5D3E02AB-6190-11d3-BBBB-00C04F795683") )  //not "Application-Name: File Transfer" because the File Transfer label is sometimes translate
+		if( msg.contains(MSNFileTransferSocket::applicationID()) )
 		{
-			rx=QRegExp("Application-File: ([^\\r\\n]*)");
-			rx.search(msg);
-			QString filename = rx.cap(1);
-			rx=QRegExp("Application-FileSize: ([0-9]*)");
-			rx.search(msg);
-			unsigned long int filesize= rx.cap(1).toUInt();
-
-			MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(m_protocol,true,this);
-			MFTS->setCookie(cookie);
+			MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(user()->account()->accountId(),c,true,this);
 			connect(MFTS, SIGNAL( done(MSNFileTransferSocket*) ) , this , SLOT( slotFileTransferDone(MSNFileTransferSocket*) ));
 			m_invitations.insert( cookie  , MFTS);
-			KopeteTransferManager::transferManager()->askIncomingTransfer( c , filename, filesize, QString::null, MFTS );
+
+			MFTS->parseInvitation(msg);
 		}
 		else
 		{
@@ -370,16 +349,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			KopeteMessage tmpMsg = KopeteMessage( c , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
 			appendMessage(tmpMsg);
 
-			QCString message=QString(
-				"MIME-Version: 1.0\r\n"
-				"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
-				"\r\n"
-				"Invitation-Command: CANCEL\r\n"
-				"Cancel-Code: REJECT_NOT_INSTALLED\r\n"
-				"Invitation-Cookie: " + QString::number(cookie) + "\r\n"
-				"Session-ID: {120019D9-C3F5-4F94-978D-CB33534C3309}\r\n\r\n").utf8();  //FIXME: i don't know at all what Seession-ID is
-			m_chatService->sendCommand( "MSG" , "N", true, message );
-
+			m_chatService->sendCommand( "MSG" , "N", true, MSNInvitation::unimplemented(cookie) );
 		}
 	}
 }
@@ -462,42 +432,29 @@ void MSNMessageManager::slotFileTransferDone(MSNFileTransferSocket* MFTS)
 		setCanBeDeleted(true);
 }
 
-void MSNMessageManager::sendFile(const QString &fileLocation, const QString &fileName,
+void MSNMessageManager::sendFile(const QString &fileLocation, const QString &/*fileName*/,
 	long unsigned int fileSize)
 {
-	QString theFileName;
-
 	if(m_chatService)
 	{
-		//If the alternate filename is null, then get the filename from the location
+		//If the alternate filename is null, then get the filename from the location (FIXME)
+		/*QString theFileName;
 		if( fileName.isNull() ) {
 			theFileName = fileLocation.right( fileLocation.length()
 				- fileLocation.findRev( QRegExp("/") ) - 1 );
 		} else {
 			theFileName = fileName;
-		}
+		}*/
 
-		unsigned long int cookie = (rand()%(999999))+1;
-		MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(m_protocol,false,this);
-		MFTS->setCookie(cookie);
+		QPtrList<KopeteContact>contacts=members();
+		MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(user()->account()->accountId(),contacts.first(), false,this);
 		connect(MFTS, SIGNAL( done(MSNFileTransferSocket*) ) , this , SLOT( slotFileTransferDone(MSNFileTransferSocket*) ));
-		m_invitations.insert( cookie  , MFTS);
+		m_invitations.insert( MFTS->cookie()  , MFTS);
 
 		//Call the setFile command to let the MFTS know what file we are sending
 		MFTS->setFile(fileLocation, fileSize);
 
-		QCString message=QString(
-			"MIME-Version: 1.0\r\n"
-			"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
-			"\r\n"
-			"Application-Name: File Transfer\r\n" // +i18n("File Transfer")
-			"Application-GUID: {5D3E02AB-6190-11d3-BBBB-00C04F795683}\r\n"
-			"Invitation-Command: INVITE\r\n"
-			"Invitation-Cookie: " +QString::number(cookie) +"\r\n"
-			"Application-File: "+ theFileName +"\r\n"
-			"Application-FileSize: "+ QString::number(MFTS->size()) +"\r\n\r\n").utf8();
-
-		m_chatService->sendCommand( "MSG" , "N", true, message );
+		m_chatService->sendCommand( "MSG" , "N", true, MFTS->invitationHead() );
 	}
 }
 
