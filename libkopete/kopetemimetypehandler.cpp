@@ -145,11 +145,7 @@ bool MimeTypeHandler::dispatchToHandler( const KURL &url, const QString &mimeTyp
 	if( !handler->canAcceptRemoteFiles() )
 	{
 		QString file;
-		#if KDE_IS_VERSION( 3, 1, 90 )
 		if( !KIO::NetAccess::download( url, file, Kopete::UI::Global::mainWidget() ) )
-		#else
-		if( !KIO::NetAccess::download( url, file ) )
-		#endif
 		{
 			QString sorryText;
 			if ( url.isLocalFile() )

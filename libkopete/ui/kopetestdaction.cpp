@@ -37,13 +37,12 @@
 KSettings::Dialog *KopetePreferencesAction::s_settingsDialog = 0L;
 
 KopetePreferencesAction::KopetePreferencesAction( KActionCollection *parent, const char *name )
-// FIXME: Pending kdelibs change, uncomment when it's in - Martijn
-//#if KDE_IS_VERSION( 3, 1, 90 )
-//: KAction( KStdGuiItem::preferences(), 0, 0, 0, parent, name )
-//#else
+#if KDE_IS_VERSION( 3, 3, 90 )
+: KAction( KStdGuiItem::configure(), 0, 0, 0, parent, name )
+#else
 : KAction( KGuiItem( i18n( "&Configure Kopete..." ),
 	QString::fromLatin1( "configure" ) ), 0, 0, 0, parent, name )
-//#endif
+#endif
 {
 	connect( this, SIGNAL( activated() ), this, SLOT( slotShowPreferences() ) );
 }
@@ -61,9 +60,7 @@ void KopetePreferencesAction::slotShowPreferences()
 
 	s_settingsDialog->dialog()->raise();
 
-#if KDE_IS_VERSION( 3, 1, 90 )
 	KWin::activateWindow( s_settingsDialog->dialog()->winId() );
-#endif
 }
 
 KAction * KopeteStdAction::preferences( KActionCollection *parent, const char *name )
