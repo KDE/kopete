@@ -292,7 +292,6 @@ QString Kopete::parseEmoticons( QString message )
 		em.replace( QRegExp("\\("), "\\(" );
 		em.replace( QRegExp("\\>"), "\\>" );
 		em.replace( QRegExp("\\<"), "\\<" );
-
 		message = message.replace ( QRegExp(em), "<img src=\""+KopeteEmoticons::emoticons()->emoticonToPicPath(*it)+"\">" );
 	}
 	return message;

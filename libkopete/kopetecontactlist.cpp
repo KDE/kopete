@@ -35,6 +35,8 @@
 #include <kglobal.h>
 #include <kstandarddirs.h>
 
+#include <ksavefile.h>
+
 KopeteContactList *KopeteContactList::s_contactList = 0L;
 
 KopeteContactList *KopeteContactList::contactList()
@@ -203,7 +205,28 @@ void KopeteContactList::saveXML()
 
 	//kdDebug() << "KopeteContactList::saveXML: Contact List File: "
 	//	<< contactListFileName << endl;
-	QFile contactListFile( contactListFileName );
+
+	KSaveFile contactListFile( contactListFileName );
+	if( contactListFile.status() == 0 )
+	{
+		QTextStream *stream = contactListFile.textStream();
+		stream->setEncoding( QTextStream::UnicodeUTF8 );
+
+		*stream << toXML();
+
+		if ( !contactListFile.close() )
+		{
+			kdDebug() << "failed to write contactlist, error code is: " << contactListFile.status() << endl;
+		}
+	}
+	else
+	{
+		kdDebug() << "WARNING: Couldn't open contact list file "
+			<< contactListFileName << ". Contact list not saved." << endl;
+	}
+
+	
+/*	QFile contactListFile( contactListFileName );
 	if( contactListFile.open( IO_WriteOnly ) )
 	{
 		QTextStream stream( &contactListFile );
@@ -218,6 +241,7 @@ void KopeteContactList::saveXML()
 		kdDebug() << "WARNING: Couldn't open contact list file "
 			<< contactListFileName << ". Contact list not saved." << endl;
 	}
+*/
 }
 
 QString KopeteContactList::toXML()

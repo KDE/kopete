@@ -258,7 +258,7 @@ bool KopeteMetaContact::isReachable() const
 void KopeteMetaContact::slotContactStatusChanged( KopeteContact * /* c */,
 	KopeteContact::ContactStatus /* s */ )
 {
-	kdDebug() << "KopeteMetaContact::slotContactStatusChanged" << endl;
+//	kdDebug() << "KopeteMetaContact::slotContactStatusChanged" << endl;
 	emit onlineStatusChanged( this, status() );
 }
 
