@@ -47,9 +47,9 @@ WPUserInfo::WPUserInfo( WPContact *contact, WPAccount *account, QWidget *parent,
 	m_mainWidget->sComputerName->setText( m_contact->displayName() );
 
 	QStringList::Iterator it = theHostDetails.begin();
-	m_mainWidget->sWorkgroup->setText( (*it).isEmpty() ? "N/A" : *it );
-	m_mainWidget->sOS->setText( (*++it).isEmpty() ? "N/A" : *it );
-	m_mainWidget->sServer->setText( (*++it).isEmpty() ? "N/A" : *it );
+	m_mainWidget->sWorkgroup->setText( (*it).isEmpty() ? i18n( "N/A" ) : *it );
+	m_mainWidget->sOS->setText( (*++it).isEmpty() ? i18n( "N/A" ) : *it );
+	m_mainWidget->sServer->setText( (*++it).isEmpty() ? i18n( "N/A" ) : *it );
 
 	connect( this, SIGNAL( closeClicked() ), this, SLOT( slotCloseClicked() ) );
 }
@@ -62,3 +62,4 @@ void WPUserInfo::slotCloseClicked()
 }
 
 #include "wpuserinfo.moc"
+
