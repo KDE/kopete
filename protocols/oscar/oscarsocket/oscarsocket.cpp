@@ -1502,12 +1502,38 @@ void OscarSocket::parseLocateRights(Buffer &/*inbuf*/)
 	}
 }
 
-/** Parses buddy list rights from the server */
-void OscarSocket::parseBuddyRights(Buffer &/*inbuf*/)
+void OscarSocket::parseBuddyRights(Buffer &inbuf)
 {
 	kdDebug(14150) << k_funcinfo << "RECV (SRV_REPLYBUDDY), TODO: Ignoring Buddy Rights" << endl;
-	// FIXME: write code to parse buddy rights info
-	//requestMsgRights();
+	// TODO: use these values if possible
+
+	while(1)
+	{
+		TLV t = inbuf.getTLV();
+		if(t.data == 0L)
+			break;
+
+		Buffer tlvBuf(t.data, t.length);
+		switch(t.type)
+		{
+			case 0x0001:
+				kdDebug(14150) << k_funcinfo <<
+					"max contactlist size     = " << tlvBuf.getWord() << endl;
+				break;
+			case 0x0002:
+				kdDebug(14150) << k_funcinfo <<
+					"max no. of watchers      = " << tlvBuf.getWord() << endl;
+				break;
+			case 0x0003:
+				kdDebug(14150) << k_funcinfo <<
+					"max online notifications = " << tlvBuf.getWord() << endl;
+				break;
+			default:
+				break;
+		}
+		tlvBuf.clear();
+	}
+
 	gotAllRights++;
 	if (gotAllRights==7)
 	{

@@ -382,9 +382,18 @@ int Buffer::addTLV8(const WORD type, const BYTE data)
 TLV Buffer::getTLV()
 {
 	TLV t;
-	t.type = getWord();
-	t.length = getWord();
-	t.data = getBlock(t.length);
+	if(length() >= 4)
+	{
+		t.type = getWord();
+		t.length = getWord();
+		t.data = getBlock(t.length);
+	}
+	else
+	{
+		t.type = 0;
+		t.length = 0;
+		t.data = 0L;
+	}
 	return t;
 }
 
