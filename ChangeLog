@@ -1,13 +1,17 @@
 Kopete Messenger ChangeLog
 --------------------------
 
+30-Sept-2002 Released Kopete 0.5
+=================================
+
 o Main App
 	o New metacontact serialize architecture ( Martijn, Zack )
 	o Contact list UI/Logic separation and cleanup ( Duncan )
 	o Lot of bugfixing ( Olivier and all the team )
 	o New away system ( Chris )
-	o Drag and Dorp ( Olivier )
+	o Drag and Drop ( Olivier )
 	o File transfers API ( Nick )
+	o new icon ( Luci )
 o ICQ Plugin
 	o New written from scratch plugin ( Nick )
 	o new features ( Stefan )
@@ -23,7 +27,7 @@ o Jabber Plugin
 o AIM Plugin
 o Gadu Plugin ( Zack )
 o Translator plugin ( Duncan )
-
+o Contact Notes (Olivier)
 
 16-Jun-2002 Released Kopete 0.4.1
 =================================

@@ -1,10 +1,10 @@
 Main Developers
 ===============
 
-Duncan Mac-Vicar Prett <duncan@kde.org> (irc: BaRRiL)
+Duncan Mac-Vicar Prett <duncan@kde.org> (irc: duncanmv)
 - Original author, main app work & design, original MSN Plugin, hacks in all plugins
 
-Nick Betcher <nbetcher@usinternet.com> (irc: Error403)
+Nick Betcher <nbetcher@kde.org> (irc: Error403)
 - ICQ Plugin, AIM Plugin, IRC Plugin, various hacks
 
 Developer Team
@@ -29,7 +29,8 @@ Daniel Stone <dstone@kde.org> (irc: DannyS)
 Ian Renhart Geiser <geiseri@kde.org> (irc: geiseri)
 - KMM work
 
-
+See the Development team section of http://kopete.kde.org
+for an updated list of Kopete team!
 
 Contributed patches. Thanks!
 ==============================

@@ -3,6 +3,8 @@ the works or planned for new releases. When known, the people who work on
 it and the planned Kopete version are mentioned. When not mentioned, feel
 free to assign the issue to yourself, or contact kopete-devel@kde.org.
 
+See roadmap section of http://kopete.kde.org
+
 - Contact list API rewrite
   Currently being worked on for Kopete 0.5
   Assigned to Martijn <klingens@kde.org> and Duncan <duncan@kde.org>
