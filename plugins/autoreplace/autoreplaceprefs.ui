@@ -10,8 +10,11 @@
             <x>0</x>
             <y>0</y>
             <width>458</width>
-            <height>371</height>
+            <height>378</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>AutoReplacePrefsUI</string>
     </property>
     <grid>
         <property name="name">
@@ -53,41 +56,30 @@
             <property name="title">
                 <string>Replacement Options</string>
             </property>
-            <widget class="QCheckBox">
+            <vbox>
                 <property name="name">
-                    <cstring>AutoReplaceIncoming</cstring>
+                    <cstring>unnamed</cstring>
                 </property>
-                <property name="geometry">
-                    <rect>
-                        <x>11</x>
-                        <y>19</y>
-                        <width>414</width>
-                        <height>18</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Auto replace on incoming messages</string>
-                </property>
-            </widget>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>AutoReplaceOutgoing</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>11</x>
-                        <y>43</y>
-                        <width>414</width>
-                        <height>18</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Auto replace on outgoing messages</string>
-                </property>
-                <property name="checked">
-                    <bool>true</bool>
-                </property>
-            </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>AutoReplaceIncoming</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Auto replace on incoming messages</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>AutoReplaceOutgoing</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Auto replace on outgoing messages</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+            </vbox>
         </widget>
         <widget class="QGroupBox" row="1" column="0">
             <property name="name">
