@@ -78,6 +78,7 @@ Comment[et]=Kopete sündmuste helisignaalid
 Comment[nl]=Geluidsnotificatie voor Kopete-gebeurtenissen
 Comment[pt]=Notificação sonora para os eventos do Kopete
 Comment[pt_BR]=Notificação sonora para os eventos do Kopete
+Comment[sv]=Ljudunderrättelse för händelser i Kopete
 default_sound=Kopete_Event.ogg
 default_presentation=65
 
