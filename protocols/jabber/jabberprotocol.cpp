@@ -1362,6 +1362,27 @@ void JabberProtocol::slotNewMessage(const Jabber::Message &message)
 				}
 				messageManagerMap[userHost_] = manager;
 			}
+			else
+			{
+				manager = messageManagerMap[message.from().userHost()];
+
+				// we have a message manager, determine its type
+				if(((message.type() == "chat") && !emailType && (manager->widgetType() != KopeteMessageManager::ChatWindow))
+				  || ((message.type() == "normal") && (manager->widgetType() != KopeteMessageManager::Email)))
+				{
+					// we have a message manager with an incorrect type, so reinstantiate it
+					delete manager;
+
+					if((message.type() == "chat") && !emailType)
+						manager = createMessageManager(contactMap[message.from().userHost()], KopeteMessageManager::ChatWindow);
+					else
+						manager = createMessageManager(contactMap[message.from().userHost()], KopeteMessageManager::Email);
+
+					messageManagerMap[message.from().userHost()] = manager;
+				}
+			}
+
+			from = contactMap[message.from().userHost()];
 		}
 
 		KopeteContactPtrList contactList;
@@ -1446,7 +1467,8 @@ void JabberProtocol::slotJoinChat()
 				return;
 		}
 
-		jabberClient->groupChatJoin(dlg->host(), dlg->room(), dlg->nick());
+	// send the join request
+	jabberClient->groupChatJoin(dlg->host(), dlg->room(), dlg->nick());
 
 }
 
@@ -1462,17 +1484,63 @@ void JabberProtocol::slotGroupChatJoined(const Jabber::Jid &jid)
 
 }
 
-void JabberProtocol::slotGroupChatLeft(const Jabber::Jid &jid)
+void JabberProtocol::slotGroupChatLeave()
 {
-		kdDebug(14130) << "[JabberProtocol] Left group chat "
-									 << jid.full() << endl;
+	JabberMessageManager *manager = (JabberMessageManager *)sender();
+
+	KopeteContactPtrList memberList = manager->members();
+	JabberContact *contact = (JabberContact *)memberList.first();
+
+	kdDebug() << "[JabberProtocol] Message manager has been closed, leaving groupchat " << contact->userId() << endl;
+
+//	jabberClient->groupChatLeave(
 
 }
 
-void JabberProtocol::slotGroupChatPresence(const Jabber::Jid &jid)
+void JabberProtocol::slotGroupChatLeft(const Jabber::Jid &jid)
 {
-		kdDebug(14130) << "[JabberProtocol] Received group chat presence: "
-									 << jid.full() << endl;
+	kdDebug() << "[JabberProtocol] Left groupchat " << jid.full() << endl;
+
+}
+
+void JabberProtocol::slotGroupChatPresence(const Jabber::Jid &jid, const Jabber::Status &status)
+{
+	kdDebug() << "[JabberProtocol] Received groupchat presence for room " << jid.full() << endl;
+
+	if(status.isAvailable())
+	{
+		kdDebug() << "[JabberProtocol] " << jid.resource() << " entered the room." << endl;
+
+		JabberMessageManager *manager = messageManagerMap[jid.userHost()];
+
+		// create a new contact (will return reference to existing contact if we
+		// double-add it)
+		JabberContact *contact = createContact(QString("%1@%2").arg(jid.resource(), 1).arg(jid.host(), 2), jid.resource(), QStringList(), 0L, myContact->userId());
+		contact->slotResourceAvailable(jid.resource(), Jabber::Resource("Groupchat Resource", Jabber::Status("available", "available")));
+
+		// see if it is already in there
+		if(!manager->members().containsRef(contact))
+			// it is not, add a new contact
+			manager->addContact(contact);
+	}
+	else
+	{
+		kdDebug() << "[JabberProtocol] " << jid.resource() << " left the room." << endl;
+		
+		JabberMessageManager *manager = messageManagerMap[jid.userHost()];
+
+		JabberContact *contact = (JabberContact *)manager->getContact(jid.resource());
+
+		// remove contact from our map
+		contactMap.remove(QString("%1@%2").arg(jid.resource(), 1).arg(jid.host(), 2));
+
+		// delete it from the manager
+		manager->removeContact(jid.resource());
+
+		// since groupchat contacts are temporary only while they are in the chat,
+		// delete it here for good
+		delete contact;
+	}
 
 }
 
