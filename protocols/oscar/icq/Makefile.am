@@ -12,9 +12,10 @@ kopete_icq_la_SOURCES = icqpresence.cpp icqaccount.cpp icqcontact.cpp icqprotoco
 # icquserinfo.cpp icqreadaway.cpp icqsendsmsdialog.cpp
 
 kopete_icq_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
-kopete_icq_la_LIBADD  = ../libkopete_oscar.la $(top_builddir)/kopete/libkopete/libkopete.la ui/libkopeteicqui.la
+kopete_icq_la_LIBADD  = ../libkopete_oscar.la \
+	$(top_builddir)/kopete/libkopete/libkopete.la ui/libkopeteicqui.la
 
-service_DATA = kopete_icq.desktop
+service_DATA = kopete_icq2.desktop
 servicedir = $(kde_servicesdir)
 
 mime_DATA = x-icq.desktop

@@ -38,7 +38,7 @@ class Connection;
 class OscarContact;
 class OscarAccountPrivate;
 
-class KDE_EXPORT OscarAccount : public Kopete::PasswordedAccount
+class OscarAccount : public Kopete::PasswordedAccount
 {
 	Q_OBJECT
 
