@@ -76,8 +76,11 @@ KopeteAccount::~KopeteAccount()
 	// Delete all registered child contacts first
 	while ( !d->contacts.isEmpty() )
 		delete *QDictIterator<KopeteContact>( d->contacts );
-
 	KopeteAccountManager::manager()->unregisterAccount( this );
+
+	// Let the protocol know that one of its accounts
+	// is no longer there
+	QTimer::singleShot( 0, d->protocol, SLOT( slotAccountAdded() ) );
 
 	delete d;
 }
