@@ -388,3 +388,5 @@ void BSocket::qs_error(int x)
 }
 
 // CS_NAMESPACE_END
+
+#include "bsocket.moc"

@@ -938,3 +938,5 @@ void SocksServer::connectionError()
 }
 
 // CS_NAMESPACE_END
+
+#include "socks.moc"
