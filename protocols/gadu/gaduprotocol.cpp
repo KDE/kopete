@@ -153,7 +153,7 @@ GaduProtocol::statusToWithDescription( Kopete::OnlineStatus status )
 		return GG_STATUS_BUSY_DESCR;
 	}
 
-	if ( status == gaduStatusInvisibleDescr_ || status == gaduStatusInvisible_){
+	if ( status == gaduStatusInvisibleDescr_ || status == gaduStatusInvisible_ ){
 		return GG_STATUS_INVISIBLE_DESCR;
 	}
 
