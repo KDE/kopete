@@ -37,16 +37,11 @@ struct KopeteLibraryInfo
 {
 	QString specfile;
 	QString filename;
-	QString author;
-	QString license;
 	QString type;
-	QString site;
-	QString email;
 	QString name;
 	QString comment;
 	QString icon;
 	QString messagingProtocol;
-	QString pluginId;
 };
 
 bool operator ==(const KopeteLibraryInfo &, const KopeteLibraryInfo &);
@@ -77,7 +72,6 @@ public:
 	QValueList<KopeteLibraryInfo> available() const;
 	QValueList<KopeteLibraryInfo> loaded() const;
 	bool isLoaded(const QString &spec) const;
-	void setModules(const QStringList &mods);
 	KopetePlugin *loadPlugin( const QString &spec );
 
 	/**

@@ -112,10 +112,7 @@ QValueList<KopeteLibraryInfo> LibraryLoader::loaded() const
 
 bool LibraryLoader::loadAll()
 {
-	KConfig *config=KGlobal::config();
-	config->setGroup("");
-	QStringList modules = config->readListEntry("Plugins");
-
+	// FIXME: We need session management here - Martijn
 	// Session management...
 /*
 	for(QStringList::ConstIterator i=modules.begin(); i!=modules.end(); ++i)
@@ -128,14 +125,6 @@ bool LibraryLoader::loadAll()
 */
 
 	slotKopeteSettingsChanged();
-
-	// Compatibility until all plugins are ported
-	for(QStringList::ConstIterator i=modules.begin(); i!=modules.end(); ++i)
-	{
-		KopeteLibraryInfo info = getInfo( *i );
-		loadPlugin( *i );
-		kapp->processEvents();
-	}
 
 	return true;
 }
@@ -160,15 +149,10 @@ KopeteLibraryInfo LibraryLoader::getInfo( const QString &spec ) const
 	file.setGroup( QString::fromLatin1( "Desktop Entry" ) );
 
 	info.filename = file.readEntry( "X-KDE-Library" );
-	info.author   = file.readEntry( "X-Kopete-Author" );
-	info.site     = file.readEntry( "X-Kopete-Site" );
-	info.email    = file.readEntry( "X-Kopete-Email" );
 	info.type     = file.readEntry( "ServiceTypes" );
 	info.name     = file.readEntry( "Name" );
 	info.comment  = file.readEntry( "Comment" );
-	info.license  = file.readEntry( "X-Kopete-License" );
 	info.icon     = file.readEntry( "Icon" );
-	info.pluginId = file.readEntry( "X-Kopete-Plugin-Id" );
 	info.messagingProtocol = file.readEntry( "X-Kopete-Messaging-Protocol" );
 
 	if ( info.type != QString::fromLatin1( "Kopete/Plugin" ) && info.type != QString::fromLatin1( "Kopete/Protocol" ) )
@@ -182,14 +166,6 @@ bool LibraryLoader::isLoaded( const QString &spec ) const
 {
 	KopetePlugin *p = m_loadedPlugins[ spec ];
 	return p;
-}
-
-void LibraryLoader::setModules(const QStringList &mods)
-{
-	KConfig *config=KGlobal::config();
-	config->setGroup("");
-	config->writeEntry("Plugins", mods);
-	KGlobal::config()->sync();
 }
 
 QValueList<KopeteLibraryInfo> LibraryLoader::available() const
@@ -213,8 +189,6 @@ KopetePlugin *LibraryLoader::loadPlugin( const QString &spec_ )
 
 	kdDebug( 14010 ) << k_funcinfo << spec << endl;
 
-	QString pluginId = spec;
-
 	KopetePlugin *plugin = m_loadedPlugins[ spec ];
 	if(plugin)
 		return plugin;
@@ -222,14 +196,7 @@ KopetePlugin *LibraryLoader::loadPlugin( const QString &spec_ )
 	int error = 0;
 	plugin = KParts::ComponentFactory::createInstanceFromQuery<KopetePlugin>(
 		QString::fromLatin1( "Kopete/Plugin" ),
-		QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='kopete_%1'" ).arg( pluginId ), this, 0, QStringList(), &error );
-
-	if ( !plugin )
-	{
-		plugin = KParts::ComponentFactory::createInstanceFromQuery<KopetePlugin>(
-			QString::fromLatin1( "Kopete/Plugin" ),
-			QString::fromLatin1( "[X-Kopete-Plugin-Id]=='%1'" ).arg( pluginId ), this, 0, QStringList(), &error );
-	}
+		QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='kopete_%1'" ).arg( spec ), this, 0, QStringList(), &error );
 
 	if( plugin )
 	{
@@ -240,7 +207,7 @@ KopetePlugin *LibraryLoader::loadPlugin( const QString &spec_ )
 
 		m_addressBookFields.insert(plugin, plugin->addressBookFields());
 
-		kdDebug(14010) << k_funcinfo << "Successfully loaded plugin '" << pluginId << "'"<< endl;
+		kdDebug(14010) << k_funcinfo << "Successfully loaded plugin '" << spec << "'"<< endl;
 
 		emit pluginLoaded(plugin);
 	}
@@ -272,7 +239,7 @@ KopetePlugin *LibraryLoader::loadPlugin( const QString &spec_ )
 				break;
 		}
 
-		kdDebug(14010) << k_funcinfo << "Loading plugin '"<< pluginId <<
+		kdDebug(14010) << k_funcinfo << "Loading plugin '"<< spec <<
 			"'failed, KLibLoader reported error:" << endl <<
 			KLibLoader::self()->lastErrorMessage() << endl;
 	}
@@ -386,7 +353,13 @@ void LibraryLoader::slotKopeteSettingsChanged()
 				if ( it.data() == QString::fromLatin1( "true" ) )
 				{
 					if ( !m_loadedPlugins[ key ] )
+					{
 						loadPlugin( key );
+
+						// FIXME: processEvents is evil, we need to use a queue and
+						//        a singleshot timer instead - Martijn
+						kapp->processEvents();
+					}
 				}
 				else
 				{

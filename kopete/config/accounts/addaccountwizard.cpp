@@ -72,8 +72,6 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 			pluginItem = new QListViewItem(selectService->protocolListView);
 			pluginItem->setText(0, ( *i ).name );
 			pluginItem->setText( 1, ( *i ).comment );
-			//pluginItem->setText( 2, ( *i ).author );
-			//pluginItem->setText( 3, ( *i ).license );
 			pluginItem->setPixmap(0, SmallIcon( (*i).icon ) );
 			pluginCount++;
 			m_protocolItems.insert(pluginItem, (*i));
