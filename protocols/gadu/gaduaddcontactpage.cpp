@@ -28,6 +28,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
+#include <krestrictedline.h>
 
 GaduAddContactPage::GaduAddContactPage( GaduAccount* owner,
 																				QWidget* parent, const char* name )
