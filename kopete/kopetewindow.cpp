@@ -370,8 +370,9 @@ void KopeteWindow::slotPluginLoaded( KopetePlugin *p )
 		SLOT( slotProtocolStatusIconRightClicked( KopeteProtocol *,
 		const QPoint & ) ) );
 
-	i->setPixmap( SmallIcon( proto->statusIcon() ) );
 	m_statusBarIcons.insert( proto, i );
+
+	slotProtocolStatusIconChanged( proto, proto->statusIcon() );
 }
 
 void KopeteWindow::slotProtocolDestroyed( QObject *o )
@@ -395,7 +396,32 @@ void KopeteWindow::slotProtocolStatusIconChanged( KopeteProtocol * p,
 	if( !i )
 		return;
 
-	i->setPixmap( SmallIcon( icon ) );
+	// Because we want null pixmaps to detect the need for a loadMovie
+	// we can't use the SmallIcon() method directly
+	KIconLoader *loader = KGlobal::instance()->iconLoader();
+	QPixmap pm = loader->loadIcon( icon, KIcon::User, 0, KIcon::DefaultState, 0L,
+		true );
+	if( pm.isNull() )
+	{
+		QString path = loader->moviePath( icon, KIcon::User, 0 );
+		if( path.isEmpty() )
+		{
+			kdDebug() << "KopeteWindow::slotProtocolStatusIconChanged(): "
+				<< "Using unknown pixmap for status icon '" << icon << "'."
+				<< endl;
+			i->setPixmap( KIconLoader::unknown() );
+		}
+		else
+		{
+			kdDebug() << "KopeteWindow::slotProtocolStatusIconChanged(): "
+				<< "Using movie: " << path << endl;
+			i->setMovie( QMovie( path ) );
+		}
+	}
+	else
+	{
+		i->setPixmap( pm );
+	}
 }
 
 void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
