@@ -205,6 +205,7 @@ void AIMAccount::slotGoOnline()
 	{
 		kdDebug(14152) << k_funcinfo << accountId() << " was away. welcome back." << endl;
 		engine()->setStatus( Client::Online );
+		myself()->removeProperty( Kopete::Global::Properties::self()->awayMessage() );
 	}
 	else if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
 	{

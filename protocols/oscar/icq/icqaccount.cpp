@@ -259,6 +259,7 @@ void ICQAccount::setPresenceType( ICQ::Presence::Type type, const QString &messa
 	kdDebug(14153) << k_funcinfo << "new type=" << (int)type << ", old type=" << (int)pres.type() << endl;
 	//setAwayMessage(awayMessage);
 	setPresenceTarget( ICQ::Presence( type, pres.visibility() ) );
+	myself()->setProperty( Kopete::Global::Properties::self()->awayMessage(), message );
 }
 
 void ICQAccount::setPresenceTarget( const ICQ::Presence &newPres )
