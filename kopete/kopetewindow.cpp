@@ -443,9 +443,6 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
 	// FIXME -Will
 	//slotProtocolStatusIconChanged( proto, proto->statusIcon() );
 
-	KActionMenu *menu = a->actionMenu();
-	if( menu )
-		menu->plug( tray->contextMenu(), 1 );
 
 	// this should be placed in the contactlistview insteads of, but i am lazy to redo a new slot
 	contactlist->actionAddContact->insert(new KAction( a->accountId() , a->protocol()->pluginIcon() , 0 , contactlist , SLOT( slotAddContact() ) , a));
@@ -610,9 +607,20 @@ void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& stat
 	}
 }
 
-void KopeteWindow::slotTrayAboutToShowMenu( KPopupMenu * /* me */ )
+void KopeteWindow::slotTrayAboutToShowMenu( KPopupMenu * popup )
 {
-//	kdDebug(14000) << k_funcinfo << "Called. EMPTY" << endl;
+	//KPopupMenu *popup=tray->contextMenu();
+
+	QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
+	for(KopeteAccount *a=accounts.first() ; a; a=accounts.next() )
+	{
+		KActionMenu *menu = a->actionMenu();
+		if( menu )
+			menu->plug(popup , 1 );
+
+		connect(popup , SIGNAL(aboutToHide()) , menu , SLOT(deleteLater()));
+	}
+
 }
 
 void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
@@ -666,6 +674,7 @@ void KopeteWindow::slotSettingsChanged()
 	QPtrListIterator<KopetePlugin> it( plugins );
 	KopetePlugin *plugin = 0L;
 
+	//FIXME: loop only in accounts
 	while( ( plugin = it.current() ) != 0 )
 	{
 		++it;
