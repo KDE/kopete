@@ -8,20 +8,14 @@ libkopeteui_la_SOURCES = configmodule.cpp preferencesdialog.cpp \
 	kopetecontactaction.cpp addcontactpage.cpp \
 	editaccountwidget.cpp kopetehistorydialog.cpp \
 	kopetepassworddialog.ui kopetestdaction.cpp \
-	kopetehistorywidget.cpp kopeteemailwindow.cpp \
-	kopeteawaydialogbase.ui kopetefiletransferui.ui \
+	kopetehistorywidget.cpp kopeteawaydialogbase.ui kopetefiletransferui.ui \
 	kopetefileconfirmdialog.cpp fileconfirmbase.ui \
-	kopetechatwindow.cpp chatview.cpp \
-	userinfodialog.cpp ktabwidget.cpp \
-	kopeteview.cpp emoticonselector.cpp \
-	kopeteemoticonaction.cpp
+	userinfodialog.cpp kopeteview.cpp 
 
 libkopeteui_la_LDFLAGS = $(all_libraries)
 libkopeteui_la_LIBADD = ../private/libkopeteprivate.la \
         $(LIB_KDEUI) $(LIB_KHTML) $(LIB_KIO) $(LIBXML_LIBS) $(LIBXSLT_LIBS)
 
-rcdir = $(kde_datadir)/kopete
-rc_DATA = kopetechatwindow.rc kopeteemailwindow.rc
 
 # vim: set noet:
 

@@ -2,24 +2,25 @@ AM_CPPFLAGS = -I$(srcdir)/conf \
 	-I$(srcdir)/addcontactwizard \
 	-I./addcontactwizard \
 	-I../libkopete/ui \
+	-I./contactlist \
+	-I./chatwindow \
 	-I$(top_srcdir)/kopete/libkopete/private \
 	$(KOPETE_INCLUDES) \
 	$(all_includes)
 KDE_ICON = AUTO
 METASOURCES = AUTO
 
-SUBDIRS = conf addcontactwizard
+SUBDIRS = conf addcontactwizard contactlist chatwindow
 
 bin_PROGRAMS = kopete
 kopete_SOURCES = main.cpp \
-	kopetewindow.cpp kopete.cpp kopeteiface.cpp kopeteiface.skel \
-	kopetemetacontactlvi.cpp kopetestatusgroupviewitem.cpp kopetegroupviewitem.cpp \
-	statusbaricon.cpp kopetecontactlistview.cpp systemtray.cpp \
+	kopete.cpp kopeteiface.cpp kopeteiface.skel \
+	systemtray.cpp \
 	kopeteballoon.cpp kopeteglobalawaydialog.cpp
 
 kopete_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH) -lktexteditor
 kopete_LDADD = ../libkopete/libkopete.la conf/libkopeteconf.la \
-	addcontactwizard/libkopeteaddcontactwizard.la  $(LIBXML_LIBS) $(LIBXSLT_LIBS)
+	addcontactwizard/libkopeteaddcontactwizard.la  contactlist/libkopetecontactlist.la chatwindow/libkopetechatwindow.la $(LIBXML_LIBS) $(LIBXSLT_LIBS)
 
 icondir = $(kde_datadir)/kopete/pics
 icon_DATA =

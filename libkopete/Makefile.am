@@ -12,7 +12,7 @@ lib_LTLIBRARIES = libkopete.la
 libkopete_la_SOURCES = kopeteonlinestatus.cpp kopeteprotocol.cpp kopetecontact.cpp pluginloader.cpp kopeteplugin.cpp \
 	kopetemessage.cpp kopetemessagemanager.cpp kopetemessagemanagerfactory.cpp kopetecontactlist.cpp kopetemetacontact.cpp \
 	kopeteaway.cpp kopeteawaydialog.cpp kopetetransfermanager.cpp kopetegroup.cpp \
-	kopeteaccountmanager.cpp kopeteviewmanager.cpp kopeteaccount.cpp kopeteplugindataobject.cpp \
+	kopeteaccountmanager.cpp kopeteaccount.cpp kopeteplugindataobject.cpp \
 	kopetecommandhandler.cpp
 
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)

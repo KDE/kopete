@@ -72,7 +72,6 @@
 #include "appearanceconfig_chatwindow.h"
 #include "appearanceconfig_chatappearance.h"
 #include "configmodule.h"
-#include "kopetechatwindow.h"
 #include "kopeteprefs.h"
 #include "kopetemessage.h"
 #include "kopetecontact.h"
