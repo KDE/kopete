@@ -115,33 +115,31 @@ This way power users can add +1 contact per protocol without complicating the AC
 
 
 
---Olivier's try--
-1) Welcome :P   (the smeley is very important here)
-2) some radio-button (could be merged with the welcome sceen?)    we need to choose a good default, or using the last selected one
-	(.) Add this contact to a new KAB entry 	 => goto A
-	(.) Use an existing KAb Entry           	 => goto B
-	(.) Do not add this contact to KAB      	 => goto 3
+--Olivier's 2nd try--
+1) Welcome :P    do you want  to add this contact to KAB?   ( we need to choose a good default, or using the last selected one )
+	(.) Yes / search in KAB fo an existing entry  	 => goto A
+	(.) Yes / and create a new KAB entry        	 => goto B
+	(.) No / Do not add this contact to KAB      	 => goto 3
 ( This would require the user to remember if an appropriate KAB entry exists.
-  It would be better to allow the user to select/search KAB entries OR create a new one 
+  It would be better to allow the user to select/search KAB entries OR create a new one
   from the same screen, if they can't find an entry - Will)
-A) use a KPart from KAB to show the widget showed when adding new KAB entried => goto 3
-B) use a KPart from KAB to search an user an select one
+A) use a KPart from KAB to search an user an select one. if one exist => goto 3    the user still can shoose to create one  => goto B
+B) use a KPart from KAB to show the widget showed when adding new KAB entried => goto 3
 
 3) select groups, and ask the displayName (let empty to use the serverside one)  (show the KAB displayname by default)
 4) select account to use  (select by default account where a KAB entry exist)
 5) fill the account data (if a KAB entry exist, show as default)
-( What if, horrible case, you want to have 2 contacts for this guy on the same account, 
-  is that allowed? - Will)
-6) (.) another account    => goto 5 (or 4? - Will)
+6) (.) another account (and select it)    => goto 5
    (.) finish
 7) Finish screen  (is that possible to merge this screen with the previous one?
 
 This try to do all in as few step as possible.
 I can't count very well, but AFAICS your suggestion is equal or greater:
 
-Step Count		No IM in kabc	1 IM in kabc + n new
-Will			8		7 + 3 * n = 10
-Gof			8		8 + 3 * n = 11
+Step Count		No IM in kabc	1 IM in kabc (new entry) + n new
+Will    			7				6 +  3 * n = 9
+Gof     			6 				5 +  2 * n = 7
+
 
 
  KAB Widget in Kopete
@@ -154,7 +152,7 @@ B)  "View information"   if the metacontact is already in KAB
 
 A)  show the step  2 and A/B  of my addcontactwizard  (Olivier)
 
-B) KParts showing the KAddressBook entries information, and allow to edit it of 
+B) KParts showing the KAddressBook entries information, and allow to edit it of
 course
 
 

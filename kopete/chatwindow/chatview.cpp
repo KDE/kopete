@@ -1241,8 +1241,19 @@ void ChatView::copy()
 {
 	if ( chatView->hasSelection() )
 	{
-		QApplication::clipboard()->setText( chatView->selectedText(), QClipboard::Clipboard );
-		QApplication::clipboard()->setText( chatView->selectedText(), QClipboard::Selection );
+		QString sel= chatView->selection().toHTML().string();
+		sel.replace( QRegExp( QString::fromLatin1( "< *img[^>]*title=\"([^>\"]*)\"[^>]*>" ) , false ), QString::fromLatin1( "\\1" ) );
+		sel.replace( QRegExp( QString::fromLatin1( "< *p[^>]*>" ) , false ), QString::fromLatin1( "\n" ) );
+		sel.replace( QRegExp( QString::fromLatin1( "< *br */? *>" ) , false ), QString::fromLatin1( "\n" ) );
+		sel.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
+		sel.replace( QString::fromLatin1( "&gt;" ), QString::fromLatin1( ">" ) );
+		sel.replace( QString::fromLatin1( "&lt;" ), QString::fromLatin1( "<" ) );
+		sel.replace( QString::fromLatin1( "&quot;" ), QString::fromLatin1( "\"" ) );
+		sel.replace( QString::fromLatin1( "&nbsp;" ), QString::fromLatin1( " " ) );
+		sel.replace( QString::fromLatin1( "&amp;" ), QString::fromLatin1( "&" ) );
+
+		QApplication::clipboard()->setText( sel, QClipboard::Clipboard );
+		QApplication::clipboard()->setText( sel, QClipboard::Selection );
 	}
 	else
 		m_edit->copy();
