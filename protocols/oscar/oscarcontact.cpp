@@ -428,7 +428,7 @@ void OscarContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	// Show the message we just sent in the chat window
 	manager()->appendMessage(message);
 
-	manager()->messageSuccess();
+	manager()->messageSucceeded();
 }
 
 /** Called when nickname needs to be updated */
