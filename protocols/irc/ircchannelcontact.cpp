@@ -140,11 +140,12 @@ void IRCChannelContact::slotJoinChannel( KopeteView *view )
 		m_engine->joinChannel(m_nickName, password());
 }
 
-// FIXME: Remove me /* obsolete */
 void IRCChannelContact::slotConnectedToServer()
 {
-	kdDebug(14120) << k_funcinfo << endl;
 	setOnlineStatus( m_protocol->m_ChannelStatusOnline );
+	if( m_isConnected )
+		m_engine->joinChannel(m_nickName, password());
+
 }
 
 void IRCChannelContact::slotNamesList(const QString &channel, const QStringList &nicknames)
