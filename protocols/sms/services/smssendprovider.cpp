@@ -153,7 +153,10 @@ void SMSSendProvider::send(const KopeteMessage& msg)
 	KProcess* p = new KProcess;
 #endif
 
-	*p << QString("%1/bin/smssend").arg(prefix) << provider << args;
+	*p << QString("%1/bin/smssend").arg(prefix) << provider;
+    for( unsigned int i = 0; i < values.count(); ++i)
+      *p << values[i];
+    
 	output.clear();
 	connect( p, SIGNAL(processExited(KProcess *)), this, SLOT(slotSendFinished(KProcess*)));
 	connect( p, SIGNAL(receivedStdout(KProcess*, char*, int)),
