@@ -26,7 +26,8 @@ kopete_gadu_la_SOURCES = gaduaway.cpp gadueditcontact.cpp gaducommands.cpp \
 			 gadueditaccount.cpp gadusession.cpp gaducontact.cpp \
 			 gaduaddcontactpage.cpp gaduprotocol.cpp gaduaccount.cpp \
 			 gadupubdir.cpp gaduregisteraccount.cpp \
-			 gaducontactlist.cpp gadurichtextformat.cpp
+			 gaducontactlist.cpp gadurichtextformat.cpp \
+			 gadudccserver.cpp gadudcctransaction.cpp gadudcc.cpp
 
 kopete_gadu_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_gadu_la_LIBADD  = ./ui/libgaduui.la \

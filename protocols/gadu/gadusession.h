@@ -1,7 +1,7 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Copyright (C)	2002	Zack Rusin <zack@kde.org>
-// Copyright (C)	2003 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
+// Copyright (C) 2003-2004	 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
+// Copyright (C) 2002	 	Zack Rusin <zack@kde.org>
 //
 // gadusession.h
 //
@@ -23,6 +23,8 @@
 #ifndef GADUSESSION_H
 #define GADUSESSION_H
 
+#include "kopeteaccount.h"
+
 #include <qvaluelist.h>
 #include <qptrlist.h>
 #include <qobject.h>
@@ -40,6 +42,18 @@ struct KGaduMessage {
 	unsigned int	sender_id;	// sender's UIN
 	QDateTime	sendTime;
 	QByteArray	rtf;
+};
+
+struct KGaduLoginParams {
+	uin_t uin;
+	QString password;
+	bool useTls;
+	int status;
+	QString statusDescr;
+	unsigned int server;
+	bool forFriends;
+	unsigned int client_addr;
+	unsigned int client_port;
 };
 
 struct KGaduNotify {
@@ -88,10 +102,8 @@ public:
 	static QString stateDescription( int state );
 
 public slots:
-	void	login( struct gg_login_params* );
-	void	login( uin_t uin, const QString&, bool, int status = GG_STATUS_AVAIL,
-			const QString& statusDescr = "", unsigned int server = 0, bool forFriends = false );
-	void	logoff();
+	void	login( KGaduLoginParams* login );
+	void	logoff( KopeteAccount::DisconnectReason reason = KopeteAccount::Manual );
 	int	notify( uin_t*, int );
 	int	addNotify( uin_t );
 	int	removeNotify( uin_t );
@@ -129,7 +141,7 @@ signals:
 	void pong();
 	void connectionFailed( gg_failure_t failure );
 	void connectionSucceed( );
-	void disconnect();
+	void disconnect( KopeteAccount::DisconnectReason );
 	void pubDirSearchResult( const SearchResult& );
 	void userListRecieved( const QString& );
 	void userListExported();
@@ -138,6 +150,7 @@ protected slots:
 	void enableNotifiers( int );
 	void disableNotifiers();
 	void checkDescriptor();
+	void login( struct gg_login_params* );
 
 private:
 

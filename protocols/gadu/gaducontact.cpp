@@ -23,6 +23,7 @@
 #include <klocale.h>
 #include <kaction.h>
 #include <kdebug.h>
+#include <kfiledialog.h>
 
 #include "gaduaccount.h"
 #include "gaduprotocol.h"
@@ -47,6 +48,13 @@ GaduContact::GaduContact( uin_t uin, const QString& name, KopeteAccount* account
 {
 	msgManager_ = 0L;
 	account_ = static_cast<GaduAccount*>( account );
+
+	remote_ip	= 0;
+	remote_port	= 0;
+	version		= 0;
+	image_size	= 0;
+
+	setFileCapable( false );
 
 	//offline
 	setOnlineStatus( GaduProtocol::protocol()->convertStatus( 0 ) );
@@ -76,6 +84,26 @@ GaduContact::uin() const
 }
 
 void
+GaduContact::sendFile( const KURL &sourceURL, const QString &fileName, uint fileSize )
+{
+	QString filePath;
+
+	if ( !sourceURL.isValid () ) {
+		filePath = KFileDialog::getOpenFileName( QString::null , "*", 0L, i18n ( "Kopete File Transfer" ) );
+	}
+	else {
+		filePath = sourceURL.path( -1 );
+	}
+
+	QFile file ( filePath );
+
+	if ( file.exists () ) {
+	// transfer the bastard
+	}
+}
+
+
+void
 GaduContact::changedStatus( KGaduNotify* newstatus )
 {
 	if ( newstatus->description.isNull() ) {
@@ -86,6 +114,21 @@ GaduContact::changedStatus( KGaduNotify* newstatus )
 		setOnlineStatus( GaduProtocol::protocol()->convertStatus( newstatus->status ) );
 		setProperty( GaduProtocol::protocol()->propAwayMessage, newstatus->description );
 	}
+
+	remote_ip	= newstatus->remote_ip;
+	remote_port	= newstatus->remote_port;
+	version		= newstatus->version;
+	image_size	= newstatus->image_size;
+
+	kdDebug(14100) << "uin:" << uin() << " port: " << remote_port << " remote ip: " <<  remote_ip << " image size: " << image_size << "  version: "  << version  << endl;
+
+	if ( remote_port > 10 ) {
+		setFileCapable( true );
+	}
+	else {
+		setFileCapable( false );
+	}
+
 }
 
 KopeteMessageManager*
@@ -195,8 +238,7 @@ GaduContact::serialize( QMap<QString, QString>& serializedData, QMap<QString, QS
 	serializedData[ "FirstName"  ]	= property( GaduProtocol::protocol()->propFirstName ).value().toString();
 	serializedData[ "SecondName" ]	= property( GaduProtocol::protocol()->propLastName ).value().toString();
 	serializedData[ "telephone" ]	= property( GaduProtocol::protocol()->propPhoneNr ).value().toString();
-	serializedData[ "ignored" ]	= ignored_ ? "true" : "false"; //property( "ignored" ).value().toString();
-	//serializedData[ "nickname" ]	= property( "nickName" ).value().toString();
+	serializedData[ "ignored" ]	= ignored_ ? "true" : "false";
 }
 
 bool

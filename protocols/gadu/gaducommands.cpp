@@ -1,7 +1,7 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
-// Copyright (C) 	2002-2003	 Zack Rusin 	<zack@kde.org>
+// Copyright (C) 2003-2004 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
+// Copyright (C) 2002-2003	 Zack Rusin 	<zack@kde.org>
 //
 // gaducommands.cpp - all basic, and not-session dependent commands
 // (meaning you don't have to be logged in for any of these).

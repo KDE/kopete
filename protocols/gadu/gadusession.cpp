@@ -1,7 +1,7 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Copyright (C) 	2003	 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
-// Copyright (C) 	2002	 Zack Rusin <zack@kde.org>
+// Copyright (C) 2003-2004	 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
+// Copyright (C) 2002	 	Zack Rusin <zack@kde.org>
 //
 // gadusession.cpp
 //
@@ -148,29 +148,30 @@ GaduSession::disableNotifiers()
 }
 
 void
-GaduSession::login( uin_t uin, const QString& password, bool useTls,
-					int status, const QString& statusDescr, unsigned int server, bool forFriends )
+GaduSession::login( KGaduLoginParams* loginp )
 {
 	memset( &params_, 0, sizeof(params_) );
 
-	params_.uin		= uin;
-	params_.password	= (char *)password.ascii();
-	params_.status		= status | ( forFriends ? GG_STATUS_FRIENDS_MASK : 0);
-	params_.status_descr	= ( textcodec->fromUnicode( statusDescr ).data() );
+	params_.uin		= loginp->uin;
+	params_.password	= (char *)( loginp->password.ascii() );
+	params_.status		= loginp->status | ( loginp->forFriends ? GG_STATUS_FRIENDS_MASK : 0);
+	params_.status_descr	= ( textcodec->fromUnicode( loginp->statusDescr ).data() );
 	params_.async		= 1;
-	params_.tls		= useTls;
-	params_ .server_addr	= server;
+	params_.tls		= loginp->useTls;
+	params_ .server_addr	= loginp->server;
+	params_.client_addr	= loginp->client_addr;
+	params_.client_port	= loginp->client_port;
 
-	if ( useTls ) {
+	if ( loginp->useTls ) {
 		params_.server_port = GG_HTTPS_PORT;
 	}
 	else {
-		if ( server ) {
+		if ( loginp->server ) {
 			params_.server_port = GG_DEFAULT_PORT;
 		}
 	}
 
-	kdDebug(14100)<<"gadusession::login, server ( " << server << " ), tls(" << useTls << ") " <<endl;
+	kdDebug(14100)<<"gadusession::login, server ( " << loginp->server << " ), tls(" << loginp->useTls << ") " <<endl;
 	login( &params_ );
 }
 
@@ -185,10 +186,10 @@ GaduSession::destroySession()
 }
 
 void
-GaduSession::logoff()
+GaduSession::logoff( KopeteAccount::DisconnectReason reason )
 {
 	destroySession();
-	emit disconnect();
+	emit disconnect( reason );
 }
 
 int
@@ -603,7 +604,7 @@ GaduSession::checkDescriptor()
 	if ( !( event = gg_watch_fd( session_ ) ) ) {
 		kdDebug(14100)<<"Connection was broken for some reason"<<endl;
 		destroyNotifiers();
-		logoff();
+		logoff( KopeteAccount::ConnectionReset );
 		return;
 	}
 
@@ -617,6 +618,7 @@ GaduSession::checkDescriptor()
 	switch( event->type ) {
 		case GG_EVENT_MSG:
 			if ( event->event.msg.msgclass == GG_CLASS_CTCP ) {
+				kdDebug( 14100 ) << "incomming ctcp " << endl;
 				// TODO: DCC CONNECTION
 				break;
 			}
@@ -680,7 +682,8 @@ GaduSession::checkDescriptor()
 			break;
 		case GG_EVENT_DISCONNECT:
 			kdDebug(14100)<<"event Disconnected"<<endl;
-			logoff();
+			// it should be called either when we requested disconnect, or when other client connects with our UID
+			logoff( KopeteAccount::Manual );
 		break;
 		case GG_EVENT_PONG:
 			emit pong();

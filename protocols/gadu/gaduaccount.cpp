@@ -1,6 +1,6 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
+// Copyright (C) 2003-2004 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
 // Copyright (C) 2003 Zack Rusin 		<zack@kde.org>
 //
 // gaduaccount.cpp
@@ -26,6 +26,8 @@
 #include "gaduawayui.h"
 #include "gaduaway.h"
 #include "gadupubdir.h"
+#include "gadudcc.h"
+#include "gadudcctransaction.h"
 
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
@@ -51,10 +53,45 @@
 
 #include <netinet/in.h>
 
+class GaduAccountPrivate {
+
+public:
+	GaduAccountPrivate() {}
+
+	GaduSession*	session_;
+	GaduDCC*	gaduDcc_;
+
+	QTimer*		pingTimer_;
+//	QString		nick_;
+
+	QTextCodec*	textcodec_;
+	KFileDialog*	saveListDialog;
+	KFileDialog*	loadListDialog;
+
+	KActionMenu*	actionMenu_;
+	KAction*	searchAction;
+	KAction*	listputAction;
+	KAction*	listToFileAction;
+	KAction*	listFromFileAction;
+	KAction*	friendsModeAction;
+	bool		connectWithSSL;
+
+	int		currentServer;
+	unsigned int	serverIP;
+
+	QString		lastDescription;
+	bool		forFriends;
+
+	QPtrList<GaduCommand>		commandList_;
+	KopeteOnlineStatus		status_;
+	QValueList<QHostAddress>	servers_;
+	KGaduLoginParams	loginInfo;
+};
+
 // FIXME: use dynamic cache please, i consider this as broken resolution of this problem
 
-const int NUM_SERVERS = 5;
-const char* const servers_ip[ NUM_SERVERS ] = {
+static const int NUM_SERVERS = 5;
+static const char* const servers_ip[ NUM_SERVERS ] = {
 	"217.17.41.88",
  	"217.17.41.85",
 	"217.17.41.87",
@@ -63,44 +100,67 @@ const char* const servers_ip[ NUM_SERVERS ] = {
 };
 
  GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const char* name )
-: KopeteAccount( parent, accountID, name ), pingTimer_( 0 ), saveListDialog( NULL ), loadListDialog( NULL ), forFriends( false )
+: KopeteAccount( parent, accountID, name )
 {
 	QHostAddress ip;
+	p = new GaduAccountPrivate;
 
-	textcodec_ = QTextCodec::codecForName( "CP1250" );
-	session_ = new GaduSession( this, "GaduSession" );
+	p->pingTimer_ = NULL;
+	p->saveListDialog = NULL;
+	p->loadListDialog = NULL;
+	p->forFriends = false;
+
+	p->textcodec_ = QTextCodec::codecForName( "CP1250" );
+	p->session_ = new GaduSession( this, "GaduSession" );
+
 	KGlobal::config()->setGroup( "Gadu" );
 
 	setMyself( new GaduContact(  accountId().toInt(), accountId(), this, new KopeteMetaContact() ) );
 
-	status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL );
-	lastDescription = QString::null;
+	p->status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL );
+	p->lastDescription = QString::null;
 
 	for ( int i = 0; i < NUM_SERVERS; i++ ) {
 		ip.setAddress( QString( servers_ip[i] ) );
-		servers_.append( ip );
+		p->servers_.append( ip );
 	}
-	currentServer = -1;
-	serverIP = 0;
+	p->currentServer = -1;
+	p->serverIP = 0;
 
-	pingTimer_ = new QTimer( this );
+	// initialize KGaduLogin structure to default values
+	p->loginInfo.uin		=  accountId().toInt();
+	p->loginInfo.useTls		= false;
+	p->loginInfo.status		= GG_STATUS_AVAIL;
+	p->loginInfo.server		= 0;
+	p->loginInfo.forFriends		= false;
+	p->loginInfo.client_port	= 0;
+	p->loginInfo.client_addr	= 0;
+
+	p->pingTimer_ = new QTimer( this );
+
+	p->gaduDcc_ = NULL;
 
 	initActions();
 	initConnections();
 }
 
+GaduAccount::~GaduAccount()
+{
+	delete p;
+}
+
 void
 GaduAccount::initActions()
 {
-	searchAction		= new KAction( i18n( "&Search for Friends" ), "", 0,
+	p->searchAction		= new KAction( i18n( "&Search for Friends" ), "", 0,
 							this, SLOT( slotSearch() ), this, "actionSearch" );
-	listputAction		= new KAction( i18n( "Export Contacts on Server" ), "", 0,
+	p->listputAction		= new KAction( i18n( "Export Contacts on Server" ), "", 0,
 							this, SLOT( slotExportContactsList() ), this, "actionListput" );
-	listToFileAction	= new KAction( i18n( "Export Contacts to File" ), "", 0,
+	p->listToFileAction	= new KAction( i18n( "Export Contacts to File" ), "", 0,
 							this, SLOT( slotExportContactsListToFile() ), this, "actionListputFile" );
-	listFromFileAction	= new KAction( i18n( "Import Contacts From File" ), "", 0,
+	p->listFromFileAction	= new KAction( i18n( "Import Contacts From File" ), "", 0,
 							this, SLOT( slotImportContactsFromFile() ), this, "actionListgetFile" );
-	friendsModeAction	= new KToggleAction( i18n( "Only for Friends" ), "", 0,
+	p->friendsModeAction	= new KToggleAction( i18n( "Only for Friends" ), "", 0,
 							this, SLOT( slotFriendsMode() ), this,
 							"actionFriendsMode" );
 }
@@ -108,29 +168,29 @@ GaduAccount::initActions()
 void
 GaduAccount::initConnections()
 {
-	QObject::connect( session_, SIGNAL( error( const QString&, const QString& ) ),
+	QObject::connect( p->session_, SIGNAL( error( const QString&, const QString& ) ),
 				SLOT( error( const QString&, const QString& ) ) );
-	QObject::connect( session_, SIGNAL( messageReceived( KGaduMessage* ) ),
+	QObject::connect( p->session_, SIGNAL( messageReceived( KGaduMessage* ) ),
 				SLOT( messageReceived( KGaduMessage* ) )  );
-	QObject::connect( session_, SIGNAL( notify( KGaduNotifyList* ) ),
+	QObject::connect( p->session_, SIGNAL( notify( KGaduNotifyList* ) ),
 				SLOT( notify( KGaduNotifyList* ) ) );
-	QObject::connect( session_, SIGNAL( contactStatusChanged( KGaduNotify* ) ),
+	QObject::connect( p->session_, SIGNAL( contactStatusChanged( KGaduNotify* ) ),
 				SLOT( contactStatusChanged( KGaduNotify* ) ) );
-	QObject::connect( session_, SIGNAL( connectionFailed( gg_failure_t )),
+	QObject::connect( p->session_, SIGNAL( connectionFailed( gg_failure_t )),
 				SLOT( connectionFailed( gg_failure_t ) ) );
-	QObject::connect( session_, SIGNAL( connectionSucceed( ) ),
+	QObject::connect( p->session_, SIGNAL( connectionSucceed( ) ),
 				SLOT( connectionSucceed( ) ) );
-	QObject::connect( session_, SIGNAL( disconnect() ),
-				SLOT( slotSessionDisconnect() ) );
-	QObject::connect( session_, SIGNAL( ackReceived( unsigned int ) ),
+	QObject::connect( p->session_, SIGNAL( disconnect( KopeteAccount::DisconnectReason ) ),
+				SLOT( slotSessionDisconnect( KopeteAccount::DisconnectReason ) ) );
+	QObject::connect( p->session_, SIGNAL( ackReceived( unsigned int ) ),
 				SLOT( ackReceived( unsigned int ) ) );
-	QObject::connect( session_, SIGNAL( pubDirSearchResult( const SearchResult& ) ),
+	QObject::connect( p->session_, SIGNAL( pubDirSearchResult( const SearchResult& ) ),
 				SLOT( slotSearchResult( const SearchResult& ) ) );
-	QObject::connect( session_, SIGNAL( userListExported() ),
+	QObject::connect( p->session_, SIGNAL( userListExported() ),
 				SLOT( userListExportDone() ) );
-	QObject::connect( session_, SIGNAL( userListRecieved( const QString& ) ),
+	QObject::connect( p->session_, SIGNAL( userListRecieved( const QString& ) ),
 				SLOT( userlist( const QString& ) ) );
-	QObject::connect( pingTimer_, SIGNAL( timeout() ),
+	QObject::connect( p->pingTimer_, SIGNAL( timeout() ),
 				SLOT( pingServer() ) );
 }
 
@@ -164,76 +224,75 @@ GaduAccount::actionMenu()
 {
 	kdDebug(14100) << "actionMenu() " << endl;
 
-	actionMenu_ = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ), this );
+	p->actionMenu_ = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ), this );
 
-	actionMenu_->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> " ).
+	p->actionMenu_->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> " ).
 
 	arg( myself()->displayName(), accountId() ) );
-	if ( session_->isConnected() ) {
-		searchAction->setEnabled( TRUE );
-		listputAction->setEnabled( TRUE );
-		friendsModeAction->setEnabled( TRUE );
+	if ( p->session_->isConnected() ) {
+		p->searchAction->setEnabled( TRUE );
+		p->listputAction->setEnabled( TRUE );
+		p->friendsModeAction->setEnabled( TRUE );
 	}
 	else {
-		searchAction->setEnabled( FALSE );
-		listputAction->setEnabled( FALSE );
-		friendsModeAction->setEnabled( FALSE );
+		p->searchAction->setEnabled( FALSE );
+		p->listputAction->setEnabled( FALSE );
+		p->friendsModeAction->setEnabled( FALSE );
 	}
-	kdDebug( 14100 ) << "nr of contacts - " << contacts().count() <<endl ;
 
 	if ( contacts().count() > 1 ) {
-		if ( saveListDialog ) {
-			listToFileAction->setEnabled( FALSE );
+		if ( p->saveListDialog ) {
+			p->listToFileAction->setEnabled( FALSE );
 		}
 		else {
-			listToFileAction->setEnabled( TRUE );
+			p->listToFileAction->setEnabled( TRUE );
 		}
 
-		listToFileAction->setEnabled( TRUE );
+		p->listToFileAction->setEnabled( TRUE );
 	}
 	else {
-		listToFileAction->setEnabled( FALSE );
+		p->listToFileAction->setEnabled( FALSE );
 	}
 
-	if ( loadListDialog ) {
-		listFromFileAction->setEnabled( FALSE );
+	if ( p->loadListDialog ) {
+		p->listFromFileAction->setEnabled( FALSE );
 	}
 	else {
-		listFromFileAction->setEnabled( TRUE );
+		p->listFromFileAction->setEnabled( TRUE );
 	}
 
-	actionMenu_->insert( new KAction( i18n( "Go O&nline" ),
+	p->actionMenu_->insert( new KAction( i18n( "Go O&nline" ),
 			GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ).iconFor( this ),
 			0, this, SLOT( slotGoOnline() ), this, "actionGaduConnect" ) );
-	actionMenu_->insert( new KAction( i18n( "Set &Busy" ),
+	p->actionMenu_->insert( new KAction( i18n( "Set &Busy" ),
 			GaduProtocol::protocol()->convertStatus( GG_STATUS_BUSY ).iconFor( this ),
 			0, this, SLOT( slotGoBusy() ), this, "actionGaduConnect" ) );
-	actionMenu_->insert( new KAction( i18n( "Set &Invisible" ),
+	p->actionMenu_->insert( new KAction( i18n( "Set &Invisible" ),
 			GaduProtocol::protocol()->convertStatus( GG_STATUS_INVISIBLE ).iconFor( this ),
 			0, this, SLOT( slotGoInvisible() ), this, "actionGaduConnect" ) );
-	actionMenu_->insert( new KAction( i18n( "Go &Offline" ),
+	p->actionMenu_->insert( new KAction( i18n( "Go &Offline" ),
 			GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ).iconFor( this ),
 			0, this, SLOT( slotGoOffline() ), this, "actionGaduConnect" ) );
-	actionMenu_->insert( new KAction( i18n( "Set &Description" ),
+	p->actionMenu_->insert( new KAction( i18n( "Set &Description" ),
 			"info",
 			0, this, SLOT( slotDescription() ), this, "actionGaduDescription" ) );
 
-	actionMenu_->insert( friendsModeAction );
+	p->actionMenu_->insert( p->friendsModeAction );
 
-	actionMenu_->popupMenu()->insertSeparator();
+	p->actionMenu_->popupMenu()->insertSeparator();
 
-	actionMenu_->insert( searchAction );
+	p->actionMenu_->insert( p->searchAction );
 
-	actionMenu_->popupMenu()->insertSeparator();
+	p->actionMenu_->popupMenu()->insertSeparator();
 
-	actionMenu_->insert( listputAction );
+	p->actionMenu_->insert( p->listputAction );
 
-	actionMenu_->popupMenu()->insertSeparator();
+	p->actionMenu_->popupMenu()->insertSeparator();
 
-	actionMenu_->insert( listToFileAction );
-	actionMenu_->insert( listFromFileAction );
+	p->actionMenu_->insert( p->listToFileAction );
+	p->actionMenu_->insert( p->listFromFileAction );
 
-	return actionMenu_;
+	return p->actionMenu_;
 }
 
 void
@@ -246,7 +305,16 @@ void
 GaduAccount::disconnect()
 {
 	slotGoOffline();
-	connectWithSSL=true;
+	p->connectWithSSL = true;
+	KopeteAccount::disconnect( Manual );
+}
+
+void
+GaduAccount::disconnect( DisconnectReason reason )
+{
+	slotGoOffline();
+	p->connectWithSSL = true;
+	KopeteAccount::disconnect( reason );
 }
 
 bool
@@ -266,45 +334,46 @@ GaduAccount::addContactToMetaContact( const QString& contactId, const QString& d
 void
 GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& descr )
 {
-	kdDebug(14101) << "### Status = " << session_->isConnected() << endl;
+	kdDebug(14101) << "### Status = " << p->session_->isConnected() << endl;
 
 	if ( GG_S_NA( status.internalStatus() ) ) {
-		if ( !session_->isConnected() ) {
+		if ( !p->session_->isConnected() ) {
 			return;//already logged off
 		}
 		else {
 			 if ( status.internalStatus() == GG_STATUS_NOT_AVAIL_DESCR ) {
-				if ( session_->changeStatusDescription( status.internalStatus(), descr, forFriends ) != 0 ) {
+				if ( p->session_->changeStatusDescription( status.internalStatus(), descr, p->forFriends ) != 0 ) {
 					return;
 				}
 			}
 		}
-		session_->logoff();
+		p->session_->logoff();
+		dccOff();
 	}
 	else {
-		if ( !session_->isConnected() ) {
+		if ( !p->session_->isConnected() ) {
 			if ( useTls() != TLS_no ) {
-				connectWithSSL = true;
+				p->connectWithSSL = true;
 			}
 			else {
-				connectWithSSL = false;
+				p->connectWithSSL = false;
 			}
-			serverIP = 0;
-			currentServer = -1;
-			status_ = status;
+			p->serverIP = 0;
+			p->currentServer = -1;
+			p->status_ = status;
 			kdDebug(14100) << "#### Connecting..., tls option "<< (int)useTls() << " " << endl;
-			lastDescription = descr;
+			p->lastDescription = descr;
 			slotLogin( status.internalStatus(), descr );
 			return;
 		}
 		else {
-			status_ = status;
+			p->status_ = status;
 			if ( descr.isEmpty() ) {
-				if ( session_->changeStatus( status.internalStatus(), forFriends ) != 0 )
+				if ( p->session_->changeStatus( status.internalStatus(), p->forFriends ) != 0 )
 					return;
 			}
 			else {
-				if ( session_->changeStatusDescription( status.internalStatus(), descr, forFriends ) != 0 )
+				if ( p->session_->changeStatusDescription( status.internalStatus(), descr, p->forFriends ) != 0 )
 					return;
 			}
 		}
@@ -314,8 +383,8 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 	myself()->setProperty( GaduProtocol::protocol()->propAwayMessage, descr );
 
 	if ( status.internalStatus() == GG_STATUS_NOT_AVAIL || status.internalStatus() == GG_STATUS_NOT_AVAIL_DESCR ) {
-		if ( pingTimer_ ){
-			pingTimer_->stop();
+		if ( p->pingTimer_ ){
+			p->pingTimer_->stop();
 		}
 	}
 }
@@ -323,44 +392,51 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 void
 GaduAccount::slotLogin( int status, const QString& dscr )
 {
-	lastDescription	= dscr;
+	p->lastDescription	= dscr;
 
 	myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ));
 	myself()->setProperty( GaduProtocol::protocol()->propAwayMessage, dscr );
 
-
-	if ( !session_->isConnected() ) {
+	if ( !p->session_->isConnected() ) {
 		if ( password().isEmpty() ) {
 			connectionFailed( GG_FAILURE_PASSWORD );
 		}
 		else {
-				session_->login( accountId().toInt(), password(), connectWithSSL, status, dscr, serverIP, forFriends );
+			p->loginInfo.password		= password();
+			p->loginInfo.useTls		= p->connectWithSSL;
+			p->loginInfo.status		= status;
+			p->loginInfo.statusDescr	= dscr;
+			p->loginInfo.forFriends		= p->forFriends;
+			p->session_->login( &p->loginInfo );
 		}
 	}
 	else {
-		session_->changeStatus( status );
+		p->session_->changeStatus( status );
 	}
 }
 
 void
 GaduAccount::slotLogoff()
 {
-	if ( session_->isConnected() || status_ == GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING )) {
-		status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
-		changeStatus( status_ );
-		session_->logoff();
+	if ( p->session_->isConnected() || p->status_ == GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING )) {
+		p->status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
+		changeStatus( p->status_ );
+		p->session_->logoff();
+		dccOff();
 	}
 }
 
 void
 GaduAccount::slotGoOnline()
 {
+	dccOn();
 	changeStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ) );
 }
 void
 GaduAccount::slotGoOffline()
 {
 	slotLogoff();
+	dccOff();
 }
 
 void
@@ -380,31 +456,31 @@ GaduAccount::removeContact( const GaduContact* c )
 {
 	if ( isConnected() ) {
 		const uin_t u = c->uin();
-		session_->removeNotify( u );
+		p->session_->removeNotify( u );
 	}
 }
 
 void
 GaduAccount::addNotify( uin_t uin )
 {
-	if ( session_->isConnected() ) {
-		session_->addNotify( uin );
+	if ( p->session_->isConnected() ) {
+		p->session_->addNotify( uin );
 	}
 }
 
 void
 GaduAccount::notify( uin_t* userlist, int count )
 {
-	if ( session_->isConnected() ) {
-		session_->notify( userlist, count );
+	if ( p->session_->isConnected() ) {
+		p->session_->notify( userlist, count );
 	}
 }
 
 void
 GaduAccount::sendMessage( uin_t recipient, const KopeteMessage& msg, int msgClass )
 {
-	if ( session_->isConnected() ) {
-		session_->sendMessage( recipient, msg, msgClass );
+	if ( p->session_->isConnected() ) {
+		p->session_->sendMessage( recipient, msg, msgClass );
 	}
 }
 
@@ -468,19 +544,13 @@ GaduAccount::notify( KGaduNotifyList* notifyList )
 	QPtrListIterator<KGaduNotify>notifyListIterator( *notifyList );
 	unsigned int i;
 
-// FIXME:store this info in GaduContact, be usefull in dcc and custom images
-//		n->remote_ip;
-//		n->remote_port;
-//		n->version;
-//		n->image_size;
-
 	for ( i = notifyList->count() ; i-- ; ++notifyListIterator ) {
 		kdDebug(14100) << "### NOTIFY " << (*notifyListIterator)->contact_id << " " << (*notifyListIterator)->status << endl;
 		contact = static_cast<GaduContact*> ( contacts()[ QString::number( (*notifyListIterator)->contact_id ) ] );
 
 		if ( !contact ) {
 			kdDebug(14100) << "Notify not in the list " << (*notifyListIterator)->contact_id << endl;
-			session_->removeNotify((*notifyListIterator)->contact_id );
+			p->session_->removeNotify((*notifyListIterator)->contact_id );
 			continue;
 		}
 
@@ -526,7 +596,7 @@ void
 GaduAccount::pingServer()
 {
 	kdDebug(14100) << "####" << " Ping..." << endl;
-	session_->ping();
+	p->session_->ping();
 }
 
 void
@@ -542,38 +612,38 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 			if ( pass.isEmpty() ) {
 				slotCommandDone( QString::null, i18n( "Please set password, empty passwords are not supported by Gadu-Gadu"  ) );
 				// and set status disconnected, so icon on toolbar won't blink
-				status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
-				myself()->setOnlineStatus( status_ );
+				p->status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
+				myself()->setOnlineStatus( p->status_ );
 				return;
 			}
 			if ( pass.isNull() ){
 				// user pressed CANCEL
-				status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
-				myself()->setOnlineStatus( status_ );
+				p->status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
+				myself()->setOnlineStatus( p->status_ );
 				return;
 			}
 			tryReconnect = true;
 		break;
 		default:
-			if ( connectWithSSL ) {
+			if ( p->connectWithSSL ) {
 				if ( useTls() != TLS_only ) {
 					slotCommandDone( QString::null, i18n( "connection using SSL was not possible, retrying without." ) );
 					kdDebug( 14100 ) << "try without tls now" << endl;
-					connectWithSSL = false;
+					p->connectWithSSL = false;
 					tryReconnect = true;
-					currentServer = -1;
-					serverIP = 0;
+					p->currentServer = -1;
+					p->serverIP = 0;
 					break;
 				}
 			}
 			else {
-				if ( currentServer == NUM_SERVERS-1 ) {
-					serverIP = 0;
-					currentServer = -1;
+				if ( p->currentServer == NUM_SERVERS-1 ) {
+					p->serverIP = 0;
+					p->currentServer = -1;
 				}
 				else {
-					serverIP = htonl( servers_[ ++currentServer ].ip4Addr() );
-					kdDebug(14100) << "trying : " << currentServer << endl;
+					p->serverIP = htonl( p->servers_[ ++p->currentServer ].ip4Addr() );
+					kdDebug(14100) << "trying : " << p->currentServer << endl;
 					tryReconnect = true;
 				}
 			}
@@ -581,27 +651,70 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 	}
 
 	if ( tryReconnect ) {
-			slotLogin( status_.internalStatus() , lastDescription );
+			slotLogin( p->status_.internalStatus() , p->lastDescription );
 	}
 	else {
 		error( i18n( "unable to connect to the Gadu-Gadu server(\"%1\")." ).arg( GaduSession::failureDescription( failure ) ),
 				i18n( "Connection Error" ) );
-		status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
-		myself()->setOnlineStatus( status_ );
+		p->status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
+		myself()->setOnlineStatus( p->status_ );
 	}
+}
+
+void
+GaduAccount::dccOn()
+{
+	if ( dccEnabled() ) {
+		if ( !p->gaduDcc_ ) {
+			p->gaduDcc_ = new GaduDCC( this );
+		}
+		kdDebug( 14100 ) << " turn DCC on for " << accountId() << endl;
+		p->gaduDcc_->registerAccount( this );
+		p->loginInfo.client_port	= p->gaduDcc_->listeingPort();
+	}
+}
+
+void
+GaduAccount::dccOff()
+{
+	if ( p->gaduDcc_ ) {
+		kdDebug( 14100 ) << "destroying dcc in gaduaccount " << endl;
+		delete p->gaduDcc_;
+		p->gaduDcc_ = NULL;
+		p->loginInfo.client_port	= 0;
+		p->loginInfo.client_addr	= 0;
+	}
+}
+
+void
+GaduAccount::slotIncomingDcc( GaduDCCTransaction* dcctransaction )
+{
+	if ( !dcctransaction ) {
+		return;
+	}
+
+	GaduContact* contact;
+
+	contact = static_cast<GaduContact*>( contacts()[ QString::number( dcctransaction->peerUIN() ) ] );
+	if( !contact ) {
+		delete dcctransaction;
+	}
+
+	KMessageBox::error( Kopete::UI::Global::mainWidget(), "incomming dcc", contact->metaContact()->displayName() );
+
 }
 
 void
 GaduAccount::connectionSucceed( )
 {
 	kdDebug(14100) << "#### Gadu-Gadu connected! " << endl;
-	status_ =  GaduProtocol::protocol()->convertStatus( session_->status() );
-	myself()->setOnlineStatus( status_ );
-	myself()->setProperty( GaduProtocol::protocol()->propAwayMessage, lastDescription );
+	p->status_ =  GaduProtocol::protocol()->convertStatus( p->session_->status() );
+	myself()->setOnlineStatus( p->status_ );
+	myself()->setProperty( GaduProtocol::protocol()->propAwayMessage, p->lastDescription );
 	startNotify();
 
-	session_->requestContacts();
-	pingTimer_->start( 180000 );//3 minute timeout
+	p->session_->requestContacts();
+	p->pingTimer_->start( 180000 );//3 minute timeout
 }
 
 void
@@ -621,19 +734,19 @@ GaduAccount::startNotify()
 		userlist[i++] = static_cast<GaduContact*> ((*kopeteContactsList))->uin();
 	}
 
-	session_->notify( userlist, contacts().count() );
+	p->session_->notify( userlist, contacts().count() );
 	delete [] userlist;
 }
 
 void
-GaduAccount::slotSessionDisconnect()
+GaduAccount::slotSessionDisconnect( KopeteAccount::DisconnectReason reason )
 {
 	uin_t status;
 
 	kdDebug(14100) << "Disconnecting" << endl;
 
-	if (pingTimer_) {
-		pingTimer_->stop();
+	if (p->pingTimer_) {
+		p->pingTimer_->stop();
 	}
 	QDictIterator<KopeteContact> it( contacts() );
 
@@ -646,6 +759,7 @@ GaduAccount::slotSessionDisconnect()
 	if ( status != GG_STATUS_NOT_AVAIL || status!= GG_STATUS_NOT_AVAIL_DESCR ) {
 		myself()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
 	}
+	GaduAccount::disconnect( reason );
 }
 
 void
@@ -712,10 +826,10 @@ GaduAccount::userListExportDone()
 void
 GaduAccount::slotFriendsMode()
 {
-	forFriends = !forFriends;
-	kdDebug( 14100 ) << "for friends mode: " << forFriends << endl;
-	// now change status, it will changing it with forFriends flag
-	changeStatus( status_, lastDescription );
+	p->forFriends = !p->forFriends;
+	kdDebug( 14100 ) << "for friends mode: " << p->forFriends << endl;
+	// now change status, it will changing it with p->forFriends flag
+	changeStatus( p->status_, p->lastDescription );
 
 }
 
@@ -727,18 +841,18 @@ GaduAccount::slotExportContactsListToFile()
 	KTempFile tempFile;
 	tempFile.setAutoDelete( true );
 
-	if ( saveListDialog ) {
+	if ( p->saveListDialog ) {
 		kdDebug( 14100 ) << " save contacts to file: alread waiting for input " << endl ;
 		return;
 	}
 
-	saveListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
+	p->saveListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
 					Kopete::UI::Global::mainWidget(), "gadu-list-save", false );
-	saveListDialog->setCaption( i18n(" Save Contacts list for account %1 as ...").arg( myself()->displayName() ) );
+	p->saveListDialog->setCaption( i18n(" Save Contacts list for account %1 as ...").arg( myself()->displayName() ) );
 
-	if ( saveListDialog->exec() == QDialog::Accepted ) {
+	if ( p->saveListDialog->exec() == QDialog::Accepted ) {
 
-		QCString list = textcodec_->fromUnicode( userlist()->asString() );
+		QCString list = p->textcodec_->fromUnicode( userlist()->asString() );
 
 		if ( tempFile.status() ) {
 			// say cheese, can't create file.....
@@ -751,7 +865,7 @@ GaduAccount::slotExportContactsListToFile()
 
 			bool res = KIO::NetAccess::upload(
 								tempFile.name() ,
-								saveListDialog->selectedURL() ,
+								p->saveListDialog->selectedURL() ,
 								Kopete::UI::Global::mainWidget()
 								);
 			if ( !res ) {
@@ -761,28 +875,28 @@ GaduAccount::slotExportContactsListToFile()
 		}
 
 	}
-	delete saveListDialog;
-	saveListDialog = NULL;
+	delete p->saveListDialog;
+	p->saveListDialog = NULL;
 }
 
 void
 GaduAccount::slotImportContactsFromFile()
 {
 
-	if ( loadListDialog ) {
+	if ( p->loadListDialog ) {
 		kdDebug( 14100 ) << "load contacts from file: alread waiting for input " << endl ;
 		return;
 	}
 
-	loadListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
+	p->loadListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null,
 					Kopete::UI::Global::mainWidget(), "gadu-list-load", true );
-	loadListDialog->setCaption( i18n(" Load Contacts list for account %1 as ...").arg( myself()->displayName() ) );
+	p->loadListDialog->setCaption( i18n(" Load Contacts list for account %1 as ...").arg( myself()->displayName() ) );
 
-	if ( loadListDialog->exec() == QDialog::Accepted ) {
+	if ( p->loadListDialog->exec() == QDialog::Accepted ) {
 
 		QCString list;
 
-		KURL url = loadListDialog->selectedURL();
+		KURL url = p->loadListDialog->selectedURL();
 		QString oname;
 		kdDebug(14100) << "a:"<<url<<"\nb:" << oname << endl;
 		if ( KIO::NetAccess::download(	url,
@@ -799,7 +913,7 @@ GaduAccount::slotImportContactsFromFile()
 				kdDebug( 14100 ) << "loaded list:" << endl;
 				kdDebug( 14100 ) << list << endl;
 				kdDebug( 14100 ) << " --------------- " << endl;
-				userlist( textcodec_->toUnicode( list ) );
+				userlist( p->textcodec_->toUnicode( list ) );
 			}
 			else {
 				error( tempFile.errorString(),
@@ -813,14 +927,14 @@ GaduAccount::slotImportContactsFromFile()
 		}
 
 	}
-	delete loadListDialog;
-	loadListDialog = NULL;
+	delete p->loadListDialog;
+	p->loadListDialog = NULL;
 }
 
 void
 GaduAccount::slotExportContactsList()
 {
-	session_->exportContactsOnServer( userlist() );
+	p->session_->exportContactsOnServer( userlist() );
 }
 
 
@@ -889,14 +1003,14 @@ GaduAccount::pubDirSearch( QString& name, QString& surname, QString& nick,
 			    int UIN, QString& city, int gender,
 			    int ageFrom, int ageTo, bool onlyAlive )
 {
-	return session_->pubDirSearch( name, surname, nick, UIN, city, gender,
+	return p->session_->pubDirSearch( name, surname, nick, UIN, city, gender,
 							ageFrom, ageTo, onlyAlive );
 }
 
 void
 GaduAccount::pubDirSearchClose()
 {
-	session_->pubDirSearchClose();
+	p->session_->pubDirSearchClose();
 }
 
 void
@@ -905,6 +1019,41 @@ GaduAccount::slotSearchResult( const SearchResult& result )
 	emit pubDirSearchResult( result );
 }
 
+// dcc settings
+bool
+GaduAccount::dccEnabled()
+{
+	QString s = pluginData( protocol(), QString::fromAscii( "useDcc" ) );
+	kdDebug( 14100 ) << "dccEnabled: "<<s<<endl;
+	if ( s == QString::fromAscii( "enabled" ) ) {
+		return true;
+	}
+	return false;
+}
+
+bool
+GaduAccount::setDcc( bool d )
+{
+	QString s;
+	bool f = true;
+
+	if ( d == false ) {
+		dccOff();
+		s = QString::fromAscii( "disabled" );
+	}
+	else {
+		s = QString::fromAscii( "enabled" );
+	}
+
+	setPluginData( protocol(), QString::fromAscii( "useDcc" ), s );
+
+	if ( p->session_->isConnected() & d ) {
+		dccOn();
+	}
+	kdDebug( 14100 ) << "s: "<<s<<endl;
+
+	return f;
+}
 
 GaduAccount::tlsConnection
 GaduAccount::useTls()

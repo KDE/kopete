@@ -1,6 +1,6 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
+// Copyright (C) 2003-2004 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
 // Copyright (C) 2003 Zack Rusin 		<zack@kde.org>
 //
 // gaduaccount.h
@@ -39,13 +39,17 @@
 #include <kaction.h>
 #include <kfiledialog.h>
 
+class GaduAccountPrivate;
+
 class GaduContact;
 class GaduProtocol;
 class KopeteProtocol;
+class KopeteMessage;
 class GaduCommand;
 class QTimer;
 class KActionMenu;
 class GaduDCC;
+class GaduDCCTransaction;
 
 class GaduAccount : public KopeteAccount
 {
@@ -53,15 +57,17 @@ class GaduAccount : public KopeteAccount
 
 public:
 	GaduAccount( KopeteProtocol*, const QString& accountID,  const char* name = 0L );
+	~GaduAccount();
 	//{
 	void setAway( bool isAway, const QString& awayMessage = QString::null );
 	KActionMenu* actionMenu();
 	//}
-	enum tlsConnection{ TLS_ifAvaliable=0, TLS_only, TLS_no };
+	enum tlsConnection{ TLS_ifAvaliable = 0, TLS_only, TLS_no };
 
 public slots:
 	//{
 	void connect();
+	void disconnect( DisconnectReason );
 	void disconnect();
 	//}
 
@@ -75,10 +81,10 @@ public slots:
 	void slotDescription();
 	void slotSearch( int uin = 0);
 
-	void removeContact( const GaduContact* c );
+	void removeContact( const GaduContact* );
 
-	void addNotify( uin_t uin );
-	void notify( uin_t* userlist, int count );
+	void addNotify( uin_t );
+	void notify( uin_t*, int );
 
 	void sendMessage( uin_t recipient, const KopeteMessage& msg,
 			int msgClass = GG_CLASS_CHAT );
@@ -98,7 +104,11 @@ public slots:
 
 	// tls
 	tlsConnection useTls();
-	void setUseTls( tlsConnection  ut );
+	void setUseTls( tlsConnection );
+
+	// dcc
+	bool dccEnabled();
+	bool setDcc( bool );
 
 signals:
 	void pubDirSearchResult( const SearchResult& );
@@ -120,7 +130,7 @@ private slots:
 	void messageReceived( KGaduMessage* );
 	void ackReceived( unsigned int );
 	void contactStatusChanged( KGaduNotify* );
-	void slotSessionDisconnect();
+	void slotSessionDisconnect( KopeteAccount::DisconnectReason );
 
 	void slotExportContactsList();
 	void slotExportContactsListToFile();
@@ -141,37 +151,15 @@ private slots:
 	void slotSearchResult( const SearchResult& result );
 	void userListExportDone();
 
+	void slotIncomingDcc( GaduDCCTransaction* );
+
 private:
 	void initConnections();
 	void initActions();
+	void dccOn();
+	void dccOff();
 
-
-	GaduSession*	session_;
-
-	QTimer*		pingTimer_;
-	QString		nick_;
-
-	QTextCodec*	textcodec_;
-	KFileDialog*	saveListDialog;
-	KFileDialog*	loadListDialog;
-
-	KActionMenu*	actionMenu_;
-	KAction*	searchAction;
-	KAction*	listputAction;
-	KAction*	listToFileAction;
-	KAction*	listFromFileAction;
-	KAction*	friendsModeAction;
-	bool		connectWithSSL;
-
-	int		currentServer;
-	unsigned int	serverIP;
-
-	QString		lastDescription;
-	bool		forFriends;
-
-	QPtrList<GaduCommand>		commandList_;
-	KopeteOnlineStatus		status_;
-	QValueList<QHostAddress>	servers_;
+	GaduAccountPrivate* p;
 };
 
 #endif

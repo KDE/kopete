@@ -77,6 +77,9 @@ public slots:
 	void messageAck();
 	void slotShowPublicProfile();
 	void slotEditContact();
+	virtual void sendFile( const KURL &sourceURL = KURL(),
+		const QString &fileName = QString::null, uint fileSize = 0L );
+
 
 protected:
 	virtual KopeteMessageManager* manager( bool canCreate = false );
@@ -89,13 +92,20 @@ private:
 	KopeteMessageManager*	msgManager_;
 	QString			description_;
 	QString			parentIdentity_;
-	GaduAccount*	account_;
+	GaduAccount*		account_;
 
 	KAction*		actionSendMessage_;
 	KAction*		actionInfo_;
 	KAction*		actionRemove_;
 
 	KopeteContactPtrList	thisContact_;
+
+
+	unsigned int remote_ip;
+	unsigned int remote_port;
+	unsigned int version;
+	unsigned int image_size;
+
 
 private slots:
 	void slotMessageManagerDestroyed();

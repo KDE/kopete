@@ -1,6 +1,6 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
-// Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
+// Copyright (C) 2003-2004 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
 //
 // gadueditaccount.cpp
 //
@@ -70,9 +70,10 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, KopeteAccount* ident, QWi
 
 		rememberCheck_->setChecked( account()->rememberPassword() );
 		autoLoginCheck_->setChecked( account()->autoLogin() );
+		dccCheck_->setChecked( static_cast<GaduAccount*>(account())->dccEnabled() );
 		useTls_->setCurrentItem( isSsl ?  ( static_cast<GaduAccount*> (account()) ->useTls() ) : 2 );
 	}
-	
+
 	QObject::connect( registerNew, SIGNAL( clicked( ) ), SLOT( registerNewAccount( ) ) );
 }
 
@@ -95,7 +96,7 @@ void GaduEditAccount::registrationFailed()
 	KMessageBox::sorry( this, i18n( "<b>Registration FAILED.</b>" ), i18n( "Gadu-Gadu" ) );
 }
 
-void GaduEditAccount::newUin( unsigned int uni, QString password ) 
+void GaduEditAccount::newUin( unsigned int uni, QString password )
 {
 	loginEdit_->setText( QString::number( uni ) );
 	passwordEdit_->setText( password );
@@ -127,7 +128,6 @@ KopeteAccount* GaduEditAccount::apply()
 	if ( account() == NULL ) {
 		setAccount( new GaduAccount( protocol_, loginEdit_->text() ) );
 		account()->setAccountId( loginEdit_->text() );
-		
 	}
 
 	account()->setAutoLogin( autoLoginCheck_->isChecked() );
@@ -146,6 +146,10 @@ KopeteAccount* GaduEditAccount::apply()
 
 	account()->setAutoLogin( autoLoginCheck_->isChecked() );
 	( static_cast<GaduAccount*> (account()) )->setUseTls( (GaduAccount::tlsConnection) useTls_->currentItem() );
+
+	if ( static_cast<GaduAccount*>(account())->setDcc( dccCheck_->isChecked() ) == false ) {
+		KMessageBox::sorry( this, i18n( "<b>Starting DCC listening socket failed, dcc isn't working now.</b>" ), i18n( "Gadu-Gadu" ) );
+	}
 
 	return account();
 }
