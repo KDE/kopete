@@ -182,10 +182,15 @@ QString KMSNServiceSocket::readBlock(uint len)
 
 void KMSNServiceSocket::parseCommand(QString str)
 {
-	m_id = str.section( ' ', 1, 1 ).toUInt();
-
 	QString cmd  = str.section( ' ', 0, 0 );
 	QString data = str.section( ' ', 2 ).replace( QRegExp( "\r\n" ), "" );
+
+	// For some reason the RNG command doesn't send a valid id as second
+	// argument, but a session id instead. As long as that's the only command
+	// suffering from this the below will work, otherwise we might be in
+	// need for a better solution...
+	if( cmd != "RNG" )
+		m_id = str.section( ' ', 1, 1 ).toUInt();
 
 	kdDebug() << "KMSNServiceSocket::parseCommand: Parsing command " << cmd <<
 		" (ID " << m_id << "): '" << data << "'" << endl;
@@ -205,12 +210,16 @@ void KMSNServiceSocket::parseCommand(QString str)
 		if( isConnected )
 		{
 			// Address, AuthInfo
-			emit startChat( kstr.word( str, 3 ), kstr.word( str, 5 ) );
+			emit startChat( data.section( ' ', 0, 0 ),
+				data.section( ' ', 2, 2 ) );
 		}
 		else
 		{
 			// new server reconnect
-			newConnect(str);
+			QString host = data.section( ' ', 1, 1 );
+			QString server = host.section( ':', 0, 0 );
+			uint port = host.section( ':', 1, 1 ).toUInt();
+			newConnect( server, port );
 		}
 	}
 	else if( cmd == "VER" )
@@ -225,11 +234,12 @@ void KMSNServiceSocket::parseCommand(QString str)
 	}
 	else if( cmd == "USR" )
 	{
-		if(kstr.word(str,3) == "S")
+		if( data.section( ' ', 1, 1 ) == "S" )
 		{
 			kdDebug() << "Sending response Authentication" << endl;
 
-			hashRes = str.right(str.length() - str.findRev(" ",-1,false)-1);
+			QString hashRes = str.right( str.length() -
+				str.findRev( " ", -1, false ) - 1 );
 			if(hashRes.contains("\r\n",true))
 				hashRes = hashRes.left(hashRes.find("\r\n",0,true));
 
@@ -241,37 +251,30 @@ void KMSNServiceSocket::parseCommand(QString str)
 			kdDebug() << "Sending serial number" << endl;
 			sendCommand( "SYN", QString::number( _serial ) );
 
-			_publicName = kstr.word( str, 4 ).replace( QRegExp( "%20" ), " " );
-			emit newPublicName(_publicName);
 			// this is our current user and friendly name
 			// do some nice things with it  :-)
+			_publicName = data.section( ' ', 2, 2 ).replace(
+				QRegExp( "%20" ), " " );
+			emit newPublicName(_publicName);
 		}
 	}
 	else if( cmd == "NLN" )
 	{
 		// handle, publicName, status
-		emit contactStatusChanged( kstr.word(str,2), kstr.word(str,3).replace(QRegExp("%20")," "), kstr.word(str,1) );
+		emit contactStatusChanged( data.section( ' ', 0, 0 ),
+			data.section( ' ', 1, 1 ).replace( QRegExp( "%20" ), " " ),
+			data.section( ' ', 2, 2 ) );
 	}
 	else if( cmd == "LST" )
 	{
-		if( kstr.word(str,2) == "FL")
-		{
-			// handle, publicName, group, list
-			emit contactList( kstr.word(str,6), kstr.word(str,7).replace(QRegExp("%20")," "), kstr.word(str,8), kstr.word(str,2) );
-		}
-		else
-		{
-			// handle, publicName, 0L,  list
-			emit contactList( kstr.word(str,6), kstr.word(str,7).replace(QRegExp("%20")," "), 0L, kstr.word(str,2) );
-		}
+		// handle, publicName, group, list
+		emit contactList( data.section( ' ', 4, 4 ),
+			data.section( ' ', 5, 5 ).replace( QRegExp( "%20" ), " " ),
+			data.section( ' ', 6, 6 ), data.section( ' ', 0, 0 ) );
 	}
 	else if( cmd == "MSG" )
 	{
-		QString miss, len;
-		len = kstr.word(str,3);
-		miss = readBlock(len.toUInt());
-		miss = QString::fromUtf8(miss);
-		//miss = miss.left(len.toUInt());
+		QString miss = readBlock( data.section( ' ', 1, 1 ).toUInt() );
 		if(miss.contains("Inbox-Unread:"))
 		{
 			 //this sends the server if we are going online, contains the unread message count
@@ -303,12 +306,14 @@ void KMSNServiceSocket::parseCommand(QString str)
 	}
 	else if( cmd == "FLN" )
 	{
-		emit contactStatusChanged(kstr.word(str,1), "", "FLN" );
+		emit contactStatusChanged( data.section( ' ', 1, 1 ), "", "FLN" );
 	}
 	else if( cmd == "ILN" )
 	{
 		// handle, publicName, Status
-		emit contactStatus(kstr.word(str,3), kstr.word(str,4).replace(QRegExp("%20")," "), kstr.word(str,2) );
+		emit contactStatus( data.section( ' ', 1, 1 ),
+			data.section( ' ', 2, 2 ).replace( QRegExp( "%20" ), " " ),
+			data.section( ' ', 0, 0 ) );
 	}
 	else if( cmd == "GTC" )
 	{
@@ -321,55 +326,61 @@ void KMSNServiceSocket::parseCommand(QString str)
 	else if( cmd == "RNG" )
 	{
 		// SessionID, Address, AuthInfo, handle, publicName
-		emit invitedToChat( kstr.word(str,1), kstr.word(str,2), kstr.word(str,4), kstr.word(str,5), kstr.word(str,6).replace(QRegExp("%20")," ") );
+		emit invitedToChat( str.section( ' ', 1, 1 ),
+			data.section( ' ', 0, 0 ), data.section( ' ', 2, 2 ),
+			data.section( ' ', 3, 3 ),
+			data.section( ' ', 4, 4 ).replace( QRegExp( "%20" ), " " ) );
 	}
 	else if( cmd == "ADD" )
 	{
-		//
-		if( kstr.word(str,2) == "FL")
-		{
-			// handle, publicName, List, serial , group
-			emit contactAdded( kstr.word(str,4), kstr.word(str,4).replace(QRegExp("%20")," "), kstr.word(str,2), kstr.word(str,3).toUInt(), kstr.word(str,6).toUInt() );
-		}
+		uint group;
+		if( data.section( ' ', 0, 0 ) == "FL" )
+			group = data.section( ' ', 4, 4 ).toUInt();
 		else
-		{
-			// handle, publicName, List, serial
-			emit contactAdded( kstr.word(str,4), kstr.word(str,4).replace(QRegExp("%20")," "), kstr.word(str,2), kstr.word(str,3).toUInt(), 0L );
-		}
+			group = 0;
+
+		// handle, publicName, List, serial , group
+		emit contactAdded( data.section( ' ', 2, 2 ),
+			data.section( ' ', 2, 2 ).replace( QRegExp( "%20" ), " " ),
+			data.section( ' ', 0, 0 ), data.section( ' ', 1, 1 ).toUInt(),
+			group );
 	}
 	else if( cmd == "REM" ) // someone is removed from a list
 	{
-		if( kstr.word(str, 2) == "FL")
-		{
-			// handle, list, serial, group
-			contactRemoved( kstr.word(str,4), kstr.word(str,2), kstr.word(str,3).toUInt(), kstr.word(str,5).toUInt() );
-		}
+		uint group;
+		if( data.section( ' ', 0, 0 ) == "FL" )
+			group = data.section( ' ', 3, 3 ).toUInt();
 		else
-		{
-			contactRemoved( kstr.word(str,4), kstr.word(str,2), kstr.word(str,3).toUInt(), 0L );
-		}
+			group = 0;
+
+		// handle, list, serial, group
+		contactRemoved( data.section( ' ', 2, 2 ), data.section( ' ', 0, 0 ),
+			data.section( ' ', 1, 1 ).toUInt(), group );
 	}
 	else if( cmd == "OUT" )
 	{
-		if( kstr.word(str,1) == "OTH" )
-			KMessageBox::error(0,i18n("You have connected\r\nfrom an other client"));
+		if( str.section( ' ', 1, 1 ) == "OTH" )
+		{
+			KMessageBox::information( 0,
+				i18n( "You have connected from an other client" ) );
+		}
 
 		slotSocketClose();
-		emit sessionClosed( kstr.word(str,1) );
+		emit sessionClosed( str.section( ' ', 1, 1 ) );
 	}
 	else if( cmd == "CHG" )
 	{
-		if(!isConnected)
+		if( !isConnected )
 		{
 			isConnected = true;
-			emit connected(true);
+			emit connected( true );
 		}
-		statusChanged( kstr.word(str,2) );
+		statusChanged( data.section( ' ', 0, 0 ) );
 	}
 	else if( cmd == "REA" )
 	{
-		emit publicNameChanged(kstr.word(str,3),kstr.word(str,4).replace(QRegExp("%20")," ") );
-		kdDebug() << str << endl;
+		emit publicNameChanged( data.section( ' ', 1, 1 ),
+			data.section( ' ', 2, 2 ).replace( QRegExp( "%20" ), " " ) );
 	}
 	else if( cmd == "LSG" )
 	{
@@ -381,29 +392,35 @@ void KMSNServiceSocket::parseCommand(QString str)
 		else
 		{
 			// groupName, group
-			emit groupName( kstr.word(str,6).replace(QRegExp("%20")," "),
-				kstr.word(str,5).toUInt() );
+			emit groupName( data.section( ' ', 4, 4 ).replace(
+				QRegExp( "%20" )," " ), data.section( ' ', 3, 3 ).toUInt() );
 		}
 	}
 	else if( cmd == "ADG" )
 	{
 		// groupName, serial, group
-		emit groupAdded( kstr.word(str,3).replace(QRegExp("%20")," "), kstr.word(str,2).toUInt(), kstr.word(str,4).toUInt() );
+		emit groupAdded( data.section( ' ', 1, 1 ).replace(
+			QRegExp( "%20" ), " " ), data.section( ' ', 0, 0 ).toUInt(),
+			data.section( ' ', 2, 2 ).toUInt() );
 	}
 	else if( cmd == "REG" )
 	{
 		// groupName, serial, group
-		emit groupRenamed( kstr.word(str,4).replace(QRegExp("%20")," "), kstr.word(str,2).toUInt(), kstr.word(str,3).toUInt() );
+		emit groupRenamed( data.section( ' ', 2, 2 ).replace(
+			QRegExp( "%20" ), " " ), data.section( ' ', 0, 0 ).toUInt(),
+			data.section( ' ', 1, 1 ).toUInt() );
 	}
 	else if( cmd == "RMG" )
 	{
-		emit groupRemoved(kstr.word(str,2).toUInt(), kstr.word(str,3).toUInt() );
+		emit groupRemoved( data.section( ' ', 0, 0 ).toUInt(),
+			data.section( ' ', 1, 1 ).toUInt() );
 	}
 	else if( cmd  == "CHL" )
 	{
 		kdDebug() << "Sending final Authentication" << endl;
-		QString res = kstr.word( str, 2 ).replace(QRegExp("\r\n"),"");
-		KMD5 context( res + "Q1P7W2E4J9R8U3S5" );
+		KMD5 context(
+			data.section( ' ', 0, 0 ).replace( QRegExp( "\r\n" ), "" ) +
+			"Q1P7W2E4J9R8U3S5" );
 		sendCommand( "QRY", "msmsgs@msnmsgr.com 32\r\n" +
 			context.hexDigest() );
 	}
@@ -411,7 +428,7 @@ void KMSNServiceSocket::parseCommand(QString str)
 	{
 		// this is the current serial on the server, if its different with the own we can get the user list
 		//isConnected = true;
-		uint serial = kstr.word(str,2).toUInt();
+		uint serial = data.section( ' ', 0, 0 ).toUInt();
 		if( serial != _serial)
 		{
 			emit newSerial(serial);  // remove all contacts, msn sends a new contact list
@@ -450,19 +467,14 @@ void KMSNServiceSocket::sendCommand( const QString &cmd, const QString &args )
 }
 
 /* MSN Service has send a new IP , so connect to it */
-void KMSNServiceSocket::newConnect( QString data)
+void KMSNServiceSocket::newConnect( const QString &server, uint port )
 {
-	QString port,server;
-	data =  kstr.word(data,3);
-	port = data.right(data.length() - data.findRev(":") - 1);
-	server = data.right(data.length() - data.findRev(" ") - 1);
-	server = server.left(server.find(":"));
 	socket->flush();
 	socket->closeNow();
 	delete socket;
 
 	kdDebug() << "Connecting to new server " << server << ":" << port << endl;
-	connectInternal( server, port.toUInt() );
+	connectInternal( server, port );
 }
 
 void KMSNServiceSocket::addGroup(QString groupName)

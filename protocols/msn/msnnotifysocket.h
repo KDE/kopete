@@ -22,7 +22,6 @@
 #include <qobject.h>
 
 // kde include
-#include <kstringhandler.h>
 #include <kextsock.h>
 // qt
 #include <qsocket.h>
@@ -52,13 +51,9 @@ protected:
 	uint mailCount;
 	QString _handle;
 	QString _password;
-	QString hashRes;
 	bool _silent;
-	time_t ID;
-	time_t md5_tr;
 	KExtendedSocket *socket;
 	bool isConnected;
-	KStringHandler kstr;
 
 protected slots:
 	void slotDataReceived();
@@ -67,7 +62,7 @@ protected slots:
 
 protected:
 	void sendProtocol();
-	void newConnect( QString data);
+	void newConnect( const QString &server, uint port );
 	void sendCVR();
 
 	void parseCommand( QString str);
