@@ -149,31 +149,27 @@ void DCCServer::slotError(int error)
 	}
 }
 
+#include <inttypes.h>
+#include <netinet/in.h>
+
 void DCCServer::slotReadyRead()
 {
-	kdDebug() << "IRC Plugin: slotReadyRead() mSocket->canReadLine() == " << mSocket->canReadLine() << endl;
-	int available = mSocket->bytesAvailable();
-	if (available != 0)
-	{
-		QCString data;
-		data.resize(available);
-		mSocket->readBlock(data.data(), available);
-		unsigned long int ack;
-		for (int i = 0; i != 5; i++)
-		{
-			kdDebug() << "IRC Plugin: data.data()[i] == " << data.data()[i] << endl;
-		}
-		QString percentage = QString::number(((ack * 100) / mFile->size())); // people ask me if I like lisp, I just ask them "What's Lisp?" :)
-		kdDebug() << "IRC Plugin: percentage == " << percentage << endl;
-		emit incomingAckPercent(percentage);
-		kdDebug() << "IRC Plugin: mFile->atEnd() == " << mFile->atEnd() << endl;
-		if (mFile->atEnd())
-		{
-			emit sendFinished();
-		} else {
-			sendNextPacket();
-		}
-	}
+	uint32_t ack;
+	
+	mSocket->readBlock((char*)&ack, sizeof(ack));
+	ack = ::ntohl(ack);
+	
+	// people ask me if I like lisp, I just ask them "What's Lisp?" :)
+	QString percentage = QString::number(ack * 100 / mFile->size());
+	
+	kdDebug() << "IRC Plugin: percentage == " << percentage << endl;
+	emit incomingAckPercent(percentage);
+	kdDebug() << "IRC Plugin: mFile->atEnd() == " << mFile->atEnd() << endl;
+	
+	if (mFile->atEnd())
+		emit sendFinished();
+	else
+		sendNextPacket();
 }
 
 void DCCServer::sendNextPacket()
