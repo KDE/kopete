@@ -226,11 +226,12 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 
 	if ( d->extraText )
 	{
-		d->extraText->setText( QString::fromLatin1("this is a test!") );
-		if ( c->onlineStatus().status() == KopeteOnlineStatus::Online )
+		if ( m_metaContact->status() == KopeteOnlineStatus::Online )
 			d->extraText->setText( QString::null );
-		if ( c->hasProperty( QString::fromLatin1("awayMessage") ) )
+		else if ( c->hasProperty( QString::fromLatin1("awayMessage") ) )
 			d->extraText->setText( i18n( "Message: %1" ).arg( c->property( QString::fromLatin1("awayMessage") ).value().toString() ) );
+		else if ( d->extraText->text() == QString::null )
+			d->extraText->setText( i18n( "User is %1" ).arg( m_metaContact->statusString() ) );
 	}
 
 	// FIXME: All this code should be in kopetemetacontact.cpp.. having it in the LVI makes it all fire
@@ -245,7 +246,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 	{
 		int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 
-		QString text = i18n( "%2 is now %1!" ).arg( m_metaContact->statusString() ).arg( m_metaContact->displayName() );
+		QString text = i18n( "%2 is now %1!" ).arg( m_metaContact->statusString(), m_metaContact->displayName() );
 
 		if ( m_metaContact->isOnline() && m_oldStatus == KopeteOnlineStatus::Offline )
 			KNotifyClient::event( winId,  "kopete_online", text, i18n( "Chat" ), this, SLOT( execute() ) );
@@ -254,8 +255,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 		else if ( m_oldStatus != KopeteOnlineStatus::Unknown )
 			KNotifyClient::event( winId , "kopete_status_change", text, i18n( "Chat" ), this, SLOT( execute() ) );
 
-		if ( !mBlinkTimer->isActive() &&
-			( m_metaContact->statusIcon() != m_oldStatusIcon ) )
+		if ( !mBlinkTimer->isActive() && ( m_metaContact->statusIcon() != m_oldStatusIcon ) )
 		{
 			mIsBlinkIcon = false;
 			m_blinkLeft = 5;
@@ -467,7 +467,7 @@ QString KopeteMetaContactLVI::key( int, bool ) const
 		importanceChar = 'D';
 	}
 
-	return importanceChar + text( 0 ).lower();
+	return importanceChar + d->nameText->text().lower();
 }
 
 bool KopeteMetaContactLVI::isTopLevel() const
