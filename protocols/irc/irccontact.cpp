@@ -353,13 +353,13 @@ void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 	if( processMessage( message ) )
 	{
 		// If the above was false, there was a server command so we don't need to do any of this
-		QStringList messages = QStringList::split( QString::fromLatin1("<br/>"), message.parsedBody() );
+		QStringList messages = QStringList::split( QString::fromLatin1("<br/>"), message.plainBody() );
 		for(QStringList::Iterator it = messages.begin(); it != messages.end(); ++it)
 		{
-			mEngine->messageContact(mNickName, *it);
 			KopeteMessage msg( message.from(), message.to(), *it, KopeteMessage::Inbound, KopeteMessage::RichText, KopeteMessage::Chat );
 			msg.setBg( QColor() );
 			msg.setFg( QColor() );
+			mEngine->messageContact(mNickName, msg.plainBody() );
 			manager()->appendMessage(msg);
 		}
 	}
