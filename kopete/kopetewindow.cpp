@@ -493,7 +493,7 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *account )
 
 	// this should be placed in the contactlistview insteads of, but i am lazy to redo a new slot
 	contactlist->actionAddContact->insert(new KAction( account->accountId() ,
-		account->protocol()->pluginIcon() , 0 ,
+		account->accountIcon() , 0 ,
 		contactlist , SLOT( slotAddContact() ) , account));
 	slotAccountStatusIconChanged( account->myself() );
 }

@@ -86,7 +86,7 @@ void KopeteAccountConfig::load()
 		// Insert the item after the previous one
 		lvi = new QListViewItem( m_view->mAccountList, lvi );
 		lvi->setText( 0, i->protocol()->displayName() );
-		lvi->setPixmap( 0, SmallIcon( i->protocol()->pluginIcon() ) );
+		lvi->setPixmap( 0, i->accountIcon() );
 		lvi->setText( 1, i->accountId() );
 		m_accountItems.insert( lvi, i );
 	}

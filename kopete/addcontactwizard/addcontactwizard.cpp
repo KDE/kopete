@@ -88,7 +88,8 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	{
 		accountLVI= new QCheckListItem( protocolListView, i->accountId(), QCheckListItem::CheckBox);
 		accountLVI->setText(1,i->protocol()->displayName() + QString::fromLatin1(" ") );
-		accountLVI->setPixmap( 1, SmallIcon( i->protocol()->pluginIcon() ) );
+		//FIXME - I'm not sure the column 1 is a right place for the colored icon -Olivier
+		accountLVI->setPixmap( 1, i->accountIcon() ); 
 		m_accountItems.insert(accountLVI,i);
 	}
 

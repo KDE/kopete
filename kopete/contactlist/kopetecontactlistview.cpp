@@ -311,7 +311,7 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
 	for( KopeteAccount *acc = accounts.first() ; acc ; acc = accounts.next() )
 	{
-		KAction *action = new KAction( acc->accountId(), acc->protocol()->pluginIcon(), 0, this, SLOT( slotAddContact() ), acc );
+		KAction *action = new KAction( acc->accountId(), acc->accountIcon(), 0, this, SLOT( slotAddContact() ), acc );
 		actionAddContact->insert( action );
 	}
 

@@ -26,6 +26,8 @@
 #include <kdeversion.h>
 #include <kdialogbase.h>
 #include <klocale.h>
+#include <kiconloader.h> 
+#include <kiconeffect.h> 
 
 #include "kopetecontactlist.h"
 #include "kopeteaccount.h"
@@ -137,6 +139,23 @@ void KopeteAccount::setAccountId( const QString &accountId )
 		d->id = accountId;
 		emit ( accountIdChanged() );
 	}
+}
+
+QPixmap KopeteAccount::accountIcon(const int size) const
+{
+	QPixmap basis = SmallIcon( d->protocol->pluginIcon() );
+
+	if ( d->color.isValid() )
+	{
+		KIconEffect effect;
+		basis = effect.apply( basis, KIconEffect::Colorize, 1, d->color, 0);
+	}
+	
+	if ( size > 0 && basis.width() != size )
+	{
+		basis = QPixmap( basis.convertToImage().smoothScale( size, size ) );
+	}
+	return basis;
 }
 
 QString KopeteAccount::configGroup() const

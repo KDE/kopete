@@ -155,6 +155,14 @@ public:
 	 * don't have to set yourself the color.
 	 */
 	void setColor( const QColor &color);
+	
+	/**
+	 * return the icon for this account, colored if needed
+	 * Note: there is no cache in this funciton
+	 * @param size is the size of the icon.  If the size is 0, the default size is used
+	 * 
+	 */
+	QPixmap accountIcon(const int size=0) const;
 
 	/**
 	 * this will be called if main-kopete wants
