@@ -1103,7 +1103,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem * /* parent
 			return;
 		if(source_metaLVI->metaContact()->isTemporary())
 		{
-			int r=KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "<qt>Would you like to add this contact to your contaclist</qt>" ),
+			int r=KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
 				i18n( "Kopete" ), KStdGuiItem::yes(),KStdGuiItem::no(),"addTemporaryWhenMoving" );
 
 			if(r==KMessageBox::Yes)
@@ -1120,7 +1120,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem * /* parent
 			return;
 		if(source_metaLVI->metaContact()->isTemporary())
 		{
-			int r=KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "<qt>Would you like to add this contact to your contaclist</qt>" ),
+			int r=KMessageBox::questionYesNo( qApp->mainWidget(), i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
 				i18n( "Kopete" ), KStdGuiItem::yes(),KStdGuiItem::no(),"addTemporaryWhenMoving" );
 
 			if(r==KMessageBox::Yes)
