@@ -26,6 +26,8 @@
 
 #include <kbufferedio.h>
 
+#include "kircentity.h" // Don't remove this prefix should/could(MUST?) be returned as a KIRCEntity
+
 // Uncoment this if you want a really rfc compliant message handling.
 // This is due to some changes of the message encoding with 14 arguments.(not very frequent :)
 // #define _IRC_STRICTNESS_

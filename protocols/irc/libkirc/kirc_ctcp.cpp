@@ -23,7 +23,7 @@
 #include "kirctransferhandler.h"
 #include "kirc.h"
 
-void KIRC::registerCtcpMethods()
+void KIRC::registerCtcp()
 {
 //	CTCP Queries
 	addCtcpQueryIrcMethod("ACTION",		&KIRC::CtcpQuery_action,	-1,	-1,	"");
@@ -42,7 +42,7 @@ void KIRC::registerCtcpMethods()
 	addCtcpReplyIrcMethod("VERSION",	&KIRC::CtcpReply_version,	-1,	-1,	"");
 }
 
-// Normal order for a ctcp commands:
+// Normal order for a ctcp command:
 // CtcpRequest_*
 // CtcpQuery_*
 // CtcpReply_* (if any)
@@ -63,7 +63,7 @@ void KIRC::CtcpRequest_action(const QString &contact, const QString &message)
 	{
 		writeCtcpQueryMessage(contact, QString::null, "ACTION", message );
 
-		if( isChannel(contact) )
+		if( KIRCEntity::isChannel(contact) )
 			emit incomingPrivAction(m_Nickname, contact, message);
 		else
 			emit incomingAction(m_Nickname, contact, message);
@@ -86,6 +86,27 @@ bool KIRC::CtcpReply_action(const KIRCMessage &msg)
 {
 }
 */
+
+//	FIXME: the API can now answer to help commands.
+bool KIRC::CtcpQuery_clientInfo(const KIRCMessage &msg)
+{
+	QString response = customCtcpMap[ QString::fromLatin1("clientinfo") ];
+	if( !response.isNull() )
+	{
+		writeCtcpReplyMessage(	msg.nickFromPrefix(), QString::null,
+					msg.ctcpMessage().command(), QString::null, response);
+	}
+	else
+	{
+		QString info = QString::fromLatin1("The following commands are supported, but "
+			"without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING,"
+			"ACTION.");
+
+		writeCtcpReplyMessage(	msg.nickFromPrefix(), QString::null,
+					msg.ctcpMessage().command(), QString::null, info);
+	}
+	return true;
+}
 
 void KIRC::CtcpRequest_dcc(const QString &nickname, const QString &filename, uint port, KIRCTransfer::Type type)
 {
@@ -188,24 +209,9 @@ bool KIRC::CtcpReply_dcc(const KIRCMessage &msg)
 }
 */
 
-//	FIXME: the API can now answer to help commands.
-bool KIRC::CtcpQuery_clientInfo(const KIRCMessage &msg)
+bool KIRC::CtcpReply_errorMsg(const KIRCMessage &)
 {
-	QString response = customCtcpMap[ QString::fromLatin1("clientinfo") ];
-	if( !response.isNull() )
-	{
-		writeCtcpReplyMessage(	msg.nickFromPrefix(), QString::null,
-					msg.ctcpMessage().command(), QString::null, response);
-	}
-	else
-	{
-		QString info = QString::fromLatin1("The following commands are supported, but "
-			"without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING,"
-			"ACTION.");
-
-		writeCtcpReplyMessage(	msg.nickFromPrefix(), QString::null,
-					msg.ctcpMessage().command(), QString::null, info);
-	}
+	// should emit one signal
 	return true;
 }
 
@@ -224,7 +230,7 @@ void KIRC::CtcpRequest_pingPong(const QString &target)
 	{
 		QString timeReply;
 
-		if( isChannel(target) )
+		if( KIRCEntity::isChannel(target) )
 			timeReply = QString::fromLatin1("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
 		else
 		 	timeReply = QString::number( time.tv_sec );

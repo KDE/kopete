@@ -386,7 +386,7 @@ void IRCProtocol::slotTopicCommand( const QString &args, KopeteMessageManager *m
 void IRCProtocol::slotJoinCommand( const QString &args, KopeteMessageManager *manager )
 {
 	QString chan = KopeteCommandHandler::parseArguments( args ).front();
-	if( KIRC::isChannel(chan) )
+	if( KIRCEntity::isChannel(chan) )
 	{
 		static_cast<IRCAccount*>( manager->account() )->
 			contactManager()->findChannel( chan )->startChat();
@@ -406,7 +406,7 @@ void IRCProtocol::slotInviteCommand( const QString &args, KopeteMessageManager *
 
 	if( argsList.count() > 1 )
 	{
-		if( KIRC::isChannel(argsList[1]) )
+		if( KIRCEntity::isChannel(argsList[1]) )
 		{
 			c = static_cast<IRCAccount*>( manager->account() )->contactManager()->
 				findChannel( argsList[1] );
@@ -443,7 +443,7 @@ void IRCProtocol::slotQueryCommand( const QString &args, KopeteMessageManager *m
 	QString user = args.section( ' ', 0, 0 );
 	QString rest = args.section( ' ', 1 );
 
-	if( !KIRC::isChannel(user) )
+	if( !KIRCEntity::isChannel(user) )
 	{
 		IRCUserContact *c = static_cast<IRCAccount*>( manager->account() )->
 			contactManager()->findUser( user );
@@ -521,7 +521,7 @@ void IRCProtocol::slotKickCommand( const QString &args, KopeteMessageManager *ma
 		QString reason = args.section( spaces, 1);
 		KopeteContactPtrList members = manager->members();
 		QString channel = static_cast<IRCContact*>( members.first() )->nickName();
-		if( KIRC::isChannel(channel) )
+		if( KIRCEntity::isChannel(channel) )
 			static_cast<IRCAccount*>( manager->account() )->engine()->kickUser( nick, channel, reason );
 	}
 	else
