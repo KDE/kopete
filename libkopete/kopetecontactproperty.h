@@ -50,12 +50,15 @@ class ContactPropertyTmpl
 		 * @param icon name of the icon to show for properties based on this template
 		 * @param persistent if true, properties based on this template will be
 		 *  saved to the contactlist
+		 * @param privateProp if true, properties based on this template won't be
+		 *  visible to the user
 		 **/
 		ContactPropertyTmpl( const QString &key,
 			const QString &label,
 			const QString &icon = QString::null,
 			bool persistent = false,
-			bool richText = false );
+			bool richText = false,
+			bool privateProp = false );
 
 		/**
 		 * Copy constructor
@@ -96,6 +99,11 @@ class ContactPropertyTmpl
 		 * Returns true if properties based on this template are HTML formatted
 		 **/
 		bool isRichText() const;
+
+		/**
+		 * Returns true if properties based on this template are invisible to the user
+		 **/
+		bool isPrivate() const;
 
 		/**
 		 * An empty template, check for it using isNull()

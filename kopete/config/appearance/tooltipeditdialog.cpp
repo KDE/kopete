@@ -72,7 +72,7 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent, const char* name)
 	{
 		usedIt--;
 		// only add if that property key is really known
-		if(propmap.contains(*usedIt))
+		if(propmap.contains(*usedIt) && !propmap[*usedIt].isPrivate())
 		{
 			new TooltipItem(mMainWidget->lstUsedItems,
 				propmap[*usedIt].label(), *usedIt);
@@ -84,7 +84,7 @@ TooltipEditDialog::TooltipEditDialog(QWidget *parent, const char* name)
 	Kopete::ContactPropertyTmpl::Map::ConstIterator it;
 	for(it = propmap.begin(); it != propmap.end(); ++it)
 	{
-		if(usedKeys.contains(it.key())==0)
+		if((usedKeys.contains(it.key())==0) && (!it.data().isPrivate()))
 			new TooltipItem(mMainWidget->lstUnusedItems, it.data().label(), it.key());
 	}
 

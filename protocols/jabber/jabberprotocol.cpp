@@ -83,7 +83,7 @@ JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStrin
 	propWorkPhone(Kopete::Global::Properties::self()->workPhone()),
 	propWorkMobilePhone(Kopete::Global::Properties::self()->workMobilePhone()),
 	propNickName(Kopete::Global::Properties::self()->nickName()),
-	propVCardCacheTimeStamp("jabberVCardCacheTimeStamp", i18n ("vCard Cache Timestamp"), QString::null, true, false)
+	propVCardCacheTimeStamp("jabberVCardCacheTimeStamp", i18n ("vCard Cache Timestamp"), QString::null, true, false, true)
 
 {
 
