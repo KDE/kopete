@@ -27,7 +27,9 @@
 #include <klistview.h>
 #include <klocale.h>
 #include <kpushbutton.h>
+
 #include "icqaccount.h"
+#include "icqaddcontactpage.h"
 #include "icqprotocol.h"
 #include "icqsearchbase.h"
 #include "oscartypes.h"
@@ -43,11 +45,13 @@ ICQSearchDialog::ICQSearchDialog( ICQAccount* account, QWidget* parent, const ch
 	connect( m_searchUI->addButton, SIGNAL( clicked() ), this, SLOT( addContact() ) );
 	connect( m_searchUI->clearButton, SIGNAL( clicked() ), this, SLOT( clearResults() ) );
 	connect( m_searchUI->stopButton, SIGNAL( clicked() ), this, SLOT( stopSearch() ) );
+	connect( m_searchUI->closeButton, SIGNAL( clicked() ), this, SLOT( closeDialog() ) );
 	
 	ICQProtocol *p = ICQProtocol::protocol();
 	p->fillComboFromTable( m_searchUI->gender, p->genders() );
 	p->fillComboFromTable( m_searchUI->country, p->countries() );
 	p->fillComboFromTable( m_searchUI->language, p->languages() );
+	m_searchUI->gender->setCurrentItem( 2 ); //unspecified gender
 }
 
 
@@ -78,11 +82,23 @@ void ICQSearchDialog::startSearch()
 		info.nickName = m_searchUI->nickName->text();
 		info.email = m_searchUI->email->text();
 		info.city = m_searchUI->city->text(); // City
-		info.gender = m_searchUI->gender->currentItem(); // Gender
+		switch ( m_searchUI->gender->currentItem() )
+		{
+		case 0: //female
+			info.gender = 1;
+			break;
+		case 1: //male 
+			info.gender = 2;
+			break;
+		case 2: //don't care
+			info.gender = 0;
+			break;
+		}
 		info.language = p->getCodeForCombo(m_searchUI->language, p->languages()); // Lang
 		info.country =p->getCodeForCombo(m_searchUI->country, p->countries()); // country code
 		info.onlineOnly = m_searchUI->onlyOnline->isChecked();
-		kdWarning(OSCAR_ICQ_DEBUG) << k_funcinfo << "Whitepage searching not implemented yet" << endl;
+		m_account->engine()->whitePagesSearch( info );
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Starting whitepage search" << endl;
 	}
 }
 
@@ -97,7 +113,17 @@ void ICQSearchDialog::stopSearch()
 
 void ICQSearchDialog::addContact()
 {
-	//push the uin to the add contact wizard.
+	ICQAddContactPage* iacp = dynamic_cast<ICQAddContactPage*>( parent() );
+	if ( !iacp )
+	{
+		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "The ICQ ACP is not our parent!!" << endl;
+	}
+	else
+	{
+		QString uin = m_searchUI->searchResults->selectedItem()->text( 0 );
+		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Passing " << uin << " back to the ACP" << endl;
+		iacp->setUINFromSearch( uin );
+	}
 }
 
 void ICQSearchDialog::clearResults()
@@ -105,6 +131,13 @@ void ICQSearchDialog::clearResults()
 	stopSearch();
 	m_searchUI->searchResults->clear();
 	m_searchUI->addButton->setEnabled( false );
+}
+
+void ICQSearchDialog::closeDialog()
+{
+	stopSearch();
+	clearResults();
+	slotYes();
 }
 
 void ICQSearchDialog::resultSelectionChanged()
@@ -123,19 +156,25 @@ void ICQSearchDialog::newResult( const ICQSearchResult& info )
 		return;
 	}
 		
-	QListViewItem *item = new QListViewItem(m_searchUI->searchResults, QString::number( info.uin ),
-	                                        info.nickName, info.firstName, info.lastName, info.email);
+	QListViewItem *item = new QListViewItem( m_searchUI->searchResults, QString::number( info.uin ),
+	                                         info.nickName, info.firstName, info.lastName, info.email,
+	                                         info.auth ? i18n( "Yes" ) : i18n( "No" ) );
 	
 	if ( !item )
 		return;
 	
-	info.online ? item->setPixmap( 0, SmallIcon( "icq_online" ) ) : item->setPixmap( 0, SmallIcon( "icq_offline" ) );
+	if ( info.online )
+		item->setPixmap( 0, SmallIcon( "icq_online" ) );
+	else
+		item->setPixmap( 0, SmallIcon( "icq_offline" ) );
 
 }
 
 void ICQSearchDialog::searchFinished( int numLeft )
 {
 	kdWarning(OSCAR_ICQ_DEBUG) << k_funcinfo << "There are " << numLeft << "contact left out of this search" << endl;
+	m_searchUI->stopButton->setEnabled( false );
+	m_searchUI->clearButton->setEnabled( true );
 }
 
 //kate: indent-mode csands; space-indent off; replace-tabs off; tab-width 4;

@@ -40,6 +40,8 @@ public:
 	virtual bool validateData();
 	virtual bool apply(Kopete::Account* , Kopete::MetaContact *parentContact);
 	
+	void setUINFromSearch( const QString& );
+	
 protected:
 	void showEvent(QShowEvent *e);
 	

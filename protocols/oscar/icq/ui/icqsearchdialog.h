@@ -40,6 +40,7 @@ private slots:
 	void stopSearch();
 	void addContact();
 	void clearResults();
+	void closeDialog();
 
 	/// Enable/disable buttons when the selection changes
 	void resultSelectionChanged();
@@ -49,7 +50,7 @@ private slots:
 	
 	/// The search is finished
 	void searchFinished( int numLeft );
-	
+
 private:
 	ICQAccount* m_account;
 	ICQSearchBase* m_searchUI;

@@ -74,14 +74,18 @@ bool UserSearchTask::take( Transfer* t )
 			
 		ICQSearchResult result;
 		buffer->getLEWord(); // data chunk size
-		DWORD receiverUin = buffer->getLEDWord(); // target uin
+		/*DWORD receiverUin =*/ buffer->getLEDWord(); // target uin
 		buffer->getLEWord(); // request type
 		buffer->getLEWord(); // request sequence number: 0x0002
 		buffer->getLEWord(); // request subtype
 		
-		buffer->getByte(); // Success byte: always 0x0a
+		BYTE success = buffer->getByte(); // Success byte: always 0x0a
 		
-		result.fill( buffer );
+		if ( ( success == 0x32 ) || ( success == 0x14 ) || ( success == 0x1E ) )
+			result.uin = 1;
+		else
+			result.fill( buffer );
+		
 		m_results.append( result );
 		
 		emit foundUser( result );
@@ -121,7 +125,6 @@ void UserSearchTask::searchUserByUIN( const QString& uin )
 
 void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 {
-	Q_UINT16 seq = client()->flapSequence();
 	m_type = WhitepageSearch;
 	
 	FLAP f = { 0x02, client()->flapSequence(), 0 };
@@ -131,15 +134,152 @@ void UserSearchTask::searchWhitePages( const ICQWPSearchInfo& info )
 	setRequestSubType( 0x0533 );
 	setSequence( f.sequence );
 	Buffer* tlvData = new Buffer();
-	tlvData->addLELNTS( info.firstName.latin1() );
-	tlvData->addLELNTS( info.lastName.latin1() );
-	tlvData->addLELNTS( info.nickName.latin1() );
-	tlvData->addLELNTS( info.email.latin1() );
+	/*
+		search.addLEWord(0x0533); // subtype: 1331
+	
+	//LNTS FIRST
+	search.addLEWord(first.length());
+	if(first.length()>0)
+		search.addLEString(first.latin1(), first.length());
+	
+	// LNTS LAST
+	search.addLEWord(last.length());
+	if(last.length()>0)
+		search.addLEString(last.latin1(), last.length());
+	
+	// LNTS NICK
+	search.addLEWord(nick.length());
+	if(nick.length()>0)
+		search.addLEString(nick.latin1(), nick.length());
+	
+	// LNTS EMAIL
+	search.addLEWord(mail.length());
+	if(mail.length()>0)
+		search.addLEString(mail.latin1(), mail.length());
+	
+	// WORD.L MINAGE
+	search.addLEWord(minage);
+	
+	// WORD.L MAXAGE
+	search.addLEWord(maxage);
+	
+	// BYTE xx SEX 1=fem, 2=mal, 0=dontcare
+	if (sex==1)
+		search.addLEByte(0x01);
+	else if(sex==2)
+		search.addLEByte(0x02);
+	else
+		search.addLEByte(0x00);
+	
+	// BYTE xx LANGUAGE
+	search.addLEByte(lang);
+	
+	// LNTS CITY
+	search.addLEWord(city.length());
+	if(city.length()>0)
+		search.addLEString(city.latin1(), city.length());
+	
+	// LNTS STATE
+	search.addLEWord(state.length());
+	if(state.length()>0)
+		search.addLEString(state.latin1(), state.length());
+	
+	// WORD.L xx xx COUNTRY
+	search.addLEWord(country);
+	
+	// LNTS COMPANY
+	search.addLEWord(company.length());
+	if(company.length()>0)
+		search.addLEString(company.latin1(), company.length());
+	
+	// LNTS DEPARTMENT
+	search.addLEWord(department.length());
+	if(department.length()>0)
+		search.addLEString(department.latin1(), department.length());
+	
+	// LNTS POSITION
+	search.addLEWord(position.length());
+	if(position.length()>0)
+		search.addLEString(position.latin1(), position.length());
+	
+	// BYTE xx OCCUPATION
+	search.addLEByte(occupation);
+	
+	//WORD.L xx xx PAST
+	search.addLEWord(0x0000);
+	
+	//LNTS PASTDESC - The past description to search for.
+	search.addLEWord(0x0000);
+	
+	// WORD.L xx xx INTERESTS - The interests category to search for.
+	search.addLEWord(0x0000);
+	
+	// LNTS INTERDESC - The interests description to search for.
+	search.addLEWord(0x0000);
+	
+	// WORD.L xx xx AFFILIATION - The affiliation to search for.
+	search.addLEWord(0x0000);
+	
+	// LNTS AFFIDESC - The affiliation description to search for.
+	search.addLEWord(0x0000);
+	
+	// WORD.L xx xx HOMEPAGE - The home page category to search for.
+	search.addLEWord(0x0000);
+	
+	// LNTS HOMEDESC - The home page description to search for.
+	search.addLEWord(0x0000);
+	
+	// BYTE xx ONLINE 1=online onliners, 0=dontcare
+	if(onlineOnly)
+		search.addLEByte(0x01);
+	else
+		search.addLEByte(0x00);
+	*/
+	if ( !info.firstName.isEmpty() )
+	{
+		tlvData->addLEWord( info.firstName.length() );
+		tlvData->addLEString( info.firstName.latin1(), info.firstName.length() );
+	}
+	else
+		tlvData->addLEWord( 0x0000 );
+	
+	if ( !info.lastName.isEmpty() )
+	{
+		tlvData->addLEWord( info.lastName.length() );
+		tlvData->addLEString( info.lastName.latin1(), info.lastName.length() );
+	}
+	else
+		tlvData->addLEWord( 0x0000 );
+	
+	if ( !info.nickName.isEmpty() )
+	{
+		tlvData->addLEWord( info.nickName.length() );
+		tlvData->addLEString( info.nickName.latin1(), info.nickName.length() );
+	}
+	else
+		tlvData->addLEWord( 0x0000 );
+	
+	if ( !info.email.isEmpty() )
+	{
+		tlvData->addLEWord( info.email.length() );
+		tlvData->addLEString( info.email.latin1(), info.email.length() );
+	}
+	else
+		tlvData->addLEWord( 0x0000 );
+	
 	tlvData->addLEWord( info.age );
 	tlvData->addLEWord( info.age );
 	tlvData->addByte( info.gender );
 	tlvData->addByte( info.language );
-	tlvData->addLELNTS( info.city.latin1() );
+	
+	if ( !info.city.isEmpty() )
+	{
+		tlvData->addLEWord( info.city.length() );
+		tlvData->addLEString( info.city.latin1(), info.city.length() );
+	}
+	else
+		tlvData->addLEWord( 0x0000 );
+
 	tlvData->addLEWord( 0x0000 );
 	tlvData->addLEWord( info.country );
 	tlvData->addLEWord( 0x0000 ); //company

@@ -45,13 +45,24 @@ ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent, const c
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	addUI = new icqAddUI(this);
-	//connect( addUI->searchButton, SIGNAL( clicked() ), this, SLOT( showSearchDialog() ) );
+	connect( addUI->searchButton, SIGNAL( clicked() ), this, SLOT( showSearchDialog() ) );
+	
+	if ( !mAccount->isConnected() )
+	{
+		addUI->searchButton->setEnabled( false );
+		addUI->uinEdit->setReadOnly( true );
+		addUI->uinEdit->setText( i18n( "%1 is offline. Unable to add contacts" ).arg( mAccount->accountLabel() ) );
+	}
 }
 
 ICQAddContactPage::~ICQAddContactPage()
 {
 }
 
+void ICQAddContactPage::setUINFromSearch( const QString& uin )
+{
+	addUI->uinEdit->setText( uin );
+}
 
 void ICQAddContactPage::showEvent(QShowEvent *e)
 {

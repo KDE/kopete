@@ -102,7 +102,8 @@ void OscarAccount::disconnect()
 	Kopete::ContactList* kcl = Kopete::ContactList::self();
 	QObject::disconnect( kcl, SIGNAL( groupRenamed( Kopete::Group*,  const QString& ) ), 
 	                     this, SLOT( kopeteGroupRenamed( Kopete::Group*, const QString& ) ) );
-	QObject::disconnect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ), this, SLOT( kopeteGroupRemoved( Kopete::Group* ) ) );
+	QObject::disconnect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ),
+	                     this, SLOT( kopeteGroupRemoved( Kopete::Group* ) ) );
 	QObject::disconnect( d->engine->ssiManager(), SIGNAL( contactAdded( const Oscar::SSI& ) ),
 	                     this, SLOT( ssiContactAdded( const Oscar::SSI& ) ) );
 	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupAdded( const Oscar::SSI& ) ),
@@ -186,10 +187,14 @@ void OscarAccount::slotGotSSIList()
 		else
 			addContact( ( *bit ).name(), QString::null, group, Kopete::Account::DontChangeKABC );
 	}
-	QObject::connect( kcl, SIGNAL( groupRenamed( Kopete::Group*,  const QString& ) ), this, SLOT( kopeteGroupRenamed( Kopete::Group*, const QString& ) ) );
-	QObject::connect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ), this, SLOT( kopeteGroupRemoved( Kopete::Group* ) ) );
-	QObject::connect( listManager, SIGNAL( contactAdded( const Oscar::SSI& ) ), this, SLOT( ssiContactAdded( const Oscar::SSI& ) ) );
-	QObject::connect( listManager, SIGNAL( groupAdded( const Oscar::SSI& ) ), this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
+	QObject::connect( kcl, SIGNAL( groupRenamed( Kopete::Group*,  const QString& ) ),
+	                  this, SLOT( kopeteGroupRenamed( Kopete::Group*, const QString& ) ) );
+	QObject::connect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ),
+	                  this, SLOT( kopeteGroupRemoved( Kopete::Group* ) ) );
+	QObject::connect( listManager, SIGNAL( contactAdded( const Oscar::SSI& ) ),
+	                  this, SLOT( ssiContactAdded( const Oscar::SSI& ) ) );
+	QObject::connect( listManager, SIGNAL( groupAdded( const Oscar::SSI& ) ),
+	                  this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
 }
 
 
@@ -217,7 +222,8 @@ void OscarAccount:: protocolError( int error, int psError, const QString& messag
 	
 	if ( error == Client::FatalProtocolError )
 	{
-		
+		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Received fatal protocol error" << error << ", " 
+			<< psError << endl;
 		disconnect();
 		if ( psError == 5 )
 		{

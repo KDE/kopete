@@ -169,19 +169,27 @@ ICQSearchResult::ICQSearchResult()
 
 void ICQSearchResult::fill( Buffer* buffer )
 {
-	//buffer->getLEWord(); // data length
-	
-	WORD len;
+	WORD datalength = buffer->getLEWord(); // data length
+	WORD len = 0;
 	uin = buffer->getLEDWord();
+	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found UIN " << QString::number( uin ) << endl;
 	len = buffer->getLEWord();
-	nickName = QString( buffer->getBlock( len ) );
+	if ( len > 0 )
+		nickName = QString( buffer->getBlock( len ) );
+	
 	len = buffer->getLEWord();
-	firstName = QString( buffer->getBlock( len ) );
+	if ( len > 0 )
+		firstName = QString( buffer->getBlock( len ) );
+	
 	len = buffer->getLEWord();
-	lastName = QString( buffer->getBlock( len ) );
+	if ( len > 0 )
+		lastName = QString( buffer->getBlock( len ) );
+	
 	len = buffer->getLEWord();
-	email = QString( buffer->getBlock( len ) );
-	auth = buffer->getByte() == 0x01;
+	if ( len > 0 )
+		email = QString( buffer->getBlock( len ) );
+	
+	auth = ( buffer->getByte() == 0x01 );
 	online = ( buffer->getLEWord() == 0x0001 );
 	switch ( buffer->getByte() )
 	{
@@ -200,11 +208,11 @@ void ICQSearchResult::fill( Buffer* buffer )
 
 ICQWPSearchInfo::ICQWPSearchInfo()
 {
-	age = -1;
-	gender = -1;
-	language = -1;
-	country = -1;
-	occupation = -1;
+	age = 0;
+	gender = 0;
+	language = 0;
+	country = 0;
+	occupation = 0;
 	onlineOnly = false;
 }
 
