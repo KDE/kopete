@@ -117,7 +117,10 @@ KopeteView *KopeteViewManager::view( KopeteMessageManager* manager, bool /*forei
 		QWidget *newViewWidget;
 
 		if( type == KopeteMessage::Undefined )
-			type = static_cast<KopeteMessage::MessageType>( KopetePrefs::prefs()->interfacePreference() );
+		{
+			int t = KopetePrefs::prefs()->interfacePreference();
+			type = static_cast<KopeteMessage::MessageType>( t );    
+		}
 
 		if( type == KopeteMessage::Chat )
 		{
