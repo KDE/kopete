@@ -129,10 +129,8 @@ void KopeteMessageManager::setMainWindow()
 	disconnect(myWindow, SIGNAL(destroyed()), this, SLOT(slotChatWindowClosing()));
 	myWindow = d->mView->mainWindow();
 
- 	if( chatWindowMap()->contains( d->mProtocol ) )
-		chatWindowMap()->remove( d->mProtocol );
-
-	chatWindowMap()->insert( d->mProtocol, myWindow);
+ 	if( !chatWindowMap()->contains( d->mProtocol ) )
+		chatWindowMap()->insert( d->mProtocol, static_cast<KopeteChatWindow*>(myWindow) );
 	connect(myWindow, SIGNAL(destroyed()), this, SLOT(slotChatWindowClosing()));
 }
 
@@ -236,16 +234,25 @@ KopeteChatWindow *KopeteMessageManager::newWindow()
 			}
 			else
 			{
-				//A window does exist. Just use the first one on our map.
-				ChatWindowMap::Iterator it = chatWindowMap()->begin();
-				myWindow = it.data();
+				//A window does exist. Use the one with the most tabs
+				int viewCount = 0;
+				ChatWindowMap::Iterator it;
+				for ( it = chatWindowMap()->begin(); it != chatWindowMap()->end(); ++it )
+				{
+					if( it.data()->chatViewCount() > viewCount )
+					{
+						myWindow = it.data();
+						viewCount = it.data()->chatViewCount();
+					}
+
+				}
 			}
 			break;
 	}
 
 	//Add this protocol to the map no matter what the preference, in case it is switched while windows are open
 	if( mappedWindowCreated && !chatWindowMap()->contains( d->mProtocol ) )
-		chatWindowMap()->insert(d->mProtocol, myWindow);
+		chatWindowMap()->insert(d->mProtocol, static_cast<KopeteChatWindow*>(myWindow) );
 
 	return static_cast<KopeteChatWindow *>( myWindow );
 }

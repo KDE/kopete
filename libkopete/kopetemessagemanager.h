@@ -38,7 +38,7 @@ class KopeteProtocol;
 class KopeteChatWindow;
 class KMainWindow;
 
-typedef QMap<KopeteProtocol*,KMainWindow*> ChatWindowMap;
+typedef QMap<KopeteProtocol*,KopeteChatWindow*> ChatWindowMap;
 typedef QPtrList<KopeteContact>        KopeteContactPtrList;
 typedef QValueList<KopeteMessage>        KopeteMessageList;
 typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
