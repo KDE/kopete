@@ -100,25 +100,24 @@ void LinkAddressbookUI::slotLoadAddressees()
   m_mainWidget->addresseeListView->clear();
 
   QString realname;
-  int num_contacts_with_nick=0;  //There shouldn't be more than 1 contact with this irc nick.  Warn the user if there is.
 
   KABC::AddressBook::Iterator it;
+	AddresseeItem * current = 0;
   for( it = m_addressBook->begin(); it != m_addressBook->end(); ++it )
-/*	if(Konversation::Addressbook::self()->hasNick(*it, m_lower_ircnick, m_servername, m_servergroup)) {
-		realname = (*it).realName();
-		num_contacts_with_nick++;
-		(new AddresseeItem( m_mainWidget->addresseeListView, (*it) ))->setSelected(true);
-	} else*/
-		new AddresseeItem( m_mainWidget->addresseeListView, (*it));
-  
-/*  if(num_contacts_with_nick == 0)
-    m_mainWidget->lblHeader->setText(i18n("Choose the person who '%1' is.").arg(m_ircnick));
-  else if(num_contacts_with_nick == 1 && realname.isEmpty())
-    m_mainWidget->lblHeader->setText(i18n("Currently '%1' is associated with a contact.").arg(m_ircnick));
-  else if(num_contacts_with_nick == 1 && !realname.isEmpty())
-    m_mainWidget->lblHeader->setText(i18n("Currently '%1' is associated with contact '%2'.").arg(m_ircnick).arg(realname));
-  else
-    m_mainWidget->lblHeader->setText(i18n("<qt><b>Warning:</b> '%1' is currently being listed as belonging to multiple contacts.  Please select the correct contact.</qt>").arg(m_ircnick));*/
+	{
+		AddresseeItem * addr = new AddresseeItem( m_mainWidget->addresseeListView, (*it));
+		if ( m_mc->metaContactId() == it->uid() )
+		{
+			m_mainWidget->addresseeListView->setSelected( addr, true );
+			current = addr;
+		}
+	}
+	if ( current )
+	{
+		m_mainWidget->addresseeListView->ensureItemVisible( current );
+	}
+	enableButtonOK( current );
+	m_mainWidget->lblHeader->setText(i18n("Choose the person who '%1' is.").arg(m_mc->displayName() ));
 }
 
 void LinkAddressbookUI::slotAddAddresseeClicked()
@@ -135,6 +134,10 @@ void LinkAddressbookUI::slotAddAddresseeClicked()
 		m_addressBook->insertAddressee(addr);
 		Kopete::KABCPersistence::self()->writeAddressBook( 0 );
 		slotLoadAddressees();
+		// select the addressee we just added
+		QListViewItem * added = m_mainWidget->addresseeListView->findItem( addresseeName, 1 );
+		m_mainWidget->addresseeListView->setSelected( added, true );
+		m_mainWidget->addresseeListView->ensureItemVisible( added );
 	}
 }
 
