@@ -84,10 +84,11 @@ unsigned int ChallengeResponseV10::authFibonacci(unsigned int challenge, int div
 	hash ^= (challenge & 0xff000000) >> 0x18;
 	hash *= 0x9e3779b1;
 		
-	if (outer_loop > 1) {
-		auth_function_t		*ft;
+	if (outer_loop > 1)
+	{
+		auth_function_t *ft;
 
-		int					remainder;
+		int remainder;
 				
 		hash = ((((hash ^ (hash >> 0x8)) >> 0x10) ^ hash) ^ (hash >> 0x8)) & 0xff;
 
@@ -98,27 +99,24 @@ unsigned int ChallengeResponseV10::authFibonacci(unsigned int challenge, int div
 
 		ft = &main_function_list[inner_loop][remainder];
 
-		if (ft) {
+		if (ft)
+		{
+			switch (ft->type)
+			{
+			case 0:
+				return challenge;
+			case 1:
+				return authType1(challenge, divisor, outer_loop, inner_loop, ft->var1);
+			case 2:
+				return authType2(challenge, divisor, outer_loop, inner_loop, ft->var1, ft->var2);
+			case 3:
+				return authType3(challenge, divisor, outer_loop, inner_loop, ft->var1);
+			case 4:
+			case 5:
+				return authType45(challenge, divisor, outer_loop, inner_loop, ft->var1);
 
-			switch (ft->type) {
-
-				case 0:
-					return challenge;
-				case 1:
-					return authType1(challenge, divisor, outer_loop, inner_loop, ft->var1);
-
-				case 2:
-					return authType2(challenge, divisor, outer_loop, inner_loop, ft->var1, ft->var2);
-
-				case 3:
-					return authType3(challenge, divisor, outer_loop, inner_loop, ft->var1);
-
-				case 4:
-				case 5:
-					return authType45(challenge, divisor, outer_loop, inner_loop, ft->var1);
-
-				default:
-					break;
+			default:
+				break;
 			}
 		}
 	}
@@ -133,12 +131,14 @@ unsigned char ChallengeResponseV10::authRead45(unsigned int buffer, int offset)
 	if (offset > 32)
 		return 0;
 
-	for (i = 0; i < NUM_TYPE_FOURS; i++) {
+	for (i = 0; i < NUM_TYPE_FOURS; i++ )
+	{
 		if (type_four_list[i].buffer_start == buffer)
 			return type_four_list[i].buffer[offset] ^ (buffer & 0xff);
 	}
 
-	for (i = 0; i < NUM_TYPE_FIVES; i++) {
+	for (i = 0; i < NUM_TYPE_FIVES; i++)
+	{
 		if (type_five_list[i].buffer_start == buffer)
 			return type_five_list[i].buffer[offset] ^ (buffer & 0xff);
 	}
@@ -148,12 +148,13 @@ unsigned char ChallengeResponseV10::authRead45(unsigned int buffer, int offset)
 
 unsigned char ChallengeResponseV10::authRead3(unsigned int buffer, int offset)
 {
-	int		i;
+	int i;
 
 	if (offset > 256)
 		return 0;
 
-	for (i = 0; i < NUM_TYPE_THREES; i++) {
+	for (i = 0; i < NUM_TYPE_THREES; i++) 
+	{
 		if (type_three_list[i].buffer_start == buffer)
 			return type_three_list[i].buffer[offset] ^ (buffer & 0xff);
 	}
@@ -163,18 +164,20 @@ unsigned char ChallengeResponseV10::authRead3(unsigned int buffer, int offset)
 
 unsigned int ChallengeResponseV10::authType45(unsigned int challenge, int divisor, int outer_loop, int inner_loop, int initial)
 {
-	unsigned int	final_value = 0;
+	unsigned int final_value = 0;
 
-	int				i;
+	int i;
 
 	/* Run through each bit.
 	 */
 
 	for (i = 0; i < 32; i++)
 	{
-		unsigned char	buffer = authRead45(initial, i);		/* Find the location in the challenge to put the 1/0 bit */
-		int				mask = ~(1 << buffer);						/* so that we can do a replace of our current value. */
-		int				new_value = (challenge >> i) & 1;			/* Is this bit 1 or 0? */
+		/* Find the location in the challenge to put the 1/0 bit
+		   so that we can do a replace of our current value. */
+		unsigned char buffer = authRead45(initial, i);
+		int mask = ~(1 << buffer);
+		int new_value = (challenge >> i) & 1; // Is this bit 1 or 0?
 
 		final_value = (final_value & mask) | (new_value << buffer);
 	}
@@ -205,35 +208,35 @@ unsigned int ChallengeResponseV10::authType1(unsigned int challenge, int divisor
 
 int ChallengeResponseV10::authFinalCountdown(unsigned int challenge, int divisor, int inner_loop, int outer_loop)
 {
-	auth_function_t		*ft;
+	auth_function_t *ft;
 	
 	int remainder = challenge % divisor;
 
 	ft = &main_function_list[inner_loop][remainder];
 
-	if (ft) {
+	if (ft)
+	{
+		switch(ft->type)
+		{
+		case 0:
+			break;
 
-		switch(ft->type) {
+		case 1:
+			challenge = authType1(challenge, divisor, outer_loop, inner_loop, ft->var1);
+			break;
 
-			case 0:
-				break;
+		case 2:
+			challenge = authType2(challenge, divisor, outer_loop, inner_loop, ft->var1, ft->var2);
+			break;
 
-			case 1:
-				challenge = authType1(challenge, divisor, outer_loop, inner_loop, ft->var1);
-				break;
+		case 3:
+			challenge = authType3(challenge, divisor, outer_loop, inner_loop, ft->var1);
+			break;
 
-			case 2:
-				challenge = authType2(challenge, divisor, outer_loop, inner_loop, ft->var1, ft->var2);
-				break;
-
-			case 3:
-				challenge = authType3(challenge, divisor, outer_loop, inner_loop, ft->var1);
-				break;
-
-			case 4:
-			case 5:
-				challenge = authType45(challenge, divisor, outer_loop, inner_loop, ft->var1);
-				break;
+		case 4:
+		case 5:
+			challenge = authType45(challenge, divisor, outer_loop, inner_loop, ft->var1);
+			break;
 		}
 	}
 
