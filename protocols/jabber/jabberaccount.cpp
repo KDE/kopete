@@ -123,6 +123,9 @@ void JabberAccount::slotS5bServerGone ()
 
 	m_s5bServer = 0L;
 
+	if ( jabberClient )
+		jabberClient->s5bManager()->setServer( 0L );
+
 }
 
 void JabberAccount::addS5bAddress ( const QString &address )
