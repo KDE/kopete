@@ -28,14 +28,14 @@ void SMSClient::send(const KopeteMessage& msg)
 
 	QString provider = SMSGlobal::readConfig("SMSClient", "ProviderName", m_contact);
 
-	if (provider == QString::null)
+	if (provider.isNull())
 	{
 		KMessageBox::error(0L, i18n("No provider configured"), i18n("Could Not Send Message"));
 		return;
 	}
 
 	QString programName = SMSGlobal::readConfig("SMSClient", "ProgramName", m_contact);
-	if (programName == QString::null)
+	if (programName.isNull())
 		programName = "/usr/bin/sms_client";
 
 	KProcess* p = new KProcess;
@@ -63,12 +63,12 @@ QWidget* SMSClient::configureWidget(QWidget* parent)
 	
 	prefWidget->configDir->setMode(KFile::Directory);
 	QString configDir = SMSGlobal::readConfig("SMSClient", "ConfigDir", m_contact);
-	if (configDir == QString::null)
+	if (configDir.isNull())
 		configDir = "/etc/sms";
 	prefWidget->configDir->setURL(configDir);
 	
 	QString programName = SMSGlobal::readConfig("SMSClient", "ProgramName", m_contact);
-	if (programName == QString::null)
+	if (programName.isNull())
 		programName = "/usr/bin/sms_client";
 	prefWidget->program->setURL(programName);
 	

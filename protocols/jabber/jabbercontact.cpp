@@ -205,7 +205,7 @@ KActionCollection *JabberContact::customContextMenuActions()
 		// put best resource first
 		items.append(i18n("Automatic (best resource)"));
 
-		if(tmpBestResource->resource() != QString::null)
+		if(!tmpBestResource->resource().isNull())
 			items.append(tmpBestResource->resource());
 
 		// iterate through available resources
@@ -213,7 +213,7 @@ KActionCollection *JabberContact::customContextMenuActions()
 		for (JabberResource *tmpResource = resources.first(); tmpResource; tmpResource = resources.next(), i++)
 		{
 			// skip the default (empty) resource
-			if(tmpResource->resource() == QString::null)
+			if(tmpResource->resource().isNull())
 			{
 				i--;
 				continue;

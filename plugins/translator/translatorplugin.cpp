@@ -202,7 +202,7 @@ void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 	QString src_lang;
 	QString dst_lang;
 
-	if ( (msg.direction() == KopeteMessage::Inbound) && ( msg.body() != QString::null ) )
+	if ( (msg.direction() == KopeteMessage::Inbound) && ( !msg.body().isNull() ) )
 	{
 		KopeteMetaContact *from = msg.from()->metaContact();
 		src_lang = from->pluginData( this, "languageKey" );
@@ -253,7 +253,7 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 	QString src_lang;
 	QString dst_lang;
 
-	if ( ( msg.direction() == KopeteMessage::Outbound ) && ( msg.body() != QString::null ) )
+	if ( ( msg.direction() == KopeteMessage::Outbound ) && ( !msg.body().isNull() ) )
 	{
 		src_lang = m_prefs->myLang();
 //		kdDebug(14308) << "[Translator] ( Outgoing ) My lang is: " << src_lang << endl;

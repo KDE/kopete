@@ -17,7 +17,7 @@ SMSUserPreferences::SMSUserPreferences( SMSContact* contact )
 	userPrefs = new SMSUserPrefsUI( topWidget );
 	prefBase = new SMSPreferencesBase( contact, topWidget );
 
-	if (m_contact->serviceName() != QString::null)
+	if (!m_contact->serviceName().isNull())
 	{
 		prefBase->setEnabled(true);
 		userPrefs->uSpecific->setChecked(true);

@@ -213,7 +213,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			if(r== KMessageBox::Yes)
 			{
 				QString saveFileName = KFileDialog::getSaveFileName( filename,"*.*", 0l  , i18n( "MSN File transfer" ) );
-				if ( saveFileName == QString::null )
+				if ( saveFileName.isNull() )
 					r=KMessageBox::Cancel;
 				else filename=saveFileName;
 			}
