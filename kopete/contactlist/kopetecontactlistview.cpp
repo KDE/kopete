@@ -1374,7 +1374,7 @@ QDragObject *KopeteContactListView::dragObject()
 				// into a pixmap to drag - anyone know how to complete this?
 				//QPainter p( pm );
 				//source_metaLVI->paintCell( p, cg?, width(), 0, 0 );
-				pm = UserIcon( source_metaLVI->metaContact()->statusIcon() );
+				pm = SmallIcon( source_metaLVI->metaContact()->statusIcon() );
 			}
 		}
 

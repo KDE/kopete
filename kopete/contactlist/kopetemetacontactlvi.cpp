@@ -211,7 +211,7 @@ void KopeteMetaContactLVI::slotUpdateIcons()
 */
 	KopetePrefs *prefs = KopetePrefs::prefs();
 
-	QPixmap statusIcon = UserIcon( m_metaContact->statusIcon() );
+	QPixmap statusIcon = SmallIcon( m_metaContact->statusIcon() );
 	if(
 		prefs->greyIdleMetaContacts() &&
 		(m_metaContact->idleState() == KopeteMetaContact::Idle) )
@@ -491,7 +491,7 @@ bool KopeteMetaContactLVI::isGrouped() const
 
 void KopeteMetaContactLVI::slotIdleStateChanged()
 {
-	QPixmap theIcon = UserIcon( m_metaContact->statusIcon() );
+	QPixmap theIcon = SmallIcon( m_metaContact->statusIcon() );
 	if ( KopetePrefs::prefs()->greyIdleMetaContacts() && ( m_metaContact->idleState() == KopeteMetaContact::Idle ) )
 	{
 		KIconEffect::semiTransparent(theIcon);
@@ -521,7 +521,7 @@ void KopeteMetaContactLVI::slotBlink()
 {
 	if (mIsBlinkIcon)
 	{
-		setPixmap(0,UserIcon(m_metaContact->statusIcon()));
+		setPixmap(0,SmallIcon(m_metaContact->statusIcon()));
 		mIsBlinkIcon = false;
 	}
 	else
@@ -538,7 +538,7 @@ void KopeteMetaContactLVI::slotEventDone(KopeteEvent* )
 	{
 		mBlinkTimer->stop();
 	}
-	setPixmap(0,UserIcon(m_metaContact->statusIcon()));
+	setPixmap(0,SmallIcon(m_metaContact->statusIcon()));
 	mIsBlinkIcon = false;
 }
 
