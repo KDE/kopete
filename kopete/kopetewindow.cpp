@@ -246,7 +246,6 @@ void KopeteWindow::initSystray()
 
 KopeteWindow::~KopeteWindow()
 {
-	saveOptions();
 	delete m_pluginConfig;
 }
 
@@ -459,6 +458,7 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 
 void KopeteWindow::slotQuit()
 {
+	saveOptions();
 	KopeteApplication *app = static_cast<KopeteApplication *>( kapp );
 	app->quitKopete();
 }
