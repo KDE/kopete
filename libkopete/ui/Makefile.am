@@ -9,10 +9,13 @@ DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libui_a_SOURCES = \
 		configmodule.cpp \
 		preferencesdialog.cpp \
-		aboutplugins.cpp 
+		aboutplugins.cpp \
+		kopetewindow.cpp
 EXTRA_DIST = \
 		preferencesdialog.cpp \
 		preferencesdialog.h \
 		configmodule.cpp \
-		aboutplugins.cpp
+		aboutplugins.cpp \
+		kopetewindow.cpp
+
 
