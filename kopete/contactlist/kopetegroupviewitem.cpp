@@ -122,6 +122,8 @@ QString KopeteGroupViewItem::toolTip() const
 {
 	// TODO: add icon, and some more information than that which
 	// is already displayed in the list view item
+	// FIXME: post-KDE-3.3, make this better i18n-able
+	//  currently it can't cause more problems than the contact list itself, at least.
 	return "<b>" + d->name->text() + "</b> " + d->count->text();
 }
 
