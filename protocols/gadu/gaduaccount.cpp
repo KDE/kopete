@@ -18,6 +18,8 @@
 #include <qapplication.h>
 #include <qdialog.h>
 #include <qtimer.h>
+#include <qtextcodec.h>
+
 
 
 GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const char* name )
@@ -137,7 +139,6 @@ bool GaduAccount::addContactToMetaContact( const QString& contactId, const QStri
 					 KopeteMetaContact* parentContact )
 {
 	uin_t uinNumber = contactId.toUInt();
-
 	if ( !parentContact->findContact( protocol()->pluginId(), myself_->contactId(), contactId ) ) {
 		GaduContact *newContact = new GaduContact( uinNumber, displayName, this, parentContact );
 		newContact->setParentIdentity( accountId() );
@@ -282,10 +283,12 @@ GaduAccount::notify( uin_t* userlist, int count )
 void
 GaduAccount::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 {
+    QTextCodec *codec = QTextCodec::codecForName("CP1250");
+    QString sendMsg, cpmsg;
 	if ( session_->isConnected() ){
-	    kdDebug(14100)<<"Sending \"" << msg <<"\""<<endl;
-	    QString sendMsg = msg;
+	    sendMsg = msg;
 	    sendMsg.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "\r\n" ) );
+            cpmsg = codec->fromUnicode(sendMsg);
 	    session_->sendMessage( recipient, sendMsg, msgClass );
 	}
 }
@@ -300,32 +303,34 @@ void
 GaduAccount::messageReceived( struct gg_event* e )
 {
     GaduContact *c = 0;
-
-    kdDebug(14100)<<"####"<<" Great! Message Received :: "<<((const char*)e->event.msg.message)<<endl;
+    QString message;
+    QTextCodec *codec = QTextCodec::codecForName("CP1250");
 
     if ( !e->event.msg.message )
 	return;
 
+    message = codec->toUnicode((const char*)e->event.msg.message);
+
     if ( e->event.msg.sender == 0 ) {
 	//system message, display them or not?
-	kdDebug(14100)<<"####"<<" System Message "<< (const char*)e->event.msg.message << endl;
+	kdDebug(14100)<<"####"<<" System Message "<< message << endl;
 	return;
     }
 
-    kdDebug(14100)<<"Message from " << e->event.msg.sender <<" = "<< (const char*)e->event.msg.message << endl;
     if ( contactsMap_.contains( e->event.msg.sender ) )
 	c = contactsMap_[ e->event.msg.sender ];
+
     if ( c ) {
 	KopeteContactPtrList tmp;
 	tmp.append( myself_ );
-	KopeteMessage msg( c, tmp, (const char*)e->event.msg.message, KopeteMessage::Inbound );
+	KopeteMessage msg( c, tmp, message, KopeteMessage::Inbound );
 	c->messageReceived( msg );
     } else {
 	addContact( QString::number(e->event.msg.sender), QString::number(e->event.msg.sender) );
 	c = contactsMap_.find( e->event.msg.sender ).data();
 	KopeteContactPtrList tmp;
 	tmp.append( myself_ );
-	KopeteMessage msg( c, tmp, (const char*)e->event.msg.message, KopeteMessage::Inbound );
+	KopeteMessage msg( c, tmp, message, KopeteMessage::Inbound );
 	c->messageReceived( msg );
     }
 }
