@@ -32,6 +32,7 @@ class KopeteContact;
 class StyleEditDialog;
 class QListBoxItem;
 
+class AppearanceConfig_Emoticons;
 class AppearanceConfig_ChatWindow;
 class AppearanceConfig_Colors;
 
@@ -76,20 +77,26 @@ private slots:
 	void slotStyleSelected();
 	void slotGreyIdleMetaContactsChanged(bool);
 	void emitChanged();
+	void installNewTheme();
+	void removeSelectedTheme();
+
+private:
+	void updateHighlight();
+	QString fileContents(const QString &path);
+	bool addStyle(const QString &styleName, const QString &xslString);
+	QStringList findThemeDirs(const QString &archiveName);
+	bool installThemes(const QStringList &themes, const QString &archiveName);
+	void updateEmoticonlist();
 
 private:
 	QTabWidget* mAppearanceTabCtl;
 
-	// Widgets for Emoticon TAB
-	QFrame* mEmoticonsTab;
-	QCheckBox *mUseEmoticonsChk;
-	KListBox *icon_theme_list;
-//	KIconView *icon_theme_preview;
-	KTextEdit *icon_theme_preview;
+	// Widgets for Chat TAB
 	KHTMLPart *preview;
 	KTextEditor::Document* editDocument;
 
 	// All other TABs have their own ui-file
+	AppearanceConfig_Emoticons *mPrfsEmoticons;
 	AppearanceConfig_ChatWindow *mPrfsChatWindow;
 	AppearanceConfig_Colors *mPrfsColors;
 
@@ -101,15 +108,7 @@ private:
 	bool errorAlert;
 	bool styleChanged;
 
-private:
-	void updateHighlight();
-	QString fileContents(const QString &path);
-	bool addStyle(const QString &styleName, const QString &xslString);
-
 	KopeteAppearanceConfigPrivate *d;
 };
-
 #endif
-
 // vim: set noet ts=4 sts=4 sw=4:
-
