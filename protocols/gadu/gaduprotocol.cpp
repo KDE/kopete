@@ -103,7 +103,7 @@ GaduProtocol* GaduProtocol::protocolStatic_ = 0L;
 const
 QString GaduProtocol::protocolIcon( )
 {
-	return "gg_online";
+	return "gadu_protocol";
 }
 
 void

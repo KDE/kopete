@@ -1,5 +1,5 @@
 METASOURCES = AUTO
-SUBDIRS = ui services
+SUBDIRS = ui services icons
 AM_CPPFLAGS = -I$(srcdir)/ui \
 	-I./ui \
 	-I$(srcdir)/services \

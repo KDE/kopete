@@ -1,5 +1,5 @@
 METASOURCES = AUTO
-SUBDIRS = lib ui pixmaps
+SUBDIRS = lib ui pixmaps icons
 AM_CPPFLAGS = -I$(srcdir)/ui \
 	-I./ui \
 	-I$(srcdir)/lib \

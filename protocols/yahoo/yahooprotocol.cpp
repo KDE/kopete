@@ -73,7 +73,7 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 	setStatusIcon( "yahoo_offline" );
 
 	/* Create preferences menu */
-	m_prefs = new YahooPreferences("yahoo_protocol_32", this);
+	m_prefs = new YahooPreferences("yahoo_protocol", this);
 	
 	/* Call slotSettingsChanged() to get it all registered. */
 	slotSettingsChanged();
