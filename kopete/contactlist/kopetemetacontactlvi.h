@@ -46,7 +46,6 @@ class MessageEvent;
 class AddContactPage;
 class KopeteGroupViewItem;
 
-class ContactComponent;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -162,7 +161,7 @@ private:
 	void setMetaContactToolTipSourceForComponent( Kopete::UI::ListView::Component *comp );
 	QString key( int column, bool ascending ) const;
 	void updateContactIcon( Kopete::Contact * );
-	ContactComponent *contactComponent( const Kopete::Contact *c ) const;
+	Kopete::UI::ListView::ContactComponent *contactComponent( const Kopete::Contact *c ) const;
 
 	Kopete::MetaContact *m_metaContact;
 	KopeteGroupViewItem *m_parentGroup;

@@ -156,44 +156,6 @@ public:
 	QPtrList<Kopete::MessageEvent> events;
 };
 
-class ContactComponent : public ListView::ImageComponent
-{
-	Kopete::Contact *mContact;
-	int mIconSize;
-public:
-	ContactComponent( ListView::ComponentBase *parent, Kopete::Contact *contact, int iconSize)
-	 : ListView::ImageComponent( parent )
-	 , mContact( contact ), mIconSize( iconSize )
-	{
-		updatePixmap();
-	}
-	void updatePixmap()
-	{
-		setPixmap( contact()->onlineStatus().iconFor( contact(), mIconSize ) );
-	}
-	Kopete::Contact *contact()
-	{
-		return mContact;
-	}
-	// we don't need to use a tooltip source here - this way is simpler
-	std::pair<QString,QRect> toolTip( const QPoint &relativePos )
-	{
-		return std::make_pair(mContact->toolTip(),rect());
-	}
-};
-
-// FIXME: move to kopetelistviewitem.cpp
-class SpacerComponent : public ListView::Component
-{
-public:
-	SpacerComponent( ListView::ComponentBase *parent, int w, int h )
-	 : ListView::Component( parent )
-	{
-		setMinWidth(w);
-		setMinHeight(h);
-	}
-};
-
 KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, KopeteGroupViewItem *parent )
 : ListView::Item( parent, contact, "MetaContactLVI" )
 //: QObject( contact, "MetaContactLVI" ), KListViewItem( parent )
@@ -311,7 +273,7 @@ void KopeteMetaContactLVI::movedToDifferentGroup()
 	if ( KListViewItem::parent() && KopetePrefs::prefs()->contactListIndentContacts() &&
 	                !KopetePrefs::prefs()->treeView() )
 	{
-		new SpacerComponent( d->spacerBox, 20, 0 );
+		new ListView::SpacerComponent( d->spacerBox, 20, 0 );
 	}
 
 	KopeteGroupViewItem *group_item = dynamic_cast<KopeteGroupViewItem*>(KListViewItem::parent());
@@ -672,7 +634,7 @@ void KopeteMetaContactLVI::slotConfigChanged()
 	if ( KListViewItem::parent() && KopetePrefs::prefs()->contactListIndentContacts() &&
 	                !KopetePrefs::prefs()->treeView() )
 	{
-		new SpacerComponent( d->spacerBox, 20, 0 );
+		new ListView::SpacerComponent( d->spacerBox, 20, 0 );
 	}
 
 	if ( KopetePrefs::prefs()->contactListUseCustomFonts() )
@@ -855,10 +817,10 @@ void KopeteMetaContactLVI::updateContactIcon( Kopete::Contact *c )
 	if ( KopetePrefs::prefs()->showOffline() )
 		bHideOffline = false;
 
-	ContactComponent *comp = contactComponent( c );
+	ListView::ContactComponent *comp = contactComponent( c );
 	bool bShow = !bHideOffline || c->isOnline();
 	if ( bShow && !comp )
-		(void)new ContactComponent( d->contactIconBox, c, d->contactIconSize );
+		(void)new ListView::ContactComponent( d->contactIconBox, c, d->contactIconSize );
 	else if ( !bShow && comp )
 		delete comp;
 	else if ( comp )
@@ -867,16 +829,16 @@ void KopeteMetaContactLVI::updateContactIcon( Kopete::Contact *c )
 
 Kopete::Contact *KopeteMetaContactLVI::contactForPoint( const QPoint &p ) const
 {
-	if ( ContactComponent *comp = dynamic_cast<ContactComponent*>( d->contactIconBox->componentAt( p ) ) )
+	if ( ListView::ContactComponent *comp = dynamic_cast<ListView::ContactComponent*>( d->contactIconBox->componentAt( p ) ) )
 		return comp->contact();
 	return 0L;
 }
 
-ContactComponent *KopeteMetaContactLVI::contactComponent( const Kopete::Contact *c ) const
+ListView::ContactComponent *KopeteMetaContactLVI::contactComponent( const Kopete::Contact *c ) const
 {
 	for ( uint n = 0; n < d->contactIconBox->components(); ++n )
 	{
-		if ( ContactComponent *comp = dynamic_cast<ContactComponent*>( d->contactIconBox->component( n ) ) )
+		if ( ListView::ContactComponent *comp = dynamic_cast<ListView::ContactComponent*>( d->contactIconBox->component( n ) ) )
 		{
 			if ( comp->contact() == c )
 				return comp;
