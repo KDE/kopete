@@ -1215,6 +1215,12 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 
 	if (u.capabilities != 0)
 	{
+		/**
+		 * Client type detection ---
+		 * Most of this code is based on sim-icq code
+		 * Thanks a lot for all the tests you guys must have made
+		 * without sim-icq I would have only checked for the capabilities
+		 **/
 		bool clientMatched = false;
 		if (u.hasCap(CAP_KOPETE))
 		{
@@ -1241,6 +1247,20 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 			u.clientName=i18n("MacICQ");
 			clientMatched=true;
 		}
+		else if ((u.lastInfoUpdateTime & 0xFF7F0000L) == 0x7D000000L)
+		{
+			unsigned ver = u.lastInfoUpdateTime & 0xFFFF;
+			if (u.lastInfoUpdateTime & 0x00800000L)
+				u.clientName=i18n("Licq SSL");
+			else
+				u.clientName=i18n("Licq");
+
+			if (ver % 10)
+				u.clientVersion.sprintf("%u.%u.%u", ver/1000, (ver/10)%100, ver%10);
+			else
+				u.clientVersion.sprintf("%u.%u", ver/1000, (ver/10)%100);
+			clientMatched=true;
+		}
 		else // some client we could not detect using capabilities
 		{
 			/*kdDebug(14150) << k_funcinfo << "checking update times" << endl;
@@ -1255,7 +1275,6 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 					if ((u.lastExtStatusUpdateTime == 0xFFFFFFFFL) &&
 						(u.lastExtInfoUpdateTime == 0xFFFFFFFFL))
 					{
-						//kdDebug(14150) << k_funcinfo << "update times revealed GAIM" << endl;
 						u.clientName=i18n("Gaim");
 					}
 					else
@@ -1273,18 +1292,16 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 						BYTE minor2 = (version & 0xFF);
 						if (minor2 > 0) // w.x.y.z
 						{
-							u.clientVersion.sprintf("%d.%d.%d.%d",
-								major1, major2, minor1, minor2);
+							u.clientVersion.sprintf("u.%u.%u.%u", major1, major2,
+								minor1, minor2);
 						}
 						else if (minor1 > 0)  // w.x.y
 						{
-							u.clientVersion.sprintf("%d.%d.%d",
-								major1, major2, minor1);
+							u.clientVersion.sprintf("%u.%u.%u", major1, major2, minor1);
 						}
 						else // w.x
 						{
-							u.clientVersion.sprintf("%d.%d",
-								major1, major2);
+							u.clientVersion.sprintf("%u.%u", major1, major2);
 						}
 					}
 					break;
