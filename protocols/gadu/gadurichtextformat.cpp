@@ -270,7 +270,7 @@ GaduRichTextFormat::unescapeGaduMessage( QString& ns )
 bool
 GaduRichTextFormat::insertRtf( uint position)
 {
-	if ( color.red() != rtcs.red || color.blue() != rtcs.blue || color.green() != rtcs.green ) {
+	if ( color != QColor( rtcs.red, rtcs.green, rtcs.blue ) ) {
 		rtcs.red   = color.red();
 		rtcs.green = color.green();
 		rtcs.blue  = color.blue();
