@@ -119,8 +119,6 @@ void KopeteMessageManagerFactory::addKopeteMessageManager(KopeteMessageManager *
 	connect( result, SIGNAL( messageReceived( KopeteMessage &, KopeteMessageManager * ) ),
 		SIGNAL( aboutToReceive(KopeteMessage & ) ) );
 
-	connect( result, SIGNAL(readMessages( KopeteMessageManager*, bool )), KopeteViewManager::viewManager(),
-		SLOT(readMessages(KopeteMessageManager*,bool)));
 	connect( result, SIGNAL(messageAppended( KopeteMessage &, KopeteMessageManager *) ), KopeteViewManager::viewManager(),
 		SLOT( messageAppended( KopeteMessage &, KopeteMessageManager *) ) );
 }
