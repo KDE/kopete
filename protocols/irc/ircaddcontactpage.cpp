@@ -22,9 +22,5 @@ IRCAddContactPage::~IRCAddContactPage()
 /** No descriptions */
 void IRCAddContactPage::slotFinish()
 {
-/*
-	QString nick = msndata->addNick->text();
-	QString userid = msndata->addID->text();
-	plugin->engine->contactAdd(userid);
-*/
+	plugin->addContact(ircdata->ircServer->text(), ircdata->addID->text());
 }

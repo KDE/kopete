@@ -25,7 +25,7 @@
 #include <statusbaricon.h>
 #include <addcontactpage.h>
 #include <improtocol.h>
-
+#include "kirc.h"
 
 /**
   *@author duncan
@@ -34,7 +34,7 @@
 class IRCProtocol : public QObject, public IMProtocol
 {
 Q_OBJECT
-public: 
+public:
 	IRCProtocol();
 	~IRCProtocol();
 	/* Plugin reimplementation */
@@ -53,12 +53,20 @@ public:
 	QPixmap onlineIcon;
 	QPixmap offlineIcon;
 	QPixmap awayIcon;
-	QPixmap naIcon;
+	void addContact(const QString &, const QString &);
+	bool mIsConnected;
+	KIRC *engine;
+	QPixmap joinIcon;
+	QPixmap privmsgIcon;
 private:
 	void initIcons();
 public slots: // Public slots
   /** No descriptions */
-	signals:
+private slots:
+	void slotIncomingMotd(const QString &);
+	void slotConnectedToHost();
+	void slotUserJoinedChannel(const QString &, const QString &);
+	void slotNamesList(const QString &, const QString &, int);
 };
 
 #endif

@@ -8,106 +8,87 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>353</width>
-            <height>155</height>
+            <width>268</width>
+            <height>172</height>
         </rect>
     </property>
     <property name="caption">
-        <string>Form4</string>
+        <string>Form2</string>
     </property>
-    <vbox>
+    <widget class="QGroupBox">
         <property name="name">
-            <cstring>unnamed</cstring>
+            <cstring>GroupBox2</cstring>
         </property>
-        <property name="margin">
-            <number>11</number>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>10</y>
+                <width>247</width>
+                <height>151</height>
+            </rect>
         </property>
-        <property name="spacing">
-            <number>6</number>
+        <property name="title">
+            <string>Contact Information</string>
         </property>
-        <widget class="QGroupBox">
+        <grid>
             <property name="name">
-                <cstring>GroupBox1</cstring>
+                <cstring>unnamed</cstring>
             </property>
-            <property name="title">
-                <string>Contact Information</string>
+            <property name="margin">
+                <number>11</number>
             </property>
-            <widget class="QLabel">
+            <property name="spacing">
+                <number>6</number>
+            </property>
+            <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
                 <property name="name">
                     <cstring>TextLabel1</cstring>
                 </property>
-                <property name="geometry">
-                    <rect>
-                        <x>10</x>
-                        <y>20</y>
-                        <width>90</width>
-                        <height>22</height>
-                    </rect>
-                </property>
                 <property name="text">
-                    <string>MSN id</string>
+                    <string>Channel or nickname:</string>
                 </property>
             </widget>
-            <widget class="QLabel">
-                <property name="name">
-                    <cstring>TextLabel3</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>10</x>
-                        <y>90</y>
-                        <width>90</width>
-                        <height>20</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Show as</string>
-                </property>
-            </widget>
-            <widget class="QLabel">
-                <property name="name">
-                    <cstring>TextLabel1_2</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>10</x>
-                        <y>50</y>
-                        <width>210</width>
-                        <height>20</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>( for example joe@hotmail.com )</string>
-                </property>
-            </widget>
-            <widget class="QLineEdit">
+            <widget class="QLineEdit" row="0" column="2">
                 <property name="name">
                     <cstring>addID</cstring>
                 </property>
-                <property name="geometry">
-                    <rect>
-                        <x>90</x>
-                        <y>20</y>
-                        <width>127</width>
-                        <height>22</height>
-                    </rect>
+            </widget>
+            <widget class="QLabel" row="2" column="0">
+                <property name="name">
+                    <cstring>TextLabel3</cstring>
+                </property>
+                <property name="text">
+                    <string>On server:</string>
                 </property>
             </widget>
-            <widget class="QLineEdit">
+            <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>ircServer</cstring>
+                </property>
+            </widget>
+            <widget class="QLabel" row="3" column="0">
+                <property name="name">
+                    <cstring>TextLabel4</cstring>
+                </property>
+                <property name="text">
+                    <string>Show as:</string>
+                </property>
+            </widget>
+            <widget class="QLineEdit" row="3" column="1" rowspan="1" colspan="2">
                 <property name="name">
                     <cstring>addNick</cstring>
                 </property>
-                <property name="geometry">
-                    <rect>
-                        <x>90</x>
-                        <y>90</y>
-                        <width>127</width>
-                        <height>22</height>
-                    </rect>
+            </widget>
+            <widget class="QLabel" row="1" column="0" rowspan="1" colspan="3">
+                <property name="name">
+                    <cstring>TextLabel2</cstring>
+                </property>
+                <property name="text">
+                    <string>( for example: #kde or SomeNickName )</string>
                 </property>
             </widget>
-        </widget>
-    </vbox>
+        </grid>
+    </widget>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
