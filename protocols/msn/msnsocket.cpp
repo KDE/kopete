@@ -154,6 +154,13 @@ void MSNSocket::slotSocketError( int error )
 
 	m_socket->cancelAsyncConnect();
 
+
+	QString errormsg = i18n( "There was an error while connecting to the MSN server.\nError message:\n" );
+	if ( m_lookupStatus == Failed )
+		errormsg += i18n( "Unable to lookup %1" ).arg( m_socket->host() );
+	else
+		errormsg += KExtendedSocket::strError( error, m_socket->systemError() );
+
 	//delete m_socket;
 	m_socket->deleteLater();
 	m_socket = 0L;
@@ -163,11 +170,6 @@ void MSNSocket::slotSocketError( int error )
 	//like if the socket is closed
 	emit( socketClosed( -1 ) );
 
-	QString errormsg = i18n( "There was an error while connecting to the MSN server.\nError message:\n" );
-	if ( m_lookupStatus == Failed )
-		errormsg += i18n( "Unable to lookup %1" ).arg( m_socket->host() );
-	else
-		errormsg += KExtendedSocket::strError( error, m_socket->systemError() );
 	KMessageBox::error( 0, errormsg, i18n( "MSN Plugin" ) );
 }
 
