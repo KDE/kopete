@@ -11,7 +11,8 @@ libkopeteconf_la_SOURCES = pluginconfig.cpp \
 	appearanceconfig_general.ui appearanceconfig_contactlist.ui \
 	appearanceconfig_chatwindow.ui appearanceconfig_chatappearance.ui \
 	appearanceconfig.cpp kopeteawayconfigbase.ui kopeteawayconfigui.cpp \
-	identityconfig.cpp identityconfigbase.ui addidentitywizard.cpp addidentitywizard_base.ui
+	identityconfigbase.ui identityconfig.cpp addidentitywizard_base.ui \
+	addidentitywizard.cpp
 
 libkopeteconf_la_LDFLAGS = $(all_libraries)
 libkopeteconf_la_LIBADD = ../../libkopete/libkopete.la $(LIB_KDEUI)
