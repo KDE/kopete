@@ -1,9 +1,9 @@
 noinst_LTLIBRARIES = libkopeteircui.la
-INCLUDES = $(all_includes)\
-		-I$(srcdir)/../../../libkopete\
-		-I$(srcdir)/../../../libkopete/ui\
-		-I$(srcdir)/..\
-		-I$(srcdir)/../libkirc
+INCLUDES = -I$(srcdir)/../../../libkopete\
+	-I$(srcdir)/../../../libkopete/ui\
+	-I$(srcdir)/..\
+	-I$(srcdir)/../libkirc \
+	$(all_includes)
 
 libkopeteircui_la_METASOURCES = AUTO
 libkopeteircui_la_SOURCES = ircadd.ui ircprefs.ui ircmessagebase.ui ircchatviewbase.ui ircchatwindow.cpp ircconsoleviewbase.ui ircqueryview.cpp empty.cpp
