@@ -31,7 +31,12 @@
 #include <kapplication.h>
 #include <kaboutdata.h>
 
+//kopete
 #include "msnaccount.h"
+#include "kopetemessage.h"
+#include "kopetecontact.h"
+
+
 
 MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account )
 : MSNSocket( account )
@@ -261,7 +266,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		kdDebug(14140) << "MSNSwitchBoardService::slotReadMessage: User handle: "
 			<< m_msgHandle << endl;*/
 
-		KopeteContactPtrList others;
+		QPtrList<KopeteContact> others;
 		others.append( m_account->myself() );
 		QStringList::iterator it;
 		for( it = m_chatMembers.begin(); it != m_chatMembers.end(); ++it )

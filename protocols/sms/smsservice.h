@@ -8,6 +8,7 @@
 #include <qobject.h>
 
 class SMSContact;
+class KopeteAccount;
 
 class SMSService : public QObject
 {

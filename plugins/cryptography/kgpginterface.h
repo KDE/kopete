@@ -22,6 +22,7 @@
 
 
 #include <qobject.h>
+#include <kurl.h>
 
 /**
  * Encrypt a file using gpg.

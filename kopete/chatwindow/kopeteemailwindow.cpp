@@ -44,6 +44,7 @@
 #include <ktextedit.h>
 
 #include "kopeteemoticons.h"
+#include "kopetecontact.h"
 #include "kopetemessagemanager.h"
 #include "kopeteprefs.h"
 #include "pluginloader.h"

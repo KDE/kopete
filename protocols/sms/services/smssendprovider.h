@@ -9,6 +9,7 @@
 #include <qptrlist.h>
 
 class KProcess;
+class KopeteAccount;
 class SMSContact;
 
 class SMSSendProvider : public QObject

@@ -29,6 +29,7 @@
 #include <klocale.h>
 
 #include "kopetetransfermanager.h"
+#include "kopetecontact.h"
 #include "msnmessagemanager.h"
 #include "msnswitchboardsocket.h"
 

@@ -56,6 +56,7 @@
 #include "kopeteawayconfigui.h"
 #include "styleeditdialog.h"
 #include "kopetexsl.h"
+#include "kopetecontact.h"
 
 #include <qtabwidget.h>
 
