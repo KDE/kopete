@@ -25,6 +25,7 @@
 #include <qvaluestack.h>
 
 #include "kopete.h"
+#include "kopetemetacontact.h"
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetehistorydialog.h"
@@ -51,8 +52,8 @@ class JabberResource;
 class JabberContact:public KopeteContact {
   Q_OBJECT
   public:
-    JabberContact(QString userid, QString name, QString group,
-		  JabberProtocol *protocol);
+    JabberContact( QString userid, QString name, QString group,
+		  JabberProtocol *protocol, KopeteMetaContact *mc);
     void initContact(QString userID, QString name, QString group);
 
 
@@ -135,11 +136,11 @@ class JabberResource : public QObject {
     JabberResource(const QString &, const int &, const QDateTime &, const int &, const QString &);
     ~JabberResource();
     
-    QString &resource() { return mResource; }
+    QString resource() { return mResource; }
     int priority() { return mPriority; }
     QDateTime timestamp() { return mTimestamp; }
     int status() { return mStatus; }
-    QString &reason() { return mReason; }
+    QString reason() { return mReason; }
 
   private:
     QString mResource, mReason;

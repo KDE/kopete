@@ -214,7 +214,7 @@ void JabberProtocol::slotConnected() {
 	{
 		statusBarIcon->setPixmap(onlineIcon);
 	}
-	myContact = new JabberContact(QString("%1@%2").arg(mUsername, 1).arg(mServer, 2), mUsername, i18n("Unknown"), this);
+	myContact = new JabberContact(QString("%1@%2").arg(mUsername, 1).arg(mServer, 2), mUsername, i18n("Unknown"), this, 0L);
 }
 
 void JabberProtocol::slotDisconnected() {
@@ -459,7 +459,7 @@ void JabberProtocol::slotNewContact(JabRosterEntry *contact) {
 	}
 	else {
 		kdDebug() << "[JabberProtocol] Adding contact " << contact->jid << " ..." << endl;
-		JabberContact *jabContact = new JabberContact(contact->jid, contact->nick, group ? group : QString(""), this);
+		JabberContact *jabContact = new JabberContact(contact->jid, contact->nick, group ? group : QString(""), this, 0L);
 		contactList[contact->jid] = jabContact;
 		c = jabContact;
 		kdDebug() << "[JabberProtocol] Contact has been added to contactList[]" << endl;
@@ -476,7 +476,7 @@ KopeteContact *JabberProtocol::createContact(KopeteMetaContact *parent, const QS
 	if (contactList[data]) { /* EEK! Someone's already added it! */
 		return(NULL);
 	}
-	contactList[data] = new JabberContact(data, "", QString(""), this);
+	contactList[data] = new JabberContact(data, "", QString(""), this, parent);
 	return contactList[data]; /* o/~ superstylin */
 }
 
