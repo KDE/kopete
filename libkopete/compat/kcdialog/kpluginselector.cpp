@@ -20,6 +20,7 @@
 #include "kpluginselector.h"
 #include "kpluginselector_p.h"
 
+#include <qtooltip.h>
 #include <qvbox.h>
 #include <qlabel.h>
 #include <qstrlist.h>
@@ -40,6 +41,7 @@
 #include <ksimpleconfig.h>
 #include <kdialog.h>
 #include <kglobal.h>
+#include <kglobalsettings.h>
 #include <kstandarddirs.h>
 #include <ktabctl.h>
 #include <kcmoduleinfo.h>
@@ -57,6 +59,66 @@
 #include <kinstance.h>
 #include <qptrdict.h>
 #include <qstringlist.h>
+#include "kcmoduleproxy.h"
+
+/*
+    QCheckListViewItem that holds a pointer to the KPluginInfo object.
+    Used in the tooltip code to access additional fields
+*/
+class KPluginInfoLVI : public QCheckListItem
+{
+public:
+    KPluginInfoLVI( KPluginInfo *pluginInfo, KListView *parent )
+    : QCheckListItem( parent, pluginInfo->name(), QCheckListItem::CheckBox ), m_pluginInfo( pluginInfo )
+    {
+    }
+
+    KPluginInfo * pluginInfo() { return m_pluginInfo; }
+
+private:
+    KPluginInfo *m_pluginInfo;
+};
+
+/*
+	Custom QToolTip for the list view.
+	The decision whether or not to show tooltips is taken in
+	maybeTip(). See also the QListView sources from Qt itself.
+*/
+class KPluginListViewToolTip : public QToolTip
+{
+public:
+	KPluginListViewToolTip( QWidget *parent, KListView *lv );
+
+	void maybeTip( const QPoint &pos );
+
+private:
+	KListView *m_listView;
+};
+
+KPluginListViewToolTip::KPluginListViewToolTip( QWidget *parent, KListView *lv )
+: QToolTip( parent ), m_listView( lv )
+{
+}
+
+void KPluginListViewToolTip::maybeTip( const QPoint &pos )
+{
+    if ( !parentWidget() || !m_listView )
+        return;
+
+    KPluginInfoLVI *item = dynamic_cast<KPluginInfoLVI *>( m_listView->itemAt( pos ) );
+    if ( !item )
+        return;
+
+    QString toolTip = i18n( "<qt><table>"
+        "<tr><td><b>Description:</b></td><td>%1</td></tr>"
+        "<tr><td><b>Author:</b></td><td>%2</td></tr>"
+        "<tr><td><b>Version:</b></td><td>%3</td></tr>"
+        "<tr><td><b>License:</b></td><td>%4</td></tr></table></qt>" ).arg( item->pluginInfo()->comment(),
+        item->pluginInfo()->author(), item->pluginInfo()->version(), item->pluginInfo()->license() );
+
+    //kdDebug( 702 ) << k_funcinfo << "Adding tooltip: itemRect: " << itemRect << ", tooltip:  " << toolTip << endl;
+    tip( m_listView->itemRect( item ), toolTip );
+}
 
 struct KPluginSelectionWidget::KPluginSelectionWidgetPrivate
 {
@@ -67,6 +129,7 @@ struct KPluginSelectionWidget::KPluginSelectionWidgetPrivate
         , widgetstack( 0 )
         , kps( _kps )
         , config( _config )
+        , tooltip( 0 )
         , catname( _cat )
         , currentplugininfo( 0 )
         , visible( true )
@@ -87,12 +150,13 @@ struct KPluginSelectionWidget::KPluginSelectionWidgetPrivate
     QWidgetStack * widgetstack;
     KPluginSelector * kps;
     KConfigGroup * config;
+    KPluginListViewToolTip *tooltip;
 
     QDict<KCModuleInfo> pluginconfigmodules;
     QMap<QString, int> widgetIDs;
     QMap<KPluginInfo*, bool> plugincheckedchanged;
     QString catname;
-    QValueList<KCModule*> modulelist;
+    QValueList<KCModuleProxy*> modulelist;
     QPtrDict<QStringList> moduleParentComponents;
 
     KPluginInfo * currentplugininfo;
@@ -144,6 +208,7 @@ void KPluginSelectionWidget::init( const QValueList<KPluginInfo*> & plugininfos,
     // setup Widgets
     ( new QVBoxLayout( this, 0, KDialog::spacingHint() ) )->setAutoAdd( true );
     KListView * listview = new KListView( this );
+    d->tooltip = new KPluginListViewToolTip( listview->viewport(), listview );
     connect( listview, SIGNAL( pressed( QListViewItem * ) ), this,
             SLOT( executed( QListViewItem * ) ) );
     connect( listview, SIGNAL( spacePressed( QListViewItem * ) ), this,
@@ -152,14 +217,12 @@ void KPluginSelectionWidget::init( const QValueList<KPluginInfo*> & plugininfos,
             SLOT( executed( QListViewItem * ) ) );
     connect( listview, SIGNAL( selectionChanged( QListViewItem * ) ), this,
             SLOT( executed( QListViewItem * ) ) );
+    listview->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Preferred );
     listview->setAcceptDrops( false );
+    listview->setFullWidth( true );
     listview->setSelectionModeExt( KListView::Single );
     listview->setAllColumnsShowFocus( true );
     listview->addColumn( i18n( "Name" ) );
-    listview->addColumn( i18n( "Description" ) );
-    listview->addColumn( i18n( "Author" ) );
-    listview->addColumn( i18n( "Version" ) );
-    listview->addColumn( i18n( "License" ) );
     for( QValueList<KPluginInfo*>::ConstIterator it = plugininfos.begin();
             it != plugininfos.end(); ++it )
     {
@@ -167,14 +230,9 @@ void KPluginSelectionWidget::init( const QValueList<KPluginInfo*> & plugininfos,
         if( !( *it )->isHidden() &&
                 ( category.isNull() || ( *it )->category() == category ) )
         {
-            QCheckListItem * item = new QCheckListItem( listview,
-                    ( *it )->name(), QCheckListItem::CheckBox );
+            QCheckListItem * item = new KPluginInfoLVI( *it, listview );
             if( ! ( *it )->icon().isEmpty() )
                 item->setPixmap( 0, SmallIcon( ( *it )->icon(), IconSize( KIcon::Small ) ) );
-            item->setText( 1, ( *it )->comment() );
-            item->setText( 2, ( *it )->author()  );
-            item->setText( 3, ( *it )->version() );
-            item->setText( 4, ( *it )->license() );
             item->setOn( ( *it )->isPluginEnabled() );
             d->pluginInfoMap.insert( item, *it );
         }
@@ -190,6 +248,7 @@ void KPluginSelectionWidget::init( const QValueList<KPluginInfo*> & plugininfos,
 
 KPluginSelectionWidget::~KPluginSelectionWidget()
 {
+    delete d->tooltip;
     delete d;
 }
 
@@ -206,16 +265,13 @@ bool KPluginSelectionWidget::pluginIsLoaded( const QString & pluginName ) const
 QWidget * KPluginSelectionWidget::insertKCM( QWidget * parent,
         const KCModuleInfo & moduleinfo )
 {
-    KCModule * module = KCModuleLoader::loadModule( moduleinfo, false, parent );
-    if( !module )
+    KCModuleProxy * module = new KCModuleProxy( moduleinfo, false,
+            parent );
+    if( !module->realModule() )
     {
         //FIXME: not very verbose
         QLabel * label = new QLabel( i18n( "Error" ), parent );
         label->setAlignment( Qt::AlignCenter );
-
-        QApplication::restoreOverrideCursor();
-        KCModuleLoader::showLastLoaderError( this );
-        QApplication::setOverrideCursor( Qt::WaitCursor );
 
         return label;
     }
@@ -401,7 +457,7 @@ void KPluginSelectionWidget::load()
             d->currentchecked = info->isPluginEnabled();
     }
 
-    for( QValueList<KCModule*>::Iterator it = d->modulelist.begin();
+    for( QValueList<KCModuleProxy*>::Iterator it = d->modulelist.begin();
             it != d->modulelist.end(); ++it )
         if( ( *it )->changed() )
             ( *it )->load();
@@ -423,7 +479,7 @@ void KPluginSelectionWidget::save()
         info->save( d->config );
     }
     QStringList updatedModules;
-    for( QValueList<KCModule*>::Iterator it = d->modulelist.begin();
+    for( QValueList<KCModuleProxy*>::Iterator it = d->modulelist.begin();
             it != d->modulelist.end(); ++it )
         if( ( *it )->changed() )
         {
@@ -483,32 +539,22 @@ class KPluginSelector::KPluginSelectorPrivate
         bool hideconfigpage;
 };
 
-    KPluginSelector::KPluginSelector( QWidget * parent, const char * name )
-    : QWidget( parent, name )
+KPluginSelector::KPluginSelector( QWidget * parent, const char * name )
+: QWidget( parent, name )
 , d( new KPluginSelectorPrivate )
 {
-    QBoxLayout * vbox = new QVBoxLayout( this, 0, KDialog::spacingHint() );
+    QBoxLayout * vbox = new QHBoxLayout( this, 0, KDialog::spacingHint() );
     vbox->setAutoAdd( true );
-    QSplitter * splitter = new QSplitter( Qt::Vertical, this, "PluginSelectionWidget splitter" );
-    d->frame = new QFrame( splitter, "KPluginSelector top frame" );
+    d->frame = new QFrame( this, "KPluginSelector left frame" );
     d->frame->setFrameStyle( QFrame::NoFrame );
     ( new QVBoxLayout( d->frame, 0, KDialog::spacingHint() ) )->setAutoAdd( true );
 
     // widgetstack
-    d->widgetstack = new QWidgetStack( splitter,
-            "KPluginSelector Config Pages" );
+    d->widgetstack = new QWidgetStack( this, "KPluginSelector Config Pages" );
     d->widgetstack->setFrameStyle( QFrame::Panel | QFrame::Sunken );
     d->widgetstack->setMinimumSize( 200, 200 );
 
-#if KDE_IS_VERSION( 3, 1, 92 )
-    splitter->setOpaqueResize( KGlobalSettings::opaqueResize() );
-#else
-    splitter->setOpaqueResize( true );
-#endif
-
-    splitter->setResizeMode( d->widgetstack, QSplitter::FollowSizeHint );
-
-    QLabel * label = new QLabel( i18n( "this plugin is not configurable" ),
+    QLabel * label = new QLabel( i18n( "(This plugin is not configurable)" ),
             d->widgetstack );
     ( new QVBoxLayout( label, 0, KDialog::spacingHint() ) )->setAutoAdd( true );
     label->setAlignment( Qt::AlignCenter );
@@ -614,9 +660,10 @@ inline void KPluginSelector::configPage( int id )
     {
         // no config page
         if( d->hideconfigpage )
+        {
             d->widgetstack->hide();
-        //else
-            //d->widgetstack->
+            return;
+        }
     }
     else
         d->widgetstack->show();
@@ -627,6 +674,9 @@ inline void KPluginSelector::configPage( int id )
 void KPluginSelector::setShowEmptyConfigPage( bool show )
 {
     d->hideconfigpage = !show;
+    if( d->hideconfigpage )
+        if( d->widgetstack->id( d->widgetstack->visibleWidget() ) == 1 )
+            d->widgetstack->hide();
 }
 
 void KPluginSelector::load()
@@ -659,7 +709,8 @@ void KPluginSelector::defaults()
     // tabwidget - defaults() will be called for all of them)
 
     QWidget * pluginconfig = d->widgetstack->visibleWidget();
-    KCModule * kcm = ( KCModule* )pluginconfig->qt_cast( "KCModule" );
+    KCModuleProxy * kcm = ( KCModuleProxy* )pluginconfig->qt_cast(
+            "KCModuleProxy" );
     if( kcm )
     {
         kdDebug( 702 ) << "call KCModule::defaults() for the plugins KCM"
@@ -668,8 +719,10 @@ void KPluginSelector::defaults()
         return;
     }
 
-    // doesn't work for plugins with more than one KCM
-    QObjectList * kcms = pluginconfig->queryList( "KCModule", 0, false, false );
+    // if we get here the visible Widget must be a tabwidget holding more than
+    // one KCM
+    QObjectList * kcms = pluginconfig->queryList( "KCModuleProxy",
+            0, false, false );
     QObjectListIt it( *kcms );
     QObject * obj;
     while( ( obj = it.current() ) != 0 )

@@ -32,15 +32,24 @@
  */ 
 #ifndef NDEBUG
 #include "kdebug.h"
-#define functionCallOrderCheck(functionName, returnValue) \
+#define functionCallPreOrderCheck(functionName, returnValue) \
   if(!d->retrievedSettings){ \
       kdDebug(180) << "KAutoConfig::"functionName"() was called before " \
-      "KAutoConfig::retrieveSettings().  This should NEVER happen.  " \
-      "Please Fix." << endl; \
+      "KAutoConfig::retrieveSettings().  This should NEVER happen because " \
+      "it will do nothing.  Please Fix." << endl; \
+    return returnValue; \
+  }
+
+#define functionCallPostOrderCheck(functionName, returnValue) \
+  if(d->retrievedSettings){ \
+      kdDebug(180) << "KAutoConfig::"functionName"() was called after " \
+      "KAutoConfig::retrieveSettings().  This should NEVER happen because " \
+      "it will do nothing.  Please Fix." << endl; \
     return returnValue; \
   }
 #else
-#define functionCallOrderCheck(functionName, returnValue)
+#define functionCallPostOrderCheck(functionName, returnValue)
+#define functionCallPreOrderCheck(functionName, returnValue)
 #endif
 
 class KAutoConfig::KAutoConfigPrivate {
@@ -106,6 +115,7 @@ KAutoConfig::~KAutoConfig(){
 }
 
 void KAutoConfig::addWidget(QWidget *widget, const QString &group){
+  functionCallPostOrderCheck("addWidget",);
   d->groups.insert(widget, group);
   d->widgets.append(widget);
   QPtrList<QWidget> newAutoConfigWidget;
@@ -113,6 +123,7 @@ void KAutoConfig::addWidget(QWidget *widget, const QString &group){
 }
 
 void KAutoConfig::ignoreSubWidget(QWidget *widget){
+  functionCallPostOrderCheck("ignoreSubWidget",);
   d->ignore.append(widget);
 }
 
@@ -184,7 +195,7 @@ bool KAutoConfig::retrieveSettings(bool trackChanges){
 }
 
 bool KAutoConfig::saveSettings() {
-  functionCallOrderCheck("saveSettings", false);
+  functionCallPreOrderCheck("saveSettings", false);
 
   QSqlPropertyMap *propertyMap = QSqlPropertyMap::defaultMap();
   // Go through all of the widgets
@@ -234,7 +245,7 @@ bool KAutoConfig::saveSettings() {
 }
 
 bool KAutoConfig::hasChanged() const {
-  functionCallOrderCheck("hasChanged", false);
+  functionCallPreOrderCheck("hasChanged", false);
 
   QSqlPropertyMap *propertyMap = QSqlPropertyMap::defaultMap();
   // Go through all of the widgets
@@ -263,7 +274,7 @@ bool KAutoConfig::hasChanged() const {
 }
 
 bool KAutoConfig::isDefault() const {
-  functionCallOrderCheck("isDefault", false);
+  functionCallPreOrderCheck("isDefault", false);
 
   QSqlPropertyMap *propertyMap = QSqlPropertyMap::defaultMap();
   // Go through all of the widgets
@@ -289,7 +300,7 @@ bool KAutoConfig::isDefault() const {
 }
 
 void KAutoConfig::resetSettings() const {
-  functionCallOrderCheck("resetSettings",);
+  functionCallPreOrderCheck("resetSettings",);
 
   QSqlPropertyMap *propertyMap = QSqlPropertyMap::defaultMap();
   // Go through all of the widgets
@@ -314,7 +325,7 @@ void KAutoConfig::resetSettings() const {
 }
 
 void KAutoConfig::reloadSettings() const {
-  functionCallOrderCheck("reloadSettings", );
+  functionCallPreOrderCheck("reloadSettings", );
 
   QSqlPropertyMap *propertyMap = QSqlPropertyMap::defaultMap();
   // Go through all of the widgets
@@ -360,6 +371,16 @@ bool KAutoConfig::parseChildren(const QWidget *widget,
     }
 
     bool parseTheChildren = true;
+#ifndef NDEBUG
+    if(d->ignoreTheseWidgets[childWidget->className()] == 0 &&
+		    childWidget->name(0) == NULL){
+      // Without a name the widget is just skipped over.
+      kdDebug(180) << "KAutoConfig::retrieveSettings, widget with "
+        "NULL name.  className: " << childWidget->className() << endl;
+    }
+#endif
+    
+    
     if( d->ignoreTheseWidgets[childWidget->className()] == 0 &&  
       childWidget->name(0) != NULL )
     {
@@ -396,7 +417,9 @@ bool KAutoConfig::parseChildren(const QWidget *widget,
         else if(trackChanges &&
           changedMap.find(childWidget->className()) == changedMap.end())
         {
-          kdDebug(180) << "KAutoConfig::retrieveSettings, Unknown changed "
+          // Without a signal kautoconfigdialog could incorectly 
+	  // enable/disable the buttons
+	  kdDebug(180) << "KAutoConfig::retrieveSettings, Unknown changed "
            "signal for widget:" << childWidget->className() << endl;
         }
 #endif
@@ -405,8 +428,10 @@ bool KAutoConfig::parseChildren(const QWidget *widget,
 #ifndef NDEBUG
       else
       { 
-          kdDebug(180) << "KAutoConfig::retrieveSettings, Unknown widget:" 
-           << childWidget->className() << endl;
+        // If kautoconfig doesn't know how to get/set the widget's value 
+	// nothing can be done to it and it is skipped. 
+	kdDebug(180) << "KAutoConfig::retrieveSettings, Unknown widget:" 
+          << childWidget->className() << endl;
       }
 #endif
     }

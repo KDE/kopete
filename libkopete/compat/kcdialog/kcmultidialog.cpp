@@ -35,14 +35,17 @@
 #include "kcmultidialog.h"
 #include "kcmultidialog.moc"
 #include "kcmoduleloader.h"
+#include "kcmoduleproxy.h"
 #include <assert.h>
+#include <qlayout.h>
 
-KCMultiDialog::KCMultiDialog(const QString& baseGroup, QWidget *parent, const char *name, bool modal)
-  : KDialogBase(IconList, i18n("Configure"), Help | Default |Cancel | Apply | Ok, Ok,
-                parent, name, modal, true)
-  , _baseGroup(baseGroup)
-  , createTreeList( false )
+KCMultiDialog::KCMultiDialog(QWidget *parent, const char *name, bool modal)
+    : KDialogBase(IconList, i18n("Configure"), Help | Default |Cancel | Apply |
+            Ok | User1, Ok, parent, name, modal, true,
+            KGuiItem( i18n( "&Reset" ), "undo" ) )
+    , dialogface( IconList )
 {
+    showButton( User1, false );;
     init();
 }
 
@@ -50,11 +53,9 @@ KCMultiDialog::KCMultiDialog( int dialogFace, const QString & caption, QWidget *
     : KDialogBase( dialogFace, caption, Help | Default | Cancel | Apply | Ok |
             User1, Ok, parent, name, modal, true,
             KGuiItem( i18n( "&Reset" ), "undo" ) )
-    , createTreeList( false )
+    , dialogface( dialogFace )
 {
     showButton( User1, false );;
-    if( dialogFace == KDialogBase::TreeList )
-        createTreeList = true;
     init();
 }
 
@@ -69,57 +70,51 @@ inline void KCMultiDialog::init()
 
 KCMultiDialog::~KCMultiDialog()
 {
-    moduleDict.setAutoDelete(true);
+    OrphanMap::Iterator end2 = m_orphanModules.end();
+    for( OrphanMap::Iterator it = m_orphanModules.begin(); it != end2; ++it )
+        delete ( *it );
 }
 
 void KCMultiDialog::slotDefault()
 {
     int curPageIndex = activePageIndex();
 
-    QPtrListIterator<KCModule> it(modules);
-    for (; it.current(); ++it)
-    {
-       if (pageIndex((QWidget *)(*it)->parent()) == curPageIndex)
-       {
-          (*it)->defaults();
-          clientChanged(true);
+    ModuleList::Iterator end = m_modules.end();
+    for( ModuleList::Iterator it = m_modules.begin(); it != end; ++it )
+        if( pageIndex( ( QWidget * )( *it ).kcm->parent() ) == curPageIndex )
+        {
+          ( *it ).kcm->defaults();
+          clientChanged( true );
           return;
-       }
-    }
+        }
 }
 
 void KCMultiDialog::slotUser1()
 {
     int curPageIndex = activePageIndex();
 
-    QPtrListIterator<KCModule> it( modules );
-    for( ; it.current(); ++it )
-    {
-        if( pageIndex( ( QWidget* )( *it )->parent() ) == curPageIndex )
+    ModuleList::Iterator end = m_modules.end();
+    for( ModuleList::Iterator it = m_modules.begin(); it != end; ++it )
+        if( pageIndex( ( QWidget * )( *it ).kcm->parent() ) == curPageIndex )
         {
-            ( *it )->load();
+            ( *it ).kcm->load();
             clientChanged( false );
             return;
         }
-    }
 }
 
 void KCMultiDialog::apply()
 {
     QStringList updatedModules;
-    for( KCModule * m = modules.first(); m; m = modules.next() )
+    ModuleList::Iterator end = m_modules.end();
+    for( ModuleList::Iterator it = m_modules.begin(); it != end; ++it )
     {
-        kdDebug(710) << k_funcinfo << m->name() << ' ' << ( m->aboutData() ? m->aboutData()->appName() : "" ) << endl;
+        KCModuleProxy * m = ( *it ).kcm;
+        kdDebug(710) << k_funcinfo << m->name() << ' ' <<
+            ( m->aboutData() ? m->aboutData()->appName() : "" ) << endl;
         if( m->changed() )
         {
             m->save();
-            // ### KDE4 remove setChanged workaround
-            if( m->changed() )
-            {
-                kdWarning( 710 ) << "The KCModule says it is changed right "
-                    "after it saved its configuration. A call to setChanged(false) in the save() method is missing." << endl;
-                m->setChanged( false );
-            }
             QStringList * names = moduleParentComponents[ m ];
             //kdDebug(710) << k_funcinfo << *names << " saved and added to the list" << endl;
             for( QStringList::ConstIterator it = names->begin(); it != names->end(); ++it )
@@ -132,6 +127,7 @@ void KCMultiDialog::apply()
         kdDebug(710) << k_funcinfo << *it << " " << ( *it ).latin1() << endl;
         emit configCommitted( ( *it ).latin1() );
     }
+    emit configCommitted();
 }
 
 void KCMultiDialog::slotApply()
@@ -166,8 +162,9 @@ void KCMultiDialog::slotHelp()
 void KCMultiDialog::clientChanged(bool state)
 {
     kdDebug( 710 ) << k_funcinfo << state << endl;
-    for( KCModule * m = modules.first(); m; m = modules.next() )
-        if( m->changed() )
+    ModuleList::Iterator end = m_modules.end();
+    for( ModuleList::Iterator it = m_modules.begin(); it != end; ++it )
+        if( ( *it ).kcm->changed() )
         {
             enableButton( Apply, true );
             return;
@@ -197,43 +194,99 @@ void KCMultiDialog::addModule(const KCModuleInfo& moduleinfo,
     kdDebug(710) << "KCMultiDialog::addModule " << moduleinfo.moduleName() <<
         endl;
 
-    QHBox* page = 0;
+    QFrame* page = 0;
     if (!moduleinfo.service()->noDisplay())
-        if( createTreeList )
+        switch( dialogface )
         {
-            parentmodulenames += moduleinfo.moduleName();;
-            page = addHBoxPage(parentmodulenames, moduleinfo.comment(),
-                    KGlobal::iconLoader()->loadIcon(moduleinfo.icon(), KIcon::Small));
+            case TreeList:
+                parentmodulenames += moduleinfo.moduleName();;
+                page = addHBoxPage( parentmodulenames, moduleinfo.comment(),
+                        SmallIcon( moduleinfo.icon(),
+                            IconSize( KIcon::Small ) ) );
+                break;
+            case IconList:
+                page = addHBoxPage( moduleinfo.moduleName(),
+                        moduleinfo.comment(), DesktopIcon( moduleinfo.icon(),
+                            KIcon::SizeMedium ) );
+                break;
+            case Plain:
+                page = plainPage();
+                ( new QHBoxLayout( page ) )->setAutoAdd( true );
+                break;
+            default:
+                kdError( 710 ) << "unsupported dialog face for KCMultiDialog"
+                    << endl;
+                break;
         }
-        else
-            page = addHBoxPage(moduleinfo.moduleName(), moduleinfo.comment(),
-                    KGlobal::iconLoader()->loadIcon(moduleinfo.icon(),
-                        KIcon::Desktop, KIcon::SizeMedium));
     if(!page) {
         KCModuleLoader::unloadModule(moduleinfo);
         return;
     }
-    moduleDict.insert(page, new LoadInfo(moduleinfo, withfallback));
-    if (modules.isEmpty())
-        slotAboutToShow(page);
+    KCModuleProxy * module;
+    if( m_orphanModules.contains( moduleinfo.service() ) )
+    {
+        // the KCModule already exists - it was removed from the dialog in
+        // removeAllModules
+        module = m_orphanModules[ moduleinfo.service() ];
+        m_orphanModules.remove( moduleinfo.service() );
+        kdDebug( 710 ) << "use KCModule from the list of orphans for " <<
+            moduleinfo.moduleName() << ": " << module << endl;
+
+        module->reparent( page, 0, QPoint( 0, 0 ), true );
+
+        if( module->changed() )
+            clientChanged( true );
+
+        if( activePageIndex() == -1 )
+            showPage( pageIndex( page ) );
+    }
+    else
+    {
+        module = new KCModuleProxy( moduleinfo, withfallback, page );
+        QStringList parentComponents = moduleinfo.service()->property(
+                "X-KDE-ParentComponents" ).toStringList();
+        //kdDebug(710) << k_funcinfo << "ParentComponents=" << parentComponents << endl;
+        moduleParentComponents.insert( module,
+                new QStringList( parentComponents ) );
+
+        connect(module, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
+
+        //setHelp( docpath, QString::null );
+        // FIXME: this will break if two KCMs have a different docPath
+        _docPath = moduleinfo.docPath();
+
+        if( m_modules.count() == 0 )
+            aboutToShowPage( page );
+    }
+    CreatedModule cm;
+    cm.kcm = module;
+    cm.service = moduleinfo.service();
+    m_modules.append( cm );
 }
 
-void KCMultiDialog::removeModule( const KCModuleInfo& moduleinfo )
+void KCMultiDialog::removeAllModules()
 {
-    kdDebug( 710 ) << k_funcinfo << moduleinfo.moduleName() << endl;
-    QPtrDictIterator<LoadInfo> it( moduleDict );
-    for( ; it.current(); ++it )
+    kdDebug( 710 ) << k_funcinfo << endl;
+    ModuleList::Iterator end = m_modules.end();
+    for( ModuleList::Iterator it = m_modules.begin(); it != end; ++it )
     {
-        if( it.current()->info == moduleinfo )
+        kdDebug( 710 ) << "remove 2" << endl;
+        KCModuleProxy * kcm = ( *it ).kcm;
+        QObject * page = kcm->parent();
+        kcm->hide();
+        if( page )
         {
-            kdDebug( 710 ) << "found module to remove" << endl;
-            QWidget * page = ( QWidget* )it.currentKey();
-            delete it.current();
-            moduleDict.remove( page );
+            // I hate this
+            kcm->reparent( 0, QPoint( 0, 0 ), false );
             delete page;
-            break;
         }
+        m_orphanModules[ ( *it ).service ] = kcm;
+        kdDebug( 710 ) << "added KCModule to the list of orphans: " <<
+            kcm << endl;
     }
+    m_modules.clear();
+    // all modules are gone, none can be changed
+    clientChanged( false );
 }
 
 void KCMultiDialog::show()
@@ -241,8 +294,9 @@ void KCMultiDialog::show()
     if( ! isVisible() )
     {
         // call load() method of all KCMs
-        for( QPtrListIterator<KCModule> it( modules ); it.current(); ++it )
-            ( *it )->load();
+        ModuleList::Iterator end = m_modules.end();
+        for( ModuleList::Iterator it = m_modules.begin(); it != end; ++it )
+            ( *it ).kcm->load();
     }
     KDialogBase::show();
 }
@@ -250,67 +304,20 @@ void KCMultiDialog::show()
 void KCMultiDialog::slotAboutToShow(QWidget *page)
 {
     kdDebug( 710 ) << k_funcinfo << endl;
-    LoadInfo *loadInfo = moduleDict[page];
-    if (!loadInfo)
-    {
-        // honor KCModule::buttons
-        QObject * obj = page->child( 0, "KCModule" );
-        if( ! obj )
-            return;
-        KCModule * module = ( KCModule* )obj->qt_cast( "KCModule" );
-        if( ! module )
-            return;
-        enableButton( KDialogBase::Help,
-                module->buttons() & KCModule::Help );
-        enableButton( KDialogBase::Default,
-                module->buttons() & KCModule::Default );
-       return;
-    }
-
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-
-    moduleDict.remove(page);
-
-    KCModule *module = KCModuleLoader::loadModule(loadInfo->info, loadInfo->withfallback);
-
-    if (!module)
-    {
-        QApplication::restoreOverrideCursor();
-        KCModuleLoader::showLastLoaderError(this);
-        delete loadInfo;
-        return;
-    }
-
-    QStringList parentComponents = loadInfo->info.service()->property(
-            "X-KDE-ParentComponents" ).toStringList();
-//    kdDebug(710) << k_funcinfo << "ParentComponents=" << parentComponents << endl;
-    moduleParentComponents.insert( module,
-            new QStringList( parentComponents ) );
-
-    connect(module, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
-    module->reparent(page,0,QPoint(0,0),true);
-
     // honor KCModule::buttons
+    QObject * obj = page->child( 0, "KCModuleProxy" );
+    if( ! obj )
+        return;
+    KCModuleProxy * module = ( KCModuleProxy* )obj->qt_cast(
+            "KCModuleProxy" );
+    if( ! module )
+        return;
+    // TODO: if the dialogface is Plain we should hide the buttons instead of
+    // disabling
     enableButton( KDialogBase::Help,
             module->buttons() & KCModule::Help );
     enableButton( KDialogBase::Default,
             module->buttons() & KCModule::Default );
-
-    if( module->changed() )
-    {
-        kdWarning(710) << "Just loaded a KCModule but it's already changed."
-            << endl;
-        clientChanged( true );
-    }
-    //setHelp( docpath, QString::null );
-    _docPath = loadInfo->info.docPath();
-    modules.append(module);
-
-    //KCGlobal::repairAccels( topLevelWidget() );
-
-    delete loadInfo;
-
-    QApplication::restoreOverrideCursor();
 }
 
 // vim: sw=4 et sts=4

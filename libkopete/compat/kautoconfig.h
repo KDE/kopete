@@ -27,10 +27,10 @@ class KConfig;
 class QWidget;
 
 /**
- * @author Benjamin C Meyer <ben+kdelibs at meyerhome dot net>
+ * @short Provides a means of automatically retrieving, saving and resetting basic settings
  * 
- * The KAutoConfig class provides a means of automaticly retrieving,
- * saving and reseting basic settings.  It also can emit signals when
+ * The KAutoConfig class provides a means of automatically retrieving,
+ * saving and resetting basic settings.  It also can emit signals when
  * settings have been changed (settings were saved) or modified (the
  * user changes a checkbox from on to off).
  *
@@ -51,8 +51,6 @@ class QWidget;
  * If one of the widgets needs special treatment it can be specified to be
  * ignored using the ignoreSubWidget() function.  
  *
- * <hr>
- * 
  * KAutoConfig uses the QSqlPropertyMap class to determine if it can do
  * anything to a widget.  Note that KAutoConfig doesn't  require a database,
  * it simply uses the functionality that is built into the QSqlPropertyMap
@@ -79,10 +77,11 @@ class QWidget;
  * If you add a new widget to the QSqlPropertyMap and wish to be notified when
  * it is modified you should add its signal using addWidgetChangedSignal().
  * If the Apply and Default buttons and enabled/disabled by KAutoConfigDialog
- * automaticly than this must be done.
+ * automatically then this must be done.
  *
  * @see KAutoConfigDialog
  * @since 3.2
+ * @author Benjamin C Meyer <ben+kdelibs at meyerhome dot net>
  */ 
 class KAutoConfig : public QObject {
 
@@ -141,7 +140,8 @@ public:
   /**
    * Adds a widget to the list of widgets that should be parsed for any 
    * children that KAutoConfig might know when retrieveSettings() is
-   * called.
+   * called.  All calls to this function should be made before calling
+   * retrieveSettings().
    * @param widget - Pointer to the widget to add.
    * @param group - Name of the group from which all of the settings for this
    * widget will be located.  If a child of 'widget' needs to be in a separate
@@ -152,7 +152,8 @@ public:
 
   /**
    * Ignore the specified child widget when performing an action.  Doesn't
-   * effect widgets that were added with addWidget() only their children.
+   * effect widgets that were added with addWidget() only their children. All
+   * calls to this function should be made before calling retrieveSettings().
    * @param widget - Pointer to the widget that should be ignored.
    * Note: Widgets that don't have a name are ignored automatically.
    **/ 

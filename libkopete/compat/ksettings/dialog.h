@@ -66,6 +66,7 @@ namespace KSettings
  */
 class Dialog : public QObject
 {
+    friend class PageNode;
     Q_OBJECT
     public:
         /**
@@ -162,17 +163,51 @@ class Dialog : public QObject
          */
         void show();
 
+    signals:
+        /**
+         * If you use the dialog in Configurable mode and want to be notified
+         * when the user changes the plugin selections use this signal. It's
+         * emitted if the selection has changed and the user pressed Apply or
+         * Ok. In the slot you would then load and unload the plugins as
+         * requested.
+         */
+        void pluginSelectionChanged();
+
     protected slots:
         void configureTree();
         void updateTreeList();
 
     private:
+        /**
+         * @internal
+         * Check whether the plugin associated with this KCM is enabled.
+         */
         bool isPluginForKCMEnabled( KCModuleInfo * ) const;
+
         QValueList<KService::Ptr> instanceServices() const;
         QValueList<KService::Ptr> parentComponentsServices(
                 const QStringList & ) const;
+        /**
+         * @internal
+         * Read the .setdlg file and add it to the groupmap
+         */
         void parseGroupFile( const QString & );
+
+        /**
+         * @internal
+         * If this module is put into a TreeList hierarchy this will return a
+         * list of the names of the parent modules.
+         */
+        QStringList parentModuleNames( KCModuleInfo * );
+
+        /**
+         * @internal
+         * This method is called only once. The KCMultiDialog is not created
+         * until it's really needed. So if some method needs to access d->dlg it
+         * checks for 0 and if it's not created this method will do it.
+         */
         void createDialogFromServices();
+
         class DialogPrivate;
         DialogPrivate * d;
 };

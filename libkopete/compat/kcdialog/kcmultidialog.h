@@ -23,16 +23,15 @@
 #ifndef KCMULTIDIALOG_H
 #define KCMULTIDIALOG_H
 
-#include <qptrlist.h>
 #include <qptrdict.h>
 
 #include <kdialogbase.h>
-#include <kcmodule.h>
-#include "kcmoduleinfo.h"
+#include <kservice.h>
+
+class KCModuleProxy;
+class KCModuleInfo;
 
 /**
- * A class that offers a KDialogBase containing arbitrary KControl Modules
- *
  * @short A method that offers a KDialogBase containing arbitrary
  *        KControl Modules.
  *
@@ -49,13 +48,9 @@ public:
      *
      * @param parent The parent widget
      * @param name The widget name
-     * @param baseGroup The baseGroup, if you want to call a module out of
-     *                  kcontrol, just keep "settings"
      * @param modal If you pass true here, the dialog will be modal
      **/
-    KCMultiDialog(const QString& baseGroup = QString::fromLatin1("settings"),
-                  QWidget *parent=0, const char *name=0,
-                  bool modal=false);
+    KCMultiDialog( QWidget *parent=0, const char *name=0, bool modal=false );
 
     /**
      * Construct a personalized KCMultiDialog.
@@ -107,9 +102,9 @@ public:
             parentmodulenames = QStringList(), bool withfallback=false);
 
     /**
-     * Remove a module from the dialog.
+     * Remove all modules from the dialog.
      */
-    void removeModule( const KCModuleInfo& moduleinfo );
+    void removeAllModules();
 
     /**
      * @internal
@@ -118,6 +113,29 @@ public:
     void show();
 
 signals:
+    /**
+     * Emitted after all KCModules have been told to save their configuration.
+     *
+     * The applyClicked and okClicked signals are emitted before the
+     * configuration is saved.
+     */
+    void configCommitted();
+
+    /**
+     * Emitted after the KCModules have been told to save their configuration.
+     * It is emitted once for every instance the KCMs that were changed belong
+     * to.
+     *
+     * You can make use of this if you have more than one component in your
+     * application. instanceName tells you the instance that has to reload its
+     * configuration.
+     *
+     * The applyClicked and okClicked signals are emitted before the
+     * configuration is saved.
+     *
+     * @param instanceName The name of the instance that needs to reload its
+     *                     configuration.
+     */
     void configCommitted( const QCString & instanceName );
 
 protected slots:
@@ -171,19 +189,20 @@ private:
     void init();
     void apply();
 
-    struct LoadInfo {
-      LoadInfo(const KCModuleInfo &_info, bool _withfallback)
-         : info(_info), withfallback(_withfallback)
-         { }
-      KCModuleInfo info;
-      bool withfallback;
+    struct CreatedModule
+    {
+        KCModuleProxy * kcm;
+        KService::Ptr service;
     };
-    QPtrList<KCModule> modules;
-    QPtrDict<LoadInfo> moduleDict;
+    typedef QValueList<CreatedModule> ModuleList;
+    ModuleList m_modules;
+
+    typedef QMap<KService::Ptr, KCModuleProxy*> OrphanMap;
+    OrphanMap m_orphanModules;
+
     QPtrDict<QStringList> moduleParentComponents;
     QString _docPath;
-    QString _baseGroup;
-    bool createTreeList;
+    int dialogface;
 
     // For future use
     class KCMultiDialogPrivate;
