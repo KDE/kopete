@@ -9,6 +9,7 @@ Comment[sv]=Kopete Instant Messenger
 
 [kopete_event]
 Name=Event
+Name[be]=Падзея
 Name[da]=Begivenhed
 Name[de]=Ereignis
 Name[es]=Evento
