@@ -197,6 +197,8 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 				this, SIGNAL( contactIdleStateChanged( Kopete::Contact *) ) );
 
 			kdDebug( 14010 ) << k_funcinfo << "Contact disconnected" << endl;
+
+			KABCPersistence::self()->write( this );
 		}
 
 		// Reparent the contact
@@ -204,7 +206,6 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 
 		emit contactRemoved( c );
 	}
-	KABCPersistence::self()->write( this );
 	updateOnlineStatus();
 }
 
