@@ -210,7 +210,7 @@ GaduContact::importance() const
 QString
 GaduContact::id() const
 {
-    return QString::number( uin_ );;
+    return QString::number( uin_ );
 }
 
 QString
@@ -246,7 +246,7 @@ GaduContact::msgManager()
     } else {
         msgManager_ = kopeteapp->sessionFactory()->create( GaduProtocol::protocol()->myself(),
                                                            thisContact_, GaduProtocol::protocol(),
-                                                           "gadu_logs" + name_ + ".log",
+                                                           "gadu_logs/" + id() + ".log",
                                                            KopeteMessageManager::ChatWindow );
         connect( msgManager_, SIGNAL(messageSent(const KopeteMessage&, KopeteMessageManager*)),
                  this, SLOT(messageSend(const KopeteMessage&, KopeteMessageManager*)) );
@@ -283,6 +283,18 @@ GaduContact::messageSend( const KopeteMessage& msg, KopeteMessageManager* mgr )
     mgr->appendMessage( msg );
 }
 
+bool
+GaduContact::isReachable()
+{
+    return false;
+}
+
+KActionCollection *
+GaduContact::customContextMenuActions()
+{
+    return 0L;
+}
+
 void
 GaduContact::slotUserInfo()
 {
@@ -291,12 +303,31 @@ GaduContact::slotUserInfo()
 void
 GaduContact::slotViewHistory()
 {
+    if ( historyDialog_ != 0L ) {
+        historyDialog_->raise();
+    } else {
+        historyDialog_ = new KopeteHistoryDialog( QString("gadu_logs/%1.log ").arg( id() ), displayName(), true, 50, 0, "GaduHistoryDialog" );
+        connect ( historyDialog_, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()) );
+    }
+}
+
+void
+GaduContact::slotCloseHistoryDialog()
+{
+    delete historyDialog_;
+    historyDialog_ = 0L;
 }
 
 void
 GaduContact::removeThisUser()
 {
 }
+
+void
+GaduContact::slotDeleteContact()
+{
+}
+
 
 
 /*

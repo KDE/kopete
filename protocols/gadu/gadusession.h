@@ -33,7 +33,6 @@ class GaduSession : public QObject
 public:
     GaduSession( QObject *parent=0, const char* name=0 );
     virtual ~GaduSession();
-
     bool isConnected() const;
 
 public slots:

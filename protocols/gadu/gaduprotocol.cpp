@@ -228,11 +228,13 @@ GaduProtocol::addContact( const QString& uin, const QString& nick,
     if ( !parent )
     {
         m = l->findContact( this->id(), QString::null, uin );
-        if(!m)
+        if( !m )
         {
-        	//TODO: make this better
-          m=new KopeteMetaContact();
-          KopeteContactList::contactList()->addMetaContact(m);
+            //TODO: make this better
+            m = new KopeteMetaContact();
+            if ( !group.isEmpty() )
+                m->addToGroup( group );
+            KopeteContactList::contactList()->addMetaContact(m);
         }
     } else
         m = parent;
@@ -405,6 +407,7 @@ void
 GaduProtocol::notify( struct gg_event* e )
 {
     GaduContact *c;
+
     struct gg_notify_reply *n = e->event.notify;
 
     while( n->uin ) {
@@ -466,10 +469,12 @@ GaduProtocol::connectionSucceed( struct gg_event* /*e*/ )
     kdDebug()<<"#### Gadu-Gadu connected!"<<endl;
     //FIXME: remember last state and set it appropriately
     changeStatus( GG_STATUS_INVISIBLE );
+    kdDebug()<<"### Creating get command "<<endl;
     UserlistGetCommand *cmd = new UserlistGetCommand( this );
     cmd->setInfo( userUin_, password_ );
     connect( cmd, SIGNAL(done(const QStringList&)),
              SLOT(userlist(const QStringList&)) );
+    kdDebug()<<"### Executing get command "<<endl;
     cmd->execute();
     if ( !pingTimer_ ) {
         pingTimer_ = new QTimer( this );
@@ -492,6 +497,7 @@ GaduProtocol::userlist( const QStringList& u )
 {
     int i;
     QString name, group, uin;
+    kdDebug()<<"### Got userlist"<<endl;
     for ( QStringList::ConstIterator it = u.begin(); it != u.end(); ++it ) {
         QStringList user = QStringList::split( ";", *it );
         i = 0;

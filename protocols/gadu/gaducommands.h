@@ -1,6 +1,8 @@
 // gaducommands.h - all basic, and not-session dependent commands
 //                  (meaning you don't have to be logged in for any
-//                   of these)
+//                   of these). These delete themselves, meaning you don't
+//                   have to/can't delete them explicitely and have to create
+//                   them dynamically (via the 'new' call).
 //
 // Copyright (C)  2002  Zack Rusin <zack@kde.org>
 //

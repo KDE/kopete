@@ -53,7 +53,8 @@ public:
     virtual int           importance() const;
     virtual QString       id() const;
     virtual QString       data() const;
-
+    virtual bool          isReachable();
+    virtual KActionCollection *customContextMenuActions();
     void  setGaduStatus( Q_UINT32 );
     Q_UINT32  gaduStatus() const;
     uin_t uin() const;
@@ -63,10 +64,12 @@ public slots:
     void execute();
 
     void slotUserInfo();
+    void slotDeleteContact();
     void slotViewHistory();
     void removeThisUser();
     void messageReceived( const KopeteMessage& );
     void messageSend( const KopeteMessage&, KopeteMessageManager* );
+    void slotCloseHistoryDialog();
 
 protected:
     KopeteMessageManager* msgManager();

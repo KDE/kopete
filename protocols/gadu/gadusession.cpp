@@ -292,6 +292,8 @@ GaduSession::checkDescriptor()
         break;
     }
 
+    if ( e ) gg_free_event( e );
+
     enableNotifiers( session_->check );
 }
 
