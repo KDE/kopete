@@ -157,7 +157,6 @@ void YahooSession::login(int initial)
 
 	/* We try to login */
 	yahoo_login( m_connId, initial );
-	m_keepalive->start(60000);
 }
 
 YahooSession::~YahooSession()
@@ -718,6 +717,10 @@ void YahooSession::_loginResponseReceiver( int succ, const char *url )
 {
 
 	kdDebug(14181) << k_funcinfo << endl;
+	
+	if ( succ == YAHOO_LOGIN_OK )
+		m_keepalive->start(60000);
+
 	emit loginResponse( succ, QString( url ) );
 }
 
