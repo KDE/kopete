@@ -56,11 +56,9 @@ MSNContact::MSNContact( KopeteProtocol *proto, const QString &id,
 		this, SLOT (slotMoved(KopeteMetaContact*) ));
 	setDisplayName( displayName );
 
-	kdDebug(14140) << "Checking if we are under a metacontact..." <<endl;
-		
 	if( metaContact() )
 	{
-		kdDebug(14140) << "Yes we are!!!" <<endl;
+		// we are under a metacontact
 		connect ( metaContact(),
 			SIGNAL( movedToGroup( KopeteGroup *, KopeteGroup * , KopeteMetaContact * ) ),
 			this, SLOT( moveToGroup( KopeteGroup *, KopeteGroup * ) ) );
