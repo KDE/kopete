@@ -7,16 +7,21 @@ sub OutgoingMessage
 	my $messageText = shift;
 
 	#The third paramater is who the message is from
-	my $messageFrom = shift;
+	my $from = shift;
 
 	#The remaining paramaters are who the message is to (could be a list)
-	my @messageTo = @_;
+	my @to = @_;
 
 	#Sample - reverse the text of a message prefixed with "/reverse"
 	if( $firstWord eq "/reverse" )
 	{
-		return reverse( $messageText );
+		$messageText = reverse( $messageText );
+		$messageBg = "blue";
+		$messageFg = "green";
 	}
+	
+	#Return array format is ("Background Color", "Foreground Color", "Message Text")
+	return ($messageBg, $messageFg, $messageText);
 }
 
 sub ContactContextMenu

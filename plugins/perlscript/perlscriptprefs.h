@@ -52,6 +52,7 @@ private slots:
 	void slotNewScript();
 	void slotRemoveScript();
 	void slotSelectionChanged( QListViewItem *selectedScript ); 
+	void slotScriptSaved();
 };
 
 #endif

@@ -19,7 +19,6 @@
 
 #ifndef PERLPLUGIN_H
 
-#include <XSUB.h>
 #include <EXTERN.h>
 #include <perl.h>
 
@@ -66,6 +65,7 @@ class PerlPlugin : public KopetePlugin
 	private:
 		static PerlPlugin* pluginStatic_;
 		QStringList getArguments( KopeteMessage &msg );
+		void setHeader();
 		
 		QPtrList<PerlScript> m_incomingScripts;
 		QPtrList<PerlScript> m_outgoingScripts;
@@ -73,6 +73,7 @@ class PerlPlugin : public KopetePlugin
 		QMap<QString,PerlScript*> m_allScripts;
 		PerlInterpreter *my_perl;
 		PerlScriptPreferences *m_prefs;
+		QString HeaderScript;
 
 	private slots: 
 		void slotIncomingMessage( KopeteMessage& msg );
@@ -82,7 +83,7 @@ class PerlPlugin : public KopetePlugin
 		void slotClearScripts();
 		void slotScriptModified( const QString &scriptPath );
 		void slotContextScript( const QString &scriptPath );
-		QString executeScript( const QString &scriptText, const QString &subName, QStringList args );
+		void executeScript( const QString &scriptText, const QString &subName, QStringList &args, KopeteMessage *msg = 0L );
 		
 	signals:
 		void scriptExecuted( const QString &scriptPath, const QString &scriptName );

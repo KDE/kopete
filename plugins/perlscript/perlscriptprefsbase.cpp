@@ -61,6 +61,13 @@ PerlScriptPrefsUI::PerlScriptPrefsUI( QWidget* parent, const char* name, WFlags 
 	
 	v->addWidget( editArea );
 	
+	QHBoxLayout *h2 = new QHBoxLayout( this, 4 );
+	h2->insertStretch(0);
+	saveButton = new KPushButton( this, "saveButton" );
+	saveButton->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
+	h2->addWidget( saveButton );
+	v->addLayout(h2);
+	
 	languageChange();
 }
 
@@ -79,6 +86,7 @@ PerlScriptPrefsUI::~PerlScriptPrefsUI()
 void PerlScriptPrefsUI::languageChange()
 {
     setCaption( tr2i18n( "Form1" ) );
+    saveButton->setText( tr2i18n( "Save Changes" ) );
     addButton->setText( tr2i18n( "Add Script" ) );
     removeButton->setText( tr2i18n( "Remove Script" ) );
 }
