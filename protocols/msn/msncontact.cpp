@@ -41,7 +41,6 @@ MSNContact::MSNContact( KopeteProtocol *proto, const QString &id,
 {
 	m_actionBlock = 0L;
 	m_actionCollection=0L;
-	m_manager = 0L;
 
 	m_status = MSNProtocol::UNK;
 
@@ -61,28 +60,14 @@ MSNContact::~MSNContact()
 
 KopeteMessageManager *MSNContact::manager( bool canCreate )
 {
-	MSNProtocol *m_protocol = static_cast<MSNProtocol*>( protocol() );
-	if( !m_protocol->managerMap.contains( this )  ||
-		( canCreate && ( m_protocol->managerMap[ this ]->members().count() > 1) ) )
-	{
-		KopeteContactPtrList chatmembers;
-		chatmembers.append( this );
-		m_manager = new MSNMessageManager( protocol(), protocol()->myself(), chatmembers );
-		connect( m_manager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
-		m_protocol->managerMap[ this ] = m_manager;
-	}
-	else
-	{
-		m_manager = m_protocol->managerMap[ this ];
-	}
+	KopeteContactPtrList chatmembers;
+	chatmembers.append(this);
 
-	return m_manager;
-}
-
-void MSNContact::slotMessageManagerDestroyed()
-{
-	MSNProtocol *m_protocol = static_cast<MSNProtocol*>( protocol() );
-	m_protocol->managerMap.remove( this );
+	KopeteMessageManager *_manager = KopeteMessageManagerFactory::factory()->findKopeteMessageManager(  protocol()->myself(), chatmembers, protocol() );
+	MSNMessageManager *manager = dynamic_cast<MSNMessageManager*>( _manager );
+	if(!manager &&  canCreate)
+			manager = new MSNMessageManager( protocol(), protocol()->myself(), chatmembers );
+	return manager;
 }
 
 KActionCollection *MSNContact::customContextMenuActions()

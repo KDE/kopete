@@ -157,8 +157,6 @@ public:
 	virtual KActionMenu* protocolActions();
 	virtual const QString protocolIcon();
 
-	QMap<const MSNContact*, MSNMessageManager*> managerMap;
-
 public slots:
 	virtual void connect();
 	virtual void disconnect();

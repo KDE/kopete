@@ -116,7 +116,6 @@ void MSNMessageManager::slotRemoveManager( const KopeteContact *contact )
 {
 	MSNProtocol *p = static_cast<MSNProtocol*>( m_protocol );
 	const MSNContact *c = static_cast<const MSNContact*>( &*contact );
-	p->managerMap.remove ( c );
 }
 
 void MSNMessageManager::slotUpdateChatMember(const QString &handle, const QString &publicName, bool add)
@@ -195,7 +194,7 @@ void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageMana
 	{
 		static_cast<MSNProtocol*>( protocol() )->slotStartChatSession( message.to().first()->contactId() );
 		m_messagesQueue.append(message);
-		sendMessageQueue();
+//		sendMessageQueue();
 		//m_msgQueued=new KopeteMessage(message);
 	}
 }

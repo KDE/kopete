@@ -145,7 +145,6 @@ public slots:
 
 private slots:
 	void slotBlockUser();
-	void slotMessageManagerDestroyed();
 
 private:
 	QMap<uint, KopeteGroup *> m_serverGroups;
@@ -166,8 +165,6 @@ private:
 	QString m_phoneWork;
 	QString m_phoneMobile;
 	bool m_phone_mob;
-
-	MSNMessageManager *m_manager;
 };
 
 #endif
