@@ -1,0 +1,68 @@
+History plugin: show correct date of old catch-up messages
+Re: [Kopete-devel] Kopete 0.7
+
+From: 
+Stefan Gehn <sgehn@gmx.net>
+
+
+To: 
+kopete-devel@kde.org
+
+
+Date: 
+Yesterday 15:30:05
+
+
+On Wednesday June 18 2003 13:49, Daniel Stone wrote:
+> On Wed, Jun 18, 2003 at 01:44:45PM +0200, Olivier Goffart wrote:
+> > I realy think it is possible to release 0.7 in the end of july, to have
+> > enough time to enter in the kopete 1.0's feature frezee in september.
+
+> >
+> > Here is a few list of what we need to do:
+> >
+> > * OSCAR!!!!!!!!!!
+
+So make it work untiul end of July, don't count on me though :P
+
+> > * The history plugin is not finished
+And has got bugs, for cartman (#kde-devel) it duplicates every incoming icq message.
+
+> > * Fix the account loading
+>
+> As well as the fact that ICQ contacts appear as both AIM and ICQ, even
+> after nuking accounts.xml.
+
+Better try to find out why it does that for you because it doesn't do that over here (I use both aim and icq).
+
+> > * Fix the fonts chatwindow  (i think the richedit component is still not
+> > stable enough)
+>
+> No.
+
+What no? Could you please be a bit more verbose? IMO that richtexteditor is unusable and doesn't give us any benefits currently.
+
+> > * some few bugfixings
+> Like the segfault-on-exit that's been around for years.
+
+Which one? Backtrace?
+
+> > Anyone see other important thing?
+> Making it so you don't have to select which protocol plugins to load.
+> Just load them if an account needs them - it's that simple.
+
+So code it yourself if it's that simple, Olivier will help you too as he said it's easy as well.
+
+> > So the big problem is Oscar! we absolutely need at least one more
+> > developper to help Stephan (one active developer)
+> > can someone xhich have a write acces to the website make the anounce
+
+That's in the topic of #kopete for days, still Duncan didn't react to it :P
+
+-- 
+sgehn_AT_gmx.net | ICQ#51123152 | Moege der Pinguin mit euch sein
+
+_______________________________________________
+Kopete-devel mailing list
+Kopete-devel@mail.kde.org
+http://mail.kde.org/mailman/listinfo/kopete-devel
