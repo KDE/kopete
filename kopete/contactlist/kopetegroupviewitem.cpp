@@ -88,6 +88,7 @@ KopeteGroup* KopeteGroupViewItem::group() const
 
 void KopeteGroupViewItem::slotConfigChanged()
 {
+	updateIcon();
 	updateVisibility();
 
 	d->name->setColor( KopetePrefs::prefs()->contactListGroupNameColor() );
