@@ -86,7 +86,6 @@ void AIMContact::slotGotProfile(const UserInfo &user, const QString &profile, co
 	kdDebug(14200) << k_funcinfo << "Called for contact '" << displayName() << "'" << endl;
 	mUserProfile = profile;
 	mAwayMessage = away;
-//	mUserInfo = user;
 	emit updatedProfile();
 }
 
@@ -233,7 +232,7 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 	if(u.userclass & CLASS_UNKNOWN400)
 		uclass += " Active contact ";
 
-	kdDebug(14190) << k_funcinfo << "decoded userclass=[" << uclass << "]" << endl;
+	//kdDebug(14190) << k_funcinfo << "decoded userclass=[" << uclass << "]" << endl;
 
 	if(u.userclass & CLASS_AWAY)
 		setStatus(OSCAR_AWAY);
@@ -248,7 +247,7 @@ void AIMContact::slotOffgoingBuddy(QString sn)
 	if(tocNormalize(sn) != contactName())
 		return;
 
-	kdDebug(14190) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
+	//kdDebug(14190) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
 
 	setOnlineStatus(mProtocol->statusOffline);
 	slotUpdateBuddy();
