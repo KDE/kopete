@@ -35,7 +35,7 @@ class NowListeningGUIClient : public QObject , public KXMLGUIClient
 Q_OBJECT
 	public:
 		NowListeningGUIClient( KopeteMessageManager *parent );
-
+		virtual ~NowListeningGUIClient() {}
 	protected slots:
 		void slotAdvertToCurrentChat();
 
