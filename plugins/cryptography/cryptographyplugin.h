@@ -24,7 +24,6 @@
 class QStringList;
 class QString;
 class QTimer;
-class KListAction;
 
 class KopeteMessage;
 class KopeteMetaContact;
@@ -45,7 +44,7 @@ public:
 		Time	= 1,
 		Never	= 2
 	};
-	
+
 	static CryptographyPlugin  *plugin();
 	static QCString cachedPass();
 	static void setCachedPass(const QCString &pass);

@@ -28,7 +28,6 @@
 class QStringList;
 class QString;
 class QTimer;
-class KListAction;
 
 class KopeteMessage;
 class KopeteMetaContact;

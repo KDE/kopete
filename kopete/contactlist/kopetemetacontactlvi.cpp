@@ -92,9 +92,6 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, QListVie
 
 void KopeteMetaContactLVI::initLVI()
 {
-	m_actionMove = 0L;
-	m_actionCopy = 0L;
-
 	m_oldStatus = m_metaContact->status();
 	m_oldStatusIcon = m_metaContact->statusIcon();
 

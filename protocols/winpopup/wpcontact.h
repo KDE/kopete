@@ -44,7 +44,6 @@ class QListView;
 class QListViewItem;
 class KPopupMenu;
 class KAction;
-class KListAction;
 class KopeteMetaContact;
 
 class WPContact: public KopeteContact

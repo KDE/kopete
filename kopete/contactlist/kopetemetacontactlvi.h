@@ -172,11 +172,6 @@ private:
 
 
 	KopeteMetaContact *m_metaContact;
-
-	// Used actions in the context menu
-	KListAction *m_actionMove;
-	KListAction *m_actionCopy;
-
 	KopeteGroupViewItem *m_parentGroup;
 	QListView *m_parentView;
 	bool m_isTopLevel;

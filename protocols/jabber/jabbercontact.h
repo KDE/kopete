@@ -25,7 +25,6 @@
 
 
 class KAction;
-class KListAction;
 class KPopupMenu;
 class KSelectAction;
 

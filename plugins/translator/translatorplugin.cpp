@@ -67,7 +67,7 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name, const QSt
 
 		keys << m[ m_languages->languageKey(k) ];
 	}
-	m_actionLanguage=new KListAction(i18n("Set &Language"),"",0,  actionCollection() ,"contactLanguage");
+	m_actionLanguage=new KSelectAction(i18n("Set &Language"),"",0,  actionCollection() ,"contactLanguage");
 	m_actionLanguage->setItems( keys );
 	connect( m_actionLanguage, SIGNAL( activated() ), this, SLOT(slotSetLanguage()) );
 	connect( KopeteContactList::contactList() , SIGNAL( metaContactSelected(bool) ) , this , SLOT(slotSelectionChanged(bool)));

@@ -34,7 +34,6 @@ class QTimer;
 class MSNMessageManager;
 class KAction;
 class KActionCollection;
-class KListAction;
 class KTempFile;
 
 class KopeteProtocol;

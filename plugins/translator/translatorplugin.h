@@ -34,7 +34,7 @@
 
 
 class QString;
-class KListAction;
+class KSelectAction;
 
 class KopeteMessage;
 class KopeteMetaContact;
@@ -92,7 +92,7 @@ private:
 	QMap< KIO::Job *, QCString> m_data;
 	QMap< KIO::Job *, bool> m_completed;
 
-	KListAction* m_actionLanguage;
+	KSelectAction* m_actionLanguage;
 
 	static TranslatorPlugin* pluginStatic_;
 	TranslatorLanguages *m_languages;
