@@ -154,7 +154,7 @@ public:
 		{ return m_status; }
 
 	inline bool isDisconnected() const
-		{ return m_status == Disconnected; }
+		{ return m_status == Disconnected || m_status == Idle; }
 
 	inline bool isConnected() const
 		{ return m_status == Connected; }

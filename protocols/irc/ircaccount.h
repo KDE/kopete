@@ -23,7 +23,7 @@
 
 #include "kircengine.h"
 
-#include "kopeteaccount.h"
+#include "kopetepasswordedaccount.h"
 
 #include <kdialogbase.h>
 
@@ -85,7 +85,7 @@ class ChannelListDialog
 };
 
 class IRCAccount
-	: public Kopete::Account
+	: public Kopete::PasswordedAccount
 {
 	friend class IRCEditAccountWidget;
 	friend class IRCProtocolHandler;
@@ -180,7 +180,7 @@ public slots:
 
 	void successfullyChangedNick(const QString &, const QString &);
 
-	virtual void connect( const Kopete::OnlineStatus &initial = Kopete::OnlineStatus() );
+	virtual void connectWithPassword( const QString & );
 	virtual void disconnect();
 
 	void quit( const QString &quitMessage = QString::null );

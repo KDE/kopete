@@ -35,6 +35,7 @@
 #include "kopeteaccountmanager.h"
 #include "kopetecommandhandler.h"
 #include "kopeteview.h"
+#include "kopetepassword.h"
 
 #include <kaction.h>
 #include <kaboutdata.h>
@@ -92,7 +93,7 @@ const QString IRCAccount::CONFIG_NICKNAME = QString::fromLatin1("NickName");
 const QString IRCAccount::CONFIG_USERNAME = QString::fromLatin1("UserName");
 
 IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QString &autoChan )
-	: Kopete::Account(protocol, accountId), autoConnect( autoChan )
+	: Kopete::PasswordedAccount(protocol, accountId), autoConnect( autoChan )
 {
 	m_manager = 0L;
 	m_channelList = 0L;
@@ -211,8 +212,8 @@ void IRCAccount::loaded()
 			IRCHost *host = new IRCHost;
 			host->host = hostName;
 			host->port = serverInfo.section(':',1).toInt();
-			if( rememberPassword() )
-				host->password = password();
+			if( !password().cachedValue().isEmpty() )
+				host->password = password().cachedValue();
 			host->ssl = false;
 
 			m_network->hosts.append( host );
@@ -423,7 +424,7 @@ KActionMenu *IRCAccount::actionMenu()
 	return mActionMenu;
 }
 
-void IRCAccount::connect(const Kopete::OnlineStatus &initial)
+void IRCAccount::connectWithPassword(const QString &password)
 {
 	//TODO:  honor the initial status
 
@@ -620,8 +621,7 @@ void IRCAccount::setAway(bool isAway, const QString &awayMessage)
 void IRCAccount::slotFailedServerPassword()
 {
 	// JLN
-	QString servPass = Kopete::Account::password();
-	m_engine->setPassword(servPass);
+	password().setWrong();
 	connect();
 }
 void IRCAccount::slotGoAway( const QString &reason )

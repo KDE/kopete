@@ -24,6 +24,8 @@
 
 #include "kircengine.h"
 
+#include "kopetepasswordwidget.h"
+
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <klistview.h>
@@ -64,13 +66,11 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		if( account()->codec() )
 			currentCodec = account()->codec()->mibEnum();
 
-		//mPass->load ( &account()->password() );
+		mPasswordWidget->load ( &account()->password() );
 
 		preferSSL->setChecked(account()->configGroup()->readBoolEntry("PreferSSL"));
 
 		autoConnect->setChecked( static_cast<Kopete::Account*>(account())->autoConnect() );
-
-		//if(account()->rememberPassword()) mPassword->setText( account()->password() );
 
 		QStringList cmds = account()->connectCommands();
 		for( QStringList::Iterator i = cmds.begin(); i != cmds.end(); ++i )
@@ -225,7 +225,7 @@ Kopete::Account *IRCEditAccountWidget::apply()
 		account()->loaded();
 	}
 
-//	mPass->save( &account()->password() );
+	mPasswordWidget->save( &account()->password() );
 
 	account()->setNickName( nickName );
 	account()->setUserName( mUserName->text() );
@@ -233,9 +233,6 @@ Kopete::Account *IRCEditAccountWidget::apply()
 	account()->setDefaultPart( partMessage->text() );
 	account()->setDefaultQuit( quitMessage->text() );
 	account()->setAutoConnect( autoConnect->isChecked() );
-	// what about?:
-	// password - No time to sort out the password handling or move to KopetePasswordedAccount before 3.3
-	// remember password cb - disabling the UI for this.
 
 	account()->configGroup()->writeEntry("PreferSSL", preferSSL->isChecked());
 
