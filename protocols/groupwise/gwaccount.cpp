@@ -59,6 +59,7 @@
 #include "userdetailsmanager.h"
 #include "tasks/createcontacttask.h"
 #include "tasks/deleteitemtask.h"
+#include "tasks/updatefoldertask.h"
 #include "ui/gwprivacy.h"
 #include "ui/gwprivacydialog.h"
 #include "ui/gwreceiveinvitationdialog.h"
@@ -417,31 +418,52 @@ void GroupWiseAccount::slotLoginFailed()
 	connect();
 }
 
-void GroupWiseAccount::slotKopeteGroupRenamed( KopeteGroup * )
+void GroupWiseAccount::slotKopeteGroupRenamed( KopeteGroup * renamedGroup )
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	// rename the group on the server
+	if ( isConnected() )
+	{
+		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+		
+		GroupWise::FolderItem fi;
+		fi.id = renamedGroup->pluginData( protocol(), accountId() + " objectId" ).toInt();
+		fi.sequence = renamedGroup->pluginData( protocol(), accountId() + " sequence" ).toInt();
+		fi.name	= renamedGroup->pluginData( protocol(), accountId() + " serverDisplayName" );
+
+		UpdateFolderTask * uft = new UpdateFolderTask( client()->rootTask() );
+		uft->renameFolder( renamedGroup->displayName(), fi );
+		uft->go( true );
+		// would be safer to do this in a slot fired on uft's finished() signal
+		renamedGroup->setPluginData( protocol(), accountId() + " serverDisplayName",
+		renamedGroup->displayName() );
+	}
+	//else
+	// errornotconnected
 }
 
 void GroupWiseAccount::slotKopeteGroupRemoved( KopeteGroup * group )
 {
-	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	// the member contacts should be deleted separately, so just delete the folder here
-	// get the folder object id
-	QString objectIdString = group->pluginData( protocol(), group->pluginData( protocol(), accountId() + " objectId" ) );
-	if ( !objectIdString.isEmpty() )
+	if ( isConnected() )
 	{
-		int objectId = objectIdString.toInt();
-		if ( objectId == 0 )
+		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+		// the member contacts should be deleted separately, so just delete the folder here
+		// get the folder object id
+		QString objectIdString = group->pluginData( protocol(), group->pluginData( protocol(), accountId() + " objectId" ) );
+		if ( !objectIdString.isEmpty() )
 		{
-			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "deleted folder " << group->displayName() << " has root folder objectId 0!" << endl;
-			return;
+			int objectId = objectIdString.toInt();
+			if ( objectId == 0 )
+			{
+				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "deleted folder " << group->displayName() << " has root folder objectId 0!" << endl;
+				return;
+			}
+			DeleteItemTask * dit = new DeleteItemTask( client()->rootTask() );
+			dit->item( 0, objectId );
+			// the group is deleted synchronously after this slot returns; so there is no point listening for signals
+			dit->go( true );
 		}
-		DeleteItemTask * dit = new DeleteItemTask( client()->rootTask() );
-		dit->item( 0, objectId );
-		// the group is deleted synchronously after this slot returns; so there is no point listening for signals
-		dit->go( true );
 	}
+	//else
+	// errornotconnected
 }
 
 void GroupWiseAccount::slotConnError()
@@ -553,26 +575,43 @@ void GroupWiseAccount::receiveFolder( const FolderItem & folder )
 		kdWarning( GROUPWISE_DEBUG_GLOBAL ) << " - received a nested folder.  These were not supported in GroupWise or Kopete as of Sept 2004, aborting! (parentId = " << folder.parentId << ")" << endl;
 		return;
 	}
-	
-	bool found = false;
+	// either find a local group and record these details there, or create a new group to suit
+	KopeteGroup * found = 0;
 	QPtrList<KopeteGroup> groupList = KopeteContactList::contactList()->groups();
 	for ( KopeteGroup *grp = groupList.first(); grp; grp = groupList.next() )
-		if ( grp->displayName() == folder.name )
+	{
+		// see if there is already a local group that matches this group
+		if ( grp->pluginData( protocol(), accountId() + " serverDisplayName" ) == folder.name )
 		{
-			grp->setPluginData( protocol(), accountId() + " objectId", QString::number( folder.id ) );
-			grp->setPluginData( protocol(), accountId() + " sequence", QString::number( folder.sequence ) );
-			found = true;
+			// was it renamed locally while we were offline?
+			if ( grp->displayName() != folder.name )
+				slotKopeteGroupRenamed( grp );
+
+			found = grp;
 			break;
 		}
+		else
+		if ( grp->displayName() == folder.name )
+		{
+			found = grp;
+			break;
+		}
+	}
 
 	if ( found )
+	{
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - folder already exists locally" << endl;
+		found->setPluginData( protocol(), accountId() + " objectId", QString::number( folder.id ) );
+		found->setPluginData( protocol(), accountId() + " serverDisplayName", folder.name );
+		found->setPluginData( protocol(), accountId() + " sequence", QString::number( folder.sequence ) );
+	}
 	else
 	{
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - creating local folder" << endl;
 		KopeteGroup * grp = new KopeteGroup( folder.name );
 		grp->setPluginData( protocol(), accountId() + " objectId", QString::number( folder.id ) );
-			grp->setPluginData( protocol(), accountId() + " sequence", QString::number( folder.sequence ) );
+		grp->setPluginData( protocol(), accountId() + " serverDisplayName", folder.name );
+		grp->setPluginData( protocol(), accountId() + " sequence", QString::number( folder.sequence ) );
 		KopeteContactList::contactList()->addGroup( grp );
 	}
 }

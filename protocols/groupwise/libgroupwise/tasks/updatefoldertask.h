@@ -30,11 +30,13 @@ Renames a folder on the server
 */
 class UpdateFolderTask : public UpdateItemTask
 {
+Q_OBJECT
 public:
-    UpdateFolderTask(Task* parent);
-
-    ~UpdateFolderTask();
-
+	UpdateFolderTask(Task* parent);
+	~UpdateFolderTask();
+	void renameFolder( const QString & newName, const GroupWise::FolderItem & existing );
+protected: 
+	Field::FieldList folderToFields( const GroupWise::FolderItem & folder );
 };
 
 #endif
