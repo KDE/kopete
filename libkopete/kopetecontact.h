@@ -20,9 +20,10 @@
 #define __KOPETECONTACT_H__
 
 #include <qobject.h>
+#include <qstringlist.h>
 #include <kurl.h>
 
-class KopeteContactPrivate;
+struct KopeteContactPrivate;
 
 class KActionCollection;
 class KPopupMenu;
@@ -50,7 +51,7 @@ public:
 	/**
 	 * Create new contact. Supply the parent meta contact!
 	 */
-	KopeteContact( KopeteProtocol *protocol, const QString &id, KopeteMetaContact *parent );
+	KopeteContact( KopeteProtocol *protocol, const QString &id, KopeteMetaContact *parent, QStringList identities=QStringList() );
 	~KopeteContact();
 
 	/**
@@ -91,6 +92,8 @@ public:
 	 * FIXME: This is a bad description, could someone clear it up?
 	 *
 	 * @return THe identity of the ID
+	 *
+	 * OBSOLETE: use identities() isteads
 	 */
 	virtual QString identityId() const;
 
@@ -237,6 +240,11 @@ public:
 	 * @return the contact's protocol
 	 */
 	KopeteProtocol* protocol() const;
+	
+	/**
+	 * Return a list of identities Id where this contact is
+	 */ 
+	QStringList identities() const;
 
 	/**
 	 * Returns a set of custom menu items for the context menu

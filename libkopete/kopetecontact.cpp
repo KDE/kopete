@@ -43,7 +43,7 @@
 #define EMAIL_WINDOW 0
 #define CHAT_WINDOW 1
 
-class KopeteContactPrivate
+struct KopeteContactPrivate
 {
 public:
 	KopeteHistoryDialog *historyDialog;
@@ -76,10 +76,12 @@ public:
 	KPopupMenu *contextMenu;
 
 	QString contactId;
+	QStringList identities;
 };
 
 // Used in slotChangeMetaContact()
 // FIXME: How about reusing KopeteMetaContactLVI ? - Martijn
+//          or maybe using a QMap < QListViewItem , KopeteMetaContact> - Olivier
 class MetaContactListViewItem : public QListViewItem
 {
 public:
@@ -87,7 +89,7 @@ public:
 	MetaContactListViewItem( KopeteMetaContact *m, QListView *p );
 };
 
-KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId, KopeteMetaContact *parent )
+KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId, KopeteMetaContact *parent, QStringList identities )
 : QObject( parent )
 {
 	d = new KopeteContactPrivate;
@@ -107,6 +109,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	d->historyDialog = 0L;
 	d->idleState = Unspecified;
 	d->displayName = contactId;
+	d->identities = identities;
 
 	if( protocol )
 	{
@@ -591,6 +594,11 @@ QString KopeteContact::contactId() const
 KopeteProtocol * KopeteContact::protocol() const
 {
 	return d->protocol;
+}
+
+QStringList KopeteContact::identities() const
+{
+	return d->identities;
 }
 
 KActionCollection * KopeteContact::customContextMenuActions()

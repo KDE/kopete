@@ -26,6 +26,8 @@
 #include "kopetemessagemanagerfactory.h"
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
+#include "kopeteidentitymanager.h"
+#include "kopeteidentity.h"
 
 KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
     : KopetePlugin( parent, name )
@@ -113,6 +115,8 @@ void KopeteProtocol::slotMetaContactAboutToSave( KopeteMetaContact *metaContact 
 		// them, or use its own format, it can call clear() on the provided list
 		sd[ QString::fromLatin1( "contactId" ) ] =   contactIt.current()->contactId();
 		sd[ QString::fromLatin1( "displayName" ) ] = contactIt.current()->displayName();
+		//FIXME: is there any risk to see the ',' char into an identity id ?
+		sd[ QString::fromLatin1( "identities" ) ] = contactIt.current()->identities().join(QString::fromLatin1(",")); 
 
 		// If there's an index field preset it too
 		QString index = contactIt.current()->protocol()->addressBookIndexField();
@@ -283,6 +287,23 @@ bool KopeteProtocol::addContactToMetaContact( const QString &, const QString &, 
 	kdDebug(14010) << "KopeteProtocol::addContactToMetaContact() Not Implemented!!!" << endl;
 	return false;
 }
+
+//-------- OBSOLETE
+KopeteContact* KopeteProtocol::myself() const
+{
+	QDict<KopeteIdentity> dict=KopeteIdentityManager::manager()->identities(this);
+	QDictIterator<KopeteIdentity> it( dict ); 
+    for( ; KopeteIdentity *identity=it.current(); ++it )
+	{
+		if(identity->myself())
+		{
+			return identity->myself();
+		}
+	}
+	return 0L;
+}
+
+
 
 #include "kopeteprotocol.moc"
 

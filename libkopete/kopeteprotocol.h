@@ -42,21 +42,11 @@ public:
 	KopeteProtocol( QObject *parent = 0L, const char *name = 0L );
 	virtual ~KopeteProtocol();
 
+
 	/**
 	 * Protocol API. Must be reimplemented
 	 */
 	virtual bool unload();
-	virtual bool isConnected() const = 0;
-
-	// this will be called if main-kopete wants
-	// the plugin to set the user's mode to away or something similar
-	virtual void setAway() = 0;
-	// this will be called if main-kopete wants
-	// the plugin to set the user's mode to online or something similar
-	virtual void setAvailable() = 0;
-	// plugin has to return wether it is away or not
-	// plugins should also return TRUE for modes like occupied not-vailable etc.
-	virtual bool isAway() const = 0;
 
 	virtual const QString protocolIcon() = 0;
 	
@@ -103,13 +93,8 @@ public:
 	 */
 	virtual KActionMenu* protocolActions();
 
-	/**
-	 * Function has to be reimplemented in every single protocol
-	 * and return the KopeteContact associated with the 'home' user.
-	 *
-	 * @return contact associated with the currently logged in user
-	 */
-	virtual KopeteContact* myself() const = 0;
+	
+
 
 	/**
 	 * Retrieve the list of contacts for this protocol
@@ -167,19 +152,20 @@ public:
 	 */
 	virtual void deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
 		const QMap<QString, QString> &addressBookData );
+		
+		
+		
+	/** OBSOLETE **/
+	virtual KopeteContact* myself() const;
+	virtual bool isConnected() const  { return false; }
+	virtual void setAway() {}
+	virtual void setAvailable() {}
+	virtual bool isAway() const { return false; }
 
 public slots:
-	/**
-	 * Go online for this service.
-	 * This is a slot, so it can be called directly from e.g. a KAction.
-	 */
-	virtual void connect() = 0;
-
-	/**
-	 * Disconnect from this service.
-	 * This is a slot, so it can be called directly from e.g. a KAction.
-	 */
-	virtual void disconnect() = 0;
+	/** OBSOLETE **/	
+	virtual void connect() {};
+	virtual void disconnect() {};
 	
 	/**
 	 * Adds a contact to this protocol with the specified details
