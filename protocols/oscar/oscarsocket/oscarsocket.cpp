@@ -3157,7 +3157,7 @@ void OscarSocket::sendRenameBuddy(const QString &budName,
 	sendSSIAddModDel(newSSI, 0x0009);
 }
 
-void OscarSocket::sendAddGroup(const QString &name)
+int OscarSocket::sendAddGroup(const QString &name)
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 
@@ -3166,12 +3166,13 @@ void OscarSocket::sendAddGroup(const QString &name)
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"Null SSI returned from addGroup(), group must already exist!" << endl;
-		return;
+		return(0);
 	}
 
 	kdDebug(14150) << k_funcinfo << "Adding group, name='" << name <<
 		"' gid=" << newitem->gid << endl;
 	sendSSIAddModDel(newitem,0x0008);
+	return(newitem->gid);
 }
 
 // Changes the name of a group on the server side list

@@ -460,7 +460,7 @@ class OscarSocket : public OscarConnection
 		/*
 		 * Adds a group to the server side buddy list
 		 */
-		virtual void sendAddGroup(const QString &name);
+		virtual int sendAddGroup(const QString &name);
 
 		/*
 		 * Changes a group's name on the server side buddy list

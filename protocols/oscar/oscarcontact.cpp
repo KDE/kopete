@@ -394,41 +394,42 @@ void OscarContact::syncGroups()
 		return;
 	}
 
-//	kdDebug(14150) << k_funcinfo << ": Getting current oscar group " << mListContact->groupID() << " ... " << endl;
+	//kdDebug(14150) << k_funcinfo << "First Kopete Group: " << firstKopeteGroup->displayName() << endl;
+	//kdDebug(14150) << k_funcinfo << "Current mGroupId: " << mGroupId << endl;
+
 	// Get the current (oscar) group that this contact belongs to on the server
 	AIMGroup *currentOscarGroup = mAccount->findGroup( mGroupId );
+
+	// Get the new (oscar) group that this contact belongs to on the server
+	AIMGroup *newOscarGroup = mAccount->findGroup( firstKopeteGroup->displayName() );
+
+	if(!newOscarGroup)
+	{
+		// This is a new group, it doesn't exist on the server yet
+		kdDebug(14150) << k_funcinfo
+			<< ": New group did not exist on server, "
+			<< "asking server to create it first"
+			<< endl;
+		// Ask the server to create the group
+		mGroupId = mAccount->engine()->sendAddGroup(firstKopeteGroup->displayName());
+	}
+	else
+		mGroupId = newOscarGroup->ID();
+
+	//kdDebug(14150) << k_funcinfo << "New mGroupId: " << mGroupId << endl;
+
 	if (!currentOscarGroup)
 	{
+		// Contact is not on the SSI
 		kdDebug(14150) << k_funcinfo <<
-			"Could not get current Oscar group for contact '" << displayName() << "'" << endl;
-		return;
+			"Could not get current Oscar group for contact '" << displayName() << "'. Adding contact to the SSI." << endl;
+		mAccount->engine()->sendAddBuddy(contactName(), firstKopeteGroup->displayName() );
+		mAccount->buddyWaitingSSIAck.set(contactName(), firstKopeteGroup->displayName() );
+	return;
 	}
 
-	/*
-	kdDebug(14150) << k_funcinfo <<
-		"Current OSCAR group id=" << mGroupId <<
-		", Current OSCAR group name='" << currentOscarGroup->name() << "'" << endl;
-	*/
-
-	// Compare the two names, to see if they're actually different
 	if (currentOscarGroup->name() != firstKopeteGroup->displayName())
 	{
-		// First check to see if the new group is actually on the server list yet
-		AIMGroup *newOscarGroup = mAccount->findGroup( firstKopeteGroup->displayName() );
-
-		if(!newOscarGroup)
-		{
-			// This is a new group, it doesn't exist on the server yet
-			kdDebug(14150) << k_funcinfo
-				<< ": New group did not exist on server, "
-				<< "asking server to create it first"
-				<< endl;
-			// Ask the server to create the group
-			mAccount->engine()->sendAddGroup(firstKopeteGroup->displayName());
-		}
-
-		// TODO: update groupID in OscarContact
-
 		// The group has changed, so ask the engine to change
 		// our group on the server
 		mAccount->engine()->sendChangeBuddyGroup(
