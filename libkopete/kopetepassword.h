@@ -24,9 +24,9 @@ namespace KWallet { class Wallet; }
 
 class QPixmap;
 
-/// @internal
+/** @internal */
 class KopetePasswordGetRequest;
-/// @internal
+/** @internal */
 class KopetePasswordSetRequest;
 
 namespace Kopete

@@ -27,9 +27,10 @@ namespace Kopete
 class Password;
 
 /**
- * @author Richard Smith
  * An account requiring a password to connect. Instead of reimplementing connect()
  * in your subclass, reimplement connectWithPassword.
+ *
+ * @author Richard Smith <kde@metafoo.co.uk>
  */
 class PasswordedAccount : public Account
 {
