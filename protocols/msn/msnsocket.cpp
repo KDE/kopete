@@ -262,6 +262,9 @@ void MSNSocket::readBlock( uint len )
 
 	m_waitBlockSize = len;
 
+	kdDebug() << "MSNSocket::readBlock: Preparing for block read of size "
+		<< len << endl;
+
 	// Try to return the data now, if available. Otherwise slotDataReady
 	// will do this whenever all data is there.
 	pollReadBlock();
@@ -272,11 +275,19 @@ bool MSNSocket::pollReadBlock()
 	if( !m_waitBlockSize )
 		return false;
 	else if( m_buffer.length() < m_waitBlockSize )
+	{
+		kdDebug() << "MSNSocket::pollReadBlock: Waiting for data. Received: "
+			<< m_buffer.length() << ", required: " << m_waitBlockSize << endl;
 		return true;
+	}
 
 	QString block;
 	block = m_buffer.left( m_waitBlockSize );
 	m_buffer = m_buffer.remove( 0, m_waitBlockSize );
+
+	kdDebug() << "MSNSocket::pollReadBlock: Successfully read block of size "
+			<< m_waitBlockSize << endl;
+
 	m_waitBlockSize = 0;
 	emit blockRead( block );
 
