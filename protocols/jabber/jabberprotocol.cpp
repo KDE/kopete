@@ -1275,7 +1275,7 @@ void JabberProtocol::slotNewMessage(const Jabber::Message &message)
 	userHost_ = message.from().userHost();
 	contactFrom_ = static_cast<JabberContact *>( contacts()[ userHost_ ] );
 
-	if (message.from().userHost().isEmpty())
+	if ( userHost_.isEmpty() )
 	{
 		// if the sender field is empty, it is a server message
 		kdDebug(14130) << "[JabberProtocol] New server message for us!"
@@ -1314,10 +1314,10 @@ void JabberProtocol::slotNewMessage(const Jabber::Message &message)
 		bool emailType =
 		KGlobal::config()->readBoolEntry("EmailDefault", false);
 
-		if(!messageManagerMap.contains(userHost_))
+		if( ! messageManagerMap.contains(userHost_) )
 		{
 			// we don't have a widget yet, create one
-			if((message.type() == "chat") && !emailType)
+			if( ( message.type() == "chat" ) && !emailType )
 			{
 				manager = createMessageManager(
 					contactFrom_,
@@ -1328,10 +1328,9 @@ void JabberProtocol::slotNewMessage(const Jabber::Message &message)
 				manager = createMessageManager(
 					contactFrom_,
 					KopeteMessageManager::Email);
-
-				// add this manager to the map
-				messageManagerMap[userHost_] = manager;
 			}
+			// add this manager to the map
+			messageManagerMap[userHost_] = manager;
 		}
 		else
 		{
