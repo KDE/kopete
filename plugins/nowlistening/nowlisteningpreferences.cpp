@@ -63,7 +63,7 @@ void NowListeningPreferences::save()
 	
 	KCModule::save();
 	
-	setChanged( false );
+	emit changed( false );
 }
 
 void NowListeningPreferences::load()
@@ -75,12 +75,12 @@ void NowListeningPreferences::load()
 
 	KCModule::load();
 
-	setChanged( false );
+	emit changed( false );
 }
 
 void NowListeningPreferences::slotSettingsChanged()
 {
-	setChanged( true );
+	emit changed( true );
 }
 /*
 * Local variables:
