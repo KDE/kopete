@@ -85,7 +85,9 @@ Kopete::Kopete()
 
 Kopete::~Kopete()
 {
+	KopeteContactList::contactList()->save();
 	delete m_mainWindow;
+//	kdDebug() << "Kopete::~Kopete: done" <<endl;
 }
 
 void Kopete::slotLoadPlugins()
@@ -107,6 +109,7 @@ void Kopete::slotLoadPlugins()
 		// Ups! the user does not have plugins selected.
 		// TODO: show "first time" wizard and let user decide which modules to load
 		modules.append("autoaway.plugin");
+		modules.append("contactnotes.plugin");
 		// Other modules to load for the first time?
 	}
 

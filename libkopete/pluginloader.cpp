@@ -20,7 +20,7 @@
 
 #include "pluginloader.h"
 
-#include <qapplication.h>
+#include <kapplication.h>
 #include <qdir.h>
 #include <qfile.h>
 
@@ -61,7 +61,7 @@ LibraryLoader* LibraryLoader::pluginLoader()
 }
 
 LibraryLoader::LibraryLoader()
-: QObject( qApp )
+: QObject( kapp )
 {
 }
 
@@ -69,24 +69,14 @@ LibraryLoader::~LibraryLoader()
 {
 	QValueList<KopeteLibraryInfo> l;
 
-	l = loaded();
+	/*l = loaded();
 	for(QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
 		if((*i).type != "protocol" && (*i).type != "ui" && (*i).type != "dock")
 		{
 			removeNow((*i).specfile);
 		}
-	}
-	/*
-	l = loaded();
-	for(QValueList<NoatunLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
-	{
-		if((*i).type == "userinterface")
-		{
-			removeNow((*i).specfile);
-		}
-	}
-	*/
+	}*/
 	l = loaded();
 	for(QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
@@ -372,7 +362,9 @@ KopetePlugin* LibraryLoader::searchByID( const QString &Id )
 
 void LibraryLoader::slotPluginDestroyed( QObject *o )
 {
-	m_addressBookFields.remove( static_cast<KopetePlugin *>( o ) );
+	// the plugin _need_ to be removed by removeNow !
+
+/*	m_addressBookFields.remove( static_cast<KopetePlugin *>( o ) );
 
 	QDictIterator<PluginLibrary> it( mLibHash );
 	for( ; it.current(); ++it )
@@ -385,7 +377,7 @@ void LibraryLoader::slotPluginDestroyed( QObject *o )
 
 			break;
 		}
-	}
+	}*/
 
 	// FIXME: Most likely most data structures here leak and are bound
 	// to cause crashes. Find and identify those.

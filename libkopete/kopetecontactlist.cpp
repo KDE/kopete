@@ -51,7 +51,8 @@ KopeteContactList::KopeteContactList()
 
 KopeteContactList::~KopeteContactList()
 {
-	save();
+// save is currently called in ~kopete (before the deletion of plugins)
+//	save();
 }
 
 KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
@@ -293,29 +294,28 @@ void KopeteContactList::sendFile( QString displayName, QString fileName)
 	 * here, or force user to only enter unique display names. A
 	 * unique identifier is needed for external DCOP refs like this!
 	 */
-	kdDebug() << "Send To Display Name: " << displayName << "\n";
+//	kdDebug() << "Send To Display Name: " << displayName << "\n";
 	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
-		kdDebug() << "Display Name: " << it.current()->displayName() << "\n";
+//		kdDebug() << "Display Name: " << it.current()->displayName() << "\n";
 		if( it.current()->displayName() == displayName ) {
 			it.current()->sendFile( fileName );
 			return;
 		}
 	}
-	return;
 }
 
 QStringList KopeteContactList::contactFileProtocols(QString displayName)
 {
-	kdDebug() << "Get contacts for: " << displayName << "\n";
+//	kdDebug() << "Get contacts for: " << displayName << "\n";
 	QStringList protocols;
 
 	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
 		if( it.current()->displayName() == displayName ) {
-			kdDebug() << "Found them!" << endl;
+//			kdDebug() << "Found them!" << endl;
 			QPtrList<KopeteContact> mContacts = it.current()->contacts();
 			kdDebug() << mContacts.count() << endl;
 			QPtrListIterator<KopeteContact> jt( mContacts );
