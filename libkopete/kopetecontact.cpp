@@ -49,7 +49,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	m_metaContact = parent;
 	m_protocol = protocol;
 	m_cachedSize = 0;
-	m_cachedOldStatus = Unknown;
+	m_cachedOldImportance = 0;
 	contextMenu = 0L;
 	mFileCapable = false;
 	m_historyDialog = 0L;
@@ -155,11 +155,11 @@ QString KopeteContact::statusIcon() const
 
 QPixmap KopeteContact::scaledStatusIcon(int size)
 {
-	if ( (status() != m_cachedOldStatus) || ( size != m_cachedSize ) )
+	if ( (importance() != m_cachedOldImportance) || ( size != m_cachedSize ) )
 	{
 		QImage afScal = ((QPixmap(SmallIcon(statusIcon()))).convertToImage()).smoothScale( size, size );
 		m_cachedScaledIcon = QPixmap(afScal);
-		m_cachedOldStatus = status();
+		m_cachedOldImportance = importance();
 		m_cachedSize = size;
 	}
 	if ( m_idleState == Idle )

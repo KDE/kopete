@@ -424,7 +424,7 @@ private:
 	 */
 	QPixmap m_cachedScaledIcon;
 	int m_cachedSize;
-	ContactStatus m_cachedOldStatus;
+	int m_cachedOldImportance;
 
 	//idle state
 	IdleState m_idleState;
