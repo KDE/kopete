@@ -4,7 +4,7 @@
     begin                : Wed Aug 14 2002
     copyright            : (C) 2002 by Tom Linsky
     email                : twl6@po.cwru.edu
- ***************************************************************************/
+***************************************************************************/
 
 /***************************************************************************
  *                                                                         *
@@ -21,9 +21,24 @@
 #include <qstring.h>
 #include <qptrlist.h>
 
-/** Manages SSI data from the server
-  * @author Tom Linsky
-  */
+/**
+ * Manages SSI data from the server
+ * You can use the SSI pointers returned
+ * from many of these methods to send
+ * the actual request to the server.
+ * These fall under the
+ * Oscar Protocol Specification: Family 0x0013, Subtype 0x0008
+ * (Add item)
+ * or the Oscar Protocol Specification: Family 0x0013, Subtype 0x0009
+ * (Modify Item), but do not contain information for
+ * whether it's an add or modify request, you will have to
+ * construct that part of the SNAC yourself, and can then
+ * append this data to the "series of items" list
+ * See: http://kingant.net/oscar/?family=0x0013&subtype=0x0008
+ * for more info
+ * @author Tom Linsky (Main)
+ * @author Chris TenHarmsel (Secondary)
+ */
 
 struct SSI
 {
@@ -37,23 +52,53 @@ struct SSI
 
 class SSIData : public QPtrList<SSI>
 {
-	public:
-		SSIData();
-		~SSIData();
-		/** Find the group named name, and returns a pointer to it */
-		SSI *findGroup(const QString &name);
-		/** Adds a buddy to the SSI data list */
-		SSI *addBuddy(const QString &name, const QString &group);
-		/** Adds a group to the local ssi data */
-		SSI *addGroup(const QString &name);
-		/** Finds the buddy with given name and group... returns NULL if not found */
-		SSI *findBuddy(const QString &name, const QString &group);
-		/** Prints out the SSI data */
-		void print(void);
-		/** Adds the given sn to the list of blocked sn's */
-		SSI *addBlock(const QString &name);
-		/** Finds the given buddy in the deny list... return NULL if not found */
-		SSI *findDeny(const QString &name);
+public:
+	SSIData();
+	~SSIData();
+	/** Find the group named name, and returns a pointer to it */
+	SSI *findGroup(const QString &name);
+
+	/**
+	 * Adds a buddy to the SSI data list
+	 * you will need to actually send the info in the
+	 * SSI returned by this method to change the Server
+	 * Side data
+	 */
+	SSI *addBuddy(const QString &name, const QString &group);
+
+	/**
+	 * Adds a group to the local ssi data
+	 * you will need to actually send the info in the
+	 * SSI returned by this method to change the Server
+	 * Side data
+	 */
+	SSI *addGroup(const QString &name);
+
+	/**
+	 * Changes the name of a group in the local SSI data
+	 * You can use the SSI pointer returned by this
+	 * method to pass to the server to actually change
+	 * the name on the SSI data
+	 */
+	SSI *changeGroup(const QString &currentName, const QString &newName);
+
+	/** Finds the buddy with given name and group... returns NULL if not found */
+	SSI *findBuddy(const QString &name, const QString &group);
+
+	/**
+	 * Prints out the SSI data
+	 */
+	void print(void);
+
+	/** Adds the given sn to the list of blocked sn's
+	 * You can use the SSI pointer returned by this
+	 * method to pass to the server to actually change
+	 * the name on the SSI data
+	 */
+	SSI *addBlock(const QString &name);
+
+	/** Finds the given buddy in the deny list... return NULL if not found */
+	SSI *findDeny(const QString &name);
 };
 
 #endif

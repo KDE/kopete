@@ -2612,9 +2612,38 @@ void OscarSocket::sendAddGroup(const QString &name)
 	sendSSIAddModDel(newitem,0x0008);
 }
 
+// Changes the name of a group on the server side list
+void OscarSocket::sendChangeGroupName(const QString &currentName,
+									  const QString &newName)
+{
+	kdDebug(14150) << k_funcinfo
+				   << "Renaming" << currentName << " to "
+				   << newName << endl;
+	// Check to make sure that the name has actually changed
+	if (currentName == newName)
+	{  // Name hasn't changed, don't do anything
+		kdDebug(14150) << k_funcinfo
+					   << "Name not actually changed, doing nothing"
+					   << endl;
+		return;
+	}
+
+	// Get the SSI data item to send using the
+	// sendSSIAddModDel method
+	SSI *updatedItem = ssiData.changeGroup(currentName,  newName);
+	// Make the call to sendSSIAddModDel requesting a "modify"
+	// SNAC (0x0009)
+	sendSSIAddModDel(updatedItem, 0x0009);
+}
+
 // Sends SSI add, modify, or delete request, to reuse code
 void OscarSocket::sendSSIAddModDel(SSI *item, WORD request_type)
 {
+	if (item == 0L)
+	{ // The SSI Item we were given is null, do nothing
+		return;
+	}
+
 	Buffer outbuf;
 	outbuf.addSnac(0x0013,request_type,0x0000,0x00000000);
 	//name length

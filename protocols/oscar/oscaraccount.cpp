@@ -85,12 +85,6 @@ OscarAccount::~OscarAccount()
 	delete m_awayDialog;
 	delete m_debugDialog;
 	delete m_myself;
-	// qt has QObject::parent(), you know ;)
-//	delete m_actionGoOnline;
-//	delete m_actionGoOffline;
-//	delete m_actionGoAway;
-//	delete m_actionEditInfo;
-//	delete m_actionShowDebug;
 }
 
 void OscarAccount::connect()
@@ -237,7 +231,7 @@ void OscarAccount::initSignals()
 	// Contact list signals for group management events
 	QObject::connect(
 		KopeteContactList::contactList(), SIGNAL( groupRenamed( KopeteGroup *, const QString & ) ),
-		this, SLOT( slotKopeteGroupRenamed( KopeteGroup * )));
+		this, SLOT( slotKopeteGroupRenamed( KopeteGroup *, const QString & )));
 
 	QObject::connect(
 		KopeteContactList::contactList(), SIGNAL( groupRemoved( KopeteGroup * ) ),
@@ -415,19 +409,12 @@ void OscarAccount::slotGroupAdded(KopeteGroup *group)
 	}
 }
 
-void OscarAccount::slotGroupRenamed( const QString& /*groupName*/, uint /*groupNumber*/)
+void OscarAccount::slotKopeteGroupRenamed( KopeteGroup *group,
+										   const QString &oldName )
 {
-	kdDebug(14150) << k_funcinfo << "DOING NOTHING" << endl;
-}
+	kdDebug(14150) << k_funcinfo << "Sending group name change request" << endl;
+	getEngine()->sendChangeGroupName(oldName, group->displayName());
 
-void OscarAccount::slotGroupRemoved( const QString& /*groupName*/, uint /*groupNumber*/)
-{
-	kdDebug(14150) << k_funcinfo << "DOING NOTHING" << endl;
-}
-
-void OscarAccount::slotKopeteGroupRenamed( KopeteGroup */*group*/ )
-{
-	kdDebug(14150) << k_funcinfo << "DOING NOTHING" << endl;
 }
 
 void OscarAccount::slotKopeteGroupRemoved( KopeteGroup */*group*/ )

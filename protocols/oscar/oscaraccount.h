@@ -108,18 +108,9 @@ class OscarAccount : public KopeteAccount
 		/** Called when a group is added for this account */
 		void slotGroupAdded(KopeteGroup* group);
 
-		/** Called when a group is removed for this account */
-		void slotGroupRemoved( const QString& groupName, uint groupNumber );
-
-		/**
-		* Called when a group is renamed for this account
-		* @param groupName The new group name
-		* @param groupNumber The group number, shouldn't change
-		*/
-		void slotGroupRenamed( const QString& groupName, uint groupNumber );
-
 		/** Called when the contact list renames a group */
-		void slotKopeteGroupRenamed( KopeteGroup *group );
+		void slotKopeteGroupRenamed( KopeteGroup *group,
+									 const QString &oldName );
 
 		/** Called when the contact list removes a group */
 		void slotKopeteGroupRemoved( KopeteGroup *group );

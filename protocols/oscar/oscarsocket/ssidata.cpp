@@ -94,6 +94,28 @@ SSI * SSIData::addGroup(const QString &name)
 	return newitem;
 }
 
+// Changes a groups name
+SSI *SSIData::changeGroup(const QString &currentName, const QString &newName)
+{
+	// Find the group
+	SSI *group = findGroup(currentName);
+	// No sense in trying to change the group's name if it doesn't exist
+	if (group != 0L)
+	{ // Printing some debugging info
+		kdDebug(14150) << k_funcinfo << "Building group name change request"
+					   << endl;
+		// Change the info in the SSI for the group name
+		// Sending the OSCAR serverthis SNAC, where the
+		// group ID is the same, but the name in the
+		// SNAC has changed _should_ change the name of
+		// the group on the server -Chris
+		group->name = newName;
+	}
+	// Return the group, which will be null if this couldn't
+	// find the group
+	return group;
+}
+
 // Finds the buddy with given name and group... returns NULL if not found
 SSI *SSIData::findBuddy(const QString &name, const QString &group)
 {
