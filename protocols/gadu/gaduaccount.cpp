@@ -504,20 +504,24 @@ GaduAccount::slotSessionDisconnect()
 void
 GaduAccount::userlist( const gaduContactsList& u)
 {
-	QString contactname;
 	kdDebug(14100)<<"### Got userlist - gadu account"<<endl;
 	
-	for ( QPtrListIterator< contactLine > loo(u); ++loo; loo!=0 ){ 
+	QString contactname;
+	int i;
+	
+	QPtrListIterator< contactLine > loo(u);
+	
+	for ( i=u.count() ; i-- ; i ){ 
 	    kdDebug(14100)<<"uin "<< (*loo)->uin << endl;
 	
 	    if ((*loo)->uin.isNull()){
 		kdDebug(14100) << "no Uin, strange.. "<<endl;
-		continue;
+		goto next_cont;
 	    }
 
  	    if (contactsMap_.contains((*loo)->uin.toUInt())){
 		kdDebug(14100) << "UIN allready exists in contacts "<< (*loo)->uin << endl; 
-		continue;
+		goto next_cont;
 	    }
     
 	    // if there is no nicname
@@ -551,7 +555,9 @@ GaduAccount::userlist( const gaduContactsList& u)
 		contactname=(*loo)->nickname;
 	    }
 	    addContact( (*loo)->uin, contactname, 0L, QString::null);
-    	}
+next_cont:
+	    ++loo;
+	}
 
 }
 
