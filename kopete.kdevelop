@@ -16,9 +16,13 @@
     <ignoreparts>
       <part>kdevabbrev</part>
       <part>kdevbookmarks</part>
-      <part>kdevsnippet</part>
-      <part>kdevfileselector</part>
       <part>kdevdistpart</part>
+      <part>kdevvalgrind</part>
+      <part>kdevdebugger</part>
+      <part>kdevctags2</part>
+      <part>kdevsnippet</part>
+      <part>kdevquickopen</part>
+      <part>kdevfileselector</part>
     </ignoreparts>
     <secondaryLanguages/>
     <versioncontrol>kdevcvsservice</versioncontrol>
@@ -126,7 +130,7 @@
       <abortonerror>true</abortonerror>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin>/usr/local/bin/unsermake</makebin>
+      <makebin>make</makebin>
       <prio>0</prio>
     </make>
     <general>
@@ -145,8 +149,8 @@
     <configurations>
       <default>
         <configargs>--enable-debug=full</configargs>
-        <builddir>/home/kde/build/head/kdenetwork/kopete</builddir>
-        <topsourcedir>/home/kde/head/kdenetwork</topsourcedir>
+        <builddir/>
+        <topsourcedir/>
         <cppflags/>
         <ldflags/>
         <ccompiler>kdevgccoptions</ccompiler>
@@ -164,12 +168,7 @@
   </kdevautoproject>
   <kdevfilecreate>
     <filetypes/>
-    <useglobaltypes>
-      <type ext="ui" />
-      <type ext="cpp" />
-      <type ext="c" />
-      <type ext="h" />
-    </useglobaltypes>
+    <useglobaltypes/>
   </kdevfilecreate>
   <cppsupportpart>
     <codecompletion/>

@@ -74,9 +74,7 @@ GroupWiseAccount::GroupWiseAccount( GroupWiseProtocol *parent, const QString& ac
 {
 	Q_UNUSED( name );
 	// Init the myself contact
-	// FIXME: I think we should add a global self metaContact (Olivier)
-	Kopete::MetaContact *metaContact = new Kopete::MetaContact;
-	setMyself( new GroupWiseContact( this, accountId(), metaContact, 0, 0, 0 ) );
+	setMyself( new GroupWiseContact( this, accountId(), Kopete::ContactList::self()->myself(), 0, 0, 0 ) );
 	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
 
 	// Contact list management

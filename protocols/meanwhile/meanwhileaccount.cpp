@@ -22,6 +22,7 @@
 #include "meanwhilecontact.h"
 #include "kopetemessagemanager.h"
 #include "kopetepassword.h"
+#include "kopetecontactlist.h"
 
 #include <kaction.h>
 #include <kpopupmenu.h>
@@ -50,7 +51,7 @@ MeanwhileAccount::MeanwhileAccount(
                         accountId(),
                         accountId(),
                         this,
-                        0L));
+						Kopete::ContactList::self()->myself()));
     myself()->setOnlineStatus(MeanwhileProtocol::protocol()->meanwhileOffline);
     server = NULL;
     infoPlugin = new MeanwhilePlugin();

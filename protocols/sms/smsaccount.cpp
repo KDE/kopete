@@ -22,6 +22,7 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kopetemetacontact.h>
+#include <kopetecontactlist.h>
 
 #include "kopeteuiglobal.h"
 
@@ -32,7 +33,7 @@
 SMSAccount::SMSAccount( SMSProtocol *parent, const QString &accountID, const char *name )
 	: Kopete::Account( parent, accountID, name )
 {
-	setMyself( new SMSContact(this, accountID, accountID, 0L) );
+	setMyself( new SMSContact(this, accountID, accountID, Kopete::ContactList::self()->myself()) );
 	loadConfig();
 	connect();
 }

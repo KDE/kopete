@@ -15,6 +15,9 @@
 */
 
 #include <klocale.h>
+
+#include "kopetecontactlist.h"
+
 #include "oscartypes.h"
 #include "oscaraccount.h"
 
@@ -22,7 +25,7 @@
 
 
 OscarMyselfContact::OscarMyselfContact( OscarAccount* account )
-	: Kopete::Contact( account, account->accountId(), 0, QString::null )
+: Kopete::Contact( account, account->accountId(), Kopete::ContactList::self()->myself() )
 {
 	QObject::connect( account->engine(), SIGNAL( haveOwnInfo() ), this, SLOT( userInfoUpdated() ) );
 }

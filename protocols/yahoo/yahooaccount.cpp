@@ -71,7 +71,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	m_lastDisconnectCode = 0;
 	m_currentMailCount = 0;
 
-	setMyself( new YahooContact( this, accountId, accountId, 0 ) );
+	setMyself( new YahooContact( this, accountId, accountId, Kopete::ContactList::self()->myself() ) );
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( parent->Offline );
 
 	QString displayName = configGroup()->readEntry(QString::fromLatin1("displayName"));

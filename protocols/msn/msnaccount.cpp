@@ -58,8 +58,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 	m_newContactList=false;
 
 	// Init the myself contact
-	// FIXME: I think we should add a global self metaContact ( Olivier )
-	setMyself( new MSNContact( this, accountId(), 0L ) );
+	setMyself( new MSNContact( this, accountId(), Kopete::ContactList::self()->myself() ) );
 	//myself()->setOnlineStatus( MSNProtocol::protocol()->FLN );
 
 	QObject::connect( Kopete::ContactList::self(), SIGNAL( groupRenamed( Kopete::Group *, const QString & ) ),

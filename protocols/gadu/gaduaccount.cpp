@@ -117,7 +117,7 @@ static const char* const servers_ip[ NUM_SERVERS ] = {
 
 	KGlobal::config()->setGroup( "Gadu" );
 
-	setMyself( new GaduContact(  accountId().toInt(), accountId(), this, new Kopete::MetaContact() ) );
+	setMyself( new GaduContact(  accountId().toInt(), accountId(), this, Kopete::ContactList::self()->myself() ) );
 
 	p->status = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
 	p->lastDescription = QString::null;
