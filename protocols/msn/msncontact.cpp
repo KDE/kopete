@@ -57,12 +57,20 @@ MSNContact::MSNContact( KopeteAccount *account, const QString &id, const QString
 
 	setFileCapable( true );
 
-	// When we are not connected, it's because we are loading the contactlist. so we set the initial status to offline.
-	// We set offline directly because modifying the status after is too slow. (notification, contactlist updating,....)
-	//When we are connected, it can be because the user add a contact with the wizzard, and it can be because we are creating a temporary contact.
-	// if it's aded by the wizard, the status will be set immediately after.  if it's a temporary contact, better to set the unknown status.
+	// When we are not connected, it's because we are loading the contactlist.
+	// so we set the initial status to offline.
+	// We set offline directly because modifying the status after is too slow.
+	// (notification, contactlist updating,....)
+	//
+	// FIXME: Hacks like these shouldn't happen in the protocols, but should be
+	//        covered properly at the libkopete level instead - Martijn
+	//
+	// When we are connected, it can be because the user added a contact with the
+	// wizard, and it can be because we are creating a temporary contact.
+	// if it's added by the wizard, the status will be set immediately after.
+	// if it's a temporary contact, better to set the unknown status.
 	setOnlineStatus( ( parent && parent->isTemporary() ) ? MSNProtocol::protocol()->UNK : MSNProtocol::protocol()->FLN );
-	
+
 	actionBlock = 0L;
 }
 
@@ -73,7 +81,9 @@ MSNContact::~MSNContact()
 
 bool MSNContact::isReachable()
 {
-	if ( account()->isConnected() && isOnline() )
+	// When we are invisible we can't start a chat with others, make isReachable return false
+	// (This is an MSN limitation, not a problem in Kopete)
+	if ( account()->isConnected() && isOnline() && account()->myself()->onlineStatus() != MSNProtocol::protocol()->HDN )
 		return true;
 	else
 		return false;
@@ -542,7 +552,6 @@ void MSNContact::setObject(const QString &obj)
 	m_displayPicture=0;
 	emit displayPictureChanged();
 }
-
 
 #include "msncontact.moc"
 
