@@ -1206,7 +1206,6 @@ void ChatView::slotRightClick( const QString &, const QPoint &point )
 	else
 	{
 		KPopupMenu *chatWindowPopup = new KPopupMenu();
-		connect(p,SIGNAL(aboutToHide()),p,SLOT(deleteLater()));
 
 		if( activeElement.className() == QString::fromLatin1("KopeteDisplayName") )
 		{
