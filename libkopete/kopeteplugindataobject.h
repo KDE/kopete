@@ -3,7 +3,8 @@
 
     Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -122,6 +123,22 @@ public:
 	 * this does not clear icons string if you set false
 	 */
 	void setUseCustomIcon( bool useCustomIcon );
+
+signals:
+	/**
+	 * The plugin data was changed (by a plugin)
+	 */
+	void pluginDataChanged();
+
+	/**
+	 * The icon to use for some state has changed
+	 */
+	void iconChanged( KopetePluginDataObject::IconState state, const QString &icon );
+
+	/**
+	 * The useCustomIcon property has changed
+	 */
+	void useCustomIconChanged( bool useCustomIcon );
 
 protected:
 	/**

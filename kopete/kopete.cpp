@@ -240,13 +240,8 @@ void Kopete::quitKopete()
 	if ( !m_mainWindow.isNull() )
 		m_mainWindow->close();
 
-	// First save the contacts and accounts before unloading them
-	// FIXME: After KDE 3.2 we _really_ need to find a way to save these lists
-	//        whenever they change instead of on exit and explicit save only.
-	//        This requires 'dirty' notifications for all involved objects
-	//        though, after which we can fire a 1-sec timer to do the saving,
-	//        much like the contact list sorting. Too intrusive for now,
-	//        that's for sure. - Martijn
+	// save the contact list now, just in case a change was made very recently and
+	// it hasn't autosaved yet.
 	KopeteContactList::contactList()->save();
 	KopeteAccountManager::manager()->save();
 

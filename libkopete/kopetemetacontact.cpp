@@ -74,6 +74,21 @@ KopeteMetaContact::KopeteMetaContact()
 	d->temporary = false;
 
 	d->onlineStatus = KopeteOnlineStatus::Offline;
+
+	connect( this, SIGNAL( pluginDataChanged() ), SLOT( emitPersistentDataChanged() ) );
+	connect( this, SIGNAL( iconChanged( KopetePluginDataObject::IconState, const QString & ) ), SLOT( emitPersistentDataChanged() ) );
+	connect( this, SIGNAL( useCustomIconChanged( bool ) ), SLOT( emitPersistentDataChanged() ) );
+	connect( this, SIGNAL( displayNameChanged( const QString &, const QString & ) ), SLOT( emitPersistentDataChanged() ) );
+	connect( this, SIGNAL( movedToGroup( KopeteMetaContact *, KopeteGroup *, KopeteGroup * ) ), SLOT( emitPersistentDataChanged() ) );
+	connect( this, SIGNAL( removedFromGroup( KopeteMetaContact *, KopeteGroup * ) ), SLOT( emitPersistentDataChanged() ) );
+	connect( this, SIGNAL( addedToGroup( KopeteMetaContact *, KopeteGroup * ) ), SLOT( emitPersistentDataChanged() ) );
+	connect( this, SIGNAL( contactAdded( KopeteContact * ) ), SLOT( emitPersistentDataChanged() ) );
+	connect( this, SIGNAL( contactRemoved( KopeteContact * ) ), SLOT( emitPersistentDataChanged() ) );
+}
+
+void KopeteMetaContact::emitPersistentDataChanged()
+{
+	emit persistentDataChanged( this );
 }
 
 KopeteMetaContact::~KopeteMetaContact()
@@ -475,8 +490,6 @@ void KopeteMetaContact::setDisplayName( const QString &name )
 	const QString old = d->displayName;
 	d->displayName = name;
 
-	emit displayNameChanged( old , name );
-
 	//The name is set by the user, disable tracking
 	d->trackChildNameChanges = false;
 
@@ -489,6 +502,8 @@ void KopeteMetaContact::setDisplayName( const QString &name )
 	for( KopeteContact *c = d->contacts.first(); c ; c = d->contacts.next() )
 		c->rename( name );
 #endif
+
+	emit displayNameChanged( old , name );
 }
 
 QString KopeteMetaContact::displayName() const
@@ -512,6 +527,7 @@ void KopeteMetaContact::setTrackChildNameChanges( bool  track  )
 	{
 		d->trackChildNameChanges = false;
 	}
+	emitPersistentDataChanged();
 }
 
 void KopeteMetaContact::slotContactNameChanged( const QString &/*oldName*/, const QString &newName )
@@ -525,6 +541,7 @@ void KopeteMetaContact::slotContactNameChanged( const QString &/*oldName*/, cons
 		//because d->trackChildNameChanges is set to false in setDisplayName
 		d->trackChildNameChanges = true;
 	}
+	emitPersistentDataChanged();
 }
 
 void KopeteMetaContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
@@ -771,6 +788,8 @@ void KopeteMetaContact::setMetaContactId( const QString& newMetaContactId )
 	removeKABC();
 	d->metaContactId = newMetaContactId;
 	updateKABC();
+
+	emitPersistentDataChanged();
 }
 
 void KopeteMetaContact::updateKABC()

@@ -245,10 +245,14 @@ signals:
 	 */
 	void groupRenamed(KopeteGroup *, const QString & oldname);
 
-	/* Not used yet.... */
-//	void addedToGroup( KopeteMetaContact *mc, const QString &to );
-//	void removedFromGroup( KopeteMetaContact *mc, const QString &from );
-
+	/**
+	 * A contact has been added to a group
+	 */
+	void metaContactAddedToGroup( KopeteMetaContact *mc, KopeteGroup *to );
+	/**
+	 * A contact has been removed from a group
+	 */
+	void metaContactRemovedFromGroup( KopeteMetaContact *mc, KopeteGroup *from );
 
 	/**
 	 * This signal is emit when the selection has changed, it is emitted after the following slot
@@ -261,6 +265,12 @@ signals:
 	 * you can connect this signal to KAction::setEnabled if you have an action which is applied to only one contact
 	 */
 	void metaContactSelected(bool);
+
+private slots:
+	/**
+	 * Called when the contact list changes. Flags the list dirty and schedules a save for a little while later.
+	 */
+	void slotSaveLater();
 
 private:
 	/**

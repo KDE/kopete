@@ -385,6 +385,11 @@ signals:
 	 */
 	void contactIdleStateChanged( KopeteContact *contact );
 
+	/**
+	 * Some part of this object's persistent data (as returned by toXML) has changed.
+	 */
+	void persistentDataChanged( KopeteMetaContact *metaContact );
+
 private slots:
 	/**
 	 * Update the contact's online status and emit onlineStatusChanged
@@ -417,6 +422,11 @@ private slots:
 	 * Perform a delayed address book write
 	 */
 	void slotWriteAddressBook();
+
+	/**
+	 * Emits the persistentDataChanged signal, passing this as the KopeteMetaContact* argument
+	 */
+	void emitPersistentDataChanged();
 private:
 	KopeteContact *preferredContact();
 

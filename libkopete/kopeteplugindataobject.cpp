@@ -3,7 +3,8 @@
 
     Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -53,11 +54,15 @@ void KopetePluginDataObject::setPluginData( KopetePlugin *plugin, const QMap<QSt
 	}
 
 	d->pluginData[ plugin->pluginId() ] = pluginData;
+
+	emit pluginDataChanged();
 }
 
 void KopetePluginDataObject::setPluginData( KopetePlugin *p, const QString &key, const QString &value )
 {
 	d->pluginData[ p->pluginId() ][ key ] = value;
+
+	emit pluginDataChanged();
 }
 
 QMap<QString, QString> KopetePluginDataObject::pluginData( KopetePlugin *plugin ) const
@@ -248,6 +253,8 @@ void KopetePluginDataObject::setIcon( const QString& icon , KopetePluginDataObje
 		d->icons.remove( state );
 	else
 		d->icons[ state ] = icon;
+
+	emit iconChanged( state, icon );
 }
 
 bool KopetePluginDataObject::useCustomIcon() const
@@ -257,7 +264,11 @@ bool KopetePluginDataObject::useCustomIcon() const
 
 void KopetePluginDataObject::setUseCustomIcon( bool useCustomIcon )
 {
-	d->useCustomIcon = useCustomIcon;
+	if ( d->useCustomIcon != useCustomIcon )
+	{
+		d->useCustomIcon = useCustomIcon;
+		emit useCustomIconChanged( useCustomIcon );
+	}
 }
 
 #include "kopeteplugindataobject.moc"

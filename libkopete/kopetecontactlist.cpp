@@ -21,6 +21,7 @@
 
 #include <qdir.h>
 #include <qregexp.h>
+#include <qtimer.h>
 
 #include <kapplication.h>
 #include <kabc/stdaddressbook.h>
@@ -46,6 +47,8 @@ class KopeteContactList::KopeteContactListPrivate
 	QPtrList<KopeteMetaContact> selectedMetaContacts;
 	QPtrList<KopeteGroup> selectedGroups;
 
+	QTimer *saveTimer;
+
 	/**
 	 * Current contact list version * 10 ( i.e. '10' is version '1.0' )
 	 */
@@ -69,12 +72,20 @@ KopeteContactList::KopeteContactList()
 
 	//no contactlist loaded yet, don't save them
 	d->loaded=false;
+
+	// automatically save on changes to the list
+	d->saveTimer = new QTimer( this, "saveTimer" );
+	connect( d->saveTimer, SIGNAL( timeout() ), SLOT ( save() ) );
+
+	connect( this, SIGNAL( metaContactAdded( KopeteMetaContact * ) ), SLOT( slotSaveLater() ) );
+	connect( this, SIGNAL( metaContactDeleted( KopeteMetaContact * ) ), SLOT( slotSaveLater() ) );
+	connect( this, SIGNAL( groupAdded( KopeteGroup * ) ), SLOT( slotSaveLater() ) );
+	connect( this, SIGNAL( groupRemoved( KopeteGroup * ) ), SLOT( slotSaveLater() ) );
+	connect( this, SIGNAL( groupRenamed( KopeteGroup *, const QString & ) ), SLOT( slotSaveLater() ) );
 }
 
 KopeteContactList::~KopeteContactList()
 {
-// save is currently called in ~kopete (before the deletion of plugins)
-//	save();
 	delete d;
 }
 
@@ -111,6 +122,9 @@ void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 	d->contacts.append( mc );
 
 	emit metaContactAdded( mc );
+	connect( mc, SIGNAL( persistentDataChanged( KopeteMetaContact * ) ), SLOT( slotSaveLater() ) );
+	connect( mc, SIGNAL( addedToGroup( KopeteMetaContact *, KopeteGroup * ) ), SIGNAL( metaContactAddedToGroup( KopeteMetaContact *, KopeteGroup * ) ) );
+	connect( mc, SIGNAL( removedFromGroup( KopeteMetaContact *, KopeteGroup * ) ), SIGNAL( metaContactRemovedFromGroup( KopeteMetaContact *, KopeteGroup * ) ) );
 }
 
 /*
@@ -127,7 +141,8 @@ void KopeteContactList::slotRemovedFromGroup( KopeteMetaContact *mc, const QStri
 
 void KopeteContactList::loadXML()
 {
-	addGroup( KopeteGroup::topLevel() );
+	// don't save when we're in the middle of this...
+	d->loaded = false;
 
 	QString filename = locateLocal( "appdata", QString::fromLatin1( "contactlist.xml" ) );
 	if( filename.isEmpty() )
@@ -168,6 +183,8 @@ void KopeteContactList::loadXML()
 
 		list = contactList.documentElement();
 	}
+
+	addGroup( KopeteGroup::topLevel() );
 
 	QDomElement element = list.firstChild().toElement();
 	while( !element.isNull() )
@@ -605,7 +622,13 @@ void KopeteContactList::saveXML()
 		stream->setEncoding( QTextStream::UnicodeUTF8 );
 		toXML().save( *stream, 4 );
 
-		if ( !contactListFile.close() )
+		if ( contactListFile.close() )
+		{
+			// cancel any scheduled saves
+			d->saveTimer->stop();
+			return;
+		}
+		else
 		{
 			kdDebug(14010) << "KopeteContactList::saveXML: failed to write contactlist, error code is: " << contactListFile.status() << endl;
 		}
@@ -615,6 +638,9 @@ void KopeteContactList::saveXML()
 		kdWarning(14010) << "KopeteContactList::saveXML: Couldn't open contact list file "
 			<< contactListFileName << ". Contact list not saved." << endl;
 	}
+
+	// if we got here, saving the contact list failed. retry every minute until it works.
+	d->saveTimer->start( 60000, true /* single-shot: will get restarted by us next time if it's still failing */ );
 }
 
 const QDomDocument KopeteContactList::toXML()
@@ -828,8 +854,8 @@ KopeteGroupList KopeteContactList::groups() const
 
 void KopeteContactList::removeMetaContact(KopeteMetaContact *m)
 {
-	emit metaContactDeleted( m );
 	d->contacts.remove( m );
+	emit metaContactDeleted( m );
 	m->deleteLater();
 }
 
@@ -838,7 +864,7 @@ QPtrList<KopeteMetaContact> KopeteContactList::metaContacts() const
 	return d->contacts;
 }
 
-void KopeteContactList::addGroup( KopeteGroup * g)
+void KopeteContactList::addGroup( KopeteGroup * g )
 {
 	if(!d->groups.contains(g) )
 	{
@@ -848,7 +874,7 @@ void KopeteContactList::addGroup( KopeteGroup * g)
 	}
 }
 
-void KopeteContactList::removeGroup( KopeteGroup *g)
+void KopeteContactList::removeGroup( KopeteGroup *g )
 {
 	d->groups.remove( g );
 	emit groupRemoved( g );
@@ -900,6 +926,14 @@ void KopeteContactList::setSelectedItems(QPtrList<KopeteMetaContact> metaContact
 
 	emit metaContactSelected( groups.isEmpty() && metaContacts.count()==1 );
 	emit selectionChanged();
+}
+
+
+void KopeteContactList::slotSaveLater()
+{
+	// if we already have a save scheduled, it will be cancelled. either way,
+	// start a timer to save the contact list a bit later.
+	d->saveTimer->start( 1000 /* 1 second */, true /* single-shot */ );
 }
 
 
