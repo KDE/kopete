@@ -75,7 +75,7 @@ KopeteAccount::KopeteAccount( KopeteProtocol *parent, const QString &accountId, 
 	d->protocol = parent;
 	d->id = accountId;
 	d->autologin = false;
-	d->rememberPassword;
+	d->rememberPassword = false;
 
 #if KDE_IS_VERSION( 3, 1, 90 )
 	d->wallet = 0L;
