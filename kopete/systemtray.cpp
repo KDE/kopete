@@ -19,7 +19,6 @@
 
 #include "systemtray.h"
 
-//#include <qpixmap.h>
 #include <qtimer.h>
 #include <qtooltip.h>
 #include <qregexp.h>
@@ -34,7 +33,7 @@
 #include "kopeteprefs.h"
 #include "kopetemetacontact.h"
 #include "kopeteaccount.h"
-
+#include "kopeteaccountmanager.h"
 
 KopeteSystemTray* KopeteSystemTray::s_systemTray = 0L;
 
@@ -56,15 +55,20 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent, const char* name)
 	mIsBlinking = false;
 	mBlinkTimer = new QTimer(this, "mBlinkTimer");
 
-	//mKopeteIcon = kapp->miniIcon();
-	mKopeteIcon = loadIcon( "kopete" );
+	mKopeteIcon = loadIcon("kopete");
 
 	connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
 	connect(KopeteMessageManagerFactory::factory() , SIGNAL(newEvent(KopeteEvent*)),
 		this, SLOT(slotNewEvent(KopeteEvent*)));
 	connect(KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()));
 
-	setPixmap(mKopeteIcon);
+	connect(KopeteAccountManager::manager(),
+		SIGNAL(accountOnlineStatusChanged(KopeteAccount *,
+		const KopeteOnlineStatus &, const KopeteOnlineStatus &)),
+	this, SLOT(slotReevaluateAccountStates()));
+
+	//setPixmap(mKopeteIcon);
+	slotReevaluateAccountStates();
 	slotConfigChanged();
 
 	m_balloon=0l;
@@ -143,7 +147,7 @@ void KopeteSystemTray::startBlink()
 {
 	if ( mMovie.isNull() )
 		mMovie = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Panel );
-	
+
 	startBlink( mMovie );
 }
 
@@ -159,7 +163,8 @@ void KopeteSystemTray::stopBlink()
 
 	mIsBlinkIcon = false;
 	mIsBlinking = false;
-	setPixmap( mKopeteIcon );
+	//setPixmap( mKopeteIcon );
+	slotReevaluateAccountStates();
 }
 
 void KopeteSystemTray::slotBlink()
@@ -261,6 +266,59 @@ void KopeteSystemTray::slotConfigChanged()
 		hide(); // for users without kicker or a similar docking app
 }
 
+void KopeteSystemTray::slotReevaluateAccountStates()
+{
+	//kdDebug(14010) << k_funcinfo << endl;
+	bool bOnline = false;
+	bool bAway = false;
+	bool bOffline = false;
+	KopeteContact *c = 0;
+
+	for (QPtrListIterator<KopeteAccount> it(KopeteAccountManager::manager()->accounts()); it.current(); ++it)
+	{
+		c = it.current()->myself();
+		if (!c)
+			continue;
+
+		if (c->onlineStatus().status() == KopeteOnlineStatus::Online)
+		{
+			bOnline = true; // at least one contact is online
+		}
+		else if (c->onlineStatus().status() == KopeteOnlineStatus::Away)
+		{
+			bAway = true; // at least one contact is away
+		}
+		else // this account must be offline (or unknown, which I don't know how to handle)
+		{
+			bOffline = true;
+		}
+	}
+
+	if (!bOnline && !bAway && !bOffline) // special case, no accounts defined (yet)
+		bOffline = true;
+
+	if (bAway)
+	{
+		if (!bOnline && !bOffline) // none online and none offline -> all away
+			setPixmap(loadIcon("kopete_all_away"));
+		else
+			setPixmap(loadIcon("kopete_some_away"));
+	}
+	else if(bOnline)
+	{
+		/*if(bOffline) // at least one offline and at least one online -> some accounts online
+			setPixmap(loadIcon("kopete_some_online"));
+		else*/ // none offline and none away -> all online
+			setPixmap(mKopeteIcon);
+	}
+	else // none away and none online -> all offline
+	{
+		//kdDebug(14010) << k_funcinfo << "All Accounts offline!" << endl;
+		setPixmap(loadIcon("kopete_offline"));
+	}
+}
+
+
 QString KopeteSystemTray::squashMessage( const KopeteMessage& msg )
 {
 	QString msgText = msg.parsedBody();
@@ -305,7 +363,6 @@ QString KopeteSystemTray::squashMessage( const KopeteMessage& msg )
 	}
 	return msgText;
 }
+
 #include "systemtray.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
-

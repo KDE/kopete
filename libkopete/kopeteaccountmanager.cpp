@@ -4,7 +4,7 @@
     Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -30,6 +30,7 @@
 #include "kopeteaccount.h"
 #include "kopeteaway.h"
 #include "kopeteprotocol.h"
+#include "kopetecontact.h"
 #include "kopetepluginmanager.h"
 
 class KopeteAccountPtrList : public QPtrList<KopeteAccount>
@@ -200,7 +201,8 @@ KopeteAccount * KopeteAccountManager::findAccount( const QString &protocolId, co
 
 void KopeteAccountManager::removeAccount( KopeteAccount *account )
 {
-	kdDebug( 14010 ) << k_funcinfo << "Removing account '" << account->accountId() << "' and cleanning up config" << endl;
+	kdDebug( 14010 ) << k_funcinfo << "Removing account '" <<
+		account->accountId() << "' and cleaning up config" << endl;
 
 	KopeteProtocol *protocol = account->protocol();
 
@@ -229,14 +231,15 @@ void KopeteAccountManager::removeAccount( KopeteAccount *account )
 
 void KopeteAccountManager::unregisterAccount( KopeteAccount *account )
 {
-	kdDebug( 14010 ) << k_funcinfo << "Unregistering account " << account->accountId() << endl;
+	/*kdDebug( 14010 ) << k_funcinfo << "Unregistering account " <<
+		account->accountId() << endl;*/
 	d->accounts.remove( account );
 	emit accountUnregistered( account );
 }
 
 void KopeteAccountManager::save()
 {
-	kdDebug( 14010 ) << k_funcinfo << endl;
+	//kdDebug( 14010 ) << k_funcinfo << endl;
 	d->accounts.sort();
 	for ( QPtrListIterator<KopeteAccount> it( d->accounts ); it.current(); ++it )
 		it.current()->writeConfig( it.current()->configGroup() );
@@ -246,7 +249,8 @@ void KopeteAccountManager::save()
 
 void KopeteAccountManager::load()
 {
-	connect( KopetePluginManager::self(), SIGNAL( pluginLoaded( KopetePlugin * ) ), SLOT( slotPluginLoaded( KopetePlugin * ) ) );
+	connect( KopetePluginManager::self(), SIGNAL( pluginLoaded( KopetePlugin * ) ),
+		this, SLOT( slotPluginLoaded( KopetePlugin * ) ) );
 
 	// Iterate over all groups that start with "Account_" as those are accounts
 	// and load the required protocols if the account is enabled.
@@ -291,15 +295,18 @@ void KopeteAccountManager::slotPluginLoaded( KopetePlugin *plugin )
 		QString accountId = config->readEntry( "AccountId" );
 		if ( accountId.isEmpty() )
 		{
-			kdWarning( 14010 ) << k_funcinfo << "Not creating account for empty accountId." << endl;
+			kdWarning( 14010 ) << k_funcinfo <<
+				"Not creating account for empty accountId." << endl;
 			continue;
 		}
 
-		kdDebug( 14010 ) << k_funcinfo << "Creating account for '" << accountId << "'" << endl;
+		kdDebug( 14010 ) << k_funcinfo <<
+			"Creating account for '" << accountId << "'" << endl;
 		KopeteAccount *account = protocol->createNewAccount( accountId );
 		if ( !account )
 		{
-			kdWarning( 14010 ) << k_funcinfo << "Failed to create account for '" << accountId << "'" << endl;
+			kdWarning( 14010 ) << k_funcinfo <<
+				"Failed to create account for '" << accountId << "'" << endl;
 			continue;
 		}
 		account->readConfig( *it );
@@ -317,12 +324,27 @@ void KopeteAccountManager::autoConnect()
 
 void KopeteAccountManager::notifyAccountReady( KopeteAccount *account )
 {
-	kdDebug(14010) << k_funcinfo << account->accountId() << endl;
+	//kdDebug(14010) << k_funcinfo << account->accountId() << endl;
 	emit accountReady( account );
 	d->accounts.sort();
+
+	// Connect to the account's status changed signal
+	connect(account->myself(), SIGNAL(onlineStatusChanged(KopeteContact *,
+			const KopeteOnlineStatus &, const KopeteOnlineStatus &)),
+		this, SLOT(slotAccountOnlineStatusChanged(KopeteContact *,
+			const KopeteOnlineStatus &, const KopeteOnlineStatus &)));
+}
+
+void KopeteAccountManager::slotAccountOnlineStatusChanged(KopeteContact *c,
+	const KopeteOnlineStatus &oldStatus, const KopeteOnlineStatus &newStatus)
+{
+	KopeteAccount *account = c->account();
+	if (!account)
+		return;
+
+	//kdDebug(14010) << k_funcinfo << endl;
+	emit accountOnlineStatusChanged(account, oldStatus, newStatus);
 }
 
 #include "kopeteaccountmanager.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
-

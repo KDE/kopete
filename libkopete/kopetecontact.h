@@ -276,7 +276,6 @@ public:
 	 */
 	void setIdleTime(unsigned long int);
 
-
 	/**
 	 * @return A QStringList containing all property keys
 	 **/

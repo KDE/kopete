@@ -74,12 +74,13 @@ private slots:
 	void slotNewEvent(KopeteEvent*);
 	void slotEventDone(KopeteEvent *);
 	void slotConfigChanged();
+	void slotReevaluateAccountStates();
 
 private:
 	KopeteSystemTray( QWidget* parent, const char* name );
 	void addBalloon();
 	QString squashMessage( const KopeteMessage& msgText );
-	
+
 	QTimer *mBlinkTimer;
 	QPixmap mKopeteIcon;
 	QPixmap mBlinkIcon;

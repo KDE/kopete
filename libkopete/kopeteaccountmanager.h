@@ -4,7 +4,7 @@
     Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -22,10 +22,12 @@
 #include <qobject.h>
 #include <qptrlist.h>
 #include <qdict.h>
+#include <kopeteonlinestatus.h>
 
 class KopeteAccount;
 class KopetePlugin;
 class KopeteProtocol;
+class KopeteContact;
 
 class KopeteAccountManagerPrivate;
 
@@ -147,6 +149,16 @@ signals:
 	 */
 	void accountUnregistered( KopeteAccount *account );
 
+	/**
+	 * \brief An account has changed its onlinestatus
+	 * Technically this monitors KopeteAccount::myself() onlinestatus changes
+	 * @p account Account which changed its onlinestatus
+	 * @p oldStatus Status before the change
+	 * @p newStatus New status
+	 */
+	void accountOnlineStatusChanged(KopeteAccount *account,
+		const KopeteOnlineStatus &oldStatus, const KopeteOnlineStatus &newStatus);
+
 private:
 	/**
 	 * Private constructor, because we're a singleton
@@ -176,6 +188,8 @@ private:
 
 private slots:
 	void slotPluginLoaded( KopetePlugin *plugin );
+	void slotAccountOnlineStatusChanged(KopeteContact *c,
+		const KopeteOnlineStatus &oldStatus, const KopeteOnlineStatus &newStatus);
 
 private:
 	KopeteAccountManagerPrivate *d;
