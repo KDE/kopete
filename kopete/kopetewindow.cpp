@@ -33,6 +33,7 @@
 #include <kmenubar.h>
 #include <kstatusbar.h>
 #include <kglobalaccel.h>
+#include <kwin.h>
 #include <kdeversion.h>
 
 #include "addcontactwizard.h"
@@ -176,6 +177,12 @@ void KopeteWindow::slotShowHide()
 	else
 	{
 		show();
+		//raise() and show() should normaly deIconify the window. but it doesn't do here due
+		// to a bug in QT or in KDE  (qt3.1.x or KDE 3.1.x) then, i have to call KWin's method
+		if(isMinimized())
+			KWin::deIconifyWindow(winId() );
+		if( !KWin::info( winId() ).onAllDesktops )
+			KWin::setOnDesktop( winId(), KWin::currentDesktop() );
 		raise();
 		setActiveWindow();
 	}
