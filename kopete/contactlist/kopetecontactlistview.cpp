@@ -30,7 +30,7 @@
 #include <qrect.h>
 #include <qtooltip.h>
 #include <qstylesheet.h>
-#include <qdragobject.h>
+#include <kurldrag.h>
 
 #include <kapplication.h>
 #include <kconfig.h>
@@ -909,12 +909,12 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/
 			return;
 		}
 
-		QStrList urlList;
-		QUriDrag::decode( e, urlList );
+		KURL::List urlList;
+		KURLDrag::decode( e, urlList );
 
-		for ( char* url = urlList.first(); url; url = urlList.next() )
+		for ( KURL::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
 		{
-			dest_metaLVI->metaContact()->sendFile( KURL( QString::fromLatin1( url ) ) );
+			dest_metaLVI->metaContact()->sendFile( *it );
 		}
 
 		e->acceptAction();
