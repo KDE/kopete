@@ -14,7 +14,6 @@ TODO for Jabber:
   list
 - ask the same for added contacts
 - provide better feedback for dialogs querying the server
-- try to find a way to read a nickname for yourself from the Jabber roster
 - support avatars and idle times for tooltips
 - when trying to register an account, try to display the actual server error
   message
