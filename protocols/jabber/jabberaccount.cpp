@@ -289,6 +289,8 @@ void JabberAccount::connect ()
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Connecting to Jabber server " << server() << ":" << port() << " with jidDomain " << jidDomain << endl;
 
+	setPresence(protocol()->JabberConnecting, "");
+
 	jabberClient->connectToHost (server(), port(), jidDomain);
 
 	emit connectionAttempt ();
@@ -318,8 +320,6 @@ void JabberAccount::slotHandshaken ()
 			jabberClient->authPlain (accountId().section("@", 0, 0), getPassword(), resource());
 
 	}
-
-	setPresence(protocol()->JabberConnecting, "");
 
 }
 
@@ -500,7 +500,7 @@ void JabberAccount::setPresence (const KopeteOnlineStatus & status, const QStrin
 	{
 		// if we are already connected and changing our presence or if we are connecting
 		// and set our initial presence, send new presence packet to the server
-		if (isConnected () || (myContact->onlineStatus() == protocol()->JabberConnecting))
+		if (isConnected ())
 		{
 			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Sending new presence to the server." << endl;
 
@@ -510,7 +510,7 @@ void JabberAccount::setPresence (const KopeteOnlineStatus & status, const QStrin
 			presence.setStatus (reason);
 			presence.setIsAvailable (true);
 
-			if ((status == protocol()->JabberOnline) || (status == protocol()->JabberConnecting))
+			if (status == protocol()->JabberOnline)
 				presence.setShow ("");
 			else if (status == protocol()->JabberChatty)
 				presence.setShow ("chat");
@@ -528,7 +528,7 @@ void JabberAccount::setPresence (const KopeteOnlineStatus & status, const QStrin
 				return;
 			}
 
-			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating presence to \"" << presence.status () << "\" with reason \"" << reason << endl;
+			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Updating presence to show(" << presence.show () << "), status(" << presence.status () << "), with reason \"" << reason << endl;
 
 			myContact->slotUpdatePresence (status, reason);
 

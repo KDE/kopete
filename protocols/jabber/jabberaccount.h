@@ -71,8 +71,6 @@ public slots:
 	/* Disconnects from the server. */
 	void disconnect ();
 
-	void setPresence (const KopeteOnlineStatus & status, const QString & reason = 0, int priority = 5);
-
 	/* Sends a presence packet to a node. */
 	void sendPresenceToNode (const KopeteOnlineStatus & status, const QString & reason);
 
@@ -112,6 +110,8 @@ private:
 
 	/* Psi backend for this account. */
 	Jabber::Client *jabberClient;
+
+	void setPresence (const KopeteOnlineStatus & status, const QString & reason = 0, int priority = 5);
 
 	/* Asks the specified JID for authorization. */
 	void subscribe (const Jid & jid);
