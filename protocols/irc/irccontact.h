@@ -51,24 +51,41 @@ public:
 	virtual QString statusIcon() const;
 	virtual void execute();
 	virtual void showContextMenu(const QPoint&, const QString&);
-	KIRC *engine;
-	bool waitingPart;
-	bool requestedQuit;
-	IRCServerContact *mContact;
+	
+	bool waitingPart() { return m_waitingPart ;};
+	bool requestedQuit() { return m_requestedQuit; };
+
+	IRCServerContact *serverContact() { return m_serverContact; };
+    KIRC *engine() { return m_engine; };
+
 	QVBox *tabPage() { return mTabPage; };
 	IRCChatView *getChatView() { return chatView; };
-	QString mServer;
-	QString mTarget;
-	QString mGroupName;
+
+	QString serverName() { return m_serverName; };
+	QString targetName() { return m_targetName; } ;
+	QString groupName() { return m_groupName; };
+
 
 	virtual QString id() const;
 	virtual QString data() const;
 
 private:
+	QString m_serverName;
+	QString m_targetName;
+	QString m_groupName;
+
+	bool m_waitingPart;
+	bool m_requestedQuit;
+
+
+	KIRC *m_engine;
+	IRCServerContact *m_serverContact;
 	void initActions();
-	unsigned int mPort;
-	QString mUsername;
-	QString mNickname;
+	unsigned int m_port;
+
+	QString m_username;
+	QString m_nickname;
+
 	bool mJoinOnConnect;
 	IRCChatView *chatView;
 	KPopupMenu *popup;

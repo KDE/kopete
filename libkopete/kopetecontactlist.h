@@ -52,22 +52,8 @@ public:
 	 *       method, it's not completely obsolete either, because protocols
 	 *       with server-side contact lists ( MSN, Jabber, etc. ) may detect
 	 *       new contacts having been added upon reconnect.
-	 *
-	 * FIXME: Also take protocol and identity into account!
 	 */
-	KopeteMetaContact *findContact( const QString &contactId );
-
-	/**
-	 * add a metacontact into the contact list
-	 * It always create a new one
-	 *
-	 * FIXME: Require an id instead of a pointer. The pointer-version should
-	 *        be removed. - Martijn
-	 * FIXME: When we do that, can't we just use findContact again instead?
-	 *        with some clever naming the same method can probably be used
-	 *        - Martijn
-	 */
-	void addMetaContact( KopeteMetaContact *c );
+	KopeteMetaContact *findContact( const QString &contactId,const QString &protocolId );
 
 	/**
 	 * Return all meta contacts
@@ -105,6 +91,12 @@ public:
 	QStringList groups() const;
 
 private:
+	/**
+	 * add a metacontact into the contact list
+	 * It handles the groups for it.
+	 */
+	void addMetaContact( KopeteMetaContact *c );
+
 	/**
 	 * Return a XML representation of the contact list
 	 */

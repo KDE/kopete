@@ -54,7 +54,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 	setIcon( "irc_protocol_small" );
 
 	initIcons();
-	manager = new IRCServerManager();
+	m_serverManager = new IRCServerManager();
 	kdDebug() << "IRC Protocol Plugin: Creating Status Bar icon\n";
 	statusBarIcon = new StatusBarIcon();
 
@@ -73,18 +73,18 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 	}
 
 	QString filename = locateLocal("data", "kopete/irc.buddylist");
-	mConfig = new KSimpleConfig(filename);
+	m_config = new KSimpleConfig(filename);
 
-	QStringList contacts = mConfig->groupList();
+	QStringList contacts = m_config->groupList();
 	for(QStringList::Iterator it = contacts.begin(); it != contacts.end(); it++)
 	{
-		mConfig->setGroup((*it));
-		QString groupName = mConfig->readEntry("Group", "");
+		m_config->setGroup((*it));
+		QString groupName = m_config->readEntry("Group", "");
 		if (groupName.isEmpty())
 		{
 			continue;
 		}
-		QString server = mConfig->readEntry("Server", "");
+		QString server = m_config->readEntry("Server", "");
 		if (server.isEmpty())
 		{
 			KGlobal::config()->setGroup("IRC");
@@ -129,11 +129,11 @@ void IRCProtocol::addContact( const QString &groupName, const QString &server, c
 	QString serverAndNick = nick;
 	serverAndNick.append("@");
 	serverAndNick.append(server);
-	IRCServerContact *serverContact = manager->findServer(serverAndNick);
+	IRCServerContact *serverContact = m_serverManager->findServer(serverAndNick);
 
 	KopeteContactList *l = KopeteContactList::contactList();
-	KopeteMetaContact *m = l->findContact( serverAndNick );
-	KopeteContact *c = m->findContact( serverAndNick );
+	KopeteMetaContact *m = l->findContact( serverAndNick,this->id() );
+	KopeteContact *c = m->findContact( serverAndNick , this->id());
 	if( c )
 	{
 		// Existing contact, update data
@@ -148,7 +148,7 @@ void IRCProtocol::addContact( const QString &groupName, const QString &server, c
 		{
 			(void)new IRCContact(groupName, server, contact, 6667, joinNow, serverContact, m, protocolID);
 		} else {
-			IRCServerContact *serverItem = manager->addServer(serverAndNick, connectNow, this);
+			IRCServerContact *serverItem = m_serverManager->addServer(serverAndNick, connectNow, this);
 			if (serverItem != 0)
 			{
 				(void)new IRCContact(groupName, server, contact, 6667, joinNow, serverItem, m, protocolID);

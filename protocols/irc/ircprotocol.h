@@ -46,6 +46,7 @@ public:
 	/* Plugin reimplementation */
 	void init();
 	bool unload();
+
 	/** KopeteProtocol reimplementation */
 	virtual KopeteContact* createContact( KopeteMetaContact *parent, const QString &serializedData );
 	virtual QString protocolIcon() const;
@@ -56,26 +57,33 @@ public:
 	virtual void setAway(void);
 	virtual void setAvailable(void);
 	virtual bool isAway(void) const;
+
 	//following implementation is incorrect
 	KopeteContact* myself() const { return 0L; }
 	/** Internal */
 	StatusBarIcon *statusBarIcon;
-
 	/** The IRC Engine */
 	QPixmap protocolSmallIcon;
 	QPixmap onlineIcon;
 	QPixmap offlineIcon;
 	QPixmap awayIcon;
-	void addContact(const QString &, const QString &, const QString &, bool, bool);
-	bool mIsConnected;
-	KIRC *engine;
 	QPixmap joinIcon;
 	QPixmap privmsgIcon;
-	IRCServerManager *manager;
-	KSimpleConfig *mConfig;
+
+	void addContact(const QString &, const QString &, const QString &, bool, bool);
+
+	IRCServerManager *serverManager();
+    KSimpleConfig *config() { return m_config; };
+	KIRC *engine() { return m_engine; };
+
 private:
 	void initIcons();
 	KPopupMenu *popup;
+	IRCServerManager *m_serverManager;
+    KSimpleConfig *m_config;
+    KIRC *m_engine;
+	bool m_isConnected;
+
 public slots: // Public slots
   /** No descriptions */
 private slots:

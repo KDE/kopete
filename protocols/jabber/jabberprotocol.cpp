@@ -447,8 +447,8 @@ void JabberProtocol::slotNewContact(JabRosterEntry *contact) {
 	QString group = *(contact->groups.begin());
 
 	KopeteContactList *l = KopeteContactList::contactList();
-	KopeteMetaContact *m = l->findContact(contact->jid);
-	KopeteContact *c = m->findContact(contact->jid);
+	KopeteMetaContact *m = l->findContact(contact->jid, this->id() );
+	KopeteContact *c = m->findContact(contact->jid, this->id());
 
 	if (c) {
 		/* Existing contact, update data. */

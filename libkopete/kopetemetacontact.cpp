@@ -68,6 +68,7 @@ void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups 
 		// Generally, if the groups are explicitly set by the user they
 		// should not be overridden. Until then manage them automatically.
 		// For now just assume an empty group list means override
+        
 		if( m_groups.isEmpty() )
 		{
 			m_groups = groups;
@@ -101,20 +102,8 @@ void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups 
 					new KopeteMetaContactLVI( this, groupLVI ) );
 			}
 		}
+		
 	}
-}
-
-KopeteContact *KopeteMetaContact::findContact( const QString &contactId )
-{
-	QPtrListIterator<KopeteContact> it( m_contacts );
-	for( ; it.current(); ++it )
-	{
-		if( it.current()->id() == contactId )
-			return it.current();
-	}
-
-	// Contact not found
-	return 0L;
 }
 
 KopeteContact *KopeteMetaContact::findContact( const QString &protocolId, const QString &contactId )

@@ -46,28 +46,49 @@ Q_OBJECT
 public:
 	IRCServerContact(const QString &, const QString &, bool, IRCProtocol *protocol);
 	IRCServerContact(IRCProtocol *protocol, bool connectNow = true);
-	KIRC *engine;
-	const QString &nickName() { return mNickname; };
-	const QString &serverName() { return mServer; };
+	KIRC *engine() { return m_engine; };
+	const QString &nickName() { return m_nickname; };
+
+	const QString &serverName() { return m_serverName; };
+    const QString &quitMessage() { return mQuitMessage; };
+
+	void setServerName( const QString &name ) { m_serverName = name; };
+	void setQuitMessage( const QString &msg ) { mQuitMessage = msg; };
+	
 	void newNickname(const QString &newNick);
-	IRCServerManager *mManager;
-	IRCChatWindow *mWindow;
-	QString mNickname;
-	QString mServer;
+	IRCServerManager *serverManager() { return m_serverManager; };
+	IRCChatWindow *chatWindow() { return m_ircChatWindow; };
+	IRCMessage *messenger() { return m_messenger; };
+	IRCCmdParser *parser() { return m_parser; };
+	QStringList activeContacts() { return m_activeContacts; };
 	bool parentClosing();
-	QString mQuitMessage;
-	IRCMessage *messenger;
-	IRCCmdParser *parser;
-	QStringList activeContacts;
-	QVBox *mTabView;
-	bool tryingQuit;
-	bool closing;
-	IRCProtocol *mProtocol;
-	IRCConsoleView *consoleView() { return mConsoleView; };
+
+	bool tryingQuit() { return m_tryingQuit; };
+	bool closing() { return m_closing;};
+	void setClosing( bool c ) { m_closing = c;};
+
+	IRCProtocol *protocol() { return m_protocol; };
+	IRCConsoleView *consoleView() { return m_consoleView; };
+	QVBox *tabView() { return mTabView ;};
 	void initiateDcc(const QString &nickname, const QString &, DCCServer::Type type);
 	QString id() const;
+
 private:
-	IRCConsoleView *mConsoleView;
+	KIRC *m_engine;
+	QString mQuitMessage;
+	IRCMessage *m_messenger;
+	IRCCmdParser *m_parser;
+	QStringList m_activeContacts;
+	QVBox *mTabView;
+	bool m_tryingQuit;
+	bool m_closing;
+
+	QString m_serverName;
+	IRCChatWindow *m_ircChatWindow;
+	IRCServerManager *m_serverManager;
+	IRCConsoleView *m_consoleView;
+	QString m_nickname;
+	IRCProtocol *m_protocol;
 	KPopupMenu *popup;
 	void init();
 private slots:

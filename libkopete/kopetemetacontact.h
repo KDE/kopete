@@ -68,7 +68,6 @@ public:
 	 * For now, just compare the ID field.
 	 * FIXME: Also take protocol and identity into account!
 	 */
-	KopeteContact *findContact( const QString &contactId );
 	KopeteContact *findContact( const QString &protocolId, const QString &contactId );
 	/**
 	 * The name of the icon associated with the contact's status

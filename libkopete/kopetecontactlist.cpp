@@ -53,7 +53,7 @@ KopeteContactList::~KopeteContactList()
 {
 }
 
-KopeteMetaContact *KopeteContactList::findContact( const QString &contactId )
+KopeteMetaContact *KopeteContactList::findContact( const QString &contactId, const QString &protocolId )
 {
 	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
@@ -61,16 +61,19 @@ KopeteMetaContact *KopeteContactList::findContact( const QString &contactId )
 		QPtrListIterator<KopeteContact> contactIt( it.current()->contacts() );
 		for( ; contactIt.current(); ++contactIt )
 		{
-			if( contactIt.current()->id() == contactId )
+			if( (contactIt.current()->id() == contactId) && (contactIt.current()->protocol() == protocolId))
 				return it.current();
 		}
 	}
 
 	// Contact not found, create a new meta contact
-	KopeteMetaContact *c = new KopeteMetaContact();
-	m_contacts.append( c );
-	return c;
+	KopeteMetaContact *mc = new KopeteMetaContact();
+	//m_contacts.append( c );
+	KopeteContactList::contactList()->addMetaContact(mc);
+
+	return mc;
 }
+
 
 void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 {
@@ -99,6 +102,7 @@ void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 		}
 	}
 }
+
 
 void KopeteContactList::loadXML()
 {
