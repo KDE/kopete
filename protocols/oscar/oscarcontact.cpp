@@ -292,31 +292,32 @@ void OscarContact::slotUserInfo(void)
 /** Called when an IM is received */
 void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto*/)
 {
-	if ( tocNormalize(sender) != tocNormalize(mName) )
-		return;
+		// Check if we're the one who sent the message
+		if ( tocNormalize(sender) != tocNormalize(mName) )
+				return;
 
-	TBuddy tmpBuddy;
-	mProtocol->buddyList()->get(&tmpBuddy, mProtocol->buddyList()->getNum(mName));
+		TBuddy tmpBuddy;
+		mProtocol->buddyList()->get(&tmpBuddy, mProtocol->buddyList()->getNum(mName));
 
-	KopeteMessage parsedMessage = parseAIMHTML( message );
-	msgManager()->appendMessage(parsedMessage);
+		KopeteMessage parsedMessage = parseAIMHTML( message );
+		msgManager()->appendMessage(parsedMessage);
 	
-	if ( mProtocol->isAway() ) // send our away message in fire-and-forget-mode :)
-	{
-		kdDebug() << "[OscarContact] slotIMReceived() while we are away, sending away-message to annoy buddy :)" << endl;
+		if ( mProtocol->isAway() ) // send our away message in fire-and-forget-mode :)
+		{
+				kdDebug() << "[OscarContact] slotIMReceived() while we are away, sending away-message to annoy buddy :)" << endl;
 /*
-		// TODO: move to aimprefs and add gui in there!
-		KGlobal::config()->setGroup("Oscar");
-		QString reply = KGlobal::config()->readEntry("AwayMessage", QString("I'm currently away from my computer. Please leave a message for me when I return to my computer."));
+// TODO: move to aimprefs and add gui in there!
+KGlobal::config()->setGroup("Oscar");
+QString reply = KGlobal::config()->readEntry("AwayMessage", QString("I'm currently away from my computer. Please leave a message for me when I return to my computer."));
 
-		if ( KopeteAway::globalAway() )
-			reply = KopeteAway::message();
+if ( KopeteAway::globalAway() )
+reply = KopeteAway::message();
 
-		mProtocol->engine->sendIM(reply, mName, true);
-		KopeteMessage replymsg ( mProtocol->myself(), theContacts , QStyleSheet::escape(reply), KopeteMessage::Outbound);
-		msgManager()->appendMessage(replymsg);
+mProtocol->engine->sendIM(reply, mName, true);
+KopeteMessage replymsg ( mProtocol->myself(), theContacts , QStyleSheet::escape(reply), KopeteMessage::Outbound);
+msgManager()->appendMessage(replymsg);
 */
-	}
+		}
 }
 
 /** Called when we want to send a message */
@@ -463,6 +464,9 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 	<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><font back="#00ff00">bggruen</BODY></HTML>
 	<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><font back="#00ff00"><font color="#ffff00">both</BODY></HTML>
 	<HTML><BODY BGCOLOR="#ffffff"><font face="Arial">LOL</BODY></HTML>
+
+	From GAIM:
+	<FONT COLOR="#0002A6"><FONT SIZE="2">cool cool</FONT></FONT>
 	============================================================================================ */
 
 	kdDebug() << "AIM Plugin: original message: " << m << endl;
@@ -477,19 +481,39 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 
 	kdDebug() << "AIM Plugin: Start of HTML: " << htmlStart << " End of HTML: " << htmlEnd << endl;
 
-	//	if ( result.startsWith("<HTML>") && result.endsWith("</HTML>") )
-	if ( htmlStart == 0 && htmlEnd == (result.length()-7) )
-	{
+	// Remove the HTML tags if there
+	if ( htmlStart == 0 && htmlEnd == (result.length()-7) ){
 		result.remove ( htmlStart, 6 );
 		// Have to modify this a bit since we just took off the first 6 chars
 		result.remove ( htmlEnd - 6, 7 );
 
 		kdDebug() << "AIM Plugin: message after HTML removal: " << result << endl;
+	}
 
-		removeTag ( result, "BODY" );
-		kdDebug() << "AIM Plugin: message after BODY removal: " << result << endl;
-		QStringList colors = removeTag ( result, "FONT" );
-		for (QStringList::Iterator it = colors.begin(); it != colors.end(); it++)
+	// Get the background color for the message
+	QStringList backColors = removeTag( result, "BODY" );
+	for( QStringList::Iterator it = backColors.begin(); it != backColors.end(); it++){
+			// Get the modifier (tag attr)
+			QString modifier = (*it).section('=', 0, 0);
+			// Get the value
+			QString value = (*it).section( '=', 1);
+
+			// Remove the quotes from the value if they're there
+			int quotePlace = value.find( '"', 0);
+			if( quotePlace > -1){
+					value.remove( quotePlace, 1);
+			}
+			quotePlace = value.find( '"', 0);
+			if( quotePlace > -1){
+					value.remove( quotePlace, 1);
+			}
+
+			
+			
+
+	
+		QStringList fontColors = removeTag ( result, "FONT" );
+		for (QStringList::Iterator it = fontColors.begin(); it != fontColors.end(); it++)
 		{
 			QString modifier = (*it).section('=', 0, 0);
 			QString value = (*it).section('=', 1);

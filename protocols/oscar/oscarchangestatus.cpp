@@ -33,8 +33,15 @@ OscarChangeStatus::OscarChangeStatus(QWidget *parent, const char *name ) : Oscar
 	/* Set up the SingleShot away message */
 	lneSingleShot->setText("");
 
-	KGlobal::config()->setGroup("Oscar");
-	away = KGlobal::config()->readEntry("AwayMessage", "I'm currently away from my computer. Please leave a message for me when I return to my computer.");
+	// Set up the combobox
+	QStringList titles = KopeteAway::getInstance()->getTitles(); // Get the titles
+	for(QStringList::iterator i = titles.begin(); i != titles.end(); i++){
+		cmbSavedMessages->insertItem((*i)); // Should be a QString item....
+	}
+
+	// Set as modal
+	setWFlags(Qt::WType_Modal);
+	
 }
 
 OscarChangeStatus::~OscarChangeStatus()
@@ -49,25 +56,5 @@ QString OscarChangeStatus::getStatusMessage(void)
 	} else {
 		return KopeteAway::getInstance()->getMessage(cmbSavedMessages->currentText());
 	}
-/*OscarChangeStatus aimcs;
-	if (request == OSCAR_AWAY)
-	{
-		aimcs.mleMessage->setText(aimcs.away);
-	}
-	aimcs.setWFlags(Qt::WType_Modal);
-	if (aimcs.exec() == QDialog::Accepted)
-	{
-		if (request == OSCAR_AWAY)
-		{
-			KGlobal::config()->setGroup("Oscar");
-			KGlobal::config()->writeEntry("AwayMessage", aimcs.mleMessage->text());
-			KGlobal::config()->sync();
-		}
-		return aimcs.mleMessage->text();
-	}
-	else
-	{
-		return QString("QDialog::Rejected");
-	}*/
 
 }

@@ -205,7 +205,8 @@ DWORD Buffer::getDWord()
 /** Called when a buffer error occurs */
 void Buffer::OnBufError(QString s)
 {
-	printf("Buffer error: %s\n",s.latin1());
+	// Taking this out for now....
+	//kdDebug() << "Buffer error: " << s << endl;
 }
 
 /** sets the buffer and length to the given values */

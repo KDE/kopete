@@ -21,9 +21,11 @@
 #include <qwidget.h>
 #include <oscarchangestatusbase.h>
 
-/**The dialog that is dislpayed when we want to put up an away message
-  *@author twl6
-  */
+/**
+ * The dialog that is dislpayed when we want to put up an away message
+ * @author twl6
+ * @author Chris TenHarmsel
+ */
 
 class OscarChangeStatus : public OscarChangeStatusBase  {
    Q_OBJECT
@@ -32,9 +34,7 @@ public:
 	~OscarChangeStatus();
   /** Gets a status message */
   QString getStatusMessage(void);
-private: // Private attributes
-  /** The actual away message */
-  QString away;
+
 };
 
 #endif

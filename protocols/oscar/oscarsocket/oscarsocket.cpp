@@ -1107,6 +1107,11 @@ void OscarSocket::parseIM(Buffer &inbuf)
 								emit gotIM(message,u.sn,false);
 						}
 						break;
+				case 0x0004: // Away message
+						// The server doesn't actually SEND the away message
+						// I think we have to request it and print it out ourselves
+						break;
+						
 				default: //unknown type
 						kdDebug() << "[OSCAR][parseIM] unknown msg tlv type " << type;
 				};
@@ -1410,31 +1415,31 @@ void OscarSocket::parseUserProfile(Buffer &inbuf)
     profile += QString("Idle Minutes: <B>%1</B><br>\n<hr><br>").arg(u.idletime);  
     QString away, prof;
     for (TLV *cur = tl.first();cur;cur = tl.next())
-	{
-	    switch(cur->type) {
-	    case 0x0001: //profile text encoding
-		kdDebug() << "[OSCAR] text encoding is: " << cur->data << endl;
-		break;
-	    case 0x0002: //profile text
-		kdDebug() << "[OSCAR] The profile is: " << cur->data << endl;
-		prof += cur->data;
-		break;
-	    case 0x0003: //away message encoding
-		kdDebug() << "[OSCAR] Away message encoding is: " << cur->data << endl;
-		break;
-	    case 0x0004: //away message
-		kdDebug() << "[OSCAR] Away message is: " << cur->data << endl;
-		away += cur->data;
-		break;
-	    case 0x0005: //capabilities
-		kdDebug() << "[OSCAR] Got capabilities" << endl;
-		break;
-	    default: //unknown
-		kdDebug() << "[OSCAR] Unknown user info type " << cur->type << endl;
-		break;
-	    };
-	    delete cur->data;
-	}
+		{
+				switch(cur->type) {
+				case 0x0001: //profile text encoding
+						kdDebug() << "[OSCAR] text encoding is: " << cur->data << endl;
+						break;
+				case 0x0002: //profile text
+						kdDebug() << "[OSCAR] The profile is: " << cur->data << endl;
+						prof += cur->data;
+						break;
+				case 0x0003: //away message encoding
+						kdDebug() << "[OSCAR] Away message encoding is: " << cur->data << endl;
+						break;
+				case 0x0004: //away message
+						kdDebug() << "[OSCAR] Away message is: " << cur->data << endl;
+						away += cur->data;
+						break;
+				case 0x0005: //capabilities
+						kdDebug() << "[OSCAR] Got capabilities" << endl;
+						break;
+				default: //unknown
+						kdDebug() << "[OSCAR] Unknown user info type " << cur->type << endl;
+						break;
+				};
+				delete cur->data;
+		}
     if (away.length())
 	profile += "<B>Away Message:</B><br>" + away + "<br><hr>";
     if (prof.length())
