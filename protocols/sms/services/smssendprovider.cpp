@@ -173,11 +173,11 @@ void SMSSendProvider::save(QPtrList<KLineEdit>& args)
 	if (!m_account) return;		// prevent crash in worst case
 
 	QString group = QString("SMSSend-%1").arg(provider);
-	unsigned namesI=0;
+	int namesI=0;
 
 	for (unsigned i=0; i < args.count(); i++)
 	{
-	        if (telPos == namesI || messagePos == namesI)
+		if (telPos == namesI || messagePos == namesI)
 		{
 //		    kdDebug(14160) << k_funcinfo << "Skipping pos " << namesI << endl;
 		    namesI++;
@@ -245,8 +245,7 @@ void SMSSendProvider::send(const KopeteMessage& msg)
 	connect( p, SIGNAL(receivedStdout(KProcess *, char *, int)), this, SLOT(slotReceivedOutput(KProcess *, char *, int)));
 //	connect( p, SIGNAL(receivedStderr(KProcess *, char *, int)), this, SLOT(slotReceivedOutput(KProcess *, char *, int)));
 
-	bool ps = p->start(KProcess::NotifyOnExit, KProcess::AllOutput);
-
+	p->start(KProcess::NotifyOnExit, KProcess::AllOutput);
 }
 
 void SMSSendProvider::slotSendFinished(KProcess *p)
