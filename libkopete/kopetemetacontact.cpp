@@ -461,9 +461,10 @@ void KopeteMetaContact::setDisplayName( const QString &name )
 	if( name == d->displayName )
 		return;
 
+	const QString old = d->displayName;
 	d->displayName = name;
 
-	emit displayNameChanged( d->displayName, name );
+	emit displayNameChanged( old , name );
 
 	//The name is set by the user, disable tracking
 	d->trackChildNameChanges = false;
