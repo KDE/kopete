@@ -31,12 +31,6 @@ MsgInfoPlugin::~MsgInfoPlugin()
 }
 
 bool
-MsgInfoPlugin::unload()
-{
-	return true;
-}
-
-bool
 MsgInfoPlugin::serialize( KopeteMetaContact *metaContact,
 			  QStringList &strList  ) const
 {

@@ -42,7 +42,6 @@ class MotionAwayPlugin : public KopetePlugin
 public:
 	MotionAwayPlugin( QObject *parent, const char *name, const QStringList &args );
 	~MotionAwayPlugin();
-	virtual bool unload();
 
 public slots:
 	void slotTimeout();

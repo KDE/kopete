@@ -132,11 +132,6 @@ MotionAwayPlugin::~MotionAwayPlugin()
 	kdDebug(14305) << "[MotionAway Plugin] : Freeing memory" << endl;
 }
 
-bool MotionAwayPlugin::unload()
-{
-	return true;
-}
-
 int MotionAwayPlugin::getImage(int _dev, QByteArray &_image, int _width, int _height, int _input, int _norm,  int _fmt)
 {
 	struct video_capability vid_caps;
