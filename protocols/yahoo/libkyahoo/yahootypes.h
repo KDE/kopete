@@ -66,7 +66,7 @@ namespace Yahoo
 		ServicePeerToPeer = 0x4F,	/* Checks if P2P possible */
 		ServiceWebcam,
 		ServiceAuthResp = 0x54,
-		ServiceList,
+		ServiceList = 85,
 		ServiceAuth = 0x57,
 		ServiceAddBuddy = 0x83,
 		ServiceRemBuddy,

@@ -1,11 +1,10 @@
 /*
-    Kopete Groupwise Protocol
-    eventprotocol.h - reads the protocol used by GroupWise for signalling Events
+    Kopete Yahoo Protocol
 
-    Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
-    
+    Copyright (c) 2004 Duncan Mac-Vicar Prett <duncan@kde.org>
+
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
+
     *************************************************************************
     *                                                                       *
     * This library is free software; you can redistribute it and/or         *
@@ -32,7 +31,7 @@ public:
 	~YMSGProtocol();
 	
 	/** 
-	 * Attempt to parse the supplied data into an @ref SnacTransfer object.  
+	 * Attempt to parse the supplied data into an @ref YMSGTransfer object.  
 	 * The exact state of the parse attempt can be read using @ref state. 
 	 * @param rawData The unparsed data.
 	 * @param bytes An integer used to return the number of bytes read.

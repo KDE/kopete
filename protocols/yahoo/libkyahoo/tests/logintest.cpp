@@ -51,7 +51,7 @@ void LoginTest::slotDoTest()
 	kdDebug(14180) << k_funcinfo << " connecting to server" << endl;
 	
 	connect( myClient, SIGNAL( connected() ), SLOT( slotConnected() ) );
-	myClient->start( server, 5050, "kopetetest", "snapscan" );
+	myClient->start( server, 5050, "duncanmacvicar", "**********" );
 	myClient->connectToServer( myClientStream, server, true );
 }
 

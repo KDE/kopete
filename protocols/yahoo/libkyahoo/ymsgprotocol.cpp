@@ -1,9 +1,7 @@
 /*
-    Kopete Oscar Protocol
-    eventprotocol.cpp - reads the protocol used by Oscar for BOS connections
+    Kopete Yahoo Protocol
 
-    Copyright (c) 2004 Matt Rogers <matt.rogers@kdemail.net>
-    Based on code Copyright (c) 2004 SuSE Linux AG <http://www.suse.com>
+    Copyright (c) 2004 Duncan Mac-Vicar Prett <duncan@kde.org>
 
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
@@ -100,6 +98,10 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 		case (Yahoo::ServiceVerify) :
 			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceVerify " << servicenum << endl;
 			service = Yahoo::ServiceVerify;
+		break;
+		case (Yahoo::ServiceList) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceList " << servicenum << endl;
+			service = Yahoo::ServiceList;
 		break;
 		default:
 			kdDebug(14180) << k_funcinfo << "  Parsed packet service -  This means an unknown service " << servicenum << endl;

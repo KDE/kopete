@@ -41,13 +41,21 @@
  *
  */
 
+#if HAVE_CONFIG_H
+# include <config.h>
+#endif 
+ 
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #include "libyahoo.h"
 #include "yahoo_fn.h"
 #include "md5.h"
-#include "sha.h"
+#include "sha1.h"
+
+extern char *yahoo_crypt(char *, char *);
+
 void yahooBase64(unsigned char *out, const unsigned char *in, int inlen)
 /* raw bytes in quasi-big-endian order to base 64 string (NUL-terminated) */
 {
@@ -84,8 +92,8 @@ void authresp_0x0b(const char *seed, const char *sn, const char *password, char 
 	md5_byte_t         result[16];
 	md5_state_t        ctx;
 
-	SHA_CTX            ctx1;
-	SHA_CTX            ctx2;
+	SHA1Context            ctx1;
+	SHA1Context            ctx2;
 
 	const char *alphabet1 = "FBZDWAGHrJTLMNOPpRSKUVEXYChImkwQ";
 	const char *alphabet2 = "F0E1D2C3B4A59687abcdefghijklmnop";
@@ -311,27 +319,27 @@ void authresp_0x0b(const char *seed, const char *sn, const char *password, char 
 	if (cnt < 64)
 		memset(&(pass_hash_xor2[cnt]), 0x5c, 64-cnt);
 
-	shaInit(&ctx1);
-	shaInit(&ctx2);
+	SHA1Init(&ctx1);
+	SHA1Init(&ctx2);
 
 	/* The first context gets the password hash XORed
 	 * with 0x36 plus a magic value
 	 * which we previously extrapolated from our
 	 * challenge. */
 
-	shaUpdate(&ctx1, pass_hash_xor1, 64);
+	SHA1Update(&ctx1, pass_hash_xor1, 64);
 	if (j >= 3 )
-		ctx1.sizeLo = 0x1ff;
-	shaUpdate(&ctx1, magic_key_char, 4);
-	shaFinal(&ctx1, digest1);
+		ctx1.totalLength = 0x1ff;
+	SHA1Update(&ctx1, magic_key_char, 4);
+	SHA1Final(&ctx1, digest1);
 
 	 /* The second context gets the password hash XORed
 	  * with 0x5c plus the SHA-1 digest
 	  * of the first context. */
 
-	shaUpdate(&ctx2, pass_hash_xor2, 64);
-	shaUpdate(&ctx2, digest1, 20);
-	shaFinal(&ctx2, digest2);
+	SHA1Update(&ctx2, pass_hash_xor2, 64);
+	SHA1Update(&ctx2, digest1, 20);
+	SHA1Final(&ctx2, digest2);
 
 	/* Now that we have digest2, use it to fetch
 	 * characters from an alphabet to construct
@@ -402,27 +410,27 @@ void authresp_0x0b(const char *seed, const char *sn, const char *password, char 
 	if (cnt < 64)
 		memset(&(crypt_hash_xor2[cnt]), 0x5c, 64-cnt);
 
-	shaInit(&ctx1);
-	shaInit(&ctx2);
+	SHA1Init(&ctx1);
+	SHA1Init(&ctx2);
 
 	/* The first context gets the password hash XORed
 	 * with 0x36 plus a magic value
 	 * which we previously extrapolated from our
 	 * challenge. */
 
-	shaUpdate(&ctx1, crypt_hash_xor1, 64);
+	SHA1Update(&ctx1, crypt_hash_xor1, 64);
 	if (j >= 3 )
-		ctx1.sizeLo = 0x1ff;
-	shaUpdate(&ctx1, magic_key_char, 4);
-	shaFinal(&ctx1, digest1);
+		ctx1.totalLength = 0x1ff;
+	SHA1Update(&ctx1, magic_key_char, 4);
+	SHA1Final(&ctx1, digest1);
 
 	/* The second context gets the password hash XORed
 	 * with 0x5c plus the SHA-1 digest
 	 * of the first context. */
 
-	shaUpdate(&ctx2, crypt_hash_xor2, 64);
-	shaUpdate(&ctx2, digest1, 20);
-	shaFinal(&ctx2, digest2);
+	SHA1Update(&ctx2, crypt_hash_xor2, 64);
+	SHA1Update(&ctx2, digest1, 20);
+	SHA1Final(&ctx2, digest2);
 
 	/* Now that we have digest2, use it to fetch
 	 * characters from an alphabet to construct
