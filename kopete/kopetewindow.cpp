@@ -141,7 +141,7 @@ void KopeteWindow::initActions()
 	actionConnect->setEnabled(false);
 	actionDisconnect->setEnabled(false);
 
-	selectAway = new KopeteAwayAction( i18n("&Set Away Globally"), SmallIcon("kopeteaway"), 0, 
+	selectAway = new KopeteAwayAction( i18n("&Set Away Globally"), SmallIcon("kopeteaway"), 0,
 		this, SLOT( slotGlobalAwayMessageSelect( const QString & ) ), actionCollection(),
 		"SetAwayAll" );
 
@@ -448,7 +448,7 @@ void KopeteWindow::slotPluginLoaded( KopetePlugin *  p  )
 void KopeteWindow::slotAllPluginsLoaded()
 {
 	actionConnect->setEnabled(true);
-	actionConnect->setEnabled(true);
+	actionDisconnect->setEnabled(true);
 }
 
 void KopeteWindow::slotAccountRegistered( KopeteAccount *account )
@@ -464,7 +464,7 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *account )
 		actionConnect->setEnabled(true);
 		actionDisconnect->setEnabled(true);
 	}
-		
+
 	connect( account->myself(),
 		SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ),
 		this, SLOT( slotAccountStatusIconChanged( KopeteContact * ) ) );
@@ -498,7 +498,7 @@ void KopeteWindow::slotAccountUnregistered( KopeteAccount *account)
 		actionConnect->setEnabled(false);
 		actionDisconnect->setEnabled(false);
 	}
-	
+
 	KopeteAccountStatusBarIcon *sbIcon = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ account ] );
 	if( !sbIcon )
 		return;
