@@ -105,6 +105,7 @@ void TextEffectPreferences::load()
 	preferencesDialog->m_lamer->setChecked(config->lamer());
 	preferencesDialog->m_casewaves->setChecked(config->waves());
 
+
 	// Call parent's save method
 	KCModule::load();
 
@@ -212,6 +213,19 @@ void TextEffectPreferences::slotSettingChanged()
 	kdDebug() << k_funcinfo << "Called"
 			  << endl;
 	// Indicate that our settings have changed
+    emit changed( true );
+}
+
+void TextEffectPreferences::defaults()
+{
+    preferencesDialog->mColorsListBox->clear();
+    preferencesDialog->mColorsListBox->insertStringList(config->defaultColorList());
+    preferencesDialog->m_fg->setChecked(false);
+    preferencesDialog->m_words->setChecked(false);
+    preferencesDialog->m_char->setChecked(false);
+    preferencesDialog->m_lamer->setChecked(false);
+    preferencesDialog->m_casewaves->setChecked(false);
+    preferencesDialog->m_colorRandom->setChecked( false );
     emit changed( true );
 }
 

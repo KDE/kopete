@@ -45,6 +45,7 @@ public:
 	void setColorRandom(bool newRandom);
 	void setLamer(bool newLamer);
 	void setWaves(bool newWaves);
+    QStringList defaultColorList();
 
 
 private:

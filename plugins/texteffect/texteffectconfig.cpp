@@ -36,7 +36,7 @@ void TextEffectConfig::load()
 	mColors = config->readListEntry("Colors");
 	if(mColors.isEmpty())
 	{
-		mColors=QStringList::split( ",", "#00BBDD,#0088DD,#0000DD,#8800DD,#DD00DD,#DD0088,#DD0000,#DD8800,#DDBB00,#88BB00,#00BB00" );
+            mColors= defaultColorList();
 	}
 	mColorRandom = config->readBoolEntry("Color Random Order", false);
 	mColorLines = config->readBoolEntry("Color change every lines", true);
@@ -45,6 +45,11 @@ void TextEffectConfig::load()
 
 	mLamer = config->readBoolEntry("L4m3r", false);
 	mWaves = config->readBoolEntry("WaVeS", false);
+}
+
+QStringList TextEffectConfig::defaultColorList()
+{
+    return QStringList::split( ",", "#00BBDD,#0088DD,#0000DD,#8800DD,#DD00DD,#DD0088,#DD0000,#DD8800,#DDBB00,#88BB00,#00BB00" );
 }
 
 void TextEffectConfig::save()

@@ -38,19 +38,20 @@ public:
 	// Overloaded from parent
 	virtual void save();
 	virtual void load();
+    virtual void defaults();
 
 private:
 	QStringList colors();
 	TextEffectPrefs *preferencesDialog;
 	TextEffectConfig *config;
-		
+
 private slots: // Public slots
 	void slotAddPressed();
 	void slotRemovePressed();
 	void slotUpPressed();
 	void slotDownPressed();
 	void slotSettingChanged();
-	
+
 };
 
 #endif
