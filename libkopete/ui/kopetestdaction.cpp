@@ -55,7 +55,7 @@ void KopeteGroupListAction::slotUpdateList()
 	QStringList groupList;
 
 	// Add groups to our list
-	Kopete::GroupList groups = Kopete::ContactList::self()->groups();
+	QPtrList<Kopete::Group> groups = Kopete::ContactList::self()->groups();
 	for ( Kopete::Group *it = groups.first(); it; it = groups.next() )
 	{
 		groupList.append( it->displayName() );

@@ -1,10 +1,10 @@
 /*
     kopetegroup.h - Kopete (Meta)Contact Group
 
-    Copyright (c) 2002-2003 by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart       <ogoffart@tiscalinet.be>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -21,24 +21,26 @@
 
 #include "kopetenotifydataobject.h"
 #include "kopetecontactlistelement.h"
-#include "kopetemessage.h"
-#include "kopetemessagemanager.h"
+
 
 #include <qptrlist.h>
 
 class QDomElement;
 
-class KopeteGroupPrivate;
 
-namespace Kopete
-{
+namespace Kopete {
 
-class Group;
+
 class MetaContact;
-
-typedef QPtrList<Group> GroupList;
+class Message;
 
 /**
+ * Class which represents the Group.
+ *
+ * A Group is a ConstacListElement which means plugin can save datas.
+ *
+ * some static group are availavle from this class:  topLevel and temporary
+ *
  * @author Olivier Goffart
  */
 class Group : public ContactListElement, public NotifyDataObject
@@ -56,26 +58,17 @@ public:
 	 * \brief Create an empty group
 	 *
 	 * Note that the constructor will not add the group automatically to the contact list.
-	 * Use @ref Kopete::ContactList::addGroup() to add it
+	 * Use @ref ContactList::addGroup() to add it
 	 */
 	Group();
 
 	/**
 	 * \brief Create a group of the specified type
 	 *
-	 * Overloaded constructor to create a group of the specified type.
+	 * Overloaded constructor to create a group with a display name of the specified type.
 	 */
 	Group( const QString &displayName, GroupType type = Normal );
 	
-	/**
-	 * \brief Create a group with the specified internal name
-	 *
-	 * Overloaded constructor to create a group with the specified internal
-	 * name
-	 */
-	Group( const QString &displayName, const QString& internalName,
-			 GroupType type = Normal );
-
 	~Group();
 
 	/**
@@ -90,12 +83,6 @@ public:
 	 */
 	void setDisplayName( const QString &newName );
 
-	/**
-	 * \brief Get the group's internal name
-	 * \return Return a QString containing the internal name
-	 */
-	QString internalName() const;
-	
 	/**
 	 * \return the group type
 	 */
@@ -112,32 +99,16 @@ public:
 	uint groupId() const;
 
 	/**
+	 * @brief child metacontact
+	 * This function is not very efficient - it searches through all the metacontacts in the contact list
 	 * \return the members of this group
 	 */
 	QPtrList<MetaContact> members() const;
-	
-	/**
-	 * \return the online members of this group
-	 */
-	QPtrList<MetaContact> onlineMembers() const;
-
-	/**
-	 * @internal
-	 * Outputs the group data in XML
-	 */
-	const QDomElement toXML();
-
-	/**
-	 * @internal
-	 * Loads the group data from XML
-	 */
-	bool fromXML( const QDomElement &data );
 
 	/**
 	 * \brief Set if the group is expanded.
 	 *
 	 * This is saved to the xml contactlist file
-	 * FIXME: the group should not need to know this
 	 */
 	void setExpanded( bool expanded );
 
@@ -149,40 +120,66 @@ public:
 	bool isExpanded() const;
 
 	/**
-	 * \return a Kopete::Group pointer to the toplevel group
+	 * \return a Group pointer to the toplevel group
 	 */
 	static Group *topLevel();
 
 	/**
-	 * \return a Kopete::Group pointer to the temporary group
+	 * \return a Group pointer to the temporary group
 	 */
 	static Group *temporary();
 	
+
+	
+	/**
+	 * @internal
+	 * Outputs the group data in XML
+	 */
+	const QDomElement toXML();
+
+	
+	/**
+	 * @internal
+	 * Loads the group data from XML
+	 */
+	 bool fromXML( const QDomElement &data );
+
+	 
+	 
+	 	
 public slots:
 	/**
 	 * Send a message to all contacts in the group
 	 */
 	void sendMessage();
 
+
 signals:
 	/**
 	 * \brief Emitted when the group has been renamed
 	 */
-	void renamed( Kopete::Group *group , const QString &oldName );
+	void displayNameChanged( Kopete::Group *group , const QString &oldName );
+
+	
+private slots:
+	void sendMessage( Kopete::Message& );
 
 private:
 	static Group *s_topLevel;
 	static Group *s_temporary;
 
-	KopeteGroupPrivate *d;
+	class Private;
+	Private *d;
 	
-private slots:
-	void sendMessage( Kopete::Message& );
+	
+	/**
+	 * @internal  used to get reachabe contact to send message to thom.
+	 */
+	QPtrList<MetaContact> onlineMembers() const;
 };
 
-}
+} //END namespace Kopete 
 
 #endif
 
-// vim: set noet ts=4 sts=4 sw=4:
 

@@ -30,7 +30,7 @@
 #include <kstandarddirs.h>
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
-//#include "kopetemessagemanager.h"
+#include "kopetemessagemanager.h"
 //#include "kopetemessage.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
@@ -255,7 +255,7 @@ void ContactList::addGroup( Group * g )
 	{
 		d->groups.append( g );
 		emit groupAdded( g );
-		connect( g , SIGNAL ( renamed(Kopete::Group* , const QString & )) , this , SIGNAL ( groupRenamed(Kopete::Group* , const QString & )) ) ;
+		connect( g , SIGNAL ( displayNameChanged(Kopete::Group* , const QString & )) , this , SIGNAL ( groupRenamed(Kopete::Group* , const QString & )) ) ;
 	}
 }
 

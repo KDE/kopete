@@ -101,7 +101,7 @@ void KopeteGroupViewItem::initLVI()
 	d->name->setToolTipSource( d->toolTipSource.get() );
 	d->count->setToolTipSource( d->toolTipSource.get() );
 
-	connect( m_group, SIGNAL( renamed( Kopete::Group*, const QString& ) ),
+	connect( m_group, SIGNAL( displayNameChanged( Kopete::Group*, const QString& ) ),
 		this, SLOT( refreshDisplayName() ) );
 
 	connect( KopetePrefs::prefs(), SIGNAL( contactListAppearanceChanged() ),

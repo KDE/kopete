@@ -1,10 +1,10 @@
 /*
     kopetegroup.cpp - Kopete (Meta)Contact Group
 
-    Copyright (c) 2002-2003 by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart       <ogoffart@ tiscalinet.be>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -21,14 +21,17 @@
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 #include "kopetecontact.h"
+#include "kopetemessagemanager.h"
 
 #include <klocale.h>
 
-struct KopeteGroupPrivate
+namespace Kopete {
+
+class Group::Private
 {
+public:
 	QString displayName;
-	QString internalName;
-	Kopete::Group::GroupType type;
+	Group::GroupType type;
 	bool expanded;
 	uint groupId;
 
@@ -36,66 +39,46 @@ struct KopeteGroupPrivate
 	static uint uniqueGroupId;
 };
 
-Kopete::Group *Kopete::Group::s_topLevel  = 0L;
-Kopete::Group *Kopete::Group::s_temporary = 0L;
-
-Kopete::Group * Kopete::Group::topLevel()
+Group *Group::s_topLevel  = 0L;
+Group *Group::s_temporary = 0L;
+Group * Group::topLevel()
 {
-	// Do not translate the internal name, it's not shown in the GUI
 	if ( !s_topLevel )
-		s_topLevel = new Kopete::Group( i18n( "Top Level" ),
-				QString::fromLatin1( "Top-Level" ), 
-				Kopete::Group::TopLevel );
+		s_topLevel = new Group( i18n( "Top Level" ), Group::TopLevel );
 
 	return s_topLevel;
 }
 
-Kopete::Group * Kopete::Group::temporary()
+Group * Group::temporary()
 {
-	// Do not translate the internal name, it's not shown in the GUI
 	if ( !s_temporary )
-		s_temporary = new Kopete::Group( i18n( "Not in your contact list" ),
-				 QString::fromLatin1( "Temporary" ), 
-				 Kopete::Group::Temporary );
+		s_temporary = new Group( i18n( "Not in your contact list" ), Group::Temporary );
 
 	return s_temporary;
 }
 
-uint KopeteGroupPrivate::uniqueGroupId = 0;
+uint Group::Private::uniqueGroupId = 0;
 
-Kopete::Group::Group( const QString &_name, GroupType _type )
-: Kopete::ContactListElement( Kopete::ContactList::self() )
+Group::Group( const QString &_name, GroupType _type )
+	: ContactListElement( ContactList::self() )
 {
-	d = new KopeteGroupPrivate;
+	d = new Private;
 	d->displayName = _name;
-	d->internalName = _name;
 	d->type = _type;
 	d->expanded = true;
 	d->groupId = 0;
 }
 
-Kopete::Group::Group()
-: Kopete::ContactListElement( Kopete::ContactList::self() )
+Group::Group()
+	: ContactListElement( ContactList::self() )
 {
-	d = new KopeteGroupPrivate;
+	d = new Private;
 	d->expanded = true;
 	d->type = Normal;
-	d->displayName = QString::null;
-	d->internalName = QString::null;
 	d->groupId = 0;
 }
 
-Kopete::Group::Group( const QString &_displayName, const QString &_internalName, GroupType _type )
-{
-	d = new KopeteGroupPrivate;
-	d->displayName = _displayName;
-	d->internalName = _internalName;
-	d->type = _type;
-	d->expanded = true;
-	d->groupId = 0;
-}
-
-Kopete::Group::~Group()
+Group::~Group()
 {
 	if(d->type == TopLevel)
 		s_topLevel=0L;
@@ -104,9 +87,9 @@ Kopete::Group::~Group()
 	delete d;
 }
 
-QPtrList<Kopete::MetaContact> Kopete::Group::members() const
+QPtrList<MetaContact> Group::members() const
 {
-	QPtrList<Kopete::MetaContact> members = Kopete::ContactList::self()->metaContacts();
+	QPtrList<MetaContact> members = ContactList::self()->metaContacts();
 	// members is a *copy* of the meta contacts, so using first(), next() and remove() is fine.
 	for( members.first(); members.current(); )
 	{
@@ -118,7 +101,7 @@ QPtrList<Kopete::MetaContact> Kopete::Group::members() const
 	return members;
 }
 
-const QDomElement Kopete::Group::toXML()
+const QDomElement Group::toXML()
 {
 	QDomDocument group;
 	group.appendChild( group.createElement( QString::fromLatin1( "kopete-group" ) ) );
@@ -146,7 +129,7 @@ const QDomElement Kopete::Group::toXML()
 	group.documentElement().appendChild( displayName );
 
 	// Store other plugin data
-	QValueList<QDomElement> pluginData = Kopete::ContactListElement::toXML();
+	QValueList<QDomElement> pluginData = ContactListElement::toXML();
 	for ( QValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
 		group.documentElement().appendChild( group.importNode( *it, true ) );
 
@@ -158,7 +141,7 @@ const QDomElement Kopete::Group::toXML()
 	return group.documentElement();
 }
 
-bool Kopete::Group::fromXML( const QDomElement &data )
+bool Group::fromXML( const QDomElement &data )
 {
 	QString strGroupId = data.attribute( QString::fromLatin1( "groupId" ) );
 	if ( !strGroupId.isEmpty() )
@@ -240,42 +223,42 @@ bool Kopete::Group::fromXML( const QDomElement &data )
 	return ( d->type == Normal );
 }
 
-void Kopete::Group::setDisplayName( const QString &s )
+void Group::setDisplayName( const QString &s )
 {
 	if ( d->displayName != s )
 	{
 		QString oldname = d->displayName;
 		d->displayName = s;
-		emit renamed( this, oldname );
+		emit displayNameChanged( this, oldname );
 	}
 }
 
-QString Kopete::Group::displayName() const
+QString Group::displayName() const
 {
 	return d->displayName;
 }
 
-Kopete::Group::GroupType Kopete::Group::type() const
+Group::GroupType Group::type() const
 {
 	return d->type;
 }
 
-void Kopete::Group::setType( GroupType t )
+void Group::setType( GroupType t )
 {
 	d->type = t;
 }
 
-void Kopete::Group::setExpanded( bool isExpanded )
+void Group::setExpanded( bool isExpanded )
 {
 	d->expanded = isExpanded;
 }
 
-bool Kopete::Group::isExpanded() const
+bool Group::isExpanded() const
 {
 	return d->expanded;
 }
 
-uint Kopete::Group::groupId() const
+uint Group::groupId() const
 {
 	if ( d->groupId == 0 )
 		d->groupId = ++d->uniqueGroupId;
@@ -283,12 +266,8 @@ uint Kopete::Group::groupId() const
 	return d->groupId;
 }
 
-QString Kopete::Group::internalName() const
-{
-	return d->internalName;
-}
 
-void Kopete::Group::sendMessage()
+void Group::sendMessage()
 {
 	QPtrList<Kopete::MetaContact> list = onlineMembers();
 	Kopete::MetaContact *mc = list.first();
@@ -298,15 +277,15 @@ void Kopete::Group::sendMessage()
 		return;
 	c = mc->preferredContact();
 	c->sendMessage();
-	if( c->manager( Contact::CannotCreate ) )
+	if( c->manager( Contact::CanCreate ) )
 	{
-		connect( c->manager(  ), SIGNAL( messageSent( Kopete::Message&, Kopete::MessageManager* ) ), this, SLOT( sendMessage( Kopete::Message& ) ));
+		connect( c->manager(), SIGNAL( messageSent( Kopete::Message&, Kopete::MessageManager* ) ), this, SLOT( sendMessage( Kopete::Message& ) ));
 	}
 }
 
-void Kopete::Group::sendMessage( Kopete::Message& msg )
+void Group::sendMessage( Message& msg )
 {
-	QPtrList<Kopete::MetaContact> list = onlineMembers();
+	QPtrList<MetaContact> list = onlineMembers();
 	Kopete::MetaContact *mc = list.first();
 	Kopete::Contact *c = msg.to().first();
 	
@@ -320,12 +299,15 @@ void Kopete::Group::sendMessage( Kopete::Message& msg )
 			mc->preferredContact()->manager( )->sendMessage( msg );
 		}
 	}
-	disconnect( c->manager( Contact::CannotCreate ), SIGNAL( messageSent( Kopete::Message&, Kopete::MessageManager* ) ), this, SLOT( sendMessage( Kopete::Message& ) ) );
+	if( c->manager( Contact::CannotCreate ) )
+	{
+		disconnect( c->manager(), SIGNAL( messageSent( Kopete::Message&, Kopete::MessageManager* ) ), this, SLOT( sendMessage( Kopete::Message& ) ) );
+	}
 }
 
-QPtrList<Kopete::MetaContact> Kopete::Group::onlineMembers() const
+QPtrList<MetaContact> Group::onlineMembers() const
 {
-	QPtrList<Kopete::MetaContact> list = members();
+	QPtrList<MetaContact> list = members();
 	
 	for( list.first(); list.current(); )
 		if( list.current()->isReachable() )
@@ -335,7 +317,10 @@ QPtrList<Kopete::MetaContact> Kopete::Group::onlineMembers() const
 	return list;
 }
 
+} //END namespace Kopete 
+
+
 #include "kopetegroup.moc"
 
-// vim: set noet ts=4 sts=4 sw=4:
+
 
