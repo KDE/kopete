@@ -42,7 +42,7 @@ KopeteMessageManager *KopeteMessageManagerFactory::create(
 			kdDebug() << "[KopeteMessageManagerFactory] User match, looking session members" << endl;	
 			KopeteContact *tmp_contact;
 			KopeteContactList contactlist = tmp->contacts();
-            for (  tmp_contact = contactlist.first(); tmp ; tmp_contact = contactlist.next() )
+            for (  tmp_contact = contactlist.first(); tmp_contact ; tmp_contact = contactlist.next() )
 			{
 				if ( !contacts.containsRef( tmp_contact ) )
 				{
