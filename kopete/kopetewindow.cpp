@@ -139,7 +139,7 @@ void KopeteWindow::initActions()
 		SLOT( setAvailableAll() ), actionCollection(),
 		"SetAvailableAll" );
 
-	actionAwayMenu = new KActionMenu( i18n("Status"),"kopetestatus",
+	actionAwayMenu = new KActionMenu( i18n("Status"),"kopeteaway",
 							actionCollection(), "Status" );
 	actionAwayMenu->setDelayed( false );
 	actionAwayMenu->insert(actionSetAvailable);
