@@ -96,7 +96,7 @@ void AddContactWizard::slotProtocolListClicked( QListViewItem *)
 		}
 	}
 
-	setNextEnabled(selectGroup ,oneIsChecked);
+	setNextEnabled(selectService, oneIsChecked);
 }
 
 void AddContactWizard::slotGroupListClicked( QListViewItem *)
