@@ -80,6 +80,7 @@ class JabberContact:public KopeteContact {
     void slotResourceAvailable(const Jid &, const JabResource &);
     void slotResourceUnavailable(const Jid &);
     void slotRemoveFromGroup();
+    void slotSelectResource();
 
   private slots:
     void slotUpdateContact(QString, QString, int, QString);
@@ -98,21 +99,23 @@ class JabberContact:public KopeteContact {
     void initActions();
     
     JabberProtocol *mProtocol;
+    JabberResource *activeResource;
 
     QPtrList<JabberResource> resources;
     QPtrList<KopeteContact> theContacts;
     
-    bool hasLocalName, hasLocalGroup;
+    bool hasLocalName, hasLocalGroup, hasResource;
     QString mUserID, mResource, mGroup, mReason;
     int mStatus;
     
     KPopupMenu *popup;
     KAction *actionRemove, *actionRemoveFromGroup, *actionChat, *actionInfo, *actionHistory, *actionRename;
     KListAction *actionContactMove;
-
+    KSelectAction *actionSelectResource;
+    
     dlgJabberRename *dlgRename;
     KopeteMessageManager *mMsgManager;
-	KopeteMessageManager *msgManager();
+    KopeteMessageManager *msgManager();
 
     KopeteHistoryDialog *historyDialog;
 

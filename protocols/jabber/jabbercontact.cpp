@@ -34,6 +34,7 @@ JabberContact::JabberContact(QString userID, QString name, QString group, Jabber
     mUserID = userID;
 	if (mGroup == QString("")) { hasLocalGroup = false; }
 	else { hasLocalGroup = true; }
+	hasResource = false;
     connect(mProtocol,
 	    SIGNAL(contactUpdated(QString, QString, int, QString)),
 	    this,
@@ -72,31 +73,32 @@ KopeteMessageManager* JabberContact::msgManager()
 }
 
 void JabberContact::initActions() {
-    actionChat =
-	KopeteStdAction::sendMessage(this, SLOT(slotChatThisUser()), this,
-				     "actionChat");
-    actionRemoveFromGroup =
-	new KAction(i18n("Remove From Group"), "edittrash", 0, this,
-		    SLOT(slotRemoveFromGroup()), this, "actionRemove");
-    actionRemove =
-	KopeteStdAction::deleteContact(this, SLOT(slotRemoveThisUser()),
-				       this, "actionDelete");
-    actionContactMove =
-	KopeteStdAction::moveContact(this, SLOT(slotMoveThisUser()), this,
-				     "actionMove");
-    actionHistory =
-	KopeteStdAction::viewHistory(this, SLOT(slotViewHistory()), this,
-				     "actionHistory");
-    actionRename =
-	new KAction(i18n("Rename Contact"), "editrename", 0, this,
-		    SLOT(slotRenameContact()), this, "actionRename");
+    actionChat = KopeteStdAction::sendMessage(this, SLOT(slotChatThisUser()), this, "actionChat");
+    actionRemoveFromGroup = new KAction(i18n("Remove From Group"), "edittrash", 0, this, SLOT(slotRemoveFromGroup()), this, "actionRemove");
+    actionRemove = KopeteStdAction::deleteContact(this, SLOT(slotRemoveThisUser()), this, "actionDelete");
+    actionContactMove = KopeteStdAction::moveContact(this, SLOT(slotMoveThisUser()), this, "actionMove");
+    actionHistory = KopeteStdAction::viewHistory(this, SLOT(slotViewHistory()), this, "actionHistory");
+    actionRename = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");
+	actionSelectResource = new KSelectAction(i18n("Select Resource"), "selectresource", 0, this, SLOT(slotSelectResource()), this, "actionSelectResource");
 }
 
 void JabberContact::showContextMenu(QPoint, QString /*group */) {
     popup = new KPopupMenu();
     popup->insertTitle(userID() + " (" + mResource + ")");
     actionChat->plug(popup);
-    popup->insertSeparator();
+	QStringList items;
+	items.append("Automatic (best resource)");
+	JabberResource *tmpBestResource = bestResource();
+	items.append(tmpBestResource->resource());
+    for (JabberResource *resource = resources.first(); resource; resource = resources.next()) {
+		if (resource != tmpBestResource) {
+			items.append(resource->resource());
+		}
+	}
+	actionSelectResource->setItems(items);
+	actionSelectResource->setCurrentItem(0);
+	actionSelectResource->plug(popup);
+	popup->insertSeparator();
     actionHistory->plug(popup);
     popup->insertSeparator();
     actionRename->plug(popup);
@@ -231,12 +233,8 @@ void JabberContact::slotNewMessage(const JabMessage &message) {
 
 void JabberContact::slotViewHistory() {
     if (historyDialog == 0L) {
-	historyDialog =
-	    new KopeteHistoryDialog(QString("kopete/jabber_logs/%1.log").
-				    arg(userID()), name(), true, 50, 0,
-				    "JabberHistoryDialog");
-	connect(historyDialog, SIGNAL(closing()), this,
-		SLOT(slotCloseHistoryDialog()));
+		historyDialog = new KopeteHistoryDialog(QString("kopete/jabber_logs/%1.log").arg(userID()), name(), true, 50, 0, "JabberHistoryDialog");
+		connect(historyDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()));
     }
 }
 
@@ -289,6 +287,9 @@ void JabberContact::slotResourceAvailable(const Jid &jid, const JabResource &res
 			msgManager()->addResource(this, tmpResource->resource());
 		}
 	}
+	if (hasResource == false) {
+		activeResource = tmpBestResource;
+	}
 }
 
 void JabberContact::slotResourceUnavailable(const Jid &jid) {
@@ -317,6 +318,29 @@ void JabberContact::slotResourceUnavailable(const Jid &jid) {
 	else {
 		kdDebug() << "Jabber contact: Best resource is now " << newResource->resource() << "." << endl;
 		slotUpdateContact(theirJID, newResource->resource(), newResource->status(), newResource->reason());
+	}
+	if (hasResource == false || activeResource == resource) {
+		/* No good sending to a deleted resource. */
+		activeResource = bestResource();
+		hasResource = false;
+	}
+}
+
+void JabberContact::slotSelectResource() {
+	if (actionSelectResource->currentItem() == 0) {
+		hasResource = false;
+		activeResource = bestResource();
+	}
+	else {
+		hasResource = true;
+		JabberResource *resource;
+		QString selectedResource = actionSelectResource->currentText();
+		for (resource = resources.first(); resource; resource = resources.next()) {
+			if (resource->resource() == selectedResource) {
+				activeResource = resource;
+				break;
+			}
+		}
 	}
 }
 
