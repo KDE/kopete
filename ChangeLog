@@ -6,11 +6,14 @@ o Main App
 	o Contact list UI/Logic separation and cleanup ( Duncan )
 	o Lot of bugfixing ( Olivier and all the team )
 	o New away system ( Chris )
+	o Drag and Dorp ( Olivier )
+	o File transfers API ( Nick )
 o ICQ Plugin
 	o New written from scratch plugin ( Nick )
 	o new features ( Stefan )
 	o contact search ( Stefan )
 o MSN Plugin
+	o Incoming File Transfer ( Olivier )
 	o Bugfixes ( Martijn, Olivier )
 o IRC Plugin
 	o Bugfixing ( André )
