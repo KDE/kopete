@@ -332,7 +332,7 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 		(onlineStatus().status() == KopeteOnlineStatus::Offline))
 	{
 		KMessageBox::sorry(qApp->mainWidget(),
-			i18n("<qt>This user is not online at the moment for you to message him/her. "
+			i18n("<qt>This user is not online at the moment for you to message them. "
 				"AIM users must be online for you to be able to message them.</qt>"),
 			i18n("User not Online"));
 		return;
