@@ -503,6 +503,8 @@ void MSNContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 
 void MSNContact::rename( const QString &newName )
 {
+	//kdDebug() << k_funcinfo << "From: " << displayName() << ", to: " << newName << endl;
+
 	if( newName == displayName() )
 		return;
 
