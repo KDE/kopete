@@ -303,7 +303,7 @@
             </sizepolicy>
         </property>
         <property name="text">
-            <string>Remember Password</string>
+            <string>Remember password</string>
         </property>
         <property name="checked">
             <bool>true</bool>

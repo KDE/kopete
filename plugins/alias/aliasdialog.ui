@@ -68,7 +68,7 @@
             <property name="fullWidth">
                 <bool>true</bool>
             </property>
-            <property name="itemsMovable">
+            <property name="itemsMovable" stdset="0">
                 <bool>false</bool>
             </property>
             <property name="whatsThis" stdset="0">
@@ -124,7 +124,7 @@
                 <bool>false</bool>
             </property>
             <property name="text">
-                <string>For Protocols:</string>
+                <string>For protocols:</string>
             </property>
             <property name="alignment">
                 <set>AlignTop</set>
@@ -135,8 +135,6 @@
         </widget>
     </grid>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>kPushButton3</sender>
