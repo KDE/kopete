@@ -34,7 +34,7 @@ MeanwhileContact::MeanwhileContact(
 						QString _nickname,
 						MeanwhileAccount *_account,
 						Kopete::MetaContact *_parent )
-	: Kopete::Contact( _account, _nickname, _parent )
+	: Kopete::Contact( _account, _userId, _parent )
 {
 	setDisplayName( _nickname );
 	m_msgManager = 0L;
