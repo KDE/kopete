@@ -22,8 +22,11 @@
 #include "kopete.h"
 
 #include "messagelog.h"
+
 #include <kdebug.h>
 #include <klocale.h>
+
+#include <qstylesheet.h>
 
 KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteContactList others,
 		KopeteProtocol *protocol, QString logFile, int widget, int capabilities,
@@ -120,7 +123,7 @@ void KopeteMessageManager::slotReadMessages()
 void KopeteMessageManager::messageSentFromWindow(const QString &message)
 {
 	QString body = message;
-	KopeteMessage tmpmessage(mUser, mContactList, body, KopeteMessage::Outbound);
+	KopeteMessage tmpmessage(mUser, mContactList, QStyleSheet::escape(body), KopeteMessage::Outbound);
 	emit messageSent(tmpmessage);
 	readMessages();
 }
@@ -143,7 +146,7 @@ void KopeteMessageManager::cancelUnreadMessageEvent()
 		delete mUnreadMessageEvent;
 		mUnreadMessageEvent = 0L;
 		kdDebug() << "[KopeteMessageManager] cancelUnreadMessageEvent Event Deleted" << endl;
-	}		
+	}
 }
 
 void KopeteMessageManager::slotEventDeleted(KopeteEvent *e)
