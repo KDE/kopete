@@ -60,7 +60,7 @@
                 </widget>
                 <widget class="QLineEdit" row="4" column="1">
                     <property name="name">
-                        <cstring>valueToken</cstring>
+                        <cstring>valueVerificationSequence</cstring>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>The text from the image below.</string>
@@ -94,7 +94,7 @@
                         <string>&amp;Verification Sequence:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>valueToken</cstring>
+                        <cstring>valueVerificationSequence</cstring>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>The text from the image below.</string>
@@ -116,7 +116,7 @@
                 </widget>
                 <widget class="QLabel" row="0" column="0" rowspan="2" colspan="1">
                     <property name="name">
-                        <cstring>labelServer</cstring>
+                        <cstring>labelEmailAddress</cstring>
                     </property>
                     <property name="text">
                         <string>&amp;E-Mail Address:</string>
@@ -297,7 +297,7 @@
     <tabstop>valueEmailAddress</tabstop>
     <tabstop>valuePassword</tabstop>
     <tabstop>valuePasswordVerify</tabstop>
-    <tabstop>valueToken</tabstop>
+    <tabstop>valueVerificationSequence</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

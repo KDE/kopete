@@ -46,10 +46,8 @@ protected slots:
 	void displayToken( QPixmap, QString );
 	void registrationError(  const QString&, const QString& );
 	void registrationDone(  const QString&,  const QString& );
-	void emailChanged( const QString & );
-	void passwordsChanged( const QString & );
+	void inputChanged( const QString & );
 	void doRegister();
-	void tokenChanged( const QString & );
 	void updateStatus( const QString status );
 
 private:

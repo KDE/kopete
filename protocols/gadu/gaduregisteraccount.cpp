@@ -39,24 +39,22 @@ GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
 	ui = new GaduRegisterAccountUI( this );
 	setMainWidget( ui );
 
-	ui->valueToken->setDisabled( true );
+	ui->valueVerificationSequence->setDisabled( true );
 	setButtonText( Apply, i18n( "&Register" ) );
 	setButtonText( Cancel, i18n( "&Close" ) );
 	enableButton( Apply, false );
-	updateStatus( "" );
 
 	cRegister = new RegisterCommand( this );
 
-	//emailRegexp = new QRegExp( "[\\w\\d\\.\\-\\+\\_]{1,}\\@[\\w\\d\\.\\-]{1,}" );
-	emailRegexp = new QRegExp(  "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
+	emailRegexp = new QRegExp(  "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}.[\\w\\d.-]{2,}" );
 
 	connect( this, SIGNAL( applyClicked() ), SLOT( doRegister() ) );
 	connect( this, SIGNAL( cancelClicked() ), SLOT( slotCancel() ) );
 
-	connect( ui->valueEmailAddress, SIGNAL( textChanged( const QString &) ), SLOT( emailChanged( const QString & ) ) );
-	connect( ui->valuePassword, SIGNAL( textChanged( const QString & ) ), SLOT( passwordsChanged( const QString & ) ) );
-	connect( ui->valuePasswordVerify, SIGNAL( textChanged( const QString & ) ), SLOT( passwordsChanged( const QString & ) ) );
-	connect( ui->valueToken, SIGNAL( textChanged( const QString & ) ), SLOT( tokenChanged( const QString & ) ) );
+	connect( ui->valueEmailAddress, SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
+	connect( ui->valuePassword, SIGNAL( textChanged( const QString & ) ), SLOT( inputChanged( const QString & ) ) );
+	connect( ui->valuePasswordVerify, SIGNAL( textChanged( const QString & ) ), SLOT( inputChanged( const QString & ) ) );
+	connect( ui->valueVerificationSequence, SIGNAL( textChanged( const QString & ) ), SLOT( inputChanged( const QString & ) ) );
 
 	connect( cRegister, SIGNAL( tokenRecieved( QPixmap, QString ) ), SLOT( displayToken( QPixmap, QString ) ) );
 	connect( cRegister, SIGNAL( done(  const QString&,  const QString& ) ), SLOT( registrationDone(  const QString&,  const QString& ) ) );
@@ -72,7 +70,7 @@ GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
 void
 GaduRegisterAccount::doRegister( )
 {
-	cRegister->setUserinfo( ui->valueEmailAddress->text(), ui->valuePassword->text(), ui->valueToken->text() );
+	cRegister->setUserinfo( ui->valueEmailAddress->text(), ui->valuePassword->text(), ui->valueVerificationSequence->text() );
 	cRegister->execute();
 	enableButton( Apply, false );
 }
@@ -80,54 +78,52 @@ GaduRegisterAccount::doRegister( )
 void
 GaduRegisterAccount::validateInput()
 {
+	// FIXME: These need to use KDE default text color instead of hardcoded black.
+	ui->labelEmailAddress->unsetPalette();
+	ui->labelPassword->unsetPalette();
+	ui->labelPasswordVerify->unsetPalette();
+	ui->labelVerificationSequence->unsetPalette();
 	if ( emailRegexp->exactMatch( ui->valueEmailAddress->text() ) &&
 		ui->valuePassword->text() == ui->valuePasswordVerify->text()  && !ui->valuePassword->text().isEmpty() && !ui->valuePasswordVerify->text().isEmpty() &&
-		!ui->valueToken->text().isEmpty() )
+		!ui->valueVerificationSequence->text().isEmpty() )
 	{
 		enableButton( Apply, true );
+		updateStatus( "" );
 	}
-	else{
+	else {
+		if ( !emailRegexp->exactMatch( ui->valueEmailAddress->text() ) )
+		{
+			updateStatus( i18n( "Please enter a valid E-Mail Address." ) );
+			ui->labelEmailAddress->setPaletteForegroundColor( QColor( 0, 0, 255 ) );
+		} else if ( ( ui->valuePassword->text().isEmpty() ) || ( ui->valuePasswordVerify->text().isEmpty() ) )
+		{
+			updateStatus( i18n( "Please enter the same password twice." ) );
+			ui->labelPassword->setPaletteForegroundColor( QColor( 0, 0, 255 ) );
+			ui->labelPasswordVerify->setPaletteForegroundColor( QColor( 0, 0, 255 ) );
+		} else if ( ui->valuePassword->text() != ui->valuePasswordVerify->text() )
+		{
+			updateStatus( i18n( "Password entries do not match!" ) );
+			ui->labelPassword->setPaletteForegroundColor( QColor( 255, 0, 0 ) );
+			ui->labelPasswordVerify->setPaletteForegroundColor( QColor( 255, 0, 0 ) );
+		} else if ( ui->valueVerificationSequence->text().isEmpty() )
+		{
+			updateStatus( i18n( "Please enter the verification sequence." ) );
+			ui->labelVerificationSequence->setPaletteForegroundColor( QColor( 0, 0, 255 ) );
+		}
 		enableButton( Apply, false );
 	}
 }
 
 void
-GaduRegisterAccount::tokenChanged( const QString & )
+GaduRegisterAccount::inputChanged( const QString & )
 {
-	validateInput();
-}
-
-void
-GaduRegisterAccount::emailChanged( const QString & )
-{
-	// validate
-	if ( emailRegexp->exactMatch( ui->valueEmailAddress->text() ) == FALSE && !ui->valueEmailAddress->text().isEmpty() ) {
-		ui->valueEmailAddress->setPaletteBackgroundColor( QColor( 0, 150 , 227 ) );
-	}
-	else {
-		ui->valueEmailAddress->setPaletteBackgroundColor( QColor( 255, 255 , 255 ) );
-	}
-	validateInput();
-}
-
-void
-GaduRegisterAccount::passwordsChanged( const QString & )
-{
-	if ( ui->valuePassword->text() != ui->valuePasswordVerify->text()  && !ui->valuePassword->text().isEmpty() && !ui->valuePasswordVerify->text().isEmpty() ) {
-		ui->valuePassword->setPaletteBackgroundColor( QColor( 164, 0 , 0 ) );
-		ui->valuePasswordVerify->setPaletteBackgroundColor( QColor( 164, 0 , 0 ) );
-	}
-	else {
-		ui->valuePassword->setPaletteBackgroundColor( QColor( 255, 255 , 255 ) );
-		ui->valuePasswordVerify->setPaletteBackgroundColor( QColor( 255, 255 , 255 ) );
-	}
 	validateInput();
 }
 
 void
 GaduRegisterAccount::registrationDone(  const QString& /*title*/,  const QString& /*what */ )
 {
-	ui->valueToken->setDisabled( true );
+	ui->valueVerificationSequence->setDisabled( true );
 	ui->valuePassword->setDisabled( true );
 	ui->valuePasswordVerify->setDisabled( true );
 	ui->valueEmailAddress->setDisabled( true );
@@ -150,8 +146,8 @@ GaduRegisterAccount::registrationError(  const QString& title,  const QString& w
 
 // it is set to deleteLater, in case of error
 	cRegister = NULL;
-	ui->valueToken->setDisabled( true );
-	ui->valueToken->setText( "" );
+	ui->valueVerificationSequence->setDisabled( true );
+	ui->valueVerificationSequence->setText( "" );
 	enableButton( Apply, false );
 	updateStatus( "" );
 
@@ -169,9 +165,9 @@ GaduRegisterAccount::registrationError(  const QString& title,  const QString& w
 void
 GaduRegisterAccount::displayToken( QPixmap image, QString /*tokenId */ )
 {
-	ui->valueToken->setDisabled( false );
+	ui->valueVerificationSequence->setDisabled( false );
 	ui->pixmapToken->setPixmap( image );
-	updateStatus( i18n( "" ) );
+	validateInput();
 }
 
 void
