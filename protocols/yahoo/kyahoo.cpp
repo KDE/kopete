@@ -33,6 +33,7 @@
 #include "libyahoo2/yahoo2.h"
 #include "libyahoo2/yahoo2_callbacks.h"
 #include <iostream.h>
+#include <errno.h>
 
 /* Those gave me undefined reference errors */
 #define MAX_PREF_LEN 255

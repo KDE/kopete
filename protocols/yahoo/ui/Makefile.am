@@ -4,5 +4,5 @@ INCLUDES = -I$(srcdir)/../../../libkopete -I$(srcdir)/../../../libkopete/ui \
 		$(all_includes)
 
 libkopeteyahooui_la_METASOURCES = AUTO
-libkopeteyahooui_la_SOURCES = yahooadd.ui dlgpreferences.ui empty.cpp
+libkopeteyahooui_la_SOURCES = dlgpreferences.ui empty.cpp
 EXTRA_DIST = dlgrename.ui
