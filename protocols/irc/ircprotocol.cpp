@@ -35,7 +35,7 @@
 //           Constructor & Destructor
 ///////////////////////////////////////////////////
 
-IRCProtocol::IRCProtocol(): QObject(0, "IRC"), IMProtocol()
+IRCProtocol::IRCProtocol(): QObject(0, "IRC"), KopeteProtocol()
 {
 	kdDebug() << "\nIRC Plugin Loading\n";
 	// Load all ICQ icons from KDE standard dirs
@@ -143,7 +143,7 @@ bool IRCProtocol::unload()
 }
 
 ///////////////////////////////////////////////////
-//           IMProtocol Class reimplementation
+//           KopeteProtocol Class reimplementation
 ///////////////////////////////////////////////////
 
 void IRCProtocol::Connect()

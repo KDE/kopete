@@ -25,14 +25,14 @@ struct KopeteLibraryInfo
 
 bool operator ==(const KopeteLibraryInfo &, const KopeteLibraryInfo &);
 
-class IMProtocol;
+class KopeteProtocol;
 class Plugin;
 
 class LibraryLoader
 {
 	friend class Kopete;
 	friend class Plugin;
-	friend class IMProtocol;
+	friend class KopeteProtocol;
 	friend class AddWizardImpl;
 	struct PluginLibrary
 	{

@@ -135,7 +135,7 @@ void Kopete::slotConnectAll()
 	{
 		kdDebug() << "[Kopete] Connect All: " << (*i).name << endl;
 		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
-		IMProtocol *prot =  dynamic_cast<IMProtocol*>(tmpprot);
+		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
 
 		if (!prot)
 			continue;
@@ -155,7 +155,7 @@ void Kopete::slotDisconnectAll()
 	{
 		kdDebug() << "[Kopete] Disconnect All: "<<(*i).name << endl;
 		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
-		IMProtocol *prot =  dynamic_cast<IMProtocol*>(tmpprot);
+		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
 
 		if (!prot)
 			continue;
@@ -178,7 +178,7 @@ void Kopete::slotSetAwayAll(void)
 	{
 		kdDebug() << "[Kopete] slotSetAwayAll() for plugin: " << (*i).name << endl;
 		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
-		IMProtocol *prot =  dynamic_cast<IMProtocol*>(tmpprot);
+		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
 
 		if (!prot)
 			continue;
@@ -201,7 +201,7 @@ void Kopete::slotSetAvailableAll(void)
 	{
 		kdDebug() << "[Kopete] slotSetAvailableAll() for plugin: " << (*i).name << endl;
 		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
-		IMProtocol *prot =  dynamic_cast<IMProtocol*>(tmpprot);
+		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
 
 		if (!prot)
 			continue;

@@ -4,7 +4,7 @@ lib_LTLIBRARIES = libkopete.la
 
 # kopete_include_HEADERS = kopetecontact.h  improtocol.h kopete.h
 
-libkopete_la_SOURCES = kopete.cpp improtocol.cpp kopetecontact.cpp \
+libkopete_la_SOURCES = kopete.cpp kopeteprotocol.cpp kopetecontact.cpp \
 						pluginloader.cpp plugin.cpp \
 						messagelog.cpp kopetemessage.cpp kopetenotifier.cpp\
 						kopeteevent.cpp

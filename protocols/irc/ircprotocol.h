@@ -24,7 +24,7 @@
 #include "ircpreferences.h"
 #include <statusbaricon.h>
 #include <addcontactpage.h>
-#include "improtocol.h"
+#include "kopeteprotocol.h"
 #include "kirc.h"
 
 class IRCServerContact;
@@ -34,7 +34,7 @@ class IRCServerManager;
   *@author duncan
   */
 
-class IRCProtocol : public QObject, public IMProtocol
+class IRCProtocol : public QObject, public KopeteProtocol
 {
 Q_OBJECT
 public:
@@ -43,7 +43,7 @@ public:
 	/* Plugin reimplementation */
 	void init();
 	bool unload();
-	/** IMProtocol reimplementation */
+	/** KopeteProtocol reimplementation */
 	virtual QPixmap getProtocolIcon();
 	virtual AddContactPage *getAddContactWidget(QWidget *parent);
 	virtual void Connect();

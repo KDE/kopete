@@ -35,7 +35,7 @@
 #include "newuserimpl.h"
 #include "statusbaricon.h"
 
-MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), IMProtocol()
+MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 {
 	QString path;
 	path = locateLocal("data","kopete/msn.contacts");
@@ -122,7 +122,7 @@ bool MSNProtocol::unload()
 }
 
 ///////////////////////////////////////////////////
-//           IMProtocol Class reimplementation
+//           KopeteProtocol Class reimplementation
 ///////////////////////////////////////////////////
 
 void MSNProtocol::Connect()

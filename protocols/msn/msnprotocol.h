@@ -22,7 +22,7 @@
 #include <qpixmap.h>
 #include <qptrlist.h>
 
-#include "improtocol.h"
+#include "kopeteprotocol.h"
 
 class QLabel;
 
@@ -57,7 +57,7 @@ struct MSNGroupStruct
 /**
  * @author duncan
  */
-class MSNProtocol : public QObject, public IMProtocol
+class MSNProtocol : public QObject, public KopeteProtocol
 {
 	Q_OBJECT
 
@@ -69,7 +69,7 @@ public:
 	void init();
 	bool unload();
 
-	// IMProtocol reimplementation
+	// KopeteProtocol reimplementation
 	virtual QPixmap getProtocolIcon();
 	virtual AddContactPage *getAddContactWidget( QWidget *parent );
 	virtual void Connect();

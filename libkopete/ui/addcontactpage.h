@@ -3,7 +3,7 @@
 #define ADDCONTACTPAGE_H
 
 #include <qwidget.h>
-#include <improtocol.h>
+#include <kopeteprotocol.h>
 
 /**
   *@author duncan
@@ -15,7 +15,7 @@ class AddContactPage : public QWidget
 public: 
 	AddContactPage(QWidget *parent=0, const char *name=0);
 	~AddContactPage();
-	//IMProtocol *protocol;
+	//KopeteProtocol *protocol;
 public slots: // Public slots
   /** No descriptions */
   virtual void slotFinish();
