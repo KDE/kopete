@@ -523,7 +523,7 @@ void MSNProtocol::slotStartChat()
 	bool ok;
 	QString handle = KLineEditDlg::getText(
 		i18n( "Start chat - MSN Plugin" ),
-		i18n( "Please enter the mail address of the person with whom you want to chat" ),
+		i18n( "Please enter the email address of the person with whom you want to chat" ),
 		QString::null, &ok );
 	if( ok )
 	{
