@@ -3,6 +3,7 @@
 #include <kcolordialog.h>
 #include <kfontdialog.h>
 #include <kdebug.h>
+#include <kdeversion.h>
 #include <kparts/genericfactory.h>
 
 #include "krichtexteditpart.h"
@@ -40,6 +41,10 @@ KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *parent, const char *nam
 		editor->setTextFormat( Qt::RichText );
 		setXMLFile( "kopeterichtexteditpartfull.rc" );
 	}
+	
+	#if KDE_IS_VERSION( 3, 1, 90 )
+		editor->setCheckSpellingEnabled( true );
+	#endif
 }
 
 void KopeteRichTextEditPart::createActions()
