@@ -430,6 +430,14 @@ Comment[xx]=xxA highlighted message has been receivedxx
 default_sound=Kopete_Received.ogg
 default_presentation=65
 
+
+[kopete_lowpriority]
+Name=Low priority messages
+Comment=A message marqued with a low priority has been received
+default_presentation=0
+
+
+
 [yahoo_mail]
 Name=Yahoo Mail
 Name[bg]=Пристигна нова поща в Yahoo

@@ -194,30 +194,26 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 			int winId = 0;  //KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 			QWidget *w=dynamic_cast<QWidget*>(manager->view(false));
 			if(w) winId=w->topLevelWidget()->winId();
+			
+			
+			QString event;
+			QString body =i18n( "<qt>Incoming message from %1<br>\"%2\"</qt>" );;
 
 			switch( msg.importance() )
 			{
 				case KopeteMessage::Low:
-					//TODO: add an event for this (like a little beep)
+					event = QString::fromLatin1( "kopete_lowpriority" );
+					break;
+				case KopeteMessage::Highlight:
+					event = QString::fromLatin1( "kopete_highlight" );
+					body = i18n( "<qt>A highlighted message arrived from %1<br>\"%2\"</qt>" );
 					break;
 				default:
-				{
-					QString event = QString::fromLatin1( "kopete_incoming" );
-					QString body = i18n( "<qt>Incoming message from %1<br>\"%2\"</qt>" );
-
-					if( msg.importance() == KopeteMessage::Highlight )
-					{
-						event = QString::fromLatin1( "kopete_highlight" );
-						body = i18n( "<qt>A highlighted message arrived from %1<br>\"%2\"</qt>" );
-					}
-#if QT_VERSION < 0x030200
-					KNotifyClient::event( winId, event, body.arg( msgFrom ).arg( msgText ) ,
-#else
-					KNotifyClient::event(winId,  event, body.arg( msgFrom, msgText ) ,
-#endif
-						i18n("View") , const_cast<KopeteContact*>(msg.from()) , SLOT(execute()) );
-				}
+					event = QString::fromLatin1( "kopete_incoming" );
 			}
+			KNotifyClient::event(winId,  event, body.arg( msgFrom, msgText ) ,
+				i18n("View") , const_cast<KopeteContact*>(msg.from()) , SLOT(execute()) );
+
 		}
 	}
 }
