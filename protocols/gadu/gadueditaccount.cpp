@@ -80,13 +80,14 @@ void GaduEditAccount::registerNewAccount()
 {
 	registerNew->setDisabled( true );
 	regDialog = new GaduRegisterAccount( NULL , "Register account dialog" );
-	;
+	connect( regDialog, SIGNAL( registeredNumber( unsigned int, QString  ) ), SLOT( newUin( unsigned int, QString  ) ) );
 	if ( regDialog->exec() != QDialog::Accepted ){
 		registerNew->setDisabled( false );
+		loginEdit_->setText( "" );
+		rememberCheck_->setChecked( true );
+		passwordEdit_->setText( "" );
 		return;
 	}
-
-	kdDebug( 14100 ) << "dupa123" << endl;
 }
 
 void GaduEditAccount::registrationFailed()
@@ -94,8 +95,10 @@ void GaduEditAccount::registrationFailed()
 	KMessageBox::sorry( this, i18n( "<b>Registration FAILED.</b>" ), i18n( "Gadu-Gadu" ) );
 }
 
-void GaduEditAccount::newUin()
+void GaduEditAccount::newUin( unsigned int uni, QString password ) 
 {
+	loginEdit_->setText( QString::number( uni ) );
+	passwordEdit_->setText( password );
 }
 
 bool GaduEditAccount::validateData()

@@ -47,7 +47,7 @@ public:
 	~GaduRegisterAccount( );
 
 signals:
-	void registeredNumber( unsigned int );
+	void registeredNumber( unsigned int, QString  );
 
 protected slots:
 	void slotApply();

@@ -117,18 +117,44 @@ void GaduRegisterAccount::passwordsChanged( const QString & )
 
 void GaduRegisterAccount::registrationDone(  const QString& /*title*/,  const QString& /*what */ )
 {
-	updateStatus( "" );
-	KMessageBox::sorry( this, QString::number( cRegister->newUin() ), "dupa" );
+	ui->textToken->setDisabled( true );
+	ui->password1->setDisabled( true );
+	ui->password2->setDisabled( true );
+	ui->emailArea->setDisabled( true );
+	ui->submitData->setDisabled( true );
+	emit registeredNumber( cRegister->newUin(), ui->password1->text() );
+	updateStatus( i18n( "Your UNI is %1" ).arg(QString::number( cRegister->newUin() )  ) );
 	enableButton( Ok, true );
 }
 
 void GaduRegisterAccount::registrationError(  const QString& title,  const QString& what )
 {
-	updateStatus( "" );
+	updateStatus( i18n( "Registration failed: %1" ).arg( what ) );
 	KMessageBox::sorry( this, what, title );
+
+	disconnect( this, SLOT( displayToken( QPixmap, QString ) ) );
+	disconnect( this, SLOT( registrationDone(  const QString&,  const QString& ) ) );
+	disconnect( this, SLOT( registrationError(  const QString&,  const QString& ) ) );
+	disconnect( this, SLOT( updateStatus( const QString ) ) );
+
+// it is set to deleteLater, in case of error
+	cRegister = NULL;
+	ui->textToken->setDisabled( true );
+	ui->textToken->setText( "" );
+	enableButton( Ok, false );
+	updateStatus( "" );
+
+	cRegister = new RegisterCommand( this );
+
+	connect( cRegister, SIGNAL( tokenRecieved( QPixmap, QString ) ), SLOT( displayToken( QPixmap, QString ) ) );
+	connect( cRegister, SIGNAL( done(  const QString&,  const QString& ) ), SLOT( registrationDone(  const QString&,  const QString& ) ) );
+	connect( cRegister, SIGNAL( error(  const QString&,  const QString& ) ), SLOT( registrationError(  const QString&,  const QString& ) ) );
+	connect( cRegister, SIGNAL( operationStatus( const QString ) ), SLOT( updateStatus( const QString ) ) );
+
+	cRegister->requestToken();
 }
 
-void GaduRegisterAccount::displayToken( QPixmap image, QString tokenId )
+void GaduRegisterAccount::displayToken( QPixmap image, QString /*tokenId */ )
 {
 	ui->textToken->setDisabled( false );
 	ui->pixmapToken->setPixmap( image );

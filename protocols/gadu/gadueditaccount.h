@@ -43,7 +43,7 @@ public:
 
 private slots:
 	void registerNewAccount();
-	void newUin();
+	void newUin( unsigned int, QString  );
 	void registrationFailed();
 
 private:
