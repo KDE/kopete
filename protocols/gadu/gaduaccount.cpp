@@ -4,6 +4,7 @@
 #include "gaducontact.h"
 #include "gaduprotocol.h"
 #include "gaduaway.h"
+#include "gadupubdir.h"
 
 #include "kopetemetacontact.h"
 
@@ -130,6 +131,9 @@ KActionMenu* GaduAccount::actionMenu()
 	actionMenu_->insert( descrAction );
 
 	actionMenu_->popupMenu()->insertSeparator();
+
+	actionMenu_->insert( new KAction( i18n("Search for friends"), "", 0, this,
+		SLOT(slotSearch()), this, "actionSearch" ) );
 
 //  actionMenu_->insert( new KAction( i18n("Change Password"), "", 0, this,
 //		SLOT(slotChangePassword()), this, "actionChangePassword" ) );
@@ -546,6 +550,12 @@ void
 GaduAccount::pingServer()
 {
 	session_->ping();
+}
+
+void
+GaduAccount::slotSearch()
+{
+    GaduPublicDir *gpd=new GaduPublicDir( this, qApp->mainWidget(), "Gadu Public user directory search" );
 }
 
 void

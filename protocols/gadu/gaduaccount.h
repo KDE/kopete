@@ -97,7 +97,8 @@ private slots:
 	void connectionSucceed( struct gg_event* /*e*/ );
 
 	void slotChangePassword();
-
+	void slotSearch();
+	
 	void slotCommandDone( const QString&, const QString& );
 	void slotCommandError( const QString&, const QString& );
 	
