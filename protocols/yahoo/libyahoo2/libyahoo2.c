@@ -1620,12 +1620,12 @@ void yahoo_send_typing(int id, const char *from, const char *who, int typ)
 
 void yahoo_set_away(int id, enum yahoo_status state, const char *msg, int away)
 {
-	printf("libyahoo2: set_away(%d, %d, %s, %d)\n", id, state, msg, away);
-
 	struct yahoo_data *yd = find_conn_by_id(id);
 	struct yahoo_packet *pkt = NULL;
 	int service;
 	char s[4];
+
+	printf("libyahoo2: set_away(%d, %d, %s, %d)\n", id, state, msg, away);
 
 	if(!yd)
 		return;
