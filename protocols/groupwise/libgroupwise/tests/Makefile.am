@@ -14,4 +14,5 @@ field_test_LDADD = \
 
 
 client_test_SOURCES = client_test.cpp
-client_test_LDADD = ../libgwtest.la -lqt-mt
+client_test_LDADD = ../../../../protocols/groupwise/kopete_groupwise.la \
+	../libgwtest.la -lqt-mt

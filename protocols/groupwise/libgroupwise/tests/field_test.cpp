@@ -9,6 +9,17 @@ void extractFields( Field::FieldList );
 int main()
 {
 	buildList();
+	// look for a field in the list
+	if ( fl.locate( NM_A_FA_MESSAGE ) )
+		printf( "Found a field, where there was supposed to be one :)" );
+	else
+		printf( "Didn't find a field, where there was supposed to be one :(" );
+		
+	if ( fl.locate( NM_A_SZ_OBJECT_ID ) )
+		printf( "Found a field, where there was NOT supposed to be one :(" );
+	else
+		printf( "Didn't find a field, where there wasn't supposed to be one :)" );
+				
 	extractFields( fl );
 	return 0;
 }
@@ -26,7 +37,8 @@ void buildList()
 	nl.append( sf );
 	sf = new Field::SingleField( NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, QString::fromLatin1( "bla bla" ) );
 	nl.append( sf );
-	Field::MultiField* mf = new Field::MultiField( NM_A_FA_PARTICIPANTS, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, nl );
+	Field::MultiField* mf = new Field::MultiField( NM_A_FA_PARTICIPANTS, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY );
+	mf->setFields( nl );
 	fl.append( mf );
 	
 /*	Field::SingleField * ext = sf;

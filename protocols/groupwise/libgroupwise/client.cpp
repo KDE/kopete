@@ -1,6 +1,7 @@
 #include <qapplication.h>
 
 #include "gwclientstream.h"
+#include "requestfactory.h"
 #include "task.h"
 
 #include "client.h"
@@ -17,7 +18,7 @@ public:
 	QString osname, tzname, clientName, clientVersion;
 	int tzoffset;
 	bool active;
-
+	RequestFactory * requestFactory;
 /*	LiveRoster roster;
 	ResourceList resourceList;
 	QValueList<GroupChat> groupChatList;*/
@@ -34,7 +35,7 @@ Client::Client(QObject *par)
 	d->clientVersion = "0.0";
 
 	d->root = new Task(this, true);
-
+	d->requestFactory = new RequestFactory;
 	d->stream = 0;
 }
 
@@ -42,6 +43,7 @@ Client::~Client()
 {
 	close();
 	delete d->root;
+	delete d->requestFactory;
 	delete d;
 }
 
@@ -142,6 +144,26 @@ void Client::streamReadyRead()
 
 // INTERNALS //
 
+QCString Client::userId()
+{
+	return "maeuschen";
+}
+
+QCString Client::password()
+{
+	return "maeuschen";
+}
+
+QCString Client::userAgent()
+{
+	return "libgroupwise/0.1 (Linux, 2.6.5-7.97-smp)";
+}
+
+QCString Client::ipAddress()
+{
+	return "10.10.11.103";
+}
+
 void Client::distribute( const Transfer * transfer )
 {
 	if( !rootTask()->take( transfer ) )
@@ -171,6 +193,16 @@ QString Client::genUniqueId()
 	s.sprintf("a%x", d->id_seed);
 	d->id_seed += 0x10;
 	return s;
+}
+
+RequestFactory * Client::requestFactory()
+{
+	return d->requestFactory;
+}
+
+Task * Client::rootTask()
+{
+	return d->root;
 }
 
 #include "client.moc"

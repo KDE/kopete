@@ -56,6 +56,7 @@ void Task::init()
 	d->deleteme = false;
 	d->autoDelete = false;
 	d->done = false;
+	d->transfer = 0;
 }
 
 Task *Task::parent() const
@@ -71,6 +72,11 @@ Client *Task::client() const
 Transfer * Task::transfer() const
 {
 	return d->transfer;
+}
+
+void Task::setTransfer( Transfer * transfer )
+{
+	d->transfer = transfer;
 }
 
 QString Task::id() const
@@ -225,6 +231,9 @@ void Task::debug(const QString &str)
 	client()->debug(QString("%1: ").arg(className()) + str);
 }
 
-// method iqVerify removed - seems to do sanity checking on dom doc
+bool Task::forMe( const Transfer * transfer ) const
+{
+	return false;
+}
 
 #include "task.moc"

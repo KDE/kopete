@@ -8,6 +8,7 @@
 #include "transfer.h"
 
 class Client;
+class Request; 
 
 class Task : public QObject
 {
@@ -29,6 +30,10 @@ public:
 	const QString & statusString() const;
 
 	void go( bool autoDelete=false  );
+	/** 
+	 * Allows a task to examine an incoming Transfer and decide whether to 'take' it
+	 * for further processing.
+	 */
 	virtual bool take( const Transfer* transfer );
 	void safeDelete();
 
@@ -43,7 +48,16 @@ protected:
 	void setError( int code=0, const QString &str="" );
 // 	void debug( const char *, ... );
 	void debug( const QString & );
-
+	/**
+	 * Used in take() to check if the offered transfer is for this Task
+	 * @return true if this Task should take the Transfer.  Default impl always returns false.
+	 */
+	virtual bool forMe( const Transfer * transfer ) const;
+	/**
+	 * Sets the transfer the task is about to send or receive
+	 */
+	void setTransfer( Transfer * transfer );
+	
 private slots:
 	void clientDisconnected();
 	void done();

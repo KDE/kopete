@@ -12,6 +12,7 @@ typedef QString Message;
 typedef QString Status;
 
 class Task;
+class RequestFactory;
 
 class Client : public QObject
 {
@@ -84,9 +85,9 @@ Q_OBJECT
 		 * Remove a contact from the contact list
 		 * Protocol action P14
 		 */
-		 
+		
 		/*************
-		  INTERNAL METHODS 
+		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
 		/**
 		 * Send an outgoing request to the server
@@ -101,6 +102,33 @@ Q_OBJECT
 		 */
 		QString genUniqueId();
 		
+		/**
+		 * The current user's user ID
+		 */
+		QCString userId();
+		
+		/**
+		 * The current user's password
+		 */
+		QCString password();
+		
+		/**
+		 * User agent details for this host
+		 */
+		QCString userAgent();
+		
+		/**
+		 * Host's IP address
+		 */
+		QCString ipAddress();
+		
+		/**
+		 * Get a reference to the RequestFactory for this Client. 
+		 * Used by Tasks to generate Requests with an ascending sequence of transaction IDs 
+		 * for this connection
+		 */
+		RequestFactory * requestFactory();
+		 
 	protected slots:
 		/**
 		 * Used by the client stream to notify errors to upper layers.

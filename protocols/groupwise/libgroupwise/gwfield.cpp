@@ -24,6 +24,21 @@
 
 using namespace Field;
 
+/* === FieldList ==================================================== */
+
+FieldBase * FieldList::locate( QCString tag )
+{
+	QPtrListIterator<Field::FieldBase> it( *this );
+	Field::FieldBase* field;
+	while ( ( field = it.current() ) != 0 )
+	{
+		if ( field->tag() == tag )
+			return field;
+		++it;
+	}
+	return 0;	
+}
+
 /* === FieldBase ========================================================= */
 
 FieldBase::FieldBase( QCString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type )
@@ -87,6 +102,11 @@ QVariant SingleField::value() const
 
 MultiField::MultiField( QCString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, FieldList fields )
 : FieldBase( tag, method, flags, type ), m_fields( fields )
+{
+}
+
+MultiField::MultiField( QCString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type )
+: FieldBase( tag, method, flags, type )
 {
 }
 

@@ -131,7 +131,6 @@
 
 //class FieldBase;
 
-
 namespace Field
 {
 	//enum Tag
@@ -157,7 +156,11 @@ namespace Field
 		Q_UINT8 m_type;  // doch needed
 	};
 
-	typedef QPtrList<FieldBase> FieldList;
+	class FieldList : public QPtrList<FieldBase>
+	{
+		public:
+			FieldBase * locate( QCString tag );
+	};
 	
 	/** 
 	 * This class is responsible for storing all Groupwise single value field types, eg
@@ -190,13 +193,15 @@ namespace Field
 	class MultiField : public FieldBase
 	{
 	public:  
-		MultiField( QCString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, FieldList fields = FieldList() );
+		MultiField( QCString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type );
+		MultiField( QCString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, FieldList fields );
 		~MultiField() {}
 		FieldList fields() const;
 		void setFields( FieldList );
 	private:
 		FieldList m_fields; // nb implicitly shared, copy-on-write - is there a case where this is bad?
 	};
+	
 };
 
 #endif
