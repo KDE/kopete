@@ -29,6 +29,7 @@
 #include "kopeteprotocol.h"
 #include "kopeteuiglobal.h"
 #include "kopeteaway.h"
+#include "kopetegroup.h"
 #include "kopetecontact.h"
 
 KopeteIface::KopeteIface() : DCOPObject( "KopeteIface" )
@@ -127,12 +128,15 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 	if( myAccount )
 	{
 		QString contactName;
-
+		QString realGroupName;
 		//If the nickName isn't specified we need to display the userId in the prompt
 		if( displayName.isEmpty() || displayName.isNull() )
 			contactName = contactId;
 		else
 			contactName = displayName;
+
+		if ( !groupName.isEmpty() )
+			realGroupName = groupName;
 
 		// Confirm with the user before we add the contact
 		if( KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(), i18n( "An external application is attempting to add the "
@@ -140,7 +144,7 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 			.arg( protocolName ).arg( contactName ), i18n( "Allow Contact?" ) ) == 3 ) // Yes == 3
 		{
 			//User said Yes
-			myAccount->addContact( contactId, displayName, 0L, KopeteAccount::DontChangeKABC, groupName, false );
+			myAccount->addContact( contactId, contactName, 0L, KopeteAccount::DontChangeKABC, realGroupName, false );
 			return true;
 		} else {
 			//User said No
