@@ -18,11 +18,11 @@
 
 #include "kopetestdaction.h"
 
+#include "oscarchangestatus.h"
 #include "aimprotocol.h"
 #include "aimaccount.h"
 #include "aimcontact.h"
 #include "aimuserinfo.h"
-#include "aimchangestatus.h"
 
 class KopeteMetaContact;
 
@@ -34,14 +34,13 @@ AIMAccount::AIMAccount(KopeteProtocol *parent, QString accountID, const char *na
 	mStatus = OSCAR_OFFLINE;
 
 	mMyself = new AIMContact(accountID, accountID, this, 0L);
-	mAwayDialog = new AIMChangeStatus(engine());
 	QObject::connect(mAwayDialog, SIGNAL(goAway(const int, const QString&)),
 		this, SLOT(slotAwayDialogReturned(const int, const QString&)));
 }
 
 AIMAccount::~AIMAccount()
 {
-	delete mAwayDialog;
+	kdDebug(14190) << k_funcinfo << "[" << accountId() << "] deleted" << endl;
 }
 
 OscarContact *AIMAccount::createNewContact( const QString &contactId,

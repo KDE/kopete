@@ -54,7 +54,7 @@ OscarContact::OscarContact(const QString name, const QString displayName,
 	mFwType = 0;
 	mTcpVersion = 0;
 
-	mListContact = mAccount->internalBuddyList()->findBuddy(mName); // TODO: get rid of AIMBuddy
+	mListContact = mAccount->internalBuddyList()->findBuddy(mName); // TODO: remove AIMBuddy
 
 	if (!mListContact) // this Contact is not yet in the internal contactlist!
 	{
@@ -134,17 +134,22 @@ void OscarContact::initSignals()
 OscarContact::~OscarContact()
 {
 //	kdDebug(14150) << k_funcinfo << "Called for '" << mName << "'" << endl;
-	slotDeleteContact();
+
+	// FIXME: Why was this here, we shouldn't try to remove users from
+	// contactlist just because their destructor was called
+//	slotDeleteContact();
 }
 
 
 KopeteMessageManager* OscarContact::manager(bool canCreate)
 {
-	if ( !mMsgManager && canCreate)
+	if(!mMsgManager && canCreate)
 	{
 		QPtrList<KopeteContact> theContact;
 		theContact.append(this);
-		mMsgManager=KopeteMessageManagerFactory::factory()->create( account()->myself(), theContact, protocol());
+
+		mMsgManager = KopeteMessageManagerFactory::factory()->create(account()->myself(), theContact, protocol());
+
 		// This is for when the user types a message and presses send
 		QObject::connect(mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)),
 			this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
@@ -160,41 +165,19 @@ void OscarContact::slotMessageManagerDestroyed()
 	mMsgManager = 0L;
 }
 
-// FIXME: Do we still need this, it looks a bit "commented"
-// and could be removed eventually ;)
+// TODO: Can be removed when AIMBuddy is gone
 void OscarContact::slotUpdateBuddy()
 {
-	// status did not change, do nothing
-//	if((onlineStatus().internalStatus() == mListContact->status()) &&
-// 		(mIdle == mListContact->idleTime()))
-//		return;
-
 	// FIXME: just to make sure the stupid AIMBuddy has proper status
 	// This should be handled in AIM/ICQContact now!
 	mListContact->setStatus(onlineStatus().internalStatus());
 
 	if (mAccount->isConnected())
 	{
-/*		if (mIdle != mListContact->idleTime())
+		// Probably already broken. Does not work at all for ICQ because uin never changes
+		if (mName != mListContact->screenname()) // contact changed his nickname
 		{
-			kdDebug(14150) << k_funcinfo << "Contact '" << displayName() <<
-				"' mIdle=" << mIdle << endl;
-		}
-*/
-//		setStatus( mListContact->status() );
-
-//		mIdle = mListContact->idleTime();
-//		mListContact->setIdleTime(mIdle);
-
-/* TODO: remove, moved to setIdleTime()
-		if(mListContact->idleTime() > 0)
-			setIdleState(Idle);
-		else // we are not idling anymore
-			setIdleState(Active);
-*/
-		if (mName!=mListContact->screenname()) // contact changed his nickname
-		{
-			if (!mListContact->alias().isEmpty())
+			if(!mListContact->alias().isEmpty())
 				setDisplayName(mListContact->alias());
 			else
 				setDisplayName(mListContact->screenname());
@@ -202,7 +185,7 @@ void OscarContact::slotUpdateBuddy()
 	}
 	else // oscar-account is offline so all users are offline too
 	{
-		mListContact->setStatus(OSCAR_OFFLINE);
+		mListContact->setStatus(OSCAR_OFFLINE); // TODO: remove AIMBuddy
 		setStatus(OSCAR_OFFLINE);
 	}
 }
@@ -225,17 +208,16 @@ void OscarContact::slotOffgoingBuddy(QString sn)
 	}
 }
 
-// Called when nickname needs to be updated
 void OscarContact::slotUpdateNickname(const QString newNickname)
 {
 	setDisplayName(newNickname);
 	//emit updateNickname ( newNickname );
-	mListContact->setAlias(newNickname); // TODO: remove mListContact :)
+	mListContact->setAlias(newNickname); // TODO: remove AIMBuddy :)
 }
 
-// Method to delete a contact from the contact list
 void OscarContact::slotDeleteContact()
 {
+	kdDebug(14150) << k_funcinfo << "contact '" << displayName() << "'" << endl;
 	AIMGroup *group = mAccount->internalBuddyList()->findGroup(mListContact->groupID());
 	if (!group)
 		return;
@@ -272,36 +254,20 @@ void OscarContact::slotGroupRemoved(KopeteGroup * /* removedGroup */ )
 *****/
 }
 
-void OscarContact::slotWarn()
-{
-	QString message = i18n( "<qt>Would you like to warn %1 anonymously?" \
-		" Select \"Yes\" to warn anonymously, \"No\" to warn" \
-		" the user showing them your name, or \"Cancel\" to abort" \
-		" warning. (Warning a user on AIM will result in a \"Warning Level\"" \
-		" increasing for the user you warn. Once this level has reached a" \
-		" certain point, they will not be able to sign on. Please do not abuse" \
-		" this function, it is meant for legitimate practices.)</qt>" ).arg(mName);
-	QString title = i18n("Warn User %1 anonymously?").arg(mName);
-
-	int result = KMessageBox::questionYesNoCancel(qApp->mainWidget(), message, title);
-	if (result == KMessageBox::Yes)
-		mAccount->engine()->sendWarning(mName, true);
-	else if (result == KMessageBox::No)
-		mAccount->engine()->sendWarning(mName, false);
-}
-
 void OscarContact::slotBlock()
 {
-	QString message = i18n( "<qt>Are you sure you want to block %1? \
-		Once blocked, this user will no longer be visible to you. The block can be \
-		removed later in the preferences dialog.</qt>" ).arg(mName);
-	QString title = i18n("Block User %1?").arg(mName);
+	QString message = i18n("<qt>Are you sure you want to block %1?" \
+		" Once blocked, this user will no longer be visible to you. The block can be" \
+		" removed later in the preferences dialog.</qt>").arg(mName);
 
-	int result = KMessageBox::questionYesNo(qApp->mainWidget(), message, title);
+	int result = KMessageBox::questionYesNo(
+		qApp->mainWidget(),
+		message,
+		i18n("Block User %1?").arg(mName),
+		i18n("Block"));
+
 	if (result == KMessageBox::Yes)
-	{
 		mAccount->engine()->sendBlock(mName);
-	}
 }
 
 void OscarContact::slotDirectConnect()
@@ -334,11 +300,10 @@ void OscarContact::slotDirectConnect()
 	}
 }
 
-/** Called when we become directly connected to the contact */
 void OscarContact::slotDirectIMReady(QString name)
 {
 	// Check if we're the one who is directly connected
-	if ( tocNormalize(name) != tocNormalize(mName) )
+	if(tocNormalize(name) != mName)
 		return;
 
 	kdDebug(14150) << "[OscarContact] Setting direct connect state for "
@@ -368,9 +333,8 @@ void OscarContact::slotDirectIMConnectionClosed(QString name)
 	mDirectlyConnected = false;
 }
 
-/** Sends a file */
 void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*/,
-			    const long unsigned int /*fileSize*/)
+	const long unsigned int /*fileSize*/)
 {
 	KURL filePath;
 
@@ -383,7 +347,9 @@ void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*
 	if(!filePath.isEmpty())
 	{
 		KFileItem finfo(KFileItem::Unknown, KFileItem::Unknown, filePath);
-		kdDebug(14150) << k_funcinfo << "File size is " << (unsigned long)finfo.size() << endl;
+
+		kdDebug(14150) << k_funcinfo << "File size is " <<
+			(unsigned long)finfo.size() << endl;
 
 		//Send the file
 		mAccount->engine()->sendFileSendRequest(mName, finfo);
@@ -416,10 +382,9 @@ void OscarContact::syncGroups()
 		return;
 	}
 
-	kdDebug(14150) << k_funcinfo << ": Current oscar group id: "
-				   << mListContact->groupID()
-				   << ", Current oscar group name: "
-				   << currentOscarGroup->name() << endl;
+	kdDebug(14150) << k_funcinfo << ": Current oscar group id: " <<
+		mListContact->groupID() << ", Current oscar group name: " <<
+		currentOscarGroup->name() << endl;
 
 	// Compare the two names, to see if they're actually different
 	if (currentOscarGroup->name() != newKopeteGroup->displayName())
@@ -484,7 +449,6 @@ void OscarContact::slotTransferDenied(const KopeteFileTransferInfo &tr)
 	mAccount->engine()->sendFileSendDeny(mName);
 }
 
-/** Called when a file transfer begins */
 void OscarContact::slotTransferBegun(OscarConnection *con,
 	const QString& file,
 	const unsigned long size,

@@ -227,4 +227,20 @@ void OscarSocket::sendAIMAway(bool away, const QString &message)
 	sendBuf(outbuf,0x02);
 }
 
+void OscarSocket::parseWarningNotify(Buffer &inbuf)
+{
+	//aol multiplies warning % by 10, don't know why
+	int newevil = inbuf.getWord() / 10;
+	kdDebug(14150) << "[OSCAR} Got a warning: new warning level is " <<
+		newevil << endl;
+
+	if (inbuf.length() != 0)
+	{
+		UserInfo u = parseUserInfo(inbuf);
+		emit gotWarning(newevil,u.sn);
+	}
+	else
+		emit gotWarning(newevil,QString::null);
+}
+
 // vim: set noet ts=4 sts=4 sw=4:

@@ -153,8 +153,6 @@ class OscarContact : public KopeteContact
 //		void slotIMReceived(QString sender, QString msg, bool isAuto);
 		/** Called when nickname needs to be updated */
 		void slotUpdateNickname(const QString);
-		/** Warn the user */
-		void slotWarn(void);
 
 		/**
 		* Called when the status of the Kopete user(behind this computer)'s status has changed

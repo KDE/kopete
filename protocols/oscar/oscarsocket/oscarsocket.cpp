@@ -1957,7 +1957,8 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 		BYTE len = inbuf.getByte();
 		// First comes their screen name/UIN
 		char *cb = inbuf.getBlock(len);
-		u.sn = cb;
+		u.sn = QString::fromLocal8Bit(cb);
+		delete [] cb;
 
 		// Next comes the warning level
 		//for some reason aol multiplies the warning level by 10
@@ -2138,8 +2139,12 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 		outbuf.addWord(0x0004);
 		outbuf.addWord(0x0000);
 	}
-	outbuf.addWord(0x0006);
-	outbuf.addWord(0x0000); // always empty TLV(6)
+
+//	outbuf.addWord(0x0003); // TLV.Type(0x03) - request an ack from server
+//	outbuf.addWord(0x0000);
+
+	outbuf.addWord(0x0006); // TLV.Type(0x06) - store message if recipient offline
+	outbuf.addWord(0x0000);
 
 	sendBuf(outbuf,0x02);
 }
@@ -2823,24 +2828,6 @@ void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
 	}
 }
 
-/** Parses a warning notification */
-void OscarSocket::parseWarningNotify(Buffer &inbuf)
-{
-	//aol multiplies warning % by 10, don't know why
-	int newevil = inbuf.getWord() / 10;
-	kdDebug(14150) << "[OSCAR} Got a warning: new warning level is " <<
-		newevil << endl;
-
-	if (inbuf.length() != 0)
-	{
-		UserInfo u = parseUserInfo(inbuf);
-		emit gotWarning(newevil,u.sn);
-	}
-	else
-		emit gotWarning(newevil,QString::null);
-}
-
-/** Parses a message error */
 void OscarSocket::parseError(Buffer &inbuf)
 {
 	QString msg;
@@ -2986,7 +2973,6 @@ void OscarSocket::sendDirectIMAccept(const QString &sn)
 	}
 }
 
-/** Parses a missed message notification */
 void OscarSocket::parseMissedMessage(Buffer &inbuf)
 {
 	while (inbuf.length() > 0)

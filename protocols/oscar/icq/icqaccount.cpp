@@ -18,7 +18,7 @@
 #include "icqaccount.h"
 #include "icqcontact.h"
 #include "icqprotocol.h"
-#include "icqchangestatus.h"
+#include "oscarchangestatus.h"
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -41,7 +41,7 @@ ICQAccount::ICQAccount(KopeteProtocol *parent, QString accountID, const char *na
 	mHideIP = false;
 	mInvisible = false;
 	mMyself = new ICQContact(accountId(), "", this, 0L);
-	mAwayDialog = new ICQChangeStatus(engine());
+
 	QObject::connect(mAwayDialog, SIGNAL(goAway(const int, const QString&)),
 		this, SLOT(slotAwayDialogReturned(const int, const QString&)));
 }
@@ -57,8 +57,7 @@ void ICQAccount::loaded()
 
 ICQAccount::~ICQAccount()
 {
-//	kdDebug(14200) << k_funcinfo << "[" << accountId() << "] deleted" << endl;
-	delete mAwayDialog;
+	kdDebug(14200) << k_funcinfo << "[" << accountId() << "] deleted" << endl;
 }
 
 KActionMenu* ICQAccount::actionMenu()

@@ -1,14 +1,13 @@
 SUBDIRS = oscarsocket . icq aim icons pics
 METASOURCES = AUTO
-AM_CPPFLAGS = -I../../libkopete/ui $(KOPETE_INCLUDES) \
+AM_CPPFLAGS = -I../../libkopete/ui \
 	-I$(srcdir)/oscarsocket \
-        -I./ui \
-	-I$(srcdir)/ui \
-	$(all_includes)
+	-I./ui -I$(srcdir)/ui \
+	 $(KOPETE_INCLUDES) $(all_includes)
 
 lib_LTLIBRARIES = libkopete_oscar.la
 
-libkopete_oscar_la_SOURCES = oscaraccount.cpp oscarcontact.cpp
+libkopete_oscar_la_SOURCES = oscaraccount.cpp oscarcontact.cpp oscarchangestatus.cpp
 
 libkopete_oscar_la_LDFLAGS = -no-undefined $(all_libraries)
 libkopete_oscar_la_LIBADD  = ./oscarsocket/libkopeteoscarsocket.la \

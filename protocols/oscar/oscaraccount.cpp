@@ -33,6 +33,7 @@
 #include "aim.h" // For tocNormalize()
 
 #include "oscarsocket.h"
+#include "oscarchangestatus.h"
 
 
 OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, const char *name, bool isICQ)
@@ -43,7 +44,6 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 
 	mEngine = 0L;
 	mMyself = 0L;
-	mAwayDialog =0L;
 	// Set our random new numbers
 	mRandomNewBuddyNum = 0;
 	mRandomNewGroupNum = 0;
@@ -51,6 +51,8 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 	mAreIdle = false;
 
 	initEngine(isICQ); // Initialize the backend
+
+	mAwayDialog = new OscarChangeStatus(engine());
 
 	// Create the internal buddy list for this account
 	// TODO: make this an internal list of KopeteGroup and Kopete-/OscarContact
@@ -65,6 +67,8 @@ OscarAccount::~OscarAccount()
 		"' deleted, Disconnecting..." << endl;
 
 	disconnect();
+
+	delete mAwayDialog; // has no parent
 
 	// Delete the backend
 	if (mEngine)

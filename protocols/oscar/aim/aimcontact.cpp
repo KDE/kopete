@@ -72,9 +72,9 @@ KActionCollection *AIMContact::customContextMenuActions()
 	KAction* actionDirectConnect = new KAction(i18n("&Direct IM"), 0,
 		this, SLOT(slotDirectConnect()), actionCollection, "actionDirectConnect");
 
-	actionCollection->insert( actionWarn );
-	actionCollection->insert( actionBlock );
-	actionCollection->insert( actionDirectConnect );
+	actionCollection->insert(actionWarn);
+	actionCollection->insert(actionBlock);
+	actionCollection->insert(actionDirectConnect);
 
 	return actionCollection;
 }
@@ -319,6 +319,27 @@ void AIMContact::slotUserInfo()
 	AIMUserInfo *userInfoDialog = new AIMUserInfo(mName, displayName(), mAccount, this);
 	kdDebug(14190) << k_funcinfo << "Showing User Profile/Info dialog" << endl;
 	userInfoDialog->show();
+}
+
+void AIMContact::slotWarn()
+{
+	QString message = i18n( "<qt>Would you like to warn %1 anonymously or with your name?<br>" \
+		"(Warning a user on AIM will result in a \"Warning Level\"" \
+		" increasing for the user you warn. Once this level has reached a" \
+		" certain point, they will not be able to sign on. Please do not abuse" \
+		" this function, it is meant for legitimate practices.)</qt>" ).arg(mName);
+
+	int result = KMessageBox::questionYesNoCancel(
+		qApp->mainWidget(),
+		message,
+		i18n("Warn User %1?").arg(mName),
+		i18n("Warn anonymously"),
+		i18n("Warn"));
+
+	if (result == KMessageBox::Yes)
+		mAccount->engine()->sendWarning(mName, true);
+	else if (result == KMessageBox::No)
+		mAccount->engine()->sendWarning(mName, false);
 }
 
 
