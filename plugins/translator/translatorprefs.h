@@ -28,11 +28,15 @@
 #include "configmodule.h"
 #include "translatorprefs.h"
 
-/**
-  *@author duncan
-  */
 class QString;
 class TranslatorPrefsUI;
+
+/**
+  * @author Duncan Mac-Vicar Prett   <duncan@kde.org>
+  *
+  * Translator Plugin Preferences
+  *
+  */
 
 class TranslatorPreferences : public ConfigModule
 {
@@ -42,7 +46,13 @@ public:
 	~TranslatorPreferences();
    virtual void save();
 
+	/**
+	 * Default's user language
+	 */
 	const QString& myLang();
+	/**
+	 * Translation engine
+	 */
 	const QString& service();
 
 signals:

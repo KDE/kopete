@@ -37,29 +37,12 @@ class KopeteMetaContact;
 
 class TranslatorPreferences;
 
-/*
-BabelFish supported (DON'T REMOVE)
-
-en_zh English to Chinese
-en_fr English to French
-en_de English to German
-en_it English to Italian
-en_ja English to Japanese
-en_ko English to Korean
-en_pt English to Portuguese
-en_es English to Spanish
-zh_en Chinese to English
-fr_en French to English
-fr_de French to German
-de_en German to English
-de_fr German to French
-it_en Italian to English
-ja_en Japanese to English
-ko_en Korean to English
-pt_en Portuguese to English
-ru_en Russian to English
-es_en Spanish to English
-*/
+/**
+  * @author Duncan Mac-Vicar Prett   <duncan@kde.org>
+  *
+  * Kopete Translator Plugin
+  *
+  */
 
 class TranslatorPlugin : public KopetePlugin
 {
@@ -71,11 +54,19 @@ public:
 	TranslatorPlugin( QObject *parent, const char *name, const QStringList &args );
 	~TranslatorPlugin();
 
+	/***************************************************************************
+	 *   Re-implementation of KopetePlugin class methods                       *
+	 ***************************************************************************/
+
 	void init();
 	bool unload();
 
 	bool serialize( KopeteMetaContact *metaContact, QStringList &strList) const;
 	void deserialize( KopeteMetaContact *metaContact, const QStringList& data );
+
+	/***************************************************************************
+	 *   Plugin's API (used by preferences)                                    *
+	 ***************************************************************************/
 
 	const QString& languageName( const QString &key )
 	{ return m_langs[key]; };
@@ -98,7 +89,7 @@ public slots:
 
 protected:
 
-	void translateMessage( KopeteMessage& msg, const QString &, const QString & );
+	void translateMessage( KopeteMessage &, const QString &, const QString & );
 
 private:
 	/* Known Languages key -> desc ie: en -> English */

@@ -128,31 +128,111 @@ bool TranslatorPlugin::serialize( KopeteMetaContact *metaContact,
 void TranslatorPlugin::deserialize( KopeteMetaContact *metaContact, const QStringList& data )
 {
 	m_langMap[ metaContact ] = data.first();
+	kdDebug() << "[Translator] Deserialize " << metaContact->displayName() << " lang is " << data.first() << endl;
+
 }
 
 void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
 {
     kdDebug() << "[Translator] Incoming message " << msg.timestamp().toString("hhmmsszzz") << endl;
 
-	if ( msg.direction() == KopeteMessage::Inbound && ( msg.body() != QString::null ) )
+	QString src_lang;
+    QString dst_lang;
+
+	if ( (msg.direction() == KopeteMessage::Inbound) && ( msg.body() != QString::null ) )
     {
-		translateMessage( msg , "fr", "en");
+        KopeteMetaContact *from = msg.from()->metaContact();
+		if ( m_langMap.contains( from ) && (m_langMap[from] != "null"))
+    	{
+			src_lang = m_langMap[ from ];
+		}
+		else
+		{
+            kdDebug() << "[Translator] ( Incoming) Cannot determine src Metacontact language (" << from->displayName() << ")" << endl;
+			return;
+		}
+
+		dst_lang = m_prefs->myLang();
+
+		if ( src_lang == dst_lang )
+		{
+            kdDebug() << "[Translator] ( Incoming) Src and Dst languages are the same" << endl;
+			return;
+		}
+
+		/* We search for src_dst */
+
+		QStringList s = m_supported[ m_prefs->service() ];
+		QStringList::ConstIterator i;
+        
+		for ( i = s.begin(); i != s.end() ; ++i )
+		{
+			if ( *i == src_lang + "_" + dst_lang )
+			{
+				translateMessage( msg , src_lang, dst_lang);
+				return;
+			}
+		}				
 	}
+	else
+	{
+		kdDebug() << "[Translator] Incoming, but empty body" << endl;
+	}	
 }
 
 void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 {
     kdDebug() << "[Translator] Outgoing message " << msg.timestamp().toString("hhmmsszzz") << endl;
+    kdDebug() << "[Translator] Outgoing infu " << msg.timestamp().toString("hhmmsszzz") << endl;
+    QString src_lang;
+    QString dst_lang;
 
 	if ( ( msg.direction() == KopeteMessage::Outbound ) && ( msg.body() != QString::null ) )
     {
-		translateMessage( msg , "en", "fr");
+		src_lang = m_prefs->myLang();
+
+		/* Sad, we have to consideer only the first To: metacontact only */
+		KopeteMetaContact *to = msg.to().first()->metaContact();
+		if ( m_langMap.contains( to ) && (m_langMap[to] != "null"))
+    	{
+			dst_lang = m_langMap[ to ];
+		}
+		else
+		{
+            kdDebug() << "[Translator] ( Outgoing ) Cannot determine dst Metacontact language (" << to->displayName() << ")" << endl;
+			return;
+		}
+
+		if ( src_lang == dst_lang )
+		{
+            kdDebug() << "[Translator] ( Outgoing ) Src and Dst languages are the same" << endl;
+			return;
+		}
+
+		/* We search for src_dst */
+
+		QStringList s = m_supported[ m_prefs->service() ];
+		QStringList::ConstIterator i;
+
+		for ( i = s.begin(); i != s.end() ; ++i )
+		{
+			if ( *i == src_lang + "_" + dst_lang )
+			{
+				translateMessage( msg , src_lang, dst_lang);
+				return;
+			}
+		}				
+	}
+	else
+	{
+		kdDebug() << "[Translator] Outgoing, but empty body" << endl;
 	}
 }
 
-void TranslatorPlugin::translateMessage( KopeteMessage& msg , const QString &from, const QString &to)
+void TranslatorPlugin::translateMessage( KopeteMessage &msg , const QString &from, const QString &to)
 {
-	kdDebug() << "[Translator] Translating " << from << " " << to << " " << msg.timestamp().toString("hhmmsszzz") << endl;
+	kdDebug() << "[Translator] Translating: [" << from << "_" << to << "] " << endl
+			<< msg.body() << endl << endl;
 	
 	QString body, lp;
 	KURL translatorURL;
