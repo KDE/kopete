@@ -1345,18 +1345,21 @@ void JabberProtocol::slotEmptyMail()
 
 void JabberProtocol::slotOpenEmptyMail()
 {
-		KLineEditDlg *dlg = (KLineEditDlg *)sender();
+		QString emailAddress = ((KLineEditDlg *)sender() )->text();
+		if( !emailAddress.isEmpty() && !emailAddress.isNull() )
+		{
+				KopeteMetaContact *metaContact = new KopeteMetaContact();
+				metaContact->setTemporary(true);
 
-		KopeteMetaContact *metaContact = new KopeteMetaContact();
-		metaContact->setTemporary(true);
+				JabberContact *contact = createContact(emailAddress, emailAddress,
+								QStringList(), metaContact, myContact->userId());
 
-		JabberContact *contact = createContact(dlg->text(), dlg->text(),
-						QStringList(), metaContact, myContact->userId());
+				KopeteContactList::contactList()->addMetaContact(metaContact);
 
-		KopeteContactList::contactList()->addMetaContact(metaContact);
+				messageManagerMap[emailAddress] = createMessageManager(contact);
 
-		messageManagerMap[contact->contactId()] = createMessageManager(contact);
-
+				KopeteViewManager::viewManager()->launchWindow( messageManagerMap[emailAddress], KopeteView::Email );
+		}
 }
 
 void JabberProtocol::slotJoinNewChat()
