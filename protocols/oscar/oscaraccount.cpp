@@ -733,7 +733,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			// Get a list of the groups it's in
 			KopeteGroupList kopeteGroups = parentContact->groups();
 
-			if(kopeteGroups.isEmpty())
+			if ( kopeteGroups.isEmpty() || kopeteGroups.first()->displayName() == "Top-Level" )
 			{
 				kdDebug(14150) << k_funcinfo
 					<< "Contact with no group, adding to group 'Buddies'" << endl;
