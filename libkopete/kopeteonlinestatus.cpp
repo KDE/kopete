@@ -122,7 +122,7 @@ OnlineStatus::OnlineStatus( StatusType status )
 		d->description = i18n( "Offline" );
 	case Unknown:
 	default:
-		d->description = i18n( "(Status not available)" );
+		d->description = i18n( "Unknown" );
 		d->overlayIcon = "status_unknown";
 		break;
 
