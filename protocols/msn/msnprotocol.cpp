@@ -855,7 +855,7 @@ void MSNProtocol::removeContactFromGroup(  MSNContact *c, const QString &group )
 		{
 			//Do not remove the contact if he has no group:
 			//Kopete allow top-level contact
-			kdDebug() << "MSNProtocol::removeContactFromGroup : contact not removed" <<endl;
+			kdDebug() << "MSNProtocol::removeContactFromGroup : contact not removed.  MSN requires all contacts to be in at least one group" <<endl;
 			return;
 		}
 		int g = groupNumber( group );
@@ -953,13 +953,13 @@ void MSNProtocol::slotGroupAdded( QString groupName, uint /* serial */, uint gro
 	{
 		for ( QValueList<QPair<QString,QString> >::Iterator it = tmp_addToNewGroup.begin(); it != tmp_addToNewGroup.end(); ++it)
 		{
-			kdDebug() << "MSNProtocol::slotGroupAdded : add the contact to the new group" << endl;
 			if((*it).second==groupName)
 			{
+				kdDebug() << "MSNProtocol::slotGroupAdded : Adding to new group: " << (*it).first <<  endl;
 				m_notifySocket->addContact( (*it).first, (*it).first, group, FL );
-				tmp_addToNewGroup.remove(*it);
 			}
 		}
+		tmp_addToNewGroup.clear();
 	}
 }
 

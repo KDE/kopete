@@ -114,6 +114,7 @@ public:
 
 	void addGroup(QString g);
 	void removeGroup(QString g);
+	void renameGroup(QString to, QString from);
 
 public slots:
 	void slotRemovedFromGroup( KopeteMetaContact *mc, const QString &from );
@@ -129,6 +130,7 @@ signals:
 
 	void groupAdded( const QString &group );
 	void groupRemoved( const QString &group );
+	void groupRenamed( const QString &from, const QString &to );
 
 
 	/* Not used yet.... */

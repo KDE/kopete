@@ -291,7 +291,15 @@ void KopeteContactList::removeGroup(QString g)
 {
 	m_groupStringList.remove( g );
 	emit groupRemoved( g );
+}
 
+void KopeteContactList::renameGroup(QString from, QString to)
+{
+	kdDebug() << "KopeteContactList::renameGroup()" << endl;
+	int i=m_groupStringList.findIndex(from);
+	if(i>=0)
+		m_groupStringList[i]=to;
+	emit groupRenamed(from,to);
 }
 
 
