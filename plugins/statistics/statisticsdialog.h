@@ -63,4 +63,4 @@ private slots:
 };
 
 
-#endif _STATISTICSDIALOG_H
+#endif // _STATISTICSDIALOG_H

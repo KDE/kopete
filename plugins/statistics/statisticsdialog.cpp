@@ -106,7 +106,7 @@ void StatisticsDialog::generatePageForMonth(const int monthOfYear)
 	
 	QStringList values2;
 	
-	for (int i=0; i<values.count(); i+=3)
+	for (uint i=0; i<values.count(); i+=3)
 	{
 		QDateTime dateTimeBegin;
 		dateTimeBegin.setTime_t(values[i+1].toInt());
@@ -128,7 +128,7 @@ void StatisticsDialog::generatePageForDay(const int dayOfWeek)
 	
 	QStringList values2;
 	
-	for (int i=0; i<values.count(); i+=3)
+	for (uint i=0; i<values.count(); i+=3)
 	{
 		QDateTime dateTimeBegin;
 		dateTimeBegin.setTime_t(values[i+1].toInt());
@@ -163,14 +163,6 @@ void StatisticsDialog::generatePageForDay(const int dayOfWeek)
 /// @todo chart problem at midnight.
 void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QString subTitle)
 {
-	QString photoName;
-	if (!m_contact->metaContact()->photo().isNull())
-		photoName = QString::fromLatin1("kopete-metacontact-photo:%1").arg( KURL::encode_string( m_contact->metaContact()->metaContactId() ));
-	else
-		photoName = "";
-	
-	
-	
 	generalHTMLPart->begin();
 	generalHTMLPart->write(QString("<html><head><style>.bar { margin:0px;} "
 	"body"
@@ -195,8 +187,8 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	"</style></head><body>"
 	"<h1>Statistics for %1</h1><h3>%2</h3><hr>").arg(m_contact->metaContact()->displayName()).arg(subTitle));
 	
-	generalHTMLPart->write(QString("<div class=\"statgroup\"><b><a href=\"main:generalinfo\">General</a></b><br>"
-	"<b>Days: </b>"
+	generalHTMLPart->write(QString("<div class=\"statgroup\"><b><a href=\"main:generalinfo\" title=\"General summary view\">General</a></b><br>"
+	"<span title=\"Select the a day or a month to view the stat for\"><b>Days: </b>"
 	"<a href=\"dayofweek:1\">Monday</a>&nbsp;"
 	"<a href=\"dayofweek:2\">Tuesday</a>&nbsp;"
 	"<a href=\"dayofweek:3\">Wednesday</a>&nbsp;"
@@ -217,7 +209,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	"<a href=\"monthofyear:10\">October</a>&nbsp;"
 	"<a href=\"monthofyear:11\">November</a>&nbsp;"
 	"<a href=\"monthofyear:12\">December</a>&nbsp;"
-	"</div><br>"));
+	"</span></div><br>"));
 	
 	mainWidget->listView->addColumn("Status");
 	mainWidget->listView->addColumn("Start date");
@@ -228,7 +220,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	
 	
 	QString todayString;
-	todayString.append("<div class=\"statgroup\"><h2>Today</h2><table width=\"100%\"><tr><td>Status</td><td>From</td><td>To</td></tr>");
+	todayString.append("<div class=\"statgroup\" title=\"Contact status history for today\"><h2>Today</h2><table width=\"100%\"><tr><td>Status</td><td>From</td><td>To</td></tr>");
 	
 	bool today;
 	
@@ -246,7 +238,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	int hoursOffline[24]; // this is in seconds. Hours where we are sure contact is offline
 	int iMaxHoursOffline = 0;
 	
-	for (int i=0; i<24; i++)
+	for (uint i=0; i<24; i++)
 	{
 		hours[i] = 0;
 		hoursOnline[i] = 0;
@@ -254,7 +246,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 		hoursOffline[i] = 0;
 	}
 		
-	for (int i=0; i<values.count(); i+=3 /* because SELECT 3 columns */)
+	for (uint i=0; i<values.count(); i+=3 /* because SELECT 3 columns */)
 	{
 		/* 	Here we try to interpret one database entry...
 			What's important here, is to not count two times the same hour for instance
@@ -288,9 +280,9 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 		 */
 		 
 		// Number of hours between dateTime1 and dateTime2
-		int nbHours = (double)dateTime1.secsTo(dateTime2)/3600.;
+		uint nbHours = qRound((double)dateTime1.secsTo(dateTime2)/3600.);
 		
-		int tempHour = 
+		uint tempHour = 
 			dateTime1.time().hour() == dateTime2.time().hour()
 				 ? dateTime1.secsTo(dateTime2) // (*)
 				: 3600 - dateTime1.time().minute()*60 - dateTime1.time().second();
@@ -303,7 +295,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 		else if (Kopete::OnlineStatus::statusStringToType(values[i]) == Kopete::OnlineStatus::Offline) 
 			hoursOffline[dateTime1.time().hour()] += tempHour;
 		
-		for (int j= dateTime1.time().hour()+1; j < dateTime1.time().hour() + nbHours - 1; j++)
+		for (uint j= dateTime1.time().hour()+1; j < dateTime1.time().hour() + nbHours - 1; j++)
 		{
 			hours[j%24] += 3600;
 			if (Kopete::OnlineStatus::statusStringToType(values[i]) == Kopete::OnlineStatus::Online) 
@@ -360,7 +352,7 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	todayString.append("</table></div>");
 	
 	// Get the max from the hours*
-	for (int i=1; i<24; i++)
+	for (uint i=1; i<24; i++)
 	{
 		if (hours[iMaxHours] < hours[i])
 			iMaxHours = i;
@@ -379,10 +371,16 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	 */
 	// Some "total times"
 	generalHTMLPart->write(i18n("<div class=\"statgroup\">"));
-	generalHTMLPart->write(i18n("<b>Total seen time :</b> %1 hour(s)<br>").arg(stringFromSeconds(totalTime)));
-	generalHTMLPart->write(i18n("<b>Total online time :</b> %1 hour(s)<br>").arg(stringFromSeconds(totalOnlineTime)));
-	generalHTMLPart->write(i18n("<b>Total busy time :</b> %1 hour(s)<br>").arg(stringFromSeconds(totalAwayTime)));
-	generalHTMLPart->write(i18n("<b>Total offline time :</b> %1 hour(s)").arg(stringFromSeconds(totalOfflineTime)));
+	generalHTMLPart->write(i18n("<b title=\"The total time I have been able to see ") + m_contact->metaContact()->displayName()+i18n(" status\">Total seen time :</b> %1 hour(s)<br>").arg(stringFromSeconds(totalTime)));
+	generalHTMLPart->write(i18n("<b title=\"The total time I have seen ")
+			+m_contact->metaContact()->displayName()
+			+i18n(" online\">Total online time :</b> %1 hour(s)<br>").arg(stringFromSeconds(totalOnlineTime)));
+	generalHTMLPart->write(i18n("<b title=\"The total time I have seen ")
+			+m_contact->metaContact()->displayName()
+			+i18n(" away\">Total busy time :</b> %1 hour(s)<br>").arg(stringFromSeconds(totalAwayTime)));
+	generalHTMLPart->write(i18n("<b title=\"The total time I have seen ")
+			+m_contact->metaContact()->displayName()
+			+i18n(" offline\">Total offline time :</b> %1 hour(s)").arg(stringFromSeconds(totalOfflineTime)));
 	generalHTMLPart->write(QString("</div>"));
 
 	if (subTitle == "General informations")
@@ -396,18 +394,24 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	 	generalHTMLPart->write(QString("</div>"));
 	
 		 generalHTMLPart->write(QString("<div class=\"statgroup\">"));
-         generalHTMLPart->write(QString("<b>Last talk :</b> %1<br>").arg(m_contact->lastTalk().toString()));
-		 generalHTMLPart->write(QString("<b>Last time contact was present :</b> %1").arg(m_contact->lastPresent().toString()));
+		 generalHTMLPart->write(QString("<b title=\"The last time you talked with ")
+				 +m_contact->metaContact()->displayName()
+				 +i18n("\">Last talk :</b> %1<br>").arg(m_contact->lastTalk().toString()));
+		 generalHTMLPart->write(QString("<b title=\"The last time I have seen ")
+				 +m_contact->metaContact()->displayName()
+				 +i18n(" online or away\">Last time contact was present :</b> %1").arg(m_contact->lastPresent().toString()));
 		 generalHTMLPart->write(QString("</div>"));
 		 
 		 generalHTMLPart->write(QString("<div class=\"statgroup\">"));
-		 generalHTMLPart->write(QString("<b>Main online events :</b><br>"));
+		 generalHTMLPart->write(QString("<b title=\"")
+				 +m_contact->metaContact()->displayName()
+				 +i18n(" use to set his status online at these hours (EXPERIMENTAL)\">Main online events :</b><br>"));
 		 QValueList<QTime> mainEvents = m_contact->mainEvents(Kopete::OnlineStatus::Online);
-		 for (int i=0; i<mainEvents.count(); i++)
+		 for (uint i=0; i<mainEvents.count(); i++)
 			 generalHTMLPart->write(QString("%1<br>").arg(mainEvents[i].toString()));
 		 generalHTMLPart->write(QString("</div>"));
 		 
-	 	generalHTMLPart->write(QString("<div class=\"statgroup\">"));
+		 generalHTMLPart->write(QString("<div title=\"Current status\" class=\"statgroup\">"));
 	 	generalHTMLPart->write(i18n("Is <b>%1</b> since <b>%2</b>").arg(
 				Kopete::OnlineStatus::statusTypeToString(m_contact->oldStatus()),m_contact->oldStatusDateTime().toString()));
 	 	generalHTMLPart->write(QString("</div>"));
@@ -422,17 +426,17 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	
 	QString chartString;
 	QString colorPath = ::locate("appdata", "pics/statistics/black.png");
-	for (int i=0; i<24; i++)
+	for (uint i=0; i<24; i++)
 	{
 		
-		int hrWidth = (double)hours[i]/(double)hours[iMaxHours]*100.;
+		int hrWidth = qRound((double)hours[i]/(double)hours[iMaxHours]*100.);
 		chartString += QString("<img class=\"margin:0px;\"  height=\"")
 				+(totalTime ? QString::number(hrWidth) : QString::number(0))
 				+QString("\" src=\"file://")
 				+colorPath
 				+"\" width=\"4%\" title=\""+
-				i18n("Hour:")+QString::number(i)+
-				", "+QString::number(hrWidth)+"%\">";
+				i18n("Between ")+QString::number(i)+
+				"00 and "+QString::number((i+1)%24)+":00, I was able to see "+m_contact->metaContact()->displayName()+ " status " + QString::number(hrWidth)+"% of the hour\">";
 	}
 	generalHTMLPart->write(chartString);
 	generalHTMLPart->write(QString("</td></tr>"));
@@ -480,18 +484,18 @@ QString StatisticsDialog::generateHTMLChart(const int *hours, const int *hours2,
 	QString colorPath = ::locate("appdata", "pics/statistics/"+color+".png");
 	
 	
-	for (int i=0; i<24; i++)
+	for (uint i=0; i<24; i++)
 	{
 		int totalTime = hours[i] + hours2[i] + hours3[i];
 		
-		int hrWidth = (double)hours[i]/(double)totalTime*100.;
+		int hrWidth = qRound((double)hours[i]/(double)totalTime*100.);
 		chartString += QString("<img class=\"margin:0px;\"  height=\"")
 				+(totalTime ? QString::number(hrWidth) : QString::number(0))
 				+QString("\" src=\"file://")
 				+colorPath
-				+"\" width=\"4%\" title=\"At "
+				+"\" width=\"4%\" title=\"Between "
 				+QString::number(i)
-				+":00, I have seen " 
+				+":00 and " + QString::number((i+1) % 24) +":00, I have see " 
 				+ m_contact->metaContact()->displayName() 
 				+ " " + QString::number(hrWidth)+"% "
 				+caption
