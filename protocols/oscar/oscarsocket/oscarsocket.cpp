@@ -576,6 +576,7 @@ void OscarSocket::OnConnAckReceived()
 
 void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 {
+	
 	//For now, we use 0 as the sequence number because rate
 	//limiting can cause packets from different classes to be
 	//sent out in different order
@@ -584,24 +585,32 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 	//Read SNAC family/type from buffer if able
 	SNAC s = outbuf.readSnacHeader();
 	
-	//Pointer to proper rate class
-	RateClass *rc = 0L; 
-	
-	//Determine rate class
-	for ( RateClass *tmp=rateClasses.first(); tmp; tmp = rateClasses.next() )
+	//if the snac was read without a problem, find its rate class 
+	if ( !s.error )
 	{
-		if ( tmp->isMember(s) )
+		//Pointer to proper rate class
+		RateClass *rc = 0L; 
+		
+		//Determine rate class
+		for ( RateClass *tmp=rateClasses.first(); tmp; tmp = rateClasses.next() )
 		{
-			kdDebug(14150) << k_funcinfo << "Rate class (id=" << tmp->id() << ") found: SNAC(" << s.family << "," << s.subtype << ")" << endl;
-			rc = tmp;
-			break;
+			if ( tmp->isMember(s) )
+			{
+				kdDebug(14150) << k_funcinfo << "Rate class (id=" << tmp->id() << ") found: SNAC(" << s.family << "," << s.subtype << ")" << endl;
+				rc = tmp;
+				break;
+			}
 		}
+		
+		if ( rc ) 
+			rc->enqueue(outbuf);
+		else
+			writeData(outbuf);
 	}
-	
-	if ( rc ) 
-		rc->enqueue(outbuf);
 	else
+	{
 		writeData(outbuf);
+	}
 }
 
 /* Writes the next packet in the queue onto the wire */
@@ -618,7 +627,6 @@ void OscarSocket::writeData(Buffer &outbuf)
 	}
 		
 	kdDebug(14150) << k_funcinfo << "Writing data" << endl;
-
 #ifdef OSCAR_PACKETLOG
 	kdDebug(14150) << "--- OUTPUT ---" << outbuf.toString() << endl;
 #endif

@@ -41,6 +41,8 @@ struct SNAC
 	WORD flags;
 	/** SNAC Request ID */
 	DWORD id;
+	/** Tells if there was an error in the SNAC */
+	bool error;
 };
 
 struct TLV

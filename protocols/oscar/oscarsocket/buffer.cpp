@@ -244,16 +244,28 @@ SNAC Buffer::getSnacHeader()
 	s.subtype = getWord();
 	s.flags = getWord();
 	s.id = getDWord();
+	s.error = false;
 	return s;
 }
 
 SNAC Buffer::readSnacHeader()
 {
 	SNAC s;
-	s.family = (mBuffer[6] << 8) | mBuffer[7];
-	s.subtype = (mBuffer[8] << 8) | mBuffer[9];
-	s.flags = (mBuffer[10] << 8) | mBuffer[11];
-	s.id = (mBuffer[12] << 24) | (mBuffer[13] << 16) | (mBuffer[14] << 8) | mBuffer[15];
+	//Read the snac if the buffer contains one
+	if ( mBuffer.size() >= 16 )
+	{
+		s.family = (mBuffer[6] << 8) | mBuffer[7];
+		s.subtype = (mBuffer[8] << 8) | mBuffer[9];
+		s.flags = (mBuffer[10] << 8) | mBuffer[11];
+		s.id = (mBuffer[12] << 24) | (mBuffer[13] << 16) | (mBuffer[14] << 8) | mBuffer[15];
+		s.error = false;
+	}
+	//Otherwise raise an error
+	else
+	{
+		s.error = true;
+	}
+	
 	return s;
 }
 

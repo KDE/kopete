@@ -63,7 +63,7 @@ void RateClass::timedSend(void)
 {
 	if ( mPacketQueue.empty() )
 	{
-		kdDebug() << k_funcinfo << "Calling writeData on empty queue!" << endl;
+		kdDebug(14150) << k_funcinfo << "Calling writeData on empty queue!" << endl;
 	}
 	Buffer &outbuf = mPacketQueue.first();
 	
@@ -91,7 +91,7 @@ void RateClass::timedSend(void)
 	//	<< "\nTime elapsed: " << timeDiff 
 	//	<< "\nMax packet: " << maxPacket
 	//	<< "\nSend queue length: " << mPacketQueue.count() << endl;
-		
+	
 	//If we are one packet or less away from being blocked, 
 	// wait to send
 	if ( newLevel < maxPacket || newLevel < disconnect )
