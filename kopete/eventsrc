@@ -756,6 +756,7 @@ default_presentation=2
 Name=ICQ Authorization
 Name[bg]=Оторизация на ICQ
 Name[ca]=Autorització ICQ
+Name[cs]=ICQ autorizace
 Name[da]=ICQ-godkendelse
 Name[en_GB]=ICQ Authorisation
 Name[et]=ICQ autoriseerimine
