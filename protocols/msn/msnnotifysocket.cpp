@@ -152,6 +152,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 		break;
 	}
 }
+
 void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	const QString &data )
 {
@@ -161,7 +162,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		if( data.section( ' ', 1, 1 ) == "S" )
 		{
-			kdDebug(14140) << "Sending response Authentication" << endl;
+			kdDebug(14140) << "MSNNotifySocket::parseCommand: Sending response Authentication" << endl;
 
 			KMD5 context( data.section( ' ', 2, 2 ) + m_password );
 			sendCommand( "USR", "MD5 S " + context.hexDigest() );
@@ -189,9 +190,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		{
 			c->setMsnStatus( MSNProtocol::convertStatus( data.section( ' ', 0, 0 ) ) );
 			QString publicName = unescape( data.section( ' ', 2, 2 ) );
-			// FIXME: We may want to save the remote user's display name somewhere, but
-			// don't enforce it over a custom name if one has already been set - Martijn
-			if( publicName != c->displayName() && c->displayName() == c->contactId() )
+			if( publicName != c->displayName())
 				changePublicName( publicName, c->contactId() );
 		}
 	}
