@@ -1,0 +1,8 @@
+TODO for Jabber:
+
+- update status is not signalled after a new contact has been added
+- check renaming
+- check moving between groups
+- check if pending subscriptions are displayed
+- check if incoming auth requests are properly added
+- implement support for transports/agents
