@@ -312,7 +312,7 @@ This option is only available if there is exactly one child contact </string>
                         <cstring>checkBox5</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Play a sound</string>
+                        <string>&amp;Play a sound:</string>
                     </property>
                 </widget>
                 <widget class="KURLRequester" row="1" column="1">

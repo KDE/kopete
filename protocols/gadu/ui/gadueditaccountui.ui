@@ -478,7 +478,7 @@
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>DCC global options</string>
+                    <string>DCC Global Options</string>
                 </attribute>
                 <grid>
                     <property name="name">
