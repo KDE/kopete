@@ -51,11 +51,16 @@ struct KopeteMetaContactPrivate
 
 	bool temporary;
 	bool dirty;
-	uint contactId;
+	ulong contactId;
 	KopeteMetaContact::OnlineStatus onlineStatus;
 	KopeteMetaContact::IdleState    idleState;
 	KopeteHistoryDialog *historyDialog;
+
+	//Unique contact id per metacontact
+	static ulong uniqueContactId;
 };
+
+ulong KopeteMetaContactPrivate::uniqueContactId = 0;
 
 KopeteMetaContact::KopeteMetaContact()
 : KopetePluginDataObject( KopeteContactList::contactList() )
@@ -69,6 +74,7 @@ KopeteMetaContact::KopeteMetaContact()
 	d->onlineStatus = Unknown;
 	d->idleState = Unspecified;
 	d->historyDialog = 0L;
+	d->contactId = 0;
 }
 
 KopeteMetaContact::~KopeteMetaContact()
@@ -599,7 +605,7 @@ const QDomElement KopeteMetaContact::toXML()
 
 	QDomDocument metaContact;
 	metaContact.appendChild( metaContact.createElement( QString::fromLatin1("meta-contact") ) );
-	metaContact.documentElement().setAttribute( QString::fromLatin1("contactId"), QString::number(d->contactId) );
+	metaContact.documentElement().setAttribute( QString::fromLatin1("contactId"), QString::number(contactId()) );
 
 	QDomElement displayName = metaContact.createElement( QString::fromLatin1("display-name") );
 	displayName.setAttribute( QString::fromLatin1("trackChildNameChanges"), QString::null );
@@ -664,20 +670,16 @@ const QDomElement KopeteMetaContact::toXML()
 
 bool KopeteMetaContact::fromXML( const QDomElement& element )
 {
-	//Unique contact id per metacontact
-	static uint contactId = 0;
-
 	if( !element.hasChildNodes() )
 		return false;
 
 	QString strContactId = element.attribute( QString::fromLatin1("contactId") );
-	if( strContactId.isEmpty() )
-		d->contactId = ++contactId;
-	else
-		d->contactId = strContactId.toUInt();
-
-	if( d->contactId > contactId )
-		contactId = d->contactId;
+	if( !strContactId.isEmpty() )
+	{
+		d->contactId = strContactId.toULong();
+		if( d->contactId > d->uniqueContactId )
+			d->uniqueContactId = d->contactId;
+	}
 
 	QDomElement contactElement = element.firstChild().toElement();
 	while( !contactElement.isNull() )
@@ -798,8 +800,11 @@ KopeteMetaContact::IdleState KopeteMetaContact::idleState() const
 	return d->idleState;
 }
 
-uint KopeteMetaContact::contactId() const
+ulong KopeteMetaContact::contactId() const
 {
+	if( d->contactId == 0 )
+		d->contactId = ++d->uniqueContactId;
+
 	return d->contactId;
 }
 

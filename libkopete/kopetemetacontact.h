@@ -201,7 +201,7 @@ public:
 	/**
 	 * Returns this metacontact's ID. Every metacontact has a unique id.
 	 */
-	uint contactId() const;
+	ulong contactId() const;
 	/**
 	 * Get or set a field for the KDE address book backend. Fields not
 	 * registered during the call to KopetePlugin::addressBookFields()
