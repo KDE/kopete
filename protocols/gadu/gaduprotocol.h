@@ -32,7 +32,6 @@
 #include "kopeteprotocol.h"
 #include "gaducommands.h"
 
-class StatusBarIcon;
 class GaduSession;
 class KopeteContact;
 class KAction;
@@ -56,7 +55,6 @@ public:
     // Plugin reimplementation
     // {
     void init();
-    bool unload();
 
     QString protocolIcon() const ;
     void Connect();
@@ -73,6 +71,8 @@ public:
     KopeteContact *myself() const;
     void deserialize( KopeteMetaContact *metaContact, const QStringList &strList );
     QStringList addressBookFields() const;
+
+    virtual KActionMenu* protocolActions();
     // }
     //!Plugin reimplementation
 
@@ -80,7 +80,6 @@ public:
                      KopeteMetaContact* parent = 0L, const QString& group = QString::null );
     void removeContact( const GaduContact *c );
 public slots:
-    void slotIconRightClicked( const QPoint& );
     void slotLogin();
     void slotLogoff();
     void addNotify( uin_t uin );
@@ -115,7 +114,6 @@ protected slots:
 
 private:
     void initConnections();
-    void initIcons();
     void initActions();
 
     static GaduProtocol* protocolStatic_;
@@ -124,8 +122,6 @@ private:
     QPtrList<GaduCommand>  commandList_;
     ContactsMap            contactsMap_;
 
-    StatusBarIcon *statusBarIcon_;
-
     GaduContact         *myself_;
     Q_UINT32             userUin_;
     Q_UINT32             status_;
@@ -133,13 +129,6 @@ private:
     QString              nick_;
 
     GaduPreferences     *prefs_;
-
-    QPixmap  onlineIcon_;
-    QPixmap  awayIcon_;
-    QPixmap  invisibleIcon_;
-    QPixmap  busyIcon_;
-    QPixmap  offlineIcon_;
-    QPixmap  connectingIcon_;
 
     KActionMenu *actionMenu_;
     KAction     *onlineAction_;

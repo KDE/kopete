@@ -7,7 +7,6 @@
 #include <ksimpleconfig.h>
 #include <kaction.h>
 #include <kpopupmenu.h>
-#include <kstatusbar.h>
 #include <kstandarddirs.h>
 
 #include "kopete.h"
@@ -15,7 +14,6 @@
 #include "kopetemetacontact.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
-#include "statusbaricon.h"
 #include "systemtray.h"
 
 #include <qcursor.h>
@@ -51,15 +49,13 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
     myself_ = new GaduContact( this->id(), userUin_, nick_,
                                new KopeteMetaContact() );
 
-    statusBarIcon_ = new StatusBarIcon();
     prefs_ = new GaduPreferences( "gadu_protocol", this );
     connect( prefs_, SIGNAL(saved()), this, SLOT(settingsChanged()) );
 
-    initIcons();
     initActions();
     initConnections();
 
-    statusBarIcon_->setPixmap( connectingIcon_ );
+    setStatusIcon( "gg_connecting" );
 
     if( KGlobal::config()->readBoolEntry("AutoConnect", false) )
         slotGoOnline();
@@ -71,20 +67,6 @@ GaduProtocol::~GaduProtocol()
 }
 
 GaduProtocol* GaduProtocol::protocolStatic_ = 0L;
-
-void
-GaduProtocol::initIcons()
-{
-    KIconLoader *loader = KGlobal::iconLoader();
-    KStandardDirs dir;
-
-    onlineIcon_ = QPixmap( loader->loadIcon("gg_online", KIcon::User) );
-    offlineIcon_ = QPixmap( loader->loadIcon("gg_offline", KIcon::User) );
-    awayIcon_ = QPixmap( loader->loadIcon("gg_away", KIcon::User) );
-    busyIcon_ = QPixmap( loader->loadIcon("gg_busy", KIcon::User) );
-    invisibleIcon_ = QPixmap( loader->loadIcon("gg_invi", KIcon::User) );
-    connectingIcon_= QPixmap( loader->loadIcon("gg_connecting", KIcon::User) );
-}
 
 void
 GaduProtocol::initActions()
@@ -102,6 +84,8 @@ GaduProtocol::initActions()
 
     actionMenu_ = new KActionMenu( "Gadu", this );
 
+    actionMenu_->popupMenu()->insertTitle( id() );
+
     actionMenu_->insert( onlineAction_ );
     actionMenu_->insert( offlineAction_ );
     actionMenu_->insert( awayAction_ );
@@ -114,8 +98,6 @@ GaduProtocol::initActions()
 void
 GaduProtocol::initConnections()
 {
-    QObject::connect( statusBarIcon_, SIGNAL(rightClicked(const QPoint&)),
-                      this, SLOT(slotIconRightClicked(const QPoint&)) );
     QObject::connect( session_, SIGNAL(error(const QString&,const QString&)),
                       SLOT(error(const QString&, const QString&)) );
     QObject::connect( session_, SIGNAL(messageReceived( struct gg_event* )),
@@ -146,16 +128,6 @@ GaduProtocol::protocol()
 void
 GaduProtocol::init()
 {
-}
-
-bool
-GaduProtocol::unload()
-{
-    if( kopeteapp->statusBar() ) {
-        kopeteapp->statusBar()->removeWidget( statusBarIcon_ );
-        delete statusBarIcon_;
-    }
-	return KopeteProtocol::unload();
 }
 
 QString
@@ -274,18 +246,10 @@ GaduProtocol::removeContact( const GaduContact* c )
     }
 }
 
-void
-GaduProtocol::slotIconRightClicked( const QPoint& /*p*/ )
+KActionMenu *
+GaduProtocol::protocolActions()
 {
-    KPopupMenu *popup = new KPopupMenu( statusBarIcon_ );
-    popup->insertTitle( this->id() );
-    onlineAction_->plug( popup );
-    busyAction_->plug( popup );
-    awayAction_->plug( popup );
-    invisibleAction_->plug( popup );
-    offlineAction_->plug( popup );
-
-    popup->popup( QCursor::pos() );
+    return actionMenu_;
 }
 
 void
@@ -324,7 +288,7 @@ GaduProtocol::slotLogoff()
         status_ = 0;
         changeStatus( status_ );
     } else
-        statusBarIcon_->setPixmap( offlineIcon_ );
+        setStatusIcon( "gg_offline" );
 }
 
 void
@@ -365,23 +329,23 @@ GaduProtocol::changeStatus( int status, const QString& descr )
     switch( status_ ) {
     case GG_STATUS_NOT_AVAIL:
     case GG_STATUS_NOT_AVAIL_DESCR:
-        statusBarIcon_->setPixmap( awayIcon_ );
+        setStatusIcon( "gg_away" );
         break;
     case GG_STATUS_AVAIL:
     case GG_STATUS_AVAIL_DESCR:
-        statusBarIcon_->setPixmap( onlineIcon_ );
+        setStatusIcon( "gg_online" );
         break;
     case GG_STATUS_BUSY:
     case GG_STATUS_BUSY_DESCR:
-        statusBarIcon_->setPixmap( busyIcon_ );
+        setStatusIcon( "gg_busy" );
         break;
     case GG_STATUS_INVISIBLE:
     case GG_STATUS_INVISIBLE_DESCR:
-        statusBarIcon_->setPixmap( invisibleIcon_ );
+        setStatusIcon( "gg_invi" );
         break;
     default:
         session_->logoff();
-        statusBarIcon_->setPixmap( offlineIcon_ );
+        setStatusIcon( "gg_offline" );
         break;
     }
 }
@@ -487,7 +451,7 @@ GaduProtocol::connectionFailed( struct gg_event* /*e*/ )
 {
     KMessageBox::error( qApp->mainWidget(), i18n("Plugin unable to connect to the Gadu-Gadu server."),
                         i18n("Connection Error") );
-    statusBarIcon_->setPixmap( offlineIcon_ );
+    setStatusIcon( "gg_offline" );
 }
 
 void
