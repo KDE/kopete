@@ -283,9 +283,8 @@ void YahooAccount::setAway(bool status, const QString &awayMessage)
 
 void YahooAccount::slotConnected()
 {
-	kdDebug(14180) << k_funcinfo << endl;
-	static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Available);
-	m_needNewPassword = false;	
+	kdDebug(14180) << k_funcinfo << "Moved to slotLoginResponse for the moment" << endl;
+
 }
 
 void YahooAccount::slotGoOnline()
@@ -392,12 +391,12 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	if (succ == YAHOO_LOGIN_OK)
 	{
 		slotGotBuddies(yahooSession()->getLegacyBuddyList());
-		if(stateOnConnection)
-		{
-			m_session->setAway(yahoo_status(stateOnConnection), "", 0);
-			static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::fromLibYahoo2(stateOnConnection));
-			stateOnConnection = 0;
-		}
+		/**
+		 * FIXME: Right now, we only support connecting as online
+		 * Support needs to be added for invisible
+		 */
+		static_cast<YahooContact *>( myself() )->setYahooStatus(YahooStatus::Available);
+		m_needNewPassword = false;	
 		return;
 	}
 	else if(succ == YAHOO_LOGIN_PASSWD)
