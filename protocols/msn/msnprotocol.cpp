@@ -87,7 +87,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	setStatusIcon( "msn_offline" );
 
 	// FIXME: I think we should add a global self metaContact (Olivier)
-	m_myself = new MSNContact( m_msnId,m_publicName,  0L );
+	m_myself = new MSNContact( this, m_msnId, m_publicName, 0L );
 
 	if ( mPrefs->autoConnect() )
 		Connect();
@@ -293,7 +293,7 @@ void MSNProtocol::deserialize( KopeteMetaContact *metaContact,
 		QStringList groups  = QStringList::split( ",", strList[ idx + 2 ] );
 
 		// Create MSN contact
-		MSNContact *c = new MSNContact( passport, displayName, metaContact );
+		MSNContact *c = new MSNContact( this, passport, displayName, metaContact );
 		c->setMsnStatus( MSNProtocol::FLN );
 		for(QStringList::Iterator it = groups.begin() ; it != groups.end(); ++it )
 			c->slotAddedToGroup(  (*it).toUInt()  );
@@ -956,7 +956,7 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 		{
 			m = new KopeteMetaContact();
 
-			MSNContact *msnContact = new MSNContact( handle, publicName, m );
+			MSNContact *msnContact = new MSNContact( this, handle, publicName, m );
 			msnContact->setMsnStatus( FLN );
 
 			for( QStringList::Iterator it = groups.begin();
@@ -1092,7 +1092,7 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 				else
 					m=new KopeteMetaContact();
 
-				MSNContact *c = new MSNContact( handle, publicName, m );
+				MSNContact *c = new MSNContact( this, handle, publicName, m );
 				c->slotAddedToGroup( group );
 
 				if(!m_addWizard_metaContact)
@@ -1210,7 +1210,7 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 			m->setTemporary(true);
 			QString protocolid = this->pluginId();
 
-			MSNContact *msnContact = new MSNContact( handle, publicName, m );
+			MSNContact *msnContact = new MSNContact( this, handle, publicName, m );
 
 			m->addContact( msnContact);
 			KopeteContactList::contactList()->addMetaContact(m);
@@ -1378,7 +1378,7 @@ void MSNProtocol::slotPreferencesSaved()
 		{
 			Disconnect();
 			delete m_myself;
-			m_myself = new MSNContact( m_msnId, m_publicName, 0L );
+			m_myself = new MSNContact( this, m_msnId, m_publicName, 0L );
 		}
 	}
 }

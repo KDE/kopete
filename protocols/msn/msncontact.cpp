@@ -36,9 +36,9 @@
 #include "msnnotifysocket.h"
 #include "msnprotocol.h"
 
-MSNContact::MSNContact( const QString &msnId,
+MSNContact::MSNContact( KopeteProtocol *proto, const QString &id,
 	const QString &displayName, KopeteMetaContact *parent )
-: KopeteContact( MSNProtocol::protocol(), msnId, parent )
+: KopeteContact( proto, id, parent )
 {
 	m_actionBlock = 0L;
 	m_actionCollection=0L;
@@ -52,21 +52,25 @@ MSNContact::MSNContact( const QString &msnId,
 	m_moving=false;
 
 	connect ( this, SIGNAL( chatToUser( QString ) ),
-		MSNProtocol::protocol(), SLOT( slotStartChatSession( QString ) ) );
+		protocol(), SLOT( slotStartChatSession( QString ) ) );
 	connect (this , SIGNAL( moved(KopeteMetaContact*,KopeteContact*) ),
 		this, SLOT (slotMoved(KopeteMetaContact*) ));
 	setDisplayName( displayName );
 
-	if(parent)
+	if( metaContact() )
 	{
-		connect (parent , SIGNAL( movedToGroup( KopeteGroup*, KopeteGroup* , KopeteMetaContact*) ),
-				this, SLOT (moveToGroup(KopeteGroup*,KopeteGroup*) ));
-		connect (parent , SIGNAL( addedToGroup( KopeteGroup* , KopeteMetaContact*) ),
-				this, SLOT (addToGroup(KopeteGroup*) ));
-		connect (parent , SIGNAL( removedFromGroup(  KopeteGroup* , KopeteMetaContact*) ),
-				this, SLOT (removeFromGroup(KopeteGroup*) ));
-		connect (parent , SIGNAL( aboutToSave(KopeteMetaContact*) ),
-				MSNProtocol::protocol(), SLOT (serialize(KopeteMetaContact*) ));
+		connect ( metaContact(),
+			SIGNAL( movedToGroup( KopeteGroup *, KopeteGroup * , KopeteMetaContact * ) ),
+			this, SLOT( moveToGroup( KopeteGroup *, KopeteGroup * ) ) );
+		connect( metaContact(),
+			SIGNAL( addedToGroup( KopeteGroup * , KopeteMetaContact * ) ),
+			this, SLOT( addToGroup( KopeteGroup * ) ) );
+		connect( metaContact(),
+			SIGNAL( removedFromGroup(  KopeteGroup * , KopeteMetaContact * ) ),
+			this, SLOT( removeFromGroup( KopeteGroup * ) ) );
+		connect( metaContact(),
+			SIGNAL( aboutToSave( KopeteMetaContact * ) ),
+			protocol(), SLOT( serialize( KopeteMetaContact * ) ) );
 	}
 
 	setFileCapable(true);
@@ -109,7 +113,7 @@ void MSNContact::execute()
 
 void MSNContact::slotBlockUser()
 {
-	MSNNotifySocket *notify=MSNProtocol::protocol()->notifySocket();
+	MSNNotifySocket *notify = static_cast<MSNProtocol*>( protocol() )->notifySocket();
 	if( !notify )
 	{
 		KMessageBox::error( 0l,
@@ -153,7 +157,7 @@ void MSNContact::slotDeleteContact()
 {
 	kdDebug() << "MSNContact::slotDeleteContact" << endl;
 
-	MSNNotifySocket *notify=MSNProtocol::protocol()->notifySocket();
+	MSNNotifySocket *notify = static_cast<MSNProtocol*>( protocol() )->notifySocket();
 	if( notify )
 	{
 		m_moving=false;
@@ -469,7 +473,7 @@ void MSNContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 	}
 
 //	kdDebug() << "MSNContact::moveToGroup: " << from->displayName() << " => " << to->displayName() << endl;
-	MSNNotifySocket *notify=MSNProtocol::protocol()->notifySocket();
+	MSNNotifySocket *notify = static_cast<MSNProtocol*>( protocol() )->notifySocket();
 	if( notify )
 	{
 		m_moving=true;
@@ -497,7 +501,7 @@ void MSNContact::addToGroup( KopeteGroup *group )
 
 //	kdDebug() << "MSNContact::addToGroup: " << group->displayName() << endl;
 	
-	MSNNotifySocket *notify=MSNProtocol::protocol()->notifySocket();
+	MSNNotifySocket *notify = static_cast<MSNProtocol*>( protocol() )->notifySocket();
 	if( notify )
 	{
 		QStringList strL=group->pluginData(protocol());
@@ -512,7 +516,7 @@ void MSNContact::addToGroup( KopeteGroup *group )
 		}
 		else
 		{
-			MSNProtocol::protocol()->addGroup( group->displayName(), contactId() );
+			static_cast<MSNProtocol*>( protocol() )->addGroup( group->displayName(), contactId() );
 		}
 	}
 	else
@@ -532,7 +536,7 @@ void MSNContact::removeFromGroup( KopeteGroup * group )
 	
 	m_moving=false;
 
-	MSNNotifySocket *notify=MSNProtocol::protocol()->notifySocket();
+	MSNNotifySocket *notify = static_cast<MSNProtocol*>( protocol() )->notifySocket();
 	if( notify )
 	{
 		if(m_groups.count()==1)
@@ -570,7 +574,7 @@ void MSNContact::slotRemovedFromGroup(unsigned int group)
 void MSNContact::addThisTemporaryContact(KopeteGroup* group)
 {
 	if(!group || group->displayName().isNull() || group->type() != KopeteGroup::Classic)
-		MSNProtocol::protocol()->addContact( contactId() );
+		static_cast<MSNProtocol*>( protocol() )->addContact( contactId() );
 	else
 		addToGroup(  group );
 }
@@ -600,7 +604,7 @@ void MSNContact::slotMoved(KopeteMetaContact* from)
 			this, SLOT (removeFromGroup(KopeteGroup*) ));
 	// no need to disconnect: 1) maybe there are other msncontact here ; 2) we need to remove old info
 //	disconnect (from , SIGNAL( aboutToSave(KopeteMetaContact*) ),
-//				MSNProtocol::protocol(), SLOT (serialize(KopeteMetaContact*) ));
+//		static_cast<MSNProtocol*>( protocol() ), SLOT (serialize(KopeteMetaContact*) ));
 
 
 	connect (metaContact() , SIGNAL( movedToGroup( KopeteGroup*, KopeteGroup* , KopeteMetaContact*) ),
@@ -626,12 +630,12 @@ void MSNContact::slotSendFile(QString fileName  )
 		chatmembers.append( this );
 		KopeteMessageManager *_manager =
 			KopeteMessageManagerFactory::factory()->findKopeteMessageManager(
-				MSNProtocol::protocol()->myself(), chatmembers,
-				MSNProtocol::protocol() );
+				protocol()->myself(), chatmembers,
+				protocol() );
 		MSNMessageManager *manager= dynamic_cast<MSNMessageManager*>(_manager);
 		if( !manager )
 		{
-			manager = new MSNMessageManager( MSNProtocol::protocol()->myself(),
+			manager = new MSNMessageManager( protocol()->myself(),
 				chatmembers );
 		}
 		manager->sendFile( fileName );
