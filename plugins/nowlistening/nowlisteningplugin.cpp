@@ -91,6 +91,8 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 	connect(  KopeteMessageManagerFactory::factory(),
 			SIGNAL( aboutToSend( KopeteMessage & ) ),
 			SLOT( slotOutgoingMessage( KopeteMessage & ) ) );
+			
+	connect ( this , SIGNAL( settingsChanged() ) , this , SLOT( slotSettingsChanged() ) );
 }
 
 NowListeningPlugin::~NowListeningPlugin()
@@ -257,6 +259,11 @@ void NowListeningPlugin::advertiseToChat( KopeteMessageManager *theChat, QString
 			KopeteMessage::Outbound,
 			KopeteMessage::RichText );
 	theChat->sendMessage( msg );
+}
+
+void NowListeningPlugin::slotSettingsChanged()
+{
+	m_config->load();
 }
 
 NowListeningPlugin* NowListeningPlugin::pluginStatic_ = 0L;

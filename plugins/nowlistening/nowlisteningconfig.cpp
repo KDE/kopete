@@ -28,7 +28,6 @@ NowListeningConfig::NowListeningConfig()
 
 void NowListeningConfig::load()
 {
-
 	KConfig *config = KGlobal::config();
 	config->setGroup("Now Listening Plugin");
 	mHeader = config->readEntry("Header", i18n("Now Listening To: "));

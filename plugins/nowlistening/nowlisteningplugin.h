@@ -75,6 +75,11 @@ friend class NowListeningGUIClient;
 		 * Reacts to a new chat starting and adds actions to its GUI
 		 */
 		void slotNewKMM( KopeteMessageManager* );
+		
+		/**
+		 * Reacts to the plugin's settings changed signal, originating from the KCModule dispatcher
+		 */ 
+		void slotSettingsChanged();
 
 	private:
 		// used to access the GUI settings
@@ -90,7 +95,6 @@ friend class NowListeningGUIClient;
 		KopeteMetaContact *m_currentMetaContact;
 
 		static NowListeningPlugin* pluginStatic_;
-
 };
 
 #endif

@@ -10,7 +10,7 @@ kopete_nowlistening_la_LIBADD      = ../../libkopete/libkopete.la $(XMMS_LIBS)
 
 kcm_kopete_nowlistening_la_SOURCES = nowlisteningprefs.ui nowlisteningpreferences.cpp nowlisteningconfig.cpp
 kcm_kopete_nowlistening_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
-kcm_kopete_nowlistening_la_LIBADD  = $(LIB_KOPETECOMPAT) $(LIB_KUTILS)
+kcm_kopete_nowlistening_la_LIBADD  = $(LIB_KUTILS)
 
 service_DATA = kopete_nowlistening.desktop
 servicedir = $(kde_servicesdir)

@@ -38,6 +38,9 @@ public:
 	virtual void save();
 	virtual void load();
 
+private slots:
+	void slotSettingsChanged();
+	
 private:
 	NowListeningPrefsUI *preferencesDialog;
 	NowListeningConfig *config;

@@ -39,7 +39,13 @@ NowListeningPreferences::NowListeningPreferences(QWidget *parent, const char* /*
 	preferencesDialog = new NowListeningPrefsUI( this );
 	config = new NowListeningConfig;
 
-
+	connect ( preferencesDialog->m_header, SIGNAL( textChanged( const QString & ) ),
+		  this, SLOT( slotSettingsChanged() ) );
+	connect ( preferencesDialog->m_perTrack, SIGNAL( textChanged( const QString & ) ),
+		  this, SLOT( slotSettingsChanged() ) );
+	connect ( preferencesDialog->m_conjunction, SIGNAL( textChanged( const QString & ) ),
+		  this, SLOT( slotSettingsChanged() ) );
+	load();
 }
 
 NowListeningPreferences::~NowListeningPreferences( )
@@ -50,17 +56,32 @@ NowListeningPreferences::~NowListeningPreferences( )
 
 void NowListeningPreferences::save()
 {
+	config->setHeader( preferencesDialog->m_header->text() );
+	config->setPerTrack( preferencesDialog->m_perTrack->text() );
+	config->setConjunction( preferencesDialog->m_conjunction->text() );
 	config->save();
+	
+	KCModule::save();
+	
+	setChanged( false );
 }
 
 void NowListeningPreferences::load()
 {
 	config->load();
-	preferencesDialog->m_header->setText(config->header());
-	preferencesDialog->m_perTrack->setText(config->perTrack());
-	preferencesDialog->m_conjunction->setText(config->conjunction());
+	preferencesDialog->m_header->setText( config->header() );
+	preferencesDialog->m_perTrack->setText( config->perTrack() );
+	preferencesDialog->m_conjunction->setText( config->conjunction() );
+
+	KCModule::load();
+
+	setChanged( false );
 }
 
+void NowListeningPreferences::slotSettingsChanged()
+{
+	setChanged( true );
+}
 /*
 * Local variables:
 * c-indentation-style: k&r
