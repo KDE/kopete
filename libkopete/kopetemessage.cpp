@@ -146,7 +146,7 @@ void KopeteMessage::setBg( const QColor &color )
 {
 	detach();
 	QDomElement bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
-	if( d->bgOverride && color.isValid() )
+	if( !d->bgOverride && color.isValid() )
 		bodyNode.setAttribute( QString::fromLatin1("bgcolor"), color.name() );
 	else
 		bodyNode.removeAttribute( QString::fromLatin1("bgcolor") );
