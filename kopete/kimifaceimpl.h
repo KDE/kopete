@@ -35,15 +35,15 @@ public:
 	QStringList fileTransferContacts();
 	
 // individual
-	bool isPresent( const QString & uid );
-	QString presenceString( const QString & uid );
-	int presenceStatus( const QString & uid );
-	bool canReceiveFiles( const QString & uid );
-	bool canRespond( const QString & uid );
-	QString locate( const QString & contactId, const QString & protocol );
+	bool isPresent( const QString &uid );
+	QString presenceString( const QString &uid );
+	int presenceStatus( const QString &uid );
+	bool canReceiveFiles( const QString &uid );
+	bool canRespond( const QString &uid );
+	QString locate( const QString &contactId, const QString &protocol );
 // metadata
-	QPixmap icon( const QString & uid );
-	QString context( const QString & uid );
+	QPixmap icon( const QString &uid );
+	QString context( const QString &uid );
 // App capabilities
 	QStringList protocols();
 	
@@ -56,7 +56,7 @@ public:
 	/**
 	 * Open a chat to a contact, and optionally set some initial text
 	 */
-	void messageNewContact( const QString &protocolId, const QString &contactId );
+	void messageNewContact(  const QString &contactId, const QString &protocolId );
 
 	/**
 	 * Message a contact by their metaContactId, aka their uid in KABC.
@@ -71,7 +71,7 @@ public:
 
 // MUTATORS
 // Contact list
-	bool addContact( const QString &protocolId, const QString &contactId );
+	bool addContact( const QString &contactId, const QString &protocolId );
 // SIGNALS
 	/**
 	 * DCOP Signal used to notify 

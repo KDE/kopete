@@ -147,7 +147,7 @@ QString KIMIfaceImpl::presenceString( const QString & uid )
 	}
 	else
 	{
-		p = i18n("Error: could not discover presence.");
+		p = QString::null;
 	}
 	return p;
 }
@@ -189,7 +189,7 @@ QString KIMIfaceImpl::locate( const QString & contactId, const QString & protoco
 	if ( mc )
 		return mc->metaContactId();
 	else
-		return QString();
+		return QString::null;
 }
 
 KopeteMetaContact * KIMIfaceImpl::locateProtocolContact( const QString & contactId, const QString & protocolId )
@@ -249,7 +249,7 @@ void KIMIfaceImpl::messageContact( const QString &uid, const QString& messageTex
 		m->sendMessage();
 }
 
-void KIMIfaceImpl::messageNewContact( const QString &protocol, const QString &contactId )
+void KIMIfaceImpl::messageNewContact( const QString &contactId, const QString &protocol )
 {
 	KopeteMetaContact *mc = locateProtocolContact( contactId, protocol );
 	if ( mc )
@@ -271,7 +271,7 @@ void KIMIfaceImpl::sendFile(const QString &uid, const KURL &sourceURL,
 		m->sendFile( sourceURL, altFileName, fileSize );
 }
 
-bool KIMIfaceImpl::addContact( const QString &protocolId, const QString &contactId )
+bool KIMIfaceImpl::addContact( const QString &contactId, const QString &protocolId )
 {
 	// find a matching protocol
 	KopeteProtocol *protocol = dynamic_cast<KopeteProtocol*>( KopetePluginManager::self()->plugin( protocolId ) );
