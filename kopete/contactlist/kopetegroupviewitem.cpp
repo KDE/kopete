@@ -33,15 +33,15 @@
 
 #include <memory>
 
-using namespace Kopete::UI;
+//using namespace Kopete::UI;
 
 class KopeteGroupViewItem::Private
 {
 public:
-	ListView::ImageComponent *image;
-	ListView::TextComponent *name;
-	ListView::TextComponent *count;
-	std::auto_ptr<ListView::ToolTipSource> toolTipSource;
+	Kopete::UI::ListView::ImageComponent *image;
+	Kopete::UI::ListView::TextComponent *name;
+	Kopete::UI::ListView::TextComponent *count;
+	std::auto_ptr<Kopete::UI::ListView::ToolTipSource> toolTipSource;
 };
 
 namespace Kopete {
@@ -90,9 +90,9 @@ void KopeteGroupViewItem::initLVI()
 {
 	d = new Private;
 
-	d->toolTipSource.reset( new ListView::GroupToolTipSource( this ) );
+	d->toolTipSource.reset( new Kopete::UI::ListView::GroupToolTipSource( this ) );
 
-	using namespace ListView;
+	using namespace Kopete::UI::ListView;
 	Component *hbox = new BoxComponent( this, BoxComponent::Horizontal );
 	d->image = new ImageComponent( hbox );
 	d->name = new TextComponent( hbox );
@@ -168,6 +168,7 @@ void KopeteGroupViewItem::refreshDisplayName()
 	// Sorting in this slot is extremely expensive as it's called dozens of times and
 	// the sorting itself is rather slow. Therefore we call delayedSort, which tries
 	// to group multiple sort requests into one.
+	using namespace Kopete::UI::ListView;
 	if ( ListView::ListView *lv = dynamic_cast<ListView::ListView *>( listView() ) )
 		lv->delayedSort();
 	else
