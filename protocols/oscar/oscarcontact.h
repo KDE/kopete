@@ -59,6 +59,7 @@ public slots:
 	//virtual void showContextMenu(const QPoint &p, const QString &group);
 	/** Method to delete a contact from the contact list */
 	virtual void slotDeleteContact(void);
+	void slotSendFile();
 
 public: // Public attributes
 	/** The name of the contact */

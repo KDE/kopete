@@ -2,6 +2,7 @@
 #include <kaction.h>
 #include <klocale.h>
 #include <kdebug.h>
+#include <kmessagebox.h>
 
 #include <qstring.h>
 
@@ -11,6 +12,7 @@
 #include "kopetestdaction.h"
 #include "kopetehistorydialog.h"
 #include "kopeteaway.h"
+#include "kopetewindow.h"
 
 #include "gaduprotocol.h"
 #include "gaducontact.h"
@@ -317,6 +319,12 @@ GaduContact::customContextMenuActions()
 void
 GaduContact::slotUserInfo()
 {
+}
+
+void GaduContact::slotSendFile()
+{
+	kdDebug() << "[GaduGadu] File transfer not implemented yet!" << endl;
+	KMessageBox::sorry(kopeteapp->mainWindow(), i18n("Sorry, file transfer has not been implemented in the Gadu Gadu protocol yet."), i18n("File transfer not implemented"));
 }
 
 void

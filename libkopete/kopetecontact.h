@@ -236,8 +236,7 @@ public:
 	  * TODO: Write a better description of this, this doc doesn't make sense
 	  */
 	 virtual void addThisTemporaryContact(KopeteGroup *group=KopeteGroup::null);
-	 
-	 
+
 public slots:
 	/**
 	 * This should typically pop up a KopeteChatWindow
@@ -269,6 +268,11 @@ public slots:
 	 * the protocols, and popup some sort of dialog box
 	 */
 	virtual void slotUserInfo() = 0;
+	
+	/**
+	 * Method to send a file. Should be implemented by the protocols
+	 */
+	 virtual void slotSendFile() = 0;
 	
 private slots:
 	/**
@@ -338,6 +342,7 @@ private:
 	KAction *actionViewHistory;
 	KAction *actionChangeAlias;
 	KAction *actionUserInfo;
+	KAction *actionSendFile;
 
 	KPopupMenu *contextMenu;
 

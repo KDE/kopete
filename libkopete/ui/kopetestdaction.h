@@ -36,6 +36,7 @@ class KopeteStdAction
 
 		static KAction *contactInfo(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
 		static KAction *viewHistory(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
+		static KAction *sendFile(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
 		
 		static KAction *changeMetaContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
 		

@@ -49,6 +49,7 @@ class YahooContact : public KopeteContact
 		QString statusIcon() const;		// Return statusIcon 
 
 	public slots:
+		void slotSendFile();
 
 	private slots:
 

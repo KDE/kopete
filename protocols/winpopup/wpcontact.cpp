@@ -25,6 +25,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
+#include <kmessagebox.h>
 
 // Kopete Includes
 #include "kopetestdaction.h"
@@ -32,6 +33,7 @@
 #include "kopetemessagemanager.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
+#include "kopetewindow.h"
 
 // Local Includes
 #include "wpcontact.h"
@@ -138,6 +140,12 @@ void WPContact::slotViewHistory()
 		myHistoryDialog = new KopeteHistoryDialog(QString("wp_logs/%1.log").arg(myHost), displayName(), true, 50, 0, "WPHistoryDialog");
 		connect(myHistoryDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()));
 	}
+}
+
+void WPContact::slotSendFile()
+{
+	kdDebug() << "[WinPopup] File transfer not implemented yet!" << endl;
+	KMessageBox::sorry(kopeteapp->mainWindow(), i18n("Sorry, file transfer has not been implemented in the Winpopup protocol yet."), i18n("File transfer not implemented"));
 }
 
 void WPContact::slotCloseHistoryDialog()

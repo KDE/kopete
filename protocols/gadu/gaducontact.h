@@ -72,6 +72,7 @@ public slots:
     void messageReceived( const KopeteMessage& );
     void messageSend( const KopeteMessage&, KopeteMessageManager* );
     void slotCloseHistoryDialog();
+    void slotSendFile();
 
 protected:
     KopeteMessageManager* msgManager();

@@ -62,6 +62,7 @@ KopeteContact::~KopeteContact()
 	delete actionViewHistory;
 	delete actionChangeAlias;
 	delete actionUserInfo;
+	delete actionSendFile;
 	
 	emit( contactDestroyed( this ) );
 }
@@ -174,6 +175,7 @@ void KopeteContact::initActions()
 	actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT(slotDeleteContact()), this, "actionDeleteContact" );
 	actionUserInfo = KopeteStdAction::contactInfo( this, SLOT(slotUserInfo()), this, "actionUserInfo" );
 	actionChangeAlias = KopeteStdAction::changeAlias( this, SLOT(slotChangeDisplayName()), this, "actionChangeAlias" );
+	actionSendFile = KopeteStdAction::sendFile( this, SLOT(slotSendFile()), this, "actionSendFile");
 }
 
 void KopeteContact::showContextMenu(const QPoint& p)
@@ -194,6 +196,8 @@ void KopeteContact::showContextMenu(const QPoint& p)
 	actionUserInfo->plug( contextMenu );
 	actionChangeAlias->plug( contextMenu );
 	actionDeleteContact->plug( contextMenu );
+	actionSendFile->plug( contextMenu );
+
 	/* Protocol specific options will go below this separator
 	 * through the use of the customContextMenuActions() function
 	 */

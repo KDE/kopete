@@ -250,7 +250,7 @@ class JabberContact : public KopeteContact
 		void addToGroup( KopeteGroup * );
 		void removeFromGroup( KopeteGroup * );
 		void moveToGroup( KopeteGroup * , KopeteGroup * );
-
+		void slotSendFile();
 
 	private slots:
 		

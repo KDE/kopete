@@ -116,6 +116,7 @@ public slots:
 	virtual void slotViewHistory() {}
 	virtual void slotDeleteContact();
 	virtual void slotUserInfo() {}
+	void slotSendFile();
 };
 
 #endif
