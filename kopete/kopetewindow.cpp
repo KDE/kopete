@@ -205,11 +205,8 @@ void KopeteWindow::initSystray()
 	actionConnectionMenu->plug ( tm,1 );
 	tm->insertSeparator(1);
 
-	QObject::connect(tray, SIGNAL(aboutToShowMenu(KPopupMenu*)), this, SLOT(slotTrayAboutToShowMenu(KPopupMenu*)));
-
-#if KDE_VERSION >= 306
-	QObject::connect(tray,SIGNAL(quitSelected()),this,SLOT(slotQuit()));
-#endif
+	QObject::connect( tray, SIGNAL( aboutToShowMenu( KPopupMenu * ) ), this, SLOT( slotTrayAboutToShowMenu( KPopupMenu * ) ) );
+	QObject::connect( tray, SIGNAL(quitSelected() ), this, SLOT( slotQuit() ) );
 }
 
 KopeteWindow::~KopeteWindow()
@@ -379,36 +376,30 @@ void KopeteWindow::slotGlobalAwayMessageSelect()
 
 void KopeteWindow::closeEvent( QCloseEvent *e )
 {
-	Kopete *kopeteapp = static_cast<Kopete*>(kapp);
-	if (!kopeteapp)
-		return;
+	Kopete *app = static_cast<Kopete *>( kapp );
 
 	// also close if our tray icon is hidden!
-	if(kopeteapp->isShuttingDown() || !KopetePrefs::prefs()->showTray() || !isShown() )
+	if( app->isShuttingDown() || !KopetePrefs::prefs()->showTray() || !isShown() )
 	{
 		KMainWindow::closeEvent( e );
 		return;
 	}
 
-#if KDE_VERSION >= 306
 	KMessageBox::information( this,
 		i18n( "<qt>Closing the main window will keep Kopete running in the "
-		"system tray. Use Quit from the File menu to quit the "
-		"application.</qt>" ), i18n( "Docking in System Tray" ),
-		"hideOnCloseInfo" );
+		"system tray. Use Quit from the File menu to quit the application.</qt>" ),
+		i18n( "Docking in System Tray" ), "hideOnCloseInfo" );
 	hide();
 	e->ignore();
-#else
-	KMainWindow::closeEvent( e );
-#endif
 }
 
 void KopeteWindow::slotQuit()
 {
-	qApp->quit();
+	Kopete *app = static_cast<Kopete *>( kapp );
+	app->quitKopete();
 }
 
-void KopeteWindow::slotPluginLoaded( KopetePlugin */* p  */)
+void KopeteWindow::slotPluginLoaded( KopetePlugin * /* p */ )
 {
 //	kdDebug(14000) << "KopeteWindow::slotPluginLoaded()" << endl;
 /*

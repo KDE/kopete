@@ -39,12 +39,22 @@ class Kopete : public KUniqueApplication
 public:
 	Kopete();
 	~Kopete();
+
 	/**
 	 * Method to return whether or not we're shutting down
 	 * or not at this point.
 	 */
-	 bool isShuttingDown() const { return m_isShuttingDown; }
-	 virtual void commitData( QSessionManager &sm );
+	bool isShuttingDown() const { return m_isShuttingDown; }
+
+public slots:
+	/**
+	 * Quit Kopete. This method marks Kopete as 'shutting down' to avoid
+	 * showing the message box that Kopete will be left running in the
+	 * system tray before calling qApp->quit().
+	 */
+	void quitKopete();
+
+	virtual void commitData( QSessionManager &sm );
 
 private slots:
 	/**

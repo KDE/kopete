@@ -180,6 +180,12 @@ void Kopete::slotMainWindowDestroyed()
 	m_mainWindow = 0L;
 }
 
+void Kopete::quitKopete()
+{
+	m_isShuttingDown = true;
+	quit();
+}
+
 void Kopete::commitData( QSessionManager &sm )
 {
 	m_isShuttingDown = true;
