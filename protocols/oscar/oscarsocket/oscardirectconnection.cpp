@@ -63,11 +63,6 @@ void OscarDirectConnection::slotRead(void)
 			debugDialog()->addMessageFromServer(inbuf.toString(),connectionName());
 	}
 
-	fl.message = inbuf.getBlock(fl.length);
-
-	if ( inbuf.getLength() )
-		kdDebug() << "[OscarDirectConnection] slotread (" << connectionName() << "): inbuf not empty" << inbuf.toString() << endl;
-
 	if (fl.type == 0x000e) // started typing
 	{
 		emit gotMiniTypeNotification(fl.sn, 2);
@@ -80,15 +75,17 @@ void OscarDirectConnection::slotRead(void)
 	{
 		emit gotMiniTypeNotification(fl.sn, 1);
 	}
-	if ( (fl.length > 0) && fl.message && fl.sn)
-		emit gotIM(fl.message, fl.sn, false);
-		
-  if (fl.sn)
+
+	if ( (fl.length > 0) && fl.message && fl.sn) //there is a message here
+		parseMessage(inbuf);
+
+	if ( inbuf.getLength() )
+		kdDebug() << "[OscarDirectConnection] slotread (" << connectionName() << "): inbuf not empty" << endl;//inbuf.toString() << endl;
+
+	if (fl.sn)
   	delete fl.sn;
   if (fl.cookie)
   	delete fl.cookie;
-  if (fl.message)
-  	delete fl.message;
 }
 
 /** Gets an ODC2 header */
@@ -281,4 +278,44 @@ void OscarDirectConnection::sendODC2Block(const QString &message, WORD typingnot
 
   writeBlock(outbuf.getBuf(),outbuf.getLength());
 }
+
+/** Parses the given message */
+void OscarDirectConnection::parseMessage(Buffer &inbuf)
+{
+	kdDebug() << "[OscarDirect] buffer length is " << inbuf.getLength() << endl;
+	// The message will come first, followed by binary files
+	// so let's parse until we see "<BINARY>"
+	QString message;
+	while ( !message.contains("<BINARY>",false) )
+	{
+		kdDebug() << "[OscarDirect] message is: " << message << endl;
+		// while the message does not contain the string "<BINARY>"
+		message.append(inbuf.getByte());
+		if ( !inbuf.getLength() )
+		{
+			//if we are at the end of the buffer
+			emit gotIM(message, connectionName(), false);
+			return;
+		}
+	}
+	//now, we have the message, and we need to d/l the binary content
+	
+  //TODO: implement a FOR loop to handle multiple binary file ID's
+
+	//first comes the <DATA> tag
+	//fields of <DATA ID="n" SIZE="n">(binary file here)
+	QString datatag;
+	while ( !datatag.contains(">",false) )
+	{
+		datatag.append(inbuf.getByte());
+		kdDebug() << "[OscarDirect] datatag matching " << datatag << endl;
+		if ( !inbuf.getLength() )
+		{
+			//message ended in the middle of the data tag
+			emit gotIM(message.remove("<BINARY>"), connectionName(), false);
+		}
+	}
+	emit gotIM(message.remove("<BINARY>"), connectionName(), false);
+}
+
 #include "oscardirectconnection.moc"

@@ -58,6 +58,14 @@ public:
 	/* Return whether or not this contact is REACHABLE. */
 	virtual bool isReachable(void);
 
+	/**
+	 * Returns the direct connection state of the contact
+	 * true = a direct connection is established with the contact
+	 * false = a direct connection is not established with the contact
+	 */
+	bool isDirectConnected() const { return mDirectlyConnected; };
+
+
 public slots:
 	/** Pops up a chat window */
 	virtual void execute(void);
@@ -105,6 +113,8 @@ private: // Private attributes
 	int mIdle;
 	/** Timer for sending typing notifications */
 	QTimer* mTypingTimer;
+  /** Tells whether or not we have a direct connection with the contact */
+	bool mDirectlyConnected;
 
 private slots: // Private slots
 	/** Called when a buddy changes */

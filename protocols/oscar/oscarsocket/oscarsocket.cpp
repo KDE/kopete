@@ -234,6 +234,18 @@ void OscarSocket::slotRead(void)
 	char *buf = new char[fl.length];
 	Buffer inbuf;
 
+	if (fl.length == 0) //something went wrong, this shouldn't happen
+  {
+  	kdDebug() << "[OSCAR] this is bad, flap read error occured " << endl;
+  	//dump packet, try to recover
+   	char *tmp = new char[bytesAvailable()];
+    readBlock(tmp, bytesAvailable());
+    inbuf.setBuf(tmp, bytesAvailable());
+    if (hasDebugDialog()) {
+    	debugDialog()->addMessageFromServer(inbuf.toString(), connectionName());
+    }
+    return;
+  }
 	if (bytesAvailable() < fl.length)
 	{
 		while (waitForMore(500) < fl.length)
@@ -2211,6 +2223,8 @@ FLAP OscarSocket::getFLAP(void)
 				}
 		} else {
 				kdDebug() << "[OSCAR] Error reading FLAP... start byte is " << start << endl;
+				fl.length = 0;
+				putch(start);
 		}
     return fl;
 }

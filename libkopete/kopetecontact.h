@@ -272,18 +272,6 @@ public:
 	  * If this function is not called by a plugin, the idle state is set to Unknown
 	  */
 	 void setIdleState( KopeteContact::IdleState newState );
-	 
-	 /**
-	 	* Sets the direct connection state to newstate
-	  */
-	 void setDirectConnectState( bool newState );
-
-	 /**
-	 	 * Returns the direct connection state of the contact
-	   * true = a direct connection is established with the contact
-	   * false = a direct connection is not established with the contact
-	   */
-	  bool isDirectConnected() const;
 	  
 public slots:
 	/**
@@ -387,7 +375,6 @@ private:
 	QString m_displayName;
 	KopeteProtocol *m_protocol;
 	bool mFileCapable;
-	bool mDirectlyConnected;
 
 	/**
 	 * Scaled icon cache

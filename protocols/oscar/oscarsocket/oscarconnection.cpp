@@ -68,4 +68,5 @@ void OscarConnection::setSN(const QString &newSN)
 {
 	mSN = newSN;
 }
+
 #include "oscarconnection.moc"

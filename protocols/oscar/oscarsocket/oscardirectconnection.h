@@ -58,6 +58,8 @@ private: // Private methods
   ODC2 getODC2(void);
   /** Prepares and sends a block with the given message and typing notify flag attached */
   void sendODC2Block(const QString &message, WORD typingnotify);
+  /** Parses the given message */
+  void parseMessage(Buffer &inbuf);
   
 private slots: // Private slots
   /** Called when we have established a connection */

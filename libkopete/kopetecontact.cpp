@@ -52,7 +52,6 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	mFileCapable = false;
 	m_historyDialog = 0L;
 	m_idleState = Unspecified;
-	mDirectlyConnected = false;
 
 	if( protocol )
 		protocol->registerContact( this );
@@ -146,17 +145,11 @@ QPixmap KopeteContact::scaledStatusIcon(int size)
 		m_cachedOldStatus = this->status();
 		m_cachedSize = size;
 	}
-	if ( m_idleState == Idle || mDirectlyConnected )
+	if ( m_idleState == Idle )
 	{
-		QImage tmp;
-		QPixmap pm;
-		tmp = m_cachedScaledIcon.convertToImage();
-		if ( m_idleState == Idle ) // if this contact is idle, make its icon semi-transparent
-			KIconEffect::semiTransparent(tmp);
-		if ( mDirectlyConnected ) //if we are directly connected, change color of icon
-			KIconEffect::colorize(tmp, red, 1.0F);
-		pm.convertFromImage(tmp);
-		return pm;
+		QPixmap tmp = m_cachedScaledIcon;
+		KIconEffect::semiTransparent(tmp);
+		return tmp;
 	}
 	return m_cachedScaledIcon;
 }
@@ -358,17 +351,6 @@ void KopeteContact::setIdleState( KopeteContact::IdleState newState )
 	m_idleState = newState;
 	emit idleStateChanged( this, m_idleState );
 }
-
-void KopeteContact::setDirectConnectState( bool newState )
-{
-	mDirectlyConnected = newState;
-}
-
-bool KopeteContact::isDirectConnected() const
-{
-	return mDirectlyConnected;
-}
-
 
 #include "kopetecontact.moc"
 
