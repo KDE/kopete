@@ -1,5 +1,7 @@
 METASOURCES = AUTO
 
+SUBDIRS=icons
+
 AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes)
 
 kde_module_LTLIBRARIES = kopete_cryptography.la kcm_kopete_cryptography.la
