@@ -157,7 +157,14 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 			}
 			else
 			{
-				actionSelectResource->insert ( new KAction( ( *it ), "", 0, this, SLOT( slotSelectResource() ),
+				/*
+				 * Select icon, using bestResource() without lock for the automatic entry
+				 * and the resources' respective status icons for the rest.
+				 */
+				QIconSet iconSet ( !i ?
+					protocol()->resourceToKOS ( account()->resourcePool()->bestResource ( mRosterItem.jid(), false ) ).iconFor ( account () ) : protocol()->resourceToKOS ( *availableResources.find(*it) ).iconFor ( account () ));
+
+				actionSelectResource->insert ( new KAction( ( *it ), iconSet, 0, this, SLOT( slotSelectResource() ),
 											   actionSelectResource, QString::number( i ).latin1() ) );
 			}
 

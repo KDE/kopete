@@ -36,6 +36,11 @@
 #define JABBER_DEBUG_GLOBAL		14130
 #define JABBER_DEBUG_PROTOCOL	14131
 
+namespace XMPP
+{
+	class Resource;
+};
+
 class JabberContact;
 class dlgJabberStatus;
 class dlgJabberSendRaw;
@@ -87,6 +92,7 @@ public:
 	const Kopete::ContactPropertyTmpl propWorkPhone;
 	const Kopete::ContactPropertyTmpl propWorkMobilePhone;
 	const Kopete::ContactPropertyTmpl propNickName;
+	const Kopete::ContactPropertyTmpl propAvailableResources;
 	const Kopete::ContactPropertyTmpl propVCardCacheTimeStamp;
 
 	/**
@@ -98,6 +104,11 @@ public:
 	 * Return whether the protocol supports offline messages.
 	 */
 	bool canSendOffline() const { return true; }
+
+	/**
+	 * Convert an XMPP::Resource status to a KopeteOnlineStatus
+	 */
+	KopeteOnlineStatus resourceToKOS ( const XMPP::Resource &resource );
 
 private:
 	/*

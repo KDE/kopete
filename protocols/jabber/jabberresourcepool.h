@@ -32,11 +32,11 @@ class JabberResourcePool : public QObject
 
 Q_OBJECT
 
+public:
 	static XMPP::Resource EmptyResource;
 
 	typedef QValueList<XMPP::Resource> ResourceList;
 
-public:
 	/**
 	 * Default constructor
 	 */
@@ -92,9 +92,9 @@ public:
 
 	/**
 	 * Return usable resource for a given JID
-	 * Matches by userHost(), honours locks for a JID
+	 * Matches by userHost(), honours locks for a JID by default
 	 */
-	const XMPP::Resource &bestResource ( const XMPP::Jid &jid );
+	const XMPP::Resource &bestResource ( const XMPP::Jid &jid, bool honourLock = true );
 
 	/**
 	 * Find all resources that exist for a given JID

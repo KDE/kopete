@@ -17,6 +17,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
+#include <kiconloader.h>
 
 #include <kopetegroup.h>
 #include <kopetecontactlist.h>
@@ -115,7 +116,7 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 		bool found = false;
 		for ( unsigned j = 0; j < metaContact()->groups().count (); j++)
 		{
-			if ( metaContact()->groups().at(i)->displayName () == *item.groups().at(i) )
+			if ( metaContact()->groups().at(j)->displayName () == *item.groups().at(i) )
 			{
 				found = true;
 				break;
@@ -160,56 +161,58 @@ void JabberBaseContact::reevaluateStatus ()
 	KopeteOnlineStatus status;
 	XMPP::Resource resource = account()->resourcePool()->bestResource ( mRosterItem.jid () );
 
-	// update to online by default
-	status = protocol()->JabberKOSOffline;
+	status = protocol()->resourceToKOS ( resource );
 
-	if ( !resource.status().isAvailable () )
+	/*
+	 * Set away message property.
+	 * We just need to read it from the current resource.
+	 */
+	if ( !resource.status ().status ().isEmpty () )
 	{
-		// resource is offline
-		status = protocol()->JabberKOSOffline;
+		setProperty ( protocol()->propAwayMessage, resource.status().status () );
 	}
 	else
 	{
-		if (resource.status ().show () == "")
-		{
-			if (resource.status ().isInvisible ())
-			{
-				status = protocol()->JabberKOSInvisible;
-			}
-			else
-			{
-				status = protocol()->JabberKOSOnline;
-			}
-		}
-		else
-		if (resource.status ().show () == "chat")
-		{
-			status = protocol()->JabberKOSChatty;
-		}
-		else if (resource.status ().show () == "away")
-		{
-			status = protocol()->JabberKOSAway;
-		}
-		else if (resource.status ().show () == "xa")
-		{
-			status = protocol()->JabberKOSXA;
-		}
-		else if (resource.status ().show () == "dnd")
-		{
-			status = protocol()->JabberKOSDND;
-		}
-		else if (resource.status ().show () == "connecting")
-		{
-			status = protocol()->JabberKOSConnecting;
-		}
+		removeProperty ( protocol()->propAwayMessage );
 	}
 
-	// remove properties first
-	removeProperty ( protocol()->propAwayMessage );
+	/*
+	 * Set available resources.
+	 * This is a bit more complicated: We need to generate
+	 * all images dynamically from the KOS icons and store
+	 * them into the mime factory, then plug them into
+	 * the richtext.
+	 */
+	JabberResourcePool::ResourceList resourceList;
+	account()->resourcePool()->findResources ( XMPP::Jid ( contactId () ), resourceList );
 
-	// set away message property
-	if ( !resource.status ().status ().isEmpty () )
-		setProperty ( protocol()->propAwayMessage, resource.status().status () );
+	QString resourceListStr = "<table cellspacing=\"0\">";
+
+	for ( JabberResourcePool::ResourceList::iterator it = resourceList.begin (); it != resourceList.end (); ++it )
+	{
+		// icon, resource name and priority
+		resourceListStr += QString ( "<tr><td><img src=\"kopete-onlinestatus-icon:%1\" /> <b>%2</b> (Priority: %3)</td></tr>" ).
+						   arg ( protocol()->resourceToKOS(*it).mimeSourceFor ( account () ) ).
+						   arg ( (*it).name () ).
+						   arg ( (*it).priority () );
+
+		// resource timestamp
+		resourceListStr += QString ( "<tr><td>%1: %2</td></tr>" ).
+						   arg ( i18n ( "Timestamp" ) ).
+						   arg ( (*it).status().timeStamp().toString ( Qt::LocalDate ) );
+		
+		// message, if any
+		if ( !(*it).status().status().stripWhiteSpace().isEmpty () )
+		{
+			resourceListStr += QString ( "<tr><td>%1: %2</td></tr>" ).
+							   arg ( i18n ( "Message" ) ).
+							   arg ( (*it).status().status () );
+		}
+	}
+	
+	resourceListStr += "</table>";
+	
+	setProperty ( protocol()->propAvailableResources, resourceListStr );
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New status for " << contactId () << " is " << status.description () << endl;
 	setOnlineStatus ( status );

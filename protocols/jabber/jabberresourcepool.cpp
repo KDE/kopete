@@ -249,18 +249,21 @@ const XMPP::Resource &JabberResourcePool::lockedResource ( const XMPP::Jid &jid 
 
 }
 
-const XMPP::Resource &JabberResourcePool::bestResource ( const XMPP::Jid &jid )
+const XMPP::Resource &JabberResourcePool::bestResource ( const XMPP::Jid &jid, bool honourLock )
 {
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Determining best resource for " << jid.full () << endl;
 
 	// FIXME: the code below would be more efficient if it would cache results
 
-	// if we are locked to a certain resource, always return that one
-	const XMPP::Resource &mResource = lockedResource ( jid );
-	if ( !mResource.name().isEmpty() )
+	if ( honourLock )
 	{
-		kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "We have a locked resource '" << mResource.name () << "' for " << jid.full () << endl;
-		return mResource;
+		// if we are locked to a certain resource, always return that one
+		const XMPP::Resource &mResource = lockedResource ( jid );
+		if ( !mResource.name().isEmpty() )
+		{
+			kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "We have a locked resource '" << mResource.name () << "' for " << jid.full () << endl;
+			return mResource;
+		}
 	}
 
 	JabberResource *bestResource = 0L;
