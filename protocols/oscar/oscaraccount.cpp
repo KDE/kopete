@@ -789,6 +789,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			// Add the buddy to the server's list, with the group,
 			// need to normalize the contact name
 			engine()->sendAddBuddy(tocNormalize(contactId), internalGroup->name(), false);
+			engine()->sendReqInfo( contactId.toULong() );
 
 			// Increase these counters, I'm not sure what this does
 			d->randomNewGroupNum++;
@@ -807,7 +808,10 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 
 			// Get user status through BLM if contact is temporary (ICQ only)
 			if ( engine()->isICQ() )
+			{
 				engine()->sendAddBuddylist(tocNormalize(contactId));
+				engine()->sendReqInfo( contactId.toULong() );
+			}
 
 			// Set it's initial status
 			// This requests the buddy's info from the server
