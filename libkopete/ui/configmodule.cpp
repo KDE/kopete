@@ -54,6 +54,9 @@ ConfigModule::ConfigModule(const QString &name, const QString &description, cons
 
 ConfigModule::~ConfigModule()
 {
+	// TODO When kdialogbase is fixed, delete the parent QFrame, and
+	// all traces of the related page
+	kapp->sendPostedEvents();
 	PreferencesDialog::preferencesDialog()->remove(this);
 }
 
