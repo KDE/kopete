@@ -75,16 +75,22 @@ void IRCTransferHandler::transferCreated(KIRCTransfer *t)
 	}
 }
 
-void IRCTransferHandler::transferAccepted(KopeteTransfer *kt, const QString&file)
+void IRCTransferHandler::transferAccepted(KopeteTransfer *kt, const QString &file)
 {
 	KIRCTransfer *t = getKIRCTransfer(kt->info());
-	t->setFileName(file);
-	connectKopeteTransfer(kt, t);
+	if(t)
+	{
+		t->setFileName(file);
+		connectKopeteTransfer(kt, t);
+	}
 }
 void IRCTransferHandler::transferRefused(const KopeteFileTransferInfo &info)
 {
 	KIRCTransfer *t = getKIRCTransfer(info);
-	t->deleteLater();
+	if(t)
+	{
+		t->deleteLater();
+	}
 }
 
 void IRCTransferHandler::connectKopeteTransfer(KopeteTransfer *kt, KIRCTransfer *t)
