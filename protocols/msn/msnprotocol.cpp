@@ -198,7 +198,7 @@ void MSNProtocol::slotIconRightClicked(const QPoint point)
 	//
 	// /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\
 	KGlobal::config()->setGroup("MSN");
-	QString handle = KGlobal::config()->readEntry("UserID", "(User ID not set)");
+	QString handle = KGlobal::config()->readEntry("UserID", i18n("(User ID not set)"));
     popup = new KPopupMenu(statusBarIcon);
 	popup->insertTitle(handle);
 	actionGoOnline->plug( popup );
@@ -228,18 +228,36 @@ void MSNProtocol::slotConnected()
  	groups = engine->getGroups();
  	for ( QStringList::Iterator it = groups.begin(); it != groups.end(); ++it )
  	{
- 		//item=  new QListViewItem(ListView,(*it).latin1() ,"","1");
+ 		QListViewItem *groupItem;
+		if ( kopeteapp->contactList()->getGroup( (*it).latin1() ) == NULL )
+		{
+			kdDebug() << "MSN Plugin: Group: [ " << (*it).latin1() << " ] exits in server but not locally!! CREATING!" <<endl;
+ 		    kopeteapp->contactList()->addGroup( (*it).latin1() );
+		}
+		/* We now get the widget for the group */
+		groupItem = kopeteapp->contactList()->getGroup( (*it).latin1() );
+		//item=  new QListViewItem(ListView,(*it).latin1() ,"","1");
  		//item->setPixmap(0,expandedPixmap);
  		//item->setOpen(true);
-	
+	    kdDebug() << "MSN Plugin: Searching contacts for group: [ " << (*it).latin1() << " ]" <<endl;
  		// We get the contacts for this group
  		contacts = engine->getContacts( (*it).latin1() );
  		for ( QStringList::Iterator it1 = contacts.begin(); it1 != contacts.end(); ++it1 )
  	 	{
  	 		userid = (*it1).latin1();
  			publicname = engine->getPublicName((*it1).latin1());
- 			tmpcontact = new MSNContact( userid , publicname , this );
- 			//item1= new QListViewItem(item, engine->getPublicName((*it1).latin1())  , (*it1).latin1() ,"1");
+ 			/* We check if the group was created ok, if not, just no group */
+			if ( groupItem )
+			{
+				kdDebug() << "MSN Plugin: Group OK, exists in contact list" <<endl;
+				tmpcontact = new MSNContact( groupItem, userid , publicname , this );
+			}
+			else
+			{
+				kdDebug() << "MSN Plugin: Ups! The group widget was null!" <<endl;
+				tmpcontact = new MSNContact( userid , publicname , this );
+ 			}
+			//item1= new QListViewItem(item, engine->getPublicName((*it1).latin1())  , (*it1).latin1() ,"1");
  	 		status = engine->getStatus( userid );
  	 		kdDebug() << "MSN Plugin: Created contact " << userid << " " << publicname << " with status " << status << endl;
 			switch(status)

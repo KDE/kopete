@@ -24,13 +24,32 @@
 #include "kmsncontact.h"
 #include <kmsnchatservice.h>
 
+/* Constructor for no-groups */
 MSNContact::MSNContact(QString userid, const QString name, MSNProtocol *protocol)
 	: IMContact(kopeteapp->contactList())
 {
 	mProtocol = protocol;
 	mName = name;
 	mUserID = userid;
-	messageTimer = new QTimer();
+
+	initContact(userid, name, protocol);
+	
+}
+
+MSNContact::MSNContact(QListViewItem *parent, QString userid, const QString name, MSNProtocol *protocol)
+	: IMContact(parent)
+{
+	mProtocol = protocol;
+	mName = name;
+	mUserID = userid;
+
+	initContact(userid, name, protocol);
+	
+}
+
+void MSNContact::initContact(QString userid, const QString name, MSNProtocol *protocol)
+{
+    messageTimer = new QTimer();
 	messageQueue = new QValueStack<MSNMessageStruct>;
 	isMessageIcon = false;
 	// We connect this signal so that we can tell when a user's status changes
@@ -48,6 +67,7 @@ MSNContact::MSNContact(QString userid, const QString name, MSNProtocol *protocol
 	setText(0,tmp);
     initActions();
 	//slotUserStateChanged(uin, (protocol->kxContacts->getContact(uin)).status, 0);
+		
 }
 
 void MSNContact::initActions()

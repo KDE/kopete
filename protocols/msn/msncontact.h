@@ -24,12 +24,14 @@
 #include <qpixmap.h>
 #include <qstring.h>
 #include <qvaluestack.h>
+#include <qlistview.h>
 #include <kiconloader.h>
 #include <kpopupmenu.h>
 #include <qtimer.h>
 #include "kopete.h"
 #include "msnprotocol.h"
 #include "msnmessage.h"
+#include <contactlist.h>
 #include <kmsnchatservice.h>
 
 struct MSNMessageStruct
@@ -46,6 +48,9 @@ class MSNContact : public IMContact
 	Q_OBJECT
 	public:
 		MSNContact(QString userid, const QString name, MSNProtocol *protocol);
+		MSNContact(QListViewItem *parent, QString userid, const QString name, MSNProtocol *protocol);
+		
+		void initContact(QString userid, const QString name, MSNProtocol *protocol);
 		virtual void rightButtonPressed(const QPoint &);
 		virtual void leftButtonDoubleClicked();
 		QString mUserID;
