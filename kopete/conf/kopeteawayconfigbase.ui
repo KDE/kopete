@@ -86,7 +86,7 @@
                 <cstring>predefinedGroupBox</cstring>
             </property>
             <property name="title">
-                <string>Predefined messages</string>
+                <string>Predefined Messages</string>
             </property>
             <grid>
                 <property name="name">
