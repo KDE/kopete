@@ -33,7 +33,6 @@
 #include <klineeditdlg.h>
 
 #include "kopetecontactlist.h"
-#include "kopetecontactlistview.h"
 #include "kopetehistorydialog.h"
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"

@@ -22,7 +22,6 @@
 #include "kopetegroup.h"
 #include "kopetestdaction.h"
 #include "kopetecontactlist.h"
-#include "kopetecontactlistview.h"
 #include "kopeteprotocol.h"
 #include "pluginloader.h"
 

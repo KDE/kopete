@@ -28,8 +28,6 @@
 #include <knotifyclient.h>
 
 #include "kopetecontactlist.h"
-#include "kopetecontactlistview.h"
-#include "kopetemetacontactlvi.h"
 #include "kopeteplugin.h"
 #include "kopeteprotocol.h"
 #include "kopeteprefs.h"
