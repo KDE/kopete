@@ -400,7 +400,7 @@ QString JabberContact::statusText() const
 	}
 
 	// append away reason if there is one
-	if ( !awayReason.isNull() && !awayReason.isEmpty() )
+	if (awayReason && !awayReason.isNull() && !awayReason.isEmpty())
 		txt += " (" + awayReason + ")";
 
 	return txt;
