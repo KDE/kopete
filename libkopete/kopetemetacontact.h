@@ -21,8 +21,7 @@
 #ifndef __kopetemetacontact_h__
 #define __kopetemetacontact_h__
 
-#include <qdom.h>
-#include <qobject.h>
+#include "kopetecontactlistelement.h"
 #include <qptrlist.h>
 
 #include <kabc/addressbook.h>
@@ -40,7 +39,6 @@ namespace Kopete {
 
 
 //TODO:  temporary
-class ContactListElement : public QObject { public: ContactListElement(QObject *parent) : QObject(parent) {}  };
 class Plugin;
 class Group;
 

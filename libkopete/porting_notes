@@ -56,3 +56,15 @@ Porting from Kopete 0.9 to Kopete 0.10
 	.) displayName has finaly been totaly removed
 	.) slotDeleteContact has been renamed to deleteContact
 	.) slotUserInfo has been renamed userInfo and is now pure virtual
+	
+*) KopeteGroup has been renamed to Kopete::Group
+	.) renamed() signal has been renamed into displayNameChanged()  for consistancy
+	.) internalName has been removed
+
+*) KopetePluginDataObject has been renamed Kopete::ContactListElement
+
+
+
+
+
+
