@@ -131,6 +131,7 @@ void JabberProtocol::init()
 
 		dirs += "/usr/lib";
 		dirs += "/usr/local/lib";
+		dirs += QStringList::split(":", QString(getenv("LD_LIBRARY_PATH")));
 
 		Jabber::Stream::loadSSL(dirs);
 	}
