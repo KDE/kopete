@@ -75,7 +75,7 @@ void OscarSocket::parseMiniTypeNotify(Buffer &inbuf)
 {
 //	kdDebug(14150) << k_funcinfo <<  "RECV (SRV_TYPINGNOTIFY)" << endl;
 	// Throw away 8 bytes which are all zeros
-	inbuf.getBlock(8)
+	inbuf.getBlock(8);
 
 	// Throw away two bytes (0x0001) which are always there
 	inbuf.getWord(); // notification channel
