@@ -21,6 +21,7 @@
 #include <kpopupmenu.h>
 
 #include "kmsnservice.h"
+//#include "kopetechatwindow.h" // Debug, Martijn
 #include "kopetestdaction.h"
 #include "msncontact.h"
 #include "msnprotocol.h"
@@ -49,7 +50,7 @@ void MSNContact::initContact( const QString &msnId, const QString &nickname,
 	m_protocol = protocol;
 	m_msnId = msnId;
 	m_nickname = nickname;
-	mGroup =  group;
+	m_group =  group;
 	hasLocalGroup = false;
 
 	// We connect this signal so that we can tell when a user's status changes
@@ -127,6 +128,7 @@ void MSNContact::showContextMenu(QPoint point)
 
 void MSNContact::execute()
 {
+//	( new KopeteChatWindow( this, this, QString::null, 0 ) )->show(); // Debug, Martijn
 	emit chatToUser( m_msnId );
 }
 
@@ -143,13 +145,13 @@ void MSNContact::slotRemoveThisUser()
 
 void MSNContact::slotRemoveFromGroup()
 {
-	m_protocol->removeFromGroup( m_msnId, mGroup );
+	m_protocol->removeFromGroup( m_msnId, m_group );
 }
 
 void MSNContact::slotMoveThisUser()
 {
 	if( m_actionMove )
-		m_protocol->moveContact( m_msnId, mGroup, m_actionMove->currentText() );
+		m_protocol->moveContact( this, m_actionMove->currentText() );
 }
 
 void MSNContact::slotCopyThisUser()
@@ -160,7 +162,7 @@ void MSNContact::slotCopyThisUser()
 
 void MSNContact::slotContactRemoved(QString handle, QString group)
 {
-	if ( (handle == m_msnId) && ( group == mGroup ) )
+	if ( (handle == m_msnId) && ( group == m_group ) )
 	{
 		delete this;
 	}
@@ -396,6 +398,11 @@ QString MSNContact::msnId() const
 QString MSNContact::nickname() const
 {
 	return m_nickname;
+}
+
+QString MSNContact::group() const
+{
+	return m_group;
 }
 
 #include "msncontact.moc"

@@ -63,6 +63,13 @@ public:
 	 */
 	QString nickname() const;
 
+	/**
+	 * The group in which the user is located. Actually a user can be in
+	 * multiple groups with MSN, but that can be done later. For now keep
+	 * the abstraction of a single user per group
+	 */
+	QString group() const;
+
 public slots:
 	void slotContactRemoved( QString, QString );
 	void slotChatThisUser();
@@ -88,9 +95,9 @@ private slots:
 private:
 	QString m_msnId;
 	QString m_nickname;
+	QString m_group;
 	bool hasLocalGroup;
 
-	QString mGroup;
 	uint mStatus;
 	const MSNProtocol *m_protocol;
 	KopeteHistoryDialog *historyDialog;

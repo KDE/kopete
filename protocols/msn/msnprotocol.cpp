@@ -595,10 +595,10 @@ void MSNProtocol::removeFromGroup( const QString &userID,
 	m_msnService->contactRemove( userID, group );
 }
 
-void MSNProtocol::moveContact( const QString &userID, const QString &oldGroup,
+void MSNProtocol::moveContact( const MSNContact *c,
 	const QString &newGroup ) const
 {
-	m_msnService->contactMove( userID, oldGroup, newGroup);
+	m_msnService->contactMove( c, newGroup);
 }
 
 void MSNProtocol::copyContact( const QString &userID,

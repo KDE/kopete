@@ -35,6 +35,7 @@ class KURLLabel;
 
 class KMSNChatService;
 class KMSNService;
+class MSNContact;
 class MSNMessageDialog;
 class MSNPreferences;
 class StatusBarIcon;
@@ -67,8 +68,7 @@ public:
 	void addContact( const QString &userID ) const;
 	void removeContact( const QString &userID ) const;
 	void removeFromGroup( const QString &userID, const QString &group ) const;
-	void moveContact( const QString &userID, const QString &oldGroup,
-						const QString &newGroup ) const;
+	void moveContact( const MSNContact *c, const QString &newGroup ) const;
 	void copyContact( const QString &userID, const QString &newGroup ) const;
 
 	int contactStatus( const QString &handle ) const;
