@@ -108,6 +108,9 @@ KopeteMessageManager::~KopeteMessageManager()
 	d->mCanBeDeleted = false; //prevent double deletion
 	KopeteMessageManagerFactory::factory()->removeSession( this );
 	emit dying(d->mView);
+	ChatWindowMap windowMap = *(chatWindowMap());
+	if( windowMap.contains( d->mProtocol ) && (windowMap[ d->mProtocol ] == myWindow) )
+		chatWindowMap()->remove( d->mProtocol );
 	delete d;
 }
 
@@ -490,6 +493,10 @@ void KopeteMessageManager::slotChatViewClosing()
 		kdDebug(14010) << k_funcinfo << "delete KMM" << endl;
 		delete this;
 	}
+	ChatWindowMap windowMap = *(chatWindowMap());
+	if( windowMap.contains( d->mProtocol ) && (windowMap[ d->mProtocol ] == myWindow) )
+		chatWindowMap()->remove( d->mProtocol );
+
 	d->mView = 0L;
 }
 
@@ -499,11 +506,8 @@ void KopeteMessageManager::slotChatWindowClosing()
 	{
 		//We are deleting this window instance
 		kdDebug(14010) << k_funcinfo << "Chat Window closed, now 0L" << endl;
-		ChatWindowMap windowMap = *(chatWindowMap());
-		if( windowMap.contains( d->mProtocol ) && (windowMap[ d->mProtocol ] == myWindow) )
-			chatWindowMap()->remove( d->mProtocol );
 		myWindow = 0L;
-		d->mView = 0L;
+		slotChatViewClosing();
 	}
 	else if (d->mWidget == Email)
 	{

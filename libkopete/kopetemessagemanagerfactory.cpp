@@ -139,6 +139,7 @@ KopeteMessageManager* KopeteMessageManagerFactory::findKopeteMessageManager( int
 
 void KopeteMessageManagerFactory::removeSession( KopeteMessageManager *session)
 {
+	kdDebug(14010) << k_funcinfo << endl;
 	mSessionDict.setAutoDelete( false );
 	mSessionDict.remove( session->mmId() );
 }
