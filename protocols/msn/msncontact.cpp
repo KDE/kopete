@@ -81,7 +81,7 @@ KActionCollection *MSNContact::customContextMenuActions()
 
 	// Block/unblock Contact
 	QString label = isBlocked() ? i18n( "Unblock User" ) : i18n( "Block User" );
-	KAction* actionBlock = new KAction( label, 0, this, SLOT( slotBlockUser() ), m_actionCollection, "actionBlock" );
+	KAction* actionBlock = new KAction( label, "msn_blocked", this, SLOT( slotBlockUser() ), m_actionCollection, "actionBlock" );
 
 	//show profile
 	KAction* actionShowProfile = new KAction( i18n("Show Profile") , 0, this, SLOT( slotShowProfile() ), m_actionCollection, "actionShowProfile" );
@@ -398,8 +398,7 @@ void MSNContact::setOnlineStatus(const KopeteOnlineStatus& status)
 	if(isBlocked() && status.internalStatus() < 15)
 	{
 		KopeteContact::setOnlineStatus(KopeteOnlineStatus(status.status() , (status.weight()==0) ? 0 : (status.weight() -1)  ,
-			protocol() , status.internalStatus()+15 ,
-			(status.status()==KopeteOnlineStatus::Offline)? QString::fromLatin1("msn_offline_blocked") : QString::fromLatin1("msn_online_blocked")  ,
+			protocol() , status.internalStatus()+15 , QString::fromLatin1("msn_blocked"),
 			status.caption() ,  i18n("%1|Blocked").arg( status.description() ) ) );
 	}
 	else
@@ -430,6 +429,9 @@ void MSNContact::setOnlineStatus(const KopeteOnlineStatus& status)
 					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->FLN);
 					break;
 				case 8:
+					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->HDN);
+					break;
+				case 9:
 					KopeteContact::setOnlineStatus(MSNProtocol::protocol()->IDL);
 					break;
 				default:
