@@ -106,7 +106,7 @@ public:
 	 * Get/set the display name
 	 */
 	QString displayName() const;
-	void setDisplayName( const QString &name,  bool trackNameChanges = true );
+	void setDisplayName( const QString &name);
 	
 	/**
 	 * The groups the contact is stored in
