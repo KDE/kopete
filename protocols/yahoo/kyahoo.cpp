@@ -1062,8 +1062,7 @@ void YahooSession::slotReadReady()
 	int fd = m_socket->fd();
 	//kdDebug(14181) << k_funcinfo << "Socket FD: " << fd << endl;
 
-	if ( m_waitingForKeepalive )
-		m_waitingForKeepalive = false;
+	m_waitingForKeepalive = false;
 
 	ret = yahoo_read_ready( m_connId , fd, m_data );
 
