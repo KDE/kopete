@@ -56,6 +56,7 @@
 #include <kcompletion.h>
 #include <kpopupmenu.h>
 #include <klibloader.h>
+#include <ktextedit.h>
 
 #include "chatview.h"
 #include "kopetechatwindow.h"
@@ -120,7 +121,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	}
 	else
 	{
-		m_edit = m_edit = new QTextEdit( editDock, "m_edit" );
+		m_edit = new KTextEdit( editDock, "m_edit" );
 	}
 
 	//Set params on the edit widget
