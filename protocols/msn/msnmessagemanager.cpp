@@ -29,12 +29,15 @@
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <ktempfile.h>
+#include <kmainwindow.h>
+#include <ktoolbar.h>
 
 #include "kopetecontactaction.h"
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteuiglobal.h"
 #include "kopeteglobal.h"
+#include "kopeteview.h"
 
 #include "msncontact.h"
 #include "msnfiletransfersocket.h"
@@ -79,14 +82,15 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 		connect( c, SIGNAL( displayPictureChanged() ), this, SLOT( slotDisplayPictureChanged() ) );
 		m_image = new QLabel( 0L, "kde toolbar widget" );
 		new KWidgetAction( m_image, i18n( "MSN Display Picture" ), 0, 0, 0, actionCollection(), "msnDisplayPicture" );
-		if ( c->displayPicture() )
+		if(c->displayPicture())
 		{
-			// FIXME: don't duplicate this code with the slotDisplayPictureChanged - Martijn
-			// FIXME: don't hardcode the 22x22 geometry, but adjust to the toolbar's height - Martijn
-			// FIXME: make the tooltip center on the image rather than stay out of the way - Martijn
-			QImage scaledImg = QPixmap( c->displayPicture()->name() ).convertToImage().smoothScale( 22, 22 );
-			m_image->setPixmap( scaledImg );
-			QToolTip::add( m_image, "<qt><img src=\"" + c->displayPicture()->name() + "\"></qt>" );
+			//if the view doesn't exist yet, we will be unable to get the size of the toolbar
+			// so when the view will exist, we will show the displaypicture.
+			//How to know when a our view is created?  We can't.
+			// but chances are the next created view will be for this KMM
+			// And if it is not?  never mind. the icon will just be sized 22x22
+			connect( KopeteMessageManagerFactory::factory() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );
+			//it's viewActivated and not viewCreated because the view get his mainwindow only when it is shown.
 		}
 	}
 	else
@@ -504,17 +508,39 @@ void MSNMessageManager::slotDisplayPictureChanged()
 	const MSNContact *c = static_cast<const MSNContact *>( members().getFirst() );
 	if ( c && m_image )
 	{
-		KTempFile* tempFile = c->displayPicture();
-		if ( tempFile && tempFile->file() && tempFile->file()->size() != 0 )
+		if(c->displayPicture())
 		{
-			// FIXME: don't duplicate this code with the c'tor - Martijn
-			// FIXME: don't hardcode the 22x22 geometry, but adjust to the toolbar's height - Martijn
-			// FIXME: make the tooltip center on the image rather than stay out of the way - Martijn
-			QImage scaledImg = QPixmap( c->displayPicture()->name() ).convertToImage().smoothScale( 22, 22 );
+			int sz=22;
+			// get the size of the toolbar were the aciton is plugged.
+			//  if you know a better way to get the toolbar, let me know
+			KMainWindow *w= view(false) ? dynamic_cast<KMainWindow*>( view(false)->mainWidget()->topLevelWidget() ) : 0L;
+			if(w)
+			{
+				//We connected that in the constructor.  we don't need to keep this slot active.
+				disconnect( KopeteMessageManagerFactory::factory() , SIGNAL(viewActivated(KopeteView* )) , this, SLOT(slotDisplayPictureChanged()) );
+			
+				QPtrListIterator<KToolBar>  it=w->toolBarIterator() ;
+				KAction *imgAction=actionCollection()->action("msnDisplayPicture");
+				if(imgAction)  while(it)
+				{
+					KToolBar *tb=*it;
+					if(imgAction->isPlugged(tb))
+					{
+						sz=tb->iconSize();
+						//ipdate if the size of the toolbar change.
+						disconnect(tb, SIGNAL(modechange()), this, SLOT(slotDisplayPictureChanged()));
+						connect(tb, SIGNAL(modechange()), this, SLOT(slotDisplayPictureChanged()));
+						break;
+					}
+					++it;
+				}
+			}
+			
+			QImage scaledImg = QPixmap( c->displayPicture()->name() ).convertToImage().smoothScale( sz, sz );
 			m_image->setPixmap( scaledImg );
 			QToolTip::add( m_image, "<qt><img src=\"" + c->displayPicture()->name() + "\"></qt>" );
 		}
-		else
+		else 
 		{
 			KConfig *config = KGlobal::config();
 			config->setGroup( "MSN" );

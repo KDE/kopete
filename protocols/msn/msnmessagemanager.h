@@ -1,9 +1,9 @@
 /*
     msnmessagemanager.h - MSN Message Manager
 
-    Copyright (c) 2002 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -78,10 +78,10 @@ private slots:
 	 * (debug)
 	 */
 	void slotDebugRawCommand();
+
 private:
 
 	MSNSwitchBoardSocket *m_chatService;
-//	KopeteMessage *m_msgQueued;
 	QString otherString;
 	KActionMenu *m_actionInvite;
 	QPtrList<KAction> m_inviteactions;
