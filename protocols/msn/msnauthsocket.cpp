@@ -84,13 +84,12 @@ void MSNAuthSocket::parseCommand( const QString &cmd, uint id,
 {
 	if( cmd == "VER" )
 	{
-	//	sendCommand("CVR" , "0x0409 winnt 5.1 i386 MSNMSGR 5.0.0 MSMSGS " + m_msnId );
-
-		struct utsname utsBuf;
+		sendCommand("CVR" , "0x0409 winnt 5.1 i386 MSNMSGR 5.0.0 MSMSGS " + m_msnId );
+/*		struct utsname utsBuf;
 		uname (&utsBuf);
 
 		sendCommand("CVR" ,  i18n("MS Local code, see http://www.microsoft.com/globaldev/reference/oslocversion.mspx","0x0409") +
-		   " " + escape(utsBuf.sysname) + " " + escape(utsBuf.release) + " " + escape(utsBuf.machine) +" Kopete "+ escape(kapp->aboutData()->version()) + " Kopete " + m_msnId );
+		   " " + escape(utsBuf.sysname) + " " + escape(utsBuf.release) + " " + escape(utsBuf.machine) +" Kopete "+ escape(kapp->aboutData()->version()) + " Kopete " + m_msnId );*/
 	}
 	else if ( cmd == "CVR" ) //else if( cmd == "INF" )
 	{
