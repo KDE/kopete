@@ -2,8 +2,9 @@
     kopeteplugin.cpp - Kopete Plugin API
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar P. <duncan@kde.org>
+    Copyright (c) 2002-2004 by Olivier Goffart  <ogoffart @tiscalinet.be>
 
-    Copyright (c) 2002 by the Kopete developers    <kopete-devel@kde.org>
+    Copyright (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -18,52 +19,73 @@
 #include "kopeteplugin.h"
 #include "kopetepluginmanager.h"
 
+#include <kplugininfo.h>
 #include <ksettings/dispatcher.h>
 #include <kplugininfo.h>
 
-class Kopete::Plugin::Private
+namespace Kopete {
+
+class Plugin::Private
 {
 public:
 	QStringList addressBookFields;
 	QString indexField;
 };
 
-Kopete::Plugin::Plugin( KInstance *instance, QObject *parent, const char *name )
-: QObject( parent, name ), KXMLGUIClient(), d( new Private )
+Plugin::Plugin( KInstance *instance, QObject *parent, const char *name )
+: QObject( parent, name ), KXMLGUIClient(), d(new Private)
 {
 	setInstance( instance );
 	KSettings::Dispatcher::self()->registerInstance( instance, this, SIGNAL( settingsChanged() ) );
 }
 
-Kopete::Plugin::~Plugin()
+Plugin::~Plugin()
 {
 	delete d;
 }
 
-KPluginInfo *Kopete::Plugin::pluginInfo() const
-{
-	return PluginManager::self()->pluginInfo( this );
-}
-
-QString Kopete::Plugin::pluginId() const
+QString Plugin::pluginId() const
 {
 	return QString::fromLatin1( className() );
 }
 
-QString Kopete::Plugin::displayName() const
+
+QString Plugin::displayName() const
 {
 	return pluginInfo()->name();
 }
 
-QString Kopete::Plugin::pluginIcon() const
+QString Plugin::pluginIcon() const
 {
 	return pluginInfo()->icon();
 }
 
-void Kopete::Plugin::deserialize( Kopete::MetaContact * /* metaContact */,
+
+KPluginInfo *Plugin::pluginInfo() const 
+{
+	return PluginManager::self()->pluginInfo( this );
+}
+
+void Plugin::aboutToUnload()
+{
+	// Just make the unload synchronous by default
+	emit readyForUnload();
+}
+
+
+void Plugin::deserialize( MetaContact * /* metaContact */,
 	const QMap<QString, QString> & /* stream */ )
 {
 	// Do nothing in default implementation
+}
+
+
+
+void Kopete::Plugin::addAddressBookField( const QString &field, AddressBookFieldAddMode mode )
+{
+	d->addressBookFields.append( field );
+	if( mode == MakeIndexField )
+		d->indexField = field;
 }
 
 QStringList Kopete::Plugin::addressBookFields() const
@@ -74,27 +96,15 @@ QStringList Kopete::Plugin::addressBookFields() const
 QString Kopete::Plugin::addressBookIndexField() const
 {
 	return d->indexField;
+	
 }
 
-void Kopete::Plugin::addAddressBookField( const QString &field, AddressBookFieldAddMode mode )
-{
-	d->addressBookFields.append( field );
-	if( mode == MakeIndexField )
-		d->indexField = field;
-}
 
-QPtrList<KAction> *Kopete::Plugin::customChatWindowPopupActions( const Kopete::Message &, DOM::Node & )
-{
-	return 0L;
-}
+void Plugin::virtual_hook( uint, void * ) { }
 
-void Kopete::Plugin::aboutToUnload()
-{
-	// Just make the unload synchronous by default
-	emit readyForUnload();
-}
+} //END namespace Kopete
+
 
 #include "kopeteplugin.moc"
 
-// vim: set noet ts=4 sts=4 sw=4:
 

@@ -3,6 +3,7 @@
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@ tiscalinet.be>
 
     Copyright (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -19,34 +20,70 @@
 #ifndef KOPETEPLUGIN_H
 #define KOPETEPLUGIN_H
 
-#include <qobject.h>
-
 #include <kxmlguiclient.h>
+#include <qobject.h>
+#include <kdemacros.h>
 
-class KActionCollection;
-class KMainWindow;
+#include <kopetemessage.h> //TODO: remove
+namespace DOM  { class Node; }  //TODO: remove
+class KAction; //TODO: remove
+
+
 class KPluginInfo;
 
-namespace DOM
-{
-	class Node;
-}
 
 namespace Kopete
 {
 
 class MetaContact;
-class MessageManager;
-class Message;
 
 /**
- * @author Duncan Mac-Vicar P. <duncan@kde.org>
+ * @brief Base class for all plugins or protocols.
  *
- * Kopete::Plugin is the base class for all Kopete plugins, and can implement
- * virtually anything you like.
- * Kopete::Plugin inherits from KXMLGUIClient. it is used in the contactlist.
- * please note the the client is added *RIGHT* after the plugin is created.
- * so you have to make every actions in the constructor
+ * To create a plugin, you need to create a .desktop file which looks like that:
+ * \verbatim
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+X-Kopete-Version=1000900
+Icon=icon
+ServiceTypes=Kopete/Plugin
+X-KDE-Library=kopete_myplugin
+X-KDE-PluginInfo-Author=Your Name
+X-KDE-PluginInfo-Email=your@mail.com
+X-KDE-PluginInfo-Name=kopete_myplugin
+X-KDE-PluginInfo-Version=0.0.1
+X-KDE-PluginInfo-Website=http://yoursite.com
+X-KDE-PluginInfo-Category=Plugins
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=false
+Name=MyPlugin
+Comment=Plugin that do some nice stuff
+ \endverbatim
+ *
+ * The constructor of your plugin should looks like this:
+ *
+ * \code
+	typedef KGenericFactory<MyPlugin> MyPluginFactory;
+	static const KAboutData aboutdata("kopete_myplugin", I18N_NOOP("MyPlugin") , "1.0" );
+	K_EXPORT_COMPONENT_FACTORY( kopete_myplugin, MyPluginFactory( &aboutdata )  )
+
+	MyPlugin::MyPlugin( QObject *parent, const char *name, const QStringList &  args  )
+		: Kopete::Plugin( MyPluginFactory::instance(), parent, name )
+	{
+		//...
+	}
+ \endcode
+ *
+ * Kopete::Plugin inherits from @ref KXMLGUIClient.  That client is added
+ * to the Kopete's mainwindow @ref KXMLGUIFactory. So you may add actions
+ * on the main window (for hinstance in the meta contact popup menu).
+ * Please note the the client is added right after the plugin is created.
+ * so you have to create every actions in the constructor
+ *
+ * @author Duncan Mac-Vicar P. <duncan@kde.org>
+ * @author Olivier Goffart <ogoffart @ tiscalinet.be>
  */
 class Plugin : public QObject, public KXMLGUIClient
 {
@@ -118,21 +155,18 @@ public:
 	void addAddressBookField( const QString &field, AddressBookFieldAddMode mode = AddOnly );
 
 	/**
-	 * The user right-click on the chatwindow
-	 */
-	virtual QPtrList<KAction> *customChatWindowPopupActions( const Message &, DOM::Node &node );
-
-	/**
 	 * @brief Prepare for unloading a plugin
 	 *
 	 * When unloading a plugin the plugin manager first calls aboutToUnload()
 	 * to indicate the pending unload. Some plugins need time to shutdown
 	 * asynchronously and thus can't be simply deleted in the destructor.
 	 *
-	 * The default implementation immediately emits the readyForUnload() signal,
+	 * The default implementation immediately emits the @ref readyForUnload() signal,
 	 * which basically makes the shutdown immediate and synchronous. If you need
 	 * more time you can reimplement this method and fire the signal whenever
-	 * you're ready.
+	 * you're ready. (you have 3 seconds)
+	 *
+	 * @ref Kopete::Protocol reimplement it.
 	 */
 	virtual void aboutToUnload();
 
@@ -144,11 +178,13 @@ signals:
 	void settingsChanged();
 
 	/**
-	 * Indicate when we're ready for unload. See aboutToUnload()
+	 * Indicate when we're ready for unload.
+	 * @see aboutToUnload()
 	 */
 	void readyForUnload();
 
 public slots:
+
 	/**
 	 * deserialize() and tell the plugin
 	 * to apply the previously stored data again.
@@ -157,17 +193,22 @@ public slots:
 	 * @ref Kopete::MetaContact::addressBookField().
 	 *
 	 * The default implementation does nothing.
+	 *
+	 * @todo we probably should think to another way to save the contacltist.
 	 */
-	virtual void deserialize( Kopete::MetaContact *metaContact, const QMap<QString, QString> &data );
+	virtual void deserialize( MetaContact *metaContact, const QMap<QString, QString> &data );
+
+
+protected:
+	virtual void virtual_hook( uint id, void *data );
 
 private:
 	class Private;
 	Private *d;
 };
 
-}
+
+} //END namespace Kopete
+
 
 #endif
-
-// vim: set noet ts=4 sts=4 sw=4:
-
