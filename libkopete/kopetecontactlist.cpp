@@ -913,6 +913,7 @@ void KopeteContactList::removeGroup( KopeteGroup *g )
 	}
 
 	if ( g->type() == KopeteGroup::Normal )
+	{
 		d->groups.remove( g );
 		emit groupRemoved( g );
 		delete g;
