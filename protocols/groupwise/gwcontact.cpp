@@ -194,16 +194,15 @@ GroupWiseMessageManager * GroupWiseContact::manager( KopeteContactPtrList chatMe
 		mgr = account()->messageManager( account()->myself(), chatMembers, protocol(), QString::null );
 		connect( mgr, SIGNAL( leavingConference ( GroupWiseMessageManager * ) ), SLOT( slotLeavingConference ( GroupWiseMessageManager * ) ) );
 		connect( mgr, SIGNAL( conferenceCreated() ), SLOT( slotConferenceCreated() ) );
-		//m_pendingManagers.append( mgr );
-	
 	}
 
 	return mgr;
 }
 
-GroupWiseMessageManager * GroupWiseContact::manager( const GroupWise::ConferenceGuid & guid, bool canCreate )
+
+GroupWiseMessageManager * GroupWiseContact::manager( const GroupWise::ConferenceGuid & guid, bool canCreate ) 
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << m_dn << "looking for message manager for guid: " << guid << ", canCreate: " << canCreate << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << m_dn << "looking for message manager for guid: " << guid << endl;
 	if ( !guid.isNull() )
 	{
 		dumpManagers();
@@ -299,8 +298,22 @@ void GroupWiseContact::handleIncomingMessage( const ConferenceEvent & message, b
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << m_dn << " sent a " << ( autoReply ? "auto-reply" : "message" ) << " to conference: " << message.guid << ", message: " << message.message << endl;
 	KopeteContactPtrList contactList;
 	contactList.append ( account()->myself () );
-	GroupWiseMessageManager *mgr = manager( message.guid, true );
-
+	//GroupWiseMessageManager *mgr = manager( message.guid, true );
+	// FIND A MESSAGE MANAGER FOR THIS CONTACT
+	GroupWiseMessageManager *mgr = 0;
+	// FIRST, SEARCH BY GUID
+	mgr = m_msgManagers[ message.guid ];
+	// IF NOT FOUND, SEARCH BY CHAT MEMBERS
+	if ( !mgr )
+	{
+		KopeteContactPtrList chatMembers;
+		chatMembers.append ( this );
+		mgr = manager( chatMembers, true ); // create a new manager if we can't find one on its members
+		// set the GUID to the one from the message
+		mgr->setGuid( message.guid );
+	}
+	// NOW WE SHOULD HAVE A NEW MANAGER OR AN EXISTING ONE
+	
 	// add an auto-reply indicator if needed
 	QString messageMunged = message.message;
 	if ( autoReply )

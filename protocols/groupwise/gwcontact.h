@@ -204,7 +204,7 @@ protected:
 	/**
 	 * Returns the KopeteMessageManager for the GroupWise conference with the supplied GUID, or creates a new one.
 	 */
-	GroupWiseMessageManager *manager( const ConferenceGuid & guid, bool canCreate = false );
+	GroupWiseMessageManager *manager( const ConferenceGuid & guid, bool canCreate = false ) KDE_DEPRECATED;
 	// debug function to see what message managers we have on the server
 	void dumpManagers();
 protected slots:
