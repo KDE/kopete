@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>BehaviorConfig_General</class>
 <widget class="QWidget">
     <property name="name">
@@ -15,11 +15,11 @@
     <property name="caption">
         <string>General</string>
     </property>
-    <grid>
+    <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QButtonGroup" row="0" column="0">
+        <widget class="QButtonGroup">
             <property name="name">
                 <cstring>buttonGroup2</cstring>
             </property>
@@ -51,51 +51,7 @@
                 </widget>
             </vbox>
         </widget>
-        <spacer row="3" column="0">
-            <property name="name">
-                <cstring>spacer1</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>30</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QGroupBox" row="2" column="0">
-            <property name="name">
-                <cstring>groupBox1</cstring>
-            </property>
-            <property name="title">
-                <string>Miscellaneous</string>
-            </property>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>mUseQueueChk</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>10</x>
-                        <y>20</y>
-                        <width>370</width>
-                        <height>23</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Use the message &amp;queue</string>
-                </property>
-                <property name="whatsThis" stdset="0">
-                    <string>Use a queue instead of opening a chat window on incoming messages</string>
-                </property>
-            </widget>
-        </widget>
-        <widget class="QButtonGroup" row="1" column="0">
+        <widget class="QButtonGroup">
             <property name="name">
                 <cstring>notifyGroupBox</cstring>
             </property>
@@ -132,7 +88,62 @@
                 </widget>
             </grid>
         </widget>
-    </grid>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>groupBox1</cstring>
+            </property>
+            <property name="title">
+                <string>Miscellaneous</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mUseQueueChk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use the message &amp;queue</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+Q</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Use a queue instead of opening a chat window on incoming messages</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>mAutoConnect</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Connect automaticaly at startup</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Automaticaly connect all your account when Kopete start</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>30</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
 </widget>
 <tabstops>
     <tabstop>mUseQueueChk</tabstop>

@@ -41,6 +41,7 @@
 #include "kopetestdaction.h"
 #include "kopeteuiglobal.h"
 #include "kopetewindow.h"
+#include "kopeteprefs.h"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -221,8 +222,7 @@ void KopeteApplication::slotAllPluginsLoaded()
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
 	// --noconnect not specified?
-	//TODO: add a configure option
-	if ( args->isSet( "connect" ) )
+	if ( args->isSet( "connect" )  && KopetePrefs::prefs()->autoConnect() )
 		Kopete::AccountManager::self()->connectAll();
 
 	QCStringList connectArgs = args->getOptionList( "autoconnect" );

@@ -74,6 +74,9 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 		this, SLOT(slotSettingsChanged(bool)));
 	connect(mPrfsGeneral->mSoundIfAwayChk, SIGNAL(toggled(bool)),
 		this, SLOT(slotSettingsChanged(bool)));
+		connect(mPrfsGeneral->mAutoConnect, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+
 
 	// "Chat" TAB ===============================================================
 	connect( mPrfsChat->cb_RaiseMsgWindowChk, SIGNAL(toggled(bool)),
@@ -115,6 +118,7 @@ void BehaviorConfig::save()
 	p->setTrayflashNotify(mPrfsGeneral->mTrayflashNotifyChk->isChecked());
 	p->setBalloonNotify(mPrfsGeneral->mBalloonNotifyChk->isChecked());
 	p->setSoundIfAway(mPrfsGeneral->mSoundIfAwayChk->isChecked());
+	p->setAutoConnect(mPrfsGeneral->mAutoConnect->isChecked());
 
 	// "Away" TAB ===============================================================
 	p->setRememberedMessages( mAwayConfigUI->rememberedMessages->value() );
@@ -155,6 +159,7 @@ void BehaviorConfig::load()
 	mPrfsGeneral->mTrayflashNotifyChk->setChecked ( p->trayflashNotify() );
 	mPrfsGeneral->mBalloonNotifyChk->setChecked ( p->balloonNotify() );
 	mPrfsGeneral->mSoundIfAwayChk->setChecked( p->soundIfAway() );
+	mPrfsGeneral->mAutoConnect->setChecked( p->autoConnect() );
 	slotShowTrayChanged( mPrfsGeneral->mShowTrayChk->isChecked() );
 
 	// "Away" TAB ===============================================================
