@@ -786,18 +786,12 @@ QString KopeteMessage::decodeString( const QCString &message, const QTextCodec *
 	However, it *is* the only way we can be guarenteed that a given string is
 	decoded properly.
 	*/
+
+	//Check first 128 chars
+	int charsToCheck = 128 > message.length() ? message.length() : 128;
+
 	if( success )
 		*success = true;
-
-	//First, we check if it is UTF, no matter what the inital quess
-	if( KStringHandler::isUtf8(message) )
-	{
-		//We have a UTF string almost for sure. At least we know it will be decoded.
-		//Reject the provided codec.
-		return QString::fromUtf8( message );
-	}
-
-	int charsToCheck = 256 > message.length() ? message.length() : 256;
 
 	//They are providing a possible codec. Check if it is valid
 	if( providedCodec && providedCodec->heuristicContentMatch( message, charsToCheck ) == charsToCheck )
@@ -806,19 +800,26 @@ QString KopeteMessage::decodeString( const QCString &message, const QTextCodec *
 		return providedCodec->toUnicode( message );
 	}
 
-	kdWarning(14000) << k_funcinfo << "Unable to decode string using provided codec(s), taking best guesses!" << endl;
-	if( success )
-		*success = false;
+	//Check if it is UTF
+	if( KStringHandler::isUtf8(message) )
+	{
+		//We have a UTF string almost for sure. At least we know it will be decoded.
+		return QString::fromUtf8( message );
+	}
 
-	//We don't have any clues here.
-
-	//Try codecForContent
-	QTextCodec *testCodec = QTextCodec::codecForContent(message, 256);
+	//Try codecForContent - exact match
+	QTextCodec *testCodec = QTextCodec::codecForContent(message, charsToCheck);
 	if( testCodec && testCodec->heuristicContentMatch( message, charsToCheck ) == charsToCheck )
 	{
 		//All chars decodable.
 		return testCodec->toUnicode( message );
 	}
+
+	kdWarning(14000) << k_funcinfo << "Unable to decode string using provided codec(s), taking best guesses!" << endl;
+	if( success )
+		*success = false;
+
+	//We don't have any clues here.
 
 	//Try latin1 codec
 	testCodec = QTextCodec::codecForMib(4);
