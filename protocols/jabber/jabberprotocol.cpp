@@ -100,7 +100,7 @@ JabberProtocol::JabberProtocol( QObject *parent, QString name, QStringList )
 
 	initialPresence = JabberOnline;
 
-	preferences = new JabberPreferences("jabber_protocol_32", this);
+	preferences = new JabberPreferences("jabber_protocol", this);
 	QObject::connect( preferences, SIGNAL(saved()),
 					this, SLOT(slotSettingsChanged()));
 

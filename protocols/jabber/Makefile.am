@@ -1,5 +1,5 @@
 METASOURCES = AUTO
-SUBDIRS = ui pixmaps psi
+SUBDIRS = ui pixmaps icons psi
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(srcdir)/ui \
 	-I$(top_builddir)/kopete/protocols/jabber/ui \

@@ -61,7 +61,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	kdDebug(14120) << k_funcinfo << endl;
 	// Load all ICQ icons from KDE standard dirs
 
-	m_ChannelOnline = KopeteOnlineStatus( KopeteOnlineStatus::Online,  25, this, 0, "irc_protocol_small",   i18n( "Go O&nline" ),  i18n( "Online" ));
+	m_ChannelOnline = KopeteOnlineStatus( KopeteOnlineStatus::Online,  25, this, 0, "irc_protocol",   i18n( "Go O&nline" ),  i18n( "Online" ));
 	m_ChannelOffline = KopeteOnlineStatus( KopeteOnlineStatus::Offline, 25, this, 1, "irc_protocol_offline", i18n( "Go O&ffline" ), i18n( "Offline" ));
 
 	m_UserOnline = KopeteOnlineStatus( KopeteOnlineStatus::Online,  25, this, 0, "irc_normal",   i18n( "Go O&nline" ),  i18n( "Online" ));
@@ -119,7 +119,7 @@ KActionMenu* IRCProtocol::protocolActions()
 
 const QString IRCProtocol::protocolIcon()
 {
-	return "irc_protocol_small";
+	return "irc_protocol";
 }
 
 void IRCProtocol::init()
