@@ -9,6 +9,11 @@
 				<table>
 					<xsl:apply-templates select="contact"/>
 				</table>
+				<hr/>
+				<font size="-2">
+					Last update at:
+					<xsl:value-of select="listdate"/>
+				</font>
 			</body>
 		</html>
 	</xsl:template>
