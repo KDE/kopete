@@ -15,3 +15,8 @@ void AddContactPage::slotFinish()
 {
 
 }
+
+bool AddContactPage::validateData()
+{
+	return false;
+}

@@ -16,6 +16,7 @@ public:
 	AddContactPage(QWidget *parent=0, const char *name=0);
 	~AddContactPage();
 	//KopeteProtocol *protocol;
+	virtual bool validateData();
 public slots: // Public slots
   /** No descriptions */
   virtual void slotFinish();

@@ -23,6 +23,7 @@ public:
 	QLabel *noaddMsg1;
 	QLabel *noaddMsg2;
 	bool canadd;
+	virtual bool validateData();
 public slots: // Public slots
   /** No descriptions */
   virtual void slotFinish();

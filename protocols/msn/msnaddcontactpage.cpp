@@ -54,4 +54,11 @@ void MSNAddContactPage::slotFinish()
 		return;
 	}
 }
+
+bool MSNAddContactPage::validateData()
+{
+	// PLEASE DO SOME VALIDATING HERE FOR MSN ID'S!!!
+	return true;
+}
+
 #include "msnaddcontactpage.moc"
