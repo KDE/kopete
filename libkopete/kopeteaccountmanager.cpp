@@ -238,7 +238,25 @@ void KopeteAccountManager::save()
 
 void KopeteAccountManager::load()
 {
-	connect( KopetePluginManager::self(), SIGNAL( pluginLoaded( KopetePlugin* ) ), SLOT( slotPluginLoaded( KopetePlugin * ) ) );
+	connect( KopetePluginManager::self(), SIGNAL( pluginLoaded( KopetePlugin * ) ), SLOT( slotPluginLoaded( KopetePlugin * ) ) );
+
+	// Iterate over all groups that start with "Account_" as those are accounts
+	// and load the required protocols if the account is enabled.
+	// Don't try to optimize duplicate calls out, the plugin queue is smart enough
+	// (and fast enough) to handle that without adding complexity here
+	KConfig *config = KGlobal::config();
+	QStringList accountGroups = config->groupList().grep( QRegExp( QString::fromLatin1( "^Account_" ) ) );
+	for ( QStringList::Iterator it = accountGroups.begin(); it != accountGroups.end(); ++it )
+	{
+		config->setGroup( *it );
+
+		QString protocol = config->readEntry( "Protocol" );
+		if ( protocol.endsWith( QString::fromLatin1( "Protocol" ) ) )
+			protocol = QString::fromLatin1( "kopete_" ) + protocol.lower().remove( QString::fromLatin1( "protocol" ) );
+
+		if ( config->readBoolEntry( "Enabled", true ) )
+			KopetePluginManager::self()->loadPlugin( protocol, KopetePluginManager::LoadAsync );
+	}
 }
 
 void KopeteAccountManager::slotPluginLoaded( KopetePlugin *plugin )
