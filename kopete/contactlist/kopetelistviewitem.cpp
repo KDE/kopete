@@ -462,6 +462,7 @@ void TextComponent::setText( const QString &text )
 {
 	if ( text == d->text ) return;
 	d->text = text;
+	relayout();
 	calcMinSize();
 }
 
