@@ -21,4 +21,3 @@ servicetype_DATA = kopeteplugin.desktop kopeteprotocol.desktop
 servicetypedir = $(kde_servicetypesdir)
 
 # vim: set noet:
-
