@@ -55,16 +55,14 @@ YahooSessionManager::~YahooSessionManager()
 
 void YahooSessionManager::setPager(QString host, int port)
 {
-	strcpy(pager_host, host);
-	QString portString = QString().setNum(port);
-	strcpy(pager_port, portString);
+	strcpy( pager_host, host.utf8() );
+	strcpy( pager_port, QString::number( port ).latin1() );
 }
 
 void YahooSessionManager::setFileTransfer(QString host, int port)
 {
-	strcpy(filetransfer_host, host);
-	QString portString = QString().setNum(port);
-	strcpy(filetransfer_port, portString);
+	strcpy( filetransfer_host, host.utf8() );
+	strcpy( filetransfer_port, QString::number( port ).latin1() );
 }
 
 int YahooSessionManager::socketDescriptor( int session_id )
@@ -391,7 +389,7 @@ QStringList YahooSession::getIdentities()
 
 QString YahooSession::getCookie( const QString &which)
 {
-	return QString(yahoo_get_cookie(m_connId, which));
+	return QString( yahoo_get_cookie( m_connId, which.latin1() ) );
 }
 
 QString YahooSession::getProfile_url( void )
@@ -399,12 +397,10 @@ QString YahooSession::getProfile_url( void )
 	return QString(yahoo_get_profile_url());
 }
 
-void YahooSession::slotLoginResponseReceiver(int succ, char *url)
+void YahooSession::slotLoginResponseReceiver( int /* succ */, char * /* url */ )
 {
 	kdDebug(14180)<< k_funcinfo <<endl;
 }
-
-
 
 /* Callbacks implementation */
 
