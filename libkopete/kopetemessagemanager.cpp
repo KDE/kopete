@@ -93,8 +93,9 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	// directory traversal, although appending '.log' and the rest of the
 	// code should really make overwriting files possible anyway.
 	KopeteContact *c = others.first();
-	QString logFileName = "kopete/" + QString( c->protocol()->pluginId() ) +
-		"/" + c->contactId().replace( QRegExp( "[./~]" ), "-" ) + ".log";
+	QString logFileName = QString::fromLatin1("kopete/") + QString( c->protocol()->pluginId() ) +
+		QString::fromLatin1("/") + c->contactId().replace( QRegExp( QString::fromLatin1("[./~]") ),
+		QString::fromLatin1("-") ) + QString::fromLatin1(".log");
 	d->mLogger = new KopeteMessageLog( logFileName, this );
 
 //	connect(protocol, SIGNAL(destroyed()), this, SLOT(slotProtocolUnloading()));
@@ -230,7 +231,7 @@ KopeteChatWindow *KopeteMessageManager::newWindow()
 	if( windowCreated && !chatWindowMap()->contains( d->mProtocol ) )
 		chatWindowMap()->insert(d->mProtocol, myWindow);
 	
-	return (KopeteChatWindow*)myWindow;
+	return static_cast<KopeteChatWindow*>(myWindow);
 }
 
 void KopeteMessageManager::newChatView()
@@ -380,9 +381,14 @@ void KopeteMessageManager::readMessages()
 		{
 			KWin::setOnDesktop(myWindow->winId() , KWin::currentDesktop()); //set on the desktop
 			myWindow->raise(); // make it top window
+			
+			//Raise the tab if needed
 			if (d->mWidget == ChatWindow)
-				((KopeteChatWindow*)myWindow)->makeWidgetDockVisible(mainView);
-			myWindow->setActiveWindow();
+				static_cast<KopeteChatWindow*>(myWindow)->makeWidgetDockVisible(mainView);
+			
+			//Only grab focus if we opened the chat ourselves
+			if ( queueEmpty )
+				myWindow->setActiveWindow();
 		}
 	}
 	d->isBusy=false;
