@@ -18,12 +18,20 @@
 
 #include "chatview.h"
 
-#include <qclipboard.h>
-#include <qheader.h>
-#include <qtooltip.h>
-#include <qtimer.h>
+#include "chatmemberslistwidget.h"
+#include "chatmessagepart.h"
+#include "chattexteditpart.h"
+#include "kopetechatwindow.h"
+#include "kopetemessagemanager.h"
+#include "kopetemetacontact.h"
+#include "kopetepluginmanager.h"
+#include "kopeteprefs.h"
+#include "kopeteprotocol.h"
+#include "kopeteaccount.h"
+#include "kopeteglobal.h"
+#include "kopetecontactlist.h"
 
-#include <kcompletion.h>
+#include <ktabwidget.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -31,23 +39,9 @@
 #include <kstringhandler.h>
 #include <kwin.h>
 #include <kurldrag.h>
+#include <kglobalsettings.h>
 
-#include "chatmemberslistwidget.h"
-#include "chatmessagepart.h"
-#include "kopetechatwindow.h"
-// FIXME: including a .cpp file !!!
-#include "krichtexteditpart.cpp"
-#include "kopetemessagemanager.h"
-#include "kopetemetacontact.h"
-#include "kopetepluginmanager.h"
-#include "kopeteprefs.h"
-#include "kopeteprotocol.h"
-#include "kopetexsl.h"
-#include "kopeteaccount.h"
-#include "kopeteglobal.h"
-#include "kopetecontactlist.h"
-
-#include <ktabwidget.h>
+#include <qtimer.h>
 
 class KopeteChatViewPrivate
 {
@@ -60,23 +54,19 @@ public:
 };
 
 ChatView::ChatView( Kopete::ChatSession *mgr, const char *name )
-	 : KDockMainWindow( 0L, name, 0L ), KopeteView( mgr ), editpart(0)
+	 : KDockMainWindow( 0L, name, 0L ), KopeteView( mgr )
 {
 	d = new KopeteChatViewPrivate;
-
-	historyPos = -1;
+	d->isActive = false;
+	d->visibleMembers = false;
+	d->sendInProgress = false;
+	
 	m_type = Kopete::Message::Chat;
 	m_mainWindow = 0L;
 	membersDock = 0L;
-	d->isActive = false;
 	m_tabBar = 0L;
 	membersStatus = Smart;
 	m_tabState=Normal;
-	d->visibleMembers = false;
-	d->sendInProgress = false;
-	mComplete = new KCompletion();
-	mComplete->setIgnoreCase( true );
-	mComplete->setOrder( KCompletion::Weighted );
 	
 	//FIXME: don't widgets start off hidden anyway?
 	hide();
@@ -93,20 +83,20 @@ ChatView::ChatView( Kopete::ChatSession *mgr, const char *name )
 	//Create the bottom dock widget, with the edit area, statusbar and send button
 	editDock = createDockWidget( QString::fromLatin1( "editDock" ), QPixmap(),
 		0L, QString::fromLatin1("editDock"), QString::fromLatin1(" ") );
-	editpart = new KopeteRichTextEditPart( editDock, "kopeterichtexteditpart",
-		mgr->protocol()->capabilities() );
-	connect( editpart, SIGNAL( toggleToolbar(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
+	m_editPart = new ChatTextEditPart( mgr, editDock, "kopeterichtexteditpart" );
+	
+	// FIXME: is this used these days? it seems totally unnecessary
+	connect( editPart(), SIGNAL( toggleToolbar(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
 
-	m_edit = static_cast<KTextEdit*>( editpart->widget() );
-
-	//Set params on the edit widget
-	m_edit->setMinimumSize( QSize( 75, 20 ) );
-	m_edit->setWordWrap( QTextEdit::WidgetWidth );
-	m_edit->setWrapPolicy( QTextEdit::AtWhiteSpace );
-	m_edit->setAutoFormatting( QTextEdit::AutoNone );
-
+	connect( editPart(), SIGNAL( messageSent( Kopete::Message & ) ),
+	         this, SIGNAL( messageSent( Kopete::Message & ) ) );
+	connect( editPart(), SIGNAL( canSendChanged( bool ) ),
+	         this, SIGNAL( canSendChanged(bool) ) );
+	connect( editPart(), SIGNAL( typing(bool) ),
+	         this, SIGNAL( typing(bool) ) );
+	
 	//Make the edit area dockable for now
-	editDock->setWidget( m_edit );
+	editDock->setWidget( editPart()->widget() );
 	editDock->setDockSite( KDockWidget::DockNone );
 	editDock->setEnableDocking(KDockWidget::DockBottom);
 
@@ -118,20 +108,8 @@ ChatView::ChatView( Kopete::ChatSession *mgr, const char *name )
 	// I had to disable the acceptDrop in the khtml widget to be able to intercept theses events.
 	setAcceptDrops(true);
 	viewDock->setAcceptDrops(false);
-	
-	// some signals and slots connections
-	connect( m_edit, SIGNAL( textChanged()), this, SLOT( slotTextChanged() ) );
-
-	// Timers for typing notifications
-	m_typingRepeatTimer = new QTimer(this, "m_typingRepeatTimer");
-	m_typingStopTimer   = new QTimer(this, "m_typingStopTimer");
 
 	m_remoteTypingMap.setAutoDelete( true );
-
-	connect( m_typingRepeatTimer, SIGNAL( timeout() ),
-	         this, SLOT( slotRepeatTimer() ) );
-	connect( m_typingStopTimer,   SIGNAL( timeout() ),
-	         this, SLOT( slotStopTimer() ) );
 
 	connect( mgr, SIGNAL( displayNameChanged() ),
 	         this, SLOT( slotChatDisplayNameChanged() ) );
@@ -141,15 +119,20 @@ ChatView::ChatView( Kopete::ChatSession *mgr, const char *name )
 	         this, SLOT( slotContactRemoved(const Kopete::Contact*, const QString&, Kopete::Message::MessageFormat, bool) ) );
 	connect( mgr, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & , const Kopete::OnlineStatus &) ),
 	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
-
-	setFocusProxy( m_edit );
-	m_edit->setFocus();
+	
+	// add contacts
+	slotContactAdded( mgr->user(), true );
+	for ( QPtrListIterator<Kopete::Contact> it( mgr->members() ); it.current(); ++it )
+		slotContactAdded( *it, true );
+	
+	setFocusProxy( editPart()->widget() );
+	editPart()->widget()->setFocus();
 
 	// init actions
-	copyAction  = KStdAction::copy( this, SLOT(copy()), actionCollection() );
+	KStdAction::copy( this, SLOT(copy()), actionCollection() );
 
 	setCaption( m_manager->displayName(), false );
-
+	
 	// restore docking positions
 	readOptions();
 
@@ -163,9 +146,90 @@ ChatView::~ChatView()
 
 	saveOptions();
 
-	delete mComplete;
-
 	delete d;
+}
+
+KTextEdit *ChatView::editWidget()
+{
+	return editPart()->widget();
+}
+
+QWidget *ChatView::mainWidget()
+{
+	return this;
+}
+
+KParts::Part *ChatView::part() const
+{
+	return editPart();
+}
+
+bool ChatView::canSend()
+{
+	return editPart()->canSend();
+}
+
+Kopete::Message ChatView::currentMessage()
+{
+	return editPart()->contents();
+}
+
+void ChatView::setCurrentMessage( const Kopete::Message &message )
+{
+	editPart()->setContents( message );
+}
+
+void ChatView::cut()
+{
+	editPart()->edit()->cut();
+}
+
+void ChatView::copy()
+{
+	if ( messagePart()->hasSelection() )
+		messagePart()->copy();
+	else
+		editPart()->edit()->copy();
+}
+
+void ChatView::paste()
+{
+	editPart()->edit()->paste();
+}
+
+void ChatView::nickComplete()
+{
+	return editPart()->complete();
+}
+
+void ChatView::addText( const QString &text )
+{
+	editPart()->addText( text );
+}
+
+void ChatView::clear()
+{
+	messagePart()->clear();
+}
+
+void ChatView::setBgColor( const QColor &newColor )
+{
+	editPart()->setBgColor( newColor );
+}
+
+void ChatView::setFont()
+{
+	editPart()->setFont();
+}
+
+void ChatView::setFont( const QFont &font )
+{
+	editPart()->setFont( font );
+}
+
+void ChatView::setFgColor( const QColor &newColor )
+{
+	editPart()->setFgColor( newColor );
 }
 
 void ChatView::raise( bool activate )
@@ -477,84 +541,11 @@ const QString& ChatView::statusText()
 	return d->statusText;
 }
 
-// NAUGHTY, BAD AND WRONG! (but needed to fix nick complete bugs)
-#include <private/qrichtext_p.h>
-class EvilTextEdit : public KTextEdit
-{
-public:
-	// grab the paragraph as plain text - very very evil.
-	QString plainText( int para )
-	{
-		QString str = document()->paragAt( para )->string()->toString();
-		// str includes an extra space on the end (from the newline character?) - remove it
-		return str.left( str.length() - 1 );
-	}
-};
-
-void ChatView::nickComplete()
-{
-	int para = 1, parIdx = 1;
-	m_edit->getCursorPosition( &para, &parIdx);
-
-	// FIXME: strips out all formatting
-	QString txt = static_cast<EvilTextEdit*>(m_edit)->plainText( para );
-
-	if ( parIdx > 0 )
-	{
-		int firstSpace = txt.findRev( QRegExp( QString::fromLatin1("\\s\\S+") ), parIdx - 1 ) + 1;
-		int lastSpace = txt.find( QRegExp( QString::fromLatin1("[\\s\\:]") ), firstSpace );
-		if( lastSpace == -1 )
-			lastSpace = txt.length();
-
-		QString word = txt.mid( firstSpace, lastSpace - firstSpace );
-		QString match;
-
-		kdDebug(14000) << k_funcinfo << word << " from '" << txt << "'" << endl;
-
-		if ( word != m_lastMatch )
-		{
-			match = mComplete->makeCompletion( word );
-			m_lastMatch = QString::null;
-			parIdx -= word.length();
-		}
-		else
-		{
-			match = mComplete->nextMatch();
-			parIdx -= m_lastMatch.length();
-		}
-
-		if ( !match.isNull() && !match.isEmpty() )
-		{
-			QString rightText = txt.right( txt.length() - lastSpace );
-
-			if ( para == 0 && firstSpace == 0 && rightText[0] != QChar(':') )
-			{
-				rightText = match + QString::fromLatin1(": ") + rightText;
-				parIdx += 2;
-			}
-			else
-				rightText = match + rightText;
-
-			// insert *before* remove. this is becase Qt adds an extra blank line
-			// if the rich text control becomes empty (if you remove the only para).
-			// disable updates while we change the contents to eliminate flicker.
-			m_edit->setUpdatesEnabled( false );
-			m_edit->insertParagraph( txt.left(firstSpace) + rightText, para );
-			m_edit->removeParagraph( para + 1 );
-			m_edit->setCursorPosition( para, parIdx + match.length() );
-			m_edit->setUpdatesEnabled( true );
-			// must call this rather than update because QTextEdit is broken :(
-			m_edit->updateContents();
-			m_lastMatch = match;
-		}
-	}
-}
-
 void ChatView::slotChatDisplayNameChanged()
 {
-	//This fires whenever a contact or MC changes displayName, so only
-	//update the caption if it changed to avoid unneeded updates that
-	//could cause flickering
+	// This fires whenever a contact or MC changes displayName, so only
+	// update the caption if it changed to avoid unneeded updates that
+	// could cause flickering
 	QString chatName = m_manager->displayName();
 	if ( chatName != d->captionText )
 		setCaption( chatName, true );
@@ -571,9 +562,6 @@ void ChatView::slotPropertyChanged( Kopete::Contact*, const QString &key,
 		if(KopetePrefs::prefs()->showEvents())
 			if ( oldName != newName && !oldName.isEmpty())
 				sendInternalMessage( i18n( "%1 is now known as %2" ). arg( oldName, newName ) );
-
-		mComplete->removeItem( oldName );
-		mComplete->addItem( newName );
 	}
 }
 
@@ -582,8 +570,6 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 	connect( contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
 		this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
-
-	mComplete->addItem( contactName );
 
 	if( !suppress && m_manager->members().count() > 1 )
 		sendInternalMessage(  i18n("%1 has joined the chat.").arg(contactName) );
@@ -610,7 +596,6 @@ void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString
 		m_remoteTypingMap.remove( const_cast<Kopete::Contact *>( contact ) );
 
 		QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
-		mComplete->removeItem( contactName );
 
 		// When the last person leaves, don't disconnect the signals, since we're in a one-to-one chat
 		if ( m_manager->members().count() > 0 )
@@ -711,44 +696,12 @@ void ChatView::slotToggleRtfToolbar( bool enabled )
 		m_mainWindow->toolBar( "formatToolBar" )->hide();
 }
 
-bool ChatView::canSend()
-{
-	if ( !m_manager ) return false;
-
-	// can't send if there's nothing *to* send...
-	if ( m_edit->text().isEmpty() )
-		return false;
-
-	Kopete::ContactPtrList members = m_manager->members();
-	
-	// if we can't send offline, make sure we have a reachable contact...
-	if ( !( m_manager->protocol()->capabilities() & Kopete::Protocol::CanSendOffline ) )
-	{
-		bool reachableContactFound = false;
-
-		//TODO: does this perform badly in large / busy IRC channels? - no, doesn't seem to
-		QPtrListIterator<Kopete::Contact> it ( members );
-		for( ; it.current(); ++it )
-		{
-			if ( (*it)->isReachable() )
-			{
-				reachableContactFound = true;
-				break;
-			}
-		}
-
-		// no online contact found and can't send offline? can't send.
-		if ( !reachableContactFound )
-			return false;
-	}
-
-	return true;
-}
-
 void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &newStatus, const Kopete::OnlineStatus &oldStatus )
 {
 	kdDebug(14000) << k_funcinfo << endl;
-	if ( contact && KopetePrefs::prefs()->showEvents() )
+	bool inhibitNotification = ( newStatus.status() == Kopete::OnlineStatus::Unknown ||
+	                             oldStatus.status() == Kopete::OnlineStatus::Unknown );
+	if ( contact && KopetePrefs::prefs()->showEvents() && !inhibitNotification )
 	{
 		if ( contact->account() && contact == contact->account()->myself() )
 		{
@@ -789,13 +742,6 @@ void ChatView::slotContactStatusChanged( Kopete::Contact *contact, const Kopete:
 	// update the windows caption
 	slotChatDisplayNameChanged();
 	emit updateStatusIcon( this );
-
-
-	if ( ( oldStatus.status() == Kopete::OnlineStatus::Offline )
-	  != ( newStatus.status() == Kopete::OnlineStatus::Offline ) )
-	{
-		emit canSendChanged();
-	}
 }
 
 void ChatView::sendInternalMessage(const QString &msg, Kopete::Message::MessageFormat format )
@@ -812,128 +758,13 @@ void ChatView::sendInternalMessage(const QString &msg, Kopete::Message::MessageF
 void ChatView::sendMessage()
 {
 	d->sendInProgress = true;
-
-	QString txt = editpart->text( Qt::PlainText );
-	if ( m_lastMatch.isNull() && ( txt.find( QRegExp( QString::fromLatin1("^\\w+:\\s") ) ) > -1 ) )
-	{ //no last match and it finds something of the form of "word:" at the start of a line
-		QString search = txt.left( txt.find(':') );
-		if( !search.isEmpty() )
-		{
-			QString match = mComplete->makeCompletion( search );
-			if( !match.isNull() )
-				m_edit->setText( txt.replace(0,search.length(),match) );
-		}
-	}
-
-	if ( !m_lastMatch.isNull() )
-	{
-		mComplete->addItem( m_lastMatch );
-		m_lastMatch = QString::null;
-	}
-
-	Kopete::Message sentMessage = currentMessage();
-	emit messageSent( sentMessage );
-	historyList.prepend( m_edit->text() );
-	historyPos = -1;
-	editpart->clear();
-	emit canSendChanged();
-	slotStopTimer();
+	editPart()->sendMessage();
 }
 
 void ChatView::messageSentSuccessfully()
 {
 	d->sendInProgress = false;
-	emit ( messageSuccess( this ) );
-}
-
-bool ChatView::isTyping()
-{
-	QString txt = editpart->text( Qt::PlainText );
-
-	//Make sure the message is empty. QString::isEmpty()
-	//returns false if a message contains just whitespace
-	//which is the reason why we strip the whitespace	
-	return !txt.stripWhiteSpace().isEmpty();
-}
-
-void ChatView::slotTextChanged()
-{
-	if ( isTyping() )
-	{
-		// And they were previously typing
-		if( !m_typingRepeatTimer->isActive() )
-		{
-			m_typingRepeatTimer->start( 4000, false );
-			slotRepeatTimer();
-		}
-
-		// Reset the stop timer again, regardless of status
-		m_typingStopTimer->start( 4500, true );
-	}
-
-	canSendChanged();
-}
-
-void ChatView::historyUp()
-{
-	QString txt = editpart->text( Qt::PlainText );
-	bool empty = txt.stripWhiteSpace().isEmpty();
-	QString textToSave = m_edit->text();
-
-	if ( historyPos == -1 )
-	{
-		if ( !empty ) //if we've typed something...
-		{
-			historyList.prepend( textToSave ); //...save it
-			if ( historyList.count() > 1)
-				historyPos = 1;
-			else
-				historyPos = 0;
-		}
-		else if ( historyList.count() != 0 )
-			historyPos = 0;
-	}
-	else
-	{
-		if ( !empty )
-			historyList[historyPos] = textToSave;
-		if ( historyPos < historyList.count() - 1 )
-			historyPos++;
-	}
-	if ( historyPos != -1 )
-	{
-		m_edit->setText( historyList[historyPos] );
-		m_edit->moveCursor( QTextEdit::MoveEnd, false );
-	}
-}
-
-void ChatView::historyDown()
-{
-	QString txt = m_edit->text( Qt::PlainText );
-	bool empty = txt.stripWhiteSpace().isEmpty();
-	QString textToSave = m_edit->text();
-
-	if ( historyPos == -1 )
-	{
-		if ( !empty ) //if we've typed something...
-		{
-			historyList.prepend( textToSave ); //...save it
-			m_edit->setText( QString::null );
-		}
-	}
-	else
-	{
-		if ( !empty )
-			historyList[historyPos] = textToSave;
-		historyPos--;
-		if ( historyPos >= 0 )
-		{
-			m_edit->setText( historyList[historyPos] );
-			m_edit->moveCursor( QTextEdit::MoveEnd, false );
-		}
-		else
-			m_edit->setText( QString::null );
-	}
+	emit messageSuccess( this );
 }
 
 void ChatView::saveOptions()
@@ -976,16 +807,6 @@ void ChatView::readOptions()
 	editDock->setEnableDocking( KDockWidget::DockNone );
 }
 
-void ChatView::addText( const QString &text )
-{
-	m_edit->insert( text );
-}
-
-void ChatView::clear()
-{
-	messagePart()->clear();
-}
-
 void ChatView::setActive( bool value )
 {
 	d->isActive = value;
@@ -1001,83 +822,11 @@ void ChatView::setTabBar( KTabWidget *tabBar )
 	m_tabBar = tabBar;
 }
 
-void ChatView::setCurrentMessage( const Kopete::Message &message )
-{
-	m_edit->setText( message.plainBody() );
-
-	setFont( message.font() );
-	setFgColor( message.fg() );
-	setBgColor( message.bg() );
-}
-
-Kopete::Message ChatView::currentMessage()
-{
-	Kopete::Message currentMsg = Kopete::Message( m_manager->user(), m_manager->members(),
-		 				m_edit->text(), Kopete::Message::Outbound,
-						editpart->richTextEnabled() ? Kopete::Message::RichText : Kopete::Message::PlainText );
-
-	currentMsg.setBg( editpart->bgColor() );
-	currentMsg.setFg( editpart->fgColor() );
-	currentMsg.setFont( editpart->font() );
-
-	return currentMsg;
-}
-
-void ChatView::cut()
-{
-	m_edit->cut();
-}
-
-void ChatView::copy()
-{
-	if ( messagePart()->hasSelection() )
-		messagePart()->copy();
-	else
-		m_edit->copy();
-}
-
-void ChatView::paste()
-{
-	m_edit->paste();
-}
-
-void ChatView::setBgColor( const QColor &newColor )
-{
-	editpart->setBgColor( newColor );
-}
-
-void ChatView::setFont()
-{
-	editpart->setFont();
-}
-
-void ChatView::setFont( const QFont &font )
-{
-	editpart->setFont( font );
-}
-
-void ChatView::setFgColor( const QColor &newColor )
-{
-	editpart->setFgColor( newColor );
-}
-
-
-void ChatView::slotRepeatTimer()
-{
-	emit typing( true );
-}
-
 void ChatView::slotRemoteTypingTimeout()
 {
 	// Remove the topmost timer from the list. Why does QPtrDict use void* keys and not typed keys? *sigh*
 	if ( !m_remoteTypingMap.isEmpty() )
 		remoteTyping( reinterpret_cast<const Kopete::Contact *>( QPtrDictIterator<QTimer>(m_remoteTypingMap).currentKey() ), false );
-}
-
-void ChatView::slotStopTimer()
-{
-	m_typingRepeatTimer->stop();
-	emit typing( false );
 }
 
 void ChatView::dragEnterEvent ( QDragEnterEvent * event )
@@ -1197,7 +946,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 			}
 			else
 			{ //this is a URL, send the URL in a message
-				m_edit->insert( (*it).url() );
+				addText( (*it).url() );
 			}
 		}
 		event->acceptAction();

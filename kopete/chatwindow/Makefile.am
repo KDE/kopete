@@ -5,7 +5,8 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) $(KOPETE_COMPAT_INCLUDES) -I$(top_srcdir)/kopet
 
 kopete_chatwindow_la_SOURCES = kopeteviewmanager.cpp kopeteemailwindow.cpp \
 	kopetechatwindow.cpp chatview.cpp chatmemberslistwidget.cpp \
-	chatmessagepart.cpp emoticonselector.cpp kopeteemoticonaction.cpp
+	chatmessagepart.cpp emoticonselector.cpp kopeteemoticonaction.cpp \
+	chattexteditpart.cpp krichtexteditpart.cpp
 
 kopete_chatwindow_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_chatwindow_la_LIBADD = ../../libkopete/libkopete.la $(LIB_KOPETECOMPAT) $(LIB_KDEUI)

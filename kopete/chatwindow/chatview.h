@@ -20,22 +20,20 @@
 
 #include "kopeteview.h"
 
-#include <ktextedit.h>
 #include <kdockwidget.h>
+#include <ktextedit.h> // for covariant return type of editWidget
 
 #include <qptrdict.h>
 
 class QTimer;
 
+class ChatTextEditPart;
 class ChatMembersListWidget;
 class ChatMessagePart;
 
 class KopeteChatWindow;
-class KopeteRichTextEditPart;
 
-class KTextEdit;
 class KTabWidget;
-class KCompletion;
 
 class KopeteChatViewPrivate;
 
@@ -55,15 +53,14 @@ class Part;
  */
 class ChatView : public KDockMainWindow, public KopeteView
 {
-	friend class KopeteChatViewTip;
-
 	Q_OBJECT
 public:
 	ChatView( Kopete::ChatSession *manager, const char *name = 0 );
 	~ChatView();
 	
-	ChatMembersListWidget *membersList() { return m_membersList; }
-	ChatMessagePart *messagePart() { return m_messagePart; }
+	ChatMembersListWidget *membersList() const { return m_membersList; }
+	ChatMessagePart *messagePart() const { return m_messagePart; }
+	ChatTextEditPart *editPart() const { return m_editPart; }
 
 	/**
 	 * Adds text into the edit area. Used when you select an emoticon
@@ -97,7 +94,7 @@ public:
 	/**
 	 * Sets the text to be displayed on tab label and window caption
 	 */
-	virtual void setCaption( const QString &text, bool modified );
+	void setCaption( const QString &text, bool modified );
 
 	/**
 	 * Changes the pointer to the chat widnow. Used to re-parent the view
@@ -106,8 +103,19 @@ public:
 	void setMainWindow( KopeteChatWindow* parent );
 
 	/**
+	 * Returns the message currently in the edit area
+	 * Reimplemented from KopeteView
+	 * @return The Kopete::Message object for the message
+	 *
+	 * Reimplemented from KopeteView
+	 */
+	virtual Kopete::Message currentMessage();
+	
+	/**
 	 * Sets the current message in the chat window
 	 * @param parent The new chat window
+	 *
+	 * Reimplemented from KopeteView
 	 */
 	virtual void setCurrentMessage( const Kopete::Message &newMessage );
 
@@ -124,13 +132,6 @@ public:
 	 * Shows or hides the chat members list
 	 */
 	void toggleMembersVisibility();
-
-	/**
-	 * Returns the message currently in the edit area
-	 * Reimplemented from KopeteView
-	 * @return The Kopete::Message object for the message
-	 */
-	virtual Kopete::Message currentMessage();
 
 	/**
 	 * Returns the chat window this view is in
@@ -158,10 +159,6 @@ public:
 
 	bool sendInProgress();
 
-	void historyUp();
-
-	void historyDown();
-
 	/** Reimplemented from KopeteView **/
 	virtual void raise( bool activate=false );
 
@@ -172,23 +169,13 @@ public:
 	virtual bool isVisible();
 
 	/** Reimplemented from KopeteView **/
-	virtual KTextEdit *editWidget() { return m_edit; }
+	virtual KTextEdit *editWidget();
 	
 	/** Reimplemented from KopeteView **/
-	virtual QWidget *mainWidget() { return this; }
-
-	void nickComplete();
-
-	/**
-	 * Can we send messages now?
-	 */
+	virtual QWidget *mainWidget();
+	
 	bool canSend();
 
-	/**
-	 * Is the user typing right now?
-	 */
-	bool isTyping();
-	
 public slots:
 	/**
 	 * Initiates a cut action on the edit area of the chat view
@@ -206,6 +193,8 @@ public slots:
 	 * Initiates a paste action into the edit area of the chat view
 	 */
 	void paste();
+	
+	void nickComplete();
 
 	/**
 	 * Sets the foreground color of the entry area, and outgoing messages
@@ -256,17 +245,17 @@ public slots:
 
 	virtual bool closeView( bool force = false );
 
-	KParts::Part *part() const { return (KParts::Part*)( editpart ); }
+	KParts::Part *part() const;
 
 signals:
 	/**
-	 * Emits when a message is sent
+	 * Emitted when a message is sent
 	 * @param message The message sent
 	 */
 	void messageSent( Kopete::Message & );
 
 	/**
-	 * Emits every 4 seconds while the user is typing
+	 * Emitted every 4 seconds while the user is typing
 	 * @param bool if the user is typing right now
 	 */
 	void typing( bool );
@@ -289,7 +278,7 @@ signals:
 	/**
 	 * Our send-button-enabled flag has changed
 	 */
-	void canSendChanged();
+	void canSendChanged(bool);
 
 	/**
 	 * Emitted when we re-parent ourselves with a new window
@@ -297,12 +286,11 @@ signals:
 	void windowCreated();
 
 private slots:
-	void slotRepeatTimer();
 	void slotRemoteTypingTimeout();
 	void slotPropertyChanged( Kopete::Contact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
 	/**
-	 * Called when a contact is added to the KMM instance (A new person joins the chat).
+	 * Called when a contact is added to the chat session. 
 	 * Adds this contact to the typingMap and the contact list view
 	 * @param c The contact that joined the chat
 	 * @param suppress mean that no notifications are showed
@@ -310,8 +298,8 @@ private slots:
 	void slotContactAdded( const Kopete::Contact *c, bool suppress );
 
 	/**
-	 * Called when a contact is removed from the KMM instance (A person left the chat).
-	 * Removes this contact from typingMap and the contact list view
+	 * Called when a contact is removed from the chat session. Updates the tab state and status icon,
+	 * displays a notification message and performs some cleanup.
 	 * @param c The contact left the chat
 	 * @param reason is the reason the contact left
 	 * @param format The format of the reason message
@@ -320,9 +308,11 @@ private slots:
 	void slotContactRemoved( const Kopete::Contact *c, const QString& reason, Kopete::Message::MessageFormat format, bool suppressNotification=false );
 
 	/**
-	 * Called when a contact changes status, updates the contact list view and
+	 * Called when a contact changes status, updates the display name, status icon and tab bar state.
+	 * If the user isn't changing to/from an Unknown status, will also display a message in the chatwindow.
 	 * @param contact The contact who changed status
 	 * @param status The new status of the contact
+	 * @param oldstatus The former status of the contact
 	 */
 	void slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus &oldstatus );
 
@@ -330,13 +320,6 @@ private slots:
 	 * Called when the chat's display name is changed
 	 */
 	void slotChatDisplayNameChanged();
-
-	/**
-	 * Called when text is changed in the edit area
-	 */
-	void slotTextChanged();
-
-	void slotStopTimer();
 
 	void slotMarkMessageRead();
 
@@ -347,40 +330,33 @@ protected:
 	virtual void dropEvent ( QDropEvent * );
 
 private:
-	enum KopeteTabState { Normal , Highlighted , Changed , Typing , Message , Undefined };
-	enum MembersListPolicy { Smart = 0, Visible = 1, Hidden = 2 };
-
-	QPtrDict<QTimer> m_remoteTypingMap;
-	ChatMessagePart *m_messagePart; //move to d-pointer
-	
-	MembersListPolicy membersStatus;
-	QStringList historyList;
-	int historyPos;
-	QString unreadMessageFrom;
-	KTextEdit* m_edit;
-	ChatMembersListWidget *m_membersList; //move to d-pointer
-	
-	QString m_lastMatch;
-	QString m_status;
-	KCompletion *mComplete;
-
-	KopeteTabState m_tabState;
-	KDockWidget *viewDock;
-	KDockWidget *membersDock;
-	KDockWidget *editDock;
-	KTabWidget *m_tabBar;
-	KopeteRichTextEditPart *editpart;
-
-	KAction *copyAction;
-
-	// These control the position and visibility of the chat member list
-	KDockWidget::DockPosition membersDockPosition;
-
+	// widget stuff
 	KopeteChatWindow *m_mainWindow;
-
-	QTimer *m_typingRepeatTimer;
-	QTimer *m_typingStopTimer;
-
+	KTabWidget *m_tabBar;
+	
+	KDockWidget *viewDock;
+	ChatMessagePart *m_messagePart;
+	
+	KDockWidget *membersDock;
+	ChatMembersListWidget *m_membersList;
+	
+	KDockWidget *editDock;
+	ChatTextEditPart *m_editPart;
+	
+	// the state of our tab
+	enum KopeteTabState { Normal, Highlighted, Changed, Typing, Message, Undefined };
+	KopeteTabState m_tabState;
+	
+	// position and visibility of the chat member list
+	KDockWidget::DockPosition membersDockPosition;
+	enum MembersListPolicy { Smart = 0, Visible = 1, Hidden = 2 };
+	MembersListPolicy membersStatus;
+	
+	// miscellany
+	QPtrDict<QTimer> m_remoteTypingMap;
+	QString unreadMessageFrom;
+	QString m_status;
+	
 	void setTabState( KopeteTabState state = Undefined );
 
 	/**

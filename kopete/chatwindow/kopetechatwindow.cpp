@@ -47,6 +47,7 @@
 #include <kstdaccel.h>
 
 #include "chatmessagepart.h"
+#include "chattexteditpart.h"
 #include "chatview.h"
 #include "kopetechatwindow.h"
 #include "kopeteemoticonaction.h"
@@ -561,13 +562,13 @@ void KopeteChatWindow::slotToggleViewMembers()
 void KopeteChatWindow::slotHistoryUp()
 {
 	if( m_activeView )
-		m_activeView->historyUp();
+		m_activeView->editPart()->historyUp();
 }
 
 void KopeteChatWindow::slotHistoryDown()
 {
 	if( m_activeView )
-		m_activeView->historyDown();
+		m_activeView->editPart()->historyDown();
 }
 
 void KopeteChatWindow::slotCut()
@@ -846,7 +847,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 
 	if(m_activeView)
 	{
-		disconnect( m_activeView, SIGNAL( canSendChanged() ), this, SLOT( slotUpdateSendEnabled() ) );
+		disconnect( m_activeView, SIGNAL( canSendChanged(bool) ), this, SLOT( slotUpdateSendEnabled() ) );
 		guiFactory()->removeClient(m_activeView->msgManager());
 	}
 
@@ -861,7 +862,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 	if( !chatViewList.contains( view ) )
 		attachChatView( view );
 
-	connect( m_activeView, SIGNAL( canSendChanged() ), this, SLOT( slotUpdateSendEnabled() ) );
+	connect( m_activeView, SIGNAL( canSendChanged(bool) ), this, SLOT( slotUpdateSendEnabled() ) );
 
 	//Tell it it is active
 	m_activeView->setActive( true );
