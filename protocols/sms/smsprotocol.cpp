@@ -26,7 +26,6 @@
 #include "smscontact.h"
 #include "smsaddcontactpage.h"
 #include "smsaccount.h"
-#include "smspreferences.h"
 
 typedef KGenericFactory<SMSProtocol> SMSProtocolFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_sms, SMSProtocolFactory( "kopete_sms" )  )
@@ -44,30 +43,12 @@ SMSProtocol::SMSProtocol(QObject *parent, const char *name, const QStringList &/
 	else
 		s_protocol = this;
 
-	SMSPreferences *p = new SMSPreferences("sms_protocol", this);
-	connect(p, SIGNAL(saved()), this, SLOT(loadConfig()));
-	loadConfig();
-
 	addAddressBookField("messaging/sms", KopetePlugin::MakeIndexField);
 }
 
 SMSProtocol::~SMSProtocol()
 {
 	s_protocol = 0L;
-}
-
-void SMSProtocol::loadConfig()
-{
-	KGlobal::config()->setGroup("SMS");
-	theSubEnable = KGlobal::config()->readBoolEntry("SubEnable", false);
-	theSubCode = KGlobal::config()->readEntry("SubCode", "+44");
-	theLongMsgAction = (SMSMsgAction)KGlobal::config()->readNumEntry("MsgAction", ACT_ASK);
-}
-
-void SMSProtocol::translateNumber(QString &theNumber)
-{
-	if(theNumber[0] == QChar('0') && theSubEnable)
-		theNumber.replace(0, 1, theSubCode);
 }
 
 AddContactPage *SMSProtocol::createAddContactWidget(QWidget *parent, KopeteAccount */*i*/)
@@ -83,17 +64,6 @@ EditAccountWidget* SMSProtocol::createEditAccountWidget(KopeteAccount *account, 
 SMSProtocol* SMSProtocol::protocol()
 {
 	return s_protocol;
-}
-
-const bool SMSProtocol::splitNowMsgTooLong(int max, int msgLength)
-{
-	if(theLongMsgAction == ACT_CANCEL) return false;
-	if(theLongMsgAction == ACT_SPLIT) return true;
-	if(KMessageBox::questionYesNo(0L, i18n("This message is longer than the maximum length (%1). Should it be divided to %2 messages?").arg(max).arg(msgLength / max + 1),
-		i18n("Message Too Long")) == KMessageBox::Yes)
-		return true;
-	else
-		return false;
 }
 
 void SMSProtocol::deserializeContact(KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,

@@ -14,19 +14,20 @@
     *************************************************************************
 */
 
-#include "smscontact.h"
-#include "serviceloader.h"
-#include "smsprotocol.h"
-#include "smsuserpreferences.h"
-
-#include "kopetemessagemanagerfactory.h"
-#include "kopeteaccount.h"
-
 #undef KDE_NO_COMPAT
 #include <kaction.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+
+#include "kopetemessagemanagerfactory.h"
+#include "kopeteaccount.h"
+#include "serviceloader.h"
+
+#include "smscontact.h"
+#include "smsprotocol.h"
+#include "smsaccount.h"
+#include "smsuserpreferences.h"
 
 SMSContact::SMSContact( KopeteAccount* _account, const QString &phoneNumber,
 	const QString &displayName, KopeteMetaContact *parent, KopeteContact::AddMode mode  )
@@ -106,7 +107,7 @@ void SMSContact::slotSendMessage(KopeteMessage &msg)
 	if (s->maxSize() == -1)
 		s->send(msg);
 	else if (s->maxSize() < msgLength)
-	{	if (dynamic_cast<SMSProtocol *>(protocol())->splitNowMsgTooLong(s->maxSize(), msgLength))
+	{	if (dynamic_cast<SMSAccount *>(account())->splitNowMsgTooLong(s->maxSize(), msgLength))
 			for (int i=0; i < msgLength / s->maxSize() + 1; i++)
 			{	QString text = msg.plainBody();
 				text = text.mid( s->maxSize() * i, s->maxSize() );
@@ -137,7 +138,7 @@ void SMSContact::slotDeleteContact()
 const QString SMSContact::qualifiedNumber()
 {
 	QString number = m_phoneNumber;
-	dynamic_cast<SMSProtocol *>(protocol())->translateNumber(number);
+	dynamic_cast<SMSAccount *>(account())->translateNumber(number);
 	return number;
 }
 

@@ -5,4 +5,4 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 
 noinst_LTLIBRARIES = libkopetesmsui.la
 
-libkopetesmsui_la_SOURCES = smsadd.ui smsactprefs.ui smsprefs.ui smsuserprefs.ui empty.cpp
+libkopetesmsui_la_SOURCES = smsadd.ui smsactprefs.ui smsuserprefs.ui empty.cpp

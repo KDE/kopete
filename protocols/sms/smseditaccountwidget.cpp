@@ -19,9 +19,12 @@
 #include <qcombobox.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
+#include <qcheckbox.h>
+#include <qradiobutton.h>
 
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <krestrictedline.h>
 
 #include "smseditaccountwidget.h"
 #include "smsactprefs.h"
@@ -50,7 +53,12 @@ SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, KopeteAccount 
 		//Disable changing the account ID for now
 		//FIXME: Remove this when we can safely change the account ID (Matt)
 		preferencesDialog->accountId->setDisabled(true);
-		sName = m_account->pluginData(SMSProtocol::protocol(), "ServiceName");
+		sName = m_account->pluginData(protocol, "ServiceName");
+		preferencesDialog->subEnable->setChecked(m_account->pluginData(protocol, "SubEnable") == "true");
+		preferencesDialog->subCode->setText(m_account->pluginData(protocol, "SubCode"));
+		preferencesDialog->msgAsk->setChecked((SMSMsgAction)m_account->pluginData(protocol, "MsgAction").toInt() == ACT_ASK);
+		preferencesDialog->msgCancel->setChecked((SMSMsgAction)m_account->pluginData(protocol, "MsgAction").toInt() == ACT_CANCEL);
+		preferencesDialog->msgSplit->setChecked((SMSMsgAction)m_account->pluginData(protocol, "MsgAction").toInt() == ACT_SPLIT);
 	}
 
 	preferencesDialog->serviceName->insertStringList(ServiceLoader::services());
@@ -93,8 +101,10 @@ KopeteAccount* SMSEditAccountWidget::apply()
 	if (service)
 		service->setAccount(m_account);
 
-	m_account->setPluginData(SMSProtocol::protocol(), "ServiceName",
-		preferencesDialog->serviceName->currentText());
+	m_account->setPluginData(m_protocol, "ServiceName", preferencesDialog->serviceName->currentText());
+	m_account->setPluginData(m_protocol, "SubEnable", preferencesDialog->subEnable->isChecked() ? "true" : "false");
+	m_account->setPluginData(m_protocol, "SubCode", preferencesDialog->subCode->text());
+	m_account->setPluginData(m_protocol, "MsgAction", QString().setNum((int)(preferencesDialog->msgAsk->isChecked() ? ACT_ASK : preferencesDialog->msgSplit->isChecked() ? ACT_SPLIT : ACT_CANCEL)));
 
 	emit saved();
 	return m_account;

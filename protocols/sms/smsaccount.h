@@ -24,6 +24,8 @@ class SMSProtocol;
 class SMSContact;
 class KProcess;
 
+enum SMSMsgAction { ACT_ASK = 0, ACT_CANCEL, ACT_SPLIT };
+
 class SMSAccount : public KopeteAccount
 {
 	Q_OBJECT
@@ -37,15 +39,31 @@ public:
 	virtual void setAway( bool away, const QString & );
 	virtual KopeteContact* myself() const;
 
+	void translateNumber(QString &theNumber);
+
+	/**
+	 * Checks to see if the message should be split or not, in case it is too long.
+	 *
+	 * Only ever call in case of message being too long - may result in user interaction.
+	 */
+	const bool splitNowMsgTooLong(int max, int msgLength);
+
+public slots:
+	void loadConfig();
+
 public slots:
 	virtual void connect();
 	virtual void disconnect();
 
 protected:
-	bool addContactToMetaContact( const QString &contactId, const QString &displayName,
-		KopeteMetaContact *parentContact );
+	bool addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact);
+	virtual void loaded();
 
 private:
+	bool theSubEnable;
+	QString theSubCode;
+	SMSMsgAction theLongMsgAction;
+
 	SMSContact* m_myself;
 };
 

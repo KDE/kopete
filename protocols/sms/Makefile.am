@@ -11,7 +11,7 @@ kde_module_LTLIBRARIES = kopete_sms.la
 
 kopete_sms_la_SOURCES = smsaddcontactpage.cpp smscontact.cpp smseditaccountwidget.cpp \
 	smsprotocol.cpp serviceloader.cpp smsservice.cpp smsuserpreferences.cpp \
-	smsaccount.cpp smspreferences.cpp
+	smsaccount.cpp
 kopete_sms_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_sms_la_LIBADD  = ./ui/libkopetesmsui.la \
 	./services/libkopetesmsservices.la \

@@ -34,12 +34,39 @@ SMSAccount::SMSAccount( SMSProtocol *parent, const QString &accountID, const cha
 
 SMSAccount::~SMSAccount()
 {
+}
 
+void SMSAccount::loaded()
+{
+	loadConfig();
+}
+
+void SMSAccount::loadConfig()
+{
+	theSubEnable = pluginData(protocol(), "SubEnable") == "true";
+	theSubCode = pluginData(protocol(), "SubCode");
+	theLongMsgAction = (SMSMsgAction)pluginData(protocol(), "MsgAction").toInt();
+}
+
+void SMSAccount::translateNumber(QString &theNumber)
+{
+	if(theNumber[0] == QChar('0') && theSubEnable)
+		theNumber.replace(0, 1, theSubCode);
+}
+
+const bool SMSAccount::splitNowMsgTooLong(int max, int msgLength)
+{
+	if(theLongMsgAction == ACT_CANCEL) return false;
+	if(theLongMsgAction == ACT_SPLIT) return true;
+	if(KMessageBox::questionYesNo(0L, i18n("This message is longer than the maximum length (%1). Should it be divided to %2 messages?").arg(max).arg(msgLength / max + 1),
+		i18n("Message Too Long")) == KMessageBox::Yes)
+		return true;
+	else
+		return false;
 }
 
 void SMSAccount::setAway( bool /*away*/, const QString &)
 {
-
 }
 
 void SMSAccount::connect()

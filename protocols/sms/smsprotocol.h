@@ -28,8 +28,6 @@
 #include "kopeteonlinestatus.h"
 #include "kopetecontact.h"
 
-#include "smspreferences.h"
-
 class KAction;
 class KActionMenu;
 
@@ -63,23 +61,8 @@ public:
 	const KopeteOnlineStatus SMSUnknown;
 	const KopeteOnlineStatus SMSOffline;
 
-	void translateNumber(QString &theNumber);
-
-	/**
-	 * Checks to see if the message should be split or not, in case it is too long.
-	 *
-	 * Only ever call in case of message being too long - may result in user interaction.
-	 */
-	const bool splitNowMsgTooLong(int max, int msgLength);
-
-public slots:
-	void loadConfig();
-
 private:
-	bool theSubEnable;
-	QString theSubCode;
 	static SMSProtocol *s_protocol;
-	SMSMsgAction theLongMsgAction;
 };
 
 #endif

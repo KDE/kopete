@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>smsActPrefsUI</class>
 <author>Richard Lärkäng</author>
 <widget class="QWidget">
@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>336</width>
-            <height>274</height>
+            <width>346</width>
+            <height>484</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -21,82 +21,282 @@
             <verstretch>0</verstretch>
         </sizepolicy>
     </property>
-    <vbox>
+    <property name="caption">
+        <string>smsActPrefsUI</string>
+    </property>
+    <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
         <property name="margin">
             <number>0</number>
         </property>
-        <widget class="QLayoutWidget">
+        <widget class="QLineEdit" row="1" column="1">
             <property name="name">
-                <cstring>layout3</cstring>
+                <cstring>accountId</cstring>
             </property>
-            <grid>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>textLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Account name:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>accountId</cstring>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget" row="0" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>layout16</cstring>
+            </property>
+            <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel" row="1" column="0">
+                <widget class="QLabel">
                     <property name="name">
-                        <cstring>textLabel1</cstring>
+                        <cstring>textLabel1_3_2</cstring>
+                    </property>
+                    <property name="font">
+                        <font>
+                            <bold>1</bold>
+                        </font>
                     </property>
                     <property name="text">
-                        <string>&amp;SMS service:</string>
+                        <string>Name</string>
                     </property>
-                    <property name="buddy" stdset="0">
+                </widget>
+                <widget class="Line">
+                    <property name="name">
+                        <cstring>line1_2</cstring>
+                    </property>
+                    <property name="frameShape">
+                        <enum>HLine</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Sunken</enum>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QLayoutWidget" row="3" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>layout15</cstring>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1_3</cstring>
+                    </property>
+                    <property name="font">
+                        <font>
+                            <bold>1</bold>
+                        </font>
+                    </property>
+                    <property name="text">
+                        <string>Behaviour</string>
+                    </property>
+                </widget>
+                <widget class="Line">
+                    <property name="name">
+                        <cstring>line1</cstring>
+                    </property>
+                    <property name="frameShape">
+                        <enum>HLine</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Sunken</enum>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QLabel" row="5" column="0">
+            <property name="name">
+                <cstring>textLabel2_3</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>5</vsizetype>
+                    <horstretch>1</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>&amp;Substitute leading zero with code:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>subCode</cstring>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>subEnable</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Enable phone number internationalization</string>
+            </property>
+            <property name="accel">
+                <string>Alt+E</string>
+            </property>
+        </widget>
+        <widget class="KRestrictedLine" row="5" column="1">
+            <property name="name">
+                <cstring>subCode</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>+</string>
+            </property>
+            <property name="validChars">
+                <string>1234567890+</string>
+            </property>
+        </widget>
+        <widget class="QButtonGroup" row="6" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>buttonGroup1</cstring>
+            </property>
+            <property name="title">
+                <string>If Message is Too Long</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>msgCancel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Cancel the message without sending</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+C</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>msgAsk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Ask how to proceed (recommended)</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+A</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>msgSplit</cstring>
+                    </property>
+                    <property name="text">
+                        <string>S&amp;plit the message into smaller sections and send</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+P</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QLayoutWidget" row="9" column="1">
+            <property name="name">
+                <cstring>layout2</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QComboBox">
+                    <property name="name">
                         <cstring>serviceName</cstring>
                     </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
                 </widget>
-                <widget class="QLabel" row="0" column="0">
+                <widget class="QPushButton">
                     <property name="name">
-                        <cstring>textLabel2</cstring>
+                        <cstring>descButton</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Account name:</string>
+                        <string>&amp;Description</string>
                     </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>accountId</cstring>
-                    </property>
-                </widget>
-                <widget class="QLayoutWidget" row="1" column="1">
-                    <property name="name">
-                        <cstring>layout2</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QComboBox">
-                            <property name="name">
-                                <cstring>serviceName</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>7</hsizetype>
-                                    <vsizetype>5</vsizetype>
-                                    <horstretch>1</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                        </widget>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>descButton</cstring>
-                            </property>
-                            <property name="text">
-                                <string>&amp;Description</string>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-                <widget class="QLineEdit" row="0" column="1">
-                    <property name="name">
-                        <cstring>accountId</cstring>
+                    <property name="accel">
+                        <string>Alt+D</string>
                     </property>
                 </widget>
-            </grid>
+            </hbox>
         </widget>
-        <widget class="QFrame">
+        <widget class="QLayoutWidget" row="8" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>layout14</cstring>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1_3_3</cstring>
+                    </property>
+                    <property name="font">
+                        <font>
+                            <bold>1</bold>
+                        </font>
+                    </property>
+                    <property name="text">
+                        <string>Service Details</string>
+                    </property>
+                </widget>
+                <widget class="Line">
+                    <property name="name">
+                        <cstring>line1_3</cstring>
+                    </property>
+                    <property name="frameShape">
+                        <enum>HLine</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Sunken</enum>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QFrame" row="10" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>middleFrame</cstring>
             </property>
@@ -110,7 +310,18 @@
                 <number>0</number>
             </property>
         </widget>
-        <spacer>
+        <widget class="QLabel" row="9" column="0">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;SMS delivery service:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>serviceName</cstring>
+            </property>
+        </widget>
+        <spacer row="11" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>spacer3</cstring>
             </property>
@@ -122,13 +333,61 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>20</width>
-                    <height>170</height>
+                    <width>100</width>
+                    <height>190</height>
                 </size>
             </property>
         </spacer>
-    </vbox>
+        <spacer row="7" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>spacer2_2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>440</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+        <spacer row="2" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>440</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
 </widget>
+<connections>
+    <connection>
+        <sender>subEnable</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel2_3</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>subEnable</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>subCode</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
 <tabstops>
     <tabstop>accountId</tabstop>
     <tabstop>serviceName</tabstop>
