@@ -1,2 +1,2 @@
-SUBDIRS = icq
+SUBDIRS = icq aim
 
