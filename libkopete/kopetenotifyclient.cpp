@@ -82,13 +82,15 @@ static int notifyBySound( const QString &filename , const QString &appname, int 
 static bool notifyByMessagebox(const QString &text, int level, WId winId, const KGuiItem &action,
 		QObject* receiver , const char* slot)
 {
-    // ignore empty messages
-    if ( text.isEmpty() )
+		// ignore empty messages
+		if ( text.isEmpty() )
 	return false;
 
-    if(!receiver || !slot) {
+	if(!receiver || !slot)
+	{
 	// display message box for specified event level
-		switch( level ) {
+		switch( level )
+		{
 		default:
 #if KDE_IS_VERSION( 3, 1, 90 )
 		case KNotifyClient::Notification:
@@ -114,15 +116,18 @@ static bool notifyByMessagebox(const QString &text, int level, WId winId, const 
 			KMessageBox::error( 0, text, i18n( "Error" ) );
 			break;
 		case KNotifyClient::Catastrophe:
-			KMessageBox::errorWId( 0, text, i18n( "Fatal" ) );
+			KMessageBox::error( 0, text, i18n( "Fatal" ) );
 			break;
 #endif
 		}
-    } else { //we may show the specific action button
+	}
+	else
+	{ //we may show the specific action button
 		int result=0;
 		QSignal signal;
 		signal.connect(receiver, slot);
-		switch( level ) {
+		switch( level )
+		{
 		default:
 		case KNotifyClient::Notification:
 			result = KMessageBox::questionYesNo(0, text, i18n( "Notification" ), action, KStdGuiItem::cancel(), QString::null, false );
@@ -136,12 +141,13 @@ static bool notifyByMessagebox(const QString &text, int level, WId winId, const 
 		case KNotifyClient::Catastrophe:
 			result = KMessageBox::warningYesNo( 0, text, i18n( "Fatal" ), action, KStdGuiItem::cancel(), QString::null, false );
 			break;
-	}
-	if(result==KMessageBox::Yes)
-		signal.activate();
-    }
+		}
 
-    return true;
+		if(result==KMessageBox::Yes)
+			signal.activate();
+	}
+
+	return true;
 }
 
 static bool notifyByPassivePopup( const QString &text, const QString &appName,WId senderWinId,
