@@ -362,48 +362,48 @@ void JabberProtocol::slotError(const Jabber::StreamError &error)
 	{
 		case Jabber::StreamError::DNS:
 			KMessageBox::error(kopeteapp->mainWindow(), i18n("DNS error (%1)").arg(error.details(), 1),
-						i18n("Error connecting to Jabber server"));
+						i18n("Error Connecting to Jabber Server"));
 			break;
 
 		case Jabber::StreamError::Refused:
 			KMessageBox::error(kopeteapp->mainWindow(), i18n("Connection refused (%1)").arg(error.details(), 1),
-						i18n("Error connecting to Jabber server"));
+						i18n("Error Connecting to Jabber Server"));
 			break;
 
 		case Jabber::StreamError::Timeout:
 			KMessageBox::error(kopeteapp->mainWindow(), i18n("Timeout (%1)").arg(error.details(), 1),
-						i18n("Error connecting to Jabber server"));
+						i18n("Error Connecting to Jabber Server"));
 			break;
 
 		case Jabber::StreamError::Socket:
 			KMessageBox::error(kopeteapp->mainWindow(), i18n("Socket error (%1)").arg(error.details(), 1),
-						i18n("Error connecting to Jabber server"));
+						i18n("Error Connecting to Jabber Server"));
 			break;
 
 		case Jabber::StreamError::Disconnected:
 			KMessageBox::error(kopeteapp->mainWindow(), i18n("Remote server closed connection (%1)").arg(error.details(), 1),
-						i18n("Error connecting to Jabber server"));
+						i18n("Error Connecting to Jabber Server"));
 			break;
 
 		case Jabber::StreamError::Handshake:
 			KMessageBox::error(kopeteapp->mainWindow(), i18n("Handshake failed (%1)").arg(error.details(), 1),
-						i18n("Error connecting to Jabber server"));
+						i18n("Error Connecting to Jabber Server"));
 			break;
 
 		case Jabber::StreamError::SSL:
 			KMessageBox::error(kopeteapp->mainWindow(), i18n("SSL error (%1)").arg(error.details(), 1),
-						i18n("Error connecting to Jabber server"));
+						i18n("Error Connecting to Jabber Server"));
 			break;
 
 		case Jabber::StreamError::Proxy:
 			KMessageBox::error(kopeteapp->mainWindow(), i18n("Proxy error (%1)").arg(error.details(), 1),
-						i18n("Error connecting to Jabber server"));
+						i18n("Error Connecting to Jabber Server"));
 			break;
 
 		case Jabber::StreamError::Unknown:
 		default:
-			KMessageBox::error(kopeteapp->mainWindow(), i18n("I am sorry, I encountered an error that I don't know how to deal with (%1)").arg(error.details(), 1),
-						i18n("Error connecting to Jabber server"));
+			KMessageBox::error(kopeteapp->mainWindow(), i18n("An unknown error was encountered (%1)").arg(error.details(), 1),
+						i18n("Error Connecting to Jabber Server"));
 			break;
 
 	}
@@ -1222,13 +1222,13 @@ void JabberProtocol::slotRegisterUserDone()
 		// reconnect
 		Disconnect();
 		Connect();
-		KMessageBox::information(kopeteapp->mainWindow(), i18n("Account successfully registered."), i18n("Account registration"));
+		KMessageBox::information(kopeteapp->mainWindow(), i18n("Account successfully registered."), i18n("Account Registration"));
 	}
 	else
 	{
 		// make sure we are disconnected
 		Disconnect();
-		KMessageBox::information(kopeteapp->mainWindow(), i18n("Account couldn't be created on the server."), i18n("Account registration"));
+		KMessageBox::information(kopeteapp->mainWindow(), i18n("Unable to create account on the server."), i18n("Account Registration"));
 	}
 
 }
