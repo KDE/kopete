@@ -20,8 +20,6 @@
 #include <qobject.h>
 #include <kdemacros.h>
 
-#include "kopeteaccount.h"
-
 namespace KWallet { class Wallet; }
 
 class QPixmap;
@@ -151,47 +149,6 @@ private:
 	//TODO: can we rearrange things so these aren't friends?
 	friend class KopetePasswordGetRequest;
 	friend class KopetePasswordSetRequest;
-};
-
-class KopetePasswordedAccount : public KopeteAccount
-{
-	Q_OBJECT
-public:
-	/**
-	 * KopetePasswordedAccount constructor
-	 * @param parent The protocol this account connects via
-	 * @param acctId The ID of this account - should be unique within this protocol
-	 * @param maxPasswordLength The maximum length for passwords for this account, or 0 for no limit
-	 * @param name The name for this QObject
-	 */
-	KopetePasswordedAccount( KopeteProtocol *parent, const QString &acctId, uint maxPasswordLength = 0, const char *name = 0 );
-	virtual ~KopetePasswordedAccount();
-
-	/**
-	 * Returns a reference to the password object stored in this account.
-	 */
-	KopetePassword &password();
-	void connect();
-
-protected slots:
-	/**
-	 * Called when your account should attempt to connect.
-	 * @param password The password to connect with, or QString::null
-	 *        if the user wished to cancel the connection attempt.
-	 */
-	virtual void connectWithPassword( const QString &password ) = 0;
-
-protected:
-	/**
-	 * Returns the prompt shown to the user when requesting their password.
-	 * The default implementation should be adequate in most cases; override
-	 * if you have a custom message to show the user.
-	 */
-	virtual QString passwordPrompt();
-
-private:
-	struct Private;
-	Private *d;
 };
 
 /**

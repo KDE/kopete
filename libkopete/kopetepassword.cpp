@@ -16,7 +16,6 @@
 
 #include "kopetepassword.h"
 #include "kopetepassworddialog.h"
-#include "kopeteprotocol.h"
 #include "kopetewalletmanager.h"
 
 #include <qapplication.h>
@@ -25,6 +24,7 @@
 #include <qcheckbox.h>
 #include <qguardedptr.h>
 
+#include <kactivelabel.h>
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kdebug.h>
@@ -474,43 +474,6 @@ void KopetePassword::set( const QString &pass )
 bool KopetePassword::remembered()
 {
 	return d->remembered;
-}
-
-struct KopetePasswordedAccount::Private
-{
-	Private( const QString &group, uint maxLen ) : password( group, maxLen, "mPassword" ) {}
-	KopetePassword password;
-};
-
-KopetePasswordedAccount::KopetePasswordedAccount( KopeteProtocol *parent, const QString &acctId, uint maxLen, const char *name )
- : KopeteAccount( parent, acctId, name ), d( new Private( configGroup(), maxLen ) )
-{
-}
-
-KopetePasswordedAccount::~KopetePasswordedAccount()
-{
-	delete d;
-}
-
-KopetePassword &KopetePasswordedAccount::password()
-{
-	return d->password;
-}
-
-void KopetePasswordedAccount::connect()
-{
-	QString prompt = passwordPrompt();
-	KopetePassword::PasswordSource src = password().isWrong() ? KopetePassword::FromUser : KopetePassword::FromConfigOrUser;
-
-	password().request( this, SLOT( connectWithPassword( const QString & ) ), accountIcon( KopetePassword::preferredImageSize() ), prompt, src );
-}
-
-QString KopetePasswordedAccount::passwordPrompt()
-{
-	if ( password().isWrong() )
-		return i18n( "<b>The password was wrong!</b> Please re-enter your password for %1 account <b>%2</b>" ).arg( protocol()->displayName(), accountId() );
-	else
-		return i18n( "Please enter your password for %1 account <b>%2</b>" ).arg( protocol()->displayName(), accountId() );
 }
 
 #include "kopetepassword.moc"
