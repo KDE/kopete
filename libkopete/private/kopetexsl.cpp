@@ -52,14 +52,14 @@ public:
 	 * @param target Target object to connect to for async operation
 	 * @param slotCompleted Slot to fire on completion in asnc operation
 	 */
-	KopeteXSLThread( const QString &xmlString, const QString &xslString, QObject *target = 0L, const char *slotCompleted = 0L );
+	KopeteXSLThread( const QString &xmlString, const QCString &xslString, QObject *target = 0L, const char *slotCompleted = 0L );
 
 	/**
 	 * Reimplemented from QThread. Does the processing.
 	 */
 	virtual void run();
 
-	static QString xsltTransform( const QString &xmlString, const QString &xslString );
+	static QString xsltTransform( const QString &xmlString, const QCString &xsltString );
 
 	/**
 	 * Returns the result string
@@ -69,16 +69,16 @@ public:
 
 private:
 	QString m_xml;
-	QString m_xsl;
+	QCString m_xsl;
 	QString m_resultString;
 	QObject *m_target;
 	const char *m_slotCompleted;
 };
 
-KopeteXSLThread::KopeteXSLThread( const QString &xmlString, const QString &xslString, QObject *target, const char *slotCompleted )
+KopeteXSLThread::KopeteXSLThread( const QString &xmlString, const QCString &xsltString, QObject *target, const char *slotCompleted )
 {
 	m_xml = xmlString;
-	m_xsl = xslString;
+	m_xsl = xsltString;
 
 	m_target = target;
 	m_slotCompleted = slotCompleted;
@@ -101,7 +101,7 @@ void KopeteXSLThread::run()
 	}
 }
 
-QString KopeteXSLThread::xsltTransform( const QString &xmlString, const QString &xslString )
+QString KopeteXSLThread::xsltTransform( const QString &xmlString, const QCString &xslCString )
 {
 	// Init Stuff
 	xmlLoadExtDtdDefaultValue = 0;
@@ -117,7 +117,6 @@ QString KopeteXSLThread::xsltTransform( const QString &xmlString, const QString 
 	xmlDocPtr xmlDoc = xmlParseMemory( xmlCString, xmlCString.length() );
 	if ( xmlDoc )
 	{
-	    QCString xslCString = xslString.utf8();
 		xmlDocPtr xslDoc = xmlParseMemory( xslCString, xslCString.length() );
 		if ( xslDoc )
 		{
@@ -166,18 +165,41 @@ QString KopeteXSLThread::xsltTransform( const QString &xmlString, const QString 
 	return resultString;
 }
 
-const QString KopeteXSL::xsltTransform( const QString &xmlString, const QString &xslString )
+class KopeteXSLTPrivate
 {
-	return KopeteXSLThread::xsltTransform(xmlString, xslString);
+public:
+	QCString document;
+};
+
+KopeteXSLT::KopeteXSLT( const QString &document, QObject *parent )
+: QObject( parent )
+{
+	d = new KopeteXSLTPrivate;
+
+	setXSLT( document );
 }
 
-void KopeteXSL::xsltTransformAsync( const QString &xmlString, const QString &xslString, QObject *target, const char *slotCompleted )
+KopeteXSLT::~KopeteXSLT()
 {
-	KopeteXSLThread *mThread = new KopeteXSLThread( xmlString, xslString, target, slotCompleted );
-	mThread->start();
+	delete d;
 }
 
-bool KopeteXSL::isValid( const QString &xslString )
+void KopeteXSLT::setXSLT( const QString &document )
+{
+	d->document = document.utf8();
+}
+
+QString KopeteXSLT::transform( const QString &xmlString )
+{
+	return KopeteXSLThread::xsltTransform( xmlString, d->document );
+}
+
+void KopeteXSLT::transformAsync( const QString &xmlString, QObject *target, const char *slotCompleted )
+{
+	( new KopeteXSLThread( xmlString, d->document, target, slotCompleted ) )->start();
+}
+
+bool KopeteXSLT::isValid()
 {
 	bool retVal = false;
 
@@ -185,8 +207,7 @@ bool KopeteXSL::isValid( const QString &xslString )
 	xmlLoadExtDtdDefaultValue = 0;
 	xmlSubstituteEntitiesDefault( 1 );
 
-	QCString xslCString = xslString.utf8();
-	xmlDocPtr xslDoc = xmlParseMemory( xslCString, xslCString.length() );
+	xmlDocPtr xslDoc = xmlParseMemory( d->document, d->document.length() );
 	if ( xslDoc )
 	{
 		xsltStylesheetPtr styleSheet = xsltParseStylesheetDoc( xslDoc );
@@ -204,5 +225,6 @@ bool KopeteXSL::isValid( const QString &xslString )
 	return retVal;
 }
 
+#include "kopetexsl.moc"
 // vim: set noet ts=4 sts=4 sw=4:
 

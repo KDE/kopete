@@ -1,5 +1,5 @@
 /*
-    kopetexsl.h - Kopete XSL Routines
+    kopetexslt.h - Kopete XSLT Routines
 
     Copyright (c) 2003      by Jason Keirstead       <jason@keirstead.org>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
@@ -19,46 +19,62 @@
 #ifndef _KOPETE_XSLT_H
 #define _KOPETE_XSLT_H
 
-class QObject;
-class QString;
+#include <qobject.h>
+
+class KopeteXSLTPrivate;
 
 /**
  * @author Jason Keirstead <jason@keirstead.org>
  *
  * This class provides an easy to use interface to basic
- * libxslt transformations. All functions are static so there
- * is no need to create instances of this class.
+ * libxslt transformations.
  */
-class KopeteXSL
+class KopeteXSLT : public QObject
 {
+	Q_OBJECT
+
 public:
 	/**
-	 * Transforms the XML string using the XSL String, synchronously
+	 * Constructor.
 	 *
-	 * @param xmlString The source XML
-	 * @param xslString The source XSL
-	 * @return The result of the transformation
+	 * Constructs a new Kopete XSLT parser using the provided XSLT document
 	 */
-	static const QString xsltTransform( const QString &xmlString, const QString &xslString );
+	KopeteXSLT( const QString &xsltDocument, QObject *parent = 0L );
+
+	virtual ~KopeteXSLT();
 
 	/**
-	 * Transforms the XML string using the XSL String, asynchronously
+	 * Set the XSLT document
+	 */
+	void setXSLT( const QString &document );
+
+	/**
+	 * Transforms the XML string using the XSLT document, synchronously
 	 *
 	 * @param xmlString The source XML
-	 * @param xslString The source XSL
+	 * @return The result of the transformation
+	 */
+	QString transform( const QString &xmlString );
+
+	/**
+	 * Transforms the XML string using the XSLT document, asynchronously
+	 *
+	 * @param xmlString The source XML
 	 * @param target The QObject that contains the slot to be executed when processing is complete
 	 * @param slotCompleted A slot that accepts a QVariant & paramater, that is the result
 	 * of the transformation
 	 */
-	static void xsltTransformAsync( const QString &xmlString, const QString &xslString, QObject *target, const char *slotCompleted );
+	void transformAsync( const QString &xmlString, QObject *target, const char *slotCompleted );
 
 	/**
-	 * Check if a string is a valid XSL stylesheet
+	 * Check whether the XSLT document is valid
 	 *
-	 * @param xslString The string you want to check
-	 * @return If this string represents a valid XSL stylesheet
+	 * @return Whether the document represents a valid XSLT stylesheet
 	 */
-	 static bool isValid( const QString &xslString );
+	bool isValid();
+
+private:
+	KopeteXSLTPrivate *d;
 };
 
 #endif
