@@ -31,13 +31,20 @@
 #include "kopeteaccountmanager.h"
 #include "kopeteaccount.h"
 
-AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool modale )
-: AddAccountWizard_Base( parent, name, modale )
+AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool modal )
+	: KWizard(parent, name, modal)
 {
-	accountPage=0L;
+	accountPage = 0L;
 	int pluginCount = 0;
 	QListViewItem *pluginItem=0L;
 
+	intro = new AddAccountWizardPage1(this);
+	selectService = new AddAccountWizardPage2(this);
+	finish = new AddAccountWizardPage3(this);
+
+	addPage( intro, i18n("Introduction") );
+	addPage( selectService, i18n("Step One: Select the messaging service(s)") );
+	addPage( finish, i18n("Finished!") );
 
 	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
 	for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
@@ -45,7 +52,7 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 		KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
 		if( proto )
 		{
-			pluginItem = new QListViewItem( protocolListView );
+			pluginItem = new QListViewItem( selectService->protocolListView );
 			pluginItem->setText(0, proto->displayName());
 			pluginItem->setPixmap( 0, SmallIcon( proto->pluginIcon() ) );
 			pluginCount++;
@@ -56,14 +63,15 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 	if ( pluginCount == 1 )
 	{
 		pluginItem->setSelected( true );
-		// I think it is important to select one protocl to make sure.
+		// I think it is important to select one protocol to make sure.
 		//setAppropriate( selectService, false );
 	}
 
 	setNextEnabled(selectService, (pluginCount == 1));
-	setFinishEnabled(finis, true);
+	setFinishEnabled(finish, true);
 
-	connect( protocolListView, SIGNAL(clicked(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
+	connect(selectService->protocolListView, SIGNAL(clicked(QListViewItem *)),
+		this, SLOT(slotProtocolListClicked(QListViewItem *)));
 }
 
 AddAccountWizard::~AddAccountWizard()
@@ -73,26 +81,29 @@ AddAccountWizard::~AddAccountWizard()
 void AddAccountWizard::slotProtocolListClicked( QListViewItem *)
 {
 	// Just makes sure only one protocol is selected before allowing the user to continue
-	setNextEnabled(selectService, (bool)(protocolListView->selectedItem()));
+	setNextEnabled(
+		selectService,
+		(selectService->protocolListView->selectedItem()!=0)
+		);
 }
 
 void AddAccountWizard::accept()
 {
-	KopeteAccount *a=accountPage->apply();
+	KopeteAccount *a = accountPage->apply();
 	if(a)
-		a->setColor( mUseColor->isChecked() ? mColorButton->color() : QColor() );
+		a->setColor( finish->mUseColor->isChecked() ? finish->mColorButton->color() : QColor() );
 	deleteLater();
 }
 
 void AddAccountWizard::next()
 {
 	if (currentPage() == selectService ||
-		(currentPage() == intro && !appropriate( selectService )))
+		(currentPage() == intro && !appropriate(selectService)))
 	{
 		if(accountPage)
 			delete accountPage;
 
-		QListViewItem *lvi = protocolListView->selectedItem();
+		QListViewItem *lvi = selectService->protocolListView->selectedItem();
 		if( lvi && m_protocolItems[lvi] )
 		{
 			if( accountPage )
@@ -100,29 +111,38 @@ void AddAccountWizard::next()
 
 			accountPage = m_protocolItems[lvi]->createEditAccountWidget(0L,this);
 
-			if (!accountPage) {
-				KMessageBox::error( this, i18n( "The author of this protocol hasn't implemented Adding of Accounts" ),
-														i18n( "Error while adding account" ) );
+			if (!accountPage)
+			{
+				KMessageBox::error(this,
+					i18n("The author of this protocol hasn't implemented Adding of Accounts"),
+					i18n("Error while adding account") );
 				return;
 			}
 
-			insertPage( dynamic_cast<QWidget*>(accountPage), i18n( "Step Two: Account Information" ), indexOf(finis) );
-			QWizard::next();
+			insertPage(
+				dynamic_cast<QWidget*>(accountPage),
+				i18n( "Step Two: Account Information" ), indexOf(finish)
+			);
+			KWizard::next();
 		}
 		return;
 	}
-	else if( indexOf( currentPage() ) == 2 )
+	else if( indexOf(currentPage()) == 2 )
 	{
-		if( !accountPage->validateData() )
+		if(!accountPage->validateData())
 			return;
 
-		QColor col=KopeteAccountManager::manager()->guessColor( m_protocolItems[protocolListView->selectedItem()] );
-		mColorButton->setColor(col );
-		mUseColor->setChecked(col.isValid());
-		QWizard::next();
+		QColor col = KopeteAccountManager::manager()->guessColor(
+			m_protocolItems[selectService->protocolListView->selectedItem()] );
+
+		finish->mColorButton->setColor(col);
+		finish->mUseColor->setChecked(col.isValid());
+		KWizard::next();
 	}
 	else
-		QWizard::next();
+	{
+		KWizard::next();
+	}
 }
 
 

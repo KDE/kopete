@@ -90,7 +90,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 
 }
 
-void KopeteWindow::initView ( void )
+void KopeteWindow::initView()
 {
 	contactlist = new KopeteContactListView(this);
 	setCentralWidget(contactlist);
@@ -99,7 +99,7 @@ void KopeteWindow::initView ( void )
 	m_awayMessageDialog = new KopeteGlobalAwayDialog(this);
 }
 
-void KopeteWindow::initActions ( void )
+void KopeteWindow::initActions()
 {
 	actionAddContact = new KAction( i18n( "&Add Contact..." ), "bookmark_add",
 		0, this, SLOT( showAddContactDialog() ),
@@ -175,7 +175,7 @@ void KopeteWindow::initActions ( void )
 
 void KopeteWindow::slotShowHide()
 {
-	if( isActiveWindow() )
+	if(isActiveWindow())
 		hide();
 	else
 	{
@@ -183,15 +183,15 @@ void KopeteWindow::slotShowHide()
 		//raise() and show() should normaly deIconify the window. but it doesn't do here due
 		// to a bug in QT or in KDE  (qt3.1.x or KDE 3.1.x) then, i have to call KWin's method
 		if(isMinimized())
-			KWin::deIconifyWindow(winId() );
-		if( !KWin::info( winId() ).onAllDesktops )
-			KWin::setOnDesktop( winId(), KWin::currentDesktop() );
+			KWin::deIconifyWindow(winId());
+		if(!KWin::info(winId()).onAllDesktops)
+			KWin::setOnDesktop(winId(), KWin::currentDesktop());
 		raise();
 		setActiveWindow();
 	}
 }
 
-void KopeteWindow::initSystray ( void )
+void KopeteWindow::initSystray()
 {
 	tray = KopeteSystemTray::systemTray( this, "KopeteSystemTray" );
 	KPopupMenu *tm = tray->contextMenu();
@@ -205,7 +205,7 @@ void KopeteWindow::initSystray ( void )
 	actionConnectionMenu->plug ( tm,1 );
 	tm->insertSeparator(1);
 
-	QObject::connect(tray, SIGNAL(aboutToShowMenu(KActionMenu*)), this, SLOT(slotTrayAboutToShowMenu(KActionMenu*)));
+	QObject::connect(tray, SIGNAL(aboutToShowMenu(KPopupMenu*)), this, SLOT(slotTrayAboutToShowMenu(KPopupMenu*)));
 
 #if KDE_VERSION >= 306
 	QObject::connect(tray,SIGNAL(quitSelected()),this,SLOT(slotQuit()));
@@ -223,13 +223,13 @@ bool KopeteWindow::queryExit()
 //	kdDebug(14000) << "[KopeteWindow] queryExit()" << endl;
 	saveOptions();
 	//Now in Kopete::~Kopete().
-	// (KDE3.1 beta2 did't save contact-list on exit)
+	// (KDE3.1 beta2 didn't save contact-list on exit)
 	/*	KopeteContactList::contactList()->save();*/
 	return true;
 }
 
 
-void KopeteWindow::loadOptions(void)
+void KopeteWindow::loadOptions()
 {
 	KConfig *config = KGlobal::config();
 
@@ -273,7 +273,7 @@ void KopeteWindow::loadOptions(void)
 	statusbarAction->setChecked( !statusBar()->isHidden() );
 }
 
-void KopeteWindow::saveOptions(void)
+void KopeteWindow::saveOptions()
 {
 	KConfig *config = KGlobal::config();
 
@@ -302,7 +302,7 @@ void KopeteWindow::saveOptions(void)
 	config->sync();
 }
 
-void KopeteWindow::showToolbar(void)
+void KopeteWindow::showToolbar()
 {
 	if( toolbarAction->isChecked() )
 		toolBar("mainToolBar")->show();
@@ -310,7 +310,7 @@ void KopeteWindow::showToolbar(void)
 		toolBar("mainToolBar")->hide();
 }
 
-void KopeteWindow::showMenubar(void)
+void KopeteWindow::showMenubar()
 {
 	if( menubarAction->isChecked() )
 		menuBar()->show();
@@ -318,7 +318,7 @@ void KopeteWindow::showMenubar(void)
 		menuBar()->hide();
 }
 
-void KopeteWindow::showStatusbar(void)
+void KopeteWindow::showStatusbar()
 {
 	if( statusbarAction->isChecked() )
 		statusBar()->show();
@@ -326,7 +326,7 @@ void KopeteWindow::showStatusbar(void)
 		statusBar()->hide();
 }
 
-void KopeteWindow::slotToggleShowOffliners ( void )
+void KopeteWindow::slotToggleShowOffliners()
 {
 	KopetePrefs *p = KopetePrefs::prefs();
 	p->setShowOffline ( actionShowOffliners->isChecked() );
@@ -369,7 +369,8 @@ void KopeteWindow::slotConfToolbar()
 	delete dlg;
 }
 
-void KopeteWindow::slotGlobalAwayMessageSelect(){
+void KopeteWindow::slotGlobalAwayMessageSelect()
+{
 	// Show the dialog and set the message
 	// This also tells the account manager to
 	// set the away on all protocols
@@ -428,7 +429,6 @@ void KopeteWindow::slotPluginLoaded( KopetePlugin */* p  */)
 
 	m_statusBarIcons.insert( proto, i );
 
-	// FIXME -Will
 	//slotProtocolStatusIconChanged( proto, proto->statusIcon() );
 
 	KActionMenu *menu = proto->protocolActions();
@@ -599,7 +599,7 @@ void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& stat
 	}
 }
 
-void KopeteWindow::slotTrayAboutToShowMenu( KActionMenu *am )
+void KopeteWindow::slotTrayAboutToShowMenu( KPopupMenu *me )
 {
 	kdDebug(14000) << k_funcinfo << "Called. EMPTY" << endl;
 }
@@ -615,16 +615,14 @@ void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
 	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts( proto );
 	if ( dict.count() > 0 )
 		menu = proto->protocolActions();
-	else
-	{
-		menu = new KActionMenu( proto->displayName(), proto->pluginIcon(), this);
+/*	else
+	{  // Fuck Kopete, this code won't be reached anyway, see slotAddAccount() [mETz]
+
 		// FIXME: use the commented out KAction when we've solved using the addaccountwizard from
 		// this class
-		//menu->insert( new KAction( i18n("Create Account"), QString::null, 0, qApp->mainWidget(), SLOT( slotAddAccount() ), menu, "actionKWAddAccount" ) );
-		KAction dummy( i18n("Create Account") );
-		dummy.setEnabled( false );
-		menu->insert( &dummy );
-	}
+		menu = new KActionMenu( proto->displayName(), proto->pluginIcon(), this);
+		menu->insert( new KAction( i18n("Create Account"), QString::null, 0, qApp->mainWidget(), SLOT( slotAddAccount() ), menu, "actionKWAddAccount" ) );
+	}*/
 
 	if( menu )
 	{
@@ -633,16 +631,18 @@ void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
 	}
 }
 
-// FIXME: find out why using AddAccountWizard from this class causes monster compile failures
-// and uncomment!
-// void KopeteWindow::slotAddAccount()
-// {
-// 	AddAccountWizard *m_addwizard;
-// 	m_addwizard  = new AddAccountWizard( this , "addAccountWizard" , true);
-// 	//connect(m_addwizard, SIGNAL( destroyed(QObject*)) , this, SLOT (slotAddWizardDone()));
-// 	m_addwizard->show();
-// }
-
+/*
+// TODO: Now I wasted 30mins on fixing addaccountwizard so this code works and
+// suddenly I find out it's not needed anyway
+// thanks pals for not removing the FIXME note in here :P [mETz]
+void KopeteWindow::slotAddAccount()
+{
+	AddAccountWizard *mAddwizard;
+	mAddwizard  = new AddAccountWizard( this , "addAccountWizard" , true);
+	//connect(m_addwizard, SIGNAL( destroyed(QObject*)) , this, SLOT (slotAddWizardDone()));
+	mAddwizard->show();
+}
+*/
 void KopeteWindow::slotShowPreferencesDialog()
 {
 	// Although show() itself is a slot too we can't connect actions to it

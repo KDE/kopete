@@ -121,7 +121,7 @@ private slots:
 	void slotAccountStatusIconRightClicked( KopeteAccount *a,
 		const QPoint &p );
 
-	void slotTrayAboutToShowMenu(KActionMenu *);
+	void slotTrayAboutToShowMenu(KPopupMenu *);
 
 	/**
 	 * Show the Add Contact wizard
@@ -131,8 +131,8 @@ private slots:
 	/**
 	 * Carry out any changes resulting from a change to preferences
 	 */
-	 void slotSettingsChanged();
-	 
+	void slotSettingsChanged();
+
 public:
 	KopeteContactListView *contactlist;
 
@@ -161,11 +161,11 @@ public:
 	KopeteSystemTray *tray;
 
 private:
-	void initView ( void );
-	void initActions ( void );
-	void initSystray ( void );
-	void loadOptions( void );
-	void saveOptions( void );
+	void initView();
+	void initActions();
+	void initSystray();
+	void loadOptions();
+	void saveOptions();
 	int docked;
 	bool hidden;
 	int deskRight;
@@ -198,12 +198,11 @@ private slots:
 	 * why this is needed.
 	 */
 	void slotShowPreferencesDialog();
+	void slotAddAccount();
 	void slotSaveContactList();
 	void slotConfGlobalKeys();
 	void slotShowHide();
 };
 
 #endif
-
 // vim: set noet ts=4 sts=4 sw=4:
-

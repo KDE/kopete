@@ -49,7 +49,7 @@
 #endif
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, KopeteGroupViewItem *parent )
-	: QObject( contact ), KListViewItem( parent )
+	: QObject( contact, "KopeteMetaContactLVI" ), KListViewItem( parent )
 {
 	m_metaContact = contact;
 	m_isTopLevel = false;
@@ -61,7 +61,7 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, KopeteGr
 }
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, QListViewItem *parent )
-: QObject( contact ), KListViewItem( parent )
+: QObject( contact, "KopeteMetaContactLVI" ), KListViewItem( parent )
 {
 	m_metaContact = contact;
 
@@ -73,7 +73,7 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, QListVie
 }
 
 KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, QListView *parent )
-: QObject( contact ), KListViewItem( parent )
+: QObject( contact, "KopeteMetaContactLVI" ), KListViewItem( parent )
 {
 	m_metaContact = contact;
 
@@ -86,10 +86,8 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, QListVie
 
 void KopeteMetaContactLVI::initLVI()
 {
-
 	m_actionMove = 0L;
 	m_actionCopy = 0L;
-
 
 	connect( m_metaContact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
 		SLOT( slotDisplayNameChanged() ) );
@@ -118,7 +116,7 @@ void KopeteMetaContactLVI::initLVI()
 	mIsBlinkIcon=false;
 	m_event=0L;
 
-	slotContactStatusChanged();
+	slotContactStatusChanged(true);
 	slotDisplayNameChanged();
 }
 
@@ -175,7 +173,7 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 		m_metaContact->setDisplayName( newName );
 	}
 
-				kdDebug( 14000 ) << k_funcinfo << "newName=" << newName <<
+	kdDebug( 14000 ) << k_funcinfo << "newName=" << newName <<
 		", TrackChildNameChanges=" << m_metaContact->trackChildNameChanges() << endl;
 }
 
@@ -318,13 +316,27 @@ void KopeteMetaContactLVI::showContextMenu( const QPoint &point )
 
 void KopeteMetaContactLVI::slotContactStatusChanged()
 {
-	//kdDebug( 14000 ) << k_funcinfo << m_metaContact->displayName() << ": new status " << m_metaContact->status() << endl;
+	slotContactStatusChanged(false);
+}
 
+void KopeteMetaContactLVI::slotContactStatusChanged(bool init)
+{
+/*
+	kdDebug(14000) << k_funcinfo << m_metaContact->displayName() <<
+		": new status " << m_metaContact->status() << ", init=" << init << endl;
+
+	if (sender())
+		kdDebug(14000) << k_funcinfo << "sender name: " << sender()->name() << endl;
+*/
 	KopetePrefs *prefs = KopetePrefs::prefs();
 
 	QPixmap statusIcon = UserIcon( m_metaContact->statusIcon() );
-	if( prefs->greyIdleMetaContacts() && m_metaContact->idleState() == KopeteMetaContact::Idle )
+	if(
+		prefs->greyIdleMetaContacts() &&
+		(m_metaContact->idleState() == KopeteMetaContact::Idle) )
+	{
 		KIconEffect::semiTransparent( statusIcon );
+	}
 
 	setPixmap( 0, statusIcon );
 
@@ -333,35 +345,50 @@ void KopeteMetaContactLVI::slotContactStatusChanged()
 	if( m_parentGroup )
 		m_parentGroup->refreshDisplayName();
 
+	if(!init)
+	{
 #if KDE_VERSION > 0x030100
-	// FIXME: All this code should be in kopetemetacontact.cpp.. having it in the LVI makes it all fire
-	// multiple times if the user is in multiple groups - Jason
-	QString event = (m_metaContact->status() == KopeteOnlineStatus::Online) ? "kopete_online" : "kopete_status_change";
-	int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
-	KNotifyClient::event( winId, event,
-		i18n( "%2 is now %1!" ).arg( m_metaContact->statusString() ).arg( m_metaContact->displayName() ) );
+		// FIXME: All this code should be in kopetemetacontact.cpp.. having it in the LVI makes it all fire
+		// multiple times if the user is in multiple groups - Jason
+		QString event = (m_metaContact->status() == KopeteOnlineStatus::Online) ?
+			"kopete_online" : "kopete_status_change";
+
+		int winId = KopeteSystemTray::systemTray() ?
+			KopeteSystemTray::systemTray()->winId() : 0;
+
+		KNotifyClient::event( winId, event,
+			i18n( "%2 is now %1!" )
+				.arg( m_metaContact->statusString() )
+				.arg( m_metaContact->displayName() ) );
 #else
-// ### All this should go away ASAP.
-  #if KDE_VERSION >= 0x030006
-	// Show passive popup when requested and the user's KDE version supports it
-	// FIXME: when a contact is in several groups, this popup is showed multiple times
-	if( m_metaContact->status() == KopeteOnlineStatus::Online )
-	{
-		if( prefs->showTray() )
+	// TODO: All this should go away ASAP.
+	#if KDE_VERSION >= 0x030006
+		// Show passive popup when requested and the user's KDE version
+		// supports it.
+		// FIXME: when a contact is in several groups, this popup is
+		// shown multiple times
+		if( m_metaContact->status() == KopeteOnlineStatus::Online )
 		{
-			KPassivePopup::message( i18n( "%2 is now %1!" ).arg( m_metaContact->statusString() ).arg(
-				m_metaContact->displayName() ), QString::null, statusIcon, KopeteSystemTray::systemTray() );
+			if( prefs->showTray() )
+			{
+				KPassivePopup::message( i18n( "%2 is now %1!" ).
+					arg( m_metaContact->statusString() ).
+					arg( m_metaContact->displayName() ),
+					QString::null, statusIcon, KopeteSystemTray::systemTray() );
+			}
 		}
-	}
-  #endif
+	#endif
 
-	if( m_metaContact->status() != KopeteOnlineStatus::Away || prefs->soundIfAway() )
-	{
-		KNotifyClient::event( "kopete_online",
-            i18n( "%2 is now %1!" ).arg( m_metaContact->statusString() ).arg( m_metaContact->displayName() ) );
-	}
-
+		if(
+			(m_metaContact->status() != KopeteOnlineStatus::Away) ||
+			(prefs->soundIfAway()) )
+		{
+			KNotifyClient::event( "kopete_online",
+				i18n( "%2 is now %1!" ).arg( m_metaContact->statusString() ).
+				arg( m_metaContact->displayName() ) );
+		}
 #endif
+	}
 }
 
 void KopeteMetaContactLVI::execute() const
@@ -376,8 +403,7 @@ void KopeteMetaContactLVI::slotDisplayNameChanged()
 
 void KopeteMetaContactLVI::slotRemoveThisUser()
 {
-
-	kdDebug(14000) << "KopeteMetaContactLVI::slotRemoveThisUser - removing user" << endl;
+	kdDebug(14000) << k_funcinfo << " Removing user" << endl;
 //	m_metaContact->removeThisUser();
 
 	if( KMessageBox::questionYesNo( qApp->mainWidget(), i18n("Are you sure you want to remove"
@@ -460,7 +486,7 @@ void KopeteMetaContactLVI::slotAddToNewGroup()
 
 void KopeteMetaContactLVI::slotAddContact()
 {
-	QObject *s=sender();
+	QObject *s= const_cast<QObject *>(sender());
 	KopeteAccount *account=m_addContactActions[s];
 	if( account && !m_metaContact->isTemporary())
 	{

@@ -101,9 +101,10 @@ void KopeteSystemTray::mouseDoubleClickEvent( QMouseEvent *me )
 	}
 }
 
-void KopeteSystemTray::contextMenuAboutToShow( KActionMenu *am )
+void KopeteSystemTray::contextMenuAboutToShow( KPopupMenu *me )
 {
-	emit aboutToShowMenu( am );
+	kdDebug(14010) << k_funcinfo << "Called." << endl;
+	emit aboutToShowMenu( me );
 }
 
 void KopeteSystemTray::startBlink( QString icon )

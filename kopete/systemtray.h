@@ -63,10 +63,10 @@ public:
 protected:
 	virtual void mousePressEvent( QMouseEvent *e );
 	virtual void mouseDoubleClickEvent( QMouseEvent *me );
-	virtual void contextMenuAboutToShow( KActionMenu *am );
+	virtual void contextMenuAboutToShow( KPopupMenu * );
 
 signals:
-	void aboutToShowMenu(KActionMenu *am);
+	void aboutToShowMenu(KPopupMenu *am);
 
 private slots:
 	void slotBlink();
@@ -87,7 +87,7 @@ private:
 	bool mIsBlinking;
 
 	void startBlinkPrivate();
-  
+
 	static KopeteSystemTray* s_systemTray;
 
 	QPtrList<KopeteEvent> mEventList;
