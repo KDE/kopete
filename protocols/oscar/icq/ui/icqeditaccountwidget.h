@@ -2,7 +2,6 @@
     icqeditaccountwidget.h - ICQ Account Widget
 
     Copyright (c) 2003 by Chris TenHarmsel  <tenharmsel@staticmethod.net>
-
     Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -15,22 +14,17 @@
     *************************************************************************
 */
 
-
 #ifndef ICQEDITACCOUNTWIDGET_H
 #define ICQEDITACCOUNTWIDGET_H
 
 #include <qwidget.h>
 #include "editaccountwidget.h"
-/**
- * @author Chris TenHarmsel <tenharmsel@staticmethod.net>
- */
 
 class KopeteAccount;
 
 class ICQProtocol;
 class OscarEditAccountUI;
 class ICQUserInfoWidget;
-// class QTabWidget;
 class KJanusWidget;
 
 class ICQEditAccountWidget : public QWidget, public EditAccountWidget
@@ -50,11 +44,17 @@ class ICQEditAccountWidget : public QWidget, public EditAccountWidget
 		void slotReadInfo();
 
 	protected:
-		/** Our account we're editing */
+		/*
+		 * The account we're editing
+		 */
 		KopeteAccount *mAccount;
-		/** The Protocol we're in */
+		/*
+		 * The Protocol we're in
+		 */
 		ICQProtocol *mProtocol;
-		/** The GUI */
+		/*
+		 * GUI parts
+		 */
 		OscarEditAccountUI *mAccountSettings;
 		ICQUserInfoWidget *mUserInfoSettings;
 		KJanusWidget *mTop;

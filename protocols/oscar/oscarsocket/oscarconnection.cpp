@@ -105,7 +105,7 @@ void OscarConnection::sendTypingNotify(TypingNotify /*notifyType*/)
 }
 
 /** Called when we have established a connection */
-void OscarConnection::slotConnected(void)
+void OscarConnection::slotConnected()
 {
 	kdDebug(14150) << k_funcinfo <<
 		"We are connected to '" <<
@@ -117,7 +117,7 @@ void OscarConnection::slotConnected(void)
 }
 
 /** Called when the connection is closed */
-void OscarConnection::slotConnectionClosed(void)
+void OscarConnection::slotConnectionClosed()
 {
 	kdDebug(14150) << k_funcinfo << "connection with '" <<
 		connectionName() << "' lost." << endl;
@@ -127,7 +127,7 @@ void OscarConnection::slotConnectionClosed(void)
 }
 
 /** Sends request to the client telling he/she that we want to send this file */
-void OscarConnection::sendFileSendRequest(void)
+void OscarConnection::sendFileSendRequest()
 {
 	kdDebug(14150) << k_funcinfo <<
 		"Not implemented in this object! " << endl;

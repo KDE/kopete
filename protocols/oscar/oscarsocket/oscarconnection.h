@@ -46,16 +46,16 @@ class OscarConnection : public QSocket
 			const QByteArray &cookie, QObject *parent=0, const char *name=0);
 		~OscarConnection();
 
-		inline QString connectionName(void) const { return mConnName; };
+		inline QString connectionName() const { return mConnName; };
 		/** Returns the type of this connection */
-		inline int connectionType(void) const { return mConnType; };
+		inline int connectionType() const { return mConnType; };
 		/** Gets the currently logged in user's screen name */
-		inline QString getSN(void) const { return mSN; };
+		inline QString getSN() const { return mSN; };
 		/** Sets the currently logged in user's screen name */
 		void setSN(const QString &newSN);
 
 		/** Gets the message cookie */
-		inline const QByteArray &cookie(void) const { return mCookie; };
+		inline const QByteArray &cookie() const { return mCookie; };
 
 		/** Sets the socket to use socket, state() to connected, and emit connected() */
 		virtual void setSocket( int socket );
@@ -70,7 +70,7 @@ class OscarConnection : public QSocket
 		 */
 		virtual void sendTypingNotify(TypingNotify notifyType);
 		/** Sends request to the client telling he/she that we want to send a file */
-		virtual void sendFileSendRequest(void);
+		virtual void sendFileSendRequest();
 
 	signals:
 		/** Emitted when an IM comes in */
@@ -104,13 +104,13 @@ class OscarConnection : public QSocket
 		 * should override this
 		 * No need to connect the signal in derived classes, just override this slot
 		 */
-		virtual void slotRead(void);
+		virtual void slotRead();
 
 	private slots:
 		/** Called when we have established a connection */
-		void slotConnected(void);
+		void slotConnected();
 		/** Called when the connection is closed */
-		void slotConnectionClosed(void);
+		void slotConnectionClosed();
 		/** Called when a socket error occurs */
 		void slotError(int);
 

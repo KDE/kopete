@@ -27,6 +27,7 @@
 #include <qcombobox.h>
 #include <qspinbox.h>
 #include <qtextedit.h>
+#include <qlistbox.h>
 
 #include <kdatewidget.h>
 #include <klineedit.h>
@@ -680,8 +681,11 @@ void ICQProtocol::contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *w
 	// ABOUT USER ========================================
 	widget->rwAboutUser->setText(c->aboutInfo);
 
-
-
+	ICQMailList::iterator it;
+	for (it = c->emailInfo.begin(); it != c->emailInfo.end(); ++it )
+	{
+		widget->lstEmails->insertItem(it.key());
+	}
 
 
 }

@@ -124,9 +124,10 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 	WORD subcmd = fromicqsrv.getLEWord();
 	WORD sequence = fromicqsrv.getLEWord();
 
+/*
 	kdDebug(14150) << k_funcinfo << "commandlength=" << commandlength <<
 		", ourUIN='" << ourUIN << "', subcmd=" << subcmd << ", sequence=" << sequence << endl;
-
+*/
 	switch(subcmd)
 	{
 		case 0x0041: //SRV_OFFLINEMSG
@@ -393,8 +394,11 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					res.lang3 = fromicqsrv.getLEByte();
 
 					WORD unknown = fromicqsrv.getLEWord();
-					kdDebug(14150) << k_funcinfo <<
-						"unknown last word=" << unknown << endl;
+					if (unknown != 0)
+					{
+						kdDebug(14150) << k_funcinfo <<
+							"unknown last word=" << unknown << endl;
+					}
 
 					emit gotICQMoreUserInfo(sequence, res);
 					break;
@@ -416,8 +420,35 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 				case 235:
 				{
-					kdDebug(14150) << k_funcinfo <<
-						"TODO: SRV_METAMOREEMAIL subtype=" << type << endl;
+					ICQMailList mailList;
+					kdDebug(14150) << k_funcinfo << "RECV (SRV_METAEMAILS)" << endl;
+					BYTE numMails = fromicqsrv.getLEByte();
+//					kdDebug(14150) << k_funcinfo << "numMails=" << numMails << endl;
+					if (numMails > 0)
+					{
+						BYTE publishMail;
+						char *tmptxt;
+						QString mailAddress;
+
+						for(int mailx=0; mailx <= numMails; mailx++)
+						{
+							publishMail = fromicqsrv.getLEByte();
+							tmptxt = fromicqsrv.getLELNTS();
+							mailAddress = QString::fromLocal8Bit(tmptxt);
+							mailList.insert(mailAddress, (publishMail==0x01));
+							delete [] tmptxt;
+
+							kdDebug(14150) << k_funcinfo <<
+								"mail address:" << mailAddress <<
+								", publish=" << publishMail << endl;
+						}
+					}
+					else
+					{
+						kdDebug(14150) << k_funcinfo <<
+							"no mail addresses in SRV_METAEMAILS" << endl;
+					}
+					emit gotICQEmailUserInfo(sequence, mailList);
 					break;
 				}
 
@@ -487,41 +518,6 @@ void OscarSocket::sendICQStatus(unsigned long status)
 //	outbuf.print();
 
 	sendBuf(outbuf, 0x2);
-
-	// convert the weird hex crap from icq to our internal OSCAR_ ints
-	// as they are better to handle and not protocol specific
-/*
-	if (status & ICQ_STATUS_IS_FFC)
-	{
-		kdDebug(14150) << k_funcinfo << "setting to FFC" << endl;
-		emit statusChanged(OSCAR_FFC);
-	}
-	else if (status & ICQ_STATUS_IS_DND)
-	{
-		kdDebug(14150) << k_funcinfo << "setting to DND" << endl;
-		emit statusChanged(OSCAR_DND);
-	}
-	else if (status & ICQ_STATUS_IS_OCC)
-	{
-		kdDebug(14150) << k_funcinfo << "setting to OCC" << endl;
-		emit statusChanged(OSCAR_OCC);
-	}
-	else if (status & ICQ_STATUS_IS_NA)
-	{
-		kdDebug(14150) << k_funcinfo << "setting to NA" << endl;
-		emit statusChanged(OSCAR_NA);
-	}
-	else if (status & ICQ_STATUS_IS_AWAY)
-	{
-		kdDebug(14150) << k_funcinfo << "setting to AWAY" << endl;
-		emit statusChanged(OSCAR_AWAY);
-	}
-	else
-	{
-		kdDebug(14150) << k_funcinfo << "setting to ONLINE" << endl;
-		emit statusChanged(OSCAR_ONLINE);
-	}
-	*/
 } // END OscarSocket::sendICQStatus
 
 /*
@@ -803,7 +799,6 @@ bool requestAutoReply(unsigned long uin, unsigned long status)
 	sendBuf(outbuf, 0x2);
 }
 */
-
 
 
 WORD OscarSocket::sendCLI_TOICQSRV(const WORD subcommand, Buffer &data)

@@ -34,11 +34,6 @@
 
 //#define DIRECTCONNECT				0x0f1f // WHAT IS THAT FOR??? [mETz, 21.05.2003]
 
-/* This was in the oscarsocket.h before. i move them here because too warning
- *   (warning: overflow in implicit constant conversion)
- * the warning is fixed if i set the char to unsigned char.but then, i get error
- * later in the code.
- */
 static const struct
 {
 	DWORD flag;
@@ -172,7 +167,7 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	kdDebug(14150) << k_funcinfo << "connName=" << connName <<
 		QString::fromLatin1( isicq?" ICQICQ":" AIMAIM" ) << endl;
 
-	mIsICQ=isicq; // TODO: I have no idea if this is a good way of handling icq mode
+	mIsICQ = isicq; // TODO: I have no idea if this is a good way of handling icq mode
 	toicqsrv_seq = 1;
 //	flapSequenceNum = 0x010f; // old value from oscar
 	flapSequenceNum = rand() & 0x7FFF; // value taken from libicq

@@ -76,7 +76,9 @@ class UserInfo
 		unsigned long icqextstatus;
 };
 
-/** Internal status enum */
+/*
+ * Internal status enum
+ */
 const unsigned int OSCAR_OFFLINE = 0;
 const unsigned int OSCAR_ONLINE = 1;
 const unsigned int OSCAR_AWAY = 2;
@@ -202,6 +204,8 @@ class ICQMoreUserInfo
 		unsigned int lang2;
 		unsigned int lang3;
 };
+
+typedef QMap<QString, bool> ICQMailList;
 
 /*
  * Implements the actual communication with the oscar server
@@ -622,8 +626,8 @@ class OscarSocket : public OscarConnection
 	void gotICQWorkUserInfo(const int, const ICQWorkUserInfo &);
 	void gotICQMoreUserInfo(const int, const ICQMoreUserInfo &);
 	void gotICQAboutUserInfo(const int, const QString &);
-/*	void gotICQEmailUserInfo(const int, const ICQEmailUserInfo &);
-	void gotICQInterestUserInfo(const int, const ICQInterestUserInfo &);
+	void gotICQEmailUserInfo(const int, const ICQMailList &);
+/*	void gotICQInterestUserInfo(const int, const ICQInterestUserInfo &);
 	void gotICQBackgroundUserInfo(const int, const ICQBackgroundUserInfo &);
 */
 

@@ -94,10 +94,12 @@ class ICQContact : public OscarContact
 		ICQWorkUserInfo workInfo;
 		ICQMoreUserInfo moreInfo;
 		QString aboutInfo;
+		ICQMailList emailInfo;
 
 		int userinfoRequestSequence;
-		int userinfoReplyCount;
+		unsigned int userinfoReplyCount;
 		bool mInvisible;
+		const unsigned int supportedInfoItems = 5;
 
 	private slots:
 		/** Called when the userinfo dialog is getting closed */
@@ -116,6 +118,7 @@ class ICQContact : public OscarContact
 		void slotUpdWorkInfo(const int, const ICQWorkUserInfo &);
 		void slotUpdMoreUserInfo(const int, const ICQMoreUserInfo &);
 		void slotUpdAboutUserInfo(const int, const QString &);
+		void slotUpdEmailUserInfo(const int, const ICQMailList &);
 };
 
 #endif

@@ -33,5 +33,6 @@ const unsigned short ICQ_SEARCHSTATE_ONLINE = 1;
 const unsigned short ICQ_SEARCHSTATE_DISABLED = 2;
 
 const unsigned char ICQ_TCP_VERSION = 0x0008;
+
 #endif
 // vim: set noet ts=4 sts=4 sw=4:
