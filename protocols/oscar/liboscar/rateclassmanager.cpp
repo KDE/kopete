@@ -126,7 +126,7 @@ void RateClassManager::transferReady( Transfer* t )
 RateClass* RateClassManager::findRateClass( SnacTransfer* st ) const
 {
 	SNAC s = st->snac();
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Looking for SNAC " << s.family << ", " << s.subtype << endl;
+	//kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Looking for SNAC " << s.family << ", " << s.subtype << endl;
 	RateClass* rc = 0L;
 	QValueList<RateClass*>::const_iterator it;
 	QValueList<RateClass*>::const_iterator rcEnd = d->classList.constEnd();
@@ -135,7 +135,7 @@ RateClass* RateClassManager::findRateClass( SnacTransfer* st ) const
 	{
 		if ( ( *it )->isMember( s.family, s.subtype ) )
 		{
-			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found SNAC(" << s.family << ", " << s.subtype << ") in class" << endl;
+			//kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Found SNAC(" << s.family << ", " << s.subtype << ") in class" << endl;
 			rc = ( *it );
 			break;
 		}

@@ -98,8 +98,8 @@ bool RateClass::isMember( WORD family, WORD subtype ) const
 void RateClass::enqueue( Transfer* t )
 {
 	m_packetQueue.push_back( t );
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Send queue length is now: "
-		<< m_packetQueue.count() << endl;
+	/*kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Send queue length is now: "
+		<< m_packetQueue.count() << endl;*/
 	setupTimer();
 }
 
@@ -183,7 +183,7 @@ void RateClass::setupTimer()
 
 void RateClass::slotSend()
 {
-	kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
+	//kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << endl;
 
 	if ( m_packetQueue.isEmpty() )
 		return;

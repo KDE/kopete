@@ -436,7 +436,11 @@ bool OscarAccount::createContact(const QString &contactId,
 void OscarAccount::ssiContactAdded( const Oscar::SSI& item )
 {
 	if ( d->addContactMap.contains( Oscar::normalize( item.name() ) ) )
+	{
+		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Received confirmation from server. adding " << item.name()
+			<< " to the contact list" << endl;
 		createNewContact( item.name(), d->addContactMap[Oscar::normalize( item.name() )], item );
+	}
 	else
 		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Got addition for contact we weren't waiting on" << endl;
 }
