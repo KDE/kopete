@@ -93,9 +93,6 @@ class Kopete : public KUniqueApplication
 	QString parseHTML(QString);
 	QString parseURL(QString);
 
-	PluginManager *plugins;
-	PreferencesDialog *mPref;
-
 	/*
 	 * is true if all plugins are connected to their servers
 	 * currently unused !!!
@@ -103,6 +100,9 @@ class Kopete : public KUniqueApplication
 	bool allConnected;
 
 private:
+	PluginManager *plugins;
+	PreferencesDialog *mPref;
+
 	KopeteWindow *mainwindow;
 	LibraryLoader *mLibraryLoader;
 	KIconLoader *mIconLoader;
