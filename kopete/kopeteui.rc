@@ -31,6 +31,6 @@
 		<Action name="DisconnectAll"/>
 		<Action name="Status"/>
 		<Action name="AddContact"/>
-		<Action name="options_show_offliners"/>
+		<Action name="settings_show_offliners"/>
 	</ToolBar>
 </kpartgui>
