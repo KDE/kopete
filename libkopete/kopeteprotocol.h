@@ -76,10 +76,10 @@ public:
 		{ return 0L; }  //TODO: make this pure virtual
 
 	/**
-	 * The icon of the plugin as shown in the status bar. .mng animations
-	 * are supported too, and tried first
+	 * Return the most significant status of the protocol's
+	 * accounts.  Useful for aggregating status information.
 	 */
-	QString statusIcon() const;
+	KopeteOnlineStatus status() const;
 
 	/**
 	 * Return whether the protocol supports offline messages.
@@ -142,8 +142,6 @@ public:
 	virtual void deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
 		const QMap<QString, QString> &addressBookData );
 
-	void setStatusIcon( const QString &icon );
-
 	/**
 	 * @internal
 	 * Register a new KopeteContact with the protocol.
@@ -162,7 +160,7 @@ public slots:
 
 signals:
 	/**
-	 * The status icon changed. See also @ref setStatusIcon().
+	 * The status icon changed.
 	 * This signal is only emitted if the new icon is different from
 	 * the previous icon.
 	 */
@@ -174,15 +172,18 @@ private slots:
 	 */
 	void slotKopeteContactDestroyed( KopeteContact * );
 
-	void slotRefreshStatusIcon();
+	/**
+	 * Update the overall protocol status, called in
+	 * response to account status changes
+	 */
+	void slotRefreshStatus();
 	void slotAccountAdded();
 
-private:
-	//FIXME -Will, remove!
-	QString m_statusIcon;
-
+protected:
 	KopeteOnlineStatus m_status;
+	const KopeteOnlineStatus m_unknownStatus;
 
+private:
 	/**
 	 * The list of all contacts for this protocol
 	 */

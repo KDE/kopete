@@ -110,6 +110,7 @@ private:
 	static KopeteOnlineStatus m_UserOffline;
 	static KopeteOnlineStatus m_UserAway;
 	static KopeteOnlineStatus m_UserConnecting;
+	static KopeteOnlineStatus m_Unknown;
 
 	KActionCollection *mActions;
 

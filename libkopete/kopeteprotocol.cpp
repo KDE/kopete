@@ -22,6 +22,7 @@
 
 #include <kdebug.h>
 #include <kaction.h>
+#include <klocale.h>
 
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
@@ -34,6 +35,9 @@
 KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
     : KopetePlugin( parent, name )
 {
+	m_status = KopeteOnlineStatus( KopeteOnlineStatus::Unknown, 0,
+			this, 0, QString::fromLatin1( "status_unknown" )
+			, QString::null, QString::null );
 }
 
 KopeteProtocol::~KopeteProtocol()
@@ -52,9 +56,9 @@ KopeteProtocol::~KopeteProtocol()
 		delete *QDictIterator<KopeteContact>( m_contacts );
 }
 
-QString KopeteProtocol::statusIcon() const
+KopeteOnlineStatus KopeteProtocol::status() const
 {
-	return m_statusIcon;
+	return m_status;
 }
 
 KActionMenu* KopeteProtocol::protocolActions()
@@ -68,13 +72,24 @@ KActionMenu* KopeteProtocol::protocolActions()
 
 	KActionMenu *m_menu = new KActionMenu(displayName(),pluginIcon(),this);
 
-	for( ; KopeteAccount *account=it.current(); ++it )
+	bool accountsFound = false;
+	for( ; KopeteAccount *account = it.current(); ++it )
 	{
+		accountsFound = true;
 		KActionMenu *accountMenu = account->actionMenu();
 		if(accountMenu->parent())
 			accountMenu->parent()->removeChild( accountMenu );
 		m_menu->insertChild( accountMenu );
 		m_menu->insert( accountMenu );
+	}
+
+	// if no accounts exist, insert a dummy disabled action
+	// so as not to confuse the user
+	if ( !accountsFound )
+	{
+		KAction dummy( i18n("Create an Account!") );
+		dummy.setEnabled( false );
+		m_menu->insert( &dummy );
 	}
 
 	return m_menu;
@@ -259,20 +274,23 @@ void KopeteProtocol::slotAccountAdded()
 	{
 		if(account->myself())
 		{	//because we can't know if the account has already connected
-			QObject::disconnect(account->myself() , SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & )) , this , SLOT( slotRefreshStatusIcon()));
-			QObject::connect   (account->myself() , SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & )) , this , SLOT( slotRefreshStatusIcon()));
+			QObject::disconnect(account->myself() , SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & )) , this , SLOT( slotRefreshStatus()));
+			QObject::connect   (account->myself() , SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & )) , this , SLOT( slotRefreshStatus()));
 		}
 	}
-	slotRefreshStatusIcon();
+	slotRefreshStatus();
 }
 
-void KopeteProtocol::slotRefreshStatusIcon()
+void KopeteProtocol::slotRefreshStatus()
 {
 	KopeteOnlineStatus newStatus;
 	QDict<KopeteAccount> dict=KopeteAccountManager::manager()->accounts(this);
 	QDictIterator<KopeteAccount> it( dict );
-	for( ; KopeteAccount *account=it.current(); ++it )
+
+	bool accountsFound = false;
+	for( ; KopeteAccount *account = it.current(); ++it )
 	{
+		accountsFound = true;
 		if(account->myself())
 		{
 			if(account->myself()->onlineStatus() > newStatus)
@@ -282,17 +300,12 @@ void KopeteProtocol::slotRefreshStatusIcon()
 		}
 	}
 
+	if ( !accountsFound )
+		newStatus = m_unknownStatus;
+
 	if( newStatus != m_status )
 	{
 		m_status = newStatus;
-		emit( statusIconChanged( m_status ) );
-	}
-}
-void KopeteProtocol::setStatusIcon( const QString &icon )
-{
-	if( icon != m_statusIcon )
-	{
-		m_statusIcon = icon;
 		emit( statusIconChanged( m_status ) );
 	}
 }

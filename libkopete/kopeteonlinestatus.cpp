@@ -111,6 +111,7 @@ KopeteOnlineStatus::KopeteOnlineStatus()
 	d->internalStatus = 0;
 	d->weight = 0;
 	d->protocol = 0L;
+	d->overlayIcon = "status_unknown";
 	d->iconCache.setAutoDelete( true );
 }
 
@@ -262,12 +263,12 @@ QPixmap* KopeteOnlineStatus::cacheLookup( const QString& icon, const int size, c
 
 	if ( ( theIcon = d->iconCache.find( fingerprint ) ) ) //return (*(d->iconCache))[ fingerprint ];		// cache hit
 	{
-		//kdDebug(14010) << k_funcinfo << "Found " << fingerprint << " in icon cache!" << endl;
+		kdDebug(14010) << k_funcinfo << "Found " << fingerprint << " in icon cache!" << endl;
 	}
 	else
 	{
 		// cache miss
-		//kdDebug(14010) << k_funcinfo << "Missed " << fingerprint << " in icon cache!" << endl;
+		kdDebug(14010) << k_funcinfo << "Missed " << fingerprint << " in icon cache!" << endl;
 		theIcon = renderIcon( icon, size, idle );
 		d->iconCache.insert( fingerprint, theIcon );
 	}
