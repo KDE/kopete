@@ -305,12 +305,6 @@ void Kopete::cancelEvent( KopeteEvent *event)
 	delete event;
 }
 
-
-KopeteContactListView *Kopete::contactList() const
-{
-	return m_mainWindow ? m_mainWindow->contactlist : 0L;
-}
-
 KStatusBar* Kopete::statusBar() const
 {
 	return m_mainWindow ? m_mainWindow->statusBar() : 0L;

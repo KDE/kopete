@@ -93,18 +93,6 @@ public:
 	{ return mLibraryLoader; }
 
 	/**
-	 * Use it to access Kopete's icon loader.
-	 * You shouldn't need to use it from a plugin.
-	 */
-	KIconLoader *iconLoader() const
-	{ return mIconLoader; }
-
-	/**
-	 * Use it to access Kopete's Contact List.
-	 */
-	KopeteContactListView *contactList() const;
-
-	/**
 	 * Use it to access the status bar
 	 * The plugins can dock status bar icons to
 	 * show informatin about the plugin itself
@@ -186,12 +174,10 @@ private:
 
 	KopeteWindow *m_mainWindow;
 	LibraryLoader *mLibraryLoader;
-	KIconLoader *mIconLoader;
 	AppearanceConfig *mAppearance;
 
 	//User preferences config module
 	KopeteUserPreferencesConfig *mUserPreferencesConfig;
-	QString mEmoticonTheme;
 	KopeteNotifier *mNotifier;
 	KopeteMessageManagerFactory *mMessageManagerFactory;
 	KopeteTransferManager *mTransferManager;
