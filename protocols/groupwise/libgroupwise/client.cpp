@@ -4,6 +4,7 @@
 #include "requestfactory.h"
 #include "task.h"
 #include "tasks/logintask.h"
+#include "tasks/setstatustask.h"
 
 #include "client.h"
 
@@ -160,11 +161,14 @@ void Client::streamReadyRead()
 
 void Client::lt_LoginFinished()
 {
+	qDebug( "got login finished" );
 	const LoginTask * lt = (LoginTask *)sender();
 	if ( lt->success() )
 	{
-		//SetStatusTask * sst = new SetStatusTask( d->root );
 		qDebug( "LOGIN FINISHED" );
+		SetStatusTask * sst = new SetStatusTask( d->root );
+		sst->status( NM_STATUS_AVAILABLE, QString::null, QString::null );
+		sst->go( true );
 	}
 }
 // INTERNALS //
