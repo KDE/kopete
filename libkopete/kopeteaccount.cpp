@@ -43,12 +43,12 @@
  * Function for (en/de)crypting strings for config file, taken from KMail
  * Author: Stefan Taferner <taferner@alpin.or.at>
  */
-QString cryptStr(const QString &aStr)
+QString cryptStr( const QString &aStr )
 {
 	QString result;
-	for (unsigned int i = 0; i < aStr.length(); i++)
-		result += (aStr[i].unicode() < 0x20) ? aStr[i] :
-			QChar(0x1001F - aStr[i].unicode());
+	for ( uint i = 0; i < aStr.length(); i++ )
+		result += ( aStr[ i ].unicode() < 0x20) ? aStr[ i ] : QChar( 0x1001F - aStr[ i ].unicode() );
+
 	return result;
 }
 
@@ -62,18 +62,16 @@ struct KopeteAccountPrivate
 	QColor color;
 };
 
-KopeteAccount::KopeteAccount(KopeteProtocol *parent, const QString& _accountId , const char *name):  KopetePluginDataObject (parent, name)
+KopeteAccount::KopeteAccount( KopeteProtocol *parent, const QString &accountId, const char *name )
+: KopetePluginDataObject( parent, name )
 {
 	d = new KopeteAccountPrivate;
 	d->protocol = parent;
-	d->id = _accountId;
+	d->id = accountId;
 	d->autologin = false;
-	d->password = QString::null;
-	d->color = QColor();
 
 	KopeteAccountManager::manager()->registerAccount( this );
 	QTimer::singleShot( 0, this, SLOT( slotAccountReady() ) );
-
 }
 
 KopeteAccount::~KopeteAccount()
@@ -117,7 +115,7 @@ void KopeteAccount::setColor( const QColor &color )
 
 void KopeteAccount::setAccountId( const QString &accountId )
 {
-	if(d->id!=accountId)
+	if ( d->id != accountId )
 	{
 		d->id = accountId;
 		emit ( accountIdChanged() );
@@ -148,7 +146,7 @@ void KopeteAccount::writeConfig( const QString &configGroupName )
 
 	config->writeEntry( "AutoConnect", d->autologin );
 
-	if( d->color.isValid() )
+	if ( d->color.isValid() )
 		config->writeEntry( "Color", d->color );
 	else
 		config->deleteEntry( "Color" );
@@ -192,6 +190,8 @@ void KopeteAccount::readConfig( const QString &configGroupName )
 		KopetePlugin *plugin = KopetePluginManager::self()->plugin( pluginId );
 		if ( plugin )
 			setPluginData( plugin, pluginDataIt.data() );
+		else
+			kdDebug( 14010 ) << k_funcinfo << "No plugin object found for id '" << pluginId << "'" << endl;
 	}
 
 	loaded();
@@ -204,7 +204,7 @@ void KopeteAccount::loaded()
 
 QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 {
-	if( ok )
+	if ( ok )
 		*ok = true;
 
 	if ( !error )
@@ -238,7 +238,7 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 			return d->password;
 	}
 
-	KDialogBase *passwdDialog = new KDialogBase( qApp->mainWidget() ,"passwdDialog", true, i18n( "Password Needed" ),
+	KDialogBase *passwdDialog = new KDialogBase( qApp->mainWidget(), "passwdDialog", true, i18n( "Password Needed" ),
 		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
 
 	KopetePasswordDialog *view = new KopetePasswordDialog( passwdDialog );
@@ -267,7 +267,7 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 	passwdDialog->adjustSize();
 
 	QString pass;
-	if( passwdDialog->exec() == QDialog::Accepted )
+	if ( passwdDialog->exec() == QDialog::Accepted )
 	{
 		pass = view->m_password->text();
 		if ( view->m_save_passwd->isChecked() )
@@ -287,7 +287,7 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 void KopeteAccount::setPassword( const QString &pass )
 {
 #if KDE_IS_VERSION( 3, 1, 90 )
-	kdDebug() << k_funcinfo << endl;
+	kdDebug( 14010 ) << k_funcinfo << endl;
 	KWallet::Wallet *wallet =
 		KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), KWallet::Wallet::Synchronous );
 
@@ -319,14 +319,16 @@ void KopeteAccount::setPassword( const QString &pass )
 	writeConfig( configGroup() );
 }
 
-void KopeteAccount::setAutoLogin(bool b)
+void KopeteAccount::setAutoLogin( bool b )
 {
-	d->autologin=b;
+	d->autologin = b;
 }
+
 bool KopeteAccount::autoLogin() const
 {
 	return d->autologin;
 }
+
 bool KopeteAccount::rememberPassword()
 {
 	return !d->password.isNull();
@@ -341,7 +343,7 @@ void KopeteAccount::registerContact( KopeteContact *c )
 
 void KopeteAccount::slotKopeteContactDestroyed( KopeteContact *c )
 {
-//	kdDebug(14010) << "KopeteProtocol::slotKopeteContactDestroyed: " << c->contactId() << endl;
+	//kdDebug( 14010 ) << "KopeteProtocol::slotKopeteContactDestroyed: " << c->contactId() << endl;
 	d->contacts.remove( c->contactId() );
 }
 
@@ -357,7 +359,7 @@ const QDict<KopeteContact>& KopeteAccount::contacts()
 	QDictIterator<KopeteContact> it( d->contacts );
 	for ( ; it.current() ; ++it )
 	{
-		if( ( *it )->metaContact() == mc )
+		if ( ( *it )->metaContact() == mc )
 			result.insert( ( *it )->contactId(), *it );
 	}
 	return result;
@@ -367,34 +369,39 @@ const QDict<KopeteContact>& KopeteAccount::contacts()
 bool KopeteAccount::addContact( const QString &contactId, const QString &displayName,
 	KopeteMetaContact *parentContact, const QString &groupName, bool isTemporary )
 {
-	if(contactId==accountId())
+	if ( contactId == accountId() )
 	{
-		kdDebug(14010) << "KopeteAccount::addContact: WARNING: the user try to add myself to his contactlist - abort" << endl;
+		kdDebug( 14010 ) << "KopeteAccount::addContact: WARNING: the user try to add myself to his contactlist - abort" << endl;
 		return false;
 	}
-	KopeteContact *c=d->contacts[contactId];
-	if(c && c->metaContact())
+
+	KopeteContact *c = d->contacts[ contactId ];
+	if ( c && c->metaContact() )
 	{
-		if(c->metaContact()->isTemporary() && !isTemporary)
+		if ( c->metaContact()->isTemporary() && !isTemporary )
 		{
-			kdDebug(14010) << "KopeteAccount::addContact: You are triying to add an existing temporary contact. Just add it on the list" << endl;
+			kdDebug( 14010 ) << "KopeteAccount::addContact: You are triying to add an existing temporary contact. Just add it on the list" << endl;
 			parentContact->addToGroup( KopeteContactList::contactList()->getGroup( groupName ) );
 		}
-		else // should we here add the contact to the parentContact if any?
-			kdDebug(14010) << "KopeteAccount::addContact: Contact already exist" << endl;
+		else
+		{
+			// should we here add the contact to the parentContact if any?
+			kdDebug( 14010 ) << "KopeteAccount::addContact: Contact already exist" << endl;
+		}
+
 		return false;
 	}
 
-	KopeteGroup *parentGroup=0L;
+	KopeteGroup *parentGroup = 0L;
 	//If this is a temporary contact, use the temporary group
-	if(!groupName.isNull())
+	if ( !groupName.isNull() )
 		parentGroup = isTemporary ? KopeteGroup::temporary : KopeteContactList::contactList()->getGroup( groupName );
 
-	if( parentContact )
+	if ( parentContact )
 	{
 		//If we are given a MetaContact to add to that is marked as temporary. but
 		//this contact is not temporary, then change the metacontact to non-temporary
-		if( parentContact->isTemporary() && !isTemporary )
+		if ( parentContact->isTemporary() && !isTemporary )
 			parentContact->setTemporary( false, parentGroup );
 		else
 			parentContact->addToGroup( parentGroup );
@@ -406,24 +413,26 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 		parentContact->setDisplayName( displayName );
 
 		//Set it as a temporary contact if requested
-		if( isTemporary )
-			parentContact->setTemporary(true);
+		if ( isTemporary )
+			parentContact->setTemporary( true );
 		else
 			parentContact->addToGroup( parentGroup );
 
 		KopeteContactList::contactList()->addMetaContact( parentContact );
 	}
 
-	if( c )
+	if ( c )
 	{
-		c->setMetaContact(parentContact);
+		c->setMetaContact( parentContact );
 		return true;
 	}
 	else
+	{
 		return addContactToMetaContact( contactId, displayName, parentContact );
+	}
 }
 
-KActionMenu* KopeteAccount::actionMenu()
+KActionMenu * KopeteAccount::actionMenu()
 {
 	//default implementation
 	return 0L;
