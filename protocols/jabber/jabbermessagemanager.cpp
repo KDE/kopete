@@ -176,7 +176,7 @@ void JabberMessageManager::slotMessageSent ( KopeteMessage &message, KopeteMessa
 			 */
 
 			// please don't translate the following string
-			jabberMessage.setBody ( "This message is encrypted.", false );
+			jabberMessage.setBody ( "This message is encrypted." );
 
 			QString encryptedBody = message.plainBody ();
 
@@ -190,7 +190,7 @@ void JabberMessageManager::slotMessageSent ( KopeteMessage &message, KopeteMessa
         else
         {
 			// this message is not encrypted
-			jabberMessage.setBody ( message.plainBody (), false );
+			jabberMessage.setBody ( message.plainBody () );
         }
 
 		// determine type of the widget and set message type accordingly

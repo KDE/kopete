@@ -92,7 +92,7 @@ void JabberGroupChatManager::slotMessageSent ( KopeteMessage &message, KopeteMes
 			 */
 
 			// please don't translate the following string
-			jabberMessage.setBody ( "This message is encrypted.", false );
+			jabberMessage.setBody ( "This message is encrypted." );
 
 			QString encryptedBody = message.plainBody ();
 
@@ -106,7 +106,7 @@ void JabberGroupChatManager::slotMessageSent ( KopeteMessage &message, KopeteMes
         else
         {
 			// this message is not encrypted
-			jabberMessage.setBody ( message.plainBody (), false );
+			jabberMessage.setBody ( message.plainBody () );
         }
 
 		jabberMessage.setType ( "groupchat" );
