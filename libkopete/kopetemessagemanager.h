@@ -29,6 +29,8 @@
 //FIXME: get rid of this include in header
 #include "kopetemessage.h"
 
+#include <kxmlguiclient.h>
+
 class KopeteContact;
 class KopeteMessageManager;
 class KopeteMessage;
@@ -57,8 +59,11 @@ struct  KMMPrivate;
  * The protocol can connect to @ref messageSent() signals to send the message, and can
  * append received message with @ref messageReceived()
  *
+ * The KMM inherits from KXMLGUIClient, this client is merged with the chatwindow's ui
+ * so plugins can add childClients of this client to add their own actions in the
+ * chatwindow. 
  */
-class KopeteMessageManager : public QObject
+class KopeteMessageManager : public QObject , public KXMLGUIClient
 {
 	friend class KopeteMessageManagerFactory;
 

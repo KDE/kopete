@@ -116,13 +116,7 @@ public:
 	virtual EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
 	virtual KopeteAccount *createNewAccount(const QString &accountId);
 
-	/**
-	 * Returns a set of action items for the chatWindows
-	 */
-	KActionCollection * customChatActions(KopeteMessageManager * );
-
 	static MSNProtocol* protocol();
-	
 	static bool validContactId(const QString&);
 
 private slots:

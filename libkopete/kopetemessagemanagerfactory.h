@@ -133,6 +133,10 @@ signals:
 	 * A new view has been created
 	 */
 	void viewCreated( KopeteView * );
+	/**
+	 * a new KMM has been created
+	 */
+	void messageManagerCreated( KopeteMessageManager *);
 
 	/*
 	 * Request the creation of a new view

@@ -3,9 +3,10 @@
 
     Kopete Translator plugin
 
-    Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
+    Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett       <duncan@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart      <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -19,6 +20,7 @@
 
 #include <qapplication.h>
 #include <qregexp.h>
+#include <qsignal.h>
 
 #include <kdebug.h>
 #include <kaction.h>
@@ -32,6 +34,7 @@
 #include "translatorplugin.h"
 #include "translatorprefs.h"
 #include "translatordialog.h"
+#include "translatorguiclient.h"
 
 K_EXPORT_COMPONENT_FACTORY( kopete_translator, KGenericFactory<TranslatorPlugin> );
 
@@ -39,9 +42,6 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 	const QStringList &/*args*/ )
 : KopetePlugin( parent, name )
 {
-	m_actionCollection=0L;
-	m_actionLanguage=0L;
-
 	m_lc = 0; m_sc = 0;
 
 	if ( pluginStatic_ )
@@ -120,12 +120,10 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 
 	m_prefs = new TranslatorPreferences ( "locale", this );
 
-	connect( KopeteMessageManagerFactory::factory(),
-		SIGNAL( aboutToDisplay( KopeteMessage & ) ),
-		SLOT( slotIncomingMessage( KopeteMessage & ) ) );
-	connect( KopeteMessageManagerFactory::factory(),
-		SIGNAL( aboutToSend( KopeteMessage & ) ),
-		SLOT( slotOutgoingMessage( KopeteMessage & ) ) );
+	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( KopeteMessage & ) ), SLOT( slotIncomingMessage( KopeteMessage & ) ) );
+	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToSend( KopeteMessage & ) ),    SLOT( slotOutgoingMessage( KopeteMessage & ) ) );
+
+	connect( KopeteMessageManagerFactory::factory(), SIGNAL( messageManagerCreated( KopeteMessageManager * )) , SLOT( slotNewKMM( KopeteMessageManager * ) ) );
 
 	QStringList keys;
 	int k;
@@ -139,6 +137,14 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 	connect( KopeteContactList::contactList() , SIGNAL( metaContactSelected(bool) ) , this , SLOT(slotSelectionChanged(bool)));
 
 	setXMLFile("translatorui.rc");
+
+	//Add GUI action to all already existing kmm (if the plugin is launched when kopete already rining)
+	QIntDict<KopeteMessageManager> sessions = KopeteMessageManagerFactory::factory()->sessions();
+	QIntDictIterator<KopeteMessageManager> it( sessions );
+	for ( ; it.current() ; ++it )
+	{
+		slotNewKMM(it.current());
+	}
 }
 
 TranslatorPlugin::~TranslatorPlugin()
@@ -181,17 +187,9 @@ void TranslatorPlugin::slotSelectionChanged(bool b)
 		m_actionLanguage->setCurrentItem( languageIndex( "null" ) );
 }
 
-KActionCollection *TranslatorPlugin::customChatActions(KopeteMessageManager *KMM)
+void TranslatorPlugin::slotNewKMM(KopeteMessageManager *KMM)
 {
-	delete m_actionCollection;
-
-	m_actionCollection = new KActionCollection(this);
-	KAction *actionTranslate = new KAction( i18n ("Translate"), 0,
-		this, SLOT( slotTranslateChat() ), m_actionCollection, "actionTranslate" );
-	m_actionCollection->insert( actionTranslate );
-
-	m_currentMessageManager=KMM;
-	return m_actionCollection;
+	new TranslatorGUIClient(KMM);
 }
 
 void TranslatorPlugin::slotIncomingMessage( KopeteMessage& msg )
@@ -310,6 +308,22 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 		kdDebug(14308) << "TranslatorPlugin::slotOutgoingMessage : incomming or empty body" << endl;
 	}
 }
+
+void TranslatorPlugin::translateMessage(const QString &msg , const QString &from, const QString &to , QObject *obj , const char* slot)
+{
+	QSignal completeSignal;
+	completeSignal.connect( obj, slot );
+
+	QString result=translateMessage(msg,from,to);
+
+	completeSignal.setValue( result );
+	completeSignal.activate();
+
+
+
+
+}
+
 
 QString TranslatorPlugin::translateMessage(const QString &msg , const QString &from, const QString &to)
 {
@@ -503,61 +517,6 @@ void TranslatorPlugin::slotSetLanguage()
 		m->setPluginData( this, "languageKey", languageKey( m_actionLanguage->currentItem() ) );
 	}
 }
-
-void TranslatorPlugin::slotTranslateChat()
-{
-	if(!m_currentMessageManager || !m_currentMessageManager->view())
-		return;
-
-	KopeteMessage msg = m_currentMessageManager->view()->currentMessage();
-	QString body=msg.plainBody();
-	if(body.isEmpty())
-		return;
-
-	QString src_lang = m_prefs->myLang();
-	QString dst_lang;
-
-	QPtrList<KopeteContact> list=m_currentMessageManager->members();
-	KopeteMetaContact *to = list.first()->metaContact();
-	dst_lang = to->pluginData( this, "languageKey" );
-	if( dst_lang.isEmpty() || dst_lang == "null" )
-	{
-		kdDebug(14308) << "TranslatorPlugin::slotTranslateChat :  Cannot determine dst Metacontact language (" << to->displayName() << ")" << endl;
-		return;
-	}
-	if ( src_lang == dst_lang )
-	{
-		kdDebug(14308) << "TranslatorPlugin::slotTranslateChat :  Src and Dst languages are the same" << endl;
-		return;
-	}
-
-	/* We search for src_dst */
-
-	QStringList s = m_supported[ m_prefs->service() ];
-	QStringList::ConstIterator i;
-
-	for ( i = s.begin(); i != s.end() ; ++i )
-	{
-		if ( *i == src_lang + "_" + dst_lang )
-		{
-			QString translated=translateMessage( body , src_lang, dst_lang);
-			if(translated.isEmpty())
-			{
-				kdDebug(14308) << "TranslatorPlugin::slotTranslateChat : empty string returned"  << endl;
-				return;
-			}
-			//if the user close the window before the translation arrive, return
-			if(!m_currentMessageManager || !m_currentMessageManager->view())
-				return;
-
-			msg.setBody(translated);
-			m_currentMessageManager->view()->setCurrentMessage(msg);
-			return;
-		}
-	}
-	kdDebug(14308) << "TranslatorPlugin::slotTranslateChat : "<< src_lang + "_" + dst_lang << " doesn't exists with service " << m_prefs->service() << endl;
-}
-
 
 #include "translatorplugin.moc"
 

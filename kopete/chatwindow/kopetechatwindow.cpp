@@ -375,8 +375,8 @@ void KopeteChatWindow::initActions(void)
 	actionSmileyMenu->setDelayed( false );
 	connect(actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
 
-	actionActionMenu = new KActionMenu(i18n("&Actions"), coll, "actions_menu" );
-	connect ( actionActionMenu->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareActionMenu()) );
+	//actionActionMenu = new KActionMenu(i18n("&Actions"), coll, "actions_menu" );
+	//connect ( actionActionMenu->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(slotPrepareActionMenu()) );
 //	connect ( actionActionMenu->popupMenu(), SIGNAL(activated(int)), this, SLOT(slotActionActivated(int)) );
 
 	actionContactMenu = new KActionMenu(i18n("Co&ntacts"), coll, "contacts_menu" );
@@ -672,6 +672,9 @@ void KopeteChatWindow::slotDetachChat( int newWindowIndex )
 	if( !detachedView )
 		return;
 
+	//if we dont do that, we maybe encounter crash
+	guiFactory()->removeClient(detachedView->msgManager());
+
 	if( newWindowIndex == -1 )
 		newWindow = new KopeteChatWindow();
 	else
@@ -729,22 +732,25 @@ void KopeteChatWindow::updateBackground( const QPixmap &pm )
 
 void KopeteChatWindow::setActiveView( QWidget *widget )
 {
-//	kdDebug(14010) << k_funcinfo << endl;
-
 	ChatView *view = static_cast<ChatView*>(widget);
+
+//	kdDebug(14010) << k_funcinfo << m_activeView << "  |||||||||  " << view << endl;
 
 	if( m_activeView == view )
 		return;
 
+	if(m_activeView)
+		guiFactory()->removeClient(m_activeView->msgManager());
+	guiFactory()->addClient(view->msgManager());
 	createGUI( view->part() );
-
-	if( !chatViewList.contains( view ) )
-		attachChatView( view );
 
 	if( m_activeView )
 		m_activeView->setActive( false );
 
 	m_activeView = view;
+
+	if( !chatViewList.contains( view ) )
+		attachChatView( view );
 
 	//Tell it it is active
 	m_activeView->setActive( true );
@@ -862,39 +868,6 @@ void KopeteChatWindow::slotPlaceTabs( int placement )
 	}
 }
 
-void KopeteChatWindow::slotPrepareActionMenu(void)
-{
-	QPopupMenu *actionsMenu = actionActionMenu->popupMenu();
-
-	actionsMenu->clear();
-
-	QPtrList<KopetePlugin> ps = LibraryLoader::pluginLoader()->plugins();
-	bool actions = false;
-	int j = 0;
-
-	for( KopetePlugin *p = ps.first() ; p ; p = ps.next() )
-	{
-		KActionCollection *customActions = p->customChatActions( m_activeView->msgManager() );
-		if( customActions )
-		{
-//			kdDebug(14010) << k_funcinfo << "Found custom Actions defined by Plugins" << endl;
-			actions = true;
-			for(unsigned int i = 0; i < customActions->count(); i++)
-			{
-				customActions->action(i)->plug( actionsMenu, i+j );
-			}
-		}
-		j++;
-	}
-
-	if ( !actions )
-	{
-//		kdDebug(14010) << k_funcinfo << "No Action defined by any Plugin" << endl;
-		int id = actionsMenu->insertItem( i18n("No Action Defined by any Plugin") );
-		actionsMenu->setItemEnabled(id, false);
-	}
-}
-
 void KopeteChatWindow::readOptions()
 {
 	// load and apply config file settings affecting the appearance of the UI
@@ -1000,11 +973,14 @@ void KopeteChatWindow::closeEvent( QCloseEvent *e )
 
 void KopeteChatWindow::slotConfKeys()
 {
-	KKeyDialog dlg( true, this );
+	KKeyDialog dlg( false, this );
 	dlg.insert( actionCollection() );
-	if( m_activeView && m_activeView->part() )
-		dlg.insert( m_activeView->part()->actionCollection(), m_activeView->part()->name() );
-
+	if( m_activeView )
+	{
+		dlg.insert(m_activeView->msgManager()->actionCollection() , i18n("Plugin actions"));
+		if( m_activeView->part() )
+			dlg.insert( m_activeView->part()->actionCollection(), m_activeView->part()->name() );
+	}
 	dlg.configure();
 }
 
@@ -1015,7 +991,10 @@ void KopeteChatWindow::slotConfToolbar()
 	if (dlg->exec())
 	{
 		if( m_activeView )
+		{
 			createGUI( m_activeView->part() );
+			//guiFactory()->addClient(m_activeView->msgManager());
+		}
 		else
 			createGUI( 0L );
 		applyMainWindowSettings(KGlobal::config(), QString::fromLatin1( "KopeteChatWindow" ));

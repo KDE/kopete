@@ -47,7 +47,7 @@ HistoryDialog::HistoryDialog( KopeteContact *mContact, bool showclose, int count
 
 	showButton(KDialogBase::Close, showclose); // hide Close button if showClose is false
 
-	m_logger= new HistoryLogger(mContact,QColor(),this);
+	m_logger= new HistoryLogger(mContact,this);
 
 	m_metaContact=mContact->metaContact();
 	m_contact=mContact;
@@ -69,7 +69,7 @@ HistoryDialog::HistoryDialog( KopeteMetaContact *mContact, bool showClose, int c
 
 	showButton(KDialogBase::Close, showClose); // hide Close button if showClose is false
 
-	m_logger= new HistoryLogger(mContact,QColor(),this);
+	m_logger= new HistoryLogger(mContact,this);
 
 	m_metaContact=mContact;
 	m_contact=0L;

@@ -24,6 +24,7 @@ class MSNSwitchBoardSocket;
 class KActionCollection;
 class MSNInvitation;
 class MSNContact;
+class KActionMenu;
 
 
 /**
@@ -38,8 +39,6 @@ public:
 	~MSNMessageManager();
 
 	void createChat( const QString &handle, const QString &adress, const QString &auth, const QString &ID = QString::null );
-
-	KActionCollection * chatActions();
 
 	MSNSwitchBoardSocket *service() { return m_chatService; };
 
@@ -68,6 +67,8 @@ private slots:
 	void slotAcknowledgement( unsigned int id, bool ack );
 	void slotInvitation( const QString &handle, const QString &msg );
 
+	void slotActionInviteAboutToShow();
+
 	/**
 	 * (debug)
 	 */
@@ -77,7 +78,8 @@ private:
 	MSNSwitchBoardSocket *m_chatService;
 //	KopeteMessage *m_msgQueued;
 	QString otherString;
-	KActionCollection *m_actions;
+	KActionMenu *m_actionInvite;
+	QPtrList<KAction> m_inviteactions;
 
 	//Messages sent before the ending of the connection are queued
 	QValueList<KopeteMessage> m_messagesQueue;
@@ -86,6 +88,7 @@ private:
 	QMap<unsigned int, KopeteMessage> m_messagesSent;
 
 	QMap<long unsigned int, MSNInvitation*> m_invitations;
+
 
 signals:
 	/*

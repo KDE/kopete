@@ -3,9 +3,10 @@
 
     Kopete Translatorfish Translator plugin
 
-    Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
+    Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett       <duncan@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart      <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -40,6 +41,7 @@ class KopeteMetaContact;
 class KopeteMessageManager;
 
 class TranslatorPreferences;
+class TranslatorGUIClient;
 
 /**
   * @author Duncan Mac-Vicar Prett   <duncan@kde.org>
@@ -51,6 +53,8 @@ class TranslatorPreferences;
 class TranslatorPlugin : public KopetePlugin
 {
 	Q_OBJECT
+
+friend class TranslatorGUIClient;
 
 public:
 	static  TranslatorPlugin  *plugin();
@@ -65,13 +69,6 @@ public:
 		JustTranslate	= 2,
 		ShowDialog   	= 3
 	};
-
-
-	/***************************************************************************
-	 *   Re-implementation of KopetePlugin class methods                       *
-	 ***************************************************************************/
-
-	virtual KActionCollection *customChatActions(KopeteMessageManager*);
 
 	/***************************************************************************
 	 *   Plugin's API (used by preferences)                                    *
@@ -109,10 +106,14 @@ private slots:
 	void slotJobDone ( KIO::Job *);
 	void slotSetLanguage();
 	void slotSelectionChanged(bool);
+	void slotNewKMM(KopeteMessageManager *);
 
-protected:
+public:
 
 	QString translateMessage( const QString &, const QString &, const QString & );
+	void translateMessage( const QString &, const QString &, const QString & , QObject * , const char*);
+
+protected:
 
 	QString googleTranslateMessage( const QString &, const QString &, const QString & );
 	QString babelTranslateMessage(const QString &, const QString &, const QString & );
@@ -149,18 +150,13 @@ private:
 	QMap< KIO::Job *, QCString> m_data;
 	QMap< KIO::Job *, bool> m_completed;
 
-	KActionCollection* m_actionCollection;
 	KListAction* m_actionLanguage;
-	KopeteMessageManager *m_currentMessageManager;
 
 	static TranslatorPlugin* pluginStatic_;
 
 private: // Private methods
   /** No descriptions */
   void sendTranslation(KopeteMessage &msg, const QString &translated);
-private slots: // Private slots
-  /** No descriptions */
-  void slotTranslateChat();
 };
 
 #endif

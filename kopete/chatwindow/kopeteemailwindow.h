@@ -85,7 +85,6 @@ private slots:
 	void slotTextChanged();
 	void slotCloseView();
 
-	void slotPrepareActionMenu();
 	void slotSmileyActivated( const QString & );
 	void slotCopy();
 	void slotSetBgColor( const QColor & = QColor() );

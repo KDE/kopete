@@ -28,8 +28,9 @@ class KopeteView;
 class KActionCollection;
 class KopeteMetaContact;
 class KopeteMessageManager;
-class HistoryLogger;
+//class HistoryLogger;
 class HistoryPreferences;
+class HistoryGUIClient;
 
 
 /**
@@ -41,8 +42,6 @@ class HistoryPlugin : public KopetePlugin
 public:
 	HistoryPlugin( QObject *parent, const char *name, const QStringList &args );
 	~HistoryPlugin();
-
-	virtual KActionCollection *customChatActions(KopeteMessageManager *KMM);
 
 	/*
 	 * convert the Kopete 0.6 / 0.5 history to the new format
@@ -58,16 +57,14 @@ private slots:
 	void slotMessageDisplayed(KopeteMessage &msg);
 	void slotViewCreated( KopeteView* );
 	void slotViewHistory();
-	void slotPrevious();
-	void slotLast();
-	void slotNext();
+
 	void slotKMMClosed( KopeteMessageManager* );
 
 private:
 	KActionCollection *m_collection;
 	KopeteMessageManager *m_currentMessageManager;
 	KopeteView *m_currentView;
-	QMap<KopeteMessageManager*,HistoryLogger*> m_loggers;
+	QMap<KopeteMessageManager*,HistoryGUIClient*> m_loggers;
 	HistoryPreferences *m_prefs;
 };
 

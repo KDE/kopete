@@ -138,15 +138,6 @@ void MSNProtocol::slotSyncContactList()
 */
 }
 
-KActionCollection * MSNProtocol::customChatActions(KopeteMessageManager * manager)
-{
-	MSNMessageManager *msnMM= dynamic_cast<MSNMessageManager*>(manager);
-	if(!msnMM)
-		return 0L;
-
-	return msnMM->chatActions();
-}
-
 MSNProtocol* MSNProtocol::protocol()
 {
 	return s_protocol;

@@ -54,29 +54,12 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer4</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Fixed</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>30</width>
-                            <height>21</height>
-                        </size>
-                    </property>
-                </spacer>
                 <widget class="QLabel">
                     <property name="name">
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>Color for old messages:</string>
+                        <string>Color for history messages in the chatwindow</string>
                     </property>
                 </widget>
                 <widget class="KColorButton">
@@ -173,24 +156,6 @@ Help is welcome</string>
         <signal>toggled(bool)</signal>
         <receiver>nbNewView</receiver>
         <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>newView</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>textLabel1</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>newView</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_color</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>textLabel1</sender>
-        <signal>&lt;No Signal&gt;</signal>
-        <receiver>textLabel1</receiver>
-        <slot>&lt;No)</slot>
     </connection>
 </connections>
 <layoutdefaults spacing="6" margin="11"/>

@@ -45,8 +45,8 @@ public:
 	/*
 	 * constructor: it take the contacvt, and the color of messages
 	 */
-	HistoryLogger( KopeteMetaContact *m ,const QColor &col=QColor(), QObject *parent = 0, const char *name = 0);
-	HistoryLogger( KopeteContact *c ,const QColor &col=QColor(), QObject *parent = 0, const char *name = 0);
+	HistoryLogger( KopeteMetaContact *m , QObject *parent = 0, const char *name = 0);
+	HistoryLogger( KopeteContact *c , QObject *parent = 0, const char *name = 0);
 
 
 	~HistoryLogger();
@@ -141,12 +141,6 @@ private:
 	 * the metacontact we are using
 	 */
 	KopeteMetaContact *m_metaContact;
-	/*
-	 * color of messages
-	 */
-	QColor m_color;
-
-
 
 	/*
 	 * keep the old position in memory, so if we change the sens, we can begin here

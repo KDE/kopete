@@ -15,3 +15,6 @@ kopete_msn_la_LIBADD  = ./ui/libkopetemsnui.la \
 service_DATA = msn.desktop
 servicedir = $(kde_servicesdir)
 
+mydatadir = $(kde_datadir)/kopete
+mydata_DATA = msnchatui.rc
+

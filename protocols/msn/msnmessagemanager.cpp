@@ -20,6 +20,7 @@
 #include <klineeditdlg.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kpopupmenu.h>
 
 #include "kopetecontactaction.h"
 #include "kopetecontactlist.h"
@@ -42,7 +43,6 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 	KopeteMessageManagerFactory::factory()->addKopeteMessageManager( this );
 	m_chatService = 0l;
 //	m_msgQueued = 0L;
-	m_actions = 0L;
 
 	connect( this, SIGNAL( messageSent( KopeteMessage&,
 		KopeteMessageManager* ) ),
@@ -51,6 +51,17 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 
 	connect( this, SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNMessageManager*  , MSNContact*  ) ) ,
 		protocol,  SIGNAL( invitation(MSNInvitation*& ,  const QString & , long unsigned int , MSNMessageManager*  , MSNContact*  ) ) );
+
+
+	m_actionInvite = new KActionMenu( i18n( "&Invite" ), actionCollection() , "msnInvite" );
+	connect ( m_actionInvite->popupMenu() , SIGNAL( aboutToShow() ) , this , SLOT(slotActionInviteAboutToShow() ) ) ;
+
+	#if !defined NDEBUG
+	new KAction( i18n( "Send Raw C&ommand..." ), 0, this, SLOT( slotDebugRawCommand() ), actionCollection(), "msnDebugRawCommand" ) ;
+	#endif
+
+
+	setXMLFile("msnchatui.rc");
 }
 
 MSNMessageManager::~MSNMessageManager()
@@ -199,35 +210,32 @@ void MSNMessageManager::slotMessageReceived( KopeteMessage &msg )
 }
 
 
-KActionCollection * MSNMessageManager::chatActions()
+void MSNMessageManager::slotActionInviteAboutToShow()
 {
-	delete m_actions;
+	// We can't simply insert  KAction in this menu bebause we don't know when to delete them.
+	//  items inserted with insert items are automaticaly deleted when we call clear
 
-	m_actions = new KActionCollection( this );
+	m_inviteactions.setAutoDelete(true);
+	m_inviteactions.clear();
 
-	kdDebug(14140) << "MSNMessageManager::chatActions"  <<endl;
+	m_actionInvite->popupMenu()->clear();
 
-	KActionMenu *actionInvite = new KActionMenu( i18n( "&Invite" ), m_actions , "actionInvite" );
 	QPtrList<KopeteContact> availableContacts = KopeteContactList::contactList()->onlineContacts( protocol()->pluginId() );
 	QPtrListIterator<KopeteContact> it( availableContacts );
 	for( ; it.current(); ++it )
 	{
 		if( !members().contains( it.current() ) )
 		{
-			actionInvite->insert( new KopeteContactAction( it.current(), this,
-				SLOT( slotInviteContact( KopeteContact * ) ), actionInvite ) );
+			KAction *a=new KopeteContactAction( it.current(), this,
+				SLOT( slotInviteContact( KopeteContact * ) ), m_actionInvite );
+			m_actionInvite->insert( a );
+			m_inviteactions.append( a ) ;
+
 		}
 	}
-	actionInvite->insert( new KAction( i18n ("Other ..."), 0, this, SLOT( slotInviteOtherContact() ), actionInvite, "actionOther" ));
-	m_actions->insert( actionInvite );
-
-	#if !defined NDEBUG
-	KActionMenu *debugMenu = new KActionMenu( "Debug", m_actions );
-	debugMenu->insert( new KAction( i18n( "Send Raw C&ommand..." ), 0, this, SLOT( slotDebugRawCommand() ), debugMenu, "m_debugRawCommand" ) );
-	m_actions->insert( debugMenu );
-	#endif
-
-	return m_actions;
+	KAction *b=new KAction( i18n ("Other ..."), 0, this, SLOT( slotInviteOtherContact() ), m_actionInvite, "actionOther" );
+	m_actionInvite->insert( b );
+	m_inviteactions.append( b ) ;
 }
 
 void MSNMessageManager::slotCloseSession()

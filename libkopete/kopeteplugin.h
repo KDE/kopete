@@ -88,17 +88,6 @@ public:
 	void addAddressBookField( const QString &field, AddressBookFieldAddMode mode = AddOnly );
 
 	/**
-	 * Returns a set of action items for the chatWindows
-	 */
-	virtual KActionCollection *customChatActions(KopeteMessageManager*) ;
-
-	/**
-	 * Returns a set of action items to be shown on chat window toolbars
-	 */
-	virtual KActionCollection *customToolbarActions();
-
-
-	/**
 	 * The user right-click on the chatwindow
 	 */
 	virtual KActionCollection *customChatWindowPopupActions( const KopeteMessage &, DOM::Node & ) ;

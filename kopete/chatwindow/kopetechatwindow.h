@@ -156,7 +156,6 @@ public slots:
 private slots:
 //	void slotPrepareSmileyMenu();
 	void slotPrepareContactMenu();
-	void slotPrepareActionMenu();
 	void slotPrepareDetachMenu();
 	void slotPreparePlacementMenu();
 

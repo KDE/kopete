@@ -27,6 +27,7 @@
 //#include <kiconloader.h>
 #include <kstandarddirs.h>
 #include <ksavefile.h>
+#include <kconfig.h>
 
 
 #include "kopetecontact.h"
@@ -34,12 +35,11 @@
 #include "kopeteaccount.h"
 #include "kopetemetacontact.h"
 
-HistoryLogger::HistoryLogger( KopeteMetaContact *m , const QColor &col , QObject *parent , const char *name )
+HistoryLogger::HistoryLogger( KopeteMetaContact *m ,  QObject *parent , const char *name )
  : QObject(parent, name)
 {
 	m_metaContact=m;
 	m_hideOutgoing=false;
-	m_color=col;
 	m_cachedMonth=-1;
 	m_oldSens=Default;
 
@@ -50,10 +50,9 @@ HistoryLogger::HistoryLogger( KopeteMetaContact *m , const QColor &col , QObject
 }
 
 
-HistoryLogger::HistoryLogger( KopeteContact *c , const QColor &col, QObject *parent , const char *name )
+HistoryLogger::HistoryLogger( KopeteContact *c ,  QObject *parent , const char *name )
  : QObject(parent, name)
 {
-	m_color=col;
 	m_cachedMonth=-1;
 	m_metaContact=c->metaContact();
 	m_hideOutgoing=false;
@@ -261,6 +260,10 @@ QValueList<KopeteMessage> HistoryLogger::readMessages( unsigned int nb , const K
 	}
 	m_oldSens=sens;
 
+	//getting the color for messages:
+	KGlobal::config()->setGroup("History Plugin");
+	QColor FGcolor=KGlobal::config()->readColorEntry( "History Color");
+
 	//Hello guest!
 
 	//there are two algoritms:
@@ -400,7 +403,7 @@ QValueList<KopeteMessage> HistoryLogger::readMessages( unsigned int nb , const K
 				}
 
 				KopeteMessage msg(timestamp,from,to, msgElem.text() , dir);
-				msg.setFg(m_color);
+				msg.setFg(FGcolor);
 //kdDebug() << "HistoryLogger::readMessages: message: " << msg.plainBody() << endl;
 				if(reverseOrder)
 					messages.prepend(msg);

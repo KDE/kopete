@@ -257,9 +257,6 @@ void KopeteEmailWindow::initActions(void)
 	d->actionSmileyMenu->setDelayed( false );
 	connect(d->actionSmileyMenu, SIGNAL(activated(const QString &)), this, SLOT(slotSmileyActivated(const QString &)));
 
-	d->actionActionMenu = new KActionMenu( i18n( "&Actions" ), coll, "actions_menu" );
-	connect( d->actionActionMenu->popupMenu(), SIGNAL( aboutToShow() ), this, SLOT( slotPrepareActionMenu() ) );
-
 	// add configure key bindings menu item
 	KStdAction::keyBindings(this, SLOT(slotConfKeys()), coll);
 	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), coll);
@@ -278,6 +275,7 @@ void KopeteEmailWindow::initActions(void)
 	setXMLFile( QString::fromLatin1( "kopetechatwindow.rc" ) );
 	createGUI( d->editpart );
 	//createGUI( QString::fromLatin1( "kopeteemailwindow.rc" ) );
+	guiFactory()->addClient(m_manager);
 }
 
 void KopeteEmailWindow::slotViewToolBar()
@@ -319,36 +317,6 @@ void KopeteEmailWindow::slotConfToolbar()
 	delete dlg;
 }
 
-void KopeteEmailWindow::slotPrepareActionMenu(void)
-{
-	QPopupMenu *actionsMenu = d->actionActionMenu->popupMenu();
-
-	actionsMenu->clear();
-
-	QPtrList<KopetePlugin> ps = LibraryLoader::pluginLoader()->plugins();
-	bool actions = false;
-
-	for( KopetePlugin *p = ps.first() ; p ; p = ps.next() )
-	{
-		KActionCollection *customActions = p->customChatActions( m_manager );
-		if( customActions )
-		{
-//			kdDebug(14010) << k_funcinfo << "Found custom Actions defined by Plugins" << endl;
-			actions = true;
-			for(unsigned int i = 0; i < customActions->count(); i++)
-			{
-				customActions->action(i)->plug( actionsMenu );
-			}
-		}
-	}
-
-	if ( !actions )
-	{
-//		kdDebug(14010) << k_funcinfo << "No Action defined by any Plugin" << endl;
-		int id = actionsMenu->insertItem( i18n("No Action Defined by Any Plugin") );
-		actionsMenu->setItemEnabled(id, false);
-	}
-}
 
 
 bool KopeteEmailWindow::queryExit()
