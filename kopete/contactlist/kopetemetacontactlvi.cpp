@@ -461,7 +461,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( Kopete::Contact *c )
 		if ( !mBlinkTimer->isActive() && ( m_metaContact->statusIcon() != m_oldStatusIcon ) )
 		{
 			mIsBlinkIcon = false;
-			m_blinkLeft = 5;
+			m_blinkLeft = 9;
 			mBlinkTimer->start( 400, false );
 		}
 	}
