@@ -761,7 +761,8 @@ void ChatView::slotProperyChanged( KopeteContact*, const QString &key,
 		QString oldName=oldValue.toString();
 
 		if(KopetePrefs::prefs()->showEvents())
-			sendInternalMessage( i18n( "%1 is now known as %2" ). arg( oldName, newName ) );
+			if ( oldName != newName )
+				sendInternalMessage( i18n( "%1 is now known as %2" ). arg( oldName, newName ) );
 
 		mComplete->removeItem( oldName );
 		mComplete->addItem( newName );
