@@ -318,62 +318,47 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					OscarContact *contact = 0L;
 
 					tmptxt = fromicqsrv.getLELNTS();
-					//kdDebug(14151) << k_funcinfo << "converting nickname string" << endl;
 					res.nickName = ServerToQString(tmptxt, contact);
-					//res.nickName = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
-					//kdDebug(14151) << k_funcinfo << "converting firstname string" << endl;
 					res.firstName = ServerToQString(tmptxt, contact);
-					//res.firstName = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
-					//kdDebug(14151) << k_funcinfo << "converting lastname string" << endl;
 					res.lastName = ServerToQString(tmptxt, contact);
-					//res.lastName = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
-					//kdDebug(14151) << k_funcinfo << "converting email string" << endl;
 					res.eMail = ServerToQString(tmptxt, contact);
-					//res.eMail = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
 					res.city = ServerToQString(tmptxt, contact);
-					//res.city = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
 					res.state = ServerToQString(tmptxt, contact);
-					//res.state = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
 					res.phoneNumber = ServerToQString(tmptxt, contact);
-					//res.phoneNumber = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
 					res.faxNumber = ServerToQString(tmptxt, contact);
-					//res.faxNumber = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
 					res.street = ServerToQString(tmptxt, contact);
-					//res.street = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
 					res.cellularNumber = ServerToQString(tmptxt, contact);
-					//res.cellularNumber = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					tmptxt = fromicqsrv.getLELNTS();
 					res.zip = ServerToQString(tmptxt, contact);
-					//res.zip = QString::fromLocal8Bit(tmptxt);
 					delete [] tmptxt;
 
 					res.countryCode = fromicqsrv.getLEWord();
