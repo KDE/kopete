@@ -86,13 +86,13 @@ void SendMessageTask::onGo()
 	tlv2buffer.addWord( 0x0101 ); //add TLV(0x0101) also known as TLV(257)
 	
 	/* If we can encode in Latin1, do that, otherwise send Unicode */
-	QTextCodec* codec = QTextCodec::codecForMib( 4 );
+	QTextCodec* codec = QTextCodec::codecForMib( 4 ); //4 is the MIBEnum for ISO-8859-1
 	if ( codec->canEncode( m_message.text() ) )
 	{
 		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Latin-1 encoding successful. Sending outgoing message as "
 			<< "ISO-8859-1" << endl;
 		tlv2buffer.addWord( m_message.text().length() + 4 ); // add TLV length
-		tlv2buffer.addWord( 0x0001 );
+		tlv2buffer.addWord( 0x0000 );
 		tlv2buffer.addWord( 0x0000 );
 		tlv2buffer.addString( m_message.text().latin1(), m_message.text().length() );
 	}
