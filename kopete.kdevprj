@@ -164,7 +164,7 @@ email=duncan@tarro
 kdevprj_version=1.3
 lfv_open_groups=
 make_options=\s-j1
-makefiles=./Makefile.am,po/Makefile.am,kopete/Makefile.am,kopete/templates/Makefile.am,kopete/protocols/Makefile.am,kopete/protocols/msn/Makefile.am,kopete/protocols/msn/libkmsn/Makefile.am,kopete/protocols/icq/Makefile.am,kopete/protocols/icq/kxengine/Makefile.am,kopete/pixmaps/Makefile.am,kopete/pixmaps/.pics/Makefile.am,kopete/pixmaps/.pics/small/Makefile.am,kopete/library/Makefile.am,kopete/library/ui/Makefile.am,kopete/gui/Makefile.am,doc-api/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,admin/Makefile.am,kopete/protocols/irc/Makefile.am,kopete/protocols/irc/libkirc/Makefile.am,kopete/protocols/aim/Makefile.am,kopete/protocols/msn/ui/Makefile.am
+makefiles=./Makefile.am,po/Makefile.am,kopete/Makefile.am,kopete/templates/Makefile.am,kopete/protocols/Makefile.am,kopete/protocols/msn/Makefile.am,kopete/protocols/msn/libkmsn/Makefile.am,kopete/protocols/icq/Makefile.am,kopete/protocols/icq/kxengine/Makefile.am,kopete/pixmaps/Makefile.am,kopete/pixmaps/.pics/Makefile.am,kopete/pixmaps/.pics/small/Makefile.am,kopete/library/Makefile.am,kopete/library/ui/Makefile.am,kopete/gui/Makefile.am,doc-api/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,admin/Makefile.am,kopete/protocols/irc/Makefile.am,kopete/protocols/irc/libkirc/Makefile.am,kopete/protocols/aim/Makefile.am,kopete/protocols/msn/ui/Makefile.am,kopete/protocols/msn/libkmerlin/Makefile.am
 modifyMakefiles=false
 project_name=kopete
 project_type=normal_empty
@@ -1081,8 +1081,39 @@ type=SOURCE
 
 [kopete/protocols/msn/Makefile.am]
 files=kopete/protocols/msn/msnprotocol.cpp,kopete/protocols/msn/msnprotocol.h,kopete/protocols/msn/protocol.cpp,kopete/protocols/msn/msnaddcontactpage.cpp,kopete/protocols/msn/msnaddcontactpage.h,kopete/protocols/msn/msnpreferences.cpp,kopete/protocols/msn/msnpreferences.h,kopete/protocols/msn/msncontact.cpp,kopete/protocols/msn/msncontact.h,kopete/protocols/msn/msnmessage.cpp,kopete/protocols/msn/msnmessage.h
-sub_dirs=libkmsn,ui
+sub_dirs=libkmsn,ui,libkmerlin
 type=static_library
+
+[kopete/protocols/msn/libkmerlin/Makefile.am]
+files=kopete/protocols/msn/libkmerlin/kmsnchatservice.cpp,kopete/protocols/msn/libkmerlin/kmsnchatservice.h,kopete/protocols/msn/libkmerlin/kmsnservice.cpp,kopete/protocols/msn/libkmerlin/kmsnservice.h
+sharedlib_LDFLAGS=-version-info 0:0:0
+sharedlib_rootname=libkmerlin
+sub_dirs=
+type=static_library
+
+[kopete/protocols/msn/libkmerlin/kmsnchatservice.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/msn/libkmerlin/kmsnchatservice.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/protocols/msn/libkmerlin/kmsnservice.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/msn/libkmerlin/kmsnservice.h]
+dist=true
+install=false
+install_location=
+type=HEADER
 
 [kopete/protocols/msn/libkmsn/Makefile.am]
 files=kopete/protocols/msn/libkmsn/msn.cpp,kopete/protocols/msn/libkmsn/msn.h,kopete/protocols/msn/libkmsn/msnuser.cpp,kopete/protocols/msn/libkmsn/msnuser.h,kopete/protocols/msn/libkmsn/newuser.cpp,kopete/protocols/msn/libkmsn/newuser.h,kopete/protocols/msn/libkmsn/newuser.ui,kopete/protocols/msn/libkmsn/newuserimpl.cpp,kopete/protocols/msn/libkmsn/newuserimpl.h,kopete/protocols/msn/libkmsn/switchboard.cpp,kopete/protocols/msn/libkmsn/switchboard.h,

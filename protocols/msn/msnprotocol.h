@@ -132,6 +132,7 @@ public slots: // Public slots
 	void slotConnectedToMSN(bool c);
 	void slotConnecting();
 
+	void slotContactAdded (QString, QString, QString);
 	void slotUserStateChange (QString, QString, int);
 	void slotStateChanged (uint);
 	void slotUserSetOffline( QString );

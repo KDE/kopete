@@ -53,7 +53,7 @@ MSNContact::MSNContact(QListViewItem *parent, QString userid, const QString name
 
 void MSNContact::initContact(QString userid, const QString name, MSNProtocol *protocol)
 {
-    messageTimer = new QTimer();
+	messageTimer = new QTimer();
 	messageQueue = new QValueStack<MSNMessageStruct>;
 	isMessageIcon = false;
 	// We connect this signal so that we can tell when a user's status changes
@@ -62,34 +62,39 @@ void MSNContact::initContact(QString userid, const QString name, MSNProtocol *pr
 	
 	QObject::connect(this, SIGNAL(chatToUser(QString)), protocol->engine, SLOT( slotStartChatSession(QString)) );
 	QObject::connect(messageTimer, SIGNAL(timeout()), this, SLOT(slotFlashIcon()));
-    QObject::connect(protocol->engine, SIGNAL(connectedToService(bool)), this, SLOT(slotDeleteMySelf(bool)));
+	QObject::connect(protocol->engine, SIGNAL(connectedToService(bool)), this, SLOT(slotDeleteMySelf(bool)));
 	QString tmp = name;
-	//tmp.append(" (");
-	//tmp.append(QString::number(uin));
-	//tmp.append(")");
 	setText(0,tmp);
-    initActions();
-	//slotUserStateChanged(uin, (protocol->kxContacts->getContact(uin)).status, 0);
-		
+	initActions();
+	slotUpdateContact( mUserID, mProtocol->engine->getStatus( mUserID ) );		
 }
 
 void MSNContact::initActions()
 {
 	actionChat = new KAction ( i18n("Start Chat"), "idea", 0, this, SLOT(slotChatThisUser()), this, "actionChat" );
-	actionRemove = new KAction ( i18n("Delete contact"), "edittrash", 0, this, SLOT(slotRemoveThisUser()), this, "actionRemove" );
-	actionGroupList = new KListAction ( i18n("Move contact"), "editcut", 0, this, SLOT(slotMoveThisUser()), this, "actionMove" );	
+	actionRemoveFromGroup = new KAction ( i18n("Remove from group"), "edittrash", 0, this, SLOT(slotRemoveFromGroup()), this, "actionRemove" );
+	actionRemove = new KAction ( i18n("Delete contact"), "edittrash", 0, this, SLOT(slotRemoveThisUser()), this, "actionDelete" );
+	actionContactCopy = new KListAction ( i18n("Copy contact"), "editcopy", 0, this, SLOT(slotCopyThisUser()), this, "actionCopy" );	
+	actionContactMove = new KListAction ( i18n("Move contact"), "editcut", 0, this, SLOT(slotMoveThisUser()), this, "actionMove" );	
+	actionHistory = new KAction ( i18n("View History"), "history", 0, this, SLOT(slotHistory()), this, "actionDelete" );
+
 }
 
 void MSNContact::rightButtonPressed(const QPoint &point)
 {
-	QStringList grouplist = *(kopeteapp->contactList()->groupStringList);
-	actionGroupList->setItems(grouplist);
+	QStringList grouplist1 = mProtocol->engine->getGroups();
+	QStringList grouplist2 = mProtocol->engine->getGroups();
+	actionContactMove->setItems(grouplist1);
+	actionContactCopy->setItems(grouplist2);
 
 	popup = new KPopupMenu();
 	popup->insertTitle(mUserID);
 	actionChat->plug( popup );
+	actionRemoveFromGroup->plug( popup );
 	actionRemove->plug( popup );
-	actionGroupList->plug( popup );
+	actionContactCopy->plug( popup );
+	actionContactMove->plug( popup );
+	actionHistory->plug( popup );
 	popup->popup(QCursor::pos());
 }
 
@@ -109,33 +114,41 @@ void MSNContact::slotRemoveThisUser()
 	delete this;
 }
 
+void MSNContact::slotRemoveFromGroup()
+{
+	QString group;
+	group = parentGroup->text(0);
+	mProtocol->engine->contactRemove(mUserID, group);
+}
+
 void MSNContact::slotMoveThisUser()
 {
 	QString newgroup;
 	QString oldgroup;
-	QStringList grouplist;
-	int counter;
-
-	grouplist = mProtocol->engine->getGroups();
-	newgroup = actionGroupList->currentText();
+	newgroup = actionContactMove->currentText();
 	oldgroup = parentGroup->text(0);
-	for ( QStringList::Iterator it = grouplist.begin(); it != grouplist.end(); ++it )
-	{
-		if (*it == newgroup );
-		{
-			counter++;
-		}
-    }
-	if ( counter == 0 )
-	{
-		/* Group dont exist in server, we create it */
-		mProtocol->engine->groupAdd( newgroup);
-	}
 	mProtocol->engine->contactMove( mUserID, oldgroup, newgroup);
+	
 }
 
-void MSNContact::slotContactRemoved(QString handle, QString nick)
+void MSNContact::slotCopyThisUser()
 {
+	QString newgroup;
+	newgroup = actionContactCopy->currentText();
+	mProtocol->engine->contactCopy( mUserID, newgroup);
+}
+
+void MSNContact::slotHistory()
+{
+
+}
+
+void MSNContact::slotContactRemoved(QString handle, QString group)
+{
+	if ( (handle == mUserID) && ( group == parentGroup->text(0) ) )
+	{
+		delete this;
+	}
 }
 
 void MSNContact::slotUpdateContact (QString handle , uint status)

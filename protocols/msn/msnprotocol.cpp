@@ -69,6 +69,7 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSN"), IMProtocol()
 	connect(engine, SIGNAL(connectedToService(bool)), this, SLOT(slotConnectedToMSN(bool)));
 	connect(engine, SIGNAL(contactStatusChanged(QString, QString, int)), this, SIGNAL(userStateChange (QString, QString, int) ) );
 	connect(engine, SIGNAL(statusChanged( uint)), this, SLOT(slotStateChanged ( uint) ) );
+	connect(engine, SIGNAL(contactAdded( QString, QString, QString)), this, SLOT(slotContactAdded ( QString, QString, QString) ) );
   QObject::connect(engine, SIGNAL(startChat(KMSNChatService *, QString)), this, SLOT(slotIncomingChat (KMSNChatService *, QString) ));
 	connect(engine, SIGNAL( newContact(QString) ), this, SLOT(slotAuthenticate(QString) ) );
 
@@ -337,7 +338,43 @@ void MSNProtocol::slotConnected()
 
  	 	}
  	}
+  #warning FIXME is there any way to do a faster sync of msn groups?
+	/* Now we sync local groups that dont exist in server */
+	QStringList localgroups = *(kopeteapp->contactList()->groupStringList) ;
+	QStringList servergroups = engine->getGroups();
+	QString localgroup;
+	QString remotegroup;
+	int exists;
+	
+	KGlobal::config()->setGroup("MSN");
+	if ( KGlobal::config()->readBoolEntry("ExportGroups", true) )
+	{
+		for ( QStringList::Iterator it1 = localgroups.begin(); it1 != localgroups.end(); ++it1 )
+		{
+ 	 		exists = 0;
+			localgroup = (*it1).latin1();
+			for ( QStringList::Iterator it2 = servergroups.begin(); it2 != servergroups.end(); ++it2 )
+			{
+ 	 			remotegroup = (*it2).latin1();
+				if ( localgroup == remotegroup )
+				{
+					exists++;
+				}
+			}
+			/* Groups doesnt matches any server group */
+			if (exists == 0)
+			{
+				QString notexistsMsg = i18n("the group ") + localgroup + i18n(" doesn't exists in MSN server group list, if you want to move a MSN contact to this group you need to add it to MSN server, do you want to add this group to the server group list?");
+				kdDebug() << "MSN Plugin: Sync: Local group " << localgroup << " dont exists in server!" << endl;
+				//useranswer = KMessageBox::warningYesNo (kopeteapp->mainWindow(), notexistsMsg , i18n("New local group found...") );				
+				engine->groupAdd( localgroup );
+
+			}		
+		}
+	}	
+
 }
+
 
 
 void MSNProtocol::slotIncomingChat(KMSNChatService *newboard, QString reqUserID)
@@ -507,6 +544,15 @@ void MSNProtocol::slotUserSetOffline (QString str)
 	kdDebug() << "MSN Plugin: User Set Offline " << str << "\n";
 		
 }
+
+void MSNProtocol::slotContactAdded( QString handle, QString nick,QString group)
+{
+	kdDebug() << "MSN Plugin: Contact Added in group " << group << " ... creating contact" << endl;
+	MSNContact *tmpcontact;
+	uint status;	
+	tmpcontact = new MSNContact( kopeteapp->contactList()->getGroup(group) , handle , nick , this );
+}
+
 // Dont use this for now
 void MSNProtocol::slotNewUserFound (QString userid )
 {

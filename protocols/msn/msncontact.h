@@ -63,7 +63,11 @@ class MSNContact : public IMContact
 		void slotChatThisUser();
 	private slots:
 		void slotRemoveThisUser();
+		void slotCopyThisUser();
 		void slotMoveThisUser();
+		void slotRemoveFromGroup();
+		void slotHistory();
+		
 		void slotUpdateContact (QString, uint);
 		// We have to delete the contact if MSN disconenct
 		// We will use the engine signal
@@ -83,9 +87,12 @@ class MSNContact : public IMContact
 		QTimer *messageTimer;
 		KPopupMenu *popup;
 		KAction* actionRemove;
+		KAction* actionRemoveFromGroup;
 		KAction* actionChat;
 		KAction* actionInfo;
-        KListAction *actionGroupList;
+		KAction* actionHistory;
+    KListAction *actionContactMove;
+   	KListAction *actionContactCopy;
 	signals:
 		void chatToUser( QString );
 };
