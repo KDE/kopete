@@ -118,7 +118,6 @@ KopeteIdentity *IRCProtocol::createNewIdentity(const QString &identityId)
 	{
 		IRCIdentity *id = new IRCIdentity( identityId, this );
 		mIdentityMap[ identityId ] = id;
-		KopeteIdentityManager::manager()->registerIdentity( id );
 	}
 
 	return mIdentityMap[ identityId ];
