@@ -420,7 +420,7 @@ KActionMenu *YahooAccount::actionMenu()
 		m_protocol->Online.iconFor(this), 0, this, SLOT(slotGoOnline()),
 		this, "actionYahooGoOnline"));
 
-	theActionMenu->insert(new KAction(i18n( "Be right back" ),
+	theActionMenu->insert(new KAction(i18n( "Be Right Back" ),
 		m_protocol->BeRightBack.iconFor(this), 0, this, SLOT(slotGoStatus001()),
 		this, "actionYahooGoStatus001"));
 
@@ -428,31 +428,31 @@ KActionMenu *YahooAccount::actionMenu()
 		m_protocol->Busy.iconFor(this), 0, this, SLOT(slotGoStatus002()),
 		this, "actionYahooGoStatus002"));
 
-	theActionMenu->insert(new KAction(i18n( "Not at home" ),
+	theActionMenu->insert(new KAction(i18n( "Not at Home" ),
 		m_protocol->NotAtHome.iconFor(this), 0, this, SLOT(slotGoStatus003()),
 		this, "actionYahooGoStatus003"));
 
-	theActionMenu->insert(new KAction( i18n( "Not at my desk" ),
+	theActionMenu->insert(new KAction( i18n( "Not at My Desk" ),
 		m_protocol->NotAtMyDesk.iconFor(this), 0, this, SLOT(slotGoStatus004()),
 		this, "actionYahooGoStatus004"));
 
-	theActionMenu->insert(new KAction( i18n( "Not in the office"),
+	theActionMenu->insert(new KAction( i18n( "Not in The Office"),
 		m_protocol->NotInTheOffice.iconFor(this), 0, this, SLOT(slotGoStatus005()),
 		this, "actionYahooGoStatus005"));
 
-	theActionMenu->insert(new KAction( i18n( "On the phone" ),
+	theActionMenu->insert(new KAction( i18n( "On The Phone" ),
 		m_protocol->OnThePhone.iconFor(this), 0, this, SLOT(slotGoStatus006()),
 		this, "actionYahooGoStatus006"));
 
-	theActionMenu->insert(new KAction( i18n( "On vacation" ),
+	theActionMenu->insert(new KAction( i18n( "On Vacation" ),
 		m_protocol->OnVacation.iconFor(this), 0, this, SLOT(slotGoStatus007()),
 		this, "actionYahooGoStatus007"));
 
-	theActionMenu->insert(new KAction( i18n( "Out to lunch" ),
+	theActionMenu->insert(new KAction( i18n( "Out to Lunch" ),
 		m_protocol->OutToLunch.iconFor(this), 0, this, SLOT(slotGoStatus008()),
 		this, "actionYahooGoStatus008"));
 
-	theActionMenu->insert(new KAction( i18n( "Stepped out" ),
+	theActionMenu->insert(new KAction( i18n( "Stepped Out" ),
 		m_protocol->SteppedOut.iconFor(this), 0, this, SLOT(slotGoStatus009()),
 		this, "actionYahooGoStatus009"));
 

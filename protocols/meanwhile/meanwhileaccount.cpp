@@ -177,7 +177,7 @@ KActionMenu * MeanwhileAccount::actionMenu()
     theMenu->popupMenu()->insertSeparator();
 
     theMenu->insert(
-           new KAction( i18n("&Change status message"), QString::null,
+           new KAction( i18n("&Change Status Message"), QString::null,
                         0, this, SLOT(meanwhileChangeStatus()), this,
                         "meanwhileChangeStatus"));
 

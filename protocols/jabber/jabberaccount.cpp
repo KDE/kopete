@@ -226,7 +226,7 @@ KActionMenu *JabberAccount::actionMenu ()
 												  0, this, SLOT ( slotGoXA ( const QString & ) ),
 												  this, "actionJabberXA") );
 
-	m_actionMenu->insert ( new Kopete::AwayAction (  i18n ("Set &Do not Disturb"),
+	m_actionMenu->insert ( new Kopete::AwayAction (  i18n ("Set &Do Not Disturb"),
 												  mProtocol->JabberKOSDND.iconFor ( this ),
 												  0, this, SLOT ( slotGoDND ( const QString & ) ),
 												  this, "actionJabberDND") );
