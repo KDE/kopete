@@ -653,8 +653,8 @@ void Client::requestStatusInfo( const QString& contact )
 void Client::whitePagesSearch( const ICQWPSearchInfo& info )
 {
 	UserSearchTask* ust = new UserSearchTask( d->connections.first()->rootTask() );
-	connect( ust, SIGNAL( foundUser( const ICQSearchResult& result ) ),
-	         this, SIGNAL( gotSearchResults( const ICQSearchResults& result ) ) );
+	connect( ust, SIGNAL( foundUser( const ICQSearchResult& ) ),
+	         this, SIGNAL( gotSearchResults( const ICQSearchResult& ) ) );
 	connect( ust, SIGNAL( searchFinished( int ) ), this, SIGNAL( endOfSearch( int ) ) );
 	ust->go( true ); //onGo does nothing in this task. This is just here so autodelete works
 	ust->searchWhitePages( info );
@@ -663,8 +663,8 @@ void Client::whitePagesSearch( const ICQWPSearchInfo& info )
 void Client::uinSearch( const QString& uin )
 {
 	UserSearchTask* ust = new UserSearchTask( d->connections.first()->rootTask() );
-	connect( ust, SIGNAL( foundUser( const ICQSearchResult& result ) ),
-	         this, SIGNAL( gotSearchResults( const ICQSearchResults& result ) ) );
+	connect( ust, SIGNAL( foundUser( const ICQSearchResult& ) ),
+	         this, SIGNAL( gotSearchResults( const ICQSearchResult& ) ) );
 	connect( ust, SIGNAL( searchFinished( int ) ), this, SIGNAL( endOfSearch( int ) ) );
 	ust->go( true ); //onGo does nothing in this task. This is just here so autodelete works
 	ust->searchUserByUIN( uin );

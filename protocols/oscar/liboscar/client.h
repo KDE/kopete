@@ -306,8 +306,8 @@ signals:
 	void userWarned( const QString& contact, Q_UINT16 increase, Q_UINT16 newLevel );
 	
 	/** Search signals */
-	void gotSearchResults( const ICQSearchResult& result );
-	void endOfSearch( int moreItems );
+	void gotSearchResults( const ICQSearchResult& );
+	void endOfSearch( int);
 	
 protected slots:
 	// INTERNAL, FOR USE BY TASKS' finished() SIGNALS //
