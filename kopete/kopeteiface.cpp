@@ -17,6 +17,8 @@
 
 #include <kmessagebox.h>
 #include <klocale.h>
+#include <kconfig.h>
+#include <kglobal.h>
 
 #include "kopeteiface.h"
 #include "kopetecontactlist.h"
@@ -24,10 +26,20 @@
 #include "kopeteaccountmanager.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
+#include "kopeteaway.h"
 
 
 KopeteIface::KopeteIface() : DCOPObject( "KopeteIface" )
 {
+#if 0 //disabled because of feature frezee.   TODO: enable after kde 3.2
+	KConfig *config = KGlobal::config();
+	config->setGroup("AutoAway");
+
+	if (config->readBoolEntry("UseAutoAway", true))
+		connectDCOPSignal("kdesktop", "KScreensaverIface", "KDE_start_screensaver()", "setAutoAway()", false);
+	else
+		disconnectDCOPSignal("kdesktop", "KScreensaverIface", "KDE_start_screensaver()", "setAutoAway()");
+#endif
 }
 
 QStringList KopeteIface::contacts()
@@ -186,6 +198,21 @@ bool KopeteIface::unloadPlugin( const QString& name )
 	if ( !argument.startsWith( "kopete_" ) )
 		argument.prepend( "kopete_" );
 	return KopetePluginManager::self()->unloadPlugin( argument );
+}
+
+void KopeteIface::setAway()
+{
+	KopeteAccountManager::manager()->setAwayAll();
+}
+
+void KopeteIface::setAvailable()
+{
+	KopeteAccountManager::manager()->setAvailableAll();
+}
+
+void KopeteIface::setAutoAway()
+{
+	KopeteAway::getInstance()->setAutoAway();
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

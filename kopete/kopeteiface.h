@@ -64,13 +64,48 @@ k_dcop:
 	bool addContact( const QString &protocolName, const QString &accountId, const QString &contactId,
 		const QString &displayName, const QString &groupName = QString::null );
 
+	/**
+	 * return a list of alls accounts.
+	 * form: XXXProtocol||AccountId
+	 */
 	QStringList accounts();
 
+	/**
+	 * connect a given account in the given protocol
+	 */
 	void connect(const QString &protocolName, const QString &accountId);
+	/**
+	 * disconnect a given account in the given protocol
+	 */
 	void disconnect(const QString &protocolName, const QString &accountId);
 
+	/**
+	 * load a plugin
+	 * the name is the name of the library: example: kopete_msn
+	 * but you can ommit the kopete_ prefix
+	 */
 	bool loadPlugin( const QString& name );
+	/**
+	 * unload a plugin
+	 * the name is the name of the library: example: kopete_msn
+	 * but you can ommit the kopete_ prefix
+	 */
 	bool unloadPlugin( const QString& name );
+
+	/**
+	 * set all account away using the global away function
+	 */
+	void setAway();
+	/**
+	 * set Available all accountes
+	 */
+	void setAvailable();
+	/**
+	 * set all account away using the auto away funciton.
+	 * accounts will return online if activity is detected again
+	 */
+	void setAutoAway();
+
 };
 
 #endif
