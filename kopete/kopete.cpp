@@ -19,6 +19,8 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kcrash.h>
+#include <kglobal.h>
+#include <kiconloader.h>
 
 #include <kopete.h>
 #include <preferencesdialog.h>
@@ -34,6 +36,7 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 {
 	//plugins = new PluginManager;
 	mLibraryLoader = new LibraryLoader;
+	mIconLoader = KGlobal::iconLoader();
 	mPref=new PreferencesDialog;
 	Plugins *blah = new Plugins(this);
 

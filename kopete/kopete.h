@@ -30,6 +30,7 @@
 #include <kpopupmenu.h>
 #include <kaction.h>
 #include <kstatusbar.h>
+#include <kiconloader.h>
 
 #include "preferencesdialog.h"
 #include "aboutplugins.h"
@@ -56,6 +57,7 @@ class Kopete : public KUniqueApplication
 	KopeteWindow *popupMenu() const { /*return mainwidget->popupmenu;*/ };
 	//PluginManager *Plugins() const { return plugins; }
 	LibraryLoader *libraryLoader() const { return mLibraryLoader; }
+	KIconLoader *iconLoader() const { return mIconLoader; }
 	KopeteWindow *mainWindow() const { return mainwindow; };
 
 	/** No descriptions */
@@ -75,6 +77,7 @@ class Kopete : public KUniqueApplication
 	private:
 	KopeteWindow *mainwindow;
 	LibraryLoader *mLibraryLoader;
+	KIconLoader *mIconLoader;
 	static void cleverKCrashHack(int);
 	void loadPlugins();
 	

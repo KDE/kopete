@@ -857,7 +857,7 @@ install_location=
 type=SOURCE
 
 [kopete/protocols/msn/Makefile.am]
-files=kopete/protocols/msn/msnprotocol.cpp,kopete/protocols/msn/msnprotocol.h,kopete/protocols/msn/protocol.cpp
+files=kopete/protocols/msn/msnprotocol.cpp,kopete/protocols/msn/msnprotocol.h,kopete/protocols/msn/protocol.cpp,kopete/protocols/msn/msnaddcontactpage.cpp,kopete/protocols/msn/msnaddcontactpage.h,kopete/protocols/msn/msnpreferences.cpp,kopete/protocols/msn/msnpreferences.h
 sub_dirs=libkmsn,
 type=static_library
 
@@ -927,6 +927,30 @@ install_location=
 type=SOURCE
 
 [kopete/protocols/msn/libkmsn/switchboard.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/protocols/msn/msnaddcontactpage.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/msn/msnaddcontactpage.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/protocols/msn/msnpreferences.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/msn/msnpreferences.h]
 dist=true
 install=false
 install_location=
