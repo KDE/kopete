@@ -701,28 +701,28 @@ QString KopeteContact::toolTip() const
 		if((*it) == QString::fromLatin1("FormattedName"))
 		{
 			QString name = formattedName();
-			if(!name.isNull())
+			if(!name.isEmpty())
 				tip += i18n("<br><b>Full Name:</b>&nbsp;FORMATTED NAME",
 					"<br><b>Full Name:</b>&nbsp;<nobr>%1</nobr>").arg(name);
 		}
 		else if ((*it) == QString::fromLatin1("FormattedIdleTime"))
 		{
 			QString time = formattedIdleTime();
-			if(!time.isNull())
+			if(!time.isEmpty())
 				tip += i18n("<br><b>Idle:</b>&nbsp;FORMATTED IDLE TIME",
 					"<br><b>Idle:</b>&nbsp;<nobr>%1</nobr>").arg(time);
 		}
 		else if ((*it) == QString::fromLatin1("homePage"))
 		{
 			QString url = property(*it).value().toString();
-			if(!url.isNull())
+			if(!url.isEmpty())
 				url += i18n("<br><b>Home Page:</b>&nbsp;FORMATTED URL",
 					"<br><b>Home Page:</b>&nbsp;<nobr><a href=\"%1\">%1</a></nobr>").arg(url).arg(url);
 		}
 		else
 		{
 			p = property(*it);
-			if(!p.isNull())
+			if(!p.isEmpty())
 			{
 				QVariant val = p.value();
 				QString valueText;
@@ -758,9 +758,9 @@ QString KopeteContact::formattedName() const
 
 	first = property(QString::fromLatin1("firstName"));
 	last = property(QString::fromLatin1("lastName"));
-	if(!first.isNull())
+	if(!first.isEmpty())
 	{
-		if(!last.isNull()) // contact has both first and last name
+		if(!last.isEmpty()) // contact has both first and last name
 		{
 			ret = i18n("firstName lastName", "%2 %1")
 				.arg(last.value().toString())
@@ -771,7 +771,7 @@ QString KopeteContact::formattedName() const
 			ret = first.value().toString();
 		}
 	}
-	else if(!last.isNull()) // only last name set
+	else if(!last.isEmpty()) // only last name set
 	{
 		ret = last.value().toString();
 	}
