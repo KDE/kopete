@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=Spell Checking Plugin
+Icon=spellcheck
+ServiceTypes=Kopete/Plugin
+X-KDE-Library=kopete_spellcheck
+X-Kopete-Author=Jason Keirstead
+X-Kopete-Site=http://kopete.kde.org
+X-Kopete-Email=jason@keirstead.org
+X-Kopete-License=GPL
+Comment=Check the spelling of messages 
