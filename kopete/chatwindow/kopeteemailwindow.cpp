@@ -304,7 +304,7 @@ void KopeteEmailWindow::slotSmileyActivated(const QString &sm )
 
 void KopeteEmailWindow::slotConfKeys()
 {
-	KKeyDialog::configureKeys(actionCollection(), xmlFile(), true, this);
+	KKeyDialog::configure(actionCollection(), this, true);
 }
 
 void KopeteEmailWindow::slotConfToolbar()

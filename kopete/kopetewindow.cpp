@@ -370,7 +370,7 @@ void KopeteWindow::slotConfigChanged()
 
 void KopeteWindow::slotConfKeys()
 {
-	KKeyDialog::configureKeys(actionCollection(), xmlFile(), true, this);
+	KKeyDialog::configure(actionCollection(), this, true);
 }
 
 void KopeteWindow::slotConfGlobalKeys()
