@@ -32,6 +32,29 @@ Use cases
 
 9) A contact changes accounts (msn:foo@uncool.org -> foo@cool.org).  This is the same as 7) then 8).
 
+Implementation notes
+--------------------
+1) New MC.  Need dialogs to ask if association needed. Association dialog allows to select/search kabc contacts.  We need to write the kabc data sooner than closing Kopete!
+
+2) Same as 1)
+
+3) Not an issue given optional participation
+*) is orthogonal and can be dealt with separately.
+
+4) Deferred association
+
+5a) We don't want any Kopete specific data in the kabc.  Entries should be usable by other KDE IM apps.
+
+5b) The reverse case, therefore we should agree standard entry format with other apps.
+
+6) Question: how to combine all contacts in an MCs' data before saving this to kabc.
+
+7) Deferred association accessed via MC properties dialog
+
+8) Don't remove the kabc fields, other IM clients might be using them.
+
+Therefore we need an Association Dialog accessed in wizard and from the MC properties dialog.  Note, this name sucks, don't write any classes using it.
+
 Side Issues
 -----------
 
@@ -205,3 +228,5 @@ messenging/nickname    =>    Mr. X ; Mr. Y
 that looks fine, but how to make sure than Mr. X is for xxx@msn.com, imagine if we have icq contact, or other? (Gof)
 
 We should never store nicknames in kabc.  The metacontact name should be taken from the kabc formatted name (Will)
+
+Syncing contactlist info currently takes place when Kopete exits.  other kabc apps write kabc during their runs.  We will have to make changes to do this and to make sure that we don't try to write 200 kabc entries simultaneously with individual tickets after fetching the SSCL for a new account.
