@@ -516,35 +516,8 @@ void OscarAccount::slotGotServerBuddyList()
 	for (; it.current(); ++it)
 	{
 		OscarContact* c = static_cast<OscarContact*>((*it));
-		//get the metacontact so we can remove it if it's empty
-		KopeteMetaContact *oldMetaContact = c->metaContact();
-		if (oldMetaContact && !c->serverSide())
-		{
-			KopeteGroup *notOnSSIgroup = kcl->getGroup(i18n("Not on Server"));
-			KopeteGroupList groups = oldMetaContact->groups();
-			if ((groups.count() > 0) && (groups.first() == notOnSSIgroup))
-			{
-				// contact already on temporary group, aborting
-				continue;
-			}
-			else
-			{
-				kdDebug(14150) << "Contact not on SSI, moving '" <<
-					c->displayName() << "' to 'Not in server' group." << endl;
-
-				oldMetaContact->removeContact(c);
-				KopeteMetaContact* kmc = new KopeteMetaContact;
-				c->setMetaContact(kmc);
-				kmc->addToGroup(notOnSSIgroup);
-				kcl->addMetaContact(kmc);
-
-				if (oldMetaContact->contacts().isEmpty())
-				{
-					kcl->removeMetaContact(oldMetaContact);
-					delete oldMetaContact;
-				}
-			}
-		}
+		if ( !c->serverSide() )
+			c->setOnlineStatus( KopeteOnlineStatus::Unknown );
 	} // END for()
 
 	//reconnect the signal here so new stuff gets added
