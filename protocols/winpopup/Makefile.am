@@ -1,10 +1,9 @@
 METASOURCES = AUTO
 SUBDIRS = ui icons libwinpopup
 AM_CPPFLAGS = -I$(srcdir)/ui \
-	$(KOPETE_INCLUDES) \
-	-I$(srcdir)/ui \
 	-I./ui \
 	-I$(srcdir)/libwinpopup \
+	$(KOPETE_INCLUDES) \
 	$(all_includes)
 
 kde_module_LTLIBRARIES = kopete_wp.la

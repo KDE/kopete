@@ -8,7 +8,6 @@ AM_CPPFLAGS = -I$(kopete_srcdir)/kopete/conf \
 	-I$(kopete_srcdir)/libkopete/ui \
 	-I$(kopete_srcdir)/kopete/contactlist \
 	-I$(kopete_srcdir)/kopete/chatwindow \
-	-I$(kopete_srcdir)/kopete/conf \
 	-I$(kopete_builddir)/kopete/conf \
 	-I$(kopete_srcdir)/libkopete/private \
 	-I$(kopete_srcdir) \
