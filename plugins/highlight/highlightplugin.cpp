@@ -48,14 +48,9 @@ HighlightPlugin::HighlightPlugin( QObject *parent, const char *name, const QStri
 		pluginStatic_=this;
 
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( KopeteMessage & ) ), SLOT( slotIncomingMessage( KopeteMessage & ) ) );
-	
-	//add the default filter
-	Filter *filtre=newFilter();
-	filtre->search="kopete";
-	filtre->setFG=true;
-	filtre->FG=QColor(0x0000FF);
-	filtre->displayName="Kopete";
-	
+
+	load();
+
 	//TODO: found a pixmap
 	m_prefs = new HighlightPreferences ( "highlight", this );
 
@@ -153,12 +148,12 @@ void HighlightPlugin::save()
 			"<!DOCTYPE kopete-highlight-plugin>\n"
 			"<highlight-plugin>\n" );
 
-			// Save metacontact information.
+			// Save metafilter information.
 		QPtrListIterator<Filter> filtreIt( m_filters );
 		for( ; filtreIt.current(); ++filtreIt )
 		{
 			Filter *filtre = *filtreIt;
-			xml += QString::fromLatin1( "  <filtre>\n    <display-name>" ) 
+			xml += QString::fromLatin1( "  <filter>\n    <display-name>" ) 
 				+ QStyleSheet::escape(filtre->displayName)
 				+ QString::fromLatin1( "</display-name>\n" );
 				
@@ -177,7 +172,7 @@ void HighlightPlugin::save()
 			xml += QString::fromLatin1("    <sound set=\"") + QString::number( static_cast<int>( filtre->playSound ) ) +
 				QString::fromLatin1( "\">" ) + QStyleSheet::escape( filtre->soundFN ) + QString::fromLatin1( "</sound>\n" );
 			
-			xml += QString::fromLatin1( "  </filtre>\n" );
+			xml += QString::fromLatin1( "  </filter>\n" );
 		}
 	
 		xml += QString::fromLatin1( "</highlight-plugin>\n" );
@@ -189,6 +184,74 @@ void HighlightPlugin::save()
 
 void HighlightPlugin::load()
 {
+	QString filename = locateLocal( "appdata", QString::fromLatin1( "highlight.xml" ) );
+	if( filename.isEmpty() )
+		return ;
+
+	QDomDocument filterList( QString::fromLatin1( "highlight-plugin" ) );
+
+	QFile filterListFile( filename );
+	filterListFile.open( IO_ReadOnly );
+	filterList.setContent( &filterListFile );
+
+	QDomElement list = filterList.documentElement();
+
+	QDomNode node = list.firstChild();
+	while( !node.isNull() )
+	{
+		QDomElement element = node.toElement();
+		if( !element.isNull() )
+		{
+//			if( element.tagName() == QString::fromLatin1("filter") 
+//			{
+				Filter *filtre=newFilter();
+				QDomNode filterNode = node.firstChild();
+				
+				while( !filterNode.isNull() )
+				{
+					QDomElement filterElement = filterNode.toElement();
+					if( !filterElement.isNull() )
+					{
+						if( filterElement.tagName() == QString::fromLatin1( "display-name" ) )
+						{
+							filtre->displayName = filterElement.text();
+						}
+						else if( filterElement.tagName() == QString::fromLatin1( "search" ) )
+						{
+							filtre->search = filterElement.text();
+
+							filtre->caseSensitive= ( filterElement.attribute( QString::fromLatin1( "caseSensitive" ), QString::fromLatin1( "1" ) ) == QString::fromLatin1( "1" ) );
+							filtre->isRegExp= ( filterElement.attribute( QString::fromLatin1( "regExp" ), QString::fromLatin1( "0" ) ) == QString::fromLatin1( "1" ) );
+						}
+						else if( filterElement.tagName() == QString::fromLatin1( "FG" ) )
+						{
+							filtre->FG = filterElement.text();
+							filtre->setFG= ( filterElement.attribute( QString::fromLatin1( "set" ), QString::fromLatin1( "0" ) ) == QString::fromLatin1( "1" ) );
+						}
+						else if( filterElement.tagName() == QString::fromLatin1( "BG" ) )
+						{
+							filtre->BG = filterElement.text();
+							filtre->setBG= ( filterElement.attribute( QString::fromLatin1( "set" ), QString::fromLatin1( "0" ) ) == QString::fromLatin1( "1" ) );
+						}
+						else if( filterElement.tagName() == QString::fromLatin1( "importance" ) )
+						{
+							filtre->importance = filterElement.text().toUInt();
+							filtre->setImportance= ( filterElement.attribute( QString::fromLatin1( "set" ), QString::fromLatin1( "0" ) ) == QString::fromLatin1( "1" ) );
+						}
+						else if( filterElement.tagName() == QString::fromLatin1( "sound" ) )
+						{
+							filtre->soundFN = filterElement.text();
+							filtre->playSound = ( filterElement.attribute( QString::fromLatin1( "set" ), QString::fromLatin1( "0" ) ) == QString::fromLatin1( "1" ) );
+						}
+					}
+					filterNode = filterNode.nextSibling();
+				}
+//			}
+		}
+		node = node.nextSibling();
+	}
+	filterListFile.close();
+
 }
 
 
