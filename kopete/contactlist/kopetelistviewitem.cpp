@@ -236,7 +236,7 @@ int BoxComponent::widthForHeight( int height )
 	if ( d->direction != Horizontal )
 		return Component::widthForHeight( height );
 
-	int width = components() * Private::padding;
+	int width = (components() - 1) * Private::padding;
 	for ( uint n = 0; n < components(); ++n )
 		width += component( n )->widthForHeight( height );
 	return width;
@@ -247,7 +247,7 @@ int BoxComponent::heightForWidth( int width )
 	if ( d->direction == Horizontal )
 		return Component::heightForWidth( width );
 
-	int height = components() * Private::padding;
+	int height = (components() - 1) * Private::padding;
 	for ( uint n = 0; n < components(); ++n )
 		height += component( n )->heightForWidth( width );
 	return height;
@@ -255,7 +255,7 @@ int BoxComponent::heightForWidth( int width )
 
 void BoxComponent::calcMinSize()
 {
-	int sum = components() * Private::padding, max = 0;
+	int sum = (components() - 1) * Private::padding, max = 0;
 	bool stretchH = false, stretchV = false;
 	for ( uint n = 0; n < components(); ++n )
 	{
@@ -318,7 +318,7 @@ void BoxComponent::layout( const QRect &rect )
 	int numFixed = components() - numVariable;
 
 	// remaining space after all fixed items have been allocated
-	const int padding = Private::padding;
+	int padding = Private::padding;
 
 	// ensure total is at least minXXX. the only time the rect
 	// will be smaller than that is when we don't fit, and in
@@ -329,14 +329,14 @@ void BoxComponent::layout( const QRect &rect )
 	else
 		total = QMAX( rect.height(), minHeight() );
 
-	int remaining = total - fixedSize - padding * components();
+	int remaining = total - fixedSize - padding * (components() - 1);
 
 	// extra space for each variable-size and each fixed-size item
-	int eachVariable = padding, eachFixed = padding;
+	int eachVariable = 0;
 	if ( numVariable > 0 )
-		eachVariable = remaining / numVariable + padding;
-	else if ( numFixed > 0 )
-		eachFixed = remaining / numFixed + padding;
+		eachVariable = remaining / numVariable;
+	else if ( numFixed > 1 )
+		padding += remaining / ( numFixed - 1 );
 
 	// finally, lay everything out
 	int pos = 0;
@@ -352,7 +352,7 @@ void BoxComponent::layout( const QRect &rect )
 			if ( comp->stretchHoriz() )
 				rc.setWidth( comp->minWidth() + eachVariable );
 			else
-				rc.setWidth( comp->minWidth() + eachFixed );
+				rc.setWidth( comp->minWidth() );
 			pos += rc.width();
 		}
 		else
@@ -363,10 +363,11 @@ void BoxComponent::layout( const QRect &rect )
 			if ( comp->stretchVert() )
 				rc.setHeight( comp->minHeight() + eachVariable );
 			else
-				rc.setHeight( comp->minHeight() + eachFixed );
+				rc.setHeight( comp->minHeight() );
 			pos += rc.height();
 		}
 		comp->layout( rc & rect );
+		pos += padding;
 	}
 }
 
