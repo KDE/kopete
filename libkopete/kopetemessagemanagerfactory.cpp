@@ -167,7 +167,7 @@ void KopeteMessageManagerFactory::cleanSessions( KopeteProtocol *protocol )
 	for ( ; it.current() ; ++it )
 	{
 		kdDebug( 14010 ) << k_funcinfo << "Unloading KMM " << it.current()->user()->displayName() << endl;
-		it.current()->deleteLater();
+		delete it.current();
 	}
 }
 
