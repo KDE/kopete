@@ -96,6 +96,12 @@ void KopetePrefs::load()
 	{
 		mToolTipContents
 			<< QString::fromLatin1("FormattedName")
+			<< QString::fromLatin1("userInfo")
+			<< QString::fromLatin1("server")
+			<< QString::fromLatin1("channels")
+			<< QString::fromLatin1("FormattedIdleTime")
+			<< QString::fromLatin1("channelMembers")
+			<< QString::fromLatin1("channelTopic")
 			<< QString::fromLatin1("emailAddress")
 			<< QString::fromLatin1("onlineSince")
 			<< QString::fromLatin1("awayMessage");
