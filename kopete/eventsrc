@@ -282,7 +282,11 @@ default_presentation=1
 [msn_mail]
 Name=MSN Mail
 Name[ca]=Correu de MSN
+Name[es]=MSN correo
+Name[pt]=E-mail MSN
 Comment=A new email arrived in your MSN inbox
 Comment[ca]=Ha arribat un nou correu a la vostra bústia de MSN
+Comment[es]=Un nuevo correo ha llegado a su buzón MSN.
+Comment[pt]=Chegou um nome e-mail à sua caixa de correio MSN
 Comment[pt_BR]=Um novo e-mail chegou em sua caixa de entrada MSN
 default_presentation=2
