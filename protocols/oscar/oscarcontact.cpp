@@ -273,7 +273,7 @@ void OscarContact::slotDeleteContact()
 // Called when the metacontact owning this contact has changed groups
 void OscarContact::syncGroups()
 {
-	if (!metaContact() || !this->serverSide())
+	if (!metaContact())
 		return;
 
 	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() <<
@@ -339,7 +339,8 @@ void OscarContact::syncGroups()
 	else
 	{
 		kdDebug(14150) << k_funcinfo <<
-			"Contact must be in BLM. Doing nothing" << endl;
+			"Contact not on server. Adding it." << endl;
+		mAccount->engine()->sendAddBuddy(contactId(), firstKopeteGroup->displayName(), false);
 	}
 
 	/*kdDebug(14150) << k_funcinfo << "SSI Data after change of group" << endl;
