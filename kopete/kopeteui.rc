@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kopete" version="15">
+<kpartgui name="kopete" version="16">
 	<MenuBar>
 		<Menu name="file" noMerge="1">
 			<text>&amp;File</text>
