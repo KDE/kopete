@@ -1,4 +1,4 @@
-SUBDIRS = ui
+SUBDIRS = ui .
 METASOURCES = AUTO
 AM_CPPFLAGS = -I$(srcdir)/../ \
 	-I$(srcdir)/ui/ \
@@ -19,3 +19,6 @@ kopete_icq_la_LIBADD  = ../libkopete_oscar.la ui/libkopeteicqui.la \
 
 service_DATA = kopete_icq.desktop
 servicedir = $(kde_servicesdir)
+
+mime_DATA = x-icq.desktop
+mimedir = $(kde_mimedir)/application

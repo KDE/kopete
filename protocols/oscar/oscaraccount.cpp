@@ -795,7 +795,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 				return false;
 
 			// Get user status through BLM if contact is temporary (ICQ only)
-			if ( engine()->isICQ() )
+			if (engine()->isICQ())
 				engine()->sendAddBuddylist(tocNormalize(contactId));
 
 			// Set it's initial status

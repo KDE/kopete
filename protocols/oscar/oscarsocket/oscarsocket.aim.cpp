@@ -170,6 +170,9 @@ void OscarSocket::parseWarningNotify(Buffer &inbuf)
 
 void OscarSocket::sendUserLocationInfoRequest(const QString &name, WORD type)
 {
+	if (mIsICQ) // does not work on ICQ
+		return;
+
 	// docs: http://iserverd.khstu.ru/oscar/snac_02_05.html
 	kdDebug(14150) << k_funcinfo <<
 		"SEND CLI_LOCATIONINFOREQ for '" << name << "'" << endl;
