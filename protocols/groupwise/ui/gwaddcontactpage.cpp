@@ -24,6 +24,7 @@
 #include <qlayout.h>
 #include <qlineedit.h>
 #include <qradiobutton.h>
+#include <qtabwidget.h>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -32,6 +33,7 @@
 #include "kopetemetacontact.h"
 
 #include "gwerror.h"
+#include "gwsearchwidget.h"
 
 #include "gwaddui.h"
 
@@ -45,6 +47,10 @@ GroupWiseAddContactPage::GroupWiseAddContactPage( KopeteAccount * owner, QWidget
 		m_gwAddUI = new GroupWiseAddUI( this );
 		connect( m_gwAddUI->rb_userId, SIGNAL( toggled( bool ) ), SLOT( slotAddMethodChanged() ) );
 		connect( m_gwAddUI->rb_userName, SIGNAL( toggled( bool ) ), SLOT( slotAddMethodChanged() ) );
+		
+		// add search widget
+		( new QVBoxLayout( m_gwAddUI->m_tabWidget->page( 1 ) ) )->setAutoAdd( true );
+		new GWSearchWidget( m_gwAddUI->m_tabWidget->page( 1 ) );
 		m_gwAddUI->show ();
 
 		m_canadd = true;

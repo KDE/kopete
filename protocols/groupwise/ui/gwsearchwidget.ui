@@ -1,0 +1,375 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>GWSearchWidget</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>GWSearchWidget</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>600</width>
+            <height>480</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string></string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout2</cstring>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QComboBox" row="3" column="1">
+                    <item>
+                        <property name="text">
+                            <string>begins with</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>contains</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>equals</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>comboBox1_4</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="2" column="2">
+                    <property name="name">
+                        <cstring>lineEdit3</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>textLabel3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;User ID:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>comboBox1_5</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="4" column="2">
+                    <property name="name">
+                        <cstring>lineEdit5</cstring>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="1" column="1">
+                    <item>
+                        <property name="text">
+                            <string>begins with</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>contains</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>equals</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>comboBox1_6</cstring>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="0" column="1">
+                    <item>
+                        <property name="text">
+                            <string>begins with</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>contains</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>equals</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>comboBox1</cstring>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="2" column="1">
+                    <item>
+                        <property name="text">
+                            <string>begins with</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>contains</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>equals</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>comboBox1_5</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>textLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Last Name:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>comboBox1_6</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;First Name</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>comboBox1</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>textLabel4</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Title:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>comboBox1_4</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="4" column="0">
+                    <property name="name">
+                        <cstring>textLabel5</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Department</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>comboBox1_3</cstring>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="4" column="1">
+                    <item>
+                        <property name="text">
+                            <string>begins with</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>contains</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>equals</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>comboBox1_3</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="1" column="2">
+                    <property name="name">
+                        <cstring>lineEdit2</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="0" column="2">
+                    <property name="name">
+                        <cstring>lineEdit1</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="3" column="2">
+                    <property name="name">
+                        <cstring>lineEdit4</cstring>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="Line">
+            <property name="name">
+                <cstring>line1</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel9</cstring>
+            </property>
+            <property name="text">
+                <string>Results:</string>
+            </property>
+        </widget>
+        <widget class="QListView">
+            <column>
+                <property name="text">
+                    <string>Status</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>First Name</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Last Name</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>User ID</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <property name="name">
+                <cstring>listView1</cstring>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout6</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout4</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel8</cstring>
+                            </property>
+                            <property name="text">
+                                <string>0</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel6</cstring>
+                            </property>
+                            <property name="text">
+                                <string>matching users found</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel8_2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>0</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel7</cstring>
+                            </property>
+                            <property name="text">
+                                <string>selected</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer3</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>71</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>pushButton1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Details...</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+    </vbox>
+</widget>
+<tabstops>
+    <tabstop>comboBox1</tabstop>
+    <tabstop>lineEdit1</tabstop>
+    <tabstop>comboBox1_6</tabstop>
+    <tabstop>lineEdit2</tabstop>
+    <tabstop>comboBox1_5</tabstop>
+    <tabstop>lineEdit3</tabstop>
+    <tabstop>comboBox1_4</tabstop>
+    <tabstop>lineEdit4</tabstop>
+    <tabstop>comboBox1_3</tabstop>
+    <tabstop>lineEdit5</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
