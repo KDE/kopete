@@ -2,10 +2,10 @@ Now Listening Plugin
 
 What It Does
 
-This plugin tells your chat buddies what media (music, ...) you are currently enjoying.  When a new track begins, it automatically sends a message (user defined?) of the form *Nick* is now listening to Artist - Song
+This plugin tells your chat buddies what media (music, ...) you are currently enjoying.  If you turn on "Now Listening" for a contact, when a new track begins, it automatically sends a user defined message.
 
 How It Does It
-Looks for running KDE media applications (Noatun, Kscd) using DCOP and asks them what track they are currently playing.  A polling mechanism is used to discover the current track, and if it has changed, it is advertised in all live chatwindows.
+Looks for running media applications (Noatun, Kscd, Xmms) using DCOP and asks them what track they are currently playing.  The current track is discovered on a periodic basis, and if it has changed, it is advertised in live chatwindows to contacts that the user has indicated should be notified.
 
 Fair Points
 Do we want to tell ALL chat partners what we're listening to?
@@ -40,8 +40,11 @@ KopetePlugin::custom[Chat|ContextMenuActions] both return a set of KActions that
 
 Choosing whether to advertise to all contacts
 We can either advertise periodically to (some) contacts, or we could just add an Action to advertise what we're currently listening to.
+DONE
 
 Maybe need a per-contact toggle, and a per-chat button to advertise.
+DONE
 
 Customising the advert message
+DONE
 Maybe provide substitution as in "Now listening to %track by %artist (on %album)".  Here () indicates substitute whole clause only if enclosed variable is set.
