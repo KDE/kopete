@@ -3,6 +3,7 @@
 
 class QString;
 class KopeteAway;
+class KConfig;
 
 #include "kopeteawaydialogbase.h"
 
@@ -15,6 +16,7 @@ class KopeteAwayDialog : public KopeteAwayBase
 	
 	private:
 	KopeteAway *awayInstance;
+	KConfig *config;
 	
 	private slots:
 		void slotOkayClicked();

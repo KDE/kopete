@@ -1,7 +1,6 @@
 #include "kopeteaway.h"
 
 #include <qstring.h>
-#include <kglobal.h>
 #include <kconfig.h>
 #include <qmultilineedit.h>
 
@@ -12,9 +11,7 @@ KopeteAway *KopeteAway::instance = 0L;
 
 KopeteAway::KopeteAway()
 {
-	config = KGlobal::config();
-	config->setGroup("");
-	mAwayMessage = config->readEntry ( "AwayMessage", "I'm currently away" );
+	mAwayMessage = "";
 	mGlobalAway = false;
 }
 
@@ -26,7 +23,6 @@ QString KopeteAway::message()
 void KopeteAway::show()
 {
 	KopeteAwayDialog awaydialog;
-	awaydialog.mleMessage->setText(getInstance()->mAwayMessage);
 	awaydialog.exec();
 }
 

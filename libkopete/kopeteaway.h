@@ -20,7 +20,6 @@ friend class KopeteAwayDialog;
 	KopeteAway();
 	static KopeteAway *instance;
 	QString mAwayMessage;
-	KConfig *config;
 	bool mGlobalAway;
 };
 
