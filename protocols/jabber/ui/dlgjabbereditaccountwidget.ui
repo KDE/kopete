@@ -156,9 +156,6 @@
                                 <property name="text">
                                     <string>Connect automatically at &amp;startup</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+S</string>
-                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to connect automatically when Kopete is started.</string>
                                 </property>
@@ -272,9 +269,6 @@
                                 </property>
                                 <property name="text">
                                     <string>&amp;Override default server information</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+O</string>
                                 </property>
                             </widget>
                             <widget class="QLayoutWidget">
