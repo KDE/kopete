@@ -94,10 +94,8 @@ KopeteMessageManager::~KopeteMessageManager()
 void KopeteMessageManager::slotOnlineStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus )
 {
 	kdDebug( 14010 ) << k_funcinfo << endl;
-	if ( c == d->mUser )
+	if ( c == d->mUser && KopetePrefs::prefs()->notifyAway() )
 	{
-		if ( !KopetePrefs::prefs()->notifyAway() )
-			return;
 		if ( status.status() == KopeteOnlineStatus::Away )
 		{
 			d->awayTime = QDateTime::currentDateTime();
