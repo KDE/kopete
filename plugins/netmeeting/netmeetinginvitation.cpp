@@ -20,6 +20,7 @@
 #include "msnmessagemanager.h"
 #include "msnswitchboardsocket.h"
 #include "msncontact.h"
+#include "kopetemetacontact.h"
 
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -60,7 +61,7 @@ void NetMeetingInvitation::parseInvitation(const QString& msg)
 		MSNInvitation::parseInvitation(msg); //for the cookie
 
 		unsigned int result = KMessageBox::questionYesNo( Kopete::UI::Global::mainWidget(),
-					i18n("%1 wants to start a chat with GnomeMeeting. Do you want to accept it? " ).arg(m_contact->displayName()),
+					i18n("%1 wants to start a chat with GnomeMeeting. Do you want to accept it? " ).arg(m_contact->metaContact()->displayName()),
 					i18n("MSN Plugin") , i18n("Accept"),i18n("Refuse"));
 
 		MSNMessageManager* manager=dynamic_cast<MSNMessageManager*>(m_contact->manager());
