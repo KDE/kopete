@@ -91,6 +91,7 @@ private slots:
 	void slotMeCommand( const QString &args, KopeteMessageManager *manager);
 	void slotModeCommand( const QString &args, KopeteMessageManager *manager);
 	void slotQueryCommand( const QString &args, KopeteMessageManager *manager);
+	void slotMOTDCommand( const QString &args, KopeteMessageManager *manager);
 
 	void slotKickCommand( const QString &args, KopeteMessageManager *manager);
 	void slotBanCommand( const QString &args, KopeteMessageManager *manager);

@@ -87,7 +87,7 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 	addIrcMethod("NOTICE",	&KIRC::notice,		1,	1);
 
 //	Server queries and commands
-
+	
 //	Service Query and Commands
 
 //	User based queries
@@ -687,6 +687,12 @@ void KIRC::list()
 {
 	writeMessage("LIST");
 }
+
+void KIRC::motd()
+{
+	writeMessage("MOTD");
+}
+
 /*
 void KIRC::invite()
 {
