@@ -89,20 +89,21 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 
 	initActions();
 	TBuddy tmpBuddy;
-	int num = mProtocol->buddyList()->getNum(mName);
-	if ( mProtocol->buddyList()->get(&tmpBuddy, num) != -1 )
+	int num = mProtocol->buddyList()->getNum( mName );
+	if( mProtocol->buddyList()->get( &tmpBuddy, num ) != -1 )
 	{
-		if ( !tmpBuddy.alias.isEmpty() ){
-			setDisplayName(tmpBuddy.alias);
-		} else {
-			setDisplayName(tmpBuddy.name);
-		}
+		if ( !tmpBuddy.alias.isEmpty() )
+			setDisplayName( tmpBuddy.alias );
+		else
+			setDisplayName( tmpBuddy.name );
 
-		slotUpdateBuddy(num);
-	}	else 	{
-		setDisplayName(mName);
+		slotUpdateBuddy( num );
 	}
-	theContacts.append(this);
+	else
+	{
+		setDisplayName( mName );
+	}
+	theContacts.append( this );
 }
 
 OscarContact::~OscarContact()
