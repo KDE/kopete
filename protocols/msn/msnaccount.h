@@ -57,7 +57,7 @@ public:
 	 */
 	void setPublicName( const QString &name );
 
-	MSNNotifySocket *notifySocket() const;
+	MSNNotifySocket *notifySocket();
 
 	// FIXME: Make generic - Martijn
 	void setOnlineStatus( const KopeteOnlineStatus &status );

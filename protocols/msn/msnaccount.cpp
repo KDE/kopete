@@ -182,7 +182,7 @@ KActionMenu* MSNAccount::actionMenu()
 	return m_actionMenu;
 }
 
-MSNNotifySocket *MSNAccount::notifySocket() const
+MSNNotifySocket *MSNAccount::notifySocket() 
 {
 	return m_notifySocket;
 }
