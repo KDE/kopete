@@ -42,7 +42,7 @@ IRCProtocol::IRCProtocol(): QObject(0, "IRC"), IMProtocol()
 	statusBarIcon = new StatusBarIcon();
 
 	kdDebug() << "IRC Protocol Plugin: Setting icon offline\n";
-	statusBarIcon->setPixmap(offlineIcon);
+	statusBarIcon->setPixmap(protocolSmallIcon);
 
 	kdDebug() << "IRC Protocol Plugin: Creating Config Module\n";
 	new IRCPreferences(protocolIcon, this);
@@ -168,6 +168,7 @@ void IRCProtocol::initIcons()
 	KIconLoader *loader = KGlobal::iconLoader();
 
 	protocolIcon = QPixmap(loader->loadIcon("irc_protocol", KIcon::User));
+	protocolSmallIcon = QPixmap(loader->loadIcon("irc_protocol_small", KIcon::User));
 	onlineIcon = QPixmap(loader->loadIcon("irc_online", KIcon::User));
 	offlineIcon = QPixmap(loader->loadIcon("irc_offline", KIcon::User));
 	awayIcon = QPixmap(loader->loadIcon("irc_away", KIcon::User));

@@ -52,6 +52,7 @@ public:
 	StatusBarIcon *statusBarIcon;
 	/** The IRC Engine */
 	QPixmap protocolIcon;
+	QPixmap protocolSmallIcon;
 	QPixmap onlineIcon;
 	QPixmap offlineIcon;
 	QPixmap awayIcon;
