@@ -380,19 +380,19 @@ void OscarSocket::slotRead()
 						case 0x0001: //msg error
 							parseError(s.family, inbuf);
 							break;
-						case 0x0005: //msg rights
+						case 0x0005: //msg rights SNAC(4,5)
 							parseMsgRights(inbuf);
 							break;
-						case 0x0007: //incoming IM
+						case 0x0007: //incoming IM SNAC(4,7)
 							parseIM(inbuf);
 							break;
-						case 0x000a: //missed messages
+						case 0x000a: //missed messages SNAC(4,10)
 							parseMissedMessage(inbuf);
 							break;
-						case 0x000b: // message ack
+						case 0x000b: // message ack SNAC(4,11)
 							parseMsgAck(inbuf);
 							break;
-						case 0x000c: // server ack for type-2 message
+						case 0x000c: // server ack for type-2 message SNAC(4,12)
 							parseSrvMsgAck(inbuf);
 							break;
 						case 0x0014: // Mini-Typing notification
@@ -1611,9 +1611,9 @@ void OscarSocket::parseIM(Buffer &inbuf)
 		{
 			if (mIsICQ) // TODO: unify AIM and ICQ in this place
 			{
-				//kdDebug(14150) << k_funcinfo << "IM received on channel 2 from '" << u.sn << "'" << endl;
+				kdDebug(14150) << k_funcinfo << "IM received on channel 2 from '" << u.sn << "'" << endl;
 				TLV tlv5tlv = inbuf.getTLV();
-				//kdDebug(14150) << k_funcinfo << "The first TLV is of type " << tlv5tlv.type << endl;
+				kdDebug(14150) << k_funcinfo << "The first TLV is of type " << tlv5tlv.type << endl;
 				if (tlv5tlv.type != 0x0005)
 				{
 					kdDebug(14150) << k_funcinfo << "Aborting because first TLV != TLV(5)" << endl;
@@ -1633,7 +1633,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 				lst.setAutoDelete(TRUE);
 
 				TLV *msgTLV = findTLV(lst,0x2711);  //message tlv
-				if (!msgTLV)
+				if(!msgTLV)
 				{
 					kdDebug(14150) << k_funcinfo << "Aborting because TLV(10001) wasn't found (no message?)" << endl;
 					break;
@@ -2631,7 +2631,6 @@ void OscarSocket::parseSrvMsgAck(Buffer &inbuf)
 
 void OscarSocket::parseMsgAck(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo << "RECV (ACKMSG)..." << endl;
 
 	WORD sublen, seq2;
 	BYTE msgFlags, msgType;
@@ -2668,8 +2667,8 @@ void OscarSocket::parseMsgAck(Buffer &inbuf)
 	delete [] txtStr;
 
 	kdDebug(14150) << k_funcinfo << "RECV (ACKMSG) uin=" << uin <<
-		" msgType=" << msgType << " msgFlags=" << msgFlags <<
-		" msgStatus=" << msgStatus << " msgPrio=" << msgPrio <<
+		" msgType=" << (int)msgType << " msgFlags=" << (int)msgFlags <<
+		" msgStatus=" << (int)msgStatus << " msgPrio=" << (int)msgPrio <<
 		" text='"  << text << "'" << endl;
 
 	if(msgFlags == MSG_FLAG_GETAUTO)

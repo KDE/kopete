@@ -761,10 +761,12 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 {
 	WORD ackStatus = P2P_ONLINE;
 	WORD ackFlags = 0x0000;
-	QString ackMessage = QString::fromLatin1("");
+	QString ackMessage("");
 	bool sendAck = true;
 
 	kdDebug(14150) << k_funcinfo << "RECV TYPE-2 message" << endl;
+
+	kdDebug(14150) << "packet:" << endl << messageBuf.toString() << endl;
 
 	if(mAccount->myself()->onlineStatus().internalStatus() == OSCAR_NA)
 		ackStatus = P2P_NA;
@@ -792,10 +794,10 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 	WORD priority = messageBuf.getLEWord();
 
 	kdDebug(14150) << k_funcinfo <<
-		"msgType=" << msgType <<
-		", msgFlags=" << msgFlags <<
-		", status=" << status <<
-		", priority=" << priority << endl;
+		"msgType=" << (int)msgType <<
+		", msgFlags=" << (int)msgFlags <<
+		", status=" << (int)status <<
+		", priority=" << (int)priority << endl;
 
 	const char *messagetext = messageBuf.getLNTS();
 
@@ -807,6 +809,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 		case MSG_GET_DND:
 		case MSG_GET_FFC:
 		{
+			kdDebug(14150) << k_funcinfo << "RECV TYPE-2 IM, away message request" << endl;
 			ackMessage = mAccount->awayMessage();
 			break;
 		}
@@ -821,14 +824,17 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 			BYTE r = messageBuf.getLEByte();
 			BYTE g = messageBuf.getLEByte();
 			BYTE b = messageBuf.getLEByte();
-			/*BYTE n =*/ messageBuf.getLEByte();
-			//kdDebug(14150) << k_funcinfo << "fg color=(" << r << ", " << g << ", " << b << ", " << n << ")" << endl;
+			BYTE n = messageBuf.getLEByte();
+			kdDebug(14150) << k_funcinfo << "fg color=(" << (int)r << ", " << (int)g << ", " << (int)b <<
+				", " << (int)n << ")" << endl;
 			oMsg.fgColor.setRgb((int)r, (int)g, (int)b);
 
 			r = messageBuf.getLEByte();
 			g = messageBuf.getLEByte();
 			b = messageBuf.getLEByte();
-			/*n =*/ messageBuf.getLEByte();
+			n = messageBuf.getLEByte();
+			kdDebug(14150) << k_funcinfo << "bg color=(" << (int)r << ", " << (int)g << ", " << (int)b <<
+				", " << (int)n << ")" << endl;
 			oMsg.bgColor.setRgb((int)r, (int)g, (int)b);
 
 			bool utf = false;

@@ -459,10 +459,11 @@ char *Buffer::getLELNTS()
 int Buffer::addLNTS(const char *s)
 {
 	unsigned int len = strlen(s);
-	int ret = addLEWord(len+1);
+
+	addLEWord(len+1);
 	if(len > 0)
-		ret = addString(s, len);
-	ret = addByte(0x00);
+		addString(s, len);
+	int ret = addByte(0x00);
 	return ret;
 }
 

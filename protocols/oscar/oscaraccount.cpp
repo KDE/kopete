@@ -50,6 +50,7 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 	mIgnoreUnknownContacts = false;
 	mAreIdle = false;
 	lastIdleValue = 0;
+	mAwayMessage = "";
 
 	initEngine(isICQ); // Initialize the backend
 
