@@ -39,6 +39,7 @@
 
 #include "tasks/createcontactinstancetask.h"
 #include "tasks/deleteitemtask.h"
+#include "tasks/movecontacttask.h"
 #include "tasks/updatecontacttask.h"
 
 #include "client.h"
@@ -58,7 +59,7 @@ GroupWiseContact::GroupWiseContact( KopeteAccount* account, const QString &dn,
 			KopeteMetaContact *parent, 
 			const int objectId, const int parentId, const int sequence )
 : KopeteContact( account, GroupWiseProtocol::dnToDotted( dn ), parent ), m_objectId( objectId ), m_parentId( parentId ),
-  m_sequence( sequence ), m_actionBlock( 0 ), m_archiving( false )
+  m_sequence( sequence ), m_actionBlock( 0 ), m_archiving( false ), m_deleting( false )
 {
 	//kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " id supplied: " << dn << endl;
 	if ( dn.find( '=' ) != -1 )
@@ -379,6 +380,7 @@ void GroupWiseContact::slotDeleteContact()
 	// remove all the instances of this contact from the server's contact list
 	QValueListConstIterator< ContactListInstance > it = m_instances.begin();
 	const QValueListConstIterator< ContactListInstance > end = m_instances.end();
+	m_deleting = true;
 	for ( ; it != end; ++it )
 	{
 		DeleteItemTask * dit = new DeleteItemTask( account()->client()->rootTask() );
@@ -393,7 +395,7 @@ void GroupWiseContact::receiveContactDeleted( const ContactItem & instance )
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	removeCLInstance( instance.id );
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << contactId() << " now has " << m_instances.count() << " instances remaining." << endl;
-	if ( m_instances.count() == 0 )
+	if ( m_instances.count() == 0 && m_deleting )
 		deleteLater();
 }
 
@@ -477,9 +479,22 @@ void GroupWiseContact::syncGroups()
 			QPtrListIterator< KopeteGroup > candidateGrp( groupList );
 			candidateGrp = grpIt;
 			++grpIt;
-			
 			QValueList< ContactListInstance >::Iterator instIt = contactInstanceList.begin();
+
 			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - moving contact instance from group '" << (*instIt).parentId << "' to group '" << ( *candidateGrp )->pluginData( protocol(), account()->accountId() + " objectId" ) << "'" << endl;
+
+			ContactItem instance;
+			instance.id = ( *instIt ).objectId;
+			instance.parentId = ( *instIt ).parentId;
+			instance.sequence = ( *instIt ).sequence;
+			instance.dn = m_dn;
+			instance.displayName = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+
+			MoveContactTask * mit = new MoveContactTask( account()->client()->rootTask() );
+			mit->moveContact( instance, ( *candidateGrp )->pluginData( protocol(), account()->accountId() + " objectId" ).toInt() );
+			connect( mit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
+			mit->go();
+
 			groupList.remove( candidateGrp );
 			contactInstanceList.remove( instIt );
 		}
@@ -495,7 +510,7 @@ void GroupWiseContact::syncGroups()
 			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "  - add a contact instance for group '" << ( *candidateGrp )->pluginData( protocol(), account()->accountId() + " objectId" ) << "'" << endl;
 
 			CreateContactInstanceTask * ccit = new CreateContactInstanceTask( account()->client()->rootTask() );
-			// connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), SLOT( slotContactAdded( const ContactItem & ) ) );
+			connect( ccit, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
 
 			// does this group exist on the server?  Create the contact appropriately
 			bool ok = false;

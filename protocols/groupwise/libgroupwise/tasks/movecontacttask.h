@@ -21,21 +21,29 @@
 #ifndef MOVECONTACTTASK_H
 #define MOVECONTACTTASK_H
 
-#include <modifycontactlisttask.h>
+#include "needfoldertask.h"
 
 /**
 Moves a contact between folders on the server
 
 @author SUSE AG
 */
-class MoveContactTask : public ModifyContactListTask
+class MoveContactTask : public NeedFolderTask
 {
 Q_OBJECT
 public:
 	MoveContactTask(Task* parent);
-
 	~MoveContactTask();
-
+	void moveContact( const ContactItem & contact, const int newParent );
+	void moveContactToNewFolder( const ContactItem & contact, const int newSequenceNumber, const QString & folderDisplayName );
+	void onGo();
+protected:
+	void onFolderCreated();
+private:
+	int m_targetFolder;
+	QString m_dn;
+	QString m_displayName;
+	
 };
 
 #endif

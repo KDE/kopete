@@ -226,6 +226,9 @@ protected:
 	// Unfortunately we don't the domain of the set of keys, so they are not easily mappable to KopeteContactProperties
 	QMap< QString, QString > m_serverProperties;
 	bool m_archiving;
+	// HACK: flag used to differentiate between 'all contact list instances gone while we are moving on the server' 
+	// and 'all contact list instances gone because we wanted to delete them all'
+	bool m_deleting;
 };
 
 #endif
