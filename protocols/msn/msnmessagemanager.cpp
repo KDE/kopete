@@ -122,8 +122,7 @@ void MSNMessageManager::createChat( const QString &handle,
 {
 	if( m_chatService )
 	{
-		kdDebug(14140) << "MSNMessageManager::createChat: "
-			<< "Service already exists, disconnect them." << endl;
+		kdDebug(14140) << k_funcinfo << "Service already exists, disconnect them." << endl;
 		delete m_chatService;
 	}
 
@@ -184,7 +183,7 @@ void MSNMessageManager::slotUserLeft( const QString &handle, const QString& reas
 
 void MSNMessageManager::slotSwitchBoardClosed()
 {
-	kdDebug(14140) << "MSNMessageManager::slotSwitchBoardClosed"  << endl;
+	//kdDebug(14140) << "MSNMessageManager::slotSwitchBoardClosed"  << endl;
 	m_chatService->deleteLater();
 	m_chatService=0l;
 
@@ -210,7 +209,7 @@ void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageMana
 		if(id == -1)
 		{
 			m_messagesQueue.append(message);
-			kdDebug(14140) << "MSNMessageManager::slotMessageSent: message added to the queue" <<endl;
+			kdDebug(14140) << k_funcinfo << "Message added to the queue" <<endl;
 		}
 		else if( id== -2 ) //the message has not been sent
 		{
@@ -296,7 +295,7 @@ void MSNMessageManager::slotActionInviteAboutToShow()
 
 void MSNMessageManager::slotCloseSession()
 {
-	kdDebug(14140) << "MSNMessageManager::slotCloseSession: " << m_chatService <<endl;
+	kdDebug(14140) << k_funcinfo  << m_chatService <<endl;
 	if(m_chatService)
 		m_chatService->slotCloseSession();
 }
@@ -337,10 +336,10 @@ void MSNMessageManager::sendMessageQueue()
 {
 	if(!m_chatService)
 	{
-		kdDebug(14140) << "MSNMessageManager::sendMessageQueue: service doesn't exist" <<endl;
+		kdDebug(14140) <<k_funcinfo << "Service doesn't exist" <<endl;
 		return;
 	}
-	kdDebug(14140) << "MSNMessageManager::sendMessageQueue: " << m_messagesQueue.count() <<endl;
+//	kdDebug(14140) << "MSNMessageManager::sendMessageQueue: " << m_messagesQueue.count() <<endl;
 	for ( QValueList<KopeteMessage>::iterator it = m_messagesQueue.begin(); it!=m_messagesQueue.end(); it = m_messagesQueue.begin() )
 	{
 		//m_chatService->sendMsg( *it)  ;

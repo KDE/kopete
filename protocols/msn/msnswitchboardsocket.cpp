@@ -61,7 +61,7 @@ MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account , QObject *paren
 
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
 {
-	kdDebug(14140) <<"MSNSwitchBoardSocket::~MSNSwitchBoardSocket" <<endl;
+	kdDebug(14140) << k_funcinfo << endl;
 
 	QMap<QString , QPair<QString , KTempFile*> >::Iterator it;
 	for ( it = m_emoticons.begin(); it != m_emoticons.end(); ++it )
@@ -304,7 +304,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		if(!m_account->contacts()[m_msgHandle])
 		{
 			//this may happens if the contact has been deleted.
-			kdDebug(14140) << "MSNSwitchBoardSocket::slotReadMessage: WARNING: contact is null, adding it" <<endl;
+			kdDebug(14140) << k_funcinfo <<"WARNING: contact is null, adding it" <<endl;
 			if( !m_chatMembers.contains( m_msgHandle ) )
 				m_chatMembers.append( m_msgHandle );
 			emit userJoined( m_msgHandle , m_msgHandle , false);
@@ -320,7 +320,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		if ( m_recvIcons > 0 )
 		{ //Some custom emoticons are waiting to be received. so append the message to the queue
 			
-			kdDebug(14140) << "MSNSwitchBoardSocket::slotReadMessage: Not all icons received => append to queue.  Emoticon left: " << m_recvIcons <<endl;
+			kdDebug(14140) << k_funcinfo << "Not all icons received => append to queue.  Emoticon left: " << m_recvIcons <<endl;
 			m_msgQueue.append( kmsg );
 			if(!m_emoticonTimer) //to be sure no message will be lost, we will appends message to
 			{                    // the queue in 30 secondes even if we have not received emoticons
@@ -346,7 +346,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			{
 				QString msnobj=rx.cap(2);
 				QString txt=rx.cap(1);
-				kdDebug(14140) << "MSNSwitchBoardSocket::slotReadMessage: emoticon: " <<  txt << "    msnobj: " << msnobj<<  endl;
+				kdDebug(14140) << k_funcinfo << "emoticon: " <<  txt << "    msnobj: " << msnobj<<  endl;
 
 				if( !m_emoticons.contains(msnobj) || !m_emoticons[msnobj].second )
 				{
@@ -385,7 +385,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	}
 	else
 	{
-		kdDebug(14140) << "MSNSwitchBoardSocket::slotReadMessage: Unknown type '" << type << "' message: \n"<< msg <<endl;
+		kdDebug(14140) << k_funcinfo <<" Unknown type '" << type << "' message: \n"<< msg <<endl;
 	}
 }
 
@@ -591,7 +591,7 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 	
 		if( m_recvIcons > 0 ) 
 			m_recvIcons--;
-		kdDebug(14140) << "MSNSwitchBoardSocket::slotEmoticonReceived: emoticons received queue is now: " << m_recvIcons << endl;
+		kdDebug(14140) << k_funcinfo << "emoticons received queue is now: " << m_recvIcons << endl;
 
 		if ( m_recvIcons <= 0 ) 
 			cleanQueue();

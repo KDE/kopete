@@ -67,7 +67,7 @@ MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& /*msnId*/,
 MSNNotifySocket::~MSNNotifySocket()
 {
 	delete m_tmpMailFile;
-	kdDebug(14140) << "MSNNotifySocket::~MSNNotifySocket" << endl;
+	kdDebug(14140) << k_funcinfo << endl;
 }
 
 void MSNNotifySocket::doneConnect()
@@ -276,7 +276,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			QString authURL="https://"+m_sid+"/login.srf?" + m_authData;
 			authURL.replace("," , "&" ) ;
 
-			kdDebug(14140) << "MSNNotifySocket::parseCommand: " << authURL << endl;
+			kdDebug(14140) << k_funcinfo << "downlaod URL: " << authURL << endl;
 
 			KIO::Job *job = KIO::get( KURL( authURL ), true, false );
 			job->addMetaData("cookies", "manual");
@@ -447,7 +447,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd  == "CHL" )
 	{
-		kdDebug(14140) << "Sending final Authentication" << endl;
+//		kdDebug(14140) << k_funcinfo <<"Sending final Authentication" << endl;
 		KMD5 context( ( data.section( ' ', 0, 0 ) + "Q1P7W2E4J9R8U3S5" ).utf8() );
 		sendCommand( "QRY", "msmsgs@msnmsgr.com", true,
 			context.hexDigest());
@@ -593,12 +593,10 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 		QString cookies="Cookie: ";
 		for ( QStringList::Iterator it = cookielist.begin(); it != cookielist.end(); ++it )
 		{
-//			kdDebug(14140) << "MSNNotifySocket::slotAuthJobDone: cl: " << *it << endl;
 			QRegExp rx("Set-Cookie: ([^;]*)");
 			rx.search(*it);
 			cookies+=rx.cap(1)+";";
 		}
-//		kdDebug(14140) << "MSNNotifySocket::slotAuthJobDone: cookie: " << cookies << endl;
 
 		//QRegExp rx("lc=([1-9]*),id=([1-9]*),tw=([1-9]*),fs=[1-9]*,ru=[1-9a-zA-Z%]*,ct=[1-9]*,kpp=[1-9]*,kv=([1-9]*),");
 		QRegExp rx("lc=([0-9]*),id=([0-9]*),tw=([0-9]*),.*kv=([0-9]*),");
@@ -608,7 +606,7 @@ void MSNNotifySocket::slotAuthJobDone ( KIO::Job *job)
 			rx.cap( 2 ) + "&tw=" + rx.cap( 3 ) + "&cbid=" + rx.cap( 2 ) + "&da=passport.com&login=" +
 			KURL::encode_string( m_account->accountId()) + "&domain=passport.com&passwd=";
 
-//		kdDebug( 14140 ) << "MSNNotifySocket::slotAuthJobDone: " << authURL << "(*******)" << endl;
+		kdDebug( 14140 ) << k_funcinfo << "Download URL: " << authURL << "(*******)" << endl;
 
 		m_authData = QString::null;
 		m_kv=rx.cap(4);
@@ -765,7 +763,7 @@ void MSNNotifySocket::addContact( const QString &handle, const QString& publicNa
 		args = "BL " + handle + " " + escape( publicName );
 		break;
 	default:
-		kdDebug(14140) << "MSNNotifySocket::addContact: WARNING! Unknown list " <<
+		kdDebug(14140) << k_funcinfo <<"WARNING! Unknown list " <<
 			list << "!" << endl;
 		return;
 	}
@@ -788,8 +786,7 @@ void MSNNotifySocket::removeContact( const QString &handle, uint group,	int list
 		args = "BL " + handle;
 		break;
 	default:
-		kdDebug(14140) << "MSNNotifySocket::removeContact: " <<
-			"WARNING! Unknown list " << list << "!" << endl;
+		kdDebug(14140) <<k_funcinfo  << "WARNING! Unknown list " << list << "!" << endl;
 		return;
 	}
 	sendCommand( "REM", args );
@@ -797,7 +794,7 @@ void MSNNotifySocket::removeContact( const QString &handle, uint group,	int list
 
 void MSNNotifySocket::setStatus( const KopeteOnlineStatus &status )
 {
-	kdDebug( 14140 ) << k_funcinfo << statusToString( status ) << endl;
+//	kdDebug( 14140 ) << k_funcinfo << statusToString( status ) << endl;
 
 	if( onlineStatus() == Disconnected )
 		m_newstatus = status;

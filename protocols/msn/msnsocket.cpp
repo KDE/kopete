@@ -79,7 +79,6 @@ void MSNSocket::connect( const QString &server, uint port )
 	m_server = server;
 	m_port = port;
 	m_socket = new KBufferedSocket( server, QString::number(port) );
-	 //can this prevent the kopete frezee? (http://lists.kde.org/?l=kopete-devel&m=107117795131722&w=2)
 
 	m_socket->enableRead( true );
 

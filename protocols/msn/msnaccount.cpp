@@ -129,14 +129,14 @@ void MSNAccount::connect()
 {
 	if ( isConnected() )
 	{
-		kdDebug( 14140 ) << "MSNAccount::connect: Ignoring Connect request "
+		kdDebug( 14140 ) << k_funcinfo <<"Ignoring Connect request "
 			<< "(Already Connected)" << endl;
 		return;
 	}
 
 	if ( m_notifySocket )
 	{
-		kdDebug( 14140 ) << "MSNAccount::connect: Ignoring Connect request (Already connecting)"  << endl;
+		kdDebug( 14140 ) << k_funcinfo <<"Ignoring Connect request (Already connecting)"  << endl;
 		return;
 	}
 	m_password = password( m_badpassword ); 
@@ -144,7 +144,7 @@ void MSNAccount::connect()
 
 	if ( m_password.isNull() )
 	{
-		kdDebug( 14140 ) << "MSNAccount::connect: Abort connection (null password)"  << endl;
+		kdDebug( 14140 ) << k_funcinfo <<"Abort connection (null password)"  << endl;
 		return;
 	}
 
@@ -518,7 +518,7 @@ void MSNAccount::slotNotifySocketClosed()
 
 void MSNAccount::slotStatusChanged( const KopeteOnlineStatus &status )
 {
-	kdDebug( 14140 ) << "MSNAccount::slotStatusChanged: " << status.internalStatus() <<  endl;
+//	kdDebug( 14140 ) << k_funcinfo  << status.internalStatus() <<  endl;
 	myself()->setOnlineStatus( status );
 }
 
@@ -1070,7 +1070,7 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 		return;
 	}
 
-	kdDebug( 14140 ) << "MSNAccount::slotCreateChat: Creating chat for " << handle << endl;
+//	kdDebug( 14140 ) << k_funcinfo <<"Creating chat for " << handle << endl;
 
 	if ( !contacts()[ handle ] )
 		addContact( handle, publicName, 0L, KopeteAccount::DontChangeKABC, QString::null, true );
