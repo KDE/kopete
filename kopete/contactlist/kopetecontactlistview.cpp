@@ -113,7 +113,7 @@ KopeteContactListView::KopeteContactListView( QWidget *parent,
 //	connect( this , SIGNAL ( onItem(QListViewItem *) ) ,
 //		this, SLOT (slotOnItem(QListViewItem *) ));
 
-	addColumn( i18n("Contacts") );
+	addColumn( i18n("Contacts") , 0 );
 
 	closed  = SmallIcon( "folder_green" );
 	open    = SmallIcon( "folder_green_open" );
