@@ -114,11 +114,11 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name,
 
 	if (m_deviceHandler < 0)
 	{
-		kdDebug(14305) << k_funcinfo k_funcinfo << "Can't open Video4Linux Device" << endl;
+		kdDebug(14305) << k_funcinfo << "Can't open Video4Linux Device" << endl;
 	}
 	else
 	{
-        kdDebug(14305) k_funcinfo << "Worked! Setting Capture timers!" << endl;
+        kdDebug(14305) << k_funcinfo << "Worked! Setting Capture timers!" << endl;
 		/* Capture first image, or we will get a alarm on start */
 		getImage (m_deviceHandler, m_imageRef, DEF_WIDTH, DEF_HEIGHT, IN_DEFAULT, NORM_DEFAULT,
 	    	VIDEO_PALETTE_RGB24);
@@ -134,9 +134,9 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name,
 
 MotionAwayPlugin::~MotionAwayPlugin()
 {
-    kdDebug(14305) k_funcinfo << "Closing Video4Linux Device" << endl;
+    kdDebug(14305) << k_funcinfo << "Closing Video4Linux Device" << endl;
 	close (m_deviceHandler);
-	kdDebug(14305) k_funcinfo << "Freeing memory" << endl;
+	kdDebug(14305) << k_funcinfo << "Freeing memory" << endl;
 }
 
 int MotionAwayPlugin::getImage(int _dev, QByteArray &_image, int _width, int _height, int _input, int _norm,  int _fmt)
@@ -235,7 +235,7 @@ void MotionAwayPlugin::slotCapture()
 		/* The cat just walked in :) */
 		if (diffs > m_maxChanges)
 		{
-            kdDebug(14305) k_funcinfo << "Motion Detected. [" << diffs << "] Reseting Timeout" << endl;
+            kdDebug(14305) << k_funcinfo << "Motion Detected. [" << diffs << "] Reseting Timeout" << endl;
 
 			/* If we were away, now we are available again */
 			if ( mPrefs->goAvailable() && !KopeteAway::globalAway() && m_wentAway)
@@ -265,7 +265,7 @@ void MotionAwayPlugin::slotCapture()
 
 void MotionAwayPlugin::slotActivity()
 {
-	kdDebug(14305) k_funcinfo << "User activity!, going available" << endl;
+	kdDebug(14305) << k_funcinfo << "User activity!, going available" << endl;
 	m_wentAway = false;
 	KopeteAccountManager::manager()->setAvailableAll();
 }
@@ -274,7 +274,7 @@ void MotionAwayPlugin::slotTimeout()
 {
 	if(!KopeteAway::globalAway() && !m_wentAway)
 	{
-		kdDebug(14305) k_funcinfo << "Timeout and no user activity, going away" << endl;
+		kdDebug(14305) << k_funcinfo << "Timeout and no user activity, going away" << endl;
 		m_wentAway = true;
 		KopeteAccountManager::manager()->setAwayAll();
 	}
