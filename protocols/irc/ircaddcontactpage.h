@@ -21,8 +21,8 @@
 #include "addcontactpage.h"
 
 class ircAddUI;
-class IRCProtocol;
 class KopeteMetaContact;
+class IRCAccount;
 
 /**
   *@author Nick Betcher <nbetcher@kde.org>
@@ -31,12 +31,11 @@ class IRCAddContactPage : public AddContactPage
 {
    Q_OBJECT
 public:
-	IRCAddContactPage(IRCProtocol *owner, QWidget *parent=0, const char *name=0);
+	IRCAddContactPage(QWidget *parent=0, IRCAccount* account = 0);
 	~IRCAddContactPage();
 	ircAddUI *ircdata;
-	IRCProtocol *plugin;
 public slots:
-	virtual void slotFinish(KopeteMetaContact *m);
+	virtual bool apply(KopeteAccount *account , KopeteMetaContact *m);
 
 private slots:
 	virtual bool validateData();

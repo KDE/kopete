@@ -51,10 +51,10 @@ IRCAccount::IRCAccount(const QString &accountId, const IRCProtocol *protocol) : 
 IRCAccount::~IRCAccount()
 {
 	kdDebug(14120) << k_funcinfo << endl;
-	if ( mEngine && mEngine->state() != QSocket::Idle )
-		mEngine->quitIRC( i18n("Plugin Unloaded") );
+	if ( engine()->state() != QSocket::Idle )
+		engine()->quitIRC( i18n("Plugin Unloaded") );
 
-	delete mEngine;
+	delete engine();
 }
 
 void IRCAccount::slotAccountIdChanged()
@@ -63,12 +63,13 @@ void IRCAccount::slotAccountIdChanged()
 	QString serverInfo = accountId().section('@',1);
 	mServer = serverInfo.section(':',0,0);
 	mPort = serverInfo.section(':',1).toUInt();
+
 	if( !mMySelf )
 		mMySelf = findUser( mNickName );
 
-	bool reConnect = mEngine->isLoggedIn();
+	bool reConnect = engine()->isLoggedIn();
 
-	if( mServer == mEngine->host() && mPort == mEngine->port() )
+	if( mServer == engine()->host() && mPort == engine()->port() )
 	{
 		if( mNickName != mMySelf->nickName() )
 			successfullyChangedNick( mMySelf->nickName(), mNickName );
@@ -84,7 +85,7 @@ void IRCAccount::slotAccountIdChanged()
 			mMySelf = findUser( mNickName );
 		}
 
-		delete mEngine;
+		delete engine();
 	}
 
 	if( reConnect )
@@ -94,7 +95,7 @@ void IRCAccount::slotAccountIdChanged()
 void IRCAccount::slotPasswordChanged()
 {
 	if( !isConnected() )
-		delete mEngine;
+		delete engine();
 }
 
 KIRC *IRCAccount::engine()
@@ -109,8 +110,14 @@ KIRC *IRCAccount::engine()
 		QObject::connect(mEngine, SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)), this, SLOT(slotNewPrivMessage(const QString &, const QString &, const QString &)));
 		QObject::connect(mEngine, SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
 		QObject::connect(mEngine, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
+		QObject::connect(mEngine, SIGNAL(destroyed()), this, SLOT(slotEngineDestroyed()));
 	}
 	return mEngine;
+}
+
+void IRCAccount::slotEngineDestroyed()
+{
+	mEngine = 0L;
 }
 
 KActionMenu *IRCAccount::actionMenu()
@@ -146,7 +153,7 @@ void IRCAccount::connect()
 void IRCAccount::disconnect()
 {
  	engine()->quitIRC("Kopete IRC 2.0. http://kopete.kde.org");
-	delete mEngine;
+	delete engine();
 }
 
 void IRCAccount::setAway(bool)
@@ -169,7 +176,7 @@ void IRCAccount::addContact( const QString &contact, const QString &displayName,
 		c = static_cast<IRCContact*>( findChannel(contact, m) );
 	else
 	{
-		mEngine->addToNotifyList( contact );
+		engine()->addToNotifyList( contact );
 		c = static_cast<IRCContact*>( findUser(contact, m) );
 	}
 
@@ -199,7 +206,7 @@ IRCChannelContact *IRCAccount::findChannel(const QString &name, KopeteMetaContac
 	{
 		channel = new IRCChannelContact(this, name, m);
 		mChannels.insert( lowerName, channel );
-		if( mEngine->state() == QSocket::Connected)
+		if( engine()->state() == QSocket::Connected)
 			channel->setOnlineStatus( IRCProtocol::IRCChannelOnline() );
 	}
 	else

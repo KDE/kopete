@@ -100,6 +100,7 @@ public slots:
 	virtual void disconnect();
 
 private slots:
+	void slotEngineDestroyed();
 	void slotConnectedToServer();
 	void slotConnectionClosed();
 	void slotAccountIdChanged();

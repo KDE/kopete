@@ -39,7 +39,7 @@
 #include <unistd.h>
 #include <pwd.h>
 
-KIRC::KIRC(const QString host, const Q_UINT16 port) : QSocket()
+KIRC::KIRC(const QString &host, const Q_UINT16 port) : QSocket()
 {
 	attemptingQuit = false;
 	waitingFinishMotd = false;
@@ -702,7 +702,7 @@ void KIRC::joinChannel(const QString &name)
 	/*
 	This will join a channel
 	*/
-	if (state() == QSocket::Connected && loggedIn)
+	if (loggedIn)
 		writeString( QString::fromLatin1("JOIN %1").arg( name ) );
 }
 
@@ -711,7 +711,7 @@ void KIRC::quitIRC(const QString &reason)
 	/*
 	This will quit IRC
 	*/
-	if (state() == QSocket::Connected && loggedIn && !attemptingQuit)
+	if (loggedIn && !attemptingQuit)
 	{
 		attemptingQuit = true;
 		writeString( QString::fromLatin1("QUIT :%1").arg( reason ) );
@@ -721,8 +721,11 @@ void KIRC::quitIRC(const QString &reason)
 
 void KIRC::addToNotifyList( const QString &nick )
 {
-	if( !mNotifyList.contains( nick.lower() ) )
+ 	if( !mNotifyList.contains( nick.lower() ) )
+	{
 		mNotifyList.append( nick );
+		slotCheckOnline();
+	}
 }
 
 void KIRC::removeFromNotifyList( const QString &nick )
@@ -771,14 +774,14 @@ void KIRC::sendCtcpPing(const QString &target)
 
 void KIRC::sendCtcpVersion(const QString &target)
 {
-	if (state() == QSocket::Connected && loggedIn == true)
+	if (loggedIn)
 		writeString( QString::fromLatin1("PRIVMSG %1 :%2VERSION").arg( target ).arg( QChar(0x01) ).append( QChar(0x01) ) );
 
 }
 
 void KIRC::changeMode(const QString &target, const QString &mode)
 {
-	if (state() == QSocket::Connected && loggedIn == true)
+	if (loggedIn)
 		writeString( QString::fromLatin1("MODE %1 %2").arg( target ).arg( mode ) );
 }
 
@@ -793,7 +796,7 @@ void KIRC::partChannel(const QString &name, const QString &reason)
 
 void KIRC::actionContact(const QString &contact, const QString &message)
 {
-	if (state() == QSocket::Connected && loggedIn == true)
+	if (loggedIn)
 	{
 		writeString( QString::fromLatin1("PRIVMSG %1 :%2ACTION %3").arg( contact ).arg( QChar(0x01) ).arg( message ).append( QChar(0x01) ) );
 
@@ -806,7 +809,7 @@ void KIRC::actionContact(const QString &contact, const QString &message)
 
 void KIRC::requestDccConnect(const QString &nickname, const QString &filename, unsigned int port, DCCClient::Type type)
 {
-	if (state() == QSocket::Connected && loggedIn == true)
+	if (loggedIn)
 	{
 		/* Please do not pick on me about this if it isn't portable. Submit a patch and I'll glady apply it. This is *needed* for
 		sending the connecting client the proper IP address that they need to connect to. */
@@ -839,13 +842,13 @@ void KIRC::requestDccConnect(const QString &nickname, const QString &filename, u
 
 void KIRC::sendNotice(const QString &target, const QString &message)
 {
-	if (state() == QSocket::Connected && loggedIn == true && !target.isEmpty() && !message.isEmpty())
+	if (loggedIn && !target.isEmpty() && !message.isEmpty())
 		writeString( QString::fromLatin1("NOTICE %1 :%2").arg( target ).arg(message));
 }
 
 void KIRC::messageContact(const QString &contact, const QString &message)
 {
-	if (state() == QSocket::Connected && loggedIn == true)
+	if (loggedIn)
 		writeString( QString::fromLatin1("PRIVMSG %1 :%2").arg( contact ).arg( message ) );
 }
 

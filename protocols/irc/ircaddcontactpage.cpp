@@ -23,40 +23,35 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <qcombobox.h>
-#include <qradiobutton.h>
+#include <qlistview.h>
+#include <qpushbutton.h>
 
 #include "ircaddcontactpage.h"
 #include "ircadd.h"
 #include "ircprotocol.h"
+#include "ircaccount.h"
 #include "kopetecontactlist.h"
 
-IRCAddContactPage::IRCAddContactPage(IRCProtocol *owner, QWidget *parent, const char *name )
-				  : AddContactPage(parent,name)
+IRCAddContactPage::IRCAddContactPage( QWidget *parent, IRCAccount * ) : AddContactPage(parent, 0)
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	ircdata = new ircAddUI(this);
-	plugin = owner;
+	ircdata->searchResults->setEnabled( false );
+	ircdata->searchButton->setEnabled( false );
 }
 IRCAddContactPage::~IRCAddContactPage()
 {
 }
 
-void IRCAddContactPage::slotFinish(KopeteMetaContact *m)
+bool IRCAddContactPage::apply(KopeteAccount *account , KopeteMetaContact *m)
 {
-	QString server = ircdata->ircServer->lineEdit()->text();
 	QString name = ircdata->addID->text();
-	plugin->addContact(name, name, m);
+	static_cast<IRCAccount*>(account)->addContact(name, name, m);
+	return true;
 }
 
 bool IRCAddContactPage::validateData()
 {
-	QString server = ircdata->ircServer->lineEdit()->text();
-	if (server.isEmpty() == true)
-	{
-		KMessageBox::sorry(this, i18n("<qt>You need to specify a server to connect to.</qt>"), i18n("You Must Specify a Server"));
-		return false;
-	}
 	QString name = ircdata->addID->text();
 	if (name.isEmpty() == true)
 	{

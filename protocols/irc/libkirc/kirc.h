@@ -34,7 +34,7 @@ class QRegExp;
 class KIRC : public QSocket {
 Q_OBJECT
 public:
-	KIRC(const QString host, const Q_UINT16 port);
+	KIRC(const QString &host, const Q_UINT16 port);
 	~KIRC();
 	void connectToServer(const QString &);
 	void joinChannel(const QString &);

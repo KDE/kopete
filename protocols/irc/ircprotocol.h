@@ -45,8 +45,7 @@ public:
 	~IRCProtocol();
 
 	/** KopeteProtocol reimplementation */
-	virtual AddContactPage *createAddContactWidget(QWidget *parent);
-	virtual KActionMenu* protocolActions();
+	virtual AddContactPage *createAddContactWidget(QWidget *parent, KopeteAccount *account);
 
 	/**
 	 * Deserialize contact data
@@ -86,7 +85,6 @@ private:
 	static KopeteOnlineStatus m_UserOffline;
 
 	KSParser *mParser;
-
 };
 
 #endif

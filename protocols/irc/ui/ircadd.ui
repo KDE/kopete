@@ -8,14 +8,14 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>482</width>
-            <height>291</height>
+            <width>504</width>
+            <height>336</height>
         </rect>
     </property>
     <property name="caption">
         <string>Form2</string>
     </property>
-    <hbox>
+    <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
@@ -25,136 +25,36 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QGroupBox">
+        <widget class="QLabel" row="0" column="0">
             <property name="name">
-                <cstring>GroupBox2</cstring>
+                <cstring>TextLabel1</cstring>
             </property>
-            <property name="title">
-                <string>Contact Information</string>
+            <property name="text">
+                <string>Channel or Nickname:</string>
             </property>
-            <vbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>Layout54</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>TextLabel1</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Channel or nickname:</string>
-                            </property>
-                        </widget>
-                        <widget class="QLineEdit">
-                            <property name="name">
-                                <cstring>addID</cstring>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>TextLabel2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>(for example: #kde or SomeNickName)</string>
-                    </property>
-                </widget>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>Layout53</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>TextLabel3</cstring>
-                            </property>
-                            <property name="text">
-                                <string>On server:</string>
-                            </property>
-                        </widget>
-                        <widget class="QComboBox">
-                            <property name="name">
-                                <cstring>ircServer</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="editable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="maxCount">
-                                <number>5000</number>
-                            </property>
-                            <property name="autoCompletion">
-                                <bool>true</bool>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-                <widget class="QButtonGroup">
-                    <property name="name">
-                        <cstring>buttonGroup1</cstring>
-                    </property>
-                    <property name="title">
-                        <string>Type of Contact:</string>
-                    </property>
-                    <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QRadioButton">
-                            <property name="name">
-                                <cstring>rdoChannel</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Channel (e.g. begins with "#" or "-")</string>
-                            </property>
-                            <property name="checked">
-                                <bool>true</bool>
-                            </property>
-                        </widget>
-                        <widget class="QRadioButton">
-                            <property name="name">
-                                <cstring>rdoQuery</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Query (e.g. a normal user)</string>
-                            </property>
-                        </widget>
-                    </vbox>
-                </widget>
-            </vbox>
         </widget>
-    </hbox>
+        <widget class="QLineEdit" row="0" column="1">
+            <property name="name">
+                <cstring>addID</cstring>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>For exmaple, #kopete or SomeNickname</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="0" column="2">
+            <property name="name">
+                <cstring>searchButton</cstring>
+            </property>
+            <property name="text">
+                <string>Search</string>
+            </property>
+        </widget>
+        <widget class="QListView" row="1" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>searchResults</cstring>
+            </property>
+        </widget>
+    </grid>
 </widget>
 <tabstops>
     <tabstop>addID</tabstop>

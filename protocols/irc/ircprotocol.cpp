@@ -100,29 +100,9 @@ IRCProtocol::~IRCProtocol()
 	delete mParser;
 }
 
-KActionMenu* IRCProtocol::protocolActions()
+AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent, KopeteAccount *account)
 {
-	KActionMenu *mActionMenu;
-	QDict<KopeteAccount> mAccounts = KopeteAccountManager::manager()->accounts(this);
-	QDictIterator<KopeteAccount> it( mAccounts );
-
-	if( mAccounts.count() == 1 )
-		mActionMenu = static_cast<IRCAccount*>( it.current() )->actionMenu();
-	else
-	{
-		mActionMenu = new KActionMenu( "IRC", this );
-		for( ; it.current(); ++it )
-		{
-			mActionMenu->insert( static_cast<IRCAccount*>( it.current() )->actionMenu() );
-		}
-	}
-
-	return mActionMenu;
-}
-
-AddContactPage *IRCProtocol::createAddContactWidget(QWidget *parent)
-{
-	return new IRCAddContactPage(this,parent);
+	return new IRCAddContactPage(parent,static_cast<IRCAccount*>(account));
 }
 
 EditAccountWidget *IRCProtocol::createEditAccountWidget(KopeteAccount *account, QWidget *parent)
@@ -135,7 +115,7 @@ KopeteAccount *IRCProtocol::createNewAccount(const QString &accountId)
 	kdDebug(14120) << k_funcinfo << endl;
 
 	IRCAccount *id = new IRCAccount( accountId, this );
-	mAccountMap[ accountId.section('@',1) ] = id;
+	mAccountMap[ accountId ] = id;
 
 	return id;
 }
@@ -156,15 +136,14 @@ void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	{
 		for( uint i=0 ; i<accounts.count(); i++ )
 		{
-			kdDebug(14120) << k_funcinfo << i << endl;
-			QString server = accounts[i].section('@',1);
-			if( mAccountMap.contains( server ) )
-				mAccountMap[ server ]->addContact( contactId, displayName, metaContact );
-			else
+			QString account = accounts[i];
+			if( mAccountMap.contains( account ) )
+				mAccountMap[ account ]->addContact( contactId, displayName, metaContact );
+			else if( mAccountMap.count() > 0 )
 				mAccountMap.begin().data()->addContact( contactId, displayName, metaContact );
 		}
 	}
-	else
+	else if( mAccountMap.count() > 0 )
 	{
 		//This guy does not have an account. Must be old data.
 		//Just add him to the first server we have, which would be the default server if
