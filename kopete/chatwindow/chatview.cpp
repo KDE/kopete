@@ -598,8 +598,8 @@ void ChatView::slotContactAdded(const KopeteContact *c, bool surpress)
 
 		if( !surpress )
 		{
-			connect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ),
-				this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ) );
+			connect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & , const KopeteOnlineStatus &) ),
+				this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 		}
 
 		typingMap.insert( c, false );
@@ -630,8 +630,8 @@ void ChatView::slotContactRemoved(const KopeteContact *c, bool surpress)
 
 		if( !surpress )
 		{
-			disconnect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ),
-				this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ) );
+			disconnect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
+				this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
 			sendInternalMessage(i18n("%1 has left the chat.").arg( contactName ));
 		}
@@ -708,7 +708,7 @@ void ChatView::slotMarkMessageRead()
 	unreadMessageFrom = QString::null;
 }
 
-void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus & /* newStatus */ )
+void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus & /* newStatus */ , const KopeteOnlineStatus & /* oldstatus */)
 {
 	// %2 before %1 because displayName can contains '%' . And i don't think the status can
 	if(KopetePrefs::prefs()->showEvents())

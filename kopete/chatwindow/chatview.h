@@ -318,7 +318,7 @@ private slots:
 	 * @param contact The contact who changed status
 	 * @param status The new status of the contact
 	 */
-	void slotContactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &status );
+	void slotContactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldstatus );
 
 	/**
 	 * Called when the chat's display name is changed
