@@ -91,21 +91,21 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteMessageManager *manager )
 
 	switch( KopetePrefs::prefs()->chatWindowPolicy() )
 	{
-		case GROUP_BY_ACCOUNT: //Open chats in the same protocol in the same window
+		case GROUP_BY_ACCOUNT: //Open chats from the same protocol in the same window
 			if( accountMap.contains( manager->account() ) )
 				myWindow = accountMap[ manager->account() ];
 			else
 				windowCreated = true;
 			break;
 
-		case GROUP_BY_GROUP: //Open chats in the same group in the same window
+		case GROUP_BY_GROUP: //Open chats from the same group in the same window
 			if( group && groupMap.contains( group ) )
 				myWindow = groupMap[ group ];
 			else
 				windowCreated = true;
 			break;
 
-		case GROUP_BY_METACONTACT: //Open chats in the same metacontact in the same window
+		case GROUP_BY_METACONTACT: //Open chats from the same metacontact in the same window
 			if( mcMap.contains( metaContact ) )
 				myWindow = mcMap[ metaContact ];
 			else
@@ -353,17 +353,18 @@ void KopeteChatWindow::slotTabContextMenu( QWidget *tab, const QPoint &pos )
 {
 	m_popupView = static_cast<ChatView*>( tab );
 
-	KPopupMenu *p = new KPopupMenu;
-	p->insertTitle( KStringHandler::rsqueeze( m_popupView->caption() ) );
+	KPopupMenu *popup = new KPopupMenu;
+	popup->insertTitle( KStringHandler::rsqueeze( m_popupView->caption() ) );
 
-	actionContactMenu->plug(p);
-	p->insertSeparator();
-	actionTabPlacementMenu->plug( p );
-	tabDetach->plug( p );
-	actionDetachMenu->plug( p );
-	tabClose->plug( p );
-	p->exec( pos );
-	delete p;
+	actionContactMenu->plug( popup );
+	popup->insertSeparator();
+	actionTabPlacementMenu->plug( popup );
+	tabDetach->plug( popup );
+	actionDetachMenu->plug( popup );
+	tabClose->plug( popup );
+	popup->exec( pos );
+
+	delete popup;
 	m_popupView = 0;
 }
 
