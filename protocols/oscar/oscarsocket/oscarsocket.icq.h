@@ -2,6 +2,9 @@
 #ifndef OSCARSOCKET_ICQ_H
 #define OSCARSOCKET_ICQ_H
 
+#include <qmap.h>
+#include <qvaluelist.h>
+
 const QString ICQ_SERVER = "login.icq.com";
 const unsigned int ICQ_PORT = 5190;
 
@@ -139,7 +142,6 @@ class ICQInfoItem
 		int category;
 		QString description;
 };
-
 
 typedef QMap<QString, bool> ICQMailList;
 typedef QValueList<ICQInfoItem> ICQInfoItemList;

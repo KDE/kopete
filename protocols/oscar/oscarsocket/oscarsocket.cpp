@@ -2,7 +2,7 @@
   oscarsocket.cpp  -  Oscar Protocol Implementation
 
     Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -28,13 +28,13 @@
 #include <qtimer.h>
 
 #include <kdebug.h>
-#include <kextsock.h>
+//#include <kextsock.h>
 
 // ---------------------------------------------------------------------------------------
 
 OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	OscarAccount *account, QObject *parent, const char *name, bool isicq)
-	: OscarConnection( QString::fromLocal8Bit("unknown"), connName, Server, cookie, parent, name)
+	: OscarConnection(connName, Server, cookie, parent, name)
 {
 //	kdDebug(14150) << k_funcinfo << "connName=" << connName <<
 //		QString::fromLatin1( isicq?" ICQ":" AIM" ) << endl;
@@ -43,7 +43,7 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	toicqsrv_seq=1;
 	type2SequenceNum=0xFFFF;
 	flapSequenceNum=rand() & 0x7FFF; // value taken from libicq
-	key=0L;
+	mPwEncryptionKey=0L;
 	mCookie=0L;
 	loginStatus=0;
 	gotAllRights=0;
@@ -52,48 +52,49 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	rateClasses.setAutoDelete(TRUE);
 	isLoggedIn=false;
 	idle=false;
-	mDirectConnnectionCookie=rand();
+	//mDirectConnnectionCookie=rand();
 	mAccount=account;
-	mDirectIMMgr=0L;
-	mFileTransferMgr=0L;
-	awaitingFirstPresenceBlock=OscarSocket::Waiting;
-	bSomethingOutgoing=false;
+	//mDirectIMMgr=0L;
+	//mFileTransferMgr=0L;
+	//awaitingFirstPresenceBlock=OscarSocket::Waiting;
+	//bSomethingOutgoing=false;
 
-	socket()->enableWrite(false); // don't spam us with readyWrite() signals
-	socket()->enableRead(true);
-	// from KExtenedSocket
-	QObject::connect(socket(), SIGNAL(closed(int)), this, SLOT(slotConnectionClosed()));
-	//QObject::connect(this, SIGNAL(serverReady()), this, SLOT(OnServerReady()));
-	QObject::connect(this, SIGNAL(moreToRead()), this, SLOT(slotRead()));
-	QObject::connect(socket(), SIGNAL(bytesWritten(int)), this, SLOT(slotBytesWritten(int)));
+	QObject::connect(this, SIGNAL(socketClosed(const QString &)),
+		this, SLOT(slotConnectionClosed()));
+	QObject::connect(this, SIGNAL(moreToRead()),
+		this, SLOT(slotRead()));
+	/*
+	QObject::connect(this, SIGNAL(serverReady()), this, SLOT(OnServerReady()));
+	QObject::connect(mSocket, SIGNAL(bytesWritten(int)),
+		this, SLOT(slotBytesWritten(int)));
+	*/
 }
 
 OscarSocket::~OscarSocket()
 {
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
 
-	if(socket()->socketStatus() == KExtendedSocket::connecting ||
-		socket()->socketStatus() == KExtendedSocket::connected )
+	if(socketStatus() == OscarConnection::Connecting ||
+		socketStatus() == OscarConnection::Connected )
 	{
 		kdDebug(14150) << k_funcinfo <<
-			"Not disconnected, status=" << socket()->socketStatus() << endl;
+			"WE ARE NOT DISCONNECTED YET, Status = " <<
+			mSocket->socketStatus() << endl;
 
 		if(mIsICQ)
 			stopKeepalive();
 
-		QObject::disconnect(socket(), 0, 0, 0);
-		socket()->closeNow();
+		QObject::disconnect(mSocket, 0, 0, 0);
+		mSocket->reset();
 	}
 
-	delete mDirectIMMgr;
-	delete mFileTransferMgr;
+	//delete mDirectIMMgr;
+	//delete mFileTransferMgr;
 	delete[] mCookie;
-	delete[] key;
+	delete[] mPwEncryptionKey;
 
-	for ( RateClass *tmp=rateClasses.first(); tmp; tmp = rateClasses.next() )
-	{
+	for (RateClass *tmp=rateClasses.first(); tmp; tmp=rateClasses.next())
 		QObject::disconnect(tmp, SIGNAL(dataReady(Buffer &)), this, SLOT(writeData(Buffer &)));
-	}
 	rateClasses.clear();
 }
 
@@ -131,11 +132,11 @@ SSIData& OscarSocket::ssiData()
 void OscarSocket::slotConnected()
 {
 	kdDebug(14150) << k_funcinfo <<
-		"Connected to '" << socket()->host() <<
-		"', port '" << socket()->port() << "'" << endl;
+		"Connected to '" << mSocket->host() <<
+		"', port '" << mSocket->port() << "'" << endl;
 
 #if 0
-	QString h=socket()->localAddress()->nodeName();
+	QString h=mSocket->localAddress()->nodeName();
 	mDirectIMMgr=new OncomingSocket(this, h, DirectIM);
 	mFileTransferMgr=new OncomingSocket(this, h, SendFile, SENDFILE_PORT);
 #endif
@@ -146,13 +147,14 @@ void OscarSocket::slotConnectionClosed()
 {
 	kdDebug(14150) << k_funcinfo << "Connection for account '" <<
 		mAccount->accountId() << "' closed." << endl;
-	kdDebug(14150) << k_funcinfo << "Socket Status: " <<
-			socket()->strError(socket()->socketStatus(), socket()->systemError()) << endl;
 
-	if(socket()->bytesAvailable() > 0)
+	kdDebug(14150) << k_funcinfo << "Socket Status: " <<
+			mSocket->strError(mSocket->socketStatus(), mSocket->systemError()) << endl;
+
+	if(mSocket->bytesAvailable() > 0)
 	{
 		kdDebug(14150) << k_funcinfo <<
-			socket()->bytesAvailable() << " bytes left to read" << endl;
+			mSocket->bytesAvailable() << " bytes were left to read" << endl;
 	}
 
 	if(mIsICQ)
@@ -163,15 +165,15 @@ void OscarSocket::slotConnectionClosed()
 	idle=false;
 	gotAllRights=0;
 	isLoggedIn=false;
-	awaitingFirstPresenceBlock=OscarSocket::Waiting;
+	//awaitingFirstPresenceBlock=OscarSocket::Waiting;
 
-	socket()->reset();
+	mSocket->reset();
 	//kdDebug(14150) << k_funcinfo << "Socket state is " << state() << endl;
 
 	QObject::disconnect(this, SIGNAL(connAckReceived()), 0, 0);
-	QObject::disconnect(socket(), SIGNAL(connectionSuccess()), 0, 0);
+	QObject::disconnect(mSocket, SIGNAL(socketConnected(const QString &)), 0, 0);
 
-	if(mDirectIMMgr)
+	/*if(mDirectIMMgr)
 	{
 		delete mDirectIMMgr;
 		mDirectIMMgr=0L;
@@ -181,20 +183,20 @@ void OscarSocket::slotConnectionClosed()
 	{
 		delete mFileTransferMgr;
 		mFileTransferMgr=0L;
-	}
+	}*/
 
 	kdDebug(14150) << k_funcinfo << "emitting statusChanged(OSCAR_OFFLINE)" << endl;
 	emit statusChanged(OSCAR_OFFLINE);
 }
 
-void OscarSocket::slotBytesWritten(int n)
+/*void OscarSocket::slotBytesWritten(int n)
 {
 	if (n > 0 && !bSomethingOutgoing)
 	{
 		//kdDebug(14150) << k_funcinfo << "Setting bSomethingOutgoing = true" << endl;
 		bSomethingOutgoing = true;
 	}
-}
+}*/
 
 void OscarSocket::slotRead()
 {
@@ -204,32 +206,33 @@ void OscarSocket::slotRead()
 	FLAP fl;
 	int bytesread=0;
 
-	//kdDebug(14150) << k_funcinfo << socket()->bytesAvailable() << " bytes to read" << endl;
+	//kdDebug(14150) << k_funcinfo << mSocket->bytesAvailable() << " bytes to read" << endl;
 
 	// a FLAP is min 6 bytes, we cannot read more out of
 	// a buffer without these 6 initial bytes
-	if(socket()->bytesAvailable() < 6)
+	if(mSocket->bytesAvailable() < 6)
 	{
-		kdDebug(14150) << k_funcinfo << "less than 6 bytes available, waiting for 100ms for data" << endl;
-		socket()->waitForMore(100);
+		/*kdDebug(14150) << k_funcinfo <<
+		"less than 6 bytes available, waiting for m data" << endl;*/
+		mSocket->waitForMore(200);
 		return;
 	}
 
-	fl=getFLAP();
+	fl = getFLAP();
 
 	if (fl.error || fl.length == 0)
 	{
-		// kdDebug(14150) << k_funcinfo << "Error reading FLAP" << endl;
+		//kdDebug(14150) << k_funcinfo << "Error reading FLAP" << endl;
 		return;
 	}
 
 	buf=new char[fl.length];
 
-	bytesread=socket()->readBlock(buf, fl.length);
+	bytesread = mSocket->readBlock(buf, fl.length);
 	if(bytesread != fl.length)
 	{
-		kdDebug(14150) << k_funcinfo <<
-		"WARNING, couldn't read all of that packet, this will probably break things!!!" << endl;
+		kdDebug(14150) << k_funcinfo << "WARNING, couldn't read all of" \
+			" that packet, this will probably break things!!!" << endl;
 	}
 
 	inbuf.setBuf(buf, bytesread);
@@ -252,12 +255,8 @@ void OscarSocket::slotRead()
 			else
 			{
 				kdDebug(14150) << k_funcinfo <<
-					"Could not read FLAP version on channel 0x01" << endl;
+					"!Could not read FLAP version on channel 0x01" << endl;
 				break;
-				/*
-				inbuf.clear();
-				delete [] buf;
-				return;*/
 			}
 			break;
 		} // END 0x01
@@ -362,8 +361,8 @@ void OscarSocket::slotRead()
 							break;
 						case 0x000b: //contact changed status, (SRV_USERONLINE)
 							parseUserOnline(inbuf);
-							if(awaitingFirstPresenceBlock == OscarSocket::Waiting)
-								awaitingFirstPresenceBlock=OscarSocket::GotSome;
+							/*if(awaitingFirstPresenceBlock == OscarSocket::Waiting)
+								awaitingFirstPresenceBlock=OscarSocket::GotSome;*/
 							break;
 						case 0x000c: //contact went offline
 							parseUserOffline(inbuf);
@@ -522,7 +521,7 @@ void OscarSocket::slotRead()
 	delete [] buf;
 
 	// another flap is waiting in read buffer
-	if (socket()->bytesAvailable() > 0)
+	if (mSocket->bytesAvailable() > 0)
 	{
 		/*kdDebug(14150) << k_funcinfo <<
 			"END, restarting from top as we still have buffer contents." << endl;*/
@@ -533,12 +532,12 @@ void OscarSocket::slotRead()
 		/*kdDebug(14150) << k_funcinfo <<
 			"END, nothing more to read from socket buffer." << endl;*/
 
-		if(awaitingFirstPresenceBlock == OscarSocket::GotSome)
+		/*if(awaitingFirstPresenceBlock == OscarSocket::GotSome)
 		{
 			kdDebug(14150) << k_funcinfo << "Got all initial presence status =======================" << endl;
 			awaitingFirstPresenceBlock = OscarSocket::GotAll;
 			requestMyUserInfo();
-		}
+		}*/
 	}
 }
 
@@ -597,7 +596,8 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 		{
 			if ( tmp->isMember(s) )
 			{
-				kdDebug(14150) << k_funcinfo << "Rate class (id=" << tmp->id() << ") found: SNAC(" << s.family << "," << s.subtype << ")" << endl;
+				kdDebug(14150) << k_funcinfo << "Rate class (id=" << tmp->id() <<
+					") found: SNAC(" << s.family << "," << s.subtype << ")" << endl;
 				rc = tmp;
 				break;
 			}
@@ -621,9 +621,10 @@ void OscarSocket::writeData(Buffer &outbuf)
 	outbuf.changeSeqNum(flapSequenceNum);
 	flapSequenceNum++;
 
-	if(socket()->socketStatus() != KExtendedSocket::connected)
+	if(socketStatus() != OscarConnection::Connected)
 	{
-		kdDebug(14150) << k_funcinfo << "Socket is NOT open, can't write to it right now" << endl;
+		kdDebug(14150) << k_funcinfo <<
+			"Socket is NOT open, can't write to it right now" << endl;
 		return;
 	}
 
@@ -633,11 +634,11 @@ void OscarSocket::writeData(Buffer &outbuf)
 #endif
 
 	//actually put the data onto the wire
-	if(socket()->writeBlock(outbuf.buffer(), outbuf.length()) == -1)
+	if(mSocket->writeBlock(outbuf.buffer(), outbuf.length()) == -1)
 	{
 		kdDebug(14150) << k_funcinfo << "writeBlock() call failed!" << endl;
 		kdDebug(14150) << k_funcinfo <<
-		socket()->strError(socket()->socketStatus(), socket()->systemError()) << endl;
+		mSocket->strError(mSocket->socketStatus(), mSocket->systemError()) << endl;
 	}
 
 	if ( sender() && sender()->isA("RateClass") )
@@ -677,71 +678,90 @@ void OscarSocket::doLogin(
 
 	kdDebug(14150) << k_funcinfo << "Connecting to '" << host << "', port=" << port << endl;
 
-	QObject::disconnect(this, SIGNAL(connAckReceived()), this, SLOT(OnBosConnAckReceived()));
-	QObject::connect(this, SIGNAL(connAckReceived()), this, SLOT(OnConnAckReceived()));
+	QObject::disconnect(this, SIGNAL(socketConnected(const QString &)),
+		this, SLOT(OnBosConnect()));
+	QObject::disconnect(this, SIGNAL(connAckReceived()),
+		this, SLOT(OnBosConnAckReceived()));
 
-	QObject::disconnect(socket(), SIGNAL(connectionSuccess()), this, SLOT(OnBosConnect()));
-	QObject::connect(socket(), SIGNAL(connectionSuccess()), this, SLOT(slotConnected()));
+	QObject::connect(this, SIGNAL(socketConnected(const QString &)),
+		this, SLOT(slotConnected()));
+	QObject::connect(this, SIGNAL(connAckReceived()),
+		this, SLOT(OnConnAckReceived()));
 
 	setSN(name);
 	loginPassword=password;
 	loginProfile=userProfile;
 	loginStatus=initialStatus;
 
-	kdDebug(14150) << k_funcinfo << "emitting statusChanged(OSCAR_CONNECTING)" << endl;
+	/*kdDebug(14150) << k_funcinfo <<
+		"emitting statusChanged(OSCAR_CONNECTING)" << endl;*/
 	emit statusChanged(OSCAR_CONNECTING);
 
-	socket()->setAddress(realHost, port);
-	socket()->connect();
+	connectTo(realHost, QString::number(port));
 }
 
 void OscarSocket::parsePasswordKey(Buffer &inbuf)
 {
 	kdDebug(14150) << k_funcinfo << "Got the key" << endl;
 
-	WORD keylen=inbuf.getWord();
-	delete[] key;
-	key=inbuf.getBlock(keylen);
+	WORD keylen = inbuf.getWord();
+	delete[] mPwEncryptionKey;
+	mPwEncryptionKey = inbuf.getBlock(keylen);
 	sendLoginAIM();
 }
 
 void OscarSocket::connectToBos()
 {
-	kdDebug(14150) << k_funcinfo << "Cookie received!... preparing to connect to BOS server" << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"Cookie received! Connecting to BOS server..." << endl;
 
 //	emit connectionChanged(4,"Connecting to server...");
-	QObject::disconnect(this, SIGNAL(connAckReceived()), this, SLOT(OnConnAckReceived()));
-	QObject::disconnect(socket(), SIGNAL(connectionSuccess()), this, SLOT(slotConnected()));
-	QObject::disconnect(socket(), SIGNAL(closed(int)), this, SLOT(slotConnectionClosed()));
+	QObject::disconnect(this, SIGNAL(connAckReceived()),
+		this, SLOT(OnConnAckReceived()));
+	QObject::disconnect(this, SIGNAL(socketConnected(const QString &)),
+		this, SLOT(slotConnected()));
 
-	socket()->close();
-	//kdDebug(14150) << k_funcinfo << "Resetting the socket" << endl;
-	socket()->reset();
-	//kdDebug(14150) << k_funcinfo << socket()->socketStatus() << endl;
-	QObject::connect(this, SIGNAL(connAckReceived()), this, SLOT(OnBosConnAckReceived()));
-	QObject::connect(socket(), SIGNAL(connectionSuccess()), this, SLOT(OnBosConnect()));
-	QObject::connect(socket(), SIGNAL(closed(int)), this, SLOT(slotConnectionClosed()));
+	// Disconnect from socketClosed signal so we do not set our
+	// account status (and thus our icon) from connecting to offline
+	QObject::disconnect(this, SIGNAL(socketClosed(const QString &)),
+		this, SLOT(slotConnectionClosed()));
 
-	socket()->setAddress(bosServer, bosPort);
-	socket()->connect();
+	//mSocket->close();
+	mSocket->reset();
+
+	QObject::connect(this, SIGNAL(connAckReceived()),
+		this, SLOT(OnBosConnAckReceived()));
+	QObject::connect(this, SIGNAL(socketConnected(const QString &)),
+		this, SLOT(OnBosConnect()));
+
+	// Reconnect socketClosed status to track if we (were) disconnected
+	// from the main BOS server
+	QObject::connect(this, SIGNAL(socketClosed(const QString &)),
+		this, SLOT(slotConnectionClosed()));
+
+	connectTo(bosServer, QString::number(bosPort));
 }
 
 void OscarSocket::OnBosConnAckReceived()
 {
-	kdDebug(14150) << "Bos server ack'ed us!  Sending auth cookie" << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"BOS server ack'ed us! Sending auth cookie" << endl;
+
 	sendCookie();
 //	emit connectionChanged(5,"Connected to server, authorizing...");
 }
 
 void OscarSocket::sendCookie()
 {
-	kdDebug(14150) << k_funcinfo << "SEND (CLI_COOKIE) Mhh, cookies, let's give one to the server" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_COOKIE)" << endl;
 	Buffer outbuf;
 	putFlapVer(outbuf);
 	outbuf.addTLV(0x0006, mCookieLength, mCookie);
 	sendBuf(outbuf, 0x01);
 }
 
+// SNAC(01,06)
+// http://iserverd.khstu.ru/oscar/snac_01_06.html
 void OscarSocket::sendRateInfoRequest(void)
 {
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_RATESREQUEST)" << endl;
@@ -750,15 +770,22 @@ void OscarSocket::sendRateInfoRequest(void)
 	sendBuf(outbuf,0x02);
 }
 
+// SNAC(01,07)
+// http://iserverd.khstu.ru/oscar/snac_01_07.html
 void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo << "RECV (SRV_RATES), Parsing Rate Info Response" << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"RECV (SRV_RATES), Parsing Rate Info Response" << endl;
 
-	RateClass *rc=NULL;
+	RateClass *rc = 0;
+	//SnacPair *snacPair = 0;
+	unsigned int i = 0;
 	WORD numclasses = inbuf.getWord();
-//	kdDebug(14150) << k_funcinfo << "Number of Rate Classes=" << numclasses << endl;
 
-	for (unsigned int i=0;i<numclasses;i++)
+	/*kdDebug(14150) << k_funcinfo <<
+	"Number of Rate Classes=" << numclasses << endl;*/
+
+	for (i=0; i<numclasses; i++)
 	{
 		WORD classid;
 		DWORD windowsize, clear, alert, limit, disconnect,
@@ -766,6 +793,7 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 		BYTE currentState;
 
 		rc = new RateClass;
+
 		classid = inbuf.getWord();
 		//kdDebug(14150) << k_funcinfo << "Rate classId=" << rc->classid << endl;
 		windowsize = inbuf.getDWord();
@@ -775,28 +803,27 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 		disconnect = inbuf.getDWord();
 		current = inbuf.getDWord();
 		max = inbuf.getDWord();
+		// TODO: From http://iserverd.khstu.ru/oscar/snac_01_07.html
+		// Last time  -  not present in protocol version 2
+		// Current state  -  not present in protocol version 2
+		// i.e. find out when protocol version 2 is used (if it
+		// isn't obsolete already)
 		lastTime = inbuf.getDWord();
 		currentState = inbuf.getByte();
-		rc->setRateInfo( classid, windowsize, clear, alert, limit,
-			disconnect, current, max, lastTime, currentState );
 
-		QObject::connect(rc, SIGNAL(dataReady(Buffer &)), this, SLOT(writeData(Buffer &)));
-
-		/*//5 unknown bytes, depending on the 0x0001/0x0017 you send
-		for (int j=0;j<5;j++)
-				rc->unknown[j] = inbuf.getByte();*/
+		rc->setRateInfo(classid, windowsize, clear, alert, limit,
+			disconnect, current, max, lastTime, currentState);
+		QObject::connect(rc, SIGNAL(dataReady(Buffer &)),
+			this, SLOT(writeData(Buffer &)));
 		rateClasses.append(rc);
 	}
-
-	/*kdDebug(14150) << k_funcinfo << "The buffer is " << inbuf.length() <<
-		" bytes long after reading the classes." << endl;*/
 
 #ifdef OSCAR_PACKETLOG
 	kdDebug(14150) << "REMAINING BUFFER:" << inbuf.toString() << endl;
 #endif
 
 	//now here come the members of each class
-	for (unsigned int i=0;i<numclasses;i++)
+	for (i=0; i<numclasses; i++)
 	{
 		WORD classid = inbuf.getWord();
 		WORD count = inbuf.getWord();
@@ -805,8 +832,9 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 //			", Count: " << count << endl;
 
 		RateClass *tmp;
+		rc = 0;
 		// find the class we're talking about
-		for (tmp=rateClasses.first();tmp;tmp=rateClasses.next())
+		for (tmp=rateClasses.first(); tmp; tmp=rateClasses.next())
 		{
 			if (tmp->id() == classid)
 			{
@@ -815,20 +843,36 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 			}
 		}
 
-		for (WORD j=0;j<count;j++)
+		// do not go into next for() loop if we didnt find a RateClass anyway
+		if (rc == 0)
 		{
-			SnacPair *s = new SnacPair;
-			s->group = inbuf.getWord();
-			s->type = inbuf.getWord();
-//			kdDebug(14150)  << k_funcinfo << "snacpair; group=" << s->group <<
-//				", type=" << s->type << endl;
+			kdDebug(14150) << k_funcinfo << "WARNING: Could not find RateClass" <<
+				"to store SNAC group/type pairs into. Missing class id = " <<
+				classid << endl;
+			continue;
+		}
+
+		for (WORD j=0; j<count; j++)
+		{
+			/*
+			snacPair = new SnacPair;
+			snacPair->group = inbuf.getWord();
+			snacPair->type = inbuf.getWord();
 			if (rc)
 				rc->addMember(s);
+			*/
+
+			WORD group = inbuf.getWord();
+			WORD type = inbuf.getWord();
+			rc->addMember(group, type);
 		}
 	}
 
 	if(inbuf.length() != 0)
-		kdDebug(14150) << k_funcinfo << "Did not parse all Rates successfully!" << endl;
+	{
+		kdDebug(14150) << k_funcinfo <<
+			"ERROR: Did not parse all Rates successfully!" << endl;
+	}
 
 	sendRateAck();
 }
@@ -838,10 +882,10 @@ void OscarSocket::sendRateAck()
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_ACKRATES)" << endl;
 	Buffer outbuf;
 	outbuf.addSnac(0x0001,0x0008,0x0000,0x00000000);
-	for (RateClass *rc=rateClasses.first();rc;rc=rateClasses.next())
+	for (RateClass *rc = rateClasses.first(); rc; rc = rateClasses.next())
 	{
-		kdDebug(14150) << k_funcinfo << "adding classid " << rc->id() <<
-			 " to the rate acknowledgement" << endl;
+		/*kdDebug(14150) << k_funcinfo << "adding classid " << rc->id() <<
+			 " to the rate acknowledgement" << endl;*/
 		outbuf.addWord(rc->id());
 	}
 	sendBuf(outbuf,0x02);
@@ -852,10 +896,11 @@ void OscarSocket::sendRateAck()
 
 void OscarSocket::OnBosConnect()
 {
-	kdDebug(14150) << k_funcinfo << "Connected to " << socket()->host() << ", port " << socket()->port() << endl;
+	kdDebug(14150) << k_funcinfo << "Connected to " << mSocket->host() <<
+		", port " << mSocket->port() << endl;
 }
 
-void OscarSocket::sendPrivacyFlags(void)
+void OscarSocket::sendPrivacyFlags()
 {
 	Buffer outbuf;
 	outbuf.addSnac(0x0001,0x0014,0x0000,0x00000000);
@@ -876,7 +921,7 @@ void OscarSocket::requestMyUserInfo()
 
 void OscarSocket::parseMyUserInfo(Buffer &inbuf)
 {
-	if ((gotAllRights > 7) && (awaitingFirstPresenceBlock == OscarSocket::GotAll))
+	if ((gotAllRights > 7) /*&& (awaitingFirstPresenceBlock == OscarSocket::GotAll)*/)
 	{
 		kdDebug(14150) << k_funcinfo "RECV (SRV_REPLYINFO) Parsing OWN user info" << endl;
 		UserInfo u;
@@ -2839,8 +2884,9 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 
 	if (currentLevel <= disconnectLevel)
 	{
-		emit protocolError(i18n("The account %1 will be disconnected for exceeding the rate limit." \
-			"Please wait approximately 10 minutes before reconnecting.")
+		emit protocolError(i18n("The account %1 will be disconnected for " \
+			"exceeding the rate limit. Please wait approximately 10 minutes" \
+			" before reconnecting.")
 			.arg(mAccount->accountId()), 0);
 		//let the account properly clean itself up
 		mAccount->disconnect();
@@ -2849,7 +2895,7 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 	{
 		if (code == 0x0002 || code == 0x0003)
 		{
-			kdDebug(14150) << "Warning about the rate limit in class "
+			kdDebug(14150) << k_funcinfo "WARNING about rate-limit in class "
 				<< rateclass << " received. Current level: "
 				<< currentLevel << endl;
 		}
@@ -2880,26 +2926,30 @@ xx			byte	Current state
 void OscarSocket::doLogoff()
 {
 	mSSIData.clear();
-	if(isLoggedIn && (socket()->socketStatus() == KExtendedSocket::connected))
+	if(isLoggedIn && (socketStatus() == OscarConnection::Connected))
 	{
-		/*if(mIsICQ) // Done in slotConnectionClosed()
-			stopKeepalive();
-		*/
 		kdDebug(14150) << k_funcinfo << "Sending sign off request" << endl;
 		Buffer outbuf;
-		sendBuf(outbuf,0x04);
-		socket()->close();
+		sendBuf(outbuf, 0x04);
+		mSocket->close();
 	}
 	else
 	{
-		if(socket()->socketStatus() == KExtendedSocket::connecting ||
-			socket()->socketStatus() == KExtendedSocket::connected )
+		if(socketStatus() == OscarConnection::Connecting ||
+			socketStatus() == OscarConnection::Connected )
 		{
 			kdDebug(14150) << k_funcinfo <<
+				"ERROR =====" <<
 				"we're either not logged in correctly or something" <<
 				"wicked happened, closing down socket..." << endl;
-			socket()->close();
-			emit connectionClosed(QString::null);
+
+			//mSocket->close();
+			mSocket->reset();
+
+			// FIXME ?
+			// The above socket calls _should_ trigger a connectionClosed,
+			// I hope it really does [mETz, 05-05-2004]
+			//emit connectionClosed(QString::null);
 		}
 	}
 }
@@ -3425,27 +3475,47 @@ void OscarSocket::parseError(WORD family, Buffer &inbuf)
 	kdDebug(14150) << k_funcinfo <<
 		"Got an error, SNAC family=" << family << ", reason=" << reason << endl;
 
+
 	if (reason < msgerrreasonlen)
 	{
 		if(family==OSCAR_FAM_2)
+		{
 			msg = i18n("Sending userprofile failed: %1").arg(msgerrreason[reason]);
-		else if(family==OSCAR_FAM_4)
-			msg = i18n("Your message did not get sent: %1").arg(msgerrreason[reason]);
-		else
-			msg = i18n("Generic Packet error: %1").arg(msgerrreason[reason]);
+		}
+		else if(family == OSCAR_FAM_4) // Instant Messaging errors
+		{
+			// Ignores rate to client errors, usually caused by querying away messages
+			if (reason == 3)
+				return;
 
+			msg = i18n("Your message did not get sent because the following" \
+				" error occurred: %1").arg(msgerrreason[reason]);
+		}
+		else
+		{
+			msg = i18n("Generic Packet error: %1").arg(msgerrreason[reason]);
+		}
 	}
 	else
 	{
-		if(family==OSCAR_FAM_2)
-			msg = i18n("Sending userprofile failed: Unknown Error");
-		else if(family==OSCAR_FAM_4)
-			msg = i18n("Your message did not get sent: Unknown Error");
+		if (family == OSCAR_FAM_2)
+		{
+			msg = i18n("Sending userprofile failed: Unknown Error.\n" \
+				"Please report a bug at http://bugs.kde.org");
+		}
+		else if (family == OSCAR_FAM_4)
+		{
+			msg = i18n("Your message did not get sent: Unknown Error.\n" \
+				"Please report a bug at http://bugs.kde.org");
+		}
 		else
-			msg = i18n("Generic Packet error: Unknown Error");
+		{
+			msg = i18n("Generic Packet error: Unknown Error.\n" \
+				"Please report a bug at http://bugs.kde.org");
+		}
 	}
 
-	emit protocolError(msg,reason);
+	emit protocolError(msg, reason);
 }
 
 /* Request, deny, or accept a rendezvous session with someone
@@ -3525,7 +3595,7 @@ void OscarSocket::sendRendezvous(const QString &/*sn*/, WORD /*type*/, DWORD /*r
 		outbuf.addWord(0x0003);
 		outbuf.addWord(0x0004);
 
-		if (sockToUse->socket()->socketStatus() < KExtendedSocket::created)
+		if (sockToUse->mSocket->socketStatus() < KExtendedSocket::created)
 		{  //make sure the socket stuff is properly set up
 			kdDebug(14150) << k_funcinfo << "SERVER SOCKET NOT SET UP... " <<
 			"returning from sendRendezvous" << endl;
@@ -3535,11 +3605,11 @@ void OscarSocket::sendRendezvous(const QString &/*sn*/, WORD /*type*/, DWORD /*r
 			return;
 		}
 
-		outbuf.addDWord(static_cast<DWORD>(setIPv4Address(sockToUse->socket()->host()))); //8
+		outbuf.addDWord(static_cast<DWORD>(setIPv4Address(sockToUse->mSocket->host()))); //8
 		//TLV (type 5)
 		outbuf.addWord(0x0005);
 		outbuf.addWord(0x0002); //8
-		outbuf.addWord(sockToUse->socket()->port().toUShort()); //6
+		outbuf.addWord(sockToUse->mSocket->port().toUShort()); //6
 		//TLV (type f)
 		outbuf.addTLV(0x000f,0x0000,NULL); //4
 
@@ -3557,7 +3627,7 @@ void OscarSocket::sendRendezvous(const QString &/*sn*/, WORD /*type*/, DWORD /*r
 	}
 
 	kdDebug(14150) << "Sending direct IM, type " << type << " from " <<
-		sockToUse->socket()->host() << ", port " << sockToUse->socket()->port() << endl;
+		sockToUse->mSocket->host() << ", port " << sockToUse->mSocket->port() << endl;
 
 	sendBuf(outbuf,0x02);
 #endif
@@ -3574,11 +3644,13 @@ void OscarSocket::sendDirectIMAccept(const QString &sn)
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 
 	sendRendezvous(sn,0x0002,AIM_CAPS_IMIMAGE);
+	/*
 	if(!mDirectIMMgr->establishOutgoingConnection(sn))
 	{
 		kdDebug(14150) << k_funcinfo << sn <<
 			" not found in pending connection list" << endl;
 	}
+	*/
 }
 
 void OscarSocket::parseMissedMessage(Buffer &inbuf)
@@ -3682,12 +3754,8 @@ void OscarSocket::sendInfo()
 
 	sendIdleTime(0); // CLI_SNAC1_11, sent before CLI_SETSTATUS
 
-	// Is this allowed while logging into AIM?
-	// This is just here to state that we're online
-//	sendStatus(OSCAR_ONLINE); // CLI_SETSTATUS for ICQ, weird away SNAC for AIM
-
 	if(mIsICQ)
-		sendICQStatus(loginStatus);
+		sendICQStatus(loginStatus); // send initial login status
 
 	if (!mIsICQ)
 	{
@@ -3701,25 +3769,31 @@ void OscarSocket::sendInfo()
 		sendReqOfflineMessages(); // CLI_REQOFFLINEMSGS
 		startKeepalive();
 	}
-	// FIXME: If nobody on your list is online you'll never come to the state where we
+
+	// HACK: If nobody on your list is online you'll never come to the state where we
 	// re-request own userinfo that results in properly updating your own status.
 	// This 4 second timer checks if the initial presence info came in, if not it just
 	// goes and requests your online-status.
 	// If anybody knows a better way to handle this please mail me [mETz]
-	QTimer::singleShot(4000, this, SLOT(slotDelayConnectingPhaseTimeout()));
+	//QTimer::singleShot(4000, this, SLOT(slotDelayConnectingPhaseTimeout()));
+
+	QTimer::singleShot(2000, this, SLOT(slotDelayConnectingPhaseTimeout()));
 }
 
 void OscarSocket::slotDelayConnectingPhaseTimeout()
 {
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
+	/*kdDebug(14150) << k_funcinfo << "Called." << endl;
 
 	if(awaitingFirstPresenceBlock == OscarSocket::Waiting)
 	{
-		kdDebug(14150) << k_funcinfo << "Didn't get any initial presence status =======================" << endl;
+		kdDebug(14150) << k_funcinfo <<
+			"Didn't get any initial presence status =======================" << endl;
 		awaitingFirstPresenceBlock = OscarSocket::GotAll;
 		requestMyUserInfo();
 	}
+	*/
 
+	requestMyUserInfo();
 }
 
 // Sends parameters for ICBM messages (CLI_SETICBM)
@@ -3735,11 +3809,12 @@ void OscarSocket::sendMsgParams()
 	outbuf.addWord(0x0000);
 
 	//these are all read-write
-	//flags
-	if(mIsICQ)
-		outbuf.addDWord(0x00000003);
-	else
-		outbuf.addDWord(0x0000000b);
+	// channel-flags
+	// outbuf.addDWord(mIsICQ ? 0x00000003 : 0x0000000b);
+	// bit 1 : messages allowed (always 1 or you cannot send IMs)
+	// bit 2 : missed call notifications enabled
+	// bit 4 : typing notifications enabled
+	outbuf.addDWord(0x0000000b);
 
 	//max message length (8000 bytes)
 	outbuf.addWord(0x1f40);
@@ -3811,7 +3886,7 @@ FLAP OscarSocket::getFLAP()
 	FLAP fl;
 	fl.error = false;
 
-	if (socket()->peekBlock(&peek[0], 6) != 6 )
+	if (mSocket->peekBlock(&peek[0], 6) != 6 )
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"Error reading 6 bytes for FLAP" << endl;
@@ -3835,11 +3910,12 @@ FLAP OscarSocket::getFLAP()
 		// get the packet length
 		fl.length = buf.getWord();
 		//kdDebug(14150) << k_funcinfo << "FLAP length=" << fl.length << endl;
-		//kdDebug(14150) << k_funcinfo << "bytes available=" << socket()->bytesAvailable() << endl;
+		//kdDebug(14150) << k_funcinfo << "bytes available=" << mSocket->bytesAvailable() << endl;
 
-		if(socket()->bytesAvailable() < fl.length+6)
+		if(mSocket->bytesAvailable() < fl.length+6)
 		{
-			kdDebug(14150) << k_funcinfo << "Not enough data in recv buffer to read the full FLAP, aborting" << endl;
+			/*kdDebug(14150) << k_funcinfo <<
+				"Not enough data in recv buffer to read the full FLAP, aborting" << endl;*/
 			fl.error = true;
 		}
 
@@ -3855,11 +3931,12 @@ FLAP OscarSocket::getFLAP()
 	{
 		/*kdDebug(14150) << k_funcinfo <<
 			"Returning FLAP, channel=" << fl.channel << ", length=" << fl.length << endl;*/
-		socket()->readBlock(0L, 6); // get rid of FLAP header because we successfully retrieved it
+		mSocket->readBlock(0L, 6); // get rid of FLAP header because we successfully retrieved it
 	}
 	return fl;
 }
 
+/*
 // Called when a direct IM is received
 void OscarSocket::OnDirectIMReceived(QString message, QString sender, bool isAuto)
 {
@@ -3897,7 +3974,7 @@ void OscarSocket::OnDirectIMReady(QString name)
 {
 	emit connectionReady(name);
 }
-
+*/
 #if 0
 void OscarSocket::sendFileSendRequest(const QString &sn, const KFileItem &finfo)
 {

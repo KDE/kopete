@@ -39,7 +39,6 @@ AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount
 	mProtocol=static_cast<AIMProtocol *>(protocol());
 	setOnlineStatus(mProtocol->statusOffline);
 
-	mLastAutoResponseTime=0;
 	mUserProfile="";
 	infoDialog=0L;
 
@@ -50,8 +49,8 @@ AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount
 
 	// Incoming minitype notification
 	QObject::connect(
-		acc->engine(), SIGNAL(gotMiniTypeNotification(const QString &, int)),
-		this, SLOT(slotGotMiniType(const QString &, int)));
+		acc->engine(), SIGNAL(gotMiniTypeNotification(const QString &, OscarConnection::TypingNotify)),
+		this, SLOT(slotGotMiniType(const QString &, OscarConnection::TypingNotify)));
 
 	// received userprofile
 	QObject::connect(
@@ -91,7 +90,7 @@ void AIMContact::slotGotProfile(const UserInfo &user, const QString &profile, co
 		kdDebug(14150) << k_funcinfo << "Attempting to set status to online for temp contact" << endl;
 		setStatus(OSCAR_ONLINE);
 	}
-	
+
 	emit updatedProfile();
 }
 
@@ -184,7 +183,7 @@ void AIMContact::slotTyping(bool typing)
 }
 
 // Called when we get a minityping notification
-void AIMContact::slotGotMiniType(const QString &screenName, int type)
+void AIMContact::slotGotMiniType(const QString &screenName, OscarConnection::TypingNotify type)
 {
 	// Check to see if it's us
 	if(tocNormalize(screenName) != contactName())
@@ -198,15 +197,11 @@ void AIMContact::slotGotMiniType(const QString &screenName, int type)
 
 	switch(type)
 	{
-		case 0:
-		case 1:
-			// 0 == Typing Finished
-			// 1 == Text Typed
-			// Both of these are types of "not typing"
+		case (OscarConnection::TypingFinished):
+		case (OscarConnection::TextTyped): // Both of these are types of "not typing"
 			mMsgManager->receivedTypingMsg(this, false);
 			break;
-		case 2:
-			// Typing started
+		case (OscarConnection::TypingBegun): // Typing started
 			mMsgManager->receivedTypingMsg(this, true);
 			break;
 		default:
@@ -275,49 +270,6 @@ void AIMContact::slotOffgoingBuddy(QString sn)
 	slotUpdateBuddy();
 }
 
-#if 0
-void AIMContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &message)
-{
-	// Tell the message manager that the buddy is done typing
-	manager()->receivedTypingMsg(this, false);
-
-	// Build a KopeteMessage and set the body as Rich Text
-	KopeteMessage msg = parseAIMHTML(message);
-	manager()->appendMessage(msg);
-
-	// send our away message in fire-and-forget-mode :)
-	if(mAccount->isAway())
-	{
-		// Compare current time to last time we sent a message
-		// We'll wait 2 minutes between responses
-		if((time(0L) - mLastAutoResponseTime) > 120)
-		{
-			kdDebug(14190) << k_funcinfo << " while we are away, " \
-				"sending away-message to annoy buddy :)" << endl;
-			// Send the autoresponse
-			mAccount->engine()->sendIM(KopeteAway::getInstance()->message(), this, true);
-			// Build a pointerlist to insert this contact into
-			KopeteContactPtrList toContact;
-			toContact.append(this);
-			// Display the autoresponse
-			// Make it look different
-			// FIXME: hardcoded color
-			QString responseDisplay =
-				"<font color='#666699'>Autoresponse: </font>" +
-				KopeteAway::getInstance()->message();
-
-			KopeteMessage message(mAccount->myself(), toContact,
-				responseDisplay, KopeteMessage::Outbound, KopeteMessage::RichText);
-
-			manager()->appendMessage(message);
-			// Set the time we last sent an autoresponse
-			// which is right now
-			mLastAutoResponseTime = time(0L);
-		}
-	}
-}
-#endif
-
 void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 {
 	if (message.plainBody().isEmpty()) // no text, do nothing
@@ -355,7 +307,7 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	}
 
 	// Check to see if the person we're sending the message to is online
-	
+
 	if( onlineStatus().status() == KopeteOnlineStatus::Offline )
 	{
 		KMessageBox::sorry(Kopete::UI::Global::mainWidget(),
@@ -375,72 +327,6 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	manager()->appendMessage(message);
 	manager()->messageSucceeded();
 }
-
-#if 0
-KopeteMessage AIMContact::parseAIMHTML(const QString &m)
-{
-/* ========================================================================================
-Original AIM-Messages, just a few to get the idea of the weird format[tm]:
-
-From original AIM: ------------------------------------------------------------------------
-<HTML><BODY BGCOLOR="#ffffff"><FONT FACE="Verdana" SIZE=4>some text message</FONT></BODY></HTML>
-
-From Trillian 0.7something: ---------------------------------------------------------------
-<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><font color="#ffff00">ups</BODY></HTML>
-<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><font back="#00ff00">bggruen</BODY></HTML>
-<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><font back="#00ff00"><font color="#ffff00">both</BODY></HTML>
-
-From GAIM: --------------------------------------------------------------------------------
-<FONT COLOR="#0002A6"><FONT SIZE="2">cool cool</FONT></FONT>
-
-Original AIM 5.2 message: -----------------------------------------------------------------
-<HTML><BODY BGCOLOR="#ffffff">
-<FONT LANG="0" SIZE=2>t</FONT>
-<FONT BACK="#ffffff" SIZE=3>h</FONT>
-<FONT SIZE=4>i</FONT>
-<FONT SIZE=5>s</FONT>
-<FONT SIZE=6> i</FONT>
-<FONT SIZE=7>s <B><I><U>a </B></I></U> </FONT>
-<FONT BACK="#008000" SIZE=7>test</FONT>
-<FONT BACK="#ffffff" SIZE=7> <I></FONT>
-<FONT SIZE=3>of <B>h</I>t<U>m</U>l</B></FONT>
-<FONT COLOR="#008000"> formatting</FONT>
-</BODY></HTML>
-
-AIM 5.2 with fg and bg set for some text: -------------------------------------------------
-<HTML><BODY BGCOLOR="#ffffff">
-<FONT COLOR="#00ff00" BACK="#800080" LANG="0">test</FONT>
-</BODY></HTML>
-=========================================================================================== */
-
-//	kdDebug(14190) << k_funcinfo << "Original MSG: '" << m << "'" << endl;
-
-	QString result = m;
-	result.replace( QRegExp(
-		QString::fromLatin1("<[hH][tT][mM][lL].*>(.*)</[hH][tT][mM][lL]>") ),
-		QString::fromLatin1("\\1") );
-	result.replace( QRegExp(
-		QString::fromLatin1("<[bB][oO][dD][yY].*>(.*)</[bB][oO][dD][yY]>") ),
-		QString::fromLatin1("\\1") );
-	result.replace( QRegExp(
-		QString::fromLatin1("<[bB][rR]>") ),
-		QString::fromLatin1("<br />") );
-	result.replace( QRegExp(
-		QString::fromLatin1("<[fF][oO][nN][tT].*[bB][aA][cC][kK]=(.*).*>") ),
-		QString::fromLatin1("<span style=\"background-color:\\1 ;\"") );
-	result.replace( QRegExp(
-		QString::fromLatin1("</[fF][oO][nN][tT]>") ),
-		QString::fromLatin1("</span>") );
-
-//	kdDebug(14190) << k_funcinfo << "Final MSG: '" << result << "'" << endl;
-
-	KopeteContactPtrList tmpList;
-	tmpList.append(mAccount->myself());
-	KopeteMessage msg(this, tmpList, result, KopeteMessage::Inbound, KopeteMessage::RichText);
-
-	return msg;
-}
-#endif
 
 void AIMContact::slotUserInfo()
 {

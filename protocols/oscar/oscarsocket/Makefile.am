@@ -5,7 +5,13 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 
 noinst_LTLIBRARIES = liboscarsocket.la
 
-liboscarsocket_la_SOURCES = oscarsocket.cpp oscarsocket.icq.cpp oscarsocket.aim.cpp \
-	oscarcaps.cpp oncomingsocket.cpp buffer.cpp md5.c aim.cpp ssidata.cpp \
-	oscarconnection.cpp oscardirectconnection.cpp \
-	oscarfilesendconnection.cpp rateclass.cpp oscarmessage.cpp rtf.cc
+liboscarsocket_la_SOURCES = oscarconnection.cpp oscarsocket.cpp \
+	oscarsocket.icq.cpp oscarsocket.aim.cpp \
+	oscarcaps.cpp buffer.cpp md5.c aim.cpp ssidata.cpp \
+	rateclass.cpp oscarmessage.cpp rtf.cc
+
+# Unused files
+#
+# oscarfilesendconnection.cpp
+# oscardirectconnection.cpp
+# oncomingsocket.cpp

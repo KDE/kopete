@@ -15,100 +15,154 @@
 */
 
 #include "oscarconnection.h"
-#include <qobject.h>
+
 #include <kdebug.h>
+#include <klocale.h>
 
-OscarConnection::OscarConnection(const QString &sn, const QString &connName,
-	ConnectionType type, const QByteArray &cookie, QObject *parent, const char *name) :
-	QObject(parent, name)
+OscarConnection::OscarConnection(const QString &connName, ConnectionType type,
+	const QByteArray &cookie, QObject *parent, const char *name) : QObject(parent, name)
 {
-//	kdDebug(14150) << k_funcinfo <<  "called, sn='" << sn << "' connName='" << connName << "'" << endl;
-
 	mConnName = connName;
 	mConnType = type;
-	mSN = sn;
+	//mSN = sn;
 	mCookie.duplicate(cookie);
-	mSocket = new KExtendedSocket();
-	mSocket->setSocketFlags(KExtendedSocket::inetSocket | KExtendedSocket::bufferedSocket);
 
-	connect(mSocket, SIGNAL(connectionSuccess()), this, SLOT(slotConnected()));
-	connect(mSocket, SIGNAL(connectionFailed(int)), this, SLOT(slotError(int)));
+
+	#ifdef USE_KEXTSOCK
+	mSocket = new KExtendedSocket();
+	mSocket->setSocketFlags(KExtendedSocket::inetSocket |
+		KExtendedSocket::bufferedSocket);
+
+	connect(mSocket, SIGNAL(connectionSuccess()),
+		this, SLOT(slotSocketConnected()));
+	connect(mSocket, SIGNAL(connectionFailed(int)),
+		this, SLOT(slotSocketError(int)));
+	connect(mSocket, SIGNAL(closed(int)), this, SLOT(slotSocketClosed()));
+
+	#else // libqt-addon
+
+	mSocket = new QBufferedSocket();
+	mSocket->setSocketFlags(QSocketBase::KeepAlive);
+
+	connect(mSocket, SIGNAL(connected(const QResolverEntry &)),
+		this, SLOT(slotSocketConnected()));
+	connect(mSocket, SIGNAL(gotError(int)), this, SLOT(slotSocketError(int)));
+	connect(mSocket, SIGNAL(closed()), this, SLOT(slotSocketClosed()));
+
+	#endif
+
+	mSocket->enableWrite(false);
+	mSocket->enableRead(true);
 }
+
 
 OscarConnection::~OscarConnection()
 {
 //	kdDebug(14150) << k_funcinfo << "Called." << endl;
 }
 
-/* Called when there is data to be read.
- * If you want your connection to be able to receive data, you
- * should override this
- * No need to connect the signal in derived classes, just override this slot
- */
-void OscarConnection::slotRead()
-{
-	kdDebug(14150) << k_funcinfo << mSocket->bytesAvailable() <<
-		" bytes, connection name='" << mConnName << "'" << endl;
-
-	Buffer inbuf;
-	int len = mSocket->bytesAvailable();
-	char *buf = new char[len];
-	mSocket->readBlock(buf,len);
-	inbuf.setBuf(buf,len);
-//	inbuf.print();
-	delete buf;
-}
-
-void OscarConnection::slotError(int errornum)
-{
-	kdDebug(14150) << k_funcinfo << mSocket->strError(mSocket->status(), errornum) << endl;
-	slotConnectionClosed();
-}
 
 void OscarConnection::setSN(const QString &newSN)
 {
 	mSN = newSN;
 }
 
+
+const QString &OscarConnection::getSN() const
+{
+	return mSN;
+}
+
+
+OscarConnection::ConnectionStatus OscarConnection::socketStatus() const
+{
+	switch(mSocket->socketStatus())
+	{
+	#ifdef USE_KEXTSOCK
+		case (KExtendedSocket::connecting):
+			return Connecting;
+		case (KExtendedSocket::connected):
+			return Connected;
+	#else
+		case (QClientSocketBase::HostLookup):
+		case (QClientSocketBase::Connecting):
+			return Connecting;
+		case (QClientSocketBase::Open):
+		case (QClientSocketBase::Connected):
+		case (QClientSocketBase::Connection):
+			return Connected;
+	#endif
+		default:
+			break;
+	}
+	return Disconnected;
+}
+
+
+void OscarConnection::connectTo(const QString &host, const QString &port)
+{
+	#ifdef USE_KEXTSOCK
+	mSocket->setAddress(host, port);
+	mSocket->connect();
+	#else
+	mSocket->connect(host, port);
+	#endif
+}
+
+
+void OscarConnection::slotRead()
+{
+	kdDebug(14150) << k_funcinfo << "NOT IMPLEMENTED IN THIS OBJECT!" << endl;
+}
+
+
 void OscarConnection::sendIM(const QString &/*message*/, bool /*isAuto*/)
-{}
+{
+	kdDebug(14150) << k_funcinfo << "NOT IMPLEMENTED IN THIS OBJECT!" << endl;
+}
+
 
 void OscarConnection::sendTypingNotify(TypingNotify /*notifyType*/)
 {
-	kdDebug(14150) << k_funcinfo <<
-		"Not implemented in this object! " << endl;
+	kdDebug(14150) << k_funcinfo << "NOT IMPLEMENTED IN THIS OBJECT!" << endl;
 }
 
-void OscarConnection::slotConnected()
-{
-	kdDebug(14150) << k_funcinfo << "Connected" << endl;
-
-//	mSocket->enableRead(true);
-//	mSocket->enableWrite(true);
-//	mSocket->setBufferSize(-1);
-	connect(mSocket, SIGNAL(readyRead()), this, SLOT(slotRead()));
-
-	// Announce that we are ready for use, if it's not the server socket
-	if(mConnType != Server)
-		emit connectionReady(connectionName());
-}
-
-/** Called when the connection is closed */
-void OscarConnection::slotConnectionClosed()
-{
-	kdDebug(14150) << k_funcinfo << "connection with '" <<
-		connectionName() << "' lost." << endl;
-
-	emit protocolError(QString("Connection with %1 lost").arg(mSocket->host()), 1);
-	emit connectionClosed(connectionName());
-}
-
-/** Sends request to the client telling he/she that we want to send this file */
 void OscarConnection::sendFileSendRequest()
 {
-	kdDebug(14150) << k_funcinfo <<
-		"Not implemented in this object! " << endl;
+	kdDebug(14150) << k_funcinfo << "NOT IMPLEMENTED IN THIS OBJECT!" << endl;
 }
+
+
+// ============================================================================
+
+
+void OscarConnection::slotSocketConnected()
+{
+	kdDebug(14150) << k_funcinfo << "Socket is now connected" << endl;
+	connect(mSocket, SIGNAL(readyRead()), this, SLOT(slotRead()));
+
+	emit socketConnected(connectionName());
+}
+
+
+void OscarConnection::slotSocketClosed()
+{
+	kdDebug(14150) << k_funcinfo << "Connection with '" <<
+		connectionName() << "' closed" << endl;
+
+	//emit protocolError(i18n("Connection with %1 lost").arg(mSocket->host()), 1);
+	//emit connectionClosed(connectionName());
+	emit socketClosed(connectionName());
+}
+
+
+void OscarConnection::slotSocketError(int errornum)
+{
+	kdDebug(14150) << k_funcinfo << "SOCKET ERROR: " << errornum << endl;
+	mSocket->closeNow();
+	emit socketError(connectionName(), errornum);
+}
+
 
 #include "oscarconnection.moc"
 // vim: set noet ts=4 sts=4 sw=4:

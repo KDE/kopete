@@ -81,7 +81,7 @@ void OscarSocket::parseMiniTypeNotify(Buffer &inbuf)
 
 	int snlen = inbuf.getByte();
 	char *sn = inbuf.getBlock(snlen);
-	QString screenName = QString::fromLatin1(sn); // TODO: check if encoding is right
+	QString screenName = QString::fromLatin1(sn); // TODO: encoding
 	delete [] sn;
 
 	// Get the actual notification
@@ -92,17 +92,14 @@ void OscarSocket::parseMiniTypeNotify(Buffer &inbuf)
 
 	switch(notification)
 	{
-		case 0x0000:
-			// Typing finished
-			emit gotMiniTypeNotification(screenName, 0);
+		case 0x0000: // Typing finished
+			emit gotMiniTypeNotification(screenName, OscarConnection::TypingFinished);
 			break;
-		case 0x0001:
-			// Text Typed
-			emit gotMiniTypeNotification(screenName, 1);
+		case 0x0001: // Text Typed
+			emit gotMiniTypeNotification(screenName, OscarConnection::TextTyped);
 			break;
-		case 0x0002:
-			// Typing Started
-			emit gotMiniTypeNotification(screenName, 2);
+		case 0x0002: // Typing Started
+			emit gotMiniTypeNotification(screenName, OscarConnection::TypingBegun);
 			break;
 		default:
 			kdDebug(14150) << k_funcinfo << "MiniType Error: " << notification << endl;
@@ -156,7 +153,7 @@ void OscarSocket::encodePassword(char *digest)
 {
 	md5_state_t state;
 	md5_init(&state);
-	md5_append(&state, (const md5_byte_t *)key, strlen(key));
+	md5_append(&state, (const md5_byte_t *)mPwEncryptionKey, strlen(mPwEncryptionKey));
 	md5_append(&state, (const md5_byte_t *)loginPassword.latin1(), loginPassword.length());
 	md5_append(&state, (const md5_byte_t *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
 	md5_finish(&state, (md5_byte_t *)digest);

@@ -18,9 +18,12 @@
 #define OSCARSOCKET_H
 
 #include "aim.h" // tocNormalize()
-#include "oscardirectconnection.h"
+#include "oscarconnection.h"
+#include "buffer.h"
+//#include "oscardirectconnection.h"
+//#include "oncomingsocket.h"
+
 #include "ssidata.h"
-#include "oncomingsocket.h"
 #include "oscarmessage.h"
 #include "oscarsocket.icq.h"
 
@@ -33,7 +36,7 @@
 class OscarAccount;
 class OscarContact;
 class QTimer;
-class KExtendedSocket;
+class KFileItem;
 class RateClass;
 
 struct FLAP
@@ -203,14 +206,14 @@ const struct
 
 const QString msgerrreason[] =
 {
-	I18N_NOOP("Invalid error"),
-	I18N_NOOP("Invalid SNAC"),
+	I18N_NOOP("Unknown error"),
+	I18N_NOOP("Invalid SNAC header, report a bug at http://bugs.kde.org"),
 	I18N_NOOP("Rate to server"),
 	I18N_NOOP("Rate to client"),
 	I18N_NOOP("Recipient is not logged in"),
 	I18N_NOOP("Service unavailable"),
 	I18N_NOOP("Service not defined"),
-	I18N_NOOP("Obsolete SNAC"),
+	I18N_NOOP("Obsolete SNAC, report a bug at http://bugs.kde.org"),
 	I18N_NOOP("Not supported by server"),
 	I18N_NOOP("Not supported by client"),
 	I18N_NOOP("Refused by client"),
@@ -219,14 +222,14 @@ const QString msgerrreason[] =
 	I18N_NOOP("Request denied"),
 	I18N_NOOP("Broken packet format, report a bug at http://bugs.kde.org"),
 	I18N_NOOP("Insufficient rights"),
-	I18N_NOOP("In local permit/deny"),
+	I18N_NOOP("In local permit/deny list"),
 	I18N_NOOP("Sender is too evil"),
 	I18N_NOOP("Receiver too evil"),
 	I18N_NOOP("User is temporarily unavailable"),
 	I18N_NOOP("No match"),
 	I18N_NOOP("List overflow"),
 	I18N_NOOP("Request ambiguous"),
-	I18N_NOOP("Queue full"),
+	I18N_NOOP("Server queue is full"),
 	I18N_NOOP("Not while on AOL")
 };
 
@@ -255,7 +258,7 @@ const QString AIM_SERVER		= "login.oscar.aol.com";
 const unsigned int AIM_PORT	= 5190;
 
 
-/*
+/**
  * Implements the actual communication with the oscar server
  * @author Tom Linsky
  * @author Stefan Gehn
@@ -267,7 +270,6 @@ class OscarSocket : public OscarConnection
 	public:
 		OscarSocket(const QString &connName, const QByteArray &cookie,
 			OscarAccount *account, QObject *parent=0, const char *name=0, bool=false);
-
 		~OscarSocket();
 
 		/**
@@ -882,15 +884,15 @@ class OscarSocket : public OscarConnection
 		/** Called on connection to bos server */
 		void OnBosConnect();
 		/** Called when a direct IM is received */
-		void OnDirectIMReceived(QString, QString, bool);
+		//void OnDirectIMReceived(QString, QString, bool);
 		/** Called when a direct IM connection suffers an error */
-		void OnDirectIMError(QString, int);
+		//void OnDirectIMError(QString, int);
 		/** Called when a direct IM connection bites the dust */
-		void OnDirectIMConnectionClosed(QString);
+		//void OnDirectIMConnectionClosed(QString);
 		/** Called whenever a direct IM connection gets a typing notification */
-		void OnDirectMiniTypeNotification(QString screenName, int notify);
+		//void OnDirectMiniTypeNotification(QString screenName, int notify);
 		/** Called when a direct connection is set up and ready for use */
-		void OnDirectIMReady(QString name);
+		//void OnDirectIMReady(QString name);
 
 		/**
 		 * Called when a file transfer begins
@@ -899,7 +901,7 @@ class OscarSocket : public OscarConnection
 			const unsigned long size, const QString &recipient);*/
 
 		void slotKeepaliveTimer();
-		void slotBytesWritten(int n);
+		//void slotBytesWritten(int n);
 
 	signals:
 		/**
@@ -1067,7 +1069,7 @@ class OscarSocket : public OscarConnection
 		/**
 		 * The key used to encrypt the password
 		 */
-		char * key;
+		char *mPwEncryptionKey;
 		/**
 		 * The user's password
 		 */
@@ -1094,13 +1096,13 @@ class OscarSocket : public OscarConnection
 		/** tells whether we are idle */
 		bool idle;
 		/** Socket for direct connections */
-		OncomingSocket *mDirectIMMgr;
+		//OncomingSocket *mDirectIMMgr;
 		/** Socket for file transfers */
-		OncomingSocket *mFileTransferMgr;
+		//OncomingSocket *mFileTransferMgr;
 		/** SSI server stored data */
 		SSIData mSSIData;
 		/** Socket for direct connections */
-		KExtendedSocket * connsock;
+		//KExtendedSocket * connsock;
 		// Tells if we are connected to the server and ready to operate
 		bool isLoggedIn;
 
@@ -1133,7 +1135,7 @@ class OscarSocket : public OscarConnection
 		 */
 		WORD type2SequenceNum;
 
-		DWORD mDirectConnnectionCookie;
+		//DWORD mDirectConnnectionCookie;
 
 		enum FirstPresenceBlock
 		{
@@ -1141,7 +1143,7 @@ class OscarSocket : public OscarConnection
 		};
 		FirstPresenceBlock awaitingFirstPresenceBlock;
 
-		bool bSomethingOutgoing;
+		//bool bSomethingOutgoing;
 
 		/** Used to map a buddy and his group to a server ack */
 		QMap<DWORD, AckBuddy> m_ackBuddyMap;

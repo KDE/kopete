@@ -44,38 +44,23 @@ class AIMContact : public OscarContact
 
 		const QString &userProfile() { return mUserProfile; }
 
-		/*
-		 * Only usable for the myself() contact
-		 */
+		/** !!! Only usable for the myself() contact */
 		void setOwnProfile(const QString &profile);
 
 		virtual const QString awayMessage();
 		virtual void setAwayMessage(const QString &message);
 
-	protected:
-		/**
-		 * parses HTML AIM-Clients send to us and
-		 * strips off most of it
-		 */
-		KopeteMessage parseAIMHTML(const QString &m);
-
-		AIMProtocol* mProtocol;
-
-		/**
-		* The time of the last autoresponse,
-		* used to determine when to send an
-		* autoresponse again.
-		*/
-		long mLastAutoResponseTime;
 
 	signals:
 		void updatedProfile();
+
 
 	private slots:
 		/**
 		 * Called when we get a minityping notification
 		 */
-		void slotGotMiniType(const QString &screenName, int type);
+		void slotGotMiniType(const QString &screenName,
+			OscarConnection::TypingNotify type);
 		void slotTyping(bool typing);
 
 		/**
@@ -108,6 +93,7 @@ class AIMContact : public OscarContact
 		void slotCloseUserInfoDialog();
 
 	private:
+		AIMProtocol* mProtocol;
 		QString mUserProfile;
 		AIMUserInfoDialog *infoDialog;
 		KAction *actionRequestAuth;

@@ -144,7 +144,7 @@ class Buffer
 		 * returns new buffer length
 		 */
 		int addFlap(const BYTE channel, const WORD flapSequenceNum);
-		
+
 		/**
 		 * changes the flap sequence number
 		 * (assumed to be already included in the buffer) to the
@@ -199,7 +199,7 @@ class Buffer
 		SNAC getSnacHeader();
 
 		/**
-		 * Reads the SNAC header from the buffer without removing it 
+		 * Reads the SNAC header from the buffer without removing it
 		 */
 		SNAC readSnacHeader();
 
@@ -273,7 +273,7 @@ class Buffer
 		char *getBUIN();
 
 	private:
-		/*
+		/**
 		 * Make the buffer bigger by @p inc bytes
 		 */
 		void expandBuffer(unsigned int inc);

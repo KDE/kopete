@@ -18,6 +18,30 @@
 #include <qtimer.h>
 #include <kdebug.h>
 
+
+SnacPair::SnacPair()
+{
+}
+
+SnacPair::SnacPair(const WORD pGroup, const WORD pType)
+{
+	mGroup = pGroup;
+	mType = pType;
+}
+
+const WORD SnacPair::group()
+{
+	return mGroup;
+}
+
+const WORD SnacPair::type()
+{
+	return mType;
+}
+
+// =====================================================================
+
+
 RateClass::RateClass()
 {
 	mPacketTimer.start();
@@ -39,12 +63,13 @@ void RateClass::setRateInfo( WORD pclassid, DWORD pwindowsize, DWORD pclear,
 	currentState = pcurrentState;
 }
 
-void RateClass::addMember( SnacPair *pmember )
+void RateClass::addMember(const WORD snacGroup, const WORD snacType)
 {
-	members.append(pmember);
+	SnacPair *snacPair = new SnacPair(snacGroup, snacType);
+	mMembers.append(snacPair);
 }
 
-void RateClass::dequeue(void)
+void RateClass::dequeue()
 {
 	//clear the buffer
 	mPacketQueue.first().clear();
@@ -59,7 +84,7 @@ void RateClass::enqueue(Buffer &outbuf)
 	timedSend();
 }
 
-void RateClass::timedSend(void)
+void RateClass::timedSend()
 {
 	if ( mPacketQueue.empty() )
 	{
@@ -80,36 +105,31 @@ void RateClass::timedSend(void)
 	//The maximum level at which we can safely send a packet
 	DWORD maxPacket = limit*windowsize/(windowsize-1) + RATE_SAFETY_TIME;
 
-	//kdDebug(14150) << k_funcinfo << "Rate Information:"
-	//	<< "\nWindow Size: " << windowsize
-	//	<< "\nWindow Size - 1: " << windowsize - 1
-	//	<< "\nOld Level: " << current
-	//	<< "\nAlert Level: " << alert
-	//	<< "\nLimit Level: " << limit
-	//	<< "\nDisconnect Level: " << disconnect
-	//	<< "\nNew Level: " << newLevel
-	//	<< "\nTime elapsed: " << timeDiff
-	//	<< "\nMax packet: " << maxPacket
-	//	<< "\nSend queue length: " << mPacketQueue.count() << endl;
+	/*kdDebug(14150) << k_funcinfo << "Rate Information:"
+		<< "\nWindow Size: " << windowsize
+		<< "\nWindow Size - 1: " << windowsize - 1
+		<< "\nOld Level: " << current
+		<< "\nAlert Level: " << alert
+		<< "\nLimit Level: " << limit
+		<< "\nDisconnect Level: " << disconnect
+		<< "\nNew Level: " << newLevel
+		<< "\nTime elapsed: " << timeDiff
+		<< "\nMax packet: " << maxPacket
+		<< "\nSend queue length: " << mPacketQueue.count() << endl;*/
 
 	//If we are one packet or less away from being blocked,
 	// wait to send
 	if ( newLevel < maxPacket || newLevel < disconnect )
 	{
+		int waitTime = maxPacket * windowsize - (windowsize - 1) * current - timeDiff + RATE_SAFETY_TIME;
 		//We are sending TOO FAST, let's wait and send later
-		kdDebug(14150) << k_funcinfo << "Sending this packet would violate rate limit... waiting "
-			<< maxPacket*windowsize - (windowsize - 1)*current - timeDiff + RATE_SAFETY_TIME
-			<< " ms..." << endl;
-
-		//the 25 is included here to allow for differences in clock
-		//granularity between client and server
-		QTimer::singleShot(
-			maxPacket*windowsize - (windowsize - 1)*current - timeDiff + RATE_SAFETY_TIME,
-			this,
-			SLOT(timedSend()));
-
+		kdDebug(14150) << k_funcinfo <<
+			"Sending this packet would violate rate limit, waiting "
+			<< waitTime << " ms..." << endl;
+		QTimer::singleShot(waitTime, this, SLOT(timedSend()));
 		return;
 	}
+
 	emit dataReady(outbuf);
 
 	//Update rate info
@@ -121,14 +141,12 @@ void RateClass::timedSend(void)
 	mPacketTimer.restart();
 }
 
-bool RateClass::isMember( const SNAC &s )
+bool RateClass::isMember(const SNAC &s)
 {
-	for ( SnacPair *sp=members.first(); sp; sp = members.next() )
+	for (SnacPair *sp=mMembers.first(); sp; sp = mMembers.next())
 	{
-		if ( sp->group == s.family && sp->type == s.subtype )
-		{
+		if (sp->group() == s.family && sp->type() == s.subtype)
 			return true;
-		}
 	}
 	return false;
 }

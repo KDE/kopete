@@ -1,8 +1,8 @@
 /*
   oscarsocket.icq.cpp  -  ICQ specific part of Oscarsocket
 
-  Copyright (c) 2003 by Stefan Gehn <metz AT gehn.net>
-  Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+  Copyright (c) 2004 by Stefan Gehn <metz AT gehn.net>
+  Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
 
 
   Much of this code was learned from code of the following apps:
@@ -716,7 +716,7 @@ void OscarSocket::fillDirectInfo(Buffer &directInfo)
 	directInfo.addWord(0x000C); // TLV(12)
 	directInfo.addWord(0x0025); // length 25
 
-	if(mDirectIMMgr)
+	/*if(mDirectIMMgr)
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"bindhost=" << mDirectIMMgr->socket()->bindHost() <<
@@ -730,10 +730,10 @@ void OscarSocket::fillDirectInfo(Buffer &directInfo)
 		directInfo.addWord(0x0000);
 		directInfo.addWord(mDirectIMMgr->socket()->port().toUShort()); // Port
 	}
-	else
+	else*/
 	{
-		kdDebug(14150) << k_funcinfo <<
-			"No direct-connection socket, filling in dummy values for IP and Port" << endl;
+		/*kdDebug(14150) << k_funcinfo <<
+			"No direct-connection socket, filling in dummy values" << endl;*/
 		directInfo.addDWord(0x00000000);
 		directInfo.addWord(0x0000);
 		directInfo.addWord(0x0000);
@@ -742,7 +742,8 @@ void OscarSocket::fillDirectInfo(Buffer &directInfo)
 	directInfo.addByte(0x00); // Mode, TODO: currently fixed to "Direct Connection disabled"
 	directInfo.addWord(ICQ_TCP_VERSION); // icq tcp protocol version, v8 currently
 
-	directInfo.addDWord(mDirectConnnectionCookie);
+	//directInfo.addDWord(mDirectConnnectionCookie);
+	directInfo.addDWord(0x00000000);
 	directInfo.addDWord(0x00000050); // web front port
 	directInfo.addDWord(0x00000003); // number of following client features
 	directInfo.addDWord(0x00000000); // TODO: InfoUpdateTime
@@ -769,8 +770,9 @@ void OscarSocket::startKeepalive()
 	{
 		//kdDebug(14150) << k_funcinfo << "Creating keepaliveTimer" << endl;
 		keepaliveTimer = new QTimer(this, "keepaliveTimer");
-		QObject::connect(keepaliveTimer,SIGNAL(timeout()),this,SLOT(slotKeepaliveTimer()));
-		bSomethingOutgoing = true;
+		QObject::connect(keepaliveTimer, SIGNAL(timeout()),
+			this, SLOT(slotKeepaliveTimer()));
+		//bSomethingOutgoing = true;
 		keepaliveTimer->start(keepaliveTime*1000);
 	}
 }
@@ -789,13 +791,14 @@ void OscarSocket::stopKeepalive()
 void OscarSocket::slotKeepaliveTimer()
 {
 	//kdDebug(14150) << k_funcinfo << "Called." << endl;
-	if(!bSomethingOutgoing)
+	/*if(!bSomethingOutgoing)
 	{
-		kdDebug(14150) << k_funcinfo << "EEEEK, didn send something since last ping sent to socket!" << endl;
+		kdDebug(14150) << k_funcinfo <<
+			"ERROR, didnt send something since last ping sent to socket!" << endl;
 		emit protocolError(
 			i18n("Connection to %1 timed out").arg((mIsICQ ? "ICQ" : "AIM")), 0);
 	}
-	bSomethingOutgoing = false;
+	bSomethingOutgoing = false;*/
 	sendKeepalive();
 }
 

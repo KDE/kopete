@@ -17,15 +17,22 @@
 #ifndef OSCARCONNECTION_H
 #define OSCARCONNECTION_H
 
-#include "buffer.h"
-#include <qobject.h>
+#define USE_KEXTSOCK 1
+
+#ifdef USE_KEXTSOCK
 #include <kextsock.h>
+#else
+#include <qbufferedsocket.h>
+#endif
 
-/**Implementation of a base oscar connection.
-  *No login functions, just basic direct Oscar connection functionality.
-  *@author Tom Linsky
-  */
+#include <qobject.h>
 
+/**
+ * Implementation of a base oscar connection.
+ * No login functions, just basic direct Oscar connection functionality.
+ *
+ * @author Tom Linsky
+ */
 class OscarConnection : public QObject
 {
 	Q_OBJECT
@@ -34,124 +41,156 @@ class OscarConnection : public QObject
 		/** Enum for connection type */
 		enum ConnectionType
 		{
-			DirectIM, Server, SendFile, Redirect
+			DirectIM=0, Server, SendFile, Redirect
 		};
 
 		/** Enum for typing notifications */
 		enum TypingNotify
 		{
-			TypingFinished, TextTyped, TypingBegun
+			TypingFinished=0, TextTyped, TypingBegun
 		};
 
-		OscarConnection(const QString &sn, const QString &connName, ConnectionType type,
+		enum ConnectionStatus
+		{
+			Disconnected=0, Connecting, Connected
+		};
+
+		OscarConnection(const QString &connName, ConnectionType type,
 			const QByteArray &cookie, QObject *parent=0, const char *name=0);
 		virtual ~OscarConnection();
 
 		inline QString connectionName() const { return mConnName; };
-		/** Returns the type of this connection */
-		inline int connectionType() const { return mConnType; };
-		/** Gets the currently logged in user's screen name */
-		inline QString getSN() const { return mSN; };
-		/** Sets the currently logged in user's screen name */
-		void setSN(const QString &newSN);
 
-		/** Gets the current socket **/
-		KExtendedSocket* socket() const { return mSocket; };
+		/**
+		 * @return Type of this connection
+		 */
+		inline OscarConnection::ConnectionType connectionType() const { return mConnType; };
+
+		/**
+		 * @return Currently logged in user's screen-name/UIN
+		 */
+		const QString &getSN() const;
+
+		OscarConnection::ConnectionStatus OscarConnection::socketStatus() const;
+
+		/**
+		 * Sets the currently logged in users screen name
+		 */
+		void setSN(const QString &newSN);
 
 		/** Gets the message cookie */
 		inline const QByteArray &cookie() const { return mCookie; };
 
-		// virtual functions to be overloaded by child classes
+		void connectTo(const QString &host, const QString &port);
 
-		/*
+		/**
 		 * Sends the direct IM message to buddy
 		 */
 		virtual void sendIM(const QString &message, bool isAuto);
 
-		/* Sends a typing notification to the server
+		/**
+		 * Sends a typing notification to the connection
 		 * @param notifyType Type of notify to send
 		 */
 		virtual void sendTypingNotify(TypingNotify notifyType);
-		/** Sends request to the client telling he/she that we want to send a file */
+
+		/**
+		 * Sends request to the client telling he/she that we want to send a file
+		 */
 		virtual void sendFileSendRequest();
 
+
 	signals:
-		/*
+		/**
 		 * Emitted when an IM comes in
 		 */
-//		void gotIM(QString, QString, bool);
+		//void gotIM(QString, QString, bool);
 
-		/*
-		 * called when an AIM protocol error occurs
+		/**
+		 * Emitted when an OSCAR protocol error occurs
 		 */
 		void protocolError(QString, int);
 
 		/**
-		* Emitted when we get a minityping notifications
-		* First param is the screen name, second is the type
-		* 0: Finished
-		* 1: Typed
-		* 2: Begun (is typing)
-		*/
-		void gotMiniTypeNotification(const QString &, int);
-		/*
+		 * Emitted when we get a minityping notifications
+		 * First param is the screen name, second is the type
+		 */
+		void gotMiniTypeNotification(const QString &, OscarConnection::TypingNotify);
+
+		/**
 		 * Emitted when we are ready to send commands!
 		 */
-		void connectionReady(QString name);
-		/*
+		void socketConnected(const QString &name);
+
+		/**
 		 * Emitted when the connection is closed
+		 * @p name name of this connection
 		 */
-		void connectionClosed(QString name);
-		/*
-		 * Emitted when a file transfer is complete
+		void socketClosed(const QString &name);
+
+		/**
+		 * Emitted when a lowlevel socket error occured
+		 * @p name name of this connection
 		 */
-		void transferComplete(QString name);
-		/*
-		 * Emitted when data is received.. parameter is percentage of transfer complete
-		 */
-		void percentComplete( unsigned int percent );
-		/*
-		 * Emitted when a file transfer begins
-		 */
-		void transferBegun(OscarConnection *con, const QString& file, const unsigned long size, const QString &recipient);
+		void socketError(const QString &name, int);
+
+
 
 	protected slots:
-		/* Called when there is data to be read.
+		/**
+		 * Called when there is data to be read.
 		 * If you want your connection to be able to receive data, you
 		 * should override this
-		 * No need to connect the signal in derived classes, just override this slot
 		 */
 		virtual void slotRead();
 
+
 	private slots:
-		/*
-		 * Called when we have established a connection
+		/**
+		 * Called when the socket has established a connection
 		 */
-		void slotConnected();
-		/*
-		 * Called when the connection is closed
+		void slotSocketConnected();
+
+		/**
+		 * Called when the socket is closed
 		 */
-		void slotConnectionClosed();
-		/*
-		 * Called when a socket error occurs
+		void slotSocketClosed();
+
+		/**
+		 * Called when a socket error has occured
 		 */
-		void slotError(int);
+		void slotSocketError(int);
+
 
 	private:
 		/** The ICBM cookie used to authenticate */
 		QByteArray mCookie;
-		/** The name of the connection */
+
+		/**
+		 * The name of the connection
+		 */
 		QString mConnName;
-		/** The connection type */
+
+		/**
+		 * The connection type
+		 */
 		ConnectionType mConnType;
-		/** The ip of the host we will connect to */
-		QString mHost;
-		/** The Port we will connect to on the peer machine */
-		int mPort;
-		/** The user's screen name */
+
+		/**
+		 * The users screen-name/UIN
+		 */
 		QString mSN;
-		/** The socket */
+
+	protected:
+		/**
+		 * The encapsulated socket
+		 */
+		#ifdef USE_KEXTSOCK
 		KExtendedSocket *mSocket;
+		#else
+		QBufferedSocket *mSocket;
+		#endif
 };
+
 #endif
 // vim: set noet ts=4 sts=4 sw=4:
