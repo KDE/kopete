@@ -138,14 +138,17 @@ bool SpellCheckPlugin::eventFilter(QObject *o, QEvent *e)
 		{
 			QKeyEvent *event = (QKeyEvent*) e;
 			QChar typedChar = QChar( event->ascii() );
-			if( singleSpellCheckerReady && !typedChar.isLetterOrNumber() )
+			if( singleSpellCheckerReady )
 			{
-				delete words;
-				words = new QStringList( QStringList::split( mBound, t->text() ) );
-				if( words->count() > 0 )
-					mSingleSpell->checkList( words, false );
+				if( !typedChar.isLetterOrNumber() )
+				{
+					delete words;
+					words = new QStringList( QStringList::split( mBound, t->text() ) );
+					if( words->count() > 0 )
+						mSingleSpell->checkList( words, false );
+				}
+				slotUpdateTextEdit();
 			}
-			slotUpdateTextEdit();
 			break;
 		}
 		case QEvent::ContextMenu:
@@ -270,6 +273,11 @@ void SpellCheckPlugin::slotUpdateTextEdit()
 		t->getSelection(&selParFrom, &selTxtFrom, &selParTo, &selTxtTo);
 		t->getCursorPosition(&parIdx, &txtIdx);
 
+		/*
+		The reason we don't check this until here is so that the text
+		will be set back to its default color when someone changes their
+		preference settings, turning us off.
+		*/
 		if( singleSpellCheckerReady )
 		{
 			QString highlightColor;
