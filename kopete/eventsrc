@@ -817,6 +817,7 @@ Name=IRC Event
 Name[bg]=Събитие в IRC
 Name[ca]=Esdeveniment IRC
 Name[cs]=IRC událost
+Name[da]=IRC-begivenhed
 Name[de]=IRC-Ereignis
 Name[et]=IRC sündmus
 Name[fr]=Évènement IRC
@@ -834,6 +835,7 @@ Name[zh_CN]=IRC 事件
 Comment=An IRC event has occurred
 Comment[bg]=Събитие в клиента за IRC
 Comment[cs]=Nastala IRC událost
+Comment[da]=En IRC=begivenhed er opstået
 Comment[de]=Ein IRC-Ereignis ist aufgetreten
 Comment[et]=Midagi toimus IRCus
 Comment[fr]=Un évènement IRC s'est produit
