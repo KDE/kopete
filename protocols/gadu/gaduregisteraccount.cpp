@@ -34,21 +34,21 @@
 #include "gaducommands.h"
 
 GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
-: KDialogBase( parent, name, true, i18n( "Register New Account" ), KDialogBase::Apply | KDialogBase::Ok, KDialogBase::Apply, true )
+: KDialogBase( parent, name, true, i18n( "Register New Account" ), KDialogBase::User1 | KDialogBase::Ok, KDialogBase::User1, true )
 {
 	ui = new GaduRegisterAccountUI( this );
 	setMainWidget( ui );
 
 	ui->valueVerificationSequence->setDisabled( true );
-	setButtonText( Apply, i18n( "&Register" ) );
+	setButtonText( User1, i18n( "&Register" ) );
 	setButtonText( Ok, i18n( "&Close" ) );
-	enableButton( Apply, false );
+	enableButton( User1, false );
 
 	cRegister = new RegisterCommand( this );
 
 	emailRegexp = new QRegExp(  "[\\w\\d.+_-]{1,}@[\\w\\d.-]{1,}" );
 
-	connect( this, SIGNAL( applyClicked() ), SLOT( doRegister() ) );
+	connect( this, SIGNAL( user1Clicked() ), SLOT( doRegister() ) );
 	connect( this, SIGNAL( okClicked() ), SLOT( slotClose() ) );
 
 	connect( ui->valueEmailAddress, SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
@@ -72,7 +72,7 @@ GaduRegisterAccount::doRegister( )
 {
 	cRegister->setUserinfo( ui->valueEmailAddress->text(), ui->valuePassword->text(), ui->valueVerificationSequence->text() );
 	cRegister->execute();
-	enableButton( Apply, false );
+	enableButton( User1, false );
 }
 
 void
@@ -87,7 +87,7 @@ GaduRegisterAccount::validateInput()
 		ui->valuePassword->text() == ui->valuePasswordVerify->text()  && !ui->valuePassword->text().isEmpty() && !ui->valuePasswordVerify->text().isEmpty() &&
 		!ui->valueVerificationSequence->text().isEmpty() )
 	{
-		enableButton( Apply, true );
+		enableButton( User1, true );
 		updateStatus( "" );
 	}
 	else {
@@ -110,7 +110,7 @@ GaduRegisterAccount::validateInput()
 			updateStatus( i18n( "Please enter the verification sequence." ) );
 			ui->labelVerificationSequence->setPaletteForegroundColor( QColor( 0, 0, 255 ) );
 		}
-		enableButton( Apply, false );
+		enableButton( User1, false );
 	}
 }
 
@@ -132,7 +132,7 @@ GaduRegisterAccount::registrationDone(  const QString& /*title*/,  const QString
 	ui->labelPasswordVerify->setDisabled( true );
 	ui->labelVerificationSequence->setDisabled( true );
 	ui->labelInstructions->setDisabled( true );
-	enableButton( Apply, false );
+	enableButton( User1, false );
 	emit registeredNumber( cRegister->newUin(), ui->valuePassword->text() );
 	updateStatus( i18n( "Account created!  Your new UIN is %1." ).arg(QString::number( cRegister->newUin() )  ) );
 }
@@ -152,7 +152,7 @@ GaduRegisterAccount::registrationError(  const QString& title,  const QString& w
 	cRegister = NULL;
 	ui->valueVerificationSequence->setDisabled( true );
 	ui->valueVerificationSequence->setText( "" );
-	enableButton( Apply, false );
+	enableButton( User1, false );
 	updateStatus( "" );
 
 	cRegister = new RegisterCommand( this );
