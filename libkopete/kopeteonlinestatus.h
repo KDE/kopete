@@ -324,7 +324,7 @@ private:
 	KopeteOnlineStatusPrivate *d;
 	QPixmap cacheLookupByObject( const QString& icon, int size, QColor color, bool idle = false) const;
 	QPixmap cacheLookupByMimeSource( const QString &mimeSource ) const;
-	QString KopeteOnlineStatus::mimeSource( const QString& icon, int size, QColor color, bool idle) const;
+	QString mimeSource( const QString& icon, int size, QColor color, bool idle) const;
 	friend class Kopete::OnlineStatusIconCache;
 };
 

@@ -24,7 +24,7 @@ class KopeteEventPresentation
 {
 	public:
 		enum PresentationType { Sound, Message, Chat };
-		KopeteEventPresentation::KopeteEventPresentation( const PresentationType type );
+		KopeteEventPresentation( const PresentationType type );
 		KopeteEventPresentation( const PresentationType type, 
 				const QString &content = QString::null,
 				const bool singleShot = false, const bool enabled = false );
