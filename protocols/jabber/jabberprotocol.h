@@ -77,7 +77,16 @@ public:
 	const KopeteOnlineStatus JabberKOSInvisible;
 	const KopeteOnlineStatus JabberKOSConnecting;
 
-	const Kopete::ContactPropertyTmpl awayMessage;
+	const Kopete::ContactPropertyTmpl propAwayMessage;
+	const Kopete::ContactPropertyTmpl propFirstName;
+	const Kopete::ContactPropertyTmpl propLastName;
+	const Kopete::ContactPropertyTmpl propFullName;
+	const Kopete::ContactPropertyTmpl propEmailAddress;
+	const Kopete::ContactPropertyTmpl propPrivatePhone;
+	const Kopete::ContactPropertyTmpl propPrivateMobilePhone;
+	const Kopete::ContactPropertyTmpl propWorkPhone;
+	const Kopete::ContactPropertyTmpl propWorkMobilePhone;
+	const Kopete::ContactPropertyTmpl propNickName;
 
 	/**
 	 * This returns our protocol instance

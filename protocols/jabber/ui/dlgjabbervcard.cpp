@@ -149,7 +149,7 @@ void dlgJabberVCard::assignVCard (const XMPP::VCard &vCard)
 			m_mainWidget->leWorkCountry->setText (address.country);
 		}
 		else
-		//if(address.home)
+		if(address.home)
 		{
 			m_mainWidget->leHomeStreet->setText (address.street);
 			m_mainWidget->leHomeExtAddr->setText (address.extaddr);
@@ -173,7 +173,7 @@ void dlgJabberVCard::assignVCard (const XMPP::VCard &vCard)
 			m_mainWidget->urlWorkEmail->setUseCursor ( !email.userid.isEmpty () );
 		}
 		else
-		//if(email.home)
+		if(email.home)
 		{
 			m_mainWidget->leHomeEmail->setText (email.userid);
 			m_mainWidget->urlHomeEmail->setText (email.userid);
@@ -208,7 +208,7 @@ void dlgJabberVCard::assignVCard (const XMPP::VCard &vCard)
 			m_mainWidget->lePhoneCell->setText (phone.number);
 		}
 		else
-		//if(phone.home)
+		if(phone.home)
 		{
 			m_mainWidget->lePhoneHome->setText (phone.number);
 		}

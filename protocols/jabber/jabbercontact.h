@@ -19,6 +19,7 @@
 #define JABBERCONTACT_H
 
 #include "jabberbasecontact.h"
+#include "xmpp_vcard.h"
 
 #include "kopetemessagemanager.h" // needed for silly KopeteContactPtrList
 
@@ -57,6 +58,12 @@ public:
 	 * managers with ourselves in the contact list.
 	 */
 	KopeteMessageManager *manager ( bool canCreate = false );
+	
+	/**
+	 * Reads a vCard object and updates the contact's
+	 * properties accordingly.
+	 */
+	void setPropertiesFromVCard ( const XMPP::VCard &vCard );
 
 public slots:
 
@@ -120,6 +127,23 @@ private slots:
 	void slotSelectResource ();
 
 	void slotMessageManagerDeleted ( QObject *sender );
+	
+	/**
+	 * Check if cached vCard is recent.
+	 * Triggered as soon as Kopete changes its online state.
+	 */
+	void slotCheckVCard ();
+	
+	/**
+	 * Triggered from a timer, requests the vCard.
+	 * Timer is initiated by slotCheckVCard().
+	 */
+	void slotGetTimedVCard ();
+	
+	/**
+	 * Passes vCard on to parsing function.
+	 */
+	void slotGotVCard ();
 
 private:
 

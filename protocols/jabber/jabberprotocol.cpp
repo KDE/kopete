@@ -73,7 +73,17 @@ JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStrin
 	JabberKOSOffline(KopeteOnlineStatus::Offline,       50, this, 5, QString::null,       i18n ("Go O&ffline"), i18n ("Offline")),
 	JabberKOSInvisible(KopeteOnlineStatus::Invisible,   40, this, 6, "jabber_invisible",    i18n ("Set I&nvisible"), i18n ("Invisible")),
 	JabberKOSConnecting(KopeteOnlineStatus::Connecting, 30, this, 7, "jabber_connecting", i18n ("FIXME: You should not see this"), i18n("Connecting")),
-	awayMessage(Kopete::Global::Properties::self()->awayMessage())
+	propAwayMessage(Kopete::Global::Properties::self()->awayMessage()),
+	propFirstName(Kopete::Global::Properties::self()->firstName()),
+	propLastName(Kopete::Global::Properties::self()->lastName()),
+	propFullName(Kopete::Global::Properties::self()->fullName()),
+	propEmailAddress(Kopete::Global::Properties::self()->emailAddress()),
+	propPrivatePhone(Kopete::Global::Properties::self()->privatePhone()),
+	propPrivateMobilePhone(Kopete::Global::Properties::self()->privateMobilePhone()),
+	propWorkPhone(Kopete::Global::Properties::self()->workPhone()),
+	propWorkMobilePhone(Kopete::Global::Properties::self()->workMobilePhone()),
+	propNickName(Kopete::Global::Properties::self()->nickName())
+
 {
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Loading ..." << endl;

@@ -19,11 +19,17 @@
 
 #include "xmpp_tasks.h"
 
+#include <math.h>
+
+#include <qtimer.h>
+#include <qdatetime.h>
+
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
 #include <kaction.h>
+#include <kapplication.h>
 
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
@@ -43,7 +49,15 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 				: JabberBaseContact ( rosterItem, account, mc)
 {
 
+	// this contact is able to transfer files
 	setFileCapable ( true );
+	
+	/*
+	 * Catch when we're going online for the first time to
+	 * update our properties from a vCard.
+	 */
+	connect ( account->myself (), SIGNAL ( onlineStatusChanged ( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
+			  this, SLOT ( slotCheckVCard () ) );
 
 }
 
@@ -132,7 +146,6 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 	return actionCollection;
 
 }
-
 void JabberContact::rename ( const QString &newName )
 {
 
@@ -213,6 +226,246 @@ void JabberContact::handleIncomingMessage (const XMPP::Message & message)
 	mManager->appendMessage ( *newMessage, message.from().resource () );
 
 	delete newMessage;
+
+}
+
+void JabberContact::slotCheckVCard ()
+{
+	QDateTime cacheDate;
+	QString cacheDateString = account()->pluginData ( protocol (), contactId() + "_vCard_timestamp" );
+
+	// avoid warning if key does not exist in configuration file
+	if ( cacheDateString.isEmpty () )
+		cacheDate = QDateTime::currentDateTime().addDays ( -2 );
+	else
+		cacheDate = QDateTime::fromString ( cacheDateString, Qt::ISODate );
+
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Cached vCard data from " << cacheDate.toString () << endl;
+
+	if ( cacheDate.addDays ( 1 ) < QDateTime::currentDateTime () )
+	{
+		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Scheduling update." << endl;
+
+		double randTime = (double)KApplication::random () / (double)RAND_MAX * 10.0 * 60.0 * 1000.0;
+
+		// current data is older than 24 hours, request a new one
+		QTimer::singleShot ( lround ( randTime ), this, SLOT ( slotGetTimedVCard () ) );
+	}
+
+}
+
+void JabberContact::slotGetTimedVCard ()
+{
+
+	// check if we are connected
+	if ( ( account()->myself()->onlineStatus().status () != KopeteOnlineStatus::Online ) &&
+		 ( account()->myself()->onlineStatus().status () != KopeteOnlineStatus::Away ) )
+	{
+		// we are not connected, reinitiate timer
+		double randTime = (double)KApplication::random () / (double)RAND_MAX * 10.0 * 60.0 * 1000.0;
+		QTimer::singleShot ( lround ( randTime ), this, SLOT ( slotGetTimedVCard () ) );
+		return;
+	}
+
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Requesting vCard from update timer." << endl;
+
+	// request vCard
+	XMPP::JT_VCard *task = new XMPP::JT_VCard ( account()->client()->rootTask () );
+	// signal to ourselves when the vCard data arrived
+	QObject::connect ( task, SIGNAL ( finished () ), this, SLOT ( slotGotVCard () ) );
+	task->get ( mRosterItem.jid () );
+	task->go ( true );
+
+}
+
+void JabberContact::slotGotVCard ()
+{
+
+	XMPP::JT_VCard * vCard = (XMPP::JT_VCard *) sender ();
+
+	if ( !vCard->success() )
+	{
+		/*
+		 * A vCard for the user does not exist or the
+		 * request was unsuccessful or incomplete.
+		 * Manually set the timestamp here so that
+		 * a new request won't be triggered too early.
+		 */
+		account()->setPluginData ( protocol (), contactId() + "_vCard_timestamp", QDateTime::currentDateTime().toString ( Qt::ISODate ) );
+		return;
+	}
+
+	setPropertiesFromVCard ( vCard->vcard () );
+
+}
+
+void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
+{
+	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Updating vCard for " << contactId () << endl;
+
+	// update vCard cache timestamp
+	account()->setPluginData ( protocol (), contactId() + "_vCard_timestamp", QDateTime::currentDateTime().toString ( Qt::ISODate ) );
+
+	if ( vCard.nickName().isEmpty () )
+		removeProperty ( protocol()->propNickName );
+	else
+		setProperty ( protocol()->propNickName, vCard.nickName () );
+
+	/**
+	 * Kopete does not allow a modification of the "full name"
+	 * property. However, some vCards specify only the full name,
+	 * some specify only first and last name.
+	 * Due to these inconsistencies, if first and last name don't
+	 * exist, it is attempted to parse the full name.
+	 */
+	
+	// remove all properties first
+	removeProperty ( protocol()->propFirstName );
+	removeProperty ( protocol()->propLastName );
+
+	if ( !vCard.fullName().isEmpty () && vCard.givenName().isEmpty () && vCard.familyName().isEmpty () )
+	{
+		QString firstName = vCard.fullName().section ( ' ', 0, 0 );
+		QString lastName = vCard.fullName().section ( ' ', 1, 1 );
+		
+		// if a "," is found, remove it and switch names
+		// (format was then probably "Lastname, Firstname")
+		if ( firstName.find ( ',' ) != -1 )
+		{
+			firstName = firstName.remove ( ',' );
+			QString tmp = lastName;
+			lastName = firstName;
+			firstName = tmp;
+		}
+		
+		setProperty ( protocol()->propFirstName, firstName );
+		setProperty ( protocol()->propLastName, lastName );
+	}
+	else
+	{
+		if ( !vCard.givenName().isEmpty () )
+			setProperty ( protocol()->propFirstName, vCard.givenName () );
+
+		if ( !vCard.familyName().isEmpty () )
+			setProperty ( protocol()->propLastName, vCard.familyName () );
+	}
+
+/**
+ * Currently unsupported properties (to be implemented)
+ *
+	m_mainWidget->leJID->setText (vCard.jid());
+	m_mainWidget->leBirthday->setText (vCard.bdayStr());
+	m_mainWidget->leTimezone->setText (vCard.timezone());
+	m_mainWidget->leHomepage->setText (vCard.url());
+	m_mainWidget->urlHomepage->setText (vCard.url());
+	m_mainWidget->urlHomepage->setURL (vCard.url());
+	m_mainWidget->urlHomepage->setUseCursor ( !vCard.url().isEmpty () );
+
+	// work information tab
+	m_mainWidget->leCompany->setText (vCard.org().name);
+	m_mainWidget->leDepartment->setText (vCard.org().unit.join(","));
+	m_mainWidget->lePosition->setText (vCard.title());
+	m_mainWidget->leRole->setText (vCard.role());
+
+	// about tab
+	m_mainWidget->teAbout->setText (vCard.desc());
+*/
+/**
+ * Adresses - currently unsupported
+ *
+	for(XMPP::VCard::AddressList::const_iterator it = vCard.addressList().begin(); it != vCard.addressList().end(); it++)
+	{
+		XMPP::VCard::Address address = (*it);
+
+		if(address.work)
+		{
+			m_mainWidget->leWorkStreet->setText (address.street);
+			m_mainWidget->leWorkExtAddr->setText (address.extaddr);
+			m_mainWidget->leWorkPOBox->setText (address.pobox);
+			m_mainWidget->leWorkCity->setText (address.locality);
+			m_mainWidget->leWorkPostalCode->setText (address.pcode);
+			m_mainWidget->leWorkCountry->setText (address.country);
+		}
+		else
+		if(address.home)
+		{
+			m_mainWidget->leHomeStreet->setText (address.street);
+			m_mainWidget->leHomeExtAddr->setText (address.extaddr);
+			m_mainWidget->leHomePOBox->setText (address.pobox);
+			m_mainWidget->leHomeCity->setText (address.locality);
+			m_mainWidget->leHomePostalCode->setText (address.pcode);
+			m_mainWidget->leHomeCountry->setText (address.country);
+		}
+	}
+*/
+
+	/*
+	 * Delete emails first, they might not be present
+	 * in the vCard at all anymore.
+	 */
+	removeProperty ( protocol()->propEmailAddress );
+
+	/*
+	 * Note: the following code gives the private email
+	 * preference over the work email if both are given.
+	 * This might not be the desired behaviour for all.
+	 */
+	for(XMPP::VCard::EmailList::const_iterator it = vCard.emailList().begin(); it != vCard.emailList().end(); it++)
+	{
+		XMPP::VCard::Email email = (*it);
+
+		if(email.work)
+		{
+			setProperty ( protocol()->propEmailAddress, email.userid );
+		}
+		else
+		if(email.home)
+		{
+			setProperty ( protocol()->propEmailAddress, email.userid );
+		}
+	}
+
+	/*
+	 * Delete phone number properties first as they might have
+	 * been unset during an update and are not present in
+	 * the vCard at all anymore.
+	 */
+	removeProperty ( protocol()->propPrivatePhone );
+	removeProperty ( protocol()->propPrivateMobilePhone );
+	removeProperty ( protocol()->propWorkPhone );
+	removeProperty ( protocol()->propWorkMobilePhone );
+
+	/*
+	 * Set phone numbers. Note that if a mobile phone number
+	 * is specified, it's assigned to the private mobile
+	 * phone number property. This might not be the desired
+	 * behavior for all users.
+	 */
+	for(XMPP::VCard::PhoneList::const_iterator it = vCard.phoneList().begin(); it != vCard.phoneList().end(); it++)
+	{
+		XMPP::VCard::Phone phone = (*it);
+
+		if(phone.work)
+		{
+			setProperty ( protocol()->propWorkPhone, phone.number );
+		}
+		else
+/*		if(phone.fax)
+		{
+			m_mainWidget->lePhoneFax->setText (phone.number);
+		}
+		else*/
+		if(phone.cell)
+		{
+			setProperty ( protocol()->propPrivateMobilePhone, phone.number );
+		}
+		else
+		if(phone.home)
+		{
+			setProperty ( protocol()->propPrivatePhone, phone.number );
+		}
+
+	}
 
 }
 
