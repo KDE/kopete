@@ -263,7 +263,7 @@ void KopeteMessageManager::newChatView()
 		myWindow = (KMainWindow*)d->mEmailWindow = new KopeteEmailWindow(d->mUser, d->mContactList);
 		d->mEmailWindow->setSendEnabled(d->mSendEnabled);
 		connect (d->mEmailWindow, SIGNAL(shown()), this, SLOT(slotCancelUnreadMessageEvent()));
-		connect (d->mEmailWindow, SIGNAL(sendMessage(KopeteMessage &)),
+		connect (d->mEmailWindow, SIGNAL(sendMessage(const KopeteMessage &)),
 			 this, SLOT(slotMessageSent(const KopeteMessage &)));
 		connect (d->mEmailWindow, SIGNAL(closeClicked()), this, SLOT(slotChatWindowClosing()));
 		connect (d->mEmailWindow, SIGNAL(replyClicked()), this, SLOT(slotReply()));
