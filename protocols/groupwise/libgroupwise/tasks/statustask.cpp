@@ -13,7 +13,7 @@
 
 StatusTask::StatusTask(Task* parent): EventTask(parent)
 {
-	addEventCode( EventTransfer::StatusChange );
+	registerEvent( EventTransfer::StatusChange );
 }
 
 StatusTask::~StatusTask()
@@ -22,10 +22,10 @@ StatusTask::~StatusTask()
 
 bool StatusTask::take( Transfer * transfer )
 {
-	if ( forMe( transfer ) )
+	EventTransfer * event;
+	if ( forMe( transfer, event ) )
 	{
 		qDebug( "Got a status change!" );
-		EventTransfer * event = dynamic_cast<EventTransfer *>( transfer );
 		QDataStream din( event->payload(), IO_ReadOnly);
 		din.setByteOrder( QDataStream::LittleEndian );
 		Q_UINT16 status;
@@ -36,6 +36,7 @@ bool StatusTask::take( Transfer * transfer )
 		din.readBytes( rawData, val );
 		if ( val ) // val is 0 if there is no status text
 			statusText = QString::fromUtf8( rawData, val );
+		qDebug( "%s changed status to %i, message: %s", event->source().data(), status, statusText.ascii() );
 		emit gotStatus( event->source(), status, statusText );
 		return true;
 	}

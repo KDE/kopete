@@ -18,15 +18,16 @@ EventTask::EventTask( Task * parent )
 {
 }
 
-void EventTask::addEventCode( EventTransfer::Event e )
+void EventTask::registerEvent( EventTransfer::Event e )
 {
 	m_eventCodes.append( e );
 }
 
-bool EventTask::forMe( Transfer * transfer ) const
+bool EventTask::forMe( Transfer * transfer, EventTransfer*& event ) const
 {
 	// see if we can down-cast transfer to an EventTransfer
-	EventTransfer * event = dynamic_cast<EventTransfer *>(transfer);
+	/*EventTransfer * */
+	event = dynamic_cast<EventTransfer *>(transfer);
 	if ( event )
 	{
 		// see if we are supposed to handle this kind of event

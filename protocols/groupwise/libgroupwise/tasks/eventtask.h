@@ -26,8 +26,8 @@ Q_OBJECT
 	public:
 		EventTask( Task *parent );
 	protected:
-		bool forMe( Transfer * transfer ) const;
-		void addEventCode( EventTransfer::Event e );
+		bool forMe( Transfer * transfer, EventTransfer *& event ) const;
+		void registerEvent( EventTransfer::Event e );
 	private:
 		QValueList<int> m_eventCodes;
 };

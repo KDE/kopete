@@ -3,6 +3,7 @@
 #include "gwclientstream.h"
 #include "requestfactory.h"
 #include "task.h"
+#include "tasks/conferencetask.h"
 #include "tasks/logintask.h"
 #include "tasks/setstatustask.h"
 #include "tasks/statustask.h"
@@ -133,6 +134,7 @@ void Client::close()
 void Client::initialiseEventTasks()
 {
 	new StatusTask( d->root ); // FIXME - add an additional EventRoot?
+	new ConferenceTask( d->root ); 
 }
 
 void Client::setPresence( const Status &status )
