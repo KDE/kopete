@@ -122,7 +122,7 @@ QString KopeteMessage::escapedBody() const
 {
 	if( mFormat == PlainText )
 	{
-		QString parsedString = QStyleSheet::escape( mBody ).replace( "\n", "<br>\n" );
+		QString parsedString = QStyleSheet::escape( mBody ).replace( QRegExp( "\n" ), "<br>\n" );
 		// Replace multiple spaces with '&nbsp;', but leave the first space
 		// intact for any necessary wordwrap:
 		QStringList words = QStringList::split( ' ', parsedString, true );
