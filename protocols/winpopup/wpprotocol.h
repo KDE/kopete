@@ -85,8 +85,6 @@ public:
 
 // KopetePlugin overloading
 public:
-	virtual void init();				// Initialise protocol
-	virtual bool unload();				// Unload protocol (statusbar icon)
 	virtual void deserializeContact(KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData);
 		
 // Stuff used internally & by colleague classes

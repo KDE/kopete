@@ -119,15 +119,6 @@ void YahooProtocol::deserializeContact( KopeteMetaContact *metaContact,
 	theAccount->addContact(contactId, serializedData["displayName"], metaContact, serializedData["group"]);
 }
 
-void YahooProtocol::init()
-{
-}
-
-bool YahooProtocol::unload()
-{
-	return true;
-}
-
 void YahooProtocol::slotSettingsChanged()
 {
 	kdDebug(14180) << "YahooProtocol::slotSettingsChanged()" <<endl;
