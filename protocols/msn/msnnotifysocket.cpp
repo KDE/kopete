@@ -349,6 +349,10 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		//do nothing
 	}
+	else if( cmd == "QNG" )
+	{
+		//this is a reply from a ping
+	}
 	else
 	{
 		// Let the base class handle the rest
@@ -613,14 +617,14 @@ void MSNNotifySocket::slotSendKeepAlive()
 {
 	// Send a dummy command to fake activity. This makes sure MSN doesn't
 	// disconnect you when the notify socket is idle.
-	sendCommand( "LSG", QString::null );
+	sendCommand( "PNG" , QString::null , false ); 
 }
 
 void MSNNotifySocket::slotResetKeepAlive()
 {
-	// Fire the timer every 90 seconds. QTimer will reset a running timer
+	// Fire the timer every 60 seconds. QTimer will reset a running timer
 	// on a subsequent call if there has been activity again.
-	m_keepaliveTimer->start( 90000 );
+	m_keepaliveTimer->start( 60000 );
 }
 
 KopeteOnlineStatus MSNNotifySocket::convertOnlineStatus( const QString &status )
