@@ -273,7 +273,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		}
 
 		kdDebug() << "MSNSwitchBoardService::slotReadMessage: Message: " <<
-			endl << msg.right( msg.length() - msg.findRev("\r\n\r\n") - 4) <<
+			endl << msg.right( msg.length() - msg.find("\r\n\r\n") - 4) <<
 			endl;
 
 		kdDebug() << "MSNSwitchBoardService::slotReadMessage: User handle: "
@@ -285,7 +285,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 
 		KopeteMessage kmsg(
 			MSNProtocol::protocol()->contacts()[ m_msgHandle ] , others,
-			msg.right( msg.length() - msg.findRev("\r\n\r\n") - 4 ),
+			msg.right( msg.length() - msg.find("\r\n\r\n") - 4 ),
 			KopeteMessage::Inbound );
 
 		kmsg.setFg( fontColor );
