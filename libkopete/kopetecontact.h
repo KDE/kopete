@@ -236,6 +236,18 @@ public:
 	  * TODO: Write a better description of this, this doc doesn't make sense
 	  */
 	 virtual void addThisTemporaryContact(KopeteGroup *group=KopeteGroup::null);
+	 
+	 /**
+	  * Returns whether or not this contact is capable of file transfers or not
+	  */
+	 bool isFileCapable() const { return mFileCapable; }
+	 
+	 /*
+	  * Sets the capability of file transfers for this user. Once this is changed it will
+	  * immediately add a new menu entry called "Send File...", and will call the
+	  * virtual slotSendFile
+	  */
+	  void setFileCapable(bool filecap) { mFileCapable = filecap; }
 
 public slots:
 	/**
@@ -272,7 +284,7 @@ public slots:
 	/**
 	 * Method to send a file. Should be implemented by the protocols
 	 */
-	 virtual void slotSendFile() = 0;
+	 virtual void slotSendFile();
 	
 private slots:
 	/**
@@ -323,6 +335,7 @@ private:
 	
 	QString m_displayName;
 	QString m_protocolId;
+	bool mFileCapable;
 
 	/**
 	 * Scaled icon cache

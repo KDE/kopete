@@ -47,6 +47,7 @@ KopeteContact::KopeteContact( const QString &protocolId, KopeteMetaContact *pare
 	m_cachedSize = 0;
 	m_cachedOldStatus = Offline;
 	contextMenu = 0L;
+	mFileCapable = false;
 	
 	/* Initialize the context Menu */
 	initActions();
@@ -178,6 +179,11 @@ void KopeteContact::initActions()
 	actionSendFile = KopeteStdAction::sendFile( this, SLOT(slotSendFile()), this, "actionSendFile");
 }
 
+void KopeteContact::slotSendFile()
+{
+	kdDebug() << "[KopeteContact] Opps, the plugin hasn't implemented file sending, yet it was turned on! :(" << endl;
+}
+
 void KopeteContact::showContextMenu(const QPoint& p)
 {
 	/* Build the menu */
@@ -196,7 +202,9 @@ void KopeteContact::showContextMenu(const QPoint& p)
 	actionUserInfo->plug( contextMenu );
 	actionChangeAlias->plug( contextMenu );
 	actionDeleteContact->plug( contextMenu );
-	actionSendFile->plug( contextMenu );
+
+	if (mFileCapable)
+		actionSendFile->plug( contextMenu );
 
 	/* Protocol specific options will go below this separator
 	 * through the use of the customContextMenuActions() function

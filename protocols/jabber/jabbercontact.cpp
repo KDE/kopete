@@ -328,12 +328,6 @@ void JabberContact::slotRenameContact()
 
 }
 
-void JabberContact::slotSendFile()
-{
-	kdDebug() << "[Jabber] File transfer not implemented yet!" << endl;
-	KMessageBox::sorry(kopeteapp->mainWindow(), i18n("Sorry, file transfer has not been implemented in the Jabber protocol yet."), i18n("File transfer not implemented"));
-}
-
 void JabberContact::slotDoRenameContact(const QString &nickname)
 {
 	QString name = nickname;

@@ -142,12 +142,6 @@ void WPContact::slotViewHistory()
 	}
 }
 
-void WPContact::slotSendFile()
-{
-	kdDebug() << "[WinPopup] File transfer not implemented yet!" << endl;
-	KMessageBox::sorry(kopeteapp->mainWindow(), i18n("Sorry, file transfer has not been implemented in the Winpopup protocol yet."), i18n("File transfer not implemented"));
-}
-
 void WPContact::slotCloseHistoryDialog()
 {
 	delete myHistoryDialog;

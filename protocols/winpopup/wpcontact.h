@@ -78,7 +78,6 @@ public slots:
 							// carries out sending of a message (supporting a hacked-up subject field)
 	void slotCloseHistoryDialog();
 							// deletes and resets the hisory dialog (needed by slotViewHistory)
-	void slotSendFile();
 
 public:
 	WPContact(const QString &userID, WPProtocol *protocol, KopeteMetaContact *parent);

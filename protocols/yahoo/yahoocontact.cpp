@@ -162,12 +162,6 @@ void YahooContact::slotUpdateStatus(QString status, QString statusText == NULL)
 }
 */
 
-void YahooContact::slotSendFile()
-{
-	kdDebug() << "[Yahoo] File transfer not implemented yet!" << endl;
-	KMessageBox::sorry(kopeteapp->mainWindow(), i18n("Sorry, file transfer has not been implemented in the Yahoo protocol yet."), i18n("File transfer not implemented"));
-}
-
 #include "yahoocontact.moc"
 
 

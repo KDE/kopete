@@ -194,12 +194,6 @@ void MSNContact::slotUserInfo()
 	infoDialog->show();
 }
 
-void MSNContact::slotSendFile()
-{
-	kdDebug() << "[MSN] File transfer not implemented yet!" << endl;
-	KMessageBox::sorry(kopeteapp->mainWindow(), i18n("Sorry, file transfer has not been implemented in the MSN protocol yet."), i18n("File transfer not implemented"));
-}
-
 void MSNContact::slotDeleteContact()
 {
 	kdDebug() << "MSNContact::slotDeleteContact" << endl;

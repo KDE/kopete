@@ -138,7 +138,6 @@ public slots:
 	void addToGroup( KopeteGroup * );
 	void removeFromGroup( KopeteGroup * );
 	void moveToGroup( KopeteGroup * , KopeteGroup * );
-	void slotSendFile();
 
 signals:
 	void chatToUser( QString );
