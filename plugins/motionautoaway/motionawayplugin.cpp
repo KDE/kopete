@@ -43,11 +43,18 @@
 #include <sys/types.h>
 #include <sys/poll.h>
 
-/* The following is a mandrake 9 hack. Mandrake 9
- * doesn't define this 64 bit types (we need GNU C lib
- * because we use long long and warning - gcc extensions.
- */
 #if 0
+/* The following is a hack:
+ * e.g. Mandrake 9.x ships with a patched
+ * kernel which doesn't define this 64 bit types (we need GNU C lib
+ * because we use long long and warning - gcc extensions.)
+ *
+ * This is caused by the !defined(__STRICT_ANSI__) check in
+ * /usr/include/asm/types.h
+ *
+ * Warning: enabling this code breaks 64bits archs!
+ * If compilation fails for you, change the "#if 0" above to "#if 1"
+ */
 #if !defined(__u64) && defined(__GNUC__)
 //#warning "defining __u64"
 typedef unsigned long long __u64;
@@ -56,6 +63,9 @@ typedef unsigned long long __u64;
 //#warning "defining __s64"
 typedef __signed__ long long __s64;
 #endif
+/*
+ * End hack
+ */
 #endif
 
 #include <linux/version.h>
