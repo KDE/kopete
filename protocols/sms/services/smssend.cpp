@@ -15,8 +15,8 @@
 #include <kmessagebox.h>
 #include <kdebug.h>
 
-SMSSend::SMSSend(QString userName)
-	: SMSService(userName)
+SMSSend::SMSSend(SMSContact* contact)
+	: SMSService(contact)
 {
 	prefWidget = 0L;
 }
@@ -29,7 +29,7 @@ void SMSSend::send(const KopeteMessage& msg)
 {
 	kdDebug() << "SMSSend::send()" << endl;
 
-	QString provider = SMSGlobal::readConfig("SMSSend", "ProviderName", uName);
+	QString provider = SMSGlobal::readConfig("SMSSend", "ProviderName", m_contact);
 
 	if (provider == QString::null)
 	{
@@ -37,11 +37,11 @@ void SMSSend::send(const KopeteMessage& msg)
 		return;
 	}
 
-	QString prefix = SMSGlobal::readConfig("SMSSend", "Prefix", uName);
+	QString prefix = SMSGlobal::readConfig("SMSSend", "Prefix", m_contact);
 	if (prefix == QString::null)
 		prefix = "/usr/";
 
-	SMSSendProvider* s = new SMSSendProvider(provider, prefix, uName, this);
+	SMSSendProvider* s = new SMSSendProvider(provider, prefix, m_contact, this);
 
 	connect( s, SIGNAL(messageSent(const KopeteMessage &)), this, SIGNAL(messageSent(const KopeteMessage &)));
 
@@ -54,7 +54,7 @@ QWidget* SMSSend::configureWidget(QWidget* parent)
 		prefWidget = new SMSSendPrefsUI(parent);
 	
 	prefWidget->program->setMode(KFile::Directory);
-	QString prefix = SMSGlobal::readConfig("SMSSend", "Prefix", uName);
+	QString prefix = SMSGlobal::readConfig("SMSSend", "Prefix", m_contact);
 	if (prefix == QString::null)
 		prefix = "/usr";
 
@@ -65,7 +65,7 @@ QWidget* SMSSend::configureWidget(QWidget* parent)
 	connect(prefWidget->provider, SIGNAL(activated(const QString &)),
 		this, SLOT(setOptions(const QString &)));
 	
-	QString pName = SMSGlobal::readConfig("SMSSend", "ProviderName", uName);
+	QString pName = SMSGlobal::readConfig("SMSSend", "ProviderName", m_contact);
 	for (int i=0; i < prefWidget->provider->count(); i++)
 	{
 		if (prefWidget->provider->text(i) == pName)
@@ -88,8 +88,8 @@ void SMSSend::savePreferences()
 {
 	if (prefWidget != 0L)
 	{
-		SMSGlobal::writeConfig("SMSSend", "Prefix", uName, prefWidget->program->url());
-		SMSGlobal::writeConfig("SMSSend", "ProviderName", uName, prefWidget->provider->currentText());
+		SMSGlobal::writeConfig("SMSSend", "Prefix", m_contact, prefWidget->program->url());
+		SMSGlobal::writeConfig("SMSSend", "ProviderName", m_contact, prefWidget->provider->currentText());
 		if (prefWidget->providerSettings->childCount() > 0)
 			saveProviderPreferences();
 	}
@@ -97,7 +97,7 @@ void SMSSend::savePreferences()
 
 void SMSSend::saveProviderPreferences()
 {
-	SMSSendProvider* s = new SMSSendProvider(prefWidget->provider->currentText(), prefWidget->program->url(), uName, this);
+	SMSSendProvider* s = new SMSSendProvider(prefWidget->provider->currentText(), prefWidget->program->url(), m_contact, this);
 	s->save(prefWidget->providerSettings);
 }
 
@@ -121,7 +121,7 @@ void SMSSend::setOptions(const QString& name)
 	prefWidget->settingsBox->setTitle(name);
 	prefWidget->providerSettings->clear();
 
-	SMSSendProvider* s = new SMSSendProvider(name, prefWidget->program->url(), uName, this);
+	SMSSendProvider* s = new SMSSendProvider(name, prefWidget->program->url(), m_contact, this);
 
 	for (int i=0; i < s->count(); i++)
 		prefWidget->providerSettings->insertItem(s->listItem(prefWidget->providerSettings, i));
@@ -131,7 +131,7 @@ void SMSSend::showDescription()
 {
 	if (prefWidget->providerSettings->currentItem() != 0L)
 	{
-		SMSSendProvider* s = new SMSSendProvider(prefWidget->provider->currentText(), prefWidget->program->url(), uName, this);
+		SMSSendProvider* s = new SMSSendProvider(prefWidget->provider->currentText(), prefWidget->program->url(), m_contact, this);
 		s->showDescription(prefWidget->providerSettings->currentItem()->text(0));
 	}
 }

@@ -1,14 +1,16 @@
 #ifndef SERVICELOADER_H
 #define SERVICELOADER_H
 
+#include "smsservice.h"
 #include <qstring.h>
 #include <qstringlist.h>
-#include "smsservice.h"
+
+class SMSContact;
 
 class ServiceLoader
 {
 public:
-	static SMSService* loadService(QString name, QString uName);
+	static SMSService* loadService(QString name, SMSContact* contact);
 	static QStringList services();
 } ;
 

@@ -17,7 +17,7 @@ SMSPreferences::SMSPreferences( const QString &pixmap, QObject *parent )
 	: ConfigModule( i18n( "SMS Plugin" ), i18n( "Sending messages to cellphones" ), pixmap, parent )
 {
 	(new QBoxLayout(this, QBoxLayout::Down))->setAutoAdd(true);
-	prefBase = new SMSPreferencesBase( QString::null, this );
+	prefBase = new SMSPreferencesBase( 0L, this );
 
 	connect (prefBase, SIGNAL(saved()), this, SIGNAL(saved()));
 }

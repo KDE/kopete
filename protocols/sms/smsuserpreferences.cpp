@@ -1,6 +1,7 @@
 #include "smsuserpreferences.h"
 #include "smspreferencesbase.h"
 #include "smsuserprefs.h"
+#include "smscontact.h"
 
 #include <qcheckbox.h>
 
@@ -8,21 +9,23 @@
 #include <kconfig.h>
 #include <klineedit.h>
 
-SMSUserPreferences::SMSUserPreferences( const QString userId )
+SMSUserPreferences::SMSUserPreferences( SMSContact* contact )
 	: KDialogBase( 0L, "userPrefs", true, i18n("User preferences"), Ok|Apply|Cancel, Ok, true )
 {
-	m_userId = userId;
+	m_contact = contact;
 	topWidget = makeVBoxMainWidget();
 	userPrefs = new SMSUserPrefsUI( topWidget );
-	prefBase = new SMSPreferencesBase( userId, topWidget );
+	prefBase = new SMSPreferencesBase( contact, topWidget );
 
-	if (KGlobal::config()->hasGroup(QString("SMS:%1").arg(m_userId)))
+	if (m_contact->serviceName() != QString::null)
 	{
-		prefBase->setEnabled(KGlobal::config()->hasGroup(QString("SMS:%1").arg(m_userId)));
+		prefBase->setEnabled(true);
 		userPrefs->uSpecific->setChecked(true);
 	}
+	else
+		prefBase->setEnabled(false);
 
-	userPrefs->telNumber->setText(userId);
+	userPrefs->telNumber->setText(m_contact->phoneNumber());
 
 	connect (userPrefs->uSpecific, SIGNAL(toggled(bool)), prefBase, SLOT(setEnabled(bool)));
 }
@@ -42,8 +45,11 @@ void SMSUserPreferences::slotApply()
 {
 	if (userPrefs->uSpecific->isOn())
 		prefBase->save();
-	if (userPrefs->telNumber->text() != m_userId)
-		emit updateUserId(userPrefs->telNumber->text());
+	else
+		m_contact->clearServicePrefs();
+
+	if (userPrefs->telNumber->text() != m_contact->phoneNumber())
+		m_contact->setPhoneNumber(userPrefs->telNumber->text());
 }
 
 void SMSUserPreferences::slotCancel()

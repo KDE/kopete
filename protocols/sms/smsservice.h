@@ -7,10 +7,12 @@
 #include <qwidget.h>
 #include <qobject.h>
 
+class SMSContact;
+
 class SMSService : public QObject
 {
 public:
-	SMSService(QString user);
+	SMSService(SMSContact* contact);
 	virtual ~SMSService();
 
 	virtual void send(const KopeteMessage& msg) = 0;
@@ -20,7 +22,7 @@ public slots:
 signals:
 	void messageSent(const KopeteMessage&);
 protected:
-	QString uName;
+	SMSContact* m_contact;
 } ;
 
 #endif //SMSSERVICE_H

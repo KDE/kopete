@@ -9,12 +9,13 @@
 class KListView;
 class QListViewItem;
 class KProcess;
+class SMSContact;
 
 class SMSSendProvider : public QObject
 {
 	Q_OBJECT
 public:
-	SMSSendProvider(QString providerName, QString prefixValue, QString userName, QObject* parent = 0, const char* name = 0);
+	SMSSendProvider(QString providerName, QString prefixValue, SMSContact* contact, QObject* parent = 0, const char* name = 0);
 	~SMSSendProvider();
 
 	QListViewItem* listItem(KListView* parent, int pos);
@@ -34,8 +35,9 @@ private:
 
 	QString provider;
 	QString prefix;
-	QString uName;
 	QStringList output;
+
+	SMSContact* m_contact;
 
 	bool optionsLoaded;
 

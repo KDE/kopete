@@ -13,6 +13,7 @@
 #define SMSCONTACT_H
 
 #include "kopetecontact.h"
+#include "kopetemessage.h"
 
 #include <qstring.h>
 
@@ -28,9 +29,8 @@ class KAction;
 class SMSContact : public KopeteContact
 {
 	Q_OBJECT
-
 public:
-	SMSContact( SMSProtocol* protocol, const QString &smsId,
+	SMSContact( SMSProtocol* protocol, const QString &phoneNumber,
 		const QString &displayName, KopeteMetaContact *parent );
 	~SMSContact();
 
@@ -41,9 +41,21 @@ public:
 	ContactStatus status() const;
 	int importance() const;
 
-	QString smsId() const;
-
 	virtual bool isReachable() { return true; };
+
+	QString phoneNumber();
+	void setPhoneNumber( const QString phoneNumber );
+
+	QString serviceName();
+	void setServiceName(QString name);
+
+	QString servicePref(QString name);
+	void setServicePref(QString name, QString value);
+	void deleteServicePref(QString name);
+	void clearServicePrefs();
+
+	QString servicePrefsString();
+	void setServicePrefsString(QString servicePrefs);
 
 public slots:
 
@@ -51,10 +63,8 @@ public slots:
 	virtual void slotDeleteContact();
 	virtual void execute();
 	virtual void slotViewHistory();
-	void slotSendMessage(const KopeteMessage &msg);
-	void setSmsId( const QString id );
-
 	void slotCloseHistoryDialog();
+	void slotSendMessage(const KopeteMessage &msg);
 
 private slots:
 	void userPrefs();
@@ -62,17 +72,19 @@ private slots:
 
 private:
 	KopeteMessageManager* msgManager();
-
 	void initActions();
-	KActionCollection* actionCollection;
-	KAction* actionPrefs;
 
-	QString m_smsId;
+	KActionCollection* m_actionCollection;
+	KAction* m_actionPrefs;
+
+	QString m_phoneNumber;
+	QString m_serviceName;
+	QMap<QString, QString> m_servicePrefs;
 	SMSProtocol* m_protocol;
 
-	KopeteHistoryDialog *historyDialog;
+	KopeteHistoryDialog* m_historyDialog;
 
-	KopeteMessageManager* mMsgManager;
+	KopeteMessageManager* m_msgManager;
 };
 
 #endif

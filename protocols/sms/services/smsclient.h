@@ -8,6 +8,7 @@
 #include <qstringlist.h>
 
 class SMSClientPrefsUI;
+class SMSContact;
 class QListViewItem;
 class KProcess;
 
@@ -15,7 +16,7 @@ class SMSClient : public SMSService
 {
 	Q_OBJECT
 public:
-	SMSClient(QString userName);
+	SMSClient(SMSContact* contact);
 	~SMSClient();
 
 	void send(const KopeteMessage& msg);

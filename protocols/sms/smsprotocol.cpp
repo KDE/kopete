@@ -86,9 +86,11 @@ AddContactPage *SMSProtocol::createAddContactWidget(QWidget *parent)
 	return (new SMSAddContactPage(this,parent));
 }
 
-void SMSProtocol::addContact( const QString nr , const QString name, KopeteMetaContact *m)
+SMSContact* SMSProtocol::addContact( const QString nr , const QString name, KopeteMetaContact *m)
 {
-	m->addContact(new SMSContact(protocol(), nr, name, m));
+	SMSContact* c = new SMSContact(protocol(), nr, name, m);
+	m->addContact(c);
+	return c;
 }
 
 SMSProtocol* SMSProtocol::s_protocol = 0L;
@@ -114,6 +116,16 @@ bool SMSProtocol::serialize( KopeteMetaContact *metaContact,
 		if (g)
 		{
 			stream << g->id() << g->displayName();
+			if (g->serviceName() != QString::null)
+			{
+				stream << g->serviceName();
+				if (g->servicePrefsString() != QString::null)
+					stream << g->servicePrefsString();
+				else
+					stream << " ";
+			}
+			else
+				stream << " " << " ";
 			r=true;
 		}
 	}
@@ -130,9 +142,17 @@ void SMSProtocol::deserialize( KopeteMetaContact *metaContact,
 	{
 		QString nr = strList[ idx ];
 		QString name = strList[ idx+1];
+		QString serviceName = strList[ idx+2 ];
+		QString servicePrefs = strList[ idx+3 ];
 
-		addContact( nr, name, metaContact );
-		idx += 2;
+		SMSContact* c = addContact(nr, name, metaContact);
+		if (serviceName != " " && serviceName != QString::null)
+		{
+			c->setServiceName(serviceName);
+			if (servicePrefs != " " && servicePrefs != QString::null)
+				c->setServicePrefsString(servicePrefs);
+		}
+		idx += 4;
 	}
 }
 

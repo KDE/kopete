@@ -7,20 +7,20 @@
 
 class SMSPreferencesBase;
 class SMSUserPrefsUI;
+class SMSContact;
 
 class SMSUserPreferences : public KDialogBase
 {
 	Q_OBJECT
 public:
-	SMSUserPreferences(const QString user);
+	SMSUserPreferences(SMSContact* contact);
 	~SMSUserPreferences();
 private:
 	SMSPreferencesBase* prefBase;
 	SMSUserPrefsUI* userPrefs;
-	QString m_userId;
 	QVBox* topWidget;
-signals:
-	void updateUserId(const QString newId);
+
+	SMSContact* m_contact;
 public slots:
 	void slotOk();
 	void slotApply();

@@ -1,5 +1,6 @@
 #include "smssendprovider.h"
 #include "smsglobal.h"
+#include "smscontact.h"
 
 #include <kdeversion.h>
 #if KDE_VERSION > 305
@@ -13,13 +14,13 @@
 #include <klocale.h>
 #include <kdebug.h>
 
-SMSSendProvider::SMSSendProvider(QString providerName, QString prefixValue, QString userName, QObject* parent, const char *name)
+SMSSendProvider::SMSSendProvider(QString providerName, QString prefixValue, SMSContact* contact, QObject* parent, const char *name)
 	: QObject( parent, name )
 {
 
 	provider = providerName;
 	prefix = prefixValue;
-	uName = userName;
+	m_contact = contact;
 
 	optionsLoaded = false;
 
@@ -62,9 +63,9 @@ void SMSSendProvider::save(KListView* data)
 	{
 		p = data->itemAtIndex(i);
 		if (p->text(1) == "")
-			SMSGlobal::deleteConfig(group, p->text(0), uName);
+			SMSGlobal::deleteConfig(group, p->text(0), m_contact);
 		else
-			SMSGlobal::writeConfig(group, p->text(0), uName, p->text(1));
+			SMSGlobal::writeConfig(group, p->text(0), m_contact, p->text(1));
 	}
 }
 
@@ -163,7 +164,7 @@ void SMSSendProvider::slotOptionsFinished(KProcess* p)
 
 			descriptions.append(r.cap(3));
 			rules.append("");
-			values.append(SMSGlobal::readConfig(group, r.cap(1), uName));
+			values.append(SMSGlobal::readConfig(group, r.cap(1), m_contact));
 		}
 	}
 

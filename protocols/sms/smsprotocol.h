@@ -57,7 +57,7 @@ public:
 	virtual void setAvailable();
 	virtual bool isAway() const;
 
-	void addContact( const QString nr , const QString name, KopeteMetaContact *m=0L);
+	SMSContact* addContact( const QString nr , const QString name, KopeteMetaContact *m=0L);
 
 	KopeteContact *myself() const;
 
