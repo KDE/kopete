@@ -74,8 +74,8 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), IMProtocol()
 	connect(m_msnService, SIGNAL(startChat(KMSNChatService *, QString)), this, SLOT(slotIncomingChat (KMSNChatService *, QString) ));
 	connect(m_msnService, SIGNAL( newContact(QString) ), this, SLOT(slotAuthenticate(QString) ) );
 
-	connect(kopeteapp->contactList(), SIGNAL( groupAdded(QString) ), this, SLOT(slotGroupAdded(QString) ) );
-	connect(kopeteapp->contactList(), SIGNAL( deletingGroup(QString) ), this, SLOT(slotDeletingGroup(QString) ) );
+	connect(kopeteapp->contactList(), SIGNAL( groupAdded(const QString &) ), this, SLOT(slotGroupAdded(const QString &) ) );
+	connect(kopeteapp->contactList(), SIGNAL( deletingGroup(const QString &) ), this, SLOT(slotDeletingGroup(const QString &) ) );
 		
 	KGlobal::config()->setGroup("MSN");
 
@@ -299,16 +299,6 @@ void MSNProtocol::slotConnected()
 	groups = m_msnService->getGroups();
 	for ( QStringList::Iterator it = groups.begin(); it != groups.end(); ++it )
 	{
-		if ( !kopeteapp->contactList()->groups().contains( (*it).latin1() ) )
-		{
-			kdDebug() << "MSN Plugin: Group: [ " << (*it).latin1() << " ] exits in server but not locally!! CREATING!" <<endl;
-		    kopeteapp->contactList()->addGroup( (*it).latin1() );
-		}
-
-		/* We now get the widget for the group */
-		if (!kopeteapp->contactList()->groups().contains( (*it).latin1() ) )
-			kopeteapp->contactList()->addGroup((*it).latin1());
-
 		kdDebug() << "MSN Plugin: Searching contacts for group: [ " << (*it).latin1() << " ]" <<endl;
 
 		// We get the contacts for this group
@@ -521,9 +511,6 @@ void MSNProtocol::slotInitContacts (QString status, QString userid, QString nick
 	kdDebug() << "MSN Plugin: User State change " << status << " " << userid << " " << nick <<"\n";
 	if ( status == "NLN" )
 	{
-		if (kopeteapp->contactList()->groups().contains(i18n("Unknown")))
-			kopeteapp->contactList()->addGroup(i18n("Unknown"));
-
 		kopeteapp->contactList()->addContact(new MSNContact(userid, nick, i18n("Unknown"), this), i18n("Unknown"));
 	}
 }
@@ -547,9 +534,6 @@ void MSNProtocol::slotNewUserFound (QString userid )
 	QString tmpnick = m_msnService->getPublicName(userid);
 	kdDebug() << "MSN Plugin: User found " << userid << " " << tmpnick <<"\n";
 
-	if (kopeteapp->contactList()->groups().contains(i18n("Unknown")))
-		kopeteapp->contactList()->addGroup(i18n("Unknown"));
-
 	kopeteapp->contactList()->addContact(new MSNContact(userid, tmpnick, i18n("Unknown"), this), i18n("Unknown"));
 }
 
@@ -558,9 +542,6 @@ void MSNProtocol::slotNewUser (QString userid )
 {
 	QString tmpnick = m_msnService->getPublicName(userid);
 	kdDebug() << "MSN Plugin: User found " << userid << " " << tmpnick <<"\n";
-
-	if (kopeteapp->contactList()->groups().contains(i18n("Unknown")))
-		kopeteapp->contactList()->addGroup(i18n("Unknown"));
 
 	kopeteapp->contactList()->addContact(new MSNContact(userid, tmpnick, i18n("Unknown"),this), i18n("Unknown"));
 }
@@ -584,11 +565,11 @@ void MSNProtocol::slotBlockContact( QString handle)
 	m_msnService->contactBlock( handle );
 }
 
-void MSNProtocol::slotGroupAdded( QString /* handle */ )
+void MSNProtocol::slotGroupAdded( const QString & )
 {
 }
 
-void MSNProtocol::slotDeletingGroup( QString /* handle */ )
+void MSNProtocol::slotDeletingGroup( const QString & )
 {
 }
 

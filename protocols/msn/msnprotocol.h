@@ -116,8 +116,8 @@ public slots:
 	void slotBlockContact(QString);
 
 	// Group slots
-	void slotGroupAdded( const QString );
-	void slotDeletingGroup( const QString );
+	void slotGroupAdded( const QString &);
+	void slotDeletingGroup( const QString &);
 	void slotGoURL( const QString );
 
 signals:

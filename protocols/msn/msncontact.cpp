@@ -19,6 +19,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 
+#include "kopetestdaction.h"
 #include "msncontact.h"
 #include "kmsnservice.h"
 
@@ -54,20 +55,18 @@ void MSNContact::initContact(QString userid, const QString name, MSNProtocol *pr
 
 void MSNContact::initActions()
 {
-	actionChat				= new KAction ( i18n("Start Chat"), "idea", 0, this, SLOT(slotChatThisUser()), this, "actionChat" );
-	actionRemoveFromGroup	= new KAction ( i18n("Remove From Group"), "edittrash", 0, this, SLOT(slotRemoveFromGroup()), this, "actionRemove" );
-	actionRemove			= new KAction ( i18n("Delete Contact"), "edittrash", 0, this, SLOT(slotRemoveThisUser()), this, "actionDelete" );
+	actionChat				= KopeteStdAction::sendMessage(this, SLOT(slotChatThisUser()), this, "actionChat" );
+	actionRemoveFromGroup	= new KAction( i18n("Remove From Group"), "edittrash", 0, this, SLOT(slotRemoveFromGroup()), this, "actionRemove" );
+	actionRemove			= KopeteStdAction::deleteContact(this, SLOT(slotRemoveThisUser()), this, "actionDelete" );
 	actionContactCopy		= new KListAction ( i18n("Copy Contact"), "editcopy", 0, this, SLOT(slotCopyThisUser()), this, "actionCopy" );
-	actionContactMove		= new KListAction ( i18n("Move Contact"), "editcut", 0, this, SLOT(slotMoveThisUser()), this, "actionMove" );
-	actionHistory			= new KAction ( i18n("View History"), "history", 0, this, SLOT(slotViewHistory()), this, "actionHistory" );
+	actionContactMove		= KopeteStdAction::moveContact(this, SLOT(slotMoveThisUser()), this, "actionMove" );
+	actionHistory			= KopeteStdAction::viewHistory(this, SLOT(slotViewHistory()), this, "actionHistory" );
 }
 
 void MSNContact::showContextMenu(QPoint point)
 {
-	QStringList grouplist1 = mProtocol->msnService()->getGroups();
-	QStringList grouplist2 = mProtocol->msnService()->getGroups();
-	actionContactMove->setItems(grouplist1);
-	actionContactCopy->setItems(grouplist2);
+	QStringList grouplist = mProtocol->msnService()->getGroups();
+	actionContactCopy->setItems(grouplist);
 
 	popup = new KPopupMenu();
 	popup->insertTitle(mUserID);
@@ -75,10 +74,10 @@ void MSNContact::showContextMenu(QPoint point)
 	popup->insertSeparator();
 	actionHistory->plug( popup );
 	popup->insertSeparator();
+	actionContactMove->plug( popup );
+	actionContactCopy->plug( popup );
 	actionRemoveFromGroup->plug( popup );
 	actionRemove->plug( popup );
-	actionContactCopy->plug( popup );
-	actionContactMove->plug( popup );
 	popup->popup(point);
 }
 
