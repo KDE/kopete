@@ -49,6 +49,7 @@ public:
 	int mId;
 	bool isEmpty;
 	bool mCanBeDeleted;
+	bool customDisplayName;
 	QDateTime awayTime;
 	QString displayName;
 	KopeteView *view;
@@ -65,6 +66,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	d->isEmpty = others.isEmpty();
 	d->mCanBeDeleted = true;
 	d->view = 0L;
+	d->customDisplayName = false;
 
 	for ( KopeteContact *c = others.first(); c; c = others.next() )
 		addContact( c, true );
@@ -109,7 +111,7 @@ void KopeteMessageManager::slotOnlineStatusChanged( KopeteContact *c, const Kope
 			sendMessage( msg );
 		}
 	}
-	
+
 	slotUpdateDisplayName();
 	emit onlineStatusChanged((KopeteContact*)c, status, oldStatus);
 }
@@ -144,11 +146,15 @@ const QString KopeteMessageManager::displayName()
 void KopeteMessageManager::setDisplayName( const QString &newName )
 {
 	d->displayName = newName;
+	d->customDisplayName = true;
 	emit displayNameChanged();
 }
 
 void KopeteMessageManager::slotUpdateDisplayName()
 {
+	if( d->customDisplayName )
+		return;
+
 	QString nextDisplayName;
 
 	KopeteContact *c = d->mContactList.first();
@@ -263,7 +269,7 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool suppress )
 			KopeteContact *old = d->mContactList.first();
 			d->mContactList.remove( old );
 			d->mContactList.append( c );
-			
+
 			disconnect( old, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
 			this, SLOT( slotOnlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus &) ) );
 
