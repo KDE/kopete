@@ -220,8 +220,8 @@ void MetaContact::removeContact(Contact *c, bool deleted)
 		{  //If this function is tell by slotContactRemoved, c is maybe just a QObject
 			disconnect( c, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 				this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
-			connect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-			this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+			disconnect( c, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
+				this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 			disconnect( c, SIGNAL( contactDestroyed( Kopete::Contact * ) ),
 				this, SLOT( slotContactDestroyed( Kopete::Contact * ) ) );
 			disconnect( c, SIGNAL( idleStateChanged( Kopete::Contact * ) ),
