@@ -777,11 +777,6 @@ QString KopeteContact::formattedName() const
 	return ret;
 }
 
-QPixmap KopeteContact::userPhoto() const
-{
-	return QPixmap();
-}
-
 QString KopeteContact::formattedIdleTime() const
 {
 	QString ret;

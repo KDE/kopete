@@ -26,8 +26,8 @@
 #include <kdeversion.h>
 #include <kdialogbase.h>
 #include <klocale.h>
-#include <kiconloader.h> 
-#include <kiconeffect.h> 
+#include <kiconloader.h>
+#include <kiconeffect.h>
 
 #include "kopetecontactlist.h"
 #include "kopeteaccount.h"
@@ -101,7 +101,6 @@ KopeteAccount::KopeteAccount( KopeteProtocol *parent, const QString &accountId, 
 	QObject::connect( d->suppressStatusTimer, SIGNAL( timeout() ), this, SLOT( slotStopSuppression() ) );
 
 	KopeteAccountManager::manager()->registerAccount( this );
-	QTimer::singleShot( 0, this, SLOT( slotAccountReady() ) );
 }
 
 KopeteAccount::~KopeteAccount()
@@ -170,7 +169,7 @@ QPixmap KopeteAccount::accountIcon(const int size) const
 		KIconEffect effect;
 		basis = effect.apply( basis, KIconEffect::Colorize, 1, d->color, 0);
 	}
-	
+
 	if ( size > 0 && basis.width() != size )
 	{
 		basis = QPixmap( basis.convertToImage().smoothScale( size, size ) );
@@ -254,6 +253,8 @@ void KopeteAccount::readConfig( const QString &configGroupName )
 	}
 
 	loaded();
+
+	QTimer::singleShot( 0, this, SLOT( slotAccountReady() ) );
 }
 
 void KopeteAccount::loaded()
