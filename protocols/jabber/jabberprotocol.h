@@ -121,6 +121,7 @@ public slots:
 	void setPresence(int, QString, int = 0);
 	
 	void sendRawMessage(const QString &packet);
+	void sendPresenceToNode(const int&, const QString &);
 
 	void slotIconRightClicked(const QPoint&);
 

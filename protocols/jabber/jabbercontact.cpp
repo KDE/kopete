@@ -17,6 +17,7 @@
 #include <qcursor.h>
 #include <qfont.h>
 #include <qptrlist.h>
+#include <qstrlist.h>
 
 #include <kaction.h>
 #include <kconfig.h>
@@ -47,6 +48,17 @@
 JabberContact::JabberContact(QString userID, QString nickname, QString group, JabberProtocol *protocol, KopeteMetaContact *mc, QString identity) : KopeteContact(protocol->id(), mc)
 {
 
+	actionMessage = actionChat = 0L;
+	actionHistory= actionSnarfVCard = 0L;
+	actionRename = 0L;
+	actionSendAuth = 0L;
+	
+	actionRemoveFromGroup = actionRemove = actionInfo = 0L;
+	actionStatusAway = actionStatusChat = actionStatusXA = actionStatusDND = 0L;
+	
+	actionContactMove = 0L;
+	actionSelectResource = 0L;
+	
 	// save parent protocol object
 	mProtocol = protocol;
 	
@@ -58,7 +70,6 @@ JabberContact::JabberContact(QString userID, QString nickname, QString group, Ja
 	historyDialog = 0L;
 	mMsgManagerKCW = 0L;
 	mMsgManagerKEW = 0L;
-	popup = 0L;
 	
 	mIdentityId = identity;
 
@@ -71,6 +82,8 @@ JabberContact::~JabberContact()
 {
 	
 	delete actionMessage;
+	delete actionChat;
+	delete actionHistory;
 	delete actionRemoveFromGroup;
 	delete actionRename;
 	delete actionSelectResource;
@@ -78,9 +91,12 @@ JabberContact::~JabberContact()
 
 	// Authorization actions 
 	delete actionSendAuth;
+	// Availability
+	delete actionStatusAway; 
+	delete actionStatusChat; 
+	delete actionStatusXA; 
+	delete actionStatusDND;
 
-	if(popup)
-		delete popup;
 
 }
 
@@ -114,8 +130,6 @@ void JabberContact::initContact(QString &userID, QString &nickname, QString &gro
 		hasLocalGroup = true;
 	}
 
-	// create popup menu for the contact
-	initActions();
 	
 	// update the displayed name
 	setDisplayName(nickname);
@@ -168,31 +182,48 @@ KopeteMessageManager* JabberContact::msgManagerKCW()
 void JabberContact::initActions()
 {
     
+
+	if (!actionChat)
 	actionChat = KopeteStdAction::sendMessage(this, SLOT(slotChatThisUser()), this, "actionChat");
-	actionMessage = new KAction(i18n("Send Email Message"), "mail_generic", 0, this, SLOT(slotEmailUser()), this, "actionMessage");
+	if (!actionMessage)
+		actionMessage = new KAction(i18n("Send Email Message"), "mail_generic", 0, this, SLOT(slotEmailUser()), this, "actionMessage");
+	if (!actionRemoveFromGroup)
 	actionRemoveFromGroup = new KAction(i18n("Remove From Group"), "edittrash", 0, this, SLOT(slotRemoveFromGroup()), this, "actionRemove");
-	actionRemove = KopeteStdAction::deleteContact(this, SLOT(slotRemoveThisUser()), this, "actionDelete");
-	actionContactMove = KopeteStdAction::moveContact(this, SLOT(slotMoveThisUser()), this, "actionMove");
-	actionHistory = KopeteStdAction::viewHistory(this, SLOT(slotViewHistory()), this, "actionHistory");
-	actionRename = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");
-	actionSelectResource = new KSelectAction(i18n("Select Resource"), "selectresource", 0, this, SLOT(slotSelectResource()), this, "actionSelectResource");
-	actionSnarfVCard = new KAction(i18n("Get vCard"), "identity", 0, this, SLOT(slotSnarfVCard()), this, "actionSnarfVCard");
+	if (!actionRemove)
+		actionRemove = KopeteStdAction::deleteContact(this, SLOT(slotRemoveThisUser()), this, "actionDelete");
+	if (!actionContactMove)
+		actionContactMove = KopeteStdAction::moveContact(this, SLOT(slotMoveThisUser()), this, "actionMove");
+	if (!actionHistory)
+		actionHistory = KopeteStdAction::viewHistory(this, SLOT(slotViewHistory()), this, "actionHistory");
+	if (!actionRename)
+		actionRename = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");
+	kdDebug()<< &actionRename << endl;
+	if (!actionSelectResource)
+		actionSelectResource = new KSelectAction(i18n("Select Resource"), "selectresource", 0, this, SLOT(slotSelectResource()), this, "actionSelectResource");
+	if (!actionSnarfVCard)
+		actionSnarfVCard = new KAction(i18n("Get vCard"), "identity", 0, this, SLOT(slotSnarfVCard()), this, "actionSnarfVCard");
 
 	// Authorization actions 
-	actionSendAuth = new KAction(i18n("(Re)send authorization to"), "", 0, this, SLOT(slotSendAuth()), this, "actionSendAuth");
+	if (!actionSendAuth)
+		actionSendAuth = new KAction(i18n("(Re)send authorization to"), "", 0, this, SLOT(slotSendAuth()), this, "actionSendAuth");
 
+	// Availability status
+	if (!actionStatusAway)
+		actionStatusAway = new KAction(i18n("Temporarily away"), "", 0, this,SLOT(slotStatusAway()), this,  "actionAway");
+	if (!actionStatusChat)
+		actionStatusChat = new KAction(i18n("Free to chat"), "", 0, this, SLOT(slotStatusChat()), this, "actionChat");
+	if (!actionStatusXA)
+		actionStatusXA = new KAction(i18n("Extended away"), "", 0, this, SLOT(slotStatusXA()),this, "actionXA");
+	if (!actionStatusDND)
+		actionStatusDND = new KAction(i18n("Do not Disturb"), "", 0, this, SLOT(slotStatusDND()), this, "actionDND");
 }
 
-void JabberContact::showContextMenu(const QPoint&, const QString&)
+void JabberContact::showContextMenu(const QPoint& point, const QString&)
 {
 
-	// if the popup menu has been instantiated before,
-	// delete it now
-	if(popup)
-		delete popup;
+	initActions();
 	
-	// create a new popup menu
-	popup = new KPopupMenu();
+	KPopupMenu *popup = new KPopupMenu();
 	popup->insertTitle(userID() + " (" + mResource + ")");
 
 	KGlobal::config()->setGroup("Jabber");
@@ -265,11 +296,24 @@ void JabberContact::showContextMenu(const QPoint&, const QString&)
 	actionRename->plug(popup);
 	actionContactMove->plug(popup);
 	actionSendAuth->plug(popup);
+
+	// Availability popup menu
+	KPopupMenu *popup_status = new KPopupMenu();
+	popup->insertItem("Availabilty", popup_status);
+
+	actionStatusChat->plug(popup_status);
+	actionStatusAway->plug(popup_status);
+	actionStatusXA->plug(popup_status);
+	actionStatusDND->plug(popup_status);
+	// Remove
+	popup->insertSeparator();
 	actionRemoveFromGroup->plug(popup);
 	actionRemove->plug(popup);
 
-	popup->popup(QCursor::pos());
-
+	
+	popup->exec( point );
+	delete popup;
+	delete popup_status;
 }
 
 void JabberContact::slotUpdateContact(QString resource, int newStatus, QString reason)
@@ -887,6 +931,26 @@ void JabberContact::slotUpdateNickname(const QString newNickname)
 	// update display
 	setDisplayName( newNickname );
 
+}
+
+void JabberContact::slotStatusChat()
+{
+	mProtocol->sendPresenceToNode(0, mUserID);
+}
+
+void JabberContact::slotStatusAway()
+{
+	mProtocol->sendPresenceToNode(1, mUserID);
+}
+
+void JabberContact::slotStatusXA()
+{
+	mProtocol->sendPresenceToNode(2, mUserID);
+}
+
+void JabberContact::slotStatusDND()
+{
+	mProtocol->sendPresenceToNode(3, mUserID);
 }
 
 #include "jabbercontact.moc"

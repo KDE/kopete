@@ -670,6 +670,22 @@ void JabberProtocol::sendRawMessage(const QString &packet)
 
 }
 
+void JabberProtocol::sendPresenceToNode(const int &status,const QString &toUser )
+{
+	QString status_str;
+
+	switch(status)
+	{
+		case 0: status_str = "chat"; break;
+		case 1: status_str = "away" ; break;
+		case 2: status_str = "xa"; break;
+		case 3: status_str = "dnd"; break;
+	}
+	
+	mProtocol->insertXml( QString("<presence to=\"%1\" from=\"%2\">\n<priority>1</priority>\n<status></status>\n<show>%3</show>\n</presence>").arg(toUser).arg(mUsername+"@"+mServer).arg(status_str));
+	
+	}
+
 /*
  * Set presence (usually called by dialog widget)
  */

@@ -190,7 +190,7 @@ class JabberContact : public KopeteContact
 		 * Send a message using the email window
 		 */
 		void slotSendMsgKEW(const KopeteMessage&);
-		
+	
 		/**
 		 * Slots called when a certain resource
 		 * appears or disappears for the contact
@@ -274,6 +274,12 @@ class JabberContact : public KopeteContact
 		 * Send type="subscribe" to contact
 		 */
 		void slotSendAuth();
+
+		void slotStatusChat();
+		void slotStatusAway();
+		void slotStatusXA();
+		void slotStatusDND();
+
 		
 	signals:
 		void msgRecieved(QString, QString, QString, QString, QFont, QColor);
@@ -305,13 +311,14 @@ class JabberContact : public KopeteContact
 		QString mUserID, mResource, mGroup, mReason;
 		int mStatus;
 
-		KPopupMenu *popup;
 		KAction *actionMessage, *actionChat,
 				*actionHistory, *actionSnarfVCard,
 				*actionRename,
 	 			*actionSendAuth,
-				*actionRemoveFromGroup, *actionRemove, *actionInfo;
+				*actionRemoveFromGroup, *actionRemove, *actionInfo,
+				*actionStatusAway, *actionStatusChat, *actionStatusXA, *actionStatusDND;
 		KListAction *actionContactMove;
+		
 		KSelectAction *actionSelectResource;
 
 		dlgJabberRename *dlgRename;
