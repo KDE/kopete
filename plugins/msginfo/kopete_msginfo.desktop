@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
-Version=1000792
+X-Kopete-Version=1000792
 Icon=msginfo_plugin
 ServiceTypes=Kopete/Plugin
 X-KDE-Library=kopete_msginfo

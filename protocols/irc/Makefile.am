@@ -18,5 +18,5 @@ kopete_irc_la_LIBADD      = ../../libkopete/libkopete.la \
 		./libkirc/libkirc.la \
 		$(LIB_KIO)
 
-service_DATA = irc.desktop
+service_DATA = kopete_irc.desktop
 servicedir = $(kde_servicesdir)

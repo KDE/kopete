@@ -11,7 +11,7 @@ kcm_kopete_alias_la_SOURCES     = aliaspreferences.cpp aliasdialogbase.ui aliasd
 kcm_kopete_alias_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
 kcm_kopete_alias_la_LIBADD      = $(LIB_KOPETECOMPAT) $(LIB_KUTILS) ../../libkopete/libkopete.la
 
-service_DATA = alias.desktop
+service_DATA = kopete_alias.desktop
 servicedir = $(kde_servicesdir)
 
 kcm_DATA = kopete_alias_config.desktop

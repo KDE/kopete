@@ -9,5 +9,5 @@ kopete_perlscript_la_SOURCES     = perlscriptplugin.cpp perlscriptprefs.cpp perl
 kopete_perlscript_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
 kopete_perlscript_la_LIBADD      = ../../libkopete/libkopete.la $(LIBPERL_LIBS) -lktexteditor
 
-service_DATA = perlscript.desktop
+service_DATA = kopete_perlscript.desktop
 servicedir = $(kde_servicesdir)

@@ -22,6 +22,7 @@ Comment[tr]=Kopete Eklentisi
 Comment[wa]=Tchôke-divins po Kopete
 Comment[xx]=xxKopete Pluginxx
 
+# The Kopete version for which the plugin is written
 [PropertyDef::X-Kopete-Version]
-Type=integer
+Type=QString
 

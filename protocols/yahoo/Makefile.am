@@ -12,6 +12,6 @@ kopete_yahoo_la_SOURCES = yahooprotocol.cpp kyahoo.cpp yahoocontact.cpp yahoosta
 kopete_yahoo_la_LDFLAGS     = -module $(KDE_PLUGIN)
 kopete_yahoo_la_LIBADD      = $(top_builddir)/kopete/libkopete/libkopete.la  ui/libkopeteyahooui.la libyahoo2/libyahoo2.la
 
-service_DATA = yahoo.desktop
+service_DATA = kopete_yahoo.desktop
 servicedir = $(kde_servicesdir)
 

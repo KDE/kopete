@@ -26,7 +26,7 @@ dummy.cpp: $(srcdir)/Makefile.am
 	echo 'extern "C" void *init_libkopete_msn_shared();' > $@
 	echo 'extern "C" void *init_kopete_msn() { return init_libkopete_msn_shared(); }' >> $@
 
-service_DATA = msn.desktop
+service_DATA = kopete_msn.desktop
 servicedir = $(kde_servicesdir)
 
 mydatadir = $(kde_datadir)/kopete

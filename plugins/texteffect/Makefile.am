@@ -13,7 +13,7 @@ kcm_kopete_texteffect_la_SOURCES = texteffectconfig.cpp texteffectprefs.ui texte
 kcm_kopete_texteffect_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
 kcm_kopete_texteffect_la_LIBADD  = $(LIB_KOPETECOMPAT) $(LIB_KUTILS)
 
-service_DATA = texteffect.desktop
+service_DATA = kopete_texteffect.desktop
 servicedir = $(kde_servicesdir)
 
 kcm_DATA = kopete_texteffect_config.desktop

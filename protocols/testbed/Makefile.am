@@ -10,5 +10,5 @@ kopete_testbed_la_SOURCES = testbedprotocol.cpp testbedcontact.cpp testbedaccoun
 kopete_testbed_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN) $(all_libraries)
 kopete_testbed_la_LIBADD = ../../libkopete/libkopete.la $(LIB_KIO)
 
-service_DATA = testbed.desktop
+service_DATA = kopete_testbed.desktop
 servicedir= $(kde_servicesdir)

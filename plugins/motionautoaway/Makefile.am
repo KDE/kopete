@@ -14,7 +14,7 @@ kcm_kopete_motionaway_la_LIBADD  = $(LIB_KOPETECOMPAT) $(LIB_KUTILS)
 
 
 
-service_DATA = motionaway.desktop
+service_DATA = kopete_motionaway.desktop
 servicedir = $(kde_servicesdir)
 
 kcm_DATA = kopete_motionaway_config.desktop

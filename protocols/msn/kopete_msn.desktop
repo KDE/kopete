@@ -1,10 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Service
-Version=1000792
 Icon=msn_protocol
 ServiceTypes=Kopete/Protocol
 X-KDE-Library=kopete_msn
+X-Kopete-Version=1000792
 X-Kopete-Messaging-Protocol=messaging/msn
 X-KDE-PluginInfo-Author=Kopete Developers
 X-KDE-PluginInfo-Email=kopete-devel@kde.org

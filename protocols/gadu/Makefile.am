@@ -21,5 +21,5 @@ kopete_gadu_la_LIBADD  = ./ui/libgaduui.la \
 		       $(top_builddir)/kopete/libkopete/libkopete.la \
 		       $(LIBGG_LIBS)
 
-service_DATA = gadu.desktop
+service_DATA = kopete_gadu.desktop
 servicedir = $(kde_servicesdir)

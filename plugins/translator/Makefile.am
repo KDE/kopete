@@ -12,7 +12,7 @@ kcm_kopete_translator_la_SOURCES = translatorprefsbase.ui translatorprefs.cpp tr
 kcm_kopete_translator_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
 kcm_kopete_translator_la_LIBADD  = $(LIB_KOPETECOMPAT) $(LIB_KUTILS)
 
-service_DATA = translator.desktop
+service_DATA = kopete_translator.desktop
 servicedir = $(kde_servicesdir)
 
 kcm_DATA = kopete_translator_config.desktop

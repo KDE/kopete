@@ -89,7 +89,8 @@ KopetePluginManager::KopetePluginManager()
 
 	KSettings::Dispatcher::self()->registerInstance( KGlobal::instance(), this, SLOT( loadAllPlugins() ) );
 
-	d->plugins = KPluginInfo::fromServices( KTrader::self()->query( QString::fromLatin1( "Kopete/Plugin" ) ) );
+	d->plugins = KPluginInfo::fromServices( KTrader::self()->query( QString::fromLatin1( "Kopete/Plugin" ),
+		QString::fromLatin1( "[X-Kopete-Version] == '1000792'" ) ) );
 }
 
 KopetePluginManager::~KopetePluginManager()

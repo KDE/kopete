@@ -18,6 +18,6 @@ kopete_jabber_la_LIBADD  = ../../libkopete/libkopete.la \
 	libxmpp/cutestuff/ssl/libcutestuff_ssl.la \
 	libxmpp/cutestuff/util/libcutestuff_util.la
 
-service_DATA = jabber.desktop
+service_DATA = kopete_jabber.desktop
 servicedir = $(kde_servicesdir)
 

@@ -17,5 +17,5 @@ kopete_icq_la_LIBADD  = ../libkopete_oscar.la ui/libkopeteicqui.la \
 #kopete_icq_la_DEPENDENCIES  = ../libkopete_oscar.la ./ui/libkopeteicqui.la \
 #	$(top_builddir)/kopete/libkopete/libkopete.la
 
-service_DATA = icq.desktop
+service_DATA = kopete_icq.desktop
 servicedir = $(kde_servicesdir)

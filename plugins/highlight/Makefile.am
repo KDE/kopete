@@ -14,7 +14,7 @@ kcm_kopete_highlight_la_SOURCES = highlightprefsbase.ui highlightpreferences.cpp
 kcm_kopete_highlight_la_LDFLAGS = -module -no-undefined $(KDE_PLUGIN) $(all_libraries)
 kcm_kopete_highlight_la_LIBADD  = $(LIB_KOPETECOMPAT) $(LIB_KUTILS)
 
-service_DATA = highlight.desktop
+service_DATA = kopete_highlight.desktop
 servicedir = $(kde_servicesdir)
 
 kcm_DATA = kopete_highlight_config.desktop
