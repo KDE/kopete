@@ -80,10 +80,21 @@ namespace GroupWise
 						 };
 	
 	// helpful structs used to pass data between the client library and the application using it
+	class ConferenceGuid : public QString 
+	{
+	public:
+		ConferenceGuid();
+		ConferenceGuid( const QString & string );
+	};
+	
+	bool operator==( const ConferenceGuid & g1, const ConferenceGuid & g2 );
+	bool operator==( const QString & s, const ConferenceGuid & g );
+	bool operator==( const ConferenceGuid & g, const QString & s );
+	
 	struct ConferenceEvent 
 	{
 		Event type;
-		QString guid;
+		ConferenceGuid guid;
 		QString user;
 		QDateTime timeStamp;
 		Q_UINT32 flags;
@@ -123,7 +134,7 @@ namespace GroupWise
 
 	struct OutgoingMessage
 	{
-		QString guid;
+		ConferenceGuid guid;
 		QString message;
 		QString rtfMessage;
 	};
@@ -146,6 +157,7 @@ namespace GroupWise
 		QString argument;
 		int operation;
 	};
+	
 };
 
 // temporary typedef pending implementation

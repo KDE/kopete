@@ -168,7 +168,7 @@ QString GroupWiseProtocol::rtfizeText( const QString & plain )
 	QString rtfTemplate = QString::fromLatin1("{\\rtf1\\ansi\n"
 						"{\\fonttbl{\\f0\\fnil Unknown;}}\n"
 						"{\\colortbl ;\\red0\\green0\\blue0;}\n"
-						"\\uc1\\cf1\\f0\\fs12 %1\\par\n}");
+						"\\uc1\\cf1\\f0\\fs18 %1\\par\n}");
 	QString outputText; // output text
 	QCString plainUtf8 = plain.utf8(); // encoded as UTF8, because that's what this encoding algorithm, taken from Gaim's Novell plugin
 	uint index = 0; // current char to transcode

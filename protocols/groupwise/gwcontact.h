@@ -35,6 +35,7 @@
 
 #include "gwerror.h"
 #include "gwfield.h"
+#include "gwmessagemanager.h"
 
 class KAction;
 class KActionCollection;
@@ -120,12 +121,12 @@ public:
 	/**
 	 * Add this contact to a conference
 	 */
-	void joinConference( const QString & guid );
+	void joinConference( const ConferenceGuid & guid );
 
 	/**
 	 * Remove this contact from a conference
 	 */
-	void leaveConference( const QString & guid );
+	void leaveConference( const ConferenceGuid & guid );
 	
 	/**
 	 * Access the contact's server properties
@@ -182,7 +183,7 @@ protected:
 	/**
 	 * Returns the KopeteMessageManager for the GroupWise conference with the supplied GUID, or creates a new one.
 	 */
-	GroupWiseMessageManager *manager( const QString & guid, bool canCreate = false );
+	GroupWiseMessageManager *manager( const ConferenceGuid & guid, bool canCreate = false );
 	// debug function to see what message managers we have on the server
 	void dumpManagers();
 protected slots:
@@ -218,7 +219,7 @@ protected:
 	KAction* m_actionPrefs;
 	KAction *m_actionBlock;
 	// all the message managers that this contact is currently chatting via
-	QDict< GroupWiseMessageManager > m_msgManagers;
+	GroupWiseMessageManager::Dict m_msgManagers;
 	// a list of all the instances that this contact appears in the server side contact list
 	CLInstanceList m_instances;
 	// Novell Messenger Properties, as received by the server.  

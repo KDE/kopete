@@ -21,7 +21,9 @@
 #include <qcstring.h>
 #include <qdatetime.h>
 
-#include <transfer.h>
+#include "gwerror.h" 
+
+#include "transfer.h"
 
 namespace Event {
 	
@@ -78,7 +80,7 @@ public:
 	int eventType();
 	QString source();
 	QDateTime timeStamp();
-	QString guid();
+	GroupWise::ConferenceGuid guid();
 	Q_UINT32 flags();
 	QString message();
 	Q_UINT16 status();
@@ -87,7 +89,7 @@ public:
 	/**
 	 * Mutators to set the transfer's contents
 	 */
-	void setGuid( const QString & guid );
+	void setGuid( const GroupWise::ConferenceGuid & guid );
 	void setFlags( const Q_UINT32 flags );
 	void setMessage( const QString & message );
 	void setStatus( const Q_UINT16 status );
@@ -98,7 +100,7 @@ private:
 	int m_eventType;
 	QString m_source;
 	QDateTime m_timeStamp;
-	QString m_guid;
+	GroupWise::ConferenceGuid m_guid;
 	Q_UINT32 m_flags;
 	QString m_message;
 	Q_UINT16 m_status;

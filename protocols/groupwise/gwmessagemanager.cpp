@@ -39,7 +39,18 @@
 
 #include "gwmessagemanager.h"
 
-GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const QString & guid, int id, const char* name): KopeteMessageManager(user, others, protocol, 0, name), m_guid( guid ), m_flags( 0 ), m_memberCount( others.count() ), m_searchDlg( 0 )
+void GroupWiseMessageManager::Dict::insert( const ConferenceGuid & key, GroupWiseMessageManager * item )
+{
+	QMap< ConferenceGuid, GroupWiseMessageManager * >::insert( key.left( CONF_GUID_END ), item  );
+}
+
+GroupWiseMessageManager * GroupWiseMessageManager::Dict::operator[]( const ConferenceGuid & key )
+{
+	//return (*( QMap< ConferenceGuid, GroupWiseMessageManager * > *)this)[ key.left( CONF_GUID_END ) ];
+	return QMap< ConferenceGuid, GroupWiseMessageManager * >::operator[]( key.left( CONF_GUID_END ) );
+}
+
+GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const GroupWise::ConferenceGuid & guid, int id, const char* name): KopeteMessageManager(user, others, protocol, 0, name), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId() << endl;
 
@@ -76,7 +87,7 @@ GroupWiseMessageManager::~GroupWiseMessageManager()
 {
 }
 
-void GroupWiseMessageManager::setGuid( const QString & guid )
+void GroupWiseMessageManager::setGuid( const GroupWise::ConferenceGuid & guid )
 {
 	if ( m_guid.isEmpty() )
 	{
@@ -141,7 +152,7 @@ void GroupWiseMessageManager::createConference()
 			invitees.append( static_cast< GroupWiseContact * >( contact )->dn() );
 		}
 		// this is where we will set the GUID and send any pending messages
-		connect( account(), SIGNAL( conferenceCreated( const int, const QString & ) ), SLOT( receiveGuid( const int, const QString & ) ) );
+		connect( account(), SIGNAL( conferenceCreated( const int, const GroupWise::ConferenceGuid & ) ), SLOT( receiveGuid( const int, const GroupWise::ConferenceGuid & ) ) );
 		connect( account(), SIGNAL( conferenceCreationFailed( const int, const int ) ), SLOT( slotCreationFailed( const int, const int ) ) );
 		
 		// create the conference
@@ -151,7 +162,7 @@ void GroupWiseMessageManager::createConference()
 		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " tried to create conference on the server when it was already instantiated" << endl;
 }
 
-void GroupWiseMessageManager::receiveGuid( const int newMmId, const QString & guid )
+void GroupWiseMessageManager::receiveGuid( const int newMmId, const GroupWise::ConferenceGuid & guid )
 {
 	if ( newMmId == mmId() )
 	{
@@ -230,7 +241,7 @@ void GroupWiseMessageManager::slotMessageSent( KopeteMessage & message, KopeteMe
 				{
 					kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "waiting for server to create a conference, queuing message" << endl;
 					// the conference hasn't been instantiated on the server yet, so queue the message
-					m_guid = QString();
+					m_guid = ConferenceGuid();
 					createConference();
 					m_pendingOutgoingMessages.append( message );
 				}

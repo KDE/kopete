@@ -72,7 +72,7 @@ bool CreateConferenceTask::take( Transfer * transfer )
 	
 }
 
-QString CreateConferenceTask::conferenceGUID() const
+GroupWise::ConferenceGuid CreateConferenceTask::conferenceGUID() const
 {
 	return m_guid;
 }

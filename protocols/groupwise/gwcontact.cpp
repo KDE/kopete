@@ -197,11 +197,12 @@ GroupWiseMessageManager * GroupWiseContact::manager( KopeteContactPtrList chatMe
 	return mgr;
 }
 
-GroupWiseMessageManager * GroupWiseContact::manager( const QString & guid, bool canCreate )
+GroupWiseMessageManager * GroupWiseContact::manager( const GroupWise::ConferenceGuid & guid, bool canCreate )
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "called for guid: " << guid << ", canCreate: " << canCreate << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << m_dn << "looking for message manager for guid: " << guid << ", canCreate: " << canCreate << endl;
 	if ( !guid.isNull() )
 	{
+		dumpManagers();
 		GroupWiseMessageManager * mgr = m_msgManagers[ guid ];
 		if ( !mgr )
 		{
@@ -268,15 +269,16 @@ void GroupWiseContact::sendMessage( KopeteMessage &message )
 void GroupWiseContact::dumpManagers()
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " for: " << contactId() << endl;
-	QDictIterator< GroupWiseMessageManager > it( m_msgManagers );
-	for ( ; it.current(); ++it )
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "guid: " << it.currentKey() << endl;
+	QMapIterator< GroupWise::ConferenceGuid, GroupWiseMessageManager * > it;
+	
+	for ( it = m_msgManagers.begin() ; it != m_msgManagers.end(); ++it )
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "guid: " << it.key() << endl;
 }
 
 void GroupWiseContact::slotConferenceCreated()
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	const GroupWiseMessageManager * mgr = (GroupWiseMessageManager *)sender();
+	GroupWiseMessageManager * mgr = (GroupWiseMessageManager *)sender();
 	m_msgManagers.insert( mgr->guid(), mgr );
 	dumpManagers();
 }
@@ -292,7 +294,7 @@ void GroupWiseContact::slotMessageManagerDeleted( QObject *sender )
 
 void GroupWiseContact::handleIncomingMessage( const ConferenceEvent & message, bool autoReply )
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Got a " << ( autoReply ? "auto-reply" : "message" ) << " for conference: " << message.guid << ", message: " << message.message << endl;
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << m_dn << " sent a " << ( autoReply ? "auto-reply" : "message" ) << " to conference: " << message.guid << ", message: " << message.message << endl;
 	KopeteContactPtrList contactList;
 	contactList.append ( account()->myself () );
 	GroupWiseMessageManager *mgr = manager( message.guid, true );
@@ -314,13 +316,13 @@ void GroupWiseContact::handleIncomingMessage( const ConferenceEvent & message, b
 	delete newMessage;
 }
 
-void GroupWiseContact::joinConference( const QString & guid )
+void GroupWiseContact::joinConference( const GroupWise::ConferenceGuid & guid )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	manager( guid, false );
 }
 
-void GroupWiseContact::leaveConference( const QString & guid )
+void GroupWiseContact::leaveConference( const GroupWise::ConferenceGuid & guid )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo <<  endl;
 	m_msgManagers.remove( guid );

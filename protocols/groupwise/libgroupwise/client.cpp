@@ -231,7 +231,7 @@ void Client::sendMessage( const QStringList & addresseeDNs, const OutgoingMessag
 	smt->go( true );
 }
 
-void Client::sendTyping( const QString & conferenceGuid, bool typing )
+void Client::sendTyping( const GroupWise::ConferenceGuid & conferenceGuid, bool typing )
 {
 	TypingTask * tt = new TypingTask( d->root );
 	tt->typing( conferenceGuid, typing );
@@ -260,7 +260,7 @@ void Client::requestDetails( const QStringList & userDNs )
 	gdt->go( true );
 }
 
-void Client::joinConference( const QString & guid )
+void Client::joinConference( const GroupWise::ConferenceGuid & guid )
 {
 	JoinConferenceTask * jct = new JoinConferenceTask( d->root );
 	jct->join( guid );
@@ -268,7 +268,7 @@ void Client::joinConference( const QString & guid )
 	jct->go( true );
 }
 
-void Client::rejectInvitation( const QString & guid )
+void Client::rejectInvitation( const GroupWise::ConferenceGuid & guid )
 {
 	RejectInviteTask * rit = new RejectInviteTask ( d->root );
 	rit->reject( guid );
@@ -276,7 +276,7 @@ void Client::rejectInvitation( const QString & guid )
 	rit->go( true );
 }
 
-void Client::leaveConference( const QString & guid )
+void Client::leaveConference( const GroupWise::ConferenceGuid & guid )
 {
 	qDebug( "Client::leaveConference()" );
 	LeaveConferenceTask * lct = new LeaveConferenceTask( d->root );
@@ -285,7 +285,7 @@ void Client::leaveConference( const QString & guid )
 	lct->go( true );
 }
 
-void Client::sendInvitation( const QString & guid, const QString & dn, const GroupWise::OutgoingMessage & message )
+void Client::sendInvitation( const GroupWise::ConferenceGuid & guid, const QString & dn, const GroupWise::OutgoingMessage & message )
 {
 	qDebug( "Client::sendInvitation()" );
 	SendInviteTask * sit = new SendInviteTask( d->root );

@@ -38,15 +38,27 @@ Q_OBJECT
 
 friend class GroupWiseAccount;
 public:
-	~GroupWiseMessageManager();
+	/**
+	 * INNER CLASS 
+	 * Specialised dictionary that only keys on the first CONF_GUID_END characters of a conference GUID
+	 */
+	class Dict : public QMap< ConferenceGuid, GroupWiseMessageManager * >
+	{
+		// QMap::insert isn't virtual 
+		public:
+		void insert( const ConferenceGuid & key, GroupWiseMessageManager * item );
+		GroupWiseMessageManager * operator[]( const ConferenceGuid & key );
+	};
+	
+		~GroupWiseMessageManager();
 	/**
 	 * The conference's globally unique identifier, which is given to it by the server
 	 */
-	QString guid() const { return m_guid; }
+	ConferenceGuid guid() const { return m_guid; }
 	/**
 	 * Change the GUID
 	 */
-	void setGuid( const QString & guid );
+	void setGuid( const ConferenceGuid & guid );
 	/**
 	 * Utility account access
 	 */
@@ -104,7 +116,7 @@ protected slots:
 	 * @param mmId Message Manager ID, used to determine if this GUID is meant for this message manager
 	 * @param guid The GUID allotted us by the server.
 	 */
-	void receiveGuid( const int mmId, const QString & guid );
+	void receiveGuid( const int mmId, const GroupWise::ConferenceGuid & guid );
 	/**
 	 * An attempt to create a conference on the server failed.
 	 * @param mmId Message Manager ID to see if the failure refers to this message manager
@@ -137,9 +149,9 @@ protected slots:
 	void slotShowArchiving();
 private:
 	
-	GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const QString & guid, int id = 0, const char* name = 0);
+	GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const ConferenceGuid & guid, int id = 0, const char* name = 0);
 	
-	QString m_guid; // The conference's globally unique identifier, which is given to it by the server
+	ConferenceGuid m_guid; // The conference's globally unique identifier, which is given to it by the server
 	int m_flags; // flags for secure connections, central logging and "conference closed" as given by the server
 	
 	QValueList< KopeteMessage > m_pendingOutgoingMessages; // messages queued while we wait for the server to tell us the conference is created.

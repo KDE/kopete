@@ -31,7 +31,7 @@ TypingTask::~TypingTask()
 {
 }
 
-void TypingTask::typing( const QString & conferenceGuid, const bool typing )
+void TypingTask::typing( const GroupWise::ConferenceGuid & conferenceGuid, const bool typing )
 {
 	Field::FieldList typingNotification, outgoingList;
 	typingNotification.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, conferenceGuid ) );

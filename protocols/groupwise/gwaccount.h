@@ -104,7 +104,7 @@ public:
 	/** 
 	 * Utility access to a message manager instance for a given GUID
 	 */
-	GroupWiseMessageManager * messageManager( const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const QString & guid );
+	GroupWiseMessageManager * messageManager( const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const ConferenceGuid & guid );
 	/**
 	 * Look up a contact given a DN
 	 * Returns 0 if none found
@@ -118,12 +118,12 @@ public:
 	/**
 	 * Send a message
 	 */ 
-	void sendMessage( const QString & guid, const KopeteMessage & message );
+	void sendMessage( const ConferenceGuid & guid, const KopeteMessage & message );
 	
 	/**
 	 * Invite someone to join a conference
 	 */
-	void sendInvitation( const QString & guid, const QString & dn, const QString & message );
+	void sendInvitation( const ConferenceGuid & guid, const QString & dn, const QString & message );
 	
 	/**
 	 * Check a contact's blocking status
@@ -145,7 +145,7 @@ public slots:
 	virtual void disconnect();
 	virtual void disconnect( KopeteAccount::DisconnectReason reason );
 signals: 
-	void conferenceCreated( const int mmId, const QString & guid );
+	void conferenceCreated( const int mmId, const GroupWise::ConferenceGuid & guid );
 	void conferenceCreationFailed( const int mmId, const int statusCode );
 	void contactTyping( const ConferenceEvent & );
 	void contactNotTyping( const ConferenceEvent & );
@@ -203,7 +203,7 @@ protected slots:
 	/**
 	 * A contact changed status
 	 */
-	void receiveStatus( const QString &, Q_UINT16 , const QString & );
+	void receiveStatus( const QString &, Q_UINT16, const QString & );
 	/**
 	 * Our status changed on the server
 	 */
@@ -223,7 +223,7 @@ protected slots:
 	/**
 	 * We joined a conference having accepted an invitation, create a message manager
 	 */
- 	void receiveConferenceJoin( const QString & guid, const QStringList & participants, const QStringList & invitees );
+ 	void receiveConferenceJoin( const GroupWise::ConferenceGuid & guid, const QStringList & participants, const QStringList & invitees );
 	/**
 	 * Someone joined a conference, add them to the appropriate message manager
 	 */
@@ -302,12 +302,10 @@ private:
 	ClientStream * m_clientStream;
 	// Client, entry point of libgroupwise
 	Client * m_client;
-	// Map of objectId to group, used to add contacts to the correct KopeteGroup
-	//QMap<unsigned int, KopeteGroup*> m_groupList;
+	
 	GroupWise::Status m_initialStatus;
 	QString m_initialReason;
-	//QValueList<ConferenceEvent> m_pendingEvents; // events for which we need the source's details before we can deal with them
-	QDict< GroupWiseMessageManager > m_managers;
+	GroupWiseMessageManager::Dict m_managers;
 };
 
 #endif

@@ -106,7 +106,7 @@ fd		 * @param password
 		 * @param conference The conference where the typing took place.
 		 * @param typing True if the user is now typing, false otherwise.
 		 */
-		void sendTyping( const QString & conferenceGuid, bool typing );
+		void sendTyping( const ConferenceGuid & conferenceGuid, bool typing );
 		
 		/** 
 		 * Request details for one or more users, for example, if we receive a message from someone who isn't on our contact list
@@ -143,25 +143,25 @@ fd		 * @param password
 		 * Join a conference, accepting an invitation 
 		 * Protocol action P7
 		 */
-		void joinConference( const QString & guid );
+		void joinConference( const ConferenceGuid & guid );
 
 		/**
 		 * Reject a conference invitation
 		 * Protocol action P8
 		 */
-		void rejectInvitation( const QString & guid );
+		void rejectInvitation( const ConferenceGuid & guid );
 		
 		/**
 		 * Leave a conference, notifying 
 		 * Protocol action P6
 		 */
-		void leaveConference( const QString & guid ); 
+		void leaveConference( const ConferenceGuid & guid ); 
 		
 		/**
 		 * Send an invitation to join a conference
 		 * Protocol action P9
 		 */
-		void sendInvitation( const QString & guid, const QString & dn, const GroupWise::OutgoingMessage & message );
+		void sendInvitation( const ConferenceGuid & guid, const QString & dn, const GroupWise::OutgoingMessage & message );
 		/*************
 		  INTERNAL (FOR USE BY TASKS) METHODS 
 		 *************/
@@ -277,7 +277,7 @@ fd		 * @param password
 		/** 
 		 * A conference was successfully created on the server
 		 */
-		void conferenceCreated( const int clientId, const QString & guid );
+		void conferenceCreated( const int clientId, const GroupWise::ConferenceGuid & guid );
 		/**
 		 * A third party was invited to join a chat.  They may not be on our contact list.
 		 */
@@ -307,7 +307,7 @@ fd		 * @param password
 		/**
 		 * We joined a conference.
 		 */
-		void conferenceJoined( const QString &, const QStringList &, const QStringList & );
+		void conferenceJoined( const GroupWise::ConferenceGuid &, const QStringList &, const QStringList & );
 		/**
 		 * We received an "is typing" event in a conference
 		 */
@@ -351,9 +351,7 @@ fd		 * @param password
 		 * The client stream has data ready to read.
 		 */
 		void streamReadyRead();
-		
-		
-		
+
 	private:
 		void distribute( Transfer *transfer );
 		class ClientPrivate;

@@ -28,7 +28,7 @@ SendInviteTask::~SendInviteTask()
 {
 }
 
-void SendInviteTask::invite( const QString & guid, const QStringList & invitees, const GroupWise::OutgoingMessage & msg)
+void SendInviteTask::invite( const GroupWise::ConferenceGuid & guid, const QStringList & invitees, const GroupWise::OutgoingMessage & msg)
 {
 	Field::FieldList lst, tmp;
 	tmp.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, guid ) );

@@ -35,7 +35,7 @@ Q_OBJECT
 public:
 	TypingTask(Task* parent);
 	~TypingTask();
-	void typing( const QString & conferenceGuid, const bool typing );
+	void typing( const GroupWise::ConferenceGuid & guid, const bool typing );
 };
 
 #endif

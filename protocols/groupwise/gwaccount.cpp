@@ -148,7 +148,7 @@ GroupWiseProtocol *GroupWiseAccount::protocol() const
 	return static_cast<GroupWiseProtocol *>( KopeteAccount::protocol() );
 }
 
-GroupWiseMessageManager * GroupWiseAccount::messageManager( const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const QString & guid )
+GroupWiseMessageManager * GroupWiseAccount::messageManager( const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const GroupWise::ConferenceGuid & guid )
 {
 	GroupWiseMessageManager * mgr = m_managers[ guid ];
 	if ( !mgr )
@@ -269,7 +269,9 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	
 	QObject::connect( m_client, SIGNAL( ourStatusChanged( GroupWise::Status, const QString &, const QString & ) ), SLOT( changeOurStatus( GroupWise::Status, const QString &, const QString & ) ) );
 	// conference events
-	QObject::connect( m_client, SIGNAL( conferenceCreated( const int, const QString & ) ), SIGNAL( conferenceCreated( const int, const QString & ) ) );
+	QObject::connect( m_client, 
+		SIGNAL( conferenceCreated( const int, const GroupWise::ConferenceGuid & ) ), 
+		SIGNAL( conferenceCreated( const int, const GroupWise::ConferenceGuid & ) ) );
 	QObject::connect( m_client, SIGNAL( conferenceCreationFailed( const int,  const int ) ), SIGNAL( conferenceCreationFailed( const int,  const int ) ) );
 	QObject::connect( m_client, SIGNAL( invitationReceived( const ConferenceEvent & ) ), SLOT( receiveInvitation( const ConferenceEvent & ) ) );
 	QObject::connect( m_client, SIGNAL( conferenceLeft( const ConferenceEvent & ) ), SLOT( receiveConferenceLeft( const ConferenceEvent & ) ) );
@@ -277,7 +279,7 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	QObject::connect( m_client, SIGNAL( inviteNotifyReceived( const ConferenceEvent & ) ), SLOT( receiveInviteNotify( const ConferenceEvent & ) ) );
 	QObject::connect( m_client, SIGNAL( invitationDeclined( const ConferenceEvent & ) ), SLOT( receiveInviteDeclined( const ConferenceEvent & ) ) );
 
-	QObject::connect( m_client, SIGNAL( conferenceJoined( const QString &, const QStringList &, const QStringList &  ) ), SLOT( receiveConferenceJoin( const QString &, const QStringList & , const QStringList & ) ) );
+	QObject::connect( m_client, SIGNAL( conferenceJoined( const GroupWise::ConferenceGuid &, const QStringList &, const QStringList &  ) ), SLOT( receiveConferenceJoin( const GroupWise::ConferenceGuid &, const QStringList & , const QStringList & ) ) );
 
 	// typing events
 	QObject::connect( m_client, SIGNAL( contactTyping( const ConferenceEvent & ) ),
@@ -365,7 +367,7 @@ void GroupWiseAccount::createConference( const int clientId, const QStringList& 
 	m_client->createConference( clientId , invitees );
 }
 
-void GroupWiseAccount::sendInvitation( const QString & guid, const QString & dn, const QString & message )
+void GroupWiseAccount::sendInvitation( const GroupWise::ConferenceGuid & guid, const QString & dn, const QString & message )
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	GroupWise::OutgoingMessage msg;
@@ -797,7 +799,7 @@ void GroupWiseAccount::changeOurStatus( GroupWise::Status status, const QString 
 	myself()->setProperty( protocol()->propAutoReply, autoReply );
 }
 
-void GroupWiseAccount::sendMessage( const QString &guid, const KopeteMessage & message )
+void GroupWiseAccount::sendMessage( const GroupWise::ConferenceGuid &guid, const KopeteMessage & message )
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	// make an outgoing message
@@ -903,7 +905,7 @@ void GroupWiseAccount::receiveInvitation( const ConferenceEvent & event )
 	dlg->show();
 }
 
-void GroupWiseAccount::receiveConferenceJoin( const QString & guid, const QStringList & participants, const QStringList & invitees )
+void GroupWiseAccount::receiveConferenceJoin( const GroupWise::ConferenceGuid & guid, const QStringList & participants, const QStringList & invitees )
 {
 	// get a new GWMM
 	KopeteContactPtrList others;
@@ -1064,9 +1066,10 @@ bool GroupWiseAccount::isContactBlocked( const QString & dn )
 void GroupWiseAccount::dumpManagers()
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " for: " << accountId() << endl;
-	QDictIterator< GroupWiseMessageManager > it( m_managers );
-	for ( ; it.current(); ++it )
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "guid: " << it.currentKey() << endl;
+	QMapIterator< GroupWise::ConferenceGuid, GroupWiseMessageManager * > it;
+	
+	for ( it = m_managers.begin() ; it != m_managers.end(); ++it )
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "guid: " << it.key() << endl;
 }
 
 

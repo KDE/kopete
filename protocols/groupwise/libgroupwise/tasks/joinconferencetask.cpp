@@ -33,7 +33,7 @@ JoinConferenceTask::~JoinConferenceTask()
 {
 }
 
-void JoinConferenceTask::join( const QString & guid )
+void JoinConferenceTask::join( const GroupWise::ConferenceGuid & guid )
 {
 	m_guid = guid;
 	Field::FieldList lst, tmp;
@@ -166,7 +166,7 @@ QStringList JoinConferenceTask::invitees() const
 	return m_invitees;
 }
 
-QString JoinConferenceTask::guid() const
+GroupWise::ConferenceGuid JoinConferenceTask::guid() const
 {
 	return m_guid;
 }

@@ -34,7 +34,7 @@ Q_OBJECT
 public:
 	LeaveConferenceTask(Task* parent);
 	~LeaveConferenceTask();
-	void leave( const QString & guid );
+	void leave( const GroupWise::ConferenceGuid & guid );
 };
 
 #endif

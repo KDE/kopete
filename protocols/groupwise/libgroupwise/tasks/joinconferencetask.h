@@ -37,15 +37,15 @@ Q_OBJECT
 public:
 	JoinConferenceTask(Task* parent);
 	~JoinConferenceTask();
-	void join( const QString & guid );
+	void join( const ConferenceGuid & guid );
 	bool take( Transfer * transfer );
 	QStringList participants() const;
 	QStringList invitees() const;
-	QString guid() const;
+	ConferenceGuid guid() const;
 public slots:
 	void slotReceiveUserDetails( const GroupWise::ContactDetails & details );
 private:
-	QString m_guid;
+	ConferenceGuid m_guid;
 	QStringList m_participants;
 	QStringList m_invitees;
 	QStringList m_unknowns;

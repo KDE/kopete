@@ -42,13 +42,13 @@ public:
 	void conference( const int confId, const QStringList &participants );
 	bool take( Transfer * transfer );
 	int clientConfId() const;
-	QString conferenceGUID() const;
+	GroupWise::ConferenceGuid conferenceGUID() const;
 	
 signals:
-	void created( const QString & guid );
+	void created( const GroupWise::ConferenceGuid & guid );
 private: 
 	int m_confId; // the conference id given us before making the request
-	QString m_guid;
+	ConferenceGuid m_guid;
 };
 
 #endif

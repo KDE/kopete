@@ -34,7 +34,7 @@ Q_OBJECT
 public:
 	RejectInviteTask(Task* parent);
 	~RejectInviteTask();
-	void reject( const QString & guid );
+	void reject( const GroupWise::ConferenceGuid & guid );
 
 };
 

@@ -33,13 +33,13 @@ public:
 	ReceiveInvitationDialog( GroupWiseAccount * account, const ConferenceEvent & event, QWidget *parent, const char *name );
 	~ReceiveInvitationDialog();
 signals:
-	void invitationAccepted( bool, const QString & guid );
+	void invitationAccepted( bool, const GroupWise::ConferenceGuid & guid );
 protected slots:
 	void slotYesClicked();
 	void slotNoClicked();
 private:
 	GroupWiseAccount * m_account;
-	QString m_guid; // the conference we were invited to join.
+	ConferenceGuid m_guid; // the conference we were invited to join.
 };
 
 #endif

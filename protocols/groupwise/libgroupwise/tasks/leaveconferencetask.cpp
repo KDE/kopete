@@ -29,7 +29,7 @@ LeaveConferenceTask::~LeaveConferenceTask()
 {
 }
 
-void LeaveConferenceTask::leave( const QString & guid )
+void LeaveConferenceTask::leave( const GroupWise::ConferenceGuid & guid )
 {
 	Field::FieldList lst, tmp;
 	tmp.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, guid ) );

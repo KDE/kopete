@@ -1,11 +1,8 @@
 /*
-    Kopete Groupwise Protocol
-    rejectinvitetask.cpp - Decline an invitation to chat 
-
+    gwglobal.cpp - Kopete Groupwise Protocol
+  
     Copyright (c) 2004      SUSE Linux AG	 	 http://www.suse.com
     
-    Based on Iris, Copyright (C) 2003  Justin Karneges
-
     Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
  
     *************************************************************************
@@ -18,22 +15,23 @@
     *************************************************************************
 */
 
-#include "rejectinvitetask.h"
+#include "gwerror.h"
 
-RejectInviteTask::RejectInviteTask(Task* parent): RequestTask(parent)
+namespace GroupWise
 {
-}
-
-RejectInviteTask::~RejectInviteTask()
-{
-}
-
-void RejectInviteTask::reject( const GroupWise::ConferenceGuid & guid )
-{
-	Field::FieldList lst, tmp;
-	tmp.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, guid ) );
-	lst.append( new Field::MultiField( NM_A_FA_CONVERSATION, NMFIELD_METHOD_VALID, 0, NMFIELD_TYPE_ARRAY, tmp ) );
-	createTransfer( "rejectconf", lst );
-}
-
-#include "rejectinvitetask.moc"
+	ConferenceGuid::ConferenceGuid() {}
+	ConferenceGuid::ConferenceGuid( const QString & string ) : QString( string ) {}
+	
+	bool operator==( const ConferenceGuid & g1, const ConferenceGuid & g2 )
+	{
+		return g1.left( CONF_GUID_END ) == g2.left( CONF_GUID_END );
+	}
+	bool operator==( const QString & s, const ConferenceGuid & g )
+	{
+		return s.left( CONF_GUID_END ) == g.left( CONF_GUID_END );
+	}
+	bool operator==( const ConferenceGuid & g, const QString & s )
+	{
+		return s.left( CONF_GUID_END ) == g.left( CONF_GUID_END );
+	}
+};

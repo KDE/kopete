@@ -87,7 +87,7 @@ QDateTime EventTransfer::timeStamp()
 	return m_timeStamp;
 }
 
-QString EventTransfer::guid()
+GroupWise::ConferenceGuid EventTransfer::guid()
 {
 	return m_guid;
 }
@@ -113,7 +113,7 @@ QString EventTransfer::statusText()
 }
 
 // mutators
-void EventTransfer::setGuid( const QString & guid )
+void EventTransfer::setGuid( const GroupWise::ConferenceGuid & guid )
 {
 	m_contentFlags |= Guid;
 	m_guid = guid;

@@ -35,7 +35,7 @@ class SendInviteTask : public RequestTask
 public:
 	SendInviteTask(Task* parent);
 	~SendInviteTask();
-	void invite( const QString & guid, const QStringList & invitees, const GroupWise::OutgoingMessage & msg );
+	void invite( const GroupWise::ConferenceGuid & guid, const QStringList & invitees, const GroupWise::OutgoingMessage & msg );
 private:
 	QString m_confId;
 };
