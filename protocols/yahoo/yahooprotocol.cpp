@@ -66,8 +66,8 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name,
 
 	// Create statusbar Icon
     statusBarIcon = new StatusBarIcon();
-    QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)),
-		     this, SLOT(slotIconRightClicked(const QPoint)));
+    QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint&)),
+		     this, SLOT(slotIconRightClicked(const QPoint&)));
     statusBarIcon->setPixmap(offlineIcon);
 
 	// Create preferences menu
@@ -201,7 +201,7 @@ AddContactPage *YahooProtocol::createAddContactWidget(QWidget * parent)
 
 
 // CallBack when clicking on statusbar icon
-void YahooProtocol::slotIconRightClicked(const QPoint)
+void YahooProtocol::slotIconRightClicked(const QPoint&)
 {
 	DEBUG(YDMETHOD, "YahooProtocol::slotIconRightClicked(<qpoint>)");
 

@@ -178,7 +178,7 @@ public slots:
 	void slotGoOnline();
 	void slotGoOffline();
 	void slotGoAway();
-	void slotIconRightClicked( const QPoint );
+	void slotIconRightClicked( const QPoint& );
 
 	void slotOnlineStatusChanged( MSNSocket::OnlineStatus );
 

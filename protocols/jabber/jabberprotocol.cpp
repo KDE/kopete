@@ -66,7 +66,7 @@ JabberProtocol::JabberProtocol(QObject *parent, QString name, QStringList) : Kop
 	reasonDialog = 0L;
 
     statusBarIcon = new StatusBarIcon();
-    QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)), this, SLOT(slotIconRightClicked(const QPoint)));
+    QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint&)), this, SLOT(slotIconRightClicked(const QPoint&)));
     statusBarIcon->setPixmap(offlineIcon);
 
     mPrefs = new JabberPreferences("jabber_protocol_32", this);
@@ -330,7 +330,7 @@ void JabberProtocol::setPresence(int status, QString reason, int priority) {
 	}
 }
 
-void JabberProtocol::slotIconRightClicked(const QPoint) {
+void JabberProtocol::slotIconRightClicked(const QPoint&) {
 	QString handle = mUsername + "@" + mServer;
 	popup = new KPopupMenu(statusBarIcon);
 	popup->insertTitle(handle);

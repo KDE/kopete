@@ -100,7 +100,7 @@ public slots:
 	void slotSetDND();
 	void setPresence(int, QString, int = 0);
 
-	void slotIconRightClicked(const QPoint);
+	void slotIconRightClicked(const QPoint&);
 
 	void slotNewContact(JabRosterEntry *);
 	void slotContactUpdated(JabRosterEntry *);

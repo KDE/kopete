@@ -79,7 +79,7 @@ private:
 public slots: // Public slots
   /** No descriptions */
 private slots:
-	void slotIconRightClicked(const QPoint);
+	void slotIconRightClicked(const QPoint&);
 	void slotNewConsole();
 };
 

@@ -88,7 +88,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 
 	initActions();
 
-	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)), this, SLOT(slotIconRightClicked(const QPoint)));
+	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint&)), this, SLOT(slotIconRightClicked(const QPoint&)));
 	statusBarIcon->setPixmap( offlineIcon );
 
 	KConfig *cfg = KGlobal::config();
@@ -344,7 +344,7 @@ void MSNProtocol::initActions()
 	actionStatusMenu->plug( kopeteapp->systemTray()->contextMenu(), 1 );
 }
 
-void MSNProtocol::slotIconRightClicked( const QPoint /* point */ )
+void MSNProtocol::slotIconRightClicked( const QPoint& /* point */ )
 {
 	KGlobal::config()->setGroup("MSN");
 	QString handle = KGlobal::config()->readEntry("UserID", i18n("(User ID not set)"));

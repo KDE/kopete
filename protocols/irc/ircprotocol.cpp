@@ -60,7 +60,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 
 	kdDebug() << "IRC Protocol Plugin: Setting icon offline\n";
 	statusBarIcon->setPixmap(protocolSmallIcon);
-	connect(statusBarIcon, SIGNAL(rightClicked(const QPoint)), this, SLOT(slotIconRightClicked(const QPoint)));
+	connect(statusBarIcon, SIGNAL(rightClicked(const QPoint&)), this, SLOT(slotIconRightClicked(const QPoint&)));
 
 	kdDebug() << "IRC Protocol Plugin: Creating Config Module\n";
 	new IRCPreferences("irc_protocol", this);
@@ -106,7 +106,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name,
 	}
 }
 
-void IRCProtocol::slotIconRightClicked(const QPoint)
+void IRCProtocol::slotIconRightClicked(const QPoint&)
 {
 	popup = new KPopupMenu(statusBarIcon);
 	popup->insertTitle("IRC");
@@ -122,7 +122,7 @@ void IRCProtocol::slotNewConsole()
 
 void IRCProtocol::addContact( const QString &groupName, const QString &server, const QString &contact, bool connectNow, bool joinNow)
 {
-	
+
 	QString protocolID = this->id();
 	KGlobal::config()->setGroup("IRC");
 	QString nick = KGlobal::config()->readEntry("Nickname", "KopeteUser");
@@ -160,7 +160,7 @@ void IRCProtocol::addContact( const QString &groupName, const QString &server, c
 KopeteContact* IRCProtocol::createContact( KopeteMetaContact *parent, const QString &serializedData )
 {
     QString protocolID = this->id();
-	// FIXME: serializedData contains much more than just the server, target, port, joinonconnect contact 
+	// FIXME: serializedData contains much more than just the server, target, port, joinonconnect contact
 
 	// FIXME: more error-proof deserialize would be useful :)
 	QStringList data    = QStringList::split( ' ', serializedData );
