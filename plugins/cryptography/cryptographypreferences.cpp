@@ -82,7 +82,6 @@ void CryptographyPreferences::slotSelectPressed()
 		m_signKeyID=opts->getkeyID();
 		m_signKeyMail=opts->getkeyMail();
 		preferencesDialog->m_editOwnKey->setText(m_signKeyID);
-
 	}
 	delete opts;
 }

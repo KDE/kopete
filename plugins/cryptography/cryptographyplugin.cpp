@@ -29,6 +29,7 @@
 
 #include "cryptographyplugin.h"
 #include "cryptographypreferences.h"
+#include "cryptographyselectuserkey.h"
 
 #include "kgpginterface.h"
 
@@ -153,8 +154,11 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 
 	body=KgpgInterface::KgpgDecryptText(body, m_prefs->privateKey());
 
-	body="<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FF41\"><td><font size=\"-1\"><b>"+i18n("Incomming Encrypted Message")+"</b></font></td></tr><tr bgcolor=\"#DDFFDD\"><td>"+QStyleSheet::escape(body)+"</td></tr></table>";
-	msg.setBody(body,KopeteMessage::RichText);
+	if(!body.isEmpty())
+	{
+		body="<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FF41\"><td><font size=\"-1\"><b>"+i18n("Incomming Encrypted Message")+"</b></font></td></tr><tr bgcolor=\"#DDFFDD\"><td>"+QStyleSheet::escape(body)+"</td></tr></table>";
+		msg.setBody(body,KopeteMessage::RichText);
+	}
 
 }
 
@@ -162,18 +166,28 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 {
 	if(msg.direction() != KopeteMessage::Outbound)
 		return;
-	if(msg.to().count()!=1)
-	{
-		kdDebug() << "CryptographyPlugin::slotOutgoingMessage: TODO: group chat not yet implemented" <<endl;
-		return;
-	}
-	KopeteMetaContact *m=msg.to().first()->metaContact();
 
-	if(!m_keyMap.contains(m))
+	QString key;
+
+	QPtrList<KopeteContact> contactlist = msg.to();
+	for (KopeteContact *c=contactlist.first(); c; c = contactlist.next()) 
 	{
-		kdDebug() << "CryptographyPlugin::slotOutgoingMessage: no key selected for this contact" <<endl;
+		if(!m_keyMap.contains(c->metaContact()))
+		{
+			kdDebug() << "CryptographyPlugin::slotOutgoingMessage: no key selected for one contact" <<endl;
+			return;
+		}
+		if(!key.isNull())
+			key+=" ";
+		key+=m_keyMap[c->metaContact()];
+	}
+
+	if(key.isEmpty())
+	{
+		kdDebug() << "CryptographyPlugin::slotOutgoingMessage: empty key" <<endl;
 		return;
 	}
+	
    QString original=msg.plainBody();
 	
 	/* Code From KGPG */
@@ -194,30 +208,33 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 
 // if (selec==NULL) {KMessageBox::sorry(0,i18n("You have not choosen an encryption key..."));return;}
 
-	QString resultat=KgpgInterface::KgpgEncryptText(original,m_keyMap[m],encryptOptions);
+	QString resultat=KgpgInterface::KgpgEncryptText(original,key,encryptOptions);
 	if (resultat!="")
 	{
 		msg.setBody(resultat,KopeteMessage::PlainText);
 		m_cachedMessages.insert(resultat,original);
 	}
+	else
+		kdDebug() << "CryptographyPlugin::slotOutgoingMessage: empty result" <<endl;
+	
 }
-
-#include "popuppublic.h"
 
 void CryptographyPlugin::slotSelectContactKey()
 {
-	popupPublic *dialogue=new popupPublic(0L/*this*/, "public_keys", 0,false);
-	connect(dialogue,SIGNAL(selectedKey(QString &,bool,bool,bool,bool)),this,SLOT(setKey(QString &)));
-	dialogue->exec();
-	delete dialogue;
-}
-
-void CryptographyPlugin::setKey(QString &keyId)
-{
-	if(  m_currentMetaContact)
+	QString key;
+	if(m_keyMap.contains(m_currentMetaContact))
+		key=m_keyMap[m_currentMetaContact];
+	CryptographySelectUserKey *opts=new CryptographySelectUserKey(key,m_currentMetaContact);
+	opts->exec();
+	if (opts->result()==true)
 	{
-		m_keyMap[ m_currentMetaContact ]= keyId;
+		key=opts->publicKey();
+		if(key.isEmpty())
+			m_keyMap.remove(m_currentMetaContact);
+		else
+			m_keyMap[m_currentMetaContact]=key;
 	}
+	delete opts;
 }
 
 #include "cryptographyplugin.moc"

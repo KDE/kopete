@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>305</width>
+            <width>442</width>
             <height>232</height>
         </rect>
     </property>
@@ -33,14 +33,6 @@
             </property>
             <property name="readOnly">
                 <bool>true</bool>
-            </property>
-        </widget>
-        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>m_titleLabel</cstring>
-            </property>
-            <property name="text">
-                <string>TextLabel2</string>
             </property>
         </widget>
         <widget class="QPushButton" row="1" column="2">
@@ -68,6 +60,22 @@
                 </size>
             </property>
         </spacer>
+        <widget class="QPushButton" row="1" column="3">
+            <property name="name">
+                <cstring>m_removeButton</cstring>
+            </property>
+            <property name="text">
+                <string>Remove</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>m_titleLabel</cstring>
+            </property>
+            <property name="text">
+                <string>TextLabel2</string>
+            </property>
+        </widget>
     </grid>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>

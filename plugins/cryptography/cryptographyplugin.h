@@ -76,7 +76,6 @@ public slots:
 
 private slots:
 
-	void setKey(QString &);
 	void slotSelectContactKey();
 
 private:
