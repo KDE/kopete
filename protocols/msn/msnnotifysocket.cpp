@@ -40,6 +40,7 @@
 
 #include "kopetenotifyclient.h"
 #include "kopeteuiglobal.h"
+#include "kopeteglobal.h"
 
 #include <ctime>
 
@@ -321,7 +322,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		{
 			c->setOnlineStatus( convertOnlineStatus( data.section( ' ', 0, 0 ) ) );
 			QString publicName=unescape( data.section( ' ', 2, 2 ) );
-			if (publicName!=c->displayName())
+			if (publicName!=c->property( Kopete::Global::Properties::self()->nickName()).value().toString())
 				changePublicName(publicName,c->contactId());
 			c->setObject( unescape(data.section( ' ', 4, 4 )) );
 		}
@@ -393,7 +394,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		{
 			MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ handle ] );
 			if( c )
-				c->setDisplayName( unescape( data.section( ' ', 2, 2 ) ) );
+				c->setProperty( Kopete::Global::Properties::self()->nickName() , unescape( data.section( ' ', 2, 2 ) ) );
 		}
 		m_account->setPluginData(m_account->protocol() , "serial" , data.section( ' ', 0,0) );
 	}

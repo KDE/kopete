@@ -37,13 +37,14 @@
 #include "kopetemetacontact.h"
 #include "kopetegroup.h"
 #include "kopeteuiglobal.h"
+#include "kopeteglobal.h"
 
 #include "msninfo.h"
 #include "msnmessagemanager.h"
 #include "msnnotifysocket.h"
 #include "msnaccount.h"
 
-MSNContact::MSNContact( KopeteAccount *account, const QString &id, const QString &displayName, KopeteMetaContact *parent )
+MSNContact::MSNContact( KopeteAccount *account, const QString &id, KopeteMetaContact *parent )
 : KopeteContact( account, id, parent )
 {
 	m_displayPicture = 0L;
@@ -53,8 +54,6 @@ MSNContact::MSNContact( KopeteAccount *account, const QString &id, const QString
 	m_blocked = false;
 	m_reversed = false;
 	m_moving = false;
-
-	setDisplayName( displayName );
 
 	setFileCapable( true );
 
@@ -165,9 +164,10 @@ void MSNContact::slotBlockUser()
 void MSNContact::slotUserInfo()
 {
 	KDialogBase *infoDialog=new KDialogBase( 0l, "infoDialog", /*modal = */false, QString::null, KDialogBase::Close , KDialogBase::Close, false );
+	QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
 	MSNInfo *info=new MSNInfo ( infoDialog,"info");
 	info->m_id->setText( contactId() );
-	info->m_displayName->setText(displayName());
+	info->m_displayName->setText(nick);
 	info->m_phh->setText(m_phoneHome);
 	info->m_phw->setText(m_phoneWork);
 	info->m_phm->setText(m_phoneMobile);
@@ -176,7 +176,7 @@ void MSNContact::slotUserInfo()
 	connect( info->m_reversed, SIGNAL(toggled(bool)) , this, SLOT(slotUserInfoDialogReversedToggled()));
 
 	infoDialog->setMainWidget(info);
-	infoDialog->setCaption(displayName());
+	infoDialog->setCaption(nick);
 	infoDialog->show();
 }
 
@@ -383,7 +383,8 @@ void MSNContact::syncGroups( )
 			else if( !m_serverGroups.contains(Gid) )
 			{
 				//Add the contact to the group on the server
-				notify->addContact( contactId(), displayName(), Gid, MSNProtocol::FL );
+				QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
+				notify->addContact( contactId(), nick.isEmpty() ? contactId() : nick, Gid, MSNProtocol::FL );
 				count++;
 				m_moving=true;
 			}
@@ -442,7 +443,8 @@ void MSNContact::syncGroups( )
 	//   we add the contact to the group #0 (the default one)
 	if(count==0)
 	{
-		notify->addContact( contactId(), displayName(), 0 , MSNProtocol::FL );
+		QString nick=property( Kopete::Global::Properties::self()->nickName()).value().toString();
+		notify->addContact( contactId(), nick.isEmpty() ? contactId() : nick, 0, MSNProtocol::FL );
 	}
 
 
@@ -465,26 +467,17 @@ void MSNContact::contactRemovedFromGroup( unsigned int group )
 }
 
 
-
 void MSNContact::rename( const QString &newName )
 {
 	//kdDebug( 14140 ) << k_funcinfo << "From: " << displayName() << ", to: " << newName << endl;
 
-	if( newName == displayName() )
-		return;
+/*	if( newName == displayName() )
+		return;*/
 
 	MSNNotifySocket *notify = static_cast<MSNAccount*>( account() )->notifySocket();
 	if( notify )
 	{
 		notify->changePublicName( newName, contactId() );
-	}
-	else
-	{
-		// FIXME: Move this to libkopete instead - Martijn
-		KMessageBox::information( Kopete::UI::Global::mainWidget(),
-			i18n( "<qt>Changes to your contact list when you are offline will not be updated on the MSN server. "
-				"Your changes will be lost when you reconnect.</qt>" ),
-			i18n( "MSN Plugin" ), "msn_OfflineContactList" );
 	}
 }
 
@@ -515,11 +508,6 @@ void MSNContact::sendFile( const KURL &sourceURL, const QString &altFileName, ui
 		static_cast<MSNMessageManager*>( manager(true) )->sendFile( filePath, altFileName, fileSize );
 
 	}
-}
-
-void MSNContact::setDisplayName(const QString &Dname)
-{	//call the protocted method
-	KopeteContact::setDisplayName(Dname);
 }
 
 void MSNContact::setOnlineStatus(const KopeteOnlineStatus& status)

@@ -34,6 +34,7 @@
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteuiglobal.h"
+#include "kopeteglobal.h"
 
 #include "msncontact.h"
 #include "msnfiletransfersocket.h"
@@ -155,7 +156,7 @@ void MSNMessageManager::slotUserJoined( const QString &handle, const QString &pu
 
 	MSNContact *c = static_cast<MSNContact*>( account()->contacts()[ handle ] );
 
-	if( c->displayName() != publicName)
+	if( c->property( Kopete::Global::Properties::self()->nickName()).value().toString() != publicName)
 		c->rename(publicName);
 
 	addContact(c , IRO); // don't show notificaions when we join wesalef
@@ -422,12 +423,8 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 
 				QString body = i18n(
 					"%1 has sent an unimplemented invitation, the invitation was rejected.\n"
-					"The invitation was: %2" ).
-#if QT_VERSION < 0x030200
-					arg( c->displayName() ).arg( inviteName );
-#else
-					arg( c->displayName(), inviteName );
-#endif
+					"The invitation was: %2" )
+						.arg( c->property( Kopete::Global::Properties::self()->nickName()).value().toString(), inviteName );
 				KopeteMessage tmpMsg = KopeteMessage( c , members() , body , KopeteMessage::Internal, KopeteMessage::PlainText);
 				appendMessage(tmpMsg);
 

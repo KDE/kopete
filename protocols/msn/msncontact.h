@@ -4,9 +4,9 @@
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Ryan Cumming           <bodnar42@phalynx.dhs.org>
     Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
 
     *************************************************************************
@@ -44,7 +44,7 @@ class MSNContact : public KopeteContact
 	Q_OBJECT
 
 public:
-	MSNContact( KopeteAccount *account, const QString &id, const QString &displayName, KopeteMetaContact *parent );
+	MSNContact( KopeteAccount *account, const QString &id, KopeteMetaContact *parent );
 	~MSNContact();
 
 	/**
@@ -100,19 +100,13 @@ public:
 	/**
 	 * Rename contact on server
 	 */
-	virtual void rename( const QString &newName );
+	virtual void rename( const QString &newName ) KDE_DEPRECATED;
 
 	/**
 	 * Returns the MSN Message Manager associated with this contact
 	 */
 	virtual KopeteMessageManager *manager( bool canCreate = false );
 
-
-	/**
-	 * MSNAccount and MSNSwhitchBoardSocket need to change the displayName of contacts.
-	 * Then, we do this function public
-	 **/
-	void setDisplayName(const QString &Dname);
 
 	/**
 	 * Because blocked contact have a small auto-modified status

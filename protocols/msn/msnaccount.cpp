@@ -38,7 +38,7 @@
 #include "kopetegroup.h"
 #include "kopetemetacontact.h"
 #include "kopeteuiglobal.h"
-
+#include "kopeteglobal.h"
 
 #include "sha1.h"
 
@@ -58,7 +58,7 @@ MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const cha
 
 	// Init the myself contact
 	// FIXME: I think we should add a global self metaContact ( Olivier )
-	setMyself( new MSNContact( this, accountId(), accountId(), 0L ) );
+	setMyself( new MSNContact( this, accountId(), 0L ) );
 	//myself()->setOnlineStatus( MSNProtocol::protocol()->FLN );
 
 	QObject::connect( KopeteContactList::contactList(), SIGNAL( groupRenamed( KopeteGroup *, const QString & ) ),
@@ -76,7 +76,7 @@ void MSNAccount::loaded()
 {
 	QString publicName = pluginData( protocol(), QString::fromLatin1( "displayName" ) );
 	if ( !publicName.isNull() )
-		static_cast<MSNContact *>( myself() )->setDisplayName( publicName );
+		myself()->setProperty( Kopete::Global::Properties::self()->nickName() , publicName );
 	m_blockList   = QStringList::split( ',', pluginData( protocol(), QString::fromLatin1( "blockList" ) ) );
 	m_allowList   = QStringList::split( ',', pluginData( protocol(), QString::fromLatin1( "allowList" ) ) );
 	m_reverseList = QStringList::split( ',', pluginData( protocol(), QString::fromLatin1( "reverseList" ) ) );
@@ -205,12 +205,7 @@ KActionMenu * MSNAccount::actionMenu()
 {
 	KActionMenu *m_actionMenu = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ),  this );
 	m_actionMenu->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%2 <%1>" ).
-#if QT_VERSION < 0x030200
-		arg( accountId() ).arg( myself()->displayName() )
-#else
-		arg( accountId(), myself()->displayName() )
-#endif
-	);
+		arg( accountId(), myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ) );
 
 	if ( isConnected() )
 	{
@@ -373,7 +368,7 @@ void MSNAccount::slotChangePublicName()
 	bool ok;
 	QString name = KInputDialog::getText( i18n( "Change Display Name - MSN Plugin" ),
 		i18n( "Enter the new display name by which you want to be visible to your friends on MSN:" ),
-		myself()->displayName(), &ok );
+		myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString(), &ok );
 
 	if ( ok )
 	{
@@ -506,25 +501,11 @@ void MSNAccount::slotStatusChanged( const KopeteOnlineStatus &status )
 
 void MSNAccount::slotPublicNameChanged( const QString& publicName )
 {
-	if ( publicName != myself()->displayName() )
+	QString oldNick=myself()->property( Kopete::Global::Properties::self()->nickName()).value().toString() ;
+	if ( publicName != oldNick )
 	{
-		// if ( m_publicNameSyncMode & SyncFromServer )
-		// {
-			static_cast<MSNContact *>( myself() )->setDisplayName( publicName );
-			setPluginData( protocol(), QString::fromLatin1( "displayName" ), publicName );
-
-/*
-			m_publicNameSyncMode = SyncBoth;
-		}
-		else
-		{
-			// Check if name differs, and schedule sync if needed
-			if ( m_publicNameSyncMode & SyncToServer )
-				m_publicNameSyncNeeded = true;
-			else
-				m_publicNameSyncNeeded = false;
-		}
-*/
+		myself()->setProperty( Kopete::Global::Properties::self()->nickName(), publicName );
+		setPluginData( protocol(), QString::fromLatin1( "displayName" ), publicName );
 	}
 }
 
@@ -629,8 +610,9 @@ void MSNAccount::slotGroupAdded( const QString& groupName, uint groupNumber )
 		{
 			QString contactId =*it;
 			kdDebug( 14140 ) << k_funcinfo << "Adding to new group: " << contactId <<  endl;
-			notifySocket()->addContact( contactId, contacts()[ contactId ] ? contacts()[ contactId ]->displayName()
-						: contactId, groupNumber, MSNProtocol::FL );
+			notifySocket()->addContact( contactId, contacts()[ contactId ] ? 
+					contacts()[contactId]->property( Kopete::Global::Properties::self()->nickName()).value().toString()
+					: contactId, groupNumber, MSNProtocol::FL );
 		}
 		tmp_addToNewGroup.remove(groupName);
 	}
@@ -737,7 +719,9 @@ void MSNAccount::slotKopeteGroupRemoved( KopeteGroup *g )
 			}*/
 			m_notifySocket->removeGroup( groupNumber );
 		}
-		
+		//this is also done later, but he have to do it now!
+		// (in slotGroupRemoved)
+		m_groupList.remove(groupNumber);
 	}
 	
 	//remove it from the old list
@@ -807,7 +791,7 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 			// Contact exists, update data.
 			// Merging difference between server contact list and KopeteContact's contact list into MetaContact's contact-list
 			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
-			c->setDisplayName( publicName );
+			c->setProperty( Kopete::Global::Properties::self()->nickName() ,  publicName );
 
 			const QMap<uint, KopeteGroup *> oldServerGroups = c->serverGroups();
 			c->clearServerGroups();  
@@ -846,14 +830,15 @@ void MSNAccount::slotContactListed( const QString& handle, const QString& public
 		{
 			KopeteMetaContact *metaContact = new KopeteMetaContact();
 
-			MSNContact *msnContact = new MSNContact( this, handle, publicName, metaContact );
-			msnContact->setOnlineStatus( MSNProtocol::protocol()->FLN );
+			c = new MSNContact( this, handle, metaContact );
+			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
+			c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName );
 
 			for ( QStringList::Iterator it = contactGroups.begin();
 				it != contactGroups.end(); ++it )
 			{
 				uint groupNumber = ( *it ).toUInt();
-				msnContact->contactAddedToGroup( groupNumber, m_groupList[ groupNumber ] );
+				c->contactAddedToGroup( groupNumber, m_groupList[ groupNumber ] );
 				metaContact->addToGroup( m_groupList[ groupNumber ] );
 			}
 			KopeteContactList::contactList()->addMetaContact( metaContact );
@@ -910,8 +895,9 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 				else
 					m = new KopeteMetaContact();
 
-				MSNContact *c = new MSNContact( this, handle, publicName, m );
+				MSNContact *c = new MSNContact( this, handle, m );
 				c->contactAddedToGroup( group, m_groupList[ group ] );
+				c->setProperty( Kopete::Global::Properties::self()->nickName() , publicName);
 
 				if ( !m_addWizard_metaContact )
 				{
@@ -1090,7 +1076,7 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 		if ( !ID.isEmpty() && notifyNewChat )
 		{
 			// this temporary message should open the window if they not exist
-			QString body = i18n( "%1 has started a chat with you" ).arg( c->displayName() );
+			QString body = i18n( "%1 has started a chat with you" ).arg( c->metaContact()->displayName() );
 			KopeteMessage tmpMsg = KopeteMessage( c, manager->members(), body, KopeteMessage::Internal, KopeteMessage::PlainText );
 			manager->appendMessage( tmpMsg );
 		}
@@ -1206,7 +1192,7 @@ bool MSNAccount::addContactToMetaContact( const QString &contactId, const QStrin
 		{
 			// This is a temporary contact. ( a person who messaged us but is not on our conntact list.
 			// We don't want to create it on the server.Just create the local contact object and add it
-			MSNContact *newContact = new MSNContact( this, contactId, contactId, metaContact );
+			MSNContact *newContact = new MSNContact( this, contactId, metaContact );
 			return ( newContact != 0L );
 		}
 	}
