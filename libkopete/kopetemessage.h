@@ -302,9 +302,14 @@ private:
 	void compareColors( QColor &colorFg, QColor &colorBg );
 	
 	/**
-	 * Helper method for transforMessage for formatting names for display
+	 * Helper method for transformMessage for formatting names for display
 	 */
-	 QString formatDisplayName( QString name ) const;
+	QString formatDisplayName( const QString &name ) const;
+	 
+	/**
+	 * Helper method for transformMessage for finding closing % tag
+	 */
+	int findClosingTag( const QString &model, int openTag ) const;
 };
 
 #endif

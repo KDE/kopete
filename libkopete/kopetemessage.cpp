@@ -337,13 +337,30 @@ QString KopeteMessage::parsedBody() const
 }
 
 
-QString KopeteMessage::formatDisplayName(QString name) const
+QString KopeteMessage::formatDisplayName( const QString &name ) const
 {
 	return QString::fromLatin1(
 		"<span class=\"KopeteDisplayName\" style=\"cursor:pointer\">") + 
 		QStyleSheet::escape(name) + QString::fromLatin1("</span>");
 }
 
+int KopeteMessage::findClosingTag( const QString &model, int openTag ) const
+{
+	// Upon entry, model[openTag-1] == QChar('%') and model[openTag] is the
+	// character we're trying to match. When we return, the analogous thing
+	// for our return value should be true, or should be off the end of model.
+	bool lastWasPercent = false;
+
+	int pos = openTag + 1;
+	for(int len = model.length(); pos < len; ++pos)
+	{
+		if( lastWasPercent && model[pos] == model[openTag] )
+			break;
+		if( lastWasPercent || model[pos] == QChar('%') )
+			lastWasPercent = !lastWasPercent;
+	}
+	return pos;
+}
 
 QString KopeteMessage::transformMessage( const QString &model ) const
 {
@@ -351,6 +368,34 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 	bool F_first = true;
 	bool L_first = true;
 	unsigned int f = 0;
+
+	// should we display sections with these tags?
+	QMap<QChar, bool> displaySection;
+	displaySection['i'] = (d->direction == Inbound);                           	// only inbound
+	displaySection['o'] = (d->direction == Outbound);                          	// only outbound
+	displaySection['s'] = (d->direction == Internal);                          	// only internal
+	displaySection['a'] = (d->direction == Action);                            	// only actions
+	displaySection['e'] = (d->direction != Internal && d->direction != Action);	// not internal ('external')
+
+	// what name to display for each of these tags?
+	QMap<QChar, QString> nameMap;
+
+	// insert the 'from' metaContact's displayName
+	if (d->from->metaContact())
+		nameMap['f'] = d->from->metaContact()->displayName();
+	else
+		nameMap['f'] = d->from->displayName();
+
+	// insert the 'to' metaContact's displayName
+	if (to().first()->metaContact())
+		nameMap['t'] = to().first()->metaContact()->displayName();
+	else
+		nameMap['t'] = to().first()->displayName();
+
+	// the 'from' KopeteContact displayName
+	nameMap['c'] = to().first()->displayName();
+	// the 'to' KopeteContact displayName
+	nameMap['C'] = d->from->displayName();
 
 	do
 	{
@@ -419,68 +464,6 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 						message += d->bgColor.name();
 					break;
 
-				case 'i': //only inbound
-					if(d->direction != Inbound)
-					{
-						f = model.find(QString::fromLatin1("%i"), f) + 1;
-						if(!f) f = model.length();
-					}
-					break;
-
-				case 'o': //only outbound
-					if(d->direction != Outbound)
-					{
-						f = model.find(QString::fromLatin1("%o"), f) + 1;
-						if(!f) f = model.length();
-					}
-					break;
-
-				case 's': //only internal
-					if(d->direction != Internal)
-					{
-						f = model.find(QString::fromLatin1("%s"), f) + 1;
-						if(!f) f = model.length();
-					}
-					break;
-				case 'a': //action
-					if(d->direction != Action)
-					{
-						f = model.find(QString::fromLatin1("%a"), f) + 1;
-						if(!f) f = model.length();
-					}
-					break;
-				case 'e': //not internal (external)
-					if( (d->direction == Internal) || (d->direction == Action) )
-					{
-						f = model.find(QString::fromLatin1("%e"), f) + 1;
-						if(!f) f = model.length();
-					}
-					break;
-
-				case 'f': //insert the 'from' metaContact's displayName
-					if (d->from->metaContact())
-						message.append( formatDisplayName(d->from->metaContact()->displayName()) );
-					else
-						message.append( formatDisplayName(d->from->displayName()) );
-					break;
-
-				case 't': //insert the 'to' metaContact's displayName
-					if (to().first()->metaContact())
-						message.append( formatDisplayName(to().first()->metaContact()->displayName()) );
-					else
-						message.append( formatDisplayName(to().first()->displayName()) );
-					break;
-
-				case 'c': //the 'from' KopeteContact displayName
-					if (to().first())
-						message.append( formatDisplayName(to().first()->displayName()) );
-					break;
-
-				case 'C': //the 'to' KopeteContact displayName
-					if (d->from)
-						message.append( formatDisplayName(d->from->displayName()) );
-					break;
-
 				case 'I': //insert the statusicon path
 					if(d->from)
 					{
@@ -491,7 +474,19 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 					}
 					break;
 				default:
-					message += c;
+					if(displaySection.contains(c))
+					{
+						if( !displaySection[c] )
+							f = findClosingTag( model, f );
+					}
+					else if(nameMap.contains(c))
+					{
+						message.append( formatDisplayName( nameMap[c] ) );
+					}
+					else
+					{
+						message += c;
+					}
 					break;
 			}
 		}
