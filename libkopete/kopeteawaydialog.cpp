@@ -2,8 +2,7 @@
     kopeteawaydialog.cpp  -  Kopete Away Dialog
 
     Copyright (c) 2002 by Hendrik vom Lehn <hvl@linux-4-ever.de>
-
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 The Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -26,9 +25,9 @@
 #include "kopeteaway.h"
 
 KopeteAwayDialog::KopeteAwayDialog(QWidget *parent, const char *name)
-				: KopeteAwayBase(parent, name)
+	: KopeteAwayBase(parent, name)
 {
-//	kdDebug(14011) << "[KopeteAwayDialog] Building KopeteAwayDialog..." << endl;
+//	kdDebug(14010) << "[KopeteAwayDialog] Building KopeteAwayDialog..." << endl;
 
 	// Connect the buttons to actions
 	QObject::connect( cmdCancel, SIGNAL(clicked()),
@@ -57,10 +56,10 @@ KopeteAwayDialog::KopeteAwayDialog(QWidget *parent, const char *name)
 	// Set us modal
 	setWFlags( Qt::WType_Dialog | Qt::WShowModal );
 
-//	kdDebug(14011) << "[KopeteAwayDialog] KopeteAwayDialog Created." << endl;
+//	kdDebug(14010) << "[KopeteAwayDialog] KopeteAwayDialog Created." << endl;
 }
 
-KopeteAwayDialog::~KopeteAwayDialog(){}
+KopeteAwayDialog::~KopeteAwayDialog() {}
 
 void KopeteAwayDialog::slotComboBoxSelection(int /*index*/)
 {
@@ -79,7 +78,7 @@ void KopeteAwayDialog::show()
 	// Reinit the GUI
 	init();
 
-//	kdDebug(14011) << "[KopeteAwayDialog] Showing Dialog with no " << "extended away type" << endl;
+//	kdDebug(14010) << "[KopeteAwayDialog] Showing Dialog with no " << "extended away type" << endl;
 
 	// Call the parent class' show method
 	KopeteAwayBase::show();
@@ -94,8 +93,8 @@ void KopeteAwayDialog::show(int awayType)
 	init();
 
 	// Print a debug statement telling what's going on
-	kdDebug(14011) << "[KopeteAwayDialog] Showing Dialog with "
-		<< "extended away type " << awayType << endl;
+	kdDebug(14010) << k_funcinfo << "Showing Dialog with extended away type " <<
+		awayType << endl;
 
 	// Call the parent class' show method
 	KopeteAwayBase::show();
@@ -140,14 +139,4 @@ void KopeteAwayDialog::slotCancelClicked()
 }
 
 #include "kopeteawaydialog.moc"
-/*
- * Local variables:
- * mode: c++
- * c-indentation-style: k&r
- * c-basic-offset: 4
- * indent-tabs-mode: t
- * End:
- */
-
 // vim: set noet ts=4 sts=4 sw=4:
-
