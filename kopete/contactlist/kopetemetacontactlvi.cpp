@@ -138,11 +138,11 @@ class KopeteMetaContactLVI::Private
 public:
 	Private() : metaContactIcon( 0L ), nameText( 0L ), extraText( 0L ), contactIconBox( 0L ),
 	            metaContactPhoto( 0L ), currentMode( -1 ) {}
+	ListView::ImageComponent *metaContactPhoto;
 	ListView::ImageComponent *metaContactIcon;
 	ListView::DisplayNameComponent *nameText;
 	ListView::TextComponent *extraText;
 	ListView::BoxComponent *contactIconBox;
-	ListView::ImageComponent *metaContactPhoto;
 	ListView::BoxComponent *spacerBox;
 	std::auto_ptr<ListView::ToolTipSource> toolTipSource;
 	// metacontact icon size
@@ -513,7 +513,6 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 					effect->toGray(photoImg);
 				break;
 				case Kopete::OnlineStatus::Unknown:
-				default:
 					effect = new KImageEffect();
 					effect->fade(photoImg, 0.8, Qt::white);
 			}
