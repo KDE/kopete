@@ -17,7 +17,6 @@ TODO for Jabber:
 - JabberAccount::setAway() has a b0rked implementation?
 - JabberAccount::slotGoAway() etc. don't use the global away dialog
 - get rid of the identity stuff in JabberContact
-- JabberContact has a few inactivated methods regarding subscribing/unsubscribing
 - verify groupchat
 - when going online, setPresence() is called twice, once too early -> investigate
 - using "online" presence emits "Going online"?
@@ -25,4 +24,5 @@ TODO for Jabber:
 - should the away dialog pop up when going away using the account context menu?
 - add canSendOffline() to JabberProtocol
 - messages contain HTML-like tags (bug 60700)
+- verify FIXMEs in JabberContact
 - save "auto connect" in account preferences
