@@ -21,8 +21,7 @@
 #include <kprocess.h>
 
 #include "connectionstatusplugin.h"
-#include "connectionstatusplugin.moc"
-#include "kopete.h"
+#include "kopeteidentitymanager.h"
 
 K_EXPORT_COMPONENT_FACTORY(kopete_connectionstatus, KGenericFactory<ConnectionStatusPlugin>);
 
@@ -86,7 +85,7 @@ void ConnectionStatusPlugin::setConnectedStatus(bool connected)
 		kdDebug() << "Setting m_boolPluginConnected to true" << endl;
 		m_boolPluginConnected = true;
 		kdDebug() << "ConnectionStatusPlugin::setConnectedStatus() -- we're connected" << endl;
-		kopeteapp->slotConnectAll();
+		KopeteIdentityManager::manager()->connectAll();
 	}
 	else
 	if (!connected && m_boolPluginConnected) // the machine isn't connected and plugin thinks we're connected
@@ -94,10 +93,11 @@ void ConnectionStatusPlugin::setConnectedStatus(bool connected)
 		kdDebug() << "Setting m_boolPluginConnected to false" << endl;
 		m_boolPluginConnected = false;
 		kdDebug() << "ConnectionStatusPlugin::setConnectedStatus() -- we're offline" << endl;
-		kopeteapp->slotDisconnectAll();
+		KopeteIdentityManager::manager()->disconnectAll();
 	}
 }
 
+#include "connectionstatusplugin.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

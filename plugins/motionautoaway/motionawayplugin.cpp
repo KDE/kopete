@@ -30,8 +30,8 @@
 
 #include "motionawayplugin.h"
 #include "motionawaypreferences.h"
-#include "kopete.h"
 #include "kopeteaway.h"
+#include "kopeteidentitymanager.h"
 
 // motion.c includes
 #include <stdio.h>
@@ -259,7 +259,7 @@ void MotionAwayPlugin::slotActivity()
 {
 		kdDebug() << "[MotionAway Plugin] : User activity!, going available" << endl;
 		m_wentAway = false;
-		kopeteapp->slotSetAvailableAll();
+		KopeteIdentityManager::manager()->setAvailableAll();
 }
 
 void MotionAwayPlugin::slotTimeout()
@@ -268,7 +268,7 @@ void MotionAwayPlugin::slotTimeout()
 	{
 		kdDebug() << "[MotionAway Plugin] : Timeout and no user activity, going away" << endl;
 		m_wentAway = true;
-		kopeteapp->setAwayAll();
+		KopeteIdentityManager::manager()->setAwayAll();
 	}
 }
 
