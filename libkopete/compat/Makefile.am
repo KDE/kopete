@@ -16,3 +16,5 @@ noinst_HEADERS = kresolver.h kreverseresolver.h ksocketaddress.h ksocketbase.h k
         kmulticastsocket.h knetworkinterface.h khttpproxysocketdevice.h ksockssocketdevice.h kbufferedsocket.h \
         kresolver_p.h kresolverworkerbase.h kresolverstandardworkers_p.h ksocketbuffer_p.h syssocket.h ksockaddr.h \
 	netsupp.h kextsock.h
+
+KDE_OPTIONS=nofinal
