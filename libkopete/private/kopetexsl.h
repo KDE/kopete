@@ -1,7 +1,10 @@
 /*
     kopetexsl.h - Kopete XSL Routines
 
-    Copyright (c) 2003 by Jason Keirstead <jason@keirstead.org>
+    Copyright (c) 2003      by Jason Keirstead       <jason@keirstead.org>
+    Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
+
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -16,10 +19,8 @@
 #ifndef _KOPETE_XSLT_H
 #define _KOPETE_XSLT_H
 
-#include <qthread.h>
-
 class QObject;
-class QSignal;
+class QString;
 
 /**
  * @author Jason Keirstead <jason@keirstead.org>
@@ -30,35 +31,37 @@ class QSignal;
  */
 class KopeteXSL
 {
-	public:
-		/**
-		 * Transforms the XML string using the XSL String, synchronously
-		 *
-		 * @param xmlString The source XML
-		 * @param xslString The source XSL
-		 * @return The result of the transformation
-		 */
-		static const QString xsltTransform( const QString &xmlString, const QString &xslString );
+public:
+	/**
+	 * Transforms the XML string using the XSL String, synchronously
+	 *
+	 * @param xmlString The source XML
+	 * @param xslString The source XSL
+	 * @return The result of the transformation
+	 */
+	static const QString xsltTransform( const QString &xmlString, const QString &xslString );
 
-		/**
-		 * Transforms the XML string using the XSL String, asynchronously
-		 *
-		 * @param xmlString The source XML
-		 * @param xslString The source XSL
-		 * @param target The QObject that contains the slot to be executed when processing is complete
-		 * @param slotCompleted A slot that accepts a QVariant & paramater, that is the result
-		 *	of the transformation
-		 */
-		static void xsltTransformAsync( const QString &xmlString, const QString &xslString,
-			QObject *target, const char* slotCompleted );
+	/**
+	 * Transforms the XML string using the XSL String, asynchronously
+	 *
+	 * @param xmlString The source XML
+	 * @param xslString The source XSL
+	 * @param target The QObject that contains the slot to be executed when processing is complete
+	 * @param slotCompleted A slot that accepts a QVariant & paramater, that is the result
+	 * of the transformation
+	 */
+	static void xsltTransformAsync( const QString &xmlString, const QString &xslString, QObject *target, const char *slotCompleted );
 
-		/**
-		 * Check if a string is a valid XSL stylesheet
-		 *
-		 * @param xslString The string you want to check
-		 * @return If this string represents a valid XSL stylesheet
-		 */
-		 static bool isValid( const QString &xslString );
+	/**
+	 * Check if a string is a valid XSL stylesheet
+	 *
+	 * @param xslString The string you want to check
+	 * @return If this string represents a valid XSL stylesheet
+	 */
+	 static bool isValid( const QString &xslString );
 };
 
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:
+
