@@ -168,8 +168,16 @@ public slots:
 	 * Set if the KMM will be deleted when the chatwindow is deleted
 	 */
 	void setCanBeDeleted ( bool ) ;
-	
+
+	/*
+	 * Change the current message in the ChatWindow
+	 */
 	void setCurrentMessage(const KopeteMessage&);
+
+	/**
+	 * Send a message to the user
+	 */
+	void slotMessageSent(KopeteMessage &message);
 
 
 protected slots:
@@ -177,7 +185,6 @@ protected slots:
 	void slotEventDeleted(KopeteEvent *);
 	void slotChatWindowClosing();
 	void slotReplyWindowClosing();
-	void slotMessageSent(KopeteMessage &message);
 	void slotReadMessages();
 	void slotReply();
 	virtual void slotTyping(bool ) {};

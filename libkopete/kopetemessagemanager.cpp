@@ -211,17 +211,24 @@ bool KopeteMessageManager::emptyMessageBuffer()
 	}
 
 	bool foreignMessage = false;
-	for (KopeteMessageList::Iterator it = d->mMessageQueue.begin(); it != d->mMessageQueue.end(); it++)
+	for (KopeteMessageList::Iterator it = d->mMessageQueue.begin(); it != d->mMessageQueue.end(); it = d->mMessageQueue.begin())
 	{
 		kdDebug() << "[KopeteMessageManager] Inserting message from " << (*it).from()->displayName() << endl;
 		if ( (*it).from() != d->mUser )
 			foreignMessage = true;
 
-		emit messageReceived( *it );
+		KopeteMessage msg=*it;
+		//It is verry important to remove the message from the queue before
+		// emiting the message, because some plugin (translator, cryptography)
+		// can don't return imediatly. Then, if a new message arrive, same
+		// message is interpreted several times by the plugin, and finaly, crash
+		d->mMessageQueue.remove(it);
+
+		emit messageReceived( msg );
 		if ( d->mWidget == ChatWindow ) // ### why don't they implement the same interface?
-			d->mChatWindow->messageReceived(*it);
+			d->mChatWindow->messageReceived(msg);
 		else if ( d->mWidget == Email )
-			d->mEmailWindow->messageReceived(*it);
+			d->mEmailWindow->messageReceived(msg);
 	}
 	d->mMessageQueue.clear();
 	return foreignMessage;
