@@ -339,6 +339,13 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 							{
 								fieldCount = 4;
 							}
+							else if( id == "SMSProtocol" )
+							{
+								// SMS used a variable serializing using a dot as delimiter.
+								// The minimal count is three though (id, name, delimiter).
+								fieldCount = 2;
+								addressBookLabel = "sms";
+							}
 
 							if( pluginData[ id ].isNull() )
 							{
@@ -349,7 +356,7 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 
 							// Do the actual conversion
 							if( id == "MSNProtocol" || id == "OscarProtocol" || id == "AIMProtocol" || id == "IRCProtocol" ||
-								id == "ICQProtocol" || id == "JabberProtocol" )
+								id == "ICQProtocol" || id == "JabberProtocol" || id == "SMSProtocol" )
 							{
 								QStringList strList = QStringList::split( "||", data );
 								// Unescape '||'
@@ -406,6 +413,21 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 										pluginData[ id ].appendChild( dataField );
 										dataField.setAttribute( "key", "groups" );
 										dataField.appendChild( newList.createTextNode( strList[ idx + 3 ] ) );
+									}
+									else if( id == "SMSProtocol" && ( idx + 2 < strList.size() ) && strList[ idx + 2 ] != '.' )
+									{
+										dataField = newList.createElement( "plugin-data-field" );
+										pluginData[ id ].appendChild( dataField );
+										dataField.setAttribute( "key", "serviceName" );
+										dataField.appendChild( newList.createTextNode( strList[ idx + 2 ] ) );
+
+										dataField = newList.createElement( "plugin-data-field" );
+										pluginData[ id ].appendChild( dataField );
+										dataField.setAttribute( "key", "servicePrefs" );
+										dataField.appendChild( newList.createTextNode( strList[ idx + 3 ] ) );
+
+										// Add extra fields
+										idx += 2;
 									}
 
 									// MSN, AIM, IRC, Oscar and SMS didn't store address book fields up
