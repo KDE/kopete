@@ -136,15 +136,17 @@ void WebPresencePlugin::slotWriteFile()
 {
 	bool error = false;
 	// generate the (temporary) XML file representing the current contactlist
-	KTempFile* xml = generateFile();
-	xml->setAutoDelete( true );
-
-	if ( url.isEmpty() )
+	KURL dest( url );
+	if ( url.isEmpty() || !dest.isValid() )
 	{
-		kdDebug(14309) << "url is empty. NOT UPDATING!" << endl;
+		kdDebug(14309) << "url is empty or not valid. NOT UPDATING!" << endl;
 		error = true;
 	}
 
+	if ( !error )
+	{
+		KTempFile* xml = generateFile();
+		xml->setAutoDelete( true );
 	kdDebug(14309) << k_funcinfo << " " << xml->name() << endl;
 
 	if ( justXml )
@@ -164,11 +166,9 @@ void WebPresencePlugin::slotWriteFile()
 		}
 		delete xml; // might make debugging harder!
 	}
-	if ( !error )
-	{
+
 		// upload it to the specified URL
 		KURL src( m_output->name() );
-		KURL dest( url );
 		KIO::FileCopyJob *job = KIO::file_copy( src, dest, -1, true, false, false );
 		connect( job, SIGNAL( result( KIO::Job * ) ),
 				SLOT(  slotUploadJobResult( KIO::Job * ) ) );
