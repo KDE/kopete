@@ -323,6 +323,11 @@ void JabberAccount::connect ()
 	jabberClientStream->setNoopTime(55000);
 
 	/*
+	 * Allow plaintext password authentication or not?
+	 */
+	jabberClientStream->setAllowPlain(pluginData (protocol (), "AllowPlainTextPassword"));
+
+	/*
 	 * Setup client layer.
 	 */
 	jabberClient = new XMPP::Client (this);

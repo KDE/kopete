@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>DlgJabberEditAccountWidget</class>
 <author>Daniel Stone</author>
 <widget class="QWidget">
@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>640</width>
-            <height>480</height>
+            <height>482</height>
         </rect>
     </property>
     <property name="caption">
@@ -146,10 +146,13 @@
                             </widget>
                             <widget class="QCheckBox">
                                 <property name="name">
-                                    <cstring>chkRemPass</cstring>
+                                    <cstring>cbRemPass</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Remember &amp;password</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+P</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to save your password.</string>
@@ -326,25 +329,11 @@
                         <property name="title">
                             <string>Connection Preferences</string>
                         </property>
-                        <vbox>
+                        <grid>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>mAutoConnect</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Connect automatically at &amp;startup</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Check to connect automatically when Kopete is started.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
-                                </property>
-                            </widget>
-                            <widget class="QLayoutWidget">
+                            <widget class="QLayoutWidget" row="0" column="0">
                                 <property name="name">
                                     <cstring>layout87</cstring>
                                 </property>
@@ -469,60 +458,40 @@
                                     </widget>
                                 </hbox>
                             </widget>
-                            <widget class="QLayoutWidget">
+                            <widget class="QCheckBox" row="1" column="0">
                                 <property name="name">
-                                    <cstring>layout11</cstring>
+                                    <cstring>cbAutoConnect</cstring>
                                 </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <widget class="QLabel">
-                                        <property name="name">
-                                            <cstring>lblAuth</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>Authentication &amp;method:</string>
-                                        </property>
-                                        <property name="buddy" stdset="0">
-                                            <cstring>cmbAuth</cstring>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The authentication method you would like to use.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The authentication method you would like to use.  Digest is the most secure, but your server may only support plain.</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="QComboBox">
-                                        <item>
-                                            <property name="text">
-                                                <string>Digest</string>
-                                            </property>
-                                        </item>
-                                        <item>
-                                            <property name="text">
-                                                <string>Plain</string>
-                                            </property>
-                                        </item>
-                                        <property name="name">
-                                            <cstring>cmbAuth</cstring>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The authentication method you would like to use.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The authentication method you would like to use.  Digest is the most secure, but your server may only support plain.</string>
-                                        </property>
-                                    </widget>
-                                </hbox>
+                                <property name="text">
+                                    <string>Connect automatically at &amp;startup</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+S</string>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Check to connect automatically when Kopete is started.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
+                                </property>
                             </widget>
-                            <widget class="QCheckBox">
+                            <widget class="QCheckBox" row="2" column="0">
                                 <property name="name">
-                                    <cstring>chkUseSSL</cstring>
+                                    <cstring>cbAllowPlainTextPassword</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Allow plaintext password authentication</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="3" column="0">
+                                <property name="name">
+                                    <cstring>cbUseSSL</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Use protocol encr&amp;yption (SSL)</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+Y</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check this box to enable SSL encrypted communication with the server.</string>
@@ -531,7 +500,7 @@
                                     <string>Check this box to enable SSL encrypted communication with the server.  Note that this is not end-to-end encryption, but rather encrypted communication with the server.</string>
                                 </property>
                             </widget>
-                        </vbox>
+                        </grid>
                     </widget>
                     <widget class="QGroupBox">
                         <property name="name">
@@ -720,6 +689,9 @@
                                 <property name="text">
                                     <string>Re&amp;quires authentication</string>
                                 </property>
+                                <property name="accel">
+                                    <string>Alt+Q</string>
+                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check this box if your proxy server requires authentication, and enter the login credentials below.</string>
                                 </property>
@@ -869,15 +841,17 @@
         </widget>
     </vbox>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
-        <sender>chkRemPass</sender>
+        <sender>cbRemPass</sender>
         <signal>toggled(bool)</signal>
         <receiver>mPass</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>chkRemPass</sender>
+        <sender>cbRemPass</sender>
         <signal>toggled(bool)</signal>
         <receiver>TextLabel2_2</receiver>
         <slot>setEnabled(bool)</slot>
@@ -911,13 +885,12 @@
     <tabstop>mID</tabstop>
     <tabstop>mResource</tabstop>
     <tabstop>btnRegister</tabstop>
-    <tabstop>chkRemPass</tabstop>
+    <tabstop>cbRemPass</tabstop>
     <tabstop>mPass</tabstop>
-    <tabstop>mAutoConnect</tabstop>
+    <tabstop>cbAutoConnect</tabstop>
     <tabstop>mServer</tabstop>
     <tabstop>mPort</tabstop>
-    <tabstop>cmbAuth</tabstop>
-    <tabstop>chkUseSSL</tabstop>
+    <tabstop>cbUseSSL</tabstop>
     <tabstop>kActiveLabel3</tabstop>
     <tabstop>tabWidget10</tabstop>
     <tabstop>cbProxyType</tabstop>

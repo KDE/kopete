@@ -40,12 +40,10 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (mServer, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
 	connect (mPort, SIGNAL (valueChanged (int)), this, SLOT (configChanged ()));
 
-	connect (mAutoConnect, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
-	connect (chkUseSSL, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
-	connect (chkRemPass, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
-
-	// Chat TAB
-	connect (cmbAuth, SIGNAL (activated (int)), this, SLOT (configChanged ()));
+	connect (cbAutoConnect, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
+	connect (cbUseSSL, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
+	connect (cbAllowPlainTextPassword, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
+	connect (cbRemPass, SIGNAL (toggled (bool)), this, SLOT (configChanged ()));
 
 	connect (cbProxyType, SIGNAL (activated (int)), this, SLOT (configChanged ()));
 	connect (leProxyName, SIGNAL (textChanged (const QString &)), this, SLOT (configChanged ()));
@@ -59,7 +57,7 @@ JabberEditAccountWidget::JabberEditAccountWidget (JabberProtocol * proto, Jabber
 	connect (mServer, SIGNAL (textChanged (const QString &)), this, SLOT (setJIDValidation ()));
 
 	connect (btnRegister, SIGNAL (clicked ()), this, SLOT (registerClicked ()));
-	connect (chkUseSSL, SIGNAL (toggled (bool)), this, SLOT (sslToggled (bool)));
+	connect (cbUseSSL, SIGNAL (toggled (bool)), this, SLOT (sslToggled (bool)));
 
 	if (account())
 	{
@@ -83,20 +81,15 @@ void JabberEditAccountWidget::reopen ()
 	mResource->setText (account()->pluginData (m_protocol, "Resource"));
 	mServer->setText (account()->pluginData (m_protocol, "Server"));
 
-	if (account()->pluginData (m_protocol, "UseSSL") == "true")
-		chkUseSSL->setChecked (true);
+	cbUseSSL->setChecked (account()->pluginData (m_protocol, "UseSSL") == QString::fromLatin1("true"));
 
 	mPort->setValue (account()->pluginData (m_protocol, "Port").toInt ());
 
-	if (account()->pluginData (m_protocol, "RemPass") == "true")
-		chkRemPass->setChecked (true);
+	cbRemPass->setChecked (account()->pluginData (m_protocol, "RemPass") == QString::fromLatin1("true"));
 
 	QString auth = account()->pluginData (m_protocol, "AuthType");
 
-	cmbAuth->setCurrentItem (0);
-
-	if (auth == QString ("plain"))
-		cmbAuth->setCurrentItem (1);
+	cbAllowPlainTextPassword->setChecked (account()->pluginData (m_protocol, "AllowPlainTextPassword") == QString::fromLatin1 ("true"));
 
 	QString proxyType = account()->pluginData (m_protocol, "ProxyType");
 
@@ -113,7 +106,7 @@ void JabberEditAccountWidget::reopen ()
 	cbProxyAuth->setChecked (account()->pluginData (m_protocol, "ProxyAuth") == QString::fromLatin1 ("true"));
 	leProxyUser->setText (account()->pluginData (m_protocol, "ProxyUser"));
 	leProxyPass->setText (account()->pluginData (m_protocol, "ProxyPass"));
-	mAutoConnect->setChecked (account()->autoLogin());
+	cbAutoConnect->setChecked (account()->autoLogin());
 
 	revalidateJID = false;
 
@@ -155,12 +148,12 @@ void JabberEditAccountWidget::writeConfig ()
 	account()->setPluginData (m_protocol, "Resource", mResource->text ());
 	account()->setPluginData (m_protocol, "Port", QString::number (mPort->value ()));
 
-	if (chkUseSSL->isChecked ())
+	if (cbUseSSL->isChecked ())
 		account()->setPluginData (m_protocol, "UseSSL", "true");
 	else
 		account()->setPluginData (m_protocol, "UseSSL", "false");
 
-	if (chkRemPass->isChecked ())
+	if (cbRemPass->isChecked ())
 	{
 		account()->setPluginData (m_protocol, "RemPass", "true");
 		account()->setPassword (mPass->text ());
@@ -171,21 +164,12 @@ void JabberEditAccountWidget::writeConfig ()
 		account()->setPassword (NULL);
 	}
 
-	account()->setAutoLogin(mAutoConnect->isChecked());
+	if (cbAllowPlainTextPassword->isChecked ())
+		account()->setPluginData (m_protocol, "AllowPlainTextPassword", "true");
+	else
+		account()->setPluginData (m_protocol, "AllowPlainTextPassword", "false");
 
-	switch (cmbAuth->currentItem ())
-	{
-	case 0:
-		account()->setPluginData (m_protocol, "AuthType", "digest");
-		break;
-	case 1:
-		account()->setPluginData (m_protocol, "AuthType", "plain");
-		break;
-	default:					// this case should never happen, just
-		// implemented for safety
-		account()->setPluginData (m_protocol, "AuthType", "digest");
-		break;
-	}
+	account()->setAutoLogin(cbAutoConnect->isChecked());
 
 	switch (cbProxyType->currentItem ())
 	{
