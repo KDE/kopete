@@ -24,6 +24,7 @@
 #include <kdialogbase.h>
 
 #include "kopeteaccount.h"
+#include "ircprotocol.h"
 
 class KAction;
 class KActionMenu;
@@ -197,7 +198,6 @@ private slots:
 	void slotJoinedUnknownChannel( const QString &channel, const QString &nick );
 
 private:
-	IRCProtocol *m_protocol;
 	KopeteMessageManager *m_manager;
 	QString mNickName;
 	KopeteAwayAction *mAwayAction;

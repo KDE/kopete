@@ -91,6 +91,7 @@ public:
 	void failedChanBanned();
 	void failedChanInvite();
 	void failedChanFull();
+	void newAction(const QString &from, const QString &action);
 
 public slots:
 	void updateStatus();
@@ -115,7 +116,6 @@ protected slots:
 	void messageManagerDestroyed();
 
 	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
-	virtual void action(IRCContact *from, IRCContact *to, const QString &action);
 	virtual void initConversation();
 
 private slots:

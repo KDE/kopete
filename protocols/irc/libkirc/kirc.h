@@ -236,7 +236,8 @@ signals:
 	//Contact Signals
 	void incomingPrivMessage(const QString &, const QString &, const QString &);
 	void incomingQuitIRC(const QString &user, const QString &reason);
-	void incomingAction(const QString &originating, const QString &target, const QString &message);
+	void incomingAction(const QString &channel, const QString &originating, const QString &message);
+	void incomingPrivAction(const QString &target, const QString &originating, const QString &message);
 	void incomingUserModeChange(const QString &nick, const QString &mode);
 
 	//Response Signals
@@ -275,7 +276,6 @@ signals:
 	//General Signals
 	void incomingUnknown(const QString &);
 	void incomingUnknownCtcp(const QString &);
-	void incomingPrivAction(const QString &, const QString &, const QString &);
 	void incomingKick(const QString &channel, const QString &nick,
 		const QString &nickKicked, const QString &reason);
 

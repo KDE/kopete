@@ -84,7 +84,6 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	: KopeteAccount(protocol, accountId), autoConnect( autoChan )
 {
 	m_manager = 0L;
-	m_protocol = protocol;
 	m_channelList = 0L;
 	m_network = 0L;
 

@@ -24,7 +24,7 @@
 
 IRCSignalHandler::IRCSignalHandler( IRCContactManager *m ) : QObject(m), manager(m)
 {
-	m_engine = manager->engine();
+	KIRC *m_engine = static_cast<IRCAccount*>( manager->mySelf()->account() )->engine();
 
 	//Channel Connections to ourself
 	QObject::connect(m_engine, SIGNAL(incomingNamesList(const QString &, const QStringList &)),
@@ -104,6 +104,14 @@ IRCSignalHandler::IRCSignalHandler( IRCContactManager *m ) : QObject(m), manager
 	mapDouble<IRCUserContact>( m,
 		SIGNAL(incomingWhoIsServer(const QString &, const QString &, const QString &)),
 		&IRCUserContact::newWhoIsServer );
+
+	mapDouble<IRCUserContact>( m,
+		SIGNAL(incomingPrivAction(const QString &, const QString &, const QString &)),
+		&IRCUserContact::newAction );
+
+	mapDouble<IRCChannelContact>( m,
+		SIGNAL(incomingAction(const QString &, const QString &, const QString &)),
+		&IRCChannelContact::newAction );
 
 	mapTriple<IRCUserContact>( m,
 		SIGNAL(incomingWhoIsUser(const QString &, const QString &, const QString &, const QString &)),

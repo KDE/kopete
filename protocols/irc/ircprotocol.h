@@ -25,6 +25,8 @@
 
 #include <dom/dom_node.h>
 
+#define m_protocol ((IRCProtocol*)IRCProtocol::protocol())
+
 class KopeteMetaContact;
 class AddContactPage;
 class KIRC;

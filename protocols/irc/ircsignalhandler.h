@@ -25,6 +25,7 @@
 
 #include <kdebug.h>
 
+#include "ircaccount.h"
 #include "irccontactmanager.h"
 
 /***
@@ -270,7 +271,6 @@ class IRCSignalHandler : public QObject
 
 	private:
 		IRCContactManager *manager;
-		KIRC *m_engine;
 		QValueList<IRCSignalMappingBase*> mappings;
 
 		/****
@@ -282,7 +282,7 @@ class IRCSignalHandler : public QObject
 		{
 			IRCSignalMappingT *mapping = new IRCSignalMapping<TClass>( m, signal, method );
 			mappings.append(mapping);
-			QObject::connect( m->engine(), signal,
+			QObject::connect( static_cast<IRCAccount*>( m->mySelf()->account() )->engine(), signal,
 				new QMember( mapping, this),
 				SLOT( slotEmit( const QString &) )
 			);
@@ -294,7 +294,7 @@ class IRCSignalHandler : public QObject
 		{
 			IRCSignalMappingSingleT *mapping = new IRCSignalMappingSingle<TClass>( m, signal, method );
 			mappings.append(mapping);
-			QObject::connect( m->engine(), signal,
+			QObject::connect( static_cast<IRCAccount*>( m->mySelf()->account() )->engine(), signal,
 				new QMemberSingle( mapping, this),
 				SLOT( slotEmit( const QString &, const QString &) )
 			);
@@ -306,7 +306,7 @@ class IRCSignalHandler : public QObject
 		{
 			IRCSignalMappingDoubleT *mapping = new IRCSignalMappingDouble<TClass>( m, signal, method );
 			mappings.append(mapping);
-			QObject::connect( m->engine(), signal,
+			QObject::connect( static_cast<IRCAccount*>( m->mySelf()->account() )->engine(), signal,
 				new QMemberDouble( mapping, this),
 				SLOT( slotEmit( const QString &, const QString &,const QString &) )
 			);
@@ -319,7 +319,7 @@ class IRCSignalHandler : public QObject
 		{
 			IRCSignalMappingTripleT *mapping = new IRCSignalMappingTriple<TClass>( m, signal, method );
 			mappings.append(mapping);
-			QObject::connect( m->engine(), signal,
+			QObject::connect( static_cast<IRCAccount*>( m->mySelf()->account() )->engine(), signal,
 				new QMemberTriple( mapping, this),
 				SLOT( slotEmit( const QString &, const QString &,const QString &,const QString &) )
 			);

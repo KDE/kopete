@@ -37,11 +37,11 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 	  m_isAway(false)
 {
 	mOnlineTimer = new QTimer( this );
-	m_isOnline = m_metaContact->isTemporary();
+	m_isOnline = metaContact()->isTemporary();
 
 	QObject::connect(mOnlineTimer, SIGNAL(timeout()), this, SLOT( slotUserOffline() ) );
 
-	QObject::connect(m_engine, SIGNAL(incomingChannelModeChange(const QString&, const QString&, const QString&)),
+	QObject::connect(MYACCOUNT->engine(), SIGNAL(incomingChannelModeChange(const QString&, const QString&, const QString&)),
 		this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
 
 	actionCtcpMenu = 0L;
@@ -57,7 +57,7 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 
 void IRCUserContact::updateStatus()
 {
-	KIRC::EngineStatus status = m_engine->status();
+	KIRC::EngineStatus status = MYACCOUNT->engine()->status();
 	switch( status )
 	{
 		case KIRC::Disconnected:
@@ -66,7 +66,7 @@ void IRCUserContact::updateStatus()
 
 		case KIRC::Connecting:
 		case KIRC::Authentifying:
-			if(this == m_account->mySelf())
+			if(this == MYACCOUNT->mySelf())
 				setOnlineStatus(m_protocol->m_UserStatusConnecting);
 			else
 				setOnlineStatus(m_protocol->m_UserStatusOffline);
@@ -94,7 +94,7 @@ void IRCUserContact::slotUserOffline()
 	updateStatus();
 
 	if( !metaContact()->isTemporary() )
-		m_engine->writeMessage( QString::fromLatin1("WHOWAS %1").arg(m_nickName) );
+		MYACCOUNT->engine()->writeMessage( QString::fromLatin1("WHOWAS %1").arg(m_nickName) );
 
 	removeProperty( m_protocol->propUserInfo );
 	removeProperty( m_protocol->propServer );
@@ -111,7 +111,7 @@ void IRCUserContact::incomingUserIsAway(const QString &reason )
 {
 	if( manager(false ) )
 	{
-		KopeteMessage msg( (KopeteContact*)m_account->myServer(), mMyself,
+		KopeteMessage msg( (KopeteContact*)MYACCOUNT->myServer(), mMyself,
 			i18n("%1 is away (%2)").arg( m_nickName ).arg( reason ),
 			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
 		manager()->appendMessage(msg);
@@ -122,10 +122,10 @@ void IRCUserContact::userOnline()
 {
 	m_isOnline = true;
 	updateStatus();
-	if( this != m_account->mySelf() && !metaContact()->isTemporary() )
+	if( this != MYACCOUNT->mySelf() && !metaContact()->isTemporary() )
 	{
 		mOnlineTimer->start( 45000, true );
-		m_engine->writeMessage( QString::fromLatin1("WHOIS %1").arg(m_nickName) );
+		MYACCOUNT->engine()->writeMessage( QString::fromLatin1("WHOIS %1").arg(m_nickName) );
 	}
 
 	removeProperty( m_protocol->propLastSeen );
@@ -136,13 +136,13 @@ void IRCUserContact::slotUserInfo()
 	if( isChatting() )
 	{
 		m_protocol->setCommandInProgress(true);
-		m_engine->whoisUser( m_nickName );
+		MYACCOUNT->engine()->whoisUser( m_nickName );
 	}
 }
 
 const QString IRCUserContact::caption() const
 {
-	return i18n("%1 @ %2").arg(m_nickName).arg( m_engine->currentHost() );
+	return i18n("%1 @ %2").arg(m_nickName).arg( MYACCOUNT->engine()->currentHost() );
 }
 
 void IRCUserContact::slotOp()
@@ -189,24 +189,24 @@ void IRCUserContact::slotKick()
 {
 	KopeteContactPtrList members = mActiveManager->members();
 	QString channelName = static_cast<IRCContact*>( members.first() )->nickName();
-	m_engine->kickUser(m_nickName, channelName, QString::null);
+	MYACCOUNT->engine()->kickUser(m_nickName, channelName, QString::null);
 }
 
 void IRCUserContact::contactMode( const QString &mode )
 {
 	KopeteContactPtrList members = mActiveManager->members();
 	QString channelName = static_cast<IRCContact*>( members.first() )->nickName();
-	m_engine->changeMode( channelName, QString::fromLatin1("%1 %2").arg(mode).arg(m_nickName) );
+	MYACCOUNT->engine()->changeMode( channelName, QString::fromLatin1("%1 %2").arg(mode).arg(m_nickName) );
 }
 
 void IRCUserContact::slotCtcpPing()
 {
-	m_engine->CtcpRequest_pingPong(m_nickName);
+	MYACCOUNT->engine()->CtcpRequest_pingPong(m_nickName);
 }
 
 void IRCUserContact::slotCtcpVersion()
 {
-	m_engine->CtcpRequest_version(m_nickName);
+	MYACCOUNT->engine()->CtcpRequest_version(m_nickName);
 }
 
 void IRCUserContact::newWhoIsUser(const QString &username, const QString &hostname, const QString &realname)
@@ -286,7 +286,7 @@ void IRCUserContact::whoIsComplete()
 		msg += i18n("idle: %2<br/>").arg( idleTime.isEmpty() ? QString::number(0) : idleTime );
 
 		//End
-		m_account->appendMessage(msg, IRCAccount::InfoReply );
+		MYACCOUNT->appendMessage(msg, IRCAccount::InfoReply );
 		m_protocol->setCommandInProgress(false);
 	}
 }
@@ -308,7 +308,7 @@ void IRCUserContact::whoWasComplete()
 			)
 		);
 
-		m_account->appendMessage(msg, IRCAccount::InfoReply );
+		MYACCOUNT->appendMessage(msg, IRCAccount::InfoReply );
 		m_protocol->setCommandInProgress(false);
 	}
 }
@@ -425,7 +425,7 @@ QPtrList<KAction> *IRCUserContact::customContextMenuActions( KopeteMessageManage
 
 void IRCUserContact::slotIncomingModeChange( const QString &channel, const QString &, const QString &mode )
 {
-	IRCChannelContact *chan = m_account->contactManager()->findChannel( channel );
+	IRCChannelContact *chan = MYACCOUNT->contactManager()->findChannel( channel );
 	if( chan->locateUser( m_nickName ) )
 	{
 		QString user = mode.section(' ', 1, 1);
@@ -463,20 +463,23 @@ void IRCUserContact::privateMessage(IRCContact *from, IRCContact *to, const QStr
 	}
 }
 
-void IRCUserContact::action(IRCContact *from, IRCContact *to, const QString &action)
+void IRCUserContact::newAction(const QString &from, const QString &action)
 {
+	kdDebug(14120) << k_funcinfo << m_nickName << endl;
+
 	//Either this is from me to a guy, or from a guy to me. Either way its a PM
-	if( to == this && from == m_account->mySelf() )
+	if( this == MYACCOUNT->mySelf() )
 	{
-		KopeteMessage msg(from, to->manager()->members(), action,
+		IRCContact *f = MYACCOUNT->contactManager()->findUser( from );
+		KopeteMessage msg(f, f->manager()->members(), action,
 			KopeteMessage::Action, KopeteMessage::RichText, KopeteMessage::Chat);
-		to->appendMessage(msg);
+		f->appendMessage(msg);
 	}
-	else if( from == this && to == m_account->mySelf() )
+	else
 	{
-		KopeteMessage msg(from, from->manager()->members(), action,
+		KopeteMessage msg( MYACCOUNT->mySelf(), manager()->members(), action,
 			KopeteMessage::Action, KopeteMessage::RichText, KopeteMessage::Chat);
-		from->appendMessage(msg);
+		appendMessage(msg);
 	}
 }
 

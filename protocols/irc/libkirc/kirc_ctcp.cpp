@@ -64,9 +64,9 @@ void KIRC::CtcpRequest_action(const QString &contact, const QString &message)
 		writeCtcpQueryMessage(contact, QString::null, "ACTION", message );
 
 		if( KIRCEntity::isChannel(contact) )
-			emit incomingPrivAction(m_Nickname, contact, message);
+			emit incomingAction(contact, m_Nickname, message);
 		else
-			emit incomingAction(m_Nickname, contact, message);
+			emit incomingPrivAction(m_Nickname, contact, message);
 	}
 }
 
@@ -74,7 +74,7 @@ bool KIRC::CtcpQuery_action(const KIRCMessage &msg)
 {
 	QString target = msg.arg(0);
 	if (target[0] == '#' || target[0] == '!' || target[0] == '&')
-		emit incomingAction(msg.nickFromPrefix(), target, msg.ctcpMessage().ctcpRaw());
+		emit incomingAction(target, msg.nickFromPrefix(), msg.ctcpMessage().ctcpRaw());
 	else
 		emit incomingPrivAction(msg.nickFromPrefix(), target, msg.ctcpMessage().ctcpRaw());
 	return true;

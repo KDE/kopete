@@ -27,6 +27,8 @@
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
+#define MYACCOUNT ((IRCAccount*)account())
+
 class QTextCodec;
 class KopeteMessageManager;
 class KopeteMetaContact;
@@ -100,22 +102,14 @@ class IRCContact : public KopeteContact
 		void slotNewNickChange( const QString &oldnickname, const QString &newnickname);
 		void slotUserDisconnected( const QString &nickname, const QString &reason);
 
-
 		virtual void slotDeleteContact();
 		virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
-		virtual void action(IRCContact *from, IRCContact *to, const QString &action);
 		virtual void updateStatus() = 0;
 		virtual void initConversation() {};
 
 	protected:
-
-		IRCProtocol *m_protocol;
-		IRCAccount *m_account;
-		KIRC *m_engine;
-		KopeteMetaContact *m_metaContact;
 		QString m_nickName;
 		KopeteMessageManager *m_msgManager;
-		bool m_isConnected;
 
 		QPtrList<KopeteContact> mMyself;
 		KopeteMessage::MessageDirection execDir;

@@ -38,10 +38,9 @@
 
 IRCContactManager::IRCContactManager(const QString &nickName, IRCAccount *account, const char *name)
 	: QObject(account, name),
-	  m_account(account),
-	  m_engine(account->engine()),
 	  m_channels( QDict<IRCChannelContact>( 17, false ) ),
-	  m_users( QDict<IRCUserContact>( 577, false ) )
+	  m_users( QDict<IRCUserContact>( 577, false ) ),
+	  m_account( account )
 {
 	m_mySelf = findUser(nickName);
 
@@ -49,25 +48,25 @@ IRCContactManager::IRCContactManager(const QString &nickName, IRCAccount *accoun
 	m->setTemporary( true );
 	m_myServer = new IRCServerContact(this, account->engine()->currentHost(), m);
 
-	QObject::connect(m_engine, SIGNAL(incomingMessage(const QString &, const QString &, const QString &)),
+	QObject::connect(account->engine(), SIGNAL(incomingMessage(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewMessage(const QString &, const QString &, const QString &)));
 
-	QObject::connect(m_engine, SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)),
+	QObject::connect(account->engine(), SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewPrivMessage(const QString &, const QString &, const QString &)));
 
-	QObject::connect(m_engine, SIGNAL(incomingAction(const QString &, const QString &, const QString &)),
+	QObject::connect(account->engine(), SIGNAL(incomingAction(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewAction(const QString &, const QString &, const QString &)));
 
-	QObject::connect(m_engine, SIGNAL(incomingPrivAction(const QString &, const QString &, const QString &)),
+	QObject::connect(account->engine(), SIGNAL(incomingPrivAction(const QString &, const QString &, const QString &)),
 			this, SLOT(slotNewPrivAction(const QString &, const QString &, const QString &)));
 
-	QObject::connect(m_engine, SIGNAL(incomingNickChange(const QString &, const QString &)),
+	QObject::connect(account->engine(), SIGNAL(incomingNickChange(const QString &, const QString &)),
 			this, SLOT( slotNewNickChange(const QString&, const QString&)));
 
-	QObject::connect(m_engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)),
+	QObject::connect(account->engine(), SIGNAL(successfullyChangedNick(const QString &, const QString &)),
 			this, SLOT( slotNewNickChange(const QString &, const QString &)));
 
-	QObject::connect(m_engine, SIGNAL(incomingUserOnline(const QString &)),
+	QObject::connect(account->engine(), SIGNAL(incomingUserOnline(const QString &)),
 			this, SLOT( slotIsonRecieved()));
 
 	socketTimeout = 15000;
@@ -108,22 +107,6 @@ void IRCContactManager::slotNewPrivMessage(const QString &originating, const QSt
 	IRCContact *from = findUser(originating);
 	IRCUserContact *to = findUser(user);
 	emit privateMessage(from, to, message);
-}
-
-void IRCContactManager::slotNewAction(const QString &originating, const QString &channel, const QString &message)
-{
-	IRCContact *from = findUser(originating);
-	IRCChannelContact *to = findChannel(channel);
-
-	emit action(from, to, message);
-}
-
-void IRCContactManager::slotNewPrivAction(const QString &originating, const QString &user, const QString &message)
-{
-	IRCContact *from = findUser(originating);
-	IRCUserContact *to = findUser(user);
-
-	emit action(from, to, message);
 }
 
 void IRCContactManager::unregister(KopeteContact *contact)
@@ -255,10 +238,10 @@ void IRCContactManager::removeFromNotifyList(const QString &nick)
 
 void IRCContactManager::checkOnlineNotifyList()
 {
-	if( m_engine->isConnected() )
+	if( m_account->engine()->isConnected() )
 	{
 		isonRecieved = false;
-		m_engine->isOn( m_NotifyList );
+		m_account->engine()->isOn( m_NotifyList );
 		//QTimer::singleShot( socketTimeout, this, SLOT( slotIsonTimeout() ) );
 	}
 }
@@ -271,7 +254,7 @@ void IRCContactManager::slotIsonRecieved()
 void IRCContactManager::slotIsonTimeout()
 {
 	if( !isonRecieved )
-		m_engine->quitIRC("", true);
+		m_account->engine()->quitIRC("", true);
 }
 
 #include "irccontactmanager.moc"

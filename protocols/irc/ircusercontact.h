@@ -75,6 +75,7 @@ public:
 	//Methods handled by the signal mapper
 	void incomingUserIsAway(const QString &message );
 	void userOnline();
+	void newAction( const QString &from, const QString &action );
 	void newWhoIsUser(const QString &username, const QString &hostname, const QString &realname);
 	void newWhoIsServer(const QString &server, const QString &serverInfo);
 	void newWhoIsOperator();
@@ -89,7 +90,6 @@ public:
 
 protected slots:
 	virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
-	virtual void action(IRCContact *from, IRCContact *to, const QString &action);
 
 private slots:
 	void slotOp();
