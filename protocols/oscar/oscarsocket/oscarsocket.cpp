@@ -161,7 +161,7 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	OscarAccount *account, QObject *parent, const char *name, bool isicq)
 	: OscarConnection("unknown", connName, Server, cookie, parent, name)
 {
-	kdDebug(14150) << k_funcinfo <<  "connName=" << connName <<
+	kdDebug(14150) << k_funcinfo << "connName=" << connName <<
 		QString::fromLatin1( isicq?" ICQICQ":" AIMAIM" ) << endl;
 
 	mIsICQ=isicq; // TODO: I have no idea if this is a good way of handling icq mode
@@ -191,12 +191,12 @@ OscarSocket::~OscarSocket(void)
 /** This is called when a connection is established */
 void OscarSocket::OnConnect(void)
 {
-	kdDebug(14150) << k_funcinfo <<  "Connected to " << peerName() << ", port " << peerPort() << endl;
+	kdDebug(14150) << k_funcinfo << "Connected to " << peerName() << ", port " << peerPort() << endl;
 
 	mDirectIMMgr = new OncomingSocket(this, address(), DirectIM);
 	mFileTransferMgr = new OncomingSocket(this, address(), SendFile, SENDFILE_PORT);
 
-	kdDebug(14150) << k_funcinfo <<  "address() is " << address().toString() <<
+	kdDebug(14150) << k_funcinfo << "address() is " << address().toString() <<
 		" mDirectIMMgr->address() is " << mDirectIMMgr->address().toString() << endl;
 
 //	emit connectionChanged(1, QString("Connected to %2, port %1").arg(peerPort()).arg(peerName()));
@@ -211,7 +211,7 @@ void OscarSocket::slotRead(void)
 
 	if (fl.error) //something went wrong, this shouldn't happen
 	{
-		kdDebug(14150) << k_funcinfo <<  "FLAP() read error occured!" << endl;
+		kdDebug(14150) << k_funcinfo << "FLAP() read error occured!" << endl;
 		//dump packet, try to recover
 		char *tmp = new char[bytesAvailable()];
 		readBlock(tmp, bytesAvailable());
@@ -226,7 +226,7 @@ void OscarSocket::slotRead(void)
 	if (bytesAvailable() < fl.length)
 	{
 		while (waitForMore(500) < fl.length)
-			kdDebug(14150) << k_funcinfo <<  "Not enough data read yet... waiting" << endl;
+			kdDebug(14150) << k_funcinfo << "Not enough data read yet... waiting" << endl;
 	}
 
 	int bytesread = readBlock(buf,fl.length);
@@ -236,7 +236,7 @@ void OscarSocket::slotRead(void)
 	inbuf.setBuf(buf,bytesread);
 
 #ifdef OSCAR_PACKETLOG
-	kdDebug(14150) << k_funcinfo <<  "Input: " << endl;
+	kdDebug(14150) << k_funcinfo << "Input: " << endl;
 	inbuf.print();
 #endif
 
@@ -252,7 +252,7 @@ void OscarSocket::slotRead(void)
 			}
 			else
 			{
-				kdDebug(14150) << k_funcinfo <<  "Could not read FLAP version on channel 0x01" << endl;
+				kdDebug(14150) << k_funcinfo << "Could not read FLAP version on channel 0x01" << endl;
 				return;
 			}
 			break;
@@ -263,7 +263,7 @@ void OscarSocket::slotRead(void)
 			SNAC s;
 			s = inbuf.getSnacHeader();
 
-//			kdDebug(14150) << k_funcinfo <<  "SNAC(" << s.family << "," << s.subtype << "), id=" << s.id << endl;
+//			kdDebug(14150) << k_funcinfo << "SNAC(" << s.family << "," << s.subtype << "), id=" << s.id << endl;
 
 			switch(s.family)
 			{
@@ -274,7 +274,7 @@ void OscarSocket::slotRead(void)
 						case 0x0001:  //error
 						{
 #ifdef OSCAR_PACKETLOG
-							kdDebug(14150) << k_funcinfo <<  "Generic service error, remaining data is:" << endl;
+							kdDebug(14150) << k_funcinfo << "Generic service error, remaining data is:" << endl;
 							inbuf.print();
 #endif
 							emit protocolError(
@@ -313,7 +313,7 @@ void OscarSocket::slotRead(void)
 							parseMemRequest(inbuf);
 							break;
 						default:
-							kdDebug(14150) << k_funcinfo <<  "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
 				}
@@ -329,7 +329,7 @@ void OscarSocket::slotRead(void)
 							parseUserProfile(inbuf);
 							break;
 						default:
-							kdDebug(14150) << k_funcinfo <<  "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
 				} // END 0x0002
@@ -348,7 +348,7 @@ void OscarSocket::slotRead(void)
 							parseOffgoingBuddy(inbuf);
 							break;
 						default:
-							kdDebug(14150) << k_funcinfo <<  "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
 				} // END 0x0003
@@ -376,7 +376,7 @@ void OscarSocket::slotRead(void)
 							parseMiniTypeNotify(inbuf);
 							break;
 						default: //invalid subtype
-							kdDebug(14150) << k_funcinfo <<  "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
 				} // END Family 4
@@ -389,7 +389,7 @@ void OscarSocket::slotRead(void)
 							parseBOSRights(inbuf);
 							break;
 						default:
-							kdDebug(14150) << k_funcinfo <<  "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
 				} // END 0x0009
@@ -408,7 +408,7 @@ void OscarSocket::slotRead(void)
 							parseSSIAck(inbuf);
 							break;
 						default: //invalid subtype
-							kdDebug(14150) << k_funcinfo <<  "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
 				} // END 0x0013
@@ -417,11 +417,17 @@ void OscarSocket::slotRead(void)
 				{
 					switch(s.subtype)
 					{
+						case 0x0001:
+							kdDebug(14150) << k_funcinfo <<
+								"TODO: parse SRV_FROMICQERR packet!!" << endl;
+							kdDebug(14150) << "errorcode=" << inbuf.getWord() << endl;
+//							parseSRV_FROMICQERR(inbuf);
+							break;
 						case 0x0003:
 							parseSRV_FROMICQSRV(inbuf);
 							break;
 						default:
-							kdDebug(14150) << k_funcinfo <<  "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
 					}
 					break;
 				} // END OSCAR_FAM_21
@@ -437,13 +443,13 @@ void OscarSocket::slotRead(void)
 							parsePasswordKey(inbuf);
 							break;
 						default:
-							kdDebug(14150) << k_funcinfo <<  "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
+							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
 					};
 					break;
 				} // END OSCAR_FAM_23
 
 				default:
-					kdDebug(14150) << k_funcinfo <<  "Unknown SNAC(|" << s.family << "|," << s.subtype << ")" << endl;
+					kdDebug(14150) << k_funcinfo << "Unknown SNAC(|" << s.family << "|," << s.subtype << ")" << endl;
 			}; // END switch (s.family)
 			break;
 		} // END channel 0x02
@@ -460,7 +466,7 @@ void OscarSocket::slotRead(void)
 
 		case 0x04: //close connection negotiation channel
 		{
-			kdDebug(14150) << "[OSCAR] Got connection close request, length=" << inbuf.getLength() << endl;
+			kdDebug(14150) << "Got connection close request, length=" << inbuf.getLength() << endl;
 
 			// BEGIN TODO
 			// This is a part of icq login procedure,
@@ -531,15 +537,15 @@ void OscarSocket::slotRead(void)
 
 		case 0x05:
 		{
-			kdDebug(14150) << k_funcinfo <<  "RECV KEEPALIVE" << endl;
+			kdDebug(14150) << k_funcinfo << "RECV KEEPALIVE" << endl;
 			break;
 		}
 
 		default: //oh, crap, something's wrong
 		{
-			kdDebug(14150) << k_funcinfo <<  "Unknown channel " << fl.channel << endl;
+			kdDebug(14150) << k_funcinfo << "Unknown channel " << fl.channel << endl;
 #ifdef OSCAR_PACKETLOG
-			kdDebug(14150) << k_funcinfo <<  "Input: " << endl;
+			kdDebug(14150) << k_funcinfo << "Input: " << endl;
 			inbuf.print();
 #endif
 		}
@@ -551,7 +557,7 @@ void OscarSocket::slotRead(void)
 // Sends an authorization request to the server
 void OscarSocket::sendLoginRequest()
 {
-	kdDebug(14150) << k_funcinfo <<  "Called" << endl;
+	kdDebug(14150) << k_funcinfo << "Called" << endl;
 	Buffer outbuf;
 	outbuf.addSnac(0x0017,0x0006,0x0000,0x00000000);
 	outbuf.addTLV(0x0001,getSN().length(),getSN().latin1());
@@ -568,7 +574,7 @@ void OscarSocket::putFlapVer(Buffer &outbuf)
 // Called when a connection has been closed
 void OscarSocket::OnConnectionClosed()
 {
-	kdDebug(14150) << k_funcinfo <<  "Connection for account '" <<
+	kdDebug(14150) << k_funcinfo << "Connection for account '" <<
 		mAccount->accountId() << "' closed by server" << endl;
 
 	if(size()>0)
@@ -591,15 +597,15 @@ void OscarSocket::OnConnectionClosed()
 // Called when the server aknowledges the connection
 void OscarSocket::OnConnAckReceived(void)
 {
-	kdDebug(14150) << k_funcinfo <<  "Called." << endl;
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	if(mIsICQ)
 	{
-		kdDebug(14150) << k_funcinfo <<  "ICQ-LOGIN, sending ICQ login" << endl;
+		kdDebug(14150) << k_funcinfo << "ICQ-LOGIN, sending ICQ login" << endl;
 		sendLoginICQ();
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo <<  "AIM-LOGIN, Sending flap version to server" << endl;
+		kdDebug(14150) << k_funcinfo << "AIM-LOGIN, Sending flap version to server" << endl;
 		Buffer outbuf;
 		putFlapVer(outbuf);
 		sendBuf(outbuf,0x01);
@@ -613,12 +619,12 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 	outbuf.addFlap(chan);
 
 #ifdef OSCAR_PACKETLOG
-	kdDebug(14150) << "[OSCAR] Output: " << endl;
+	kdDebug(14150) << "Output: " << endl;
 	outbuf.print();
 #endif
 
 	if(state() != QSocket::Connected)
-		kdDebug(14150) << k_funcinfo <<  "Socket is NOT open, can't write to it right now" << endl;
+		kdDebug(14150) << k_funcinfo << "Socket is NOT open, can't write to it right now" << endl;
 	else
 		writeBlock(outbuf.getBuf(),outbuf.getLength());
 	outbuf.clear();
@@ -629,7 +635,7 @@ void OscarSocket::doLogin(const QString &host, int port, const QString &s, const
 {
 	if (isConnected)
 	{
-		kdDebug(14150) << k_funcinfo <<  "We're already connected, aborting!" << endl;
+		kdDebug(14150) << k_funcinfo << "We're already connected, aborting!" << endl;
 		return;
 	}
 
@@ -652,7 +658,7 @@ void OscarSocket::doLogin(const QString &host, int port, const QString &s, const
 // The program does this when a key is received
 void OscarSocket::parsePasswordKey(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo <<  "Got the key" << endl;;
+	kdDebug(14150) << k_funcinfo << "Got the key" << endl;;
 
 	WORD keylen;
 	keylen = inbuf.getWord();
@@ -665,7 +671,7 @@ void OscarSocket::parsePasswordKey(Buffer &inbuf)
 // Called when a cookie is received
 void OscarSocket::connectToBos(void)
 {
-	kdDebug(14150) << k_funcinfo <<  "Cookie received!... preparing to connect to BOS server" << endl;
+	kdDebug(14150) << k_funcinfo << "Cookie received!... preparing to connect to BOS server" << endl;
 
 //	emit connectionChanged(4,"Connecting to server...");
 
@@ -681,7 +687,7 @@ void OscarSocket::connectToBos(void)
 /** called when a conn ack is recieved for the BOS connection */
 void OscarSocket::OnBosConnAckReceived()
 {
-	kdDebug(14150) << "[OSCAR] Bos server ack'ed us!  Sending auth cookie" << endl;
+	kdDebug(14150) << "Bos server ack'ed us!  Sending auth cookie" << endl;
 	sendCookie();
 //	emit connectionChanged(5,"Connected to server, authorizing...");
 }
@@ -689,7 +695,7 @@ void OscarSocket::OnBosConnAckReceived()
 // Sends the authorization cookie to the BOS server
 void OscarSocket::sendCookie(void)
 {
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_COOKIE) Mhh, cookies, let's give one to the server" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_COOKIE) Mhh, cookies, let's give one to the server" << endl;
 	Buffer outbuf;
 	putFlapVer(outbuf);
 	outbuf.addTLV(0x0006,cookielen, mCookie);
@@ -699,14 +705,14 @@ void OscarSocket::sendCookie(void)
 /** Called when the server is ready for normal commands */
 void OscarSocket::OnServerReady(void)
 {
-//	kdDebug(14150) << k_funcinfo <<  "What is this? [mETz] ==================" << endl;
+//	kdDebug(14150) << k_funcinfo << "What is this? [mETz] ==================" << endl;
 //	emit connectionChanged(6,"Authorization successful, getting info from server");
 }
 
 // Gets the rate info from the server
 void OscarSocket::sendRateInfoRequest(void)
 {
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_RATESREQUEST)" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_RATESREQUEST)" << endl;
 	Buffer outbuf;
 	outbuf.addSnac(0x0001,0x0006,0x0000,0x00000006);
 	sendBuf(outbuf,0x02);
@@ -715,11 +721,11 @@ void OscarSocket::sendRateInfoRequest(void)
 /** Parses the rate info response */
 void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo <<  "RECV (SRV_RATES), Parsing Rate Info Response" << endl;
+	kdDebug(14150) << k_funcinfo << "RECV (SRV_RATES), Parsing Rate Info Response" << endl;
 
 	RateClass *rc = NULL;
 	WORD numclasses = inbuf.getWord();
-//	kdDebug(14150) << k_funcinfo <<  "Number of Rate Classes=" << numclasses << endl;
+//	kdDebug(14150) << k_funcinfo << "Number of Rate Classes=" << numclasses << endl;
 
 	for (unsigned int i=0;i<numclasses;i++)
 	{
@@ -741,8 +747,9 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 	}
 
 #ifdef OSCAR_PACKETLOG
-	kdDebug(14150) << k_funcinfo <<  "The buffer is " << inbuf.getLength() << " bytes long after reading the classes." << endl;
-	kdDebug(14150) << k_funcinfo <<  "It looks like this: " << endl;
+	kdDebug(14150) << k_funcinfo << "The buffer is " << inbuf.getLength()
+		<< " bytes long after reading the classes." << endl;
+	kdDebug(14150) << k_funcinfo << "It looks like this: " << endl;
 	inbuf.print();
 #endif
 
@@ -752,10 +759,12 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 		WORD classid = inbuf.getWord();
 		WORD count = inbuf.getWord();
 
-//		kdDebug(14150) << "[OSCAR] Classid: " << classid << ", Count: " << count << endl;
+//		kdDebug(14150) << k_funcinfo << "Classid: " << classid <<
+//			", Count: " << count << endl;
 
 		RateClass *tmp;
-		for (tmp=rateClasses.first();tmp;tmp=rateClasses.next())  //find the class we're talking about
+		// find the class we're talking about
+		for (tmp=rateClasses.first();tmp;tmp=rateClasses.next())
 		{
 			if (tmp->classid == classid)
 			{
@@ -769,29 +778,29 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 			SnacPair *s = new SnacPair;
 			s->group = inbuf.getWord();
 			s->type = inbuf.getWord();
-//			kdDebug(14150)  << k_funcinfo <<  "snacpair; group=" << s->group << ", type=" << s->type << endl;
+//			kdDebug(14150)  << k_funcinfo << "snacpair; group=" << s->group <<
+//				", type=" << s->type << endl;
 			if (rc)
 				rc->members.append(s);
 		}
 	}
 
-/*	kdDebug(14150) << "[OSCAR] The buffer is " << inbuf.getLength() <<
-		" bytes long after reading the rate info" << endl; */
 	if(inbuf.getLength() != 0)
-		kdDebug(14150) << k_funcinfo <<  "Did not parse all Rates successfully!" << endl;
+		kdDebug(14150) << k_funcinfo << "Did not parse all Rates successfully!" << endl;
+
 	sendRateAck();
 }
 
 // Tells the server we accept it's communist rate limits, even though I have no idea what they mean
 void OscarSocket::sendRateAck()
 {
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_ACKRATES)" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_ACKRATES)" << endl;
 	Buffer outbuf;
 //	outbuf.addSnac(0x0001,0x0008,0x0000,0x00000008);
 	outbuf.addSnac(0x0001,0x0008,0x0000,0x00000000);
 	for (RateClass *rc=rateClasses.first();rc;rc=rateClasses.next())
 	{
-//		kdDebug(14150) << "[OSCAR] adding classid " << rc->classid << " to RateAck" << endl;
+//		kdDebug(14150) << "adding classid " << rc->classid << " to RateAck" << endl;
 
 		// FIXME what to do in icq-mode?
 //		if (rc->classid != 0x0015) //0x0015 is ICQ
@@ -805,7 +814,7 @@ void OscarSocket::sendRateAck()
 // Called on connection to bos server
 void OscarSocket::OnBosConnect()
 {
-	kdDebug(14150) << k_funcinfo <<  "Connected to " << peerName() << ", port " << peerPort() << endl;
+	kdDebug(14150) << k_funcinfo << "Connected to " << peerName() << ", port " << peerPort() << endl;
 }
 
 // Sends privacy flags to the server
@@ -822,7 +831,7 @@ void OscarSocket::sendPrivacyFlags(void)
 // requests the current user's info
 void OscarSocket::requestMyUserInfo()
 {
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_REQINFO)" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_REQINFO)" << endl;
 	Buffer outbuf;
 	outbuf.addSnac(0x0001,0x000e,0x0000,0x00000000);
 	sendBuf(outbuf,0x02);
@@ -885,7 +894,7 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 		ip.remove(0,index+1); //get rid of the colon and everything before it
 		bosPort = ip.toInt();
 
-		kdDebug(14150) << "[OSCAR] server is " << bosServer <<
+		kdDebug(14150) << "server is " << bosServer <<
 			", ip.right(index) is " << ip <<
 			", bosPort is " << bosPort << endl;
 
@@ -980,7 +989,7 @@ void OscarSocket::sendClientReady(void)
 // Sends versions so that we get proper rate info
 void OscarSocket::sendVersions(const WORD *families, const int len)
 {
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_FAMILIES)" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_FAMILIES)" << endl;
 	WORD val;
 	Buffer outbuf;
 //	outbuf.addSnac(0x0001,0x0017,0x0000,0x00000017);
@@ -1002,7 +1011,7 @@ void OscarSocket::sendVersions(const WORD *families, const int len)
 		else
 			val=0x0001;
 
-//		kdDebug(14150) << k_funcinfo <<  "family=" << families[i] << ", val=" << val << endl;
+//		kdDebug(14150) << k_funcinfo << "family=" << families[i] << ", val=" << val << endl;
 		outbuf.addWord(val);
 	}
 	sendBuf(outbuf,0x02);
@@ -1035,7 +1044,7 @@ void OscarSocket::sendIdleTime(DWORD time)
 /** requests ssi data from the server */
 void OscarSocket::sendBuddyListRequest(void)
 {
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_CHECKROSTER) Requesting SSI data" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_CHECKROSTER) Requesting SSI data" << endl;
 	Buffer outbuf;
 	outbuf.addSnac(0x0013,0x0005,0x0000,0x00000000);
 	outbuf.addDWord(0x00000000); // FIXME: contactlist timestamp
@@ -1051,7 +1060,7 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 	inbuf.getByte(); //get fmt version
 	blist.revision = inbuf.getWord(); //gets the contactlist length
 
-	kdDebug(14150) << k_funcinfo <<  "RECV (SRV_REPLYROSTER) received contactlist, length=" << blist.revision << endl;
+	kdDebug(14150) << k_funcinfo << "RECV (SRV_REPLYROSTER) received contactlist, length=" << blist.revision << endl;
 
 	while(inbuf.getLength() > 4) //the last 4 bytes are the timestamp
 	{
@@ -1067,9 +1076,9 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 				ssi->tlvlist = inbuf.getBlock(ssi->tlvlength);
 		ssiData.append(ssi);
 
-		kdDebug(14150) << "[OSCAR] Read server-side list-entry. name: " << ssi->name << ", group: " << ssi->gid
-				<< ", id: " << ssi->bid << ", type: " << ssi->type << ", TLV length: " << ssi->tlvlength
-				<< endl;
+		kdDebug(14150) << k_funcinfo << "Read server-side list-entry. name: " <<
+			ssi->name << ", group: " << ssi->gid << ", id: " << ssi->bid <<
+			", type: " << ssi->type << ", TLV length: " << ssi->tlvlength << endl;
 
 		AIMBuddy *bud;
 		switch (ssi->type)
@@ -1081,18 +1090,22 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 				QString groupName = "\"Group not found\"";
 				if (group)
 					groupName = group->name();
-				kdDebug(14150) << "[OSCAR] Adding Buddy " << ssi->name <<  " to group " << ssi->gid
-						<< " (" <<  groupName << ")" << endl;
+
+				kdDebug(14150) << k_funcinfo << "Adding Contact " << ssi->name <<
+					" to group " << ssi->gid << " (" <<  groupName << ")" << endl;
 
 				Buffer tmpBuf(ssi->tlvlist, ssi->tlvlength);
 				QPtrList<TLV> lst = tmpBuf.getTLVList();
+				lst.setAutoDelete(TRUE);
 
-				kdDebug(14150) << "[OSCAR] BUDDY entry contained TLVs:" << endl;
+				kdDebug(14150) << k_funcinfo << "Contact entry contained TLVs:" << endl;
 				TLV *t;
 				for(t=lst.first(); t; t=lst.next())
-					kdDebug(14150) << "TLV(" << t->type << ") with length " << t->length << endl;
+				{
+					kdDebug(14150) << k_funcinfo <<
+						"TLV(" << t->type << "), length=" << t->length << endl;
+				}
 
-				lst.setAutoDelete(TRUE);
 				TLV *nick = findTLV(lst,0x0131);
 				if(nick && nick->length > 0)
 					bud->setAlias(QString::fromLatin1(nick->data));
@@ -1104,14 +1117,17 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 
 			case 0x0001: //group of contacts
 			{
-
 				Buffer tmpBuf(ssi->tlvlist, ssi->tlvlength);
 				QPtrList<TLV> lst = tmpBuf.getTLVList();
-				kdDebug(14150) << k_funcinfo <<  "GROUP entry contained TLVs:" << endl;
+				lst.setAutoDelete(TRUE);
+
+				kdDebug(14150) << k_funcinfo << "Group entry contained TLVs:" << endl;
 				TLV *t;
 				for(t=lst.first(); t; t=lst.next())
-					kdDebug(14150) << "TLV(" << t->type << ") with length " << t->length << endl;
-				lst.setAutoDelete(TRUE);
+				{
+					kdDebug(14150) << k_funcinfo <<
+						"TLV(" << t->type << "), length=" << t->length << endl;
+				}
 
 				if (namelen) //if it's not the master group
 					blist.addGroup(ssi->gid, ssi->name);
@@ -1124,7 +1140,9 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 			case 0x0003: // TODO deny buddy AKA invisible list
 			{
 				bud = new AIMBuddy(ssi->bid, ssi->gid, ssi->name);
-				kdDebug(14150) << "[OSCAR] Adding Buddy " << ssi->name << " to deny list." << endl;
+				kdDebug(14150) << k_funcinfo << "Adding Contact '" << ssi->name <<
+					"' to deny list." << endl;
+
 				blist.addBuddyDeny(bud);
 				emit denyAdded(ssi->name);
 				break;
@@ -1142,7 +1160,7 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 	} // END while(inbuf.getLength() > 4)
 
 	blist.timestamp = inbuf.getDWord();
-	kdDebug(14150) << k_funcinfo <<  "Finished getting buddy list, timestamp=" <<
+	kdDebug(14150) << k_funcinfo << "Finished getting contact list, timestamp=" <<
 		blist.timestamp << endl;
 
 	sendSSIActivate(); // send CLI_ROSTERACK
@@ -1153,19 +1171,17 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 		sendInfo();
 }
 
-/** Requests the user's BOS rights */
 void OscarSocket::requestBOSRights(void)
 {
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_REQBOS) Requesting BOS rights" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_REQBOS) Requesting BOS rights" << endl;
 	Buffer outbuf;
 	outbuf.addSnac(0x0009,0x0002,0x0000,0x00000002);
 	sendBuf(outbuf,0x02);
 }
 
-/** Parses SSI rights data */
 void OscarSocket::parseBOSRights(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo <<  "RECV (SRV_REPLYBOS) " << endl;
+	kdDebug(14150) << k_funcinfo << "RECV (SRV_REPLYBOS) " << endl;
 
 	QPtrList<TLV> ql = inbuf.getTLVList();
 	ql.setAutoDelete(TRUE);
@@ -1175,7 +1191,7 @@ void OscarSocket::parseBOSRights(Buffer &inbuf)
 		maxpermits = (t->data[0] << 8) | t->data[1];
 	if ((t = findTLV(ql,0x0002))) //max denies
 		maxdenies = (t->data[0] << 8) | t->data[1];
-//	kdDebug(14150) << k_funcinfo <<  "maxpermits=" << maxpermits << ", maxdenies=" << maxdenies << endl;
+//	kdDebug(14150) << k_funcinfo << "maxpermits=" << maxpermits << ", maxdenies=" << maxdenies << endl;
 	ql.clear();
 	//sendGroupPermissionMask();
 	//sendPrivacyFlags();
@@ -1185,10 +1201,9 @@ void OscarSocket::parseBOSRights(Buffer &inbuf)
 		sendInfo();
 }
 
-/** Parses the server ready response */
 void OscarSocket::parseServerReady(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo <<  "RECV (SRV_FAMILIES), got list of families" << endl;
+	kdDebug(14150) << k_funcinfo << "RECV (SRV_FAMILIES), got list of families" << endl;
 
 	int famcount; //the number of families received
 	WORD *families = new WORD[inbuf.getLength()];
@@ -1204,12 +1219,12 @@ void OscarSocket::parseServerReady(Buffer &inbuf)
 /** parses server version info */
 void OscarSocket::parseServerVersions(Buffer &/*inbuf*/)
 {
-	kdDebug(14150) << k_funcinfo <<  "RECV (SRV_FAMILIES2), got list of families this server understands" << endl;
+	kdDebug(14150) << k_funcinfo << "RECV (SRV_FAMILIES2), got list of families this server understands" << endl;
 /*
 	int srvFamCount;
 	for (srvFamCount=0; inbuf.getLength(); srvFamCount++)
 	{
-		kdDebug(14150) << k_funcinfo <<  "server family=" << inbuf.getWord() <<
+		kdDebug(14150) << k_funcinfo << "server family=" << inbuf.getWord() <<
 			", server version=" << inbuf.getWord() << endl;
 	}
 */
@@ -1221,7 +1236,7 @@ void OscarSocket::parseServerVersions(Buffer &/*inbuf*/)
 /** Parses Message of the day */
 void OscarSocket::parseMessageOfTheDay(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo <<  "RECV (SRV_MOTD)" << endl;
+	kdDebug(14150) << k_funcinfo << "RECV (SRV_MOTD)" << endl;
 	WORD id = inbuf.getWord();
 	if (id < 4)
 	{
@@ -1234,7 +1249,7 @@ void OscarSocket::parseMessageOfTheDay(Buffer &inbuf)
 // Requests location rights (CLI_REQLOCATION)
 void OscarSocket::requestLocateRights(void)
 {
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_REQLOCATION), Requesting rights for location service" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_REQLOCATION), Requesting rights for location service" << endl;
 	Buffer buf;
 //	buf.addSnac(0x0002,0x0002,0x0000,0x00000002);
 	buf.addSnac(0x0002,0x0002,0x0000,0x00000000);
@@ -1267,7 +1282,7 @@ void OscarSocket::sendGroupPermissionMask(void)
 // adds a request for buddy list rights to the buffer
 void OscarSocket::requestBuddyRights(void)
 {
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_REQBUDDY), Requesting rights for buddy service" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_REQBUDDY), Requesting rights for buddy service" << endl;
 	Buffer outbuf;
 //	outbuf.addSnac(0x0003,0x0002,0x0000,0x00000002);
 	outbuf.addSnac(0x0003,0x0002,0x0000,0x00000000);
@@ -1277,7 +1292,7 @@ void OscarSocket::requestBuddyRights(void)
 // adds a request for msg rights to the buffer
 void OscarSocket::requestMsgRights(void)
 {
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_REQICBM), Requesting rights for ICBM (instant messages)" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_REQICBM), Requesting rights for ICBM (instant messages)" << endl;
 	Buffer outbuf;
 //	outbuf.addSnac(0x0004,0x0004,0x0000,0x00000004);
 	outbuf.addSnac(0x0004,0x0004,0x0000,0x00000000);
@@ -1287,7 +1302,7 @@ void OscarSocket::requestMsgRights(void)
 // Parses the locate rights provided by the server (SRV_REPLYLOCATION)
 void OscarSocket::parseLocateRights(Buffer &/*inbuf*/)
 {
-	kdDebug(14150) << k_funcinfo <<  "RECV (SRV_REPLYLOCATION), TODO: Ignoring location rights" << endl;
+	kdDebug(14150) << k_funcinfo << "RECV (SRV_REPLYLOCATION), TODO: Ignoring location rights" << endl;
 	//we don't care what the locate rights are
 	//and we don't know what they mean
 	//  requestBuddyRights();
@@ -1300,7 +1315,7 @@ void OscarSocket::parseLocateRights(Buffer &/*inbuf*/)
 /** Parses buddy list rights from the server */
 void OscarSocket::parseBuddyRights(Buffer &/*inbuf*/)
 {
-	kdDebug(14150) << k_funcinfo <<  "RECV (SRV_REPLYBUDDY), TODO: Ignoring Buddy Rights" << endl;
+	kdDebug(14150) << k_funcinfo << "RECV (SRV_REPLYBUDDY), TODO: Ignoring Buddy Rights" << endl;
 	// FIXME: write code to parse buddy rights info
 	//requestMsgRights();
 	gotAllRights++;
@@ -1311,7 +1326,7 @@ void OscarSocket::parseBuddyRights(Buffer &/*inbuf*/)
 /** Parses msg rights info from server */
 void OscarSocket::parseMsgRights(Buffer &/*inbuf*/)
 {
-	kdDebug(14150) << k_funcinfo <<  "RECV (SRV_REPLYICBM) TODO: Ignoring ICBM rights" << endl;
+	kdDebug(14150) << k_funcinfo << "RECV (SRV_REPLYICBM) TODO: Ignoring ICBM rights" << endl;
 	// FIXME: write code to parse this
 	//requestBOSRights();
 
@@ -1380,9 +1395,9 @@ void OscarSocket::parseIM(Buffer &inbuf)
 			bool isAutoResponse = false;
 			while(moreTLVs)
 			{
-//				kdDebug(14150) << k_funcinfo <<  "Got a normal IM block from '" << u.sn << "'" << endl;
+//				kdDebug(14150) << k_funcinfo << "Got a normal IM block from '" << u.sn << "'" << endl;
 				type = inbuf.getWord();
-//				kdDebug(14150) << k_funcinfo <<  "type=" << type << endl;
+//				kdDebug(14150) << k_funcinfo << "type=" << type << endl;
 				switch(type)
 				{
 					case 0x0002: //TLV(2), message block
@@ -1394,7 +1409,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 /*
 						if (caps.type==1281)
 						{
-							kdDebug(14150) << k_funcinfo <<  "TODO: parse CAPABILITIES block!" << endl;
+							kdDebug(14150) << k_funcinfo << "TODO: parse CAPABILITIES block!" << endl;
 						}
 */
 						delete [] caps.data;
@@ -1431,7 +1446,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 
 							delete [] messagetext; // getBlock allocates memory, we HAVE to free it again!
 
-							kdDebug(14150) << k_funcinfo <<  "emit gotIM(), contact='" << u.sn <<
+							kdDebug(14150) << k_funcinfo << "emit gotIM(), contact='" << u.sn <<
 								"', message='" << message <<
 								"' encoding=" << encoding << endl;
 							emit gotIM(message, u.sn, isAutoResponse);
@@ -1442,7 +1457,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 								"Cannot find TLV(257), no message inside packet???" << endl;
 						}
 
-//						kdDebug(14150) << k_funcinfo <<  "deleting data from TLV(257)" << endl;
+//						kdDebug(14150) << k_funcinfo << "deleting data from TLV(257)" << endl;
 						delete [] tlvMessage.data; // getTLV uses getBlock() internally! same as aboves delete applies
 
 						if(inbuf.getLength() > 0)
@@ -1564,14 +1579,14 @@ void OscarSocket::parseIM(Buffer &inbuf)
 					//IP address from the perspective of the client
 					if (cur->type == 0x0002)
 					{
-						kdDebug(14150) << "[OSCAR] ClientIP1: " << cur->data[0] << "."
+						kdDebug(14150) << "ClientIP1: " << cur->data[0] << "."
 							<< cur->data[1] << "." << cur->data[2] << "."
 							<< cur->data[3]  << endl;
 					}
 					//Secondary IP address from the perspective of the client
 					else if (cur->type == 0x0003)
 					{
-							kdDebug(14150) << "[OSCAR] ClientIP2: " << cur->data[0] << "."
+							kdDebug(14150) << "ClientIP2: " << cur->data[0] << "."
 								<< cur->data[1] << "." << cur->data[2] << "."
 								<< cur->data[3] << endl;
 					}
@@ -1583,15 +1598,15 @@ void OscarSocket::parseIM(Buffer &inbuf)
 							tmpaddr = (tmpaddr*0x100) + static_cast<unsigned char>(cur->data[i]);
 						}
 						qh.setAddress(tmpaddr);
-						kdDebug(14150) << "[OSCAR] OscarIPRaw: " <<
+						kdDebug(14150) << "OscarIPRaw: " <<
 							cur->data[0] << "." << cur->data[1] << "." <<
 							cur->data[2] << "." << cur->data[3] << endl;
-						kdDebug(14150) << "[OSCAR] OscarIP: " << qh.toString() << endl;
+						kdDebug(14150) << "OscarIP: " << qh.toString() << endl;
 					}
 					else if (cur->type == 0x0005) //Port number
 					{
 						remotePort = (cur->data[0] << 8) | cur->data[1];
-						kdDebug(14150) << k_funcinfo <<  "remotePort=" << remotePort << endl;
+						kdDebug(14150) << k_funcinfo << "remotePort=" << remotePort << endl;
 					}
 					//else if (cur->type == 0x000a)
 					//{
@@ -1599,7 +1614,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 					//Error code
 					else if (cur->type == 0x000b)
 					{
-						kdDebug(14150) << k_funcinfo <<  "ICBM ch 2 error code " <<
+						kdDebug(14150) << k_funcinfo << "ICBM ch 2 error code " <<
 							 ((cur->data[1] << 8) | cur->data[0]) << endl;
 
 						emit protocolError(
@@ -1611,17 +1626,17 @@ void OscarSocket::parseIM(Buffer &inbuf)
 					else if (cur->type == 0x000c)
 					{
 						message = cur->data;
-						kdDebug(14150) << k_funcinfo <<  "Invited to chat " << cur->data << endl;
+						kdDebug(14150) << k_funcinfo << "Invited to chat " << cur->data << endl;
 					}
 					//Character set
 					else if (cur->type == 0x000d)
 					{
-						kdDebug(14150) << k_funcinfo <<  "Using character set " << cur->data << endl;
+						kdDebug(14150) << k_funcinfo << "Using character set " << cur->data << endl;
 					}
 					//Language
 					else if (cur->type == 0x000e)
 					{
-						kdDebug(14150) << k_funcinfo <<  "Using language " << cur->data << endl;
+						kdDebug(14150) << k_funcinfo << "Using language " << cur->data << endl;
 					}
 					//File transfer
 					else if (cur->type == 0x2711)
@@ -1637,14 +1652,14 @@ void OscarSocket::parseIM(Buffer &inbuf)
 						delete [] fname;
 					} // END File transfer
 					else
-						kdDebug(14150) << k_funcinfo <<  "ICBM, unknown TLV type " << cur->type << endl;
+						kdDebug(14150) << k_funcinfo << "ICBM, unknown TLV type " << cur->type << endl;
 
 					delete [] cur->data;
 				} // END for (tlvlist...)
 			}
 			else
 			{
-				kdDebug(14150) << k_funcinfo <<  "IM: unknown TLV type " << type << endl;
+				kdDebug(14150) << k_funcinfo << "IM: unknown TLV type " << type << endl;
 			}
 
 			// Set the appropriate server socket
@@ -1652,7 +1667,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 
 			if (msgtype == 0x0000) // initiate
 			{
-				kdDebug(14150) << k_funcinfo <<  "adding " << u.sn << " to pending list." << endl;
+				kdDebug(14150) << k_funcinfo << "adding " << u.sn << " to pending list." << endl;
 				if ( capflag & AIM_CAPS_IMIMAGE ) //if it is a direct IM rendezvous
 				{
 					sockToUse->addPendingConnection(u.sn, cook, 0L, qh.toString(), 4443, DirectInfo::Outgoing);
@@ -1689,7 +1704,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 				char *msgtxt = inbuf.getBlock(msgLen);
 				message = QString::fromLocal8Bit(msgtxt);
 				delete [] msgtxt; // getBlock allocates memory, we HAVE to free it again!
-				kdDebug(14150) << k_funcinfo <<  "emit gotIM(), contact=" <<
+				kdDebug(14150) << k_funcinfo << "emit gotIM(), contact=" <<
 					u.sn << " == " << uin << "?, message='" << message << "'" << endl;
 				emit gotIM(message, u.sn, false);
 			}
@@ -1697,7 +1712,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 		} // END MSGFORMAT_SERVER
 
 		default: // unknown channel
-			kdDebug(14150) << "[OSCAR] Error: unknown ICBM channel " << channel << endl;
+			kdDebug(14150) << "Error: unknown ICBM channel " << channel << endl;
 	} // END switch(channel)
 }
 
@@ -1715,7 +1730,7 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 	if(inbuf.getLength() > 0)
 	{
 		BYTE len = inbuf.getByte();
-//		kdDebug(14150) << "[OSCAR] Finished getting user info" << endl;
+//		kdDebug(14150) << "Finished getting user info" << endl;
 
 		// First comes their screen name
 		char *cb = inbuf.getBlock(len);
@@ -1728,7 +1743,7 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 		//the number of TLV's that follow
 		WORD tlvlen = inbuf.getWord();
 
-/*		kdDebug(14150) << k_funcinfo <<  "Screenname '" << u.sn << "', length " <<
+/*		kdDebug(14150) << k_funcinfo << "Screenname '" << u.sn << "', length " <<
 			(int)len << ", evil " << u.evil
 			<< ", number of TLVs following " << tlvlen << endl;*/
 
@@ -1766,7 +1781,7 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 				{
 					Buffer tmpBuf(t.data,t.length);
 					DWORD status = tmpBuf.getDWord();
-//					kdDebug(14150) << k_funcinfo <<  "TLV(6) [STATUS] status=" << status << endl;
+//					kdDebug(14150) << k_funcinfo << "TLV(6) [STATUS] status=" << status << endl;
 /*
 					if (status & 0x00000100)
 						kdDebug(14150) << "INVISIBLE" << endl;
@@ -1802,7 +1817,7 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 						cap[6], cap[7], cap[8], cap[9],
 						cap[10], cap[11], cap[12], cap[13],
 						cap[14], cap[15]);
-					kdDebug(14150) << k_funcinfo <<  "TLV(13) [CAPABILITIES], " << capstring << endl;*/
+					kdDebug(14150) << k_funcinfo << "TLV(13) [CAPABILITIES], " << capstring << endl;*/
 					break;
 				}
 				case 0x000f: //session length (in seconds)
@@ -1820,12 +1835,12 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 				case 0x001e: // unknown, empty
 					break;
 				default: //unknown info type
-					kdDebug(14150) << k_funcinfo <<  "Unknown TLV(" << t.type << ")" << endl;
+					kdDebug(14150) << k_funcinfo << "Unknown TLV(" << t.type << ")" << endl;
 			}; // END switch()
 			delete [] t.data;
 		}
 /*
-		kdDebug(14150) << k_funcinfo <<  "userclass: " << u.userclass <<
+		kdDebug(14150) << k_funcinfo << "userclass: " << u.userclass <<
 			", membersince: " << u.membersince <<
 			", onlinesince: " << u.onlinesince <<
 			", idletime: " << u.idletime << endl;
@@ -1833,7 +1848,7 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo <<  "ZERO sized userinfo!" << endl;
+		kdDebug(14150) << k_funcinfo << "ZERO sized userinfo!" << endl;
 		// Buffer had length of zero for some reason, so
 		u.userclass = -1;
 		u.membersince = 1;
@@ -1854,12 +1869,12 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 	OscarConnection *dc = mDirectIMMgr->findConnection(dest);
 	if (dc)
 	{
-		kdDebug(14150) << k_funcinfo <<  "Sending direct IM " << message << " to " << dest << endl;
+		kdDebug(14150) << k_funcinfo << "Sending direct IM " << message << " to " << dest << endl;
 		dc->sendIM(message,isAuto);
 		return;
 	}
 
-	kdDebug(14150) << k_funcinfo <<  "Sending '" << message << "' to '" << dest << "'" << endl;
+	kdDebug(14150) << k_funcinfo << "Sending '" << message << "' to '" << dest << "'" << endl;
 //	static const char deffeatures[] = { 0x01, 0x01, 0x01, 0x02 };
 	static const char deffeatures[] = { 0x01 };
 
@@ -1913,7 +1928,7 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 
 void OscarSocket::sendSSIActivate(void)
 {
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_ROSTERACK), sending SSI Activate" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_ROSTERACK), sending SSI Activate" << endl;
 	Buffer outbuf;
 	outbuf.addSnac(0x0013,0x0007,0x0000,0x00000000);
 	sendBuf(outbuf,0x02);
@@ -1981,24 +1996,24 @@ void OscarSocket::parseUserProfile(Buffer &inbuf)
 		switch(cur->type)
 		{
 			case 0x0001: //profile text encoding
-				kdDebug(14150) << k_funcinfo <<  "text encoding is: " << cur->data << endl;
+				kdDebug(14150) << k_funcinfo << "text encoding is: " << cur->data << endl;
 				break;
 			case 0x0002: //profile text
-				kdDebug(14150) << k_funcinfo <<  "The profile is: " << cur->data << endl;
+				kdDebug(14150) << k_funcinfo << "The profile is: " << cur->data << endl;
 				prof += cur->data;
 				break;
 			case 0x0003: //away message encoding
-				kdDebug(14150) << k_funcinfo <<  "Away message encoding is: " << cur->data << endl;
+				kdDebug(14150) << k_funcinfo << "Away message encoding is: " << cur->data << endl;
 				break;
 			case 0x0004: //away message
-				kdDebug(14150) << k_funcinfo <<  "Away message is: " << cur->data << endl;
+				kdDebug(14150) << k_funcinfo << "Away message is: " << cur->data << endl;
 				away += cur->data;
 				break;
 			case 0x0005: //capabilities
-				kdDebug(14150) << k_funcinfo <<  "Got capabilities" << endl;
+				kdDebug(14150) << k_funcinfo << "Got capabilities" << endl;
 				break;
 			default: //unknown
-				kdDebug(14150) << k_funcinfo <<  "Unknown user info type " << cur->type << endl;
+				kdDebug(14150) << k_funcinfo << "Unknown user info type " << cur->type << endl;
 					break;
 		};
 //		delete [] cur->data; // should be taken care of by QPtrList
@@ -2041,7 +2056,7 @@ void OscarSocket::sendChangePassword(const QString &newpw, const QString &oldpw)
 {
 	// FIXME: This does not work :-(
 
-	kdDebug(14150) << k_funcinfo <<  "Changing password from " << oldpw << " to " << newpw << endl;
+	kdDebug(14150) << k_funcinfo << "Changing password from " << oldpw << " to " << newpw << endl;
 	Buffer outbuf;
 	outbuf.addSnac(0x0007,0x0004,0x0000,0x00000000);
 	outbuf.addTLV(0x0002,newpw.length(),newpw.latin1());
@@ -2057,7 +2072,7 @@ void OscarSocket::sendChatJoin(const QString &/*name*/, const int /*exchange*/)
 	outbuf.addWord(0x000d);
 	//outbuf.addChatTLV(0x0001,exchange,name,0x0000); //instance is 0x0001 here for a test
 	sendBuf(outbuf,0x02);
-	kdDebug(14150) << "[OSCAR] Send chat join thingie (That's a technical term)" << endl;
+	kdDebug(14150) << "Send chat join thingie (That's a technical term)" << endl;
 }
 
 /** Handles a redirect */
@@ -2065,7 +2080,7 @@ void OscarSocket::parseRedirect(Buffer &inbuf)
 {
 	// FIXME: this function does not work, but it is never
 	// called unless you want to connect to the advertisements server
-	kdDebug(14150) << "[OSCAR] Parsing redirect" << endl;
+	kdDebug(14150) << "Parsing redirect" << endl;
 
 	OscarConnection *servsock = new OscarConnection(getSN(),"Redirect",Redirect,QByteArray(8));
 
@@ -2108,13 +2123,13 @@ void OscarSocket::parseRedirect(Buffer &inbuf)
 					servsock->mHost = host;
 					servsock->mPort = peerPort();
 				}
-				kdDebug(14150) << "[OSCAR] Set host to " << servsock->mHost <<
+				kdDebug(14150) << "Set host to " << servsock->mHost <<
 					", port to " << servsock->mPort << endl;*/
 				break;
 			}
 
 			default: //unknown
-				kdDebug(14150) << "[OSCAR] Unknown tlv type in parseredirect: " << tmp->type << endl;
+				kdDebug(14150) << "Unknown tlv type in parseredirect: " << tmp->type << endl;
 				break;
 		}
 		delete [] tmp->data;
@@ -2122,7 +2137,7 @@ void OscarSocket::parseRedirect(Buffer &inbuf)
 	tl.clear();
 	//sockets.append(servsock);
 	delete servsock;
-	kdDebug(14150) << "[OSCAR] Socket added to connection list!" << endl;
+	kdDebug(14150) << "Socket added to connection list!" << endl;
 }
 
 /** Request a direct IM session with someone
@@ -2200,7 +2215,7 @@ void OscarSocket::doLogoff()
 	{
 		if(mIsICQ)
 			stopKeepalive();
-		kdDebug(14150) << k_funcinfo <<  "Sending sign off request" << endl;
+		kdDebug(14150) << k_funcinfo << "Sending sign off request" << endl;
 		Buffer outbuf;
 		sendBuf(outbuf,0x04);
 	}
@@ -2275,13 +2290,13 @@ void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
 /*
 void OscarSocket::sendRenameBuddy(const QString &budName, const QString &budGroup, const QString &newAlias)
 {
-	kdDebug(14150) << k_funcinfo <<  "Sending rename buddy..." << endl;
+	kdDebug(14150) << k_funcinfo << "Sending rename buddy..." << endl;
 	SSI *renameitem = ssiData.findBuddy(budName,budGroup);
 	ssiData.print();
 
 	if (!renameitem)
 	{
-		kdDebug(14150) << k_funcinfo <<  "Item with name " << budName << " and group "
+		kdDebug(14150) << k_funcinfo << "Item with name " << budName << " and group "
 			<< budGroup << "not found" << endl;
 
 		emit protocolError(
@@ -2293,11 +2308,11 @@ void OscarSocket::sendRenameBuddy(const QString &budName, const QString &budGrou
 	Buffer buf(ssi->tlvlist,ssi->tlvlength);
 	QPtrList<TLV> lst = buf.getTLVList();
 
-	kdDebug(14150) << k_funcinfo <<  "contained TLVs:" << endl;
+	kdDebug(14150) << k_funcinfo << "contained TLVs:" << endl;
 	TLV *t;
 	for(t=lst.first(); t; t=lst.next())
 	{
-		kdDebug(14150) << k_funcinfo <<  "TLV(" << t->type << ") with length " << t->length << endl;
+		kdDebug(14150) << k_funcinfo << "TLV(" << t->type << ") with length " << t->length << endl;
 	}
 	lst.setAutoDelete(TRUE);
 	TLV *nick= findTLV(lst,0x0131);
@@ -2305,7 +2320,7 @@ void OscarSocket::sendRenameBuddy(const QString &budName, const QString &budGrou
 	{
 
     //ATÜ
-	kdDebug(14150) << k_funcinfo <<  "Renaming " << renameitem->name << ", gid " << renameitem->gid
+	kdDebug(14150) << k_funcinfo << "Renaming " << renameitem->name << ", gid " << renameitem->gid
 			<< ", bid " << renameitem->bid << ", type " << renameitem->type
 			<< ", datalength " << renameitem->tlvlength << endl;
 
@@ -2313,7 +2328,7 @@ void OscarSocket::sendRenameBuddy(const QString &budName, const QString &budGrou
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo <<  "FIXME: cannot rename a buddy without an alias set on the server!" << endl;
+		kdDebug(14150) << k_funcinfo << "FIXME: cannot rename a buddy without an alias set on the server!" << endl;
 	}
 }
 */
@@ -2321,16 +2336,16 @@ void OscarSocket::sendRenameBuddy(const QString &budName, const QString &budGrou
 // Adds a group to the server side buddy list
 void OscarSocket::sendAddGroup(const QString &name)
 {
-	kdDebug(14150) << k_funcinfo <<  "Called." << endl;
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
 
 	SSI *newitem = ssiData.addGroup(name);
 	if(!newitem)
 	{
-		kdDebug(14150) << k_funcinfo <<  "Null SSI returned from addGroup(), group must already exist!" << endl;
+		kdDebug(14150) << k_funcinfo << "Null SSI returned from addGroup(), group must already exist!" << endl;
 		return;
 	}
 
-	kdDebug(14150) << k_funcinfo <<  "Adding group, name='" << name << "' gid=" << newitem->gid << endl;
+	kdDebug(14150) << k_funcinfo << "Adding group, name='" << name << "' gid=" << newitem->gid << endl;
 	sendSSIAddModDel(newitem,0x0008);
 }
 
@@ -2369,7 +2384,7 @@ void OscarSocket::sendDelGroup(const QString &groupName)
 	ssiData.print();
 	if (delGroup == 0L)
 	{ // There was an error finding the group
-		kdDebug(14150) << "[OSCAR] Group with name " << groupName
+		kdDebug(14150) << "Group with name " << groupName
 					   << " not found" << endl;
 		emit protocolError(
 			i18n("Group %1 was not found on the server's " \
@@ -2429,25 +2444,25 @@ void OscarSocket::parseSSIAck(Buffer &/*inbuf*/)
 // Deletes a buddy from the server side contact list
 void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
 {
-	kdDebug(14150) << k_funcinfo <<  "Sending del buddy" << endl;
+	kdDebug(14150) << k_funcinfo << "Sending del buddy" << endl;
 
 	SSI *delitem = ssiData.findBuddy(budName,budGroup);
 	ssiData.print();
 	if (!delitem)
 	{
-		kdDebug(14150) << "[OSCAR] Item with name " << budName << " and group "
+		kdDebug(14150) << "Item with name " << budName << " and group "
 			<< budGroup << "not found" << endl;
 		return;
 	}
 
-	kdDebug(14150) << k_funcinfo <<  "Deleting " << delitem->name << ", gid " << delitem->gid
+	kdDebug(14150) << k_funcinfo << "Deleting " << delitem->name << ", gid " << delitem->gid
 			<< ", bid " << delitem->bid << ", type " << delitem->type
 			<< ", datalength " << delitem->tlvlength << endl;
 
 	sendSSIAddModDel(delitem,0x000a);
 
 	if (!ssiData.remove(delitem))
-		kdDebug(14150) << k_funcinfo <<  "delitem was not found in the SSI list" << endl;
+		kdDebug(14150) << k_funcinfo << "delitem was not found in the SSI list" << endl;
 }
 
 /** Parses a warning notification */
@@ -2469,7 +2484,7 @@ void OscarSocket::parseError(Buffer &inbuf)
 {
 	QString msg;
 	WORD reason = inbuf.getWord();
-	kdDebug(14150) << k_funcinfo <<  "Got an error: " << QTextStream::hex << reason << endl;
+	kdDebug(14150) << k_funcinfo << "Got an error: " << QTextStream::hex << reason << endl;
 
 	if (reason < msgerrreasonlen)
 		msg = i18n("Your message did not get sent: %1").arg(msgerrreason[reason]);
@@ -2573,7 +2588,7 @@ void OscarSocket::sendRendezvous(const QString &sn, WORD type, DWORD rendezvousT
 		}
 	}
 
-	kdDebug(14150) << "[OSCAR] Sending direct IM, type " << type << " from " << sockToUse->address().toString() << ", port " << sockToUse->port() << endl;
+	kdDebug(14150) << "Sending direct IM, type " << type << " from " << sockToUse->address().toString() << ", port " << sockToUse->port() << endl;
 	sendBuf(outbuf,0x02);
 }
 
@@ -2646,7 +2661,7 @@ void OscarSocket::parseMissedMessage(Buffer &inbuf)
 /** Sends a 0x0013,0x0002 (requests SSI rights information) */
 void OscarSocket::sendSSIRightsRequest()
 {
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_REQLISTS)" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_REQLISTS)" << endl;
 	Buffer outbuf;
 	outbuf.addSnac(0x0013,0x0002,0x0000,0x00000002);
 	sendBuf(outbuf,0x02);
@@ -2664,7 +2679,7 @@ void OscarSocket::sendSSIRequest(void)
 /** Parses a 0x0013,0x0003 (SSI rights) from the server */
 void OscarSocket::parseSSIRights(Buffer &/*inbuf*/)
 {
-	kdDebug(14150) << k_funcinfo <<  "RECV (SRV_REPLYLISTS)" << endl;
+	kdDebug(14150) << k_funcinfo << "RECV (SRV_REPLYLISTS)" << endl;
 	//List of TLV's
 		//TLV of type 4 contains a bunch of words, representing maxmimums
 		// word 0 of TLV 4 data: maxbuddies
@@ -2680,7 +2695,7 @@ void OscarSocket::parseSSIRights(Buffer &/*inbuf*/)
 // Sends the server lots of information about the currently logged in user
 void OscarSocket::sendInfo(void)
 {
-	kdDebug(14150) << k_funcinfo <<  "Called." << endl;
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	gotAllRights=0;
 
 	if(!mIsICQ)
@@ -2716,7 +2731,7 @@ void OscarSocket::sendInfo(void)
 /** Sends the user's profile to the server */
 void OscarSocket::sendMyProfile(void)
 {
-	kdDebug(14150) << k_funcinfo <<  "Called." << endl;
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
 
 	static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
 	Buffer outbuf;
@@ -2763,12 +2778,12 @@ void OscarSocket::setMyProfile(const QString &profile)
 // Blocks user with screenname 'sname'
 void OscarSocket::sendBlock(const QString &sname)
 {
-	kdDebug(14150) << "[OSCAR] Sending block buddy" << endl;
+	kdDebug(14150) << "Sending block buddy" << endl;
 	SSI *newitem = ssiData.addBlock(sname);
 	if (!newitem)
 		return;
 
-	kdDebug(14150) << "[OSCAR] Adding DENY:" << newitem->name << ", gid " << newitem->gid
+	kdDebug(14150) << "Adding DENY:" << newitem->name << ", gid " << newitem->gid
 		<< ", bid " << newitem->bid << ", type " << newitem->type
 		<< ", datalength " << newitem->tlvlength << endl;
 	sendSSIAddModDel(newitem,0x0008);
@@ -2780,16 +2795,16 @@ void OscarSocket::sendBlock(const QString &sname)
 // Removes the block on user sname
 void OscarSocket::sendRemoveBlock(const QString &sname)
 {
-	kdDebug(14150) << "[OSCAR] Removing block on " << sname << endl;
+	kdDebug(14150) << "Removing block on " << sname << endl;
 	SSI *delitem = ssiData.findDeny(sname);
 
 	if (!delitem)
 	{
-		kdDebug(14150) << "[OSCAR] Item with name " << sname << "not found" << endl;
+		kdDebug(14150) << "Item with name " << sname << "not found" << endl;
 		return;
 	}
 
-	kdDebug(14150) << "[OSCAR] Deleting " << delitem->name << ", gid " << delitem->gid
+	kdDebug(14150) << "Deleting " << delitem->name << ", gid " << delitem->gid
 		<< ", bid " << delitem->bid << ", type " << delitem->type
 		<< ", datalength " << delitem->tlvlength << endl;
 
@@ -2819,7 +2834,7 @@ FLAP OscarSocket::getFLAP(void)
 		//get the channel ID
 		if ( (chan = getch()) == -1)
 		{
-			kdDebug(14150) << "[OSCAR] Error reading channel ID: nothing to be read" << endl;
+			kdDebug(14150) << "Error reading channel ID: nothing to be read" << endl;
 			fl.error = true;
 		}
 		else
@@ -2830,12 +2845,12 @@ FLAP OscarSocket::getFLAP(void)
 		//get the sequence number
 		if((theword = getch()) == -1)
 		{
-			kdDebug(14150) << "[OSCAR] Error reading sequence number: nothing to be read" << endl;;
+			kdDebug(14150) << "Error reading sequence number: nothing to be read" << endl;;
 			fl.error = true;
 		}
 		else if((theword2 = getch()) == -1)
 		{
-			kdDebug(14150) << "[OSCAR] Error reading data field length: nothing to be read" << endl;
+			kdDebug(14150) << "Error reading data field length: nothing to be read" << endl;
 			fl.error = true;
 		}
 		else
@@ -2847,12 +2862,12 @@ FLAP OscarSocket::getFLAP(void)
 		//get the data field length
 		if ((theword = getch()) == -1)
 		{
-			kdDebug(14150) << "[OSCAR] Error reading sequence number: nothing to be read" << endl;
+			kdDebug(14150) << "Error reading sequence number: nothing to be read" << endl;
 			fl.error = true;
 		}
 		else if((theword2 = getch()) == -1)
 		{
-			kdDebug(14150) << "[OSCAR] Error reading data field length: nothing to be read" << endl;
+			kdDebug(14150) << "Error reading data field length: nothing to be read" << endl;
 			fl.error = true;
 		}
 		else
@@ -2862,7 +2877,7 @@ FLAP OscarSocket::getFLAP(void)
 	}
 	else
 	{
-		kdDebug(14150) << "[OSCAR] Error reading FLAP... start byte is " << start << endl;
+		kdDebug(14150) << "Error reading FLAP... start byte is " << start << endl;
 		fl.error = true;
 		putch(start);
 	}
@@ -2873,7 +2888,7 @@ FLAP OscarSocket::getFLAP(void)
 // Called when a direct IM is received
 void OscarSocket::OnDirectIMReceived(QString message, QString sender, bool isAuto)
 {
-	kdDebug(14150) << k_funcinfo <<  "Called." << endl;
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	//for now, let's just emit a gotIM as though it came from the server
 	emit gotIM(message,sender,isAuto);
 }
@@ -2907,7 +2922,7 @@ void OscarSocket::OnDirectIMReady(QString name)
 // Initiate a transfer of the given file to the given sn
 void OscarSocket::sendFileSendRequest(const QString &sn, const KFileItem &finfo)
 {
-	kdDebug(14150) << k_funcinfo <<  "Called." << endl;
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	sendRendezvous(sn, 0x0000, AIM_CAPS_SENDFILE, &finfo);
 }
 
@@ -2931,7 +2946,7 @@ void OscarSocket::sendFileSendDeny(const QString &sn)
 void OscarSocket::OnFileTransferBegun(OscarConnection *con, const QString& file,
 	const unsigned long size, const QString &recipient)
 {
-	kdDebug(14150) << k_funcinfo <<  "emitting transferBegun()" << endl;
+	kdDebug(14150) << k_funcinfo << "emitting transferBegun()" << endl;
 	emit transferBegun(con, file, size, recipient);
 }
 

@@ -118,6 +118,9 @@ KActionMenu* ICQAccount::actionMenu()
 	mActionMenu->insert(mActionOccupied);
 	mActionMenu->insert(mActionOffline);
 	mActionMenu->popupMenu()->insertSeparator();
+	mActionMenu->insert(
+		KopeteStdAction::contactInfo(myself(), SLOT(slotUserInfo()),
+			mActionMenu, "ICQAccount::mActionEditInfo"));
 	mActionMenu->insert(mActionFastAddContact); // DEBUG ACTION
 
 	return mActionMenu;

@@ -40,18 +40,18 @@ static const char ICQ_OTHER[] = { 0x00, 0x00, 0x00, 0x55 };
  * @encoded: buffer to put encoded password
  *
  * This takes a const pointer to a (null terminated) string
- * containing the unencoded password.  It also gets passed
+ * containing the unencoded password. It also gets passed
  * an already allocated buffer to store the encoded password.
  * This buffer should be the exact length of the password without
- * the null.  The encoded password buffer /is not %NULL terminated/.
+ * the null. The encoded password buffer /is not %NULL terminated/.
  */
 QCString OscarSocket::encodePasswordXOR()
 {
 	const char *password = pass.latin1();
 	QCString encoded;
 
-	kdDebug(14150) << k_funcinfo <<  endl;
-//	kdDebug(14150) << "  unencoded pw='" << password << "'" << endl;
+	kdDebug(14150) << k_funcinfo << endl;
+//	kdDebug(14150) << " unencoded pw='" << password << "'" << endl;
 	// v2.1 table, also works for ICQ
 
 	unsigned char encoding_table[] =
@@ -68,13 +68,13 @@ QCString OscarSocket::encodePasswordXOR()
 //		kdDebug(14150) << "adding char '" << (char) (password[i] ^ encoding_table[i]) << "'" << endl;
 	}
 
-//	kdDebug(14150) << "  encoded pw='" << encoded << "', length=" << encoded.length() << endl;
+//	kdDebug(14150) << " encoded pw='" << encoded << "', length=" << encoded.length() << endl;
 	return encoded;
 }
 
 void OscarSocket::sendLoginICQ()
 {
-	kdDebug(14150) << k_funcinfo <<  "Sending ICQ login info... (CLI_COOKIE)" << endl;;
+	kdDebug(14150) << k_funcinfo << "Sending ICQ login info... (CLI_COOKIE)" << endl;;
 
 	Buffer outbuf;
 
@@ -104,18 +104,18 @@ void OscarSocket::sendLoginICQ()
 // Parses all SNAC(15,3) Packets, these are only for ICQ!
 void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 {
-//	kdDebug(14150) << k_funcinfo <<  "START" << endl;
+//	kdDebug(14150) << k_funcinfo << "START" << endl;
 
 	QPtrList<TLV> tl = inbuf.getTLVList();
 	tl.setAutoDelete(true);
 	TLV *tlv = findTLV(tl,0x0001);
 	if (!tlv)
-   {
+	{
 		kdDebug(140150) << k_funcinfo <<  "Bad SNAC(21,3), no TLV(1) found!" << endl;
 		return;
 	}
 
-//	kdDebug(14150) << k_funcinfo <<  "Got SNAC(21,3) containing TLV(1) of length=" << tlv->length << endl;
+//	kdDebug(14150) << k_funcinfo << "Got SNAC(21,3) containing TLV(1) of length=" << tlv->length << endl;
 
 	Buffer fromicqsrv(tlv->data, tlv->length);
 
@@ -128,14 +128,14 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 	WORD subcmd = fromicqsrv.getLEWord();
 	WORD sequence = fromicqsrv.getLEWord();
 
-	kdDebug(14150) << k_funcinfo <<  "commandlength=" << commandlength <<
+	kdDebug(14150) << k_funcinfo << "commandlength=" << commandlength <<
 		", ourUIN=" << ourUIN << ", subcmd=" << subcmd << ", sequence=" << sequence << endl;
 
 	switch(subcmd)
 	{
 		case 0x0041: //SRV_OFFLINEMSG
 		{
-//			kdDebug(14150) << k_funcinfo <<  "RECV (SRV_OFFLINEMSG), got an offline message" << endl;
+//			kdDebug(14150) << k_funcinfo << "RECV (SRV_OFFLINEMSG), got an offline message" << endl;
 
 			DWORD UIN = fromicqsrv.getLEDWord();
 			/*WORD year =*/ fromicqsrv.getLEWord();
@@ -149,7 +149,7 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 			QString message = msg;
 			delete [] msg;
 
-			kdDebug(14150) << k_funcinfo <<   "Offline message from '" << UIN <<
+			kdDebug(14150) << k_funcinfo << "Offline message from '" << UIN <<
 				"' type=" << (type & 0xFF) << ", message='" << message << "'" << endl;
 
 			emit gotIM(message, QString::number(UIN), false);
@@ -165,19 +165,20 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 		case 0x07da: //SRV_META
 		{
-			kdDebug(14150) << "RECV (SRV_META), got meta result" << endl;
 			WORD type = fromicqsrv.getLEWord();
-			kdDebug(14150) << "type=" << type << endl;
 			BYTE result = fromicqsrv.getLEByte();
-			kdDebug(14150) << "result=" << (int)result << endl;
+
+			kdDebug(14150) << k_funcinfo << "RECV (SRV_META), subtype=" << type <<
+				 ", result=" << result << endl;
 
 			switch(type)
 			{
 				case 0x01a4: // SRV_METAFOUND
 				case 0x01ae: // SRV_METALAST
 				{
-					kdDebug(14150) << "RECV (SRV_METAFOUND or SRV_METALAST)" << endl;
+					kdDebug(14150) << k_funcinfo << "RECV (SRV_METAFOUND or SRV_METALAST)" << endl;
 
+					char *tmptxt;
 					ICQSearchResult searchResult;
 					// codes taken from libicq, some kind of failure,
 					// have to find out what they are for
@@ -190,56 +191,34 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 					// DATALEN; The length of the following data.
 					/*WORD datalen = */fromicqsrv.getLEWord();
-					// UIN; The user's UIN
 					searchResult.uin = fromicqsrv.getLEDWord();
 
-					//QString::fromLocal8Bit() // maybe use this instead of fromLatin1()
+					tmptxt=fromicqsrv.getLELNTS();
+					searchResult.nickName = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
 
-					WORD tmplen;
-					char *tmptxt;
+					tmptxt=fromicqsrv.getLELNTS();
+					searchResult.firstName = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
 
-					tmplen = fromicqsrv.getLEWord();
-					if(tmplen>0)
-					{
-						tmptxt=fromicqsrv.getLEBlock(tmplen);
-						searchResult.nickName = QString::fromLatin1(tmptxt);
-						delete [] tmptxt;
-					}
+					tmptxt=fromicqsrv.getLELNTS();
+					searchResult.lastName = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
 
-					tmplen = fromicqsrv.getLEWord();
-					if(tmplen>0)
-					{
-						tmptxt=fromicqsrv.getLEBlock(tmplen);
-						searchResult.firstName = QString::fromLatin1(tmptxt);
-						delete [] tmptxt;
-					}
+					tmptxt=fromicqsrv.getLELNTS();
+					searchResult.eMail = QString::fromLocal8Bit(tmptxt);
+					delete [] tmptxt;
 
-					tmplen = fromicqsrv.getLEWord();
-					if(tmplen>0)
-					{
-						tmptxt=fromicqsrv.getLEBlock(tmplen);
-						searchResult.lastName = QString::fromLatin1(tmptxt);
-						delete [] tmptxt;
-					}
-
-					tmplen = fromicqsrv.getLEWord();
-					if(tmplen>0)
-					{
-						tmptxt=fromicqsrv.getLEBlock(tmplen);
-						searchResult.eMail = QString::fromLatin1(tmptxt);
-						delete [] tmptxt;
-					}
-
-					//FLAGS; Auth flag.
-					// 1 = anyone can add to list, 0 = authorization required.
+					// FLAGS; 1 = anyone can add me to list, 0 = auth required.
 					BYTE flags = fromicqsrv.getLEByte();
 					searchResult.needAuth = (flags==0x00);
 
-					// STATUS
-					// 0 = Offline, 1 = Online, 2 = not webaware.
+					// STATUS; 0 = Offline, 1 = Online, 2 = not webaware.
 					searchResult.status = fromicqsrv.getLEWord();
 
-					if (type==0x01ae) // said to be the last searchresult, unfortunately this is wrong
+					// said to be the last searchresult
+					// unfortunately I still get some results afterwards
+					if (type==0x01ae)
 					{
 						// MISSED
 						// The number of users not returned that matched this search.
@@ -261,40 +240,30 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 						emit gotSearchResult(searchResult,-1);
 					}
 					break;
-				} // END SRV_METAFOUND  SRV_METALAST
+				} // END SRV_METAFOUND/SRV_METALAST
 
-				case 0x019a: // SRV_METAINFO410  seems to be unused
+				case 0x019a: // SRV_METAINFO410 seems to be unused
 				{
-					kdDebug(14150) << "RECV (SRV_METAINFO410) !!!" << endl;
+					kdDebug(14150) << k_funcinfo << "RECV (SRV_METAINFO410) !!!" << endl;
 					/*
-					WORD tmplen;
 					char *tmptxt;
 					ICQInfoResult res;
 
 					fromicqsrv.getLEWord(); // datalen
 					res.uin = fromicqsrv.getLEDWord();
 
-					tmplen = fromicqsrv.getLEWord();
-					if(tmplen>0)
-					{
-						tmptxt=fromicqsrv.getLEBlock(tmplen);
-						res.nickName = QString::fromLatin1(tmptxt);
-						delete [] tmptxt;
-					}
-					tmplen = fromicqsrv.getLEWord();
-					if(tmplen>0)
-					{
-						tmptxt=fromicqsrv.getLEBlock(tmplen);
-						res.firstName = QString::fromLatin1(tmptxt);
-						delete [] tmptxt;
-					}
-					tmplen = fromicqsrv.getLEWord();
-					if(tmplen>0)
-					{
-						tmptxt=fromicqsrv.getLEBlock(tmplen);
-						res.lastName = QString::fromLatin1(tmptxt);
-						delete [] tmptxt;
-					}
+					tmptxt=fromicqsrv.getLELNTS();
+					res.nickName = QString::fromLatin1(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt=fromicqsrv.getLELNTS();
+					res.firstName = QString::fromLatin1(tmptxt);
+					delete [] tmptxt;
+
+					tmptxt=fromicqsrv.getLELNTS();
+					res.lastName = QString::fromLatin1(tmptxt);
+					delete [] tmptxt;
+
 					kdDebug(14150) << k_funcinfo << "emitting gotICQUserInfo()" << endl;
 					emit gotICQUserInfo(sequence, res);
 					*/
@@ -304,7 +273,7 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 				case 200: // SRV_METAGENERAL
 				{
-					kdDebug(14150) << "RECV (SRV_METAGENERAL), parsing it..." << endl;
+					kdDebug(14150) << k_funcinfo << "RECV (SRV_METAGENERAL)" << endl;
 					char *tmptxt;
 					ICQGeneralUserInfo res;
 
@@ -354,17 +323,19 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 					res.countryCode = fromicqsrv.getLEWord();
 					res.timezoneCode = fromicqsrv.getLEByte(); // UTC+(tzcode * 30min)
+					kdDebug(14150) << k_funcinfo << "timezoneCode=" <<
+						res.timezoneCode << endl;
 					res.publishEmail = (fromicqsrv.getLEByte()==0x01);
 					res.showOnWeb = (fromicqsrv.getLEWord()==0x0001);
 
 					kdDebug(14150) << k_funcinfo << "emitting gotICQGeneralUserInfo()" << endl;
 					emit gotICQGeneralUserInfo(sequence, res);
 					break;
-				}  // END SRV_METAGENERAL (200)
+				} // END SRV_METAGENERAL (200)
 
 				case 210: // SRV_METAWORK
 				{
-					kdDebug(14150) << "RECV (SRV_METAWORK), parsing it..." << endl;
+					kdDebug(14150) << k_funcinfo << "RECV (SRV_METAWORK)" << endl;
 					char *tmptxt;
 					ICQWorkUserInfo res;
 
@@ -419,7 +390,7 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 				case 220:
 				{
-					kdDebug(14150) << "RECV (SRV_METAWORK), parsing it..." << endl;
+					kdDebug(14150) << k_funcinfo << "RECV (SRV_METAWORK)" << endl;
 					char *tmptxt;
 					ICQMoreUserInfo res;
 
@@ -433,16 +404,19 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 					WORD y = fromicqsrv.getLEWord();
 					BYTE m = fromicqsrv.getLEByte();
 					BYTE d = fromicqsrv.getLEByte();
-					kdDebug(14150) <<
-						"birtday, y=" << y << ", m=" << m << ", d=" << d << endl;
-					res.birthday = QDate(y,m,d);
+// 					kdDebug(14150) << k_funcinfo <<
+// 						"birtday, y=" << y << ", m=" << (int)m << ", d=" << (int)d << endl;
+					if (y==0 && m==0 && d==0) // stops QDate from spewing out errors
+						res.birthday = QDate();
+					else
+						res.birthday = QDate(y,m,d);
 
 					res.lang1 = fromicqsrv.getLEByte();
 					res.lang2 = fromicqsrv.getLEByte();
 					res.lang3 = fromicqsrv.getLEByte();
 
 					WORD unknown = fromicqsrv.getLEWord();
-					kdDebug(14150) <<
+					kdDebug(14150) << k_funcinfo <<
 						"unknown last word=" << unknown << endl;
 
 					kdDebug(14150) << k_funcinfo << "emitting gotICQMoreUserInfo()" << endl;
@@ -452,37 +426,43 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 				case 230:
 				{
-					kdDebug(14150) << "TODO: userinfo, SRV_METAABOUT subtype=" << type << endl;
+					kdDebug(14150) << k_funcinfo <<
+						"TODO: SRV_METAABOUT subtype=" << type << endl;
 					break;
 				}
 
 				case 235:
 				{
-					kdDebug(14150) << "TODO: userinfo, SRV_METAMOREEMAIL subtype=" << type << endl;
+					kdDebug(14150) << k_funcinfo <<
+						"TODO: SRV_METAMOREEMAIL subtype=" << type << endl;
 					break;
 				}
 
 				case 240:
 				{
-					kdDebug(14150) << "TODO: userinfo, SRV_METAINTEREST subtype=" << type << endl;
+					kdDebug(14150) << k_funcinfo <<
+						"TODO: SRV_METAINTEREST subtype=" << type << endl;
 					break;
 				}
 
 				case 250:
 				{
-					kdDebug(14150) << "TODO: userinfo, SRV_METABACKGROUND subtype=" << type << endl;
+					kdDebug(14150) << k_funcinfo <<
+						"TODO: SRV_METABACKGROUND subtype=" << type << endl;
 					break;
 				}
 
 				case 270:
 				{
-					kdDebug(14150) << "TODO: userinfo, SRV_META270 subtype=" << type << endl;
+					kdDebug(14150) << k_funcinfo <<
+						"TODO: SRV_META270 subtype=" << type << endl;
 					break;
 				}
 
 				default:
 				{
-					kdDebug(14150) << "SRV_META subtype UNHANDLED!" << endl;
+					kdDebug(14150) << k_funcinfo <<
+						"SRV_META subtype UNHANDLED!" << endl;
 					break;
 				}
 			} // END switch(type)
@@ -491,20 +471,20 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 		default:
 		{
-			kdDebug(14150) << "Unknown SNAC(21,03) subcommand is" << subcmd << endl;
+			kdDebug(14150) << k_funcinfo << "Unknown SNAC(21,03) subcommand is" << subcmd << endl;
 			break;
 		}
 	} // END switch(subcmd)
 
-//	kdDebug(14150) << k_funcinfo <<  "deleting tlv data" << endl;
-
+//	kdDebug(14150) << k_funcinfo << "deleting tlv data" << endl;
 	delete [] tlv->data;
-	kdDebug(14150) << k_funcinfo <<  "END" << endl;
+
+//	kdDebug(14150) << k_funcinfo << "END" << endl;
 } // END OscarSocket::parseSRV_FROMICQSRV()
 
 void OscarSocket::sendICQStatus(unsigned long status)
 {
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_SETSTATUS)" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_SETSTATUS)" << endl;
 
 	Buffer outbuf;
 	outbuf.addSnac(0x0001,0x001e,0x0000,0x00000000);
@@ -530,39 +510,39 @@ void OscarSocket::sendICQStatus(unsigned long status)
 
 	if (status & ICQ_STATUS_FFC)
 	{
-		kdDebug(14150) << k_funcinfo <<  "setting to FFC" << endl;
+		kdDebug(14150) << k_funcinfo << "setting to FFC" << endl;
 		emit statusChanged(OSCAR_FFC);
 	}
 	else if (status & ICQ_STATUS_DND)
 	{
-		kdDebug(14150) << k_funcinfo <<  "setting to DND" << endl;
+		kdDebug(14150) << k_funcinfo << "setting to DND" << endl;
 		emit statusChanged(OSCAR_DND);
 	}
 	else if (status & ICQ_STATUS_OCC)
 	{
-		kdDebug(14150) << k_funcinfo <<  "setting to OCC" << endl;
+		kdDebug(14150) << k_funcinfo << "setting to OCC" << endl;
 		emit statusChanged(OSCAR_OCC);
 	}
 	else if (status & ICQ_STATUS_NA)
 	{
-		kdDebug(14150) << k_funcinfo <<  "setting to NA" << endl;
+		kdDebug(14150) << k_funcinfo << "setting to NA" << endl;
 		emit statusChanged(OSCAR_NA);
 	}
 	else if (status & ICQ_STATUS_AWAY)
 	{
-		kdDebug(14150) << k_funcinfo <<  "setting to AWAY" << endl;
+		kdDebug(14150) << k_funcinfo << "setting to AWAY" << endl;
 		emit statusChanged(OSCAR_AWAY);
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo <<  "setting to ONLINE" << endl;
+		kdDebug(14150) << k_funcinfo << "setting to ONLINE" << endl;
 		emit statusChanged(OSCAR_ONLINE);
 	}
 } // END OscarSocket::sendStatus
 
 void OscarSocket::sendKeepalive()
 {
-	kdDebug(14150) << k_funcinfo <<  "SEND KEEPALIVE" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND KEEPALIVE" << endl;
 	Buffer outbuf;
 //	outbuf.print();
 	sendBuf(outbuf, 0x05);
@@ -570,13 +550,13 @@ void OscarSocket::sendKeepalive()
 
 void OscarSocket::startKeepalive()
 {
-//	kdDebug(14150) << k_funcinfo <<  "Called." << endl;
+//	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	if (keepaliveTime==0) // nobody wants keepalive, so shut up ;)
 		return;
 
 	if (!keepaliveTimer)
 	{
-		kdDebug(14150) << k_funcinfo <<  "Creating keepaliveTimer" << endl;
+		kdDebug(14150) << k_funcinfo << "Creating keepaliveTimer" << endl;
 		keepaliveTimer=new QTimer(this, "keepaliveTimer");
 		QObject::connect(keepaliveTimer,SIGNAL(timeout()),this,SLOT(slotKeepaliveTimer()));
 		keepaliveTimer->start(keepaliveTime*1000);
@@ -585,10 +565,10 @@ void OscarSocket::startKeepalive()
 
 void OscarSocket::stopKeepalive()
 {
-//	kdDebug(14150) << k_funcinfo <<  "Called." << endl;
+//	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	if(keepaliveTimer)
 	{
-		kdDebug(14150) << k_funcinfo <<  "Deleting keepaliveTimer" << endl;
+		kdDebug(14150) << k_funcinfo << "Deleting keepaliveTimer" << endl;
 		delete keepaliveTimer;
 		keepaliveTimer=0L;
 	}
@@ -596,13 +576,13 @@ void OscarSocket::stopKeepalive()
 
 void OscarSocket::slotKeepaliveTimer()
 {
-//	kdDebug(14150) << k_funcinfo <<  "Called." << endl;
+//	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	sendKeepalive();
 }
 
 void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 {
-	kdDebug(14150) << k_funcinfo <<  "called" << endl;
+	kdDebug(14150) << k_funcinfo << "called" << endl;
 
 	TLV tlv;
 	bool moreTLVs = true; // Flag to indicate if there are more TLV's to parse
@@ -611,7 +591,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 	{
 		tlv = buf.getTLV();
 
-		kdDebug(14150) << k_funcinfo <<  "Found TLV(" << tlv.type << "), length=" << tlv.length << endl;
+		kdDebug(14150) << k_funcinfo << "Found TLV(" << tlv.type << "), length=" << tlv.length << endl;
 
 		switch(tlv.type)
 		{
@@ -619,7 +599,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 			{
 				Buffer type2(tlv.data, tlv.length);
 				WORD ackType = type2.getWord();
-				kdDebug(14150) << k_funcinfo <<  "acktype=" << ackType << endl;
+				kdDebug(14150) << k_funcinfo << "acktype=" << ackType << endl;
 
 				if (ackType==0x0000) // normal message
 				{
@@ -641,7 +621,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 							cap[6], cap[7], cap[8], cap[9],
 							cap[10], cap[11], cap[12], cap[13],
 							cap[14], cap[15]);
-						kdDebug(14150) << k_funcinfo <<  "CAPABILITY:" << capstring << endl;
+						kdDebug(14150) << k_funcinfo << "CAPABILITY:" << capstring << endl;
 
 						delete [] cap;
 						messageBuf.getByte(); // unknown
@@ -652,7 +632,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 						messageBuf.getWord(); // unknown
 						WORD seq2 = messageBuf.getWord(); // some stupid sequence
 						if (seq1 != seq2)
-							kdDebug(14150) << k_funcinfo <<  "TODO: seq1 != seq2, what shall we do now?" << endl;
+							kdDebug(14150) << k_funcinfo << "TODO: seq1 != seq2, what shall we do now?" << endl;
 
 						char *tmp = messageBuf.getBlock(12); // unknown
 						delete[] tmp;
@@ -677,7 +657,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 
 								DWORD guidlen = messageBuf.getDWord();
 								char *guid = messageBuf.getBlock(guidlen);
-								kdDebug(14150) << k_funcinfo <<  "type-2 guid=" << guid << endl;
+								kdDebug(14150) << k_funcinfo << "type-2 guid=" << guid << endl;
 								delete [] guid;
 
 								kdDebug(14150) << k_funcinfo << "emit gotIM(), contact='" <<
@@ -709,7 +689,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 				}
 				else
 				{
-					kdDebug(14150) << k_funcinfo <<  "UNHANDLED acktype" << endl;
+					kdDebug(14150) << k_funcinfo << "UNHANDLED acktype" << endl;
 					delete [] tlv.data;
 				}
 				break;
@@ -717,7 +697,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 
 			default:
 			{
-				kdDebug(14150) << k_funcinfo <<  "Unhandled TLV(" << tlv.type << ") length=" << tlv.length << endl;
+				kdDebug(14150) << k_funcinfo << "Unhandled TLV(" << tlv.type << ") length=" << tlv.length << endl;
 				delete [] tlv.data;
 				break;
 			}
@@ -729,7 +709,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 			moreTLVs=false;
 	} // END while(moreTLVs)
 
-	kdDebug(14150) << k_funcinfo <<  "END" << endl;
+	kdDebug(14150) << k_funcinfo << "END" << endl;
 }
 
 // TODO: get on with the coding, need to implement that sequence counting and
@@ -753,13 +733,13 @@ bool requestAutoReply(unsigned long uin, unsigned long status)
 		type = 0xEC;
 
 
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_SENDMSG), requesting away message" << endl;
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_SENDMSG), requesting away message" << endl;
 
 	Buffer outbuf;
 	outbuf.addSnac(OSCAR_FAM_4,0x0006,0x0000,0x00000000);
 	outbuf.addDWord(0x00000000); // TIME
 	int id1 = rand() & 0xFFFF;
-   int id2 = rand() & 0xFFFF;
+	int id2 = rand() & 0xFFFF;
 	outbuf.addWord(id1); // ID
 	outbuf.addWord(id2); // ID
 
@@ -818,19 +798,25 @@ bool requestAutoReply(unsigned long uin, unsigned long status)
 
 WORD OscarSocket::sendCLI_TOICQSRV(const WORD subcommand, Buffer &data)
 {
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_TOICQSRV), subcommand=" << subcommand << endl;
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_TOICQSRV), subcommand=" << subcommand << endl;
 
 	Buffer outbuf;
-
-	DWORD word1 = 0x0001; // TODO: is this really right?
+	DWORD word1 = 0x0000; // TODO: is this really right?
 	DWORD word2 = (toicqsrv_seq);
 	DWORD snacid = (word1 << 16) | word2;
-	kdDebug(14150) << k_funcinfo << "snacid=" << snacid << endl;
+
+	// 2nd try
+/*	toicqsrv_seq++;
+	DWORD snacid = toicqsrv_seq;*/
+	// ---
 
 	outbuf.addSnac(OSCAR_FAM_21,0x0002,0x0000,snacid);
 	// yum yum, one up sequence, starts at 1 and has to be 2 for the first
 	// usage on the LEWord added some lines under this comment ;)
 	toicqsrv_seq++;
+
+	kdDebug(14150) << k_funcinfo << "snacid=" << snacid << endl;
+	kdDebug(14150) << k_funcinfo << "toicqsrv_seq=" << toicqsrv_seq << endl;
 
 	int tlvLen = 10 + data.getLength();
 	kdDebug(14150) << k_funcinfo << "tlvLen=" << tlvLen << endl;
@@ -842,7 +828,6 @@ WORD OscarSocket::sendCLI_TOICQSRV(const WORD subcommand, Buffer &data)
 	outbuf.addLEDWord(getSN().toULong()); // own uin
 	outbuf.addLEWord(subcommand); // subcommand
 	outbuf.addLEWord(toicqsrv_seq); // TODO: make this the snac sequence's upper Word minus 1!
-	kdDebug(14150) << k_funcinfo << "toicqsrv_seq=" << toicqsrv_seq << endl;
 
 	if (data.getLength() > 0)
 		outbuf.addString(data.getBuf(), data.getLength());

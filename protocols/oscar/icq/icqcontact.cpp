@@ -240,7 +240,8 @@ void ICQContact::slotUserInfo()
 {
 	if (!infoDialog)
 	{
-		infoDialog = new ICQUserInfo(this, static_cast<ICQAccount*>(account()), false);
+		bool editable = (this == account()->myself());
+		infoDialog = new ICQUserInfo(this, static_cast<ICQAccount*>(account()), editable);
 		if(!infoDialog)
 			return;
 		connect(infoDialog, SIGNAL(closing()), this, SLOT(slotCloseUserInfoDialog()));
@@ -279,7 +280,7 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 	generalInfo = inf;
 
 	userinfoReplyCount++; // number of packets that
-	if (userinfoReplyCount >= 2)
+	if (userinfoReplyCount >= 3)
 		emit updatedUserInfo();
 }
 
@@ -295,7 +296,7 @@ void ICQContact::slotUpdWorkInfo(const int seq, const ICQWorkUserInfo &inf)
 	workInfo = inf;
 
 	userinfoReplyCount++; // number of packets that
-	if (userinfoReplyCount >= 2)
+	if (userinfoReplyCount >= 3)
 		emit updatedUserInfo();
 }
 
@@ -311,7 +312,7 @@ void ICQContact::slotUpdMoreUserInfo(const int seq, const ICQMoreUserInfo &inf)
 	moreInfo = inf;
 
 	userinfoReplyCount++; // number of packets that
-	if (userinfoReplyCount >= 2)
+	if (userinfoReplyCount >= 3)
 		emit updatedUserInfo();
 }
 

@@ -385,6 +385,8 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 		// Contact existed in the list already, sync information
 		// FIXME: is this needed? won't work anymore as AIMBuddy doesn't return a KOS on status()!
 //		contact->setOnlineStatus( buddy->status() );
+		kdDebug(14150) << k_funcinfo <<
+			"serverside contact already in kopete, his status=" << buddy->status() << endl;
 		if(contact->displayName()!=nick)
 			contact->rename(nick);
 		contact->syncGroups();
