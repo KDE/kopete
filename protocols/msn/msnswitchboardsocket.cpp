@@ -170,86 +170,6 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	if( msg.contains("Content-Type: text/x-msmsgsinvite; charset=UTF-8") )
 	{
 		emit invitation(m_msgHandle,msg);
-		/*
-		if( msg.contains("Invitation-Command: ACCEPT") )
-		{
-			QString ip_adress = msg.right( msg.length() - msg.find( "IP-Address:" ) - 12 );
-			ip_adress.truncate( ip_adress.find("\r\n") );
-			QString authcook = msg.right( msg.length() - msg.find(  "AuthCookie:" ) - 12 );
-			authcook.truncate( authcook.find("\r\n") );
-			QString port = msg.right( msg.length() - msg.find(  "Port:" ) - 6 );
-			port.truncate( port.find("\r\n") );
-
-			kdDebug(14140) << "MSNSwitchBoardSocket::slotReadMessage : filetransfer: - ip:" <<ip_adress <<" : " <<port <<" -authcook: " <<authcook<<  endl;
-
-			MSNFileTransferSocket *MFTS=new  MSNFileTransferSocket(m_myHandle,authcook,m_filetransferName);
-			//FIXME: i think current KopeteFileTransferInfo and KopeteTransfer is not perfect:
-			// missing:	-a signal when the transfer is aborted
-			//         	-a flag to precies if it is an outgoing or an incomming transfer
-			// I would like set the size later in the MSNFileTransferSocket.  (current size is set to 0)
-			MFTS->setKopeteTransfer( KopeteTransferManager::transferManager()->addTransfer( m_protocol->contact(m_msgHandle)->metaContact(),
-				m_filetransferName, 0, m_protocol->contact(m_msgHandle)->displayName()));
-			MFTS->connect(ip_adress, port.toUInt());
-		}
-		else  if( msg.contains("Application-File:") )  //not "Application-Name: File Transfer" because the File Transfer label is sometimes translate
-		{
-			QString cookie = msg.right( msg.length() - msg.find( "Invitation-Cookie:" ) - 19 );
-			cookie.truncate( cookie.find("\r\n") );
-			QString filename = msg.right( msg.length() - msg.find( "Application-File:" ) - 18 );
-			filename.truncate( filename.find("\r\n") );
-			QString filesize = msg.right( msg.length() - msg.find( "Application-FileSize:" ) - 22 );
-			filesize.truncate( filesize.find("\r\n") );
-
-			kdDebug(14140) << "MSNSwitchBoardService::slotReadMessage: " <<
-				"invitation cookie: " << cookie << endl;
-
-			QString contact = m_protocol->contact(m_msgHandle)->displayName();
-			QString txt = i18n("%1 tried to send you a file.\n"
-				"Name: %2 \nSize: %3 bytes\n"
-				"Would you like to accept?\n").arg( contact).arg( filename).arg( filesize );
-
-			int r=KMessageBox::questionYesNo (0l, txt, i18n( "MSN Plugin - Kopete" ), i18n( "Accept" ), i18n( "Refuse" ));
-
-			if(r== KMessageBox::Yes)
-			{
-				QString saveFileName = KFileDialog::getSaveFileName( filename,"*.*", 0l  , i18n( "MSN File transfer" ) );
-				if ( saveFileName.isNull() )
-					r=KMessageBox::Cancel;
-				else filename=saveFileName;
-			}
-
-			if(r== KMessageBox::Yes)
-			{
-				QCString message=QString(
-					"MIME-Version: 1.0\r\n"
-					"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
-					"\r\n"
-					"Invitation-Command: ACCEPT\r\n"
-					"Invitation-Cookie: " + cookie + "\r\n"
-					"Launch-Application: FALSE\r\n"
-					"Request-Data: IP-Address:\r\n"
-					).utf8();
-				QCString command=QString("MSG").utf8();
-				QCString args = QString( "N" ).utf8();
-				sendCommand( command , args, true, message );
-				m_filetransferName=filename;
-			}
-			else
-			{
-				QCString message=QString(
-					"MIME-Version: 1.0\r\n"
-					"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
-					"\r\n"
-					"Invitation-Command: CANCEL\r\n"
-					"Invitation-Cookie: " + cookie + "\r\n"
-					"Cancel-Code: REJECT").utf8();
-				QCString command=QString("MSG").utf8();
-				QCString args = QString( "N" ).utf8();
-				sendCommand( command , args, true, message );
-			}
-//			m_lastId++;
-		}
-		*/
 	}
 	else if( msg.contains( "MIME-Version: 1.0\r\nContent-Type: text/x-msmsgscontrol\r\nTypingUser:" ) )
 	{
@@ -386,34 +306,46 @@ int MSNSwitchBoardSocket::sendMsg( const KopeteMessage &msg )
 		return -1;
 	}
 
-	kdDebug(14140) << "MSNSwitchBoardSocket::slotSendMsg" << endl;
+	//kdDebug(14140) << "MSNSwitchBoardSocket::slotSendMsg" << endl;
 
 	QString head =
 		"MIME-Version: 1.0\r\n"
 		"Content-Type: text/plain; charset=UTF-8\r\n"
-		"X-MMS-IM-Format: FN=MS%20Serif; EF=; ";
+		"X-MMS-IM-Format: ";
+
+	if(msg.font() != QFont() )
+	{
+		head += "FN=" + escape( msg.font().family());
+		head += "; EF=";
+		if(msg.font().bold())
+			head += "B";
+		if(msg.font().italic())
+			head += "I";
+		if(msg.font().strikeOut())
+			head += "S";
+		if(msg.font().underline())
+			head += "U";
+		head += "; ";
+	}
+	else head+="FN=MS%20Serif; EF=; ";
 
 	// Color support
-	if (msg.fg().isValid()) {
+	if (msg.fg().isValid())
+	{
 		QString colorCode = QColor(msg.fg().blue(),msg.fg().green(),msg.fg().red()).name().remove(0,1);  //colours aren't sent in RGB but in BGR (O.G.)
 		head += "CO=" + colorCode;
-	} else {
+	}
+	else
+	{
 		head += "CO=0";
 	}
 
 	head += "; CS=0; PF=0\r\n"
 		"\r\n";
-	// TODO: send our fonts as well
 
 	head += msg.plainBody().replace( QRegExp( "\n" ), "\r\n" );
-	QString args = "A";
 
-	return sendCommand( "MSG", args, true, head );
-
-	/*KopeteMessage msg2=msg;
-	msg2.setBg(QColor()); // BGColor is not send, don't show it on chatwindow
-	emit msgReceived( msg2);
-	// send the own msg to chat window*/
+	return sendCommand( "MSG", "A", true, head );
 }
 
 void MSNSwitchBoardSocket::slotSocketClosed( )
