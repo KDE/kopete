@@ -79,9 +79,12 @@ void SMSProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 
 	KopeteAccount *account = accounts[accountId];
 	if ( !account )
-		account = createNewAccount( accountId );
-	
-	/*SMSContact* c =*/ new SMSContact( account, contactId, displayName, metaContact );
+	{
+		kdDebug(14160) << "Account doesn't exist, skipping" << endl;
+		return;
+	}
+
+		/*SMSContact* c =*/ new SMSContact( account, contactId, displayName, metaContact );
 }
 
 KopeteAccount* SMSProtocol::createNewAccount(const QString &accountId)
