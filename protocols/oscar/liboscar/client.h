@@ -39,7 +39,10 @@ class UserDetails;
 class QString;
 class Task;
 
-using namespace Oscar;
+namespace Oscar
+{
+class Settings;
+}
 
 class KOPETE_EXPORT Client : public QObject
 {
@@ -60,6 +63,11 @@ public:
 
 	Client(QObject *parent=0);
 	~Client();
+	
+	/**
+	 * Get the settings object for this client instance
+	 */
+	Oscar::Settings* clientSettings() const;
 
 	/**
 	 * Start a connection to the server using the supplied @ref ClientStream.

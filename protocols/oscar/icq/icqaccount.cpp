@@ -24,6 +24,7 @@
 
 #include "client.h"
 #include "icquserinfo.h"
+#include "oscarsettings.h"
 #include "oscarutils.h"
 
 #include "icqcontact.h"
@@ -166,6 +167,11 @@ void ICQAccount::connectWithPassword( const QString &password )
 		uint port = configGroup()->readNumEntry( "Port", 5190 );
 		Connection* c = setupConnection( server, port );
 		
+		//set up the settings for the account
+		Oscar::Settings* oscarSettings = engine()->clientSettings();
+		oscarSettings->setWebAware( configGroup()->readBoolEntry( "WebAware", false ) );
+		oscarSettings->setHideIP( configGroup()->readBoolEntry( "HideIP", true ) );
+		oscarSettings->setRequireAuth( configGroup()->readBoolEntry( "RequireAuth", false ) );
 		//FIXME: also needed for the other call to setStatus (in setPresenceTarget)
 		DWORD status = pres.toOscarStatus();
 		

@@ -92,6 +92,11 @@ void Connection::close()
 	reset();
 }
 
+Oscar::Settings* Connection::settings() const
+{
+	return d->client->clientSettings();
+}
+
 Q_UINT16 Connection::flapSequence()
 {
 	d->flapSequence++;

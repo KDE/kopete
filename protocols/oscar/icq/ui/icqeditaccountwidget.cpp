@@ -128,7 +128,7 @@ bool ICQEditAccountWidget::validateData()
 
 	if (userName.contains(" ") || (userName.length() < 4))
 		return false;
-
+	
 	for (unsigned int i=0; i<userName.length(); i++)
 	{
 		if(!(userName[i]).isNumber())

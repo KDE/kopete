@@ -20,6 +20,7 @@
 #include <kdebug.h>
 #include "connection.h"
 #include "buffer.h"
+#include "oscarsettings.h"
 #include "oscartypes.h"
 #include "oscarutils.h"
 #include "transfer.h"
@@ -57,13 +58,25 @@ void SendDCInfoTask::onGo()
 	buffer->addWord( 0x0004 );
 	//### Don't hardcode this value
 	//Right now, it's always coded to not support DC
-	buffer->addDWord( 0x01000000 | mStatus );
+	DWORD statusFlag = 0x01000000;
+	if ( client()->settings()->webAware() )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting web aware on" << endl;
+		statusFlag |= 0x00010000;
+	}
+	if ( !client()->settings()->hideIP() )
+	{
+		kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "setting show ip on" << endl;
+		statusFlag |= 0x00020000;
+	}
+	
+	buffer->addDWord( statusFlag | mStatus );
 
 	/* Fill in the DC Info 
 	 * We don't support Direct Connection yet. So fill in some
 	 * dummy values
 	 */
-	buffer->addWord( 0x000C ); //TLV Type 0x0CC
+	buffer->addWord( 0x000C ); //TLV Type 0x0C
 	buffer->addWord( 0x0025 );
 
 	buffer->addDWord( 0x00000000 );
