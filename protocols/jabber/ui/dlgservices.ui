@@ -108,9 +108,6 @@
             <property name="readOnly">
                 <bool>true</bool>
             </property>
-            <property name="focusStyle">
-                <enum>SpreadSheet</enum>
-            </property>
         </widget>
         <widget class="QLayoutWidget">
             <property name="name">
