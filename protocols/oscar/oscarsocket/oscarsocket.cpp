@@ -936,11 +936,6 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 				if (ssi->tlvlength) //sometimes there is additional info
 						ssi->tlvlist = inbuf.getBlock(ssi->tlvlength);
 				ssiData.append(ssi);
-				SSI *ssi2 = ssiData.current();
-				if (ssi->name == "CWRU")
-						kdDebug() << "[OSCAR] Read CWRU: name: " << ssi2->name << ", gid: " << ssi2->gid
-											<< ", bid: " << ssi2->bid << ", type: " << ssi2->type << ", tbslen: "
-											<< ssi2->tlvlength << endl;
 				kdDebug() << "[OSCAR] Read a buddy: name: " << ssi->name << ", gid: " << ssi->gid
 									<< ", bid: " << ssi->bid << ", type: " << ssi->type << ", tbslen: " << ssi->tlvlength
 									<< endl;
@@ -958,8 +953,8 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 				case 0x0001: //group
 						if (namelen) //if it's not the master group
 						{
-								blist.buddyList.addGroup(ssi->name);
-								curgroup++;
+							blist.buddyList.addGroup(ssi->name);
+							curgroup++;
 						}
 						break;
 				case 0x0002: // TODO permit buddy
@@ -987,8 +982,8 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 /** Requests the user's BOS rights */
 void OscarSocket::requestBOSRights(void)
 {
-    Buffer outbuf;
- outbuf.addSnac(0x0009,0x0002,0x0000,0x00000002);
+	Buffer outbuf;
+	outbuf.addSnac(0x0009,0x0002,0x0000,0x00000002);
 	sendBuf(outbuf,0x02);
 }
 
@@ -1397,25 +1392,27 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 						TLV t = inbuf.getTLV();
 						switch(t.type) {
 						case 0x0001: //user class
-								u.userclass = (t.data[0] << 8) | t.data[1];
+								u.userclass = (((BYTE)t.data[0] << 8)) | ((BYTE)t.data[1]);
 								break;
 						case 0x0002: //member since
-								u.membersince = (t.data[0] << 24) | (t.data[1] << 16)
-										| (t.data[2] << 8) | t.data[3];
+								u.membersince = (DWORD) (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
+										| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
 								break;
 						case 0x0003: //online since
-								u.onlinesince = (t.data[0] << 24) | (t.data[1] << 16)
-										| (t.data[2] << 8) | t.data[3];
+								kdDebug() << "t.data: " << static_cast<uint>((BYTE)t.data[0]) << "\t" << static_cast<uint>((BYTE)t.data[1])  << "\t" << static_cast<uint>((BYTE)t.data[2]) << "\t" << static_cast<uint>((BYTE)t.data[3]) << endl;
+								kdDebug() << "u.onlinesince: " << u.onlinesince << endl;
+								u.onlinesince = (DWORD) (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
+										| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
 								break;
 						case 0x0004: //idle time
-								u.idletime = (WORD) ((t.data[0] << 8) | t.data[1]);
+								u.idletime = (WORD) ((((BYTE)t.data[0]) << 8) | ((BYTE)t.data[1]));
 								break;
 								//case 0x000d: //capability info
 
 								//break;
 						case 0x000f: //session length (in seconds)
-								u.sessionlen = (t.data[0] << 24) | (t.data[1] << 16)
-										| (t.data[2] << 8) | t.data[3];
+								u.sessionlen = (((BYTE)t.data[0]) << 24) | (((BYTE)t.data[1]) << 16)
+										| (((BYTE)t.data[2]) << 8) | ((BYTE)t.data[3]);
 								break;
 						default: //unknown info type
 								kdDebug() << "[OSCAR][parseUserInfo] invalid tlv type " << t.type << endl;
@@ -1431,8 +1428,8 @@ UserInfo OscarSocket::parseUserInfo(Buffer &inbuf)
 		} else {
 				// Buffer had length of zero for some reason, so
 				u.userclass = -1;
-				u.membersince = -1;
-				u.onlinesince = -1;
+				u.membersince = 1;
+				u.onlinesince = 1;
 				u.idletime = -1;
 				u.sessionlen = -1;
 		}
@@ -1484,11 +1481,11 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
     //NOTE TO TOM: there are a lot of other options that can go here
     // IMPLEMENT THEM!
     if ( isAuto )                  
-	{
-	    outbuf.addWord(0x0004);
-	    outbuf.addWord(0x0000);
-	}
-    sendBuf(outbuf,0x02);
+		{
+			outbuf.addWord(0x0004);
+			outbuf.addWord(0x0000);
+		}
+		sendBuf(outbuf,0x02);
 }
 
 /** Activates the SSI list on the server */
@@ -1533,28 +1530,30 @@ void OscarSocket::sendUserProfileRequest(const QString &sn)
 /** Parses someone's user info */
 void OscarSocket::parseUserProfile(Buffer &inbuf)
 {
-    UserInfo u = parseUserInfo(inbuf);
-    QList<TLV> tl = inbuf.getTLVList();
-    tl.setAutoDelete(true);
-    QString profile = "<HTML><HEAD><TITLE>User Information for %n</TITLE><HEAD><BODY BGCOLOR=#CCCCCC>";
-    profile += "Username: <B>" + u.sn + "</B>";
-    profile += "<IMG SRC=\"";
-    if (u.userclass & 0x0004) //AOL user
+	UserInfo u = parseUserInfo(inbuf);
+  QList<TLV> tl = inbuf.getTLVList();
+  tl.setAutoDelete(true);
+  QString profile = "<HTML><HEAD><TITLE>User Information for %n</TITLE><HEAD><BODY BGCOLOR=#CCCCCC>";
+  profile += "Username: <B>" + u.sn + "</B>";
+  profile += "<IMG SRC=\"";
+  if (u.userclass & 0x0004) //AOL user
   	profile += "aol_icon.png";
-    else if (u.userclass & 0x0010) //AIM user
+  else if (u.userclass & 0x0010) //AIM user
   	profile += "free_icon.png";
-    else  //other
+  else  //other
   	profile += "dt_icon.png";
-    profile += "\"><br>\n";
-    profile += QString("Warning Level: <B>%1 %</B><br>\n").arg(u.evil);
-    QDateTime qdt;
-    qdt.setTime_t(u.onlinesince);
-    profile += "Online Since: <B>" + qdt.toString() + "</B><br>\n";
-    profile += QString("Idle Minutes: <B>%1</B><br>\n<hr><br>").arg(u.idletime);
-    QString away, prof;
-    for (TLV *cur = tl.first();cur;cur = tl.next())
+  profile += "\"><br>\n";
+  profile += QString("Warning Level: <B>%1 %</B><br>\n").arg(u.evil);
+  QDateTime qdt;
+  kdDebug() << "ONLINE SINCE TIME IS " << u.onlinesince << endl;
+  qdt.setTime_t(static_cast<uint>(u.onlinesince));
+  profile += "Online Since: <B>" + qdt.toString() + "</B><br>\n";
+  profile += QString("Idle Minutes: <B>%1</B><br>\n<hr><br>").arg(u.idletime);
+  QString away, prof;
+  for (TLV *cur = tl.first();cur;cur = tl.next())
+	{
+		switch(cur->type)
 		{
-				switch(cur->type) {
 				case 0x0001: //profile text encoding
 						kdDebug() << "[OSCAR] text encoding is: " << cur->data << endl;
 						break;
@@ -1575,20 +1574,20 @@ void OscarSocket::parseUserProfile(Buffer &inbuf)
 				default: //unknown
 						kdDebug() << "[OSCAR] Unknown user info type " << cur->type << endl;
 						break;
-				};
-				delete cur->data;
-		}
-    if (away.length())
-	profile += "<B>Away Message:</B><br>" + away + "<br><hr>";
-    if (prof.length())
-	profile += prof;
-    else
-	profile += "<I>No user information provided</I>";
-    tl.clear();
-    profile += "<br><hr><I>Legend:</I><br><br><IMG SRC=\"free_icon.png\">: Normal AIM User<br> \
+		};
+		delete cur->data;
+	}
+  if (away.length())
+		profile += "<B>Away Message:</B><br>" + away + "<br><hr>";
+  if (prof.length())
+		profile += prof;
+  else
+		profile += "<I>No user information provided</I>";
+  tl.clear();
+  profile += "<br><hr><I>Legend:</I><br><br><IMG SRC=\"free_icon.png\">: Normal AIM User<br> \
 		<IMG SRC=\"aol_icon.png\">: AOL User<br><IMG SRC=\"dt_icon.png\">: Trial AIM User <br> \
 		<IMG SRC=\"admin_icon.png\">: Administrator</HTML>";
-    emit gotUserProfile(u,profile);
+  emit gotUserProfile(u,profile);
 }
 
 /** Sets the away message, makes user away */
@@ -1658,48 +1657,47 @@ void OscarSocket::parseRedirect(Buffer &inbuf)
     QString host;
     tl.setAutoDelete(true);
     if (!findTLV(tl,0x0006) && !findTLV(tl,0x0005) && !findTLV(tl,0x000e))
-	{
-	    tl.clear();
-	    emit protocolError(i18n("An unknown error occured. Please check your internet connection. The error message was: \"Not enough information found in server redirect\""), 0);
-	    return;
-	}
+    {
+    	tl.clear();
+     	emit protocolError(i18n("An unknown error occured. Please check your internet connection. The error message was: \"Not enough information found in server redirect\""), 0);
+      return;
+    }
     for (TLV *tmp = tl.first(); tmp; tmp = tl.next())
-	{
-	    switch (tmp->type)
-		{
-		case 0x0006: //auth cookie
+    {
+			switch (tmp->type)
+			{
+			case 0x0006: //auth cookie
 		    for (int i=0;i<tmp->length;i++)
-			servsock->cookie[i] = tmp->data[i];
-		    break;
-		case 0x000d: //service type
+					servsock->cookie[i] = tmp->data[i];
+		    	break;
+			case 0x000d: //service type
 		    servsock->type = (tmp->data[1] << 8) | tmp->data[0];
 		    break;
-		case 0x0005: //new ip & port
+			case 0x0005: //new ip & port
 		    host = tmp->data;
 		    n = host.find(':');
 		    if (n != -1)
-			{
+				{
 			    servsock->host = host.left(n);
 			    servsock->conPort = host.right(n).toInt();
-			}
+				}
 		    else
-			{
+				{
 			    servsock->host = host;
 			    servsock->conPort = peerPort();
-			}
+				}
 		    kdDebug() << "[OSCAR] Set host to " << servsock->host << ", port to " << servsock->conPort << endl;
 		    break;
 		default: //unknown
 		    kdDebug() << "[OSCAR] Unknown tlv type in parseredirect: " << tmp->type << endl;
 		    break;
 		}
-	    delete tmp->data;
+	  delete tmp->data;
 	}
-    tl.clear();
-    sockets.append(servsock);
-    kdDebug() << "[OSCAR] Socket added to connection list!" << endl;
-}
-
+	tl.clear();
+	sockets.append(servsock);
+	kdDebug() << "[OSCAR] Socket added to connection list!" << endl;
+} 
 /** Request a direct IM session with someone
 	type == 0: request
 	type == 1: deny
@@ -1799,13 +1797,13 @@ void OscarSocket::sendSSIAddModDel(SSI *item, WORD request_type)
     //name length
     outbuf.addWord(item->name.length());
     if (item->name.length())
-	outbuf.addString(item->name, item->name.length());
+			outbuf.addString(item->name, item->name.length());
     outbuf.addWord(item->gid);
     outbuf.addWord(item->bid);
     outbuf.addWord(item->type);
     outbuf.addWord(item->tlvlength);
     if (item->tlvlength)
-	outbuf.addString(item->tlvlist,item->tlvlength);
+			outbuf.addString(item->tlvlist,item->tlvlength);
     sendBuf(outbuf,0x02);
 }
 
@@ -1824,12 +1822,12 @@ void OscarSocket::sendDelBuddy(const QString &budName, const QString &budGroup)
     SSI *delitem = ssiData.findBuddy(budName,budGroup);
     ssiData.print();
     if (!delitem)
-	{
+		{
 	    kdDebug() << "[OSCAR] Item with name " << budName << " and group "
 		      << budGroup << "not found" << endl;
 	    emit protocolError(budName + " in group " + budGroup + " was not found on the server's buddy list and cannot be deleted.",0);
 	    return;
-	}
+		}
     kdDebug() << "[OSCAR] Deleting " << delitem->name << ", gid " << delitem->gid
 	      << ", bid " << delitem->bid << ", type " << delitem->type
 	      << ", datalength " << delitem->tlvlength << endl;
@@ -1893,13 +1891,13 @@ void OscarSocket::sendDirectIMInit(const QString &sn, WORD type)
     outbuf.addWord(type); //2
     outbuf.addString(ck,8); //8
     for (int i=0;aim_caps[i].flag != AIM_CAPS_LAST;i++)
-	{
-	    if (aim_caps[i].flag & AIM_CAPS_IMIMAGE)
 		{
+	    if (aim_caps[i].flag & AIM_CAPS_IMIMAGE)
+			{
 		    outbuf.addString(aim_caps[i].data,0x10);
 		    break;
-		}
-	} //16
+			}
+		} //16
     //TLV (type a)
     outbuf.addWord(0x000a);
     outbuf.addWord(0x0002);
@@ -2007,7 +2005,7 @@ void OscarSocket::sendSSIRequest(void)
 }
 
 /** Parses a 0x0013,0x0003 (SSI rights) from the server */
-void OscarSocket::parseSSIRights(Buffer &inbuf)
+void OscarSocket::parseSSIRights(Buffer &/*inbuf*/)
 {
    //don't really care about this stuff...
    //maybe write code to parse it into something useful later
@@ -2028,12 +2026,12 @@ void OscarSocket::sendInfo(void)
 /** Sends the user's profile to the server */
 void OscarSocket::sendMyProfile(void)
 {
-    static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
-    Buffer outbuf;
-    outbuf.addSnac(0x0002,0x0004,0x0000,0x00000004);
-    outbuf.addTLV(0x0001,defencoding.length(),defencoding.latin1());
-    outbuf.addTLV(0x0002,myUserProfile.length(),myUserProfile.local8Bit());
-    sendBuf(outbuf,0x02);
+  static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
+  Buffer outbuf;
+  outbuf.addSnac(0x0002,0x0004,0x0000,0x00000004);
+  outbuf.addTLV(0x0001,defencoding.length(),defencoding.latin1());
+  outbuf.addTLV(0x0002,myUserProfile.length(),myUserProfile.local8Bit());
+  sendBuf(outbuf,0x02);
 }
 
 /** Sends parameters for ICBM messages */
