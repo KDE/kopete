@@ -21,7 +21,10 @@
 #include <kapplication.h>
 #include <kiconloader.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 #include <kplugininfo.h>
+#include <kabc/addressbook.h>
+#include <kabc/stdaddressbook.h>
 
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
@@ -29,8 +32,9 @@
 #include "kopetemetacontact.h"
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
+#include "kopeteuiglobal.h"
 
-#include "kdebug.h"
+#include <kdebug.h>
 
 #include "kimifaceimpl.h"
 
@@ -262,9 +266,12 @@ QStringList KIMIfaceImpl::protocols()
 void KIMIfaceImpl::messageContact( const QString &uid, const QString& messageText )
 {
 	// TODO: make it possible to specify the message here
+	Q_UNUSED( messageText );
 	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( uid );
 	if ( m )
 		m->sendMessage();
+	else
+		unknown( uid );
 }
 
 void KIMIfaceImpl::messageNewContact( const QString &contactId, const QString &protocol )
@@ -279,6 +286,8 @@ void KIMIfaceImpl::chatWithContact( const QString &uid )
 	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( uid );
 	if ( m )
 		m->execute();
+	else
+		unknown( uid );
 }
 
 void KIMIfaceImpl::sendFile(const QString &uid, const KURL &sourceURL,
@@ -287,6 +296,7 @@ void KIMIfaceImpl::sendFile(const QString &uid, const KURL &sourceURL,
 	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( uid );
 	if ( m )
 		m->sendFile( sourceURL, altFileName, fileSize );
+    // else, prompt to create a new MC associated with UID
 }
 
 bool KIMIfaceImpl::addContact( const QString &contactId, const QString &protocolId )
@@ -346,6 +356,25 @@ void KIMIfaceImpl::slotContactStatusChanged( KopeteMetaContact *mc )
 		stream << kapp->name();
 		stream << p;
 		kapp->dcopClient()->emitDCOPSignal( "contactPresenceChanged( QString, QCString, int )", params );
+	}
+}
+
+void KIMIfaceImpl::unknown( const QString &uid )
+{
+	// warn the user that the KABC contact associated with this UID isn't known to kopete,
+	// either associate an existing contact with KABC or add a new one using the ACW.
+	KABC::AddressBook *bk = KABC::StdAddressBook::self( false );
+	KABC::Addressee addr = bk->findByUid( uid );
+	if ( addr.isEmpty() )
+	{
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry, i18n("Another KDE application tried to use Kopete for instant messaging, but Kopete could not find the specified contact in the KDE Address Book."), i18n( "Not found in Address Book" ) );
+	}
+	else
+	{
+		QString apology = i18n( "Translators: %1 is the name of a person taken from the KDE address book, who Kopete doesn't know about.  Kopete must either be told that an existing contact in Kopete is this person, or add a new contact for them", 
+			"<qt><p>The KDE Address Book has no instant messaging information for</p><p><b>%1</b>.</p><p>If he/she is already present in the Kopete Contact List, indicate the correct addressbook entry in their Properties.</p><p>Otherwise, add a new contact using the Add Contact Wizard.</p></qt>" );
+		apology = apology.arg( addr.realName() );
+		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Information, apology, i18n( "No instant messaging address" ) );
 	}
 }
 

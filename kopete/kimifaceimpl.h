@@ -80,6 +80,8 @@ public:
 	 */
 	void contactStatusChanged( const QString &uid);
 
+protected:
+	void unknown( const QString &uid );
 protected slots:
 	void slotMetaContactAdded( KopeteMetaContact *mc );
 	void slotContactStatusChanged( KopeteMetaContact *mc );	
