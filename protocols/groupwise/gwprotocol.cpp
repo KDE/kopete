@@ -75,7 +75,8 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const char *name, const Q
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 
 	s_protocol = this;
-	
+
+  addAddressBookField( "messaging/groupwise", Kopete::Plugin::MakeIndexField );
 }
 
 GroupWiseProtocol::~GroupWiseProtocol()
