@@ -17,8 +17,13 @@
     *************************************************************************
 */
 
+#include "config.h"
+
 #include "kircengine.h"
 #include "kirctransferhandler.h"
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <kextsock.h>
