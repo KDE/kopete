@@ -222,7 +222,63 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 				QStringList icqData;
 				QStringList gaduData;
 
+				// ICQ and Gadu can only be converted properly if the address book fields
+				// are already parsed. Therefore, scan for those first and add the rest
+				// afterwards
 				QDomNode oldContactNode = oldNode.firstChild();
+				while( !oldContactNode.isNull() )
+				{
+					QDomElement oldContactElement = oldContactNode.toElement();
+					if( !oldContactElement.isNull() && oldContactElement.tagName() == "address-book-field" )
+					{
+						// Convert address book fields.
+						// Jabber will be called "xmpp", Aim/Toc and Aim/Oscar both will
+						// be called "aim". MSN, AIM, IRC, Oscar and SMS don't use address
+						// book fields yet; Gadu and ICQ can be converted as-is.
+						// As Yahoo is unfinished we won't try to convert at all.
+						QString id   = oldContactElement.attribute( "id", QString::null );
+						QString data = oldContactElement.text();
+
+						QString app, key, val;
+						QString separator = ",";
+						if( id == "messaging/gadu" )
+							separator = "\n";
+						else if( id == "messaging/icq" )
+							separator = ";";
+						else if( id == "messaging/jabber" )
+							id = "messaging/xmpp";
+
+						if( id == "messaging/gadu" || id == "messaging/icq" ||
+							id == "messaging/winpopup" || id == "messaging/xmpp" )
+						{
+							app = id;
+							key = "All";
+							val = data.replace( QRegExp( separator ), QChar( 0xE000 ) );
+						}
+
+						if( !app.isEmpty() )
+						{
+							QDomElement addressBookField = newList.createElement( "address-book-field" );
+							newMetaContact.appendChild( addressBookField );
+
+							addressBookField.setAttribute( "app", app );
+							addressBookField.setAttribute( "key", key );
+
+							addressBookField.appendChild( newList.createTextNode( val ) );
+
+							// ICQ didn't store the contactId locally, only in the address
+							// book fields, so we need to be able to access it later
+							if( id == "messaging/icq" )
+								icqData = QStringList::split( QChar( 0xE000 ), val );
+							else if( id == "messaging/gadu" )
+								gaduData = QStringList::split( QChar( 0xE000 ), val );
+						}
+					}
+					oldContactNode = oldContactNode.nextSibling();
+				}
+
+				// Now, convert the other elements
+				oldContactNode = oldNode.firstChild();
 				while( !oldContactNode.isNull() )
 				{
 					QDomElement oldContactElement = oldContactNode.toElement();
@@ -256,52 +312,6 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 								}
 
 								oldGroup = oldGroup.nextSibling();
-							}
-						}
-
-						else if( oldContactElement.tagName() == "address-book-field" )
-						{
-							// Convert address book fields.
-							// Jabber will be called "xmpp", Aim/Toc and Aim/Oscar both will
-							// be called "aim". MSN, AIM, IRC, Oscar and SMS don't use address
-							// book fields yet; Gadu and ICQ can be converted as-is.
-							// As Yahoo is unfinished we won't try to convert at all.
-							QString id   = oldContactElement.attribute( "id", QString::null );
-							QString data = oldContactElement.text();
-
-							QString app, key, val;
-							QString separator = ",";
-							if( id == "messaging/gadu" )
-								separator = "\n";
-							else if( id == "messaging/icq" )
-								separator = ";";
-							else if( id == "messaging/jabber" )
-								id = "messaging/xmpp";
-
-							if( id == "messaging/gadu" || id == "messaging/icq" ||
-								id == "messaging/winpopup" || id == "messaging/xmpp" )
-							{
-								app = id;
-								key = "All";
-								val = data.replace( QRegExp( separator ), QChar( 0xE000 ) );
-							}
-
-							if( !app.isEmpty() )
-							{
-								QDomElement addressBookField = newList.createElement( "address-book-field" );
-								newMetaContact.appendChild( addressBookField );
-
-								addressBookField.setAttribute( "app", app );
-								addressBookField.setAttribute( "key", key );
-
-								addressBookField.appendChild( newList.createTextNode( val ) );
-
-								// ICQ didn't store the contactId locally, only in the address
-								// book fields, so we need to be able to access it later
-								if( id == "messaging/icq" )
-									icqData = QStringList::split( QChar( 0xE000 ), val );
-								else if( id == "messaging/gadu" )
-									gaduData = QStringList::split( QChar( 0xE000 ), val );
 							}
 						}
 						else if( oldContactElement.tagName() == "plugin-data" )
@@ -377,7 +387,7 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 									dataField.setAttribute( "key", "contactId" );
 									if( id == "ICQProtocol" )
 										dataField.appendChild( newList.createTextNode( icqData[ idx ] ) );
-									if( id == "GaduProtocol" )
+									else if( id == "GaduProtocol" )
 										dataField.appendChild( newList.createTextNode( gaduData[ idx ] ) );
 									else if( id == "JabberProtocol" )
 										dataField.appendChild( newList.createTextNode( strList[ idx + 1 ] ) );
@@ -530,7 +540,7 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 
 	QDir().rename( fileName, fileName + ".bak" );
 
-	// kdDebug() << k_funcinfo << "XML output:\n" << newList.toString( 2 ) << endl;
+	kdDebug() << k_funcinfo << "XML output:\n" << newList.toString( 2 ) << endl;
 
 	contactListFile.open( IO_WriteOnly );
 	QTextStream stream( &contactListFile );
