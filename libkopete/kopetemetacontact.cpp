@@ -79,8 +79,11 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 		connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 			this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
 
-		 if (m_displayName == QString::null)
+		if (m_displayName == QString::null)
+		{
 			 setDisplayName( c->displayName() );
+			 m_trackChildNameChanges=true;
+		}
 
 	/*	for( QStringList::ConstIterator it = groups.begin(); it != groups.end(); ++it )
 		{
