@@ -28,7 +28,6 @@
 
 #include "appearanceconfig.h"
 #include "kopetecontactlist.h"
-#include "kopeteuserpreferences.h"
 #include "kopetewindow.h"
 #include "pluginloader.h"
 #include "pluginconfig.h"
@@ -56,7 +55,6 @@ Kopete::Kopete()
 	new PluginConfig( this );
 
 	new AppearanceConfig( m_mainWindow );
-	new KopeteUserPreferencesConfig( m_mainWindow );
 
 	/*
 	 * This is a workaround for a quite odd problem:

@@ -10,7 +10,7 @@ noinst_HEADERS = pluginconfig.h appearanceconfig.h
 libkopeteconf_la_SOURCES = pluginconfig.cpp \
 	appearanceconfig_general.ui appearanceconfig_contactlist.ui \
 	appearanceconfig_chatwindow.ui appearanceconfig_chatappearance.ui \
-	appearanceconfig.cpp kopeteuserpreferences.cpp kopeteawayconfigbase.ui kopeteawayconfigui.cpp
+	appearanceconfig.cpp kopeteawayconfigbase.ui kopeteawayconfigui.cpp
 libkopeteconf_la_LDFLAGS = $(all_libraries)
 libkopeteconf_la_LIBADD = ../../libkopete/libkopete.la $(LIB_KDEUI)
 

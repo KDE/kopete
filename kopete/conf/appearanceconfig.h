@@ -31,6 +31,7 @@ class AppearanceConfig_General;
 class AppearanceConfig_ChatWindow;
 class AppearanceConfig_ChatAppearance;
 class AppearanceConfig_Contactlist;
+class KopeteAwayConfigUI;
 
 typedef QPtrList<KopeteContact> KopeteContactPtrList;
 
@@ -74,6 +75,7 @@ private:
 	AppearanceConfig_Contactlist *mPrfsContactlist;
 	AppearanceConfig_ChatAppearance *mPrfsChatAppearance;
 	AppearanceConfig_ChatWindow *mPrfsChatWindow;
+	KopeteAwayConfigUI *mAwayConfigUI;
 
 };
 #endif

@@ -30,6 +30,7 @@
 #include <qstringlist.h>
 #include <qtextedit.h>
 #include <qvgroupbox.h>
+#include <qspinbox.h>
 //#include <qdatetime.h>
 #include <qslider.h>
 
@@ -65,6 +66,8 @@
 #include "kopeteprefs.h"
 #include "kopetemessage.h"
 #include "kopetecontact.h"
+#include "kopeteaway.h"
+#include "kopeteawayconfigui.h"
 
 AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	ConfigModule (
@@ -82,6 +85,10 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	connect(mPrfsGeneral->mSoundNotifyChk, SIGNAL(clicked()), this, SLOT(slotSoundChanged()));
 	connect(mPrfsGeneral->mShowTrayChk, SIGNAL(clicked()), this, SLOT(slotShowTrayChanged()));
 	mAppearanceTabCtl->addTab( mPrfsGeneral, i18n("&General") );
+
+	// "Away" TAB ========================================================
+	mAwayConfigUI = new KopeteAwayConfigUI(mAppearanceTabCtl);
+	mAppearanceTabCtl->addTab( mAwayConfigUI, i18n("&Away Settings") );
 
 	// "Contact List" TAB ========================================================
 	mPrfsContactlist = new AppearanceConfig_Contactlist(mAppearanceTabCtl);
@@ -184,6 +191,11 @@ void AppearanceConfig::save()
 // 	p->setCTransparencyValue( mPrfsChatWindow->mCTransparencyValue->value() );
 	p->setBgOverride( mPrfsChatWindow->mTransparencyBgOverride->isChecked() );
 
+	KopeteAway::getInstance()->setAutoAwayTimeout(mAwayConfigUI->mAwayTimeout->value()*60);
+	KopeteAway::getInstance()->setGoAvailable(mAwayConfigUI->mGoAvailable->isChecked());
+	/* Tells KopeteAway to save it's messages */
+	KopeteAway::getInstance()->save();
+
 	// disconnect or else we will end up in an endless loop
 	disconnect(KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()));
 	p->save();
@@ -265,6 +277,8 @@ void AppearanceConfig::reopen()
 
 	// "Chat Appearance" TAB
 	mPrfsChatAppearance->mle_codehtml->setText( p->kindMessagesHtml() );
+
+	mAwayConfigUI->updateView();
 
 	slotUpdatePreview();
 }
