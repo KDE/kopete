@@ -37,7 +37,6 @@
 #include "wpcontact.h"
 #include "wpaddcontact.h"
 
-class StatusBarIcon;	// libkopete::ui::statusbaricon
 class KPopupMenu;
 class KActionMenu;
 class KAction;
@@ -46,7 +45,7 @@ class WPContact;
 /**
  * This is a subclass of the KWinPopup class needed in order to use the virtual
  * methods and communicate nicely with Kopete.
- */  
+ */
 class KopeteWinPopup: public KWinPopup
 {
 	Q_OBJECT
@@ -82,43 +81,37 @@ public:
 	WPContact *getContact(const QString &Name, KopeteMetaContact* theMetaContact = 0);
 	const QStringList getGroups() { return theInterface->getGroups(); }
 	const QStringList getHosts(const QString &Group) { return theInterface->getHosts(Group); }
+	virtual KActionMenu* protocolActions();	// Per-protocol actions for the systray and the status bar
 
-public slots:				
-	void slotIconRightClicked(const QPoint &);	// Callback when clicking on statusbar icon
+public slots:
 	void slotSettingsChanged(void);			// Callback when settings changed
 	void installSamba();				// Modify smb.conf to use winpopup-send.sh script
-	
+
 private:
 	void initActions();			// Load Status Actions
 	KActionMenu *actionStatusMenu;		// Statusbar Popup
 	KAction *actionGoAvailable, *actionGoOffline, *actionGoAway;	// Go into normal/away/offline mode
-	
-	void initIcons();			// Load Icons
-	QPixmap iconAway, iconAvailable, iconOffline;	// Icons for away, available and offline modes
 
 	bool available, online;			// true if we're available/online
-	
+
 	KopeteWinPopup *theInterface;		// Our KopeteWinPopup instance
-	StatusBarIcon *statusBarIcon;		// Statusbar Icon Object
-	KPopupMenu *popup;			// Statusbar Popup
 	WPPreferences *mPrefs;			// Preferences Object
 	WPContact *theMyself;			// A contact to return for the API
-	
+
 //	static WPProtocol *protocol() { return sProtocol; }
 //	static WPProtocol *sProtocol;
-	
-	
+
 private slots:
 	/**
 	 * Called when a new message arrives with the message's data.
 	 */
 	void slotGotNewMessage(const QString &Body, const QDateTime &Arrival, const QString &From);
-			
-// KopeteProtocol overloading				
+
+// KopeteProtocol overloading
 public:
 	WPProtocol(QObject *parent, QString name, QStringList);
 	~WPProtocol();
-	
+
 	QString protocolIcon() const { return "wp_icon"; }							// Return protocol icon name
 	AddContactPage *createAddContactWidget(QWidget *parent) { return new WPAddContact(this, parent); }	// Return "add contact" dialog
 	KopeteContact *myself() const {	return (KopeteContact *)theMyself; } 					// Return the user's contact object
@@ -126,7 +119,7 @@ public:
 	bool isConnected() const { return online; }		// Return true if connected
 	bool isAway() const { return !available; }		// Return true if away
 
-public slots:	
+public slots:
 	void Connect();						// Connect to server
 	void Disconnect();					// Disconnect from server
 	void setAvailable();					// Set user Available
@@ -140,12 +133,12 @@ public:
 	void deserialize(KopeteMetaContact *metaContact, const QStringList &strList);	// Deserialises a strlist into a metacontact
 
 // Stuff used by WPContact
-public:	
+public:
 	/**
 	 * Returns whether or not the named host is online.
 	 */
 	bool checkHost(const QString &Name) { return theInterface->checkHost(Name); }
-	
+
 public slots:
 	/**
 	 * Despatches said message to the destination.

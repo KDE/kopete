@@ -35,7 +35,6 @@
 #include <kpushbutton.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
-#include <kstatusbar.h>
 #include <kstdguiitem.h>
 
 // Local Includes
@@ -49,7 +48,6 @@
 #include "kopete.h"
 #include "kopetecontactlistview.h"
 #include "kopetemetacontact.h"
-#include "statusbaricon.h"
 #include "systemtray.h"
 
 class KPopupMenu;
@@ -62,11 +60,8 @@ K_EXPORT_COMPONENT_FACTORY(kopete_wp, KGenericFactory<WPProtocol>);
 WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProtocol(parent, name)
 {
 	DEBUG(WPDMETHOD, "WPProtocol::WPProtocol()");
-	
-	theInterface = 0;
 
-	// Load icons
-	initIcons();
+	theInterface = 0;
 
 	// Load Status Actions
 	initActions();
@@ -116,9 +111,6 @@ WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProto
 	// Call slotSettingsChanged() to get it all registered.
 	slotSettingsChanged();
 
-	// Create statusbar Icon
-	statusBarIcon = new StatusBarIcon();
-	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint &)), this, SLOT(slotIconRightClicked(const QPoint &)));
 	setAvailable();
 	Connect();
 
@@ -147,7 +139,7 @@ WPProtocol::~WPProtocol()
 		}
 	}
 	delete theMyself;
-	
+
 	DEBUG(WPDINFO, "Deleted OK.");*/
 }
 
@@ -158,7 +150,7 @@ QStringList WPProtocol::addressBookFields() const
 	return QStringList("messaging/winpopup");
 }
 
-void WPProtocol::serialize(KopeteMetaContact *metaContact) 
+void WPProtocol::serialize(KopeteMetaContact *metaContact)
 {
 //	DEBUG(WPDMETHOD, "WPProtocol::serialize(metaContact => " << metaContact->displayName() << ", <strList>)");
 	QStringList strList;
@@ -248,14 +240,8 @@ bool WPProtocol::unload()
 {
 	DEBUG(WPDMETHOD, "WPProtocol::unload()");
 
-	if(kopeteapp->statusBar())
-	{
-		kopeteapp->statusBar()->removeWidget(statusBarIcon);
-		delete statusBarIcon;
-	}
-
 	delete theInterface;
-	
+
 	return KopeteProtocol::unload();
 }
 
@@ -266,7 +252,7 @@ void WPProtocol::Connect()
 	online = true;
 	theInterface->goOnline();
 	available = true;
-	statusBarIcon->setPixmap(iconAvailable);
+	setStatusIcon( "wp_available" );
 }
 
 void WPProtocol::Disconnect()
@@ -275,7 +261,7 @@ void WPProtocol::Disconnect()
 
 	online = false;
 	theInterface->goOffline();
-	statusBarIcon->setPixmap(iconOffline);
+	setStatusIcon( "wp_offline" );
 }
 
 void WPProtocol::setAvailable()
@@ -285,7 +271,7 @@ void WPProtocol::setAvailable()
 	online = true;
 	theInterface->goOnline();
 	available = true;
-	statusBarIcon->setPixmap(iconAvailable);
+	setStatusIcon( "wp_available" );
 	// do any other stuff?
 }
 
@@ -296,23 +282,13 @@ void WPProtocol::setAway()
 	available = false;
 	online = true;
 	theInterface->goOnline();
-	statusBarIcon->setPixmap(iconAway);
+	setStatusIcon( "wp_away" );
 	// do any other stuff?
 }
 
-void WPProtocol::slotIconRightClicked(const QPoint &)
+KActionMenu* WPProtocol::protocolActions()
 {
-	DEBUG(WPDMETHOD, "WPProtocol::slotIconRightClicked(<qpoint>)");
-
-	KGlobal::config()->setGroup("WinPopup");
-	QString handle = "WinPopup (" + KGlobal::config()->readEntry("HostName", "") + ")";
-
-	popup = new KPopupMenu(statusBarIcon);
-	popup->insertTitle(handle);
-	actionGoAvailable->plug(popup);
-	actionGoAway->plug(popup);
-	actionGoOffline->plug(popup);
-	popup->popup(QCursor::pos());
+	return actionStatusMenu;
 }
 
 void WPProtocol::slotSendMessage(const QString &Body, const QString &Destination)
@@ -334,18 +310,6 @@ void WPProtocol::slotSettingsChanged()
 	theInterface->setMessageCheckFrequency(KGlobal::config()->readNumEntry("MessageCheckFrequency", 5));
 }
 
-void WPProtocol::initIcons()
-{
-	DEBUG(WPDMETHOD, "WPProtocol::initIcons()");
-
-	KIconLoader *loader = KGlobal::iconLoader();
-	KStandardDirs dir;
-
-	iconAvailable  = QPixmap(loader->loadIcon("wp_available",  KIcon::User));
-	iconAway = QPixmap(loader->loadIcon("wp_away", KIcon::User));
-	iconOffline = QPixmap(loader->loadIcon("wp_offline", KIcon::User));
-}
-
 void WPProtocol::initActions()
 {
 	DEBUG(WPDMETHOD, "WPProtocol::initActions()");
@@ -354,7 +318,13 @@ void WPProtocol::initActions()
 	actionGoOffline = new KAction("Offline", "wp_offline", 0, this, SLOT(Disconnect()), this, "actionGoOffline");
 	actionGoAway = new KAction("Away", "wp_away", 0, this, SLOT(setAway()), this, "actionGoAway");
 
+	KGlobal::config()->setGroup("WinPopup");
+	QString handle = "WinPopup (" + KGlobal::config()->readEntry("HostName", "") + ")";
+
 	actionStatusMenu = new KActionMenu("WinPopup", this);
+	actionStatusMenu->popupMenu()->insertTitle(
+		SmallIcon( statusIcon() ), handle );
+
 	actionStatusMenu->insert(actionGoAvailable);
 	actionStatusMenu->insert(actionGoAway);
 	actionStatusMenu->insert(actionGoOffline);
@@ -364,7 +334,7 @@ void WPProtocol::initActions()
 void WPProtocol::installSamba()
 {
 	DEBUG(WPDMETHOD, "WPPreferences::installSamba()");
-	
+
 	QStringList args;
 	args += KStandardDirs::findExe("winpopup-install.sh");
 	args += KStandardDirs::findExe("winpopup-send.sh");
