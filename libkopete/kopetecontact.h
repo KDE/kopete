@@ -58,27 +58,32 @@ public:
 
 	/**
 	 * Return whether this contact is online or not.
-	 * FIXME: Make the return value an enum, because this value might
-	 *        be Unknown or NotApplicable!
+	 * @return bool indicating whhether the contact is online
 	 * FIXME: When all plugins support this, make this pure virtual!
 	 */
 	bool isOnline() const { return status() != Offline; }
 
 	/**
-	 * Return whether or not this contact is REACHABLE.
-	 * Useful in determining if the contact is able to
-	 * recieve messages even if offline, etc.
+	 * Function used in determining if the contact is able to
+	 * recieve messages even if offline, etc.  This function must
+	 * be defined by child classes
+	 *
+	 * @return bool indicating whether or not the contact is reachable (can send a message to it)
 	 */
 	virtual bool isReachable() = 0;
 
 	/**
-	 * The meta contact this contact is contained in
+	 * Accessor function for the contact's MetaContact
+	 * @return The contact's metacontact
 	 */
 	KopeteMetaContact *metaContact() const { return m_metaContact; }
 
 	/**
-	 * Return the ID of the identity this contact belongs to (i.e. for
+	 * Returns the identity this contact belongs to (i.e. for
 	 * having multiple contacts of the same protocol in the metacontact)
+	 * FIXME: This is a bad description, could someone clear it up?
+	 * 
+	 * @return THe identity of the ID
 	 */
 	virtual QString identityId() const;
 	
@@ -123,11 +128,13 @@ public:
 	
 	/**
 	 * Get the current display name
+	 * @return The display name
 	 */
 	QString displayName() const;
 
 	/**
 	 * Return the status of the contact
+	 * @return the status of the contact
 	 */
 	virtual ContactStatus status() const;
 
@@ -136,11 +143,14 @@ public:
 	 * The default implement does what you'd expect,
 	 * but you might want to reimplement it for more
 	 * fine-grained reporting of status
+	 * 
+	 * @return Formatted status text
 	 */
 	virtual QString statusText() const;
 	
 	/**
 	 * The name of the icon associated with the contact's status
+	 * @return name of the icon associated with the contact's status
 	 */
 	virtual QString statusIcon() const;
 
@@ -177,17 +187,22 @@ public:
 	 * more crash-prone). DO NOT assume anything regarding the id's
 	 * value! Even if it may look like an ICQ UIN or an MSN passport,
 	 * this is undefined and may change at any time!
+	 *
+	 * @return The unique id of the contact
 	 */
 	virtual QString id() const = 0;
 
 	/**
-	 * Return the protocol id that identifies a contact. Id is required
-	 * to be unique per protocol and per identity. Across those boundaries
-	 * ids may occur multiple times.
+	 * Return the protocol id that identifies a contact. 
+	 *
+	 * Note: Id is required to be unique per protocol and per identity. 
+	 * Across those boundaries ids may occur multiple times.
 	 * The id is solely for comparing items safely (using pointers is
 	 * more crash-prone). DO NOT assume anything regarding the id's
 	 * value! Even if it may look like an ICQ UIN or an MSN passport,
 	 * this is undefined and may change at any time!
+	 *
+	 * @return the unique protocol id of the contact
 	 */
 	QString protocol() const { return m_protocolId; }
 	
@@ -196,30 +211,39 @@ public:
 	 * which is displayed in showContextMenu (private).  Protocols
 	 * should use this to add protocol-specific actions to the 
 	 * popup menu
+	 *
+	 * @return Collection of menu items to be show on the context menu
 	 */
 	 virtual KActionCollection *customContextMenuActions() = 0;
 	 
 	 /**
-	 * Show a context menu of actions pertaining to this contact
-	 */
-	void showContextMenu( const QPoint& p );
+	  * Show a context menu of actions pertaining to this contact
+	  *
+	  * @param p The point at which to show the context menu
+	  */
+	 void showContextMenu( const QPoint& p );
 
-
-	void moveToMetaContact(KopeteMetaContact *m);
-
-	/**
-	 * Add this contact to the contact-list if this is a temporary contact.
-	 * If the protocol has a contact-list server-side, it is needed to derive this fontction.  
-	 */
-	virtual void addThisTemporaryContact();
-
-
+	 /**
+	  * Moves this contact to a new MetaContact
+	  *
+	  * @param m The new MetaContact to move this contact to
+	  */
+	 void moveToMetaContact(KopeteMetaContact *m);
+	 
+	 /**
+	  * Add this contact to the contact-list if this is a temporary contact.
+	  * If the protocol has a contact-list server-side, it is needed to derive this fontction.  
+	  * TODO: Write a better description of this, this doc doesn't make sense
+	  */
+	 virtual void addThisTemporaryContact();
+	 
+	 
 public slots:
 	/**
 	 * This should typically pop up a KopeteChatWindow
 	 */
 	virtual void execute() = 0;
-	
+ 
 	/**
 	 * Changes the MetaContact that this contact is a part of.  This function
 	 * is called by the KAction changeMetaContact that is part of the context 
