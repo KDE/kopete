@@ -122,16 +122,14 @@ void JabberEditAccountWidget::reopen ()
 KopeteAccount *JabberEditAccountWidget::apply ()
 {
 	kdDebug (14180) << "JabberEditAccount::apply()" << endl;
+
 	if (!m_account)
 	{
 		m_account = new JabberAccount (m_protocol, mID->text ());
 	}
-	/*else
-	{
-		m_account->setAccountId (mID->text ());
-	}*/
 
 	this->writeConfig ();
+
 	return m_account;
 }
 
@@ -229,21 +227,20 @@ void JabberEditAccountWidget::registerClicked ()
 	{
 		m_account = new JabberAccount (m_protocol, mID->text ());
 	}
-/*	else
-	{
-		m_account->setAccountId (mID->text ());
-	}*/
 
 	this->writeConfig ();
+
 	static_cast < JabberAccount * >(m_account)->registerUser ();
+
 }
 
 void JabberEditAccountWidget::sslToggled (bool value)
 {
-	if (value)
+	if (value && (mPort->value() == 5222))
 		mPort->stepUp ();
 	else
-		mPort->stepDown ();
+		if(!value && (mPort->value() == 5223))
+			mPort->stepDown ();
 }
 
 
