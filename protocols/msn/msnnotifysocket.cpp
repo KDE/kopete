@@ -549,7 +549,7 @@ void MSNNotifySocket::slotDispatchClosed()
 	m_dispatchSocket = 0L;
 	if(!dispatchOK)
 	{
-		KMessageBox::error( 0, i18n( "Connection failed\n Try later" ) , i18n ("MSN Plugin") );
+		KMessageBox::error( 0, i18n( "Connection failed\nTry again later." ) , i18n ("MSN Plugin") );
 		//because "this socket" isn't already connected, doing this manualy
 		emit onlineStatusChanged( Disconnected );
 		emit socketClosed(-1);

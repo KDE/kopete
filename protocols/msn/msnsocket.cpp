@@ -352,7 +352,7 @@ void MSNSocket::handleError( uint code, uint id )
 	if(code==500)
 	{
 		QString msg = i18n( "Internal server error!\n"
-				"The server is maybe down for maintenance. Try later " );
+				"The server is maybe down for maintenance. Try again later." );
 
 		KMessageBox::error( 0, msg, i18n( "MSN Plugin - Kopete" ) );
 		return;
