@@ -26,9 +26,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// * 2003-06-29
-//	(GJ) This file was completly rewriten by me
-//		
 
 #include "gadueditaccount.h"
 #include "gaduaccount.h"
@@ -50,7 +47,6 @@ GaduEditAccount::GaduEditAccount( GaduProtocol *proto, KopeteAccount *ident,
                                   QWidget *parent, const char *name )
   : GaduAccountEditUI( parent, name ), EditAccountWidget( ident )
   ,
-//    account_(ident), 
     protocol_( proto ), rcmd(0)
 {
 
