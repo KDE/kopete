@@ -17,6 +17,8 @@
 #include "kopeteprefs.h"
 
 #include <qfile.h>
+#include <qfont.h>
+#include <qmetaobject.h>
 
 #include <kapplication.h>
 #include <kglobalsettings.h>
@@ -113,8 +115,24 @@ void KopetePrefs::load()
 			<< QString::fromLatin1("awayMessage");
 	}
 
+	config->setGroup("ContactList");
+	int n = metaObject()->findProperty( "contactListDisplayMode" );
+	QString value = config->readEntry("DisplayMode",QString::fromLatin1("Default"));
+	mContactListDisplayMode = (ContactDisplayMode)metaObject()->property( n )->keyToValue( value.latin1() );
+	mContactListIndentContacts = config->readBoolEntry("IndentContacts", false);
+	mContactListUseCustomFonts = config->readBoolEntry("UseCustomFonts", false);
+	QFont font = KGlobalSettings::generalFont();
+	mContactListNormalFont = config->readFontEntry("NormalFont", &font);
+	if ( font.pixelSize() != -1 )
+		font.setPixelSize( (font.pixelSize() * 3) / 4 );
+	else
+		font.setPointSizeFloat( font.pointSizeFloat() * 0.75 );
+	mContactListSmallFont = config->readFontEntry("SmallFont", &font);
+	mContactListGroupNameColor = config->readColorEntry("GroupNameColor", &darkRed);
+
 	mWindowAppearanceChanged = false;
 	mTransparencyChanged = false;
+	mContactListAppearanceChanged = false;
 }
 
 void KopetePrefs::save()
@@ -161,6 +179,15 @@ void KopetePrefs::save()
 
 	config->writeEntry("ToolTipContents", mToolTipContents);
 
+	config->setGroup("ContactList");
+	int n = metaObject()->findProperty( "contactListDisplayMode" );
+	config->writeEntry("DisplayMode", metaObject()->property( n )->valueToKey( mContactListDisplayMode ));
+	config->writeEntry("IndentContacts", mContactListIndentContacts);
+	config->writeEntry("UseCustomFonts", mContactListUseCustomFonts);
+	config->writeEntry("NormalFont", mContactListNormalFont);
+	config->writeEntry("SmallFont", mContactListSmallFont);
+	config->writeEntry("GroupNameColor", mContactListGroupNameColor);
+
 	config->sync();
 	emit saved();
 
@@ -170,8 +197,12 @@ void KopetePrefs::save()
 	if(mWindowAppearanceChanged)
 		emit(windowAppearanceChanged());
 
+	if(mContactListAppearanceChanged)
+		emit(contactListAppearanceChanged());
+
 	mWindowAppearanceChanged = false;
 	mTransparencyChanged = false;
+	mContactListAppearanceChanged = false;
 }
 
 void KopetePrefs::setIconTheme(const QString &value)
@@ -191,21 +222,25 @@ void KopetePrefs::setShowOffline(bool value)
 
 void KopetePrefs::setShowEmptyGroups(bool value)
 {
+	mContactListAppearanceChanged = mContactListAppearanceChanged || !(value == mShowEmptyGroups);
 	mShowEmptyGroups = value;
 }
 
 void KopetePrefs::setTreeView(bool value)
 {
+	mContactListAppearanceChanged = mContactListAppearanceChanged || !(value == mTreeView);
 	mTreeView = value;
 }
 
 void KopetePrefs::setSortByGroup(bool value)
 {
+	mContactListAppearanceChanged = mContactListAppearanceChanged || !(value == mSortByGroup);
 	mSortByGroup = value;
 }
 
 void KopetePrefs::setGreyIdleMetaContacts(bool value)
 {
+	mContactListAppearanceChanged = mContactListAppearanceChanged || !(value == mGreyIdle);
 	mGreyIdle = value;
 }
 
@@ -376,6 +411,7 @@ QString KopetePrefs::fileContents(const QString &path)
 
 void KopetePrefs::setIdleContactColor(const QColor &value)
 {
+	mContactListAppearanceChanged = mContactListAppearanceChanged || !(value == mIdleContactColor);
 	mIdleContactColor = value;
 }
 
@@ -387,6 +423,54 @@ void KopetePrefs::setRichText(bool value)
 void KopetePrefs::setToolTipContents(const QStringList &value)
 {
 	mToolTipContents=value;
+}
+
+void KopetePrefs::setContactListIndentContacts( bool v )
+{
+	mContactListAppearanceChanged = mContactListAppearanceChanged || !(v == mContactListIndentContacts);
+	mContactListIndentContacts = v;
+}
+
+void KopetePrefs::setContactListDisplayMode( ContactDisplayMode v )
+{
+	mContactListAppearanceChanged = mContactListAppearanceChanged || !(v == mContactListDisplayMode);
+	mContactListDisplayMode = v;
+}
+
+void KopetePrefs::setContactListUseCustomFonts( bool v )
+{
+	mContactListAppearanceChanged = mContactListAppearanceChanged || !(v == mContactListUseCustomFonts);
+	mContactListUseCustomFonts = v;
+}
+
+void KopetePrefs::setContactListCustomNormalFont( const QFont & v )
+{
+	mContactListAppearanceChanged = mContactListAppearanceChanged || !(v == mContactListNormalFont);
+	mContactListNormalFont = v;
+}
+
+void KopetePrefs::setContactListCustomSmallFont( const QFont & v )
+{
+	mContactListAppearanceChanged = mContactListAppearanceChanged || !(v == mContactListSmallFont);
+	mContactListSmallFont = v;
+}
+
+QFont KopetePrefs::contactListSmallFont() const
+{
+	if ( mContactListUseCustomFonts )
+		return contactListCustomSmallFont();
+	QFont smallFont = KGlobalSettings::generalFont();
+	if ( smallFont.pixelSize() != -1 )
+		smallFont.setPixelSize( (smallFont.pixelSize() * 3) / 4 );
+	else
+		smallFont.setPointSizeFloat( smallFont.pointSizeFloat() * 0.75 );
+	return smallFont;
+}
+
+void KopetePrefs::setContactListGroupNameColor( const QColor & v )
+{
+	mContactListAppearanceChanged = mContactListAppearanceChanged || !(v == mContactListGroupNameColor);
+	mContactListGroupNameColor = v;
 }
 
 #include "kopeteprefs.moc"

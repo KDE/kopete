@@ -27,6 +27,9 @@ class KConfig;
 class KopetePrefs : public QObject
 {
 	Q_OBJECT
+	// here so we can use Qt to translate enums<-->strings
+	Q_PROPERTY( ContactDisplayMode contactListDisplayMode READ contactListDisplayMode WRITE setContactListDisplayMode )
+	Q_ENUMS( ContactDisplayMode )
 
 public:
 	/**
@@ -89,6 +92,16 @@ public:
 
 	QStringList toolTipContents() const { return mToolTipContents; }
 
+	///
+	enum ContactDisplayMode { Classic, RightAligned, Detailed, Yagami, Default = Classic };
+	bool contactListIndentContacts() const { return mContactListIndentContacts; }
+	ContactDisplayMode contactListDisplayMode() const { return mContactListDisplayMode; }
+	bool contactListUseCustomFonts() const { return mContactListUseCustomFonts; }
+	QFont contactListCustomNormalFont() const { return mContactListNormalFont; }
+	QFont contactListCustomSmallFont() const { return mContactListSmallFont; }
+	QFont contactListSmallFont() const;
+	QColor contactListGroupNameColor() const { return mContactListGroupNameColor; }
+	
 	void setIconTheme(const QString &value);
 	void setUseEmoticons(bool value);
 	void setShowOffline(bool value);
@@ -124,6 +137,12 @@ public:
 	void setNotifyAway(bool);
 	void setRichText(bool);
 	void setToolTipContents(const QStringList &);
+	void setContactListIndentContacts( bool v );
+	void setContactListDisplayMode( ContactDisplayMode v );
+	void setContactListUseCustomFonts( bool v );
+	void setContactListCustomNormalFont( const QFont & v );
+	void setContactListCustomSmallFont( const QFont & v );
+	void setContactListGroupNameColor( const QColor & v );
 
 signals:
 	/**
@@ -137,6 +156,7 @@ signals:
 	 */
 	void windowAppearanceChanged();
 	void messageAppearanceChanged();
+	void contactListAppearanceChanged();
 	void transparencyChanged();
 
 private:
@@ -183,6 +203,7 @@ private:
 	bool mShowTray;
 	bool mTransparencyChanged;
 	bool mWindowAppearanceChanged;
+	bool mContactListAppearanceChanged;
 	bool mNotifyAway;
 	bool mChatWShowSend;
 
@@ -193,6 +214,13 @@ private:
 	QString mStyleContents;
 
 	QStringList mToolTipContents;
+
+	bool mContactListIndentContacts;
+	ContactDisplayMode mContactListDisplayMode;
+	bool mContactListUseCustomFonts;
+	QFont mContactListNormalFont;
+	QFont mContactListSmallFont;
+	QColor mContactListGroupNameColor;
 
 	QString fileContents(const QString &path);
 	void _setStyleSheet (const QString &);
