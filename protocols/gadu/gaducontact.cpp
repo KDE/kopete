@@ -109,7 +109,7 @@ void
 GaduContact::initActions()
 {
 	actionSendMessage_	= KopeteStdAction::sendMessage( this, SLOT( execute() ), this, "actionMessage" );
-	actionInfo_			= KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), this, "actionInfo" );
+	actionInfo_		= KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ), this, "actionInfo" );
 }
 
 void
@@ -132,10 +132,12 @@ GaduContact::messageSend( KopeteMessage& msg, KopeteMessageManager* mgr )
 bool
 GaduContact::isReachable()
 {
-	if ( account_->isConnected() )
+	if ( account_->isConnected() ) {
 		return true;
-	else 
+	}
+	else { 
 		return false;
+	}
 }
 
 QPtrList<KAction>*
@@ -193,7 +195,7 @@ GaduContact::setInfo( const QString& email, const QString& firstName,
 		secondName_	= secondName;
 	}
 	if ( nickName.length() ) {
-		nickName_		= nickName;
+		nickName_	= nickName;
 	}
 	if ( phonenr.length() ) {
 		phonenr_		= phonenr;
