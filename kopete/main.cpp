@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 	aboutData.addCredit ( "Justin Karneges", I18N_NOOP("Psi Jabber code") );
 	aboutData.addCredit ( "Steve Cable", I18N_NOOP("Sounds") );
 
-	aboutData.addAuthor ( "Daniel Stone", I18N_NOOP("Former developer, Jabber plugin"), "daniel@fooishbar.org", "http://fooishbar.org");
+	aboutData.addCredit ( "Daniel Stone", I18N_NOOP("Former developer, Jabber plugin"), "daniel@fooishbar.org", "http://fooishbar.org");
 	aboutData.addCredit ( "Ryan Cumming", I18N_NOOP("Former developer"), "ryan@kde.org" );
 	aboutData.addCredit ( "Richard Stellingwerff", I18N_NOOP("Former Developer"), "remenic@linuxfromscratch.org");
 	aboutData.addCredit ( "Hendrik vom Lehn", I18N_NOOP("Former Developer"), "hennevl@hennevl.de", "http://www.hennevl.de");
