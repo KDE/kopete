@@ -1,4 +1,4 @@
-SUBDIRS = libkopete kopete protocols plugins pics sounds
+SUBDIRS = libkopete kopete protocols plugins pics sounds kio_kopete
 
 api:
 	doxygen kopete.api

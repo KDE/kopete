@@ -1,0 +1,14 @@
+[Protocol]
+exec=kio_kopete
+protocol=kopete
+input=none
+output=filesystem
+listing=Name,Type,MimeType
+reading=true
+writing=true
+deleting=false
+source=true
+makedir=false
+linking=false
+moving=false
+
