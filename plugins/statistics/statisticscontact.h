@@ -23,7 +23,6 @@
 class StatisticsDB;
 class QDateTime;
 
-
 class StatisticsContact 
 {
 	
@@ -112,10 +111,10 @@ public:
 	 * \returns the main (most used) status of the contact at date (not time) dt. return false if dt is invalid.
 	 */
 	QString mainStatusDate(QDate date);
-// 	/*
-// 	 * Prevision methods
-// 	 */
-// 	/**
+	/*
+	 * Prevision methods
+	 */
+	/**
 // 	 * \brief Give informations on when the next event will occur
 // 	 *
 // 	 * \param status the status to be checked.
@@ -134,6 +133,13 @@ public:
 // 	QDateTime nextOnlineEvent();
 	
 	
+	/**
+	 * \brief computes the main "status" events for the contact
+	 */
+	QValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::StatusType& status);
+	/// \brief used by mainEvents()
+	QValueList<int> StatisticsContact::computeCentroids(const QValueList<int>& centroids, const QValueList<int>& values);
+
 	
 private:	
 	/**

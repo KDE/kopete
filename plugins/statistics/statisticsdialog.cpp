@@ -222,6 +222,8 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 	mainWidget->listView->addColumn("Status");
 	mainWidget->listView->addColumn("Start date");
 	mainWidget->listView->addColumn("End date");
+	mainWidget->listView->addColumn("Start date");
+	mainWidget->listView->addColumn("End date");
 	
 	
 	
@@ -348,7 +350,10 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
 		}
 		
 		// We add a listview item to the log list
-		new KListViewItem(mainWidget->listView, values[i], values[i+1], values[i+2]);
+		QDateTime listViewDT1, listViewDT2;
+		listViewDT1.setTime_t(values[i+1].toInt());
+		listViewDT2.setTime_t(values[i+2].toInt());
+		new KListViewItem(mainWidget->listView, values[i], values[i+1], values[i+2], listViewDT1.toString(), listViewDT2.toString());
 	}
 	
 	
@@ -394,7 +399,14 @@ void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QS
          generalHTMLPart->write(QString("<b>Last talk :</b> %1<br>").arg(m_contact->lastTalk().toString()));
 		 generalHTMLPart->write(QString("<b>Last time contact was present :</b> %1").arg(m_contact->lastPresent().toString()));
 		 generalHTMLPart->write(QString("</div>"));
-	
+		 
+		 generalHTMLPart->write(QString("<div class=\"statgroup\">"));
+		 generalHTMLPart->write(QString("<b>Main online events :</b><br>"));
+		 QValueList<QTime> mainEvents = m_contact->mainEvents(Kopete::OnlineStatus::Online);
+		 for (int i=0; i<mainEvents.count(); i++)
+			 generalHTMLPart->write(QString("%1<br>").arg(mainEvents[i].toString()));
+		 generalHTMLPart->write(QString("</div>"));
+		 
 	 	generalHTMLPart->write(QString("<div class=\"statgroup\">"));
 	 	generalHTMLPart->write(i18n("Is <b>%1</b> since <b>%2</b>").arg(
 				Kopete::OnlineStatus::statusTypeToString(m_contact->oldStatus()),m_contact->oldStatusDateTime().toString()));
@@ -506,6 +518,11 @@ void StatisticsDialog::slotAskButtonClicked()
 	else if (mainWidget->questionComboBox->currentItem()==1)
 	{
 		mainWidget->answerEdit->setText(m_contact->mainStatusDate(mainWidget->datePicker->date()));
+	}
+	else if (mainWidget->questionComboBox->currentItem()==2)
+	// Next online
+	{
+		
 	}
 }
 

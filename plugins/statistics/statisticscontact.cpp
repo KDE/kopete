@@ -14,6 +14,8 @@
     *************************************************************************
 */
 
+#include <qvaluelist.h>
+
 #include <klocale.h>
 
 #include "kopetemetacontact.h"
@@ -153,7 +155,10 @@ void StatisticsContact::newMessageReceived(Kopete::Message& m)
 	
 	
 	// Message lenght
-	m_messageLength= (m.plainBody().length() + m_messageLength * m_messageLengthOn)/(1 + m_messageLengthOn);
+	if (m_messageLengthOn != -1)
+	{
+		m_messageLength= (m.plainBody().length() + m_messageLength * m_messageLengthOn)/(1 + m_messageLengthOn);
+	}
 	m_messageLengthOn++;
 	
 	// Last talked
@@ -262,7 +267,7 @@ QString StatisticsContact::mainStatusDate(QDate date)
 // {
 // 	return nextEvent(Kopete::OnlineStatus::Offline);
 // }
-// 
+//  
 // QDateTime StatisticsContact::nextOnlineEvent()
 // {
 // 	return nextEvent(Kopete::OnlineStatus::Online);
@@ -270,44 +275,136 @@ QString StatisticsContact::mainStatusDate(QDate date)
 
 // QDateTime StatisticsContact::nextEvent(const Kopete::OnlineStatus::StatusType& status)
 // {
-// 	QStringList values;
-// 	QDateTime currentDateTime = QDateTime::currentDateTime();
-// 	values = m_db->query(QString("SELECT datetimebegin, datetimeend, status FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin").arg(metaContact()->metaContactId()));
 // 	
-// 	/// @todo Problem here with the ORDER BY because it works here on strings, not on dates
-// 	/// So this doesn't work for now.
-// 		
-// 	int secsTo = 0;
-// 	int nb = 0;
-// 	for(int i=0; i < values.count(); i+=3)
-// 	{
-// 		kdDebug() << "statistics: " << currentDateTime.time().toString();
-// 		kdDebug() << "  statistics: " << QTime::fromString(values[i]).toString();
-// 		kdDebug() << "  statistics: " << QTime::fromString(values[i+1]).toString();
-// 		if (currentDateTime.time() > QTime::fromString(values[i]) && currentDateTime.time() < QTime::fromString(values[i+1])
-// 		/*&& currentDateTime.date().dayOfWeek() == QDate::fromString(values[i]).dayOfWeek() */ /// @todo temporary removed for tests
-// 		)
-// 		// We match the status like the current status and at the same time, and the same day of week, because on sundays, I 
-// 		// do not connect like on tuesdays.
-// 		{
-// 			kdDebug() << "statistics: " << currentDateTime.time().toString();
-// 			/// Then we look for the fist \p status (method parameter) event
-// 			int j = i+3;
-// 			while(j < values.count())
-// 			{
-// 				if (values[j+3] == Kopete::OnlineStatus::statusTypeToString(status))
-// 				{
-// 					
-// 					// Not really good for events at about midnight
-// 					secsTo = (nb*secsTo + currentDateTime.time().secsTo(QDateTime::fromString(values[j]).time()))/(nb+1);
-// 					nb++;
-// 					break;
-// 				}
-// 				
-// 				j+=3;
-// 			}
-// 		}
-// 	}
-// 	
-// 	return currentDateTime.addSecs(secsTo);
 // }
+
+QValueList<QTime> StatisticsContact::mainEvents(const Kopete::OnlineStatus::StatusType& status)
+{
+	QStringList buffer;
+	QValueList<QTime> mainEvents;
+	
+	
+	QDateTime currentDateTime = QDateTime::currentDateTime();
+	buffer = m_db->query(QString("SELECT datetimebegin, datetimeend, status FROM contactstatus WHERE metacontactid LIKE '%1' ORDER BY datetimebegin").arg(metaContact()->metaContactId()));
+	
+	
+	// Only select the events for which the previous is not Unknown AND the status is status.
+	QStringList values;
+	for (int i=0; i<buffer.count(); i += 3)
+	{
+		if (buffer[i+2] == Kopete::OnlineStatus::statusTypeToString(status)
+			&& abs(buffer[i+1].toInt()-buffer[i].toInt()) > 120)
+		{
+			values.push_back(buffer[i]);
+		}
+	}
+	
+	// No entries for this contact ...
+	if (!values.count()) return mainEvents;
+
+	// First we compute the average number of events/day : avEventsPerDay;
+	int avEventsPerDay = 0;
+	QDateTime dt1, dt2;
+	dt1.setTime_t(values[0].toInt());
+	dt2.setTime_t(values[values.count()-1].toInt());
+	
+	avEventsPerDay = qRound((double)values.count()/(double)dt1.daysTo(dt2));
+	kdDebug() << "statistics: average events per day : " <<avEventsPerDay << endl;
+	
+	// We want to work on hours
+	QValueList<int> hoursValues;
+	for (int i=0; i<values.count(); i++)
+	{
+		QDateTime dt;
+		dt.setTime_t(values[i].toInt());
+		hoursValues.push_back(QTime(0, 0, 0).secsTo(dt.time()));
+	}
+	
+	// Sort the list
+	qHeapSort(hoursValues);
+	
+	// Then we put some centroids (centroids in [0..24[)
+	QValueList<int> centroids;
+	int incr=qRound((double)hoursValues.count()/(double)avEventsPerDay);
+	incr = incr ? incr : 1;
+	for (int i=0; i<hoursValues.count(); i+=incr)
+	{
+		centroids.push_back(hoursValues[i]);
+		kdDebug() << "statistics: add a centroid : " << centroids[centroids.count()-1] << endl;
+	}
+	
+	
+	// We need to compute the centroids
+	centroids = computeCentroids(centroids, hoursValues);
+	
+	// Convert to QDateTime
+	for (int i=0; i<centroids.count(); i++)
+	{
+		kdDebug() << "statistics: new centroid : " << centroids[i] << endl;
+
+		QTime dt(0, 0, 0);
+		dt = dt.addSecs(centroids[i]);
+		mainEvents.push_back(dt);
+	}
+	
+	
+	return mainEvents;
+}
+
+QValueList<int> StatisticsContact::computeCentroids(const QValueList<int>& centroids, const QValueList<int>& values)
+{
+	kdDebug() << "statistics: enter compute centroids"<< endl;
+
+	QValueList<int> whichCentroid; // whichCentroid[i] = j <=> values[i] has centroid j for closest one
+	QValueList<int> newCentroids;
+	for (int i=0; i<values.count(); i++)
+	// Iterates over the values. For each one we need to get the closest centroid.
+	{
+		int value = values[i];
+		int distanceToNearestCentroid = abs(centroids[0]-value);
+		int nearestCentroid = 0;
+		for (int j=1; j<centroids.count(); j++)
+		{
+			if (abs(centroids[j]-value) < distanceToNearestCentroid)
+			{
+				distanceToNearestCentroid = abs(centroids[j]-value);
+				nearestCentroid = j;
+			}
+		}
+		whichCentroid.push_back(nearestCentroid);
+	}
+	
+	// Recompute centroids
+	newCentroids = centroids;
+	
+	for (int i=0; i<newCentroids.count(); i++)
+	{
+		kdDebug() << "statistics: compute new centroids"<< i << endl;
+		int weight = 0;
+		for (int j=0; j<values.count(); j++)
+		{
+			int value = values[j];
+			if (whichCentroid[j] == i)
+			{
+				newCentroids[i] = qRound((double)(value + newCentroids[i]*weight)/(double)(weight + 1));
+				weight++;
+				
+			}
+		}
+	}
+	
+	
+	
+	// Should we recompute or are we OK ?
+	int dist = 0;
+	for (int i=0; i < newCentroids.count(); i++)
+		dist += abs(newCentroids[i]-centroids[i]);
+	
+	if (dist > 10) 
+		return computeCentroids(newCentroids, values);
+	else
+	{
+		
+		return newCentroids;
+	}
+}
