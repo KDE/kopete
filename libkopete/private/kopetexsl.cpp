@@ -111,7 +111,7 @@ void KopeteXSLThread::run()
 				xmlChar *mem;
 				int size;
 				xmlDocDumpMemory( resultDoc, &mem, &size );
-				m_resultString = QString::fromUtf8( QCString( (const char*)mem, size ) );
+				m_resultString = QString::fromUtf8( QCString( (char*)mem, size + 1 ) );
 				delete mem;
 			}
 			else
