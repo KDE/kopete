@@ -46,10 +46,14 @@ public:
 	void sendFile( const QString &fileLocation, const QString &fileName,
 		long unsigned int fileSize );
 
+	/**
+	 * append an invitation in the invitation map, and send the first invitation message
+	 */
+	void initInvitation(MSNInvitation* invitation);
+
 public slots:
 	void slotCloseSession();
 	void slotInviteOtherContact();
-	void slotVoiceChat();
 
 	void invitationDone( MSNInvitation*  );
 

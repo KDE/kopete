@@ -57,6 +57,8 @@ public:
 
 	virtual void parseInvitation(const QString& invitation);
 
+	virtual QObject* object() { return this; }
+
 public slots:
 	void abort();
 

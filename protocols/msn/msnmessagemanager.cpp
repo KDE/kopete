@@ -31,8 +31,6 @@
 #include "msnaccount.h"
 #include "msnswitchboardsocket.h"
 
-#include "msnvoiceinvitation.h"
-
 #if !defined NDEBUG
 #include "msndebugrawcmddlg.h"
 #endif
@@ -222,7 +220,6 @@ KActionCollection * MSNMessageManager::chatActions()
 	#if !defined NDEBUG
 	KActionMenu *debugMenu = new KActionMenu( "Debug", m_actions );
 	debugMenu->insert( new KAction( i18n( "Send Raw C&ommand..." ), 0, this, SLOT( slotDebugRawCommand() ), debugMenu, "m_debugRawCommand" ) );
-	debugMenu->insert( new KAction( i18n( "Voice Chat" ), 0, this, SLOT( slotVoiceChat() ), debugMenu, "m_voiceChat" ) );
 	m_actions->insert( debugMenu );
 	#endif
 
@@ -325,14 +322,6 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			MFTS->parseInvitation(msg);
 			setCanBeDeleted(false);
 		}
-		else if( msg.contains(MSNVoiceInvitation::applicationID()) )
-		{
-			MSNVoiceInvitation *msnVI=new MSNVoiceInvitation(true,c,this);
-			connect(msnVI, SIGNAL( done(MSNInvitation*) ) , this , SLOT( invitationDone(MSNInvitation*) ));
-			m_invitations.insert( cookie  , msnVI);
-			msnVI->parseInvitation(msg);
-			setCanBeDeleted(false);
-		}
 		else
 		{
 			MSNInvitation *i=0l;
@@ -385,26 +374,28 @@ void MSNMessageManager::sendFile(const QString &fileLocation, const QString &/*f
 
 		QPtrList<KopeteContact>contacts=members();
 		MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(user()->account()->accountId(),contacts.first(), false,this);
-		connect(MFTS, SIGNAL( done(MSNInvitation*) ) , this , SLOT( invitationDone(MSNInvitation*) ));
-		m_invitations.insert( MFTS->cookie()  , MFTS);
 
 		//Call the setFile command to let the MFTS know what file we are sending
 		MFTS->setFile(fileLocation, fileSize);
 
-		m_chatService->sendCommand( "MSG" , "N", true, MFTS->invitationHead() );
+		initInvitation(MFTS);
 	}
 }
 
-void MSNMessageManager::slotVoiceChat()
+void MSNMessageManager::initInvitation(MSNInvitation* invitation)
 {
 	if(m_chatService)
 	{
-		QPtrList<KopeteContact>contacts=members();
-		MSNVoiceInvitation *msnVI=new MSNVoiceInvitation(false,static_cast<MSNContact*>(contacts.first()),this);
-		connect(msnVI, SIGNAL( done(MSNInvitation*) ) , this , SLOT( invitationDone(MSNInvitation*) ));
-		m_invitations.insert( msnVI->cookie() , msnVI);
+		connect(invitation->object(), SIGNAL( done(MSNInvitation*) ) , this , SLOT( invitationDone(MSNInvitation*) ));
+		m_invitations.insert( invitation->cookie() , invitation);
 
-		m_chatService->sendCommand( "MSG" , "N", true, msnVI->invitationHead() );
+		m_chatService->sendCommand( "MSG" , "N", true, invitation->invitationHead() );
+	}
+	else
+	{
+		//TODO: connect the switchboard, and add the invitation to a quee
+		//FIXME: show a message box
+		delete invitation;
 	}
 }
 
