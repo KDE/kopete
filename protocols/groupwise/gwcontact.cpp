@@ -61,7 +61,6 @@ GroupWiseContact::GroupWiseContact( Kopete::Account* account, const QString &dn,
 : Kopete::Contact( account, GroupWiseProtocol::dnToDotted( dn ), parent ), m_objectId( objectId ), m_parentId( parentId ),
   m_sequence( sequence ), m_actionBlock( 0 ), m_archiving( false ), m_deleting( false )
 {
-	//kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " id supplied: " << dn << endl;
 	if ( dn.find( '=' ) != -1 )
 	{
 		m_dn = dn;
@@ -142,14 +141,6 @@ bool GroupWiseContact::isReachable()
 
 void GroupWiseContact::serialize( QMap< QString, QString > &serializedData, QMap< QString, QString > & /* addressBookData */ )
 {
-/*    QString value;
-	switch ( m_type )
-	{
-	case Null:
-		value = "null";
-	case Echo:
-		value = "echo";
-	}*/
 	serializedData[ "DN" ] = m_dn;
 }
 
@@ -160,75 +151,7 @@ Kopete::ChatSession * GroupWiseContact::manager( Kopete::Contact::CanCreateFlags
 	Kopete::ContactPtrList chatMembers;
 	chatMembers.append( this );
 
-	return manager( chatMembers, canCreate );
-
-/*	if ( m_msgManager )
-	{
-		return m_msgManager;
-	}
-	else
-	{
-		QPtrList<Kopete::Contact> contacts;
-		contacts.append(this);
-		m_msgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), contacts, protocol());
-		connect(m_msgManager, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession*)),
-				this, SLOT( sendMessage( Kopete::Message& ) ) );
-		connect(m_msgManager, SIGNAL(destroyed()), this, SLOT(slotChatSessionDestroyed()));
-		return m_msgManager;
-	}*/
-}
-
-GroupWiseChatSession * GroupWiseContact::manager( Kopete::ContactPtrList chatMembers, Kopete::Contact::CanCreateFlags canCreate )
-{
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	
-	Kopete::ChatSession *_manager = Kopete::ChatSessionManager::self()->findChatSession ( account()->myself(), chatMembers, protocol() );
-	GroupWiseChatSession *mgr = dynamic_cast<GroupWiseChatSession*>( _manager );
-
-	/*
-	 * If we didn't find a message manager for this contact,
-	 * instantiate a new one if we are allowed to. (otherwise return 0)
-	 */
-	if ( !mgr && canCreate==Kopete::Contact::CanCreate )
-	{
-		mgr = account()->chatSession( account()->myself(), chatMembers, protocol(), QString::null );
-		connect( mgr, SIGNAL( destroyed ( QObject * ) ), SLOT( slotChatSessionDeleted ( QObject * ) ) );
-		connect( mgr, SIGNAL( conferenceCreated() ), SLOT( slotConferenceCreated() ) );
-		//m_pendingManagers.append( mgr );
-	
-	}
-
-	return mgr;
-}
-
-GroupWiseChatSession * GroupWiseContact::manager( const GroupWise::ConferenceGuid & guid, Kopete::Contact::CanCreateFlags canCreate )
-{
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << m_dn << "looking for message manager for guid: " << guid << ", canCreate: " << canCreate << endl;
-	if ( !guid.isNull() )
-	{
-		dumpManagers();
-		GroupWiseChatSession * mgr = m_msgManagers[ guid ];
-		if ( !mgr )
-		{
-			// we've received the first message from a new conference.
-			// create a message manager with the given guid
-			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - this GroupWiseChatSession is new to us. " << endl;
-			Kopete::ContactPtrList chatMembers;
-			chatMembers.append ( this );
-			mgr = account()->chatSession( account()->myself(), chatMembers, protocol(), guid );
-			connect( mgr, SIGNAL( destroyed( QObject * ) ), this, SLOT( slotChatSessionDeleted ( QObject * ) ) );
-			m_msgManagers.insert( guid, mgr );
-		}
-		else
-			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << " - found an existing GroupWiseChatSession for this guid. " << endl;
-		
-		return mgr;
-	}
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "GUID is empty, grabbing first available manager." << endl;
-	/*
-	 * The guid supplied is empty, so just return the first available manager.
-	 */
-	return dynamic_cast<GroupWiseChatSession *>( manager( canCreate ) );
+	return account()->chatSession( chatMembers, QString::null, Kopete::Contact::CanCreate );
 }
 
 QPtrList<KAction> *GroupWiseContact::customContextMenuActions() 
@@ -268,68 +191,6 @@ void GroupWiseContact::sendMessage( Kopete::Message &message )
 	manager()->appendMessage( message );
 	// tell the manager it was sent successfully
 	manager()->messageSucceeded();
-}
-
-void GroupWiseContact::dumpManagers()
-{
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " for: " << contactId() << endl;
-	QMapIterator< GroupWise::ConferenceGuid, GroupWiseChatSession * > it;
-	
-	for ( it = m_msgManagers.begin() ; it != m_msgManagers.end(); ++it )
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "guid: " << it.key() << endl;
-}
-
-void GroupWiseContact::slotConferenceCreated()
-{
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	GroupWiseChatSession * mgr = (GroupWiseChatSession *)sender();
-	m_msgManagers.insert( mgr->guid(), mgr );
-	dumpManagers();
-}
-
-void GroupWiseContact::slotChatSessionDeleted( QObject *sender )
-{
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "Message manager deleted, collecting the pieces..." << endl;
-
-	GroupWiseChatSession *manager = static_cast<GroupWiseChatSession *>(sender);
-
-	m_msgManagers.remove( manager->guid() );
-}
-
-void GroupWiseContact::handleIncomingMessage( const ConferenceEvent & message, bool autoReply )
-{
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << m_dn << " sent a " << ( autoReply ? "auto-reply" : "message" ) << " to conference: " << message.guid << ", message: " << message.message << endl;
-	Kopete::ContactPtrList contactList;
-	contactList.append ( account()->myself () );
-	GroupWiseChatSession *mgr = manager( message.guid, Kopete::Contact::CanCreate );
-
-	// add an auto-reply indicator if needed
-	QString messageMunged = message.message;
-	if ( autoReply )
-	{
-		QString autoReplyPrefix = i18n("Prefix used for automatically generated auto-reply"
-									   " messages when the contact is Away, contains contact's name",
-				"Auto reply from %1: " ).arg( metaContact()->displayName() );
-		messageMunged = autoReplyPrefix + message.message;
-	}
-	Kopete::Message * newMessage = new Kopete::Message ( message.timeStamp, this, contactList, messageMunged, 
-									Kopete::Message::Inbound,
-									autoReply ? Kopete::Message::PlainText : Kopete::Message::RichText );
-	Q_ASSERT( mgr );
-	mgr->appendMessage( *newMessage );
-	delete newMessage;
-}
-
-void GroupWiseContact::joinConference( const GroupWise::ConferenceGuid & guid )
-{
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	manager( guid, Kopete::Contact::CannotCreate );
-}
-
-void GroupWiseContact::leaveConference( const GroupWise::ConferenceGuid & guid )
-{
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo <<  endl;
-	m_msgManagers.remove( guid );
 }
 
 void GroupWiseContact::addCLInstance( const ContactListInstance & instance )

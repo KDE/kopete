@@ -23,9 +23,7 @@
 #include <kresolver.h>
 
 #include "gwbytestream.h"
-//#include "gwprotocol.h"
-// temporary #define until we have a protocol
-#define GROUPWISE_DEBUG_GLOBAL
+#include "gwerror.h"
 
 KNetworkByteStream::KNetworkByteStream ( QObject *parent, const char */*name*/ )
  : ByteStream ( parent )
@@ -115,7 +113,7 @@ void KNetworkByteStream::slotConnectionClosed ()
 	if ( mClosing )
 	{
 		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "..by ourselves!" << endl;
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "socket error is " << socket()->errorString( socket()->error() ) << endl;
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "socket error is \"" << socket()->errorString( socket()->error() ) << "\"" << endl;
 		emit connectionClosed ();
 	}
 	else

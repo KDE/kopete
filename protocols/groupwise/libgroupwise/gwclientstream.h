@@ -137,7 +137,7 @@ signals:
 	void warning(int);
 // #	void incomingXml(const QString &s); // signals emitted in processNext but don't seem to go anywhere...
 // #	void outgoingXml(const QString &s); //
-	void readyRead(); //signals that there is a transfer ready to be read
+//	void readyRead(); //signals that there is a transfer ready to be read - defined in stream
 public slots:
 	void continueAfterWarning();
 

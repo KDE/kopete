@@ -25,6 +25,7 @@ UserTransfer::UserTransfer( int transactionId )
 
 UserTransfer::~UserTransfer()
 {
+	m_fields.purge();
 }
 
 void UserTransfer::setFields( Field::FieldList fields )

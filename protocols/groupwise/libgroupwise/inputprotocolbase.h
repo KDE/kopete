@@ -66,7 +66,7 @@ protected:
 protected:
 	uint m_state;
 	uint m_bytes;
-	QDataStream * m_din;
+	QDataStream m_din;
 };
 
 #endif

@@ -24,7 +24,7 @@
 #include <qstring.h>
 
 typedef Q_UINT16 NMERR_T;
-#define GROUPWISE_DEBUG_GLOBAL 14220
+#define GROUPWISE_DEBUG_GLOBAL 14190
 
 #define BLANK_GUID "[00000000-00000000-00000000-0000-0000]"
 #define CONF_GUID_END 27
@@ -85,6 +85,7 @@ namespace GroupWise
 	public:
 		ConferenceGuid();
 		ConferenceGuid( const QString & string );
+		~ConferenceGuid();
 	};
 	
 	bool operator==( const ConferenceGuid & g1, const ConferenceGuid & g2 );

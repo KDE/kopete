@@ -39,26 +39,12 @@
 
 #include "gwmessagemanager.h"
 
-void GroupWiseChatSession::Dict::insert( const ConferenceGuid & key, GroupWiseChatSession * item )
-{
-	QMap< ConferenceGuid, GroupWiseChatSession * >::insert( key.left( CONF_GUID_END ), item  );
-}
-
-GroupWiseChatSession * GroupWiseChatSession::Dict::operator[]( const ConferenceGuid & key )
-{
-	return QMap< ConferenceGuid, GroupWiseChatSession * >::operator[]( key.left( CONF_GUID_END ) );
-}
-
-void GroupWiseChatSession::Dict::remove( const ConferenceGuid & key )
-{
-	QMap< ConferenceGuid, GroupWiseChatSession * >::remove( key.left( CONF_GUID_END ) );
-}
-
 GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const GroupWise::ConferenceGuid & guid, int id, const char* name): Kopete::ChatSession(user, others, protocol, name), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )
 {
-  static uint s_id=0;
-  m_mmId=++s_id;
-  
+	Q_UNUSED( id );
+	static uint s_id=0;
+	m_mmId=++s_id;
+	
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId() << endl;
 
 	// Needed because this is (indirectly) a KXMLGuiClient, so it can find the gui description .rc file
@@ -93,6 +79,7 @@ GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::
 
 GroupWiseChatSession::~GroupWiseChatSession()
 {
+	emit leavingConference( this );
 }
 
 uint GroupWiseChatSession::mmId() const
@@ -128,6 +115,7 @@ bool GroupWiseChatSession::secure()
 
 void GroupWiseChatSession::setClosed()
 {
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " Conference " << m_guid << " is now Closed " << endl;
 	m_guid = QString::null;
 	m_flags = m_flags | GroupWise::Closed;
 }
@@ -425,8 +413,6 @@ void GroupWiseChatSession::joined( GroupWiseContact * c )
 	// because otherwise KMM will delete itself when the last member leaves.
 	addContact( c );
 
-	c->joinConference( m_guid );
-	
 	// look for the invitee and remove it
 	Kopete::Contact * pending;
 	for ( pending = m_invitees.first(); pending; pending = m_invitees.next() )
@@ -447,8 +433,8 @@ void GroupWiseChatSession::joined( GroupWiseContact * c )
 
 void GroupWiseChatSession::left( GroupWiseContact * c )
 {
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	removeContact( c );
-	c->leaveConference( m_guid );
 	--m_memberCount;
 	
 	updateArchiving();

@@ -102,9 +102,9 @@ public:
 	 */
 	Client * client() const;
 	/**
-	 * Utility access to a message manager instance for a given GUID
+	 * Utility to create or access a message manager instance for a given GUID and set of contacts
 	 */
-	GroupWiseChatSession * chatSession( const Kopete::Contact* user, Kopete::ContactPtrList others, Kopete::Protocol* protocol, const ConferenceGuid & guid );
+	GroupWiseChatSession * chatSession( Kopete::ContactPtrList others, const ConferenceGuid & guid, Kopete::Contact::CanCreateFlags canCreate );
 	/**
 	 * Look up a contact given a DN
 	 * Returns 0 if none found
@@ -284,16 +284,10 @@ protected slots:
 
 	// HOUSEKEEPING
 	/**
-	 * Because a message manager that we create will get a GUID from the server some time after it is created,
-	 * when we get a GUID back after a successful conference create, we signal the GUID and the message manager's internal ID
-	 * using conferenceCreated, then listen for a conferenceCreated signal back from the manager, and register it in this slot
-	 */
-	void slotChatSessionGotGuid();
-	/**
 	 * We listen for the destroyed() signal and leave any conferences we
 	 * might have been in, and remove it from our map.
 	 */
-	void slotChatSessionDestroyed( QObject * );
+	void slotLeavingConference( GroupWiseChatSession * );
 
 	/** Debug slots */
 	void slotConnError();
@@ -303,6 +297,15 @@ protected:
 	 * Sends a status message to the server - called by the status specific slotGoAway etc
 	 */
 	void setStatus( GroupWise::Status status, const QString & reason = QString::null );
+
+	/**
+	* Received a message from the server.
+	* Find the conversation that this message belongs to, and display it there.
+	* @param autoReply Indicates that the message is an auto reply - doesn't contain any RTF.
+	*/
+	void handleIncomingMessage( const ConferenceEvent & event, bool autoReply );
+
+	GroupWiseChatSession * findChatSessionByGuid( const GroupWise::ConferenceGuid & guid );
 	/**
 	 * Memory management
 	 */
@@ -320,7 +323,7 @@ private:
 
 	GroupWise::Status m_initialStatus;
 	QString m_initialReason;
-	GroupWiseChatSession::Dict m_managers;
+	QValueList<GroupWiseChatSession*> m_chatSessions;
 	bool m_dontSync;
 };
 

@@ -106,28 +106,6 @@ public:
 	 */
 	virtual Kopete::ChatSession *manager( Kopete::Contact::CanCreateFlags canCreate =  Kopete::Contact::CannotCreate );
 
-	/** 
-	 * Locate or create a messagemanager for the specified group of contacts
-	 */
-	GroupWiseChatSession *manager ( Kopete::ContactPtrList chatMembers, Kopete::Contact::CanCreateFlags canCreate =  Kopete::Contact::CannotCreate );
-
-	/**
-	 * Received a message from the server.
-	 * Find the conversation that this message belongs to, and display it there.
-	 * @param autoReply Indicates that the message is an auto reply - doesn't contain any RTF.
-	 */
-	void handleIncomingMessage( const ConferenceEvent & event, bool autoReply );
-	
-	/**
-	 * Add this contact to a conference
-	 */
-	void joinConference( const ConferenceGuid & guid );
-
-	/**
-	 * Remove this contact from a conference
-	 */
-	void leaveConference( const ConferenceGuid & guid );
-	
 	/**
 	 * Access the contact's server properties
 	 */
@@ -201,10 +179,6 @@ public slots:
 	void slotRenamedOnServer();
 	
 protected:
-	/**
-	 * Returns the Kopete::ChatSession for the GroupWise conference with the supplied GUID, or creates a new one.
-	 */
-  GroupWiseChatSession *manager( const ConferenceGuid & guid, Kopete::Contact::CanCreateFlags canCreate = Kopete::Contact::CannotCreate );
 	// debug function to see what message managers we have on the server
 	void dumpManagers();
 protected slots:
@@ -212,15 +186,6 @@ protected slots:
 	 * Show the contact's properties
 	 */
 	void slotUserInfo();
-	/**
-	 * A message manager was instantiated as a conference on the server, so record it.
-	 */
-	void slotConferenceCreated();
-	/**
-	 * Notify the contact that a Kopete::ChatSession was
-	 * destroyed - probably by the chatwindow being closed
-	 */
-	void slotChatSessionDeleted( QObject *sender );
 	/**
 	 * Block or unblock the contact, toggle its current blocking state
 	 */
@@ -239,8 +204,6 @@ protected:
 	QString m_displayName;
 	KAction* m_actionPrefs;
 	KAction *m_actionBlock;
-	// all the message managers that this contact is currently chatting via
-	GroupWiseChatSession::Dict m_msgManagers;
 	// a list of all the instances that this contact appears in the server side contact list
 	CLInstanceList m_instances;
 	// Novell Messenger Properties, as received by the server.  

@@ -40,19 +40,8 @@ friend class GroupWiseAccount;
 
 public:
 	/**
-	 * Specialised dictionary that only keys on the first CONF_GUID_END characters of a conference GUID
-	 * INNER CLASS derived from an INSTANCE of a TEMPLATE CLASS with an OVERLOADED OPERATOR []
+     * The destructor emits leavingConference so that the account can tell the server that the user has left the chat
 	 */
-	class Dict : public QMap< ConferenceGuid, GroupWiseChatSession * >
-	{
-		// QMap::insert isn't virtual 
-		public:
-		void insert( const ConferenceGuid & key, GroupWiseChatSession * item );
-		GroupWiseChatSession * operator[]( const ConferenceGuid & key );
-		void remove( const ConferenceGuid & k );
-	};
-
-
 	~GroupWiseChatSession();
 	/**
 	 * The conference's globally unique identifier, which is given to it by the server
@@ -105,9 +94,9 @@ signals:
 	 */
 	void conferenceCreated();
 	/**
-	 * Tell the contact that the server wouldn't create a conference
+	 * Tell the account that the GroupWiseChatSession is closing so it can tell the server that the user has left the conference
 	 */
-	// NOT DECIDED IF WE NEED THIS YET
+	void leavingConference( GroupWiseChatSession * );
 protected:
 	/**
 	 * Start the process of creating a conference for this GWMM on the server.

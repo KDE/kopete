@@ -170,7 +170,7 @@ namespace Field
 	{
 		public:
 			/** 
-			 * Destructor, deletes all the Fields (including nested FieldLists) that this list contains.
+			 * Destructor - doesn't delete the fields because FieldLists are passed by value
 			 */
 			virtual ~FieldList();
 			/** 
@@ -194,6 +194,10 @@ namespace Field
 			 * Debug function, dumps to stdout
 			 */
 			void dump( bool recursive = false, int offset = 0 );
+			/**
+			 * Delete the contents of the list
+			 */
+			void purge();
 			/** 
 			 * Utility functions for finding the first instance of a tag
 			 * @return 0 if no field of the right tag and type was found.
@@ -239,7 +243,7 @@ namespace Field
 	public:  
 		MultiField( QCString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type );
 		MultiField( QCString tag, Q_UINT8 method, Q_UINT8 flags, Q_UINT8 type, FieldList fields );
-		~MultiField() {}
+		~MultiField();
 		FieldList fields() const;
 		void setFields( FieldList );
 	private:

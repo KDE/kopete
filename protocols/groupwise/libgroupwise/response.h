@@ -28,7 +28,8 @@ class Response: public UserTransfer
 {
 public:
 	Response( int transactionId, int resultCode, Field::FieldList fields );
-	~Response( ) {}
+	virtual ~Response( );
+
 	TransferType type() { return Transfer::ResponseTransfer; }
 	int resultCode() const;
 private:
