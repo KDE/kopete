@@ -35,7 +35,7 @@
 
 GaduAway::GaduAway( GaduAccount* account, QWidget* parent, const char* name )
 : KDialogBase( parent, name, true, i18n( "Away Dialog" ),
-			 KDialogBase::Ok | KDialogBase::Apply |  KDialogBase::Cancel,
+			 KDialogBase::Ok | KDialogBase::Cancel,
 			 KDialogBase::Ok, true ), account_( account )
 {
 	KopeteOnlineStatus ks;
