@@ -60,7 +60,6 @@ public:
 	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 
 public slots:
-	virtual void slotDeleteContact() { deleteLater(); }
 	virtual void slotUserInfo();
 	void slotCheckStatus();	// the call back for the checkStatus timer
 	void slotNewMessage(const QString &Body, const QDateTime &Arrival);

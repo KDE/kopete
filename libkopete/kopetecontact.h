@@ -278,6 +278,7 @@ public slots:
 	 * should be implemented by protocol plugin to handle
 	 * protocol-specific actions required to delete a contact
 	 * (ie. messages to the server, etc)
+	 * the default implementation simply call deleteLater()
 	 */
 	virtual void slotDeleteContact();
 

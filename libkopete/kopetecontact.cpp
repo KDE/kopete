@@ -420,8 +420,8 @@ KopeteMessageManager *KopeteContact::manager( bool )
 
 void KopeteContact::slotDeleteContact()
 {
-	/* Default implementation does nothing */
-	//FIXME: shouldn't we simply delete the contact here? (Olivier)
+	/* Default implementation simply delete the contact */
+	deleteLater();
 }
 
 void KopeteContact::slotUserInfo()

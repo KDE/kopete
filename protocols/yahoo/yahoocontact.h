@@ -52,8 +52,6 @@ public:
 	void setYahooStatus(YahooStatus::Status, const QString & = "", int = 0);
 
 public slots:
-	virtual void slotViewHistory();
-	virtual void slotDeleteContact();
 	virtual void slotUserInfo();
 	virtual void slotSendFile();
 	void syncToServer();		// must be called after the contact list has been received, or it wont work very well!

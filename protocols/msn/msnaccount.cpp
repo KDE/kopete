@@ -858,7 +858,6 @@ void MSNAccount::slotContactRemoved( const QString& handle, const QString& list,
 		{
 			// Contact is removed from the FL list, remove it from the group
 			c->contactRemovedFromGroup( group );
-			//FIXME: I think we have to delete this contact is it is in no groups
 		}
 		else if( list == "BL" )
 		{

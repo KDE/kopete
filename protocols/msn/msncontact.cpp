@@ -154,6 +154,7 @@ void MSNContact::slotDeleteContact()
 	else
 	{
 		// FIXME: This case should be handled by Kopete, not by the plugins :( - Martijn
+		// FIXME: We should be able to delete contacts offline, and remove it from server next time we go online - Olivier
 		KMessageBox::error( 0L, i18n( "<qt>Please go online to remove contact</qt>" ), i18n( "MSN Plugin" ));
 	}
 }
@@ -346,6 +347,10 @@ void MSNContact::contactAddedToGroup( uint groupNumber, KopeteGroup *group )
 void MSNContact::contactRemovedFromGroup( unsigned int group )
 {
 	m_serverGroups.remove( group );
+	if(m_serverGroups.isEmpty() && !m_moving)
+	{
+		deleteLater();
+	}
 	m_moving=false;
 }
 

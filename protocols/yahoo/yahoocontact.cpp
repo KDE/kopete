@@ -170,16 +170,6 @@ KActionCollection *YahooContact::customContextMenuActions()
 	return 0L;
 }
 
-void YahooContact::slotViewHistory()
-{
-	kdDebug(14180) << "[YahooContact::slotViewHistory()]" << endl;
-}
-
-void YahooContact::slotDeleteContact()
-{
-	kdDebug(14180) << "[YahooContact::slotDeleteContact()]" << endl;
-}
-
 void YahooContact::slotUserInfo()
 {
 	kdDebug(14180) << "[YahooContact::slotUserInfo()]" << endl;
