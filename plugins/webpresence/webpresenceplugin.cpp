@@ -20,6 +20,7 @@
 #include <qtimer.h>
 #include <qptrlist.h>
 #include <qfile.h>
+#include <qdatetime.h>
 
 #include <kdebug.h>
 #include <kgenericfactory.h>
@@ -29,6 +30,8 @@
 #include <kaction.h>
 #include <kstdguiitem.h>
 #include <kstandarddirs.h>
+#include <kglobal.h>
+#include <klocale.h>
 
 #include <libxml/xmlmemory.h>
 #include <libxml/debugXML.h>
@@ -71,7 +74,7 @@ void WebPresencePlugin::slotWriteFile()
 	// generate the (temporary) XML file representing the current contactlist
 	KTempFile* xml = generateFile();
 	xml->setAutoDelete( true );
-	
+
 	kdDebug(14309) << "WebPresencePlugin::slotWriteFile() : " << xml->name() 
 		<< endl;
 	
@@ -115,62 +118,62 @@ void WebPresencePlugin::slotUploadJobResult( KIO::Job *job )
 
 KTempFile* WebPresencePlugin::generateFile()
 {
-	kdDebug(14309) << "WebPresencePlugin::generateFile()" << endl;
 	// generate the (temporary) file representing the current contactlist
+	kdDebug( 14309 ) << "WebPresencePlugin::generateFile()" << endl;
+
 	KTempFile* theFile = new KTempFile();
 	QTextStream* qout =  theFile->textStream() ;
+	QString output;
+	QString notKnown = i18n( "Not yet known" );
 	QPtrList<KopeteProtocol> protocols = allProtocols();
 
-	int depth = 0;
-	QString shift;
-	*qout << "<?xml version=\"1.0\"?>\n" 
-		<< shift.fill( '\t', ++depth ) << "<contacts>\n";
+	XMLHelper h;
+	output += h.content( "<?xml version=\"1.0\"?>" );
+	output += h.openTag( "contacts" );
 
-	*qout << shift.fill( '\t', ++depth ) << "<contact type=\"self\">\n";
+	// insert the current date/time
+	output += h.oneLineTag( "listdate",
+			KGlobal::locale()->formatDateTime( QDateTime::currentDateTime() ) );
+	output += h.openTag( "contact", "type=\"self\"" );
+
+	// insert the contact's name
+	output += h.oneLineTag( "name",
+			(  !m_prefs->useImName() && !m_prefs->userName().isEmpty() )
+			? m_prefs->userName( )
+			: protocols.first()->myself()->displayName() );
+
+	// insert the list of the contact's protocols
+	output += h.openTag( "protocols" );
 	
-	*qout << shift.fill( '\t', ++depth ) << "<name>";
-	if ( !m_prefs->useImName() && !m_prefs->userName().isEmpty() )
-		*qout << m_prefs->userName();
-	else
-		*qout << protocols.first()->myself()->displayName();
-	*qout << "</name>\n";
-	
-	*qout << shift.fill( '\t', depth++ ) << "<protocols>\n";
 	for ( KopeteProtocol *p = protocols.first();
 			p; p = protocols.next() )
 	{
 		KopeteContact* me = p->myself();
-		QString notKnown = i18n( "Not yet known" );
+		output += h.openTag( "protocol" );
 
-		*qout << shift.fill( '\t', depth++ ) << "<protocol>\n";
-		
-		*qout << shift.fill( '\t', depth ) << "<protoname>";
-		*qout << p->pluginId();
-		*qout << "</protoname>";
-		
-		*qout << shift.fill( '\t', depth ) << "<protostatus>";
-		if ( me )
-			*qout << statusAsString( me->status() );
-		else
-			*qout << notKnown;
-		*qout << "</protostatus>\n";
+		output += h.oneLineTag( "protoname", p->pluginId() );
 
-		if ( m_prefs->showAddresses() )
-		{
-			*qout << shift.fill( '\t', depth ) << "<protoaddress>";
-			if ( me )
-				*qout << me->contactId().latin1();
-			else
-				*qout << notKnown;
-			*qout << "</protoaddress>\n";
-		}
-		*qout << shift.fill( '\t', --depth ) << "</protocol>\n";
+		output += h.oneLineTag( "protostatus", 
+				( me )
+				? statusAsString(  me->status() )
+				: notKnown );
+		
+		if (  m_prefs->showAddresses() )
+			output += h.oneLineTag( "protoaddress",
+					( me )
+					? me->contactId().latin1()
+					: notKnown.latin1()
+					);
+
+		output += h.closeTag();
 	}
-	*qout << shift.fill( '\t', --depth ) << "</protocols>\n";
-	*qout << shift.fill( '\t', --depth ) << "</contact>\n";
 
-	*qout << shift.fill( '\t', --depth ) << "</contacts>\n" << endl;
+	// finish off neatly
+	output += h.closeTag() + h.closeTag() + h.closeTag();
 
+	// write our XML
+	*qout << output;
+	
 	theFile->close();
 	return theFile;
 }
@@ -284,6 +287,74 @@ void WebPresencePlugin::slotSettingsChanged()
 	m_timer->start( m_prefs->frequency() * 1000 * 60);
 }
 
+WebPresencePlugin::XMLHelper::XMLHelper()
+{
+	depth = 0;
+	stack = new QValueStack<QString>();
+}
+
+WebPresencePlugin::XMLHelper::~XMLHelper()
+{
+	delete stack;
+}
+
+QString WebPresencePlugin::XMLHelper::oneLineTag( QString name, QString content, QString attrs )
+{
+	QString out;
+	out.fill( '\t', depth );
+	out += "<" + name;
+	if ( !attrs.isEmpty() )
+		out += " " + attrs;
+	if ( !content.isEmpty() )
+		out += ">" + content + "</" + name + ">\n";
+	else
+		out += "/>\n";
+	return out;
+}
+
+QString WebPresencePlugin::XMLHelper::openTag( QString name, QString attrs )
+{
+	QString out;
+	out.fill( '\t', depth++ );
+	out += "<" + name;
+	if ( !attrs.isEmpty() )
+		out += " " + attrs;
+	out += ">\n";
+
+	stack->push( name );
+
+	return out;
+}
+
+QString WebPresencePlugin::XMLHelper::content( QString content )
+{
+	QString out;
+	out.fill( '\t', depth );
+	out += content + "\n";
+
+	return out;
+}
+
+QString WebPresencePlugin::XMLHelper::closeTag()
+{
+	QString out;
+	out.fill(  '\t', --depth );
+	out += "</" + stack->pop () + ">\n";
+
+	return out;
+}
+
+QString WebPresencePlugin::XMLHelper::closeAll()
+{
+	QString out;
+	while ( !stack->isEmpty() )
+	{
+		out.fill(   '\t', --depth );
+		out += "</" + stack->pop () + ">\n";
+	}
+
+	return out;
+}
 
 // vim: set noet ts=4 sts=4 sw=4:
 #include "webpresenceplugin.moc"

@@ -20,10 +20,13 @@
 #ifndef WEBPRESENCEPLUGIN_H
 #define WEBPRESENCEPLUGIN_H
 
+#include <qptrlist.h>
+#include <qvaluestack.h>
+
+#include <kio/job.h>
+
 #include "kopeteplugin.h"
 #include "kopetecontact.h"
-#include <qptrlist.h>
-#include <kio/job.h>
 
 class QTimer;
 class KTempFile;
@@ -82,6 +85,23 @@ class WebPresencePlugin : public KopetePlugin
 		// The file to be uploaded to the WWW
 		KTempFile *m_output;
 
+		// Helper class to produce the XML
+		class XMLHelper
+		{
+			public:
+				XMLHelper();
+				virtual ~XMLHelper();
+				QString oneLineTag( QString name,
+						QString content = QString::null,
+						QString attrs = QString::null);
+				QString openTag( QString name, QString attrs = QString::null );
+				QString content( QString content );
+				QString closeTag();
+				QString closeAll();
+			private:
+				QValueStack<QString> *stack;
+				int depth;
+		};
 };
 
 #endif
