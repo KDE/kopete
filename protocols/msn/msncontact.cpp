@@ -68,7 +68,10 @@ KopeteMessageManager *MSNContact::manager( bool canCreate )
 	KopeteMessageManager *_manager = KopeteMessageManagerFactory::factory()->findKopeteMessageManager(  account()->myself(), chatmembers, protocol() );
 	MSNMessageManager *manager = dynamic_cast<MSNMessageManager*>( _manager );
 	if(!manager &&  canCreate)
-			manager = new MSNMessageManager( protocol(), account()->myself(), chatmembers );
+	{
+		manager = new MSNMessageManager( protocol(), account()->myself(), chatmembers );
+		static_cast<MSNAccount*>( account() )->slotStartChatSession( contactId() );
+	}
 	return manager;
 }
 

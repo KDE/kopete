@@ -290,7 +290,7 @@ void MSNAccount::slotStartChat()
 		QString::null, &ok );
 	if( ok )
 	{
-		if( handle.contains('@') ==1 && handle.contains('.') >=1)
+		if( MSNProtocol::validContactId(handle))
 		{
 			m_msgHandle = handle;
 			// don't crash when we were disconnected before we got the address
@@ -905,6 +905,14 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 	const QString& handle_, const QString&  publicName  )
 {
 	QString handle = handle_.lower();
+	
+	if(handle.isEmpty())
+	{
+		//we have lost the handle?
+		//forget it
+		//(that can be because the user try to open two swichboard in the same time)
+		return;
+	}
 
 	kdDebug(14140) << "MSNAccount::slotCreateChat: Creating chat for " << handle << endl;
 
@@ -924,25 +932,39 @@ void MSNAccount::slotCreateChat( const QString& ID, const QString& address, cons
 			c->manager()->appendMessage(tmpMsg);
 		}
 	}
+	
+	m_msgHandle=QString::null; 
 }
 
 void MSNAccount::slotStartChatSession( const QString& handle )
 {
 	//FIXME: raise the manager if it does exist
-
+	
 	// First create a message manager, because we might get an existing
 	// manager back, in which case we likely also have an active switchboard
 	// connection to reuse...
+
+	if(!m_msgHandle.isNull())
+	{
+		//Hep hep hep l'ami! I am not crazy! i know you are trying to open
+		//a new chat session, but the previous one is not yet created.
+		//if it is with the same m_msgHandle, that is certenely because you
+		//are impatient, but you have to wait the server reply
+		if(m_msgHandle==handle)
+			return;
+		//else, you are trying to open two sessions in the same time
+		//it will have conflict. but i can't return, may be you ask a signle
+		//session because the previous one was not created due to a randomely error
+		//never mind then, i don't care
+	}
+
+
 	MSNContact *c = static_cast<MSNContact*>( contacts()[ handle ] );
 	//if( isConnected() && c && myself() && handle != m_msnId )
 	if( m_notifySocket && c && myself() && handle != accountId() )
 	{
 		if(!c->manager() || !static_cast<MSNMessageManager*>( c->manager() )->service())
 		{
-			kdDebug(14140) << "MSNAccount::slotStartChatSession: "
-				<< "Creating new switchboard connection" << endl;
-
-			//FIXME: what's happend when the user try to open two socket in the same time????  can the m_msgHandle be altered??
 			m_msgHandle = handle;
 			m_notifySocket->createChatSession();
 		}
