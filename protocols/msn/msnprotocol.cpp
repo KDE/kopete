@@ -421,6 +421,11 @@ void MSNProtocol::initActions()
 
 KActionMenu* MSNProtocol::protocolActions()
 {
+	actionStatusMenu->popupMenu()->changeTitle(
+		m_menuTitleId,
+		SmallIcon( statusIcon() ),
+		i18n( "%1 (%2)" ).arg( m_publicName ).arg( m_msnId ) );
+
 	return actionStatusMenu;
 }
 
@@ -1176,9 +1181,6 @@ void MSNProtocol::slotPublicNameChanged( QString publicName)
 			m_publicNameSyncMode = SyncBoth;
 
 			m_myself->setDisplayName(publicName);
-
-			actionStatusMenu->popupMenu()->changeTitle( m_menuTitleId,
-				SmallIcon( statusIcon() ), QString( m_publicName+" ("+ m_msnId +")" ));
 
 			// Also sync the config file
 			mPrefs->setPublicName(m_publicName);
