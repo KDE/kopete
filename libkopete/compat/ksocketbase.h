@@ -111,13 +111,16 @@ public:
    *    See @ref setIPv6Only.
    *  - KeepAlive: whether TCP should send keepalive probes when a connection
    *    has gone idle for far too long.
+   *  - Broadcast: whether this socket is allowed to send broadcast packets
+   *    and will receive packets sent to broadcast.
    */
   enum SocketOptions
     {
       Blocking = 0x01,
       AddressReuseable = 0x02,
       IPv6Only = 0x04,
-      Keepalive = 0x08
+      Keepalive = 0x08,
+      Broadcast = 0x10
     };
 
   /**
@@ -141,6 +144,8 @@ public:
    * - NotSupported: requested operation is not supported
    * - Timeout: a timed operation timed out
    * - UnknownError: an unknown/unexpected error has happened
+   *
+   * @sa error, errorString
    */
   enum SocketError
     {
@@ -276,10 +281,31 @@ public:
   /**
    * Retrieves this socket's IPv6 Only flag.
    *
-   * @returns true if this socket's address can be reused,
-   *          false if it can't.
+   * @returns true if this socket will ignore IPv4-compatible and IPv4-mapped
+   *	      addresses, false if it will accept them.
    */
   bool isIPv6Only() const;
+
+  /**
+   * Sets this socket Broadcast flag.
+   *
+   * Datagram-oriented sockets cannot normally send packets to broadcast
+   * addresses, nor will they receive packets that were sent to a broadcast
+   * address. To do so, you need to enable the Broadcast flag.
+   *
+   * This option has no effect on stream-oriented sockets.
+   *
+   * @returns true if setting this flag was successful.
+   */
+  virtual bool setBroadcast(bool enable);
+
+  /**
+   * Retrieves this socket's Broadcast flag.
+   *
+   * @returns true if this socket can send and receive broadcast packets,
+   *          false if it can't.
+   */
+  bool broadcast() const;
 
   /**
    * Retrieves the socket implementation used on this socket.
@@ -344,8 +370,15 @@ protected:
 public:
   /**
    * Retrieves the socket error code.
+   * @sa errorString
    */
   SocketError error() const;
+
+  /**
+   * Returns the error string corresponding to this error condition.
+   */
+  inline QString errorString() const
+  { return errorString(error()); }
 
   /**
    * Returns the internal mutex for this class.
@@ -363,6 +396,24 @@ public:
    * object when deleting it.
    */
   QMutex* mutex() const;
+
+public:
+  /**
+   * Returns the string describing the given error code, i18n'ed.
+   *
+   * @param code		the error code
+   */
+  static QString errorString(SocketError code);
+
+  /**
+   * Returns true if the given error code is a fatal one, false
+   * otherwise. The parameter here is of type int so that
+   * casting isn't necessary when using the parameter to signal
+   * QClientSocketBase::gotError.
+   *
+   * @param code		the code to test
+   */
+  static bool isFatalError(int code);
 
 private:
   /// @internal

@@ -38,6 +38,8 @@
 
 #include "ksocketaddress.h"
 
+#include "netsupp.h"
+
 using namespace KNetwork;
 
 #if 0
@@ -158,6 +160,11 @@ bool KIpAddress::setAddress(const QString& address)
     }
 
   return false;			// can never happen!
+}
+
+bool KIpAddress::setAddress(const char* address)
+{
+  return setAddress(QString::fromLatin1(address));
 }
 
 // set from binary data
