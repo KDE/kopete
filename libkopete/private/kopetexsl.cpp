@@ -108,11 +108,11 @@ void KopeteXSLThread::run()
 			if( resultDoc != NULL )
 			{
 				//Save the result into the QString
-				xmlOutputBufferPtr outp = xmlOutputBufferCreateIO( writeToQString, (xmlOutputCloseCallback)closeQString, &m_resultString, 0);
-				outp->written = 0;
-				xsltSaveResultTo ( outp, resultDoc, style_sheet );
-				xmlOutputBufferFlush(outp);
-				xmlFreeDoc(resultDoc);
+				xmlChar *mem;
+				int size;
+				xmlDocDumpMemory( resultDoc, &mem, &size );
+				m_resultString = QString::fromUtf8( QCString( (const char*)mem, size ) );
+				delete mem;
 			}
 			else
 			{
@@ -155,18 +155,4 @@ void KopeteXSL::unescape( QString &xml )
 	xml.replace( QRegExp( QString::fromLatin1( "&lt;" ) ), QString::fromLatin1( "<" ) );
 	xml.replace( QRegExp( QString::fromLatin1( "&quot;" ) ), QString::fromLatin1( "\"" ) );
 	xml.replace( QRegExp( QString::fromLatin1( "&amp;" ) ), QString::fromLatin1( "&" ) );
-}
-
-int KopeteXSLThread::writeToQString( void * context, const char * buffer, int len )
-{
-	QString *t = (QString*)context;
-	*t += QString::fromUtf8(buffer, len);
-	return len;
-}
-
-int KopeteXSLThread::closeQString( void * context )
-{
-	QString *t = (QString*)context;
-	*t += QString::fromLatin1("\n");
-	return 0;
 }

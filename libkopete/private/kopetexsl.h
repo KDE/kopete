@@ -99,16 +99,6 @@ class KopeteXSLThread : public QThread
 		const QString &result() { return m_resultString; };
 
 	private:
-		/**
-		 * Write data to a QString
-		 */
-		static int writeToQString( void * context, const char * buffer, int len );
-
-		/**
-		 * Close the QString
-		 */
-		static int closeQString( void * context );
-
 		QString m_xml;
 		QString m_xsl;
 		QString m_resultString;
