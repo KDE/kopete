@@ -78,7 +78,7 @@ void KIRC::slotError(int error)
 	loggedIn = false;
 }
 
-void KIRC::slotBytesWritten(int bytes)
+void KIRC::slotBytesWritten(int /*bytes*/)
 {
 
 }

@@ -118,21 +118,21 @@ cflags=
 cppflags=
 cxxflags=\s-O0
 ldadd=
-ldflags=\s
+ldflags=\s \s
 libtool_dir=
 path_to_bin_program=.
 
 [General]
 AMChanged=false
-author=duncan
+author=Kopete developers
 configure_args=\s--build=i386-linux --host=i386-linux --target=i386-linux\s
 dir_where_make_will_be_called=./
-email=duncan@tarro
+email=kopete-devel@kde.org
 kdevprj_version=1.3
 lfv_open_groups=
 make_options=\s-j1
-makefiles=./Makefile.am,contrib/Makefile.am,doc-api/Makefile.am,doc-api/html/Makefile.am,sounds/Makefile.am,protocols/Makefile.am,protocols/gadu/Makefile.am,protocols/gadu/pixmaps/Makefile.am,protocols/gadu/ui/Makefile.am,protocols/gadu/lib/Makefile.am,protocols/winpopup/Makefile.am,protocols/winpopup/ui/Makefile.am,protocols/winpopup/pixmaps/Makefile.am,protocols/winpopup/libwinpopup/Makefile.am,protocols/icq_new/Makefile.am,protocols/icq_new/ui/Makefile.am,protocols/icq_new/pixmaps/Makefile.am,protocols/icq_new/libicq/Makefile.am,protocols/yahoo/Makefile.am,protocols/yahoo/ui/Makefile.am,protocols/yahoo/pixmaps/Makefile.am,protocols/msn/Makefile.am,protocols/msn/ui/Makefile.am,protocols/msn/pixmaps/Makefile.am,protocols/msn/libkmerlin/Makefile.am,protocols/jabber/Makefile.am,protocols/jabber/ui/Makefile.am,protocols/jabber/psi/Makefile.am,protocols/jabber/pixmaps/Makefile.am,protocols/irc/Makefile.am,protocols/irc/ui/Makefile.am,protocols/irc/pixmaps/Makefile.am,protocols/irc/libkirc/Makefile.am,protocols/icq/Makefile.am,protocols/icq/ui/Makefile.am,protocols/icq/pixmaps/Makefile.am,protocols/icq/kxengine/Makefile.am,protocols/aim/Makefile.am,protocols/aim/ui/Makefile.am,protocols/aim/pixmaps/Makefile.am,protocols/aim/taim/Makefile.am,protocols/aim/data/Makefile.am,plugins/Makefile.am,plugins/autoaway/Makefile.am,pics/Makefile.am,pics/emoticons/Makefile.am,pics/emoticons/set1/Makefile.am,pics/emoticons/phpBB/Makefile.am,pics/emoticons/Default/Makefile.am,libkopete/Makefile.am,libkopete/ui/Makefile.am,kopete/Makefile.am,debian/Makefile.am,Makefile.am
-modifyMakefiles=true
+makefiles=./Makefile.am,contrib/Makefile.am,doc-api/Makefile.am,doc-api/html/Makefile.am,sounds/Makefile.am,protocols/Makefile.am,protocols/gadu/Makefile.am,protocols/gadu/pixmaps/Makefile.am,protocols/gadu/ui/Makefile.am,protocols/gadu/lib/Makefile.am,protocols/winpopup/Makefile.am,protocols/winpopup/ui/Makefile.am,protocols/winpopup/pixmaps/Makefile.am,protocols/winpopup/libwinpopup/Makefile.am,protocols/icq_new/Makefile.am,protocols/icq_new/ui/Makefile.am,protocols/icq_new/pixmaps/Makefile.am,protocols/icq_new/libicq/Makefile.am,protocols/yahoo/Makefile.am,protocols/yahoo/ui/Makefile.am,protocols/yahoo/pixmaps/Makefile.am,protocols/msn/Makefile.am,protocols/msn/ui/Makefile.am,protocols/msn/pixmaps/Makefile.am,protocols/msn/libkmerlin/Makefile.am,protocols/jabber/Makefile.am,protocols/jabber/ui/Makefile.am,protocols/jabber/psi/Makefile.am,protocols/jabber/pixmaps/Makefile.am,protocols/irc/Makefile.am,protocols/irc/ui/Makefile.am,protocols/irc/pixmaps/Makefile.am,protocols/irc/libkirc/Makefile.am,protocols/icq/Makefile.am,protocols/icq/ui/Makefile.am,protocols/icq/pixmaps/Makefile.am,protocols/icq/kxengine/Makefile.am,protocols/aim/Makefile.am,protocols/aim/ui/Makefile.am,protocols/aim/pixmaps/Makefile.am,protocols/aim/taim/Makefile.am,protocols/aim/data/Makefile.am,plugins/Makefile.am,plugins/autoaway/Makefile.am,pics/Makefile.am,pics/emoticons/Makefile.am,pics/emoticons/set1/Makefile.am,pics/emoticons/phpBB/Makefile.am,pics/emoticons/Default/Makefile.am,libkopete/Makefile.am,libkopete/ui/Makefile.am,kopete/Makefile.am,debian/Makefile.am,Makefile.am,plugins/translator/Makefile.am,plugins/contactnotes/Makefile.am
+modifyMakefiles=false
 project_name=kopete
 project_type=normal_empty
 short_info=
@@ -155,7 +155,7 @@ groups=Headers,Sources,GNU,Translations,User Interface,Desktop,Others
 files=jabbermap.cpp,jabbermap.h,dlgjabberrename.cpp,dlgjabberrename.h
 sharedlib_LDFLAGS=-version-info 0:0:0
 sharedlib_rootname=.
-sub_dirs=protocols
+sub_dirs=protocols,plugins
 type=static_library
 
 [contrib/Makefile.am]
@@ -1609,7 +1609,7 @@ install_location=
 type=DATA
 
 [plugins/Makefile.am]
-sub_dirs=autoaway,
+sub_dirs=autoaway,translator,contactnotes
 type=normal
 
 [plugins/autoaway/Makefile.am]
@@ -1660,6 +1660,56 @@ install_location=
 type=SOURCE
 
 [plugins/autoaway/xautolock.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[plugins/contactnotes/Makefile.am]
+files=plugins/contactnotes/contactnotesplugin.cpp,plugins/contactnotes/contactnotesplugin.h,plugins/contactnotes/contactnotesedit.cpp,plugins/contactnotes/contactnotesedit.h
+sharedlib_LDFLAGS=-version-info 0:0:0
+sharedlib_rootname=contactnotes
+sub_dirs=
+type=static_library
+
+[plugins/contactnotes/contactnotesedit.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[plugins/contactnotes/contactnotesedit.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[plugins/contactnotes/contactnotesplugin.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[plugins/contactnotes/contactnotesplugin.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[plugins/translator/Makefile.am]
+files=plugins/translator/translatorplugin.cpp,plugins/translator/translatorplugin.h
+sharedlib_LDFLAGS=-version-info 0:0:0
+sharedlib_rootname=translator
+sub_dirs=
+type=static_library
+
+[plugins/translator/translatorplugin.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[plugins/translator/translatorplugin.h]
 dist=true
 install=false
 install_location=
@@ -2243,87 +2293,9 @@ install_location=
 type=SOURCE
 
 [protocols/icq/Makefile.am]
-files=protocols/icq/icq.plugin,protocols/icq/icqaddcontactpage.cpp,protocols/icq/icqaddcontactpage.h,protocols/icq/icqchangestatus.cpp,protocols/icq/icqchangestatus.h,protocols/icq/icqcontact.cpp,protocols/icq/icqcontact.h,protocols/icq/icqpreferences.cpp,protocols/icq/icqpreferences.h,protocols/icq/icqprotocol.cpp,protocols/icq/icqprotocol.h,protocols/icq/icquserinfo.cpp,protocols/icq/icquserinfo.h,
+files=
 sub_dirs=kxengine,pixmaps,ui,
 type=normal
-
-[protocols/icq/icq.plugin]
-dist=true
-install=false
-install_location=
-type=DATA
-
-[protocols/icq/icqaddcontactpage.cpp]
-dist=true
-install=false
-install_location=
-type=SOURCE
-
-[protocols/icq/icqaddcontactpage.h]
-dist=true
-install=false
-install_location=
-type=HEADER
-
-[protocols/icq/icqchangestatus.cpp]
-dist=true
-install=false
-install_location=
-type=SOURCE
-
-[protocols/icq/icqchangestatus.h]
-dist=true
-install=false
-install_location=
-type=HEADER
-
-[protocols/icq/icqcontact.cpp]
-dist=true
-install=false
-install_location=
-type=SOURCE
-
-[protocols/icq/icqcontact.h]
-dist=true
-install=false
-install_location=
-type=HEADER
-
-[protocols/icq/icqpreferences.cpp]
-dist=true
-install=false
-install_location=
-type=SOURCE
-
-[protocols/icq/icqpreferences.h]
-dist=true
-install=false
-install_location=
-type=HEADER
-
-[protocols/icq/icqprotocol.cpp]
-dist=true
-install=false
-install_location=
-type=SOURCE
-
-[protocols/icq/icqprotocol.h]
-dist=true
-install=false
-install_location=
-type=HEADER
-
-[protocols/icq/icquserinfo.cpp]
-dist=true
-install=false
-install_location=
-type=SOURCE
-
-[protocols/icq/icquserinfo.h]
-dist=true
-install=false
-install_location=
-type=HEADER
 
 [protocols/icq/kxengine/Makefile.am]
 files=protocols/icq/kxengine/kxaim.cpp,protocols/icq/kxengine/kxaim.h,protocols/icq/kxengine/kxconnection.cpp,protocols/icq/kxengine/kxconnection.h,protocols/icq/kxengine/kxcontact.cpp,protocols/icq/kxengine/kxcontact.h,protocols/icq/kxengine/kxcountry.cpp,protocols/icq/kxengine/kxcountry.h,protocols/icq/kxengine/kxengine.cpp,protocols/icq/kxengine/kxengine.h,protocols/icq/kxengine/kxfile.cpp,protocols/icq/kxengine/kxfile.h,protocols/icq/kxengine/kxmessage.cpp,protocols/icq/kxengine/kxmessage.h,protocols/icq/kxengine/kxpacket.cpp,protocols/icq/kxengine/kxpacket.h,protocols/icq/kxengine/kxsend.cpp,protocols/icq/kxengine/kxsend.h,protocols/icq/kxengine/kxsnac.cpp,protocols/icq/kxengine/kxsnac.h,protocols/icq/kxengine/kxsocket.cpp,protocols/icq/kxengine/kxsocket.h,protocols/icq/kxengine/kxtcp.cpp,protocols/icq/kxengine/kxtcp.h,protocols/icq/kxengine/kxtlv.cpp,protocols/icq/kxengine/kxtlv.h,protocols/icq/kxengine/kxudp.cpp,protocols/icq/kxengine/kxudp.h,protocols/icq/kxengine/resouces.h,protocols/icq/kxengine/v2_codes.h,
@@ -2635,15 +2607,27 @@ install_location=
 type=SOURCE
 
 [protocols/icq_new/Makefile.am]
-files=protocols/icq_new/TODO,protocols/icq_new/fileconfirmation.cpp,protocols/icq_new/fileconfirmation.h,protocols/icq_new/icq2.plugin,protocols/icq_new/icqaddcontactpage.cpp,protocols/icq_new/icqaddcontactpage.h,protocols/icq_new/icqchangestatus.cpp,protocols/icq_new/icqchangestatus.h,protocols/icq_new/icqcontact.cpp,protocols/icq_new/icqcontact.h,protocols/icq_new/icqfiletransfer.cpp,protocols/icq_new/icqfiletransfer.h,protocols/icq_new/icqpreferences.cpp,protocols/icq_new/icqpreferences.h,protocols/icq_new/icqprotocol.cpp,protocols/icq_new/icqprotocol.h,protocols/icq_new/enable.cpp,protocols/icq_new/enable.h,protocols/icq_new/icquserinfo.cpp,protocols/icq_new/icquserinfo.h,
+files=protocols/icq_new/TODO,protocols/icq_new/fileconfirmation.cpp,protocols/icq_new/fileconfirmation.h,protocols/icq_new/icq2.plugin,protocols/icq_new/icqaddcontactpage.cpp,protocols/icq_new/icqaddcontactpage.h,protocols/icq_new/icqchangestatus.cpp,protocols/icq_new/icqchangestatus.h,protocols/icq_new/icqcontact.cpp,protocols/icq_new/icqcontact.h,protocols/icq_new/icqfiletransfer.cpp,protocols/icq_new/icqfiletransfer.h,protocols/icq_new/icqpreferences.cpp,protocols/icq_new/icqpreferences.h,protocols/icq_new/icqprotocol.cpp,protocols/icq_new/icqprotocol.h,protocols/icq_new/enable.cpp,protocols/icq_new/enable.h,protocols/icq_new/icquserinfo.cpp,protocols/icq_new/icquserinfo.h,protocols/icq_new/client.cpp,protocols/icq_new/client.h
 sub_dirs=libicq,pixmaps,ui,
-type=normal
+type=static_library
 
 [protocols/icq_new/TODO]
 dist=true
 install=false
 install_location=
 type=DATA
+
+[protocols/icq_new/client.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[protocols/icq_new/client.h]
+dist=true
+install=false
+install_location=
+type=HEADER
 
 [protocols/icq_new/enable.cpp]
 dist=true

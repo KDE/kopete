@@ -58,27 +58,23 @@ KopeteContactList::~KopeteContactList()
 }
 
 KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
-	const QString &identityId, const QString &contactId, bool sameNameAsKC )
+	const QString &identityId, const QString &contactId )
 {
-	//kdDebug() << "*** Looking for contact " << contactId << ", proto "
-	//	<< protocolId << endl;
 	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
-		//kdDebug() << "*** Iterating " << it.current()->displayName() << endl;
-		
-		/* sameNameAsKC allows for the MetaContact to be named differently than the KopeteContact so that finds
-		 don't fail when the KopeteMetaContact display name != the KopeteContact display name.
-		 If you want an example as to why something cray would be done like that, see IRC. IRC looks like this
-		 in the contact list:
-		 
-		     + irc.openprojects.net
-		         - #kde
-			 - #kopete
-			 - duncanmacv
-		
-		Therefor the metacontact's name != the kopetecontact's name, expecially since there are more than one name per metacontact
-		*/
+		KopeteContact *c = it.current()->findContact( protocolId, identityId,
+				contactId );
+		if( c )
+			return it.current();
+	}
+	//	kdDebug() << "KopeteContactList::findContact  *** Not found!" << endl;
+	return 0L;
+
+		/*
+			//I think sameAsKC bad: the user can choose the metacontact's displayname.
+			//and search DON'T may be done with the displayname. (Olivier)
+
 		if (sameNameAsKC)
 		{
 			KopeteContact *c = it.current()->findContact( protocolId, identityId,
@@ -91,17 +87,7 @@ KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId,
 			{
 				if( it.current() )
 					return it.current();
-			}
-		}
-	}
-	/*// Contact not found, create a new meta contact
-	KopeteMetaContact *mc = new KopeteMetaContact();
-	KopeteContactList::contactList()->addMetaContact(mc);
-	return mc;*/
-
-	kdDebug() << "KopeteContactList::findContact  *** Not found!" << endl;
-	return 0L;
-	
+			}*/
 }
 
 

@@ -15,7 +15,7 @@
 #include "gaduprotocol.h"
 #include "gaducontact.h"
 
-GaduContact::GaduContact( const QString& protocolId, uin_t uin,
+GaduContact::GaduContact( const QString& /*protocolId*/, uin_t uin,
                           const QString& name, KopeteMetaContact* parent )
     : KopeteContact( GaduProtocol::protocol()->id(), parent )
 {

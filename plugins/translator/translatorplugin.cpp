@@ -174,11 +174,8 @@ void TranslatorPlugin::deserialize( KopeteMetaContact *metaContact, const QStrin
 
 KActionCollection *TranslatorPlugin::customContextMenuActions(KopeteMetaContact *m)
 {
-    QStringList keys;
-
-	QMap<QString,QString>::ConstIterator it;
+	QStringList keys;
 	int k;
-
 	for ( k=0; k <= m_lc; k++)
 	{
 		keys << m_langs[ languageKey(k) ];

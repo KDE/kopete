@@ -312,7 +312,7 @@ QString Kopete::parseHTML( QString message, bool parseURLs )
 	QRegExp regExp;
 	uint len = message.length();
 	int matchLen;
-	uint startIdx;
+	unsigned int startIdx;
 	int lastReplacement = -1;
 	text = message;
 
@@ -344,7 +344,6 @@ QString Kopete::parseHTML( QString message, bool parseURLs )
 				{
 					startIdx = idx;
 					while (
-						(startIdx>=0) &&
 						(startIdx>(uint)(lastReplacement+1)) &&
 						(text[startIdx-1]!=' ') &&
 						(text[startIdx-1]!='\t') &&
