@@ -22,11 +22,27 @@
 #define GADUSESSION_H
 
 #include <qvaluelist.h>
+#include <qptrlist.h>
 #include <qhostaddress.h>
 #include <qobject.h>
 #include <qstring.h>
 
 #include <libgadu.h>
+
+
+
+struct resLine{
+    QString uin;
+    QString firstname;
+    QString surname;
+    QString nickname;
+    QString age;
+    QString city;
+    int     status;
+};
+
+typedef QPtrList<resLine> searchResult;
+
 
 class QSocketNotifier;
 
@@ -57,6 +73,25 @@ public slots:
 
 	int	 dccRequest( uin_t uin );
 
+  /*
+   *  Initiates search in public directory, we need to be logged on to perform search !
+   *  This returns false, if you are unable to search (fe you are not logged on, you don't have memory)
+   *  This does not checks parametrs !
+   *  Calling this function more times with the same params, will continue this search as long as
+   *  @ref pubDirSearchClose() will not be called
+   *  You must set @ref pubDirSearchResult() signal before calling this function, otherwise no result
+   *  will be returned
+   */
+	bool pubDirSearch(QString &name, QString &surname, QString &nick, 
+			    int UIN, QString &city, int gender, 
+			    int ageFrom, int ageTo, bool onlyAlive);
+                            
+  /*
+   *  Releases all allocated memory needed to perform search.
+   *  This will be done on each @ref pubDirNewSearch(), if previuos is not released
+   */
+  void pubDirSearchClose();
+  
 signals:
 	void error( const QString& title, const QString& message );
 	void messageReceived( struct gg_event* );
@@ -68,19 +103,26 @@ signals:
 	void connectionFailed( struct gg_event* );
 	void connectionSucceed( struct gg_event* );
 	void disconnect();
-
+  void pubDirSearchResult( searchResult &result );
+  
+  
 protected slots:
 	void enableNotifiers( int checkWhat );
 	void disableNotifiers();
 	void checkDescriptor();
 
 private:
+
+	void sendResult( gg_pubdir50_t result );
+
 	struct gg_session *session_;
 	QSocketNotifier		*read_;
 	QSocketNotifier		*write_;
 	int	 currentServer_;
 	QValueList<QHostAddress> servers_;
 	gg_login_params params_;
+	int searchSeqNr_;
+
 };
 
 

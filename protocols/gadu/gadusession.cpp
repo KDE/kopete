@@ -35,6 +35,7 @@
 
 #include <qsocketnotifier.h>
 #include <qtextcodec.h>
+#include <qdatetime.h>
 
 #include <netinet/in.h>
 #include <errno.h>
@@ -47,7 +48,7 @@ const char* const gg_servers_ip[NUM_SERVERS] = {"217.17.41.82", "217.17.41.83",
 						"217.17.41.88"};
 
 GaduSession::GaduSession( QObject *parent, const char* name )
-	: QObject( parent, name ), session_(0), currentServer_(-1)
+	: QObject( parent, name ), session_(0), currentServer_(-1), searchSeqNr_(0)
 {
 	QHostAddress ip;
 	for ( int i = 0; i < NUM_SERVERS; i++ ) {
@@ -108,7 +109,8 @@ GaduSession::login( struct gg_login_params& p )
 											SLOT(checkDescriptor()) );
 
 		enableNotifiers( session_->check );
-	}
+    searchSeqNr_=0;
+  }                  
 }
 
 void
@@ -275,6 +277,123 @@ GaduSession::dccRequest( uin_t uin )
 }
 
 void
+GaduSession::pubDirSearchClose()
+{
+
+  searchSeqNr_=0;
+
+}
+
+bool
+GaduSession::pubDirSearch(QString &name, QString &surname, QString &nick, int UIN, QString &city,
+                            int gender, int ageFrom, int ageTo, bool onlyAlive)
+{
+
+  QString bufYear; 
+	QTextCodec *textcodec = QTextCodec::codecForName("CP1250");
+  gg_pubdir50_t searchRequest_;
+  
+  if (!session_){
+    return false;
+  }
+
+  searchRequest_ = gg_pubdir50_new( GG_PUBDIR50_SEARCH_REQUEST );
+  if (!searchRequest_){
+    return false;
+  }
+
+  if (!UIN){
+	  gg_pubdir50_add( searchRequest_, GG_PUBDIR50_FIRSTNAME, (const char *)textcodec->fromUnicode( name ) );
+	  gg_pubdir50_add( searchRequest_, GG_PUBDIR50_LASTNAME, (const char *)textcodec->fromUnicode( surname ) );
+	  gg_pubdir50_add( searchRequest_, GG_PUBDIR50_NICKNAME, (const char *)textcodec->fromUnicode( nick ) );
+	  gg_pubdir50_add( searchRequest_, GG_PUBDIR50_CITY, (const char *)textcodec->fromUnicode( city ) );
+
+    if (ageFrom || ageTo){
+      QString yearFrom = QString::number(QDate::currentDate().year() - ageFrom );
+      QString yearTo = QString::number(QDate::currentDate().year() - ageTo );
+
+      if (ageFrom && ageTo){
+		    gg_pubdir50_add( searchRequest_, GG_PUBDIR50_BIRTHYEAR, (const char *)textcodec->fromUnicode( yearFrom + " " + yearTo ) );
+      }
+      if (ageFrom){   
+		    gg_pubdir50_add( searchRequest_, GG_PUBDIR50_BIRTHYEAR, (const char *)textcodec->fromUnicode( yearFrom ) );
+      }
+      else{
+		    gg_pubdir50_add( searchRequest_, GG_PUBDIR50_BIRTHYEAR, (const char *)textcodec->fromUnicode( yearTo ) );
+      }
+    }
+
+    switch ( gender ){
+		  case 1:
+			  gg_pubdir50_add( searchRequest_, GG_PUBDIR50_GENDER, GG_PUBDIR50_GENDER_MALE );
+		  break;
+		  case 2:
+			  gg_pubdir50_add( searchRequest_, GG_PUBDIR50_GENDER, GG_PUBDIR50_GENDER_FEMALE );
+		  break;
+	  }
+
+    if (onlyAlive){
+      gg_pubdir50_add( searchRequest_, GG_PUBDIR50_ACTIVE, GG_PUBDIR50_ACTIVE_TRUE );
+    }
+    
+  }
+  // otherwise we are looking only for one fellow with this nice UIN
+  else{
+    gg_pubdir50_add( searchRequest_, GG_PUBDIR50_UIN, (const char *)QString::number( UIN ) );
+  }
+
+  gg_pubdir50_add( searchRequest_, GG_PUBDIR50_START, QString::number(searchSeqNr_) );
+                                   	
+  gg_pubdir50( session_, searchRequest_ );
+
+  gg_pubdir50_free( searchRequest_ );
+
+  return true;
+}
+
+void
+GaduSession::sendResult( gg_pubdir50_t result )
+{
+  int i, count;
+  resLine *rl=NULL;
+  searchResult sres;
+	QTextCodec *textcodec = QTextCodec::codecForName( "CP1250" );
+	
+	count = gg_pubdir50_count( result );
+
+//  No need to check that acctually :-)
+//	if (count < 1) {
+//	}
+
+  sres.setAutoDelete( TRUE );
+
+	for (i = 0; i < count; i++){
+    
+    if ( !rl ){
+      rl = new resLine;
+    }
+    
+		rl->uin =   textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_UIN ) );
+		rl->firstname = textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_FIRSTNAME ));
+		rl->surname = textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_LASTNAME ));
+		rl->nickname = textcodec->toUnicode( gg_pubdir50_get(result, i, GG_PUBDIR50_NICKNAME ) );
+		rl->age = textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_BIRTHYEAR ) );
+		rl->city = textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_CITY ) );
+		QString stat = textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_STATUS ) );
+		rl->status = stat.toInt();
+
+    sres.append(rl);
+    rl=NULL;    
+  }
+    
+	searchSeqNr_ = gg_pubdir50_next( result );
+
+  emit pubDirSearchResult( sres );
+  
+}
+
+
+void
 GaduSession::checkDescriptor()
 {
 	disableNotifiers();
@@ -348,7 +467,12 @@ GaduSession::checkDescriptor()
 		break;
 	case GG_EVENT_NONE:
 		break;
-	default:
+	case GG_EVENT_PUBDIR50_SEARCH_REPLY:
+	case GG_EVENT_PUBDIR50_WRITE:
+	case GG_EVENT_PUBDIR50_READ:
+		sendResult( e->event.pubdir50 );
+	        break;
+  default:
 		emit error( i18n("Unknown Event"),
 								i18n("Can't handle an event. Please report this to zack@kde.org") );
 		kdDebug(14100)<<"GaduGadu Event = "<<e->type<<endl;
