@@ -760,6 +760,25 @@ void KopeteContactListView::slotSettingsChanged( void )
 		setTreeStepSize( 0 );
 	}
 
+	if( KopetePrefs::prefs()->contactListHideVerticalScrollBar() )
+	{
+		// This will disable scrollbar auto-hide feature if it's enabled
+		// and it will call setVScrollBarMode(Auto), so it must precede setScrollHide call
+		setScrollAutoHide( false );
+		setScrollHide( true );
+	}
+	else
+	{
+		// This will disable "always hide scrollbar" optio and call setVScrollBarMode(Auto)
+		// so it must precede setScrollAutoHide call
+		setScrollHide(false);
+		setScrollAutoHide( KopetePrefs::prefs()->contactListAutoHideVScroll() );
+	}
+	
+
+	setScrollAutoHideTimeout( KopetePrefs::prefs()->contactListAutoHideTimeout() );
+	setMouseNavigation( KopetePrefs::prefs()->contactListMouseNavigation() );
+
 	// maybe setEffects should read these from KopetePrefs itself?
 	Kopete::UI::ListView::Item::setEffects( KopetePrefs::prefs()->contactListAnimation(),
 	                                        KopetePrefs::prefs()->contactListFading(),
