@@ -74,6 +74,10 @@ Name[xh]=Isiganeko
 Name[xx]=xxEventxx
 Name[zh_CN]=事件
 Comment=Sound notification for Kopete events
+Comment[et]=Kopete sündmuste helisignaalid
+Comment[nl]=Geluidsnotificatie voor Kopete-gebeurtenissen
+Comment[pt]=Notificação sonora para os eventos do Kopete
+Comment[pt_BR]=Notificação sonora para os eventos do Kopete
 default_sound=Kopete_Event.ogg
 default_presentation=65
 
