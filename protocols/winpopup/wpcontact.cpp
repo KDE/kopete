@@ -28,6 +28,7 @@
 #include "kopetestdaction.h"
 #include "kopetemessage.h"
 #include "kopetemessagemanager.h"
+#include "kopetecontactlist.h"
 
 // Qt Includes
 #include <qdatetime.h>
@@ -70,7 +71,7 @@ KopeteMessageManager *WPContact::msgManagerKEW()
 	DEBUG(WPDMETHOD, "WPContact::msgManager()");
 
 	if(!mMsgManagerKEW)
-	{	KopeteContactList singleContact;
+	{	QPtrList<KopeteContact> singleContact;
 		singleContact.append(this);
 		mMsgManagerKEW = kopeteapp->sessionFactory()->create(mProtocol->myself(), singleContact, mProtocol, "wp_logs/" + mUserID +".log", KopeteMessageManager::Email);
 		connect(mMsgManagerKEW, SIGNAL(messageSent(const KopeteMessage)), this, SLOT(slotSendMsgKEW(const KopeteMessage)));
@@ -83,7 +84,7 @@ KopeteMessageManager *WPContact::msgManagerKCW()
 	DEBUG(WPDMETHOD, "WPContact::msgManager()");
 
 	if(!mMsgManagerKCW)
-	{	KopeteContactList singleContact;
+	{	QPtrList<KopeteContact> singleContact;
 		singleContact.append(this);
 		mMsgManagerKCW = kopeteapp->sessionFactory()->create(mProtocol->myself(), singleContact, mProtocol, "wp_logs/" + mUserID +".log", KopeteMessageManager::ChatWindow);
 		connect(mMsgManagerKCW, SIGNAL(messageSent(const KopeteMessage)), this, SLOT(slotSendMsgKCW(const KopeteMessage)));
@@ -267,7 +268,7 @@ void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 {
 	DEBUG(WPDMETHOD, "WPContact::slotNewMessage(" << Body << ", " << Arrival.toString() << ")");
 
-	KopeteContactList contactList;
+	QPtrList<KopeteContact> contactList;
 	contactList.append(mProtocol->myself());
 
 	QRegExp subj("^Subject: ([^\n]*)\n(.*)$");
