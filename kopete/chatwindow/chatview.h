@@ -74,12 +74,6 @@ public:
 	void saveOptions();
 
 	/**
-	 * Sets the text to be displayed on the status label
-	 * @param text The text to be displayed
-	 */
-	void setStatusText( const QString &text );
-
-	/**
 	 * Tells this view it is the active view
 	 */
 	void setActive( bool value );
@@ -246,6 +240,12 @@ public slots:
 	 */
 	void remoteTyping( const Kopete::Contact *contact, bool typing );
 
+	/**
+	 * Sets the text to be displayed on the status label
+	 * @param text The text to be displayed
+	 */
+	void setStatusText( const QString &text );
+    
 	/** Reimplemented from KopeteView **/
 	virtual void messageSentSuccessfully();
 

@@ -387,6 +387,11 @@ void Kopete::ChatSession::typing( bool t )
 	emit myselfTyping( t );
 }
 
+void Kopete::ChatSession::receivedEventNotification( const QString& notificationText)
+{
+	emit eventNotification( notificationText );
+}
+
 void Kopete::ChatSession::setCanBeDeleted ( bool b )
 {
 	d->mCanBeDeleted = b;

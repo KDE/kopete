@@ -242,6 +242,12 @@ signals:
 	 */
 	void remoteTyping( const Kopete::Contact *contact, bool isTyping );
 
+	/**
+	 * Signals that a an event has to be displayed in the statusbar.
+	 * The chatwindow connects to this signal to update the statusbar.
+	 */
+	void eventNotification( const QString& notificationText);
+    
 public slots:
 	/**
 	 * @brief Got a typing notification from a user
@@ -255,6 +261,13 @@ public slots:
 	 */
 	void receivedTypingMsg( const QString &contactId, bool isTyping = true );
 
+	/**
+	 * @brief Got an event notification from a user.
+	 * It will emit the signal eventNotification(). Use this slot in your protocols
+	 * and plugins to change chatwindow statusBar text.
+	 */
+	void receivedEventNotification(  const QString& notificationText );
+     
 	/**
 	 * Show a message to the chatwindow, or append it to the queue.
 	 * This is the function protocols HAVE TO call for both incoming and outgoing messages

@@ -131,6 +131,7 @@ KopeteView *KopeteViewManager::view( Kopete::ChatSession* manager, bool /*foreig
 
 			connect (newViewWidget, SIGNAL( typing(bool) ), manager, SLOT( typing(bool) ) );
 			connect (manager, SIGNAL( remoteTyping( const Kopete::Contact *, bool) ), newViewWidget, SLOT( remoteTyping(const Kopete::Contact *, bool) ) );
+			connect (manager, SIGNAL( eventNotification( const QString& ) ), newViewWidget, SLOT( setStatusText( const QString& ) ) );
 		}
 		else
 		{
