@@ -99,12 +99,12 @@ void MSNAccount::connect()
 
 
 	QString passwd=getPassword(m_badpassword);
+	m_badpassword=false;
 	if(passwd.isNull())
 	{
 		kdDebug(14140) << "MSNAccount::connect: Abort connection (null password)"  <<endl;
 		return;
 	}
-	m_badpassword=false;
 
 	if(contacts().count() <= 1)
 	{
