@@ -442,8 +442,11 @@ void AppearanceConfig::slotCopyStyle()
 				i18n("New Style Name"),
 				i18n("Enter the name of the new style:"),
 				QString::null, &okPressed, 0L );
-			QString copiedXSL = fileContents( itemMap[ copiedItem] );
-			addStyle( styleName, copiedXSL );
+                        if ( !styleName.isEmpty() )
+                        {
+                            QString copiedXSL = fileContents( itemMap[ copiedItem] );
+                            addStyle( styleName, copiedXSL );
+                        }
 		}
 	}
 	else
