@@ -35,6 +35,7 @@ class KopeteContactListView;
 class KopetePlugin;
 class KopeteProtocol;
 class KopeteSystemTray;
+class KopeteAwayDialog;
 class StatusBarIcon;
 
 /**
@@ -60,7 +61,11 @@ private slots:
 	void slotConfigChanged();
 	void slotConfKeys();
 	void slotConfToolbar();
-
+	/**
+	 * This slot will show an away dialog and then
+	 * set all the protocols to away
+	 */
+	void slotGlobalAwayMessageSelect();
 	void slotQuit();
 
 	/**
@@ -134,6 +139,11 @@ private:
 	 */
 	QPtrDict<QObject> m_statusBarIcons;
 
+	/**
+	 * This is the away message selection dialog
+	 */
+	KopeteAwayDialog *m_awayMessageDialog;
+	
 private slots:
 	/**
 	 * Show the prefs dialog. See also the source for a description

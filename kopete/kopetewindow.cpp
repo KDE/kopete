@@ -46,6 +46,7 @@
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopetetransfermanager.h"
+#include "kopeteawaydialog.h"
 #include "pluginloader.h"
 #include "preferencesdialog.h"
 #include "systemtray.h"
@@ -87,6 +88,9 @@ void KopeteWindow::initView ( void )
 {
 	contactlist = new KopeteContactListView(this);
 	setCentralWidget(contactlist);
+
+	// Initialize the Away message selection dialog
+	m_awayMessageDialog = new KopeteAwayDialog(this);
 }
 
 void KopeteWindow::initActions ( void )
@@ -110,7 +114,7 @@ void KopeteWindow::initActions ( void )
 	actionConnectionMenu->insert(actionDisconnect);
 
 	actionSetAway = new KAction( i18n( "&Set Away Globally" ), "kopeteaway",
-		0, KopeteIdentityManager::manager(), SLOT( setAwayAll() ),
+		0, this, SLOT( slotGlobalAwayMessageSelect() ),
 		actionCollection(), "SetAwayAll" );
 
 	actionSetAvailable = new KAction( i18n( "Set Availa&ble Globally" ),
@@ -324,6 +328,14 @@ void KopeteWindow::slotConfToolbar()
 	}
 	delete dlg;
 }
+
+void KopeteWindow::slotGlobalAwayMessageSelect(){
+	// Show the dialog and set the message
+	// This also tells the identity manager to
+	// set the away on all protocols
+	m_awayMessageDialog->show();		
+}
+
 
 
 void KopeteWindow::closeEvent( QCloseEvent *e )
