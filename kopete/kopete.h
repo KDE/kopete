@@ -28,6 +28,8 @@
 
 #include "kopetemessage.h"
 
+#define KOPETE_VERSION "0.6.90cvs >= 20030218"
+
 class KopeteWindow;
 class QSessionManager;
 
