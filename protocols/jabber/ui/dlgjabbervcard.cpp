@@ -47,7 +47,7 @@
  *
  */
 dlgJabberVCard::dlgJabberVCard (JabberAccount *account, const QString &jid, QWidget * parent, const char *name)
-	: KDialogBase (parent, name, false, i18n("Jabber vCard"), Close | User1, Close, false, i18n("&Save vCard"))
+	: KDialogBase (parent, name, false, i18n("Jabber vCard"), Close | User1, Close, false, i18n("&Save User Info"))
 {
 
 	m_account = account;
@@ -277,6 +277,9 @@ void dlgJabberVCard::setReadOnly (bool state)
 
 	// about tab
 	m_mainWidget->teAbout->setReadOnly (state);
+
+	// save button
+	enableButton(User1, !state);
 
 }
 
