@@ -27,7 +27,7 @@
  *
  * This class is a data container for whatever information
  * kopete or any of its plugins want to store for a KopeteContact
- */
+ **/
 class KopeteContactProperty
 {
 	// TODO: Add d-pointer !
@@ -35,7 +35,7 @@ class KopeteContactProperty
 		/**
 		 * Constructor only used for empty KopeteContactProperty objects
 		 *
-		 * Note: you cannot set label or value or label later on!
+		 * Note: you cannot set label or value later on!
 		 **/
 		KopeteContactProperty();
 
