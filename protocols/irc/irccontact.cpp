@@ -40,6 +40,8 @@ IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, K
 	  m_nickName(nick),
 	  m_chatSession(0)
 {
+	KIRC::Engine *engine = kircEngine();
+
 	// Contact list display name
 	setProperty( Kopete::Global::Properties::self()->nickName(), m_nickName );
 
@@ -51,17 +53,17 @@ IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, K
 	mMyself.append( static_cast<Kopete::Contact*>( this ) );
 
 	// KIRC stuff
-	QObject::connect(MYACCOUNT->engine(), SIGNAL(incomingNickChange(const QString &, const QString &)),
+	QObject::connect(engine, SIGNAL(incomingNickChange(const QString &, const QString &)),
 			this, SLOT( slotNewNickChange(const QString&, const QString&)));
-	QObject::connect(MYACCOUNT->engine(), SIGNAL(successfullyChangedNick(const QString &, const QString &)),
+	QObject::connect(engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)),
 			this, SLOT(slotNewNickChange(const QString &, const QString &)));
-	QObject::connect(MYACCOUNT->engine(), SIGNAL(incomingQuitIRC(const QString &, const QString &)),
+	QObject::connect(engine, SIGNAL(incomingQuitIRC(const QString &, const QString &)),
 			this, SLOT( slotUserDisconnected(const QString&, const QString&)));
 
-	QObject::connect(MYACCOUNT->engine(), SIGNAL(statusChanged(KIRC::Engine::Status)),
+	QObject::connect(engine, SIGNAL(statusChanged(KIRC::Engine::Status)),
 			this, SLOT(updateStatus()));
 
-	MYACCOUNT->engine()->setCodec( m_nickName, codec() );
+	engine->setCodec( m_nickName, codec() );
 }
 
 IRCContact::~IRCContact()
@@ -69,6 +71,16 @@ IRCContact::~IRCContact()
 //	kdDebug(14120) << k_funcinfo << mNickName << endl;
 	if (metaContact() && metaContact()->isTemporary() && !isChatting(m_chatSession))
 		metaContact()->deleteLater();
+}
+
+IRCAccount *IRCContact::ircAccount() const
+{
+	return static_cast<IRCAccount *>(account());
+}
+
+KIRC::Engine *IRCContact::kircEngine() const
+{
+	return ircAccount()->engine();
 }
 
 bool IRCContact::isReachable()
@@ -86,14 +98,14 @@ void IRCContact::privateMessage(IRCContact *, IRCContact *, const QString &)
 
 void IRCContact::setCodec(const QTextCodec *codec)
 {
-	MYACCOUNT->engine()->setCodec(m_nickName, codec);
+	kircEngine()->setCodec(m_nickName, codec);
 	metaContact()->setPluginData(m_protocol, QString::fromLatin1("Codec"), QString::number(codec->mibEnum()));
 }
 
 const QTextCodec *IRCContact::codec()
 {
 	QString codecId = metaContact()->pluginData(m_protocol, QString::fromLatin1("Codec"));
-	QTextCodec *codec = MYACCOUNT->codec();
+	QTextCodec *codec = ircAccount()->codec();
 
 	if( !codecId.isEmpty() )
 	{
@@ -106,19 +118,22 @@ const QTextCodec *IRCContact::codec()
 	}
 
 	if( !codec )
-		return MYACCOUNT->engine()->codec();
+		return kircEngine()->codec();
 
 	return codec;
 }
 
 Kopete::ChatSession *IRCContact::manager(Kopete::Contact::CanCreateFlags canCreate)
 {
+	IRCAccount *account = ircAccount();
+	KIRC::Engine *engine = kircEngine();
+
 	if (canCreate == Kopete::Contact::CanCreate && !m_chatSession)
 	{
-		if(MYACCOUNT->engine()->status() == KIRC::Engine::Disconnected)
-			MYACCOUNT->connect();
+		if (engine->status() == KIRC::Engine::Idle)
+			account->connect();
 
-		m_chatSession = Kopete::ChatSessionManager::self()->create(MYACCOUNT->myself(), mMyself, MYACCOUNT->protocol());
+		m_chatSession = Kopete::ChatSessionManager::self()->create(account->myself(), mMyself, account->protocol());
 		m_chatSession->setDisplayName(caption());
 
 		QObject::connect(m_chatSession, SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession *)),
@@ -163,7 +178,7 @@ void IRCContact::setNickName( const QString &nickname )
 
 void IRCContact::slotNewNickChange(const QString &oldnickname, const QString &newnickname)
 {
-	//kdDebug(14120) << k_funcinfo << oldnickname << " >> " << newnickname << ", " << m_nickName << endl;
+	IRCAccount *account = ircAccount();
 
 	IRCContact *user = static_cast<IRCContact*>( locateUser(oldnickname) );
 	if( user )
@@ -171,16 +186,18 @@ void IRCContact::slotNewNickChange(const QString &oldnickname, const QString &ne
 		user->setNickName( newnickname );
 
 		//If the user is in our contact list, then change the notify list nickname
-		if( !user->metaContact()->isTemporary() )
+		if (!user->metaContact()->isTemporary())
 		{
-			MYACCOUNT->contactManager()->removeFromNotifyList( oldnickname );
-			MYACCOUNT->contactManager()->addToNotifyList( newnickname );
+			account->contactManager()->removeFromNotifyList( oldnickname );
+			account->contactManager()->addToNotifyList( newnickname );
 		}
 	}
 }
 
 void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::ChatSession *)
 {
+	KIRC::Engine *engine = kircEngine();
+
 	QString htmlString = message.escapedBody();
 
 	if (htmlString.find(QString::fromLatin1("</span")) > -1)
@@ -231,7 +248,7 @@ void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::ChatSession *)
 			Kopete::Message msg(message.from(), message.to(), *it, message.direction(),
 			                    Kopete::Message::RichText, message.viewType(), message.type());
 
-			MYACCOUNT->engine()->privmsg(m_nickName, *it );
+			engine->privmsg(m_nickName, *it );
 
 			msg.setBg(QColor());
 			msg.setFg(QColor());
@@ -242,7 +259,7 @@ void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::ChatSession *)
 	}
 	else
 	{
-		MYACCOUNT->engine()->privmsg(m_nickName, htmlString );
+		engine->privmsg(m_nickName, htmlString );
 
 		message.setBg( QColor() );
 		message.setFg( QColor() );
@@ -254,11 +271,12 @@ void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::ChatSession *)
 
 Kopete::Contact *IRCContact::locateUser(const QString &nick)
 {
-	//kdDebug(14120) << k_funcinfo << "Find nick " << nick << endl;
+	IRCAccount *account = ircAccount();
+
 	if (m_chatSession)
 	{
-		if( nick == MYACCOUNT->mySelf()->nickName() )
-			return MYACCOUNT->mySelf();
+		if( nick == account->mySelf()->nickName() )
+			return account->mySelf();
 		else
 		{
 			Kopete::ContactPtrList mMembers = m_chatSession->members();
@@ -269,18 +287,20 @@ Kopete::Contact *IRCContact::locateUser(const QString &nick)
 			}
 		}
 	}
-	return 0L;
+	return 0;
 }
 
 bool IRCContact::isChatting(Kopete::ChatSession *avoid) const
 {
-	if (!MYACCOUNT)
+	IRCAccount *account = ircAccount();
+
+	if (!account)
 		return false;
 
 	QValueList<Kopete::ChatSession*> sessions = Kopete::ChatSessionManager::self()->sessions();
 	for (QValueList<Kopete::ChatSession*>::Iterator it= sessions.begin(); it!=sessions.end() ; ++it)
 	{
-	  if( (*it) != avoid && (*it)->account() == MYACCOUNT &&
+	  if( (*it) != avoid && (*it)->account() == account &&
 			   (*it)->members().contains(this) )
 		{
 			return true;

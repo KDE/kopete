@@ -26,11 +26,14 @@
 #include <qptrlist.h>
 #include <qmap.h>
 
-#define MYACCOUNT ((IRCAccount*)account())
-
 class IRCProtocol;
 class IRCAccount;
 class IRCContactManager;
+
+namespace KIRC
+{
+class Engine;
+}
 
 namespace Kopete
 {
@@ -58,6 +61,9 @@ class IRCContact
 public:
 	IRCContact(IRCContactManager *contactManager, const QString &nick, Kopete::MetaContact *metac, const QString& icon = QString::null);
 	~IRCContact();
+
+	IRCAccount *ircAccount() const;
+	KIRC::Engine *kircEngine() const;
 
 	/**
 	 * Sets the nickname of this contact. The nickname is distinct from the displayName

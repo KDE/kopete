@@ -44,7 +44,7 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 
 	QObject::connect(mOnlineTimer, SIGNAL(timeout()), this, SLOT( slotUserOffline() ) );
 
-	QObject::connect(MYACCOUNT->engine(), SIGNAL(incomingChannelModeChange(const QString&, const QString&, const QString&)),
+	QObject::connect(kircEngine(), SIGNAL(incomingChannelModeChange(const QString&, const QString&, const QString&)),
 		this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
 
 	actionCtcpMenu = 0L;
@@ -60,9 +60,7 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 
 void IRCUserContact::updateStatus()
 {
-	KIRC::Engine::Status status = MYACCOUNT->engine()->status();
-
-	switch( status )
+	switch (kircEngine()->status())
 	{
 	case KIRC::Engine::Idle:
 		setOnlineStatus(m_protocol->m_UserStatusOffline);
@@ -70,7 +68,7 @@ void IRCUserContact::updateStatus()
 
 	case KIRC::Engine::Connecting:
 	case KIRC::Engine::Authentifying:
-		if(this == MYACCOUNT->mySelf())
+		if (this == ircAccount()->mySelf())
 			setOnlineStatus(m_protocol->m_UserStatusConnecting);
 		else
 			setOnlineStatus(m_protocol->m_UserStatusOffline);
@@ -103,11 +101,8 @@ void IRCUserContact::sendFile(const KURL &sourceURL, const QString&, unsigned in
 
 	kdDebug(14120) << k_funcinfo << "File chosen to send:" << filePath << endl;
 
-	if ( !filePath.isEmpty() )
-	{
-		//Send the file
-		MYACCOUNT->engine()->CtcpRequest_dcc( m_nickName, filePath, 0, KIRC::Transfer::FileOutgoing);
-	}
+	if (!filePath.isEmpty())
+		kircEngine()->CtcpRequest_dcc( m_nickName, filePath, 0, KIRC::Transfer::FileOutgoing);
 }
 
 void IRCUserContact::slotUserOffline()
@@ -117,7 +112,7 @@ void IRCUserContact::slotUserOffline()
 	updateStatus();
 
 	if( !metaContact()->isTemporary() )
-		MYACCOUNT->engine()->writeMessage( QString::fromLatin1("WHOWAS %1").arg(m_nickName) );
+		kircEngine()->writeMessage( QString::fromLatin1("WHOWAS %1").arg(m_nickName) );
 
 	removeProperty( m_protocol->propUserInfo );
 	removeProperty( m_protocol->propServer );
@@ -130,11 +125,11 @@ void IRCUserContact::setAway(bool isAway)
 	updateStatus();
 }
 
-void IRCUserContact::incomingUserIsAway(const QString &reason )
+void IRCUserContact::incomingUserIsAway(const QString &reason)
 {
 	if( manager( Kopete::Contact::CannotCreate ) )
 	{
-		Kopete::Message msg( (Kopete::Contact*)MYACCOUNT->myServer(), mMyself,
+		Kopete::Message msg( (Kopete::Contact*)ircAccount()->myServer(), mMyself,
 			i18n("%1 is away (%2)").arg( m_nickName ).arg( reason ),
 			Kopete::Message::Internal, Kopete::Message::RichText, Kopete::Message::Chat );
 		manager()->appendMessage(msg);
@@ -145,10 +140,10 @@ void IRCUserContact::userOnline()
 {
 	m_isOnline = true;
 	updateStatus();
-	if (this != MYACCOUNT->mySelf() && !metaContact()->isTemporary())
+	if (this != ircAccount()->mySelf() && !metaContact()->isTemporary())
 	{
 		mOnlineTimer->start( 45000, true );
-		MYACCOUNT->engine()->writeMessage( QString::fromLatin1("WHOIS %1").arg(m_nickName) );
+		kircEngine()->writeMessage( QString::fromLatin1("WHOIS %1").arg(m_nickName) );
 	}
 
 	removeProperty( m_protocol->propLastSeen );
@@ -159,13 +154,13 @@ void IRCUserContact::slotUserInfo()
 	if (isChatting())
 	{
 		m_protocol->setCommandInProgress(true);
-		MYACCOUNT->engine()->whoisUser( m_nickName );
+		kircEngine()->whoisUser( m_nickName );
 	}
 }
 
 const QString IRCUserContact::caption() const
 {
-	return i18n("%1 @ %2").arg(m_nickName).arg( MYACCOUNT->engine()->currentHost() );
+	return i18n("%1 @ %2").arg(m_nickName).arg(kircEngine()->currentHost());
 }
 
 void IRCUserContact::slotOp()
@@ -212,24 +207,24 @@ void IRCUserContact::slotKick()
 {
 	Kopete::ContactPtrList members = mActiveManager->members();
 	QString channelName = static_cast<IRCContact*>(members.first())->nickName();
-	MYACCOUNT->engine()->kick(m_nickName, channelName, QString::null);
+	kircEngine()->kick(m_nickName, channelName, QString::null);
 }
 
 void IRCUserContact::contactMode(const QString &mode)
 {
 	Kopete::ContactPtrList members = mActiveManager->members();
 	QString channelName = static_cast<IRCContact*>(members.first())->nickName();
-	MYACCOUNT->engine()->mode(channelName, QString::fromLatin1("%1 %2").arg(mode).arg(m_nickName));
+	kircEngine()->mode(channelName, QString::fromLatin1("%1 %2").arg(mode).arg(m_nickName));
 }
 
 void IRCUserContact::slotCtcpPing()
 {
-	MYACCOUNT->engine()->CtcpRequest_ping(m_nickName);
+	kircEngine()->CtcpRequest_ping(m_nickName);
 }
 
 void IRCUserContact::slotCtcpVersion()
 {
-	MYACCOUNT->engine()->CtcpRequest_version(m_nickName);
+	kircEngine()->CtcpRequest_version(m_nickName);
 }
 
 void IRCUserContact::newWhoIsUser(const QString &username, const QString &hostname, const QString &realname)
@@ -309,7 +304,7 @@ void IRCUserContact::whoIsComplete()
 		msg += i18n("idle: %2<br/>").arg( idleTime.isEmpty() ? QString::number(0) : idleTime );
 
 		//End
-		MYACCOUNT->appendMessage(msg, IRCAccount::InfoReply );
+		ircAccount()->appendMessage(msg, IRCAccount::InfoReply );
 		m_protocol->setCommandInProgress(false);
 	}
 }
@@ -331,7 +326,7 @@ void IRCUserContact::whoWasComplete()
 			)
 		);
 
-		MYACCOUNT->appendMessage(msg, IRCAccount::InfoReply );
+		ircAccount()->appendMessage(msg, IRCAccount::InfoReply );
 		m_protocol->setCommandInProgress(false);
 	}
 }
@@ -448,7 +443,7 @@ QPtrList<KAction> *IRCUserContact::customContextMenuActions( Kopete::ChatSession
 
 void IRCUserContact::slotIncomingModeChange( const QString &channel, const QString &, const QString &mode )
 {
-	IRCChannelContact *chan = MYACCOUNT->contactManager()->findChannel( channel );
+	IRCChannelContact *chan = ircAccount()->contactManager()->findChannel( channel );
 	if( chan->locateUser( m_nickName ) )
 	{
 		QString user = mode.section(' ', 1, 1);
@@ -488,12 +483,12 @@ void IRCUserContact::privateMessage(IRCContact *from, IRCContact *to, const QStr
 
 void IRCUserContact::newAction(const QString &to, const QString &action)
 {
-	kdDebug(14120) << k_funcinfo << m_nickName << endl;
+	IRCAccount *account = ircAccount();
 
-	IRCContact *t = MYACCOUNT->contactManager()->findUser(to);
+	IRCContact *t = account->contactManager()->findUser(to);
 
 	Kopete::Message::MessageDirection dir =
-		(this == MYACCOUNT->mySelf()) ? Kopete::Message::Outbound : Kopete::Message::Inbound;
+		(this == account->mySelf()) ? Kopete::Message::Outbound : Kopete::Message::Inbound;
 	Kopete::Message msg(this, t, action, dir, Kopete::Message::RichText,
 	                    Kopete::Message::Chat, Kopete::Message::TypeAction);
 
