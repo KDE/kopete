@@ -177,7 +177,7 @@ GaduRichTextFormat::convertToGaduMessage( const KopeteMessage& message )
 
 				if ( pos != lastpos ) {
 					QString tmp = htmlString.mid( lastpos, pos-lastpos );
-					rtcs.blue  = rtcs.green = rtcs.red = 0;
+					color.setRgb( 0, 0, 0 );
 					rtfs.font = GG_FONT_COLOR;
 					if ( insertRtf( position ) == false ) {
 						delete output;
@@ -214,7 +214,7 @@ GaduRichTextFormat::convertToGaduMessage( const KopeteMessage& message )
 			else {
 				QString tmp = htmlString.mid( lastpos, htmlString.length() - lastpos );
 				if ( tmp.length() ) {
-					rtcs.blue  = rtcs.green = rtcs.red = 0;
+					color.setRgb( 0, 0, 0 );
 					rtfs.font = GG_FONT_COLOR;
 					if ( insertRtf( position ) == false ) {
 						delete output;
@@ -276,7 +276,7 @@ GaduRichTextFormat::unescapeGaduMessage( QString& ns )
 bool
 GaduRichTextFormat::insertRtf( uint position)
 {
-	if ( color.red() != rtcs.red || color.blue() != rtcs.blue || color.green() !=rtcs.green ) {
+	if ( color.red() != rtcs.red || color.blue() != rtcs.blue || color.green() != rtcs.green ) {
 		rtcs.red   = color.red();
 		rtcs.green = color.green();
 		rtcs.blue  = color.blue();
@@ -299,6 +299,7 @@ GaduRichTextFormat::insertRtf( uint position)
 				kdDebug( 14100 ) << "problem allocating memory, message cannot be sent" << endl;
 				return false;
 			};
+			kdDebug(14100)<<"dodajemy kolorek " << endl;
 			memcpy( rtf.data() + csize, &rtcs, sizeof( rtcs ) );
 		}
 	}
