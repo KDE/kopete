@@ -11,13 +11,11 @@
 GaduSession::GaduSession( QObject *parent, const char* name )
     : QObject( parent, name )
 {
-	kdDebug()<<k_funcinfo<<endl;
     session_ = 0;
 }
 
 GaduSession::~GaduSession()
 {
-	kdDebug()<<k_funcinfo<<endl;
     if ( isConnected() ) {
         logoff();
     }
@@ -29,7 +27,6 @@ GaduSession::~GaduSession()
 bool
 GaduSession::isConnected() const
 {
-	kdDebug()<<k_funcinfo<<endl;
     if ( session_ )
         return (session_->state & GG_STATE_CONNECTED);
     return false;
@@ -38,7 +35,6 @@ GaduSession::isConnected() const
 void
 GaduSession::login( const struct gg_login_params& p )
 {
-	kdDebug()<<k_funcinfo<<endl;
     if ( !isConnected() ) {
 	if ( !(session_ = gg_login( &p ))) {
 		emit connectionFailed( 0L );
@@ -66,21 +62,17 @@ GaduSession::login( const struct gg_login_params& p )
 void
 GaduSession::enableNotifiers( int checkWhat )
 {
-	kdDebug()<<k_funcinfo<<endl;
-	if( checkWhat & GG_CHECK_READ ) {
-		kdDebug()<<"## Enable Read!"<<endl;
-		read_->setEnabled( true );
-	}
-	if( checkWhat & GG_CHECK_WRITE ) {
-		write_->setEnabled( true );
-		kdDebug()<<"## Enable Write!"<<endl;
-	}
+    if( checkWhat & GG_CHECK_READ ) {
+        read_->setEnabled( true );
+    }
+    if( checkWhat & GG_CHECK_WRITE ) {
+        write_->setEnabled( true );
+    }
 }
 
 void
 GaduSession::disableNotifiers()
 {
-	kdDebug()<<k_funcinfo<<endl;
 	read_->setEnabled( false );
 	write_->setEnabled( false );
 }
@@ -89,7 +81,6 @@ void
 GaduSession::login( uin_t uin, const QString& password,
                     int status, const QString& statusDescr )
 {
-	kdDebug()<<k_funcinfo<<endl;
     struct gg_login_params p;
 
     memset( &p, 0, sizeof(p) );
@@ -104,7 +95,6 @@ GaduSession::login( uin_t uin, const QString& password,
 void
 GaduSession::logoff()
 {
-	kdDebug()<<k_funcinfo<<endl;
     if ( isConnected() ) {
         gg_logoff( session_ );
 	QObject::disconnect( this, SLOT(checkDescriptor()) );
@@ -114,7 +104,6 @@ GaduSession::logoff()
 int
 GaduSession::notify( uin_t *userlist, int count )
 {
-	kdDebug()<<k_funcinfo<<endl;
     if ( isConnected() )
         return gg_notify( session_, userlist, count );
     else
@@ -126,7 +115,6 @@ GaduSession::notify( uin_t *userlist, int count )
 int
 GaduSession::addNotify( uin_t uin )
 {
-	kdDebug()<<k_funcinfo<<endl;
     if ( isConnected() )
         return gg_add_notify( session_, uin );
     else
@@ -138,7 +126,6 @@ GaduSession::addNotify( uin_t uin )
 int
 GaduSession::removeNotify( uin_t uin )
 {
-	kdDebug()<<k_funcinfo<<endl;
     if ( isConnected() )
         gg_remove_notify( session_, uin );
     else
@@ -151,7 +138,6 @@ int
 GaduSession::sendMessage( uin_t recipient, const QString& msg,
                           int msgClass )
 {
-	kdDebug()<<k_funcinfo<<endl;
     if ( isConnected() )
         return gg_send_message( session_,
                                 msgClass,
@@ -167,7 +153,6 @@ int
 GaduSession::sendMessageCtcp( uin_t recipient, const QString& msg,
                               int msgClass )
 {
-	kdDebug()<<k_funcinfo<<endl;
     if ( isConnected() )
         return gg_send_message_ctcp( session_,
                                      msgClass,
@@ -183,7 +168,6 @@ GaduSession::sendMessageCtcp( uin_t recipient, const QString& msg,
 int
 GaduSession::changeStatus( int status )
 {
-	kdDebug()<<k_funcinfo<<endl;
     if ( isConnected() )
         return gg_change_status( session_, status );
     else
@@ -195,7 +179,6 @@ GaduSession::changeStatus( int status )
 int
 GaduSession::changeStatusDescription( int status, const QString& descr )
 {
-	kdDebug()<<k_funcinfo<<endl;
     if ( isConnected() )
         return gg_change_status_descr( session_, status, descr.latin1() );
     else
@@ -208,7 +191,6 @@ GaduSession::changeStatusDescription( int status, const QString& descr )
 int
 GaduSession::ping()
 {
-	kdDebug()<<k_funcinfo<<endl;
     if ( isConnected() )
         return gg_ping( session_ );
     else
@@ -220,7 +202,6 @@ GaduSession::ping()
 int
 GaduSession::dccRequest( uin_t uin )
 {
-	kdDebug()<<k_funcinfo<<endl;
     if ( isConnected() )
         return gg_dcc_request( session_, uin );
     else
@@ -232,7 +213,6 @@ GaduSession::dccRequest( uin_t uin )
 void
 GaduSession::checkDescriptor()
 {
-	kdDebug()<<k_funcinfo<<endl;
     struct gg_event *e;
     disableNotifiers();
 

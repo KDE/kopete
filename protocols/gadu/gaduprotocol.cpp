@@ -5,15 +5,22 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <ksimpleconfig.h>
+#include <kaction.h>
+#include <kpopupmenu.h>
+#include <kstatusbar.h>
 #include <kstandarddirs.h>
 
 #include "kopete.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 #include "kopetemessagemanager.h"
+#include "kopetewindow.h"
 #include "kopetemessagemanagerfactory.h"
 #include "statusbaricon.h"
 #include "systemtray.h"
+
+#include <qcursor.h>
+#include <qtimer.h>
 
 #include "gaduprotocol.h"
 #include "gaducontact.h"
@@ -23,7 +30,6 @@
 #include "gaducommands.h"
 
 #include <libgadu.h>
-#include <qcursor.h>
 
 K_EXPORT_COMPONENT_FACTORY( kopete_gadu, KGenericFactory<GaduProtocol> );
 
@@ -219,11 +225,11 @@ GaduProtocol::addContact( const QString& uin, const QString& nick, KopeteMetaCon
     KopeteMetaContact *m;
 
     if ( !parent ) {
-        m = l->findContact( nick, this->id() );
+        m = l->findContact( this->id(), nick );
     } else
         m = parent;
 
-    KopeteContact     *c = m->findContact( this->id(), uin );
+    KopeteContact *c = m->findContact( this->id(), uin );
 
     if( !c ) {
         uin_t uinNumber = uin.toUInt();
