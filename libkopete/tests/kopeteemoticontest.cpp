@@ -68,6 +68,14 @@ static TestSet knownBroken =
 	{ ":))", ":))" },
 	{ "In a sentence:practical example", "In a sentence:practical example" },
 	{ "Bla (&nbsp;)", "Bla (&nbsp;)" },
+	{ ":D and :-D are not the same as :d and :-d", "<img align=\"center\" width=\"20\" height=\"20\" src=\"teeth.png\" title=\":D\"/> and <img align=\"center\" width=\"20\" height=\"20\" src=\"teeth.png\" title=\":-D\"/> are not the same as :d and :-d" },
+	// A future emoticon theme may very well have an emoticon for :d/:-d (an
+	// upward tongue expression - Casey
+	{ "4d:D>:)F:/&gt;:-(:Pu:d9", "4d:D>:)F:/&gt;:-(:Pu:d9" },
+	{ "&lt;::pvar:: test=1&gt;", "&lt;::pvar:: test=1&gt;" },
+	{ "a non-breaking space (&nbsp;) character", "a non-breaking space (&nbsp;) character" },
+	{ "-+-[-:-(-:-)-:-]-+-", "-+-[-:-(-:-)-:-]-+-" },
+	{ "::shrugs::", "::shrugs::" },
 	{ NULL, NULL }
 };
 
