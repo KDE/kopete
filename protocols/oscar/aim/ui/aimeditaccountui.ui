@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>aimEditAccountUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>640</width>
-            <height>480</height>
+            <width>560</width>
+            <height>438</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -58,18 +58,35 @@
                             </property>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout42</cstring>
+                                    <cstring>layout12</cstring>
                                 </property>
-                                <hbox>
+                                <grid>
                                     <property name="name">
                                         <cstring>unnamed</cstring>
                                     </property>
-                                    <widget class="QLabel">
+                                    <widget class="QLineEdit" row="1" column="1">
+                                        <property name="name">
+                                            <cstring>edtPassword</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="echoMode">
+                                            <enum>Password</enum>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The password for your account.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The password for your account.  You may optionally leave this blank and enter it when you wish to connect.</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel" row="0" column="0">
                                         <property name="name">
                                             <cstring>lblAccountId</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>&amp;AIM screen name:</string>
+                                            <string>&amp;AIM Screen Name:</string>
                                         </property>
                                         <property name="buddy" stdset="0">
                                             <cstring>edtAccountId</cstring>
@@ -81,59 +98,7 @@
                                             <string>The screen name of your AIM account.  This should be in the form of an alphanumeric string (spaces allowed, not case sensitive).</string>
                                         </property>
                                     </widget>
-                                    <widget class="QLineEdit">
-                                        <property name="name">
-                                            <cstring>edtAccountId</cstring>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The screen name of your AIM account.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The screen name of your AIM account.  This should be in the form of an alphanumeric string (spaces allowed, not case sensitive).</string>
-                                        </property>
-                                    </widget>
-                                </hbox>
-                            </widget>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>mSavePassword</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Remember &amp;password</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Check to save your password.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
-                                </property>
-                            </widget>
-                            <widget class="QLayoutWidget">
-                                <property name="name">
-                                    <cstring>layout55</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <spacer>
-                                        <property name="name">
-                                            <cstring>spacer69</cstring>
-                                        </property>
-                                        <property name="orientation">
-                                            <enum>Horizontal</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>Fixed</enum>
-                                        </property>
-                                        <property name="sizeHint">
-                                            <size>
-                                                <width>17</width>
-                                                <height>20</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
-                                    <widget class="QLabel">
+                                    <widget class="QLabel" row="1" column="0">
                                         <property name="name">
                                             <cstring>lblPassword</cstring>
                                         </property>
@@ -153,55 +118,62 @@
                                             <string>The password for your account.  You may optionally leave this blank and enter it when you wish to connect.</string>
                                         </property>
                                     </widget>
-                                    <widget class="QLineEdit">
+                                    <widget class="QLayoutWidget" row="0" column="1">
                                         <property name="name">
-                                            <cstring>edtPassword</cstring>
+                                            <cstring>layout11</cstring>
                                         </property>
-                                        <property name="enabled">
-                                            <bool>false</bool>
-                                        </property>
-                                        <property name="echoMode">
-                                            <enum>Password</enum>
-                                        </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>The password for your account.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>The password for your account.  You may optionally leave this blank and enter it when you wish to connect.</string>
-                                        </property>
+                                        <hbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>edtAccountId</cstring>
+                                                </property>
+                                                <property name="toolTip" stdset="0">
+                                                    <string>The screen name of your AIM account.</string>
+                                                </property>
+                                                <property name="whatsThis" stdset="0">
+                                                    <string>The screen name of your AIM account.  This should be in the form of an alphanumeric string (spaces allowed, not case sensitive).</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QCheckBox">
+                                                <property name="name">
+                                                    <cstring>mSavePassword</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Remember &amp;password</string>
+                                                </property>
+                                                <property name="toolTip" stdset="0">
+                                                    <string>Check to save your password.</string>
+                                                </property>
+                                                <property name="whatsThis" stdset="0">
+                                                    <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
+                                                </property>
+                                            </widget>
+                                        </hbox>
                                     </widget>
-                                </hbox>
+                                </grid>
+                            </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>mAutoLogon</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Connect automatically at &amp;startup</string>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Check to connect automatically when Kopete is started.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
+                                </property>
                             </widget>
                         </vbox>
                     </widget>
-                    <widget class="QLabel">
+                    <widget class="QGroupBox">
                         <property name="name">
-                            <cstring>textLabel10</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>3</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="minimumSize">
-                            <size>
-                                <width>600</width>
-                                <height>0</height>
-                            </size>
-                        </property>
-                        <property name="text">
-                            <string>&lt;i&gt;To connect to the AOL Instant Messaging network, you will need to use a screen name from AIM, AOL, or .Mac.&lt;br&gt;&lt;br&gt;If you do not currently have an AIM screen name, you may register for one at the site linked below.&lt;/i&gt;</string>
-                        </property>
-                        <property name="alignment">
-                            <set>WordBreak|AlignTop</set>
-                        </property>
-                    </widget>
-                    <widget class="KActiveLabel">
-                        <property name="name">
-                            <cstring>kActiveLabel6</cstring>
+                            <cstring>groupBox5</cstring>
                         </property>
                         <property name="sizePolicy">
                             <sizepolicy>
@@ -211,10 +183,65 @@
                                 <verstretch>0</verstretch>
                             </sizepolicy>
                         </property>
-                        <property name="text">
-                            <string>&lt;a href="http://my.screenname.aol.com/_cqr/login/login.psp?siteId=snshomepage&amp;mcState=initialized&amp;createSn=1"&gt;Register for an AIM account&lt;/a&gt;</string>
+                        <property name="title">
+                            <string>Registration</string>
                         </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>textLabel6</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>1</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                    <size>
+                                        <width>0</width>
+                                        <height>0</height>
+                                    </size>
+                                </property>
+                                <property name="text">
+                                    <string>To connect to the AOL Instant Messaging network, you will need to use a screen name from AIM, AOL, or .Mac.&lt;br&gt;&lt;br&gt;If you do not currently have an AIM screen name, please click the button to create one.</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>WordBreak|AlignVCenter</set>
+                                </property>
+                            </widget>
+                            <widget class="QPushButton">
+                                <property name="name">
+                                    <cstring>buttonRegister</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Re&amp;gister New Account</string>
+                                </property>
+                            </widget>
+                        </hbox>
                     </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer7</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>90</height>
+                            </size>
+                        </property>
+                    </spacer>
                 </vbox>
             </widget>
             <widget class="QWidget">
@@ -241,21 +268,15 @@
                             </property>
                             <widget class="QCheckBox">
                                 <property name="name">
-                                    <cstring>mAutoLogon</cstring>
+                                    <cstring>optionOverrideServer</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Connect automatically at &amp;startup</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Check to connect automatically when Kopete is started.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
+                                    <string>&amp;Override default server information</string>
                                 </property>
                             </widget>
                             <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>layout205</cstring>
+                                    <cstring>layout14</cstring>
                                 </property>
                                 <hbox>
                                     <property name="name">
@@ -263,18 +284,24 @@
                                     </property>
                                     <widget class="QLayoutWidget">
                                         <property name="name">
-                                            <cstring>layout56</cstring>
+                                            <cstring>layout13</cstring>
                                         </property>
                                         <hbox>
                                             <property name="name">
                                                 <cstring>unnamed</cstring>
                                             </property>
+                                            <property name="spacing">
+                                                <number>3</number>
+                                            </property>
                                             <widget class="QLabel">
                                                 <property name="name">
                                                     <cstring>lblServer</cstring>
                                                 </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
                                                 <property name="text">
-                                                    <string>Ser&amp;ver:</string>
+                                                    <string>Ser&amp;ver /</string>
                                                 </property>
                                                 <property name="buddy" stdset="0">
                                                     <cstring>edtServerAddress</cstring>
@@ -286,30 +313,12 @@
                                                     <string>The IP address or hostmask of the AIM server you wish to connect to.  Normally you will want the default (login.oscar.aol.com).</string>
                                                 </property>
                                             </widget>
-                                            <widget class="QLineEdit">
-                                                <property name="name">
-                                                    <cstring>edtServerAddress</cstring>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>The IP address or hostmask of the AIM server you wish to connect to.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>The IP address or hostmask of the AIM server you wish to connect to.  Normally you will want the default (login.oscar.aol.com).</string>
-                                                </property>
-                                            </widget>
-                                        </hbox>
-                                    </widget>
-                                    <widget class="QLayoutWidget">
-                                        <property name="name">
-                                            <cstring>layout57</cstring>
-                                        </property>
-                                        <hbox>
-                                            <property name="name">
-                                                <cstring>unnamed</cstring>
-                                            </property>
                                             <widget class="QLabel">
                                                 <property name="name">
                                                     <cstring>lblPort</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
                                                 </property>
                                                 <property name="text">
                                                     <string>Po&amp;rt:</string>
@@ -324,40 +333,46 @@
                                                     <string>The port on the AIM server that you would like to connect to.  Normally this is 5190.</string>
                                                 </property>
                                             </widget>
-                                            <widget class="QSpinBox">
-                                                <property name="name">
-                                                    <cstring>sbxServerPort</cstring>
-                                                </property>
-                                                <property name="maxValue">
-                                                    <number>65534</number>
-                                                </property>
-                                                <property name="minValue">
-                                                    <number>1</number>
-                                                </property>
-                                                <property name="value">
-                                                    <number>1</number>
-                                                </property>
-                                                <property name="toolTip" stdset="0">
-                                                    <string>The port on the AIM server that you would like to connect to.</string>
-                                                </property>
-                                                <property name="whatsThis" stdset="0">
-                                                    <string>The port on the AIM server that you would like to connect to.  Normally this is 5190.</string>
-                                                </property>
-                                            </widget>
                                         </hbox>
                                     </widget>
-                                    <widget class="QPushButton">
+                                    <widget class="QLineEdit">
                                         <property name="name">
-                                            <cstring>btnServerDefaults</cstring>
+                                            <cstring>edtServerAddress</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
                                         </property>
                                         <property name="text">
-                                            <string>&amp;Defaults</string>
+                                            <string>login.oscar.aol.com</string>
                                         </property>
                                         <property name="toolTip" stdset="0">
-                                            <string>Restore the server and port values to their defaults.</string>
+                                            <string>The IP address or hostmask of the AIM server you wish to connect to.</string>
                                         </property>
                                         <property name="whatsThis" stdset="0">
-                                            <string>Restore the server and port values to their defaults.</string>
+                                            <string>The IP address or hostmask of the AIM server you wish to connect to.  Normally you will want the default (login.oscar.aol.com).</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QSpinBox">
+                                        <property name="name">
+                                            <cstring>sbxServerPort</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="maxValue">
+                                            <number>65534</number>
+                                        </property>
+                                        <property name="minValue">
+                                            <number>1</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>5190</number>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>The port on the AIM server that you would like to connect to.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>The port on the AIM server that you would like to connect to.  Normally this is 5190.</string>
                                         </property>
                                     </widget>
                                 </hbox>
@@ -384,6 +399,17 @@
                 </vbox>
             </widget>
         </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>labelStatusMessage</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
     </vbox>
 </widget>
 <connections>
@@ -399,19 +425,37 @@
         <receiver>lblPassword</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>optionOverrideServer</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>lblServer</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>optionOverrideServer</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>lblPort</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>optionOverrideServer</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>edtServerAddress</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>optionOverrideServer</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>sbxServerPort</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>edtAccountId</tabstop>
     <tabstop>mSavePassword</tabstop>
     <tabstop>edtPassword</tabstop>
-    <tabstop>mAutoLogon</tabstop>
     <tabstop>edtServerAddress</tabstop>
     <tabstop>sbxServerPort</tabstop>
-    <tabstop>btnServerDefaults</tabstop>
-    <tabstop>kActiveLabel6</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kactivelabel.h</includehint>
-</includehints>
 </UI>

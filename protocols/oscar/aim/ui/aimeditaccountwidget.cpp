@@ -8,6 +8,7 @@
 #include <qspinbox.h>
 
 #include <kdebug.h>
+#include <krun.h>
 
 #include "aimprotocol.h"
 #include "aimaccount.h"
@@ -26,10 +27,6 @@ AIMEditAccountWidget::AIMEditAccountWidget(AIMProtocol *protocol,
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	mGui = new aimEditAccountUI(this, "AIMEditAccountWidget::mGui");
 
-	connect(mGui->btnServerDefaults, SIGNAL(clicked()),
-	this, SLOT(slotSetDefaultServer()));
-
-
 	// Read in the settings from the account if it exists
 	if (account)
 	{
@@ -42,6 +39,9 @@ AIMEditAccountWidget::AIMEditAccountWidget(AIMProtocol *protocol,
 		//Remove me after we can change Account IDs (Matt)
 		mGui->edtAccountId->setDisabled(true);
 		mGui->mAutoLogon->setChecked(account->autoLogin());
+        if (account->pluginData(protocol, "Server") != "login.oscar.aol.com" || (account->pluginData(protocol, "Port").toInt() != 5190)) {
+            mGui->optionOverrideServer->setChecked( true );
+        }
 		mGui->edtServerAddress->setText(account->pluginData(protocol, "Server"));
 		mGui->sbxServerPort->setValue(account->pluginData(protocol,"Port").toInt());
 	}
@@ -49,7 +49,6 @@ AIMEditAccountWidget::AIMEditAccountWidget(AIMProtocol *protocol,
 	{
 		// Just set the default saved password to true
 		mGui->mSavePassword->setChecked(false);
-		slotSetDefaultServer();
 	}
 	QObject::connect(mGui->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
 }
@@ -77,8 +76,14 @@ KopeteAccount *AIMEditAccountWidget::apply()
 		mAccount->setPassword(QString::null);
 
 	mAccount->setAutoLogin(mGui->mAutoLogon->isChecked()); // save the autologon choice
-	static_cast<OscarAccount *>(mAccount)->setServerAddress(mGui->edtServerAddress->text());
-	static_cast<OscarAccount *>(mAccount)->setServerPort(mGui->sbxServerPort->value());
+	if (mGui->optionOverrideServer->isChecked()) {
+		static_cast<OscarAccount *>(mAccount)->setServerAddress(mGui->edtServerAddress->text());
+		static_cast<OscarAccount *>(mAccount)->setServerPort(mGui->sbxServerPort->value());
+	}
+	else {
+		static_cast<OscarAccount *>(mAccount)->setServerAddress("login.oscar.aol.com");
+		static_cast<OscarAccount *>(mAccount)->setServerPort(5190);
+	}
 
 	return mAccount;
 }
@@ -105,13 +110,7 @@ bool AIMEditAccountWidget::validateData()
 	return true;
 }
 
-void AIMEditAccountWidget::slotSetDefaultServer()
-{
-	mGui->edtServerAddress->setText(AIM_SERVER);
-	mGui->sbxServerPort->setValue(AIM_PORT);
-}
-
-void ICQEditAccountWidget::slotOpenRegister()
+void AIMEditAccountWidget::slotOpenRegister()
 {
     KRun::runURL( "http://my.screenname.aol.com/_cqr/login/login.psp?siteId=snshomepage&mcState=initialized&createSn=1", "text/html" );
 }

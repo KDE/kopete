@@ -45,9 +45,6 @@ class AIMEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 	private slots:
 		void slotOpenRegister();
 
-	protected slots:
-		void slotSetDefaultServer();
-
 	protected:
 		KopeteAccount *mAccount;
 		AIMProtocol *mProtocol;
