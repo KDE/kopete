@@ -28,7 +28,7 @@ kopete_SOURCES = main.cpp \
 kopete_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH) -lktexteditor
 kopete_LDADD = \
 	addcontactwizard/libkopeteaddcontactwizard.la contactlist/libkopetecontactlist.la \
-	chatwindow/libkopetechatwindow.la conf/libkopeteconf.la ../libkopete/libkopete.la
+	chatwindow/kopete_chatwindow.la conf/libkopeteconf.la ../libkopete/libkopete.la
 
 mydatadir = $(kde_datadir)/kopete
 mydata_DATA = kopeteui.rc eventsrc
