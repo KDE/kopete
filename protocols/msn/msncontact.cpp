@@ -155,7 +155,8 @@ QString MSNContact::data() const
 
 void MSNContact::slotChatThisUser()
 {
-	return m_msnId;
+#warning "FIXME: what am I supposed to do"
+	//return m_msnId;
 }
 
 void MSNContact::slotRemoveThisUser()
