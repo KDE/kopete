@@ -240,254 +240,235 @@
                 <attribute name="title">
                     <string>Connection</string>
                 </attribute>
-                <widget class="QGroupBox">
+                <vbox>
                     <property name="name">
-                        <cstring>groupBox66</cstring>
+                        <cstring>unnamed</cstring>
                     </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>11</x>
-                            <y>11</y>
-                            <width>585</width>
-                            <height>58</height>
-                        </rect>
-                    </property>
-                    <property name="title">
-                        <string>Connection Preferences</string>
-                    </property>
-                    <vbox>
+                    <widget class="QGroupBox">
                         <property name="name">
-                            <cstring>unnamed</cstring>
+                            <cstring>groupBox66</cstring>
                         </property>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>m_autologin</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Connect automatically at &amp;startup</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+S</string>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Check to connect automatically when Kopete is started.</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
-                            </property>
-                        </widget>
-                    </vbox>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer7</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>21</width>
-                            <height>104</height>
-                        </size>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>293</x>
-                            <y>340</y>
-                            <width>21</width>
-                            <height>104</height>
-                        </rect>
-                    </property>
-                </spacer>
-                <widget class="QGroupBox">
-                    <property name="name">
-                        <cstring>global_settings_page</cstring>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>11</x>
-                            <y>75</y>
-                            <width>585</width>
-                            <height>237</height>
-                        </rect>
-                    </property>
-                    <property name="title">
-                        <string>MSN Settings</string>
-                    </property>
-                    <vbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
+                        <property name="title">
+                            <string>Connection Preferences</string>
                         </property>
-                        <widget class="QCheckBox">
+                        <vbox>
                             <property name="name">
-                                <cstring>NotifyNewChat</cstring>
+                                <cstring>unnamed</cstring>
                             </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>1</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="text">
-                                <string>Automatically open a chat &amp;window when someone starts
-a conversation</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+W</string>
-                            </property>
-                        </widget>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>AutoDownloadPicture</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Automatically &amp;download the display picture if possible</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+D</string>
-                            </property>
-                            <property name="checked">
-                                <bool>true</bool>
-                            </property>
-                        </widget>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>useCustomEmoticons</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Download and show c&amp;ustom emoticons (experimental)</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+U</string>
-                            </property>
-                        </widget>
-                        <widget class="QCheckBox">
-                            <property name="name">
-                                <cstring>SendAwayMessages</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>7</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="text">
-                                <string>&amp;Send away messages</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+S</string>
-                            </property>
-                            <property name="checked">
-                                <bool>false</bool>
-                            </property>
-                        </widget>
-                        <widget class="QLayoutWidget">
-                            <property name="name">
-                                <cstring>layout89</cstring>
-                            </property>
-                            <hbox>
+                            <widget class="QCheckBox">
                                 <property name="name">
-                                    <cstring>unnamed</cstring>
+                                    <cstring>m_autologin</cstring>
                                 </property>
-                                <spacer>
-                                    <property name="name">
-                                        <cstring>spacer69_2</cstring>
-                                    </property>
-                                    <property name="orientation">
-                                        <enum>Horizontal</enum>
-                                    </property>
-                                    <property name="sizeType">
-                                        <enum>Fixed</enum>
-                                    </property>
-                                    <property name="sizeHint">
-                                        <size>
-                                            <width>17</width>
-                                            <height>20</height>
-                                        </size>
-                                    </property>
-                                </spacer>
-                                <widget class="QLabel">
-                                    <property name="name">
-                                        <cstring>textLabel3</cstring>
-                                    </property>
-                                    <property name="enabled">
-                                        <bool>false</bool>
-                                    </property>
-                                    <property name="text">
-                                        <string>Do not send more than one away message e&amp;very:</string>
-                                    </property>
-                                    <property name="alignment">
-                                        <set>WordBreak|AlignVCenter</set>
-                                    </property>
-                                    <property name="buddy" stdset="0">
-                                        <cstring>AwayMessageSeconds</cstring>
-                                    </property>
-                                </widget>
-                                <widget class="QLayoutWidget">
-                                    <property name="name">
-                                        <cstring>layout19</cstring>
-                                    </property>
-                                    <hbox>
-                                        <property name="name">
-                                            <cstring>unnamed</cstring>
-                                        </property>
-                                        <widget class="KIntNumInput">
-                                            <property name="name">
-                                                <cstring>AwayMessageSeconds</cstring>
-                                            </property>
-                                            <property name="enabled">
-                                                <bool>false</bool>
-                                            </property>
-                                            <property name="value">
-                                                <number>90</number>
-                                            </property>
-                                            <property name="minValue">
-                                                <number>1</number>
-                                            </property>
-                                            <property name="maxValue">
-                                                <number>3600</number>
-                                            </property>
-                                        </widget>
-                                        <widget class="QLabel">
-                                            <property name="name">
-                                                <cstring>textLabel4</cstring>
-                                            </property>
-                                            <property name="enabled">
-                                                <bool>false</bool>
-                                            </property>
-                                            <property name="text">
-                                                <string>seconds</string>
-                                            </property>
-                                        </widget>
-                                    </hbox>
-                                </widget>
-                            </hbox>
-                        </widget>
-                        <widget class="QLabel">
+                                <property name="text">
+                                    <string>Connect automatically at &amp;startup</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+S</string>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Check to connect automatically when Kopete is started.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
+                                </property>
+                            </widget>
+                        </vbox>
+                    </widget>
+                    <widget class="QGroupBox">
+                        <property name="name">
+                            <cstring>global_settings_page</cstring>
+                        </property>
+                        <property name="title">
+                            <string>MSN Settings</string>
+                        </property>
+                        <vbox>
                             <property name="name">
-                                <cstring>textLabel1_3</cstring>
+                                <cstring>unnamed</cstring>
                             </property>
-                            <property name="paletteForegroundColor">
-                                <color>
-                                    <red>255</red>
-                                    <green>0</green>
-                                    <blue>0</blue>
-                                </color>
-                            </property>
-                            <property name="text">
-                                <string>&lt;qt&gt;&lt;b&gt;Note:&lt;/b&gt; These settings are applicable for all MSN accounts</string>
-                            </property>
-                        </widget>
-                    </vbox>
-                </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>NotifyNewChat</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>1</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>Automatically open a chat &amp;window when someone starts
+a conversation</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+W</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>AutoDownloadPicture</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Automatically &amp;download the display picture if possible</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+D</string>
+                                </property>
+                                <property name="checked">
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>useCustomEmoticons</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Download and show c&amp;ustom emoticons (experimental)</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+U</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox">
+                                <property name="name">
+                                    <cstring>SendAwayMessages</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>7</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>&amp;Send away messages</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+S</string>
+                                </property>
+                                <property name="checked">
+                                    <bool>false</bool>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget">
+                                <property name="name">
+                                    <cstring>layout89</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <spacer>
+                                        <property name="name">
+                                            <cstring>spacer69_2</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Fixed</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>17</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>textLabel3</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="text">
+                                            <string>Do not send more than one away message e&amp;very:</string>
+                                        </property>
+                                        <property name="alignment">
+                                            <set>WordBreak|AlignVCenter</set>
+                                        </property>
+                                        <property name="buddy" stdset="0">
+                                            <cstring>AwayMessageSeconds</cstring>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLayoutWidget">
+                                        <property name="name">
+                                            <cstring>layout19</cstring>
+                                        </property>
+                                        <hbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="KIntNumInput">
+                                                <property name="name">
+                                                    <cstring>AwayMessageSeconds</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                                <property name="value">
+                                                    <number>90</number>
+                                                </property>
+                                                <property name="minValue">
+                                                    <number>1</number>
+                                                </property>
+                                                <property name="maxValue">
+                                                    <number>3600</number>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>textLabel4</cstring>
+                                                </property>
+                                                <property name="enabled">
+                                                    <bool>false</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string>seconds</string>
+                                                </property>
+                                            </widget>
+                                        </hbox>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>textLabel1_3</cstring>
+                                </property>
+                                <property name="paletteForegroundColor">
+                                    <color>
+                                        <red>255</red>
+                                        <green>0</green>
+                                        <blue>0</blue>
+                                    </color>
+                                </property>
+                                <property name="text">
+                                    <string>&lt;qt&gt;&lt;b&gt;Note:&lt;/b&gt; These settings are applicable for all MSN accounts</string>
+                                </property>
+                            </widget>
+                        </vbox>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer7</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>21</width>
+                                <height>104</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
             </widget>
             <widget class="QWidget">
                 <property name="name">
