@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>640</width>
-            <height>548</height>
+            <height>550</height>
         </rect>
     </property>
     <property name="caption">
@@ -998,7 +998,7 @@
                                     <number>65535</number>
                                 </property>
                                 <property name="value">
-                                    <number>8001</number>
+                                    <number>8010</number>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="2" column="0">

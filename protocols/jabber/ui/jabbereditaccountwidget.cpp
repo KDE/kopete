@@ -144,7 +144,7 @@ void JabberEditAccountWidget::reopen ()
 
 	KGlobal::config()->setGroup("Jabber");
 	leLocalIP->setText (KGlobal::config()->readEntry("LocalIP", ""));
-	sbLocalPort->setValue (KGlobal::config()->readNumEntry("LocalPort", 8001));
+	sbLocalPort->setValue (KGlobal::config()->readNumEntry("LocalPort", 8010));
 
 	leProxyJID->setText (account()->pluginData (m_protocol, "ProxyJID"));
 
