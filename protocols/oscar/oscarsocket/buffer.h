@@ -109,6 +109,8 @@ private: // Private attributes
   /** The allocated size of the buffer */
   DWORD alloc_length;
   /** The actual buffer */
+  char * alloc_buf;
+  /** The usable buffer */
   char * buf;
   /** The sequence number, incremented after every command sent to the oscar server */
   static WORD sequenceNum;

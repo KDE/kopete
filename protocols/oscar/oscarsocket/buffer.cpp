@@ -27,6 +27,7 @@ Buffer::Buffer(QObject *parent, const char *name)
 {
 	length = 0;
 	alloc_length = 0;
+	alloc_buf = NULL;
 	buf = NULL;
 	connect(this, SIGNAL(bufError(QString)), this, SLOT(OnBufError(QString)));
 }
@@ -162,10 +163,11 @@ BYTE Buffer::getByte()
 	if (length > 0)
 	{
 		thebyte = buf[0];
-		for (unsigned int i=1;i<length;i++)
+		buf++; //advance buf to the next char
+		/*for (unsigned int i=1;i<length;i++)
 		{  //get rid of first element by shifting the array
 			buf[i-1] = buf[i];
-		}
+		} */
 		length--;
 	}
 	else
@@ -204,8 +206,9 @@ void Buffer::OnBufError(QString s)
 /** sets the buffer and length to the given values */
 void Buffer::setBuf(char *b, const WORD l)
 {
-	if (buf)
-		delete buf;
+	if (alloc_buf)
+		delete alloc_buf;
+	alloc_buf = b;
 	buf = b;
 	length = l;
 	alloc_length = l;
@@ -292,15 +295,16 @@ int Buffer::addChatTLV(const WORD type, const WORD exchange, const QString &room
 /** Make the buffer bigger by inc bytes, reallocating memory if needed */
 void Buffer::doResize(int inc)
 {
-	if ( length + inc > alloc_length ) //if we need a new array
+	if ( (length + inc + buf - alloc_buf) > alloc_length ) //if we need a new array
 	{
 		char *tmp;
 		tmp = new char[(length + inc)*2];
-		for (int i=0;i<length;i++)
+		for (DWORD i=0;i<length;i++)
 			tmp[i] = buf[i];
-		if (buf)
-			delete buf;
-		buf = tmp;
+		if (alloc_buf)
+			delete alloc_buf;
+		alloc_buf = tmp;
+		buf = alloc_buf;
 		alloc_length = (length + inc)*2;
 	}
 }
