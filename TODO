@@ -1,0 +1,57 @@
+TODO - Kopete
+-------------
+
+This is a very rough draft, so we have something. Feel free to add or modify
+your entries, or to beautify this file a bit ;-) - Martijn
+
+
+- framework
+  + better chatwindow
+    -> In progress, will become future KopeteChatWindow class
+       ASSIGNED: Martijn Klingens ('spaze') and Ryan Cumming ('Phalynx')
+  + contact list functionality sharing among plugins
+    -> Part of API restructuring
+       ASSIGNED: Martijn Klingens ('spaze') and Ryan Cumming ('Phalynx')
+  + unified support for groups (icq can move users to any groups, but aim
+    can't...)
+    -> Part of API restructuring
+       ASSIGNED: Martijn Klingens ('spaze') and Ryan Cumming ('Phalynx')
+  + unified events - on message, on login/logout, on file transfer...
+    -> Part of API restructuring
+       ASSIGNED: Martijn Klingens ('spaze') and Ryan Cumming ('Phalynx')
+  + global notification api and preferences (right now, only the icq plugin
+    seems to use the balloons, and msn/aim pop up a window)
+    -> Part of API restructuring
+       ASSIGNED: Martijn Klingens ('spaze') and Ryan Cumming ('Phalynx')
+  + support for file transfer
+    UNASSIGNED
+  + add sound support
+    UNASSIGNED
+  + Split KopeteProtocol into KopeteProtocol and KopeteIdentity to allow
+    multiple identities using the same protocol
+    -> Part of API restructuring
+       ASSIGNED: Martijn Klingens ('spaze') and Ryan Cumming ('Phalynx')
+
+- ui
+  + integrate patch for not quitting on close (when there's a way of quitting
+    from the systray... what's the status of this ?)
+    -> In progress, currently being discussed on kde-core-devel (kdelibs bug)
+       ASSIGNED: Martijn Klingens
+  + chatwindow like gaim's/trillian's (richtext + send hyperlink + emoticon
+    menu + a few extras). maybe use the one from kinkatta, which is nice.
+    -> Is this the same as the 'better chatwindow' above?
+       UNASSIGNED
+  + notify the user of events. either with sounds or blink something in the
+    systray.
+    -> Is this part of the global notification API?
+       UNASSIGNED
+
+- msn
+  + store the users locally
+    UNASSIGNED
+
+- icq
+  + store users on server/icq2001b (although that's more of a kxengine item)
+    -> In progress, almost finished in kxicq/kxengine
+       ASSIGNED: Herwin Jan Steehouwer ('Gompy'), kxicq author
+
