@@ -288,7 +288,7 @@ void KopeteWindow::loadOptions()
 	toolBar("quickSearchBar")->applySettings( config, "QuickSearchBar Settings" );
 
 	applyMainWindowSettings( config, "General Options" );
-
+	/*
 	QPoint pos = config->readPointEntry("Position");
 	move(pos);
 
@@ -297,7 +297,7 @@ void KopeteWindow::loadOptions()
 		resize( QSize(220, 350) );
 	else
 		resize(size);
-
+	*/
 	KopetePrefs *p = KopetePrefs::prefs();
 
 	m_autoHide = p->contactListAutoHide();
