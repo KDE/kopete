@@ -339,8 +339,9 @@ QString KopeteMetaContact::statusIcon() const
 			return QString::fromLatin1( "metacontact_online" );
 		case Away:
 			return QString::fromLatin1( "metacontact_away" );
-		case Offline:
 		case Unknown:
+			return QString::fromLatin1( "metacontact_unknown" );
+		case Offline:
 		default:
 			return QString::fromLatin1( "metacontact_offline" );
 	}
