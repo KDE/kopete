@@ -56,11 +56,21 @@ signals:
 
 private:
 
+	enum MessageType { BYE, OK, DECLINE, ERROR, INVITE };
+
 	/**
 	 * send the MSNSLP command in a msn p2p message
 	 * dataMessage cen be a QCString in case of text message
 	 */
 	void sendP2PMessage( const QByteArray& dataMessage );
+	
+	/**
+	 * make and send a P2P message.
+	 * @ref sendP2PMessage is used to send the message.
+	 *
+	 * @param content is the content of the message. it must be terminated by two \r\n\r\n
+	 */
+	void makeMSNSLPMessage( MessageType type, QString content );
 
 
 	/**
@@ -69,10 +79,8 @@ private:
 	void sendP2PAck( const char * originalHeader) ;
 
 
-	unsigned long int m_msgIdentifier;
-	unsigned long int m_sessionId;
-	unsigned long int m_totalDataSize;
-	unsigned long int m_offset;
+
+
 
 private slots:
 	void slotSendData();
@@ -97,7 +105,15 @@ private:
 	QFile *m_Sfile;
 	QFile *m_Rfile;
 	QString m_obj;
+	
+	unsigned long int m_msgIdentifier;
+	unsigned long int m_sessionId;
+	unsigned long int m_totalDataSize;
+	unsigned long int m_offset;
+	
 	QString m_CallID;
+	QString m_branch;
+
 
 	QString m_myHandle;
 	QString m_msgHandle;

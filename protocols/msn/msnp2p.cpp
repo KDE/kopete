@@ -161,23 +161,15 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 				{
 					if(m_kopeteTransfer) m_kopeteTransfer->slotComplete();
 					m_Rfile->close();
+					delete m_Rfile;
+					m_Rfile=0L;
 				}
 /*
 				delete m_file;*/
 
 				//send the bye message
-				QCString dataMessage= QString(
-						"BYE MSNMSGR:"+m_msgHandle+"MSNSLP/1.0\r\n"
-						"To: <msnmsgr:"+m_msgHandle+">\r\n"
-						"From: <msnmsgr:"+m_myHandle+">\r\n"
-						"Via: MSNSLP/1.0/TLP ;branch={A0D624A6-6C0C-4283-A9E0-BC97B4B46D32}\r\n"
- 						"CSeq: 0\r\n"
- 						"Call-ID: {"+m_CallID.upper()+"}\r\n"
- 						"Max-Forwards: 0\r\n"
- 						"Content-Type: application/x-msnmsgr-sessionclosebody\r\n"
- 						"Content-Length: 3\r\n\r\n" ).utf8();
-				sendP2PMessage(dataMessage);
-
+				makeMSNSLPMessage(BYE, QString::null);
+				
 				//deleteLater();
 			}
 		}
@@ -193,58 +185,111 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 			}
    			else if (dataMessage.contains("INVITE"))
 			{
-
-//			kdDebug(14141) << "MSNP2P::slotReadMessage: dataMessage: "  << dataMessage << endl;
-
-
-				//Parse the message to get some info for replying with the 200 OK message
+				//Parse the message to get some info for replying 
 				QRegExp rx(";branch=\\{([0-9A-F\\-]*)\\}\r\n");
 				rx.search( dataMessage );
-				QString branch=rx.cap(1);
+				m_branch=rx.cap(1);
 
 				rx=QRegExp("Call-ID: \\{([0-9A-F\\-]*)\\}\r\n");
 				rx.search( dataMessage );
-				QString callid=rx.cap(1);
+				m_CallID=rx.cap(1);
 
-				rx=QRegExp("SessionID: ([0-9]*)\r\n");
-				rx.search( dataMessage );
-				m_sessionId=rx.cap(1).toUInt();
 
-				rx=QRegExp("AppID: ([0-9]*)\r\n");
-				rx.search( dataMessage );
-				unsigned long int AppID=rx.cap(1).toUInt();
-
-				if(m_kopeteTransfer) // we are probably negotiating a file transfer
+				if(!m_kopeteTransfer) // it's the first INVITE message
 				{
-					QRegExp rx(";branch=\\{([0-9A-F\\-]*)\\}\r\n");
+					rx=QRegExp("SessionID: ([0-9]*)\r\n");
 					rx.search( dataMessage );
-					QString branch=rx.cap(1);
-
-					rx=QRegExp("Call-ID: \\{([0-9A-F\\-]*)\\}\r\n");
+					m_sessionId=rx.cap(1).toUInt();
+	
+					rx=QRegExp("AppID: ([0-9]*)\r\n");
 					rx.search( dataMessage );
-					QString callid=rx.cap(1);
+					unsigned long int AppID=rx.cap(1).toUInt();
+					if(AppID==1) //the peer ask for a msn picture, or emoticon download.
+					{                 //  currently, we always send the display picture
 
+						//Send the OK message.
+						QString content="SessionID: " + QString::number( m_sessionId ) + "\r\n\r\n" ;
+						makeMSNSLPMessage( OK, content );
+	
+						//send the data preparation message
+						QByteArray initM(4);
+						initM.fill('\0');
+						sendP2PMessage(initM);
+	
+						//prepare to send the file
+						m_Sfile = new QFile( locateLocal( "appdata", "msnpicture-"+ m_myHandle.lower().replace(QRegExp("[./~]"),"-")  +".png" ) );
+						if(!m_Sfile->open(IO_ReadOnly))  {/* TODO: error?*/}
+						m_totalDataSize=  m_Sfile->size();
+	
+						QTimer::singleShot( 10, this, SLOT(slotSendData()) ); //Go for upload
+					}
+					else if(AppID==2) //the peer want to transfer a file.
+					{
+						//extract the context from the invitation contents
+						rx=QRegExp("Context: ([0-9a-zA-Z+/=]*)");
+						rx.search( dataMessage );
+						QString context=rx.cap(1);
+
+						//Context is a base64 encoded dump of the internal memory of MSN messanger.
+						// the filesize is contained in the bytes 8..11
+						// the filename is from the byte 19 
+						// I don't know what other fields are.
+	
+						QByteArray binaryContext;
+						KCodecs::base64Decode( context.utf8() , binaryContext );
+						if(binaryContext.size() < 21 )   //security,  (don't crash)
+							return;  //TODO: handle error
+	
+						
+						//the filename is conteined in the context from the 19st char to the end.  (in utf-16)
+						QTextCodec *codec = QTextCodec::codecForName("ISO-10646-UCS-2");
+						if(!codec)
+							return; //abort();
+						QString filename = codec->toUnicode(binaryContext.data()+19 , binaryContext.size()-19) ;
+						//TODO FIXME !!!!!!!!!!!!!!!!!!!
+	
+	
+						//the size is placed in the context in the bytes 8..12  (source: the amsn code)
+						unsigned long int filesize= (unsigned char)(binaryContext[8]) + (unsigned char)(binaryContext[9]) *256 + (unsigned char)(binaryContext[10]) *65536 + (unsigned char)(binaryContext[11]) *16777216 ;
+	
+	
+						//ugly hack to get the KopeteContact.
+						KopeteContact *c=0L;
+						if(parent())
+						{
+							KopeteMessageManager *kmm=dynamic_cast<KopeteMessageManager*>(parent()->parent());
+							if(kmm)
+								c=kmm->account()->contacts()[m_msgHandle];
+						}
+						disconnect(KopeteTransferManager::transferManager(), 0L , this, 0L);
+						connect(KopeteTransferManager::transferManager() , SIGNAL(accepted(KopeteTransfer*, const QString& )) ,
+								this, SLOT(slotTransferAccepted(KopeteTransfer*, const QString& )));
+						connect(KopeteTransferManager::transferManager() , SIGNAL(refused( const KopeteFileTransferInfo & ) ),
+								this, SLOT( slotFileTransferRefused( const KopeteFileTransferInfo & ) ) );
+	
+						QString description="Warning: I can't extract correctly the filename due to an encoding problem.\n"
+										"the extracted filename looks like: " + filename ;
+						filename= "msnfile";
+	
+						//show a dialog to ask the transfer.
+						KopeteTransferManager::transferManager()->askIncomingTransfer(c  , filename , filesize, description, QString::number(m_sessionId)+":"+m_branch+":"+m_CallID);
+	
+					}
+					else  //unknwon AppID
+					{
+						makeMSNSLPMessage( ERROR, QString::null );
+					}
+				} // end of  if(m_kopeteTranfer)
+				else // we are nogitiating a complex invitaiton ( a file transfer)   
+				{    // it's the second INVITE message
+
+				    //dirrect connection is not yet implemented, use the connection via MSNP2P 
 					QString content="Bridge: TCPv1\r\n"
-									"Listening: false\r\n"
-									"Nonce: {00000000-0000-0000-0000-000000000000}";
+					                "Listening: false\r\n"
+					                "Nonce: {00000000-0000-0000-0000-000000000000}\r\n\r\n";
 
-					QCString dataMessage= QString(
-								"MSNSLP/1.0 200 OK\r\n"
-								"To: <msnmsgr:"+m_msgHandle+">\r\n"
-								"From: <msnmsgr:"+m_myHandle+">\r\n"
-								"Via: MSNSLP/1.0/TLP ;branch={"+ branch +"}\r\n"
-								"CSeq: 1\r\n"
-								"Call-ID: {"+callid+"}\r\n"
-								"Max-Forwards: 0\r\n"
-								"Content-Type: application/x-msnmsgr-transreqbody\r\n"
-								"Content-Length: "+ QString::number(content.length()+5)+"\r\n"
-								"\r\n" + content + "\r\n\r\n").utf8(); //\0
-
-					//MSNP2P beleive that the transfer already startyed when sessionID !=0 )
-					unsigned long int si=m_sessionId;
-					m_sessionId=0;
-					sendP2PMessage(dataMessage);
-					m_sessionId=si; //reset the sessionID
+					makeMSNSLPMessage(OK, content);
+					
 					m_Rfile=new QFile( m_kopeteTransfer->destinationURL().path() );
 					if(!m_Rfile->open(IO_WriteOnly))
 					{
@@ -257,111 +302,6 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 						}
 						abortCurrentTransfer();
 					}
-					else
-						kdDebug(14140) << "MSNP2P::slotReadMessage: GO GO GO GO: "  << m_kopeteTransfer->info().file() << endl;
-				}
-				else if(AppID==1) //Ask for a msn picture, or emoticon,  currently, we always send the display picture
-				{
-					QString content="SessionID: " + QString::number( m_sessionId ) ;
-
-					QCString dataMessage= QString(
-							"MSNSLP/1.0 200 OK\r\n"
-							"To: <msnmsgr:"+m_msgHandle+">\r\n"
-							"From: <msnmsgr:"+m_myHandle+">\r\n"
-							"Via: MSNSLP/1.0/TLP ;branch={"+ branch +"}\r\n"
-							"CSeq: 1\r\n"
-							"Call-ID: {"+callid+"}\r\n"
-							"Max-Forwards: 0\r\n"
-							"Content-Type: application/x-msnmsgr-sessionreqbody\r\n"
-							"Content-Length: "+ QString::number(content.length()+5)+"\r\n"
-							"\r\n" + content + "\r\n\r\n").utf8(); //\0
-
-					sendP2PMessage(dataMessage);
-
-					//send the data preparation message
-
-					QByteArray initM(4);
-					initM.fill('\0');
-					sendP2PMessage(initM);
-
-					//prepare to send the file
-					m_Sfile = new QFile( locateLocal( "appdata", "msnpicture-"+ m_myHandle.lower().replace(QRegExp("[./~]"),"-")  +".png" ) );
-					if(!m_Sfile->open(IO_ReadOnly))  {/* TODO: error?*/}
-					m_totalDataSize=  m_Sfile->size();
-
-					QTimer::singleShot( 10, this, SLOT(slotSendData()) ); //Go for upload
-				}
-				else if(AppID==2) //filetransfer
-				{
-					rx=QRegExp("Context: ([0-9a-zA-Z+/=]*)");
-					rx.search( dataMessage );
-					QString context=rx.cap(1);
-
-					QByteArray binaryContext;
-					KCodecs::base64Decode( context.utf8() , binaryContext );
-
-					if(binaryContext.size() < 21 )
-					{ //security,  don't let hackers crash everithing.
-						//TODO: handle error
-						return;
-					}
-
-					//the filename is conteined in the context from the 19st char to the end.  (in utf-16)
-					QTextCodec *codec = QTextCodec::codecForName("ISO-10646-UCS-2");
-					if(!codec)
-						return; //abort();
-					QString filename = codec->toUnicode(binaryContext.data()+19 , binaryContext.size()-19) ;
-					//TODO FIXME !!!!!!!!!!!!!!!!!!!
-
-
-					//the size is placed in the context in the bytes 8..12  (source: the amsn code)
-					unsigned long int filesize= (unsigned char)(binaryContext[8]) + (unsigned char)(binaryContext[9]) *256 + (unsigned char)(binaryContext[10]) *65536 + (unsigned char)(binaryContext[11]) *16777216 ;
-
-			/*		unsigned char q1=binaryContext[8];
-					unsigned char q2=binaryContext[9];
-					unsigned char q3=binaryContext[10];
-					unsigned char q4=binaryContext[11];
-
-					unsigned long int filesize= q1 + q2<<8 + q3<<16 + q4<<24;
-
-
-					QString debug= QString::number((unsigned char)binaryContext[8]) +" " +QString::number((unsigned char)binaryContext[9]) +" " +QString::number((unsigned char)binaryContext[10]) +" " +QString::number((unsigned char)binaryContext[11]) +" "+ QString::number((unsigned char)binaryContext[12])  + " et le résultat " + QString::number( filesize1 )  +"\n" +
-						" q1= " +  (uint)q1 + " q2= " +  (uint)q2 + " q3= " +  (uint)q3 + " q4= " +  (uint)q4 + " et le résultat " + QString::number( filesize) ;*/
-
-					//ugly hack to get the contact
-					KopeteContact *c=0L;
-					if(parent())
-					{
-						KopeteMessageManager *kmm=dynamic_cast<KopeteMessageManager*>(parent()->parent());
-						if(kmm)
-							c=kmm->account()->contacts()[m_msgHandle];
-					}
-					disconnect(KopeteTransferManager::transferManager(), 0L , this, 0L);
-					connect(KopeteTransferManager::transferManager() , SIGNAL(accepted(KopeteTransfer*, const QString& )) ,
-							this, SLOT(slotTransferAccepted(KopeteTransfer*, const QString& )));
-					connect(KopeteTransferManager::transferManager() , SIGNAL(refused( const KopeteFileTransferInfo & ) ),
-							this, SLOT( slotFileTransferRefused( const KopeteFileTransferInfo & ) ) );
-
-					QString description="Warning: I can't extract correctly the filename due to an encoding problem.\n"
-					                  "the extracted filename looks like: " + filename ;
-					filename= "msnfile";
-
-					KopeteTransferManager::transferManager()->askIncomingTransfer(c  , filename , filesize, description, QString::number(m_sessionId)+":"+branch+":"+callid);
-
-				}
-				else
-				{
-					QCString dataMessage= QString(
-							"MSNSLP/1.0 500 Internal Error\r\n"
-							"To: <msnmsgr:"+m_msgHandle+">\r\n"
-							"From: <msnmsgr:"+m_myHandle+">\r\n"
-							"Via: MSNSLP/1.0/TLP ;branch={"+ branch +"}\r\n"
-							"CSeq: 1\r\n"
-							"Call-ID: {"+callid+"}\r\n"
-							"Max-Forwards: 0\r\n"
-							"Content-Type: null\r\n"
-							"Content-Length: 0\r\n\r\n").utf8(); //\0
-					sendP2PMessage(dataMessage);
 				}
 			}
 			else if (dataMessage.contains("BYE"))
@@ -398,35 +338,75 @@ void MSNP2P::requestDisplayPicture( const QString &myHandle, const QString &msgH
 	msnObject.replace("=" , QString::null ) ;
 
 	unsigned long int sessID=rand()%0xFFFFFF00+4;
-	QString branch= QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-" + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-" + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)  + "-" + QString::number(rand()%0xAAFF+0x1111, 16) + "-" + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)+QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)+QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16);
+	m_branch= QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-" + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-" + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)  + "-" + QString::number(rand()%0xAAFF+0x1111, 16) + "-" + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)+QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)+QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16);
 	m_CallID= QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-" + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16) + "-" + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)  + "-" + QString::number(rand()%0xAAFF+0x1111, 16) + "-" + QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)+QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16)+QString::number((unsigned long int)rand()%0xAAFF+0x1111, 16); ;
 
 	QString content="EUF-GUID: {A4268EEC-FEC5-49E5-95C3-F126696BDBF6}\r\n"
  			"SessionID: "+ QString::number(sessID)+"\r\n"
  			"AppID: 1\r\n"
- 			"Context: "  + msnObject;
+ 			"Context: "  + msnObject +"\r\n\r\n";
+			
+	makeMSNSLPMessage( INVITE , content );
+}
+
+
+void MSNP2P::makeMSNSLPMessage( MessageType type, QString content )
+{
+	QString contentType= QString( "application/x-msnmsgr-sessionreqbody" );
+	QString method;
+	QString CSeq;
+	
+	switch(type)
+	{
+		case INVITE:
+			method="INVITE MSNMSGR:"+ m_msgHandle + "  MSNSLP/1.0";
+			CSeq="0";
+			break;
+		case DECLINE:
+			method="MSNSLP/1.0 603 DECLINE";
+			CSeq="1";
+			break;
+		case ERROR:
+			contentType="null";
+			method="MSNSLP/1.0 500 Internal Error";
+			CSeq="1";
+			break;
+		case OK:
+			if(m_kopeteTransfer)
+				contentType="application/x-msnmsgr-transreqbody";
+			method="MSNSLP/1.0 200 OK";
+			CSeq="1";
+			break;
+		case BYE:
+			contentType="application/x-msnmsgr-sessionclosebody";
+			method="BYE MSNMSGR:"+m_msgHandle+" MSNSLP/1.0";
+			CSeq="0";
+			break;
+	}
 
 	QCString dataMessage= QString(
-			"INVITE MSNMSGR:"+ msgHandle + "  MSNSLP/1.0\r\n"
- 			"To: <msnmsgr:"+msgHandle+">\r\n"
- 			"From: <msnmsgr:"+myHandle+">\r\n"
-			"Via: MSNSLP/1.0/TLP ;branch={"+branch.upper()+"}\r\n"
-			"CSeq: 0\r\n"
-			"Call-ID: {"+m_CallID.upper()+"}\r\n"
- 			"Max-Forwards: 0\r\n"
- 			"Content-Type: application/x-msnmsgr-sessionreqbody\r\n"
-			"Content-Length: "+ QString::number(content.length()+5)+"\r\n"
-			"\r\n" + content + "\r\n\r\n").utf8(); //\0
+		method + "\r\n"
+		"To: <msnmsgr:"+m_msgHandle+">\r\n"
+		"From: <msnmsgr:"+m_myHandle+">\r\n"
+		"Via: MSNSLP/1.0/TLP ;branch={"+m_branch.upper()+"}\r\n"
+		"CSeq: "+ CSeq +"\r\n"
+		"Call-ID: {"+m_CallID.upper()+"}\r\n"
+		"Max-Forwards: 0\r\n"
+		"Content-Type: "+ contentType +"\r\n"
+		"Content-Length: "+ QString::number(content.length()+1)+"\r\n"
+		"\r\n" + content ).utf8(); //\0
+	//the data message must be end by \0,  bye chance, QCString automaticaly appends \0 at the end of the QByteArray
 
+	kdDebug(14141) << k_funcinfo << dataMessage << endl;
+		
 	sendP2PMessage(dataMessage);
 }
 
 
 void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 {
-	if(m_sessionId == 0)
-		kdDebug(14141) << k_funcinfo << QCString(dataMessage.data() , dataMessage.size()) << endl;
-
+	bool transferStarted=( m_Rfile || m_Sfile );  //we are stransfering binary is any of the file exists
+	
 	QCString messageHeader=QString(
 				"MIME-Version: 1.0\r\n"
  				"Content-Type: application/x-msnmsgrp2p\r\n"
@@ -441,11 +421,13 @@ void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 	else if(m_offset==0)
 		m_msgIdentifier++;
 
+	
 	//SessionID
-	binHeader[0]=(char)(m_sessionId%256);
-	binHeader[1]=(char)((unsigned long int)(m_sessionId/256)%256);
-	binHeader[2]=(char)((unsigned long int)(m_sessionId/(256*256))%256);
-	binHeader[3]=(char)((unsigned long int)(m_sessionId/(256*256*256))%256);
+	unsigned long int sessionID=transferStarted ? m_sessionId : 0;
+	binHeader[0]=(char)(sessionID%256);
+	binHeader[1]=(char)((unsigned long int)(sessionID/256)%256);
+	binHeader[2]=(char)((unsigned long int)(sessionID/(256*256))%256);
+	binHeader[3]=(char)((unsigned long int)(sessionID/(256*256*256))%256);
 
 	//MessageID
 	binHeader[4]=(char)(m_msgIdentifier%256);
@@ -509,7 +491,7 @@ void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 	for(unsigned int f=0; f< 4 ; f++) //footer
 		data[messageHeader.length()+binHeader.size()+dataMessage.size()+f]='\0';
 
-	if(m_sessionId!=0)
+	if(transferStarted)
 	{ //then, the footer ends with \1
 		data[messageHeader.length()+binHeader.size() + dataMessage.size()  +3 ]='\1';
 	}
@@ -635,34 +617,17 @@ void MSNP2P::slotTransferAccepted(KopeteTransfer* transfer, const QString& /*fil
 	QStringList internalId=QStringList::split(":" , transfer->info().internalId() );
 	if(internalId[0].toUInt() == m_sessionId )
 	{
-		m_kopeteTransfer=transfer;
-
 		QObject::connect(transfer , SIGNAL(transferCanceled()), this, SLOT(abortCurrentTransfer()));
 		QObject::connect(transfer,  SIGNAL(destroyed()) , this , SLOT(slotKopeteTransferDestroyed()));
 
-		QString branch=internalId[1];
+		m_branch=internalId[1];
 		QString callid=internalId[2];
 
-		QString content="SessionID: " + QString::number( m_sessionId ) ;
+		QString content="SessionID: " + QString::number( m_sessionId ) +"\r\n\r\n";
+		
+		makeMSNSLPMessage( OK, content);
+		m_kopeteTransfer=transfer;
 
-		QCString dataMessage= QString(
-					"MSNSLP/1.0 200 OK\r\n"
-					"To: <msnmsgr:"+m_msgHandle+">\r\n"
-					"From: <msnmsgr:"+m_myHandle+">\r\n"
-					"Via: MSNSLP/1.0/TLP ;branch={"+ branch +"}\r\n"
-					"CSeq: 1\r\n"
-					"Call-ID: {"+callid+"}\r\n"
-					"Max-Forwards: 0\r\n"
-					"Content-Type: application/x-msnmsgr-sessionreqbody\r\n"
-					"Content-Length: "+ QString::number(content.length()+5)+"\r\n"
-					"\r\n" + content + "\r\n\r\n").utf8(); //\0
-
-		//MSNP2P beleive that the transfer already startyed when sessionID !=0 )
-		m_sessionId=0;
-
-		sendP2PMessage(dataMessage);
-
-		m_sessionId=internalId[0].toUInt(); //reset the sessionID
 	}
 }
 
@@ -672,29 +637,13 @@ void MSNP2P::slotFileTransferRefused( const KopeteFileTransferInfo &info )
 	kdDebug(14140) << k_funcinfo << internalId << endl;
 	if(internalId[0].toUInt() == m_sessionId )
 	{
-		QString branch=internalId[1];
-		QString callid=internalId[2];
+		m_branch=internalId[1];
+		m_CallID=internalId[2];
 
-		QString content="SessionID: " + QString::number( m_sessionId ) ;
+		QString content="SessionID: " + QString::number( m_sessionId ) +"\r\n\r\n";
+		
+		makeMSNSLPMessage( DECLINE , content );
 
-		QCString dataMessage= QString(
-					"MSNSLP/1.0 603 DECLINE\r\n"
-					"To: <msnmsgr:"+m_msgHandle+">\r\n"
-					"From: <msnmsgr:"+m_myHandle+">\r\n"
-					"Via: MSNSLP/1.0/TLP ;branch={"+ branch +"}\r\n"
-					"CSeq: 1\r\n"
-					"Call-ID: {"+callid+"}\r\n"
-					"Max-Forwards: 0\r\n"
-					"Content-Type: application/x-msnmsgr-sessionreqbody\r\n"
-					"Content-Length: "+ QString::number(content.length()+5)+"\r\n"
-					"\r\n" + content + "\r\n\r\n").utf8(); //\0
-
-		//MSNP2P beleive that the transfer already startyed when sessionID !=0 )
-		m_sessionId=0;
-
-		sendP2PMessage(dataMessage);
-
-//		m_sessionId=internalId[0].toUInt(); //reset the sessionID
 	}
 
 }
@@ -707,21 +656,10 @@ void MSNP2P::abortCurrentTransfer()
 		delete m_Rfile;
 		m_Rfile=0L;
 
-		QCString dataMessage= QString(
-				"BYE MSNMSGR:"+m_msgHandle+"MSNSLP/1.0\r\n"
-				"To: <msnmsgr:"+m_msgHandle+">\r\n"
-				"From: <msnmsgr:"+m_myHandle+">\r\n"
-				"Via: MSNSLP/1.0/TLP ;branch={A0D624A6-6C0C-4283-A9E0-BC97B4B46D32}\r\n"
-				"CSeq: 0\r\n"
-				"Call-ID: {"+m_CallID.upper()+"}\r\n"
-				"Max-Forwards: 0\r\n"
-				"Content-Type: application/x-msnmsgr-sessionclosebody\r\n"
-				"Content-Length: 3\r\n\r\n" ).utf8();
-		sendP2PMessage(dataMessage);
-
+		//FIXME: i'm not sure it's like that i should abort the transfer.
+		makeMSNSLPMessage(BYE, QString::null );
 
 		m_sessionId=0;
-		//TODO: send BYE message
 	}
 }
 
