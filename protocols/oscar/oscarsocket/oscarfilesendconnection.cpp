@@ -400,7 +400,7 @@ void OscarFileSendConnection::slotKIOResult(KIO::Job *job)
 	}
 }
 
-void OscarFileSendConnection::slotKIOData(KIO::Job *job, const QByteArray &data)
+void OscarFileSendConnection::slotKIOData(KIO::Job * /* job */, const QByteArray &data)
 {
 	//kdDebug(14150) << "[OscarFileSendConnection] got data " << ((KIO::SimpleJob *)(job))->url().fileName() << ", size " << data.size() << endl;
 	writeBlock(data.data(),data.size());

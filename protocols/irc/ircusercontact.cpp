@@ -140,7 +140,7 @@ void IRCUserContact::slotKick()
 	}*/
 }
 
-void IRCUserContact::contactMode( const QString &mode )
+void IRCUserContact::contactMode( const QString & /* mode */ )
 {
 	/* TODO: rewrite this code
 	KopeteView *activeView = KopeteViewManager::viewManager()->activeView();

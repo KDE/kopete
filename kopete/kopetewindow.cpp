@@ -599,7 +599,7 @@ void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& stat
 	}
 }
 
-void KopeteWindow::slotTrayAboutToShowMenu( KPopupMenu *me )
+void KopeteWindow::slotTrayAboutToShowMenu( KPopupMenu * /* me */ )
 {
 	kdDebug(14000) << k_funcinfo << "Called. EMPTY" << endl;
 }

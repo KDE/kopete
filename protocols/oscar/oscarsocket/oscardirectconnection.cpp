@@ -83,7 +83,7 @@ void OscarDirectConnection::slotRead(void)
 ODC2 OscarDirectConnection::getODC2(void)
 {
 	ODC2 odc;
-	int theword, theword2, start, chan;
+	int theword, theword2, start /*, chan */;
 
 	//the ODC2 start byte
 	if (
