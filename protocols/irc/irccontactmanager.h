@@ -67,21 +67,22 @@ class IRCContactManager
 
 		void addToNotifyList(const QString &nick);
 		void removeFromNotifyList(const QString &nick);
-
 		void checkOnlineNotifyList();
 
 	signals:
 		void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
 		void action(IRCContact *from, IRCContact *to, const QString &action);
 
-	protected slots:
-		//KIRC slots
+	private slots:
 		void slotNewMessage(const QString &originating, const QString &channel, const QString &message);
 		void slotNewPrivMessage(const QString &originating, const QString &, const QString &message);
 		void slotNewAction(const QString &originating, const QString &channel, const QString &action);
 		void slotNewPrivAction(const QString &originating, const QString &, const QString &action);
+		void slotIsonRecieved();
+		void slotIsonTimeout();
+		void slotNewNickChange(const QString &oldnick, const QString &newnick);
 
-	protected:
+	private:
 		IRCAccount *m_account;
 		KIRC *m_engine;
 
@@ -93,10 +94,8 @@ class IRCContactManager
 
 		QStringList m_NotifyList;
 		QTimer *m_NotifyTimer;
-
-	private slots:
-		void slotNewNickChange(const QString &oldnick, const QString &newnick);
-
+		bool isonRecieved;
+		int socketTimeout;
 };
 
 

@@ -16,6 +16,7 @@
 */
 
 #include <qtimer.h>
+#include <kstandarddirs.h>
 
 #include "kopetemetacontact.h"
 #include "kopeteview.h"
@@ -60,10 +61,21 @@ IRCContactManager::IRCContactManager(const QString &nickName, IRCAccount *accoun
 	QObject::connect(m_engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)),
 			this, SLOT( slotNewNickChange(const QString &, const QString &)));
 
+	QObject::connect(m_engine, SIGNAL(userOnline(const QString &)),
+			this, SLOT( slotIsonRecieved()));
+
+	socketTimeout = 15000;
+	QString timeoutPath = locate( "config", "kioslaverc" );
+	if( !timeoutPath.isEmpty() )
+	{
+		KConfig config( timeoutPath );
+		socketTimeout = config.readNumEntry( "ReadTimeout", 15 ) * 1000;
+	}
+
 	m_NotifyTimer = new QTimer(this);
 	QObject::connect(m_NotifyTimer, SIGNAL(timeout()),
 			this, SLOT(checkOnlineNotifyList()));
-	m_NotifyTimer->start(30000); // check online every 60sec
+	m_NotifyTimer->start(30000); // check online every 30sec
 }
 
 void IRCContactManager::slotNewNickChange(const QString &oldnick, const QString &newnick)
@@ -78,7 +90,6 @@ void IRCContactManager::slotNewNickChange(const QString &oldnick, const QString 
 
 void IRCContactManager::slotNewMessage(const QString &originating, const QString &channel, const QString &message)
 {
-	//kdDebug(14120) << k_funcinfo << "o:" << originating << "; t:" << target << endl;
 	IRCContact *from = findUser(originating.section('!', 0, 0));
 	IRCChannelContact *to = findChannel(channel);
 	emit privateMessage(from, to, message);
@@ -86,7 +97,6 @@ void IRCContactManager::slotNewMessage(const QString &originating, const QString
 
 void IRCContactManager::slotNewPrivMessage(const QString &originating, const QString &user, const QString &message)
 {
-	//kdDebug(14120) << k_funcinfo << "o:" << originating << "; t:" << target << endl;
 	IRCContact *from = findUser(originating.section('!', 0, 0));
 	IRCUserContact *to = findUser(user);
 	emit privateMessage(from, to, message);
@@ -94,7 +104,6 @@ void IRCContactManager::slotNewPrivMessage(const QString &originating, const QSt
 
 void IRCContactManager::slotNewAction(const QString &originating, const QString &channel, const QString &message)
 {
-	kdDebug(14120) << k_funcinfo << "o:" << originating << "; t:" << channel << endl;
 	IRCContact *from = findUser(originating.section('!', 0, 0));
 	IRCChannelContact *to = findChannel(channel);
 
@@ -103,7 +112,6 @@ void IRCContactManager::slotNewAction(const QString &originating, const QString 
 
 void IRCContactManager::slotNewPrivAction(const QString &originating, const QString &user, const QString &message)
 {
-	kdDebug(14120) << k_funcinfo << "o:" << originating << "; u:" << user << endl;
 	IRCContact *from = findUser( originating.section('!', 0, 0) );
 	IRCUserContact *to = findUser( user );
 
@@ -137,7 +145,6 @@ IRCChannelContact *IRCContactManager::findChannel(const QString &name, KopeteMet
 	else
 	{
 		channel = m_channels[ lowerName ];
-//		kdDebug(14120) << k_funcinfo << lowerName << " conversations:" << channel->conversations() << endl;
 	}
 
 	return channel;
@@ -175,7 +182,6 @@ IRCUserContact *IRCContactManager::findUser(const QString &name, KopeteMetaConta
 	else
 	{
 		user = m_users[ lowerName ];
-//		kdDebug(14120) << k_funcinfo << lowerName << " conversations:" << user->conversations() << endl;
 	}
 
 	return user;
@@ -210,8 +216,23 @@ void IRCContactManager::removeFromNotifyList(const QString &nick)
 
 void IRCContactManager::checkOnlineNotifyList()
 {
-	if(m_engine->isConnected())
+	if( m_engine->isConnected() )
+	{
+		isonRecieved = false;
 		m_engine->isOn( m_NotifyList );
+		QTimer::singleShot( socketTimeout, this, SLOT( slotIsonTimeout() ) );
+	}
+}
+
+void IRCContactManager::slotIsonRecieved()
+{
+	isonRecieved = true;
+}
+
+void IRCContactManager::slotIsonTimeout()
+{
+	if( !isonRecieved )
+		m_engine->quitIRC("", true);
 }
 
 #include "irccontactmanager.moc"

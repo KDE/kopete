@@ -198,7 +198,6 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 
 IRCAccount::~IRCAccount()
 {
-//	kdDebug(14120) << k_funcinfo << mServer << " " << engine() << endl;
 	if ( engine()->isConnected() )
 		engine()->quitIRC(i18n("Plugin Unloaded"), true);
 
@@ -419,7 +418,6 @@ void IRCAccount::connect()
 
 void IRCAccount::slotConnectedToServer()
 {
-	//Check who is online
 	m_contactManager->checkOnlineNotifyList();
 
 	QStringList m_connectCommands = connectCommands();
@@ -432,7 +430,6 @@ void IRCAccount::slotConnectedToServer()
 
 void IRCAccount::slotJoinedUnknownChannel( const QString &user, const QString &channel )
 {
-	kdDebug(14120) << user << " joins " << channel << ", me=" << m_contactManager->mySelf()->nickName().lower() << endl;
 	QString nickname = user.section('!', 0, 0);
 	if ( nickname.lower() == m_contactManager->mySelf()->nickName().lower() )
 		m_contactManager->findChannel( channel )->startChat();
@@ -451,7 +448,7 @@ void IRCAccount::disconnect()
 
 void IRCAccount::slotServerBusy()
 {
-      KMessageBox::queuedMessageBox(
+	KMessageBox::queuedMessageBox(
 		0L, KMessageBox::Error, i18n("The IRC server is currently too busy to respond to this request."),
 		i18n("Server is busy"), 0
 	);
@@ -481,8 +478,6 @@ void IRCAccount::quit( const QString &quitMessage )
 {
 	kdDebug(14120) << "Quitting IRC: " << quitMessage << endl;
 
-	// TODO: Add a thing to save a custom quit message in the account wizard,
-	// and use that value here if set.
 	if( quitMessage.isNull() || quitMessage.isEmpty() )
 		m_engine->quitIRC( defaultQuit() );
 	else
@@ -525,12 +520,11 @@ bool IRCAccount::isConnected()
 }
 
 
-void IRCAccount::successfullyChangedNick(const QString &/*oldnick*/, const QString &newnick)
+void IRCAccount::successfullyChangedNick(const QString &, const QString &newnick)
 {
 	kdDebug(14120) << k_funcinfo << "Changing nick to " << newnick << endl;
 	mNickName = newnick;
 	mySelf()->setNickName( mNickName );
-	/*myself()->manager()->setDisplayName( static_cast<IRCUserContact *>( myself() )->caption() );*/
 }
 
 bool IRCAccount::addContactToMetaContact( const QString &contactId, const QString &displayName,

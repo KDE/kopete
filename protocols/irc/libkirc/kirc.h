@@ -186,6 +186,7 @@ signals:
 	void incomingAction(const QString &originating, const QString &target, const QString &message);
 
 	//Response Signals
+	void userOnline(const QString &nick);
 	void incomingWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
 	void incomingWhoIsServer(const QString &nickname, const QString &server, const QString &serverInfo);
 	void incomingWhoIsOperator(const QString &nickname);
@@ -221,7 +222,6 @@ signals:
 
 	void incomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 	void incomingUserIsAway(const QString &nick, const QString &awayMessage);
-	void userOnline(const QString &nick);
 	void incomingListedChan(const QString &chan, uint users, const QString &topic);
 	void incomingEndOfList();
 
@@ -299,7 +299,6 @@ private slots:
 	void slotConnected();
 	void slotConnectionClosed();
 	void slotAuthFailed();
-	void slotIsonCheck();
 	void slotReadyRead();
 	void error(int errCode = 0);
 	void quitTimeout();
@@ -447,7 +446,6 @@ private:
 	QTextCodec *defaultCodec;
 
 	void setStatus(EngineStatus status);
-	bool isonRecieved;
 	bool canSend( bool mustBeConnected ) const;
 
 

@@ -333,6 +333,7 @@ void KIRC::slotConnected()
 	kdDebug(14120) << k_funcinfo << "Connected" << endl;
 	setStatus(Authentifying);
 	m_sock.enableRead(true);
+
 	// If password is given for this server, send it now, and don't expect a reply
 	if (!(password()).isEmpty())
 	{
@@ -583,6 +584,7 @@ bool KIRC::nickChange(const KIRCMessage &msg)
 	}
 	else
 		emit incomingNickChange(oldNick, msg.suffix());
+
 	return true;
 }
 
@@ -846,20 +848,6 @@ void KIRC::isOn(const QStringList &nickList)
 				statement.append(QChar(' ') + (*it));
 		}
 		writeMessage(statement);
-
-		//15 second timeout to detect network disconnections
-		isonRecieved = false;
-		QTimer::singleShot(15000, this, SLOT( slotIsonCheck() ) );
-	}
-}
-
-void KIRC::slotIsonCheck()
-{
-	if( !isonRecieved )
-	{
-		setStatus( Disconnected );
-		m_sock.close();
-		m_sock.reset();
 	}
 }
 
