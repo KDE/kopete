@@ -30,9 +30,6 @@
             <property name="text">
                 <string>&amp;New...</string>
             </property>
-            <property name="accel">
-                <string>Alt+N</string>
-            </property>
             <property name="toolTip" stdset="0">
                 <string>Add new account</string>
             </property>
@@ -43,9 +40,6 @@
             </property>
             <property name="text">
                 <string>&amp;Modify...</string>
-            </property>
-            <property name="accel">
-                <string>Alt+M</string>
             </property>
             <property name="toolTip" stdset="0">
                 <string>Modify selected account</string>
@@ -60,9 +54,6 @@
             </property>
             <property name="text">
                 <string>&amp;Remove</string>
-            </property>
-            <property name="accel">
-                <string>Alt+R</string>
             </property>
             <property name="toolTip" stdset="0">
                 <string>Remove selected account</string>
@@ -107,9 +98,6 @@
             </property>
             <property name="text">
                 <string>Use &amp;custom color</string>
-            </property>
-            <property name="accel">
-                <string>Alt+C</string>
             </property>
             <property name="toolTip" stdset="0">
                 <string>Use custom color for account</string>

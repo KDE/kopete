@@ -128,9 +128,6 @@
             <property name="text">
                 <string>A&amp;lways accept invitations</string>
             </property>
-            <property name="accel">
-                <string>Alt+L</string>
-            </property>
         </widget>
     </vbox>
 </widget>
