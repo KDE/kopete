@@ -2,26 +2,26 @@
 #include <kgenericfactory.h>
 #include <kstandarddirs.h>
 
-#include "kopete.h"
 #include "kopetemessage.h"
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
 
 #include "msginfoplugin.h"
 
-#include <qregexp.h>
+#include <qapplication.h>
 #include <qcolor.h>
+#include <qregexp.h>
 
 K_EXPORT_COMPONENT_FACTORY( kopete_msginfo, KGenericFactory<MsgInfoPlugin> );
 
 MsgInfoPlugin::MsgInfoPlugin( QObject *parent, const char *name,
-			      const QStringList &/*args*/ )
-	: Plugin( parent, name )
+				const QStringList &/*args*/ )
+: KopetePlugin( parent, name )
 {
-	connect( kopeteapp, SIGNAL(aboutToDisplay(KopeteMessage&)),
-		 SLOT(slotProcessDisplay(KopeteMessage&)) );
-	connect( kopeteapp, SIGNAL(aboutToSend(KopeteMessage&)),
-		 SLOT(slotProcessSend(KopeteMessage&)) );
+	connect( qApp, SIGNAL( aboutToDisplay( KopeteMessage & ) ),
+		 SLOT( slotProcessDisplay( KopeteMessage & ) ) );
+	connect( qApp, SIGNAL( aboutToSend( KopeteMessage & ) ),
+		 SLOT( slotProcessSend( KopeteMessage & ) ) );
 }
 
 MsgInfoPlugin::~MsgInfoPlugin()
@@ -88,8 +88,7 @@ MsgInfoPlugin::changeMessage( KopeteMessage& msg )
 	}
 }
 
-
-
-
-
 #include "msginfoplugin.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:
+
