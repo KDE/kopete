@@ -11,6 +11,8 @@
 #include <krun.h>
 #include <kpassdlg.h>
 
+#include "kopetepassword.h"
+
 #include "aimprotocol.h"
 #include "aimaccount.h"
 #include "oscartypes.h"
@@ -21,7 +23,7 @@ AIMEditAccountWidget::AIMEditAccountWidget(AIMProtocol *protocol,
 {
 	//kdDebug(14152) << k_funcinfo << "Called." << endl;
 
-	mAccount = account;
+	mAccount = dynamic_cast<AIMAccount*>(account);
 	mProtocol = protocol;
 
 	// create the gui (generated from a .ui file)
@@ -29,12 +31,15 @@ AIMEditAccountWidget::AIMEditAccountWidget(AIMProtocol *protocol,
 	mGui = new aimEditAccountUI(this, "AIMEditAccountWidget::mGui");
 
 	// Read in the settings from the account if it exists
-	if (account)
+	if (mAccount)
 	{
-		if (account->rememberPassword())
+		if (mAccount->password().remembered())
 		{ // If we want to remember the password
 			mGui->mSavePassword->setChecked(true);
+#warning Gof broke this! Use Kopete::UI::PasswordWidget
+#if 0
 			mGui->edtPassword->setText(account->password(false, 0L, 16));
+#endif
 		}
 		mGui->edtAccountId->setText(account->accountId());
 		//Remove me after we can change Account IDs (Matt)
@@ -70,15 +75,11 @@ Kopete::Account *AIMEditAccountWidget::apply()
 		mAccount = new AIMAccount(mProtocol, newId);
 	}
 
-	
-#warning implements PasswordedAccount
-#if 0
 	// Check to see if we're saving the password, and set it if so
 	if (mGui->mSavePassword->isChecked())
-		mAccount->setPassword(QString::fromLocal8Bit(mGui->edtPassword->password()));
+		mAccount->password().set(QString::fromLocal8Bit(mGui->edtPassword->password()));
 	else
-		mAccount->setPassword(QString::null);
-#endif
+		mAccount->password().set();
 
 	mAccount->setAutoConnect(mGui->mAutoLogon->isChecked()); // save the autologon choice
 	if (mGui->optionOverrideServer->isChecked()) {

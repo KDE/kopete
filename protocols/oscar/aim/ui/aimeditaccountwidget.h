@@ -27,6 +27,7 @@
 
 namespace Kopete { class Account; }
 
+class AIMAccount;
 class AIMProtocol;
 class aimEditAccountUI;
 
@@ -46,7 +47,7 @@ class AIMEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 		void slotOpenRegister();
 
 	protected:
-		Kopete::Account *mAccount;
+		AIMAccount *mAccount;
 		AIMProtocol *mProtocol;
 		aimEditAccountUI *mGui;
 };

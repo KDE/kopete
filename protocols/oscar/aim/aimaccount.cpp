@@ -19,6 +19,7 @@
 #include <kmessagebox.h>
 
 #include "kopeteawayaction.h"
+#include "kopetepassword.h"
 #include "kopetestdaction.h"
 #include "kopeteuiglobal.h"
 
@@ -214,7 +215,7 @@ void AIMAccount::slotGoOnline()
 	{
 		kdDebug(14152) << k_funcinfo << "'" << accountId() <<
 			"' was OFFLINE, now connecting" << endl;
-		AIMAccount::connect();
+		OscarAccount::connect();
 	}
 	else
 	{
@@ -229,7 +230,7 @@ void AIMAccount::slotGoAway(const QString &message)
 	setAway(true, message);
 }
 
-void AIMAccount::connect(  const Kopete::OnlineStatus& /*initial*/  )
+void AIMAccount::connectWithPassword( const QString & )
 {
 #warning TODO: honor the initial status
 	kdDebug(14152) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
@@ -258,7 +259,7 @@ void AIMAccount::connect(const unsigned long status, const QString &awMessage)
 	}
 	else if (screenName != i18n("(No Screen Name Set)") ) // FIXME: Is this needed at all?
 	{
-		QString _password = password(passwordWasWrong(), 0L, 16);
+		QString _password = password().cachedValue();
 		if (_password.isEmpty())
 		{
 			slotError(i18n("Kopete is unable to attempt to sign-on to the " \

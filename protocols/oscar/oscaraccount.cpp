@@ -19,6 +19,7 @@
 #include "aim.h"
 #include "ssidata.h"
 
+#include "kopetepassword.h"
 #include "kopeteprotocol.h"
 #include "kopeteaway.h"
 #include "kopetemetacontact.h"
@@ -79,12 +80,10 @@ public:
 	QTimer *idleTimer;
 
 	//QString awayMessage;
-
-	bool passwordWrong;
 };
 
 OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, const char *name, bool isICQ)
-: Kopete::Account( parent, accountID, name )
+: Kopete::PasswordedAccount( parent, accountID, isICQ ? 8 : 16, name )
 {
 	kdDebug(14150) << k_funcinfo << " accountID='" << accountID <<
 		"', isICQ=" << isICQ << endl;
@@ -96,7 +95,6 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, c
 	d->isIdle = false;
 	d->lastIdleValue = 0;
 	//d->awayMessage = "";
-	d->passwordWrong = false;
 
 	initEngine(isICQ); // Initialize the backend
 
@@ -186,7 +184,7 @@ void OscarAccount::disconnect(DisconnectReason reason)
 
 bool OscarAccount::passwordWasWrong()
 {
-	return d->passwordWrong;
+	return password().isWrong();
 }
 
 void OscarAccount::initEngine(bool icq)
@@ -232,7 +230,7 @@ void OscarAccount::slotError(QString errmsg, int errorCode, bool isFatal)
 void OscarAccount::slotPasswordWrong()
 {
 	OscarAccount::disconnect(Kopete::Account::Manual);
-	d->passwordWrong = true;
+	password().setWrong();
 	QTimer::singleShot(0, this, SLOT(connect()));
 }
 
@@ -530,7 +528,6 @@ void OscarAccount::slotLoggedIn()
 {
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
 
-	d->passwordWrong = false;
 	d->idleTimer->start(10 * 1000);
 }
 

@@ -20,6 +20,7 @@
 #include "icqsendsmsdialog.h"
 #include "oscarcontact.h"
 #include "kopeteawayaction.h"
+#include "kopetepassword.h"
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -122,21 +123,17 @@ KActionMenu* ICQAccount::actionMenu()
 	return mActionMenu;
 }
 
-void ICQAccount::connect(void)
-{
-	kdDebug(14153) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
-	setStatus(ICQ_STATUS_ONLINE);
-}
 
 // ----------------------
 
 
-void ICQAccount::connect(const Kopete::OnlineStatus &initialStatus)
+void ICQAccount::connectWithPassword( const QString & )
 {
+	Kopete::OnlineStatus status = initialStatus();
 	kdDebug(14153) << k_funcinfo << "accountId='" << accountId() << "'" <<
-		" initialStatus=" << (int)initialStatus.status() << endl;
+		" initialStatus=" << (int)status.status() << endl;
 
-	if (initialStatus.status() == Kopete::OnlineStatus::Away)
+	if (status.status() == Kopete::OnlineStatus::Away)
 		setStatus(ICQ_STATUS_SET_AWAY);
 	else
 		setStatus(ICQ_STATUS_ONLINE);
@@ -252,7 +249,7 @@ void ICQAccount::setStatus(const unsigned long status,
 		if(port.isEmpty() || (port.toInt() < 1))
 			port = ICQ_PORT;
 
-		QString pass = password(passwordWasWrong(), 0L, 8);
+		QString pass = password().cachedValue();
 		if (pass.isEmpty())
 		{
 			slotError(i18n("Kopete is unable to attempt to sign-on to the " \

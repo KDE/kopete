@@ -35,6 +35,8 @@
 #include <krun.h>
 #include <kpassdlg.h>
 
+#include "kopetepassword.h"
+
 #include "icquserinfowidget.h"
 #include "icqprotocol.h"
 #include "icqaccount.h"
@@ -46,7 +48,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 {
 	kdDebug(14153) << k_funcinfo << "Called." << endl;
 
-	mAccount=account;
+	mAccount=dynamic_cast<ICQAccount*>(account);
 	mProtocol=protocol;
 	mModified=false;
 
@@ -113,11 +115,13 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	// Read in the settings from the account if it exists
 	if(mAccount)
 	{
-		mAccountSettings->chkSavePassword->setChecked(
-			mAccount->rememberPassword());
+		mAccountSettings->chkSavePassword->setChecked(mAccount->password().remembered());
 
+#warning Gof broke this! Use Kopete::UI::PasswordWidget
+#if 0
 		if(mAccountSettings->chkSavePassword->isChecked())
-			mAccountSettings->edtPassword->setText(mAccount->password(false, 0L, 16));
+			mAccountSettings->edtPassword->setText(mAccount->Kopete::Account::password());
+#endif
 
 		mAccountSettings->edtAccountId->setText(mAccount->accountId());
 
@@ -269,16 +273,13 @@ Kopete::Account *ICQEditAccountWidget::apply()
 			return NULL;
 	}
 
-#warning implement PasswordedAccount 
-#if 0
 	// Check to see if we're saving the password, and set it if so
 	if (mAccountSettings->chkSavePassword->isChecked())
-		mAccount->setPassword(mAccountSettings->edtPassword->text());
+		mAccount->password().set(mAccountSettings->edtPassword->text());
 	else
-		mAccount->setPassword(QString::null);
+		mAccount->password().set();
 
 	mAccount->setAutoConnect(mAccountSettings->chkAutoLogin->isChecked());
-#endif
 
 	if (mAccountSettings->optionOverrideServer->isChecked() ) {
 		static_cast<OscarAccount *>(mAccount)->setServerAddress(

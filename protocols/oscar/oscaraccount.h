@@ -22,7 +22,7 @@
 #include <qstring.h>
 #include <qwidget.h>
 
-#include "kopeteaccount.h"
+#include "kopetepasswordedaccount.h"
 #include "oscarcontact.h"
 #include "oscarsocket.h"
 
@@ -32,7 +32,7 @@ class OscarContact;
 class OscarSocket;
 class OscarAccountPrivate;
 
-class OscarAccount : public Kopete::Account
+class OscarAccount : public Kopete::PasswordedAccount
 {
 	Q_OBJECT
 

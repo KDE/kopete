@@ -23,6 +23,7 @@
 
 namespace Kopete { class Account; }
 
+class ICQAccount;
 class ICQProtocol;
 class ICQEditAccountUI;
 class ICQUserInfoWidget;
@@ -59,7 +60,7 @@ class ICQEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 		void slotOpenRegister();
 
 	protected:
-		Kopete::Account *mAccount;
+		ICQAccount *mAccount;
 		ICQProtocol *mProtocol;
 
 		/*

@@ -44,13 +44,10 @@ class ICQAccount : public OscarAccount
 		virtual void setStatus(const unsigned long status,
 			const QString &awayMessage = QString::null);
 
-		void connect(const Kopete::OnlineStatus &initialStatus);
-
+		void connectWithPassword(const QString &password);
 
 		void setInvisible(bool);
 		void reloadPluginData();
-
-		void connect(void);
 
 	public slots:
 		void slotGoOnline();
