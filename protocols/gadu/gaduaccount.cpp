@@ -668,6 +668,8 @@ GaduAccount::userlist( const QString& contactsListString )
 		return;
 	}
 
+	contactsList.setAutoDelete( TRUE );
+	
 	QPtrListIterator< contactLine >contactLine( contactsList );
 
 	for ( i = contactsList.count() ; i-- ;  ) {
