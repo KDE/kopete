@@ -11,7 +11,44 @@ X-KDE-ParentApp=kopete
 X-KDE-ParentComponents=kopete
 
 Name=Behavior
+Name[be]=Паводзіны
+Name[bs]=Ponašanje
+Name[ca]=Comportament
+Name[cs]=Chování
+Name[da]=Opførsel
+Name[de]=Verhalten
+Name[en_GB]=Behaviour
+Name[es]=Comportamiento
+Name[et]=Käitumine
+Name[fi]=Käytös
+Name[hu]=Működés
+Name[it]=Comportamento
+Name[nl]=Gedrag
+Name[pt]=Comportamento
+Name[pt_BR]=Comportamento
+Name[ru]=Поведение
+Name[sr]=Понашање
+Name[sv]=Beteende
+Name[tr]=Davranış
+Name[wa]=Dujhance
+Name[xx]=xxBehaviorxx
 Comment=Here You Can Personalize Kopete
+Comment[ca]=Aquí podreu personalitzar a Kopete
+Comment[cs]=Zde je možné přizpůsobit si Kopete
+Comment[da]=Her kan du personliggøre Kopete
+Comment[de]=Hier können Sie Kopete an ihre persönlichen Vorstellungen anpassen
+Comment[en_GB]=Here You Can Personalise Kopete
+Comment[es]=Aquí puede personalizar Kopete
+Comment[et]=Siin saab muuta Kopete just selliseks, nagu sulle meeldib
+Comment[hu]=Itt lehet megváltoztatni a Kopete működési jellemzőit
+Comment[it]=Qui puoi personalizzare Kopete
+Comment[nl]=Hier kunt u Kopete naar wens instellen
+Comment[pt]=Aqui você pode personalizar o Kopete
+Comment[pt_BR]=Agora você pode personalizar o Kopete
+Comment[sr]=Овде можете прилагодити Kopete себи
+Comment[sv]=Här kan du göra personlig anpassning av Kopete
+Comment[wa]=Chal vos ploz apontyî Kopete a vosse mode
+Comment[xx]=xxHere You Can Personalize Kopetexx
 
 
 
