@@ -486,10 +486,20 @@ void MSNProtocol::addContact( const QString &userID )
 {
 	if( isConnected() )
 	{
-		m_serviceSocket->addContact( userID, m_contacts[ userID ]->nickname(),
-			0, FL );
-		m_serviceSocket->addContact( userID, m_contacts[ userID ]->nickname(),
-			0, AL );
+		if( !m_contacts.contains( userID ) )
+		{
+			kdDebug() << "MSNProtocol::addContact: WARNING: MSN ID " << userID
+				<< " not found in contact list!" << endl;
+			m_serviceSocket->addContact( userID, userID, 0, FL );
+			m_serviceSocket->addContact( userID, userID, 0, AL );
+		}
+		else
+		{
+			m_serviceSocket->addContact( userID, m_contacts[ userID ]->nickname(),
+				0, FL );
+			m_serviceSocket->addContact( userID, m_contacts[ userID ]->nickname(),
+				0, AL );
+		}
 	}
 }
 
