@@ -1106,9 +1106,17 @@ void ChatView::slotRightClick( const QString &, const QPoint &point )
 	{
 		if( activeElement.className() == QString::fromLatin1("KopeteDisplayName") )
 		{
-			if( msgManager()->members().contains( m.from() ) )
+			KopeteContactPtrList members = msgManager()->members();
+			KopeteContact *c = 0l;
+			for( c = members.first(); c; c = members.next() )
 			{
-				KPopupMenu *p = ((KopeteContact*)m.from())->popupMenu( m_manager );
+				if( c->displayName() == activeElement.innerText() )
+					break;
+			}
+			
+			if( c )
+			{
+				KPopupMenu *p = c->popupMenu( m_manager );
 				connect(p,SIGNAL(aboutToHide()),p,SLOT(deleteLater()));
 				p->popup( point );
 				delete chatWindowPopup;
