@@ -542,34 +542,44 @@ QString MetaContact::displayName() const
 
 QImage MetaContact::photo() const
 {
-	KABC::AddressBook* ab = addressBook();
-		
-	// If the metacontact is linked to a kabc entry
-	if ( !d->metaContactId.isEmpty() )
+	if ( photoSource() == 0L )
 	{
-		KABC::Addressee theAddressee = ab->findByUid( metaContactId() );
-		if ( theAddressee.isEmpty() )
-		{
-			kdDebug( 14010 ) << k_funcinfo << "metacontact has Addressee id but it is a null Addressee" << displayName() << "..." << endl;
-		}
-		else
-		{
-			KABC::Picture pic = theAddressee.photo();
-			if ( pic.data().isNull() && pic.url().isEmpty() )
-				pic = theAddressee.logo();
+		// no photo source, try to get from addressbook
+		// if the metacontact has a kabc association
+		
+		KABC::AddressBook* ab = addressBook();
 			
-			if ( pic.isIntern())
+		// If the metacontact is linked to a kabc entry
+		if ( !d->metaContactId.isEmpty() )
+		{
+			KABC::Addressee theAddressee = ab->findByUid( metaContactId() );
+			if ( theAddressee.isEmpty() )
 			{
-				return pic.data();
+				kdDebug( 14010 ) << k_funcinfo << "metacontact has Addressee id but it is a null Addressee" << displayName() << "..." << endl;
 			}
 			else
 			{
-				return QPixmap( pic.url() ).convertToImage();
+				KABC::Picture pic = theAddressee.photo();
+				if ( pic.data().isNull() && pic.url().isEmpty() )
+					pic = theAddressee.logo();
+				
+				if ( pic.isIntern())
+				{
+					return pic.data();
+				}
+				else
+				{
+					return QPixmap( pic.url() ).convertToImage();
+				}
 			}
 		}
+		// no kabc association, return null image
+		return QImage();
 	}
-	
-	return QImage();
+	else
+	{
+		return photoSource()->photo();
+	}
 }
 
 Contact *MetaContact::nameSource() const
