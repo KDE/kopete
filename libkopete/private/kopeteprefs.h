@@ -37,7 +37,7 @@ public:
 
 	/**
 	 * Reads all pref-variables from KConfig
-	 * usually you don't need this as KopePrefs loads settings
+	 * usually you don't need this as KopetePrefs loads settings
 	 * when an instance is created
 	 */
 	void load();
