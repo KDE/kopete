@@ -311,14 +311,19 @@ KopeteContact *KopeteMetaContact::preferredContact()
 		  indicate that messages are still pending.
 	*/
 
-	KopeteContact *contact = 0L;
+	KopeteContact *contact = 0;
 
-	QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
-	for( QPtrListIterator<KopeteContact> it( d->contacts ) ; it.current(); ++it )
+	for ( QPtrListIterator<KopeteContact> it( d->contacts ); it.current(); ++it )
 	{
-		if( ( *it )->isReachable() && ( !contact || ( *it )->onlineStatus() > contact->onlineStatus()  ||
-				( (*it)->account() && (*it)->onlineStatus() == contact->onlineStatus() &&
-				(*it)->account()->priority() < contact->account()->priority() ) ) )
+		// FIXME: The isConnected call should be handled in KopeteContact::isReachable
+		//        after KDE 3.2 - Martijn
+		if ( !it.current()->account() || !it.current()->account()->isConnected() || !it.current()->isReachable() )
+			continue;
+
+		if ( !contact ||
+		     it.current()->onlineStatus().status() > contact->onlineStatus().status() ||
+		     ( it.current()->onlineStatus().status() == contact->onlineStatus().status() &&
+		       it.current()->account()->priority() > contact->account()->priority() ) )
 		{
 			contact = *it;
 		}

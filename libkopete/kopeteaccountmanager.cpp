@@ -43,9 +43,9 @@ class KopeteAccountPtrList : public QPtrList<KopeteAccount>
 			if( priority1 == priority2 )
 				return 0;
 			else if( priority1 > priority2 )
-				return -1;
-			else
 				return 1;
+			else
+				return -1;
 		}
 };
 

@@ -60,7 +60,6 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const char * /* name 
 
 	m_view->mButtonUp->setPixmap( SmallIcon( "up" ) );
 	m_view->mButtonDown->setPixmap( SmallIcon( "down" ) );
-	m_view->mAccountList->setSorting( 1 );
 
 	connect( m_view->mButtonNew,    SIGNAL( clicked() ), this, SLOT( slotAddAccount() ) );
 	connect( m_view->mButtonEdit,   SIGNAL( clicked() ), this, SLOT( slotEditAccount() ) );
@@ -78,12 +77,12 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const char * /* name 
 
 void KopeteAccountConfig::save()
 {
-	uint priority = 0;
+	uint priority = m_view->mAccountList->childCount();
 
 	KopeteAccountLVI *i = static_cast<KopeteAccountLVI*>( m_view->mAccountList->firstChild() );
 	while( i )
 	{
-		  i->account()->setPriority( priority++ );
+		  i->account()->setPriority( priority-- );
 		  i = static_cast<KopeteAccountLVI*>( i->nextSibling() );
 	}
 
