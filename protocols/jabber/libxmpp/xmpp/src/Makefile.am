@@ -3,7 +3,7 @@ METASOURCES = AUTO
 AM_CPPFLAGS = -I$(srcdir)/../../cutestuff/network \
 	-I$(srcdir)/../../cutestuff/util \
 	-I$(srcdir)/../../cutestuff/ssl \
-	-I$(SSL_INCLUDES) \
+	$(SSL_INCLUDES) \
 	$(all_includes)
 
 noinst_LTLIBRARIES = libxmpp.la
