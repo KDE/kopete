@@ -92,8 +92,8 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 	{
 		d->contacts.append( c );
 
-		connect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ),
-			SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ) );
+		connect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
+			SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
 		connect( c, SIGNAL( displayNameChanged( const QString &,const QString & ) ),
 			this, SLOT( slotContactNameChanged( const QString &,const QString & ) ) );
@@ -188,8 +188,8 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 
 		if(!deleted)
 		{  //If this function is tell by slotContactRemoved, c is maybe just a QObject
-			disconnect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ),
-				this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ) );
+			disconnect( c, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
+				this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
 			disconnect( c, SIGNAL( displayNameChanged( const QString &,const QString & ) ),
 				this, SLOT( slotContactNameChanged( const QString &,const QString & ) ) );
@@ -443,7 +443,7 @@ void KopeteMetaContact::sendFile( const KURL &sourceURL, const QString &altFileN
 	c->sendFile( sourceURL, altFileName, fileSize );
 }
 
-void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c, const KopeteOnlineStatus &status  )
+void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c, const KopeteOnlineStatus &status, const KopeteOnlineStatus &  )
 {
 	updateOnlineStatus();
 

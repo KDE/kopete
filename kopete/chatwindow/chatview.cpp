@@ -1289,7 +1289,7 @@ KopeteContactLVI::KopeteContactLVI( KopeteView *view, const KopeteContact *conta
 	connect( m_contact, SIGNAL( displayNameChanged( const QString &, const QString & ) ), SLOT( slotDisplayNameChanged(const QString &, const QString &) ) );
 
 	connect( m_contact, SIGNAL( destroyed() ), this, SLOT( deleteLater() ) );
-	connect( m_contact, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & ) ), SLOT( slotStatusChanged() ) );
+	connect( m_contact, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ), SLOT( slotStatusChanged() ) );
 	connect( m_parentView, SIGNAL( executed( QListViewItem* ) ), this, SLOT( slotExecute( QListViewItem * ) ) );
 
 	slotStatusChanged();

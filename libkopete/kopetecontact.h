@@ -346,7 +346,7 @@ signals:
 	/**
 	 * The contact's online status changed
 	 */
-	void onlineStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &status );
+	void onlineStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus );
 
 	/**
 	 * Connect to this signal to know when the contact

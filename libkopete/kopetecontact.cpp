@@ -210,9 +210,9 @@ void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status )
 	if( status == d->onlineStatus )
 		return;
 
+	KopeteOnlineStatus oldStatus = d->onlineStatus;
 	d->onlineStatus = status;
-
-	emit onlineStatusChanged( this, status );
+	emit onlineStatusChanged( this, status, oldStatus );
 }
 
 void KopeteContact::slotViewHistory()

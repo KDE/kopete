@@ -259,8 +259,8 @@ void KopeteProtocol::slotAccountAdded()
 	{
 		if(account->myself())
 		{	//because we can't know if the account has already connected
-			QObject::disconnect(account->myself() , SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & )) , this , SLOT( slotRefreshStatusIcon()));
-			QObject::connect   (account->myself() , SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & )) , this , SLOT( slotRefreshStatusIcon()));
+			QObject::disconnect(account->myself() , SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & )) , this , SLOT( slotRefreshStatusIcon()));
+			QObject::connect   (account->myself() , SIGNAL(onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & )) , this , SLOT( slotRefreshStatusIcon()));
 		}
 	}
 	slotRefreshStatusIcon();

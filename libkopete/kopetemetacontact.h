@@ -339,7 +339,7 @@ private slots:
 	/**
 	 * One of the child contact's online status changed
 	 */
-	void slotContactStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status );
+	void slotContactStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus );
 
 	/**
 	 * One of the child contact's display names changed

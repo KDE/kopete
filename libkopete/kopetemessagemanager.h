@@ -191,6 +191,7 @@ public slots:
 private slots:
 	void slotUpdateDisplayName();
 	void slotViewDestroyed();
+	void slotStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus );
 
 protected:
 	/**

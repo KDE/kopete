@@ -21,7 +21,9 @@
 #include <qregexp.h>
 #include <qmap.h>
 #include <qwidget.h>
+#include <qdatetime.h>
 #include <qapplication.h>
+#include <kglobal.h>
 
 #include "kopeteaway.h"
 #include "kopeteaccount.h"
@@ -45,6 +47,7 @@ struct KMMPrivate
 	int mId;
 	bool isEmpty;
 	bool mCanBeDeleted;
+	QDateTime awayTime;
 	QString displayName;
 	KopeteView *view;
 };
@@ -66,6 +69,9 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	for( KopeteContact *c = others.first(); c; c = others.next() )
 		c->setConversations( c->conversations() + 1 );
 
+	connect( user, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ), this,
+		SLOT( slotStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
+
 	kdDebug(14010) << k_funcinfo << endl;
 }
 
@@ -81,6 +87,24 @@ KopeteMessageManager::~KopeteMessageManager()
 	KopeteMessageManagerFactory::factory()->removeSession( this );
 	emit(closing( this ) );
 	delete d;
+}
+
+void KopeteMessageManager::slotStatusChanged( KopeteContact *c, const KopeteOnlineStatus &status, const KopeteOnlineStatus &oldStatus )
+{
+	kdDebug(14010) << k_funcinfo << endl;
+	if( status.status() == KopeteOnlineStatus::Away )
+	{
+		d->awayTime = QDateTime::currentDateTime();
+		KopeteMessage msg(c, d->mContactList, i18n("%1 has been marked as away.")
+			.arg(c->displayName()), KopeteMessage::Outbound, KopeteMessage::PlainText);
+		sendMessage( msg );
+	}
+	else if( oldStatus.status() == KopeteOnlineStatus::Away && status.status() == KopeteOnlineStatus::Online )
+	{
+		KopeteMessage msg(c, d->mContactList, i18n("%1 is no longer marked as away. Gone since %1")
+			.arg(c->displayName()).arg(KGlobal::locale()->formatDateTime(d->awayTime, true)), KopeteMessage::Outbound, KopeteMessage::PlainText);
+		sendMessage( msg );
+	}
 }
 
 void KopeteMessageManager::setContactOnlineStatus( const KopeteContact *contact, const KopeteOnlineStatus &status )
