@@ -222,16 +222,21 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 		<< displayName() << "', contactName()=" << contactName() << endl;*/
 	QStringList capList;
 	// Append client name and version in case we found one
-	if (!mInfo.clientName.isEmpty())
+	if(u.userclass & CLASS_WIRELESS)
+		capList << i18n("Mobile AIM Client");
+	else
 	{
-		if (!mInfo.clientVersion.isEmpty())
+		if (!mInfo.clientName.isEmpty())
 		{
-			capList << i18n("Translators: client-name client-version",
-				"%1 %2").arg(mInfo.clientName, mInfo.clientVersion);
-		}
-		else
-		{
-			capList << mInfo.clientName;
+			if (!mInfo.clientVersion.isEmpty())
+			{
+				capList << i18n("Translators: client-name client-version",
+					"%1 %2").arg(mInfo.clientName, mInfo.clientVersion);
+			}
+			else
+			{
+				capList << mInfo.clientName;
+			}
 		}
 	}
 	// and now for some general informative capabilities
