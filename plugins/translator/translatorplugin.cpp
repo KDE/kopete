@@ -367,10 +367,7 @@ void TranslatorPlugin::googleTranslateMessage( KopeteMessage &msg , const QStrin
 
 	QString translated = re.cap(1);
 
-	if ( translated != QString::null )
-		msg.setBody(translated);
-	else
-		msg.setBody(msg.body());
+	sendTranslation(msg,translated);
 }
 
 void TranslatorPlugin::babelTranslateMessage( KopeteMessage &msg , const QString &from, const QString &to)
@@ -424,11 +421,50 @@ void TranslatorPlugin::babelTranslateMessage( KopeteMessage &msg , const QString
 
 	QString translated = re.cap(1);
 
-	if ( translated != QString::null )
-		msg.setBody(translated);
-	else
-		msg.setBody(msg.body());
+	sendTranslation(msg,translated);
 }
+
+void TranslatorPlugin::sendTranslation(KopeteMessage &msg, const QString &translated)
+{
+	if ( translated.isEmpty() )
+	{
+		kdDebug() << "TranslatorPlugin::sendTranslation - WARNING: Translated text is empty" <<endl;
+		return;
+	}
+	
+	TranslateMode mode=DontTranslate;
+	
+	switch (msg.direction())
+	{
+		case KopeteMessage::Outbound:
+			mode=m_prefs->outgoingMode();
+			break;
+		case KopeteMessage::Inbound:
+			mode=m_prefs->incommingMode();
+			break;
+		default:
+			kdDebug() << "TranslatorPlugin::sendTranslation - WARNING: can't determine if it is an incomming or outgoing message" <<endl;
+	};
+
+	switch (mode)
+	{
+		case JustTranslate:
+			msg.setBody(translated);
+			break;
+		case ShowOriginal:
+			msg.setBody(msg.body() + "\n" + i18n("Auto Translated: ") + translated);
+			break;
+		case ShowDialog:
+			//TODO!!!
+			break;
+		case DontTranslate:
+		default:
+			//do nothing
+			break;
+	};
+
+}
+
 
 void TranslatorPlugin::slotDataReceived ( KIO::Job *job, const QByteArray &data)
 {

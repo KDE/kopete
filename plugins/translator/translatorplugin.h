@@ -57,6 +57,15 @@ public:
 	TranslatorPlugin( QObject *parent, const char *name, const QStringList &args );
 	~TranslatorPlugin();
 
+	enum TranslateMode
+	{
+		DontTranslate	= 0,
+		ShowOriginal 	= 1,
+		JustTranslate	= 2,
+		ShowDialog   	= 3
+	};
+
+
 	/***************************************************************************
 	 *   Re-implementation of KopetePlugin class methods                       *
 	 ***************************************************************************/
@@ -156,6 +165,9 @@ private:
 
 	static TranslatorPlugin* pluginStatic_;
 
+private: // Private methods
+  /** No descriptions */
+  void sendTranslation(KopeteMessage &msg, const QString &translated);
 };
 
 #endif

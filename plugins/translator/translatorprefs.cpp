@@ -30,6 +30,7 @@
 #include <kdebug.h>
 #include <qlabel.h>
 #include <qgroupbox.h>
+#include <qbuttongroup.h>
 #include <qmap.h>
 
 #include <knuminput.h>
@@ -54,15 +55,14 @@ TranslatorPreferences::TranslatorPreferences(const QString &pixmap,QObject *pare
 	for ( i = m.begin(); i != m.end() ; ++i )
 		preferencesDialog->m_ServiceBox->insertItem( i.data(), TranslatorPlugin::plugin()->serviceIndex(i.key()) );
 
-	KGlobal::config()->setGroup("Translator Plugin");
+	reopen();
 
-	preferencesDialog->m_LangBox->setCurrentItem( TranslatorPlugin::plugin()->languageIndex(KGlobal::config()->readEntry("myLang", "null")));
-	preferencesDialog->m_ServiceBox->setCurrentItem( TranslatorPlugin::plugin()->serviceIndex(KGlobal::config()->readEntry("Service", "babelfish")));
 }
 
 TranslatorPreferences::~TranslatorPreferences()
 {
 }
+
 
 const QString& TranslatorPreferences::myLang()
 {
@@ -74,12 +74,39 @@ const QString& TranslatorPreferences::service()
 	return TranslatorPlugin::plugin()->serviceKey(preferencesDialog->m_ServiceBox->currentItem());
 }
 
+const unsigned int TranslatorPreferences::outgoingMode()
+{
+	return preferencesDialog->m_outgoing->id(preferencesDialog->m_outgoing->selected() ) ;
+}
+
+const unsigned int TranslatorPreferences::incommingMode()
+{
+	return preferencesDialog->m_incomming->id(preferencesDialog->m_incomming->selected() );
+}
+
+
+void TranslatorPreferences::reopen()
+{
+	KGlobal::config()->setGroup("Translator Plugin");
+
+	preferencesDialog->m_LangBox->setCurrentItem( TranslatorPlugin::plugin()->languageIndex(KGlobal::config()->readEntry("myLang", "null")));
+	preferencesDialog->m_ServiceBox->setCurrentItem( TranslatorPlugin::plugin()->serviceIndex(KGlobal::config()->readEntry("Service", "babelfish")));
+
+	preferencesDialog->m_incomming->setButton(KGlobal::config()->readNumEntry( "Incomming Mode", TranslatorPlugin::ShowOriginal) );
+	preferencesDialog->m_outgoing->setButton(KGlobal::config()->readNumEntry( "Outgoing Mode", TranslatorPlugin::ShowOriginal) );
+}
+
 void TranslatorPreferences::save()
 {
 	KConfig *config = KGlobal::config();
 	config->setGroup("Translator Plugin");
 	config->writeEntry("myLang", myLang() );
 	config->writeEntry("Service", service() );
+
+	config->writeEntry("Incomming Mode", preferencesDialog->m_incomming->id(preferencesDialog->m_incomming->selected() ) );
+	config->writeEntry("Outgoing Mode",  preferencesDialog->m_outgoing->id(preferencesDialog->m_outgoing->selected() ) );
+
+
 	config->sync();
 	emit saved();
 }

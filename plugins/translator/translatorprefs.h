@@ -26,7 +26,7 @@
 #include <qwidget.h>
 #include <klineedit.h>
 #include "configmodule.h"
-#include "translatorprefs.h"
+//#include "translatorplugin.h"
 
 class QString;
 class TranslatorPrefsUI;
@@ -45,6 +45,7 @@ public:
 	TranslatorPreferences(const QString &pixmap,QObject *parent=0);
 	~TranslatorPreferences();
 	virtual void save();
+	virtual void reopen();
 
 	/**
 	 * Default's user language
@@ -54,6 +55,13 @@ public:
 	 * Translation engine
 	 */
 	const QString& service();
+
+	/**
+	 * Translation modes
+	 */
+	/*TranslatorPlugin::TranslationMode*/
+	const unsigned int outgoingMode();
+	const unsigned int incommingMode();
 
 signals:
 	void saved();
