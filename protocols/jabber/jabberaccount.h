@@ -70,6 +70,9 @@ public:
 	/* Accepts another JID's request for authorization. */
 	void subscribed (const Jid & jid);
 
+	/* Removes another JID's authorization. */
+	void unsubscribed (const Jid & jid);
+	
 public slots:
 	/* Connects to the server. */
 	void connect ();

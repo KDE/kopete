@@ -182,6 +182,11 @@ private slots:
 	 * Send type="subscribe" to contact
 	 */
 	void slotRequestAuth ();
+	
+	/**
+	 * Send type="unsubscribed" to contact
+	 */
+	void slotRemoveAuth ();
 
 	/**
 	 * Change this contact's status

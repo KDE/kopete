@@ -146,6 +146,8 @@ KActionCollection *JabberContact::customContextMenuActions ()
 
 	new KAction (i18n ("(Re)send Authorization To"), "forward", 0, this, SLOT (slotSendAuth ()), actionCollection, "actionSendAuth");
 	new KAction (i18n ("(Re)request Authorization From"), "back", 0, this, SLOT (slotRequestAuth ()), actionCollection, "actionRequestAuth");
+	// FIXME wrong position in the popup menu
+	new KAction (i18n ("Remove Authorization From"), "", 0, this, SLOT (slotRemoveAuth ()), actionCollection, "actionRemoveAuth");
 
 	KActionMenu *actionSetAvailability = new KActionMenu (i18n ("Set Availability"), "kopeteavailable", actionCollection, "jabber_online");
 
@@ -292,6 +294,14 @@ void JabberContact::slotRequestAuth ()
 
 }
 
+void JabberContact::slotRemoveAuth ()
+{
+
+	kdDebug (14130) << "[JabberContact] Remove auth " << userId () << endl;
+
+	static_cast<JabberAccount *>(account())->unsubscribed (Jabber::Jid (userId ()));
+
+}
 void JabberContact::syncGroups ()
 {
 	QStringList groups;
