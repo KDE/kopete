@@ -5,12 +5,6 @@
 // Kopete initial author:
 // Copyright (C) 	2002-2003	 Zack Rusin <zack@kde.org>
 //
-// gaducommands.h - all basic, and not-session dependent commands
-// (meaning you don't have to be logged in for any
-//  of these). These delete themselves, meaning you don't
-//  have to/can't delete them explicitely and have to create
-//  them dynamically (via the 'new' call).
-//
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
