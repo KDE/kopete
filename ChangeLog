@@ -41,7 +41,7 @@ Kopete 0.7 (released 2003/08/04)
 o Main App
 	o Multiple accounts of the same protocol are possible using the New
 	  KopeteAccount architecture. (Oliver)
-	o Allow custom colours for each account's icon (Duncan, Olivier)
+	o Allow custom colors for each account's icon (Duncan, Olivier)
 
 	o Drag and Drop contacts between metacontacts (Olivier)
 	o Show an icon while DNDing on the contactlist (Will, Olivier>

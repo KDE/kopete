@@ -57,7 +57,7 @@ class KopeteCommandHandler : public QObject
 		 * @param parent The plugin who owns this command
 		 * @param command The command we want to handle, not including the '/'
 		 * @param handlerSlot The slot used to handle the command. This slot must
-		 *   accept two paramaters, a QString of arguments, and a KopeteMessageManager
+		 *   accept two parameters, a QString of arguments, and a KopeteMessageManager
 		 *   pointer to the manager under which the command was sent.
 		 * @param help An optional help string to be shown when the user uses
 		 *   /help <command>

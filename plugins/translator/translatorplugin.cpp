@@ -306,7 +306,7 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 	}
 	else
 	{
-		kdDebug(14308) << "TranslatorPlugin::slotOutgoingMessage : incomming or empty body" << endl;
+		kdDebug(14308) << "TranslatorPlugin::slotOutgoingMessage : incoming or empty body" << endl;
 	}
 }
 
@@ -459,7 +459,7 @@ void TranslatorPlugin::sendTranslation(KopeteMessage &msg, const QString &transl
 			mode=(TranslateMode)m_prefs->incommingMode();
 			break;
 		default:
-			kdDebug(14308) << "TranslatorPlugin::sendTranslation - WARNING: can't determine if it is an incomming or outgoing message" <<endl;
+			kdDebug(14308) << "TranslatorPlugin::sendTranslation - WARNING: can't determine if it is an incoming or outgoing message" <<endl;
 	};
 
 	switch (mode)

@@ -41,7 +41,7 @@ public:
 
 public slots:
 	/**
-	 * parse an incomming message
+	 * parse an incoming message
 	 */
 	void slotReadMessage( const QByteArray &msg );
 

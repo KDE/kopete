@@ -80,32 +80,32 @@ void ICQUserInfoWidget::init()
 	intrCategoryCombo4->insertStringList( interests );
 	
 	//set up the Background combo boxes
-	QStringList organisations;
-	organisations.append( i18n( "Not Specified" ) );
-	organisations.append( i18n( "Alumni Org." ) );
-	organisations.append( i18n( "Charity Org." ) );
-	organisations.append( i18n( "Club/Social Org." ) );
-	organisations.append( i18n( "Community Org." ) );
-	organisations.append( i18n( "Cultural Org." ) );
-	organisations.append( i18n( "Fan Clubs" ) );
-	organisations.append( i18n( "Fraternity/Sorority" ) );
-	organisations.append( i18n( "Hobbyists Org." ) );
-	organisations.append( i18n( "International Org." ) );
-	organisations.append( i18n( "Nature and Environment Org." ) );
-	organisations.append( i18n( "Professional Org." ) );
-	organisations.append( i18n( "Scientific/Technical Org." ) );
-	organisations.append( i18n( "Self Improvement Group" ) );
-	organisations.append( i18n( "Spiritual/Religious Org." ) );
-	organisations.append( i18n( "Sports Org." ) );
-	organisations.append( i18n( "Support Org." ) );
-	organisations.append( i18n( "Trade and Business Org." ) );
-	organisations.append( i18n( "Union" ) );
-	organisations.append( i18n( "Voluntary Org." ) );
-	organisations.append( i18n( "Other" ) );
+	QStringList organizations;
+	organizations.append( i18n( "Not Specified" ) );
+	organizations.append( i18n( "Alumni Org." ) );
+	organizations.append( i18n( "Charity Org." ) );
+	organizations.append( i18n( "Club/Social Org." ) );
+	organizations.append( i18n( "Community Org." ) );
+	organizations.append( i18n( "Cultural Org." ) );
+	organizations.append( i18n( "Fan Clubs" ) );
+	organizations.append( i18n( "Fraternity/Sorority" ) );
+	organizations.append( i18n( "Hobbyists Org." ) );
+	organizations.append( i18n( "International Org." ) );
+	organizations.append( i18n( "Nature and Environment Org." ) );
+	organizations.append( i18n( "Professional Org." ) );
+	organizations.append( i18n( "Scientific/Technical Org." ) );
+	organizations.append( i18n( "Self Improvement Group" ) );
+	organizations.append( i18n( "Spiritual/Religious Org." ) );
+	organizations.append( i18n( "Sports Org." ) );
+	organizations.append( i18n( "Support Org." ) );
+	organizations.append( i18n( "Trade and Business Org." ) );
+	organizations.append( i18n( "Union" ) );
+	organizations.append( i18n( "Voluntary Org." ) );
+	organizations.append( i18n( "Other" ) );
 	
-	bgrdCurrOrgCombo1->insertStringList( organisations );
-	bgrdCurrOrgCombo2->insertStringList( organisations );
-	bgrdCurrOrgCombo3->insertStringList( organisations );
+	bgrdCurrOrgCombo1->insertStringList( organizations );
+	bgrdCurrOrgCombo2->insertStringList( organizations );
+	bgrdCurrOrgCombo3->insertStringList( organizations );
 	
 	QStringList affiliations;
 	affiliations.append ( i18n( "Not Specified" ));

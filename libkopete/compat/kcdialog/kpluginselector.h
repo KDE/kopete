@@ -37,7 +37,7 @@ class KConfig;
  *
  * Since the user needs a way to know what a specific plugin does every plugin
  * sould install a desktop file containing a name, comment and category field.
- * The category is usefull for applications that can use different kinds of
+ * The category is useful for applications that can use different kinds of
  * plugins like a playlist, skin or visualization.
  *
  * The location of these desktop files is the

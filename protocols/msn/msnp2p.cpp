@@ -100,7 +100,7 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 		QString dataMessage=QCString((msg.data()+startBinHeader+48) , dataMessageSize);
 
 		if(m_msgHandle.isEmpty())
-		{ //if theses adress was not previously setted, get it, they should be provided in the first message at last.
+		{ //if these addresses were not previously set, get it, they should be provided in the first message at last.
 			QRegExp rx("To: <msnmsgr:([^>]*)>");
 			if( rx.search( dataMessage ) != -1 )
 				m_myHandle=rx.cap(1);

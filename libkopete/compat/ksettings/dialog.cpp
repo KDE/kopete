@@ -165,7 +165,7 @@ QValueList<KService::Ptr> Dialog::instanceServices() const
 
 	if( service && service->isValid() )
 	{
-		kdDebug( 700 ) << "call was successfull" << endl;
+		kdDebug( 700 ) << "call was successful" << endl;
 		KServiceGroup::List list = service->entries();
 		for( KServiceGroup::List::ConstIterator it = list.begin(); it != list.end(); ++it )
 		{

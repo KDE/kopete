@@ -29,7 +29,7 @@ class NetMeetingInvitation : public QObject , public MSNInvitation
 {
 Q_OBJECT
 public:
-	NetMeetingInvitation(bool incomming ,MSNContact*, QObject *parent = 0);
+	NetMeetingInvitation(bool incoming ,MSNContact*, QObject *parent = 0);
 	~NetMeetingInvitation();
 
 	static QString applicationID() { return "44BBA842-CC51-11CF-AAFA-00AA00B6015C"; }

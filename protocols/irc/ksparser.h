@@ -13,7 +13,7 @@
 #include <qvaluestack.h>
 
 /*
- * Helper class to parse IRC colour/style codes and convert them to
+ * Helper class to parse IRC color/style codes and convert them to
  * richtext. The parser maintains an internal stack of the styles
  * applied because the IRC message could contain sequences as
  * (bold)Hello (red)World(endbold)! (blue)blue text

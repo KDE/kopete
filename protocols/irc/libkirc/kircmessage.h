@@ -25,7 +25,7 @@
 
 #include <kbufferedio.h>
 
-// Uncoment this if you want a really rfc complient message handling.
+// Uncoment this if you want a really rfc compliant message handling.
 // This is due to some changes of the message encoding with 14 arguments.(not very frequent :)
 // #define _IRC_STRICTNESS_
 

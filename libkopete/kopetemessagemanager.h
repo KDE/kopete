@@ -227,7 +227,7 @@ public slots:
 
 	/**
 	 * Show a message to the chatwindow, or append it to the queue.
-	 * This is the function protocols HAVE TO call for both incomming and outgoing messages
+	 * This is the function protocols HAVE TO call for both incoming and outgoing messages
 	 * if the message must be showed in the chatwindow
 	 */
 	void appendMessage( KopeteMessage &msg );

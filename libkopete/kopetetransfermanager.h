@@ -101,7 +101,7 @@ signals:
 	/** @brief Signals the transfer is done. */
 	void done( KopeteTransfer* );
 
-	/** @brief Signals the transfer has been cancelled. */
+	/** @brief Signals the transfer has been canceled. */
 	void canceled( KopeteTransfer* );
 
 	/** @brief Signals the transfer has been accepted */

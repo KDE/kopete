@@ -119,7 +119,7 @@ class AIMBuddy
 		// Sets how long this user has been a member since
 		void setMemberSince(long memberSince) { mMemberSince = memberSince; }
 
-		// Sets their 'evil' rating. Usually refered to as their 'warning level'
+		// Sets their 'evil' rating. Usually referred to as their 'warning level'
 		void setEvil(Q_UINT32 evil) { mEvil = evil; }
 
 		// Sets the last time this member was signed on

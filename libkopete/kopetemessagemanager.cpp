@@ -324,7 +324,7 @@ KopeteView* KopeteMessageManager::view(bool canCreate  , KopeteMessage::MessageT
 		if(d->view)
 			connect( d->view->mainWidget(), SIGNAL( closing( KopeteView * ) ), this, SLOT( slotViewDestroyed( ) ) );
 		else
-			KMessageBox::error( 0L, i18n( "<qt>An error has occured when creating a new chatwindow. The chatwindow has not been created</qt>" ),
+			KMessageBox::error( 0L, i18n( "<qt>An error has occurred when creating a new chatwindow. The chatwindow has not been created</qt>" ),
 							i18n( "Error while creating the chatwindow - Kopete" )  );
 
 	}

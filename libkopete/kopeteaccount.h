@@ -63,9 +63,9 @@ class KopeteAccount : public KopetePluginDataObject
 public:
 	/**
 	 * constructor:
-	 * The constructor register automaticaly the account to the @ref KopeteAccountManager
+	 * The constructor register automatically the account to the @ref KopeteAccountManager
 	 * @param parent it the protocol of this account. the accoun is a child object of the
-	 * protocol, so it will be automaticaly deleted with the parent.
+	 * protocol, so it will be automatically deleted with the parent.
 	 * @param accountID is the id of this protocol, it shouln't be changed after
 	 * @param name is the QObject name. it can be 0L
 	 */

@@ -193,7 +193,7 @@ bool IRCAccount::addContactToMetaContact( const QString &contactId, const QStrin
 	 KopeteMetaContact *m )
 {
 //	kdDebug(14120) << k_funcinfo << contactId << "|" << displayName << endl;
-	//FIXME: I think there are too many tests in this functions.  This fuction should be called ONLY by
+	//FIXME: I think there are too many tests in this functions.  This function should be called ONLY by
 	// KopeteAccount::addContact, where all test are already done. Can a irc developer look at this?   -Olivier
 	IRCContact *c;
 

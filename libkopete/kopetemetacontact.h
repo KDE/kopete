@@ -125,7 +125,7 @@ public:
 	 * @brief Set the displayName.
 	 *
 	 * this metohd may emit @ref displayNameChanged signal.
-	 * If @ref trackChildNameChanges was true, this will automaticaly set it to false
+	 * If @ref trackChildNameChanges was true, this will automatically set it to false
 	 */
 	void setDisplayName( const QString &name );
 

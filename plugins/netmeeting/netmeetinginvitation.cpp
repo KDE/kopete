@@ -27,8 +27,8 @@
 #include <qtimer.h>
 #include <qprocess.h>
 
-NetMeetingInvitation::NetMeetingInvitation(bool incomming, MSNContact *c, QObject *parent)
- : QObject(parent) , MSNInvitation( incomming, NetMeetingInvitation::applicationID() , i18n("NetMeeting") )
+NetMeetingInvitation::NetMeetingInvitation(bool incoming, MSNContact *c, QObject *parent)
+ : QObject(parent) , MSNInvitation( incoming, NetMeetingInvitation::applicationID() , i18n("NetMeeting") )
 {
 	m_contact=c;
 	oki=false;

@@ -44,10 +44,10 @@ CryptographySelectUserKey::~CryptographySelectUserKey()
 
 void CryptographySelectUserKey::slotSelectPressed()
 {
-	popupPublic *dialogue=new popupPublic(this, "public_keys", 0,false);
-	connect(dialogue,SIGNAL(selectedKey(QString &,QString,bool,bool)),this,SLOT(keySelected(QString &)));
-	dialogue->exec();
-	delete dialogue;
+	popupPublic *dialog=new popupPublic(this, "public_keys", 0,false);
+	connect(dialog,SIGNAL(selectedKey(QString &,QString,bool,bool)),this,SLOT(keySelected(QString &)));
+	dialog->exec();
+	delete dialog;
 }
 
 

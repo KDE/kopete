@@ -97,7 +97,7 @@ class KopeteAwayDialog : public KopeteAwayBase
 		/**
 		* This method is called when the user clicks
 		* Cancel in the GUI, signalling that they
-		* cancelled their request to mark themselves as
+		* canceled their request to mark themselves as
 		* away.  If your implementation finds this
 		* information useful, implement this method
 		* to handle this info.  By default it does nothing

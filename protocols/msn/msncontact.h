@@ -105,7 +105,7 @@ public:
 
 	/**
 	 * MSNAccount and MSNSwhitchBoardSocket need to change the displayName of contacts.
-	 * Then, we do this fuction public
+	 * Then, we do this function public
 	 **/
 	void setDisplayName(const QString &Dname);
 

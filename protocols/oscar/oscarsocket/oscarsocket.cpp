@@ -3004,7 +3004,7 @@ void OscarSocket::sendSSIAddModDel(SSI *item, WORD requestType)
 
 }
 
-// Parses the SSI acknowledgement
+// Parses the SSI acknowledgment
 void OscarSocket::parseSSIAck(Buffer &inbuf)
 {
 	kdDebug(14150) << k_funcinfo << "RECV SRV_SSIACK" << endl;

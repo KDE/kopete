@@ -63,7 +63,7 @@ public:
 	 * value! Even if it may look like an ICQ UIN or an MSN passport,
 	 * this is undefined and may change at any time!
 	 *
-	 * @param account is the parent account. this constructor automaticaly register the contact to the account
+	 * @param account is the parent account. this constructor automatically register the contact to the account
 	 * @param id is the KopeteContact inique Id (mostly the user's login)
 	 */
 	KopeteContact( KopeteAccount *account, const QString &id, KopeteMetaContact *parent, const QString &icon = QString::null );
@@ -263,7 +263,7 @@ public:
 
 	/**
 	 * Set the current idle time in seconds.
-	 * Kopete will automaticaly calculate the time in @ref idleTime
+	 * Kopete will automatically calculate the time in @ref idleTime
 	 * exepted if you set 0.
 	 */
 	void setIdleTime(unsigned long int);

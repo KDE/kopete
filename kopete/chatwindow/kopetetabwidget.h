@@ -42,7 +42,7 @@ class KopeteTabWidget : public QTabWidget
 	signals:
 		/**
 		* Fired when a context menu event occurs on a tab.
-		* Useful for a tab specfic popup menu.
+		* Useful for a tab specific popup menu.
 		* @param target The widget within the tab the context menu was fired on
 		* @param pos The position of the event
 		*/
@@ -70,7 +70,7 @@ class KopeteTabBar : public QTabBar
 	signals:
 		/**
 		* Fired when a context menu event occurs on a tab.
-		* Useful for a tab specfic popup menu.
+		* Useful for a tab specific popup menu.
 		* @param target The widget within the tab the context menu was fired on
 		* @param pos The position of the event
 		*/

@@ -262,7 +262,7 @@ void MSNSocket::slotReadLine()
 		{
 			// Don't block the GUI while parsing data, only do a single line!
 			QTimer::singleShot( 0, this, SLOT( slotReadLine() ) );
-			//(placed here and not in the end on the fuction for prevent crash)
+			//(placed here and not in the end on the function for prevent crash)
 
 			QString command = QString::fromUtf8(m_buffer.take(index+2), index);
 			command.replace( "\r\n" , "" );
@@ -400,7 +400,7 @@ void MSNSocket::handleError( uint code, uint /*id*/ )
 	default:
 		//FIXME: if the error cause a disconnection, it will crash, but we can't disconnect every time
 		msg = i18n( "Unhandled MSN error code %1 \n"
-			"Please fill a bug report with a detailed discription and if possible the last console debug output. \n" ).arg( code );
+			"Please fill a bug report with a detailed description and if possible the last console debug output. \n" ).arg( code );
 			/*"See http://www.hypothetic.org/docs/msn/basics.php for a description of all error codes."*/
 		break;
 	}

@@ -186,7 +186,7 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 			switch( msg.importance() )
 			{
 				case KopeteMessage::Low:
-					//TODO: add an event for this (like a litle beep)
+					//TODO: add an event for this (like a little beep)
 					break;
 				default:
 				{

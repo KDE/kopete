@@ -78,7 +78,7 @@ public:
 
 	/**
 	* Specifies the type of notification that will be sent with this message
-	* - Low: almost no notifications. automaticaly used in groupChat
+	* - Low: almost no notifications. automatically used in groupChat
 	* - Normal: Default notification, for normal message
 	* - Highlight: Highlight notification, for most important messages, which require particular attentions.
 	*/

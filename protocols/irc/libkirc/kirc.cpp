@@ -1332,7 +1332,7 @@ bool KIRC::CtcpQuery_dcc(const KIRCMessage &msg)
 
 /*
  * The ctcp commands seems to follaw the same message behaviours has normal IRC command.
- * (Only missing the \n\r final caracters)
+ * (Only missing the \n\r final characters)
  * So applying the same parsing rules to the messages.
  */
 bool KIRC::invokeCtcpCommandOfMessage(const KIRCMessage &msg, const QDict<KIRCMethodFunctorCall> &map)

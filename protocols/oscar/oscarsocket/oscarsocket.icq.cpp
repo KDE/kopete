@@ -521,7 +521,7 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 
 					// Get past affiliations
 					ICQInfoItemList past = extractICQItemList( fromicqsrv );
-					// Now get current organisation memberships
+					// Now get current organization memberships
 					ICQInfoItemList current = extractICQItemList( fromicqsrv );
 
 					// Tell anything that's interested

@@ -35,11 +35,11 @@ class MSNInvitation
 public:
 	/**
 	 * Constructor
-	 * @param incomming say if it is an incomming invitation
+	 * @param incoming say if it is an incoming invitation
 	 * @param applicationID is the exadecimal id of the invitation
 	 * @param applicationName is a i18n'ed string of the name of the application
 	 */
-	MSNInvitation(bool incomming,const QString &applicationID , const QString &applicationName);
+	MSNInvitation(bool incoming,const QString &applicationID , const QString &applicationName);
 	virtual ~MSNInvitation();
 
 	/**
@@ -49,7 +49,7 @@ public:
 	static QCString unimplemented(long unsigned int cookie);
 
 	/**
-	 * you can set manualy the cookie. note that a cookie is automaticaly generated when a new
+	 * you can set manualy the cookie. note that a cookie is automatically generated when a new
 	 * invitation is created, or in @ref parseInvitation
 	 */
 	void setCookie( long unsigned int c ) { m_cookie = c; }

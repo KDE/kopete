@@ -32,7 +32,7 @@ class KopeteAccount;
  *
  * We suggest in this page to put at least some fields:
  *
- * - The User login, or the accountId. you can retreive it from @ref KopeteAccount::accountId()  But this field has
+ * - The User login, or the accountId. you can retrieve it from @ref KopeteAccount::accountId()  But this field has
  *     to be marked as ReadOnly when the account already exists. Remember that accountId should be constant
  *
  * - The password, and the remember password checkboxes.  First, you have to get if the password is remember, with @ref KopeteAccount::rememberPassword
@@ -42,7 +42,7 @@ class KopeteAccount;
  *
  * - The auto connect checkboxe: use @ref KopeteAccount::autoConnect and @ref KopeteAccount::setAutoConnect  get/set this flag
  *
- * You may add some other custom fields, for example, the nickname. to save or retreive theses settings use @ref KopetePluginDataObject::setPluginData or
+ * You may add some other custom fields, for example, the nickname. to save or retrieve theses settings use @ref KopetePluginDataObject::setPluginData or
  * @ref KopetePluginDataObject::pluginData with your protocol as plugin
  *
  */

@@ -105,7 +105,7 @@ public:
 
 	/**
 	 * Returns the QRect small little icon used for the KopeteContact.
-	 * The behaviour is undefined if @param c doesn't point to a valid
+	 * The behavior is undefined if @param c doesn't point to a valid
 	 * KopeteContact for this list view item.
 	 * The returned QRect is using the list view item's coordinate
 	 * system and should probably be transformed into the list view's

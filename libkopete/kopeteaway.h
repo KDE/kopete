@@ -183,7 +183,7 @@ public:
 	 */
 	void setAutoAwayTimeout(int);
 	/**
-	 * The time (in seconds) of idle before Kopete will set automaticaly every accounts away
+	 * The time (in seconds) of idle before Kopete will set automatically every accounts away
 	 */
 	int autoAwayTimeout() const;
 
@@ -216,7 +216,7 @@ public slots:
 	 * Plugins can set the activity if they discover activity by another way than the mouse or the keyboard
 	 * (example, the motion auto away plugin)
 	 * this will reset the @ref idleTime to 0, and set all protocols to available (online) if the state was
-	 * set automaticaly to away because of idleness, and if they was previously online
+	 * set automatically to away because of idleness, and if they was previously online
 	 */
 	void setActivity();
 

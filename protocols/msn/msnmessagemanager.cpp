@@ -224,7 +224,7 @@ void MSNMessageManager::slotMessageReceived( KopeteMessage &msg )
 void MSNMessageManager::slotActionInviteAboutToShow()
 {
 	// We can't simply insert  KAction in this menu bebause we don't know when to delete them.
-	//  items inserted with insert items are automaticaly deleted when we call clear
+	//  items inserted with insert items are automatically deleted when we call clear
 
 	m_inviteactions.setAutoDelete(true);
 	m_inviteactions.clear();

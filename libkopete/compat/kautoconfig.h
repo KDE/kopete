@@ -29,7 +29,7 @@ class QWidget;
 /**
  * @author Benjamin C Meyer <ben+kdelibs at meyerhome dot net>
  * 
- * The KAutoConfig class provides a means of automaticly retrieving,
+ * The KAutoConfig class provides a means of automatically retrieving,
  * saving and reseting basic settings.  It also can emit signals when
  * settings have been changed (settings were saved) or modified (the
  * user changes a checkbox from on to off).
@@ -79,7 +79,7 @@ class QWidget;
  * If you add a new widget to the QSqlPropertyMap and wish to be notified when
  * it is modified you should add its signal using addWidgetChangedSignal().
  * If the Apply and Default buttons and enabled/disabled by KAutoConfigDialog
- * automaticly than this must be done.
+ * automatically than this must be done.
  *
  * @see KAutoConfigDialog
  * @since 3.2

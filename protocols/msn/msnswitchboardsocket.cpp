@@ -370,7 +370,7 @@ int MSNSwitchBoardSocket::sendMsg( const KopeteMessage &msg )
 	// Color support
 	if (msg.fg().isValid())
 	{
-		QString colorCode = QColor(msg.fg().blue(),msg.fg().green(),msg.fg().red()).name().remove(0,1);  //colours aren't sent in RGB but in BGR (O.G.)
+		QString colorCode = QColor(msg.fg().blue(),msg.fg().green(),msg.fg().red()).name().remove(0,1);  //colors aren't sent in RGB but in BGR (O.G.)
 		head += "CO=" + colorCode;
 	}
 	else

@@ -26,7 +26,7 @@ Filter::~Filter()
 }
 
 /*
- * But is this file usefull? :-D
+ * But is this file useful? :-D
  */
  
  

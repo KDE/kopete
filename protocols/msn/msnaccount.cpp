@@ -607,7 +607,7 @@ void MSNAccount::slotGroupRemoved( uint group )
 {
 	if ( m_groupList.contains( group ) )
 	{
-		// FIXME: we should really emty data in the group... but in most of cases, the group is already del
+		// FIXME: we should really empty data in the group... but in most of cases, the group is already del
 		// FIXME: Shouldn't we fix the memory management instead then??? - Martijn
 		// m_groupList[ group ]->setPluginData( this, QStringList() );
 		m_groupList.remove( group );

@@ -44,7 +44,7 @@ foreach my $file (@files) {
     $contents =~ s/$old_emacs_f//g;
     $contents =~ s/$/\n$emacs_format\n$vim_format\n/;
 
-    open( SRC, "> $file" ) or die "Couldn't open file for writting $ARGV[0]\n";
+    open( SRC, "> $file" ) or die "Couldn't open file for writing $ARGV[0]\n";
 
     print SRC $contents;
     close SRC;

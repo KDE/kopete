@@ -249,7 +249,7 @@ QValueList<KopeteMessage> HistoryLogger::readMessages( unsigned int nb , const K
 	if(sens ==0 )  //if no sens are selected, just continue in the previous sens
 		sens = m_oldSens ;
 	if( m_oldSens != 0 && sens != m_oldSens )
-	{ //we changed our sens! so retreive the old position to fly in the other way
+	{ //we changed our sens! so retrieve the old position to fly in the other way
 		m_currentElements= m_oldElements;
 		m_currentMonth=m_oldMonth;
 	}

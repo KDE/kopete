@@ -9,7 +9,7 @@ sub OutgoingMessage
 	#The third paramater is who the message is from
 	my $from = shift;
 
-	#The remaining paramaters are who the message is to (could be a list)
+	#The remaining parameters are who the message is to (could be a list)
 	my @to = @_;
 
 	#Sample - reverse the text of a message prefixed with "/reverse"

@@ -399,7 +399,7 @@ class OscarSocket : public OscarConnection
 		 * Sends our capabilities to the server
 		 * for AIM this also sends the userprofile
 		 * @param profile AIM UserProfile or QString:null if no profile to send
-		 * @param caps supported capabilites or 0 if you want default caps to be sent
+		 * @param caps supported capabilities or 0 if you want default caps to be sent
 		 */
 		void sendLocationInfo(const QString &profile, const unsigned long caps=0);
 
@@ -750,7 +750,7 @@ class OscarSocket : public OscarConnection
 	/** Sends SSI add, modify, or delete request to reuse code */
 	void sendSSIAddModDel(SSI *item, WORD request_type);
 
-	/** Parses the SSI acknowledgement */
+	/** Parses the SSI acknowledgment */
 	void parseSSIAck(Buffer &inbuf);
 
 	/** Parses a warning notification */
@@ -1013,7 +1013,7 @@ class OscarSocket : public OscarConnection
 		FirstPresenceBlock awaitingFirstPresenceBlock;
 
 	signals:
-		// Called when an SSI acknowledgement is received
+		// Called when an SSI acknowledgment is received
 		// FIXME: What was this for, nothing connected to this signal [mETz]
 		//void SSIAck();
 		// emitted when BOS rights are received

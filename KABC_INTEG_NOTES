@@ -24,7 +24,7 @@ What does Kopete get out of the association?
 *) Can store/use KABC information in the metacontact like contact photo
 
 Gof's goals
-1. my goal is to have the kopete contactlist a kind of adress book  (i.e. i want to view and modify kabc entry from kopete, like if i am in the kab interface.  i do not want to open KAB
+1. my goal is to have the kopete contactlist a kind of address book  (i.e. i want to view and modify kabc entry from kopete, like if i am in the kab interface.  i do not want to open KAB
 2. and i want to share fields (gpg key) with other application, like kmail
 3.  technicaly, i think that should be transparent.
 Goals (-ve):
@@ -220,7 +220,7 @@ We should keep the extra stuff in kabc to a minimum.  We can store nicknames in 
 
 We should allow plugins to save some data:
 Some protocol allow to reach phone numbers, or more (see the ICQ info page)
-It would be usefull if KABC could remember what application writes an entry. so when ICQ try to modify an e-mail, only the "icq-email" is affected
+It would be useful if KABC could remember what application writes an entry. so when ICQ try to modify an e-mail, only the "icq-email" is affected
 
 Or like the language or the PGP public key
 
@@ -300,7 +300,7 @@ Client would need to identify addressbook entries that are IM contactable, and o
 
 David Faure says it's possible to do loose lazy binding to the app responsible for providing status information as in 1).  Something to do with KTrader and DCOP.  We would need some DCOP to return status info to the client from the IM app.
 
-Showing the IM status of a contact in KMail, in KAdressBook....
+Showing the IM status of a contact in KMail, in KAddressBook....
 A "reply-by-IM" action in KMail
 
 such as things could be done. but how?
@@ -326,7 +326,7 @@ Notes
 
 As above, client must identify IM contactable addressbook entries, obtain status information and get the IM app to send the invite (inline/file transfer).  Some protocols may not support file transfer though.  Do we need a capabilities interface on the IM apps, or just use the lowest common denominator?
 
-On receipt of the invitation, IM app needs to recognise the invite and relay it to the recipient (similar lazy loose binding?).  In Kopete we could do this in a plugin, quite neatly.
+On receipt of the invitation, IM app needs to recognize the invite and relay it to the recipient (similar lazy loose binding?).  In Kopete we could do this in a plugin, quite neatly.
 
 Some problem:
   Each protocol does that in a different way.  The Game/Application  need to know some protocol specific stuff (the MSN application ID for example)
@@ -338,7 +338,7 @@ Some problem:
  'myself' integration
 =======================
 
-Some protocols allow to send some personale information like real name, phone number, adress, ...   (see icq user info)
+Some protocols allow to send some personal information like real name, phone number, address, ...   (see icq user info)
 It would be cool if theses information about the users itself could be obtained from KAB.
 
 see also Bug 63297: "meta-contact" global(local) display nickname for all accounts
@@ -359,7 +359,7 @@ ACW::accept() -> KopeteContactList::adddMetaContact()
 
 Here is a suggestion. I don't know if that already works like that in KABC.
 AFAIK by reading the KABC API documentation, it use somme different c++ function to access/modify some stuff.
-With this implementation, it is not possible to make that transparent for plugin.  That mean the PGP plugin need to call dirrectly the KABC API (with Adressee::pgpKey()) for example.
+With this implementation, it is not possible to make that transparent for plugin.  That mean the PGP plugin need to call directly the KABC API (with Addressee::pgpKey()) for example.
 
 My idea is to give for each fields a String, like for MIME-Type
 so fields could be application/pgp-public-key    (do you see what i mean?)
@@ -395,7 +395,7 @@ We should never store nicknames in kabc.  The metacontact name should be taken f
 Of course every fields shouldn't be stored in KABC (for example: MSN's groups, or others)
 to know what can be saved or not in kabc, i see two ways:
 1) KopeteMetaContact::setData( QString key , QString data , bool saveToKAB);
-2) if the key is or not recognised by KABC. example, if i save  "messanging/msn-groups"  KAB is not able to store it, so don't store it in KABC
+2) if the key is or not recognized by KABC. example, if i save  "messaging/msn-groups"  KAB is not able to store it, so don't store it in KABC
 
 
 Syncing contactlist info currently takes place when Kopete exits.  other kabc apps write kabc during their runs.  We will have to make changes to do this and to make sure that we don't try to write 200 kabc entries simultaneously with individual tickets after fetching the SSCL for a new account.
