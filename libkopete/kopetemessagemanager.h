@@ -1,5 +1,5 @@
 /*
-    kopetemessagemanager.h - Manages all chats
+    kopetechatsession.h - Manages all chats
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002      by Daniel Stone           <dstone@kde.org>
@@ -19,8 +19,8 @@
     *************************************************************************
 */
 
-#ifndef __KOPETEMESSAGEMANAGER_H__
-#define __KOPETEMESSAGEMANAGER_H__
+#ifndef __KOPETECHATSESSION_H__
+#define __KOPETECHATSESSION_H__
 
 #include <qobject.h>
 #include <qptrlist.h>
@@ -58,7 +58,7 @@ typedef QValueList<Message> MessageList;
  * @author Olivier Goffart        <ogoffart@tiscalinet.be>
  * @author Jason Keirstead        <jason@keirstead.org>
  *
- * The Kopete::ChatSession (also called KMM for simplicity) manages a single chat.
+ * The Kopete::ChatSession manages a single chat.
  * It is an interface between the protocol, and the chatwindow.
  * The protocol can connect to @ref messageSent() signals to send the message, and can
  * append received message with @ref messageReceived()
