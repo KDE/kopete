@@ -4,330 +4,269 @@
     <property name="name">
         <cstring>WebPresencePrefsUI</cstring>
     </property>
+    <property name="enabled">
+        <bool>true</bool>
+    </property>
     <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>389</width>
-            <height>452</height>
+            <width>444</width>
+            <height>399</height>
         </rect>
     </property>
     <property name="caption">
         <string>Form1</string>
     </property>
-    <widget class="QLayoutWidget">
+    <vbox>
         <property name="name">
-            <cstring>layout8</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>10</y>
-                <width>370</width>
-                <height>378</height>
-            </rect>
-        </property>
-        <vbox>
+        <widget class="QGroupBox">
             <property name="name">
-                <cstring>unnamed</cstring>
+                <cstring>groupBox1</cstring>
             </property>
-            <widget class="QLabel">
+            <property name="frameShape">
+                <enum>GroupBoxPanel</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="title">
+                <string>Uploading:</string>
+            </property>
+            <grid>
                 <property name="name">
-                    <cstring>textLabel1_2_2</cstring>
+                    <cstring>unnamed</cstring>
                 </property>
-                <property name="text">
-                    <string>&lt;b&gt;Upload information about your IM status&lt;/b&gt;</string>
-                </property>
-            </widget>
-            <widget class="QLayoutWidget">
-                <property name="name">
-                    <cstring>layout11</cstring>
-                </property>
-                <hbox>
+                <widget class="QLabel" row="0" column="0">
                     <property name="name">
-                        <cstring>unnamed</cstring>
+                        <cstring>textLabel1</cstring>
                     </property>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>textLabel2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&amp;Every: </string>
-                        </property>
-                        <property name="buddy" stdset="0">
-                            <cstring>m_freq</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QSpinBox">
-                        <property name="name">
-                            <cstring>m_freq</cstring>
-                        </property>
-                        <property name="maxValue">
-                            <number>360</number>
-                        </property>
-                        <property name="minValue">
-                            <number>1</number>
-                        </property>
-                        <property name="lineStep">
-                            <number>1</number>
-                        </property>
-                        <property name="value">
-                            <number>15</number>
-                        </property>
-                    </widget>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>textLabel3</cstring>
-                        </property>
-                        <property name="text">
-                            <string>minute(s)</string>
-                        </property>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer5</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>40</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </hbox>
-            </widget>
-            <widget class="QFrame">
-                <property name="name">
-                    <cstring>frame3</cstring>
-                </property>
-                <property name="frameShape">
-                    <enum>HLine</enum>
-                </property>
-                <property name="frameShadow">
-                    <enum>Sunken</enum>
-                </property>
-            </widget>
-            <widget class="QLayoutWidget">
-                <property name="name">
-                    <cstring>layout9</cstring>
-                </property>
-                <hbox>
+                    <property name="text">
+                        <string>Upload &amp;To:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_url</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
                     <property name="name">
-                        <cstring>unnamed</cstring>
+                        <cstring>textLabel2</cstring>
                     </property>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>textLabel1</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Upload &amp;web presence data to this URL:</string>
-                        </property>
-                        <property name="buddy" stdset="0">
-                            <cstring>m_url</cstring>
-                        </property>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer4</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>200</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </hbox>
-            </widget>
-            <widget class="QLayoutWidget">
-                <property name="name">
-                    <cstring>layout13</cstring>
-                </property>
-                <hbox>
+                    <property name="text">
+                        <string>Upload &amp;Every: </string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>m_freq</cstring>
+                    </property>
+                </widget>
+                <widget class="QSpinBox" row="1" column="1">
                     <property name="name">
-                        <cstring>unnamed</cstring>
+                        <cstring>m_freq</cstring>
                     </property>
-                    <widget class="QLineEdit">
-                        <property name="name">
-                            <cstring>m_url</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QPushButton">
-                        <property name="name">
-                            <cstring>m_fileDialog</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>false</bool>
-                        </property>
-                        <property name="text">
-                            <string>...</string>
-                        </property>
-                    </widget>
-                </hbox>
-            </widget>
-            <widget class="QFrame">
-                <property name="name">
-                    <cstring>frame3_2</cstring>
-                </property>
-                <property name="frameShape">
-                    <enum>HLine</enum>
-                </property>
-                <property name="frameShadow">
-                    <enum>Sunken</enum>
-                </property>
-            </widget>
-            <widget class="QButtonGroup">
-                <property name="name">
-                    <cstring>buttonGroup2_2</cstring>
-                </property>
-                <property name="title">
-                    <string>Formatting:</string>
-                </property>
-                <vbox>
+                    <property name="suffix">
+                        <string> minutes</string>
+                    </property>
+                    <property name="specialValueText">
+                        <string>1 minute</string>
+                    </property>
+                    <property name="maxValue">
+                        <number>360</number>
+                    </property>
+                    <property name="minValue">
+                        <number>1</number>
+                    </property>
+                    <property name="lineStep">
+                        <number>1</number>
+                    </property>
+                    <property name="value">
+                        <number>15</number>
+                    </property>
+                </widget>
+                <spacer row="1" column="2">
                     <property name="name">
-                        <cstring>unnamed</cstring>
+                        <cstring>spacer5</cstring>
                     </property>
-                    <widget class="QRadioButton">
-                        <property name="name">
-                            <cstring>m_rbDefaultStyleSheet</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&amp;HTML using default (boring) stylesheet</string>
-                        </property>
-                        <property name="checked">
-                            <bool>true</bool>
-                        </property>
-                    </widget>
-                    <widget class="QLayoutWidget">
-                        <property name="name">
-                            <cstring>layout7</cstring>
-                        </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QRadioButton">
-                                <property name="name">
-                                    <cstring>m_rbUserStyleSheet</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Format &amp;using this stylesheet:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit">
-                                <property name="name">
-                                    <cstring>m_userStyleSheet</cstring>
-                                </property>
-                            </widget>
-                        </hbox>
-                    </widget>
-                    <widget class="QRadioButton">
-                        <property name="name">
-                            <cstring>m_rbNoFormat</cstring>
-                        </property>
-                        <property name="text">
-                            <string>just &amp;XML</string>
-                        </property>
-                    </widget>
-                </vbox>
-            </widget>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>m_addresses</cstring>
-                </property>
-                <property name="text">
-                    <string>Include IM &amp;Addresses</string>
-                </property>
-            </widget>
-            <widget class="QFrame">
-                <property name="name">
-                    <cstring>frame3_2_2</cstring>
-                </property>
-                <property name="frameShape">
-                    <enum>HLine</enum>
-                </property>
-                <property name="frameShadow">
-                    <enum>Sunken</enum>
-                </property>
-            </widget>
-            <widget class="QButtonGroup">
-                <property name="name">
-                    <cstring>buttonGroup2</cstring>
-                </property>
-                <property name="title">
-                    <string>Show your name as:</string>
-                </property>
-                <vbox>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>174</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="KURLRequester" row="0" column="1" rowspan="1" colspan="2">
                     <property name="name">
-                        <cstring>unnamed</cstring>
+                        <cstring>m_url</cstring>
                     </property>
-                    <widget class="QRadioButton">
-                        <property name="name">
-                            <cstring>m_rbUseImName</cstring>
-                        </property>
-                        <property name="text">
-                            <string>One of your &amp;IM names</string>
-                        </property>
-                        <property name="checked">
-                            <bool>true</bool>
-                        </property>
-                    </widget>
-                    <widget class="QLayoutWidget">
-                        <property name="name">
-                            <cstring>layout9</cstring>
-                        </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QRadioButton">
-                                <property name="name">
-                                    <cstring>m_rbUseUserName</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;This name:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit">
-                                <property name="name">
-                                    <cstring>m_userName</cstring>
-                                </property>
-                            </widget>
-                            <spacer>
-                                <property name="name">
-                                    <cstring>spacer4_2</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </hbox>
-                    </widget>
-                </vbox>
-            </widget>
-        </vbox>
-    </widget>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>buttonGroup2_2</cstring>
+            </property>
+            <property name="title">
+                <string>Formatting:</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <spacer row="3" column="0">
+                    <property name="name">
+                        <cstring>spacer10</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Fixed</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>30</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="KURLRequester" row="3" column="1">
+                    <property name="name">
+                        <cstring>m_userStyleSheet</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_rbNoFormat</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;XML</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="1" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_rbDefaultStyleSheet</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;HTML using default (boring) stylesheet</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="2" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_rbUserStyleSheet</cstring>
+                    </property>
+                    <property name="text">
+                        <string>HTML &amp;using this stylesheet:</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>buttonGroup2</cstring>
+            </property>
+            <property name="title">
+                <string>Show your name as:</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <spacer row="2" column="0">
+                    <property name="name">
+                        <cstring>spacer4_2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Fixed</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>30</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QLineEdit" row="2" column="1">
+                    <property name="name">
+                        <cstring>m_userName</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_addresses</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Include &amp;IM Addresses</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_rbUseImName</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use one of &amp;your IM names</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="1" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_rbUseUserName</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use another &amp;name:</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+    </vbox>
 </widget>
+<connections>
+    <connection>
+        <sender>m_rbUserStyleSheet</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_userStyleSheet</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>m_rbUseUserName</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_userName</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+<includes>
+    <include location="local" impldecl="in implementation">webpresenceprefs.ui.h</include>
+</includes>
+<slots>
+    <slot>init()</slot>
+</slots>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kurlrequester.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kurlrequester.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+</includehints>
 </UI>
