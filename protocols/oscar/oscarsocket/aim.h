@@ -21,5 +21,5 @@
 #include <kopete_export.h>
 
 class QString;
-KDE_EXPORT QString tocNormalize(const QString &);
+KOPETE_EXPORT QString tocNormalize(const QString &);
 #endif
