@@ -18,8 +18,6 @@
 
 #include "gwerror.h"
 
-#include "groupwisemessagemanagerfactory.h"
-
 class GroupWiseAccount;
 /**
 @author SUSE AG
