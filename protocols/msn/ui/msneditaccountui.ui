@@ -677,12 +677,6 @@
                                         <property name="alignment">
                                             <set>WordBreak|AlignVCenter</set>
                                         </property>
-                                        <property name="toolTip" stdset="0">
-                                            <string>If the IRC server requires a password, you may enter it here.</string>
-                                        </property>
-                                        <property name="whatsThis" stdset="0">
-                                            <string>If the IRC server requires a password, you may enter it here.  Normally, you may leave this field blank.</string>
-                                        </property>
                                     </widget>
                                     <widget class="QLayoutWidget">
                                         <property name="name">
