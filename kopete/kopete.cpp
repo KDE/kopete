@@ -122,6 +122,8 @@ Kopete::~Kopete()
 {
 	kdDebug() << "[Kopete] ~Kopete()" << endl;
 
+	KopeteContactList::contactList()->save();
+
 	delete mPref;
 	delete mLibraryLoader;
 

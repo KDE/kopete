@@ -148,7 +148,9 @@ bool KopeteWindow::queryExit()
 {
 	kdDebug() << "[KopeteWindow] queryExit()" << endl;
 	saveOptions();
-	KopeteContactList::contactList()->save();
+	//Now in Kopete::~Kopete().
+	// (KDE3.1 beta2 did't save contact-list on exit)
+	/*	KopeteContactList::contactList()->save();*/
 	return true;
 }
 
