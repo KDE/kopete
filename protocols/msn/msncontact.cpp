@@ -38,11 +38,15 @@ MSNContact::MSNContact(QString userid, const QString name, QString group, MSNPro
 	initContact(userid, name, protocol);
 }
 
-void MSNContact::initContact(QString userid, const QString name, MSNProtocol *protocol)
+void MSNContact::initContact( QString /* userid */, const QString name, MSNProtocol *protocol)
 {
 	// We connect this signal so that we can tell when a user's status changes
-	connect(protocol->msnService(), SIGNAL(updateContact(QString, uint)), this, SLOT(slotUpdateContact (QString, uint) ));
-	connect(protocol->msnService(), SIGNAL(contactRemoved(QString, QString)), this, SLOT(slotContactRemoved (QString, QString) ));
+	//connect(protocol->msnService(), SIGNAL(updateContact(QString, uint)), this, SLOT(slotUpdateContact (QString, uint) ));
+	connect( protocol, SIGNAL( updateContact( QString, uint ) ),
+				this, SLOT( slotUpdateContact( QString, uint ) ) );
+	//connect(protocol->msnService(), SIGNAL(contactRemoved(QString, QString)), this, SLOT(slotContactRemoved (QString, QString) ));
+	connect( protocol, SIGNAL( contactRemoved( QString, QString ) ),
+				this, SLOT( slotContactRemoved( QString, QString ) ) );
 
 	connect ( this, SIGNAL(chatToUser(QString)), protocol->msnService(), SLOT( slotStartChatSession(QString)) );
 	connect ( protocol->msnService(), SIGNAL(connectedToService(bool)), this, SLOT(slotDeleteMySelf(bool)));
@@ -352,5 +356,5 @@ int MSNContact::importance() const
 
 #include "msncontact.moc"
 
-// vim: noet set ts=4 sts=4 sw=4:
+// vim: noet ts=4 sts=4 sw=4:
 

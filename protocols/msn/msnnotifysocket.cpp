@@ -217,7 +217,7 @@ QString KMSNServiceSocket::readBlock(uint len)
 void KMSNServiceSocket::parseCommand(QString str)
 {
 	kdDebug() << "MSN Plugin: LibKmerlin: Parsing command " << str << endl;
-	QString miss,len; char dat[1024];
+	QString miss,len;
 	str = str.replace(QRegExp("\r\n"),"");
 	QString command = str.left(3);
 	if(command == "NLN")

@@ -121,9 +121,14 @@ public slots:
 	void slotGoURL( const QString );
 
 signals:
-	void userStateChange( QString, QString, QString );
+	void userStateChange( QString, QString, int );
 	void protocolUnloading();
 	void settingsChanged( void );
+
+	// Propagated from the MSN Service, in order to hide it from external
+	// classes:
+	void updateContact( QString handle, uint status );
+	void contactRemoved( QString handle, QString groupName );
 
 private:
 	void initIcons();
