@@ -5,10 +5,10 @@
 
     Copyright (c) 2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
 
-	Contains code from motion.c ( Detect changes in a video stream )
-	Copyright 2000 by Jeroen Vreeken (pe1rxq@amsat.org)
-	Distributed under the GNU public license version 2
-	See also the file 'COPYING.motion'
+    Contains code from motion.c ( Detect changes in a video stream )
+    Copyright 2000 by Jeroen Vreeken (pe1rxq@amsat.org)
+    Distributed under the GNU public license version 2
+    See also the file 'COPYING.motion'
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -267,7 +267,7 @@ void MotionAwayPlugin::slotTimeout()
 	if ( !KopeteAway::globalAway() && ! m_wentAway )
 	{
 		kdDebug() << "[MotionAway Plugin] : Timeout and no user activity, going away" << endl;
-        m_wentAway = true;
+		m_wentAway = true;
 		kopeteapp->setAwayAll();
 	}
 }

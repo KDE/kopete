@@ -15,14 +15,14 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <qapplication.h>
 #include <qstylesheet.h>
- 
+
 #include <kdebug.h>
 #include <kaction.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
 
-#include "kopete.h"
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
 #include "kopetemessagemanager.h"
@@ -32,7 +32,6 @@
 #include "cryptographyselectuserkey.h"
 
 #include "kgpginterface.h"
-
 
 K_EXPORT_COMPONENT_FACTORY( kopete_cryptography, KGenericFactory<CryptographyPlugin> );
 
@@ -47,10 +46,10 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name,
 	//TODO: found a pixmap
 	m_prefs = new CryptographyPreferences ( "kgpg", this );
 
-	connect( kopeteapp, SIGNAL(aboutToDisplay(KopeteMessage&)),
-		 SLOT(slotIncomingMessage(KopeteMessage&)) );
-	connect( kopeteapp, SIGNAL(aboutToSend(KopeteMessage&)),
-		 SLOT(slotOutgoingMessage(KopeteMessage&)) );
+	connect( qApp, SIGNAL( aboutToDisplay( KopeteMessage & ) ),
+		 SLOT( slotIncomingMessage( KopeteMessage & ) ) );
+	connect( qApp, SIGNAL( aboutToSend( KopeteMessage & ) ),
+		 SLOT( slotOutgoingMessage( KopeteMessage & ) ) );
 
 	m_collection=0l;
 	m_currentMetaContact=0L;
@@ -146,7 +145,7 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 	QString key;
 
 	QPtrList<KopeteContact> contactlist = msg.to();
-	for (KopeteContact *c=contactlist.first(); c; c = contactlist.next()) 
+	for (KopeteContact *c=contactlist.first(); c; c = contactlist.next())
 	{
 		QStringList strlist= c->metaContact()->pluginData(this);
 		if(strlist.isEmpty())
@@ -164,24 +163,24 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 		kdDebug() << "CryptographyPlugin::slotOutgoingMessage: empty key" <<endl;
 		return;
 	}
-	
-   QString original=msg.plainBody();
-	
+
+	QString original=msg.plainBody();
+
 	/* Code From KGPG */
 
-  //////////////////              encode from editor
-  QString encryptOptions="";
+	//////////////////              encode from editor
+	QString encryptOptions="";
 
-  //if (utrust==true)
+	//if (utrust==true)
 		encryptOptions+=" --always-trust ";
-  //if (arm==true)
+	//if (arm==true)
 		encryptOptions+=" --armor ";
 
- /* if (pubcryptography==true)
-   {
-      if (gpgversion<120) encryptOptions+=" --compress-algo 1 --cipher-algo cast5 ";
-      else encryptOptions+=" --cryptography6 ";
-    }*/
+	/* if (pubcryptography==true)
+	{
+		if (gpgversion<120) encryptOptions+=" --compress-algo 1 --cipher-algo cast5 ";
+		else encryptOptions+=" --cryptography6 ";
+	}*/
 
 // if (selec==NULL) {KMessageBox::sorry(0,i18n("You have not choosen an encryption key..."));return;}
 
@@ -193,7 +192,7 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 	}
 	else
 		kdDebug() << "CryptographyPlugin::slotOutgoingMessage: empty result" <<endl;
-	
+
 }
 
 void CryptographyPlugin::slotSelectContactKey()
@@ -213,4 +212,6 @@ void CryptographyPlugin::slotSelectContactKey()
 }
 
 #include "cryptographyplugin.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:
 

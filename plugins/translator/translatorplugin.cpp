@@ -17,6 +17,7 @@
     *************************************************************************
 */
 
+#include <qapplication.h>
 #include <qcolor.h>
 #include <qcstring.h>
 #include <qstring.h>
@@ -32,7 +33,6 @@
 #include <kstandarddirs.h>
 #include <kurl.h>
 
-#include "kopete.h"
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 #include "kopetemetacontact.h"
@@ -128,10 +128,10 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 	}
 
 	m_prefs = new TranslatorPreferences ( "locale", this );
- 
-	connect( kopeteapp, SIGNAL(aboutToDisplay(KopeteMessage&)),
+
+	connect( qApp, SIGNAL(aboutToDisplay(KopeteMessage&)),
 		 SLOT(slotIncomingMessage(KopeteMessage&)) );
-	connect( kopeteapp, SIGNAL(aboutToSend(KopeteMessage&)),
+	connect( qApp, SIGNAL(aboutToSend(KopeteMessage&)),
 		 SLOT(slotOutgoingMessage(KopeteMessage&)) );
 }
 
@@ -168,7 +168,7 @@ KActionCollection *TranslatorPlugin::customContextMenuActions(KopeteMetaContact 
 		m_actionLanguage->setCurrentItem( languageIndex(strlist.first()) );
 	else
 		m_actionLanguage->setCurrentItem( languageIndex("null") );
-	
+
 
 	connect( m_actionLanguage, SIGNAL( activated() ), this, SLOT(slotSetLanguage()) );
 	m_actionCollection->insert(m_actionLanguage);
@@ -250,7 +250,7 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 	if(m_prefs->outgoingMode()==DontTranslate)
 		return;
 
-		
+
 	QString src_lang;
 	QString dst_lang;
 
@@ -347,7 +347,7 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg , const QSt
 
 	/* KIO is async and we use a sync API, hay que dentrar a picarle nomas */
 	while ( ! m_completed[ job ] )
-		kopeteapp->processEvents();
+		qApp->processEvents();
 
 	QString data = QString::fromUtf8(m_data[job]);
 
@@ -372,7 +372,7 @@ QString TranslatorPlugin::googleTranslateMessage( const QString &msg , const QSt
 QString TranslatorPlugin::babelTranslateMessage( const QString &msg , const QString &from, const QString &to)
 {
 	kdDebug() << "TranslatorPlugin::babelTranslateMessage : [" << from << "_" << to << "] " << endl ;
-	
+
 	QString body, lp;
 	//KURL translatorURL;
 	//QCString postData;
@@ -393,7 +393,7 @@ QString TranslatorPlugin::babelTranslateMessage( const QString &msg , const QStr
 
 	//job = KIO::http_post( translatorURL, postData, true );
 	job = KIO::get( geturl, false, true );
-	
+
 	//job->addMetaData("content-type", "application/x-www-form-urlencoded" );
 	//job->addMetaData("referrer", "http://www.google.com");
 
@@ -402,7 +402,7 @@ QString TranslatorPlugin::babelTranslateMessage( const QString &msg , const QStr
 
 	/* KIO is async and we use a sync API, hay que dentrar a picarle nomas */
 	while ( ! m_completed[ job ] )
-		kopeteapp->processEvents();
+		qApp->processEvents();
 
 	QString data = QString::fromUtf8(m_data[job]);
 
@@ -430,9 +430,9 @@ void TranslatorPlugin::sendTranslation(KopeteMessage &msg, const QString &transl
 		kdDebug() << "TranslatorPlugin::sendTranslation - WARNING: Translated text is empty" <<endl;
 		return;
 	}
-	
+
 	TranslateMode mode=DontTranslate;
-	
+
 	switch (msg.direction())
 	{
 		case KopeteMessage::Outbound:
@@ -548,12 +548,5 @@ void TranslatorPlugin::slotTranslateChat()
 
 #include "translatorplugin.moc"
 
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 
