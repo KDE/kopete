@@ -97,7 +97,7 @@
                         </widget>
                         <widget class="QComboBox">
                             <property name="name">
-                                <cstring>comboBox1</cstring>
+                                <cstring>dnEdit_</cstring>
                             </property>
                             <property name="editable">
                                 <bool>true</bool>
@@ -132,7 +132,7 @@
                         </widget>
                         <widget class="QLineEdit">
                             <property name="name">
-                                <cstring>addEdit__2</cstring>
+                                <cstring>snameEdit_</cstring>
                             </property>
                         </widget>
                     </hbox>
@@ -166,7 +166,7 @@
                         </widget>
                         <widget class="QLineEdit">
                             <property name="name">
-                                <cstring>addEdit__2_2</cstring>
+                                <cstring>nickEdit_</cstring>
                             </property>
                         </widget>
                     </hbox>
@@ -200,7 +200,7 @@
                         </widget>
                         <widget class="QLineEdit">
                             <property name="name">
-                                <cstring>addEdit__4</cstring>
+                                <cstring>emailEdit_</cstring>
                             </property>
                         </widget>
                     </hbox>
@@ -241,7 +241,7 @@
                 </widget>
                 <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
                     <property name="name">
-                        <cstring>checkBox1</cstring>
+                        <cstring>notAFriend_</cstring>
                     </property>
                     <property name="text">
                         <string>Set to offline for him, when status option "Just for friends" is used. </string>
