@@ -174,10 +174,6 @@ private slots:
 private:
 	bool mShowAsTree;
 
-	QPixmap open;
-	QPixmap closed;
-	QPixmap classic;
-
 	QPtrList<KopeteGroupViewItem> mGroups;
 
 	QPtrList<KopeteMetaContactLVI> m_metaContacts;

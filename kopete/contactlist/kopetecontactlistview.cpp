@@ -289,10 +289,6 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 
 	addColumn( i18n( "Contacts" ), 0 );
 
-	closed  = SmallIcon( "folder_green" );
-	open    = SmallIcon( "folder_green_open" );
-	classic = SmallIcon( "folder_blue" );
-
 	// Add the already existing groups now
 	for ( QPtrListIterator<KopeteGroup> groupIt( KopeteContactList::contactList()->groups() ); groupIt.current(); ++groupIt )
 		getGroup( groupIt.current(), true );

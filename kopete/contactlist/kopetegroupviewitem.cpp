@@ -69,22 +69,22 @@ void KopeteGroupViewItem::refreshDisplayName()
 	//if ( !m_group )
 	//	return;
 
-	QString newText;
+	QString groupName;
 	// FIXME: I think handling the i18n for temporary and top level
 	//        groups belongs in KopeteGroup instead.
 	//        It's now duplicated in KopeteGroupListAction and
 	//        KopeteGroupViewItem already - Martijn
 	switch ( m_group->type() )
 	{
-	case KopeteGroup::Temporary:
-		newText = i18n( "Not in your contact list" );
-		break;
-	case KopeteGroup::TopLevel:
-		newText = i18n( "Top-Level" );
-		break;
-	default:
-		newText = m_group->displayName();
-		break;
+		case KopeteGroup::Temporary:
+			groupName = i18n( "Not in your contact list" );
+			break;
+		case KopeteGroup::TopLevel:
+			groupName = i18n( "Top-Level" );
+			break;
+		default:
+			groupName = m_group->displayName();
+			break;
 	}
 
 	totalMemberCount = 0;
@@ -101,11 +101,15 @@ void KopeteGroupViewItem::refreshDisplayName()
 		}
 	}
 
-	m_renameText = newText;
-	newText += " (" + QString::number( onlineMemberCount ) + "/" + QString::number( totalMemberCount ) + ")";
-	//kdDebug( 14000 ) << k_funcinfo << "newText='" << newText << "', old text= " << text( 0 ) << endl;
+	m_renameText = groupName;
 
-	setText( 0, newText );
+	setText( 0,
+		i18n( "GROUPNAME (NO OF ONLINE CONTACTS/NO OF CONTACTS IN GROUP)",
+			"%1 (%2/%3)").arg(
+				groupName,
+				QString::number( onlineMemberCount ),
+				QString::number( totalMemberCount ) ) );
+
 	updateVisibility();
 
 	// Sorting in this slot is extremely expensive as it's called dozens of times and
@@ -185,37 +189,40 @@ void KopeteGroupViewItem::updateIcon()
 	bool treeView = true;
 	if ( KopeteContactListView *lv = dynamic_cast<KopeteContactListView*>( listView() ) )
 		treeView = lv->showAsTree();
-	//kdDebug( 14000 ) << k_funcinfo << "treeView=" << treeView << endl;
+	//kdDebug(14000) << k_funcinfo << "treeView=" << treeView << endl;
 
 	// TODO: clever caching
-	if ( !group()->useCustomIcon() )
-		return;
-
 	if ( treeView )
 	{
 		if ( isOpen() )
 		{
-			open = SmallIcon( group()->icon( KopetePluginDataObject::Open ) );
+			if ( group()->useCustomIcon() )
+				open = SmallIcon( group()->icon( KopetePluginDataObject::Open ) );
+			else
+				open = SmallIcon( "folder_green_open" );
+
 			setPixmap( 0, open );
-			/*kdDebug(14000) << k_funcinfo << "setting open icon name='" <<
-				group()->icon( KopetePluginDataObject::Open ) << "'" << endl;*/
 		}
 		else
 		{
-			closed = SmallIcon( group()->icon( KopetePluginDataObject::Closed ) );
+			if ( group()->useCustomIcon() )
+				closed = SmallIcon( group()->icon( KopetePluginDataObject::Closed ) );
+			else
+				closed = SmallIcon( "folder_green" );
+
 			setPixmap( 0, closed );
-			/*kdDebug(14000) << k_funcinfo << "setting closed icon name='" <<
-				group()->icon( KopetePluginDataObject::Closed ) << "'" << endl;*/
 		}
 	}
 	else // classic view
 	{
-		open = SmallIcon( group()->icon( KopetePluginDataObject::Open ) );
+		if ( group()->useCustomIcon() )
+			open = SmallIcon( group()->icon( KopetePluginDataObject::Open ) );
+		else
+			open = SmallIcon( "folder_blue" );
+
 		setPixmap( 0, open );
 	}
 }
 
 #include "kopetegroupviewitem.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
-
