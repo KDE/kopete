@@ -106,9 +106,6 @@
                     <property name="text">
                         <string>Use the message &amp;queue</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+Q</string>
-                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>Use a queue instead of opening a chat window on incoming messages</string>
                     </property>

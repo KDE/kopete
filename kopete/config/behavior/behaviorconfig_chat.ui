@@ -142,9 +142,6 @@
             <property name="text">
                 <string>Highlight messages containing your &amp;nickname</string>
             </property>
-            <property name="accel">
-                <string>Alt+N</string>
-            </property>
         </widget>
         <widget class="QCheckBox" row="1" column="0">
             <property name="name">
@@ -153,9 +150,6 @@
             <property name="text">
                 <string>Show e&amp;vents in chat window</string>
             </property>
-            <property name="accel">
-                <string>Alt+V</string>
-            </property>
         </widget>
         <widget class="QCheckBox" row="0" column="0">
             <property name="name">
@@ -163,9 +157,6 @@
             </property>
             <property name="text">
                 <string>&amp;Raise window/tab on new messages</string>
-            </property>
-            <property name="accel">
-                <string>Alt+R</string>
             </property>
         </widget>
         <widget class="QLayoutWidget" row="5" column="0">
