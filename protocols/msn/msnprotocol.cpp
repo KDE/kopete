@@ -57,7 +57,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 	LUN( KopeteOnlineStatus::Away,    15, this, 6, "msn_away",      i18n( "Set Out to &Lunch" ),  i18n( "Out to Lunch" ) ),
 	FLN( KopeteOnlineStatus::Offline,  0, this, 7, "msn_offline",   i18n( "Go &Offline" ),        i18n( "Offline" ) ),
 	HDN( KopeteOnlineStatus::Online,   3, this, 8, "msn_offline",   i18n( "Set &Invisible" ),     i18n( "Invisible" ) ),
-	IDL( KopeteOnlineStatus::Away,    10, this, 9, "msn_online",    "FIXME: Make this unselectable", i18n( "Idle" ) ),
+	IDL( KopeteOnlineStatus::Away,    10, this, 9, "msn_away",      "FIXME: Make this unselectable", i18n( "Idle" ) ),
 	UNK( KopeteOnlineStatus::Unknown, 25, this, 0, "msn_offline",   "FIXME: Make this unselectable", i18n( "Status not available" ) ),
 	CNT( KopeteOnlineStatus::Unknown,  2, this, 10,"msn_connecting","FIXME: Make this unselectable", i18n( "Connecting" ) )
 {
