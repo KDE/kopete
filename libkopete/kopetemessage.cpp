@@ -624,7 +624,7 @@ const QDomDocument KopeteMessage::asXML() const
 		QDomElement fromMcDisplayname = doc.createElement( QString::fromLatin1("metaContactDisplayName") );
 		fromMcDisplayname.setAttribute( QString::fromLatin1("dir"), fromName.isRightToLeft() ?
 			QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
-		fromContactNode.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( fromName ) );
+		fromMcDisplayname.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( fromName ) );
 		fromContactNode.appendChild( fromMcDisplayname );
 		
 		QString iconPath = KGlobal::iconLoader()->iconPath( d->from->protocol()->pluginIcon(), 		KIcon::Small );
@@ -709,7 +709,6 @@ const QDomDocument KopeteMessage::asXML() const
 
 #endif
 }
-
 
 // vim: set noet ts=4 sts=4 sw=4:
 
