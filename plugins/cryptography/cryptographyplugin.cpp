@@ -32,7 +32,6 @@
 #include "cryptographyselectuserkey.h"
 
 #include "kgpginterface.h"
-#include "ksettings/dispatcher.h"
 
 typedef KGenericFactory<CryptographyPlugin> CryptographyPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_cryptography, CryptographyPluginFactory( "kopete_cryptography" ) );
@@ -61,7 +60,7 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 
 	setXMLFile("cryptographyui.rc");
     loadSettings();
-	KSettings::Dispatcher::self()->registerInstance( instance(), this, SLOT( loadSettings() ) );
+	connect(this, SIGNAL(settingsChanged()), this, SLOT( loadSettings() ) );
 }
 
 
