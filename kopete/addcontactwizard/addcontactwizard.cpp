@@ -153,13 +153,18 @@ void AddContactWizard::accept()
 	}
 	m->setTopLevel(topLevel);
 
+	bool ok=false;
+
 	QMap <KopeteAccount*,AddContactPage*>::Iterator it;
 	for ( it = protocolPages.begin(); it != protocolPages.end(); ++it ) 
 	{
-		it.data()->apply(it.key(),m); 
+		ok |= it.data()->apply(it.key(),m); 
 	}
-	KopeteContactList::contactList()->addMetaContact(m);
-	delete(this);
+	if(ok)
+		KopeteContactList::contactList()->addMetaContact(m);
+	else
+		delete m;
+	delete this;
 }
 
 void AddContactWizard::next()
