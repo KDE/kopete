@@ -1,3 +1,10 @@
+AC_DEFUN([AC_LIBGADU_DEFINE],
+[
+sed -e "s/#undef __GG_LIBGADU_$1/#define __GG_LIBGADU_$1/" \
+${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h > ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h.1
+mv ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h{.1,}
+])
+	 
 LIBGG_INCLUDES=""
 LIBGG_LIBS=""
 ac_libgadu_includes=""
@@ -58,15 +65,58 @@ AC_MSG_CHECKING([libgadu version 1.4rc2, 1.4, 1.5(rcX) with pthread support])
 	AC_SUBST(LIBGG_LIBS)
 	COMPILE_GADU=true
 	AC_SUBST(COMPILE_GADU)
+	use_libgadu_copy=no
 	], [
-	AC_MSG_RESULT([no])
-	COMPILE_GADU=
-	AC_SUBST(COMPILE_GADU)
+	if test "$LIBPTHREAD" != "" ; then
+	AC_MSG_RESULT([no, falling back on supplied libgadu-copy])
+	use_libgadu_copy=yes
+	COMPILE_GADU=true
+	else
+	use_libgadu_copy=no
+	AC_MSG_RESULT([no, cannot fall back on libgadu-copy (no pthread)])
+	COMPILE_GADU=	
+	use_libgadu_copy=no
+	fi
+	AC_SUBST(COMPILE_GADU)	
 	])
+
 AM_CONDITIONAL(include_gadu, test -n "$COMPILE_GADU")
+AM_CONDITIONAL(include_libggcopy, test -n "$use_libgadu_copy")
 LIBS="$ac_save_LIBS"
 CXXFLAGS="$ac_save_CXXFLAGS"
 
-KDE_CHECK_SSL
+if test "$use_libgadu_copy" = "yes"; then
+	cp ${srcdir}/kopete/protocols/gadu/libgadu/libgadu-config.h{.in,}
+	if test "$ac_cv_c_bigendian" = "yes"; then
+		AC_LIBGADU_DEFINE([BIGENDIAN])	
+	fi
+	KDE_CHECK_LONG_LONG
+	if test "$kde_cv_c_long_long" = "yes"; then
+	AC_LIBGADU_DEFINE([HAVE_LONG_LONG])
+	fi
+	KDE_CHECK_SSL
+	if test  "$have_ssl" = "yes"; then
+	AC_LIBGADU_DEFINE([HAVE_OPENSSL])
+	fi
+	AC_MSG_CHECKING([for C99-compatible vsnprintf()])
+	AC_TRY_RUN(
+	[
+		#include <stdio.h>
+		int main()
+		{
+			char tmp;
+			return (snprintf(&tmp, sizeof(tmp), "test") != 4);
+		}
+	],[
+		AC_MSG_RESULT([yes])
+		AC_LIBGADU_DEFINE([HAVE_C99_VSNPRINTF])
+	], [
+		 AC_MSG_RESULT([no])
+	])
+	AC_CHECK_FUNCS([va_copy],
+		       [AC_LIBGADU_DEFINE([HAVE_VA_COPY])],[])
+	AC_CHECK_FUNCS([_va_copy],
+		       [AC_LIBGADU_DEFINE([HAVE__VA_COPY])],[])
+fi
 
 AM_CONDITIONAL(include_jabber, test "$have_ssl" = "yes")
