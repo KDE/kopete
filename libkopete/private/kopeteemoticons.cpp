@@ -188,10 +188,20 @@ QValueList<Emoticons::Token> Emoticons::tokenize( const QString& message, ParseM
 			}
 			if( !found )
 			{
-					if( inHTMLEntity ){
-						while( message[++pos] != ';' );
+				if( inHTMLEntity ){
+					// If we are in an HTML entitiy such as &gt;
+					int htmlEnd;
+					// Search for where it ends
+					if( ( htmlEnd = message.find( ';', pos ) ) == -1 ){
+						// Apparently this HTML entity isn't ended, something is wrong, try skip the '&'
+						// and continue
+						kdDebug( 14000 ) << k_funcinfo << "Broken HTML entity, trying to recover." << endl;
 						inHTMLEntity = false;
+						pos++;
+					} else {
+						pos = htmlEnd;
 					}
+				}
 			}
 		} /* else no emoticons begin with this character, so don't do anything */
 		p = c;
