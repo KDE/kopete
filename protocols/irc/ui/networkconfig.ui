@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>NetworkConfig</class>
 <widget class="QDialog">
     <property name="name">
@@ -217,6 +217,9 @@
                     <property name="name">
                         <cstring>downButton</cstring>
                     </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
                     <property name="text">
                         <string>Down</string>
                     </property>
@@ -247,6 +250,9 @@
                 <widget class="QPushButton" row="1" column="4">
                     <property name="name">
                         <cstring>upButton</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
                     </property>
                     <property name="text">
                         <string>Up</string>

@@ -1053,7 +1053,7 @@ void IRCProtocol::slotReadNetworks()
 
 void IRCProtocol::slotMoveServerUp()
 {
-	IRCHost *selectedHost = m_hosts[ netConf->hostList->currentText() ];
+	IRCHost *selectedHost = m_hosts[ netConf->hostList->currentText().section(':', 0, 0) ];
 	IRCNetwork *selectedNetwork = m_networks[ netConf->networkList->currentText() ];
 
 	if( !selectedNetwork || !selectedHost )
@@ -1080,7 +1080,7 @@ void IRCProtocol::slotMoveServerUp()
 
 void IRCProtocol::slotMoveServerDown()
 {
-	IRCHost *selectedHost = m_hosts[ netConf->hostList->currentText() ];
+	IRCHost *selectedHost = m_hosts[ netConf->hostList->currentText().section(':', 0, 0) ];
 	IRCNetwork *selectedNetwork = m_networks[ netConf->networkList->currentText() ];
 
 	if( !selectedNetwork || !selectedHost )
@@ -1090,15 +1090,18 @@ void IRCProtocol::slotMoveServerDown()
 	if( *pos != selectedNetwork->hosts.back() )
 	{
 		QValueList<IRCHost*>::iterator nextPos = pos;
-		nextPos++; nextPos++;
+		nextPos++;
 		selectedNetwork->hosts.insert( nextPos, selectedHost );
 		selectedNetwork->hosts.remove( pos );
 	}
 
 	int currentPos = netConf->hostList->currentItem();
-	netConf->hostList->removeItem( currentPos );
-	netConf->hostList->insertItem( selectedHost->host, ++currentPos );
-	netConf->hostList->setSelected( currentPos, true );
+	if( currentPos < ( netConf->hostList->count() - 1 ) )
+	{
+		netConf->hostList->removeItem( currentPos );
+		netConf->hostList->insertItem( selectedHost->host, ++currentPos );
+		netConf->hostList->setSelected( currentPos, true );
+	}
 }
 
 

@@ -230,8 +230,6 @@ KopeteAccount *IRCEditAccountWidget::apply()
 	// what about?:
 	// password - No time to sort out the password handling or move to KopetePasswordedAccount before 3.3 
 	// remember password cb - disabling the UI for this.
-	// prefer SSL
-	// default charset
 	
 	if ( preferSSL->isChecked () )
 		account()->setPluginData (m_protocol, "PreferSSL", "true");
