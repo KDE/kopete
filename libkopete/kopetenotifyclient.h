@@ -66,8 +66,8 @@ namespace KNotifyClient
 	 * @return a value > 0, unique for this event if successful, 0 otherwise
 	 * @since 3.2
 	 */
-	int userEvent(int winId, const QString &text, int present, int level, const QString &sound,
-			 const QString &file, const QString &commandline,
+	int userEvent(int winId, const QString &message, const QString &text, int present, int level, 
+			 const QString &sound, const QString &file, const QString &commandline,
 			 const KGuiItem &action = KGuiItem() , QObject *receiver=0L, const char *slot=0L);
 }
 

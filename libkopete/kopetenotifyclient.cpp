@@ -33,6 +33,9 @@
 #include <kdeversion.h>
 #include <kiconloader.h>
 #include <klocale.h>
+#if KDE_IS_VERSION( 3, 1, 3 )
+#include <kmacroexpander.h>
+#endif
 #include <kmessagebox.h>
 #include <kpassivepopup.h>
 #include <kprocess.h>
@@ -76,7 +79,8 @@ static int notifyBySound( const QString &filename , const QString &appname, int 
   return 0;
 }
 
-static bool notifyByMessagebox(const QString &text, int level, const KGuiItem &action , QObject* receiver , const char* slot)
+static bool notifyByMessagebox(const QString &text, int level, WId winId, const KGuiItem &action,
+		QObject* receiver , const char* slot)
 {
     // ignore empty messages
     if ( text.isEmpty() )
@@ -87,16 +91,16 @@ static bool notifyByMessagebox(const QString &text, int level, const KGuiItem &a
 		switch( level ) {
 		default:
 		case KNotifyClient::Notification:
-			KMessageBox::information( 0, text, i18n( "Notification" ) );
+			KMessageBox::informationWId( winId, text, i18n( "Notification" ) );
 			break;
 		case KNotifyClient::Warning:
-			KMessageBox::sorry( 0, text, i18n( "Warning" ) );
+			KMessageBox::sorryWId( winId, text, i18n( "Warning" ) );
 			break;
 		case KNotifyClient::Error:
-			KMessageBox::error( 0, text, i18n( "Error" ) );
+			KMessageBox::errorWId( winId, text, i18n( "Error" ) );
 			break;
 		case KNotifyClient::Catastrophe:
-			KMessageBox::error( 0, text, i18n( "Fatal" ) );
+			KMessageBox::errorWId( winId, text, i18n( "Fatal" ) );
 			break;
 	}
     } else { //we may show the specific action button
@@ -159,14 +163,28 @@ static bool notifyByPassivePopup( const QString &text, const QString &appName,WI
     return true;
 }
 
-static bool notifyByExecute(const QString &command) {
+static bool notifyByExecute( const QString &command, const QString& event,
+		const QString& fromApp, const QString& text,
+		int winId, int eventId ) {
     if (!command.isEmpty()) {
+		QString execLine;
+#if KDE_IS_VERSION( 3, 1, 3 )
 	// kdDebug() << "executing command '" << command << "'" << endl;
-	KProcess p;
-	p.setUseShell(true);
-	p << command;
-	p.start(KProcess::DontCare);
-	return true;
+		QMap<QChar,QString> subst;
+		subst.insert( 'e', event );
+		subst.insert( 'a', fromApp );
+		subst.insert( 's', text );
+		subst.insert( 'w', QString::number( winId ) );
+		subst.insert( 'i', QString::number( eventId ) );
+		execLine = KMacroExpander::expandMacrosShellQuote( command, subst );
+#endif
+		if ( execLine.isEmpty() )
+			execLine = command; // fallback
+		KProcess p;
+		p.setUseShell(true);
+		p << execLine;
+		p.start(KProcess::DontCare);
+		return true;
     }
     return false;
 }
@@ -284,16 +302,20 @@ int KNotifyClient::event(int winId, const QString &message, const QString &text,
 
     // get sound file name
     if( present & KNotifyClient::Sound ) {
-	sound = configFile.readPathEntry( "soundfile" );
-	if ( sound.length()==0 )
-	    sound = eventsFile.readPathEntry( "default_sound" );
+		QString theSound = configFile.readPathEntry( "soundfile" );
+		if ( theSound.isEmpty() )
+			theSound = eventsFile.readPathEntry( "default_sound" );
+		if ( !theSound.isEmpty() )
+			 sound = theSound;
     }
 
     // get log file name
     if( present & KNotifyClient::Logfile ) {
-	file = configFile.readPathEntry( "logfile" );
-	if ( file.length()==0 )
-	    file = eventsFile.readPathEntry( "default_logfile" );
+		QString theFile = configFile.readPathEntry( "logfile" );
+		if ( theFile.isEmpty() )
+			theFile = eventsFile.readPathEntry( "default_logfile" );
+		if ( !theFile.isEmpty() )
+			 file = theFile;
     }
 
     // get default event level
@@ -303,16 +325,17 @@ int KNotifyClient::event(int winId, const QString &message, const QString &text,
      // get command line
     if (present & KNotifyClient::Execute ) {
 	commandline = configFile.readPathEntry( "commandline" );
-	if ( commandline.length()==0 )
+	if ( commandline.isEmpty() )
 	    commandline = eventsFile.readPathEntry( "default_commandline" );
     }
 
 
-    return userEvent(winId, text,  present , level, sound, file, commandline, action, receiver, slot);
+    return userEvent(winId, message, text,  present , level, sound, file, commandline, action, receiver,
+			slot);
 }
 
-int KNotifyClient::userEvent(int winId, const QString &text, int present, int level,
-                              const QString &sound, const QString &file, const QString& commandline,
+int KNotifyClient::userEvent(int winId, const QString &message, const QString &text, int present,
+		int level, const QString &sound, const QString &file, const QString& commandline,
                               const KGuiItem &action , QObject* receiver , const char* slot)
 {
     int uniqueId = kMax( 1, kapp->random() ); // must not be 0 -- means failure!
@@ -332,7 +355,7 @@ int KNotifyClient::userEvent(int winId, const QString &text, int present, int le
 	notifyByPassivePopup( text, appname, winId, action, receiver, slot );
 
     else if ( present & KNotifyClient::Messagebox )
-	notifyByMessagebox( text, level, action, receiver, slot );
+	notifyByMessagebox( text, level, winId, action, receiver, slot );
 
     if ( present & KNotifyClient::Logfile ) // && QFile(file).isWritable()
 	notifyByLogfile( text, file );
@@ -341,7 +364,7 @@ int KNotifyClient::userEvent(int winId, const QString &text, int present, int le
 	notifyByStderr( text );
 
     if ( present & KNotifyClient::Execute )
-	notifyByExecute( commandline );
+	notifyByExecute( commandline, message, appname, text, winId, uniqueId );
 
 #if KDE_IS_VERSION( 3, 1, 90 )
     if ( present & KNotifyClient::Taskbar )
