@@ -361,6 +361,7 @@ void JabberProtocol::slotIconRightClicked(const QPoint&) {
 	actionGoAway->plug(popup);
 	actionGoXA->plug(popup);
 	actionGoDND->plug(popup);
+	popup->insertSeparator();
 	actionSendRaw->plug(popup);
 	popup->popup(QCursor::pos());
 }
