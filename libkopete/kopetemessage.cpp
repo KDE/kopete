@@ -187,6 +187,10 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 {
 	static QMap<QString,QColor> colorMap;
 	static int lastColor;
+	const QColor nameColors[] = {
+		Qt::red, Qt::green, Qt::blue, Qt::cyan, Qt::magenta,
+		Qt::darkRed, Qt::darkGreen, Qt::darkCyan, Qt::darkMagenta, Qt::darkYellow
+	};
 
 	d->refCount = 1;
 	d->timeStamp = timeStamp;
@@ -213,45 +217,10 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 			if( direction == Outbound )
 				newColor = Qt::yellow;
 			else
-			{
-				switch( (lastColor++) % 10 )
-				{
-					case 0:
-						newColor = Qt::red;
-						break;
-					case 1:
-						newColor =  Qt::green;
-						break;
-					case 2:
-						newColor =  Qt::blue;
-						break;
-					case 3:
-						newColor =  Qt::cyan;
-						break;
-					case 4:
-						newColor =  Qt::magenta;
-						break;
-					case 5:
-						newColor =  Qt::darkRed;
-						break;
-					case 6:
-						newColor =  Qt::darkGreen;
-						break;
-					case 7:
-						newColor =  Qt::darkCyan;
-						break;
-					case 8:
-						newColor =  Qt::darkMagenta;
-						break;
-					case 9:
-						newColor =  Qt::darkYellow;
-						break;
-				}
-			}
+				newColor = nameColors[(lastColor++) % (sizeof(nameColors) / sizeof(nameColors[0]))];
 			colorMap.insert( fromName, newColor );
 		}
 		d->contactColor = colorMap[ fromName ];
-
 
 		//Highlight if the message contains the nickname (i think it should be place in the highlight plugin)
 		if( KopetePrefs::prefs()->highlightEnabled() && from->account() && from->account()->myself() &&
@@ -444,11 +413,9 @@ void KopeteMessage::detach()
 	if( d->refCount == 1 )
 		return;
 
-	KopeteMessagePrivate *newD = new KopeteMessagePrivate;
-
 	// Warning: this only works as long as the private object doesn't contain pointers to allocated objects.
 	// The from contact for example is fine, but it's a shallow copy this way.
-	*newD = *d;
+	KopeteMessagePrivate *newD = new KopeteMessagePrivate(*d);
 	newD->refCount = 1;
 	d->refCount--;
 
