@@ -43,7 +43,7 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 	mCustomActions = new KActionCollection(this);
 	actionJoin = new KAction(i18n("&Join"), 0, this, SLOT(slotJoin()), this, "actionJoin");
 	actionPart = new KAction(i18n("&Part"), 0, this, SLOT(slotPart()), this, "actionPart");
-	actionTopic = new KAction(i18n("Change &Topic"), 0, this, SLOT(setTopic()), this, "actionTopic");
+	actionTopic = new KAction(i18n("Change &Topic..."), 0, this, SLOT(setTopic()), this, "actionTopic");
 	actionModeMenu = new KActionMenu(i18n("Channel Modes"), 0, this, "actionModeMenu");
 
 	mCustomActions->insert( actionJoin );
@@ -62,6 +62,8 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 	actionModeMenu->insert( actionModeS );
 	actionModeMenu->insert( actionModeM );
 	actionModeMenu->insert( actionModeI );
+	actionModeMenu->setEnabled( true );
+	slotModeChanged();
 
 	// KIRC Engine stuff
 	QObject::connect(identity->engine(), SIGNAL(userJoinedChannel(const QString &, const QString &)), this, SLOT(slotUserJoinedChannel(const QString &, const QString &)));
@@ -70,6 +72,7 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 	QObject::connect(identity->engine(), SIGNAL(incomingExistingTopic(const QString &, const QString &)), this, SLOT( slotChannelTopic(const QString&, const QString &)));
 	QObject::connect(identity->engine(), SIGNAL(incomingTopicChange(const QString &, const QString &, const QString &)), this, SLOT( slotTopicChanged(const QString&,const QString&,const QString&)));
 	QObject::connect(identity->engine(), SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
+	QObject::connect(identity->engine(), SIGNAL(incomingChannelMode(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingChannelMode(const QString&,const QString&, const QString&)));
 	QObject::connect(identity->engine(), SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
 	QObject::connect( this, SIGNAL( endSession() ), this, SLOT( slotPart() ) );
 }
@@ -118,15 +121,27 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QStringList 
 		kdDebug(14120) << k_funcinfo << "Names List:" << channel << endl;
 
 		QStringList mNickNames = nicknames;
+		KIRC::UserClass userclass;
 		for (QStringList::Iterator it = mNickNames.begin(); it != mNickNames.end(); it++)
 		{
 			if ((*it).lower() == mNickName.lower())
 				continue;
 
-			if ((*it)[0] == '@' || (*it)[0] == '+')
+			if ( (*it)[0] == '@' )
+			{
 				(*it) = (*it).remove(0, 1);
+				userclass = KIRC::Operator;
+			}
+			else if( (*it)[0] == '+')
+			{
+				(*it) = (*it).remove(0, 1);
+				userclass = KIRC::Voiced;
+			}
+			else
+				userclass = KIRC::Normal;
 
 			IRCUserContact *user = mIdentity->findUser( *it );
+			user->setUserclass( userclass );
 			user->setOnlineStatus( KopeteContact::Online );
 			manager()->addContact( static_cast<KopeteContact*>(user), true );
 		}
@@ -170,6 +185,7 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 				slotSendMsg( messageQueue.front(), manager() );
 				messageQueue.pop_front();
 			}
+			setMode( QString::null );
 		}
 		else
 		{
@@ -234,61 +250,122 @@ void IRCChannelContact::slotIncomingModeChange( const QString &nick, const QStri
 	{
 		KopeteMessage msg((KopeteContact *)this, mContact, i18n("%1 sets mode %2 %3").arg(nick).arg(mode).arg(mNickName), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 		manager()->appendMessage(msg);
+		bool inParams = false;
+		bool modeEnabled = false;
+		QString params = QString::null;
+		for( uint i=0; i < mode.length(); i++ )
+		{
+			switch( mode[i] )
+			{
+				case '+':
+					modeEnabled = true;
+					break;
+
+				case '-':
+					modeEnabled = false;
+					break;
+
+				case ' ':
+					inParams = true;
+					break;
+				default:
+					if( inParams )
+						params.append( mode[i] );
+					else
+						toggleMode( mode[i], modeEnabled, false );
+					break;
+			}
+		}
+	}
+}
+
+void IRCChannelContact::slotIncomingChannelMode( const QString &channel, const QString &mode, const QString &params )
+{
+	if( isConnected && channel.lower() == mNickName.lower() )
+	{
+		kdDebug(14120) << k_funcinfo << channel << " : " << mode << " : " << params << endl;
+		for( uint i=1; i < mode.length(); i++ )
+		{
+			if( mode[i] != 'l' && mode[i] != 'k' )
+				toggleMode( mode[i], true, false );
+		}
 	}
 }
 
 void IRCChannelContact::setMode( const QString &mode )
 {
-	mEngine->changeMode( mNickName, mode );
+	if( isConnected )
+		mEngine->changeMode( mNickName, mode );
 }
 
 void IRCChannelContact::slotModeChanged()
 {
-	QString modeString;
-	if( actionModeT->isChecked() )
-		modeString.append( QString::fromLatin1("+t") );
-	else
-		modeString.append( QString::fromLatin1("-t") );
+	toggleMode( 't', actionModeT->isChecked(), true );
+	toggleMode( 'n', actionModeN->isChecked(), true );
+	toggleMode( 's', actionModeS->isChecked(), true );
+	toggleMode( 'm', actionModeM->isChecked(), true );
+	toggleMode( 'i', actionModeI->isChecked(), true );
+}
 
-	if( actionModeN->isChecked() )
-		modeString.append( QString::fromLatin1("+n") );
-	else
-		modeString.append( QString::fromLatin1("-n") );
+void IRCChannelContact::toggleMode( QChar mode, bool enabled, bool update )
+{
+	if( isConnected )
+	{
+		switch( mode )
+		{
+			case 't':
+   				actionModeT->setChecked( enabled );
+				break;
+			case 'n':
+				actionModeN->setChecked( enabled );
+				break;
+			case 's':
+				actionModeS->setChecked( enabled );
+				break;
+			case 'm':
+				actionModeM->setChecked( enabled );
+				break;
+			case 'i':
+				actionModeI->setChecked( enabled );
+				break;
+		}
+	}
 
-	if( actionModeS->isChecked() )
-		modeString.append( QString::fromLatin1("+s") );
-	else
-		modeString.append( QString::fromLatin1("-s") );
+	if( update )
+	{
+		if( modeMap[mode] != enabled )
+		{
+			if( enabled )
+				setMode( QString::fromLatin1("+") + mode );
+			else
+				setMode( QString::fromLatin1("-") + mode );
+		}
+	}
 
-	if( actionModeM->isChecked() )
-		modeString.append( QString::fromLatin1("+m") );
-	else
-		modeString.append( QString::fromLatin1("-m") );
+	modeMap[mode] = enabled;
+}
 
-	if( actionModeI->isChecked() )
-		modeString.append( QString::fromLatin1("+i") );
-	else
-		modeString.append( QString::fromLatin1("-i") );
-
-	setMode( modeString );
+bool IRCChannelContact::modeEnabled( QChar mode, QString *value )
+{
+	if( !value )
+		return modeMap[mode];
 }
 
 KActionCollection *IRCChannelContact::customContextMenuActions()
 {
-	if ( onlineStatus() == KopeteContact::Offline || onlineStatus() == KopeteContact::Unknown )
-	{
-		actionJoin->setEnabled( true );
-		actionPart->setEnabled( false );
-		actionTopic->setEnabled( false );
-		actionModeMenu->setEnabled( false );
-	}
-	else if ( onlineStatus() == KopeteContact::Online || onlineStatus() == KopeteContact::Away )
-	{
-		actionJoin->setEnabled( false );
-		actionPart->setEnabled( true );
-		actionTopic->setEnabled( true );
-		actionModeMenu->setEnabled( true );
-	}
+	bool isOperator = (mIdentity->mySelf()->userclass() == KIRC::Operator);
+	bool amOnline = (onlineStatus() == KopeteContact::Online || onlineStatus() == KopeteContact::Away );
+
+	actionJoin->setEnabled( !isConnected && amOnline );
+	actionPart->setEnabled( !actionJoin->isEnabled() );
+
+	actionTopic->setEnabled( amOnline && ( !modeEnabled('t') || isOperator ) );
+
+	actionModeT->setEnabled(amOnline && isOperator);
+	actionModeN->setEnabled(amOnline && isOperator);
+	actionModeS->setEnabled(amOnline && isOperator);
+	actionModeM->setEnabled(amOnline && isOperator);
+	actionModeI->setEnabled(amOnline && isOperator);
 
 	return mCustomActions;
 }

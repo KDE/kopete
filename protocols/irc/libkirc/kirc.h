@@ -128,6 +128,7 @@ signals:
 	void incomingEndOfWhois(const QString &nickname);
 	void incomingNotice(const QString &originating, const QString &message);
 	void incomingModeChange(const QString &nick, const QString &channel, const QString &mode);
+	void incomingChannelMode( const QString &channel, const QString &mode, const QString &params);
 	void userOnline( const QString &nick );
 
 private:

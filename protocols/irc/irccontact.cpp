@@ -146,6 +146,10 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 					manager()->appendMessage(msg);
 				}
 			}
+			else if( command == QString::fromLatin1("part") )
+			{
+				KopeteViewManager::viewManager()->view( manager(), true )->closeView();
+			}
 			else
 			{
 				KopeteMessage msg((KopeteContact*)this, mContact, i18n("\"%1\" is an unrecognized command.").arg(command), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);

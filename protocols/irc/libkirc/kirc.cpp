@@ -662,6 +662,15 @@ void KIRC::slotReadyRead()
 							emit( userOnline( *it ) );
 					}
 				}
+				case 324:
+				{
+					QString channel = line.section(' ', 3, 3);
+					QString mode = line.section(' ', 4, 4);
+					QString params = line.section(' ', 5);
+
+					emit( incomingChannelMode( channel, mode, params ) );
+					break;
+				}
 				default:
 				{
 					/*

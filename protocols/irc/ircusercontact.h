@@ -47,9 +47,14 @@ class IRCUserContact : public IRCContact
 		virtual const QString caption() const;
 		virtual KopeteMessageManager* manager( bool canCreate = false );
 
+		void addChannel( const QString &channel ) { mChannels.append( channel.lower() ); };
+		void removeChannel( const QString &channel ) { mChannels.remove( channel ); };
+		const bool inChannel( const QString &channel ) const { return mChannels.contains( channel ); };
+
 	private slots:
 		void slotMessageManagerDestroyed();
 		virtual void slotUserInfo();
+		void slotAboutToShowModeMenu();
 		void slotOp();
 		void slotDeop();
 		void slotVoice();
@@ -76,6 +81,7 @@ class IRCUserContact : public IRCContact
 		KActionMenu *actionKick;
 		KActionMenu *actionBan;
 		QTimer *mOnlineTimer;
+		QStringList mChannels;
 
 		void contactMode( const QString &mode );
 };

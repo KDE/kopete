@@ -26,6 +26,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kaction.h>
+#include <kpopupmenu.h>
 #include <qtimer.h>
 
 IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, KIRC::UserClass userclass, KopeteMetaContact *m)
@@ -44,6 +45,7 @@ IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, K
 	mCustomActions->insert( actionCtcpMenu );
 
 	actionModeMenu = new KActionMenu(i18n("&Modes"), 0, this, "actionModeMenu");
+	QObject::connect( actionModeMenu->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(slotAboutToShowModeMenu()));
 	actionOp = new KAction(i18n("&Op"), 0, this, SLOT(slotOp()), this, "actionOp");
 	actionDeop = new KAction(i18n("&Deop"), 0, this, SLOT(slotDeop()), this, "actionDeop");
 	actionVoice = new KAction(i18n("&Voice"), 0, this, SLOT(slotVoice()), this, "actionVoice");
@@ -115,7 +117,7 @@ QString IRCUserContact::statusIcon() const
 	return "irc_normal";
 }
 
-void IRCUserContact::slotNewPrivMessage(const QString &originating, const QString &target, const QString &message)
+void IRCUserContact::slotNewPrivMessage(const QString &originating, const QString &, const QString &message)
 {
 	//kdDebug(14120) << k_funcinfo << "o:" << originating << "; t:" << target << endl;
 	if (originating.section('!',0,0).lower() == mNickName.lower())
@@ -179,26 +181,30 @@ void IRCUserContact::slotCtcpVersion()
 	mEngine->sendCtcpVersion(mNickName);
 }
 
-void IRCUserContact::slotIncomingModeChange( const QString &, const QString &, const QString &mode )
+void IRCUserContact::slotAboutToShowModeMenu()
 {
-	QString user = mode.section(' ', 1, 1);
-	if( user == mNickName )
-	{
-		QString modeChange = mode.section(' ', 0, 0);
-		if(modeChange == QString::fromLatin1("+o"))
-			mUserclass = KIRC::Operator;
-		else if(modeChange == QString::fromLatin1("-o"))
-			mUserclass = KIRC::Normal;
-		else if(modeChange == QString::fromLatin1("+v"))
-			mUserclass = KIRC::Voiced;
-		else if(modeChange == QString::fromLatin1("-v"))
-			mUserclass = KIRC::Normal;
+	actionModeMenu->setEnabled( mIdentity->mySelf()->userclass() == KIRC::Operator );
+}
 
-		emit( onlineStatusChanged( static_cast<KopeteContact*>(this), onlineStatus() ) );
-	}
-	else if( user == mIdentity->mySelf()->nickName() )
+void IRCUserContact::slotIncomingModeChange( const QString &, const QString &channel, const QString &mode )
+{
+	if( mChannels.contains( channel.lower() ) )
 	{
-		actionModeMenu->setEnabled( mIdentity->mySelf()->userclass() == KIRC::Operator );
+		QString user = mode.section(' ', 1, 1);
+		if( user == mNickName )
+		{
+			QString modeChange = mode.section(' ', 0, 0);
+			if(modeChange == QString::fromLatin1("+o"))
+				mUserclass = KIRC::Operator;
+			else if(modeChange == QString::fromLatin1("-o"))
+				mUserclass = KIRC::Normal;
+			else if(modeChange == QString::fromLatin1("+v"))
+				mUserclass = KIRC::Voiced;
+			else if(modeChange == QString::fromLatin1("-v"))
+				mUserclass = KIRC::Normal;
+
+			emit( onlineStatusChanged( static_cast<KopeteContact*>(this), onlineStatus() ) );
+		}
 	}
 }
 

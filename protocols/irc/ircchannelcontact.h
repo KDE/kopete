@@ -44,6 +44,7 @@ class IRCChannelContact : public IRCContact
 		virtual QString statusIcon() const;
 		virtual const QString caption() const;
 		const QString &topic() const { return mTopic; };
+		bool modeEnabled( QChar mode, QString *value = 0 );
 		virtual KopeteMessageManager* manager( bool canCreate = false );
 		// FINISH
 
@@ -62,6 +63,7 @@ class IRCChannelContact : public IRCContact
 		void slotTopicChanged(const QString &channel, const QString &nick, const QString &newtopic);
 		void slotNamesList(const QString &channel, const QStringList &nicknames);
 		void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
+		void slotIncomingChannelMode( const QString &channel, const QString &mode, const QString &params );
 		void slotModeChanged();
 
 	private:
@@ -81,6 +83,8 @@ class IRCChannelContact : public IRCContact
 		KToggleAction *actionModeB;
 
 		QString mTopic;
+		QMap<QString,bool> modeMap;
+		void toggleMode( QChar mode, bool enabled, bool update );
 };
 
 #endif
