@@ -37,35 +37,16 @@
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
 #include "kopetegroup.h"
-
-#if KDE_IS_VERSION( 3, 1, 90 )
-#include "kopetewalletmanager.h"
-// KMessageBox is only used in the KWallet code path
-#include <kmessagebox.h>
-#include <kwallet.h>
-#endif
-
-/*
- * Function for (en/de)crypting strings for config file, taken from KMail
- * Author: Stefan Taferner <taferner@alpin.or.at>
- */
-QString cryptStr( const QString &aStr )
-{
-	QString result;
-	for ( uint i = 0; i < aStr.length(); i++ )
-		result += ( aStr[ i ].unicode() < 0x20) ? aStr[ i ] : QChar( 0x1001F - aStr[ i ].unicode() );
-
-	return result;
-}
+#include "kopetepassword.h"
 
 class KopeteAccountPrivate
 {
 public:
+	~KopeteAccountPrivate() { delete password; }
 	KopeteProtocol *protocol;
 	QString id;
-	QString password;
+	KopetePassword *password;
 	bool autologin;
-	bool rememberPassword;
 	uint priority;
 	QDict<KopeteContact> contacts;
 	QColor color;
@@ -79,7 +60,7 @@ KopeteAccount::KopeteAccount( KopeteProtocol *parent, const QString &accountId, 
 	d->protocol = parent;
 	d->id = accountId;
 	d->autologin = false;
-	d->rememberPassword = false;
+	d->password = 0L;
 	d->myself = 0L;
 
 	KopeteAccountManager::manager()->registerAccount( this );
@@ -98,6 +79,7 @@ KopeteAccount::~KopeteAccount()
 
 void KopeteAccount::slotAccountReady()
 {
+	d->password = new KopetePassword( configGroup(), accountId(), protocol()->displayName() );
 	KopeteAccountManager::manager()->notifyAccountReady( this );
 }
 
@@ -175,12 +157,6 @@ void KopeteAccount::writeConfig( const QString &configGroupName )
 	config->writeEntry( "AccountId", d->id );
 	config->writeEntry( "Priority", d->priority );
 
-	if ( d->rememberPassword && !d->password.isNull() )
-		config->writeEntry( "Password", cryptStr( d->password ) );
-	else
-		config->deleteEntry( "Password" );
-
-	config->writeEntry( "RememberPassword", d->rememberPassword );
 	config->writeEntry( "AutoConnect", d->autologin );
 
 	if ( d->color.isValid() )
@@ -197,11 +173,9 @@ void KopeteAccount::readConfig( const QString &configGroupName )
 	KConfig *config = KGlobal::config();
 	config->setGroup( configGroupName );
 
-	d->password  = cryptStr( config->readEntry( "Password" ) );
 	d->autologin = config->readBoolEntry( "AutoConnect", false );
 	d->color = config->readColorEntry( "Color", &d->color );
 	d->priority = config->readNumEntry( "Priority", 0 );
-	d->rememberPassword = config->readBoolEntry( "RememberPassword", false );
 
 	// Handle the plugin data, if any
 	QMap<QString, QString> entries = config->entryMap( configGroupName );
@@ -242,133 +216,14 @@ void KopeteAccount::loaded()
 
 QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 {
-	if ( ok )
-		*ok = true;
-
-	if ( !error )
-	{
-#if KDE_IS_VERSION( 3, 1, 90 )
-		if( KWallet::Wallet *wallet = KopeteWalletManager::self()->wallet( KopeteWalletManager::DoNotCreateFolder ) )
-		{
-			// Before trying to read from the wallet, check if the config file holds a password.
-			// If so, remove it from the config and set it through KWallet instead.
-			QString pwd;
-			if ( d->rememberPassword && !d->password.isNull() )
-			{
-				pwd = d->password;
-				setPassword( pwd );
-				return pwd;
-			}
-
-			if ( wallet->readPassword( configGroup(), pwd ) == 0 && !pwd.isNull() )
-				return pwd;
-		}
-#endif
-
-		if ( d->rememberPassword && !d->password.isNull() )
-			return d->password;
-	}
-
-	KDialogBase *passwdDialog = new KDialogBase( qApp->mainWidget(), "passwdDialog", true, i18n( "Password Required" ),
-		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
-
-	KopetePasswordDialog *view = new KopetePasswordDialog( passwdDialog );
-
-	if ( error )
-	{
-		view->m_text->setText( i18n( "<b>The password was wrong! Please re-enter your password for %1</b>" ).
-			arg( protocol()->displayName() ) );
-
-		// Invalidate any stored pass
-		setPassword( QString::null );
-	}
-	else
-	{
-		view->m_text->setText( i18n( "Please enter your password for %1" ).arg( protocol()->displayName() ) );
-	}
-
-	passwdDialog->setMainWidget( view );
-
-	view->m_login->setText( d->id );
-	view->m_autologin->setChecked( d->autologin );
-	if ( maxLength != 0 )
-		view->m_password->setMaxLength( maxLength );
-
-	view->adjustSize();
-	passwdDialog->adjustSize();
-
-	QString pass;
-	if ( passwdDialog->exec() == QDialog::Accepted )
-	{
-		d->rememberPassword = view->m_save_passwd->isChecked();
-		d->autologin = view->m_autologin->isChecked();
-		pass = view->m_password->text();
-		if ( d->rememberPassword )
-			setPassword( pass );
-	}
-	else
-	{
-		if ( ok )
-			*ok = false;
-	}
-
-	passwdDialog->deleteLater();
-	return pass;
+	if ( !d->password ) return QString::null;
+	return d->password->retrieve( error, ok, maxLength );
 }
 
 void KopeteAccount::setPassword( const QString &pass )
 {
-	if ( pass.isNull() )
-	{
-		// FIXME: This is a quick workaround for the problem that after Jason
-		//        added the rememberPassword flag he didn't accordingly update
-		//        all plugins to setRememberPassword( false ), so they now
-		//        try to set a null pass when the pass is not to be remembered.
-		//
-		//        After KDE 3.2 this should be fixed by disallowing null
-		//        passwords here and adding said property setter method - Martijn
-		d->password = pass;
-		d->rememberPassword = false;
-		writeConfig( configGroup() );
-		return;
-	}
-
-#if KDE_IS_VERSION( 3, 1, 90 )
-	kdDebug( 14010 ) << k_funcinfo << endl;
-
-	if ( KWallet::Wallet *wallet = KopeteWalletManager::self()->wallet() )
-	{
-		if ( wallet->writePassword( configGroup(), pass ) == 0 )
-		{
-			// Remove any pass from KConfig if it is still there
-			if ( !d->password.isNull() )
-			{
-				d->password = QString::null;
-				writeConfig( configGroup() );
-			}
-			return;
-		}
-	}
-
-	if ( KWallet::Wallet::isEnabled() )
-	{
-		// If we end up here, the wallet is enabled, but failed somehow.
-		// Ask the user what to do now.
-		if ( KMessageBox::warningContinueCancel( qApp->mainWidget(),
-			i18n( "<qt>Kopete is unable to save your password securely in your wallet!<br>"
-			"Do you want to save the password in the <b>unsafe</b> configuration file instead?</qt>" ),
-			i18n( "Unable to Store Secure Password" ),
-			KGuiItem( i18n( "Store &Unsafe" ), QString::fromLatin1( "unlock" ) ),
-			QString::fromLatin1( "KWalletFallbackToKConfig" ) ) != KMessageBox::Continue )
-		{
-			return;
-		}
-	}
-#endif
-
-	d->password = pass;
-
-	writeConfig( configGroup() );
+	if ( !d->password ) return;
+	d->password->set( pass );
 }
 
 void KopeteAccount::setAutoLogin( bool b )
@@ -383,7 +238,8 @@ bool KopeteAccount::autoLogin() const
 
 bool KopeteAccount::rememberPassword()
 {
-	return d->rememberPassword;
+	if ( !d->password ) return false;
+	return d->password->remembered();
 }
 
 void KopeteAccount::registerContact( KopeteContact *c )
