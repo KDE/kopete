@@ -220,7 +220,7 @@ bool JabberProtocol::unload()
 
 	if(jabberClient)
 	{
-		jabberClient->deleteLater();
+		delete jabberClient;
 		jabberClient = 0L;
 	}
 	
