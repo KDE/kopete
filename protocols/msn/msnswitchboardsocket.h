@@ -2,8 +2,8 @@
     msnswitchboardsocket.h - switch board connection socket
 
     Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@ kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     Portions of this code are taken from KMerlin,
               (c) 2001 by Olaf Lueg              <olueg@olsd.de>
@@ -32,7 +32,7 @@ namespace Kopete { class Message; }
 class MSNAccount;
 class QTimer;
 
-class MSNP2P;
+class MSNP2PDisplatcher;
 class KTempFile;
 
 class MSNSwitchBoardSocket : public MSNSocket
@@ -60,7 +60,7 @@ private:
 	QString m_auth;
 	QStringList m_chatMembers;
 	
-	MSNP2P *m_p2p ;
+	MSNP2PDisplatcher *m_p2p ;
 
 	//used for emoticons
 	QValueList<const Kopete::Message> m_msgQueue;

@@ -2,8 +2,8 @@
     msnswitchboardsocket.cpp - switch board connection socket
 
     Copyright (c) 2002      by Martijn Klingens       <klingens@kde.org>
-    Copyright (c) 2002-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2002-2005 by Olivier Goffart        <ogoffart@ kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     Portions of this code are taken from KMerlin,
               (c) 2001 by Olaf Lueg              <olueg@olsd.de>
@@ -357,7 +357,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	
 					if(!m_p2p)
 					{
-						m_p2p=new MSNP2P(this , "msnp2p protocol" );
+						m_p2p=new MSNP2PDisplatcher(this , "msnp2p protocol" );
 						QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
 						QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
 								this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
@@ -376,7 +376,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	{
 		if(!m_p2p)
 		{
-			m_p2p=new MSNP2P(this , "msnp2p protocol" );
+			m_p2p=new MSNP2PDisplatcher(this , "msnp2p protocol" );
 			QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
 			QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
 				this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
@@ -428,7 +428,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		{
 			if(!m_p2p)
 			{
-				m_p2p=new MSNP2P(this , "msnp2p protocol" );
+				m_p2p=new MSNP2PDisplatcher(this , "msnp2p protocol" );
 				QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
 				QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
 						this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
@@ -593,7 +593,7 @@ void MSNSwitchBoardSocket::requestDisplayPicture()
 
 	if(!m_p2p)
 	{
-		m_p2p=new MSNP2P(this , "msnp2p protocol" );
+		m_p2p=new MSNP2PDisplatcher(this , "msnp2p protocol" );
 		QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
 		QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
 				this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
@@ -606,6 +606,8 @@ void MSNSwitchBoardSocket::requestDisplayPicture()
 
 void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString &msnObj )
 {
+	kdDebug(14141) << k_funcinfo << msnObj << endl;
+	
 	if(m_emoticons.contains(msnObj))
 	{ //it's an emoticon
 		m_emoticons[msnObj].second=file;
@@ -662,6 +664,8 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 
 void MSNSwitchBoardSocket::cleanQueue()
 {
+	kdDebug(14141) << k_funcinfo << m_msgQueue.count() << endl;
+	
 	QValueList<const Kopete::Message>::Iterator it_msg;
 	for ( it_msg = m_msgQueue.begin(); it_msg != m_msgQueue.end(); ++it_msg )
 	{
