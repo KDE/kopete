@@ -49,7 +49,6 @@ public:
 
 private:
 	JabberProtocol *m_protocol;
-	KProgressDialog *progressDialog;
 
 	QCA::TLS *jabberTLS;
 	XMPP::QCATLSHandler *jabberTLSHandler;

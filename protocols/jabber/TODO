@@ -48,3 +48,4 @@ TODO for Jabber:
 - support advanced auth methods
 - subclass TLS to make use of KDE classes
 - allow SSL fallback with setOptProbe
+- better progress bar feedback for account registration (integrated)

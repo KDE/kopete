@@ -289,10 +289,7 @@ void JabberEditAccountWidget::registerClicked ()
 
 	btnRegister->setEnabled(false);
 
-	progressDialog = new KProgressDialog(this, "jabberAccountRegistration",
-					     i18n("Registering new Jabber Account"),
-					     i18n("Please wait, trying to register your account."), true);
-	progressDialog->show ();
+	pbRegistration->setEnabled(true);
 
 	/*
 	 * Setup authentication layer
@@ -408,6 +405,8 @@ void JabberEditAccountWidget::registerClicked ()
 
 	jabberClient = new XMPP::Client (this);
 
+	pbRegistration->setProgress(25);
+
 	/*
 	 * Start connection, no authentication
 	 */
@@ -447,7 +446,7 @@ void JabberEditAccountWidget::slotTLSHandshaken ()
 {
 	kdDebug() << k_funcinfo << "TLS handshake done, testing certificate validity..." << endl;
 
-	progressDialog->progressBar()->setProgress(25);
+	pbRegistration->setProgress(50);
 
 	int validityResult = jabberTLS->certificateValidityResult ();
 
@@ -500,7 +499,7 @@ void JabberEditAccountWidget::slotCSAuthenticated ()
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Launching registration task..." << endl;
 
-	progressDialog->progressBar()->setProgress(75);
+	pbRegistration->setProgress(75);
 
 	/* slow down the polling interval for HTTP Poll proxies */
 	jabberClientConnector->changePollInterval (10);
@@ -520,7 +519,7 @@ void JabberEditAccountWidget::slotRegisterUserDone ()
 {
 	XMPP::JT_Register * task = (XMPP::JT_Register *) sender ();
 
-	progressDialog->progressBar()->setProgress(100);
+	pbRegistration->setProgress(100);
 
 	if (task->success ())
 		KMessageBox::information (Kopete::UI::Global::mainWidget (), i18n ("Account successfully registered."), i18n ("Account Registration"));
@@ -534,7 +533,8 @@ void JabberEditAccountWidget::slotRegisterUserDone ()
 	//        to disconnect here. Hopefully Justin can fix this.
 	QTimer::singleShot(0, this, SLOT(disconnect ()));
 
-	delete progressDialog;
+	pbRegistration->setEnabled(false);
+	pbRegistration->setProgress(0);
 
 	btnRegister->setEnabled(true);
 

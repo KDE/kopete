@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>640</width>
-            <height>540</height>
+            <height>542</height>
         </rect>
     </property>
     <property name="caption">
@@ -235,7 +235,10 @@
                                     </spacer>
                                     <widget class="KProgress">
                                         <property name="name">
-                                            <cstring>kProgress1</cstring>
+                                            <cstring>pbRegistration</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
                                         </property>
                                     </widget>
                                     <widget class="QPushButton">
@@ -900,17 +903,26 @@
     </connection>
 </connections>
 <tabstops>
+    <tabstop>tabWidget10</tabstop>
     <tabstop>mID</tabstop>
     <tabstop>mResource</tabstop>
-    <tabstop>btnRegister</tabstop>
     <tabstop>cbRemPass</tabstop>
     <tabstop>mPass</tabstop>
-    <tabstop>cbAutoConnect</tabstop>
+    <tabstop>btnRegister</tabstop>
+    <tabstop>kActiveLabel3</tabstop>
+    <tabstop>cbCustomServer</tabstop>
     <tabstop>mServer</tabstop>
     <tabstop>mPort</tabstop>
+    <tabstop>cbAutoConnect</tabstop>
+    <tabstop>cbAllowPlainTextPassword</tabstop>
     <tabstop>cbUseSSL</tabstop>
-    <tabstop>kActiveLabel3</tabstop>
-    <tabstop>tabWidget10</tabstop>
+    <tabstop>cbProxyType</tabstop>
+    <tabstop>leProxyName</tabstop>
+    <tabstop>spbProxyPort</tabstop>
+    <tabstop>leProxyUrl</tabstop>
+    <tabstop>cbProxyAuth</tabstop>
+    <tabstop>leProxyUser</tabstop>
+    <tabstop>leProxyPass</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
