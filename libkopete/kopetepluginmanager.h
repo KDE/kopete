@@ -79,14 +79,26 @@ public:
 	KopetePlugin *plugin( const QString &pluginName ) const;
 
 	/**
-	 * @brief The opposite of searchByName.
+	 * @brief Return the short user-visible name of the plugin.
 	 *
-	 * @return The name of the protocol.
+	 * If you want to have the internal name, use @ref pluginId() instead.
+	 *
+	 * @return The name of the protocol, in the user's locale.
 	 */
 	QString pluginName( const KopetePlugin *plugin ) const;
 
 	/**
-	 * @brief Unload the plugin specified by @p spec
+	 * @brief Return the internal name of the plugin.
+	 *
+	 * You cannot display this name on the screen, it's used internally for
+	 * passing around IDs. Use @ref pluginName() for a string ready for display.
+	 *
+	 * @return The name of the protocol, in the user's locale.
+	 */
+	QString pluginId( const KopetePlugin *plugin ) const;
+
+	/**
+	 * @brief Unload the plugin specified by @p pluginName
 	 */
 	bool unloadPlugin( const QString &pluginName );
 

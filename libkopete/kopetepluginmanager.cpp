@@ -338,6 +338,18 @@ QString KopetePluginManager::pluginName( const KopetePlugin *plugin ) const
 	return QString::fromLatin1( "Unknown" );
 }
 
+QString KopetePluginManager::pluginId( const KopetePlugin *plugin ) const
+{
+	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
+	for( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); ++it )
+	{
+		if( it.data() == plugin )
+			return it.key()->pluginName();
+	}
+
+	return QString::fromLatin1( "unknown" );
+}
+
 QString KopetePluginManager::pluginIcon( const KopetePlugin *plugin ) const
 {
 	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
