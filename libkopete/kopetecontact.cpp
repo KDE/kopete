@@ -200,7 +200,7 @@ KPopupMenu* Contact::popupMenu( ChatSession *manager )
 		titleText = QString::fromLatin1( "%1 <%2> (%3)" ).arg( nick, contactId(), onlineStatus().description() );
 	menu->insertTitle( titleText );
 
-	if( metaContact() && metaContact()->isTemporary() )
+	if( metaContact() && metaContact()->isTemporary() && contactId() != account()->myself()->contactId() )
 	{
 		KAction *actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "bookmark_add" ),
 		                                         0, this, SLOT( slotAddContact() ), menu, "actionAddContact" );
