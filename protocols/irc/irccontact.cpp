@@ -145,6 +145,9 @@ void IRCContact::messageManagerDestroyed()
 {
 	m_msgManager = 0L;
 	m_isConnected = false;
+
+	if( metaContact()->isTemporary() && !isChatting() )
+		deleteLater();
 }
 
 void IRCContact::slotUserDisconnected(const QString &user, const QString &reason)
@@ -157,8 +160,6 @@ void IRCContact::slotUserDisconnected(const QString &user, const QString &reason
 		{
 			manager()->removeContact( c, i18n("Quit: \"%1\" ").arg(reason) );
 			c->setOnlineStatus( m_protocol->m_UserStatusOffline );
-			if( c->metaContact()->isTemporary() && !static_cast<IRCContact*>(c)->isChatting( manager(false) ) )
-				c->deleteLater();
 		}
 	}
 }
