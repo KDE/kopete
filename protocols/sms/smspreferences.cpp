@@ -1,4 +1,10 @@
 /*  *************************************************************************
+    *   copyright: (C) 2003 Richard Lärkäng <nouseforaname@home.se>         *
+    *   copyright: (C) 2003 Gav Wood <gav@kde.org>                          *
+    *************************************************************************
+*/
+
+/*  *************************************************************************
     *                                                                       *
     * This program is free software; you can redistribute it and/or modify  *
     * it under the terms of the GNU General Public License as published by  *
@@ -8,21 +14,40 @@
     *************************************************************************
 */
 
-#include "smspreferences.h"
-
-#include <klocale.h>
 #include <qlayout.h>
 #include <qlabel.h>
+#include <qcheckbox.h>
+
+#include <kconfig.h>
+#include <klocale.h>
+#include <krestrictedline.h>
+#include <kglobal.h>
+
+#include "smspreferences.h"
+#include "smsprefs.h"
 
 SMSPreferences::SMSPreferences( const QString &pixmap, QObject *parent )
 	: ConfigModule( i18n( "SMS Plugin" ), i18n( "Sending messages to cellphones" ), pixmap, parent )
 {
 	(new QBoxLayout(this, QBoxLayout::Down))->setAutoAdd(true);
-	new QLabel(i18n("Nothing to configure"), this );
+	theUI = new SMSPrefsUI(this);
+
+	KGlobal::config()->setGroup("SMS");
+	theUI->subEnable->setChecked(KGlobal::config()->readBoolEntry("SubEnable", false));
+	theUI->subCode->setText(KGlobal::config()->readEntry("SubCode", "+44"));
 }
 
 SMSPreferences::~SMSPreferences()
 {
+}
+
+void SMSPreferences::save()
+{
+	KGlobal::config()->setGroup("SMS");
+	KGlobal::config()->writeEntry("SubEnable", theUI->subEnable->isChecked());
+	KGlobal::config()->writeEntry("SubCode", theUI->subCode->text());
+	KGlobal::config()->sync();
+	emit saved();
 }
 
 #include "smspreferences.moc"

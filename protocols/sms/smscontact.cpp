@@ -1,5 +1,10 @@
-/*
+/*  *************************************************************************
+    *   copyright: (C) 2003 Richard Lärkäng <nouseforaname@home.se>         *
+    *   copyright: (C) 2003 Gav Wood <gav@kde.org>                          *
     *************************************************************************
+*/
+
+/*  *************************************************************************
     *                                                                       *
     * This program is free software; you can redistribute it and/or modify  *
     * it under the terms of the GNU General Public License as published by  *

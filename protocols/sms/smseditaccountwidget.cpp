@@ -1,4 +1,10 @@
 /*  *************************************************************************
+    *   copyright: (C) 2003 Richard Lärkäng <nouseforaname@home.se>         *
+    *   copyright: (C) 2003 Gav Wood <gav@kde.org>                          *
+    *************************************************************************
+*/
+
+/*  *************************************************************************
     *                                                                       *
     * This program is free software; you can redistribute it and/or modify  *
     * it under the terms of the GNU General Public License as published by  *
@@ -18,7 +24,7 @@
 #include <kmessagebox.h>
 
 #include "smseditaccountwidget.h"
-#include "smsprefs.h"
+#include "smsactprefs.h"
 #include "serviceloader.h"
 #include "smsprotocol.h"
 #include "smsaccount.h"
@@ -27,7 +33,7 @@ SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, KopeteAccount 
 	: QWidget(parent), EditAccountWidget(account)
 {
 	QVBoxLayout *l = new QVBoxLayout(this, QBoxLayout::Down);
-	preferencesDialog = new smsPrefsUI(this);
+	preferencesDialog = new smsActPrefsUI(this);
 	l->addWidget(preferencesDialog);
 
 	service = 0L;

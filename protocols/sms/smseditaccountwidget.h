@@ -1,11 +1,18 @@
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+/*  *************************************************************************
+    *   copyright: (C) 2003 Richard Lärkäng <nouseforaname@home.se>         *
+    *   copyright: (C) 2003 Gav Wood <gav@kde.org>                          *
+    *************************************************************************
+*/
+
+/*  *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #ifndef SMSEDITACCOUNTWIDGET_H
 #define SMSEDITACCOUNTWIDGET_H
@@ -15,7 +22,7 @@
 
 class SMSProtocol;
 class SMSService;
-class smsPrefsUI;
+class smsActPrefsUI;
 class KopeteAccount;
 class QGridLayout;
 
@@ -32,7 +39,7 @@ public slots:
 	void setServicePreferences(const QString& serviceName);
 	void showDescription();
 protected:
-	smsPrefsUI *preferencesDialog;
+	smsActPrefsUI *preferencesDialog;
 	QWidget *configWidget;
 	SMSService *service;
 	SMSProtocol *m_protocol;

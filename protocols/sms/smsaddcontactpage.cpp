@@ -1,3 +1,18 @@
+/*  *************************************************************************
+    *   copyright: (C) 2003 Richard Lärkäng <nouseforaname@home.se>         *
+    *************************************************************************
+*/
+
+/*  *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
+
 #include "smsadd.h"
 #include "smsaddcontactpage.h"
 #include "kopeteaccount.h"
@@ -28,7 +43,7 @@ bool SMSAddContactPage::apply(KopeteAccount* a, KopeteMetaContact* m)
 
 		return a->addContact(nr, name, m);
 	}
-	
+
 	return false;
 }
 

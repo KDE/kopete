@@ -1,16 +1,16 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
-<class>smsPrefsUI</class>
-<author>Richard Lärkäng</author>
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>SMSPrefsUI</class>
+<author>Gav Wood</author>
 <widget class="QWidget">
     <property name="name">
-        <cstring>smsPrefsUI</cstring>
+        <cstring>SMSPrefsUI</cstring>
     </property>
     <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>336</width>
-            <height>270</height>
+            <width>334</width>
+            <height>190</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -28,12 +28,36 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="font">
+                <font>
+                    <bold>1</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>Phone Numbers</string>
+            </property>
+        </widget>
+        <widget class="Line">
+            <property name="name">
+                <cstring>line1</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+        </widget>
         <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>layout3</cstring>
+                <cstring>layout9</cstring>
             </property>
             <grid>
                 <property name="name">
@@ -41,81 +65,64 @@
                 </property>
                 <widget class="QLabel" row="1" column="0">
                     <property name="name">
-                        <cstring>textLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;SMS Service:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>serviceName</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
                         <cstring>textLabel2</cstring>
                     </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>5</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>1</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
                     <property name="text">
-                        <string>&amp;Account Name:</string>
+                        <string>&amp;Substitute Leading Zero With Code:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>accountId</cstring>
+                        <cstring>subCode</cstring>
                     </property>
                 </widget>
-                <widget class="QLayoutWidget" row="1" column="1">
+                <widget class="KRestrictedLine" row="1" column="1">
                     <property name="name">
-                        <cstring>layout2</cstring>
+                        <cstring>subCode</cstring>
                     </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QComboBox">
-                            <property name="name">
-                                <cstring>serviceName</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>7</hsizetype>
-                                    <vsizetype>5</vsizetype>
-                                    <horstretch>1</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                        </widget>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>descButton</cstring>
-                            </property>
-                            <property name="text">
-                                <string>&amp;Description</string>
-                            </property>
-                        </widget>
-                    </hbox>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>+44</string>
+                    </property>
+                    <property name="inputMask">
+                        <string>+##; </string>
+                    </property>
                 </widget>
-                <widget class="QLineEdit" row="0" column="1">
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
                     <property name="name">
-                        <cstring>accountId</cstring>
+                        <cstring>subEnable</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Enable Phone Number Internationalisation</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+E</string>
                     </property>
                 </widget>
             </grid>
         </widget>
-        <widget class="QFrame">
-            <property name="name">
-                <cstring>middleFrame</cstring>
-            </property>
-            <property name="frameShape">
-                <enum>StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Raised</enum>
-            </property>
-            <property name="lineWidth">
-                <number>0</number>
-            </property>
-        </widget>
         <spacer>
             <property name="name">
-                <cstring>spacer3</cstring>
+                <cstring>spacer5</cstring>
             </property>
             <property name="orientation">
                 <enum>Vertical</enum>
@@ -125,17 +132,30 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>20</width>
-                    <height>170</height>
+                    <width>16</width>
+                    <height>101</height>
                 </size>
             </property>
         </spacer>
     </vbox>
 </widget>
+<connections>
+    <connection>
+        <sender>subEnable</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel2</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>subEnable</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>subCode</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
 <tabstops>
-    <tabstop>accountId</tabstop>
-    <tabstop>serviceName</tabstop>
-    <tabstop>descButton</tabstop>
+    <tabstop>subEnable</tabstop>
+    <tabstop>subCode</tabstop>
 </tabstops>
 <includes>
     <include location="global" impldecl="in implementation">knuminput.h</include>
