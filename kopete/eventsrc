@@ -214,6 +214,7 @@ default_presentation=16
 
 [kopete_status_change]
 Name=Status Change
+Name[ca]=Estatus canviat
 Name[es]=Stado Cambio
 Name[fr]=Changement d'état
 Name[nl]=Statuswijziging
@@ -222,6 +223,7 @@ Name[pt_BR]=Alteração de Estado
 Name[sv]=Statusändring
 Name[wa]=Candjmint di statut
 Comment=User changed his online status
+Comment[ca]=L'usuari ha canviat i està en línia
 Comment[es]=El usuario cambió su estado en línea 
 Comment[fr]=L'utilisateur a changé d'état
 Comment[nl]=Gebruiker wijzigde zijn of haar online-status
@@ -234,6 +236,7 @@ default_presentation=0
 
 [kopete_highlight]
 Name=Highlight
+Name[ca]=Ressaltat
 Name[fr]=Surlignement
 Name[nl]=Accentueren
 Name[pt]=Seleccionado
@@ -241,6 +244,7 @@ Name[pt_BR]=Destaque
 Name[sv]=Markera
 Name[wa]=E sorbiyance
 Comment=A message was highlighted because it contained your nickname
+Comment[ca]=S'ha ressaltat un missatge perque conté el vostre sobrenom
 Comment[es]=El mensaje fue destacado porque contiene su apodo.
 Comment[fr]=Un message est surligné lorsqu'il contient votre pseudonyme
 Comment[nl]=Een bericht werd geaccentueerd omdat het uw bijnaam bevatte
