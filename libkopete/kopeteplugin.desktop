@@ -1,0 +1,18 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=ServiceType
+X-KDE-ServiceType=Kopete/Plugin
+Comment=Kopete Plugin
+
+[PropertyDef::X-Kopete-Author]
+Type=QString
+
+[PropertyDef::X-Kopete-Email]
+Type=QString
+
+[PropertyDef::X-Kopete-License]
+Type=QString
+
+[PropertyDef::X-Kopete-Site]
+Type=QString
+

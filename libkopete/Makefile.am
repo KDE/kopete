@@ -13,3 +13,6 @@ libkopete_la_SOURCES = kopeteonlinestatus.cpp kopeteprotocol.cpp kopetecontact.c
 libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
 libkopete_la_LIBADD = ui/libkopeteui.la $(LIB_KOPETECOMPAT) $(LIB_KIO)
 
+servicetype_DATA = kopeteplugin.desktop kopeteprotocol.desktop
+servicetypedir = $(kde_servicetypesdir)
+

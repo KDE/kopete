@@ -3,4 +3,21 @@ Encoding=UTF-8
 Type=ServiceType
 X-KDE-ServiceType=Kopete/Protocol
 Comment=A Kopete Protocol Plugin
+Comment[es]=Plugin de protocolo para Kopete
+Comment[fr]=Un module protocole de Kopete
+Comment[pt]=Um 'Plugin' de Protocolo do Kopete
+Comment[pt_BR]=Um 'Plugin' de Protocolo do Kopete
+Comment[sv]=Protokollinsticksprogram för Kopete
+
+[PropertyDef::X-Kopete-Author]
+Type=QString
+
+[PropertyDef::X-Kopete-Email]
+Type=QString
+
+[PropertyDef::X-Kopete-License]
+Type=QString
+
+[PropertyDef::X-Kopete-Site]
+Type=QString
 
