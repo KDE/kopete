@@ -3,7 +3,7 @@
 
     Copyright (c) 2002 by Chris TenHarmsel       <ctenha56@calvin.edu>
 
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
