@@ -33,6 +33,7 @@ class MSNP2PDisplatcher;
  */
 class MSNP2P : public QObject
 {
+   Q_OBJECT
 public:
 
 	struct MessageStruct
@@ -43,7 +44,7 @@ public:
 		QByteArray message;
 	};
 
-	
+
 	MSNP2P( unsigned long int sessionID , MSNP2PDisplatcher *parent);
 	MSNP2P( QObject* parent=0L);
 	virtual ~MSNP2P();
@@ -60,7 +61,7 @@ public:
 	 * dataMessage cen be a QCString in case of text message
 	 */
 	void sendP2PMessage( const QByteArray& dataMessage );
-	
+
 	/**
 	 * make and send a P2P message.
 	 * @ref sendP2PMessage is used to send the message.
@@ -92,7 +93,7 @@ public:
 	 * we're transfering an image: \3
 	 */
 	char m_footer;
-	
+
 	QString m_CallID;
 	QString m_branch;
 
@@ -103,114 +104,6 @@ public:
 
 };
 
-/**
- * @author Olivier Goffart
- *
- * This class help the MSNSwithboardSocket to handle the MSN-P2P messages
- * It displash the message to MSNP2PIncoming or MSNP2POutgoing  classes
- */
-class MSNP2PDisplatcher : public MSNP2P
-{
-	Q_OBJECT
-
-public:
-	MSNP2PDisplatcher(  QObject *parent=0L , const char *name=0L);
-	~MSNP2PDisplatcher();
-
-	void finished(MSNP2P *);
-
-public slots:
-	/**
-	 * parse an incoming message
-	 */
-	void slotReadMessage( const QByteArray &msg );
-
-signals:
-	/**
-	 * should be connected to the MSNSwitchBoardSocket's sendCommand function
-	 */
-	void sendCommand( const QString &cmd, const QString &args = QString::null,
-		bool addId = true, const QByteArray &body = QByteArray() , bool binary=false );
-
-	void fileReceived( KTempFile * , const QString &msnObject );
-
-private:
-
-	QMap< unsigned long int, MSNP2P* > m_p2pList;
-
-
-private slots:
-	void slotTransferAccepted(Kopete::Transfer*, const QString& );
-	void slotFileTransferRefused( const Kopete::FileTransferInfo & );
-
-
-public slots:
-	/**
-	 * Load the dysplayImage.
-	 */
-	void requestDisplayPicture( const QString &myHandle, const QString &msgHandle, QString msnObject);
-
-	/**
-	 * Send the following image
-	 */
-	void sendImage( const QString &fileName);
-
-protected:
-	virtual void parseMessage(MessageStruct & );
-
-	//let's access signal dirrectly
-	friend class MSNP2P;
-	friend class MSNP2PIncoming;
-};
-
-
-class MSNP2PIncoming : public MSNP2P
-{
-	Q_OBJECT
-public:
-	MSNP2PIncoming( unsigned long int sessionID , MSNP2PDisplatcher *parent);
-	~MSNP2PIncoming( );
-
-	
-	virtual void parseMessage(MessageStruct & );
-	virtual void error();
-
-	//for the display image
-	KTempFile *m_file;
-	QFile *m_Rfile;
-	QString m_obj;
-
-	QString fullContentMessage;  //used for typewrited images messages
-
-		
-	Kopete::Transfer *m_kopeteTransfer;
-
-public slots:
-	/**
-	 * Abort the current transfer.
-	 */
-		void abortCurrentTransfer();
-		void slotKopeteTransferDestroyed();
-
-};
-
-
-class MSNP2POutgoing : public MSNP2P
-{
-	Q_OBJECT
-public:
-	MSNP2POutgoing( unsigned long int sessionID , MSNP2PDisplatcher *parent);
-	~MSNP2POutgoing( );
-
-	virtual void parseMessage(MessageStruct & );
-
-	QFile *m_Sfile;
-	QByteArray m_imageToSend;
-
-
-private slots:
-	void slotSendData();
-};
 
 
 

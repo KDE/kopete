@@ -39,7 +39,7 @@
 #include <kconfig.h>
 
 // for the display picture
-#include "msnp2p.h"
+#include "msnp2pdisplatcher.h"
 #include <msncontact.h>
 
 //kopete
@@ -180,7 +180,7 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint  id ,
 	{
 		// some has disconnect from chat, update user in chat list
 		cleanQueue(); //in case some message are waiting their emoticons, never mind, send them
-		
+
 		QString handle = data.section( ' ', 0, 0 ).replace( "\r\n" , "" );
 		userLeftChat( handle,  (data.section( ' ', 1, 1 ) == "1" ) ? i18n("timeout") : QString::null   );
 	}
@@ -253,7 +253,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			rx=QRegExp("X-MMS-IM-Format: ([A-Za-z0-9$!*/;\\-]*)");
 			rx.search(msg);
 			fontInfo =rx.cap(1);
-			
+
 			color = parseFontAttr(fontInfo, "CO");
 
 			// FIXME: this is so BAAAAAAAAAAAAD :(
@@ -362,7 +362,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 				QObject::connect(m_emoticonTimer , SIGNAL(timeout()) , this, SLOT(cleanQueue()));
 				m_emoticonTimer->start( 15000 , true );
 			}
-		} 
+		}
 		else
 			emit msgReceived( parseCustomEmoticons( kmsg ) );
 
@@ -374,7 +374,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 		if ( config->readBoolEntry( "useCustomEmoticons", false ) )
 		{
 			QRegExp rx("([^\\s]*)[\\s]*(<msnobj [^>]*>)");
-			rx.setMinimal(true); 
+			rx.setMinimal(true);
 			int pos = rx.search(msg);
 			while( pos != -1)
 			{
@@ -388,7 +388,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 					MSNContact *c=static_cast<MSNContact*>(m_account->contacts()[m_msgHandle]);
 					if(!c)
 						return;
-	
+
 					if(!m_p2p)
 					{
 						m_p2p=new MSNP2PDisplatcher(this , "msnp2p protocol" );
@@ -397,13 +397,13 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 								this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
 						QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile *, const QString& ) ) , this , SLOT(slotEmoticonReceived( KTempFile *, const QString& ) ) ) ;
 					}
-	
+
 					// we are receiving emoticons, so delay message display until received signal
 					m_recvIcons++;
 					m_p2p->requestDisplayPicture( m_myHandle, m_msgHandle, msnobj );
 				}
 				pos=rx.search(msg, pos+rx.matchedLength());
-			} 
+			}
 		}
 	}
 	else if( type== "application/x-msnmsgrp2p" )
@@ -454,7 +454,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 //		m_messagesQueue.append(msg);
 		return -1;
 	}
-	
+
 	if( msg.format() & Kopete::Message::RichText )
 	{
 		QRegExp rx("^\\s*<img src=\"([^>\"]+)\"[^>]*>\\s*$");
@@ -468,9 +468,9 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 						this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
 				QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile *, const QString& ) ) , this , SLOT(slotEmoticonReceived( KTempFile *, const QString& ) ) ) ;
 			}
-			
+
 			m_p2p->sendImage(rx.cap(1));
-			
+
 			return -3;
 		}
 	}
@@ -512,13 +512,13 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		head += "CO=0";
 	}
 
-	head += "; CS=0; PF=0";		
-	if (msg.plainBody().isRightToLeft()) 
+	head += "; CS=0; PF=0";
+	if (msg.plainBody().isRightToLeft())
 		head += "; RL=1";
 	head += "\r\n";
-		
+
 	QString message= msg.plainBody().replace(  "\n" , "\r\n" );
-		
+
 	//-- Check if the message isn't too big,  TODO: do that at the libkopete level.
 	int len_H=head.utf8().length();	// != head.length()  because i need the size in butes and
 	int len_M=message.utf8().length();	//    some utf8 char may be longer than one byte
@@ -532,12 +532,12 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 		int len_H=head.utf8().length()+ 14;   //14 is the size of "Chunks: x"
 		//this is the size of each part of the message (excluding the header)
 		int futurmessages_size=1400;  //1400 is a common good size
-		//int futurmessages_size=1664-len_H; 
+		//int futurmessages_size=1664-len_H;
 
 		int nb=(int)ceil((float)(len_M)/(float)(futurmessages_size));
 
 		if(KMessageBox::warningContinueCancel(0L /* FIXME: we should try to find a parent somewere*/ ,
-			i18n("The message you are trying to send is too long; it will be split into %1 messages.").arg(nb) , 
+			i18n("The message you are trying to send is too long; it will be split into %1 messages.").arg(nb) ,
 			i18n("Message too big - MSN Plugin" ), KStdGuiItem::cont() , "SendLongMessages" )
 				== KMessageBox::Continue )
 		{
@@ -548,7 +548,7 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 			{
 				QString m=message.mid(place, futurmessages_size);
 				place += futurmessages_size;
-				
+
 				//make sure the size is not too big because of utf8
 				int d=m.utf8().length() + len_H -1664;
 				if( d > 0 )
@@ -556,12 +556,12 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 					m=m.left( futurmessages_size - d );
 					place -= d;
 				}
-				
+
 				//try to snip on space if possible
 				int len=m.length();
 				d=0;
 				while(d<200 && !m[len-d].isSpace() )
-					d++; 
+					d++;
 				if(d<200)
 				{
 					m=m.left(len-d);
@@ -660,38 +660,38 @@ void MSNSwitchBoardSocket::requestDisplayPicture()
 				this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
 		QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile *, const QString& ) ) , this , SLOT(slotEmoticonReceived( KTempFile *, const QString& ) ) ) ;
 	}
-	
-	
+
+
 	m_p2p->requestDisplayPicture( m_myHandle, m_msgHandle, c->object());
 }
 
 void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString &msnObj )
 {
 	kdDebug(14141) << k_funcinfo << msnObj << endl;
-	
+
 	if(m_emoticons.contains(msnObj))
 	{ //it's an emoticon
 		m_emoticons[msnObj].second=file;
-	
-		if( m_recvIcons > 0 ) 
+
+		if( m_recvIcons > 0 )
 			m_recvIcons--;
 		kdDebug(14140) << k_funcinfo << "emoticons received queue is now: " << m_recvIcons << endl;
 
-		if ( m_recvIcons <= 0 ) 
+		if ( m_recvIcons <= 0 )
 			cleanQueue();
 	}
 	else if(msnObj=="typewrite")
 	{
 		QString msg=i18n("<img src=\"%1\" alt=\"Typewrited message\" />" ).arg( file->name() );
-		
+
 	kdDebug(14140) << k_funcinfo << file->name()  <<endl;
-		
+
 		m_typewrited.append(file);
-		m_typewrited.setAutoDelete(true); 
+		m_typewrited.setAutoDelete(true);
 
 		QPtrList<Kopete::Contact> others;
 		others.append( m_account->myself() );
-		
+
 		QStringList::iterator it2;
 		for( it2 = m_chatMembers.begin(); it2 != m_chatMembers.end(); ++it2 )
 		{
@@ -710,10 +710,10 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 
 		Kopete::Message kmsg( m_account->contacts()[ m_msgHandle ], others,
 			msg, Kopete::Message::Inbound , Kopete::Message::RichText );
-		
+
 		emit msgReceived(  kmsg  );
 	}
-	else //if it is not an emoticon, 
+	else //if it is not an emoticon,
 	{    // it's certenly the displaypicture.
 		MSNContact *c=static_cast<MSNContact*>(m_account->contacts()[m_msgHandle]);
 		if(c && c->object()==msnObj)
@@ -726,7 +726,7 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 void MSNSwitchBoardSocket::cleanQueue()
 {
 	kdDebug(14141) << k_funcinfo << m_msgQueue.count() << endl;
-	
+
 	QValueList<const Kopete::Message>::Iterator it_msg;
 	for ( it_msg = m_msgQueue.begin(); it_msg != m_msgQueue.end(); ++it_msg )
 	{
@@ -748,14 +748,14 @@ Kopete::Message &MSNSwitchBoardSocket::parseCustomEmoticons(Kopete::Message &kms
 		{
 			QString imgPath = f->name();
 			QImage iconImage(imgPath);
-			/* We don't use a comple algoritm (like the one in the #if)  because the msn client shows 
+			/* We don't use a comple algoritm (like the one in the #if)  because the msn client shows
 		     * emoticons like that. So, in that case, we show like the MSN client */
 			#if 0
 			QString em = QRegExp::escape( es );
 			message.replace( QRegExp(QString::fromLatin1( "(^|[\\W\\s]|%1)(%2)(?!\\w)" ).arg(em).arg(em)),
 								QString::fromLatin1("\\1<img align=\"center\" width=\"") +
-			#endif			
-			message.replace( es, 
+			#endif
+			message.replace( es,
 						QString::fromLatin1("<img align=\"center\" width=\"") +
 						QString::number(iconImage.width()) +
 						QString::fromLatin1("\" height=\"") +
