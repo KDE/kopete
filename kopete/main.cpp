@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 	aboutData.addAuthor ( "Till Gerken", I18N_NOOP("Core developer, Jabber plugin"), "till@tantalo.net");
 	aboutData.addAuthor ( "Olivier Goffart", I18N_NOOP("Core developer"), "ogoffart@tiscalinet.be");
 	aboutData.addAuthor ( "Hendrik vom Lehn", I18N_NOOP("Developer"), "hennevl@hennevl.de", "http://www.hennevl.de");
-	aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("Developer"), "sgehn@gmx.net", "http://metz81.mine.nu" );
+	aboutData.addAuthor ( "Stefan Gehn", I18N_NOOP("Developer"), "metz@gehn.net", "http://metz.gehn.net" );
 	aboutData.addAuthor ( "Andres Krapf", I18N_NOOP("Developer"), "dae@chez.com" );
 	aboutData.addAuthor ( "Gav Wood", I18N_NOOP("Winpopup plugin"), "gjw102@york.ac.uk" );
 	aboutData.addAuthor ( "Zack Rusin", I18N_NOOP("Core developer, Gadu plugin"), "zack@kde.org" );
