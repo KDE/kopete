@@ -42,7 +42,6 @@ class KopeteMetaContact;
 class KopeteMessage;
 class YahooPreferences;
 
-// Yahoo Protocol
 class YahooProtocol : public KopeteProtocol
 {
 	Q_OBJECT

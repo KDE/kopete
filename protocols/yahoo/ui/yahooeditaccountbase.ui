@@ -72,7 +72,7 @@
                         <string>Your &amp;Password:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>lineEdit2</cstring>
+                        <cstring>mPassword</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="0" column="0">
@@ -83,10 +83,48 @@
                         <string>Your Yahoo Screen &amp;Name:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>lineEdit1</cstring>
+                        <cstring>mScreenName</cstring>
                     </property>
                 </widget>
             </grid>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout2</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>381</width>
+                            <height>21</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="KURLLabel">
+                    <property name="name">
+                        <cstring>kURLLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Get a Yahoo! account now</string>
+                    </property>
+                    <property name="url" stdset="0">
+                        <string>http://edit.yahoo.com/config/eval_register</string>
+                    </property>
+                </widget>
+            </hbox>
         </widget>
         <widget class="QLabel">
             <property name="name">
@@ -120,6 +158,14 @@
                 <string>&amp;Auto-connect</string>
             </property>
         </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>mRememberPassword</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Remember Password</string>
+            </property>
+        </widget>
         <spacer>
             <property name="name">
                 <cstring>spacer4</cstring>
@@ -133,11 +179,20 @@
             <property name="sizeHint">
                 <size>
                     <width>21</width>
-                    <height>151</height>
+                    <height>150</height>
                 </size>
             </property>
         </spacer>
     </vbox>
 </widget>
+<tabstops>
+    <tabstop>mScreenName</tabstop>
+    <tabstop>mPassword</tabstop>
+    <tabstop>mAutoConnect</tabstop>
+    <tabstop>mRememberPassword</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kurllabel.h</includehint>
+</includehints>
 </UI>

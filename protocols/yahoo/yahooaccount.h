@@ -43,7 +43,7 @@ public:
 	
 	virtual KopeteContact *myself() const;				// returns our yahoo contact
 	YahooContact *contact(const QString &id);			// returns a contact of name "id"
-	virtual KActionMenu* actionMenu() { return actionStatusMenu; }
+	virtual KActionMenu* actionMenu() { return theActionMenu; }
 
 	virtual void setAway(bool);					// set away status
 	
@@ -92,21 +92,17 @@ protected slots:
 	//void slotHostConnect(const QString &host, int port);
 
 private:
-	QMap<QString, YahooContact *> m_contactsMap;
-		// A map of all the contacts
 	QMap<QString, QPair<QString, QString> > IDs;
 		// This should be kept in sync with server - if a buddy is removed, this should be changed accordingly.
 	bool theHaveContactList;	// Do we have the full server-side contact list yet?
-
 	
-	int m_sessionId;		// The Yahoo session descriptor
-				
+	int m_sessionId;			// The Yahoo session descriptor
 	YahooPreferences *m_prefs;	// Preferences Object
 	YahooSession *m_session;	// Connection Object
 	YahooContact *m_myself;		// Ourself
-
-	void initActions();		// Load Status Actions
-	KActionMenu *actionStatusMenu;	// Statusbar Popup
+	
+	void initActions();			// Load Status Actions
+	KActionMenu *theActionMenu;	// Statusbar Popup
 	KAction *actionGoOnline;	// Available
 	KAction *actionGoOffline;	// Disconnected
 	KAction *actionGoStatus001;	// Be Right Back

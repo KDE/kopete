@@ -18,15 +18,6 @@
  *                                                                         *
  ***************************************************************************/
 
-// Local Includes
-#include "yahooadd.h"
-#include "yahooprotocol.h"
-#include "yahooaddcontact.h"
-#include "yahoocontact.h"
-
-// Kopete Includes
-#include <addcontactpage.h>
-
 // QT Includes
 #include <qwidget.h>
 #include <qlayout.h>
@@ -44,6 +35,15 @@
 #include <kurlrequester.h>
 #include <klineedit.h>
 
+// Kopete Includes
+#include <addcontactpage.h>
+#include <kopeteaccount.h>
+
+// Local Includes
+#include "yahooadd.h"
+#include "yahooprotocol.h"
+#include "yahooaddcontact.h"
+#include "yahoocontact.h"
 
 // Yahoo Add Contact page
 YahooAddContact::YahooAddContact(YahooProtocol *owner, QWidget *parent, const char *name): AddContactPage(parent, name)
@@ -69,11 +69,12 @@ bool YahooAddContact::validateData()
 	return theDialog->contactID->text() != "";
 }
 
-void YahooAddContact::slotFinish(KopeteMetaContact *theMetaContact)
+bool YahooAddContact::apply(KopeteAccount *theAccount, KopeteMetaContact *theMetaContact)
 {
-	kdDebug(14180) << "YahooAddContact::slotFinish()";
+	kdDebug(14180) << "YahooAddContact::apply()";
 
-	theProtocol->addContact(theDialog->contactID->text(), theDialog->displayName->text() == "" ? theDialog->contactID->text() : theDialog->displayName->text(), theMetaContact);
+	theAccount->addContact(theDialog->contactID->text(), theDialog->displayName->text() == "" ? theDialog->contactID->text() : theDialog->displayName->text(), theMetaContact);
+	return true;
 }
 
 #include "yahooaddcontact.moc"

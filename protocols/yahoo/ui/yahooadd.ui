@@ -38,7 +38,7 @@
                         <string>&amp;Yahoo ID:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>kLineEdit1</cstring>
+                        <cstring>contactID</cstring>
                     </property>
                 </widget>
                 <widget class="KLineEdit" row="0" column="1">
@@ -80,10 +80,10 @@
                         <cstring>textLabel1_2</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Display name:</string>
+                        <string>&amp;Display Name:</string>
                     </property>
                     <property name="buddy" stdset="0">
-                        <cstring>contactID_2</cstring>
+                        <cstring>displayName</cstring>
                     </property>
                 </widget>
                 <widget class="KLineEdit" row="0" column="1">

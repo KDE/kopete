@@ -58,6 +58,7 @@ YahooEditAccount::YahooEditAccount(YahooProtocol *protocol, KopeteAccount *theAc
 		if(m_account->rememberPassword())
 			mPassword->setText(m_account->getPassword());
 		mAutoConnect->setChecked(m_account->autoLogin());
+		mRememberPassword->setChecked(true);
 	}
 	show();
 }
@@ -83,9 +84,12 @@ KopeteAccount *YahooEditAccount::apply()
 	
 	if(!m_account)
 		m_account = new YahooAccount(theProtocol, mScreenName->text());
-	m_account->setPassword(mPassword->text());
+	else
+		m_account->setAccountId(mScreenName->text());
 	m_account->setAutoLogin(mAutoConnect->isChecked());
-
+	if(mRememberPassword->isChecked())
+		m_account->setPassword(mPassword->text());
+	
 	return m_account;
 }
 

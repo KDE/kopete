@@ -46,7 +46,7 @@ public:
 	virtual bool validateData();
 	
 public slots:
-	virtual void slotFinish(KopeteMetaContact *theMetaContact);
+	virtual bool apply(KopeteAccount *theAccount, KopeteMetaContact *theMetaContact);
 };
 
 #endif

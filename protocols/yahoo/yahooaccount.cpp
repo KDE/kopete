@@ -140,7 +140,8 @@ void YahooAccount::disconnect()
 	{	kdDebug(14180) <<  "Attempting to disconnect from Yahoo server " << endl;
 		m_session->logOff();
 		m_myself->setYahooStatus(YahooStatus::Offline);
-		//m_engine->Disconnect();
+		for(QDictIterator<KopeteContact> i(contacts()); i.current(); ++i)
+			static_cast<YahooContact *>(i.current())->setYahooStatus(YahooStatus::Offline);
 	}
 	else	// Again, what's with the crack? Sheez.
 		kdDebug(14180) << "Ignoring disconnect request (not connected)." << endl;
@@ -206,22 +207,22 @@ void YahooAccount::initActions()
 				0, this, SLOT(connect()), this, "actionYahooConnect");
 */
 	
-	actionStatusMenu = new KActionMenu("Yahoo", this);
-	actionStatusMenu->popupMenu()->insertTitle(m_myself->icon(), "Yahoo ("+m_myself->displayName()+")");
-	actionStatusMenu->insert(actionGoOnline);
-	actionStatusMenu->insert(actionGoOffline);
-/*	actionStatusMenu->insert(actionGoStatus001);
-	actionStatusMenu->insert(actionGoStatus002);
-	actionStatusMenu->insert(actionGoStatus003);
-	actionStatusMenu->insert(actionGoStatus004);
-	actionStatusMenu->insert(actionGoStatus005);
-	actionStatusMenu->insert(actionGoStatus006);
-	actionStatusMenu->insert(actionGoStatus007);
-	actionStatusMenu->insert(actionGoStatus008);
-	actionStatusMenu->insert(actionGoStatus009);
-	actionStatusMenu->insert(actionGoStatus012);
-	actionStatusMenu->insert(actionGoStatus099);
-	actionStatusMenu->insert(actionGoStatus999);
+	theActionMenu = new KActionMenu("Yahoo", this);
+	theActionMenu->popupMenu()->insertTitle(m_myself->icon(), "Yahoo ("+m_myself->displayName()+")");
+	theActionMenu->insert(actionGoOnline);
+	theActionMenu->insert(actionGoOffline);
+/*	theActionMenu->insert(actionGoStatus001);
+	theActionMenu->insert(actionGoStatus002);
+	theActionMenu->insert(actionGoStatus003);
+	theActionMenu->insert(actionGoStatus004);
+	theActionMenu->insert(actionGoStatus005);
+	theActionMenu->insert(actionGoStatus006);
+	theActionMenu->insert(actionGoStatus007);
+	theActionMenu->insert(actionGoStatus008);
+	theActionMenu->insert(actionGoStatus009);
+	theActionMenu->insert(actionGoStatus012);
+	theActionMenu->insert(actionGoStatus099);
+	theActionMenu->insert(actionGoStatus999);
 */
 }
 
