@@ -285,9 +285,10 @@ void KopeteSystemTray::slotReevaluateAccountStates()
 		{
 			bOnline = true; // at least one contact is online
 		}
-		else if (c->onlineStatus().status() == KopeteOnlineStatus::Away)
+		else if (c->onlineStatus().status() == KopeteOnlineStatus::Away
+		      || c->onlineStatus().status() == KopeteOnlineStatus::Invisible)
 		{
-			bAway = true; // at least one contact is away
+			bAway = true; // at least one contact is away or invisible
 		}
 		else // this account must be offline (or unknown, which I don't know how to handle)
 		{
