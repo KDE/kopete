@@ -19,13 +19,18 @@
 #ifndef KIRC_H
 #define KIRC_H
 
+#include <kdeversion.h>
+
 #include <qdict.h>
 #include <qregexp.h>
 #include <qstring.h>
 #include <qstringlist.h>
 
 #include <kdebug.h>
+#if KDE_VERSION < KDE_MAKE_VERSION( 3, 1, 90 )
 #include <kdebugclasses.h>
+#endif
+
 #include <kextsock.h>
 #include <ksockaddr.h>
 
@@ -115,7 +120,8 @@ protected:
 	inline KIRCMessage writeMessage(const char *command, const QStringList &args, const QString &suffix = QString::null, bool mustBeConnected=true)
 		{ return writeMessage(QString::fromLatin1(command), args, suffix, mustBeConnected); }
 
-	inline KIRCMessage writeMessage(const QString &command, const QString &arg = QString::null, const QString &suffix = QString::null, bool mustBeConnected=true);
+	KIRCMessage writeMessage( const QString &command, const QString &arg = QString::null,
+		const QString &suffix = QString::null, bool mustBeConnected = true );
 	inline KIRCMessage writeMessage(const char *command, const QString &arg = QString::null, const QString &suffix = QString::null, bool mustBeConnected=true)
 		{ return writeMessage(QString::fromLatin1(command), arg, suffix, mustBeConnected); }
 
@@ -366,3 +372,6 @@ protected:
 };
 
 #endif // KIRC_H
+
+// vim: set noet ts=4 sts=4 sw=4:
+

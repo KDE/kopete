@@ -257,7 +257,7 @@ IRCUserContact *IRCContactManager::findUser(const QString &name, KopeteMetaConta
 	return user;
 }
 
-void IRCContactManager::unregisterUser(const QString &name)
+void IRCContactManager::unregisterUser( const QString & /* name */ )
 {
 /*	QString lowerName = name.lower();
 	if( lowerName != mNickName.lower() && m_users.contains( lowerName ) )

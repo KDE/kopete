@@ -157,20 +157,19 @@ void IRCServerContact::engineReceivedMessage(const KIRCMessage &ircmsg)
 	appendMessage(msg);
 }
 
-void IRCServerContact::privateMessage(IRCContact *from, IRCContact *to, const QString &message)
+void IRCServerContact::privateMessage( IRCContact * /* from */, IRCContact * /* to */, const QString & /* message */ )
 {
 /*	KopeteMessage msg( from, manager()->members(), i18n("to %1:").arg(to.accountId())+message, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat );
 	msg.setBody( m_account->protocol()->parser()->parse( msg.escapedBody() ), KopeteMessage::RichText );
 	appendMessage(msg);*/
 }
 
-void IRCServerContact::action(IRCContact *from, IRCContact *to, const QString &message)
+void IRCServerContact::action( IRCContact * /* from */, IRCContact * /* to */, const QString & /* message */)
 {
 /*	KopeteMessage msg( from, manager()->members(), i18n("to %1:").arg(to.accountId())+message, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat );
 	msg.setBody( m_account->protocol()->parser()->parse( msg.escapedBody() ), KopeteMessage::RichText );
 	appendMessage(msg);*/
 }
-
 
 void IRCServerContact::appendMessage( KopeteMessage &msg )
 {
