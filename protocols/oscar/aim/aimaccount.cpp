@@ -119,7 +119,6 @@ KActionMenu* AIMAccount::actionMenu()
 	
 	KAction* mActionOffline = new KAction( i18n("Offline"), p->statusOffline.iconFor(this), 0, this,
 	             SLOT( slotGoOffline() ), mActionMenu, "AIMAccount::mActionOffline");
-	mActionOffline->setEnabled( isConnected() );
 
 	mActionMenu->insert( mActionOffline );
 	mActionMenu->popupMenu()->insertSeparator();
