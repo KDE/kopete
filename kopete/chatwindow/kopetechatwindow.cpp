@@ -30,6 +30,7 @@
 #include <ktoolbar.h>
 #include <klocale.h>
 #include <kstdaction.h>
+#include <kstdaccel.h>
 #include <kdockwidget.h>
 #include <kaction.h>
 #include <kmenubar.h>
@@ -340,20 +341,18 @@ void KopeteChatWindow::initActions(void)
 
 	KStdAction::save ( this, SLOT(slotChatSave()), coll );
 	KStdAction::print ( this, SLOT(slotChatPrint()), coll );
-	KStdAction::quit ( this, SLOT(close()), coll )->setText( i18n("Close Window") );
+	KStdAction::quit ( this, SLOT(close()), coll );
 
 	tabClose = KStdAction::close ( this, SLOT(slotChatClosed()), coll, "tabs_close" );
-	tabClose->setIcon( QString::fromLatin1("tab_remove") );
-	tabClose->setText( i18n("&Close Chat") );
 
 	tabLeft = new KAction( i18n( "&Previous Chat" ), QString::fromLatin1( "1leftarrow" ), 0,
 		this, SLOT( slotPreviousTab() ), coll, "tabs_left" );
-	tabLeft->setShortcut( QKeySequence( CTRL + Key_PageDown) );
+	tabLeft->setShortcut( KStdAccel::Back );
 	tabLeft->setEnabled( false );
 
 	tabRight = new KAction( i18n( "&Next Chat" ), QString::fromLatin1( "1rightarrow" ), 0,
 		this, SLOT( slotNextTab() ), coll, "tabs_right" );
-	tabRight->setShortcut( QKeySequence( CTRL + Key_PageUp ) );
+	tabRight->setShortcut( KStdAccel::Forward );
 	tabRight->setEnabled( false );
 
 	nickComplete = new KAction( i18n( "Nic&k Completion" ), QString::null, 0, this, SLOT( slotNickComplete() ), coll , "nick_compete");
