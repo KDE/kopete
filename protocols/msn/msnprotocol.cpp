@@ -49,13 +49,14 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSN"), IMProtocol()
 	actionStatusMenu->plug( kopeteapp->systemTray()->getContextMenu() );	
 
 	kdDebug() << "MSN Protocol Plugin: Setting icon offline\n";
-	statusBarIcon->setPixmap(&offlineIcon);
+	statusBarIcon->setPixmap(offlineIcon);
 
 	kdDebug() << "MSN Protocol Plugin: Creating Config Module\n";
 	new MSNPreferences(protocolIcon, this);
 	
 	kdDebug() << "MSN Protocol Plugin: Creating MSN Engine\n";
 	engine = new KMSNService;
+	connect(engine, SIGNAL(connectingToService()), this, SLOT(slotConnecting()) );
 	connect(engine, SIGNAL(connectedToService(bool)), this, SLOT(slotConnectedToMSN(bool)));
 	connect(engine, SIGNAL(contactStatusChanged(QString, QString, int)), this, SIGNAL(userStateChange (QString, QString, int) ) );
 	connect(engine, SIGNAL(statusChanged( uint)), this, SIGNAL(slotStateChanged ( uint) ) );
@@ -169,6 +170,7 @@ void MSNProtocol::initIcons()
 	offlineIcon = QPixmap(loader->loadIcon("msn_offline", KIcon::User));
 	awayIcon = QPixmap(loader->loadIcon("msn_away", KIcon::User));
 	naIcon = QPixmap(loader->loadIcon("msn_na", KIcon::User));
+	connectingIcon = QPixmap(loader->loadIcon("msn_connecting", KIcon::User));
 }
 
 void MSNProtocol::initActions()
@@ -202,6 +204,11 @@ void MSNProtocol::slotIconRightClicked(const QPoint point)
 	popup->popup(QCursor::pos());
 }
 
+/* While trying to connect :-) */
+void MSNProtocol::slotConnecting()
+{
+	statusBarIcon->setPixmap(connectingIcon);	
+}
 
 /** OK! We are connected , let's do some work */
 void MSNProtocol::slotConnected()
@@ -213,7 +220,7 @@ void MSNProtocol::slotConnected()
  	QString group, publicname, userid;
  	uint status;
  	// First, we change status bar icon
- 	statusBarIcon->setPixmap(&onlineIcon);
+ 	statusBarIcon->setPixmap(onlineIcon);
      // We get the group list
  	groups = engine->getGroups();
  	for ( QStringList::Iterator it = groups.begin(); it != groups.end(); ++it )
@@ -288,7 +295,7 @@ void MSNProtocol::slotConnected()
 void MSNProtocol::slotDisconnected()
 {
 		connected = false;
-		statusBarIcon->setPixmap(&offlineIcon);
+		statusBarIcon->setPixmap(offlineIcon);
 }
 
 
@@ -345,42 +352,42 @@ void MSNProtocol::slotStateChanged (uint newstate)
  	{
   		case NLN:
 		{
-  			statusBarIcon->setPixmap(&onlineIcon);
+  			statusBarIcon->setPixmap(onlineIcon);
 			break;
 		}
 		case FLN:
 		{
-  			statusBarIcon->setPixmap(&offlineIcon);
+  			statusBarIcon->setPixmap(offlineIcon);
 			break;
 		}
 		case AWY:
 		{
-  			statusBarIcon->setPixmap(&awayIcon);
+  			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
 		case BSY:
 		{
-  			statusBarIcon->setPixmap(&awayIcon);
+  			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
 		case IDL:
 		{
-  			statusBarIcon->setPixmap(&awayIcon);
+  			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
 		case PHN:
 		{
-  			statusBarIcon->setPixmap(&awayIcon);
+  			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
 		case BRB:
 		{
-  			statusBarIcon->setPixmap(&awayIcon);
+  			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
 		case LUN:
 		{
-  			statusBarIcon->setPixmap(&awayIcon);
+  			statusBarIcon->setPixmap(awayIcon);
 			break;
 		}
  	}

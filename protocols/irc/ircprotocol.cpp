@@ -40,7 +40,7 @@ IRCProtocol::IRCProtocol(): QObject(0, "IRC"), IMProtocol()
 	statusBarIcon = new StatusBarIcon();
 	
 	kdDebug() << "IRC Protocol Plugin: Setting icon offline\n";
-	statusBarIcon->setPixmap(&offlineIcon);
+	statusBarIcon->setPixmap(offlineIcon);
 
 	kdDebug() << "IRC Protocol Plugin: Creating Config Module\n";
 	new IRCPreferences(protocolIcon, this);

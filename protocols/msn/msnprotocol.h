@@ -58,6 +58,7 @@ public:
 	QPixmap offlineIcon;
 	QPixmap awayIcon;
 	QPixmap naIcon;
+	QPixmap connectingIcon;
 	
 	/* The main msn popup */
 	KPopupMenu *popup;
@@ -87,7 +88,10 @@ public slots: // Public slots
 	void slotGoOffline();
 	void slotGoAway();
 	void slotIconRightClicked(const QPoint);
+	
 	void slotConnectedToMSN(bool c);
+	void slotConnecting();
+
 	void slotUserStateChange (QString, QString, int);
 	void slotStateChanged (uint);
 	void slotUserSetOffline( QString );

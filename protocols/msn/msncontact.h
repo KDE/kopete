@@ -25,6 +25,7 @@
 #include <qstring.h>
 #include <qvaluestack.h>
 #include <kiconloader.h>
+#include <kpopupmenu.h>
 #include <qtimer.h>
 #include "kopete.h"
 #include "msnprotocol.h"
