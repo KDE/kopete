@@ -37,6 +37,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 
+#define EMAIL_REGEXP "[\\w\\d\\.]{1,}\\@[\\w\\d\\.]{1,}"
 
 GaduEditAccount::GaduEditAccount( GaduProtocol *proto, KopeteAccount *ident,
                                   QWidget *parent, const char *name )
@@ -80,7 +81,7 @@ void GaduEditAccount::registrationComplete( const QString& , const QString& )
 {
 	reg_in_progress=false;
 	
-	QRegExp regexp("(.*)[@](.*)");
+	QRegExp regexp(EMAIL_REGEXP);
 	regexp.search(emailedit_->text());
 	
 	// i am sure rcmd is valid, since it sends this signal ;)
@@ -109,7 +110,7 @@ void GaduEditAccount::registrationError( const QString& title, const QString& wh
 
 bool GaduEditAccount::validateData()
 {
-    QRegExp regexp("(.*)[@](.*)");
+    QRegExp regexp(EMAIL_REGEXP);
 
     // FIXME: I need to disable somehow next, finish and back button here
     if (reg_in_progress){
