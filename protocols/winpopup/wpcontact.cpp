@@ -50,6 +50,7 @@ WPContact::WPContact(WPProtocol *protocol, const QString &host, KopeteMetaContac
 			newDisplayName += host[i].lower();
 
 	setDisplayName(newDisplayName);
+	myWasConnected = false;
 	myProtocol = protocol;
 	myHost = host;
 
@@ -94,13 +95,17 @@ void WPContact::slotCheckStatus()
 {
 //	DEBUG(WPDMETHOD, "WPContact::slotCheckStatus()");
 
+	bool oldWasConnected = myWasConnected;
 	bool oldIsOnline = myIsOnline;
+	
+	myWasConnected = myProtocol;
+	
 	if(myProtocol)
 		myIsOnline = myProtocol->checkHost(myHost);
 	else
 		myIsOnline = false;
-	if( oldIsOnline != myIsOnline )
-		setOnlineStatus( myIsOnline ? Unknown : Offline );
+	if( oldIsOnline != myIsOnline || myWasConnected != oldWasConnected )
+		setOnlineStatus( myWasConnected ? myIsOnline ? Online : Offline : Unknown );
 }
 
 void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)

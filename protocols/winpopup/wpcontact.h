@@ -59,6 +59,7 @@ class WPContact: public KopeteContact
 
 private:
 	bool myIsOnline;		// true if online, false if not
+	bool myWasConnected;	// true if protocol connected at last check
 	QString myHost;			// stores the hostname of this contact
 	WPProtocol *myProtocol;	// stores the protocol instance to which this contact belongs
 	QTimer checkStatus;		// checks the status of this contact every second or so
