@@ -139,6 +139,7 @@ private:
 	KAction* busyAction;
 	KAction* invisibleAction;
 	KAction* descrAction;
+	KAction* searchAction;
 };
 
 #endif

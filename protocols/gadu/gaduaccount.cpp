@@ -52,6 +52,8 @@ GaduAccount::initActions()
                                           SLOT(slotGoInvisible()), this, "actionGaduConnect" );
 	descrAction     = new KAction( i18n("Set &Description"), "info", 0, this,
 					 SLOT(slotDescription()), this, "actionGaduDescription" );
+	searchAction	= new KAction( i18n("&Search for friends"), "", 0, this,
+				SLOT(slotSearch()), this, "actionSearch" );
 
 }
 
@@ -133,9 +135,15 @@ KActionMenu* GaduAccount::actionMenu()
 
 	actionMenu_->popupMenu()->insertSeparator();
 
-	actionMenu_->insert( new KAction( i18n("Search for friends"), "", 0, this,
-		SLOT(slotSearch()), this, "actionSearch" ) );
-
+	if (session_->isConnected()){
+	    searchAction->setEnabled(TRUE);
+	}
+	else{
+	    searchAction->setEnabled(FALSE);
+	}
+	
+	actionMenu_->insert( searchAction );
+	
 //  actionMenu_->insert( new KAction( i18n("Change Password"), "", 0, this,
 //		SLOT(slotChangePassword()), this, "actionChangePassword" ) );
 
