@@ -57,4 +57,12 @@
 	<string>;)</string>
 </emoticon>
 
+<emoticon file="pig">
+	<string>:3)</string>
+	<string>;3)</string>
+	<string>:-3</string>
+	<string>;-3</string>
+</emoticon>
+
+
 </messaging-emoticon-map>
