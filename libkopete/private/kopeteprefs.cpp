@@ -132,13 +132,13 @@ void KopetePrefs::load()
 		font.setPointSizeFloat( font.pointSizeFloat() * 0.75 );
 	mContactListSmallFont = config->readFontEntry("SmallFont", &font);
 	mContactListGroupNameColor = config->readColorEntry("GroupNameColor", &darkRed);
-	mContactListAnimation = config->readBoolEntry("AnimateContactListChanges", true);
-	mContactListFading = config->readBoolEntry("FadeContactListItems", true);
-	
+	mContactListAnimation = config->readBoolEntry("AnimateChanges", true);
+	mContactListFading = config->readBoolEntry("FadeItems", true);
+
 	//Load the reconnection setting
 	config->setGroup("General");
 	mReconnectOnDisconnect = config->readBoolEntry("ReconnectOnDisconnect", true);
-	
+
 
 	mWindowAppearanceChanged = false;
 	mTransparencyChanged = false;
@@ -201,8 +201,8 @@ void KopetePrefs::save()
 	config->writeEntry("NormalFont", mContactListNormalFont);
 	config->writeEntry("SmallFont", mContactListSmallFont);
 	config->writeEntry("GroupNameColor", mContactListGroupNameColor);
-	config->writeEntry("AnimateContactListChanges", mContactListAnimation);
-	config->writeEntry("FadeContactListItems", mContactListFading);
+	config->writeEntry("AnimateChanges", mContactListAnimation);
+	config->writeEntry("FadeItems", mContactListFading);
 	
 	//Save the reconnection setting
 	config->setGroup("General");
@@ -212,29 +212,34 @@ void KopetePrefs::save()
 	emit saved();
 
 	if(mTransparencyChanged)
-		emit(transparencyChanged());
+		emit transparencyChanged();
 
 	if(mWindowAppearanceChanged)
-		emit(windowAppearanceChanged());
+		emit windowAppearanceChanged();
 
 	if(mContactListAppearanceChanged)
-		emit(contactListAppearanceChanged());
+		emit contactListAppearanceChanged();
 
 	if(mMessageAppearanceChanged)
-		emit(messageAppearanceChanged());
+		emit messageAppearanceChanged();
 
+	// Clear all *Changed flags. This will cause breakage if someone makes some
+	// changes but doesn't save them in a slot connected to a *Changed signal.
 	mWindowAppearanceChanged = false;
 	mTransparencyChanged = false;
 	mContactListAppearanceChanged = false;
+	mMessageAppearanceChanged = false;
 }
 
 void KopetePrefs::setIconTheme(const QString &value)
 {
+	mMessageAppearanceChanged |= mIconTheme != value;
 	mIconTheme = value;
 }
 
 void KopetePrefs::setUseEmoticons(bool value)
 {
+	mMessageAppearanceChanged |= mUseEmoticons != value;
 	mUseEmoticons = value;
 }
 
@@ -311,8 +316,8 @@ void KopetePrefs::setSoundIfAway(bool value)
 
 void KopetePrefs::setStyleSheet(const QString &value)
 {
+	mMessageAppearanceChanged |= mStyleSheet != value;
 	_setStyleSheet(value);
-	emit( messageAppearanceChanged() );
 }
 
 void KopetePrefs::_setStyleSheet(const QString &value)
