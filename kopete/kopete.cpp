@@ -32,7 +32,7 @@
 #include "kopeteaccountmanager.h"
 #include "kopetecommandhandler.h"
 #include "kopetecontactlist.h"
-#include "kopeteglobal.h"
+#include "kopeteuiglobal.h"
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
 #include "kopetestdaction.h"

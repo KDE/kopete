@@ -18,8 +18,6 @@
 #ifndef KOPETEGLOBAL_H
 #define KOPETEGLOBAL_H
 
-class QWidget;
-
 namespace Kopete
 {
 
@@ -29,24 +27,6 @@ namespace Kopete
 namespace Global
 {
 } //Global
-
-namespace UI
-{
-
-namespace Global
-{
-	/**
-	 * Set the main widget to widget
-	 */
-	void setMainWidget( QWidget *widget );
-	/**
-	 * Returns the main widget - this is the widget that message boxes
-	 * and KNotify stuff should use as a parent.
-	 */
-	QWidget *mainWidget();
-} //Global::UI
-
-} //UI
 
 }
 

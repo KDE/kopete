@@ -24,20 +24,7 @@ namespace Kopete
 {
 
 
-namespace
-{
-	QGuardedPtr<QWidget> g_mainWidget;
-}
 
-void UI::Global::setMainWidget( QWidget *widget )
-{
-	g_mainWidget = widget;
-}
-
-QWidget *UI::Global::mainWidget()
-{
-	return g_mainWidget;
-}
 
 
 }
