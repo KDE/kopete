@@ -222,27 +222,29 @@ QString KopeteEmoticons::parseEmoticons( QString message )
 
 	for ( QStringList::Iterator it = emoticons.begin(); it != emoticons.end(); ++it )
 	{
-		if(message.contains( QStyleSheet::escape(*it) ))
+		QString es=QStyleSheet::escape(*it);
+		if(message.contains(es))
 		{
-			QString em = QRegExp::escape( QStyleSheet::escape(*it) );
+			QString em = QRegExp::escape( es );
 
 			QString imgPath = KopeteEmoticons::emoticons()->emoticonToPicPath( *it );
 
 			QImage iconImage(imgPath);
-
-			message.replace( QRegExp(QString::fromLatin1( "(^|[\\W\\s]|%1)(%1)(?!\\w)" ).arg(em).arg(em)),
+ 			message.replace( QRegExp(QString::fromLatin1( "(^|[\\W\\s]|%1)(%2)(?!\\w)" ).arg(em).arg(em)),
 				QString::fromLatin1("\\1<img align=\"center\" width=\"") +
 				QString::number(iconImage.width()) +
 				QString::fromLatin1("\" height=\"") +
 				QString::number(iconImage.height()) +
 				QString::fromLatin1("\" src=\"") + imgPath +
-				QString::fromLatin1("\" title=\"") + QStyleSheet::escape(*it) +
-				QString::fromLatin1( "\">" ) );
+				QString::fromLatin1("\" title=\"") + es +
+				QString::fromLatin1( "\"/>" ) );
 		}
 	}
 
 	return message;
 }
+
+//%1%1%1%1
 
 #include "kopeteemoticons.moc"
 // vim: set noet ts=4 sts=4 sw=4:
