@@ -4,7 +4,7 @@
 #include <qwidget.h>
 #include <kmainwindow.h>
 #include <kaction.h>
-#include "../contactlist.h"
+#include "contactlist.h"
 
 class KopeteWindow : public KMainWindow
 {

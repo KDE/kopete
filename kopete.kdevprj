@@ -422,9 +422,9 @@ install_location=
 type=HEADER
 
 [kopete/library/ui/Makefile.am]
-files=kopete/library/ui/aboutplugins.cpp,kopete/library/ui/aboutplugins.h,kopete/library/ui/configmodule.cpp,kopete/library/ui/configmodule.h,kopete/library/ui/kopetewindow.cpp,kopete/library/ui/kopetewindow.h,kopete/library/ui/preferencesdialog.cpp,kopete/library/ui/preferencesdialog.h,
+files=kopete/library/ui/aboutplugins.cpp,kopete/library/ui/aboutplugins.h,kopete/library/ui/configmodule.cpp,kopete/library/ui/configmodule.h,kopete/library/ui/kopetewindow.cpp,kopete/library/ui/kopetewindow.h,kopete/library/ui/preferencesdialog.cpp,kopete/library/ui/preferencesdialog.h,kopete/library/ui/connectionlabel.cpp,kopete/library/ui/connectionlabel.h
 sub_dirs=
-type=normal
+type=static_library
 
 [kopete/library/ui/aboutplugins.cpp]
 dist=true
@@ -445,6 +445,18 @@ install_location=
 type=SOURCE
 
 [kopete/library/ui/configmodule.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/library/ui/connectionlabel.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/library/ui/connectionlabel.h]
 dist=true
 install=false
 install_location=
