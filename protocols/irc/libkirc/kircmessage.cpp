@@ -23,20 +23,81 @@
 #include "kopetemessage.h"
 
 #include "kirc.h"
+#include "ksparser.h"
 #include "kircmessage.h"
 
+KIRCRegExp::KIRCRegExp( const char* regex )
+{
+	const char *error;
+	int erroffset;
+	re = pcre_compile(
+		regex,          /* the pattern */
+		PCRE_NO_UTF8_CHECK, /* default options */
+		&error,           /* for error message */
+		&erroffset,       /* for error offset */
+		NULL
+	);
+
+	pe = pcre_study(
+		re,             /* result of pcre_compile() */
+		0,              /* no options exist */
+		&error
+	);
+}
+
+KIRCRegExp::~KIRCRegExp()
+{
+	pcre_free( pe );
+	pcre_free( re );
+}
+
+bool KIRCRegExp::exactMatch( QCString str )
+{
+	subject = str;
+	caps = pcre_exec(
+		re,		/* result of pcre_compile() */
+		pe,	    	/* we didn't study the pattern */
+		str,		/* the subject string */
+		subject.length(),		/* the length of the subject string */
+		0,		/* start at offset 0 in the subject */
+		0,		/* default options */
+		ovector,	/* vector for substring information */
+		30		/* number of elements in the vector */
+	);
+
+	if( caps > 0 )
+	{
+	        return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+QCString KIRCRegExp::cap( int idx )
+{
+	char buffer[4096];
+	if( caps > 0 )
+	{
+		pcre_copy_substring( subject, ovector, caps, idx, buffer, 4096 );
+	}
+
+	return buffer;
+}
+
 #ifndef _IRC_STRICTNESS_
-const QRegExp KIRCMessage::m_IRCCommandType1(QString::fromLatin1(
-	"^(?::([^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*)*) ?(?: :(.*))?$"));
+KIRCRegExp KIRCMessage::m_IRCCommandType1(
+	"^(?::([^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*)*) ?(?: :(.*))?$");
 	// Extra end arg space check -------------------------^
 #else // _IRC_STRICTNESS_
-const QRegExp KIRCMessage::m_IRCCommandType1(QString::fromLatin1(
-	"^(?::([^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*){0,13})(?: :(.*))?$"));
-const QRegExp KIRCMessage::m_IRCCommandType2(QString::fromLatin1(
-	"^(?::[[^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*){14,14})(?: (.*))?$"));
+KIRCRegExp KIRCMessage::m_IRCCommandType1(
+	"^(?::([^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*){0,13})(?: :(.*))?$");
+KIRCRegExp KIRCMessage::m_IRCCommandType2(
+	"^(?::[[^ ]+) )?([A-Za-z]+|\\d{3,3})((?: [^ :][^ ]*){14,14})(?: (.*))?$");
 #endif // _IRC_STRICTNESS_
 
-const QRegExp KIRCMessage::m_IRCNumericCommand(QString::fromLatin1("^\\d{3,3}$"));
+KIRCRegExp KIRCMessage::m_IRCNumericCommand("^\\d{3,3}$");
 
 KIRCMessage::KIRCMessage() : m_ctcpMessage(0)
 {
@@ -77,7 +138,7 @@ KIRCMessage::~KIRCMessage()
 	if(m_ctcpMessage) delete m_ctcpMessage;
 }
 
-KIRCMessage KIRCMessage::writeRawMessage(KIRC *engine, const QTextCodec *codec, const QString &str)
+void KIRCMessage::writeRawMessage(KIRC *engine, const QTextCodec *codec, const QString &str)
 {
 	QCString s;
 	QString txt = str + QString::fromLatin1("\r\n");
@@ -88,16 +149,14 @@ KIRCMessage KIRCMessage::writeRawMessage(KIRC *engine, const QTextCodec *codec, 
 
 	// FIXME: Should check the amount of data really writen.
 	engine->socket()->writeBlock(s.data(), s.length());
-
-	return parse(str);
 }
 
-KIRCMessage KIRCMessage::writeMessage(KIRC *engine, const QTextCodec *codec, const QString &message)
+void KIRCMessage::writeMessage(KIRC *engine, const QTextCodec *codec, const QString &message)
 {
-	return writeRawMessage(engine, codec, quote(message));
+	writeRawMessage(engine, codec, quote(message));
 }
 
-KIRCMessage KIRCMessage::writeMessage(KIRC *engine, const QTextCodec *codec,
+void KIRCMessage::writeMessage(KIRC *engine, const QTextCodec *codec,
 	const QString &command, const QStringList &args, const QString &suffix)
 {
 	QString msg = command;
@@ -108,10 +167,10 @@ KIRCMessage KIRCMessage::writeMessage(KIRC *engine, const QTextCodec *codec,
 	if (!suffix.isNull())
 		msg += QString::fromLatin1(" :") + suffix;
 
-	return writeMessage(engine, codec, msg);
+	writeMessage(engine, codec, msg);
 }
 
-KIRCMessage KIRCMessage::writeCtcpMessage(KIRC *engine, const QTextCodec *codec,
+void KIRCMessage::writeCtcpMessage(KIRC *engine, const QTextCodec *codec,
 		const QString &command, const QString &to, const QString &suffix,
 		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix )
 {
@@ -123,7 +182,7 @@ KIRCMessage KIRCMessage::writeCtcpMessage(KIRC *engine, const QTextCodec *codec,
 	if (!ctcpSuffix.isNull())
 		ctcpMsg += QString::fromLatin1(" :") + ctcpSuffix;
 
-	return writeMessage(engine, codec, command, to, suffix + QChar(0x01) + ctcpQuote(ctcpMsg) + QChar(0x01));
+	writeMessage(engine, codec, command, to, suffix + QChar(0x01) + ctcpQuote(ctcpMsg) + QChar(0x01));
 }
 
 KIRCMessage KIRCMessage::parse(KIRC *engine, const QTextCodec *codec, bool *parseSuccess)
@@ -133,69 +192,34 @@ KIRCMessage KIRCMessage::parse(KIRC *engine, const QTextCodec *codec, bool *pars
 
 	if( engine->socket()->canReadLine() )
 	{
-		QCString raw;
-		QString line;
-
-		raw.resize(engine->socket()->bytesAvailable()+1);
+		QCString raw( engine->socket()->bytesAvailable()+1 );
 		Q_LONG length = engine->socket()->readLine(raw.data(), raw.count());
+
 		if( length > -1 )
 		{
-			raw.resize(length);
+			raw.resize( length );
 			raw.replace("\r\n",""); //remove the trailling \r\n if any(there must be in fact)
 
-			line = KopeteMessage::decodeString(raw, codec);
+			kdDebug(14121) << "<< " << raw << endl;
 
-			kdDebug(14121) << "<< " << line << endl;
+			KIRCMessage msg;
+			if(matchForIRCRegExp(raw, codec, msg))
+			{
+				if(parseSuccess)
+					*parseSuccess = true;
+			}
+			else
+			{
+				kdDebug(14120) << k_funcinfo << "Unmatched line: \"" << raw << "\"" << endl;
+			}
 
-			KIRCMessage msg = parse( line, parseSuccess );
-			msg.m_raw = raw;
 			return msg;
 		}
 		else
-			kdWarning(14121) << "Failed to read a line while canReadLine returned true!" << endl;
+			kdWarning(14121) << k_funcinfo << "Failed to read a line while canReadLine returned true!" << endl;
 	}
 
 	return KIRCMessage();
-}
-
-KIRCMessage KIRCMessage::parse(const QString &line, bool *parseSuccess)
-{
-	KIRCMessage msg;
-
-	if(parseSuccess)
-		*parseSuccess=false;
-
-	QString newLine = unquote( line );
-	if(matchForIRCRegExp(newLine, msg))
-	{
-		msg.m_prefix = ctcpUnquote(msg.m_prefix);
-		msg.m_command = ctcpUnquote(msg.m_command);
-		for (QStringList::Iterator it = msg.m_args.begin(); it != msg.m_args.end(); ++it)
-			(*it) = ctcpUnquote(*it);
-
-		if(extractCtcpCommand(msg.m_suffix, msg.m_ctcpRaw))
-		{
-			msg.m_ctcpRaw = ctcpUnquote(msg.m_ctcpRaw);
-			kdDebug(14121) << "Found CTCP command:\"" << msg.m_ctcpRaw << "\"" << endl;
-			msg.m_ctcpMessage = new KIRCMessage();
-			msg.m_ctcpMessage->m_raw = msg.m_ctcpRaw.utf8();
-			if(!matchForIRCRegExp(msg.m_ctcpRaw, *msg.m_ctcpMessage))
-			{
-				msg.m_ctcpMessage->m_command = msg.m_ctcpRaw.section(' ', 0, 0).upper();
-			}
-			msg.m_ctcpMessage->m_ctcpRaw = msg.m_ctcpRaw.section(' ', 1);
-		}
-		msg.m_suffix = ctcpUnquote(msg.m_suffix);
-
-		if(parseSuccess)
-			*parseSuccess = true;
-	}
-	else
-	{
-//		KMessageBox::error(Kopete::UI::Global::mainWidget(), "\"" + line + "\"", "Unmatched line");
-		kdDebug(14120) << "Unmatched line:\"" << newLine << "\"" << endl;
-	}
-	return msg;
 }
 
 QString KIRCMessage::quote(const QString &str)
@@ -210,63 +234,89 @@ QString KIRCMessage::quote(const QString &str)
 }
 
 // FIXME: The unquote system is buggy.
-QString KIRCMessage::unquote(const QString &str)
+QCString KIRCMessage::unquote(const QCString &str)
 {
-	QString tmp = str;
-	QChar q('\020');
-	tmp.replace(q+QString(q), q);
-	tmp.replace(q+QString::fromLatin1("r"), QChar('\r'));
-	tmp.replace(q+QString::fromLatin1("n"), QChar('\n'));
-	tmp.replace(q+QString::fromLatin1("0"), QChar('\0'));
-	return tmp;
+	QCString tmp = str;
+
+	char b[3];
+	b[0] = 20; b[1] = 20; b[2] = '\0';
+	char b2[2];
+	b2[0] = (char)20; b2[1] = '\0';
+
+	tmp.replace( b, b2 );
+	b[1] = 'r';
+	tmp.replace( b, "\r");
+	b[1] = 'n';
+	tmp.replace( b, "\n");
+	b[1] = '0';
+	tmp.replace( b, "\0");
+
+	tmp.replace("\\\\", "\\");
+	tmp.replace("\\1", "\1" );
+
+	return tmp;;
 }
 
 QString KIRCMessage::ctcpQuote(const QString &str)
 {
 	QString tmp = str;
 	tmp.replace( QChar('\\'), QString::fromLatin1("\\\\"));
-	tmp.replace( QChar((uchar)0x01), QString::fromLatin1("\\1"));
+	tmp.replace( (char)1, QString::fromLatin1("\\1"));
 	return tmp;
 }
 
-// FIXME: The unquote system is buggy.
-QString KIRCMessage::ctcpUnquote(const QString &str)
+bool KIRCMessage::matchForIRCRegExp(const QCString &line, const QTextCodec *codec, KIRCMessage &message)
 {
-	QString tmp = str;
-	tmp.replace(QString::fromLatin1("\\\\"), QChar('\\'));
-	tmp.replace(QString::fromLatin1("\\1"), QChar((uchar)0x01));
-	return tmp;
-}
-
-bool KIRCMessage::matchForIRCRegExp(const QString &line,KIRCMessage &message)
-{
-	QRegExp IRCCommandType1(m_IRCCommandType1);
-#ifdef _IRC_STRICTNESS_
-	QRegExp IRCCommandType2(m_IRCCommandType2);
-#endif // _IRC_STRICTNESS_
-
-	if(matchForIRCRegExp(IRCCommandType1, line,
-		message.m_prefix, message.m_command , message.m_args, message.m_suffix))
+	if(matchForIRCRegExp(m_IRCCommandType1, codec, line, message))
 		return true;
 #ifdef _IRC_STRICTNESS_
-	if(!matchForIRCRegExp(IRCCommandType2, line,
-		message.m_prefix, message.m_command , message.m_args, message.m_suffix))
+	if(!matchForIRCRegExp(m_IRCCommandType2, codec, line, message)
 		return true;
 #endif // _IRC_STRICTNESS_
 	return false;
 }
 
-bool KIRCMessage::matchForIRCRegExp(QRegExp &regexp, const QString &line,
-				QString &prefix, QString &command, QStringList &args, QString &suffix)
+bool KIRCMessage::matchForIRCRegExp(KIRCRegExp &regexp, const QTextCodec *codec, const QCString &line, KIRCMessage &msg )
 {
 	if(regexp.exactMatch(line))
 	{
-		prefix  = regexp.cap(1);
-		command = regexp.cap(2);
-		args    = QStringList::split(' ', regexp.cap(3).stripWhiteSpace());
-		suffix  = regexp.cap(4);
+		msg.m_raw = line;
+		msg.m_prefix  = QString::fromLatin1( unquote( regexp.cap(1) ) );
+		msg.m_command = QString::fromLatin1( unquote( regexp.cap(2) ) );
+		msg.m_args = QStringList::split(' ', QString::fromLatin1( regexp.cap(3) ) );
+
+		QCString suffix = unquote( regexp.cap(4) );
+		if( extractCtcpCommand( suffix, msg.m_ctcpRaw ) )
+		{
+			msg.m_ctcpMessage = new KIRCMessage();
+			msg.m_ctcpMessage->m_raw = msg.m_ctcpRaw;
+
+			int space = msg.m_ctcpRaw.find(' ');
+			if( !matchForIRCRegExp(msg.m_ctcpMessage->m_raw, codec, *msg.m_ctcpMessage) )
+			{
+				if( space > 0 )
+				{
+					msg.m_ctcpMessage->m_command = QString::fromLatin1(
+						msg.m_ctcpRaw.mid(0, space).upper()
+					);
+				}
+				else
+					msg.m_ctcpMessage->m_command = QString::null;
+			}
+
+			if( space > 0 )
+				msg.m_ctcpMessage->m_ctcpRaw = msg.m_ctcpRaw.mid( space );
+
+			msg.m_suffix = QString::null;
+		}
+		else
+		{
+			msg.m_suffix = KopeteMessage::decodeString( KSParser::parse( unquote( suffix ) ), codec );
+		}
+
 		return true;
 	}
+
 	return false;
 }
 
@@ -287,7 +337,7 @@ QString KIRCMessage::toString() const
 
 bool KIRCMessage::isNumeric() const
 {
-	return m_IRCNumericCommand.exactMatch( m_command );
+	return m_IRCNumericCommand.exactMatch( m_command.utf8() );
 }
 
 bool KIRCMessage::isValid() const
@@ -300,21 +350,19 @@ bool KIRCMessage::isValid() const
 /* Return true if the given string is a special command string
  * (i.e start and finish with the ascii code \001), and the given
  * string is splited to get the first part of the message and fill the ctcp command. */
-bool KIRCMessage::extractCtcpCommand(QString &str, QString &ctcpline)
+bool KIRCMessage::extractCtcpCommand(QCString &str, QCString &ctcpline)
 {
 	// This could also be done using a regexp like: "^([^\\x01])\\x01([^\\x01])\\x01$"
 	// (make less code to test)
-	int pos_begin = str.find(QChar(0x01));
-	if (pos_begin==-1)
-		return false;
+	uint len = str.length();
+	if( str[0] == 1 && str[ len - 1 ] == 1 )
+	{
+		ctcpline = str.mid( 1, len - 2 );
+		kdDebug(14121) << k_funcinfo << ctcpline << endl;
+		return true;
+	}
 
-	int pos_end = str.find(QChar(0x01), pos_begin+1);
-	if (pos_end==-1||pos_end!=(int)str.length()-1)
-		return false;
-
-	ctcpline = str.mid(pos_begin+1, pos_end-pos_begin-1);
-	str = str.mid(0, pos_begin);
-	return true;
+	return false;
 }
 
 void KIRCMessage::dump() const

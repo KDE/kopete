@@ -42,7 +42,6 @@
 #include "ircservercontact.h"
 #include "ircchannelcontact.h"
 #include "ircusercontact.h"
-#include "ksparser.h"
 #include "channellist.h"
 
 ChannelListDialog::ChannelListDialog( KIRC *engine, const QString &caption, QObject *target, const char* slotJoinChan )
@@ -653,7 +652,7 @@ void IRCAccount::appendMessage( const QString &message, MessageType type )
 		if( activeView && activeView->msgManager()->account() == this )
 		{
 			KopeteMessageManager *manager = activeView->msgManager();
-			KopeteMessage msg( manager->user(), manager->members(), KSParser::parse( message ),
+			KopeteMessage msg( manager->user(), manager->members(), message,
 				KopeteMessage::Internal, KopeteMessage::RichText, KopeteMessage::Chat );
 			activeView->appendMessage(msg);
 		}

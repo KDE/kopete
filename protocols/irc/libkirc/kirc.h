@@ -171,28 +171,28 @@ public:
 		{ customCtcpMap[ ctcp.lower() ] = reply; }
 
 	//Message output
-	KIRCMessage writeRawMessage( const QString &message, bool mustBeConnected = true );
+	void writeRawMessage( const QString &message, bool mustBeConnected = true );
 
-	KIRCMessage writeMessage(const QString &message, bool mustBeConnected = true);
+	void writeMessage(const QString &message, bool mustBeConnected = true);
 
-	KIRCMessage writeMessage( const QString &command, const QStringList &args, const QString &suffix = QString::null,
+	void writeMessage( const QString &command, const QStringList &args, const QString &suffix = QString::null,
 		bool mustBeConnected = true );
 
-	KIRCMessage writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
+	void writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
 		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix = QString::null,
 		bool emitRepliedCtcp = true);
 
-	inline KIRCMessage writeCtcpQueryMessage(const QString &to, const QString &suffix,
+	inline void writeCtcpQueryMessage(const QString &to, const QString &suffix,
 		const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
 		bool emitRepliedCtcp = true)
 		{ return writeCtcpMessage("PRIVMSG", to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
 
-	inline KIRCMessage writeCtcpReplyMessage(const QString &to, const QString &suffix,
+	inline void writeCtcpReplyMessage(const QString &to, const QString &suffix,
 		const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
 		bool emitRepliedCtcp = true)
 		{ return writeCtcpMessage("NOTICE", to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
 
-	inline KIRCMessage writeCtcpErrorMessage(const QString &to, const QString &ctcpLine, const QString &errorMsg,
+	inline void writeCtcpErrorMessage(const QString &to, const QString &ctcpLine, const QString &errorMsg,
 		bool emitRepliedCtcp=true)
 		{ return writeCtcpReplyMessage(to, QString::null, "ERRMSG", ctcpLine, errorMsg, emitRepliedCtcp); }
 
@@ -207,7 +207,6 @@ signals:
 	void connectionTimeout();
 	void internalError(KIRC::EngineError, const KIRCMessage &);
 	void statusChanged(KIRC::EngineStatus newStatus);
-	void sentMessage(const KIRCMessage &);
 	void receivedMessage(const KIRCMessage &);
 	void successfullyChangedNick(const QString &, const QString &);
 
@@ -284,7 +283,6 @@ signals:
 	void incomingListedChan(const QString &chan, uint users, const QString &topic);
 	void incomingEndOfList();
 
-	void repliedCtcp(const QString &type, const QString &ctcpMessage);
 	void incomingCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
 
 private slots:

@@ -25,6 +25,7 @@ Modified by Jason Keirstead <jason@keirstead.org>
 
 #include <kopetenotifyclient.h>
 #include <kdebug.h>
+#include <qstylesheet.h>
 #include "ksparser.h"
 
 KSParser KSParser::m_parser;
@@ -61,9 +62,9 @@ KSParser::~KSParser()
 }
 
 /* NOTE: If thread corruption are seen simply ad a qlock here */
-QString KSParser::parse(const QString &message)
+QCString KSParser::parse(const QCString &message)
 {
-	return m_parser._parse(message);
+	return m_parser._parse( QString::fromLatin1(message) ).latin1();
 }
 
 QString KSParser::_parse(const QString &message)
@@ -132,7 +133,7 @@ QString KSParser::_parse(const QString &message)
 			res += QString::fromLatin1("&nbsp;&nbsp;&nbsp;&nbsp;");
 			break;
 		default:
-			res += message[i];
+			res += QStyleSheet::escape(message[i]);
 		}
 	}
 	res.append( popAll() );

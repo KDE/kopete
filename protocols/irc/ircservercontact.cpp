@@ -31,7 +31,6 @@
 #include "ircservercontact.h"
 #include "ircaccount.h"
 #include "ircprotocol.h"
-#include "ksparser.h"
 
 IRCServerContact::IRCServerContact(IRCContactManager *contactManager, const QString &servername, KopeteMetaContact *m)
 	: IRCContact(contactManager, servername, m, "irc_server")
@@ -132,9 +131,8 @@ void IRCServerContact::appendMessage( const QString &message )
 {
 	KopeteContactPtrList members;
 	members.append( this );
-	KopeteMessage msg( this, members, KSParser::parse( message ), KopeteMessage::Internal,
+	KopeteMessage msg( this, members, message, KopeteMessage::Internal,
 		KopeteMessage::RichText, KopeteMessage::Chat );
-	msg.setBody( KSParser::parse( msg.escapedBody().stripWhiteSpace() ), KopeteMessage::RichText );
 	appendMessage(msg);
 }
 
@@ -165,7 +163,6 @@ void IRCServerContact::slotCannotSendToChannel( const QString &channel, const QS
 
 void IRCServerContact::appendMessage( KopeteMessage &msg )
 {
-	msg.setBody( KSParser::parse( msg.escapedBody() ), KopeteMessage::RichText );
 	msg.setImportance( KopeteMessage::Low ); //to don't distrub the user
 
 	if( m_msgManager && m_msgManager->view(false) )

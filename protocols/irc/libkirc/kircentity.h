@@ -24,10 +24,11 @@
 
 #include <kdeversion.h>
 #if KDE_IS_VERSION( 3, 2, 90 )
-#include <qt-addon/qresolver.h>
+#include <kresolver.h>
+using namespace KNetwork;
 #else
 // we provide a dummy definition because moc disregards compiler directives, and sees the signal definition using this below
-#define QResolverResults int
+#define KResolverResults int
 #endif
 #include <kdemacros.h>
 
@@ -79,21 +80,21 @@ public:
 		{ return sm_channelRegExp.exactMatch(s); };
 
 #if KDE_IS_VERSION( 3, 2, 90 )
-	inline QResolver::StatusCodes resolverStatus()
-		{ return (QResolver::StatusCodes)getResolver()->status(); }
+	inline KResolver::StatusCodes resolverStatus()
+		{ return (KResolver::StatusCodes)getResolver()->status(); }
 
-	QResolverResults resolve(bool *success = 0);
+	KResolverResults resolve(bool *success = 0);
 	void resolveAsync();
-	QResolverResults resolverResults()
+	KResolverResults resolverResults()
 		{ return getResolver()->results(); }
 #endif
 signals:
-	void resolverResults(QResolverResults);
+	void resolverResults(KResolverResults);
 
 protected:
 	static QString userInfo(const QString &s, int num_cap);
 #if KDE_IS_VERSION( 3, 2, 90 )
-	QResolver *getResolver();
+	KResolver *getResolver();
 #endif
 private:
 	static const QRegExp sm_userRegExp;
@@ -104,7 +105,7 @@ private:
 	// peer ip address if the entity is a User.
 	QString m_address;
 #if KDE_IS_VERSION( 3, 2, 90 )
-	QResolver *m_resolver;
+	KResolver *m_resolver;
 #endif
 
 };

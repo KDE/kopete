@@ -597,8 +597,9 @@ void IRCChannelContact::privateMessage(IRCContact *from, IRCContact *to, const Q
 {
 	if(to == this)
 	{
-		KopeteMessage msg(from, manager()->members(), message, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat);
-		/*to->*/appendMessage(msg);
+		KopeteMessage msg(from, manager()->members(), message, KopeteMessage::Inbound,
+			KopeteMessage::RichText, KopeteMessage::Chat);
+		appendMessage(msg);
 	}
 }
 
@@ -606,8 +607,9 @@ void IRCChannelContact::action(IRCContact *from, IRCContact *to, const QString &
 {
 	if(to == this)
 	{
-		KopeteMessage msg(from, manager()->members(), action, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat);
-		/*to->*/appendMessage(msg);
+		KopeteMessage msg(from, manager()->members(), action, KopeteMessage::Action,
+			KopeteMessage::RichText, KopeteMessage::Chat);
+		appendMessage(msg);
 	}
 }
 

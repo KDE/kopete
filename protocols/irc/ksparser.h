@@ -24,7 +24,7 @@
 class KSParser
 {
 public:
-	static QString parse(const QString &);
+	static QCString parse(const QCString &);
 	static int colorForHTML( const QString &html );
 
 	~KSParser();

@@ -22,7 +22,7 @@
 #include <kextsock.h>
 
 #include "kircfunctors.h"
-
+#include "kopetemessage.h"
 #include "kirc.h"
 
 void KIRC::registerCommands()
@@ -265,8 +265,6 @@ bool KIRC::privateMessage(const KIRCMessage &msg)
 	if (!m.suffix().isEmpty())
 	{
 		QString user = m.arg(0);
-		m = KIRCMessage::parse( codecForNick( user )->toUnicode( m.raw() ) );
-
 		QString message = m.suffix();
 
 		if( KIRCEntity::isChannel(user) )

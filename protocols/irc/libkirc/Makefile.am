@@ -12,9 +12,9 @@ libkirc_la_SOURCES = \
 	kirctransferserver.cpp \
 	ksslsocket.cpp
 libkirc_la_LDFLAGS = -no-undefined $(KDE_PLUGIN)
-libkirc_la_LIBADD = $(all_libraries) $(KDE_RPATH) $(LIB_KIO)
+libkirc_la_LIBADD = $(all_libraries) $(KDE_RPATH) $(LIB_KIO) $(LIBPCRE)
 
-AM_CPPFLAGS = $(all_includes) $(KOPETE_INCLUDES)
+AM_CPPFLAGS = -I.. $(PCRECFLAGS) $(KOPETE_INCLUDES) $(all_includes)
 METASOURCES = AUTO
 
 #Generates some warnings!!!

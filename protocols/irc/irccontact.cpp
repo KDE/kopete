@@ -18,12 +18,12 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <qregexp.h>
+
 #include <qtimer.h>
 #include <qtextcodec.h>
 
 #include "ircaccount.h"
 
-#include "ksparser.h"
 #include "kopetemetacontact.h"
 #include "kopeteview.h"
 #include "ircusercontact.h"
@@ -31,6 +31,7 @@
 #include "ircprotocol.h"
 #include "ircservercontact.h"
 #include "irccontactmanager.h"
+#include "ksparser.h"
 
 IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, KopeteMetaContact *metac, const QString& icon)
 	: KopeteContact(contactManager->account(), nick, metac, icon),
@@ -308,7 +309,6 @@ void IRCContact::slotDeleteContact()
 
 void IRCContact::appendMessage( KopeteMessage &msg )
 {
-	msg.setBody( KSParser::parse( msg.escapedBody() ), KopeteMessage::RichText );
 	manager()->appendMessage(msg);
 }
 

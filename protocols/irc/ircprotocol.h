@@ -34,7 +34,6 @@ class IRCAccount;
 
 class QStringList;
 class QWidget;
-class KSParser;
 class KopeteView;
 
 class IRCNetwork;

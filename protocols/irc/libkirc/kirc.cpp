@@ -272,69 +272,39 @@ bool KIRC::canSend( bool mustBeConnected ) const
 
 /* Message will be send as passed.
  */
-KIRCMessage KIRC::writeRawMessage(const QString &rawMsg, bool mustBeConnected)
+void KIRC::writeRawMessage(const QString &rawMsg, bool mustBeConnected)
 {
 	if(canSend(mustBeConnected))
 	{
-		KIRCMessage ircmsg = KIRCMessage::writeRawMessage(this, defaultCodec, rawMsg);
-		emit sentMessage(ircmsg);
-		return ircmsg;
+		KIRCMessage::writeRawMessage(this, defaultCodec, rawMsg);
 	}
-
-//	kdDebug(14120) << "Must be connected error:" << rawMsg << endl;
-	kdDebug(14120) << k_funcinfo << "Must be connected error:" << rawMsg << endl;
-
-	return KIRCMessage();
 }
 
 /* Message will be quoted before beeing send.
  */
-KIRCMessage KIRC::writeMessage(const QString &msg, bool mustBeConnected)
+void KIRC::writeMessage(const QString &msg, bool mustBeConnected)
 {
 	if(canSend(mustBeConnected))
 	{
-		KIRCMessage ircmsg = KIRCMessage::writeMessage(this, defaultCodec, msg);
-		emit sentMessage(ircmsg);
-		return ircmsg;
+		KIRCMessage::writeMessage(this, defaultCodec, msg);
 	}
-
-//	kdDebug(14120) << "Must be connected error:" << msg << endl;
-	kdDebug(14120) << k_funcinfo << "Must be connected error:" << msg << endl;
-
-	return KIRCMessage();
 }
 
-KIRCMessage KIRC::writeMessage(const QString &command, const QStringList &args, const QString &suffix, bool mustBeConnected)
+void KIRC::writeMessage(const QString &command, const QStringList &args, const QString &suffix, bool mustBeConnected)
 {
 	if(canSend(mustBeConnected))
 	{
-		KIRCMessage ircmsg = KIRCMessage::writeMessage(this, defaultCodec,
-			command, args, suffix );
-		emit sentMessage(ircmsg);
-		return ircmsg;
+		KIRCMessage::writeMessage(this, defaultCodec, command, args, suffix );
 	}
-
-//	kdDebug(14120) << "Must be connected error:" << command << args.join(' ') << suffix << endl;
-	kdDebug(14120) << k_funcinfo << "Must be connected error:" << command << args.join(" ") << suffix << endl;
-
-	return KIRCMessage();
 }
 
-KIRCMessage KIRC::writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
-		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix, bool emitRepliedCtcp)
+void KIRC::writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
+		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix, bool )
 {
 	QString nick =  KIRCEntity::userNick(to);
 
-	KIRCMessage msg = KIRCMessage::writeCtcpMessage(this, codecForNick( nick ),
-		command, nick, suffix,
+	KIRCMessage::writeCtcpMessage(this, codecForNick( nick ), command, nick, suffix,
 		ctcpCommand, ctcpArgs, ctcpSuffix );
-
-	emit sentMessage(msg);
-
-	if(emitRepliedCtcp && msg.isValid() && msg.hasCtcpMessage())
-		emit repliedCtcp(msg.ctcpMessage().command(), msg.ctcpMessage().ctcpRaw());
-
-	return msg;
 }
 
 void KIRC::slotReadyRead()
