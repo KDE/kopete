@@ -118,6 +118,12 @@ void KopeteMessageManager::messageSentFromWindow(const QString &message)
 {
 	QString body = message;
 	KopeteMessage tmpmessage(mUser, mContactList, body, KopeteMessage::Outbound);
+	if (mChatWindow->fg()->color().isValid()) {
+		tmpmessage.setFg(mChatWindow->fg()->color());
+	}
+	if (mChatWindow->bg()->color().isValid()) {
+		tmpmessage.setBg(mChatWindow->bg()->color());
+	}
 	emit messageSent(tmpmessage);
 }
 
