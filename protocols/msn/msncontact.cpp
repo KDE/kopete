@@ -402,14 +402,20 @@ void MSNContact::syncGroups( )
 	}
 
 	//STEP TWO : remove the contact from groups where the MC is not, but let it at least in one group
+	
+	QValueList<int> removinglist; //contact is not in that group. on the server. we will remove them dirrectly after the loop
+	
 	for( QMap<uint, KopeteGroup*>::Iterator it = m_serverGroups.begin();(count > 1 && it != m_serverGroups.end()); ++it )
 	{
 		if( !static_cast<MSNAccount*>( account() )->m_groupList.contains(it.key()) )
 		{ // ohoh!   something is corrupted on the contactlist.xml
 		  // anyway, we never should add a contact to an unexisting group on the server.
 
-			//repair the problem
-			contactRemovedFromGroup( it.key() );
+			
+			//repair the problem ...     //contactRemovedFromGroup( it.key() );
+			//         ... later  (we  can't remove it from the map now )
+			removinglist.append(it.key());
+			count--;
 
 			kdDebug( 14140 ) << k_funcinfo << "the group marked with id #" << it.key() << " does not seems to be anymore on the server" << endl;
 
@@ -426,6 +432,9 @@ void MSNContact::syncGroups( )
 			m_moving=true;
 		}
 	}
+	
+	for(QValueList<int>::Iterator it= removinglist.begin() ; it != removinglist.end() ; ++it )
+		contactRemovedFromGroup(*it);
 
 	//FINAL TEST: is the contact at least in a group..
 	//   this may happens if we just added a temporary contact to top-level
