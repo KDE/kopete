@@ -1,0 +1,10 @@
+<!DOCTYPE kpartgui>
+<kpartgui version="26" name="kopetechatwindow">
+	<MenuBar>
+		<Menu name="irc" >
+			<text>IRC</text>
+			<ActionList name="irccontactactionlist" />
+		</Menu>
+	</MenuBar>
+
+</kpartgui>

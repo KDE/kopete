@@ -34,7 +34,6 @@ const QRegExp KIRCMessage::m_IRCCommandType2(QString::fromLatin1(
 
 const QRegExp KIRCMessage::m_IRCNumericCommand(QString::fromLatin1("^\\d{3,3}$"));
 
-
 KIRCMessage::KIRCMessage()
 	: m_ctcpMessage(0)
 {
@@ -81,10 +80,10 @@ KIRCMessage KIRCMessage::writeRawMessage(QIODevice *dev, const QString &message,
 {
 	QCString s;
 	QString txt = message + QString::fromLatin1("\r\n");
-	
+
 	if( !codec ) // FIXME: Per-convo. Codec selector
 		codec = QTextCodec::codecForName("utf8");
-	
+
 	s = codec->fromUnicode(txt);
 
 	kdDebug(14121) << ">> " << s;
@@ -153,7 +152,7 @@ KIRCMessage KIRCMessage::parse(KBufferedIO *dev, bool *parseSuccess, QTextCodec 
 {
 	if(parseSuccess)
 	*parseSuccess=false;
-	
+
 	if( dev->canReadLine() )
 	{
 		QCString raw;
@@ -168,14 +167,14 @@ KIRCMessage KIRCMessage::parse(KBufferedIO *dev, bool *parseSuccess, QTextCodec 
 
 			int idx = raw.findRev( QCString(QChar(001)) + ":" );
 			kdDebug(14121) << "idx: " << idx << endl;
-		
+
 			if( !codec ) // FIXME: Per-convo. Codec selector
 				codec = QTextCodec::codecForName("utf8");
 
 			line = codec->toUnicode(raw);
-			
+
 			kdDebug(14121) << "<< Using codec " << codec->name() << " << " << line << endl;
-			
+
 			KIRCMessage msg = parse( line, parseSuccess );
 			msg.m_raw = raw;
 			return msg;
@@ -183,7 +182,7 @@ KIRCMessage KIRCMessage::parse(KBufferedIO *dev, bool *parseSuccess, QTextCodec 
 		else
 			kdWarning(14121) << "Failed to read a line while canReadLine returned true!" << endl;
 	}
-	
+
 	return KIRCMessage();
 }
 
@@ -193,7 +192,7 @@ KIRCMessage KIRCMessage::parse(const QString &line, bool *parseSuccess)
 
 	if(parseSuccess)
 		*parseSuccess=false;
-	
+
 	QString newLine = unquote( line );
 	if(matchForIRCRegExp(newLine, msg))
 	{

@@ -63,11 +63,11 @@ public:
 
 	typedef enum EngineStatus
 	{
-		Disconnected,
-		Connecting,
-		Authentifying,
-		Connected,
-		Closing
+		Disconnected = 0,
+		Connecting = 1,
+		Authentifying = 2,
+		Connected = 3,
+		Closing = 4
 	};
 
 	KIRC(const QString &host, const Q_UINT16 port, QObject *parent=0, const char *name=0);
@@ -91,6 +91,11 @@ public:
 	EngineStatus status() const { return m_status; }
 	inline bool isDisconnected() const { return m_status == Disconnected; }
 	inline bool isConnected() const { return m_status == Connected; }
+
+	inline void setCodec( const QString &nick, const QTextCodec *codec )
+	{
+		codecs.replace( nick, codec );
+	}
 
 	QString &customCtcp( const QString &s ) { return customCtcpMap[s];  }
 	void addCustomCtcp( const QString &ctcp, const QString &reply ) {
@@ -416,6 +421,7 @@ protected:
 	QDict<KIRCMethodFunctorCall> m_IrcCTCPQueryMethods;
 	QDict<KIRCMethodFunctorCall> m_IrcCTCPReplyMethods;
 	QMap<QString, QString> customCtcpMap;
+	QDict<QTextCodec> codecs;
 
 private slots:
 	void slotHostFound();

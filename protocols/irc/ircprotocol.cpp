@@ -28,6 +28,7 @@
 #include "ircaccount.h"
 #include "ircaddcontactpage.h"
 #include "ircchannelcontact.h"
+#include "ircguiclient.h"
 #include "ircusercontact.h"
 #include "kopeteaccountmanager.h"
 #include "irceditaccountwidget.h"
@@ -172,6 +173,9 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL(aboutToDisplay(KopeteMessage &)),
 		this, SLOT(slotMessageFilter(KopeteMessage &)) );
+
+	QObject::connect( KopeteMessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView* ) ),
+		this, SLOT( slotViewCreated( KopeteView* ) ) );
 }
 
 IRCProtocol * IRCProtocol::protocol()
@@ -181,6 +185,12 @@ IRCProtocol * IRCProtocol::protocol()
 
 IRCProtocol::~IRCProtocol()
 {
+}
+
+void IRCProtocol::slotViewCreated( KopeteView *view )
+{
+	if( view->msgManager()->protocol() == this )
+		new IRCGUIClient( view->msgManager() );
 }
 
 bool IRCProtocol::supportsRichText() const

@@ -24,6 +24,7 @@
 class KActionCollection;
 class KAction;
 class KActionMenu;
+class KCodecAction;
 class KToggleAction;
 
 class KopeteMetaContact;
@@ -87,7 +88,7 @@ public slots:
 	 * @param mode The full text of the mode change you want performed
 	 */
 	void setMode( const QString &mode = QString::null );
-	
+
 	void part();
 
 protected slots:
@@ -126,6 +127,7 @@ private:
 	KAction *actionPart;
 	KAction *actionTopic;
 	KActionMenu *actionModeMenu;
+	KCodecAction *codecAction;
 
 	KToggleAction *actionModeT;
 	KToggleAction *actionModeN;

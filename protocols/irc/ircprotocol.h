@@ -34,6 +34,7 @@ class IRCAccount;
 class QStringList;
 class QWidget;
 class KSParser;
+class KopeteView;
 
 /**
  * @author Nick Betcher <nbetcher@kde.org>
@@ -108,6 +109,8 @@ private slots:
 	void slotQuitCommand( const QString &args, KopeteMessageManager *manager);
 	void slotPartCommand( const QString &args, KopeteMessageManager *manager);
 	void slotInviteCommand( const QString &args, KopeteMessageManager *manager);
+
+	void slotViewCreated( KopeteView * );
 
 private:
 	static IRCProtocol *s_protocol;

@@ -24,6 +24,7 @@
 #include <kmessagebox.h>
 
 #include "kopeteview.h"
+#include "kcodecaction.h"
 #include "kopetestdaction.h"
 #include "kopetemessagemanagerfactory.h"
 
@@ -176,7 +177,6 @@ void IRCChannelContact::slotAddNicknames()
 		//kdDebug(14120) << k_funcinfo << m_nickName << " NICK: " << nickToAdd << endl;
 		user = m_account->findUser( nickToAdd );
 		user->setOnlineStatus( m_protocol->m_UserStatusOnline );
-
 		manager()->addContact( static_cast<KopeteContact*>(user) , true);
 	}
 	else
@@ -527,12 +527,18 @@ QPtrList<KAction> *IRCChannelContact::customContextMenuActions()
 		actionModeMenu->insert( actionModeM );
 		actionModeMenu->insert( actionModeI );
 		actionModeMenu->setEnabled( true );
+
+		codecAction = new KCodecAction( i18n("&Encoding"), 0, this, "selectcharset" );
+		connect( codecAction, SIGNAL( activated( const QTextCodec * ) ),
+			this, SLOT( setCodec( const QTextCodec *) ) );
+		codecAction->setCodec( codec() );
 	}
 
 	mCustomActions->append( actionJoin );
 	mCustomActions->append( actionPart );
 	mCustomActions->append( actionTopic );
 	mCustomActions->append( actionModeMenu );
+	mCustomActions->append( codecAction );
 
 	bool isOperator = m_isConnected && ( manager()->contactOnlineStatus( m_account->myself() ) == m_protocol->m_UserStatusOp );
 

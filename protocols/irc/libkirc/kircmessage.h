@@ -18,6 +18,7 @@
 #ifndef KIRCMESSAGE_H
 #define KIRCMESSAGE_H
 
+#include <qdict.h>
 #include <qregexp.h>
 #include <qstring.h>
 #include <qstringlist.h>
@@ -93,6 +94,8 @@ public:
 	inline const class KIRCMessage &ctcpMessage() const
 		{ return *m_ctcpMessage; }
 
+	static KIRCMessage parse(const QString &line, bool *parseSuccess=0);
+
 protected:
 	/**
 	 * Contains the low level dequoted message.
@@ -121,8 +124,6 @@ protected:
 	 * If it is a ctcp message contains the completely dequoted rawCtcpArgsLine.
 	 */
 	QString m_ctcpRaw;
-	
-	static KIRCMessage parse(const QString &line, bool *parseSuccess=0);
 
 	// low level quoting, message quoting
 	static QString quote(const QString &str);
