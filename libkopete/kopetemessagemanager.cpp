@@ -25,6 +25,7 @@
 #include <kcolorbutton.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <knotifyclient.h>
 
 #include <qstylesheet.h>
 
@@ -136,6 +137,8 @@ void KopeteMessageManager::messageSentFromWindow(const QString &message)
 		tmpmessage.setBg(mChatWindow->bg()->color());
 	}
 	emit messageSent(tmpmessage);
+	if ( kopeteapp->appearance()->soundNotify() )
+	    KNotifyClient::event("kopete_outgoing");
 }
 
 void KopeteMessageManager::chatWindowClosing()
@@ -177,28 +180,27 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 		mLogger->append( msg );
 	}
 
+	/* First stage, see what to do */
+	bool isvisible = false;
+	if ( mChatWindow == 0L )
+	{
+		isvisible = false;
+	}
+	else if ( !mChatWindow->isVisible() )
+    {
+		isvisible = false;
+	}
+	else
+	{
+		isvisible = true;
+	}
+
 	if (mReadMode == Popup)
 	{
     	readMessages();
 	}
 	else if ( mReadMode == Queued )
 	{
-		bool isvisible = false;
-
-		/* First stage, see what to do */
-		if ( mChatWindow == 0L )
-		{
-			isvisible = false;
-		}
-		else if ( !mChatWindow->isVisible() )
-        {
-			isvisible = false;
-		}
-		else
-		{
-			isvisible = true;
-		}
-
 		/* Second stage, do it */
 		if ( isvisible )
 		{
@@ -215,7 +217,8 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 			}
 		}
 	}
-
+	if ( kopeteapp->appearance()->soundNotify() && isvisible && (msg.direction() != KopeteMessage::Outbound) )
+	    KNotifyClient::event("kopete_incoming");
 }
 void KopeteMessageManager::addContact( const KopeteContact *c )
 {

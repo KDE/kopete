@@ -6,7 +6,7 @@ Comment[pt_BR]=Mensageiro Kopete
 Comment[sv]=Kopete Instant Messenger
 
 [kopete_event]
-Name=message_all
+Name=Event
 Name[hr]=poruka_svima
 Name[pt_BR]=mensagens
 Name[sv]=Alla meddelanden
@@ -18,3 +18,16 @@ Comment[pt_BR]=Notificação de Som para eventos Kopete
 Comment[sv]=Ljudunderrättelse för händelser i Kopete
 default_sound=kopete_event.wav
 default_presentation=1
+
+[kopete_incoming]
+Name=Incoming
+Comment=Incoming message arrives
+default_sound=kopete_incoming.wav
+default_presentation=0
+
+[kopete_outgoing]
+Name=Outgoing
+Comment=Outgoing message is sent
+default_sound=kopete_outgoing.wav
+default_presentation=0
+
