@@ -34,10 +34,13 @@
 
 #include <qregexp.h>
 #include <qsignal.h>
+#include <qstylesheet.h>
 #include <qthread.h>
 
+#include <kapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <kstandarddirs.h>
 
 /**
  * @author Jason Keirstead <jason@keirstead.org>
@@ -127,7 +130,15 @@ QString KopeteXSLThread::xsltTransform( const QString &xmlString, const QCString
 			xsltStylesheetPtr styleSheet = xsltParseStylesheetDoc( xslDoc );
 			if ( styleSheet )
 			{
-				xmlDocPtr resultDoc = xsltApplyStylesheet( styleSheet, xmlDoc, NULL );
+				static QCString appPath( QString::fromLatin1("\"%1\"").arg( KApplication::kApplication()->dirs()->findDirs("appdata", QString::fromLatin1("styles/data") ).front() ).utf8() );
+
+				static const char* params[3] = {
+					"appdata",
+					appPath,
+					NULL
+				};
+
+				xmlDocPtr resultDoc = xsltApplyStylesheet( styleSheet, xmlDoc, params );
 				if ( resultDoc )
 				{
 					// Save the result into the QString
