@@ -165,7 +165,7 @@ void GaduPublicDir::slotSearch()
 		// Search for more
 	}
 
-	setButtonText( User2, i18n( "Search &more..." ) );
+	setButtonText( User2, i18n( "Search &More..." ) );
 	showButton( User3, true );
 	showButton( User1, true );
 	enableButton( User3, false );
