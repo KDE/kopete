@@ -1,0 +1,163 @@
+/*
+    Copyright (c) 2005      Olivier Goffart           <ogoffart@ kde.org>
+
+    Kopete    (c) 2005 by the Kopete developers  <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This library is free software; you can redistribute it and/or         *
+    * modify it under the terms of the GNU Lesser General Public            *
+    * License as published by the Free Software Foundation; either          *
+    * version 2 of the License, or (at your option) any later version.      *
+    *                                                                       *
+    *************************************************************************
+*/
+
+
+#ifndef KOPETE_UICONTACTADDEDNOTIFYDIALOG_H
+#define KOPETE_UICONTACTADDEDNOTIFYDIALOG_H
+
+#include <kdialogbase.h>
+
+namespace Kopete {
+
+class Group;
+class Account;
+class MetaContact;
+
+namespace UI {
+
+/**
+ * @brief Dialog which is shown when a contact added you in the contactlist.
+ *
+ * This dialog ask the user to give the authorization, and to add the contact to the contactlist.
+ *
+ * example of usage
+ * @code 
+
+	Kopete::UI::ContactAddedNotifyDialog *dialog=new ContactAddedNotifyDialog(contactId,
+			QString::null,account);
+	QObject::connect(dialog,SIGNAL(applyClicked(const QString&)),this,SLOT(contactAddedDialogApplied()));
+	QObject::connect(dialog,SIGNAL(infoClicked(const QString&)),this,SLOT(contactAddedDialogInfo()));
+	dialog->show()
+	
+ * @endcode
+ *
+ * and in your contactAddedDialogApplied slot
+ * @code
+	Kopete::UI::ContactAddedNotifyDialog *dialog=dynamic_cast<ContactAddedNotifyDialog *>(sender());
+	if(!dialog)
+		return;
+	if(dialog->authorized())
+		socket->authorize(contactId);
+	if(dialog->added())
+		dialog->addContact();
+ * @endcode
+ *
+ * Note that you can also use exec() but this is not recommanded
+ *
+ * @author Olivier Goffart
+ * @since 0.11
+ */
+class ContactAddedNotifyDialog : public KDialogBase
+{
+Q_OBJECT
+public:
+	/**
+	 * All widget in the dialog that may be hidden.
+	 */
+	enum HideWidget
+	{
+		InfoButton = 0x01, /**< the button which ask for more info about the contact */
+		AuthorizeCheckBox = 0x02, /**< the checkbox which ask for authorize the contact */
+		AddCheckBox = 0x04, /**< the checkbox which ask if the contact should be added */
+		AddGroupBox = 0x08 /**< all the widget about metacontact properties */
+	};
+	
+	/**
+	 * @brief Constructor
+	 *
+	 * The dialog is by default not modal, and wil delete itself when closed
+	 * 
+	 * @param contactId the contactId of the contact which just added the user
+	 * @param contactNick the nickname of the contact if available.
+	 * @param account is used to display the account icon and informaiton about the account
+	 * @param show a bitmask of HideWidget used to hide some widget. By default, everything is shown.
+	 * 
+	 */
+	ContactAddedNotifyDialog(const QString& contactId, const QString& contactNick=QString::null,
+				Kopete::Account *account=0L, uint hide=0x00);
+
+	/**
+	 * @brief Destructor
+	 */
+    ~ContactAddedNotifyDialog();
+
+	/**
+	 * @brief return if the user has checked the "authorize" checkbox
+	 */
+	bool authorized();
+
+	/**
+	 * @brief return if the user has checked the "add" checkbox
+	 */
+	bool added();
+
+	/**
+	 * @brief return the display name the user has entered
+	 */
+	QString displayName();
+	/**
+	 * @brief return the group the user has selected
+	 * if the user has entered a group which doesn't exist yet, it will be created now
+	 */
+	Group* group();
+
+public slots:
+
+	/**
+	 * @brief create a metacontact.
+	 *
+	 * This function only works if the add checkbox is checked, otherwise,
+	 * it will return 0L.
+	 *
+	 * it uses the Account::addContact function to add the contact
+	 * 
+	 * @return the new metacontact created, or 0l if the operation failed.
+	 */
+	MetaContact *addContact();
+
+signals:
+	/**
+	 * @brief the dialog has been applied
+	 * @param contactId is the id of the contact passed in the constructor.
+	 */
+	void applyClicked(const QString &contactId);
+	/**
+	 * @brief the button "info" has been pressed
+	 * If you haven't hide the more info button, you should connect this signal to
+	 * a slot which show a dialog with more info about the contact.
+	 * 
+	 * hint: you can use sender() as parent of the new dialog
+	 * 
+	 * @param contactId is the id of the contact passed in the constructor.
+	 */
+	void infoClicked(const QString &contactId);
+	
+
+private slots:
+	void slotClearAddresseeClicked();
+	void slotSelectAddresseeClicked();
+	void slotInfoClicked();
+	void slotFinished();
+
+private:
+	struct Private;
+	Private *d;
+};
+
+
+
+} // namespace UI
+} // namespace Kopete
+#endif
