@@ -62,10 +62,12 @@ void CreateContactTask::onGo()
 	// connect their gotFolderAdded signals to the client's folderReceived signal, 
 	// so the client program will see these and update its folders ( which already exist locally )
 	// connect it also to our slotFolderAdded where we assess if all the folders were added ok.
+	bool foldersToAdd = false;
 	for ( ; it != end; ++it )
 	{
 		if ( (*it).id == 0 ) // caller asserts that this isn't on the server...
 		{
+			foldersToAdd = true;
 			int sequence = m_firstSequenceNumber++;
 			qDebug( "CreateContactTask::onGo() - Creating folder %s with sequence number %u", (*it).name.ascii(), sequence );
 			CreateFolderTask * cct = new CreateFolderTask( client()->rootTask() );
@@ -75,6 +77,9 @@ void CreateContactTask::onGo()
 			cct->go( true );
 		}
 	}
+	// if there aren't any folders to add, proceed straight to creating the contacts.
+	if ( !foldersToAdd )
+		createContactInstances();
 }
 
 void CreateContactTask::slotFolderAdded( const FolderItem& addedFolder )
@@ -100,18 +105,22 @@ void CreateContactTask::slotFolderAdded( const FolderItem& addedFolder )
 		}
 	}
 	if ( allAdded ) // now add the contact instances
+		createContactInstances();
+}
+		
+void CreateContactTask::createContactInstances()
+{
+	qDebug( "CreateContactTask::createContactInstances() - created all folders, or didn't need to create any, creating contacts" );
+	// one for each folder the contact is in
+	const QValueList<FolderItem>::Iterator end = m_folders.end();
+	for ( QValueList<FolderItem>::Iterator it = m_folders.begin(); it != end; ++it )
 	{
-		qDebug( "CreateContactTask::slotFolderAdded() - got all folders" );
-		// one for each folder the contact is in
-		for ( it = m_folders.begin(); it != end; ++it )
-		{
-			qDebug( "CreateContactTask::slotFolderAdded() - Creating contact %s in folder %u", m_userId.ascii(), (*it).id );
-			CreateContactInstanceTask * ccit = new CreateContactInstanceTask( client()->rootTask() );
-			ccit->contactFromUserId( m_userId, m_displayName, (*it).id );
-			connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), client(), SIGNAL( contactReceived( const ContactItem & ) ) );
-			connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), SLOT( slotContactAdded( const ContactItem & ) ) );
-			ccit->go( true );
-		}
+		qDebug( "CreateContactTask::slotFolderAdded() - Creating contact %s in folder %u", m_userId.ascii(), (*it).id );
+		CreateContactInstanceTask * ccit = new CreateContactInstanceTask( client()->rootTask() );
+		ccit->contactFromUserId( m_userId, m_displayName, (*it).id );
+		connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), client(), SIGNAL( contactReceived( const ContactItem & ) ) );
+		connect( ccit, SIGNAL( gotContactAdded( const ContactItem & ) ), SLOT( slotContactAdded( const ContactItem & ) ) );
+		ccit->go( true );
 	}	
 }
 

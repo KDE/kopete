@@ -103,9 +103,9 @@ KActionMenu* GroupWiseAccount::actionMenu()
 	theActionMenu->insert( new KAction ( "&Set Auto-Reply", QString::null, 0, this,
 		SLOT( slotSetAutoReply() ), this,
 		"actionSetAutoReply") );
-	theActionMenu->insert( new KAction ( "Test rtfize()", QString::null, 0, this,
-		SLOT( slotTestRTFize() ), this,
-		"actionTestRTFize") );
+// 	theActionMenu->insert( new KAction ( "Test rtfize()", QString::null, 0, this,
+// 		SLOT( slotTestRTFize() ), this,
+// 		"actionTestRTFize") );
 
 	return theActionMenu;
 }
@@ -889,16 +889,16 @@ void GroupWiseAccount::slotTestRTFize()
 	if ( ok )
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Converted text is: '" << protocol()->rtfizeText( testText ) << "'" << endl;*/
 	
-	bool ok;
-	const QString query = i18n("Enter a contactId:");
-	QString testText = KInputDialog::getText( query, i18n("This is a test dialog and will not be in the final product!" ), QString::null, &ok, Kopete::UI::Global::mainWidget() );
-	if ( !ok )
-		return;
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Trying to add contact: '" << protocol()->rtfizeText( testText ) << "'" << endl;
-	KopeteMetaContact *metaContact = new KopeteMetaContact ();
-	metaContact->setDisplayName( "Test Add MC" );
-	metaContact->setTemporary (true);
-	addContactToMetaContact( testText, "Test Add Contact", metaContact );
+// 	bool ok;
+// 	const QString query = i18n("Enter a contactId:");
+// 	QString testText = KInputDialog::getText( query, i18n("This is a test dialog and will not be in the final product!" ), QString::null, &ok, Kopete::UI::Global::mainWidget() );
+// 	if ( !ok )
+// 		return;
+// 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Trying to add contact: '" << protocol()->rtfizeText( testText ) << "'" << endl;
+// 	KopeteMetaContact *metaContact = new KopeteMetaContact ();
+// 	metaContact->setDisplayName( "Test Add MC" );
+// 	metaContact->setTemporary (true);
+// 	addContactToMetaContact( testText, "Test Add Contact", metaContact );
 }
 
 #include "gwaccount.moc"

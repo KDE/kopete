@@ -23,6 +23,7 @@
 
 #include <addcontactpage.h>
 
+class QLabel;
 class KopeteAccount;
 class KopeteMetaContact;
 class GroupWiseAddUI;
@@ -35,7 +36,7 @@ class GroupWiseAddContactPage : public AddContactPage
 {
 	Q_OBJECT
 public:
-    GroupWiseAddContactPage( QWidget* parent = 0, const char* name = 0 );
+    GroupWiseAddContactPage( KopeteAccount * owner, QWidget* parent = 0, const char* name = 0 );
     ~GroupWiseAddContactPage();
 	
     /**
@@ -46,9 +47,13 @@ public:
 	 * Is the data correct?
 	 */
     virtual bool validateData();
-
+protected slots:
+	void slotAddMethodChanged();
 protected:
 	GroupWiseAddUI *m_gwAddUI;
+	QLabel *m_noaddMsg1;
+	QLabel *m_noaddMsg2;
+	bool m_canadd;
 };
 
 #endif

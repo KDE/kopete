@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>GroupWiseAddUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,12 +8,15 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>406</width>
+            <width>392</width>
             <height>343</height>
         </rect>
     </property>
     <property name="caption">
         <string>TestbedAddUI</string>
+    </property>
+    <property name="toolTip" stdset="0">
+        <string></string>
     </property>
     <vbox>
         <property name="name">
@@ -25,73 +28,74 @@
         <property name="spacing">
             <number>0</number>
         </property>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout2</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>textLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Account name:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_uniqueName</cstring>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>The account name of the account you would like to add.</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>The account name of the account you would like to add.</string>
-                    </property>
-                </widget>
-                <widget class="QLineEdit">
-                    <property name="name">
-                        <cstring>m_uniqueName</cstring>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>The account name of the account you would like to add.</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>The account name of the account you would like to add.</string>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
         <widget class="QButtonGroup">
             <property name="name">
-                <cstring>buttonGroup1</cstring>
+                <cstring>bg_addMethod</cstring>
             </property>
             <property name="title">
-                <string>Contact Type</string>
+                <string>Add Using:</string>
             </property>
-            <vbox>
+            <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QRadioButton">
+                <widget class="QLineEdit" row="0" column="1">
                     <property name="name">
-                        <cstring>m_rbEcho</cstring>
+                        <cstring>m_userName</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>A full or partial name. Asterisks are ignored</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Type some or all of the contact's name.  Matches will be show below</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="1" column="0">
+                    <property name="name">
+                        <cstring>rb_userId</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Echo</string>
+                        <string>User &amp;ID:</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+I</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
                     </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Hey look!  Only one option.  Could you please make this a dropdown and add Null?</string>
+                </widget>
+                <widget class="QRadioButton" row="0" column="0">
+                    <property name="name">
+                        <cstring>rb_userName</cstring>
                     </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Hey look!  Only one option.  Could you please make this a dropdown and add Null?</string>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string>User na&amp;me</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+M</string>
                     </property>
                 </widget>
-            </vbox>
+                <widget class="QLineEdit" row="1" column="1">
+                    <property name="name">
+                        <cstring>m_userId</cstring>
+                    </property>
+                    <property name="focusPolicy">
+                        <enum>StrongFocus</enum>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>A correct User ID</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Use this field to add a contact if you already know the user's exact User ID</string>
+                    </property>
+                </widget>
+            </grid>
         </widget>
         <spacer>
             <property name="name">
@@ -106,11 +110,31 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>100</height>
+                    <height>200</height>
                 </size>
             </property>
         </spacer>
     </vbox>
 </widget>
+<connections>
+    <connection>
+        <sender>rb_userName</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_userName</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>rb_userId</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_userId</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>m_userName</tabstop>
+    <tabstop>m_userId</tabstop>
+    <tabstop>rb_userName</tabstop>
+    <tabstop>rb_userId</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

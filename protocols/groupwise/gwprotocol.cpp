@@ -93,10 +93,10 @@ KopeteContact *GroupWiseProtocol::deserializeContact(
 	return new GroupWiseContact(account, contactId, metaContact, objectId, parentId, sequence );
 }
 
-AddContactPage * GroupWiseProtocol::createAddContactWidget( QWidget *parent, KopeteAccount * /* account */ )
+AddContactPage * GroupWiseProtocol::createAddContactWidget( QWidget *parent, KopeteAccount *  account )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "Creating Add Contact Page" << endl;
-	return new GroupWiseAddContactPage( parent );
+	return new GroupWiseAddContactPage( account, parent, "addcontactpage");
 }
 
 KopeteEditAccountWidget * GroupWiseProtocol::createEditAccountWidget( KopeteAccount *account, QWidget *parent )

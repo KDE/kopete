@@ -20,9 +20,13 @@
 
 #include "gwaddcontactpage.h"
 
+#include <qlabel.h>
 #include <qlayout.h>
+#include <qlineedit.h>
 #include <qradiobutton.h>
+
 #include <kdebug.h>
+#include <klocale.h>
 
 #include "kopeteaccount.h"
 #include "kopetemetacontact.h"
@@ -31,37 +35,54 @@
 
 #include "gwaddui.h"
 
-GroupWiseAddContactPage::GroupWiseAddContactPage( QWidget* parent, const char* name )
+GroupWiseAddContactPage::GroupWiseAddContactPage( KopeteAccount * owner, QWidget* parent, const char* name )
 		: AddContactPage(parent, name)
 {
 	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << endl;
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
-	m_gwAddUI = new GroupWiseAddUI( this );
+	if (owner->isConnected ())
+	{
+		m_gwAddUI = new GroupWiseAddUI( this );
+		connect( m_gwAddUI->rb_userId, SIGNAL( toggled( bool ) ), SLOT( slotAddMethodChanged() ) );
+		connect( m_gwAddUI->rb_userName, SIGNAL( toggled( bool ) ), SLOT( slotAddMethodChanged() ) );
+		m_gwAddUI->show ();
+
+		m_canadd = true;
+	}
+	else
+	{
+		m_noaddMsg1 = new QLabel (i18n ("You need to be connected to be able to add contacts."), this);
+		m_noaddMsg2 = new QLabel (i18n ("Connect to the GroupWise server and try again."), this);
+		m_canadd = false;
+	}
 }
 
 GroupWiseAddContactPage::~GroupWiseAddContactPage()
 {
 }
 
-bool GroupWiseAddContactPage::apply( KopeteAccount* a, KopeteMetaContact* m )
+void GroupWiseAddContactPage::slotAddMethodChanged()
 {
-    if ( validateData() )
+	if ( m_gwAddUI->rb_userId->isChecked() )
+		m_gwAddUI->m_userId->setFocus();
+	else
+		m_gwAddUI->m_userName->setFocus();
+}
+
+bool GroupWiseAddContactPage::apply( KopeteAccount* account, KopeteMetaContact* parentContact )
+{
+	if ( m_canadd && validateData() )
 	{
-		bool ok = false;
-		QString type;
-		QString name;
-		if ( m_gwAddUI->m_rbEcho->isOn() )
-		{
-			type = QString::fromLatin1( "echo" );
-			name = QString::fromLatin1( "Echo Contact" );
-			ok = true;
-		}
-		if ( ok )
-			return a->addContact(type, name, m, KopeteAccount::ChangeKABC );
-		else
-			return false;
+		QString contactId = m_gwAddUI->m_userId->text();
+		QString displayName = parentContact->displayName();
+		
+		if ( displayName.isEmpty() )
+			displayName = contactId;
+
+		return ( account->addContact ( contactId, displayName, parentContact, KopeteAccount::ChangeKABC ) );
 	}
-	return false;
+	else
+		return false;
 }
 
 bool GroupWiseAddContactPage::validateData()
