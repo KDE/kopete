@@ -169,7 +169,6 @@ void KopetePluginManager::shutdown()
 		// Remove causes the iterator to become invalid, so pre-increment first
 		QMap<KPluginInfo *, KopetePlugin *>::ConstIterator nextIt( it );
 		++nextIt;
-		connect( it.data(), SIGNAL( readyForUnload() ), this, SLOT( slotPluginReadyForUnload() ) );
 		it.data()->aboutToUnload();
 		it = nextIt;
 	}
@@ -288,8 +287,8 @@ KopetePlugin *KopetePluginManager::loadPlugin( const QString &spec_ )
 		d->loadedPlugins.insert( info, plugin );
 		info->setPluginEnabled( true );
 
-		connect( plugin, SIGNAL( destroyed( QObject * ) ),
-			this, SLOT( slotPluginDestroyed( QObject * ) ) );
+		connect( plugin, SIGNAL( destroyed( QObject * ) ), this, SLOT( slotPluginDestroyed( QObject * ) ) );
+		connect( plugin, SIGNAL( readyForUnload() ), this, SLOT( slotPluginReadyForUnload() ) );
 
 		d->addressBookFields.insert( plugin, plugin->addressBookFields() );
 
@@ -342,7 +341,7 @@ bool KopetePluginManager::unloadPlugin( const QString &spec )
 	{
 		if( it.key()->pluginName() == spec )
 		{
-			delete it.data();
+			it.data()->aboutToUnload();
 			return true;
 		}
 	}
