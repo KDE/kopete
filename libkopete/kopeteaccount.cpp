@@ -26,8 +26,8 @@
 #include <kdeversion.h>
 #include <kdialogbase.h>
 #include <klocale.h>
-#include <kiconloader.h> 
-#include <kiconeffect.h> 
+#include <kiconloader.h>
+#include <kiconeffect.h>
 
 #include "kopetecontactlist.h"
 #include "kopeteaccount.h"
@@ -161,7 +161,7 @@ QPixmap KopeteAccount::accountIcon(const int size) const
 		KIconEffect effect;
 		basis = effect.apply( basis, KIconEffect::Colorize, 1, d->color, 0);
 	}
-	
+
 	if ( size > 0 && basis.width() != size )
 	{
 		basis = QPixmap( basis.convertToImage().smoothScale( size, size ) );
@@ -523,32 +523,21 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 	if ( c )
 	{
 		c->setMetaContact( parentContact );
-		if ( mode == ChangeKABC )
-		{
-			kdDebug( 14010 ) << k_funcinfo << " changing KABC" << endl;
-			parentContact->updateKABC();
-		}
-		else
-			kdDebug( 14010 ) << k_funcinfo << " leaving KABC" << endl;
-		return true;
 	}
 	else
 	{
-		if ( addContactToMetaContact( contactId, displayName, parentContact ) )
-		{
-		 	if ( mode == ChangeKABC )
-			{
-				kdDebug( 14010 ) << k_funcinfo << " changing KABC" << endl;
-				parentContact->updateKABC();
-			}
-			else
-				kdDebug( 14010 ) << k_funcinfo << " leaving KABC" << endl;
-			return true;
-		}
-		else
+		if ( !addContactToMetaContact( contactId, displayName, parentContact ) )
 			return false;
-
 	}
+
+	if ( mode == ChangeKABC )
+	{
+		kdDebug( 14010 ) << k_funcinfo << " changing KABC" << endl;
+		parentContact->updateKABC();
+	}
+	/*else
+		kdDebug( 14010 ) << k_funcinfo << " leaving KABC" << endl;*/
+	return true;
 }
 
 KActionMenu * KopeteAccount::actionMenu()
