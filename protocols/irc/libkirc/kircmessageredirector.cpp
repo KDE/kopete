@@ -26,7 +26,8 @@ MessageRedirector::MessageRedirector(KIRC::Engine *engine,
 	: QObject(engine, "KIRC::MessageRedirector"),
 	  m_argsSize_min(argsSize_min),
 	  m_argsSize_max(argsSize_max),
-	  m_helpMessage(helpMessage)
+	  m_helpMessage(helpMessage),
+	  m_connectedObjects(0)
 {
 }
 
