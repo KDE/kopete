@@ -47,6 +47,11 @@ public:
 	~KopetePassword();
 
 	/**
+	 * Returns the preferred size for images passed to the retrieve and request functions.
+	 */
+	static int preferredImageSize();
+
+	/**
 	 * Get the password. Has the ability to open an input dialog
 	 * if the password is not currently set.
 	 *
@@ -76,6 +81,15 @@ public:
 	 *        length of the password that can be entered. 0 means no limit.
 	 */
 	void request( QObject *receiver, const char *slot, const QPixmap &image, const QString &prompt, bool error = false, unsigned int maxLength = 0 );
+
+	/**
+	 * Start an asynchronous password request. Do not pop up a password entry dialog
+	 * if there is no password.
+	 * @see request(QObject*,const char*,const QPixmap&,const QString&,bool,unsigned int)
+	 * The password given to the provided slot will be NULL if no password could be retrieved for
+	 * some reason, such as the user declining to open the wallet, or no password being found.
+	 */
+	void requestWithoutPrompt( QObject *receiver, const char *slot );
 
 	/**
 	 * @return true if the password is remembered, false otherwise.

@@ -32,6 +32,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kwallet.h>
+#include <kiconloader.h>
 
 namespace
 {
@@ -117,18 +118,9 @@ protected:
 class KopetePasswordGetRequest : public KopetePasswordRequest
 {
 public:
-	KopetePasswordGetRequest( KopetePassword &pass,  const QPixmap &image, const QString &prompt, bool error, unsigned int maxLength )
-	 : KopetePasswordRequest( pass ), mImage( image ), mPrompt( prompt ), mError( error ), mMaxLength( maxLength ), mView( 0 )
+	KopetePasswordGetRequest( KopetePassword &pass )
+	 : KopetePasswordRequest( pass )
 	{
-	}
-
-	void processRequest()
-	{
-		mResult = grabPassword();
-		if ( mError || mResult.isNull() )
-			doPasswordDialog();
-		else
-			finished();
 	}
 
 	QString grabPassword()
@@ -152,8 +144,32 @@ public:
 		return QString::null;
 	}
 
-	void doPasswordDialog()
-	{	
+	void finished( const QString &result )
+	{
+		emit requestFinished( result );
+		delete this;
+	}
+};
+
+class KopetePasswordGetRequestPrompt : public KopetePasswordGetRequest
+{
+public:
+	KopetePasswordGetRequestPrompt( KopetePassword &pass,  const QPixmap &image, const QString &prompt, bool error, unsigned int maxLength )
+	 : KopetePasswordGetRequest( pass ), mImage( image ), mPrompt( prompt ), mError( error ), mMaxLength( maxLength ), mView( 0 )
+	{
+	}
+
+	void processRequest()
+	{
+		QString result = grabPassword();
+		if ( mError || result.isNull() )
+			doPasswordDialog( result );
+		else
+			finished( result );
+	}
+
+	void doPasswordDialog( const QString &password )
+	{
 		kdDebug( 14010 ) << k_funcinfo << endl;
 
 		KDialogBase *passwdDialog = new KDialogBase( qApp->mainWidget(), "passwdDialog", true, i18n( "Password Required" ),
@@ -164,7 +180,7 @@ public:
 	
 		mView->m_text->setText( mPrompt );
 		mView->m_image->setPixmap( mImage );
-		mView->m_password->setText( mResult );
+		mView->m_password->setText( password );
 		if ( mMaxLength != 0 )
 			mView->m_password->setMaxLength( mMaxLength );
 	
@@ -180,23 +196,16 @@ public:
 
 	void slotOkPressed()
 	{
-		mResult = mView->m_password->text();
+		QString result = mView->m_password->text();
 		if ( mView->m_save_passwd->isChecked() )
-			mPassword.set( mResult );
+			mPassword.set( result );
 	
-		finished();
+		finished( result );
 	}
 
 	void slotCancelPressed()
 	{
-		mResult = QString::null;
-		finished();
-	}
-
-	void finished()
-	{
-		emit requestFinished( mResult );
-		delete this;
+		finished( QString::null );
 	}
 
 private:
@@ -205,7 +214,20 @@ private:
 	bool mError;
 	unsigned int mMaxLength;
 	KopetePasswordDialog *mView;
-	QString mResult;
+};
+
+class KopetePasswordGetRequestNoPrompt : public KopetePasswordGetRequest
+{
+public:
+	KopetePasswordGetRequestNoPrompt( KopetePassword &pass )
+	 : KopetePasswordGetRequest( pass )
+	{
+	}
+
+	void processRequest()
+	{
+		finished( grabPassword() );
+	}
 };
 
 /**
@@ -338,9 +360,21 @@ void KopetePassword::writeConfig()
 	config->writeEntry( "RememberPassword", d->remembered );
 }
 
+int KopetePassword::preferredImageSize()
+{
+	return IconSize(KIcon::Toolbar);
+}
+
+void KopetePassword::requestWithoutPrompt( QObject *returnObj, const char *slot )
+{
+	KopetePasswordRequest *request = new KopetePasswordGetRequestNoPrompt( *this );
+	connect( request, SIGNAL( requestFinished( const QString & ) ), returnObj, slot );
+	request->begin();
+}
+
 void KopetePassword::request( QObject *returnObj, const char *slot, const QPixmap &image, const QString &prompt, bool error, unsigned int maxLength )
 {
-	KopetePasswordRequest *request = new KopetePasswordGetRequest( *this, image, prompt, error, maxLength );
+	KopetePasswordRequest *request = new KopetePasswordGetRequestPrompt( *this, image, prompt, error, maxLength );
 	connect( request, SIGNAL( requestFinished( const QString & ) ), returnObj, slot );
 	request->begin();
 }
