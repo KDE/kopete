@@ -178,31 +178,32 @@ void JabberFileTransfer::slotTransferError ( int errorCode )
 	switch ( errorCode )
 	{
 		case XMPP::FileTransfer::ErrReject:
-			mKopeteTransfer->slotError ( KopeteTransfer::Refused,
+			mKopeteTransfer->slotError ( KIO::ERR_ACCESS_DENIED,
+										 // "Access denied to"...
 										 i18n("The user %1 rejected the transfer request.").
 										 arg(mXMPPTransfer->peer().full ()) );
 			break;
 
 		case XMPP::FileTransfer::ErrNeg:
-			mKopeteTransfer->slotError ( KopeteTransfer::Other,
+			mKopeteTransfer->slotError ( KIO::ERR_COULD_NOT_LOGIN,
 										 i18n("Unable to negotiate a suitable connection for the file transfer with %1.").
 										 arg(mXMPPTransfer->peer().full ()) );
 			break;
 
 		case XMPP::FileTransfer::ErrConnect:
-			mKopeteTransfer->slotError ( KopeteTransfer::Other,
+			mKopeteTransfer->slotError ( KIO::ERR_COULD_NOT_CONNECT,
 										 i18n("Could not connect to %1.").
 										 arg(mXMPPTransfer->peer().full ()) );
 			break;
 
 		case XMPP::FileTransfer::ErrStream:
-			mKopeteTransfer->slotError ( KopeteTransfer::Other,
-										 i18n("The data stream with %1 was disrupted.").
+			mKopeteTransfer->slotError ( KIO::ERR_CONNECTION_BROKEN,
+										 i18n("The data stream with %1 was disrupted. (probably cancelled)").
 										 arg(mXMPPTransfer->peer().full ()) );
 			break;
 
 		default:
-			mKopeteTransfer->slotError ( KopeteTransfer::Other,
+			mKopeteTransfer->slotError ( KIO::ERR_UNKNOWN,
 										 i18n("Unknown error while transferring a file with %1.").
 										 arg(mXMPPTransfer->peer().full ()) );
 			break;
