@@ -111,6 +111,10 @@ public:
 	 */
 	QPtrList<KopeteMetaContact> metaContacts() const;
 
+
+	void addGroup(QString g);
+	void removeGroup(QString g);
+
 public slots:
 	void slotRemovedFromGroup( KopeteMetaContact *mc, const QString &from );
 
@@ -121,12 +125,16 @@ signals:
 	 * the newly added contacts.
 	 */
 	void metaContactAdded( KopeteMetaContact *mc );
+	void metaContactDeleted( KopeteMetaContact *mc );
+
+	void groupAdded( const QString &group );
+	void groupRemoved( const QString &group );
+
 
 	/* Not used yet.... */
 	void addedToGroup( KopeteMetaContact *mc, const QString &to );
 	void removedFromGroup( KopeteMetaContact *mc, const QString &from );
-	void metaContactDeleted( KopeteMetaContact *mc );
-
+	
 private:
 	/**
 	 * Return a XML representation of the contact list
@@ -154,9 +162,15 @@ private:
 	QPtrList<KopeteMetaContact> m_contacts;
 
 	/**
+	 * List of groups
+	 */
+	QStringList m_groupStringList;
+
+	/**
 	 * Our contact list instance
 	 */
 	static KopeteContactList *s_contactList;
+	
 };
 
 #endif

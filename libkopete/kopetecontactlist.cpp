@@ -282,18 +282,16 @@ QStringList KopeteContactList::onlineContacts() const
 
 QStringList KopeteContactList::groups() const
 {
-	return kopeteapp->contactList()->groupStringList();
+	return m_groupStringList;
 
 }
 
 void KopeteContactList::removeMetaContact(KopeteMetaContact *m)
 {
-  	kdDebug() << "KopeteMetaContact::removeMetaContact :" << m->displayName() << endl;
-   for( 	KopeteContact *c = m->contacts().first(); c ; c = m->contacts().next() )
+	for(KopeteContact *c = m->contacts().first(); c ; c = m->contacts().next() )
 	{
 		c->slotDeleteContact();
 	}
-
 	emit metaContactDeleted( m );
 	m_contacts.remove( m );
 	delete m;
@@ -303,6 +301,21 @@ QPtrList<KopeteMetaContact> KopeteContactList::metaContacts() const
 {
 	return m_contacts;
 }
+
+void KopeteContactList::addGroup(QString g)
+{
+	m_groupStringList.append( g );
+	emit groupAdded( g );
+}
+
+void KopeteContactList::removeGroup(QString g)
+{
+	m_groupStringList.remove( g );
+	emit groupRemoved( g );
+
+}
+
+
 
 #include "kopetecontactlist.moc"
 

@@ -34,8 +34,8 @@ KopeteGroupList::KopeteGroupList(const QString& text, const QString& pix, const 
 {
 	connect( this, SIGNAL( activated() ), receiver, slot );
 
-	connect(kopeteapp->contactList(), SIGNAL(groupAdded(const QString &)), this, SLOT(slotUpdateList()));
-	connect(kopeteapp->contactList(), SIGNAL(groupRemoved(const QString &)), this, SLOT(slotUpdateList()));
+	connect(KopeteContactList::contactList(), SIGNAL(groupAdded(const QString &)), this, SLOT(slotUpdateList()));
+	connect(KopeteContactList::contactList(), SIGNAL(groupRemoved(const QString &)), this, SLOT(slotUpdateList()));
 	slotUpdateList();
 }
 
