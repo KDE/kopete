@@ -130,7 +130,8 @@ ChatView::ChatView( Kopete::ChatSession *mgr, const char *name )
 
 	// init actions
 	KStdAction::copy( this, SLOT(copy()), actionCollection() );
-
+	KStdAction::close( this, SLOT(closeView()),actionCollection() );
+	
 	setCaption( m_manager->displayName(), false );
 	
 	// restore docking positions
