@@ -41,8 +41,10 @@ HistoryLogger::HistoryLogger( KopeteMetaContact *m , const QColor &col , QObject
 	m_hideOutgoing=false;
 	m_color=col;
 	m_cachedMonth=-1;
-
 	m_oldSens=Default;
+
+	//the contact may be destroyed, for example, if the contact chanfe metacontact
+	connect(m_metaContact , SIGNAL(destroyed(QObject *)) , this , SLOT(slotMCDeleted()));
 
 	setPositionToLast();
 }
@@ -55,8 +57,10 @@ HistoryLogger::HistoryLogger( KopeteContact *c , const QColor &col, QObject *par
 	m_cachedMonth=-1;
 	m_metaContact=c->metaContact();
 	m_hideOutgoing=false;
-
 	m_oldSens=Default;
+
+	//the contact may be destroyed, for example, if the contact chanfe metacontact
+	connect(m_metaContact , SIGNAL(destroyed(QObject *)) , this , SLOT(slotMCDeleted()));
 
 	setPositionToLast();
 }
@@ -92,6 +96,15 @@ void HistoryLogger::setCurrentMonth(int month)
 
 QDomDocument HistoryLogger::getDocument(const KopeteContact *c, unsigned int month , bool canLoad , bool* contain)
 {
+	if(!m_metaContact)
+	{ //this may happends if the contact has been moved, and the MC deleted
+		if(c && c->metaContact())
+			m_metaContact=c->metaContact();
+		else
+			return QDomDocument();
+	}
+
+
 	if(!m_metaContact->contacts().contains(c))
 	{
 		if(contain)
@@ -141,7 +154,18 @@ void HistoryLogger::appendMessage( const KopeteMessage &msg , const KopeteContac
 {
 	if(!msg.from())
 		return;
+
 	const KopeteContact *c=ct?ct:(  msg.direction()==KopeteMessage::Outbound?msg.to().first():msg.from()  );
+
+	if(!m_metaContact)
+	{ //this may happends if the contact has been moved, and the MC deleted
+		if(c && c->metaContact())
+			m_metaContact=c->metaContact();
+		else
+			return;
+	}
+
+
 	if(!c || !m_metaContact->contacts().contains(c) )
 	{
 		QPtrList<KopeteContact> contacts= m_metaContact->contacts();
@@ -211,6 +235,15 @@ void HistoryLogger::appendMessage( const KopeteMessage &msg , const KopeteContac
 QValueList<KopeteMessage> HistoryLogger::readMessages( unsigned int nb , const KopeteContact *c , Sens sens, bool reverseOrder )
 {
 	QValueList<KopeteMessage> messages;
+
+	if(!m_metaContact)
+	{ //this may happends if the contact has been moved, and the MC deleted
+		if(c && c->metaContact())
+			m_metaContact=c->metaContact();
+		else
+			return messages;
+	}
+
 
 	if(c && !m_metaContact->contacts().contains(c) ) return messages;
 
@@ -462,6 +495,12 @@ unsigned int HistoryLogger::getFistMonth()
 {
 	if(m_cachedMonth!=-1)
 		return m_cachedMonth;
+
+
+	if(!m_metaContact)
+		return 0;
+
+
 	int m=0;
 	QPtrList<KopeteContact> contacts=m_metaContact->contacts();
 	QPtrListIterator<KopeteContact> it( contacts );
@@ -480,5 +519,9 @@ void HistoryLogger::setHideOutgoing(bool b)
 	m_hideOutgoing=b;
 }
 
+void HistoryLogger::slotMCDeleted()
+{
+	m_metaContact=0L;
+}
 
 #include "historylogger.moc"

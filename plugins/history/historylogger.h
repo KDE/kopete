@@ -162,6 +162,12 @@ private:
 	 * due to a bug in QT, i have to keep the document element in the memory to prevent crashes
 	 */
 	QValueList<QDomElement> workaround;
+
+private slots:
+	/**
+	 * the metacontact has been deleted
+	 */
+	void slotMCDeleted();
 };
 
 #endif
