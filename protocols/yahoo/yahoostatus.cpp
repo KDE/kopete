@@ -32,7 +32,7 @@ YahooStatus::YahooStatus()
 KopeteOnlineStatus YahooStatus::translate() const
 {
 	if(m_status == Available)
-		return KopeteOnlineStatus(KopeteOnlineStatus::Online,  25, YahooProtocol::protocol(), m_status + 1, "yahoo_protocol",  i18n(YSTAvailable), i18n(YSTAvailable));
+		return KopeteOnlineStatus(KopeteOnlineStatus::Online,  25, YahooProtocol::protocol(), m_status + 1, QString::null,  i18n(YSTAvailable), i18n(YSTAvailable));
 	else if(m_status == Mobile)
 		return KopeteOnlineStatus(KopeteOnlineStatus::Away,     5, YahooProtocol::protocol(), m_status + 1, "yahoo_mobile",  i18n("On the mobile"), i18n("On the mobile"));
 	else if(m_status == Invisible)

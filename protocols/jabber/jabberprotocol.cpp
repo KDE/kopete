@@ -72,7 +72,7 @@ K_EXPORT_COMPONENT_FACTORY(kopete_jabber, KGenericFactory <JabberProtocol>);
 
 JabberProtocol::JabberProtocol(QObject * parent, QString name, QStringList)
 :  KopeteProtocol(parent, name),
-	JabberOnline(KopeteOnlineStatus::Online, 25, this, 0, "jabber_online",
+	JabberOnline(KopeteOnlineStatus::Online, 25, this, 0, QString::null,
 		     i18n("Go O&nline"), i18n("Online")),
 	JabberChatty(KopeteOnlineStatus::Online, 20, this, 1, "jabber_chatty",
 	     i18n("Set F&ree to Chat"), i18n("Free to Chat")),
@@ -85,9 +85,9 @@ JabberProtocol::JabberProtocol(QObject * parent, QString name, QStringList)
 							      i18n("Extended Away")),
 	JabberDND(KopeteOnlineStatus::Away, 15, this, 4, "jabber_na",
 		  i18n("Set &Do not Disturb"), i18n("Do not Disturb")),
-	JabberOffline(KopeteOnlineStatus::Offline, 20, this, 5, "jabber_offline",
+	JabberOffline(KopeteOnlineStatus::Offline, 20, this, 5, QString::null,
 	      i18n("Go O&ffline"), i18n("Offline")),
-	JabberInvisible(KopeteOnlineStatus::Online, 5, this, 6, "jabber_offline",
+	JabberInvisible(KopeteOnlineStatus::Online, 5, this, 6, QString::null,
 		i18n("Set I&nvisible"), i18n("Invisible")) {
     	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Loading ..." << endl;
 
