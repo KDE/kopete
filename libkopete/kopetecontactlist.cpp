@@ -369,23 +369,23 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 							if( id == QString::fromLatin1("MSNProtocol") )
 							{
 								fieldCount = 3;
-								addressBookLabel = "msn";
+								addressBookLabel = QString::fromLatin1("msn");
 							}
 							else if( id == QString::fromLatin1("IRCProtocol") )
 							{
 								fieldCount = 3;
-								addressBookLabel = "irc";
+								addressBookLabel = QString::fromLatin1("irc");
 							}
 							else if( id == QString::fromLatin1("OscarProtocol") )
 							{
 								fieldCount = 2;
-								addressBookLabel = "aim";
+								addressBookLabel = QString::fromLatin1("aim");
 							}
 							else if( id == QString::fromLatin1("AIMProtocol") )
 							{
 								id = QString::fromLatin1("OscarProtocol");
 								convertOldAim = true;
-								addressBookLabel = "aim";
+								addressBookLabel = QString::fromLatin1("aim");
 							}
 							else if( id == QString::fromLatin1("ICQProtocol") || id == QString::fromLatin1("WPProtocol") || id == QString::fromLatin1("GaduProtocol") )
 							{

@@ -162,7 +162,7 @@ static bool notifyByPassivePopup( const QString &text, const QString &appName,WI
                         const KGuiItem &action , QObject* receiver , const char* slot )
 {
     KIconLoader iconLoader( appName );
-    KConfig eventsFile( KNotifyClient::instance()->instanceName()+"/eventsrc", true, false, "data");
+    KConfig eventsFile( QString::fromAscii( KNotifyClient::instance()->instanceName()+"/eventsrc" ), true, false, "data");
     KConfigGroup config( &eventsFile, "!Global!" );
     QString iconName = config.readEntry( "IconName", appName );
     QPixmap icon = iconLoader.loadIcon( iconName, KIcon::Small );
@@ -336,10 +336,10 @@ int KNotifyClient::event(int winId, const QString &message, const QString &text,
 	QString commandline;
 
 	// get config file
-	KConfig eventsFile( KNotifyClient::instance()->instanceName()+"/eventsrc", true, false, "data");
+	KConfig eventsFile( QString::fromAscii( KNotifyClient::instance()->instanceName()+"/eventsrc" ), true, false, "data");
 	eventsFile.setGroup(message);
 
-	KConfig configFile( KNotifyClient::instance()->instanceName()+".eventsrc", true, false);
+	KConfig configFile( QString::fromAscii( KNotifyClient::instance()->instanceName()+".eventsrc" ), true, false);
 	configFile.setGroup(message);
 
 	int present=getPresentation(message);
@@ -387,7 +387,7 @@ int KNotifyClient::userEvent(int winId, const QString &message, const QString &t
 {
     int uniqueId = kMax( 1, kapp->random() ); // must not be 0 -- means failure!
 
-    QString appname = KNotifyClient::instance()->instanceName();
+    QString appname = QString::fromAscii( KNotifyClient::instance()->instanceName() );
 
     if(winId==0   && Kopete::UI::Global::mainWidget())
     {

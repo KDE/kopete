@@ -643,7 +643,7 @@ QString KopeteMessage::decodeString( const QCString &message, const QTextCodec *
 
 	// Avoid heavy codec tests on empty message.
 	if( message.isEmpty() )
-		return QString(message);
+            return QString::fromAscii( message );
 
 	//Check first 128 chars
 	int charsToCheck = message.length();

@@ -90,7 +90,7 @@ KopeteOnlineStatus::KopeteOnlineStatus( OnlineStatus status )
 		break;
 	case Unknown:
 		d->caption = d->description = i18n( "(Status not available)" );
-		d->overlayIcon = "status_unknown";
+		d->overlayIcon = QString::fromLatin1( "status_unknown" );
 		break;
 	case Connecting:
 		d->caption = d->description = i18n( "Connecting" );
@@ -111,7 +111,7 @@ KopeteOnlineStatus::KopeteOnlineStatus()
 	d->internalStatus = 0;
 	d->weight = 0;
 	d->protocol = 0L;
-	d->overlayIcon = "status_unknown";
+	d->overlayIcon = QString::fromLatin1( "status_unknown" );
 }
 
 KopeteOnlineStatus::KopeteOnlineStatus( const KopeteOnlineStatus &other )
