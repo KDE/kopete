@@ -527,7 +527,7 @@ void KopeteWindow::slotAccountDisplayNameChanged()
 {
 	const KopeteContact *contact=dynamic_cast<const KopeteContact *>(sender());
 	if(contact)
-		slotAccountStatusIconChanged((KopeteContact*)c);
+		slotAccountStatusIconChanged((KopeteContact*)contact);
 }
 
 void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
