@@ -808,6 +808,7 @@ default_presentation=16
 [irc_event]
 Name=IRC Event
 Name[bg]=Събитие в IRC
+Name[et]=IRC sündmus
 Name[ga]=Teagmhas IRC
 Name[nl]=IRC-gebeurtenis
 Name[pt]=Evento de IRC
@@ -818,6 +819,7 @@ Name[uk]=Подія IRC
 Name[xx]=xxIRC Eventxx
 Comment=An IRC event has occurred
 Comment[bg]=Събитие в клиента за IRC
+Comment[et]=Midagi toimus IRCus
 Comment[nl]=Er heeft zich een IRC-gebeurtenis voorgedaan
 Comment[pt]=Ocorreu um evento de IRC
 Comment[pt_BR]=Ocorreu um evento de IRC
