@@ -32,10 +32,11 @@
 /* Kopete Includes */
 #include "kopeteaccountmanager.h"
 
-K_EXPORT_COMPONENT_FACTORY( kopete_yahoo, KGenericFactory<YahooProtocol> );
+typedef KGenericFactory<YahooProtocol> YahooProtocolFactory;
+K_EXPORT_COMPONENT_FACTORY( kopete_yahoo, YahooProtocolFactory );
 
 YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringList & )
-: KopeteProtocol( KGlobal::instance(), parent, name )
+: KopeteProtocol( YahooProtocolFactory::instance(), parent, name )
 {
 	kdDebug(14180) << k_funcinfo << endl;
 
