@@ -50,7 +50,7 @@
 #include "pluginloader.h"
 #include "ktabwidget.h"
 
-namespace Kopete {
+
 
 ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	 : KDockMainWindow( 0L, name, 0L ), KopeteView( mgr )
@@ -197,10 +197,23 @@ ChatView::~ChatView()
 
 void ChatView::raise()
 {
-	makeVisible();
+	//this shouldn't change the focus. When the window is reased when a new mesage arrive
+	// if i am coding, or talking to someone else, i want to end my sentence before switch to
+	// the other chat. i just want to KNOW and SEE the other chat to switch to it right later
+
+	if(!m_mainWindow || !m_mainWindow->isActiveWindow())
+		makeVisible();
+
 	if( !KWin::info( m_mainWindow->winId() ).onAllDesktops )
 		KWin::setOnDesktop( m_mainWindow->winId(), KWin::currentDesktop() );
+
+	m_mainWindow->show();
+	//raise() and show() should normaly deIconify the window. but it doesn't do here due
+	// to a bug in QT or in KDE  (qt3.1.x or KDE 3.1.x) then, i have to call KWin's method
+	if(m_mainWindow->isMinimized())
+		KWin::deIconifyWindow(m_mainWindow->winId() );
 	m_mainWindow->raise();
+	//m_mainWindow->setActiveWindow();  //this set the focus to the window
 }
 
 void ChatView::slotScrollingTo( int /*x*/, int y)
@@ -1288,7 +1301,7 @@ void KopeteContactLVI::slotExecute( QListViewItem *item )
 		((KopeteContact*)m_contact)->execute();
 }
 
-} //end namespace Kopete
+
 
 #include "chatview.moc"
 

@@ -22,12 +22,6 @@
 #include <qmovie.h>
 #include "kopetecontact.h"
 
-namespace Kopete {
-	class ChatView;
-}
-
-using Kopete::ChatView;
-
 class KopeteMessage;
 class KopeteMessageManager;
 class KAction;
@@ -47,6 +41,7 @@ class KTabWidget;
 class QLabel;
 class KopeteEmoticonAction;
 class KopeteView;
+class ChatView;
 
 typedef  QPtrList<KopeteContact>  KopeteContactPtrList;
 

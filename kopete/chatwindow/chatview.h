@@ -50,9 +50,6 @@ typedef QPtrList<KopeteContact> KopeteContactPtrList;
 
 namespace KParts { struct URLArgs; class Part; }
 
-namespace Kopete
-{
-
 class KopeteContactLVI : public QObject, public KListViewItem
 {
 	Q_OBJECT
@@ -441,7 +438,7 @@ private:
 	QMap<unsigned long,KopeteMessage> messageMap;
 };
 
-} // namespace Kopete
+
 
 #endif
 

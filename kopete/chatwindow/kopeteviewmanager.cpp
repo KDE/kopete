@@ -106,7 +106,7 @@ KopeteView *KopeteViewManager::view( KopeteMessageManager* manager, bool /*forei
 
 		if( type == KopeteMessage::Chat )
 		{
-			newView = new Kopete::ChatView( manager );
+			newView = new ChatView( manager );
 			newViewWidget = newView->mainWidget();
 
 			connect (newViewWidget, SIGNAL( typing(bool) ), manager, SLOT( typing(bool) ) );
