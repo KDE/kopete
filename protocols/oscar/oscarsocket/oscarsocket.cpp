@@ -162,7 +162,7 @@ static const int msgerrreasonlen = 25;
 
 OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	OscarAccount *account, QObject *parent, const char *name, bool isicq)
-	: OscarConnection("unknown", connName, Server, cookie, parent, name)
+	: OscarConnection( QString::fromLocal8Bit("unknown"), connName, Server, cookie, parent, name)
 {
 	kdDebug(14150) << k_funcinfo << "connName=" << connName <<
 		QString::fromLatin1( isicq?" ICQICQ":" AIMAIM" ) << endl;
@@ -178,12 +178,13 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	keepaliveTime=60;
 	keepaliveTimer=0L;
 	rateClasses.setAutoDelete(TRUE);
+	mDirectConnnectionCookie = rand();
 
 	// TODO: move this to OscarContact or even AIMContact, it's unused by ICQ
 	myUserProfile = "Visit the Kopete website at <a href=\"http://kopete.kde.org\">http://kopete.kde.org</a>";
 
 	// FIXME: really needed? We have QSocket::status()!
-	isConnected = false;
+	isLoggedIn = false;
 	mAccount = account;
 
 	connect(this, SIGNAL(connectionClosed()), this, SLOT(OnConnectionClosed()));
@@ -653,7 +654,7 @@ void OscarSocket::OnConnectionClosed()
 		stopKeepalive();
 
 	rateClasses.clear();
-	isConnected = false;
+	isLoggedIn = false;
 	if (mDirectIMMgr)
 		delete mDirectIMMgr;
 
@@ -704,14 +705,14 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 // Logs in the user!
 void OscarSocket::doLogin(const QString &host, int port, const QString &s, const QString &password)
 {
-	if (isConnected)
+	if (isLoggedIn)
 	{
 		kdDebug(14150) << k_funcinfo << "We're already connected, aborting!" << endl;
 		return;
 	}
 
 	bool error = false;
-	if ( host.isNull() )
+	if ( host.isEmpty() )
 	{
 		kdDebug( 14150 ) << k_funcinfo << " Tried to connect without a hostname, oops!" << endl;
 		error = true;
@@ -719,6 +720,11 @@ void OscarSocket::doLogin(const QString &host, int port, const QString &s, const
 	if ( port == 0 )
 	{
 		kdDebug( 14150 ) << k_funcinfo << " Tried to connect to port 0, oops!" << endl;
+		error = true;
+	}
+	if ( password.isEmpty() )
+	{
+		kdDebug( 14150 ) << k_funcinfo << " Tried to connect without a password, oops!" << endl;
 		error = true;
 	}
 	if ( error )
@@ -738,7 +744,7 @@ void OscarSocket::doLogin(const QString &host, int port, const QString &s, const
 	kdDebug(14150) << k_funcinfo << "emitting statusChanged(OSCAR_CONNECTING)" << endl;
 	emit statusChanged(OSCAR_CONNECTING);
 
-	connectToHost(host,port);
+	connectToHost(host, port);
 }
 
 void OscarSocket::parsePasswordKey(Buffer &inbuf)
@@ -753,7 +759,7 @@ void OscarSocket::parsePasswordKey(Buffer &inbuf)
 	sendLoginAIM();
 }
 
-void OscarSocket::connectToBos(void)
+void OscarSocket::connectToBos()
 {
 	kdDebug(14150) << k_funcinfo << "Cookie received!... preparing to connect to BOS server" << endl;
 
@@ -775,7 +781,7 @@ void OscarSocket::OnBosConnAckReceived()
 //	emit connectionChanged(5,"Connected to server, authorizing...");
 }
 
-void OscarSocket::sendCookie(void)
+void OscarSocket::sendCookie()
 {
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_COOKIE) Mhh, cookies, let's give one to the server" << endl;
 	Buffer outbuf;
@@ -810,6 +816,7 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 	{
 		rc = new RateClass;
 		rc->classid = inbuf.getWord();
+		kdDebug(14150) << k_funcinfo << "Rate classId=" << rc->classid << endl;
 		rc->windowsize = inbuf.getDWord();
 		rc->clear = inbuf.getDWord();
 		rc->alert = inbuf.getDWord();
@@ -817,11 +824,13 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 		rc->disconnect = inbuf.getDWord();
 		rc->current = inbuf.getDWord();
 		rc->max = inbuf.getDWord();
-
+		rc->lastTime = inbuf.getDWord();
+		rc->currentState = inbuf.getByte();
+/*
 		//5 unknown bytes, depending on the 0x0001/0x0017 you send
 		for (int j=0;j<5;j++)
 				rc->unknown[j] = inbuf.getByte();
-
+*/
 		rateClasses.append(rc);
 	}
 
@@ -878,7 +887,7 @@ void OscarSocket::sendRateAck()
 	outbuf.addSnac(0x0001,0x0008,0x0000,0x00000000);
 	for (RateClass *rc=rateClasses.first();rc;rc=rateClasses.next())
 	{
-//		kdDebug(14150) << "adding classid " << rc->classid << " to RateAck" << endl;
+		kdDebug(14150) << "adding classid " << rc->classid << " to RateAck" << endl;
 
 //		if (rc->classid != 0x0015) //0x0015 is ICQ
 			outbuf.addWord(rc->classid);
@@ -921,7 +930,7 @@ void OscarSocket::parseMyUserInfo(Buffer &inbuf)
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo "RECV (SRV_REPLYINFO) Ignoring OWN user info" << endl;
+		kdDebug(14150) << k_funcinfo "RECV (SRV_REPLYINFO) Ignoring OWN user info, gotAllRights=" << gotAllRights << endl;
 	}
 
 	gotAllRights++;
@@ -1068,7 +1077,7 @@ void OscarSocket::sendClientReady(void)
 	if(!mIsICQ)
 		emit statusChanged(OSCAR_ONLINE);
 
-	isConnected = true;
+	isLoggedIn = true;
 }
 
 // Sends versions so that we get proper rate info
@@ -1106,7 +1115,7 @@ void OscarSocket::sendVersions(const WORD *families, const int len)
 /** Sets idle time -- time is in minutes */
 void OscarSocket::sendIdleTime(DWORD time)
 {
-	if (!isConnected)
+	if (!isLoggedIn)
 		return;
 
 	kdDebug(14150) << k_funcinfo "SEND (CLI_SNAC1_11), sending idle time, time=" << time << endl;
@@ -1199,6 +1208,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 						{
 							kdDebug(14150) << k_funcinfo <<
 								"Contact has WAITAUTH set." << endl;
+							bud->setWaitAuth(true);
 							break;
 						}
 
@@ -1545,6 +1555,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 	QByteArray cook(8);
 	WORD type = 0;
 	WORD length = 0;
+
 	//This is probably the hardest thing to do in oscar
 	//first comes an 8 byte ICBM cookie (random)
 	// from icq docs:
@@ -1601,7 +1612,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 			{
 //				kdDebug(14150) << k_funcinfo << "Got a normal IM block from '" << u.sn << "'" << endl;
 				type = inbuf.getWord();
-				kdDebug(14150) << k_funcinfo << "type=" << type << endl;
+				kdDebug(14150) << k_funcinfo << "TLV(" << type << ")" << endl;
 				switch(type)
 				{
 					case 0x0002: //TLV(2), message block
@@ -1621,31 +1632,42 @@ void OscarSocket::parseIM(Buffer &inbuf)
 
 						TLV tlvMessage = inbuf.getTLV(); // TLV(257), MESSAGE
 
-						if (tlvMessage.type == 257)
+						if (tlvMessage.type == 0x0101)
 						{
 							Buffer msgBuf(tlvMessage.data, tlvMessage.length);
-							DWORD encoding = msgBuf.getDWord();
+							//DWORD encoding = msgBuf.getDWord();
+							WORD charsetNumber=msgBuf.getWord();
+							WORD charsetSubset=msgBuf.getWord();
+							DWORD encoding = (charsetNumber << 16) | charsetSubset;
+
+							kdDebug(14150) << k_funcinfo << "charsetNumber=" <<charsetNumber <<
+								", charsetSubset=" << charsetSubset << endl;
 							// Get the message
 							char *messagetext = msgBuf.getBlock(msgBuf.length());
-
+/*
 							QTextCodec *codec;
  							if (encoding == 0x00020000) // UCS-2BE (or UTF-16)
 							{
+								kdDebug(14150) << k_funcinfo << "UTF16 message" << endl;
 								codec = QTextCodec::codecForName("utf16");
 								message = codec->toUnicode(messagetext);
 							}
 	 						else if (encoding == 0x00030000) // iso-8859-1
 							{
+								kdDebug(14150) << k_funcinfo << "ISO8859-1 message" << endl;
 								codec = QTextCodec::codecForName("ISO8859-1");
 								message = codec->toUnicode(messagetext);
 							}
   							else if (encoding == 0x0003ffff) // cp-1257
 							{
+								kdDebug(14150) << k_funcinfo << "CP1257 message" << endl;
 								codec = QTextCodec::codecForName("CP1257");
 								message = codec->toUnicode(messagetext);
 							}
   							else //if (encoding == 0x0000ffff) // unknown
+*/
 							{
+								kdDebug(14150) << k_funcinfo << "unknown encoded message" << endl;
 								message = QString::fromLocal8Bit(messagetext);
 							}
 
@@ -1653,7 +1675,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 
 							kdDebug(14150) << k_funcinfo << "emit gotIM(), contact='" << u.sn <<
 								"', message='" << message <<
-								"' encoding=" << encoding << endl;
+								"' encoding=" << (void *)encoding << endl;
 							emit gotIM(message, u.sn, isAutoResponse);
 						}
 						else
@@ -1670,6 +1692,8 @@ void OscarSocket::parseIM(Buffer &inbuf)
 							moreTLVs = true;
  							kdDebug(14150) << k_funcinfo <<
 								"remaining length after reading message=" << inbuf.length() << endl;
+
+							kdDebug(14150) << k_funcinfo << inbuf.toString() << endl;
 						}
 						else
 						{
@@ -1895,6 +1919,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 			break;
 		} // END MSGFORMAT_ADVANCED
 
+
 		case MSGFORMAT_SERVER: // non-acknowledged, server messages (ICQ ONLY I THINK)
 		{
 			kdDebug(14150) << k_funcinfo << "message format = MSGFORMAT_SERVER" << endl;
@@ -1912,24 +1937,32 @@ void OscarSocket::parseIM(Buffer &inbuf)
 					{
 						// This is the total length of the rest of this message TLV
 						length = inbuf.getWord();
-						DWORD uin = inbuf.getDWord();
-						WORD msgtype = inbuf.getWord();
-						WORD msgflags = inbuf.getWord();
+						DWORD uin = inbuf.getLEDWord();
+						BYTE msgtype = inbuf.getByte();
+						BYTE msgflags = inbuf.getByte();
+						WORD msgLength = inbuf.getLEWord();
 
 						kdDebug(14150) << "MSGFORMAT_SERVER; server message, tlv length=" <<
-							length << ", uin=" << uin << ", type=" << msgtype << ", flags=" << msgflags << endl;
+							length << ", uin=" << uin << ", type=" << msgtype <<
+							", flags=" << msgflags << endl;
 
 						kdDebug(14150) << k_funcinfo <<
-						"MSGFORMAT_SERVER; remaining length after reading uin and type=" << inbuf.length() << endl;
+							"MSGFORMAT_SERVER; length after reading uin + type=" <<
+							inbuf.length() << " == " << msgLength << " ?" << endl;
 
-						char *msgtxt = inbuf.getBlock(inbuf.length());
+						char *msgtxt = inbuf.getBlock(msgLength);
 						message = QString::fromLocal8Bit(msgtxt);
 						delete [] msgtxt; // getBlock allocates memory, we HAVE to free it again!
+						QStringList msgParts = QStringList::split(QChar('þ') /*0xFE*/, message);
 
-						kdDebug(14150) << k_funcinfo << "MSGFORMAT_SERVER; emit gotIM(), contact=" <<
-							u.sn << " == " << uin << "?, message='" << message << "'" << endl;
-
-						emit gotIM(message, u.sn, false);
+						if(msgParts.count() == 2)
+						{
+							kdDebug(14150) << k_funcinfo <<
+								"MSGFORMAT_SERVER; emit gotIM(), contact=" <<
+								u.sn << ", message='" << message << "'" << endl;
+							// TODO: add gotURL signal
+							emit gotIM(QString("[URL:]%1\n%2").arg(msgParts[1]).arg(msgParts[0]), u.sn, false);
+						}
 
 						if(inbuf.length() > 0)
 						{
@@ -2443,27 +2476,77 @@ void OscarSocket::sendCapabilities(unsigned long caps)
 	sendBuf(outbuf,0x02);
 }
 
-// Parses a rate change
 void OscarSocket::parseRateChange(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
-	/*WORD code = */inbuf.getWord();
-	/*WORD rateclass = */inbuf.getWord();
-	/*DWORD windowsize = */inbuf.getDWord();
-	/*DWORD clear = */inbuf.getDWord();
-	/*DWORD alert = */inbuf.getDWord();
-	/*DWORD limit = */inbuf.getDWord();
-	/*DWORD disconnect = */inbuf.getDWord();
-	/*DWORD currentavg = */inbuf.getDWord();
-	/*DWORD maxavg = */inbuf.getDWord();
+	kdDebug(14150) << k_funcinfo << "RECV (SRV_RATE_LIMIT_WARN)" << endl;
+
+	WORD code = inbuf.getWord();
+
+	switch(code)
+	{
+		case 0x0001:
+			kdDebug(14150) << k_funcinfo << "Rate limits parameters changed" << endl;
+			break;
+		case 0x0002:
+			kdDebug(14150) << k_funcinfo << "Rate limits warning (current level < alert level)" << endl;
+			break;
+		case 0x0003:
+			kdDebug(14150) << k_funcinfo << "Rate limit hit (current level < limit level)" << endl;
+			break;
+		case 0x0004:
+			kdDebug(14150) << k_funcinfo << "Rate limit clear (current level become > clear level)" << endl;
+			break;
+		default:
+			kdDebug(14150) << k_funcinfo << "unknown code for rate limit warning" << endl;
+	}
+
+	WORD rateclass = inbuf.getWord();
+	kdDebug(14150) << k_funcinfo << "rate applies to classId " << rateclass << endl;
+
+	DWORD windowSize = inbuf.getDWord();
+	kdDebug(14150) << k_funcinfo << "windowSize=" << windowSize << endl;
+	DWORD clearLevel = inbuf.getDWord();
+	kdDebug(14150) << k_funcinfo << "clearLevel=" << clearLevel << endl;
+	DWORD alertLevel = inbuf.getDWord();
+	kdDebug(14150) << k_funcinfo << "alertLevel=" << alertLevel << endl;
+	DWORD limitLevel = inbuf.getDWord();
+	kdDebug(14150) << k_funcinfo << "limitLevel=" << limitLevel << endl;
+	DWORD disconnectLevel = inbuf.getDWord();
+	kdDebug(14150) << k_funcinfo << "disconnectLevel=" << disconnectLevel << endl;
+	DWORD currentLevel = inbuf.getDWord();
+	kdDebug(14150) << k_funcinfo << "currentLevel=" << currentLevel << endl;
+	DWORD maxLevel = inbuf.getDWord();
+	kdDebug(14150) << k_funcinfo << "maxLevel=" << maxLevel << endl;
+	/*DWORD lastTime = */inbuf.getDWord();
+	/*BYTE currentState = */inbuf.getByte();
 
 	//there might be stuff that can be done with this crap
+
+/*
+ Docs from http://iserverd.khstu.ru/oscar/snac_01_0a.html
+
+0x0001 Rate limits parameters changed
+0x0002 Rate limits warning (current level < alert level)
+0x0003 Rate limit hit (current level < limit level)
+0x0004 Rate limit clear (current level become > clear level)
+
+xx xx		word	Message code (see above)
+xx xx		word	Rate class ID
+xx xx xx xx	dword	Window size
+xx xx xx xx	dword	Clear level
+xx xx xx xx	dword	Alert level
+xx xx xx xx	dword	Limit level
+xx xx xx xx	dword	Disconnect level
+xx xx xx xx	dword	Current level
+xx xx xx xx	dword	Max level
+xx xx xx xx	dword	Last time
+xx			byte	Current state
+*/
 }
 
-// Signs the user off
 void OscarSocket::doLogoff()
 {
-	if(isConnected)
+	if(isLoggedIn)
 	{
 		if(mIsICQ)
 			stopKeepalive();
@@ -2471,9 +2554,12 @@ void OscarSocket::doLogoff()
 		Buffer outbuf;
 		sendBuf(outbuf,0x04);
 	}
+	else
+	{
+		kdDebug(14150) << k_funcinfo << "while isLoggedIn is false, FIXME: How to disconnect with no (proper) connection?" << endl;
+	}
 }
 
-/** Adds a buddy to the server side buddy list */
 void OscarSocket::sendAddBuddy(const QString &name, const QString &group)
 {
 	kdDebug(14150) << k_funcinfo << "Sending add buddy" << endl;
@@ -3073,10 +3159,10 @@ void OscarSocket::parseSSIRights(Buffer &/*inbuf*/)
 	kdDebug(14150) << k_funcinfo << "RECV (SRV_REPLYLISTS) IGNORING" << endl;
 	//List of TLV's
 		//TLV of type 4 contains a bunch of words, representing maxmimums
-		// word 0 of TLV 4 data: maxbuddies
-		// word 1 of TLV 4 data: maxgroups
-		// word 2 of TLV 4 data: maxpermits
-		// word 3 of TLV 4 data: maxdenies
+		// word 0 of TLV 4 data: max contacts
+		// word 1 of TLV 4 data: max groups
+		// word 2 of TLV 4 data: max visible-list entries
+		// word 3 of TLV 4 data: max invisible-list entries
 //	sendSSIRequest();
 	gotAllRights++;
 	if (gotAllRights==7)
@@ -3173,7 +3259,7 @@ void OscarSocket::setMyProfile(const QString &profile)
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 
 	myUserProfile = profile;
-	if (isConnected)
+	if (isLoggedIn)
 		sendMyProfile();
 }
 

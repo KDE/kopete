@@ -206,7 +206,7 @@ class Buffer : public QObject
 		/*
 		 * Gets a list of TLV's
 		 */
-		QPtrList<TLV> getTLVList();
+		QPtrList<TLV> getTLVList(bool debug=false);
 
 		/*
 		 * Appends a FLAP header to the end of the buffer

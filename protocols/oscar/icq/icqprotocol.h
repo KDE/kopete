@@ -2,7 +2,6 @@
   oscarprotocol.h  -  Oscar Protocol Plugin
 
   Copyright (c) 2003 by Olivier Goffart <ogoffart@tiscalinet.be>
-
   Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************

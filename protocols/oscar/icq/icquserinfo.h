@@ -2,8 +2,7 @@
     icquserinfo.h  -  ICQ Protocol Plugin
 
     Copyright (c) 2002 by Nick Betcher <nbetcher@kde.org>
-
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *

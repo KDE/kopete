@@ -44,16 +44,17 @@ struct SnacPair
 
 struct RateClass
 { //rate info
-	 WORD classid;
-	 DWORD windowsize;
-	 DWORD clear;
-	 DWORD alert;
-	 DWORD limit;
-	 DWORD disconnect;
-	 DWORD current;
-	 DWORD max;
-	 BYTE unknown[5];
-	 QPtrList<SnacPair> members;
+	WORD classid;
+	DWORD windowsize;
+	DWORD clear;
+	DWORD alert;
+	DWORD limit;
+	DWORD disconnect;
+	DWORD current;
+	DWORD max;
+	DWORD lastTime;
+	BYTE currentState;
+	QPtrList<SnacPair> members;
 };
 
 class UserInfo
@@ -93,10 +94,10 @@ const unsigned int OSCAR_CONNECTING = 10;
 #define OSCAR_FAM_3				0x0003 // Contacts, adding, removal, statuschanges
 #define OSCAR_FAM_4				0x0004 // ICBM, messaging
 #define OSCAR_FAM_9				0x0009 // BOS, visible/invisible lists
-#define OSCAR_FAM_11				0x000b // Interval
-#define OSCAR_FAM_19				0x0013 // Roster, Contactlist
-#define OSCAR_FAM_21				0x0015 // icq metasearch, sms, offline messages
-#define OSCAR_FAM_23				0x0017 // new user, registration
+#define OSCAR_FAM_11			0x000b // Interval
+#define OSCAR_FAM_19			0x0013 // Roster, Contactlist
+#define OSCAR_FAM_21			0x0015 // icq metasearch, sms, offline messages
+#define OSCAR_FAM_23			0x0017 // new user, registration
 
 
 // used for SRV_RECVMSG, SNAC(4,7)
@@ -107,13 +108,19 @@ const unsigned int OSCAR_CONNECTING = 10;
 #define OSCAR_SERVER 			"login.oscar.aol.com"
 #define OSCAR_PORT 				5190
 
-#define USERCLASS_TRIAL				0x0001
-#define USERCLASS_UNKNOWN2 		0x0002
-#define USERCLASS_AOL				0x0004
-#define USERCLASS_UNKNOWN4			0x0008
-#define USERCLASS_AIM				0x0010
-#define USERCLASS_AWAY				0x0020
-#define USERCLASS_ACTIVEBUDDY		0x0400
+#define CLASS_TRIAL				0x0001
+#define CLASS_ADMINISTRATOR 	0x0002 // AOL admin
+#define CLASS_AOL				0x0004 // AOL staff user flag
+#define CLASS_COMMERCIAL		0x0008 // AOL commercial account flag
+#define CLASS_AIM				0x0010 // ICQ non-commercial account flag
+#define CLASS_AWAY				0x0020 //  Away status flag
+#define CLASS_ICQ				0x0040 //  ICQ user sign
+#define CLASS_WIRELESS			0x0080 // AOL wireless user
+#define CLASS_UNKNOWN100		0x0100 // Unknown bit
+#define CLASS_UNKNOWN200		0x0200  // Unknown bit
+#define CLASS_UNKNOWN400		0x0400  // Unknown bit
+//#define CLASS_ACTIVEBUDDY		0x0400
+#define CLASS_UNKNOWN800		0x0800 // Unknown bit
 
 
 #define AIM_CAPS_BUDDYICON			0x00000001
@@ -123,16 +130,16 @@ const unsigned int OSCAR_CONNECTING = 10;
 #define AIM_CAPS_GETFILE			0x00000010
 #define AIM_CAPS_SENDFILE			0x00000020
 #define AIM_CAPS_GAMES				0x00000040
-#define AIM_CAPS_SAVESTOCKS		0x00000080
-#define AIM_CAPS_SENDBUDDYLIST	0x00000100
+#define AIM_CAPS_SAVESTOCKS			0x00000080
+#define AIM_CAPS_SENDBUDDYLIST		0x00000100
 #define AIM_CAPS_GAMES2				0x00000200
 #define AIM_CAPS_ISICQ				0x00000400
 #define AIM_CAPS_APINFO				0x00000800
 #define AIM_CAPS_RTFMSGS			0x00001000
 #define AIM_CAPS_EMPTY				0x00002000
-#define AIM_CAPS_ICQSERVERRELAY	0x00004000
+#define AIM_CAPS_ICQSERVERRELAY		0x00004000
 #define AIM_CAPS_IS_2001			0x00008000
-#define AIM_CAPS_TRILLIANCRYPT	0x00010000
+#define AIM_CAPS_TRILLIANCRYPT		0x00010000
 #define AIM_CAPS_UTF8				0x00020000
 #define AIM_CAPS_IS_WEB				0x00040000
 #define AIM_CAPS_INTEROPERATE		0x00080000
@@ -140,7 +147,7 @@ const unsigned int OSCAR_CONNECTING = 10;
 
 // DON'T touch these if you're not 100% sure what they are for!
 #define KOPETE_AIM_CAPS			AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
-#define KOPETE_ICQ_CAPS			AIM_CAPS_ISICQ | AIM_CAPS_IS_2001 | AIM_CAPS_ICQSERVERRELAY /*| AIM_CAPS_ICQRTF | AIM_CAPS_UTF8*/
+#define KOPETE_ICQ_CAPS			AIM_CAPS_ISICQ | AIM_CAPS_IS_2001 | AIM_CAPS_ICQSERVERRELAY /*| AIM_CAPS_RTFMSGS | AIM_CAPS_UTF8*/
 
 class ICQSearchResult
 {
@@ -349,6 +356,11 @@ class OscarSocket : public OscarConnection
 		 * send status, i.e. AWAY, NA, OCC (ICQ method)
 		 */
 		void sendICQStatus(unsigned long status);
+
+		/*
+		 * Adds a direct connection info TLV to Buffer directInfo
+		 */
+		void fillDirectInfo(Buffer &directInfo);
 
 		/*
 		 * Sends the user's profile to the server
@@ -715,19 +727,19 @@ class OscarSocket : public OscarConnection
 		QSocket * connsock;
 		/** The currently logged in user's profile */
 		QString myUserProfile;
-		/** Tells if we are connected to the server and ready to operate */
-		bool isConnected;
+		// Tells if we are connected to the server and ready to operate
+		bool isLoggedIn;
 
-		/** counter to find out if we got all packets needed before sending
-		* out more info and the final CLI_READY command which is the end of a login procedure
-		*/
+		/*
+		 * counter to find out if we got all packets needed before sending
+		 * out more info and the final CLI_READY command which is the end
+		 * of a login procedure.
+		 */
 		int gotAllRights;
 
 		int keepaliveTime;
 		QTimer *keepaliveTimer;
 
-		// TODO: save icq bit-fscking status in here
-//		unsigned long icqStatus;
 		bool mIsICQ;
 		/*
 		 * one up sequence used for packets of type CLI_TOICQSRV
@@ -739,18 +751,20 @@ class OscarSocket : public OscarConnection
 		 */
 		WORD flapSequenceNum;
 
+		DWORD mDirectConnnectionCookie;
+
 	signals:
-		/** Called when an SSI acknowledgement is received */
+		// Called when an SSI acknowledgement is received
 		void SSIAck();
-		/** emitted when BOS rights are received */
+		// emitted when BOS rights are received
 //		void gotBOSRights(WORD,WORD);
-		/** emitted when a buddy gets blocked */
+		// emitted when a buddy gets blocked
 		void denyAdded(QString);
-		/** emitted when a block is removed on a buddy */
+		// emitted when a block is removed on a buddy
 		void denyRemoved(QString);
-		/** Tells when the connection ack has been received on channel 1 */
+		// Tells when the connection ack has been received on channel 1
 		void connAckReceived();
-		/** emitted when a direct connection has been terminated */
+		// emitted when a direct connection has been terminated
 		void directIMConnectionClosed(QString name);
 };
 #endif

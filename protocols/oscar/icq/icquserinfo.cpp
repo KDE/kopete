@@ -4,7 +4,7 @@
     Copyright (c) 2002 by Nick Betcher <nbetcher@kde.org>
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
-    language, country and other tables are taken from libicq
+    language, country and other tables taken from libicq
     file                 : country.cpp
     copyright            : (C) 2002 by Vladimir Shutoff
     email                : vovan@shutoff.ru

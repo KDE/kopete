@@ -103,14 +103,14 @@ void OscarAccount::connect()
 	// Get the screen name for this account
 	QString screenName = accountId();
 
-	if (screenName != i18n("(No Screen Name Set)") )
+	if (screenName != i18n("(No Screen Name Set)") ) // FIXME: Is this needed at all?
 	{	// If we have a screen name set
 		// Get the password
 		QString password = getPassword();
-		if (password.isNull())
+		if (password.isEmpty())
 		{
 			slotError(i18n("Kopete is unable to attempt to signon to the " \
-				"AIM network because no password was specified in the " \
+				"AIM/ICQ network because no password was specified in the " \
 				"preferences."), 0);
 		}
 		else

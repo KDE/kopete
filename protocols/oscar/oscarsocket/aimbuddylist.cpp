@@ -184,6 +184,7 @@ AIMBuddy::AIMBuddy(const int buddyID, const int groupID, const QString &screenNa
 	mScreenName = screenName;
 	// By default set it's status to offline
 	mStatus = OSCAR_OFFLINE;
+	mWaitAuth = false;
 }
 
 AIMBuddyCaps::AIMBuddyCaps()

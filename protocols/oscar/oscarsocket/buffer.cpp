@@ -256,10 +256,9 @@ DWORD Buffer::getLEDWord()
 
 void Buffer::OnBufError(QString s)
 {
-	kdDebug(14150) <<
-		" ============= " << endl <<
-		" BUFFER ERROR: " << s << endl <<
-		" ============= " << endl;
+	kdDebug(14150) << " BUFFER ERROR: " << s << endl << "Stopping reporting errors" << endl;
+
+	disconnect(this, SIGNAL(bufError(QString)), this, SLOT(OnBufError(QString)));
 }
 
 void Buffer::setBuf(char *b, const WORD l)
@@ -317,14 +316,24 @@ TLV Buffer::getTLV()
 	return t;
 }
 
-QPtrList<TLV> Buffer::getTLVList()
+QPtrList<TLV> Buffer::getTLVList(bool debug)
 {
 	QPtrList<TLV> ql;
 	ql.setAutoDelete(FALSE);
 	while (mLength != 0)
 	{
 		TLV *t = new TLV;
+
+		if(debug)
+			kdDebug(14150) << k_funcinfo << "calling getTLV() ..." << endl;
+
 		*t = getTLV();
+		if (!t)
+			kdDebug(14150) << k_funcinfo << "got no TLV but  NULL pointer!" << endl;
+
+		if(debug)
+			kdDebug(14150) << k_funcinfo << "got TLV(" << t->type << ")" << endl;
+
 		ql.append(t);
 	}
 	return ql;
@@ -348,17 +357,19 @@ int Buffer::addChatTLV(const WORD type, const WORD exchange,
 	const QString &roomname, const WORD instance)
 {
 	addWord(type);
-	addWord(0x0005+roomname.length());
+	addWord(0x0005 + roomname.length());
 	addWord(exchange);
 	addByte(roomname.length());
-	addString(roomname.latin1(),roomname.length());
+	addString(roomname.latin1(), roomname.length());
 	return addWord(instance);
 }
 
 void Buffer::doResize(int inc)
 {
 	if(static_cast<DWORD>(mLength + inc + mBuf - alloc_buf) > alloc_length)
-		{//if we need a new array
+	{
+		// If we need a new array
+
 		// FIXME: do what this comment says!
 		// don't worry, I'll be changing this to a QByteArray pretty soon
 		// in the meantime:

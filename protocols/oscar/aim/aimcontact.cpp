@@ -165,10 +165,25 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 	if (tocNormalize(u.sn) != tocNormalize(contactName()))
 		return; //this is not this contact
 
-// 	kdDebug(14190) << k_funcinfo << "Called for '"
-// 		<< displayName() << "', userclass=" << u.userclass << endl;
+//	kdDebug(14190) << k_funcinfo << "Called for '"
+//		<< displayName() << "', userclass=" << u.userclass << endl;
 
-	if(u.userclass & USERCLASS_AWAY)
+	if(u.userclass & CLASS_AIM)
+		kdDebug(14190) << k_funcinfo << "AIM user" << endl;
+	if(u.userclass & CLASS_ICQ)
+		kdDebug(14190) << k_funcinfo << "ICQ user??" << endl;
+	if(u.userclass & CLASS_WIRELESS)
+		kdDebug(14190) << k_funcinfo << "Wireless user" << endl;
+	if(u.userclass & CLASS_COMMERCIAL)
+		kdDebug(14190) << k_funcinfo << "AOL commercial account" << endl;
+	if(u.userclass & CLASS_TRIAL)
+		kdDebug(14190) << k_funcinfo << "AOL trial account" << endl;
+	if(u.userclass & CLASS_ADMINISTRATOR)
+		kdDebug(14190) << k_funcinfo << "AOL administrator account" << endl;
+	if(u.userclass & CLASS_UNKNOWN400)
+		kdDebug(14190) << k_funcinfo << "Active contact" << endl;
+
+	if(u.userclass & CLASS_AWAY)
 		setStatus(OSCAR_AWAY);
 	else
 		setStatus(OSCAR_ONLINE);

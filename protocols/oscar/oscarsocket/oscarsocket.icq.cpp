@@ -1,7 +1,7 @@
 /*
   oscarsocket.icq.cpp  -  ICQ specific part of Oscarsocket
 
-  Copyright (c) 2003 by Stefan Gehn <sgehn@gmx.net>
+  Copyright (c) 2003 by Stefan Gehn <metz AT gehn.net>
   Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
@@ -24,14 +24,32 @@
 #include <kdebug.h>
 
 #define ICQ_CLIENTSTRING			"ICQ Inc. - Product of ICQ (TM).2002a.5.37.1.3728.85"
-#define ICQ_CLIENTID					0x010A
-#define ICQ_MAJOR						0x0005
-#define ICQ_MINOR						0x0025
-#define ICQ_POINT						0x0001
-#define ICQ_BUILD						0x0e90
+#define ICQ_CLIENTID				0x010A
+#define ICQ_MAJOR					0x0005
+#define ICQ_MINOR					0x0025
+#define ICQ_POINT					0x0001
+#define ICQ_BUILD					0x0e90
 static const char ICQ_OTHER[] = { 0x00, 0x00, 0x00, 0x55 };
 #define ICQ_COUNTRY					"us"
-#define ICQ_LANG						"en"
+#define ICQ_LANG					"en"
+
+const unsigned char PHONEBOOK_SIGN[16] =
+{
+	0x90, 0x7C, 0x21, 0x2C, 0x91, 0x4D, 0xD3, 0x11,
+	0xAD, 0xEB, 0x00, 0x04, 0xAC, 0x96, 0xAA, 0xB2
+};
+
+const unsigned char PLUGINS_SIGN[16] =
+{
+	0xF0, 0x02, 0xBF, 0x71, 0x43, 0x71, 0xD3, 0x11,
+	0x8D, 0xD2, 0x00, 0x10, 0x4B, 0x06, 0x46, 0x2E
+};
+
+const unsigned char SHARED_FILES_SIGN[16] =
+{
+	0xF0, 0x2D, 0x12, 0xD9, 0x30, 0x91, 0xD3, 0x11,
+	0x8D, 0xD7, 0x00, 0x10, 0x4B, 0x06, 0x46, 0x2E
+};
 
 /**
  * taken from libfaim !!!
@@ -562,6 +580,7 @@ void OscarSocket::sendICQStatus(unsigned long status)
 	outbuf.addWord(0x0006);
 	outbuf.addWord(0x0004);
 	outbuf.addDWord(status);
+	fillDirectInfo(outbuf);
 	outbuf.addWord(0x0008); // TLV(8)
 	outbuf.addWord(0x0002); // length 2
 	outbuf.addWord(0x0000); // error code - 0
@@ -570,29 +589,30 @@ void OscarSocket::sendICQStatus(unsigned long status)
 	sendBuf(outbuf, 0x2);
 } // END OscarSocket::sendICQStatus
 
-/*
+
 void OscarSocket::fillDirectInfo(Buffer &directInfo)
 {
 	kdDebug(14150) << k_funcinfo << "IP=" << mDirectIMMgr->address().toString() <<
 		", Port=" << mDirectIMMgr->port() << endl;
 
-	directInfo.addDWord(htonl(mDirectIMMgr->address().ip4Addr())); // IP
+	directInfo.addWord(0x000C); // TLV(12)
+	directInfo.addWord(0x0025); // length 25
+
+	directInfo.addDWord(mDirectIMMgr->address().ip4Addr()); // IP
 	directInfo.addWord(0x0000);
 	directInfo.addWord(mDirectIMMgr->port()); // Port
 
-	directInfo.addByte(0x01) // Mode
+	directInfo.addByte(0x00); // Mode, TODO: currently fixed to "Direct Connection disabled"
 	directInfo.addWord(ICQ_TCP_VERSION); // icq tcp protocol version, v8 currently
 
-	directInfo.addDWord(0) ; // TODO: DC cookie!
+	directInfo.addDWord(mDirectConnnectionCookie);
+	directInfo.addDWord(0x00000050); // web front port
+	directInfo.addDWord(0x00000003); // number of following client features
+	directInfo.addDWord(0x00000000); // TODO: InfoUpdateTime
+	directInfo.addDWord(0x00000000); // TODO: PhoneStatusTime
+	directInfo.addDWord(0x00000000); // TODO: PhoneBookTime
 	directInfo.addWord(0x0000);
-	directInfo.addWord(0x0050);
-	directInfo.addWord(0x0000);
-	directInfo.addWord(0x0003);
-	directInfo.addDWord(0x00000000); //InfoUpdateTime
-	directInfo.addDWord(0x00000000); //PhoneStatusTime
-	directInfo.addDWord(0x00000000); //PhoneBookTime
-	directInfo.addWord(0x0000);
-}*/
+}
 
 
 void OscarSocket::sendKeepalive()
@@ -655,79 +675,164 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 			{
 				Buffer type2(tlv.data, tlv.length);
 				WORD ackType = type2.getWord();
+				type2.getDWord(); // time
+				type2.getDWord(); // id
+
 				kdDebug(14150) << k_funcinfo << "acktype=" << ackType << endl;
 
 				if (ackType==0x0000) // normal message
 				{
-					// ERROR
-					QPtrList<TLV> lst = /*buf.getTLVList(); */type2.getTLVList();
+					char *contentCap = type2.getBlock(16);
+					QString contentCapString;
+					contentCapString.sprintf("{%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}",
+						contentCap[0], contentCap[1], contentCap[2], contentCap[3],contentCap[4], contentCap[5],
+						contentCap[6], contentCap[7], contentCap[8], contentCap[9],
+						contentCap[10], contentCap[11], contentCap[12], contentCap[13],
+						contentCap[14], contentCap[15]);
+					kdDebug(14150) << k_funcinfo <<
+					"capability describing the further content:" << contentCapString << endl;
+					delete [] contentCap;
+
+					// From now on only TLVs follow:
+
+					QPtrList<TLV> lst = /*buf.getTLVList(); */type2.getTLVList(true);
 					lst.setAutoDelete(TRUE);
 
 					TLV *messageTLV = findTLV(lst,0x2711); //TLV(10001)
 					if(messageTLV)
 					{
 						Buffer messageBuf(messageTLV->data, messageTLV->length);
-						//WORD len;
-						//WORD tcpver;
+						WORD lenUntilSeq1 = messageBuf.getWord(); //WORD len
+						if (lenUntilSeq1 != 0x1b00)
+							kdDebug(14150) << k_funcinfo << "wrong len till SEQ1!" << endl;
+
+						WORD tcpVer = messageBuf.getWord(); //WORD tcpver
+						kdDebug(14150) << k_funcinfo << "len=" << lenUntilSeq1 << ", tcpver=" << tcpVer << endl;
+
+						kdDebug(14150) << k_funcinfo << "rest after this is:" << endl <<
+						"------------------------------------------------------" << endl <<
+						messageBuf.toString() << endl <<
+						"------------------------------------------------------" << endl;
+
 						char *cap=messageBuf.getBlock(16);
 
-						QString capstring;
-						capstring.sprintf("{%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}",
+						QString capString;
+						capString.sprintf("{%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}",
 							cap[0], cap[1], cap[2], cap[3],cap[4], cap[5],
 							cap[6], cap[7], cap[8], cap[9],
 							cap[10], cap[11], cap[12], cap[13],
 							cap[14], cap[15]);
-						kdDebug(14150) << k_funcinfo << "CAPABILITY:" << capstring << endl;
-
+						kdDebug(14150) << k_funcinfo <<
+							"Capability describing the further content again:" <<
+							capString << endl;
 						delete [] cap;
+
 						messageBuf.getByte(); // unknown
 						messageBuf.getByte(); // unknown
 						messageBuf.getByte(); // unknown
-						messageBuf.getDWord(); // unknown, 0=normal message, 1=file ok...
+						WORD unkMsgType = messageBuf.getDWord(); // unknown, 0=normal message, 1=file ok...
+						kdDebug(14150) << k_funcinfo << "unk msgtype is " << unkMsgType << endl;
 						WORD seq1 = messageBuf.getWord(); // some stupid sequence
-						messageBuf.getWord(); // unknown
+						WORD unk = messageBuf.getWord(); // unknown
+						if(unk != 0x0e00 && unk != 0x1200)
+							kdDebug(14150) << k_funcinfo << "unknown word is neither 0x0e00 nor 0x1200, it's " << unk << endl;
+
 						WORD seq2 = messageBuf.getWord(); // some stupid sequence
 						if (seq1 != seq2)
-							kdDebug(14150) << k_funcinfo << "TODO: seq1 != seq2, what shall we do now?" << endl;
+							kdDebug(14150) << k_funcinfo << "seq1 != seq2, what shall we do now?" << endl;
 
-						char *tmp = messageBuf.getBlock(12); // unknown
-						delete[] tmp;
-						WORD msgType = messageBuf.getWord(); // message type
+						(void) messageBuf.getBlock(12); // unknown, always zero
+
+						kdDebug(14150) << k_funcinfo << "rest after 12 empty bytes:" << endl <<
+						"------------------------------------------------------" << endl <<
+						messageBuf.toString() << endl <<
+						"------------------------------------------------------" << endl;
+
+						BYTE msgType = messageBuf.getByte(); // message type
+						BYTE msgFlags = messageBuf.getByte(); // message flags
+
+						kdDebug(14150) << k_funcinfo << "msgType=" << msgType <<
+							", msgFlags=" << msgFlags << endl;
+
+						WORD status = messageBuf.getWord(); // Usually 0, seen 0x2000.
+						kdDebug(14150) << k_funcinfo << "status=" << status << endl;
+
+						WORD priority = messageBuf.getWord(); // Usually 0, seen 0x0002 in information request messages
+						if(priority == 0x0002)
+							kdDebug(14150) << k_funcinfo << "priority flag says this is an 'information request'" << endl;
+						else
+							kdDebug(14150) << k_funcinfo << "priority flag = " << priority << endl;
 
 						switch(msgType)
 						{
-							case 0x0001: // plain normal message
+							case 0xE8:
+							case 0xE9:
+							case 0xEA:
+							case 0xEB:
+							case 0xEC:
 							{
-								messageBuf.getWord(); // unknown
-								messageBuf.getWord(); // unknown, might be priority
+								kdDebug(14150) << k_funcinfo <<
+									"Unhandled message-type: AWAY" << endl;
+								break;
+							}
+
+							default: // something else than away message
+							{
+								kdDebug(14150) << k_funcinfo <<
+									"fetching type-2 messagtext..." << endl;
 								char *messagetext = messageBuf.getLNTS();
 								QString message = QString::fromLocal8Bit(messagetext);
 								delete [] messagetext;
 								kdDebug(14150) << k_funcinfo <<
-									"type-2 messagtext=" << message << endl;
-								/*DWORD fgColor=*/messageBuf.getDWord();
-								/*DWORD bgColor=*/messageBuf.getDWord();
-								kdDebug(14150) << k_funcinfo <<
-									"messageBuf.length() after message and colors =" <<
-									messageBuf.length() << endl;
+									"type-2 messagtext='" << message << "'" << endl;
+								if(!message.isEmpty())
+								{
+									DWORD fgColor=messageBuf.getDWord();
+									DWORD bgColor=messageBuf.getDWord();
 
-								DWORD guidlen = messageBuf.getDWord();
-								char *guid = messageBuf.getBlock(guidlen);
-								kdDebug(14150) << k_funcinfo << "type-2 guid=" << guid << endl;
-								delete [] guid;
+									kdDebug(14150) << k_funcinfo << "fgcolor=" << fgColor << endl;
+									kdDebug(14150) << k_funcinfo << "bgcolor=" << bgColor << endl;
 
-								kdDebug(14150) << k_funcinfo << "emit gotIM(), contact='" <<
-									user.sn << "', message='" << message << "'" << endl;
+									kdDebug(14150) << "messageBuf.length() after message and colors =" <<
+										messageBuf.length() << endl;
 
-								emit gotIM(message, user.sn, false);
+									if(messageBuf.length() > 0)
+									{
+										DWORD guidlen = messageBuf.getDWord();
+										kdDebug(14150) << k_funcinfo << "guidlen=" << guidlen << endl;
+										char *guid = messageBuf.getBlock(guidlen);
+										kdDebug(14150) << k_funcinfo << "type-2 guid=" << guid << endl;
+										delete [] guid;
+									}
+
+									kdDebug(14150) << k_funcinfo << "emit gotIM(), contact='" <<
+										user.sn << "', message='" << message << "'" << endl;
+
+									emit gotIM(message, user.sn, false);
+								}
+								else
+								{
+									kdDebug(14150) << "messageBuf.length() after EMPTY message =" <<
+										messageBuf.length() << endl;
+
+									kdDebug(14150) << k_funcinfo << "rest after this is:" << endl <<
+									"------------------------------------------------------" << endl <<
+									messageBuf.toString() << endl <<
+									"------------------------------------------------------" << endl;
+
+									char *b = messageBuf.getBlock(16);
+									if (memcmp(b, PLUGINS_SIGN, sizeof(*b)) == 0)
+									{
+										kdDebug(14150) << k_funcinfo << "plugins request" << endl;
+									}
+									else if (memcmp(b, PHONEBOOK_SIGN, sizeof(*b)) == 0)
+									{
+										kdDebug(14150) << k_funcinfo << "phonebook request" << endl;
+									}
+								}
 								break;
 							}
 
-							default:
-							{
-								kdDebug(14150) << k_funcinfo <<
-									"Unhandled message-type:" << msgType << endl;
-							}
 						} // END switch(msgType)
 					} // END found TLV(10001)
 					else

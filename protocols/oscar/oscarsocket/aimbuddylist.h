@@ -128,6 +128,9 @@ class AIMBuddy
 		// Sets the string version of the last time the member was on
 		void setStringLastOn(const QString &stringLastOn) { mStringLastOn = stringLastOn; }
 
+		void setWaitAuth(bool b) { mWaitAuth = b; }
+		bool waitAuth() { return mWaitAuth; }
+
 	protected:
 		friend class AIMBuddyList;
 		void setGroupID(const int groupID) { mGroupID = groupID; }
@@ -146,6 +149,7 @@ class AIMBuddy
 		long mMemberSince;
 		Q_UINT32 mEvil;
 		long mLastOn;
+		bool mWaitAuth;
 		QString mStringLastOn;
 };
 

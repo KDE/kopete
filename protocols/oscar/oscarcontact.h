@@ -39,7 +39,6 @@ class QTimer;
  * Contact for oscar protocol
  * @author Tom Linsky <twl6@po.cwru.edu>
  * @author Chris TenHarmsel <tenharmsel@staticmethod.net>
- * @author Stefan Gehn <sgehn@gmx.net>
  */
 class OscarContact : public KopeteContact
 {
