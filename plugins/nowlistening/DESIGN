@@ -48,3 +48,5 @@ DONE
 Customising the advert message
 DONE
 Maybe provide substitution as in "Now listening to %track by %artist (on %album)".  Here () indicates substitute whole clause only if enclosed variable is set.
+
+Change so action inserts text in current message?

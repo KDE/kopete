@@ -40,6 +40,8 @@
 #include "nlnoatun.h"
 #include "nlxmms.h"
 
+#define NL_DATA_KEY "sendNowListening"
+
 K_EXPORT_COMPONENT_FACTORY(  kopete_nowlistening, KGenericFactory<NowListeningPlugin> );
 
 NowListeningPlugin::NowListeningPlugin( QObject *parent, const char *name, const QStringList & /*args*/ )
@@ -100,7 +102,7 @@ KActionCollection *NowListeningPlugin::customContextMenuActions( KopeteMetaConta
 	m_actionCollection = new KActionCollection( this );
 	m_actionWantsAdvert = new KToggleAction( "Now Listening", 0, this, 
 			SLOT( slotContactWantsToggled() ), m_actionCollection, "actionWantsAdvert" );
-	m_actionWantsAdvert->setChecked( m->pluginData( this ).first() == "true" );
+	m_actionWantsAdvert->setChecked( m->pluginData( this, NL_DATA_KEY ) == "true" );
 	m_actionCollection->insert( m_actionWantsAdvert );
 	m_currentMetaContact = m;
 	return m_actionCollection;
@@ -123,8 +125,8 @@ void NowListeningPlugin::slotContactWantsToggled()
 	kdDebug(14307) << "NowListeningPlugin::slotContactsWantsToggled()" << endl;
 	if ( m_actionWantsAdvert && m_currentMetaContact )
 	{
-		m_currentMetaContact->setPluginData( this, ( m_actionWantsAdvert->isChecked() 
-			? "true" : "false" ) );
+		m_currentMetaContact->setPluginData( this, NL_DATA_KEY,
+				( m_actionWantsAdvert->isChecked() ? "true" : "false" ) );
 	}
 	return;
 }
@@ -330,7 +332,7 @@ void NowListeningPlugin::advertiseToChat( KopeteMessageManager *theChat, QString
 		pl.first();
 		while ( pl.current() )
 		{
-			myData = pl.current()->metaContact()->pluginData( this );
+			myData = pl.current()->metaContact()->pluginData( this, NL_DATA_KEY );
 			if ( myData.isEmpty() || myData.first() != "true" )
 				pl.remove();
 			else
