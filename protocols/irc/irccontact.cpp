@@ -65,7 +65,7 @@ IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, K
 IRCContact::~IRCContact()
 {
 //	kdDebug(14120) << k_funcinfo << mNickName << endl;
-	if(metaContact() && metaContact()->isTemporary() && !isChatting())
+	if( metaContact() && metaContact()->isTemporary() && !isChatting(m_msgManager) )
 		metaContact()->deleteLater();
 }
 
