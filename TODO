@@ -22,6 +22,25 @@ Beware: It's totally unsorted ;)
 OSCAR ICQ/AIM TODO ITEMS (generously added by mETz *g*)
 
 	OSCAR in general=============================================================
+For 0.7
+	- somehow sync server and local list, this is not as trivial as everybody
+	  always thinks it is because you cannot sure if local changes or
+	  serverside-changes caused the difference (think about two clients being used
+	  for the same account, one at home and one at work).
+	  Update: Actually it might be possible by saving two timestamp/size values
+	  for the account. Serverside and local values.
+	  Also I'm much in favor of hindering the user from offline editing the
+	  contactlist. (Probably just this for 0.7, this is all Jabber allows, anyway)
+
+	- save groupID in KopeteGroups
+
+	- make renaming serverside contacts possible (function is there but fails due
+	  to massive contactlist crappyness caused by above mentioned classes)
+
+	X error handling on channel 0x04 messages. properly disconnect and emit a
+	  signal in oscarsocket. (Will)
+
+For 1.0/kdenetwork:
 	- switch from QSocket to KExtendedSocket,
 	  this means rewriting most of oscarsocket
 	  The biggest problem I see so far is OscarConnection::setSocket(int socket)
@@ -38,24 +57,22 @@ OSCAR ICQ/AIM TODO ITEMS (generously added by mETz *g*)
 
 	- get rid of AIMContactList, AIMBuddy (almost gone already) and AIMGroup.
 
-	- save groupID in KopeteGroups
-
-	- somehow sync server and local list, this is not as trivial as everybody
-	  always thinks it is because you cannot sure if local changes or
-	  serverside-changes caused the difference (think about two clients being used
-	  for the same account, one at home and one at work).
-	  Update: Actually it might be possible by saving two timestamp/size values
-	  for the account. Serverside and local values.
-	  Also I'm much in favor of hindering the user from offline editing the
-	  contactlist.
-
-	- make renaming serverside contacts possible (function is there but fails due
-	  to massive contactlist crappyness caused by above mentioned classes)
-
-	- error handling on channel 0x04 messages. properly disconnect and emit a
-	  signal in oscarsocket.
 
 	ICQ specific ================================================================
+For 0.7:
+	- IMPORTANT: write plugin data to accounts.xml, and fail gracefully if 
+	there is none there instead of giving 
+	kopete (oscar): [void OscarAccount::slotGoOnline()] 389743: Already ONLINE
+	** See if this is still there after the move back to KConfig
+	I noticed it was writing no plugin data to accounts.xml recently, 
+	I think a lack of server name and port data there prevents ICQ 
+	connecting. (Will, confirmed by Till)
+	
+	- support simple icq type-2 messages so we can send/receive away 
+	messages (yes, I even see this as a point for not releasing 0.7, away 
+	messages ARE important or else I could take out away modes altogether)
+
+	- prevent passwords longer than 8 chars, it upsets the server
 	- general support for SNAC (0x15,y)
 	- read away reasons
 	- own away-reasons
@@ -66,13 +83,11 @@ OSCAR ICQ/AIM TODO ITEMS (generously added by mETz *g*)
 	- Option: Allow access from contacts on my contact list only
 	- group handling
 	  (signals: KopeteMetaContact::movedToGroup , addedToGroup , removedToGroup )
+	  I'm not sure what this item means, none of the other protocols listen to
+	  these signals.
 	- ignore lists (needs proper group-handling)
 	- invisible list (needs proper group-handling)
 	X invisible mode
-
-	- support simple icq type-2 messages so we can send/receive away messages
-	  (yes, I even see this as a point for not releasing 0.7, away messages ARE
-	  important or else I could take out away modes altogether)
 
 	- support login with something different than "online" status, both for
 	  AIM and ICQ. I thought about changing OscarSocket::doLogin but the var
@@ -83,7 +98,8 @@ OSCAR ICQ/AIM TODO ITEMS (generously added by mETz *g*)
 	- support sending your own icq userinfo to the server,
 	  it's easy to do for me but because of the mass of items takes lots of time
 	  and is extremely boring.
-
+For 1.0/kdenetwork:
+	What's not achievable in the above?  Move it down here...
 	AIM specific ================================================================
 	- Nothing in here yet, I'd appreciate somebody with more extensive use of
 	  AIM to take over just that part of the plugin.
