@@ -220,6 +220,11 @@ private:
 	JabberResource *activeResource;
 
 	/**
+	 * Default resource for this contact (usually empty)
+	 */
+	JabberResource *defaultResource;
+
+	/**
 	 * This will simply cache all
 	 * relevant data for this contact.
 	 */
@@ -251,7 +256,7 @@ private:
 	KopeteMessageManager *m_manager;
 
 	dlgJabberVCard *dlgVCard;
-	
+
 	//Actions
 	KAction *actionSendAuth;
 	KAction *actionRequestAuth;

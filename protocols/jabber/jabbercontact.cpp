@@ -52,6 +52,7 @@
 JabberContact::JabberContact (QString userId, QString nickname, QStringList groups, JabberAccount * p, KopeteMetaContact * mc)
 				: KopeteContact (p, userId.lower(), mc)
 {
+	XMPP::Jid jid(userId);
 
 	parentMetaContact = mc;
 
@@ -59,13 +60,14 @@ JabberContact::JabberContact (QString userId, QString nickname, QStringList grou
 
 	messageManager = 0L;
 
-	rosterItem.setJid (XMPP::Jid (userId));
+	rosterItem.setJid (jid);
 	rosterItem.setName (nickname);
 	rosterItem.setGroups (groups);
 
 	// create a default (empty) resource for the contact
-	JabberResource *defaultResource = new JabberResource (QString::null, -1, QDateTime::currentDateTime (),
-														  static_cast<JabberProtocol *>(protocol())->JabberKOSOffline, "");
+	defaultResource = new JabberResource (jid.resource(), -1,
+					      QDateTime::currentDateTime (),
+					      static_cast<JabberProtocol *>(protocol())->JabberKOSOffline, "");
 
 	resources.append (defaultResource);
 
@@ -194,9 +196,9 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 		JabberResource *tmpBestResource = bestResource ();
 
 		// put best resource first
-		items.append (i18n ("Automatic (best resource)"));
+		items.append (i18n ("Automatic (best/default resource)"));
 
-		if (!tmpBestResource->resource ().isNull ())
+		if (tmpBestResource != defaultResource)
 			items.append (tmpBestResource->resource ());
 
 		// iterate through available resources
@@ -204,8 +206,8 @@ QPtrList<KAction> *JabberContact::customContextMenuActions ()
 
 		for (JabberResource * tmpResource = resources.first (); tmpResource; tmpResource = resources.next (), i++)
 		{
-			// skip the default (empty) resource
-			if (tmpResource->resource ().isNull ())
+			// skip the default resource
+			if (tmpResource == defaultResource)
 			{
 				i--;
 				continue;
