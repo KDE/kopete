@@ -30,6 +30,8 @@
 #include "kopetemetacontactlvi.h"
 #include "kopetemetacontact.h"
 
+#include <memory>
+
 using namespace Kopete::UI;
 
 class KopeteGroupViewItem::Private
@@ -38,7 +40,31 @@ public:
 	ListView::ImageComponent *image;
 	ListView::TextComponent *name;
 	ListView::TextComponent *count;
+	std::auto_ptr<ListView::ToolTipSource> toolTipSource;
 };
+
+namespace Kopete {
+namespace UI {
+namespace ListView {
+
+class GroupToolTipSource : public ToolTipSource
+{
+public:
+	GroupToolTipSource( KopeteGroupViewItem *gp )
+	 : group( gp )
+	{
+	}
+	QString operator()( ComponentBase *, const QPoint &, QRect & )
+	{
+		return group->toolTip();
+	}
+private:
+	KopeteGroupViewItem *group;
+};
+
+} // END namespace ListView
+} // END namespace UI
+} // END namespace Kopete
 
 KopeteGroupViewItem::KopeteGroupViewItem( KopeteGroup *group_, QListView *parent, const char *name )
 : Kopete::UI::ListView::Item( parent, group_, name )
@@ -63,11 +89,17 @@ void KopeteGroupViewItem::initLVI()
 {
 	d = new Private;
 
+	d->toolTipSource.reset( new ListView::GroupToolTipSource( this ) );
+
 	using namespace ListView;
 	Component *hbox = new BoxComponent( this, BoxComponent::Horizontal );
 	d->image = new ImageComponent( hbox );
 	d->name = new TextComponent( hbox );
 	d->count = new TextComponent( hbox );
+
+	d->image->setToolTipSource( d->toolTipSource.get() );
+	d->name->setToolTipSource( d->toolTipSource.get() );
+	d->count->setToolTipSource( d->toolTipSource.get() );
 
 	connect( m_group, SIGNAL( renamed( KopeteGroup*, const QString& ) ),
 		this, SLOT( refreshDisplayName() ) );
@@ -84,6 +116,13 @@ void KopeteGroupViewItem::initLVI()
 KopeteGroup* KopeteGroupViewItem::group() const
 {
 	return m_group;
+}
+
+QString KopeteGroupViewItem::toolTip() const
+{
+	// TODO: add icon, and some more information than that which
+	// is already displayed in the list view item
+	return "<b>" + d->name->text() + "</b> " + d->count->text();
 }
 
 void KopeteGroupViewItem::slotConfigChanged()
@@ -165,7 +204,7 @@ void KopeteGroupViewItem::cancelRename( int col )
 
 void KopeteGroupViewItem::updateVisibility()
 {
-	//FIXME: A contact can ve visible if he has a unknwon status (it's not online) 
+	//FIXME: A contact can ve visible if he has a unknwon status (it's not online)
 	//       or if he has an event (blinking icon).  If such as contact is not with
 	//       others inline contact in the group. the group will stay hidden.
 	int visibleUsers = onlineMemberCount;

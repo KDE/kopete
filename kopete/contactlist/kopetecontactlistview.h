@@ -7,7 +7,7 @@
     Copyright (c) 2002      by Nick Betcher <nbetcher@usinternet.com>
     Copyright (c) 2002      by Stefan Gehn <metz AT gehn.net>
     Copyright (c) 2002-2003 by Olivier Goffart <ogoffart@tiscalinet.be>
-    Copyright (c) 2004      by Richard Smith <kde@metafoo.co.uk
+    Copyright (c) 2004      by Richard Smith <kde@metafoo.co.uk>
 
     Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
@@ -21,14 +21,15 @@
     *************************************************************************
 */
 
-#ifndef CONTACTLIST_H
-#define CONTACTLIST_H
+#ifndef KOPETE_CONTACTLISTVIEW_H
+#define KOPETE_CONTACTLISTVIEW_H
+
+#include "kopetelistview.h"
 
 #include <qpixmap.h>
 #include <qptrlist.h>
 #include <qstringlist.h>
 #include <qrect.h>
-#include <klistview.h>
 
 class KopeteContact;
 class KopeteMetaContact;
@@ -43,14 +44,12 @@ class KAction;
 class KListAction;
 class KActionMenu;
 
-class KopeteContactListViewToolTip;
-
 class KopeteContactListViewPrivate;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  */
-class KopeteContactListView : public KListView
+class KopeteContactListView : public Kopete::UI::ListView::ListView
 {
 	Q_OBJECT
 
@@ -66,15 +65,7 @@ public:
 	/**
 	 * Add a given group name and return it
 	 */
-	void addGroup( const QString groupName );
-
-	/**
-	 * Schedule a delayed sort operation. Sorts will be withheld for at most
-	 * half a second, after which they will be performed. This way multiple
-	 * sort calls can be safely bundled without writing complex code to avoid
-	 * the sorts entirely.
-	 */
-	void delayedSort();
+	void addGroup( const QString &groupName );
 
 	/**
 	 * Are we displaying as a tree view (true), or in a flat list (false)?
@@ -95,10 +86,9 @@ public slots:
 
 protected:
 	virtual void contentsMousePressEvent( QMouseEvent *e );
-	virtual void keyPressEvent( QKeyEvent *e );
 
 	virtual bool acceptDrag(QDropEvent *e) const;
-	
+
 	/**
 	 * Start a drag operation
 	 * @return a KMultipleDrag containing: 1) A QStoredDrag of type "application/x-qlistviewitem", 2) If the MC is associated with a KABC entry, i) a QTextDrag containing their email address, and ii) their vCard representation.
@@ -122,7 +112,6 @@ private slots:
 	void slotContextMenu(KListView*,QListViewItem *item, const QPoint &point );
 	void slotExpanded( QListViewItem *item );
 	void slotCollapsed( QListViewItem *item );
-	void slotDoubleClicked( QListViewItem *item );
 
 	void slotSettingsChanged( void );
 	void slotUpdateAllGroupIcons();
@@ -169,12 +158,6 @@ private slots:
 	void slotAddTemporaryContact();
 	void slotProperties();
 
-	/**
-	 * Sort the view when the timer expires.
-	 * Too bad QListView::sort() is not a slot itself...
-	 */
-	void slotSort();
-
 private:
 	bool mShowAsTree;
 
@@ -188,8 +171,6 @@ private:
 	QRect m_onItem;
 
 	QPoint m_startDragPos;
-
-	KopeteContactListViewToolTip *m_tooltip;
 
 	/* ACTIONS */
 	KAction *actionSendMessage;
@@ -211,5 +192,6 @@ public:
 	// FIXME: do we not believe in accessor functions any more?
 	KActionMenu *actionAddContact;
 };
+
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

@@ -52,8 +52,54 @@
 #include "kopeteprefs.h"
 #include "kopetestdaction.h"
 #include "systemtray.h"
+#include "kopeteglobal.h"
+
+#include <memory>
 
 using namespace Kopete::UI;
+
+namespace Kopete {
+namespace UI {
+namespace ListView {
+
+class MetaContactToolTipSource : public ToolTipSource
+{
+public:
+	MetaContactToolTipSource( KopeteMetaContact *mc )
+	 : metaContact( mc )
+	{
+	}
+	QString operator()( ComponentBase *, const QPoint &, QRect & )
+	{
+		QPtrList<KopeteContact> contacts = metaContact->contacts();
+		if( contacts.count() == 1 )
+			return contacts.first()->toolTip();
+
+		// We are over a metacontact with > 1 child contacts, and not over a specific contact
+		// Iterate through children and display a summary tooltip
+		QString toolTip = QString::fromLatin1("<qt><table>");
+		for(KopeteContact *c = contacts.first(); c; c = contacts.next())
+		{
+			QString iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
+			.arg( KURL::encode_string( c->protocol()->pluginId() ),
+					KURL::encode_string( c->account()->accountId() ),
+					KURL::encode_string( c->contactId() )
+				);
+
+			toolTip += i18n("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
+								"<tr><td><img src=\"%1\">&nbsp;<b>%2</b>&nbsp;(%3)</td><td align=\"right\">%4</td></tr>")
+						.arg( iconName, c->property(Kopete::Global::Properties::self()->nickName()).value().toString() , c->contactId(), c->onlineStatus().description() );
+		}
+
+		return toolTip + QString::fromLatin1("</table></qt>");
+	}
+private:
+	KopeteMetaContact *metaContact;
+};
+
+} // END namespace ListView
+} // END namespace UI
+} // END namespace Kopete
 
 class KopeteMetaContactLVI::Private
 {
@@ -66,6 +112,7 @@ public:
 	ListView::BoxComponent *contactIconBox;
 	ListView::BoxComponent *spacerBox;
 	ListView::ImageComponent *buddyIcon;
+	std::auto_ptr<ListView::ToolTipSource> toolTipSource;
 	int iconSize;
 	int currentMode;
 };
@@ -87,6 +134,11 @@ public:
 	KopeteContact *contact()
 	{
 		return mContact;
+	}
+	// we don't need to use a tooltip source here - this way is simpler
+	std::pair<QString,QRect> toolTip( const QPoint &relativePos )
+	{
+		return std::make_pair(mContact->toolTip(),rect());
 	}
 };
 
@@ -144,6 +196,7 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, QListVie
 void KopeteMetaContactLVI::initLVI()
 {
 	d = new Private;
+	d->toolTipSource.reset( new ListView::MetaContactToolTipSource( m_metaContact ) );
 
 	m_oldStatus = m_metaContact->status();
 	m_oldStatusIcon = m_metaContact->statusIcon();
@@ -309,7 +362,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 						// and the preferredContact changed status, or there is a new preferredContacat
 						// so it's worth notifying
 						//kdDebug( 14000 ) << "changed status" << endl;
-						t = changedStatus; 
+						t = changedStatus;
 					}
 				}
 				else if ( m_oldStatus != newStatus )
@@ -320,7 +373,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 				}
 				// if none of the above were true, t will still be noChange
 			}
-	
+
 			// now issue the appropriate notification
 			switch ( t )
 			{
@@ -338,7 +391,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 				break;
 			}
 		}
-		//blink if the metacontact icon has changed.	
+		//blink if the metacontact icon has changed.
 		if ( !mBlinkTimer->isActive() && ( m_metaContact->statusIcon() != m_oldStatusIcon ) )
 		{
 			mIsBlinkIcon = false;
@@ -346,15 +399,15 @@ void KopeteMetaContactLVI::slotContactStatusChanged( KopeteContact *c )
 			mBlinkTimer->start( 400, false );
 		}
 	}
-	else 
+	else
 	{
-		//the status icon probably changed, but we didn't blink.   
+		//the status icon probably changed, but we didn't blink.
 		//So the olfStatusIcon will not be set to the real after the blink.
 		//we set it now.
 		if( !mBlinkTimer->isActive() )
 			m_oldStatusIcon=m_metaContact->statusIcon();
 	}
-	
+
 	// make a note of the current status for the next time we get a status change
 	m_oldStatus = newStatus;
 
@@ -495,7 +548,14 @@ void KopeteMetaContactLVI::slotConfigChanged()
 		d->extraText->setFont( KopetePrefs::prefs()->contactListSmallFont() );
 
 	updateVisibility();
+	updateContactIcons();
 	slotIdleStateChanged( 0 );
+}
+
+void KopeteMetaContactLVI::setMetaContactToolTipSourceForComponent( ListView::Component *comp )
+{
+	if ( comp )
+		comp->setToolTipSource( d->toolTipSource.get() );
 }
 
 void KopeteMetaContactLVI::setDisplayMode( int mode )
@@ -557,6 +617,11 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 		d->nameText = new TextComponent( hbox );
 		d->contactIconBox = new BoxComponent( hbox, BoxComponent::Horizontal );
 	}
+
+	// set some components to have the metacontact tooltip
+	setMetaContactToolTipSourceForComponent( d->metaContactIcon );
+	setMetaContactToolTipSourceForComponent( d->nameText );
+	setMetaContactToolTipSourceForComponent( d->extraText );
 
 	// update the display name
 	slotDisplayNameChanged();
@@ -769,7 +834,7 @@ void KopeteMetaContactLVI::catchEvent( KopeteEvent *event )
 	m_oldStatusIcon = m_metaContact->statusIcon();
 
 	mBlinkTimer->start( 500, false );
-	
+
 	//show the contact if it was hidden because offline.
 	updateVisibility();
  }

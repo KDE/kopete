@@ -97,6 +97,15 @@ void ComponentBase::componentResized( Component * )
 {
 }
 
+std::pair<QString,QRect> ComponentBase::toolTip( const QPoint &relativePos )
+{
+	for ( uint n = 0; n < components(); ++n )
+		if ( component( n )->rect().contains( relativePos ) )
+			return component( n )->toolTip( relativePos );
+
+	return std::make_pair( QString::null, QRect() );
+}
+
 void ComponentBase::updateAnimationPosition( int p, int s )
 {
 	for ( uint n = 0; n < components(); ++n )
@@ -121,6 +130,7 @@ public:
 	Private( ComponentBase *parent )
 	 : parent( parent ), minWidth( 0 ), minHeight( 0 )
 	 , growHoriz( false ), growVert( false )
+	 , tipSource( 0 )
 	{
 	}
 	ComponentBase *parent;
@@ -128,6 +138,7 @@ public:
 	QRect startRect, targetRect;
 	int minWidth, minHeight;
 	bool growHoriz, growVert;
+	ToolTipSource *tipSource;
 };
 
 Component::Component( ComponentBase *parent )
@@ -140,6 +151,21 @@ Component::~Component()
 {
 	d->parent->componentRemoved( this );
 	delete d;
+}
+
+void Component::setToolTipSource( ToolTipSource *source )
+{
+	d->tipSource = source;
+}
+
+std::pair<QString,QRect> Component::toolTip( const QPoint &relativePos )
+{
+	if ( !d->tipSource )
+		return ComponentBase::toolTip( relativePos );
+
+	QRect rc = rect();
+	QString result = (*d->tipSource)( this, relativePos, rc );
+	return std::make_pair(result, rc);
 }
 
 QRect Component::rect() { return d->rect; }
@@ -155,7 +181,7 @@ bool Component::setMinWidth( int width )
 {
 	if ( d->minWidth == width ) return false;
 	d->minWidth = width;
-	
+
 	d->parent->componentResized( this );
 	return true;
 }
@@ -875,7 +901,7 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 	// PASTED FROM QLISTVIEWITEM
 	{
 		QPainter *p = &paint;
-	
+
 		QListView *lv = listView();
 		if ( !lv )
 			return;
@@ -889,30 +915,30 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 		int marg = lv->itemMargin();
 		int r = marg;
 	//	const QPixmap * icon = pixmap( column );
-	
+
 		const BackgroundMode bgmode = lv->viewport()->backgroundMode();
 		const QColorGroup::ColorRole crole = QPalette::backgroundRoleFromMode( bgmode );
-		
+
 		if ( _cg.brush( crole ) != lv->colorGroup().brush( crole ) )
 			p->fillRect( 0, 0, width, height(), _cg.brush( crole ) );
 		else
 		{
 			// all copied from QListView::paintEmptyArea
-			
+
 			//lv->paintEmptyArea( p, QRect( 0, 0, width, height() ) );
 			QStyleOption opt( lv->sortColumn(), 0 ); // ### hack; in 3.1, add a property in QListView and QHeader
 			QStyle::SFlags how = QStyle::Style_Default;
 			if ( lv->isEnabled() )
 				how |= QStyle::Style_Enabled;
-		
+
 			lv->style().drawComplexControl( QStyle::CC_ListView,
 						p, lv, QRect( 0, 0, width, height() ), lv->colorGroup(),
 						how, QStyle::SC_ListView, QStyle::SC_None,
 						opt );
 		}
-	
-	
-	
+
+
+
 		if ( isSelected() &&
 		(column == 0 || lv->allColumnsShowFocus()) ) {
 			p->fillRect( r - marg, 0, width - r + marg, height(),
@@ -939,7 +965,7 @@ void Item::paintCell( QPainter *p, const QColorGroup &cg, int column, int width,
 		}
 	}
 	// END OF PASTE
-	
+
 	if ( Component *comp = component( column ) )
 		comp->paint( &paint, cg );
 	paint.end();

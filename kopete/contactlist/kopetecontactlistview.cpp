@@ -76,7 +76,6 @@ class ContactListViewStrategy;
 class KopeteContactListViewPrivate
 {
 public:
-	QTimer *sortTimer;
 	std::auto_ptr<ContactListViewStrategy> viewStrategy;
 
 	void updateViewStrategy( KListView *view );
@@ -369,156 +368,23 @@ void KopeteContactListViewPrivate::updateViewStrategy( KListView *view )
 	}
 }
 
-/*
-	Custom QToolTip for the contact list.
-	The decision whether or not to show tooltips is taken in
-	maybeTip(). See also the QListView sources from Qt itself.
-*/
-class KopeteContactListViewToolTip : public QToolTip
+// returns the next item in a depth-first descent of the list view.
+// much like QLVI::itemBelow but does not depend on visibility of items, etc.
+static QListViewItem *nextItem( QListViewItem *item )
 {
-public:
-	KopeteContactListViewToolTip( QWidget *parent, KopeteContactListView *lv );
-	virtual ~KopeteContactListViewToolTip();
-
-	void maybeTip( const QPoint &pos );
-
-private:
-	QString idleTime2String( int seconds );
-private:
-	KopeteContactListView *m_listView;
-};
-
-KopeteContactListViewToolTip::KopeteContactListViewToolTip( QWidget *parent, KopeteContactListView *lv )
- : QToolTip( parent )
-{
-	m_listView = lv;
-}
-
-KopeteContactListViewToolTip::~KopeteContactListViewToolTip()
-{
-}
-
-void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
-{
-	if( !parentWidget() || !m_listView )
-		return;
-
-	QListViewItem *item = m_listView->itemAt( pos );
-	if( !item )
-		return;
-
-	KopeteMetaContactLVI *metaLVI = dynamic_cast<KopeteMetaContactLVI *>( item );
-	KopeteGroupViewItem *groupLVI = dynamic_cast<KopeteGroupViewItem *>( item );
-
-	KopeteContact *contact = 0;
-	QString toolTip;
-	QRect itemRect = m_listView->itemRect( item );
-
-	if( metaLVI )
-	{
-		// FIXME: this should be in the metacontact lvi, not here...
-
-		uint leftMargin = m_listView->treeStepSize() *
-			( item->depth() + ( m_listView->rootIsDecorated() ? 1 : 0 ) ) +
-			m_listView->itemMargin();
-
-		uint xAdjust = itemRect.left() + leftMargin;
-		uint yAdjust = itemRect.top();
-		QPoint relativePos( pos.x() - xAdjust, pos.y() - yAdjust );
-
-		if( metaLVI->metaContact()->contacts().count() == 1 )
-		{
-			contact = metaLVI->metaContact()->contacts().first();
-		}
-		else
-		{
-			// Check if we are hovering over a protocol icon. If so, use that
-			// tooltip in the code below
-			contact = metaLVI->contactForPoint( relativePos );
-
-			if( contact )
-			{
-				QRect iconRect = metaLVI->contactRect( contact );
-
-				itemRect = QRect( iconRect.left() + xAdjust, iconRect.top() + yAdjust,
-				                  iconRect.width(), iconRect.height() );
-			}
-		}
-
-		if ( contact )
-		{
-			// We are over a contact
-			if ( !contact->toolTip().isNull() )
-				toolTip = contact->toolTip();
-		}
-		else
-		{
-			// We are over a metacontact with > 1 child contacts, and not over a specific contact
-			// Iterate through children and display a summary tooltip
-
-			KopeteMetaContact *mc = metaLVI->metaContact();
-			toolTip = QString::fromLatin1("<qt><table>");
-			QPtrList<KopeteContact> contacts = mc->contacts();
-			for(KopeteContact *c = contacts.first(); c; c = contacts.next())
-			{
-				QString iconName = QString::fromLatin1("kopete-contact-icon:%1:%2:%3")
-					.arg( KURL::encode_string( c->protocol()->pluginId() ),
-						KURL::encode_string( c->account()->accountId() ),
-						KURL::encode_string( c->contactId() )
-					);
-
-				toolTip += i18n("<tr><td>STATUS ICON <b>PROTOCOL NAME</b> (ACCOUNT NAME)</td><td>STATUS DESCRIPTION</td></tr>",
-					"<tr><td><img src=\"%1\">&nbsp;<b>%2</b>&nbsp;(%3)</td><td align=\"right\">%4</td></tr>")
-					.arg( iconName, c->property(Kopete::Global::Properties::self()->nickName()).value().toString() , c->contactId(), c->onlineStatus().description() );
-			}
-
-			toolTip += QString::fromLatin1("</table></qt>");
-
-			if ( Kopete::UI::ListView::Component *comp = metaLVI->componentAt( relativePos ) )
-			{
-				QRect iconRect = comp->rect();
-				itemRect = QRect( iconRect.left() + xAdjust, iconRect.top() + yAdjust,
-				                  iconRect.width(), iconRect.height() );
-			}
-		}
-	}
-	else if( groupLVI )
-	{
-		// FIXME: display the members-online/members-total information here. there is currently no
-		//        interface to get these from KopeteGroup (since a group doesn't know what members
-		//        it has)
-		KopeteGroup *g = groupLVI->group();
-		toolTip = QString( "<b>%1</b>" ).arg( g->displayName() );
-	}
-
-	/*kdDebug( 14000 ) << k_funcinfo << "Adding tooltip: itemRect: " <<
-		itemRect << ", tooltip:  " << toolTip << endl;*/
-	tip( itemRect, toolTip );
-}
-
-QString KopeteContactListViewToolTip::idleTime2String( int idleSeconds )
-{
-	unsigned int days, hours, mins, secs, left;
-	days = idleSeconds / ( 60*60*24 );
-	left = idleSeconds % ( 60*60*24 );
-	hours = left / ( 60*60 );
-	left = left % ( 60*60 );
-	mins = left / 60;
-	secs = left % 60;
-	if ( days!=0 )
-		return i18n( "<br>Idle: %1d %2h %3m %4s" ).arg( days ).arg( hours ).arg( mins ).arg( secs );
-	else if ( hours!=0 )
-		return i18n( "<br>Idle: %1h %2m %3s" ).arg( hours ).arg( mins ).arg( secs );
-	else
-		return i18n( "<br>Idle: %1m %2s" ).arg( mins ).arg( secs );
+	if ( QListViewItem *it = item->firstChild() )
+		return it;
+	while ( item && !item->nextSibling() )
+		item = item->parent();
+	if ( !item )
+		return 0;
+	return item->nextSibling();
 }
 
 KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name )
- : KListView( parent, name )
+ : Kopete::UI::ListView::ListView( parent, name )
 {
 	d = new KopeteContactListViewPrivate;
-	d->sortTimer = new QTimer( this, "sortTimer" );
-	connect( d->sortTimer, SIGNAL( timeout() ), this, SLOT( slotSort() ) );
 
 	mShowAsTree = KopetePrefs::prefs()->treeView();
 	if ( mShowAsTree )
@@ -535,47 +401,36 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 
 	setFullWidth( true );
 
-	// We have our own tooltips, don't use the default QListView ones
-	setShowToolTips( false );
-
-	m_tooltip = new KopeteContactListViewToolTip( viewport(), this );
-
 	connect( this, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
-		SLOT( slotContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
+	         SLOT( slotContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
 	connect( this, SIGNAL( expanded( QListViewItem * ) ),
-		SLOT( slotExpanded( QListViewItem * ) ) );
+	         SLOT( slotExpanded( QListViewItem * ) ) );
 	connect( this, SIGNAL( collapsed( QListViewItem * ) ),
-		SLOT( slotCollapsed( QListViewItem * ) ) );
+	         SLOT( slotCollapsed( QListViewItem * ) ) );
 	connect( this, SIGNAL( executed( QListViewItem *, const QPoint &, int ) ),
-		SLOT( slotExecuted( QListViewItem *, const QPoint &, int ) ) );
-	connect( this, SIGNAL( doubleClicked( QListViewItem * ) ),
-		SLOT( slotDoubleClicked( QListViewItem * ) ) );
+	         SLOT( slotExecuted( QListViewItem *, const QPoint &, int ) ) );
 	connect( this, SIGNAL( selectionChanged() ), SLOT( slotViewSelectionChanged() ) );
 	connect( this, SIGNAL( itemRenamed( QListViewItem * ) ),
-		SLOT( slotItemRenamed( QListViewItem * ) ) );
+	         SLOT( slotItemRenamed( QListViewItem * ) ) );
 
 	connect( KopetePrefs::prefs(), SIGNAL( saved() ), SLOT( slotSettingsChanged() ) );
 
 	connect( KopeteContactList::contactList(), SIGNAL( selectionChanged() ),
 	         SLOT( slotListSelectionChanged() ) );
 	connect( KopeteContactList::contactList(),
-		SIGNAL( metaContactAdded( KopeteMetaContact * ) ),
-		SLOT( slotMetaContactAdded( KopeteMetaContact * ) ) );
+	         SIGNAL( metaContactAdded( KopeteMetaContact * ) ),
+	         SLOT( slotMetaContactAdded( KopeteMetaContact * ) ) );
 	connect( KopeteContactList::contactList(),
-		SIGNAL( metaContactDeleted( KopeteMetaContact * ) ),
-		SLOT( slotMetaContactDeleted( KopeteMetaContact * ) ) );
-	connect( KopeteContactList::contactList(),
-		SIGNAL( groupAdded( KopeteGroup * ) ),
-		SLOT( slotGroupAdded( KopeteGroup * ) ) );
+	         SIGNAL( metaContactDeleted( KopeteMetaContact * ) ),
+	         SLOT( slotMetaContactDeleted( KopeteMetaContact * ) ) );
+	connect( KopeteContactList::contactList(), SIGNAL( groupAdded( KopeteGroup * ) ),
+	         SLOT( slotGroupAdded( KopeteGroup * ) ) );
 
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( newEvent( KopeteEvent * ) ),
-		this, SLOT( slotNewMessageEvent( KopeteEvent * ) ) );
+	         this, SLOT( slotNewMessageEvent( KopeteEvent * ) ) );
 
 	connect( this, SIGNAL( dropped( QDropEvent *, QListViewItem *, QListViewItem * ) ),
-		this, SLOT( slotDropped( QDropEvent *, QListViewItem *, QListViewItem * ) ) );
-
-	//connect( this , SIGNAL( onItem( QListViewItem * ) ),
-	//	this, SLOT ( slotOnItem( QListViewItem * ) ) );
+	         this, SLOT( slotDropped( QDropEvent *, QListViewItem *, QListViewItem * ) ) );
 
 	addColumn( i18n( "Contacts" ), 0 );
 
@@ -586,22 +441,6 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 	setDropVisualizer( false );
 	setDropHighlighter( true );
 	setSelectionMode( QListView::Extended );
-
-	clearWFlags( WStaticContents );
-	setWFlags( WNoAutoErase );
-
-	// clear the appropriate flags from the viewport - qt docs say we have to mask
-	// these flags out of the QListView to make weirdly painted list items work, but
-	// that doesn't do the job. this does.
-//	class MyWidget : public QWidget { public: using QWidget::clearWFlags; };
-//	static_cast<MyWidget*>( viewport() )->clearWFlags( WStaticContents );
-//	static_cast<MyWidget*>( viewport() )->setWFlags( WNoAutoErase );
-
-	// The above causes compiler errors with the (broken) native TRU64 and IRIX compilers.
-	// This should make it compile for both platforms and still seems to work.
-	// This is, of course, a nasty hack, but it works, so...
-	static_cast<KopeteContactListView*>(viewport())->clearWFlags( WStaticContents );
-	static_cast<KopeteContactListView*>(viewport())->setWFlags( WNoAutoErase );
 
 	// Load in the user's initial settings
 	slotSettingsChanged();
@@ -663,9 +502,6 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 
 KopeteContactListView::~KopeteContactListView()
 {
-	QToolTip::remove( viewport() );
-	delete m_tooltip;
-
 	delete d;
 }
 
@@ -745,7 +581,7 @@ void KopeteContactListView::addGroup()
 		addGroup( groupName );
 }
 
-void KopeteContactListView::addGroup( const QString groupName )
+void KopeteContactListView::addGroup( const QString &groupName )
 {
 	d->viewStrategy->addGroup( KopeteContactList::contactList()->getGroup(groupName) );
 }
@@ -773,14 +609,6 @@ void KopeteContactListView::slotCollapsed( QListViewItem *item )
 		groupLVI->group()->setExpanded( false );
 		groupLVI->updateIcon();
 	}
-}
-
-void KopeteContactListView::slotDoubleClicked( QListViewItem *item )
-{
-	kdDebug( 14000 ) << k_funcinfo << endl;
-
-	if ( item )
-		setOpen( item, !isOpen( item ) );
 }
 
 void KopeteContactListView::slotContextMenu( KListView * /*listview*/,
@@ -1270,41 +1098,6 @@ void KopeteContactListView::contentsMousePressEvent( QMouseEvent *e )
 	}
 }
 
-/* This is a small hack ensuring that only F2 triggers inline
- * renaming. Won't win a beauty award, but I think relying on
- * the fact that QListView intercepts and processes the F2 event
- * through this event filter is sorta safe.
- *
- * Also use enter to start a chat since executed is not called
- * when enter
- */
-void KopeteContactListView::keyPressEvent( QKeyEvent *e )
-{
-	if ( (e->key() == Qt::Key_F2) && currentItem() )
-	{
-		slotRename();
-	}
-	else if ( (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) && currentItem())
-	{
-		slotExecuted(currentItem() , QPoint() , 0);
-	}
-	else
-		KListView::keyPressEvent(e);
-}
-
-// returns the next item in a depth-first descent of the list view.
-// much like QLVI::itemBelow but does not depend on visibility of items, etc.
-static QListViewItem *nextItem( QListViewItem *item )
-{
-	if ( QListViewItem *it = item->firstChild() )
-		return it;
-	while ( item && !item->nextSibling() )
-		item = item->parent();
-	if ( !item )
-		return 0;
-	return item->nextSibling();
-}
-
 void KopeteContactListView::slotNewMessageEvent(KopeteEvent *event)
 {
 	KopeteMessage msg=event->message();
@@ -1786,18 +1579,6 @@ void KopeteContactListView::slotProperties()
 
 		groupLVI->updateIcon();
 	}
-}
-
-void KopeteContactListView::delayedSort()
-{
-	if ( !d->sortTimer->isActive() )
-		d->sortTimer->start( 500, true );
-}
-
-void KopeteContactListView::slotSort()
-{
-	//kdDebug( 14000 ) << k_funcinfo << endl;
-	sort();
 }
 
 void KopeteContactListView::slotItemRenamed( QListViewItem *item )

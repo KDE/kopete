@@ -20,6 +20,8 @@
 
 #include <klistview.h>
 
+#include <utility>
+
 class QPixmap;
 
 namespace Kopete {
@@ -42,6 +44,16 @@ public:
 	virtual void repaint() = 0;
 	/** Relayout this item */
 	virtual void relayout() = 0;
+
+	/**
+	 * Get the tool tip string and rectangle for a tip request at position
+	 * relativePos relative to this item. Queries the appropriate child component.
+	 *
+	 * @return a pair where the first element is the tooltip, and the second is
+	 *         the rectangle within the item for which the tip should be displayed.
+	 */
+	virtual std::pair<QString,QRect> toolTip( const QPoint &relativePos );
+
 protected:
 	/** A child item has been added to this item */
 	virtual void componentAdded( Component *component );
@@ -61,6 +73,25 @@ private:
 };
 
 /**
+ * @author Richard Smith <kde@metafoo.co.uk>
+ */
+class ToolTipSource
+{
+public:
+	/**
+	 * Get the tooltip string and rect for a component
+	 *
+	 * @param component The component to get a tip for
+	 * @param pt   The point (relative to the list item) the mouse is at
+	 * @param rect The tip will be removed when the mouse leaves this rect.
+	 *             Will initially be set to \p component's rect().
+	 */
+	virtual QString operator() ( ComponentBase *component, const QPoint &pt, QRect &rect ) = 0;
+};
+
+/**
+ * This class represents a rectangular subsection of a ListItem.
+ *
  * @author Richard Smith <kde@metafoo.co.uk>
  */
 class Component : public ComponentBase
@@ -114,6 +145,23 @@ public:
 	 */
 	virtual int heightForWidth( int width );
 
+	/**
+	 * Set a tool tip source for this item. The tool tip source object is
+	 * still owned by the caller, and must live for at least as long as
+	 * this component.
+	 */
+	void setToolTipSource( ToolTipSource *source = 0 );
+
+	/**
+	 * Get the tool tip string and rectangle for a tip request at position
+	 * relativePos relative to this item. If a tooltip source is set, it will
+	 * be used. Otherwise calls the base class.
+	 *
+	 * @return a pair where the first element is the tooltip, and the second is
+	 *         the rectangle within the item for which the tip should be displayed.
+	 */
+	std::pair<QString,QRect> toolTip( const QPoint &relativePos );
+
 protected:
 	/**
 	 * Change the minimum width, in pixels, this component requires in order
@@ -158,7 +206,7 @@ public:
 	~BoxComponent();
 
 	void layout( const QRect &rect );
-	
+
 	int widthForHeight( int height );
 	int heightForWidth( int width );
 
@@ -230,8 +278,8 @@ public:
 };
 
 /**
- * List-view item composed of Component items. Supports height-for-width,
- * neat animation effects, drag-and-drop, in-place editing of text components, ...
+ * List-view item composed of Component items. Supports height-for-width, tooltips and
+ * some animation effects.
  *
  * @author Richard Smith <kde@metafoo.co.uk>
  */

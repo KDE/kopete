@@ -23,10 +23,10 @@
 
 #define KOPETE_GROUP_DEFAULT_OPEN_ICON "folder_green_open"
 #define KOPETE_GROUP_DEFAULT_CLOSED_ICON "folder_green"
-/**
-  *@author Olivier Goffart
-  */
 
+/**
+ * @author Olivier Goffart
+ */
 class KopeteGroup;
 
 class KopeteGroupViewItem : public Kopete::UI::ListView::Item
@@ -46,6 +46,8 @@ public:
 	 */
 	virtual QString text( int column ) const;
 	virtual void setText( int column, const QString &text );
+
+	QString toolTip() const;
 
 public slots:
 	void refreshDisplayName();

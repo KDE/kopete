@@ -110,7 +110,7 @@ public:
 	QRect contactRect( const KopeteContact *c ) const;
 
 	bool isGrouped() const;
-	
+
 	/**
 	 * reimplemented from KListViewItem to take into account our alternate text storage
 	 */
@@ -144,7 +144,7 @@ private slots:
 
 	void slotEventDone( KopeteEvent* );
 	void slotBlink();
-	
+
 	void updateContactIcons();
 
 protected:
@@ -154,6 +154,7 @@ protected:
 private:
 	void initLVI();
 	void setDisplayMode( int mode );
+	void setMetaContactToolTipSourceForComponent( Kopete::UI::ListView::Component *comp );
 	QString key( int column, bool ascending ) const;
 	void updateContactIcon( KopeteContact * );
 	ContactComponent *contactComponent( const KopeteContact *c ) const;
