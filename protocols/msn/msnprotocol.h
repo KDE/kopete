@@ -111,7 +111,7 @@ public:
 	virtual void deserializeContact( KopeteMetaContact *metaContact,
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
-	virtual AddContactPage *createAddContactWidget( QWidget *parent );
+	virtual AddContactPage *createAddContactWidget( QWidget *parent , KopeteIdentity *i);
 	virtual EditIdentityWidget *createEditIdentityWidget(KopeteIdentity *identity, QWidget *parent);
 	virtual KopeteIdentity *createNewIdentity(const QString &identityId);
 
@@ -121,6 +121,8 @@ public:
 	KActionCollection * customChatActions(KopeteMessageManager * );
 
 	static MSNProtocol* protocol();
+	
+	static bool validContactId(const QString&);
 
 private slots:
 	void slotSyncContactList();

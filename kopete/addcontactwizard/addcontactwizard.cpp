@@ -25,15 +25,17 @@
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
 #include <kdebug.h>
+#include <klistview.h>
 
 #include "addcontactpage.h"
 #include "addcontactwizard.h"
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
 #include "kopeteprotocol.h"
-#include "pluginloader.h"
-#include "protocolboxitem.h"
 #include "kopetemetacontact.h"
+#include "kopeteidentitymanager.h"
+#include "kopeteidentity.h"
+#include "kopeteprotocol.h"
 
 AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 : AddContactWizard_Base( parent, name )
@@ -49,28 +51,27 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 			new QCheckListItem( groupList, groupname, QCheckListItem::CheckBox);
 	}
 
-	int pluginCount = 0;
-	ProtocolBoxItem *pluginItem = 0L;
-
-	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
-	for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
+	protocolListView->clear();
+	m_identityItems.clear();
+	
+	QCheckListItem* identityLVI=0L;
+	QPtrList<KopeteIdentity>  identities = KopeteIdentityManager::manager()->identities();
+	for(KopeteIdentity *i=identities.first() ; i; i=identities.next() )
 	{
-		KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
-		if( proto )
-		{
-			pluginItem = new ProtocolBoxItem( protocolListView, proto->pluginId() );
-			pluginItem->protocol = proto;
-			pluginCount++;
-		}
+		identityLVI= new QCheckListItem( protocolListView, i->identityId(), QCheckListItem::CheckBox); 
+		identityLVI->setText(1,i->protocol()->displayName() + QString::fromLatin1(" ") );
+		identityLVI->setPixmap( 1, SmallIcon( i->protocol()->pluginIcon() ) );
+		m_identityItems.insert(identityLVI,i);
 	}
+	
 
-	if ( pluginCount == 1 )
+	if ( identities.count() == 1 )
 	{
-		pluginItem->setOn( true );
+		identityLVI->setOn( true );
 		setAppropriate( selectService, false );
 	}
 
-	setNextEnabled(selectService, (pluginCount == 1));
+	setNextEnabled(selectService, (identities.count() == 1));
 	setFinishEnabled(finis, true);
 
 	connect( addGroupButton, SIGNAL(clicked()) , SLOT(slotAddGroupClicked()) );
@@ -151,14 +152,11 @@ void AddContactWizard::accept()
 		}
 	}
 	m->setTopLevel(topLevel);
-	
-	kdDebug(14000) << "finishing page: " << protocolPages.first() << endl;
-	for (AddContactPage *ePage = protocolPages.first();
-		 ePage; 
-		 ePage = protocolPages.next())
+
+	QMap <KopeteIdentity*,AddContactPage*>::Iterator it;
+	for ( it = protocolPages.begin(); it != protocolPages.end(); ++it ) 
 	{
-		kdDebug(14000) << "finishing page: " << ePage << endl;
-		ePage->slotFinish(m); 
+		it.data()->apply(it.key(),m); 
 	}
 	KopeteContactList::contactList()->addMetaContact(m);
 	delete(this);
@@ -169,32 +167,31 @@ void AddContactWizard::next()
 	if (currentPage() == selectService ||
 		(currentPage() == intro && !appropriate( selectService )))
 	{
-		for (AddContactPage *ePage = protocolPages.first(); 
-			 ePage != 0; 
-			 ePage = protocolPages.first())
+		QMap <KopeteIdentity*,AddContactPage*>::Iterator it;
+		for ( it = protocolPages.begin(); it != protocolPages.end(); ++it ) 
 		{
-			protocolPages.remove(ePage);
-			delete ePage;
+			delete it.data();
 		}
+		protocolPages.clear();          
 
 		// We don't keep track of this pointer because it gets deleted when the wizard does (which is what we want)
 		for (QListViewItemIterator it(protocolListView); it.current(); ++it)
 		{
-			ProtocolBoxItem *item = dynamic_cast<ProtocolBoxItem *>(it.current());
+			QCheckListItem *item = dynamic_cast<QCheckListItem *>(it.current());
 			if (item && item->isOn())
 			{
 				// this shouldn't happen either, but I hate crashes
-				if (!item->protocol) continue;
+				if (!m_identityItems[item]) continue;
 
-				AddContactPage *addPage = item->protocol->createAddContactWidget(this);
+				AddContactPage *addPage = m_identityItems[item]->protocol()->createAddContactWidget(this, m_identityItems[item] );
 				if (!addPage) continue;
 
-				QString title = i18n( "The protocol name is prepended here",
+				QString title = i18n( "The identity name is prepended here",
 									  "%1 contact information" )
-									 .arg( item->text() );
+									 .arg( item->text(0) );
 				addPage->show();
 				insertPage( addPage, title, indexOf( selectGroup) );
-				protocolPages.append( addPage );
+				protocolPages.insert( m_identityItems[item] , addPage );
 			}
 		}
 		QWizard::next();

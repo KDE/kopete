@@ -7,19 +7,19 @@
 #include "msnadd.h"
 #include "msnaddcontactpage.h"
 #include "msnprotocol.h"
+#include "kopeteidentity.h"
 
-MSNAddContactPage::MSNAddContactPage(MSNProtocol *owner, QWidget *parent, const char *name )
+MSNAddContactPage::MSNAddContactPage(bool connected, QWidget *parent, const char *name )
 				  : AddContactPage(parent,name)
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);
-	if ( owner->isConnected() )
+	if ( connected )
 	{
 			msndata = new msnAddUI(this);
 			/*
 			msndata->cmbGroup->insertStringList(owner->getGroups());
 			msndata->cmbGroup->setCurrentItem(0);
 			*/
-			plugin = owner;
 			canadd = true;
 
 	}
@@ -35,25 +35,14 @@ MSNAddContactPage::~MSNAddContactPage()
 {
 }
 
-void MSNAddContactPage::slotFinish(KopeteMetaContact *parentContact)
+bool MSNAddContactPage::apply( KopeteIdentity* i, KopeteMetaContact*m )
 {
-	if ( canadd )
+	if ( validateData() )
 	{
-		/*
-		QString currentGroup = msndata->cmbGroup->currentText();
-		if (currentGroup.isEmpty() == true)
-		{
-			KMessageBox::sorry(this, i18n("<qt>I'm sorry, you need to have a buddy listed under a group.</qt>"), i18n("You Must Select a Group"));
-			return;
-		}
-		*/
 		QString userid = msndata->addID->text();
-		plugin->addContactToMetaContact( userid , userid, parentContact );
+		return i->addContact( userid , userid, m );
 	}
-	else
-	{
-		return;
-	}
+	return false;
 }
 
 
@@ -63,9 +52,10 @@ bool MSNAddContactPage::validateData()
 		return false;
 
 	QString userid = msndata->addID->text();
-	if( userid.contains('@') ==1 && userid.contains('.') >=1)
+	
+	if(MSNProtocol::validContactId(userid))
 		return true;
-
+	
 	KMessageBox::sorry(this, i18n("<qt>You must enter a valid e-mail address</qt>"), i18n("MSN Plugin"));
 	return false;
 

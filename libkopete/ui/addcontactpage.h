@@ -33,9 +33,24 @@ public:
 	AddContactPage(QWidget *parent=0, const char *name=0);
 	~AddContactPage();
 	//KopeteProtocol *protocol;
+	
+	/**
+	 * Plugin should reimplement this methot.
+	 * return true if the content of the page are valid
+	 */
 	virtual bool validateData()=0;
+	
+	/**
+	 * add the contact the the specified meta contact, with the given identity
+	 * return false if the contact has not been added
+	 * TODO: make pure virtual
+	 */
+	virtual bool apply(KopeteIdentity * , KopeteMetaContact *) { return false; };
 public slots: // Public slots
-  virtual void slotFinish(KopeteMetaContact*)=0;
+
+   //*** OBSOLETE **/
+  virtual void slotFinish(KopeteMetaContact*) {};
+  
 };
 #endif
 /*

@@ -47,7 +47,21 @@ public:
 	 */
 	virtual bool unload();
 
-	virtual AddContactPage *createAddContactWidget(QWidget *parent)=0;
+	/**
+	 * return a new AddContact widget showed in the addContactWizzard.
+	 * parent is the parent widget.
+	 * the identity is given 
+	 * TODO: make pure virtual
+	 */	
+	virtual AddContactPage *createAddContactWidget(QWidget *parent, KopeteIdentity* /*identity*/)
+	{
+		return createAddContactWidget(parent);
+	}
+	/** obsolete one **/
+	virtual AddContactPage *createAddContactWidget(QWidget */*parent*/)
+	{
+		return 0L;
+	}
 
 	/**
 	 * return a new EditIdentity widget showed in the identity part of the configurations

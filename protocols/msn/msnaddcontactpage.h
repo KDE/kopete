@@ -16,16 +16,14 @@ class MSNAddContactPage : public AddContactPage
 {
    Q_OBJECT
 public:
-	MSNAddContactPage(MSNProtocol *owner, QWidget *parent=0, const char *name=0);
+	MSNAddContactPage(bool connected, QWidget *parent=0, const char *name=0);
 	~MSNAddContactPage();
 	msnAddUI *msndata;
-	MSNProtocol *plugin;
 	QLabel *noaddMsg1;
 	QLabel *noaddMsg2;
 	bool canadd;
 	virtual bool validateData();
-public slots: // Public slots
-  virtual void slotFinish(KopeteMetaContact*);
+	virtual bool apply( KopeteIdentity*, KopeteMetaContact* );
 
 };
 

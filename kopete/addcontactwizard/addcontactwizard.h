@@ -29,6 +29,8 @@
 
 class AddContactPage;
 class KopeteProtocol;
+class QCheckListItem;
+class KopeteIdentity;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -42,9 +44,10 @@ public:
 	~AddContactWizard();
 
 private:
-	KopeteProtocol *currentProtocol;
+	//KopeteProtocol *currentProtocol;
 	//AddContactPage *currentDataWidget;
-	QPtrList<AddContactPage> protocolPages;
+	QMap <KopeteIdentity*,AddContactPage*> protocolPages;
+	QMap <QCheckListItem*,KopeteIdentity*> m_identityItems;
 
 public slots:
 	virtual void accept();
