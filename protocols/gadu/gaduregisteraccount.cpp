@@ -29,6 +29,8 @@
 #include <qwhatsthis.h>
 #include <qpixmap.h>
 
+#include <kmessagebox.h>
+
 #include "gaduregisteraccount.h"
 
 GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
@@ -42,12 +44,82 @@ GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
 
 	cRegister = new RegisterCommand( this );
 
+	emailRegexp = new QRegExp( "[\\w\\d\\.]{1,}\\@[\\w\\d\\.]{1,}" );
+
 	connect( this, SIGNAL( applyClicked() ), SLOT( slotApply() ) );
+
+	connect( ui->submitData, SIGNAL( clicked() ), SLOT( doRegister() ) );
+	connect( ui->emailArea, SIGNAL( textChanged( const QString &) ), SLOT( emailChanged( const QString & ) ) );
+	connect( ui->password1, SIGNAL( textChanged( const QString & ) ), SLOT( passwordsChanged( const QString & ) ) );
+	connect( ui->password2, SIGNAL( textChanged( const QString & ) ), SLOT( passwordsChanged( const QString & ) ) );
+	connect( ui->textToken, SIGNAL( textChanged( const QString & ) ), SLOT( tokenChanged( const QString & ) ) );
+
 	connect( cRegister, SIGNAL( tokenRecieved( QPixmap, QString ) ), SLOT( displayToken( QPixmap, QString ) ) );
+	connect( cRegister, SIGNAL( done(  const QString&,  const QString& ) ), SLOT( registrationDone(  const QString&,  const QString& ) ) );
+	connect( cRegister, SIGNAL( error(  const QString&,  const QString& ) ), SLOT( registrationError(  const QString&,  const QString& ) ) );
 
 	cRegister->requestToken();
 
 	show();
+}
+
+void GaduRegisterAccount::doRegister( )
+{
+	cRegister->setUserinfo( ui->emailArea->text(), ui->password1->text(), ui->textToken->text() );
+	cRegister->execute();
+}
+
+void GaduRegisterAccount::validateInput()
+{
+	if ( emailRegexp->exactMatch( ui->emailArea->text() ) &&
+		ui->password1->text() == ui->password2->text()  && !ui->password1->text().isEmpty() && !ui->password2->text().isEmpty() &&
+		!ui->textToken->text().isEmpty() ) 
+	{
+		ui->submitData->setDisabled( false );
+	}
+	else{
+		ui->submitData->setDisabled( true );
+	}
+}
+
+void GaduRegisterAccount::tokenChanged( const QString & )
+{
+	validateInput();
+}
+
+void GaduRegisterAccount::emailChanged( const QString & )
+{
+	// validate
+	if ( emailRegexp->exactMatch( ui->emailArea->text() ) == FALSE && !ui->emailArea->text().isEmpty() ) {
+		ui->emailArea->setPaletteBackgroundColor( QColor( 0, 150 , 227 ) );
+	}
+	else {
+		ui->emailArea->setPaletteBackgroundColor( QColor( 255, 255 , 255 ) );
+	}
+	validateInput();
+}
+
+void GaduRegisterAccount::passwordsChanged( const QString & )
+{
+	if ( ui->password1->text() != ui->password2->text()  && !ui->password1->text().isEmpty() && !ui->password2->text().isEmpty() ) {
+		ui->password1->setPaletteBackgroundColor( QColor( 164, 0 , 0 ) );
+		ui->password2->setPaletteBackgroundColor( QColor( 164, 0 , 0 ) );
+	}
+	else {
+		ui->password1->setPaletteBackgroundColor( QColor( 255, 255 , 255 ) );
+		ui->password2->setPaletteBackgroundColor( QColor( 255, 255 , 255 ) );
+	}
+	validateInput();
+}
+
+void GaduRegisterAccount::registrationDone(  const QString& /*title*/,  const QString& /*what */ )
+{
+	KMessageBox::sorry( this, QString::number( cRegister->newUin() ), "dupa" );
+}
+
+void GaduRegisterAccount::registrationError(  const QString& title,  const QString& what )
+{
+	KMessageBox::sorry( this, what, title );
 }
 
 void GaduRegisterAccount::displayToken( QPixmap image, QString tokenId )
@@ -56,17 +128,10 @@ void GaduRegisterAccount::displayToken( QPixmap image, QString tokenId )
 	ui->pixmapToken->setPixmap( image );
 }
 
-
-
 void GaduRegisterAccount::slotApply()
 {
 }
 
 GaduRegisterAccount::~GaduRegisterAccount( )
 {
-}
-unsigned int GaduRegisterAccount::registered_number()
-{
-// return 0 if failed
-	return 0;
 }

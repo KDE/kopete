@@ -28,6 +28,7 @@
 #include <qlineedit.h>
 #include <qlabel.h>
 #include <qpixmap.h>
+#include <qregexp.h>
 
 #include <kdialogbase.h>
 #include <ktextedit.h>
@@ -44,16 +45,26 @@ class GaduRegisterAccount : public KDialogBase
 public:
 	GaduRegisterAccount( QWidget* , const char* );
 	~GaduRegisterAccount( );
-	unsigned int registered_number();
+
+signals:
+	void registeredNumber( unsigned int );
 
 protected slots:
 	void slotApply();
 	void displayToken( QPixmap, QString );
+	void registrationError(  const QString&, const QString& );
+	void registrationDone(  const QString&,  const QString& );
+	void emailChanged( const QString & );
+	void passwordsChanged( const QString & );
+	void doRegister();
+	void tokenChanged( const QString & );
 
 private:
+	void validateInput();
+
 	GaduRegisterAccountUI*	ui;
 	RegisterCommand*		cRegister;
-
+	QRegExp*				emailRegexp; 
 };
 
 #endif
