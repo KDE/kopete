@@ -95,7 +95,6 @@ void KopeteGroupViewItem::slotConfigChanged()
 	QFont font = listView()->font();
 	if ( KopetePrefs::prefs()->contactListUseCustomFonts() )
 		font = KopetePrefs::prefs()->contactListCustomNormalFont();
-	font.setBold( true );
 	d->name->setFont( font );
 
 	d->count->setFont( KopetePrefs::prefs()->contactListSmallFont() );
