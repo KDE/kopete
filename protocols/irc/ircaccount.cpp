@@ -50,48 +50,51 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	m_port = serverInfo.section(':',1).toUInt();
 
 	triedAltNick = false;
-	
+
 	m_engine = new KIRC( m_server, m_port );
-	
+
 	QMap< QString, QString> replies = customCtcpReplies();
 	for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
-		m_engine->addCustomCtcp( it.key(), it.data() ); 
-	
+		m_engine->addCustomCtcp( it.key(), it.data() );
+
 	QString version=i18n("Kopete IRC Plugin %1 [http://kopete.kde.org]").arg(kapp->aboutData()->version());
 	m_engine->setVersionString( version  );
 
 	QObject::connect(m_engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)),
 			this, SLOT(successfullyChangedNick(const QString &, const QString &)));
-	
+
 	QObject::connect(m_engine, SIGNAL(incomingFailedServerPassword()),
 			this, SLOT(slotFailedServerPassword()));
 
 	QObject::connect(m_engine, SIGNAL(incomingNickInUse(const QString &)),
 			this, SLOT(slotNickInUseAlert( const QString &)) );
-	
+
 	QObject::connect(m_engine, SIGNAL(incomingFailedNickOnLogin(const QString &)),
 			this, SLOT(slotNickInUse( const QString &)) );
-			
+
 	QObject::connect(m_engine, SIGNAL(userJoinedChannel(const QString &, const QString &)),
 		this, SLOT(slotJoinedUnknownChannel(const QString &, const QString &)));
-			
+
 	QObject::connect(m_engine, SIGNAL(connectedToServer()),
 		this, SLOT(slotConnectedToServer()));
-		
+
 	QObject::connect(m_engine, SIGNAL(successfulQuit()),
+		this, SLOT(slotDisconnected()));
+
+	QObject::connect(m_engine, SIGNAL(disconnected()),
 		this, SLOT(slotDisconnected()));
 
 	m_contactManager = new IRCContactManager(mNickName, m_server, this);
 	setMyself( m_contactManager->mySelf() );
 	m_myServer = m_contactManager->myServer();
 
-	mAwayAction = new KopeteAwayAction ( i18n("Set Away"), 
-		m_protocol->m_UserStatusAway.iconFor( this ), 0, this, 
+	mAwayAction = new KopeteAwayAction ( i18n("Set Away"),
+		m_protocol->m_UserStatusAway.iconFor( this ), 0, this,
 		SLOT(slotGoAway( const QString & )), this );
-	
+
 	//Warning: requesting the password may ask to kwallet, this will open a dcop call and call QApplication::enter_loop
 	//
-	// Never load passwords here, the initializer doesn't have a chance 
+	// Never load passwords here, the initializer doesn't have a chance
 	// to load it anyway. Passowords are loaded in ::loaded() - JLN
 	//
 	//if( rememberPassword() )
@@ -123,7 +126,7 @@ void IRCAccount::slotNickInUse( const QString &nick )
 	{
 		QString newNick = KInputDialog::getText( i18n( "IRC Plugin" ),
 			i18n( "The nickname %1 is already in use. Please enter an alternate nickname:" ).arg( nick ), nick );
-	
+
 		m_engine->changeNickname( newNick );
 	}
 	else
@@ -194,7 +197,7 @@ void IRCAccount::setCustomCtcpReplies( const QMap< QString, QString > &replies )
 		m_engine->addCustomCtcp( it.key(), it.data() );
 		val.append( QString::fromLatin1("%1=%2").arg( it.key() ).arg( it.data() ) );
 	}
-		
+
 	KConfig *config = KGlobal::config();
 	config->setGroup( configGroup() );
 	config->writeEntry( "CustomCtcp", val );
@@ -205,11 +208,11 @@ const QMap< QString, QString > IRCAccount::customCtcpReplies() const
 {
 	QMap< QString, QString > replies;
 	QStringList replyList;
-	
+
 	KConfig *config = KGlobal::config();
 	config->setGroup( configGroup() );
 	replyList = config->readListEntry( "CustomCtcp" );
-	
+
 	for( QStringList::Iterator it = replyList.begin(); it != replyList.end(); ++it )
 		replies[ (*it).section('=', 0, 0 ) ] = (*it).section('=', 1 );
 
@@ -265,7 +268,7 @@ void IRCAccount::slotConnectedToServer()
 {
 	//Check who is online
 	m_contactManager->checkOnlineNotifyList();
-	
+
 	QStringList m_connectCommands = connectCommands();
 	for( QStringList::Iterator it = m_connectCommands.begin(); it != m_connectCommands.end(); ++it )
 	{
@@ -315,7 +318,7 @@ void IRCAccount::setAway( bool isAway, const QString &awayMessage )
 }
 
 /*
- * Ask for server password, and reconnect 
+ * Ask for server password, and reconnect
  */
 void IRCAccount::slotFailedServerPassword()
 {
