@@ -94,6 +94,8 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 		this, SLOT(slotProtocolListClicked(QListViewItem *)));
 	connect(selectService->protocolListView, SIGNAL(doubleClicked(QListViewItem *)),
 		this, SLOT(slotProtocolListDoubleClicked(QListViewItem *)));
+	connect(selectService->protocolListView, SIGNAL(selectionChanged(QListViewItem *)), 
+		this, SLOT(slotProtocolListClicked(QListViewItem *)));
 }
 
 AddAccountWizard::~AddAccountWizard()
