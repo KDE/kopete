@@ -14,6 +14,7 @@ o Main Application
 	  line. (Olivier)
 	o URLs in the new message balloon are now clickable links that don't open
 	  a chat window. (Will)
+	o Allow to use customs icon for groups and metacontacts (Stephan / Olivier)
 
 
 Kopete 0.7 (released 2003/08/04)
