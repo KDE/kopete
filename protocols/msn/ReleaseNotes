@@ -1,0 +1,46 @@
+RELEASE NOTES FOR THE MSN PLUGIN IN KOPETE 0.4
+
+Most of the MSN plugin has seen an enormous improvement since the previous
+release, with many bugs fixed in especially the contact list handling.
+
+Some issues in MSN are still remaining though. We hope to fix them in the
+next release, since we think they are not critical enough to delay this
+release:
+
+- MSN allows you to have multiple groups with the same name, because
+  internally a group ID is used. Kopete currently uses the name as a unique
+  identifier, however, and will likely get a bit confused by this. If you
+  do experience problems, you could join both groups using another MSN
+  client, like the official client, Trillian or Gaim as a workaround.
+
+- MSN contacts can be in more than one group at the same time. Kopete
+  supports this partly, but not completely yet. In general Kopete will
+  function, but moving or copying contacts in the contact list will always
+  pick the first listed group as originating group. Also, this ability has
+  not really been tested yet, so more hidden problems may arise.
+
+- Kopete doesn't support moving contacts that do not exist on the server
+  yet. Ideally the group should be automatically created on the server, but
+  this can not be done reliably with the current code. Your attempt to move
+  will be ignored by kopete but not produce any error except for a debug
+  message on the console that you're moving a contact from group ID -1. A
+  workaround is to always sync groups to the server, so groups always
+  exist.
+
+- While chatting more than one person can be part of the chat. The MSN
+  plugin does signal that people join the chat, but hardly handles it
+  besides that. What happens during multi-chats is undefined, though it
+  should likely work for the other end, with slightly confusing output on
+  your own side.
+
+If you can bear with alpha-quality code (maybe beta, but definitely not
+release-quality yet ;-), we welcome you to try out this highly improved
+plugin and use it as your primary instant messaging system! Patches are
+always welcome on kopete-devel@kde.org. Trivial fixes can be committed
+directly to KDE CVS if you have an account, but please coordinate larger
+changes with us to avoid double work.
+
+Thanks for your interest in Kopete!
+
+                        May 2002, The kopete team <kopete-devel@kde.org>
+

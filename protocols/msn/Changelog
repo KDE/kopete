@@ -1,0 +1,44 @@
+CHANGELOG FOR THE MSN PLUGIN IN KOPETE 0.4
+
+Many things changed since 0.3. I won't mention them all, because so much of
+the internal code changed that the individual commits often fix more than I
+was even aware of at that time. Below are the bigger changes and fixes:
+
+- Ported the plugin to the new KopeteMessageManager. This move unifies the
+  handling of various resources like chat windows, balloons, system tray
+  flashing, and more. In Kopete 0.3 this was the exclusive domain of the
+  ICQ plugin, in this release all plugins except IRC already use the shared
+  code.
+
+- Rewrote almost all of the internal protocol handling, fixing an awful lot
+  of bugs during the process. The main goal was to make the code more
+  maintainable and extensible, but the gratuitous bug fixes are of course
+  much more useful for most people. The most important fix of all is a
+  grave bug that cause the plugin to read a fixed-size 1kb buffer in Kopete
+  0.3 without checking for additional data, often causing the plugin to
+  seemingly 'hang'.
+
+- Added the ability to change the display name while connected. This can
+  currently only be done from the context menu. The option in the
+  preferences never worked, and still does not do what you'd expect it to
+  do. Sorry :)
+
+- Added much more useful debug code for developers, testers and other
+  interested people. It is also a lot *more* debug output, so if you're
+  scared of console output, better not start Kopete from it...
+
+- All those tiny bugfixes of which I don't even know whether they fix
+  regressions introduced during the development of version 0.4, or whether
+  they fix long-standing bugs.
+
+Have fun using this all-improved plugin and feel free to contribute patches
+and other improvements to our mailing list! Although we all like to boast
+about our great work, we're sure there are still many bugs remaining, which
+is why we don't call this release 1.0, but only 0.4. Please read the
+release notes first before reporting bugs, but please do report anything
+not listed there!
+
+Thanks for your interest in Kopete!
+
+                        May 2002, The kopete team <kopete-devel@kde.org>
+
