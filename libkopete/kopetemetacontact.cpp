@@ -139,8 +139,6 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 
 void KopeteMetaContact::updateOnlineStatus()
 {
-	kdDebug() << "*******************" << k_funcinfo << endl;
-
 	KopeteOnlineStatus::OnlineStatus newStatus = KopeteOnlineStatus::Unknown;
 	KopeteOnlineStatus mostSignificantStatus;
 
@@ -213,14 +211,13 @@ bool KopeteMetaContact::isTopLevel()
 	return( d->groups.contains( KopeteGroup::topLevel() ) );
 }
 
-KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
-	const QString &accountId, const QString &contactId )
+KopeteContact *KopeteMetaContact::findContact( const QString &protocolId, const QString &accountId, const QString &contactId )
 {
-	//kdDebug(14010) << "*** Num contacts: " << d->contacts.count() << endl;
+	//kdDebug( 14010 ) << k_funcinfo << "Num contacts: " << d->contacts.count() << endl;
 	QPtrListIterator<KopeteContact> it( d->contacts );
 	for( ; it.current(); ++it )
 	{
-		//kdDebug(14010) << "*** Trying " << it.current()->contactId() << ", proto "
+		//kdDebug( 14010 ) << k_funcinfo << "Trying " << it.current()->contactId() << ", proto "
 		//<< it.current()->protocol()->pluginId() << ", account " << it.current()->accountId() << endl;
 		if( ( it.current()->contactId() == contactId ) && ( it.current()->protocol()->pluginId() == protocolId ) )
 		{
