@@ -70,6 +70,7 @@ protected slots:
 	void slotConnected();
 	void slotGoOnline();
 	void slotGoOffline();
+	void slotGoStatus(int status) { if(!isConnected()) connect(); m_session->setAway(yahoo_status(status), "", 1); }
 	
 	void slotLoginResponse( int succ, const QString &url);
 	void slotGotBuddies(const YList * buds);
@@ -94,33 +95,33 @@ protected slots:
 	void slotRemoveHandler( int fd);
 	//void slotHostConnect(const QString &host, int port);
 
+private slots:
+	// various status slots for the action menu
+	void slotGoStatus001() { slotGoStatus(1); } // Be Right Back
+	void slotGoStatus002() { slotGoStatus(2); } // Busy
+	void slotGoStatus003() { slotGoStatus(3); } // Not At Home
+	void slotGoStatus004() { slotGoStatus(4); } // Not At My Desk
+	void slotGoStatus005() { slotGoStatus(5); } // Not In The Office
+	void slotGoStatus006() { slotGoStatus(6); } // On The Phone
+	void slotGoStatus007() { slotGoStatus(7); } // On Vacation
+	void slotGoStatus008() { slotGoStatus(8); } // Out To Lunch
+	void slotGoStatus009() { slotGoStatus(9); } // Stepped Out
+	void slotGoStatus012() { slotGoStatus(12); } // Invisible
+	void slotGoStatus099() { slotGoStatus(99); } // Custom
+	void slotGoStatus999() { slotGoStatus(999); } // Idle
+	
 private:
 	QMap<QString, QPair<QString, QString> > IDs;
 		// This should be kept in sync with server - if a buddy is removed, this should be changed accordingly.
 	bool theHaveContactList;	// Do we have the full server-side contact list yet?
 	
-	int m_sessionId;			// The Yahoo session descriptor
+	int m_sessionId;		// The Yahoo session descriptor
 	YahooPreferences *m_prefs;	// Preferences Object
 	YahooSession *m_session;	// Connection Object
 	YahooContact *m_myself;		// Ourself
 	
 	void initActions();			// Load Status Actions
 	KActionMenu *theActionMenu;	// Statusbar Popup
-	KAction *actionGoOnline;	// Available
-	KAction *actionGoOffline;	// Disconnected
-	KAction *actionGoStatus001;	// Be Right Back
-	KAction *actionGoStatus002;	// Busy
-	KAction *actionGoStatus003;	// Not At Home
-	KAction *actionGoStatus004;	// Not At My Desk
-	KAction *actionGoStatus005;	// Not In The Office
-	KAction *actionGoStatus006;	// On The Phone
-	KAction *actionGoStatus007;	// On Vacation
-	KAction *actionGoStatus008;	// Out To Lunch
-	KAction *actionGoStatus009;	// Stepped Out
-	KAction *actionGoStatus012;	// Invisible
-	KAction *actionGoStatus099;	// Custom
-	KAction *actionGoStatus999;	// Idle
-
 };
 
 

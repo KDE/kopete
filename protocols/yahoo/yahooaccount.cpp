@@ -181,41 +181,31 @@ void YahooAccount::initActions()
 {
 	kdDebug(14180) << "YahooAccount::initActions()" << endl;
 
-	// TODO: These need to point to real slots that actually do the job!
-	actionGoOnline = new KAction(i18n(YSTAvailable), "yahoo_online",
-				0, this, SLOT(connect()), this, "actionYahooConnect");
-	actionGoOffline = new KAction(i18n("Offline"), "yahoo_offline",
-				0, this, SLOT(disconnect()), this, "actionYahooDisconnect");
-/*	actionGoStatus001 = new KAction(i18n(YSTBeRightBack), "yahoo_busy",
-				0, this, SLOT(connect()), this, "actionYahooConnect");
-	actionGoStatus002 = new KAction(i18n(YSTBusy), "yahoo_busy",
-				0, this, SLOT(connect()), this, "actionYahooConnect");
-	actionGoStatus003 = new KAction(i18n(YSTNotAtHome), "yahoo_busy",
-				0, this, SLOT(connect()), this, "actionYahooConnect");
-	actionGoStatus004 = new KAction(i18n(YSTNotAtMyDesk), "yahoo_busy",
-				0, this, SLOT(connect()), this, "actionYahooConnect");
-	actionGoStatus005 = new KAction(i18n(YSTNotInTheOffice), "yahoo_busy",
-				0, this, SLOT(connect()), this, "actionYahooConnect");
-	actionGoStatus006 = new KAction(i18n(YSTOnThePhone), "yahoo_busy",
-				0, this, SLOT(connect()), this, "actionYahooConnect");
-	actionGoStatus007 = new KAction(i18n(YSTOnVacation), "yahoo_busy",
-				0, this, SLOT(connect()), this, "actionYahooConnect");
-	actionGoStatus008 = new KAction(i18n(YSTOutToLunch), "yahoo_busy",
-				0, this, SLOT(connect()), this, "actionYahooConnect");
-	actionGoStatus009 = new KAction(i18n(YSTSteppedOut), "yahoo_busy",
-				0, this, SLOT(connect()), this, "actionYahooConnect");
-	actionGoStatus012 = new KAction(i18n("Invisible"), "yahoo_offline",
-				0, this, SLOT(connect()), this, "actionYahooConnect"); // XXX Connect with invisible on
+	theActionMenu = new KActionMenu("Yahoo", this);
+	theActionMenu->popupMenu()->insertTitle(m_myself->icon(), "Yahoo ("+m_myself->displayName()+")");
+	theActionMenu->insert(new KAction(i18n(YSTAvailable), "yahoo_online", 0, this, SLOT(connect()), this, "actionYahooConnect"));
+	theActionMenu->insert(new KAction(i18n("Offline"), "yahoo_offline", 0, this, SLOT(disconnect()), this, "actionYahooDisconnect"));
+	// TODO: change the "yahoo_busy"s to proper pictures.
+	theActionMenu->insert(new KAction(i18n(YSTBeRightBack), "yahoo_busy", 0, this, SLOT(goStatus001()), this, "actionYahooGoStatus001"));
+	theActionMenu->insert(new KAction(i18n(YSTBusy), "yahoo_busy", 0, this, SLOT(goStatus002()), this, "actionYahooGoStatus002"));
+	theActionMenu->insert(new KAction(i18n(YSTNotAtHome), "yahoo_busy", 0, this, SLOT(goStatus003()), this, "actionYahooGoStatus003"));
+	theActionMenu->insert(new KAction(i18n(YSTNotAtMyDesk), "yahoo_busy", 0, this, SLOT(goStatus004()), this, "actionYahooGoStatus004"));
+	theActionMenu->insert(new KAction(i18n(YSTNotInTheOffice), "yahoo_busy", 0, this, SLOT(goStatus005()), this, "actionYahooGoStatus005"));
+	theActionMenu->insert(new KAction(i18n(YSTOnThePhone), "yahoo_busy", 0, this, SLOT(goStatus006()), this, "actionYahooGoStatus006"));
+	theActionMenu->insert(new KAction(i18n(YSTOnVacation), "yahoo_busy", 0, this, SLOT(goStatus007()), this, "actionYahooGoStatus007"));
+	theActionMenu->insert(new KAction(i18n(YSTOutToLunch), "yahoo_busy", 0, this, SLOT(goStatus008()), this, "actionYahooGoStatus008"));
+	theActionMenu->insert(new KAction(i18n(YSTSteppedOut), "yahoo_busy", 0, this, SLOT(goStatus009()), this, "actionYahooGoStatus009"));
+
+/*	// TODO: connect with invisible on
+	theActionMenu->insert(new KAction(i18n("Invisible"), "yahoo_offline", 0, this, SLOT(goStatus012()), this, "actionYahooGoStatus012");
+
+	// TODO: do something(?!) with them				
 	actionGoStatus099 = new KAction(i18n("Custom"), "yahoo_online",
 				0, this, SLOT(connect()), this, "actionYahooConnect"); // XXX Get some dialogbox
 	actionGoStatus999 = new KAction(i18n(YSTIdle), "yahoo_idle",
 				0, this, SLOT(connect()), this, "actionYahooConnect");
 */
-	
-	theActionMenu = new KActionMenu("Yahoo", this);
-	theActionMenu->popupMenu()->insertTitle(m_myself->icon(), "Yahoo ("+m_myself->displayName()+")");
-	theActionMenu->insert(actionGoOnline);
-	theActionMenu->insert(actionGoOffline);
+
 /*	theActionMenu->insert(actionGoStatus001);
 	theActionMenu->insert(actionGoStatus002);
 	theActionMenu->insert(actionGoStatus003);
