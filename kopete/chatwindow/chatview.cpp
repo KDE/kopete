@@ -391,7 +391,10 @@ void ChatView::setTabState( KopeteTabState newState )
 	}
 
 	if( newState != Typing )
-		setStatusText( i18n( "One person in the chat", "%n people in the chat", m_manager->members().count() ) );
+	{
+		setStatusText( i18n( "One other person in the chat",
+			       "%n other people in the chat", m_manager->members().count() ) );
+	}
 }
 
 void ChatView::setMainWindow( KopeteChatWindow* parent )
