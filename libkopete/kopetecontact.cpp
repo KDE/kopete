@@ -169,6 +169,10 @@ void KopeteContact::moveToGroup( const QString & /* from */,
 
 #include "kopetecontact.moc"
 
+
+
+
+
 /*
  * Local variables:
  * c-indentation-style: k&r
@@ -176,6 +180,5 @@ void KopeteContact::moveToGroup( const QString & /* from */,
  * indent-tabs-mode: t
  * End:
  */
-
 // vim: set noet ts=4 sts=4 sw=4:
 

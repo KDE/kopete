@@ -84,6 +84,10 @@ protected:
 
 #endif
 
+
+
+
+
 /*
  * Local variables:
  * c-indentation-style: k&r
@@ -91,6 +95,5 @@ protected:
  * indent-tabs-mode: t
  * End:
  */
-
 // vim: set noet ts=4 sts=4 sw=4:
 

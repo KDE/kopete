@@ -75,6 +75,10 @@ void KopeteMessage::init(QDateTime timeStamp, const KopeteContact * from,
 
 }
 
+
+
+
+
 /*
  * Local variables:
  * c-indentation-style: k&r
@@ -82,6 +86,5 @@ void KopeteMessage::init(QDateTime timeStamp, const KopeteContact * from,
  * indent-tabs-mode: t
  * End:
  */
-
 // vim: set noet ts=4 sts=4 sw=4:
 

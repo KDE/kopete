@@ -237,5 +237,14 @@ void KopeteWindow::closeEvent(QCloseEvent *e)
 #endif
 }
 
-// vim: set noet sw=4 ts=4 sts=4:
+
+
+/*
+ * Local variables:
+ * c-indentation-style: k&r
+ * c-basic-offset: 8
+ * indent-tabs-mode: t
+ * End:
+ */
+// vim: set noet ts=4 sts=4 sw=4:
 
