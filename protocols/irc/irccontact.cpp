@@ -113,7 +113,7 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 			{
 				IRCChannelContact *chan = static_cast<IRCChannelContact*>( this );
 				if( commandCount > 1 )
-					chan->setTopic( *commandLine.at(1) );
+					chan->setTopic( commandArgs );
 				else
 				{
 					KopeteMessage msg((KopeteContact*)this, mContact, i18n("Topic for %1 is %2").arg(mNickName).arg(chan->topic()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
