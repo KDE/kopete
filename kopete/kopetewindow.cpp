@@ -145,7 +145,7 @@ void KopeteWindow::initActions ( void )
 	KStdAction::keyBindings(this, SLOT(slotConfKeys()), actionCollection());
 	KStdAction::configureToolbars(this, SLOT(slotConfToolbar()), actionCollection());
 
-	actionShowOffliners = new KToggleAction( i18n("Show offline &users"), "viewmag", CTRL+Key_V,
+	actionShowOffliners = new KToggleAction( i18n("Show Offline &Users"), "viewmag", CTRL+Key_V,
 			this, SLOT(slotToggleShowOffliners()), actionCollection(), "options_show_offliners" );
 
 	// sync actions, config and prefs-dialog

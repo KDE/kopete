@@ -321,8 +321,8 @@ void MSNProtocol::initActions()
 	actionGoOffline = new KAction ( i18n("Go &Offline"), "msn_offline", 0, this, SLOT(slotGoOffline()), this, "actionMSNConnect" );
 	actionGoAway = new KAction ( i18n("Set &Away"), "msn_away", 0, this, SLOT(slotGoAway()), this, "actionMSNConnect" );
 	actionGoBusy = new KAction ( i18n("Set &Busy"), "msn_na", 0, this, SLOT(slotGoBusy()), this, "actionMSNConnect" );
-	actionGoBeRightBack = new KAction ( i18n("Set Be &right back"), "msn_away", 0, this, SLOT(slotGoBeRightBack()), this, "actionMSNConnect" );
-	actionGoOnThePhone = new KAction ( i18n("Set On the &phone"), "msn_na", 0, this, SLOT(slotGoOnThePhone()), this, "actionMSNConnect" );
+	actionGoBeRightBack = new KAction ( i18n("Set Be &Right Back"), "msn_away", 0, this, SLOT(slotGoBeRightBack()), this, "actionMSNConnect" );
+	actionGoOnThePhone = new KAction ( i18n("Set on the &Phone"), "msn_na", 0, this, SLOT(slotGoOnThePhone()), this, "actionMSNConnect" );
 	actionGoOutToLunch = new KAction ( i18n("Set Out to &Lunch"), "msn_away", 0, this, SLOT(slotGoOutToLunch()), this, "actionMSNConnect" );
 	actionGoInvisible = new KAction ( i18n("Set &Invisible"), "msn_offline", 0, this, SLOT(slotGoInvisible()), this, "actionMSNConnect" );
 
@@ -331,10 +331,10 @@ void MSNProtocol::initActions()
 		this, "m_renameAction" );
 	actionStatusMenu = new KActionMenu( "MSN", this );
 
-	m_startChatAction = new KAction ( i18n( "&Start chat..." ), "mail_generic", 0, this, SLOT( slotStartChat() ),
+	m_startChatAction = new KAction ( i18n( "&Start Chat..." ), "mail_generic", 0, this, SLOT( slotStartChat() ),
 		this, "m_renameAction" );
 
-	m_openInboxAction = new KAction ( i18n( "Open inbo&x" ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
+	m_openInboxAction = new KAction ( i18n( "Open Inbo&x" ), "mail_generic", 0, this, SLOT( slotOpenInbox() ), this, "m_openInboxAction" );
 	m_openInboxAction->setEnabled(false);
 
 	m_debugMenu = new KActionMenu( "Debug", this );
