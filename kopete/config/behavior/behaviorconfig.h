@@ -16,7 +16,7 @@
 #ifndef __BEHAVIOR_H
 #define __BEHAVIOR_H
 
-#include "configmodule.h"
+#include "kcmodule.h"
 
 class QFrame;
 class QTabWidget;
@@ -25,15 +25,15 @@ class BehaviorConfig_General;
 class BehaviorConfig_Chat;
 class KopeteAwayConfigUI;
 
-class BehaviorConfig : public ConfigModule
+class BehaviorConfig : public KCModule
 {
 	Q_OBJECT
 
 	public:
-		BehaviorConfig(QWidget * parent);
+		BehaviorConfig(QWidget *parent, const char *  name , const QStringList &args) ;
 
 		virtual void save();
-		virtual void reopen();
+		virtual void load();
 
 	private slots:
 		void slotConfigSound();

@@ -16,7 +16,7 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 KDE_ICON = AUTO
 METASOURCES = AUTO
 
-SUBDIRS = conf config addcontactwizard contactlist chatwindow kconf_update
+SUBDIRS = config addcontactwizard contactlist chatwindow kconf_update
 
 bin_PROGRAMS = kopete
 kopete_SOURCES = main.cpp \
@@ -28,7 +28,7 @@ kopete_SOURCES = main.cpp \
 kopete_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH) -lktexteditor
 kopete_LDADD = \
 	addcontactwizard/libkopeteaddcontactwizard.la contactlist/libkopetecontactlist.la \
-	conf/libkopeteconf.la ../libkopete/libkopete.la
+	../libkopete/libkopete.la
 
 mydatadir = $(kde_datadir)/kopete
 mydata_DATA = kopeteui.rc eventsrc

@@ -1,0 +1,16 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=looknfeel
+Type=Service
+ServiceTypes=KCModule
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kopete_appearanceconfig
+X-KDE-FactoryName=KopeteAppearanceConfigFactory
+X-KDE-ParentApp=kopete
+X-KDE-ParentComponents=kopete
+
+Name=Appearance
+Comment=Here You Can Alter Kopete's Look'n'Feel
+
+

@@ -29,8 +29,6 @@
 
 #include "kopeteaccount.h"
 #include "kopeteprotocol.h"
-#include "appearanceconfig.h"
-#include "behaviorconfig.h"
 #include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
 #include "kopetecommandhandler.h"
@@ -56,10 +54,6 @@ Kopete::Kopete()
 	// deletion to make sure:
 	connect( m_mainWindow, SIGNAL( destroyed() ),
 		SLOT( slotMainWindowDestroyed() ) );
-
-	// Create the preferences module
-	new AppearanceConfig( m_mainWindow );
-	new BehaviorConfig( m_mainWindow );
 
 	/*
 	 * FIXME: This is a workaround for a quite odd problem:

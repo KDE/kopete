@@ -26,6 +26,9 @@
 #include <klocale.h>
 #include <knotifydialog.h>
 #include <kpushbutton.h>
+#include <kgenericfactory.h>
+#include <ktrader.h>
+
 
 #include "kopeteprefs.h"
 #include "kopeteaway.h"
@@ -33,12 +36,12 @@
 
 #include <qtabwidget.h>
 
-BehaviorConfig::BehaviorConfig(QWidget * parent) :
-	ConfigModule (
-		i18n("Behavior"),
-		i18n("Here You Can Personalize Kopete"),
-		"package_settings", // TODO: find or create a icon that fits
-		parent )
+typedef KGenericFactory<BehaviorConfig, QWidget> KopeteBehaviorConfigFactory;
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_behaviorconfig, KopeteBehaviorConfigFactory( "kcm_kopete_behaviorconfig" ) );
+
+
+BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const QStringList &args) :
+		KCModule( KopeteBehaviorConfigFactory::instance(), parent, args )
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	mBehaviorTabCtl = new QTabWidget(this, "mBehaviorTabCtl");
@@ -58,6 +61,8 @@ BehaviorConfig::BehaviorConfig(QWidget * parent) :
 	// "Chat" TAB ===============================================================
 	mPrfsChat = new BehaviorConfig_Chat(mBehaviorTabCtl);
 	mBehaviorTabCtl->addTab(mPrfsChat, i18n("&Chat"));
+
+	load();
 }
 
 
@@ -101,7 +106,7 @@ void BehaviorConfig::save()
 	p->save();
 }
 
-void BehaviorConfig::reopen()
+void BehaviorConfig::load()
 {
 //	kdDebug(14000) << k_funcinfo << "called" << endl;
 	KopetePrefs *p = KopetePrefs::prefs();

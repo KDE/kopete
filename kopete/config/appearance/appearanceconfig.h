@@ -17,7 +17,7 @@
 #ifndef __APPEARANCE_H
 #define __APPEARANCE_H
 
-#include "configmodule.h"
+#include "kcmodule.h"
 #include <qptrlist.h>
 #include <qmap.h>
 
@@ -47,15 +47,15 @@ typedef QMap<QString,QString> KopeteChatStyleMap;
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
  */
-class AppearanceConfig : public ConfigModule
+class AppearanceConfig : public KCModule
 {
 	Q_OBJECT
 
 public:
-	AppearanceConfig(QWidget * parent);
+	AppearanceConfig(QWidget *parent, const char *name, const QStringList &args );
 
 	virtual void save();
-	virtual void reopen();
+	virtual void load();
 
 private slots:
 	void slotUseEmoticonsChanged(bool);

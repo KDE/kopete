@@ -1,2 +1,2 @@
-SUBDIRS= plugins accounts
+SUBDIRS= plugins accounts behavior appearance 
 

@@ -44,6 +44,9 @@
 #include <klibloader.h>
 //#include <kiconview.h>
 #include <ktextedit.h>
+#include <kgenericfactory.h>
+#include <ktrader.h>
+
 
 #include <ktexteditor/highlightinginterface.h>
 #include <ktexteditor/editinterface.h>
@@ -60,12 +63,12 @@
 
 #include <qtabwidget.h>
 
-AppearanceConfig::AppearanceConfig(QWidget * parent) :
-	ConfigModule (
-		i18n("Appearance"),
-		i18n("Here You Can Alter Kopete's Look'n'Feel"),
-		"looknfeel",
-		parent )
+typedef KGenericFactory<AppearanceConfig, QWidget> KopeteAppearanceConfigFactory;
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_appearanceconfig, KopeteAppearanceConfigFactory( "kcm_kopete_appearanceconfig" ) );
+
+
+AppearanceConfig::AppearanceConfig(QWidget *parent, const char */*name*/, const QStringList &args )
+	: KCModule( KopeteAppearanceConfigFactory::instance(), parent, args )
 {
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	mAppearanceTabCtl = new QTabWidget(this, "mAppearanceTabCtl");
@@ -161,6 +164,8 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	errorAlert = false;
 	styleChanged = false;
 	slotTransparencyChanged(mPrfsChatWindow->mTransparencyEnabled->isChecked());
+
+	load();
 }
 
 void AppearanceConfig::save()
@@ -198,7 +203,7 @@ void AppearanceConfig::save()
 	styleChanged = false;
 }
 
-void AppearanceConfig::reopen()
+void AppearanceConfig::load()
 {
 	if( errorAlert )
 		return;
