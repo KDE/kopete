@@ -22,9 +22,7 @@
 #include <qhbox.h>
 #include <kdialogbase.h>
 
-#include <qmap.h>
-
-class QComboBox;
+class ICQProtocol;
 class ICQAccount;
 class ICQContact;
 class ICQUserInfoWidget;
@@ -38,9 +36,8 @@ class ICQUserInfo : public KDialogBase
 			QWidget *parent = 0, const char* name = "ICQUserInfo");
 
 	private:
-		void sendInfo();
+//		void sendInfo();
 		void setEditable(bool);
-		void setCombo(QComboBox *, int, int);
 
 	private slots:
 		void slotSaveClicked();
@@ -55,12 +52,7 @@ class ICQUserInfo : public KDialogBase
 		void closing();
 
 	private:
-		// TODO: move these somewhere else so it only gets
-		// set ONCE and not on every userinfo dialog
-		void fillCombo(QComboBox *, const QMap<int, QString> &);
-		void setCombo(QComboBox *, const QMap<int, QString> &, int);
-
-	private:
+		ICQProtocol *p;
 		ICQAccount *mAccount;
 		ICQContact *mContact;
 		bool mEditable;

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>312</width>
-            <height>307</height>
+            <width>390</width>
+            <height>295</height>
         </rect>
     </property>
     <property name="caption">
@@ -35,7 +35,7 @@
                 </property>
                 <widget class="QLabel" row="0" column="0">
                     <property name="name">
-                        <cstring>mTxtAccountId</cstring>
+                        <cstring>lblAccountId</cstring>
                     </property>
                     <property name="text">
                         <string>UIN:</string>
@@ -43,7 +43,7 @@
                 </widget>
                 <widget class="QLabel" row="1" column="0">
                     <property name="name">
-                        <cstring>mTxtPassword</cstring>
+                        <cstring>lblPassword</cstring>
                     </property>
                     <property name="text">
                         <string>Password:</string>
@@ -51,7 +51,7 @@
                 </widget>
                 <widget class="QLineEdit" row="1" column="1">
                     <property name="name">
-                        <cstring>mPassword</cstring>
+                        <cstring>edtPassword</cstring>
                     </property>
                     <property name="echoMode">
                         <enum>Password</enum>
@@ -59,7 +59,7 @@
                 </widget>
                 <widget class="QLineEdit" row="0" column="1">
                     <property name="name">
-                        <cstring>mAccountId</cstring>
+                        <cstring>edtAccountId</cstring>
                     </property>
                 </widget>
             </grid>
@@ -77,7 +77,7 @@
                 </property>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mSavePassword</cstring>
+                        <cstring>chkSavePassword</cstring>
                     </property>
                     <property name="text">
                         <string>Remember password</string>
@@ -85,10 +85,10 @@
                 </widget>
                 <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>mAutoLogon</cstring>
+                        <cstring>chkAutoLogin</cstring>
                     </property>
                     <property name="text">
-                        <string>Logon at startup</string>
+                        <string>Login at startup</string>
                     </property>
                 </widget>
             </vbox>
@@ -106,7 +106,7 @@
                 </property>
                 <widget class="QLabel">
                     <property name="name">
-                        <cstring>mTxtServer</cstring>
+                        <cstring>lblServer</cstring>
                     </property>
                     <property name="text">
                         <string>Server:</string>
@@ -114,12 +114,12 @@
                 </widget>
                 <widget class="QLineEdit">
                     <property name="name">
-                        <cstring>mServer</cstring>
+                        <cstring>edtServerAddress</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel">
                     <property name="name">
-                        <cstring>mTxtPort</cstring>
+                        <cstring>lblServerPort</cstring>
                     </property>
                     <property name="text">
                         <string>Port:</string>
@@ -127,7 +127,7 @@
                 </widget>
                 <widget class="QSpinBox">
                     <property name="name">
-                        <cstring>mPort</cstring>
+                        <cstring>edtServerPort</cstring>
                     </property>
                     <property name="maxValue">
                         <number>65534</number>
@@ -137,6 +137,14 @@
                     </property>
                     <property name="value">
                         <number>5190</number>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>btnServerDefaults</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Defaults</string>
                     </property>
                 </widget>
             </hbox>
@@ -161,12 +169,12 @@
     </vbox>
 </widget>
 <tabstops>
-    <tabstop>mAccountId</tabstop>
-    <tabstop>mPassword</tabstop>
-    <tabstop>mSavePassword</tabstop>
-    <tabstop>mAutoLogon</tabstop>
-    <tabstop>mServer</tabstop>
-    <tabstop>mPort</tabstop>
+    <tabstop>edtAccountId</tabstop>
+    <tabstop>edtPassword</tabstop>
+    <tabstop>chkSavePassword</tabstop>
+    <tabstop>chkAutoLogin</tabstop>
+    <tabstop>edtServerAddress</tabstop>
+    <tabstop>edtServerPort</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

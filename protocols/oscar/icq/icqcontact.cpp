@@ -98,6 +98,13 @@ ICQContact::~ICQContact()
 {
 }
 
+void ICQContact::setOwnDisplayName(const QString &s)
+{
+	kdDebug(14200) << k_funcinfo << "Called." << endl;
+	if(this == account()->myself())
+		setDisplayName(s);
+}
+
 void ICQContact::slotContactChanged(const UserInfo &u)
 {
 	if (u.sn != contactname())

@@ -71,8 +71,8 @@ KopeteAccount *AIMEditAccountWidget::apply()
 		mAccount->setPassword(QString::null);
 
 	mAccount->setAutoLogin(mGui->mAutoLogon->isChecked()); // save the autologon choice
-	static_cast<AIMAccount *>(mAccount)->setServer(mGui->mServer->text());
-	static_cast<AIMAccount *>(mAccount)->setPort(mGui->mPort->value());
+	static_cast<OscarAccount *>(mAccount)->setServerAddress(mGui->mServer->text());
+	static_cast<OscarAccount *>(mAccount)->setServerPort(mGui->mPort->value());
 
 	return mAccount;
 }

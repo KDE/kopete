@@ -209,23 +209,6 @@ void OscarContact::slotUpdateBuddy()
 	}
 }
 
-/*void OscarContact::setIdleTime(unsigned int idleTime)
-{
-	if(idleTime == mIdle)
-		return;
-
-// 	kdDebug(14150) << k_funcinfo << "Contact '" << displayName() <<
-// 		"' idletime is now " << mIdle << " minutes." << endl;
-
-	if(mIdle > 0)
-		setIdleState(Idle);
-	else // we are not idling anymore
-		setIdleState(Active);
-
-	mIdle = idleTime;
-}
-*/
-
 void OscarContact::slotMainStatusChanged(const unsigned int newStatus)
 {
 	if(newStatus == OSCAR_OFFLINE)

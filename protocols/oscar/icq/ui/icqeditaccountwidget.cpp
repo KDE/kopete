@@ -3,18 +3,21 @@
 
 #include <qlayout.h>
 #include <qcheckbox.h>
+#include <qcombobox.h>
 #include <qlineedit.h>
 #include <qspinbox.h>
-//#include <qtabwidget.h>
+#include <qpushbutton.h>
 
 #include <kdebug.h>
 #include <klocale.h>
 #include <kjanuswidget.h>
 #include <kurllabel.h>
-#include "icquserinfowidget.h"
+#include <kdatewidget.h>
 
+#include "icquserinfowidget.h"
 #include "icqprotocol.h"
 #include "icqaccount.h"
+#include "icqcontact.h"
 
 ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	KopeteAccount *account, QWidget *parent, const char *name)
@@ -26,55 +29,48 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	mProtocol = protocol;
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
-//	mTop = new QTabWidget(this, "ICQEditAccountWidget::mTop");
 	mTop = new KJanusWidget(this, "ICQEditAccountWidget::mTop", KJanusWidget::IconList);
-	QFrame *acc = mTop->addPage(i18n("Account"), i18n("ICQ Account Settings"));
-	QFrame *det = mTop->addPage(i18n("Contact"), i18n("ICQ Contact Details") );
+	QFrame *acc = mTop->addPage(i18n("Account"), i18n("ICQ Account Settings used for connecting to the ICQ Server"));
+	QFrame *det = mTop->addPage(i18n("Contact Details"), i18n("ICQ Contact Details shown to other users"));
 
 	(new QVBoxLayout(acc))->setAutoAdd(true);
 	mAccountSettings = new OscarEditAccountUI(acc,
 		"ICQEditAccountWidget::mAccountSettings");
-//	mTop->addTab( mAccountSettings, i18n("&Account Settings") );
 
 	(new QVBoxLayout(det))->setAutoAdd(true);
 	mUserInfoSettings = new ICQUserInfoWidget(det,
 		"ICQEditAccountWidget::mUserInfoSettings");
-//	mTop->addTab( mUserInfoSettings, i18n("&User Details") );
 
 	// ----------------------------------------------------------------
+	QVBoxLayout *buttons = new QVBoxLayout(det);
+	buttons->addStretch(1);
+	QPushButton *fetch = new QPushButton(i18n("Fetch from Server"), det, "fetch");
+	buttons->addWidget(fetch);
+	QPushButton *send = new QPushButton(i18n("Send to Server"), det, "send");
+	buttons->addWidget(send);
+	// ----------------------------------------------------------------
 
-	// Read in the settings from the account if it exists
-	if(account)
-	{
-		if(account->rememberPassword())
-		{
-			mAccountSettings->mSavePassword->setChecked(true);
-			mAccountSettings->mPassword->setText(account->getPassword());
-		}
+	mProtocol->fillComboFromTable(mUserInfoSettings->rwGender, mProtocol->genders());
+	mProtocol->fillComboFromTable(mUserInfoSettings->rwLang1, mProtocol->languages());
+	mProtocol->fillComboFromTable(mUserInfoSettings->rwLang2, mProtocol->languages());
+	mProtocol->fillComboFromTable(mUserInfoSettings->rwLang3, mProtocol->languages());
+	mProtocol->fillComboFromTable(mUserInfoSettings->rwPrsCountry, mProtocol->countries());
+	mProtocol->fillComboFromTable(mUserInfoSettings->rwWrkCountry, mProtocol->countries());
 
-		mAccountSettings->mAccountId->setText(account->accountId());
-		mAccountSettings->mAutoLogon->setChecked(account->autoLogin());
-		mAccountSettings->mServer->setText(account->pluginData(protocol, "Server"));
-		mAccountSettings->mPort->setValue(account->pluginData(protocol, "Port").toInt());
-
-		mUserInfoSettings->roUIN->setText(account->accountId());
-		mUserInfoSettings->rwNickName->setText(account->pluginData(protocol,"NickName"));
-		mUserInfoSettings->rwFirstName->setText(account->pluginData(protocol,"FirstName"));
-		mUserInfoSettings->rwLastName->setText(account->pluginData(protocol,"LastName"));
-		// TODO: allow fetching userinfo from server
-	}
-	else
-	{
-		// Just set the default saved password to true
-		mAccountSettings->mSavePassword->setChecked(true);
-		// These come from OscarSocket where they are #defined
-		mAccountSettings->mServer->setText(ICQ_SERVER);
-		mAccountSettings->mPort->setValue(ICQ_PORT);
-	}
-
+	mUserInfoSettings->rwAge->setValue(0);
+	mUserInfoSettings->rwBday->setDate(QDate());
 	mUserInfoSettings->rwAlias->hide();
+	mUserInfoSettings->lblAlias->hide();
+
 	mUserInfoSettings->roSignonTime->hide();
+	mUserInfoSettings->lblSignonTime->hide();
+
+	mUserInfoSettings->roUIN->hide();
+	mUserInfoSettings->lblICQUIN->hide();
+
+	mUserInfoSettings->lblIP->hide();
 	mUserInfoSettings->roIPAddress->hide();
+
 	mUserInfoSettings->roBday->hide();
 	mUserInfoSettings->roGender->hide();
 	mUserInfoSettings->roTimezone->hide();
@@ -86,6 +82,50 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	mUserInfoSettings->prsHomepageLabel->hide();
 	mUserInfoSettings->roWrkCountry->hide();
 	mUserInfoSettings->wrkHomepageLabel->hide();
+
+	// ----------------------------------------------------------------
+
+	// Read in the settings from the account if it exists
+	if(mAccount)
+	{
+		if(mAccount->rememberPassword())
+		{
+			mAccountSettings->chkSavePassword->setChecked(true);
+			mAccountSettings->edtPassword->setText(mAccount->getPassword());
+		}
+
+		mAccountSettings->edtAccountId->setText(mAccount->accountId());
+		mAccountSettings->chkAutoLogin->setChecked(mAccount->autoLogin());
+		mAccountSettings->edtServerAddress->setText(mAccount->pluginData(mProtocol, "Server"));
+		mAccountSettings->edtServerPort->setValue(mAccount->pluginData(mProtocol, "Port").toInt());
+
+		mUserInfoSettings->rwNickName->setText(
+			mAccount->pluginData(mProtocol,"NickName"));
+		mUserInfoSettings->rwFirstName->setText(
+			mAccount->pluginData(mProtocol,"FirstName"));
+		mUserInfoSettings->rwLastName->setText(
+			mAccount->pluginData(mProtocol,"LastName"));
+		mUserInfoSettings->rwBday->setDate(
+			QDate::fromString(mAccount->pluginData(mProtocol,"Birthday"), Qt::ISODate));
+		mUserInfoSettings->rwAge->setValue(
+			mAccount->pluginData(mProtocol, "Age").toInt());
+		mUserInfoSettings->rwGender->setCurrentItem(
+			mAccount->pluginData(mProtocol, "Gender").toInt());
+		mUserInfoSettings->rwLang1->setCurrentItem(
+			mAccount->pluginData(mProtocol, "Lang1").toInt());
+		mUserInfoSettings->rwLang2->setCurrentItem(
+			mAccount->pluginData(mProtocol, "Lang2").toInt());
+		mUserInfoSettings->rwLang3->setCurrentItem(
+			mAccount->pluginData(mProtocol, "Lang3").toInt());
+		// TODO: allow fetching userinfo from server
+	}
+	else
+	{
+		// Just set the default saved password to true
+		mAccountSettings->chkSavePassword->setChecked(true);
+		mAccountSettings->edtServerAddress->setText(ICQ_SERVER);
+		mAccountSettings->edtServerPort->setValue(ICQ_PORT);
+	}
 }
 
 ICQEditAccountWidget::~ICQEditAccountWidget()
@@ -99,29 +139,38 @@ KopeteAccount *ICQEditAccountWidget::apply()
 	// If this is a new account, create it
 	if (!mAccount)
 	{
-		kdDebug(14200) << k_funcinfo << "creating a new account" << endl;
-		QString newId = mAccountSettings->mAccountId->text();
-		mAccount = new ICQAccount(mProtocol, newId);
+		kdDebug(14200) << k_funcinfo << "Creating a new account" << endl;
+		mAccount = new ICQAccount(mProtocol, mAccountSettings->edtAccountId->text());
 		if(!mAccount)
 			return NULL;
 	}
 
 	// Check to see if we're saving the password, and set it if so
-	if (mAccountSettings->mSavePassword->isChecked())
-		mAccount->setPassword(mAccountSettings->mPassword->text());
+	if (mAccountSettings->chkSavePassword->isChecked())
+		mAccount->setPassword(mAccountSettings->edtPassword->text());
 	else
 		mAccount->setPassword(QString::null);
 
-	mAccount->setAutoLogin(mAccountSettings->mAutoLogon->isChecked());
-	static_cast<OscarAccount *>(mAccount)->setServer(mAccountSettings->mServer->text());
-	static_cast<OscarAccount *>(mAccount)->setPort(mAccountSettings->mPort->value());
+	mAccount->setAutoLogin(mAccountSettings->chkAutoLogin->isChecked());
+	static_cast<OscarAccount *>(mAccount)->setServerAddress(
+		mAccountSettings->edtServerAddress->text());
+	static_cast<OscarAccount *>(mAccount)->setServerPort(
+		mAccountSettings->edtServerPort->value());
 
-	mAccount->setPluginData(mProtocol, "NickName", mUserInfoSettings->rwNickName->text());
-	mAccount->setPluginData(mProtocol, "FirstName", mUserInfoSettings->rwFirstName->text());
-	mAccount->setPluginData(mProtocol, "LastName", mUserInfoSettings->rwLastName->text());
+	mAccount->setPluginData(mProtocol, "NickName",
+		mUserInfoSettings->rwNickName->text());
+	mAccount->setPluginData(mProtocol, "FirstName",
+		mUserInfoSettings->rwFirstName->text());
+	mAccount->setPluginData(mProtocol, "LastName",
+		mUserInfoSettings->rwLastName->text());
+	mAccount->setPluginData(mProtocol, "Birthday",
+		(mUserInfoSettings->rwBday->date()).toString(Qt::ISODate));
+	mAccount->setPluginData(mProtocol, "Age",
+		QString::number(mUserInfoSettings->rwAge->value()));
 
-	// FIXME: bad place for doing this
-	mAccount->myself()->rename(mUserInfoSettings->rwNickName->text());
+	static_cast<ICQContact *>(mAccount->myself())->setOwnDisplayName(
+		mUserInfoSettings->rwNickName->text());
+
 	// TODO: send updated userinfo to server if connected
 
 	return mAccount;
@@ -131,9 +180,9 @@ bool ICQEditAccountWidget::validateData()
 {
 	kdDebug(14200) << k_funcinfo << "Called." << endl;
 
-	QString userName = mAccountSettings->mAccountId->text();
-	QString server = mAccountSettings->mServer->text();
-	int port = mAccountSettings->mPort->value();
+	QString userName = mAccountSettings->edtAccountId->text();
+	QString server = mAccountSettings->edtServerAddress->text();
+	int port = mAccountSettings->edtServerPort->value();
 
 	if (userName.contains(" "))
 		return false;
@@ -154,7 +203,8 @@ bool ICQEditAccountWidget::validateData()
 		return false;
 
 	// Seems good to me
-	kdDebug(14200) << k_funcinfo << "Account data validated successfully." << endl;
+	kdDebug(14200) << k_funcinfo <<
+		"Account data validated successfully." << endl;
 	return true;
 }
 

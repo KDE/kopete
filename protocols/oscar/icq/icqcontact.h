@@ -67,6 +67,13 @@ class ICQContact : public OscarContact
 
 		void requestUserInfo();
 
+		/*
+		 * Do NOT use this for anything but the ICQAccount::myself() contact!
+		 * This avoids using OscarContact::rename() which triggers a renaming on
+		 * the server side contactlist as well
+		 */
+		void setOwnDisplayName(const QString &);
+
 	public slots:
 		virtual void slotUserInfo();
 

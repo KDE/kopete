@@ -21,6 +21,8 @@
 #include "icqaddcontactpage.h"
 #include "icqeditaccountwidget.h"
 
+#include <qcombobox.h>
+
 #include <kdebug.h>
 #include <kgenericfactory.h>
 
@@ -63,7 +65,7 @@ ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 
 void ICQProtocol::initGenders()
 {
-	mGenders.insert(0, i18n("Unspecified"));
+	mGenders.insert(0, "");
 	mGenders.insert(1, i18n("Female"));
 	mGenders.insert(2, i18n("Male"));
 }
@@ -377,6 +379,46 @@ void ICQProtocol::initLang()
 	mLanguages.insert(57, i18n("Persian"));
 	mLanguages.insert(58, i18n("Albanian"));
 	mLanguages.insert(59, i18n("Armenian"));
+}
+
+void ICQProtocol::fillComboFromTable(QComboBox *box, const QMap<int, QString> &map)
+{
+//	kdDebug(14200) << k_funcinfo << "Called." << endl;
+
+	QStringList list = map.values();
+	list.sort();
+	box->insertStringList(list);
+}
+
+void ICQProtocol::setComboFromTable(QComboBox *box, const QMap<int, QString> &map, int value)
+{
+//	kdDebug(14200) << k_funcinfo << "Called." << endl;
+	QMap<int, QString>::ConstIterator it;
+	it = map.find(value);
+	if (!(*it))
+		return;
+
+	for(int i=0; i<box->count(); i++)
+	{
+		if((*it) == box->text(i))
+		{
+			box->setCurrentItem(i);
+			return;
+		}
+	}
+}
+
+int ICQProtocol::getCodeForCombo(QComboBox *cmb, const QMap<int, QString> &map)
+{
+	const QString curText = cmb->currentText();
+
+	QMap<int, QString>::ConstIterator it;
+	for(it = map.begin(); it != map.end(); ++it)
+	{
+		if(it.data() == curText)
+			return it.key();
+	}
+	return 0; // unspecified is always first 0
 }
 
 // Called when we want to return the active instance of the protocol

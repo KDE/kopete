@@ -47,6 +47,7 @@ ICQUserInfo::ICQUserInfo(ICQContact *c, ICQAccount *account, bool editable,
 	mAccount = account;
 	mContact = c;
 	mEditable = editable;
+	p = ICQProtocol::protocol(); // I am SO lazy ;)
 
 	setCaption(i18n("User Info for %1").arg(c->displayName()));
 
@@ -78,41 +79,14 @@ ICQUserInfo::ICQUserInfo(ICQContact *c, ICQAccount *account, bool editable,
 		c, SIGNAL(updatedUserInfo()),
 		this, SLOT(slotReadInfo()));
 
-	fillCombo(mMainWidget->rwGender, ICQProtocol::protocol()->genders());
-	fillCombo(mMainWidget->rwLang1, ICQProtocol::protocol()->languages());
-	fillCombo(mMainWidget->rwLang2, ICQProtocol::protocol()->languages());
-	fillCombo(mMainWidget->rwLang3, ICQProtocol::protocol()->languages());
-	fillCombo(mMainWidget->rwPrsCountry, ICQProtocol::protocol()->countries());
-	fillCombo(mMainWidget->rwWrkCountry, ICQProtocol::protocol()->countries());
+	p->fillComboFromTable(mMainWidget->rwGender, p->genders());
+	p->fillComboFromTable(mMainWidget->rwLang1, p->languages());
+	p->fillComboFromTable(mMainWidget->rwLang2, p->languages());
+	p->fillComboFromTable(mMainWidget->rwLang3, p->languages());
+	p->fillComboFromTable(mMainWidget->rwPrsCountry, p->countries());
+	p->fillComboFromTable(mMainWidget->rwWrkCountry, p->countries());
 
 	slotFetchInfo();
-}
-
-void ICQUserInfo::fillCombo(QComboBox *box, const QMap<int, QString> &map)
-{
-//	kdDebug(14200) << k_funcinfo << "Called." << endl;
-
-	QStringList list = map.values();
-	list.sort();
-	box->insertStringList(list);
-}
-
-void ICQUserInfo::setCombo(QComboBox *box, const QMap<int, QString> &map, int value)
-{
-//	kdDebug(14200) << k_funcinfo << "Called." << endl;
-	QMap<int, QString>::ConstIterator it;
-	it = map.find(value);
-	if (*it)
-	{
-		for(int i=0; i<box->count(); i++)
-		{
-			if((*it) == box->text(i))
-			{
-				box->setCurrentItem(i);
-				return;
-			}
-		}
-	}
 }
 
 void ICQUserInfo::slotFetchInfo()
@@ -154,9 +128,17 @@ void ICQUserInfo::slotReadInfo()
 		unsigned short mPort = mContact->port();
 
 		if ( !(mIP == mRealIP) && !(mRealIP == QHostAddress()) )
-			mMainWidget->roIPAddress->setText( QString("%1 (%2:%3)").arg(mIP.toString()).arg(mRealIP.toString()).arg(mPort) );
+		{
+			mMainWidget->roIPAddress->setText(
+				QString("%1 (%2:%3)").arg(mIP.toString()).arg(mRealIP.toString()).arg(mPort)
+				);
+		}
 		else
-			mMainWidget->roIPAddress->setText( QString("%1:%2").arg(mIP.toString()).arg(mPort) );
+		{
+			mMainWidget->roIPAddress->setText(
+				QString("%1:%2").arg(mIP.toString()).arg(mPort)
+				);
+		}
 	}
 
 	if(mContact->signonTime().isValid())
@@ -189,9 +171,9 @@ void ICQUserInfo::slotReadInfo()
 	}
 
 	// PRIVATE COUNTRY ==============================
-	setCombo(
+	p->setComboFromTable(
 		mMainWidget->rwPrsCountry,
-		ICQProtocol::protocol()->countries(),
+		p->countries(),
 		mContact->generalInfo.countryCode);
 	if (!mEditable)
 		mMainWidget->roPrsCountry->setText( mMainWidget->rwPrsCountry->currentText() );
@@ -212,7 +194,7 @@ void ICQUserInfo::slotReadInfo()
 */
 
 	// AGE ===========================================
-	if ( !mEditable ) // fixed value for readonly
+	if(!mEditable) // fixed value for readonly
 	{
 		mMainWidget->rwAge->setMinValue(mContact->moreInfo.age);
 		mMainWidget->rwAge->setMaxValue(mContact->moreInfo.age);
@@ -221,8 +203,8 @@ void ICQUserInfo::slotReadInfo()
 
 	// GENDER ========================================
 
-	setCombo(mMainWidget->rwGender, ICQProtocol::protocol()->genders(), mContact->moreInfo.gender);
-	if ( !mEditable ) // get text from hidden combobox and insert into readonly lineedit
+	p->setComboFromTable(mMainWidget->rwGender, p->genders(), mContact->moreInfo.gender);
+	if(!mEditable) // get text from hidden combobox and insert into readonly lineedit
 		mMainWidget->roGender->setText( mMainWidget->rwGender->currentText() );
 
 	// BIRTHDAY ========================================
@@ -278,9 +260,9 @@ void ICQUserInfo::slotReadInfo()
 
 	// LANGUAGES =========================================
 
-	setCombo(mMainWidget->rwLang1, ICQProtocol::protocol()->languages(), mContact->moreInfo.lang1);
-	setCombo(mMainWidget->rwLang2, ICQProtocol::protocol()->languages(), mContact->moreInfo.lang2);
-	setCombo(mMainWidget->rwLang3, ICQProtocol::protocol()->languages(), mContact->moreInfo.lang3);
+	p->setComboFromTable(mMainWidget->rwLang1, p->languages(), mContact->moreInfo.lang1);
+	p->setComboFromTable(mMainWidget->rwLang2, p->languages(), mContact->moreInfo.lang2);
+	p->setComboFromTable(mMainWidget->rwLang3, p->languages(), mContact->moreInfo.lang3);
 	if(!mEditable)
 	{
 		mMainWidget->roLang1->setText( mMainWidget->rwLang1->currentText() );
@@ -331,9 +313,9 @@ void ICQUserInfo::slotReadInfo()
 		}
 	}
 
-	setCombo(
+	p->setComboFromTable(
 		mMainWidget->rwWrkCountry,
-		ICQProtocol::protocol()->countries(),
+		p->countries(),
 		mContact->workInfo.countryCode);
 	if (!mEditable)
 		mMainWidget->roWrkCountry->setText(mMainWidget->rwWrkCountry->currentText());
@@ -342,7 +324,7 @@ void ICQUserInfo::slotReadInfo()
 	mMainWidget->rwAboutUser->setText(mContact->aboutInfo);
 
 } // END slotReadInfo()
-
+/*
 void ICQUserInfo::sendInfo()
 {
 	kdDebug(14200) << k_funcinfo << "called." << endl;
@@ -351,7 +333,7 @@ void ICQUserInfo::sendInfo()
 		qApp->mainWidget(),
 		"<qt>Changing your own user information is not done yet.</qt>",
 		"unfinished code");
-/*
+
 	u->Nick = mMainWidget->rwNickName->text().local8Bit();
 	u->FirstName = mMainWidget->rwFirstName->text().local8Bit();
 	u->LastName = mMainWidget->rwLastName->text().local8Bit();
@@ -380,20 +362,20 @@ void ICQUserInfo::sendInfo()
 	u->WorkFax = mMainWidget->wrkFaxEdit->text().local8Bit();
 
 	u->Age = mMainWidget->rwAge->text().toInt();
-	u->Gender = getComboValue( mMainWidget->rwGender, ICQProtocol::protocol()->genders() );
+	u->Gender = getComboValue( mMainWidget->rwGender, p->genders() );
 	u->Homepage = mMainWidget->prsHomepageEdit->text().local8Bit();
 	u->BirthYear = mMainWidget->rwBday->date().year();
 	u->BirthMonth = mMainWidget->rwBday->date().month();
 	u->BirthDay = mMainWidget->rwBday->date().day();
-	u->Language1 = getComboValue( mMainWidget->rwLang1, ICQProtocol::protocol()->languages());
-	u->Language2 = getComboValue( mMainWidget->rwLang2, ICQProtocol::protocol()->languages());
-	u->Language3 = getComboValue( mMainWidget->rwLang3, ICQProtocol::protocol()->languages());
+	u->Language1 = getComboValue( mMainWidget->rwLang1, p->languages());
+	u->Language2 = getComboValue( mMainWidget->rwLang2, p->languages());
+	u->Language3 = getComboValue( mMainWidget->rwLang3, p->languages());
 //	int return = mAccount->engine()->sendAboutInfo(QString); <- string with blah blah about yourself
 
 	mAccount->engine()->setInfo( u );
 	kdDebug(14200) << "[ICQUserInfo] Done sending new userinfo to server" << endl;
-*/
 }
+*/
 
 void ICQUserInfo::setEditable(bool e)
 {
@@ -438,7 +420,7 @@ void ICQUserInfo::setEditable(bool e)
 		enableButton(User1, mAccount->isConnected() );
 
 		mMainWidget->rwAlias->hide();
-		mMainWidget->txtAlias->hide();
+		mMainWidget->lblAlias->hide();
 
 		mMainWidget->roBday->hide();
 		mMainWidget->rwBday->show();
@@ -472,7 +454,7 @@ void ICQUserInfo::setEditable(bool e)
 	{
 //		kdDebug(14200) << k_funcinfo << "readonly mode" << endl;
 		mMainWidget->rwAlias->show();
-		mMainWidget->txtAlias->show();
+		mMainWidget->lblAlias->show();
 
 		mMainWidget->rwBday->hide();
 		mMainWidget->roBday->show();
@@ -517,9 +499,11 @@ void ICQUserInfo::slotHomePageClicked(const QString &url)
 void ICQUserInfo::slotSaveClicked()
 {
 	kdDebug(14200) << k_funcinfo << "called." << endl;
-	if(mEditable)
-		sendInfo();
-	else
+//	if(mEditable)
+//		sendInfo();
+//	else
+
+	if(mContact->displayName() != mMainWidget->rwAlias->text())
 		mContact->rename(mMainWidget->rwAlias->text());
 }
 

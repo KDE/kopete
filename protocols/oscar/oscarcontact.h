@@ -82,19 +82,13 @@ class OscarContact : public KopeteContact
 		const unsigned int  tcpVersion() { return mTcpVersion; }
 		const QDateTime signonTime() { return mSignonTime; }
 
-		/** Sets the idle time
-		 *
-		 */
-//		void setIdleTime(unsigned int idleTime);
-
-
 	public slots:
 		/** Method to delete a contact from the contact list */
 		virtual void slotDeleteContact(void);
 
 		/** Send a file */
 		virtual void sendFile(const KURL &sourceURL, const QString &altFileName,
-							const long unsigned int fileSize);
+			const long unsigned int fileSize);
 
 		/** Called when the metacontact owning this contact changes groups */
 		virtual void syncGroups();
@@ -133,13 +127,15 @@ class OscarContact : public KopeteContact
 		unsigned int mIdle;
 		unsigned long mRealIP;
 		unsigned long mLocalIP;
-		unsigned int  mPort;
-		unsigned int  mFwType;
-		unsigned int  mTcpVersion;
+		unsigned int mPort;
+		unsigned int mFwType;
+		unsigned int mTcpVersion;
 		QDateTime mSignonTime;
 
 		/** Tells whether or not we have a direct connection with the contact */
 		bool mDirectlyConnected;
+
+//		int groupID; // TODO: move the server groupid to OscarContact!
 
 	private slots:
 		/** Called when a buddy has changed status */

@@ -23,6 +23,8 @@
 
 #include "kopeteprotocol.h"
 
+class QComboBox;
+
 class ICQProtocol : public KopeteProtocol
 {
 	Q_OBJECT
@@ -57,6 +59,10 @@ class ICQProtocol : public KopeteProtocol
 		const QMap<int, QString> &genders() { return mGenders; }
 		const QMap<int, QString> &countries() { return mCountries; }
 		const QMap<int, QString> &languages() { return mLanguages; }
+
+		void fillComboFromTable(QComboBox *, const QMap<int, QString> &);
+		void setComboFromTable(QComboBox *, const QMap<int, QString> &, int);
+		int getCodeForCombo(QComboBox *, const QMap<int, QString> &);
 
 	private:
 		void initGenders();

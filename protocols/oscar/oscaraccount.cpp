@@ -405,7 +405,7 @@ void OscarAccount::syncLocalWithServerBuddyList( AIMBuddyList& serverList )
 	}
 }
 
-// 
+//
 // Looks for the group localGroup in the server-side list.
 // If it doesn't find it there, creates and returns it.
 //
@@ -415,7 +415,7 @@ AIMGroup * OscarAccount::findOrCreateGroup( const QString& localGroup, AIMBuddyL
 
 	// See if it exists in our internal group list already
 	AIMGroup *internalGroup = serverList.findGroup( groupName );
-	
+
 	// If the group didn't exist, take it from the local list
 	if (!internalGroup)
 	{
@@ -563,13 +563,13 @@ AIMBuddyList *OscarAccount::internalBuddyList()
 	return mInternalBuddyList;
 }
 
-void OscarAccount::setServer( QString server )
+void OscarAccount::setServerAddress(const QString &server)
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	setPluginData(protocol(), "Server", server);
 }
 
-void OscarAccount::setPort( int port )
+void OscarAccount::setServerPort(int port)
 {
 	kdDebug(14150) << k_funcinfo << "Called." << endl;
 	if (port>0)// Do a little error checkin on it

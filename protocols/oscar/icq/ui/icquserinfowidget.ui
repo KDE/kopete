@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>495</width>
+            <width>591</width>
             <height>461</height>
         </rect>
     </property>
@@ -50,15 +50,7 @@
                             </property>
                             <widget class="QLabel">
                                 <property name="name">
-                                    <cstring>txtNickname</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblNickname</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Nickname:</string>
@@ -71,15 +63,7 @@
                             </widget>
                             <widget class="QLabel">
                                 <property name="name">
-                                    <cstring>txtAlias</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblAlias</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Alias:</string>
@@ -108,15 +92,7 @@
                             </property>
                             <widget class="QLabel">
                                 <property name="name">
-                                    <cstring>txtICQUIN</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblICQUIN</cstring>
                                 </property>
                                 <property name="text">
                                     <string>ICQ UIN#:</string>
@@ -135,15 +111,7 @@
                             </widget>
                             <widget class="QLabel">
                                 <property name="name">
-                                    <cstring>txtIP</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblIP</cstring>
                                 </property>
                                 <property name="text">
                                     <string>IP:</string>
@@ -178,7 +146,7 @@
                             </property>
                             <widget class="QLabel">
                                 <property name="name">
-                                    <cstring>txtName</cstring>
+                                    <cstring>lblName</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Name:</string>
@@ -212,15 +180,7 @@
                             </property>
                             <widget class="QLabel">
                                 <property name="name">
-                                    <cstring>txtBirthday</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblBirthday</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Birthday:</string>
@@ -252,23 +212,19 @@
                                         <property name="name">
                                             <cstring>rwBday</cstring>
                                         </property>
-                                        <property name="enabled">
-                                            <bool>true</bool>
+                                        <property name="date">
+                                            <date>
+                                                <year>2000</year>
+                                                <month>1</month>
+                                                <day>1</day>
+                                            </date>
                                         </property>
                                     </widget>
                                 </hbox>
                             </widget>
                             <widget class="QLabel">
                                 <property name="name">
-                                    <cstring>TextLabel14</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>1</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblAge</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Age:</string>
@@ -283,9 +239,6 @@
                                 </property>
                                 <property name="maxValue">
                                     <number>120</number>
-                                </property>
-                                <property name="value">
-                                    <number>66</number>
                                 </property>
                             </widget>
                         </hbox>
@@ -306,15 +259,7 @@
                             </property>
                             <widget class="QLabel">
                                 <property name="name">
-                                    <cstring>txtGender</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblGender</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Gender:</string>
@@ -351,15 +296,7 @@
                             </widget>
                             <widget class="QLabel">
                                 <property name="name">
-                                    <cstring>txtTimezone</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblTimezone</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Timezone:</string>
@@ -406,7 +343,7 @@
                             </property>
                             <widget class="QLabel" row="0" column="1">
                                 <property name="name">
-                                    <cstring>textLabel1_2</cstring>
+                                    <cstring>lblSignonTime</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Signon Time:</string>
@@ -584,15 +521,7 @@
                             </widget>
                             <widget class="QLabel" row="0" column="0">
                                 <property name="name">
-                                    <cstring>TextLabel22</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblPrsCity</cstring>
                                 </property>
                                 <property name="text">
                                     <string>City:</string>
@@ -600,15 +529,7 @@
                             </widget>
                             <widget class="QLabel" row="0" column="2">
                                 <property name="name">
-                                    <cstring>TextLabel19</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblPrsPhone</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Phone:</string>
@@ -626,15 +547,7 @@
                             </widget>
                             <widget class="QLabel" row="1" column="0">
                                 <property name="name">
-                                    <cstring>TextLabel23</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblPrsState</cstring>
                                 </property>
                                 <property name="text">
                                     <string>State:</string>
@@ -676,15 +589,7 @@
                             </widget>
                             <widget class="QLabel" row="2" column="0">
                                 <property name="name">
-                                    <cstring>TextLabel24</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblPrsCountry</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Country:</string>
@@ -692,15 +597,7 @@
                             </widget>
                             <widget class="QLabel" row="1" column="2">
                                 <property name="name">
-                                    <cstring>TextLabel20</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblPrsCellular</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Cellular:</string>
@@ -708,15 +605,7 @@
                             </widget>
                             <widget class="QLabel" row="2" column="2">
                                 <property name="name">
-                                    <cstring>TextLabel21</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblPrsFax</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Fax:</string>
@@ -724,15 +613,7 @@
                             </widget>
                             <widget class="QLabel" row="3" column="0">
                                 <property name="name">
-                                    <cstring>TextLabel25</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblPrsZip</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Zip:</string>
@@ -761,15 +642,7 @@
                             </property>
                             <widget class="QLabel">
                                 <property name="name">
-                                    <cstring>adressLabel</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>3</hsizetype>
-                                        <vsizetype>1</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblPrsAddress</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Postal address:</string>
@@ -798,15 +671,7 @@
                             </property>
                             <widget class="QLabel" row="0" column="0">
                                 <property name="name">
-                                    <cstring>TextLabel17</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblPrsHomepage</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Homepage:</string>
@@ -843,15 +708,7 @@
                             </widget>
                             <widget class="QLabel" row="1" column="0">
                                 <property name="name">
-                                    <cstring>TextLabel18</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblPrsEmail</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Email address:</string>
@@ -960,14 +817,6 @@
                                 <property name="name">
                                     <cstring>TextLabel19_2</cstring>
                                 </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
                                 <property name="text">
                                     <string>Phone:</string>
                                 </property>
@@ -1010,21 +859,13 @@
                                 <property name="name">
                                     <cstring>TextLabel23_2</cstring>
                                 </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
                                 <property name="text">
                                     <string>State:</string>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="1" column="0">
                                 <property name="name">
-                                    <cstring>TextLabel1</cstring>
+                                    <cstring>lwlWrkDepartment</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Department:</string>
@@ -1032,15 +873,7 @@
                             </widget>
                             <widget class="QLabel" row="2" column="2">
                                 <property name="name">
-                                    <cstring>TextLabel21_2</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblWrkFax</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Fax:</string>
@@ -1050,14 +883,6 @@
                                 <property name="name">
                                     <cstring>TextLabel25_2</cstring>
                                 </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
                                 <property name="text">
                                     <string>Zip:</string>
                                 </property>
@@ -1066,21 +891,13 @@
                                 <property name="name">
                                     <cstring>TextLabel24_2</cstring>
                                 </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
                                 <property name="text">
                                     <string>Country:</string>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="0" column="0">
                                 <property name="name">
-                                    <cstring>TextLabel1_2</cstring>
+                                    <cstring>lwlWrkName</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Name:</string>
@@ -1107,14 +924,6 @@
                             <widget class="QLabel" row="3" column="0">
                                 <property name="name">
                                     <cstring>TextLabel22_2</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
                                 </property>
                                 <property name="text">
                                     <string>City:</string>
@@ -1156,15 +965,7 @@
                             </property>
                             <widget class="QLabel">
                                 <property name="name">
-                                    <cstring>adressLabel_2</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>3</hsizetype>
-                                        <vsizetype>1</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lwlWrkAddress</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Postal address:</string>
@@ -1193,15 +994,7 @@
                             </property>
                             <widget class="QLabel">
                                 <property name="name">
-                                    <cstring>TextLabel17_2</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>4</hsizetype>
-                                        <vsizetype>4</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                    <cstring>lblWrkHomepage</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Homepage:</string>
@@ -1254,7 +1047,7 @@
                     </property>
                     <widget class="QLabel">
                         <property name="name">
-                            <cstring>textLabel1</cstring>
+                            <cstring>lblAboutUser</cstring>
                         </property>
                         <property name="text">
                             <string>About User:</string>

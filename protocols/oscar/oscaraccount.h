@@ -72,10 +72,10 @@ public:
 	AIMBuddyList *internalBuddyList();
 
 	/** Sets the port we connect to */
-	void setPort(int port);
+	void setServerPort(int port);
 
 	/** Sets the server we connect to */
-	void setServer(QString server);
+	void setServerAddress(const QString &server);
 
 public slots:
 	/** Slot for telling this account to go online */

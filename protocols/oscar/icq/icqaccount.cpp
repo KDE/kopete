@@ -31,15 +31,16 @@
 ICQAccount::ICQAccount(KopeteProtocol *parent, QString accountID, const char *name)
 	: OscarAccount(parent, accountID, name, true)
 {
-	//myself has to be created in constructor
-	mMyself = new ICQContact(accountId(), "FUCK KOPETE", this, 0L);
+	//myself() has to be created in constructor!
+	mMyself = new ICQContact(accountId(), "", this, 0L);
 	mAwayDialog = new ICQChangeStatus(getEngine());
 }
 
 void ICQAccount::loaded()
 {
 	// needs to be here because pluginData() does not work in constructor
-	mMyself->rename(pluginData(protocol(), "NickName"));
+	static_cast<ICQContact *>(mMyself)->setOwnDisplayName(
+		pluginData(protocol(), "NickName"));
 }
 
 ICQAccount::~ICQAccount()
