@@ -254,7 +254,7 @@ void JabberEditAccountWidget::validateJID ()
 			int result = KMessageBox::warningYesNo (this, i18n("You have chosen a different Jabber server than your Jabber "
 													"ID suggests. Do you want me to change your server setting? Selecting \"Yes\" "
 													"will change your Jabber server to \"%1\" as indicated by your Jabber ID. "
-													"Selecting \"No\" leave your current settings.").arg(server),
+													"Selecting \"No\" will keep your current settings.").arg(server),
 													i18n("Are you sure about your server name?"));
 
 			if(result == KMessageBox::Yes)
