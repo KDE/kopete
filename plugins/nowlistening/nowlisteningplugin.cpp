@@ -34,7 +34,7 @@
 #include "nlkscd.h"
 #include "nlnoatun.h"
 #include "nljuk.h"
-//#include "nlamarok.h"
+#include "nlamarok.h"
 #include "nowlisteningguiclient.h"
 
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && defined HAVE_XMMS
@@ -81,7 +81,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 	m_mediaPlayer->append( new NLKscd( m_client ) );
 	m_mediaPlayer->append( new NLNoatun( m_client ) );
 	m_mediaPlayer->append( new NLJuk( m_client ) );
-	//m_mediaPlayer->append( new NLAmaroK( m_client ) );
+	m_mediaPlayer->append( new NLAmaroK( m_client ) );
 
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && HAVE_XMMS
 	m_mediaPlayer->append( new NLXmms() );
