@@ -64,6 +64,7 @@ public:
 	bool closing;
 	IRCProtocol *mProtocol;
 	IRCConsoleView *consoleView() { return mConsoleView; };
+	void initiateDcc(const QString &nickname, DCCServer::Type type);
 private:
 	IRCConsoleView *mConsoleView;
 	KPopupMenu *popup;
@@ -76,7 +77,7 @@ private slots:
 	void updateToolbar();
 	void incomingPrivMessage(const QString &, const QString &, const QString &);
 	void incomingPrivAction(const QString &, const QString &, const QString &);
-	void incomingDccChatRequest(const QHostAddress &, unsigned int port, const QString &nickname, DCCChat &chatObject);
+	void incomingDccChatRequest(const QHostAddress &, unsigned int port, const QString &nickname, DCCClient &chatObject);
 public slots:
 	void slotQuitServer();
 	void connectNow();

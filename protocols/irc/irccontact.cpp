@@ -240,7 +240,7 @@ bool IRCContact::init()
 	added = true;
 	connect(mContact->engine, SIGNAL(successfulQuit()), this, SLOT(unloading()));
 	connect(mContact->engine, SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), this, SLOT(slotPartedChannel(const QString &, const QString &, const QString &)));
-	connect(mContact->engine, SIGNAL(incomingKick(const QString &, const QString &, const QString &)), this, SLOT(slotUserKicked(const QString &, const QString &, const QString &)));
+	connect(mContact->engine, SIGNAL(incomingKick(const QString &, const QString &, const QString &, const QString &)), this, SLOT(slotUserKicked(const QString &, const QString &, const QString &, const QString &)));
 	connect(engine, SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)), this, SLOT(incomingPrivMessage(const QString &, const QString &, const QString &)));
 	connect(engine, SIGNAL(incomingPrivAction(const QString &, const QString &, const QString &)), this, SLOT(incomingPrivAction(const QString &, const QString &, const QString &)));
 	return true;
@@ -439,7 +439,7 @@ void IRCContact::slotPartedChannel(const QString &originating, const QString &ch
 
 void IRCContact::slotUserKicked(const QString &user, const QString &channel, const QString &by, const QString &reason)
 {
-	if (mTarget.lower() == channel.lower() && user == mContact->mNickname.lower())
+	if (mTarget.lower() == channel.lower() && user.lower() == mContact->mNickname.lower())
 	{
 		unloading();
 	}
@@ -458,7 +458,10 @@ void IRCContact::unloading()
 {
 	if (mTabPage !=0)
 	{
-		delete mTabPage;
+		if (mContact->closing == true)
+		{
+			delete mTabPage;
+		}
 		mTabPage = 0L;
 		chatView = 0L;
 		queryView = 0L;

@@ -22,6 +22,8 @@
 #include <qregexp.h>
 #include <sys/time.h>
 #include <qdatetime.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 #include "dcchandler.h"
 
 KIRC::KIRC()
@@ -30,6 +32,7 @@ KIRC::KIRC()
 	attemptingQuit = false;
 	waitingFinishMotd = false;
 	loggedIn = false;
+	failedNickOnLogin = false;
 	QObject::connect(this, SIGNAL(hostFound()), this, SLOT(slotHostFound()));
 	QObject::connect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
 	QObject::connect(this, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
@@ -171,7 +174,7 @@ void KIRC::slotReadyRead()
 						unsigned int port = message.section(' ', 4, 4).toUInt(&okayPort);
 						if (okayHost && okayPort)
 						{
-							DCCChat *chatObject = new DCCChat(address, port);
+							DCCClient *chatObject = new DCCClient(address, port, DCCClient::Chat);
 							emit incomingDccChatRequest(address, port, originating.section('!', 0, 0), *chatObject);
 						}
 					}
@@ -652,6 +655,28 @@ void KIRC::actionContact(const QString &contact, const QString &message)
                         emit incomingPrivAction(mNickname, contact, message);
                 } else {
 			emit incomingAction(mNickname, contact, message);
+		}
+	}
+}
+
+void KIRC::requestDccConnect(const QString &nickname, unsigned int port, DCCClient::Type type)
+{
+	if (state() == QSocket::Connected && loggedIn == true)
+	{
+		/* Please do not pick on me about this if it isn't portable. Submit a patch and I'll glady apply it. This is *needed* for
+		sending the connecting client the proper IP address that they need to connect to. */
+		struct sockaddr_in name;
+		int sockfd = socket();
+		int len = sizeof(name);
+		if (getsockname(sockfd, (struct sockaddr *)&name,&len) == 0)
+		{
+			// refer to the ntohl man page for more info, but what it basicly does is flips the numbers around (e.g. from 1.0.0.10 to 10.0.0.1) since it's in "network order" right now
+			QHostAddress host(ntohl(name.sin_addr.s_addr));
+			if (type == DCCClient::Chat)
+			{
+				QString message = QString("PRIVMSG %1 :%2DCC CHAT chat %3 %4%5\r\n").arg(nickname).arg(QChar(0x01)).arg(host.ip4Addr()).arg(port).arg(QChar(0x01));
+				writeBlock(message.local8Bit(), message.length());
+			}
 		}
 	}
 }

@@ -24,12 +24,15 @@
 #include <qfile.h>
 #include <qregexp.h>
 
-class DCCChat : public QSocket
+class DCCClient : public QSocket
 {
 Q_OBJECT
 public:
-	DCCChat(QHostAddress host, unsigned int port);
-	DCCChat();
+	enum Type {
+		Chat = 0,
+		File = 1
+	};
+	DCCClient(QHostAddress host, unsigned int port, Type type);
 	void dccAccept();
 	void dccCancel();
 	bool sendMessage(const QString &message);
@@ -47,12 +50,20 @@ private slots:
 	void slotError(int);
 };
 
-class DCCSend : public QServerSocket
+class DCCServer : public QServerSocket
 {
 Q_OBJECT
 public:
-	DCCSend(const QString &filename);
+	enum Type {
+		Chat = 0,
+		File = 1
+	};
+	DCCServer(Type type);
 	virtual void newConnection(int socket);
+	bool sendMessage(const QString &message);
+	DCCClient *mClient;
+signals:
+	void clientConnected();
 };
 
 #endif

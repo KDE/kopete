@@ -103,7 +103,7 @@ void IRCServerContact::init()
 	QObject::connect(engine, SIGNAL(successfulQuit()), this, SLOT(slotServerHasQuit()));
 	QObject::connect(engine, SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)), this, SLOT(incomingPrivMessage(const QString &, const QString &, const QString &)));
 	QObject::connect(engine, SIGNAL(incomingPrivAction(const QString &, const QString &, const QString &)), this, SLOT(incomingPrivAction(const QString &, const QString &, const QString &)));
-	QObject::connect(engine, SIGNAL(incomingDccChatRequest(const QHostAddress &, unsigned int, const QString &, DCCChat &)), this, SLOT(incomingDccChatRequest(const QHostAddress &, unsigned int, const QString &, DCCChat &)));
+	QObject::connect(engine, SIGNAL(incomingDccChatRequest(const QHostAddress &, unsigned int, const QString &, DCCClient &)), this, SLOT(incomingDccChatRequest(const QHostAddress &, unsigned int, const QString &, DCCClient &)));
 	mWindow = new IRCChatWindow(mServer, this);
 	QObject::connect(mWindow, SIGNAL(windowClosing()), this, SLOT(slotQuitServer()));
 	mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
@@ -167,7 +167,26 @@ void IRCServerContact::disconnectNow()
 	}
 }
 
-void IRCServerContact::incomingDccChatRequest(const QHostAddress &, unsigned int port, const QString &nickname, DCCChat &chatObject)
+void IRCServerContact::initiateDcc(const QString &nickname, DCCServer::Type type)
+{
+	if (type == DCCServer::Chat)
+	{
+		DCCServer *dccServer = new DCCServer(type);
+		kdDebug() << "IRC Plugin: dccServer->ok() == " << dccServer->ok() << endl;
+		if (dccServer->ok())
+		{
+			unsigned int port = dccServer->port();
+			QVBox *parent = new QVBox(mWindow->mTabWidget);
+			IRCDCCView *dccView = new IRCDCCView(nickname, this, parent, dccServer);
+			mWindow->mTabWidget->addTab(parent, SmallIconSet("irc_dcc"),nickname);
+			mWindow->mTabWidget->showPage(parent);
+		} else {
+			delete dccServer;
+		}
+	}
+}
+
+void IRCServerContact::incomingDccChatRequest(const QHostAddress &, unsigned int port, const QString &nickname, DCCClient &chatObject)
 {
 	if (mWindow != 0)
 	{
@@ -290,6 +309,7 @@ void IRCServerContact::slotQuitServer()
 				delete mWindow;
 				mWindow = 0L;
 			}
+			engine->close();
 		}
 		tryingQuit = false;
 		closing = false;
@@ -310,7 +330,7 @@ void IRCServerContact::updateToolbar()
 
 bool IRCServerContact::parentClosing()
 {
-	if (engine->isLoggedIn() == true || engine->state() != QSocket::Idle)
+	if (engine->isLoggedIn() == true && engine->state() == QSocket::Connected)
 	{
 		if (KMessageBox::questionYesNo(mWindow, i18n("You are currently connected to the IRC server, are you sure you want to quit now?"), i18n("Are you sure?"), KStdGuiItem::yes(), KStdGuiItem::no(), "IRCServerQuitAsk") == KMessageBox::Yes)
 		{

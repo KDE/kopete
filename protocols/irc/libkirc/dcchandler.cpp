@@ -18,7 +18,7 @@
 #include "dcchandler.h"
 #include <kdebug.h>
 
-DCCChat::DCCChat(QHostAddress host, unsigned int port)
+DCCClient::DCCClient(QHostAddress host, unsigned int port, Type type)
 	: QSocket()
 {
 	mHost = host;
@@ -29,17 +29,17 @@ DCCChat::DCCChat(QHostAddress host, unsigned int port)
 	connect(this, SIGNAL(error(int)), this, SLOT(slotError(int)));
 }
 
-void DCCChat::dccAccept()
+void DCCClient::dccAccept()
 {
 	connectToHost(mHost.toString(), mPort);
 }
 
-void DCCChat::dccCancel()
+void DCCClient::dccCancel()
 {
 	slotConnectionClosed();
 }
 
-void DCCChat::slotError(int error)
+void DCCClient::slotError(int error)
 {
 	if (error == QSocket::ErrConnectionRefused || error == QSocket::ErrHostNotFound)
 	{
@@ -47,7 +47,7 @@ void DCCChat::slotError(int error)
 	}
 }
 
-void DCCChat::slotReadyRead()
+void DCCClient::slotReadyRead()
 {
 	while(canReadLine())
 	{
@@ -57,20 +57,20 @@ void DCCChat::slotReadyRead()
 	}
 }
 
-void DCCChat::slotConnectionClosed()
+void DCCClient::slotConnectionClosed()
 {
 	emit terminating();
 	delete this;
 }
 
-bool DCCChat::sendMessage(const QString &message)
+bool DCCClient::sendMessage(const QString &message)
 {
 	if (state() != QSocket::Connected)
 	{
 		return false;
 	} else {
 		QCString block = message.local8Bit();
-		block.append("\n");
+		block.append("\r\n");
 		writeBlock(block, block.length());
 	}
 	emit incomingDccMessage(message, true);
@@ -78,13 +78,18 @@ bool DCCChat::sendMessage(const QString &message)
 	return true;
 }
 
-DCCSend::DCCSend(const QString &)
-	: QServerSocket()
+DCCServer::DCCServer(Type type)
+	: QServerSocket((short unsigned int)0)
 {
-
+	mClient = new DCCClient(QHostAddress(), 0, DCCClient::Chat);
 }
 
-void DCCSend::newConnection(int socket)
+void DCCServer::newConnection(int socket)
 {
-
+	mClient->setSocket(socket);
+	connect(mClient, SIGNAL(connectionClosed()), mClient, SLOT(slotConnectionClosed()));
+	connect(mClient, SIGNAL(readyRead()), mClient, SLOT(slotReadyRead()));
+	connect(mClient, SIGNAL(delayedCloseFinished()), mClient, SLOT(slotConnectionClosed()));
+	connect(mClient, SIGNAL(error(int)), mClient, SLOT(slotError(int)));
+	emit clientConnected();
 }
