@@ -299,7 +299,7 @@ void JabberContact::execute() {
 void JabberContact::slotNewMessage(const JabMessage &message) {
 	QString theirUserID = QString("%1@%2").arg(message.from.user(), 1).arg(message.from.host());
 	
-	kdDebug() << "[JabberContact] Message recieved from " << theirUserID << endl;
+	kdDebug() << "[JabberContact] Message received from " << theirUserID << endl;
     if (theirUserID != userID()) {
 		return;
     }

@@ -195,7 +195,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 
 		QString contact = MSNProtocol::protocol()->contacts()[ m_msgHandle ]->nickname();
 		QString message = i18n("%1 tried to send you a file.\nUnfortunately,"
-			" file tranfer is currently not supported.\n").arg( contact );
+			" file transfer is currently not supported.\n").arg( contact );
 
 		KMessageBox::error( 0, message, i18n( "MSN Plugin - Kopete" ) );
 

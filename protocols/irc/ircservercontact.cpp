@@ -97,7 +97,7 @@ void IRCServerContact::init()
 	engine = new KIRC();
 	engine->setVersionString("Kopete IRC 1.0");
 // 	engine->setUserString(""); Pull this from a KConfig entry which is set in the preferences!
-	engine->setSourceString("Kopete IRC Plugin 1.0 http://www.kdedevelopers.net/kopete");
+	engine->setSourceString("Kopete IRC Plugin 1.0 http://kopete.kde.org");
 	mQuitMessage = "Using Kopete IRC Plugin";
 	QObject::connect(engine, SIGNAL(incomingFailedNickOnLogin(const QString &)), this, SLOT(nickInUseOnLogin(const QString &)));
 	QObject::connect(engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)), this, SLOT(slotChangedNick(const QString &, const QString &)));
@@ -136,7 +136,7 @@ void IRCServerContact::slotConnectNow()
 	}
 	if (mServer == "(Console)")
 	{
-		QString message = i18n("Sorry, you need to specifiy a server before trying to connect. The syntax is: /server irc.yourserver.com");
+		QString message = i18n("Sorry, you need to specify a server before trying to connect. The syntax is: /server irc.yourserver.com");
 		messenger->displayMessage(MessageTransport(message, QString(""), QString(""), QString(""), engine->nickName(), IRCMessage::UnknownMsg, mServer, mConsoleView->chatView));
 		mConsoleView->messageBox->setText("");
 		return;

@@ -153,9 +153,9 @@ void MSNSocket::slotDataReceived()
 	{
 		kdDebug() << "MSNSocket::slotDataReceived:\n"
 			"** WARNING ** bytesAvailable() returned 0!\n"
-			"If you are running KDE 3.0, please upgrade to current CVS or to\n"
-			"KDE 3.0.1 to fix a bug in KExtendedSocket always returning 0.\n"
-			"Trying to read 4kb blocks instead, but be prepared for problems!"
+			"If you are running KDE 3.0.0, please upgrade to a newer KDE\n"
+			"version. This fixes a KExtendedSocket bug always returning 0.\n"
+			"Trying to read 4KB blocks instead, but be prepared for problems!"
 			<< endl;
 		toRead = 4096;
 	}

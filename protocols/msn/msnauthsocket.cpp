@@ -56,7 +56,7 @@ void MSNAuthSocket::handleError( uint code, uint id )
 	{
 		QString msg =
 			i18n( "The MSN server is busy.\n"
-				"Trying to reconnect every 10 seconds. Please be pateint..." );
+				"Trying to reconnect every 10 seconds. Please be patient..." );
 		m_msgBoxShown = true;
 
 		KMessageBox::information( 0, msg, i18n( "MSN Plugin - Kopete" ) );

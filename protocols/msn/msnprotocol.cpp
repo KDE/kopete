@@ -421,7 +421,7 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 		statusBarIcon->setPixmap( onlineIcon );
 
 		// FIXME: is there any way to do a faster sync of msn groups?
-		/* Now we sync local groups that dont exist in server */
+		/* Now we sync local groups that don't exist on server */
 		QStringList localgroups = (kopeteapp->contactList()->groups()) ;
 		QStringList servergroups = groups();
 		QString localgroup;
@@ -447,7 +447,7 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 				/* Groups doesnt match any server group */
 				if ( exists == 0 )
 				{
-					kdDebug() << "MSN Plugin: Sync: Local group " << localgroup << " dont exists in server!" << endl;
+					kdDebug() << "MSN Plugin: Sync: Local group " << localgroup << " doesn't exist on server!" << endl;
 					/*
 					QString notexistsMsg = i18n(
 						"the group %1 doesn't exist in MSN server group list, if you want to move" \
