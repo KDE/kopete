@@ -188,12 +188,13 @@
 </widget>
 <tabstops>
     <tabstop>radio1</tabstop>
-    <tabstop>radio2</tabstop>
-    <tabstop>rememberCheck_</tabstop>
-    <tabstop>autoLoginCheck_</tabstop>
     <tabstop>loginEdit_</tabstop>
     <tabstop>passwordEdit_</tabstop>
+    <tabstop>radio2</tabstop>
+    <tabstop>emailedit_</tabstop>
     <tabstop>passwordEdit2__</tabstop>
+    <tabstop>rememberCheck_</tabstop>
+    <tabstop>autoLoginCheck_</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
