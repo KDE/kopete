@@ -265,7 +265,7 @@ SNAC Buffer::readSnacHeader()
 	{
 		s.error = true;
 	}
-	
+
 	return s;
 }
 
@@ -372,6 +372,15 @@ char *Buffer::getBlock(WORD len)
 	ch[len]=0;
 	return ch;
 }
+
+QByteArray Buffer::getBBlock(WORD len)
+{
+	QByteArray data;
+	data.duplicate(mBuffer.data() + mReadPos, len);
+	mReadPos += len;
+	return data;
+}
+
 
 WORD *Buffer::getWordBlock(WORD len)
 {

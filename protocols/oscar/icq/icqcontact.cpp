@@ -135,9 +135,12 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 	if (u.capabilities & AIM_CAPS_RTFMSGS)
 		capList << i18n("RTF-Messages");
 	if (u.capabilities & AIM_CAPS_KOPETE)
-		capList << i18n("Kopete");
+		capList << i18n("Kopete %1").arg(u.clientVersion);
 	if (u.capabilities & AIM_CAPS_MICQ)
 		capList << i18n("MICQ");
+		//capList << i18n("MICQ %1").arg(u.clientVersion);
+	if (u.capabilities & AIM_CAPS_SIMNEW)
+		capList << i18n("SIM %1").arg(u.clientVersion);
 	if (u.capabilities & AIM_CAPS_MACICQ)
 		capList << i18n("MacICQ");
 	if (u.capabilities & AIM_CAPS_IMIMAGE)

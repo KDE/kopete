@@ -1040,7 +1040,7 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 			}
 			case 0x000d: //capability info
 			{
-				u.capabilities = parseCapabilities(tlvBuf);
+				u.capabilities = parseCapabilities(tlvBuf, u.clientVersion);
 				break;
 			}
 			case 0x0010: //session length (for AOL users, in seconds)
@@ -1066,7 +1066,7 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 
 
 
-const DWORD OscarSocket::parseCapabilities(Buffer &inbuf)
+const DWORD OscarSocket::parseCapabilities(Buffer &inbuf, QString &versionString)
 {
 //
 // FIXME: port capabilities array to some qt based list class, makes usage of memcmp obsolete
@@ -1088,18 +1088,56 @@ const DWORD OscarSocket::parseCapabilities(Buffer &inbuf)
 			{
 				if (memcmp(&oscar_caps[i].data, cap, 12) == 0)
 				{
+
+					kdDebug(14150) << "KOPETE version : <" <<
+						(int)cap[12] << ":" << (int)cap[13] << ":" <<
+						(int)cap[14] << ":" << (int)cap[15] << ">" << endl;
+
 					capflags |= oscar_caps[i].flag;
-					kdDebug(14150) << k_funcinfo <<
-						"Kopete Ver " << cap[12] << "." << cap[13] << "." << cap[14] << cap[15] << endl;
+
+					// Did a bad mistake in CVS :(
+					if (
+						(int)cap[12] == 0 &&
+						(int)cap[13] == 8 &&
+						(int)cap[14] == 90 &&
+						(int)cap[15] == 0)
+					{
+						versionString.sprintf("%d.%d.%d",
+							cap[12], cap[13], cap[14]);
+					}
+					else
+					{
+						versionString.sprintf("%d.%d.%d%d",
+							cap[12], cap[13], cap[14], cap[15]);
+					}
 				}
 			}
 			else if (oscar_caps[i].flag == AIM_CAPS_MICQ)
 			{
 				if (memcmp(&oscar_caps[i].data, cap, 12) == 0)
 				{
+					kdDebug(14150) << "MICQ version : <" <<
+						(int)cap[12] << ":" << (int)cap[13] << ":" <<
+						(int)cap[14] << ":" << (int)cap[15] << ">" << endl;
+
 					capflags |= oscar_caps[i].flag;
-					kdDebug(14150) << k_funcinfo <<
-						"MICQ Ver " << cap[12] << "." << cap[13] << "." << cap[14] << cap[15] << endl;
+
+					// FIXME: how to decode this micq version mess? [mETz - 08.06.2004]
+					/*versionString.sprintf("%d.%d.%d%d",
+						cap[12], cap[13], cap[14], cap[15]);*/
+				}
+			}
+			else if (oscar_caps[i].flag == AIM_CAPS_SIMNEW)
+			{
+				if (memcmp(&oscar_caps[i].data, cap, 12) == 0)
+				{
+					kdDebug(14150) << "SIM version : <" <<
+						(int)cap[12] << ":" << (int)cap[13] << ":" <<
+						(int)cap[14] << ":" << (int)cap[15] << ">" << endl;
+
+					capflags |= oscar_caps[i].flag;
+					versionString.sprintf("%d.%d.%d%d",
+						cap[12], cap[13], cap[14], cap[15]);
 				}
 			}
 			else if (memcmp(&oscar_caps[i].data, cap, 0x10) == 0)

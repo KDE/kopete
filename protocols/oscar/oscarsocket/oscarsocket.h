@@ -64,6 +64,7 @@ class UserInfo
 		QDateTime membersince;
 		QDateTime onlinesince;
 		DWORD capabilities;
+		QString clientVersion;
 		long sessionlen;
 		unsigned int idletime;
 		unsigned long realip;
@@ -99,7 +100,8 @@ const DWORD AIM_CAPS_INTEROPERATE	= 0x00080000;
 const DWORD AIM_CAPS_KOPETE			= 0x00100000;
 const DWORD AIM_CAPS_MICQ				= 0x00200000;
 const DWORD AIM_CAPS_MACICQ			= 0x00400000;
-const DWORD AIM_CAPS_LAST				= 0x00800000;
+const DWORD AIM_CAPS_SIMNEW			= 0x00800000;
+const DWORD AIM_CAPS_LAST				= 0x01000000;
 
 const struct
 {
@@ -192,7 +194,7 @@ const struct
 
 	{AIM_CAPS_KOPETE,
 	{'K', 'o', 'p', 'e', 't', 'e', ' ', 'I',
-	 'C', 'Q', ' ', ' ', '0', '8', '9', '0'}}, // TODO: change with each Kopete Release!
+	 'C', 'Q', ' ', ' ', 0, 8, 9, 0}}, // TODO: change with each Kopete Release!
 
 	{AIM_CAPS_MICQ,
 	{0x6d, 0x49, 0x43, 0x51, 0x20, 0xa9, 0x20, 0x52,
@@ -201,6 +203,10 @@ const struct
 	{AIM_CAPS_MACICQ,
 	{0xDD, 0x16, 0xF2, 0x02, 0x84, 0xE6, 0x11, 0xD4,
 	 0x90, 0xDB, 0x00, 0x10, 0x4B, 0x9B, 0x4B, 0x7D}},
+
+	{AIM_CAPS_SIMNEW,
+	{'S', 'I', 'M', ' ', 'c', 'l', 'i', 'e',
+	 'n', 't', ' ', ' ',  0 ,  0 ,  0 , 0}}, // last 4 bytes determine version (US-ASCII encoded)
 
 	{AIM_CAPS_LAST,
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -785,7 +791,7 @@ class OscarSocket : public OscarConnection
 		 * parses a capabilities block contained in inbuf
 		 * inbuf should NOT contain anything else or it'll break ya neck ;)
 		 */
-		const DWORD parseCapabilities(Buffer &inbuf);
+		const DWORD parseCapabilities(Buffer &inbuf, QString &versionString);
 
 		/**
 		 * Activates the SSI list on the server

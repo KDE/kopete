@@ -212,6 +212,7 @@ class Buffer
 		 * Allocates memory for and gets a block of buffer bytes
 		 */
 		char *getBlock(WORD len);
+		QByteArray getBBlock(WORD len);
 
 		/**
 		 * Allocates memory for and gets a block of buffer words
