@@ -1,21 +1,22 @@
 /***************************************************************************
-                          ircchannelcontact.cpp  -  description
-                             -------------------
-    begin                : Thu Feb 20 2003
-    copyright            : (C) 2003 by nbetcher
-    email                : nbetcher@kde.org
- ***************************************************************************/
+			ircchannelcontact.cpp  -  description
+			-------------------
+begin                : Thu Feb 20 2003
+copyright            : (C) 2003 by nbetcher
+email                : nbetcher@kde.org
+***************************************************************************/
 
 /***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+*                                                                         *
+*   This program is free software; you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 2 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+***************************************************************************/
 
 #include "ircchannelcontact.h"
+#include "ircusercontact.h"
 #include "ircidentity.h"
 
 #include "kirc.h"
@@ -29,13 +30,13 @@
 #include <kdebug.h>
 
 IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &channel, KopeteMetaContact *metac) :
-		IRCContact( identity, metac )
+		IRCContact( identity, channel, metac )
 {
 	// Variable assignments
-	mChannelName = channel;
+	mNickName = channel;
 
 	// Registers this IRCChannelContact with the identity
-	identity->registerChannel(mChannelName, this);
+	identity->registerChannel(mNickName, this);
 
 	// Contact list display name
 	setDisplayName(channel);
@@ -45,83 +46,40 @@ IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &chann
 	actionJoin = new KAction(i18n("&Join"), 0, this, SLOT(slotJoin()), this, "actionJoin");
 	actionPart = new KAction(i18n("&Part"), 0, this, SLOT(slotPart()), this, "actionPart");
 
-	// KopeteMessageManagerFactory stuff
-	mContact.append((KopeteContact *)this);
-	mMyself.append((KopeteContact *)identity->mySelf());
-
 	// KIRC Engine stuff
 	QObject::connect(identity->engine(), SIGNAL(connectedToServer()), this, SLOT(slotConnectedToServer()));
 	QObject::connect(identity->engine(), SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
 	QObject::connect(identity->engine(), SIGNAL(userJoinedChannel(const QString &, const QString &)), this, SLOT(slotUserJoinedChannel(const QString &, const QString &)));
 	QObject::connect(identity->engine(), SIGNAL(incomingPartedChannel(const QString &, const QString &, const QString &)), this, SLOT(slotUserPartedChannel(const QString &, const QString &, const QString &)));
-	QObject::connect(identity->engine(), SIGNAL(incomingMessage(const QString &, const QString &, const QString &)), this, SLOT(slotNewMessage(const QString &, const QString &, const QString &)));
 	QObject::connect(identity->engine(), SIGNAL(incomingNamesList(const QString &, const QString &, const int)), this, SLOT(slotNamesList(const QString &, const QString &, const int)));
 
-	// TODO: make this configurable: (on connect, join)
+	connect( this, SIGNAL( endSession() ), this, SLOT( slotPart() ) );
+	
+	// TODO: make this configurable: (join on load)
 	if (mEngine->state() == QSocket::Idle)
 		identity->engine()->connectToServer(identity->mySelf()->nickName());
-
 }
 
 IRCChannelContact::~IRCChannelContact()
 {
-	mIdentity->unregisterChannel(mChannelName);
-}
-
-KopeteMessageManager* IRCChannelContact::manager(bool)
-{
-	if (!mMsgManager)
-	{
-		kdDebug(14120) << k_funcinfo << "Creating new KMM" << endl;
-
-		KopeteContactPtrList initialContact;
-		initialContact.append((KopeteContact *)mIdentity->mySelf());
-		mMsgManager = KopeteMessageManagerFactory::factory()->create( (KopeteContact *)mIdentity->mySelf(), initialContact, (KopeteProtocol *)mIdentity->protocol());
-		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
-		QObject::connect( mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
-		if( mEngine->isLoggedIn() )
-			mEngine->joinChannel(mChannelName);
-	}
-	return mMsgManager;
-}
-
-void IRCChannelContact::slotMessageManagerDestroyed()
-{
-	mMsgManager = 0L;
+	mIdentity->unregisterChannel(mNickName);
 }
 
 void IRCChannelContact::slotConnectedToServer()
 {
-	// We've connected to the server, join this channel
-	mEngine->joinChannel(mChannelName);
-}
-
-void IRCChannelContact::slotNewMessage(const QString &originating, const QString &target, const QString &message)
-{
-	kdDebug(14120) << "[IRCProtocol]: slotNewMessage: originating is " << originating << " target is " << target << endl;
-	if (target.lower() == mChannelName.lower())
-	{
-		QString nickname = originating.section('!', 0, 0);
-		kdDebug(14120) << "[IRCProtocol]: slotNewMessage: originating is mChannelName, finding user " << nickname << endl;
-		IRCChanPrivUser *user = mMembers[nickname];
-		if (user)
-		{
-			KopeteMessage msg((KopeteContact *)user, mContact, message, KopeteMessage::Inbound);
-			manager()->appendMessage(msg);
-		}
-	}
+	// TODO: make this configurable: (on connect, join)
+	mEngine->joinChannel(mNickName);
 }
 
 void IRCChannelContact::slotNamesList(const QString &channel, const QString &nickname, const int mode)
 {
 	QString newNick = nickname;
-	if (channel.lower() == mChannelName.lower())
+	if (channel.lower() == mNickName.lower())
 	{
 		if (newNick.startsWith("@") || newNick.startsWith("+"))
 			newNick.remove(0, 1);
 
-		IRCChanPrivUser *user = new IRCChanPrivUser(mIdentity, newNick, (KIRC::UserClass)mode);
-		mMembers.insert(nickname, user);
+		IRCUserContact *user = new IRCUserContact(mIdentity, newNick, (KIRC::UserClass)mode);
 		manager()->addContact((KopeteContact *)user);
 	}
 }
@@ -129,34 +87,36 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QString &nic
 void IRCChannelContact::slotJoin()
 {
 	if ( onlineStatus() == KopeteContact::Offline )
-		mEngine->joinChannel(mChannelName);
+		mEngine->joinChannel(mNickName);
 }
 
 void IRCChannelContact::slotPart()
 {
 	if ( onlineStatus() == KopeteContact::Online || onlineStatus() == KopeteContact::Away)
-		mEngine->partChannel(mChannelName, QString("Kopete 2.0: http://kopete.kde.org"));
+	{
+		mEngine->partChannel(mNickName, QString("Kopete 2.0: http://kopete.kde.org"));
+		manager()->deleteLater();
+	}
 }
 
 void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString &channel)
 {
 	QString nickname = user.section('!', 0, 0);
-	if (nickname.lower() == mEngine->nickName().lower() && channel.lower() == mChannelName.lower())
+	if (nickname.lower() == mEngine->nickName().lower() && channel.lower() == mNickName.lower())
 	{
 		setOnlineStatus( KopeteContact::Online ); // We joined the channel, change status
 
 		KopeteMessage msg((KopeteContact *)this, mContact,
-		i18n(QString("You have joined channel %1").arg(mChannelName)), KopeteMessage::Internal);
+		i18n(QString("You have joined channel %1").arg(mNickName)), KopeteMessage::Internal);
 		manager()->appendMessage(msg);
 	}
 	else {
-		IRCChanPrivUser *contact = new IRCChanPrivUser(mIdentity, nickname, KIRC::Normal);
-		mMembers.insert(nickname, contact);
+		IRCUserContact *contact = new IRCUserContact(mIdentity, nickname, KIRC::Normal);
 		manager()->addContact((KopeteContact *)contact);
 
 		KopeteMessage msg((KopeteContact *)this, mContact,
 		i18n(QString("User %1[%2] joined channel %3").arg(nickname).arg(user.section('!', 1))
-		.arg(mChannelName)), KopeteMessage::Internal);
+		.arg(mNickName)), KopeteMessage::Internal);
 		manager()->appendMessage(msg);
 	}
 }
@@ -164,18 +124,17 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString &channel, const QString &reason)
 {
 	QString nickname = user.section('!', 0, 0);
-	if (nickname.lower() == mEngine->nickName().lower() && channel.lower() == mChannelName.lower())
+	if (nickname.lower() == mEngine->nickName().lower() && channel.lower() == mNickName.lower())
 		setOnlineStatus( KopeteContact::Offline ); // We parted the channel, change status
 	else {
-		IRCChanPrivUser *user = mMembers[nickname];
-		mMembers.remove(nickname);
-		if (user)
+		KopeteContact *user = locateUser( nickname );
+		if ( user )
 		{
-			manager()->removeContact((KopeteContact *)user);
+			manager()->removeContact( user );
 			delete user;
 		}
 		KopeteMessage msg((KopeteContact *)this, mContact,
-		i18n(QString("User %1 parted channel %2 (%3)").arg(nickname).arg(mChannelName).arg(reason)),
+		i18n(QString("User %1 parted channel %2 (%3)").arg(nickname).arg(mNickName).arg(reason)),
 		KopeteMessage::Internal);
 		manager()->appendMessage(msg);
 	}
@@ -184,21 +143,6 @@ void IRCChannelContact::slotUserPartedChannel(const QString &user, const QString
 void IRCChannelContact::slotConnectionClosed()
 {
 	setOnlineStatus( KopeteContact::Offline );
-}
-
-void IRCChannelContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
-{
-	if( onlineStatus() != KopeteContact::Online )
-		mEngine->joinChannel(mChannelName);
-
-	if( processMessage( message ) )
-	{
-		// If the above was false, there was a server command
-		mEngine->messageContact(mChannelName, message.plainBody());
-		manager()->appendMessage(message);
-	}
-
-	manager()->messageSucceeded();
 }
 
 KActionCollection *IRCChannelContact::customContextMenuActions()
@@ -224,24 +168,6 @@ QString IRCChannelContact::statusIcon() const
 	if ( onlineStatus() == KopeteContact::Online || onlineStatus() == KopeteContact::Away )
 		return "irc_protocol_small";
 	return "irc_protocol_offline";
-}
-
-IRCChanPrivUser::IRCChanPrivUser(IRCIdentity *identity, const QString &nickname, KIRC::UserClass userclass)
-	: IRCContact( identity, 0L )
-{
-	mUserclass = userclass;
-	mNickname = nickname;
-	setDisplayName(mNickname);
-}
-
-QString IRCChanPrivUser::statusIcon() const
-{
-	if (mUserclass == KIRC::Operator)
-		return "irc_op";
-	else if (mUserclass == KIRC::Voiced)
-		return "irc_voice";
-
-	return "irc_normal";
 }
 
 #include "ircchannelcontact.moc"

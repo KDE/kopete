@@ -20,6 +20,7 @@
 
 #include "kopeteprotocol.h"
 #include "ircidentity.h"
+#include "irccontact.h"
 
 #include <qpixmap.h>
 
@@ -57,7 +58,7 @@ public:
 	virtual KActionMenu* protocolActions();
 
 	// FIXME WHEN IDENTITY SUPPORT IS ADDED:
-	virtual KopeteContact *myself() const { return identity->mySelf(); }
+	virtual KopeteContact *myself() const { return static_cast<KopeteContact*>( identity->mySelf() ); }
 
 	void addContact(const QString &, const QString &, bool isChannel, KopeteMetaContact *m=0l);
 

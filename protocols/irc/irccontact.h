@@ -18,6 +18,8 @@
 #ifndef IRCCONTACT_H
 #define IRCCONTACT_H
 
+#include <qptrlist.h>
+
 #include "kirc.h"
 #include "kopetecontact.h"
 
@@ -28,17 +30,42 @@ class KopeteMessage;
 
 class IRCContact : public KopeteContact
 {
+	Q_OBJECT
+	
 	public:
-		IRCContact(IRCIdentity *identity, KopeteMetaContact *metac);
+		IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaContact *metac);
 
 		// Checks a message for server commands
 		bool processMessage( const KopeteMessage & );
 
+		// Nickname stuff
+		void setNickName(const QString &nickname) { mNickName = nickname; }
+		const QString &nickName() { return mNickName; }
+
+		virtual KopeteMessageManager* manager( bool canCreate = false );
+		virtual const QString &caption() const;
+
+	signals:
+		void endSession();
+
+	private slots:
+		void slotMessageManagerDestroyed();
+		void slotSendMsg(KopeteMessage &message, KopeteMessageManager *);
+		void slotNewMessage(const QString &originating, const QString &target, const QString &message);
+		void slotNewAction(const QString &originating, const QString &target, const QString &message);
+		void slotNewWhois(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
+
 	protected:
+		QPtrList<KopeteContact> mContact;
+		QPtrList<KopeteContact> mMyself;
+
 		KopeteMetaContact *mMetaContact;
 		KIRC *mEngine;
 		KopeteMessageManager *mMsgManager;
 		IRCIdentity *mIdentity;
+		QString mNickName;
+
+		KopeteContact *locateUser( const QString &nickName );
 };
 
 #endif
