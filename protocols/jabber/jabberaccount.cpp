@@ -99,6 +99,8 @@ JabberAccount::~JabberAccount ()
 
 	cleanup ();
 
+	delete myself()->metaContact ();
+
 }
 
 void JabberAccount::cleanup ()
