@@ -34,3 +34,4 @@ TODO for Jabber:
 - allow SSL fallback with setOptProbe
 - verify if Kopete can follow foreign clients modifying it's contact list
 - try to subscribe to a resource
+- verify behavior when subscribing to a certain resource of a contact

@@ -508,8 +508,11 @@ void JabberContact::reevaluateStatus ()
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New status for " << contactId () << " is " << status.description () << endl;
 	setOnlineStatus ( status );
 
+	// remove properties first
+	removeProperty ( "awayMessage" );
+
 	// set away message property
-	!resource.status().status().isEmpty () ? setProperty ( "awayMessage", resource.status().status () ) : removeProperty ( "awayMessage" );
+	setProperty ( "awayMessage", resource.status().status () );
 
 }
 
