@@ -28,17 +28,7 @@ GaduSession::GaduSession( QObject *parent, const char* name )
 
 GaduSession::~GaduSession()
 {
-	if ( isConnected() ) {
-		logoff();
-	}
-	if( session_ ) {
-		gg_free_session( session_ );
-		delete read_;
-		delete write_;
-		read_ = 0;
-		write_ = 0;
-		session_ = 0;
-	}
+	logoff();
 }
 
 bool
@@ -128,7 +118,7 @@ GaduSession::login( uin_t uin, const QString& password,
 void
 GaduSession::logoff()
 {
-	if ( isConnected() ) {
+	if ( session_ ) {
 		gg_logoff( session_ );
 		QObject::disconnect( this, SLOT(checkDescriptor()) );
 		delete read_;
@@ -137,6 +127,7 @@ GaduSession::logoff()
 		write_ = 0;
 		gg_free_session( session_ );
 		session_ = 0;
+		emit disconnect();
 	}
 }
 
@@ -256,6 +247,7 @@ GaduSession::checkDescriptor()
 	struct gg_event *e;
 
 	if (!(e = gg_watch_fd(session_))) {
+		kdDebug(14100)<<"Connection was broken for some reason"<<endl;
 		emit error( i18n("Connection broken!"),
 								i18n(strerror(errno)) );
 		QObject::disconnect( this, SLOT(checkDescriptor()) );
@@ -265,7 +257,9 @@ GaduSession::checkDescriptor()
 		write_ = 0;
 		gg_free_session( session_ );
 		session_ = 0;
+		kdDebug(14100)<<"Emitting disconnect"<<endl;
 		emit disconnect();
+		kdDebug(14100)<<"done emitting disconnect"<<endl;
 		return;
 	}
 

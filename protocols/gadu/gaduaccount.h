@@ -56,7 +56,7 @@ public slots:
 	//}
 
 	void changeStatus( const KopeteOnlineStatus& status, const QString& descr=QString::null );
-	void slotLogin();
+	void slotLogin( int status = GG_STATUS_AVAIL, const QString& dscr = QString::null );
 	void slotLogoff();
 	void slotGoOnline();
 	void slotGoOffline();
@@ -78,7 +78,6 @@ protected:
 	bool addContactToMetaContact( const QString &contactId, const QString &displayName,
 																KopeteMetaContact *parentContact );
 	//}
-
 private slots:
 	void startNotify();
 	void messageReceived( struct gg_event* e );

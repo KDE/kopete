@@ -1,11 +1,11 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 // gaducommands.h - all basic, and not-session dependent commands
-//                  (meaning you don't have to be logged in for any
-//                   of these). These delete themselves, meaning you don't
-//                   have to/can't delete them explicitely and have to create
-//                   them dynamically (via the 'new' call).
+//									(meaning you don't have to be logged in for any
+//									 of these). These delete themselves, meaning you don't
+//									 have to/can't delete them explicitely and have to create
+//									 them dynamically (via the 'new' call).
 //
-// Copyright (C)  2002-2003  Zack Rusin <zack@kde.org>
+// Copyright (C)	2002-2003	 Zack Rusin <zack@kde.org>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,7 +14,7 @@
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
@@ -87,7 +87,7 @@ protected slots:
 	void watcher();
 private:
 	const struct gg_search_request *request_;
-	struct gg_http  *session_;
+	struct gg_http	*session_;
 };
 
 class RegisterCommand : public GaduCommand
@@ -106,7 +106,7 @@ protected slots:
 private:
 	QString email_;
 	QString password_;
-	struct gg_http  *session_;
+	struct gg_http	*session_;
 };
 
 class RemindPasswordCommand : public GaduCommand
@@ -123,7 +123,7 @@ protected slots:
 	void watcher();
 private:
 	uin_t uin_;
-	struct gg_http  *session_;
+	struct gg_http	*session_;
 };
 
 class ChangePasswordCommand : public GaduCommand
@@ -139,7 +139,7 @@ public:
 protected slots:
 	void watcher();
 private:
-	struct gg_http  *session_;
+	struct gg_http	*session_;
 	QString passwd_;
 	QString newpasswd_;
 	QString newemail_;
@@ -162,7 +162,7 @@ protected slots:
 	void watcher();
 private:
 	struct gg_change_info_request info_;
-	struct gg_http  *session_;
+	struct gg_http	*session_;
 	uin_t uin_;
 	QString passwd_;
 };
@@ -181,7 +181,7 @@ public:
 protected slots:
 	void watcher();
 private:
-	struct gg_http  *session_;
+	struct gg_http	*session_;
 	uin_t uin_;
 	QString password_;
 	QStringList contacts_;
@@ -202,7 +202,7 @@ protected slots:
 	void watcher();
 
 private:
-	struct gg_http  *session_;
+	struct gg_http	*session_;
 	uin_t uin_;
 	QString password_;
 };

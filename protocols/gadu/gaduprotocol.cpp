@@ -56,6 +56,9 @@ GaduProtocol::GaduProtocol( QObject* parent, const char* name, const QStringList
 																"gg_online",	i18n( "Go &Online" ),		 i18n( "Online" ) ),
 			gaduStatusAvailDescr_(		KopeteOnlineStatus::Online,	 30, this, GG_STATUS_AVAIL_DESCR,
 																"gg_online_d",	i18n( "Go &Online" ),		 i18n( "Online With Description" ) ),
+			gaduConnecting_(          KopeteOnlineStatus::Offline, 1, this, GG_STATUS_CONNECTING,
+																"gg_con", i18n( "Connect"), i18n("Connecting") ),
+
 			defaultAccount_( 0 )
 {
 	if ( protocolStatic_ )
@@ -125,6 +128,8 @@ GaduProtocol::convertStatus( uint status ) const
 		return gaduStatusAvail_;
 	case GG_STATUS_AVAIL_DESCR:
 		return gaduStatusAvailDescr_;
+	case GG_STATUS_CONNECTING:
+		return gaduConnecting_;
 	default:
 		return gaduStatusOffline_;
 	}

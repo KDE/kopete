@@ -138,15 +138,29 @@ void
 GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& descr )
 {
   kdDebug()<<"### Status = "<<session_->isConnected()<<endl;
-	if ( !session_->isConnected() ) {
-		slotLogin();
-	}
-	if ( descr.isEmpty() ) {
-		if ( session_->changeStatus( status.internalStatus() ) != 0 )
-      return;
+
+	if ( GG_S_NA( status.internalStatus() ) ) {
+		if ( !session_->isConnected() )
+			return;//already logged off
+		else if ( status.internalStatus() == GG_STATUS_NOT_AVAIL_DESCR ) {
+			if ( session_->changeStatusDescription( status.internalStatus(), descr ) != 0 )
+				return;
+		}
+		session_->logoff();
 	} else {
-		if ( session_->changeStatusDescription( status.internalStatus(), descr ) != 0 )
-      return;
+		if ( !session_->isConnected() ) {
+			slotLogin( status.internalStatus(), descr );
+			status_ = status;
+			return;
+		} else {
+			if ( descr.isEmpty() ) {
+				if ( session_->changeStatus( status.internalStatus() ) != 0 )
+					return;
+			} else {
+				if ( session_->changeStatusDescription( status.internalStatus(), descr ) != 0 )
+					return;
+			}
+		}
 	}
 	status_ = status;
 	myself_->setOnlineStatus( status_ );
@@ -157,7 +171,7 @@ GaduAccount::changeStatus( const KopeteOnlineStatus& status, const QString& desc
 }
 
 void
-GaduAccount::slotLogin()
+GaduAccount::slotLogin( int status, const QString& dscr  )
 {
 	if ( (userUin_ == 0) || getPassword().isEmpty() ) {
 		KMessageBox::error( qApp->mainWidget(),
@@ -165,10 +179,11 @@ GaduAccount::slotLogin()
 												i18n("Unable to Login") );
 		return;
 	}
+	myself_->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING ) );
 	if ( !session_->isConnected() ) {
-		session_->login( userUin_, getPassword(), GG_STATUS_AVAIL );
+		session_->login( userUin_, getPassword(), status, dscr );
 	} else {
-		session_->changeStatus( GG_STATUS_AVAIL );
+		session_->changeStatus( status );
 	}
 }
 
@@ -179,7 +194,6 @@ GaduAccount::slotLogoff()
 		status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
 		changeStatus( status_ );
     session_->logoff();
-
 	}
 }
 
@@ -242,8 +256,11 @@ GaduAccount::notify( uin_t* userlist, int count )
 void
 GaduAccount::sendMessage( uin_t recipient, const QString& msg, int msgClass )
 {
+	//kdDebug(14100)<<"Sending \"" << msg <<"\""<<endl;
+	QString sendMsg = msg;
+	sendMsg.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "\r\n" ) );
 	if ( session_->isConnected() )
-		session_->sendMessage( recipient, msg, msgClass );
+		session_->sendMessage( recipient, sendMsg, msgClass );
 }
 
 void
@@ -255,7 +272,7 @@ GaduAccount::error( const QString& title, const QString& message )
 void
 GaduAccount::messageReceived( struct gg_event* e )
 {
-	//kdDebug(14100)<<"####"<<" Great! Message Received :: "<<((const char*)e->event.msg.message)<<endl;
+	kdDebug(14100)<<"####"<<" Great! Message Received :: "<<((const char*)e->event.msg.message)<<endl;
 
 	if ( !e->event.msg.message )
 		return;
@@ -407,8 +424,14 @@ GaduAccount::startNotify()
 void
 GaduAccount::slotSessionDisconnect()
 {
+	kdDebug(14100)<<"Disconnecting"<<endl;
 	pingTimer_->stop();
-	changeStatus(  GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
+	for ( ContactsMap::iterator it = contactsMap_.begin(); it != contactsMap_.end(); ++it) {
+		it.data()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
+	}
+	if ( myself_->onlineStatus().internalStatus() != GG_STATUS_NOT_AVAIL ||
+			 myself_->onlineStatus().internalStatus() != GG_STATUS_NOT_AVAIL_DESCR )
+		myself_->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
 }
 
 void

@@ -45,6 +45,8 @@ class QWidget;
 class KopeteMetaContact;
 class GaduPreferences;
 
+#define GG_STATUS_CONNECTING 0x0100
+
 class GaduProtocol : public KopeteProtocol
 {
 	Q_OBJECT
@@ -86,6 +88,7 @@ private:
 	const KopeteOnlineStatus gaduStatusInvisibleDescr_;
 	const KopeteOnlineStatus gaduStatusAvail_;
 	const KopeteOnlineStatus gaduStatusAvailDescr_;
+	const KopeteOnlineStatus gaduConnecting_;
 
 	GaduAccount *defaultAccount_;
 };
