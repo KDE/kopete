@@ -32,6 +32,7 @@ class ICQProtocol : public KopeteProtocol
 
 	public:
 		ICQProtocol(QObject *parent, const char *name, const QStringList &args);
+		~ICQProtocol();
 
 		/**
 		* Return the active instance of the protocol

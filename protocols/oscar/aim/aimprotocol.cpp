@@ -53,6 +53,7 @@ AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
 
 AIMProtocol::~AIMProtocol()
 {
+	protocolStatic_ =0L;
 }
 
 AIMProtocol *AIMProtocol::protocol(void)

@@ -71,6 +71,11 @@ ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 	initCountries();
 }
 
+ICQProtocol::~ICQProtocol()
+{
+	protocolStatic_ =0L;
+}
+
 
 void ICQProtocol::initGenders()
 {
