@@ -82,8 +82,8 @@ void KopeteXSLThread::run()
 	#endif
 
 	// Convert QString into a C string
-	QCString xmlCString = m_xml.latin1();
-	QCString xslCString = m_xsl.latin1();
+	QCString xmlCString = m_xml.utf8();
+	QCString xslCString = m_xsl.utf8();
 
 	// Read XML docs in from memory
 	xmlDoc = xmlParseMemory( xmlCString, xmlCString.length() );
