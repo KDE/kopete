@@ -39,6 +39,7 @@
 #include "kopetegroup.h"
 
 #if KDE_IS_VERSION( 3, 1, 90 )
+#include "kopetewalletmanager.h"
 // KMessageBox is only used in the KWallet code path
 #include <kmessagebox.h>
 #include <kwallet.h>
@@ -69,10 +70,6 @@ public:
 	QDict<KopeteContact> contacts;
 	QColor color;
 	KopeteContact *myself;
-
-#if KDE_IS_VERSION( 3, 1, 90 )
-	KWallet::Wallet *wallet;
-#endif
 };
 
 KopeteAccount::KopeteAccount( KopeteProtocol *parent, const QString &accountId, const char *name )
@@ -85,10 +82,6 @@ KopeteAccount::KopeteAccount( KopeteProtocol *parent, const QString &accountId, 
 	d->rememberPassword = false;
 	d->myself = 0L;
 
-#if KDE_IS_VERSION( 3, 1, 90 )
-	d->wallet = 0L;
-#endif
-
 	KopeteAccountManager::manager()->registerAccount( this );
 	QTimer::singleShot( 0, this, SLOT( slotAccountReady() ) );
 }
@@ -99,11 +92,6 @@ KopeteAccount::~KopeteAccount()
 	while ( !d->contacts.isEmpty() )
 		delete *QDictIterator<KopeteContact>( d->contacts );
 	KopeteAccountManager::manager()->unregisterAccount( this );
-
-#if KDE_IS_VERSION( 3, 1, 90 )
-	delete d->wallet;
-	d->wallet = 0L;
-#endif
 
 	delete d;
 }
@@ -187,14 +175,10 @@ void KopeteAccount::writeConfig( const QString &configGroupName )
 	config->writeEntry( "AccountId", d->id );
 	config->writeEntry( "Priority", d->priority );
 
-#if KDE_IS_VERSION( 3, 1, 90 )
-	config->deleteEntry( "Password" ); // now in KWallet
-#else
-	if ( d->rememberPassword )
+	if ( d->rememberPassword && !d->password.isNull() )
 		config->writeEntry( "Password", cryptStr( d->password ) );
 	else
 		config->deleteEntry( "Password" );
-#endif
 
 	config->writeEntry( "RememberPassword", d->rememberPassword );
 	config->writeEntry( "AutoConnect", d->autologin );
@@ -264,34 +248,24 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 	if ( !error )
 	{
 #if KDE_IS_VERSION( 3, 1, 90 )
-		if ( !KWallet::Wallet::folderDoesNotExist( KWallet::Wallet::NetworkWallet(), QString::fromLatin1( "Kopete" ) ) )
+		if( KWallet::Wallet *wallet = KopeteWalletManager::self()->wallet( KopeteWalletManager::DoNotCreateFolder ) )
 		{
-			// The folder might exist, try to open the wallet
-			if ( !d->wallet ) {
-				d->wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), /*FIXME: put a real wId here */0, KWallet::Wallet::Synchronous );
-				if (d->wallet) {
-					QObject::connect(d->wallet, SIGNAL(walletClosed()), this, SLOT(walletClosed()));
-				}
-			}
-
 			// Before trying to read from the wallet, check if the config file holds a password.
 			// If so, remove it from the config and set it through KWallet instead.
-			if ( !d->password.isNull() )
-			{
-				setPassword( d->password );
-				return d->password;
-			}
-
 			QString pwd;
-			if ( d->wallet && d->wallet->setFolder( QString::fromLatin1( "Kopete" ) ) &&
-				d->wallet->readPassword( configGroup(), pwd ) == 0 && !pwd.isNull() )
+			if ( d->rememberPassword && !d->password.isNull() )
 			{
+				pwd = d->password;
+				setPassword( pwd );
 				return pwd;
 			}
+
+			if ( wallet->readPassword( configGroup(), pwd ) == 0 && !pwd.isNull() )
+				return pwd;
 		}
 #endif
 
-		if ( d->rememberPassword || !d->password.isNull() )
+		if ( d->rememberPassword && !d->password.isNull() )
 			return d->password;
 	}
 
@@ -335,7 +309,7 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 	else
 	{
 		if ( ok )
-            *ok = false;
+			*ok = false;
 	}
 
 	passwdDialog->deleteLater();
@@ -362,34 +336,22 @@ void KopeteAccount::setPassword( const QString &pass )
 #if KDE_IS_VERSION( 3, 1, 90 )
 	kdDebug( 14010 ) << k_funcinfo << endl;
 
+	if ( KWallet::Wallet *wallet = KopeteWalletManager::self()->wallet() )
+	{
+		if ( wallet->writePassword( configGroup(), pass ) == 0 )
+		{
+			// Remove any pass from KConfig if it is still there
+			if ( !d->password.isNull() )
+			{
+				d->password = QString::null;
+				writeConfig( configGroup() );
+			}
+			return;
+		}
+	}
+
 	if ( KWallet::Wallet::isEnabled() )
 	{
-		if ( !d->wallet )
-			d->wallet = KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), /*FIXME: put a real wId here */0, KWallet::Wallet::Synchronous );
-
-		if ( d->wallet )
-		{
-			if ( !d->wallet->hasFolder( QString::fromLatin1( "Kopete" ) ) )
-				d->wallet->createFolder( QString::fromLatin1( "Kopete" ) );
-
-			if ( d->wallet->setFolder( QString::fromLatin1( "Kopete" ) ) &&
-				d->wallet->writePassword( configGroup(), pass ) == 0 )
-			{
-				// Remove any pass from KConfig if it is still there
-				if ( !d->password.isNull() )
-				{
-					KConfig *config = KGlobal::config();
-					config->setGroup( configGroup() );
-
-					config->deleteEntry( "Password" );
-					config->sync();
-
-					d->password = QString::null;
-				}
-				return;
-			}
-		}
-
 		// If we end up here, the wallet is enabled, but failed somehow.
 		// Ask the user what to do now.
 		if ( KMessageBox::warningContinueCancel( qApp->mainWidget(),
@@ -575,14 +537,6 @@ KopeteContact * KopeteAccount::myself() const
 void KopeteAccount::setMyself( KopeteContact *myself )
 {
 	d->myself = myself;
-}
-
-void KopeteAccount::walletClosed()
-{
-#if KDE_IS_VERSION( 3, 1, 90 )
-	delete d->wallet;
-	d->wallet = 0L;
-#endif
 }
 
 #include "kopeteaccount.moc"
