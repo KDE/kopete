@@ -208,15 +208,15 @@ GaduRegisterAccount::updateStatus( const QString status )
 void
 GaduRegisterAccount::slotClose()
 {
-//	deleteLater();
+	delete cRegister;
+	cRegister = NULL;
 }
 
 GaduRegisterAccount::~GaduRegisterAccount( )
 {
 	kdDebug( 14100 ) << " register Cancel " << endl;
-//	if ( cRegister ) {
-//		cRegister->cancel();
-//	}
+	delete cRegister;
+	cRegister = NULL;
 }
 
 #include "gaduregisteraccount.moc"
