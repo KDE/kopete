@@ -100,7 +100,7 @@ JabberContact::~JabberContact()
 	delete actionHistory;
 	delete actionRename;
 	delete actionSelectResource;
-	delete actionRetrieveVCard;
+	//delete actionRetrieveVCard;
 	delete actionSendAuth;
 	delete actionStatusAway;
 	delete actionStatusChat;
@@ -165,7 +165,7 @@ void JabberContact::initActions()
 	actionHistory = KopeteStdAction::viewHistory(this, SLOT(slotViewHistory()), this, "actionHistory");
 	actionRename = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");
 	actionSelectResource = new KSelectAction(i18n("Select Resource"), "selectresource", 0, this, SLOT(slotSelectResource()), this, "actionSelectResource");
-	actionRetrieveVCard = new KAction(i18n("Get vCard"), "identity", 0, this, SLOT(slotRetrieveVCard()), this, "actionRetrieveVCard");
+	//actionRetrieveVCard = new KAction(i18n("Get vCard"), "identity", 0, this, SLOT(slotRetrieveVCard()), this, "actionRetrieveVCard");
 	actionSendAuth = new KAction(i18n("(Re)send authorization to"), "", 0, this, SLOT(slotSendAuth()), this, "actionSendAuth");
 	actionRequestAuth = new KAction(i18n("(Re)request authorization from"), "", 0, this, SLOT(slotRequestAuth()), this, "actionRequestAuth");
 	actionStatusAway = new KAction(i18n("Away"), "jabber_away", 0, this,SLOT(slotStatusAway()), this,  "actionAway");
