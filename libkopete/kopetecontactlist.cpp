@@ -26,6 +26,7 @@
 #include <kstandarddirs.h>
 #include <kapplication.h>
 #include <kdebug.h>
+#include <qstringlist.h>
 
 KopeteContactList *KopeteContactList::s_contactList = 0L;
 
@@ -95,10 +96,15 @@ void KopeteContactList::loadXML()
 			if ( elementl1.tagName() == "person" )
 			{
 				QString person_name = elementl1.attribute("name", "No Name");
-				kdDebug() << "XML Reader: New Person " << person_name << endl;
+				QString person_groups = elementl1.attribute("groups", "Unknown");
+				kdDebug() << "XML Reader: New Person " << person_name << " in groups " << person_groups << endl;
 				KopeteMetaContact *mc = findContact(person_name);
 				mc->setDisplayName(person_name);
 
+				QStringList groupStringList = QStringList::split(',', person_groups);
+				for (QStringList::Iterator it = groupStringList.begin(); it != groupStringList.end(); it++)
+					mc->addToGroup(*it);
+					
 				/* Now we have to find all contacts and metadata for this person */
 				QDomNode nodel2;
 				nodel2 = nodel1.firstChild();
