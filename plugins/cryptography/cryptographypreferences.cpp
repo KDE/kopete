@@ -37,12 +37,12 @@ CryptographyPreferences::CryptographyPreferences(QWidget *parent, const char* /*
 	preferencesDialog = new CryptographyPrefsUI(this);
 	connect (preferencesDialog->m_selectOwnKey , SIGNAL(pressed()) ,
 			this , SLOT(slotSelectPressed()));
-	
+
 	// KAutoConfig stuff
 	kautoconfig = new KAutoConfig(KGlobal::config(), this, "kautoconfig");
 	connect(kautoconfig, SIGNAL(widgetModified()), SLOT(widgetModified()));
 	connect(kautoconfig, SIGNAL(settingsChanged()), SLOT(widgetModified()));
-    kautoconfig->addWidget(preferencesDialog, "Cryptography Plugin");
+	kautoconfig->addWidget(preferencesDialog, "Cryptography Plugin");
 	kautoconfig->retrieveSettings(true);
 }
 
