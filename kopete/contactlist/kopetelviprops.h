@@ -20,6 +20,7 @@
 #define KOPETELVIPROPS_H
 
 #include <kdialogbase.h>
+#include <kabc/sound.h>
 
 #include "kopetegvipropswidget.h"
 #include "kopetemetalvipropswidget.h"
@@ -67,6 +68,7 @@ class KopeteMetaLVIProps: public KDialogBase
 		KopeteAddressBookExport *mExport;
 		QStringList m_eventList;
 		QString m_event;
+		KABC::Sound mSound;
 
 	private slots:
 		void slotOkClicked();
@@ -74,6 +76,7 @@ class KopeteMetaLVIProps: public KDialogBase
 		void slotHasAddressbookEntryToggled( bool on );
 		void slotSelectAddresseeClicked();
 		void slotMergeClicked();
+		void slotFromKABCClicked();
 		void slotEventsComboChanged( int item );
 };
 

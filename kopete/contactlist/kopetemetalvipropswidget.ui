@@ -463,13 +463,27 @@ This option is only available if there is exactly one child contact </string>
                             <string>S&amp;uppress standard notifications</string>
                         </property>
                         <property name="checked">
-                            <bool>true</bool>
+                            <bool>false</bool>
                         </property>
                         <property name="toolTip" stdset="0">
                             <string>Check to prevent notifications common to all contacts from happening for this contact</string>
                         </property>
                     </widget>
-                    <spacer row="5" column="1">
+                    <widget class="KPushButton" row="5" column="0">
+                        <property name="name">
+                            <cstring>btnFromKABC</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Sync KABC...</string>
+                        </property>
+                        <property name="accel">
+                            <string></string>
+                        </property>
+                    </widget>
+                    <spacer row="6" column="1">
                         <property name="name">
                             <cstring>spacer6</cstring>
                         </property>
@@ -561,6 +575,7 @@ This option is only available if there is exactly one child contact </string>
     <includehint>kicondialog.h</includehint>
     <includehint>kurlrequester.h</includehint>
     <includehint>klineedit.h</includehint>
+    <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
 </includehints>
 </UI>

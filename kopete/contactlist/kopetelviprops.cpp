@@ -32,6 +32,7 @@
 #include <kicondialog.h>
 #include <kabc/addresseedialog.h>
 #include <kabc/stdaddressbook.h>
+#include <kabc/addressee.h>
 #include <kurlrequester.h>
 
 #include "kopeteaddrbookexport.h"
@@ -160,10 +161,11 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 	mainWidget->icnbOnline->setIcon( onlineName );
 	mainWidget->icnbAway->setIcon( awayName );
 	mainWidget->icnbUnknown->setIcon( unknownName );
-	
+
 	QString kabcUid = item->metaContact()->metaContactId();
 
 	mExport = 0L;
+
 	
 	if ( !kabcUid.isEmpty() )
 	{
@@ -177,6 +179,9 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 		mainWidget->lblAddressee->setEnabled( true );
 		mainWidget->chkHasAddressbookEntry->setChecked( true );
 		mExport = new KopeteAddressBookExport( this, item->metaContact() );
+		
+		mSound = a.sound();
+		mainWidget->btnFromKABC->setEnabled( !( mSound.isIntern() || mSound.url().isEmpty() ) );
 	}
 	
 	connect( this, SIGNAL(okClicked()), this, SLOT( slotOkClicked() ) );
@@ -188,7 +193,8 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 		this, SLOT( slotSelectAddresseeClicked() ) );
 	connect( mainWidget->btnMerge, SIGNAL( clicked() ),
 		this, SLOT( slotMergeClicked() ) );
-		
+	connect( mainWidget->btnFromKABC, SIGNAL( clicked() ),
+		this, SLOT( slotFromKABCClicked() ) );
 	slotUseCustomIconsToggled( mainWidget->chkUseCustomIcons->isChecked() );
 
 	populateEventsCombo();
@@ -265,9 +271,12 @@ void KopeteMetaLVIProps::slotSelectAddresseeClicked()
 	 {
 	 	mainWidget->edtAddressee->setText( QString::null ) ;
 		mainWidget->btnMerge->setEnabled( false );
+		mainWidget->btnFromKABC->setEnabled( false );
 	 }
 	 else
 	 {
+		mSound = a.sound();
+		mainWidget->btnFromKABC->setEnabled( !( mSound.isIntern() || mSound.url().isEmpty() ) );
 	 	mainWidget->btnMerge->setEnabled( true );
 		// set the lineedit to the Addressee's name
 		mainWidget->edtAddressee->setText( a.realName() );
@@ -368,7 +377,7 @@ void KopeteMetaLVIProps::resetEventWidgets()
 	mainWidget->chkMsgSS->setChecked( true );
 	mainWidget->chkCustomChat->setChecked( false );
 	mainWidget->chkChatSS->setChecked( true );
-	mainWidget->chkSuppressCommon->setChecked( true );
+	mainWidget->chkSuppressCommon->setChecked( false );
 }
 
 void KopeteMetaLVIProps::storeCurrentCustoms()
@@ -404,6 +413,11 @@ void KopeteMetaLVIProps::storeCurrentCustoms()
 		evt->setPresentation( KopeteEventPresentation::Chat, eventNotify );
 		evt->setSuppressCommon( mainWidget->chkSuppressCommon->isChecked() );
 	}
+}
+
+void KopeteMetaLVIProps::slotFromKABCClicked()
+{
+	mainWidget->customSound->setURL( mSound.url() );
 }
 
 #include "kopetelviprops.moc"
