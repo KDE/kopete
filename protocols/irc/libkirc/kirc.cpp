@@ -72,7 +72,7 @@ void KIRC::slotReadyRead()
 			kdDebug() << "IRC Plugin: userJoinedChannel emitting" << endl;
 			QString channel = line.mid((line.findRev(':')+1), (line.length()-1));
 			emit userJoinedChannel(line.mid(1, (commandIndex-1)), channel);
-			return;
+			continue;
 		}
 		else if (command == QString("PRIVMSG"))
 		{
@@ -96,7 +96,7 @@ void KIRC::slotReadyRead()
 					QString reply = QString("NOTICE %1 :%2PING %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(message.section(' ', 1, 1)).arg(QChar(0x01)).arg("\r\n");
 					writeBlock(reply.latin1(), reply.length());
 					emit repliedCtcp("PING", originating.section('!', 0, 0), message.section(' ', 1, 1));
-					return;
+					continue;
 				} else if (special.lower() == "version")
 				{
 					// Just remove newlines and line feeds because we don't want to user to get clever ;)
@@ -109,7 +109,7 @@ void KIRC::slotReadyRead()
 					QString reply = QString("NOTICE %1 :%2VERSION %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(mVersionString).arg(QChar(0x01)).arg("\r\n");
 					writeBlock(reply.latin1(), reply.length());
 					emit repliedCtcp("VERSION", originating.section('!', 0, 0), mVersionString);
-					return;
+					continue;
 				} else if (special.lower() == "userinfo")
 				{
 					mUserString.replace(QRegExp("[\\r\\n]*$"), "");
@@ -120,21 +120,21 @@ void KIRC::slotReadyRead()
 					QString reply = QString("NOTICE %1 :%2USERINFO %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(mUserString).arg(QChar(0x01)).arg("\r\n");
 					writeBlock(reply.latin1(), reply.length());
 					emit repliedCtcp("USERINFO", originating.section('!', 0, 0), mUserString);
-					return;
+					continue;
 				} else if (special.lower() == "clientinfo")
 				{
 					QString response = "The following commands are supported, but without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING, ACTION.";
 					QString reply = QString("NOTICE %1 :%2CLIENTINFO %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(response).arg(QChar(0x01)).arg("\r\n");
 					writeBlock(reply.latin1(), reply.length());
 					emit repliedCtcp("CLIENTINFO", originating.section('!', 0, 0), response);
-					return;
+					continue;
 				} else if (special.lower() == "time")
 				{
 					QString dateTime = QDateTime::currentDateTime().toString();
 					QString reply = QString("NOTICE %1 :%2TIME %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(dateTime).arg(QChar(0x01)).arg("\r\n");
 					writeBlock(reply.latin1(), reply.length());
 					emit repliedCtcp("TIME", originating.section('!', 0, 0), dateTime);
-					return;
+					continue;
 				} else if (special.lower() == "source")
 				{
 					mSourceString.replace(QRegExp("[\\r\\n]*$"), "");
@@ -145,7 +145,7 @@ void KIRC::slotReadyRead()
 					QString reply = QString("NOTICE %1 :%2SOURCE %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(mSourceString).arg(QChar(0x01)).arg("\r\n");
 					writeBlock(reply.latin1(), reply.length());
 					emit repliedCtcp("TIME", originating.section('!', 0, 0), mSourceString);
-					return;
+					continue;
 				} else if (special.lower() == "finger")
 				{
 					// Not implemented yet
@@ -158,7 +158,7 @@ void KIRC::slotReadyRead()
 					} else {
 						emit incomingPrivAction(originating, target, message);
 					}
-					return;
+					continue;
 				}
 			}
 			if (target[0] == '#' || target[0] == '!' || target[0] == '&')
@@ -167,8 +167,9 @@ void KIRC::slotReadyRead()
 			} else {
 				emit incomingPrivMessage(originating, target, message);
 			}
-			return;
-		} else if (command == "NOTICE")
+			continue;
+		}
+		else if (command == QString("NOTICE"))
 		{
 			QString originating = line.section(' ', 0, 0);
 			originating.remove(0, 1);
@@ -210,10 +211,11 @@ void KIRC::slotReadyRead()
 							emit incomingCtcpReply("PING", originating.section('!', 0, 0), diffString);
 						}
 					}
-					return;
+					continue;
 				}
 			}
-			return;
+			kdDebug() << "-" << command << "-" << endl;
+			continue;
 		} else if (command == QString("PART"))
 		{
 			/*
@@ -226,7 +228,7 @@ void KIRC::slotReadyRead()
 			QString message = line.section(' ', 3);
 			message = message.remove(0, 1);
 			emit incomingPartedChannel(originating, target, message);
-			return;
+			continue;
 		}
 		else if (command == QString("QUIT"))
 		{
@@ -239,7 +241,7 @@ void KIRC::slotReadyRead()
 			QString message = line.section(' ', 2);
 			message = message.remove(0, 1);
 			emit incomingQuitIRC(originating, message);
-			return;
+			continue;
 		}
 		else if (command == QString("NICK"))
 		{
@@ -254,10 +256,10 @@ void KIRC::slotReadyRead()
 			{
 				emit successfullyChangedNick(oldNick, newNick);
 				mNickname = newNick;
-				return;
+				continue;
 			}
 			emit incomingNickChange(oldNick, newNick);
-			return;
+			continue;
 		}
 		else if (command == QString("TOPIC"))
 		{
@@ -270,7 +272,7 @@ void KIRC::slotReadyRead()
 			QString changer = line.section('!', 0, 0);
 			changer = changer.remove(0,1);
 			emit incomingTopicChange(channel, changer, newTopic);
-			return;
+			continue;
 		}
 		else if (number.contains(QRegExp("^\\d\\d\\d$")))
 		{
@@ -503,7 +505,7 @@ void KIRC::slotReadyRead()
 						// This tells us that our nickname is, but we aren't logged in. This differs because the server won't send us a response back telling us our nick changed (since we aren't logged in)
 						failedNickOnLogin = true;
 						emit incomingFailedNickOnLogin(line.section(' ', 3, 3));
-						return;
+						continue;
 					}
 					// And this is the signal for if someone is trying to use the /nick command or such when already logged in, but it's already in use
 					emit incomingNickInUse(line.section(' ', 3, 3));
@@ -528,7 +530,7 @@ void KIRC::slotReadyRead()
 
 			statement.append( "\r\n");
 			writeBlock(statement.data(), statement.length() );
-			return;
+			continue;
 		}
 	}
 }
