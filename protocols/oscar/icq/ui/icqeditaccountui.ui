@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>ICQEditAccountUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,14 +8,14 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>640</width>
-            <height>480</height>
+            <width>520</width>
+            <height>263</height>
         </rect>
     </property>
     <property name="caption">
         <string>ICQEditAccountUI</string>
     </property>
-    <vbox>
+    <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
@@ -25,9 +25,17 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QTabWidget">
+        <widget class="QTabWidget" row="0" column="0">
             <property name="name">
                 <cstring>tabWidget7</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>3</hsizetype>
+                    <vsizetype>3</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
             </property>
             <widget class="QWidget">
                 <property name="name">
@@ -36,13 +44,21 @@
                 <attribute name="title">
                     <string>B&amp;asic Setup</string>
                 </attribute>
-                <vbox>
+                <grid>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QGroupBox">
+                    <widget class="QGroupBox" row="0" column="0">
                         <property name="name">
                             <cstring>groupBox3</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
                         </property>
                         <property name="title">
                             <string>Account Preferences</string>
@@ -89,19 +105,49 @@
                                     </widget>
                                 </hbox>
                             </widget>
-                            <widget class="QCheckBox">
+                            <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>chkSavePassword</cstring>
+                                    <cstring>layout251</cstring>
                                 </property>
-                                <property name="text">
-                                    <string>Remember &amp;password</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Check to save your password.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
-                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QCheckBox">
+                                        <property name="name">
+                                            <cstring>chkSavePassword</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Remember &amp;password</string>
+                                        </property>
+                                        <property name="accel">
+                                            <string>Alt+P</string>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>Check to save your password.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
+                                        </property>
+                                    </widget>
+                                    <spacer>
+                                        <property name="name">
+                                            <cstring>spacer78</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Expanding</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>251</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                </hbox>
                             </widget>
                             <widget class="QLayoutWidget">
                                 <property name="name">
@@ -170,53 +216,98 @@
                                     </widget>
                                 </hbox>
                             </widget>
-                            <widget class="QCheckBox">
+                            <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>chkHideIP</cstring>
+                                    <cstring>layout7</cstring>
                                 </property>
-                                <property name="text">
-                                    <string>Hide &amp;IP</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Check this to hide your IP address from other users.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Check this to hide your IP address from other users.  If this option is unchecked, other users may view your IP address in your user information.</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>chkWebAware</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>W&amp;eb aware</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Check this box to enable Web Aware functionality.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Check this box to enable Web Aware functionality, which allows people to see your online status from a web page, and send you a message without necessarily having ICQ themselves.</string>
-                                </property>
-                            </widget>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>chkRequireAuth</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Require authori&amp;zation</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Enable authorization requirement, which will not allow users to add you to their contact list without authorization from you.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Enable authorization requirement, which will not allow users to add you to their contact list without authorization from you.  Check this box, and you will have to confirm any users who add you to their list before they may see your online status.</string>
-                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QCheckBox">
+                                        <property name="name">
+                                            <cstring>chkRequireAuth</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Require authori&amp;zation</string>
+                                        </property>
+                                        <property name="accel">
+                                            <string>Alt+Z</string>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>Enable authorization requirement, which will not allow users to add you to their contact list without authorization from you.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>Enable authorization requirement, which will not allow users to add you to their contact list without authorization from you.  Check this box, and you will have to confirm any users who add you to their list before they may see your online status.</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QCheckBox">
+                                        <property name="name">
+                                            <cstring>chkHideIP</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Hide &amp;IP</string>
+                                        </property>
+                                        <property name="accel">
+                                            <string>Alt+I</string>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>Check this to hide your IP address from other users.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>Check this to hide your IP address from other users.  If this option is unchecked, other users may view your IP address in your user information.</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QCheckBox">
+                                        <property name="name">
+                                            <cstring>chkWebAware</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>W&amp;eb aware</string>
+                                        </property>
+                                        <property name="accel">
+                                            <string>Alt+E</string>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>Check this box to enable Web Aware functionality.</string>
+                                        </property>
+                                        <property name="whatsThis" stdset="0">
+                                            <string>Check this box to enable Web Aware functionality, which allows people to see your online status from a web page, and send you a message without necessarily having ICQ themselves.</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
                             </widget>
                         </vbox>
                     </widget>
-                    <widget class="QLabel">
+                    <widget class="QLabel" row="1" column="0">
                         <property name="name">
                             <cstring>textLabel9</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>7</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                            <size>
+                                <width>0</width>
+                                <height>0</height>
+                            </size>
+                        </property>
+                        <property name="text">
+                            <string>&lt;i&gt;To connect to the ICQ network, you will need an ICQ account.If you do not currently have an ICQ account, you may register for
+one at the site linked below.&lt;/i&gt;</string>
+                        </property>
+                        <property name="alignment">
+                            <set>WordBreak|AlignTop</set>
+                        </property>
+                    </widget>
+                    <widget class="KActiveLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>kActiveLabel7</cstring>
                         </property>
                         <property name="sizePolicy">
                             <sizepolicy>
@@ -226,36 +317,11 @@
                                 <verstretch>0</verstretch>
                             </sizepolicy>
                         </property>
-                        <property name="minimumSize">
-                            <size>
-                                <width>650</width>
-                                <height>0</height>
-                            </size>
-                        </property>
-                        <property name="text">
-                            <string>&lt;i&gt;To connect to the ICQ network, you will need an ICQ account.&lt;br&gt;&lt;br&gt;If you do not currently have an ICQ account, you may register for one at the site linked below.&lt;/i&gt;</string>
-                        </property>
-                        <property name="alignment">
-                            <set>WordBreak|AlignTop</set>
-                        </property>
-                    </widget>
-                    <widget class="KActiveLabel">
-                        <property name="name">
-                            <cstring>kActiveLabel7</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>1</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
                         <property name="text">
                             <string>&lt;a href="http://go.icq.com/register/"&gt;Register for an ICQ account&lt;/a&gt;</string>
                         </property>
                     </widget>
-                </vbox>
+                </grid>
             </widget>
             <widget class="QWidget">
                 <property name="name">
@@ -264,36 +330,30 @@
                 <attribute name="title">
                     <string>Connection</string>
                 </attribute>
-                <vbox>
+                <grid>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QGroupBox">
+                    <widget class="QGroupBox" row="0" column="0">
                         <property name="name">
                             <cstring>groupBox2</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
                         </property>
                         <property name="title">
                             <string>Connection Preferences</string>
                         </property>
-                        <vbox>
+                        <grid>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QCheckBox">
-                                <property name="name">
-                                    <cstring>chkAutoLogin</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Connect automatically at &amp;startup</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Check to connect automatically when Kopete is started.</string>
-                                </property>
-                                <property name="whatsThis" stdset="0">
-                                    <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
-                                </property>
-                            </widget>
-                            <widget class="QLayoutWidget">
+                            <widget class="QLayoutWidget" row="1" column="0">
                                 <property name="name">
                                     <cstring>layout220</cstring>
                                 </property>
@@ -393,6 +453,9 @@
                                         <property name="text">
                                             <string>&amp;Defaults</string>
                                         </property>
+                                        <property name="accel">
+                                            <string>Alt+D</string>
+                                        </property>
                                         <property name="toolTip" stdset="0">
                                             <string>Restore the server and port values to their defaults.</string>
                                         </property>
@@ -402,30 +465,32 @@
                                     </widget>
                                 </hbox>
                             </widget>
-                        </vbox>
+                            <widget class="QCheckBox" row="0" column="0">
+                                <property name="name">
+                                    <cstring>chkAutoLogin</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Connect automatically at &amp;startup</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+S</string>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Check to connect automatically when Kopete is started.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
+                                </property>
+                            </widget>
+                        </grid>
                     </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer23</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>41</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </vbox>
+                </grid>
             </widget>
         </widget>
-    </vbox>
+    </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>chkSavePassword</sender>

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>ICQUserInfoWidget</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,23 +8,31 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>538</width>
-            <height>496</height>
+            <width>403</width>
+            <height>487</height>
         </rect>
     </property>
     <property name="caption">
         <string>ICQUserInfoWidget</string>
     </property>
-    <vbox>
+    <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
         <property name="margin">
             <number>0</number>
         </property>
-        <widget class="QTabWidget">
+        <widget class="QTabWidget" row="0" column="0">
             <property name="name">
                 <cstring>TabWidget2</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>7</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
             </property>
             <widget class="QWidget">
                 <property name="name">
@@ -332,73 +340,23 @@
                     </widget>
                     <widget class="QLayoutWidget">
                         <property name="name">
-                            <cstring>layout22</cstring>
+                            <cstring>layout233</cstring>
                         </property>
-                        <grid>
+                        <hbox>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLineEdit" row="3" column="1">
+                            <widget class="QGroupBox">
                                 <property name="name">
-                                    <cstring>roCreationTime</cstring>
+                                    <cstring>grpLanguages</cstring>
                                 </property>
                                 <property name="sizePolicy">
                                     <sizepolicy>
-                                        <hsizetype>7</hsizetype>
-                                        <vsizetype>0</vsizetype>
+                                        <hsizetype>4</hsizetype>
+                                        <vsizetype>4</vsizetype>
                                         <horstretch>0</horstretch>
                                         <verstretch>0</verstretch>
                                     </sizepolicy>
-                                </property>
-                                <property name="readOnly">
-                                    <bool>true</bool>
-                                </property>
-                            </widget>
-                            <spacer row="4" column="1">
-                                <property name="name">
-                                    <cstring>Spacer6</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <spacer row="5" column="1">
-                                <property name="name">
-                                    <cstring>Spacer3</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Vertical</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="QLabel" row="0" column="1">
-                                <property name="name">
-                                    <cstring>lblSignonTime</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Signon time:</string>
-                                </property>
-                            </widget>
-                            <widget class="QGroupBox" row="0" column="0" rowspan="6" colspan="1">
-                                <property name="name">
-                                    <cstring>grpLanguages</cstring>
                                 </property>
                                 <property name="title">
                                     <string>Languages</string>
@@ -454,31 +412,65 @@
                                     </widget>
                                 </grid>
                             </widget>
-                            <widget class="QLabel" row="2" column="1">
+                            <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>lblCreationTime</cstring>
+                                    <cstring>layout232</cstring>
                                 </property>
-                                <property name="text">
-                                    <string>Account creation time:</string>
-                                </property>
+                                <vbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>lblSignonTime</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Signon time:</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLineEdit">
+                                        <property name="name">
+                                            <cstring>roSignonTime</cstring>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>7</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="readOnly">
+                                            <bool>true</bool>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>lblCreationTime</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Account creation time:</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLineEdit">
+                                        <property name="name">
+                                            <cstring>roCreationTime</cstring>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>7</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="readOnly">
+                                            <bool>true</bool>
+                                        </property>
+                                    </widget>
+                                </vbox>
                             </widget>
-                            <widget class="QLineEdit" row="1" column="1">
-                                <property name="name">
-                                    <cstring>roSignonTime</cstring>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>7</hsizetype>
-                                        <vsizetype>0</vsizetype>
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                                <property name="readOnly">
-                                    <bool>true</bool>
-                                </property>
-                            </widget>
-                        </grid>
+                        </hbox>
                     </widget>
                     <widget class="QLayoutWidget">
                         <property name="name">
@@ -525,18 +517,18 @@
                     </widget>
                     <spacer>
                         <property name="name">
-                            <cstring>Spacer3_2</cstring>
+                            <cstring>spacer75</cstring>
                         </property>
                         <property name="orientation">
                             <enum>Vertical</enum>
                         </property>
                         <property name="sizeType">
-                            <enum>Expanding</enum>
+                            <enum>MinimumExpanding</enum>
                         </property>
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>8</height>
+                                <height>21</height>
                             </size>
                         </property>
                     </spacer>
@@ -549,38 +541,19 @@
                 <attribute name="title">
                     <string>Private</string>
                 </attribute>
-                <vbox>
+                <grid>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QLayoutWidget">
+                    <widget class="QLayoutWidget" row="0" column="0">
                         <property name="name">
-                            <cstring>Layout14</cstring>
+                            <cstring>layout228</cstring>
                         </property>
-                        <grid>
+                        <hbox>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <property name="margin">
-                                <number>0</number>
-                            </property>
-                            <property name="spacing">
-                                <number>6</number>
-                            </property>
-                            <widget class="QLineEdit" row="1" column="1">
-                                <property name="name">
-                                    <cstring>prsStateEdit</cstring>
-                                </property>
-                                <property name="maxLength">
-                                    <number>5</number>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="0" column="1">
-                                <property name="name">
-                                    <cstring>prsCityEdit</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="0" column="0">
+                            <widget class="QLabel">
                                 <property name="name">
                                     <cstring>lblPrsCity</cstring>
                                 </property>
@@ -588,38 +561,158 @@
                                     <string>City:</string>
                                 </property>
                             </widget>
-                            <widget class="QLabel" row="0" column="2">
+                            <widget class="QLineEdit">
+                                <property name="name">
+                                    <cstring>prsCityEdit</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                            </widget>
+                        </hbox>
+                    </widget>
+                    <widget class="QLayoutWidget" row="0" column="1" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>layout227</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
                                 <property name="name">
                                     <cstring>lblPrsPhone</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>4</hsizetype>
+                                        <vsizetype>4</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
                                 </property>
                                 <property name="text">
                                     <string>Phone:</string>
                                 </property>
                             </widget>
-                            <widget class="QLineEdit" row="2" column="3">
+                            <widget class="QLineEdit">
                                 <property name="name">
-                                    <cstring>prsFaxEdit</cstring>
+                                    <cstring>prsPhoneEdit</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>5</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
                                 </property>
                             </widget>
-                            <widget class="QLineEdit" row="1" column="3">
-                                <property name="name">
-                                    <cstring>prsCellphoneEdit</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="1" column="0">
+                        </hbox>
+                    </widget>
+                    <widget class="QLayoutWidget" row="1" column="0">
+                        <property name="name">
+                            <cstring>layout229</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
                                 <property name="name">
                                     <cstring>lblPrsState</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>4</hsizetype>
+                                        <vsizetype>4</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
                                 </property>
                                 <property name="text">
                                     <string>State:</string>
                                 </property>
                             </widget>
-                            <widget class="QLineEdit" row="0" column="3">
+                            <widget class="QLineEdit">
                                 <property name="name">
-                                    <cstring>prsPhoneEdit</cstring>
+                                    <cstring>prsStateEdit</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="maxLength">
+                                    <number>5</number>
                                 </property>
                             </widget>
-                            <widget class="QLayoutWidget" row="2" column="1">
+                        </hbox>
+                    </widget>
+                    <widget class="QLayoutWidget" row="1" column="1" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>layout226</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>lblPrsCellular</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>4</hsizetype>
+                                        <vsizetype>4</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>Cellular:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit">
+                                <property name="name">
+                                    <cstring>prsCellphoneEdit</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                            </widget>
+                        </hbox>
+                    </widget>
+                    <widget class="QLayoutWidget" row="2" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>layout230</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>lblPrsCountry</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Country:</string>
+                                </property>
+                            </widget>
+                            <widget class="QLayoutWidget">
                                 <property name="name">
                                     <cstring>Layout11</cstring>
                                 </property>
@@ -648,23 +741,17 @@
                                     </widget>
                                 </hbox>
                             </widget>
-                            <widget class="QLabel" row="2" column="0">
-                                <property name="name">
-                                    <cstring>lblPrsCountry</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Country:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="1" column="2">
-                                <property name="name">
-                                    <cstring>lblPrsCellular</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Cellular:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="2" column="2">
+                        </hbox>
+                    </widget>
+                    <widget class="QLayoutWidget" row="2" column="2">
+                        <property name="name">
+                            <cstring>layout225</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
                                 <property name="name">
                                     <cstring>lblPrsFax</cstring>
                                 </property>
@@ -672,7 +759,30 @@
                                     <string>Fax:</string>
                                 </property>
                             </widget>
-                            <widget class="QLabel" row="3" column="0">
+                            <widget class="QLineEdit">
+                                <property name="name">
+                                    <cstring>prsFaxEdit</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                            </widget>
+                        </hbox>
+                    </widget>
+                    <widget class="QLayoutWidget" row="3" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>layout213</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
                                 <property name="name">
                                     <cstring>lblPrsZip</cstring>
                                 </property>
@@ -680,14 +790,22 @@
                                     <string>Zip:</string>
                                 </property>
                             </widget>
-                            <widget class="QLineEdit" row="3" column="1">
+                            <widget class="QLineEdit">
                                 <property name="name">
                                     <cstring>prsZipcodeEdit</cstring>
                                 </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
                             </widget>
-                        </grid>
+                        </hbox>
                     </widget>
-                    <widget class="QLayoutWidget">
+                    <widget class="QLayoutWidget" row="4" column="0" rowspan="1" colspan="3">
                         <property name="name">
                             <cstring>layout22</cstring>
                         </property>
@@ -699,6 +817,14 @@
                                 <property name="name">
                                     <cstring>lblPrsAddress</cstring>
                                 </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>4</hsizetype>
+                                        <vsizetype>4</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
                                 <property name="text">
                                     <string>Postal address:</string>
                                 </property>
@@ -707,69 +833,42 @@
                                 <property name="name">
                                     <cstring>prsAddressEdit</cstring>
                                 </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>0</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
                             </widget>
                         </hbox>
                     </widget>
-                    <widget class="QLayoutWidget">
+                    <widget class="QLayoutWidget" row="5" column="0" rowspan="1" colspan="3">
                         <property name="name">
-                            <cstring>Layout15</cstring>
+                            <cstring>layout221</cstring>
                         </property>
-                        <grid>
+                        <hbox>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <property name="margin">
-                                <number>0</number>
-                            </property>
-                            <property name="spacing">
-                                <number>6</number>
-                            </property>
-                            <widget class="QLabel" row="0" column="0">
+                            <widget class="QLabel">
                                 <property name="name">
                                     <cstring>lblPrsHomepage</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>4</hsizetype>
+                                        <vsizetype>4</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
                                 </property>
                                 <property name="text">
                                     <string>Homepage:</string>
                                 </property>
                             </widget>
-                            <widget class="QLayoutWidget" row="1" column="1">
-                                <property name="name">
-                                    <cstring>Layout13</cstring>
-                                </property>
-                                <hbox>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <property name="margin">
-                                        <number>0</number>
-                                    </property>
-                                    <property name="spacing">
-                                        <number>0</number>
-                                    </property>
-                                    <widget class="KURLLabel">
-                                        <property name="name">
-                                            <cstring>prsEmailLabel</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string></string>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLineEdit">
-                                        <property name="name">
-                                            <cstring>prsEmailEdit</cstring>
-                                        </property>
-                                    </widget>
-                                </hbox>
-                            </widget>
-                            <widget class="QLabel" row="1" column="0">
-                                <property name="name">
-                                    <cstring>lblPrsEmail</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Email address:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLayoutWidget" row="0" column="1">
+                            <widget class="QLayoutWidget">
                                 <property name="name">
                                     <cstring>Layout12</cstring>
                                 </property>
@@ -803,138 +902,46 @@
                                         <property name="name">
                                             <cstring>prsHomepageEdit</cstring>
                                         </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>3</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
                                     </widget>
                                 </hbox>
                             </widget>
-                        </grid>
+                        </hbox>
                     </widget>
-                    <spacer>
+                    <widget class="QLayoutWidget" row="6" column="0" rowspan="1" colspan="3">
                         <property name="name">
-                            <cstring>Spacer2_2</cstring>
+                            <cstring>layout222</cstring>
                         </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>8</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </vbox>
-            </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>Work</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLayoutWidget">
-                        <property name="name">
-                            <cstring>layout21</cstring>
-                        </property>
-                        <grid>
+                        <hbox>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QLabel" row="3" column="0">
+                            <widget class="QLabel">
                                 <property name="name">
-                                    <cstring>TextLabel22_2</cstring>
+                                    <cstring>lblPrsEmail</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>4</hsizetype>
+                                        <vsizetype>4</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
                                 </property>
                                 <property name="text">
-                                    <string>City:</string>
+                                    <string>Email address:</string>
                                 </property>
                             </widget>
-                            <widget class="QLineEdit" row="3" column="3">
+                            <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>wrkStateEdit</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="2" column="0">
-                                <property name="name">
-                                    <cstring>TextLabel19_2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Phone:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="1" column="3">
-                                <property name="name">
-                                    <cstring>wrkPositionEdit</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="1" column="2">
-                                <property name="name">
-                                    <cstring>TextLabel2_2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Position:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="1" column="1">
-                                <property name="name">
-                                    <cstring>wrkDepartmentEdit</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="4" column="1">
-                                <property name="name">
-                                    <cstring>wrkZipcodeEdit</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="3" column="1">
-                                <property name="name">
-                                    <cstring>wrkCityEdit</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="2" column="1">
-                                <property name="name">
-                                    <cstring>wrkPhoneEdit</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="4" column="0">
-                                <property name="name">
-                                    <cstring>TextLabel25_2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Zip:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="3" column="2">
-                                <property name="name">
-                                    <cstring>TextLabel23_2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>State:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="0" column="1">
-                                <property name="name">
-                                    <cstring>wrkNameEdit</cstring>
-                                </property>
-                                <property name="text">
-                                    <string></string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="0" column="0">
-                                <property name="name">
-                                    <cstring>lwlWrkName</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Name:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLayoutWidget" row="4" column="3">
-                                <property name="name">
-                                    <cstring>Layout16</cstring>
+                                    <cstring>Layout13</cstring>
                                 </property>
                                 <hbox>
                                     <property name="name">
@@ -946,130 +953,417 @@
                                     <property name="spacing">
                                         <number>0</number>
                                     </property>
-                                    <widget class="QLineEdit">
+                                    <widget class="KURLLabel">
                                         <property name="name">
-                                            <cstring>roWrkCountry</cstring>
+                                            <cstring>prsEmailLabel</cstring>
                                         </property>
-                                        <property name="readOnly">
-                                            <bool>true</bool>
+                                        <property name="text">
+                                            <string></string>
                                         </property>
                                     </widget>
-                                    <widget class="QComboBox">
+                                    <widget class="QLineEdit">
                                         <property name="name">
-                                            <cstring>rwWrkCountry</cstring>
+                                            <cstring>prsEmailEdit</cstring>
+                                        </property>
+                                        <property name="sizePolicy">
+                                            <sizepolicy>
+                                                <hsizetype>3</hsizetype>
+                                                <vsizetype>0</vsizetype>
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
                                         </property>
                                     </widget>
                                 </hbox>
                             </widget>
-                            <widget class="QLineEdit" row="2" column="3">
-                                <property name="name">
-                                    <cstring>wrkFaxEdit</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="1" column="0">
-                                <property name="name">
-                                    <cstring>lwlWrkDepartment</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Department:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="2" column="2">
-                                <property name="name">
-                                    <cstring>lblWrkFax</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Fax:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLabel" row="4" column="2">
-                                <property name="name">
-                                    <cstring>TextLabel24_2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Country:</string>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
-                    <widget class="QLayoutWidget">
-                        <property name="name">
-                            <cstring>layout20</cstring>
-                        </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLabel">
-                                <property name="name">
-                                    <cstring>lwlWrkAddress</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Postal address:</string>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit">
-                                <property name="name">
-                                    <cstring>wrkAddressEdit</cstring>
-                                </property>
-                            </widget>
                         </hbox>
                     </widget>
-                    <widget class="QLayoutWidget">
+                    <spacer row="7" column="1">
                         <property name="name">
-                            <cstring>Layout12</cstring>
-                        </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <property name="margin">
-                                <number>0</number>
-                            </property>
-                            <property name="spacing">
-                                <number>6</number>
-                            </property>
-                            <widget class="QLabel">
-                                <property name="name">
-                                    <cstring>lblWrkHomepage</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Homepage:</string>
-                                </property>
-                            </widget>
-                            <widget class="KURLLabel">
-                                <property name="name">
-                                    <cstring>wrkHomepageLabel</cstring>
-                                </property>
-                                <property name="text">
-                                    <string></string>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit">
-                                <property name="name">
-                                    <cstring>wrkHomepageEdit</cstring>
-                                </property>
-                            </widget>
-                        </hbox>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>Spacer2_2_2</cstring>
+                            <cstring>spacer73</cstring>
                         </property>
                         <property name="orientation">
                             <enum>Vertical</enum>
                         </property>
                         <property name="sizeType">
-                            <enum>Expanding</enum>
+                            <enum>MinimumExpanding</enum>
                         </property>
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>8</height>
+                                <height>21</height>
                             </size>
                         </property>
                     </spacer>
-                </vbox>
+                </grid>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Work</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <spacer row="1" column="0">
+                        <property name="name">
+                            <cstring>spacer74</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>MinimumExpanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>41</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QLayoutWidget" row="0" column="0">
+                        <property name="name">
+                            <cstring>layout241</cstring>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLayoutWidget" row="1" column="0">
+                                <property name="name">
+                                    <cstring>layout20</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>lwlWrkAddress</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Postal address:</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLineEdit">
+                                        <property name="name">
+                                            <cstring>wrkAddressEdit</cstring>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                            <widget class="QLayoutWidget" row="2" column="0">
+                                <property name="name">
+                                    <cstring>Layout12</cstring>
+                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <property name="margin">
+                                        <number>0</number>
+                                    </property>
+                                    <property name="spacing">
+                                        <number>6</number>
+                                    </property>
+                                    <widget class="QLabel">
+                                        <property name="name">
+                                            <cstring>lblWrkHomepage</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string>Homepage:</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="KURLLabel">
+                                        <property name="name">
+                                            <cstring>wrkHomepageLabel</cstring>
+                                        </property>
+                                        <property name="text">
+                                            <string></string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QLineEdit">
+                                        <property name="name">
+                                            <cstring>wrkHomepageEdit</cstring>
+                                        </property>
+                                    </widget>
+                                </hbox>
+                            </widget>
+                            <widget class="QLayoutWidget" row="0" column="0">
+                                <property name="name">
+                                    <cstring>layout240</cstring>
+                                </property>
+                                <grid>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <widget class="QLayoutWidget" row="3" column="0">
+                                        <property name="name">
+                                            <cstring>layout205</cstring>
+                                        </property>
+                                        <hbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>TextLabel22_2</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>City:</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>wrkCityEdit</cstring>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>TextLabel23_2</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>State:</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>wrkStateEdit</cstring>
+                                                </property>
+                                                <property name="sizePolicy">
+                                                    <sizepolicy>
+                                                        <hsizetype>5</hsizetype>
+                                                        <vsizetype>0</vsizetype>
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                            </widget>
+                                        </hbox>
+                                    </widget>
+                                    <widget class="QLayoutWidget" row="4" column="0">
+                                        <property name="name">
+                                            <cstring>layout204</cstring>
+                                        </property>
+                                        <hbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>TextLabel25_2</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Zip:</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>wrkZipcodeEdit</cstring>
+                                                </property>
+                                                <property name="sizePolicy">
+                                                    <sizepolicy>
+                                                        <hsizetype>1</hsizetype>
+                                                        <vsizetype>0</vsizetype>
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>TextLabel24_2</cstring>
+                                                </property>
+                                                <property name="sizePolicy">
+                                                    <sizepolicy>
+                                                        <hsizetype>5</hsizetype>
+                                                        <vsizetype>5</vsizetype>
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Country:</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLayoutWidget">
+                                                <property name="name">
+                                                    <cstring>Layout16</cstring>
+                                                </property>
+                                                <hbox>
+                                                    <property name="name">
+                                                        <cstring>unnamed</cstring>
+                                                    </property>
+                                                    <property name="margin">
+                                                        <number>0</number>
+                                                    </property>
+                                                    <property name="spacing">
+                                                        <number>0</number>
+                                                    </property>
+                                                    <widget class="QLineEdit">
+                                                        <property name="name">
+                                                            <cstring>roWrkCountry</cstring>
+                                                        </property>
+                                                        <property name="readOnly">
+                                                            <bool>true</bool>
+                                                        </property>
+                                                    </widget>
+                                                    <widget class="QComboBox">
+                                                        <property name="name">
+                                                            <cstring>rwWrkCountry</cstring>
+                                                        </property>
+                                                    </widget>
+                                                </hbox>
+                                            </widget>
+                                        </hbox>
+                                    </widget>
+                                    <widget class="QLayoutWidget" row="1" column="0">
+                                        <property name="name">
+                                            <cstring>layout208</cstring>
+                                        </property>
+                                        <hbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>lwlWrkDepartment</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Department:</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>wrkDepartmentEdit</cstring>
+                                                </property>
+                                                <property name="sizePolicy">
+                                                    <sizepolicy>
+                                                        <hsizetype>3</hsizetype>
+                                                        <vsizetype>0</vsizetype>
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>TextLabel2_2</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Position:</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>wrkPositionEdit</cstring>
+                                                </property>
+                                                <property name="sizePolicy">
+                                                    <sizepolicy>
+                                                        <hsizetype>3</hsizetype>
+                                                        <vsizetype>0</vsizetype>
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                            </widget>
+                                        </hbox>
+                                    </widget>
+                                    <widget class="QLayoutWidget" row="0" column="0">
+                                        <property name="name">
+                                            <cstring>layout210</cstring>
+                                        </property>
+                                        <hbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>lwlWrkName</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Name:</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>wrkNameEdit</cstring>
+                                                </property>
+                                                <property name="sizePolicy">
+                                                    <sizepolicy>
+                                                        <hsizetype>3</hsizetype>
+                                                        <vsizetype>0</vsizetype>
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                                <property name="text">
+                                                    <string></string>
+                                                </property>
+                                            </widget>
+                                        </hbox>
+                                    </widget>
+                                    <widget class="QLayoutWidget" row="2" column="0">
+                                        <property name="name">
+                                            <cstring>layout207</cstring>
+                                        </property>
+                                        <hbox>
+                                            <property name="name">
+                                                <cstring>unnamed</cstring>
+                                            </property>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>TextLabel19_2</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Phone:</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>wrkPhoneEdit</cstring>
+                                                </property>
+                                                <property name="sizePolicy">
+                                                    <sizepolicy>
+                                                        <hsizetype>7</hsizetype>
+                                                        <vsizetype>0</vsizetype>
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLabel">
+                                                <property name="name">
+                                                    <cstring>lblWrkFax</cstring>
+                                                </property>
+                                                <property name="text">
+                                                    <string>Fax:</string>
+                                                </property>
+                                            </widget>
+                                            <widget class="QLineEdit">
+                                                <property name="name">
+                                                    <cstring>wrkFaxEdit</cstring>
+                                                </property>
+                                                <property name="sizePolicy">
+                                                    <sizepolicy>
+                                                        <hsizetype>7</hsizetype>
+                                                        <vsizetype>0</vsizetype>
+                                                        <horstretch>0</horstretch>
+                                                        <verstretch>0</verstretch>
+                                                    </sizepolicy>
+                                                </property>
+                                            </widget>
+                                        </hbox>
+                                    </widget>
+                                </grid>
+                            </widget>
+                        </grid>
+                    </widget>
+                </grid>
             </widget>
             <widget class="QWidget">
                 <property name="name">
@@ -1082,7 +1376,7 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
+                    <widget class="QLabel" row="0" column="0">
                         <property name="name">
                             <cstring>textLabel2_2</cstring>
                         </property>
@@ -1090,25 +1384,12 @@
                             <string>Email addresses:</string>
                         </property>
                     </widget>
-                    <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
+                    <widget class="QLabel" row="2" column="0">
                         <property name="name">
                             <cstring>textLabel1_3</cstring>
                         </property>
                         <property name="text">
                             <string>About user:</string>
-                        </property>
-                    </widget>
-                    <widget class="QTextEdit" row="3" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>rwAboutUser</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>7</hsizetype>
-                                <vsizetype>7</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>2</verstretch>
-                            </sizepolicy>
                         </property>
                     </widget>
                     <widget class="QListBox" row="1" column="0">
@@ -1117,10 +1398,23 @@
                         </property>
                         <property name="sizePolicy">
                             <sizepolicy>
-                                <hsizetype>7</hsizetype>
-                                <vsizetype>7</vsizetype>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>3</vsizetype>
                                 <horstretch>0</horstretch>
-                                <verstretch>1</verstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                    </widget>
+                    <widget class="QTextEdit" row="3" column="0">
+                        <property name="name">
+                            <cstring>rwAboutUser</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>3</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
                             </sizepolicy>
                         </property>
                     </widget>
@@ -1542,27 +1836,10 @@
                             </spacer>
                         </grid>
                     </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer6</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>8</height>
-                            </size>
-                        </property>
-                    </spacer>
                 </vbox>
             </widget>
         </widget>
-    </vbox>
+    </grid>
 </widget>
 <customwidgets>
 </customwidgets>
