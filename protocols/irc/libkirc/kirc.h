@@ -167,6 +167,9 @@ signals:
 	void incomingNickChange(const QString &, const QString &);
 	void incomingFailedServerPassword();
 	void incomingFailedChankey(const QString &);
+	void incomingFailedChanBanned(const QString &);
+	void incomingFailedChanInvite(const QString &);
+	void incomingFailedChanFull(const QString &);
 	void incomingFailedNickOnLogin(const QString &);
 	void incomingNoNickChan(const QString &);
 	void incomingWasNoNick(const QString &);
@@ -303,6 +306,9 @@ protected:
 
 	ircMethod numericReply_433;
 	ircMethod numericReply_464;
+	ircMethod numericReply_471;
+	ircMethod numericReply_473;
+	ircMethod numericReply_474;
 	ircMethod numericReply_475;
 
 	inline void addCtcpQueryIrcMethod(const char *str, KIRCMethodFunctorCall *method) {

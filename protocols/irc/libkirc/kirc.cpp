@@ -244,6 +244,12 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 	addIrcMethod("433",	&KIRC::numericReply_433,	2,	2);
 	/* Bad server password */
 	addIrcMethod("464",	&KIRC::numericReply_464,	1,	1);
+	/* Channel is Full */
+	addIrcMethod("471",	&KIRC::numericReply_471,	2,	2);
+	/* Invite Only */
+	addIrcMethod("473",	&KIRC::numericReply_473,	2,	2);
+	/* Banned */
+	addIrcMethod("474",	&KIRC::numericReply_474,	2,	2);
 	/* Wrong Chan-key */
 	addIrcMethod("475",	&KIRC::numericReply_475,	2,	2);
 
@@ -1143,6 +1149,24 @@ bool KIRC::numericReply_464(const KIRCMessage &msg)
 {
 	/* Server need pass.. Call disconnect */
 	emit incomingFailedServerPassword();
+	return true;
+}
+
+bool KIRC::numericReply_471(const KIRCMessage &msg)
+{
+	emit incomingFailedChanFull(msg.args()[1]);
+	return true;
+}
+
+bool KIRC::numericReply_473(const KIRCMessage &msg)
+{
+	emit incomingFailedChanInvite(msg.args()[1]);
+	return true;
+}
+
+bool KIRC::numericReply_474(const KIRCMessage &msg)
+{
+	emit incomingFailedChanBanned(msg.args()[1]);
 	return true;
 }
 

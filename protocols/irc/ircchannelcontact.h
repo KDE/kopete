@@ -98,7 +98,6 @@ protected slots:
 
 public slots: // should be viewCreated( KopeteView* )
 	void slotJoinChannel( KopeteView* );
-	void slotFailedChankey(const QString &channame);
 
 private slots:
 	void slotConnectedToServer();
@@ -114,6 +113,10 @@ private slots:
 	void slotIncomingChannelMode( const QString &channel, const QString &mode, const QString &params );
 	void slotModeChanged();
 	void slotAddNicknames();
+	void slotFailedChankey(const QString &channame);
+	void slotFailedChanBanned( const QString &channame );
+	void slotFailedChanInvite( const QString &channame );
+	void slotFailedChanFull( const QString &channame );
 
 
 private:
