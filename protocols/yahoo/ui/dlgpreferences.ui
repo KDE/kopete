@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>dlgPreferences</class>
 <author>Daniel Stone</author>
 <widget class="QWidget">
@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>365</width>
-            <height>409</height>
+            <height>411</height>
         </rect>
     </property>
     <property name="caption">
@@ -19,12 +19,6 @@
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
-            <number>11</number>
-        </property>
-        <property name="spacing">
-            <number>6</number>
         </property>
         <widget class="QLabel">
             <property name="name">
@@ -139,12 +133,23 @@
         </widget>
         <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>layout2</cstring>
+                <cstring>layout4</cstring>
             </property>
             <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
+                <widget class="KURLLabel">
+                    <property name="name">
+                        <cstring>kURLLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Get a Yahoo! account now</string>
+                    </property>
+                    <property name="url" stdset="0">
+                        <string>http://edit.yahoo.com/config/eval_register</string>
+                    </property>
+                </widget>
                 <spacer>
                     <property name="name">
                         <cstring>spacer2</cstring>
@@ -157,22 +162,11 @@
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>381</width>
+                            <width>113</width>
                             <height>21</height>
                         </size>
                     </property>
                 </spacer>
-                <widget class="KURLLabel">
-                    <property name="name">
-                        <cstring>kURLLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Get a Yahoo! account now</string>
-                    </property>
-                    <property name="url" stdset="0">
-                        <string>http://edit.yahoo.com/config/eval_register</string>
-                    </property>
-                </widget>
             </hbox>
         </widget>
         <widget class="QLabel">
@@ -235,7 +229,7 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>495</width>
+                    <width>343</width>
                     <height>16</height>
                 </size>
             </property>
@@ -320,7 +314,7 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>60</height>
+                    <height>53</height>
                 </size>
             </property>
         </spacer>
@@ -335,7 +329,4 @@
     </connection>
 </connections>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kurllabel.h</includehint>
-</includehints>
 </UI>

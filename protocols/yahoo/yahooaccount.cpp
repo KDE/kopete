@@ -15,6 +15,8 @@
     *                                                                       *
     *************************************************************************
 */
+//QT
+#include <qfont.h>
 
 // KDE
 #include <kconfig.h>
@@ -32,7 +34,7 @@
 YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, const char *name)
 : KopeteAccount(parent, AccountID, name)
 {
-	kdDebug(14180) << k_funcinfo << AccountID << ", " << QString(name) << ")" << endl;
+//	kdDebug(14180) << k_funcinfo << AccountID << ", " << QString(name) << ")" << endl;
 
 	// first things first - initialise internals
 	theHaveContactList = false;
@@ -53,7 +55,7 @@ YahooAccount::~YahooAccount()
 
 void YahooAccount::slotGoStatus(int status, const QString &awayMessage)
 {
-	kdDebug(14180) << k_funcinfo << status << endl;
+	kdDebug(14180) << k_funcinfo << status << awayMessage << endl;
 
 	if(!isConnected())
 	{	if(status == 12)
@@ -92,7 +94,7 @@ void YahooAccount::connect()
 
 	QString server = static_cast<YahooProtocol *>(protocol())->server();
 	int port = static_cast<YahooProtocol *>(protocol())->port();
-	kdDebug(14180) << k_funcinfo << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 
 	if(!isConnected())
 	{	kdDebug(14180) << "Attempting to connect to Yahoo on <" << server << ":" << port << ">. user <" << accountId() << ">" << endl;
@@ -143,7 +145,7 @@ void YahooAccount::connect()
 
 void YahooAccount::disconnect()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 
 	if(isConnected())
 	{	kdDebug(14180) <<  "Attempting to disconnect from Yahoo server " << endl;
@@ -159,7 +161,7 @@ void YahooAccount::disconnect()
 void YahooAccount::setAway(bool status, const QString &awayMessage)
 {
 	kdDebug(14180) << "YahooAccount::setAway(" << status << ", " << awayMessage << ")" << endl;
-	if(awayMessage.isNull() || awayMessage == "")
+	if(awayMessage.isEmpty())
 		slotGoStatus(status ? 2 : 0);
 	else
 		slotGoStatus(status ? 99 : 0, awayMessage);
@@ -167,7 +169,7 @@ void YahooAccount::setAway(bool status, const QString &awayMessage)
 
 void YahooAccount::slotConnected()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotGoOnline()
@@ -188,7 +190,7 @@ void YahooAccount::slotGoOffline()
 
 KActionMenu *YahooAccount::actionMenu()
 {
-	kdDebug(14180) << k_funcinfo << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 
 	KActionMenu *theActionMenu = new KActionMenu("Yahoo", this);
 	theActionMenu->popupMenu()->insertTitle(m_myself->icon(), "Yahoo ("+m_myself->displayName()+")");
@@ -214,7 +216,7 @@ KActionMenu *YahooAccount::actionMenu()
 
 void YahooAccount::slotGotBuddies( const YList */*theList*/ )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 	theHaveContactList = true;
 	KGlobal::config()->setGroup("Yahoo");
 	YahooProtocol *theProtocol = static_cast<YahooProtocol *>(protocol());
@@ -240,7 +242,7 @@ YahooContact *YahooAccount::contact( const QString &id )
 
 bool YahooAccount::addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact )
 {
-	kdDebug(14180) << k_funcinfo << " contactId: " << contactId << endl;
+//	kdDebug(14180) << k_funcinfo << " contactId: " << contactId << endl;
 
 	if(!contact(contactId))
 	{	YahooContact *newContact = new YahooContact( this, contactId, displayName, parentContact);
@@ -251,6 +253,7 @@ bool YahooAccount::addContactToMetaContact(const QString &contactId, const QStri
 
 	return false;
 }
+
 
 /***************************************************************************
  *                                                                         *
@@ -277,12 +280,12 @@ void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, co
 
 void YahooAccount::slotGotIgnore( const QStringList & /* igns */ )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	//kdDebug(14180) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotGotIdentities( const QStringList & /* ids */ )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+	//kdDebug(14180) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotStatusChanged( const QString &who, int stat, const QString &msg, int away)
@@ -292,9 +295,9 @@ void YahooAccount::slotStatusChanged( const QString &who, int stat, const QStrin
 		contact(who)->setYahooStatus( YahooStatus::fromLibYahoo2(stat), msg, away);
 }
 
-void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, int stat)
+void YahooAccount::slotGotIm( const QString &who, const QString &msg, long /*tm*/, int /*stat*/)
 {
-	kdDebug(14180) << k_funcinfo << who << " " << msg << " " << tm << " " << stat << endl;
+	QFont msgFont;
 
 	if(!contact(who))
 		addContact( who, who, 0L, QString::null, true );
@@ -306,83 +309,95 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 
 	KopeteContactPtrList justMe;
 	justMe.append(myself());
-	KopeteMessage kmsg(contact(who), justMe, msg, KopeteMessage::Inbound , KopeteMessage::RichText);
+	KopeteMessage kmsg(contact(who), justMe, msg, KopeteMessage::Inbound , KopeteMessage::PlainText);
+	QString newMsg = kmsg.plainBody();
 
+	if (newMsg.find("<font") != -1)
+	{
+		msgFont.setFamily(newMsg.section('"', 1,1));
+
+		if (newMsg.find("size"))
+			msgFont.setPointSize(newMsg.section('"', 3,3).toInt());
+
+		//remove the font encoding since we handle them ourselves
+		newMsg.remove(newMsg.mid(0, newMsg.find('>')+1));
+	}
+	//set the new body that has correct HTML
+	kmsg.setBody(newMsg, KopeteMessage::RichText);
+	kmsg.setFont(msgFont);
 	mm->appendMessage(kmsg);
 
 }
 
 void YahooAccount::slotGotConfInvite( const QString & /* who */, const QString & /* room */, const QString & /* msg */, const QStringList & /* members */ )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotConfUserDecline( const QString & /* who */, const QString & /* room */, const QString & /* msg */ )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotConfUserJoin( const QString & /* who */, const QString & /* room */ )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotConfUserLeave( const QString & /* who */, const QString & /* room */ )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotConfMessage( const QString & /* who */, const QString & /* room */, const QString & /* msg */ )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotGotFile( const QString & /* who */, const QString & /* url */, long /* expires */, const QString & /* msg */,
 	const QString & /* fname */, unsigned long /* fesize */ )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotContactAdded( const QString &  myid , const QString &  who , const QString &  msg  )
 {
-	kdDebug(14180) << k_funcinfo << myid << " " << who << " " << msg << endl;
+//	kdDebug(14180) << k_funcinfo << myid << " " << who << " " << msg << endl;
 }
 
 void YahooAccount::slotRejected( const QString & /* who */, const QString & /* msg */ )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotTypingNotify( const QString &who, int what )
 {
-	kdDebug(14180) << k_funcinfo << who << " " << what << endl;
-
 	emit receivedTypingMsg(who, what);
 }
 
 void YahooAccount::slotGameNotify( const QString & /* who */, int /* stat */ )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotMailNotify( const QString & /* from */, const QString & /* subj */, int /* cnt */)
 {
-	kdDebug(14180) << k_funcinfo << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotSystemMessage( const QString &msg )
 {
-	kdDebug(14180) << k_funcinfo << msg << endl;
+//	kdDebug(14180) << k_funcinfo << msg << endl;
 }
 
 void YahooAccount::slotError( const QString & /* err */, int /* fatal */ )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 }
 
 void YahooAccount::slotRemoveHandler( int /* fd */ )
 {
-	kdDebug(14180) << k_funcinfo << endl;
+//	kdDebug(14180) << k_funcinfo << endl;
 }
 
 void YahooAwayDialog::setAway(int awayType)
