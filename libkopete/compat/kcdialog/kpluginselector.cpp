@@ -33,6 +33,7 @@
 #include <qobjectlist.h>
 #include <qcstring.h>
 
+#include <kdeversion.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <klistview.h>
