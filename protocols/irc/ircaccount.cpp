@@ -132,14 +132,6 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 	mAwayAction = new KopeteAwayAction ( i18n("Set Away"),
 		m_protocol->m_UserStatusAway.iconFor( this ), 0, this,
 		SLOT(slotGoAway( const QString & )), this );
-
-	//Warning: requesting the password may ask to kwallet, this will open a dcop call and call QApplication::enter_loop
-	//
-	// Never load passwords here, the initializer doesn't have a chance
-	// to load it anyway. Passowords are loaded in ::loaded() - JLN
-	//
-	//if( rememberPassword() )
-	//	m_engine->setPassword( password() );
 }
 
 IRCAccount::~IRCAccount()
@@ -481,6 +473,13 @@ void IRCAccount::slotJoinChannel()
 		else
 			KMessageBox::error(0l, i18n("<qt>\"%1\" is an invalid channel. Channels must start with '#','!','+', or '&'.</qt>").arg(chan), i18n("IRC Plugin"));
 	}
+}
+
+void IRCAccount::appendMessage( MessageType type, const QString &message )
+{
+	if( type == Ignore )
+		return;
+
 }
 
 IRCUserContact *IRCAccount::mySelf() const

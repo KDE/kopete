@@ -120,6 +120,7 @@ private slots:
 	void slotFailedChanBanned( const QString &channame );
 	void slotFailedChanInvite( const QString &channame );
 	void slotFailedChanFull( const QString &channame );
+	void slotUpdateInfo();
 
 
 private:
@@ -142,6 +143,7 @@ private:
 	QString mPassword;
 	QStringList mJoinedNicks;
 	QMap<QString,bool> modeMap;
+	QTimer *mInfoTimer;
 	void toggleMode( QChar mode, bool enabled, bool update );
 };
 

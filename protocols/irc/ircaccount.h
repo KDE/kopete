@@ -61,12 +61,28 @@ class ChannelListDialog : public KDialogBase
 		ChannelList *m_list;
 };
 
-class IRCAccount
-	: public KopeteAccount
+class IRCAccount:  public KopeteAccount
 {
 	Q_OBJECT
 
 public:
+	enum MessageType
+	{
+		LoginReply = 1,
+		InfoReply = 2,
+		NoticeReply = 4,
+		ErrorReply = 8,
+		UnknownReply = 16
+	};
+
+	enum MessageDestination
+	{
+		ActiveWindow = 1,
+		ServerWindow = 2,
+		AnonymousWindow = 4,
+		Ignore = 8
+	};
+
 	IRCAccount(IRCProtocol *p, const QString &accountid);
 	~IRCAccount();
 
@@ -108,15 +124,12 @@ public slots:
 	virtual bool isConnected();
 
 	// Returns the KIRC engine instance
-	KIRC *engine() const
-		{ return m_engine; }
+	KIRC *engine() const { return m_engine; }
 
 	// Returns the IRCProtocol instance for contacts
-	IRCProtocol *protocol() const
-		{ return m_protocol; }
+	IRCProtocol *protocol() const { return m_protocol; }
 
-	IRCContactManager *contactManager() const
-		{ return m_contactManager; }
+	IRCContactManager *contactManager() const { return m_contactManager; }
 
 	// Returns the KopeteContact of the user
 	IRCUserContact *mySelf() const;
@@ -125,12 +138,15 @@ public slots:
 	IRCServerContact *myServer() const;
 
 	void successfullyChangedNick(const QString &, const QString &);
+
 	virtual void connect();
 	virtual void disconnect();
 
 	void quit( const QString &quitMessage = QString::null );
 
 	void listChannels();
+
+	void appendMessage( MessageType type, const QString &message );
 
 protected:
 	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact ) ;

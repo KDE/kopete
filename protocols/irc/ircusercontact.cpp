@@ -313,11 +313,9 @@ void IRCUserContact::updateInfo()
 		.arg(mInfo.userName).arg(mInfo.hostName) );
 	setProperty( QString::fromLatin1("Server"), i18n("Server"), mInfo.serverName );
 	setProperty( QString::fromLatin1("Channels"), i18n("Channels"), mInfo.channels.join(" ") );
-	setProperty( QString::fromLatin1("FormattedIdleTime"), i18n("Idle"), QString::number(mInfo.idle) );
 	setProperty( QString::fromLatin1("Hops"), i18n("Hops"), QString::number(mInfo.hops) );
 
 	setIdleTime( mInfo.idle );
-
 }
 
 void IRCUserContact::slotNewWhoReply( const QString &channel, const QString &user, const QString &host,

@@ -39,6 +39,9 @@
 IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QString &channel, KopeteMetaContact *metac)
 	: IRCContact(contactManager, channel, metac, "irc_channel")
 {
+	mInfoTimer = new QTimer( this );
+	QObject::connect(mInfoTimer, SIGNAL(timeout()), this, SLOT( slotUpdateInfo() ) );
+
 	QObject::connect(KopeteMessageManagerFactory::factory(), SIGNAL(viewCreated(KopeteView*)),
 			this, SLOT(slotJoinChannel(KopeteView*)) );
 
@@ -167,7 +170,7 @@ void IRCChannelContact::slotAddNicknames()
 {
 	if( !m_isConnected || mJoinedNicks.isEmpty() )
 	{
-		m_engine->writeMessage( QString::fromLatin1("WHO %1").arg( m_nickName ), true );
+		slotUpdateInfo();
 		return;
 	}
 
@@ -197,6 +200,16 @@ void IRCChannelContact::slotAddNicknames()
 		manager()->setContactOnlineStatus( static_cast<KopeteContact*>(user), m_protocol->m_UserStatusVoice );
 
 	QTimer::singleShot(0, this, SLOT( slotAddNicknames() ) );
+}
+
+void IRCChannelContact::slotUpdateInfo()
+{
+	if( m_isConnected )
+	{
+		mInfoTimer->start( 60000, true );
+		if( manager()->members().count() < 100 )
+			m_engine->writeMessage( QString::fromLatin1("WHO %1").arg( m_nickName ), true );
+	}
 }
 
 void IRCChannelContact::slotChannelTopic(const QString &channel, const QString &topic)
