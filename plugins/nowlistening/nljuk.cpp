@@ -47,30 +47,57 @@ void NLJuk::update()
 		QCString replyType;
 		QString result;
 
-		if ( m_client->call( "juk", "Player", "currentTime()", data, 
+		if ( m_client->call( "juk", "Player", "playing()", data, 
 					replyType, replyData ) )
 		{
 			QDataStream reply( replyData, IO_ReadOnly );
-			int currentTime;
-			if ( replyType == "int" ) {
-				reply >> currentTime;
-				if ( currentTime != -1 )
-					m_playing = true;
+			if ( replyType == "bool" ) {
+				reply >> m_playing;
 			}
 		}
 		
-		if ( m_client->call( "juk", "Player", "playingString()", data,
-					replyType, replyData ) )
 		{
-			QDataStream reply( replyData, IO_ReadOnly );
-
-			if ( replyType == "QString" ) {
-				reply >> result;
-				m_artist = result.section( " - ", 0, 0 );
-				newTrack = result.section( " - ", 1, 1 );
+			QDataStream arg( data, IO_WriteOnly );
+			arg << QString::fromLatin1("Album");
+			if ( m_client->call( "juk", "Player", "trackProperty(QString)", data,
+						replyType, replyData ) )
+			{
+				QDataStream reply( replyData, IO_ReadOnly );
+	
+				if ( replyType == "QString" ) {
+					reply >> m_album;
+				}
+			}
+		}
+		
+		{
+			QDataStream arg( data, IO_WriteOnly );
+			arg << QString::fromLatin1("Artist");
+			if ( m_client->call( "juk", "Player", "trackProperty(QString)", data,
+						replyType, replyData ) )
+			{
+				QDataStream reply( replyData, IO_ReadOnly );
+	
+				if ( replyType == "QString" ) {
+					reply >> m_artist;
+				}
 			}
 		}
 
+		{
+			QDataStream arg( data, IO_WriteOnly );
+			arg << QString::fromLatin1("Title");
+			if ( m_client->call( "juk", "Player", "trackProperty(QString)", data,
+						replyType, replyData ) )
+			{
+				QDataStream reply( replyData, IO_ReadOnly );
+	
+				if ( replyType == "QString" ) {
+					reply >> newTrack;
+				}
+			}
+		}
+		
 		if ( newTrack != m_track )
 		{
 			m_newTrack = true;
