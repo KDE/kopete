@@ -176,7 +176,7 @@ void KopeteMetaContactLVI::rename( const QString& newName )
 		", TrackChildNameChanges=" << m_metaContact->trackChildNameChanges() << endl;
 }
 
-void KopeteMetaContactLVI::showContextMenu( const QPoint &point )
+/*void KopeteMetaContactLVI::showContextMenu( const QPoint &point )
 {
 	KPopupMenu *popup = new KPopupMenu();
 
@@ -197,10 +197,10 @@ void KopeteMetaContactLVI::showContextMenu( const QPoint &point )
 	actionSendMessage->plug( popup );
 	actionChat->plug( popup );
 
-	/*
-	 * If the contact can accept file transfers, add this to the top popup window
-	 * It will use the highest priority protocol to send the file
-	 */
+	///*
+	// * If the contact can accept file transfers, add this to the top popup window
+	// * It will use the highest priority protocol to send the file
+	// *
 	if( m_metaContact->canAcceptFiles() )
 	{
 		KAction *actionFile = KopeteStdAction::sendFile( m_metaContact,
@@ -321,7 +321,7 @@ void KopeteMetaContactLVI::showContextMenu( const QPoint &point )
 	popup->exec( point );
 	delete popup;
 }
-
+*/
 void KopeteMetaContactLVI::slotContactStatusChanged()
 {
 	slotUpdateIcons();
@@ -377,7 +377,7 @@ void KopeteMetaContactLVI::slotDisplayNameChanged()
 	setText( 0, m_metaContact->displayName() );
 }
 
-void KopeteMetaContactLVI::slotRemoveThisUser()
+/*void KopeteMetaContactLVI::slotRemoveThisUser()
 {
 	kdDebug(14000) << k_funcinfo << " Removing user" << endl;
 //	m_metaContact->removeThisUser();
@@ -396,7 +396,7 @@ void KopeteMetaContactLVI::slotRemoveFromGroup()
 
 	m_metaContact->removeFromGroup( group() );
 }
-
+*/
 void KopeteMetaContactLVI::slotRename()
 {
 	setRenameEnabled(0, true);
@@ -410,8 +410,10 @@ void KopeteMetaContactLVI::okRename(int col)
 	setRenameEnabled(col, false); // Yeah, that's on purpose...
 }
 
+/*
 void KopeteMetaContactLVI::slotMoveToGroup()
 {
+
 	if( m_actionMove && !m_metaContact->isTemporary() )
 	{
 		if( m_actionMove->currentItem() == 0 )
@@ -429,6 +431,7 @@ void KopeteMetaContactLVI::slotMoveToGroup()
 	}
 }
 
+
 void KopeteMetaContactLVI::slotAddToGroup()
 {
 	if( m_actionCopy )
@@ -445,7 +448,9 @@ void KopeteMetaContactLVI::slotAddToGroup()
 		}
 	}
 }
+*/
 
+//FIXME: this is not used... remove?
 void KopeteMetaContactLVI::slotAddToNewGroup()
 {
 	if( m_metaContact->isTemporary() )

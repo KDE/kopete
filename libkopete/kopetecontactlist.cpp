@@ -871,6 +871,25 @@ KopeteGroup * KopeteContactList::getGroup(unsigned int groupId)
 	return 0L;
 }
 
+QPtrList<KopeteMetaContact> KopeteContactList::selectedMetaContacts() const
+{
+	return m_selectedMetaContacts;
+}
+KopeteGroupList KopeteContactList::selectedGroups() const
+{
+	return m_selectedGroups;
+}
+
+
+void KopeteContactList::setSelectedItems(QPtrList<KopeteMetaContact> metaContacts , KopeteGroupList groups)
+{
+	m_selectedMetaContacts=metaContacts;
+	m_selectedGroups=groups;
+
+	emit metaContactSelected( groups.isEmpty() && metaContacts.count()==1 );
+	emit selectionChanged();
+}
+
 
 #include "kopetecontactlist.moc"
 

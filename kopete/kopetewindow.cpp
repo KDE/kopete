@@ -76,6 +76,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	/* -------------------------------------------------------------------------------- */
 	initView();
 	initActions();
+	contactlist->initActions(actionCollection());
 	initSystray();
 	/* -------------------------------------------------------------------------------- */
 
@@ -88,6 +89,7 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	connect( KopeteAccountManager::manager(), SIGNAL(accountRegistered(KopeteAccount*)), this, SLOT(slotAccountRegistered(KopeteAccount*)));
 	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)), this, SLOT(slotAccountUnregistered(KopeteAccount*)));
 
+	createGUI ( "kopeteui.rc"  , false);
 }
 
 void KopeteWindow::initView()
@@ -169,8 +171,6 @@ void KopeteWindow::initActions()
 
 	globalAccel->readSettings();
         globalAccel->updateConnections();
-
-	createGUI ( "kopeteui.rc" );
 }
 
 void KopeteWindow::slotShowHide()
@@ -444,8 +444,7 @@ void KopeteWindow::slotProtocolDestroyed( QObject */*o */)
 
 void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
 {
-	kdDebug(14000) << k_funcinfo << "Called." << endl;
-
+//	kdDebug(14000) << k_funcinfo << "Called." << endl;
 	if ( !a )
 		return;
 
@@ -475,7 +474,7 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *a )
 
 void KopeteWindow::slotAccountUnregistered( KopeteAccount *a)
 {
-	kdDebug(14000) << k_funcinfo << "Called." << endl;
+//	kdDebug(14000) << k_funcinfo << "Called." << endl;
 
 	KopeteAccountStatusBarIcon *i = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ a ] );
 	if( !i )
@@ -488,8 +487,8 @@ void KopeteWindow::slotAccountUnregistered( KopeteAccount *a)
 void KopeteWindow::slotAccountStatusIconChanged( KopeteAccount *account )
 {
 	KopeteOnlineStatus status = account->myself()->onlineStatus();
-	kdDebug(14000) << k_funcinfo << "Icon: '" <<
-		status.overlayIcon() << "'" << endl;
+//	kdDebug(14000) << k_funcinfo << "Icon: '" <<
+//		status.overlayIcon() << "'" << endl;
 
 	KopeteAccountStatusBarIcon *i = static_cast<KopeteAccountStatusBarIcon *>( m_accountStatusBarIcons[ account ] );
 	if( !i )
@@ -530,7 +529,7 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteAccount *account )
 	}
 	else
 	{
-		kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged(): "<< "Using movie."  << endl;
+//		kdDebug(14000) << "KopeteWindow::slotProtocolStatusIconChanged(): "<< "Using movie."  << endl;
 		i->setMovie( mv );
 	}
 }
@@ -545,8 +544,8 @@ void KopeteWindow::slotAccountStatusIconRightClicked( KopeteAccount *account,
 void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& status )
 /*KopeteProtocol * p,	const QString &icon )*/
 {
-	kdDebug(14000) << k_funcinfo << "Icon: " <<
-		status.overlayIcon() << endl;
+//	kdDebug(14000) << k_funcinfo << "Icon: " <<
+//		status.overlayIcon() << endl;
 
 	KopeteProtocolStatusBarIcon *i = static_cast<KopeteProtocolStatusBarIcon *>( m_protocolStatusBarIcons[ status.protocol() ] );
 	if( !i )
@@ -573,9 +572,9 @@ void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& stat
 		if(pm.isNull())
 		{
 			/* No Pixmap found, fallback to Unknown */
-			kdDebug(14000) << k_funcinfo <<
-				"Using unknown pixmap for status icon '" << status.overlayIcon() <<
-				"'." << endl;
+//			kdDebug(14000) << k_funcinfo <<
+//				"Using unknown pixmap for status icon '" << status.overlayIcon() <<
+//				"'." << endl;
 			i->setPixmap( KIconLoader::unknown() );
 		}
 		else
@@ -585,14 +584,14 @@ void KopeteWindow::slotProtocolStatusIconChanged( const KopeteOnlineStatus& stat
 	}
 	else
 	{
-		kdDebug(14000) << k_funcinfo << "Using movie." << endl;
+//		kdDebug(14000) << k_funcinfo << "Using movie." << endl;
 		i->setMovie( mv );
 	}
 }
 
 void KopeteWindow::slotTrayAboutToShowMenu( KPopupMenu * /* me */ )
 {
-	kdDebug(14000) << k_funcinfo << "Called. EMPTY" << endl;
+//	kdDebug(14000) << k_funcinfo << "Called. EMPTY" << endl;
 }
 
 void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
@@ -660,7 +659,7 @@ void KopeteWindow::showAddContactDialog()
 void KopeteWindow::slotSettingsChanged()
 {
 	// Account colouring may have changed, so tell our status bar to redraw
-	kdDebug(14000) << k_funcinfo << endl;
+//	kdDebug(14000) << k_funcinfo << endl;
 	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
 	QPtrListIterator<KopetePlugin> it( plugins );
 	KopetePlugin *plugin = 0L;
@@ -682,3 +681,6 @@ void KopeteWindow::slotSettingsChanged()
 }
 #include "kopetewindow.moc"
 // vim: set noet ts=4 sts=4 sw=4:
+
+
+

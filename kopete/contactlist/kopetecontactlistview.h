@@ -29,7 +29,6 @@
 #include <qrect.h>
 #include <klistview.h>
 
-class KToggleAction;
 class KopeteContact;
 class KopeteMetaContact;
 class KopeteMetaContactLVI;
@@ -38,6 +37,10 @@ class KopeteGroupViewItem;
 class KopeteStatusGroupViewItem;
 class KRootPixmap;
 class KopeteEvent;
+class KActionCollection;
+class KAction;
+class KListAction;
+class KActionMenu;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -50,20 +53,20 @@ public:
 	KopeteContactListView( QWidget *parent = 0, const char *name = 0 );
 	~KopeteContactListView();
 
-	//const QStringList& groups() const { return groupStringList; }
+	/**
+	 * Init MetaContact related actions
+	 */
+	void initActions(KActionCollection*);
+
 
 	// FIXME: Make this private again when meta contact is more mature...
 	KopeteGroupViewItem *getGroup( KopeteGroup* , bool add=true );
 
-//	QStringList groupStringList() {return m_groupStringList; }
 
 	/**
 	 * Add a given group name and return it
 	 */
 	void addGroup( const QString groupName );
-//	void renameGroup( const QString from, const QString to);
-
-//	QListViewItem* temporaryGroup();
 
 public slots:
 	/**
@@ -75,7 +78,6 @@ public slots:
 	 * Prompt the user for the group name (slot)
 	 */
 	void addGroup();
-	void renameGroup();
 
 protected:
 	virtual void contentsMouseMoveEvent( QMouseEvent *e );
@@ -86,19 +88,18 @@ protected:
 	virtual QDragObject *dragObject();
 
 private slots:
+	void slotSelectionChanged();
 	void slotContextMenu(KListView*,QListViewItem *item, const QPoint &point );
-
 	void slotExpanded( QListViewItem *item );
 	void slotDoubleClicked( QListViewItem *item );
 	void slotCollapsed( QListViewItem *item );
-	void removeGroup();
+
 	void slotSettingsChanged( void );
 	void slotExecuted( QListViewItem *item, const QPoint &pos, int c );
 
 	void slotAddedToGroup( KopeteMetaContact *mc, KopeteGroup *to );
 	void slotRemovedFromGroup( KopeteMetaContact *mc, KopeteGroup *from );
 	void slotMovedToGroup( KopeteMetaContact *mc, KopeteGroup *from, KopeteGroup *to );
-
 
 	/**
 	 * A meta contact was added to the contact list - update the view
@@ -115,8 +116,21 @@ private slots:
 	void slotShowAddContactDialog();
 	void slotNewMessageEvent(KopeteEvent *);
 
+	void removeGroup();
+
+
+	/** Actions related slots **/
+	void slotSendMessage();
+	void slotStartChat();
+	void slotSendFile();
+	void slotMoveToGroup();
+	void slotCopyToGroup();
+	void slotRemoveFromGroup();
+	void slotRemove();
+	void slotRename();
+
+
 private:
-	KToggleAction *m_actionShowOffline;
 
 	bool mShowAsTree;
 
@@ -138,6 +152,19 @@ private:
 	QRect m_onItem;
 
 	QPoint m_startDragPos;
+
+
+	/* ACTIONS */
+	KAction *actionSendFile;
+	KListAction *actionMove;
+	KListAction *actionCopy;
+	KAction *actionRename;
+	KAction *actionRemove;
+	KAction *actionRemoveFromGroup;
+	KActionMenu *actionAddContact;
+	KAction *actionAddTemporaryContact;
+
+
 };
 
 #endif

@@ -173,19 +173,35 @@ public:
 	 */
 	KopeteGroup * getGroup(unsigned int groupId);
 
-
 	/**
 	 * Find a contact by display name. Returns the first match.
 	 */
 	KopeteMetaContact *findContactByDisplayName( const QString &displayName );
+
+
+	/**
+	 * return the list of metacontact actualy selected in the contactlist UI
+	 */
+	QPtrList<KopeteMetaContact> selectedMetaContacts() const;
+
+	/**
+	 * return the list of groups actualy selected in the contactlist UI
+	 */
+	KopeteGroupList selectedGroups() const ;
+
+public slots:
 
 	/**
 	 * Open a chat to a contact, and optionally set some initial text
 	 */
 	void messageContact( const QString &displayName, const QString &messageText = QString::null );
 
-public slots:
-
+	/**
+	 * Set which items are selected in the ContactList GUI.
+	 * This method has to be call by the contactlist UI side.
+	 * it store selected items, and emits signals
+	 */
+	 void setSelectedItems(QPtrList<KopeteMetaContact> metaContacts , KopeteGroupList groups);
 
 	/**
 	 * Load the contact list
@@ -224,6 +240,19 @@ signals:
 //	void addedToGroup( KopeteMetaContact *mc, const QString &to );
 //	void removedFromGroup( KopeteMetaContact *mc, const QString &from );
 
+
+	/**
+	 * This signal is emit when the selection has changed, it is emited after the following slot
+	 * Warning: Do not delete any contacts in slots connected to this signal.  (it is the warning in the QListView::selectionChanged() doc)
+	 */
+	void selectionChanged();
+	/**
+	 * This slot is emit each time the selection changed. the bool is set to true if one single meta contact has been selected,
+	 * and set to false if none, or several contacts are selected
+	 * you can connect this signal to KAction::setEnabled if you have an action which is applied to only one contact
+	 */
+	void metaContactSelected(bool);
+
 private:
 	/**
 	 * Current contact list version * 10 ( i.e. '10' is version '1.0' )
@@ -258,7 +287,7 @@ private:
 	/**
 	 * List of groups
 	 */
-	 KopeteGroupList m_groupList;
+	KopeteGroupList m_groupList;
 
 	/**
 	 * Our contact list instance
@@ -274,6 +303,12 @@ private:
 	 * flag to don't save the contactlist when it is not completly loaded
 	 */
 	bool m_loaded;
+
+	/**
+	 * selected items
+	 */
+	QPtrList<KopeteMetaContact> m_selectedMetaContacts;
+	KopeteGroupList m_selectedGroups;
 };
 
 #endif

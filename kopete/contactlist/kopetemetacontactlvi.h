@@ -90,7 +90,6 @@ public:
 	QColor color();
 	QString colorName();*/
 
-	void showContextMenu( const QPoint &point );
 
 	/**
 	 * Call the meta contact's execute as I don't want to expose m_contact
@@ -115,20 +114,18 @@ public:
 
 	void catchEvent(KopeteEvent *);
 
+	void slotRename();
+
 private slots:
 	void slotUpdateIcons();
 	void slotContactStatusChanged();
-	
+
 	void slotDisplayNameChanged();
-	void slotRemoveThisUser();
-	void slotRemoveFromGroup();
-	void slotMoveToGroup();
+
 	void slotAddContact();
 	void slotAddTemoraryContact();
 
-	void slotAddToGroup();
 	void slotAddToNewGroup();
-	void slotRename();
 	void slotIdleStateChanged();
 
 	/**
