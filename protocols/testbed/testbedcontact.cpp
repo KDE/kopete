@@ -28,7 +28,7 @@
 #include "testbedfakeserver.h"
 #include "testbedprotocol.h"
 
-TestbedContact::TestbedContact( KopeteAccount* _account, const QString &uniqueName, 
+TestbedContact::TestbedContact( KopeteAccount* _account, const QString &uniqueName,
 		const TestbedContactType type, const QString &displayName, KopeteMetaContact *parent )
 : KopeteContact( _account, uniqueName, parent )
 {
@@ -54,7 +54,7 @@ void TestbedContact::serialize( QMap< QString, QString >& serializedData, QMap< 
     QString value;
 	switch ( m_type )
 	{
-	case Null: 
+	case Null:
 		value = "null";
 	case Echo:
 		value = "echo";
@@ -81,13 +81,15 @@ KopeteMessageManager* TestbedContact::manager( bool )
 	}
 }
 
-KActionCollection *TestbedContact::customContextMenuActions()
+
+KActionCollection *TestbedContact::customContextMenuActions() //OBSOLETE
 {
-	m_actionCollection = new KActionCollection( this, "userColl" );
-	m_actionPrefs = new KAction(i18n( "&Contact Settings" ), 0, this, 
+	//FIXME!!!  this function is obsolete, we should use XMLGUI instead
+	/*m_actionCollection = new KActionCollection( this, "userColl" );
+	m_actionPrefs = new KAction(i18n( "&Contact Settings" ), 0, this,
 			SLOT( showContactSettings( )), m_actionCollection, "contactSettings" );
 
-	return m_actionCollection;
+	return m_actionCollection;*/
 }
 
 void TestbedContact::showContactSettings()
@@ -102,8 +104,8 @@ void TestbedContact::sendMessage( KopeteMessage &message )
 	// convert to the what the server wants
 	// For this 'protocol', there's nothing to do
 	// send it
-	static_cast<TestbedAccount *>( account() )->server()->sendMessage( 
-			message.to().first()->contactId(), 
+	static_cast<TestbedAccount *>( account() )->server()->sendMessage(
+			message.to().first()->contactId(),
 			message.plainBody() );
 	// give it back to the manager to display
 	manager()->appendMessage( message );
@@ -113,13 +115,13 @@ void TestbedContact::sendMessage( KopeteMessage &message )
 
 void TestbedContact::receivedMessage( const QString &message )
 {
-	// Create a KopeteMessage 
+	// Create a KopeteMessage
 	KopeteMessage *newMessage;
 	KopeteContactPtrList contactList;
 	account();
 	contactList.append( account()->myself() );
 	newMessage = new KopeteMessage( this, contactList, message, KopeteMessage::Inbound );
-	
+
 	// Add it to the manager
 	manager()->appendMessage (*newMessage);
 
