@@ -110,7 +110,7 @@ public slots:
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
 	virtual void execute();
-	virtual void slotSendFile(QString fileName);
+	virtual void slotSendFile(QString &fileLocation, QString fileName, long unsigned int fileSize);
 
 	void slotRemovedFromGroup(unsigned int);
 	void slotAddedToGroup(unsigned int);

@@ -617,14 +617,14 @@ void MSNContact::slotMoved(KopeteMetaContact* from)
 			protocol(), SLOT (serialize(KopeteMetaContact*) ));
 }
 
-void MSNContact::slotSendFile(QString fileName  )
+void MSNContact::slotSendFile(QString &fileLocation, QString fileName = QString::null, long unsigned int fileSize = 0L )
 {
-	if(fileName.isNull())
-		fileName = KFileDialog::getOpenFileName( QString::null ,"*.*", 0l  , i18n( "Kopete File Transfer" ));
+	if(fileLocation.isNull())
+		fileLocation = KFileDialog::getOpenFileName( QString::null ,"*.*", 0l  , i18n( "Kopete File Transfer" ));
 
 	//kdDebug() << "MSNContact::slotSendFile: File chosen to send:" << fileName << endl;
 
-	if ( !fileName.isNull() )
+	if ( !fileLocation.isNull() )
 	{
 		KopeteContactPtrList chatmembers;
 		chatmembers.append( this );
@@ -636,7 +636,7 @@ void MSNContact::slotSendFile(QString fileName  )
 		if( !manager )
 			manager = new MSNMessageManager( protocol(), protocol()->myself(), chatmembers );
 
-		manager->sendFile( fileName );
+		manager->sendFile( fileLocation, fileName, fileSize );
 	}
 }
 

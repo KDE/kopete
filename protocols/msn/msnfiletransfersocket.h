@@ -42,7 +42,7 @@ public:
 
 	void setKopeteTransfer( KopeteTransfer *kt );
 	KopeteTransfer* kopeteTransfer() { return m_kopeteTransfer; }
-	void setFileName( const QString &fn );
+	void setFile( const QString &fn, long unsigned int fileSize = 0L );
 	void setAuthCookie( const QString &c ) { m_authcook = c; }
 	void setCookie( long unsigned int c ) { m_cookie = c; }
 	long unsigned int cookie() { return m_cookie; }

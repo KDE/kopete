@@ -457,7 +457,7 @@ void MSNMessageManager::slotFileTransferAccepted(KopeteTransfer *trans, const QS
 
 	if(m_chatService)
 	{
-		MFTS->setFileName(fileName);
+		MFTS->setFile(fileName);
 		MFTS->setKopeteTransfer(trans);
 
 		QCString message=QString(
@@ -517,16 +517,20 @@ void MSNMessageManager::slotFileTransferDone(MSNFileTransferSocket* MFTS)
 		setCanBeDeleted(true);
 }
 
-void MSNMessageManager::sendFile(const QString& file)
+void MSNMessageManager::sendFile(const QString& fileLocation, QString& fileName, long unsigned int fileSize) 
 {
+		
 	if(m_chatService)
 	{
+		if( fileName == QString::null )
+			fileName = fileLocation.right( fileLocation.length() - fileLocation.findRev( QRegExp("/") ) - 1 );
+		
 		unsigned long int cookie = (rand()%(999999))+1;
 		MSNFileTransferSocket *MFTS=new MSNFileTransferSocket(false,this);
 		MFTS->setCookie(cookie);
 		connect(MFTS, SIGNAL( done(MSNFileTransferSocket*) ) , this , SLOT( slotFileTransferDone(MSNFileTransferSocket*) ));
 		m_invitations.insert( cookie  , MFTS);
-		MFTS->setFileName(file);
+		MFTS->setFile(fileLocation, fileSize);
 
 		QCString message=QString(
 			"MIME-Version: 1.0\r\n"
@@ -536,7 +540,7 @@ void MSNMessageManager::sendFile(const QString& file)
 			"Application-GUID: {5D3E02AB-6190-11d3-BBBB-00C04F795683}\r\n"
 			"Invitation-Command: INVITE\r\n"
 			"Invitation-Cookie: " +QString::number(cookie) +"\r\n"
-			"Application-File: "+file.right( file.length() - file.findRev( QRegExp("/") ) - 1 )+"\r\n"
+			"Application-File: "+ fileName +"\r\n"
 			"Application-FileSize: "+ QString::number(MFTS->size()) +"\r\n\r\n").utf8();
 
 		m_chatService->sendCommand( "MSG" , "N", true, message );

@@ -219,7 +219,7 @@ void MSNFileTransferSocket::abort()
 //	emit done(this);
 }
 
-void MSNFileTransferSocket::setFileName(const QString &fn)
+void MSNFileTransferSocket::setFile(const QString &fn, long unsigned int fileSize = 0L)
 {
 	m_fileName=fn;
 	if(!m_incoming)
@@ -235,7 +235,11 @@ void MSNFileTransferSocket::setFileName(const QString &fn)
 			//FIXME: abort transfer here
 			kdDebug() << "MSNFileTransferSocket::setFileName: WARNING unable to open the file" << endl;
 		}
-		m_size = m_file->size();
+		
+		if(fileSize == 0L)
+			m_size = m_file->size();
+		else
+			m_size = fileSize;
 	}
 }
 
