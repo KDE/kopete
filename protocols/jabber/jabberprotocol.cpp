@@ -218,6 +218,12 @@ bool JabberProtocol::unload()
 
 	disconnect();
 
+	if(jabberClient)
+	{
+		jabberClient->deleteLater();
+		jabberClient = 0L;
+	}
+	
 	// kick the SSL library
 	Jabber::Stream::unloadSSL();
 
@@ -521,17 +527,25 @@ JabberProtocol *JabberProtocol::protocol()
 
 void JabberProtocol::disconnect()
 {
+	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] disconnect() called" << endl;
+
 	if (isConnected())
 	{
+		kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Still connected, closing connection..." << endl;
+
 		// tell backend class to disconnect
 		jabberClient->close();
 	}
 
-	// we need to use deleteLater because a delete would
-	// not execute the close() request
-	jabberClient->deleteLater();
-	jabberClient = 0L;
-
+	/* FIXME:
+	 * We should delete the Jabber::Client instance here,
+	 * but active timers in psi prevent us from doing so.
+	 * (in a failed connection attempt, these timers will
+	 * try to access an already deleted object)
+	 * Instead, the instance will lurk until the next
+	 * connection attempt.
+	 */
+	
 	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Disconnected." << endl;
 
 	setStatusIcon("jabber_offline");
@@ -545,6 +559,7 @@ void JabberProtocol::disconnect()
 		static_cast<JabberContact *>( *it )->slotUpdatePresence(
 			STATUS_OFFLINE, "" );
 	}
+
 }
 
 void JabberProtocol::slotConnect()
@@ -562,10 +577,11 @@ void JabberProtocol::slotDisconnected()
 	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Disconnected from Jabber server."
 			<< endl;
 
-	if(jabberClient)
-		jabberClient->deleteLater();
-
-	jabberClient = 0L;
+	/* FIXME:
+	 * We should delete the Jabber::Client instance here,
+	 * but timers etc prevent us from doing so. (psi does
+	 * not like to be deleted from a slot)
+	 */
 
 	setStatusIcon("jabber_offline");
 }
