@@ -4205,7 +4205,7 @@ const QString OscarSocket::ServerToQString(const char* string, OscarContact *con
 				"result for US-ASCII=" << cresult <<
 				", message length=" << length << endl;
 #endif
-			if ( length < 0 )
+			if(cresult < length-1)
 				codec=0L; // codec not appropriate
 		}
 
