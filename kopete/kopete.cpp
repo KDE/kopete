@@ -195,7 +195,7 @@ void Kopete::slotConnectAll()
 	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
 		kdDebug() << "[Kopete] Connect All: " << (*i).name << endl;
-		KopetePlugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
+		KopetePlugin *tmpprot = kopeteapp->libraryLoader()->searchByID( ( *i ).name );
 		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
 
 		if (!prot)
@@ -215,7 +215,7 @@ void Kopete::slotDisconnectAll()
 	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
 		kdDebug() << "[Kopete] Disconnect All: "<<(*i).name << endl;
-		KopetePlugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
+		KopetePlugin *tmpprot = kopeteapp->libraryLoader()->searchByID( ( *i ).name );
 		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
 
 		if (!prot)
@@ -245,7 +245,7 @@ void Kopete::setAwayAll(void)
 	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
 		kdDebug() << "[Kopete] slotSetAwayAll() for plugin: " << (*i).name << endl;
-		KopetePlugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
+		KopetePlugin *tmpprot = kopeteapp->libraryLoader()->searchByID( ( *i ).name );
 		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
 
 		if (!prot)
@@ -269,7 +269,7 @@ void Kopete::slotSetAvailableAll(void)
 	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
 		kdDebug() << "[Kopete] slotSetAvailableAll() for plugin: " << (*i).name << endl;
-		KopetePlugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
+		KopetePlugin *tmpprot = kopeteapp->libraryLoader()->searchByID( ( *i ).name );
 		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
 
 		if (!prot)

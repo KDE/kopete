@@ -56,12 +56,6 @@ class LibraryLoader : public QObject
 	Q_OBJECT
 
 private:
-	friend class Kopete;
-	friend class KopetePlugin;
-	friend class KopeteProtocol;
-	friend class AddWizardImpl;
-	friend class KopeteStdAction;
-	friend class KopeteMetaContactLVI;
 	struct PluginLibrary
 	{
 		KopetePlugin *plugin;
