@@ -27,7 +27,7 @@
 #include "nowlisteningpreferences.h"
 #include "nowlisteningpreferences.moc"
 
-NowListeningPreferences::NowListeningPreferences( const QString &pixmap, QObject *parent ) 
+NowListeningPreferences::NowListeningPreferences( const QString &pixmap, QObject *parent )
 	: ConfigModule( i18n( "Now Listening" ), i18n( "Now Listening Plugin" ), pixmap, parent )
 {
 	(  new QVBoxLayout(  this ) )->setAutoAdd(  true );
@@ -38,12 +38,12 @@ NowListeningPreferences::NowListeningPreferences( const QString &pixmap, QObject
 			KGlobal::config()->readNumEntry( "PollFrequency", 90 )
 			);
 	preferencesDialog->m_header->setText( 
-			KGlobal::config()->readEntry( "Header", 
+			KGlobal::config()->readEntry( "Header",
 				"Now Listening To: " ) 
 			 );
 	preferencesDialog->m_perTrack->setText( 
 			KGlobal::config()->readEntry( "PerTrack", 
-				"%track (by %artist)(on %album)" ) 
+				"%track( by %artist)( on %album)" ) 
 			 );
 	preferencesDialog->m_conjunction->setText( 
 			KGlobal::config()->readEntry( "Conjunction", 
