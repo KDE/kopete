@@ -41,6 +41,7 @@ HistoryLogger::HistoryLogger( KopeteMetaContact *m,  QObject *parent, const char
  : QObject(parent, name)
 {
 	m_saveTimer=0L;
+	m_saveTimerTime=0;
 	m_metaContact=m;
 	m_hideOutgoing=false;
 	m_cachedMonth=-1;
@@ -58,6 +59,7 @@ HistoryLogger::HistoryLogger( KopeteContact *c,  QObject *parent, const char *na
  : QObject(parent, name)
 {
 	m_saveTimer=0L;
+	m_saveTimerTime=0;
 	m_cachedMonth=-1;
 	m_metaContact=c->metaContact();
 	m_hideOutgoing=false;
@@ -252,7 +254,7 @@ void HistoryLogger::appendMessage( const KopeteMessage &msg , const KopeteContac
 	
 	// I'm temporizing the save.
 	// On hight-traffic channel, saving can take lots of CPU. (because the file is big)
-	// So i wait 3 minutes. If no message has been received/send in 3 minutes, we save.
+	// So i wait a time proportional to the time needed to save..
 	
 	const QString filename=getFileName(c,0);
 	if(!m_toSaveFileName.isEmpty() && m_toSaveFileName != filename)
@@ -268,7 +270,8 @@ void HistoryLogger::appendMessage( const KopeteMessage &msg , const KopeteContac
 		m_saveTimer=new QTimer(this);
 		connect( m_saveTimer, SIGNAL( timeout() ) , this, SLOT(saveToDisk()) );
 	}
-	m_saveTimer->start( 150000 /*~2min*/, true /*singleshot*/ ); 
+	if(!m_saveTimer->isActive())
+		m_saveTimer->start( m_saveTimerTime, true /*singleshot*/ ); 
 }
 
 void HistoryLogger::saveToDisk()
@@ -277,6 +280,9 @@ void HistoryLogger::saveToDisk()
 		m_saveTimer->stop();
 	if(m_toSaveFileName.isEmpty() || m_toSaveDocument.isNull())
 		return;
+		
+	QTime t;
+	t.start(); //mesure the time needed to save.
 
 	KSaveFile file( m_toSaveFileName );
 	if( file.status() == 0 )
@@ -285,9 +291,21 @@ void HistoryLogger::saveToDisk()
 		//stream->setEncoding( QTextStream::UnicodeUTF8 ); //???? oui ou non?
 		m_toSaveDocument.save( *stream, 1 );
 		file.close();
+		
+		m_saveTimerTime=QMIN(t.elapsed()*1000, 500000); 
+		    //a time 1000 times supperior to the time needed to save.  but with a upper limit of 8 minutes
+		//on a my machine, (2.4Ghz, but old HD) it should take about 10 ms to save the file. 
+		// So that would mean save every 10 seconds, which seems to be ok.
+		// But it may take 500 ms if the file to save becomes too big (1Mb).
+		// So saving every 8 minutes is a good deal.
+		kdDebug(14310) << k_funcinfo << m_toSaveFileName << " saved in " << t.elapsed() << " ms " <<endl ;
+		
 		m_toSaveFileName=QString::null;
 		m_toSaveDocument=QDomDocument();
 	}
+	else
+		kdError(14310) << k_funcinfo << "impossible to save the history file " << m_toSaveFileName << endl;
+	
 }
 
 QValueList<KopeteMessage> HistoryLogger::readMessages(unsigned int lines,

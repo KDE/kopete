@@ -168,6 +168,7 @@ private:
 	QTimer *m_saveTimer;
 	QDomDocument m_toSaveDocument;
 	QString m_toSaveFileName;
+	unsigned int m_saveTimerTime; //time in ms between each save
 	
 	/**
 	 * workaround for the 31 midnight bug.
