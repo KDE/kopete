@@ -26,6 +26,7 @@
 #include "plugin.h"
 #include "pluginloader.h"
 #include "pluginmodule.h"
+#include <addwizardimpl.h>
 
 class Plugins;
 
@@ -141,9 +142,11 @@ void Kopete::slotAboutPlugins()
 	aboutPl->show();
 	
 }
-/** No descriptions */
+/** Add a contact through Wizard */
 void Kopete::slotAddContact()
 {
+	AddWizardImpl *tmpdialog = new AddWizardImpl(this->mainWindow());
+	tmpdialog->show();
 }
 
 /** No descriptions */
