@@ -99,7 +99,10 @@ void KopeteAccountManager::setAwayAll( const QString &awayReason )
 
 	for ( QPtrListIterator<KopeteAccount> it( d->accounts ); it.current(); ++it )
 	{
-		if ( it.current()->isConnected() )
+		// FIXME: ICQ's invisible online should be set to invisible away
+		KopeteContact *self = it.current()->myself();
+		bool isInvisible = self && self->onlineStatus().status() == KopeteOnlineStatus::Invisible;
+		if ( it.current()->isConnected() && !isInvisible )
 			it.current()->setAway( true, awayReason.isNull() ? KopeteAway::message() : awayReason );
 	}
 }
