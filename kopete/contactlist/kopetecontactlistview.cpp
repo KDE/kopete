@@ -405,18 +405,18 @@ void KopeteContactListView::slotMetaContactSelected( bool sel )
 	if( mccount == 1 )
 	{
 		KopeteMetaContact *kmc = KopeteContactList::contactList()->selectedMetaContacts().first();
-		set = kmc->isReachable() && sel;
+		set = sel && kmc->isReachable();
 		actionAddTemporaryContact->setEnabled( sel && kmc->isTemporary() );
 	}
 
 	actionSendMessage->setEnabled( set );
 	actionStartChat->setEnabled( set );
-	actionMove->setEnabled( set ); // TODO: make available for several contacts
-	actionCopy->setEnabled( set ); // TODO: make available for several contacts
+	actionMove->setEnabled( sel ); // TODO: make available for several contacts
+	actionCopy->setEnabled( sel ); // TODO: make available for several contacts
 	// TODO: make available for several contacts
 	// and unavailable when the contact is only in one group
-	actionRemoveFromGroup->setEnabled( set );
-	actionAddContact->setEnabled( set );
+	actionRemoveFromGroup->setEnabled( sel );
+	actionAddContact->setEnabled( sel );
 }
 
 void KopeteContactListView::slotAddedToGroup( KopeteMetaContact *mc, KopeteGroup *to )
