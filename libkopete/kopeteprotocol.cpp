@@ -193,7 +193,7 @@ void KopeteProtocol::deserialize( KopeteMetaContact *metaContact, const QMap<QSt
 	QMap<QString, QString>::ConstIterator it;
 	for( it = data.begin(); it != data.end(); ++it )
 	{
-		serializedData[ it.key() ] = QStringList::split( QChar( 0xE000 ), it.data() );
+		serializedData[ it.key() ] = QStringList::split( QChar( 0xE000 ), it.data(), true );
 		serializedDataIterators[ it.key() ] = serializedData[ it.key() ].begin();
 	}
 
