@@ -51,7 +51,7 @@ public:
 	KopeteMessageManager* create(const KopeteContact *user,
 		KopeteContactList _contacts, KopeteProtocol *protocol,
 		QString logFile = QString::null,
-		int widget = WIDGET_OLDSCHOOL, int capabilities = 0);
+		KopeteMessageManager::WidgetType widget = KopeteMessageManager::ChatWindow);
 	
 	/**
 	 * Get a list of all open sessions

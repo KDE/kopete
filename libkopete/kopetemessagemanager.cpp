@@ -29,7 +29,7 @@
 #include <qstylesheet.h>
 
 KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteContactList others,
-		KopeteProtocol *protocol, QString logFile, int widget, int capabilities,
+		KopeteProtocol *protocol, QString logFile, enum WidgetType widget,
 		QObject *parent, const char *name) : QObject( parent, name)
 {
 
@@ -39,7 +39,6 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user, KopeteCon
 	mUnreadMessageEvent = 0L;
 	mProtocol = protocol;
 	mWidget = widget;
-	mCapabilities = capabilities;
 	
 	readModeChanged();
 	connect(kopeteapp->appearance(), SIGNAL(queueChanged()), this, SLOT(readModeChanged()));
@@ -61,14 +60,9 @@ KopeteMessageManager::~KopeteMessageManager()
 }
 
 void KopeteMessageManager::newChatWindow() {
-	mChatWindow = new KopeteChatWindow(mCapabilities);
+	mChatWindow = new KopeteChatWindow();
 	if (mContactList.first() != 0L)
 		mChatWindow->setCaption(mContactList.first()->name()); //TODO: add multi-user support
-	for (KopeteContact *it = mContactList.first(); it; it = mContactList.next()) {
-		for (QStringList::Iterator it2 = (resources[it]).begin(); it2 != (resources[it]).end(); it2++) {
-			mChatWindow->addResource(it, *it2);
-		}
-	}
 	/* When the window is shown, we have to delete this contact event */
 	kdDebug() << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
 	connect (mChatWindow, SIGNAL(shown()), this, SLOT(cancelUnreadMessageEvent()));
@@ -91,7 +85,7 @@ void KopeteMessageManager::setReadMode(int mode)
 
 void KopeteMessageManager::readMessages()
 {
-	if (mWidget == WIDGET_OLDSCHOOL) {
+	if (mWidget == ChatWindow) {
 		if (mChatWindow == 0L) {
 			kdDebug() << "[KopeteMessageManager] mChatWindow just doesn't exist" << endl;
 			newChatWindow();
@@ -124,12 +118,6 @@ void KopeteMessageManager::messageSentFromWindow(const QString &message)
 {
 	QString body = message;
 	KopeteMessage tmpmessage(mUser, mContactList, body, KopeteMessage::Outbound);
-	if (mChatWindow->fg()->color().isValid()) {
-		tmpmessage.setFg(mChatWindow->fg()->color());
-	}
-	if (mChatWindow->bg()->color().isValid()) {
-		tmpmessage.setBg(mChatWindow->bg()->color());
-	}
 	emit messageSent(tmpmessage);
 }
 
@@ -244,52 +232,6 @@ void KopeteMessageManager::readModeChanged()
 	{
 		mReadMode = Popup;
 	}
-}
-
-void KopeteMessageManager::addResource(const KopeteContact *c, QString resource)
-{
-	if (mWidget == WIDGET_OLDSCHOOL) {
-		kdDebug() << "[KopeteMessageManager] Adding new resource to KCW: " << resource << endl;
-		if (mChatWindow != 0L) {
-			kdDebug() << "[KopeteMessageManager] mChatWindow != 0L!" << endl;
-			mChatWindow->addResource(c, resource);
-		}
-		(resources[c]).append(resource);
-	}
-	else {
-		kdDebug() << "[KopeteMessageManager] Adding new resource to other widget: " << resource << endl;
-		(resources[c]).append(resource);
-	}
-}
-
-void KopeteMessageManager::removeResource(const KopeteContact *c, QString resource) {
-	if (mWidget == WIDGET_OLDSCHOOL) {
-		kdDebug() << "[KopeteMessageManager] Removing resource from KCW: " << resource << endl;
-		if (mChatWindow != 0L) {
-			mChatWindow->removeResource(c, resource);
-		}
-
-		QStringList tmpResources = resources[c];
-		if (&tmpResources == NULL) {
-			kdDebug() << "[KopeteMessageManager] ->rR(): Eeks, no tmpResource!" << endl;
-		}
-		else {
-			tmpResources.remove(resource);
-		}
-	}
-	else {
-		kdDebug() << "[KopeteMessageManager] Removing resource from other widget: " << resource << endl;
-	}
-}
-
-bool KopeteMessageManager::serverChecked()
-{
-	return	mChatWindow->cbServer->isChecked();
-}
-
-void KopeteMessageManager::checkServer(bool check)
-{
-	mChatWindow->cbServer->setChecked(check);
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -49,6 +49,11 @@ public:
 	 *	Reading mode
 	 */
 	enum ReadingMode { Queued, Popup };
+
+	/**
+	 * Widget type to display.
+	 */
+	enum WidgetType { ChatWindow, Email, MDI, FileSend };
 	/**
 	 * Delete a chat manager instance
 	 */
@@ -75,16 +80,6 @@ public:
 	void removeContact( const KopeteContact *c );
 
 	/**
-	 * Add a resource to the session
-	 */
-	void addResource(const KopeteContact *c, QString resource);
-
-	/**
-	 * Remove a resource from the session
-	 */
-	void removeResource(const KopeteContact *c, QString resource);
-	
-	/**
 	 * Set Reading mode
 	 */
 	void setReadMode( int mode );
@@ -110,9 +105,6 @@ public:
 	const KopeteContact* user() const { return mUser; };
     const KopeteProtocol* protocol() const { return mProtocol; };
 
-	bool serverChecked(); //return if the send through server checkbox for icq is checked
-	void checkServer(bool state); //Set the send through server checkbox for icq
-
 signals:
 	/**
 	 * A message has been sent by the user or a plugin. The protocol should
@@ -137,7 +129,7 @@ private:
 	 * not create instances yourself directly!
 	 */
 	KopeteMessageManager( const KopeteContact *user, KopeteContactList others,
-		KopeteProtocol *protocol, QString logFile = QString::null, int widget = 0, int capabilities = 0,
+		KopeteProtocol *protocol, QString logFile = QString::null, enum WidgetType widget = ChatWindow,
 		QObject *parent = 0, const char *name = 0 );
 
 	KopeteContactList mContactList;
@@ -146,7 +138,8 @@ private:
 	KopeteEvent *mUnreadMessageEvent;
 	KopeteMessageList mMessageQueue;
 	KopeteMessageLog *mLogger;
-	int mReadMode, mWidget, mCapabilities;
+	int mReadMode;
+	enum WidgetType mWidget;
 	QMap<const KopeteContact *, QStringList> resources;
 	KopeteProtocol *mProtocol;
 };

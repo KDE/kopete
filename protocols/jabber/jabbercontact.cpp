@@ -66,7 +66,7 @@ KopeteMessageManager* JabberContact::msgManager()
 	}
 	else
 	{
-		mMsgManager = kopeteapp->sessionFactory()->create(mProtocol->myself(), theContacts, mProtocol, "jabber/" + mUserID, WIDGET_OLDSCHOOL, CAP_RESOURCES);
+		mMsgManager = kopeteapp->sessionFactory()->create(mProtocol->myself(), theContacts, mProtocol, "jabber/" + mUserID, KopeteMessageManager::ChatWindow);
 		connect(mMsgManager, SIGNAL(messageSent(const KopeteMessage)), this, SLOT(slotSendMsg(const KopeteMessage)));
 		return mMsgManager;
 	}
@@ -86,18 +86,20 @@ void JabberContact::showContextMenu(QPoint, QString /*group */) {
     popup = new KPopupMenu();
     popup->insertTitle(userID() + " (" + mResource + ")");
     actionChat->plug(popup);
-	QStringList items;
-	items.append("Automatic (best resource)");
-	JabberResource *tmpBestResource = bestResource();
-	items.append(tmpBestResource->resource());
-    for (JabberResource *resource = resources.first(); resource; resource = resources.next()) {
-		if (resource != tmpBestResource) {
-			items.append(resource->resource());
+	if (mStatus != STATUS_OFFLINE) {
+		QStringList items;
+		items.append("Automatic (best resource)");
+		JabberResource *tmpBestResource = bestResource();
+		items.append(tmpBestResource->resource());
+		for (JabberResource *resource = resources.first(); resource; resource = resources.next()) {
+			if (resource != tmpBestResource) {
+				items.append(resource->resource());
+			}
 		}
+		actionSelectResource->setItems(items);
+		actionSelectResource->setCurrentItem(0);
+		actionSelectResource->plug(popup);
 	}
-	actionSelectResource->setItems(items);
-	actionSelectResource->setCurrentItem(0);
-	actionSelectResource->plug(popup);
 	popup->insertSeparator();
     actionHistory->plug(popup);
     popup->insertSeparator();
@@ -269,7 +271,7 @@ void JabberContact::slotResourceAvailable(const Jid &jid, const JabResource &res
 	if (theirJID != userID()) { return; }
 	kdDebug() << "Jabber contact: Adding new resource '" << resource.name << "' for " << userID() << endl;
 	for (JabberResource *tmpResource = resources.first(); tmpResource; tmpResource = resources.next()) {
-		msgManager()->removeResource(this, tmpResource->resource());
+//		msgManager()->removeResource(this, tmpResource->resource());
 		if (tmpResource->resource() == jid.resource()) {
 			/* Yes, it's a hack. AIUI, Psi will emit resourceAvailable() whenever a certain resource
 			 * changes status, which means we can't really avoid this, unless we want multiple instances
@@ -286,10 +288,10 @@ void JabberContact::slotResourceAvailable(const Jid &jid, const JabResource &res
 	JabberResource *tmpBestResource = bestResource();
 	kdDebug() << "Jabber contact: Best resource is now " << tmpBestResource->resource() << "." << endl;
 	slotUpdateContact(theirJID, tmpBestResource->resource(), tmpBestResource->status(), tmpBestResource->reason());
-	msgManager()->addResource(this, tmpBestResource->resource());
+//	msgManager()->addResource(this, tmpBestResource->resource());
 	for (JabberResource *tmpResource = resources.first(); tmpResource; tmpResource = resources.next()) {
 		if (tmpResource != tmpBestResource) {
-			msgManager()->addResource(this, tmpResource->resource());
+//			msgManager()->addResource(this, tmpResource->resource());
 		}
 	}
 	if (hasResource == false) {

@@ -35,7 +35,7 @@ KopeteMessageManagerFactory::~KopeteMessageManagerFactory()
 
 KopeteMessageManager *KopeteMessageManagerFactory::create(
 	const KopeteContact *user, KopeteContactList _contacts, /* Touch that underscore and you die, along with ICQ not compiling. Fuck the underscore, that BLOWS CHUNKS. */
-	KopeteProtocol *protocol, QString logFile , int widget, int capabilities )
+	KopeteProtocol *protocol, QString logFile, enum KopeteMessageManager::WidgetType widget)
 {
 	/* We build the sessions list for this protocol */
 	KopeteMessageManager *tmpKmm;
@@ -95,7 +95,7 @@ KopeteMessageManager *KopeteMessageManagerFactory::create(
 	}
 
 	if (0 == result) {
-		result = new KopeteMessageManager(user,  _contacts, protocol, logFile, widget, capabilities);
+		result = new KopeteMessageManager(user,  _contacts, protocol, logFile, widget);
 		mSessionList.append(result);
 
 		/*
@@ -104,7 +104,6 @@ KopeteMessageManager *KopeteMessageManagerFactory::create(
 		 */
 		connect( result, SIGNAL(dying(KopeteMessageManager*)), this, SLOT(slotRemoveSession(KopeteMessageManager*)));
 	}
-
 	return (result);
 }
 
