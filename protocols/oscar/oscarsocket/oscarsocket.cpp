@@ -1337,14 +1337,18 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 	if (blmBuddies.size() > 0)
 		sendBuddylistAdd(blmBuddies);
 
-	sendSSIActivate(); // send CLI_ROSTERACK
-	emit gotConfig();
-
-	gotAllRights++;
-	if (gotAllRights==7)
+	// If the server list is splited on more than one packet, only the last one has timestamp != 0
+	if (timestamp)
 	{
-		kdDebug(14150) << k_funcinfo "gotAllRights==7" << endl;
-		sendInfo();
+		sendSSIActivate(); // send CLI_ROSTERACK
+		emit gotConfig();
+
+		gotAllRights++;
+		if (gotAllRights==7)
+		{
+			kdDebug(14150) << k_funcinfo "gotAllRights==7" << endl;
+			sendInfo();
+		}
 	}
 }
 
