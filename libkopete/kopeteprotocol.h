@@ -61,7 +61,7 @@ public:
 
 	/**
 	 * The icon of the plugin as shown in the status bar. .mng animations
-	 * are supported too, but tried last for performance reasons
+	 * are supported too, and tried first
 	 */
 	QString statusIcon() const;
 	void setStatusIcon( const QString &icon );

@@ -58,8 +58,7 @@ public:
 	 * Find the KopeteContact to a given contact. If contact
 	 * is not found, a null pointer is returned.
 	 */
-	KopeteContact *findContact( const QString &protocolId, const QString &identityId, const QString
-&contactId );
+	KopeteContact *findContact( const QString &protocolId, const QString &identityId, const QString &contactId );
 	/**
 	 * The name of the icon associated with the contact's status
 	 */
