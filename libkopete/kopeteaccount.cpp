@@ -361,13 +361,24 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 		KopeteContactList::contactList()->addMetaContact( parentContact );
 	}
 
+	//Fix for 77835 (forward the metacontact name is displayName is empty)
+	QString realDisplayName;
+	if ( displayName.isEmpty() )
+	{
+		realDisplayName = parentContact->displayName();
+	}
+	else
+	{
+		realDisplayName = displayName;
+	}
+	
 	if ( c )
 	{
 		c->setMetaContact( parentContact );
 	}
 	else
 	{
-		if ( !addContactToMetaContact( contactId, displayName, parentContact ) )
+		if ( !addContactToMetaContact( contactId, realDisplayName, parentContact ) )
 			return false;
 	}
 
