@@ -431,11 +431,11 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 			saveAutoSaveSettings();
 
 		e->accept();
-		
+
 		//If we're not showing the tray, and they close the window (via the 'X' in the titlebar),
 		//workaround the fact that accepting the close event doesn't cause kopete to shutdown
 		if ( !app->isShuttingDown() )
-		{	
+		{
 			queryExit();
 			slotQuit();
 		}
@@ -563,37 +563,15 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 		//QPixmap pm = SmallIcon( icon );
 		QPixmap pm = status.iconFor( contact->account() );
 
-		// BEGIN REMOVE
-		// Compat for the non-themed icons
-		// FIXME: When all icons are converted, remove this - Martijn
-		#if 0
+		// No Pixmap found, fallback to Unknown
 		if( pm.isNull() )
-		{
-			kdDebug(14000) << k_funcinfo << " FIXME: loading non-themed icon for "
-					<< contact->protocol()->pluginId() << ", needs converting!" << endl;
-			pm = loader->loadIcon( status.overlayIcon(),
-				 KIcon::User, 0, KIcon::DefaultState, 0L, true );
-		}
-		#endif
-		// END REMOVE
-
-		if( pm.isNull() )
-		{
-			// No Pixmap found, fallback to Unknown
-			kdDebug(14000) << k_funcinfo <<
-				"Using unknown pixmap for status icon '" << status.overlayIcon() << "'."
-				<< endl;
 			i->setPixmap( KIconLoader::unknown() );
-		}
 		else
-		{
 			i->setPixmap( pm );
-		}
 	}
 	else
 	{
 		//kdDebug( 14000 ) << k_funcinfo << "Using movie."  << endl;
-		mv.setSpeed( 33 );
 		i->setMovie( mv );
 	}
 
