@@ -87,9 +87,11 @@
       <codehinting outputview="1" enablech="0" selectview="0" />
     </codecompletion>
     <classstore>
-      <enablepcs>false</enablepcs>
-      <enablepp>false</enablepp>
-      <preparsing/>
+      <enablepcs>true</enablepcs>
+      <enablepp>true</enablepp>
+      <preparsing>
+        <directory dir="/home/jason/src/kdenonbeta/kopete" parsesubdir="Yes" />
+      </preparsing>
     </classstore>
     <filetemplates>
       <choosefiles>false</choosefiles>
