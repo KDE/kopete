@@ -1,9 +1,9 @@
 /***************************************************************************
-                          msncontact.h  -  description
+                          msncontact.h  -  MSN Contact
                              -------------------
     begin                : Thu Jan 24 2002
-    copyright            : (C) 2002 by duncan
-    email                : duncan@tarro
+    copyright            : (C) 2002 by Duncan Mac-Vicar Prett
+    email                : duncan@kde.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -92,7 +92,6 @@ class MSNContact : public KopeteContact
 		uint mStatus;
 		MSNProtocol *mProtocol;
 		KopeteHistoryDialog *historyDialog;
-		QValueStack<MSNMessageStruct> *messageQueue;
 		KPopupMenu *popup;
 		KAction* actionRemove;
 		KAction* actionRemoveFromGroup;

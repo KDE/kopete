@@ -1,9 +1,9 @@
 /***************************************************************************
-                          msnprotocol.cpp  -  description
+                          msnprotocol.cpp  -  MSN Plugin
                              -------------------
     begin                : Wed Jan 2 2002
-    copyright            : (C) 2002 by duncan
-    email                : duncan@tarro
+    copyright            : (C) 2002 by Duncan mac-Vicar Prett
+    email                : duncan@kde.org
  ***************************************************************************
 
  ***************************************************************************

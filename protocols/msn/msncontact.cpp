@@ -1,9 +1,10 @@
 /***************************************************************************
-                          msncontact.cpp  -  description
+                          msncontact.cpp  -  MSN Contact
                              -------------------
     begin                : Thu Jan 24 2002
-    copyright            : (C) 2002 by duncan
-    email                : duncan@tarro
+    copyright            : (C) 2002 by Duncan Mac-Vicar Prett
+                           (C) 2002 by Ryan Cumming
+    email                : duncan@kde.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -53,8 +54,6 @@ MSNContact::MSNContact(QString userid, const QString name, QString group, MSNPro
 
 void MSNContact::initContact(QString userid, const QString name, MSNProtocol *protocol)
 {
-	messageQueue = new QValueStack<MSNMessageStruct>;
-
 	// We connect this signal so that we can tell when a user's status changes
 	connect(protocol->engine, SIGNAL(updateContact(QString, uint)), this, SLOT(slotUpdateContact (QString, uint) ));
 	connect(protocol->engine, SIGNAL(contactRemoved(QString, QString)), this, SLOT(slotContactRemoved (QString, QString) ));
@@ -184,7 +183,7 @@ void MSNContact::slotViewHistory()
 	}
 	else
 	{
-		historyDialog = new KopeteHistoryDialog(QString("kopete/msn_logs/%1.log").arg(mUserID), mName, 0, "ICQHistoryDialog");
+		historyDialog = new KopeteHistoryDialog(QString("kopete/msn_logs/%1.log").arg(mUserID), mName, 0, "MSNHistoryDialog");
 
 		connect ( historyDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()) );
 		connect ( historyDialog, SIGNAL(destroyed()), this, SLOT(slotHistoryDialogClosing()) );
