@@ -3,6 +3,8 @@
   <!ENTITY kopete "<application>Kopete</application>">
   <!ENTITY Will.Stephenson "<personname><firstname>Will</firstname><surname>Stephenson</surname></personname>">
   <!ENTITY Will.Stephenson.mail "<email>lists@stevello.free-online.co.uk</email>">
+  <!ENTITY Matt.Rogers "<personname><firstname>Matt</firstname><surname>Rogers</surname></personname>">
+  <!ENTITY Matt.Rogers.mail "<email>mattr@kde.org</email>">
   <!ENTITY package "kdenetwork">
   <!ENTITY kappname "&kopete;">
   <!ENTITY im "<acronym>IM</acronym>">
@@ -69,6 +71,7 @@ Appendix: Obtaining and installation (1st draft, Will)
 <authorgroup>
 
 <author>&Will.Stephenson; &Will.Stephenson.mail;</author>
+<author>&Matt.Rogers; &Matt.Rogers.mail;</author>
 
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
@@ -759,13 +762,6 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 <answer><para>&kopete;'s name comes from the chilean word Copete, meaning <quote>a drink with your friends</quote>. Duncan, the original author, recorded an <ulink type="audio/vorbis" url="http://kopete.kde.org/files/kopete_en.ogg">audio sample</ulink>.</para></answer>
 </qandaentry>
 <qandaentry>
-<question><para>How do I send messages using just the <keycap>Enter</keycap> key?</para>
-</question>
-<answer><para>You can change it in the Chat window using <menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure
-Shortcuts...</guimenuitem></menuchoice></para>
-<para>This is because in &kde; applications such as &kopete;, you configure keyboard shortcuts in the window where you use the shortcut.  <keycombo action="simul">&Ctrl;&Enter;</keycombo> is the &kde; default shortcut for Send Message.</para></answer>
-</qandaentry>
-<qandaentry>
 <question><para>When I have more than one messaging service under a user's name in my contact list and I click on that user's name, it will message them on the wrong messaging service.</para>
 </question>
 <answer><para>You can change the order of accounts Kopete tries to message people with by using the Up and Down arrows in the bottom right corner of the account configuration screen. Kopete will try to connect with accounts starting from the top. However, if one service has a higher status value than the others for that user, Kopete will use that one. For example, if a person has three services and two are marked as away and the third is marked as online, Kopete will always try to message the user using the online service.</para><tip><para>If you click on the small protocol icon on the right of the menu item, instead of on the person's name, you will always try to contact the person using that service!</para></tip>
@@ -775,9 +771,7 @@ Shortcuts...</guimenuitem></menuchoice></para>
 <question><para>I need to connect via a SOCKS proxy, but I can't find any proxy configuration options in &kopete;.  How do I set up &kopete; to use SOCKS?</para>
 </question>
 <answer><itemizedlist>
-<listitem><para><trademark>MSN</trademark>, <trademark>ICQ</trademark>, <trademark>AIM</trademark>, and Yahoo use the &kde; network infrastructure.  Their SOCKS proxy details are configured with the rest of &kde;, in <application>Control Center</application><menuchoice><guimenu>Internet &amp; Network</guimenu><guimenuitem>Proxy</guimenuitem></menuchoice>.</para></listitem>
-<listitem><para>Jabber has its own SOCKS implementation in the Advanced tab of its account configuration.</para></listitem>
-<listitem><para>Yahoo does not support SOCKS proxies yet.</para></listitem>
+<listitem><para><trademark>MSN</trademark>, <trademark>ICQ</trademark>, <trademark>AIM</trademark>, Jabber, and <trademark>Yahoo</trademark> use the &kde; network infrastructure.  Their SOCKS proxy details are configured with the rest of &kde;, in <application>Control Center</application>, <menuchoice><guimenu>Internet &amp; Network</guimenu><guimenuitem>Proxy</guimenuitem></menuchoice>.</para></listitem>
 </itemizedlist>
 </answer>
 </qandaentry>

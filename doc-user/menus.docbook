@@ -14,12 +14,12 @@ performs a menu item function, the default shortcut is listed with the menu item
 <term>
 <menuchoice>
 <guimenu>File</guimenu>
-<guisubmenu>Connection</guisubmenu>
-<guimenuitem>Connect All</guimenuitem>
+<guisubmenu>Set Status</guisubmenu>
+<guimenuitem>Online</guimenuitem>
 </menuchoice>
 </term>
 <listitem>
-<para>Go online with all your accounts.</para>
+<para>Go online with all accounts</para>
 </listitem>
 </varlistentry>
 
@@ -27,12 +27,12 @@ performs a menu item function, the default shortcut is listed with the menu item
 <term>
 <menuchoice>
 <guimenu>File</guimenu>
-<guisubmenu>Connection</guisubmenu>
-<guimenuitem>Disconnect All</guimenuitem>
+<guisubmenu>Set Status</guisubmenu>
+<guimenuitem>Away</guimenuitem>
 </menuchoice>
 </term>
 <listitem>
-<para>Take all your accounts offline.</para>
+<para>Set all connected accounts away</para>
 </listitem>
 </varlistentry>
 
@@ -40,25 +40,12 @@ performs a menu item function, the default shortcut is listed with the menu item
 <term>
 <menuchoice>
 <guimenu>File</guimenu>
-<guisubmenu>Status</guisubmenu>
-<guimenuitem>Set Available Globally</guimenuitem>
+<guisubmenu>Set Status</guisubmenu>
+<guimenuitem>Offline</guimenuitem>
 </menuchoice>
 </term>
 <listitem>
-<para>Make all your online accounts available.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term>
-<menuchoice>
-<guimenu>File</guimenu>
-<guisubmenu>Status</guisubmenu>
-<guisubmenu>Set Away Globally</guisubmenu>
-</menuchoice>
-</term>
-<listitem>
-<para>This sets all your accounts away.  Choose an away message from the sub-menu, which will be sent to anyone who tries to message you by &im; systems that support it.</para>
+<para>Set all accounts offline</para>
 </listitem>
 </varlistentry>
 
@@ -70,7 +57,7 @@ performs a menu item function, the default shortcut is listed with the menu item
 </menuchoice>
 </term>
 <listitem>
-<para>This displays the Add Contact Wizard.</para>
+<para>This displays the Add Contact Wizard, which allows you to add a new contact to your list</para>
 </listitem>
 </varlistentry>
 
@@ -83,20 +70,6 @@ performs a menu item function, the default shortcut is listed with the menu item
 </term>
 <listitem>
 <para>Prompts you for the new group's name and adds it to the contact list.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term>
-<menuchoice>
-<shortcut><keycombo action="simul">&Ctrl;<keycap>S</keycap></keycombo>
-</shortcut>
-<guimenu>File</guimenu>
-<guimenuitem>Save Contactlist</guimenuitem>
-</menuchoice>
-</term>
-<listitem>
-<para>This saves &kopete;'s contactlist to disk immediately.  The list is also saved when &kopete; quits, so you don't need to save by hand. </para>
 </listitem>
 </varlistentry>
 
@@ -119,11 +92,40 @@ performs a menu item function, the default shortcut is listed with the menu item
 <sect2 id="menus-contactlist-edit">
 <title><guimenu>Edit</guimenu> Menu</title>
 <variablelist>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;<keycap>Z</keycap></keycombo>
+</shortcut>
+<guimenu>Edit</guimenu>
+<guimenuitem>Undo</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Reverts the last change that was made to the contact list.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<menuchoice>
+<shortcut><keycombo action="simul">&Ctrl;&Shift;<keycap>Z</keycap></keycombo>
+</shortcut>
+<guimenu>Edit</guimenu>
+<guimenuitem>Redo</guimenuitem>
+</menuchoice>
+</term>
+<listitem>
+<para>Reverts the last change that was made to the contact list by <guimenu>Edit</guimenu><guimenuitem>Undo</guimenuitem></para>
+</listitem>
+</varlistentry>
+
 <varlistentry>
 <term>
 <menuchoice>
 <guimenu>Edit</guimenu>
-<guimenuitem>Send Message...</guimenuitem>
+<guimenuitem>Send Single Message...</guimenuitem>
 </menuchoice>
 </term>
 <listitem>
@@ -182,20 +184,10 @@ performs a menu item function, the default shortcut is listed with the menu item
 <varlistentry>
 <term>
 <menuchoice>
+<shortcut><keycombo><keycap>Delete</keycap></keycombo>
+</shortcut>
 <guimenu>Edit</guimenu>
-<guimenuitem>Remove From Group</guimenuitem>
-</menuchoice>
-</term>
-<listitem>
-<para>(Enabled when a contact is selected) Removes the selected contact from the group.  If it is not in any other groups, it is moved to the top level of the contactlist.  To remove a contact entirely, see <guimenuitem>Remove Contact</guimenuitem>.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term>
-<menuchoice>
-<guimenu>Edit</guimenu>
-<guimenuitem>Remove Contact</guimenuitem>
+<guimenuitem>Remove</guimenuitem>
 </menuchoice>
 </term>
 <listitem>
