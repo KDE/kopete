@@ -1,3 +1,6 @@
+#include <kaction.h>
+#include <kpopupmenu.h>
+
 #include "smsaccount.h"
 #include "smsprotocol.h"
 #include "smscontact.h"
@@ -29,7 +32,7 @@ KActionMenu* SMSAccount::actionMenu()
 {
 	SMSProtocol *theProtocol = dynamic_cast<SMSProtocol *>(protocol());
 	KActionMenu *theActionMenu = new KActionMenu(accountId(), this);
-	theActionMenu->popupMenu()->insertTitle(theMyself->icon(), "SMS (" + accountId() + ")");
+	theActionMenu->popupMenu()->insertTitle(m_myself->icon(), "SMS (" + accountId() + ")");
 
 	return theActionMenu;
 }

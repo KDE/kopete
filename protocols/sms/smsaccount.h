@@ -12,6 +12,7 @@
 
 #include "kopeteaccount.h"
 
+class KActionMenu;
 class SMSProtocol;
 class SMSContact;
 
