@@ -408,16 +408,16 @@
                             <string>12</string>
                         </property>
                         <property name="text">
-                            <string>agnieszka</string>
+                            <string>DONT_TRANSLATE</string>
                         </property>
                         <property name="text">
-                            <string>agniesia z podlesia</string>
+                            <string>DO_NOT_TRANSLATE_PLEASE</string>
                         </property>
                         <property name="text">
-                            <string>128</string>
+                            <string>999</string>
                         </property>
                         <property name="text">
-                            <string>zagłobożagłów nizno-dolny</string>
+                            <string>DO_NOT_TRANSLATE_THIS_AS_WELL</string>
                         </property>
                         <property name="text">
                             <string>245324956234</string>
