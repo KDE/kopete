@@ -36,6 +36,7 @@
 #include <kpassdlg.h>
 
 #include "kopetepassword.h"
+#include "kopetepasswordwidget.h"
 
 #include "icquserinfowidget.h"
 #include "icqprotocol.h"
@@ -115,19 +116,13 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	// Read in the settings from the account if it exists
 	if(mAccount)
 	{
-		mAccountSettings->chkSavePassword->setChecked(mAccount->password().remembered());
-
-#warning Gof broke this! Use Kopete::UI::PasswordWidget
-#if 0
-		if(mAccountSettings->chkSavePassword->isChecked())
-			mAccountSettings->edtPassword->setText(mAccount->Kopete::Account::password());
-#endif
-
 		mAccountSettings->edtAccountId->setText(mAccount->accountId());
 
 		// TODO: Remove me after we can change Account IDs (Matt)
 		mAccountSettings->edtAccountId->setDisabled(true);
 
+		mAccountSettings->mPasswordWidget->load(&mAccount->password());
+		
 		mAccountSettings->chkAutoLogin->setChecked(mAccount->autoConnect());
 
 		if ( mAccount->pluginData(mProtocol, "Server") != "login.icq.com" || ( mAccount->pluginData(mProtocol, "Port").toInt() != 5190) ) {
@@ -221,7 +216,6 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		// Just set the default saved password to true
 		kdDebug(14153) << k_funcinfo <<
 			"Called with no account object, setting defaults for server and port" << endl;
-		mAccountSettings->chkSavePassword->setChecked(false);
 
 		QTime current = QTime::currentTime(Qt::LocalTime);
 		QTime currentUTC = QTime::currentTime(Qt::UTC);
@@ -273,11 +267,7 @@ Kopete::Account *ICQEditAccountWidget::apply()
 			return NULL;
 	}
 
-	// Check to see if we're saving the password, and set it if so
-	if (mAccountSettings->chkSavePassword->isChecked())
-		mAccount->password().set(mAccountSettings->edtPassword->text());
-	else
-		mAccount->password().set();
+	mAccountSettings->mPasswordWidget->save(&mAccount->password());
 
 	mAccount->setAutoConnect(mAccountSettings->chkAutoLogin->isChecked());
 

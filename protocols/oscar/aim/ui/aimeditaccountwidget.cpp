@@ -12,6 +12,7 @@
 #include <kpassdlg.h>
 
 #include "kopetepassword.h"
+#include "kopetepasswordwidget.h"
 
 #include "aimprotocol.h"
 #include "aimaccount.h"
@@ -33,14 +34,7 @@ AIMEditAccountWidget::AIMEditAccountWidget(AIMProtocol *protocol,
 	// Read in the settings from the account if it exists
 	if (mAccount)
 	{
-		if (mAccount->password().remembered())
-		{ // If we want to remember the password
-			mGui->mSavePassword->setChecked(true);
-#warning Gof broke this! Use Kopete::UI::PasswordWidget
-#if 0
-			mGui->edtPassword->setText(account->password(false, 0L, 16));
-#endif
-		}
+		mGui->mPasswordWidget->load( &mAccount->password() );
 		mGui->edtAccountId->setText(account->accountId());
 		//Remove me after we can change Account IDs (Matt)
 		mGui->edtAccountId->setDisabled(true);
@@ -50,11 +44,6 @@ AIMEditAccountWidget::AIMEditAccountWidget(AIMProtocol *protocol,
         }
 		mGui->edtServerAddress->setText(account->pluginData(protocol, "Server"));
 		mGui->sbxServerPort->setValue(account->pluginData(protocol,"Port").toInt());
-	}
-	else
-	{
-		// Just set the default saved password to true
-		mGui->mSavePassword->setChecked(false);
 	}
 	QObject::connect(mGui->buttonRegister, SIGNAL(clicked()), this, SLOT(slotOpenRegister()));
 }
@@ -75,11 +64,7 @@ Kopete::Account *AIMEditAccountWidget::apply()
 		mAccount = new AIMAccount(mProtocol, newId);
 	}
 
-	// Check to see if we're saving the password, and set it if so
-	if (mGui->mSavePassword->isChecked())
-		mAccount->password().set(QString::fromLocal8Bit(mGui->edtPassword->password()));
-	else
-		mAccount->password().set();
+	mGui->mPasswordWidget->save( &mAccount->password() );
 
 	mAccount->setAutoConnect(mGui->mAutoLogon->isChecked()); // save the autologon choice
 	if (mGui->optionOverrideServer->isChecked()) {
