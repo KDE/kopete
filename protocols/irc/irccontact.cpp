@@ -145,8 +145,6 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 
 	connect(mContact->engine, SIGNAL(connectionClosed()), this, SLOT(unloading()));
 
-	mPendingMessage = pendingMessage;
-
 	if (joinOnConnect == true)
 	{
 		if (mContact->engine->isLoggedIn() == true)
@@ -275,8 +273,6 @@ void IRCContact::incomingPrivMessage(const QString &originating, const QString &
 	{
 		if (mTabPage == 0)
 		{
-			mPendingMessage.clear();
-			mPendingMessage << "message" << originating << target << message;
 			joinNow();
 		}
 	}
@@ -288,8 +284,6 @@ void IRCContact::incomingPrivAction(const QString &originating, const QString &t
 	{
 		if (mTabPage == 0)
 		{
-			mPendingMessage.clear();
-			mPendingMessage << "action" << originating << target << message;
 			joinNow();
 		}
 	}

@@ -246,11 +246,10 @@ void IRCServerContact::incomingPrivMessage(const QString &originating, const QSt
 	{
 		return;
 	}
-	QStringList pendingMessage;
-	pendingMessage << "message" << originating << target << message;
+
 	if (activeContacts.find(queryName.lower()) == activeContacts.end())
 	{
-		(void)new IRCContact(mServer, queryName, 6667, true, this, pendingMessage);
+		(void)new IRCContact(mServer, queryName, 6667, true, this);
 	}
 }
 
@@ -261,11 +260,10 @@ void IRCServerContact::incomingPrivAction(const QString &originating, const QStr
 	{
 		return;
 	}
-	QStringList pendingMessage;
-	pendingMessage << "action" << originating << target << message;
+
 	if (activeContacts.find(queryName.lower()) == activeContacts.end())
 	{
-		(void)new IRCContact(mServer, queryName, 6667, true, this, pendingMessage);
+		(void)new IRCContact(mServer, queryName, 6667, true, this);
 	}
 }
 

@@ -57,7 +57,6 @@ public:
 	IRCServerContact *mContact;
 	QVBox *tabPage() { return mTabPage; };
 	IRCChatView *getChatView() { return chatView; };
-	QStringList mPendingMessage;
 	QString mServer;
 	QString mTarget;
 	QString mGroupName;
