@@ -64,8 +64,24 @@ BehaviorConfig::BehaviorConfig(QWidget *parent, const char * /* name */, const Q
 	mBehaviorTabCtl->addTab(mPrfsChat, i18n("&Chat"));
 
 	load();
+	//connect a whole bunch of signals and slots so the thing works
+	//TODO: There's gotta be a better way to do this --Matt
+	
+	connect(mPrfsGeneral->mStartDockedChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsGeneral->mUseQueueChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsGeneral->mBalloonNotifyChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsGeneral->mTrayflashNotifyChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsGeneral->mSoundIfAwayChk, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsGeneral->mTreeContactList, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
+	connect(mPrfsGeneral->mSortByGroup, SIGNAL(toggled(bool)),
+		this, SLOT(slotSettingsChanged(bool)));
 }
-
 
 void BehaviorConfig::save()
 {
@@ -161,6 +177,11 @@ void BehaviorConfig::slotShowTrayChanged(bool check)
 	mPrfsGeneral->mStartDockedChk->setEnabled(check);
 	mPrfsGeneral->mTrayflashNotifyChk->setEnabled(check);
 	mPrfsGeneral->mBalloonNotifyChk->setEnabled(check);
+	setChanged(true);
+}
+
+void BehaviorConfig::slotSettingsChanged(bool)
+{
 	setChanged(true);
 }
 

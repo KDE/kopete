@@ -38,6 +38,7 @@ class BehaviorConfig : public KCModule
 	private slots:
 		void slotConfigSound();
 		void slotShowTrayChanged(bool);
+		void slotSettingsChanged(bool);
 
 	private:
 		QTabWidget* mBehaviorTabCtl;
