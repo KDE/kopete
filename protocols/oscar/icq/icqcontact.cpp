@@ -211,10 +211,42 @@ KActionCollection *ICQContact::customContextMenuActions()
 	KAction* actionSendAuth = new KAction(i18n("&Send Authorization"), 0,
 		this, SLOT(slotSendAuth()), actionCollection, "actionSendAuth");
 
+	QString awTxt;
+	QString awIcn;
+	int status = onlineStatus().internalStatus();
+	if (status >= 15)
+		status-=15; // get rid of invis addon
+	switch(status)
+	{
+		case OSCAR_FFC:
+			awTxt = i18n("Read Free For Chat &Message");
+			awIcn = "icq_ffc";
+			break;
+		case OSCAR_AWAY:
+			awTxt = i18n("Read Away &Message");
+			awIcn = "icq_away";
+			break;
+		case OSCAR_DND:
+			awTxt = i18n("Read Do Not Disturb &Message");
+			awIcn = "icq_dnd";
+			break;
+		case OSCAR_NA:
+			awTxt = i18n("Read Not Available &Message");
+			awIcn = "icq_na";
+			break;
+		case OSCAR_OCC:
+			awTxt = i18n("Read Occupied &Message");
+			awIcn = "icq_occ" ;
+			break;
+	}
+	KAction* actionReadAwayMessage = new KAction(awTxt, awIcn, 0,
+		this, SLOT(slotReadAwayMessage()), actionCollection, "actionReadAwayMessage");
+
 	actionRequestAuth->setEnabled(waitAuth());
 
 	actionCollection->insert(actionRequestAuth);
 	actionCollection->insert(actionSendAuth);
+	actionCollection->insert(actionReadAwayMessage);
 
 	return actionCollection;
 }
@@ -390,41 +422,33 @@ void ICQContact::slotUpdEmailUserInfo(const int seq, const ICQMailList &inf)
 		emit updatedUserInfo();
 }
 
-/**
- * Store the interest user info for this contact and see if we have
- * received all the info we support.
- */
-void ICQContact::slotUpdInterestUserInfo( const int seq, const ICQInfoItemList &inf )
+void ICQContact::slotUpdInterestUserInfo(const int seq, const ICQInfoItemList &inf)
 {
 	// compare reply's sequence with the one we sent with our last request
 	if(seq != userinfoRequestSequence)
 		return;
-
 	interestInfo = inf;
-
 	userinfoReplyCount++;
 	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
 		emit updatedUserInfo();
-
 }
 
-/**
- * Store the background user info for this contact and see if we have
- * received all the info we support
-  */
-void ICQContact::slotUpdBackgroundUserInfo( const int seq, const ICQInfoItemList &curr, const ICQInfoItemList &past )
+void ICQContact::slotUpdBackgroundUserInfo(const int seq, const ICQInfoItemList &curr, const ICQInfoItemList &past)
 {
 	// compare reply's sequence with the one we sent with our last request
 	if(seq != userinfoRequestSequence)
 		return;
-
 	currentBackground = curr;
 	pastBackground = past;
-
 	userinfoReplyCount++;
 	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
 		emit updatedUserInfo();
+}
 
+void ICQContact::slotReadAwayMessage()
+{
+	kdDebug(14200) << k_funcinfo << endl;
+	account()->engine()->requestAwayMessage(this);
 }
 
 #include "icqcontact.moc"

@@ -23,6 +23,7 @@
 #include "oscarsocket.h"
 #include "oscarsocket.icq.h"
 #include "oscaraccount.h"
+#include "oscarcontact.h"
 #include <kopeteonlinestatus.h>
 
 #include <netinet/in.h> // for htons()
@@ -653,7 +654,7 @@ void OscarSocket::sendICQStatus(unsigned long status)
 	outbuf.addWord(0x0000); // error code - 0
 //	outbuf.print();
 
-	sendBuf(outbuf, 0x2);
+	sendBuf(outbuf, 0x02);
 } // END OscarSocket::sendICQStatus
 
 
@@ -779,24 +780,13 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 		"msgType=" << msgType <<
 		", msgFlags=" << msgFlags << endl;
 
-	WORD status = messageBuf.getWord(); // Usually 0, seen 0x2000.
-
+	WORD status = messageBuf.getLEWord();
 	kdDebug(14150) << k_funcinfo << "status=" << status << endl;
 
-	// Usually 0, seen 0x0002 in information request messages
-	WORD priority = messageBuf.getWord();
-	if(priority == 0x02)
-	{
-		kdDebug(14150) << k_funcinfo <<
-			"priority flag says this is an 'information request'" << endl;
-	}
-	else
-	{
-		kdDebug(14150) << k_funcinfo <<
-			"priority flag=" << priority << endl;
-	}
+	WORD priority = messageBuf.getLEWord();
+	kdDebug(14150) << k_funcinfo << "priority flag=" << priority << endl;
 
-	WORD messageLength = htons(messageBuf.getWord());
+	WORD messageLength = messageBuf.getLEWord();
 	char *messagetext = messageBuf.getBlock(messageLength);
 
 	switch(msgType)
@@ -859,17 +849,17 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 
 			kdDebug(14150) << k_funcinfo <<
 				"SEND ACKMSG, status=" << ackStatus <<
-				",flags=" << ackFlags <<
+				", flags=" << ackFlags <<
 				", message='" << ackMessage << "'" << endl;
-			ack.addWord(ackStatus);
-			ack.addWord(ackFlags);
+			ack.addLEWord(ackStatus);
+			ack.addLEWord(ackFlags);
 			ack.addLNTS(ackMessage.latin1()); // TODO: encoding
 			if(msgType==0x0001)
 			{
 				ack.addDWord(0x00000000);
-				ack.addDWord(0x00FFFFFF);
+				ack.addDWord(0xFFFFFF00);
 			}
-			sendBuf(ack, 0x2); // send back ack
+			sendBuf(ack, 0x02); // send back ack
 			sendAck = false; // already sent
 			break;
 		}
@@ -899,93 +889,146 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 		"------------------------------------------------------" << endl <<
 		ack.toString() << endl <<
 		"------------------------------------------------------" << endl;*/
-		sendBuf(ack, 0x2); // send back ack
+		sendBuf(ack, 0x02); // send back ack
 	}
 
 	kdDebug(14150) << k_funcinfo << "END" << endl;
 }
 
-// TODO: get on with the coding, need to implement that sequence counting and
-// some sort of packet queue so I know what requests I sent out
-
-/*
-bool requestAutoReply(unsigned long uin, unsigned long status)
+void OscarSocket::requestAwayMessage(OscarContact *c)
 {
-	if (status == 0)
+	if(!c)
+		return;
+	kdDebug(14150) << k_funcinfo << "Called for '" << c->displayName() << "'" << endl;
+
+	DWORD receiverStatus = c->userInfo().icqextstatus;
+	WORD type = (MSG_FLAG_GETAUTO << 8);
+
+	if (receiverStatus == ICQ_STATUS_OFFLINE)		return;
+	else if (receiverStatus & ICQ_STATUS_IS_DND)	type |= MSG_GET_DND;
+	else if (receiverStatus & ICQ_STATUS_IS_OCC)	type |= MSG_GET_OCC;
+	else if (receiverStatus & ICQ_STATUS_IS_NA)		type |= MSG_GET_NA;
+	else if (receiverStatus & ICQ_STATUS_IS_AWAY)	type |= MSG_GET_AWAY;
+	else if (receiverStatus & ICQ_STATUS_IS_FFC)	type |= MSG_GET_FFC;
+
+	sendType2IM(c, "", type);
+}
+
+bool OscarSocket::sendType2IM(OscarContact *c, const QString &text, WORD type)
+{
+	if(!c)
 		return false;
+	kdDebug(14150) << k_funcinfo << "Called for '" << c->displayName() <<
+		"', text='" << text << "' type=" << type << endl;
 
-	int advCounter = 0;
-	unsigned char type = 0xE8;
-	if (status & ICQ_STATUS_DND)
-		type = 0xEB;
-	else if (status & ICQ_STATUS_OCCUPIED)
-		type = 0xE9;
-	else if (status & ICQ_STATUS_NA)
-		type = 0xEA;
-	else if (status & ICQ_STATUS_FREEFORCHAT)
-		type = 0xEC;
+	WORD status = static_cast<OscarContact *>(mAccount->myself())->userInfo().icqextstatus;
+	WORD flags = 0;
 
+	if (status == (WORD)ICQ_STATUS_OFFLINE)		/* no change */;
+	else if (status & ICQ_STATUS_IS_DND)	status = ICQ_STATUS_IS_DND  | (status & ICQ_STATUS_IS_INVIS);
+	else if (status & ICQ_STATUS_IS_OCC)	status = ICQ_STATUS_IS_OCC  | (status & ICQ_STATUS_IS_INVIS);
+	else if (status & ICQ_STATUS_IS_NA)		status = ICQ_STATUS_IS_NA   | (status & ICQ_STATUS_IS_INVIS);
+	else if (status & ICQ_STATUS_IS_AWAY)	status = ICQ_STATUS_IS_AWAY | (status & ICQ_STATUS_IS_INVIS);
+	else if (status & ICQ_STATUS_IS_FFC)	status = ICQ_STATUS_IS_FFC  | (status & ICQ_STATUS_IS_INVIS);
+	else
+		status &= ICQ_STATUS_IS_INVIS;
 
-	kdDebug(14150) << k_funcinfo << "SEND (CLI_SENDMSG), requesting away message" << endl;
+	DWORD receiverStatus = c->userInfo().icqextstatus;
+	if (receiverStatus == ICQ_STATUS_OFFLINE)		/* no change */;
+	else if (receiverStatus & ICQ_STATUS_IS_DND)	flags = MSG_FLAG_CONTACTLIST;
+	else if (receiverStatus & ICQ_STATUS_IS_OCC)	flags = MSG_FLAG_CONTACTLIST;
+	else if (receiverStatus & ICQ_STATUS_IS_NA)		flags = MSG_FLAG_UNKNOWN;
+	else if (receiverStatus & ICQ_STATUS_IS_AWAY)	flags = MSG_FLAG_UNKNOWN;
+	else if (receiverStatus & ICQ_STATUS_IS_FFC)	flags = MSG_FLAG_LIST | MSG_FLAG_UNKNOWN;
+	else											flags = MSG_FLAG_LIST | MSG_FLAG_UNKNOWN;
+
+	DWORD time = rand() % 0xFFFF;
+	DWORD id = rand() % 0xFFFF;
+
+	type2SequenceNum--;
+
+	kdDebug(14150) << k_funcinfo << "SEND (CLI_SENDMSG) type-2, text='" << text <<
+		"' to " << c->displayName() << "(" << c->contactName() << ")" << endl;
 
 	Buffer outbuf;
-	outbuf.addSnac(OSCAR_FAM_4,0x0006,0x0000,0x00000000);
-	outbuf.addDWord(0x00000000); // TIME
-	int id1 = rand() & 0xFFFF;
-	int id2 = rand() & 0xFFFF;
-	outbuf.addWord(id1); // ID
-	outbuf.addWord(id2); // ID
+	outbuf.addSnac(OSCAR_FAM_4,0x0006,0x0000,toicqsrv_seq);
+	toicqsrv_seq++;
+
+	outbuf.addDWord(time); // TIME
+	outbuf.addDWord(id); // ID
 
 	outbuf.addWord(MSGFORMAT_ADVANCED); // type-2 message
-	outbuf.addDWord(getSN().toULong()); // own uin
 
-	Buffer tlv10001;
-	tlv10001.addWord(0x1B00); // length
-	tlv10001.addWord(ICQ_TCP_VERSION);
-	tlv10001.addDWord(0x00000000); // CAP
-	tlv10001.addDWord(0x00000000); // CAP
-	tlv10001.addDWord(0x00000000); // CAP
-	tlv10001.addDWord(0x00000000); // CAP
-	tlv10001.addDWord(0x00000003); // unknown
-	tlv10001.addDWord(0x00000000); // unknown -> 0 = normal message
-	tlv10001.addWord(advCounter);
-	tlv10001.addWord(0xE000);
-	tlv10001.addWord(advCounter);
+	outbuf.addBUIN(c->contactName().latin1()); //dest sn
+	//outbuf.addString(c->contactName().latin1(), c->contactName().length()); //dest sn
 
-	tlv10001.addDWord(0x00000000); // 12 unknown bytes, always zero
-	tlv10001.addDWord(0x00000000);
-	tlv10001.addDWord(0x00000000);
-	tlv10001.addWord(0x0001) // message type - normal message
+	Buffer tlv5;
+	{ // TLV(5)
+		tlv5.addWord(0x0000); // acktype, 0 = normal message
+		tlv5.addDWord(time); // time
+		tlv5.addDWord(id); // random message id
+		tlv5.addDWord(0x09461349); // CAP SERVERRELAY
+		tlv5.addDWord(0x4C7F11D1); // CAP SERVERRELAY
+		tlv5.addDWord(0x82224445); // CAP SERVERRELAY
+		tlv5.addDWord(0x53540000); // CAP SERVERRELAY
 
-	addByte << (char)3;
-	tlv10001.pack((unsigned short)(client->owner->uStatus & 0xFFFF));
-	tlv10001 << 0x0100 << 0x0100 << (char)0;
+		tlv5.addWord(0x000A); // TLV(10)
+		tlv5.addWord(0x0002); // len
+		tlv5.addWord(0x0001); // data, acktype2, 1 = normal message
 
-	// TLV(2) =============
-	Buffer tlv2;
-	tlv2.addWord(0x0000) // acktype, 0 = normal message
-	tlv2.addDWord(0x00000000); // time
-	tlv2.addDWord(0x00000000); // random message id
-	tlv2.addDWord(0x09461349); // CAP SERVERRELAY
-	tlv2.addDWord(0x4C7F11D1); // CAP SERVERRELAY
-	tlv2.addDWord(0x82224445); // CAP SERVERRELAY
-	tlv2.addDWord(0x53540000); // CAP SERVERRELAY
+		tlv5.addWord(0x000F); // TLV(15), always empty
+		tlv5.addWord(0x0000); // len
 
-	tlv2.addWord(0x000A); // TLV(10)
-	tlv2.addWord(0x0002); // len
-	tlv2.addWord(0x0001); // data, acktype2, 1 = normal message
+		Buffer tlv10001;
+		{ // TLV(10001)
+			tlv10001.addLEWord(0x001B); // length
+			tlv10001.addLEWord(ICQ_TCP_VERSION);
+			tlv10001.addDWord(0x00000000); // CAP
+			tlv10001.addDWord(0x00000000); // CAP
+			tlv10001.addDWord(0x00000000); // CAP
+			tlv10001.addDWord(0x00000000); // CAP
+			tlv10001.addWord(0x0000);
+			tlv10001.addByte(0x03); // unknown
+			tlv10001.addDWord(0x00000000); // unknown -> 0 = normal message
+			tlv10001.addWord(type2SequenceNum);
+			tlv10001.addLEWord(0x00E);
+			tlv10001.addWord(type2SequenceNum);
 
-	tlv2.addWord(0x000F); // TLV(15), always empty
-	tlv2.addWord(0x0000); // len
+			tlv10001.addDWord(0x00000000); // 12 unknown bytes, always zero
+			tlv10001.addDWord(0x00000000);
+			tlv10001.addDWord(0x00000000);
 
-	tlv2.addTLV(0x2711, tlv10001.data, tlv10001.length);
-	// ========================
+			tlv10001.addLEWord(type); // message type
+			tlv10001.addWord(status); // own status + a bit of bit-fscking
+			tlv10001.addWord(flags); // message flags/priority
 
-	outbuf.addTLV(0x0002, tlv2.data, tlv2.length )
-//	outbuf.print();
-	sendBuf(outbuf, 0x2);
+			const char *str = text.latin1();
+
+			int len = strlen(str);
+			tlv10001.addLEWord(len+1);
+			tlv10001.addString(str, len);
+			tlv10001.addByte(0x00);
+
+			//tlv10001.addLNTS(text.latin1()); // TODO: encoding
+			if(type == MSG_NORM)
+			{
+				tlv10001.addDWord(0x00000000); // fg color
+				tlv10001.addDWord(0xFFFFFF00); // bg color
+			}
+			//kdDebug(14150) << "tlv10001 :" << endl << tlv10001.toString() << endl;
+		} // END TLV(10001)
+
+		tlv5.addTLV(0x2711, tlv10001.length(), tlv10001.buffer());
+	} // END TLV(5)
+
+	outbuf.addTLV(0x0005, tlv5.length(), tlv5.buffer());
+	outbuf.addDWord(0x00030000); // empty TLV(3)
+	//kdDebug(14150) << "CLI_SENDMSG packet:" << endl << outbuf.toString() << endl;
+	sendBuf(outbuf, 0x02);
+
+	return true;
 }
-*/
+
 
 
 WORD OscarSocket::sendCLI_TOICQSRV(const WORD subcommand, Buffer &data)
@@ -1022,7 +1065,7 @@ WORD OscarSocket::sendCLI_TOICQSRV(const WORD subcommand, Buffer &data)
 	if (data.length() > 0)
 		outbuf.addString(data.buffer(), data.length());
 
-	sendBuf(outbuf, 0x2);
+	sendBuf(outbuf, 0x02);
 	return (toicqsrv_seq);
 }
 

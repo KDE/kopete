@@ -45,4 +45,17 @@ const BYTE MSG_GET_NA		= 0xea; // A message requesting the "not available" auto 
 const BYTE MSG_GET_DND		= 0xeb; // A message requesting the "do not disturb" auto message.
 const BYTE MSG_GET_FFC		= 0xec; // A message requesting the "free for chat" auto message.
 
+
+// taken from micq, now that's code I understand :)
+const WORD MSG_FLAG_UNKNOWN		= 0x0001;
+const WORD MSG_FLAG_CONTACTLIST = 0x0004;
+const WORD MSG_FLAG_REAL		= 0x0010;
+const WORD MSG_FLAG_LIST		= 0x0020;
+const WORD MSG_FLAG_URGENT		= 0x0040;
+const WORD MSG_FLAG_INV			= 0x0080;
+const WORD MSG_FLAG_AWAY		= 0x0100;
+const WORD MSG_FLAG_OCC			= 0x0200;
+const WORD MSG_FLAG_NA			= 0x0800;
+const WORD MSG_FLAG_DND			= 0x1000;
+
 #endif

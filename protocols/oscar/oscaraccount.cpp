@@ -562,17 +562,15 @@ void OscarAccount::slotGotDirectIMRequest(QString sn)
 
 void OscarAccount::slotIdleTimeout()
 {
-//	kdDebug(14150) << k_funcinfo << "called" << endl;
-
+	//kdDebug(14150) << k_funcinfo << "called" << endl;
 	int idletime = KopeteAway::getInstance()->idleTime();
-
 	// not doing anything for more than 5 mins and still not idle
 	if(idletime >= 5*60)
 	{
 		if (idletime >= lastIdleValue + 60)
 		{
-			kdDebug(14150) << k_funcinfo <<
-				"sending idle time to server, idletime=" << idletime << endl;
+			/*kdDebug(14150) << k_funcinfo <<
+				"sending idle time to server, idletime=" << idletime << endl;*/
 			engine()->sendIdleTime(idletime);
 			lastIdleValue = idletime;
 
@@ -584,9 +582,9 @@ void OscarAccount::slotIdleTimeout()
 	{
 		if (mAreIdle)
 		{ // If we _are_ idle, change it
-			kdDebug(14150) << k_funcinfo <<
-				"system change to ACTIVE, setting idle time with server to 0" << endl;
-				engine()->sendIdleTime(0);
+			/*kdDebug(14150) << k_funcinfo <<
+				"system change to ACTIVE, setting idle time with server to 0" << endl;*/
+			engine()->sendIdleTime(0);
 			mAreIdle = false;
 			lastIdleValue = 0;
 		}

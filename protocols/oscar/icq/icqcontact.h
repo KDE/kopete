@@ -106,14 +106,24 @@ class ICQContact : public OscarContact
 		bool mInvisible;
 
 	private slots:
-		/** Called when the userinfo dialog is getting closed */
+		/*
+		 * Called when the userinfo dialog is getting closed
+		 */
 		void slotCloseUserInfoDialog();
-		/** Called when a buddy has changed status */
+
+		/*
+		 * Called when a buddy has changed status
+		 */
 		void slotContactChanged(const UserInfo &u);
 
-		/** Called when a buddy is offgoing */
+		/*
+		 * Called when a buddy is offgoing
+		 */
 		void slotOffgoingBuddy(QString sn);
-		/** Called when we want to send a message */
+
+		/*
+		 * Called when we want to send a message
+		 */
 		void slotSendMsg(KopeteMessage&, KopeteMessageManager *);
 
 		void slotUpdGeneralInfo(const int, const ICQGeneralUserInfo &);
@@ -121,8 +131,20 @@ class ICQContact : public OscarContact
 		void slotUpdMoreUserInfo(const int, const ICQMoreUserInfo &);
 		void slotUpdAboutUserInfo(const int, const QString &);
 		void slotUpdEmailUserInfo(const int, const ICQMailList &);
+
+		/*
+		* Store the interest user info for this contact and see if we have
+		* received all the info we support.
+		*/
 		void slotUpdInterestUserInfo(const int, const ICQInfoItemList& );
+
+		/*
+		* Store the background user info for this contact and see if we have
+		* received all the info we support
+		*/
 		void slotUpdBackgroundUserInfo( const int seq, const ICQInfoItemList &curr, const ICQInfoItemList &past );
+
+		void slotReadAwayMessage();
 };
 
 #endif

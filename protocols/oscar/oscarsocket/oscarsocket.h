@@ -385,6 +385,13 @@ class OscarSocket : public OscarConnection
 			OscarContact *contact,
 			bool isAuto);
 
+		/*
+		 * cool eh ;)
+		 */
+		bool sendType2IM(OscarContact *c, const QString &text, WORD type);
+
+		void requestAwayMessage(OscarContact *c);
+
 		/** Requests sn's user info */
 		void sendUserProfileRequest(const QString &sn);
 
@@ -764,6 +771,10 @@ class OscarSocket : public OscarConnection
 		/*
 		 * Parses a message ack from the server
 		 */
+		void parseSrvMsgAck(Buffer &inbuf);
+		/*
+		 * Parses a message ack from another client
+		 */
 		void parseMsgAck(Buffer &);
 
 		/** Parses a minityping notification from server */
@@ -1103,6 +1114,13 @@ class OscarSocket : public OscarConnection
 		 * incremented after every command sent to the oscar server
 		 */
 		WORD flapSequenceNum;
+
+		/*
+		 * sequence number in type-2 messages [SNAC(4,6)]
+		 * starts at 0xffff
+		 * decremented after every type-2 message sent
+		 */
+		WORD type2SequenceNum;
 
 		DWORD mDirectConnnectionCookie;
 

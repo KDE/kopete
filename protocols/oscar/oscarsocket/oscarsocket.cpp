@@ -40,7 +40,7 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 
 	mIsICQ=isicq; // TODO: Maybe find a better way of handling icq mode
 	toicqsrv_seq=1;
-//	flapSequenceNum=0x010f; // old value from oscar
+	type2SequenceNum=0xFFFF;
 	flapSequenceNum=rand() & 0x7FFF; // value taken from libicq
 	key=0L;
 	mCookie=0L;
@@ -55,8 +55,8 @@ OscarSocket::OscarSocket(const QString &connName, const QByteArray &cookie,
 	mAccount=account;
 	mDirectIMMgr=0L;
 	mFileTransferMgr=0L;
-	awaitingFirstPresenceBlock = OscarSocket::Waiting;
-	mBlockSend = false;
+	awaitingFirstPresenceBlock=OscarSocket::Waiting;
+	mBlockSend=false;
 
 	socket()->enableWrite(false); // don't spam us with readyWrite() signals
 	socket()->enableRead(true);
@@ -97,21 +97,21 @@ OscarSocket::~OscarSocket()
 
 DWORD OscarSocket::setIPv4Address(const QString &address)
 {
-	QString a = address.simplifyWhiteSpace();
+	QString a=address.simplifyWhiteSpace();
 
-	QStringList ipv4Addr = QStringList::split(".", a, FALSE);
+	QStringList ipv4Addr=QStringList::split(".", a, FALSE);
 	if (ipv4Addr.count() == 4)
 	{
-		unsigned long newAddr = 0;
-		int i = 0;
-		bool ok = true;
+		unsigned long newAddr=0;
+		int i=0;
+		bool ok=true;
 		while (ok && i < 4)
 		{
-			unsigned long value = ipv4Addr[i].toUInt(&ok);
+			unsigned long value=ipv4Addr[i].toUInt(&ok);
 			if (value > 255)
-				ok = false;
+				ok=false;
 			if (ok)
-				newAddr = newAddr * 256 + value;
+				newAddr=newAddr * 256 + value;
 			i++;
 		}
 		if (ok)
@@ -123,9 +123,9 @@ DWORD OscarSocket::setIPv4Address(const QString &address)
 void OscarSocket::slotToggleSend()
 {
 	if (mBlockSend)
-		mBlockSend = false;
+		mBlockSend=false;
 	else
-		mBlockSend = true;
+		mBlockSend=true;
 }
 
 void OscarSocket::slotConnected()
@@ -135,7 +135,7 @@ void OscarSocket::slotConnected()
 		"', port '" << socket()->port() << "'" << endl;
 
 #if 0
-	QString h = socket()->localAddress()->nodeName();
+	QString h=socket()->localAddress()->nodeName();
 	mDirectIMMgr=new OncomingSocket(this, h, DirectIM);
 	mFileTransferMgr=new OncomingSocket(this, h, SendFile, SENDFILE_PORT);
 #endif
@@ -163,7 +163,7 @@ void OscarSocket::slotConnectionClosed()
 	idle=false;
 	gotAllRights=0;
 	isLoggedIn=false;
-	awaitingFirstPresenceBlock = OscarSocket::Waiting;
+	awaitingFirstPresenceBlock=OscarSocket::Waiting;
 
 	socket()->reset();
 	//kdDebug(14150) << k_funcinfo << "Socket state is " << state() << endl;
@@ -189,11 +189,11 @@ void OscarSocket::slotConnectionClosed()
 
 void OscarSocket::slotRead()
 {
-	//int waitCount = 0;
-	char *buf = 0L;
+	//int waitCount=0;
+	char *buf=0L;
 	Buffer inbuf;
 	FLAP fl;
-	int bytesread = 0;
+	int bytesread=0;
 
 	//kdDebug(14150) << k_funcinfo << socket()->bytesAvailable() << " bytes to read" << endl;
 
@@ -206,7 +206,7 @@ void OscarSocket::slotRead()
 		return;
 	}
 
-	fl = getFLAP();
+	fl=getFLAP();
 
 	if (fl.error || fl.length == 0)
 	{
@@ -214,9 +214,9 @@ void OscarSocket::slotRead()
 		return;
 	}
 
-	buf = new char[fl.length];
+	buf=new char[fl.length];
 
-	bytesread = socket()->readBlock(buf, fl.length);
+	bytesread=socket()->readBlock(buf, fl.length);
 	if(bytesread != fl.length)
 	{
 		kdDebug(14150) << k_funcinfo <<
@@ -235,7 +235,7 @@ void OscarSocket::slotRead()
 	{
 		case 0x01: //new connection negotiation channel
 		{
-			DWORD flapversion = inbuf.getDWord();
+			DWORD flapversion=inbuf.getDWord();
 			if (flapversion == 0x00000001)
 			{
 				emit connAckReceived();
@@ -353,7 +353,7 @@ void OscarSocket::slotRead()
 						case 0x000b: //contact changed status, (SRV_USERONLINE)
 							parseUserOnline(inbuf);
 							if(awaitingFirstPresenceBlock == OscarSocket::Waiting)
-								awaitingFirstPresenceBlock = OscarSocket::GotSome;
+								awaitingFirstPresenceBlock=OscarSocket::GotSome;
 							break;
 						case 0x000c: //contact went offline
 							parseUserOffline(inbuf);
@@ -381,8 +381,11 @@ void OscarSocket::slotRead()
 						case 0x000a: //missed messages
 							parseMissedMessage(inbuf);
 							break;
-						case 0x000c: //message ack
+						case 0x000b: // message ack
 							parseMsgAck(inbuf);
+							break;
+						case 0x000c: // server ack for type-2 message
+							parseSrvMsgAck(inbuf);
 							break;
 						case 0x0014: // Mini-Typing notification
 							parseMiniTypeNotify(inbuf);
@@ -462,7 +465,7 @@ void OscarSocket::slotRead()
 					switch(s.subtype)
 					{
 						case 0x0001: //registration refused!
-							emit protocolError ( i18n( "Registration refused!" ), 0 );
+							emit protocolError(i18n("Registration refused!"),0);
 							break;
 						case 0x0003: //authorization response (and hash) is being sent
 							parseAuthResponse(inbuf);
@@ -1037,9 +1040,8 @@ void OscarSocket::sendIdleTime(DWORD time)
 	if (!isLoggedIn)
 		return;
 
-	kdDebug(14150) << k_funcinfo "SEND (CLI_SNAC1_11), sending idle time, time=" << time << endl;
+	//kdDebug(14150) << k_funcinfo "SEND (CLI_SNAC1_11), sending idle time, time=" << time << endl;
 	bool newidle = (time!=0);
-
 	if (newidle != idle) //only do stuff if idle status changed
 	{
 		idle = newidle;
@@ -1613,10 +1615,10 @@ void OscarSocket::parseIM(Buffer &inbuf)
 					case AIM_CAPS_ICQSERVERRELAY:
 					{
 						Buffer messageBuf(msgTLV->data, msgTLV->length);
-						WORD len = messageBuf.getWord();
-						if (len != 0x1b00)
+						WORD len = messageBuf.getLEWord();
+						if (len != 0x001b)
 							kdDebug(14150) << k_funcinfo << "wrong len till SEQ1!" << endl;
-						WORD tcpVer = messageBuf.getWord();
+						WORD tcpVer = messageBuf.getLEWord();
 						kdDebug(14150) << k_funcinfo << "len=" << len << ", tcpver=" << tcpVer << endl;
 						char *cap=messageBuf.getBlock(16);
 						WORD unk1 = messageBuf.getWord();
@@ -1634,7 +1636,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 						ack.addString(u.sn.latin1(), u.sn.length()); //dest sn
 						ack.addWord(0x0003); // unknown
 						ack.addWord(len);
-						ack.addWord(tcpVer);
+						ack.addLEWord(tcpVer);
 						ack.addString(cap, 16);
 						ack.addWord(unk1);
 						ack.addDWord(unk2);
@@ -1791,7 +1793,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 				if (msgtype == 0x0000) // initiate
 				{
 					kdDebug(14150) << k_funcinfo << "adding " << u.sn << " to pending list." << endl;
-					if ( capflag & AIM_CAPS_IMIMAGE ) //if it is a direct IM rendezvous
+					if(capflag & AIM_CAPS_IMIMAGE) //if it is a direct IM rendezvous
 					{
 						sockToUse->addPendingConnection(u.sn, cook, 0L, qh, 4443, DirectInfo::Outgoing);
 						emit gotDirectIMRequest(u.sn);
@@ -1804,7 +1806,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 				}
 				else if (msgtype == 0x0001) //deny
 				{
-					if ( capflag & AIM_CAPS_IMIMAGE )
+					if(capflag & AIM_CAPS_IMIMAGE)
 						emit protocolError(i18n("Direct IM request denied by %1").arg(u.sn),0);
 					else
 						emit protocolError(i18n("Send file request denied by %1").arg(QString(u.sn)),0);
@@ -1924,7 +1926,7 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 								kdDebug(14150) << k_funcinfo <<
 									"result for US-ASCII=" << cresult <<
 									", message length=" << messageLength << endl;
-								if(cresult < messageLength)
+								if(cresult < messageLength-1)
 									codec=0L; // codec not appropriate
 							}
 
@@ -1937,7 +1939,7 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 									kdDebug(14150) << k_funcinfo <<
 										"result for UTF-8=" << cresult <<
 										", message length=" << messageLength << endl;
-									if(cresult < messageLength/2)
+									if(cresult < (messageLength/2)-1)
 										codec=0L;
 								}
 							}
@@ -2628,18 +2630,72 @@ void OscarSocket::sendDirectIMRequest(const QString &sn)
 	sendRendezvous(sn,0x0000,AIM_CAPS_IMIMAGE);
 }
 
-void OscarSocket::parseMsgAck(Buffer &inbuf)
+void OscarSocket::parseSrvMsgAck(Buffer &inbuf)
 {
 	//8 byte cookie is first
 	/*char *ck =*/ inbuf.getBlock(8);
 	//delete [] ck;
-	WORD typ = inbuf.getWord();
+	WORD type = inbuf.getWord();
 
 	char *sn = inbuf.getBUIN();
 	QString nm = QString::fromLatin1(sn);
 	delete [] sn;
 
-	emit gotAck(nm,typ);
+	kdDebug(14150) << k_funcinfo << "RECV (SRV_SRVACKMSG) sn=" << nm << ", type=" << type << endl;
+
+	emit gotAck(nm,type);
+}
+
+void OscarSocket::parseMsgAck(Buffer &inbuf)
+{
+	kdDebug(14150) << k_funcinfo << "RECV (ACKMSG)..." << endl;
+
+	WORD sublen, seq2;
+	BYTE msgFlags, msgType;
+	WORD msgStatus, msgPrio;
+
+	inbuf.getBlock(8);
+
+	inbuf.getWord(); // message-type, only type-2 is acknowledged so this is always 2
+
+	char *sn = inbuf.getBUIN();
+	QString nm = QString::fromLatin1(sn);
+	delete [] sn;
+
+	inbuf.getWord(); // unk
+
+	sublen = inbuf.getLEWord(); // len of following subchunk
+	kdDebug(14150) << k_funcinfo << "sublen=" << sublen << endl;
+	inbuf.getBlock(sublen); // ignore subchunk
+	kdDebug(14150) << k_funcinfo << "len after subchunk=" << inbuf.length() << endl;
+
+	inbuf.getLEWord();
+	seq2 = inbuf.getLEWord();
+	inbuf.getBlock(12); // ignore 12 zero bytes
+	kdDebug(14150) << k_funcinfo << "len after 12 zero bytes=" << inbuf.length() << endl;
+
+	msgType = inbuf.getByte(); //
+	msgFlags = inbuf.getByte(); // type and flags have wrong order because it's a little-endian word
+	msgStatus = inbuf.getLEWord();
+	msgPrio = inbuf.getLEWord();
+
+	WORD txtLen = inbuf.getLEWord();
+	char *txtStr = inbuf.getBlock(txtLen);
+	QString text = QString::fromLatin1(txtStr);
+	delete [] txtStr;
+
+	kdDebug(14150) << k_funcinfo << "RECV (ACKMSG) sn=" << nm <<
+		" msgType=" << msgType << " msgFlags=" << msgFlags <<
+		" msgStatus=" << msgStatus << " msgPrio=" << msgPrio <<
+		" text='"  << text << "'" << endl;
+
+	if(msgFlags == MSG_FLAG_GETAUTO)
+	{
+		kdDebug(14150) << "Was away message" << endl;
+		//emit gotICQAwayMessage(sn, text);
+	}
+
+	//TODO: there can be more data after text
 }
 
 void OscarSocket::sendLocationInfo(const QString &profile, const unsigned long caps)
@@ -3282,7 +3338,7 @@ void OscarSocket::sendRendezvous(const QString &/*sn*/, WORD /*type*/, DWORD /*r
 	}
 
 	//add this to the list of pending connections if it is a request
-	if ( type == 0 )
+	if(type == 0)
 	{
 		sockToUse->addPendingConnection(sn, ck, finfo, QString::null, 0,
 			DirectInfo::Incoming);
@@ -3298,7 +3354,7 @@ void OscarSocket::sendRendezvous(const QString &/*sn*/, WORD /*type*/, DWORD /*r
 	outbuf.addTLV(0x0003,0x0000,NULL);
 	//add a huge TLV of type 5
 	outbuf.addWord(0x0005);
-	if ( !finfo ) //this is a simple direct IM
+	if(!finfo) //this is a simple direct IM
 	{
 		if (type == 0x0000)
 			outbuf.addWord(2+8+16+6+8+6+4);
@@ -3329,7 +3385,7 @@ void OscarSocket::sendRendezvous(const QString &/*sn*/, WORD /*type*/, DWORD /*r
 		}
 	} //16
 
-	if ( type == 0x0000 ) //if this is an initiate rendezvous command
+	if(type == 0x0000 ) //if this is an initiate rendezvous command
 	{
 		//TLV (type a)
 		outbuf.addWord(0x000a);
