@@ -56,17 +56,6 @@ struct KopeteMessagePrivate
 	QString subject;
 };
 
-// These colors are used for coloring nicknames. I tried to use
-// colors both visible on light and dark background.
-static const char* nameColors[] =
-{
-	"red", "blue" , "gray", "magenta", "violet", "olive", "yellowgreen",
-	"darkred", "darkgreen", "darksalmon", "darkcyan", "darkyellow",
-	"mediumpurple", "peru", "olivedrab", "royalred", "darkorange", "stateblue",
-	"stategray", "goldenrod", "orangered", "tomato", "dogderblue", "steelblue",
-	"deeppink", "saddlebrown", "coral", "royalblue"
-};
-
 Kopete::Message::Message()
 {
 	d = new KopeteMessagePrivate;
@@ -489,6 +478,59 @@ void Kopete::Message::setManager(Kopete::MessageManager *kmm)
 }
 
 
+static QDomElement contactNode( QDomDocument doc, const Kopete::Contact *contact )
+{
+	// These colors are used for coloring nicknames. I tried to use
+	// colors both visible on light and dark background.
+	static const char* nameColors[] =
+	{
+		"red", "blue" , "gray", "magenta", "violet", "olive", "yellowgreen",
+		"darkred", "darkgreen", "darksalmon", "darkcyan", "darkyellow",
+		"mediumpurple", "peru", "olivedrab", "royalred", "darkorange", "stateblue",
+		"stategray", "goldenrod", "orangered", "tomato", "dogderblue", "steelblue",
+		"deeppink", "saddlebrown", "coral", "royalblue"
+	};
+
+	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+	if(contactName.isEmpty())
+		contactName = contact->metaContact() ? contact->metaContact()->displayName() : contact->contactId();
+	
+	QString metacontactName = contact->metaContact() ? contact->metaContact()->displayName() : contactName;
+	QDomElement contactNode = doc.createElement( QString::fromLatin1("contact") );
+	contactNode.setAttribute( QString::fromLatin1("contactId"), contact->contactId() );
+	
+	QDomElement contactNameNode = doc.createElement( QString::fromLatin1("contactDisplayName") );
+	contactNameNode.setAttribute( QString::fromLatin1("dir"), contactName.isRightToLeft() ?
+	                              QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
+	contactNameNode.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( contactName ) );
+	contactNode.appendChild( contactNameNode );
+	
+	QDomElement metacontactNameNode = doc.createElement( QString::fromLatin1("metaContactDisplayName") );
+	metacontactNameNode.setAttribute( QString::fromLatin1("dir"), metacontactName.isRightToLeft() ?
+	                                  QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
+	metacontactNameNode.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( metacontactName ) );
+	contactNode.appendChild( metacontactNameNode );
+	
+	// FIXME: protocol() returns NULL here in the style preview in appearance config.
+	//  this is probably technically undefined behaviour, but works by coincidence.
+	QString iconName = contact->protocol()->pluginIcon();
+	
+	QString iconPath = KGlobal::iconLoader()->iconPath( iconName, KIcon::Small );
+	contactNode.setAttribute( QString::fromLatin1("protocolIcon"), iconPath );
+	
+	// hash contactId to deterministically pick a color for the contact
+	int hash = 0;
+	const QString &contactId = contact->contactId();
+	for( uint f = 0; f < contactId.length(); ++f )
+		hash += contactId[f].latin1() * f;
+	int nameColorsLen = sizeof(nameColors) / sizeof(nameColors[0]);
+	
+	QString color = QString::fromLatin1( nameColors[ hash % nameColorsLen ] );
+	contactNode.setAttribute( QString::fromLatin1("color"), color );
+	
+	return contactNode;
+}
+
 
 const QDomDocument Kopete::Message::asXML() const
 {
@@ -514,88 +556,32 @@ const QDomDocument Kopete::Message::asXML() const
 
 
 	//build the <from> and <to>  node
-	if( d->direction == Inbound ? d->from : d->to.first() )
-	{
-		messageNode.setAttribute( QString::fromLatin1("mainContactId"),
-			(d->direction == Inbound) ? d->from->contactId() :
-				d->to.first()->contactId() );
-	}
+	if( const Kopete::Contact *mainContact = (d->direction == Inbound ? d->from : d->to.first()) )
+		messageNode.setAttribute( QString::fromLatin1("mainContactId"), mainContact->contactId() );
 
 	doc.appendChild( messageNode );
 
-	if( d->from )
+	if( const Kopete::Contact *c = d->from )
 	{
-		//the nickname
-		QString nick=d->from->property(Kopete::Global::Properties::self()->nickName()).value().toString();
-		if(nick.isEmpty())
-			nick= d->from->metaContact() ? d->from->metaContact()->displayName() : d->from->contactId() ;
-
-		QString fromName = d->from->metaContact() ? d->from->metaContact()->displayName(): nick;
 		QDomElement fromNode = doc.createElement( QString::fromLatin1("from") );
-		QDomElement fromContactNode = doc.createElement( QString::fromLatin1("contact") );
-		fromContactNode.setAttribute( QString::fromLatin1("contactId"), d->from->contactId() );
-
-		QDomElement fromDisplayName = doc.createElement( QString::fromLatin1("contactDisplayName") );
-		fromDisplayName.setAttribute( QString::fromLatin1("dir"), nick.isRightToLeft() ?
-			QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
-		fromDisplayName.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( nick ) );
-		fromContactNode.appendChild( fromDisplayName );
-
-		QDomElement fromMcDisplayname = doc.createElement( QString::fromLatin1("metaContactDisplayName") );
-		fromMcDisplayname.setAttribute( QString::fromLatin1("dir"), fromName.isRightToLeft() ?
-			QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
-		fromMcDisplayname.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( fromName ) );
-		fromContactNode.appendChild( fromMcDisplayname );
-
-		QString iconPath = KGlobal::iconLoader()->iconPath( d->from->protocol()->pluginIcon(), 		KIcon::Small );
-		fromContactNode.setAttribute( QString::fromLatin1("protocolIcon"), iconPath );
-
-		fromNode.appendChild( fromContactNode );
-
-		//quick and simple hash algoritm.
-		int hash=0;
-		const QString &contactId = d->from->contactId();
-		for( uint f = 0; f < contactId.length(); ++f )
-			hash += contactId[f].latin1() * f;
-
-		fromContactNode.setAttribute( QString::fromLatin1("color"), QString::fromLatin1( nameColors[hash % (sizeof(nameColors)/sizeof(char*)) ] )  );
+		fromNode.appendChild( contactNode( doc, c ) );
 		messageNode.appendChild( fromNode );
 	}
 
+	/*
 	QDomElement toNode = doc.createElement( QString::fromLatin1("to") );
-	///for( Kopete::Contact *c = d->to.first(); c; c = d->to.next() )
-	//{
-		Kopete::Contact *c = d->to.first();
-		if( c )
-		{
-		//the nickname
-			QString nick=c->property(Kopete::Global::Properties::self()->nickName()).value().toString();
-			if(nick.isEmpty())
-				nick= c->metaContact() ? c->metaContact()->displayName() : c->contactId() ;
-
-			QDomElement cNode = doc.createElement( QString::fromLatin1("contact") );
-			cNode.setAttribute( QString::fromLatin1("contactId"), c->contactId() );
-
-			QDomElement toDisplayName = doc.createElement( QString::fromLatin1("contactDisplayName") );
-			toDisplayName.setAttribute( QString::fromLatin1("dir"), nick.isRightToLeft() ?
-				QString::fromLatin1("rtl") : QString::fromLatin1("ltr"));
-			toDisplayName.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( nick ) );
-			cNode.appendChild( toDisplayName );
-
-			QString toName = c->metaContact() ? c->metaContact()->displayName() : nick;
-			QDomElement toMDisplayName = doc.createElement( QString::fromLatin1("metaContactDisplayName") );
-			toMDisplayName.setAttribute( QString::fromLatin1("dir"), toName.isRightToLeft() ?
-				QString::fromLatin1("rtl") : QString::fromLatin1("ltr") );
-			toMDisplayName.setAttribute( QString::fromLatin1("text"), QStyleSheet::escape( toName ) );
-			cNode.appendChild( toMDisplayName );
-
-			QString iconPath = KGlobal::iconLoader()->iconPath(c->protocol()->pluginIcon(), 		KIcon::Small );
-			cNode.setAttribute( QString::fromLatin1("protocolIcon"), iconPath );
-			toNode.appendChild( cNode );
-		}
-	//}
+	for( Kopete::Contact *c = d->to.first(); c; c = d->to.next() )
+		toNode.appendChild( contactNode( doc, c ) );
 	messageNode.appendChild( toNode );
-
+	*/
+	
+	if( const Kopete::Contact *c = d->to.first() )
+	{
+		QDomElement toNode = doc.createElement( QString::fromLatin1("to") );
+		toNode.appendChild( contactNode( doc, c ) );
+		messageNode.appendChild( toNode );
+	}
+	
 	QDomElement bodyNode = doc.createElement( QString::fromLatin1("body") );
 
 	if( !d->fgOverride && d->fgColor.isValid() )
