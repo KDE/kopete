@@ -1,8 +1,8 @@
 <!DOCTYPE kdevelop>
 <kdevelop>
   <general>
-    <author>Duncan Mac-Vicar Prett</author>
-    <email>duncan@kde.org</email>
+    <author>Kopete Developpers</author>
+    <email>kopete-devel@kde.org</email>
     <version>$VERSION$</version>
     <projectmanagement>KDevKDEAutoProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
@@ -93,7 +93,7 @@
   </cppsupportpart>
   <kdevclassview>
     <folderhierarchy>true</folderhierarchy>
-    <depthoffolders>1</depthoffolders>
+    <depthoffolders>2</depthoffolders>
   </kdevclassview>
   <kdevcvs>
     <cvsoptions>-f</cvsoptions>

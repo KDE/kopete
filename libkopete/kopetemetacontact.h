@@ -257,7 +257,6 @@ public slots:
 	void sendFile( const KURL &sourceURL, const QString &altFileName = QString::null,
 		unsigned long fileSize = 0L );
 
-	void viewHistory();
 
 signals:
 	/**
@@ -363,7 +362,6 @@ private slots:
 	void slotContactIdleStateChanged( KopeteContact *c,
 		KopeteContact::IdleState s );
 
-	void slotHistoryDialogDestroyed();
 
 private:
 	KopeteContact *preferredContact();

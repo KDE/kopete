@@ -20,9 +20,10 @@
 #include <knotifyclient.h>
 #include <qapplication.h>
 #include <kglobal.h>
+#include <qregexp.h>
+#include <qdatetime.h>
 
 #include "kopeteaccount.h"
-#include "kopetemessagelog.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteprefs.h"
@@ -34,7 +35,6 @@ struct KMMPrivate
 {
 	KopeteContactPtrList mContactList;
 	const KopeteContact *mUser;
-	KopeteMessageLog *mLogger;
 	QMap<const KopeteContact *, KopeteOnlineStatus> contactStatus;
 	KopeteProtocol *mProtocol;
 	int mId;
@@ -224,8 +224,6 @@ void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 	}
 
 	emit messageAppended( msg, this );
-
-	KopeteMessageLog::logMessage( msg );
 }
 
 void KopeteMessageManager::addContact( const KopeteContact *c, bool surpress )
@@ -306,9 +304,9 @@ void KopeteMessageManager::setCanBeDeleted ( bool b )
 		deleteLater();
 }
 
-KopeteView* KopeteMessageManager::view(bool /*canCreate*/  , KopeteMessage::MessageType type )
+KopeteView* KopeteMessageManager::view(bool canCreate  , KopeteMessage::MessageType type )
 {
-	if(!d->view)
+	if(!d->view && canCreate)
 	{
 		d->view=KopeteMessageManagerFactory::factory()->createView( this , type );
 		connect( d->view->mainWidget(), SIGNAL( closing( KopeteView * ) ), this, SLOT( slotViewDestroyed( ) ) );

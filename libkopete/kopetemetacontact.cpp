@@ -29,7 +29,6 @@
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "pluginloader.h"
-#include "kopetehistorydialog.h"
 
 #define EMAIL_WINDOW 0
 #define CHAT_WINDOW 1
@@ -51,7 +50,6 @@ struct KopeteMetaContactPrivate
 	ulong contactId;
 	KopeteOnlineStatus::OnlineStatus onlineStatus;
 	KopeteMetaContact::IdleState    idleState;
-	KopeteHistoryDialog *historyDialog;
 
 	//Unique contact id per metacontact
 	static ulong uniqueContactId;
@@ -69,7 +67,6 @@ KopeteMetaContact::KopeteMetaContact()
 
 	d->onlineStatus = KopeteOnlineStatus::Offline;
 	d->idleState = Unspecified;
-	d->historyDialog = 0L;
 	d->contactId = 0;
 }
 
@@ -797,25 +794,6 @@ void KopeteMetaContact::slotContactIdleStateChanged( KopeteContact *c, KopeteCon
 	updateIdleState();
 }
 
-void KopeteMetaContact::viewHistory()
-{
-	kdDebug( 14010 ) << k_funcinfo << endl;
-
-	if( d->historyDialog )
-	{
-		d->historyDialog->raise();
-	}
-	else
-	{
-		d->historyDialog = new KopeteHistoryDialog( this, true, 50, qApp->mainWidget(), "KopeteHistoryDialog" );
-		connect ( d->historyDialog, SIGNAL( destroyed() ), SLOT( slotHistoryDialogDestroyed() ) );
-	}
-}
-
-void KopeteMetaContact::slotHistoryDialogDestroyed()
-{
-	d->historyDialog = 0L;
-}
 
 QPtrList<KopeteContact> KopeteMetaContact::contacts() const
 {

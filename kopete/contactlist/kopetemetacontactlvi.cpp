@@ -82,15 +82,7 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( KopeteMetaContact *contact, QListVie
 
 void KopeteMetaContactLVI::initLVI()
 {
-/*	m_actionRemove = 0L;
-	m_actionRemoveFromGroup = 0L;
-	m_actionChat = 0L;
-	m_actionSendMessage = 0L;
-	m_actionInfo = 0L;
-	m_actionBlock = 0L;
-	m_actionHistory = 0L;
-	m_actionRename = 0L;
-	m_actionAddTemporaryContact = 0l;*/
+
 	m_actionMove = 0L;
 	m_actionCopy = 0L;
 	m_actionAddContact = 0L;
@@ -197,12 +189,8 @@ void KopeteMetaContactLVI::showContextMenu( const QPoint &point )
 	KAction *actionChat = KopeteStdAction::chat( m_metaContact,
 		SLOT( startChat() ), popup, "actionChat" );
 
-	KAction *actionHistory = KopeteStdAction::viewHistory( m_metaContact,
-		SLOT( viewHistory() ), popup, "actionHistory" );
-
 	actionSendMessage->plug( popup );
 	actionChat->plug( popup );
-	actionHistory->plug( popup );
 
 	/*
 	 * If the contact can accept file transfers, add this to the top popup window
@@ -423,12 +411,6 @@ void KopeteMetaContactLVI::slotMoveToGroup()
 		}
 	}
 }
-
-/*void KopeteMetaContactLVI::slotViewHistory()
-{
-	KMessageBox::information( 0, i18n( "This function is available only from the within individual contacts." ),
-				  i18n( "Kopete" ) );
-} */
 
 void KopeteMetaContactLVI::slotAddToGroup()
 {

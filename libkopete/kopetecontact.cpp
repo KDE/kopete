@@ -29,13 +29,13 @@
 #include <kpopupmenu.h>
 
 #include "kopetecontactlist.h"
-#include "kopetehistorydialog.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopetestdaction.h"
 #include "kopetemessagemanager.h"
 #include "kopeteview.h"
+#include "kopetemetacontact.h"
 
 // FIXME: What are these doing here and why are they #defines and not const ints? - Martijn
 #define EMAIL_WINDOW 0
@@ -44,7 +44,6 @@
 struct KopeteContactPrivate
 {
 public:
-	KopeteHistoryDialog *historyDialog;
 	QString displayName;
 	bool fileCapable;
 	int conversations;
@@ -59,7 +58,6 @@ public:
 	KAction *actionChat;
 	KAction *actionDeleteContact;
 	KAction *actionChangeMetaContact;
-	KAction *actionViewHistory;
 	KAction *actionChangeAlias;
 	KAction *actionUserInfo;
 	KAction *actionSendFile;
@@ -98,7 +96,6 @@ KopeteContact::KopeteContact( KopeteAccount *account,
 	//d->cachedSize = 0;
 	d->fileCapable = false;
 	d->conversations = 0;
-	d->historyDialog = 0L;
 	d->idleState = Unspecified;
 	d->displayName = contactId;
 	d->account=account;
@@ -173,27 +170,6 @@ void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status )
 	emit onlineStatusChanged( this, status, oldStatus );
 }
 
-void KopeteContact::slotViewHistory()
-{
-	kdDebug( 14010 ) << k_funcinfo << endl;
-
-	if( d->historyDialog )
-	{
-		d->historyDialog->raise();
-	}
-	else
-	{
-		d->historyDialog = new KopeteHistoryDialog( this, true, 50, qApp->mainWidget(), "KopeteHistoryDialog" );
-
-		connect ( d->historyDialog, SIGNAL( destroyed() ), SLOT( slotHistoryDialogDestroyed() ) );
-	}
-}
-
-void KopeteContact::slotHistoryDialogDestroyed()
-{
-	d->historyDialog = 0L;
-}
-
 void KopeteContact::sendFile( const KURL & /* sourceURL */, const QString & /* fileName */, uint /* fileSize */ )
 {
 	kdWarning( 14010 ) << k_funcinfo << "Plugin " << protocol()->pluginId() << " has enabled file sending, "
@@ -228,7 +204,6 @@ KPopupMenu* KopeteContact::popupMenu()
 	d->actionSendFile    = KopeteStdAction::sendFile( this,    SLOT( sendFile() ),              menu, "actionSendFile" );
 	d->actionUserInfo    = KopeteStdAction::contactInfo( this, SLOT( slotUserInfo() ),          menu, "actionUserInfo" );
 	d->actionSendMessage = KopeteStdAction::sendMessage( this, SLOT( sendMessage() ),           menu, "actionSendMessage" );
-	d->actionViewHistory = KopeteStdAction::viewHistory( this, SLOT( slotViewHistory() ),       menu, "actionViewHistory" );
 	d->actionChangeAlias = KopeteStdAction::changeAlias( this, SLOT( slotChangeDisplayName() ), menu, "actionChangeAlias" );
 	d->actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT( slotDeleteContact() ), menu, "actionDeleteContact" );
 	d->actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( slotChangeMetaContact() ), menu, "actionChangeMetaContact" );
@@ -251,7 +226,6 @@ KPopupMenu* KopeteContact::popupMenu()
 	d->actionChat->plug( menu );
 	if( d->fileCapable )
 		d->actionSendFile->plug( menu );
-	d->actionViewHistory->plug( menu );
 
 	// Protocol specific options will go below this separator
 	// through the use of the customContextMenuActions() function

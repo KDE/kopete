@@ -328,15 +328,6 @@ private slots:
 
 	void slotMoveDialogOkClicked();
 
-	/**
-	 * View the chat history
-	 */
-	void slotViewHistory();
-
-	/**
-	 * Chat history widget got closed, remove the reference
-	 */
-	void slotHistoryDialogDestroyed();
 
 	void slotAddContact();
 
