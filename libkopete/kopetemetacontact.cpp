@@ -75,7 +75,7 @@ void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups 
 		// Generally, if the groups are explicitly set by the user they
 		// should not be overridden. Until then manage them automatically.
 		// For now just assume an empty group list means override
-        
+
 		if( m_groups.isEmpty() )
 		{
 			m_groups = groups;
@@ -109,7 +109,6 @@ void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups 
 					new KopeteMetaContactLVI( this, groupLVI ) );
 			}
 		}
-		
 	}
 }
 
@@ -350,14 +349,12 @@ void KopeteMetaContact::slotMetaContactDestroyed( QObject *obj )
 
 QString KopeteMetaContact::toXML()
 {
-	QString xml;
+	QString xml = "  <meta-contact id=\"TODO: KABC ID\">\n"
+		"    <display-name>" +
+		QStyleSheet::escape( m_displayName ) +
+		"</display-name>\n";
 
-	xml += "  <meta-contact id=\"TODO: KABC ID\">\n"
-	       "    <display-name>" +
-	       QStyleSheet::escape( m_displayName ) +
-	       "</display-name>\n";
-
-		/* We include all groups in the XML */
+	// Store groups
 	if ( !m_groups.isEmpty() )
 	{
 		xml += "    <groups>\n";
@@ -373,13 +370,14 @@ QString KopeteMetaContact::toXML()
 		xml += "    </groups>\n";
 	}
 
-	kdDebug() << "[KopeteMetacontact::toXML] XMLing meta-contact global adressbook fields" << endl;
-	for( AddressBookFields::Iterator adrIt = m_addressBook.begin(); adrIt != m_addressBook.end(); ++adrIt )
+	// Store address book fields
+	AddressBookFields::Iterator addrIt = m_addressBook.begin();
+	for( ; addrIt != m_addressBook.end(); ++addrIt )
 	{
-            kdDebug() << "                           XMLing " << adrIt.key() << " field" << endl;
-			xml += "    <address-book-field id=\"" + adrIt.key() + "\">";
-			xml += adrIt.data();
-			xml += "</address-book-field>\n";
+		kdDebug() << "KopeteMetaContact::toXML: Storing address book field "
+			<< addrIt.key() << " with value '" << addrIt.data() << "'" << endl;
+		xml += "    <address-book-field id=\"" + addrIt.key() + "\">" +
+			addrIt.data() + "</address-book-field>\n";
 	}
 
 	QPtrList<KopetePlugin> ps = kopeteapp->libraryLoader()->plugins();

@@ -107,7 +107,6 @@ void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 	}
 }
 
-
 void KopeteContactList::loadXML()
 {
 	QDomDocument contactList( "messaging-contact-list" );
@@ -163,15 +162,15 @@ void KopeteContactList::saveXML()
 {
 	QString contactListFileName = locateLocal( "appdata", "contactlist.xml" );
 
-	kdDebug() << "[KopeteContactList] saveXML() Contact List File: "
-		<< contactListFileName << endl;
+	//kdDebug() << "KopeteContactList::saveXML: Contact List File: "
+	//	<< contactListFileName << endl;
 	QFile contactListFile( contactListFileName );
 	if( contactListFile.open( IO_WriteOnly ) )
 	{
 		QTextStream stream( &contactListFile );
 		stream.setEncoding( QTextStream::UnicodeUTF8 );
 
-	stream << toXML();
+		stream << toXML();
 
 		contactListFile.close();
 	}
