@@ -1,7 +1,7 @@
 /*
     historylogger.cpp
 
-    Copyright (c) 2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
     Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -24,6 +24,7 @@ class KopeteContact;
 class KopeteMetaContact;
 class QFile;
 class QDomDocument;
+class QTimer;
 
 /**
  * One hinstance of this class is opened for every KopeteMessageManager,
@@ -157,9 +158,16 @@ private:
 	/*
 	 * keep the old position in memory, so if we change the sens, we can begin here
 	 */
-	 QMap<const KopeteContact*, QDomElement>  m_oldElements;
-	 unsigned int m_oldMonth;
-	 Sens m_oldSens;
+	QMap<const KopeteContact*, QDomElement>  m_oldElements;
+	unsigned int m_oldMonth;
+	Sens m_oldSens;
+	 
+	 /**
+	  * the timer used to save the file
+	  */ 
+	QTimer *m_saveTimer;
+	QDomDocument m_toSaveDocument;
+	QString m_toSaveFileName;
 
 	/*
 	 * FIXME:
@@ -174,6 +182,12 @@ private slots:
 	 * the metacontact has been deleted
 	 */
 	void slotMCDeleted();
+	
+	/**
+	 * save the current month's document on the disk. 
+	 * connected to the m_saveTimer signal
+	 */
+	void saveToDisk();
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
     historylogger.cpp
 
-    Copyright (c) 2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2004 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
     Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -23,6 +23,7 @@
 #include <qdir.h>
 #include <qdatetime.h>
 #include <qdom.h>
+#include <qtimer.h>
 
 #include <kdebug.h>
 #include <kstandarddirs.h>
@@ -39,6 +40,7 @@
 HistoryLogger::HistoryLogger( KopeteMetaContact *m,  QObject *parent, const char *name )
  : QObject(parent, name)
 {
+	m_saveTimer=0L;
 	m_metaContact=m;
 	m_hideOutgoing=false;
 	m_cachedMonth=-1;
@@ -54,6 +56,7 @@ HistoryLogger::HistoryLogger( KopeteMetaContact *m,  QObject *parent, const char
 HistoryLogger::HistoryLogger( KopeteContact *c,  QObject *parent, const char *name )
  : QObject(parent, name)
 {
+	m_saveTimer=0L;
 	m_cachedMonth=-1;
 	m_metaContact=c->metaContact();
 	m_hideOutgoing=false;
@@ -68,6 +71,8 @@ HistoryLogger::HistoryLogger( KopeteContact *c,  QObject *parent, const char *na
 
 HistoryLogger::~HistoryLogger()
 {
+	if(m_saveTimer && m_saveTimer->isActive())
+		saveToDisk();
 }
 
 
@@ -233,14 +238,44 @@ void HistoryLogger::appendMessage( const KopeteMessage &msg , const KopeteContac
 	docElem.appendChild( msgElem );
 	msgElem.appendChild( msgNode );
 
-	//TODO: Is that a good thing to save every time?
-	KSaveFile file( getFileName(c,0) );
+	
+	// I'm temporizing the save.
+	// On hight-traffic channel, saving can take lots of CPU. (because the file is big)
+	// So i wait 3 minutes. If no message has been received/send in 3 minutes, we save.
+	
+	const QString filename=getFileName(c,0);
+	if(!m_toSaveFileName.isEmpty() && m_toSaveFileName != filename)
+	{ //that mean the contact or the month has changed, save it now.
+		saveToDisk();
+	}
+	
+	m_toSaveFileName=filename;
+	m_toSaveDocument=doc;
+	
+	if(!m_saveTimer)
+	{
+		m_saveTimer=new QTimer(this);
+		connect( m_saveTimer, SIGNAL( timeout() ) , this, SLOT(saveToDisk()) );
+	}
+	m_saveTimer->start( 150000 /*~2min*/, true /*singleshot*/ ); 
+}
+
+void HistoryLogger::saveToDisk()
+{
+	if(m_saveTimer)
+		m_saveTimer->stop();
+	if(m_toSaveFileName.isEmpty() || m_toSaveDocument.isNull())
+		return;
+
+	KSaveFile file( m_toSaveFileName );
 	if( file.status() == 0 )
 	{
 		QTextStream *stream = file.textStream();
 		//stream->setEncoding( QTextStream::UnicodeUTF8 ); //???? oui ou non?
-		doc.save( *stream, 1 );
+		m_toSaveDocument.save( *stream, 1 );
 		file.close();
+		m_toSaveFileName=QString::null;
+		m_toSaveDocument=QDomDocument();
 	}
 }
 
