@@ -209,35 +209,35 @@ KActionMenu *JabberAccount::actionMenu ()
 	m_actionMenu->popupMenu()->insertTitle ( myself()->onlineStatus().iconFor ( myself () ),
 											 i18n("%2 <%1>").arg ( accountId (), myself()->property(protocol()->propNickName).value().toString () ) );
 
-	m_actionMenu->insert ( new KAction ( i18n ("Go O&nline"),
+	m_actionMenu->insert ( new KAction ( i18n ("O&nline"),
 										 mProtocol->JabberKOSOnline.iconFor ( this ),
 										 0, this, SLOT ( slotGoOnline () ), this, "actionJabberConnect") );
 
-	m_actionMenu->insert ( new KAction ( i18n ("Set F&ree to Chat"),
+	m_actionMenu->insert ( new KAction ( i18n ("F&ree to Chat"),
 										 mProtocol->JabberKOSChatty.iconFor ( this ),
 										 0, this, SLOT ( slotGoChatty () ), this, "actionJabberChatty") );
 
-	m_actionMenu->insert ( new Kopete::AwayAction ( i18n ("Set A&way"),
+	m_actionMenu->insert ( new Kopete::AwayAction ( i18n ("A&way"),
 												  mProtocol->JabberKOSAway.iconFor ( this ),
 												  0, this, SLOT ( slotGoAway ( const QString & ) ),
 												  this, "actionJabberAway") );
 
-	m_actionMenu->insert ( new Kopete::AwayAction ( i18n ("Set E&xtended Away"),
+	m_actionMenu->insert ( new Kopete::AwayAction ( i18n ("E&xtended Away"),
 												  mProtocol->JabberKOSXA.iconFor ( this ),
 												  0, this, SLOT ( slotGoXA ( const QString & ) ),
 												  this, "actionJabberXA") );
 
-	m_actionMenu->insert ( new Kopete::AwayAction (  i18n ("Set &Do Not Disturb"),
+	m_actionMenu->insert ( new Kopete::AwayAction (  mProtocol->JabberKOSDND, i18n ("&Do Not Disturb"),
 												  mProtocol->JabberKOSDND.iconFor ( this ),
-												  0, this, SLOT ( slotGoDND ( const QString & ) ),
+												  0, this, SLOT ( slotGoDND ( const Kopete::OnlineStatus&, const QString & ) ),
 												  this, "actionJabberDND") );
 
-	m_actionMenu->insert ( new KAction ( i18n ("Set I&nvisible"),
+	m_actionMenu->insert ( new KAction ( i18n ("I&nvisible"),
 										 mProtocol->JabberKOSInvisible.iconFor ( this ),
 										 0, this, SLOT ( slotGoInvisible () ),
 										 this, "actionJabberInvisible") );
 
-	m_actionMenu->insert ( new KAction ( i18n ("Go O&ffline"),
+	m_actionMenu->insert ( new KAction ( i18n ("O&ffline"),
 										 mProtocol->JabberKOSOffline.iconFor ( this ),
 										 0, this, SLOT ( slotGoOffline () ),
 										 this, "actionJabberDisconnect") );
@@ -1280,7 +1280,7 @@ void JabberAccount::slotGoXA ( const QString &reason )
 
 }
 
-void JabberAccount::slotGoDND ( const QString &reason )
+void JabberAccount::slotGoDND ( const Kopete::OnlineStatus&, const QString &reason )
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
 

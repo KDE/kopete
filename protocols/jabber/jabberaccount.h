@@ -249,7 +249,7 @@ private slots:
 	void slotGoXA ( const QString & );
 
 	/* Set global presence to "do not disturb". */
-	void slotGoDND ( const QString & );
+	void slotGoDND ( const Kopete::OnlineStatus&, const QString & );
 
 	/* Set global presence to "invisible", no reason. */
 	void slotGoInvisible ();
