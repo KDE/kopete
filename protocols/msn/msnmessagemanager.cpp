@@ -441,7 +441,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 		}
 		else
 		{
-			rx=QRegExp("Application-Name: ([A-Za-z0-9@._\\-]*)");
+			rx=QRegExp("Application-Name: ([A-Za-z0-9@._\\- ]*)");
 			rx.search(msg);
 			QString invitname = rx.cap(1);
 

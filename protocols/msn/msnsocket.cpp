@@ -358,6 +358,12 @@ void MSNSocket::handleError( uint code, uint id )
 int MSNSocket::sendCommand( const QString &cmd, const QString &args,
 	bool addId, const QString &body )
 {
+	if(!m_socket)
+	{
+		kdDebug() << "MSNSocket::sendCommand : WARNING: socket=0L" <<endl;
+		return -1;
+	}
+
 	QCString data = cmd.utf8();
 	if( addId )
 		data += " " + QString::number( m_id ).utf8();
@@ -443,8 +449,8 @@ void MSNSocket::slotSocketClosed( int state )
 	doneDisconnect();
 
 	m_buffer = Buffer(0);
-	delete m_socket;
-	//m_socket->deleteLater();
+	//delete m_socket;
+	m_socket->deleteLater();
 	m_socket = 0L;
 
 	emit( socketClosed( state ) );
