@@ -72,7 +72,7 @@
 					<font color="blue">&gt;</font>
 				</xsl:otherwise>
 			</xsl:choose>
-			<span>
+			<span style="padding-left:0.5em;">
 				<xsl:attribute name="dir">
 					<xsl:value-of select="body/@dir"/>
 				</xsl:attribute>
