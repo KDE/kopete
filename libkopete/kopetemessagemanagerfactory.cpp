@@ -30,7 +30,7 @@ KopeteMessageManagerFactory::~KopeteMessageManagerFactory()
 }
 
 KopeteMessageManager *KopeteMessageManagerFactory::create(
-	const KopeteContact *user, KopeteContactList &contacts,
+	const KopeteContact *user, KopeteContactList contacts,
 	QString logFile )
 {
 	bool createNewSession = false;

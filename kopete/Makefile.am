@@ -22,7 +22,7 @@ icon_DATA =
 dummy.cpp:
 	echo > dummy.cpp
 
-data_DATA = kopeteui.rc
+data_DATA = kopeteui.rc eventsrc
 datadir = $(kde_datadir)/kopete
 
 # this is where the desktop file will go

@@ -45,7 +45,7 @@ public:
 	 * it will be reused. Otherwise a new session is created.
 	 */
 	KopeteMessageManager* create( const KopeteContact *user,
-		KopeteContactList &contacts , QString logFile = QString::null );
+		KopeteContactList contacts , QString logFile = QString::null );
 	
 	/**
 	 * Get a list of all open sessions

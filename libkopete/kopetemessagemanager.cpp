@@ -5,7 +5,7 @@
 #include "messagelog.h"
 #include <kdebug.h>
 
-KopeteMessageManager::KopeteMessageManager( const KopeteContact *user , KopeteContactList &others,
+KopeteMessageManager::KopeteMessageManager( const KopeteContact *user , KopeteContactList others,
 		QString logFile = QString::null , QObject *parent = 0, const char *name = 0 ) : QObject( parent, name)
 {
 
@@ -13,7 +13,15 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user , KopeteCo
 	mUser = user;
 	mChatWindow = 0L;
 	mUnreadMessageEvent = 0L;
-	mReadMode = Queued;
+
+	if ( kopeteapp->appearance()->useQueue() )
+	{
+		mReadMode = Queued;
+	}
+	else
+	{
+		mReadMode = Popup;
+	}
 
 	if (!logFile.isEmpty())
 	{
@@ -122,7 +130,6 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 		readMessages();
 	}
 }
-
 void KopeteMessageManager::addContact( const KopeteContact *c )
 {
 	KopeteContact *tmp;

@@ -108,7 +108,7 @@ private:
 	 * static factory method createSession() creates the object. You may
 	 * not create instances yourself directly!
 	 */
-	KopeteMessageManager( const KopeteContact *user, KopeteContactList &others,
+	KopeteMessageManager( const KopeteContact *user, KopeteContactList others,
 		QString logFile = QString::null, QObject *parent = 0, const char *name = 0 );
 
 	KopeteContactList mContactList;

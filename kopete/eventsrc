@@ -1,0 +1,9 @@
+[!Global!]
+IconName=kopete
+Comment=Kopete Messenger
+
+[kopete_event]
+Name=message_all
+Comment=Sound Notification for Kopete Events
+default_sound=kopete_event.wav
+default_presentation=1
