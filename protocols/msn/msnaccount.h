@@ -173,7 +173,6 @@ private slots:
 
 private:
 	MSNNotifySocket *m_notifySocket;
-	MSNContact *m_myself;
 	KAction *m_openInboxAction;
 
 	// status which will be using for connecting
