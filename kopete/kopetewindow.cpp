@@ -202,13 +202,18 @@ void KopeteWindow::loadOptions(void)
 
 	toolBar("mainToolBar")->applySettings( config, "ToolBar Settings" );
 
-	applyMainWindowSettings ( config, "General Options" );
+	applyMainWindowSettings( config, "General Options" );
 
 	QPoint pos = config->readPointEntry("Position");
 	move(pos);
 
 	QSize size = config->readSizeEntry("Geometry");
-	if(!size.isEmpty())
+	if(size.isEmpty())
+	{
+		// Default size
+		resize( QSize(220, 350) );
+	}
+	else
 	{
 		resize(size);
 	}
