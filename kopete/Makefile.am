@@ -3,14 +3,14 @@ SUBDIRS = library protocols
 
 lib_LTLIBRARIES = libkopetemain.la
 libkopetemain_la_SOURCES = main.cpp
-libkopetemain_la_LDFLAGS = -lX11 -lpng -lz -lm -ljpeg $(LIBQT) -lXext -lkdecore -lkdeui $(KFILE) -lXpm 
+libkopetemain_la_LDFLAGS = -lX11 -lpng -lz -lm -ljpeg $(LIBQT) -lXext -lkdecore -lkdeui $(KFILE) -lXpm -lDCOP
 libkopetemain_la_LIBADD = $(top_srcdir)/kopete/library/libkopete.la
 
 bin_PROGRAMS = kopete
 kopete_SOURCES = dummy.cpp
 kopete_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 kopete_LDADD = $(LIB_KFILE) libkopetemain.la
-
+CXXFLAGS = -g -O2 -Wall
 METASOURCES = AUTO
 
 CLEANFILES = dummy.cpp
