@@ -91,7 +91,7 @@ JabberAccount::JabberAccount (JabberProtocol * parent, const QString & accountId
 
 JabberAccount::~JabberAccount ()
 {
-	KopeteAccount::disconnect ( KopeteAccount::Manual );
+	disconnect ( KopeteAccount::Manual );
 
 	cleanup ();
 
@@ -186,7 +186,7 @@ KActionMenu *JabberAccount::actionMenu ()
 	KActionMenu *m_actionMenu = new KActionMenu ( accountId (), myself()->onlineStatus().iconFor ( this ), this );
 
 	m_actionMenu->popupMenu()->insertTitle ( myself()->onlineStatus().iconFor ( myself () ),
-											 i18n("%2 <%1>").arg ( accountId (), myself()->displayName () ) );
+											 i18n("%2 <%1>").arg ( accountId (), myself()->property(protocol()->propNickName).value().toString () ) );
 
 	m_actionMenu->insert ( new KAction ( mProtocol->JabberKOSOnline.caption (),
 										 mProtocol->JabberKOSOnline.iconFor ( this ),
@@ -332,7 +332,7 @@ void JabberAccount::connectWithPassword ( const QString &password )
 	/* Cancel connection process if no password has been supplied. */
 	if ( password.isEmpty () )
 	{
-		KopeteAccount::disconnect ( KopeteAccount::Manual );
+		disconnect ( KopeteAccount::Manual );
 		return;
 	}
 
@@ -643,7 +643,7 @@ void JabberAccount::slotTLSHandshaken ()
 		}
 		else
 		{
-			KopeteAccount::disconnect ( KopeteAccount::Manual );
+			disconnect ( KopeteAccount::Manual );
 		}
 	}
 
@@ -745,6 +745,15 @@ void JabberAccount::slotIncomingFileTransfer ()
 
 }
 
+void JabberAccount::disconnect ( KopeteAccount::DisconnectReason reason )
+{
+
+	// FIXME: this ugly sequence is a libkopete requirement
+	disconnect ();
+	KopeteAccount::disconnect ( reason );
+
+}
+
 void JabberAccount::disconnect ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "disconnect() called" << endl;
@@ -779,7 +788,7 @@ void JabberAccount::slotConnect ()
 
 void JabberAccount::slotDisconnect ()
 {
-	disconnect ();
+	disconnect ( KopeteAccount::Manual );
 }
 
 void JabberAccount::slotCSDisconnected ()
@@ -1160,7 +1169,7 @@ void JabberAccount::slotGoOffline ()
 {
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "called." << endl;
 
-	KopeteAccount::disconnect ( KopeteAccount::Manual );
+	disconnect ( KopeteAccount::Manual );
 }
 
 void JabberAccount::slotGoChatty ()

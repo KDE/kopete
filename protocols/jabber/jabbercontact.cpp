@@ -178,7 +178,7 @@ void JabberContact::rename ( const QString &newName )
 	}
 	else
 	{
-		setDisplayName ( newName );
+		metaContact()->setDisplayName ( newName );
 	}
 
 }
@@ -269,6 +269,9 @@ void JabberContact::slotCheckVCard ()
 
 		// current data is older than 24 hours, request a new one
 		QTimer::singleShot ( account()->getPenaltyTime () * 1000, this, SLOT ( slotGetTimedVCard () ) );
+
+		// make sure that no more requests will be started while we are waiting for this vCard
+		setProperty ( protocol()->propVCardCacheTimeStamp, QDateTime::currentDateTime().toString ( Qt::ISODate ) );
 	}
 
 }
@@ -305,10 +308,10 @@ void JabberContact::slotGotVCard ()
 		/*
 		 * A vCard for the user does not exist or the
 		 * request was unsuccessful or incomplete.
-		 * Manually set the timestamp here so that
-		 * a new request won't be triggered too early.
+		 * The timestamp was already updated when
+		 * requesting the vCard, so it's safe to
+		 * just do nothing here.
 		 */
-		setProperty ( protocol()->propVCardCacheTimeStamp, QDateTime::currentDateTime().toString ( Qt::ISODate ) );
 		return;
 	}
 
@@ -328,37 +331,24 @@ void JabberContact::setPropertiesFromVCard ( const XMPP::VCard &vCard )
 
 	/*
 	 * If a nick name is present in the vCard and if
-	 * no nick name has been set so far, we'll update
-	 * the contact's nick name to the one set in the vCard.
-	 * The check for the display name has to be done before
-	 * we set the actual nick name property, as these are
-	 * connected and displayName() will be updated behind
-	 * the scenes.
-	 * The rename request will update it again by getting
-	 * feedback from the contact list.
+	 * no alias has been set so far, we'll update
+	 * the contact's alias to the nick set in the vCard.
 	 */
 	if ( !vCard.nickName().isEmpty () )
 	{
-		if ( displayName().isEmpty () || displayName () == contactId () )
+		if ( metaContact()->displayName () == contactId () )
 		{
 			/*
-			 * This will cause the nick name property
-			 * to be updated once we get feedback from
-			 * the server, so no need to set the property
-			 * twice.
+			 * Set the alias to the nick, as no alias
+			 * is present so far.
 			 */
 			rename ( vCard.nickName () );
 		}
-		else
-		{
-			/*
-			 * The user already specified a nick name
-			 * in the contact list but we want the
-			 * official nick name to show up in the
-			 * contact list tooltip.
-			 */
-			setProperty ( protocol()->propNickName, vCard.nickName () );
-		}
+
+		/*
+		 * Update the property
+		 */
+		setProperty ( protocol()->propNickName, vCard.nickName () );
 	}
 	else
 	{
@@ -673,7 +663,7 @@ void JabberContact::syncGroups ()
 
 	XMPP::JT_Roster * rosterTask = new XMPP::JT_Roster ( account()->client()->rootTask () );
 
-	rosterTask->set ( mRosterItem.jid (), displayName (), mRosterItem.groups () );
+	rosterTask->set ( mRosterItem.jid (), metaContact()->displayName (), mRosterItem.groups () );
 	rosterTask->go (true);
 
 }

@@ -64,9 +64,9 @@ void JabberMessageManager::updateDisplayName ()
 		jid.setResource ( mResource );
 
 	if ( jid.resource().isEmpty () )
-		setDisplayName ( chatMembers.first()->displayName () );
+		setDisplayName ( chatMembers.first()->metaContact()->displayName () );
 	else
-		setDisplayName ( chatMembers.first()->displayName () + "/" + jid.resource () );
+		setDisplayName ( chatMembers.first()->metaContact()->displayName () + "/" + jid.resource () );
 
 }
 

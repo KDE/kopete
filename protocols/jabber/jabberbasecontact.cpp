@@ -78,11 +78,7 @@ void JabberBaseContact::updateContact ( const XMPP::RosterItem & item )
 	// only update the nickname if its not empty
 	if ( !item.name ().isEmpty () )
 	{
-		setDisplayName ( item.name () );
-	}
-	else
-	{
-		setDisplayName ( item.jid().full () );
+		metaContact()->setDisplayName ( item.name () );
 	}
 
 	/*

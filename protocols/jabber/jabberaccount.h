@@ -130,6 +130,9 @@ public slots:
 	/* Disconnects from the server. */
 	void disconnect ();
 
+	/* Disconnect with a reason */
+	void disconnect ( KopeteAccount::DisconnectReason reason );
+
 protected:
 	/**
 	 * Create a new contact in the specified metacontact
