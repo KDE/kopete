@@ -45,7 +45,7 @@ class MessageHandler : public QObject
 {
 	Q_OBJECT
 public:
-	MessageHandler( MessageHandler *next, QObject *parent = 0, const char *name = 0 );
+	MessageHandler();
 	virtual ~MessageHandler() = 0;
 
 	/**

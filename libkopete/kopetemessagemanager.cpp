@@ -205,7 +205,7 @@ class Kopete::TemporaryKMMCallbackAppendMessageHandler : public Kopete::MessageH
 	Kopete::MessageManager *manager;
 public:
 	TemporaryKMMCallbackAppendMessageHandler( Kopete::MessageManager *manager )
-	: Kopete::MessageHandler(0, manager, "temporary kmm callback"), manager(manager)
+	: manager(manager)
 	{
 	}
 	void handleMessage( Kopete::MessageEvent *event )

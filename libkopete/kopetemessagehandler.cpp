@@ -23,12 +23,12 @@ namespace Kopete
 class MessageHandler::Private
 {
 public:
-	Private( MessageHandler *next ) : next(next) {}
+	Private() : next(0) {}
 	MessageHandler *next;
 };
 
-MessageHandler::MessageHandler( MessageHandler *next, QObject *parent, const char *name )
- : QObject( parent, name ), d( new Private(next) )
+MessageHandler::MessageHandler()
+ : QObject( 0 ), d( new Private )
 {
 }
 

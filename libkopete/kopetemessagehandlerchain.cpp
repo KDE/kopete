@@ -36,7 +36,6 @@ public:
 class MessageHandlerChainTerminator : public MessageHandler
 {
 public:
-	MessageHandlerChainTerminator() : MessageHandler(0) {}
 	void handleMessage( MessageEvent * )
 	{
 		kdError( 14010 ) << k_funcinfo << "message got to end of chain!" << endl;
