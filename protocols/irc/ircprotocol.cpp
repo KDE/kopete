@@ -706,13 +706,11 @@ void IRCProtocol::editNetworks( const QString &networkName )
 
 void IRCProtocol::slotUpdateNetworkConfig()
 {
-	kdDebug( 14020 ) << k_funcinfo << endl;
 	// update the data structure of the previous selection from the UI
 	storeCurrentNetwork();
 
 	// update the UI from the data for the current selection
 	IRCNetwork *net = m_networks[ netConf->networkList->currentText() ];
-	kdDebug( 14020 ) << "just dehashed the network: " << netConf->networkList->currentText() << endl;
 	if( net )
 	{
 		netConf->description->setText( net->description );
@@ -721,8 +719,11 @@ void IRCProtocol::slotUpdateNetworkConfig()
 		for( QValueList<IRCHost*>::iterator it = net->hosts.begin(); it != net->hosts.end(); ++it )
 			netConf->hostList->insertItem( (*it)->host + QString::fromLatin1(":") + QString::number((*it)->port) );
 
+		// prevent nested event loop crash
+		disconnect( netConf->hostList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkHostConfig() ) );
 		netConf->hostList->setSelected( 0, true );
 		slotUpdateNetworkHostConfig();
+		connect( netConf->hostList, SIGNAL( selectionChanged() ), this, SLOT( slotUpdateNetworkHostConfig() ) );
 	}
 	
 	// record the current selection
@@ -787,10 +788,12 @@ void IRCProtocol::slotUpdateNetworkHostConfig()
 	}
 	else
 	{
+		disconnect( netConf->port, SIGNAL( valueChanged( int ) ), this, SLOT( slotHostPortChanged( int ) ) );
 		netConf->host->clear();
 		netConf->password->clear();
 		netConf->port->setValue( 6667 );
 		netConf->useSSL->setChecked( false );
+		connect( netConf->port, SIGNAL( valueChanged( int ) ), this, SLOT( slotHostPortChanged( int ) ) );
 	}
 }
 

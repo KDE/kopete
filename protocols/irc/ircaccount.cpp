@@ -425,7 +425,7 @@ void IRCAccount::connect()
 	{
 		if( m_network )
 		{
-			const QValueList<IRCHost*> &hosts = m_network->hosts;
+			QValueList<IRCHost*> &hosts = m_network->hosts;
 			if( hosts.count() == 0 )
 			{
 				KMessageBox::queuedMessageBox(
@@ -435,10 +435,31 @@ void IRCAccount::connect()
 			}
 			else
 			{
+				// if prefer SSL is set, sort by SSL first
+				if ( pluginData (m_protocol, "PreferSSL") == QString::fromLatin1("true") )
+				{
+					typedef QValueList<IRCHost*> IRCHostList;
+					IRCHostList sslFirst;
+					IRCHostList::iterator it;
+					for ( it = hosts.begin(); it != hosts.end(); ++it )
+					{
+						if ( (*it)->ssl = true )
+						{
+							sslFirst.append( *it );
+							it = hosts.remove( it );
+						}
+					}
+					for ( it = hosts.begin(); it != hosts.end(); ++it )
+						sslFirst.append( *it );
+	
+					hosts = sslFirst;
+				}
+				
 				if( currentHost == hosts.count() )
 					currentHost = 0;
 
 				IRCHost *host = hosts[ currentHost++ ];
+				kdDebug( 0 ) << k_funcinfo << "connecting to " << host->host << ", SSL= " << host->ssl << endl;
 				m_engine->connectToServer( host->host, host->port, mNickName, host->ssl );
 			}
 		}

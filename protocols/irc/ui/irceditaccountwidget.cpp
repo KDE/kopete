@@ -63,8 +63,9 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 			currentCodec = m_IRCAccount->codec()->mibEnum();
 
 // 		mPass->load ( &m_IRCAccount->password() );
-// 
-// 		cbUseSSL->setChecked (account()->pluginData (m_protocol, "UseSSL") == QString::fromLatin1("true"));
+
+		preferSSL->setChecked(
+			account()->pluginData (m_protocol, "PreferSSL") == QString::fromLatin1("true") );
 
 		//if(account()->rememberPassword()) mPassword->setText( m_IRCAccount->password() );
 
@@ -231,6 +232,11 @@ KopeteAccount *IRCEditAccountWidget::apply()
 	// remember password cb - disabling the UI for this.
 	// prefer SSL
 	// default charset
+	
+	if ( preferSSL->isChecked () )
+		account()->setPluginData (m_protocol, "PreferSSL", "true");
+	else
+		account()->setPluginData (m_protocol, "PreferSSL", "false");
 	
 	QStringList cmds;
 	for( QListViewItem *i = commandList->firstChild(); i; i = i->nextSibling() )
