@@ -657,9 +657,19 @@ void AppearanceConfig::installNewTheme()
 {
 	KURL themeURL = KURLRequesterDlg::getURL(QString::null, this,
 			i18n("Drag or Type Emoticon Theme URL"));
+	if ( themeURL.isEmpty() )
+		return;
 
-	if( Kopete::Global::handleURL(themeURL) )
-		updateEmoticonlist();
+	//TODO: support remote theme files!
+	if ( !themeURL.isLocalFile() )
+	{
+		KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Sorry, emoticon themes must be installed from local files"),
+		                               i18n("Could not install emoticon theme") );
+		return;
+	}
+
+	Kopete::Global::installEmoticonTheme( themeURL.path() );
+	updateEmoticonlist();
 }
 
 void AppearanceConfig::removeSelectedTheme()

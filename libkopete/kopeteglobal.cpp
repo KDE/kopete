@@ -94,7 +94,11 @@ EmoticonHandler::EmoticonHandler()
 
 void EmoticonHandler::handleURL( const QString &, const KURL &url ) const
 {
-	QString archiveName = url.path();
+	Global::installEmoticonTheme( url.path() );
+}
+
+void Global::installEmoticonTheme(const QString &archiveName)
+{
 	QStringList foundThemes;
 	KArchiveEntry *currentEntry = 0L;
 	KArchiveDirectory* currentDir = 0L;
@@ -198,13 +202,11 @@ void EmoticonHandler::handleURL( const QString &, const KURL &url ) const
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(),
 			KMessageBox::Error,
 			i18n("<qt>A problem occurred during the installation process. "
-			"However, most of the emoticon themes in the archive have been " \
+			"However, some of the emoticon themes in the archive may have been "
 			"installed.</qt>"));
 	}
 
 	delete progressDlg;
-
-	KIO::NetAccess::removeTempFile( archiveName );
 }
 
 bool Global::handleURL( const KURL &url )
@@ -248,6 +250,8 @@ bool Global::handleURL( const KURL &url )
 
 		KURL dest; dest.setPath( file );
 		handler->handleURL( type, dest );
+		// for now, local-only handlers have to be synchronous
+		KIO::NetAccess::removeTempFile( file );
 	}
 	else
 	{

@@ -76,6 +76,14 @@ public:
 
 	const QStringList mimeTypes() const;
 
+	void handleURL( const QString &mimeType, const KURL &url ) const;
+};
+
+/**
+ * This namespace contains Kopete's global settings and functions
+ */
+namespace Global
+{
 	/**
 	 * \brief Installs one or more kopete emoticon themes from a tarball
 	 * (either .kopete-emoticons or tar.gz or tar.bz2)
@@ -88,14 +96,8 @@ public:
 	 *
 	 * TODO: If possible, port it to KIO instead of using ugly blocking KTar
 	 **/
-	void handleURL( const QString &mimeType, const KURL &url ) const;
-};
+	void installEmoticonTheme( const QString &localPath );
 
-/**
- * This namespace contains Kopete's global settings and functions
- */
-namespace Global
-{
 	/**
 	 * Handles a URL argument with a registered MimeTypeHandler.
 	 *
