@@ -610,8 +610,6 @@ void KopeteContact::setProperty(const QString &key, const QVariant &value)
 		label = i18n("Private Mobile");
 	else if (key == QString::fromLatin1("awayMessage"))
 		label = i18n("Away Message");
-	else if (key == QString::fromLatin1("ircChannel"))
-		label = i18n("Channel");
 	else if (key == QString::fromLatin1("onlineSince"))
 		label = i18n("Online Since");
 
@@ -626,8 +624,9 @@ void KopeteContact::setProperty(const QString &key, const QString &label, const 
 {
 	if(value.isNull())
 	{
+		kdDebug(14000) << k_funcinfo <<
+			"Tried setting null value for property '" << key << "'" << endl;
 		removeProperty(key);
-		return;
 	}
 
 	KopeteContactProperty prop( label, value );
@@ -711,6 +710,13 @@ QString KopeteContact::toolTip() const
 				tip += i18n("<br><b>Idle:</b>&nbsp;FORMATTED IDLE TIME",
 					"<br><b>Idle:</b>&nbsp;%1").arg(time);
 		}
+		else if ((*it) == QString::fromLatin1("homePage"))
+		{
+			QString url = property(*it).value().toString();
+			if(!url.isNull())
+				url += i18n("<br><b>Home Page:</b>&nbsp;FORMATTED URL",
+					"<br><b>Home Page:</b>&nbsp;<a href=\"%1\">%1</a>").arg(url).arg(url);
+		}
 		else
 		{
 			p = property(*it);
@@ -767,9 +773,14 @@ QString KopeteContact::formattedName() const
 	{
 		ret = last.value().toString();
 	}
+
 	return ret;
 }
 
+QPixmap KopeteContact::userPhoto() const
+{
+	return QPixmap();
+}
 
 QString KopeteContact::formattedIdleTime() const
 {

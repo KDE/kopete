@@ -103,6 +103,7 @@ void KopetePrefs::load()
 			<< QString::fromLatin1("channelMembers")
 			<< QString::fromLatin1("channelTopic")
 			<< QString::fromLatin1("emailAddress")
+			<< QString::fromLatin1("homePage")
 			<< QString::fromLatin1("onlineSince")
 			<< QString::fromLatin1("lastOnline")
 			<< QString::fromLatin1("awayMessage");
