@@ -28,7 +28,6 @@
 #include <qtimer.h>
 
 #include <kdebug.h>
-//#include <kextsock.h>
 
 // ---------------------------------------------------------------------------------------
 
@@ -517,40 +516,48 @@ void OscarSocket::slotRead()
 
 void OscarSocket::sendLoginRequest()
 {
-	kdDebug(14150) << k_funcinfo << "Called" << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"SEND CLI_AUTH_REQUEST, sending login request" << endl;
+
 	Buffer outbuf;
-	outbuf.addSnac(OSCAR_FAM_23,0x0006,0x0000,0x00000000);
-	outbuf.addTLV(0x0001, getSN().length(), getSN().latin1());
-	sendBuf(outbuf,0x02);
+	outbuf.addSnac(OSCAR_FAM_23, 0x0006, 0x0000, 0x00000000);
+	outbuf.addTLV(0x0001, getSN().length(), getSN().latin1()); // login name
+	outbuf.addDWord(0x004B0000); // empty TLV 0x004B
+	outbuf.addDWord(0x005A0000); // empty TLV 0x005A
+
+	sendBuf(outbuf, 0x02);
 //	emit connectionChanged(2,QString("Requesting login for " + getSN() + "..."));
 }
+
 
 void OscarSocket::putFlapVer(Buffer &outbuf)
 {
 	outbuf.addDWord(0x00000001);
 }
 
+
 void OscarSocket::OnConnAckReceived()
 {
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
+	//kdDebug(14150) << k_funcinfo << "Called." << endl;
 	if(mIsICQ)
 	{
-		kdDebug(14150) << k_funcinfo << "ICQ-LOGIN, sending ICQ login" << endl;
+		//kdDebug(14150) << k_funcinfo << "ICQ-LOGIN, sending ICQ login" << endl;
 		sendLoginICQ();
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo << "AIM-LOGIN, Sending flap version to server" << endl;
+		//kdDebug(14150) << k_funcinfo << "AIM-LOGIN, Sending flap version to server" << endl;
 		Buffer outbuf;
 		putFlapVer(outbuf);
 		sendBuf(outbuf,0x01);
+
 		sendLoginRequest();
 	}
 }
 
+
 void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 {
-
 	//For now, we use 0 as the sequence number because rate
 	//limiting can cause packets from different classes to be
 	//sent out in different order
@@ -560,24 +567,26 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 	SNAC s = outbuf.readSnacHeader();
 
 	//if the snac was read without a problem, find its rate class
-	if ( !s.error )
+	if (!s.error)
 	{
 		//Pointer to proper rate class
 		RateClass *rc = 0L;
 
 		//Determine rate class
-		for ( RateClass *tmp=rateClasses.first(); tmp; tmp = rateClasses.next() )
+		for (RateClass *tmp=rateClasses.first(); tmp; tmp=rateClasses.next())
 		{
-			if ( tmp->isMember(s) )
+			if (tmp->isMember(s))
 			{
+				/*
 				kdDebug(14150) << k_funcinfo << "Rate class (id=" << tmp->id() <<
 					") found: SNAC(" << s.family << "," << s.subtype << ")" << endl;
+				*/
 				rc = tmp;
 				break;
 			}
 		}
 
-		if ( rc )
+		if (rc)
 			rc->enqueue(outbuf);
 		else
 			writeData(outbuf);
@@ -588,19 +597,19 @@ void OscarSocket::sendBuf(Buffer &outbuf, BYTE chan)
 	}
 }
 
-/* Writes the next packet in the queue onto the wire */
+
 void OscarSocket::writeData(Buffer &outbuf)
 {
-	//Update packet sequence number
-	outbuf.changeSeqNum(flapSequenceNum);
-	flapSequenceNum++;
-
 	if(socketStatus() != OscarConnection::Connected)
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"Socket is NOT open, can't write to it right now" << endl;
 		return;
 	}
+
+	//Update packet sequence number
+	outbuf.changeSeqNum(flapSequenceNum);
+	flapSequenceNum++;
 
 	//kdDebug(14150) << k_funcinfo << "Writing data" << endl;
 #ifdef OSCAR_PACKETLOG
@@ -610,15 +619,17 @@ void OscarSocket::writeData(Buffer &outbuf)
 	//actually put the data onto the wire
 	if(mSocket->writeBlock(outbuf.buffer(), outbuf.length()) == -1)
 	{
-		kdDebug(14150) << k_funcinfo << "writeBlock() call failed!" << endl;
-		/*
 		kdDebug(14150) << k_funcinfo <<
-		mSocket->strError(mSocket->socketStatus(), mSocket->systemError()) << endl;
-		*/
+			"Could not write to socket, writeBlock() failed" << endl;
 	}
-
-	if ( sender() && sender()->isA("RateClass") )
-		((RateClass *)sender())->dequeue();
+	else
+	{
+		if (sender())
+		{
+			if (sender()->isA("RateClass"))
+				((RateClass *)(sender()))->dequeue();
+		}
+	}
 }
 
 // Logs in the user!
@@ -770,20 +781,9 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 	{
 		QString errorString;
 		int errorCode = (err->data[0] << 8)|err->data[1];
-
-		switch(errorCode)
-		{
-			case 1: { errorString = i18n("Sign on failed because the screen name you provided is not registered on the AIM network. Please visit http://aim.aol.com to create a screen name for use on the AIM network."); break;  }
-			case 5: { errorString = i18n("Sign on failed because the password supplied for this screen name is invalid. Please check your password and try again."); break; }
-			case 0x11: { errorString = i18n("Sign on failed because your account is currently suspended."); break; }
-			case 0x14: { errorString = i18n("The AOL Instant Messenger service is temporarily unavailable. Please try again later."); break; }
-			case 0x18: { errorString = i18n("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."); break; }
-			case 0x1c: { errorString = i18n("The client you are using is too old. Please upgrade."); break; }
-			default: { errorString = i18n("Authentication failed."); break; }
-		}
-
-		emit protocolError(errorString, errorCode);
 		delete[] err->data;
+
+		parseAuthFailedCode(errorCode);
 	}
 
 	if (bosip)
@@ -818,7 +818,134 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 	lst.clear();
 }
 
-/** finds a tlv of type typ in the list */
+
+bool OscarSocket::parseAuthFailedCode(WORD errorCode)
+{
+	QString err;
+	QString accountType = (mIsICQ ? i18n("ICQ") : i18n("AIM"));
+	QString accountDescr = (mIsICQ ? "UIN" : "screen name");
+
+	switch(errorCode)
+	{
+		case 0x0001:
+		{
+			if (isLoggedIn) // multiple logins (on same UIN)
+			{
+				err = i18n("You have logged in more than once with the same %1," \
+					" account %2 is now disconnected.")
+					.arg(accountDescr).arg(getSN());
+			}
+			else // error while logging in
+			{
+				err = i18n("Sign on failed because either your %1 or " \
+					"password are invalid. Please check your settings for account %2.")
+					.arg(accountDescr).arg(getSN());
+			}
+			break;
+		}
+
+		case 0x0002: // Service temporarily unavailable
+		case 0x0014: // Reservation map error
+		{
+			err = i18n("The %1 service is temporarily unavailable. Please " \
+				"try again later.").arg(accountType).arg(getSN());
+			break;
+		}
+
+		case 0x0004: // Incorrect nick or password, re-enter
+		case 0x0005: // Mismatch nick or password, re-enter
+		{
+			err = i18n("Could not sign on to %1 with account %2 as the " \
+				"password was incorrect.").arg(accountType).arg(getSN());
+			break;
+		}
+
+		case 0x0007: // non-existant ICQ#
+		case 0x0008: // non-existant ICQ#
+		{
+			err = i18n("Could not sign on to %1 with nonexistent account %2.")
+				.arg(accountType).arg(getSN());
+			break;
+		}
+
+		case 0x0009: // Expired account
+		{
+			err = i18n("Sign on to %1 failed because your account %2 expired.")
+				.arg(accountType).arg(getSN());
+			break;
+		}
+
+		case 0x0011: // Suspended account
+		{
+			err = i18n("Sign on to %1 failed because your account %2 is " \
+				"currently suspended.").arg(accountType).arg(getSN());
+			break;
+		}
+
+		case 0x0015: // too many clients from same IP
+		case 0x0016: // too many clients from same IP
+		case 0x0017: // too many clients from same IP (reservation)
+		{
+			err = i18n("Could not sign on to %1 as there are too many clients" \
+				" from the same computer.").arg(accountType);
+			break;
+		}
+
+		case 0x0018: // rate exceeded (turboing)
+		{
+			if (isLoggedIn)
+			{
+				err = i18n("Account %1 was blocked on the %2 server for" \
+					" sending messages too quickly." \
+					" Wait ten minutes and try again." \
+					" If you continue to try, you will" \
+					" need to wait even longer.")
+					.arg(getSN()).arg(accountType);
+			}
+			else
+			{
+				err = i18n("Account %1 was blocked on the %2 server for" \
+					" reconnecting too quickly." \
+					" Wait ten minutes and try again." \
+					" If you continue to try, you will" \
+					" need to wait even longer.")
+					.arg(getSN()).arg(accountType);
+			}
+			break;
+		}
+
+		case 0x001C:
+		{
+			err = i18n("The %1 server thinks the client you are using is " \
+				"too old. Please report this as a bug at http://bugs.kde.org")
+				.arg(accountType);
+			break;
+		}
+
+		case 0x0022: // Account suspended because of your age (age < 13)
+		{
+			err = i18n("Account %1 was disabled on the %2 server because " \
+				"of your age (less than 13).")
+			.arg(getSN()).arg(accountType);
+			break;
+		}
+
+		default:
+		{
+			if (!isLoggedIn)
+			{
+				err = i18n("Sign on to %1 with your account %2 failed.")
+					.arg(accountType).arg(getSN());
+			}
+			break;
+		}
+	}
+
+	if (errorCode > 0)
+		emit protocolError(err, errorCode);
+	return (errorCode > 0);
+}
+
 TLV * OscarSocket::findTLV(QPtrList<TLV> &l, WORD typ)
 {
 	TLV *t;
@@ -1128,12 +1255,12 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 					if ((u.lastExtStatusUpdateTime == 0xFFFFFFFFL) &&
 						(u.lastExtInfoUpdateTime == 0xFFFFFFFFL))
 					{
-						kdDebug(14150) << k_funcinfo << "update times revealed GAIM" << endl;
+						//kdDebug(14150) << k_funcinfo << "update times revealed GAIM" << endl;
 						u.clientName=i18n("Gaim");
 					}
 					else
 					{
-						kdDebug(14150) << k_funcinfo << "update times revealed MIRANDA" << endl;
+						//kdDebug(14150) << k_funcinfo << "update times revealed MIRANDA" << endl;
 						if (u.lastExtStatusUpdateTime & 0x80000000)
 							u.clientName=i18n("Miranda alpha");
 						else
@@ -1195,12 +1322,12 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 
 		if (!clientMatched) // now the fuzzy clientsearch starts =)
 		{
-			kdDebug(14190) << k_funcinfo <<
-					"Client fuzzy search..." << endl;
+			/*kdDebug(14190) << k_funcinfo <<
+					"Client fuzzy search..." << endl;*/
 			if (u.hasCap(CAP_IS_WEB))
 			{
-				kdDebug(14190) << k_funcinfo <<
-					"Client protocol version = " << u.version << endl;
+				/*kdDebug(14190) << k_funcinfo <<
+					"Client protocol version = " << u.version << endl;*/
 				switch (u.version)
 				{
 					case 10:
@@ -1245,8 +1372,8 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 				u.clientName=i18n("GnomeICU");
 			}
 		}
-		kdDebug(14150) << k_funcinfo << "|| clientName     = " << u.clientName << endl;
-		kdDebug(14150) << k_funcinfo << "|| clientVersion  = " << u.clientVersion << endl;
+		//kdDebug(14150) << k_funcinfo << "|| clientName     = " << u.clientName << endl;
+		//kdDebug(14150) << k_funcinfo << "|| clientVersion  = " << u.clientVersion << endl;
 	}
 
 	return true;
@@ -1727,73 +1854,15 @@ void OscarSocket::parseConnectionClosed(Buffer &inbuf)
 		err=findTLV(lst,0x0009);
 	if (err)
 	{
-		kdDebug(14150) << k_funcinfo << k_funcinfo << "found TLV(8) [ERROR] error= " <<
-			((err->data[0] << 8)|err->data[1]) << endl;
-
 		WORD errorNum = ((err->data[0] << 8)|err->data[1]);
-
-		switch(errorNum)
-		{
-			case 0x0001: // multiple logins (on same UIN)
-			{
-// 				kdDebug(14150) << k_funcinfo <<
-// 					"multiple logins (on same UIN)!!!" << endl;
-				emit protocolError(
-					i18n("You have logged in more than once with the same %1," \
-						" this login is now disconnected.").arg((mIsICQ ? "UIN" : "buddy name")), 0);
-				break;
-			}
-
-			case 0x0004:
-			case 0x0005: // bad password
-			{
-// 				kdDebug(14150) << k_funcinfo << "bad password!!!" << endl;
-				emit protocolError(
-					i18n("Could not log on to %1 with account %2 as the password was" \
-						" incorrect.").arg((mIsICQ ? "ICQ" : "AIM")).arg(getSN()), 5);
-				break;
-			}
-
-			case 0x0007: // non-existant ICQ#
-			case 0x0008: // non-existant ICQ#
-			{
-// 				kdDebug(14150) << k_funcinfo << "non-existant ICQ#" << endl;
-				emit protocolError(
-					i18n("Could not log on to %1 with nonexistent account %2.").arg(
-						(mIsICQ ? "ICQ" : "AIM")).arg(getSN()), 0);
-				break;
-			}
-
-			case 0x0015: // too many clients from same IP
-			case 0x0016: // too many clients from same IP
-			{
-/*				kdDebug(14150) << k_funcinfo <<
-					"too many clients from same IP" << endl;*/
-				emit protocolError(
-					i18n("Could not log on to %1 as there are too many clients" \
-						" from the same computer.").arg(
-							(mIsICQ ? "ICQ" : "AIM")), 0);
-				break;
-			}
-
-			case 0x0018: // rate exceeded (turboing)
-			{
-				/*kdDebug(14150) << k_funcinfo <<
-					"rate exceeded (maybe reconnecting too fast), " \
-					"server-ban for at least 10 mins!!!" << endl;*/
-				emit protocolError(
-					i18n("Server has blocked %1 account %2 for sending messages too quickly." \
-						" Wait ten minutes and try again. If you continue to try, you will" \
-						" need to wait even longer.").arg(
-							(mIsICQ ? "ICQ" : "AIM")).arg(getSN()), 0);
-				break;
-			}
-		}
-
-		if (errorNum != 0x0000)
-			mAccount->disconnect(KopeteAccount::Manual); //doLogoff();
-
 		delete [] err->data;
+
+		kdDebug(14150) << k_funcinfo << k_funcinfo << "found TLV(8) [ERROR] error= " <<
+			errorNum << endl;
+
+		bool disc = parseAuthFailedCode(errorNum);
+		if (disc)
+			mAccount->disconnect(KopeteAccount::Manual); //doLogoff();
 	}
 
 	TLV *server = findTLV(lst,0x0005);
@@ -1822,6 +1891,7 @@ void OscarSocket::parseConnectionClosed(Buffer &inbuf)
 	lst.clear();
 }
 
+
 void OscarSocket::sendAuthRequest(const QString &contact, const QString &reason)
 {
 	kdDebug(14150) << k_funcinfo << "contact='" << contact << "', reason='" << reason <<
@@ -1836,6 +1906,7 @@ void OscarSocket::sendAuthRequest(const QString &contact, const QString &reason)
 	sendBuf(outbuf,0x02);
 }
 
+
 void OscarSocket::sendAuthReply(const QString &contact, const QString &reason, bool grant)
 {
 	kdDebug(14150) << k_funcinfo << "contact='" << contact << "', reason='" << reason <<
@@ -1848,6 +1919,7 @@ void OscarSocket::sendAuthReply(const QString &contact, const QString &reason, b
 	outbuf.addBSTR(reason.local8Bit());
 	sendBuf(outbuf,0x02);
 }
+
 
 void OscarSocket::parseAuthReply(Buffer &inbuf)
 {
@@ -1884,6 +1956,7 @@ void OscarSocket::sendBuddylistAdd(QStringList &contacts)
 	}
 	sendBuf(outbuf,0x02);
 }
+
 
 void OscarSocket::sendBuddylistDel(QStringList &contacts)
 {

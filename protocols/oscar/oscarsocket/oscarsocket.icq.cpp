@@ -132,32 +132,12 @@ void OscarSocket::sendLoginICQ()
 	Buffer outbuf;
 
 	putFlapVer(outbuf); // FLAP Version
-	outbuf.addTLV(0x0001, getSN().length(), getSN().latin1()); // login name, i.e. ICQ UIN
+	outbuf.addTLV(0x0001, getSN().length(), getSN().latin1()); // login name
 
 	QString encodedPassword;
 	encodePasswordXOR(loginPassword, encodedPassword);
-/*
-	int n = 0;
-	char pass[16];
-	for (const char *p = encodedPassword; *p && n < 16; p++)
-	{
-		if (*p != '\\')
-		{
-			pass[n++] = *p;
-			continue;
-		}
-		kdDebug(14150) << k_funcinfo << "got escaped char @ " << n << endl;
-		char c = *(++p);
-		if (c == '0')
-		{
-			kdDebug(14150) << k_funcinfo << "got escaped NULL char @ " << n << endl;
-			c = 0;
-		}
-		pass[n++] = c;
-	}
-*/
 
-	outbuf.addTLV( 0x0002, encodedPassword.length(), encodedPassword.latin1() );
+	outbuf.addTLV(0x0002, encodedPassword.length(), encodedPassword.latin1() );
 
 	outbuf.addTLV(0x0003, strlen(ICQ_CLIENTSTRING), ICQ_CLIENTSTRING);
 	outbuf.addTLV16(0x0016, ICQ_CLIENTID);
@@ -174,9 +154,9 @@ void OscarSocket::sendLoginICQ()
 #endif
 
 	sendBuf(outbuf,0x01);
-
 //	emit connectionChanged(3,"Sending username and password...");
 }
+
 
 // Parses all SNAC(0x15,3) Packets, these are only for ICQ!
 void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)

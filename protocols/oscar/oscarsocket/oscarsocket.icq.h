@@ -35,6 +35,7 @@ const unsigned short ICQ_SEARCHSTATE_OFFLINE 	= 0;
 const unsigned short ICQ_SEARCHSTATE_ONLINE 	= 1;
 const unsigned short ICQ_SEARCHSTATE_DISABLED 	= 2;
 
+
 const unsigned char ICQ_TCP_VERSION 	= 0x0008;
 const char ICQ_CLIENTSTRING[] 		= "ICQ Inc. - Product of ICQ (TM).2003a.5.45.1.3777.85";
 const WORD ICQ_CLIENTID 		= 0x010A;
@@ -45,6 +46,7 @@ const WORD ICQ_BUILD 			= 0x0EC1;
 const char ICQ_OTHER[] 			= { 0x00, 0x00, 0x00, 0x55 };
 const char ICQ_COUNTRY[] 		= "us";
 const char ICQ_LANG[] 			= "en";
+
 
 // Taken from libicq, not sure if we ever support these requests
 const unsigned char PHONEBOOK_SIGN[16] =

@@ -99,6 +99,8 @@ class UserInfo
 };
 
 
+
+
 const QString msgerrreason[] =
 {
 	I18N_NOOP("Unknown error"),
@@ -551,6 +553,14 @@ class OscarSocket : public OscarConnection
 		 * (which hopefully contains the cookie)
 		 */
 		void parseAuthResponse(Buffer &inbuf);
+
+		/**
+		 * parse oscar error codes sent on login or
+		 * on an unexpected disconnect
+		 * see http://insel.gehn/doc/oscar_spec/auth_failed.html
+		 * @return true if the error can't be recovered (i.e. needs a disconnect)
+		 */
+		bool parseAuthFailedCode(WORD errorCode);
 
 		/**
 		 * The program does this when a key is received

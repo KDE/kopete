@@ -216,24 +216,24 @@ void OscarAccount::slotError(QString errmsg, int errorCode)
 		"' errmsg=" << errmsg <<
 		", errorCode=" << errorCode << "." << endl;
 
-	// 1 = username unknown to server
-	// 5 = wrong password
-	if (errorCode == 1 || errorCode == 5 || errorCode == 24)
+	if (errorCode > 0)
 		OscarAccount::disconnect(KopeteAccount::Manual);
 
 	// suppress error dialog for password-was-wrong error, since we're about
 	// to pop up a password dialog saying the same thing when we try to reconenct
-	if (errorCode != 5)
+	if (errorCode == 4 || errorCode == 5)
 	{
-		QString caption = engine()->isICQ() ? i18n("Connection Lost - ICQ Plugin") :
-			i18n("Connection Lost - AIM Plugin");
-		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(),
-			KMessageBox::Error, errmsg, caption, KMessageBox::Notify);
+		d->passwordWrong = true;
+		QTimer::singleShot(0, this, SLOT(connect()));
 	}
 	else
 	{
-		d->passwordWrong = true;
-		QTimer::singleShot( 0, this, SLOT( connect() ) );
+		QString caption = engine()->isICQ() ?
+			i18n("Connection Lost - ICQ Plugin") :
+			i18n("Connection Lost - AIM Plugin");
+
+		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(),
+			KMessageBox::Error, errmsg, caption, KMessageBox::Notify);
 	}
 }
 

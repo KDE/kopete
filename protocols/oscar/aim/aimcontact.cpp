@@ -218,24 +218,27 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 	// update mInfo and general stuff from OscarContact
 	slotParseUserInfo(u);
 
+	/*kdDebug(14190) << k_funcinfo << "Called for '"
+		<< displayName() << "', contactName()=" << contactName() << endl;*/
 	QStringList capList;
-	if (hasCap(CAP_KOPETE))
-		capList << i18n("Kopete %1").arg(mInfo.clientVersion);
-	if (hasCap(CAP_MICQ))
-		capList << i18n("MICQ");
-		//capList << i18n("MICQ %1").arg(mInfo.clientVersion);
-	if (hasCap(CAP_SIMNEW))
-		capList << i18n("SIM %1").arg(mInfo.clientVersion);
-	if (hasCap(CAP_MACICQ))
-		capList << i18n("MacICQ");
+	// Append client name and version in case we found one
+	if (!mInfo.clientName.isEmpty())
+	{
+		if (!mInfo.clientVersion.isEmpty())
+		{
+			capList << i18n("Translators: client-name client-version",
+				"%1 %2").arg(mInfo.clientName, mInfo.clientVersion);
+		}
+		else
+		{
+			capList << mInfo.clientName;
+		}
+	}
+	// and now for some general informative capabilities
 	if (hasCap(CAP_BUDDYICON))
 		capList << i18n("Buddyicons");
-	if (hasCap(CAP_TRILLIANCRYPT))
-		capList << i18n("Trillian Encryption");
 	if (hasCap(CAP_UTF8))
 		capList << i18n("UTF-8");
-	if (hasCap(CAP_IS_WEB))
-		capList << i18n("Lite/Web-Client");
 	if (hasCap(CAP_RTFMSGS))
 		capList << i18n("RTF-Messages");
 	if (hasCap(CAP_CHAT))
@@ -253,6 +256,8 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 
 	if (capList.count() > 0)
 		setProperty(mProtocol->clientFeatures, capList.join(", "));
+	else
+		removeProperty(mProtocol->clientFeatures);
 
 
 	if(u.userclass & CLASS_AWAY)
