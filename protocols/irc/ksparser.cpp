@@ -23,7 +23,7 @@ Modified by Jason Keirstead <jason@keirstead.org>
 
 // $Id$
 
-#include <knotifyclient.h>
+#include <kopetenotifyclient.h>
 #include <kdebug.h>
 #include "ksparser.h"
 
@@ -116,7 +116,7 @@ QString KSParser::_parse(const QString &message)
 		case 6:		//Invert Colors
 			break;
 		case 7:		//System bell
-			KNotifyClient::beep( QString::fromLatin1("IRC beep event received in a message") );
+			KopeteNotifyClient::beep( QString::fromLatin1("IRC beep event received in a message") );
 			break;
 		case 15:	//Plain Text, close all tags
 			res.append( popAll() );

@@ -17,7 +17,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include "knotifyclient.h"
+#include "kopetenotifyclient.h"
 
 #include "kopeteprefs.h"
 #include "kopeteaccount.h"
@@ -188,9 +188,9 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 					}
 
 #if QT_VERSION < 0x030200
-					KNotifyClient::event( winId, event, body.arg( msgFrom ).arg( msgText ) ,
+					KopeteNotifyClient::event( winId, event, body.arg( msgFrom ).arg( msgText ) ,
 #else
-					KNotifyClient::event( winId, event, body.arg( msgFrom, msgText ) ,
+					KopeteNotifyClient::event( winId, event, body.arg( msgFrom, msgText ) ,
 #endif
 						i18n("View") , const_cast<KopeteContact*>(msg.from()) , SLOT(execute()) );
 ;

@@ -21,7 +21,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <knotifyclient.h>
+#include <kopetenotifyclient.h>
 #include <qapplication.h>
 #include <kglobal.h>
 #include <qregexp.h>
@@ -198,7 +198,7 @@ void KopeteMessageManager::sendMessage(KopeteMessage &message)
 	{
 		emit messageSent(sentMessage, this);
 		if ( !account()->isAway() || KopetePrefs::prefs()->soundIfAway() )
-			KNotifyClient::event( QString::fromLatin1( "kopete_outgoing"), i18n("Outgoing Message Sent") );
+			KopeteNotifyClient::event( QString::fromLatin1( "kopete_outgoing"), i18n("Outgoing Message Sent") );
 	}
 	else
 		emit( messageSuccess() );

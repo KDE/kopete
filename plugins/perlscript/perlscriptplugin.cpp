@@ -25,7 +25,7 @@
 #include <qcolor.h>
 
 #include <kdebug.h>
-#include <knotifyclient.h>
+#include <kopetenotifyclient.h>
 #include <ktempfile.h>
 #include <kgenericfactory.h>
 #include <kio/netaccess.h>
@@ -339,7 +339,7 @@ void PerlScript::load()
 			m_localPath = m_localFile->name();
 			if ( !KIO::NetAccess::download(KURL(path), m_localPath) )
 			{
-				KNotifyClient::event("cannotopenfile");
+				KopeteNotifyClient::event("cannotopenfile");
 				return;
 			}
 			m_localFile->close();
@@ -356,7 +356,7 @@ void PerlScript::load()
 	QFile f(m_localPath);
 	if ( !f.open(IO_ReadOnly) )
 	{
-		KNotifyClient::event("cannotopenfile");
+		KopeteNotifyClient::event("cannotopenfile");
 	}
 	else
 	{

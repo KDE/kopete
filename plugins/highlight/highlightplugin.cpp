@@ -23,7 +23,7 @@
 #include <ksavefile.h>
 #include <kstandarddirs.h>
 #include <kgenericfactory.h>
-#include <knotifyclient.h>
+#include <kopetenotifyclient.h>
 
 
 #include "kopetemessagemanagerfactory.h"
@@ -85,7 +85,7 @@ void HighlightPlugin::slotIncomingMessage( KopeteMessage& msg )
 			if(f->setImportance)
 				msg.setImportance((KopeteMessage::MessageImportance)f->importance);
 			if(f->playSound)
-				KNotifyClient::userEvent (QString::null, KNotifyClient::Sound, KNotifyClient::Default, f->soundFN );
+				KopeteNotifyClient::userEvent (QString::null, KopeteNotifyClient::Sound, KopeteNotifyClient::Default, f->soundFN );
 
 			break; //uh?
 		}

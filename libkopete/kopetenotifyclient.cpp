@@ -19,7 +19,7 @@
    Boston, MA 02111-1307, USA.
 */
 
-#include "knotifyclient.h"
+#include "kopetenotifyclient.h"
 
 // QT headers
 #include <qfile.h>
@@ -64,7 +64,7 @@ static int notifyBySound(const QString &filename , const QString &appname, int u
       return 0;
   }
 
-  if ( !KNotifyClient::startDaemon() )
+  if ( !KopeteNotifyClient::startDaemon() )
       return 0;
 
 
@@ -76,11 +76,11 @@ static int notifyBySound(const QString &filename , const QString &appname, int u
   ds << filename << appname << uniqueId;
   if ( client->send(daemonName, "Notify", "notifyBySound(QString,QString,int)", data) )
 #elif KDE_IS_VERSION( 3, 1, 90 )
-  ds << QString::null << appname << QString::null << filename << QString::null << 1 << KNotifyClient::Default << 0 << uniqueId;
+  ds << QString::null << appname << QString::null << filename << QString::null << 1 << KopeteNotifyClient::Default << 0 << uniqueId;
   if ( client->send(daemonName, "Notify", "notify(QString,QString,QString,QString,QString,int,int,int,int)", data) )
       return uniqueId;
 #else
-  ds << QString::null << appname << QString::null << filename << QString::null << 1 << KNotifyClient::Default << 0 ;
+  ds << QString::null << appname << QString::null << filename << QString::null << 1 << KopeteNotifyClient::Default << 0 ;
   if ( client->send(daemonName, "Notify", "notify(QString,QString,QString,QString,QString,int,int,int)", data) )
       return uniqueId;
 #endif
@@ -100,17 +100,17 @@ static bool notifyByMessagebox(const QString &text, int level, const KGuiItem &a
 	// display message box for specified event level
 		switch( level ) {
 		default:
-		case KNotifyClient::Notification:
-			KMessageBox::information( 0, text, i18n("Notification"), 0, false );
+		case KopeteNotifyClient::Notification:
+			KMessageBox::information( 0, text, i18n( "Notification" ) );
 			break;
-		case KNotifyClient::Warning:
-			KMessageBox::sorry( 0, text, i18n("Warning"), false );
+		case KopeteNotifyClient::Warning:
+			KMessageBox::sorry( 0, text, i18n( "Warning" ) );
 			break;
-		case KNotifyClient::Error:
-			KMessageBox::error( 0, text, i18n("Error"), false );
+		case KopeteNotifyClient::Error:
+			KMessageBox::error( 0, text, i18n( "Error" ) );
 			break;
-		case KNotifyClient::Catastrophe:
-			KMessageBox::error( 0, text, i18n("Catastrophe!"), false );
+		case KopeteNotifyClient::Catastrophe:
+			KMessageBox::error( 0, text, i18n( "Fatal" ) );
 			break;
 	}
     } else { //we may show the specific action button
@@ -119,16 +119,16 @@ static bool notifyByMessagebox(const QString &text, int level, const KGuiItem &a
 		signal.connect(receiver, slot);
 		switch( level ) {
 		default:
-		case KNotifyClient::Notification:
+		case KopeteNotifyClient::Notification:
 			result=KMessageBox::questionYesNo(0, text, i18n("Notification"), action, KStdGuiItem::cancel() , QString::null, false );
 			break;
-		case KNotifyClient::Warning:
+		case KopeteNotifyClient::Warning:
 			result=KMessageBox::warningYesNo( 0, text, i18n("Warning"), action, KStdGuiItem::cancel() , QString::null, false );
 			break;
-		case KNotifyClient::Error:
+		case KopeteNotifyClient::Error:
 			result=KMessageBox::warningYesNo( 0, text, i18n("Error"), action, KStdGuiItem::cancel() , QString::null, false );
 			break;
-		case KNotifyClient::Catastrophe:
+		case KopeteNotifyClient::Catastrophe:
 			result=KMessageBox::warningYesNo( 0, text, i18n("Catastrophe!"), action, KStdGuiItem::cancel() , QString::null, false );
 			break;
 	}
@@ -145,7 +145,7 @@ static bool notifyByPassivePopup( const QString &text, const QString &appName,WI
                         const KGuiItem &action , QObject* receiver , const char* slot )
 {
     KIconLoader iconLoader( appName );
-    KConfig eventsFile( KNotifyClient::instance()->instanceName()+"/eventsrc", true, false, "data");
+    KConfig eventsFile( KopeteNotifyClient::instance()->instanceName()+"/eventsrc", true, false, "data");
     KConfigGroup config( &eventsFile, "!Global!" );
     QString iconName = config.readEntry( "IconName", appName );
     QPixmap icon = iconLoader.loadIcon( iconName, KIcon::Small );
@@ -158,7 +158,8 @@ static bool notifyByPassivePopup( const QString &text, const QString &appName,WI
 
 	if ( receiver && slot )
 	{
-		KActiveLabel *link = new KActiveLabel( "<p align=\"right\"><a href=\" \">"+ action.plainText() +"</a></p>", vb, "msg_label" );
+		KActiveLabel *link = new KActiveLabel( QString::fromLatin1( "<p align=\"right\"><a href=\" \">" ) +
+            action.plainText() + QString::fromLatin1( "</a></p>" ), vb, "msg_label" );
 		//link->setAlignment( AlignRight );
 		QObject::disconnect(link, SIGNAL(linkClicked(const QString &)), link, SLOT(openLink(const QString &)));
 		QObject::connect(link, SIGNAL(linkClicked(const QString &)), receiver, slot);
@@ -238,17 +239,17 @@ static bool notifyByTaskbar( WId win )
 }
 
 
-int KNotifyClient::event( StandardEvent type, const QString& text )
+int KopeteNotifyClient::event( StandardEvent type, const QString& text )
 {
     return event( 0, type, text );
 }
 
-int KNotifyClient::event(const QString &message, const QString &text)
+int KopeteNotifyClient::event(const QString &message, const QString &text)
 {
     return event(0, message, text);
 }
 
-int KNotifyClient::userEvent(const QString &text, int present, int level,
+int KopeteNotifyClient::userEvent(const QString &text, int present, int level,
                               const QString &sound, const QString &file)
 {
     return userEvent( 0, text, present, level, sound, file );
@@ -256,7 +257,7 @@ int KNotifyClient::userEvent(const QString &text, int present, int level,
 
 
 
-int KNotifyClient::event( int winId, StandardEvent type, const QString& text )
+int KopeteNotifyClient::event( int winId, StandardEvent type, const QString& text )
 {
     QString message;
     switch ( type ) {
@@ -282,13 +283,13 @@ int KNotifyClient::event( int winId, StandardEvent type, const QString& text )
 }
 
 
-int KNotifyClient::event(int winId, const QString &message,
+int KopeteNotifyClient::event(int winId, const QString &message,
                           const QString &text)
 {
     return event( winId , message, text, KGuiItem() , 0L , 0L)  ;
 }
 
-int KNotifyClient::userEvent(int winId, const QString &text, int present,
+int KopeteNotifyClient::userEvent(int winId, const QString &text, int present,
                               int level,
                               const QString &sound, const QString &file)
 {
@@ -297,7 +298,7 @@ int KNotifyClient::userEvent(int winId, const QString &text, int present,
 
 
 
-int KNotifyClient::event(int winId, const QString &message, const QString &text,
+int KopeteNotifyClient::event(int winId, const QString &message, const QString &text,
                     const KGuiItem &action , QObject* receiver , const char* slot)
 {
    if (message.isEmpty()) return 0;
@@ -308,10 +309,10 @@ int KNotifyClient::event(int winId, const QString &message, const QString &text,
     QString commandline;
 
     // get config file
-    KConfig eventsFile( KNotifyClient::instance()->instanceName()+"/eventsrc", true, false, "data");
+    KConfig eventsFile( KopeteNotifyClient::instance()->instanceName()+"/eventsrc", true, false, "data");
     eventsFile.setGroup(message);
 
-    KConfig configFile( KNotifyClient::instance()->instanceName()+".eventsrc", true, false);
+    KConfig configFile( KopeteNotifyClient::instance()->instanceName()+".eventsrc", true, false);
     configFile.setGroup(message);
 
 	int present=getPresentation(message);
@@ -321,25 +322,25 @@ int KNotifyClient::event(int winId, const QString &message, const QString &text,
 		present=0;
 
     // get sound file name
-    if( present & KNotifyClient::Sound ) {
+    if( present & KopeteNotifyClient::Sound ) {
         sound = configFile.readPathEntry( "soundfile" );
         if ( sound.length()==0 )
             sound = eventsFile.readPathEntry( "default_sound" );
     }
 
     // get log file name
-    if( present & KNotifyClient::Logfile ) {
+    if( present & KopeteNotifyClient::Logfile ) {
         file = configFile.readPathEntry( "logfile" );
         if ( file.length()==0 )
             file = eventsFile.readPathEntry( "default_logfile" );
     }
 
     // get default event level
-    if( present & KNotifyClient::Messagebox )
+    if( present & KopeteNotifyClient::Messagebox )
         level = eventsFile.readNumEntry( "level", 0 );
 
      // get command line
-    if (present & KNotifyClient::Execute ) {
+    if (present & KopeteNotifyClient::Execute ) {
         commandline = configFile.readPathEntry( "commandline" );
         if ( commandline.length()==0 )
             commandline = eventsFile.readPathEntry( "default_commandline" );
@@ -349,13 +350,13 @@ int KNotifyClient::event(int winId, const QString &message, const QString &text,
     return userEvent(winId, text,  present , level, sound, file, commandline, action, receiver, slot);
 }
 
-int KNotifyClient::userEvent(int winId, const QString &text, int present, int level,
+int KopeteNotifyClient::userEvent(int winId, const QString &text, int present, int level,
                               const QString &sound, const QString &file, const QString& commandline,
                               const KGuiItem &action , QObject* receiver , const char* slot)
 {
     int uniqueId = kMax( 1, kapp->random() ); // must not be 0 -- means failure!
 
-    QString appname = KNotifyClient::instance()->instanceName();
+    QString appname = KopeteNotifyClient::instance()->instanceName();
 
     if(winId==0   && kapp->mainWidget())
     {
@@ -363,36 +364,36 @@ int KNotifyClient::userEvent(int winId, const QString &text, int present, int le
     }
 
     // emit event
-    if ( present & KNotifyClient::Sound ) // && QFile(sound).isReadable()
+    if ( present & KopeteNotifyClient::Sound ) // && QFile(sound).isReadable()
         notifyBySound( sound , appname , uniqueId ) ;
 
-    if ( present & KNotifyClient::PassivePopup )
+    if ( present & KopeteNotifyClient::PassivePopup )
         notifyByPassivePopup( text, appname, winId, action, receiver, slot );
 
-    else if ( present & KNotifyClient::Messagebox )
+    else if ( present & KopeteNotifyClient::Messagebox )
         notifyByMessagebox( text, level, action, receiver, slot );
 
-    if ( present & KNotifyClient::Logfile ) // && QFile(file).isWritable()
+    if ( present & KopeteNotifyClient::Logfile ) // && QFile(file).isWritable()
         notifyByLogfile( text, file );
 
-    if ( present & KNotifyClient::Stderr )
+    if ( present & KopeteNotifyClient::Stderr )
         notifyByStderr( text );
 
-    if ( present & KNotifyClient::Execute )
+    if ( present & KopeteNotifyClient::Execute )
         notifyByExecute( commandline );
 
-    if ( present & KNotifyClient::Taskbar )
+    if ( present & KopeteNotifyClient::Taskbar )
         notifyByTaskbar( winId );
 
     return uniqueId;
 }
 
-int KNotifyClient::getPresentation(const QString &eventname)
+int KopeteNotifyClient::getPresentation(const QString &eventname)
 {
 	int present;
 	if (eventname.isEmpty()) return Default;
 
-	KConfig eventsfile( KNotifyClient::instance()->instanceName()+".eventsrc", true, false);
+	KConfig eventsfile( KopeteNotifyClient::instance()->instanceName()+".eventsrc", true, false);
 	eventsfile.setGroup(eventname);
 
 	present=eventsfile.readNumEntry("presentation", -1);
@@ -400,11 +401,11 @@ int KNotifyClient::getPresentation(const QString &eventname)
 	return present;
 }
 
-QString KNotifyClient::getFile(const QString &eventname, int present)
+QString KopeteNotifyClient::getFile(const QString &eventname, int present)
 {
 	if (eventname.isEmpty()) return QString::null;
 
-	KConfig eventsfile( KNotifyClient::instance()->instanceName()+".eventsrc", true, false);
+	KConfig eventsfile( KopeteNotifyClient::instance()->instanceName()+".eventsrc", true, false);
 	eventsfile.setGroup(eventname);
 
 	switch (present)
@@ -418,12 +419,12 @@ QString KNotifyClient::getFile(const QString &eventname, int present)
 	return QString::null;
 }
 
-int KNotifyClient::getDefaultPresentation(const QString &eventname)
+int KopeteNotifyClient::getDefaultPresentation(const QString &eventname)
 {
 	int present;
 	if (eventname.isEmpty()) return Default;
 
-	KConfig eventsfile( KNotifyClient::instance()->instanceName()+"/eventsrc", true, false, "data");
+	KConfig eventsfile( KopeteNotifyClient::instance()->instanceName()+"/eventsrc", true, false, "data");
 	eventsfile.setGroup(eventname);
 
 	present=eventsfile.readNumEntry("default_presentation", -1);
@@ -432,11 +433,11 @@ int KNotifyClient::getDefaultPresentation(const QString &eventname)
 
 }
 
-QString KNotifyClient::getDefaultFile(const QString &eventname, int present)
+QString KopeteNotifyClient::getDefaultFile(const QString &eventname, int present)
 {
 	if (eventname.isEmpty()) return QString::null;
 
-	KConfig eventsfile( KNotifyClient::instance()->instanceName()+"/eventsrc", true, false, "data");
+	KConfig eventsfile( KopeteNotifyClient::instance()->instanceName()+"/eventsrc", true, false, "data");
 	eventsfile.setGroup(eventname);
 
 	switch (present)
@@ -450,20 +451,20 @@ QString KNotifyClient::getDefaultFile(const QString &eventname, int present)
 	return QString::null;
 }
 
-bool KNotifyClient::startDaemon()
+bool KopeteNotifyClient::startDaemon()
 {
   static bool firstTry = true;
   if (firstTry && !kapp->dcopClient()->isApplicationRegistered(daemonName)) {
     firstTry = false;
-    return KApplication::startServiceByDesktopName(daemonName) == 0;
+    return KApplication::startServiceByDesktopName( QString::fromLatin1( daemonName ) ) == 0;
   }
   return true;
 }
 
 
-void KNotifyClient::beep(const QString& reason)
+void KopeteNotifyClient::beep(const QString& reason)
 {
-  if ( !kapp || KNotifyClient::Instance::currentInstance()->useSystemBell() ) {
+  if ( !kapp || KopeteNotifyClient::Instance::currentInstance()->useSystemBell() ) {
     QApplication::beep();
     return;
   }
@@ -485,16 +486,16 @@ void KNotifyClient::beep(const QString& reason)
       return;
   }
 
-  KNotifyClient::event(KNotifyClient::notification, reason);
+  KopeteNotifyClient::event(KopeteNotifyClient::notification, reason);
 }
 
 
-KInstance * KNotifyClient::instance() {
-    return KNotifyClient::Instance::current();
+KInstance * KopeteNotifyClient::instance() {
+    return KopeteNotifyClient::Instance::current();
 }
 
 
-class KNotifyClient::InstanceStack
+class KopeteNotifyClient::InstanceStack
 {
 public:
 	InstanceStack() { m_defaultInstance = 0; }
@@ -529,16 +530,16 @@ private:
 	Instance *m_defaultInstance;
 };
 
-KNotifyClient::InstanceStack * KNotifyClient::Instance::s_instances = 0L;
-static KStaticDeleter<KNotifyClient::InstanceStack > instancesDeleter;
+KopeteNotifyClient::InstanceStack * KopeteNotifyClient::Instance::s_instances = 0L;
+static KStaticDeleter<KopeteNotifyClient::InstanceStack > instancesDeleter;
 
-struct KNotifyClient::InstancePrivate
+struct KopeteNotifyClient::InstancePrivate
 {
     KInstance *instance;
     bool useSystemBell;
 };
 
-KNotifyClient::Instance::Instance(KInstance *instance)
+KopeteNotifyClient::Instance::Instance(KInstance *instance)
 {
     d = new InstancePrivate;
     d->instance = instance;
@@ -549,21 +550,21 @@ KNotifyClient::Instance::Instance(KInstance *instance)
     d->useSystemBell = config->readBoolEntry( "UseSystemBell", false );
 }
 
-KNotifyClient::Instance::~Instance()
+KopeteNotifyClient::Instance::~Instance()
 {
 	if (s_instances)
 		s_instances->pop(this);
 	delete d;
 }
 
-KNotifyClient::InstanceStack *KNotifyClient::Instance::instances()
+KopeteNotifyClient::InstanceStack *KopeteNotifyClient::Instance::instances()
 {
 	if (!s_instances)
 		instancesDeleter.setObject(s_instances, new InstanceStack);
 	return s_instances;
 }
 
-bool KNotifyClient::Instance::useSystemBell() const
+bool KopeteNotifyClient::Instance::useSystemBell() const
 {
     return d->useSystemBell;
 }
@@ -571,18 +572,18 @@ bool KNotifyClient::Instance::useSystemBell() const
 
 // static methods
 
-// We always return a valid KNotifyClient::Instance here. If no special one
+// We always return a valid KopeteNotifyClient::Instance here. If no special one
 // is available, we have a default-instance with kapp as KInstance.
 // We make sure to always have that default-instance in the stack, because
 // the stack might have gotten cleared in the destructor.
 // We can't use QStack::setAutoDelete( true ), because no instance besides
 // our default instance is owned by us.
-KNotifyClient::Instance * KNotifyClient::Instance::currentInstance()
+KopeteNotifyClient::Instance * KopeteNotifyClient::Instance::currentInstance()
 {
 	return instances()->currentInstance();
 }
 
-KInstance *KNotifyClient::Instance::current()
+KInstance *KopeteNotifyClient::Instance::current()
 {
     return currentInstance()->d->instance;
 }

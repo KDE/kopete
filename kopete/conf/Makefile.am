@@ -3,7 +3,8 @@ METASOURCES = AUTO
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
         -I$(top_srcdir)/kopete/libkopete/private \
         -I$(top_srcdir)/kopete/kopete/conf \
-        -I$(top_builddir)/kopete/kopete/conf $(all_includes)
+        -I$(top_builddir)/kopete/kopete/conf \
+        -I$(top_builddir)/kopete/libkopete $(all_includes)
 
 noinst_LTLIBRARIES = libkopeteconf.la
 noinst_HEADERS = pluginconfig.h appearanceconfig.h accountconfig.h \

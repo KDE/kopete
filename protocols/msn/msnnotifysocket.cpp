@@ -37,7 +37,7 @@
 #include <krun.h>
 #include <kio/job.h>
 
-#include "knotifyclient.h"
+#include "kopetenotifyclient.h"
 
 #include <ctime>
 
@@ -574,7 +574,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 		if(mailCount > 0 )
 		{
-			KNotifyClient::event( 0 , "msn_mail" , i18n( "You have one unread message in your MSN inbox.", "You have %n unread messages in your MSN inbox." , mailCount),
+			KopeteNotifyClient::event( 0 , "msn_mail" , i18n( "You have one unread message in your MSN inbox.", "You have %n unread messages in your MSN inbox." , mailCount),
 				i18n("Open &inbox") , this , SLOT(slotOpenInbox()) );
 		}
 
@@ -595,7 +595,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 		mailCount++;
 
-		KNotifyClient::event( 0 , "msn_mail" , i18n( "You have one new email from %1 in your MSN inbox." ).arg(m) ,
+		KopeteNotifyClient::event( 0 , "msn_mail" , i18n( "You have one new email from %1 in your MSN inbox." ).arg(m) ,
 			i18n("Open &inbox") , this , SLOT(slotOpenInbox()) );
 	}
 	else if(msg.contains("text/x-msmsgsprofile"))

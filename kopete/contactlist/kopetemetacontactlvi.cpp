@@ -29,7 +29,7 @@
 #include <klineeditdlg.h>
 #include <kiconeffect.h>
 #include <kpassivepopup.h>
-#include "knotifyclient.h"
+#include "kopetenotifyclient.h"
 
 #include "kopetecontactlistview.h"
 #include "kopeteaccountmanager.h"
@@ -190,7 +190,7 @@ void KopeteMetaContactLVI::slotContactStatusChanged()
 	int winId = KopeteSystemTray::systemTray() ?
 		KopeteSystemTray::systemTray()->winId() : 0;
 
-	KNotifyClient::event(winId, event,
+	KopeteNotifyClient::event(winId, event,
 		i18n("%2 is now %1!").arg(m_metaContact->statusString()).arg(m_metaContact->displayName()),
 		i18n("Chat") , this, SLOT(execute()));
 

@@ -16,9 +16,8 @@ libkopete_la_SOURCES = kopeteonlinestatus.cpp kopeteprotocol.cpp kopetecontact.c
 	kopetemessage.cpp kopetemessagemanager.cpp kopetemessagemanagerfactory.cpp kopetecontactlist.cpp kopetemetacontact.cpp \
 	kopeteaway.cpp kopeteawaydialog.cpp kopetetransfermanager.cpp kopetegroup.cpp \
 	kopeteaccountmanager.cpp kopeteaccount.cpp kopeteplugindataobject.cpp \
-	kopetecommandhandler.cpp
-
-libkopete_la_LDFLAGS = -no-undefined -version-info 1:0:0 $(all_libraries)
+	kopetecommandhandler.cpp kopetenotifywidgetbase.ui kopetenotifydialog.cpp kopetenotifyclient.cpp
+libkopete_la_LDFLAGS = -no-undefined -version-info 0:8:0 $(all_libraries)
 libkopete_la_LIBADD = ui/libkopeteui.la $(COMPAT_LIBS) $(LIB_KIO) $(LIB_XSS)
 
 servicetype_DATA = kopeteplugin.desktop kopeteprotocol.desktop

@@ -1,8 +1,8 @@
 <!DOCTYPE UI><UI version="3.0" stdsetdef="1">
-<class>KNotifyWidgetBase</class>
+<class>KopeteNotifyWidgetBase</class>
 <widget class="QWidget">
     <property name="name">
-        <cstring>KNotifyWidgetBase</cstring>
+        <cstring>KopeteNotifyWidgetBase</cstring>
     </property>
     <property name="geometry">
         <rect>

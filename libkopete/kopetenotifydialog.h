@@ -16,8 +16,8 @@
   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#ifndef KNOTIFYDIALOG_H
-#define KNOTIFYDIALOG_H
+#ifndef KOPETENOTIFYDIALOG_H
+#define KOPETENOTIFYDIALOG_H
 
 #include <klistview.h>
 
@@ -25,17 +25,17 @@
 #include <kinstance.h>
 #include <kglobal.h>
 
-#include "knotifywidgetbase.h"
+#include "kopetenotifywidgetbase.h"
 
 class QShowEvent;
 
-namespace KNotify
+namespace KopeteNotify
 {
-    class KNotifyWidget;
+    class KopeteNotifyWidget;
 }
 
 /**
- * KNotifyDialog presents an interface for configuring an application's
+ * KopeteNotifyDialog presents an interface for configuring an application's
  * KNotify events.
  *
  * Rather than requiring the user to wade through the entire list of
@@ -44,19 +44,19 @@ namespace KNotify
  *
  * Typical usage is calling the static @ref configure() method:
  * <pre>
- * (void) KNotifyDialog::configure( someParentWidget );
+ * (void) KopeteNotifyDialog::configure( someParentWidget );
  * </pre>
  *
  * @since 3.1
  * @author Carsten Pfeiffer <pfeiffer@kde.org>
  */
-class KNotifyDialog : public KDialogBase
+class KopeteNotifyDialog : public KDialogBase
 {
     Q_OBJECT
 
 public:
     /**
-     * If you want a non-modal dialog, you need to instantiate KNotifyDialog
+     * If you want a non-modal dialog, you need to instantiate KopeteNotifyDialog
      * yourself instead of using the @ref configure() method.
      *
      * @param parent The parent widget for the dialog
@@ -67,17 +67,17 @@ public:
      *                  Set this to 0L if you want to add all events yourself with
      *                  @ref addApplicationEvents().
      */
-    KNotifyDialog( QWidget *parent = 0, const char *name = 0,
+    KopeteNotifyDialog( QWidget *parent = 0, const char *name = 0,
                    bool modal = true,
                    const KAboutData *aboutData =
                    KGlobal::instance()->aboutData() );
     /**
-     * Destroys the KNotifyDialog
+     * Destroys the KopeteNotifyDialog
      */
-    virtual ~KNotifyDialog();
+    virtual ~KopeteNotifyDialog();
 
     /**
-     * Convenience method to create @ref exec() a modal KNotifyDialog.
+     * Convenience method to create @ref exec() a modal KopeteNotifyDialog.
      *
      * @param parent The parent widget for the dialog
      * @param name The widget name
@@ -92,7 +92,7 @@ public:
     /**
      * With this method, you can add the KNotify events of one eventsrc
      * files to the view.
-     * KNotifyDialog can handle events for multiple applications (i.e. eventsrc files).
+     * KopeteNotifyDialog can handle events for multiple applications (i.e. eventsrc files).
      * Successive calls with a different @p appName will add them.
      * @param appName The application's name, i.e. the name passed to the @ref
      *                KApplication constructor or @ref KAboutData.
@@ -103,7 +103,7 @@ public:
     /**
      * With this method, you can add the KNotify events of one eventsrc
      * files to the view.
-     * KNotifyDialog can handle events for multiple applications (i.e. eventsrc files).
+     * KopeteNotifyDialog can handle events for multiple applications (i.e. eventsrc files).
      * Successive calls with a different @p path will add them.
      * @param path The absolute or relative path to the eventsrc file to be configured.
      *             A relative path would be e.g. "kwin/eventsrc".
@@ -128,14 +128,14 @@ private:
 
     void updateView();
 
-    KNotify::KNotifyWidget * m_notifyWidget;
+    KopeteNotify::KopeteNotifyWidget * m_notifyWidget;
 
     class Private;
     Private *d;
 };
 
 
-namespace KNotify
+namespace KopeteNotify
 {
     class Application;
     class Event;
@@ -185,14 +185,14 @@ namespace KNotify
     /**
      * @internal
      */
-    class KNotifyWidget : public KNotifyWidgetBase
+    class KopeteNotifyWidget : public KopeteNotifyWidgetBase
     {
         Q_OBJECT
 
     public:
-        KNotifyWidget( QWidget* parent = 0, const char* name = 0,
+        KopeteNotifyWidget( QWidget* parent = 0, const char* name = 0,
                        bool handleAllApps = false );
-        ~KNotifyWidget();
+        ~KopeteNotifyWidget();
 
         KListView * eventsView() {
             return m_listview;

@@ -26,8 +26,8 @@
 #include <kfiledialog.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
-#include "knotifyclient.h"
-#include "knotifydialog.h"
+#include "kopetenotifyclient.h"
+#include "kopetenotifydialog.h"
 #include <kstandarddirs.h>
 #include <kurlrequester.h>
 #include <kdeversion.h>
@@ -38,13 +38,13 @@
 #include <qtooltip.h>
 #include <qvbox.h>
 
-using namespace KNotify;
+using namespace KopeteNotify;
 
 //
 // I don't feel like subclassing KComboBox and find ways to insert that into
 // the .ui file...
 //
-namespace KNotify
+namespace KopeteNotify
 {
     class SelectionCombo
     {
@@ -67,40 +67,40 @@ namespace KNotify
             switch( combo->currentItem() )
             {
                 case 0:
-                    return KNotifyClient::Sound;
+                    return KopeteNotifyClient::Sound;
                 case 1:
-                    return KNotifyClient::Logfile;
+                    return KopeteNotifyClient::Logfile;
                 case 2:
-                    return KNotifyClient::Execute;
+                    return KopeteNotifyClient::Execute;
                 case 3:
-                    return KNotifyClient::Messagebox;
+                    return KopeteNotifyClient::Messagebox;
                 case 4:
-                    return KNotifyClient::PassivePopup;
+                    return KopeteNotifyClient::PassivePopup;
                 case 5:
-                    return KNotifyClient::Stderr;
+                    return KopeteNotifyClient::Stderr;
             }
 
-            return KNotifyClient::None;
+            return KopeteNotifyClient::None;
         }
     };
 };
 
 
-int KNotifyDialog::configure( QWidget *parent, const char *name,
+int KopeteNotifyDialog::configure( QWidget *parent, const char *name,
                               const KAboutData *aboutData )
 {
-    KNotifyDialog dialog( parent, name, true, aboutData );
+    KopeteNotifyDialog dialog( parent, name, true, aboutData );
     return dialog.exec();
 }
 
-KNotifyDialog::KNotifyDialog( QWidget *parent, const char *name, bool modal,
+KopeteNotifyDialog::KopeteNotifyDialog( QWidget *parent, const char *name, bool modal,
                               const KAboutData *aboutData )
     : KDialogBase(parent, name, modal, i18n("Notification Settings"),
                   Ok | Apply | Cancel | Default, Ok, true )
 {
     QVBox *box = makeVBoxMainWidget();
 
-    m_notifyWidget = new KNotifyWidget( box, "knotify widget" );
+    m_notifyWidget = new KopeteNotifyWidget( box, "knotify widget" );
 
     if ( aboutData )
         addApplicationEvents( aboutData->appName() );
@@ -109,17 +109,17 @@ KNotifyDialog::KNotifyDialog( QWidget *parent, const char *name, bool modal,
     connect( this, SIGNAL( applyClicked() ), m_notifyWidget, SLOT( save() ));
 };
 
-KNotifyDialog::~KNotifyDialog()
+KopeteNotifyDialog::~KopeteNotifyDialog()
 {
 }
 
-void KNotifyDialog::addApplicationEvents( const char *appName )
+void KopeteNotifyDialog::addApplicationEvents( const char *appName )
 {
     addApplicationEvents( QString::fromUtf8( appName ) +
                           QString::fromLatin1( "/eventsrc" ) );
 }
 
-void KNotifyDialog::addApplicationEvents( const QString& path )
+void KopeteNotifyDialog::addApplicationEvents( const QString& path )
 {
     Application *app = m_notifyWidget->addApplicationEvents( path );
     if ( app )
@@ -129,12 +129,12 @@ void KNotifyDialog::addApplicationEvents( const QString& path )
     }
 }
 
-void KNotifyDialog::clearApplicationEvents()
+void KopeteNotifyDialog::clearApplicationEvents()
 {
     m_notifyWidget->clear();
 }
 
-void KNotifyDialog::slotDefault()
+void KopeteNotifyDialog::slotDefault()
 {
     m_notifyWidget->resetDefaults( true ); // ask user
 }
@@ -151,16 +151,16 @@ void KNotifyDialog::slotDefault()
 #define COL_SOUND   4
 #define COL_EVENT   5
 
-class KNotifyWidget::Private
+class KopeteNotifyWidget::Private
 {
 public:
     QPixmap pixmaps[5];
 };
 
 // simple access to all knotify-handled applications
-KNotifyWidget::KNotifyWidget( QWidget *parent, const char *name,
+KopeteNotifyWidget::KopeteNotifyWidget( QWidget *parent, const char *name,
                               bool handleAllApps )
-    : KNotifyWidgetBase( parent, name ? name : "KNotifyWidget" )
+    : KopeteNotifyWidgetBase( parent, name ? name : "KopeteNotifyWidget" )
 {
     d = new Private;
 
@@ -181,11 +181,11 @@ KNotifyWidget::KNotifyWidget( QWidget *parent, const char *name,
     m_listview->setFullWidth( true );
     m_listview->setAllColumnsShowFocus( true );
 
-    QPixmap pexec = SmallIcon("exec");
-    QPixmap pstderr = SmallIcon("terminal");
-    QPixmap pmessage = SmallIcon("info");
-    QPixmap plogfile = SmallIcon("log");
-    QPixmap psound = SmallIcon("sound");
+    QPixmap pexec = SmallIcon( QString::fromLatin1( "exec" ) );
+    QPixmap pstderr = SmallIcon( QString::fromLatin1( "terminal" ) );
+    QPixmap pmessage = SmallIcon( QString::fromLatin1( "info" ) );
+    QPixmap plogfile = SmallIcon( QString::fromLatin1( "log" ) );
+    QPixmap psound = SmallIcon( QString::fromLatin1( "sound" ) );
 
     d->pixmaps[COL_EXECUTE] = pexec;
     d->pixmaps[COL_STDERR]  = pstderr;
@@ -202,7 +202,7 @@ KNotifyWidget::KNotifyWidget( QWidget *parent, const char *name,
     header->setLabel( COL_LOGFILE, plogfile, QString::null, w );
     header->setLabel( COL_SOUND,   psound,   QString::null, w );
 
-    m_playButton->setPixmap( SmallIcon( "1rightarrow" ) );
+    m_playButton->setPixmap( SmallIcon( QString::fromLatin1( "1rightarrow" ) ) );
     connect( m_playButton, SIGNAL( clicked() ), SLOT( playSound() ));
 
     connect( m_listview, SIGNAL( currentChanged( QListViewItem * ) ),
@@ -248,17 +248,17 @@ KNotifyWidget::KNotifyWidget( QWidget *parent, const char *name,
     slotEventChanged( 0L ); // disable widgets by default
 }
 
-KNotifyWidget::~KNotifyWidget()
+KopeteNotifyWidget::~KopeteNotifyWidget()
 {
     delete d;
 }
 
-void KNotifyWidget::toggleAdvanced()
+void KopeteNotifyWidget::toggleAdvanced()
 {
     showAdvanced( m_logToFile->isHidden() );
 }
 
-void KNotifyWidget::showAdvanced( bool show )
+void KopeteNotifyWidget::showAdvanced( bool show )
 {
     if ( show )
     {
@@ -294,7 +294,7 @@ void KNotifyWidget::showAdvanced( bool show )
     }
 }
 
-Application * KNotifyWidget::addApplicationEvents( const QString& path )
+Application * KopeteNotifyWidget::addApplicationEvents( const QString& path )
 {
     kdDebug() << "**** knotify: adding path: " << path << endl;
     QString relativePath = path;
@@ -312,26 +312,26 @@ Application * KNotifyWidget::addApplicationEvents( const QString& path )
     return 0L;
 }
 
-void KNotifyWidget::clear()
+void KopeteNotifyWidget::clear()
 {
     clearVisible();
     m_allApps.clear();
 }
 
-void KNotifyWidget::clearVisible()
+void KopeteNotifyWidget::clearVisible()
 {
     m_visibleApps.clear();
     m_listview->clear();
     slotEventChanged( 0L ); // disable widgets
 }
 
-void KNotifyWidget::showEvent( QShowEvent *e )
+void KopeteNotifyWidget::showEvent( QShowEvent *e )
 {
     selectItem( m_listview->firstChild() );
-    KNotifyWidgetBase::showEvent( e );
+    KopeteNotifyWidgetBase::showEvent( e );
 }
 
-void KNotifyWidget::slotEventChanged( QListViewItem *item )
+void KopeteNotifyWidget::slotEventChanged( QListViewItem *item )
 {
     bool on = (item != 0L);
 
@@ -345,7 +345,7 @@ void KNotifyWidget::slotEventChanged( QListViewItem *item )
     updateWidgets( lit );
 }
 
-void KNotifyWidget::updateWidgets( ListViewItem *item )
+void KopeteNotifyWidget::updateWidgets( ListViewItem *item )
 {
     bool enable;
     bool checked;
@@ -357,9 +357,9 @@ void KNotifyWidget::updateWidgets( ListViewItem *item )
     // sound settings
     m_playButton->setEnabled( !event.soundfile.isEmpty() );
     m_soundPath->setURL( event.soundfile );
-    enable = (event.dontShow & KNotifyClient::Sound) == 0;
+    enable = (event.dontShow & KopeteNotifyClient::Sound) == 0;
     checked = enable && !event.soundfile.isEmpty() &&
-              (event.presentation & KNotifyClient::Sound);
+              (event.presentation & KopeteNotifyClient::Sound);
     m_playSound->setEnabled( enable );
     m_playSound->setChecked( checked );
     m_soundPath->setEnabled( checked );
@@ -367,9 +367,9 @@ void KNotifyWidget::updateWidgets( ListViewItem *item )
 
     // logfile settings
     m_logfilePath->setURL( event.logfile );
-    enable = (event.dontShow & KNotifyClient::Logfile) == 0;
+    enable = (event.dontShow & KopeteNotifyClient::Logfile) == 0;
     checked = enable && !event.logfile.isEmpty()  &&
-              (event.presentation & KNotifyClient::Logfile);
+              (event.presentation & KopeteNotifyClient::Logfile);
     m_logToFile->setEnabled( enable );
     m_logToFile->setChecked( checked );
     m_logfilePath->setEnabled( checked );
@@ -377,52 +377,52 @@ void KNotifyWidget::updateWidgets( ListViewItem *item )
 
     // execute program settings
     m_executePath->setURL( event.commandline );
-    enable = (event.dontShow & KNotifyClient::Execute) == 0;
+    enable = (event.dontShow & KopeteNotifyClient::Execute) == 0;
     checked = enable && !event.commandline.isEmpty() &&
-              (event.presentation & KNotifyClient::Execute);
+              (event.presentation & KopeteNotifyClient::Execute);
     m_execute->setEnabled( enable );
     m_execute->setChecked( checked );
     m_executePath->setEnabled( checked );
 
 
     // other settings
-    m_messageBox->setChecked(event.presentation & (KNotifyClient::Messagebox | KNotifyClient::PassivePopup));
-    m_passivePopup->setChecked(event.presentation & KNotifyClient::PassivePopup);
-    m_stderr->setChecked( event.presentation & KNotifyClient::Stderr );
+    m_messageBox->setChecked(event.presentation & (KopeteNotifyClient::Messagebox | KopeteNotifyClient::PassivePopup));
+    m_passivePopup->setChecked(event.presentation & KopeteNotifyClient::PassivePopup);
+    m_stderr->setChecked( event.presentation & KopeteNotifyClient::Stderr );
 
     updatePixmaps( item );
 
     blockSignals( false );
 }
 
-void KNotifyWidget::updatePixmaps( ListViewItem *item )
+void KopeteNotifyWidget::updatePixmaps( ListViewItem *item )
 {
     QPixmap emptyPix;
     Event &event = item->event();
 
-    bool doIt = (event.presentation & KNotifyClient::Execute) &&
+    bool doIt = (event.presentation & KopeteNotifyClient::Execute) &&
                 !event.commandline.isEmpty();
     item->setPixmap( COL_EXECUTE, doIt ? d->pixmaps[COL_EXECUTE] : emptyPix );
 
-    doIt = (event.presentation & KNotifyClient::Sound) &&
+    doIt = (event.presentation & KopeteNotifyClient::Sound) &&
            !event.soundfile.isEmpty();
     item->setPixmap( COL_SOUND, doIt ? d->pixmaps[COL_SOUND] : emptyPix );
 
-    doIt = (event.presentation & KNotifyClient::Logfile) &&
+    doIt = (event.presentation & KopeteNotifyClient::Logfile) &&
            !event.logfile.isEmpty();
     item->setPixmap( COL_LOGFILE, doIt ? d->pixmaps[COL_LOGFILE] : emptyPix );
 
     item->setPixmap( COL_MESSAGE,
                      (event.presentation &
-                      (KNotifyClient::Messagebox | KNotifyClient::PassivePopup)) ?
+                      (KopeteNotifyClient::Messagebox | KopeteNotifyClient::PassivePopup)) ?
                      d->pixmaps[COL_MESSAGE] : emptyPix );
 
     item->setPixmap( COL_STDERR,
-                     (event.presentation & KNotifyClient::Stderr) ?
+                     (event.presentation & KopeteNotifyClient::Stderr) ?
                      d->pixmaps[COL_STDERR] : emptyPix );
 }
 
-void KNotifyWidget::addVisibleApp( Application *app )
+void KopeteNotifyWidget::addVisibleApp( Application *app )
 {
     if ( !app || (m_visibleApps.findRef( app ) != -1) )
         return;
@@ -437,7 +437,7 @@ void KNotifyWidget::addVisibleApp( Application *app )
     selectItem( item );
 }
 
-void KNotifyWidget::addToView( const EventList& events )
+void KopeteNotifyWidget::addToView( const EventList& events )
 {
     ListViewItem *item = 0L;
 
@@ -448,23 +448,23 @@ void KNotifyWidget::addToView( const EventList& events )
         Event *event = it.current();
         item = new ListViewItem( m_listview, event );
 
-        if ( (event->presentation & KNotifyClient::Execute) &&
+        if ( (event->presentation & KopeteNotifyClient::Execute) &&
              !event->commandline.isEmpty() )
             item->setPixmap( COL_EXECUTE, d->pixmaps[COL_EXECUTE] );
-        if ( (event->presentation & KNotifyClient::Sound) &&
+        if ( (event->presentation & KopeteNotifyClient::Sound) &&
              !event->soundfile.isEmpty() )
             item->setPixmap( COL_SOUND, d->pixmaps[COL_SOUND] );
-        if ( (event->presentation & KNotifyClient::Logfile) &&
+        if ( (event->presentation & KopeteNotifyClient::Logfile) &&
              !event->logfile.isEmpty() )
             item->setPixmap( COL_LOGFILE, d->pixmaps[COL_LOGFILE] );
-        if ( event->presentation & (KNotifyClient::Messagebox|KNotifyClient::PassivePopup) )
+        if ( event->presentation & (KopeteNotifyClient::Messagebox|KopeteNotifyClient::PassivePopup) )
             item->setPixmap( COL_MESSAGE, d->pixmaps[COL_MESSAGE] );
-        if ( event->presentation & KNotifyClient::Stderr )
+        if ( event->presentation & KopeteNotifyClient::Stderr )
             item->setPixmap( COL_STDERR, d->pixmaps[COL_STDERR] );
     }
 }
 
-void KNotifyWidget::widgetChanged( QListViewItem *item,
+void KopeteNotifyWidget::widgetChanged( QListViewItem *item,
                                    int what, bool on, QWidget *buddy )
 {
     if ( signalsBlocked() )
@@ -486,37 +486,37 @@ void KNotifyWidget::widgetChanged( QListViewItem *item,
     emit changed( true );
 }
 
-void KNotifyWidget::soundToggled( bool on )
+void KopeteNotifyWidget::soundToggled( bool on )
 {
     QListViewItem *item = m_listview->currentItem();
     if ( !item )
         return;
     bool doIcon = on && !m_soundPath->url().isEmpty();
     item->setPixmap( COL_SOUND, doIcon ? d->pixmaps[COL_SOUND] : QPixmap() );
-    widgetChanged( item, KNotifyClient::Sound, on, m_soundPath );
+    widgetChanged( item, KopeteNotifyClient::Sound, on, m_soundPath );
 }
 
-void KNotifyWidget::loggingToggled( bool on )
+void KopeteNotifyWidget::loggingToggled( bool on )
 {
     QListViewItem *item = m_listview->currentItem();
     if ( !item )
         return;
     bool doIcon = on && !m_logfilePath->url().isEmpty();
     item->setPixmap(COL_LOGFILE, doIcon ? d->pixmaps[COL_LOGFILE] : QPixmap());
-    widgetChanged( item, KNotifyClient::Logfile, on, m_logfilePath );
+    widgetChanged( item, KopeteNotifyClient::Logfile, on, m_logfilePath );
 }
 
-void KNotifyWidget::executeToggled( bool on )
+void KopeteNotifyWidget::executeToggled( bool on )
 {
     QListViewItem *item = m_listview->currentItem();
     if ( !item )
         return;
     bool doIcon = on && !m_executePath->url().isEmpty();
     item->setPixmap(COL_EXECUTE, doIcon ? d->pixmaps[COL_EXECUTE] : QPixmap());
-    widgetChanged( item, KNotifyClient::Execute, on, m_executePath );
+    widgetChanged( item, KopeteNotifyClient::Execute, on, m_executePath );
 }
 
-void KNotifyWidget::messageBoxChanged()
+void KopeteNotifyWidget::messageBoxChanged()
 {
     if ( signalsBlocked() )
         return;
@@ -534,32 +534,32 @@ void KNotifyWidget::messageBoxChanged()
 
     if ( m_messageBox->isChecked() ) {
 	if ( m_passivePopup->isChecked() ) {
-	    e.presentation |= KNotifyClient::PassivePopup;
-	    e.presentation &= ~KNotifyClient::Messagebox;
+	    e.presentation |= KopeteNotifyClient::PassivePopup;
+	    e.presentation &= ~KopeteNotifyClient::Messagebox;
 	}
 	else {
-	    e.presentation &= ~KNotifyClient::PassivePopup;
-	    e.presentation |= KNotifyClient::Messagebox;
+	    e.presentation &= ~KopeteNotifyClient::PassivePopup;
+	    e.presentation |= KopeteNotifyClient::Messagebox;
 	}
     }
     else {
-        e.presentation &= ~KNotifyClient::Messagebox;
-        e.presentation &= ~KNotifyClient::PassivePopup;
+        e.presentation &= ~KopeteNotifyClient::Messagebox;
+        e.presentation &= ~KopeteNotifyClient::PassivePopup;
     }
 
     emit changed( true );
 }
 
-void KNotifyWidget::stderrToggled( bool on )
+void KopeteNotifyWidget::stderrToggled( bool on )
 {
     QListViewItem *item = m_listview->currentItem();
     if ( !item )
         return;
     item->setPixmap( COL_STDERR, on ? d->pixmaps[COL_STDERR] : QPixmap() );
-    widgetChanged( item, KNotifyClient::Stderr, on );
+    widgetChanged( item, KopeteNotifyClient::Stderr, on );
 }
 
-void KNotifyWidget::soundFileChanged( const QString& text )
+void KopeteNotifyWidget::soundFileChanged( const QString& text )
 {
     if ( signalsBlocked() )
         return;
@@ -577,7 +577,7 @@ void KNotifyWidget::soundFileChanged( const QString& text )
     emit changed( true );
 }
 
-void KNotifyWidget::logfileChanged( const QString& text )
+void KopeteNotifyWidget::logfileChanged( const QString& text )
 {
     if ( signalsBlocked() )
         return;
@@ -593,7 +593,7 @@ void KNotifyWidget::logfileChanged( const QString& text )
     emit changed( true );
 }
 
-void KNotifyWidget::commandlineChanged( const QString& text )
+void KopeteNotifyWidget::commandlineChanged( const QString& text )
 {
     if ( signalsBlocked() )
         return;
@@ -609,7 +609,7 @@ void KNotifyWidget::commandlineChanged( const QString& text )
     emit changed( true );
 }
 
-void KNotifyWidget::slotItemClicked( QListViewItem *item, const QPoint&,
+void KopeteNotifyWidget::slotItemClicked( QListViewItem *item, const QPoint&,
                                      int col )
 {
     if ( !item || !item->isSelected() )
@@ -654,13 +654,13 @@ void KNotifyWidget::slotItemClicked( QListViewItem *item, const QPoint&,
     }
 }
 
-void KNotifyWidget::sort( bool ascending )
+void KopeteNotifyWidget::sort( bool ascending )
 {
     m_listview->setSorting( COL_EVENT, ascending );
     m_listview->sort();
 }
 
-void KNotifyWidget::selectItem( QListViewItem *item )
+void KopeteNotifyWidget::selectItem( QListViewItem *item )
 {
     if ( item )
     {
@@ -670,7 +670,7 @@ void KNotifyWidget::selectItem( QListViewItem *item )
     }
 }
 
-void KNotifyWidget::resetDefaults( bool ask )
+void KopeteNotifyWidget::resetDefaults( bool ask )
 {
     if ( ask )
     {
@@ -687,7 +687,7 @@ void KNotifyWidget::resetDefaults( bool ask )
     emit changed( true );
 }
 
-void KNotifyWidget::reload( bool revertToDefaults )
+void KopeteNotifyWidget::reload( bool revertToDefaults )
 {
     m_listview->clear();
     ApplicationListIterator it( m_visibleApps );
@@ -701,7 +701,7 @@ void KNotifyWidget::reload( bool revertToDefaults )
     selectItem( m_listview->firstChild()  );
 }
 
-void KNotifyWidget::save()
+void KopeteNotifyWidget::save()
 {
     kdDebug() << "save\n";
 
@@ -716,7 +716,7 @@ void KNotifyWidget::save()
     {
         if ( !kapp->dcopClient()->isAttached() )
             kapp->dcopClient()->attach();
-        kapp->dcopClient()->send("knotify", "", "reconfigure()", "");
+        kapp->dcopClient()->send( "knotify", "", "reconfigure()", QCString( "" ) );
     }
 
     emit changed( false );
@@ -724,7 +724,7 @@ void KNotifyWidget::save()
 
 // returns e.g. "kwin/eventsrc" from a given path
 // "/opt/kde3/share/apps/kwin/eventsrc"
-QString KNotifyWidget::makeRelative( const QString& fullPath )
+QString KopeteNotifyWidget::makeRelative( const QString& fullPath )
 {
     int slash = fullPath.findRev( '/' ) - 1;
     slash = fullPath.findRev( '/', slash );
@@ -735,7 +735,7 @@ QString KNotifyWidget::makeRelative( const QString& fullPath )
     return fullPath.mid( slash+1 );
 }
 
-Event * KNotifyWidget::currentEvent()
+Event * KopeteNotifyWidget::currentEvent()
 {
     QListViewItem *current = m_listview->currentItem();
     if ( !current )
@@ -744,7 +744,7 @@ Event * KNotifyWidget::currentEvent()
     return &static_cast<ListViewItem*>( current )->event();
 }
 
-void KNotifyWidget::openSoundDialog( KURLRequester *requester )
+void KopeteNotifyWidget::openSoundDialog( KURLRequester *requester )
 {
     static bool init = true;
     if ( !init )
@@ -755,14 +755,14 @@ void KNotifyWidget::openSoundDialog( KURLRequester *requester )
     KFileDialog *fileDialog = requester->fileDialog();
     fileDialog->setCaption( i18n("Select Sound File") );
     QStringList filters;
-    filters << "audio/x-wav" << "audio/x-mp3" << "application/x-ogg"
-            << "audio/x-adpcm";
+    filters << QString::fromLatin1( "audio/x-wav" ) << QString::fromLatin1( "audio/x-mp3" )
+            << QString::fromLatin1( "application/x-ogg" ) << QString::fromLatin1( "audio/x-adpcm" );
     fileDialog->setMimeFilter( filters );
 
     // find the first "sound"-resource that contains files
     const Application *app = currentEvent()->application();
     QStringList soundDirs =
-        KGlobal::dirs()->findDirs("data", app->appName() + "/sounds");
+        KGlobal::dirs()->findDirs( "data", app->appName() + QString::fromLatin1( "/sounds" ) );
     soundDirs += KGlobal::dirs()->resourceDirs( "sound" );
 
     if ( !soundDirs.isEmpty() ) {
@@ -782,7 +782,7 @@ void KNotifyWidget::openSoundDialog( KURLRequester *requester )
     }
 }
 
-void KNotifyWidget::openLogDialog( KURLRequester *requester )
+void KopeteNotifyWidget::openLogDialog( KURLRequester *requester )
 {
     static bool init = true;
     if ( !init )
@@ -793,11 +793,11 @@ void KNotifyWidget::openLogDialog( KURLRequester *requester )
     KFileDialog *fileDialog = requester->fileDialog();
     fileDialog->setCaption( i18n("Select Log File") );
     QStringList filters;
-    filters << "text/x-log" << "text/plain";
+    filters << QString::fromLatin1( "text/x-log" ) << QString::fromLatin1( "text/plain" );
     fileDialog->setMimeFilter( filters );
 }
 
-void KNotifyWidget::openExecDialog( KURLRequester *requester )
+void KopeteNotifyWidget::openExecDialog( KURLRequester *requester )
 {
     static bool init = true;
     if ( !init )
@@ -808,24 +808,26 @@ void KNotifyWidget::openExecDialog( KURLRequester *requester )
     KFileDialog *fileDialog = requester->fileDialog();
     fileDialog->setCaption( i18n("Select File to Execute") );
     QStringList filters;
-    filters << "application/x-executable" << "application/x-shellscript"
-            << "application/x-perl" << "application/x-python";
+    filters << QString::fromLatin1( "application/x-executable" )
+            << QString::fromLatin1( "application/x-shellscript" )
+            << QString::fromLatin1( "application/x-perl" )
+            << QString::fromLatin1( "application/x-python" );
     fileDialog->setMimeFilter( filters );
 }
 
-void KNotifyWidget::playSound()
+void KopeteNotifyWidget::playSound()
 {
     KAudioPlayer::play( m_soundPath->url() );
 }
 
-void KNotifyWidget::enableAll()
+void KopeteNotifyWidget::enableAll()
 {
     bool enable = (sender() == m_buttonEnable);
     enableAll( SelectionCombo::type(enable ? m_comboEnable : m_comboDisable),
                enable );
 }
 
-void KNotifyWidget::enableAll( int what, bool enable )
+void KopeteNotifyWidget::enableAll( int what, bool enable )
 {
     if ( m_listview->childCount() == 0 )
         return;
@@ -965,7 +967,7 @@ void Application::reloadEvents( bool revertToDefaults )
             else { // load the event
                 // default to passive popups over plain messageboxes
                 int default_rep = kc->readNumEntry("default_presentation",
-                                                   0 | KNotifyClient::PassivePopup);
+                                                   0 | KopeteNotifyClient::PassivePopup);
                 QString default_logfile = kc->readEntry("default_logfile");
                 QString default_soundfile = kc->readEntry("default_sound");
                 QString default_commandline = kc->readEntry("default_commandline");
@@ -1026,19 +1028,19 @@ int ListViewItem::compare ( QListViewItem * i, int col, bool ascending ) const
             return QListViewItem::compare( i, col, ascending );
 
         case COL_EXECUTE:
-            action = KNotifyClient::Execute;
+            action = KopeteNotifyClient::Execute;
             break;
         case COL_LOGFILE:
-            action = KNotifyClient::Logfile;
+            action = KopeteNotifyClient::Logfile;
             break;
         case COL_MESSAGE:
-            action = (KNotifyClient::Messagebox | KNotifyClient::PassivePopup);
+            action = (KopeteNotifyClient::Messagebox | KopeteNotifyClient::PassivePopup);
             break;
         case COL_SOUND:
-            action = KNotifyClient::Sound;
+            action = KopeteNotifyClient::Sound;
             break;
         case COL_STDERR:
-            action = KNotifyClient::Stderr;
+            action = KopeteNotifyClient::Stderr;
             break;
     }
 
@@ -1056,4 +1058,4 @@ int ListViewItem::compare ( QListViewItem * i, int col, bool ascending ) const
     return 0;
 }
 
-#include "knotifydialog.moc"
+#include "kopetenotifydialog.moc"

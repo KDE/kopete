@@ -15,9 +15,9 @@
    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.
 */
-#ifndef _KNOTIFY_CLIENT_
-#define _KNOTIFY_CLIENT_
-#define _KNOTIFY_CLIENT
+#ifndef _KOPETENOTIFY_CLIENT_
+#define _KOPETENOTIFY_CLIENT_
+#define _KOPETENOTIFY_CLIENT
 
 #include <qstring.h>
 #include <kguiitem.h>
@@ -27,7 +27,7 @@ class KInstance;
 
 /**
  * This namespace provides a method for issuing events to a KNotifyServer
- * call KNotifyClient::event("eventname"); to issue it.
+ * call KopeteNotifyClient::event("eventname"); to issue it.
  * On installation, there should be a file called
  * $KDEDIR/share/apps/appname/eventsrc which contains the events.
  *
@@ -76,34 +76,34 @@ class KInstance;
  */
 
 
-namespace KNotifyClient
+namespace KopeteNotifyClient
 {
     struct InstancePrivate;
 	class InstanceStack;
 
     /**
-     * Makes it possible to use KNotifyClient with a KInstance
+     * Makes it possible to use KopeteNotifyClient with a KInstance
      * that is not the application.
      *
      * Use like this:
      * \code
-     * KNotifyClient::Instance(myInstance);
-     * KNotifyClient::event("MyEvent");
+     * KopeteNotifyClient::Instance(myInstance);
+     * KopeteNotifyClient::event("MyEvent");
      * \endcode
      *
-     * @short Enables KNotifyClient to use a different KInstance
+     * @short Enables KopeteNotifyClient to use a different KInstance
      */
     class Instance
     {
     public:
         /**
-         * Constructs a KNotifyClient::Instance to make KNotifyClient use
+         * Constructs a KopeteNotifyClient::Instance to make KopeteNotifyClient use
          * the specified KInstance for the event configuration.
 	 * @param instance the instance for the event configuration
          */
         Instance(KInstance *instance);
         /**
-         * Destructs the KNotifyClient::Instance and resets KNotifyClient
+         * Destructs the KopeteNotifyClient::Instance and resets KopeteNotifyClient
          * to the previously used KInstance.
          */
         ~Instance();
@@ -120,7 +120,7 @@ namespace KNotifyClient
         static KInstance *current();
 
 	/**
-	 * Returns the current KNotifyClient::Instance (not the KInstance).
+	 * Returns the current KopeteNotifyClient::Instance (not the KInstance).
 	 * @return the active Instance
 	 */
 	static Instance *currentInstance();
@@ -215,7 +215,7 @@ namespace KNotifyClient
 	 * Pass the origin-widget's winId() here so that a PassivePopup can be
 	 * placed appropriately.
 	 *
-	 * Call it by KNotifyClient::event(widget->winId(), "EventName");
+	 * Call it by KopeteNotifyClient::event(widget->winId(), "EventName");
 	 * It will use KApplication::kApplication->dcopClient() to communicate to
 	 * the server
 	 * @param winId The winId() of the widget where the event originates
@@ -266,7 +266,7 @@ namespace KNotifyClient
 	 * Pass the origin-widget's winId() here so that a PassivePopup can be
 	 * placed appropriately.
 	 *
-	 * Call it by KNotifyClient::event(widget->winId(), "EventName");
+	 * Call it by KopeteNotifyClient::event(widget->winId(), "EventName");
 	 * It will use KApplication::kApplication->dcopClient() to communicate to
 	 * the server
 	 * @param winId The winId() of the widget where the event originates
@@ -309,7 +309,7 @@ namespace KNotifyClient
 	 * This is a simple substitution for QApplication::beep().
 	 * It simply calls
 	 * \code
-	 * KNotifyClient::event( KNotifyClient::notification, reason );
+	 * KopeteNotifyClient::event( KopeteNotifyClient::notification, reason );
 	 * \endcode
 	 * @param reason the reason, can be QString::null.
 	 */
@@ -319,7 +319,7 @@ namespace KNotifyClient
 	 * Gets the presentation associated with a certain event name
 	 * Remeber that they may be ORed:
 	 * \code
-	 * if (present & KNotifyClient::Sound) { [Yes, sound is a default] }
+	 * if (present & KopeteNotifyClient::Sound) { [Yes, sound is a default] }
 	 * \endcode
 	 * @param eventname the event name to check
 	 * @return the presentation methods
@@ -340,7 +340,7 @@ namespace KNotifyClient
 	 * Gets the default presentation for the event of this program.
 	 * Remember that the Presentation may be ORed.  Try this:
 	 * \code
-	 * if (present & KNotifyClient::Sound) { [Yes, sound is a default] }
+	 * if (present & KopeteNotifyClient::Sound) { [Yes, sound is a default] }
 	 * \endcode
 	 * @return the presentation methods
 	 */
@@ -358,7 +358,7 @@ namespace KNotifyClient
 	QString getDefaultFile(const QString &eventname, int present);
 
 	/**
-	 * Shortcut to KNotifyClient::Instance::current() :)
+	 * Shortcut to KopeteNotifyClient::Instance::current() :)
 	 * @returns the current KInstance.
 	 */
 	KInstance * instance();
