@@ -70,7 +70,7 @@ class KopeteRichTextEditPart : public KParts::ReadOnlyPart
 		void checkToolbarEnabled();
 
 	signals:
-		void toggleToolbar( const bool &enabled );
+		void toggleToolbar( bool enabled );
 
 	protected:
 		/**
