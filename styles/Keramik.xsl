@@ -2,6 +2,9 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html"/>
 	<xsl:template match="message">
+		<div style="height:5px;">
+		 
+		</div>
 		<div class="KopeteMessage">
 			<xsl:attribute name="id">
 				<xsl:value-of select="@id"/>
@@ -105,11 +108,6 @@
 					</xsl:otherwise>
 				</xsl:choose>
 			</div>
-		</div>
-		<div>
-			<xsl:attribute name="style">
-				<xsl:text>height:10px;</xsl:text>
-			</xsl:attribute>
 		</div>
 	</xsl:template>
 </xsl:stylesheet>
