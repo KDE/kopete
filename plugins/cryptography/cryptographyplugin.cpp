@@ -197,6 +197,12 @@ void CryptographyPlugin::slotIncomingMessage( Kopete::Message& msg )
 		return;
 	}
 
+
+	//the Message::unescape is there because client like fire replace linebreak by <BR> to work even if the protocol doesn't allow newlines (IRC)
+	// cf http://fire.sourceforge.net/forums/viewtopic.php?t=174  and Bug #96052
+	if(body.contains("<"))  
+		body= Kopete::Message::unescape(body);
+
 	body = KgpgInterface::KgpgDecryptText( body, mPrivateKeyID );
 
 	if( !body.isEmpty() )
