@@ -369,8 +369,9 @@ private slots:
 	 * @param c The contact left the chat
 	 * @param reason is the reason the contact left
 	 * @param format The format of the reason message
+	 * @param suppressNotification mean that no notifications are showed
 	 */
-	void slotContactRemoved( const KopeteContact *c, const QString& reason, KopeteMessage::MessageFormat format );
+	void slotContactRemoved( const KopeteContact *c, const QString& reason, KopeteMessage::MessageFormat format, bool suppressNotification=false );
 
 	/**
 	 * Called when a contact changes status, updates the contact list view and

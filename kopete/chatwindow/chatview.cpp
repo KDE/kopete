@@ -278,8 +278,8 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 		this, SLOT( slotChatDisplayNameChanged() ) );
 	connect( mgr, SIGNAL( contactAdded(const KopeteContact*, bool) ),
 		this, SLOT( slotContactAdded(const KopeteContact*, bool) ) );
-	connect( mgr, SIGNAL( contactRemoved(const KopeteContact*, const QString&, KopeteMessage::MessageFormat ) ),
-		this, SLOT( slotContactRemoved(const KopeteContact*, const QString&, KopeteMessage::MessageFormat) ) );
+	connect( mgr, SIGNAL( contactRemoved(const KopeteContact*, const QString&, KopeteMessage::MessageFormat, bool) ),
+		this, SLOT( slotContactRemoved(const KopeteContact*, const QString&, KopeteMessage::MessageFormat, bool) ) );
 	connect( mgr, SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus & , const KopeteOnlineStatus &) ),
 		this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
@@ -885,7 +885,7 @@ void ChatView::slotContactAdded(const KopeteContact *contact , bool surpress)
 	emit updateStatusIcon( this );
 }
 
-void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &reason, KopeteMessage::MessageFormat format )
+void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &reason, KopeteMessage::MessageFormat format, bool suppressNotification )
 {
 	kdDebug(14000) << k_funcinfo << endl;
 	if ( memberContactMap.contains( contact ) && contact != m_manager->user() )
@@ -905,12 +905,15 @@ void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &
 				this, SLOT( slotPropertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 		}
 
-		if ( reason.isEmpty() )
-			sendInternalMessage( i18n( "%1 has left the chat." ).arg( contactName ), format ) ;
-		else
+		if ( !suppressNotification )
 		{
-			sendInternalMessage( i18n( "%1 has left the chat (%2)." ).
-				arg( contactName, reason ), format);
+			if ( reason.isEmpty() )
+				sendInternalMessage( i18n( "%1 has left the chat." ).arg( contactName ), format ) ;
+			else
+			{
+				sendInternalMessage( i18n( "%1 has left the chat (%2)." ).
+						arg( contactName, reason ), format);
+			}
 		}
 	}
 
