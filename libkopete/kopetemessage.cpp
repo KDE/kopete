@@ -157,7 +157,7 @@ QString KopeteMessage::escapedBody() const
 		return parsedString;
 	}
 
-//	kdDebug(14010) << "KopeteMessage::escapeBody: not escape needed" <<endl;
+	kdDebug(14010) << "KopeteMessage::escapeBody: not escape needed" <<endl;
 	return mBody;
 }
 
