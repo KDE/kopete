@@ -140,7 +140,7 @@ void KopeteContactList::loadXML()
 		QDomElement element = node.toElement();
 		if( !element.isNull() )
 		{
-			if( element.tagName() == "meta-contact" )
+			if( element.tagName() == QString::fromLatin1("meta-contact") )
 			{
 				//TODO: id isn't used
 				//QString id = element.attribute( "id", QString::null );
@@ -158,7 +158,7 @@ void KopeteContactList::loadXML()
 						metaContact );
 				}
 			}
-			else if( element.tagName() == "kopete-group" )
+			else if( element.tagName() == QString::fromLatin1("kopete-group") )
 			{
 				KopeteGroup *group = new KopeteGroup();
 				if( !group->fromXML( element ) )
@@ -210,7 +210,7 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 		QDomElement oldElement = oldNode.toElement();
 		if( !oldElement.isNull() )
 		{
-			if( oldElement.tagName() == "meta-contact" )
+			if( oldElement.tagName() == QString::fromLatin1("meta-contact") )
 			{
 				// Ignore ID, it is not used in the current list anyway
 				QDomElement newMetaContact = newList.createElement( QString::fromLatin1( "meta-contact" ) );
@@ -229,7 +229,7 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 				while( !oldContactNode.isNull() )
 				{
 					QDomElement oldContactElement = oldContactNode.toElement();
-					if( !oldContactElement.isNull() && oldContactElement.tagName() == "address-book-field" )
+					if( !oldContactElement.isNull() && oldContactElement.tagName() == QString::fromLatin1("address-book-field") )
 					{
 						// Convert address book fields.
 						// Jabber will be called "xmpp", Aim/Toc and Aim/Oscar both will
@@ -248,11 +248,11 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 						else if( id == QString::fromLatin1( "messaging/jabber" ) )
 							id = QString::fromLatin1( "messaging/xmpp" );
 
-						if( id == "messaging/gadu" || id == "messaging/icq" ||
-							id == "messaging/winpopup" || id == "messaging/xmpp" )
+						if( id == QString::fromLatin1("messaging/gadu") || id == QString::fromLatin1("messaging/icq") ||
+							id == QString::fromLatin1("messaging/winpopup") || id == QString::fromLatin1("messaging/xmpp") )
 						{
 							app = id;
-							key = "All";
+							key = QString::fromLatin1("All");
 							val = data.replace( QRegExp( separator ), QChar( 0xE000 ) );
 						}
 
@@ -270,7 +270,7 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 							// book fields, so we need to be able to access it later
 							if( id == QString::fromLatin1( "messaging/icq" ) )
 								icqData = QStringList::split( QChar( 0xE000 ), val );
-							else if( id == "messaging/gadu" )
+							else if( id == QString::fromLatin1("messaging/gadu") )
 								gaduData = QStringList::split( QChar( 0xE000 ), val );
 						}
 					}
@@ -284,13 +284,13 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 					QDomElement oldContactElement = oldContactNode.toElement();
 					if( !oldContactElement.isNull() )
 					{
-						if( oldContactElement.tagName() == "display-name" )
+						if( oldContactElement.tagName() == QString::fromLatin1("display-name") )
 						{
 							QDomElement displayName = newList.createElement( QString::fromLatin1( "display-name" ) );
 							displayName.appendChild( newList.createTextNode( oldContactElement.text() ) );
 							newMetaContact.appendChild( displayName );
 						}
-						else if( oldContactElement.tagName() == "groups" )
+						else if( oldContactElement.tagName() == QString::fromLatin1("groups") )
 						{
 							QDomElement groups = newList.createElement( QString::fromLatin1( "groups" ) );
 							newMetaContact.appendChild( groups );
@@ -299,13 +299,13 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 							while( !oldGroup.isNull() )
 							{
 								QDomElement oldGroupElement = oldGroup.toElement();
-								if ( oldGroupElement.tagName() == "group" )
+								if ( oldGroupElement.tagName() == QString::fromLatin1("group") )
 								{
 									QDomElement group = newList.createElement( QString::fromLatin1( "group" ) );
 									group.appendChild( newList.createTextNode( oldGroupElement.text() ) );
 									groups.appendChild( group );
 								}
-								else if ( oldGroupElement.tagName() == "top-level" )
+								else if ( oldGroupElement.tagName() == QString::fromLatin1("top-level") )
 								{
 									QDomElement group = newList.createElement( QString::fromLatin1( "top-level" ) );
 									groups.appendChild( group );
@@ -323,41 +323,41 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 							bool convertOldAim = false;
 							uint fieldCount = 1;
 							QString addressBookLabel;
-							if( id == "MSNProtocol" )
+							if( id == QString::fromLatin1("MSNProtocol") )
 							{
 								fieldCount = 3;
 								addressBookLabel = "msn";
 							}
-							else if( id == "IRCProtocol" )
+							else if( id == QString::fromLatin1("IRCProtocol") )
 							{
 								fieldCount = 3;
 								addressBookLabel = "irc";
 							}
-							else if( id == "OscarProtocol" )
+							else if( id == QString::fromLatin1("OscarProtocol") )
 							{
 								fieldCount = 2;
 								addressBookLabel = "aim";
 							}
-							else if( id == "AIMProtocol" )
+							else if( id == QString::fromLatin1("AIMProtocol") )
 							{
-								id = "OscarProtocol";
+								id = QString::fromLatin1("OscarProtocol");
 								convertOldAim = true;
 								addressBookLabel = "aim";
 							}
-							else if( id == "ICQProtocol" || id == "WPProtocol" || id == "GaduProtocol" )
+							else if( id == QString::fromLatin1("ICQProtocol") || id == QString::fromLatin1("WPProtocol") || id == QString::fromLatin1("GaduProtocol") )
 							{
 								fieldCount = 1;
 							}
-							else if( id == "JabberProtocol" )
+							else if( id == QString::fromLatin1("JabberProtocol") )
 							{
 								fieldCount = 4;
 							}
-							else if( id == "SMSProtocol" )
+							else if( id == QString::fromLatin1("SMSProtocol") )
 							{
 								// SMS used a variable serializing using a dot as delimiter.
 								// The minimal count is three though (id, name, delimiter).
 								fieldCount = 2;
-								addressBookLabel = "sms";
+								addressBookLabel = QString::fromLatin1("sms");
 							}
 
 							if( pluginData[ id ].isNull() )
@@ -368,9 +368,9 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 							}
 
 							// Do the actual conversion
-							if( id == "MSNProtocol" || id == "OscarProtocol" || id == "AIMProtocol" || id == "IRCProtocol" ||
-								id == "ICQProtocol" || id == "JabberProtocol" || id == "SMSProtocol" || id == "WPProtocol" ||
-								id == "GaduProtocol" )
+							if( id == QString::fromLatin1("MSNProtocol") || id == QString::fromLatin1("OscarProtocol") || id == QString::fromLatin1("AIMProtocol") || id == QString::fromLatin1("IRCProtocol") ||
+								id == QString::fromLatin1("ICQProtocol") || id == QString::fromLatin1("JabberProtocol") || id == QString::fromLatin1("SMSProtocol") || id == QString::fromLatin1("WPProtocol") ||
+								id == QString::fromLatin1("GaduProtocol") )
 							{
 								QStringList strList = QStringList::split( QString::fromLatin1( "||" ), data );
 								// Unescape '||'
@@ -387,11 +387,11 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 									dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
 									pluginData[ id ].appendChild( dataField );
 									dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "contactId" ) );
-									if( id == "ICQProtocol" )
+									if( id == QString::fromLatin1("ICQProtocol") )
 										dataField.appendChild( newList.createTextNode( icqData[ idx ] ) );
-									else if( id == "GaduProtocol" )
+									else if( id == QString::fromLatin1("GaduProtocol") )
 										dataField.appendChild( newList.createTextNode( gaduData[ idx ] ) );
-									else if( id == "JabberProtocol" )
+									else if( id == QString::fromLatin1("JabberProtocol") )
 										dataField.appendChild( newList.createTextNode( strList[ idx + 1 ] ) );
 									else
 										dataField.appendChild( newList.createTextNode( strList[ idx ] ) );
@@ -399,28 +399,28 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 									dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
 									pluginData[ id ].appendChild( dataField );
 									dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "displayName" ) );
-									if( convertOldAim || id == "ICQProtocol" || id == "WPProtocol" || id == "GaduProtocol" )
+									if( convertOldAim || id == QString::fromLatin1("ICQProtocol") || id == QString::fromLatin1("WPProtocol") || id == QString::fromLatin1("GaduProtocol") )
 										dataField.appendChild( newList.createTextNode( strList[ idx ] ) );
-									else if( id == "JabberProtocol" )
+									else if( id == QString::fromLatin1("JabberProtocol") )
 										dataField.appendChild( newList.createTextNode( strList[ idx + 2 ] ) );
 									else
 										dataField.appendChild( newList.createTextNode( strList[ idx + 1 ] ) );
 
-									if( id == "MSNProtocol" )
+									if( id == QString::fromLatin1("MSNProtocol") )
 									{
 										dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
 										pluginData[ id ].appendChild( dataField );
 										dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "groups" ) );
 										dataField.appendChild( newList.createTextNode( strList[ idx + 2 ] ) );
 									}
-									else if( id == "IRCProtocol" )
+									else if( id == QString::fromLatin1("IRCProtocol") )
 									{
 										dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
 										pluginData[ id ].appendChild( dataField );
 										dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "serverName" ) );
 										dataField.appendChild( newList.createTextNode( strList[ idx + 2 ] ) );
 									}
-									else if( id == "JabberProtocol" )
+									else if( id == QString::fromLatin1("JabberProtocol") )
 									{
 										dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
 										pluginData[ id ].appendChild( dataField );
@@ -432,7 +432,7 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 										dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "groups" ) );
 										dataField.appendChild( newList.createTextNode( strList[ idx + 3 ] ) );
 									}
-									else if( id == "SMSProtocol" && ( idx + 2 < strList.size() ) && strList[ idx + 2 ] != '.' )
+									else if( id == QString::fromLatin1("SMSProtocol") && ( idx + 2 < strList.size() ) && strList[ idx + 2 ] != '.' )
 									{
 										dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
 										pluginData[ id ].appendChild( dataField );
@@ -450,7 +450,7 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 
 									// MSN, AIM, IRC, Oscar and SMS didn't store address book fields up
 									// to now, so create one
-									if( id != "ICQProtocol" && id != "JabberProtocol" && id != "WPProtocol" && id != "GaduProtocol" )
+									if( id != QString::fromLatin1("ICQProtocol") && id != QString::fromLatin1("JabberProtocol") && id != QString::fromLatin1("WPProtocol") && id != QString::fromLatin1("GaduProtocol") )
 									{
 										QDomElement addressBookField = newList.createElement( QString::fromLatin1( "address-book-field" ) );
 										newMetaContact.appendChild( addressBookField );
@@ -464,15 +464,15 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 									idx += fieldCount;
 								}
 							}
-							else if( id == "ContactNotesPlugin" || id == "CryptographyPlugin" || id == "TranslatorPlugin" )
+							else if( id == QString::fromLatin1("ContactNotesPlugin") || id == QString::fromLatin1("CryptographyPlugin") || id == QString::fromLatin1("TranslatorPlugin") )
 							{
 								QDomElement dataField = newList.createElement( QString::fromLatin1( "plugin-data-field" ) );
 								pluginData[ id ].appendChild( dataField );
-								if( id == "ContactNotesPlugin" )
+								if( id == QString::fromLatin1("ContactNotesPlugin") )
 									dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "notes" ) );
-								else if( id == "CryptographyPlugin" )
+								else if( id == QString::fromLatin1("CryptographyPlugin") )
 									dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "gpgKey" ) );
-								else if( id == "TranslatorPlugin" )
+								else if( id == QString::fromLatin1("TranslatorPlugin") )
 									dataField.setAttribute( QString::fromLatin1( "key" ), QString::fromLatin1( "languageKey" ) );
 
 								dataField.appendChild( newList.createTextNode( data ) );
@@ -482,7 +482,7 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 					oldContactNode = oldContactNode.nextSibling();
 				}
 			}
-			else if( oldElement.tagName() == "kopete-group" )
+			else if( oldElement.tagName() == QString::fromLatin1("kopete-group") )
 			{
 				QDomElement newGroup = newList.createElement( QString::fromLatin1( "kopete-group" ) );
 				newRoot.appendChild( newGroup );
@@ -492,29 +492,29 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 				{
 					QDomElement oldGroupElement = oldGroupNode.toElement();
 
-					if( oldGroupElement.tagName() == "display-name" )
+					if( oldGroupElement.tagName() == QString::fromLatin1("display-name") )
 					{
 						QDomElement displayName = newList.createElement( QString::fromLatin1( "display-name" ) );
 						displayName.appendChild( newList.createTextNode( oldGroupElement.text() ) );
 						newGroup.appendChild( displayName );
 					}
-					if( oldGroupElement.tagName() == "type" )
+					if( oldGroupElement.tagName() == QString::fromLatin1("type") )
 					{
-						if( oldGroupElement.text() == "Temporary" )
+						if( oldGroupElement.text() == QString::fromLatin1("Temporary") )
 							newGroup.setAttribute( QString::fromLatin1( "type" ), QString::fromLatin1( "temporary" ) );
-						else if( oldGroupElement.text() == "TopLevel" )
+						else if( oldGroupElement.text() == QString::fromLatin1("TopLevel") )
 							newGroup.setAttribute( QString::fromLatin1( "type" ), QString::fromLatin1( "top-level" ) );
 						else
 							newGroup.setAttribute( QString::fromLatin1( "type" ), QString::fromLatin1( "standard" ) );
 					}
-					if( oldGroupElement.tagName() == "view" )
+					if( oldGroupElement.tagName() == QString::fromLatin1("view") )
 					{
-						if( oldGroupElement.text() == "collapsed" )
+						if( oldGroupElement.text() == QString::fromLatin1("collapsed") )
 							newGroup.setAttribute( QString::fromLatin1( "view" ), QString::fromLatin1( "collapsed" ) );
 						else
 							newGroup.setAttribute( QString::fromLatin1( "view" ), QString::fromLatin1( "expanded" ) );
 					}
-					else if( oldGroupElement.tagName() == "plugin-data" )
+					else if( oldGroupElement.tagName() == QString::fromLatin1("plugin-data") )
 					{
 						// Per-group plugin data
 						// FIXME: This needs updating too, ideally, convert this in a later
