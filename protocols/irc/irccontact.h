@@ -35,6 +35,8 @@ class IRCQueryView;
 class QVBox;
 class QStringList;
 class IRCServerContact;
+class KAction;
+class KListAction;
 
 class IRCContact : public KopeteContact
 {
@@ -60,6 +62,7 @@ public:
 	QString mTarget;
 	QString mGroupName;
 private:
+	void initActions();
 	unsigned int mPort;
 	QString mUsername;
 	QString mNickname;
@@ -70,6 +73,11 @@ private:
 	IRCQueryView *queryView;
 	void init();
 	bool minimizeQuery;
+
+	KAction* actionAddGroup;
+	KListAction *actionContactMove;
+	KAction* actionRemove;
+
 private slots:
 //	void slotHop();
 	void slotPartedChannel(const QString &, const QString &, const QString &);
@@ -79,7 +87,10 @@ private slots:
 	void incomingPrivMessage(const QString &, const QString &, const QString &);
 	void incomingPrivAction(const QString &, const QString &, const QString &);
 	void slotGroupRemoved(const QString &);
+
 public slots:
+	void slotMoveThisUser();
+
 	void slotPart();
 	void joinNow();
 	void unloading();

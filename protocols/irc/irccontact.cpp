@@ -35,6 +35,7 @@
 #include <qvbox.h>
 #include <qstringlist.h>
 #include <ksimpleconfig.h>
+#include "kopetestdaction.h"
 
 IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact)
 	: KopeteContact(contact->mProtocol)
@@ -43,6 +44,8 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 	requestedQuit = false;
 	KGlobal::config()->setGroup("IRC");
 	QString newServer;
+
+	initActions();
 
 	if (server.isEmpty() == true)
 	{
@@ -95,6 +98,8 @@ IRCContact::IRCContact(const QString &server, const QString &target, unsigned in
 	requestedQuit = false;
 	KGlobal::config()->setGroup("IRC");
 	QString newServer;
+
+	initActions();
 
 	if (server.isEmpty() == true)
 	{
@@ -150,6 +155,8 @@ IRCContact::IRCContact(const QString &groupName, const QString &server, const QS
 	KGlobal::config()->setGroup("IRC");
 	minimizeQuery = false;
 	QString newServer;
+
+	initActions();
 
 	if (server.isEmpty() == true)
 	{
@@ -363,7 +370,13 @@ void IRCContact::showContextMenu(QPoint point)
 			}
 		}
 	}
-	popup->insertItem(i18n("Remove"), this, SLOT(slotRemoveThis()));
+
+	popup->insertSeparator();
+
+	actionAddGroup->plug( popup );
+	actionContactMove->plug( popup );
+	actionRemove->plug( popup );
+
 	popup->popup(point);
 }
 
@@ -456,5 +469,22 @@ void IRCContact::joinNow()
 	{
 		mContact->mWindow->mTabWidget->showPage(mTabPage);
 	}
+}
+
+void IRCContact::slotMoveThisUser() {
+	QString mGroup = actionContactMove->currentText();
+
+	kopeteapp->contactList()->moveContact(this, mGroup);
+
+	mContact->mProtocol->mConfig->setGroup(mTarget.lower());
+	mContact->mProtocol->mConfig->writeEntry("Group", mGroup);
+	mContact->mProtocol->mConfig->sync();
+}
+
+void IRCContact::initActions() 
+{
+	actionAddGroup = KopeteStdAction::addGroup( kopeteapp->contactList(), SLOT(addGroup()), this, "actionAddGroup" );
+	actionContactMove = KopeteStdAction::moveContact( this, SLOT(slotMoveThisUser()), this, "actionMove" );
+	actionRemove = KopeteStdAction::deleteContact( this, SLOT(removeThisUser()), this, "actionDelete" );
 }
 #include "irccontact.moc"
