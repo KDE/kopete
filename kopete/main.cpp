@@ -33,7 +33,7 @@ static const char description[] =
 static KCmdLineOptions options[] =
 {
 	{ "noplugins",              I18N_NOOP( "Do not load plugins. This option overrides all other options." ), 0 },
-	{ "noconnect",              I18N_NOOP( "Disable auto-connection." ), 0 },
+	{ "noconnect",              I18N_NOOP( "Disable auto-connection" ), 0 },
 	{ "autoconnect <accounts>", I18N_NOOP( "Auto-connect the specified accounts. Use a comma-separated list\n"
 		"to auto-connect multiple accounts." ), 0 },
 	{ "disable <plugins>",      I18N_NOOP( "Do not load the specified plugin. Use a comma-separated list\n"
