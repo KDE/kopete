@@ -35,6 +35,10 @@
 #include "kopetemetacontact.h"
 #include "kopeteaccount.h"
 
+#if !KDE_IS_VERSION(3, 1, 90)
+#include "loadmovie.h"
+#endif
+
 KopeteSystemTray* KopeteSystemTray::s_systemTray = 0L;
 
 KopeteSystemTray* KopeteSystemTray::systemTray( QWidget *parent, const char* name )
@@ -144,7 +148,11 @@ void KopeteSystemTray::startBlink( const QMovie &icon )
 void KopeteSystemTray::startBlink()
 {
 	if( mMovie.isNull() )
+#if KDE_IS_VERSION(3, 1, 90)
 		mMovie = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Panel );
+#else
+		mMovie = KopeteCompat::loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Panel );
+#endif
 	startBlink( mMovie );
 }
 

@@ -57,6 +57,10 @@
 #include "kopeteawayaction.h"
 #include "systemtray.h"
 
+#if !KDE_IS_VERSION(3, 1, 90)
+#include "loadmovie.h"
+#endif
+
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 : KMainWindow( parent, name )
 {
@@ -563,7 +567,11 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 	// we can't use the SmallIcon() method directly
 	KIconLoader *loader = KGlobal::instance()->iconLoader();
 
+#if KDE_IS_VERSION(3, 1, 90)
 	QMovie mv = loader->loadMovie( status.overlayIcon(),
+#else
+	QMovie mv = KopeteCompat::loadMovie( status.overlayIcon(),
+#endif
 		 KIcon::Small);
 
 	if ( mv.isNull() )

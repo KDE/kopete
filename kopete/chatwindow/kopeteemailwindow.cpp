@@ -55,6 +55,10 @@
 #include "kopeteprefs.h"
 #include "kopetexsl.h"
 
+#if !KDE_IS_VERSION(3, 1, 90)
+#include "loadmovie.h"
+#endif
+
 class KopeteEmailWindowPrivate
 {
 public:
@@ -272,7 +276,11 @@ void KopeteEmailWindow::initActions(void)
 
 	// The animated toolbarbutton
 	d->normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
+#if KDE_IS_VERSION(3, 1, 90)
 	d->animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
+#else
+	d->animIcon = KopeteCompat::loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
+#endif
 
 	d->anim = new QLabel( this, "kde toolbar widget" );
 	d->anim->setMargin(5);

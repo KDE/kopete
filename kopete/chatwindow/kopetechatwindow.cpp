@@ -60,6 +60,8 @@
 
 #if KDE_IS_VERSION( 3, 1, 90 )
 	#include <kactionclasses.h>
+#else
+	#include "loadmovie.h"
 #endif
 
 static int MESSAGE_STATUS_ID = 1;
@@ -454,7 +456,11 @@ void KopeteChatWindow::initActions(void)
 
 	//The Sending movie
 	normalIcon = QPixmap( BarIcon( QString::fromLatin1( "kopete" ) ) );
+#if KDE_IS_VERSION(3, 1, 90)
 	animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
+#else
+	animIcon = KopeteCompat::loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Toolbar);
+#endif
 
 	// we can't set the tool bar as parent, if we do, it will be deleted when we configure toolbars
 	anim = new QLabel( QString::null, 0L ,"kde toolbar widget" );

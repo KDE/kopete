@@ -34,7 +34,7 @@ K_UTILS=""
 K_SETTINGS=""
 KIO=""
 NOT_FOUND=""
-IGNORE_FILES='(Makefile|\.diff$|\.patch$|CVS|README$|\.cvsignore$|sync.sh$|dummy.cpp$)'
+IGNORE_FILES='(Makefile|\.diff$|\.patch$|CVS|README$|\.cvsignore$|sync.sh$|dummy.cpp$|^loadmovie\.)'
 
 for i in `find -type f | egrep -v "$IGNORE_FILES"`
 do
