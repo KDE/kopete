@@ -70,6 +70,7 @@ public slots:
 	void slotGoInvisible();
 	void slotGoBusy();
 	void slotDescription();
+	void slotSearch( int );
 
 	void removeContact( const GaduContact* c );
 

@@ -21,10 +21,12 @@
 // 02111-1307, USA.
 
 #include <klocale.h>
+#include <kaction.h>
 #include <kdebug.h>
 
 #include "gaduprotocol.h"
 #include "gaducontact.h"
+#include "gadupubdir.h"
 
 #include "kopetemessagemanagerfactory.h"
 #include "kopetegroup.h"
@@ -136,7 +138,20 @@ GaduContact::isReachable()
 KActionCollection*
 GaduContact::customContextMenuActions()
 {
-	return 0L;
+	KActionCollection *actionCollection = new KActionCollection(this);
+
+	//show profile
+	KAction* actionShowProfile = new KAction( i18n("Show Profile") , 0, this, SLOT( slotShowPublicProfile() ), actionCollection, "actionShowPublicProfile" );
+
+	actionCollection->insert( actionShowProfile );
+
+	return actionCollection;
+}
+
+void
+GaduContact::slotShowPublicProfile()
+{
+	account_->slotSearch( uin_ );
 }
 
 void

@@ -704,7 +704,13 @@ GaduAccount::pingServer()
 void
 GaduAccount::slotSearch()
 {
-	new GaduPublicDir( this, NULL, "Gadu Public user directory search" );
+	new GaduPublicDir( this );
+}
+
+void
+GaduAccount::slotSearch( int uin )
+{
+	new GaduPublicDir( this, uin );
 }
 
 void

@@ -70,6 +70,7 @@ public slots:
 	void messageReceived( KopeteMessage& );
 	void messageSend( KopeteMessage&, KopeteMessageManager* );
 	void messageAck();
+	void slotShowPublicProfile();
 
 protected:
 	virtual KopeteMessageManager* manager( bool canCreate = false );

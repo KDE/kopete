@@ -47,6 +47,7 @@ Q_OBJECT
 
 public:
 	GaduPublicDir( GaduAccount* , QWidget *parent = 0, const char* name = "GaduPublicDir" );
+	GaduPublicDir( GaduAccount* , int searchFor, QWidget* parent = 0, const char* name = "GaduPublicDir" );
 	QPixmap iconForStatus( uint status );
 
 private slots:
@@ -57,6 +58,8 @@ private slots:
 private:
 	void getData();
 	bool validateData();
+	void createWidget();
+	void initConnections();
 
 	GaduProtocol*		p;
 	GaduAccount*		mAccount;

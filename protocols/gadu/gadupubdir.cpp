@@ -41,7 +41,45 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, QWidget* parent, const char*
 : KDialogBase( parent, name, false, QString::null, User1|User2|User3|Cancel, User2 )
 {
 	mAccount = account;
+	createWidget();
+	initConnections();
 
+	show();
+}
+
+GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* parent, const char* name )
+: KDialogBase( parent, name, false, QString::null, User1|User2|User3|Cancel, User2 )
+{
+	mAccount = account;
+	createWidget();
+	initConnections();
+
+	// now it is time to switch to Right Page(tm)
+	fName	=  fSurname =  fNick = fCity = QString::null;
+	fUin		= searchFor;
+	fGender	= 0;
+	fOnlyOnline= false;
+	fAgeFrom	= 0;
+	fAgeTo	= 0;
+
+	mMainWidget->listFound->clear();
+	show();
+
+	mMainWidget->pubsearch->raiseWidget( 1 );
+
+	setButtonText( User2, i18n( "Search &More..." ) );
+	showButton( User3, true );
+	showButton( User1, true );
+	enableButton( User3, false );
+	enableButton( User2, false );
+
+	mAccount->pubDirSearch( fName, fSurname, fNick,
+				fUin, fCity, fGender, fAgeFrom, fAgeTo, fOnlyOnline );
+
+}
+
+void GaduPublicDir::createWidget()
+{
 	setCaption( i18n( "Gadu-Gadu Public Directory" ) );
 
 	mMainWidget = new GaduPublicDirectory( this );
@@ -57,16 +95,19 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, QWidget* parent, const char*
 	showButton( User1, false );
 	showButton( User3, false );
 
+	mAccount->pubDirSearchClose();
+
+}
+
+void GaduPublicDir::initConnections()
+{
 	connect( this, SIGNAL( user2Clicked() ), SLOT( slotSearch() ) );
 	connect( this, SIGNAL( user1Clicked() ), SLOT( slotNewSearch() ) );
 
-	connect( account, SIGNAL( pubDirSearchResult( const searchResult& ) ),
+	connect( mAccount, SIGNAL( pubDirSearchResult( const searchResult& ) ),
 				SLOT( slotSearchResult( const searchResult& ) ) );
-
-	mAccount->pubDirSearchClose();
-
-	show();
 }
+
 void GaduPublicDir::getData()
 {
 	fName	= mMainWidget->nameS->text();
