@@ -38,6 +38,7 @@
 #include "kopeteballoon.h"
 #include "kopeteprefs.h"
 #include "kopetemetacontact.h"
+#include "kopeteprotocol.h"
 
 KopeteSystemTray* KopeteSystemTray::s_systemTray = 0L;
 
@@ -227,13 +228,11 @@ void KopeteSystemTray::slotEventDone(KopeteEvent *event)
 
 void KopeteSystemTray::addBalloon()
 {
-	if( !m_balloon &&
-		KopetePrefs::prefs()->showTray() &&
-		KopetePrefs::prefs()->balloonNotify() &&
-		!mEventList.isEmpty() )
+	if( !m_balloon && KopetePrefs::prefs()->showTray() && KopetePrefs::prefs()->balloonNotify() && !mEventList.isEmpty() )
 	{
 		KopeteMessage msg = mEventList.first()->message();
-		if( msg.from() && msg.from()->metaContact() )
+		if( (!msg.from()->protocol()->isAway() || KopetePrefs::prefs()->soundIfAway()) &&
+			msg.from() && msg.from()->metaContact() )
 		{
 			QString msgText = msg.plainBody();
 			if( msgText.length() > 30 )

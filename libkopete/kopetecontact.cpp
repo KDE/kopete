@@ -234,22 +234,16 @@ KPopupMenu* KopeteContact::createContextMenu()
 
 
 	actionSendMessage->plug( menu );
-	actionSendMessage->setEnabled( isReachable() );
 	actionChat->plug( menu );
-	actionChat->setEnabled( isReachable() );
+	if (mFileCapable)
+		actionSendFile->plug( menu );
 
 	actionViewHistory->plug( menu );
-
 	menu->insertSeparator();
-
-	actionChangeMetaContact->setEnabled( !m_metaContact->isTemporary() );
 	actionChangeMetaContact->plug( menu );
 	actionUserInfo->plug( menu );
 	actionChangeAlias->plug( menu );
 	actionDeleteContact->plug( menu );
-
-	if (mFileCapable)
-		actionSendFile->plug( menu );
 
 	// Protocol specific options will go below this separator
 	// through the use of the customContextMenuActions() function
