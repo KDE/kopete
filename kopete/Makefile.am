@@ -1,6 +1,8 @@
 INCLUDES = $(all_includes) -I$(top_srcdir)/kopete/library -I$(top_srcdir)/kopete/library/ui -I$(top_srcdir)/kopete/protocols/icq -I$(top_srcdir)/kopete/protocols/icq/kxengine
 SUBDIRS = library protocols
 
+KDE_ICON = AUTO
+
 lib_LTLIBRARIES = libkopetemain.la
 libkopetemain_la_SOURCES = main.cpp
 libkopetemain_la_LDFLAGS = -lX11 -lpng -lz -lm -ljpeg $(LIBQT) -lXext -lkdecore -lkdeui $(KFILE) -lXpm -lDCOP
@@ -25,5 +27,5 @@ data_DATA = kopeteui.rc
 datadir = $(kde_datadir)/kopete
 
 # this is where the desktop file will go
-desktopdir   = $(kde_appsdir)/Utilities
+desktopdir   = $(kde_appsdir)/Internet
 desktop_DATA = kopete.desktop
