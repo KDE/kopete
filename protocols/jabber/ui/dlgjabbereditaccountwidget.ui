@@ -520,84 +520,6 @@
                     </spacer>
                 </vbox>
             </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>C&amp;hat</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>TextLabel3_2</cstring>
-                        </property>
-                        <property name="font">
-                            <font>
-                                <bold>1</bold>
-                            </font>
-                        </property>
-                        <property name="text">
-                            <string>Logging</string>
-                        </property>
-                    </widget>
-                    <widget class="QFrame">
-                        <property name="name">
-                            <cstring>Frame3_3</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>1</hsizetype>
-                                <vsizetype>0</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="frameShape">
-                            <enum>HLine</enum>
-                        </property>
-                        <property name="frameShadow">
-                            <enum>Sunken</enum>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox">
-                        <property name="name">
-                            <cstring>mLogAll</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>7</hsizetype>
-                                <vsizetype>0</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="text">
-                            <string>&amp;Log conversations</string>
-                        </property>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>Spacer2</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>360</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </vbox>
-            </widget>
         </widget>
     </grid>
 </widget>
@@ -606,6 +528,7 @@
     <tabstop>mID</tabstop>
     <tabstop>mPass</tabstop>
     <tabstop>mResource</tabstop>
+    <tabstop>chkRemPass</tabstop>
     <tabstop>btnRegister</tabstop>
     <tabstop>mServer</tabstop>
     <tabstop>mPort</tabstop>
@@ -618,7 +541,6 @@
     <tabstop>cbProxyAuth</tabstop>
     <tabstop>leProxyUser</tabstop>
     <tabstop>leProxyPass</tabstop>
-    <tabstop>mLogAll</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
