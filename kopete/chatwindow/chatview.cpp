@@ -85,17 +85,20 @@
 #define ID_TT 97
 #define ID_UL 99
 
+class ChatViewMembersTip;
 
 class KopeteChatViewPrivate
 {
 	public:
 		KopeteXSLT *xsltParser;
+		ChatViewMembersTip *membersTip;
 };
 
 class ChatViewMembersTip : public QToolTip
 {
 	public:
 		ChatViewMembersTip( KListView *parent );
+		~ChatViewMembersTip();
 		void maybeTip( const QPoint &pos );
 
 	private:
@@ -106,6 +109,12 @@ ChatViewMembersTip::ChatViewMembersTip( KListView *parent ) : QToolTip( parent->
 {
 	m_listView = parent;
 }
+
+ChatViewMembersTip::~ChatViewMembersTip()
+{
+	remove( m_listView->viewport() );
+}
+
 
 void ChatViewMembersTip::maybeTip( const QPoint &pos )
 {
@@ -279,6 +288,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	m_type = KopeteMessage::Chat;
 	m_mainWindow = 0L;
 	membersDock = 0L;
+	d->membersTip = 0;
 	backgroundFile = QString::null;
 	root = 0L;
 	isActive = false;
@@ -320,7 +330,7 @@ ChatView::~ChatView()
 	saveOptions();
 
 	delete mComplete;
-
+	delete d->membersTip;
 	delete d;
 }
 
@@ -537,7 +547,7 @@ void ChatView::createMembersList()
 			QString::fromLatin1( "membersDock" ), QString::fromLatin1( " " ) );
 		membersList = new KListView( this, "membersList" );
 		membersList->setShowToolTips( false );
-		new ChatViewMembersTip( membersList );
+		d->membersTip = new ChatViewMembersTip( membersList );
 		membersList->setAllColumnsShowFocus( true );
 		membersList->addColumn( i18n("Chat Members"), -1 );
 		membersList->setSorting( 0, true );
