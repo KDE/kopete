@@ -27,6 +27,7 @@
 #include "types.h"
 #include "tasks.h"
 
+#include "jabberaccount.h"
 #include "dlgregister.h"
 #include "jabberformtranslator.h"
 
@@ -37,16 +38,19 @@
 class dlgJabberRegister:public dlgRegister
 {
 
-  Q_OBJECT public:
+	Q_OBJECT
 
-	  dlgJabberRegister (const Jabber::Jid & jid, QWidget * parent = 0, const char *name = 0);
+public:
+	  dlgJabberRegister (JabberAccount *account, const Jabber::Jid & jid, QWidget * parent = 0, const char *name = 0);
 	 ~dlgJabberRegister ();
 
-	private slots:void slotGotForm ();
+private slots:
+	void slotGotForm ();
 	void slotSendForm ();
 	void slotSentForm ();
 
-  private:
+private:
+	  JabberAccount *m_account;
 	  JabberFormTranslator * translator;
 
 };

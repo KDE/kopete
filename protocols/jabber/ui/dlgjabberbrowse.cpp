@@ -25,10 +25,13 @@
 #include <klocale.h>
 
 #include "jabberprotocol.h"
+#include "jabberaccount.h"
+#include "jabberformtranslator.h"
 #include "dlgjabberbrowse.h"
 
-dlgJabberBrowse::dlgJabberBrowse (const Jabber::Jid & jid, QWidget * parent, const char *name):dlgBrowse (parent, name)
+dlgJabberBrowse::dlgJabberBrowse (JabberAccount *account, const Jabber::Jid & jid, QWidget * parent, const char *name):dlgBrowse (parent, name)
 {
+	m_account = account;
 
 	// disable the left margin
 	tblResults->setLeftMargin (0);
@@ -39,7 +42,7 @@ dlgJabberBrowse::dlgJabberBrowse (const Jabber::Jid & jid, QWidget * parent, con
 	// disable user selections
 	tblResults->setSelectionMode (QTable::NoSelection);
 
-	Jabber::JT_Search * task = new Jabber::JT_Search (JabberProtocol::protocol ()->jabberClient->rootTask ());
+	Jabber::JT_Search * task = new Jabber::JT_Search (m_account->client()->rootTask ());
 
 	connect (task, SIGNAL (finished ()), this, SLOT (slotGotForm ()));
 
@@ -86,7 +89,7 @@ void dlgJabberBrowse::slotGotForm ()
 void dlgJabberBrowse::slotSendForm ()
 {
 
-	Jabber::JT_Search * task = new Jabber::JT_Search (JabberProtocol::protocol ()->jabberClient->rootTask ());
+	Jabber::JT_Search * task = new Jabber::JT_Search (m_account->client()->rootTask ());
 
 	connect (task, SIGNAL (finished ()), this, SLOT (slotSentForm ()));
 

@@ -24,6 +24,7 @@
 #include "types.h"
 #include "tasks.h"
 
+#include "jabberaccount.h"
 #include "jabberformtranslator.h"
 #include "dlgbrowse.h"
 
@@ -34,16 +35,20 @@
 class dlgJabberBrowse:public dlgBrowse
 {
 
-  Q_OBJECT public:
-	  dlgJabberBrowse (const Jabber::Jid & jid, QWidget * parent = 0, const char *name = 0);
-	 ~dlgJabberBrowse ();
+	Q_OBJECT
 
-	private slots:void slotGotForm ();
+public:
+	dlgJabberBrowse (JabberAccount *account, const Jabber::Jid & jid, QWidget * parent = 0, const char *name = 0);
+	~dlgJabberBrowse ();
+
+private slots:
+	void slotGotForm ();
 	void slotSendForm ();
 	void slotSentForm ();
 
-  private:
-	  JabberFormTranslator * translator;
+private:
+	JabberAccount *m_account;
+	JabberFormTranslator * translator;
 
 };
 

@@ -21,6 +21,7 @@
 
 #include <qwidget.h>
 
+#include "jabberaccount.h"
 #include "types.h"
 #include "tasks.h"
 
@@ -32,20 +33,22 @@
 
 class dlgJabberServices:public dlgServices
 {
+	Q_OBJECT
 
-  Q_OBJECT public:
-	  dlgJabberServices (QWidget * parent = 0, const char *name = 0);
+public:
+	  dlgJabberServices (JabberAccount *account, QWidget *parent = 0, const char *name = 0);
 	 ~dlgJabberServices ();
 
-	private slots:void slotSetSelection (int row, int, int, const QPoint &);
+private slots:
+	void slotSetSelection (int row, int, int, const QPoint &);
 	void slotQuery ();
 	void slotQueryFinished ();
 	void slotRegister ();
 	void slotBrowse ();
 
-  private:
-	  Jabber::JT_GetServices * serviceTask;
-
+private:
+	JabberAccount *m_account;
+	Jabber::JT_GetServices * serviceTask;
 	int selectedRow;
 
 };

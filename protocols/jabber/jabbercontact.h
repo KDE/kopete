@@ -57,11 +57,6 @@ class JabberContact:public KopeteContact
 	 ********************************************************************/
 
 	/**
-	 * Return the identity ID
-	 */
-	virtual QString identityId () const;
-
-	/**
 	 * Return the user ID
 	 */
 	QString userId () const;
@@ -212,21 +207,6 @@ class JabberContact:public KopeteContact
 	 * Convert KopeteMessage to Jabber::Message
 	 */
 	void km2jm (const KopeteMessage & km, Jabber::Message & jm);
-
-	/**
-	 * Protocol identity (user ID) that this
-	 * contact belongs to. Basically identifies
-	 * the account into whose roster this contact
-	 * belongs.
-	 */
-	QString mIdentityId;
-
-	/**
-	 * Protocol instance that this contact
-	 * belongs to.
-	 */
-	JabberAccount *protocol;
-	//JabberProtocol *protocol;
 
 	/**
 	 * The metacontact that this contact belongs

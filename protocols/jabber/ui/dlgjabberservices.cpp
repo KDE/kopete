@@ -32,14 +32,15 @@
 
 #include "dlgjabberservices.moc"
 
-dlgJabberServices::dlgJabberServices (QWidget * parent, const char *name):dlgServices (parent, name)
+dlgJabberServices::dlgJabberServices (JabberAccount *account, QWidget *parent, const char *name):dlgServices (parent, name)
 {
+	m_account = account;
 
-	/*if(JabberAccount::protocol()->isConnected())
-	   {
-	   // pre-populate the server field
-	   //   leServer->setText(Jid(JabberProtocol::protocol()->myContact->contactId()).host());
-	   } */
+	if(m_account->isConnected())
+	{
+		// pre-populate the server field
+		leServer->setText(m_account->server());
+	}
 
 	// disable the left margin
 	tblServices->setLeftMargin (0);
@@ -91,21 +92,21 @@ void dlgJabberServices::slotSetSelection (int row, int, int, const QPoint &)
 void dlgJabberServices::slotQuery ()
 {
 
-	/*if(!JabberProtocol::protocol()->isConnected())
-	   {
-	   JabberProtocol::protocol()->errorConnectFirst();
-	   return;
-	   } */
+	if(!m_account->isConnected())
+	{
+		m_account->errorConnectFirst();
+		return;
+	}
 
 	// create the jabber task
 	delete serviceTask;
 
-	serviceTask = new Jabber::JT_GetServices (JabberProtocol::protocol ()->jabberClient->rootTask ());
+	serviceTask = new Jabber::JT_GetServices (m_account->client()->rootTask ());
 	connect (serviceTask, SIGNAL (finished ()), this, SLOT (slotQueryFinished ()));
 
 	/* populate server field if it is empty */
-	//if(leServer->text().isEmpty())
-	//  leServer->setText(Jid(JabberProtocol::protocol()->myContact->contactId()).host());
+	if(leServer->text().isEmpty())
+		leServer->setText(m_account->server());
 
 	kdDebug (14130) << "[dlgJabberServices] Trying to fetch a list of services at " << leServer->text () << endl;
 
@@ -142,7 +143,7 @@ void dlgJabberServices::slotQueryFinished ()
 void dlgJabberServices::slotRegister ()
 {
 
-	dlgJabberRegister *registerDialog = new dlgJabberRegister (serviceTask->agents ()[selectedRow].jid ());
+	dlgJabberRegister *registerDialog = new dlgJabberRegister (m_account, serviceTask->agents ()[selectedRow].jid ());
 
 	registerDialog->show ();
 	registerDialog->raise ();
@@ -152,7 +153,7 @@ void dlgJabberServices::slotRegister ()
 void dlgJabberServices::slotBrowse ()
 {
 
-	dlgJabberBrowse *browseDialog = new dlgJabberBrowse (serviceTask->agents ()[selectedRow].jid ());
+	dlgJabberBrowse *browseDialog = new dlgJabberBrowse (m_account, serviceTask->agents ()[selectedRow].jid ());
 
 	browseDialog->show ();
 	browseDialog->raise ();

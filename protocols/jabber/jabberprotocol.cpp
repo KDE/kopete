@@ -51,7 +51,6 @@
 #include "kopeteplugin.h"
 #include "addcontactpage.h"
 #include "jabbercontact.h"
-#include "dlgjabberstatus.h"
 #include "dlgjabbersendraw.h"
 #include "dlgjabberservices.h"
 #include "dlgjabberchatjoin.h"
@@ -67,31 +66,17 @@
 
 JabberProtocol *JabberProtocol::protocolInstance = 0;
 
-KopeteOnlineStatus JabberProtocol::JabberOnline;
-KopeteOnlineStatus JabberProtocol::JabberChatty;
-KopeteOnlineStatus JabberProtocol::JabberAway;
-KopeteOnlineStatus JabberProtocol::JabberXA;
-KopeteOnlineStatus JabberProtocol::JabberDND;
-KopeteOnlineStatus JabberProtocol::JabberOffline;
-KopeteOnlineStatus JabberProtocol::JabberInvisible;
-
 K_EXPORT_COMPONENT_FACTORY (kopete_jabber, KGenericFactory < JabberProtocol >);
 
-JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStringList &):KopeteProtocol (parent, name)
+JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStringList &) : KopeteProtocol (parent, name),
+	JabberOnline(KopeteOnlineStatus::Online, 25, this, 0, "jabber_online", i18n ("Go O&nline"), i18n ("Online")),
+	JabberChatty(KopeteOnlineStatus::Online, 20, this, 1, "jabber_chatty", i18n ("Set F&ree to Chat"), i18n ("Free to Chat")),
+	JabberAway(KopeteOnlineStatus::Away, 25, this, 2, "jabber_away", i18n ("Set A&way"), i18n ("Away")),
+	JabberXA(KopeteOnlineStatus::Away, 20, this, 3, "jabber_away", i18n ("Set E&xtended Away"), i18n ("Extended Away")),
+	JabberDND(KopeteOnlineStatus::Away, 15, this, 4, "jabber_na", i18n ("Set &Do not Disturb"), i18n ("Do not Disturb")),
+	JabberOffline(KopeteOnlineStatus::Offline, 20, this, 5, "jabber_offline", i18n ("Go O&ffline"), i18n ("Offline")),
+	JabberInvisible(KopeteOnlineStatus::Online, 5, this, 6, "jabber_offline", i18n ("Set I&nvisible"), i18n ("Invisible"))
 {
-
-	JabberOnline = KopeteOnlineStatus (KopeteOnlineStatus::Online, 25, this, 0, "jabber_online", i18n ("Go O&nline"), i18n ("Online"));
-
-	JabberChatty = KopeteOnlineStatus (KopeteOnlineStatus::Online, 20, this, 1, "jabber_chatty", i18n ("Set F&ree to Chat"), i18n ("Free to Chat"));
-
-	JabberAway = KopeteOnlineStatus (KopeteOnlineStatus::Away, 25, this, 2, "jabber_away", i18n ("Set A&way"), i18n ("Away"));
-	JabberXA = KopeteOnlineStatus (KopeteOnlineStatus::Away, 20, this, 3, "jabber_away", i18n ("Set E&xtended Away"), i18n ("Extended Away"));
-
-	JabberDND = KopeteOnlineStatus (KopeteOnlineStatus::Away, 15, this, 4, "jabber_na", i18n ("Set &Do not Disturb"), i18n ("Do not Disturb"));
-
-	JabberOffline = KopeteOnlineStatus (KopeteOnlineStatus::Offline, 20, this, 5, "jabber_offline", i18n ("Go O&ffline"), i18n ("Offline"));
-
-	JabberInvisible = KopeteOnlineStatus (KopeteOnlineStatus::Online, 5, this, 6, "jabber_offline", i18n ("Set I&nvisible"), i18n ("Invisible"));
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Loading ..." << endl;
 
@@ -107,9 +92,6 @@ JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStrin
 
 	// read the Jabber ID from Kopete's configuration
 	KGlobal::config ()->setGroup ("Jabber");
-
-	// setup actions
-	initActions ();
 
 	addAddressBookField ("messaging/xmpp", KopetePlugin::MakeIndexField);
 }
@@ -144,11 +126,6 @@ KopeteAccount *JabberProtocol::createNewAccount (const QString & accountId)
 }
 
 
-void JabberProtocol::errorConnectFirst ()
-{
-	KMessageBox::error (qApp->mainWidget (), i18n ("Please connect first"), i18n ("Error"));
-}
-
 KActionMenu *JabberProtocol::protocolActions ()
 {
 	KActionMenu *protocolMenu = new KActionMenu ();
@@ -159,14 +136,6 @@ KActionMenu *JabberProtocol::protocolActions ()
 	   protocolMenu->insert(tmpAccount->actionMenu());
 	 */
 	return protocolMenu;
-}
-
-void JabberProtocol::initActions ()
-{
-	// initialize icon that sits in Kopete's status bar
-	//setStatusIcon("jabber_offline");
-
-	KGlobal::config ()->setGroup ("Jabber");
 }
 
 void JabberProtocol::connectAll ()

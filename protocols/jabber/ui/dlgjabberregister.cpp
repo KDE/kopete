@@ -23,12 +23,14 @@
 
 
 #include "jabberprotocol.h"
+#include "jabberaccount.h"
 #include "dlgjabberregister.h"
 
-dlgJabberRegister::dlgJabberRegister (const Jabber::Jid & jid, QWidget * parent, const char *name):dlgRegister (parent, name)
+dlgJabberRegister::dlgJabberRegister (JabberAccount *account, const Jabber::Jid & jid, QWidget * parent, const char *name):dlgRegister (parent, name)
 {
+	m_account = account;
 
-	Jabber::JT_Register * task = new Jabber::JT_Register (JabberProtocol::protocol ()->jabberClient->rootTask ());
+	Jabber::JT_Register * task = new Jabber::JT_Register(m_account->client()->rootTask ());
 
 	connect (task, SIGNAL (finished ()), this, SLOT (slotGotForm ()));
 
@@ -70,7 +72,7 @@ void dlgJabberRegister::slotGotForm ()
 void dlgJabberRegister::slotSendForm ()
 {
 
-	Jabber::JT_Register * task = new Jabber::JT_Register (JabberProtocol::protocol ()->jabberClient->rootTask ());
+	Jabber::JT_Register * task = new Jabber::JT_Register (m_account->client()->rootTask ());
 
 	connect (task, SIGNAL (finished ()), this, SLOT (slotSentForm ()));
 

@@ -38,7 +38,7 @@ void JabberGroupChat::slotMessageManagerDeleted ()
 	kdDebug (JABBER_DEBUG_GLOBAL) << "[JabberGroupChat] slotMessageManagerDeleted(), leaving room " << room.user () << " at server " << room.host () << endl;
 
 	// the message manager has been deleted, leave the chat room
-	JabberProtocol::protocol ()->jabberClient->groupChatLeave (room.host (), room.user ());
+	dynamic_cast<JabberAccount *>(account())->client()->groupChatLeave (room.host (), room.user ());
 
 	// pass the slot on to the base class
 	JabberContact::slotMessageManagerDeleted ();

@@ -23,8 +23,8 @@
 #include <kaction.h>
 #include "kopeteaccount.h"
 #include "jabbercontact.h"
+#include "jabberprotocol.h"
 #include "kopeteonlinestatus.h"
-#include "ui/dlgjabberstatus.h"
 #include "ui/dlgjabbersendraw.h"
 #include "jid.h"
 #include "client.h"
@@ -37,17 +37,6 @@ using namespace Jabber;
 class JabberAccount:public KopeteAccount
 {
 	Q_OBJECT
-
-	/* Friends can touch each other's private parts. */
-	friend class JabberProtocol;
-	friend class JabberContact;
-	friend class JabberGroupChat;
-	friend class dlgJabberServices;
-	friend class dlgJabberRegister;
-	friend class dlgJabberBrowse;
-	friend class dlgJabberChatJoin;
-	friend class dlgJabberStatus;
-	friend class JabberPreferences;
 
 public:
 	  JabberAccount (JabberProtocol * parent, const QString & accountID, const char *name = 0L);
@@ -89,17 +78,26 @@ public:
 	 * @param addressBookData Output - serialized address book data. */
 	virtual void deserializeContact (KopeteMetaContact * metaContact,
 									 const QMap < QString, QString > &serializedData, const QMap < QString, QString > &addressBookData);
+
 	/* Return the resource of the client */
-	QString getResource ();
-	QString getServer ();
-	int getPort ();
+	QString resource ();
+	QString server ();
+	int port ();
 
-	void setResource (QString r);
-	void setServer (QString s);
-	void setPort (int p);
+	Jabber::Client *client();
 
-	public slots:
-		/* Connects to the server. */
+	/* Tells the user to connect first before they can do whatever it is
+	 * that they want to do. */
+	void errorConnectFirst ();
+
+	/* Asks the specified JID for authorization. */
+	void subscribe (const Jid & jid);
+
+	/* Accepts another JID's request for authorization. */
+	void subscribed (const Jid & jid);
+
+public slots:
+	/* Connects to the server. */
 	void connect ();
 
 	/* Disconnects from the server. */
@@ -110,13 +108,14 @@ public:
 	/* Sends a presence packet to a node. */
 	void sendPresenceToNode (const KopeteOnlineStatus & status, const QString & reason);
 
-	  signals:void settingsChanged ();
+signals:
+	void settingsChanged ();
 	void statusChanged (KopeteOnlineStatus status);
 	void connected ();
 	void disconnected ();
 	void connectionAttempt ();
 
-  protected:
+protected:
 	/* Create a new contact in the specified metacontact.
 	 * You shouldn't call this method yourself; for adding contacts, see @ref addContact().
 	 *
@@ -124,24 +123,16 @@ public:
 	 * @param displayName The display name of the contact (may equal @param contactID).
 	 * @param parentContact The metacontact to add this contact to
 	 */
-	  virtual bool addContactToMetaContact (const QString & contactID, const QString & displayName, KopeteMetaContact * parentContact);
+	virtual bool addContactToMetaContact (const QString & contactID, const QString & displayName, KopeteMetaContact * parentContact);
 
 	//void addContact(KopeteMetaContact*, const QString&);
-	protected slots:virtual void loaded ();
 
-  private:
+private:
 	/* JabberContact for this account. */
-	  JabberContact * myContact;
+	JabberContact * myContact;
 
 	/* Psi backend for this account. */
-	  Jabber::Client * client;
-
-	/* Temps stuff to get to compile....needs some work to 
-	   port to the accounts stuff.  */
-	QString password;
-	QString resource;
-	QString server;
-	int port;
+	Jabber::Client *jabberClient;
 
 	void setAvailable ();
 	void updateContact (const RosterItem &);
@@ -158,38 +149,13 @@ public:
 
 	JabberProtocol *mProtocol;
 
-	/* Actions for the menu. */
-	KAction *actionGoOnline;
-	KAction *actionGoChatty;
-	KAction *actionGoAway;
-	KAction *actionGoXA;
-	KAction *actionGoDND;
-	KAction *actionGoInvisible;
-	KAction *actionGoOffline;
-	KAction *actionJoinChat;
-	KAction *actionServices;
-	KAction *actionSendRaw;
-	KAction *actionEditVCard;
-	KActionMenu *actionStatusMenu;
-
 	dlgJabberStatus *reasonDialog;
 	dlgJabberSendRaw *sendRawDialog;
-
-	const KopeteOnlineStatus JabberOnline;
-	const KopeteOnlineStatus JabberChatty;
-	const KopeteOnlineStatus JabberAway;
-	const KopeteOnlineStatus JabberXA;
-	const KopeteOnlineStatus JabberDND;
-	const KopeteOnlineStatus JabberOffline;
-	const KopeteOnlineStatus JabberInvisible;
 
 	//JabberPreferences *preferences;
 
 	/* Initial presence to set after connecting. */
 	KopeteOnlineStatus initialPresence;
-
-	/* Psi backend class, for communication with the server. */
-	Jabber::Client * jabberClient;
 
 	/* Do we need to register on connection? */
 	int registerFlag;
@@ -197,9 +163,7 @@ public:
 	/* Caches the title ID of the account context menu. */
 	int menuTitleId;
 
-	/* Tells the user to connect first before they can do whatever it is
-	 * that they want to do. */
-	void errorConnectFirst ();
+	bool isConnecting;
 
 	/*
 	 * Create a new JabberContact
@@ -211,14 +175,7 @@ public:
 	 * affect the Jabber roster, it's just an internal method. */
 	void createAddContact (KopeteMetaContact * mc, const RosterItem & item);
 
-	/* Asks the specified JID for authorization. */
-	void subscribe (const Jid & jid);
-
-	/* Accepts another JID's request for authorization. */
-	void subscribed (const Jid & jid);
-
-
-	private slots:
+private slots:
 		/* Connects to the server. */
 	void slotConnect ();
 
@@ -305,11 +262,6 @@ public:
 
 	/* Get the services list from the server for management. */
 	void slotGetServices ();
-
-	void slotGetOneShotRecipient ();
-
-	void slotNewOneShot ();
-
 
 };
 
