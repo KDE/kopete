@@ -253,7 +253,7 @@ void MSNContact::setInfo(const  QString &type,const QString &data )
 	if( type == "PHH" )
 	{
 		m_phoneHome = data;
-		setProperty("privPhoneNumber", data);
+		setProperty("privPhoneNum", data);
 	}
 	else if( type == "PHW" )
 	{
