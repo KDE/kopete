@@ -5,6 +5,7 @@
 #include "task.h"
 #include "tasks/logintask.h"
 #include "tasks/setstatustask.h"
+#include "tasks/statustask.h"
 
 #include "client.h"
 
@@ -68,6 +69,8 @@ void Client::start( const QString &host, const QString &user, const QString &pas
 	d->user = user;
 	d->pass = pass;
 
+	initialiseEventTasks();
+	
 	LoginTask * login = new LoginTask( d->root );
 	connect( login, SIGNAL( gotMyself( Field::FieldList & ) ), 
 			this, SIGNAL( gotMyself( Field::FieldList & ) ) );
@@ -127,6 +130,11 @@ void Client::close()
 // 	cleanup();
 }
 
+void Client::initialiseEventTasks()
+{
+	new StatusTask( d->root ); // FIXME - add an additional EventRoot?
+}
+
 void Client::setPresence( const Status &status )
 {
 	//TODO Implement setPresence
@@ -167,7 +175,7 @@ void Client::lt_LoginFinished()
 	{
 		qDebug( "LOGIN FINISHED" );
 		SetStatusTask * sst = new SetStatusTask( d->root );
-		sst->status( NM_STATUS_AVAILABLE, QString::null, QString::null );
+		sst->status( GroupWise::Available, QString::null, QString::null );
 		sst->go( true );
 	}
 }

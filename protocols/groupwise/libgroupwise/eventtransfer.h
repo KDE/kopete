@@ -17,7 +17,7 @@
 
 #include <transfer.h>
 
-#define	NMEVT_INVALID_RECIPIENT			101
+/*#define	NMEVT_INVALID_RECIPIENT			101
 #define	NMEVT_UNDELIVERABLE_STATUS		102
 #define	NMEVT_STATUS_CHANGE				103
 #define	NMEVT_CONTACT_ADD				104
@@ -36,7 +36,10 @@
 #define NMEVT_CONFERENCE_REJECT			119
 #define NMEVT_RECEIVE_AUTOREPLY			121
 #define NMEVT_START						NMEVT_INVALID_RECIPIENT
-#define NMEVT_STOP						NMEVT_RECEIVE_AUTOREPLY
+#define NMEVT_STOP						NMEVT_RECEIVE_AUTOREPLY*/
+namespace Event {
+	
+};
 
 /**
 @author Kopete Developers
@@ -44,12 +47,33 @@
 class EventTransfer : public Transfer
 {
 public:
+	enum Event {		InvalidRecipient 		= 101,
+						UndeliverableStatus 	= 102,
+						StatusChange 			= 103,
+						ContactAdd 				= 104,
+						ConferenceClosed 		= 105,
+						ConferenceJoined 		= 106,
+						ConferenceLeft 			= 107,
+						ReceiveMessage			= 108,
+						ReceiveFile				= 109,
+						UserTyping				= 112,
+						UserNotTyping			= 113,
+						UserDisconnect			= 114,
+						ServerDisconnect		= 115,
+						ConverenceRename		= 116,
+						ConferenceInvite		= 117,
+						ConferenceInviteNotify	= 118,
+						ConferenceReject		= 119,
+						ReceiveAutoReply		= 121,
+						Start					= InvalidRecipient,
+						Stop					= ReceiveAutoReply
+				};
 	EventTransfer( const Q_UINT32 eventType, QCString& source, QTime timeStamp );
 	~EventTransfer();
 	
 	TransferType type() { return Transfer::EventTransfer; }
 	
-	int eventType();
+	int event();
 	QCString source();
 	QTime timeStamp();
 private:

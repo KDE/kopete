@@ -21,7 +21,7 @@ EventTransfer::~EventTransfer()
 {
 }
 
-int EventTransfer::eventType()
+int EventTransfer::event()
 { 
 	return m_eventType;
 }

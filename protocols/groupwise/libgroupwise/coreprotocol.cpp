@@ -292,9 +292,15 @@ void CoreProtocol::wireToTransfer( const QByteArray& wire )
 	m_din = new QDataStream( wire, IO_ReadOnly );
 	m_din->setByteOrder( QDataStream::LittleEndian );
 	
-	// does protocol state indicate we are partially through reading a response?
-	if ( false /*m_state == NeedMore*/ )
-		readResponse();
+	// does protocol state indicate we are partially through reading an
+	// if so, call readEvent which will create an EventTransfer out of the event code already received 
+	// and the event data that is on the wire
+	if ( m_state == ReadingEvent )
+	{
+		readEvent();
+		m_state = Available;
+		emit incomingData();
+	}
 	else
 	{
 		// otherwise, examine the data to see what it is
@@ -315,30 +321,27 @@ void CoreProtocol::wireToTransfer( const QByteArray& wire )
 				m_state = NeedMore;
 		}
 		else	
-		// otherwise -> event
-		{
-			cout << "CoreProtocol::wireToTransfer() - looks like an EVENT " << endl;
-			readEvent( val );
-			emit incomingData();
+		{	// otherwise -> event code, store it and await the rest of the event
+			qDebug( "CoreProtocol::wireToTransfer() - looks like an EVENT: %i\n", val );
+			m_state = ReadingEvent;
+			m_collatingEvent = val;
 		}
 	}
 	delete m_din;
 }
 
-void CoreProtocol::readEvent( const Q_UINT32 eventType )
+void CoreProtocol::readEvent()
 {
+	qDebug( "Reading event of type %i", m_collatingEvent);
 	// discover the length of the event's source, then read it
-	Q_UINT32 len;
-	*m_din >> len;
 	QCString source;
-	if ( len > 0 )
-	{
-		char* rawSource;
-		m_din->readBytes( rawSource, len );
-		source = rawSource; // shallow copy, QCString's destructor will delete the allocated space
-	}
+	Q_UINT32 len;
+	char* rawData;
+	m_din->readBytes( rawData, len );
+	source = QCString( rawData ); // shallow copy, QCString's destructor will delete the allocated space
 	// now create an event object
-	m_inTransfer = new EventTransfer( eventType, source, QTime::currentTime() );
+	m_inTransfer = new EventTransfer( m_collatingEvent, source, QTime::currentTime() );
+	m_collatingEvent = 0;
 }
 
 QCString CoreProtocol::readGroupWiseLine()

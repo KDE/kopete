@@ -526,12 +526,14 @@ void ClientStream::bs_error(int)
 
 void ClientStream::ss_readyRead()
 {
-	QByteArray a = d->ss->read();
+	QByteArray a;
+	qDebug( "size of storage for incoming data is %i bytes.", a.size() );
+	a = d->ss->read();
 
 //#ifdef LIBGW_DEBUG
 	QCString cs(a.data(), a.size()+1);
 	//qDebug("ClientStream: recv: %d [%s]\n", a.size(), cs.data());
-	qDebug("ClientStream: recv: %d\n", a.size() );
+	qDebug("ClientStream: ss_readyRead() recv: %d bytes\n", a.size() );
 	cs_dump( a );
 //#endif
 

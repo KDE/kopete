@@ -8,13 +8,26 @@
 typedef Q_UINT16 NMERR_T;
 #define GROUPWISE_DEBUG_GLOBAL 14220
 
-#define	NM_STATUS_UNKNOWN			0
+/*#define	NM_STATUS_UNKNOWN			0
 #define	NM_STATUS_OFFLINE			1
 #define NM_STATUS_AVAILABLE			2
 #define	NM_STATUS_BUSY				3
 #define	NM_STATUS_AWAY				4
 #define	NM_STATUS_AWAY_IDLE			5
 #define	NM_STATUS_INVALID			6
+*/
+namespace GroupWise
+{
+	enum Status {	Unknown = 0,
+					Offline = 1,
+					Available = 2,
+					Busy = 3,
+					Away = 4,
+					AwayIdle= 5,
+					Invalid = 6
+				};
+};
+					
 
 #define NMERR_BASE							0x2000L
 #define NM_OK								0L

@@ -136,7 +136,11 @@ Q_OBJECT
 	public slots:
 		// INTERNAL, FOR USE BY TASKS' SIGNALS //
 		void lt_LoginFinished();
-		
+	protected:
+		/**
+		 * Instantiate all the event handling tasks
+		 */
+		void initialiseEventTasks();
 	protected slots:
 		/**
 		 * Used by the client stream to notify errors to upper layers.

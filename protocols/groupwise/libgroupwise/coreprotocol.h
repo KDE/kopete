@@ -17,7 +17,7 @@ public:
 	/**
 	 * Describes the current state of the protocol
 	 */
-	enum State { NeedMore, Available, ServerError, ServerRedirect };
+	enum State { NeedMore, Available, ServerError, ServerRedirect, ReadingEvent };
 	
 	/**
 	 * Describes the parsing of the last received packet 
@@ -85,7 +85,7 @@ protected:
 	/**
 	 * Read in an eventconst
 	 */
-	void readEvent( const Q_UINT32 eventType );
+	void readEvent(/* const Q_UINT32 eventType */);
 	/**
 	 * Read in a response
 	 */
@@ -112,6 +112,7 @@ private:
 	// fields from a packet being parsed, before it has been completely received
 	//QValueStack<Field::FieldList> m_collatingFields;
 	Field::FieldList m_collatingFields;
+	int m_collatingEvent; // the event code of an event that is in the process of being collated
 };
 
 #endif

@@ -121,8 +121,14 @@ bool Task::take( Transfer * transfer)
 			continue;
 
 		t = static_cast<Task*>(obj);
+		
 		if(t->take( transfer ))
+		{
+			qDebug( "Transfer ACCEPTED by: %s\n", t->className() );
 			return true;
+		}
+		else
+			qDebug( "Transfer refused by: %s\n", t->className() );
 	}
 
 	return false;
