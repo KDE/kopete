@@ -68,6 +68,7 @@ bool BookmarksPrefsSettings::isUseSubfolderForContact( QString nickname )
 	case OnlyContactsNotInList:
 		return (m_contactslist.find(nickname) == m_contactslist.end());
 	}
+	return false;
 }
 
 #include "addbookmarksprefssettings.moc"
