@@ -389,7 +389,12 @@ GaduSession::sendResult( gg_pubdir50_t result )
 		QString stat = textcodec->toUnicode( gg_pubdir50_get( result, i, GG_PUBDIR50_STATUS ) );
 		rl->status = stat.toInt();
 		age = rl->age.toInt();
-		rl->age = QString::number(QDate::currentDate().year()-age);
+		if (age){
+		    rl->age = QString::number(QDate::currentDate().year()-age);
+		}
+		else{
+		    rl->age.truncate(0);
+		}
 		
     kdDebug(14100) << "found line "<< rl->uin << " " << rl->firstname << endl;
 
