@@ -138,7 +138,7 @@ void LoginTask::extractContact( Field::MultiField * contactContainer )
 	emit gotContact( contact );
 	Field::MultiField * details = fl.findMultiField( NM_A_FA_USER_DETAILS );
 	ContactDetails cd = extractUserDetails( details );
-	cd.dn = contact.dn;
+	cd.dn = contact.dn.lower(); // HACK: lowercased DN
 	emit gotContactUserDetails( cd );
 }
 
@@ -155,7 +155,7 @@ ContactDetails LoginTask::extractUserDetails(Field::MultiField * details )
 		if ( ( sf = fields.findSingleField ( NM_A_SZ_AUTH_ATTRIBUTE ) ) )
 			cd.authAttribute = sf->value().toString();
 		if ( ( sf = fields.findSingleField ( NM_A_SZ_DN ) ) )
-			cd.dn =sf->value().toString();
+			cd.dn =sf->value().toString().lower(); // HACK: lowercased DN
 		if ( ( sf = fields.findSingleField ( "CN" ) ) )
 			cd.cn = sf->value().toString();
 		if ( ( sf = fields.findSingleField ( "Given Name" ) ) )
