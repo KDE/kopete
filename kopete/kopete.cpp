@@ -238,8 +238,8 @@ void Kopete::notifyEvent( KopeteEvent *event)
 /** Cancel an event */
 void Kopete::cancelEvent( KopeteEvent *event)
 {
-	/* See KopeteNotifier and KopeteEvent class */
-	mNotifier->cancelEvent( event );
+	/* deleted events are removed automaticly */
+	delete event;
 }
 
 
