@@ -420,6 +420,9 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 
 void ChatMessagePart::slotRefreshNodes()
 {
+#ifdef TRANSFORM_ALL_MESSAGES
+	d->refreshtimer.stop();
+#endif
 	DOM::HTMLBodyElement bodyElement = htmlDocument().body();
 
 	QString xmlString = QString::fromLatin1( "<document>" );
