@@ -154,7 +154,25 @@ void KopeteMessage::setBody( const QString &body, MessageFormat f )
 {
 	detach();
 	QDomCDATASection bodyNode = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).firstChild().toCDATASection();
-	bodyNode.setData( body );
+
+	QString theBody = body;
+	if( f == RichText )
+	{
+		//This is coming from the RichTextEditor component.
+		//Strip off the containing HTML document
+		theBody.replace( QRegExp( QString::fromLatin1(".*<body.*>(.*)</body>.*") ), QString::fromLatin1("\\1") );
+
+		//Strip <p> tags
+		theBody.replace( QRegExp( QString::fromLatin1("<p>") ), QString::null );
+
+		//Replace </p> with a <br/> if text follows it
+		theBody.replace( QRegExp( QString::fromLatin1("</p>(.+)") ), QString::fromLatin1("<br/>\\1") );
+
+		//Remove trailing </p>
+		theBody.replace( QRegExp( QString::fromLatin1("</p>") ), QString::null );
+	}
+
+	bodyNode.setData( theBody );
 	d->format = f;
 }
 
@@ -234,6 +252,15 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 		//This is coming from the RichTextEditor component.
 		//Strip off the containing HTML document
 		theBody.replace( QRegExp( QString::fromLatin1(".*<body.*>(.*)</body>.*") ), QString::fromLatin1("\\1") );
+
+		//Strip <p> tags
+		theBody.replace( QRegExp( QString::fromLatin1("<p>") ), QString::null );
+
+		//Replace </p> with a <br/> if text follows it
+		theBody.replace( QRegExp( QString::fromLatin1("</p>(.+)") ), QString::fromLatin1("<br/>\\1") );
+
+		//Remove trailing </p>
+		theBody.replace( QRegExp( QString::fromLatin1("</p>") ), QString::null );
 	}
 
 	QDomElement bodyNode = d->xmlDoc.createElement( QString::fromLatin1("body") );
