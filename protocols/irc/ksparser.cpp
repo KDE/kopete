@@ -120,17 +120,23 @@ QString KSParser::_parse(const QString &message)
 		case 7:		//System bell
 			KNotifyClient::beep( QString::fromLatin1("IRC beep event received in a message") );
 			break;
+		case '\t':
+			res += QString::fromLatin1("&nbsp;&nbsp;&nbsp;&nbsp;");
+			break;
+		case '\n':
+			res += QString::fromLatin1("<br/>");
+			break;
 		case 15:	//Plain Text, close all tags
 			res.append( popAll() );
 			break;
 		case 31: 	//Underline
 			res += toggleTag("u");
 			break;
-		case '\n':
-			res += QString::fromLatin1("<br/>");
+		case '<':
+			res += QString::fromLatin1("&lt;");
 			break;
-		case '\t':
-			res += QString::fromLatin1("&nbsp;&nbsp;&nbsp;&nbsp;");
+		case '>':
+			res += QString::fromLatin1("&gt;");
 			break;
 		default:
 			res += QStyleSheet::escape(message[i]);
