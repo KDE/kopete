@@ -227,7 +227,7 @@ void MSNNotifySocket::handleError( uint code, uint id )
 	case 921:
 	case 922:
 	    KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
-			i18n( "The MSN Server is busy or temporary unavailable. Try to reconnect later." ) , i18n( "MSN Plugin" ) );
+			i18n( "The MSN Server is busy or temporarily unavailable. Try to reconnect later." ), i18n( "MSN Plugin" ) );
 		break;
 	case 923:
 		KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Error,
