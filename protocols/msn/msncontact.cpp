@@ -51,6 +51,58 @@ MSNContact::MSNContact(QListViewItem *parent, QString userid, const QString name
 	
 }
 
+QString MSNContact::key(int column, bool ascending) const
+{
+	switch(mStatus_n)
+	{
+  		case BLO:
+  		{
+			return "G"+ text(0);
+  			break;
+  		}
+  		case NLN:
+  		{
+			return "A"+ text(0);
+  			break;
+  		}
+  		case FLN:
+  		{
+			return "Z"+ text(0);
+  			break;
+  		}
+  		case BSY:
+  		{
+			return "F"+ text(0);
+  			break;
+  		}
+  		case IDL:
+  		{
+			return "A"+ text(0);
+  			break;
+  		}
+  		case AWY:
+  		{
+			return "B"+ text(0);
+  			break;
+  		}
+  		case PHN:
+  		{
+			return "C"+ text(0);
+  			break;
+  		}
+  		case BRB:
+  		{
+			return "D"+ text(0);
+  			break;
+  		}
+  		case LUN:
+  		{
+			return "E"+ text(0);
+  			break;
+  		}
+   	}	
+}
+
 void MSNContact::initContact(QString userid, const QString name, MSNProtocol *protocol)
 {
 	messageTimer = new QTimer();
@@ -156,7 +208,7 @@ void MSNContact::slotUpdateContact (QString handle , uint status)
 	if (handle == mUserID)
 	{
 		kdDebug() << "MSN Plugin: Contact " << handle <<" request update (" << status << ")\n";
-		//mStatus = state;
+		mStatus_n = status;
 		isMessageIcon = false;
         QString tmppublicname = mProtocol->engine->getPublicName( handle);
 		switch(status)
@@ -215,6 +267,8 @@ void MSNContact::slotUpdateContact (QString handle , uint status)
    				break;
    			}
 		}
+		/* We need to resort the group */
+		parentGroup->sortChildItems(0,0);
 	}
 }
 

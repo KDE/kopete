@@ -52,6 +52,8 @@ class MSNContact : public IMContact
 		void initContact(QString userid, const QString name, MSNProtocol *protocol);
 		virtual void rightButtonPressed(const QPoint &);
 		virtual void leftButtonDoubleClicked();
+		virtual QString key(int, bool) const;
+
 		QString mUserID;
 		QString mName;
 		bool hasLocalGroup;
