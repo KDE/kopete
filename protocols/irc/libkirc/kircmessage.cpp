@@ -247,6 +247,8 @@ QString KIRCMessage::unquote(const QString &str)
 
 QString KIRCMessage::ctcpQuote(const QString &str)
 {
+	return str;
+	
 	QString tmp = str;
 	tmp.replace( QChar('\\'), QString::fromLatin1("\\\\"));
 	tmp.replace( QChar((uchar)0x01), QString::fromLatin1("\\1"));
@@ -256,6 +258,8 @@ QString KIRCMessage::ctcpQuote(const QString &str)
 // FIXME: The unquote system is buggy.
 QString KIRCMessage::ctcpUnquote(const QString &str)
 {
+	return str;
+	
 	QString tmp = str;
 	tmp.replace(QString::fromLatin1("\\\\"), QChar('\\'));
 	tmp.replace(QString::fromLatin1("\\1"), QChar((uchar)0x01));
