@@ -80,7 +80,7 @@ KopeteAccount::~KopeteAccount()
 
 	// Let the protocol know that one of its accounts
 	// is no longer there
-	QTimer::singleShot( 0, d->protocol, SLOT( slotAccountAdded() ) );
+	d->protocol->slotAccountAdded();
 
 	delete d;
 }
