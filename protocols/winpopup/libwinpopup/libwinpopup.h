@@ -18,6 +18,8 @@
 #ifndef __LIBWINPOPUP_H
 #define __LIBWINPOPUP_H
 
+#include <sys/types.h>
+
 // The winpopup message file (really should go into config.h)
 #define WP_MESSAGE_FILE "/var/lib/winpopup/message"
 
@@ -64,6 +66,7 @@ public:
 typedef QMap<QString, QString> stringMap;
 
 class KWinPopup;
+class KProcess;
 
 class UpdateThread: public QThread
 {
@@ -100,6 +103,7 @@ public slots:
 	void updateNoWait() { update(false); }
 	void updateInBackground() { if(!theUpdateThread.running()) theUpdateThread.start(); }
 	void update(bool Wait = true);
+	void slotSendProcessExited(KProcess *p);
 
 // API section:
 
@@ -112,8 +116,8 @@ protected:
 	// overload this to be called when a new message arrives
 
 public:
-	bool sendMessage(const QString &Body, const QString &Destination);
-	// use this to send a message
+	pid_t sendMessage(const QString &Body, const QString &Destination);
+	// use this to send a message, returns the pid of the send mesage job
 
 	void setSMBClientPath(const QString &SMBClientPath) { mySMBClientPath = SMBClientPath; }
 	void setInitialSearchHost(const QString &InitialSearchHost) { myInitialSearchHost = InitialSearchHost; }
@@ -129,6 +133,9 @@ public:
 	
 	KWinPopup(const QString &SMBClientPath, const QString &InitialSearchHost, const QString &HostName, int HostCheckFrequency, int MessageCheckFrequency);
 	~KWinPopup();
+signals:
+	/* sends the pid of the finished job */
+	void sendJobDone(pid_t);
 };
 
 #endif

@@ -19,19 +19,21 @@
 // Compatibility problems?
 #include <cstdio>
 #include <cstdlib>
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
 using namespace std;
 
 // QT Includes
+#include <qfile.h>
 #include <qprocess.h>
 #include <qregexp.h>
 
 // KDE Includes
 #include <kapplication.h>
 #include <kprocio.h>
+#include <kprocess.h>
+#include <kdebug.h>
 
 // Local Includes
 #include "libwinpopup.h"
@@ -79,24 +81,25 @@ void KWinPopup::goOnline()
 	online = true;
 }
 
-bool KWinPopup::sendMessage(const QString &Body, const QString &Destination)
+pid_t KWinPopup::sendMessage(const QString &Body, const QString &Destination)
 {
-	QProcess sender;
-	sender.addArgument(mySMBClientPath);
-	sender.addArgument("-M");
-	sender.addArgument(Destination);
-	sender.addArgument("-N");
-	sender.addArgument("-U");
-	sender.addArgument(myHostName);
-	if(!sender.launch(Body + "\n")) return 1;
+	/* we are the parent of the process */
+	KProcess *sender = new KProcess(this);
+	/* set the executable */
+	*sender <<  mySMBClientPath;
+	/* set command line argumets */
+	*sender << "-M" << Destination << "-N" << "-U" << myHostName;
+	*sender << Body;
+	QObject::connect(sender, SIGNAL(processExited(KProcess *)), this, SLOT(slotSendProcessExited(KProcess *)));
+	/* default is NotifyOnExit */
+	sender->start();
+	return sender->pid();
+}
 
-	int i;
-	for(i = 0; i < 150 && sender.isRunning(); i++)
-	{	KApplication::kApplication()->processEvents();
-		usleep(100000);
-	}
-
-	return i < 150;
+void KWinPopup::slotSendProcessExited(KProcess *p)
+{
+	emit sendJobDone(p->pid());
+	delete p;
 }
 
 void KWinPopup::messageHandler()
@@ -215,7 +218,8 @@ QPair<stringMap, stringMap> KWinPopup::grabData(const QString &Host, QString *th
 	sender->addArgument("-N");
 	connect(sender, SIGNAL(destroyed()), sender, SLOT(kill()));
 	if(!sender->launch(""))
-	{	qDebug("Couldn't launch smbclient (%d)", times);
+	{
+		kdDebug( 14170 ) << k_funcinfo << "Couldn't launch smbclient (" << times << ")" << endl;
 		return QPair<stringMap, stringMap>();
 	}
 
@@ -253,7 +257,8 @@ QPair<stringMap, stringMap> KWinPopup::newGrabData(const QString &Host, QString 
 	*sender << mySMBClientPath << "-L" << Host << "-N";
 
 	if(!sender->start())
-	{	qDebug("Couldn't launch smbclient");
+	{
+		kdDebug( 14170 ) << k_funcinfo << "Couldn't launch smbclient" << endl;
 		return QPair<stringMap, stringMap>();
 	}
 	sender->closeStdin();
