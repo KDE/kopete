@@ -77,3 +77,4 @@ Jabber::Form &JabberFormTranslator::resultData()
 JabberFormTranslator::~JabberFormTranslator()
 {
 }
+#include "jabberformtranslator.moc"

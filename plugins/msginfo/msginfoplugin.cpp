@@ -92,3 +92,4 @@ MsgInfoPlugin::changeMessage( KopeteMessage& msg )
 
 
 
+#include "msginfoplugin.moc"

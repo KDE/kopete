@@ -121,3 +121,4 @@ DlgJabberRegister::~DlgJabberRegister()
 	delete translator;
 
 }
+#include "dlgjabberregister.moc"

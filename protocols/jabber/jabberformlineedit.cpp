@@ -35,3 +35,4 @@ void JabberFormLineEdit::slotGatherData(Jabber::Form &form)
 JabberFormLineEdit::~JabberFormLineEdit()
 {
 }
+#include "jabberformlineedit.moc"
