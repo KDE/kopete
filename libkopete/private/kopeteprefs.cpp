@@ -85,7 +85,7 @@ void KopetePrefs::load()
 	mShowTray		= config->readBoolEntry( "Show Systemtray", true);
 	mKindMessagesHtml    	= config->readEntry("MessagesHTML", QString::null );
 
-	config->setGroup( QString::fromLatin1("Chat Styles") );
+	config->setGroup( QString::fromLatin1("XSL Chat Styles") );
 	QString keyBase = QString::fromLatin1("Style");
 	int loopPosition = 0;
 	QString styleNum = keyBase + QString::number(loopPosition);
@@ -100,20 +100,74 @@ void KopetePrefs::load()
 
 	if( mChatStyles.isEmpty() )
 	{
-		QString start = QString::fromLatin1( "<table width=\"100%%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">" );
-		QString end =   QString::fromLatin1( "\n</td></tr></table>" );
+		QString start = QString::fromLatin1( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n<xsl:output method=\"html\"/>\n<xsl:template match=\"message\">\n" );
+		QString end =   QString::fromLatin1( "\n</xsl:template>\n</xsl:stylesheet>" );
 
-  		QString msnStyle = start + QString::fromLatin1( "\n\t<tr>%e<td colspan=\"2\"><font color=\"#606060\"> " ) + i18n( "%f says:" ) +
-			QString::fromLatin1( "\n\t</font></td></tr><tr><td width=\"15\">&nbsp;</td>%e<td width=\"100%%\" bgcolor=\"%b\">"
-			"\n\t%a<font color='green'>* %f%a %F%M%F %a</font>%a") + end;
+  		QString msnStyle = start + QString::fromLatin1(
+			"<div style=\"padding-bottom:10px;\">\n"
+			"\t<div style=\"color:lightgray\">\n"
+			"\t\t(<xsl:value-of select=\"@timestamp\"/>) <span class=\"KopeteDisplayName\"><xsl:value-of select=\"from/contact/@metaContactDisplayName\"/></span> says:\n"
+			"\t</div>\n"
+			"\t<xsl:text disable-output-escaping=\"yes\">&#160;&#160;&#160;&#160;</xsl:text>\n"
+			"\t<span>\n<xsl:if test=\"@importance='2'\">\n"
+			"\t<xsl:attribute name=\"class\"><xsl:text>highlight</xsl:text></xsl:attribute>\n"
+			"</xsl:if>\n<xsl:value-of disable-output-escaping=\"yes\" select=\"body\"/></span>\n</div>"
+		) + end;
 
-		QString xchatStyle = start + QString::fromLatin1( "\n\t<tr><td bgcolor=\"%b\">%a<font color='green'>%a [%T] %s-<font color=\"cyan\">--</font> %F%M%F%s"
-				"\n\t%e<font color=\"blue\">&lt;</font>%i%L%f%L%i%o<font color=\"yellow\">%f</font>%o<font color=\"blue\">&gt;"
-				"\n\t</font>%F%M%F%e%a * %f <font color='green'> %M</font>%a" ) + end;
+		QString xchatStyle = start + QString::fromLatin1(
+			"<div>\n<xsl:if test=\"@importance='2'\">\n"
+			"\t<xsl:attribute name=\"class\"><xsl:text>highlight</xsl:text></xsl:attribute>\n"
+			"</xsl:if>\n<xsl:if test=\"@direction='3'\">\n"
+			"\t<xsl:attribute name=\"style\"><xsl:text>color:darkgreen</xsl:text></xsl:attribute>\n"
+			"</xsl:if>\n[<xsl:value-of select=\"@timestamp\"/>] \n"
+			"<!-- Choose based on message direction -->\n<xsl:choose>\n"
+			"\t<xsl:when test=\"@direction='2'\"><!--internal message-->\n"
+			"\t\t-<font color=\"cyan\">--</font>\n\t</xsl:when>\n"
+			"\t<xsl:when test=\"@direction='3'\"><!--action message-->\n"
+			"\t\t<span class=\"KopeteDisplayName\"><xsl:value-of select=\"from/contact/@metaContactDisplayName\"/></span>\n"
+			"\t</xsl:when>\n\t<xsl:otherwise>\n\t\t<font color=\"blue\">&lt;</font>\n"
+			"\t\t<font>\n\t\t\t<xsl:attribute name=\"color\">\n"
+			"\t\t\t\t<xsl:choose>\n\t\t\t\t\t<xsl:when test=\"@direction='1'\"> <!-- Outgoing -->\n"
+			"\t\t\t\t\t\t<xsl:text>yellow</xsl:text>\n\t\t\t\t\t</xsl:when>\n"
+			"\t\t\t\t\t<xsl:otherwise> <!-- Incoming -->\n\t\t\t\t\t\t<xsl:value-of select=\"from/contact/@color\"/>\n"
+			"\t\t\t\t\t</xsl:otherwise>\n\t\t\t\t</xsl:choose>\n\t\t\t</xsl:attribute>\n"
+			"\t\t\t<span class=\"KopeteDisplayName\"><xsl:value-of select=\"from/contact/@metaContactDisplayName\"/></span>\n\t\t</font>\n"
+			"\t\t<font color=\"blue\">&gt; </font>\n\t</xsl:otherwise>\n</xsl:choose>\n"
+			"<xsl:value-of disable-output-escaping=\"yes\" select=\"body\"/>\n</div>"
+		 ) + end;
 
-		QString kopeteStyle = start + QString::fromLatin1( "\n\t %e<tr><td>%i<font color=\"#0360B1\"><b>" ) +
-			i18n( "Message from %f %i %o" ) + QString::fromLatin1( "\n\t<font color=\"#E11919\"><b>" ) +
-			i18n( "Message to %t %o at %T" ) + QString::fromLatin1( "\n\t</b></font></td></tr>%e <tr><td bgcolor=\"%b\">%a<font color='green'>* %f%a %F%M%F%a</font>%a" ) + end;
+		QString kopeteStyle = start + QString::fromLatin1(
+			"<div style=\"padding-bottom:10px;\">\n"
+			"\t<xsl:if test=\"@direction='0' or @direction='1'\">\n"
+			"\t\t<div>\n"
+			"\t\t\t<xsl:choose>\n"
+			"\t\t\t<xsl:when test=\"@direction='1'\">\n"
+			"\t\t\t\t<xsl:attribute name=\"style\"><xsl:text>color:red;font-weight:bold;</xsl:text></xsl:attribute>\n"
+			"\t\t\t\t<xsl:text>Message to </xsl:text><span class=\"KopeteDisplayName\"><xsl:value-of select=\"to/contact/@metaContactDisplayName\"/></span>\n"
+			"\t\t\t</xsl:when>\n"
+			"\t\t\t<xsl:otherwise>\n"
+			"\t\t\t\t<xsl:attribute name=\"style\"><xsl:text>color:blue;font-weight:bold;</xsl:text></xsl:attribute>\n"
+			"\t\t\t\t<xsl:text>Message from </xsl:text><span class=\"KopeteDisplayName\"><xsl:value-of select=\"from/contact/@metaContactDisplayName\"/></span>\n"
+			"\t\t\t</xsl:otherwise>\n"
+			"\t\t\t</xsl:choose>\n"
+			"\t\t\t<xsl:text> at </xsl:text><xsl:value-of select=\"@timestamp\"/>\n"
+			"\t\t</div>\n"
+			"\t\t<xsl:text disable-output-escaping=\"yes\">&#160;&#160;&#160;&#160;</xsl:text>\n"
+			"\t</xsl:if>\n"
+			"\t<span>\n"
+			"\t\t<xsl:if test=\"@importance='2'\">\n"
+			"\t\t\t<xsl:attribute name=\"class\"><xsl:text>highlight</xsl:text></xsl:attribute>\n"
+			"\t\t</xsl:if>\n"
+			"\t\t<xsl:choose>\n"
+			"\t\t<xsl:when test=\"@direction='3'\">\n\t\t\t<span style=\"color:darkgreen\">\n"
+			"\t\t\t\t<span class=\"KopeteDisplayName\"><xsl:value-of select=\"from/contact/@metaContactDisplayName\"/></span> <xsl:value-of disable-output-escaping=\"yes\" select=\"body\"/>\n"
+			"\t\t\t</span>\n"
+			"\t\t</xsl:when>\n"
+			"\t\t<xsl:otherwise>\n"
+			"\t\t\t<xsl:value-of disable-output-escaping=\"yes\" select=\"body\"/>\n"
+			"\t\t</xsl:otherwise>\n"
+			"\t\t</xsl:choose>\n\t</span>\n</div>"
+		) + end;
 
 		mChatStyles.insert( i18n("MSN Style"), msnStyle );
 		mChatStyles.insert( i18n("XChat Style"), xchatStyle );
@@ -126,8 +180,6 @@ void KopetePrefs::load()
 	}
 
 	config->setGroup("Appearance");
-
-
 	mTransparancyChanged = false;
 }
 
@@ -174,8 +226,8 @@ void KopetePrefs::save()
 	config->writeEntry("Show Systemtray", mShowTray);
 	config->writeEntry("MessagesHTML", mKindMessagesHtml);
 
-	config->deleteGroup( QString::fromLatin1("Chat Styles") );
-	config->setGroup( QString::fromLatin1("Chat Styles") );
+	config->deleteGroup( QString::fromLatin1("XSL Chat Styles") );
+	config->setGroup( QString::fromLatin1("XSL Chat Styles") );
 	QString keyBase = QString::fromLatin1("Style");
 	int loopPosition = 0;
 	for( KopeteChatStyleMap::Iterator it = mChatStyles.begin(); it != mChatStyles.end(); ++it)

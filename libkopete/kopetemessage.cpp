@@ -46,7 +46,7 @@ struct KopeteMessagePrivate
 	QColor contactColor;
 	QDomDocument xmlDoc;
 	bool contentsModified;
-
+	bool highlighted;
 	QDateTime timeStamp;
 	QFont font;
 	QString body;
@@ -169,19 +169,7 @@ void KopeteMessage::setFont( const QFont &font )
 
 void KopeteMessage::highlight()
 {
-	/*
-	This code is required in case the user has the %F tags removed from ther message
-	(the don't want to see the users sent fonts and colorr), so they can still see the message
-	highlight
-	*/
-	setBody( QString::fromLatin1("<span style=\"background-color:%1;color:%2\">%3</span>")
-		.arg( KopetePrefs::prefs()->highlightBackground().name() )
-		.arg( KopetePrefs::prefs()->highlightForeground().name() )
-		.arg( escapedBody() ), RichText );
-
-	setBg( KopetePrefs::prefs()->highlightBackground() );
-	setFg( KopetePrefs::prefs()->highlightForeground() );
-
+	detach();
 	d->importance = Highlight;
 	d->contentsModified = true;
 }
@@ -189,16 +177,7 @@ void KopeteMessage::highlight()
 void KopeteMessage::setBody( const QString &body, MessageFormat f )
 {
 	detach();
-	/*if( d->direction == Outbound && body.startsWith( QString::fromLatin1( "/me " ) ) )
-	{
-		d->body = body.section( QString::fromLatin1( " " ), 1 ).prepend(
-			QString::fromLatin1( " " ) ).prepend( d->from->displayName() ).prepend( QString::fromLatin1( "*" ) );
-	}
-	else
-	{*/
-		d->body = body;
-	//}
-
+	d->body = body;
 	d->format = f;
 	d->contentsModified = true;
 }
@@ -305,40 +284,16 @@ QString KopeteMessage::plainBody() const
 
 QString KopeteMessage::escapedBody() const
 {
-	if( d->format & PlainText )
+	if( d->format == PlainText )
 	{
-		QStringList words;
-		QString parsedString;
-
-		//Strip whitespace off the end of the string only
-		//(stripWhiteSpace removes it from beginning as well)
-		int stringEnd = d->body.findRev( QRegExp( QString::fromLatin1( "\\S" ) ) );
-//		kdDebug(14010) << k_funcinfo << "String End:" << stringEnd <<endl;
-		if( stringEnd > -1 )
-			parsedString = QStyleSheet::escape( d->body.left( stringEnd + 1 ) );
-		else
-			parsedString = QStyleSheet::escape( d->body );
-
-		words = QStringList::split( ' ', parsedString, true );
-
-		// Replace multiple spaces with '&nbsp;', but leave the first space
-		// intact for any necessary wordwrap:
-		parsedString = "";
-		for( QStringList::Iterator it = words.begin(); it != words.end(); ++it )
-		{
-			if( ( *it ).isEmpty() )
-				parsedString += QString::fromLatin1( "&nbsp;" );
-			else
-				parsedString += *it + QString::fromLatin1( " " );
-		}
+		QString parsedString = d->body;
 
 		//Replace carriage returns inside the text
-		parsedString = parsedString.replace( QRegExp( QString::fromLatin1( "\n" ) ), QString::fromLatin1( "<br/>" ) );
+		parsedString.replace( QRegExp( QString::fromLatin1( "\n" ) ), QString::fromLatin1( "<br/>" ) );
 
 		//Replace a tab with 4 spaces
-		parsedString = parsedString.replace( QRegExp( QString::fromLatin1( "\t" ) ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
+		parsedString.replace( QRegExp( QString::fromLatin1( "\t" ) ), QString::fromLatin1( "    " ) );
 
-//		kdDebug(14010) << k_funcinfo << parsedString <<endl;
 		return parsedString;
 	}
 
@@ -350,458 +305,20 @@ QString KopeteMessage::parsedBody() const
 	if( d->format == ParsedHTML )
 		return d->body;
 
-	return KopeteEmoticons::parseEmoticons(parseHTML(escapedBody()));
+	return KopeteEmoticons::parseEmoticons(parseLinks(escapedBody()));
 }
 
-QString KopeteMessage::formatDisplayName( const QString &name ) const
+QString KopeteMessage::parseLinks( const QString &message ) const
 {
-	return QString::fromLatin1(
-		"<span class=\"KopeteDisplayName\" style=\"cursor:pointer\">") +
-		QStyleSheet::escape(name) + QString::fromLatin1("</span>");
-}
+	QString result = message;
 
-int KopeteMessage::findClosingTag( const QString &model, int openTag ) const
-{
-	// Upon entry, model[openTag-1] == QChar('%') and model[openTag] is the
-	// character we're trying to match. When we return, the analogous thing
-	// for our return value should be true, or should be off the end of model.
-	bool lastWasPercent = false;
+	//Replace Email Links
+	result.replace( QRegExp( QString::fromLatin1("\\b([\\w\\.]+@([\\w\\.]+\\.\\w+)+)\\b") ), QString::fromLatin1("<a href=\"mailto:\\1\">\\1</a>") );
 
-	int pos = openTag + 1;
-	for(int len = model.length(); pos < len; ++pos)
-	{
-		if( lastWasPercent && model[pos] == model[openTag] )
-			break;
-		if( lastWasPercent || model[pos] == QChar('%') )
-			lastWasPercent = !lastWasPercent;
-	}
-	return pos;
-}
+	//Replace http/https/ftp links
+	result.replace( QRegExp( QString::fromLatin1("\\b((http://\\w|ftp://\\w|https://\\w|www\\.)[\\w\\./]*)\\b") ), QString::fromLatin1("<a href=\"\\1\">\\1</a>" ) );
 
-QString KopeteMessage::transformMessage( const QString &model ) const
-{
-	QString message;
-	bool F_first = true;
-	bool L_first = true;
-	unsigned int f = 0;
-
-	// should we display sections with these tags?
-	QMap<QChar, bool> displaySection;
-	displaySection['i'] = (d->direction == Inbound);                           	// only inbound
-	displaySection['o'] = (d->direction == Outbound);                          	// only outbound
-	displaySection['s'] = (d->direction == Internal);                          	// only internal
-	displaySection['a'] = (d->direction == Action);                            	// only actions
-	displaySection['e'] = (d->direction != Internal && d->direction != Action);	// not internal ('external')
-
-	// what name to display for each of these tags?
-	QMap<QChar, QString> nameMap;
-
-	// insert the 'from' metaContact's displayName
-	if (d->from->metaContact())
-		nameMap['f'] = d->from->metaContact()->displayName();
-	else
-		nameMap['f'] = d->from->displayName();
-
-	// insert the 'to' metaContact's displayName
-	if (to().first()->metaContact())
-		nameMap['t'] = to().first()->metaContact()->displayName();
-	else
-		nameMap['t'] = to().first()->displayName();
-
-	// the 'from' KopeteContact displayName
-	nameMap['c'] = to().first()->displayName();
-	// the 'to' KopeteContact displayName
-	nameMap['C'] = d->from->displayName();
-
-	do
-	{
-		QChar c = model[ f ];
-		if( c != '%' )
-		{
-			message += c;
-		}
-		else
-		{
-			f++;
-			c = model[ f ];
-			// Using latin1 is safe, we don't check for other chars, and latin1() returns non-latin as '\0'
-			switch( c.latin1() )
-			{
-				case 'M':  //insert Message
-					message.append( parsedBody() );
-					break;
-
-				case 'T':  //insert Timestamp
-					message.append( KGlobal::locale()->formatTime(d->timeStamp.time(), true) );
-					break;
-
-				case 'F':  //insert Fonts
-					if( F_first ) // <font>....
-					{
-						message += QString::fromLatin1( "<font" );
-						if ( d->fgColor.isValid() )
-							message += QString::fromLatin1( " color=\"" ) + d->fgColor.name() + QString::fromLatin1( "\"" );
-						if ( d->font != QFont() )
-							message += QString::fromLatin1( " face=\"" ) + d->font.family() + QString::fromLatin1( "\"" );
-						message += QString::fromLatin1( ">" );
-						if ( d->font != QFont() && d->font.bold())
-							message += QString::fromLatin1( "<b>" );
-						if ( d->font != QFont() && d->font.italic())
-							message += QString::fromLatin1( "<i>" );
-						F_first=false;
-					}
-					else            // </font>
-					{
-						if ( d->font != QFont() && d->font.italic())
-							message += QString::fromLatin1( "</i>" );
-						if ( d->font != QFont() && d->font.bold())
-							message += QString::fromLatin1( "</b>" );
-
-						message += QString::fromLatin1( "</font>" );
-						F_first=true;
-					}
-					break;
-
-				case 'L':  //insert Contact color
-					if( L_first ) // <font>....
-					{
-						message += QString::fromLatin1( "<font color=\"%1\">" ).arg( d->contactColor.name() );
-						L_first = false;
-					}
-					else            // </font>
-					{
-						message += QString::fromLatin1( "</font>" );
-						L_first = true;
-					}
-					break;
-
-				case 'b':   //BgColor
-					if ( d->bgColor.isValid() && !d->bgOverride )
-						message += d->bgColor.name();
-					break;
-
-				case 'I': //insert the statusicon path
-					if(d->from)
-					{
-						//FIXME -Will
-						QString icoPath = KGlobal::iconLoader()->iconPath( d->from->onlineStatus().overlayIcon(), KIcon::Small );
-						if (!icoPath.isNull())
-						message.append( QStyleSheet::escape(icoPath) );
-					}
-					break;
-				default:
-					if(displaySection.contains(c))
-					{
-						if( !displaySection[c] )
-							f = findClosingTag( model, f );
-					}
-					else if(nameMap.contains(c))
-					{
-						message.append( formatDisplayName( nameMap[c] ) );
-					}
-					else
-					{
-						message += c;
-					}
-					break;
-			}
-		}
-		f++;
-	}
-	while( f < model.length() );
-
-	return message;
-}
-
-QString KopeteMessage::parseHTML( const QString &message, bool parseURLs )
-{
-	QString text, result;
-	QRegExp regExp;
-	uint len = message.length();
-	int matchLen;
-	unsigned int startIdx;
-	int lastReplacement = -1;
-	text = message;
-
-	for ( uint idx=0; idx<len; idx++ )
-	{
-		switch( text[idx].latin1() )
-		{
-			case '\r':
-				lastReplacement = idx;
-				break;
-			case '@':		// email-addresses or message-ids
-			{
-				if ( parseURLs )
-				{
-					startIdx = idx;
-					while (
-						(startIdx>(uint)(lastReplacement+1)) &&
-						(text[startIdx-1]!=' ') &&
-						(text[startIdx-1]!='\t') &&
-						(text[startIdx-1]!=',') &&
-						(text[startIdx-1]!='<') && (text[startIdx-1]!='>') &&
-						(text[startIdx-1]!='(') && (text[startIdx-1]!=')') &&
-						(text[startIdx-1]!='[') && (text[startIdx-1]!=']') &&
-						(text[startIdx-1]!='{') && (text[startIdx-1]!='}')
-						)
-					{
-//						kdDebug(14010) << "searching start of email addy at: " << startIdx << endl;
-						startIdx--;
-					}
-//					kdDebug(14010) << "found start of email addy at:" << startIdx << endl;
-
-					regExp.setPattern( QString::fromLatin1( "[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+" ) );
-					if ( regExp.search(text,startIdx) != -1 )
-					{
-						matchLen = regExp.matchedLength();
-						if (text[startIdx+matchLen-1]=='.')   // remove trailing dot
-						{
-							matchLen--;
-						}
-						else if (text[startIdx+matchLen-1]==',')   // remove trailing comma
-						{
-							matchLen--;
-						}
-						else if (text[startIdx+matchLen-1]==':')   // remove trailing colon
-						{
-							matchLen--;
-						}
-
-						if ( matchLen < 3 )
-						{
-							result += text[idx];
-						}
-						else
-						{
-//							kdDebug(14010) << "adding email link starting at: " << result.length()-(idx-startIdx) << endl;
-							result.remove( result.length()-(idx-startIdx), idx-startIdx );
-							QString mailAddr = parseHTML(text.mid(startIdx,matchLen),false);
-							result += QString::fromLatin1("<a href=\"mailto:%1\">%2</a>").arg(mailAddr).arg(mailAddr);
-/*								QString::fromLatin1("<a href=\"addrOrId://") + // What is this weird adress?
-								parseHTML(text.mid(startIdx,matchLen),false) +
-								QString::fromLatin1("\">") +
-								parseHTML(text.mid(startIdx,matchLen),false) +
-								QString::fromLatin1("</a>"); */
-							idx = startIdx + matchLen - 1;
-//							kdDebug(14010) << "index is now: " << idx << endl;
-//							kdDebug(14010) << "result is: " << result << endl;
-							lastReplacement = idx;
-						}
-						break;
-					}
-				}
-				result += text[idx];
-				break;
-			}
-
-			case 'h' :
-			{
-				if( (parseURLs) && (text[idx+1].latin1()=='t') )
-				{   // don't do all the stuff for every 'h'
-					regExp.setPattern( QString::fromLatin1( "https?://[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+" ) );
-					if ( regExp.search(text,idx) == (int)idx )
-					{
-						matchLen = regExp.matchedLength();
-
-						if (text[idx+matchLen-1]=='.')			// remove trailing dot
-							matchLen--;
-						else if (text[idx+matchLen-1]==',')		// remove trailing comma
-							matchLen--;
-						else if (text[idx+matchLen-1]==':')		// remove trailing colon
-							matchLen--;
-
-						result +=
-							QString::fromLatin1("<a href=\"")
-							+ text.mid(idx,matchLen)
-							+ QString::fromLatin1("\">")
-							+ text.mid(idx,matchLen)
-							+ QString::fromLatin1("</a>");
-						idx += matchLen-1;
-						lastReplacement = idx;
-						break;
-					}
-				}
-				result += text[idx];
-				break;
-			}
-
-			case 'w':
-			{
-				if( (parseURLs) && (text[idx+1].latin1()=='w') && (text[idx+2].latin1()=='w') )
-				{   // don't do all the stuff for every 'w'
-					regExp.setPattern( QString::fromLatin1( "www\\.[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+\\.[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+" ) );
-					if (regExp.search(text,idx)==(int)idx)
-					{
-						matchLen = regExp.matchedLength();
-						if (text[idx+matchLen-1]=='.')   // remove trailing dot
-							matchLen--;
-						else if (text[idx+matchLen-1]==',')   // remove trailing comma
-							matchLen--;
-						else if (text[idx+matchLen-1]==':')   // remove trailing colon
-							matchLen--;
-
-						result +=
-							QString::fromLatin1("<a href=\"http://")
-							+ text.mid(idx,matchLen)
-							+ QString::fromLatin1("\">")
-							+ text.mid(idx,matchLen)
-							+ QString::fromLatin1("</a>");
-						idx += matchLen-1;
-						lastReplacement = idx;
-						break;
-					}
-				}
-				result+=text[idx];
-				break;
-			}
-
-			case 'f' :
-			{
-				if( (parseURLs) && (text[idx+1].latin1()=='t') && (text[idx+2].latin1()=='p') )
-				{   // don't do all the stuff for every 'f'
-					regExp.setPattern( QString::fromLatin1( "ftp://[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+" ) );
-					if ( regExp.search(text,idx)==(int)idx )
-					{
-						matchLen = regExp.matchedLength();
-						if (text[idx+matchLen-1]=='.')   // remove trailing dot
-							matchLen--;
-						else if (text[idx+matchLen-1]==',')   // remove trailing comma
-							matchLen--;
-						else if (text[idx+matchLen-1]==':')   // remove trailing colon
-							matchLen--;
-
-						result +=
-							QString::fromLatin1("<a href=\"")
-							+ text.mid(idx,matchLen)
-							+ QString::fromLatin1("\">")
-							+ text.mid(idx,matchLen)
-							+ QString::fromLatin1("</a>");
-						idx += matchLen-1;
-						lastReplacement = idx;
-						break;
-					}
-
-					regExp.setPattern( QString::fromLatin1( "ftp\\.[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+\\.[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+" ) );
-					if ( regExp.search(text,idx)==(int)idx )
-					{
-						matchLen = regExp.matchedLength();
-						if (text[idx+matchLen-1]=='.')   // remove trailing dot
-						matchLen--;
-						else if (text[idx+matchLen-1]==',')   // remove trailing comma
-						matchLen--;
-						else if (text[idx+matchLen-1]==':')   // remove trailing colon
-						matchLen--;
-
-						result +=
-							QString::fromLatin1("<a href=\"ftp://")
-							+ text.mid(idx,matchLen)
-							+ QString::fromLatin1("\">")
-							+ text.mid(idx,matchLen)
-							+ QString::fromLatin1("</a>");
-						idx += matchLen-1;
-						lastReplacement = idx;
-						break;
-					}
-				}
-				result+=text[idx];
-				break;
-			}
-
-			case 'm' :
-			{
-				if( (parseURLs) && (text[idx+1].latin1()=='a') && (text[idx+2].latin1()=='i') )
-				{   // don't do all the stuff for every 'm'
-					regExp.setPattern( QString::fromLatin1( "mailto:[^\\s<>\\(\\)\"\\|\\[\\]\\{\\}]+" ) );
-					if (regExp.search(text,idx)==(int)idx)
-					{
-						matchLen = regExp.matchedLength();
-						if (text[idx+matchLen-1]=='.')   // remove trailing dot
-						matchLen--;
-						else if (text[idx+matchLen-1]==',')   // remove trailing comma
-						matchLen--;
-						else if (text[idx+matchLen-1]==':')   // remove trailing colon
-						matchLen--;
-
-						result +=
-							QString::fromLatin1("<a href=\"")
-							+ text.mid(idx,matchLen)
-							+ QString::fromLatin1("\">")
-							+ text.mid(idx,matchLen)
-							+ QString::fromLatin1("</a>");
-						idx += matchLen-1;
-						lastReplacement = idx;
-						break;
-					}
-				}
-				result += text[idx];
-				break;
-			}
-//TODO: Get a real RTF-Editor for Kopete and send html-ized texts out, this pseudo formatting
-//      using ASCII-chars is ONLY common for UseNet.
-//      And yes, I was the one who introduced it, now I think it's the wrong way ;) mETz [03.01.2003]
-
-			case '_' :
-			case '/' :
-			case '*' :
-			{
-				regExp = QString::fromLatin1( "\\%1[^\\s%2]+\\%3" ).arg( text[ idx ] ).arg( text[ idx ] ).arg( text[ idx ] );
-				if ( regExp.search(text,idx) == (int)idx )
-				{
-					matchLen = regExp.matchedLength();
-					if ((matchLen>2) &&
-					((idx==0)||text[idx-1].isSpace()||(text[idx-1] == '(')) &&
-					((idx+matchLen==len)||text[idx+matchLen].isSpace()||(text[idx+matchLen]==',')||
-					(text[idx+matchLen]=='.')||(text[idx+matchLen]==')')))
-					{
-						switch (text[idx].latin1())
-						{
-							case '_' :
-								result += QString::fromLatin1( "<u>%1</u>" ).arg( parseHTML( text.mid( idx + 1, matchLen - 2 ), parseURLs ) );
-								break;
-							case '/' :
-								result += QString::fromLatin1( "<i>%1</i>" ).arg( parseHTML( text.mid( idx + 1, matchLen - 2 ), parseURLs ) );
-								break;
-							case '*' :
-								result += QString::fromLatin1( "<b>%1</b>" ).arg( parseHTML( text.mid( idx + 1, matchLen - 2 ), parseURLs ) );
-								break;
-						}
-						idx += matchLen-1;
-						lastReplacement = idx;
-						break;
-					}
-				}
-				result += text[idx];
-				break;
-			}
-
-			default:
-				result += text[idx];
-				break;
-		} // END switch( text[idx].latin1() )
-	}
 	return result;
-}
-
-QString KopeteMessage::asHTML() const
-{
-	QString msg = parsedBody();
-
-	if ( fg().isValid() )
-		msg.prepend( QString::fromLatin1( "<font color=\"%1\">" ).arg(fg().name()) );
-	else
-		msg.prepend( QString::fromLatin1( "<font>" ) );
-
-	msg.append( QString::fromLatin1( "</font>" ) );
-
-	// we want a custom background-color
-	if ( bg().isValid() )
-		msg.prepend( QString::fromLatin1( "<html><body bgcolor=\"%1\">" ).arg( bg().name() ) );
-	else
-		msg.prepend( QString::fromLatin1( "<html><body>" ) );
-
-	msg.append ( QString::fromLatin1( "</body></html>" ) );
-	return msg;
 }
 
 QDomDocument KopeteMessage::asXML()
@@ -819,8 +336,11 @@ QDomDocument KopeteMessage::asXML()
 		QDomElement fromNode = doc.createElement( QString::fromLatin1("from") );
 		QDomElement cNode = doc.createElement( QString::fromLatin1("contact") );
 		cNode.setAttribute( QString::fromLatin1("contactDisplayName"), d->from->displayName() );
+		cNode.setAttribute( QString::fromLatin1("color"), d->contactColor.name() );
 		if( d->from->metaContact() )
 			cNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), d->from->metaContact()->displayName() );
+		else
+			cNode.setAttribute( QString::fromLatin1("metaContactDisplayName"), d->from->displayName() );
 		fromNode.appendChild( cNode );
 
 		messageNode.setAttribute( QString::fromLatin1("from"), d->from->displayName() );
@@ -843,7 +363,7 @@ QDomDocument KopeteMessage::asXML()
 		bodyNode.setAttribute( QString::fromLatin1("color"), d->bgColor.name() );
 		bodyNode.setAttribute( QString::fromLatin1("font"), d->font.family() );
 
-		QDomCDATASection bodyText = doc.createCDATASection( d->body );
+		QDomCDATASection bodyText = doc.createCDATASection( KopeteEmoticons::parseEmoticons(parseLinks( escapedBody() )) );
 		bodyNode.appendChild( bodyText );
 
 		messageNode.appendChild( bodyNode );
@@ -853,20 +373,7 @@ QDomDocument KopeteMessage::asXML()
 
 	return doc;
 }
-/*
-QString KopeteMessage::transform()
-{
-	QString xsl = QString::fromLatin1("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-		"<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">"
-		"<xsl:template match=\"message\">"
-		"<table><tr><td><xsl:value-of select=\"from/contact/@contactDisplayName\"/>: </td><td><xsl:value-of select=\"body\"/></td></tr></table>"
-		"</xsl:template></xsl:stylesheet>" );
 
-	kdDebug() << xsl << endl;
-
-	return KopeteXSL::transform( QString::fromLatin1("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") + asXML().toString(), xsl );
-}
-*/
 QDateTime KopeteMessage::timestamp() const
 {
 	return d->timeStamp;

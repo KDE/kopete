@@ -22,10 +22,11 @@
 #include <qtimer.h>
 #include <kdebug.h>
 #include <kopetexsl.h>
+#include <qregexp.h>
 
 extern int xmlLoadExtDtdDefaultValue;
 
-const QString KopeteXSL::xsltTransform( const QString &xmlString, const QString &xslString )
+QString KopeteXSL::xsltTransform( const QString &xmlString, const QString &xslString )
 {
 	KopeteXSLThread mThread( xmlString, xslString );
 	mThread.start();
@@ -33,7 +34,7 @@ const QString KopeteXSL::xsltTransform( const QString &xmlString, const QString 
 	return mThread.result();
 }
 
-void xsltTransformAsync( const QString &xmlString, const QString &xslString,
+void KopeteXSL::xsltTransformAsync( const QString &xmlString, const QString &xslString,
 			QObject *target, const char* slotCompleted )
 {
 	KopeteXSLThread *mThread = new KopeteXSLThread( xmlString, xslString );
@@ -41,7 +42,7 @@ void xsltTransformAsync( const QString &xmlString, const QString &xslString,
 	mThread->start();
 }
 
-const QDomDocument xsltTransform( const QDomDocument &xmlDocument, const QDomDocument &xslDocument )
+QDomDocument KopeteXSL::xsltTransform( const QDomDocument &xmlDocument, const QDomDocument &xslDocument )
 {
 	KopeteXSLThread mThread( xmlDocument.toString(), xslDocument.toString() );
 	mThread.start();
@@ -49,7 +50,7 @@ const QDomDocument xsltTransform( const QDomDocument &xmlDocument, const QDomDoc
 	return mThread.resultDocument();
 }
 
-void xsltTransformAsync( const QDomDocument &xmlDocument, const QDomDocument &xslDocument,
+void KopeteXSL::xsltTransformAsync( const QDomDocument &xmlDocument, const QDomDocument &xslDocument,
 			QObject *target, const char* slotCompleted )
 {
 	KopeteXSLThread *mThread = new KopeteXSLThread( xmlDocument.toString(), xslDocument.toString() );
@@ -111,6 +112,9 @@ void KopeteXSLThread::run()
 	xmlCleanupParser();
 	xmlMemoryDump();
 
+	//Remove escaping
+	//KopeteXSL::unescape( m_resultString );
+
 	//Save the resuling DOM document
 	m_result.setContent( m_resultString );
 
@@ -122,14 +126,13 @@ void KopeteXSLThread::run()
 	QTimer::singleShot( 500, this, SLOT( deleteLater() ) );
 }
 
-const QString &KopeteXSLThread::result()
+void KopeteXSL::unescape( QString &xml )
 {
-	return m_resultString;
-}
-
-const QDomDocument &KopeteXSLThread::resultDocument()
-{
-	return m_result;
+	xml.replace( QRegExp( QString::fromLatin1( "\"\"" ) ), QString::fromLatin1( "\"" ) );
+	xml.replace( QRegExp( QString::fromLatin1( "&gt;" ) ), QString::fromLatin1( ">" ) );
+	xml.replace( QRegExp( QString::fromLatin1( "&lt;" ) ), QString::fromLatin1( "<" ) );
+	xml.replace( QRegExp( QString::fromLatin1( "&quot;" ) ), QString::fromLatin1( "\"" ) );
+	xml.replace( QRegExp( QString::fromLatin1( "&amp;" ) ), QString::fromLatin1( "&" ) );
 }
 
 int KopeteXSLThread::writeToQString( void * context, const char * buffer, int len )

@@ -37,7 +37,7 @@ class KopeteXSL
 		 * @param xslString The source XSL
 		 * @return The result of the transformation
 		 */
-		static const QString xsltTransform( const QString &xmlString, const QString &xslString );
+		static QString xsltTransform( const QString &xmlString, const QString &xslString );
 
 		/**
 		 * Transforms the XML string using the XSL String, asynchronously
@@ -45,7 +45,7 @@ class KopeteXSL
 		 * @param xmlString The source XML
 		 * @param xslString The source XSL
 		 * @param target The QObject that contains the slot to be executed when processing is complete
-		 * @param slotCompleted A slot that accepts a const QString & paramater, that is the result
+		 * @param slotCompleted A slot that accepts a QString & paramater, that is the result
 		 *	of the transformation
 		 */
 		static void xsltTransformAsync( const QString &xmlString, const QString &xslString,
@@ -58,7 +58,7 @@ class KopeteXSL
 		 * @param xslDocument The source XSL
 		 * @return The result of the transformation
 		 */
-		static const QDomDocument xsltTransform( const QDomDocument &xmlDocument, const QDomDocument &xslDocument );
+		static QDomDocument xsltTransform( const QDomDocument &xmlDocument, const QDomDocument &xslDocument );
 
 		/**
 		 * Transforms the XML string using the XSL String, asynchronously
@@ -66,11 +66,18 @@ class KopeteXSL
 		 * @param xmlDocument The source XML Document
 		 * @param xslDocument The source XSL Document
 		 * @param target The QObject that contains the slot to be executed when processing is complete
-		 * @param slotCompleted A slot that accepts a const QDomDocument & paramater, that is the result
+		 * @param slotCompleted A slot that accepts a QDomDocument & paramater, that is the result
 		 *	of the transformation
 		 */
 		static void xsltTransformAsync( const QDomDocument &xmlDocument, const QDomDocument &xslDocument,
 			QObject *target, const char* slotCompleted );
+
+		/**
+		 * Unescapes a string, removing XML entitiy references
+		 *
+		 * @param xml The string you want to unescape
+		 */
+		static void unescape( QString &xml );
 };
 
 /**
@@ -100,23 +107,23 @@ class KopeteXSLThread : public QObject, public QThread
 		/**
 		 * Returns the result string
 		 */
-		const QString &result();
+		const QString &result() { return m_resultString; };
 
 		/**
 		 * Returns the result document
 		 */
-		const QDomDocument &resultDocument();
+		const QDomDocument &resultDocument() { return m_result; };
 
 	signals:
 		/**
 		 * Emits when the transformation is complete
 		 */
-		void complete( const QString & );
+		void complete( QString & );
 
 		/**
 		 * Emits when the transformation is complete
 		 */
-		void documentComplete( const QDomDocument & );
+		void documentComplete( QDomDocument & );
 
 	private:
 		/**

@@ -40,7 +40,7 @@ public:
 	 * Direction of a message. Inbound is from the chat partner, Outbound is
 	 * from the user.
 	 */
-	enum MessageDirection { Inbound, Outbound, Internal, Action };
+	enum MessageDirection { Inbound = 0, Outbound = 1, Internal= 2, Action = 3 };
 
 	/**
 	 * Format of the body
@@ -257,25 +257,9 @@ public:
 	 */
 	QString parsedBody() const ;
 
-	/**
-	 * internal Functions
-	 *
-	 */
-	QString asHTML() const;
-
 	QDomDocument asXML();
 
-	QString transformMessage( const QString &model ) const;
-
 	void setBgOverride( bool enable );
-
-	/**
-	 * Use it to parse HTML in text.
-	 * You dont need to use this for chat windows,
-	 * There is a special class that abstract a chat view
-	 * and uses HTML parser.
-	 */
-	static QString parseHTML( const QString &message, bool parseURLs = true );
 
 	/**
 	 * Highlight the message with the default highlight options
@@ -304,15 +288,7 @@ private:
 	 */
 	void compareColors( QColor &colorFg, QColor &colorBg );
 
-	/**
-	 * Helper method for transformMessage for formatting names for display
-	 */
-	QString formatDisplayName( const QString &name ) const;
-
-	/**
-	 * Helper method for transformMessage for finding closing % tag
-	 */
-	int findClosingTag( const QString &model, int openTag ) const;
+	QString parseLinks( const QString &message ) const;
 };
 
 #endif

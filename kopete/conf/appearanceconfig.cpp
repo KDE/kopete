@@ -74,7 +74,7 @@
 #include "kopeteaway.h"
 #include "kopeteawayconfigui.h"
 #include "styleeditdialog.h"
-
+#include "kopetexsl.h"
 
 #include <qtabwidget.h>
 
@@ -386,7 +386,12 @@ void AppearanceConfig::slotAddStyle()
 	KLibFactory *factory = KLibLoader::self()->factory( service->library() );
 	editDocument = static_cast<KTextEditor::Document *>( factory->create( styleEditor->editFrame, 0, "KTextEditor::Document" ) );
 	editDocument->createView( styleEditor->editFrame, 0 )->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding) );
-	KTextEditor::editInterface( editDocument )->setText( QString::fromLatin1("<table width=\"100%%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n\n\n\n</td></tr></table>") );
+	KTextEditor::editInterface( editDocument )->setText(
+		QString::fromLatin1(
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			"<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n"
+			"<xsl:output method=\"html\"/>\n"
+			"<xsl:template match=\"message\">\n\n\n\n</xsl:template>\n</xsl:stylesheet>") );
 	updateHighlight();
 	styleEditor->show();
 	connect( styleEditor->buttonOk, SIGNAL(clicked()), this, SLOT(slotStyleSaved()) );
@@ -399,7 +404,7 @@ void AppearanceConfig::updateHighlight()
 	int count = hi->hlModeCount();
 	for( int i=0; i < count; i++ )
 	{
-		if( hi->hlModeName(i) == QString::fromLatin1("HTML") )
+		if( hi->hlModeName(i) == QString::fromLatin1("XML") )
 		{
 			hi->setHlMode(i);
 			break;
@@ -467,36 +472,28 @@ void AppearanceConfig::slotUpdatePreview()
 	}
 
 	preview->begin();
-	preview->write( QString::fromLatin1( "<html><head><style>body{font-family:%1;color:%2;}td{font-family:%3;color:%4}</style></head><body bgcolor=\"%5\" vlink=\"%6\" link=\"%7\">" )
+	preview->write( QString::fromLatin1( "<html><head><style>body{font-family:%1;color:%2;}td{font-family:%3;color:%4;}.highlight{color:%5;background-color:%6}</style></head><body bgcolor=\"%7\" vlink=\"%8\" link=\"%9\">" )
 		.arg( mPrfsChatAppearance->fontFace->font().family() )
 		.arg( mPrfsChatAppearance->textColor->color().name() )
 		.arg( mPrfsChatAppearance->fontFace->font().family() )
 		.arg( mPrfsChatAppearance->textColor->color().name() )
+		.arg( mPrfsChatAppearance->foregroundColor->color().name() )
 		.arg( mPrfsChatAppearance->bgColor->color().name() )
+		.arg( mPrfsChatAppearance->backgroundColor->color().name() )
 		.arg( mPrfsChatAppearance->linkColor->color().name() )
 		.arg( mPrfsChatAppearance->linkColor->color().name() ) );
 
-
 	// incoming messages
-	preview->write( msgIn->transformMessage( model ) );
+	preview->write( KopeteXSL::xsltTransform( msgIn->asXML().toString(), model ) );
 	msgIn->setFg(Qt::white);
 	msgIn->setBg(Qt::blue);
 	msgIn->setBody( QString::fromLatin1("This is a colored incoming message (random color)") );
-	preview->write( msgIn->transformMessage( model ) );
-	// -------------------
 
-	// internal message
-	preview->write( msgInt->transformMessage( model ) );
-
-	//highlighted message
-	if( mPrfsChatAppearance->highlightEnabled->isChecked() )
-	{
-		msgHigh->setFg( mPrfsChatAppearance->foregroundColor->color() );
-		msgHigh->setBg( mPrfsChatAppearance->backgroundColor->color() );
-	}
-	preview->write( msgHigh->transformMessage( model ) );
-
-	preview->write( msgAct->transformMessage( model ) );
+	preview->write( KopeteXSL::xsltTransform( msgIn->asXML().toString(), model ) );
+	preview->write( KopeteXSL::xsltTransform( msgOut->asXML().toString(), model ) );
+	preview->write( KopeteXSL::xsltTransform( msgInt->asXML().toString(), model ) );
+	preview->write( KopeteXSL::xsltTransform( msgAct->asXML().toString(), model ) );
+	preview->write( KopeteXSL::xsltTransform( msgHigh->asXML().toString(), model ) );
 
 	preview->write( QString::fromLatin1( "</body></html>" ) );
 	preview->end();

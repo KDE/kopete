@@ -37,7 +37,7 @@ AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool moda
 	accountPage=0L;
 	int pluginCount = 0;
 	QListViewItem *pluginItem=0L;
-	
+
 
 	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
 	for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
@@ -89,30 +89,28 @@ void AddAccountWizard::next()
 	{
 		if(accountPage)
 			delete accountPage;
-			
-		QListViewItem *lvi=protocolListView->selectedItem();
-		if(KopeteProtocol *p=m_protocolItems[lvi] )
+
+		QListViewItem *lvi = protocolListView->selectedItem();
+		if( lvi && m_protocolItems[lvi] )
 		{
-			accountPage = p->createEditAccountWidget(0L,this);
+			if( accountPage )
+				delete accountPage;
+
+			accountPage = m_protocolItems[lvi]->createEditAccountWidget(0L,this);
 
 			//that will not be possible, but if a protocol doesn't have yet this page, we should show a inform text or textbox
 			if (!accountPage)
 				return;
 
-			QWidget *qWidget = dynamic_cast<QWidget*>( accountPage );
-			insertPage( qWidget, i18n( "Step Two: Account Information" ) , indexOf( finis) );
+			insertPage( dynamic_cast<QWidget*>(accountPage), i18n( "Step Two: Account Information" ), indexOf(finis) );
 			QWizard::next();
 		}
 		return;
 	}
-	if (currentPage() != intro &&
-		currentPage() != selectService &&
-		currentPage() != finis)
-	{
-		if (accountPage && !accountPage->validateData())
+	else if( indexOf( currentPage() ) == 2 && !accountPage->validateData() )
 			return;
-	}
-	QWizard::next();
+	else
+		QWizard::next();
 }
 
 
