@@ -98,21 +98,21 @@ void IRCContactManager::slotNewNickChange(const QString &oldnick, const QString 
 
 void IRCContactManager::slotNewMessage(const QString &originating, const QString &channel, const QString &message)
 {
-	IRCContact *from = findUser(originating.section('!', 0, 0));
+	IRCContact *from = findUser(originating);
 	IRCChannelContact *to = findChannel(channel);
 	emit privateMessage(from, to, message);
 }
 
 void IRCContactManager::slotNewPrivMessage(const QString &originating, const QString &user, const QString &message)
 {
-	IRCContact *from = findUser(originating.section('!', 0, 0));
+	IRCContact *from = findUser(originating);
 	IRCUserContact *to = findUser(user);
 	emit privateMessage(from, to, message);
 }
 
 void IRCContactManager::slotNewAction(const QString &originating, const QString &channel, const QString &message)
 {
-	IRCContact *from = findUser(originating.section('!', 0, 0));
+	IRCContact *from = findUser(originating);
 	IRCChannelContact *to = findChannel(channel);
 
 	emit action(from, to, message);
@@ -120,8 +120,8 @@ void IRCContactManager::slotNewAction(const QString &originating, const QString 
 
 void IRCContactManager::slotNewPrivAction(const QString &originating, const QString &user, const QString &message)
 {
-	IRCContact *from = findUser( originating.section('!', 0, 0) );
-	IRCUserContact *to = findUser( user );
+	IRCContact *from = findUser(originating);
+	IRCUserContact *to = findUser(user);
 
 	emit action(from, to, message);
 }
@@ -171,7 +171,7 @@ void IRCContactManager::unregisterChannel(KopeteContact *contact)
 
 IRCUserContact *IRCContactManager::findUser(const QString &name, KopeteMetaContact *m)
 {
-	IRCUserContact *user = m_users[ name ];
+	IRCUserContact *user = m_users[name.section('!', 0, 0)];
 
 	if ( !user )
 	{
@@ -192,7 +192,7 @@ IRCUserContact *IRCContactManager::findUser(const QString &name, KopeteMetaConta
 
 IRCUserContact *IRCContactManager::existUser( const QString &user ) const
 {
-	return m_users[ user ];
+	return m_users[user];
 }
 
 IRCContact *IRCContactManager::findContact( const QString &id, KopeteMetaContact *m )
