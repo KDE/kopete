@@ -51,8 +51,7 @@ public:
 	~YahooProtocol();
 	
 	static YahooProtocol *protocol();
-
-	/* Plugin reimplementation */
+	
 	virtual void init();
 	virtual bool unload();
 
@@ -64,14 +63,12 @@ public:
 	int port() { return m_port; }
 
 public slots:
-	virtual AddContactPage *createAddContactWidget(QWidget * parent); // Return "add contact" dialog
+	virtual AddContactPage *createAddContactWidget(QWidget * parent);
 	virtual EditAccountWidget *createEditAccountWidget(KopeteAccount *account, QWidget *parent);
 	virtual KopeteAccount *createNewAccount(const QString &accountId);
+	virtual bool addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact);
 
-	void slotSettingsChanged(void);
-						// Callback when settings changed
-signals:
-//	void protocolUnloading();	// Unload Protocol
+	void slotSettingsChanged(void);					// Callback when settings changed
 
 private:
 	static YahooProtocol* s_protocolStatic_;

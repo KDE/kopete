@@ -62,6 +62,12 @@ YahooContact::~YahooContact()
 	kdDebug(14180) << "Yahoo::~YahooContact()" << endl;
 }
 
+void YahooContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData)
+{
+	kdDebug(14180) << "Yahoo::serialize(...)" << endl;
+	KopeteContact::serialize(serializedData, addressBookData);
+}
+
 void YahooContact::setYahooStatus( YahooStatus::Status status_, const QString &msg, int /*away*/)
 {
 	kdDebug(14180) << "Yahoo::setYahooStatus( " << status_ << ", " << msg << ")" << endl;
@@ -159,13 +165,6 @@ void YahooContact::slotMessageManagerDestroyed()
 {
 	m_manager = 0L;
 }
-
-/*
-QPixmap YahooContact::scaledStatusIcon(int size)
-{
-
-}
-*/
 
 KActionCollection *YahooContact::customContextMenuActions()
 {

@@ -45,8 +45,6 @@ public:
 	YahooContact *contact(const QString &id);			// returns a contact of name "id"
 	virtual KActionMenu* actionMenu() { return actionStatusMenu; }
 
-	virtual bool isConnected() const;				// are we connected?
-	virtual bool isAway() const;					// check away status
 	virtual void setAway(bool);					// set away status
 	
 	YahooSession *yahooSession();					// the session
@@ -101,7 +99,6 @@ private:
 	bool theHaveContactList;	// Do we have the full server-side contact list yet?
 
 	
-	bool m_isConnected;		// Am I connected?
 	int m_sessionId;		// The Yahoo session descriptor
 				
 	YahooPreferences *m_prefs;	// Preferences Object

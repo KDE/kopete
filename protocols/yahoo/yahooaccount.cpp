@@ -31,24 +31,28 @@
 #include "kopetemessage.h"
 #include "kopeteviewmanager.h"
 #include "kopetemessagemanager.h"
+#include "kopeteonlinestatus.h"
 
 // Yahoo
 #include "yahooaccount.h"
 #include "yahooprotocol.h"
 #include "yahoocontact.h"
 
-YahooAccount::YahooAccount( YahooProtocol *parent, const QString& AccountID, const char *name )
-: KopeteAccount ( parent, AccountID , name )
+YahooAccount::YahooAccount(YahooProtocol *parent, const QString& AccountID, const char *name)
+: KopeteAccount(parent, AccountID, name)
 {
 	kdDebug(14180) << "YahooAccount::YahooAccount(parent, " << AccountID << ", " << QString(name) << ")" << endl;
 
+	// first things first - initialise internals
 	theHaveContactList = false;
-	initActions();
-//	setStatusIcon("yahoo_offline");
-	m_isConnected = false;
-
+	
+	// we need this quite early (before initActions at least)
 	kdDebug(14180) << "Yahoo: Creating myself with name = " << accountId() << endl;
-	m_myself = new YahooContact( this, accountId(), accountId(), 0L );
+	m_myself = new YahooContact(this, accountId(), accountId(), 0);
+	m_myself->setOnlineStatus(KopeteOnlineStatus::Offline);
+	
+	// now initialise the menu actions
+	initActions();
 	
 	if(autoLogin()) connect();
 }
@@ -97,8 +101,7 @@ void YahooAccount::connect()
 		m_session = session_;
 		if(session_)
 		{	QTimer::singleShot(5000, this, SLOT(slotGotBuddiesTimeout()));
-//			setStatusIcon( "yahoo_online" );
-			m_isConnected = true;
+			m_myself->setOnlineStatus(KopeteOnlineStatus::Online);
 			/* We have a session, time to connect its signals to our plugin slots */
 			QObject::connect( session_ , SIGNAL(loginResponse( int,  const QString &)), this , SLOT(slotLoginResponse( int, const QString &)) );
 			QObject::connect( session_ , SIGNAL(gotBuddy(const QString &, const QString &, const QString &)), this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
@@ -136,9 +139,8 @@ void YahooAccount::disconnect()
 	if(isConnected())
 	{	kdDebug(14180) <<  "Attempting to disconnect from Yahoo server " << endl;
 		m_session->logOff();
-		//setStatusIcon( "yahoo_offline" );
+		m_myself->setOnlineStatus(KopeteOnlineStatus::Offline);
 		//m_engine->Disconnect();
-		m_isConnected = false;
 	}
 	else	// Again, what's with the crack? Sheez.
 		kdDebug(14180) << "Ignoring disconnect request (not connected)." << endl;
@@ -148,26 +150,9 @@ void YahooAccount::setAway(bool status)
 {
 	kdDebug(14180) << "YahooAccount::setAway(" << status << ")" << endl;
 	// TODO: make it work!
+	
 }
 
-bool YahooAccount::isConnected() const
-{
-	kdDebug(14180) << "YahooAccount::isConnected()" << endl;
-	return m_isConnected;
-}
-
-bool YahooAccount::isAway() const
-{
-	kdDebug(14180) << "YahooAccount::isAway()" << endl;
-	// TODO: make it work!
-	return false;
-}
-/*
-KActionMenu* YahooAccount::protocolActions()
-{
-	return actionStatusMenu;
-}
-*/
 void YahooAccount::slotConnected()
 {
 	kdDebug(14180) << "Yahoo: CONNECTED" << endl;
@@ -190,11 +175,12 @@ void YahooAccount::initActions()
 {
 	kdDebug(14180) << "YahooAccount::initActions()" << endl;
 
+	// TODO: These need to point to real slots that actually do the job!
 	actionGoOnline = new KAction(i18n(YSTAvailable), "yahoo_online",
 				0, this, SLOT(connect()), this, "actionYahooConnect");
 	actionGoOffline = new KAction(i18n("Offline"), "yahoo_offline",
 				0, this, SLOT(disconnect()), this, "actionYahooDisconnect");
-	actionGoStatus001 = new KAction(i18n(YSTBeRightBack), "yahoo_busy",
+/*	actionGoStatus001 = new KAction(i18n(YSTBeRightBack), "yahoo_busy",
 				0, this, SLOT(connect()), this, "actionYahooConnect");
 	actionGoStatus002 = new KAction(i18n(YSTBusy), "yahoo_busy",
 				0, this, SLOT(connect()), this, "actionYahooConnect");
@@ -218,13 +204,13 @@ void YahooAccount::initActions()
 				0, this, SLOT(connect()), this, "actionYahooConnect"); // XXX Get some dialogbox
 	actionGoStatus999 = new KAction(i18n(YSTIdle), "yahoo_idle",
 				0, this, SLOT(connect()), this, "actionYahooConnect");
-
+*/
 	QString handle = accountId();
-	actionStatusMenu = new KActionMenu("Yahoo", this);
-//	actionStatusMenu->popupMenu()->insertTitle(statusIcon(), handle);
+	actionStatusMenu = new KActionMenu("Yahoo ("+m_myself->displayName()+")", this);
+	actionStatusMenu->popupMenu()->insertTitle(m_myself->onlineStatus().icon(), handle);
 	actionStatusMenu->insert(actionGoOnline);
 	actionStatusMenu->insert(actionGoOffline);
-	actionStatusMenu->insert(actionGoStatus001);
+/*	actionStatusMenu->insert(actionGoStatus001);
 	actionStatusMenu->insert(actionGoStatus002);
 	actionStatusMenu->insert(actionGoStatus003);
 	actionStatusMenu->insert(actionGoStatus004);
@@ -236,6 +222,7 @@ void YahooAccount::initActions()
 	actionStatusMenu->insert(actionGoStatus012);
 	actionStatusMenu->insert(actionGoStatus099);
 	actionStatusMenu->insert(actionGoStatus999);
+*/
 }
 
 void YahooAccount::slotGotBuddiesTimeout()
@@ -310,7 +297,7 @@ void YahooAccount::slotGotIdentities( const QStringList & /* ids */ )
 
 void YahooAccount::slotStatusChanged( const QString &who, int stat, const QString &msg, int away)
 {
-	kdDebug(14180) << "[YahooAccount::slotStatusChanged]" << endl;
+	kdDebug(14180) << "[YahooAccount::slotStatusChanged(" << who << ", " << stat << ", " << msg << ", " << away << "]" << endl;
 	if(contact(who))
 		contact(who)->setYahooStatus( YahooStatus::fromLibYahoo2(stat), msg, away);
 }

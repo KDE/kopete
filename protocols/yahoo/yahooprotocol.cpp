@@ -43,6 +43,7 @@
 #include "yahooeditaccount.h"
 
 /* Kopete Includes */
+#include "kopeteaccountmanager.h"
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
@@ -57,25 +58,23 @@ YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringLi
 {
 	kdDebug(14180) << "YahooProtocol::YahooProtocol()" << endl;
 
-	if ( !s_protocolStatic_ )
+	if(!s_protocolStatic_)
 		s_protocolStatic_ = this;
 	else
 		kdDebug(14180) << "YahooProtocol already initialized" << endl;
 
-	/* Init actions and icons and create the status bar icon */
+	// Init actions and icons and create the status bar icon
 //	initActions();
+	// TODO: this will be useful for introduing yahoo specific actions in the future, but i cant be bothered yet.
 
-//	setStatusIcon( "yahoo_offline" );
 
-	/* Create preferences menu */
+	// Create preferences menu
 	m_prefs = new YahooPreferences("yahoo_protocol", this);
 
-	/* Call slotSettingsChanged() to get it all registered. */
+	// Call slotSettingsChanged() to get it all registered.
 	slotSettingsChanged();
 
 	QObject::connect( m_prefs, SIGNAL(saved(void)), this, SLOT(slotSettingsChanged(void)));
-
-//	m_isConnected = false;
 
 	addAddressBookField( "messaging/yahoo", KopetePlugin::MakeIndexField );
 }
@@ -104,14 +103,20 @@ void YahooProtocol::deserializeContact( KopeteMetaContact *metaContact,
 	const QMap<QString, QString> &serializedData, const QMap<QString, QString> & /* addressBookData */ )
 {
 	QString contactId = serializedData[ "contactId" ];
-/*	if(contact(contactId))
-	{
-		kdDebug( 14180 ) << k_funcinfo << "User " << contactId << " already in contacts map" << endl;
+	QString accountId = serializedData[ "accountId" ];
+
+	YahooAccount *theAccount = KopeteAccountManager::manager()->findAccount("YahooProtocol", accountId);
+	if(!theAccount)
+	{	kdDebug( 14180 ) << k_funcinfo << "Account " << accountId << " not found" << endl;
 		return;
 	}
-*/	// TODO: this might have done something useful - perhaps it should be reimplemented?
+	
+	if(theAccount->contact(contactId))
+	{	kdDebug( 14180 ) << k_funcinfo << "User " << contactId << " already in contacts map" << endl;
+		return;
+	}
 
-	addContact( contactId, serializedData[ "displayName" ], metaContact, serializedData[ "group" ] );
+	theAccount->addContact(contactId, serializedData["displayName"], metaContact, serializedData["group"]);
 }
 
 void YahooProtocol::init()
@@ -126,7 +131,7 @@ bool YahooProtocol::unload()
 void YahooProtocol::slotSettingsChanged()
 {
 	kdDebug(14180) << "YahooProtocol::slotSettingsChanged()" <<endl;
-	m_server   = KGlobal::config()->readEntry("Server", "cs.yahoo.com");
+	m_server   = KGlobal::config()->readEntry("Server", "scs.yahoo.com");
 	m_port     = KGlobal::config()->readNumEntry("Port", 5050);
 	m_logAll   = KGlobal::config()->readBoolEntry("LogAll", true);
 }
@@ -146,6 +151,12 @@ EditAccountWidget *YahooProtocol::createEditAccountWidget(KopeteAccount *account
 KopeteAccount *YahooProtocol::createNewAccount(const QString &accountId)
 {
 	return new YahooAccount(this, accountId);
+}
+
+bool YahooProtocol::addContactToMetaContact(const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact)
+{
+	// for now, just add it to the first account we have
+	
 }
 
 #include "yahooprotocol.moc"

@@ -20,24 +20,26 @@
 #ifndef YAHOOCONTACT_H
 #define YAHOOCONTACT_H
 
-/* Local Includes */
-#include "yahooprotocol.h"
-#include "yahoostatus.h"
+/* QT Includes */
+#include <qtimer.h>
+
+/* KDE Includes */
+
 /* Kopete Includes */
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
 
-/* QT Includes */
-#include <qtimer.h>
-/* KDE Includes */
+/* Local Includes */
+#include "yahooprotocol.h"
+#include "yahoostatus.h"
 
 class YahooProtocol;
 class KopeteMessageManager;
 
 class YahooContact : public KopeteContact
 {
-	Q_OBJECT public:
-
+	Q_OBJECT
+public:
 	YahooContact(KopeteAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact);
 	~YahooContact();
 
@@ -45,6 +47,7 @@ class YahooContact : public KopeteContact
 	virtual bool isReachable();
 	virtual KActionCollection *customContextMenuActions();
 	virtual KopeteMessageManager *manager( bool canCreate = false );
+	virtual void serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData);
 
 	void setYahooStatus( YahooStatus::Status , const QString &, int  );
 
