@@ -722,7 +722,7 @@ QString KopeteContact::toolTip() const
 		else
 		{
 			p = property(*it);
-			if(!p.isEmpty())
+			if(!p.isNull())
 			{
 				QVariant val = p.value();
 				QString valueText;
@@ -758,9 +758,9 @@ QString KopeteContact::formattedName() const
 
 	first = property(QString::fromLatin1("firstName"));
 	last = property(QString::fromLatin1("lastName"));
-	if(!first.isEmpty())
+	if(!first.isNull())
 	{
-		if(!last.isEmpty()) // contact has both first and last name
+		if(!last.isNull()) // contact has both first and last name
 		{
 			ret = i18n("firstName lastName", "%2 %1")
 				.arg(last.value().toString())
@@ -771,7 +771,7 @@ QString KopeteContact::formattedName() const
 			ret = first.value().toString();
 		}
 	}
-	else if(!last.isEmpty()) // only last name set
+	else if(!last.isNull()) // only last name set
 	{
 		ret = last.value().toString();
 	}
