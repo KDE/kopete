@@ -335,8 +335,6 @@ public:
 	 **/
 	QString toolTip() const;
 
-	virtual QPixmap userPhoto() const;
-
 	/**
 	 * Returns a formatted string of "firstName" and/or "lastName" properties
 	 * if present.
