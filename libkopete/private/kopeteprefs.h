@@ -106,6 +106,7 @@ public:
 	QColor contactListGroupNameColor() const { return mContactListGroupNameColor; }
 	bool contactListAnimation() const { return mContactListAnimation; }
 	bool contactListFading() const { return mContactListFading; }
+	bool contactListFolding() const { return mContactListFolding; }
 
 	bool reconnectOnDisconnect() const { return mReconnectOnDisconnect; }
 
@@ -155,6 +156,7 @@ public:
 	void setContactListGroupNameColor( const QColor & v );
 	void setContactListAnimation( bool );
 	void setContactListFading( bool );
+	void setContactListFolding( bool );
 	void setReconnectOnDisconnect( bool newSetting );
 
 signals:
@@ -240,6 +242,7 @@ private:
 	QColor mContactListGroupNameColor;
 	bool mContactListAnimation;
 	bool mContactListFading;
+	bool mContactListFolding;
 
 	bool mReconnectOnDisconnect;
 

@@ -95,8 +95,9 @@ void KopetePrefs::load()
 	mShowTray = config->readBoolEntry("Show Systemtray", true);
 
 	/*
-	The stylesheet config value is now just the basename of the xsl file ie: Messenger, Kopete
-	T avoid having fallback duplicate code, I used the extract method pattern and left all in _setStyleSheet
+	The stylesheet config value is now just the basename of the xsl file ie: Messenger, Kopete.
+	To avoid having duplicated fallback code, I used the extract method refactoring and left all in
+	_setStyleSheet.
 	*/
 	_setStyleSheet(config->readEntry("Stylesheet", QString::fromLatin1(KOPETE_DEFAULT_CHATSTYLE)));
 
@@ -134,12 +135,13 @@ void KopetePrefs::load()
 	mContactListGroupNameColor = config->readColorEntry("GroupNameColor", &darkRed);
 	mContactListAnimation = config->readBoolEntry("AnimateChanges", true);
 	mContactListFading = config->readBoolEntry("FadeItems", true);
+	mContactListFolding = config->readBoolEntry("FoldItems", true);
 
-	//Load the reconnection setting
+	// Load the reconnection setting
 	config->setGroup("General");
 	mReconnectOnDisconnect = config->readBoolEntry("ReconnectOnDisconnect", true);
 
-
+	// Nothing has changed yet
 	mWindowAppearanceChanged = false;
 	mTransparencyChanged = false;
 	mContactListAppearanceChanged = false;
@@ -203,7 +205,8 @@ void KopetePrefs::save()
 	config->writeEntry("GroupNameColor", mContactListGroupNameColor);
 	config->writeEntry("AnimateChanges", mContactListAnimation);
 	config->writeEntry("FadeItems", mContactListFading);
-	
+	config->writeEntry("FoldItems", mContactListFolding);
+
 	//Save the reconnection setting
 	config->setGroup("General");
 	config->writeEntry("ReconnectOnDisconnect", mReconnectOnDisconnect);
@@ -233,43 +236,43 @@ void KopetePrefs::save()
 
 void KopetePrefs::setIconTheme(const QString &value)
 {
-	mMessageAppearanceChanged |= mIconTheme != value;
+	if( mIconTheme != value ) mMessageAppearanceChanged = true;
 	mIconTheme = value;
 }
 
 void KopetePrefs::setUseEmoticons(bool value)
 {
-	mMessageAppearanceChanged |= mUseEmoticons != value;
+	if( mUseEmoticons != value ) mMessageAppearanceChanged = true;
 	mUseEmoticons = value;
 }
 
 void KopetePrefs::setShowOffline(bool value)
 {
-	mContactListAppearanceChanged = mContactListAppearanceChanged || !(value == mShowOffline);
+	if( value != mShowOffline ) mContactListAppearanceChanged = true;
 	mShowOffline = value;
 }
 
 void KopetePrefs::setShowEmptyGroups(bool value)
 {
-	mContactListAppearanceChanged = mContactListAppearanceChanged || !(value == mShowEmptyGroups);
+	if( value != mShowEmptyGroups ) mContactListAppearanceChanged = true;
 	mShowEmptyGroups = value;
 }
 
 void KopetePrefs::setTreeView(bool value)
 {
-	mContactListAppearanceChanged = mContactListAppearanceChanged || !(value == mTreeView);
+	if( value != mTreeView ) mContactListAppearanceChanged = true;
 	mTreeView = value;
 }
 
 void KopetePrefs::setSortByGroup(bool value)
 {
-	mContactListAppearanceChanged = mContactListAppearanceChanged || !(value == mSortByGroup);
+	if( value != mSortByGroup ) mContactListAppearanceChanged = true;
 	mSortByGroup = value;
 }
 
 void KopetePrefs::setGreyIdleMetaContacts(bool value)
 {
-	mContactListAppearanceChanged = mContactListAppearanceChanged || !(value == mGreyIdle);
+	if( value != mGreyIdle ) mContactListAppearanceChanged = true;
 	mGreyIdle = value;
 }
 
@@ -316,7 +319,7 @@ void KopetePrefs::setSoundIfAway(bool value)
 
 void KopetePrefs::setStyleSheet(const QString &value)
 {
-	mMessageAppearanceChanged |= mStyleSheet != value;
+	if( mStyleSheet != value ) mMessageAppearanceChanged = true;
 	_setStyleSheet(value);
 }
 
@@ -342,25 +345,25 @@ void KopetePrefs::_setStyleSheet(const QString &value)
 
 void KopetePrefs::setFontFace( const QFont &value )
 {
-	mWindowAppearanceChanged = mWindowAppearanceChanged || !(value == mFontFace);
+	if( value != mFontFace ) mWindowAppearanceChanged = true;
 	mFontFace = value;
 }
 
 void KopetePrefs::setTextColor( const QColor &value )
 {
-	mWindowAppearanceChanged = mWindowAppearanceChanged || !(value == mTextColor);
+	if( value != mTextColor ) mWindowAppearanceChanged = true;
 	mTextColor = value;
 }
 
 void KopetePrefs::setBgColor( const QColor &value )
 {
-	mWindowAppearanceChanged = mWindowAppearanceChanged || !(value == mBgColor);
+	if( value != mBgColor ) mWindowAppearanceChanged = true;
 	mBgColor = value;
 }
 
 void KopetePrefs::setLinkColor( const QColor &value )
 {
-	mWindowAppearanceChanged = mWindowAppearanceChanged || !(value == mLinkColor);
+	if( value != mLinkColor ) mWindowAppearanceChanged = true;
 	mLinkColor = value;
 }
 
@@ -376,13 +379,13 @@ void KopetePrefs::setInterfacePreference(ChatWindowPref value)
 
 void KopetePrefs::setTransparencyEnabled(bool value)
 {
-	mTransparencyChanged =  mTransparencyChanged || !(value == mTransparencyEnabled);
+	if( value != mTransparencyEnabled ) mTransparencyChanged = true;
 	mTransparencyEnabled = value;
 }
 
 void KopetePrefs::setTransparencyColor(const QColor &value)
 {
-	mTransparencyChanged =  mTransparencyChanged || !(value == mTransparencyColor);
+	if( value != mTransparencyColor ) mTransparencyChanged = true;
 	mTransparencyColor = value;
 }
 
@@ -393,43 +396,43 @@ void KopetePrefs::setChatViewBufferSize( int value )
 
 void KopetePrefs::setHighlightBackground(const QColor &value)
 {
-	mWindowAppearanceChanged = mWindowAppearanceChanged || !(value == mHighlightBackground);
+	if( value != mHighlightBackground ) mWindowAppearanceChanged = true;
 	mHighlightBackground = value;
 }
 
 void KopetePrefs::setHighlightForeground(const QColor &value)
 {
-	mWindowAppearanceChanged = mWindowAppearanceChanged || !(value == mHighlightForeground);
+	if( value != mHighlightForeground ) mWindowAppearanceChanged = true;
 	mHighlightForeground = value;
 }
 
 void KopetePrefs::setHighlightEnabled(bool value)
 {
-	mWindowAppearanceChanged = mWindowAppearanceChanged || !(value == mHighlightEnabled);
+	if( value != mHighlightEnabled ) mWindowAppearanceChanged = true;
 	mHighlightEnabled = value;
 }
 
 void KopetePrefs::setTransparencyValue(int value)
 {
-	mWindowAppearanceChanged = mWindowAppearanceChanged || !(value == mTransparencyValue);
+	if( value != mTransparencyValue ) mWindowAppearanceChanged = true;
 	mTransparencyValue = value;
 }
 
 void KopetePrefs::setBgOverride(bool value)
 {
-	mMessageAppearanceChanged = mMessageAppearanceChanged || !(value == mBgOverride);
+	if( value != mBgOverride ) mMessageAppearanceChanged = true;
 	mBgOverride = value;
 }
 
 void KopetePrefs::setFgOverride(bool value)
 {
-	mMessageAppearanceChanged = mMessageAppearanceChanged || !(value == mFgOverride);
+	if( value != mFgOverride ) mMessageAppearanceChanged = true;
 	mFgOverride = value;
 }
 
 void KopetePrefs::setRtfOverride(bool value)
 {
-	mMessageAppearanceChanged = mMessageAppearanceChanged || !(value == mRtfOverride);
+	if( value != mRtfOverride ) mMessageAppearanceChanged = true;
 	mRtfOverride = value;
 }
 
@@ -458,7 +461,7 @@ QString KopetePrefs::fileContents(const QString &path)
 
 void KopetePrefs::setIdleContactColor(const QColor &value)
 {
-	mContactListAppearanceChanged = mContactListAppearanceChanged || !(value == mIdleContactColor);
+	if( value != mIdleContactColor ) mContactListAppearanceChanged = true;
 	mIdleContactColor = value;
 }
 
@@ -474,31 +477,31 @@ void KopetePrefs::setToolTipContents(const QStringList &value)
 
 void KopetePrefs::setContactListIndentContacts( bool v )
 {
-	mContactListAppearanceChanged = mContactListAppearanceChanged || !(v == mContactListIndentContacts);
+	if( v != mContactListIndentContacts ) mContactListAppearanceChanged = true;
 	mContactListIndentContacts = v;
 }
 
 void KopetePrefs::setContactListDisplayMode( ContactDisplayMode v )
 {
-	mContactListAppearanceChanged = mContactListAppearanceChanged || !(v == mContactListDisplayMode);
+	if( v != mContactListDisplayMode ) mContactListAppearanceChanged = true;
 	mContactListDisplayMode = v;
 }
 
 void KopetePrefs::setContactListUseCustomFonts( bool v )
 {
-	mContactListAppearanceChanged = mContactListAppearanceChanged || !(v == mContactListUseCustomFonts);
+	if( v != mContactListUseCustomFonts ) mContactListAppearanceChanged = true;
 	mContactListUseCustomFonts = v;
 }
 
 void KopetePrefs::setContactListCustomNormalFont( const QFont & v )
 {
-	mContactListAppearanceChanged = mContactListAppearanceChanged || !(v == mContactListNormalFont);
+	if( v != mContactListNormalFont ) mContactListAppearanceChanged = true;
 	mContactListNormalFont = v;
 }
 
 void KopetePrefs::setContactListCustomSmallFont( const QFont & v )
 {
-	mContactListAppearanceChanged = mContactListAppearanceChanged || !(v == mContactListSmallFont);
+	if( v != mContactListSmallFont ) mContactListAppearanceChanged = true;
 	mContactListSmallFont = v;
 }
 
@@ -516,20 +519,26 @@ QFont KopetePrefs::contactListSmallFont() const
 
 void KopetePrefs::setContactListGroupNameColor( const QColor & v )
 {
-	mContactListAppearanceChanged = mContactListAppearanceChanged || !(v == mContactListGroupNameColor);
+	if( v != mContactListGroupNameColor ) mContactListAppearanceChanged = true;
 	mContactListGroupNameColor = v;
 }
 
 void KopetePrefs::setContactListAnimation( bool n )
 {
-	mContactListAppearanceChanged = mContactListAppearanceChanged || !(n == mContactListAnimation);
+	if( n != mContactListAnimation ) mContactListAppearanceChanged = true;
 	mContactListAnimation = n;
 }
 
 void KopetePrefs::setContactListFading( bool n )
 {
-	mContactListAppearanceChanged = mContactListAppearanceChanged || !(n == mContactListFading);
+	if( n != mContactListFading ) mContactListAppearanceChanged = true;
 	mContactListFading = n;
+}
+
+void KopetePrefs::setContactListFolding( bool n )
+{
+	if( n != mContactListFolding ) mContactListAppearanceChanged = true;
+	mContactListFolding = n;
 }
 
 void KopetePrefs::setReconnectOnDisconnect( bool newSetting )
