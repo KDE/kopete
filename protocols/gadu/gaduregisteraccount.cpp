@@ -62,7 +62,7 @@ GaduRegisterAccount::GaduRegisterAccount( QWidget* parent, const char* name )
 	connect( cRegister, SIGNAL( error(  const QString&,  const QString& ) ), SLOT( registrationError(  const QString&,  const QString& ) ) );
 	connect( cRegister, SIGNAL( operationStatus( const QString ) ), SLOT( updateStatus( const QString ) ) );
 
-	updateStatus( i18n( "Retriving token" ) );
+	updateStatus( i18n( "Retrieving token" ) );
 	cRegister->requestToken();
 
 	show();
@@ -162,7 +162,7 @@ GaduRegisterAccount::registrationError(  const QString& title,  const QString& w
 	connect( cRegister, SIGNAL( error(  const QString&,  const QString& ) ), SLOT( registrationError(  const QString&,  const QString& ) ) );
 	connect( cRegister, SIGNAL( operationStatus( const QString ) ), SLOT( updateStatus( const QString ) ) );
 
-	updateStatus( i18n( "Retriving token" ) );
+	updateStatus( i18n( "Retrieving token" ) );
 	cRegister->requestToken();
 }
 
