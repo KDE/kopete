@@ -3,7 +3,6 @@
 
 #include <klocale.h>
 
-#include "kopetewindow.h"
 #include "jabberaddcontactpage.h"
 #include "jabberprotocol.h"
 

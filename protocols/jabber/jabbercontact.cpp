@@ -39,7 +39,6 @@
 #include "jabbermessage.h"
 #include "kopete.h"
 #include "kopetestdaction.h"
-#include "kopetewindow.h"
 #include "kopetemessage.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
@@ -871,7 +870,7 @@ void JabberContact::slotGotVCard(Jabber::JT_VCard *vCard)
 
 	kdDebug() << "[JabberContact] Got vCard for user " << vCard->jid().userHost() << ", displaying." << endl;
 	
-	dlgVCard = new dlgJabberVCard(kopeteapp->mainWindow(), "dlgJabberVCard", vCard);
+	dlgVCard = new dlgJabberVCard(qApp->mainWidget(), "dlgJabberVCard", vCard);
 
 	if (mEditingVCard) {
 		connect(dlgVCard, SIGNAL(saveAsXML(QDomElement &)), this, SLOT(slotSaveVCard(QDomElement &)));
