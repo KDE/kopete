@@ -81,18 +81,11 @@ KIRCMessage KIRCMessage::writeRawMessage(QIODevice *dev, const QString &message,
 {
 	QCString s;
 	QString txt = message + QString::fromLatin1("\r\n");
-
-	// FIXME: codecForContent() is useless on QStrings, they are already unicode!
-	// Pass a REAL char* like QSocket::readBlock() provides before doing any
-	// charset conversion.
-	// Also, codecForContent is quite crappy. See the Qt docs, but I would suggest
-	// defaulting to utf8 encoding in IRC and having OPTIONAL support for other
-	// codecs (manually selectable, not auto-detected). - Martijn
-	QTextCodec *_codec = codec ? codec : QTextCodec::codecForContent( txt.latin1(), txt.length() );
-	if (codec)
-		s = _codec->fromUnicode(txt);
-	else
-		s = txt.local8Bit();
+	
+	if( !codec ) // FIXME: Per-convo. Codec selector
+		codec = QTextCodec::codecForName("utf8");
+	
+	s = codec->fromUnicode(txt);
 
 	kdDebug(14121) << ">> " << s;
 	// FIXME: Should check the amount of data really writen.
@@ -158,34 +151,39 @@ KIRCMessage KIRCMessage::writeCtcpMessage(QIODevice *dev,
 // if codec==0 => autodetect
 KIRCMessage KIRCMessage::parse(KBufferedIO *dev, bool *parseSuccess, QTextCodec *codec)
 {
-	if(parseSuccess) *parseSuccess=false;
-	if(dev->canReadLine())
+	if(parseSuccess)
+	*parseSuccess=false;
+	
+	if( dev->canReadLine() )
 	{
 		QCString raw;
 		QString line;
 
 		raw.resize(dev->bytesAvailable()+1);
 		Q_LONG length = dev->readLine(raw.data(), raw.count());
-		if (length > -1)
+		if( length > -1 )
 		{
 			raw.resize(length);
 			raw.replace("\r\n",""); //remove the trailling \r\n if any(there must be in fact)
-			kdDebug(14121) << "<< " << raw << endl;
 
-			QTextCodec *_codec = codec?codec:QTextCodec::codecForContent(raw.data(), raw.length());
+			int idx = raw.findRev( QCString(QChar(001)) + ":" );
+			kdDebug(14121) << "idx: " << idx << endl;
+		
+			if( !codec ) // FIXME: Per-convo. Codec selector
+				codec = QTextCodec::codecForName("utf8");
 
-			if (codec)
-				line = _codec->toUnicode(raw);
-			else
-				line = raw;
-
-			KIRCMessage msg = parse(line, parseSuccess);
+			line = codec->toUnicode(raw);
+			
+			kdDebug(14121) << "<< Using codec " << codec->name() << " << " << line << endl;
+			
+			KIRCMessage msg = parse( line, parseSuccess );
 			msg.m_raw = raw;
 			return msg;
 		}
 		else
 			kdWarning(14121) << "Failed to read a line while canReadLine returned true!" << endl;
 	}
+	
 	return KIRCMessage();
 }
 
@@ -193,9 +191,11 @@ KIRCMessage KIRCMessage::parse(const QString &line, bool *parseSuccess)
 {
 	KIRCMessage msg;
 
-	if(parseSuccess) *parseSuccess=false;
-	msg.m_raw = unquote( line ).utf8();
-	if(matchForIRCRegExp(msg.m_raw, msg))
+	if(parseSuccess)
+		*parseSuccess=false;
+	
+	QString newLine = unquote( line );
+	if(matchForIRCRegExp(newLine, msg))
 	{
 		msg.m_prefix = ctcpUnquote(msg.m_prefix);
 		msg.m_command = ctcpUnquote(msg.m_command);
@@ -216,12 +216,13 @@ KIRCMessage KIRCMessage::parse(const QString &line, bool *parseSuccess)
 		}
 		msg.m_suffix = ctcpUnquote(msg.m_suffix);
 
-		if(parseSuccess) *parseSuccess=true;
+		if(parseSuccess)
+			*parseSuccess = true;
 	}
 	else
 	{
 //		KMessageBox::error(0, "\"" + line + "\"", "Unmatched line");
-		kdDebug(14120) << "Unmatched line:\"" << line << "\"" << endl;
+		kdDebug(14120) << "Unmatched line:\"" << newLine << "\"" << endl;
 	}
 	return msg;
 }

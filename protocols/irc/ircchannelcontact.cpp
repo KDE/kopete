@@ -68,16 +68,19 @@ IRCChannelContact::IRCChannelContact(IRCContactManager *contactManager, const QS
 		this, SLOT(slotConnectedToServer()));
 
 	QObject::connect(m_engine, SIGNAL(incomingFailedChankey(const QString &)),
-			this, SLOT(slotFailedChankey(const QString&)));
+		this, SLOT(slotFailedChankey(const QString&)));
 		
 	QObject::connect(m_engine, SIGNAL(incomingFailedChanFull(const QString &)),
-			this, SLOT(slotFailedChanFull(const QString&)));
+		this, SLOT(slotFailedChanFull(const QString&)));
 			
 	QObject::connect(m_engine, SIGNAL(incomingFailedChanInvite(const QString &)),
-			this, SLOT(slotFailedChanInvite(const QString&)));
+		this, SLOT(slotFailedChanInvite(const QString&)));
 			
 	QObject::connect(m_engine, SIGNAL(incomingFailedChanBanned(const QString &)),
-			this, SLOT(slotFailedChanBanned(const QString&)));
+		this, SLOT(slotFailedChanBanned(const QString&)));
+			
+	QObject::connect(m_engine, SIGNAL(incomingUserIsAway( const QString &, const QString & )),
+		this, SLOT(slotIncomingUserIsAway(const QString &, const QString &)));	
 
 	actionModeT = new KToggleAction(i18n("Only Operators Can Change &Topic"), 0, this, SLOT(slotModeChanged()), this );
 	actionModeN = new KToggleAction(i18n("&No Outside Messages"), 0, this, SLOT(slotModeChanged()), this );
@@ -161,7 +164,7 @@ void IRCChannelContact::slotAddNicknames()
 	QString nickToAdd = mJoinedNicks.front();
 	mJoinedNicks.pop_front();
 
-	if (nickToAdd.lower() != m_nickName.lower())
+	if ( nickToAdd.lower() != m_account->mySelf()->nickName().lower() )
 	{
 		kdDebug(14120) << k_funcinfo << m_nickName << endl;
 		QChar firstChar = nickToAdd[0];
@@ -206,12 +209,36 @@ void IRCChannelContact::part()
 		m_engine->partChannel( m_nickName, m_account->defaultPart() );
 }
 
+void IRCChannelContact::slotIncomingUserIsAway( const QString &nick, const QString & )
+{
+	if( nick.lower() == m_account->mySelf()->nickName().lower() )
+	{
+		IRCUserContact *c = m_account->mySelf();
+		if( m_isConnected && manager()->members().contains( c ) )
+		{
+			KopeteOnlineStatus status = manager()->contactOnlineStatus( c );
+			if( status == m_protocol->m_UserStatusOp )
+				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusOpAway );
+			else if( status == m_protocol->m_UserStatusOpAway )
+				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusOp );
+			else if( status == m_protocol->m_UserStatusVoice )
+				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusVoiceAway );
+			else if( status == m_protocol->m_UserStatusVoiceAway )
+				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusVoice );
+			else if( status == m_protocol->m_UserStatusAway )
+				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusOnline );
+			else
+				manager()->setContactOnlineStatus( c, m_protocol->m_UserStatusAway );
+		}
+	}
+}
+
 void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString &channel)
 {
 	if( m_isConnected && (channel.lower() == m_nickName.lower()) )
 	{
 		QString nickname = user.section('!', 0, 0);
-		if ( nickname.lower() == m_engine->nickName().lower() )
+		if ( nickname.lower() == m_account->mySelf()->nickName().lower() )
 		{
 			KopeteMessage msg((KopeteContact *)this, mMyself, i18n("You have joined channel %1").arg(m_nickName),
 					KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);

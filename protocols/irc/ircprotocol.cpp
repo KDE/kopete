@@ -50,7 +50,9 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	m_ChannelStatusOffline(KopeteOnlineStatus::Offline,	60, this, 10, "irc_channel",	i18n("Go O&ffline"),	i18n("Offline")),
 
 	m_UserStatusOp(KopeteOnlineStatus::Online,		50, this, 5, "irc_op",		i18n("Go &Op"),		i18n("Op")),
+	m_UserStatusOpAway(KopeteOnlineStatus::Online,		50, this, 5, "irc_away",	i18n("Go &Op"),		i18n("Away")),
 	m_UserStatusVoice(KopeteOnlineStatus::Online,		40, this, 4, "irc_voice",	i18n("Go &Voice"),	i18n("Voice")),
+	m_UserStatusVoiceAway(KopeteOnlineStatus::Online,	40, this, 4, "irc_away",	i18n("Go &Voice"), i18n("Away")),
 	m_UserStatusOnline(KopeteOnlineStatus::Online,		30, this, 3, QString::null,	i18n("Go O&nline"),	i18n("Online")),
 	m_UserStatusAway(KopeteOnlineStatus::Away,		20, this, 2, "irc_away",	i18n("Set &Away"),	i18n("Away")),
 	m_UserStatusConnecting(KopeteOnlineStatus::Connecting,	10, this, 1, "irc_connecting",	i18n("Connecting"),	i18n("Connecting")),
@@ -190,9 +192,7 @@ void IRCProtocol::slotMessageFilter( KopeteMessage &msg )
 {
 	if( msg.from()->protocol() == this )
 	{
-		kdDebug(14120) << k_funcinfo << endl;
 		QString messageText = msg.escapedBody();
-		kdDebug(14120) << k_funcinfo << messageText << endl;
 
 		//Add right click for channels, only replace text not in HTML tags
 		messageText.replace( QRegExp( QString::fromLatin1("(?![^<]+>)(#[^#\\s]+)(?![^<]+>)") ), QString::fromLatin1("<span class=\"KopeteLink\" type=\"IRCChannel\">\\1</span>") );
@@ -264,7 +264,7 @@ void IRCProtocol::slotRawCommand( const QString &args, KopeteMessageManager *man
 {
 	if( !args.isEmpty() )
 	{
-		static_cast<IRCAccount*>( manager->account() )->engine()->writeRawMessage( args );
+		static_cast<IRCAccount*>( manager->account() )->engine()->writeRawMessage( args, false );
 	}
 	else
 	{
@@ -277,7 +277,7 @@ void IRCProtocol::slotQuoteCommand( const QString &args, KopeteMessageManager *m
 {
 	if( !args.isEmpty() )
 	{
-		static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage( args );
+		static_cast<IRCAccount*>( manager->account() )->engine()->writeMessage( args, false );
 	}
 	else
 	{
