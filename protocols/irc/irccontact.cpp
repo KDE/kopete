@@ -213,9 +213,7 @@ void IRCContact::slotSendMsg(Kopete::Message &message, Kopete::ChatSession *)
 						replacement.prepend( QChar(31) ).append( QChar(31) );
 				}
 
-				QRegExp rx( QString::fromLatin1("<span style=\"%1\">.*</span>" ).arg( styleHTML ) );
-				rx.setMinimal( true );
-				htmlString.replace( rx, replacement );
+				htmlString = htmlString.left( pos ) + replacement + htmlString.mid( pos + findTags.matchedLength() );
 			}
 		}
 	}
