@@ -111,7 +111,7 @@ void KopeteMessageManagerFactory::addKopeteMessageManager(KopeteMessageManager *
 	 * There's no need for a slot here... just add a public remove()
 	 * method and call from KMM's destructor
 	 */
-	connect( result, SIGNAL( messageReceived( KopeteMessage &, KopeteMessageManager * ) ),
+	connect( result, SIGNAL( messageAppended( KopeteMessage &, KopeteMessageManager * ) ),
 		SIGNAL( aboutToDisplay( KopeteMessage & ) ) );
 	connect( result, SIGNAL( messageSent( KopeteMessage &, KopeteMessageManager * ) ),
 		SIGNAL( aboutToSend(KopeteMessage & ) ) );
