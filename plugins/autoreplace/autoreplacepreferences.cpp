@@ -130,9 +130,7 @@ void AutoReplacePreferences::slotAddCouple()
 // Single selection mode and an item is selected
 void AutoReplacePreferences::slotRemoveCouple()
 {
-	QListViewItem *lvi = preferencesDialog->m_list->selectedItem();
-	if ( lvi )
-		delete lvi;
+	delete preferencesDialog->m_list->selectedItem();
 
 	m_wordListChanged = true;
 	slotWidgetModified();

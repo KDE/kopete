@@ -79,8 +79,7 @@ SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, KopeteAccount 
 
 SMSEditAccountWidget::~SMSEditAccountWidget()
 {
-//	if (service != 0L)
-		delete service;
+	delete service;
 }
 
 bool SMSEditAccountWidget::validateData()
@@ -109,11 +108,8 @@ KopeteAccount* SMSEditAccountWidget::apply()
 
 void SMSEditAccountWidget::setServicePreferences(const QString& serviceName)
 {
-//	if (service != 0L)
-		delete service;
-
-//	if (configWidget != 0L)
-		delete configWidget;
+	delete service;
+	delete configWidget;
 
 	service = ServiceLoader::loadService(serviceName, account());
 
@@ -122,8 +118,7 @@ void SMSEditAccountWidget::setServicePreferences(const QString& serviceName)
 
 	connect (this, SIGNAL(saved()), service, SLOT(savePreferences()));
 
-//	if (middleFrameLayout != 0L)
-		delete middleFrameLayout;
+	delete middleFrameLayout;
 	middleFrameLayout = new QGridLayout(preferencesDialog->middleFrame, 1, 2, 0, 6, "middleFrameLayout");
 	service->setWidgetContainer(preferencesDialog->middleFrame, middleFrameLayout);
 }

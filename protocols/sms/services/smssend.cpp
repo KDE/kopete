@@ -78,8 +78,7 @@ void SMSSend::setWidgetContainer(QWidget* parent, QGridLayout* layout)
 	m_layout = layout;
 
 	// could end up being deleted twice??
-	if (prefWidget != 0L)
-		delete prefWidget;
+	delete prefWidget;
 	prefWidget = new SMSSendPrefsUI(parent);
 	layout->addMultiCellWidget(prefWidget, 0, 1, 0, 1);
 
