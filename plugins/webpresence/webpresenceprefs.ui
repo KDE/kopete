@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
 <class>WebPresencePrefsUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>444</width>
-            <height>405</height>
+            <width>701</width>
+            <height>547</height>
         </rect>
     </property>
     <property name="caption">
@@ -22,15 +22,15 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QGroupBox">
+        <property name="margin">
+            <number>11</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QButtonGroup">
             <property name="name">
                 <cstring>groupBox1</cstring>
-            </property>
-            <property name="frameShape">
-                <enum>GroupBoxPanel</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
             </property>
             <property name="title">
                 <string>Uploading</string>
@@ -38,6 +38,12 @@
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
                 </property>
                 <widget class="QLabel" row="0" column="0">
                     <property name="name">
@@ -84,6 +90,11 @@
                         <number>15</number>
                     </property>
                 </widget>
+                <widget class="KURLRequester" row="0" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>m_url</cstring>
+                    </property>
+                </widget>
                 <spacer row="1" column="2">
                     <property name="name">
                         <cstring>spacer5</cstring>
@@ -96,16 +107,11 @@
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>174</width>
-                            <height>20</height>
+                            <width>449</width>
+                            <height>0</height>
                         </size>
                     </property>
                 </spacer>
-                <widget class="KURLRequester" row="0" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_url</cstring>
-                    </property>
-                </widget>
             </grid>
         </widget>
         <widget class="QButtonGroup">
@@ -118,6 +124,12 @@
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
                 </property>
                 <spacer row="3" column="0">
                     <property name="name">
@@ -184,6 +196,12 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
                 <spacer row="2" column="0">
                     <property name="name">
                         <cstring>spacer4_2</cstring>
@@ -238,6 +256,23 @@
                 </widget>
             </grid>
         </widget>
+        <spacer>
+            <property name="name">
+                <cstring>Spacer7</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>0</width>
+                    <height>71</height>
+                </size>
+            </property>
+        </spacer>
     </vbox>
 </widget>
 <connections>
@@ -261,12 +296,4 @@
     <slot>init()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kurlrequester.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kurlrequester.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-</includehints>
 </UI>
