@@ -71,7 +71,7 @@ KopeteMetaContact::KopeteMetaContact()
 	d->temporary = false;
 //	m_isTopLevel=false;
 
-	d->onlineStatus = KopeteOnlineStatus::Unknown;
+	d->onlineStatus = KopeteOnlineStatus::Offline;
 	d->idleState = Unspecified;
 	d->historyDialog = 0L;
 	d->contactId = 0;
