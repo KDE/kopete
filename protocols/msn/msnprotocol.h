@@ -31,6 +31,7 @@ class KActionMenu;
 class KMSNChatService;
 class KMSNServiceSocket;
 class MSNContact;
+class MSNIdentity;
 class MSNMessageDialog;
 class MSNPreferences;
 class StatusBarIcon;
@@ -269,6 +270,8 @@ private:
 	QString m_msgHandle;
 
 	KMSNServiceSocket *m_serviceSocket;
+
+	MSNIdentity *m_identity;
 };
 
 #endif

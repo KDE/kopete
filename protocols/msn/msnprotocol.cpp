@@ -29,6 +29,7 @@
 #include "kopete.h"
 #include "msnaddcontactpage.h"
 #include "msncontact.h"
+#include "msnidentity.h"
 #include "msnmessagedialog.h"
 #include "msnpreferences.h"
 #include "msnprotocol.h"
@@ -47,6 +48,7 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 	m_serial = 0;
 	m_silent = false;
 
+	m_identity = new MSNIdentity( this, "m_identity" );
 	m_serviceSocket = new KMSNServiceSocket;
 
 	kdDebug() << "MSNProtocol::MSNProtocol: MSN Plugin Loading" << endl;
