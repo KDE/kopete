@@ -1676,12 +1676,13 @@ void KopeteContactListView::slotAddTemporaryContact()
 		KopeteContactList::contactList()->selectedMetaContacts().first();
 	if( metacontact )
 	{
-		int r=KMessageBox::questionYesNo( qApp->mainWidget(),
+/*		int r=KMessageBox::questionYesNo( qApp->mainWidget(),
 			i18n( "<qt>Would you like to add this contact to your contact list?</qt>" ),
 			i18n( "Kopete" ), KStdGuiItem::yes(), KStdGuiItem::no(),
 			"addTemporaryWhenMoving" );
 
-		if(r==KMessageBox::Yes)
+		if(r==KMessageBox::Yes)*/
+		if(metacontact->isTemporary() )
 			metacontact->setTemporary( false );
 	}
 }

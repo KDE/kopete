@@ -150,8 +150,6 @@ private slots:
 
 	void slotDisplayNameChanged();
 
-	void slotAddTemporaryContact();
-
 	void slotAddToNewGroup();
 	void slotIdleStateChanged();
 

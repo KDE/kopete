@@ -343,11 +343,6 @@ void KopeteMetaContactLVI::slotAddToNewGroup()
 		m_metaContact->addToGroup( KopeteContactList::contactList()->getGroup( groupName ) );
 }
 
-void KopeteMetaContactLVI::slotAddTemporaryContact()
-{
-	m_metaContact->setTemporary( false, KopeteGroup::topLevel() );
-}
-
 void KopeteMetaContactLVI::slotConfigChanged()
 {
 	updateVisibility();
