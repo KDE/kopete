@@ -117,6 +117,36 @@ JabberProtocol::JabberProtocol( QObject *parent, QString name, QStringList )
 
 JabberProtocol::~JabberProtocol()
 {
+	disconnect();
+
+	if(jabberClient)
+	{
+		delete jabberClient;
+		jabberClient = 0L;
+	}
+
+	// kick the SSL library
+	Jabber::Stream::unloadSSL();
+
+	// make sure that the next attempt to load Jabber
+	// re-initializes the protocol class
+	protocolInstance = 0L;
+
+	delete actionGoOnline;
+	delete actionGoChatty;
+	delete actionGoAway;
+	delete actionGoXA;
+	delete actionGoDND;
+	delete actionGoInvisible;
+	delete actionGoOffline;
+
+	delete actionServices;
+	delete actionSendRaw;
+	delete actionEditVCard;
+	delete actionEmptyMail;
+
+	delete actionStatusMenu;
+
 	// Delete the send raw dialog
 	delete sendRawDialog;
 }
@@ -216,43 +246,6 @@ void JabberProtocol::initActions()
 					userId, QStringList(i18n("Unknown")),
 					this, 0L, QString::null);
 
-}
-
-bool JabberProtocol::unload()
-{
-	kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberProtocol] Unload..." << endl;
-
-	disconnect();
-
-	if(jabberClient)
-	{
-		delete jabberClient;
-		jabberClient = 0L;
-	}
-
-	// kick the SSL library
-	Jabber::Stream::unloadSSL();
-
-	// make sure that the next attempt to load Jabber
-	// re-initializes the protocol class
-	protocolInstance = 0L;
-
-	delete actionGoOnline;
-	delete actionGoChatty;
-	delete actionGoAway;
-	delete actionGoXA;
-	delete actionGoDND;
-	delete actionGoInvisible;
-	delete actionGoOffline;
-
-	delete actionServices;
-	delete actionSendRaw;
-	delete actionEditVCard;
-	delete actionEmptyMail;
-
-	delete actionStatusMenu;
-
-	return KopeteProtocol::unload();
 }
 
 void JabberProtocol::connect()

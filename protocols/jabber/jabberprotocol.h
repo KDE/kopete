@@ -80,12 +80,6 @@ public:
 	KActionMenu *protocolActions();
 
 	/**
-	 * Initialization/deinitialization routines called upon
-	 * loading/unloading the plugin
-	 */
-	bool unload();
-
-	/**
 	 * Creates the "add contact" dialog specific to this protocol
 	 */
 	AddContactPage *createAddContactWidget(QWidget * parent);

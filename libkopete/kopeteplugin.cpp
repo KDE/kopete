@@ -27,11 +27,6 @@ KopetePlugin::~KopetePlugin()
 {
 }
 
-bool KopetePlugin::unload()
-{
-	return true;
-}
-
 QString KopetePlugin::pluginId() const
 {
 	return QString::fromLatin1( className() );

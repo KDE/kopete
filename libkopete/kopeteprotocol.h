@@ -45,11 +45,6 @@ public:
 	virtual ~KopeteProtocol();
 
 	/**
-	 * Protocol API. Must be reimplemented
-	 */
-	virtual bool unload();
-
-	/**
 	 * return a new AddContact widget showed in the addContactWizzard.
 	 * parent is the parent widget.
 	 * the account is given 

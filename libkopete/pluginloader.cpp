@@ -265,10 +265,6 @@ bool LibraryLoader::remove( KopetePlugin *p )
 
 	kdDebug(14010) << "LibraryLoader::remove: Removing plugin: " << p->pluginId() << endl;
 
-	// Added by Duncan 20/01/2002
-	// We need to call unload function for the plugin
-	p->unload();
-
 	delete p;
 
 	return true;
