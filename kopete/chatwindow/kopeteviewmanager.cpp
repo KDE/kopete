@@ -175,26 +175,33 @@ void KopeteViewManager::messageAppended( KopeteMessage &msg, KopeteMessageManage
 
 			int winId = KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 
-			switch(msg.importance())
+			switch( msg.importance() )
 			{
 				case KopeteMessage::Low:
 					//TODO: add an event for this (like a litle beep)
 					break;
-				case KopeteMessage::Highlight:
-#if KDE_VERSION > 0x030100
-					KNotifyClient::event( winId , QString::fromLatin1( "kopete_highlight"), i18n("<qt>An Highlighted message arrived from %1<br>\"%2\"</qt>").arg(msgFrom).arg(msgText) );
-#else
-					KNotifyClient::event( QString::fromLatin1( "kopete_highlight"), i18n("<qt>An Highlighted message arrived from %1<br>\"%2\"</qt>").arg(msgFrom).arg(msgText) );
-#endif
-					break;
-				case KopeteMessage::Normal:
 				default:
+				{
+					QString event = QString::fromLatin1( "kopete_incoming" );
+					QString body = i18n( "<qt>Incoming message from %1<br>\"%2\"</qt>" );
+
+					if( msg.importance() == KopeteMessage::Highlight )
+					{
+						event = QString::fromLatin1( "kopete_highlight" );
+						body = i18n( "<qt>A highlighted message arrived from %1<br>\"%2\"</qt>" );
+					}
+
 #if KDE_VERSION > 0x030100
-					KNotifyClient::event( winId , QString::fromLatin1( "kopete_incoming"), i18n("<qt>Incoming message from %1<br>\"%2\"</qt>").arg(msgFrom).arg(msgText) );
+#if QT_VERSION < 0x030200
+					KNotifyClient::event( winId, event, body.arg( msgFrom ).arg( msgText ) );
 #else
-					KNotifyClient::event( QString::fromLatin1( "kopete_incoming"), i18n("<qt>Incoming message from %1<br>\"%2\"</qt>").arg(msgFrom).arg(msgText) );
+					KNotifyClient::event( winId, event, body.arg( msgFrom, msgText ) );
+#endif
+#else
+					KNotifyClient::event( event, body.arg( msgFrom ).arg( msgText ) );
 #endif
 					break;
+				}
 			}
 		}
 	}
