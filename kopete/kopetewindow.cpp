@@ -15,20 +15,18 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "kopetewindow.h"
-#include "kopetewindow.moc"
-
-#include <kopete.h>
-#include <kopeteballoon.h>
-#include <contactlist.h>
-
 #include <qlayout.h>
-#include <kconfig.h>
-#include <kstdaction.h>
-#include <kaction.h>
-#include <klocale.h>
-#include <kdebug.h>
 
+#include <kconfig.h>
+#include <kdebug.h>
+#include <klocale.h>
+#include <kstdaction.h>
+
+#include "contactlist.h"
+#include "imcontact.h"
+#include "kopete.h"
+#include "kopeteballoon.h"
+#include "kopetewindow.h"
 #include "systemtray.h"
 
 KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(parent,name)
@@ -41,6 +39,8 @@ KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(pare
 	QBoxLayout *layout = new QBoxLayout(mainwidget,QBoxLayout::TopToBottom);
 	contactlist = new ContactList(mainwidget);
 	layout->insertWidget ( -1, contactlist );
+	connect( contactlist, SIGNAL(executed(QListViewItem *)),
+			 this, SLOT(slotExecuted(QListViewItem *)) );
 	
 	/* ---------------------------------- */
 	
@@ -167,3 +167,17 @@ void KopeteWindow::showToolbar(void)
 	else
 		toolBar("mainToolBar")->hide();
 }
+
+void KopeteWindow::slotExecuted( QListViewItem *item )
+{
+	IMContact *contact = dynamic_cast<IMContact *>(item);
+	if (contact)
+	{
+		contact->doubleClicked();
+	}
+}
+
+#include "kopetewindow.moc"
+
+// vim: set noet sw=4 ts=4 sts=4:
+

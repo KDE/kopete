@@ -26,6 +26,7 @@ class KToggleAction;
 class KSelectAction;
 class ContactList;
 class KopeteSystemTray;
+class QListViewItem;
 
 class KopeteWindow : public KMainWindow
 {
@@ -37,6 +38,7 @@ class KopeteWindow : public KMainWindow
 
 	private slots:
 		void showToolbar(void);
+		void slotExecuted( QListViewItem * );
 
 	public:
 		ContactList *contactlist;
