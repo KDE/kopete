@@ -149,32 +149,66 @@ GroupWiseProtocol *GroupWiseAccount::protocol() const
 	return static_cast<GroupWiseProtocol *>( KopeteAccount::protocol() );
 }
 
-GroupWiseMessageManager * GroupWiseAccount::messageManager( KopeteContactPtrList others, const GroupWise::ConferenceGuid & guid )
+GroupWiseMessageManager * GroupWiseAccount::messageManager( KopeteContactPtrList others, const GroupWise::ConferenceGuid & guid, bool canCreate )
 {
 	GroupWiseMessageManager * mgr = 0;
 	do // one iteration misuse of do...while to enable an easy drop-out once we locate a manager
 	{
 		// do we have a manager keyed by GUID?
-		mgr = m_managers[ guid ];
+		mgr = findMessageManagerByGuid( guid );
 		if ( mgr ) 
+		{
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " found a message manager by GUID: " << guid << endl;
 			break;
+		}
 		// does the factory know about one, going on the chat members?
 		mgr = dynamic_cast<GroupWiseMessageManager*>( 
 			KopeteMessageManagerFactory::factory()->findKopeteMessageManager( myself(), others, protocol() ) );
 		if ( mgr ) 
+		{
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " found a message manager by members with GUID: " << mgr->guid() << endl;
+			// re-add the returning contact(s) (very likely only one) to the chat
+			KopeteContact * returningContact;
+			for ( returningContact = others.first(); returningContact; returningContact = others.next() )
+				mgr->joined( static_cast<GroupWiseContact *>( returningContact ) );
+
+			if ( !guid.isEmpty() )
+				mgr->setGuid( guid );
 			break;
-		// we don't have an existing message manager for this chat, so create one
-		mgr = new GroupWiseMessageManager( myself(), others, protocol(), guid );
-		if ( !guid.isEmpty() )
-			m_managers.insert( guid, mgr );
-		// if the message manager gets a guid (either on creation, or after the first chat has closed, but the chatwindow 
-		// is reused and we start a new conference in it) record the guid.
-		QObject::connect( mgr, SIGNAL( conferenceCreated() ), SLOT( slotMessageManagerGotGuid() ) );
-		// listen for the message manager telling us that the user has left the conference so we remove it from our map
-		QObject::connect( mgr, SIGNAL( leavingConference( GroupWiseMessageManager * ) ), SLOT( slotLeavingConference( GroupWiseMessageManager * ) ) );
+		}
+		// we don't have an existing message manager for this chat, so create one if we may
+		if ( canCreate )
+		{
+			mgr = new GroupWiseMessageManager( myself(), others, protocol(), guid );
+			kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << 
+				" created a new message manager with GUID: " << mgr->guid() << endl;
+			m_managers.append( mgr );
+			// listen for the message manager telling us that the user 
+			//has left the conference so we remove it from our map
+			QObject::connect( mgr, SIGNAL( leavingConference( GroupWiseMessageManager * ) ), 
+					SLOT( slotLeavingConference( GroupWiseMessageManager * ) ) );
+			break;
+		}
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << 
+			" no message manager available." << endl;
 	}
 	while ( 0 );
 	dumpManagers();
+	return mgr;
+}
+
+GroupWiseMessageManager * GroupWiseAccount::findMessageManagerByGuid( const GroupWise::ConferenceGuid & guid )
+{
+	GroupWiseMessageManager * mgr = 0;
+	QValueList<GroupWiseMessageManager*>::ConstIterator it;
+	for ( it = m_managers.begin(); it != m_managers.end(); ++it )
+	{
+		if ( (*it)->guid() == guid )
+		{
+			mgr = *it;
+			break;
+		}
+	}
 	return mgr;
 }
 
@@ -605,7 +639,7 @@ void GroupWiseAccount::handleIncomingMessage( const ConferenceEvent & message, b
 	KopeteContactPtrList contactList;
 	contactList.append( sender );
 	// FIND A MESSAGE MANAGER FOR THIS CONTACT
-	GroupWiseMessageManager *mgr = messageManager( contactList, message.guid );
+	GroupWiseMessageManager *mgr = messageManager( contactList, message.guid, true );
 
 	// add an auto-reply indicator if needed
 	QString messageMunged = message.message;
@@ -970,7 +1004,7 @@ void GroupWiseAccount::receiveConferenceJoin( const GroupWise::ConferenceGuid & 
 {
 	// get a new GWMM
 	KopeteContactPtrList others;
-	GroupWiseMessageManager * mgr = messageManager( others, guid );
+	GroupWiseMessageManager * mgr = messageManager( others, guid, true );
 	// find each contact and add them to the GWMM, and tell them they are in the conference
 	for ( QValueList<QString>::ConstIterator it = participants.begin(); it != participants.end(); ++it )
 	{
@@ -999,7 +1033,7 @@ void GroupWiseAccount::receiveConferenceJoin( const GroupWise::ConferenceGuid & 
 void GroupWiseAccount::receiveConferenceJoinNotify( const ConferenceEvent & event )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	GroupWiseMessageManager * mgr = m_managers[ event.guid ];
+	GroupWiseMessageManager * mgr = findMessageManagerByGuid( event.guid );
 	if ( mgr )
 	{
 		GroupWiseContact * c = contactForDN( event.user );
@@ -1014,7 +1048,7 @@ void GroupWiseAccount::receiveConferenceJoinNotify( const ConferenceEvent & even
 void GroupWiseAccount::receiveConferenceLeft( const ConferenceEvent & event )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	GroupWiseMessageManager * mgr = m_managers[ event.guid ];
+	GroupWiseMessageManager * mgr = findMessageManagerByGuid( event.guid );
 	if ( mgr )
 	{
 		GroupWiseContact * c = contactForDN( event.user );
@@ -1033,7 +1067,7 @@ void GroupWiseAccount::receiveConferenceLeft( const ConferenceEvent & event )
 void GroupWiseAccount::receiveInviteDeclined( const ConferenceEvent & event )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	GroupWiseMessageManager * mgr = m_managers[ event.guid ];
+	GroupWiseMessageManager * mgr = findMessageManagerByGuid( event.guid );
 	if ( mgr )
 	{
 		GroupWiseContact * c = contactForDN( event.user );
@@ -1047,7 +1081,7 @@ void GroupWiseAccount::receiveInviteDeclined( const ConferenceEvent & event )
 void GroupWiseAccount::receiveInviteNotify( const ConferenceEvent & event )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
-	GroupWiseMessageManager * mgr = m_managers[ event.guid ];
+	GroupWiseMessageManager * mgr = findMessageManagerByGuid( event.guid );
 	if ( mgr )
 	{
 		GroupWiseContact * c = contactForDN( event.user );
@@ -1062,19 +1096,12 @@ void GroupWiseAccount::receiveInviteNotify( const ConferenceEvent & event )
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " couldn't find a GWMM for conference: " << event.guid << endl;
 }
 
-void GroupWiseAccount::slotMessageManagerGotGuid()
-{
-	GroupWiseMessageManager * mgr = ( GroupWiseMessageManager * )sender();
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "registering message manager" << mgr->guid() << endl;
-	m_managers.insert( mgr->guid(), mgr );
-}
-
 void GroupWiseAccount::slotLeavingConference( GroupWiseMessageManager * mgr )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "unregistering message manager:" << mgr->guid()<< endl;
 	// leave the conference
 	m_client->leaveConference( mgr->guid() );
-	m_managers.remove( mgr->guid() );
+	m_managers.remove( mgr );
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "m_managers now contains:" << m_managers.count() << " managers" << endl;
 }
 
@@ -1125,11 +1152,11 @@ bool GroupWiseAccount::isContactBlocked( const QString & dn )
 
 void GroupWiseAccount::dumpManagers()
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " for: " << accountId() << endl;
-	QMapIterator< GroupWise::ConferenceGuid, GroupWiseMessageManager * > it;
-	
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " for: " << accountId() 
+		<< " containing: " << m_managers.count() << " managers " << endl;
+	QValueList< GroupWiseMessageManager * >::ConstIterator it;
 	for ( it = m_managers.begin() ; it != m_managers.end(); ++it )
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "guid: " << it.key() << endl;
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "guid: " << (*it)->guid() << endl;
 }
 
 #include "gwaccount.moc"

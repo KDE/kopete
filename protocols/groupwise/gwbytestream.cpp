@@ -23,9 +23,7 @@
 #include <kresolver.h>
 
 #include "gwbytestream.h"
-//#include "gwprotocol.h"
-// temporary #define until we have a protocol
-#define GROUPWISE_DEBUG_GLOBAL
+#include "gwerror.h"
 
 KNetworkByteStream::KNetworkByteStream ( QObject *parent, const char */*name*/ )
  : ByteStream ( parent )

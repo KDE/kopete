@@ -204,8 +204,6 @@ protected:
 	QString m_displayName;
 	KAction* m_actionPrefs;
 	KAction *m_actionBlock;
-	// all the message managers that this contact is currently chatting via
-	GroupWiseMessageManager::Dict m_msgManagers;
 	// a list of all the instances that this contact appears in the server side contact list
 	CLInstanceList m_instances;
 	// Novell Messenger Properties, as received by the server.  

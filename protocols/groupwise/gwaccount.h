@@ -104,7 +104,7 @@ public:
 	/** 
 	 * Utility to create or access a message manager instance for a given GUID and set of contacts
 	 */
-	GroupWiseMessageManager * messageManager( KopeteContactPtrList others, const ConferenceGuid & guid );
+	GroupWiseMessageManager * messageManager( KopeteContactPtrList others, const ConferenceGuid & guid, bool canCreate );
 	/**
 	 * Look up a contact given a DN
 	 * Returns 0 if none found
@@ -273,12 +273,6 @@ protected slots:
 	
 	// HOUSEKEEPING
 	/**
-	 * Because a message manager that we create will get a GUID from the server some time after it is created,
-	 * when we get a GUID back after a successful conference create, we signal the GUID and the message manager's internal ID
-	 * using conferenceCreated, then listen for a conferenceCreated signal back from the manager, and register it in this slot
-	 */
-	void slotMessageManagerGotGuid();
-	/**
 	 * We listen for the destroyed() signal and leave any conferences we
 	 * might have been in, and remove it from our map.
 	 */
@@ -299,7 +293,8 @@ protected:
 	 * @param autoReply Indicates that the message is an auto reply - doesn't contain any RTF.
 	 */
 	void handleIncomingMessage( const ConferenceEvent & event, bool autoReply );
-
+	
+	GroupWiseMessageManager * findMessageManagerByGuid( const GroupWise::ConferenceGuid & guid );
 	/**
 	 * Memory management
 	 */
@@ -317,7 +312,7 @@ private:
 	
 	GroupWise::Status m_initialStatus;
 	QString m_initialReason;
-	GroupWiseMessageManager::Dict m_managers;
+	QValueList<GroupWiseMessageManager*> m_managers;
 };
 
 #endif

@@ -39,21 +39,6 @@
 
 #include "gwmessagemanager.h"
 
-void GroupWiseMessageManager::Dict::insert( const ConferenceGuid & key, GroupWiseMessageManager * item )
-{
-	QMap< ConferenceGuid, GroupWiseMessageManager * >::insert( key.left( CONF_GUID_END ), item  );
-}
-
-GroupWiseMessageManager * GroupWiseMessageManager::Dict::operator[]( const ConferenceGuid & key )
-{
-	return QMap< ConferenceGuid, GroupWiseMessageManager * >::operator[]( key.left( CONF_GUID_END ) );
-}
-
-void GroupWiseMessageManager::Dict::remove( const ConferenceGuid & key )
-{
-	QMap< ConferenceGuid, GroupWiseMessageManager * >::remove( key.left( CONF_GUID_END ) );
-}
-
 GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const GroupWise::ConferenceGuid & guid, int id, const char* name): KopeteMessageManager(user, others, protocol, 0, name), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )
 {
 	Q_UNUSED( id );
@@ -122,6 +107,8 @@ bool GroupWiseMessageManager::secure()
 
 void GroupWiseMessageManager::setClosed()
 {
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " Conference " << m_guid << " is now Closed " << endl;
+
 	m_guid = QString::null;
 	m_flags = m_flags | GroupWise::Closed;
 }
@@ -439,6 +426,7 @@ void GroupWiseMessageManager::joined( GroupWiseContact * c )
 
 void GroupWiseMessageManager::left( GroupWiseContact * c )
 {
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	removeContact( c );
 	--m_memberCount;
 	

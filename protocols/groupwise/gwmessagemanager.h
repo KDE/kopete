@@ -39,19 +39,6 @@ Q_OBJECT
 friend class GroupWiseAccount;
 
 public:
-	/**
-	 * Specialised dictionary that only keys on the first CONF_GUID_END characters of a conference GUID
-	 * INNER CLASS derived from an INSTANCE of a TEMPLATE CLASS with an OVERLOADED OPERATOR []
-	 */
-	class Dict : public QMap< ConferenceGuid, GroupWiseMessageManager * >
-	{
-		// QMap::insert isn't virtual 
-		public:
-		void insert( const ConferenceGuid & key, GroupWiseMessageManager * item );
-		GroupWiseMessageManager * operator[]( const ConferenceGuid & key );
-		void remove( const ConferenceGuid & k );
-	};
-
 	/** 
 	 * The destructor emits leavingConference so that the account can tell the server that the user has left the chat
 	 */

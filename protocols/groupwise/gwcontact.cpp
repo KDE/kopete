@@ -151,7 +151,7 @@ KopeteMessageManager * GroupWiseContact::manager( bool canCreate )
 	KopeteContactPtrList chatMembers;
 	chatMembers.append( this );
 
-	return account()->messageManager( chatMembers, QString::null );
+	return account()->messageManager( chatMembers, QString::null, canCreate );
 }
 
 QPtrList<KAction> *GroupWiseContact::customContextMenuActions() 
