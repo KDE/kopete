@@ -194,7 +194,24 @@ Kopete::Contact *AIMProtocol::deserializeContact(Kopete::MetaContact *metaContac
 	if ( !account ) //no account
 		return 0;
 
-	AIMContact *c = new AIMContact( account, contactId, metaContact, QString::null );
+	uint ssiGid = 0, ssiBid = 0, ssiType = 0xFFFF;
+	QString ssiName;
+	bool ssiWaitingAuth = false;
+	if ( serializedData.contains( "ssi_type" ) )
+	{
+		ssiName = serializedData["ssi_name"];
+		QString authStatus = serializedData["ssi_waitingAuth"];
+		if ( authStatus == "true" )
+		ssiWaitingAuth = true;
+		ssiGid = serializedData["ssi_gid"].toUInt();
+		ssiBid = serializedData["ssi_bid"].toUInt();
+		ssiType = serializedData["ssi_type"].toUInt();
+	}
+	
+	Oscar::SSI item( ssiName, ssiGid, ssiBid, ssiType, QValueList<TLV>(), 0 );
+	item.setWaitingAuth( ssiWaitingAuth );
+	
+	AIMContact *c = new AIMContact( account, contactId, metaContact, QString::null, item );
 	return c;
 }
 

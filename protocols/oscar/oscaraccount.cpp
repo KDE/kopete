@@ -77,8 +77,6 @@ OscarAccount::OscarAccount(Kopete::Protocol *parent, const QString &accountID, c
 	d = new OscarAccountPrivate;
 	d->engine = new Client( this );
 
-	d->ssiLastModTime = configGroup()->readNumEntry( "LastSSIModTime", 0 );
-	
 	QObject::connect( d->engine, SIGNAL( loggedIn() ), this, SLOT( slotGotSSIList() ) );
 	QObject::connect( d->engine, SIGNAL( messageReceived( const Oscar::Message& ) ),
 						this, SLOT( messageReceived(const Oscar::Message& ) ) );
@@ -100,6 +98,16 @@ Client* OscarAccount::engine()
 void OscarAccount::disconnect()
 {
 	kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
+		//disconnect the signals
+	Kopete::ContactList* kcl = Kopete::ContactList::self();
+	QObject::disconnect( kcl, SIGNAL( groupRenamed( Kopete::Group*,  const QString& ) ), 
+	                     this, SLOT( kopeteGroupRenamed( Kopete::Group*, const QString& ) ) );
+	QObject::disconnect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ), this, SLOT( kopeteGroupRemoved( Kopete::Group* ) ) );
+	QObject::disconnect( d->engine->ssiManager(), SIGNAL( contactAdded( const Oscar::SSI& ) ),
+	                     this, SLOT( ssiContactAdded( const Oscar::SSI& ) ) );
+	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupAdded( const Oscar::SSI& ) ),
+	                     this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
+	
 	d->engine->close();
 	myself()->setOnlineStatus( Kopete::OnlineStatus::Offline );
 	disconnected( Manual );
@@ -180,25 +188,8 @@ void OscarAccount::slotGotSSIList()
 
 void OscarAccount::slotGoOffline()
 {
-	//disconnect the signals
-	Kopete::ContactList* kcl = Kopete::ContactList::self();
-	QObject::disconnect( kcl, SIGNAL( groupRenamed( Kopete::Group*,  const QString& ) ), 
-	                     this, SLOT( kopeteGroupRenamed( Kopete::Group*, const QString& ) ) );
-	QObject::disconnect( kcl, SIGNAL( groupRemoved( Kopete::Group* ) ), this, SLOT( kopeteGroupRemoved( Kopete::Group* ) ) );
-	QObject::disconnect( d->engine->ssiManager(), SIGNAL( contactAdded( const Oscar::SSI& ) ),
-			     this, SLOT( ssiContactAdded( const Oscar::SSI& ) ) );
-	QObject::disconnect( d->engine->ssiManager(), SIGNAL( groupAdded( const Oscar::SSI& ) ),
-			     this, SLOT( ssiGroupAdded( const Oscar::SSI& ) ) );
-	
-	//crude hack to set all contacts offline
-	QDictIterator<Kopete::Contact> it( contacts() );
-	for ( ; ( *it ); ++ it )
-	{
-		OscarContact* oc = static_cast<OscarContact*>( ( *it ) );
-		oc->userOffline( oc->contactId() );
-	}
-	
 	OscarAccount::disconnect();
+	//setAllContactsStatus( Kopete::OnlineStatus::AccountOffline );
 }
 
 void OscarAccount::slotGoOnline()

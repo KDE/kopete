@@ -64,7 +64,6 @@ AIMAccount::AIMAccount(Kopete::Protocol *parent, QString accountID, const char *
 
 AIMAccount::~AIMAccount()
 {
-	kdDebug(14152) << k_funcinfo << "for '" << accountId() << "' deleted" << endl;
 }
 
 OscarContact *AIMAccount::createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const SSI& ssiItem )

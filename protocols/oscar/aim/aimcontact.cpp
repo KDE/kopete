@@ -45,6 +45,7 @@ AIMContact::AIMContact( Kopete::Account* account, const QString& name, Kopete::M
 {
 	mProtocol=static_cast<AIMProtocol *>(protocol());
 	setOnlineStatus( mProtocol->statusOffline );
+	
 	m_infoDialog = 0L;
 	m_warnUserAction = 0L;
 	mUserProfile="";
