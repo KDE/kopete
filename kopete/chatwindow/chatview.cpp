@@ -141,14 +141,17 @@ KopeteChatViewTip::KopeteChatViewTip( ChatView *c ) : QToolTip( c->htmlWidget->v
 
 void KopeteChatViewTip::maybeTip( const QPoint &p )
 {
+	// FIXME: it's wrong to look for the node under the mouse - this makes too many
+	//        assumptions about how tooltips work
 	DOM::Node n = m_chat->chatView->nodeUnderMouse();
 	KopeteContact *c = m_chat->contactFromNode( n );
 
 	QRect r = n.getRect();
 
-	//FIXME: Why do I need to call this??? This rect is in a weird
-	// location relative to the point. Dunno whats up here.
-	r.moveCenter( p );
+	// this tooltip is attached to the viewport widget, so translate the node's rect
+	// into its coordinates.
+	r = QRect( m_chat->htmlWidget->contentsToViewport( r.topLeft() ),
+	           m_chat->htmlWidget->contentsToViewport( r.bottomRight() ) );
 
 	if( c )
 	{
@@ -719,52 +722,73 @@ void ChatView::pageDown()
 	htmlWidget->scrollBy( 0, htmlWidget->visibleHeight() );
 }
 
+// NAUGHTY, BAD AND WRONG!
+#include <private/qrichtext_p.h>
+class EvilTextEdit : public KTextEdit
+{
+public:
+	// grab the paragraph as plain text - very very evil.
+	QString plainText( int para )
+	{
+		return document()->paragAt( para )->string()->toString();
+	}
+};
+
 void ChatView::nickComplete()
 {
-	int firstSpace, lastSpace, para = 1, parIdx = 1;
+	int para = 1, parIdx = 1;
 	m_edit->getCursorPosition( &para, &parIdx);
-	QString txt = editpart->text( Qt::PlainText );
+
+	// FIXME: strips out all formatting
+	QString txt = static_cast<EvilTextEdit*>(m_edit)->plainText( para );
 
 	if( parIdx > 0 )
 	{
-		firstSpace = txt.findRev( QRegExp( QString::fromLatin1("\\s\\S+") ), parIdx - 1 ) + 1;
-		lastSpace = txt.find( QRegExp( QString::fromLatin1("[\\s\\:]") ), firstSpace );
+		int firstSpace = txt.findRev( QRegExp( QString::fromLatin1("\\s\\S+") ), parIdx - 1 ) + 1;
+		int lastSpace = txt.find( QRegExp( QString::fromLatin1("[\\s\\:]") ), firstSpace );
 		if( lastSpace == -1 )
 			lastSpace = txt.length();
 
 		QString word = txt.mid( firstSpace, lastSpace - firstSpace );
-		QString m_Match;
+		QString match;
 
 		kdDebug() << k_funcinfo << word << endl;
 
 		if( word != m_lastMatch )
 		{
-			m_Match = mComplete->makeCompletion( word );
+			match = mComplete->makeCompletion( word );
 			m_lastMatch = QString::null;
 			parIdx -= word.length();
 		}
 		else
 		{
-			m_Match = mComplete->nextMatch();
+			match = mComplete->nextMatch();
 			parIdx -= m_lastMatch.length();
 		}
 
-		if( !m_Match.isNull() && !m_Match.isEmpty() )
+		if( !match.isNull() && !match.isEmpty() )
 		{
 			QString rightText = txt.right( txt.length() - lastSpace );
 
 			if( para == 0 && firstSpace == 0 && rightText[0] != QChar(':') )
 			{
-				rightText = m_Match + QString::fromLatin1(": ") + rightText;
+				rightText = match + QString::fromLatin1(": ") + rightText;
 				parIdx += 2;
 			}
 			else
-				rightText = m_Match + rightText;
+				rightText = match + rightText;
 
-			m_edit->removeParagraph( para );
-			m_edit->insertParagraph( txt.left(firstSpace) + rightText, para);
-			m_edit->setCursorPosition( para, parIdx + m_Match.length() );
-			m_lastMatch = m_Match;
+			// insert *before* remove. this is becase Qt adds an extra blank line
+			// if the rich text control becomes empty (if you remove the only para).
+			// disable updates while we change the contents to eliminate flicker.
+			m_edit->setUpdatesEnabled( false );
+			m_edit->insertParagraph( txt.left(firstSpace) + rightText, para );
+			m_edit->removeParagraph( para + 1 );
+			m_edit->setCursorPosition( para, parIdx + match.length() );
+			m_edit->setUpdatesEnabled( true );
+			// must call this rather than update because QTextEdit is broken :(
+			m_edit->updateContents();
+			m_lastMatch = match;
 		}
 	}
 }
