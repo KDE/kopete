@@ -360,21 +360,6 @@ void KopeteAway::slotTimerTimeout()
 				i->setAway( true, getInstance()->d->awayMessage);
 			}
 		}
-
-		// Do the same with the protocols.
-		QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
-		for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
-		{
-			KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
-			if( !proto )
-				continue;
-
-			if( proto->isConnected() && !proto->isAway() )
-			{
-				d->autoAwayProtocols.append(proto);
-				proto->setAway();
-			}
-		}
 	}
 }
 

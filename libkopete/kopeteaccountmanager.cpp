@@ -56,77 +56,27 @@ KopeteAccountManager::~KopeteAccountManager()
 void KopeteAccountManager::connectAll()
 {
 	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
-	{
 		i->connect();
-	}
-
-	//------ OBSOLETE
-	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
-	for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
-	{
-			KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
-			if( !proto )
-					continue;
-
-			if( !proto->isConnected() )
-			{
-					kdDebug(14010) << "KopeteAccountManager::connectAll: "
-												 << "Connecting plugin: " << proto->pluginId() << endl;
-
-					proto->connect();
-			}
-	}
 }
 
 void KopeteAccountManager::disconnectAll()
 {
 	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
-	{
 		i->disconnect();
-	}
-
-	//------ OBSOLETE
-	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
-	for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
-	{
-			KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
-			if( !proto )
-					continue;
-
-			if( proto->isConnected() )
-			{
-					kdDebug(14010) << "KopeteAccountManager::disconnectAll: "
-												 << "Disonnecting plugin: " << proto->pluginId() << endl;
-
-					proto->disconnect();
-			}
-	}
 }
 
 void KopeteAccountManager::setAwayAll( const QString &awayReason )
 {
 	KopeteAway::setGlobalAway( true );
 
-	for(KopeteAccount *i=m_accounts.first() ; i; i=m_accounts.next() )
+	for(KopeteAccount *i = m_accounts.first() ; i; i = m_accounts.next() )
 	{
 		if(i->isConnected() && !i->isAway())
-			i->setAway(true, awayReason);
-	}
-
-	//------ OBSOLETE
-	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
-	for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
-	{
-		KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
-		if( !proto )
-				continue;
-
-		if( proto->isConnected() && !proto->isAway() )
 		{
-				kdDebug(14010) << "KopeteAccountManager::setAwayAll: "
-											 << "Setting plugin to away: " << proto->pluginId() << endl;
-
-				proto->setAway();
+			if( !awayReason.isNull() )
+				i->setAway(true, awayReason);
+			else
+				i->setAway(true, KopeteAway::message() );
 		}
 	}
 }
@@ -139,23 +89,6 @@ void KopeteAccountManager::setAvailableAll()
 	{
 		if(i->isConnected() && i->isAway())
 			i->setAway(false);
-	}
-
-	//------ OBSOLETE
-	QPtrList<KopetePlugin> plugins = LibraryLoader::pluginLoader()->plugins();
-	for( KopetePlugin *p = plugins.first() ; p ; p = plugins.next() )
-	{
-			KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>( p );
-			if( !proto )
-					continue;
-
-			if( proto->isConnected() && proto->isAway() )
-			{
-					kdDebug(14010) << "KopeteAccountManager::setAvailableAll: "
-												 << "Setting plugin to available: " << proto->pluginId() << endl;
-
-					proto->setAvailable();
-			}
 	}
 }
 
