@@ -253,6 +253,7 @@ class ImageComponent : public Component
 {
 public:
 	ImageComponent( ComponentBase *parent );
+	ImageComponent( ComponentBase *parent, int minW, int minH );
 	~ImageComponent();
 
 	void setPixmap( const QPixmap &img );

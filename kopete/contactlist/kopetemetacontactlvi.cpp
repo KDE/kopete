@@ -125,8 +125,9 @@ private:
 class KopeteMetaContactLVI::Private
 {
 public:
-	Private() : metaContactIcon( 0 ), nameText( 0 ), extraText( 0 ), contactIconBox( 0 ),
-	            buddyIcon( 0 ), currentMode( -1 ) {}
+	Private() : metaContactIcon( 0L ), nameText( 0L ), extraText( 0L ), contactIconBox( 0L ),
+	            buddyIcon( 0L ), metaContactPhoto( 0L ), currentMode( -1 ) {}
+	ListView::ImageComponent *metaContactPhoto;
 	ListView::ImageComponent *metaContactIcon;
 	ListView::TextComponent *nameText;
 	ListView::TextComponent *extraText;
@@ -134,7 +135,12 @@ public:
 	ListView::BoxComponent *spacerBox;
 	ListView::ImageComponent *buddyIcon;
 	std::auto_ptr<ListView::ToolTipSource> toolTipSource;
+	// metacontact icon size
 	int iconSize;
+	// protocol icon size
+	int contactIconSize;
+	// metacontact photo size
+	int photoSize;
 	int currentMode;
 
 	QPtrList<Kopete::MessageEvent> events;
@@ -143,16 +149,17 @@ public:
 class ContactComponent : public ListView::ImageComponent
 {
 	Kopete::Contact *mContact;
+	int mIconSize;
 public:
-	ContactComponent( ListView::ComponentBase *parent, Kopete::Contact *contact )
+	ContactComponent( ListView::ComponentBase *parent, Kopete::Contact *contact, int iconSize)
 	 : ListView::ImageComponent( parent )
-	 , mContact( contact )
+	 , mContact( contact ), mIconSize( iconSize )
 	{
 		updatePixmap();
 	}
 	void updatePixmap()
 	{
-		setPixmap( contact()->onlineStatus().iconFor( contact(), 12 ) );
+		setPixmap( contact()->onlineStatus().iconFor( contact(), mIconSize ) );
 	}
 	Kopete::Contact *contact()
 	{
@@ -219,11 +226,12 @@ KopeteMetaContactLVI::KopeteMetaContactLVI( Kopete::MetaContact *contact, QListV
 void KopeteMetaContactLVI::initLVI()
 {
 	d = new Private;
+	  
 	d->toolTipSource.reset( new ListView::MetaContactToolTipSource( m_metaContact ) );
 
 	m_oldStatus = m_metaContact->status();
 	m_oldStatusIcon = m_metaContact->statusIcon();
-
+	
 	connect( m_metaContact, SIGNAL( displayNameChanged( const QString &, const QString & ) ),
 		SLOT( slotDisplayNameChanged() ) );
 
@@ -468,13 +476,37 @@ void KopeteMetaContactLVI::execute() const
 
 void KopeteMetaContactLVI::slotDisplayNameChanged()
 {
-	d->nameText->setText( m_metaContact->displayName() );
+	if ( d->nameText )
+	{
+		d->nameText->setText( m_metaContact->displayName() );
+	
+		// delay the sort if we can
+		if ( ListView::ListView *lv = dynamic_cast<ListView::ListView *>( listView() ) )
+			lv->delayedSort();
+		else
+			listView()->sort();
+	}
+}
 
-	// delay the sort if we can
-	if ( ListView::ListView *lv = dynamic_cast<ListView::ListView *>( listView() ) )
-		lv->delayedSort();
-	else
-		listView()->sort();
+void KopeteMetaContactLVI::slotPhotoChanged()
+{
+	if ( d->metaContactPhoto )
+	{
+		QPixmap photoPixmap;
+		//QPixmap defaultIcon( KGlobal::iconLoader()->loadIcon( "vcard", KIcon::Desktop ) );
+		QImage photoImg = m_metaContact->photo();
+		
+		if ( (photoImg.width() > 0) &&  (photoImg.height() > 0) )
+		{
+			int photoSize = d->photoSize;
+			if ( photoImg.width() > photoImg.height() )
+				photoPixmap = photoImg.scaleWidth( photoSize );
+			else
+				photoPixmap = photoImg.scaleHeight( photoSize );
+			
+			d->metaContactPhoto->setPixmap( photoPixmap );
+		}
+	}
 }
 
 /*
@@ -608,9 +640,14 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 	// empty...
 	while ( component( 0 ) )
 		delete component( 0 );
-	d->extraText = 0;
-	d->buddyIcon = 0;
+	
+	d->nameText = 0L;
+	d->metaContactPhoto = 0L;
+	d->extraText = 0L;
+	d->buddyIcon = 0L;
 	d->iconSize = IconSize( KIcon::Small );
+	d->contactIconSize = 12;
+	d->photoSize = 48;
 
 	// generate our contents
 	using namespace ListView;
@@ -633,6 +670,11 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 	}
 	else if( mode == KopetePrefs::Yagami )             // just for Yagami :)
 	{
+		d->contactIconSize = IconSize( KIcon::Small );
+		Component *imageBox = new BoxComponent( hbox, BoxComponent::Vertical );
+		new VSpacerComponent( imageBox );
+		d->metaContactPhoto = new ImageComponent( imageBox, d->photoSize*110/140, d->photoSize );
+		new VSpacerComponent( imageBox );
 		Component *vbox = new BoxComponent( hbox, BoxComponent::Vertical );
 		d->nameText = new TextComponent( vbox );
 		d->extraText = new TextComponent( vbox );
@@ -660,13 +702,15 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 	}
 
 	// set some components to have the metacontact tooltip
-	setMetaContactToolTipSourceForComponent( d->metaContactIcon );
-	setMetaContactToolTipSourceForComponent( d->nameText );
-	setMetaContactToolTipSourceForComponent( d->extraText );
-
+		setMetaContactToolTipSourceForComponent( d->metaContactIcon );
+		setMetaContactToolTipSourceForComponent( d->nameText );
+		setMetaContactToolTipSourceForComponent( d->extraText );
+		setMetaContactToolTipSourceForComponent( d->metaContactPhoto );
+	
 	// update the display name
 	slotDisplayNameChanged();
-
+	slotPhotoChanged();
+	
 	// finally, re-add all contacts so their icons appear. remove them first for consistency.
 	QPtrList<Kopete::Contact> contacts = m_metaContact->contacts();
 	for ( QPtrListIterator<Kopete::Contact> it( contacts ); it.current(); ++it )
@@ -746,7 +790,7 @@ void KopeteMetaContactLVI::updateContactIcon( Kopete::Contact *c )
 	ContactComponent *comp = contactComponent( c );
 	bool bShow = !bHideOffline || c->isOnline();
 	if ( bShow && !comp )
-		(void)new ContactComponent( d->contactIconBox, c );
+		(void)new ContactComponent( d->contactIconBox, c, d->contactIconSize );
 	else if ( !bShow && comp )
 		delete comp;
 	else if ( comp )

@@ -424,6 +424,14 @@ ImageComponent::ImageComponent( ComponentBase *parent )
 {
 }
 
+ImageComponent::ImageComponent( ComponentBase *parent, int minW, int minH )
+ : Component( parent ), d( new Private )
+{
+	setMinWidth( minW );
+	setMinHeight( minH );
+	repaint();
+}
+
 ImageComponent::~ImageComponent()
 {
 	delete d;

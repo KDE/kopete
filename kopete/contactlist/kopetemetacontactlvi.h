@@ -140,6 +140,7 @@ private slots:
 	void slotContactRemoved( Kopete::Contact * );
 
 	void slotDisplayNameChanged();
+	void slotPhotoChanged();
 
 	void slotAddToNewGroup();
 	void slotIdleStateChanged( Kopete::Contact * );
