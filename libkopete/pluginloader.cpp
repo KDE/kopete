@@ -276,10 +276,13 @@ void LibraryLoader::slotPluginDestroyed( QObject *o )
 	m_addressBookFields.remove( static_cast<KopetePlugin *>( o ) );
 
 	QDictIterator<KopetePlugin> it( mLibHash );
-	for( ; it.current() && it.current() == o; ++it )
+	for( ; it.current() ; ++it )
 	{
-		mLibHash.remove( it.currentKey() );
-		break;
+		if( it.current() == o )
+		{
+			mLibHash.remove( it.currentKey() );
+			break;
+		}
 	}
 
 	// FIXME: Most likely most data structures here leak and are bound
