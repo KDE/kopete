@@ -331,6 +331,10 @@ void KopeteMetaContact::slotMetaContactDestroyed( QObject *obj )
 	// Try removing the item. The contact might be removed already, but
 	// that's safely handled inside QPtrList::remove()
 	m_contacts.remove( dynamic_cast<KopeteContact *>( obj ) );
+
+	// If a contact has been removed, we need to re-evaluate the
+	// online status
+	emit onlineStatusChanged( this, status() );
 }
 
 QString KopeteMetaContact::toXML()
