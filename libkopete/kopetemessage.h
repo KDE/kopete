@@ -31,17 +31,22 @@ public:
 	*/
 	enum MessageDirection { Inbound, Outbound };
 
+	/*
+		Constructs a new message
+		Please note that body -must- be valid HTML, so all HTML control
+		characters must be escaped.
+	*/
 	KopeteMessage(QString from, QString to, QString body, MessageDirection direction);
 	KopeteMessage(QDateTime timestamp, QString from, QString to, QString body, MessageDirection direction);
 
-	QDateTime timestamp() { return mTimestamp; }
+	QDateTime timestamp() const { return mTimestamp; }
 
-	QString from() { return mFrom; }
-	QString to() { return mTo; }
+	QString from() const { return mFrom; }
+	QString to() const { return mTo; }
 
-	QString body() { return mBody; }
+	QString body() const { return mBody; }
 
-	MessageDirection direction() { return mDirection; }
+	MessageDirection direction() const { return mDirection; }
 
 protected:
 	QDateTime mTimestamp;
