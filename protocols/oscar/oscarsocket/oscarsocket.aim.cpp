@@ -39,7 +39,7 @@ const char AIM_LANG[] 		= "en";
 // Sends login information, actually logs onto the server
 void OscarSocket::sendLoginAIM(void)
 {
-	kdDebug(14150) << k_funcinfo <<  "SEND (CLI_MD5_LOGIN) sending AIM login" << endl;
+	kdDebug(14151) << k_funcinfo <<  "SEND (CLI_MD5_LOGIN) sending AIM login" << endl;
 
 	Buffer outbuf;
 	outbuf.addSnac(0x0017,0x0002,0x0000,0x00000000);
@@ -64,7 +64,7 @@ void OscarSocket::sendLoginAIM(void)
 	outbuf.addTLV8(0x004a,0x01);
 
 	sendBuf(outbuf,0x02);
-//	kdDebug(14150) << k_funcinfo <<  "emitting connectionChanged" << endl;
+//	kdDebug(14151) << k_funcinfo <<  "emitting connectionChanged" << endl;
 //	emit connectionChanged(3,"Sending username and password...");
 }
 
@@ -83,7 +83,7 @@ void OscarSocket::encodePassword(char *digest)
 
 void OscarSocket::sendAIMAway(bool away, const QString &message)
 {
-	kdDebug(14150) << k_funcinfo << "Called. away = " << away <<
+	kdDebug(14151) << k_funcinfo << "Called. away = " << away <<
 		", message = '" << message << "'" << endl;
 
 	Buffer outbuf;
@@ -120,7 +120,7 @@ void OscarSocket::sendUserLocationInfoRequest(const QString &name, WORD type)
 		return;
 
 	// docs: http://iserverd.khstu.ru/oscar/snac_02_05.html
-	kdDebug(14150) << k_funcinfo <<
+	kdDebug(14151) << k_funcinfo <<
 		"SEND CLI_LOCATIONINFOREQ for '" << name << "'" << endl;
 
 	Buffer outbuf;
@@ -138,7 +138,7 @@ void OscarSocket::parseUserLocationInfo(Buffer &inbuf)
 	UserInfo u;
 	parseUserInfo(inbuf, u);
 
-	kdDebug(14150) << k_funcinfo <<
+	kdDebug(14151) << k_funcinfo <<
 		"RECV SRV_LOCATIONINFOREQ for '" << u.sn << "'" << endl;
 
 	QPtrList<TLV> tl = inbuf.getTLVList();
@@ -151,32 +151,32 @@ void OscarSocket::parseUserLocationInfo(Buffer &inbuf)
 		switch(cur->type)
 		{
 			case 0x0001: //profile text encoding
-//				kdDebug(14150) << k_funcinfo << "text encoding is: " << cur->data << endl;
+//				kdDebug(14151) << k_funcinfo << "text encoding is: " << cur->data << endl;
 				break;
 
 			case 0x0002: //profile text
-				/*kdDebug(14150) << k_funcinfo <<
+				/*kdDebug(14151) << k_funcinfo <<
 					"The profile is: '" << cur->data << "'" << endl;*/
 				profile += QString::fromAscii(cur->data); // aim always seems to use us-ascii encoding
 				break;
 
 			case 0x0003: //away message encoding
-//				kdDebug(14150) << k_funcinfo <<
+//				kdDebug(14151) << k_funcinfo <<
 //					"Away message encoding is: " << cur->data << endl;
 				break;
 
 			case 0x0004: //away message
-				//kdDebug(14150) << k_funcinfo << "Away message is: " << cur->data << endl;
+				//kdDebug(14151) << k_funcinfo << "Away message is: " << cur->data << endl;
 				away += QString::fromAscii(cur->data); // aim always seems to use us-ascii encoding
 				emit receivedAwayMessage(u.sn, away);
 				break;
 
 			case 0x0005: //capabilities
-				//kdDebug(14150) << k_funcinfo << "Got capabilities" << endl;
+				//kdDebug(14151) << k_funcinfo << "Got capabilities" << endl;
 				break;
 
 			default: //unknown
-				kdDebug(14150) << k_funcinfo << "Unknown user info type " << cur->type << endl;
+				kdDebug(14151) << k_funcinfo << "Unknown user info type " << cur->type << endl;
 					break;
 		};
 	}

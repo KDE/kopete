@@ -53,7 +53,7 @@ AIMContact::AIMContact(const QString name, const QString displayName, AIMAccount
 		acc->engine(), SIGNAL(gotUserProfile(const UserInfo &, const QString &, const QString &)),
 		this, SLOT(slotGotProfile(const UserInfo &, const QString &, const QString &)));
 
-	/*kdDebug(14190) << k_funcinfo <<
+	/*kdDebug(14152) << k_funcinfo <<
 		"contactName()='" << contactName() <<
 		"', displayName()='" << displayName << "'" << endl;*/
 	actionRequestAuth = 0L;
@@ -65,7 +65,7 @@ AIMContact::~AIMContact()
 
 void AIMContact::setOwnProfile(const QString &profile)
 {
-	kdDebug(14190) << k_funcinfo << "Called." << endl;
+	kdDebug(14152) << k_funcinfo << "Called." << endl;
 	if(this == account()->myself())
 	{
 		mUserProfile = profile;
@@ -78,12 +78,12 @@ void AIMContact::slotGotProfile(const UserInfo &user, const QString &profile, co
 {
 	if(tocNormalize(user.sn) != contactName())
 		return;
-	kdDebug(14190) << k_funcinfo << "Called for contact '" << displayName() << "'" << endl;
+	kdDebug(14152) << k_funcinfo << "Called for contact '" << displayName() << "'" << endl;
 	mUserProfile = profile;
 	setAwayMessage(away);
 	if ( metaContact()->isTemporary() && onlineStatus().internalStatus() == OSCAR_OFFLINE && user.onlinesince.isValid() )
 	{
-		kdDebug(14190) << k_funcinfo << "Attempting to set status to online for temp contact" << endl;
+		kdDebug(14152) << k_funcinfo << "Attempting to set status to online for temp contact" << endl;
 		setStatus(OSCAR_ONLINE);
 	}
 
@@ -148,7 +148,7 @@ void AIMContact::setStatus(const unsigned int newStatus)
 			setOnlineStatus(mProtocol->statusOnline);
 	}
 
-//	kdDebug(14190) << k_funcinfo << "'" << displayName() << "' is now " <<
+//	kdDebug(14152) << k_funcinfo << "'" << displayName() << "' is now " <<
 //		onlineStatus().description() << endl;
 }
 
@@ -161,7 +161,7 @@ void AIMContact::slotContactChanged(const UserInfo &u)
 	// update mInfo and general stuff from OscarContact
 	slotParseUserInfo(u);
 
-	/*kdDebug(14190) << k_funcinfo << "Called for '"
+	/*kdDebug(14152) << k_funcinfo << "Called for '"
 		<< displayName() << "', contactName()=" << contactName() << endl;*/
 	QStringList capList;
 	// Append client name and version in case we found one
@@ -336,7 +336,7 @@ const QString AIMContact::awayMessage()
 
 void AIMContact::setAwayMessage(const QString &message)
 {
-	kdDebug(14190) << k_funcinfo <<
+	kdDebug(14152) << k_funcinfo <<
 		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;
 	QString filteredMessage = message;
 	filteredMessage.replace(

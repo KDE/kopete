@@ -88,7 +88,7 @@ void RateClass::timedSend()
 {
 	if ( mPacketQueue.empty() )
 	{
-		kdDebug(14150) << k_funcinfo << "Calling writeData on empty queue!" << endl;
+		kdDebug(14151) << k_funcinfo << "Calling writeData on empty queue!" << endl;
 	}
 	Buffer &outbuf = mPacketQueue.first();
 
@@ -105,7 +105,7 @@ void RateClass::timedSend()
 	//The maximum level at which we can safely send a packet
 	DWORD maxPacket = limit*windowsize/(windowsize-1) + RATE_SAFETY_TIME;
 
-	/*kdDebug(14150) << k_funcinfo << "Rate Information:"
+	/*kdDebug(14151) << k_funcinfo << "Rate Information:"
 		<< "\nWindow Size: " << windowsize
 		<< "\nWindow Size - 1: " << windowsize - 1
 		<< "\nOld Level: " << current
@@ -123,7 +123,7 @@ void RateClass::timedSend()
 	{
 		int waitTime = maxPacket * windowsize - (windowsize - 1) * current - timeDiff + RATE_SAFETY_TIME;
 		//We are sending TOO FAST, let's wait and send later
-		kdDebug(14150) << k_funcinfo <<
+		kdDebug(14151) << k_funcinfo <<
 			"Sending this packet would violate rate limit, waiting "
 			<< waitTime << " ms..." << endl;
 		QTimer::singleShot(waitTime, this, SLOT(timedSend()));

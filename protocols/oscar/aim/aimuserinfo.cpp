@@ -157,7 +157,7 @@ void AIMUserInfoDialog::slotCloseClicked()
 
 void AIMUserInfoDialog::slotUpdateProfile()
 {
-	kdDebug(14190) << k_funcinfo << "Got User Profile." << endl;
+	kdDebug(14152) << k_funcinfo << "Got User Profile." << endl;
 
 	QObject::disconnect(mContact, SIGNAL(updatedProfile()), this, SLOT(slotUpdateProfile()));
 

@@ -115,7 +115,7 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KURL & url) co
 			i18n("Do you want to add %1 to your contact list?").arg(nickuin))
 			!= KMessageBox::Yes)
 		{
-			kdDebug(14200) << k_funcinfo << "Cancelled" << endl;
+			kdDebug(14153) << k_funcinfo << "Cancelled" << endl;
 			return;
 		}
 	}
@@ -134,13 +134,13 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KURL & url) co
 		delete chooser;
 		if (ret == QDialog::Rejected || account == 0)
 		{
-			kdDebug(14200) << k_funcinfo << "Cancelled" << endl;
+			kdDebug(14153) << k_funcinfo << "Cancelled" << endl;
 			return;
 		}
 	}
 
 
-	kdDebug(14200) << k_funcinfo <<
+	kdDebug(14153) << k_funcinfo <<
 		"Adding Contact; uin = " << uin << ", nick = '" << nick <<
 		"', firstname = '" << first << "', lastname = '" << last <<"'" << endl;
 	if (account->addContact(uin, nick, 0L, KopeteAccount::DontChangeKABC, QString::null, true))
@@ -174,7 +174,7 @@ ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 	clientFeatures("clientFeatures", i18n("Client Features"), 0, false)
 {
 	if (protocolStatic_)
-		kdDebug(14200) << k_funcinfo << "ICQ plugin already initialized" << endl;
+		kdDebug(14153) << k_funcinfo << "ICQ plugin already initialized" << endl;
 	else
 		protocolStatic_ = this;
 	addAddressBookField("messaging/icq", KopetePlugin::MakeIndexField);
@@ -575,7 +575,7 @@ Apple Roman
 
 void ICQProtocol::fillComboFromTable(QComboBox *box, const QMap<int, QString> &map)
 {
-//	kdDebug(14200) << k_funcinfo << "Called." << endl;
+//	kdDebug(14153) << k_funcinfo << "Called." << endl;
 
 	QStringList list = map.values();
 	list.sort();
@@ -584,7 +584,7 @@ void ICQProtocol::fillComboFromTable(QComboBox *box, const QMap<int, QString> &m
 
 void ICQProtocol::setComboFromTable(QComboBox *box, const QMap<int, QString> &map, int value)
 {
-//	kdDebug(14200) << k_funcinfo << "Called." << endl;
+//	kdDebug(14153) << k_funcinfo << "Called." << endl;
 	QMap<int, QString>::ConstIterator it;
 	it = map.find(value);
 	if (!(*it))
@@ -638,7 +638,7 @@ void ICQProtocol::fillTZCombo(QComboBox *combo)
 
 void ICQProtocol::setTZComboValue(QComboBox *combo, const char &tz)
 {
-	kdDebug(14200) << k_funcinfo << "tz=" << int(tz) << endl;
+	kdDebug(14153) << k_funcinfo << "tz=" << int(tz) << endl;
 	if ((tz < -24) || (tz > 24))
 		combo->setCurrentItem(24); // GMT+0:00 as default
 	else
@@ -648,7 +648,7 @@ void ICQProtocol::setTZComboValue(QComboBox *combo, const char &tz)
 char ICQProtocol::getTZComboValue(QComboBox *combo)
 {
 	char ret =  combo->currentItem() - 24;
-// 	kdDebug(14200) << k_funcinfo << "return value=" << int(ret) << endl;
+// 	kdDebug(14153) << k_funcinfo << "return value=" << int(ret) << endl;
 	return ret;
 }
 
@@ -740,7 +740,7 @@ void ICQProtocol::contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *w
 	// TIMEZONE ======================================
 	fillTZCombo(widget->rwTimezone);
 	setTZComboValue(widget->rwTimezone, c->generalInfo.timezoneCode);
-	kdDebug(14200) << k_funcinfo << "timezonecode=" <<
+	kdDebug(14153) << k_funcinfo << "timezonecode=" <<
 		c->generalInfo.timezoneCode << endl;
 	/*
 	widget->rwTimezone->setCurrentText(c->generalInfo.timezoneCode)
@@ -995,7 +995,7 @@ KopeteContact *ICQProtocol::deserializeContact(KopeteMetaContact *metaContact,
 
 	if(!account)
 	{
-		kdDebug(14200) << k_funcinfo <<
+		kdDebug(14153) << k_funcinfo <<
 			"WARNING: Account for contact does not exist, skipping." << endl;
 		return 0;
 	}

@@ -70,7 +70,7 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
  **/
 
 	AIMProtocol *proto = AIMProtocol::protocol();
-	kdDebug(14190) << k_funcinfo << "URL url   : '" << url.url() << "'" << endl;
+	kdDebug(14152) << k_funcinfo << "URL url   : '" << url.url() << "'" << endl;
 	QString command = url.path();
 
 	if (command.startsWith("goim") || command.startsWith("addbuddy"))
@@ -82,7 +82,7 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
 
 		if (!command.startsWith("?screenname="))
 		{
-			kdWarning(14190) << "Unhandled aim URI : " << url.url() << endl;
+			kdWarning(14152) << "Unhandled aim URI : " << url.url() << endl;
 			return;
 		}
 
@@ -107,7 +107,7 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
 				i18n("Do you want to add '%1' to your contact list?").arg(command))
 				!= KMessageBox::Yes)
 			{
-				kdDebug(14190) << k_funcinfo << "Cancelled" << endl;
+				kdDebug(14152) << k_funcinfo << "Cancelled" << endl;
 				return;
 			}
 		}
@@ -126,13 +126,13 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
 			delete chooser;
 			if (ret == QDialog::Rejected || account == 0)
 			{
-				kdDebug(14190) << k_funcinfo << "Cancelled" << endl;
+				kdDebug(14152) << k_funcinfo << "Cancelled" << endl;
 				return;
 			}
 		}
 
 
-		kdDebug(14190) << k_funcinfo <<
+		kdDebug(14152) << k_funcinfo <<
 			"Adding Contact; screenname = " << screenname << endl;
 		if (account->addContact(screenname, command, 0L,
 			KopeteAccount::DontChangeKABC, QString::null, true))
@@ -144,7 +144,7 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
 	}
 	else
 	{
-		kdWarning(14190) << "Unhandled aim URI : " << url.url() << endl;
+		kdWarning(14152) << "Unhandled aim URI : " << url.url() << endl;
 	}
 }
 
@@ -161,7 +161,7 @@ AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
 	clientFeatures("clientFeatures", i18n("Client Features"), 0, false)
 {
 	if (protocolStatic_)
-		kdDebug(14190) << k_funcinfo << "AIM plugin already initialized" << endl;
+		kdDebug(14152) << k_funcinfo << "AIM plugin already initialized" << endl;
 	else
 	{
 		protocolStatic_ = this;
@@ -195,7 +195,7 @@ KopeteContact *AIMProtocol::deserializeContact(KopeteMetaContact *metaContact,
 
 	if(!account)
 	{
-		kdDebug(14190) << k_funcinfo << "WARNING: Account for contact does not exist, skipping." << endl;
+		kdDebug(14152) << k_funcinfo << "WARNING: Account for contact does not exist, skipping." << endl;
 		return 0;
 	}
 

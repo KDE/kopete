@@ -42,7 +42,7 @@ const WORD CLI_VERIFICATION_REPLY = 0x0020;
 // http://iserverd.khstu.ru/oscar/snac_01_03.html
 void OscarSocket::parseServerReady(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo << "RECV (SRV_FAMILIES), got list of families" << endl;
+	kdDebug(14151) << k_funcinfo << "RECV (SRV_FAMILIES), got list of families" << endl;
 
 	int famcount; //the number of families received
 	//WORD *families = new WORD[inbuf.length()];
@@ -62,7 +62,7 @@ void OscarSocket::parseServerReady(Buffer &inbuf)
 // http://iserverd.khstu.ru/oscar/snac_01_04.html
 void OscarSocket::sendRequestService(const WORD serviceFamily)
 {
-	kdDebug(14150) << k_funcinfo <<
+	kdDebug(14151) << k_funcinfo <<
 		"Requesting new service with SNAC family = " << serviceFamily << endl;
 	Buffer outbuf;
 	outbuf.addSnac(OSCAR_FAM_1,CLI_SERVICExREQ,0x0000,0x00000000);
@@ -75,7 +75,7 @@ void OscarSocket::sendRequestService(const WORD serviceFamily)
 // http://iserverd.khstu.ru/oscar/snac_01_06.html
 void OscarSocket::sendRateInfoRequest()
 {
-	kdDebug(14150) << k_funcinfo << "SEND (CLI_RATESREQUEST)" << endl;
+	kdDebug(14151) << k_funcinfo << "SEND (CLI_RATESREQUEST)" << endl;
 	Buffer outbuf;
 	outbuf.addSnac(OSCAR_FAM_1,CLI_RATES_REQUEST,0x0000,0x00000006);
 	sendBuf(outbuf,0x02);
@@ -88,21 +88,21 @@ void OscarSocket::parseMyUserInfo(Buffer &inbuf)
 {
 	if (gotAllRights > 7)
 	{
-		kdDebug(14150) << k_funcinfo "RECV (SRV_REPLYINFO) Parsing OWN user info" << endl;
+		kdDebug(14151) << k_funcinfo "RECV (SRV_REPLYINFO) Parsing OWN user info" << endl;
 		UserInfo u;
 		parseUserInfo(inbuf, u);
 		emit gotContactChange(u); // gotMyUserInfo(u);
 		return;
 	}
 
-	kdDebug(14150) << k_funcinfo <<
+	kdDebug(14151) << k_funcinfo <<
 		"RECV (SRV_REPLYINFO) Ignoring OWN user info, gotAllRights=" <<
 		gotAllRights << endl;
 
 	gotAllRights++;
 	if (gotAllRights==7)
 	{
-		kdDebug(14150) << k_funcinfo "gotAllRights==7" << endl;
+		kdDebug(14151) << k_funcinfo "gotAllRights==7" << endl;
 		sendInfo();
 	}
 }
@@ -112,7 +112,7 @@ void OscarSocket::parseMyUserInfo(Buffer &inbuf)
 // http://iserverd.khstu.ru/oscar/snac_01_07.html
 void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo <<
+	kdDebug(14151) << k_funcinfo <<
 		"RECV (SRV_RATES), Parsing Rate Info Response" << endl;
 
 	RateClass *rc = 0;
@@ -120,7 +120,7 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 	unsigned int i = 0;
 	WORD numclasses = inbuf.getWord();
 
-	/*kdDebug(14150) << k_funcinfo <<
+	/*kdDebug(14151) << k_funcinfo <<
 	"Number of Rate Classes=" << numclasses << endl;*/
 
 	for (i=0; i<numclasses; i++)
@@ -133,7 +133,7 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 		rc = new RateClass;
 
 		classid = inbuf.getWord();
-		//kdDebug(14150) << k_funcinfo << "Rate classId=" << rc->classid << endl;
+		//kdDebug(14151) << k_funcinfo << "Rate classId=" << rc->classid << endl;
 		windowsize = inbuf.getDWord();
 		clear = inbuf.getDWord();
 		alert = inbuf.getDWord();
@@ -159,7 +159,7 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 	}
 
 #ifdef OSCAR_PACKETLOG
-	kdDebug(14150) << "REMAINING BUFFER:" << inbuf.toString() << endl;
+	kdDebug(14151) << "REMAINING BUFFER:" << inbuf.toString() << endl;
 #endif
 
 	//now here come the members of each class
@@ -168,7 +168,7 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 		WORD classid = inbuf.getWord();
 		WORD count = inbuf.getWord();
 
-//		kdDebug(14150) << k_funcinfo << "Classid: " << classid <<
+//		kdDebug(14151) << k_funcinfo << "Classid: " << classid <<
 //			", Count: " << count << endl;
 
 		RateClass *tmp;
@@ -186,7 +186,7 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 		// do not go into next for() loop if we didnt find a RateClass anyway
 		if (rc == 0)
 		{
-			kdDebug(14150) << k_funcinfo << "WARNING: Could not find RateClass" <<
+			kdDebug(14151) << k_funcinfo << "WARNING: Could not find RateClass" <<
 				"to store SNAC group/type pairs into. Missing class id = " <<
 				classid << endl;
 			continue;
@@ -210,7 +210,7 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 
 	if(inbuf.length() != 0)
 	{
-		kdDebug(14150) << k_funcinfo <<
+		kdDebug(14151) << k_funcinfo <<
 			"ERROR: Did not parse all Rates successfully!" << endl;
 	}
 
@@ -222,12 +222,12 @@ void OscarSocket::parseRateInfoResponse(Buffer &inbuf)
 // http://iserverd.khstu.ru/oscar/snac_01_08.html
 void OscarSocket::sendRateAck()
 {
-	kdDebug(14150) << k_funcinfo << "SEND (CLI_ACKRATES)" << endl;
+	kdDebug(14151) << k_funcinfo << "SEND (CLI_ACKRATES)" << endl;
 	Buffer outbuf;
 	outbuf.addSnac(OSCAR_FAM_1,CLI_RATES_ACK,0x0000,0x00000000);
 	for (RateClass *rc = rateClasses.first(); rc; rc = rateClasses.next())
 	{
-		/*kdDebug(14150) << k_funcinfo << "adding classid " << rc->id() <<
+		/*kdDebug(14151) << k_funcinfo << "adding classid " << rc->id() <<
 			 " to the rate acknowledgement" << endl;*/
 		outbuf.addWord(rc->id());
 	}
@@ -240,7 +240,7 @@ void OscarSocket::sendRateAck()
 
 void OscarSocket::requestInfo()
 {
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
+	kdDebug(14151) << k_funcinfo << "Called." << endl;
 
 	requestMyUserInfo(); // CLI_REQINFO
 	sendSSIRightsRequest();  // CLI_REQLISTS
@@ -250,7 +250,7 @@ void OscarSocket::requestInfo()
 	requestMsgRights(); // CLI_REQICBML
 	requestBOSRights(); // CLI_REQBOS
 
-	kdDebug(14150) << k_funcinfo << "resetting gotAllRights to 0!" << endl;
+	kdDebug(14151) << k_funcinfo << "resetting gotAllRights to 0!" << endl;
 	gotAllRights=0;
 	// next received packet should be a SRV_REPLYINFO
 }
@@ -277,7 +277,7 @@ void OscarSocket::sendPrivacyFlags()
 // http://iserverd.khstu.ru/oscar/snac_01_0e.html
 void OscarSocket::requestMyUserInfo()
 {
-	kdDebug(14150) << k_funcinfo << "SEND (CLI_REQINFO)" << endl;
+	kdDebug(14151) << k_funcinfo << "SEND (CLI_REQINFO)" << endl;
 	Buffer outbuf;
 	outbuf.addSnac(OSCAR_FAM_1,CLI_REQ_SELFINFO,0x0000,0x00000000);
 	sendBuf(outbuf,0x02);
@@ -286,30 +286,30 @@ void OscarSocket::requestMyUserInfo()
 
 void OscarSocket::parseRateChange(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo << "RECV (SRV_RATE_LIMIT_WARN)" << endl;
+	kdDebug(14151) << k_funcinfo << "RECV (SRV_RATE_LIMIT_WARN)" << endl;
 
 	WORD code = inbuf.getWord();
 
 	switch(code)
 	{
 		case 0x0001:
-			kdDebug(14150) << k_funcinfo <<
+			kdDebug(14151) << k_funcinfo <<
 				"Rate limits parameters changed" << endl;
 			break;
 		case 0x0002:
-			kdDebug(14150) << k_funcinfo <<
+			kdDebug(14151) << k_funcinfo <<
 				"Rate limits warning (current level < alert level)" << endl;
 			break;
 		case 0x0003:
-			kdDebug(14150) << k_funcinfo <<
+			kdDebug(14151) << k_funcinfo <<
 				"Rate limit hit (current level < limit level)" << endl;
 			break;
 		case 0x0004:
-			kdDebug(14150) << k_funcinfo <<
+			kdDebug(14151) << k_funcinfo <<
 				"Rate limit clear (current level > clear level)" << endl;
 			break;
 		default:
-			kdDebug(14150) << k_funcinfo <<
+			kdDebug(14151) << k_funcinfo <<
 				"unknown code for rate limit warning" << endl;
 	}
 
@@ -327,7 +327,7 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 
 	if (code != 0x0002) // do not spam me just with warnings, only critical limits please
 	{
-		kdDebug(14150) << k_funcinfo <<
+		kdDebug(14151) << k_funcinfo <<
 		"RATE LIMIT DATA (class id " << rateclass << ") -----" << endl <<
 		"  windowSize= " << windowSize << endl <<
 		"  clearLevel= " << clearLevel << endl <<
@@ -351,7 +351,7 @@ void OscarSocket::parseRateChange(Buffer &inbuf)
 	{
 		if (code == 0x0002 || code == 0x0003)
 		{
-			kdDebug(14150) << k_funcinfo "WARNING about rate-limit in class "
+			kdDebug(14151) << k_funcinfo "WARNING about rate-limit in class "
 				<< rateclass << " received. Current level: "
 				<< currentLevel << endl;
 		}
@@ -385,7 +385,7 @@ void OscarSocket::parseWarningNotify(Buffer &inbuf)
 {
 	//aol multiplies warning % by 10, don't know why
 	int newevil = inbuf.getWord() / 10;
-	kdDebug(14150) << k_funcinfo <<
+	kdDebug(14151) << k_funcinfo <<
 		"Got a warning: new warning level is " << newevil << endl;
 
 	if (inbuf.length() != 0)
@@ -401,7 +401,7 @@ void OscarSocket::parseWarningNotify(Buffer &inbuf)
 
 void OscarSocket::parseMessageOfTheDay(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo << "RECV (SRV_MOTD)" << endl;
+	kdDebug(14151) << k_funcinfo << "RECV (SRV_MOTD)" << endl;
 	WORD id = inbuf.getWord();
 	if (id < 4)
 	{
@@ -415,13 +415,13 @@ void OscarSocket::parseMessageOfTheDay(Buffer &inbuf)
 
 void OscarSocket::parseServerVersions(Buffer &inbuf)
 {
-	kdDebug(14150) << k_funcinfo <<
+	kdDebug(14151) << k_funcinfo <<
 		"RECV (SRV_FAMILIES2), got list of families this server understands" << endl;
 
 	int srvFamCount;
 	for (srvFamCount=0; inbuf.length(); srvFamCount++)
 	{
-		kdDebug(14150) << k_funcinfo << "server family=" << inbuf.getWord() <<
+		kdDebug(14151) << k_funcinfo << "server family=" << inbuf.getWord() <<
 			", server version=" << inbuf.getWord() << endl;
 	}
 
@@ -443,12 +443,12 @@ void OscarSocket::parseMemRequest(Buffer &inbuf)
 	QPtrList<TLV> ql = inbuf.getTLVList();
 	ql.setAutoDelete(TRUE);
 
-//	kdDebug(14150) << k_funcinfo <<
+//	kdDebug(14151) << k_funcinfo <<
 //		"requested offset " << offset << ", length " << len << endl;
 
 	if (len == 0)
 	{
-		kdDebug(14150) << k_funcinfo <<  "Length is 0, hashing null!" << endl;
+		kdDebug(14151) << k_funcinfo <<  "Length is 0, hashing null!" << endl;
 		md5_state_t state;
 		BYTE nil = '\0';
 		md5_byte_t digest[0x10];
@@ -474,7 +474,7 @@ void OscarSocket::parseMemRequest(Buffer &inbuf)
 
 void OscarSocket::sendClientReady()
 {
-	kdDebug(14150) << k_funcinfo <<
+	kdDebug(14151) << k_funcinfo <<
 		"SEND (CLI_READY) sending client ready, end of login procedure." << endl;
 
 	Buffer outbuf;
@@ -482,7 +482,7 @@ void OscarSocket::sendClientReady()
 
 	for (RateClass *rc=rateClasses.first();rc;rc=rateClasses.next())
 	{
-		/*kdDebug(14150) << "adding family '" << rc->classid <<
+		/*kdDebug(14151) << "adding family '" << rc->classid <<
 			"' to CLI_READY packet" << endl;*/
 
 		outbuf.addWord(rc->id());
@@ -532,7 +532,7 @@ void OscarSocket::sendClientReady()
 
 void OscarSocket::sendVersions(const WORD *families, const int len)
 {
-	kdDebug(14150) << k_funcinfo << "SEND (CLI_FAMILIES)" << endl;
+	kdDebug(14151) << k_funcinfo << "SEND (CLI_FAMILIES)" << endl;
 	WORD val;
 	Buffer outbuf;
 	outbuf.addSnac(OSCAR_FAM_1,CLI_FAMILIES_VERSIONS,0x0000,0x00000000);
@@ -554,7 +554,7 @@ void OscarSocket::sendVersions(const WORD *families, const int len)
 		else
 			val=0x0001;
 
-//		kdDebug(14150) << k_funcinfo << "family=" << families[i] << ", val=" << val << endl;
+//		kdDebug(14151) << k_funcinfo << "family=" << families[i] << ", val=" << val << endl;
 		outbuf.addWord(val);
 	}
 	sendBuf(outbuf,0x02);
@@ -571,7 +571,7 @@ void OscarSocket::sendIdleTime(DWORD time)
 	bool newidle = (time!=0);
 	if (newidle != idle) //only do stuff if idle status changed
 	{
-		kdDebug(14150) << k_funcinfo <<
+		kdDebug(14151) << k_funcinfo <<
 			"SEND (CLI_SETxIDLExTIME), sending idle time, time=" << time << endl;
 		idle = newidle;
 		Buffer outbuf;

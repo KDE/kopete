@@ -35,7 +35,7 @@
 ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent, const char *name)
 	: AddContactPage(parent,name)
 {
-	kdDebug(14200) << k_funcinfo << "called" << endl;
+	kdDebug(14153) << k_funcinfo << "called" << endl;
 	searchMode = 0;
 	searching = false;
 	mAccount = owner;
@@ -107,7 +107,7 @@ void ICQAddContactPage::slotSearchTabChanged(QWidget *tabWidget)
 	if(tab != -1)
 	{
 		searchMode = tab;
-		kdDebug(14200) << k_funcinfo << "searchMode=" << searchMode << endl;
+		kdDebug(14153) << k_funcinfo << "searchMode=" << searchMode << endl;
 		updateGui();
 	}
 }
@@ -121,7 +121,7 @@ void ICQAddContactPage::slotStartSearch()
 {
 	ICQProtocol *p = ICQProtocol::protocol();
 
-	kdDebug(14200) << k_funcinfo << "Called; searchmode= " << searchMode << endl;
+	kdDebug(14153) << k_funcinfo << "Called; searchmode= " << searchMode << endl;
 	switch(searchMode)
 	{
 		case 0: // search by name
@@ -168,7 +168,7 @@ void ICQAddContactPage::slotStartSearch()
 
 void ICQAddContactPage::slotSearchResult (ICQSearchResult &res, const int missed)
 {
-	/*kdDebug(14200) << k_funcinfo << "searching=" << searching <<
+	/*kdDebug(14153) << k_funcinfo << "searching=" << searching <<
 		", res.uin=" << res.uin << ", missed=" << missed << endl;*/
 
 	if(!searching)
@@ -291,13 +291,13 @@ bool ICQAddContactPage::apply(KopeteAccount* , KopeteMetaContact *parentContact 
 	if (!item )
 		return false;
 
-	kdDebug(14200) << k_funcinfo << "called; adding contact..." << endl;
+	kdDebug(14153) << k_funcinfo << "called; adding contact..." << endl;
 
 	if(item->text(3).toULong() > 1000)
 	{
 		QString contactId = item->text(3);
 		QString displayName = item->text(0);
-		kdDebug(14200) << k_funcinfo << "uin=" << contactId << ", displayName=" << displayName << endl;
+		kdDebug(14153) << k_funcinfo << "uin=" << contactId << ", displayName=" << displayName << endl;
 
 		return mAccount->addContact(contactId, displayName, parentContact, KopeteAccount::ChangeKABC );
 	}
@@ -315,7 +315,7 @@ bool ICQAddContactPage::validateData()
 void ICQAddContactPage::slotSelectionChanged()
 {
 	bool valid;
-	kdDebug(14200) << k_funcinfo << endl;
+	kdDebug(14153) << k_funcinfo << endl;
 	valid = icqdata->resultView->selectedItem() != 0L;
 	if (!mAccount->isConnected())
 	{

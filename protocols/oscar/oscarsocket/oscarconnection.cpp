@@ -58,7 +58,7 @@ OscarConnection::OscarConnection(const QString &connName, ConnectionType type,
 
 OscarConnection::~OscarConnection()
 {
-//	kdDebug(14150) << k_funcinfo << "Called." << endl;
+//	kdDebug(14151) << k_funcinfo << "Called." << endl;
 }
 
 
@@ -172,24 +172,24 @@ QString OscarConnection::peerPort() const
 
 void OscarConnection::slotRead()
 {
-	kdDebug(14150) << k_funcinfo << "NOT IMPLEMENTED IN THIS OBJECT!" << endl;
+	kdDebug(14151) << k_funcinfo << "NOT IMPLEMENTED IN THIS OBJECT!" << endl;
 }
 
 
 void OscarConnection::sendIM(const QString &/*message*/, bool /*isAuto*/)
 {
-	kdDebug(14150) << k_funcinfo << "NOT IMPLEMENTED IN THIS OBJECT!" << endl;
+	kdDebug(14151) << k_funcinfo << "NOT IMPLEMENTED IN THIS OBJECT!" << endl;
 }
 
 
 void OscarConnection::sendTypingNotify(TypingNotify /*notifyType*/)
 {
-	kdDebug(14150) << k_funcinfo << "NOT IMPLEMENTED IN THIS OBJECT!" << endl;
+	kdDebug(14151) << k_funcinfo << "NOT IMPLEMENTED IN THIS OBJECT!" << endl;
 }
 
 void OscarConnection::sendFileSendRequest()
 {
-	kdDebug(14150) << k_funcinfo << "NOT IMPLEMENTED IN THIS OBJECT!" << endl;
+	kdDebug(14151) << k_funcinfo << "NOT IMPLEMENTED IN THIS OBJECT!" << endl;
 }
 
 
@@ -198,14 +198,14 @@ void OscarConnection::sendFileSendRequest()
 
 void OscarConnection::slotSocketConnected()
 {
-	kdDebug(14150) << k_funcinfo << "Socket is now connected" << endl;
+	kdDebug(14151) << k_funcinfo << "Socket is now connected" << endl;
 	emit socketConnected(connectionName());
 }
 
 
 void OscarConnection::slotSocketClosed()
 {
-	kdDebug(14150) << k_funcinfo << "Connection with '" <<
+	kdDebug(14151) << k_funcinfo << "Connection with '" <<
 		connectionName() << "' closed" << endl;
 
 	emit socketClosed(connectionName(), (socketStatus() != Disconnecting));
@@ -219,7 +219,7 @@ void OscarConnection::slotSocketError(int errornum)
 		return;
 #endif
 
-	kdDebug(14150) << k_funcinfo << "SOCKET ERROR: " << errornum << endl;
+	kdDebug(14151) << k_funcinfo << "SOCKET ERROR: " << errornum << endl;
 	mSocket->closeNow();
 	emit socketError(connectionName(), errornum);
 }

@@ -124,7 +124,7 @@ KActionMenu* ICQAccount::actionMenu()
 
 void ICQAccount::connect(void)
 {
-	kdDebug(14200) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
+	kdDebug(14153) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 	setStatus(ICQ_STATUS_ONLINE);
 }
 
@@ -133,7 +133,7 @@ void ICQAccount::connect(void)
 
 void ICQAccount::connect(const KopeteOnlineStatus &initialStatus)
 {
-	kdDebug(14200) << k_funcinfo << "accountId='" << accountId() << "'" <<
+	kdDebug(14153) << k_funcinfo << "accountId='" << accountId() << "'" <<
 		" initialStatus=" << (int)initialStatus.status() << endl;
 
 	if (initialStatus.status() == KopeteOnlineStatus::Away)
@@ -145,50 +145,50 @@ void ICQAccount::connect(const KopeteOnlineStatus &initialStatus)
 
 void ICQAccount::slotGoOnline()
 {
-	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
+	kdDebug(14153) << k_funcinfo << "account='" << accountId() << "'" << endl;
 	setStatus(ICQ_STATUS_ONLINE, QString::null);
 }
 
 void ICQAccount::slotGoAway(const QString &reason)
 {
-	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
+	kdDebug(14153) << k_funcinfo << "account='" << accountId() << "'" << endl;
 	setStatus(ICQ_STATUS_SET_AWAY, reason);
 }
 
 void ICQAccount::slotGoNA(const QString &reason)
 {
-	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
+	kdDebug(14153) << k_funcinfo << "account='" << accountId() << "'" << endl;
 	setStatus(ICQ_STATUS_SET_NA, reason);
 }
 
 void ICQAccount::slotGoOCC(const QString &reason)
 {
-	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
+	kdDebug(14153) << k_funcinfo << "account='" << accountId() << "'" << endl;
 	setStatus(ICQ_STATUS_SET_OCC, reason);
 }
 
 void ICQAccount::slotGoFFC(const QString &reason)
 {
-	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
+	kdDebug(14153) << k_funcinfo << "account='" << accountId() << "'" << endl;
 	setStatus(ICQ_STATUS_SET_FFC, reason);
 }
 
 void ICQAccount::slotGoDND(const QString &reason)
 {
-	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
+	kdDebug(14153) << k_funcinfo << "account='" << accountId() << "'" << endl;
 	setStatus(ICQ_STATUS_SET_DND, reason);
 }
 
 void ICQAccount::slotToggleInvisible()
 {
-	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
+	kdDebug(14153) << k_funcinfo << "account='" << accountId() << "'" << endl;
 	setInvisible(!mInvisible);
 }
 
 
 void ICQAccount::setAway(bool away, const QString &awayReason)
 {
-	kdDebug(14200) << k_funcinfo << "account='" << accountId() << "'" << endl;
+	kdDebug(14153) << k_funcinfo << "account='" << accountId() << "'" << endl;
 	if(away)
 		setStatus(ICQ_STATUS_SET_AWAY, awayReason);
 	else
@@ -202,19 +202,19 @@ const unsigned long ICQAccount::fullStatus(const unsigned long plainStatus)
 
 	if(mInvisible)
 	{
-		kdDebug(14200) << k_funcinfo << "ORing with invisible flag" << endl;
+		kdDebug(14153) << k_funcinfo << "ORing with invisible flag" << endl;
 		sendStatus |= ICQ_STATUS_SET_INVIS;
 	}
 
 	if(!mHideIP)
 	{
-		kdDebug(14200) << k_funcinfo << "ORing with show ip flag" << endl;
+		kdDebug(14153) << k_funcinfo << "ORing with show ip flag" << endl;
 		sendStatus |= ICQ_STATUS_SHOWIP;
 	}
 
 	if(mWebAware)
 	{
-		kdDebug(14200) << k_funcinfo << "ORing with web aware flag" << endl;
+		kdDebug(14153) << k_funcinfo << "ORing with web aware flag" << endl;
 		sendStatus |= ICQ_STATUS_WEBAWARE;
 	}
 	return sendStatus;
@@ -224,7 +224,7 @@ const unsigned long ICQAccount::fullStatus(const unsigned long plainStatus)
 void ICQAccount::setStatus(const unsigned long status,
 	const QString &awayMessage)
 {
-	kdDebug(14200) << k_funcinfo <<
+	kdDebug(14153) << k_funcinfo <<
 		"new status=" << status <<
 		", old status=" << mStatus << endl;
 
@@ -234,14 +234,14 @@ void ICQAccount::setStatus(const unsigned long status,
 	unsigned long outgoingStatus = fullStatus(status);
 	if (isConnected())
 	{
-		/*kdDebug(14200) << k_funcinfo <<
+		/*kdDebug(14153) << k_funcinfo <<
 			"calling sendICQStatus(), outgoingStatus = " <<
 			outgoingStatus << endl;*/
 		engine()->sendICQStatus(outgoingStatus);
 	}
 	else
 	{
-		kdDebug(14200) << k_funcinfo << "LOGGING IN; accountId='" <<
+		kdDebug(14153) << k_funcinfo << "LOGGING IN; accountId='" <<
 			accountId() << "', status=" << outgoingStatus <<
 			", awaymessage=" << awayMessage << endl;
 
@@ -279,7 +279,7 @@ void ICQAccount::setInvisible(bool invis)
 	if (invis == mInvisible)
 		return;
 
-	kdDebug(14200) << k_funcinfo <<
+	kdDebug(14153) << k_funcinfo <<
 		"changing invisible setting to " << invis << endl;
 
 	mInvisible = invis;
@@ -290,7 +290,7 @@ void ICQAccount::setInvisible(bool invis)
 
 void ICQAccount::slotSendSMS()
 {
-	//kdDebug(14200) << k_funcinfo << endl;
+	//kdDebug(14153) << k_funcinfo << endl;
 	ICQSendSMSDialog *smsDialog = new ICQSendSMSDialog(this, 0L, 0L, "smsDialog");
 	smsDialog->exec();
 	delete smsDialog;
@@ -298,7 +298,7 @@ void ICQAccount::slotSendSMS()
 
 void ICQAccount::reloadPluginData()
 {
-	kdDebug(14200) << k_funcinfo << "Called." << endl;
+	kdDebug(14153) << k_funcinfo << "Called." << endl;
 	bool oldwebaware = mWebAware;
 	bool oldhideip = mHideIP;
 
@@ -308,7 +308,7 @@ void ICQAccount::reloadPluginData()
 
 	if(isConnected() && (oldhideip != mHideIP || oldwebaware != mWebAware))
 	{
-		kdDebug(14200) << k_funcinfo <<
+		kdDebug(14153) << k_funcinfo <<
 			"sending status to reflect HideIP and WebAware settings" << endl;
 		setStatus(mStatus, QString::null);
 	}
@@ -318,7 +318,7 @@ OscarContact *ICQAccount::createNewContact(const QString &contactId,
 	const QString &displayName, KopeteMetaContact *parentContact,
 	bool isOnSSI)
 {
-	/*kdDebug(14200) << k_funcinfo <<
+	/*kdDebug(14153) << k_funcinfo <<
 		"contactId='" << contactId <<
 		"', displayName='" << displayName << endl;*/
 

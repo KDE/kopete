@@ -57,7 +57,7 @@ OncomingSocket::~OncomingSocket()
 
 void OncomingSocket::newConnection()
 {
-	kdDebug(14150) << k_funcinfo << "Called!" << endl;
+	kdDebug(14151) << k_funcinfo << "Called!" << endl;
 
 	for (DirectInfo *tmp=mPendingConnections.first(); tmp; tmp = mPendingConnections.next())
 	{
@@ -67,7 +67,7 @@ void OncomingSocket::newConnection()
 	DirectInfo *tmp = mPendingConnections.first();
 	if (!tmp)
 	{
-		kdDebug(14150) << k_funcinfo << "no pending connection exists! uh oh" << endl;
+		kdDebug(14151) << k_funcinfo << "no pending connection exists! uh oh" << endl;
 		return;
 	}
 	OscarConnection *newsock = createAppropriateType(tmp);
@@ -104,7 +104,7 @@ OscarConnection * OncomingSocket::findConnection(const QString &name)
 	{
 		if(!tmp->connectionName().compare(tocNormalize(name)))
 		{
-			kdDebug(14150) << k_funcinfo << "'" << tmp->connectionName() <<
+			kdDebug(14151) << k_funcinfo << "'" << tmp->connectionName() <<
 				"' matches dest sn '" << tocNormalize(name) << "'." << endl;
 			return tmp;
 		}
@@ -148,12 +148,12 @@ void OncomingSocket::slotConnectionReady(QString name)
 
 	if (dc)
 	{
-		kdDebug(14150) << k_funcinfo << "Connection '" << name <<
+		kdDebug(14151) << k_funcinfo << "Connection '" << name <<
 			"' not found!!! exiting slotConnectionReady()" << endl;
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo <<
+		kdDebug(14151) << k_funcinfo <<
 			"slotConnectionReady(): Setting up direct IM signals!" << endl;
 
 		// Connect protocol error signal
@@ -200,7 +200,7 @@ void OncomingSocket::setupConnection(OscarConnection *newsock)
 		mServer, SLOT(OnDirectIMReady(QString)));
 	}
 
-	kdDebug(14150) << k_funcinfo << "setting up connection.. .there are currently " << mConns.count() << endl;
+	kdDebug(14151) << k_funcinfo << "setting up connection.. .there are currently " << mConns.count() << endl;
 	mConns.append(newsock);
 }
 
@@ -213,7 +213,7 @@ OscarConnection *OncomingSocket::establishOutgoingConnection(const QString &sn)
 		{
 			OscarConnection *s = createAppropriateType(tmp);
 			setupConnection(s);
-			kdDebug(14150) << k_funcinfo << "Connecting to " << tmp->host << ":" << tmp->port << endl;
+			kdDebug(14151) << k_funcinfo << "Connecting to " << tmp->host << ":" << tmp->port << endl;
 			s->socket()->setHost(tmp->host);
 			s->socket()->setPort(tmp->port);
 			s->socket()->connect();
@@ -221,7 +221,7 @@ OscarConnection *OncomingSocket::establishOutgoingConnection(const QString &sn)
 		}
 	}
 
-	kdDebug(14150) << k_funcinfo <<
+	kdDebug(14151) << k_funcinfo <<
 		"WARNING: outgoing connection not found in pending list, returning NULL" << endl;
 	return 0L;
 }
@@ -229,21 +229,21 @@ OscarConnection *OncomingSocket::establishOutgoingConnection(const QString &sn)
 /** Called when connection named name has been closed */
 void OncomingSocket::slotConnectionClosed(QString name)
 {
-	kdDebug(14150) << k_funcinfo << "Direct connection closed, deleting it: " << name << endl;
+	kdDebug(14151) << k_funcinfo << "Direct connection closed, deleting it: " << name << endl;
 	removeConnection(name);
 }
 
 /** Removes the named connection from the connection list and disconnects it. */
 void OncomingSocket::removeConnection(const QString &name)
 {
-	kdDebug(14150) << k_funcinfo << "Deleting direct connection " << name << endl;
+	kdDebug(14151) << k_funcinfo << "Deleting direct connection " << name << endl;
 	OscarConnection *dc = findConnection(name);
 	if(dc)
 	{
 		mConns.remove(dc);
 	}
 	else
-		kdDebug(14150) << k_funcinfo << "No connection to delete" << endl;
+		kdDebug(14151) << k_funcinfo << "No connection to delete" << endl;
 }
 
 /** Allocates memory to ptr of the proper type */
@@ -257,7 +257,7 @@ OscarConnection * OncomingSocket::createAppropriateType(DirectInfo *tmp)
 	}
 	else // other type?? this should never happen
 	{
-		kdDebug(14150) << k_funcinfo << "Creating generic OscarConnection type. INVESTIGATE." << endl;
+		kdDebug(14151) << k_funcinfo << "Creating generic OscarConnection type. INVESTIGATE." << endl;
 		return new OscarConnection(mServer->getSN(), tmp->sn, mType, tmp->cookie);
 	}
 }

@@ -15,7 +15,7 @@ void OscarMessage::setText(const QString &txt, MessageFormat format)
 {
 	if(format == AimHtml)
 	{
-		kdDebug(14150) << k_funcinfo <<
+		kdDebug(14151) << k_funcinfo <<
 			"AIM message text: " << txt << endl;
 
 		mText = txt;
@@ -45,11 +45,11 @@ void OscarMessage::setText(const QString &txt, MessageFormat format)
 	else
 	{
 		RTF2HTML parser;
-		/*kdDebug(14150) << k_funcinfo <<
+		/*kdDebug(14151) << k_funcinfo <<
 			"Original message text: " << txt << endl;*/
 		//TODO: encoding
 		mText = parser.Parse(txt.latin1(), "");
-		/*kdDebug(14150) << k_funcinfo <<
+		/*kdDebug(14151) << k_funcinfo <<
 			"Message text after RTF2HTML: " << mText << endl;*/
 	}
 }

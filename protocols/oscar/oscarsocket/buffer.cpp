@@ -34,7 +34,7 @@ Buffer::Buffer()
 Buffer::Buffer(char *b, Q_ULONG len)
 {
 #ifdef BUFFER_DEBUG
-	kdDebug(14150) << k_funcinfo << "Creating prefilled Buffer" << endl;
+	kdDebug(14151) << k_funcinfo << "Creating prefilled Buffer" << endl;
 #endif
 
 	mExtDataPointer=b;
@@ -48,14 +48,14 @@ Buffer::Buffer(char *b, Q_ULONG len)
 Buffer::~Buffer()
 {
 #ifdef BUFFER_DEBUG
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
+	kdDebug(14151) << k_funcinfo << "Called." << endl;
 #endif
 
 	if(mExtDataPointer)
 	{
 #ifdef BUFFER_DEBUG
-		kdDebug(14150) << k_funcinfo << "Deleting prefilled Buffer without deleting contents" << endl;
-		kdDebug(14150) << k_funcinfo << "mExtDataPointer=" << mExtDataPointer <<  endl;
+		kdDebug(14151) << k_funcinfo << "Deleting prefilled Buffer without deleting contents" << endl;
+		kdDebug(14151) << k_funcinfo << "mExtDataPointer=" << mExtDataPointer <<  endl;
 #endif
 		mBuffer.resetRawData(mExtDataPointer, mExtDataLen);
 	}
@@ -67,7 +67,7 @@ Buffer::~Buffer()
 int Buffer::addByte(const BYTE b)
 {
 	expandBuffer(1);
-//	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
+//	kdDebug(14151) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
 	mBuffer[mBuffer.size()-1] = b;
 
 	return mBuffer.size();
@@ -76,7 +76,7 @@ int Buffer::addByte(const BYTE b)
 int Buffer::addLEByte(const BYTE b)
 {
 	expandBuffer(1);
-//	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
+//	kdDebug(14151) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
 	mBuffer[mBuffer.size()-1] = ((b) & 0xff);
 
 	return mBuffer.size();
@@ -86,7 +86,7 @@ int Buffer::addLEByte(const BYTE b)
 int Buffer::addWord(const WORD w)
 {
 	expandBuffer(2);
-//	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
+//	kdDebug(14151) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
 	mBuffer[mBuffer.size()-2] = ((w & 0xff00) >> 8);
 	mBuffer[mBuffer.size()-1] = (w & 0x00ff);
 
@@ -96,7 +96,7 @@ int Buffer::addWord(const WORD w)
 int Buffer::addLEWord(const WORD w)
 {
 	expandBuffer(2);
-//	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
+//	kdDebug(14151) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
 	mBuffer[mBuffer.size()-2] = (unsigned char) ((w >> 0) & 0xff);
 	mBuffer[mBuffer.size()-1] = (unsigned char) ((w >> 8) & 0xff);
 
@@ -107,7 +107,7 @@ int Buffer::addLEWord(const WORD w)
 int Buffer::addDWord(const DWORD dw)
 {
 	expandBuffer(4);
-//	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
+//	kdDebug(14151) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
 	mBuffer[mBuffer.size()-4] = (dw & 0xff000000) >> 24;
 	mBuffer[mBuffer.size()-3] = (dw & 0x00ff0000) >> 16;
 	mBuffer[mBuffer.size()-2] = (dw & 0x0000ff00) >> 8;
@@ -119,7 +119,7 @@ int Buffer::addDWord(const DWORD dw)
 int Buffer::addLEDWord(const DWORD dw)
 {
 	expandBuffer(4);
-//	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
+//	kdDebug(14151) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
 	mBuffer[mBuffer.size()-4] = (unsigned char) ((dw >> 0) & 0xff);
 	mBuffer[mBuffer.size()-3] = (unsigned char) ((dw >>  8) & 0xff);
 	mBuffer[mBuffer.size()-2] = (unsigned char) ((dw >> 16) & 0xff);
@@ -162,13 +162,13 @@ int Buffer::addLEString(const char *s, const DWORD len)
 void Buffer::clear()
 {
 #ifdef BUFFER_DEBUG
-	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
+	kdDebug(14151) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
 #endif
 
 	if(mExtDataPointer)
 	{
 #ifdef BUFFER_DEBUG
-		kdDebug(14150) << k_funcinfo << "Clearing Buffer without deleting contents" << endl;
+		kdDebug(14151) << k_funcinfo << "Clearing Buffer without deleting contents" << endl;
 #endif
 		mBuffer.resetRawData(mExtDataPointer, mExtDataLen);
 		mExtDataPointer=0L;
@@ -184,7 +184,7 @@ void Buffer::clear()
 
 int Buffer::addTLV(WORD type, WORD len, const char *data)
 {
-//	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
+//	kdDebug(14151) << k_funcinfo << "buffer size=" << mBuffer.size() << endl;
 	addWord(type);
 	addWord(len);
 	return addString(data,len);
@@ -195,7 +195,7 @@ int Buffer::addFlap(const BYTE channel, const WORD flapSequenceNum)
 	unsigned int sizeWithoutHeader = mBuffer.size();
 	expandBuffer(6);
 
-/*	kdDebug(14150) << k_funcinfo << "buffer size=" << mBuffer.size() <<
+/*	kdDebug(14151) << k_funcinfo << "buffer size=" << mBuffer.size() <<
 		", size without header = " << sizeWithoutHeader << endl;*/
 
 	//create the flap header
@@ -225,7 +225,7 @@ DWORD Buffer::addSnac(const WORD family, const WORD subtype,
 	const WORD flags, DWORD id)
 {
 #ifdef BUFFER_DEBUG
-	kdDebug(14150) << k_funcinfo <<
+	kdDebug(14151) << k_funcinfo <<
 		family << ", " << subtype << ", " << flags << ", " << id << endl;
 #endif
 	addWord(family);
@@ -275,14 +275,14 @@ BYTE Buffer::getByte()
 
 	if(mReadPos < mBuffer.size())
 	{
-//		kdDebug(14150) << k_funcinfo << "read pos = " << mReadPos << endl;
+//		kdDebug(14151) << k_funcinfo << "read pos = " << mReadPos << endl;
 		thebyte = mBuffer[mReadPos];
 		mReadPos++;
 	}
 	else
 	{
 		//emit bufError("Buffer::getByte(): mBuffer empty");
-		kdDebug(14150) << "Buffer::getByte(): mBuffer empty" << endl;
+		kdDebug(14151) << "Buffer::getByte(): mBuffer empty" << endl;
 	}
 	return thebyte;
 }
@@ -332,7 +332,7 @@ DWORD Buffer::getLEDWord()
 /*
 void Buffer::slotBufferError(QString s)
 {
-	kdDebug(14150) << " BUFFER ERROR: " << s << endl << "Stopping reporting errors" << endl;
+	kdDebug(14151) << " BUFFER ERROR: " << s << endl << "Stopping reporting errors" << endl;
 
 	disconnect(this, SIGNAL(bufError(QString)), this, SLOT(slotBufferError(QString)));
 }
@@ -340,13 +340,13 @@ void Buffer::slotBufferError(QString s)
 void Buffer::setBuf(char *b, const WORD len)
 {
 #ifdef BUFFER_DEBUG
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
+	kdDebug(14151) << k_funcinfo << "Called." << endl;
 #endif
 
 	if(mExtDataPointer)
 	{
 #ifdef BUFFER_DEBUG
-		kdDebug(14150) << k_funcinfo << "Deleting prefilled Buffer without deleting contents" << endl;
+		kdDebug(14151) << k_funcinfo << "Deleting prefilled Buffer without deleting contents" << endl;
 #endif
 		mBuffer.resetRawData(mExtDataPointer, mExtDataLen);
 	}
@@ -384,7 +384,7 @@ QByteArray Buffer::getBBlock(WORD len)
 
 WORD *Buffer::getWordBlock(WORD len)
 {
-	kdDebug(14150) << k_funcinfo << "of length " << len << endl;
+	kdDebug(14151) << k_funcinfo << "of length " << len << endl;
 	WORD *ch=new WORD[len+1];
 	for (unsigned int i=0; i<len; i++)
 	{
@@ -449,10 +449,10 @@ QPtrList<TLV> Buffer::getTLVList(bool debug)
 
 		*t = getTLV();
 		if (!t)
-			kdDebug(14150) << k_funcinfo << "got no TLV but NULL pointer!" << endl;
+			kdDebug(14151) << k_funcinfo << "got no TLV but NULL pointer!" << endl;
 
 		if(debug)
-			kdDebug(14150) << k_funcinfo << "got TLV(" << t->type << ")" << endl;
+			kdDebug(14151) << k_funcinfo << "got TLV(" << t->type << ")" << endl;
 
 		ql.append(t);
 	}
@@ -489,7 +489,7 @@ int Buffer::addChatTLV(const WORD type, const WORD exchange,
 
 void Buffer::expandBuffer(unsigned int inc)
 {
-/*	kdDebug(14150) << k_funcinfo << "Resizing from '" << mBuffer.size() << "' to " <<
+/*	kdDebug(14151) << k_funcinfo << "Resizing from '" << mBuffer.size() << "' to " <<
 		(mBuffer.size()+inc) << "' bytes" << endl;*/
 	mBuffer.resize(mBuffer.size()+inc, QGArray::SpeedOptim);
 }
@@ -568,7 +568,7 @@ int Buffer::length() const
 
 /*void Buffer::print() const
 {
-	kdDebug(14150) << toString() << endl;
+	kdDebug(14151) << toString() << endl;
 }*/
 
 QString Buffer::toString() const

@@ -95,7 +95,7 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 
 	if((name == displayName || displayName.isEmpty()) && account()->isConnected())
 	{
-		kdDebug(14200) << k_funcinfo <<
+		kdDebug(14153) << k_funcinfo <<
 			"ICQ Contact with no nickname, grabbing userinfo" << endl;
 		requestShortInfo();
 	}
@@ -109,7 +109,7 @@ ICQContact::~ICQContact()
 
 void ICQContact::setOwnDisplayName(const QString &s)
 {
-	kdDebug(14200) << k_funcinfo << "Called." << endl;
+	kdDebug(14153) << k_funcinfo << "Called." << endl;
 	if(this == account()->myself())
 		setDisplayName(s);
 }
@@ -358,7 +358,7 @@ void ICQContact::setOnlineStatus(const KopeteOnlineStatus& status)
 {
 	if(mInvisible)
 	{
-		kdDebug(14200) << k_funcinfo << "'" << displayName() << "' is invisible!" << endl;
+		kdDebug(14153) << k_funcinfo << "'" << displayName() << "' is invisible!" << endl;
 		KopeteContact::setOnlineStatus(
 			KopeteOnlineStatus(
 				status.status() , (status.weight()==0) ? 0 : (status.weight() -1),
@@ -375,7 +375,7 @@ void ICQContact::setOnlineStatus(const KopeteOnlineStatus& status)
 		KopeteContact::setOnlineStatus(status);
 	}
 /*
-	kdDebug(14200) << k_funcinfo << "'" << displayName() << "' is now " <<
+	kdDebug(14153) << k_funcinfo << "'" << displayName() << "' is now " <<
 		onlineStatus().description() << endl;
 */
 }
@@ -408,7 +408,7 @@ void ICQContact::slotCloseUserInfoDialog()
 
 void ICQContact::slotReadAwayMessage()
 {
-	kdDebug(14200) << k_funcinfo << "account='" << account()->accountId() <<
+	kdDebug(14153) << k_funcinfo << "account='" << account()->accountId() <<
 		"', contact='" << displayName() << "'" << endl;
 
 	if (!awayMessageDialog)
@@ -451,7 +451,7 @@ void ICQContact::setAwayMessage(const QString &message)
 
 void ICQContact::requestUserInfo()
 {
-	//kdDebug(14200) << k_funcinfo << "called" << endl;
+	//kdDebug(14153) << k_funcinfo << "called" << endl;
 	userinfoReplyCount = 0;
 	userinfoRequestSequence =
 		account()->engine()->sendReqInfo(contactName().toULong());
@@ -460,7 +460,7 @@ void ICQContact::requestUserInfo()
 
 void ICQContact::requestShortInfo()
 {
-	//kdDebug(14200) << k_funcinfo << "called" << endl;
+	//kdDebug(14153) << k_funcinfo << "called" << endl;
 	userinfoReplyCount = 0;
 	userinfoRequestSequence =
 		account()->engine()->sendShortInfoReq( contactName().toULong() );
@@ -507,7 +507,7 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 
 	if(contactName() == displayName() && !generalInfo.nickName.isEmpty())
 	{
-		kdDebug(14200) << k_funcinfo << "setting new displayname for former UIN-only Contact" << endl;
+		kdDebug(14153) << k_funcinfo << "setting new displayname for former UIN-only Contact" << endl;
 		setDisplayName(generalInfo.nickName);
 	}
 
@@ -539,7 +539,7 @@ void ICQContact::slotUpdShortInfo(const int seq, const ICQSearchResult &inf)
 
 	if (contactName() == displayName() && !shortInfo.nickName.isEmpty())
 	{
-		kdDebug(14200) << k_funcinfo <<
+		kdDebug(14153) << k_funcinfo <<
 			"setting new displayname for former UIN-only Contact" << endl;
 		setDisplayName(shortInfo.nickName);
 	}
@@ -626,7 +626,7 @@ void ICQContact::slotUpdBackgroundUserInfo(const int seq, const ICQInfoItemList 
 void ICQContact::slotSnacFailed(WORD snacID)
 {
 	if (userinfoRequestSequence != 0)
-		kdDebug(14200) << k_funcinfo << "snacID = " << snacID << " seq = " << userinfoRequestSequence << endl;
+		kdDebug(14153) << k_funcinfo << "snacID = " << snacID << " seq = " << userinfoRequestSequence << endl;
 
 	//TODO: ugly interaction between snacID and request sequence, see OscarSocket::sendCLI_TOICQSRV
 	if (snacID == (0x0000 << 16) | userinfoRequestSequence)

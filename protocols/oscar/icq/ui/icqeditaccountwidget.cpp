@@ -44,7 +44,7 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	KopeteAccount *account, QWidget *parent, const char *name)
 	: QWidget(parent, name), KopeteEditAccountWidget(account)
 {
-	kdDebug(14200) << k_funcinfo << "Called." << endl;
+	kdDebug(14153) << k_funcinfo << "Called." << endl;
 
 	mAccount=account;
 	mProtocol=protocol;
@@ -215,14 +215,14 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	else
 	{
 		// Just set the default saved password to true
-		kdDebug(14200) << k_funcinfo <<
+		kdDebug(14153) << k_funcinfo <<
 			"Called with no account object, setting defaults for server and port" << endl;
 		mAccountSettings->chkSavePassword->setChecked(false);
 
 		QTime current = QTime::currentTime(Qt::LocalTime);
 		QTime currentUTC = QTime::currentTime(Qt::UTC);
 		int diff = current.hour() - currentUTC.hour();
-		kdDebug(14200) << k_funcinfo << "Difference from UTC = " << diff << endl;
+		kdDebug(14153) << k_funcinfo << "Difference from UTC = " << diff << endl;
 
 		mProtocol->setTZComboValue(mUserInfoSettings->rwTimezone, (diff*2));
 	}
@@ -258,12 +258,12 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 
 KopeteAccount *ICQEditAccountWidget::apply()
 {
-	kdDebug(14200) << k_funcinfo << "Called." << endl;
+	kdDebug(14153) << k_funcinfo << "Called." << endl;
 
 	// If this is a new account, create it
 	if (!mAccount)
 	{
-		kdDebug(14200) << k_funcinfo << "Creating a new account" << endl;
+		kdDebug(14153) << k_funcinfo << "Creating a new account" << endl;
 		mAccount = new ICQAccount(mProtocol, mAccountSettings->edtAccountId->text());
 		if(!mAccount)
 			return NULL;
@@ -370,7 +370,7 @@ KopeteAccount *ICQEditAccountWidget::apply()
 
 bool ICQEditAccountWidget::validateData()
 {
-	kdDebug(14200) << k_funcinfo << "Called." << endl;
+	kdDebug(14153) << k_funcinfo << "Called." << endl;
 
 	QString userName = mAccountSettings->edtAccountId->text();
 
@@ -389,7 +389,7 @@ bool ICQEditAccountWidget::validateData()
 		return false;
 
 	// Seems good to me
-	kdDebug(14200) << k_funcinfo <<
+	kdDebug(14153) << k_funcinfo <<
 		"Account data validated successfully." << endl;
 	return true;
 }
@@ -398,7 +398,7 @@ void ICQEditAccountWidget::slotFetchInfo()
 {
 	if(mAccount->isConnected())
 	{
-		kdDebug(14200) << k_funcinfo << "Fetching User Info for '" <<
+		kdDebug(14153) << k_funcinfo << "Fetching User Info for '" <<
 			mAccount->myself()->displayName() << "'." << endl;
 
 		mUserInfoSettings->setDisabled(true);
@@ -406,13 +406,13 @@ void ICQEditAccountWidget::slotFetchInfo()
 		static_cast<ICQContact *>(mAccount->myself())->requestUserInfo(); // initiate retrival of userinfo
 	}
 	else
-		kdDebug(14200) << k_funcinfo <<
+		kdDebug(14153) << k_funcinfo <<
 			"Ignore request to fetch User Info, NOT online!" << endl;
 }
 
 void ICQEditAccountWidget::slotReadInfo()
 {
-	kdDebug(14200) << k_funcinfo << "Called for user '" <<
+	kdDebug(14153) << k_funcinfo << "Called for user '" <<
 		mAccount->myself()->displayName() << "'." << endl;
 
 	mUserInfoSettings->setDisabled(false);
@@ -427,7 +427,7 @@ void ICQEditAccountWidget::slotSend()
 	if(!mAccount->isConnected())
 		return;
 
-	kdDebug(14200) << k_funcinfo << "Called." << endl;
+	kdDebug(14153) << k_funcinfo << "Called." << endl;
 
 	ICQGeneralUserInfo generalInfo;
 	ICQWorkUserInfo workInfo;
@@ -494,7 +494,7 @@ void ICQEditAccountWidget::slotSend()
 	}
 	else
 	{
-		kdDebug(14200) << k_funcinfo <<
+		kdDebug(14153) << k_funcinfo <<
 			"Failed to fetch engine pointer, cannot send userinfo" << endl;
 	}
 
@@ -509,7 +509,7 @@ void ICQEditAccountWidget::slotModified()
 void ICQEditAccountWidget::slotRecalcAge(QDate bday)
 {
 	QDate now = QDate::currentDate();
-	kdDebug(14200) << k_funcinfo << "current year=" << now.year() << " bday year=" << bday.year() << endl;
+	kdDebug(14153) << k_funcinfo << "current year=" << now.year() << " bday year=" << bday.year() << endl;
 
 	if(bday.year() < now.year())
 	{
@@ -517,17 +517,17 @@ void ICQEditAccountWidget::slotRecalcAge(QDate bday)
 
 		if(now.month() < bday.month()) // didn't have his birthday this year
 		{
-			kdDebug(14200) << k_funcinfo << "didn't have his birthday this year" << endl;
+			kdDebug(14153) << k_funcinfo << "didn't have his birthday this year" << endl;
 			age--;
 		}
 		else if(now.month() == bday.month()) // his birthday is in the current month
 		{
-			kdDebug(14200) << k_funcinfo << "birthday is in the current month" << endl;
+			kdDebug(14153) << k_funcinfo << "birthday is in the current month" << endl;
 
 			if(now.day() < bday.day()) // didn't have his birthday this month yet
 				age--;
 		}
-		kdDebug(14200) << k_funcinfo << "age calculated from birthday is " << age << endl;
+		kdDebug(14153) << k_funcinfo << "age calculated from birthday is " << age << endl;
 		mUserInfoSettings->rwAge->setValue(age);
 	}
 }

@@ -34,7 +34,7 @@ class KopeteMetaContact;
 AIMAccount::AIMAccount(KopeteProtocol *parent, QString accountID, const char *name)
 	: OscarAccount(parent, accountID, name, false)
 {
-	kdDebug(14190) << k_funcinfo << accountID << ": Called."<< endl;
+	kdDebug(14152) << k_funcinfo << accountID << ": Called."<< endl;
 	mStatus = OSCAR_OFFLINE;
 
 	setMyself( new AIMContact(tocNormalize(accountID), accountID, this, 0L) );
@@ -42,12 +42,12 @@ AIMAccount::AIMAccount(KopeteProtocol *parent, QString accountID, const char *na
 
 AIMAccount::~AIMAccount()
 {
-	kdDebug(14190) << k_funcinfo << "for '" << accountId() << "' deleted" << endl;
+	kdDebug(14152) << k_funcinfo << "for '" << accountId() << "' deleted" << endl;
 }
 
 void AIMAccount::loaded()
 {
-	kdDebug(14190) << k_funcinfo << "Called." << endl;
+	kdDebug(14152) << k_funcinfo << "Called." << endl;
 
 	QString profile = pluginData(protocol(), "Profile");
 	if(profile.isNull())
@@ -68,7 +68,7 @@ OscarContact *AIMAccount::createNewContact( const QString &contactId,
 
 KActionMenu* AIMAccount::actionMenu()
 {
-//	kdDebug(14190) << k_funcinfo << accountId() << ": Called." << endl;
+//	kdDebug(14152) << k_funcinfo << accountId() << ": Called." << endl;
 	// mActionMenu is managed by KopeteAccount.  It is deleted when
 	// it is no longer shown, so we can (safely) just make a new one here.
 	KActionMenu *mActionMenu = new KActionMenu(accountId(),
@@ -128,13 +128,13 @@ void AIMAccount::initSignals()
 
 /*void AIMAccount::slotGotMyUserInfo(UserInfo &newInfo)
 {
-	kdDebug(14190) << k_funcinfo << "Called" << endl;
+	kdDebug(14152) << k_funcinfo << "Called" << endl;
 	mUserInfo = newInfo;
 }*/
 
 void AIMAccount::setUserProfile(const QString &profile)
 {
-	kdDebug(14190) << k_funcinfo << "called." << endl;
+	kdDebug(14152) << k_funcinfo << "called." << endl;
 	static_cast<AIMContact *>(myself())->setOwnProfile(profile);
 	setPluginData(protocol(), "Profile", profile);
 }
@@ -142,7 +142,7 @@ void AIMAccount::setUserProfile(const QString &profile)
 // Called when we have been warned
 void AIMAccount::slotGotWarning(int newlevel, QString warner)
 {
-	kdDebug(14190) << k_funcinfo << "Called." << endl;
+	kdDebug(14152) << k_funcinfo << "Called." << endl;
 
 	//this is not a natural decrease in level
 	if (static_cast<AIMContact *>( myself() )->userInfo().evil < newlevel)
@@ -178,7 +178,7 @@ void AIMAccount::slotEditInfo()
 
 void AIMAccount::setAway(bool away, const QString &awayReason)
 {
-	kdDebug(14190) << k_funcinfo << accountId() << ": setAway()" << endl;
+	kdDebug(14152) << k_funcinfo << accountId() << ": setAway()" << endl;
 
 	if(away)
 		setStatus(OSCAR_AWAY, awayReason);
@@ -190,7 +190,7 @@ void AIMAccount::setAway(bool away, const QString &awayReason)
 void AIMAccount::setStatus(const unsigned long status,
 	const QString &awayMessage)
 {
-	kdDebug(14190) << k_funcinfo << "new status=" << status <<
+	kdDebug(14152) << k_funcinfo << "new status=" << status <<
 		", old status=" << mStatus << endl;
 	mStatus = status;
 
@@ -206,38 +206,38 @@ void AIMAccount::slotGoOnline()
 {
 	if(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
 	{
-		kdDebug(14190) << k_funcinfo << "'" << accountId() <<
+		kdDebug(14152) << k_funcinfo << "'" << accountId() <<
 			"' was AWAY, marking back" << endl;
 		setStatus(OSCAR_ONLINE, QString::null);
 	}
 	else if(myself()->onlineStatus().status() == KopeteOnlineStatus::Offline)
 	{
-		kdDebug(14190) << k_funcinfo << "'" << accountId() <<
+		kdDebug(14152) << k_funcinfo << "'" << accountId() <<
 			"' was OFFLINE, now connecting" << endl;
 		AIMAccount::connect();
 	}
 	else
 	{
-		kdDebug(14190) << k_funcinfo << "'" << accountId() <<
+		kdDebug(14152) << k_funcinfo << "'" << accountId() <<
 			"' Already ONLINE" << endl;
 	}
 }
 
 void AIMAccount::slotGoAway(const QString &message)
 {
-	kdDebug(14190) << k_funcinfo << endl;
+	kdDebug(14152) << k_funcinfo << endl;
 	setAway(true, message);
 }
 
 void AIMAccount::connect()
 {
-	kdDebug(14190) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
+	kdDebug(14152) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
 	setStatus(OSCAR_ONLINE, QString::null);
 }
 
 void AIMAccount::connect(const unsigned long status, const QString &awMessage)
 {
-	kdDebug(14190) << k_funcinfo << "accountId='" << accountId() <<
+	kdDebug(14152) << k_funcinfo << "accountId='" << accountId() <<
 		"', status=" << status << ", awaymessage=" << awMessage << endl;
 
 	// Get the screen name for this account
@@ -266,7 +266,7 @@ void AIMAccount::connect(const unsigned long status, const QString &awMessage)
 		}
 		else
 		{
-			kdDebug(14190) << k_funcinfo << accountId() <<
+			kdDebug(14152) << k_funcinfo << accountId() <<
 				": Logging in as " << screenName << endl;
 
 			// Connect, need to normalize the name first

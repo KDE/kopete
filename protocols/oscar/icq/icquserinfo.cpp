@@ -87,7 +87,7 @@ void ICQUserInfo::slotFetchInfo()
 {
 	if(mAccount->isConnected())
 	{
-		kdDebug(14200) << k_funcinfo << "fetching User Info for '" <<
+		kdDebug(14153) << k_funcinfo << "fetching User Info for '" <<
 			mContact->displayName() << "'." << endl;
 
 		mMainWidget->setDisabled(true);
@@ -99,12 +99,12 @@ void ICQUserInfo::slotFetchInfo()
 		setCaption( i18n("Fetching User Info for %1...").arg(mContact->displayName()));
 	}
 	else
-		kdDebug(14200) << k_funcinfo << "Ignore request to fetch User Info, NOT online!" << endl;
+		kdDebug(14153) << k_funcinfo << "Ignore request to fetch User Info, NOT online!" << endl;
 }
 
 void ICQUserInfo::slotReadInfo()
 {
-	kdDebug(14200) << k_funcinfo << "called for user '" <<
+	kdDebug(14153) << k_funcinfo << "called for user '" <<
 		mContact->displayName() << "'." << endl;
 
 	setCaption(i18n("User Info for %1").arg(mContact->displayName()));
@@ -118,7 +118,7 @@ void ICQUserInfo::slotReadInfo()
 
 void ICQUserInfo::slotUserInfoRequestFailed()
 {
-	kdDebug(14200) << k_funcinfo << "called for user '" <<
+	kdDebug(14153) << k_funcinfo << "called for user '" <<
 		mContact->displayName() << "'." << endl;
 
 	setCaption(i18n("User Info for %1").arg(mContact->displayName()));
@@ -224,13 +224,13 @@ void ICQUserInfo::slotHomePageClicked(const QString &url)
 
 void ICQUserInfo::slotSaveClicked()
 {
-	kdDebug(14200) << k_funcinfo << "called." << endl;
+	kdDebug(14153) << k_funcinfo << "called." << endl;
 
 	if(mContact->displayName() != mMainWidget->rwAlias->text())
 		mContact->rename(mMainWidget->rwAlias->text());
 
 	int enc = p->getCodeForCombo(mMainWidget->cmbEncoding, p->encodings());
-	kdDebug(14200) << k_funcinfo <<
+	kdDebug(14153) << k_funcinfo <<
 		"setting encoding to MIB:" << enc <<
 		"(" << static_cast<const QString&>(p->encodings()[enc]) << ")" << endl;
 	mContact->setEncoding(enc);
@@ -238,7 +238,7 @@ void ICQUserInfo::slotSaveClicked()
 
 void ICQUserInfo::slotCloseClicked()
 {
-//	kdDebug(14200) << k_funcinfo << "called." << endl;
+//	kdDebug(14153) << k_funcinfo << "called." << endl;
 	emit closing();
 }
 

@@ -56,7 +56,7 @@ const DWORD OscarSocket::parseCapabilities(Buffer &inbuf, QString &versionString
 				if (memcmp(&oscar_caps[i], cap, 12) == 0)
 				{
 
-					kdDebug(14150) << k_funcinfo << "KOPETE version : <" <<
+					kdDebug(14151) << k_funcinfo << "KOPETE version : <" <<
 						(int)cap[12] << ":" << (int)cap[13] << ":" <<
 						(int)cap[14] << ":" << (int)cap[15] << ">" << endl;
 
@@ -84,7 +84,7 @@ const DWORD OscarSocket::parseCapabilities(Buffer &inbuf, QString &versionString
 			{
 				if (memcmp(&oscar_caps[i], cap, 12) == 0)
 				{
-					kdDebug(14150) << k_funcinfo << "MICQ version : <" <<
+					kdDebug(14151) << k_funcinfo << "MICQ version : <" <<
 						(int)cap[12] << ":" << (int)cap[13] << ":" <<
 						(int)cap[14] << ":" << (int)cap[15] << ">" << endl;
 
@@ -100,7 +100,7 @@ const DWORD OscarSocket::parseCapabilities(Buffer &inbuf, QString &versionString
 			{
 				if (memcmp(&oscar_caps[i], cap, 12) == 0)
 				{
-					kdDebug(14150) << k_funcinfo << "SIM version : <" <<
+					kdDebug(14151) << k_funcinfo << "SIM version : <" <<
 						(unsigned int)cap[12] << ":" << (unsigned int)cap[13] << ":" <<
 						(unsigned int)cap[14] << ":" << (unsigned int)cap[15] << ">" << endl;
 					capflags |= (1 << i);
@@ -123,7 +123,7 @@ const DWORD OscarSocket::parseCapabilities(Buffer &inbuf, QString &versionString
 				{
 					int hiVersion = (cap[15] >> 6) - 1;
 					unsigned loVersion = cap[15] & 0x1F;
-					kdDebug(14150) << k_funcinfo << "OLD SIM version : <" <<
+					kdDebug(14151) << k_funcinfo << "OLD SIM version : <" <<
 						hiVersion << ":" << loVersion << endl;
 					capflags |= (1 << i);
 					versionString.sprintf("%d.%d", (unsigned int)hiVersion, loVersion);
@@ -144,7 +144,7 @@ const DWORD OscarSocket::parseCapabilities(Buffer &inbuf, QString &versionString
 		delete [] cap;
 	}
 	#ifdef OSCAR_CAP_DEBUG
-	kdDebug(14150) << k_funcinfo << dbgCaps << endl;
+	kdDebug(14151) << k_funcinfo << dbgCaps << endl;
 	#endif
 	return capflags;
 }
@@ -176,13 +176,13 @@ DWORD OscarSocket::parseCapString(char *cap)
 		&oscar_caps[i][14],
 		&oscar_caps[i][15]);
 
-		kdDebug(14150) << k_funcinfo <<
+		kdDebug(14151) << k_funcinfo <<
 			"source=" << source <<
 			"   dest=" << dest << "" << endl;
 
 		if(source == dest)
 		{
-			kdDebug(14150) << k_funcinfo << "found cap" << endl;
+			kdDebug(14151) << k_funcinfo << "found cap" << endl;
 			capflag |= oscar_caps[i].flag;
 			break; // should only match once...
 		}

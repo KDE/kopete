@@ -36,7 +36,7 @@ SSI *SSIData::addContact(const QString &name, const QString &group, bool addingA
 {
 	if (name.isNull() || group.isNull())
 	{
-		kdWarning(14150) << k_funcinfo <<
+		kdWarning(14151) << k_funcinfo <<
 			"Passed NULL name or group string, aborting!" << endl;
 		return 0;
 	}
@@ -82,7 +82,7 @@ SSI *SSIData::findContact(const QString &name, const QString &group)
 {
 	if (name.isNull() || group.isNull())
 	{
-		kdWarning(14150) << k_funcinfo <<
+		kdWarning(14151) << k_funcinfo <<
 			"Passed NULL name or group string, aborting!" << endl;
 		return 0;
 	}
@@ -91,7 +91,7 @@ SSI *SSIData::findContact(const QString &name, const QString &group)
 	if (gr)
 	{
 #ifdef OSCAR_SSI_DEBUG
-		kdDebug(14150) << k_funcinfo << "gr->name= " << gr->name <<
+		kdDebug(14151) << k_funcinfo << "gr->name= " << gr->name <<
 			", gr->gid= " << gr->gid <<
 			", gr->bid= " << gr->bid <<
 			", gr->type= " << gr->type << endl;
@@ -99,7 +99,7 @@ SSI *SSIData::findContact(const QString &name, const QString &group)
 		for (QPtrListIterator<SSI> it (*this); it.current(); ++it)
 		{
 			//if the ssi item has the right name, is a contact, and has the right group
-			/*kdDebug(14150) << k_funcinfo <<
+			/*kdDebug(14151) << k_funcinfo <<
 				"i->gid is " << i->gid << ", gr->gid is " << gr->gid << endl;*/
 			if ((it.current()->name == name) && 
 			   (it.current()->type == ROSTER_CONTACT) && 
@@ -107,7 +107,7 @@ SSI *SSIData::findContact(const QString &name, const QString &group)
 			{
 				//we have found our contact
 #ifdef OSCAR_SSI_DEBUG
-				kdDebug(14150) << k_funcinfo <<
+				kdDebug(14151) << k_funcinfo <<
 					"Found contact " << name << " in SSI data" << endl;
 #endif
 				return it.current();
@@ -116,7 +116,7 @@ SSI *SSIData::findContact(const QString &name, const QString &group)
 	}
 	else
 	{
-		kdDebug(14150) << k_funcinfo <<
+		kdDebug(14151) << k_funcinfo <<
 			"ERROR: Group '" << group << "' not found!" << endl;
 	}
 	return 0L;
@@ -126,7 +126,7 @@ SSI *SSIData::findContact(const QString& name)
 {
 	if (name.isNull())
 	{
-		kdWarning(14150) << k_funcinfo <<
+		kdWarning(14151) << k_funcinfo <<
 			"Passed NULL name string, aborting!" << endl;
 		return 0;
 	}
@@ -134,20 +134,20 @@ SSI *SSIData::findContact(const QString& name)
 	for (QPtrListIterator<SSI> it (*this); it.current(); ++it)
 	{
 		//if the ssi item has the right name, is a contact, and has the right group
-		/*kdDebug(14150) << k_funcinfo <<
+		/*kdDebug(14151) << k_funcinfo <<
 			"i->gid is " << i->gid << ", gr->gid is " << gr->gid << endl;*/
 		if ((it.current()->name.lower() == name.lower()) && (it.current()->type == ROSTER_CONTACT))
 		{
 			//we have found our contact
 #ifdef OSCAR_SSI_DEBUG
-			kdDebug(14150) << k_funcinfo <<
+			kdDebug(14151) << k_funcinfo <<
 				"Found contact " << name << " in SSI data" << endl;
 #endif
 			return it.current();
 		}
 	}
 
-	kdDebug(14150) << k_funcinfo <<
+	kdDebug(14151) << k_funcinfo <<
 		"ERROR: contact '" << name << "' not found!" << endl;
 	return 0L;
 }
@@ -162,7 +162,7 @@ SSI *SSIData::findGroup(const QString &name)
 #endif
 	if (name.isNull())
 	{
-		kdWarning(14150) << k_funcinfo <<
+		kdWarning(14151) << k_funcinfo <<
 			"Passed NULL groupname string, aborting!" << endl;
 		return 0;
 	}
@@ -194,7 +194,7 @@ SSI *SSIData::addGroup(const QString &name)
 {
 	if (name.isNull())
 	{
-		kdWarning(14150) << k_funcinfo <<
+		kdWarning(14151) << k_funcinfo <<
 			"Passed NULL groupname string, aborting!" << endl;
 		return 0;
 	}
@@ -221,7 +221,7 @@ SSI *SSIData::renameGroup(const QString &currentName, const QString &newName)
 {
 	if (newName.isNull())
 	{
-		kdWarning(14150) << k_funcinfo <<
+		kdWarning(14151) << k_funcinfo <<
 			"Passed NULL groupname string for new groupname, aborting!" << endl;
 		return 0;
 	}
@@ -233,7 +233,7 @@ SSI *SSIData::renameGroup(const QString &currentName, const QString &newName)
 	if (group)
 	{
 #ifdef OSCAR_SSI_DEBUG
-		kdDebug(14150) << k_funcinfo << "Building group name change request" << endl;
+		kdDebug(14151) << k_funcinfo << "Building group name change request" << endl;
 #endif
 		// Change the info in the SSI for the group name
 		// Sending the OSCAR server this SNAC, where the
@@ -255,7 +255,7 @@ SSI *SSIData::renameGroup(const QString &currentName, const QString &newName)
 SSI *SSIData::addVisible(const QString &name)
 {
 #ifdef OSCAR_SSI_DEBUG
-	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
+	kdDebug(14151) << k_funcinfo << "Called for contact '" << name << "'" << endl;
 #endif
 	return addSpecial(name, ROSTER_VISIBLE);
 }
@@ -263,7 +263,7 @@ SSI *SSIData::addVisible(const QString &name)
 SSI *SSIData::findVisible(const QString &name)
 {
 #ifdef OSCAR_SSI_DEBUG
-	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
+	kdDebug(14151) << k_funcinfo << "Called for contact '" << name << "'" << endl;
 #endif
 	return findSpecial(name, ROSTER_VISIBLE);
 }
@@ -274,7 +274,7 @@ SSI *SSIData::findVisible(const QString &name)
 SSI *SSIData::addInvisible(const QString &name)
 {
 #ifdef OSCAR_SSI_DEBUG
-	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
+	kdDebug(14151) << k_funcinfo << "Called for contact '" << name << "'" << endl;
 #endif
 	return addSpecial(name, ROSTER_INVISIBLE);
 }
@@ -282,7 +282,7 @@ SSI *SSIData::addInvisible(const QString &name)
 SSI *SSIData::findInvisible(const QString &name)
 {
 #ifdef OSCAR_SSI_DEBUG
-	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
+	kdDebug(14151) << k_funcinfo << "Called for contact '" << name << "'" << endl;
 #endif
 	return findSpecial(name, ROSTER_INVISIBLE);
 }
@@ -292,7 +292,7 @@ SSI *SSIData::findInvisible(const QString &name)
 SSI *SSIData::addIgnore(const QString &name)
 {
 #ifdef OSCAR_SSI_DEBUG
-	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
+	kdDebug(14151) << k_funcinfo << "Called for contact '" << name << "'" << endl;
 #endif
 	return addSpecial(name, ROSTER_IGNORE);
 }
@@ -300,7 +300,7 @@ SSI *SSIData::addIgnore(const QString &name)
 SSI *SSIData::findIgnore(const QString &name)
 {
 #ifdef OSCAR_SSI_DEBUG
-	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
+	kdDebug(14151) << k_funcinfo << "Called for contact '" << name << "'" << endl;
 #endif
 	return findSpecial(name, ROSTER_IGNORE);
 }
@@ -397,7 +397,7 @@ void SSIData::print()
 {
 	for (QPtrListIterator<SSI> it (*this); it.current(); ++it)
 	{
-		kdDebug(14150) << k_funcinfo << "name: " << it.current()->name <<
+		kdDebug(14151) << k_funcinfo << "name: " << it.current()->name <<
 			", gid: " << it.current()->gid << ", bid: " << it.current()->bid <<
 			", type: " << it.current()->type << ", tbslen: " << it.current()->tlvlength << endl;
 	}

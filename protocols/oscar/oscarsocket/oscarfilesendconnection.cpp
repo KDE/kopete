@@ -25,7 +25,7 @@ OscarFileSendConnection::OscarFileSendConnection(const KFileItem *finfo, const Q
 	const QString &connName, const QByteArray &cookie, QObject *parent, const char *name)
 	: OscarConnection(sn, connName, SendFile, cookie, parent, name)
 {
-	kdDebug(14150) << k_funcinfo <<  "called, sn='" << sn << "' connName='" <<
+	kdDebug(14151) << k_funcinfo <<  "called, sn='" << sn << "' connName='" <<
 		connName << "'" << endl;
 
 	if (finfo)
@@ -41,7 +41,7 @@ OscarFileSendConnection::OscarFileSendConnection(const KFileItem *finfo, const Q
 
 OscarFileSendConnection::~OscarFileSendConnection()
 {
-	kdDebug(14150) << k_funcinfo << "Called." << endl;
+	kdDebug(14151) << k_funcinfo << "Called." << endl;
 }
 
 void OscarFileSendConnection::slotRead()
@@ -88,7 +88,7 @@ void OscarFileSendConnection::slotRead()
 		{
 			mSending = false;
 			mFile->resume();
-			kdDebug(14150) << "[OscarFileSendConnection] Sending read confirm.  filesize: " << mFileSize << ", bytes transferred: " << mBytesTransferred << endl;
+			kdDebug(14151) << "[OscarFileSendConnection] Sending read confirm.  filesize: " << mFileSize << ", bytes transferred: " << mBytesTransferred << endl;
 			sendReadConfirm();
 		}
 	}
@@ -108,12 +108,12 @@ OFT2 OscarFileSendConnection::getOFT2()
 		//get the header length
 		if ((theword = socket()->getch()) == -1)
 		{
-			kdDebug(14150) << "[OSCAR] Error reading length, byte 1: nothing to be read" << endl;
+			kdDebug(14151) << "[OSCAR] Error reading length, byte 1: nothing to be read" << endl;
 			oft.headerlen = 0x00;
 		}
 		else if((theword2 = socket()->getch()) == -1)
 		{
-			kdDebug(14150) << "[OSCAR] Error reading data field length, byte 2: nothing to be read" << endl;
+			kdDebug(14151) << "[OSCAR] Error reading data field length, byte 2: nothing to be read" << endl;
 			oft.headerlen = 0x00;
 		}
 		else
@@ -128,7 +128,7 @@ OFT2 OscarFileSendConnection::getOFT2()
 		inbuf.setBuf(buf,oft.headerlen-6);
 
 #ifdef OSCAR_PACKETLOG
-		kdDebug(14150) << "=== INPUT ===" << inbuf.toString();
+		kdDebug(14151) << "=== INPUT ===" << inbuf.toString();
 #endif
 
 		oft.channel = inbuf.getWord();
@@ -166,11 +166,11 @@ OFT2 OscarFileSendConnection::getOFT2()
 	}
 	else
 	{
-		kdDebug(14150) << "[OSCAR] Error reading OFT2 header... start byte is " << start << endl;
+		kdDebug(14151) << "[OSCAR] Error reading OFT2 header... start byte is " << start << endl;
 		oft.size = 0;
 	}
 
-	kdDebug(14150) << "[OSCAR] Read an OFT2 header!  header length: " << oft.headerlen
+	kdDebug(14151) << "[OSCAR] Read an OFT2 header!  header length: " << oft.headerlen
 		<< ", channel: " << oft.channel << ", size: " << oft.size
 		<< ", nrecvd: " << oft.nrecvd << ", file name: " << oft.filename << endl;
 
@@ -227,7 +227,7 @@ void OscarFileSendConnection::sendOFT2Block(const OFT2 &oft, const Buffer &/*dat
 		outbuf.addByte(0x00);
 
 #ifdef OSCAR_PACKETLOG
-		kdDebug(14150) << "=== OUTPUT ===" << outbuf.toString();
+		kdDebug(14151) << "=== OUTPUT ===" << outbuf.toString();
 #endif
 	socket()->writeBlock(outbuf.buffer(), outbuf.length());
 }
@@ -290,7 +290,7 @@ void OscarFileSendConnection::sendAcceptTransfer(OFT2 &hdr)
 
 	if(!mFileInfo)
 	{
-		kdDebug(14150) << k_funcinfo <<
+		kdDebug(14151) << k_funcinfo <<
 			"mfileinfo is null :-(  can't accept transfer" << endl;
 		return;
 	}
@@ -299,7 +299,7 @@ void OscarFileSendConnection::sendAcceptTransfer(OFT2 &hdr)
 	ku.setFileName(hdr.filename);
 	mFileInfo->setURL(ku);
 
-	kdDebug(14150) << "[OscarFileSendConnection] Accepting transfer of " <<
+	kdDebug(14151) << "[OscarFileSendConnection] Accepting transfer of " <<
 		mFileInfo->url().path() << ", size: " << mFileSize << endl;
 
 	mFile = KIO::put(mFileInfo->url(), -1, true, false, false);
@@ -318,7 +318,7 @@ void OscarFileSendConnection::sendAcceptTransfer(OFT2 &hdr)
 void OscarFileSendConnection::sendFile()
 {
 	mSending = true;
-	kdDebug(14150) << k_funcinfo <<  "The transfer of " <<
+	kdDebug(14151) << k_funcinfo <<  "The transfer of " <<
 		mFileInfo->url().path() << " has begun." << endl;
 
 	emit transferBegun(this, mFileName, mFileSize, connectionName());
@@ -381,19 +381,19 @@ void OscarFileSendConnection::slotKIOResult(KIO::Job *job)
 {
 	if (job->error())
 	{
-		kdDebug(14150) << k_funcinfo << "Error on transferring file" << endl;
+		kdDebug(14151) << k_funcinfo << "Error on transferring file" << endl;
 		job->showErrorDialog();
 	}
 	else
 	{
 		mSending = false;
-		kdDebug(14150) << k_funcinfo << "Finished transferring file" << endl;
+		kdDebug(14151) << k_funcinfo << "Finished transferring file" << endl;
 	}
 }
 
 void OscarFileSendConnection::slotKIOData(KIO::Job * /* job */, const QByteArray &data)
 {
-	//kdDebug(14150) << "[OscarFileSendConnection] got data " << ((KIO::SimpleJob *)(job))->url().fileName() << ", size " << data.size() << endl;
+	//kdDebug(14151) << "[OscarFileSendConnection] got data " << ((KIO::SimpleJob *)(job))->url().fileName() << ", size " << data.size() << endl;
 	socket()->writeBlock(data.data(),data.size());
 }
 
@@ -402,7 +402,7 @@ void OscarFileSendConnection::slotKIODataReq(KIO::Job *job, QByteArray &data)
 	int len = mBuffer.length();
 	data.assign(mBuffer.getBlock(len), len);
 /*
-	kdDebug(14150) << k_funcinfo << "Writing data " <<
+	kdDebug(14151) << k_funcinfo << "Writing data " <<
 		((KIO::SimpleJob *)(job))->url().fileName() <<
 		", size " << data.size() << endl;
 */
