@@ -35,8 +35,9 @@ class YahooContact : public KopeteContact
 	Q_OBJECT
 public:
 	YahooContact( YahooAccount *account, const QString &userId, const QString &fullName, KopeteMetaContact *metaContact );
-
 	~YahooContact();
+
+	/** Base Class Reimplementations **/
 	virtual bool isOnline() const;
 	virtual bool isReachable();
 	virtual QPtrList<KAction> *customContextMenuActions();
@@ -44,6 +45,11 @@ public:
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
 	void setYahooStatus( const KopeteOnlineStatus& );
+
+	/** The group name getter and setter methods**/
+	QString group() const;
+	void setGroup( const QString& );
+
 
 public slots:
 	virtual void slotUserInfo();
@@ -64,6 +70,9 @@ private slots:
 private:
 	//the user id of the contact
 	QString m_userId;
+
+	//the group name of the contact
+	QString m_groupName;
 
 	//The message manager
 	KopeteMessageManager *m_manager;

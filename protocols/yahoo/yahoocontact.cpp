@@ -41,6 +41,8 @@ YahooContact::YahooContact( YahooAccount *account, const QString &userId, const 
 	kdDebug(14180) << k_funcinfo << endl;
 
 	m_userId = userId;
+	if ( metaContact )
+		m_groupName = metaContact->groups().getFirst()->displayName();
 	m_manager = 0L;
 	m_account = account;
 
@@ -168,7 +170,7 @@ void YahooContact::slotDeleteContact()
 	kdDebug(14180) << k_funcinfo << endl;
 	//my ugliest hack yet. how many levels of indirection do I want? ;)
 	if ( m_account->isConnected() )
-		m_account->yahooSession()->removeBuddy(m_userId, metaContact()->groups().getFirst()->displayName());
+		m_account->yahooSession()->removeBuddy(m_userId, m_groupName);
 
 	KopeteContact::slotDeleteContact();
 }
