@@ -111,7 +111,7 @@ void KopeteSystemTray::mouseDoubleClickEvent( QMouseEvent *me )
 
 void KopeteSystemTray::contextMenuAboutToShow( KPopupMenu *me )
 {
-	kdDebug(14010) << k_funcinfo << "Called." << endl;
+	//kdDebug(14010) << k_funcinfo << "Called." << endl;
 	emit aboutToShowMenu( me );
 }
 
@@ -140,7 +140,7 @@ void KopeteSystemTray::startBlink( const QPixmap &icon )
 
 void KopeteSystemTray::startBlink( const QMovie &movie )
 {
-	kdDebug( 14010 ) << k_funcinfo << "starting movie." << endl;
+	//kdDebug( 14010 ) << k_funcinfo << "starting movie." << endl;
 	const_cast<QMovie &>( movie ).unpause();
 	setMovie( movie );
 	mIsBlinking = true;
@@ -214,10 +214,10 @@ void KopeteSystemTray::slotEventDone(KopeteEvent *event)
 
 void KopeteSystemTray::addBalloon()
 {
-	kdDebug(14010) << k_funcinfo <<
+	/*kdDebug(14010) << k_funcinfo <<
 		m_balloon << ":" << KopetePrefs::prefs()->showTray() <<
 		":" << KopetePrefs::prefs()->balloonNotify()
-		<< ":" << !mEventList.isEmpty() << endl;
+		<< ":" << !mEventList.isEmpty() << endl;*/
 
 	if( !m_balloon && KopetePrefs::prefs()->showTray() && KopetePrefs::prefs()->balloonNotify() && !mEventList.isEmpty() )
 	{
@@ -225,11 +225,9 @@ void KopeteSystemTray::addBalloon()
 
 		if ( msg.from() )
 		{
-			kdDebug(14010) << k_funcinfo << "Orig msg text=" << msg.parsedBody() << endl;
-
+			//kdDebug(14010) << k_funcinfo << "Orig msg text=" << msg.parsedBody() << endl;
 			QString msgText = squashMessage( msg );
-
-			kdDebug(14010) << k_funcinfo << "New msg text=" << msgText << endl;
+			//kdDebug(14010) << k_funcinfo << "New msg text=" << msgText << endl;
 
 			QString msgFrom;
 			if( msg.from()->metaContact() )
