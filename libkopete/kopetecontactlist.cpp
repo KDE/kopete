@@ -356,7 +356,7 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 
 							// Do the actual conversion
 							if( id == "MSNProtocol" || id == "OscarProtocol" || id == "AIMProtocol" || id == "IRCProtocol" ||
-								id == "ICQProtocol" || id == "JabberProtocol" || id == "SMSProtocol" )
+								id == "ICQProtocol" || id == "JabberProtocol" || id == "SMSProtocol" || id == "WPProtocol" )
 							{
 								QStringList strList = QStringList::split( "||", data );
 								// Unescape '||'
@@ -381,7 +381,7 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 									dataField = newList.createElement( "plugin-data-field" );
 									pluginData[ id ].appendChild( dataField );
 									dataField.setAttribute( "key", "displayName" );
-									if( convertOldAim || id == "ICQProtocol" )
+									if( convertOldAim || id == "ICQProtocol" || id == "WPProtocol" )
 										dataField.appendChild( newList.createTextNode( strList[ idx ] ) );
 									else if( id == "JabberProtocol" )
 										dataField.appendChild( newList.createTextNode( strList[ idx + 2 ] ) );
@@ -432,7 +432,7 @@ void KopeteContactList::convertContactList( const QString &fileName, uint /* fro
 
 									// MSN, AIM, IRC, Oscar and SMS didn't store address book fields up
 									// to now, so create one
-									if( id != "ICQProtocol" && id != "JabberProtocol" )
+									if( id != "ICQProtocol" && id != "JabberProtocol" && id != "WPProtocol" )
 									{
 										QDomElement addressBookField = newList.createElement( "address-book-field" );
 										newMetaContact.appendChild( addressBookField );
