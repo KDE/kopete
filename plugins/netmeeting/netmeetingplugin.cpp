@@ -32,12 +32,8 @@
 #include "netmeetingguiclient.h"
 
 
-#if KDE_IS_VERSION(3,2,90)
 static const KAboutData aboutdata("kopete_netmeeting", I18N_NOOP("NetMeeting") , "1.0" );
 K_EXPORT_COMPONENT_FACTORY( kopete_netmeeting, KGenericFactory<NetMeetingPlugin>( &aboutdata )  )
-#else
-K_EXPORT_COMPONENT_FACTORY( kopete_netmeeting, KGenericFactory<NetMeetingPlugin>( "kopete_netmeeting" )  )
-#endif
 
 NetMeetingPlugin::NetMeetingPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
 : Kopete::Plugin( KGlobal::instance(), parent, name )

@@ -37,9 +37,7 @@
 #include <kprocio.h>
 #include <klocale.h>
 #include <kaccel.h>
-#if KDE_IS_VERSION( 3, 2, 90 )
 #include <klistviewsearchline.h>
-#endif
 #include <kactivelabel.h>
 #include <kaction.h>
 #include <kdebug.h>

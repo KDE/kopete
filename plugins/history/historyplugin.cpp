@@ -38,12 +38,8 @@
 #include "historyconfig.h"
 
 typedef KGenericFactory<HistoryPlugin> HistoryPluginFactory;
-#if KDE_IS_VERSION(3,2,90)
 static const KAboutData aboutdata("kopete_history", I18N_NOOP("History") , "1.0" );
 K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory( &aboutdata )  )
-#else
-K_EXPORT_COMPONENT_FACTORY( kopete_history, HistoryPluginFactory("kopete_history")  )
-#endif
 
 HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringList & /* args */ )
 : Kopete::Plugin( HistoryPluginFactory::instance(), parent, name ), m_loggerFactory( this )
