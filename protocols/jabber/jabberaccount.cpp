@@ -201,9 +201,45 @@ void JabberAccount::setS5bPort ( int port )
 
 }
 
-KActionMenu *JabberAccount::actionMenu()
+KActionMenu *JabberAccount::actionMenu ()
 {
-	KActionMenu *m_actionMenu = Kopete::Account::actionMenu();
+	KActionMenu *m_actionMenu = new KActionMenu ( accountId (), myself()->onlineStatus().iconFor ( this ), this );
+
+	m_actionMenu->popupMenu()->insertTitle ( myself()->onlineStatus().iconFor ( myself () ),
+											 i18n("%2 <%1>").arg ( accountId (), myself()->property(protocol()->propNickName).value().toString () ) );
+
+	m_actionMenu->insert ( new KAction ( i18n ("Go O&nline"),
+										 mProtocol->JabberKOSOnline.iconFor ( this ),
+										 0, this, SLOT ( slotGoOnline () ), this, "actionJabberConnect") );
+
+	m_actionMenu->insert ( new KAction ( i18n ("Set F&ree to Chat"),
+										 mProtocol->JabberKOSChatty.iconFor ( this ),
+										 0, this, SLOT ( slotGoChatty () ), this, "actionJabberChatty") );
+
+	m_actionMenu->insert ( new Kopete::AwayAction ( i18n ("Set A&way"),
+												  mProtocol->JabberKOSAway.iconFor ( this ),
+												  0, this, SLOT ( slotGoAway ( const QString & ) ),
+												  this, "actionJabberAway") );
+
+	m_actionMenu->insert ( new Kopete::AwayAction ( i18n ("Set E&xtended Away"),
+												  mProtocol->JabberKOSXA.iconFor ( this ),
+												  0, this, SLOT ( slotGoXA ( const QString & ) ),
+												  this, "actionJabberXA") );
+
+	m_actionMenu->insert ( new Kopete::AwayAction (  i18n ("Set &Do Not Disturb"),
+												  mProtocol->JabberKOSDND.iconFor ( this ),
+												  0, this, SLOT ( slotGoDND ( const QString & ) ),
+												  this, "actionJabberDND") );
+
+	m_actionMenu->insert ( new KAction ( i18n ("Set I&nvisible"),
+										 mProtocol->JabberKOSInvisible.iconFor ( this ),
+										 0, this, SLOT ( slotGoInvisible () ),
+										 this, "actionJabberInvisible") );
+
+	m_actionMenu->insert ( new KAction ( i18n ("Go O&ffline"),
+										 mProtocol->JabberKOSOffline.iconFor ( this ),
+										 0, this, SLOT ( slotGoOffline () ),
+										 this, "actionJabberDisconnect") );
 
 	m_actionMenu->popupMenu()->insertSeparator();
 
