@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>icqAddUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>607</width>
-            <height>396</height>
+            <height>398</height>
         </rect>
     </property>
     <property name="caption">
@@ -63,6 +63,9 @@
                     <property name="text">
                         <string>&amp;Search</string>
                     </property>
+                    <property name="accel">
+                        <string>Alt+S</string>
+                    </property>
                 </widget>
                 <widget class="QPushButton">
                     <property name="name">
@@ -78,6 +81,9 @@
                     </property>
                     <property name="text">
                         <string>Clear &amp;Results</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+R</string>
                     </property>
                 </widget>
             </vbox>
@@ -135,7 +141,7 @@
                             </property>
                             <widget class="QLabel" row="1" column="0">
                                 <property name="name">
-                                    <cstring>TextLabel2_2</cstring>
+                                    <cstring>lblFirstName</cstring>
                                 </property>
                                 <property name="text">
                                     <string>First name:</string>
@@ -143,7 +149,7 @@
                             </widget>
                             <widget class="QLabel" row="2" column="2">
                                 <property name="name">
-                                    <cstring>TextLabel2_4_3</cstring>
+                                    <cstring>lblCity</cstring>
                                 </property>
                                 <property name="text">
                                     <string>City:</string>
@@ -151,7 +157,7 @@
                             </widget>
                             <widget class="QLabel" row="2" column="0">
                                 <property name="name">
-                                    <cstring>TextLabel2_4</cstring>
+                                    <cstring>lblGender</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Gender:</string>
@@ -159,7 +165,7 @@
                             </widget>
                             <widget class="QLabel" row="4" column="2">
                                 <property name="name">
-                                    <cstring>TextLabel3</cstring>
+                                    <cstring>lblAge</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Age:</string>
@@ -167,7 +173,7 @@
                             </widget>
                             <widget class="QLabel" row="1" column="2">
                                 <property name="name">
-                                    <cstring>TextLabel2_3</cstring>
+                                    <cstring>lblLastName</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Last name:</string>
@@ -175,7 +181,7 @@
                             </widget>
                             <widget class="QLabel" row="0" column="2">
                                 <property name="name">
-                                    <cstring>TextLabel1</cstring>
+                                    <cstring>lblEmail</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Email:</string>
@@ -198,7 +204,7 @@
                             </widget>
                             <widget class="QLabel" row="3" column="2">
                                 <property name="name">
-                                    <cstring>TextLabel2_4_4</cstring>
+                                    <cstring>lblCountry</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Country:</string>
@@ -224,7 +230,7 @@
                             </widget>
                             <widget class="QLabel" row="3" column="0">
                                 <property name="name">
-                                    <cstring>TextLabel2_4_2</cstring>
+                                    <cstring>lblLanguage</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Language:</string>
@@ -252,7 +258,7 @@
                             </widget>
                             <widget class="QLabel" row="0" column="0">
                                 <property name="name">
-                                    <cstring>TextLabel2</cstring>
+                                    <cstring>lblNickName</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Nickname:</string>

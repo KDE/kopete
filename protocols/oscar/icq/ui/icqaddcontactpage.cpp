@@ -44,11 +44,11 @@ ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent, const c
 	icqdata = new icqAddUI(this);
 
 
-	icqdata->resultView->addColumn( i18n("Nick") );
-	icqdata->resultView->addColumn( i18n("First Name") );
-	icqdata->resultView->addColumn( i18n("Last Name") );
-	icqdata->resultView->addColumn( i18n("UIN") );
-	icqdata->resultView->addColumn( i18n("Email") );
+	icqdata->resultView->addColumn(i18n("Nick"));
+	icqdata->resultView->addColumn(i18n("First Name"));
+	icqdata->resultView->addColumn(i18n("Last Name"));
+	icqdata->resultView->addColumn(i18n("UIN"));
+	icqdata->resultView->addColumn(i18n("Email"));
 
 	ICQProtocol *p = ICQProtocol::protocol();
 	p->fillComboFromTable(icqdata->gender, p->genders());
@@ -60,26 +60,32 @@ ICQAddContactPage::ICQAddContactPage(ICQAccount *owner, QWidget *parent, const c
 	icqdata->progressText->setText("");
 	icqdata->progressPixmap->setPixmap(SmallIcon("icq_offline"));
 
-	connect(icqdata->startSearch, SIGNAL(clicked()), this, SLOT(slotStartSearch()) );
-	connect(icqdata->stopSearch, SIGNAL(clicked()), this, SLOT(slotStopSearch()) );
-	connect(icqdata->clearResults, SIGNAL(clicked()), this, SLOT(slotClearResults()) );
-	connect(icqdata->searchTab, SIGNAL(currentChanged(QWidget*)), this, SLOT(slotSearchTabChanged(QWidget*)) );
-	connect(icqdata->nickName, SIGNAL(textChanged(const QString &)), this, SLOT(slotTextChanged()) );
-	connect(icqdata->firstName, SIGNAL(textChanged(const QString &)), this, SLOT(slotTextChanged()) );
-	connect(icqdata->lastName, SIGNAL(textChanged(const QString &)), this, SLOT(slotTextChanged()) );
-	connect(icqdata->uin, SIGNAL(textChanged(const QString &)), this, SLOT(slotTextChanged()) );
-	connect(icqdata->email, SIGNAL(textChanged(const QString &)), this, SLOT(slotTextChanged()) );
+	connect(icqdata->startSearch, SIGNAL(clicked()), this, SLOT(slotStartSearch()));
+	connect(icqdata->stopSearch, SIGNAL(clicked()), this, SLOT(slotStopSearch()));
+	connect(icqdata->clearResults, SIGNAL(clicked()), this, SLOT(slotClearResults()));
+	connect(icqdata->searchTab, SIGNAL(currentChanged(QWidget*)), this, SLOT(slotSearchTabChanged(QWidget*)));
+	connect(icqdata->nickName, SIGNAL(textChanged(const QString &)), this, SLOT(slotTextChanged()));
+	connect(icqdata->firstName, SIGNAL(textChanged(const QString &)), this, SLOT(slotTextChanged()));
+	connect(icqdata->lastName, SIGNAL(textChanged(const QString &)), this, SLOT(slotTextChanged()));
+	connect(icqdata->uin, SIGNAL(textChanged(const QString &)), this, SLOT(slotTextChanged()));
+	connect(icqdata->email, SIGNAL(textChanged(const QString &)), this, SLOT(slotTextChanged()));
 
 	updateGui();
 
 	if(!mAccount->isConnected())
 	{
-		new QListViewItem( icqdata->resultView,
-			i18n( "Adding contacts is impossible while being offline" ), "", "", "", "" );
-		new QListViewItem( icqdata->resultView,
-			i18n( "Please go online before adding ICQ contacts" ), "", "", "", "");
+		new QListViewItem(icqdata->resultView,
+			i18n("Adding contacts is impossible while being offline"), "", "", "", "");
+		new QListViewItem(icqdata->resultView,
+			i18n("Please go online before adding ICQ contacts"), "", "", "", "");
 
-		icqdata->setDisabled(true);
+		icqdata->progressText->setText(i18n("Adding contacts is impossible while being offline"));
+
+		icqdata->startSearch->setDisabled(true);
+		icqdata->stopSearch->setDisabled(true);
+		icqdata->clearResults->setDisabled(true);
+		icqdata->searchTab->setTabEnabled(icqdata->tab, false);
+		icqdata->searchTab->setTabEnabled(icqdata->tab_2, false);
 	}
 }
 
@@ -133,15 +139,15 @@ void ICQAddContactPage::slotStartSearch()
 		}
 
 		case 1: // search by uin
-			mAccount->engine()->sendCLI_SEARCHBYUIN( icqdata->uin->text().toULong() );
+			mAccount->engine()->sendCLI_SEARCHBYUIN(icqdata->uin->text().toULong());
 			searching = true;
 			break;
 	}
 
 	if (searching)
 	{
-		icqdata->progressText->setText( i18n("Searching...") );
-//		icqdata->progressPixmap->setMovie( QMovie( locate("data","kopete/pics/icq_connecting.mng") ) );
+		icqdata->progressText->setText(i18n("Searching..."));
+//		icqdata->progressPixmap->setMovie(QMovie(locate("data","kopete/pics/icq_connecting.mng") ));
 		icqdata->progressPixmap->setPixmap(SmallIcon("icq_online"));
 		connect(
 			mAccount->engine(), SIGNAL(gotSearchResult(ICQSearchResult &, const int)),
@@ -154,8 +160,8 @@ void ICQAddContactPage::slotStartSearch()
 
 void ICQAddContactPage::slotSearchResult (ICQSearchResult &res, const int missed)
 {
-	kdDebug(14200) << k_funcinfo << "searching=" << searching <<
-		", res.uin=" << res.uin << ", missed=" << missed << endl;
+	/*kdDebug(14200) << k_funcinfo << "searching=" << searching <<
+		", res.uin=" << res.uin << ", missed=" << missed << endl;*/
 
 	if(!searching)
 		return;
@@ -207,14 +213,14 @@ void ICQAddContactPage::slotSearchResult (ICQSearchResult &res, const int missed
 }
 
 
-void ICQAddContactPage::slotStopSearch(void)
+void ICQAddContactPage::slotStopSearch()
 {
 	removeSearch();
 	icqdata->progressText->setText("");
 	updateGui();
 }
 
-void ICQAddContactPage::slotClearResults(void)
+void ICQAddContactPage::slotClearResults()
 {
 	icqdata->resultView->clear();
 	icqdata->progressText->setText("");
@@ -222,7 +228,7 @@ void ICQAddContactPage::slotClearResults(void)
 }
 
 
-void ICQAddContactPage::removeSearch(void)
+void ICQAddContactPage::removeSearch()
 {
 	searching=false;
 	disconnect(
@@ -230,45 +236,44 @@ void ICQAddContactPage::removeSearch(void)
 		this, SLOT(slotSearchResult(ICQSearchResult &, const int)));
 }
 
-void ICQAddContactPage::updateGui(void)
+void ICQAddContactPage::updateGui()
 {
 	if(searching)
 	{
-		icqdata->startSearch->setEnabled( false );
-		icqdata->stopSearch->setEnabled( true );
-		icqdata->clearResults->setEnabled( false );
-		icqdata->searchTab->setEnabled( false );
+		icqdata->startSearch->setEnabled(false);
+		icqdata->stopSearch->setEnabled(true);
+		icqdata->clearResults->setEnabled(false);
+		icqdata->searchTab->setEnabled(false);
 	}
 	else
 	{
 		icqdata->progressPixmap->setPixmap(SmallIcon("icq_offline"));
-		if( mAccount->isConnected() )
-			icqdata->startSearch->setEnabled( true );
-		icqdata->stopSearch->setEnabled( false );
-		icqdata->searchTab->setEnabled( true );
-		icqdata->clearResults->setEnabled( icqdata->resultView->childCount() );
+		icqdata->searchTab->setEnabled(mAccount->isConnected());
+		icqdata->startSearch->setEnabled(mAccount->isConnected());
+		icqdata->stopSearch->setEnabled(false);
+		icqdata->clearResults->setEnabled(icqdata->resultView->childCount()>0 && mAccount->isConnected());
 
-		switch ( searchMode )
+		switch(searchMode)
 		{
 			case 0:
-/*				icqdata->startSearch->setEnabled( !icqdata->firstName->text().isEmpty()
+				/*icqdata->startSearch->setEnabled(!icqdata->firstName->text().isEmpty()
 					|| !icqdata->lastName->text().isEmpty()
 					|| !icqdata->nickName->text().isEmpty()
-					|| !icqdata->email->text().isEmpty() );*/
+					|| !icqdata->email->text().isEmpty());*/
 			break;
 
 			case 1:
-				icqdata->startSearch->setEnabled( (icqdata->uin->text().length() > 4) );
+				icqdata->startSearch->setEnabled((icqdata->uin->text().length() > 4));
 				break;
 		}
 	}
 }
 
-bool ICQAddContactPage::apply( KopeteAccount* , KopeteMetaContact *parentContact  )
+bool ICQAddContactPage::apply(KopeteAccount* , KopeteMetaContact *parentContact  )
 {
 	QListViewItem *item = icqdata->resultView->selectedItem();
 
-	if ( !item )
+	if (!item )
 		return false;
 
 	kdDebug(14200) << k_funcinfo << "called; adding contact..." << endl;
@@ -289,10 +294,7 @@ bool ICQAddContactPage::validateData()
 	if(!mAccount->isConnected())
 		return false;
 
-	if(icqdata->resultView->selectedItem())
-		return true;
-	else
-		return false;
+	return (icqdata->resultView->selectedItem() != 0L);
 }
 #include "icqaddcontactpage.moc"
 // vim: set noet ts=4 sts=4 sw=4:

@@ -73,7 +73,7 @@ OscarSocket::~OscarSocket()
 		socket()->socketStatus() == KExtendedSocket::connected )
 	{
 		kdDebug(14150) << k_funcinfo <<
-			"FIXME: Still not disconnected, status=" << socket()->socketStatus() << endl;
+			"Not disconnected, status=" << socket()->socketStatus() << endl;
 
 		if(mIsICQ)
 			stopKeepalive();
@@ -849,9 +849,16 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 	TLV *url = findTLV(lst,0x0004);  //error url
 	TLV *bosip = findTLV(lst,0x0005); //bos server address
 	TLV *cook = findTLV(lst,0x0006); //authorization cookie
-	TLV *email = findTLV(lst,0x0007); //the email address attached to the account
-	TLV *regstatus = findTLV(lst,0x0013); //whether the email address is available to others
+	//TLV *email = findTLV(lst,0x0007); //the email address attached to the account
+	//TLV *regstatus = findTLV(lst,0x0013); //whether the email address is available to others
 	TLV *err = findTLV(lst,0x0008); //whether an error occurred
+	TLV *passChangeUrl = findTLV(lst,0x0054); //Password change URL, TODO: use for AIM accounts
+
+	if (passChangeUrl)
+	{
+		kdDebug(14150) << k_funcinfo << "password change url='"  << passChangeUrl->data << "'" << endl;
+		delete [] passChangeUrl->data;
+	}
 
 	if (mCookie)
 		delete[] mCookie;
@@ -903,11 +910,11 @@ void OscarSocket::parseAuthResponse(Buffer &inbuf)
 	if (sn)
 		delete [] sn->data;
 
-	if (email)
-		delete [] email->data;
+	/*if (email)
+		delete [] email->data;*/
 
-	if (regstatus)
-		delete [] regstatus->data;
+	/*if (regstatus)
+		delete [] regstatus->data;*/
 
 	if (url)
 		delete [] url->data;
