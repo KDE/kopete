@@ -129,10 +129,21 @@ GaduContact::changedStatus( KGaduNotify* newstatus )
 
 }
 
-KopeteMessageManager*
-GaduContact::manager( bool /* canCreate */ )
+unsigned int 
+GaduContact::contactIp()
 {
-	if ( !msgManager_ ) {
+	return remote_ip;
+}
+unsigned short 
+GaduContact::contactPort()
+{
+	return remote_port;
+}
+
+KopeteMessageManager*
+GaduContact::manager( bool canCreate )
+{
+	if ( !msgManager_ && canCreate ) {
 		msgManager_ = KopeteMessageManagerFactory::factory()->create( account_->myself(), thisContact_, GaduProtocol::protocol() );
 		connect( msgManager_, SIGNAL( messageSent( KopeteMessage&, KopeteMessageManager*) ),
 			 this, SLOT( messageSend( KopeteMessage&, KopeteMessageManager*) ) );

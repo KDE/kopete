@@ -69,6 +69,9 @@ public:
 
 	uin_t uin() const;
 
+	unsigned int contactIp();
+	unsigned short contactPort();
+	
 public slots:
 	void slotUserInfo();
 	void slotDeleteContact();
