@@ -141,7 +141,7 @@ void MSNSocket::setOnlineStatus( MSNSocket::OnlineStatus status )
 		return;
 
 	m_onlineStatus = status;
-	emit( onlineStatusChanged( status ) );
+	emit onlineStatusChanged( status );
 }
 
 void MSNSocket::slotSocketError( int error )
@@ -163,7 +163,7 @@ void MSNSocket::slotSocketError( int error )
 	setOnlineStatus( Disconnected );
 	emit connectionFailed();
 	//like if the socket is closed
-	emit( socketClosed( -1 ) );
+	emit socketClosed( -1 );
 
 	KMessageBox::queuedMessageBox( 0L, KMessageBox::Error, errormsg, i18n( "MSN Plugin" ) );
 }
@@ -467,7 +467,7 @@ void MSNSocket::slotReadyWrite()
 		kdDebug( 14141 ) << k_funcinfo << "Sending command: " << QString( *it ).stripWhiteSpace() << endl;
 		m_socket->writeBlock( *it, ( *it ).length() );
 		m_sendQueue.remove( it );
-		emit( commandSent() );
+		emit commandSent();
 
 		// If the queue is empty again stop waiting for readyWrite signals
 		// because of the CPU usage
@@ -522,7 +522,7 @@ void MSNSocket::slotSocketClosed( int state )
 	m_socket->deleteLater();
 	m_socket = 0L;
 
-	emit( socketClosed( state ) );
+	emit socketClosed( state );
 }
 
 // Used in MSNFileTransferSocket
