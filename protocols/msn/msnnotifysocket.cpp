@@ -445,6 +445,8 @@ void KMSNServiceSocket::sendCommand( const QString &cmd, const QString &args )
 	kdDebug() << "KMSNServiceSocket::sendCommand: Sending command " << data;
 
 	socket->writeBlock( data, data.length() );
+
+	m_id++;
 }
 
 /* MSN Service has send a new IP , so connect to it */
