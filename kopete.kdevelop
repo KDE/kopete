@@ -13,9 +13,7 @@
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
     <description/>
-    <ignoreparts>
-      <part>KDevDebugger</part>
-    </ignoreparts>
+    <ignoreparts/>
     <secondaryLanguages/>
   </general>
   <kdevfileview>
@@ -26,6 +24,7 @@
       <group pattern="*.po;*.ts" name="Translations" />
       <group pattern="*" name="Others" />
       <hidenonprojectfiles>false</hidenonprojectfiles>
+      <hidenonlocation>false</hidenonlocation>
     </groups>
     <tree>
       <hidenonprojectfiles>false</hidenonprojectfiles>
@@ -39,8 +38,8 @@
       <toc>gnustep</toc>
     </ignoretocs>
     <projectdoc>
-      <userdocDir>/home/will/projects/kde/build/kdenetwork/kopete/doc-api/html/</userdocDir>
-      <apidocDir>/home/will/projects/build/kde/non-release/kdenonbeta/kopete/doc-api/html/</apidocDir>
+      <userdocDir>doc-api/html</userdocDir>
+      <apidocDir>doc-api/html</apidocDir>
     </projectdoc>
     <ignoreqt_xml/>
     <ignoredoxygen/>
@@ -90,10 +89,33 @@
       <customdirectory>/</customdirectory>
       <autocompile>true</autocompile>
     </run>
+    <configurations>
+      <default>
+        <configargs>--enable-debug=full</configargs>
+        <builddir/>
+        <topsourcedir/>
+        <cppflags/>
+        <ldflags/>
+        <ccompiler>kdevgccoptions</ccompiler>
+        <cxxcompiler>kdevgppoptions</cxxcompiler>
+        <f77compiler>kdevpgf77options</f77compiler>
+        <ccompilerbinary/>
+        <cxxcompilerbinary/>
+        <f77compilerbinary/>
+        <cflags/>
+        <cxxflags/>
+        <f77flags/>
+      </default>
+    </configurations>
   </kdevautoproject>
   <kdevfilecreate>
     <filetypes/>
-    <useglobaltypes/>
+    <useglobaltypes>
+      <type ext="ui" />
+      <type ext="cpp" />
+      <type ext="c" />
+      <type ext="h" />
+    </useglobaltypes>
   </kdevfilecreate>
   <cppsupportpart>
     <codecompletion/>
@@ -112,13 +134,13 @@
   </kdevclassview>
   <kdevcvs>
     <cvsoptions>-f</cvsoptions>
-    <commitoptions></commitoptions>
+    <commitoptions/>
     <updateoptions>-dP</updateoptions>
-    <addoptions></addoptions>
+    <addoptions/>
     <removeoptions>-f</removeoptions>
     <diffoptions>-u3 -p</diffoptions>
-    <logoptions></logoptions>
-    <rshoptions></rshoptions>
+    <logoptions/>
+    <rshoptions/>
     <revertoptions>-C -d -P</revertoptions>
   </kdevcvs>
   <kdevcppsupport>
@@ -126,7 +148,7 @@
       <includeGlobalFunctions>true</includeGlobalFunctions>
       <includeTypes>true</includeTypes>
       <includeEnums>true</includeEnums>
-      <includeTypedefs>false</includeTypedefs>
+      <includeTypedefs>true</includeTypedefs>
       <automaticCodeCompletion>true</automaticCodeCompletion>
       <automaticArgumentsHint>true</automaticArgumentsHint>
       <codeCompletionDelay>250</codeCompletionDelay>

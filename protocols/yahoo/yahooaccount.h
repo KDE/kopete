@@ -200,6 +200,7 @@ private:
 	bool m_importContacts;		// Import the contacts from the server
 	int m_sessionId;		// The Yahoo session descriptor
 	int m_lastDisconnectCode;	// The last disconnect code.
+	int m_currentMailCount;
 	YahooSession *m_session;	// Connection Object
 	YahooProtocol *m_protocol;	// The Protocol Object
 	

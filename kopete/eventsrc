@@ -374,6 +374,10 @@ Comment[ta]=தனிப்படுத்தப்பட்ட செய்த�
 default_sound=Kopete_Received.ogg
 default_presentation=65
 
+[yahoo_mail]
+Name=Yahoo Mail
+Comment=New email has arrived in your Yahoo inbox
+
 
 [msn_mail]
 Name=MSN Mail

@@ -38,6 +38,7 @@
 #include <kopetemessage.h>
 #include <kopetepassword.h>
 #include <kopeteuiglobal.h>
+#include <kopetenotifyclient.h>
 
 // Yahoo
 #include "yahooaccount.h"
@@ -65,6 +66,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	theAwayDialog = new YahooAwayDialog( this );
 	m_protocol = parent;
 	m_lastDisconnectCode = 0;
+	m_currentMailCount = 0;
 
 	setMyself( new YahooContact( this, accountId, accountId, 0 ) );
 	static_cast<YahooContact *>( myself() )->setOnlineStatus( parent->Offline );
@@ -624,9 +626,26 @@ void YahooAccount::slotGameNotify( const QString & /* who */, int /* stat */ )
 //	kdDebug(14180) << k_funcinfo << endl;
 }
 
-void YahooAccount::slotMailNotify( const QString & /* from */, const QString & /* subj */, int /* cnt */)
+void YahooAccount::slotMailNotify( const QString & from, const QString & subject, int cnt )
 {
-//	kdDebug(14180) << k_funcinfo << endl;
+	kdDebug(14180) << k_funcinfo << endl;
+	//kdDebug(14180) << "From: " << from << endl;
+	//kdDebug(14180) << "Subject: " << subject << endl;
+	//kdDebug(14180) << "Count: " << cnt << endl;
+	
+	if ( cnt > m_currentMailCount && from.isEmpty() )
+	{
+		KNotifyClient::event( 0, "yahoo_mail", 
+			i18n( "You have one unread message in your Yahoo inbox.",
+			"You have %n unread messages in your Yahoo inbox.", cnt ));
+		m_currentMailCount = cnt;
+	}
+	else if ( cnt > m_currentMailCount )
+	{
+		KNotifyClient::event( 0, "yahoo_mail", 
+			i18n( "You have a message from %1 in your Yahoo inbox.").arg(from));
+		m_currentMailCount = cnt;
+	}
 }
 
 void YahooAccount::slotSystemMessage( const QString & /* msg */ )
