@@ -517,7 +517,7 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 		QPixmap photoPixmap;
 		//QPixmap defaultIcon( KGlobal::iconLoader()->loadIcon( "vcard", KIcon::Desktop ) );
 		QImage photoImg = m_metaContact->photo();
-		if ( (photoImg.width() > 0) &&  (photoImg.height() > 0) )
+		if ( !photoImg.isNull() && (photoImg.width() > 0) &&  (photoImg.height() > 0) )
 		{
 			int photoSize = d->photoSize;
 			float ratio = float(photoImg.width())/float(photoImg.height());
@@ -556,8 +556,12 @@ void KopeteMetaContactLVI::slotPhotoChanged()
 			p.drawLine(0, photoPixmap.height()-1, photoPixmap.width()-1, photoPixmap.height()-1);
 			p.drawLine(0, 0, 0, photoPixmap.height()-1);
 			p.drawLine(photoPixmap.width()-1, 0, photoPixmap.width()-1, photoPixmap.height()-1);
-			d->metaContactPhoto->setPixmap( photoPixmap, false);
 		}
+		else
+		{
+			photoPixmap=SmallIcon(m_metaContact->statusIcon(), d->photoSize);
+		}
+		d->metaContactPhoto->setPixmap( photoPixmap, false);
 	}
 }
 
