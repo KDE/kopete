@@ -60,6 +60,7 @@ struct KopeteAccountPrivate
 	QString id;
 	QString password;
 	bool autologin;
+	bool rememberPassword;
 	QDict<KopeteContact> contacts;
 	QColor color;
 #if KDE_IS_VERSION( 3, 1, 90 )
@@ -74,6 +75,7 @@ KopeteAccount::KopeteAccount( KopeteProtocol *parent, const QString &accountId, 
 	d->protocol = parent;
 	d->id = accountId;
 	d->autologin = false;
+	d->rememberPassword;
 
 #if KDE_IS_VERSION( 3, 1, 90 )
 	d->wallet = 0L;
@@ -152,11 +154,12 @@ void KopeteAccount::writeConfig( const QString &configGroupName )
 	config->writeEntry( "Protocol", d->protocol->pluginId() );
 	config->writeEntry( "AccountId", d->id );
 
-	if ( !d->password.isNull() )
+	if ( d->rememberPassword )
 		config->writeEntry( "Password", cryptStr( d->password ) );
 	else
 		config->deleteEntry( "Password" );
-
+	
+	config->writeEntry( "RememberPassword", d->rememberPassword );
 	config->writeEntry( "AutoConnect", d->autologin );
 
 	if ( d->color.isValid() )
@@ -176,6 +179,7 @@ void KopeteAccount::readConfig( const QString &configGroupName )
 	d->password  = cryptStr( config->readEntry( "Password" ) );
 	d->autologin = config->readBoolEntry( "AutoConnect", false );
 	d->color     = config->readColorEntry( "Color", &d->color );
+	d->rememberPassword = config->readBoolEntry( "RememberPassword", false );
 
 	// Handle the plugin data, if any
 	QMap<QString, QString> entries = config->entryMap( configGroupName );
@@ -246,7 +250,7 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 		}
 #endif
 
-		if ( !d->password.isNull() )
+		if ( d->rememberPassword || !d->password.isNull() )
 			return d->password;
 	}
 
@@ -284,6 +288,7 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 		pass = view->m_password->text();
 		if ( view->m_save_passwd->isChecked() )
 			setPassword( pass );
+		d->rememberPassword = view->m_save_passwd->isChecked();
 		d->autologin = view->m_autologin->isChecked();
 	}
 	else
@@ -344,6 +349,7 @@ void KopeteAccount::setPassword( const QString &pass )
 #endif
 
 	d->password = pass;
+
 	writeConfig( configGroup() );
 }
 
@@ -359,7 +365,7 @@ bool KopeteAccount::autoLogin() const
 
 bool KopeteAccount::rememberPassword()
 {
-	return !password().isNull();
+	return d->rememberPassword;
 }
 
 void KopeteAccount::registerContact( KopeteContact *c )
