@@ -127,8 +127,6 @@ void KopeteGroupViewItem::refreshDisplayName()
 		}
 	}
 
-	m_renameText = groupName;
-
 	d->name->setText( groupName );
 	d->count->setText( i18n( "(NUMBER OF ONLINE CONTACTS/NUMBER OF CONTACTS IN GROUP)", "(%1/%2)" )
 	                  .arg( QString::number( onlineMemberCount ), QString::number( totalMemberCount ) ) );
@@ -158,25 +156,29 @@ void KopeteGroupViewItem::startRename( int col )
 	kdDebug(14000) << k_funcinfo << endl;
 	if ( col != 0 ) return;
 	refreshDisplayName();
-	d->name->setText( m_renameText );
+	setText( 0, d->name->text() );
 	setRenameEnabled( 0, true );
-	QListViewItem::startRename( 0 );
+	KListViewItem::startRename( 0 );
+/*
+	KListView *lv = static_cast<KListView*>( listView() );
+	lv->rename( this, 0 );*/
 }
 
 void KopeteGroupViewItem::okRename( int col )
 {
 	kdDebug(14000) << k_funcinfo << endl;
-	QListViewItem::okRename(col);
+	KListViewItem::okRename(col);
 	if ( col == 0 )
 		group()->setDisplayName(text(0));
+	setText( col, QString::null );
 	refreshDisplayName();
 }
 
 void KopeteGroupViewItem::cancelRename( int col )
 {
 	kdDebug(14000) << k_funcinfo << endl;
-	QListViewItem::cancelRename(col);
-	refreshDisplayName();
+	KListViewItem::cancelRename(col);
+	setText( col, QString::null );
 }
 
 void KopeteGroupViewItem::updateVisibility()

@@ -80,6 +80,7 @@ public:
 
 	void movedToGroup( KopeteGroup * );
 	void rename( const QString& name );
+	void startRename( int );
 
 	KopeteGroup *group();
 
@@ -116,8 +117,6 @@ public slots:
 
 	void catchEvent( KopeteEvent * );
 
-	void slotRename();
-
 	void updateVisibility();
 
 private slots:
@@ -141,7 +140,8 @@ private slots:
 	void slotBlink();
 
 protected:
-	virtual void okRename(int col);
+	void okRename(int col);
+	void cancelRename(int col);
 
 private:
 	void initLVI();

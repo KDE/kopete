@@ -1298,7 +1298,7 @@ void KopeteContactListView::contentsMousePressEvent( QMouseEvent *e )
 }
 
 /* This is a small hack ensuring that only F2 triggers inline
- * renameing. Won't win a beauty award, but I think relying on
+ * renaming. Won't win a beauty award, but I think relying on
  * the fact that QListView intercepts and processes the F2 event
  * through this event filter is sorta safe.
  *
@@ -1663,7 +1663,7 @@ void KopeteContactListView::slotRename()
 {
 	if ( KopeteMetaContactLVI *metaLVI = dynamic_cast<KopeteMetaContactLVI *>( currentItem() ) )
 	{
-		metaLVI->slotRename();
+		metaLVI->startRename( 0 );
 	}
 	else if ( KopeteGroupViewItem *groupLVI = dynamic_cast<KopeteGroupViewItem *>( currentItem() ) )
 	{
