@@ -117,7 +117,6 @@ void YahooAccount::connect()
 		{	if(session_->Id() > 0)
 			{
 				kdDebug(14180) << "We appear to have connected (session: " << session_ << endl;
-				//QTimer::singleShot(5000, this, SLOT(slotGotBuddiesTimeout()));
 				m_myself->setYahooStatus(YahooStatus::Available);
 				/* We have a session, time to connect its signals to our plugin slots */
 				QObject::connect( session_ , SIGNAL(loginResponse( int,  const QString &)), this , SLOT(slotLoginResponse( int, const QString &)) );
@@ -217,10 +216,9 @@ void YahooAccount::initActions()
 	theActionMenu->insert(new KAction(i18n(YSTOnVacation), YahooStatus(YahooStatus::OnVacation).translate().iconFor(this), 0, this, SLOT(slotGoStatus007()), this, "actionYahooGoStatus007"));
 	theActionMenu->insert(new KAction(i18n(YSTOutToLunch), YahooStatus(YahooStatus::OutToLunch).translate().iconFor(this), 0, this, SLOT(slotGoStatus008()), this, "actionYahooGoStatus008"));
 	theActionMenu->insert(new KAction(i18n(YSTSteppedOut), YahooStatus(YahooStatus::SteppedOut).translate().iconFor(this), 0, this, SLOT(slotGoStatus009()), this, "actionYahooGoStatus009"));
+	theActionMenu->insert(new KAction(i18n("Invisible"), YahooStatus(YahooStatus::Invisible).translate().iconFor(this), 0, this, SLOT(slotGoStatus012()), this, "actionYahooGoStatus012"));
 	theActionMenu->insert(new KAction(i18n("Custom"), YahooStatus(YahooStatus::Custom).translate().iconFor(this), 0, this, SLOT(slotGoStatus099()), this, "actionYahooGoStatus099"));
 	theActionMenu->insert(new KAction(i18n("Offline"), YahooStatus(YahooStatus::Offline).translate().iconFor(this), 0, this, SLOT(slotGoOffline()), this, "actionYahooGoOffline"));
-	// TODO: uncomment when connect as invisible is sorted
-//	theActionMenu->insert(new KAction(i18n("Invisible"), YahooStatus(YahooStatus::Invisible).translate().iconFor(this), 0, this, SLOT(slotGoStatus012()), this, "actionYahooGoStatus012");
 	// TODO: do something(?!) with it
 //	theActionMenu->insert(new KAction(i18n(YSTIdle), YahooStatus(YahooStatus::Idle).translate().iconFor(this), 0, this, SLOT(slotGoStatus999()), this, "actionYahooGoStatus999");
 
@@ -235,9 +233,9 @@ void YahooAccount::slotGotBuddies( const YList */*theList*/ )
 
 	// Serverside -> local
 	for(QMap<QString, QPair<QString, QString> >::iterator i = IDs.begin(); i != IDs.end(); i++)
-		if(!contacts()[i.key()] && theProtocol->importContacts())		// TODO: make importYahooContacts a configuration option.
+		if(!contacts()[i.key()] && theProtocol->importContacts())
 		{	kdDebug(14180) << "SS Contact " << i.key() << " is not in the contact list. Adding..." << endl;
-			QString groupName = theProtocol->useGroupNames() ? i.data().first : QString("Imported Yahoo Contacts");	// TODO: make importYahooGroups a config option.
+			QString groupName = theProtocol->useGroupNames() ? i.data().first : QString("Imported Yahoo Contacts");
 			addContact(i.key(), i.data().second == "" || i.data().second.isNull() ? i.key() : i.data().second, 0, groupName);
 		}
 
