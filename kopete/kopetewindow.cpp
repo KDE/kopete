@@ -89,9 +89,9 @@ void KopeteWindow::initView ( void )
 
 void KopeteWindow::initActions ( void )
 {
-	actionAddContact = new KAction( i18n("&Add Contact..."),"bookmark_add", 0 ,
-							qApp, SLOT(slotAddContact()),
-							actionCollection(), "AddContact" );
+	actionAddContact = new KAction( i18n( "&Add Contact..." ), "bookmark_add",
+		0, KopeteContactList::contactList(), SLOT( showAddContactDialog() ),
+		actionCollection(), "AddContact" );
 
 	actionConnect = new KAction( i18n( "&Connect All" ), "connect_creating",
 		0, KopeteIdentityManager::manager(), SLOT( connectAll() ),

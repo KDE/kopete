@@ -30,7 +30,6 @@
 #include <klocale.h>
 #include <kcmdlineargs.h>
 
-#include "addwizardimpl.h"
 #include "appearanceconfig.h"
 #include "kopeteaway.h"
 #include "kopetecontactlist.h"
@@ -149,13 +148,6 @@ void Kopete::slotLoadPlugins()
 	config->writeEntry("Modules", modules);
 
 	LibraryLoader::pluginLoader()->loadAll();
-}
-
-/** Add a contact through Wizard */
-void Kopete::slotAddContact()
-{
-	AddWizardImpl *tmpdialog = new AddWizardImpl( qApp->mainWidget() );
-	tmpdialog->show();
 }
 
 /** Add a Event for notify */

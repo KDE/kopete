@@ -79,11 +79,11 @@ public:
 	 * Returns all contacts which can accept file transfers
 	 */
 	QStringList fileTransferContacts() const;
-	
+
 	QStringList contactFileProtocols(QString displayName);
-	
+
 	void sendFile(QString displayName, QString fileName);
-	
+
 	/**
 	 * Return all meta contacts with their current status
 	 *
@@ -117,22 +117,28 @@ public:
 	 */
 	QPtrList<KopeteMetaContact> metaContacts() const;
 
-	/** 
+	/**
 	 * Add a group
 	 */
 	void addGroup(KopeteGroup *);
-	
-	/** 
+
+	/**
 	 * Remove a group
 	 */
 	void removeGroup(KopeteGroup *);
-	
-	/** 
+
+	/**
 	 * Get a group
 	 */
 	KopeteGroup * getGroup(const QString& displayName, KopeteGroup::GroupType type=KopeteGroup::Classic);
 
 public slots:
+	/**
+	 * Show the 'Add contact' dialog.
+	 * This is a slot, so it can be directly called from e.g. a KAction.
+	 */
+	void showAddContactDialog();
+
 //	void slotRemovedFromGroup( KopeteMetaContact *mc, const QString &from );
 
 	/**
@@ -142,7 +148,6 @@ public slots:
 	 */
 	void load() { loadXML(); }
 	void save() { saveXML(); }
-
 
 signals:
 	/**
@@ -161,7 +166,7 @@ signals:
 	/* Not used yet.... */
 //	void addedToGroup( KopeteMetaContact *mc, const QString &to );
 //	void removedFromGroup( KopeteMetaContact *mc, const QString &from );
-	
+
 private:
 	/**
 	 * Return a XML representation of the contact list
@@ -197,7 +202,6 @@ private:
 	 * Our contact list instance
 	 */
 	static KopeteContactList *s_contactList;
-	
 };
 
 #endif
