@@ -88,7 +88,7 @@ void
 GaduCommand::disableNotifiers()
 {
 	if ( read_ ) {
-	read_->setEnabled( false );
+		read_->setEnabled( false );
 	}
 	if ( write_ ) {
 		write_->setEnabled( false );
