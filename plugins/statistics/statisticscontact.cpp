@@ -14,12 +14,13 @@
     *************************************************************************
 */
 
+#include <klocale.h>
+
 #include "kopetemetacontact.h"
 #include "kopeteonlinestatus.h"
 
 #include "statisticscontact.h"
 #include "statisticsdb.h"
-
 
 StatisticsContact::StatisticsContact(Kopete::MetaContact *mc, StatisticsDB *db) : m_metaContact(mc),m_db(db), m_oldStatus(Kopete::OnlineStatus::Unknown)
 {
@@ -218,6 +219,44 @@ QString StatisticsContact::statusAt(QDateTime dt)
 	else return "";
 }
 
+QString StatisticsContact::mainStatusDate(QDate date)
+{
+	QDateTime dt1(date, QTime(0,0,0));
+	QDateTime dt2(date.addDays(1), QTime(0,0,0));
+	kdDebug() << "dt1:" << dt1.toString() << " dt2:" << dt2.toString() << endl;
+	QString request = QString("SELECT status, datetimebegin, datetimeend, metacontactid "
+			"FROM contactstatus WHERE metacontactid = '%1' AND "
+			"(datetimebegin >= %2 AND datetimebegin <= %3 OR "
+			"datetimeend >= %4 AND datetimeend <= %5) "
+			"ORDER BY datetimebegin;"
+							 ).arg(metaContact()->metaContactId()).arg(dt1.toTime_t()).arg(dt2.toTime_t()).arg(dt1.toTime_t()).arg(dt2.toTime_t());
+	kdDebug() << request << endl;
+	QStringList values = m_db->query(request);
+	
+	unsigned int online = 0, offline = 0, away = 0;
+	for(int i=0; i<values.count(); i+=4)
+	{
+		unsigned int datetimebegin = values[i+1].toInt(), datetimeend = values[i+2].toInt();
+		kdDebug() << "statistics: id "<< values[i+3]<< " status " << values[i] << " datetimeend " << QString::number(datetimeend) << " datetimebegin " << QString::number(datetimebegin) << endl;
+		if (datetimebegin <= dt1.toTime_t()) datetimebegin = dt1.toTime_t();
+		if (datetimeend >= dt2.toTime_t()) datetimeend = dt2.toTime_t();
+		
+		
+		
+		if (values[i]==Kopete::OnlineStatus::statusTypeToString(Kopete::OnlineStatus::Online))
+			online += datetimeend - datetimebegin;
+		else if (values[i]==Kopete::OnlineStatus::statusTypeToString(Kopete::OnlineStatus::Away))
+			away += datetimeend - datetimebegin;
+		else if (values[i]==Kopete::OnlineStatus::statusTypeToString(Kopete::OnlineStatus::Offline))
+			offline += datetimeend - datetimebegin;
+	}
+	
+	if (online > away && online > offline) return i18n("Online");
+	else if (away > online && away > offline) return i18n("Away");
+	else if (offline > online && offline > away) return i18n("Offline");
+	
+	return "";
+}
 
 // QDateTime StatisticsContact::nextOfflineEvent()
 // {

@@ -99,15 +99,19 @@ public:
 	void newMessageReceived(Kopete::Message& m);
 
 	/**
-	 * \returns true if contact was \var status at \var dt, false else.
+	 * \returns true if contact was status at dt, false else.
 	 */
 	bool wasStatus(QDateTime dt, Kopete::OnlineStatus::StatusType status);
 	
 	/**
-	 * \returns the status of the contact at \var dt. Return false if \var dt is invalid.
+	 * \returns the status of the contact at dt. Return false if dt is invalid.
 	 */
 	QString statusAt(QDateTime dt);
-	
+
+	/**
+	 * \returns the main (most used) status of the contact at date (not time) dt. return false if dt is invalid.
+	 */
+	QString mainStatusDate(QDate date);
 // 	/*
 // 	 * Prevision methods
 // 	 */

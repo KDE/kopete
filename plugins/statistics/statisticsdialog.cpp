@@ -18,12 +18,17 @@
 #include <qwidget.h>
 #include <qhbox.h>
 #include <qlayout.h>
+#include <qpushbutton.h>
+#include <qtextedit.h>
+#include <qcombobox.h>
 
 #include "kdialogbase.h"
 #include "klocale.h"
 #include "klistview.h"
 #include "khtml_part.h"
 #include "kstandarddirs.h"
+#include "kdatepicker.h"
+#include "ktimewidget.h"
 
 #include "kopetemetacontact.h"
 #include "kopeteonlinestatus.h"
@@ -54,6 +59,10 @@ StatisticsDialog::StatisticsDialog(StatisticsContact *contact, StatisticsDB *db,
 	
 	mainWidget->tabWidget->insertTab(hbox, "General", 0);
 	mainWidget->tabWidget->setCurrentPage(0);
+	
+	mainWidget->timePicker->setTime(QTime::currentTime());
+	mainWidget->datePicker->setDate(QDate::currentDate());
+	connect(mainWidget->askButton, SIGNAL(clicked()), this, SLOT(slotAskButtonClicked()));
 	
 	generatePageGeneral();
 }
@@ -151,6 +160,7 @@ void StatisticsDialog::generatePageForDay(const int dayOfWeek)
  
 }
 
+/// @todo chart problem at midnight.
 void StatisticsDialog::generatePageFromQStringList(QStringList &values, const QString subTitle)
 {
 	QString photoName;
@@ -485,6 +495,18 @@ QString StatisticsDialog::stringFromSeconds(const int seconds)
 	m = (seconds % 3600)/60;
 	s = (seconds % 3600) % 60;
 	return QString::number(h)+":"+QString::number(m)+":"+QString::number(s);
+}
+
+void StatisticsDialog::slotAskButtonClicked()
+{
+	if (mainWidget->questionComboBox->currentItem()==0)
+		mainWidget->answerEdit->setText(mainWidget->datePicker->date().toString() + i18n(" at ")
+				+mainWidget->timePicker->time().toString()+", "+m_contact->metaContact()->displayName()+i18n(" was " )+
+				m_contact->statusAt(QDateTime(mainWidget->datePicker->date(), mainWidget->timePicker->time())));
+	else if (mainWidget->questionComboBox->currentItem()==1)
+	{
+		mainWidget->answerEdit->setText(m_contact->mainStatusDate(mainWidget->datePicker->date()));
+	}
 }
 
 #include "statisticsdialog.moc"

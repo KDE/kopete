@@ -160,40 +160,28 @@ public slots:
 	void slotMetaContactAdded(Kopete::MetaContact *mc);
 
 
-	/* DCOP functions */
+	/*
+	 * DCOP functions 
+	 * See statisticsdcopiface.h for the documentation
+	 */
 	void dcopStatisticsDialog(QString id);
 	
-	/**
-	 * \returns true if contact was online at time timeStamp, false else. Returns false if contact does not exist.
-	 */
 	bool dcopWasOnline(QString id, int timeStamp);
-	/**
-	 * \returns true if contact was online at dt, false else. Returns false if contact does not exist.
-	 */
 	bool dcopWasOnline(QString id, QString dt);
-	/**
-	 * \returns true if contact was away at time timeStamp, false else. Returns false if contact does not exist.
-	 */
+	
 	bool dcopWasAway(QString id, int timeStamp);
-	/**
-	 * \returns true if contact was away at dt, false else. Returns false if contact does not exist.
-	 */
 	bool dcopWasAway(QString id, QString dt);
-	/**
-	 * \returns true if contact was offline at time timeStamp, false else. Returns false if contact does not exist.
-	 */
+	
 	bool dcopWasOffline(QString id, int timeStamp);
-	/**
-	 * \returns true if contact was offline at dt, false else. Returns false if contact does not exist.
-	 */
 	bool dcopWasOffline(QString id, QString dt);
 	
 	bool dcopWasStatus(QString id, QDateTime dateTime, Kopete::OnlineStatus::StatusType status);
 	
-	QString dcopStatus(QString id, QString datetime);
+	QString dcopStatus(QString id, QString dateTime);
 	QString dcopStatus(QString id, int timeStamp);
-
 	
+	QString dcopMainStatus(QString id, int timeStamp);
+
 private:	
 	StatisticsDB *m_db;
 	/** Associate a StatisticsContact to a Kopete::MetaContact id to retrieve

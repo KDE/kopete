@@ -220,5 +220,15 @@ QString StatisticsPlugin::dcopStatus(QString id, QString dateTime)
 	return "";
 }
 
-
+QString StatisticsPlugin::dcopMainStatus(QString id, int timeStamp)
+{
+	QDateTime dt;
+	dt.setTime_t(timeStamp);
+	if (dt.isValid() && statisticsContactMap[id])
+	{
+		return statisticsContactMap[id]->mainStatusDate(dt.date());
+	}
+	
+	return "";
+}
 #include "statisticsplugin.moc"

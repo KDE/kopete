@@ -58,8 +58,8 @@ private slots:
 		 * generate requested pages on the flow.
 		 */
 		void slotOpenURLRequest(const KURL& url, const KParts::URLArgs&);
-	
-		
+		void slotAskButtonClicked();
+
 };
 
 

@@ -65,6 +65,10 @@ k_dcop:
 	 * \returns return the status of the contact at timeStamp.
 	 */
 	virtual QString dcopStatus(QString id, int timeStamp) = 0;
+	/**
+	 * \returns the main status (most used status) of the contact id at date (not time) timeStamp. Will take the day where timeStamp is.
+	 */
+	virtual QString dcopMainStatus(QString id, int timeStamp) = 0;
 };
 
 #endif // STATISTICSDCOP_H
