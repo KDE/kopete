@@ -57,101 +57,65 @@ class WPProtocol;
 class WPContact: public KopeteContact
 {
 	Q_OBJECT
+
 private:
-	WPProtocol *mProtocol;
-	QString mUserID;
-	enum
-	{
-		STATUS_OFFLINE = 0,
-		STATUS_ONLINE,
-		STATUS_AWAY
-	};
-	int mStatus;
-
-	KopeteMetaContact *myMetaContact;
-
-	QTimer checkStatus;
-	KPopupMenu *popup;
-	KopeteMessageManager *mMsgManagerKCW, *mMsgManagerKEW;
-	KopeteMessageManager *msgManagerKCW(), *msgManagerKEW();
-
-	KAction *actionRemove, *actionRemoveFromGroup, *actionChat, *actionMessage, *actionInfo, *actionHistory, *actionRename;
-	KListAction *actionContactMove;
-
-//	dlgWPRename *renameDialog;
-	KopeteHistoryDialog *historyDialog;
-
-	void initActions();
-
-public:
-	WPContact(const QString &userID, WPProtocol *protocol, KopeteMetaContact *parent );
-
-	ContactStatus status() const;
-	QString statusText() const;
-	QString statusIcon() const;
-
-	int importance() const;
-	void execute();
-
-	QString userID() const { return mUserID; }
-
-//	virtual void showContextMenu(const QPoint&, const QString&);
+	bool myIsOnline;		// true if online, false if not
+	QString myHost;			// stores the hostname of this contact
+	WPProtocol *myProtocol;	// stores the protocol instance to which this contact belongs
+	QTimer checkStatus;		// checks the status of this contact every second or so
 	KActionCollection *myActionCollection;
-	KActionCollection *customContextMenuActions() { if(myActionCollection) delete myActionCollection; return myActionCollection = new KActionCollection(this); }
-
-	/**
-	 * Return whether or not this contact is REACHABLE.
-	 * Useful in determining if the contact is able to
-	 * recieve messages even if offline, etc.
-	 */
-	bool isReachable() { return mStatus != STATUS_OFFLINE; }
-
-	virtual QString id() const;
-	virtual QString data() const;
+							// holds all the protocol specific actions (not many!)
+	KopeteMessageManager *myEmailManager, *myChatManager;
+							// holds the two message managers - one for email and one for chat
 
 public slots:
+	void slotCheckStatus();	// the call back for the checkStatus timer
 	void slotNewMessage(const QString &Body, const QDateTime &Arrival);
-	void slotSendMsgKEW(const KopeteMessage&);
-	void slotSendMsgKCW(const KopeteMessage&);
+							// the call back for the winpopup protocol
+	void slotSendMessage(const KopeteMessage& message);
+							// carries out sending of a message (supporting a hacked-up subject field)
 
-	void moveToGroup(const QString &from, const QString &to);
+public:
+	WPContact(const QString &userID, WPProtocol *protocol, KopeteMetaContact *parent);
+							// the constructor
+	const QString host() { return myHost; }
+							// the host name return method
 
-	/**
-	 * Method to delete a contact from the contact list,
-	 * should be implemented by protocol plugin to handle
-	 * protocol-specific actions required to delete a contact
-	 * (ie. messages to the server, etc)
-	 */
-	void slotDeleteContact();
+//***********************************************************************
+// BEGIN MANDATORY OVERLOADING
+//***********************************************************************
 
-	/**
-	 * Method to retrieve user information.  Should be implemented by
-	 * the protocols, and popup some sort of dialog box
-	 */
-	void slotUserInfo();
+public:
+	// very basic actions
+	bool isOnline() const { return myIsOnline; }
+	bool isReachable() { return myIsOnline; }
+	QStringList groups() { return QStringList(); }
+	KopeteContact::ContactStatus status() const { return myIsOnline ? Online : Offline; }
+	QString statusText() const { return myIsOnline ? "Online" : "Offline"; }
+	QString statusIcon() const { return myIsOnline ? "wp_available" : "wp_offline"; }
+	
+	int importance() const { return myIsOnline ? 20 : 0; }
+	KActionCollection *customContextMenuActions() { return myActionCollection; }
 
-private slots:
-	void slotUpdateContact(QString, int);
-	void slotChatThisUser();
-	void slotEmailUser();
+	QString identityId() const { return myHost; }
+	QString id() const { return "smb://" + myHost; }
 
-	void slotCheckStatus();
+	// null actions
+	void addToGroup(const QString &) {}
+	void removeFromGroup(const QString &) {}
+	void moveToGroup(const QString &, const QString &) {}
 
-	void slotCloseHistoryDialog();
-	void slotViewHistory();
+public slots:
+	// not quite so basic actions
+	void execute();
+
+	void slotViewHistory() { /* show history */ }
+	void slotDeleteContact() { delete this; }
+	void slotUserInfo() { /* show user info? */ }
 
 signals:
-	void statusChanged();
-	void msgRecieved(QString, QString, QString, QString, QFont, QColor);
+	void statusChanged(KopeteContact *contact, KopeteContact::ContactStatus status);
+//	void msgRecieved(QString, QString, QString, QString, QFont, QColor);
 };
 
 #endif
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
-// vim: set noet ts=4 sts=4 sw=4:
-

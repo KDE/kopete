@@ -164,15 +164,15 @@ bool WPProtocol::serialize(KopeteMetaContact *metaContact, QStringList &strList)
 		if(c->protocol() == this->id())
 		{
 			WPContact *curContact = static_cast<WPContact*>(c);
-			DEBUG(WPDINFO, "Sub-Contact " << curContact->userID() << " is ours - serialising.");
-			strList << curContact->userID() << curContact->groups().join(",");
-			addressList << curContact->userID();
+			DEBUG(WPDINFO, "Sub-Contact " << curContact->host() << " is ours - serialising.");
+			strList << curContact->host();
+//			addressList << curContact->host();
 			done = true;
 		}
 
-	QString addresses = addressList.join(",");
-	if(!addresses.isEmpty())
-		metaContact->setAddressBookField(WPProtocol::protocol(), "messaging/winpopup", addresses);
+//	QString addresses = addressList.join(",");
+//	if(!addresses.isEmpty())
+//		metaContact->setAddressBookField(WPProtocol::protocol(), "messaging/winpopup", addresses);
 
 	DEBUG(WPDINFO, "Finished with strList = " << strList.join(","));
 	return done;
@@ -192,25 +192,14 @@ void WPProtocol::deserialize(KopeteMetaContact *metaContact, const QStringList &
 	// not using the kabc thingy for now it would seem...
 //	QStringList hosts = QStringList::split("\n", metaContact->addressBookField(this, "messaging/winpopup"));
 
-	for(unsigned i = 0; i < strList.count(); i += 2)
+	for(unsigned i = 0; i < strList.count(); i++)
 	{
-		QString userID = strList[i];
-		QStringList groups;
+		QString host = strList[i];
 
-		// make sure that we don't segfault if no groups are supplied
-		if((strList.count() - i) >= 2)
-			QStringList groups = QStringList::split(",", strList[i + 1]);
+		DEBUG(WPDINFO, "Sub-Contact " << host << " is deserialised.");
 
-		DEBUG(WPDINFO, "Sub-Contact " << userID << " is deserialised.");
-
-		WPContact *newContact = new WPContact(userID, this, metaContact);
+		WPContact *newContact = new WPContact(host, this, metaContact);
 		metaContact->addContact(newContact);
-
-/*		metaContactMap.insert(jc, contact);
-		contactMap.insert(userId, jc);
-*/
-//		connect(newContact, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact*)));
-
 	}
 }
 
@@ -223,7 +212,7 @@ WPContact *WPProtocol::getContact(const QString &Name, KopeteMetaContact* theMet
 	if(!theMetaContact)
 	{
 		// Should really ask to see if they want the contact adding to their list first...
-		theMetaContact = l->findContact(this->id(), QString::null, Name);
+		theMetaContact = l->findContact(this->id(), "smb://" + Name, QString::null);
 		if(!theMetaContact)
 		{	DEBUG(WPDINFO, "Adding " << Name << " to the contact list...");
 			theMetaContact = new KopeteMetaContact();
@@ -231,7 +220,7 @@ WPContact *WPProtocol::getContact(const QString &Name, KopeteMetaContact* theMet
 		}
 	}
 
-	KopeteContact *theContact = theMetaContact->findContact(this->id(), QString::null, Name);
+	KopeteContact *theContact = theMetaContact->findContact(this->id(), "smb://" + Name, QString::null);
 	if(!theContact)
 	{	theContact = new WPContact(Name, this, theMetaContact);
 		theMetaContact->addContact(theContact);
@@ -416,41 +405,6 @@ void WPProtocol::slotSettingsChanged()
 	theInterface->setHostName(KGlobal::config()->readEntry("HostName", "LOCAL"));
 }
 
-// Add a contact to main window	 -- when the phuk does this get called then???
-/*void WPProtocol::slotNewContact(const QString &userID, const QStringList &groups)
-{
-	DEBUG(WPDMETHOD, "WPProtocol::slotNewContact(" << userID << ", " << groups.join(",") << ")");
-
-	if(contactList[userID]) return;
-	QStringList realGroups = groups.size() ? groups : QStringList("Unknown");
-
-	KopeteContactList *l = KopeteContactList::contactList();
-	KopeteMetaContact *m = l->findContact( this->id(), QString::null, userID );
-
-	if(m)
-	{
-		// Existing contact, update data
-		// FIXME: TODO!
-		kdDebug() << "WPProtocol::slotNewContact: Not implemented: "
-			<< "Meta contact already contains contact " << userID
-			<< "???" << endl;
-			
-		//KopeteContact *c = m->findContact( this->id(), QString::null, userID );
-	}
-	else
-	{
-		m = new KopeteMetaContact();
-		QString protocol = this->id();
-		// New contact
-		WPContact *ourContact = new WPContact(userID, this, m);
-		m->addContact(ourContact);
-
-		contactList[userID] = ourContact;
-		//kopeteapp->contactList()->addContact(ourContact, realGroup);//OBSOLETE
-		KopeteContactList::contactList()->addMetaContact(m);
-	}
-}
-*/
 // Private initIcons
 void WPProtocol::initIcons()
 {

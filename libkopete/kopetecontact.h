@@ -70,14 +70,15 @@ public:
 	 * recieve messages even if offline, etc.
 	 */
 	virtual bool isReachable() = 0;
-	
+
 	/**
 	 * The meta contact this contact is contained in
 	 */
 	KopeteMetaContact *metaContact() const { return m_metaContact; }
 
 	/**
-	 * Return the ID of the identity this contact belongs to
+	 * Return the ID of the identity this contact belongs to (i.e. for
+	 * having multiple contacts of the same protocol in the metacontact)
 	 */
 	virtual QString identityId() const;
 	
@@ -203,6 +204,7 @@ public:
 	 * I hate having the group parameter, but its used for when
 	 * a contact can be in multiple groups and you have to move
 	 * a specific instance from one group to another.
+	 * OBSOLETE
 	 */
 	void showContextMenu( const QPoint& p, const QString& group );
 

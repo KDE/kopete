@@ -25,9 +25,6 @@
 
 using namespace std;
 
-// Local Includes
-#include "libwinpopup.h"
-
 // QT Includes
 #include <qprocess.h>
 #include <qdatetime.h>
@@ -37,6 +34,9 @@ using namespace std;
 
 // KDE Includes
 #include <kapplication.h>
+
+// Local Includes
+#include "libwinpopup.h"
 
 void UpdateThread::run()
 {
@@ -186,14 +186,16 @@ void KWinPopup::doUpdate()
 
 QPair<stringMap, stringMap> KWinPopup::grabData(const QString &Host, QString *theGroup, QString *theOS, QString *theSoftware)	// populates theGroup!
 {
-	QProcess sender;
-	sender.addArgument(mySMBClientPath);
-	sender.addArgument("-L");
-	sender.addArgument(Host);
-	sender.addArgument("-N");
-	connect(&sender, SIGNAL(destroyed()), &sender, SLOT(kill()));
-	if(!sender.launch(""))
-	{	qDebug("Couldn't launch smbclient!");
+	static int times = 0;
+	times++;
+	QProcess *sender = new QProcess();
+	sender->addArgument(mySMBClientPath);
+	sender->addArgument("-L");
+	sender->addArgument(Host);
+	sender->addArgument("-N");
+	connect(sender, SIGNAL(destroyed()), sender, SLOT(kill()));
+	if(!sender->launch(""))
+	{	qDebug("Couldn't launch smbclient (%d)", times);
 		return QPair<stringMap, stringMap>();
 	}
 
@@ -202,10 +204,10 @@ QPair<stringMap, stringMap> KWinPopup::grabData(const QString &Host, QString *th
 	
 	stringMap hosts, groups;
 
-	while(sender.isRunning() || sender.canReadLineStdout())
+	while(sender->isRunning() || sender->canReadLineStdout())
 	{
-		while(!sender.canReadLineStdout() && sender.isRunning());
-		QString Line = sender.readLineStdout();
+		while(!sender->canReadLineStdout() && sender->isRunning());
+		QString Line = sender->readLineStdout();
 		if(Phase == 0 && info.search(Line) != -1)
 		{	if(theGroup) *theGroup = info.cap(1);
 			if(theOS) *theOS = info.cap(2);
@@ -219,6 +221,8 @@ QPair<stringMap, stringMap> KWinPopup::grabData(const QString &Host, QString *th
 			groups[pair.cap(1)] = pair.cap(2);
 		if(sep.search(Line) != -1 || Line == "") Phase++;
 	}
+
+	delete sender;
 
 	return QPair<stringMap, stringMap>(hosts, groups);
 }

@@ -38,57 +38,92 @@
 #include "wpprotocol.h"
 #include "wpdebug.h"
 
-WPContact::WPContact( const QString &userID, WPProtocol *protocol, KopeteMetaContact *parent ) : KopeteContact( protocol->id(), parent )
+WPContact::WPContact(const QString &host, WPProtocol *protocol, KopeteMetaContact *parent) : KopeteContact(protocol->id(), parent)
 {
-	DEBUG(WPDMETHOD, "WPContact::WPContact(" << userID << ", <protocol>, <parent>)");
+	DEBUG(WPDMETHOD, "WPContact::WPContact(" << host << ", <protocol>, <parent>)");
 
-	setDisplayName(userID);
-	mProtocol = protocol;
-	mUserID = userID;
-	myMetaContact = parent;
+	QString newDisplayName;
+	for(unsigned i = 0; i < host.length(); i++)
+		if(!i)
+			newDisplayName += host[i].upper();
+		else
+			newDisplayName += host[i].lower();
 
-	connect(mProtocol, SIGNAL(contactUpdated(QString, QString, int, QString)), this, SLOT(slotUpdateContact(QString, QString, int, QString)));
-	connect(mProtocol, SIGNAL(nukeContacts(bool)), this, SLOT(slotDeleteContact()));
+	setDisplayName(newDisplayName);
+	myProtocol = protocol;
+	myHost = host;
+
+	// Initialise and start the periodical checking for contact's status
+	myIsOnline = true;
+	emit statusChanged(this, this->status());
+	slotCheckStatus();
 	connect(&checkStatus, SIGNAL(timeout()), this, SLOT(slotCheckStatus()));
 	checkStatus.start(1000, false);
 
-	initActions();
-	slotUpdateContact(userID, STATUS_OFFLINE);
-	mMsgManagerKEW = 0;
-	mMsgManagerKCW = 0;
-	historyDialog = 0;
+	// Set up the message managers
+	QPtrList<KopeteContact> singleContact;
+	singleContact.append(this);
+	myEmailManager = kopeteapp->sessionFactory()->create(myProtocol->myself(), singleContact, myProtocol, "wp_logs/" + myHost +".log", KopeteMessageManager::Email);
+	connect(myEmailManager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), this, SLOT(slotSendMessage(const KopeteMessage &)));
+	connect(myEmailManager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), myEmailManager, SLOT(appendMessage(const KopeteMessage &)));
+	myChatManager = kopeteapp->sessionFactory()->create(myProtocol->myself(), singleContact, myProtocol, "wp_logs/" + myHost +".log", KopeteMessageManager::ChatWindow);
+	connect(myChatManager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), this, SLOT(slotSendMessage(const KopeteMessage &)));
+	connect(myChatManager, SIGNAL(messageSent(const KopeteMessage &, KopeteMessageManager *)), myChatManager, SLOT(appendMessage(const KopeteMessage &)));
 
-	myActionCollection = 0;	// ughhhhhhh
+	// Set up the context menu
+	myActionCollection = new KActionCollection(this);
 }
 
 void WPContact::slotCheckStatus()
 {
 //	DEBUG(WPDMETHOD, "WPContact::slotCheckStatus()");
 
-	int oldStatus = mStatus;
-	mStatus = mProtocol->checkHost(mUserID) ? STATUS_ONLINE : STATUS_OFFLINE;
-	if(oldStatus != mStatus)
-		emit statusChanged();
+	bool oldIsOnline = myIsOnline;
+	myIsOnline = myProtocol->checkHost(myHost);
+	if(oldIsOnline != myIsOnline)
+	{
+		emit statusChanged(this, status());
+	}
 }
 
-void WPContact::moveToGroup(const QString &from, const QString &to)
+void WPContact::execute()
 {
-	DEBUG(WPDMETHOD, "WPContact::moveToGroup(" << from << ", " << to << ")");
+	DEBUG(WPDMETHOD, "WPContact::execute()");
+
+	KGlobal::config()->setGroup("WinPopup");
+	if(KGlobal::config()->readBoolEntry("EmailDefault", true))
+	{
+		myEmailManager->readMessages();
+		myEmailManager->slotSendEnabled(true);
+	}
+	else
+		myChatManager->readMessages();
 }
 
-void WPContact::slotDeleteContact()
+void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 {
-	DEBUG(WPDMETHOD, "WPContact::slotDeleteContact()");
+	DEBUG(WPDMETHOD, "WPContact::slotNewMessage(" << Body << ", " << Arrival.toString() << ")");
 
-	delete this;
+	QPtrList<KopeteContact> contactList;
+	contactList.append(myProtocol->myself());
+
+	QRegExp subj("^Subject: ([^\n]*)\n(.*)$");
+	if(subj.search(Body) == -1)
+		myChatManager->appendMessage(KopeteMessage(this, contactList, Body, KopeteMessage::Inbound));
+	else
+	{
+		myEmailManager->appendMessage(KopeteMessage(this, contactList, subj.cap(2), subj.cap(1), KopeteMessage::Inbound));
+		myEmailManager->slotSendEnabled(false);
+	}
 }
 
-void WPContact::slotUserInfo()
+void WPContact::slotSendMessage(const KopeteMessage& message)
 {
-	DEBUG(WPDMETHOD, "WPContact::slotUserInfo()");
+	QString Message = (message.subject() != "" ? "Subject: " + message.subject() + "\n" : QString("")) + message.body();
+	myProtocol->slotSendMessage(Message, dynamic_cast<WPContact *>(message.to().first())->host());
 }
 
-KopeteMessageManager *WPContact::msgManagerKEW()
+/*KopeteMessageManager *WPContact::msgManagerKEW()
 {
 	DEBUG(WPDMETHOD, "WPContact::msgManagerKEW()");
 
@@ -115,18 +150,19 @@ KopeteMessageManager *WPContact::msgManagerKCW()
 	}
 	return mMsgManagerKCW;
 }
-
+*/
+/*
 void WPContact::initActions()
 {
 	DEBUG(WPDMETHOD, "WPContact::initActions()");
 
-/*	actionChat = KopeteStdAction::sendMessage(this, SLOT(slotChatThisUser()), this, "actionChat");
+	actionChat = KopeteStdAction::sendMessage(this, SLOT(slotChatThisUser()), this, "actionChat");
 	actionMessage = new KAction(i18n("Send Email Message"), "mail_generic", 0, this, SLOT(slotEmailUser()), this, "actionMessage");
 	actionRemoveFromGroup = new KAction(i18n("Remove From Group"), "edittrash", 0, this, SLOT(slotRemoveFromGroup()), this, "actionRemove");
 	actionRemove = KopeteStdAction::deleteContact(this, SLOT(slotRemoveThisUser()), this, "actionDelete");
-	actionHistory = KopeteStdAction::viewHistory(this, SLOT(slotViewHistory()), this, "actionHistory");*/
+	actionHistory = KopeteStdAction::viewHistory(this, SLOT(slotViewHistory()), this, "actionHistory");
 }
-
+*/
 /*void WPContact::showContextMenu(const QPoint& position, const QString& group)
 {
 	DEBUG(WPDMETHOD, "WPContact::showContextMenu(<position>, " << group << ")");
@@ -153,6 +189,8 @@ void WPContact::initActions()
 
 }*/
 
+
+/*
 void WPContact::slotUpdateContact(QString handle, int status)
 {
 	DEBUG(WPDMETHOD, "WPContact::slotUpdateContact(" << handle << ", " << status << ")");
@@ -161,52 +199,11 @@ void WPContact::slotUpdateContact(QString handle, int status)
 		return;
 	if(status != -1)
 		mStatus = status;
-    emit statusChanged();
+    emit statusChanged(this, this->status());
 }
+*/
 
-WPContact::ContactStatus WPContact::status() const
-{
-//	DEBUG(WPDMETHOD, "WPContact::status()");
-	if(mStatus == STATUS_ONLINE)
-		return Online;
-	if(mStatus == STATUS_AWAY)
-		return Away;
-	return Offline;
-}
-
-QString WPContact::statusText() const
-{
-//	DEBUG(WPDMETHOD, "WPContact::statusText()");
-
-	if(mStatus == STATUS_ONLINE)
-		return "Online";
-	if(mStatus == STATUS_AWAY)
-		return "Away";
-	return "Offline";
-}
-
-QString WPContact::statusIcon() const
-{
-//	DEBUG(WPDMETHOD, "WPContact::statusIcon()");
-
-	if(mStatus == STATUS_ONLINE)
-		return "wp_available";
-	if(mStatus == STATUS_AWAY)
-		return "wp_away";
-	return "wp_offline";
-}
-
-int WPContact::importance() const
-{
-	DEBUG(WPDMETHOD, "WPContact::importance()");
-	if(mStatus == STATUS_ONLINE)
-		return 20;
-    if(mStatus == STATUS_AWAY)
-		return 15;
-	return 0;
-}
-
-void WPContact::slotChatThisUser()
+/*void WPContact::slotChatThisUser()
 {
 	DEBUG(WPDMETHOD, "WPContact::slotChatThisUser()");
 	msgManagerKCW()->readMessages();
@@ -214,35 +211,18 @@ void WPContact::slotChatThisUser()
 
 void WPContact::slotEmailUser()
 {
-	DEBUG(WPDMETHOD, "WPContact::slotChatThisUser()");
+	DEBUG(WPDMETHOD, "WPContact::slotEmailThisUser()");
 	msgManagerKEW()->readMessages();
 	msgManagerKEW()->slotSendEnabled(true);
-}
-
-void WPContact::execute()
-{
+}*/
+/*
 	DEBUG(WPDMETHOD, "WPContact::execute()");
+
 	slotChatThisUser();
 }
 
-void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
-{
-	DEBUG(WPDMETHOD, "WPContact::slotNewMessage(" << Body << ", " << Arrival.toString() << ")");
-
-	QPtrList<KopeteContact> contactList;
-	contactList.append(mProtocol->myself());
-
-	QRegExp subj("^Subject: ([^\n]*)\n(.*)$");
-	if(subj.search(Body) == -1)
-		msgManagerKCW()->appendMessage(KopeteMessage(this, contactList, Body, KopeteMessage::Inbound));
-	else
-	{
-		msgManagerKEW()->appendMessage(KopeteMessage(this, contactList, subj.cap(2), subj.cap(1), KopeteMessage::Inbound));
-		msgManagerKEW()->slotSendEnabled(false);
-	}
-}
-
-void WPContact::slotViewHistory()
+*/
+/*void WPContact::slotViewHistory()
 {
 	if(!historyDialog)
 	{
@@ -255,44 +235,8 @@ void WPContact::slotCloseHistoryDialog()
 {
 	delete historyDialog;
 	historyDialog = 0;
-}
-
-void WPContact::slotSendMsgKEW(const KopeteMessage& message)
-{
-	DEBUG(WPDMETHOD, "WPContact::slotSendMsg(<message>)");
-	QString Message = message.body();
-	if(message.subject() != "")
-		Message = "Subject: " + message.subject() + "\n" + Message;
-	mProtocol->slotSendMessage(Message, dynamic_cast<WPContact *>(message.to().first())->userID());
-	msgManagerKEW()->appendMessage(message);
-}
-
-void WPContact::slotSendMsgKCW(const KopeteMessage& message)
-{
-	DEBUG(WPDMETHOD, "WPContact::slotSendMsg(<message>)");
-	mProtocol->slotSendMessage(message.body(), dynamic_cast<WPContact *>(message.to().first())->userID());
-	msgManagerKCW()->appendMessage(message);
-}
-
-QString WPContact::id() const
-{
-	return mUserID;
-}
-
-QString WPContact::data() const
-{
-	return mUserID;
-}
-
-#include "wpcontact.moc"
-
-// vim: noet ts=4 sts=4 sw=4:
+}*/
 /*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
-// vim: set noet ts=4 sts=4 sw=4:
+*/
+#include "wpcontact.moc"
 
