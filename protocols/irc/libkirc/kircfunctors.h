@@ -22,86 +22,86 @@
 
 class KIRCMethodFunctorCall
 {
-public:
-	inline operator bool(void)
-		{ return isValid(); }
+	public:
+		inline operator bool(void) { return isValid(); }
 
-	virtual bool isValid()=0;
+		virtual bool isValid() = 0;
 
-	virtual bool checkMsgValidity(const KIRCMessage &msg)=0;
+		virtual bool checkMsgValidity(const KIRCMessage &msg) = 0;
 
-	virtual bool operator()(const KIRCMessage &msg)=0;
+		virtual bool operator()(const KIRCMessage &msg) = 0;
 
-	virtual ~KIRCMethodFunctorCall()
-		{}
+		virtual ~KIRCMethodFunctorCall() {}
 };
 
-class KIRCMethodFunctor_Ignore
-	: public KIRCMethodFunctorCall
+class KIRCMethodFunctor_Ignore : public KIRCMethodFunctorCall
 {
-public:
-	virtual bool isValid()
-		{ return true; }
+	public:
+		virtual bool isValid() { return true; }
 
-	bool checkMsgValidity(const KIRCMessage &)
-		{ return true; }
+		bool checkMsgValidity(const KIRCMessage &) { return true; }
 
-	virtual bool operator()(const KIRCMessage &)
-		{ return true; }
+		virtual bool operator()(const KIRCMessage &) { return true; }
 
-	KIRCMethodFunctor_Ignore()
-		{}
+		KIRCMethodFunctor_Ignore() {}
 };
 
 
-template <class TClass> class KIRCMethodFunctorBase
-	: public KIRCMethodFunctorCall
+template <class TClass>
+class KIRCMethodFunctorBase : public KIRCMethodFunctorCall
 {
-protected:
-	TClass *m_obj;
-	bool (TClass::*m_method)(const KIRCMessage &msg);
-	int m_argsSize_min, m_argsSize_max;
-	QString m_helpMessage;
+	public:
+		virtual bool isValid()
+		{
+			return m_obj && m_method;
+		}
 
-public:
-	virtual bool isValid()
-		{ return (m_obj!=0)&&(m_method!=0); }
-
-	bool checkMsgValidity(const KIRCMessage &msg)
+		bool checkMsgValidity(const KIRCMessage &msg)
 		{
 			int argsSize = msg.args().size();
-			if (m_argsSize_min>=0 && argsSize < m_argsSize_min)
+			if (m_argsSize_min >= 0 && argsSize < m_argsSize_min)
 				return false;
+
 			#ifdef _IRC_STRICTNESS_
-			if (m_argsSize_max>=0 && argsSize > m_argsSize_max)
+			if (m_argsSize_max >= 0 && argsSize > m_argsSize_max)
 				return false;
-			#endif // _IRC_STRICTNESS_
+			#endif
+
 			return true;
 		}
 
-	QString getHelpMessage()
-		{ return m_helpMessage; }
+		QString getHelpMessage()
+		{
+			return m_helpMessage;
+		}
 
-	virtual bool operator()(const KIRCMessage &msg)=0;
+		virtual bool operator()( const KIRCMessage &msg ) = 0;
 
-	KIRCMethodFunctorBase<TClass>(TClass *obj,  bool (TClass::*method)(const KIRCMessage &msg),
-			 int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0)
-		: m_obj(obj),m_method(method),
-		  m_argsSize_min(argsSize_min), m_argsSize_max(argsSize_max), m_helpMessage(QString::fromLatin1(helpMessage))
-		{}
+		KIRCMethodFunctorBase<TClass>(TClass *obj,  bool (TClass::*method)(const KIRCMessage &msg),
+				int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0)
+			: m_obj(obj),
+			m_method(method),
+			m_argsSize_min(argsSize_min),
+			m_argsSize_max(argsSize_max),
+			m_helpMessage(QString::fromLatin1(helpMessage)){}
 
-	virtual ~KIRCMethodFunctorBase<TClass>()
-		{}
+		virtual ~KIRCMethodFunctorBase<TClass>(){}
+
+	protected:
+		TClass *m_obj;
+		bool (TClass::*m_method)(const KIRCMessage &msg);
+		int m_argsSize_min, m_argsSize_max;
+		QString m_helpMessage;
 };
 
 
-template <class TClass> class KIRCMethodFunctor_Forward
-	: public KIRCMethodFunctorBase<TClass>
+template <class TClass>
+class KIRCMethodFunctor_Forward : public KIRCMethodFunctorBase<TClass>
 {
-public:
-	virtual bool operator()(const KIRCMessage &msg)
+	public:
+		virtual bool operator()(const KIRCMessage &msg)
 		{
-			if(isValid())
+			if( isValid() )
 			{
 				bool (TClass::*tmp)(const KIRCMessage&) = (bool (TClass::*)(const KIRCMessage&))(m_method);
 				return (*m_obj.*tmp)(msg);
@@ -109,43 +109,45 @@ public:
 			return false;
 		}
 
-	KIRCMethodFunctor_Forward<TClass>(TClass *obj,
-			bool (TClass::*method)(const KIRCMessage &msg),
-			int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0)
-		: KIRCMethodFunctorBase<TClass>(obj, (bool (TClass::*)(const KIRCMessage &msg))method,
-						argsSize_min, argsSize_max, helpMessage)
-		{}
+		KIRCMethodFunctor_Forward<TClass>(TClass *obj,
+				bool (TClass::*method)(const KIRCMessage &msg),
+				int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0)
+			: KIRCMethodFunctorBase<TClass>(obj, (bool (TClass::*)(const KIRCMessage &msg))method,
+							argsSize_min,
+							argsSize_max,
+							helpMessage){}
 };
 
 
-template <class TClass> class KIRCMethodFunctor_Empty
-	: public KIRCMethodFunctorBase<TClass>
+template <class TClass>
+class KIRCMethodFunctor_Empty : public KIRCMethodFunctorBase<TClass>
 {
-public:
-	virtual bool operator()(const KIRCMessage &)
+	public:
+		virtual bool operator()(const KIRCMessage &)
 		{
-			if(isValid())
+			if( isValid() )
 			{
 				void (TClass::*tmp)() = (void (TClass::*)())m_method;
 				emit (*m_obj.*tmp)();
 				return true;
 			}
+
 			return false;
 		}
 
-	KIRCMethodFunctor_Empty<TClass>(TClass *obj, void (TClass::*method)(),
-			int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0)
-		: KIRCMethodFunctorBase<TClass>(obj, (bool (TClass::*)(const KIRCMessage &msg))method,
-						argsSize_min, argsSize_max, helpMessage)
-		{}
+		KIRCMethodFunctor_Empty<TClass>(TClass *obj, void (TClass::*method)(),
+				int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0)
+			: KIRCMethodFunctorBase<TClass>(obj, (bool (TClass::*)(const KIRCMessage &msg))method,
+							argsSize_min, argsSize_max, helpMessage)
+			{}
 };
 
 
-template <class TClass, unsigned int argindex> class KIRCMethodFunctor_S
-	: public KIRCMethodFunctorBase<TClass>
+template <class TClass, unsigned int argindex>
+class KIRCMethodFunctor_S : public KIRCMethodFunctorBase<TClass>
 {
-public:
-	virtual bool operator()(const KIRCMessage &msg)
+	public:
+		virtual bool operator()(const KIRCMessage &msg)
 		{
 			if(isValid())
 			{
@@ -156,11 +158,11 @@ public:
 			return false;
 		}
 
-	KIRCMethodFunctor_S<TClass, argindex>(TClass *obj, void (TClass::*method)(const QString &),
-			int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0)
-		: KIRCMethodFunctorBase<TClass>(obj, (bool (TClass::*)(const KIRCMessage &msg))method,
-						argsSize_min, argsSize_max, helpMessage)
-		{}
+		KIRCMethodFunctor_S<TClass, argindex>(TClass *obj, void (TClass::*method)(const QString &),
+				int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0)
+			: KIRCMethodFunctorBase<TClass>(obj, (bool (TClass::*)(const KIRCMessage &msg))method,
+							argsSize_min, argsSize_max, helpMessage)
+			{}
 };
 
 
@@ -187,20 +189,20 @@ public:
 };
 
 
-template <class TClass> class KIRCMethodFunctor_S_Suffix
-	: public KIRCMethodFunctorBase<TClass>
+template <class TClass>
+class KIRCMethodFunctor_S_Suffix : public KIRCMethodFunctorBase<TClass>
 {
 public:
 	virtual bool operator()(const KIRCMessage &msg)
+	{
+		if( isValid() )
 		{
-			if(isValid())
-			{
-				void (TClass::*tmp)(const QString&) = (void (TClass::*)(const QString&))m_method;
-				emit (*m_obj.*tmp)(msg.suffix());
-				return true;
-			}
-			return false;
+			void (TClass::*tmp)(const QString&) = (void (TClass::*)(const QString&))m_method;
+			emit (*m_obj.*tmp)(msg.suffix());
+			return true;
 		}
+		return false;
+	}
 
 	KIRCMethodFunctor_S_Suffix<TClass>(TClass *obj, void (TClass::*method)(const QString &),
 			int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0)
@@ -210,11 +212,11 @@ public:
 };
 
 
-template <class TClass, unsigned int argindex> class KIRCMethodFunctor_SS
-	: public KIRCMethodFunctorBase<TClass>
+template <class TClass, unsigned int argindex>
+class KIRCMethodFunctor_SS : public KIRCMethodFunctorBase<TClass>
 {
-public:
-	virtual bool operator()(const KIRCMessage &msg)
+	public:
+		virtual bool operator()(const KIRCMessage &msg)
 		{
 			if(isValid())
 			{
@@ -225,19 +227,19 @@ public:
 			return false;
 		}
 
-	KIRCMethodFunctor_SS<TClass,argindex>(TClass *obj, void (TClass::*method)(const QString&,const QString&),
-			int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0)
-		: KIRCMethodFunctorBase<TClass>(obj, (bool (TClass::*)(const KIRCMessage &msg))method,
-						argsSize_min, argsSize_max, helpMessage)
-		{}
+		KIRCMethodFunctor_SS<TClass,argindex>(TClass *obj, void (TClass::*method)(const QString&,const QString&),
+				int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0)
+			: KIRCMethodFunctorBase<TClass>(obj, (bool (TClass::*)(const KIRCMessage &msg))method,
+							argsSize_min, argsSize_max, helpMessage)
+			{}
 };
 
 
-template <class TClass, unsigned int argindex> class KIRCMethodFunctor_SS_Prefix
-	: public KIRCMethodFunctorBase<TClass>
+template <class TClass, unsigned int argindex>
+class KIRCMethodFunctor_SS_Prefix : public KIRCMethodFunctorBase<TClass>
 {
-public:
-	virtual bool operator()(const KIRCMessage &msg)
+	public:
+		virtual bool operator()(const KIRCMessage &msg)
 		{
 			if(isValid())
 			{
@@ -248,19 +250,19 @@ public:
 			return false;
 		}
 
-	KIRCMethodFunctor_SS_Prefix<TClass,argindex>(TClass *obj, void (TClass::*method)(const QString&,const QString&),
-			int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0)
-		: KIRCMethodFunctorBase<TClass>(obj, (bool (TClass::*)(const KIRCMessage &msg))method,
-						argsSize_min, argsSize_max, helpMessage)
-		{}
+		KIRCMethodFunctor_SS_Prefix<TClass,argindex>(TClass *obj, void (TClass::*method)(const QString&,const QString&),
+				int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0)
+			: KIRCMethodFunctorBase<TClass>(obj, (bool (TClass::*)(const KIRCMessage &msg))method,
+							argsSize_min, argsSize_max, helpMessage)
+			{}
 };
 
 
-template <class TClass, unsigned int argindex> class KIRCMethodFunctor_SS_Suffix
-	: public KIRCMethodFunctorBase<TClass>
+template <class TClass, unsigned int argindex>
+class KIRCMethodFunctor_SS_Suffix : public KIRCMethodFunctorBase<TClass>
 {
-public:
-	virtual bool operator()(const KIRCMessage &msg)
+	public:
+		virtual bool operator()(const KIRCMessage &msg)
 		{
 			if(isValid())
 			{
@@ -271,21 +273,20 @@ public:
 			return false;
 		}
 
-	KIRCMethodFunctor_SS_Suffix<TClass,argindex>(TClass *obj, void (TClass::*method)(const QString&,const QString&),
-			int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0)
-		: KIRCMethodFunctorBase<TClass>(obj, (bool (TClass::*)(const KIRCMessage &msg))method,
-						argsSize_min, argsSize_max, helpMessage)
-		{}
+		KIRCMethodFunctor_SS_Suffix<TClass,argindex>(TClass *obj, void (TClass::*method)(const QString&,const QString&),
+				int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0)
+			: KIRCMethodFunctorBase<TClass>(obj, (bool (TClass::*)(const KIRCMessage &msg))method,
+							argsSize_min, argsSize_max, helpMessage)
+			{}
 };
 
-
-template <class TClass> class KIRCMethodFunctor_SS_PrefixSuffix
-	: public KIRCMethodFunctorBase<TClass>
+template <class TClass>
+class KIRCMethodFunctor_SS_PrefixSuffix	: public KIRCMethodFunctorBase<TClass>
 {
-public:
-	virtual bool operator()(const KIRCMessage &msg)
+	public:
+		virtual bool operator()(const KIRCMessage &msg)
 		{
-			if(isValid())
+			if( isValid() )
 			{
 				void (TClass::*tmp)(const QString&, const QString&) = (void (TClass::*)(const QString&, const QString&))m_method;
 				emit (*m_obj.*tmp)(msg.prefix(), msg.suffix());
@@ -294,11 +295,11 @@ public:
 			return false;
 		}
 
-	KIRCMethodFunctor_SS_PrefixSuffix<TClass>(TClass *obj, void (TClass::*method)(const QString&,const QString&),
-			int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0)
-		: KIRCMethodFunctorBase<TClass>(obj, (bool (TClass::*)(const KIRCMessage &msg))method,
-						argsSize_min, argsSize_max, helpMessage)
-		{}
+		KIRCMethodFunctor_SS_PrefixSuffix<TClass>(TClass *obj, void (TClass::*method)(const QString&,const QString&),
+				int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0)
+			: KIRCMethodFunctorBase<TClass>(obj, (bool (TClass::*)(const KIRCMessage &msg))method,
+							argsSize_min, argsSize_max, helpMessage)
+			{}
 };
 
 #endif // KIRCFUNCTORS_H

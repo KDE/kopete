@@ -31,18 +31,6 @@
 #include "ircservercontact.h"
 #include "irccontactmanager.h"
 
-struct whoIsInfo
-{
-	QString userName;
-	QString hostName;
-	QString realName;
-	QString serverName;
-	QString serverInfo;
-	QStringList channels;
-	unsigned long idle;
-	bool isOperator;
-};
-
 IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, KopeteMetaContact *metac, const QString& icon)
 	: KopeteContact(contactManager->account(), nick, metac, icon),
 	  m_protocol(static_cast<IRCProtocol *>(protocol())),
@@ -67,19 +55,6 @@ IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, K
 	mMyself.append( static_cast<KopeteContact*>( this ) );
 
 	// KIRC stuff
-	QObject::connect(m_engine, SIGNAL(incomingWhoIsUser(const QString &, const QString &, const QString &, const QString &)) ,
-			this, SLOT( slotNewWhoIsUser(const QString &, const QString &, const QString &, const QString &) ) );
-
-	QObject::connect(m_engine, SIGNAL(incomingWhoIsServer(const QString &, const QString &, const QString &)),
-			this, SLOT(slotNewWhoIsServer(const QString &, const QString &, const QString &)));
-	QObject::connect(m_engine, SIGNAL(incomingWhoIsOperator(const QString &)),
-			this, SLOT(slotNewWhoIsOperator(const QString &)));
-	QObject::connect(m_engine, SIGNAL(incomingWhoIsIdle(const QString &, unsigned long )),
-			this, SLOT(slotNewWhoIsIdle(const QString &, unsigned long )));
-	QObject::connect(m_engine, SIGNAL(incomingWhoIsChannels(const QString &, const QString &)),
-			this, SLOT(slotNewWhoIsChannels(const QString &, const QString &)));
-	QObject::connect(m_engine, SIGNAL(incomingEndOfWhois(const QString &)),
-			this, SLOT( slotWhoIsComplete(const QString &)));
 	QObject::connect(m_engine, SIGNAL(incomingNickChange(const QString &, const QString &)),
 			this, SLOT( slotNewNickChange(const QString&, const QString&)));
 	QObject::connect(m_engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)),
@@ -177,76 +152,6 @@ void IRCContact::slotUserDisconnected(const QString &user, const QString &reason
 			c->setOnlineStatus( m_protocol->m_UserStatusOffline );
 			m_account->contactManager()->unregisterUser( c );
 		}
-	}
-}
-
-void IRCContact::slotNewWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname)
-{
-	if( m_isConnected && manager()->view() ==
-		KopeteMessageManagerFactory::factory()->activeView() )
-	{
-		kdDebug(14120) << k_funcinfo << endl;
-		mWhoisMap[nickname] = new whoIsInfo;
-		mWhoisMap[nickname]->isOperator = false;
-		mWhoisMap[nickname]->userName = username;
-		mWhoisMap[nickname]->hostName = hostname;
-		mWhoisMap[nickname]->realName = realname;
-	}
-}
-
-void IRCContact::slotNewWhoIsServer(const QString &nickname, const QString &servername, const QString &serverinfo)
-{
-	if( m_isConnected && mWhoisMap.contains(nickname) )
-	{
-		mWhoisMap[nickname]->serverName = servername;
-		mWhoisMap[nickname]->serverInfo = serverinfo;
-	}
-}
-
-void IRCContact::slotNewWhoIsIdle(const QString &nickname, unsigned long idle)
-{
-	if( m_isConnected && mWhoisMap.contains(nickname) )
-		mWhoisMap[nickname]->idle = idle;
-}
-
-void IRCContact::slotNewWhoIsOperator(const QString &nickname)
-{
-	if( m_isConnected && mWhoisMap.contains(nickname) )
-		mWhoisMap[nickname]->isOperator = true;
-}
-
-void IRCContact::slotNewWhoIsChannels(const QString &nickname, const QString &channel)
-{
-	if( m_isConnected && mWhoisMap.contains(nickname) )
-		mWhoisMap[nickname]->channels.append( channel );
-}
-
-void IRCContact::slotWhoIsComplete(const QString &nickname)
-{
-	if( m_isConnected && mWhoisMap.contains(nickname) )
-	{
-		whoIsInfo *w = mWhoisMap[nickname];
-
-		//User info
-		QString msg=i18n("%1 is (%2@%3): %4\n").arg(nickname).arg(w->userName).arg(w->hostName).arg(w->realName);
-		if( w->isOperator )
-			msg += i18n("%1 is an IRC operator\n").arg(nickname);
-
-		//Channels
-		msg += i18n("on channels %1\n").arg(w->channels.join(" ; "));
-
-		//Server
-		msg += i18n("on IRC via server %1 ( %2 )\n").arg(w->serverName).arg(w->serverInfo);
-
-		//Idle
-		msg += i18n("idle: %2\n").arg( QString::number(w->idle) );
-
-		//End
-		KopeteMessage m( m_account->myServer(), mMyself, msg, KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
-		appendMessage(m);
-
-		delete w;
-		mWhoisMap.remove(nickname);
 	}
 }
 

@@ -166,7 +166,10 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QStringList 
 void IRCChannelContact::slotAddNicknames()
 {
 	if( !m_isConnected || mJoinedNicks.isEmpty() )
+	{
+		m_engine->writeMessage( QString::fromLatin1("WHO %1").arg( m_nickName ), true );
 		return;
+	}
 
 	QString nickToAdd = mJoinedNicks.front();
 	QChar firstChar = nickToAdd[0];

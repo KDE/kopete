@@ -23,6 +23,7 @@
 #include <qtimer.h>
 
 #include "ircusercontact.h"
+#include "ircservercontact.h"
 #include "ircchannelcontact.h"
 #include "irccontactmanager.h"
 #include "ircaccount.h"
@@ -46,7 +47,31 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 	QObject::connect(m_engine, SIGNAL(incomingUserIsAway( const QString &, const QString & )),
 		this, SLOT(slotIncomingUserIsAway(const QString &, const QString &)));
 
+	QObject::connect(m_engine, SIGNAL(incomingWhoIsUser(const QString &, const QString &, const QString &, const QString &)) ,
+			this, SLOT( slotNewWhoIsUser(const QString &, const QString &, const QString &, const QString &) ) );
+
+	QObject::connect(m_engine, SIGNAL(incomingWhoIsServer(const QString &, const QString &, const QString &)),
+			this, SLOT(slotNewWhoIsServer(const QString &, const QString &, const QString &)));
+	QObject::connect(m_engine, SIGNAL(incomingWhoIsOperator(const QString &)),
+			this, SLOT(slotNewWhoIsOperator(const QString &)));
+	QObject::connect(m_engine, SIGNAL(incomingWhoIsIdle(const QString &, unsigned long )),
+			this, SLOT(slotNewWhoIsIdle(const QString &, unsigned long )));
+	QObject::connect(m_engine, SIGNAL(incomingWhoIsChannels(const QString &, const QString &)),
+			this, SLOT(slotNewWhoIsChannels(const QString &, const QString &)));
+	QObject::connect(m_engine, SIGNAL(incomingEndOfWhois(const QString &)),
+			this, SLOT( slotWhoIsComplete(const QString &)));
+
+	QObject::connect(m_engine, SIGNAL(incomingWhoReply(const QString &, const QString &, const QString &,
+		const QString &, const QString &, bool, const QString &, uint, const QString & )),
+		this, SLOT( slotNewWhoReply(const QString &, const QString &, const QString &, const QString &,
+		const QString &, bool, const QString &, uint, const QString &)));
+
 	actionCtcpMenu = 0L;
+
+	mInfo.isOperator = false;
+	mInfo.idle = 0;
+	mInfo.hops = 0;
+	mInfo.away = false;
 
 	updateStatus();
 }
@@ -194,6 +219,118 @@ void IRCUserContact::slotCtcpVersion()
 {
 	m_engine->sendCtcpVersion(m_nickName);
 }
+
+void IRCUserContact::slotNewWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname)
+{
+	if( m_nickName == nickname )
+	{
+		mInfo.channels.clear();
+		mInfo.userName = username;
+		mInfo.hostName = hostname;
+		mInfo.realName = realname;
+	}
+}
+
+void IRCUserContact::slotNewWhoIsServer(const QString &nickname, const QString &servername, const QString &serverinfo)
+{
+	if( m_nickName == nickname )
+	{
+		mInfo.serverName = servername;
+		mInfo.serverInfo = serverinfo;
+	}
+}
+
+void IRCUserContact::slotNewWhoIsIdle(const QString &nickname, unsigned long idle)
+{
+	if( m_nickName == nickname )
+		mInfo.idle = idle;
+}
+
+void IRCUserContact::slotNewWhoIsOperator(const QString &nickname)
+{
+	if( m_nickName == nickname )
+		mInfo.isOperator = true;
+}
+
+void IRCUserContact::slotNewWhoIsChannels(const QString &nickname, const QString &channel)
+{
+	if( m_nickName == nickname )
+		mInfo.channels.append( channel );
+}
+
+void IRCUserContact::slotWhoIsComplete(const QString &nickname)
+{
+	if( m_nickName == nickname )
+	{
+		updateInfo();
+
+		//User info
+		QString msg = i18n("%1 is (%2@%3): %4\n")
+			.arg(nickname)
+			.arg(mInfo.userName)
+			.arg(mInfo.hostName)
+			.arg(mInfo.realName);
+
+		if( mInfo.isOperator )
+			msg += i18n("%1 is an IRC operator\n").arg(nickname);
+
+		//Channels
+		msg += i18n("on channels %1\n").arg(mInfo.channels.join(" ; "));
+
+		//Server
+		msg += i18n("on IRC via server %1 ( %2 )\n").arg(mInfo.serverName).arg(mInfo.serverInfo);
+
+		//Idle
+		msg += i18n("idle: %2\n").arg( QString::number(mInfo.idle) );
+
+		//End
+		KopeteMessage m( m_account->myServer(), mMyself, msg, KopeteMessage::Internal,
+			KopeteMessage::PlainText, KopeteMessage::Chat );
+
+		appendMessage(m);
+	}
+}
+
+QString IRCUserContact::formattedName() const
+{
+	return mInfo.realName;
+}
+
+void IRCUserContact::updateInfo()
+{
+	setProperty( QString::fromLatin1("UserInfo"), i18n("User"), QString::fromLatin1("%1@%2")
+		.arg(mInfo.userName).arg(mInfo.hostName) );
+	setProperty( QString::fromLatin1("Server"), i18n("Server"), mInfo.serverName );
+	setProperty( QString::fromLatin1("Channels"), i18n("Channels"), mInfo.channels.join(" ") );
+	setProperty( QString::fromLatin1("FormattedIdleTime"), i18n("Idle"), QString::number(mInfo.idle) );
+	setProperty( QString::fromLatin1("Hops"), i18n("Hops"), QString::number(mInfo.hops) );
+
+	setIdleTime( mInfo.idle );
+
+}
+
+void IRCUserContact::slotNewWhoReply( const QString &channel, const QString &user, const QString &host,
+			const QString &server, const QString &nick, bool away, const QString &flags, uint hops,
+			const QString &realName )
+{
+	if( nick == m_nickName )
+	{
+		if( !mInfo.channels.contains( channel ) )
+			mInfo.channels.append( channel );
+
+		mInfo.userName = user;
+		mInfo.hostName = host;
+		mInfo.serverName = server;
+		mInfo.flags = flags;
+		mInfo.hops = hops;
+		mInfo.realName = realName;
+
+		setAway(away);
+
+		updateInfo();
+	}
+}
+
 
 QPtrList<KAction> *IRCUserContact::customContextMenuActions( KopeteMessageManager *manager )
 {

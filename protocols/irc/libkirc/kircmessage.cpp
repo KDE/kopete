@@ -165,9 +165,6 @@ KIRCMessage KIRCMessage::parse(KBufferedIO *dev, bool *parseSuccess, QTextCodec 
 			raw.resize(length);
 			raw.replace("\r\n",""); //remove the trailling \r\n if any(there must be in fact)
 
-			int idx = raw.findRev( QCString(QChar(001)) + ":" );
-			kdDebug(14121) << "idx: " << idx << endl;
-
 			if( !codec ) // FIXME: Per-convo. Codec selector
 				codec = QTextCodec::codecForName("utf8");
 

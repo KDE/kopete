@@ -102,8 +102,6 @@ public:
 	kdDebug(14120) << "Adding cusotm CTCP reply: " << ctcp << " = " << reply << endl;
 	customCtcpMap[ ctcp.lower() ] = reply; }
 
-	KIRCMessage writeString(const QString &str, bool mustBeConnected=true);
-
 	/**
 	 * Send a quit message for the given reason.
 	 * If now is set to true the connection is closed and no event message is sent.
@@ -180,7 +178,21 @@ signals:
 	void incomingQuitIRC(const QString &user, const QString &reason);
 	void incomingAction(const QString &originating, const QString &target, const QString &message);
 
-	//General Signals
+	//Response Signals
+	void incomingWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
+	void incomingWhoIsServer(const QString &nickname, const QString &server, const QString &serverInfo);
+	void incomingWhoIsOperator(const QString &nickname);
+	void incomingWhoIsChannels(const QString &nickname, const QString &channel);
+	void incomingWhoIsIdle(const QString &nickname, unsigned long seconds); /* 317 */
+	void incomingSignOnTime(const QString &nickname, unsigned long seconds); /* 317 */
+	void incomingEndOfWhois(const QString &nickname);
+
+	void incomingWhoReply( const QString &channel, const QString &user, const QString &host,
+		const QString &server, const QString &nick, bool away, const QString &flag, uint hops,
+		const QString &realName );
+	void incomingEndOfWho( const QString &query );
+
+	//Error Message Signals
 	void incomingServerLoadTooHigh();
 	void incomingNickInUse(const QString &usingNick);
 	void incomingNickChange(const QString &, const QString &);
@@ -192,13 +204,8 @@ signals:
 	void incomingFailedNickOnLogin(const QString &);
 	void incomingNoNickChan(const QString &);
 	void incomingWasNoNick(const QString &);
-	void incomingWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
-	void incomingWhoIsServer(const QString &nickname, const QString &server, const QString &serverInfo);
-	void incomingWhoIsOperator(const QString &nickname);
-	void incomingWhoIsChannels(const QString &nickname, const QString &channel);
-	void incomingWhoIsIdle(const QString &nickname, unsigned long seconds); /* 317 */
-	void incomingSignOnTime(const QString &nickname, unsigned long seconds); /* 317 */
-	void incomingEndOfWhois(const QString &nickname);
+
+	//General Signals
 	void incomingUnknown(const QString &);
 	void incomingUnknownCtcp(const QString &);
 	void incomingPrivAction(const QString &, const QString &, const QString &);
@@ -345,6 +352,7 @@ protected:
 	ircMethod numericReply_331;
 	ircMethod numericReply_332;
 	ircMethod numericReply_333;
+	ircMethod numericReply_352;
 	ircMethod numericReply_353;
 	ircMethod numericReply_372;
 	ircMethod numericReply_375;

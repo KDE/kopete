@@ -36,8 +36,6 @@ class IRCProtocol;
 class IRCAccount;
 class IRCContactManager;
 
-struct whoIsInfo;
-
 /**
  * @author Jason Keirstead <jason@keirstead.org>
  * @author Michel Hermier <michel.hermier@wanadoo.fr>
@@ -99,15 +97,10 @@ class IRCContact : public KopeteContact
 
 		virtual void messageManagerDestroyed();
 
-		void slotNewWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
-		void slotNewWhoIsServer(const QString &nickname, const QString &server, const QString &serverInfo);
-		void slotNewWhoIsOperator(const QString &nickname);
-		void slotNewWhoIsIdle(const QString &nickname, unsigned long seconds);
-		void slotNewWhoIsChannels(const QString &nickname, const QString &channel);
-		void slotWhoIsComplete(const QString &nickname);
 		void slotNewNickChange( const QString &oldnickname, const QString &newnickname);
 		void slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
 		void slotUserDisconnected( const QString &nickname, const QString &reason);
+
 
 		virtual void slotDeleteContact();
 		virtual void privateMessage(IRCContact *from, IRCContact *to, const QString &message);
@@ -126,7 +119,6 @@ class IRCContact : public KopeteContact
 		bool m_isConnected;
 
 		QPtrList<KopeteContact> mMyself;
-		QMap<QString, whoIsInfo*> mWhoisMap;
 		QValueList<KopeteMessage> messageQueue;
 		KopeteMessage::MessageDirection execDir;
 };

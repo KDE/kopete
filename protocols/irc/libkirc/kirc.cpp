@@ -41,15 +41,14 @@
 #include <kmessagebox.h>
 
 #include "kircfunctors.h"
-
 #include "kirc.h"
-
+#include "kircnumericreplies.h"
+#include "kircctcpqueries.h"
 
 /* Please note that the regular expression "[\\r\\n]*$" is used in a QString::replace statement many times.
  * This gets rid of trailing \r\n, \r, \n, and \n\r characters.
  */
 const QRegExp KIRC::m_RemoveLinefeeds(QString::fromLatin1("[\\r\\n]*$"));
-
 
 KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char *name)
 	: QObject( parent, name ),
@@ -86,28 +85,9 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 	addIrcMethod("PRIVMSG",	&KIRC::privateMessage,	1,	1);
 	addIrcMethod("NOTICE",	&KIRC::notice,		1,	1);
 
-//	Server queries and commands
-
-//	Service Query and Commands
-
-//	User based queries
-	//Whowas
-
 //	Miscellaneous messages
 	addIrcMethod("PING",	&KIRC::ping,	0,	0);
 	addIrcMethod("PONG",	&KIRC::pong,	0,	0);
-//	addIrcMethod("ERROR",	new KIRCMethodFunctor_SS_PrefixSuffix<KIRC>(this, &KIRC::incomingError,		0,	0));
-
-//	Optional features
-//	addIrcMethod("AWAY",	&KIRC::away,		0,	0));
-	//Rehash message
-	//Die message
-	//Restart message
-	//Summon message
-	//Users
-	//Operwall message
-	//Userhost message
-	//Ison message
 
 //	Numeric Replies:
 //	Note: Numeric replies always have the current nick or *(when undefined) as first argmuent.
@@ -190,6 +170,8 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 	 * "<nick> :is an IRC operator" */
 	addIrcMethod("313",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWhoIsOperator, 2, 2));
 
+	addIrcMethod("315",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingEndOfWho, 2, 2));
+
 	addIrcMethod("317",	&KIRC::numericReply_317,	3,	4);
 
 	/* Receive end of WHOIS in the form of
@@ -215,6 +197,11 @@ KIRC::KIRC(const QString &host, const Q_UINT16 port, QObject *parent, const char
 	addIrcMethod("331",	&KIRC::numericReply_331,	2,	2);
 	addIrcMethod("332",	&KIRC::numericReply_332,	2,	2);
 	addIrcMethod("333",	&KIRC::numericReply_333,	4,	4);
+
+	//WHO Reply
+	addIrcMethod("352",	&KIRC::numericReply_352,	5,	10);
+
+	//NAMES list
 	addIrcMethod("353",	&KIRC::numericReply_353,	3,	3);
 
 	/* Gives a signal to indicate that the NAMES list has ended for a certain channel in the form of:
@@ -847,106 +834,12 @@ bool KIRC::notice(const KIRCMessage &msg)
 
 	return true;
 }
-/*
-void KIRC::serverMessageOfTheDay(const QString &server) // server = QString::null means current server
-{
-	writeMessage("MOTD", server);
-}
 
-//	FIXME: should follow the optionnal syntax [mask [target]]
-void KIRC::usersStatistics( const QString &mask, const QString &target )
-{
-	writeMessage("LUSERS", QStringList(mask) << target);
-}
-
-void KIRC::serverVersion(const QString &server) // server = QString::null means current server
-{
-	writeMessage("VERSION", server);
-}
-
-//	FIXME: should follow the optionnal syntax [query [target]]
-void KIRC::serverStatistics( const QString &query, const QString &target )
-{
-	writeMessage("STATS", QStringList(query) << target);
-}
-
-//	FIXME: [ [ <remote server> ] <server mask> ]
-void KIRC::serverLinks(const QString &remote, const QString &mask)
-{
-	writeMessage("LINKS", QStringList(query) << mask);
-}
-
-void KIRC::serverTime(const QString &server) // server = QString::null means current server
-{
-	writeMessage("TIME", server);
-}
-
-//	For admin users
-void KIRC::serverConnect(const QString &server, Q_UINT16 port)
-{
-	writeMessage("CONNECT", QStringList(server) << QString::number(port) );
-}
-
-void KIRC::serverTrace( const QString &server ) // server = QString::null means current server
-{
-	writeMessage("TRACE", server);
-}
-
-// Get some info about the server administrator
-void KIRC::serverAdmin( const QString &server ) // server = QString::null means current server
-{
-	writeMessage("ADMIN", server);
-}
-
-// target = QString::null means current server
-// target can also be a nick, in this case return the nick connected to server
-void KIRC::serverInfo( const QString &target )
-{
-	writeMessage("INFO", target);
-}
-
-//	FIXME: [ [ <remote server> ] <server mask> ]
-void KIRC::serviceList( const QString &mask, const QString &type )
-{
-	writeMessage("SERVLIST", QStringList(mask) << type);
-}
-
-void KIRC::queryService( const QString &serviceName, const QString &query )
-{
-	writeMessage("SQUERY", serviceName, query);
-}
-
-//	FIXME [ <mask> [ "o" ] ]
-void KIRC::whoUser(const QString &mask, bool askForOperator)
-{
-	writeMessage("WHO", mask);
-}
-*/
 void KIRC::whoisUser(const QString &user)
 {
 	writeMessage("WHOIS", user);
 }
-/*
-//	FIXME: <nickname> *( "," <nickname> ) [ <count> [ <target> ] ]
-void KIRC::whowasUser(const QString &nickname)
-{
-	writeMessage("WHOWAS", nickname);
-}
 
-void KIRC::killUser(const QString &nickname, const QString &comment)
-{
-	writeMessage("KILL", nickname, comment);
-}
-
-// ?? Received when killed ??
-// bool KIRC::kill(const KIRCMessage &msg)
-
-//	FIXME: <server1> [ <server2> ]
-void KIRC::ping(const QString &server1, const QString &server2)
-{
-	writeMessage("PING", QStringList(server1) << server2);
-}
-*/
 bool KIRC::ping(const KIRCMessage &msg)
 {
 	writeMessage("PONG", msg.args(), msg.suffix(), false);
@@ -971,65 +864,7 @@ void KIRC::setAway(bool isAway, const QString &awayMessage)
 	else
 		writeMessage("AWAY", QString::null);
 }
-/*
-bool KIRC::away(const KIRCMessage &msg)
-{
-	if(msg.suffix().isNull())
-		emit incomingUserPresent( msg.prefix() );
-	else
-		emit incomingUserAway( msg.prefix(), suffix );
-}
 
-// Force the server to re-read and process its configuration file.
-void KIRC::serverRehash()
-{
-	// FIXME: should we check operator rigth to avoid one error msg?
-	writeMessage("REHASH", QString::null);
-}
-
-void KIRC::serverRestart()
-{
-	// FIXME: should we check operator rigth to avoid one error msg?
-	writeMessage("RESTART", QString::null);
-}
-
-void KIRC::summonUser(const QString &user, const QString &server) //server=QString::null
-{
-	QStringList args(user);
-	if(!server.isEmpty())
-		args << server;
-	writeMessage("SUMMON", args);
-}
-
-void KIRC::users(const QString &server) //server=QString::null
-{
-	writeMessage("USERS", server);
-}
-
-bool KIRC::users(const KIRCMessage &msg)
-{
-	// what to do with this?
-	// should be of the form: :user USERS server
-}
-
-void KIRC::warnAllOperators(const QString &message)
-{
-	writeMessage("WALLOPS", QString::null, message);
-}
-
-bool KIRC::warnAllOperators(const KIRCMessage &msg)
-{
-	// what to do with this?
-	// should be of the form: :user WALLOPS :message
-}
-
-// Make a check of users host up to 5 users.
-void KIRC::usersHosts( const QStringList &users )
-{
-// FIXME: support more than 5 users
-	writeMessage("USERHOST", users);
-}
-*/
 void KIRC::isOn(const QStringList &nickList)
 {
 	if (!nickList.isEmpty())
@@ -1063,264 +898,6 @@ void KIRC::slotIsonCheck()
 	}
 }
 
-bool KIRC::numericReply_001(const KIRCMessage &msg)
-{
-	/* Gives a welcome message in the form of:
-	 * "Welcome to the Internet Relay Network <nick>!<user>@<host>"
-	 */
-	if (m_FailedNickOnLogin == true)
-	{
-		// this is if we had a "Nickname in use" message when connecting and we set another nick.
-		// This signal emits that the nick was accepted and we are now logged in
-		emit successfullyChangedNick(m_Nickname, m_PendingNick);
-		m_Nickname = m_PendingNick;
-		m_FailedNickOnLogin = false;
-	}
-
-	/* At this point we are connected and the server is ready for us to being taking commands
-	 * although the MOTD comes *after* this.
-	 */
-	emit incomingConnectString(msg.suffix());
-	setStatus(Connected);
-	emit connectedToServer();
-
-	return true;
-}
-
-bool KIRC::numericReply_004(const KIRCMessage &msg)
-{
-	/* Gives information about the servername, version, available modes, etc in the form of:
-	 * "<servername> <version> <available user modes> <available channel modes>"
-	 */
-	emit incomingHostInfo(msg.args()[1],msg.args()[2],msg.args()[3],msg.args()[4]);
-	return true;
-}
-
-bool KIRC::numericReply_252(const KIRCMessage &msg)
-{
-	emit incomingConnectString( msg.toString() );
-	return true;
-}
-
-bool KIRC::numericReply_253(const KIRCMessage &msg)
-{
-	emit incomingConnectString( msg.toString() );
-	return true;
-}
-
-bool KIRC::numericReply_254(const KIRCMessage &msg)
-{
-	emit incomingConnectString( msg.toString() );
-	return true;
-}
-
-bool KIRC::numericReply_265(const KIRCMessage &msg)
-{
-	return true;
-}
-
-bool KIRC::numericReply_266(const KIRCMessage &msg)
-{
-	return true;
-}
-
-bool KIRC::numericReply_303(const KIRCMessage &msg)
-{
-	/* ":*1<nick> *(" " <nick> )"
-	 */
-	isonRecieved = true;
-	QStringList nicks = QStringList::split(QRegExp(QChar(' ')), msg.suffix());
-	for(QStringList::Iterator it = nicks.begin(); it != nicks.end(); ++it)
-	{
-		if (!(*it).stripWhiteSpace().isEmpty())
-			emit userOnline(*it);
-	}
-	return true;
-}
-/*
-bool KIRC::numericReply_305(const KIRCMessage &msg)
-{
-	return true;
-}
-
-bool KIRC::numericReply_306(const KIRCMessage &msg)
-{
-	return true;
-}
-*/
-bool KIRC::numericReply_311(const KIRCMessage &msg)
-{
-	emit incomingWhoIsUser(msg.args()[1], msg.args()[2], msg.args()[3], msg.suffix());
-	return true;
-}
-
-bool KIRC::numericReply_312(const KIRCMessage &msg)
-{
-	emit incomingWhoIsServer(msg.args()[1], msg.args()[2], msg.suffix());
-	return true;
-}
-
-bool KIRC::numericReply_317(const KIRCMessage &msg)
-{
-	/* RFC say: "<nick> <integer> :seconds idle"
-	 * Some servers say: "<nick> <integer> <integer> :seconds idle, signon time"
-	 * Show info about someone who is idle (part of a /whois) in the form of:
-	 */
-	emit incomingWhoIsIdle(msg.args()[1], msg.args()[2].toULong());
-	if (msg.args().size()==4)
-		emit incomingSignOnTime(msg.args()[1],msg.args()[3].toULong());
-	return true;
-}
-
-bool KIRC::numericReply_319(const KIRCMessage &msg)
-{
-	/* Show info a channel a user is logged in (part of a /whois) in the form of:
-	 * "<nick> :{[@|+]<channel><space>}"
-	 */
-	emit incomingWhoIsChannels(msg.args()[1], msg.suffix());
-	return true;
-}
-
-bool KIRC::numericReply_322(const KIRCMessage &msg)
-{
-	/* "<channel> <# visible> :<topic>"
-	 */
-	//kdDebug(14120) << k_funcinfo << "Listed " << msg.args()[1] << endl;
-
-	emit incomingListedChan(msg.args()[1], msg.args()[2].toUInt(), msg.suffix());
-	return true;
-}
-
-bool KIRC::numericReply_324(const KIRCMessage &msg)
-{
-	/* "<channel> <mode> <mode params>"
-	 */
-	emit incomingChannelMode(msg.args()[1], msg.args()[2], msg.args()[3]);
-	return true;
-}
-
-bool KIRC::numericReply_329( const KIRCMessage & /* msg */ )
-{
-	/* NOT IN RFC1459 NOR RFC2812
-	 * "%s %lu"
-	 * FIXME: What is the meaning of this arguments. DAL-ircd say it's a RPL_CREATIONTIME
-	 */
-	return true;
-}
-
-bool KIRC::numericReply_331( const KIRCMessage & /* msg */ )
-{
-	/* Gives the existing topic for a channel after a join.
-	 * "<channel> :No topic is set"
-	 */
-//	emit incomingExistingTopic(args[1], suffix);
-	return true;
-}
-
-bool KIRC::numericReply_332(const KIRCMessage &msg)
-{
-	/* Gives the existing topic for a channel after a join.
-	 * "<channel> :<topic>"
-	 */
-	emit incomingExistingTopic(msg.args()[1], msg.suffix());
-	return true;
-}
-
-bool KIRC::numericReply_333( const KIRCMessage &msg )
-{
-	/* Gives the nickname and time who changed the topic
-	 */
-	 kdDebug(14120) << k_funcinfo << endl;
-	 QDateTime d;
-	 d.setTime_t( msg.args()[3].toLong() );
-	 emit incomingTopicUser( msg.args()[1], msg.args()[2], d );
-	 return true;
-}
-
-bool KIRC::numericReply_353(const KIRCMessage &msg)
-{
-	/* Gives a listing of all the people in the channel in the form of:
-	 * "( "=" / "*" / "@" ) <channel> :[ "@" / "+" ] <nick> *( " " [ "@" / "+" ] <nick> )
-	 *  - "@" is used for secret channels, "*" for private
-	 *    channels, and "=" for others (public channels).
-	 */
-	kdDebug(14120) << "Adding name list:" << msg.suffix() << endl;
-	emit incomingNamesList(msg.args()[2], QStringList::split(' ', msg.suffix()));
-	return true;
-}
-
-bool KIRC::numericReply_372(const KIRCMessage &msg)
-{
-	m_motdBuffer.append( msg.suffix() );
-	return true;
-}
-
-bool KIRC::numericReply_375(const KIRCMessage &msg)
-{
-	m_motdBuffer.clear();
-	return true;
-}
-
-bool KIRC::numericReply_376(const KIRCMessage &msg)
-{
-	emit incomingMotd(m_motdBuffer);
-	return true;
-}
-
-bool KIRC::numericReply_433(const KIRCMessage &msg)
-{
-	/* "<nick> :Nickname is already in use"
-	 * Tells us that our nickname is already in use.
-	 */
-	if(m_status == Authentifying)
-	{
-		// This tells us that our nickname is, but we aren't logged in.
-		// This differs because the server won't send us a response back telling us our nick changed
-		// (since we aren't logged in).
-		m_FailedNickOnLogin = true;
-		emit incomingFailedNickOnLogin(msg.args()[1]);
-	}
-	else
-	{
-		// And this is the signal for if someone is trying to use the /nick command or such when already logged in,
-		// but it's already in use
-		emit incomingNickInUse(msg.args()[1]);
-	}
-
-
-	return true;
-}
-
-bool KIRC::numericReply_464(const KIRCMessage &/*msg*/)
-{
-	/* Server need pass.. Call disconnect */
-	emit incomingFailedServerPassword();
-	return true;
-}
-
-bool KIRC::numericReply_471(const KIRCMessage &msg)
-{
-	emit incomingFailedChanFull(msg.args()[1]);
-	return true;
-}
-
-bool KIRC::numericReply_473(const KIRCMessage &msg)
-{
-	emit incomingFailedChanInvite(msg.args()[1]);
-	return true;
-}
-
-bool KIRC::numericReply_474(const KIRCMessage &msg)
-{
-	emit incomingFailedChanBanned(msg.args()[1]);
-	return true;
-}
-
-bool KIRC::numericReply_475(const KIRCMessage &msg)
-{
-	emit incomingFailedChankey(msg.args()[1]);
-	return true;
-}
 
 void KIRC::sendCtcpCommand(const QString &contact, const QString &command)
 {
@@ -1342,16 +919,6 @@ void KIRC::sendCtcpAction(const QString &contact, const QString &message)
 		else
 			emit incomingAction(m_Nickname, contact, message);
 	}
-}
-
-bool KIRC::CtcpQuery_action(const KIRCMessage &msg)
-{
-	QString target = msg.args()[0];
-	if (target[0] == '#' || target[0] == '!' || target[0] == '&')
-		emit incomingAction(msg.prefix(), target, msg.ctcpMessage().ctcpRaw());
-	else
-		emit incomingPrivAction(msg.prefix(), target, msg.ctcpMessage().ctcpRaw());
-	return true;
 }
 
 void KIRC::sendCtcpPing(const QString &target)
@@ -1376,13 +943,6 @@ void KIRC::sendCtcpPing(const QString &target)
 		writeCtcpQueryMessage(	target, QString::null,
 					"PING", timeReply);
 	}
-}
-
-bool KIRC::CtcpQuery_pingPong(const KIRCMessage &msg)
-{
-	writeCtcpReplyMessage(	msg.prefix(), QString::null,
-				msg.ctcpMessage().command(), msg.ctcpMessage().args()[0]);
-	return true;
 }
 
 bool KIRC::CtcpReply_pingPong( const KIRCMessage &msg )
@@ -1430,87 +990,10 @@ void KIRC::sendCtcpVersion(const QString &target)
 	writeCtcpQueryMessage(target, QString::null, "VERSION");
 }
 
-bool KIRC::CtcpQuery_version(const KIRCMessage &msg)
-{
-	QString response = customCtcpMap[ QString::fromLatin1("version") ];
-	kdDebug(14120) << "Version check: " << response << endl;
-
-	if( !response.isNull() )
-	{
-		writeCtcpReplyMessage(msg.prefix(), QString::null,
-			msg.ctcpMessage().command(), QStringList(), response);
-	}
-	else
-	{
-		writeCtcpReplyMessage(msg.prefix(), QString::null,
-			msg.ctcpMessage().command(), QStringList(), m_VersionString);
-	}
-
-	return true;
-}
 
 bool KIRC::CtcpReply_version(const KIRCMessage &msg)
 {
 	emit incomingCtcpReply(msg.ctcpMessage().command(), getNickFromPrefix(msg.prefix()), msg.ctcpMessage().ctcpRaw());
-	return true;
-}
-
-bool KIRC::CtcpQuery_userInfo(const KIRCMessage &msg)
-{
-	QString response = customCtcpMap[ QString::fromLatin1("userinfo") ];
-	if( !response.isNull() )
-	{
-		writeCtcpReplyMessage(msg.prefix(), QString::null,
-			msg.ctcpMessage().command(), QStringList(), response);
-	}
-	else
-	{
-		writeCtcpReplyMessage( msg.prefix(), QString::null,
-				msg.ctcpMessage().command(), QStringList(), m_UserString );
-	}
-
-	return true;
-}
-
-//	FIXME: the API can now answer to help commands.
-bool KIRC::CtcpQuery_clientInfo(const KIRCMessage &msg)
-{
-	QString response = customCtcpMap[ QString::fromLatin1("clientinfo") ];
-	if( !response.isNull() )
-	{
-		writeCtcpReplyMessage(	msg.prefix(), QString::null,
-					msg.ctcpMessage().command(), QStringList(), response);
-	}
-	else
-	{
-		QString info = QString::fromLatin1("The following commands are supported, but "
-			"without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING,"
-			"ACTION.");
-
-		writeCtcpReplyMessage(	msg.prefix(), QString::null,
-					msg.ctcpMessage().command(), QStringList(), info);
-	}
-	return true;
-}
-
-bool KIRC::CtcpQuery_time(const KIRCMessage &msg)
-{
-	writeCtcpReplyMessage(	msg.prefix(), QString::null,
-				msg.ctcpMessage().command(), QStringList(QDateTime::currentDateTime().toString()), QString::null,
-				false);
-	return true;
-}
-
-bool KIRC::CtcpQuery_source(const KIRCMessage &msg)
-{
-	writeCtcpReplyMessage(	msg.prefix(), QString::null,
-				msg.ctcpMessage().command(), QStringList(m_SourceString));
-	return true;
-}
-
-bool KIRC::CtcpQuery_finger( const KIRCMessage & /* msg */ )
-{
-	// To be implemented
 	return true;
 }
 
@@ -1540,62 +1023,6 @@ void KIRC::requestDccConnect(const QString &nickname, const QString &filename, u
 			QStringList( QString::fromLatin1( "SEND" ) ) << noWhiteSpace <<
 			    m_sock.localAddress()->nodeName() << QString::number( port ) << QString::number( file.size() ) );
 	}
-}
-
-bool KIRC::CtcpQuery_dcc(const KIRCMessage &msg)
-{
-	const KIRCMessage &ctcpMsg = msg.ctcpMessage();
-	QString dccCommand = ctcpMsg.args()[0].upper();
-
-	if (dccCommand == QString::fromLatin1("CHAT"))
-	{
-		if(ctcpMsg.args().size()!=4) return false;
-
-		/* DCC CHAT type longip port
-		 *
-		 *  type   = Either Chat or Talk, but almost always Chat these days
-		 *  longip = 32-bit Internet address of originator's machine
-		 *  port   = Port on which the originator is waitng for a DCC chat
-		 */
-		bool okayHost, okayPort;
-		// should ctctArgs[1] be tested?
-		QHostAddress address(ctcpMsg.args()[2].toUInt(&okayHost));
-		unsigned int port = ctcpMsg.args()[3].toUInt(&okayPort);
-		if (okayHost && okayPort)
-		{
-			kdDebug(14120) << "Starting DCC chat window." << endl;
-			DCCClient *chatObject = new DCCClient(address, port, 0, DCCClient::Chat);
-			emit incomingDccChatRequest(address, port, getNickFromPrefix(msg.prefix()), *chatObject);
-			return true;
-		}
-	}
-	else if (dccCommand == QString::fromLatin1("SEND"))
-	{
-		if(ctcpMsg.args().size()!=5) return false;
-
-		/* DCC SEND (filename) (longip) (port) (filesize)
-		 *
-		 *  filename = Name of file being sent
-		 *  longip   = 32-bit Internet address of originator's machine
-		 *  port     = Port on which the originator is waiitng for a DCC chat
-		 *  filesize = Size of file being sent
-		 */
-		bool okayHost, okayPort, okaySize;
-		QFileInfo realfile(msg.args()[1]);
-		QHostAddress address(ctcpMsg.args()[2].toUInt(&okayHost));
-		unsigned int port = ctcpMsg.args()[3].toUInt(&okayPort);
-		unsigned int size = ctcpMsg.args()[4].toUInt(&okaySize);
-		if (okayHost && okayPort && okaySize)
-		{
-			kdDebug(14120) << "Starting DCC send file transfert." << endl;
-			DCCClient *chatObject = new DCCClient(address, port, size, DCCClient::File);
-			emit incomingDccSendRequest(address, port, getNickFromPrefix(msg.prefix()), realfile.fileName(), size, *chatObject);
-			return true;
-		}
-	}
-//	else
-//		emit unknown dcc command signal
-	return false;
 }
 
 /*
@@ -1645,7 +1072,7 @@ bool KIRC::invokeCtcpCommandOfMessage(const KIRCMessage &msg, const QDict<KIRCMe
 	return false;
 }
 
-bool KIRC::CtcpReply_errorMsg(const KIRCMessage &msg)
+bool KIRC::CtcpReply_errorMsg(const KIRCMessage &)
 {
 	// should emit one signal
 	return true;
