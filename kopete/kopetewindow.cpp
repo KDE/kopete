@@ -601,6 +601,7 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 	else
 	{
 		//kdDebug( 14000 ) << k_funcinfo << "Using movie."  << endl;
+		mv.setSpeed( 33 );
 		i->setMovie( mv );
 	}
 
