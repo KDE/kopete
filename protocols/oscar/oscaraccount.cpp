@@ -557,16 +557,12 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 	* The third situation is when somebody new messages you
 	*/
 
-	/*
-	  Duncan: commented, while connecting we are not yet online but
-	  we are adding server contacts that doesn't exist locally
-        */
-
-	//if(!myself()->isOnline()) // We're not even online, so don't bother
-	//{
-	//	kdDebug(14150) << k_funcinfo << "Can't add contact, we are offline" << endl;
-	//	return false;
-	//}
+	/* We're not even online or connecting (when getting server contacts), so don't bother */
+	if( (!myself()->isOnline()) && (myself()->onlineStatus() != OscarProtocol::protocol()->getOnlineStatus( OscarProtocol::CONNECTING )) )
+	{
+		kdDebug(14150) << k_funcinfo << "Can't add contact, we are offline" << endl;
+		return false;
+	}
 
 	// Next check our internal list to see if we have this buddy
 	// already, findBuddy tocNormalizes the buddy name for us
