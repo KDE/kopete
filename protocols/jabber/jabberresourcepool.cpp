@@ -173,6 +173,10 @@ void JabberResourcePool::clear ()
 
 void JabberResourcePool::lockToResource ( const XMPP::Jid &jid, const XMPP::Resource &resource )
 {
+
+	// remove all existing locks first
+	removeLock ( jid );
+
 	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "Locking " << jid.full() << " to " << resource.name() << endl;
 
 	// find the resource in our dictionary that matches
@@ -205,6 +209,8 @@ void JabberResourcePool::removeLock ( const XMPP::Jid &jid )
 		}
 	}
 
+	kdDebug(JABBER_DEBUG_GLOBAL) << k_funcinfo << "No locks found." << endl;
+
 }
 
 const XMPP::Resource &JabberResourcePool::lockedResource ( const XMPP::Jid &jid )
@@ -215,9 +221,12 @@ const XMPP::Resource &JabberResourcePool::lockedResource ( const XMPP::Jid &jid 
 	{
 		if ( mResource->jid().userHost().lower() == jid.userHost().lower() )
 		{
+			kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Current lock for " << jid.userHost () << " is '" << mResource->resource().name () << "'" << endl;
 			return mResource->resource ();
 		}
 	}
+
+	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "No lock available for " << jid.userHost () << endl;
 
 	// there's no locked resource, return an empty resource
 	return EmptyResource;
