@@ -82,6 +82,13 @@ public:
 
 public slots:
 	/**
+	 * Contact another user.
+	 * Depending on the config settings, call sendMessage() or
+	 * startChat()
+	 */
+	void execute();
+
+	/**
 	 * Send a single message, classic ICQ style.
 	 * The actual sending is done by the KopeteContact, but the meta contact
 	 * does the GUI side of things.

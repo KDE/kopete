@@ -138,6 +138,16 @@ void KopeteMetaContact::startChat()
 		  a simple spinning hour glass animation or something similar to
 		  indicate that messages are still pending.
 	*/
+
+	// FIXME: Implement the above!
+	if( !m_contacts.isEmpty() )
+		m_contacts.first()->execute();
+}
+
+void KopeteMetaContact::execute()
+{
+	// FIXME: Implement, don't hardcode startChat()!
+	startChat();
 }
 
 QString KopeteMetaContact::statusIcon() const
