@@ -1,5 +1,6 @@
 METASOURCES = AUTO
-AM_CPPFLAGS = -I$(top_srcdir)/kopete/libkopete $(all_includes)
+AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII \
+    -I$(top_srcdir)/kopete/libkopete $(all_includes)
 
 noinst_LTLIBRARIES = libkopeteui.la
 noinst_HEADERS = configmodule.h \

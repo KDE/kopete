@@ -1,6 +1,7 @@
 METASOURCES = AUTO
 SUBDIRS = ui
-AM_CPPFLAGS = -I$(srcdir)/ui -I./ui $(all_includes)
+AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII \
+    -I$(srcdir)/ui -I./ui $(all_includes)
 
 lib_LTLIBRARIES = libkopete.la
 
