@@ -158,7 +158,7 @@ class Buffer
 		 * family, subtype, flags, and request ID
 		 */
 		DWORD addSnac(const WORD family, const WORD subtype,
-			const WORD flags, DWORD id);
+			const WORD flags = 0, DWORD id = 0);
 
 		/**
 		 * gets a DWord out of the buffer

@@ -224,7 +224,7 @@ DWORD Buffer::addSnac(const WORD family, const WORD subtype,
 	addWord(family);
 	addWord(subtype);
 	addWord(flags);
-	if (!id)
+	if (id==0)
 		id = KApplication::random();
 	addDWord(id);
 	return (id);
