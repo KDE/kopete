@@ -479,6 +479,14 @@ void ChatView::showMembersList( bool visible )
 		membersDock->undock();
 		membersDock->hide();
 		visibleMembers = false;
+		if ( root )
+		{
+			kdDebug(14000) << "REPAINTING BACKGROUND!" << endl;
+			root->repaint( true );
+		}
+		else
+			kdDebug(14000) << "BACKGROUND NOT REPAINTED!" << endl;
+
 	}
 }
 
