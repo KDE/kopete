@@ -23,6 +23,7 @@
 #include "gaduadd.h"
 #include "gaduaccount.h"
 #include "gaduaddcontactpage.h"
+#include "gaducontact.h"
 
 #include <klocale.h>
 #include <kdebug.h>
@@ -30,6 +31,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
+#include <qcombobox.h>
 #include <krestrictedline.h>
 
 GaduAddContactPage::GaduAddContactPage( GaduAccount* owner, QWidget* parent, const char* name )
@@ -40,10 +42,39 @@ GaduAddContactPage::GaduAddContactPage( GaduAccount* owner, QWidget* parent, con
 	account_	= owner;
 	canAdd_	= true;
 	addUI_->addEdit_->setValidChars( "1234567890" );
+	connect( addUI_->fornameEdit_, SIGNAL( textChanged( const QString &) ), SLOT( recreateStrings( const QString & ) ) );
+	connect( addUI_->snameEdit_, SIGNAL( textChanged( const QString & ) ), SLOT( recreateStrings( const QString & ) ) );
+	connect( addUI_->nickEdit_, SIGNAL( textChanged( const QString & ) ), SLOT( recreateStrings( const QString & ) ) );
+	connect( addUI_->addEdit_, SIGNAL( textChanged( const QString & ) ), SLOT( recreateStrings( const QString & ) ) );
+	addUI_->dnEdit_->insertItem( "" ,0 );
+	addUI_->dnEdit_->insertItem( "", 1 );
+	addUI_->dnEdit_->insertItem( "", 2 );
+	addUI_->dnEdit_->insertItem( "", 3 );
 }
 
 GaduAddContactPage::~GaduAddContactPage()
 {
+}
+
+void
+GaduAddContactPage::recreateStrings( const QString& )
+{
+	// recreate string(s) in dropdown
+	//- Nickname
+	//- Name Surname
+	//- Name
+	//- Surname
+	
+	QString fname = addUI_->fornameEdit_->text();
+	QString sname = addUI_->snameEdit_->text();
+	QString nname = addUI_->nickEdit_->text();
+	QString uname = addUI_->addEdit_->text();
+	
+	addUI_->dnEdit_->changeItem( fname + " " + sname, 0 );
+	addUI_->dnEdit_->changeItem( nname, 1 );
+	addUI_->dnEdit_->changeItem( fname, 2 );
+	addUI_->dnEdit_->changeItem( sname, 3 );
+	
 }
 
 bool
@@ -68,6 +99,9 @@ GaduAddContactPage::apply( KopeteAccount* a , KopeteMetaContact* mc )
 			if ( a->addContact( userid, userid, mc, KopeteAccount::ChangeKABC ) == false ) {
 				return false;
 			}
+			GaduContact *contact = static_cast<GaduContact*>( a->contacts()[ userid ] );
+			contact->setInfo( addUI_->emailEdit_->text(), addUI_->fornameEdit_->text(),
+						addUI_->snameEdit_->text(), addUI_->nickEdit_->text(), addUI_->telephoneEdit_ ->text() );
 		}
 	}
 	else {
