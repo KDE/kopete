@@ -99,7 +99,15 @@ void MSNNotifySocket::disconnect()
 
 	m_keepaliveTimer->stop();
 	
-	MSNAuthSocket::disconnect();
+	dispatchOK=true; // without this MSNNotifySocket will assume that an error has ocurred and display a message box
+	if (m_dispatchSocket)
+		m_dispatchSocket->disconnect();
+
+	// the socket is not connected yet, so I should force the signals
+	if ( onlineStatus() == Disconnected )
+		emit socketClosed(-1);
+	else
+		MSNAuthSocket::disconnect();
 }
 
 void MSNNotifySocket::handleError( uint code, uint id )
