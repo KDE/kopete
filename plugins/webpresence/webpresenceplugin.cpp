@@ -55,7 +55,7 @@
 
 K_EXPORT_COMPONENT_FACTORY( kopete_webpresence, KGenericFactory<WebPresencePlugin> );
 
-	WebPresencePlugin::WebPresencePlugin( QObject *parent, const char *name, const QStringList& /*args*/ )
+WebPresencePlugin::WebPresencePlugin( QObject *parent, const char *name, const QStringList& /*args*/ )
 : KopetePlugin( parent, name )
 {
 	m_prefs = new WebPresencePreferences( "", this );
@@ -169,7 +169,9 @@ KTempFile* WebPresencePlugin::generateFile()
 	}
 
 	// finish off neatly
-	output += h.closeTag() + h.closeTag() + h.closeTag();
+	output += h.closeTag();
+	output += h.closeTag();
+	output += h.closeTag();
 
 	// write our XML
 	*qout << output;
