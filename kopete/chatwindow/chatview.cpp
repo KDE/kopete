@@ -421,7 +421,7 @@ void ChatView::createMembersList()
 		}
 
 		if( membersStatus == Smart )
-			d->visibleMembers = ( m_manager->members().count() > 2 );
+			d->visibleMembers = ( m_manager->members().count() > 1 );
 		else
 			d->visibleMembers = ( membersStatus == Visible );
 
