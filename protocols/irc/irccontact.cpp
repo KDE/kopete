@@ -15,22 +15,13 @@
  *                                                                         *
  ***************************************************************************/
 
-
-
 #include "irccontact.h"
 
-#include "irc_channel_tabwidget.h"
-#include "ircchatview.h"
-#include "ircchatwindow.h"
-//#include "ircprotocol.h"
-#include "ircqueryview.h"
-#include "ircservercontact.h"
-#include "kirc.h"
-#include "kopete.h"
-#include "kopetecontactlist.h"
-#include "kopetemetacontact.h"
-#include "kopeteprotocol.h"
-#include "tabcompleter.h"
+#include <qapplication.h>
+#include <qiconset.h>
+#include <qlayout.h>
+#include <qtextedit.h>
+#include <qvbox.h>
 
 #include <kaction.h>
 #include <kconfig.h>
@@ -41,10 +32,16 @@
 #include <kmessagebox.h>
 #include <ksimpleconfig.h>
 
-#include <qiconset.h>
-#include <qlayout.h>
-#include <qtextedit.h>
-#include <qvbox.h>
+#include "irc_channel_tabwidget.h"
+#include "ircchatview.h"
+#include "ircchatwindow.h"
+#include "ircqueryview.h"
+#include "ircservercontact.h"
+#include "kirc.h"
+#include "kopetecontactlist.h"
+#include "kopetemetacontact.h"
+#include "kopeteprotocol.h"
+#include "tabcompleter.h"
 
 IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, KopeteProtocol *protocol)
 	: KopeteContact(protocol, parent),
@@ -445,15 +442,7 @@ void IRCContact::slotMovedToMetaContact()
 	connect (metaContact() , SIGNAL( aboutToSave(KopeteMetaContact*) ), protocol(), SLOT (serialize(KopeteMetaContact*) ));
 }
 
-
 #include "irccontact.moc"
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
-// vim: set noet ts=4 sts=4 sw=4:
 
+// vim: set noet ts=4 sts=4 sw=4:
 

@@ -15,6 +15,12 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "ircprotocol.h"
+
+#include <qapplication.h>
+#include <qcursor.h>
+#include <qregexp.h>
+
 #include <kaction.h>
 #include <kconfig.h>
 #include <kdebug.h>
@@ -27,10 +33,6 @@
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 
-#include <qcursor.h>
-#include <qregexp.h>
-
-#include "ircprotocol.h"
 #include "ircadd.h"
 #include "ircaddcontactpage.h"
 #include "ircchatview.h"
@@ -42,7 +44,6 @@
 #include "ircchatwindow.h"
 #include "ircconsoleview.h"
 #include "tabcompleter.h"
-#include "kopete.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 
@@ -318,5 +319,4 @@ void IRCProtocol::importOldContactList()
 #include "ircprotocol.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
-
 
