@@ -1426,8 +1426,12 @@ void JabberAccount::slotSubscription (const XMPP::Jid & jid, const QString & typ
 
 			default:
 				/*
-				 * We want to leave the contact in our contact list, so do nothing.
+				 * We want to leave the contact in our contact list.
+				 * In this case, we need to delete all the resources
+				 * we have for it, as the Jabber server won't signal us
+				 * that the contact is offline now.
 				 */
+				resourcePool()->removeAllResources ( jid );
 				break;
 
 		}
