@@ -181,7 +181,7 @@ QString KopeteGroupViewItem::key( int, bool ) const
 	return "M" + d->name->text();
 }
 
-void KopeteGroupViewItem::startRename( int col )
+void KopeteGroupViewItem::startRename( int /*col*/ )
 {
 	//kdDebug(14000) << k_funcinfo << endl;
 	KListViewItem::startRename( 0 );
