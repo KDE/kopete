@@ -35,7 +35,6 @@
 #include "kopeteview.h"
 
 #include "translatorplugin.h"
-#include "translatorprefs.h"
 #include "translatordialog.h"
 #include "translatorguiclient.h"
 #include "translatorlanguages.h"
@@ -109,20 +108,20 @@ void TranslatorPlugin::loadSettings()
 
 	if (config->readBoolEntry("IncomingDontTranslate", true))
 		mode = 0;
-	if (config->readBoolEntry("IncomingShowOriginal", false))
+	else if (config->readBoolEntry("IncomingShowOriginal", false))
 		mode = 1;
-	if (config->readBoolEntry("IncomingTranslate", false))
+	else if (config->readBoolEntry("IncomingTranslate", false))
 		mode = 2;
 
 	m_incomingMode = mode;
 
 	if (config->readBoolEntry("OutgoingDontTranslate", true))
 		mode = 0;
-	if (config->readBoolEntry("OutgoingShowOriginal", false))
+	else if (config->readBoolEntry("OutgoingShowOriginal", false))
 		mode = 1;
-	if (config->readBoolEntry("OutgoingTranslate", false))
+	else if (config->readBoolEntry("OutgoingTranslate", false))
 		mode = 2;
-	if (config->readBoolEntry("OutgoingAsk", false))
+	else if (config->readBoolEntry("OutgoingAsk", false))
 		mode = 3;
 
 	m_outgoingMode = mode;

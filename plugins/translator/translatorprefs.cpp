@@ -1,11 +1,9 @@
 /*
-    translatorprefs.cpp
-
-    Kopete Translator plugin
+    translatorprefs.cpp - Kopete Translator plugin
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett   <duncan@kde.org>
-
-    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -18,76 +16,37 @@
 */
 
 
-#include "translatorprefs.moc"
-#include "translatorprefsbase.h"
-#include "translatorplugin.h"
-#include "translatorlanguages.h"
-
-#include <qlayout.h>
-#include <kautoconfig.h>
 #include <kgenericfactory.h>
-#include <kglobal.h>
-#include <kdebug.h>
-#include <qbuttongroup.h>
-
-typedef KGenericFactory<TranslatorPreferences> TranslatorPreferencesFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kopete_translator, TranslatorPreferencesFactory( "kcm_kopete_translator" )  );
+#include <kcautoconfigmodule.h>
+#include "translatorprefsbase.h"
+#include "translatorlanguages.h"
+#include <qcombobox.h>
 
 
-TranslatorPreferences::TranslatorPreferences(QWidget* parent, const char* /*name*/, const QStringList &args)
-							: KCModule( TranslatorPreferencesFactory::instance(), parent, args)
+class TranslatorPreferences;
+typedef KGenericFactory<TranslatorPreferences> TranslatorConfigFactory;
+K_EXPORT_COMPONENT_FACTORY( kcm_kopete_translator, TranslatorConfigFactory( "kcm_kopete_translator" ) )
+
+class TranslatorPreferences : public KCAutoConfigModule
 {
-	( new QVBoxLayout( this ) )->setAutoAdd( true );
+public:
+	TranslatorPreferences( QWidget *parent = 0, const char * = 0, const QStringList &args = QStringList() ) : KCAutoConfigModule( TranslatorConfigFactory::instance(), parent, args )
+	{
+		TranslatorPrefsUI *preferencesDialog = new TranslatorPrefsUI(this);
 
-	preferencesDialog = new TranslatorPrefsUI(this);
-	languages = new TranslatorLanguages;
+		TranslatorLanguages languages;
+		QMap<QString,QString>::ConstIterator i;
+		QMap<QString,QString> m;
 
-	QMap<QString,QString>::ConstIterator i;
-	QMap<QString,QString> m;
+		m = languages.languagesMap();
+		for ( i = m.begin(); i != m.end() ; ++i )
+			preferencesDialog->myLang->insertItem( i.data(), languages.languageIndex(i.key()) );
 
-	m = languages->languagesMap();
-	for ( i = m.begin(); i != m.end() ; ++i )
-		preferencesDialog->myLang->insertItem( i.data(), languages->languageIndex(i.key()) );
+		m = languages.servicesMap();
+		for ( i = m.begin(); i != m.end() ; ++i )
+			preferencesDialog->Service->insertItem( i.data(), languages.serviceIndex(i.key()) );
 
-	m = languages->servicesMap();
-	for ( i = m.begin(); i != m.end() ; ++i )
-		preferencesDialog->Service->insertItem( i.data(), languages->serviceIndex(i.key()) );
-
-	//KAutoConfig Stuff
-	kautoconfig = new KAutoConfig(KGlobal::config(), this, "kautoconfig");
-	connect(kautoconfig, SIGNAL(widgetModified()), SLOT(widgetModified()));
-	connect(kautoconfig, SIGNAL(settingsChanged()), SLOT(widgetModified()));
-	kautoconfig->addWidget(preferencesDialog, "Cryptography Plugin");
-	kautoconfig->retrieveSettings(true);
-
-}
-
-TranslatorPreferences::~TranslatorPreferences()
-{
-	delete kautoconfig;
-}
-
-void TranslatorPreferences::widgetModified()
-{
-	setChanged(kautoconfig->hasChanged());
-}
-
-void TranslatorPreferences::defaults()
-{
-	kautoconfig->resetSettings();
-}
-
-void TranslatorPreferences::save()
-{
-	kautoconfig->saveSettings();
-}
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
-// vim: set noet ts=4 sts=4 sw=4:
+		setMainWidget( preferencesDialog , "Translator Plugin");
+	}
+};
 

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>TranslatorPrefsUI</class>
 <author>Duncan Mac-Vicar P.</author>
 <widget class="QWidget">
@@ -80,6 +80,9 @@
                     <property name="text">
                         <string>Don't translate</string>
                     </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
                     <property name="buttonGroupId">
                         <number>0</number>
                     </property>
@@ -90,6 +93,9 @@
                     </property>
                     <property name="text">
                         <string>Show the original message</string>
+                    </property>
+                    <property name="checked">
+                        <bool>false</bool>
                     </property>
                     <property name="buttonGroupId">
                         <number>1</number>
@@ -126,6 +132,9 @@
                     <property name="text">
                         <string>Don't translate</string>
                     </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
                     <property name="buttonGroupId">
                         <number>0</number>
                     </property>
@@ -136,6 +145,9 @@
                     </property>
                     <property name="text">
                         <string>Show the original message</string>
+                    </property>
+                    <property name="checked">
+                        <bool>false</bool>
                     </property>
                     <property name="buttonGroupId">
                         <number>1</number>
