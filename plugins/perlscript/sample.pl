@@ -20,8 +20,10 @@ sub OutgoingMessage
 		$messageFg = "green";
 	}
 	
-	#Return array format is ("Background Color", "Foreground Color", "Message Text")
-	return ($messageBg, $messageFg, $messageText);
+	#Return array format is ("Message Text", "Foreground Color", "Background Color")
+	#If you do not want to modify a paramater return empty string, or dont return anything
+	
+	return ($messageText, $messageFg, $messageBg);
 }
 
 sub ContactContextMenu

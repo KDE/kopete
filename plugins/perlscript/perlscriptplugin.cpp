@@ -280,7 +280,7 @@ void PerlPlugin::executeScript( const QString &scriptText, const QString &subNam
 
 		tmpStr = QString::fromLocal8Bit( POPp ).stripWhiteSpace();
 		if( !tmpStr.isNull() && !tmpStr.isEmpty() )
-			msg->setBody( tmpStr );
+			msg->setBg( QColor(tmpStr) );
 		
 		tmpStr = QString::fromLocal8Bit( POPp ).stripWhiteSpace();
 		if( !tmpStr.isNull() && !tmpStr.isEmpty() )
@@ -288,7 +288,8 @@ void PerlPlugin::executeScript( const QString &scriptText, const QString &subNam
 		
 		tmpStr = QString::fromLocal8Bit( POPp ).stripWhiteSpace();
 		if( !tmpStr.isNull() && !tmpStr.isEmpty() )
-			msg->setBg( QColor(tmpStr) );
+			msg->setBody( tmpStr );
+		
 	}
 	PUTBACK;
 	FREETMPS;					//free that return value
