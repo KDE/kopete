@@ -808,18 +808,24 @@ void ChatView::messageSentSuccessfully()
 void ChatView::slotTextChanged()
 {
 	QString txt = m_edit->text();
-	txt = txt.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null ).stripWhiteSpace();
-	m_mainWindow->setSendEnabled( !txt.isEmpty() );
+	if(editpart) //remove all <p><br> and other html tags
+		txt.replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::null );
 
-	// And they were previously typing
-	if( !m_typingRepeatTimer->isActive() )
+	bool typing=!txt.stripWhiteSpace().isEmpty();
+	m_mainWindow->setSendEnabled( typing );
+
+	if(typing)
 	{
-		m_typingRepeatTimer->start( 4000, false );
-		slotRepeatTimer();
-	}
+		// And they were previously typing
+		if( !m_typingRepeatTimer->isActive() )
+		{
+			m_typingRepeatTimer->start( 4000, false );
+			slotRepeatTimer();
+		}
 
-	// Reset the stop timer again, regardless of status
-	m_typingStopTimer->start( 4000, true );
+		// Reset the stop timer again, regardless of status
+		m_typingStopTimer->start( 4500, true );
+	}
 }
 
 void ChatView::historyUp()
