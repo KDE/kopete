@@ -27,7 +27,7 @@ SetStatusTask::~SetStatusTask()
 
 void SetStatusTask::status( const uint newStatus, const QString &awayMessage, const QString &autoReply )
 {
-	if ( newStatus < NM_STATUS_UNKNOWN || newStatus > NM_STATUS_INVALID )
+	if ( newStatus > NM_STATUS_INVALID )
 	{
 		setError( 1, "Invalid Status" );
 		return;
@@ -41,7 +41,6 @@ void SetStatusTask::status( const uint newStatus, const QString &awayMessage, co
 	if ( !autoReply.isNull() )
 		lst.append( new Field::SingleField( NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_TYPE_UTF8, autoReply ) );
 	setStatus->setFields( lst );
-	setTransactionId( setStatus->transactionId() );
 	setTransfer( setStatus );
 }
 
@@ -50,3 +49,5 @@ void SetStatusTask::onGo()
 	//cout << "SetStatusTask::onGo() - sending status fields" << endl;
 	send( static_cast<Request *>( transfer() ) );
 }
+
+#include "setstatustask.moc"

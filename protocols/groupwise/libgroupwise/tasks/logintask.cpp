@@ -37,7 +37,6 @@ void LoginTask::initialise()
 	lst.append( new Field::SingleField( NM_A_UD_BUILD, 0, NMFIELD_TYPE_UDWORD, 2 ) );
 	lst.append( new Field::SingleField( NM_A_IP_ADDRESS, 0, NMFIELD_TYPE_UTF8, client()->ipAddress() ) );
 	loginRequest->setFields( lst );
-	setTransactionId( loginRequest->transactionId() );
 	setTransfer( loginRequest );
 }
 

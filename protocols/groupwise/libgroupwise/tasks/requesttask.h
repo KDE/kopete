@@ -24,7 +24,7 @@ Q_OBJECT
 		RequestTask( Task *parent );
 	protected:
 		bool forMe( Transfer * transfer ) const;
-		void setTransactionId( const int transactionId );
+		void setTransfer( Transfer * transfer );
 	private:
 		int m_transactionId;
 };

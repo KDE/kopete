@@ -19,6 +19,7 @@
 */
 class SetStatusTask : public RequestTask
 {
+Q_OBJECT
 public:
 	SetStatusTask(Task* parent);
 	void status( const uint newStatus, const QString &awayMessage, const QString &autoReply );

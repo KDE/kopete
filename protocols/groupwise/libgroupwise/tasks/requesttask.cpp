@@ -11,6 +11,7 @@
 //
 
 #include "gwfield.h"
+#include "request.h"
 #include "response.h"
 
 #include "requesttask.h"
@@ -27,9 +28,11 @@ bool RequestTask::forMe( Transfer * transfer ) const
 	return (theResponse && theResponse->transactionId() == m_transactionId );
 }
 
-void RequestTask::setTransactionId( const int transactionId )
+
+void RequestTask::setTransfer( Transfer * transfer )
 {
-	m_transactionId = transactionId;
+	m_transactionId = static_cast<Request *>(transfer)->transactionId();
+	Task::setTransfer( transfer );
 }
 
 #include "requesttask.moc"
