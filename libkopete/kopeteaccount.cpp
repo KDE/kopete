@@ -36,6 +36,8 @@
 #include "kopetepluginmanager.h"
 
 #if KDE_IS_VERSION( 3, 1, 90 )
+// KMessageBox is only used in the KWallet code path
+#include <kmessagebox.h>
 #include <kwallet.h>
 #endif
 
@@ -287,28 +289,43 @@ void KopeteAccount::setPassword( const QString &pass )
 {
 #if KDE_IS_VERSION( 3, 1, 90 )
 	kdDebug( 14010 ) << k_funcinfo << endl;
-	KWallet::Wallet *wallet =
-		KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), KWallet::Wallet::Synchronous );
 
-	if ( wallet )
+	if ( KWallet::Wallet::isEnabled() )
 	{
-		if ( !wallet->hasFolder( QString::fromLatin1( "Kopete" ) ) )
-			wallet->createFolder( QString::fromLatin1( "Kopete" ) );
+		KWallet::Wallet *wallet =
+			KWallet::Wallet::openWallet( KWallet::Wallet::NetworkWallet(), KWallet::Wallet::Synchronous );
 
-		if ( wallet->setFolder( QString::fromLatin1( "Kopete" ) ) &&
-			wallet->writePassword( configGroup(), pass ) == 0 )
+		if ( wallet )
 		{
-			// Remove any pass from KConfig if it is still there
-			if ( !d->password.isNull() )
+			if ( !wallet->hasFolder( QString::fromLatin1( "Kopete" ) ) )
+				wallet->createFolder( QString::fromLatin1( "Kopete" ) );
+
+			if ( wallet->setFolder( QString::fromLatin1( "Kopete" ) ) &&
+				wallet->writePassword( configGroup(), pass ) == 0 )
 			{
-				KConfig *config = KGlobal::config();
-				config->setGroup( configGroup() );
+				// Remove any pass from KConfig if it is still there
+				if ( !d->password.isNull() )
+				{
+					KConfig *config = KGlobal::config();
+					config->setGroup( configGroup() );
 
-				config->deleteEntry( "Password" );
-				config->sync();
+					config->deleteEntry( "Password" );
+					config->sync();
 
-				d->password = QString::null;
+					d->password = QString::null;
+				}
+				return;
 			}
+		}
+
+		// If we end up here, the wallet is enabled, but failed somehow.
+		// Ask the user what to do now.
+		if ( KMessageBox::warningContinueCancel( qApp->mainWidget(),
+			i18n( "<qt>Kopete is unable to save your password securely in your wallet!<br>"
+			"Do you want to want to save the password in the <b>unsafe</b> configuration file instead?</qt>" ),
+			i18n( "Unable to store secure password - Kopete" ),
+			KGuiItem( i18n( "Store &Unsafe" ), QString::fromLatin1( "unlock" ) ) ) != KMessageBox::Continue )
+		{
 			return;
 		}
 	}
