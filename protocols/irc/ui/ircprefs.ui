@@ -9,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>653</width>
-            <height>344</height>
+            <width>509</width>
+            <height>336</height>
         </rect>
     </property>
     <property name="caption">
@@ -92,7 +92,7 @@
                                 </property>
                             </widget>
                             <spacer row="0" column="3">
-                                <property name="name" stdset="0">
+                                <property name="name">
                                     <cstring>Spacer1</cstring>
                                 </property>
                                 <property name="orientation">
@@ -101,15 +101,9 @@
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
                                 </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
                             </spacer>
                             <spacer row="1" column="2" rowspan="1" colspan="4">
-                                <property name="name" stdset="0">
+                                <property name="name">
                                     <cstring>Spacer2</cstring>
                                 </property>
                                 <property name="orientation">
@@ -117,12 +111,6 @@
                                 </property>
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>20</height>
-                                    </size>
                                 </property>
                             </spacer>
                             <widget class="QCheckBox" row="0" column="4">
@@ -134,7 +122,7 @@
                                 </property>
                             </widget>
                             <spacer row="0" column="5">
-                                <property name="name" stdset="0">
+                                <property name="name">
                                     <cstring>Spacer3</cstring>
                                 </property>
                                 <property name="orientation">
@@ -142,12 +130,6 @@
                                 </property>
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>20</height>
-                                    </size>
                                 </property>
                             </spacer>
                         </grid>
@@ -213,7 +195,7 @@
                                 </property>
                             </widget>
                             <spacer row="1" column="2">
-                                <property name="name" stdset="0">
+                                <property name="name">
                                     <cstring>Spacer4</cstring>
                                 </property>
                                 <property name="orientation">
@@ -222,15 +204,9 @@
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
                                 </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
                             </spacer>
                             <spacer row="2" column="2">
-                                <property name="name" stdset="0">
+                                <property name="name">
                                     <cstring>Spacer5</cstring>
                                 </property>
                                 <property name="orientation">
@@ -239,17 +215,11 @@
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
                                 </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
                             </spacer>
                         </grid>
                     </widget>
                     <spacer>
-                        <property name="name" stdset="0">
+                        <property name="name">
                             <cstring>Spacer39</cstring>
                         </property>
                         <property name="orientation">
@@ -257,12 +227,6 @@
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>20</height>
-                            </size>
                         </property>
                     </spacer>
                 </vbox>
@@ -342,7 +306,7 @@
                                 </property>
                             </widget>
                             <spacer row="3" column="0" rowspan="1" colspan="2">
-                                <property name="name" stdset="0">
+                                <property name="name">
                                     <cstring>Spacer13</cstring>
                                 </property>
                                 <property name="orientation">
@@ -350,12 +314,6 @@
                                 </property>
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>20</height>
-                                    </size>
                                 </property>
                             </spacer>
                             <widget class="QLabel" row="3" column="2" rowspan="1" colspan="3">
@@ -370,7 +328,7 @@
                                 </property>
                             </widget>
                             <spacer row="3" column="5">
-                                <property name="name" stdset="0">
+                                <property name="name">
                                     <cstring>Spacer15</cstring>
                                 </property>
                                 <property name="orientation">
@@ -379,15 +337,9 @@
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
                                 </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
                             </spacer>
                             <spacer row="2" column="4" rowspan="1" colspan="2">
-                                <property name="name" stdset="0">
+                                <property name="name">
                                     <cstring>Spacer14</cstring>
                                 </property>
                                 <property name="orientation">
@@ -395,12 +347,6 @@
                                 </property>
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>20</height>
-                                    </size>
                                 </property>
                             </spacer>
                             <widget class="KColorButton" row="2" column="3">
@@ -419,7 +365,7 @@
                                 </property>
                             </widget>
                             <spacer row="2" column="2">
-                                <property name="name" stdset="0">
+                                <property name="name">
                                     <cstring>Spacer16</cstring>
                                 </property>
                                 <property name="orientation">
@@ -438,7 +384,7 @@
                         </grid>
                     </widget>
                     <spacer>
-                        <property name="name" stdset="0">
+                        <property name="name">
                             <cstring>Spacer37</cstring>
                         </property>
                         <property name="orientation">
@@ -446,12 +392,6 @@
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>20</height>
-                            </size>
                         </property>
                     </spacer>
                 </vbox>
@@ -463,7 +403,7 @@
                 <attribute name="title">
                     <string>Output Control</string>
                 </attribute>
-                <vbox>
+                <grid>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
@@ -473,7 +413,7 @@
                     <property name="spacing">
                         <number>6</number>
                     </property>
-                    <widget class="QButtonGroup">
+                    <widget class="QButtonGroup" row="0" column="0">
                         <property name="name">
                             <cstring>ButtonGroup1</cstring>
                         </property>
@@ -522,7 +462,7 @@
                             </widget>
                         </grid>
                     </widget>
-                    <widget class="QGroupBox">
+                    <widget class="QGroupBox" row="1" column="0">
                         <property name="name">
                             <cstring>GroupBox4</cstring>
                         </property>
@@ -557,8 +497,59 @@
                             </widget>
                         </grid>
                     </widget>
-                    <spacer>
-                        <property name="name" stdset="0">
+                    <widget class="QGroupBox" row="2" column="0">
+                        <property name="name">
+                            <cstring>GroupBox6</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Logging:</string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>11</number>
+                            </property>
+                            <property name="spacing">
+                                <number>6</number>
+                            </property>
+                            <widget class="QCheckBox" row="1" column="0">
+                                <property name="name">
+                                    <cstring>chkLogQuery</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Query sessions</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="0" column="1">
+                                <property name="name">
+                                    <cstring>chkLogDcc</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>DCC CHAT sessions</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="1" column="1">
+                                <property name="name">
+                                    <cstring>chkLogServers</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Server console windows</string>
+                                </property>
+                            </widget>
+                            <widget class="QCheckBox" row="0" column="0">
+                                <property name="name">
+                                    <cstring>chkLogChans</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Channel sessions</string>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <spacer row="3" column="0">
+                        <property name="name">
                             <cstring>Spacer38</cstring>
                         </property>
                         <property name="orientation">
@@ -567,14 +558,8 @@
                         <property name="sizeType">
                             <enum>Expanding</enum>
                         </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>20</height>
-                            </size>
-                        </property>
                     </spacer>
-                </vbox>
+                </grid>
             </widget>
             <widget class="QWidget">
                 <property name="name">
@@ -621,7 +606,7 @@
                         </hbox>
                     </widget>
                     <spacer>
-                        <property name="name" stdset="0">
+                        <property name="name">
                             <cstring>Spacer40</cstring>
                         </property>
                         <property name="orientation">
@@ -629,12 +614,6 @@
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>20</height>
-                            </size>
                         </property>
                     </spacer>
                 </vbox>

@@ -30,6 +30,10 @@ IRCPreferences::IRCPreferences(const QString &pixmap,QObject *parent)
 	preferencesDialog->useMDI->setChecked(KGlobal::config()->readBoolEntry("UseMDI", true));
 	preferencesDialog->chkMinimizeQueries->setChecked(KGlobal::config()->readBoolEntry("MinimizeNewQueries", false));
 	preferencesDialog->chkHideConsole->setChecked(KGlobal::config()->readBoolEntry("HideConsole", false));
+	preferencesDialog->chkLogChans->setChecked(KGlobal::config()->readBoolEntry("LogChannels", true));
+	preferencesDialog->chkLogQuery->setChecked(KGlobal::config()->readBoolEntry("LogQueries", true));
+	preferencesDialog->chkLogDcc->setChecked(KGlobal::config()->readBoolEntry("LogDcc", false));
+	preferencesDialog->chkLogServers->setChecked(KGlobal::config()->readBoolEntry("LogServers", false));
 	if (preferencesDialog->useMDI->isChecked() == false)
 	{
 		preferencesDialog->useSDI->setChecked(KGlobal::config()->readBoolEntry("UseSDI", false));
@@ -70,6 +74,10 @@ void IRCPreferences::save()
 	config->writeEntry("UseSDI", preferencesDialog->useSDI->isChecked());
 	config->writeEntry("MinimizeNewQueries", preferencesDialog->chkMinimizeQueries->isChecked());
 	config->writeEntry("HideConsole", preferencesDialog->chkHideConsole->isChecked());
+	config->writeEntry("LogChannels", preferencesDialog->chkLogChans->isChecked());
+	config->writeEntry("LogQueries", preferencesDialog->chkLogQuery->isChecked());
+	config->writeEntry("LogDcc", preferencesDialog->chkLogDcc->isChecked());
+	config->writeEntry("LogServers", preferencesDialog->chkLogServers->isChecked());
 	if (preferencesDialog->phraseHighlight->text().isEmpty() == false)
 	{
 		config->writeEntry("HighlightPhrase", preferencesDialog->phraseHighlight->text());

@@ -33,6 +33,7 @@ DCCClient::DCCClient(QHostAddress host, unsigned int port, unsigned int size, Ty
 	mHost = host;
 	mPort = port;
 	mSize = size;
+	mFile = 0L;
 	connect(this, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
 	if (mType == Chat)
 	{
