@@ -8,4 +8,83 @@ KopeteMessage should be reorganised to use QDomDocument to store its
 contents.
 
 Some sort of async message processing API needs to be designed and implemented
+Richard's proposal: (email questions to the list or to kde@metafoo.co.uk)
 - how do we order the various message filters available properly?
+  they give us a processing stage, and an offset within that stage. the
+  stages will be something like:
+   for an incoming message:
+      - Start     - message was just received (History)
+      - ToSent    - convert from received format to sent format (GPG)
+      - ToDesired - convert to how the user wants the message (Translator, AutoReplace)
+         ToDesired+Before - Highlight
+      - Format    - decorate the message (without changing the content) (Links, Emoticons, TextEffect)
+      - Finished  - message is now ready for display (ChatWindow / MessageQueue)
+   for an outgoing message:
+      - Start     - user just hit Send
+      - Parse     - process commands (CommandHandler, Alias, Now Listening)
+         Parse+After - History
+      - ToDesired - convert to how the user wanted to send (Translator, AutoReplace)
+      - Format    - decorate the message (without changing the content) (TextEffect)
+      - ToSent    - convert to the format to send in (GPG)
+      - Finished  - message is now ready for sending (Protocols)
+   There should be a number of offsets defined for when to do the
+   processing, within a stage, such as:
+      - Before    - before any other processing in this stage
+      - VeryEarly
+      - Early
+      - Normal
+      - Late
+      - VeryLate
+      - After     - after any other processing in this stage
+- how do we construct a set of message filters for a particular message
+  manager?
+   - message filters register themselves with the filter manager, with a
+     message direction, a stage and an offset within that stage.
+   - each registered message filter factory gets queried (in stage/offset
+     order) by the object creating the filter chain. it either returns a
+     new filter for the chain, or returns NULL (meaning this filter is not
+     needed in this chain).
+   - the signals in one filter are connected to the slots in the next. any
+     sent/received message is handed to the first filter in the appropriate
+     chain.
+- how long does a filter chain live for?
+   - it's created when it's first needed (when a message is sent / received
+     and no chain already exists to process it, or when a chatwindow is
+     opened)
+   - it's reference counted
+   - the MessageQueue / ChatWindow holds a reference to its chains
+   - the chain knows how many messages are in it (the messages unregister
+     themselves when they're destroyed)
+   - this makes it trivial to implement 65803 - stay in chatwindows when no
+     window is open - just make the Kopete::Contact hold a reference to the
+     receive chain
+- interactions with the chat manager
+   - the chat manager (or possibly just 'chat') is an abstraction for a
+     conversation between our client/user and some other computer/user. it's
+     a bit like the message manager we have now, but more sophisticated.
+   - the send and receive chains are fundamentally linked - they are owned
+     by the same chat manager (which has a chainFor(MessageDirection)
+     function)
+   - when a chain's reference count drops to 0, it stays alive until
+     all the messages in it have been processed, but calls to
+     chainFor(Outgoing) will create a new chain. if we want, we can
+     guarantee messages from the old chain get sent over the wire before
+     ones from the new chain, but it's probably not essential.
+- interactions with a chat view
+   - the ChatWindow component above is actually the ChatWindowFilter. it's
+     owned by the filter chain, and so should not be a QWidget.
+   - when a chat view is closed, it drops its reference to the various
+     message chains. but the receive chain will still exist if there's an
+     incoming message that's still being processed. therefore:
+   - the chatwindow prompts you if you ask it to be closed and there are
+     messages left in its receive chain
+   - the chatwindow filter will *drop* messages that reach it if there's no
+     chatview available to send them to. but that's ok since the user will
+     already have been prompted about this.
+- problems with this design
+   - when the receive chain is closed (refcount drops to 0), it's not
+     necessarily the case that messages in it still need to be processed.
+     for instance, if you don't use the History plugin, or all the messages
+     are already past it, it probably doesn't matter if they're dropped. we
+     should somehow allow the filters to prevent destruction of the part of
+     the chain before them, and if none of them does, destroy it.
