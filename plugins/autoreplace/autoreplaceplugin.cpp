@@ -93,11 +93,13 @@ void AutoReplacePlugin::slotAutoReplaceIncomingMessage( KopeteMessage & msg )
 
 void AutoReplacePlugin::slotAddDot( KopeteMessage & msg )
 {
+	if( msg.direction() != KopeteMessage::Outbound || !m_prefs->getAddDot() )
+		return;
+	
 	QString replaced_message = msg.plainBody();
 	// eventually add . at the end of the lines, sent lines only
-	if( m_prefs->getAddDot() )
-		replaced_message.replace(QRegExp( "([a-z])$" ), "\\1." );
-//		replaced_message.replace(QRegExp( "([\\w])$" ), "\\1." );
+	replaced_message.replace(QRegExp( "([a-z])$" ), "\\1." );
+//	replaced_message.replace(QRegExp( "([\\w])$" ), "\\1." );
 	
 	// the message is now the one with replaced words
 	msg.setBody( replaced_message, KopeteMessage::PlainText );
@@ -105,11 +107,13 @@ void AutoReplacePlugin::slotAddDot( KopeteMessage & msg )
 
 void AutoReplacePlugin::slotCapitolize( KopeteMessage & msg )
 {
+	if( msg.direction() != KopeteMessage::Outbound || !m_prefs->getUpper() )
+		return;
+	
 	QString replaced_message = msg.plainBody();
 	// eventually start each sent line with capital letter
 	// TODO 	". "	 "? "	 "! " 
-	if( m_prefs->getUpper() )
-		replaced_message[0] = replaced_message.at( 0 ).upper();
+	replaced_message[0] = replaced_message.at( 0 ).upper();
 	
 	// the message is now the one with replaced words
 	msg.setBody( replaced_message, KopeteMessage::PlainText );
