@@ -350,7 +350,7 @@ void CoreProtocol::readEvent( const QByteArray& wire, int bytesRead )
 	QByteArray remainder( wire.size() - bytesRead );
 	memcpy( remainder.data(), wire.data() + bytesRead, wire.size() - bytesRead );
 	//HACK: lowercased DN
-	m_inTransfer = new EventTransfer( m_collatingEvent, source.lower(), QTime::currentTime(), remainder );
+	m_inTransfer = new EventTransfer( m_collatingEvent, source.lower(), QDateTime::currentDateTime(), remainder );
 	m_collatingEvent = 0;
 }
 
