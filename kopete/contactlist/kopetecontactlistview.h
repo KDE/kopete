@@ -84,7 +84,6 @@ protected:
 
 	virtual bool acceptDrag(QDropEvent *e) const;
 	virtual QDragObject *dragObject();
-	KopeteContact *contactFromMetaContactLVI( KopeteMetaContactLVI *i ) const;
 
 private slots:
 	void slotContextMenu(KListView*,QListViewItem *item, const QPoint &point );
@@ -139,7 +138,6 @@ private:
 	QRect m_onItem;
 
 	QPoint m_startDragPos;
-
 };
 
 #endif

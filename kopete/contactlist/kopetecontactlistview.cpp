@@ -837,16 +837,6 @@ void KopeteContactListView::slotContactStatusChanged( KopeteMetaContact *mc )
 	m_offlineItem->setText(0,i18n("Offline contacts (%1)").arg(m_offlineItem->childCount()));
 }
 
-
-KopeteContact *KopeteContactListView::contactFromMetaContactLVI( KopeteMetaContactLVI *i ) const
-{
-	int px = m_startDragPos.x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
-		treeStepSize() * ( i->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
-	int py = m_startDragPos.y() - itemRect( i ).y();
-	return i->getContactFromIcon( QPoint( px, py ) ) ;
-}
-
-
 void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/, QListViewItem *after)
 {
 	if(!acceptDrag(e))
@@ -860,9 +850,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/
 	KopeteContact *source_contact=0L;
 
 	if(source_metaLVI)
-	{
-		source_contact = contactFromMetaContactLVI( source_metaLVI );
-	}
+		source_contact = source_metaLVI->getContactFromIcon( m_startDragPos );
 
 	if(source_metaLVI  && dest_groupLVI)
 	{
@@ -940,9 +928,10 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/
 		KURL::List urlList;
 		KURLDrag::decode( e, urlList );
 
-		int px = e->pos().x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
+		QPoint p=contentsToViewport(e->pos());
+		int px = p.x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
 			treeStepSize() * ( dest_metaLVI->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
-		int py = e->pos().y() - itemRect( dest_metaLVI ).y();
+		int py = p.y() - itemRect( dest_metaLVI ).y();
 		KopeteContact *c = dest_metaLVI->getContactFromIcon( QPoint( px, py ) ) ;
 
 		for ( KURL::List::Iterator it = urlList.begin(); it != urlList.end(); ++it )
@@ -979,9 +968,7 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 		KopeteContact *source_contact=0L;
 
 		if(source_metaLVI)
-		{
-			source_contact = contactFromMetaContactLVI( source_metaLVI );
-		}
+			source_contact = source_metaLVI->getContactFromIcon( m_startDragPos );
 
 		if( source_metaLVI && dest_groupLVI && !source_contact) //we are moving a metacontact to another group
 		{
@@ -1004,6 +991,8 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 		}
 		else if(source_contact && dest_metaLVI) //we are moving a contact to another metacontact
 		{
+			if(source_contact->metaContact() == dest_metaLVI->metaContact() )
+				return false;
 			if(dest_metaLVI->metaContact()->isTemporary())
 				return false;
 			if(source_metaLVI->metaContact()->isTemporary())
@@ -1040,9 +1029,10 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 	{
 		if ( e->provides( "text/uri-list" )  && dest_metaLVI && dest_metaLVI->metaContact()->canAcceptFiles() )
 		{ //we are sending a file
-			int px = e->pos().x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
+			QPoint p=contentsToViewport(e->pos());
+			int px = p.x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
 				treeStepSize() * ( dest_metaLVI->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
-			int py = e->pos().y() - itemRect( dest_metaLVI ).y();
+			int py = p.y() - itemRect( dest_metaLVI ).y();
 			KopeteContact *c = dest_metaLVI->getContactFromIcon( QPoint( px, py ) ) ;
 			if(c)
 				return c->canAcceptFiles();
@@ -1056,13 +1046,23 @@ bool KopeteContactListView::acceptDrag(QDropEvent *e) const
 
 void KopeteContactListView::contentsMousePressEvent( QMouseEvent *e )
 {
-	if (e->button() == LeftButton)
-	{
-		//Maybe we are starting a drag?
-		//memorize the position to know later if the user move a small contacticon
-		m_startDragPos = e->pos();
-	}
 	KListView::contentsMousePressEvent( e );
+	if (e->button() == LeftButton )
+	{
+		QPoint p=contentsToViewport(e->pos());
+		QListViewItem *i=itemAt( p );
+		if( i )
+		{
+			//Maybe we are starting a drag?
+			//memorize the position to know later if the user move a small contacticon
+
+			int px = p.x() - ( header()->sectionPos( header()->mapToIndex( 0 ) ) +
+				treeStepSize() * ( i->depth() + ( rootIsDecorated() ? 1 : 0 ) ) + itemMargin() );
+			int py = p.y() - itemRect( i ).y();
+
+			m_startDragPos = QPoint( px , py );
+		}
+	}
 }
 
 
@@ -1211,8 +1211,8 @@ QDragObject *KopeteContactListView::dragObject()
 	// or the child contact's small icon
 
 	// Find out if we're starting a drag using parent's implementation
-	QDragObject *drag;
-	if ( ( drag = KListView::dragObject() ) )
+	QDragObject *drag= KListView::dragObject();
+	if ( drag )
 	{
 		//we're starting to drag something
 		KopeteMetaContactLVI *source_metaLVI =
@@ -1223,7 +1223,7 @@ QDragObject *KopeteContactListView::dragObject()
 		// get the pixmap depending what we're dragging
 		if ( source_metaLVI )
 		{
-			c = contactFromMetaContactLVI( source_metaLVI );
+			c = source_metaLVI->getContactFromIcon( m_startDragPos );
 
 			if ( c ) 	// dragging a contact
 				pm = c->onlineStatus().iconFor( c, 12 ); // FIXME: fixed icon scaling
@@ -1237,8 +1237,8 @@ QDragObject *KopeteContactListView::dragObject()
 			}
 		}
 
-		QSize s = pm.size();
-		drag->setPixmap( pm, QPoint( s.width(), s.height() ) );
+		//QSize s = pm.size();
+		drag->setPixmap( pm /*, QPoint( s.width() , s.height() )*/ );
 	}
 	return drag;
 }
