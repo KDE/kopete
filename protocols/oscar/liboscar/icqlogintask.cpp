@@ -111,3 +111,5 @@ QString IcqLoginTask::encodePassword( const QString& loginPassword )
 
 	return encodedPassword;
 }
+
+#include "icqlogintask.moc"

@@ -151,3 +151,5 @@ UserDetails UserInfoTask::getInfoFor( Q_UINT16 sequence ) const
 
 //kate: indent-mode csands; tab-width 4;
 
+
+#include "userinfotask.moc"
