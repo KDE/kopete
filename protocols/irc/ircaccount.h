@@ -162,6 +162,7 @@ private slots:
 	void slotNickInUse( const QString &nick );
 	void slotNickInUseAlert( const QString &nick );
 	void slotConnectedToServer();
+	void slotDisconnected();
 
 private:
 	IRCProtocol *m_protocol;

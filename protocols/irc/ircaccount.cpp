@@ -69,6 +69,9 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId)
 			
 	QObject::connect(m_engine, SIGNAL(connectedToServer()),
 		this, SLOT(slotConnectedToServer()));
+		
+	QObject::connect(m_engine, SIGNAL(successfulQuit()),
+		this, SLOT(slotDisconnected()));
 
 	m_contactManager = new IRCContactManager(mNickName, m_server, this);
 	setMyself( m_contactManager->mySelf() );
@@ -114,7 +117,10 @@ void IRCAccount::slotNickInUse( const QString &nick )
 		m_engine->changeNickname( newNick );
 	}
 	else
+	{
+		triedAltNick = true;
 		m_engine->changeNickname( altNickName );
+	}
 }
 
 void IRCAccount::slotNickInUseAlert( const QString &nick )
@@ -255,6 +261,11 @@ void IRCAccount::slotConnectedToServer()
 	}
 }
 
+void IRCAccount::slotDisconnected()
+{
+	triedAltNick = false;
+}
+
 void IRCAccount::disconnect()
 {
 	quit();
@@ -345,7 +356,7 @@ void IRCAccount::unregisterUser( const QString &name )
 void IRCAccount::successfullyChangedNick(const QString &/*oldnick*/, const QString &newnick)
 {
 	kdDebug(14120) << k_funcinfo << "Changing nick to " << newnick << endl;
-	myself()->manager()->setDisplayName( static_cast<IRCUserContact *>( myself() )->caption() );
+	/*myself()->manager()->setDisplayName( static_cast<IRCUserContact *>( myself() )->caption() );*/
 }
 
 bool IRCAccount::addContactToMetaContact( const QString &contactId, const QString &displayName,
