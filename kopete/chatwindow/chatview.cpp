@@ -823,7 +823,7 @@ void ChatView::slotContactRemoved( const KopeteContact *contact, const QString &
 		else
 		{
 			sendInternalMessage( i18n( "%1 has left the chat (%2)." ).
-				arg( contactName, reason ));
+				arg( contactName, reason ), format);
 		}
 	}
 
@@ -1064,8 +1064,8 @@ bool ChatView::isTyping()
 	QString txt = m_edit->text( Qt::PlainText );
 
 	// gregj:
-	// if anyone knows reason why we strip spaces here, 
-	// speak now or remain silent forever 
+	// if anyone knows reason why we strip spaces here,
+	// speak now or remain silent forever
 	return !txt.stripWhiteSpace().isEmpty();
 }
 
