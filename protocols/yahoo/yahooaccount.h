@@ -101,6 +101,9 @@ public slots:
 	 */
 	virtual void disconnect();
 
+	/** Reimplemented from Kopete::Account */
+	void setOnlineStatus( const Kopete::OnlineStatus& );
+
 
 signals:
 	/**

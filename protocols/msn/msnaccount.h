@@ -67,10 +67,6 @@ public:
 
 	MSNNotifySocket *notifySocket();
 
-	// FIXME: Make generic - Martijn
-	void setOnlineStatus( const Kopete::OnlineStatus &status );
-
-
 	QString awayReason()
 		{ return m_awayReason; }
 
@@ -95,6 +91,7 @@ public:
 public slots:
 	virtual void connectWithPassword( const QString &password ) ;
 	virtual void disconnect() ;
+	virtual void setOnlineStatus( const Kopete::OnlineStatus &status );
 
 	/**
 	 * Ask to the account to create a new chat session

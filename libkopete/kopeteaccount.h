@@ -412,6 +412,16 @@ public slots:
 	virtual void setAway( bool away, const QString &reason = QString::null ) = 0;
 
 	/**
+	 * reimplement this function to set the online status
+	 */
+	virtual void setOnlineStatus( const Kopete::OnlineStatus& ) = 0;
+
+	/**
+	 * Display the edit account widget of the account
+	 */
+	void editAccount(QWidget* parent=0L);
+
+	/**
 	 * Add a user to the blacklist. The default implementation calls
 	 * blackList()->addContact( contactId )
 	 *
@@ -426,7 +436,6 @@ public slots:
 	 * @param contactId the contact to be removed from the blacklist
 	 */
 	virtual void unblock( const QString &contactId );
-
 
 	/**
 	 * @deprecated   place everithing in the constructor

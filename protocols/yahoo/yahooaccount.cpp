@@ -413,60 +413,7 @@ KActionMenu *YahooAccount::actionMenu()
 //	kdDebug(14180) << k_funcinfo << endl;
 	//TODO: Use a QSignalMapper so all the slots can be consolidated into one function
 
-	KActionMenu *theActionMenu = new KActionMenu( myself()->displayName(), myself()->onlineStatus().iconFor(this), this );
-	theActionMenu->popupMenu()->insertTitle( myself()->icon(), "Yahoo (" + myself()->displayName() + ")");
-
-	theActionMenu->insert(new KAction(i18n( "Online" ),
-		m_protocol->Online.iconFor(this), 0, this, SLOT(slotGoOnline()),
-		this, "actionYahooGoOnline"));
-
-	theActionMenu->insert(new KAction(i18n( "Be Right Back" ),
-		m_protocol->BeRightBack.iconFor(this), 0, this, SLOT(slotGoStatus001()),
-		this, "actionYahooGoStatus001"));
-
-	theActionMenu->insert(new KAction(i18n( "Busy" ),
-		m_protocol->Busy.iconFor(this), 0, this, SLOT(slotGoStatus002()),
-		this, "actionYahooGoStatus002"));
-
-	theActionMenu->insert(new KAction(i18n( "Not at Home" ),
-		m_protocol->NotAtHome.iconFor(this), 0, this, SLOT(slotGoStatus003()),
-		this, "actionYahooGoStatus003"));
-
-	theActionMenu->insert(new KAction( i18n( "Not at My Desk" ),
-		m_protocol->NotAtMyDesk.iconFor(this), 0, this, SLOT(slotGoStatus004()),
-		this, "actionYahooGoStatus004"));
-
-	theActionMenu->insert(new KAction( i18n( "Not in The Office"),
-		m_protocol->NotInTheOffice.iconFor(this), 0, this, SLOT(slotGoStatus005()),
-		this, "actionYahooGoStatus005"));
-
-	theActionMenu->insert(new KAction( i18n( "On The Phone" ),
-		m_protocol->OnThePhone.iconFor(this), 0, this, SLOT(slotGoStatus006()),
-		this, "actionYahooGoStatus006"));
-
-	theActionMenu->insert(new KAction( i18n( "On Vacation" ),
-		m_protocol->OnVacation.iconFor(this), 0, this, SLOT(slotGoStatus007()),
-		this, "actionYahooGoStatus007"));
-
-	theActionMenu->insert(new KAction( i18n( "Out to Lunch" ),
-		m_protocol->OutToLunch.iconFor(this), 0, this, SLOT(slotGoStatus008()),
-		this, "actionYahooGoStatus008"));
-
-	theActionMenu->insert(new KAction( i18n( "Stepped Out" ),
-		m_protocol->SteppedOut.iconFor(this), 0, this, SLOT(slotGoStatus009()),
-		this, "actionYahooGoStatus009"));
-
-	theActionMenu->insert(new KAction( i18n( "Invisible" ),
-		 m_protocol->Invisible.iconFor(this), 0, this, SLOT(slotGoStatus012()),
-		 this, "actionYahooGoStatus012"));
-
-	theActionMenu->insert(new KAction( i18n( "Custom" ), 
-		m_protocol->Custom.iconFor(this), 0, this, SLOT(slotGoStatus099()),
-		this, "actionYahooGoStatus099"));
-
-	theActionMenu->insert(new KAction(i18n( "Offline" ),
-		m_protocol->Offline.iconFor(this), 0, this, SLOT(slotGoOffline()),
-		this, "actionYahooGoOffline"));
+	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
 
 	return theActionMenu;
 }
@@ -745,6 +692,16 @@ void YahooAccount::slotError( const QString & err, int fatal )
 void YahooAccount::slotRemoveHandler( int /* fd */ )
 {
 //	kdDebug(14180) << k_funcinfo << endl;
+}
+
+void YahooAccount::setOnlineStatus( const Kopete::OnlineStatus& status )
+{
+	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Online )
+		connect( status );
+	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Offline )
+		disconnect();
+	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Away )
+		slotGoStatus( status.internalStatus(), QString::null );
 }
 
 #include "yahooaccount.moc"

@@ -97,6 +97,8 @@ public slots:
 	 */
 	void slotGoOffline();
 
+	void setOnlineStatus( const Kopete::OnlineStatus& status );
+
 protected slots:
 	/** Called when we get disconnected */
 //	void slotDisconnected();

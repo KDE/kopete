@@ -41,6 +41,7 @@
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
 #include "kopetemessagemanager.h"
+#include "kopeteonlinestatusmanager.h"
 #include "kopeteaway.h"
 #include "kopeteglobal.h"
 #include "kopeteprotocol.h"
@@ -65,13 +66,13 @@ K_EXPORT_COMPONENT_FACTORY( kopete_jabber, JabberProtocolFactory( "kopete_jabber
 
 JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStringList &)
 : Kopete::Protocol( JabberProtocolFactory::instance(), parent, name ),
-	JabberKOSChatty(Kopete::OnlineStatus::Online,        100, this, 1, "jabber_chatty",      i18n ("Free to Chat")),
-	JabberKOSOnline(Kopete::OnlineStatus::Online,         90, this, 0, QString::null,        i18n ("Online")),
-	JabberKOSAway(Kopete::OnlineStatus::Away,             80, this, 2, "jabber_away",        i18n ("Away")),
-	JabberKOSXA(Kopete::OnlineStatus::Away,               70, this, 3, "jabber_xa",          i18n ("Extended Away")),
-	JabberKOSDND(Kopete::OnlineStatus::Away,              60, this, 4, "jabber_na",          i18n ("Do not Disturb")),
-	JabberKOSOffline(Kopete::OnlineStatus::Offline,       50, this, 5, QString::null,        i18n ("Offline")),
-	JabberKOSInvisible(Kopete::OnlineStatus::Invisible,   40, this, 6, "jabber_invisible",   i18n ("Invisible")),
+	JabberKOSChatty(Kopete::OnlineStatus::Online,        100, this, 1, "jabber_chatty",      i18n ("Free to Chat"), i18n ("Free to Chat"), Kopete::OnlineStatusManager::Online),
+	JabberKOSOnline(Kopete::OnlineStatus::Online,         90, this, 0, QString::null,        i18n ("Online"), i18n ("Online"), Kopete::OnlineStatusManager::Online),
+	JabberKOSAway(Kopete::OnlineStatus::Away,             80, this, 2, "jabber_away",        i18n ("Away"), i18n ("Away"), Kopete::OnlineStatusManager::Busy),
+	JabberKOSXA(Kopete::OnlineStatus::Away,               70, this, 3, "jabber_xa",          i18n ("Extended Away"), i18n ("Extended Away"), Kopete::OnlineStatusManager::Away),
+	JabberKOSDND(Kopete::OnlineStatus::Away,              60, this, 4, "jabber_na",          i18n ("Do not Disturb"), i18n ("Do not Disturb"), Kopete::OnlineStatusManager::Away),
+	JabberKOSOffline(Kopete::OnlineStatus::Offline,       50, this, 5, QString::null,        i18n ("Offline") ,i18n ("Offline"), Kopete::OnlineStatusManager::Offline),
+	JabberKOSInvisible(Kopete::OnlineStatus::Invisible,   40, this, 6, "jabber_invisible",   i18n ("Invisible") ,i18n ("Invisible"), Kopete::OnlineStatusManager::Invisible),
 	JabberKOSConnecting(Kopete::OnlineStatus::Connecting, 30, this, 7, "jabber_connecting",  i18n("Connecting")),
 	propAwayMessage(Kopete::Global::Properties::self()->awayMessage()),
 	propFirstName(Kopete::Global::Properties::self()->firstName()),

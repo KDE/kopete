@@ -164,6 +164,9 @@ public slots:
 
 	virtual bool isConnected();
 
+	/** Reimplemented from Kopete::Account */
+	void setOnlineStatus( const Kopete::OnlineStatus& status );
+
 	// Returns the KIRC engine instance
 	KIRC::Engine *engine() const { return m_engine; }
 

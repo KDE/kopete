@@ -135,6 +135,9 @@ public slots:
 	/* Disconnect with a reason */
 	void disconnect ( Kopete::Account::DisconnectReason reason );
 
+	/* Reimplemented from Kopete::Account */
+	void setOnlineStatus( const Kopete::OnlineStatus& status );
+
 protected:
 	/**
 	 * Create a new contact in the specified metacontact

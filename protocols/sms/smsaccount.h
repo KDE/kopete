@@ -50,6 +50,7 @@ public:
 public slots:
 	void loadConfig();
 
+	void setOnlineStatus( const Kopete::OnlineStatus& status );
 public slots:
 	virtual void connect(const Kopete::OnlineStatus& initial= Kopete::OnlineStatus());
 	virtual void disconnect();

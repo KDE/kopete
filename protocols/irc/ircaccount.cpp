@@ -404,12 +404,8 @@ KActionMenu *IRCAccount::actionMenu()
 {
 	QString menuTitle = QString::fromLatin1( " %1 <%2> " ).arg( accountId() ).arg( myself()->onlineStatus().description() );
 
-	KActionMenu *mActionMenu = new KActionMenu( accountId(),myself()->onlineStatus().iconFor(this), this, "IRCAccount::mActionMenu" );
-	mActionMenu->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ), menuTitle );
+	KActionMenu *mActionMenu = Kopete::Account::actionMenu();
 
-	mActionMenu->insert( new KAction ( i18n("Go Online"), m_protocol->m_UserStatusOnline.iconFor( this ), 0, this, SLOT(connect()), mActionMenu ) );
-	mActionMenu->insert( mAwayAction );
-	mActionMenu->insert( new KAction ( i18n("Go Offline"), m_protocol->m_UserStatusOffline.iconFor( this ), 0, this, SLOT(disconnect()), mActionMenu ) );
 	mActionMenu->popupMenu()->insertSeparator();
 	mActionMenu->insert( new KAction ( i18n("Join Channel..."), "", 0, this, SLOT(slotJoinChannel()), mActionMenu ) );
 	mActionMenu->insert( new KAction ( i18n("Search Channels..."), "", 0, this, SLOT(slotSearchChannels()), mActionMenu ) );
@@ -643,6 +639,16 @@ void IRCAccount::slotShowServerWindow()
 bool IRCAccount::isConnected()
 {
 	return ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline );
+}
+
+void IRCAccount::setOnlineStatus( const Kopete::OnlineStatus& status )
+{
+	if ( status.status() == Kopete::OnlineStatus::Online && myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline )
+		connect();
+	else if ( status.status() == Kopete::OnlineStatus::Offline )
+		disconnect();
+	else if ( status.status() == Kopete::OnlineStatus::Away )
+		slotGoAway( QString::null );
 }
 
 

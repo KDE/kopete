@@ -31,6 +31,7 @@
 
 /* Kopete Includes */
 #include "kopeteaccountmanager.h"
+#include "kopeteonlinestatusmanager.h"
 #include "kopeteglobal.h"
 
 typedef KGenericFactory<YahooProtocol> YahooProtocolFactory;
@@ -38,20 +39,20 @@ K_EXPORT_COMPONENT_FACTORY( kopete_yahoo, YahooProtocolFactory( "kopete_yahoo" )
 
 YahooProtocol::YahooProtocol( QObject *parent, const char *name, const QStringList & )
 	: Kopete::Protocol( YahooProtocolFactory::instance(), parent, name ),
-	Offline( Kopete::OnlineStatus::Offline, 0, this, 0x5a55aa56, QString::null,  i18n( "Offline" ) ),
-	Online( Kopete::OnlineStatus::Online, 25, this, 0, QString::null,  i18n( "Online" ) ),
-	BeRightBack( Kopete::OnlineStatus::Away, 10, this, 1, "yahoo_away",  i18n( "Be right back" ) ),
-	Busy( Kopete::OnlineStatus::Away, 10, this, 2, "yahoo_busy",  i18n( "Busy" ) ),
-	NotAtHome( Kopete::OnlineStatus::Away, 10, this, 3, "yahoo_away",  i18n( "Not at home" ) ),
-	NotAtMyDesk( Kopete::OnlineStatus::Away, 10, this, 4, "yahoo_away", i18n( "Not at my desk") ),
-	NotInTheOffice( Kopete::OnlineStatus::Away, 10, this, 5, "yahoo_away", i18n( "Not in the office" ) ),
-	OnThePhone( Kopete::OnlineStatus::Away, 10, this, 6, "yahoo_away",  i18n( "On the phone" ) ),
-	OnVacation( Kopete::OnlineStatus::Away, 10, this, 7, "yahoo_away",  i18n( "On vacation" ) ),
-	OutToLunch( Kopete::OnlineStatus::Away, 10, this, 8, "yahoo_away",  i18n( "Out to lunch" ) ),
-	SteppedOut( Kopete::OnlineStatus::Away, 10, this, 9, "yahoo_away",  i18n( "Stepped out" ) ),
-	Invisible( Kopete::OnlineStatus::Invisible, 0, this, 12, "yahoo_invisible",  i18n( "Invisible" ) ),
-	Custom( Kopete::OnlineStatus::Away, 20, this, 99, "yahoo_away", i18n( "Custom" ) ),
-	Idle( Kopete::OnlineStatus::Away, 15, this, 999, "yahoo_idle",  i18n( "Idle" ) ),
+	Offline( Kopete::OnlineStatus::Offline, 0, this, 0x5a55aa56, QString::null,  i18n( "Offline" ), i18n( "Offline" ), Kopete::OnlineStatusManager::Offline ),
+	Online( Kopete::OnlineStatus::Online, 25, this, 0, QString::null,  i18n( "Online" ), i18n( "Online" ), Kopete::OnlineStatusManager::Online ),
+	BeRightBack( Kopete::OnlineStatus::Away, 10, this, 1, "yahoo_away",  i18n( "Be right back" ), i18n( "Be right back" ), Kopete::OnlineStatusManager::Away ),
+	Busy( Kopete::OnlineStatus::Away, 10, this, 2, "yahoo_busy",  i18n( "Busy" ), i18n( "Busy" ), Kopete::OnlineStatusManager::Away ),
+	NotAtHome( Kopete::OnlineStatus::Away, 10, this, 3, "yahoo_away",  i18n( "Not at home" ), i18n( "Not at home" ), Kopete::OnlineStatusManager::Away ),
+	NotAtMyDesk( Kopete::OnlineStatus::Away, 10, this, 4, "yahoo_away", i18n( "Not at my desk"), i18n( "Not at my desk"), Kopete::OnlineStatusManager::Away ),
+	NotInTheOffice( Kopete::OnlineStatus::Away, 10, this, 5, "yahoo_away", i18n( "Not in the office" ), i18n( "Not in the office" ), Kopete::OnlineStatusManager::Away ),
+	OnThePhone( Kopete::OnlineStatus::Away, 10, this, 6, "yahoo_away",  i18n( "On the phone" ), i18n( "On the phone" ), Kopete::OnlineStatusManager::Away ),
+	OnVacation( Kopete::OnlineStatus::Away, 10, this, 7, "yahoo_away",  i18n( "On vacation" ), i18n( "On vacation" ), Kopete::OnlineStatusManager::Away ),
+	OutToLunch( Kopete::OnlineStatus::Away, 10, this, 8, "yahoo_away",  i18n( "Out to lunch" ), i18n( "Out to lunch" ), Kopete::OnlineStatusManager::Away ),
+	SteppedOut( Kopete::OnlineStatus::Away, 10, this, 9, "yahoo_away",  i18n( "Stepped out" ), i18n( "Stepped out" ), Kopete::OnlineStatusManager::Away ),
+	Invisible( Kopete::OnlineStatus::Invisible, 0, this, 12, "yahoo_invisible",  i18n( "Invisible" ), i18n( "Invisible" ), Kopete::OnlineStatusManager::Away ),
+	Custom( Kopete::OnlineStatus::Away, 20, this, 99, "yahoo_away", i18n( "Custom" ), i18n( "Custom" ), Kopete::OnlineStatusManager::Online ),
+	Idle( Kopete::OnlineStatus::Away, 15, this, 999, "yahoo_idle",  i18n( "Idle" ), i18n( "Idle" ), Kopete::OnlineStatusManager::Busy ),
 	Connecting( Kopete::OnlineStatus::Connecting, 2, this, 555, "yahoo_connecting", i18n( "Connecting" ) ),
 	awayMessage(Kopete::Global::Properties::self()->awayMessage())
 

@@ -71,6 +71,9 @@ public slots:
     void slotServerNotification(const QString &mesg);
     void slotServerDead();
 
+    /** Reimplemented from Kopete::Account */
+    void setOnlineStatus( const Kopete::OnlineStatus& status );
+
 private:
     void initServer();
     void meanwhileGoAway(const QString &statusmsg);

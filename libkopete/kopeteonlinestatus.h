@@ -162,11 +162,34 @@ public:
 		unsigned internalStatus, const QString &overlayIcon, const QString &description );
 
 	/**
-	 * same as above, but automaticaly register to OnlineStatusManager.
-	 * see OnlineStatusManager::registerOnlineStatus to know what are params
+	 * Constructor.
+	 *
+	 * Creates a new OnlineStatus object. All fields are mandatory; there
+	 * are no default values. Also, you cannot change the object after creation.
+	 *
+	 * @param status is the global online status as used by libkopete
+	 * @param weight is the 'weight' of this status. The contact list is
+	 * sorted by status, and by weight within a status. It's not possible to
+	 * 'promote' an Away item to a level above Online, since the status field
+	 * always takes precedence. Weight is used when the same status is used
+	 * more than once. Weight is also used for picking the most important
+	 * 'Away' status for a protocol when going Away.
+	 * @param protocol is a pointer to the protocol used. This is used when
+	 * comparing two states using @ref operator=().
+	 * @param internalStatus is the status as used internally by the protocol.
+	 * This status is usually a lot more fine-grained than the status as used
+	 * by libkopete and should be unique per protocol.
+	 * @param overlayIcon is a string returning the name of the status icon to be
+	 * used by the KDE icon loader. (Status whiwh doesn't have icon to overlay like
+	 * Online and Offline should use QString::null as icon string)
+	 * @param description is a description in e.g. tooltips.
+	 * @param caption is the text that will be seen when this status is displayed
+	 * @param categories the categories this online status is in
+	 * @param options the options of this online status
+	 * @see Kopete::OnlineStatusManager for more info about the categories and options parameters
 	 */
 	OnlineStatus( StatusType status, unsigned weight, Protocol *protocol, unsigned internalStatus, const QString &overlayIcon,
-		const QString &description, const QString& caption,  unsigned int categories=0x0 , unsigned int options=0x0 ) ;
+		const QString &description, const QString& caption,  unsigned int categories=0x0 , unsigned int options=0x0 );
 
 
 	/**

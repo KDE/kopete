@@ -745,5 +745,10 @@ void OscarAccount::setIgnoreUnknownContacts(bool b)
 	d->ignoreUnknownContacts = b;
 }
 
+void OscarAccount::setOnlineStatus( const Kopete::OnlineStatus & status )
+{
+	setStatus( status.internalStatus() );
+}
+
 #include "oscaraccount.moc"
 // vim: set noet ts=4 sts=4 sw=4:

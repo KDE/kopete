@@ -150,12 +150,17 @@ public slots:
 	/* Disconnects from the server. */
 	virtual void disconnect();
 	virtual void disconnected( Kopete::Account::DisconnectReason reason );
+	
+	/** Set the online status for the account. Reimplemented from Kopete::Account */
+	void setOnlineStatus( const Kopete::OnlineStatus& status );
 signals:
 	void conferenceCreated( const int mmId, const GroupWise::ConferenceGuid & guid );
 	void conferenceCreationFailed( const int mmId, const int statusCode );
 	void contactTyping( const ConferenceEvent & );
 	void contactNotTyping( const ConferenceEvent & );
 	void privacyChanged( const QString & dn, bool allowed );
+
+	
 protected slots:
 	/**
 	 * Change the account's status.  Called by KActions and internally.

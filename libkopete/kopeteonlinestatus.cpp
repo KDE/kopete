@@ -96,8 +96,6 @@ OnlineStatus::OnlineStatus( StatusType status, unsigned weight, Protocol *protoc
 	OnlineStatusManager::self()->registerOnlineStatus(*this, caption, categories, options );
 }
 
-
-
 OnlineStatus::OnlineStatus( StatusType status )
  : d( new Private )
 {

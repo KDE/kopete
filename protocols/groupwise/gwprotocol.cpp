@@ -26,6 +26,7 @@
 #include <kdebug.h>
 
 #include "kopeteaccountmanager.h"
+#include "kopeteonlinestatusmanager.h"
 #include "kopeteglobal.h"
 
 #include "gwaccount.h"
@@ -45,21 +46,21 @@ GroupWiseProtocol::GroupWiseProtocol( QObject* parent, const char *name, const Q
 	  groupwiseUnknown    ( Kopete::OnlineStatus::Unknown, 25, this, 0, "status_unknown",
 	  		"FIXME: Make this unselectable", i18n( "Unknown" ) ),
 	  groupwiseOffline ( Kopete::OnlineStatus::Offline,    0,  this, 1, QString::null, 
-	  		i18n( "O&ffline" ), i18n( "Offline" ) ),
+	  		i18n( "O&ffline" ), i18n( "Offline" ), Kopete::OnlineStatusManager::Offline ),
 	  groupwiseAvailable  ( Kopete::OnlineStatus::Online,  25, this, 2, QString::null, 
-	  		i18n( "A&vailable" ),   i18n( "Available" ) ),
+	  		i18n( "A&vailable" ),   i18n( "Available" ), Kopete::OnlineStatusManager::Online ),
 	  groupwiseBusy       ( Kopete::OnlineStatus::Away,    20, this, 3, "groupwise_busy", 
-	  		i18n( "&Busy" ), i18n( "Busy" ) ),
+	  		i18n( "&Busy" ), i18n( "Busy" ), Kopete::OnlineStatusManager::Away ),
 	  groupwiseAway       ( Kopete::OnlineStatus::Away,    18, this, 4, "groupwise_away", 
-	  		i18n( "Go &Away" ), i18n( "Away" ) ),
+	  		i18n( "Go &Away" ), i18n( "Away" ), Kopete::OnlineStatusManager::Away ),
 	  groupwiseAwayIdle   ( Kopete::OnlineStatus::Away,    15, this, 5, "groupwise_away", 
-	  		"FIXME: Make this unselectable", i18n( "Idle" ) ),
+	  		"FIXME: Make this unselectable", i18n( "Idle" ), Kopete::OnlineStatusManager::Busy ),
 	  groupwiseInvalid( Kopete::OnlineStatus::Unknown, 25, this, 6, "status_unknown",
-	  		"FIXME: Make this unselectable", i18n( "Invalid Status" ) ),
+	  		"FIXME: Make this unselectable", i18n( "Invalid Status" ), Kopete::OnlineStatusManager::Offline ),
 	  groupwiseConnecting( Kopete::OnlineStatus::Unknown, 0, this, 99, "groupwise_connecting",
 	  		"FIXME: Make this unselectable", i18n( "Connecting" ) ),
 	  groupwiseAppearOffline( Kopete::OnlineStatus::Online,22, this, 98, "groupwise_invisible",
-	  		i18n( "A&ppear Offline" ), i18n( "Appear Offline" ) ),
+	  		i18n( "A&ppear Offline" ), i18n( "Appear Offline" ), Kopete::OnlineStatusManager::Invisible ),
 	  propGivenName( Kopete::Global::Properties::self()->firstName() ),
 	  propLastName( Kopete::Global::Properties::self()->lastName() ),
 	  propFullName( Kopete::Global::Properties::self()->fullName() ),

@@ -228,11 +228,8 @@ GaduAccount::actionMenu()
 {
 	kdDebug(14100) << "actionMenu() " << endl;
 
-	p->actionMenu_ = new KActionMenu( accountId(), myself()->onlineStatus().iconFor( this ), this );
+	p->actionMenu_ = Kopete::Account::actionMenu();
 
-	p->actionMenu_->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> " ).
-
-	arg( myself()->displayName(), accountId() ) );
 	if ( p->session_->isConnected() ) {
 		p->searchAction->setEnabled( TRUE );
 		p->listputAction->setEnabled( TRUE );
@@ -265,18 +262,6 @@ GaduAccount::actionMenu()
 		p->listFromFileAction->setEnabled( TRUE );
 	}
 
-	p->actionMenu_->insert( new KAction( i18n( "Go O&nline" ),
-			GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ).iconFor( this ),
-			0, this, SLOT( slotGoOnline() ), this, "actionGaduConnect" ) );
-	p->actionMenu_->insert( new KAction( i18n( "Set &Busy" ),
-			GaduProtocol::protocol()->convertStatus( GG_STATUS_BUSY ).iconFor( this ),
-			0, this, SLOT( slotGoBusy() ), this, "actionGaduConnect" ) );
-	p->actionMenu_->insert( new KAction( i18n( "Set &Invisible" ),
-			GaduProtocol::protocol()->convertStatus( GG_STATUS_INVISIBLE ).iconFor( this ),
-			0, this, SLOT( slotGoInvisible() ), this, "actionGaduConnect" ) );
-	p->actionMenu_->insert( new KAction( i18n( "Go &Offline" ),
-			GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ).iconFor( this ),
-			0, this, SLOT( slotGoOffline() ), this, "actionGaduConnect" ) );
 	p->actionMenu_->insert( new KAction( i18n( "Set &Description..." ),
 			"info",
 			0, this, SLOT( slotDescription() ), this, "actionGaduDescription" ) );
@@ -320,6 +305,13 @@ GaduAccount::disconnect( DisconnectReason reason )
 	slotGoOffline();
 	p->connectWithSSL = true;
 	Kopete::Account::disconnected( reason );
+}
+
+void
+GaduAccount::setOnlineStatus( const Kopete::OnlineStatus& status )
+{
+	kdDebug(14100) << k_funcinfo << "Called" << endl;
+	changeStatus( status, QString::null );
 }
 
 bool

@@ -25,6 +25,7 @@
 
 #include "kopeteglobal.h"
 #include "kopeteuiglobal.h"
+#include "kopeteonlinestatusmanager.h"
 #include "accountselector.h"
 #include "kopeteaccountmanager.h"
 
@@ -159,13 +160,13 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KURL & url) co
 
 ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 : Kopete::Protocol( ICQProtocolFactory::instance(), parent, name ),
-	statusOnline(Kopete::OnlineStatus::Online, 1, this, OSCAR_ONLINE, QString::null ,  i18n("Online")),
-	statusFFC(Kopete::OnlineStatus::Online, 2, this, OSCAR_FFC, "icq_ffc",  i18n("Free For Chat")),
-	statusOffline(Kopete::OnlineStatus::Offline, 1, this, OSCAR_OFFLINE, QString::null,  i18n("Offline")),
-	statusAway(Kopete::OnlineStatus::Away, 1, this, OSCAR_AWAY, "icq_away",  i18n("Away")),
-	statusDND(Kopete::OnlineStatus::Away, 2, this, OSCAR_DND, "icq_dnd",  i18n("Do not Disturb")),
-	statusNA(Kopete::OnlineStatus::Away, 3, this, OSCAR_NA, "icq_na",  i18n("Not Available")),
-	statusOCC(Kopete::OnlineStatus::Away, 4, this, OSCAR_OCC,"icq_occupied" , i18n("Occupied")),
+	statusOnline(Kopete::OnlineStatus::Online, 1, this, OSCAR_ONLINE, QString::null, i18n("Online"), i18n("Online"), Kopete::OnlineStatusManager::Online),
+	statusFFC(Kopete::OnlineStatus::Online, 2, this, OSCAR_FFC, "icq_ffc", i18n("Free For Chat"), i18n("Free For Chat"), Kopete::OnlineStatusManager::Online),
+	statusOffline(Kopete::OnlineStatus::Offline, 1, this, OSCAR_OFFLINE, QString::null, i18n("Offline"), i18n("Offline"), Kopete::OnlineStatusManager::Offline),
+	statusAway(Kopete::OnlineStatus::Away, 1, this, OSCAR_AWAY, "icq_away", i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Busy),
+	statusDND(Kopete::OnlineStatus::Away, 2, this, OSCAR_DND, "icq_dnd", i18n("Do not Disturb"), i18n("Do not Disturb"), Kopete::OnlineStatusManager::Away),
+	statusNA(Kopete::OnlineStatus::Away, 3, this, OSCAR_NA, "icq_na", i18n("Not Available"), i18n("Not Available"), Kopete::OnlineStatusManager::Away ),
+	statusOCC(Kopete::OnlineStatus::Away, 4, this, OSCAR_OCC,"icq_occupied", i18n("Occupied"), i18n("Occupied"), Kopete::OnlineStatusManager::Away ),
 	statusConnecting(Kopete::OnlineStatus::Connecting, 99, this, OSCAR_CONNECTING, "icq_connecting", i18n("Connecting...")),
 	firstName(Kopete::Global::Properties::self()->firstName()),
 	lastName(Kopete::Global::Properties::self()->lastName()),

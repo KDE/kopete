@@ -27,6 +27,7 @@
 
 #include "accountselector.h"
 #include "kopeteaccountmanager.h"
+#include "kopeteonlinestatusmanager.h"
 #include "kopeteglobal.h"
 #include "kopeteuiglobal.h"
 
@@ -153,10 +154,13 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
 
 AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
 : Kopete::Protocol( AIMProtocolFactory::instance(), parent, name ),
-	statusOnline(Kopete::OnlineStatus::Online, 1, this, OSCAR_ONLINE, QString::null, i18n("Online")),
-	statusOffline(Kopete::OnlineStatus::Offline, 1, this, OSCAR_OFFLINE, QString::null, i18n("Offline")),
-	statusAway(Kopete::OnlineStatus::Away, 1, this, OSCAR_AWAY, "aim_away", i18n("Away")),
-	statusConnecting(Kopete::OnlineStatus::Connecting, 99, this, OSCAR_CONNECTING, "aim_connecting", i18n("Connecting...")),
+	statusOnline( Kopete::OnlineStatus::Online, 1, this, OSCAR_ONLINE, QString::null, i18n("Online"),
+	              i18n("Online"), Kopete::OnlineStatusManager::Online ),
+	statusOffline( Kopete::OnlineStatus::Offline, 1, this, OSCAR_OFFLINE, QString::null, i18n("Offline"),
+	               i18n("Offline"), Kopete::OnlineStatusManager::Offline ),
+	statusAway( Kopete::OnlineStatus::Away, 1, this, OSCAR_AWAY, "aim_away", i18n("Away"), i18n("Away"),
+	            Kopete::OnlineStatusManager::Busy ),
+	statusConnecting( Kopete::OnlineStatus::Connecting, 99, this, OSCAR_CONNECTING, "aim_connecting", i18n("Connecting...") ),
 	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
 	clientFeatures("clientFeatures", i18n("Client Features"), 0, false)
 {

@@ -81,8 +81,7 @@ void SMSAccount::connect(const Kopete::OnlineStatus&)
 
 KActionMenu* SMSAccount::actionMenu()
 {
-	KActionMenu *theActionMenu = new KActionMenu(accountId(), myself()->onlineStatus().iconFor(this) , this);
-	theActionMenu->popupMenu()->insertTitle(myself()->icon(), i18n("SMS (%1)").arg(accountId()));
+	KActionMenu *theActionMenu = Kopete::Account::actionMenu();
 
 	return theActionMenu;
 }
@@ -101,6 +100,16 @@ bool SMSAccount::createContact( const QString &contactId,
 		return true;
 	else
 		return false;
+}
+
+void SMSAccount::setOnlineStatus( const Kopete::OnlineStatus & status )
+{
+	if ( myself()->onlineStatus().status() == Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Online )
+		connect();
+	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Offline )
+		disconnect();
+	else if ( myself()->onlineStatus().status() != Kopete::OnlineStatus::Offline && status.status() == Kopete::OnlineStatus::Away )
+		setAway( true, QString::null );
 }
 
 #include "smsaccount.moc"
