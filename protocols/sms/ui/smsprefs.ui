@@ -103,9 +103,6 @@
                     <property name="text">
                         <string>+</string>
                     </property>
-                    <property name="inputMask">
-                        <string>+##; </string>
-                    </property>
                     <property name="validChars">
                         <string>1234567890+</string>
                     </property>
