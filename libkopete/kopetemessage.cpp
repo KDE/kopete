@@ -27,7 +27,7 @@
 KopeteMessage::KopeteMessage()
 {
 	mTimestamp = QDateTime::currentDateTime();
-	mBody = "Body not set";
+	mBody = QString::null;
 	mDirection = Internal;
 	mBg = QColor();
 	mFg = QColor();
