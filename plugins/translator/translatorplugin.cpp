@@ -58,6 +58,7 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 		pluginStatic_ = this;
 
 	m_services.insert("babelfish", "BabelFish");
+    m_services.insert("google", "Google");
 
     m_langs.insert("null", i18n("Unknown"));
 	m_langs.insert("en", i18n("English"));
@@ -95,6 +96,19 @@ TranslatorPlugin::TranslatorPlugin( QObject *parent, const char *name,
 	m_supported["babelfish"].append("pt_en");
 	m_supported["babelfish"].append("ru_en");
 	m_supported["babelfish"].append("es_en");
+
+	/* Google Service */
+	m_supported["google"].append("en_de");
+    m_supported["google"].append("en_es");
+	m_supported["google"].append("en_fr");
+	m_supported["google"].append("en_it");
+	m_supported["google"].append("en_pt");
+	m_supported["google"].append("de_en");
+	m_supported["google"].append("es_en");
+	m_supported["google"].append("fr_en");
+    m_supported["google"].append("fr_de");
+	m_supported["google"].append("it_en");
+	m_supported["google"].append("pt_en");
 
     QMap<QString,QString>::ConstIterator i;
 
@@ -297,7 +311,73 @@ void TranslatorPlugin::slotOutgoingMessage( KopeteMessage& msg )
 
 void TranslatorPlugin::translateMessage( KopeteMessage &msg , const QString &from, const QString &to)
 {
-	kdDebug() << "[Translator] Translating: [" << from << "_" << to << "] " << endl
+	if ( m_prefs->service() == "babelfish" )
+		babelTranslateMessage( msg ,from, to);
+	if ( m_prefs->service() == "google" )
+		googleTranslateMessage( msg ,from, to);
+}
+
+void TranslatorPlugin::googleTranslateMessage( KopeteMessage &msg , const QString &from, const QString &to)
+{
+		kdDebug() << "[Translator] Google Translating: [" << from << "_" << to << "] " << endl
+			<< msg.body() << endl << endl;
+
+	QString body, lp;
+	KURL translatorURL;
+	QCString postData;
+	KIO::TransferJob *job;
+
+	translatorURL = "http://translate.google.com/translate_t";
+
+	//body = KURL::encode_string("*-*-* " + msg.body() + " *-*-*");
+    body = KURL::encode_string( msg.body() );
+
+	lp = from + "|" + to;
+
+	postData = "text=" + body +"&langpair=" + lp ;
+
+	QString gurl = "http://translate.google.com/translate_t?text=" + body +"&langpair=" + lp;
+	kdDebug() << "[Translator] URL: " << gurl << endl;
+	KURL geturl = gurl;
+
+	//job = KIO::http_post( translatorURL, postData, true );
+	job = KIO::get( geturl, false, true );
+
+	//job->addMetaData("content-type", "application/x-www-form-urlencoded" );
+	//job->addMetaData("referrer", "http://www.google.com");
+
+	QObject::connect( job, SIGNAL(data( KIO::Job *,const QByteArray&)), this, SLOT(slotDataReceived( KIO::Job *,const QByteArray&)) );
+	QObject::connect( job, SIGNAL(result( KIO::Job *)), this, SLOT(slotJobDone( KIO::Job *)) );
+
+	/* KIO is async and we use a sync API, hay que dentrar a picarle nomas */
+	while ( ! m_completed[ job ] )
+		kopeteapp->processEvents();
+
+	QString data = QString::fromUtf8(m_data[job]);
+
+	/* After hacks, we need to clean */
+	m_data.remove( job );
+	m_completed.remove( job );
+
+	kdDebug() << "[Translator]: Google response: "<< endl << data << endl;
+
+	//QRegExp re("*-*-* (.*) *-*-*");
+    QRegExp re("<textarea name=q rows=5 cols=45 wrap=PHYSICAL>(.*)</textarea>");
+	re.setMinimal(true);
+	re.match( data );
+
+	QString translated = re.cap(1);
+
+	if ( translated != QString::null )
+		msg.setBody(translated);
+	else
+		msg.setBody(msg.body());
+
+}
+
+void TranslatorPlugin::babelTranslateMessage( KopeteMessage &msg , const QString &from, const QString &to)
+{
+	kdDebug() << "[Translator] Babel Translating: [" << from << "_" << to << "] " << endl
 			<< msg.body() << endl << endl;
 	
 	QString body, lp;

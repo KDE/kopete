@@ -109,6 +109,10 @@ protected:
 
 	void translateMessage( KopeteMessage &, const QString &, const QString & );
 
+	void googleTranslateMessage( KopeteMessage &, const QString &, const QString & );
+	void babelTranslateMessage( KopeteMessage &, const QString &, const QString & );
+
+
 private:
 	/* Known Languages key -> desc ie: en -> English */
 	QMap< QString, QString> m_langs;
