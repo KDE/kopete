@@ -60,8 +60,7 @@ public:
 		Custom,			// 13
 		CustomBusy,		// 99+Busy
 		CustomMobile,	// 99+Mobile
-		Idle,			// 999
-		Typing
+		Idle		// 999
 	};
 
 	YahooStatus( Status );

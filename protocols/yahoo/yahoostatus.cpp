@@ -106,8 +106,6 @@ YahooStatus::Status YahooStatus::fromLibYahoo2( int status_ )
 			return Idle;
 		case YAHOO_STATUS_OFFLINE :
 			return Offline;
-		case YAHOO_STATUS_TYPING :
-			return Typing;
 	}
 
 	return Offline;
