@@ -15,6 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <qstylesheet.h>
+ 
 #include <kdebug.h>
 #include <kaction.h>
 #include <klocale.h>
@@ -130,17 +132,22 @@ KActionCollection *CryptographyPlugin::customContextMenuActions(KopeteMetaContac
 
 void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 {
-	if(msg.direction() != KopeteMessage::Inbound)
-		return;
 	QString body=msg.plainBody();
 	if(!body.startsWith("-----BEGIN PGP MESSAGE----"))
 		return;
 
+	if(msg.direction() != KopeteMessage::Inbound)
+	{
+		msg.setBody("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FFFF\"><td><font size=\"-1\"><b>"+i18n("Outgoing Encrypted Message")+"</b></font></td></tr><tr bgcolor=\"#DDFFFF\"><td>"+i18n("TODO: Show original Message")+"</td></tr></table>"
+				,KopeteMessage::RichText);
+		return;
+	}
+
 	body=KgpgInterface::KgpgDecryptText(body, m_prefs->privateKey());
 
-	body="<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FF41\"><td><b>"+i18n("Begin Encrypted Message")+"</b></td></tr><tr bgcolor=\"#DDFFDD\"><td>"+body+"</td></tr><tr bgcolor=\"#41FF41\"><td><b>"+i18n("End Encrypted Message")+"</b></td></tr></table>";
-	if (body!="")
-		msg.setBody(body,KopeteMessage::RichText);
+	body="<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FF41\"><td><font size=\"-1\"><b>"+i18n("Incomming Encrypted Message")+"</b></font></td></tr><tr bgcolor=\"#DDFFDD\"><td>"+QStyleSheet::escape(body)+"</td></tr></table>";
+	msg.setBody(body,KopeteMessage::RichText);
+
 }
 
 void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
