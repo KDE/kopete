@@ -895,12 +895,6 @@ GaduAccount::userlist()
 }
 
 void
-GaduAccount::slotSearch()
-{
-	new GaduPublicDir( this );
-}
-
-void
 GaduAccount::slotSearch( int uin )
 {
 	new GaduPublicDir( this, uin );

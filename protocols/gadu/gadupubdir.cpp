@@ -60,6 +60,10 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* pare
 	mMainWidget->listFound->clear();
 	show();
 
+	if ( searchFor == 0 ) {
+		return;
+	}
+	
 	mMainWidget->pubsearch->raiseWidget( 1 );
 	mMainWidget->radioByUin->setChecked( true );
 

@@ -73,7 +73,7 @@ public slots:
 	void slotGoInvisible();
 	void slotGoBusy();
 	void slotDescription();
-	void slotSearch( int );
+	void slotSearch( int uin = 0);
 
 	void removeContact( const GaduContact* c );
 
@@ -134,7 +134,6 @@ private slots:
 	void connectionSucceed( );
 
 	void slotChangePassword();
-	void slotSearch();
 
 	void slotCommandDone( const QString&, const QString& );
 	void slotCommandError( const QString&, const QString& );
