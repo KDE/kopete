@@ -112,13 +112,6 @@ private slots:
 	void slotOpenInbox();
 	void slotChangePublicName();
 
-//#if !defined NDEBUG //(Stupid moc which don't see when he don't need to slot this slot)
-	/**
-	 * Show simple debugging aid
-	 */
-	void slotDebugRawCommand();
-//#endif
-
 	// notifySocket related
 	void slotStatusChanged( const KopeteOnlineStatus &status );
 	void slotNotifySocketClosed( int state );

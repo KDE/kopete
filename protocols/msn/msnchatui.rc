@@ -5,10 +5,6 @@
 			<text>&amp;Chat</text>
 			<Action name="msnInvite" />
 			<Action name="msnRequestDisplayPicture" />
-			<Menu name="debug">
-				<text>&amp;Debug</text>
-				<Action name="msnDebugRawCommand" />
-			</Menu>
 		</Menu>
 	</MenuBar>
 

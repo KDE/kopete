@@ -38,9 +38,6 @@
 #include "msnaccount.h"
 #include "msnswitchboardsocket.h"
 
-#if !defined NDEBUG
-#include "msndebugrawcmddlg.h"
-#endif
 
 MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteContact *user,
 	KopeteContactPtrList others, const char *name )
@@ -61,10 +58,6 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 
 	m_actionInvite = new KActionMenu( i18n( "&Invite" ), actionCollection() , "msnInvite" );
 	connect ( m_actionInvite->popupMenu() , SIGNAL( aboutToShow() ) , this , SLOT(slotActionInviteAboutToShow() ) ) ;
-
-	#if !defined NDEBUG
-	new KAction( i18n( "Send Raw C&ommand..." ), 0, this, SLOT( slotDebugRawCommand() ), actionCollection(), "msnDebugRawCommand" ) ;
-	#endif
 
 	MSNContact *c = static_cast<MSNContact*>( others.first() );
 	(new KAction( i18n( "Request Display Picture" ), "image", 0,  this, SLOT( slotRequestPicture() ), actionCollection(), "msnRequestDisplayPicture" ))->setEnabled(!c->object().isEmpty());
@@ -515,23 +508,6 @@ void MSNMessageManager::slotDisplayPictureChanged()
 				slotRequestPicture();
 		}
 	}
-}
-
-void MSNMessageManager::slotDebugRawCommand()
-{
-#if !defined NDEBUG
-	if ( !m_chatService )
-		return;
-
-	MSNDebugRawCmdDlg *dlg = new MSNDebugRawCmdDlg( 0L );
-	int result = dlg->exec();
-	if( result == QDialog::Accepted && m_chatService )
-	{
-		m_chatService->sendCommand( dlg->command(), dlg->params(),
-					dlg->addId(), dlg->msg().replace("\n","\r\n").utf8() );
-	}
-	delete dlg;
-#endif
 }
 
 

@@ -74,10 +74,6 @@ private slots:
 
 	void slotDisplayPictureChanged();
 
-	/**
-	 * (debug)
-	 */
-	void slotDebugRawCommand();
 private:
 
 	MSNSwitchBoardSocket *m_chatService;

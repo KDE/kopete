@@ -42,11 +42,6 @@
 #include "sha1.h"
 
 
-#if !defined NDEBUG
-#include "msndebugrawcmddlg.h"
-#include <kglobal.h>
-#endif
-
 MSNAccount::MSNAccount( MSNProtocol *parent, const QString& AccountID, const char *name )
 : KopeteAccount ( parent, AccountID, name )
 {
@@ -214,14 +209,6 @@ KActionMenu * MSNAccount::actionMenu()
 	m_actionMenu->popupMenu()->insertSeparator();
 	m_actionMenu->insert( m_openInboxAction );
 
-#if !defined NDEBUG
-	KActionMenu *debugMenu = new KActionMenu( "Debug", m_actionMenu );
-	debugMenu->insert( new KAction( i18n( "Send Raw C&ommand..." ), 0,
-		this, SLOT( slotDebugRawCommand() ), debugMenu, "m_debugRawCommand" ) );
-	m_actionMenu->popupMenu()->insertSeparator();
-	m_actionMenu->insert( debugMenu );
-#endif
-
 	return m_actionMenu;
 }
 
@@ -324,22 +311,6 @@ void MSNAccount::slotStartChat()
 	}
 }
 
-void MSNAccount::slotDebugRawCommand()
-{
-#if !defined NDEBUG
-	if ( !isConnected() )
-		return;
-
-	MSNDebugRawCmdDlg *dlg = new MSNDebugRawCmdDlg( 0L );
-	int result = dlg->exec();
-	if ( result == QDialog::Accepted && m_notifySocket )
-	{
-		m_notifySocket->sendCommand( dlg->command(), dlg->params(),
-					dlg->addId(), dlg->msg().replace( "\n", "\r\n" ).utf8() );
-	}
-	delete dlg;
-#endif
-}
 
 void MSNAccount::slotChangePublicName()
 {

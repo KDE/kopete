@@ -11,7 +11,7 @@ lib_LTLIBRARIES = libkopete_msn_shared.la
 CLEANFILES = dummy.cpp
 
 libkopete_msn_shared_la_SOURCES = msnprotocol.cpp msnaccount.cpp msnaddcontactpage.cpp msncontact.cpp \
-	msnsocket.cpp msnauthsocket.cpp msndispatchsocket.cpp msnmessagemanager.cpp msndebugrawcmddlg.cpp \
+	msnsocket.cpp msnauthsocket.cpp msndispatchsocket.cpp msnmessagemanager.cpp  \
 	msnnotifysocket.cpp msnswitchboardsocket.cpp msnfiletransfersocket.cpp msninvitation.cpp msnp2p.cpp sha1.cpp
 
 libkopete_msn_shared_la_LIBADD  = ./ui/libkopetemsnui.la ../../libkopete/libkopete.la $(LIB_KIO)
