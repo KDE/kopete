@@ -1,14 +1,17 @@
-SUBDRIS = ui
 METASOURCES = AUTO
 AM_CPPFLAGS = -I$(srcdir)/../ \
 	-I$(srcdir)/../../ \
 	-I$(srcdir)/ui/ \
-	-I$(srcdir)/../../oscarsocket \
+	-I$(srcdir)/../../liboscar \
 	-I$(srcdir)/../../../../ \
 	$(KOPETE_INCLUDES) $(all_includes)
 
 noinst_LTLIBRARIES = libkopeteicqui.la
 
-libkopeteicqui_la_SOURCES = icqadd.ui icquserinfowidget.ui icqaddcontactpage.cpp icqeditaccountui.ui icqeditaccountwidget.cpp
-libkopeteicqui_la_LIBADD = $(top_builddir)/kopete/libkopete/libkopete.la
+libkopeteicqui_la_SOURCES = icqadd.ui icqeditaccountui.ui \
+	icqeditaccountwidget.cpp icqgeneralinfo.ui icqotherinfowidget.ui icqworkinfowidget.ui \
+	icquserinfowidget.cpp icqauthreplyui.ui icqauthreplydialog.cpp icqaddcontactpage.cpp \
+	icqsearchbase.ui icqsearchdialog.cpp 
+
+libkopeteicqui_la_LIBADD = $(top_builddir)/kopete/libkopete/libkopete.la ../../liboscar/liboscar.la
 

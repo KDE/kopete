@@ -6,17 +6,17 @@
 #include <qlabel.h>
 #include "addcontactpage.h"
 
-/**
-  *@author duncan
-  */
 class aimAddContactUI;
 class AIMAccount;
-namespace Kopete { class Account; }
-namespace Kopete { class MetaContact; }
+namespace Kopete
+{
+class Account; 
+class MetaContact;
+}
 
 class AIMAddContactPage : public AddContactPage
 {
-	Q_OBJECT
+Q_OBJECT
 
 public:
 	AIMAddContactPage(bool connected, QWidget *parent=0,
@@ -36,12 +36,6 @@ protected:
 	bool canadd;
 };
 #endif
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
-// vim: set noet ts=4 sts=4 sw=4:
+
+//kate: tab-width 4; indent-mode csands;
 

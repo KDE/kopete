@@ -1,19 +1,19 @@
 /*
-  oscarprotocol.h  -  Oscar Protocol Plugin
+ oscarprotocol.h  -  Oscar Protocol Plugin
 
-  Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
+ Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
 
-  Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+ Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
-  *************************************************************************
-  *                                                                       *
-  * This program is free software; you can redistribute it and/or modify  *
-  * it under the terms of the GNU General Public License as published by  *
-  * the Free Software Foundation; either version 2 of the License, or     *
-  * (at your option) any later version.                                   *
-  *                                                                       *
-  *************************************************************************
-  */
+ *************************************************************************
+ *                                                                       *
+ * This program is free software; you can redistribute it and/or modify  *
+ * it under the terms of the GNU General Public License as published by  *
+ * the Free Software Foundation; either version 2 of the License, or     *
+ * (at your option) any later version.                                   *
+ *                                                                       *
+ *************************************************************************
+ */
 
 #ifndef AIMPROTOCOL_H
 #define AIMPROTOCOL_H
@@ -25,59 +25,58 @@
 
 #include <qmap.h>
 
-namespace Kopete { class OnlineStatus; }
+namespace Kopete
+{
+class OnlineStatus;
+}
 
 class AIMProtocolHandler : public Kopete::MimeTypeHandler
 {
-	public:
-		AIMProtocolHandler();
-		void handleURL(const KURL & url) const;
+public:
+	AIMProtocolHandler();
+	void handleURL( const KURL & url ) const;
 };
 
 class AIMProtocol : public Kopete::Protocol
 {
 	Q_OBJECT
 
-	public:
-		AIMProtocol(QObject *parent, const char *name, const QStringList &args);
-		virtual ~AIMProtocol();
-		/** Internal status enum */
-		enum AIMInternalStatus
-		{
-			AIMONLINE, AIMOFFLINE, AIMAWAY, AIMCONN
-		};
+public:
+	AIMProtocol( QObject *parent, const char *name, const QStringList &args );
+	virtual ~AIMProtocol();
+	/**
+	 * Return the active instance of the protocol
+	 * because it's a singleton, can only be used inside AIM classes, not in oscar lib
+	 */
+	static AIMProtocol *protocol();
 
-		/**
-		* Return the active instance of the protocol
-		* because it's a singleton, can only be used inside AIM classes, not in oscar lib
-		*/
-		static AIMProtocol *protocol();
+	bool canSendOffline() const { return false; }
 
-		bool canSendOffline() const { return false; }
+	virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
+	                                             const QMap<QString, QString> &serializedData,
+	                                             const QMap<QString, QString> &addressBookData );
+	
+	AddContactPage*createAddContactWidget( QWidget *parent, Kopete::Account *account );
+	KopeteEditAccountWidget* createEditAccountWidget( Kopete::Account *account, QWidget *parent );
+	Kopete::Account* createNewAccount( const QString &accountId );
 
-		virtual Kopete::Contact *deserializeContact( Kopete::MetaContact *metaContact,
-			const QMap<QString, QString> &serializedData,
-			const QMap<QString, QString> &addressBookData );
-		AddContactPage *createAddContactWidget(QWidget *parent, Kopete::Account *account);
-		KopeteEditAccountWidget *createEditAccountWidget(Kopete::Account *account, QWidget *parent);
-		Kopete::Account *createNewAccount(const QString &accountId);
+	/**
+	 * The set of online statuses that AIM contacts can have
+	 */
+	const Kopete::OnlineStatus statusOnline;
+	const Kopete::OnlineStatus statusOffline;
+	const Kopete::OnlineStatus statusAway;
+	const Kopete::OnlineStatus statusConnecting;
 
-		/**
-		 * The set of online statuses that AIM contacts can have
-		 */
-		const Kopete::OnlineStatus statusOnline;
-		const Kopete::OnlineStatus statusOffline;
-		const Kopete::OnlineStatus statusAway;
-		const Kopete::OnlineStatus statusConnecting;
+	const Kopete::ContactPropertyTmpl awayMessage;
+	const Kopete::ContactPropertyTmpl clientFeatures;
+	const Kopete::ContactPropertyTmpl clientProfile;
 
-		const Kopete::ContactPropertyTmpl awayMessage;
-		const Kopete::ContactPropertyTmpl clientFeatures;
-
-	private:
-		/** The active instance of oscarprotocol */
-		static AIMProtocol *protocolStatic_;
-		AIMProtocolHandler protohandler;
+private:
+	/** The active instance of oscarprotocol */
+	static AIMProtocol *protocolStatic_;
+	AIMProtocolHandler protohandler;
 };
 
-#endif
-// vim: set noet ts=4 sts=4 sw=4:
+#endif 
+//kate: tab-width 4; indent-mode csands;

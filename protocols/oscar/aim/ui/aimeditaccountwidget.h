@@ -25,7 +25,10 @@
  * @author Chris TenHarmsel <tenharmsel@staticmethod.net>
  */
 
-namespace Kopete { class Account; }
+namespace Kopete
+{
+class Account;
+}
 
 class AIMAccount;
 class AIMProtocol;
@@ -33,22 +36,23 @@ class aimEditAccountUI;
 
 class AIMEditAccountWidget : public QWidget, public KopeteEditAccountWidget
 {
-	Q_OBJECT
+Q_OBJECT
 
-	public:
-		AIMEditAccountWidget(AIMProtocol *protocol, Kopete::Account *account,
-				QWidget *parent=0, const char *name=0);
-		virtual ~AIMEditAccountWidget();
-
-		virtual bool validateData();
-		virtual Kopete::Account *apply();
-
-	private slots:
-		void slotOpenRegister();
-
-	protected:
-		AIMAccount *mAccount;
-		AIMProtocol *mProtocol;
-		aimEditAccountUI *mGui;
+public:
+	AIMEditAccountWidget(AIMProtocol *protocol, Kopete::Account *account,
+	                     QWidget *parent=0, const char *name=0);
+	virtual ~AIMEditAccountWidget();
+	
+	virtual bool validateData();
+	virtual Kopete::Account *apply();
+	
+private slots:
+	void slotOpenRegister();
+	
+protected:
+	AIMAccount *mAccount;
+	AIMProtocol *mProtocol;
+	aimEditAccountUI *mGui;
 };
 #endif
+//kate: tab-width 4; indent-mode csands;

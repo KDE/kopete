@@ -23,13 +23,19 @@
 #include <qwidget.h>
 
 #include "kopetepasswordedaccount.h"
+#include "oscartypeclasses.h"
 #include "oscarcontact.h"
-#include "oscarsocket.h"
 
-namespace Kopete { class Contact; }
-namespace Kopete { class Group; }
+
+namespace Kopete
+{
+class Contact;
+class Group;
+}
+
+class Client;
+class Connection;
 class OscarContact;
-class OscarSocket;
 class OscarAccountPrivate;
 
 class KDE_EXPORT OscarAccount : public Kopete::PasswordedAccount
@@ -40,168 +46,92 @@ public:
 	OscarAccount(Kopete::Protocol *parent, const QString &accountID, const char *name=0L, bool isICQ=false);
 	virtual ~OscarAccount();
 
-	/*
-	 * Disconnects this account
-	 */
-	virtual void disconnect();
-	virtual void disconnect(DisconnectReason reason);
+	/** Provide the derived accounts and contacts with access to the backend */
+	Client* engine();
 
-	/*
+	/** Disconnects this account */
+	virtual void disconnect();
+	
+	/**
 	 * Was the password wrong last time we tried to connect?
 	 */
 	bool passwordWasWrong();
 
-	/*
+	/**
 	 * Sets the account away
 	 */
-	virtual void setAway(bool away, const QString &awayMessage = QString::null)=0;
+	virtual void setAway( bool away, const QString &awayMessage = QString::null ) = 0;
 
-	/*
-	 * Accessor method for our engine object
-	 */
-	OscarSocket* engine() const;
-
-	/*
+	/**
 	 * Accessor method for the action menu
 	 */
 	virtual KActionMenu* actionMenu() = 0;
-
-	/**
-	 * Sets the port we connect to
-	 */
-	void setServerPort(int port);
-
-	/**
-	 * Sets the server we connect to
-	 */
-	void setServerAddress(const QString &server);
-
-	bool ignoreUnknownContacts() const;
-	void setIgnoreUnknownContacts( bool b );
-
-	void setAwayMessage(const QString&);
-	const QString awayMessage();
-
-	/**
-	 * Pure virtual to be implemented by ICQAccount and AIMAccount
-	 * sets the users status and if connected should send a status update to the server
-	 * in disconnected state it just updates the local status variable that
-	 * gets used on connect
-	 */
-	virtual void setStatus(unsigned long status,
-		const QString &awayMessage = QString::null) =0;
+	
+	/** Set the server address */
+	void setServerAddress( const QString& server );
+	
+	/** Set the server port */
+	void setServerPort( int port );
 
 public slots:
-	/*
-	 * Slot for telling this account to go offline
-	 */
 	void slotGoOffline();
-
-	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
-
-protected slots:
-	/** Called when we get disconnected */
-//	void slotDisconnected();
-
-	/** Called when a group is added for this account */
-	void slotGroupAdded(Kopete::Group* group);
-
-	/** Called when the contact list renames a group */
-	void slotKopeteGroupRenamed(Kopete::Group *group,
-		const QString &oldName);
-
-	/*
-	 * Called when the contact list removes a group
-	 */
-	void slotKopeteGroupRemoved(Kopete::Group *group);
-
-	/*
-	 * Called when our status changes on the server
-	 */
-	void slotOurStatusChanged(const unsigned int newStatus);
-
-	/*
-	 * Called when we get a contact list from the server
-	 * The parameter is a qmap with the contact names as keys
-	 * the value is another map with keys "name", "group"
-	 */
-	void slotGotServerBuddyList();
-
-	/*
-	 * Called when we've received an IM
-	 */
-	void slotReceivedMessage(const QString &sender, OscarMessage &message);
-
-	void slotReceivedAwayMessage(const QString &sender, const QString &message);
-
-	/*
-	 * Called when we get a request for a direct IM session with @sn
-	 */
-	//void slotGotDirectIMRequest(QString sn);
-
-	/*
-	 * Called when there is no activity for a certain amount of time
-	 */
-	void slotIdleTimeout();
-
-	/*
-	 * Displays an error dialog with the given text
-	 */
-	void slotError(QString errmsg, int errorCode, bool isFatal);
-
-	void slotLoggedIn();
-
-	//void slotDelayedListSync();
-
-	void slotPasswordWrong();
+	
+	void slotGoOnline();
+	
+	void protocolError( int error, int psError, const QString& message );
 
 protected:
-	/*
+	/**
+	 * Setup a connection for a derived account based on the host and port
+	 */
+	Connection* setupConnection( const QString& server, uint port );
+	
+	/**
 	 * Adds a contact to a meta contact
 	 */
 	virtual bool createContact(const QString &contactId,
 		 Kopete::MetaContact *parentContact );
 
-	/*
+	/**
 	 * Protocols using Oscar must implement this to perform the instantiation
 	 * of their contact for Kopete.  Called by @ref createContact().
 	 * @param contactId theprotocol unique id of the contact
-	 * @param displayName the display name of the contact
 	 * @param parentContact the parent metacontact
 	 * @return whether the creation succeeded or not
 	 */
-	 virtual OscarContact *createNewContact( const QString &contactId, const QString &displayName,
-		Kopete::MetaContact *parentContact, bool isOnSSI = false ) =0;
+	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const SSI& ssiItem ) = 0;
+	
+	virtual QString sanitizedMessage( const Oscar::Message& message ) = 0;
 
-	/*
-	 * Initializes the engine
-	 */
-	virtual void initEngine(bool);
+protected slots:
+	
+	void slotPasswordWrong();
+	
+	void slotGotSSIList();
+	
+	void kopeteGroupRemoved( Kopete::Group* g );
+	void kopeteGroupAdded( Kopete::Group* g );
+	void kopeteGroupRenamed( Kopete::Group* g, const QString& oldName );
 
-	//void syncLocalWithServerBuddyList();
+	void messageReceived( const Oscar::Message& message );
+	
+	void updateContact( Oscar::SSI );
+	
+	void ssiGroupAdded( const Oscar::SSI& );
+	void ssiGroupRemoved( const Oscar::SSI& ) {}
+	void ssiContactAdded( const Oscar::SSI& );
+	void ssiContactRemoved( const Oscar::SSI& ) {}
 
+signals:
+	
+	void accountDisconnected( Kopete::Account::DisconnectReason reason );
+	
 private:
 	OscarAccountPrivate *d;
-	friend class ConnectTask; // for passwordPrompt
-};
 
-class KDE_EXPORT ConnectTask : public QObject
-{
-	Q_OBJECT
-	
-public:
-	ConnectTask( OscarAccount *account, unsigned long status, const QString &awayMessage );
-	
-public slots:
-	void passwordRetrieved( const QString &password );
-	
-private:
-	OscarAccount *m_account;
-	unsigned long m_status;
-	QString m_awayMessage;
 };
 
 #endif
 
-// vim: set noet ts=4 sts=4 sw=4:
+//kate: tab-width 4; indent-mode csands;
 

@@ -1,8 +1,9 @@
 /*
   icqaccount.h  -  ICQ Account Class Header
 
-  Copyright (c) 2002 by Chris TenHarmsel <tenharmsel@staticmethod.net>
-  Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+  Copyright (c) 2002 by Chris TenHarmsel            <tenharmsel@staticmethod.net>
+  Copyright (c) 2004 by Richard Smith               <kde@metafoo.co.uk>
+  Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -18,61 +19,76 @@
 #ifndef ICQACCOUNT_H
 #define ICQACCOUNT_H
 
-#include <qdict.h>
-#include <qstring.h>
-#include <qwidget.h>
+#include "oscaraccount.h"
 
-#include <oscaraccount.h>
-#include <oscarsocket.h>
-#include <oscarsocket.icq.h>
+#include "icqpresence.h"
+#include "oscartypeclasses.h"
 
-class KActionMenu;
-namespace Kopete { class Protocol; }
+class KAction;
+namespace Kopete { class AwayAction; }
+class ICQProtocol;
 
-class OscarChangeStatus;
 class ICQAccount : public OscarAccount
 {
-	Q_OBJECT
+Q_OBJECT
+	
+public:
+	ICQAccount( Kopete::Protocol *parent, QString accountID, const char *name = 0L );
+	virtual ~ICQAccount();
+	
+	ICQProtocol *protocol();
+	
+	// Accessor method for the action menu
+	virtual KActionMenu* actionMenu();
+	
+	/** Reimplementation from Kopete::Account */
+	void setOnlineStatus( const Kopete::OnlineStatus&, const QString& ) {}
+	
+	virtual void setAway( bool away, const QString &awayReason );
+	
+	void connectWithPassword( const QString &password );
 
-	public:
-		ICQAccount(Kopete::Protocol *parent, QString accountID, const char *name=0L);
-		~ICQAccount();
+	void setUserProfile( const QString &profile );
+	
+protected:
+	virtual OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const SSI& ssiItem );
 
-		KActionMenu* actionMenu();
-		virtual void setAway(bool away, const QString &awayReason);
+	virtual QString sanitizedMessage( const Oscar::Message& message );
 
-		virtual void setStatus(unsigned long status,
-			const QString &awayMessage = QString::null);
+protected slots:	
+	virtual void disconnected( DisconnectReason reason );
+	
 
-		void connectWithPassword(const QString &password);
-
-		void setInvisible(bool);
-		void reloadPluginData();
-
-	public slots:
-		void slotGoOnline();
-		void slotGoAway( const QString & );
-		void slotGoNA( const QString & );
-		void slotGoOCC( const QString & );
-		void slotGoFFC( const QString & );
-		void slotGoDND( const QString & );
-		void slotToggleInvisible();
-
-	protected slots:
-		void slotSendSMS();
-
-	protected:
-		virtual OscarContact *createNewContact(const QString &contactId,
-			const QString &displayName, Kopete::MetaContact *parentContact, bool isOnSSI = false);
-
-	private:
-		unsigned long fullStatus(unsigned long plainStatus);
-
-	private:
-		unsigned long mStatus; // icq status minux flags for web-aware, hide-ip and invisible
-		bool mWebAware;
-		bool mHideIP;
-		bool mInvisible;
+private:
+	// helpers for actionMenu()
+	KAction* statusAction( const QString &name, ICQ::Presence::Type type, const char *slot );
+	Kopete::AwayAction* statusActionAway( const QString &name, ICQ::Presence::Type type, const char *slot );
+	
+	ICQ::Presence presence();
+	
+	void setInvisible( ICQ::Presence::Visibility );
+	void setPresenceType( ICQ::Presence::Type, const QString &awayMessage = QString::null );
+	void setPresenceTarget( const ICQ::Presence &presence );
+	
+	//const unsigned long fullStatus( const unsigned long plainStatus );
+	
+private slots:
+	// FIXME: this is also declared in OscarAccount as a public non-virtual slot.
+	//        one or the other should be removed.
+	void slotGoOnline();
+	void slotGoAway( const QString & );
+	void slotGoNA( const QString & );
+	void slotGoOCC( const QString & );
+	void slotGoFFC( const QString & );
+	void slotGoDND( const QString & );
+	void slotGoOffline();
+	
+	void slotToggleInvisible();
+	
+private:
+	bool mWebAware;
+	bool mHideIP;
 };
+
 #endif
-// vim: set noet ts=4 sts=4 sw=4:
+//kate: indent-mode csands;

@@ -20,7 +20,6 @@
 
 #include <kdialogbase.h>
 #include "aiminfobase.h"
-#include "oscarsocket.h"
 
 class KTextEdit;
 class OscarAccount;

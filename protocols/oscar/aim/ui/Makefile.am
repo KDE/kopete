@@ -2,7 +2,7 @@ METASOURCES = AUTO
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
     -I$(srcdir)/.. \
 	-I$(srcdir)/../.. \
-    -I$(srcdir)/../../oscarsocket \
+    -I$(srcdir)/../../liboscar \
 	$(all_includes)
 
 noinst_LTLIBRARIES = libkopeteaimui.la

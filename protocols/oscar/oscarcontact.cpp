@@ -26,8 +26,8 @@
 #include <kmessagebox.h>
 
 #include <kdeversion.h>
-#include <kinputdialog.h>
 
+#include "kopeteaccount.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
@@ -35,121 +35,58 @@
 #include "kopeteuiglobal.h"
 #include <kopeteglobal.h>
 
-#include "aim.h"
-#include "oscarsocket.h"
 #include "oscaraccount.h"
+#include "client.h"
+#include "ssimanager.h"
+#include "oscarutils.h"
 
 #include <assert.h>
 
-OscarContact::OscarContact(const QString& name, const QString& displayName,
-	Kopete::Account *account, Kopete::MetaContact *parent)
-	: Kopete::Contact(account, name, parent)
+OscarContact::OscarContact( Kopete::Account* account, const QString& name,
+                            Kopete::MetaContact* parent, const QString& icon, const SSI& ssiItem )
+: Kopete::Contact( account, name, parent, icon )
 {
-	/*kdDebug(14150) << k_funcinfo <<
-		"name='" << name <<
-		"', displayName='" << displayName << "'" << endl;*/
-
-	assert(account);
 	mAccount = static_cast<OscarAccount*>(account);
-
-	mName = tocNormalize(name); // We store normalized names (lowercase no spaces)
-	mEncoding=0;
-	mGroupId=0;
-	mMsgManager=0L;
-	mIsServerSide = false;
-	mIgnore = false;
-	mVisibleTo = false;
-	mInvisibleTo = false;
-
-	setFileCapable(false);
-
-	if (!displayName.isEmpty())
-		setDisplayName(displayName);
-	else
-		setDisplayName(name);
-
-	// fill userinfo with default values until we receive a userinfo block from the contact
-	mInfo.sn = name;
-	mInfo.capabilities = 0;
-	mInfo.icqextstatus = ICQ_STATUS_OFFLINE;
-	mInfo.idletime = 0;
-	mInfo.version = 0;
-
-	initSignals();
+	mName = name;
+	mMsgManager = 0L;
+	m_ssiItem = ssiItem;
+	connect( this, SIGNAL( updatedSSI() ), this, SLOT( updateSSIItem() ) );
 }
-
-
-void OscarContact::initSignals()
-{
-//	kdDebug(14150) << k_funcinfo << "Called" << endl;
-	// Buddy offline
-	connect(
-		mAccount->engine(), SIGNAL(gotOffgoingBuddy(QString)),
-		this, SLOT(slotOffgoingBuddy(QString)));
-
-	// kopete-users's status changed
-	connect(
-		mAccount->engine(), SIGNAL(statusChanged(const unsigned int)),
-		this, SLOT(slotMainStatusChanged(const unsigned int)));
-
-	/*connect(
-		mAccount->engine(), SIGNAL(gotContactChange(const UserInfo &)),
-		this, SLOT(slotParseUserInfo(const UserInfo &)));*/
-
-	connect(mAccount->engine(),
-		SIGNAL(gotAuthReply(const QString &, const QString &, bool)),
-		this, SLOT(slotGotAuthReply(const QString &, const QString &, bool)));
-
-	// Incoming minitype notification
-	connect(mAccount->engine(),
-		SIGNAL(recvMTN(const QString &, OscarConnection::TypingNotify)),
-		this, SLOT(slotGotMiniType(const QString &, OscarConnection::TypingNotify)));
-#if 0
-	// New direct connection
-	connect(
-		mAccount->engine(), SIGNAL(connectionReady(QString)),
-		this, SLOT(slotDirectIMReady(QString)));
-
-	// Direct connection closed
-	connect(
-		mAccount->engine(), SIGNAL(directIMConnectionClosed(QString)),
-		this, SLOT(slotDirectIMConnectionClosed(QString)));
-
-	// File transfer request
-	connect(
-		mAccount->engine(), SIGNAL(gotFileSendRequest(QString,QString,QString,unsigned long)),
-		this, SLOT(slotGotFileSendRequest(QString,QString,QString,unsigned long)));
-
-	// File transfer started
-	connect(
-		mAccount->engine(), SIGNAL(transferBegun(OscarConnection *, const QString &,
-			const unsigned long, const QString &)),
-		this, SLOT(slotTransferBegun(OscarConnection *,
-			const QString &,
-			const unsigned long,
-			const QString &)));
-
-	// File transfer manager stuff
-	connect(
-		Kopete::TransferManager::transferManager(), SIGNAL(accepted(Kopete::Transfer *, const QString &)),
-				this, SLOT(slotTransferAccepted(Kopete::Transfer *, const QString &)) );
-
-	// When the file transfer is refused
-	connect(
-		Kopete::TransferManager::transferManager(), SIGNAL(refused(const Kopete::FileTransferInfo &)),
-		this, SLOT(slotTransferDenied(const Kopete::FileTransferInfo &)));
-#endif
-}
-
 
 OscarContact::~OscarContact()
 {
 }
 
-
-Kopete::ChatSession* OscarContact::manager(CanCreateFlags canCreate )
+void OscarContact::serialize(QMap<QString, QString> &serializedData,
+                             QMap<QString, QString> &/*addressBookData*/)
 {
-	if(!mMsgManager && canCreate)
+	serializedData["ssi_name"] = m_ssiItem.name();
+	serializedData["ssi_type"] = QString::number( m_ssiItem.type() );
+	serializedData["ssi_gid"] = QString::number( m_ssiItem.gid() );
+	serializedData["ssi_bid"] = QString::number( m_ssiItem.bid() );
+	serializedData["ssi_alias"] = m_ssiItem.alias();
+	serializedData["ssi_waitingAuth"] = m_ssiItem.waitingAuth() ? QString::fromLatin1( "true" ) : QString::fromLatin1( "false" );
+}
+
+bool OscarContact::isOnServer() const
+{
+	return ( m_ssiItem.type() != 0xFFFF );
+}
+
+void OscarContact::setSSIItem( const Oscar::SSI& ssiItem )
+{
+	m_ssiItem = ssiItem;
+	emit updatedSSI();
+}
+
+Oscar::SSI OscarContact::ssiItem() const
+{
+	return m_ssiItem;
+}
+
+Kopete::ChatSession* OscarContact::manager( CanCreateFlags canCreate )
+{
+	if ( !mMsgManager && canCreate )
 	{
 		/*kdDebug(14190) << k_funcinfo <<
 			"Creating new ChatSession for contact '" << displayName() << "'" << endl;*/
@@ -160,588 +97,109 @@ Kopete::ChatSession* OscarContact::manager(CanCreateFlags canCreate )
 		mMsgManager = Kopete::ChatSessionManager::self()->create(account()->myself(), theContact, protocol());
 
 		// This is for when the user types a message and presses send
-		connect(mMsgManager,
-			SIGNAL(messageSent(Kopete::Message&, Kopete::ChatSession *)),
-			this, SLOT(slotSendMsg(Kopete::Message&, Kopete::ChatSession *)));
+		connect(mMsgManager, SIGNAL( messageSent( Kopete::Message&, Kopete::ChatSession * ) ),
+		        this, SLOT( slotSendMsg( Kopete::Message&, Kopete::ChatSession * ) ) );
 
 		// For when the message manager is destroyed
-		connect(mMsgManager, SIGNAL(destroyed()),
-			this, SLOT(slotChatSessionDestroyed()));
+		connect(mMsgManager, SIGNAL( destroyed() ),
+		        this, SLOT( chatSessionDestroyed() ) );
 
-		connect(mMsgManager, SIGNAL(myselfTyping(bool)),
-			this, SLOT(slotTyping(bool)));
+		connect(mMsgManager, SIGNAL( typingMsg( bool ) ),
+		        this, SLOT( slotTyping( bool ) ) );
 	}
 	return mMsgManager;
 }
 
-
-void OscarContact::slotChatSessionDestroyed()
-{
-	/*kdDebug(14190) << k_funcinfo <<
-		"ChatSession for contact '" << displayName() << "' destroyed" << endl;*/
-	mMsgManager = 0L;
-}
-
-
-void OscarContact::slotTyping(bool typing)
-{
-	mAccount->engine()->sendMiniTypingNotify(contactName(),
-		typing ? OscarSocket::TypingBegun : OscarSocket::TypingFinished);
-}
-
-
-void OscarContact::slotGotMiniType(const QString &name,
-	OscarConnection::TypingNotify type)
-{
-	// Check to see if it's us
-	if(tocNormalize(name) != contactName())
-		return;
-
-	// Only if we already have a message manager
-	if(mMsgManager == 0L)
-		return;
-
-	/*kdDebug(14190) << k_funcinfo <<
-		"Got minitype notification for " << contactName() << endl;*/
-
-	switch(type)
-	{
-		case (OscarConnection::TypingFinished):
-		case (OscarConnection::TextTyped): // Both of these are types of "not typing"
-			mMsgManager->receivedTypingMsg(this, false);
-			break;
-		case (OscarConnection::TypingBegun): // Typing started
-			mMsgManager->receivedTypingMsg(this, true);
-			break;
-		default:
-			break;
-	}
-}
-
-
-void OscarContact::slotMainStatusChanged(const unsigned int newStatus)
-{
-	if(newStatus == OSCAR_OFFLINE)
-	{
-		setStatus(OSCAR_OFFLINE);
-		mInfo.idletime = 0;
-		setIdleTime(0);
-		emit idleStateChanged(this);
-	}
-}
-
-
-void OscarContact::slotOffgoingBuddy(QString sn)
-{
-	if(tocNormalize(sn) != contactName())
-		return;
-
-	setStatus(OSCAR_OFFLINE);
-	mInfo.idletime = 0;
-	setIdleTime(0);
-	emit idleStateChanged(this);
-}
-
-
-void OscarContact::slotUpdateNickname(const QString newNickname)
-{
-	setDisplayName(newNickname);
-}
-
-
 void OscarContact::deleteContact()
 {
-	kdDebug(14150) << k_funcinfo << "contact '" << displayName() << "'" << endl;
-
-	QString grpName;
-	if (metaContact())
-	{
-		if (metaContact()->groups().count() > 0)
-			grpName = metaContact()->groups().first()->displayName();
-	}
-
-	if (mAccount->engine()->isICQ())
-		mAccount->engine()->sendDelBuddylist(contactName());
-
-	mAccount->engine()->sendDelBuddy(contactName(), grpName);
+	mAccount->engine()->removeContact( contactId() );
 	deleteLater();
 }
 
+void OscarContact::chatSessionDestroyed()
+{
+	mMsgManager = 0L;
+}
 
 // Called when the metacontact owning this contact has changed groups
-void OscarContact::sync(unsigned int)
+void OscarContact::sync(unsigned int flags)
 {
-	if (!metaContact())
-		return;
-
-	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() <<
-		"' (" << contactId() << ")" << endl;
-
-	// Get the (kopete) group that we belong to
-	Kopete::GroupList groups = metaContact()->groups();
-	if(groups.count() == 0)
-	{
-		kdDebug(14150) << k_funcinfo <<
-			"Contact is in no group in Kopete contactlist, aborting!" << endl;
-		return;
-	}
-
-	//Don't modify the group if we're moving the contact to the top-level
-	//or the temporary group. This modifies our local list, but doesn't change
-	//the server.
-	if (groups.contains(Kopete::Group::topLevel()) || groups.contains(Kopete::Group::temporary()))
-		return;
-
-	// Oscar only supports one group per contact, so just get the first one
-	Kopete::Group *firstKopeteGroup = groups.first();
-
-	if(!firstKopeteGroup)
-	{
-		kdDebug(14150) << k_funcinfo << "Could not get first kopete group" << endl;
-		return;
-	}
-
-	/*kdDebug(14150) << k_funcinfo << "SSI Data before change of group" << endl;
-	mAccount->engine()->ssiData().print();*/
-
-	if (!mAccount->engine()->ssiData().findGroup(firstKopeteGroup->displayName()))
-	{
-		//We don't have the group in SSI yet. Add it.
-		kdDebug(14150) << k_funcinfo << "Adding missing group '" <<
-			firstKopeteGroup->displayName() << "'" << endl;
-		mAccount->engine()->sendAddGroup(firstKopeteGroup->displayName());
-	}
-	else
-	{
-		kdDebug(14150) << k_funcinfo <<
-			"New group '" << firstKopeteGroup->displayName() <<
-			" 'found in SSI already" << endl;
-	}
-
-	/*
-	 * Another possibility is moving a buddy in the blm, but in that case, we don't need
-	 * to move him on BLM or SSI or anywhere, since BLM doesn't keep track of groups.
-	 *
-	 * Due to a bug in libkopete, temporary contacts don't have syncGroups called on them
+	/* 
+	 * If the contact is waiting for auth, we do nothing
+	 * If the contact has changed groups, then we update the server
+	 *   adding the group if it doesn't exist, changing the ssi item
+	 *   contained in the client and updating the contact's ssi item
+	 * Otherwise, we don't do much
 	 */
-	SSI* movedItem = mAccount->engine()->ssiData().findContact(contactId());
-	if (movedItem)
+	if ( flags & Kopete::Contact::MovedBetweenGroup == Kopete::Contact::MovedBetweenGroup )
 	{
-		//hey, contact is on SSI, move him
-		SSI* oldGroup = mAccount->engine()->ssiData().findGroup(movedItem->gid);
-		//I'm not checking the old group pointer because since we're using
-		//the gid, the group is guaranteed to be found.
-		mAccount->engine()->sendChangeBuddyGroup(movedItem->name, oldGroup->name,
-			firstKopeteGroup->displayName());
-	}
-	else
-	{
-		kdDebug(14150) << k_funcinfo <<
-			"Contact not on server. Adding it." << endl;
-		mAccount->engine()->sendAddBuddy(contactId(), firstKopeteGroup->displayName(), false);
-	}
 
-	/*kdDebug(14150) << k_funcinfo << "SSI Data after change of group" << endl;
-	mAccount->engine()->ssiData().print();*/
-}
-
-
-#if 0
-void OscarContact::slotGotFileSendRequest(QString sn, QString message, QString filename,
-	unsigned long filesize)
-{
-	if(tocNormalize(sn) != mName)
-		return;
-
-	kdDebug(14150) << k_funcinfo << "Got file transfer request for '" <<
-		displayName() << "'" << endl;
-
-	Kopete::TransferManager::transferManager()->askIncomingTransfer(
-		this, filename, filesize, message);
-}
-
-void OscarContact::slotTransferAccepted(Kopete::Transfer *tr, const QString &fileName)
-{
-	if (tr->info().contact() != this)
-		return;
-
-	kdDebug(14150) << k_funcinfo << "Transfer of '" << fileName <<
-		"' from '" << mName << "' accepted." << endl;
-
-	OscarConnection *fs = mAccount->engine()->sendFileSendAccept(mName, fileName);
-
-	//connect to transfer manager
-	connect(
-		fs, SIGNAL(percentComplete(unsigned int)),
-		tr, SLOT(slotPercentCompleted(unsigned int)));
-}
-
-void OscarContact::slotTransferDenied(const Kopete::FileTransferInfo &tr)
-{
-	// Check if we're the one who is directly connected
-	if(tr.contact() != this)
-		return;
-
-	kdDebug(14150) << k_funcinfo << "Transfer denied." << endl;
-	mAccount->engine()->sendFileSendDeny(mName);
-}
-
-void OscarContact::slotTransferBegun(OscarConnection *con,
-	const QString& file,
-	const unsigned long size,
-	const QString &recipient)
-{
-	if (tocNormalize(con->connectionName()) != mName)
-		return;
-
-	kdDebug(14150) << k_funcinfo << "adding transfer of " << file << endl;
-	Kopete::Transfer *tr = Kopete::TransferManager::transferManager()->addTransfer(
-		this, file, size, recipient, Kopete::FileTransferInfo::Outgoing );
-
-	//connect to transfer manager
-	connect(
-		con, SIGNAL(percentComplete(unsigned int)),
-		tr, SLOT(slotPercentCompleted(unsigned int)));
-}
-
-void OscarContact::slotDirectConnect()
-{
-	kdDebug(14150) << k_funcinfo << "Requesting direct IM with " << mName << endl;
-
-	int result = KMessageBox::questionYesNo(
-		Kopete::UI::Global::mainWidget(),
-		i18n("<qt>Are you sure you want to establish a direct connection to %1? \
-		This will allow %2 to know your IP address, which can be dangerous if \
-		you do not trust this contact.</qt>")
-#if QT_VERSION < 0x030200
-			.arg(mName).arg(mName),
-#else
-			.arg(mName , mName),
-#endif
-		i18n("Request Direct IM with %1?").arg(mName));
-	if(result == KMessageBox::Yes)
-	{
-		execute();
-		Kopete::ContactPtrList p;
-		p.append(this);
-		Kopete::Message msg = Kopete::Message(
-			this, p,
-			i18n("Waiting for %1 to connect...").arg(mName),
-			Kopete::Message::Internal, Kopete::Message::PlainText );
-
-		manager(true)->appendMessage(msg);
-		mAccount->engine()->sendDirectIMRequest(mName);
-	}
-}
-
-void OscarContact::slotDirectIMReady(QString name)
-{
-	// Check if we're the one who is directly connected
-	if(tocNormalize(name) != contactName())
-		return;
-
-	kdDebug(14150) << k_funcinfo << "Setting direct connect state for '" <<
-		displayName() << "' to true" << endl;
-
-	mDirectlyConnected = true;
-	Kopete::ContactPtrList p;
-	p.append(this);
-	Kopete::Message msg = Kopete::Message(
-		this, p,
-		i18n("Direct connection to %1 established").arg(mName),
-		Kopete::Message::Internal, Kopete::Message::PlainText ) ;
-
-	manager(true)->appendMessage(msg);
-}
-
-void OscarContact::slotDirectIMConnectionClosed(QString name)
-{
-	// Check if we're the one who is directly connected
-	if ( tocNormalize(name) != tocNormalize(mName) )
-		return;
-
-	kdDebug(14150) << "[OscarContact] Setting direct connect state for '"
-		<< mName << "' to false." << endl;
-
-	mDirectlyConnected = false;
-}
-
-void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*/,
-	const long unsigned int /*fileSize*/)
-{
-	KURL filePath;
-
-	//If the file location is null, then get it from a file open dialog
-	if( !sourceURL.isValid() )
-		filePath = KFileDialog::getOpenURL(QString::null ,"*", 0L, i18n("Kopete File Transfer"));
-	else
-		filePath = sourceURL;
-
-	if(!filePath.isEmpty())
-	{
-		KFileItem finfo(KFileItem::Unknown, KFileItem::Unknown, filePath);
-
-		kdDebug(14150) << k_funcinfo << "File size is " <<
-			(unsigned long)finfo.size() << endl;
-
-		//Send the file
-		mAccount->engine()->sendFileSendRequest(mName, finfo);
-	}
-}
-#endif
-
-
-void OscarContact::rename(const QString &newNick)
-{
-	kdDebug(14150) << k_funcinfo << "Rename '" << displayName() << "' to '" <<
-		newNick << "'" << endl;
-
-	//TODO: group handling!
-	setDisplayName(newNick);
-}
-
-
-void OscarContact::slotParseUserInfo(const UserInfo &u)
-{
-	if(tocNormalize(u.sn) != contactName())
-		return;
-
-	if(mInfo.idletime != u.idletime)
-	{
-		setIdleTime(u.idletime * 60);
-		if(u.idletime == 0)
-			emit idleStateChanged(this);
-	}
-
-	// Overwrites the onlineSince property set by Kopete::Contact, but that's ok :)
-	if(u.onlinesince.isValid())
-	{
-		//kdDebug(14150) << k_funcinfo << "onlinesince = " << u.onlinesince.toString() << endl;
-		setProperty(Kopete::Global::Properties::self()->onlineSince(), u.onlinesince);
-	}
-	else
-	{
-		//kdDebug(14150) << k_funcinfo << "invalid onlinesince, removing property!" << endl;
-		removeProperty(Kopete::Global::Properties::self()->onlineSince());
-	}
-
-	//kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
-	mInfo.updateInfo(u); // merge data from mInfo and u
-}
-
-bool OscarContact::hasCap(int capNumber)
-{
-	return (mInfo.hasCap(capNumber));
-}
-
-void OscarContact::slotRequestAuth()
-{
-	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
-	requestAuth();
-}
-
-
-int OscarContact::requestAuth()
-{
-	QString reason = KInputDialog::getText(
-		i18n("Request Authorization"),i18n("Reason for requesting authorization:"));
-	if(!reason.isNull())
-	{
-		kdDebug(14150) << k_funcinfo << "Sending auth request to '" <<
-			displayName() << "'" << endl;
-		mAccount->engine()->sendAuthRequest(contactName(), reason);
-		return(1);
-	}
-	else
-		return(0);
-}
-
-
-void OscarContact::slotSendAuth()
-{
-	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
-
-	// TODO: custom dialog also allowing a refusal
-	QString reason = KInputDialog::getText(
-		i18n("Request Authorization"),i18n("Reason for granting authorization:"));
-	if(!reason.isNull())
-	{
-		kdDebug(14150) << k_funcinfo << "Sending auth granted to '" <<
-			displayName() << "'" << endl;
-		mAccount->engine()->sendAuthReply(contactName(), reason, true);
-	}
-}
-
-
-void OscarContact::slotGotAuthReply(const QString &contact, const QString &reason, bool granted)
-{
-	if(contact != contactName())
-		return;
-
-	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "' reason='" <<
-		reason << "' granted=" << granted << endl;
-
-// TODO: Reimplement
-//	setWaitAuth(granted);
-
-/*	if (!waitAuth())
-		mAccount->engine()->sendDelBuddylist(tocNormalize(contact));*/
-
-	// FIXME: remove this method and handle auth in oscaraccount already!
-	/*
-	if(granted)
-	{
-		QString message = i18n("<b>[Granted Authorization:]</b> %1").arg(reason);
-		gotIM(OscarSocket::GrantedAuth, message);
-	}
-	else
-	{
-		QString message = i18n("<b>[Declined Authorization:]</b> %1").arg(reason);
-		gotIM(OscarSocket::DeclinedAuth, message);
-	}
-	*/
-}
-
-//void OscarContact::receivedIM(OscarSocket::OscarMessageType type, const OscarMessage &msg)
-void OscarContact::receivedIM(Kopete::Message &msg)
-{
-	//kdDebug(14190) << k_funcinfo << "called" << endl;
-	// Tell the message manager that the buddy is done typing
-	manager(Kopete::Contact::CanCreate)->receivedTypingMsg(this, false);
-
-/*
-	// Build a Kopete::Message and set the body as Rich Text
-	Kopete::ContactPtrList tmpList;
-	tmpList.append(account()->myself());
-	Kopete::Message kmsg(this, tmpList, msg.text, Kopete::Message::Inbound,
-		Kopete::Message::RichText);
-	manager(true)->appendMessage(kmsg);
-*/
-	manager(Kopete::Contact::CanCreate)->appendMessage(msg);
-
-#if 0
-	// send our away message in fire-and-forget-mode :)
-	if(mAccount->isAway())
-	{
-		// Compare current time to last time we sent a message
-		// We'll wait 2 minutes between responses
-		if((time(0L) - mLastAutoResponseTime) > 120)
+		if ( m_ssiItem.waitingAuth() )
 		{
-			kdDebug(14190) << k_funcinfo << " while we are away, " \
-				"sending away-message to annoy buddy :)" << endl;
-			// Send the autoresponse
-			mAccount->engine()->sendIM(Kopete::Away::getInstance()->message(), this, true);
-			// Build a pointerlist to insert this contact into
-			Kopete::ContactPtrList toContact;
-			toContact.append(this);
-			// Display the autoresponse
-			// Make it look different
-			// UGLY hardcoded color
-			QString responseDisplay =
-				"<font color='#666699'>Autoresponse: </font>" +
-				Kopete::Away::getInstance()->message();
-
-			Kopete::Message message(mAccount->myself(), toContact,
-				responseDisplay, Kopete::Message::Outbound, Kopete::Message::RichText);
-
-			manager(true)->appendMessage(message);
-			// Set the time we last sent an autoresponse
-			// which is right now
-			mLastAutoResponseTime = time(0L);
+			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Contact still requires auth. Doing nothing" << endl;
+			return;
 		}
+		
+		kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "Moving a contact between groups" << endl;
+		SSIManager* ssiManager = mAccount->engine()->ssiManager();
+		SSI oldGroup = ssiManager->findGroup( m_ssiItem.gid() );
+		Kopete::Group* newGroup = metaContact()->groups().first();
+		if ( newGroup->displayName() == oldGroup.name() )
+			return; //we didn't really move
+		
+		if ( !ssiManager->findGroup( newGroup->displayName() ) )
+		{ //we don't have the group on the server
+			kdDebug(OSCAR_GEN_DEBUG) << k_funcinfo << "the group '" << newGroup->displayName() << "' is not on the server"
+				<< "adding it" << endl;
+			mAccount->engine()->addGroup( newGroup->displayName() );
+		}
+		
+		SSI newSSIGroup = ssiManager->findGroup( newGroup->displayName() );
+		if ( !newSSIGroup )
+		{
+			kdWarning(OSCAR_GEN_DEBUG) << k_funcinfo << newSSIGroup.name() << " not found on SSI list after addition!" << endl;
+			return;
+		}
+		
+		mAccount->engine()->changeContactGroup( contactId(), newGroup->displayName() );
+		SSI newItem( m_ssiItem.name(), newSSIGroup.gid(), m_ssiItem.bid(), m_ssiItem.type(),
+		             m_ssiItem.tlvList(), m_ssiItem.tlvListLength() );
+		setSSIItem( newItem );
 	}
-#endif
+	return;
 }
 
-#if 0
-bool OscarContact::waitAuth() const
+void OscarContact::userInfoUpdated( const QString& contact, const UserDetails& details  )
 {
-	// TODO: move var to OscarContact
-	return mListContact->waitAuth();
+	Q_UNUSED( contact );
+	setIdleTime( details.idleTime() );
+	m_warningLevel = details.warningLevel();
 }
 
-void OscarContact::setWaitAuth(bool b) const
+void OscarContact::slotSendMsg( Kopete::Message& msg, Kopete::ChatSession* session )
 {
-	mListContact->setWaitAuth(b);
-}
+	//Why is this unused?
+	Q_UNUSED( session );
+	Oscar::Message message;
 
-#endif
-
-const unsigned int OscarContact::encoding()
-{
-	return mEncoding;
-}
-
-void OscarContact::setEncoding(const unsigned int mib)
-{
-	mEncoding = mib;
-}
-
-const int OscarContact::groupId()
-{
-	//kdDebug(14150) << k_funcinfo << "returning" << mGroupId << endl;
-	return mGroupId;
-}
-
-void OscarContact::setGroupId(const int newgid)
-{
-	if(newgid > 0)
-	{
-		mGroupId = newgid;
-		//kdDebug(14150) << k_funcinfo << "updated group id to " << mGroupId << endl;
-	}
-}
-
-void OscarContact::serialize(QMap<QString, QString> &serializedData,
-	QMap<QString, QString> &/*addressBookData*/)
-{
-//	serializedData["awaitingAuth"] = waitAuth() ? "1" : "0";
-	serializedData["Encoding"] = QString::number(mEncoding);
-	serializedData["groupID"] = QString::number(mGroupId);
-}
-
-void OscarContact::setIgnore(bool val, bool updateServer)
-{
-	mIgnore = val;
-	if (updateServer)
-	{
-		if (val)
-			mAccount->engine()->sendSSIAddIgnore(mName);
-		else
-			mAccount->engine()->sendSSIRemoveIgnore(mName);
-	}
-}
-
-void OscarContact::setVisibleTo(bool val, bool updateServer)
-{
-	mVisibleTo = val;
-	if (updateServer)
-	{
-		if (val)
-			mAccount->engine()->sendSSIAddVisible(mName);
-		else
-			mAccount->engine()->sendSSIRemoveVisible(mName);
-	}
-}
-
-void OscarContact::setInvisibleTo(bool val, bool updateServer)
-{
-	mInvisibleTo = val;
-	if (updateServer)
-	{
-		if (val)
-			mAccount->engine()->sendSSIAddInvisible(mName);
-		else
-			mAccount->engine()->sendSSIRemoveInvisible(mName);
-	}
-}
-
-void OscarContact::slotInvisibleTo()
-{
-	kdDebug(14150) << k_funcinfo <<
-		"Called; invisible = " << actionInvisibleTo->isChecked() << endl;
-	setInvisibleTo(actionInvisibleTo->isChecked(), true);
+	message.setText( msg.plainBody() );
+	
+	message.setTimestamp( msg.timestamp() );
+	message.setSender( mAccount->accountId() );
+	message.setReceiver( mName );
+	message.setType( 0x01 );
+	
+	//TODO add support for type 2 messages
+	/*if ( msg.type() == Kopete::Message::PlainText )
+		message.setType( 0x01 );
+	else
+		message.setType( 0x02 );*/
+	//TODO: we need to check for channel 0x04 messages too;
+	
+	mAccount->engine()->sendMessage( message );
+	manager(Kopete::Contact::CanCreate)->appendMessage(msg);
+	manager(Kopete::Contact::CanCreate)->messageSucceeded();
 }
 
 #include "oscarcontact.moc"
-// vim: set noet ts=4 sts=4 sw=4:
+//kate: tab-width 4; indent-mode csands;

@@ -1,0 +1,195 @@
+/*
+	Kopete Oscar Protocol
+	icquserinfo.h - ICQ User Info Data Types
+	
+	Copyright (c) 2004 Matt Rogers <mattr@kde.org>
+	
+	Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+	
+	*************************************************************************
+	*                                                                       *
+	* This library is free software; you can redistribute it and/or         *
+	* modify it under the terms of the GNU Lesser General Public            *
+	* License as published by the Free Software Foundation; either          *
+	* version 2 of the License, or (at your option) any later version.      *
+	*                                                                       *
+	*************************************************************************
+*/
+
+#ifndef _ICQUSERINFO_H_
+#define _ICQUSERINFO_H_
+
+#include <qstring.h>
+#include <qvaluelist.h>
+#include <qdatetime.h>
+
+class Buffer;
+
+/**
+ * @file icquserinfo.h
+ * Classes encapsulating user data retrieved from the server
+ */
+
+class ICQInfoBase
+{
+public:
+	
+	ICQInfoBase() : m_sequence( 0 ) {}
+	virtual ~ICQInfoBase() {}
+	virtual void fill( Buffer* buffer ) = 0;
+	
+	void setSequenceNumber( int number ) { m_sequence = number; }
+	int sequenceNumber() { return m_sequence; }
+
+private:
+	int m_sequence;
+};
+
+
+class ICQShortInfo : public ICQInfoBase
+{
+public:
+	ICQShortInfo();
+	~ICQShortInfo() {}
+	void fill( Buffer* buffer );
+	
+public:
+	unsigned long uin;
+	QString nickname;
+	QString firstName;
+	QString lastName;
+	QString email;
+	bool needsAuth;
+	unsigned int gender; // 0=offline, 1=online, 2=not webaware
+};
+
+class ICQGeneralUserInfo : public ICQInfoBase
+{
+public:
+	ICQGeneralUserInfo();
+	~ICQGeneralUserInfo() {}
+	void fill( Buffer* buffer );
+	
+public:
+	unsigned long uin;
+	QString nickname;
+	QString firstName;
+	QString lastName;
+	QString email;
+	QString city;
+	QString state;
+	QString phoneNumber;
+	QString faxNumber;
+	QString address;
+	QString cellNumber;
+	QString zip;
+	int country;
+	char timezone;
+	bool publishEmail;
+	bool allowsDC;
+	bool webaware;
+};
+
+class ICQWorkUserInfo : public ICQInfoBase
+{
+public:
+	ICQWorkUserInfo();
+	~ICQWorkUserInfo() {}
+	void fill( Buffer* buffer );
+	
+public:
+	QString city;
+	QString state;
+	QString phone;
+	QString fax;
+	QString address;
+	QString zip;
+	int country;
+	QString company;
+	QString department;
+	QString position;
+	int occupation;
+	QString homepage;
+};
+
+class ICQMoreUserInfo : public ICQInfoBase
+{
+public:
+	ICQMoreUserInfo();
+	~ICQMoreUserInfo() {}
+	void fill( Buffer* buffer );
+	
+public:
+	int age;
+	unsigned int gender;
+	QString homepage;
+	QDate birthday;
+	unsigned int lang1;
+	unsigned int lang2;
+	unsigned int lang3;
+};
+
+class ICQEmailInfo : public ICQInfoBase
+{
+public:
+	ICQEmailInfo();
+	~ICQEmailInfo() {}
+	void fill( Buffer* buffer );
+	
+public:
+	QValueList<QString> emailList;
+};
+
+
+class ICQSearchResult
+{
+public:
+	ICQSearchResult();
+	void fill( Buffer* buffer );
+	Q_UINT32 uin;
+	QString firstName;
+	QString lastName;
+	QString nickName;
+	QString email;
+	bool auth;
+	bool online;
+	char gender;
+	Q_UINT16 age;
+};
+
+class ICQWPSearchInfo
+{
+public:
+	ICQWPSearchInfo();
+	
+	QString firstName;
+	QString lastName;
+	QString nickName;
+	QString email;
+	int age;
+	int gender;
+	int language;
+	QString city;
+	QString state;
+	int country;
+	QString company;
+	QString department;
+	QString position;
+	int occupation;
+	bool onlineOnly;
+};
+
+/*
+class ICQInfoItem
+{
+public:
+	int category;
+	QString description;
+};
+
+
+typedef QValueList<ICQInfoItem> ICQInfoItemList;
+*/
+
+#endif
+//kate: space-indent off; tab-width 4; replace-tabs off; indent-mode csands;

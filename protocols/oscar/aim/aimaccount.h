@@ -22,71 +22,60 @@
 #include <qdict.h>
 #include <qstring.h>
 #include <qwidget.h>
+#include "oscartypeclasses.h"
 
-#include "oscarsocket.h"
 #include "oscaraccount.h"
 
+
+namespace Kopete
+{
+class Contact;
+class Group;
+}
+
 class KAction;
-
-namespace Kopete { class Contact; }
-namespace Kopete { class Group; }
-
-class OscarChangeStatus;
 class OscarContact;
 class AIMContact;
 
 class AIMAccount : public OscarAccount
 {
-	Q_OBJECT
+Q_OBJECT
+	
+public:
+	AIMAccount(Kopete::Protocol *parent, QString accountID, const char *name=0L);
+	virtual ~AIMAccount();
+	
+	// Accessor method for the action menu
+	virtual KActionMenu* actionMenu();
+	
+	/** Reimplementation from Kopete::Account */
+	void setOnlineStatus( const Kopete::OnlineStatus&, const QString& ) {}
+	
+	void setAway(bool away, const QString &awayReason);
+	
+	virtual void connectWithPassword( const QString &password );
+	
+	void setUserProfile(const QString &profile);
+	
+public slots:
+	void slotEditInfo();
+	void slotGoOnline();
+	
+protected slots:
+	void slotGoAway(const QString&);
+	
+	virtual void disconnected( Kopete::Account::DisconnectReason reason );
+	
+protected:
+	
+	/**
+	* Implement virtual method from OscarAccount
+	* This allows OscarAccount to take care of adding new contacts
+	*/
+	OscarContact *createNewContact( const QString &contactId, Kopete::MetaContact *parentContact, const SSI& ssiItem );
 
-	public:
-		AIMAccount(Kopete::Protocol *parent, QString accountID, const char *name=0L);
-		virtual ~AIMAccount();
+	QString sanitizedMessage( const Oscar::Message& message );
 
-		// Accessor method for the action menu
-		virtual KActionMenu* actionMenu();
-
-		// Called from AIMUserInfo
-		void setUserProfile(const QString &profile);
-
-		void setAway(bool away, const QString &awayReason);
-
-		virtual void setStatus(unsigned long status,
-			const QString &awayMessage = QString::null);
-
-		virtual void connectWithPassword( const QString &password );
-
-	public slots:
-		void slotEditInfo();
-		void slotGoOnline();
-
-	protected slots:
-		// Called when we have been warned
-		void slotGotWarning(int newlevel, QString warner);
-
-		//void slotGotMyUserInfo(UserInfo &);
-		void slotGoAway(const QString&);
-
-	protected:
-		void initSignals();
-		/** Why are these here?
-		void initActions();
-		void initActionMenu();
-		*/
-
-		/**
-		 * Implement virtual method from OscarAccount
-		 * This allows OscarAccount to take care of adding new contacts
-		 */
-		OscarContact *createNewContact( const QString &contactId,
-			const QString &displayName, Kopete::MetaContact *parentContact, bool isOnSSI = false );
-
-	private:
-		void connect(unsigned long status, const QString &awMessage);
-
-	private:
-		//UserInfo mUserInfo;
-		unsigned long mStatus;
 };
 #endif
-// vim: set noet ts=4 sts=4 sw=4:
+//kate: tab-width 4; indent-mode csands;

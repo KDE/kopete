@@ -13,107 +13,229 @@
   * (at your option) any later version.                                   *
   *                                                                       *
   *************************************************************************
-  */
+*/
 
 #include "icqcontact.h"
 
-#include "icqprotocol.h"
-#include "icqaccount.h"
+#include <qtimer.h>
 
 #include <kaction.h>
 #include <kactionclasses.h>
+#include <kapplication.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <knotifyclient.h>
+#include <kpassivepopup.h>
+#include <kinputdialog.h>
 
 #include "kopetemessagemanagerfactory.h"
 #include "kopeteuiglobal.h"
 
 #include "icquserinfo.h"
 #include "icqreadaway.h"
+#include "icqprotocol.h"
+#include "icqaccount.h"
+#include "icqpresence.h"
+#include "icquserinfowidget.h"
+#include "icqauthreplydialog.h"
 
-static const unsigned int SUPPORTED_INFO_ITEMS = 7;
+#include "oscarutils.h"
 
-
-ICQContact::ICQContact(const QString name, const QString displayName,
-	ICQAccount *acc, Kopete::MetaContact *parent)
-	: OscarContact(name, displayName, acc, parent)
+ICQContact::ICQContact( ICQAccount *account, const QString &name, Kopete::MetaContact *parent,
+						const QString& icon, const Oscar::SSI& ssiItem )
+: OscarContact( account, name, parent, icon, ssiItem )
 {
 	mProtocol = static_cast<ICQProtocol *>(protocol());
+	m_infoWidget = 0L;
+	
+	if ( ssiItem.waitingAuth() )
+		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
+	else
+		setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::Visible ).toOnlineStatus() );
 
-	mInvisible = false;
-	setOnlineStatus(mProtocol->statusOffline);
+	QObject::connect( mAccount->engine(), SIGNAL( loggedIn() ), this, SLOT( loggedIn() ) );
+	//QObject::connect( mAccount->engine(), SIGNAL( userIsOnline( const QString& ) ), this, SLOT( userOnline( const QString&, UserDetails ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL( userIsOffline( const QString& ) ), this, SLOT( userOffline( const QString& ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL( authRequestReceived( const QString&, const QString& ) ),
+		              this, SLOT( slotGotAuthRequest( const QString&, const QString& ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL( authReplyReceived( const QString&, const QString&, bool ) ),
+		              this, SLOT( slotGotAuthReply(const QString&, const QString&, bool ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL( receivedIcqShortInfo( const QString& ) ),
+					  this, SLOT( receivedShortInfo( const QString& ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL( receivedIcqLongInfo( const QString& ) ),
+					  this, SLOT( receivedLongInfo( const QString& ) ) );
+	QObject::connect( mAccount->engine(), SIGNAL( receivedUserInfo( const QString&, const UserDetails& ) ),
+	                  this, SLOT( userInfoUpdated( const QString&, const UserDetails& ) ) );
 
-	infoDialog = 0L;
-	awayMessageDialog = 0L;
-
-	userinfoRequestSequence=0;
-	userinfoReplyCount = 0;
-
-	generalInfo.uin=0;
-	generalInfo.countryCode=0;
-	generalInfo.timezoneCode=0;
-	generalInfo.publishEmail=false;
-	generalInfo.showOnWeb=false;
-	workInfo.occupation=0;
-
-	// Buddy Changed
-	QObject::connect(
-		acc->engine(), SIGNAL(gotContactChange(const UserInfo &)),
-		this, SLOT(slotContactChanged(const UserInfo &)));
-
-	QObject::connect(
-		acc->engine(), SIGNAL(gotICQGeneralUserInfo(const int, const ICQGeneralUserInfo &)),
-		this, SLOT(slotUpdGeneralInfo(const int, const ICQGeneralUserInfo &)));
-	QObject::connect(
-		acc->engine(), SIGNAL(gotICQWorkUserInfo(const int, const ICQWorkUserInfo &)),
-		this, SLOT(slotUpdWorkInfo(const int, const ICQWorkUserInfo &)));
-	QObject::connect(
-		acc->engine(), SIGNAL(gotICQMoreUserInfo(const int, const ICQMoreUserInfo &)),
-		this, SLOT(slotUpdMoreUserInfo(const int, const ICQMoreUserInfo &)));
-	QObject::connect(
-		acc->engine(), SIGNAL(gotICQAboutUserInfo(const int, const QString &)),
-		this, SLOT(slotUpdAboutUserInfo(const int, const QString &)));
-	QObject::connect(
-		acc->engine(), SIGNAL(gotICQEmailUserInfo(const int, const ICQMailList &)),
-		this, SLOT(slotUpdEmailUserInfo(const int, const ICQMailList &)));
-	QObject::connect(
-		acc->engine(), SIGNAL(gotICQInfoItemList(const int, const ICQInfoItemList &)),
-		this, SLOT(slotUpdInterestUserInfo(const int, const ICQInfoItemList &)));
-	QObject::connect(
-		acc->engine(), SIGNAL(gotICQInfoItemList(const int, const ICQInfoItemList &, const ICQInfoItemList & )),
-		this, SLOT(slotUpdBackgroundUserInfo(const int, const ICQInfoItemList &, const ICQInfoItemList & ) ) );
-
-	QObject::connect(
-		acc->engine(), SIGNAL( gotICQShortInfo(const int, const ICQSearchResult& ) ),
-		this, SLOT( slotUpdShortInfo( const int, const ICQSearchResult& ) ) );
-
-	QObject::connect(acc->engine(), SIGNAL(snacFailed(WORD)),
-		this, SLOT(slotSnacFailed(WORD)));
-
-
-	if((name == displayName || displayName.isEmpty()) && account()->isConnected())
-	{
-		kdDebug(14153) << k_funcinfo <<
-			"ICQ Contact with no nickname, grabbing userinfo" << endl;
-		requestShortInfo();
-	}
-
-	actionReadAwayMessage = 0L;
 }
 
 ICQContact::~ICQContact()
 {
+	delete m_infoWidget;
 }
 
-void ICQContact::setOwnDisplayName(const QString &s)
+void ICQContact::updateSSIItem()
 {
-	kdDebug(14153) << k_funcinfo << "Called." << endl;
-	if(this == account()->myself())
-		setDisplayName(s);
+	//kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << endl;
+	if ( m_ssiItem.waitingAuth() )
+		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
 }
 
+
+void ICQContact::userInfoUpdated( const QString& contact, const UserDetails& details )
+{
+	//kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << contact << contactId() << endl;
+	if ( Oscar::normalize( contact  ) != Oscar::normalize( contactId() ) )
+		return;
+
+	kdDebug( OSCAR_ICQ_DEBUG ) << k_funcinfo << "extendedStatus is " << details.extendedStatus() << endl;
+	ICQ::Presence presence = ICQ::Presence::fromOscarStatus( details.extendedStatus() & 0xffff );
+	setOnlineStatus( presence.toOnlineStatus() );
+	
+	OscarContact::userInfoUpdated( contact, details );
+}
+
+void ICQContact::userOnline( const QString& userId )
+{
+	if ( userId != contactId() )
+		return;
+
+	kdDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " online" << endl;
+	ICQ::Presence online = mProtocol->statusManager()->presenceOf( ICQ::Presence::Online );
+	//mAccount->engine()->requestStatusInfo( contactId() );
+}
+
+void ICQContact::userOffline( const QString& userId )
+{
+	if ( userId != contactId() )
+		return;
+
+	kdDebug(OSCAR_ICQ_DEBUG) << "Setting " << userId << " offline" << endl;
+	ICQ::Presence offline = mProtocol->statusManager()->presenceOf( ICQ::Presence::Offline );
+	setOnlineStatus( mProtocol->statusManager()->onlineStatusOf( offline ) );
+}
+
+void ICQContact::loggedIn()
+{
+	if ( m_ssiItem.waitingAuth() )
+		setOnlineStatus( mProtocol->statusManager()->waitingForAuth() );
+
+	QString nickname = property( Kopete::Global::Properties::self()->nickName() ).value().toString();
+	if ( nickname.isEmpty() || nickname == contactId() )
+	{
+		int time = ( KApplication::random() % 25 ) * 1000;
+		kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "updating nickname in " << time/1000 << " seconds" << endl;
+		QTimer::singleShot( time, this, SLOT( requestShortInfo() ) );
+	}
+}
+
+void ICQContact::requestShortInfo()
+{
+	if ( mAccount->isConnected() )
+		mAccount->engine()->requestShortInfo( contactId() );
+}
+
+void ICQContact::slotRequestAuth()
+{
+	QString reason = KInputDialog::getText( i18n("Request Authorization"),
+	                                        i18n("Reason for requesting authorization:") );
+	if ( !reason.isNull() )
+		mAccount->engine()->requestAuth( contactId(), reason );
+}
+
+void ICQContact::slotSendAuth()
+{
+	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "Sending auth reply" << endl;
+	ICQAuthReplyDialog replyDialog( 0, "replyDialog", false );
+	
+	replyDialog.setUser( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
+	if ( replyDialog.exec() )
+		mAccount->engine()->sendAuth( contactId(), replyDialog.reason(), replyDialog.grantAuth() );
+}
+
+void ICQContact::slotGotAuthReply( const QString& contact, const QString& reason, bool granted )
+{
+	if ( contact != contactId() )
+		return;
+	
+	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << endl;
+	QString message;
+	if( granted )
+	{
+		message = i18n( "User %1 has granted your authorization request.\nReason: %2" )
+			.arg( property( Kopete::Global::Properties::self()->nickName() ).value().toString() )
+			.arg( reason );
+		
+		// remove the unknown status
+		setOnlineStatus( ICQ::Presence( ICQ::Presence::Offline, ICQ::Presence::Visible ).toOnlineStatus() );
+	}
+	else
+	{
+		message = i18n( "User %1 has rejected the authorization request.\nReason: %2" )
+			.arg( property( Kopete::Global::Properties::self()->nickName() ).value().toString() )
+			.arg( reason );
+	}
+	KNotifyClient::event( Kopete::UI::Global::sysTrayWId(), "icq_authorization", message );
+}
+
+void ICQContact::slotGotAuthRequest( const QString& contact, const QString& reason )
+{
+	if ( contact != contactId() )
+		return;
+	
+	ICQAuthReplyDialog replyDialog;
+	
+	replyDialog.setUser( property( Kopete::Global::Properties::self()->nickName() ).value().toString() );
+	replyDialog.setRequestReason( reason );
+	if ( replyDialog.exec() )
+		mAccount->engine()->sendAuth( contactId(), replyDialog.reason(), replyDialog.grantAuth() );
+}
+
+void ICQContact::receivedLongInfo( const QString& contact )
+{
+	if ( contact.lower() != contactId().lower() )
+	{
+		if ( m_infoWidget )
+			m_infoWidget->delayedDestruct();
+		return;
+	}
+	
+	kdDebug(OSCAR_ICQ_DEBUG) << k_funcinfo << "received long info from engine" << endl;
+	
+	ICQGeneralUserInfo genInfo = mAccount->engine()->getGeneralInfo( contact );
+	emit haveBasicInfo( genInfo );
+	
+}
+
+void ICQContact::receivedShortInfo( const QString& contact )
+{
+	if ( contact != contactId() )
+		return;
+	
+	ICQShortInfo shortInfo = mAccount->engine()->getShortInfo( contact );
+	/*
+	if(!shortInfo.firstName.isEmpty())
+		setProperty(mProtocol->firstName, shortInfo.firstName);
+	else
+		removeProperty(mProtocol->firstName);
+	
+	if(!shortInfo.lastName.isEmpty())
+		setProperty(mProtocol->lastName, shortInfo.lastName);
+	else
+		removeProperty(mProtocol->lastName);
+	*/
+	if ( !shortInfo.nickname.isEmpty() )
+	{
+		kdDebug(14153) << k_funcinfo <<
+			"setting new displayname for former UIN-only Contact" << endl;
+		setProperty( Kopete::Global::Properties::self()->nickName(), shortInfo.nickname );
+	}
+	
+}
+
+#if 0
 void ICQContact::slotContactChanged(const UserInfo &u)
 {
 	if (u.sn != contactName())
@@ -197,7 +319,6 @@ void ICQContact::slotOffgoingBuddy(QString sender)
 	setOnlineStatus(mProtocol->statusOffline);
 }
 
-#if 0
 void ICQContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &message)
 {
 	// Build a Kopete::Message and set the body as Rich Text
@@ -207,7 +328,7 @@ void ICQContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &me
 		Kopete::Message::RichText);
 	manager(true)->appendMessage(msg);
 }
-#endif
+
 
 void ICQContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
 {
@@ -235,15 +356,17 @@ void ICQContact::slotSendMsg(Kopete::Message& message, Kopete::ChatSession *)
 	manager(Kopete::Contact::CanCreate)->messageSucceeded();
 }
 
+#endif
+
 bool ICQContact::isReachable()
 {
-	return true;
+	return account()->isConnected();
 }
 
 QPtrList<KAction> *ICQContact::customContextMenuActions()
 {
 	QPtrList<KAction> *actionCollection = new QPtrList<KAction>();
-
+/*
 	QString awTxt;
 	QString awIcn;
 	unsigned int status = onlineStatus().internalStatus();
@@ -277,11 +400,12 @@ QPtrList<KAction> *ICQContact::customContextMenuActions()
 	{
 		actionReadAwayMessage = new KAction(awTxt, awIcn, 0,
 			this, SLOT(slotReadAwayMessage()), this, "actionReadAwayMessage");
+		*/
 		actionRequestAuth = new KAction(i18n("&Request Authorization"), "mail_reply", 0,
 			this, SLOT(slotRequestAuth()), this, "actionRequestAuth");
-		actionSendAuth = new KAction(i18n("&Send Authorization"), "mail_forward", 0,
+		actionSendAuth = new KAction(i18n("&Grant Authorization"), "mail_forward", 0,
 			this, SLOT(slotSendAuth()), this, "actionSendAuth");
-
+		/*
 		actionIgnore = new KToggleAction(i18n("&Ignore"), "", 0,
 			this, SLOT(slotIgnore()), this, "actionIgnore");
 		actionVisibleTo = new KToggleAction(i18n("Always &Visible To"), "", 0,
@@ -295,10 +419,16 @@ QPtrList<KAction> *ICQContact::customContextMenuActions()
 		actionReadAwayMessage->setIconSet(SmallIconSet(awIcn));
 	}
 
+*/
+	
 	bool on = account()->isConnected();
-	//TODO: Only enable this if waitAuth is set
-	actionRequestAuth->setEnabled(on);
+	if ( m_ssiItem.waitingAuth() )
+		actionRequestAuth->setEnabled(on);
+	else
+		actionRequestAuth->setEnabled(false);
+	
 	actionSendAuth->setEnabled(on);
+/*
 	actionReadAwayMessage->setEnabled(status != OSCAR_OFFLINE && status != OSCAR_ONLINE);
 	actionIgnore->setEnabled(on);
 	actionVisibleTo->setEnabled(on);
@@ -308,102 +438,37 @@ QPtrList<KAction> *ICQContact::customContextMenuActions()
 	actionVisibleTo->setChecked(mVisibleTo);
 	actionInvisibleTo->setChecked(mInvisibleTo);
 
-
+*/
 	actionCollection->append(actionRequestAuth);
 	actionCollection->append(actionSendAuth);
+/*
 	actionCollection->append(actionIgnore);
 	actionCollection->append(actionVisibleTo);
 	actionCollection->append(actionInvisibleTo);
 	actionCollection->append(actionReadAwayMessage);
-
-	return actionCollection;
-}
-
-
-void ICQContact::setStatus(const unsigned int newStatus)
-{
-	if((onlineStatus().internalStatus() == newStatus) && !mInvisible)
-		return;
-
-	switch(newStatus)
-	{
-		case OSCAR_FFC:
-			setOnlineStatus(mProtocol->statusFFC);
-			break;
-		case OSCAR_OFFLINE:
-			mInvisible = false;
-			setOnlineStatus(mProtocol->statusOffline);
-			break;
-		case OSCAR_AWAY:
-			setOnlineStatus(mProtocol->statusAway);
-			break;
-		case OSCAR_DND:
-			setOnlineStatus(mProtocol->statusDND);
-			break;
-		case OSCAR_NA:
-			setOnlineStatus(mProtocol->statusNA);
-			break;
-		case OSCAR_OCC:
-			setOnlineStatus(mProtocol->statusOCC);
-			break;
-		case OSCAR_CONNECTING:
-			setOnlineStatus(mProtocol->statusConnecting); // ONLY for myself() contact
-			break;
-		default: // emergency choose, also OSCAR_ONLINE
-			setOnlineStatus(mProtocol->statusOnline);
-	}
-}
-
-void ICQContact::setOnlineStatus(const Kopete::OnlineStatus& status)
-{
-	if(mInvisible)
-	{
-		kdDebug(14153) << k_funcinfo << "'" << displayName() << "' is invisible!" << endl;
-		Kopete::Contact::setOnlineStatus(
-			Kopete::OnlineStatus(
-				status.status() , (status.weight()==0) ? 0 : (status.weight() -1),
-				protocol(),
-				status.internalStatus()+15,
-				QString::fromLatin1("icq_invisible"),
-				i18n("%1|Invisible").arg(status.description())
-				)
-			);
-	}
-	else
-	{
-		Kopete::Contact::setOnlineStatus(status);
-	}
-/*
-	kdDebug(14153) << k_funcinfo << "'" << displayName() << "' is now " <<
-		onlineStatus().description() << endl;
 */
+	return actionCollection;
 }
 
 
 void ICQContact::slotUserInfo()
 {
-	if (!infoDialog)
-	{
-		infoDialog = new ICQUserInfo(this, 0L, "infoDialog");
-		if(!infoDialog)
-			return;
-		QObject::connect(infoDialog, SIGNAL(closing()),
-			this, SLOT(slotCloseUserInfoDialog()));
-		infoDialog->show();
-	}
-	else
-	{
-		infoDialog->raise();
-	}
+	m_infoWidget = new ICQUserInfoWidget( Kopete::UI::Global::mainWidget(), "icq info" );
+	QObject::connect( m_infoWidget, SIGNAL( finished() ), this, SLOT( closeUserInfoDialog() ) );
+	m_infoWidget->setContact( this );
+	m_infoWidget->show();
+	if ( account()->isConnected() )
+		mAccount->engine()->requestFullInfo( contactId() );
 }
 
-
-void ICQContact::slotCloseUserInfoDialog()
+void ICQContact::closeUserInfoDialog()
 {
-	infoDialog->delayedDestruct();
-	infoDialog = 0L;
+	QObject::disconnect( this, 0, m_infoWidget, 0 );
+	m_infoWidget->delayedDestruct();
+	m_infoWidget = 0L;
 }
 
+#if 0
 
 void ICQContact::slotReadAwayMessage()
 {
@@ -445,24 +510,6 @@ void ICQContact::setAwayMessage(const QString &message)
 		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;*/
 	setProperty(mProtocol->awayMessage, message);
 	emit awayMessageChanged();
-}
-
-
-void ICQContact::requestUserInfo()
-{
-	//kdDebug(14153) << k_funcinfo << "called" << endl;
-	userinfoReplyCount = 0;
-	userinfoRequestSequence =
-		account()->engine()->sendReqInfo(contactName().toULong());
-}
-
-
-void ICQContact::requestShortInfo()
-{
-	//kdDebug(14153) << k_funcinfo << "called" << endl;
-	userinfoReplyCount = 0;
-	userinfoRequestSequence =
-		account()->engine()->sendShortInfoReq( contactName().toULong() );
 }
 
 
@@ -514,114 +561,6 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 }
 
 
-void ICQContact::slotUpdShortInfo(const int seq, const ICQSearchResult &inf)
-{
-	// compare reply's sequence with the one we sent with our last request
-	if(seq != userinfoRequestSequence)
-		return;
-	shortInfo = inf;
-
-	if(!shortInfo.firstName.isEmpty())
-		setProperty(mProtocol->firstName, shortInfo.firstName);
-	else
-		removeProperty(mProtocol->firstName);
-
-	if(!shortInfo.lastName.isEmpty())
-		setProperty(mProtocol->lastName, shortInfo.lastName);
-	else
-		removeProperty(mProtocol->lastName);
-
-/*	if(!shortInfo.eMail.isEmpty())
-		setProperty("emailAddress", shortInfo.eMail);
-	else
-		removeProperty("emailAddress");*/
-
-	if (contactName() == displayName() && !shortInfo.nickName.isEmpty())
-	{
-		kdDebug(14153) << k_funcinfo <<
-			"setting new displayname for former UIN-only Contact" << endl;
-		setDisplayName(shortInfo.nickName);
-	}
-
-	userinfoReplyCount = 0;
-}
-
-
-void ICQContact::slotUpdWorkInfo(const int seq, const ICQWorkUserInfo &inf)
-{
-	// compare reply's sequence with the one we sent with our last request
-	if(seq != userinfoRequestSequence)
-		return;
-	workInfo = inf;
-
-	/*
-	if(!workInfo.phone.isEmpty())
-		setProperty("workPhoneNum", i18n("Work Phone Number"), workInfo.phone);
-	else
-		removeProperty("workPhoneNum");
-
-	if(!workInfo.fax.isEmpty())
-		setProperty("workFaxNum", i18n("Work Fax Number"), workInfo.fax);
-	else
-		removeProperty("workFaxNum");
-	*/
-
-	incUserInfoCounter();
-}
-
-void ICQContact::slotUpdMoreUserInfo(const int seq, const ICQMoreUserInfo &inf)
-{
-	// compare reply's sequence with the one we sent with our last request
-	if(seq != userinfoRequestSequence)
-		return;
-	moreInfo = inf;
-	incUserInfoCounter();
-}
-
-void ICQContact::slotUpdAboutUserInfo(const int seq, const QString &inf)
-{
-	// compare reply's sequence with the one we sent with our last request
-	if(seq != userinfoRequestSequence)
-		return;
-	aboutInfo = inf;
-	incUserInfoCounter();
-}
-
-void ICQContact::slotUpdEmailUserInfo(const int seq, const ICQMailList &inf)
-{
-	// compare reply's sequence with the one we sent with our last request
-	if(seq != userinfoRequestSequence)
-		return;
-	emailInfo = inf;
-	incUserInfoCounter();
-}
-
-void ICQContact::slotUpdInterestUserInfo(const int seq, const ICQInfoItemList &inf)
-{
-	// compare reply's sequence with the one we sent with our last request
-	if(seq != userinfoRequestSequence)
-		return;
-	interestInfo = inf;
-	incUserInfoCounter();
-}
-
-void ICQContact::incUserInfoCounter()
-{
-	userinfoReplyCount++;
-	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
-		emit updatedUserInfo();
-}
-
-void ICQContact::slotUpdBackgroundUserInfo(const int seq, const ICQInfoItemList &curr, const ICQInfoItemList &past)
-{
-	// compare reply's sequence with the one we sent with our last request
-	if(seq != userinfoRequestSequence)
-		return;
-	currentBackground = curr;
-	pastBackground = past;
-	incUserInfoCounter();
-}
-
 void ICQContact::slotSnacFailed(WORD snacID)
 {
 	if (userinfoRequestSequence != 0)
@@ -648,6 +587,6 @@ void ICQContact::slotVisibleTo()
 		"Called; visible = " << actionVisibleTo->isChecked() << endl;
 	setVisibleTo(actionVisibleTo->isChecked(), true);
 }
-
+#endif
 #include "icqcontact.moc"
-// vim: set noet ts=4 sts=4 sw=4:
+//kate: indent-mode csands; tab-width 4; replace-tabs off; space-indent off;

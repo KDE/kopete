@@ -27,7 +27,6 @@
 
 #include "accountselector.h"
 #include "kopeteaccountmanager.h"
-#include "kopeteonlinestatusmanager.h"
 #include "kopeteglobal.h"
 #include "kopeteuiglobal.h"
 
@@ -36,7 +35,7 @@
 
 typedef KGenericFactory<AIMProtocol> AIMProtocolFactory;
 
-K_EXPORT_COMPONENT_FACTORY( kopete_aim, AIMProtocolFactory( "kopete_aim_protocol" ) )
+K_EXPORT_COMPONENT_FACTORY( kopete_aim, AIMProtocolFactory( "kopete_aim" ) )
 
 AIMProtocol* AIMProtocol::protocolStatic_ = 0L;
 
@@ -94,7 +93,7 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
 			command = command.left(andSign);
 		command.replace("+", " ");
 
-		QString screenname = tocNormalize(command);
+		QString screenname = command;
 
 		Kopete::Account *account = 0;
 		QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(proto);
@@ -135,8 +134,7 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
 
 		kdDebug(14152) << k_funcinfo <<
 			"Adding Contact; screenname = " << screenname << endl;
-		if (account->addContact(screenname, command, 0L,
-			Kopete::Account::Temporary))
+		if ( account->addContact(screenname, command, 0L, Kopete::Account::Temporary) )
 		{
 			//Kopete::Contact *contact = account->contacts()[screenname];
 		}
@@ -153,25 +151,20 @@ void AIMProtocolHandler::handleURL(const KURL &url) const
 
 
 AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
-: Kopete::Protocol( AIMProtocolFactory::instance(), parent, name ),
-	statusOnline( Kopete::OnlineStatus::Online, 1, this, OSCAR_ONLINE, QString::null, i18n("Online"),
-	              i18n("Online"), Kopete::OnlineStatusManager::Online ),
-	statusOffline( Kopete::OnlineStatus::Offline, 1, this, OSCAR_OFFLINE, QString::null, i18n("Offline"),
-	               i18n("Offline"), Kopete::OnlineStatusManager::Offline ),
-	statusAway( Kopete::OnlineStatus::Away, 1, this, OSCAR_AWAY, "aim_away", i18n("Away"), i18n("Away"),
-	            Kopete::OnlineStatusManager::Busy ),
-	statusConnecting( Kopete::OnlineStatus::Connecting, 99, this, OSCAR_CONNECTING, "aim_connecting", i18n("Connecting...") ),
+  : Kopete::Protocol( AIMProtocolFactory::instance(), parent, name ),
+	statusOnline(Kopete::OnlineStatus::Online, 1, this, 0, QString::null, i18n("Online")),
+	statusOffline(Kopete::OnlineStatus::Offline, 1, this, 10, QString::null, i18n("Offline")),
+	statusAway(Kopete::OnlineStatus::Away, 1, this, 20, "aim_away", i18n("Away")),
+	statusConnecting(Kopete::OnlineStatus::Connecting, 99, this, 99, "aim_connecting", i18n("Connecting...")),
 	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
-	clientFeatures("clientFeatures", i18n("Client Features"), 0, false)
+	clientFeatures("clientFeatures", i18n("Client Features"), 0, false),
+	clientProfile( "clientProfile", i18n( "User Profile"), 0, false)
 {
 	if (protocolStatic_)
 		kdDebug(14152) << k_funcinfo << "AIM plugin already initialized" << endl;
 	else
-	{
 		protocolStatic_ = this;
-		// Create the config widget, this does it's magic I think
-//		new OscarPreferences("aim_protocol", this);
-	}
+
 	addAddressBookField("messaging/aim", Kopete::Plugin::MakeIndexField);
 }
 
@@ -186,42 +179,38 @@ AIMProtocol *AIMProtocol::protocol(void)
 }
 
 Kopete::Contact *AIMProtocol::deserializeContact(Kopete::MetaContact *metaContact,
-	const QMap<QString, QString> &serializedData,
-	const QMap<QString, QString> &/*addressBookData*/)
+    const QMap<QString, QString> &serializedData,
+    const QMap<QString, QString> &/*addressBookData*/)
 {
-	QString contactId=serializedData["contactId"];
-	QString accountId=serializedData["accountId"];
-	QString displayName=serializedData["displayName"];
+
+	QString contactId = serializedData["contactId"];
+	QString accountId = serializedData["accountId"];
+	QString displayName = serializedData["displayName"];
 
 	// Get the account it belongs to
-	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(this);
+	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts( this );
 	Kopete::Account *account = accounts[accountId];
 
-	if(!account)
-	{
-		kdDebug(14152) << k_funcinfo << "WARNING: Account for contact does not exist, skipping." << endl;
+	if ( !account ) //no account
 		return 0;
-	}
 
-	AIMContact *c = new AIMContact(contactId, displayName,
-		static_cast<AIMAccount*>(account), metaContact);
-
+	AIMContact *c = new AIMContact( account, contactId, metaContact, QString::null );
 	return c;
 }
 
 AddContactPage *AIMProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *account)
 {
-	return (new AIMAddContactPage(account->isConnected(), parent));
+	return ( new AIMAddContactPage( account->isConnected(), parent ) );
 }
 
 KopeteEditAccountWidget *AIMProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
 {
-	return (new AIMEditAccountWidget(this, account, parent));
+	return ( new AIMEditAccountWidget( this, account, parent ) );
 }
 
 Kopete::Account *AIMProtocol::createNewAccount(const QString &accountId)
 {
-	return (new AIMAccount(this, accountId));
+	return ( new AIMAccount( this, accountId ) );
 }
 
 #include "aimprotocol.moc"

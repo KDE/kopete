@@ -2,7 +2,8 @@
     icqaddcontactpage.h  -  ICQ Protocol Plugin
 
     Copyright (c) 2002 by Stefan Gehn <metz AT gehn.net>
-    Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
+    Copyright (c) 2004-2005 by Matt Rogers <mattr@kde.org>
+    Kopete    (c) 2002-2005 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -21,47 +22,37 @@
 #include <addcontactpage.h>
 
 /**
-  *@author Duncan
+  *@author Matt Rogers
   *@author Stefan Gehn
   */
 class icqAddUI;
-class QWidget;
 class ICQAccount;
-class ICQSearchResult;
+class ICQSearchDialog;
 
 class ICQAddContactPage : public AddContactPage
 {
-	Q_OBJECT
+Q_OBJECT
 
-	public:
-		ICQAddContactPage(ICQAccount *owner, QWidget *parent=0, const char *name=0);
-		~ICQAddContactPage();
-
-		virtual bool validateData();
-		virtual bool apply(Kopete::Account* , Kopete::MetaContact *parentContact);
-
-	public slots:
-
-		void slotSearchResult(ICQSearchResult &res, const int missed);
-
-	private slots:
-		void slotStartSearch();
-		void slotStopSearch();
-		void slotClearResults();
-		void slotSearchTabChanged(QWidget *);
-		void slotTextChanged();
-		void slotSelectionChanged();
-
-	protected:
-		void showEvent(QShowEvent *e);
-
-	private:
-		int searchMode;
-		bool searching;
-		ICQAccount *mAccount;
-		icqAddUI *icqdata;
-
-		void updateGui();
-		void removeSearch();
+public:
+	ICQAddContactPage(ICQAccount *owner, QWidget *parent = 0, const char *name = 0);
+	~ICQAddContactPage();
+	
+	virtual bool validateData();
+	virtual bool apply(Kopete::Account* , Kopete::MetaContact *parentContact);
+	
+protected:
+	void showEvent(QShowEvent *e);
+	
+private slots:
+	void showSearchDialog();
+	void searchDialogDestroyed();
+private:
+	
+	ICQAccount *mAccount;
+	icqAddUI *addUI;
+	ICQSearchDialog* m_searchDialog;
 };
+
 #endif
+
+//kate: space-indent off; replace-tabs off; indent-mode csands;

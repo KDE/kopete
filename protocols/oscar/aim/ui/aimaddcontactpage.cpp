@@ -18,8 +18,6 @@
 #include "aimaddcontactui.h"
 #include "aimaddcontactpage.h"
 
-#include "aim.h"
-
 #include "kopeteaccount.h"
 
 #include <qlayout.h>
@@ -69,10 +67,10 @@ bool AIMAddContactPage::apply(Kopete::Account *account,
 {
 	if(validateData())
 	{ // If everything is ok
-		return account->addContact(tocNormalize(m_gui->addSN->text()), metaContact, Kopete::Account::ChangeKABC );
+		return account->addContact( m_gui->addSN->text(), metaContact, Kopete::Account::ChangeKABC );
 	}
 	return false;
 }
-// vim: set noet ts=4 sts=4 sw=4:
+//kate: tab-width 4; indent-mode csands;
 
 #include "aimaddcontactpage.moc"

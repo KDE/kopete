@@ -1,8 +1,9 @@
 /*
-  oscarprotocol.cpp  -  Oscar Protocol Plugin
+  icqprotocol.cpp  -  ICQ Protocol Plugin
 
-  Copyright (c) 2003 by Olivier Goffart <ogoffart@tiscalinet.be>
-  Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+  Copyright (c) 2003      by Olivier Goffart        <ogoffart@tiscalinet.be>
+  Copyright (c) 2004      by Richard Smith          <kde@metafoo.co.uk>
+  Kopete    (c) 2002-2004 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -12,22 +13,9 @@
   * (at your option) any later version.                                   *
   *                                                                       *
   *************************************************************************
-  */
+*/
 
 #include "config.h"
-
-#include "icqprotocol.h"
-#include "icqaccount.h"
-#include "icqcontact.h"
-#include "icqaddcontactpage.h"
-#include "icqeditaccountwidget.h"
-#include "icquserinfowidget.h"
-
-#include "kopeteglobal.h"
-#include "kopeteuiglobal.h"
-#include "kopeteonlinestatusmanager.h"
-#include "accountselector.h"
-#include "kopeteaccountmanager.h"
 
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
@@ -36,29 +24,45 @@
 #include <netinet/in.h> // for ntohl()
 
 #include <qcombobox.h>
+/*
 #include <qhostaddress.h>
 #include <qlistbox.h>
 #include <qspinbox.h>
 #include <qtextedit.h>
 
-#include <kdatewidget.h>
-#include <kdebug.h>
+#include <kdatewidget.h>*/
+#include <qvaluelist.h>
 #include <kdialogbase.h>
-#include <kgenericfactory.h>
+/*
 #include <klineedit.h>
-#include <klocale.h>
-#include <kmessagebox.h>
-#include <ksimpleconfig.h>
 #include <kurllabel.h>
+*/
+#include <kgenericfactory.h>
+#include <kdebug.h>
+#include <klocale.h>
+#include <ksimpleconfig.h>
+#include <kmessagebox.h>
 
+#include "kopeteglobal.h"
+#include "kopeteuiglobal.h"
+#include "accountselector.h"
+#include "kopeteaccountmanager.h"
+
+#include "oscartypeclasses.h"
+
+#include "icqaccount.h"
+#include "icqcontact.h"
+#include "icqaddcontactpage.h"
+#include "icqeditaccountwidget.h"
+//#include "icquserinfowidget.h"
+
+
+#include "icqprotocol.h"
 
 typedef KGenericFactory<ICQProtocol> ICQProtocolFactory;
+K_EXPORT_COMPONENT_FACTORY( kopete_icq, ICQProtocolFactory( "kopete_icq" ) )
 
-K_EXPORT_COMPONENT_FACTORY( kopete_icq, ICQProtocolFactory( "kopete_icq_protocol" ) )
-
-ICQProtocol* ICQProtocol::protocolStatic_ = 0L;
-
-
+//BEGIN class ICQProtocolHandler
 
 ICQProtocolHandler::ICQProtocolHandler() : Kopete::MimeTypeHandler(false)
 {
@@ -156,18 +160,14 @@ void ICQProtocolHandler::handleURL(const QString &mimeType, const KURL & url) co
 	}
 }
 
+//END class ICQProtocolHandler
 
+//BEGIN class ICQProtocol
+
+ICQProtocol* ICQProtocol::protocolStatic_ = 0L;
 
 ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 : Kopete::Protocol( ICQProtocolFactory::instance(), parent, name ),
-	statusOnline(Kopete::OnlineStatus::Online, 1, this, OSCAR_ONLINE, QString::null, i18n("Online"), i18n("Online"), Kopete::OnlineStatusManager::Online),
-	statusFFC(Kopete::OnlineStatus::Online, 2, this, OSCAR_FFC, "icq_ffc", i18n("Free For Chat"), i18n("Free For Chat"), Kopete::OnlineStatusManager::Online),
-	statusOffline(Kopete::OnlineStatus::Offline, 1, this, OSCAR_OFFLINE, QString::null, i18n("Offline"), i18n("Offline"), Kopete::OnlineStatusManager::Offline),
-	statusAway(Kopete::OnlineStatus::Away, 1, this, OSCAR_AWAY, "icq_away", i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Busy),
-	statusDND(Kopete::OnlineStatus::Away, 2, this, OSCAR_DND, "icq_dnd", i18n("Do not Disturb"), i18n("Do not Disturb"), Kopete::OnlineStatusManager::Away),
-	statusNA(Kopete::OnlineStatus::Away, 3, this, OSCAR_NA, "icq_na", i18n("Not Available"), i18n("Not Available"), Kopete::OnlineStatusManager::Away ),
-	statusOCC(Kopete::OnlineStatus::Away, 4, this, OSCAR_OCC,"icq_occupied", i18n("Occupied"), i18n("Occupied"), Kopete::OnlineStatusManager::Away ),
-	statusConnecting(Kopete::OnlineStatus::Connecting, 99, this, OSCAR_CONNECTING, "icq_connecting", i18n("Connecting...")),
 	firstName(Kopete::Global::Properties::self()->firstName()),
 	lastName(Kopete::Global::Properties::self()->lastName()),
 	awayMessage(Kopete::Global::Properties::self()->awayMessage()),
@@ -175,9 +175,13 @@ ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 	clientFeatures("clientFeatures", i18n("Client Features"), 0, false)
 {
 	if (protocolStatic_)
-		kdDebug(14153) << k_funcinfo << "ICQ plugin already initialized" << endl;
+		kdWarning(14153) << k_funcinfo << "ICQ plugin already initialized" << endl;
 	else
 		protocolStatic_ = this;
+	
+	// must be done after protocolStatic_ is set...
+	statusManager_ = new ICQ::OnlineStatusManager;
+	
 	addAddressBookField("messaging/icq", Kopete::Plugin::MakeIndexField);
 
 	initGenders();
@@ -188,9 +192,9 @@ ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 
 ICQProtocol::~ICQProtocol()
 {
+	delete statusManager_;
 	protocolStatic_ =0L;
 }
-
 
 void ICQProtocol::initGenders()
 {
@@ -202,7 +206,6 @@ void ICQProtocol::initGenders()
 void ICQProtocol::initCountries()
 {
 	mCountries.insert(0, ""); // unspecified
-	//Shut the translators up (bug 77828)
 	KLocale *kl = KGlobal::locale(); //KLocale(QString::fromLatin1("kopete"));
 
 	mCountries.insert(93, kl->twoAlphaToCountryName("af"));
@@ -613,6 +616,7 @@ int ICQProtocol::getCodeForCombo(QComboBox *cmb, const QMap<int, QString> &map)
 	}
 	return 0; // unspecified is always first 0
 }
+#if 0
 
 void ICQProtocol::fillTZCombo(QComboBox *combo)
 {
@@ -653,329 +657,7 @@ char ICQProtocol::getTZComboValue(QComboBox *combo)
 	return ret;
 }
 
-void ICQProtocol::initUserinfoWidget(ICQUserInfoWidget *widget)
-{
-	fillComboFromTable(widget->rwGender, genders());
-	fillComboFromTable(widget->rwLang1, languages());
-	fillComboFromTable(widget->rwLang2, languages());
-	fillComboFromTable(widget->rwLang3, languages());
-	fillComboFromTable(widget->rwPrsCountry, countries());
-	fillComboFromTable(widget->rwWrkCountry, countries());
-	fillComboFromTable(widget->cmbEncoding, encodings());
-	fillTZCombo(widget->rwTimezone);
-}
-
-
-void ICQProtocol::contactInfo2UserInfoWidget(ICQContact *c, ICQUserInfoWidget *widget, bool editMode)
-{
-	QString homepage;
-
-	// General tab
-	if(!editMode) // no idea how to get ip for ourselves
-	{
-		QHostAddress ip(ntohl(c->userInfo().localip));
-		QHostAddress realip(ntohl(c->userInfo().realip));
-		unsigned short port = c->userInfo().port;
-
-		if ( !(ip == realip) && !(realip == QHostAddress()) )
-		{
-			widget->roIPAddress->setText(
-				QString("%1 (%2:%3)").arg(ip.toString()).arg(realip.toString()).arg(port)
-				);
-		}
-		else
-		{
-			widget->roIPAddress->setText(
-				QString("%1:%2").arg(ip.toString()).arg(port)
-				);
-		}
-	}
-
-	if(c->userInfo().onlinesince.isValid())
-		widget->roSignonTime->setText(c->userInfo().onlinesince.toString(Qt::LocalDate));
-	if(c->userInfo().membersince.isValid())
-		widget->roCreationTime->setText(c->userInfo().membersince.toString(Qt::LocalDate));
-
-	widget->rwNickName->setText(c->generalInfo.nickName);
-	widget->rwAlias->setText(c->displayName());
-	widget->rwFirstName->setText(c->generalInfo.firstName);
-	widget->rwLastName->setText(c->generalInfo.lastName);
-
-	// Private details tab
-	QString email = c->generalInfo.eMail;
-	if (editMode)
-		widget->prsEmailEdit->setText(email);
-	else
-	{
-		if (email.isEmpty()) // either NULL or ""
-		{
-			widget->prsEmailLabel->setText(i18n("Unspecified"));
-			widget->prsEmailLabel->setURL(QString::null);
-			widget->prsEmailLabel->setDisabled( true );
-			widget->prsEmailLabel->setUseCursor( false ); // disable hand cursor on mouseover
-		}
-		else
-		{
-			widget->prsEmailLabel->setText(email);
-			widget->prsEmailLabel->setURL(email);
-			widget->prsEmailLabel->setDisabled(false);
-			widget->prsEmailLabel->setUseCursor(true); // enable hand cursor on mouseover
-		}
-	}
-
-	// PRIVATE COUNTRY ==============================
-	setComboFromTable(widget->rwPrsCountry,countries(),
-		c->generalInfo.countryCode);
-	if (!editMode)
-		widget->roPrsCountry->setText( widget->rwPrsCountry->currentText() );
-
-	widget->prsStateEdit->setText(c->generalInfo.state);
-	widget->prsCityEdit->setText(c->generalInfo.city);
-	widget->prsZipcodeEdit->setText(c->generalInfo.zip);
-	widget->prsAddressEdit->setText(c->generalInfo.street);
-
-	widget->prsPhoneEdit->setText(c->generalInfo.phoneNumber);
-	widget->prsCellphoneEdit->setText(c->generalInfo.cellularNumber);
-	widget->prsFaxEdit->setText(c->generalInfo.faxNumber);
-
-	// TIMEZONE ======================================
-	fillTZCombo(widget->rwTimezone);
-	setTZComboValue(widget->rwTimezone, c->generalInfo.timezoneCode);
-	kdDebug(14153) << k_funcinfo << "timezonecode=" <<
-		c->generalInfo.timezoneCode << endl;
-	/*
-	widget->rwTimezone->setCurrentText(c->generalInfo.timezoneCode)
-		QString("GMT%1%2:%3")
-			.arg(c->generalInfo.timezoneCode > 0 ? "-" : "+")
-			.arg(abs(c->generalInfo.timezoneCode / 2))
-			.arg(c->generalInfo.timezoneCode % 2 ? "30" : "00")
-			);*/
-
-	if(!editMode)
-		widget->roTimezone->setText(widget->rwTimezone->currentText());
-
-	// AGE ===========================================
-	if(!editMode) // fixed value for readonly
-	{
-		widget->rwAge->setMinValue(c->moreInfo.age);
-		widget->rwAge->setMaxValue(c->moreInfo.age);
-	}
-	widget->rwAge->setValue(c->moreInfo.age);
-
-	// GENDER ========================================
-
-	setComboFromTable(widget->rwGender, genders(), c->moreInfo.gender);
-	if(!editMode) // get text from hidden combobox and insert into readonly lineedit
-		widget->roGender->setText( widget->rwGender->currentText() );
-
-	// BIRTHDAY ========================================
-
-	if(!c->moreInfo.birthday.isValid()) // no birthday defined
-	{
-		if(editMode)
-			widget->rwBday->setDate(QDate());
-		else
-			widget->roBday->setText("");
-	}
-	else
-	{
-		if(editMode)
-		{
-			widget->rwBday->setDate(c->moreInfo.birthday);
-		}
-		else
-		{
-			widget->roBday->setText(
-				KGlobal::locale()->formatDate(c->moreInfo.birthday,true));
-		}
-	}
-
-	// Personal HOMEPAGE ========================================
-	homepage = c->moreInfo.homepage;
-	if(editMode)
-	{
-		widget->prsHomepageEdit->setText( homepage );
-	}
-	else
-	{
-		if(homepage.isEmpty())
-		{
-			widget->prsHomepageLabel->setText( i18n("unspecified") );
-			widget->prsHomepageLabel->setURL( QString::null );
-			widget->prsHomepageLabel->setDisabled( true );
-			widget->prsHomepageLabel->setUseCursor( false ); // disable hand cursor on mouseover
-		}
-		else
-		{
-			QString tmpHP = homepage; // copy it, do not work on the original
-			widget->prsHomepageLabel->setText( tmpHP );
-
-			if ( !tmpHP.contains("://") ) // assume http-protocol if no protocol given
-				tmpHP.prepend("http://");
-			widget->prsHomepageLabel->setURL( tmpHP );
-
-			widget->prsHomepageLabel->setDisabled( false );
-			widget->prsHomepageLabel->setUseCursor( true ); // enable hand cursor on mouseover
-		}
-	}
-
-	// LANGUAGES =========================================
-
-	setComboFromTable(widget->rwLang1, languages(), c->moreInfo.lang1);
-	setComboFromTable(widget->rwLang2, languages(), c->moreInfo.lang2);
-	setComboFromTable(widget->rwLang3, languages(), c->moreInfo.lang3);
-	if(!editMode)
-	{
-		widget->roLang1->setText( widget->rwLang1->currentText() );
-		widget->roLang2->setText( widget->rwLang2->currentText() );
-		widget->roLang3->setText( widget->rwLang3->currentText() );
-	}
-
-	// WORK INFO ========================================
-
-	widget->wrkCityEdit->setText(c->workInfo.city);
-	widget->wrkStateEdit->setText(c->workInfo.state);
-	widget->wrkPhoneEdit->setText (c->workInfo.phone);
-	widget->wrkFaxEdit->setText (c->workInfo.fax);
-	widget->wrkAddressEdit->setText(c->workInfo.address);
-	widget->wrkZipcodeEdit->setText(c->workInfo.zip);
-	widget->wrkNameEdit->setText(c->workInfo.company);
-	widget->wrkDepartmentEdit->setText(c->workInfo.department);
-	widget->wrkPositionEdit->setText(c->workInfo.position);
-	// TODO: c->workInfo.occupation
-
-	// WORK HOMEPAGE =====================================
-
-	homepage = c->workInfo.homepage;
-	if ( editMode )
-	{
-		widget->wrkHomepageEdit->setText(homepage);
-	}
-	else
-	{
-		if(homepage.isEmpty())
-		{
-			widget->wrkHomepageLabel->setText(i18n("unspecified"));
-			widget->wrkHomepageLabel->setURL(QString::null);
-			widget->wrkHomepageLabel->setDisabled(true);
-			widget->wrkHomepageLabel->setUseCursor(false); // disable hand cursor on mouseover
-		}
-		else
-		{
-			QString tmpHP = homepage; // copy it, do not work on the original
-			widget->wrkHomepageLabel->setText(tmpHP);
-
-			if(!tmpHP.contains("://")) // assume http-protocol if not protocol given
-				tmpHP.prepend("http://");
-			widget->wrkHomepageLabel->setURL(tmpHP);
-
-			widget->wrkHomepageLabel->setDisabled(false);
-			widget->wrkHomepageLabel->setUseCursor(true); // enable hand cursor on mouseover
-		}
-	}
-
-	setComboFromTable(widget->rwWrkCountry, countries(), c->workInfo.countryCode);
-	if (!editMode)
-		widget->roWrkCountry->setText(widget->rwWrkCountry->currentText());
-
-	// ABOUT USER ========================================
-	widget->rwAboutUser->setText(c->aboutInfo);
-
-	ICQMailList::iterator it;
-	for (it = c->emailInfo.begin(); it != c->emailInfo.end(); ++it )
-	{
-		widget->lstEmails->insertItem(it.key());
-	}
-
-	// USER INTERESTS ==========================================================
-	// set all widgets to None/disabled
-
-	int i = 0;
-	for ( ICQInfoItemList::iterator it = c->interestInfo.begin(); it != c->interestInfo.end(); ++it )
-	{
-		// fill in any interests we know about
-		// set interest categories and populate combo boxes
-		const int INTEREST_OFFSET = 99;
-		switch (i)
-		{
-			case 0:
-				widget->intrCategoryCombo1->setCurrentItem( (*it).category - INTEREST_OFFSET );
-				widget->intrDescText1->setText( (*it).description );
-				break;
-			case 1:
-				widget->intrCategoryCombo2->setCurrentItem( (*it).category - INTEREST_OFFSET );
-				widget->intrDescText2->setText( (*it).description );
-				break;
-			case 2:
-				widget->intrCategoryCombo3->setCurrentItem( (*it).category - INTEREST_OFFSET );
-				widget->intrDescText3->setText( (*it).description );
-				break;
-			case 3:
-				widget->intrCategoryCombo4->setCurrentItem( (*it).category - INTEREST_OFFSET );
-				widget->intrDescText4->setText( (*it).description );
-				break;
-			default:
-				break;
-		}
-		i++;
-	}
-
-	// USER BACKGROUND - CURRENT MEMBERSHIPS====================================
-	i = 0;
-	for ( ICQInfoItemList::iterator it = c->currentBackground.begin(); it != c->currentBackground.end(); ++it )
-	{
-		// fill in any interests we know about
-		// set interest categories and populate combo boxes
-		const int ORGANISATION_OFFSET = 199;
-		switch (i)
-		{
-			case 0:
-				widget->bgrdCurrOrgCombo1->setCurrentItem( (*it).category - ORGANISATION_OFFSET );
-				widget->bgrdCurrOrgText1->setText( (*it).description );
-				break;
-			case 1:
-				widget->bgrdCurrOrgCombo2->setCurrentItem( (*it).category - ORGANISATION_OFFSET );
-				widget->bgrdCurrOrgText2->setText( (*it).description );
-				break;
-			case 2:
-				widget->bgrdCurrOrgCombo3->setCurrentItem( (*it).category - ORGANISATION_OFFSET );
-				widget->bgrdCurrOrgText3->setText( (*it).description );
-				break;
-			default:
-				break;
-		}
-		i++;
-	}
-
-	// USER BACKGROUND - PREVIOUS AFFILIATIONS==================================
-	i = 0;
-	for ( ICQInfoItemList::iterator it = c->pastBackground.begin(); it != c->pastBackground.end(); ++it )
-	{
-		// fill in any interests we know about
-		// set interest categories and populate combo boxes
-		const int ORGANISATION_OFFSET = 299;
-		switch (i)
-		{
-			case 0:
-				widget->bgrdPastOrgCombo1->setCurrentItem( (*it).category - ORGANISATION_OFFSET );
-				widget->bgrdPastOrgText1->setText( (*it).description );
-				break;
-			case 1:
-				widget->bgrdPastOrgCombo2->setCurrentItem( (*it).category - ORGANISATION_OFFSET );
-				widget->bgrdPastOrgText2->setText( (*it).description );
-				break;
-			case 2:
-				widget->bgrdPastOrgCombo3->setCurrentItem( (*it).category - ORGANISATION_OFFSET );
-				widget->bgrdPastOrgText3->setText( (*it).description );
-				break;
-			default:
-				break;
-		}
-		i++;
-	}
-
-} // END contactInfo2UserInfoWidget()
-
+#endif
 ICQProtocol *ICQProtocol::protocol()
 {
 	return protocolStatic_;
@@ -986,9 +668,9 @@ bool ICQProtocol::canSendOffline() const
 	return true;
 }
 
-Kopete::Contact *ICQProtocol::deserializeContact(Kopete::MetaContact *metaContact,
-	const QMap<QString, QString> &serializedData,
-	const QMap<QString, QString> &/*addressBookData*/)
+Kopete::Contact *ICQProtocol::deserializeContact( Kopete::MetaContact *metaContact,
+                                                  const QMap<QString, QString> &serializedData,
+                                                  const QMap<QString, QString> &/*addressBookData*/ )
 {
 	QString accountId = serializedData["accountId"];
 	QDict<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts(this);
@@ -996,33 +678,51 @@ Kopete::Contact *ICQProtocol::deserializeContact(Kopete::MetaContact *metaContac
 
 	if(!account)
 	{
-		kdDebug(14153) << k_funcinfo <<
-			"WARNING: Account for contact does not exist, skipping." << endl;
+		kdWarning(14153) << k_funcinfo <<
+			"WARNING: Account for contact does not exist, skipping " << accountId << endl;
 		return 0;
 	}
 
-	QString displayName=serializedData["displayName"];
 	QString contactId=serializedData["contactId"];
-	ICQContact *c = new ICQContact(contactId, displayName, account, metaContact);
-	c->setGroupId(serializedData["groupID"].toInt());
-	c->setEncoding(serializedData["Encoding"].toInt());
+	uint ssiGid = 0, ssiBid = 0, ssiType = 0xFFFF;
+	QString ssiName;
+	bool ssiWaitingAuth = false;
+	ssiName = serializedData["ssi_name"];
+	QString authStatus = serializedData["ssi_waitingAuth"];
+	if ( authStatus == "true" )
+		ssiWaitingAuth = true;
+	ssiGid = serializedData["ssi_gid"].toUInt();
+	ssiBid = serializedData["ssi_bid"].toUInt();
+	ssiType = serializedData["ssi_type"].toUInt();
+	
+	Oscar::SSI item( ssiName, ssiGid, ssiBid, ssiType, QValueList<TLV>(), 0 );
+	item.setWaitingAuth( ssiWaitingAuth );
+	ICQContact *c = new ICQContact( account, contactId, metaContact, QString::null, item );
 	return c;
 }
 
 AddContactPage *ICQProtocol::createAddContactWidget(QWidget *parent, Kopete::Account *account)
 {
-	return (new ICQAddContactPage(static_cast<ICQAccount*>(account) , parent));
+	return new ICQAddContactPage( static_cast<ICQAccount*>( account ), parent);
 }
 
 KopeteEditAccountWidget *ICQProtocol::createEditAccountWidget(Kopete::Account *account, QWidget *parent)
-{
-	return (new ICQEditAccountWidget(this, account, parent));
+{	
+	return new ICQEditAccountWidget(this, account, parent);
 }
 
 Kopete::Account *ICQProtocol::createNewAccount(const QString &accountId)
 {
-	return (new ICQAccount(this, accountId));
+	return new ICQAccount(this, accountId);
 }
 
+ICQ::OnlineStatusManager *ICQProtocol::statusManager()
+{
+	return statusManager_;
+}
+
+//END class ICQProtocol
+
 #include "icqprotocol.moc"
+// kate: indent-mode csands;
 // vim: set noet ts=4 sts=4 sw=4:
