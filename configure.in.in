@@ -14,10 +14,26 @@ fi
 KDE_CHECK_HEADERS(knotifydialog.h)
 
 KOPETE_INCLUDES='-I$(top_srcdir)/kopete/libkopete -I$(top_srcdir)/kopete/libkopete/ui -I$(top_builddir)/kopete/libkopete/ui'
-if test "$ac_cv_header_knotifydialog_h" = "no"; then
-  KOPETE_INCLUDES=$KOPETE_INCLUDES' -I$(top_srcdir)/kopete/libkopete/compat'
-  LIB_KOPETECOMPAT='$(top_builddir)/kopete/libkopete/compat/libkopetecompat.la'
-fi
+KOPETE_KCDIALOG_INCLUDES=''
+
+# -- Check for KDE 3.1 and enable the compat dir --------------------
+AC_MSG_CHECKING([for kdelibs newer than 3.1.x])
+AC_TRY_COMPILE(dnl
+[
+#include <kdeversion.h>
+
+#if !( KDE_IS_VERSION( 3, 1, 90 ) )
+#error Need to enable libkopete/compat/
+#endif
+],
+[
+],
+	KOPETE_INCLUDES=$KOPETE_INCLUDES' -I$(top_srcdir)/kopete/libkopete/compat'
+	KOPETE_KCDIALOG_INCLUDES=$KOPETE_KCDIALOG_INCLUDES' -I$(top_srcdir)/kopete/libkopete/compat/kcdialog'
+	LIB_KOPETECOMPAT='$(top_builddir)/kopete/libkopete/libkopete.la'
+)
+AM_CONDITIONAL(compile_LIBKOPETE_COMPAT, test -n "$KOPETE_KCDIALOG_INCLUDES")
+# -- End KDE 3.1 check ----------------------------------------------
 
 KDE_FIND_PATH(xml2-config, XML_CONFIG, [${prefix}/bin ${exec_prefix}/bin /usr/local/bin /opt/local/bin /usr/bin], [
   AC_MSG_WARN([libxml2 not found anywhere, check ftp://xmlsoft.org/ for libxml >= 2.4.8. ])
@@ -94,5 +110,6 @@ AC_SUBST(LIBXML_RPATH)
 
 
 AC_SUBST(KOPETE_INCLUDES)
+AC_SUBST(KOPETE_KCDIALOG_INCLUDES)
 AC_SUBST(LIB_KOPETECOMPAT)
 
