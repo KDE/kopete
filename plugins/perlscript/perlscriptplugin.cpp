@@ -54,7 +54,7 @@ PerlPlugin::PerlPlugin( QObject *parent, const char *name, const QStringList &) 
 	kdDebug(14010) << k_funcinfo << "Loaded PerlScript" << endl;
 	if ( !pluginStatic_ )
 		pluginStatic_ = this;
-		
+	
 	//Initialize the perl engine	
 	my_perl = perl_alloc();
 	perl_construct( my_perl );
@@ -116,20 +116,19 @@ void PerlPlugin::slotRemoveScript( const QString &scriptPath )
 {
 	PerlScript *script = m_allScripts[ scriptPath ];
 	
-	m_allScripts.remove( scriptPath );
 	m_incomingScripts.remove( script );
 	m_outgoingScripts.remove( script );
 	m_actionScripts.remove( script );
+	m_allScripts.remove( scriptPath );
 	
 	delete script;
 }
 
 void PerlPlugin::slotClearScripts()
 {
-	m_allScripts.clear();
-	m_incomingScripts.clear();
-	m_outgoingScripts.clear();
-	m_actionScripts.clear();
+	QMap<QString,PerlScript*>::Iterator it;
+        for ( it = m_allScripts.begin(); it != m_allScripts.end(); ++it )
+		slotRemoveScript( it.key() );
 }
 
 void PerlPlugin::slotScriptModified( const QString &scriptPath )
@@ -187,13 +186,13 @@ void PerlPlugin::slotIncomingMessage( KopeteMessage& msg )
 	{
 		kdDebug(14010) << k_funcinfo << "Executing incoming scripts" << endl;
 		
-		//Get our arguments fo rthe perl script
-		QStringList args = getArguments( msg );
-		
 		//Execute all the incoming scripts			
 		for ( PerlScript *script = m_incomingScripts.first(); script; script = m_incomingScripts.next() )
 		{
-			msg.setBody( executeScript( script->scriptText, QString::fromLatin1("IncomingMessage"), args ) );
+			QString resultText = executeScript( script->scriptText, QString::fromLatin1("IncomingMessage"), getArguments( msg ) );
+			if( !resultText.isEmpty() && !resultText.isNull() )
+				msg.setBody( resultText );
+				
 			emit( scriptExecuted( script->path, script->name ) );
 		}
 	}
@@ -205,13 +204,13 @@ void PerlPlugin::slotOutgoingMessage( KopeteMessage& msg )
 	{
 		kdDebug(14010) << k_funcinfo << "Executing outgoing scripts" << endl;
 		
-		//Get our arguments fo rthe perl script
-		QStringList args = getArguments( msg );
-
 		//Execute all the outgoing scripts
 		for ( PerlScript *script = m_outgoingScripts.first(); script; script = m_outgoingScripts.next() )
 		{
-			msg.setBody( executeScript( script->scriptText, QString::fromLatin1("OutgoingMessage"), args ) );
+			QString resultText = executeScript( script->scriptText, QString::fromLatin1("OutgoingMessage"), getArguments( msg ) );
+			if( !resultText.isEmpty() && !resultText.isNull() )
+				msg.setBody( resultText );
+				
 			emit( scriptExecuted( script->path, script->name ) );
 		}
 	}
@@ -237,7 +236,7 @@ QStringList PerlPlugin::getArguments( KopeteMessage &msg )
 	return args;
 }
 
-QString PerlPlugin::executeScript( const QString &scriptText, const QString &subName, QStringList &args )
+QString PerlPlugin::executeScript( const QString &scriptText, const QString &subName, QStringList args )
 {
 	//This qstrdup stuff is a hack to surpress a few ISO C++ warnings about converting const char* to char*
 	char *embedding[] = { qstrdup(""), qstrdup("-e"), qstrdup("0") };
@@ -252,19 +251,20 @@ QString PerlPlugin::executeScript( const QString &scriptText, const QString &sub
 	PUSHMARK(SP);			 		//remember the stack pointer
 	
 	//Load our script into the interpereter
-	eval_pv(scriptText.latin1(), TRUE);
+	eval_pv(scriptText.local8Bit(), TRUE);
 	
 	//Push all our arguments onto the Perl stack
 	for ( QStringList::Iterator it = args.begin(); it != args.end(); ++it )
 	{
-        	XPUSHs(sv_2mortal(newSVpv( (*it).latin1(), 0 )));
+        	kdDebug(14010) << k_funcinfo << "Adding argument " << *it << endl;
+		XPUSHs(sv_2mortal(newSVpv( (*it).local8Bit(), 0 )));
 	}
 		
 	PUTBACK;					//make local stack pointer global
 	call_pv(subName.local8Bit(), G_SCALAR);		//call the function
 	SPAGAIN;					//refresh stack pointer
 
-	QString result = QString::fromLatin1(POPp);	//pop the return value from stack
+	QString result = QString::fromLocal8Bit(POPp);	//pop the return value from stack
 	
 	PUTBACK;
 	FREETMPS;					//free that return value
