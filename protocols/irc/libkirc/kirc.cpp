@@ -1021,6 +1021,20 @@ void KIRC::isOn(const QStringList &nickList)
 				statement.append(QChar(' ') + (*it));
 		}
 		writeMessage(statement);
+
+		//15 second timeout to detect network disconnections
+		isonRecieved = false;
+		QTimer::singleShot(15000, this, SLOT( slotIsonCheck() ) );
+	}
+}
+
+void KIRC::slotIsonCheck()
+{
+	if( !isonRecieved )
+	{
+		setStatus( Disconnected );
+		m_sock.close();
+		m_sock.reset();
 	}
 }
 
@@ -1089,6 +1103,7 @@ bool KIRC::numericReply_303(const KIRCMessage &msg)
 {
 	/* ":*1<nick> *(" " <nick> )"
 	 */
+	isonRecieved = true;
 	QStringList nicks = QStringList::split(QRegExp(QChar(' ')), msg.suffix());
 	for(QStringList::Iterator it = nicks.begin(); it != nicks.end(); ++it)
 	{

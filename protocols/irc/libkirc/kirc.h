@@ -422,12 +422,14 @@ private slots:
 	void slotConnected();
 	void slotConnectionClosed();
 	void slotAuthFailed();
+	void slotIsonCheck();
 	void slotReadyRead();
 	void error(int errCode = 0);
 	void quitTimeout();
 
 private:
 	void setStatus(EngineStatus status);
+	bool isonRecieved;
 
 
 };

@@ -147,7 +147,7 @@ void IRCServerContact::slotIncomingNotice( const QString &orig, const QString &n
 
 void IRCServerContact::slotCannotSendToChannel( const QString &channel, const QString &message )
 {
-	slotAppendMessage( i18n("%1: %2").arg( channel ).arg( message ) );
+	slotAppendMessage( QString::fromLatin1("%1: %2").arg( channel ).arg( message ) );
 }
 
 void IRCServerContact::slotIncomingMotd( const QStringList &motd )
