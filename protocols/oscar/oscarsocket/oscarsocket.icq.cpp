@@ -34,8 +34,10 @@
  * This buffer should be the exact length of the password without
  * the null. The encoded password buffer /is not %NULL terminated/.
  */
-void OscarSocket::encodePasswordXOR(const QString &originalPassword, QCString &encodedPassword)
+void OscarSocket::encodePasswordXOR(const QString &originalPassword, QString &encodedPassword)
 {
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
+
 	// TODO: check if latin1 is the right conversion
 	const char *password = originalPassword.latin1();
 
@@ -51,34 +53,66 @@ void OscarSocket::encodePasswordXOR(const QString &originalPassword, QCString &e
 		0x53, 0x7a, 0x95, 0x7c
 	};
 	unsigned int i;
+
+	encodedPassword=QString::null;
+
+// ========================================================================================
+
+
+	for (i = 0; i < 8; i++)
+	{
+		if(password[i] == 0)
+		{
+			kdDebug(14150) << k_funcinfo << "found \\0 in password @ " << i << endl;
+			break;
+		}
+		encodedPassword.append(password[i] ^ encoding_table[i]);
+	}
+
+
+// ========================================================================================
+
 /*
 	// old way
 	for (i = 0; i < strlen(password); i++)
 	{
-		encoded += (password[i] ^ encoding_table[i]);
+		encodedPassword.append(password[i] ^ encoding_table[i]);
 	}
 */
 
+// ========================================================================================
+/*
 	for (i = 0; i < 16; i++)
 	{
 		if(password[i] == 0)
+		{
+			kdDebug(14150) << k_funcinfo << "found \\0 in password @ " << i << endl;
 			break;
+		}
 
 		char enc = (password[i] ^ encoding_table[i]);
 		if (enc == 0)
 		{
-			encodedPassword += "\\";
+			kdDebug(14150) << k_funcinfo << "encoded char is NULL, escaping @ " << i << endl;
+			encodedPassword.append("\\");
 			enc = '0';
 		}
 		else if (enc == '\\')
 		{
-			encodedPassword += "\\";
+			kdDebug(14150) << k_funcinfo << "encoded char is \\, escaping @ " << i << endl;
+			encodedPassword.append("\\");
         }
-		encodedPassword += enc;
+		encodedPassword.append(enc);
 	}
+*/
+// ========================================================================================
+
 #ifdef OSCAR_PWDEBUG
-	kdDebug(14150) << " plaintext pw='" << originalPassword << "', length=" << originalPassword.length() << endl;
-	kdDebug(14150) << " encoded pw='" << encodedPassword << "', length=" << encodedPassword.length() << endl;
+	kdDebug(14150) << " plaintext pw='" << originalPassword << "', length=" <<
+		originalPassword.length() << endl;
+
+	kdDebug(14150) << " encoded   pw='" << encodedPassword  << "', length=" <<
+		encodedPassword.length() << endl;
 #endif
 }
 
@@ -91,8 +125,28 @@ void OscarSocket::sendLoginICQ()
 	putFlapVer(outbuf); // FLAP Version
 	outbuf.addTLV(0x0001, getSN().length(), getSN().latin1()); // login name, i.e. ICQ UIN
 
-	QCString encodedPassword;
+	QString encodedPassword;
 	encodePasswordXOR(loginPassword, encodedPassword);
+/*
+	int n = 0;
+	char pass[16];
+	for (const char *p = encodedPassword; *p && n < 16; p++)
+	{
+		if (*p != '\\')
+		{
+			pass[n++] = *p;
+			continue;
+		}
+		kdDebug(14150) << k_funcinfo << "got escaped char @ " << n << endl;
+		char c = *(++p);
+		if (c == '0')
+		{
+			kdDebug(14150) << k_funcinfo << "got escaped NULL char @ " << n << endl;
+			c = 0;
+		}
+		pass[n++] = c;
+	}
+*/
 
 	outbuf.addTLV(0x0002, encodedPassword.length(), encodedPassword);
 

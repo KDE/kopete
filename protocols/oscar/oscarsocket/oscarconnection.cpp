@@ -21,7 +21,7 @@ OscarConnection::OscarConnection(const QString &sn, const QString &connName,
 	ConnectionType type, const QByteArray &cookie, QObject *parent, const char *name)
 	: QSocket(parent, name)
 {
-	kdDebug(14150) << k_funcinfo <<  "called, sn='" << sn << "' connName='" << connName << "'" << endl;
+//	kdDebug(14150) << k_funcinfo <<  "called, sn='" << sn << "' connName='" << connName << "'" << endl;
 
 	mConnName = connName;
 	mConnType = type;
@@ -35,6 +35,7 @@ OscarConnection::OscarConnection(const QString &sn, const QString &connName,
 
 OscarConnection::~OscarConnection()
 {
+//	kdDebug(14150) << k_funcinfo << "Called." << endl;
 }
 
 /* Called when there is data to be read.

@@ -63,7 +63,7 @@ OscarContact::OscarContact(const QString& name, const QString& displayName,
 		mAccount->internalBuddyList()->addBuddy(mListContact);
 	}
 
-	setFileCapable(true); // FIXME: depends on status!
+	setFileCapable(false); // FIXME
 
 	if (!displayName.isEmpty())
 		setDisplayName(displayName);
@@ -103,6 +103,7 @@ void OscarContact::initSignals()
 	QObject::connect(
 		mAccount->engine(), SIGNAL(directIMConnectionClosed(QString)),
 		this, SLOT(slotDirectIMConnectionClosed(QString)));
+/*
 	// File transfer request
 	QObject::connect(
 		mAccount->engine(), SIGNAL(gotFileSendRequest(QString,QString,QString,unsigned long)),
@@ -123,7 +124,7 @@ void OscarContact::initSignals()
 	QObject::connect(
 		KopeteTransferManager::transferManager(), SIGNAL(refused(const KopeteFileTransferInfo &)),
 		this, SLOT(slotTransferDenied(const KopeteFileTransferInfo &)));
-
+*/
 	// When a group in the contact list is being removed, we're notified
 	QObject::connect(
 		KopeteContactList::contactList(), SIGNAL(groupRemoved(KopeteGroup*)),
@@ -335,7 +336,7 @@ void OscarContact::slotDirectIMConnectionClosed(QString name)
 
 	mDirectlyConnected = false;
 }
-
+#if 0
 void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*/,
 	const long unsigned int /*fileSize*/)
 {
@@ -358,7 +359,7 @@ void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*
 		mAccount->engine()->sendFileSendRequest(mName, finfo);
 	}
 }
-
+#endif
 // Called when the metacontact owning this contact has changed groups
 void OscarContact::syncGroups()
 {
@@ -374,14 +375,15 @@ void OscarContact::syncGroups()
 		return;
 	}
 
-	kdDebug(14150) << k_funcinfo << ": Getting current oscar group " << mListContact->groupID() << " ... " << endl;
+//	kdDebug(14150) << k_funcinfo << ": Getting current oscar group " << mListContact->groupID() << " ... " << endl;
 	// Get the current (oscar) group that this contact belongs to on the server
 	AIMGroup *currentOscarGroup =
 		mAccount->internalBuddyList()->findGroup(mListContact->groupID());
-	if (currentOscarGroup == 0L)
+	if (!currentOscarGroup)
 	{
-		kdDebug(14150) << k_funcinfo << ": Could not get current Oscar group "
-					   << "for contact" << endl;
+//		kdDebug(14150) << k_funcinfo <<
+//			"Could not get current Oscar group for contact '" << displayName() <<
+//			"'" << endl;
 		return;
 	}
 
@@ -412,7 +414,7 @@ void OscarContact::syncGroups()
 			newKopeteGroup->displayName());
 	}
 }
-
+#if 0
 void OscarContact::slotGotFileSendRequest(QString sn, QString message, QString filename,
 	unsigned long filesize)
 {
@@ -469,6 +471,7 @@ void OscarContact::slotTransferBegun(OscarConnection *con,
 		con, SIGNAL(percentComplete(unsigned int)),
 		tr, SLOT(slotPercentCompleted(unsigned int)));
 }
+#endif
 
 void OscarContact::rename(const QString &newNick)
 {

@@ -20,7 +20,7 @@
 #include <qwidget.h>
 #include <qdatetime.h>
 #include <kaction.h>
-#include "kopetetransfermanager.h"
+//#include "kopetetransfermanager.h"
 #include "kopetecontact.h"
 #include "kopetemessage.h"
 
@@ -84,12 +84,12 @@ class OscarContact : public KopeteContact
 
 	public slots:
 		/** Method to delete a contact from the contact list */
-		virtual void slotDeleteContact(void);
+		virtual void slotDeleteContact();
 
-		/** Send a file */
+/*
 		virtual void sendFile(const KURL &sourceURL, const QString &altFileName,
 			const long unsigned int fileSize);
-
+*/
 		/** Called when the metacontact owning this contact changes groups */
 		virtual void syncGroups();
 
@@ -171,16 +171,21 @@ class OscarContact : public KopeteContact
 		void slotDirectIMReady(QString name);
 		/** Called when the direct connection to name has been terminated */
 		void slotDirectIMConnectionClosed(QString name);
-		/** Called when someone wants to send us a file */
+/*
+		// Called when someone wants to send us a file
 		void slotGotFileSendRequest(QString sn, QString message,
 			QString filename, unsigned long filesize);
-		/** Called when we deny a transfer */
+
+		// Called when we deny a transfer
 		void slotTransferDenied(const KopeteFileTransferInfo &tr);
-		/** Called when a pending transfer has been accepted */
+
+		// Called when a pending transfer has been accepted
 		void slotTransferAccepted(KopeteTransfer *, const QString &fileName);
-		/** Called when a file transfer begins */
+
+		// Called when a file transfer begins
 		void slotTransferBegun(OscarConnection *con, const QString& file,
 			const unsigned long size, const QString &recipient);
+*/
 		/** Called when a contact from the Kopete contact list has been removed */
 		void slotGroupRemoved( KopeteGroup * );
 

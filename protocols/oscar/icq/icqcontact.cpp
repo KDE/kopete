@@ -164,7 +164,7 @@ void ICQContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &me
 	KopeteContactPtrList tmpList;
 	tmpList.append(account()->myself());
 	KopeteMessage msg(this, tmpList, message, KopeteMessage::Inbound,
-		KopeteMessage::PlainText);
+		KopeteMessage::RichText);
 	manager(true)->appendMessage(msg);
 }
 

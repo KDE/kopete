@@ -21,6 +21,9 @@
 
 #include <assert.h>
 
+#include <qstylesheet.h>
+#include <qregexp.h>
+
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -220,6 +223,11 @@ void OscarAccount::slotGotIM(OscarSocket::OscarMessageType type, QString &messag
 			contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
 		}
 	}
+
+	message = QStyleSheet::escape( message );
+	message.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) );
+	message.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
+	message.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
 
 	if (contact)
 	{

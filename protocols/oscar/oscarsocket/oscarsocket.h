@@ -23,6 +23,8 @@
 #include "oncomingsocket.h"
 #include "oscarsocket.icq.h"
 
+#include <klocale.h>
+
 #include <qptrlist.h>
 
 // ========================================================================================
@@ -40,6 +42,7 @@
 class KFileItem;
 class OscarAccount;
 class QTimer;
+
 
 struct FLAP
 { //flap header
@@ -90,51 +93,6 @@ class UserInfo
 		unsigned long icqextstatus;
 };
 
-/*
- * Internal status enum
- */
-const unsigned int OSCAR_OFFLINE = 0;
-const unsigned int OSCAR_ONLINE = 1;
-const unsigned int OSCAR_AWAY = 2;
-const unsigned int OSCAR_DND = 3;
-const unsigned int OSCAR_NA = 4;
-const unsigned int OSCAR_OCC = 5;
-const unsigned int OSCAR_FFC = 6;
-const unsigned int OSCAR_CONNECTING = 10;
-
-#define OSCAR_FAM_1				0x0001 // Services
-#define OSCAR_FAM_2				0x0002 // Location
-#define OSCAR_FAM_3				0x0003 // Contacts, adding, removal, statuschanges
-#define OSCAR_FAM_4				0x0004 // ICBM, messaging
-#define OSCAR_FAM_9				0x0009 // BOS, visible/invisible lists
-#define OSCAR_FAM_11			0x000b // Interval
-#define OSCAR_FAM_19			0x0013 // Roster, Contactlist
-#define OSCAR_FAM_21			0x0015 // icq metasearch, sms, offline messages
-#define OSCAR_FAM_23			0x0017 // new user, registration
-
-
-// used for SRV_RECVMSG, SNAC(4,7)
-#define MSGFORMAT_SIMPLE		0x0001
-#define MSGFORMAT_ADVANCED		0x0002
-#define MSGFORMAT_SERVER		0x0004
-
-#define OSCAR_SERVER 			"login.oscar.aol.com"
-#define OSCAR_PORT 				5190
-
-#define CLASS_TRIAL				0x0001
-#define CLASS_ADMINISTRATOR 	0x0002 // AOL admin
-#define CLASS_AOL				0x0004 // AOL staff user flag
-#define CLASS_COMMERCIAL		0x0008 // AOL commercial account flag
-#define CLASS_AIM				0x0010 // ICQ non-commercial account flag
-#define CLASS_AWAY				0x0020 //  Away status flag
-#define CLASS_ICQ				0x0040 //  ICQ user sign
-#define CLASS_WIRELESS			0x0080 // AOL wireless user
-#define CLASS_UNKNOWN100		0x0100 // Unknown bit
-#define CLASS_UNKNOWN200		0x0200  // Unknown bit
-#define CLASS_UNKNOWN400		0x0400  // Unknown bit
-//#define CLASS_ACTIVEBUDDY		0x0400
-#define CLASS_UNKNOWN800		0x0800 // Unknown bit
-
 
 #define AIM_CAPS_BUDDYICON			0x00000001
 #define AIM_CAPS_VOICE				0x00000002
@@ -159,10 +117,184 @@ const unsigned int OSCAR_CONNECTING = 10;
 #define AIM_CAPS_LAST				0x00100000
 
 // DON'T touch these if you're not 100% sure what they are for!
-#define KOPETE_AIM_CAPS			AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
+//#define KOPETE_AIM_CAPS			AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
+#define KOPETE_AIM_CAPS			0 // our aim client is as stupid as bread
 #define KOPETE_ICQ_CAPS			AIM_CAPS_ICQSERVERRELAY | /*AIM_CAPS_UTF8 | AIM_CAPS_RTFMSGS |*/ AIM_CAPS_ISICQ
 
 //ICQ 2002b sends: CAP_AIM_SERVERRELAY, CAP_UTF8, CAP_RTFMSGS, CAP_AIM_ISICQ
+
+static const struct
+{
+	DWORD flag;
+	unsigned char data[16];
+} oscar_caps[] =
+{
+	// Chat is oddball.
+	{AIM_CAPS_CHAT,
+	{0x74, 0x8f, 0x24, 0x20, 0x62, 0x87, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	// These are mostly in order.
+	{AIM_CAPS_VOICE,
+	{0x09, 0x46, 0x13, 0x41, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_SENDFILE,
+	{0x09, 0x46, 0x13, 0x43, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	// Advertised by the EveryBuddy client.
+	{AIM_CAPS_ISICQ,
+	{0x09, 0x46, 0x13, 0x44, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_IMIMAGE,
+	{0x09, 0x46, 0x13, 0x45, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_BUDDYICON,
+	{0x09, 0x46, 0x13, 0x46, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_SAVESTOCKS,
+	{0x09, 0x46, 0x13, 0x47, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_GETFILE,
+	{0x09, 0x46, 0x13, 0x48, 0x4c, 0x7f, 0x11, 0xd1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_ICQSERVERRELAY,
+	{0x09, 0x46, 0x13, 0x49, 0x4c, 0x7f, 0x11, 0xd1,
+	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_GAMES,
+	{0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
+	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_GAMES2,
+	{0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
+	 0x22, 0x82, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_SENDBUDDYLIST,
+	{0x09, 0x46, 0x13, 0x4b, 0x4c, 0x7f, 0x11, 0xd1,
+	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_RTFMSGS,
+	{0x97, 0xb1, 0x27, 0x51, 0x24, 0x3c, 0x43, 0x34,
+	 0xad, 0x22, 0xd6, 0xab, 0xf7, 0x3f, 0x14, 0x92}},
+
+	{AIM_CAPS_IS_2001,
+	{0x2e, 0x7a, 0x64, 0x75, 0xfa, 0xdf, 0x4d, 0xc8,
+	 0x88, 0x6f, 0xea, 0x35, 0x95, 0xfd, 0xb6, 0xdf}},
+
+	{AIM_CAPS_EMPTY,
+	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
+
+	{AIM_CAPS_TRILLIANCRYPT,
+	{0xf2, 0xe7, 0xc7, 0xf4, 0xfe, 0xad, 0x4d, 0xfb,
+	 0xb2, 0x35, 0x36, 0x79, 0x8b, 0xdf, 0x00, 0x00}},
+
+	{AIM_CAPS_APINFO,
+	{0xAA, 0x4A, 0x32, 0xB5, 0xF8, 0x84, 0x48, 0xc6,
+	 0xA3, 0xD7, 0x8C, 0x50, 0x97, 0x19, 0xFD, 0x5B}},
+
+	{AIM_CAPS_UTF8,
+	{0x09, 0x46, 0x13, 0x4E, 0x4C, 0x7F, 0x11, 0xD1,
+	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_IS_WEB,
+	{0x56, 0x3F, 0xC8, 0x09, 0x0B, 0x6f, 0x41, 0xBD,
+	 0x9F, 0x79, 0x42, 0x26, 0x09, 0xDF, 0xA2, 0xF3}},
+
+	{AIM_CAPS_INTEROPERATE,
+	{0x09, 0x46, 0x13, 0x4D, 0x4C, 0x7F, 0x11, 0xD1,
+	 0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
+
+	{AIM_CAPS_LAST,
+	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}
+};
+
+
+static const QString msgerrreason[] =
+{
+	I18N_NOOP("Invalid error"),
+	I18N_NOOP("Invalid SNAC"),
+	I18N_NOOP("Rate to host"),
+	I18N_NOOP("Rate to client"),
+	I18N_NOOP("Not logged in"),
+	I18N_NOOP("Service unavailable"),
+	I18N_NOOP("Service not defined"),
+	I18N_NOOP("Obsolete SNAC"),
+	I18N_NOOP("Not supported by host"),
+	I18N_NOOP("Not supported by client"),
+	I18N_NOOP("Refused by client"),
+	I18N_NOOP("Reply too big"),
+	I18N_NOOP("Responses lost"),
+	I18N_NOOP("Request denied"),
+	I18N_NOOP("Busted SNAC payload"),
+	I18N_NOOP("Insufficient rights"),
+	I18N_NOOP("In local permit/deny"),
+	I18N_NOOP("Too evil (sender)"),
+	I18N_NOOP("Too evil (receiver)"),
+	I18N_NOOP("User temporarily unavailable"),
+	I18N_NOOP("No match"),
+	I18N_NOOP("List overflow"),
+	I18N_NOOP("Request ambiguous"),
+	I18N_NOOP("Queue full"),
+	I18N_NOOP("Not while on AOL")
+};
+
+static const int msgerrreasonlen=25;
+
+//#define DIRECTCONNECT				0x0f1f // WHAT IS THAT FOR??? [mETz, 21.05.2003]
+
+/*
+ * Internal status enum
+ */
+const unsigned int OSCAR_OFFLINE = 0;
+const unsigned int OSCAR_ONLINE = 1;
+const unsigned int OSCAR_AWAY = 2;
+const unsigned int OSCAR_DND = 3;
+const unsigned int OSCAR_NA = 4;
+const unsigned int OSCAR_OCC = 5;
+const unsigned int OSCAR_FFC = 6;
+const unsigned int OSCAR_CONNECTING = 10;
+
+const WORD OSCAR_FAM_1 = 0x0001; // Services
+const WORD OSCAR_FAM_2 = 0x0002; // Location
+const WORD OSCAR_FAM_3 = 0x0003; // Contacts, adding, removal, statuschanges
+const WORD OSCAR_FAM_4 = 0x0004; // ICBM, messaging
+const WORD OSCAR_FAM_9 = 0x0009; // BOS, visible/invisible lists
+const WORD OSCAR_FAM_11 = 0x000b; // Interval
+const WORD OSCAR_FAM_19 = 0x0013; // Roster, Contactlist
+const WORD OSCAR_FAM_21 = 0x0015; // icq metasearch, sms, offline messages
+const WORD OSCAR_FAM_23 = 0x0017; // new user, registration
+
+
+// used for SRV_RECVMSG, SNAC(4,7)
+const WORD MSGFORMAT_SIMPLE		= 0x0001;
+const WORD MSGFORMAT_ADVANCED	= 0x0002;
+const WORD MSGFORMAT_SERVER		= 0x0004;
+
+#define OSCAR_SERVER 			"login.oscar.aol.com"
+const unsigned int OSCAR_PORT	= 5190;
+
+const WORD CLASS_TRIAL			= 0x0001;
+const WORD CLASS_ADMINISTRATOR	= 0x0002; // AOL admin
+const WORD CLASS_AOL			= 0x0004; // AOL staff user flag
+const WORD CLASS_COMMERCIAL		= 0x0008; // AOL commercial account flag
+const WORD CLASS_AIM			= 0x0010; // ICQ non-commercial account flag
+const WORD CLASS_AWAY			= 0x0020; //  Away status flag
+const WORD CLASS_ICQ			= 0x0040; //  ICQ user sign
+const WORD CLASS_WIRELESS		= 0x0080; // AOL wireless user
+const WORD CLASS_UNKNOWN100		= 0x0100; // Unknown bit
+const WORD CLASS_UNKNOWN200		= 0x0200;  // Unknown bit
+const WORD CLASS_UNKNOWN400		= 0x0400;  // Unknown bit
+//const WORD CLASS_ACTIVEBUDDY	= 0x0400;
+const WORD CLASS_UNKNOWN800		= 0x0800; // Unknown bit
 
 /*
  * Implements the actual communication with the oscar server
@@ -197,7 +329,7 @@ class OscarSocket : public OscarConnection
 		 * same as above but for icq which needs a XOR method to encode the password
 		 *  returns the encoded password  [ICQ]
 		 */
-		void encodePasswordXOR(const QString &password, QCString &encodedPassword);
+		void encodePasswordXOR(const QString &originalPassword, QString &encodedPassword);
 
 		/*
 		 * Logs in the user!  [OSCAR]
@@ -350,12 +482,14 @@ class OscarSocket : public OscarConnection
 		 * @param notifyType Type of notify to send
 		 */
 		void sendMiniTypingNotify(QString screenName, TypingNotify notifyType);
+#if 0
 		/** Initiate a transfer of the given file to the given sn */
 		void sendFileSendRequest(const QString &sn, const KFileItem &finfo);
 		/** Sends a file transfer deny to @sn */
 		void sendFileSendDeny(const QString &sn);
 		/** Accepts a file transfer from sn, returns OscarConnection created */
 		OscarConnection *sendFileSendAccept(const QString &sn, const QString &fileName);
+#endif
 
 		/** send request for offline messages (ICQ method) */
 		void sendReqOfflineMessages();
@@ -612,9 +746,10 @@ class OscarSocket : public OscarConnection
 	/** Called when a direct connection is set up and ready for use */
 	void OnDirectIMReady(QString name);
 	/** Called when a file transfer begins */
+/*
 	void OnFileTransferBegun(OscarConnection *con, const QString& file,
 		const unsigned long size, const QString &recipient);
-
+*/
 	void slotKeepaliveTimer();
 
 	signals:

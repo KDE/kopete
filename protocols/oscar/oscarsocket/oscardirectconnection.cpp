@@ -22,14 +22,18 @@ OscarDirectConnection::OscarDirectConnection(const QString &sn,
 	QObject *parent, const char *name)
 	: OscarConnection(sn, connName, DirectIM, cookie, parent, name)
 {
+	kdDebug(14150) << k_funcinfo <<  "called, sn='" << sn << "' connName='" <<
+		connName << "'" << endl;
+
 	connect(this, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
 }
 
 OscarDirectConnection::~OscarDirectConnection()
 {
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
 }
 
-void OscarDirectConnection::slotRead(void)
+void OscarDirectConnection::slotRead()
 {
 	ODC2 fl = getODC2();
 	char *buf = new char[fl.length];
@@ -38,10 +42,7 @@ void OscarDirectConnection::slotRead(void)
 	if (bytesAvailable() < fl.length)
 	{
 		while (waitForMore(500) < fl.length)
-		{
-			kdDebug(14150) << k_funcinfo <<
-				"Not enough data read yet... waiting" << endl;
-		}
+			kdDebug(14150) << k_funcinfo << "Not enough data read yet... waiting" << endl;
 	}
 
 	int bytesread = readBlock(buf,fl.length);
@@ -50,7 +51,7 @@ void OscarDirectConnection::slotRead(void)
 		emit readyRead(); //there is another packet waiting to be read
 	}
 
-	inbuf.setBuf(buf,bytesread);
+	inbuf.setBuf(buf, bytesread);
 
 	if (fl.type == 0x000e) // started typing
 	{
@@ -65,21 +66,20 @@ void OscarDirectConnection::slotRead(void)
 		emit gotMiniTypeNotification(fl.sn, 1);
 	}
 
-	if ( (fl.length > 0) && fl.sn) //there is a message here
+	if((fl.length > 0) && fl.sn) //there is a message here
 		parseMessage(inbuf);
 
-	if ( inbuf.length() )
+	if(inbuf.length() > 0)
 		kdDebug(14150) << k_funcinfo << "'" << connectionName() <<
 			"': inbuf not empty" << endl;
 
-	if (fl.sn)
+	if(fl.sn)
 		delete fl.sn;
 
-	if (fl.cookie)
+	if(fl.cookie)
 		delete fl.cookie;
 }
 
-/** Gets an ODC2 header */
 ODC2 OscarDirectConnection::getODC2(void)
 {
 	ODC2 odc;
@@ -119,10 +119,10 @@ ODC2 OscarDirectConnection::getODC2(void)
 		odc.channel = inbuf.getWord();
 		//0x0006 is next
 		if (inbuf.getWord() != 0x0006)
-			kdDebug(14150) << "[OscarDirectConnection] getODC2: 1: expected a 0x0006, didn't get it" << endl;
+			kdDebug(14150) << k_funcinfo << "1: expected a 0x0006, didn't get it" << endl;
 		//0x0000 is next
 		if (inbuf.getWord() != 0x0000)
-			kdDebug(14150) << "[OscarDirectConnection] getODC2: 2: expected a 0x0000, didn't get it" << endl;
+			kdDebug(14150) << k_funcinfo << "2: expected a 0x0000, didn't get it" << endl;
 
 		//get the 8 byte cookie
 		odc.cookie = inbuf.getBlock(8);
@@ -132,9 +132,9 @@ ODC2 OscarDirectConnection::getODC2(void)
 
 		// 10 bytes of 0
 		if (inbuf.getDWord() != 0x00000000)
-			kdDebug(14150) << "[OscarDirectConnection] getODC2: 3: expected a 0x00000000, didn't get it" << endl;
+			kdDebug(14150) << k_funcinfo << "3: expected a 0x00000000, didn't get it" << endl;
 		if (inbuf.getDWord() != 0x00000000)
-			kdDebug(14150) << "[OscarDirectConnection] getODC2: 4: expected a 0x00000000, didn't get it" << endl;
+			kdDebug(14150) << k_funcinfo << "4: expected a 0x00000000, didn't get it" << endl;
 		//if (inbuf.getWord() != 0x0000)
 		//	kdDebug(14150) << "[OscarDirectConnection] getODC2: 5: expected a 0x0000, didn't get it" << endl;
 
@@ -143,16 +143,16 @@ ODC2 OscarDirectConnection::getODC2(void)
 
 		// 6 bytes of 0
 		if (inbuf.getDWord() != 0x00000000)
-			kdDebug(14150) << "[OscarDirectConnection] getODC2: 6: expected a 0x00000000, didn't get it" << endl;
+			kdDebug(14150) << k_funcinfo << "6: expected a 0x00000000, didn't get it" << endl;
 		if (inbuf.getWord() != 0x0000)
-			kdDebug(14150) << "[OscarDirectConnection] getODC2: 7: expected a 0x0000, didn't get it" << endl;
+			kdDebug(14150) << k_funcinfo << "7: expected a 0x0000, didn't get it" << endl;
 
 		// ODC2 type
 		odc.type = inbuf.getWord();
 
 		// 4 bytes of 0
 		if (inbuf.getDWord() != 0x00000000)
-			kdDebug(14150) << "[OscarDirectConnection] getODC2: 8: expected a 0x00000000, didn't get it" << endl;
+			kdDebug(14150) << k_funcinfo << "8: expected a 0x00000000, didn't get it" << endl;
 
 		// screen name (not sure how to get length yet, so we'll just take it and the 0's after it)
 		odc.sn = inbuf.getBlock(inbuf.length());
@@ -163,25 +163,23 @@ ODC2 OscarDirectConnection::getODC2(void)
 	}
 	else
 	{
-		kdDebug(14150) << "[OSCAR] Error reading ODC2 header... start byte is " << start << endl;
+		kdDebug(14150) << k_funcinfo
+			<< "Error reading ODC2 header... start byte is '" << start << "'" << endl;
 	}
 
-	kdDebug(14150) << "[OSCAR] Read an ODC2 header!  header length: " << odc.headerLength
-		<< ", channel: " << odc.channel << ", message length: " << odc.length
-		<< ", type: " << odc.type << ", screen name: " << odc.sn << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"Read an ODC2 header!  header length: " << odc.headerLength <<
+		", channel: " << odc.channel << ", message length: " << odc.length <<
+		", type: " << odc.type << ", screen name: " << odc.sn << endl;
 
 	return odc;
 }
 
-/** Sends the direct IM message to buddy */
 void OscarDirectConnection::sendIM(const QString &message, bool /*isAuto*/)
 {
 	sendODC2Block(message, 0x0000); // 0x0000 means message
 }
 
-/** Sends a typing notification to the server
-		@param notifyType Type of notify to send
-	 */
 void OscarDirectConnection::sendTypingNotify(TypingNotify notifyType)
 {
 	switch (notifyType)
@@ -198,10 +196,10 @@ void OscarDirectConnection::sendTypingNotify(TypingNotify notifyType)
 	}
 }
 
-/** Prepares and sends a block with the given message and typing notify flag attached */
 void OscarDirectConnection::sendODC2Block(const QString &message, WORD typingnotify)
 {
 	Buffer outbuf;
+
 	outbuf.addDWord(0x4f444332); // "ODC2"
 	outbuf.addWord(0x004c); // not sure if this is always the header length
 	outbuf.addWord(0x0001); // channel

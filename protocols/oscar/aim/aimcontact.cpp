@@ -363,7 +363,7 @@ KopeteMessage AIMContact::parseAIMHTML ( QString m )
 
 	KopeteContactPtrList tmpList;
 	tmpList.append(mAccount->myself());
-	KopeteMessage msg( this, tmpList, result, KopeteMessage::Inbound, KopeteMessage::RichText);
+	KopeteMessage msg(this, tmpList, result, KopeteMessage::Inbound, KopeteMessage::RichText);
 
 	// We don't actually do anything in there yet, but we might eventually
 	return msg;
