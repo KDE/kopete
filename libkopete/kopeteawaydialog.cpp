@@ -8,7 +8,7 @@
 #include <qmultilineedit.h>
 #include <kglobal.h>
 #include <kconfig.h>
-#include <qcombobox.h>
+#include <kcombobox.h>
 
 #include "kopete.h"
 #include "kopeteaway.h"
