@@ -114,7 +114,7 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 			SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
 		connect( c, SIGNAL( propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ),
-			this, SLOT( slotProperyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+			this, SLOT( slotPropertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 
 		connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
 			this, SLOT( slotContactDestroyed( KopeteContact * ) ) );
@@ -211,7 +211,7 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 				this, SLOT( slotContactStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ) );
 
 			connect( c, SIGNAL( propertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ),
-			this, SLOT( slotProperyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+			this, SLOT( slotPropertyChanged( KopeteContact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
 
 
 			disconnect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
@@ -538,7 +538,7 @@ void KopeteMetaContact::setTrackChildNameChanges( bool  track  )
 	emitPersistentDataChanged();
 }
 
-void KopeteMetaContact::slotProperyChanged( KopeteContact*, const QString &key,
+void KopeteMetaContact::slotPropertyChanged( KopeteContact*, const QString &key,
 		const QVariant&, const QVariant &newValue  )
 {
 	if( key == Kopete::Global::Properties::self()->nickName().key() )

@@ -436,7 +436,7 @@ private slots:
 	/**
 	 * One of the child contact's property changed
 	 */
-	void slotProperyChanged( KopeteContact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
+	void slotPropertyChanged( KopeteContact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
 	/**
 	 * A child contact was deleted, remove it from the list, if it's still
