@@ -357,7 +357,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 	else if(msg.contains("text/x-msmsgsemailnotification"))
 	{
 		 //this sends the server if a new mail has arrived
-		QRegExp rx("From-Addr:([A-Za-z0-9@._\\-]*)");
+		QRegExp rx("From-Addr: ([A-Za-z0-9@._\\-]*)");
 		rx.search(msg);
 		QString m=rx.cap(1);
 
