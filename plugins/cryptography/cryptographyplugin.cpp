@@ -59,7 +59,7 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 	action->setEnabled(KopeteContactList::contactList()->selectedMetaContacts().count()==1 );
 
 	setXMLFile("cryptographyui.rc");
-    loadSettings();
+	loadSettings();
 	connect(this, SIGNAL(settingsChanged()), this, SLOT( loadSettings() ) );
 }
 
