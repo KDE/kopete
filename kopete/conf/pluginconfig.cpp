@@ -153,17 +153,6 @@ void PluginConfig::reopen()
 		{
 			parent = otherList;
 		}
-		/*
-		else if((*i).type == "playlist")
-		{
-			parent = playlistList;
-			exclusive = true;
-		}
-		else if((*i).type == "sm" || (*i).type=="hidden")
-			parent = 0;
-		else
-			parent = otherList;
-     	*/
 		if(parent)
 		{
 			PluginListItem *item = new PluginListItem(exclusive, loaded.contains(*i), *i, parent);
@@ -178,92 +167,25 @@ void PluginConfig::reopen()
 void PluginConfig::stateChange(PluginListItem *item, bool b)
 {
 	if(b)
-		addPlugin(item->info());
+		addPlugin( item->info().specfile );
 	else
-		removePlugin(item->info());
+		removePlugin( item->info().specfile );
 }
 
-void PluginConfig::addPlugin(const KopeteLibraryInfo &info)
+void PluginConfig::addPlugin( const QString &specFile )
 {
-	// Load any that this one depends upon
-	for(QStringList::ConstIterator i = info.require.begin(); i != info.require.end(); ++i)
-	{
-		KopeteLibraryInfo requiredInfo = LibraryLoader::pluginLoader()->getInfo(*i);
-		PluginListItem *item = findItem(requiredInfo);
-		if(item) item->setOn(true);
-	}
-
-	if(mDeleted.contains(info.specfile))
-		mDeleted.remove(info.specfile);
-	else if(!mAdded.contains(info.specfile))
-		mAdded.append(info.specfile);
+	if( mDeleted.contains( specFile ) )
+		mDeleted.remove( specFile );
+	else if( !mAdded.contains( specFile ) )
+		mAdded.append( specFile );
 }
 
-void PluginConfig::removePlugin(const KopeteLibraryInfo &info)
+void PluginConfig::removePlugin( const QString &specFile )
 {
-	LibraryLoader *loader = LibraryLoader::pluginLoader();
-
-	// Here are the ones loaded
-	QValueList<KopeteLibraryInfo> loaded = loader->loaded();
-	
-	// Add the ones marked for loading
-	for(QStringList::ConstIterator i = mAdded.begin(); i != mAdded.end(); ++i)
-		loaded.append( loader->getInfo( *i ) );
-
-	// Subtract the ones marked for removal
-	for(QStringList::ConstIterator i = mDeleted.begin(); i != mDeleted.end(); ++i)
-		loaded.remove( loader->getInfo( *i ) );
-
-	// If any depend on this plugin, mark them for removal (or remove them from mAdded)
-	for(QValueList<KopeteLibraryInfo>::Iterator i = loaded.begin(); i != loaded.end(); ++i)
-	{
-		for(QStringList::ConstIterator j = (*i).require.begin(); j != (*i).require.end(); ++j)
-		{
-			if(*j == info.specfile)
-			{
-				PluginListItem *item = findItem(*i);
-				if(item) item->setOn(false);
-			}
-		}
-	}
-
-	if (mAdded.contains(info.specfile))
-		mAdded.remove(info.specfile);
-	else if(!mDeleted.contains(info.specfile))
-		mDeleted.append(info.specfile);
-}
-
-PluginListItem *PluginConfig::findItem(const KopeteLibraryInfo &info) const
-{
-	for(QListViewItem *cur = protocolList->firstChild(); cur != 0; cur = cur->itemBelow())
-	{
-		PluginListItem *item = dynamic_cast<PluginListItem *>(cur);
-		if(item && item->info() == info)
-			return item;
-	}
-
-	// If our only interface has a dependency removed, that's a double dose of trouble
-	// We may as well have this here for completeness, though
-	/*
-	for(QListViewItem *cur = interfaceList->firstChild(); cur != 0; cur = cur->itemBelow())
-	{
-		PluginListItem *item = dynamic_cast<PluginListItem *>(cur);
-		if(item && item->info() == info)
-			return item;
-	}
-   */
-	// If a playlist is added or removed due to a dependency, we're doom-diddly-oomed
-	// We may as well have this here for completeness, though
-	 /*
-   for(QListViewItem *cur = playlistList->firstChild(); cur != 0; cur = cur->itemBelow())
-	{
-		PluginListItem *item = dynamic_cast<PluginListItem *>(cur);
-		if(item && item->info() == info)
-			return item;
-	}
-	*/
-
-	return 0;
+	if( mAdded.contains( specFile ) )
+		mAdded.remove( specFile );
+	else if( !mDeleted.contains( specFile ) )
+		mDeleted.append( specFile );
 }
 
 void PluginConfig::save()

@@ -20,7 +20,7 @@
 
 #include "pluginloader.h"
 
-#include <kapplication.h>
+#include <qapplication.h>
 #include <qdir.h>
 #include <qfile.h>
 
@@ -61,7 +61,7 @@ LibraryLoader* LibraryLoader::pluginLoader()
 }
 
 LibraryLoader::LibraryLoader()
-: QObject( kapp )
+: QObject( qApp )
 {
 }
 
@@ -69,29 +69,19 @@ LibraryLoader::~LibraryLoader()
 {
 	QValueList<KopeteLibraryInfo> l;
 
-	/*l = loaded();
+	l = loaded();
 	for(QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
 		if((*i).type != "protocol" && (*i).type != "ui" && (*i).type != "dock")
 		{
 			removeNow((*i).specfile);
 		}
-	}*/
+	}
 	l = loaded();
 	for(QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
 		removeNow((*i).specfile);
 	}
-}
-
-QValueList<KopeteLibraryInfo> LibraryLoader::available() const
-{
-	QValueList<KopeteLibraryInfo> items;
-	QStringList files=KGlobal::dirs()->findAllResources("appdata", "*.plugin", false, true);
-	for (QStringList::Iterator i=files.begin(); i!=files.end(); ++i)
-		items.append(getInfo(*i));
-
-	return items;
 }
 
 QPtrList<KopetePlugin> LibraryLoader::plugins() const
@@ -104,16 +94,24 @@ QPtrList<KopetePlugin> LibraryLoader::plugins() const
 	return list;
 }
 
-bool LibraryLoader::loadAll(void)
+QValueList<KopeteLibraryInfo> LibraryLoader::loaded() const
+{
+	QValueList<KopeteLibraryInfo> items;
+
+	QDictIterator<LibraryLoader::PluginLibrary> i( mLibHash );
+	for( ; i.current(); ++i )
+		if (isLoaded(i.currentKey()))
+			items.append(getInfo(i.currentKey()));
+
+	return items;
+}
+
+bool LibraryLoader::loadAll()
 {
 	KConfig *config=KGlobal::config();
 	config->setGroup("");
 	QStringList modules = config->readListEntry("Modules");
-	return loadAll(modules);
-}
 
-bool LibraryLoader::loadAll(const QStringList &modules)
-{
 	// Session management...
 /*
 	for(QStringList::ConstIterator i=modules.begin(); i!=modules.end(); ++i)
@@ -170,7 +168,6 @@ KopeteLibraryInfo LibraryLoader::getInfo(const QString &spec) const
 	info.type=file.readEntry("Type");
 	info.name=file.readEntry("Name");
 	info.comment=file.readEntry("Comment");
-	info.require=file.readListEntry("Require");
 	info.license=file.readEntry("License");
 	m_cachedInfo[spec]=info;
 	return info;
@@ -183,6 +180,33 @@ bool LibraryLoader::isLoaded(const QString &spec) const
 	return lib->plugin;
 }
 
+void LibraryLoader::setModules(const QStringList &mods)
+{
+	KConfig *config=KGlobal::config();
+	config->setGroup("");
+	config->writeEntry("Modules", mods);
+	KGlobal::config()->sync();
+}
+
+void LibraryLoader::add(const QString &spec)
+{
+	PluginLibrary *lib=mLibHash[spec];
+	if (lib)
+		if (lib->plugin) return;
+
+	loadSO(spec);
+}
+
+QValueList<KopeteLibraryInfo> LibraryLoader::available() const
+{
+	QValueList<KopeteLibraryInfo> items;
+	QStringList files=KGlobal::dirs()->findAllResources("appdata", "*.plugin", false, true);
+	for (QStringList::Iterator i=files.begin(); i!=files.end(); ++i)
+		items.append(getInfo(*i));
+
+	return items;
+}
+
 bool LibraryLoader::loadSO(const QString &spec)
 {
 	if( !isLoaded(spec) )
@@ -190,9 +214,6 @@ bool LibraryLoader::loadSO(const QString &spec)
 		KopeteLibraryInfo info = getInfo(spec);
 		if (info.specfile != spec)
 			return false;
-
-		for (QStringList::ConstIterator it = info.require.begin(); it != info.require.end(); ++it)
-			loadSO(*it);
 
 		// get the library loader instance
 		KLibLoader *loader = KLibLoader::self();
@@ -238,42 +259,10 @@ bool LibraryLoader::loadSO(const QString &spec)
 	}
 }
 
-void LibraryLoader::add(const QString &spec)
-{
-	PluginLibrary *lib=mLibHash[spec];
-	if (lib)
-		if (lib->plugin) return;
-
-	loadSO(spec);
-}
-
-void LibraryLoader::setModules(const QStringList &mods)
-{
-	KConfig *config=KGlobal::config();
-	config->setGroup("");
-	config->writeEntry("Modules", mods);
-	KGlobal::config()->sync();
-}
-
 bool LibraryLoader::remove(const QString &spec)
 {
 	removeNow(spec);
 
-	// exit if this is the last UI
-	/*
-	if (getInfo(spec).type=="userinterface")
-	{
-		QValueList<NoatunLibraryInfo> l=loaded();
-		bool isanotherui=false;
-		for (QValueList<NoatunLibraryInfo>::Iterator i=l.begin(); i!=l.end(); ++i)
-		{
-			if ((*i).specfile!=spec && (*i).type=="userinterface")
-				isanotherui=true;
-		}
-		if (!isanotherui)
-			kapp->exit();
-	}
-  */
 	return true;
 }
 
@@ -298,31 +287,8 @@ bool LibraryLoader::remove(const KopetePlugin *plugin)
 
 }
 
-QValueList<KopeteLibraryInfo> LibraryLoader::loaded() const
-{
-	QValueList<KopeteLibraryInfo> items;
-
-	for (QDictIterator<PluginLibrary> i(mLibHash); i.current(); ++i)
-		if (isLoaded(i.currentKey()))
-			items.append(getInfo(i.currentKey()));
-
-	return items;
-}
-
 void LibraryLoader::removeNow(const QString &spec)
 {
-	KopeteLibraryInfo info = getInfo(spec);
-	if (info.specfile == spec)
-	{
-		QValueList<KopeteLibraryInfo> l = loaded();
-		for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
-		{
-			for (QStringList::ConstIterator it = (*i).require.begin(); it != (*i).require.end(); ++it)
-				if (*it == spec)
-				removeNow((*i).specfile);
-		}
-	}
-
 	PluginLibrary *lib=mLibHash[spec];
 	if (!lib)
 		return;
@@ -345,26 +311,9 @@ void LibraryLoader::removeNow(const QString &spec)
 	delete lib;
 }
 
-KopetePlugin* LibraryLoader::searchByID( const QString &Id )
-{
-	QValueList<KopeteLibraryInfo> l = loaded();
-
-	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
-	{
-		KopetePlugin *tmp_plug = mLibHash[(*i).specfile]->plugin;
-		if ( tmp_plug->pluginId() == Id )
-		{
-			return tmp_plug;
-		}
-	}
-	return NULL;
-}
-
 void LibraryLoader::slotPluginDestroyed( QObject *o )
 {
-	// the plugin _need_ to be removed by removeNow !
-
-/*	m_addressBookFields.remove( static_cast<KopetePlugin *>( o ) );
+	m_addressBookFields.remove( static_cast<KopetePlugin *>( o ) );
 
 	QDictIterator<PluginLibrary> it( mLibHash );
 	for( ; it.current(); ++it )
@@ -377,7 +326,7 @@ void LibraryLoader::slotPluginDestroyed( QObject *o )
 
 			break;
 		}
-	}*/
+	}
 
 	// FIXME: Most likely most data structures here leak and are bound
 	// to cause crashes. Find and identify those.

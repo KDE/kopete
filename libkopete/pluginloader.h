@@ -43,7 +43,6 @@ struct KopeteLibraryInfo
 	QString email;
 	QString name;
 	QString comment;
-	QStringList require;
 };
 
 bool operator ==(const KopeteLibraryInfo &, const KopeteLibraryInfo &);
@@ -71,30 +70,33 @@ public:
 
 	~LibraryLoader();
 
+	/**
+	 * FIXME: These 6 methods are only used internally and by
+	 *        pluginconfig. Fix that code and remove them or
+	 *        make them private.
+	 *
+	 * This is needed for the Plugin-List-View
+	 * to see what plugins are required to show
+	 * (when required by another noatun-plugin)
+	 */
+	KopeteLibraryInfo getInfo(const QString &spec) const;
 	QValueList<KopeteLibraryInfo> available() const;
 	QValueList<KopeteLibraryInfo> loaded() const;
+	void add(const QString &spec);
+	bool isLoaded(const QString &spec) const;
+	void setModules(const QStringList &mods);
 
-	/**
-	 * Search by Id
-	 * ex: "ICQProtocol"
-	 */
-	KopetePlugin *searchByID( const QString &Id );
 	/**
 	 * Search by name
 	 * ex: "ICQ"
-	 **/
+	 */
 	KopetePlugin *searchByName(const QString&);
-
 
 	/**
 	 * loads all the enabled plugins
 	 */
-	bool loadAll(void);
-	bool loadAll(const QStringList &);
+	bool loadAll();
 
-	bool isLoaded(const QString &spec) const;
-	void add(const QString &spec);
-	void setModules(const QStringList &mods);
 	/**
 	 * unload the plugin specified by spec
 	 */
@@ -105,12 +107,6 @@ public:
 	bool remove(const LibraryLoader::PluginLibrary *plugin);
 	bool remove(const KopetePlugin *plugin);
 
-	/**
-	 * This is needed for the Plugin-List-View
-	 * to see what plugins are required to show
-	 * (when required by another noatun-plugin)
-	 */
-	KopeteLibraryInfo getInfo(const QString &spec) const;
 	QPtrList<KopetePlugin> plugins() const;
 
 	/**

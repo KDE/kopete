@@ -82,9 +82,8 @@ private slots:
 	void stateChange(PluginListItem *, bool);
 
 private:
-	void addPlugin(const KopeteLibraryInfo &);
-	void removePlugin(const KopeteLibraryInfo &);
-	PluginListItem *findItem(const KopeteLibraryInfo &) const;
+	void addPlugin( const QString &specFile );
+	void removePlugin( const QString &specFile );
 
 	QStringList mAdded, mDeleted;
 	PluginListView *protocolList;
