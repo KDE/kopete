@@ -44,20 +44,18 @@ YahooPreferences::YahooPreferences(const QString & pixmap,
 					QObject * parent) : ConfigModule(i18n("Yahoo Plugin"),
 					i18n("Yahoo Protocol"), pixmap, parent)
 {
-	DEBUG(YDMETHOD, "YahooPreferences::YahooPreferences(" << pixmap <<
-			", <parent>)");
+	DEBUG(YDMETHOD, "YahooPreferences::YahooPreferences(" << pixmap << ", <parent>)");
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	m_preferencesDialog = new dlgPreferences(this);
 	m_preferencesDialog->show();
 
 	KGlobal::config()->setGroup("Yahoo");
-	m_preferencesDialog->mServer->setText(KGlobal::config()->
-			readEntry("Server", "cs.yahoo.com"));
-	m_preferencesDialog->mPort->setValue(KGlobal::config()->
-			readNumEntry("Port", 5050));
-	m_preferencesDialog->mLogAll->setChecked(KGlobal::config()->
-			readBoolEntry("LogAll", true));
+	m_preferencesDialog->mServer->setText(KGlobal::config()->readEntry("Server", "scs.yahoo.com"));
+	m_preferencesDialog->mPort->setValue(KGlobal::config()->readNumEntry("Port", 5050));
+	m_preferencesDialog->mLogAll->setChecked(KGlobal::config()->readBoolEntry("LogAll", true));
+	m_preferencesDialog->mImportContacts->setChecked(KGlobal::config()->readBoolEntry("ImportContacts", true));
+	m_preferencesDialog->mUseGroupNames->setChecked(KGlobal::config()->readBoolEntry("UseGroupNames", false));
 }
 
 
@@ -77,6 +75,8 @@ void YahooPreferences::save()
 	config->writeEntry("Server", m_preferencesDialog->mServer->text());
 	config->writeEntry("Port", m_preferencesDialog->mPort->text());
 	config->writeEntry("LogAll", m_preferencesDialog->mLogAll->isChecked());
+	config->writeEntry("ImportContacts", m_preferencesDialog->mImportContacts->isChecked());
+	config->writeEntry("UseGroupNames", m_preferencesDialog->mUseGroupNames->isChecked());
 	config->sync();
 	emit saved();
 }

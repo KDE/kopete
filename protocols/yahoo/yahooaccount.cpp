@@ -16,6 +16,7 @@
 */
 
 // KDE
+#include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kaction.h>
@@ -228,12 +229,13 @@ void YahooAccount::slotGotBuddies( const YList */*theList*/ )
 {
 	kdDebug(14180) << "[YahooAccount::slotGotBuddies()]" << endl;
 	theHaveContactList = true;
+	KGlobal::config()->setGroup("Yahoo");
 	
 	// Serverside -> local
 	for(QMap<QString, QPair<QString, QString> >::iterator i = IDs.begin(); i != IDs.end(); i++)
-		if(!contacts()[i.key()] && 1/* && importYahooContacts */)		// TODO: make importYahooContacts a configuration option.
+		if(!contacts()[i.key()] && KGlobal::config()->readBoolEntry("ImportContacts", true))		// TODO: make importYahooContacts a configuration option.
 		{	kdDebug(14180) << "SS Contact " << i.key() << " is not in the contact list. Adding..." << endl;
-			QString groupName = /*importYahooGroups*/ 1 ? i.data().first : QString("Imported Yahoo Contacts");	// TODO: make importYahooGroups a config option.
+			QString groupName = KGlobal::config()->readBoolEntry("UseGroupNames", false) ? i.data().first : QString("Imported Yahoo Contacts");	// TODO: make importYahooGroups a config option.
 			addContact(i.key(), i.data().second == "" || i.data().second.isNull() ? i.key() : i.data().second, 0, groupName);
 		}
 		
