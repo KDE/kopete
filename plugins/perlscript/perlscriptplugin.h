@@ -18,6 +18,7 @@
 */
 
 #ifndef PERLPLUGIN_H
+#define PERLPLUGIN_H
 
 #include <EXTERN.h>
 #include <perl.h>
