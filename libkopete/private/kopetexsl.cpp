@@ -29,9 +29,7 @@
 #include <libxslt/xsltInternals.h>
 #include <libxslt/transform.h>
 
-// Solaris Fix
-// FIXME: _why_ is including stdlib.h a Solaris fix? Stuff like this should
-//        be documented - Martijn
+// stdlib.h is required to build on Solaris
 #include <stdlib.h>
 
 #include <qregexp.h>
