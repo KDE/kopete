@@ -167,11 +167,9 @@ bool GaduAccount::addContactToMetaContact( const QString& contactId, const QStri
 	
 	uin_t uinNumber = contactId.toUInt();
 	
-	if ( !parentContact->findContact( protocol()->pluginId(), myself_->contactId(), contactId ) ) {
-		GaduContact *newContact = new GaduContact( uinNumber, displayName, this, parentContact );
-		newContact->setParentIdentity( accountId() );
-		addNotify( uinNumber );
-	}
+	GaduContact *newContact = new GaduContact( uinNumber, displayName, this, parentContact );
+	newContact->setParentIdentity( accountId() );
+	addNotify( uinNumber );
 
 	return true;
 }
