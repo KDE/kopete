@@ -340,7 +340,7 @@ GaduContact::slotDeleteContact()
 {
 }
 
-
+#include "gaducontact.moc"
 
 /*
  * Local variables:

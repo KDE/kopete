@@ -34,6 +34,9 @@ GaduPreferences::save()
 {
     KConfig *config=KGlobal::config();
 
+    password_ = prefDialog_->passwordEdit_->text();
+    uin_ = prefDialog_->uinEdit_->text().toUInt();
+    
     config->setGroup("Gadu");
     config->writeEntry("Uin", prefDialog_->uinEdit_->text());
     config->writeEntry("Password", prefDialog_->passwordEdit_->text());

@@ -135,12 +135,6 @@ GaduProtocol::initConnections()
 
 }
 
-void GaduProtocol::settingsChanged()
-{
-    userUin_ = prefs_->uin();
-    password_ = prefs_->password();
-}
-
 GaduProtocol*
 GaduProtocol::protocol()
 {
@@ -283,6 +277,12 @@ GaduProtocol::slotIconRightClicked( const QPoint& /*p*/ )
     offlineAction_->plug( popup );
 
     popup->popup( QCursor::pos() );
+}
+
+void GaduProtocol::settingsChanged()
+{
+    userUin_ = prefs_->uin();
+    password_ = prefs_->password();
 }
 
 void
@@ -609,6 +609,8 @@ GaduProtocol::addressBookFields() const
 {
     return QStringList::split( "|", "|messaging/gadu|" );
 }
+
+#include "gaduprotocol.moc"
 
 /*
  * Local variables:

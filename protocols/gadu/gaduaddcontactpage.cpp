@@ -50,6 +50,8 @@ GaduAddContactPage::slotFinish(KopeteMetaContact *)
     }
 }
 
+#include "gaduaddcontactpage.moc"
+
 /*
  * Local variables:
  * c-indentation-style: bsd

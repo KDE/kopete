@@ -298,6 +298,8 @@ GaduSession::checkDescriptor()
     enableNotifiers( session_->check );
 }
 
+#include "gadusession.moc"
+
 /*
  * Local variables:
  * c-indentation-style: bsd

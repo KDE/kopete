@@ -611,6 +611,8 @@ UserlistGetCommand::watcher()
     enableNotifiers( session_->check );
 }
 
+#include "gaducommands.moc"
+
 /*
  * Local variables:
  * c-indentation-style: bsd
