@@ -149,6 +149,9 @@ KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 	 */
 	addIrcMethod("306",	new KIRCMethodFunctor_Ignore());
 
+	/* Indicates that this user is identified with NICSERV on DALNET */
+	addIrcMethod("307",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWhoIsIdentified, 2, 2));
+
 	/* Show info about a user (part of a /whois) in the form of:
 	 * "<nick> <user> <host> * :<real name>" */
 	addIrcMethod("311",	&KIRC::numericReply_311,	5,	5);
@@ -175,7 +178,7 @@ KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 
 	addIrcMethod("319",	&KIRC::numericReply_319,	2,	2);
 
-	/* Indicates that this user is identified with NICSERV */
+	/* Indicates that this user is identified with NICSERV on FREENODE */
 	addIrcMethod("320",	new KIRCMethodFunctor_S<KIRC, 1>(this, &KIRC::incomingWhoIsIdentified, 2, 2));
 
 	/* RFC1459: "<channel> :Users  Name" ("Channel :Users  Name")
