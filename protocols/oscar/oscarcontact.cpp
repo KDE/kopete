@@ -17,10 +17,13 @@
 
 #include "oscarcontact.h"
 #include <qstylesheet.h>
+#include <qregexp.h>
+
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
+
 #include "kopete.h"
 #include "kopetestdaction.h"
 #include "kopetewindow.h"
@@ -28,6 +31,7 @@
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetehistorydialog.h"
+
 #include "oscarsocket.h"
 #include "oscaruserinfo.h"
 #include "oscarprotocol.h"
@@ -65,6 +69,7 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 
 OscarContact::~OscarContact()
 {
+	kdDebug() << "[OscarContact] ~OscarContact()" << endl;
 }
 
 /** Pops up a chat window */
@@ -82,30 +87,6 @@ void OscarContact::execute(void)
 	}
 	msgManager()->readMessages();
 }
-
-/** Show a context menu of actions pertaining to this contact */
-/*void OscarContact::showContextMenu(const QPoint &p, const QString &group)
-{
-	KPopupMenu *popup = new KPopupMenu();
-
-	popup->insertTitle( QString("%1 (%2)").arg(mName).arg(statusText()) );
-
-	actionSendMessage->plug( popup );
-	popup->insertSeparator();
-
-	actionInfo->plug( popup );
-	actionViewHistory->plug( popup );
-	popup->insertSeparator();
-
-	actionAddGroup->plug( popup );
-	actionRemove->plug( popup );
-
-	actionWarn->plug( popup ); 
-
-	popup->exec( p );
-
-	delete popup;
-} */
 
 /** Return the unique id that identifies a contact.  Id is required
  *  to be unique per protocol and per identity.  Across those boundaries
@@ -263,7 +244,7 @@ void OscarContact::slotOncomingBuddy(UserInfo u)
 			slotBuddyChanged(num);
 		}
 		else
-			kdDebug() << "[OscarContact] Buddy is oncoming but is not in buddy list\n";
+			kdDebug() << "[OscarContact] Buddy is oncoming but is not in buddy list" << endl;
 	}
 }
 
@@ -281,7 +262,7 @@ void OscarContact::slotOffgoingBuddy(QString sn)
 			slotBuddyChanged(num);
 		}
 		else
-			kdDebug() << "[OscarContact] Buddy is offgoing but not in buddy list\n";
+			kdDebug() << "[OscarContact] Buddy is offgoing but not in buddy list" << endl;
 	}
 }
 
@@ -319,10 +300,15 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 
 	KopeteContactPtrList tmpList;
 	tmpList.append(mProtocol->myself());
-	KopeteMessage msg ( this, tmpList, QStyleSheet::escape(message), KopeteMessage::Inbound);
+	
+	QString parsedMessage = parseAIMHTML( message );
+	KopeteMessage msg ( this, tmpList, parsedMessage, KopeteMessage::Inbound);
 	msgManager()->appendMessage(msg);
+	
 	if ( mProtocol->isAway() ) // send our away message in fire-and-forget-mode :)
 	{
+		kdDebug() << "[OscarContact] slotIMReceived() while we are away, sending away-message to annoy buddy :)" << endl;
+/*
 		// TODO: move to aimprefs and add gui in there!
 		KGlobal::config()->setGroup("Oscar");
 		QString reply = KGlobal::config()->readEntry("AwayMessage", QString("I'm currently away from my computer. Please leave a message for me when I return to my computer."));
@@ -333,6 +319,7 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 		mProtocol->engine->sendIM(reply, mName, true);
 		KopeteMessage replymsg ( mProtocol->myself(), theContacts , QStyleSheet::escape(reply), KopeteMessage::Outbound);
 		msgManager()->appendMessage(replymsg);
+*/
 	}
 }
 
@@ -467,5 +454,80 @@ void OscarContact::slotWarn()
 		mProtocol->engine->sendWarning(mName, false);
 	}
 }
+
+
+
+QString OscarContact::parseAIMHTML ( QString m )
+{
+/*	============================================================================================
+	Original AIM-Messages, just a few to get the idea of the weird format[tm]:
+
+	From original AIM:
+	<HTML><BODY BGCOLOR="#ffffff"><FONT FACE="Verdana" SIZE=4>some text message</FONT></BODY></HTML>
+
+	From Trillian 0.7something:
+	<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><b>bin ich ueberhaupt ein standard?</b></BODY></HTML>
+	<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><font color="#ffff00">ups</BODY></HTML>
+	<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><font back="#00ff00">bggruen</BODY></HTML>
+	<HTML><BODY BGCOLOR="#ffffff"><font face="Arial"><font back="#00ff00"><font color="#ffff00">both</BODY></HTML>
+	<HTML><BODY BGCOLOR="#ffffff"><font face="Arial">LOL</BODY></HTML>
+	============================================================================================ */
+
+	kdDebug() << "AIM Plugin: original message: " << m << endl;
+
+	QString result = m;
+	int htmlStart	= result.find( QRegExp(QString("^<HTML>"),false) );
+	int htmlEnd		= result.findRev( QRegExp(QString("</HTML>$"),false) );
+
+	kdDebug() << "AIM Plugin: Start of HTML: " << htmlStart << " End of HTML: " << htmlEnd << endl;
+
+	//	if ( result.startsWith("<HTML>") && result.endsWith("</HTML>") )
+	if ( htmlStart == 0 && htmlEnd == (result.length()-7) )
+	{
+		result.remove ( htmlStart, 6 );
+		result.remove ( htmlEnd, 7 );
+
+		kdDebug() << "AIM Plugin: message after HTML removal: " << result << endl;
+
+		removeTag ( result, "BODY" );
+		kdDebug() << "AIM Plugin: message after BODY removal: " << result << endl;
+//		removeTag ( result, "FONT" );
+	}
+
+	kdDebug() << "AIM Plugin: Parsed message: " << result << endl;
+	return result;
+}
+
+// removes a weird html-tag (and returns the attributes it contained)
+void OscarContact::removeTag ( QString &message, QString tag )
+{
+	QStringList attr;
+	// first occurance of <TAG *> where * is anything except a '>'
+	// regexp is NOT case-sensitive
+	int tagStart	= message.find ( QRegExp(QString("<"+tag+"\\s+[^>]*>"),false) );
+	int tagStartEnd	= message.find ( ">", tagStart+4, false );
+
+	// TODO: get attributes and insert into a to be returned QStringList
+
+	if ( tagStart != -1 && tagStartEnd != -1 && (tagStart > tagStartEnd) )
+	{	// we found a proper opening-tag
+		message.remove ( tagStart, tagStartEnd - tagStart + 1 ); // remove the opening-tag
+		// find last closing of TAG (NOT case-sensitive)
+		int tagEnd = message.findRev( QString("</"+tag+">"), -1, false );
+		if ( tagEnd != -1 )	// found closing of font-tag
+		{
+			message.remove ( tagEnd, tag.length()+3  );
+		}
+	}
+}
+
+/*
+ * Local variables:
+ * c-indentation-style: k&r
+ * c-basic-offset: 4
+ * indent-tabs-mode: t
+ * End:
+ */
+// vim: set noet ts=4 sts=4 sw=4:
 
 #include "oscarcontact.moc"
