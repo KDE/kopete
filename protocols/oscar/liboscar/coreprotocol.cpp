@@ -36,6 +36,44 @@
 #include "flapprotocol.h"
 #include "snacprotocol.h"
 
+static QString toString( const QByteArray& buffer )
+{
+	// line format:
+	//00 03 00 0b 00 00 90 b8 f5 9f 09 31 31 33 37 38   |;tJ�..........|
+
+	int i = 0;
+	QString output = "\n";
+	QString hex, ascii;
+
+	QByteArray::ConstIterator it;
+	for ( it = buffer.begin(); it != buffer.end(); ++it )
+	{
+		i++;
+
+		unsigned char c = static_cast<unsigned char>(*it);
+
+		if ( c < 0x10 )
+			hex.append("0");
+		hex.append(QString("%1 ").arg(c, 0, 16));
+
+		ascii.append(isprint(c) ? c : '.');
+
+		if (i == 16)
+		{
+			output += hex + "   |" + ascii + "|\n";
+			i=0;
+			hex=QString::null;
+			ascii=QString::null;
+		}
+	}
+
+	if(!hex.isEmpty())
+		output += hex.leftJustify(48, ' ') + "   |" + ascii.leftJustify(16, ' ') + '|';
+	output.append('\n');
+
+	return output;
+}
+
 
 using namespace Oscar;
 
@@ -210,6 +248,7 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		{ //unknown wire format
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "unknown wire format detected!" << endl;
 			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "start byte is " << flapStart << endl;
+			kdDebug(OSCAR_RAW_DEBUG) << k_funcinfo << "Packet is " << endl << toString( wire ) << endl;
 		}
 		
 	}
