@@ -216,44 +216,43 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 		if( !colorMap.contains( fromName ) )
 		{
 			QColor newColor;
-			switch( (lastColor++) % 12 )
+			if( direction == Outbound )
+				newColor = Qt::yellow;
+			else
 			{
-				case 0:
-					newColor = Qt::red;
-					break;
-				case 1:
-					newColor =  Qt::green;
-					break;
-				case 2:
-					newColor =  Qt::blue;
-					break;
-				case 3:
-					newColor =  Qt::cyan;
-					break;
-				case 4:
-					newColor =  Qt::magenta;
-					break;
-				case 5:
-					newColor =  Qt::yellow;
-					break;
-				case 6:
-					newColor =  Qt::darkRed;
-					break;
-				case 7:
-					newColor =  Qt::darkGreen;
-					break;
-				case 8:
-					newColor =  Qt::darkBlue;
-					break;
-				case 9:
-					newColor =  Qt::darkCyan;
-					break;
-				case 10:
-					newColor =  Qt::darkMagenta;
-					break;
-				case 11:
-					newColor =  Qt::darkYellow;
-					break;
+				switch( (lastColor++) % 10 )
+				{
+					case 0:
+						newColor = Qt::red;
+						break;
+					case 1:
+						newColor =  Qt::green;
+						break;
+					case 2:
+						newColor =  Qt::blue;
+						break;
+					case 3:
+						newColor =  Qt::cyan;
+						break;
+					case 4:
+						newColor =  Qt::magenta;
+						break;
+					case 5:
+						newColor =  Qt::darkRed;
+						break;
+					case 6:
+						newColor =  Qt::darkGreen;
+						break;
+					case 7:
+						newColor =  Qt::darkCyan;
+						break;
+					case 8:
+						newColor =  Qt::darkMagenta;
+						break;
+					case 9:
+						newColor =  Qt::darkYellow;
+						break;
+				}
 			}
 
 			colorMap.insert( fromName, newColor );
