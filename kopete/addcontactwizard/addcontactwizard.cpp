@@ -251,7 +251,7 @@ void AddContactWizard::accept()
 		metaContact->setNameSource( 0 );
 		metaContact->setDisplayName( mDisplayName->text() );
 	}
-	// NOT SURE IF I MEANT TO TAKE THIS OUT - WILL
+	// NOT SURE IF I MEANT TO TAKE THIS OUT - WILLTODO - SEE THE BOTTOM OF THIS FUNCTION
 	//// set the KABC uid in the metacontact
 	KABC::AddresseeItem *item = 0L;
 	item = static_cast<KABC::AddresseeItem *>( addresseeListView->selectedItem() );

@@ -9,8 +9,11 @@
             <x>0</x>
             <y>0</y>
             <width>461</width>
-            <height>563</height>
+            <height>453</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>KopeteMetaLVIPropsWidget</string>
     </property>
     <grid>
         <property name="name">
@@ -38,16 +41,19 @@
                         <property name="title">
                             <string>Addressbook Integration</string>
                         </property>
-                        <grid>
+                        <vbox>
                             <property name="name">
                                 <cstring>unnamed</cstring>
                             </property>
-                            <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
+                            <widget class="QCheckBox">
                                 <property name="name">
                                     <cstring>chkHasAddressbookEntry</cstring>
                                 </property>
                                 <property name="text">
                                     <string>Has &amp;address book entry</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+A</string>
                                 </property>
                                 <property name="checked">
                                     <bool>false</bool>
@@ -60,24 +66,7 @@
 This option is only available if there is exactly one child contact </string>
                                 </property>
                             </widget>
-                            <spacer row="2" column="0">
-                                <property name="name">
-                                    <cstring>spacer3_2</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>16</width>
-                                        <height>16</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="QLayoutWidget" row="1" column="0" rowspan="1" colspan="2">
+                            <widget class="QLayoutWidget">
                                 <property name="name">
                                     <cstring>layout3</cstring>
                                 </property>
@@ -126,21 +115,68 @@ This option is only available if there is exactly one child contact </string>
                                     </widget>
                                 </hbox>
                             </widget>
-                            <widget class="QPushButton" row="2" column="1">
+                            <widget class="QLayoutWidget">
                                 <property name="name">
-                                    <cstring>btnMerge</cstring>
+                                    <cstring>layout9</cstring>
                                 </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Merge with Address Book...</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Select which data obtained from instant messaging systems to add to the KDE Address Book</string>
-                                </property>
+                                <hbox>
+                                    <property name="name">
+                                        <cstring>unnamed</cstring>
+                                    </property>
+                                    <spacer>
+                                        <property name="name">
+                                            <cstring>spacer8_2</cstring>
+                                        </property>
+                                        <property name="orientation">
+                                            <enum>Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>Expanding</enum>
+                                        </property>
+                                        <property name="sizeHint">
+                                            <size>
+                                                <width>110</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                    <widget class="QPushButton">
+                                        <property name="name">
+                                            <cstring>btnExportKABC</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;Export Details...</string>
+                                        </property>
+                                        <property name="accel">
+                                            <string>Alt+E</string>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>Select which data obtained from instant messaging systems to add to the KDE Address Book</string>
+                                        </property>
+                                    </widget>
+                                    <widget class="QPushButton">
+                                        <property name="name">
+                                            <cstring>btnImportKABC</cstring>
+                                        </property>
+                                        <property name="enabled">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="text">
+                                            <string>&amp;Import Contacts</string>
+                                        </property>
+                                        <property name="accel">
+                                            <string>Alt+I</string>
+                                        </property>
+                                        <property name="toolTip" stdset="0">
+                                            <string>Select which data obtained from instant messaging systems to add to the KDE Address Book</string>
+                                        </property>
+                                    </widget>
+                                </hbox>
                             </widget>
-                        </grid>
+                        </vbox>
                     </widget>
                     <widget class="QGroupBox">
                         <property name="name">
@@ -381,7 +417,7 @@ This option is only available if there is exactly one child contact </string>
                                     <cstring>lblAway</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>A&amp;way:</string>
+                                    <string>Awa&amp;y:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
                                     <cstring>icnbAway</cstring>
@@ -510,7 +546,7 @@ This option is only available if there is exactly one child contact </string>
     <tabstop>chkHasAddressbookEntry</tabstop>
     <tabstop>edtAddressee</tabstop>
     <tabstop>btnSelectAddressee</tabstop>
-    <tabstop>btnMerge</tabstop>
+    <tabstop>btnExportKABC</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

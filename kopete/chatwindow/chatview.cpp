@@ -32,6 +32,7 @@
 #include "kopetecontactlist.h"
 #include "kopeteviewmanager.h"
 
+#include <kconfig.h>
 #include <ktabwidget.h>
 #include <kdebug.h>
 #include <klocale.h>

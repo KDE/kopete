@@ -492,10 +492,6 @@ void KopeteContactListView::initActions( KActionCollection *ac )
 	actionAddTemporaryContact = new KAction( i18n( "Add to Your Contact List" ), "bookmark_add", 0,
 		this, SLOT( slotAddTemporaryContact() ), ac, "contactAddTemporaryContact" );
 
-	// TEMPORARY FOR TESTING - will be carried out on load once complete
-	actionSyncKABC = new KAction( i18n( "Sync KABC..." ), QString::fromLatin1( "kaddressbook" ),
-		0, this, SLOT(  slotSyncKABC() ), ac, "contactSyncKABC" );
-
 	connect( Kopete::ContactList::self(), SIGNAL( metaContactSelected( bool ) ), this, SLOT( slotMetaContactSelected( bool ) ) );
 
 	QPtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
@@ -1285,7 +1281,6 @@ void KopeteContactListView::updateActionsForSelection(
 	actionSendFile->setEnabled( singleContactSelected && contacts.first()->canAcceptFiles());
 	actionAddContact->setEnabled( singleContactSelected && !contacts.first()->isTemporary());
 	actionSendEmail->setEnabled( inkabc );
-	actionSyncKABC->setEnabled( inkabc );
 
 	if( singleContactSelected )
 	{
@@ -1366,15 +1361,6 @@ void KopeteContactListView::slotSendFile()
 	else
 		KMessageBox::queuedMessageBox( this, KMessageBox::Sorry, i18n( "This contact is not associated with a KDE address book entry, where the email address is stored. Check that a contact is selected in the properties dialog." ), i18n( "Not Found in Address Book" ) );
 }
-
-void KopeteContactListView::slotSyncKABC()
-{
-	Kopete::MetaContact *m = Kopete::ContactList::self()->selectedMetaContacts().first();
-	if( m )
-		if ( !m->syncWithKABC() )
-			KMessageBox::queuedMessageBox( this, KMessageBox::Information, i18n( "No contacts were added to Kopete from the address book" ), i18n( "No Change" ) );
-}
-
 
 void KopeteContactListView::slotMoveToGroup()
 {

@@ -26,6 +26,7 @@
 #include <kdeversion.h>
 #include <kinputdialog.h>
 
+#include <kabcpersistence.h>
 #include <kdialogbase.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
@@ -336,7 +337,6 @@ void Contact::setMetaContact( MetaContact *m )
 			if(result==KMessageBox::Cancel)
 				return;
 		}
-		old->removeKABC();
 		old->removeContact( this );
 		disconnect( old, SIGNAL( aboutToSave( Kopete::MetaContact * ) ),
 			protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );
@@ -348,7 +348,6 @@ void Contact::setMetaContact( MetaContact *m )
 		}
 		else
 		{
-			old->updateKABC();
 			d->metaContact = m; //i am forced to do that now if i want the next line works
 			//remove cached data for this protocol which will not be removed since we disconnected
 			protocol()->slotMetaContactAboutToSave( old );
@@ -361,10 +360,12 @@ void Contact::setMetaContact( MetaContact *m )
 	{
 		m->addContact( this );
 		m->insertChild( this );
-
+		// it is necessary to call this write here, because MetaContact::addContact() does not differentiate
+		// between adding completely new contacts (which should be written to kabc) and restoring upon restart
+		// (where no write is needed).
+		KABCPersistence::self()->write( m );
 		connect( d->metaContact, SIGNAL( aboutToSave( Kopete::MetaContact * ) ),
 		protocol(), SLOT( slotMetaContactAboutToSave( Kopete::MetaContact * ) ) );
-		m->updateKABC();
 	}
 	sync();
 }

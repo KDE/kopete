@@ -127,6 +127,11 @@ private slots:
 	 */
 	void showAddContactDialog();
 
+	/** 
+	 * Show the Export Contacts wizards
+	 */
+	void showExportDialog();
+
 	/**
 	 * Enable the Connect All and Disconnect All buttons here
 	 * along with connecting the accountRegistered and accountUnregistered
@@ -143,6 +148,7 @@ public:
 	KActionMenu* actionConnectionMenu;
 	KAction* actionConnect;
 	KAction* actionDisconnect;
+	KAction* actionExportContacts;
 
 	KActionMenu* actionAwayMenu;
 	KActionMenu* actionDockMenu;

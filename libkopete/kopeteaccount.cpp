@@ -30,6 +30,7 @@
 #include <kpopupmenu.h>
 #include <kmessagebox.h>
 
+#include "kabcpersistence.h"
 #include "kopetecontactlist.h"
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
@@ -265,7 +266,8 @@ bool Account::addContact( const QString &contactId, const QString &displayName ,
 		c->setMetaContact( parentContact );
 		if ( mode == ChangeKABC )
 		{
-			parentContact->updateKABC();
+			kdDebug( 14010 ) << k_funcinfo << " changing KABC" << endl;
+			KABCPersistence::self()->write( parentContact );
 		}
 	}
 	else
@@ -317,7 +319,7 @@ bool Account::addContact(const QString &contactId , MetaContact *parent, AddMode
 	if ( success && mode == ChangeKABC )
 	{
 		kdDebug( 14010 ) << k_funcinfo << " changing KABC" << endl;
-		parent->updateKABC();
+		KABCPersistence::self()->write( parent );
 	}
 
 	return success;

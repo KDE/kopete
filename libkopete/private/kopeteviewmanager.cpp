@@ -16,6 +16,7 @@
 
 
 #include <kapplication.h>
+#include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <qptrlist.h>

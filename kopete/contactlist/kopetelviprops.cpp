@@ -34,6 +34,7 @@
 #include <kdialogbase.h>
 #include <kfiledialog.h>
 #include <kicondialog.h>
+#include <kmessagebox.h>
 #include <kurlrequester.h>
 #include <kabc/addresseedialog.h>
 #include <kabc/stdaddressbook.h>
@@ -41,6 +42,7 @@
 #include <kstandarddirs.h>
 #include <kurlrequester.h>
 
+#include "kabcpersistence.h"
 #include "kopeteaddrbookexport.h"
 #include "kopetecontact.h"
 #include "kopetegroup.h"
@@ -248,15 +250,15 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 
 	if ( !kabcUid.isEmpty() )
 	{
-		KABC::AddressBook *ab = KABC::StdAddressBook::self();
-		KABC::StdAddressBook::setAutomaticSave( false );
+		KABC::AddressBook *ab = Kopete::KABCPersistence::self()->addressBook();
 		KABC::Addressee a = ab->findByUid( kabcUid );
 
 		if(!a.isEmpty())
 		{
 			mainWidget->edtAddressee->setText( a.realName() );
 			mainWidget->btnSelectAddressee->setEnabled( true );
-			mainWidget->btnMerge->setEnabled( true );
+			mainWidget->btnImportKABC->setEnabled( true );
+			mainWidget->btnExportKABC->setEnabled( true );
 			mainWidget->edtAddressee->setEnabled( true );
 			mainWidget->lblAddressee->setEnabled( true );
 			mainWidget->chkHasAddressbookEntry->setChecked( true );
@@ -274,8 +276,10 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 		this, SLOT( slotHasAddressbookEntryToggled( bool ) ) );
 	connect( mainWidget->btnSelectAddressee, SIGNAL( clicked() ),
 		this, SLOT( slotSelectAddresseeClicked() ) );
-	connect( mainWidget->btnMerge, SIGNAL( clicked() ),
-		this, SLOT( slotMergeClicked() ) );
+	connect( mainWidget->btnImportKABC, SIGNAL( clicked() ),
+		this, SLOT( slotImportClicked() ) );
+	connect( mainWidget->btnExportKABC, SIGNAL( clicked() ),
+					 this, SLOT( slotExportClicked() ) );
 	connect( mFromKABC, SIGNAL( clicked() ),
 		this, SLOT( slotFromKABCClicked() ) );
 	connect( mNotificationProps->widget()->customSound, SIGNAL( openFileDialog( KURLRequester * )),
@@ -376,7 +380,8 @@ void KopeteMetaLVIProps::slotHasAddressbookEntryToggled( bool on )
 	mainWidget->edtAddressee->setEnabled( on );
 	mainWidget->btnSelectAddressee->setEnabled( on );
 	if ( !on )
-		mainWidget->btnMerge->setEnabled( false );
+		mainWidget->btnImportKABC->setEnabled( false );
+		mainWidget->btnExportKABC->setEnabled( false );
 }
 
 void KopeteMetaLVIProps::slotSelectAddresseeClicked()
@@ -389,14 +394,16 @@ void KopeteMetaLVIProps::slotSelectAddresseeClicked()
 	if ( a.isEmpty() )
 	{
 		mainWidget->edtAddressee->setText( QString::null ) ;
-		mainWidget->btnMerge->setEnabled( false );
+		mainWidget->btnExportKABC->setEnabled( false );
+		mainWidget->btnImportKABC->setEnabled( false );
 		mFromKABC->setEnabled( false );
 	}
 	else
 	{
 		mSound = a.sound();
 		mFromKABC->setEnabled( !( mSound.isIntern() || mSound.url().isEmpty() ) );
-		mainWidget->btnMerge->setEnabled( true );
+		mainWidget->btnExportKABC->setEnabled( true );
+		mainWidget->btnImportKABC->setEnabled( true );
 		// set the lineedit to the Addressee's name
 		mainWidget->edtAddressee->setText( a.realName() );
 		// set/update the MC's addressee uin field
@@ -406,11 +413,20 @@ void KopeteMetaLVIProps::slotSelectAddresseeClicked()
 	}
 }
 
-void KopeteMetaLVIProps::slotMergeClicked()
+void KopeteMetaLVIProps::slotExportClicked()
 {
 	if ( mExport->showDialog() == QDialog::Accepted )
 		mExport->exportData();
 }
+
+void KopeteMetaLVIProps::slotImportClicked()
+{
+	if ( Kopete::KABCPersistence::self()->syncWithKABC( item->metaContact() ) )
+		KMessageBox::queuedMessageBox( this, KMessageBox::Information,
+																	 i18n( "No contacts were imported from the address book" ),
+																	 i18n( "No Change" ) );
+}
+
 
 void KopeteMetaLVIProps::slotFromKABCClicked()
 {

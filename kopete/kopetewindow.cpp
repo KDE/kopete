@@ -46,6 +46,7 @@
 #include <kurl.h>
 
 #include "addcontactwizard.h"
+#include "kabcexport.h"
 #include "kopeteapplication.h"
 #include "kopeteaccount.h"
 #include "kopeteaway.h"
@@ -138,6 +139,10 @@ void KopeteWindow::initActions()
 	actionDisconnect = new KAction( i18n( "O&ffline" ), "connect_no",
 		0, Kopete::AccountManager::self(), SLOT( disconnectAll() ),
 		actionCollection(), "DisconnectAll" );
+
+	actionExportContacts = new KAction( i18n( "&Export Contacts..." ), "",
+																			0, this, SLOT( showExportDialog() ),
+																			actionCollection(), "ExportContacts" );
 
 	actionConnectionMenu = new KActionMenu( i18n("Connection"),"connect_established",
 							actionCollection(), "Connection" );
@@ -644,6 +649,11 @@ void KopeteWindow::slotTrayAboutToShowMenu( KPopupMenu * popup )
 void KopeteWindow::showAddContactDialog()
 {
 	(new AddContactWizard(this))->show();
+}
+
+void KopeteWindow::showExportDialog()
+{
+	( new KabcExportWizard( this, "export_contact_dialog" ) )->show();
 }
 
 #include "kopetewindow.moc"

@@ -23,6 +23,7 @@
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
 
+#include <kdebug.h>
 #include <kiconloader.h>
 
 #include <qdragobject.h>

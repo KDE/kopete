@@ -998,10 +998,11 @@ void ContactList::slotSaveLater()
 
 void ContactList::slotKABCChanged()
 {
+	// TODO: react to changes in KABC, replacing this function, post 3.4 (Will)
 	// call syncWithKABC on each metacontact to check if its associated kabc entry has changed.
-	for ( MetaContact * mc = d->contacts.first(); mc; mc = d->contacts.next() )
+/*	for ( MetaContact * mc = d->contacts.first(); mc; mc = d->contacts.next() )
 
-		mc->syncWithKABC();
+		mc->syncWithKABC();*/
 }
 
 } //END namespace Kopete

@@ -75,7 +75,8 @@ class KopeteMetaLVIProps: public KDialogBase
 		void slotUseCustomIconsToggled( bool on );
 		void slotHasAddressbookEntryToggled( bool on );
 		void slotSelectAddresseeClicked();
-		void slotMergeClicked();
+		void slotExportClicked();
+		void slotImportClicked();
 		void slotFromKABCClicked();
 		void slotOpenSoundDialog( KURLRequester *requester );
 		void slotSetPhotoComboEnabled( bool on );

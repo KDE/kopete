@@ -127,8 +127,6 @@ private slots:
 	void slotRemovedFromGroup( Kopete::MetaContact *mc, Kopete::Group *from );
 	void slotMovedToGroup( Kopete::MetaContact *mc, Kopete::Group *from, Kopete::Group *to );
 
-	void slotSyncKABC();
-
 	/**
 	 * A meta contact was added to the contact list - update the view
 	 */
@@ -186,7 +184,6 @@ private:
 	KAction *actionStartChat;
 	KAction *actionSendFile;
 	KAction *actionSendEmail;
-	KAction *actionSyncKABC;
 	KListAction *actionMove;
 	KListAction *actionCopy;
 	KAction *actionRename;

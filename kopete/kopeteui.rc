@@ -8,6 +8,7 @@
 			<Separator lineSeparator="true"/>
 			<Action name="AddContact"/>
 			<Action name="AddGroup"/>
+			<Action name="ExportContacts"/>
 			<Separator lineSeparator="true"/>
 			<Action name="file_quit"/>
 		</Menu>

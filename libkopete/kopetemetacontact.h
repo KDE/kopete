@@ -23,8 +23,8 @@
 
 #include "kopetecontactlistelement.h"
 #include <qptrlist.h>
+#include <qstring.h>
 
-#include <kabc/addressbook.h>
 #include <kdemacros.h>
 #include <kopete_export.h>
 
@@ -176,8 +176,7 @@ public:
 	bool isTemporary() const;
 
 	/**
-	 * @brief Add a brand new contact to the meta contact.
-	 *  Updates KABC
+	 * @brief Add a contact which has just been deserialised to the meta contact
 	 * @param c The Contact being added
 	 */
 	void addContact( Contact *c );
@@ -306,27 +305,6 @@ public slots:
 	 */
 	void sendFile( const KURL &sourceURL, const QString &altFileName = QString::null,
 		unsigned long fileSize = 0L );
-
-	/**
-	 * @brief Change the KABC data associated with this metacontact
-	 *
-	 * The KABC exposed data changed, so change it in KABC
-	 */
-	void updateKABC();
-
-	/**
-	 * @brief Remove any KABC data for this meta contact
-	 */
-	void removeKABC();
-
-	/**
-	 * Check for any new addresses added to this contact's KABC entry
-	 * and prompt if they should be added in Kopete too.
-	 * @return whether any contacts were added from KABC.
-	 */
-	bool syncWithKABC();
-
-
 signals:
 	/**
 	 * This metaContact is going to be saved to the contactlist. Plugins should
@@ -488,28 +466,11 @@ private slots:
 	 */
 	void slotPluginLoaded( Kopete::Plugin *plugin );
 
-	/**
-	 * Perform a delayed address book write
-	 */
-	void slotWriteAddressBook();
-
 private:
 
 	class Private;
 	Private *d;
-
-	/**
-	 * Request an address book write, will be delayed to bundle any others happening around the same time
-	 */
-	void writeAddressBook();
-
-	static KABC::AddressBook* addressBook();
-
-	static void splitField( const QString &str, QString &app, QString &name, QString &value );
-
-	static KABC::AddressBook* m_addressBook;
 };
-
 
 } //END namespace Kopete
 
