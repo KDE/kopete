@@ -140,104 +140,64 @@ public:
 	int _hostAsyncConnectReceiver(char *host, int port,  yahoo_connect_callback callback, void *callback_data);
 
 signals:
-	/**
-	 * emitted when server says login OK
-	 */
+	/** emitted when server says login OK */
 	void loginResponse( int succ, const QString &url);
 
-	/**
-	 * emitted when servers send us our contact list
-	 */
+	/** emitted when servers send us our contact list */
 	void gotBuddy(const QString &userid, const QString &alias, const QString &group);
 
-	/**
-	 * emitted when we've finished getting the buddy list
-	 */
+	/** emitted when we've finished getting the buddy list */
 	void buddyListFetched( int numBuddies );
 
-	/**
-	 * emitted when server notifies us our ignore list
-	 */
+	/** emitted when server notifies us our ignore list */
 	void gotIgnore( const QStringList &igns);
 
-	/**
-	 * emitted when server notify us our identities
-	 */
+	/** emitted when server notify us our identities */
 	void gotIdentities( const QStringList &ids);
 
-	/**
-	 * emitted when a contact changes status
-	 */
+	/** emitted when a contact changes status */
 	void statusChanged( const QString &who, int stat, const QString &msg, int away);
 
-	/**
-	 * emitted when someone send us a message
-	 */
+	/** emitted when someone send us a message */
 	void gotIm( const QString &who, const QString &msg, long tm, int stat);
 
-	/**
-	 * emitted when someone invites us into a conference room
-	 */
+	/** emitted when someone invites us into a conference room */
 	void gotConfInvite( const QString &who, const QString &room, const QString &msg, const QStringList &members);
 
-	/**
-	 * emitted when someone declines joining a conference room
-	 */
+	/** emitted when someone declines joining a conference room */
 	void confUserDecline( const QString &who, const QString &room, const QString &msg);
 
-	/**
-	 * emitted when someone joins a conference
-	 */
+	/** emitted when someone joins a conference */
 	void confUserJoin( const QString &who, const QString &room);
 
-	/**
-	 * emitted when someone leaves a conference
-	 */
+	/** emitted when someone leaves a conference */
 	void confUserLeave( const QString &who, const QString &room);
 
-	/**
-	 * emitted when someone send us a Conference message
-	 */
+	/** emitted when someone send us a Conference message */
 	void confMessage( const QString &who, const QString &room, const QString &msg);
 
-	/**
-	 * emitted when someone wants to send us a file
-	 */
+	/** emitted when someone wants to send us a file */
 	void gotFile( const QString &who, const QString &url, long expires, const QString &msg, const QString &fname, unsigned long fesize);
 
-	/**
-	 * emitted when a contact is added
-	 */
+	/** emitted when a contact is added */
 	void contactAdded( const QString &myid, const QString &who, const QString &msg);
 
-	/**
-	 * emitted when someone rejects our auth request
-	 */
+	/** emitted when someone rejects our auth request */
 	void rejected( const QString &who, const QString &msg);
 
-	/**
-	 * emitted when someone is typing a message
-	 */
+	/** emitted when someone is typing a message */
 	void typingNotify( const QString &who, int stat);
 
-	/**
-	 * emitted when someone invites us to join a game
-	 */
+	/** emitted when someone invites us to join a game */
 	void gameNotify( const QString &who, int stat);
 
-	/**
-	 * Notify that we have mail
-	 */
+	/** Notify that we have mail */
 	void mailNotify( const QString &from, const QString &subject, int cnt);
 
-	/**
-	 * emitted when Yahoo servers send us a admin message
-	 */
+	/** emitted when Yahoo servers send us a admin message */
 	void systemMessage( const QString &msg);
 
-	/**
-	 * emitted when error
-	 */
+	/** emitted when error */
 	void error( const QString &err, int fatal);
 	//void hostConnect(char *host, int port);
 
