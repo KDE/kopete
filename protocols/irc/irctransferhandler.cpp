@@ -51,7 +51,7 @@ void IRCTransferHandler::transferCreated(KIRCTransfer *t)
 		return;
 	}
 
-	switch( t->type() )
+	switch(t->type())
 	{
 //	case KIRCTransfer::Chat:
 	case KIRCTransfer::FileOutgoing:
@@ -78,7 +78,7 @@ void IRCTransferHandler::transferCreated(KIRCTransfer *t)
 void IRCTransferHandler::transferAccepted(KopeteTransfer *kt, const QString&file)
 {
 	KIRCTransfer *t = getKIRCTransfer(kt->info());
-//	t->setFileName(file);
+	t->setFileName(file);
 	connectKopeteTransfer(kt, t);
 }
 void IRCTransferHandler::transferRefused(const KopeteFileTransferInfo &info)
@@ -91,9 +91,23 @@ void IRCTransferHandler::connectKopeteTransfer(KopeteTransfer *kt, KIRCTransfer 
 {
 	if(kt && t)
 	{
-		connect(kt , SIGNAL(transferCanceled()), t, SLOT(abort()));
-		connect(kt,  SIGNAL(destroyed()) , t, SLOT(slotKopeteTransferDestroyed()));
+//		connect(kt , SIGNAL(transferCanceled()), t, SLOT(abort()));
+//		connect(kt,  SIGNAL(destroyed()) , t, SLOT(slotKopeteTransferDestroyed()));
 
+		switch(t->type())
+		{
+//		case KIRCTransfer::Chat:
+		case KIRCTransfer::FileOutgoing:
+			connect(t , SIGNAL(fileSizeAcknowledge(unsigned int)), kt, SLOT(slotProcessed(unsigned int)));
+			break;
+		case KIRCTransfer::FileIncoming:
+			connect(t , SIGNAL(fileSizeCurrent(unsigned int)), kt, SLOT(slotProcessed(unsigned int)));
+			break;
+		default:
+			kdDebug(14120) << k_funcinfo << "Unknown transfer connections for type" << endl;
+			t->deleteLater();
+			return;
+		}
 		t->initiate();
 	}
 }

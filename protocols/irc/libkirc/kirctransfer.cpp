@@ -35,17 +35,18 @@ KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adre
 }
 
 KIRCTransfer::KIRCTransfer(	KIRC *engine, QString nick,// QString nick_peer_adress
-				QHostAddress , Q_UINT16,
+				QHostAddress hostAdress, Q_UINT16 port,
 				KIRCTransfer::Type type,
-				QString file, Q_UINT32 file_size,
+				QString fileName, Q_UINT32 fileSize,
 				QObject *parent, const char *name )
 	: QObject( parent, name ),
 	  m_engine(engine), m_nick(nick),
 	  m_type(type), m_socket(0),
 	  m_initiated(false),
-	  m_file(0), m_fileName(QString::null), m_fileSize(0), m_fileSizeCur(0), m_fileSizeAck(0),
+	  m_file(0), m_fileName(fileName), m_fileSize(fileSize), m_fileSizeCur(0), m_fileSizeAck(0),
 	  m_receivedBytes(0), m_receivedBytesLimit(0), m_sentBytes(0), m_sentBytesLimit(0)
 {
+	setSocket(new KExtendedSocket(hostAdress.toString(), port));
 }
 
 KIRCTransfer::~KIRCTransfer()
@@ -76,53 +77,55 @@ bool KIRCTransfer::initiate()
 		return false;
 	}
 
-	if(m_socket)
+	if(!m_socket)
 	{
-		m_initiated = true;
-
-		m_file.setName(m_fileName);
-
-		if(m_socket->status())
-			m_socket->connect();
-
-		connect(m_socket, SIGNAL(connectionClosed()),
-			this, SLOT(slotConnectionClosed()));
-		connect(m_socket, SIGNAL(delayedCloseFinished()),
-			this, SLOT(slotConnectionClosed()));
-		connect(m_socket, SIGNAL(error(int)),
-			this, SLOT(slotError(int)));
-
-		switch( m_type )
-		{
-		case Chat:
-			connect(m_socket, SIGNAL(readyRead()),
-				this, SLOT(readyReadFileIncoming()));
-			break;
-		case FileIncoming:
-			m_file.open(IO_WriteOnly);
-			connect(m_socket, SIGNAL(readyRead()),
-				this, SLOT(readyReadFileIncoming()));
-			break;
-		case FileOutgoing:
-			m_file.open(IO_ReadOnly);
-			connect(m_socket, SIGNAL(readyRead()),
-				this, SLOT(readyReadFileOutgoing()));
-//			QSignal for sending data
-			break;
-		default:
-			kdDebug(14121) << k_funcinfo << "Closing transfer: Unknown extra initiation for type:" << m_type << endl;
-			m_socket->close();
-			return false;
-			break;
-		}
-
-		m_socket->enableRead(true);
-		m_socket->enableWrite(true);
-		return true;
-	}
-	else
 		kdDebug(14121) << k_funcinfo << "Socket not set" << endl;
-	return false;
+		return false;
+	}
+
+	m_initiated = true;
+
+	m_file.setName(m_fileName);
+
+//	connect(m_socket, SIGNAL(connectionClosed()),
+//		this, SLOT(slotConnectionClosed()));
+//	connect(m_socket, SIGNAL(delayedCloseFinished()),
+//		this, SLOT(slotConnectionClosed()));
+	connect(m_socket, SIGNAL(error(int)),
+		this, SLOT(slotError(int)));
+
+	switch( m_type )
+	{
+	case Chat:
+		connect(m_socket, SIGNAL(readyRead()),
+			this, SLOT(readyReadFileIncoming()));
+		break;
+	case FileIncoming:
+		m_file.open(IO_WriteOnly);
+		connect(m_socket, SIGNAL(readyRead()),
+			this, SLOT(readyReadFileIncoming()));
+		break;
+	case FileOutgoing:
+		m_file.open(IO_ReadOnly);
+		connect(m_socket, SIGNAL(readyRead()),
+			this, SLOT(readyReadFileOutgoing()));
+//		QSignal for sending data
+		break;
+	default:
+		kdDebug(14121) << k_funcinfo << "Closing transfer: Unknown extra initiation for type:" << m_type << endl;
+		m_socket->close();
+		return false;
+		break;
+	}
+
+//	if(status()==Idle)
+	if(m_socket->status()==KExtendedSocket::nothing)
+		m_socket->connect();
+
+	m_socket->enableRead(true);
+	m_socket->enableWrite(true);
+
+	return true;
 }
 
 bool KIRCTransfer::setSocket( KExtendedSocket *socket )
@@ -212,6 +215,9 @@ void KIRCTransfer::readyReadFileOutgoing()
 
 void KIRCTransfer::emitSignals()
 {
+	emit fileSizeCurrent( m_fileSizeCur );
+	emit fileSizeAcknowledge( m_fileSizeAck );
+
 	if(m_receivedBytesLimit)
 		emit received( m_receivedBytes * 100 / m_receivedBytesLimit );
 	emit receivedBytes( m_receivedBytes );

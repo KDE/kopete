@@ -101,6 +101,9 @@ public slots:
 signals:
 	void readLine( const QString &msg );
 
+	void fileSizeCurrent( unsigned int );
+	void fileSizeAcknowledge( unsigned int );
+
 	void received( Q_UINT32 ); // percentage received if applicable
 	void receivedBytes( Q_UINT32 );
 

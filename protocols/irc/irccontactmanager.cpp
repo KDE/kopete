@@ -211,7 +211,7 @@ IRCContact *IRCContactManager::existContact( const KIRC *engine, const QString &
 	{
 		IRCAccount *account = (IRCAccount *)it.current();
 		if( account && account->engine() == engine )
-			account->contactManager()->existContact(id);
+			return account->contactManager()->existContact(id);
 	}
 	return 0L;
 }
