@@ -54,7 +54,6 @@ public slots:
 
 private slots:
 	void slotConfigSound();
-	void slotSoundChanged();
 	void slotUseEmoticonsChanged(bool);
 	void slotConfigChanged();
 	void slotTransparencyChanged(bool);

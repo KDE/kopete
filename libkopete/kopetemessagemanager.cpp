@@ -188,11 +188,8 @@ void KopeteMessageManager::sendMessage(KopeteMessage &message)
 	KopeteMessage sentMessage = message;
 	emit messageSent(sentMessage, this);
 
-	if ( KopetePrefs::prefs()->soundNotify() )
-	{
-		if ( !protocol()->isAway() || KopetePrefs::prefs()->soundIfAway() )
-			KNotifyClient::event( QString::fromLatin1( "kopete_outgoing"), i18n("Outgoing Message Sent") );
-	}
+	if ( !protocol()->isAway() || KopetePrefs::prefs()->soundIfAway() )
+		KNotifyClient::event( QString::fromLatin1( "kopete_outgoing"), i18n("Outgoing Message Sent") );
 }
 
 void KopeteMessageManager::messageSucceeded()

@@ -80,7 +80,6 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	// "General" TAB =============================================================
 	mPrfsGeneral = new AppearanceConfig_General(mAppearanceTabCtl);
 	connect(mPrfsGeneral->configSound, SIGNAL(clicked()), this, SLOT(slotConfigSound()));
-	connect(mPrfsGeneral->mSoundNotifyChk, SIGNAL(clicked()), this, SLOT(slotSoundChanged()));
 	connect(mPrfsGeneral->mShowTrayChk, SIGNAL(clicked()), this, SLOT(slotShowTrayChanged()));
 	mAppearanceTabCtl->addTab( mPrfsGeneral, i18n("&General") );
 
@@ -130,7 +129,6 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	// ===========================================================================
 
 	reopen(); // load settings from config
-	slotSoundChanged(); //Disable Button if no checkboxes selected
 	slotTransparencyChanged(mPrfsChatWindow->mTransparencyEnabled->isChecked());
 	slotShowTrayChanged();
 
@@ -153,7 +151,6 @@ void AppearanceConfig::save()
 	p->setUseQueue ( mPrfsGeneral->mUseQueueChk->isChecked() );
 	p->setTrayflashNotify ( mPrfsGeneral->mTrayflashNotifyChk->isChecked() );
 	p->setBalloonNotify ( mPrfsGeneral->mBalloonNotifyChk->isChecked() );
-	p->setSoundNotify ( mPrfsGeneral->mSoundNotifyChk->isChecked() );
 	p->setSoundIfAway( mPrfsGeneral->mSoundIfAwayChk->isChecked() );
 
 	// "Contact List" TAB
@@ -161,7 +158,6 @@ void AppearanceConfig::save()
 	p->setShowOffline ( mPrfsContactlist->mShowOfflineUsers->isChecked() );
 	p->setSortByGroup ( mPrfsContactlist->mSortByGroup->isChecked() );
 	p->setGreyIdleMetaContacts( mPrfsContactlist->mGreyIdleMetaContacts->isChecked() );
-	p->setNotifyOnline ( mPrfsContactlist->mNotifyOnlineUsers->isChecked() );
 
 	// Another TAB
 	p->setIconTheme( icon_theme_list->currentText() );
@@ -211,14 +207,12 @@ void AppearanceConfig::reopen()
 	mPrfsGeneral->mUseQueueChk->setChecked( p->useQueue() );
 	mPrfsGeneral->mTrayflashNotifyChk->setChecked ( p->trayflashNotify() );
 	mPrfsGeneral->mBalloonNotifyChk->setChecked ( p->balloonNotify() );
-	mPrfsGeneral->mSoundNotifyChk->setChecked ( p->soundNotify() );
 
 	// "Contact List" TAB
 	mPrfsContactlist->mTreeContactList->setChecked( p->treeView() );
 	mPrfsContactlist->mSortByGroup->setChecked( p->sortByGroup() );
 	mPrfsContactlist->mShowOfflineUsers->setChecked( p->showOffline() );
 	mPrfsContactlist->mGreyIdleMetaContacts->setChecked( p->greyIdleMetaContacts() );
-	mPrfsContactlist->mNotifyOnlineUsers->setChecked( p->notifyOnline() );
 
 	// "Emoticons" TAB
 	KStandardDirs dir;
@@ -291,11 +285,6 @@ void AppearanceConfig::reopen()
 void AppearanceConfig::slotConfigSound()
 {
 	KNotifyDialog::configure(this);
-}
-
-void AppearanceConfig::slotSoundChanged()
-{
-	mPrfsGeneral->configSound->setEnabled( mPrfsGeneral->mSoundNotifyChk->isChecked() );
 }
 
 void AppearanceConfig::slotUseEmoticonsChanged ( bool checked )
