@@ -2,19 +2,19 @@
 	<MenuBar>
 		<Menu name="file">
 			 <Action name="Connect"/>
+			<Action name="Disconnect"/>
 			<Action name="AddContact"/>
 			<Separator/>
 			<Action name="Preferences"/>
-			<Action name="AboutPlugins"/>
 			<Separator/>
                         <Action name="Quit"/>
 		</Menu>
 	</MenuBar>
 	<ToolBar fullWidth="true" name="mainToolBar">
 		 <Action name="Connect"/>
+		<Action name="Disconnect"/>
 		<Action name="AddContact"/>
 		 <Action name="Preferences"/>
-		<Action name="AboutPlugins"/>
 		<Action name="Quit"/>
 	</ToolBar>
 </kpartgui>

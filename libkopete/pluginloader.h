@@ -30,6 +30,7 @@ class Plugin;
 
 class LibraryLoader
 {
+	friend class Kopete;
 	friend class Plugin;
 	friend class IMProtocol;
 	friend class AddWizardImpl;

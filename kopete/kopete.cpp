@@ -15,7 +15,10 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <qvaluelist.h>
+#include <qlist.h>
 #include <qlayout.h>
+
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kcrash.h>
@@ -35,6 +38,8 @@ class Plugins;
 Kopete::Kopete(): KUniqueApplication(true, true, true)
 {
 	//plugins = new PluginManager;
+	allConnected = false;
+
 	mLibraryLoader = new LibraryLoader;
 	mIconLoader = KGlobal::iconLoader();
 	mPref=new PreferencesDialog;
@@ -44,8 +49,20 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 	setMainWidget(mainwindow);
 	mainwindow->statusBar()->show();
 	
-  mPref->hide();
-	
+  	mPref->hide();
+
+	KConfig *config=KGlobal::config();
+	config->setGroup("");
+	/* Ups! the user dont have plugins selected. */	
+	if (!config->hasKey("Modules"))
+	{
+		QStringList modules;
+		modules.append("icq.plugin");
+		modules.append("msn.plugin");
+		config->writeEntry("Modules", modules);
+	}
+	/* Ok, load saved plugins */
+	loadPlugins();
 	
 	
 }
@@ -133,10 +150,45 @@ void Kopete::readOptions()
 /** No descriptions */
 void Kopete::saveOptions(){
 }
-/** No descriptions */
+
+/** Connect to all loaded protocol plugins */
 void Kopete::slotConnectAll()
 {
+	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
+    for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
+	{
+		kdDebug() << "Kopete: [Connect All]: "<<(*i).name <<"\n";
+		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;				
+		IMProtocol *prot =  static_cast<IMProtocol*>(tmpprot);
+		if ( !(prot->isConnected()))
+		{
+			prot->Connect();
+		}
+	}
+	allConnected = true;
+	mainWindow()->actionConnect->setEnabled(false);
+    mainWindow()->actionDisconnect->setEnabled(true);
 }
+
+/** Connect to all loaded protocol plugins */
+void Kopete::slotDisconnectAll()
+{
+	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
+    for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
+	{
+		kdDebug() << "Kopete: [Disconnect All]: "<<(*i).name <<"\n";
+		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;				
+		IMProtocol *prot =  static_cast<IMProtocol*>(tmpprot);
+		if (prot->isConnected())
+		{
+			prot->Disconnect();
+		}
+	}
+	allConnected = false;
+	mainWindow()->actionConnect->setEnabled(true);
+    mainWindow()->actionDisconnect->setEnabled(false);
+}
+
 /** No descriptions */
 void Kopete::slotAboutPlugins()
 {

@@ -50,11 +50,11 @@ public:
 	StatusBarIcon *statusBarIcon;
 	/** The MSN Engine */
 	MSN *engine;
-private:
-	void initIcons();
 	QPixmap protocolIcon;
 	QPixmap onlineIcon;
 	QPixmap offlineIcon;
+private:
+	void initIcons();
 public slots: // Public slots
   /** No descriptions */
   void slotConnected();

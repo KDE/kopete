@@ -41,6 +41,11 @@ void KopeteWindow::initActions()
 	actionConnect = new KAction( i18n("&Connect"),"connect_no",0 ,
                           kopeteapp, SLOT(slotConnect()),
                           actionCollection(), "Connect" );
+	
+	actionDisconnect = new KAction( i18n("&Disconnect"),"connect_established",0 ,
+                          kopeteapp, SLOT(slotDisconnect()),
+                          actionCollection(), "Disconnect" );
+    actionDisconnect->setEnabled(false);
 
 	actionAboutPlugins = new KAction( i18n("&Plugins"),"input_devices_settings", 0,
                           kopeteapp, SLOT(slotAboutPlugins()),

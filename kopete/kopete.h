@@ -74,6 +74,8 @@ class Kopete : public KUniqueApplication
 	PluginManager *plugins;
 	PreferencesDialog *mPref;
 
+	/** Some bool stuff */
+	bool allConnected;
 	private:
 	KopeteWindow *mainwindow;
 	LibraryLoader *mLibraryLoader;
@@ -85,6 +87,7 @@ public slots:
   void slotPreferences();
   void slotExit();
   void slotConnectAll();
+  void slotDisconnectAll();	
   void slotAboutPlugins();
   void slotAddContact();
 	void slotSetAway();

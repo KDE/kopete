@@ -30,6 +30,7 @@ public:
 	KAction* actionQuit;
 	KSelectAction* actionStatus;
   KAction* actionConnect;
+  KAction* actionDisconnect;
   KAction* actionPrefs;
   KAction* actionHide;
 };

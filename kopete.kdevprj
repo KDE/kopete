@@ -637,7 +637,7 @@ sub_dirs=icq,msn,
 type=normal
 
 [kopete/protocols/icq/Makefile.am]
-files=kopete/protocols/icq/icqprotocol.cpp,kopete/protocols/icq/icqprotocol.h,kopete/protocols/icq/icqpreferences.cpp,kopete/protocols/icq/icqpreferences.h,kopete/protocols/icq/protocol.cpp,kopete/protocols/icq/icqaddcontactpage.cpp,kopete/protocols/icq/icqaddcontactpage.h
+files=kopete/protocols/icq/icqprotocol.cpp,kopete/protocols/icq/icqprotocol.h,kopete/protocols/icq/icqpreferences.cpp,kopete/protocols/icq/icqpreferences.h,kopete/protocols/icq/protocol.cpp,kopete/protocols/icq/icqaddcontactpage.cpp,kopete/protocols/icq/icqaddcontactpage.h,kopete/protocols/icq/icqcontact.cpp,kopete/protocols/icq/icqcontact.h
 sub_dirs=kxengine,
 type=static_library
 
@@ -648,6 +648,18 @@ install_location=
 type=SOURCE
 
 [kopete/protocols/icq/icqaddcontactpage.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/protocols/icq/icqcontact.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/icq/icqcontact.h]
 dist=true
 install=false
 install_location=
@@ -857,7 +869,7 @@ install_location=
 type=SOURCE
 
 [kopete/protocols/msn/Makefile.am]
-files=kopete/protocols/msn/msnprotocol.cpp,kopete/protocols/msn/msnprotocol.h,kopete/protocols/msn/protocol.cpp,kopete/protocols/msn/msnaddcontactpage.cpp,kopete/protocols/msn/msnaddcontactpage.h,kopete/protocols/msn/msnpreferences.cpp,kopete/protocols/msn/msnpreferences.h
+files=kopete/protocols/msn/msnprotocol.cpp,kopete/protocols/msn/msnprotocol.h,kopete/protocols/msn/protocol.cpp,kopete/protocols/msn/msnaddcontactpage.cpp,kopete/protocols/msn/msnaddcontactpage.h,kopete/protocols/msn/msnpreferences.cpp,kopete/protocols/msn/msnpreferences.h,kopete/protocols/msn/msncontact.cpp,kopete/protocols/msn/msncontact.h
 sub_dirs=libkmsn,
 type=static_library
 
@@ -939,6 +951,18 @@ install_location=
 type=SOURCE
 
 [kopete/protocols/msn/msnaddcontactpage.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/protocols/msn/msncontact.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/msn/msncontact.h]
 dist=true
 install=false
 install_location=
