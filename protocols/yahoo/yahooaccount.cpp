@@ -116,10 +116,14 @@ QString YahooAccount::stripMsgColorCodes(const QString& msg)
 {
 	QString filteredMsg = msg;
 	filteredMsg.remove(QRegExp("\033\\[(..m|#......)"));
-	
+
 	//Handle bold, underline and italic messages
 	filteredMsg.replace( QRegExp("\033\\[1m"), "<b>" );
 	filteredMsg.replace( QRegExp("\033\\[x1m"), "</b>" );
+    //work around gaim's broken sending
+    filteredMsg.remove( QRegExp( "\033\\[xlm" ) );
+    filteredMsg.remove( QRegExp( "\033\\[lm" ) );
+    //end work around
 	filteredMsg.replace( QRegExp("\033\\[3m"), "<i>" );
 	filteredMsg.replace( QRegExp("\033\\[x3m"), "</i>" );
 	filteredMsg.replace( QRegExp("\033\\[4m"), "<u>" );
@@ -170,65 +174,65 @@ void YahooAccount::initConnectionSignals( enum SignalConnectionType sct )
 	{
 		QObject::connect(m_session, SIGNAL(loginResponse(int, const QString &)),
 				this, SLOT(slotLoginResponse(int, const QString &)) );
-	
+
 		QObject::connect(m_session, SIGNAL(gotBuddy(const QString &, const QString &, const QString &)),
 				this, SLOT(slotGotBuddy(const QString &, const QString &, const QString &)));
-	
+
 		QObject::connect(m_session, SIGNAL( buddyListFetched( int ) ),
 				this, SLOT(slotBuddyListFetched( int ) ) );
-	
+
 		QObject::connect(m_session, SIGNAL(statusChanged(const QString&, int, const QString&, int)),
 				this, SLOT(slotStatusChanged(const QString&, int, const QString&, int)));
-	
+
 		QObject::connect(m_session, SIGNAL(gotIm(const QString&, const QString&, long, int)),
 				this, SLOT(slotGotIm(const QString &, const QString&, long, int)));
-	
+
 		QObject::connect(m_session, SIGNAL(gotConfInvite( const QString&, const QString&, const QString&,
 				const QStringList&)), this,
 				SLOT(slotGotConfInvite(const QString&, const QString&, const QString&, const QStringList&)));
-	
+
 		QObject::connect(m_session, SIGNAL(confUserDecline(const QString&, const QString &, const QString &)), this,
 				SLOT(slotConfUserDecline( const QString &, const QString &, const QString &)) );
-	
+
 		QObject::connect(m_session , SIGNAL(confUserJoin( const QString &, const QString &)), this,
 				SLOT(slotConfUserJoin( const QString &, const QString &)) );
-	
+
 		QObject::connect(m_session , SIGNAL(confUserLeave( const QString &, const QString &)), this,
 				SLOT(slotConfUserLeave( const QString &, const QString &)) );
-	
+
 		QObject::connect(m_session , SIGNAL(confMessage( const QString &, const QString &, const QString &)), this,
 				SLOT(slotConfMessage( const QString &, const QString &, const QString &)) );
-	
+
 		QObject::connect(m_session,
 				SIGNAL(gotFile(const QString &, const QString &, long, const QString &, const QString &, unsigned long)),
 				this,
 				SLOT(slotGotFile(const QString&, const QString&, long, const QString&, const QString&, unsigned long)));
-	
+
 		QObject::connect(m_session , SIGNAL(contactAdded(const QString &, const QString &, const QString &)), this,
 				SLOT(slotContactAdded(const QString &, const QString &, const QString &)));
-	
+
 		QObject::connect(m_session , SIGNAL(rejected(const QString &, const QString &)), this,
 				SLOT(slotRejected(const QString&, const QString&)));
-	
+
 		QObject::connect(m_session, SIGNAL(typingNotify(const QString &, int)), this ,
 				SLOT(slotTypingNotify(const QString &, int)));
-	
+
 		QObject::connect(m_session, SIGNAL(gameNotify(const QString &, int)), this,
 				SLOT(slotGameNotify( const QString &, int)));
-	
+
 		QObject::connect(m_session, SIGNAL(mailNotify(const QString&, const QString&, int)), this,
 				SLOT(slotMailNotify(const QString &, const QString&, int)));
-	
+
 		QObject::connect(m_session, SIGNAL(systemMessage(const QString&)), this,
 				SLOT(slotSystemMessage(const QString &)));
-	
+
 		QObject::connect(m_session, SIGNAL(error(const QString&, int)), this,
 				SLOT(slotError(const QString &, int )));
-	
+
 		QObject::connect(m_session, SIGNAL(gotIdentities(const QStringList &)), this,
 				SLOT(slotGotIdentities( const QStringList&)));
 	}
-	
+
 	if ( sct == DeleteConnections )
 	{
 		QObject::disconnect(m_session, SIGNAL(loginResponse(int, const QString &)),
@@ -300,7 +304,7 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 		static_cast<YahooContact*>( myself() )->setOnlineStatus( m_protocol->Offline );
 		return;
 	}
-	
+
 	QString server = "scs.msg.yahoo.com";
 	int port = 5050;
 
@@ -316,7 +320,7 @@ void YahooAccount::connectWithPassword( const QString &passwd )
 		kdDebug(14180) << "Attempting to connect to Yahoo on <" << server << ":" << port << ">. user <" << accountId() << ">" << endl;
 
 		static_cast<YahooContact*>( myself() )->setOnlineStatus( m_protocol->Connecting );
-		if ( m_session && m_session->sessionId() > 0 ) 
+		if ( m_session && m_session->sessionId() > 0 )
 		{
 
 			initConnectionSignals( MakeConnections );
@@ -406,7 +410,7 @@ KActionMenu *YahooAccount::actionMenu()
 {
 //	kdDebug(14180) << k_funcinfo << endl;
 	//TODO: Use a QSignalMapper so all the slots can be consolidated into one function
-	
+
 	KActionMenu *theActionMenu = new KActionMenu( myself()->displayName(), myself()->onlineStatus().iconFor(this), this );
 	theActionMenu->popupMenu()->insertTitle( myself()->icon(), "Yahoo (" + myself()->displayName() + ")");
 
@@ -513,13 +517,13 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 	if ( succ == YAHOO_LOGIN_OK || (succ == YAHOO_LOGIN_DUPL && m_lastDisconnectCode == 2) )
 	{
 		slotGotBuddies(yahooSession()->getLegacyBuddyList());
-		
+
 		//Yahoo only supports connecting as invisible and online, nothing else
 		if ( initialStatus() == m_protocol->Invisible )
 			static_cast<YahooContact *>( myself() )->setOnlineStatus( initialStatus() );
 		else
 			static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Online );
-			
+
 		m_lastDisconnectCode = 0;
 		return;
 	}
@@ -609,6 +613,32 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 		addContact( who, who, 0L, KopeteAccount::DontChangeKABC, QString::null, true );
 	}
 
+    //Parse the message for it's properties
+    kdDebug(14180) << "Original message is '" << msg << "'" << endl;
+    //kdDebug(14180) << "Message color is " << getMsgColor(msg) << endl;
+    QColor fgColor = getMsgColor( msg );
+    if (tm == 0)
+		msgDT.setTime_t(time(0L));
+	else
+		msgDT.setTime_t(tm, Qt::LocalTime);
+
+    QString newMsgText = stripMsgColorCodes( msg );
+
+    kdDebug(14180) << "Message after stripping color codes '" << newMsgText << "'" << endl;
+
+   	if (newMsgText.find("<font") != -1)
+	{
+		msgFont.setFamily(newMsgText.section('"', 1,1));
+
+		if (newMsgText.find("size"))
+			msgFont.setPointSize(newMsgText.section('"', 3,3).toInt());
+
+		//remove the font encoding since we handle them ourselves
+		newMsgText.remove(newMsgText.mid(0, newMsgText.find('>')+1));
+	}
+
+    kdDebug(14180) << "Message after removing font tags '" << newMsgText << "'" << endl;
+
 	KopeteMessageManager *mm = contact(who)->manager();
 
 	// Tell the message manager that the buddy is done typing
@@ -616,31 +646,10 @@ void YahooAccount::slotGotIm( const QString &who, const QString &msg, long tm, i
 
 	justMe.append(myself());
 
-	if (tm == 0)
-		msgDT.setTime_t(time(0L));
-	else
-		msgDT.setTime_t(tm, Qt::LocalTime);
+	KopeteMessage kmsg(msgDT, contact(who), justMe, newMsgText,
+					KopeteMessage::Inbound , KopeteMessage::RichText);
 
-	KopeteMessage kmsg(msgDT, contact(who), justMe, msg,
-					KopeteMessage::Inbound , KopeteMessage::PlainText);
-
-	QString newMsg = stripMsgColorCodes(kmsg.plainBody());
-
-	kmsg.setFg(getMsgColor(msg));
-//	kdDebug(14180) << "Message color is " << getMsgColor(msg) << endl;
-
-	if (newMsg.find("<font") != -1)
-	{
-		msgFont.setFamily(newMsg.section('"', 1,1));
-
-		if (newMsg.find("size"))
-			msgFont.setPointSize(newMsg.section('"', 3,3).toInt());
-
-		//remove the font encoding since we handle them ourselves
-		newMsg.remove(newMsg.mid(0, newMsg.find('>')+1));
-	}
-	//set the new body that has correct HTML
-	kmsg.setBody(newMsg, KopeteMessage::RichText);
+	kmsg.setFg( fgColor );
 	kmsg.setFont(msgFont);
 	mm->appendMessage(kmsg);
 
