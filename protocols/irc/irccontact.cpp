@@ -304,7 +304,7 @@ void IRCContact::slotNewNickChange( const QString &oldnickname, const QString &n
 
 void IRCContact::slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived)
 {
-	kdDebug(14120) << k_funcinfo << target << endl;
+	//kdDebug(14120) << k_funcinfo << target << endl;
 	if( target == mNickName )
 	{
 		KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
@@ -338,7 +338,7 @@ void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 
 KopeteContact *IRCContact::locateUser( const QString &nick )
 {
-	kdDebug(14120) << k_funcinfo << "Find nick " << nick << endl;
+	//kdDebug(14120) << k_funcinfo << "Find nick " << nick << endl;
 	if( isConnected )
 	{
 		KopeteContactPtrList mMembers = manager()->members();

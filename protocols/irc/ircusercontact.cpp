@@ -77,7 +77,7 @@ QString IRCUserContact::statusIcon() const
 
 void IRCUserContact::slotNewPrivMessage(const QString &originating, const QString &target, const QString &message)
 {
-	kdDebug(14120) << k_funcinfo << "o:" << originating << "; t:" << target << endl;
+	//kdDebug(14120) << k_funcinfo << "o:" << originating << "; t:" << target << endl;
 	if (originating.section('!',0,0).lower() == mNickName.lower())
 	{
 		KopeteMessage msg( (KopeteContact*)this, mMyself, message, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat );
