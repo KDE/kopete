@@ -85,6 +85,9 @@ KopeteMetaContact::KopeteMetaContact()
 	connect( this, SIGNAL( addedToGroup( KopeteMetaContact *, KopeteGroup * ) ), SLOT( emitPersistentDataChanged() ) );
 	connect( this, SIGNAL( contactAdded( KopeteContact * ) ), SLOT( emitPersistentDataChanged() ) );
 	connect( this, SIGNAL( contactRemoved( KopeteContact * ) ), SLOT( emitPersistentDataChanged() ) );
+	
+	// make sure KopeteMetaContact is at least in one group
+	addToGroup( KopeteGroup::topLevel() );
 }
 
 void KopeteMetaContact::emitPersistentDataChanged()
@@ -230,8 +233,6 @@ void KopeteMetaContact::removeContact(KopeteContact *c, bool deleted)
 
 bool KopeteMetaContact::isTopLevel() const
 {
-	if ( d->groups.isEmpty() )
-		d->groups.append( KopeteGroup::topLevel() );
 	return( d->groups.contains( KopeteGroup::topLevel() ) );
 }
 
@@ -583,8 +584,15 @@ void KopeteMetaContact::removeFromGroup( KopeteGroup *group )
 	{
 		return;
 	}
-
+	
 	d->groups.remove( group );
+
+	// make sure KopeteMetaContact is at least in one group	
+	if ( d->groups.isEmpty() )
+	{
+		d->groups.append( KopeteGroup::topLevel() );
+		emit addedToGroup( this, KopeteGroup::topLevel() );
+	}
 
 	for( KopeteContact *c = d->contacts.first(); c ; c = d->contacts.next() )
 		c->syncGroups();
@@ -600,6 +608,11 @@ void KopeteMetaContact::addToGroup( KopeteGroup *to )
 	if ( d->temporary && to->type() != KopeteGroup::Temporary )
 		return;
 
+	if ( isTopLevel() )
+	{
+		d->groups.remove( KopeteGroup::topLevel() );
+		emit removedFromGroup( this, KopeteGroup::topLevel() );
+	}
 
 	d->groups.append( to );
 
@@ -689,12 +702,12 @@ bool KopeteMetaContact::fromXML( const QDomElement& element )
 				{
 					QString strGroupId = groupElement.attribute( QString::fromLatin1("id") );
 					if( !strGroupId.isEmpty() )
-						d->groups.append( KopeteContactList::contactList()->getGroup( strGroupId.toUInt() ) );
+						addToGroup( KopeteContactList::contactList()->getGroup( strGroupId.toUInt() ) );
 					else //kopete 0.6 contactlist
-						d->groups.append( KopeteContactList::contactList()->getGroup( groupElement.text() ) );
+						addToGroup( KopeteContactList::contactList()->getGroup( groupElement.text() ) );
 				}
 				else if( groupElement.tagName() == QString::fromLatin1( "top-level" ) ) //kopete 0.6 contactlist
-					d->groups.append( KopeteGroup::topLevel() );
+					addToGroup( KopeteGroup::topLevel() );
 
 				group = group.nextSibling();
 			}
