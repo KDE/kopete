@@ -45,6 +45,7 @@ private:
 	void setConnectedStatus(bool);
 	bool m_boolPluginConnected;
 	QString m_qsInterface;
+	KProcess *kpIfconfig;
 
 };
 

@@ -35,6 +35,12 @@ ConnectionStatusPlugin::ConnectionStatusPlugin(QObject *parent, const char *name
 		 SLOT(slotCheckStatus()) );
 	qtTimer->start(2500);
 	
+	kpIfconfig = new KProcess;
+	connect(kpIfconfig, SIGNAL(receivedStdout(KProcess *, char *, int)),
+		this, SLOT(slotProcessStdout(KProcess *, char *, int)));
+
+
+	
 	m_boolPluginConnected = false;
 }
 
@@ -54,16 +60,13 @@ bool ConnectionStatusPlugin::unload()
 
 void ConnectionStatusPlugin::slotCheckStatus()
 {
-	/* Use KProcess to run netstat -rn. We'll then parse the output of 
+	/* Use KProcess to run netstat -r. We'll then parse the output of 
 	* netstat -r in slotProcessStdout() to see if it mentions the     
 	* default gateway. If so, we're connected, if not, we're offline */
 	
 	kdDebug() << "ConnectionStatusPlugin::checkStatus()" << endl;
-	KProcess *kpIfconfig = new KProcess;
 	*kpIfconfig << "netstat" << "-r";
 	kpIfconfig->start(KProcess::DontCare, KProcess::Stdout);
-	connect(kpIfconfig, SIGNAL(receivedStdout(KProcess *, char *, int)),
-		this, SLOT(slotProcessStdout(KProcess *, char *, int)));
 }
 
 void ConnectionStatusPlugin::slotProcessStdout(KProcess *, char *buffer, int buflen)
