@@ -43,7 +43,7 @@ struct whoIsInfo;
 class IRCContact : public KopeteContact
 {
 	Q_OBJECT
-	
+
 	public:
 		IRCContact(IRCAccount *account, const QString &nick, KopeteMetaContact *metac);
 
@@ -93,7 +93,6 @@ class IRCContact : public KopeteContact
 		 */
 		bool processMessage( const KopeteMessage & );
 
-		QPtrList<KopeteContact> mContact;
 		QPtrList<KopeteContact> mMyself;
 		QMap<QString, whoIsInfo*> mWhoisMap;
 		KopeteMetaContact *mMetaContact;

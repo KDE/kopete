@@ -61,7 +61,6 @@ IRCContact::IRCContact(IRCAccount *account, const QString &nick, KopeteMetaConta
 	setDisplayName(mNickName);
 
 	// KopeteMessageManagerFactory stuff
-	mContact.append((KopeteContact *)this);
 	mMyself.append((KopeteContact *)account->mySelf());
 
 	QObject::connect(mEngine, SIGNAL(incomingAction(const QString &, const QString &, const QString &)), this, SLOT(slotNewAction(const QString &, const QString &, const QString &)));
@@ -116,7 +115,7 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 					chan->setTopic( commandArgs );
 				else
 				{
-					KopeteMessage msg((KopeteContact*)this, mContact, i18n("Topic for %1 is %2").arg(mNickName).arg(chan->topic()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+					KopeteMessage msg((KopeteContact*)this, mMyself, i18n("Topic for %1 is %2").arg(mNickName).arg(chan->topic()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 					manager()->appendMessage(msg);
 				}
 			}
@@ -132,7 +131,7 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 					mAccount->findUser( *commandLine.at(1) )->startChat();
 				else
 				{
-					KopeteMessage msg((KopeteContact*)this, mContact, i18n("\"%1\" is an invaid nickname. Nicknames must not start with '#'.").arg(*commandLine.at(1)), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+					KopeteMessage msg((KopeteContact*)this, mMyself, i18n("\"%1\" is an invaid nickname. Nicknames must not start with '#'.").arg(*commandLine.at(1)), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 					manager()->appendMessage(msg);
 				}
 			}
@@ -142,7 +141,7 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 					mAccount->findChannel( *commandLine.at(1) )->startChat();
 				else
 				{
-					KopeteMessage msg((KopeteContact*)this, mContact, i18n("\"%1\" is an invaid channel. Channels must start with '#'.").arg(*commandLine.at(1)), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+					KopeteMessage msg((KopeteContact*)this, mMyself, i18n("\"%1\" is an invaid channel. Channels must start with '#'.").arg(*commandLine.at(1)), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 					manager()->appendMessage(msg);
 				}
 			}
@@ -172,7 +171,7 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 				}
 				else
 				{
-					KopeteMessage msg((KopeteContact*)this, mContact, i18n("Please wait for previous processes to complete, or type /kill to cancel them."), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+					KopeteMessage msg((KopeteContact*)this, mMyself, i18n("Please wait for previous processes to complete, or type /kill to cancel them."), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 					manager()->appendMessage(msg);
 				}
 			}
@@ -181,7 +180,7 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 
 			else
 			{
-				KopeteMessage msg((KopeteContact*)this, mContact, i18n("\"%1\" is an unrecognized command.").arg(command), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+				KopeteMessage msg((KopeteContact*)this, mMyself, i18n("\"%1\" is an unrecognized command.").arg(command), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 				manager()->appendMessage(msg);
 			}
 		}
@@ -234,7 +233,7 @@ void IRCContact::slotUserDisconnected( const QString &user, const QString &reaso
 		KopeteContact *c = locateUser( nickname );
 		if ( c )
 		{
-			KopeteMessage msg(c, mContact, i18n("User %1 has quit (\"%2\")").arg(nickname).arg(reason), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+			KopeteMessage msg(c, mMyself, i18n("User %1 has quit (\"%2\")").arg(nickname).arg(reason), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 			manager()->appendMessage(msg);
 			manager()->removeContact( c, true );
 			c->setOnlineStatus( IRCProtocol::IRCUserOffline() );
@@ -252,7 +251,7 @@ void IRCContact::slotNewMessage(const QString &originating, const QString &targe
 		KopeteContact *user = locateUser( nickname );
 		if ( user )
 		{
-			KopeteMessage msg( user, mContact, message, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat );
+			KopeteMessage msg( user, manager()->members(), message, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat );
 			msg.setBody( mAccount->protocol()->parser()->parse( msg.escapedBody() ), KopeteMessage::RichText );
 			manager()->appendMessage(msg);
 		}
@@ -268,12 +267,12 @@ void IRCContact::slotNewAction(const QString &originating, const QString &target
 		KopeteContact *user = locateUser( nickname );
 		if ( user )
 		{
-			KopeteMessage msg( user, mContact, message, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat );
+			KopeteMessage msg( user, manager()->members(), message, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat );
 			manager()->appendMessage(msg);
 		}
 		else if( mAccount->mySelf()->nickName().lower() == originating.lower() )
 		{
-			KopeteMessage msg( (KopeteContact*)mAccount->mySelf(), mContact, message, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat );
+			KopeteMessage msg( (KopeteContact*)mAccount->mySelf(), manager()->members(), message, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat );
 			manager()->appendMessage(msg);
 		}
 
@@ -330,12 +329,12 @@ void IRCContact::slotWhoIsComplete(const QString &nickname)
 		KopeteContact *c = locateUser( nickname );
 
 		//User info
-		msg = KopeteMessage( c, mContact, QString::fromLatin1("[%1] (%2@%3) : %4\n").arg(nickname).arg(w->userName).arg(w->hostName).arg(w->realName), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
+		msg = KopeteMessage( c, mMyself, QString::fromLatin1("[%1] (%2@%3) : %4\n").arg(nickname).arg(w->userName).arg(w->hostName).arg(w->realName), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
 		manager()->appendMessage(msg);
 
 		if( w->isOperator )
 		{
-			msg = KopeteMessage( c, mContact, i18n("[%1] is an IRC operator").arg(nickname), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
+			msg = KopeteMessage( c, mMyself, i18n("[%1] is an IRC operator").arg(nickname), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
 			manager()->appendMessage(msg);
 		}
 
@@ -344,19 +343,19 @@ void IRCContact::slotWhoIsComplete(const QString &nickname)
 		for(QStringList::Iterator it = w->channels.begin(); it != w->channels.end(); ++it)
 			channelText += *it + QString::fromLatin1(" \n");
 
-		msg = KopeteMessage( c, mContact, QString::fromLatin1("[%1] %2").arg(nickname).arg(channelText), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
+		msg = KopeteMessage( c, mMyself, QString::fromLatin1("[%1] %2").arg(nickname).arg(channelText), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
 		manager()->appendMessage(msg);
 
 		//Server
-		msg = KopeteMessage( c, mContact, QString::fromLatin1("[%1] %2 : %3\n").arg(nickname).arg(w->serverName).arg(w->serverInfo), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
+		msg = KopeteMessage( c, mMyself, QString::fromLatin1("[%1] %2 : %3\n").arg(nickname).arg(w->serverName).arg(w->serverInfo), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
 		manager()->appendMessage(msg);
 
 		//Idle
-		msg = KopeteMessage( c, mContact, i18n("[%1] idle %2\n").arg(nickname).arg( QString::number(w->idle) ), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
+		msg = KopeteMessage( c, mMyself, i18n("[%1] idle %2\n").arg(nickname).arg( QString::number(w->idle) ), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
 		manager()->appendMessage(msg);
 
 		//End
-		msg = KopeteMessage( c, mContact,  i18n("[%1] End of WHOIS list.").arg(nickname), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
+		msg = KopeteMessage( c, mMyself,  i18n("[%1] End of WHOIS list.").arg(nickname), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
 		manager()->appendMessage(msg);
 
 		delete w;
@@ -385,7 +384,7 @@ void IRCContact::slotNewNickChange( const QString &oldnickname, const QString &n
 			mEngine->addToNotifyList( newnickname );
 		}
 
-		KopeteMessage msg((KopeteContact *)this, mContact, i18n("%1 now known as %2").arg(oldName).arg(newnickname), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+		KopeteMessage msg((KopeteContact *)this, mMyself, i18n("%1 now known as %2").arg(oldName).arg(newnickname), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 		manager()->appendMessage(msg);
 	}
 }
@@ -397,7 +396,7 @@ void IRCContact::slotNewCtcpReply(const QString &type, const QString &target, co
 		KopeteView *myView = KopeteViewManager::viewManager()->view( manager(), true);
 		if( myView == KopeteViewManager::viewManager()->activeView() )
 		{
-			KopeteMessage msg((KopeteContact *)this, mContact, i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+			KopeteMessage msg((KopeteContact *)this, mMyself, i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 			manager()->appendMessage(msg);
 		}
 	}

@@ -72,7 +72,7 @@ KopeteMessageManager* IRCUserContact::manager(bool)
 	{
 		kdDebug(14120) << k_funcinfo << "Creating new KMM for " << mNickName << endl;
 
-		mMsgManager = KopeteMessageManagerFactory::factory()->create( (KopeteContact *)mAccount->mySelf(), mContact, (KopeteProtocol *)mAccount->protocol());
+		mMsgManager = KopeteMessageManagerFactory::factory()->create( (KopeteContact *)mAccount->mySelf(), mMyself, (KopeteProtocol *)mAccount->protocol());
 		mMsgManager->setDisplayName( caption() );
 		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
 		QObject::connect( mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
