@@ -32,7 +32,7 @@ Using Kopete
 		Configure &kopete;
 		Quit.
 		Shortcuts
-        Chat window
+        Chat window (WIP, Will)
 		Layout
 			Chat members list
 			Status bar (typing notifications, etc )
@@ -301,16 +301,19 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 </tgroup>
 </informaltable>
 </sect2>
-
 </sect1><!-- contact-list -->
 
 <sect1 id="chat-window">
 <title>The Chat Window</title>
-<para>The Chat Window </para>
 <sect2 id="chat-window-layout"><title>Layout of the Chat window</title>
-<para>Chat members list</para>
-<para>Status bar (typing notifications, etc )</para>
-<para>Tabbing</para>
+<sect3 id="chat-window-layout-chatview"><title>The Chat View</title><para>The Chat View usually takes up most of the Chat window and is where the conversation between you and your contacts takes place.  Messages appear in the order they are received, with the earliest messages at the top of the view.</para>
+<para>You can <link linkend="configuring-appearance">control</link> the appearance of the <interface>Chat View</interface>, making it look like other &im; clients or create a completely individual look.</para>
+</sect3>
+<sect3 id="chat-window-layout-memberslist"><title>Chat Members List</title>
+<para>Since some &im; systems allow you to chat as a group, it's useful to see who's chatting at the moment.  The Chat Members List appears to the left or the right of the Chat View.  You can change this using <menuchoice><guimenu>Settings</guimenu><guisubmenu>Chat Members List</guisubmenu></menuchoice>.  The contact context menu is available in the Chat Members List.</para></sect3>
+<sect3 id="chat-window-layout-input-area"><title>Input Area</title><para>The Input Area is below the Chat View.  This is where you type messages before sending them.  You can change the font and colour of the message using the usual tools on the toolbar.  If the &im; system supports this, your messages will appear in colour when your contacts read them.</para><para>By default, the keyboard shortcut to send messages is <keycombo action="simul">&Ctrl;&Enter;</keycombo>.</para></sect3>
+<sect3 id="chat-window-layout-statusbar"><title>Status Bar</title><para>The Status Bar contains temporary messages, such as notification that someone else is typing, as well as the <guibutton>Send</guibutton> button.</para></sect3>
+<sect3 id="chat-window-layout-tabbing"><title>Tabbing</title><para>&kopete; lets you carry on multiple conversations in one window, by putting each one in its own tab within the window.  There are several different ways to control grouping.  To configure this behaviour, go to the Chat tab of the Behaviour page of the Configure &kopete; dialog.</para></sect3>
 </sect2>
 <sect2 id="chat-window-group">
 <title>Group Chats in &kopete;</title>
