@@ -1,6 +1,0 @@
-?package(kopete):\
-	needs=X11\
-	section=Apps/Net\
-	hints="KDE,IM"\
-	title="Kopete"\
-	command="/usr/bin/kopete"

@@ -1,7 +1,0 @@
---- kdenetwork/kopete/protocols/jabber/libxmpp/cutestuff/network/ndns.cpp  #1.1:1.2
-@@ -63,4 +63,5 @@
- #endif
- 
-+#include <qmutex.h>
- 
- //! \if _hide_doc_
