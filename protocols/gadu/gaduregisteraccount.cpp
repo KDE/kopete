@@ -174,3 +174,5 @@ void GaduRegisterAccount::slotApply()
 GaduRegisterAccount::~GaduRegisterAccount( )
 {
 }
+
+#include "gaduregisteraccount.moc"
