@@ -43,7 +43,6 @@ class WebPresencePlugin : public KopetePlugin
 	public:
 		WebPresencePlugin( QObject *parent, const char *name, const QStringList &args );
 		virtual ~WebPresencePlugin();
-		virtual KActionCollection *customContextMenuActions( KopeteMetaContact * );
 
 	public slots:
 		/**
@@ -56,19 +55,18 @@ class WebPresencePlugin : public KopetePlugin
 		 */
 		void slotWriteFile();
 		/**
-		 * Change whether a contact should be included in the file
+		 * Called when an upload finished, displays error if needed
 		 */
-		void slotContactWantsToggled();
-		void slotUploadJobResult( KIO::Job * );
+		 void slotUploadJobResult( KIO::Job * );
 	protected:
 		/**
 		 * Generate the file (HTML, text) to be uploaded
 		 */	
 		KTempFile* generateFile();
 		/** 
-		 * Helper method, generates list of structs representing my status
+		 * Helper method, generates list of all IM protocols
 		 */
-		QPtrList<WebPresencePlugin::ProtoContactStatus> *myStatus();
+		QPtrList<KopeteProtocol> allProtocols();
 		/**
 		 * Converts numeric status to a string
 		 */
@@ -77,13 +75,7 @@ class WebPresencePlugin : public KopetePlugin
 		QTimer *m_timer;
 		// Interface to the preferences GUI
 		WebPresencePreferences* m_prefsDialog;
-		// Contains context menu actions
-		KActionCollection *m_actionCollection;
-		// Current context menu action
-		KToggleAction *m_actionWantsAdvert;
-		// Metacontact that the current context menu refers to
-		KopeteMetaContact *m_currentMetaContact;
-		
+
 };
 
 #endif

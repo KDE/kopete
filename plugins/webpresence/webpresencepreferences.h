@@ -34,10 +34,9 @@ class WebPresencePreferences : public ConfigModule
 
 		int frequency() const;
 		QString url() const;
-		bool showMyself() const;
-		bool showMyContacts() const;
 		bool showAddresses() const;
-		bool uploadHtml() const;
+		bool useImName() const;
+		QString userName() const;
 	signals:
 		void saved();
 	private:
