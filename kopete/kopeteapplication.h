@@ -30,6 +30,7 @@
 
 class KopeteWindow;
 class QSessionManager;
+class QMimeSourceFactory;
 
 namespace Kopete
 {
@@ -80,7 +81,8 @@ private:
 	// so use a guarded pointer
 	QGuardedPtr<KopeteWindow> m_mainWindow;
 	bool m_isShuttingDown;
-	Kopete::MimeTypeHandler *emoticonHandler;
+	Kopete::MimeTypeHandler *m_emoticonHandler;
+	QMimeSourceFactory *m_mimeFactory;
 
 private:
 	void handleURLArgs();
