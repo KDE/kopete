@@ -57,6 +57,32 @@ void MessageHandler::handleMessage( MessageEvent *event )
 	d->next->handleMessage(event);
 }
 
+
+class MessageHandlerFactory::Private
+{
+public:
+	static FactoryList factories;
+	FactoryList::Iterator iterator;
+};
+MessageHandlerFactory::FactoryList MessageHandlerFactory::Private::factories;
+
+MessageHandlerFactory::MessageHandlerFactory()
+	: d( new Private )
+{
+	d->iterator = Private::factories.append(this);
+}
+
+MessageHandlerFactory::~MessageHandlerFactory()
+{
+	Private::factories.remove( d->iterator );
+	delete d;
+}
+
+MessageHandlerFactory::FactoryList MessageHandlerFactory::messageHandlerFactories()
+{
+	return Private::factories;
+}
+
 }
 
 #include "kopetemessagehandler.moc"

@@ -44,8 +44,6 @@
 class KMMPrivate
 {
 public:
-	KMMPrivate() { chains[0] = chains[1] = chains[2] = 0; }
-	~KMMPrivate() { delete chains[0]; delete chains[1]; delete chains[2]; }
 	Kopete::ContactPtrList mContactList;
 	const Kopete::Contact *mUser;
 	QMap<const Kopete::Contact *, Kopete::OnlineStatus> contactStatus;
@@ -58,7 +56,7 @@ public:
 	QString displayName;
 	KopeteView *view;
 	bool mayInvite;
-	Kopete::MessageHandlerChain *chains[3];
+	Kopete::MessageHandlerChain::Ref chains[3];
 };
 
 Kopete::MessageManager::MessageManager( const Kopete::Contact *user,
@@ -218,16 +216,28 @@ public:
 	}
 };
 
-Kopete::MessageHandlerChain *Kopete::MessageManager::chainForDirection( Kopete::Message::MessageDirection dir )
+class TempFactory : public Kopete::MessageHandlerFactory
+{
+public:
+	Kopete::MessageHandler *create( Kopete::MessageManager *manager, Kopete::Message::MessageDirection )
+	{
+		return new Kopete::TemporaryKMMCallbackAppendMessageHandler( manager );
+	}
+	int filterPosition( Kopete::MessageManager *, Kopete::Message::MessageDirection )
+	{
+		// FIXME: somewhere after everyone else.
+		return 100000;
+	}
+};
+// FIXME: might crash on exit. use a KStaticDeleter
+static TempFactory theTempFactory;
+
+Kopete::MessageHandlerChain::Ref Kopete::MessageManager::chainForDirection( Kopete::Message::MessageDirection dir )
 {
 	if( dir < 0 || dir > 2)
 		kdFatal(14000) << k_funcinfo << "invalid message direction " << dir << endl;
-	const char * const names[] = { "incoming", "outgoing", "internal" };
 	if( !d->chains[dir] )
-	{
-		d->chains[dir] = new Kopete::MessageHandlerChain( this, names[dir] );
-		d->chains[dir]->addHandler( new TemporaryKMMCallbackAppendMessageHandler(this) );
-	}
+		d->chains[dir] = Kopete::MessageHandlerChain::create( this, dir );
 	return d->chains[dir];
 }
 

@@ -20,11 +20,13 @@
 #include <qobject.h>
 #include <kdemacros.h>
 
+#include "kopetemessage.h"
+
 namespace Kopete
 {
 
-class Message;
 class MessageHandler;
+class MessageHandlerChainRef;
 
 /**
  * @brief A chain of message handlers; the processing layer between protocol and chat view
@@ -40,22 +42,63 @@ class MessageHandlerChain : public QObject
 {
 	Q_OBJECT
 public:
+	typedef MessageHandlerChainRef Ref;
+	
 	/**
-	 * Create a new Kopete::MessageHandlerChain object with no
-	 * handlers in the chain.
+	 * Create a new MessageHandlerChain object with the appropriate handlers for
+	 * processing messages entering @p manager in direction @p direction.
 	 */
-	MessageHandlerChain( QObject *parent, const char *name );
-	~MessageHandlerChain();
-
-	//FIXME: remove - this is for testing.
-	void addHandler( MessageHandler *handler );
+	static Ref create( MessageManager *manager, Message::MessageDirection direction );
 
 	void processMessage( const Message &message );
 	int capabilities();
-
 private:
+	MessageHandlerChain();
+	~MessageHandlerChain();
+	
+	friend class MessageHandlerChainRef;
+	void incRef();
+	void decRef();
+	
 	class Private;
 	Private *d;
+};
+
+/**
+ * A smart pointer to MessageHandlerChains implementing reference counting.
+ */
+class MessageHandlerChainRef
+{
+	MessageHandlerChain *chain;
+public:
+	MessageHandlerChainRef( MessageHandlerChain *chain = 0 ) : chain(chain) { incRef(); }
+	MessageHandlerChainRef( const MessageHandlerChainRef &o ) : chain(o.chain) { incRef(); }
+	~MessageHandlerChainRef() { decRef(); }
+	MessageHandlerChainRef &operator=(const MessageHandlerChainRef &o)
+	{
+		o.incRef();
+		decRef();
+		chain = o.chain;
+		return *this;
+	}
+	MessageHandlerChain *get() const { return chain; }
+	MessageHandlerChain *operator->() const { return chain; }
+	/**
+	 * Implicit conversion to QObject * for connect() calls
+	 */
+	operator QObject *() { return chain; }
+	
+private:
+	void incRef() const
+	{
+		if(chain)
+			chain->incRef();
+	}
+	void decRef() const
+	{
+		if(chain)
+			chain->decRef();
+	}
 };
 
 }

@@ -20,39 +20,101 @@
 
 #include <kdebug.h>
 
+#include <qmap.h>
+#include <qvaluelist.h>
+
 namespace Kopete
 {
 
 class MessageHandlerChain::Private
 {
 public:
+	// note that the reference count starts from 0. whenever a chain
+	// is created by create() it is immediately passed to a Ref object
+	// which incRef()s it. It must incRef() it, or code which did something
+	// like:
+	//   Ref ref( someRef.get() );
+	// would mess up the reference count.
+	Private() : refCount(0), first(0) {}
+	int refCount;
 	MessageHandler *first;
-	MessageHandler *last;
 };
 
 class MessageHandlerChainTerminator : public MessageHandler
 {
 public:
 	MessageHandlerChainTerminator() : MessageHandler(0) {}
-	void handleMessage( MessageEvent *event )
+	void handleMessage( MessageEvent * )
 	{
-		kdError( 14000 ) << k_funcinfo << "message got to end of chain!" << endl;
+		kdError( 14010 ) << k_funcinfo << "message got to end of chain!" << endl;
 	}
 	int capabilities()
 	{
-		kdError( 14000 ) << k_funcinfo << "request got to end of chain!" << endl;
+		kdError( 14010 ) << k_funcinfo << "request got to end of chain!" << endl;
 		return 0;
 	}
 };
 
-MessageHandlerChain::MessageHandlerChain( QObject *parent, const char *name )
- : QObject( parent, name ), d( new Private )
+MessageHandlerChain::Ref MessageHandlerChain::create( MessageManager *manager, Message::MessageDirection direction )
 {
-	d->first = d->last = new MessageHandlerChainTerminator;
+	// create the handler chain
+	MessageHandlerChain *chain = new MessageHandlerChain;
+	
+	// grab the list of handler factories
+	typedef MessageHandlerFactory::FactoryList FactoryList;
+	FactoryList factories = MessageHandlerFactory::messageHandlerFactories();
+	
+	// create a sorted list of handlers
+	typedef QValueList<MessageHandler*> HandlerList;
+	typedef QMap<int,HandlerList> HandlerMap;
+	HandlerMap handlers;
+	uint count = 0;
+	for( FactoryList::Iterator it = factories.begin(); it != factories.end(); ++it )
+	{
+		int position = (*it)->filterPosition( manager, direction );
+		MessageHandler *handler = (*it)->create( manager, direction );
+		if ( handler )
+		{
+			++count;
+			handlers[ position ].append( handler );
+		}
+	}
+	
+	kdDebug(14010) << k_funcinfo << "got " << count << " handlers for chain" << endl;
+	
+	// add the handlers to the chain
+	MessageHandler *curr = 0;
+	for( HandlerMap::Iterator it = handlers.begin(); it != handlers.end(); ++it )
+	{
+		for ( HandlerList::Iterator handlerIt = (*it).begin(); handlerIt != (*it).end(); ++handlerIt )
+		{
+			if ( curr )
+				curr->setNext( *handlerIt );
+			else
+				chain->d->first = *handlerIt;
+			curr = *handlerIt;
+		}
+	}
+	
+	// add a terminator to avoid crashes if the message somehow manages to get to the
+	// end of the chain. maybe we should use a MessageHandlerFactory for this too?
+	MessageHandler *terminator = new MessageHandlerChainTerminator;
+	if ( curr )
+		curr->setNext( terminator );
+	else // empty chain: might happen for dir == Internal
+		chain->d->first = terminator;
+	
+	return chain;
+}
+
+MessageHandlerChain::MessageHandlerChain()
+ : QObject( 0 ), d( new Private )
+{
 }
 
 MessageHandlerChain::~MessageHandlerChain()
 {
+	kdDebug(14010) << k_funcinfo << endl;
 	MessageHandler *handler = d->first;
 	while( handler )
 	{
@@ -63,12 +125,17 @@ MessageHandlerChain::~MessageHandlerChain()
 	delete d;
 }
 
-
-void MessageHandlerChain::addHandler( MessageHandler *handler )
+void MessageHandlerChain::incRef()
 {
-	handler->setNext( d->first );
-	d->first = handler;
+	++d->refCount;
 }
+
+void MessageHandlerChain::decRef()
+{
+	if( --d->refCount == 0 )
+		delete this;
+}
+
 
 void MessageHandlerChain::processMessage( const Message &message )
 {

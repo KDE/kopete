@@ -28,8 +28,9 @@
 
 #include <kxmlguiclient.h>
 
-// FIXME: get rid of this include in header
+// FIXME: get rid of these includes
 #include "kopetemessage.h"
+#include "kopetemessagehandlerchain.h"
 
 class KMMPrivate;
 
@@ -172,7 +173,7 @@ public:
 	/**
 	 * Returns the message handler chain for the message direction @p dir.
 	 */
-	MessageHandlerChain *chainForDirection( Message::MessageDirection dir );
+	MessageHandlerChain::Ref chainForDirection( Message::MessageDirection dir );
 
 signals:
 	/**
