@@ -129,6 +129,7 @@ KopeteAway::KopeteAway() : QObject( kapp , "KopeteAway")
 
 KopeteAway::~KopeteAway()
 {
+	delete d;
 }
 
 QString KopeteAway::message()
