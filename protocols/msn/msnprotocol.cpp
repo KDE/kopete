@@ -528,12 +528,13 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 			kmmIt.current()->slotSendEnabled(false);
 		}
 
-		QMap<QString, MSNContact*>::Iterator it = m_contacts.begin();
-		while( it != m_contacts.end() )
+		// FIXME!!!!!!!
+		QMap<QString, MSNContact*>::Iterator it;
+		for ( it = m_contacts.begin(); it != m_contacts.end() ; ++it)
 		{
-			delete *it;
-			m_contacts.remove( it );
-			it = m_contacts.begin();
+			//delete *it;
+			(*it)->setMsnStatus( MSNProtocol::FLN );
+			//m_contacts.remove( it );
 		}
 
 		m_allowList.clear();
