@@ -15,6 +15,7 @@ KopeteAway::KopeteAway()
 	config = KGlobal::config();
 	config->setGroup("");
 	mAwayMessage = config->readEntry ( "AwayMessage", "I'm currently away" );
+	mGlobalAway = false;
 }
 
 QString KopeteAway::message()
