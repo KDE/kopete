@@ -72,11 +72,16 @@ public:
 	static KopeteTransferManager* transferManager();
 	virtual ~KopeteTransferManager(){};
 
+	/**
+	 * @brief Adds a file transfer to the KopeteTransferManager
+	 */
 	KopeteTransfer *addTransfer( KopeteContact *contact, const QString& file, const unsigned long size, const QString &recipient , KopeteFileTransferInfo::KopeteTransferDirection di);
 	int askIncomingTransfer( KopeteContact *contact, const QString& file, const unsigned long size, const QString& description=QString::null, QString internalId=QString::null);
 	void removeTransfer( unsigned int id );
 
 	/**
+	 * @brief Ask the user which file to send when they click Send File.
+	 *
 	 * Possibly ask the user which file to send when they click Send File. Sends a signal indicating KURL to
 	 * send when the local user accepts the transfer.
 	 * @param file If valid, the user will not be prompted for a URL, and this one will be used instead.
@@ -93,12 +98,19 @@ public:
 		bool mustBeLocal, QObject *sendTo, const char *slot );
 
 signals:
+	/** @brief Signals the transfer is done. */
 	void done( KopeteTransfer* );
+
+	/** @brief Signals the transfer has been cancelled. */
 	void canceled( KopeteTransfer* );
 
+	/** @brief Signals the transfer has been accepted */
 	void accepted(KopeteTransfer*, const QString &fileName);
+
+	/** @brief Signals the transfer has been rejected */
 	void refused(const KopeteFileTransferInfo& );
 
+	/** @brief Send a file */
 	void sendFile(const KURL &file, const QString &localFile, unsigned int fileSize);
 
 private slots:
@@ -133,6 +145,8 @@ public:
 	KopeteTransfer( const KopeteFileTransferInfo &, const QString &localFile, bool showProgressInfo = true);
 	KopeteTransfer( const KopeteFileTransferInfo &, const KopeteContact *toUser, bool showProgressInfo = true);
 	~KopeteTransfer();
+
+	/** @brief Get the info for this file transfer */
 	const KopeteFileTransferInfo &info() const { return mInfo; }
 
 	/**
@@ -158,17 +172,20 @@ public slots:
 	 * FIXME: find all uses, change to slotProcessed, and remove this function.
 	 */
 	void slotPercentCompleted(unsigned int);
+
 	/**
-	 * Set the file size processed so far
+	 * @brief Set the file size processed so far
 	 */
 	void slotProcessed(unsigned int);
+
 	/**
-	 * Indicate that the transfer is complete
+	 * @brief Indicate that the transfer is complete
 	 */
 	void slotComplete();
 
 	/**
-	 * Inform the job that an error has occurred while transferring the file.
+	 * @brief Inform the job that an error has occurred while transferring the file.
+	 *
 	 * @param error A member of the @ref KIO::Error enumeration indicating what error occurred.
 	 * @param errorText A string to aid understanding of the error, often the offending URL.
 	 */

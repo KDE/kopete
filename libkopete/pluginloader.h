@@ -80,61 +80,73 @@ public:
 	KopetePlugin *loadPlugin( const QString &spec );
 
 	/**
-	 * Search by Id
+	 * @brief Search by ID
+	 *
 	 * ex: "ICQProtocol"
+	 *
+	 * @return The @ref KopetePlugin object found by the search
 	 */
 	KopetePlugin *searchByID( const QString &Id );
 
 	/**
-	 * Search by name
+	 * @brief Search by name
+	 *
 	 * ex: "ICQ"
+	 *
+	 * @return The @ref KopetePlugin object found by the search
 	 */
 	KopetePlugin *searchByName(const QString&);
 
 	/**
-	 * The opposite of searchByName. Returns the name of the protocol.
+	 * @brief The opposite of searchByName.
+	 *
+	 * @return The name of the protocol.
 	 */
 	QString pluginName( const KopetePlugin *plugin ) const;
 
 	/**
-	 * loads all the enabled plugins
+	 * @brief Loads all the enabled plugins
 	 */
 	bool loadAll();
 
 	/**
-	 * unload the plugin specified by spec
+	 * @brief Unload the plugin specified by @p spec
 	 */
 	bool remove(const QString &spec);
 
 	/**
+	 * @brief Retrieve a list of all loaded plugins
+	 *
 	 * @return a list of all loaded plugins or protocols
 	 */
 	QPtrList<KopetePlugin> plugins() const;
 
 	/**
-	 * Return all registered address book fields for a given plugin.
+	 * @brief Retrieve all registered address book fields for a given plugin.
 	 *
-	 * Returns an empty QStringList if the plugin is invalid.
+	 * @return A QStringList object containing all the address book fields
+	 * available to the plugin.
+	 * @return An empty QStringList if the plugin is invalid.
 	 */
 	QStringList addressBookFields( KopetePlugin *p ) const;
 
 	/**
-	 * Retrieve the name of the icon for a KopetePlugin
+	 * @brief Retrieve the name of the icon for a @ref KopetePlugin.
 	 *
-	 * May return an empty string if the given plugin is not loaded, or
-	 * the .plugin file for this plugin specifies no icon name to use.
+	 * @return An empty string if the given plugin is not loaded
+	 * or the filename of the icon to use.
 	 */
 	QString pluginIcon( const KopetePlugin *plugin ) const;
 
 signals:
 	/**
-	 * A new plugin has just been loaded.
+	 * @brief Signals a new plugin has just been loaded.
 	 */
 	void pluginLoaded(KopetePlugin *);
 
 private slots:
 	/**
-	 * Cleanup some references if the plugin is destroyed
+	 * @brief Cleans up some references if the plugin is destroyed
 	 */
 	void slotPluginDestroyed( QObject *o );
 
