@@ -67,6 +67,9 @@ void TextEffectPreferences::load()
 	preferencesDialog->m_char->setChecked(config->colorChar());
 	preferencesDialog->m_lamer->setChecked(config->lamer());
 	preferencesDialog->m_casewaves->setChecked(config->waves());
+
+	//TODO-FIXME: port this plugin to KCAutoConfigModule to make it know if the page has been modified or not
+	setChanged(true);
 }
 
 void TextEffectPreferences::save()
@@ -81,9 +84,9 @@ void TextEffectPreferences::save()
 	config->setWaves(preferencesDialog->m_casewaves->isChecked());
 
 	config->save();
-#if KDE_IS_VERSION( 3, 1, 90 )
-	setChanged( false );
-#endif
+
+//	TODO: uncomment this line when the plugin will be ported to autoconfig
+//	setChanged( false );
 }
 
 QStringList TextEffectPreferences::colors()
@@ -103,10 +106,12 @@ void TextEffectPreferences::slotAddPressed()
 	{
 		preferencesDialog->mColorsListBox->insertItem(myColor.name());
 	}
+	setChanged(true);
 }
 void TextEffectPreferences::slotRemovePressed()
 {
 	delete preferencesDialog->mColorsListBox->selectedItem();
+	setChanged(true);
 }
 void TextEffectPreferences::slotUpPressed()
 {
@@ -120,6 +125,7 @@ void TextEffectPreferences::slotUpPressed()
 	preferencesDialog->mColorsListBox->takeItem(i);
 	preferencesDialog->mColorsListBox->insertItem(i , p-1 );
 	preferencesDialog->mColorsListBox->setSelected(i,true);
+	setChanged(true);
 }
 void TextEffectPreferences::slotDownPressed()
 {
@@ -133,6 +139,7 @@ void TextEffectPreferences::slotDownPressed()
 	preferencesDialog->mColorsListBox->takeItem(i);
 	preferencesDialog->mColorsListBox->insertItem(i , p+1 );
 	preferencesDialog->mColorsListBox->setSelected(i,true);
+	setChanged(true);
 }
 
 #include "texteffectpreferences.moc"
