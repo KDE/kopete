@@ -21,6 +21,10 @@ GaduSession::~GaduSession()
     }
     if( session_ ) {
         gg_free_session( session_ );
+        delete read_;
+        delete write_;
+        read_ = 0;
+        write_ = 0;
         session_ = 0;
     }
 }
@@ -41,6 +45,7 @@ GaduSession::login( const struct gg_login_params& p )
 		emit connectionFailed( 0L );
 		gg_free_session( session_ );
 		session_ = 0;
+                return;
 	}
 	read_ = new QSocketNotifier( session_->fd, QSocketNotifier::Read, this );
 	read_->setEnabled( false );
@@ -99,6 +104,10 @@ GaduSession::logoff()
     if ( isConnected() ) {
         gg_logoff( session_ );
 	QObject::disconnect( this, SLOT(checkDescriptor()) );
+        delete read_;
+        delete write_;
+        read_ = 0;
+        write_ = 0;
         gg_free_session( session_ );
         session_ = 0;
     }
@@ -222,11 +231,15 @@ GaduSession::checkDescriptor()
     if (!(e = gg_watch_fd(session_))) {
         emit error( i18n("Connection broken!"),
                     i18n(strerror(errno)) );
+        delete read_;
+        delete write_;
+        read_ = 0;
+        write_ = 0;
         gg_free_session( session_ );
         emit disconnect();
         return;
     }
-
+    kdDebug()<<"HERE"<<endl;
     switch( e->type ) {
     case GG_EVENT_MSG:
         emit messageReceived( e );
@@ -248,6 +261,10 @@ GaduSession::checkDescriptor()
         break;
     case GG_EVENT_CONN_FAILED:
         if ( session_ ) {
+            delete read_;
+            delete write_;
+            read_ = 0;
+            write_ = 0;
             gg_free_session( session_ );
             session_ = 0L;
         }
@@ -255,6 +272,10 @@ GaduSession::checkDescriptor()
         break;
     case GG_EVENT_DISCONNECT:
         if ( session_ ) {
+            delete read_;
+            delete write_;
+            read_ = 0;
+            write_ = 0;
             gg_free_session( session_ );
             session_ = 0L;
         }

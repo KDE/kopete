@@ -234,8 +234,9 @@ GaduProtocol::addContact( const QString& uin, const QString& nick,
 
     if( !c ) {
         uin_t uinNumber = uin.toUInt();
-        m->setAddressBookField( this, "Name", nick );
-        m->setAddressBookField( this, "uin", uin );
+        QString uins = parent->addressBookField( this, "messaging/gadu" )
+                       + "\n" + uin;
+        m->setAddressBookField( this, "messaging/gadu", uins );
         GaduContact *contact = new GaduContact( this->id(), uinNumber,
                                                 nick, m );
         m->addContact( contact, group );
@@ -550,7 +551,7 @@ GaduProtocol::serialize( KopeteMetaContact *metaContact,
         if ( c->protocol() == this->id() ) {
             kdDebug() << "*** Do it!" << endl;
             GaduContact *g = static_cast<GaduContact*>(c);
-            strList << g->name() << QString::number(g->uin());
+            strList << g->name();
             done = true;
         }
     }
@@ -565,19 +566,15 @@ GaduProtocol::deserialize( KopeteMetaContact *metaContact,
     QString protocolId = this->id();
 
     QString uin, nick;
-    int numContacts = strList.size() / 2;
+    int numContacts = strList.size();
     int idx = 0;
+
+    QStringList uins = QStringList::split( "\n",
+                                           metaContact->addressBookField( this, "messaging/gadu" ) );
+
     while( numContacts ) {
-        for( int i = 0; i < 2; ++i,++idx ) {
-            switch( i ) {
-            case 0:
-                nick = strList[idx];
-                break;
-            case 1:
-                uin = strList[idx];
-                break;
-            }
-        }
+        nick = strList[ idx ];
+        uin = uins[ idx++ ];
         --numContacts;
         addContact( uin, nick, metaContact );
     }
@@ -586,7 +583,7 @@ GaduProtocol::deserialize( KopeteMetaContact *metaContact,
 QStringList
 GaduProtocol::addressBookFields() const
 {
-    return QStringList::split( "|", "|Name|messaging/gadu|" );
+    return QStringList::split( "|", "|messaging/gadu|" );
 }
 
 /*
