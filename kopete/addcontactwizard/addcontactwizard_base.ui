@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>AddContactWizard_Base</class>
 <widget class="QWizard">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>634</width>
-            <height>530</height>
+            <width>579</width>
+            <height>414</height>
         </rect>
     </property>
     <property name="caption">
@@ -22,440 +22,134 @@
         <attribute name="title">
             <string>Introduction</string>
         </attribute>
-        <hbox>
+        <grid>
             <property name="name">
                 <cstring>unnamed</cstring>
             </property>
-            <widget class="QLayoutWidget">
+            <widget class="QLabel" row="0" column="1" rowspan="1" colspan="2">
                 <property name="name">
-                    <cstring>layout14</cstring>
+                    <cstring>TextLabel1</cstring>
                 </property>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <property name="spacing">
-                        <number>0</number>
-                    </property>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>PixmapLabel1</cstring>
-                        </property>
-                        <property name="frameShape">
-                            <enum>NoFrame</enum>
-                        </property>
-                        <property name="frameShadow">
-                            <enum>Plain</enum>
-                        </property>
-                        <property name="pixmap">
-                            <pixmap>image0</pixmap>
-                        </property>
-                        <property name="scaledContents">
-                            <bool>false</bool>
-                        </property>
-                    </widget>
-                    <widget class="QFrame">
-                        <property name="name">
-                            <cstring>frame3</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>5</hsizetype>
-                                <vsizetype>7</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="paletteBackgroundColor">
-                            <color>
-                                <red>113</red>
-                                <green>156</green>
-                                <blue>190</blue>
-                            </color>
-                        </property>
-                        <property name="palette">
-                            <palette>
-                                <active>
-                                    <color>
-                                        <red>0</red>
-                                        <green>0</green>
-                                        <blue>0</blue>
-                                    </color>
-                                    <color>
-                                        <red>238</red>
-                                        <green>234</green>
-                                        <blue>222</blue>
-                                    </color>
-                                    <color>
-                                        <red>255</red>
-                                        <green>255</green>
-                                        <blue>255</blue>
-                                    </color>
-                                    <color>
-                                        <red>246</red>
-                                        <green>244</green>
-                                        <blue>238</blue>
-                                    </color>
-                                    <color>
-                                        <red>119</red>
-                                        <green>117</green>
-                                        <blue>111</blue>
-                                    </color>
-                                    <color>
-                                        <red>158</red>
-                                        <green>155</green>
-                                        <blue>147</blue>
-                                    </color>
-                                    <color>
-                                        <red>0</red>
-                                        <green>0</green>
-                                        <blue>0</blue>
-                                    </color>
-                                    <color>
-                                        <red>255</red>
-                                        <green>255</green>
-                                        <blue>255</blue>
-                                    </color>
-                                    <color>
-                                        <red>0</red>
-                                        <green>0</green>
-                                        <blue>0</blue>
-                                    </color>
-                                    <color>
-                                        <red>255</red>
-                                        <green>255</green>
-                                        <blue>255</blue>
-                                    </color>
-                                    <color>
-                                        <red>113</red>
-                                        <green>156</green>
-                                        <blue>190</blue>
-                                    </color>
-                                    <color>
-                                        <red>0</red>
-                                        <green>0</green>
-                                        <blue>0</blue>
-                                    </color>
-                                    <color>
-                                        <red>0</red>
-                                        <green>0</green>
-                                        <blue>128</blue>
-                                    </color>
-                                    <color>
-                                        <red>255</red>
-                                        <green>255</green>
-                                        <blue>255</blue>
-                                    </color>
-                                    <color>
-                                        <red>0</red>
-                                        <green>0</green>
-                                        <blue>0</blue>
-                                    </color>
-                                    <color>
-                                        <red>0</red>
-                                        <green>0</green>
-                                        <blue>0</blue>
-                                    </color>
-                                </active>
-                                <disabled>
-                                    <color>
-                                        <red>128</red>
-                                        <green>128</green>
-                                        <blue>128</blue>
-                                    </color>
-                                    <color>
-                                        <red>238</red>
-                                        <green>234</green>
-                                        <blue>222</blue>
-                                    </color>
-                                    <color>
-                                        <red>255</red>
-                                        <green>255</green>
-                                        <blue>255</blue>
-                                    </color>
-                                    <color>
-                                        <red>255</red>
-                                        <green>255</green>
-                                        <blue>255</blue>
-                                    </color>
-                                    <color>
-                                        <red>119</red>
-                                        <green>117</green>
-                                        <blue>111</blue>
-                                    </color>
-                                    <color>
-                                        <red>158</red>
-                                        <green>155</green>
-                                        <blue>147</blue>
-                                    </color>
-                                    <color>
-                                        <red>128</red>
-                                        <green>128</green>
-                                        <blue>128</blue>
-                                    </color>
-                                    <color>
-                                        <red>255</red>
-                                        <green>255</green>
-                                        <blue>255</blue>
-                                    </color>
-                                    <color>
-                                        <red>128</red>
-                                        <green>128</green>
-                                        <blue>128</blue>
-                                    </color>
-                                    <color>
-                                        <red>255</red>
-                                        <green>255</green>
-                                        <blue>255</blue>
-                                    </color>
-                                    <color>
-                                        <red>113</red>
-                                        <green>156</green>
-                                        <blue>190</blue>
-                                    </color>
-                                    <color>
-                                        <red>0</red>
-                                        <green>0</green>
-                                        <blue>0</blue>
-                                    </color>
-                                    <color>
-                                        <red>0</red>
-                                        <green>0</green>
-                                        <blue>128</blue>
-                                    </color>
-                                    <color>
-                                        <red>255</red>
-                                        <green>255</green>
-                                        <blue>255</blue>
-                                    </color>
-                                    <color>
-                                        <red>0</red>
-                                        <green>0</green>
-                                        <blue>192</blue>
-                                    </color>
-                                    <color>
-                                        <red>128</red>
-                                        <green>0</green>
-                                        <blue>128</blue>
-                                    </color>
-                                </disabled>
-                                <inactive>
-                                    <color>
-                                        <red>0</red>
-                                        <green>0</green>
-                                        <blue>0</blue>
-                                    </color>
-                                    <color>
-                                        <red>238</red>
-                                        <green>234</green>
-                                        <blue>222</blue>
-                                    </color>
-                                    <color>
-                                        <red>255</red>
-                                        <green>255</green>
-                                        <blue>255</blue>
-                                    </color>
-                                    <color>
-                                        <red>255</red>
-                                        <green>255</green>
-                                        <blue>255</blue>
-                                    </color>
-                                    <color>
-                                        <red>119</red>
-                                        <green>117</green>
-                                        <blue>111</blue>
-                                    </color>
-                                    <color>
-                                        <red>158</red>
-                                        <green>155</green>
-                                        <blue>147</blue>
-                                    </color>
-                                    <color>
-                                        <red>0</red>
-                                        <green>0</green>
-                                        <blue>0</blue>
-                                    </color>
-                                    <color>
-                                        <red>255</red>
-                                        <green>255</green>
-                                        <blue>255</blue>
-                                    </color>
-                                    <color>
-                                        <red>0</red>
-                                        <green>0</green>
-                                        <blue>0</blue>
-                                    </color>
-                                    <color>
-                                        <red>255</red>
-                                        <green>255</green>
-                                        <blue>255</blue>
-                                    </color>
-                                    <color>
-                                        <red>113</red>
-                                        <green>156</green>
-                                        <blue>190</blue>
-                                    </color>
-                                    <color>
-                                        <red>0</red>
-                                        <green>0</green>
-                                        <blue>0</blue>
-                                    </color>
-                                    <color>
-                                        <red>0</red>
-                                        <green>0</green>
-                                        <blue>128</blue>
-                                    </color>
-                                    <color>
-                                        <red>255</red>
-                                        <green>255</green>
-                                        <blue>255</blue>
-                                    </color>
-                                    <color>
-                                        <red>0</red>
-                                        <green>0</green>
-                                        <blue>192</blue>
-                                    </color>
-                                    <color>
-                                        <red>128</red>
-                                        <green>0</green>
-                                        <blue>128</blue>
-                                    </color>
-                                </inactive>
-                            </palette>
-                        </property>
-                        <property name="frameShape">
-                            <enum>NoFrame</enum>
-                        </property>
-                        <property name="frameShadow">
-                            <enum>Raised</enum>
-                        </property>
-                    </widget>
-                </vbox>
-            </widget>
-            <widget class="QLayoutWidget">
-                <property name="name">
-                    <cstring>layout16</cstring>
+                <property name="sizePolicy">
+                    <sizepolicy>
+                        <hsizetype>5</hsizetype>
+                        <vsizetype>5</vsizetype>
+                        <horstretch>1</horstretch>
+                        <verstretch>0</verstretch>
+                    </sizepolicy>
                 </property>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>TextLabel1</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>5</hsizetype>
-                                <vsizetype>5</vsizetype>
-                                <horstretch>1</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="text">
-                            <string>&lt;h2&gt;Welcome to the Add Contact Wizard.&lt;/h2&gt;
+                <property name="text">
+                    <string>&lt;h2&gt;Welcome to the Add Contact Wizard.&lt;/h2&gt;
 
 &lt;p&gt;This wizard will guide you through the process of adding a new contact to Kopete.&lt;/p&gt;</string>
-                        </property>
-                        <property name="alignment">
-                            <set>WordBreak|AlignTop|AlignLeft</set>
-                        </property>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer12_2</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>34</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>textLabel2_2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&lt;p&gt;Kopete shares contact information with the KDE Addressbook.  This gives you seamless integration between instant messaging, e-mail and other personal information management applications.&lt;/p&gt;
-&lt;p&gt;If you prefer not to store instant messaging information in the KDE Addressbook, uncheck the box below.&lt;/p&gt;</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>textLabel1_3</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&lt;p&gt;Press the "Next" button to begin...&lt;/p&gt;</string>
-                        </property>
-                    </widget>
-                    <widget class="QLayoutWidget">
-                        <property name="name">
-                            <cstring>layout14</cstring>
-                        </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <spacer>
-                                <property name="name">
-                                    <cstring>spacer14_3</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Vertical</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>29</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <spacer>
-                                <property name="name">
-                                    <cstring>spacer14_4</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>291</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </hbox>
-                    </widget>
-                    <widget class="QCheckBox">
-                        <property name="name">
-                            <cstring>chkAddressee</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&amp;Use the KDE address book for this contact</string>
-                        </property>
-                        <property name="checked">
-                            <bool>true</bool>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>Check box this if you do not want to integrate other KDE applications with Kopete</string>
-                        </property>
-                    </widget>
-                </vbox>
+                </property>
+                <property name="alignment">
+                    <set>WordBreak|AlignTop|AlignLeft</set>
+                </property>
             </widget>
-        </hbox>
+            <widget class="QLabel" row="1" column="1" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>textLabel2_2</cstring>
+                </property>
+                <property name="text">
+                    <string>&lt;p&gt;Kopete shares contact information with the KDE Addressbook.  This gives you seamless integration between instant messaging, e-mail and other personal information management applications.&lt;/p&gt;
+&lt;p&gt;If you prefer not to store instant messaging information in the KDE Addressbook, uncheck the box below.&lt;/p&gt;</string>
+                </property>
+            </widget>
+            <widget class="QLabel" row="2" column="1" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>textLabel1_3</cstring>
+                </property>
+                <property name="text">
+                    <string>&lt;p&gt;Press the "Next" button to begin...&lt;/p&gt;</string>
+                </property>
+            </widget>
+            <widget class="QLabel" row="0" column="0" rowspan="5" colspan="1">
+                <property name="name">
+                    <cstring>PixmapLabel1</cstring>
+                </property>
+                <property name="frameShape">
+                    <enum>NoFrame</enum>
+                </property>
+                <property name="frameShadow">
+                    <enum>Plain</enum>
+                </property>
+                <property name="pixmap">
+                    <pixmap>image0</pixmap>
+                </property>
+                <property name="scaledContents">
+                    <bool>false</bool>
+                </property>
+            </widget>
+            <spacer row="3" column="1">
+                <property name="name">
+                    <cstring>spacer14_3</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Vertical</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>50</height>
+                    </size>
+                </property>
+            </spacer>
+            <spacer row="3" column="2">
+                <property name="name">
+                    <cstring>spacer14_4</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>425</width>
+                        <height>20</height>
+                    </size>
+                </property>
+            </spacer>
+            <widget class="QCheckBox" row="4" column="1" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>chkAddressee</cstring>
+                </property>
+                <property name="text">
+                    <string>&amp;Use the KDE address book for this contact</string>
+                </property>
+                <property name="accel">
+                    <string>Alt+U</string>
+                </property>
+                <property name="checked">
+                    <bool>true</bool>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>Check box this if you do not want to integrate other KDE applications with Kopete</string>
+                </property>
+            </widget>
+            <spacer row="5" column="1">
+                <property name="name">
+                    <cstring>spacer9</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Vertical</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>91</height>
+                    </size>
+                </property>
+            </spacer>
+        </grid>
     </widget>
     <widget class="QWidget">
         <property name="name">
@@ -464,98 +158,91 @@
         <attribute name="title">
             <string>Select Address Book Entry</string>
         </attribute>
-        <hbox>
+        <grid>
             <property name="name">
                 <cstring>unnamed</cstring>
             </property>
-            <widget class="QLayoutWidget">
+            <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
                 <property name="name">
-                    <cstring>layout17</cstring>
+                    <cstring>textLabel1</cstring>
                 </property>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>textLabel1</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&lt;h2&gt;Select Address Book Entry&lt;/h2&gt;
-&lt;p&gt;Choose a contact to continue:&lt;/p&gt;</string>
-                        </property>
-                    </widget>
-                    <widget class="QListView">
-                        <column>
-                            <property name="text">
-                                <string>Name</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>Email</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <property name="name">
-                            <cstring>addresseeListView</cstring>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>Select the contact you want to communicate with via Instant Messaging</string>
-                        </property>
-                    </widget>
-                    <widget class="QLayoutWidget">
-                        <property name="name">
-                            <cstring>layout10</cstring>
-                        </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QPushButton">
-                                <property name="name">
-                                    <cstring>addAddresseeButton</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Create New &amp;Entry...</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Create a new entry in your address book</string>
-                                </property>
-                            </widget>
-                            <spacer>
-                                <property name="name">
-                                    <cstring>spacer11</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>221</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </hbox>
-                    </widget>
-                </vbox>
+                <property name="text">
+                    <string>&lt;h2&gt;Select Address Book Entry&lt;/h2&gt;</string>
+                </property>
             </widget>
-        </hbox>
+            <widget class="QPushButton" row="3" column="0">
+                <property name="name">
+                    <cstring>addAddresseeButton</cstring>
+                </property>
+                <property name="text">
+                    <string>Create New Entr&amp;y...</string>
+                </property>
+                <property name="accel">
+                    <string>Alt+Y</string>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>Create a new entry in your address book</string>
+                </property>
+            </widget>
+            <spacer row="3" column="1">
+                <property name="name">
+                    <cstring>spacer11</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>410</width>
+                        <height>20</height>
+                    </size>
+                </property>
+            </spacer>
+            <widget class="QListView" row="2" column="0" rowspan="1" colspan="2">
+                <column>
+                    <property name="text">
+                        <string>Name</string>
+                    </property>
+                    <property name="clickable">
+                        <bool>true</bool>
+                    </property>
+                    <property name="resizable">
+                        <bool>true</bool>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>Email</string>
+                    </property>
+                    <property name="clickable">
+                        <bool>true</bool>
+                    </property>
+                    <property name="resizable">
+                        <bool>true</bool>
+                    </property>
+                </column>
+                <property name="name">
+                    <cstring>addresseeListView</cstring>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>Select the contact you want to communicate with via Instant Messaging</string>
+                </property>
+            </widget>
+            <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>textLabel1_5</cstring>
+                </property>
+                <property name="text">
+                    <string>&lt;p&gt;Choose a contact to continue:&lt;/p&gt;</string>
+                </property>
+                <property name="alignment">
+                    <set>AlignVCenter</set>
+                </property>
+            </widget>
+        </grid>
     </widget>
     <widget class="QWidget">
         <property name="name">
@@ -564,33 +251,36 @@
         <attribute name="title">
             <string>Select Display Name and Group</string>
         </attribute>
-        <vbox>
+        <grid>
             <property name="name">
                 <cstring>unnamed</cstring>
             </property>
-            <widget class="QLabel">
+            <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
                 <property name="name">
                     <cstring>textLabel2</cstring>
                 </property>
                 <property name="text">
-                    <string>&lt;p&gt;&lt;h2&gt;Select Display Name and Group&lt;/h2&gt;&lt;/p&gt;</string>
+                    <string>&lt;qt&gt;&lt;p&gt;&lt;h2&gt;Select Display Name and Group&lt;/h2&gt;&lt;/p&gt;&lt;/qt&gt;</string>
                 </property>
-                <property name="buddy" stdset="0">
-                    <cstring>mDisplayName</cstring>
+                <property name="textFormat">
+                    <enum>AutoText</enum>
+                </property>
+                <property name="alignment">
+                    <set>WordBreak|AlignVCenter</set>
                 </property>
             </widget>
-            <widget class="QLabel">
+            <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
                 <property name="name">
                     <cstring>textLabel1_4</cstring>
                 </property>
                 <property name="text">
-                    <string>Enter the contact's &amp;display name.  This is how the contact will appear in Kopete:</string>
+                    <string>Enter the contact's displa&amp;y name.  This is how the contact will appear in Kopete:</string>
                 </property>
                 <property name="buddy" stdset="0">
                     <cstring>mDisplayName</cstring>
                 </property>
             </widget>
-            <widget class="QLineEdit">
+            <widget class="QLineEdit" row="2" column="0" rowspan="1" colspan="2">
                 <property name="name">
                     <cstring>mDisplayName</cstring>
                 </property>
@@ -598,7 +288,7 @@
                     <string>Leave this blank to use any display name set by the contact themself</string>
                 </property>
             </widget>
-            <spacer>
+            <spacer row="3" column="1">
                 <property name="name">
                     <cstring>spacer14_2</cstring>
                 </property>
@@ -615,7 +305,7 @@
                     </size>
                 </property>
             </spacer>
-            <widget class="Line">
+            <widget class="Line" row="4" column="0" rowspan="1" colspan="2">
                 <property name="name">
                     <cstring>line1</cstring>
                 </property>
@@ -629,7 +319,7 @@
                     <enum>Horizontal</enum>
                 </property>
             </widget>
-            <widget class="QLabel">
+            <widget class="QLabel" row="5" column="0" rowspan="1" colspan="2">
                 <property name="name">
                     <cstring>TextLabel1_3</cstring>
                 </property>
@@ -643,7 +333,7 @@
                     <cstring>groupList</cstring>
                 </property>
             </widget>
-            <widget class="KListView">
+            <widget class="KListView" row="6" column="0" rowspan="1" colspan="2">
                 <column>
                     <property name="text">
                         <string>Groups</string>
@@ -665,45 +355,38 @@
                     <string>A contact may be present in more than one group</string>
                 </property>
             </widget>
-            <widget class="QLayoutWidget">
+            <widget class="KPushButton" row="7" column="0">
                 <property name="name">
-                    <cstring>layout21</cstring>
+                    <cstring>addGroupButton</cstring>
                 </property>
-                <hbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="KPushButton">
-                        <property name="name">
-                            <cstring>addGroupButton</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Create New G&amp;roup...</string>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>Click here to create a new group</string>
-                        </property>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>Spacer6</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>328</width>
-                                <height>16</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </hbox>
+                <property name="text">
+                    <string>Create New G&amp;roup...</string>
+                </property>
+                <property name="accel">
+                    <string>Alt+R</string>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>Click here to create a new group</string>
+                </property>
             </widget>
-        </vbox>
+            <spacer row="7" column="1">
+                <property name="name">
+                    <cstring>Spacer6</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>407</width>
+                        <height>16</height>
+                    </size>
+                </property>
+            </spacer>
+        </grid>
     </widget>
     <widget class="QWidget">
         <property name="name">
@@ -725,9 +408,6 @@
                 </property>
                 <property name="alignment">
                     <set>WordBreak|AlignVCenter</set>
-                </property>
-                <property name="buddy" stdset="0">
-                    <cstring>protocolListView</cstring>
                 </property>
             </widget>
             <widget class="QLabel">
@@ -825,61 +505,51 @@
         <attribute name="title">
             <string>Finished.</string>
         </attribute>
-        <hbox>
+        <grid>
             <property name="name">
                 <cstring>unnamed</cstring>
             </property>
-            <widget class="QLayoutWidget">
+            <widget class="QLabel" row="0" column="0">
                 <property name="name">
-                    <cstring>layout19</cstring>
+                    <cstring>TextLabel9</cstring>
                 </property>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>TextLabel9</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>3</hsizetype>
-                                <vsizetype>5</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="text">
-                            <string>&lt;p&gt;&lt;h2&gt;Congratulations.&lt;/h2&gt;&lt;/p&gt;
+                <property name="sizePolicy">
+                    <sizepolicy>
+                        <hsizetype>3</hsizetype>
+                        <vsizetype>5</vsizetype>
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                    </sizepolicy>
+                </property>
+                <property name="text">
+                    <string>&lt;p&gt;&lt;h2&gt;Congratulations.&lt;/h2&gt;&lt;/p&gt;
 
 &lt;p&gt;You have finished configuring a contact. Please click Finish and your contact will be added to your contact list.&lt;/p&gt;
 
 &lt;p&gt;&lt;i&gt;Note&lt;/i&gt;: If adding this contact requires authorization from one or more of the messaging services, Kopete may prompt you for further information after this screen.&lt;/p&gt;</string>
-                        </property>
-                        <property name="alignment">
-                            <set>WordBreak|AlignVCenter</set>
-                        </property>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>Spacer4</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>16</width>
-                                <height>145</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </vbox>
+                </property>
+                <property name="alignment">
+                    <set>WordBreak|AlignVCenter</set>
+                </property>
             </widget>
-        </hbox>
+            <spacer row="1" column="0">
+                <property name="name">
+                    <cstring>Spacer4</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Vertical</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>16</width>
+                        <height>205</height>
+                    </size>
+                </property>
+            </spacer>
+        </grid>
     </widget>
 </widget>
 <images>
