@@ -552,7 +552,6 @@ void KopeteContactListView::slotMetaContactSelected( bool sel )
 	actionStartChat->setEnabled( set );
 	actionMove->setEnabled( sel ); // TODO: make available for several contacts
 	actionCopy->setEnabled( sel ); // TODO: make available for several contacts
-	actionAddContact->setEnabled( sel );
 }
 
 void KopeteContactListView::slotAddedToGroup( Kopete::MetaContact *mc, Kopete::Group *to )
@@ -1362,6 +1361,8 @@ void KopeteContactListView::updateActionsForSelection(
 		actionSendMessage->setText(i18n("Send Single Message..."));
 		actionRename->setEnabled(true);
 		actionRemove->setEnabled(true);
+		actionAddContact->setText(i18n("&Add Subcontact"));
+		actionAddContact->setEnabled(!contacts.first()->isTemporary());
 	}
 	else if( groups.count() == 1 && contacts.isEmpty() )
 	{
@@ -1371,6 +1372,8 @@ void KopeteContactListView::updateActionsForSelection(
 		actionRename->setEnabled(true);
 		actionRemove->setEnabled(true);
 		actionSendMessage->setEnabled(true);
+		actionAddContact->setText(i18n("&Add Contact to Group"));
+		actionAddContact->setEnabled(groups.first()->type()==Kopete::Group::Normal);
 	}
 	else
 	{
@@ -1378,6 +1381,7 @@ void KopeteContactListView::updateActionsForSelection(
 		actionRemove->setText(i18n("Remove"));
 		actionRename->setEnabled(false);
 		actionRemove->setEnabled(contacts.count()+groups.count());
+		actionAddContact->setEnabled(false);
 	}
 
 	actionMove->setCurrentItem( -1 );
@@ -1653,14 +1657,18 @@ void KopeteContactListView::slotAddContact()
 		return;
 
 	Kopete::MetaContact *metacontact =
-		Kopete::ContactList::self()->selectedMetaContacts().first();
+			Kopete::ContactList::self()->selectedMetaContacts().first();
+	Kopete::Group *group =
+			Kopete::ContactList::self()->selectedGroups().first();
 	Kopete::Account *account = dynamic_cast<Kopete::Account*>( sender()->parent() );
 
-	if( account && metacontact )
-	{
-		if ( metacontact->isTemporary() )
-			return;
+	if ( ( metacontact && metacontact->isTemporary() ) ||
+			  (group && group->type()!=Kopete::Group::Normal ) )
+		return;
 
+
+	if( account && ( metacontact || group) )
+	{
 		KDialogBase *addDialog = new KDialogBase( this, "addDialog", true,
 			i18n( "Add Contact" ), KDialogBase::Ok|KDialogBase::Cancel,
 			KDialogBase::Ok, true );
@@ -1679,7 +1687,16 @@ void KopeteContactListView::slotAddContact()
 			if( addDialog->exec() == QDialog::Accepted )
 			{
 				if( addContactPage->validateData() )
+				{
+					if(!metacontact)
+					{
+						metacontact = new Kopete::MetaContact();
+						metacontact->addToGroup( group );
+						Kopete::ContactList::self()->addMetaContact( metacontact );
+					}
+
 					addContactPage->apply( account, metacontact );
+				}
 			}
 		}
 		addDialog->deleteLater();
