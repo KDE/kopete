@@ -86,13 +86,7 @@ KActionMenu* AIMAccount::actionMenu()
 									mActionMenu,
 									"mActionEditInfo"));
 
-
 	mActionMenu->popupMenu()->insertSeparator();
-
-	mActionMenu->insert(
-		new KAction( i18n("Show Debug"), "wizard", 0, this,
-					 SLOT(slotShowDebugDialog()), mActionMenu,
-					 "actionShowDebug") );
 
 	mActionMenu->insert(
 		new KAction(i18n("Fast add a Contact"), "", 0, this,
@@ -177,6 +171,5 @@ void AIMAccount::setAway(bool away, const QString &awayReason)
 		mEngine->sendAway(false, QString::null);
 }
 
-
-
 #include "aimaccount.moc"
+// vim: set noet ts=4 sts=4 sw=4:

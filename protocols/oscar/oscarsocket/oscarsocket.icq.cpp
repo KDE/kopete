@@ -548,7 +548,7 @@ bool requestAutoReply(unsigned long uin, unsigned long status)
 	if (status == 0)
 		return false;
 
-	responseRequestSeq = --advCounter;
+	int advCounter = 0;
 	unsigned char type = 0xE8;
 	if (status & ICQ_STATUS_DND)
 		type = 0xEB;
@@ -565,11 +565,13 @@ bool requestAutoReply(unsigned long uin, unsigned long status)
 	Buffer outbuf;
 	outbuf.addSnac(OSCAR_FAM_4,0x0006,0x0000,0x00000000);
 	outbuf.addDWord(0x00000000); // TIME
-	outbuf.addDWord(0x00000000); // ID
+	int id1 = rand() & 0xFFFF;
+   int id2 = rand() & 0xFFFF;
+	outbuf.addWord(id1); // ID
+	outbuf.addWord(id2); // ID
 
 	outbuf.addWord(MSGFORMAT_ADVANCED); // type-2 message
 	outbuf.addDWord(getSN().toULong()); // own uin
-
 
 	Buffer tlv10001;
 	tlv10001.addWord(0x1B00); // length
@@ -580,9 +582,16 @@ bool requestAutoReply(unsigned long uin, unsigned long status)
 	tlv10001.addDWord(0x00000000); // CAP
 	tlv10001.addDWord(0x00000003); // unknown
 	tlv10001.addDWord(0x00000000); // unknown -> 0 = normal message
-	<< advCounter << 0xE000 << advCounter
-	<< 0x00000000L << 0x00000000L << 0x00000000L
-	<< type << (char)3;
+	tlv10001.addWord(advCounter);
+	tlv10001.addWord(0xE000);
+	tlv10001.addWord(advCounter);
+
+	tlv10001.addDWord(0x00000000); // 12 unknown bytes, always zero
+	tlv10001.addDWord(0x00000000);
+	tlv10001.addDWord(0x00000000);
+	tlv10001.addWord(0x0001) // message type - normal message
+
+	addByte << (char)3;
 	tlv10001.pack((unsigned short)(client->owner->uStatus & 0xFFFF));
 	tlv10001 << 0x0100 << 0x0100 << (char)0;
 

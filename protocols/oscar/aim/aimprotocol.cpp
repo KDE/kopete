@@ -41,8 +41,8 @@ AIMProtocol* AIMProtocol::protocolStatic_ = 0L;
 
 AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
 	: KopeteProtocol(parent,name),
-	statusOnline(KopeteOnlineStatus::Online, 1, this, OSCAR_ONLINE, "aim_online", i18n("Go Online"), i18n("Online")),
-	statusOffline(KopeteOnlineStatus::Offline, 1, this, OSCAR_OFFLINE, "aim_offline", i18n("Go Offline"), i18n("Offline")),
+	statusOnline(KopeteOnlineStatus::Online, 1, this, OSCAR_ONLINE, "aim_online", i18n("Online"), i18n("Online")),
+	statusOffline(KopeteOnlineStatus::Offline, 1, this, OSCAR_OFFLINE, "aim_offline", i18n("Offline"), i18n("Offline")),
 	statusAway(KopeteOnlineStatus::Away, 1, this, OSCAR_AWAY, "aim_away", i18n("Go Away"), i18n("Away")),
 	statusConnecting(KopeteOnlineStatus::Connecting, 99, this, OSCAR_CONNECTING, "aim_connecting", i18n("Connecting..."), i18n("Connecting..."))
 {

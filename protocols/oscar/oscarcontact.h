@@ -145,7 +145,7 @@ class OscarContact : public KopeteContact
 		/**
 		* Called when the status of the Kopete user(behind this computer)'s status has changed
 		*/
-/* 		void slotMainStatusChanged(const unsigned int); */
+		void slotMainStatusChanged(const unsigned int);
 
 		/** Called when KMM is destroyed */
 		void slotMessageManagerDestroyed();

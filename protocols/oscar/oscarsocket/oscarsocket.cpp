@@ -927,8 +927,7 @@ TLV * OscarSocket::findTLV(QPtrList<TLV> &l, WORD typ)
 /** tells the server that the client is ready to receive commands & stuff */
 void OscarSocket::sendClientReady(void)
 {
-	kdDebug(14150) << "SEND (CLI_READY) sending client ready, end of login procedure " <<
-		"======================================================" << endl;
+	kdDebug(14150) << "SEND (CLI_READY) sending client ready, end of login procedure." << endl;
 
 	Buffer outbuf;
 //	outbuf.addSnac(0x0001,0x0002,0x0000,0x00000002);
@@ -968,7 +967,8 @@ void OscarSocket::sendClientReady(void)
 
 	outbuf.print();
 
-	kdDebug(14150) << "=================================================================================" << endl;
+	kdDebug(14150) << "===========================================" << endl;
+	kdDebug(14150) << "===========================================" << endl;
 
 	emit statusChanged(OSCAR_ONLINE);
 
@@ -1997,11 +1997,11 @@ void OscarSocket::parseUserProfile(Buffer &inbuf)
 
 void OscarSocket::sendAway(bool away, const QString &message)
 {
-	kdDebug(14150) << k_funcinfo <<  "called." << endl;
+	kdDebug(14150) << k_funcinfo << "Called." << endl;
 
 	if(mIsICQ)
 	{
-		kdDebug(14150) << k_funcinfo <<  "This is AIM only!" << endl;
+		kdDebug(14150) << k_funcinfo << "This is AIM only!" << endl;
 		return;
 	}
 

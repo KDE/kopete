@@ -383,7 +383,7 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 		// Contact existed in the list already, sync information
 		// FIXME: is this needed? won't work anymore as AIMBuddy doesn't return a KOS on status()!
 //		contact->setOnlineStatus( buddy->status() );
-		if(contact->displayName() !=nick)
+		if(contact->displayName()!=nick)
 			contact->rename(nick);
 		contact->syncGroups();
 	}
@@ -405,7 +405,7 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 		else
 		{
 			kdDebug(14150) << k_funcinfo << "DIDN'T find its group on server" << endl;
-						// If the group doesn't exist on the server yet.
+			// If the group doesn't exist on the server yet.
 			// This is really strange if we have the contact
 			// on the server but not the group it's in.
 			// May have to do something here in the future
@@ -663,7 +663,7 @@ void OscarAccount::slotOurStatusChanged(const unsigned int newStatus)
 {
 	kdDebug(14150) << k_funcinfo << "Called; newStatus=" << newStatus << endl;
 
-	mMyself->setStatus( newStatus );
+	mMyself->setStatus(newStatus);
 }
 
 

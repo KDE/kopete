@@ -87,6 +87,11 @@ void OscarContact::initSignals()
 	QObject::connect(
 		mAccount->getEngine(), SIGNAL(gotOffgoingBuddy(QString)),
 		this, SLOT(slotOffgoingBuddy(QString)));
+
+	// kopete-users's status changed
+	QObject::connect(
+		mAccount->getEngine(), SIGNAL(statusChanged(const unsigned int)),
+		this, SLOT(slotMainStatusChanged(const unsigned int)));
 	// Got IM
 /*
 	QObject::connect(
@@ -223,18 +228,16 @@ void OscarContact::setIdleTime(unsigned int idleTime)
 
 	mIdle = idleTime;
 }
-/*
+
 void OscarContact::slotMainStatusChanged(const unsigned int newStatus)
 {
-	kdDebug(14150) << k_funcinfo << "called, with status '" <<
-		newStatus.description() << "'" << endl;
 	if(newStatus == OSCAR_OFFLINE)
 	{
-		mListContact->setStatus(OSCAR_OFFLINE);
-		setStatus(newStatus);
+		setStatus(OSCAR_OFFLINE);
+		slotUpdateBuddy();
 	}
 }
-*/
+
 void OscarContact::slotOffgoingBuddy(QString sn)
 {
 	if(tocNormalize(sn)==tocNormalize(mName)) //if we are the contact that is offgoing
