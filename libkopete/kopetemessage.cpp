@@ -151,7 +151,7 @@ QString KopeteMessage::escapedBody() const
 		}
 
 		// Lastly, remove trailing whitespace:
-		parsedString.replace( QRegExp( QString::fromLatin1( "\\s*$" ) ), QString::null );
+		parsedString.stripWhiteSpace();
 
 		kdDebug(14010) << "KopeteMessage::escapeBody: " << parsedString <<endl;
 		return parsedString;
