@@ -130,9 +130,6 @@ public:
 	inline void setCodec( const QString &nick, const QTextCodec *codec )
 		{ codecs.replace( nick, codec ); }
 
-	inline static bool isChannel( const QString &s )
-		{ return isChannelRegex.exactMatch(s); };
-
 	/**
 	 * Send a quit message for the given reason.
 	 * If now is set to true the connection is closed and no event message is sent.
@@ -299,8 +296,10 @@ private slots:
 	void quitTimeout();
 
 private:
-	void registerCtcpMethods();
+	void registerCommands();
 	void registerNumericReplies();
+	void registerCtcp();
+
 	void setStatus(EngineStatus status);
 	bool canSend( bool mustBeConnected ) const;
 	bool invokeCtcpCommandOfMessage(const KIRCMessage &message, const QDict<KIRCMethodFunctorCall> &map);
@@ -418,7 +417,6 @@ private:
 	static KIRCMethodFunctorCall *IgnoreMethod;
 
 	//Static regexes
-	static const QRegExp isChannelRegex;
 	static const QRegExp m_RemoveLinefeeds;
 
 	EngineStatus m_status;
