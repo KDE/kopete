@@ -19,7 +19,7 @@
 #ifndef KOPETECONTACT_H
 #define KOPETECONTACT_H
 
-#include <qlistbox.h>
+#include <klistview.h>
 #include <qmap.h>
 #include <qobject.h>
 #include <qpixmap.h>
@@ -445,12 +445,12 @@ private:
 	/**
 	 * Followed declarations are needed to move a contact into another metacontact
 	 */
-	KListBox *m_selectMetaContactListBox;
-	class MetaContactListBoxItem : public QListBoxText
+	KListView *m_selectMetaContactListBox;
+	class MetaContactListViewItem : public QListViewItem
 	{
 		public:
 			KopeteMetaContact *metaContact;
-			MetaContactListBoxItem(KopeteMetaContact *m, QListBox *p);
+			MetaContactListViewItem(KopeteMetaContact *m, QListView *p);
 	};
 
 	QString m_contactId;

@@ -286,16 +286,21 @@ void KopeteContact::slotChangeDisplayName(){
 void KopeteContact::slotChangeMetaContact()
 {
 	KDialogBase *moveDialog= new KDialogBase( qApp->mainWidget(), "moveDialog" , true, i18n("Move Contact") , KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true )  ;
-	QVBox *w=new QVBox(moveDialog);
+	QVBox *w = new QVBox(moveDialog);
+	w->setSpacing( 8 );
 	new QLabel(i18n("Choose the meta contact into which you want to move this contact.") , w);
-	m_selectMetaContactListBox= new KListBox ( w , "m_selectMetaContactListBox");
+	m_selectMetaContactListBox = new KListView ( w , "m_selectMetaContactListBox");
+	m_selectMetaContactListBox->addColumn( i18n("Display Name") );
+	m_selectMetaContactListBox->addColumn( i18n("Contact IDs") );
 
 	QPtrList<KopeteMetaContact> metaContacts = KopeteContactList::contactList()->metaContacts();
-	for( 	KopeteMetaContact *mc = metaContacts.first(); mc ; mc = metaContacts.next() )
+	for( KopeteMetaContact *mc = metaContacts.first(); mc ; mc = metaContacts.next() )
 	{
 		if(!mc->isTemporary())
-			new MetaContactListBoxItem(mc , m_selectMetaContactListBox  ) ;
+			new MetaContactListViewItem(mc , m_selectMetaContactListBox  ) ;
 	}
+
+	m_selectMetaContactListBox->sort();
 
 	moveDialog->setMainWidget(w);
 	connect( moveDialog, SIGNAL( okClicked()) , this, SLOT( slotMoveDialogOkClicked() ) );
@@ -304,7 +309,7 @@ void KopeteContact::slotChangeMetaContact()
 
 void KopeteContact::slotMoveDialogOkClicked()
 {
-	KopeteMetaContact *mc= static_cast<MetaContactListBoxItem*>(m_selectMetaContactListBox->item(m_selectMetaContactListBox->currentItem())) ->metaContact;
+	KopeteMetaContact *mc= static_cast<MetaContactListViewItem*>( m_selectMetaContactListBox->currentItem() ) ->metaContact;
 	if(!mc)
 	{
 		kdDebug(14010) << "KopeteContact::slotMoveDialogOkClicked : WARNING metaContact not found" << endl;
@@ -348,18 +353,20 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 	}
 }
 
-KopeteContact::MetaContactListBoxItem::MetaContactListBoxItem(KopeteMetaContact *m, QListBox *p)
-		:QListBoxText(p)
+KopeteContact::MetaContactListViewItem::MetaContactListViewItem(KopeteMetaContact *m, QListView *p)
+		:QListViewItem(p)
 {
 	metaContact=m;
-	QString t=m->displayName();
+	setText( 0, m->displayName() );
+
+	QString t;
 	bool f=true;
 
 	QPtrList<KopeteContact> contacts = metaContact->contacts();
 	for( KopeteContact *c = contacts.first(); c ; c = contacts.next() )
 	{
 		if( f )
-			t += QString::fromLatin1( " [" );
+			t += QString::fromLatin1( "[ " );
 		else
 			t += QString::fromLatin1( " ; " );
 
@@ -367,9 +374,9 @@ KopeteContact::MetaContactListBoxItem::MetaContactListBoxItem(KopeteMetaContact 
 		f = false;
 	}
 	if( !f )
-		t += QString::fromLatin1( "]" );
+		t += QString::fromLatin1( " ]" );
 
-	setText(t);
+	setText( 1, t );
 }
 
 QString KopeteContact::contactId() const
