@@ -176,9 +176,6 @@
                                 <property name="text">
                                     <string>Remember &amp;password</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+P</string>
-                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to save your password.</string>
                                 </property>

@@ -111,9 +111,6 @@
                                 <property name="text">
                                     <string>Remember &amp;password</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+P</string>
-                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to save your password.</string>
                                 </property>
@@ -262,9 +259,6 @@
                                 <property name="text">
                                     <string>Connect automatically at &amp;startup</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+S</string>
-                                </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to connect automatically when Kopete is started.</string>
                                 </property>
@@ -301,9 +295,6 @@
                                     <string>Automatically open a chat &amp;window when someone starts
 a conversation</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+W</string>
-                                </property>
                             </widget>
                             <widget class="QCheckBox">
                                 <property name="name">
@@ -311,9 +302,6 @@ a conversation</string>
                                 </property>
                                 <property name="text">
                                     <string>Automatically &amp;download the display picture if possible</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+D</string>
                                 </property>
                                 <property name="checked">
                                     <bool>true</bool>
@@ -325,9 +313,6 @@ a conversation</string>
                                 </property>
                                 <property name="text">
                                     <string>Download and show c&amp;ustom emoticons (experimental)</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+U</string>
                                 </property>
                             </widget>
                             <widget class="QCheckBox">
@@ -344,9 +329,6 @@ a conversation</string>
                                 </property>
                                 <property name="text">
                                     <string>&amp;Send away messages</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+S</string>
                                 </property>
                                 <property name="checked">
                                     <bool>false</bool>
@@ -583,9 +565,6 @@ a conversation</string>
                         <property name="text">
                             <string>Block all users not in 'Allowed' &amp;list</string>
                         </property>
-                        <property name="accel">
-                            <string>Alt+L</string>
-                        </property>
                         <property name="whatsThis" stdset="0">
                             <string>Checking this box will block all users not explicitely shown in the allowed list here, including any contacts not on your contact list.</string>
                         </property>
@@ -613,9 +592,6 @@ a conversation</string>
                         </property>
                         <property name="text">
                             <string>View &amp;Reverse List</string>
-                        </property>
-                        <property name="accel">
-                            <string>Alt+R</string>
                         </property>
                         <property name="toolTip" stdset="0">
                             <string>The reverse list is the list of contact who added you in their own contact list.</string>
@@ -796,9 +772,6 @@ a conversation</string>
                                         <property name="text">
                                             <string>E&amp;xport a display picture</string>
                                         </property>
-                                        <property name="accel">
-                                            <string>Alt+X</string>
-                                        </property>
                                     </widget>
                                     <widget class="QLabel">
                                         <property name="name">
@@ -831,9 +804,6 @@ a conversation</string>
                                                 </property>
                                                 <property name="text">
                                                     <string>&amp;Select Image...</string>
-                                                </property>
-                                                <property name="accel">
-                                                    <string>Alt+S</string>
                                                 </property>
                                             </widget>
                                             <spacer>

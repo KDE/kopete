@@ -201,9 +201,6 @@
                                 <property name="text">
                                     <string>Remember &amp;password</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+P</string>
-                                </property>
                                 <property name="checked">
                                     <bool>false</bool>
                                 </property>
@@ -362,9 +359,6 @@
                                 </property>
                                 <property name="text">
                                     <string>Connect automatically at &amp;startup</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+S</string>
                                 </property>
                                 <property name="toolTip" stdset="0">
                                     <string>Check to connect automatically when Kopete is started.</string>
@@ -752,9 +746,6 @@
                                         </property>
                                         <property name="text">
                                             <string>Add Repl&amp;y</string>
-                                        </property>
-                                        <property name="accel">
-                                            <string>Alt+Y</string>
                                         </property>
                                     </widget>
                                 </hbox>
