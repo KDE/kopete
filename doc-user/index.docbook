@@ -185,6 +185,7 @@ click their name and a Chat window will appear.  The upper part of the
 window is where the conversation appears - to say something, type into
 the bottom part of the window and click
 <guibutton>Send</guibutton>.</para>
+		<para>If you've just created a new account you won't have any contacts.  See <link linkend="organise-contacts-adding">Adding Contacts</link> for details on how to add contacts.</para>
 		<tip><para>The shortcut for <guibutton>Send</guibutton> is set to
 <keycombo action="simul">&Ctrl;&Enter;</keycombo> by
 default; you can change it in the Chat window using
@@ -210,7 +211,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 				<title>Setting Your Presence</title>
 				<para>We introduced you to setting presence <link linkend="go-online">in the previous chapter</link>.  'Presence' determines how visible you are on the &im; network.  To use the network at all, you have to connect to the network, so you can send and receive messages and see others' presence.  Once you are connected, most &im; systems allow you to indicate what you're doing and whether you want to chat by setting special types of presence such as 'Away' or 'Free For Chat'.  The difference presence settings are particular to each away system; but Kopete allows you some control all your &im; systems at once by setting them to 'Away' or 'Available' at the same time.</para>
 				<para>You set your presence for individual &im; accounts by right-clicking the account's icon in the <interface>status</interface> bar at the bottom of the <interface>Contact List</interface>.  The context menu for each account lets you choose the possible presence settings for each &im; system.</para>
-				<para>To change all your accounts' presence together, click the <guibutton>Status</guibutton>, or use the <menuchoice><guimenu>File</guimenu> <guimenuitem>Status</guimenuitem> </menuchoice> menu.</para>
+				<para>To change all your accounts' presence together, click the <guibutton>Status</guibutton>, or use the <menuchoice><guimenu>File</guimenu> <guimenuitem>Status</guimenuitem></menuchoice> menu.</para>
 			</sect2>
 			<sect2 id="contact-list-start-chat">
 				<title>Start A Chat From The Contact List</title>
@@ -227,7 +228,12 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 
 				<sect3 id="organise-contacts-adding">
 					<title>Adding Contacts</title>
-					<para>To add a contact...</para>
+					<para>To add a contact, either select <menuchoice><guimenu>File</guimenu><guimenuitem>Add Contact...</guimenuitem></menuchoice> or click the <guibutton>Add Contact</guibutton> button on the toolbar.  This brings up the Add Contact Wizard.</para>
+					<para>The Add Contact Wizard should be straightforward to use. It leads you through the following steps:</para>
+					<orderedlist>
+						<listitem><para>1. Choose Metacontact name.  By choosing an entry from your KDE Address Book, you can easily use their name.</para></listitem>
+					</orderedlist>
+					<para>You can add contacts to an existing Metacontact using its context menu.</para>
 				</sect3>
 				<sect3 id="organise-contacts-grouping">
 					<title>Grouping Contacts</title>
@@ -316,7 +322,7 @@ Shortcuts...</guimenuitem></menuchoice>.</para></tip>
 		</sect1>
 		<sect1 id="plugins-history">
 			<title>History</title>
-			<para>The History plugin, when activated, records conversations using any &im; system and allows you to view old conversations later.  A <menuchoice><guimenuitem>History</guimenuitem></menuchoice> appears in each Metacontact's context menu, to view the message history for that metacontact.</para>
+			<para>The History plugin, when activated, records conversations using any &im; system and allows you to view old conversations later.  A <menuchoice><guimenuitem>History</guimenuitem></menuchoice> item appears in each Metacontact's context menu, to view the message history for that metacontact.</para>
 		</sect1>
 		<sect1 id="plugins-motion-auto-away">
 			<title>Motion Auto-Away</title>
