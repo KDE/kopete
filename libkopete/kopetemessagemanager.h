@@ -171,7 +171,7 @@ signals:
 	/**
 	 * a contact in this chat has changed his displayname
 	 */
-	void contactDisplayNameChanged(const QString &, const QString &);
+	void contactChanged();
 
 	/**
 	 * The name of the chat is changed
