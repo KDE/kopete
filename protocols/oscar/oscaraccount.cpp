@@ -62,7 +62,7 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 	// Create the internal buddy list for this account
 	// TODO: make this an internal list of KopeteGroup and Kopete-/OscarContact
 	mInternalBuddyList = new AIMBuddyList(this, "mInternalBuddyList");
-
+	mLoginContactlist = 0L;
 
 	// Contact list signals for group management events
 	QObject::connect(
@@ -353,7 +353,9 @@ void OscarAccount::slotLoggedIn()
 {
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
 
-	QTimer::singleShot(2000, this, SLOT(slotDelayedListSync()));
+	// Only call sync if we received a list on connect, does not happen on @mac AIM-accounts
+	if (mLoginContactlist)
+		QTimer::singleShot(2000, this, SLOT(slotDelayedListSync()));
 
 	mIdleTimer->start(10 * 1000);
 }
@@ -479,6 +481,8 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 
 		if(contact->displayName()!=nick)
 			contact->rename(nick);
+
+		contact->setGroupId(buddy->groupID());
 		contact->syncGroups();
 	}
 	else

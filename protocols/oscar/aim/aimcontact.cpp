@@ -272,9 +272,7 @@ void AIMContact::gotIM(OscarSocket::OscarMessageType /*type*/, const QString &me
 			kdDebug(14190) << k_funcinfo << " while we are away, " \
 				"sending away-message to annoy buddy :)" << endl;
 			// Send the autoresponse
-			mAccount->engine()->sendIM(
-				KopeteAway::getInstance()->message(),
-				userInfo(), true);
+			mAccount->engine()->sendIM(KopeteAway::getInstance()->message(), this, true);
 			// Build a pointerlist to insert this contact into
 			KopeteContactPtrList toContact;
 			toContact.append(this);
@@ -310,10 +308,13 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 		finalMessage += "<BODY>";
 	if(message.fg().isValid())
 		finalMessage += "<FONT COLOR=\"" + message.fg().name() + "\">";
-	// Cannot use KopeteMessage::escape() because AIM only supports very few
-	// tags, we just want special chars to get html-ized
+	if(!message.font().family().isEmpty())
+		finalMessage += "<FONT FACE=\"" + message.font().family() + "\">";
+
 	finalMessage += message.escapedBody().replace("<br />" , "<br>");
-//	finalMessage += QStyleSheet::escape(message.plainBody());
+
+	if(!message.font().family().isEmpty())
+		finalMessage += "</FONT>";
 	if(message.fg().isValid())
 		finalMessage += "</FONT>";
 	finalMessage += "</BODY></HTML>";
@@ -344,7 +345,7 @@ void AIMContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 	// we might be able to do that in AIM and we might also convert
 	// HTML to RTF for ICQ type-2 messages  [mETz]
 	// Will asks: Does this still apply in AIM?
-	mAccount->engine()->sendIM(finalMessage, userInfo(), false);
+	mAccount->engine()->sendIM(finalMessage, this, false);
 
 	// Show the message we just sent in the chat window
 	manager()->appendMessage(message);
@@ -399,6 +400,12 @@ AIM 5.2 with fg and bg set for some text: --------------------------------------
 	result.replace( QRegExp(
 		QString::fromLatin1("<[bB][rR]>") ),
 		QString::fromLatin1("<br />") );
+	result.replace( QRegExp(
+		QString::fromLatin1("<[fF][oO][nN][tT].*[bB][aA][cC][kK]=(.*).*>") ),
+		QString::fromLatin1("<span style=\"background-color:\\1 ;\"") );
+	result.replace( QRegExp(
+		QString::fromLatin1("</[fF][oO][nN][tT]>") ),
+		QString::fromLatin1("</span>") );
 
 //	kdDebug(14190) << k_funcinfo << "Final MSG: '" << result << "'" << endl;
 

@@ -125,18 +125,11 @@ void OscarSocket::slotConnected()
 		"Connected to '" << socket()->host() <<
 		"', port '" << socket()->port() << "'" << endl;
 
-	QString h = socket()->localAddress()->nodeName();
-
-	mDirectIMMgr=new OncomingSocket(this, h, DirectIM);
-
 #if 0
+	QString h = socket()->localAddress()->nodeName();
+	mDirectIMMgr=new OncomingSocket(this, h, DirectIM);
 	mFileTransferMgr=new OncomingSocket(this, h, SendFile, SENDFILE_PORT);
 #endif
-
-	kdDebug(14150) << k_funcinfo <<
-		" socket()->address() is " << h <<
-		" mDirectIMMgr->address() is " << mDirectIMMgr->socket()->host() << endl;
-
 	//emit connectionChanged(1, QString("Connected to %2, port %1").arg(peerPort()).arg(peerName()));
 }
 
@@ -169,13 +162,13 @@ void OscarSocket::slotConnectionClosed()
 	QObject::disconnect(this, SIGNAL(connAckReceived()), 0, 0);
 	QObject::disconnect(socket(), SIGNAL(connectionSuccess()), 0, 0);
 
-	if (mDirectIMMgr)
+	if(mDirectIMMgr)
 	{
 		delete mDirectIMMgr;
 		mDirectIMMgr=0L;
 	}
 
-	if (mFileTransferMgr)
+	if(mFileTransferMgr)
 	{
 		delete mFileTransferMgr;
 		mFileTransferMgr=0L;
@@ -1717,6 +1710,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 			}
 
 			// Set the appropriate server socket
+#if 0
 			sockToUse = serverSocket(capflag);
 
 			if (msgtype == 0x0000) // initiate
@@ -1729,10 +1723,8 @@ void OscarSocket::parseIM(Buffer &inbuf)
 				}
 				else // file send
 				{
-#if 0
 					sockToUse->addPendingConnection(u.sn, cook, 0L, qh, remotePort, DirectInfo::Outgoing);
 					emit gotFileSendRequest(u.sn, message, fileName, fileSize);
-#endif
 				}
 			}
 			else if (msgtype == 0x0001) //deny
@@ -1743,6 +1735,7 @@ void OscarSocket::parseIM(Buffer &inbuf)
 					emit protocolError(i18n("Send file request denied by %1").arg(QString(u.sn)),0);
 				sockToUse->removeConnection(u.sn);
 			}
+#endif
 			break;
 		} // END MSGFORMAT_ADVANCED
 
@@ -2225,20 +2218,27 @@ const DWORD OscarSocket::parseCapabilities(Buffer &inbuf)
 }
 
 
-// FIXME: This func is just plain ugly, unreadable and incomplete! [mETz]
-void OscarSocket::sendIM(const QString &message, const UserInfo &uInfo, bool isAuto)
+// FIXME: Split up into type-1, type-2 and type-4 messaging
+// currently we only do simple type-1
+void OscarSocket::sendIM(
+	const QString &message,
+	OscarContact *contact,
+	bool isAuto)
 {
 	//check to see if we have a direct connection to the contact
-	OscarConnection *dc = mDirectIMMgr->findConnection(uInfo.sn);
+	/*OscarConnection *dc = mDirectIMMgr->findConnection(contact->contactName());
 	if (dc)
 	{
-		kdDebug(14150) << k_funcinfo << "Sending direct IM " << message << " to " << uInfo.sn << endl;
+		kdDebug(14150) << k_funcinfo <<
+			"Sending direct IM " << message <<
+			" to " << contact->contactName() << endl;
+
 		dc->sendIM(message, isAuto);
 		return;
-	}
+	}*/
 
 	kdDebug(14150) << k_funcinfo << "SEND (CLI_SENDMSG), msg='" << message <<
-		"' to '" << uInfo.sn << "'" << endl;
+		"' to '" << contact->contactName() << "'" << endl;
 
 	// Old features data
 	//static const char deffeatures[] = { 0x01, 0x01, 0x01, 0x02 };
@@ -2257,8 +2257,8 @@ void OscarSocket::sendIM(const QString &message, const UserInfo &uInfo, bool isA
 	// 2 -> special messages (also known as advanced messages)
 	// 4 -> url etc.
 
-	outbuf.addByte((uInfo.sn).length()); //dest sn length
-	outbuf.addString((uInfo.sn).latin1(), (uInfo.sn).length()); //dest sn
+	outbuf.addByte((contact->contactName()).length()); //dest sn length
+	outbuf.addString(contact->contactName().latin1(), contact->contactName().length()); //dest sn
 
 	// ====================================================================================
 	Buffer tlv2;
@@ -2272,13 +2272,29 @@ void OscarSocket::sendIM(const QString &message, const UserInfo &uInfo, bool isA
 	int length = message.length();
 	unsigned char *utfMessage = 0L;
 
-	codec=QTextCodec::codecForMib(4); // ISO 8859-1 aka Latin1
-	if(codec && codec->canEncode(message))
+	codec=QTextCodec::codecForMib(3); // US-ASCII
+
+	if(codec)
 	{
-		charset=0x0003;
+		if(codec->canEncode(message))
+		{
+			kdDebug(14150) << k_funcinfo << "Going to encode as US-ASCII" << endl;
+			charset=0x0000; // send US-ASCII
+		}
+		else
+		{
+			codec=0L; // we failed encoding it as US-ASCII
+			kdDebug(14150) << k_funcinfo << "Cannot encode as US-ASCII" << endl;
+		}
 	}
-	else if(uInfo.capabilities & AIM_CAPS_UTF8)
+	else
 	{
+		kdDebug(14150) << k_funcinfo << "Could not find QTextCodec for US-ASCII encoding!" << endl;
+	}
+
+	if((codec==0L) && contact->hasCap(AIM_CAPS_UTF8))
+	{
+		// use UTF is peer supports it and encoding as US-ASCII failed
 		length=message.length()*2;
 		utfMessage=new unsigned char[length];
 		for(unsigned int l=0; l<message.length(); l++)
@@ -2286,21 +2302,39 @@ void OscarSocket::sendIM(const QString &message, const UserInfo &uInfo, bool isA
 			utfMessage[l*2]=message.unicode()[l].row();
 			utfMessage[(l*2)+1]=message.unicode()[l].cell();
 		}
-		charset=0x0002;
+		charset=0x0002; // send UTF-16BE
 	}
 	else
 	{
-		//
-		// TODO: Use a per account decoding or even a per contact encoding
-		// this is broken!
-		//
+		kdDebug(14150) << k_funcinfo << "Cannot send as UTF-16BE, codec value=" << (void *)codec << endl;
+	}
+
+	if((!codec || charset!=0x0002) && contact->encoding() != 0)
+	{
+		codec=QTextCodec::codecForMib(contact->encoding());
+		if(codec)
+		{
+			charset=0x0003;
+			kdDebug(14150) << k_funcinfo <<
+				"Using per-contact encoding, encoding name:" << codec->name() << endl;
+		}
+		else
+		{
+			kdDebug(14150) << k_funcinfo << "Could not find QTextCodec for per-contact encoding!" << endl;
+		}
+	}
+	else
+	{
+		kdDebug(14150) << k_funcinfo << "Cannot use per-contact encoding, codec value=" << (void *)codec << endl;
+	}
+
+	if(!codec && charset != 0x0002) // it's neither unicode nor did we find a codec so far!
+	{
 		kdDebug(14150) << k_funcinfo <<
 			"Couldn't find suitable encoding for outgoing message, " <<
-			"encoding using local system-encoding" << endl;
+			"encoding using ISO-8859-1, prepare for receiver getting unredable text :)" << endl;
 		charset=0x0003;
-		codec=QTextCodec::codecForLocale();
-		if (!codec)
-			return;
+		codec=QTextCodec::codecForMib(4); // ISO-8859-1
 	}
 
 	tlv2.addWord(0x0101); //add TLV(0x0101) also known as TLV(257)
@@ -2310,13 +2344,13 @@ void OscarSocket::sendIM(const QString &message, const UserInfo &uInfo, bool isA
 
 	if(utfMessage)
 	{
-		kdDebug(14150) << "Outgoing message encoded as 'UTF-16BE'" << endl;
+		kdDebug(14150) << k_funcinfo << "Outgoing message encoded as 'UTF-16BE'" << endl;
 		tlv2.addString(utfMessage, length); // the actual message
 		delete [] utfMessage;
 	}
 	else
 	{
-		kdDebug(14150) << "Outgoing message encoded as '" << codec->name() << "'" << endl;
+		kdDebug(14150) << k_funcinfo << "Outgoing message encoded as '" << codec->name() << "'" << endl;
 		QCString outgoingMessage=codec->fromUnicode(message);
 		tlv2.addString(outgoingMessage, length); // the actual message
 	}
@@ -3115,6 +3149,7 @@ type == 2: accept  */
 void OscarSocket::sendRendezvous(const QString &sn, WORD type,
 	DWORD rendezvousType, const KFileItem *finfo)
 {
+#if 0
 	OncomingSocket *sockToUse = serverSocket(rendezvousType);
 	Buffer outbuf;
 	outbuf.addSnac(0x0004,0x0006,0x0000,0x00000000);
@@ -3218,6 +3253,7 @@ void OscarSocket::sendRendezvous(const QString &sn, WORD type,
 		sockToUse->socket()->host() << ", port " << sockToUse->socket()->port() << endl;
 
 	sendBuf(outbuf,0x02);
+#endif
 }
 
 void OscarSocket::sendDirectIMDeny(const QString &sn)
@@ -3587,6 +3623,7 @@ void OscarSocket::OnFileTransferBegun(OscarConnection *con, const QString& file,
 }
 #endif
 
+#if 0
 OncomingSocket *OscarSocket::serverSocket(DWORD capflag)
 {
 	if ( capflag & AIM_CAPS_IMIMAGE ) //direct im
@@ -3594,6 +3631,7 @@ OncomingSocket *OscarSocket::serverSocket(DWORD capflag)
 	else  //must be a file transfer?
 		return mFileTransferMgr;
 }
+#endif
 
 void OscarSocket::parseConnectionClosed(Buffer &inbuf)
 {

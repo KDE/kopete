@@ -48,15 +48,19 @@ OscarContact::OscarContact(const QString& name, const QString& displayName,
 	mAccount = static_cast<OscarAccount*>(account);
 
 	mName = tocNormalize(name); // We store normalized names (lowercase no spaces)
-	mMsgManager = 0L;
+	mEncoding=0;
+	mGroupId=0;
+	mMsgManager=0L;
 
-	mListContact = mAccount->internalBuddyList()->findBuddy(mName); // TODO: remove AIMBuddy
+	// BEGIN TODO: remove AIMBuddy
+	mListContact=mAccount->internalBuddyList()->findBuddy(mName);
 
 	if (!mListContact) // this Contact is not yet in the internal contactlist!
 	{
-		mListContact = new AIMBuddy(mAccount->randomNewBuddyNum(), 0, mName);
+		mListContact=new AIMBuddy(mAccount->randomNewBuddyNum(), 0, mName);
 		mAccount->internalBuddyList()->addBuddy(mListContact);
 	}
+	// END TODO: remove AIMBuddy
 
 	setFileCapable(false); // FIXME
 
@@ -231,7 +235,7 @@ void OscarContact::slotDeleteContact()
 {
 	kdDebug(14150) << k_funcinfo << "contact '" << displayName() << "'" << endl;
 
-	AIMGroup *group = mAccount->internalBuddyList()->findGroup(mListContact->groupID());
+	AIMGroup *group = mAccount->internalBuddyList()->findGroup(mGroupId);
 
 	if(!group && metaContact() && metaContact()->groups().count() > 0)
 	{
@@ -388,9 +392,7 @@ void OscarContact::sendFile(const KURL &sourceURL, const QString &/*altFileName*
 // Called when the metacontact owning this contact has changed groups
 void OscarContact::syncGroups()
 {
-	// Log the function entry
-//	kdDebug(14150) << k_funcinfo << ": Entering" << endl;
-	// Get the new (kopete) group that we belong to
+	// Get the (kopete) group that we belong to
 	KopeteGroupList groups = metaContact()->groups();
 	if(groups.count() == 0)
 	{
@@ -399,50 +401,53 @@ void OscarContact::syncGroups()
 	}
 
 	// Oscar only supports one group per contact, so just get the first one
-	KopeteGroup *newKopeteGroup = groups.first();
-	if (newKopeteGroup == 0L)
+	KopeteGroup *firstKopeteGroup = groups.first();
+	if(!firstKopeteGroup)
 	{
-		kdDebug(14150) << k_funcinfo << ": Could not get kopete group" << endl;
+		kdDebug(14150) << k_funcinfo << "Could not get kopete group" << endl;
 		return;
 	}
 
 //	kdDebug(14150) << k_funcinfo << ": Getting current oscar group " << mListContact->groupID() << " ... " << endl;
 	// Get the current (oscar) group that this contact belongs to on the server
-	AIMGroup *currentOscarGroup =
-		mAccount->internalBuddyList()->findGroup(mListContact->groupID());
+	AIMGroup *currentOscarGroup = mAccount->internalBuddyList()->findGroup(mGroupId);
 	if (!currentOscarGroup)
 	{
-//		kdDebug(14150) << k_funcinfo <<
-//			"Could not get current Oscar group for contact '" << displayName() <<
-//			"'" << endl;
+		kdDebug(14150) << k_funcinfo <<
+			"Could not get current Oscar group for contact '" << displayName() <<
+			"'" << endl;
 		return;
 	}
 
-	kdDebug(14150) << k_funcinfo << ": Current oscar group id: " <<
-		mListContact->groupID() << ", Current oscar group name: " <<
-		currentOscarGroup->name() << endl;
+	kdDebug(14150) << k_funcinfo <<
+		"Current OSCAR group id=" << mGroupId <<
+		", Current OSCAR group name='" << currentOscarGroup->name() << "'" << endl;
 
 	// Compare the two names, to see if they're actually different
-	if (currentOscarGroup->name() != newKopeteGroup->displayName())
-	{ // First check to see if the new group is actually on the server list yet
+	if (currentOscarGroup->name() != firstKopeteGroup->displayName())
+	{
+		// First check to see if the new group is actually on the server list yet
 		AIMGroup *newOscarGroup =
-			mAccount->internalBuddyList()->findGroup(newKopeteGroup->displayName());
-		if (newOscarGroup == 0L)
-		{ // This is a new group, it doesn't exist on the server yet
+			mAccount->internalBuddyList()->findGroup(firstKopeteGroup->displayName());
+
+		if(!newOscarGroup)
+		{
+			// This is a new group, it doesn't exist on the server yet
 			kdDebug(14150) << k_funcinfo
 				<< ": New group did not exist on server, "
 				<< "asking server to create it first"
 				<< endl;
 			// Ask the server to create the group
-			mAccount->engine()->sendAddGroup(newKopeteGroup->displayName());
+			setGroupId(newOscarGroup->ID());
+			mAccount->engine()->sendAddGroup(firstKopeteGroup->displayName());
 		}
 
 		// The group has changed, so ask the engine to change
 		// our group on the server
 		mAccount->engine()->sendChangeBuddyGroup(
-			tocNormalize(mListContact->screenname()),
+			contactName(),
 			currentOscarGroup->name(),
-			newKopeteGroup->displayName());
+			firstKopeteGroup->displayName());
 	}
 }
 
@@ -516,7 +521,7 @@ void OscarContact::rename(const QString &newNick)
 	{
 		//FIXME: group handling!
 		currentOscarGroup =
-			mAccount->internalBuddyList()->findGroup(mListContact->groupID());
+			mAccount->internalBuddyList()->findGroup(mGroupId);
 		if(!currentOscarGroup)
 		{
 			// FIXME: workaround for not knowing the groupid
@@ -579,14 +584,10 @@ void OscarContact::slotParseUserInfo(const UserInfo &u)
 void OscarContact::slotRequestAuth()
 {
 	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
-	bool ok = false;
 
 	QString reason = KInputDialog::getText(
-		i18n("Request Authorization"),
-		i18n("Reason for requesting authorization"),
-		QString::null,
-		&ok);
-	if(ok)
+		i18n("Request Authorization"),i18n("Reason for requesting authorization"));
+	if(!reason.isNull())
 	{
 		kdDebug(14150) << k_funcinfo << "Sending auth request to '" <<
 			displayName() << "'" << endl;
@@ -597,17 +598,15 @@ void OscarContact::slotRequestAuth()
 void OscarContact::slotSendAuth()
 {
 	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
-	bool ok = false;
 
 	// TODO: custom dialog also allowing a refusal
-
 	QString reason = KInputDialog::getText(
-		i18n("Grant Authorization"),
-		i18n("Reason for granting authorization"),
-		QString::null,
-		&ok);
-	if(ok)
+		i18n("Grant Authorization"),i18n("Reason for granting authorization"));
+
+	if(!reason.isNull())
 	{
+		kdDebug(14150) << k_funcinfo << "Sending auth granted to '" <<
+			displayName() << "'" << endl;
 		mAccount->engine()->sendAuthReply(contactName(), reason, true);
 	}
 }
@@ -636,14 +635,44 @@ void OscarContact::slotGotAuthReply(const QString &contact, const QString &reaso
 bool OscarContact::waitAuth() const
 {
 	// TODO: move var to OscarContact
-	kdDebug(14150) << k_funcinfo <<
-		"for contact '" << displayName() << "' returning " << mListContact->waitAuth() << endl;
 	return mListContact->waitAuth();
 }
 
 void OscarContact::setWaitAuth(bool b) const
 {
 	mListContact->setWaitAuth(b);
+}
+
+const int OscarContact::encoding()
+{
+	return mEncoding;
+}
+
+void OscarContact::setEncoding(const int mib)
+{
+	mEncoding = mib;
+}
+
+const int OscarContact::groupId()
+{
+	kdDebug(14150) << k_funcinfo << "returning" << mGroupId << endl;
+	return mGroupId;
+}
+
+void OscarContact::setGroupId(const int newgid)
+{
+	if(newgid > 0)
+	{
+		mGroupId = newgid;
+		kdDebug(14150) << k_funcinfo << "updated group id to " << mGroupId << endl;
+	}
+}
+
+void OscarContact::serialize(QMap<QString, QString> &serializedData, QMap<QString, QString> &/*addressBookData*/)
+{
+	serializedData["awaitingAuth"] = waitAuth() ? "1" : "0";
+	serializedData["Encoding"] = QString::number(mEncoding);
+	serializedData["groupID"] = QString::number(mGroupId);
 }
 
 #include "oscarcontact.moc"

@@ -645,18 +645,19 @@ void OscarSocket::sendICQStatus(unsigned long status)
 
 void OscarSocket::fillDirectInfo(Buffer &directInfo)
 {
-	kdDebug(14150) << k_funcinfo << "bindhost=" << mDirectIMMgr->socket()->bindHost() <<
-		", bindPort=" << mDirectIMMgr->socket()->bindPort() << endl;
-
-	kdDebug(14150) << k_funcinfo << "host=" << mDirectIMMgr->socket()->host() <<
-		", Port=" << mDirectIMMgr->socket()->port() << endl;
-
-
 	directInfo.addWord(0x000C); // TLV(12)
 	directInfo.addWord(0x0025); // length 25
 
 	if(mDirectIMMgr)
 	{
+		kdDebug(14150) << k_funcinfo <<
+			"bindhost=" << mDirectIMMgr->socket()->bindHost() <<
+			", bindPort=" << mDirectIMMgr->socket()->bindPort() << endl;
+
+		kdDebug(14150) << k_funcinfo <<
+			"host=" << mDirectIMMgr->socket()->host() <<
+			", Port=" << mDirectIMMgr->socket()->port() << endl;
+
 		directInfo.addDWord(setIPv4Address(mDirectIMMgr->socket()->host())); // IP
 		directInfo.addWord(0x0000);
 		directInfo.addWord(mDirectIMMgr->socket()->port().toUShort()); // Port
@@ -875,7 +876,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &buf, UserInfo &user)
 									kdDebug(14150) << k_funcinfo << "fgcolor=" << fgColor << endl;
 									kdDebug(14150) << k_funcinfo << "bgcolor=" << bgColor << endl;
 
-									kdDebug(14150) << "messageBuf.length() after message and colors =" <<
+									kdDebug(14150) << "messageBuf.length() after message and colors=" <<
 										messageBuf.length() << endl;
 
 									if(messageBuf.length() > 0)

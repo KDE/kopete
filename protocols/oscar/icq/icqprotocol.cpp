@@ -816,14 +816,17 @@ void ICQProtocol::deserializeContact(KopeteMetaContact *metaContact,
 
 	// Get the account it belongs to
 	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts(this);
-	KopeteAccount *account = accounts[accountId];
+	ICQAccount *account = static_cast<ICQAccount*>(accounts[accountId]);
 
 	if(!account)
 	{
 		kdDebug(14200) << k_funcinfo << "WARNING: Account for contact does not exist, skipping." << endl;
 		return;
 	}
-	new ICQContact(contactId, displayName, static_cast<ICQAccount*>(account), metaContact);
+	ICQContact *c = new ICQContact(contactId, displayName, account, metaContact);
+	c->setGroupId(serializedData["groupID"].toInt());
+	c->setEncoding(serializedData["Encoding"].toInt());
+	c->setWaitAuth(serializedData["awaitingAuth"] == "1");
 }
 
 AddContactPage *ICQProtocol::createAddContactWidget(QWidget *parent, KopeteAccount *account)

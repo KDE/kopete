@@ -30,6 +30,7 @@
 
 class KFileItem;
 class OscarAccount;
+class OscarContact;
 class QTimer;
 class KExtendedSocket;
 
@@ -110,7 +111,7 @@ const DWORD AIM_CAPS_LAST			= 0x00100000;
 // DON'T touch these if you're not 100% sure what they are for!
 //#define KOPETE_AIM_CAPS			AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE
 #define KOPETE_AIM_CAPS			0 // our aim client is as stupid as bread
-#define KOPETE_ICQ_CAPS			/*AIM_CAPS_ICQSERVERRELAY |*/ AIM_CAPS_UTF8 | /* AIM_CAPS_RTFMSGS |*/ AIM_CAPS_ISICQ
+#define KOPETE_ICQ_CAPS			/*AIM_CAPS_ICQSERVERRELAY |*/ AIM_CAPS_UTF8 | AIM_CAPS_ISICQ
 
 //ICQ 2002b sends: CAP_AIM_SERVERRELAY, CAP_UTF8, CAP_RTFMSGS, CAP_AIM_ISICQ
 
@@ -372,7 +373,10 @@ class OscarSocket : public OscarConnection
 		/*
 		 * Sends message to dest
 		 */
-		void sendIM(const QString &message, const UserInfo &uInfo, bool isAuto);
+		void sendIM(
+			const QString &message,
+			OscarContact *contact,
+			bool isAuto);
 
 		/** Requests sn's user info */
 		void sendUserProfileRequest(const QString &sn);
@@ -774,14 +778,22 @@ class OscarSocket : public OscarConnection
 	/** Sends a 0x0013,0x0004 (requests SSI data?) */
 	void sendSSIRequest();
 
-	/** Parses a 0x0013,0x0003 (SSI rights) from the server */
+	/*
+	 * Parses a SNAC(0x0013,0x0003) (SSI rights) from the server
+	 */
 	void parseSSIRights(Buffer &inbuf);
 
-	/** Sends parameters for ICBM messages */
+	/*
+	 * Sends parameters for ICBM messages
+	 */
 	void sendMsgParams();
 
-	/** Returns the appropriate server socket, based on the capability flag it is passed. */
+	/*
+	 * Returns the appropriate server socket, based on the capability flag it is passed.
+	 */
+#if 0
 	OncomingSocket * serverSocket(DWORD capflag);
+#endif
 
 	// parse DISCONNECT messages on channel 4, ICQ specific
 	void parseConnectionClosed(Buffer &inbuf);

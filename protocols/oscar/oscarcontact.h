@@ -51,6 +51,8 @@ class OscarContact : public KopeteContact
 					KopeteAccount *account, KopeteMetaContact *parent);
 		virtual ~OscarContact();
 
+		virtual void serialize(QMap<QString, QString> &, QMap<QString, QString> &);
+
 		/**
 		* Returns the direct connection state of the contact
 		* true = a direct connection is established with the contact
@@ -85,9 +87,24 @@ class OscarContact : public KopeteContact
 		bool waitAuth() const;
 		void setWaitAuth(bool b) const;
 		const UserInfo &userInfo() { return mInfo; }
+		bool hasCap(DWORD cap) { return mInfo.capabilities & cap; }
+
+		/*
+		 * Encoding is a MIB, see IANA docs or QTextCodec apidocs!
+		 */
+		const int encoding();
+		void setEncoding(const int);
+
+		/*
+		 * group id for this contact onthe oscar-server
+		 */
+		const int groupId();
+		void setGroupId(const int);
 
 	public slots:
-		/** Method to delete a contact from the contact list */
+		/*
+		 * Method to delete a contact from the contact list
+		 */
 		virtual void slotDeleteContact();
 
 /*
@@ -110,7 +127,9 @@ class OscarContact : public KopeteContact
 		 */
 		OscarAccount *mAccount;
 
-		/** The name of the contact */
+		/*
+		 * The name of the contact as used on the protocol-level
+		 */
 		QString mName;
 
 		KActionCollection* actionCollection;
@@ -200,7 +219,8 @@ class OscarContact : public KopeteContact
 		 */
 		bool mDirectlyConnected;
 
-		int groupID; // TODO: move the server groupid to OscarContact!
+		int mEncoding;
+		int mGroupId; // TODO: move the server groupid to OscarContact!
 };
 
 #endif
