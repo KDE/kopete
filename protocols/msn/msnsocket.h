@@ -66,9 +66,6 @@ public:
 	enum OnlineStatus { Connecting, Connected, Disconnecting, Disconnected };
 	enum LookupStatus { Processing, Success, Failed };
 
-	void connect( const QString &server, uint port );
-	virtual void disconnect();
-
 	OnlineStatus onlineStatus() { return m_onlineStatus; }
 
 	/**
@@ -91,6 +88,11 @@ public:
 	 * Used for filetransfer
 	 */
 	QString getLocalIP();
+
+public slots:
+	void connect( const QString &server, uint port );
+	virtual void disconnect();
+
 
 signals:
 	/**

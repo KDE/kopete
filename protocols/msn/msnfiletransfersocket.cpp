@@ -222,9 +222,14 @@ void MSNFileTransferSocket::slotTimer()
 void MSNFileTransferSocket::abort()
 {
 	if(m_incoming)
+	{
 		sendCommand( "CCL" , NULL ,false);
-	disconnect();
-//	emit done(this);
+		//the timer wait one second, the time to send the CCL
+		//i suspect also than retarding the disconnection may keep away from a crash
+		QTimer::singleShot( 1000, this, SLOT(disconnect()) );
+	}
+	else
+		disconnect();
 }
 
 void MSNFileTransferSocket::setFile( const QString &fn, long unsigned int fileSize )
