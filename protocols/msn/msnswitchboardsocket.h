@@ -59,7 +59,7 @@ private:
 	QString m_ID;
 	QString m_auth;
 	QStringList m_chatMembers;
-
+	
 	MSNP2P *m_p2p ;
 
 	//used for emoticons
@@ -68,6 +68,7 @@ private:
 	QMap<QString , QPair<QString , KTempFile*> >  m_emoticons;
 	Kopete::Message &parseCustomEmoticons(Kopete::Message &msg);
 	QTimer *m_emoticonTimer;
+	QPtrList<KTempFile> m_typewrited;
 
 protected:
 	/**

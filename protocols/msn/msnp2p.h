@@ -118,7 +118,8 @@ private:
 	QString m_myHandle;
 	QString m_msgHandle;
 	Kopete::Transfer *m_kopeteTransfer;
-
+	
+	QString fullContentMessage;  //used for typewrited images messages
 };
 
 #endif

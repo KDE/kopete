@@ -306,6 +306,67 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 			{
 				//deleteLater();
 			}
+			else
+			{ //this seems to be _probably_ (just a guess) a utf-16 message.   we will download it completely.
+			
+			
+				/*
+				 * The message looks like this:
+				 *
+				  MIME-Version: 1.0
+				  Content-Type: image/gif
+				  \0
+				  base64:[ENCODED-IMAGE]
+				 *  Sometimes, the base64 ends with =  sometimes it does not.
+				 */
+	
+				if(dataOffset ==0)
+					fullContentMessage=QString::null;
+
+				//the data is utf-16
+				QTextCodec *codec = QTextCodec::codecForName("ISO-10646-UCS-2");
+				if(!codec)
+					return; //abort();
+				
+				/*
+				 * The following line doesn't works, because, wihtout reason i understand, the string contains some \0 
+				 * (\0\0 in utf-16)  between the   Content-Type:   and the Base64:
+				 fullContentMessage += codec->toUnicode(msg.data()+startBinHeader+48-1 , dataMessageSize) ;
+				
+				 * Quick hack to parse utf-16 and remove \0\0 :
+				 * The message shouldn't contains non ASCII char  (it's base64)  so i think i could do like that.
+				 * FIXME:  yes, this is not 100% correct
+				 */
+				for(unsigned int f= startBinHeader+48 ; f < startBinHeader+48 + dataMessageSize ; f+=2)
+				{
+					if(msg[f] != 0)
+					{
+						fullContentMessage+=QChar( msg[f] );
+					}
+				}
+			
+				//the message may be splitted
+				if(dataOffset+dataMessageSize >= totalSize) 
+				{ //whe have the whole
+					QRegExp rx("base64:([a-zA-Z0-9+\\-.*/!]*)");
+					if( rx.search( fullContentMessage ) != -1 )
+					{
+						QString base64=rx.cap(1);
+						kdDebug(14140) << k_funcinfo << "foud64:  "  << base64 <<  endl;
+					
+						QByteArray image;
+						KCodecs::base64Decode( base64.utf8() , image );
+						
+						
+						KTempFile *imageFile=new KTempFile( locateLocal( "tmp", "msntypewrite-" ), ".gif" );
+						imageFile->setAutoDelete(true);
+						imageFile->file()->writeBlock( image.data() , image.size() );
+						imageFile->file()->close();
+
+						emit fileReceived( imageFile , "typewrite" );
+					}
+				}
+			}
 		}
 	}
 	else

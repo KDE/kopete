@@ -596,6 +596,39 @@ void  MSNSwitchBoardSocket::slotEmoticonReceived( KTempFile *file, const QString
 		if ( m_recvIcons <= 0 ) 
 			cleanQueue();
 	}
+	else if(msnObj=="typewrite")
+	{
+		QString msg=i18n("<img src=\"%1\" alt=\"Typewrited message\" />" ).arg( file->name() );
+		
+	kdDebug(14140) << k_funcinfo << file->name()  <<endl;
+		
+		m_typewrited.append(file);
+		m_typewrited.setAutoDelete(true); 
+
+		QPtrList<Kopete::Contact> others;
+		others.append( m_account->myself() );
+		
+		QStringList::iterator it2;
+		for( it2 = m_chatMembers.begin(); it2 != m_chatMembers.end(); ++it2 )
+		{
+			if( *it2 != m_msgHandle )
+				others.append( m_account->contacts()[ *it2 ] );
+		}
+
+		if(!m_account->contacts()[m_msgHandle])
+		{
+			//this may happens if the contact has been deleted.
+			kdDebug(14140) << k_funcinfo <<"WARNING: contact is null, adding it" <<endl;
+			if( !m_chatMembers.contains( m_msgHandle ) )
+				m_chatMembers.append( m_msgHandle );
+			emit userJoined( m_msgHandle , m_msgHandle , false);
+		}
+
+		Kopete::Message kmsg( m_account->contacts()[ m_msgHandle ], others,
+			msg, Kopete::Message::Inbound , Kopete::Message::RichText );
+		
+		emit msgReceived(  kmsg  );
+	}
 	else //if it is not an emoticon, 
 	{    // it's certenly the displaypicture.
 		MSNContact *c=static_cast<MSNContact*>(m_account->contacts()[m_msgHandle]);
