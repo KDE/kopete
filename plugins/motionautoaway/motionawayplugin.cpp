@@ -192,17 +192,15 @@ int MotionAwayPlugin::getImage(int _dev, QByteArray &_image, int _width, int _he
 
 void MotionAwayPlugin::slotCapture()
 {
-    int i, diffs;
-
 	/* Should go on forever... emphasis on 'should' */
 	if ( getImage ( m_deviceHandler, m_imageNew, m_width, m_height, IN_DEFAULT, NORM_DEFAULT,
 	    VIDEO_PALETTE_RGB24) == m_width * m_height *3 )
 	{
+	    int diffs = 0;
         if ( m_tookFirst )
 		{
 			/* Make a differences picture in image_out */
-			diffs=0;
-			for (i=0; i< m_width * m_height * 3 ; i++)
+			for (int i=0; i< m_width * m_height * 3 ; i++)
 			{
 				m_imageOut[i]= m_imageOld[i]- m_imageNew[i];
 				if ((signed char)m_imageOut[i] > 32 || (signed char)m_imageOut[i] < -32)
@@ -219,7 +217,7 @@ void MotionAwayPlugin::slotCapture()
 		else
 		{
 			/* First picture: new image is now the old */
-			for (i=0; i< m_width * m_height * 3; i++)
+			for (int i=0; i< m_width * m_height * 3; i++)
 				m_imageOld[i] = m_imageNew[i];		
 		}
 
