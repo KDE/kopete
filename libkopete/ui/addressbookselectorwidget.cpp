@@ -71,7 +71,6 @@ AddressBookSelectorWidget::AddressBookSelectorWidget( QWidget *parent, const cha
 			SIGNAL( addresseeListClicked( QListViewItem * ) ) );
 	
 	connect( m_addressBook, SIGNAL( addressBookChanged( AddressBook * ) ), this, SLOT( slotLoadAddressees() ) );
-	connect( Kopete::KABCPersistence::self()->addressBook(), SIGNAL( addresseesChanged()), this, SLOT(slotLoadAddressees()));
 	
 	//We should add a clear KAction here.  But we can't really do that with a designer file :\  this sucks
 
