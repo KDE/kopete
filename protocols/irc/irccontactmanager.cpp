@@ -74,6 +74,7 @@ IRCContactManager::IRCContactManager(const QString &nickName, IRCAccount *accoun
 		socketTimeout = config.readNumEntry( "ReadTimeout", 15 ) * 1000;
 	}
 
+	m_NotifyList.append( nickName );
 	m_NotifyTimer = new QTimer(this);
 	QObject::connect(m_NotifyTimer, SIGNAL(timeout()),
 			this, SLOT(checkOnlineNotifyList()));

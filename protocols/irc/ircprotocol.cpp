@@ -783,8 +783,11 @@ void IRCProtocol::slotReadNetworks()
 							host->host = serverChild.text();
 						else if( serverChild.tagName() == "port" )
 							host->port = serverChild.text().toInt();
-						else if( serverChild.tagName() == "SSLEnabled" )
+						else if( serverChild.tagName() == "useSSL" )
+						{
 							host->ssl = ( serverChild.text() == "true" );
+							kdDebug() << "SSL Enabled for " << host->host << ":" << host->ssl << endl;
+						}
 
 						serverChild = serverChild.nextSibling().toElement();
 					}

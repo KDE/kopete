@@ -101,9 +101,6 @@ public:
 	IRCAccount(IRCProtocol *p, const QString &accountid);
 	~IRCAccount();
 
-	// Load the user preferences.
-	virtual void loaded();
-
 	const QString userName() const;
 
 	const QStringList connectCommands() const;
@@ -176,6 +173,8 @@ public slots:
 protected:
 	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact ) ;
 
+protected slots:
+	virtual void loaded();
 
 private slots:
 	void slotFailedServerPassword();
@@ -188,7 +187,6 @@ private slots:
 	void slotConnectedToServer();
 	void slotDisconnected();
 	void slotServerBusy();
-	void slotUpdateNetwork();
 	void slotSearchChannels();
 	void slotJoinedUnknownChannel( const QString &user,  const QString &channel );
 
@@ -197,8 +195,6 @@ private:
 	KopeteMessageManager *m_manager;
 	QString mNickName;
 	KopeteAwayAction *mAwayAction;
-
-	QString m_networkName;
 	bool triedAltNick;
 
 	KIRC *m_engine;

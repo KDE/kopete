@@ -1,6 +1,7 @@
 /*
     kirc.h - IRC Client
 
+    Copyright (c) 2003      by Jason Keirstead <jason@keirstead.org>
     Copyright (c) 2003      by Michel Hermier <michel.hermier@wanadoo.fr>
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
 
@@ -87,11 +88,19 @@ public:
 	const bool reqsPassword() const { return m_ReqsPasswd; };
 	void setReqsPassword(bool b) { m_ReqsPasswd = b; };
 
+	const bool useSSL() const { return m_useSSL; };
+	void setUseSSL( bool useSSL );
+
 	const QTextCodec *codec() const { return defaultCodec; };
 	const QTextCodec *codecForNick( const QString &nick ) const;
 	void setDefaultCodec( QTextCodec* codec ) { defaultCodec = codec; };
 
-	KExtendedSocket *socket() { return &m_sock; };
+	void setVersionString(const QString &versionString);
+	void setUserString(const QString &userString);
+	void setSourceString(const QString &sourceString);
+	void connectToServer(const QString &host, Q_UINT16 port, const QString &nickname, bool useSSL = false);
+
+	KExtendedSocket *socket() { return m_sock; };
 
 	EngineStatus status() const { return m_status; }
 
@@ -133,11 +142,6 @@ public:
 	void sendCtcpPing(const QString &target);
 	void sendCtcpVersion(const QString &target);
 
-	void setVersionString(const QString &versionString);
-	void setUserString(const QString &userString);
-	void setSourceString(const QString &sourceString);
-	void connectToServer(const QString &host, Q_UINT16 port, const QString &nickname);
-
 	void changeUser(const QString &newUsername, const QString &hostname, const QString &newRealname);
 	void changeUser(const QString &newUsername, Q_UINT8 mode, const QString &newRealname);
 	void changeNickname(const QString &newNickname);
@@ -156,6 +160,7 @@ signals:
 	void connectedToServer(); /* 001 */
 	void disconnected();
 	void successfulQuit();
+	void connectionTimeout();
 	void internalError(KIRC::EngineError, const KIRCMessage &);
 	void statusChanged(KIRC::EngineStatus newStatus);
 	void sentMessage(const KIRCMessage &);
@@ -418,7 +423,6 @@ private:
 
 	static const QRegExp m_RemoveLinefeeds;
 
-	KExtendedSocket m_sock;
 	EngineStatus m_status;
 	// put this in a QMap<QString, QVariant> ?
 	QString m_Host;
@@ -428,8 +432,10 @@ private:
 	QString m_Realname;
 	QString m_Nickname;
 	QString m_Passwd;
-	bool	m_ReqsPasswd;
+
+	bool m_ReqsPasswd;
 	bool m_FailedNickOnLogin;
+	bool m_useSSL;
 
 	QString m_VersionString;
 	QString m_UserString;
@@ -445,10 +451,10 @@ private:
 	QDict<QTextCodec> codecs;
 	QTextCodec *defaultCodec;
 
+	KExtendedSocket *m_sock;
+
 	void setStatus(EngineStatus status);
 	bool canSend( bool mustBeConnected ) const;
-
-
 };
 
 #endif // KIRC_H

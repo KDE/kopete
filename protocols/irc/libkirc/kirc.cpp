@@ -44,6 +44,7 @@
 #include "kirc.h"
 #include "kircnumericreplies.h"
 #include "kircctcpqueries.h"
+#include "ksslsocket.h"
 
 /* Please note that the regular expression "[\\r\\n]*$" is used in a QString::replace statement many times.
  * This gets rid of trailing \r\n, \r, \n, and \n\r characters.
@@ -52,13 +53,12 @@ const QRegExp KIRC::m_RemoveLinefeeds(QString::fromLatin1("[\\r\\n]*$"));
 
 KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 	  m_status(Disconnected),
+	  m_useSSL(false),
 	  m_IrcMethods(101, false),
 	  m_IrcCTCPQueryMethods(17, false),
 	  m_IrcCTCPReplyMethods(17, false)
 {
 	m_IrcMethods.setAutoDelete(true);
-	m_sock.setSocketFlags( KExtendedSocket::bufferedSocket | KExtendedSocket::inetSocket );
-
 	m_IrcCTCPQueryMethods.setAutoDelete(true);
 	m_IrcCTCPReplyMethods.setAutoDelete(true);
 
@@ -262,26 +262,56 @@ KIRC::KIRC( QObject *parent, const char *name) : QObject( parent, name ),
 	addCtcpReplyIrcMethod("PING",		&KIRC::CtcpReply_pingPong,	1,	1,	"");
 	addCtcpReplyIrcMethod("VERSION",	&KIRC::CtcpReply_version,	-1,	-1,	"");
 
-	QObject::connect(&m_sock, SIGNAL(closed(int)), this, SLOT(slotConnectionClosed()));
-	QObject::connect(&m_sock, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
-	QObject::connect(&m_sock, SIGNAL(connectionSuccess()), this, SLOT(slotConnected()));
-	QObject::connect(&m_sock, SIGNAL(connectionFailed(int)), this, SLOT(error(int)));
-
 	m_VersionString = QString::fromLatin1("Anonymous client using the KIRC engine.");
 	m_UserString = QString::fromLatin1("Response not supplied by user.");
 	m_SourceString = QString::fromLatin1("Unknown client, known source.");
 
 	defaultCodec = QTextCodec::codecForMib(4);
+	kdDebug(14120) << "Setting defualt engine codec, " << defaultCodec->name() << endl;
+
+	m_sock = 0L;
 }
 
 KIRC::~KIRC()
 {
 	kdDebug(14120) << k_funcinfo << m_Host << endl;
 	quitIRC("KIRC Deleted", true);
+	if( m_sock )
+		delete m_sock;
+}
+
+void KIRC::setUseSSL( bool useSSL )
+{
+	kdDebug(14120) << k_funcinfo << useSSL << endl;
+
+	if( !m_sock || useSSL != m_useSSL )
+	{
+		if( m_sock )
+			delete m_sock;
+
+		m_useSSL = useSSL;
+
+		if( m_useSSL )
+		{
+			m_sock = new KSSLSocket;
+			m_sock->setSocketFlags( KExtendedSocket::inetSocket );
+		}
+		else
+		{
+			m_sock = new KExtendedSocket;
+			m_sock->setSocketFlags( KExtendedSocket::inputBufferedSocket | KExtendedSocket::inetSocket );
+		}
+
+		QObject::connect(m_sock, SIGNAL(closed(int)), this, SLOT(slotConnectionClosed()));
+		QObject::connect(m_sock, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
+		QObject::connect(m_sock, SIGNAL(connectionSuccess()), this, SLOT(slotConnected()));
+		QObject::connect(m_sock, SIGNAL(connectionFailed(int)), this, SLOT(error(int)));
+	}
 }
 
 void KIRC::setStatus(EngineStatus status)
 {
+	kdDebug(14120) << k_funcinfo << status << endl;
 	if( status == Disconnected && m_status != Closing )
 	{
 		emit disconnected();
@@ -291,40 +321,44 @@ void KIRC::setStatus(EngineStatus status)
 	emit statusChanged(status);
 }
 
-void KIRC::connectToServer(const QString &host, Q_UINT16 port, const QString &nickname)
+void KIRC::connectToServer(const QString &host, Q_UINT16 port, const QString &nickname, bool useSSL )
 {
+	setUseSSL(useSSL);
+
 	m_Nickname = nickname;
 	m_Host = host;
 	m_Port = port;
 
 	kdDebug(14120) << "Trying to connect to server " << m_Host << ":" << m_Port << endl;
-	kdDebug(14120) << "Sock status: " << m_sock.socketStatus() << endl;
+	kdDebug(14120) << "Sock status: " << m_sock->socketStatus() << endl;
 
-	if( !m_sock.setAddress(m_Host, m_Port) )
-		kdDebug(14120) << k_funcinfo << "setAddress failed. Status:  " << m_sock.socketStatus() << endl;
+	if( !m_sock->setAddress(m_Host, m_Port) )
+		kdDebug(14120) << k_funcinfo << "setAddress failed. Status:  " << m_sock->socketStatus() << endl;
 
-	if( m_sock.lookup() ) // necessary to avoid QDns
-		kdDebug(14120) << k_funcinfo << "lookup() failed. Status: " << m_sock.socketStatus() << endl;
+	if( m_sock->lookup() ) // necessary to avoid QDns
+		kdDebug(14120) << k_funcinfo << "lookup() failed. Status: " << m_sock->socketStatus() << endl;
 
-	if( m_sock.startAsyncConnect() == 0 )
+	if( m_sock->startAsyncConnect() == 0 )
 	{
-		kdDebug(14120) << k_funcinfo << "Success!. Status: " << m_sock.socketStatus() << endl;
+		kdDebug(14120) << k_funcinfo << "Success!. Status: " << m_sock->socketStatus() << endl;
 		setStatus(Connecting);
 	}
 	else
 	{
-		kdDebug(14120) << k_funcinfo << "Failed. Status: " << m_sock.socketStatus() << endl;
+		kdDebug(14120) << k_funcinfo << "Failed. Status: " << m_sock->socketStatus() << endl;
 		setStatus(Disconnected);
 	}
 }
 
 void KIRC::slotAuthFailed()
 {
- 	if( m_status != Connected )
+	kdDebug(14120) << k_funcinfo << endl;
+	if( m_status != Connected )
 	{
 		setStatus(Disconnected);
-		m_sock.close();
-		m_sock.reset();
+		m_sock->close();
+		m_sock->reset();
+		emit connectionTimeout();
 	}
 }
 
@@ -332,7 +366,7 @@ void KIRC::slotConnected()
 {
 	kdDebug(14120) << k_funcinfo << "Connected" << endl;
 	setStatus(Authentifying);
-	m_sock.enableRead(true);
+	m_sock->enableRead(true);
 
 	// If password is given for this server, send it now, and don't expect a reply
 	if (!(password()).isEmpty())
@@ -344,27 +378,28 @@ void KIRC::slotConnected()
 	changeNickname(m_Nickname);
 
 	//If we don't get a reply within 15 seconds, give up
-	QTimer::singleShot(15000, this, SLOT(slotAuthFailed()));
+	//QTimer::singleShot(30000, this, SLOT(slotAuthFailed()));
 }
 
 void KIRC::slotConnectionClosed()
 {
-	kdDebug(14120) << k_funcinfo << "Connection Closed - local status: " << m_status << " sock status: " << m_sock.socketStatus() << endl;
+	kdDebug(14120) << k_funcinfo << "Connection Closed - local status: " << m_status << " sock status: " << m_sock->socketStatus() << endl;
 	if(m_status == Closing)
 		emit successfulQuit();
 
 	if(m_status!=Disconnected)
 		setStatus(Disconnected);
-	m_sock.reset();
+	m_sock->reset();
 }
 
-void KIRC::error(int /*errCode*/)
+void KIRC::error(int errCode)
 {
-	if (m_sock.socketStatus () != KExtendedSocket::connecting)
+	kdDebug(14120) << k_funcinfo << "Socket error: " << errCode << endl;
+	if (m_sock->socketStatus () != KExtendedSocket::connecting)
 	{
 		// Connection in progress.. This is a signal fired wrong
 		setStatus(Disconnected);
-		m_sock.reset();
+		m_sock->reset();
 	}
 }
 
@@ -513,7 +548,7 @@ void KIRC::slotReadyRead()
 	// close the socket unexpectedly
 	bool parseSuccess;
 
-	if( m_sock.socketStatus() == KExtendedSocket::connected && m_sock.canReadLine())
+	if( m_sock->socketStatus() == KExtendedSocket::connected && m_sock->canReadLine())
 	{
 		KIRCMessage msg = KIRCMessage::parse(this, defaultCodec, &parseSuccess);
 		if(parseSuccess)
@@ -550,10 +585,10 @@ void KIRC::slotReadyRead()
 			emit internalError(ParsingFailed, msg);
 		}
 
-		QTimer::singleShot(0, this, SLOT(slotReadyRead())); // Event loop.
+		QTimer::singleShot( 0, this, SLOT( slotReadyRead() ) );
 	}
 
-	if(m_sock.socketStatus()!=KExtendedSocket::connected)
+	if(m_sock->socketStatus()!=KExtendedSocket::connected)
 		error();
 }
 
@@ -590,7 +625,12 @@ bool KIRC::nickChange(const KIRCMessage &msg)
 
 const QTextCodec *KIRC::codecForNick( const QString &nick ) const
 {
+	if( nick.isEmpty() )
+		return defaultCodec;
+
 	QTextCodec *codec = codecs[ nick ];
+	kdDebug(14120) << nick << " has codec " << codec << endl;
+
 	if( !codec )
 		return defaultCodec;
 	else
@@ -624,11 +664,12 @@ void KIRC::changeUser(const QString &newUsername, Q_UINT8 mode, const QString &n
 
 void KIRC::quitIRC(const QString &reason, bool now)
 {
+	kdDebug(14120) << k_funcinfo << endl;
 	if( now || !canSend(true) )
 	{
 		setStatus(Disconnected);
-		m_sock.close();
-		m_sock.reset();
+		m_sock->close();
+		m_sock->reset();
 	}
 	else
 	{
@@ -640,13 +681,13 @@ void KIRC::quitIRC(const QString &reason, bool now)
 
 void KIRC::quitTimeout()
 {
-	if(	m_sock.socketStatus() > KExtendedSocket::nothing &&
-		m_sock.socketStatus() < KExtendedSocket::done &&
+	if(	m_sock->socketStatus() > KExtendedSocket::nothing &&
+		m_sock->socketStatus() < KExtendedSocket::done &&
 		m_status == Closing)
 	{
 		setStatus(Disconnected);
-		m_sock.close();
-		m_sock.reset();
+		m_sock->close();
+		m_sock->reset();
 	}
 }
 
@@ -953,8 +994,8 @@ bool KIRC::CtcpReply_version(const KIRCMessage &msg)
 void KIRC::requestDccConnect(const QString &nickname, const QString &filename, uint port, DCCClient::Type type)
 {
 	if(	m_status != Connected ||
-		m_sock.localAddress() == 0 ||
-		m_sock.localAddress()->nodeName() == QString::null)
+		m_sock->localAddress() == 0 ||
+		m_sock->localAddress()->nodeName() == QString::null)
 		return;
 
 	if(type == DCCClient::Chat)
@@ -962,7 +1003,7 @@ void KIRC::requestDccConnect(const QString &nickname, const QString &filename, u
 		writeCtcpQueryMessage(nickname, QString::null,
 			QString("DCC"),
 			QStringList(QString::fromLatin1("CHAT")) << QString::fromLatin1("chat") <<
-			m_sock.localAddress()->nodeName() << QString::number(port));
+			m_sock->localAddress()->nodeName() << QString::number(port));
 	}
 	else if(type == DCCClient::File)
 	{
@@ -974,7 +1015,7 @@ void KIRC::requestDccConnect(const QString &nickname, const QString &filename, u
 		writeCtcpQueryMessage(nickname, QString::null,
 			QString("DCC"),
 			QStringList( QString::fromLatin1( "SEND" ) ) << noWhiteSpace <<
-			    m_sock.localAddress()->nodeName() << QString::number( port ) << QString::number( file.size() ) );
+			    m_sock->localAddress()->nodeName() << QString::number( port ) << QString::number( file.size() ) );
 	}
 }
 
