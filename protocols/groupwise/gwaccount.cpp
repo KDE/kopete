@@ -144,11 +144,14 @@ GroupWiseChatSession * GroupWiseAccount::chatSession( Kopete::ContactPtrList oth
 	do // one iteration misuse of do...while to enable an easy drop-out once we locate a manager
 	{
 		// do we have a manager keyed by GUID?
-		chatSession = findChatSessionByGuid( guid );
-		if ( chatSession )
+		if ( !guid.isEmpty() )
 		{
-				kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " found a message manager by GUID: " << guid << endl;
-				break;
+			chatSession = findChatSessionByGuid( guid );
+			if ( chatSession )
+			{
+					kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " found a message manager by GUID: " << guid << endl;
+					break;
+			}
 		}
 		// does the factory know about one, going on the chat members?
 		chatSession = dynamic_cast<GroupWiseChatSession*>(
@@ -182,7 +185,7 @@ GroupWiseChatSession * GroupWiseAccount::chatSession( Kopete::ContactPtrList oth
 				" no message manager available." << endl;
 	}
 	while ( 0 );
-	dumpManagers();
+	//dumpManagers();
 	return chatSession;
 }
 
