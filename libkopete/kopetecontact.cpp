@@ -350,7 +350,9 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 			KopeteContactList::contactList()->removeMetaContact(old);
 		}
 		else
-		{	//remove cached data for this protocol wich will not be removed since we disconnected
+		{
+			d->metaContact = m; //i am forced to do that now if i want the next line works
+			//remove cached data for this protocol wich will not be removed since we disconnected
 			protocol()->slotMetaContactAboutToSave( old );
 		}
 
