@@ -20,6 +20,7 @@
 
 // QT Includes
 #include <qcheckbox.h>
+#include <qlineedit.h>
 
 // KDE Includes
 #include <kdebug.h>
