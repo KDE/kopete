@@ -116,7 +116,7 @@ defaultName="";
 
   CBarmor=new QCheckBox(i18n("ASCII armored encryption"),boutonboxoptions);
   CBuntrusted=new QCheckBox(i18n("Allow encryption with untrusted keys"),boutonboxoptions);
-  CBhideid=new QCheckBox(i18n("Hide user id"),boutonboxoptions);
+  CBhideid=new QCheckBox(i18n("Hide user ID"),boutonboxoptions);
 
 //boutonboxoptions->insert(CBarmor);
 //boutonboxoptions->insert(CBuntrusted);
