@@ -149,22 +149,32 @@ GroupWiseProtocol *GroupWiseAccount::protocol() const
 	return static_cast<GroupWiseProtocol *>( KopeteAccount::protocol() );
 }
 
-GroupWiseMessageManager * GroupWiseAccount::messageManager( const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const GroupWise::ConferenceGuid & guid )
+GroupWiseMessageManager * GroupWiseAccount::messageManager( KopeteContactPtrList others, const GroupWise::ConferenceGuid & guid )
 {
-	GroupWiseMessageManager * mgr = m_managers[ guid ];
-	if ( !mgr )
+	GroupWiseMessageManager * mgr = 0;
+	do // one iteration misuse of do...while to enable an easy drop-out once we locate a manager
 	{
-		mgr = new GroupWiseMessageManager( user, others, protocol, guid );
-		// if we don't have a guid yet, after we emit conferenceCreated, 
-		// we will receive a conferenceCreated signal back from the correct manager
-		// and insert the guid into the map 
+		// do we have a manager keyed by GUID?
+		mgr = m_managers[ guid ];
+		if ( mgr ) 
+			break;
+		// does the factory know about one, going on the chat members?
+		mgr = dynamic_cast<GroupWiseMessageManager*>( 
+			KopeteMessageManagerFactory::factory()->findKopeteMessageManager( myself(), others, protocol() ) );
+		if ( mgr ) 
+			break;
+		// we don't have an existing message manager for this chat, so create one
+		mgr = new GroupWiseMessageManager( myself(), others, protocol(), guid );
 		if ( !guid.isEmpty() )
 			m_managers.insert( guid, mgr );
-		
+		// if the message manager gets a guid (either on creation, or after the first chat has closed, but the chatwindow 
+		// is reused and we start a new conference in it) record the guid.
 		QObject::connect( mgr, SIGNAL( conferenceCreated() ), SLOT( slotMessageManagerGotGuid() ) );
-		// connecting to KopeteMessageManager::closing() is no use to us as it is only emitted in the dtor.  We need to know that a GWMM is about to close 
+		// listen for the message manager telling us that the user has left the conference so we remove it from our map
 		QObject::connect( mgr, SIGNAL( leavingConference( GroupWiseMessageManager * ) ), SLOT( slotLeavingConference( GroupWiseMessageManager * ) ) );
 	}
+	while ( 0 );
+	dumpManagers();
 	return mgr;
 }
 
@@ -575,32 +585,44 @@ void GroupWiseAccount::slotTLSReady( int secLayerCode )
 void GroupWiseAccount::receiveMessage( const ConferenceEvent & event )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got a message in conference: " << event.guid << ",  from: " << event.user << ", message is: " << event.message << endl;
-	GroupWiseContact * contactFrom = contactForDN( event.user );
-	if ( !contactFrom )
-		contactFrom = createTemporaryContact( event.user );
-	contactFrom->handleIncomingMessage( event, false );
+	handleIncomingMessage( event, false );
 }
 
 void GroupWiseAccount::receiveAutoReply( const ConferenceEvent & event )
 {
-	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got an auto reply in conference: " << event.guid << ",  from: " << event.user << ", message is: " << event.message << endl;
-	GroupWiseContact * contactFrom = contactForDN( event.user );
-	if ( !contactFrom )
-		contactFrom = createTemporaryContact( event.user );
-	contactFrom->handleIncomingMessage( event, true );
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " got an auto reply in conference: " << event.guid << ",  from: " << event.user << ", autoreply is: " << event.message << endl;
+	handleIncomingMessage( event, true );
 }
-/*	else
-	{
-		kdDebug (GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << event.user << " is unknown to us, requesting details so we can create a temporary contact." << endl;
-		m_pendingEvents.append( event );
-		// get their details
-		QStringList userDNsList;
-		userDNsList.append( event.user );
-		// the client will signal contactUserDetailsReceived when the details arrive, 
-		// and we'll add a temporary contact in receiveContactUserDetails, before coming back to this method
-		m_client->requestDetails( userDNsList );
-	}*/
 
+void GroupWiseAccount::handleIncomingMessage( const ConferenceEvent & message, bool autoReply )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << message.user << " sent a " << ( autoReply ? "auto-reply" : "message" ) << " to conference: " << message.guid << ", message: " << message.message << endl;
+
+	GroupWiseContact * sender = contactForDN( message.user );
+	if ( !sender )
+		sender = createTemporaryContact( message.user );
+
+	KopeteContactPtrList contactList;
+	contactList.append( sender );
+	// FIND A MESSAGE MANAGER FOR THIS CONTACT
+	GroupWiseMessageManager *mgr = messageManager( contactList, message.guid );
+
+	// add an auto-reply indicator if needed
+	QString messageMunged = message.message;
+	if ( autoReply )
+	{
+		QString autoReplyPrefix = i18n("Prefix used for automatically generated auto-reply"
+									   " messages when the contact is Away, contains contact's name",
+				"Auto reply from %1: " ).arg( sender->metaContact()->displayName() );
+		messageMunged = autoReplyPrefix + message.message;
+	}
+	KopeteMessage * newMessage = new KopeteMessage ( message.timeStamp, sender, contactList, messageMunged, 
+									KopeteMessage::Inbound,
+									autoReply ? KopeteMessage::PlainText : KopeteMessage::RichText );
+	Q_ASSERT( mgr );
+	mgr->appendMessage( *newMessage );
+	delete newMessage;
+}
 
 void GroupWiseAccount::receiveFolder( const FolderItem & folder )
 {
@@ -948,7 +970,7 @@ void GroupWiseAccount::receiveConferenceJoin( const GroupWise::ConferenceGuid & 
 {
 	// get a new GWMM
 	KopeteContactPtrList others;
-	GroupWiseMessageManager * mgr = messageManager( myself(), others, protocol(), guid );
+	GroupWiseMessageManager * mgr = messageManager( others, guid );
 	// find each contact and add them to the GWMM, and tell them they are in the conference
 	for ( QValueList<QString>::ConstIterator it = participants.begin(); it != participants.end(); ++it )
 	{

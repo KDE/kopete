@@ -56,6 +56,7 @@ void GroupWiseMessageManager::Dict::remove( const ConferenceGuid & key )
 
 GroupWiseMessageManager::GroupWiseMessageManager(const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const GroupWise::ConferenceGuid & guid, int id, const char* name): KopeteMessageManager(user, others, protocol, 0, name), m_guid( guid ), m_flags( 0 ), m_searchDlg( 0 ), m_memberCount( others.count() )
 {
+	Q_UNUSED( id );
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "New message manager for " << user->contactId() << endl;
 
 	// Needed because this is (indirectly) a KXMLGuiClient, so it can find the gui description .rc file
@@ -418,8 +419,6 @@ void GroupWiseMessageManager::joined( GroupWiseContact * c )
 	// because otherwise KMM will delete itself when the last member leaves.
 	addContact( c );
 
-	c->joinConference( m_guid );
-	
 	// look for the invitee and remove it
 	KopeteContact * pending;
 	for ( pending = m_invitees.first(); pending; pending = m_invitees.next() )
@@ -441,7 +440,6 @@ void GroupWiseMessageManager::joined( GroupWiseContact * c )
 void GroupWiseMessageManager::left( GroupWiseContact * c )
 {
 	removeContact( c );
-	c->leaveConference( m_guid );
 	--m_memberCount;
 	
 	updateArchiving();

@@ -106,28 +106,6 @@ public:
 	 */
 	virtual KopeteMessageManager *manager( bool canCreate = false );
 
-	/** 
-	 * Locate or create a messagemanager for the specified group of contacts
-	 */
-	GroupWiseMessageManager *manager ( KopeteContactPtrList chatMembers, bool canCreate = false );
-
-	/**
-	 * Received a message from the server.
-	 * Find the conversation that this message belongs to, and display it there.
-	 * @param autoReply Indicates that the message is an auto reply - doesn't contain any RTF.
-	 */
-	void handleIncomingMessage( const ConferenceEvent & event, bool autoReply );
-	
-	/**
-	 * Add this contact to a conference
-	 */
-	void joinConference( const ConferenceGuid & guid );
-
-	/**
-	 * Remove this contact from a conference
-	 */
-	void leaveConference( const ConferenceGuid & guid );
-	
 	/**
 	 * Access the contact's server properties
 	 */
@@ -201,10 +179,6 @@ public slots:
 	void slotRenamedOnServer();
 	
 protected:
-	/**
-	 * Returns the KopeteMessageManager for the GroupWise conference with the supplied GUID, or creates a new one.
-	 */
-	GroupWiseMessageManager *manager( const ConferenceGuid & guid, bool canCreate = false ) KDE_DEPRECATED;
 	// debug function to see what message managers we have on the server
 	void dumpManagers();
 protected slots:
@@ -212,15 +186,6 @@ protected slots:
 	 * Show the contact's properties
 	 */
 	void slotUserInfo();
-	/**
-	 * A message manager was instantiated as a conference on the server, so record it.
-	 */
-	void slotConferenceCreated();
-	/**
-	 * Notify the contact that a KopeteMessageManager was
-	 * destroyed - probably by the chatwindow being closed
-	 */
-	void slotLeavingConference( GroupWiseMessageManager * );
 	/**
 	 * Block or unblock the contact, toggle its current blocking state
 	 */

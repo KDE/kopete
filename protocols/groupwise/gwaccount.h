@@ -102,9 +102,9 @@ public:
 	 */
 	Client * client() const;
 	/** 
-	 * Utility access to a message manager instance for a given GUID
+	 * Utility to create or access a message manager instance for a given GUID and set of contacts
 	 */
-	GroupWiseMessageManager * messageManager( const KopeteContact* user, KopeteContactPtrList others, KopeteProtocol* protocol, const ConferenceGuid & guid );
+	GroupWiseMessageManager * messageManager( KopeteContactPtrList others, const ConferenceGuid & guid );
 	/**
 	 * Look up a contact given a DN
 	 * Returns 0 if none found
@@ -292,6 +292,14 @@ protected:
 	 * Sends a status message to the server - called by the status specific slotGoAway etc
 	 */
 	void setStatus( GroupWise::Status status, const QString & reason = QString::null );
+
+	/**
+	 * Received a message from the server.
+	 * Find the conversation that this message belongs to, and display it there.
+	 * @param autoReply Indicates that the message is an auto reply - doesn't contain any RTF.
+	 */
+	void handleIncomingMessage( const ConferenceEvent & event, bool autoReply );
+
 	/**
 	 * Memory management
 	 */
