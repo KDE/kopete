@@ -160,6 +160,7 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	// ==========================================================================
 
 	errorAlert = false;
+	styleChanged = false;
 	slotTransparencyChanged(mPrfsChatWindow->mTransparencyEnabled->isChecked());
 }
 
@@ -179,7 +180,8 @@ void AppearanceConfig::save()
 	p->setTransparencyEnabled( mPrfsChatWindow->mTransparencyEnabled->isChecked() );
 	p->setTransparencyValue( mPrfsChatWindow->mTransparencyValue->value() );
 	p->setBgOverride( mPrfsChatWindow->mTransparencyBgOverride->isChecked() );
-	p->setStyleSheet( itemMap[ mPrfsChatWindow->styleList->selectedItem() ] );
+	if( styleChanged || p->styleSheet() != itemMap[ mPrfsChatWindow->styleList->selectedItem() ] )
+		p->setStyleSheet( itemMap[ mPrfsChatWindow->styleList->selectedItem() ] );
 
 
 	// "Colors & Fonts" TAB =====================================================
@@ -194,6 +196,7 @@ void AppearanceConfig::save()
 
 	p->save();
 	errorAlert = false;
+	styleChanged = false;
 }
 
 void AppearanceConfig::reopen()
@@ -525,6 +528,7 @@ void AppearanceConfig::addStyle( const QString &styleName, const QString &xslStr
 			itemMap.insert( mPrfsChatWindow->styleList->firstItem(), filePath );
 			mPrfsChatWindow->styleList->setSelected( mPrfsChatWindow->styleList->firstItem(), true );
 			mPrfsChatWindow->styleList->sort();
+			styleChanged = true;
 		}
 		else
 		{

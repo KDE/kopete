@@ -95,6 +95,7 @@ private:
 	QMap<QListBoxItem*,QString> itemMap;
 	QString currentStyle;
 	bool errorAlert;
+	bool styleChanged;
 
 private:
 	void updateHighlight();

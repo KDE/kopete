@@ -214,12 +214,9 @@ void KopetePrefs::setSoundIfAway(bool value)
 
 void KopetePrefs::setStyleSheet(const QString &value)
 {
-	if( mStyleSheet != value )
-	{
-		mStyleSheet = value;
-		mStyleContents = fileContents( mStyleSheet );
-		emit( messageAppearanceChanged() );
-	}
+	mStyleSheet = value;
+	mStyleContents = fileContents( mStyleSheet );
+	emit( messageAppearanceChanged() );
 }
 
 void KopetePrefs::setFontFace( const QFont &value )
