@@ -24,13 +24,9 @@
 #include <kio/slavebase.h>
 
 class KSSLSocketPrivate;
-class SSLPollThread;
-class QWidget;
 
 class KSSLSocket : public KExtendedSocket
 {
-	friend class SSLPollThread;
-
 	Q_OBJECT
 
 	public:
