@@ -78,8 +78,7 @@ OscarSocket::~OscarSocket()
 		socketStatus() == OscarConnection::Connected )
 	{
 		kdDebug(14150) << k_funcinfo <<
-			"WE ARE NOT DISCONNECTED YET, Status = " <<
-			mSocket->socketStatus() << endl;
+			"ERROR: WE ARE NOT DISCONNECTED YET" << endl;
 
 		if(mIsICQ)
 			stopKeepalive();
@@ -132,8 +131,8 @@ SSIData& OscarSocket::ssiData()
 void OscarSocket::slotConnected()
 {
 	kdDebug(14150) << k_funcinfo <<
-		"Connected to '" << mSocket->host() <<
-		"', port '" << mSocket->port() << "'" << endl;
+		"Connected to '" << peerHost() <<
+		"', port '" << peerPort() << "'" << endl;
 
 #if 0
 	QString h=mSocket->localAddress()->nodeName();
@@ -148,8 +147,10 @@ void OscarSocket::slotConnectionClosed()
 	kdDebug(14150) << k_funcinfo << "Connection for account '" <<
 		mAccount->accountId() << "' closed." << endl;
 
+	/*
 	kdDebug(14150) << k_funcinfo << "Socket Status: " <<
 			mSocket->strError(mSocket->socketStatus(), mSocket->systemError()) << endl;
+	*/
 
 	if(mSocket->bytesAvailable() > 0)
 	{
@@ -200,13 +201,16 @@ void OscarSocket::slotConnectionClosed()
 
 void OscarSocket::slotRead()
 {
+	kdDebug(14150) << k_funcinfo << "-----------------------" << endl;
+
 	//int waitCount=0;
 	char *buf=0L;
 	Buffer inbuf;
 	FLAP fl;
 	int bytesread=0;
 
-	//kdDebug(14150) << k_funcinfo << mSocket->bytesAvailable() << " bytes to read" << endl;
+	/*kdDebug(14150) << k_funcinfo <<
+		mSocket->bytesAvailable() << " bytes to read" << endl;*/
 
 	// a FLAP is min 6 bytes, we cannot read more out of
 	// a buffer without these 6 initial bytes
@@ -523,8 +527,8 @@ void OscarSocket::slotRead()
 	// another flap is waiting in read buffer
 	if (mSocket->bytesAvailable() > 0)
 	{
-		/*kdDebug(14150) << k_funcinfo <<
-			"END, restarting from top as we still have buffer contents." << endl;*/
+		kdDebug(14150) << k_funcinfo <<
+			"END, restarting from top as we still have buffer contents." << endl;
 		slotRead();
 	}
 	else
@@ -637,8 +641,10 @@ void OscarSocket::writeData(Buffer &outbuf)
 	if(mSocket->writeBlock(outbuf.buffer(), outbuf.length()) == -1)
 	{
 		kdDebug(14150) << k_funcinfo << "writeBlock() call failed!" << endl;
+		/*
 		kdDebug(14150) << k_funcinfo <<
 		mSocket->strError(mSocket->socketStatus(), mSocket->systemError()) << endl;
+		*/
 	}
 
 	if ( sender() && sender()->isA("RateClass") )
@@ -896,8 +902,8 @@ void OscarSocket::sendRateAck()
 
 void OscarSocket::OnBosConnect()
 {
-	kdDebug(14150) << k_funcinfo << "Connected to " << mSocket->host() <<
-		", port " << mSocket->port() << endl;
+	kdDebug(14150) << k_funcinfo << "Connected to " << peerHost() <<
+		", port " << peerPort() << endl;
 }
 
 void OscarSocket::sendPrivacyFlags()

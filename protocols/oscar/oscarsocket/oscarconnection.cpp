@@ -38,11 +38,13 @@ OscarConnection::OscarConnection(const QString &connName, ConnectionType type,
 	connect(mSocket, SIGNAL(connectionFailed(int)),
 		this, SLOT(slotSocketError(int)));
 	connect(mSocket, SIGNAL(closed(int)), this, SLOT(slotSocketClosed()));
+	mSocket->enableWrite(false);
+	mSocket->enableRead(true);
 
 	#else // libqt-addon
 
-	mSocket = new QBufferedSocket();
-	mSocket->setSocketFlags(QSocketBase::KeepAlive);
+	mSocket = new QBufferedSocket(QString::null, QString::null, this, "mSocket");
+	//mSocket->setSocketFlags(QSocketBase::Keepalive);
 
 	connect(mSocket, SIGNAL(connected(const QResolverEntry &)),
 		this, SLOT(slotSocketConnected()));
@@ -51,8 +53,7 @@ OscarConnection::OscarConnection(const QString &connName, ConnectionType type,
 
 	#endif
 
-	mSocket->enableWrite(false);
-	mSocket->enableRead(true);
+	connect(mSocket, SIGNAL(readyRead()), this, SLOT(slotRead()));
 }
 
 
@@ -76,25 +77,31 @@ const QString &OscarConnection::getSN() const
 
 OscarConnection::ConnectionStatus OscarConnection::socketStatus() const
 {
+	#ifdef USE_KEXTSOCK
 	switch(mSocket->socketStatus())
 	{
-	#ifdef USE_KEXTSOCK
 		case (KExtendedSocket::connecting):
 			return Connecting;
 		case (KExtendedSocket::connected):
 			return Connected;
+		default:
+			break;
+	}
+
 	#else
+
+	switch(mSocket->state())
+	{
 		case (QClientSocketBase::HostLookup):
 		case (QClientSocketBase::Connecting):
 			return Connecting;
 		case (QClientSocketBase::Open):
-		case (QClientSocketBase::Connected):
-		case (QClientSocketBase::Connection):
 			return Connected;
-	#endif
 		default:
 			break;
 	}
+	#endif
+
 	return Disconnected;
 }
 
@@ -106,6 +113,46 @@ void OscarConnection::connectTo(const QString &host, const QString &port)
 	mSocket->connect();
 	#else
 	mSocket->connect(host, port);
+	#endif
+}
+
+
+QString OscarConnection::localHost() const
+{
+	#ifdef USE_KEXTSOCK
+	return mSocket->localAddress()->nodeName();
+	#else
+	return mSocket->localResults().nodeName();
+	#endif
+}
+
+
+QString OscarConnection::localPort() const
+{
+	#ifdef USE_KEXTSOCK
+	return mSocket->localAddress()->serviceName();
+	#else
+	return mSocket->localResults().serviceName();
+	#endif
+}
+
+
+QString OscarConnection::peerHost() const
+{
+	#ifdef USE_KEXTSOCK
+	return mSocket->host();
+	#else
+	return mSocket->peerResults().nodeName();
+	#endif
+}
+
+
+QString OscarConnection::peerPort() const
+{
+	#ifdef USE_KEXTSOCK
+	return mSocket->port();
+	#else
+	return mSocket->peerResults().serviceName();
 	#endif
 }
 
@@ -139,8 +186,6 @@ void OscarConnection::sendFileSendRequest()
 void OscarConnection::slotSocketConnected()
 {
 	kdDebug(14150) << k_funcinfo << "Socket is now connected" << endl;
-	connect(mSocket, SIGNAL(readyRead()), this, SLOT(slotRead()));
-
 	emit socketConnected(connectionName());
 }
 

@@ -789,7 +789,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 void OscarAccount::slotOurStatusChanged(const unsigned int newStatus)
 {
 	kdDebug(14150) << k_funcinfo << "Called; newStatus=" << newStatus << endl;
-	static_cast<OscarContact *>( myself() )->setStatus(newStatus);
+	static_cast<OscarContact *>(myself())->setStatus(newStatus);
 
 	if(newStatus == OSCAR_OFFLINE)
 		d->idleTimer->stop();

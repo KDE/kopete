@@ -21,8 +21,10 @@
 
 #ifdef USE_KEXTSOCK
 #include <kextsock.h>
+#include <ksockaddr.h>
 #else
-#include <qbufferedsocket.h>
+#include <qt-addon/qbufferedsocket.h>
+#include <qt-addon/qsocketbase.h>
 #endif
 
 #include <qobject.h>
@@ -82,6 +84,11 @@ class OscarConnection : public QObject
 		inline const QByteArray &cookie() const { return mCookie; };
 
 		void connectTo(const QString &host, const QString &port);
+
+		QString localHost() const;
+		QString localPort() const;
+		QString peerHost() const;
+		QString peerPort() const;
 
 		/**
 		 * Sends the direct IM message to buddy
