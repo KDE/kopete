@@ -125,7 +125,6 @@ GaduProtocol::deserializeContact( KopeteMetaContact *metaContact,
 					account, metaContact );
 	
 	c->setParentIdentity( aid );
-	gaccount->addContactToMap( cid.toUInt(), c );
 	gaccount->addNotify( cid.toUInt() );
 	
 	c->setInfo(	serializedData["email"],

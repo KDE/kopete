@@ -170,7 +170,6 @@ bool GaduAccount::addContactToMetaContact( const QString& contactId, const QStri
 	if ( !parentContact->findContact( protocol()->pluginId(), myself_->contactId(), contactId ) ) {
 		GaduContact *newContact = new GaduContact( uinNumber, displayName, this, parentContact );
 		newContact->setParentIdentity( accountId() );
-		contactsMap_.insert( uinNumber, newContact );
 		addNotify( uinNumber );
 	}
 
@@ -282,7 +281,6 @@ GaduAccount::removeContact( const GaduContact* c )
 	if ( isConnected() ) {
 		const uin_t u = c->uin();
 		session_->removeNotify( u );
-		contactsMap_.remove( u );
 	}
 
 // no reason for me to be online to delete
@@ -343,8 +341,7 @@ GaduAccount::messageReceived( struct gg_event* e )
 	return;
     }
 
-    if ( contactsMap_.contains( e->event.msg.sender ) )
-	c = contactsMap_[ e->event.msg.sender ];
+    c = static_cast<GaduContact *>(contacts()[QString::number( e->event.msg.sender )]);
 
     if ( c ) {
 	KopeteContactPtrList tmp;
@@ -353,7 +350,7 @@ GaduAccount::messageReceived( struct gg_event* e )
 	c->messageReceived( msg );
     } else {
 	addContact( QString::number(e->event.msg.sender), QString::number(e->event.msg.sender) );
-	c = contactsMap_.find( e->event.msg.sender ).data();
+	c = static_cast<GaduContact *>(contacts()[QString::number( e->event.msg.sender )]);
 	KopeteContactPtrList tmp;
 	tmp.append( myself_ );
 	KopeteMessage msg( c, tmp, message, KopeteMessage::Inbound );
@@ -364,10 +361,11 @@ GaduAccount::messageReceived( struct gg_event* e )
 void
 GaduAccount::ackReceived( struct gg_event* e  )
 {
-    if ( contactsMap_.contains( e->event.ack.recipient ) ) {
-	GaduContact *contact = contactsMap_[ e->event.ack.recipient ];
-	kdDebug(14100)<<"####"<<"Received an ACK from "<<contact->uin()<<endl;
-	contact->messageAck();
+    GaduContact *c;
+    c = static_cast<GaduContact *>(contacts()[QString::number( e->event.ack.recipient )]);
+    if ( c ) {
+	kdDebug(14100)<<"####"<<"Received an ACK from "<<c->uin()<<endl;
+	c->messageAck();
     } else {
 	kdDebug(14100)<<"####"<<"Received an ACK from an unknown user : "<< e->event.ack.recipient <<endl;
     }
@@ -382,7 +380,9 @@ GaduAccount::notify( struct gg_event* e )
 
     while( n && n->uin ) {
 	kdDebug(14100)<<"### NOTIFY "<<n->uin<< " " << n->status << endl;
-	if ( !(c=contactsMap_.find(n->uin).data()) ) {
+	c = static_cast<GaduContact *>(contacts()[QString::number( n->uin )]);
+
+	if ( !c ) {
 	    kdDebug(14100)<<"Notify not in the list "<< n->uin << endl;
 	    session_->removeNotify( n->uin );
 	    ++n;
@@ -409,7 +409,8 @@ GaduAccount::notifyDescription( struct gg_event* e )
 
     for( ; n->uin ; n++ ) {
 	char *descr = (e->type == GG_EVENT_NOTIFY_DESCR) ? e->event.notify_descr.descr : NULL;
-	if ( !(c=contactsMap_.find( n->uin ).data()) )
+	c = static_cast<GaduContact *>(contacts()[QString::number( n->uin )]);
+	if ( !c )
 	    continue;
 	if ( c->onlineStatus() ==  GaduProtocol::protocol()->convertStatus( n->status ) )
 	    continue;
@@ -422,7 +423,8 @@ void
 GaduAccount::statusChanged( struct gg_event* e )
 {
     kdDebug(14100)<<"####"<<" status changed, uin:"<< e->event.status.uin <<endl;
-    GaduContact *c = contactsMap_.find( e->event.status.uin ).data();
+    GaduContact *c;
+    c = static_cast<GaduContact *>(contacts()[QString::number( e->event.status.uin )]);
     if( !c )
 	return;
     c->setDescription( e->event.status.descr );
@@ -470,18 +472,20 @@ void
 GaduAccount::startNotify()
 {
     int i = 0;
-    QValueList<uin_t> l = contactsMap_.keys();
-
-    QValueList<uin_t>::iterator it;
-    uin_t *userlist = 0;
-    if ( !contactsMap_.empty() ) {
-	userlist = new uin_t[contactsMap_.count()];
-
-	for( it = l.begin(); it != l.end(); ++it, ++i ) {
-	    userlist[i] = (*it);
-	}
+    if (!contacts().count()){
+	return;
     }
-    session_->notify( userlist, contactsMap_.count() );
+    
+    QDictIterator<KopeteContact> it( contacts() );
+    
+    uin_t *userlist = 0;
+    userlist = new uin_t[contacts().count()];
+
+    for( i=0 ; it.current() ; ++it ) {
+	userlist[i++] = static_cast<GaduContact *>((*it))->uin();
+    }
+    
+    session_->notify( userlist, contacts().count() );
 }
 
 void
@@ -492,9 +496,10 @@ GaduAccount::slotSessionDisconnect()
     if (pingTimer_){
 	pingTimer_->stop();
     }
+    QDictIterator<KopeteContact> it( contacts() );
 
-    for ( ContactsMap::iterator it = contactsMap_.begin(); it != contactsMap_.end(); ++it) {
-	it.data()->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
+    for ( ; it.current() ; ++it ){
+	static_cast<GaduContact*>((*it))->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
     }
 
     if ( myself_->onlineStatus().internalStatus() != GG_STATUS_NOT_AVAIL ||
@@ -502,12 +507,6 @@ GaduAccount::slotSessionDisconnect()
 
 	myself_->setOnlineStatus( GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL ) );
     }
-}
-
-void 
-GaduAccount::addContactToMap( uin_t id, GaduContact *&contact)
-{
-    contactsMap_.insert(id, contact);
 }
 
 
@@ -530,7 +529,7 @@ GaduAccount::userlist( const gaduContactsList& u)
 		goto next_cont;
 	    }
 
- 	    if (contactsMap_.contains((*loo)->uin.toUInt())){
+ 	    if ( contacts()[(*loo)->uin] ){
 		kdDebug(14100) << "UIN already exists in contacts "<< (*loo)->uin << endl; 
 	    }
 	    else{
@@ -574,7 +573,7 @@ GaduAccount::userlist( const gaduContactsList& u)
 		    goto next_cont;
 		}
 	    }
-	    ucontact=contactsMap_[(*loo)->uin.toUInt()];
+	    ucontact = static_cast<GaduContact*>(contacts()[ (*loo)->uin ]);
 	    
 	    kdDebug(14100) << "Adding extra information for " << (*loo)->uin <<endl; 
 	    kdDebug(14100) << (*loo)->email << 

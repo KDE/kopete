@@ -45,14 +45,12 @@ class GaduAccount : public KopeteAccount
 {
 	Q_OBJECT
 public:
-	typedef QMap< uin_t, GaduContact* > ContactsMap;
 	GaduAccount( KopeteProtocol* parent, const QString& accountID,
 							 const char* name=0L );
 	//{
 	void setAway( bool isAway, const QString& awayMessage = QString::null );
 	KopeteContact* myself() const;
 	KActionMenu* actionMenu();
-	void addContactToMap( uin_t id, GaduContact *&contact);
 	//}
 public slots:
 	//{
@@ -123,8 +121,7 @@ private:
 
 	GaduSession* session_;
 	QPtrList<GaduCommand> commandList_;
-	ContactsMap contactsMap_;
-
+	
 	KActionMenu *actionMenu_;
 
 	QTimer	*pingTimer_;
