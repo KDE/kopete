@@ -26,9 +26,9 @@ namespace Kopete
 class MessageManager;
 class Protocol;
 class Contact;
+class MessageEvent;
 }
 
-class KopeteEvent;
 class KopeteView;
 class QTextEdit;
 
@@ -96,7 +96,7 @@ class KopeteViewManager : public Kopete::Plugin
 		/**
 		 * An event has been deleted.
 		 */
-		void slotEventDeleted( KopeteEvent * );
+		void slotEventDeleted( Kopete::MessageEvent * );
 
 		void slotPrefsChanged();
 		void slotViewActivated( KopeteView * );

@@ -1,9 +1,10 @@
 /*
-    kopeteevent.h - Kopete Event
+    kopetemessageevent.h - Kopete Message Event
 
     Copyright (c) 2003 by Olivier Goffart <ogoffart@tiscalinet.be>
     Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002 by Hendrik vom Lehn <hvl@linux-4-ever.de>
+    Copyright (c) 2004 by Richard Smith <richard@metafoo.co.uk>
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -17,28 +18,31 @@
     *************************************************************************
 */
 
-#ifndef KOPETEEVENT_H
-#define KOPETEEVENT_H
+#ifndef KOPETEMESSAGEEVENT_H
+#define KOPETEMESSAGEEVENT_H
 
 #include <qobject.h>
 
 #include "kopetemessage.h"
 
+namespace Kopete
+{
+
 /**
  * @author Olivier Goffart <ogoffart@tiscalinet.be>
  *
- * KopeteEvent is used when a new messages arrives, it is
+ * Kopete::MessageEvent is used when a new messages arrives, it is
  * caught by the UI. It contains just informations about
  * the message, and a signal when it is terminated (i.e.
  * the message is read
  **/
-class KopeteEvent : public QObject
+class MessageEvent : public QObject
 {
 	Q_OBJECT
 
 public:
-	KopeteEvent(const Kopete::Message& , QObject* parent=0L, const char *name=0L);
-	~KopeteEvent();
+	MessageEvent(const Kopete::Message& , QObject* parent=0L, const char *name=0L);
+	~MessageEvent();
 
 	/**
 	 * @return the message
@@ -60,7 +64,7 @@ signals:
 	/**
 	 * The event is processed
 	 **/
-	void done(KopeteEvent *);
+	void done(Kopete::MessageEvent *);
 
 private:
 	Kopete::Message m_message;
@@ -77,6 +81,8 @@ public slots:
 	void ignore();
 
 };
+
+}
 
 #endif
 

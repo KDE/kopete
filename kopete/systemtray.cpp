@@ -60,8 +60,8 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent, const char* name)
 	mKopeteIcon = loadIcon("kopete");
 
 	connect(mBlinkTimer, SIGNAL(timeout()), this, SLOT(slotBlink()));
-	connect(Kopete::MessageManagerFactory::factory() , SIGNAL(newEvent(KopeteEvent*)),
-		this, SLOT(slotNewEvent(KopeteEvent*)));
+	connect(Kopete::MessageManagerFactory::factory() , SIGNAL(newEvent(Kopete::MessageEvent*)),
+		this, SLOT(slotNewEvent(Kopete::MessageEvent*)));
 	connect(KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()));
 
 	connect(Kopete::AccountManager::manager(),
@@ -177,11 +177,11 @@ void KopeteSystemTray::slotBlink()
 	mIsBlinkIcon = !mIsBlinkIcon;
 }
 
-void KopeteSystemTray::slotNewEvent( KopeteEvent *event )
+void KopeteSystemTray::slotNewEvent( Kopete::MessageEvent *event )
 {
 	mEventList.append( event );
-	connect(event, SIGNAL(done(KopeteEvent*)),
-		this, SLOT(slotEventDone(KopeteEvent*)));
+	connect(event, SIGNAL(done(Kopete::MessageEvent*)),
+		this, SLOT(slotEventDone(Kopete::MessageEvent*)));
 
 	if( event->message().manager() != 0 )
 	{
@@ -206,7 +206,7 @@ void KopeteSystemTray::slotNewEvent( KopeteEvent *event )
 		startBlink();
 }
 
-void KopeteSystemTray::slotEventDone(KopeteEvent *event)
+void KopeteSystemTray::slotEventDone(Kopete::MessageEvent *event)
 {
 	bool current= event==mEventList.first();
 	mEventList.remove(event);

@@ -27,13 +27,13 @@
 #include "kopetemessage.h"
 
 class KopeteView;
-class KopeteEvent;
 
 namespace Kopete
 {
 
 class Contact;
 class Protocol;
+class MessageEvent;
 
 typedef QPtrList<Contact>        ContactPtrList;
 typedef QValueList<Message>      MessageList;
@@ -108,7 +108,7 @@ public:
 	/**
 	 * Post a new event. this will emit the @ref newEvent signal
 	 */
-	void postNewEvent(KopeteEvent*);
+	void postNewEvent(Kopete::MessageEvent*);
 
 	/**
 	 * Returns the current active Kopete view
@@ -175,7 +175,7 @@ signals:
 	/**
 	 * A new event has been posted.
 	 */
-	void newEvent(KopeteEvent *);
+	void newEvent(Kopete::MessageEvent *);
 
 	/**
 	 * The global shortcut for sending message has been used

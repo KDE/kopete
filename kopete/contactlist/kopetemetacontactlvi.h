@@ -40,11 +40,11 @@ class Account;
 class MetaContact;
 class Contact;
 class Group;
+class MessageEvent;
 }
 
 class AddContactPage;
 class KopeteGroupViewItem;
-class KopeteEvent;
 
 class ContactComponent;
 
@@ -128,7 +128,7 @@ public slots:
 	 */
 	void execute() const;
 
-	void catchEvent( KopeteEvent * );
+	void catchEvent( Kopete::MessageEvent * );
 
 	void updateVisibility();
 
@@ -146,7 +146,7 @@ private slots:
 
 	void slotConfigChanged();
 
-	void slotEventDone( KopeteEvent* );
+	void slotEventDone( Kopete::MessageEvent* );
 	void slotBlink();
 
 	void updateContactIcons();

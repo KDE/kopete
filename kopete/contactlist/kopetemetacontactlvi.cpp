@@ -116,7 +116,7 @@ public:
 	int iconSize;
 	int currentMode;
 
-	QPtrList<KopeteEvent> events;
+	QPtrList<Kopete::MessageEvent> events;
 };
 
 class ContactComponent : public ListView::ImageComponent
@@ -830,12 +830,12 @@ void KopeteMetaContactLVI::slotIdleStateChanged( Kopete::Contact *c )
 		return;
 }
 
-void KopeteMetaContactLVI::catchEvent( KopeteEvent *event )
+void KopeteMetaContactLVI::catchEvent( Kopete::MessageEvent *event )
 {
 	d->events.append( event );
 
-	connect( event, SIGNAL( done( KopeteEvent* ) ),
-	         this, SLOT( slotEventDone( KopeteEvent * ) ) );
+	connect( event, SIGNAL( done( Kopete::MessageEvent* ) ),
+	         this, SLOT( slotEventDone( Kopete::MessageEvent * ) ) );
 
 	if ( mBlinkTimer->isActive() )
 		mBlinkTimer->stop();
@@ -877,7 +877,7 @@ void KopeteMetaContactLVI::slotBlink()
 	mIsBlinkIcon = !mIsBlinkIcon;
 }
 
-void KopeteMetaContactLVI::slotEventDone( KopeteEvent *event )
+void KopeteMetaContactLVI::slotEventDone( Kopete::MessageEvent *event )
 {
 	d->events.remove( event );
 

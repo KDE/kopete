@@ -54,7 +54,7 @@
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 #include "kopetecontactlist.h"
-#include "kopeteevent.h"
+#include "kopetemessageevent.h"
 #include "kopetegroup.h"
 #include "kopetegroupviewitem.h"
 #include "kopetemetacontact.h"
@@ -431,12 +431,12 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 	connect( Kopete::ContactList::contactList(), SIGNAL( groupAdded( Kopete::Group * ) ),
 	         SLOT( slotGroupAdded( Kopete::Group * ) ) );
 
-	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( newEvent( KopeteEvent * ) ),
-	         this, SLOT( slotNewMessageEvent( KopeteEvent * ) ) );
+	connect( Kopete::MessageManagerFactory::factory(), SIGNAL( newEvent( Kopete::MessageEvent * ) ),
+	         this, SLOT( slotNewMessageEvent( Kopete::MessageEvent * ) ) );
 
 	connect( this, SIGNAL( dropped( QDropEvent *, QListViewItem *, QListViewItem * ) ),
 	         this, SLOT( slotDropped( QDropEvent *, QListViewItem *, QListViewItem * ) ) );
-			 
+
 	connect( &undoTimer, SIGNAL(timeout()) , this, SLOT (slotTimeout() ) );
 
 	addColumn( i18n( "Contacts" ), 0 );  //add an unique colums to add every contact
@@ -848,7 +848,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 				if( r == KMessageBox::Yes )
 				{
 					source_metaLVI->metaContact()->setTemporary( false, dest_groupLVI->group() );
-					
+
 					insertUndoItem( new UndoItem( UndoItem::MetaContactAdd , source_metaLVI->metaContact(),dest_groupLVI->group()  ) );
 				}
 			}
@@ -857,7 +857,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 				source_metaLVI->metaContact()->moveToGroup(source_metaLVI->group() , dest_groupLVI->group() );
 
 				insertUndoItem( new UndoItem( UndoItem::MetaContactCopy , source_metaLVI->metaContact() , dest_groupLVI->group() ) );
-				
+
 				UndoItem *u=new UndoItem( UndoItem::MetaContactRemove, source_metaLVI->metaContact(), source_metaLVI->group() );
 				u->isStep=false;
 				insertUndoItem(u);
@@ -887,9 +887,9 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 				/*kdDebug(14000) << "KopeteContactListView::slotDropped : moving the meta contact "
 					<< source_metaLVI->metaContact()->displayName() << " to top-level " << endl;*/
 				source_metaLVI->metaContact()->moveToGroup( source_metaLVI->group(), Kopete::Group::topLevel() );
-				
+
 				insertUndoItem( new UndoItem( UndoItem::MetaContactCopy , source_metaLVI->metaContact() , Kopete::Group::topLevel() ) );
-				
+
 				UndoItem *u=new UndoItem( UndoItem::MetaContactRemove, source_metaLVI->metaContact(), source_metaLVI->group() );
 				u->isStep=false;
 				insertUndoItem(u);
@@ -907,7 +907,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 				if( r == KMessageBox::Yes )
 				{
 					source_contact->setMetaContact(dest_metaLVI->metaContact());
-					
+
 					UndoItem *u=new UndoItem;
 					u->type=UndoItem::ContactAdd;
 					u->args << source_contact->protocol()->pluginId() << source_contact->account()->accountId() << source_contact->contactId();
@@ -919,8 +919,8 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 				//kdDebug(14000) << "KopeteContactListView::slotDropped : moving the contact "
 				//	<< source_contact->contactId()	<< " to metacontact " <<
 				//	dest_metaLVI->metaContact()->displayName() << endl;
-				
-				
+
+
 				UndoItem *u=new UndoItem;
 				u->type=UndoItem::MetaContactChange;
 				u->metacontact=source_metaLVI->metaContact();
@@ -928,7 +928,7 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 				u->args << source_contact->protocol()->pluginId() << source_contact->account()->accountId() << source_contact->contactId();
 				u->args << source_metaLVI->metaContact()->displayName();
 				insertUndoItem(u);
-				
+
 				source_contact->setMetaContact(dest_metaLVI->metaContact());
 			}
 		}
@@ -1149,7 +1149,7 @@ void KopeteContactListView::contentsMousePressEvent( QMouseEvent *e )
 	}
 }
 
-void KopeteContactListView::slotNewMessageEvent(KopeteEvent *event)
+void KopeteContactListView::slotNewMessageEvent(Kopete::MessageEvent *event)
 {
 	Kopete::Message msg=event->message();
 	//only for single chat
@@ -1187,7 +1187,7 @@ QDragObject *KopeteContactListView::dragObject()
 	Kopete::Contact *c = metaLVI->contactForPoint( m_startDragPos );
         KMultipleDrag *drag = new KMultipleDrag( this );
 	drag->addDragObject( new QStoredDrag("application/x-qlistviewitem", 0L ) );
-	
+
 	QStoredDrag *d = new QStoredDrag("kopete/x-metacontact", 0L );
 	d->setEncodedData( metaLVI->metaContact()->metaContactId().utf8() );
 	drag->addDragObject( d );
@@ -1197,7 +1197,7 @@ QDragObject *KopeteContactListView::dragObject()
 		QStoredDrag *d = new QStoredDrag("kopete/x-contact", 0L );
 		d->setEncodedData( QString( c->protocol()->pluginId() +QChar( 0xE000 )+ c->account()->accountId() +QChar( 0xE000 )+ c->contactId() ).utf8() );
 		drag->addDragObject( d );
-	
+
 		pm = c->onlineStatus().iconFor( c, 12 ); // FIXME: fixed icon scaling
 	}
 	else		// dragging a metacontact
@@ -1392,16 +1392,16 @@ void KopeteContactListView::slotMoveToGroup()
 			"addTemporaryWhenMoving" ) == KMessageBox::Yes )
 		{
 			m->setTemporary(false,to);
-			
+
 			insertUndoItem( new UndoItem( UndoItem::MetaContactAdd , m  ) );
 		}
 	}
 	else if( !m->groups().contains( to ) )
 	{
 		m->moveToGroup( g, to );
-		
+
 		insertUndoItem( new UndoItem( UndoItem::MetaContactCopy , m , to ) );
-				
+
 		UndoItem *u=new UndoItem( UndoItem::MetaContactRemove, m, g );
 		u->isStep=false;
 		insertUndoItem(u);
@@ -1432,7 +1432,7 @@ void KopeteContactListView::slotCopyToGroup()
 	if( !m->groups().contains( to ) )
 	{
 		m->addToGroup( to );
-	
+
 		insertUndoItem( new UndoItem( UndoItem::MetaContactCopy , m , to ) );
 	}
 
@@ -1450,7 +1450,7 @@ void KopeteContactListView::slotRemoveFromGroup()
 		return;
 
 	m->removeFromGroup( metaLVI->group() );
-	
+
 	insertUndoItem( new UndoItem( UndoItem::MetaContactRemove , m , metaLVI->group() ) );
 }
 
@@ -1687,7 +1687,7 @@ void KopeteContactListView::insertUndoItem( KopeteContactListView::UndoItem *u)
 		m_redo=i;
 	}
 	actionRedo->setEnabled(false);
-	undoTimer.start(10*60*1000); 
+	undoTimer.start(10*60*1000);
 }
 
 
@@ -1798,7 +1798,7 @@ void KopeteContactListView::slotUndo()
 			break;
 		 }
 		}
-		
+
 		if(success) //the undo item has been correctly performed
 		{
 			step=m_undo->isStep;
@@ -1809,7 +1809,7 @@ void KopeteContactListView::slotUndo()
 		}
 		else //something has been corrupted, clear all undo items
 		{
-			while(m_undo) 
+			while(m_undo)
 			{
 				UndoItem *u=m_undo->next;
 				delete m_undo;
@@ -1904,7 +1904,7 @@ void KopeteContactListView::slotRedo()
 			break;
 		 }
 		}
-		
+
 		if(success) //the undo item has been correctly performed
 		{
 			step=true;
@@ -1915,7 +1915,7 @@ void KopeteContactListView::slotRedo()
 		}
 		else //something has been corrupted, clear all undo items
 		{
-			while(m_redo) 
+			while(m_redo)
 			{
 				UndoItem *u=m_redo->next;
 				delete m_redo;
@@ -1931,13 +1931,13 @@ void KopeteContactListView::slotRedo()
 void KopeteContactListView::slotTimeout()
 {
 	undoTimer.stop();
-	
+
 	//we will keep one (complete) undo action
 	UndoItem *Sdel=m_undo;
 	while(Sdel && !Sdel->isStep)
 		Sdel=Sdel->next;
 
-	if(Sdel) while( Sdel->next ) 
+	if(Sdel) while( Sdel->next )
 	{
 		UndoItem *u=Sdel->next->next;
 		delete Sdel->next;

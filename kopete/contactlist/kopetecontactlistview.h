@@ -37,7 +37,6 @@ class KopeteMetaContactLVI;
 class KopeteGroupViewItem;
 class KopeteStatusGroupViewItem;
 class KRootPixmap;
-class KopeteEvent;
 class KActionCollection;
 class KAction;
 class KListAction;
@@ -50,6 +49,7 @@ namespace Kopete
 class Contact;
 class MetaContact;
 class Group;
+class MessageEvent;
 }
 
 /**
@@ -143,7 +143,7 @@ private slots:
 	void slotDropped(QDropEvent *e, QListViewItem *parent, QListViewItem*);
 
 	void slotShowAddContactDialog();
-	void slotNewMessageEvent(KopeteEvent *);
+	void slotNewMessageEvent(Kopete::MessageEvent *);
 
 	/**
 	 * Handle renamed items by renaming the meta contact

@@ -5,7 +5,7 @@ AM_CPPFLAGS = -DKDE_NO_COMPAT -DQT_NO_COMPAT -DQT_NO_CAST_ASCII -DQT_NO_ASCII_CA
 
 noinst_LTLIBRARIES = libkopeteprivate.la
 
-libkopeteprivate_la_SOURCES = kopeteevent.cpp kopeteemoticons.cpp \
+libkopeteprivate_la_SOURCES = kopeteemoticons.cpp \
 	kopeteprefs.cpp kopetecommand.cpp
 libkopeteprivate_la_LDFLAGS = $(all_libraries)
 libkopeteprivate_la_LIBADD = $(LIB_KDEUI)

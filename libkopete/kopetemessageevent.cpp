@@ -1,10 +1,11 @@
 /*
-    kopeteevent.cpp - Kopete Event
+    kopetemessageevent.cpp - Kopete Message Event
 
-    Copyright (c) 2003      by Olivier Goffart <ogoffart@tiscalinet.be>
-    Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
-    Copyright (c) 2002      by Hendrik vom Lehn <hvl@linux-4-ever.de>
-    Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2003      by Olivier Goffart      <ogoffart@tiscalinet.be>
+    Copyright (c) 2002      by Duncan Mac-Vicar Prett       <duncan@kde.org>
+    Copyright (c) 2002      by Hendrik vom Lehn        <hvl@linux-4-ever.de>
+    Copyright (c) 2002-2003 by Martijn Klingens           <klingens@kde.org>
+    Copyright (c) 2004      by Richard Smith         <richard@metafoo.co.uk>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -20,47 +21,53 @@
 
 #include <kdebug.h>
 
-#include "kopeteevent.h"
+#include "kopetemessageevent.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 
-KopeteEvent::KopeteEvent( const Kopete::Message& m, QObject *parent, const char *name ) : QObject(parent,name)
+namespace Kopete
+{
+
+MessageEvent::MessageEvent( const Message& m, QObject *parent, const char *name ) : QObject(parent,name)
 {
 	m_message=m;
 	m_state= Nothing;
 }
-KopeteEvent::~KopeteEvent()
+
+MessageEvent::~MessageEvent()
 {
-	kdDebug(14010) << "KopeteEvent::~KopeteEvent " << endl;
+	kdDebug(14010) << k_funcinfo << endl;
 	emit done(this);
 }
 
-Kopete::Message KopeteEvent::message()
+Kopete::Message MessageEvent::message()
 {
 	return m_message;
 }
 
-KopeteEvent::EventState KopeteEvent::state()
+MessageEvent::EventState MessageEvent::state()
 {
 	return m_state;
 }
 
-void KopeteEvent::apply()
+void MessageEvent::apply()
 {
-	kdDebug(14010) << "KopeteEvent::apply" << endl;
+	kdDebug(14010) << k_funcinfo << endl;
 	m_state= Applied;
 	deleteLater();
 }
 
-void KopeteEvent::ignore()
+void MessageEvent::ignore()
 {
 	if( m_message.from()->metaContact() && m_message.from()->metaContact()->isTemporary() )
-		Kopete::ContactList::contactList()->removeMetaContact( m_message.from()->metaContact() );
+		ContactList::contactList()->removeMetaContact( m_message.from()->metaContact() );
 	m_state= Ignored;
 	deleteLater();
 }
 
-#include "kopeteevent.moc"
+}
+
+#include "kopetemessageevent.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
 

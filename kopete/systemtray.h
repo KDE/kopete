@@ -25,7 +25,7 @@
 
 #include <ksystemtray.h>
 
-#include "kopeteevent.h"
+#include "kopetemessageevent.h"
 
 class QTimer;
 class QPoint;
@@ -71,8 +71,8 @@ signals:
 
 private slots:
 	void slotBlink();
-	void slotNewEvent(KopeteEvent*);
-	void slotEventDone(KopeteEvent *);
+	void slotNewEvent(Kopete::MessageEvent*);
+	void slotEventDone(Kopete::MessageEvent *);
 	void slotConfigChanged();
 	void slotReevaluateAccountStates();
 
@@ -91,7 +91,7 @@ private:
 
 	static KopeteSystemTray* s_systemTray;
 
-	QPtrList<KopeteEvent> mEventList;
+	QPtrList<Kopete::MessageEvent> mEventList;
 	KopeteBalloon *m_balloon;
 };
 

@@ -175,7 +175,7 @@ KopeteView * Kopete::MessageManagerFactory::createView( Kopete::MessageManager *
 	return newView;
 }
 
-void Kopete::MessageManagerFactory::postNewEvent(KopeteEvent *e)
+void Kopete::MessageManagerFactory::postNewEvent(Kopete::MessageEvent *e)
 {
 	emit newEvent(e);
 }

@@ -28,7 +28,7 @@
 #include "kopetemetacontact.h"
 #include "chatview.h"
 #include "kopeteemailwindow.h"
-#include "kopeteevent.h"
+#include "kopetemessageevent.h"
 //#include "systemtray.h"
 
 #include "kopeteviewmanager.h"
@@ -39,7 +39,7 @@ K_EXPORT_COMPONENT_FACTORY( kopete_chatwindow, ViewManagerFactory( "kopete_chatw
 
 
 typedef QMap<Kopete::MessageManager*,KopeteView*> ManagerMap;
-typedef QPtrList<KopeteEvent> EventList;
+typedef QPtrList<Kopete::MessageEvent> EventList;
 
 struct KopeteViewManagerPrivate
 {
@@ -121,7 +121,7 @@ KopeteView *KopeteViewManager::view( Kopete::MessageManager* manager, bool /*for
 		if( type == Kopete::Message::Undefined )
 		{
 			int t = KopetePrefs::prefs()->interfacePreference();
-			type = static_cast<Kopete::Message::MessageType>( t );    
+			type = static_cast<Kopete::Message::MessageType>( t );
 		}
 
 		if( type == Kopete::Message::Chat )
@@ -168,10 +168,10 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::MessageMa
 		{
 			if ( !outgoingMessage )
 			{
-			
-				KopeteEvent *event=new KopeteEvent(msg,manager);
+
+				Kopete::MessageEvent *event=new Kopete::MessageEvent(msg,manager);
 				d->eventList.append( event );
-				connect(event, SIGNAL(done(KopeteEvent *)), this, SLOT(slotEventDeleted(KopeteEvent *)));
+				connect(event, SIGNAL(done(Kopete::MessageEvent *)), this, SLOT(slotEventDeleted(Kopete::MessageEvent *)));
 				Kopete::MessageManagerFactory::factory()->postNewEvent(event);
 			}
 		}
@@ -195,8 +195,8 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::MessageMa
 			int winId = 0;  //KopeteSystemTray::systemTray() ? KopeteSystemTray::systemTray()->winId() : 0;
 			QWidget *w=dynamic_cast<QWidget*>(manager->view(false));
 			if(w) winId=w->topLevelWidget()->winId();
-			
-			
+
+
 			QString event;
 			QString body =i18n( "<qt>Incoming message from %1<br>\"%2\"</qt>" );;
 
@@ -231,8 +231,8 @@ void KopeteViewManager::readMessages( Kopete::MessageManager *manager, bool outg
 	else if( !thisView->isVisible() )
 		thisView->makeVisible();
 
-	QPtrListIterator<KopeteEvent> it( d->eventList );
-	KopeteEvent* event;
+	QPtrListIterator<Kopete::MessageEvent> it( d->eventList );
+	Kopete::MessageEvent* event;
 	while ( ( event = it.current() ) != 0 )
 	{
 		++it;
@@ -244,24 +244,24 @@ void KopeteViewManager::readMessages( Kopete::MessageManager *manager, bool outg
 	}
 }
 
-void KopeteViewManager::slotEventDeleted( KopeteEvent *event )
+void KopeteViewManager::slotEventDeleted( Kopete::MessageEvent *event )
 {
 	kdDebug(14000) << k_funcinfo << endl;
 	Kopete::MessageManager *kmm=event->message().manager();
 	if(!kmm)
 		return;
-	
-	if ( event->state() == KopeteEvent::Applied )
+
+	if ( event->state() == Kopete::MessageEvent::Applied )
 	{
 		readMessages( kmm, false );
 	}
-	else if ( event->state() == KopeteEvent::Ignored ) 
+	else if ( event->state() == Kopete::MessageEvent::Ignored )
 	{
 		d->eventList.remove( event );
 		bool bAnotherWithThisManager = false;
-		for( QPtrListIterator<KopeteEvent> it( d->eventList ); it; ++it )
+		for( QPtrListIterator<Kopete::MessageEvent> it( d->eventList ); it; ++it )
 		{
-			KopeteEvent *event = it.current();
+			Kopete::MessageEvent *event = it.current();
 			if ( event->message().manager() == kmm )
 				bAnotherWithThisManager = true;
 		}
@@ -277,7 +277,7 @@ void KopeteViewManager::nextEvent()
 	if( d->eventList.isEmpty() )
 		return;
 
-	KopeteEvent* event = d->eventList.first();
+	Kopete::MessageEvent* event = d->eventList.first();
 
 	if ( event )
 		event->apply();
@@ -288,15 +288,15 @@ void KopeteViewManager::slotViewActivated( KopeteView *view )
 	kdDebug( 14000 ) << k_funcinfo << endl;
 	d->activeView = view;
 
-	QPtrListIterator<KopeteEvent> it ( d->eventList );
-	KopeteEvent* event;
+	QPtrListIterator<Kopete::MessageEvent> it ( d->eventList );
+	Kopete::MessageEvent* event;
 	while ( ( event = it.current() ) != 0 )
 	{
 		++it;
 		if ( event->message().manager() == view->msgManager() )
 			event->deleteLater();
 	}
-	
+
 }
 
 void KopeteViewManager::slotViewDestroyed( KopeteView *closingView )
