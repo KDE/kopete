@@ -23,6 +23,7 @@
 #include <qfile.h>
 
 #include <kdebug.h>
+#include <kconfig.h>
 #include <kgenericfactory.h>
 #include <ktempfile.h>
 #include <kstandarddirs.h>
@@ -48,7 +49,6 @@
 #include "kopeteaccount.h"
 
 #include "webpresenceplugin.h"
-#include "webpresencepreferences.h"
 #include <kplugininfo.h>
 
 typedef KGenericFactory<WebPresencePlugin> WebPresencePluginFactory;
@@ -59,17 +59,36 @@ WebPresencePlugin::WebPresencePlugin( QObject *parent, const char *name, const Q
 {
 	m_writeScheduler = new QTimer( this );
 	connect ( m_writeScheduler, SIGNAL( timeout() ), this, SLOT( slotWriteFile() ) );
-	m_prefs = new WebPresencePreferences( "html", this );
 	connect( KopeteAccountManager::manager(), SIGNAL(accountReady(KopeteAccount*)),
 				this, SLOT( listenToAllAccounts() ) );
 	connect( KopeteAccountManager::manager(), SIGNAL(accountUnregistered(KopeteAccount*)),
 				this, SLOT( listenToAllAccounts() ) );
 
+	connect(this, SIGNAL(settingsChanged()), this, SLOT( loadSettings() ) );
+	loadSettings();
 }
 
 WebPresencePlugin::~WebPresencePlugin()
 {
 }
+
+void WebPresencePlugin::loadSettings()
+{
+	KConfig *kconfig = KGlobal::config();
+	kconfig->setGroup( "Web Presence Plugin" );
+	
+	frequency = kconfig->readNumEntry("UploadFrequency" , 15);
+	
+	QString url = kconfig->readEntry("uploadURL");
+	useDefaultStyleSheet = kconfig->readBoolEntry("formatDefault", true);
+	justXml = kconfig->readBoolEntry("formatXML", false);
+	userStyleSheet = kconfig->readEntry("formatStylesheetURL");
+
+	useImName = kconfig->readBoolEntry("showName", true);
+	userName = kconfig->readEntry("showThisName");
+	showAddresses = kconfig->readBoolEntry("includeIMAddress", false);
+}
+
 
 void WebPresencePlugin::listenToAllAccounts()
 {
@@ -112,7 +131,7 @@ void WebPresencePlugin::listenToAccount( KopeteAccount* account )
 void WebPresencePlugin::slotWaitMoreStatusChanges()
 {
 	if ( !m_writeScheduler->isActive() )
-		 m_writeScheduler->start( m_prefs->frequency() * 1000);
+		 m_writeScheduler->start( frequency * 1000);
 
 }
 
@@ -125,7 +144,7 @@ void WebPresencePlugin::slotWriteFile()
 
 	kdDebug(14309) << k_funcinfo << " " << xml->name() << endl;
 
-	if ( m_prefs->justXml() )
+	if ( justXml )
 	{
 		m_output = xml;
 		xml = 0L;
@@ -146,7 +165,7 @@ void WebPresencePlugin::slotWriteFile()
 	{
 		// upload it to the specified URL
 		KURL src( m_output->name() );
-		KURL dest( m_prefs->url() );
+		KURL dest( url );
 		KIO::FileCopyJob *job = KIO::file_copy( src, dest, -1, true, false, false );
 		connect( job, SIGNAL( result( KIO::Job * ) ),
 				SLOT(  slotUploadJobResult( KIO::Job * ) ) );
@@ -186,8 +205,8 @@ KTempFile* WebPresencePlugin::generateFile()
 	output += h.openTag( "contact", "type=\"self\"" );
 
 	// insert the user's name
-	if ( !m_prefs->useImName() && !m_prefs->userName().isEmpty() )
-		output += h.oneLineTag( "name", m_prefs->userName() );
+	if ( !useImName && !userName.isEmpty() )
+		output += h.oneLineTag( "name", userName );
 	else
 		output += h.oneLineTag( "name", notKnown );
 
@@ -222,7 +241,7 @@ KTempFile* WebPresencePlugin::generateFile()
 					? statusAsString( me->onlineStatus() )
 					: notKnown );
 
-			if ( m_prefs->showAddresses() )
+			if ( showAddresses )
 				output += h.oneLineTag( "accountaddress",
 						( me )
 						? me->contactId().latin1()
@@ -253,10 +272,10 @@ bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 	xmlLoadExtDtdDefaultValue = 1;
 	// test if the stylesheet exists
 	QFile sheet;
-	if ( m_prefs->useDefaultStyleSheet() )
+	if ( useDefaultStyleSheet )
 		sheet.setName( locate( "appdata", "webpresence/webpresencedefault.xsl" ) );
 	else
-		sheet.setName( m_prefs->userStyleSheet() );
+		sheet.setName( userStyleSheet );
 	
 	if ( sheet.exists() )
 	{

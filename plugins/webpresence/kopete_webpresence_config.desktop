@@ -1,0 +1,23 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Icon=html
+ServiceTypes=KCModule
+X-KDE-ModuleType=Library
+X-KDE-FactoryName=WebPrecencePreferencesFactory
+X-KDE-ParentApp=kopete_webpresence
+X-KDE-ParentComponents=kopete_webpresence
+Comment=Show the status of (parts of) your contactlist on a webpage
+Comment[ca]=Mostra l'estatus de (parts de) la vostra llista de contactes a una pàgina web
+Comment[da]=Vis status for (dele af) din kontaktliste på en netside
+Comment[hu]=A partnerek jelenlétének megjelenítése weboldalon
+Comment[pt_BR]=Mostra o status de (ou parte de) sua lista contatos na página web
+Comment[sr]=Приказивање статуса (делова) ваше листе контаката на веб страници
+Comment[sv]=Visa status för (delar av) din kontaktlista på en webbsida
+Name=Web Presence
+Name[ca]=Web de presència
+Name[da]=WWW-nærvær
+Name[hu]=Webes jelenlét
+Name[pt_BR]=Presença Web
+Name[sr]=Присутност веба
+Name[sv]=Webbnärvaro

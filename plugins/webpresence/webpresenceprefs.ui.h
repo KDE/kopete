@@ -10,6 +10,6 @@
 
 void WebPresencePrefsUI::init()
 {
-    m_url->setMode( KFile::File );
-    m_userStyleSheet->setFilter( "*.xsl" );
+    uploadURL->setMode( KFile::File );
+    formatStylesheetURL->setFilter( "*.xsl" );
 }

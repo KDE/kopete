@@ -34,13 +34,21 @@ class KTempFile;
 class KopeteMetaContact;
 class KToggleAction;
 class KActionCollection;
-class WebPresencePreferences;
 
 class WebPresencePlugin : public KopetePlugin
 {
 	Q_OBJECT
 
 private:
+	int frequency;
+	QString url;
+	bool showAddresses;
+	bool useImName;
+	QString userName;
+	bool useDefaultStyleSheet;
+	bool justXml;
+	QString userStyleSheet;
+		
 	struct ProtoContactStatus
 	{
 		const char *name;
@@ -53,6 +61,8 @@ public:
 	virtual ~WebPresencePlugin();
 
 protected slots:
+	void loadSettings();
+	
 	/**
 	 * Write a file to the specified location,
 	 */
@@ -97,8 +107,6 @@ protected:
 	 */
 	QTimer* m_writeScheduler;
 
-	// Interface to the preferences GUI
-	WebPresencePreferences* m_prefs;
 	// The file to be uploaded to the WWW
 	KTempFile *m_output;
 
