@@ -69,7 +69,7 @@
                                 <string>A full or partial name. Asterisks are ignored</string>
                             </property>
                             <property name="whatsThis" stdset="0">
-                                <string>Type some or all of the contact's name.  Matches will be show below</string>
+                                <string>Type some or all of the contact's name.  Matches will be shown below</string>
                             </property>
                         </widget>
                         <widget class="QRadioButton" row="1" column="0">

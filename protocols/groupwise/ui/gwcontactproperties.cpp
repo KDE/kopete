@@ -97,7 +97,7 @@ void GroupWiseContactProperties::setupProperties( QMap< QString, QString > serve
 		else if ( key == "title" )
 			localised = i18n( "Title" );
 		else if ( key == "Internet EMail Address" )
-			localised = i18n( "EMail Address" );
+			localised = i18n( "Email Address" );
 		else
 			localised = key;
 
