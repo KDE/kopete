@@ -14,7 +14,13 @@
     *                                                                       *
     *************************************************************************
 */
+
+#include <kdeversion.h>
+
+#if KDE_IS_VERSION( 3, 2, 90 )
 #include <qt-addon/qresolver.h>
+#endif
+
 #include <kdebug.h>
 
 #include "kircentity.h"
@@ -28,7 +34,7 @@ QString KIRCEntity::userInfo(const QString &s, int num)
 	userRegExp.search(s);
 	return userRegExp.cap(num);
 }
-
+#if KDE_IS_VERSION( 3, 2, 90 )
 QResolverResults KIRCEntity::resolve(bool *success)
 {
 	resolveAsync();
@@ -67,6 +73,7 @@ QResolver *KIRCEntity::getResolver()
 	}
 	return m_resolver;
 }
+#endif
 
 #include "kircentity.moc"
 

@@ -22,7 +22,12 @@
 #include <qregexp.h>
 #include <qstring.h>
 
+#include <kdeversion.h>
+#if KDE_IS_VERSION( 3, 2, 90 )
 #include <qt-addon/qresolver.h>
+#else
+#define QResolverResults int
+#endif
 #include <kdemacros.h>
 
 class KIRCEntity
@@ -72,6 +77,7 @@ public:
 	inline static bool isChannel( const QString &s )
 		{ return sm_channelRegExp.exactMatch(s); };
 
+#if KDE_IS_VERSION( 3, 2, 90 )
 	inline QResolver::StatusCodes resolverStatus()
 		{ return (QResolver::StatusCodes)getResolver()->status(); }
 
@@ -79,14 +85,15 @@ public:
 	void resolveAsync();
 	QResolverResults resolverResults()
 		{ return getResolver()->results(); }
-
+#endif
 signals:
 	void resolverResults(QResolverResults);
 
 protected:
 	static QString userInfo(const QString &s, int num_cap);
+#if KDE_IS_VERSION( 3, 2, 90 )
 	QResolver *getResolver();
-
+#endif
 private:
 	static const QRegExp sm_userRegExp;
 	static const QRegExp sm_channelRegExp;
@@ -95,8 +102,10 @@ private:
 
 	// peer ip address if the entity is a User.
 	QString m_address;
-
+#if KDE_IS_VERSION( 3, 2, 90 )
 	QResolver *m_resolver;
+#endif
+
 };
 
 #endif
