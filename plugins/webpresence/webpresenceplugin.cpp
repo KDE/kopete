@@ -266,7 +266,7 @@ bool WebPresencePlugin::transform( KTempFile * src, KTempFile * dest )
 		{
 			// and if we can parse the input XML
 			xmlDocPtr doc = NULL;
-			if ( ( doc = xmlParseFile( src->name() ) ) )
+			if ( ( doc = xmlParseFile( QFile::encodeName( src->name() ) ) ) != 0L )
 			{
 				// and if we can apply the stylesheet
 				xmlDocPtr res = NULL;
