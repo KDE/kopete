@@ -1142,9 +1142,9 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 		// existing instance. To avoid connecting multiple times, try to
 		// disconnect the existing connection first
 		disconnect( manager, SIGNAL( messageSent( const KopeteMessage&, KopeteMessageManager* ) ),
-			this, SLOT( slotMessageSent( const KopeteMessage& ) ) );
+			this, SLOT( slotMessageSent( const KopeteMessage& , KopeteMessageManager*) ) );
 		connect( manager, SIGNAL( messageSent( const KopeteMessage&, KopeteMessageManager* ) ),
-			this, SLOT( slotMessageSent( const KopeteMessage& ) ) );
+			this, SLOT( slotMessageSent( const KopeteMessage& , KopeteMessageManager*) ) );
 		manager->readMessages();
 	}
 }
