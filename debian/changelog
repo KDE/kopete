@@ -1,3 +1,9 @@
+kopete (0.5-1) unstable; urgency=low
+
+  * New Upstream.
+
+ -- Christopher L Cheney <ccheney@debian.org>  Wed, 16 Oct 2002 16:00:00 -0500
+
 kopete (0.4.1-1) unstable; urgency=low
 
   * New upstream version

@@ -1,0 +1,7 @@
+?package(kopete):\
+	needs=X11\
+	section=Apps/Net\
+	hints="KDE,IM"\
+	kderemove="y"\
+	title="Kopete"\
+	command="/usr/bin/kopete"
