@@ -135,6 +135,37 @@ class KOPETE_EXPORT KopeteView
 		 */
 		virtual void messageSentSuccessfully() = 0;
 
+		/**
+		 * @brief Register a handler for the context menu
+		 *
+		 * Plugins should call this slot at view creation to register
+		 * themselves as handlers for the context menu of this view. Plugins
+		 * can attach to the viewCreated signal of KopeteMessageManagerFactory
+		 * to know when views are created.
+		 *
+		 * A view does not need to implement this method unless they have context
+		 * menus that can be extended
+		 *
+		 * @param target A target QObject for the contextMenuEvent signal of the view
+		 * @param slot A slot that matches the signature ( DOM::HTMLElement&, KPopupMenu *)
+		 */
+		virtual void registerContextMenuHandler( QObject *target, const char* slot ){};
+
+		/**
+		* @brief Register a handler for the tooltip
+		*
+		* Plugins should call this slot at view creation to register
+		* themselves as handlers for the tooltip of this view. Plugins
+		* can attach to the viewCreated signal of KopeteMessageManagerFactory
+		* to know when views are created.
+		*
+		* A view does not need to impliment this method unless it has the ability
+		* to show tooltips
+		*
+		* @param target A target QObject for the contextMenuEvent signal of the view
+		* @param slot A slot that matches the signature ( DOM::HTMLElement&, KPopupMenu *)
+			*/
+		virtual void registerTooltipHandler( QObject *target, const char* slot ){};
 
 	protected:
 		/**

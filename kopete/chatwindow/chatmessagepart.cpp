@@ -97,7 +97,7 @@ public:
 	 * we want to render several messages in one pass if several message are apended at the same time.
 	 */
 	QTimer refreshtimer;
-#endif	
+#endif
 };
 
 class ChatMessagePart::ToolTip : public QToolTip
@@ -113,21 +113,32 @@ public:
 		// FIXME: it's wrong to look for the node under the mouse - this makes too many
 		//        assumptions about how tooltips work. but there is no nodeAtPoint.
 		DOM::Node node = m_chat->nodeUnderMouse();
+		while ( !node.isNull() && node.nodeType() != DOM::Node::ELEMENT_NODE )
+			node = node.parentNode();
+
+		QString result;
+		m_chat->emitTooltipEvent( node, result );
+		if( !result.isEmpty() )
+		{
+			tip( rect, result );
+			return;
+		}
+
 		Kopete::Contact *contact = m_chat->contactFromNode( node );
-		
+
 		QRect rect = node.getRect();
-		
+
 		// this tooltip is attached to the viewport widget, so translate the node's rect
 		// into its coordinates.
 		rect = QRect( m_chat->view()->contentsToViewport( rect.topLeft() ),
-		              m_chat->view()->contentsToViewport( rect.bottomRight() ) );
-		
+			m_chat->view()->contentsToViewport( rect.bottomRight() ) );
+
 		if( contact )
 		{
 			tip( rect, contact->toolTip() );
 			return;
 		}
-		
+
 		//Fall back to the title attribute
 		for( DOM::HTMLElement element = node; !element.isNull(); element = element.parentNode() )
 		{
@@ -138,7 +149,7 @@ public:
 			}
 		}
 	}
-	
+
 private:
 	ChatMessagePart *m_chat;
 };
@@ -155,7 +166,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	messageId = 0;
 	bgChanged = false;
 	scrollPressed = false;
-	
+
 	//Security settings, we don't need this stuff
 	setJScriptEnabled( false ) ;
 	setJavaEnabled( false );
@@ -170,12 +181,12 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	end();
 
 	view()->setFocusPolicy( QWidget::NoFocus );
-	
+
 	new ToolTip( this );
 
 	// It is not possible to drag and drop on our widget
 	view()->setAcceptDrops(false);
-	
+
 	// some signals and slots connections
 	connect( KopetePrefs::prefs(), SIGNAL(transparencyChanged()),
 	         this, SLOT( slotTransparencyChanged() ) );
@@ -195,7 +206,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 #ifdef TRANSFORM_ALL_MESSAGES
 	connect( &d->refreshtimer , SIGNAL(timeout()) , this, SLOT(slotRefreshNodes()));
 #endif
-	
+
 
 	//initActions
 	copyAction = KStdAction::copy( this, SLOT(copy()), actionCollection() );
@@ -218,7 +229,7 @@ ChatMessagePart::~ChatMessagePart()
 		backgroundFile->unlink();
 		delete backgroundFile;
 	}
-	
+
 	delete d;
 }
 
@@ -328,9 +339,9 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 {
 	//parse emoticons and URL now.
 	message.setBody( message.parsedBody() , Kopete::Message::ParsedHTML );
-	
+
 	messageMap.insert( ++messageId, message );
-	
+
 	// transform all messages every time. needed for Adium style.
 #ifdef TRANSFORM_ALL_MESSAGES
 	d->refreshtimer.start(50,true); //let 50ms delay in the case several message are appended in the same time.
@@ -375,7 +386,7 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 		QString nick = (*it)->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
 		//FIXME: this is really slow in channels with lots of contacts
 		QString parsed_nick = Kopete::Emoticons::parseEmoticons( nick );
-		
+
 		if ( nick != parsed_nick )
 		{
 			retVal.replace( QRegExp( QString::fromLatin1("([\\s&;>])%1([\\s&;<:])")
@@ -394,27 +405,27 @@ const QString ChatMessagePart::addNickLinks( const QString &html ) const
 	QString nick = m_manager->myself()->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString();
 	retVal.replace( QRegExp( QString::fromLatin1("([\\s&;>])%1([\\s&;<:])")
 			.arg( QRegExp::escape( Kopete::Emoticons::parseEmoticons( nick ) ) )  ), QString::fromLatin1("\\1%1\\2").arg( nick ) );
-	
+
 	return retVal;
 }
 
 void ChatMessagePart::slotRefreshNodes()
 {
 	DOM::HTMLBodyElement bodyElement = htmlDocument().body();
-	
+
 	QString xmlString = QString::fromLatin1( "<document>" );
 	for( MessageMap::Iterator it = messageMap.begin(); it != messageMap.end(); ++it)
 	{
 		(*it).setBgOverride( d->bgOverride );
 		(*it).setFgOverride( d->fgOverride );
 		(*it).setRtfOverride( d->rtfOverride );
-		
+
 		QDomDocument message = (*it).asXML();
 		message.documentElement().setAttribute( QString::fromLatin1( "id" ), QString::number( it.key() ) );
 		xmlString += message.toString();
 	}
 	xmlString += QString::fromLatin1( "</document>" );
-	
+
 	d->xsltParser->transformAsync( xmlString, this, SLOT( slotTransformComplete( const QVariant & ) ) );
 }
 
@@ -425,7 +436,7 @@ void ChatMessagePart::slotRefreshView()
 	DOM::HTMLElement styleElement = headElement.getElementsByTagName( QString::fromLatin1( "style" ) ).item(0);
 	if ( !styleElement.isNull() )
 		styleElement.setInnerText( styleHTML() );
-	
+
 	DOM::HTMLBodyElement bodyElement = htmlDocument().body();
 	bodyElement.setBgColor( KopetePrefs::prefs()->bgColor().name() );
 }
@@ -433,7 +444,7 @@ void ChatMessagePart::slotRefreshView()
 void ChatMessagePart::slotTransformComplete( const QVariant &result )
 {
 	htmlDocument().body().setInnerHTML( addNickLinks( result.toString() ) );
-	
+
 	if ( !scrollPressed )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
 }
@@ -487,17 +498,17 @@ Kopete::Contact *ChatMessagePart::contactFromNode( const DOM::Node &n ) const
 
 	if ( node.isNull() )
 		return 0;
-	
+
 	while ( !node.isNull() && ( node.nodeType() == DOM::Node::TEXT_NODE || ((DOM::HTMLElement)node).className() != "KopeteDisplayName" ) )
 		node = node.parentNode();
 
 	if ( !node.isNull() )
 		return 0;
-	
+
 	DOM::HTMLElement element = node;
 	if ( element.className() != "KopeteDisplayName" )
 		return 0;
-	
+
 	if ( element.hasAttribute( "contactid" ) )
 	{
 		QString contactId = element.getAttribute( "contactid" ).string();
@@ -512,7 +523,7 @@ Kopete::Contact *ChatMessagePart::contactFromNode( const DOM::Node &n ) const
 			if ( (*it)->property( Kopete::Global::Properties::self()->nickName().key() ).value().toString() == nick )
 				return *it;
 	}
-	
+
 	return 0;
 }
 
@@ -528,15 +539,16 @@ void ChatMessagePart::slotRightClick( const QString &, const QPoint &point )
 	if ( activeElement.isNull() )
 		return;
 
+	KPopupMenu *chatWindowPopup = 0L;
+
 	if ( Kopete::Contact *contact = contactFromNode( activeElement ) )
 	{
-		KPopupMenu *p = contact->popupMenu( m_manager );
-		connect( p, SIGNAL( aboutToHide() ), p , SLOT( deleteLater() ) );
-		p->popup( point );
+		chatWindowPopup = contact->popupMenu( m_manager );
+		connect( chatWindowPopup, SIGNAL( aboutToHide() ), chatWindowPopup , SLOT( deleteLater() ) );
 	}
 	else
 	{
-		KPopupMenu *chatWindowPopup = new KPopupMenu();
+		chatWindowPopup = new KPopupMenu();
 
 		if ( activeElement.className() == "KopeteDisplayName" )
 		{
@@ -560,6 +572,11 @@ void ChatMessagePart::slotRightClick( const QString &, const QPoint &point )
 		connect( chatWindowPopup, SIGNAL( aboutToHide() ), chatWindowPopup, SLOT( deleteLater() ) );
 		chatWindowPopup->popup( point );
 	}
+
+	//Emit for plugin hooks
+	emit contextMenuEvent( activeElement, chatWindowPopup );
+
+	p->popup( point );
 }
 
 void ChatMessagePart::slotCopyURL()
@@ -581,29 +598,29 @@ void ChatMessagePart::copy()
 {
 	/*
 		* The objective of this function is to keep the text of emoticons (of or latex image) when copying.
-		*   see Bug 61676 
+		*   see Bug 61676
 		* It could be done in a single line if  RangeImpl::toHTML  was implemented (see the #if 0 bellow)
 		* But since it doesn't work, i have to handle it myself with KHTML some internals.
 		* I copied a big part of the code bellow from KHTMLPart::selectedText.  only a bit modified to add the img's title
 		*/
 
 	QString text;
-	
+
 	#if 0 //This doesn't work because   RangeImpl::toHTML   is not yet implemented
 	text=Kopete::Message::unescape( selection().toHTML().string() );
-	#endif  
+	#endif
 
 	DOM::Node startNode, endNode;
 	long startOffset, endOffset;
 	selection( startNode, startOffset,  endNode, endOffset );
-	
+
 	//BEGIN: copied from KHTMLPart::selectedText
-		
+
 	bool hasNewLine = true;
 	DOM::Node n = startNode;
-	while(!n.isNull()) 
+	while(!n.isNull())
 	{
-		if(n.nodeType() == DOM::Node::TEXT_NODE /*&& n.handle()->renderer()*/) 
+		if(n.nodeType() == DOM::Node::TEXT_NODE /*&& n.handle()->renderer()*/)
 		{
 			QString str = n.nodeValue().string();
 			hasNewLine = false;
@@ -655,12 +672,12 @@ void ChatMessagePart::copy()
 		DOM::Node next = n.firstChild();
 		if(next.isNull())
 			next = n.nextSibling();
-		while( next.isNull() && !n.parentNode().isNull() ) 
+		while( next.isNull() && !n.parentNode().isNull() )
 		{
 			n = n.parentNode();
 			next = n.nextSibling();
 			unsigned short id = n.elementId();
-			switch(id) 
+			switch(id)
 			{
 			case ID_TD:  case ID_TH:  case ID_HR:
 			case ID_OL:  case ID_UL:  case ID_LI:
@@ -682,23 +699,23 @@ void ChatMessagePart::copy()
 		}
 		n = next;
 	}
-	
+
 	if(text.isEmpty())
 		return;
-	
+
 	int start = 0;
 	int end = text.length();
-	
+
 	// Strip leading LFs
 	while ((start < end) && (text[start] == '\n'))
 		start++;
-	
+
 	// Strip excessive trailing LFs
 	while ((start < (end-1)) && (text[end-1] == '\n') && (text[end-2] == '\n'))
 		end--;
-	
+
 	text=text.mid(start, end-start);
-	
+
 	//END: copied from KHTMLPart::selectedText
 
 	QApplication::clipboard()->setText( text, QClipboard::Clipboard );
@@ -760,7 +777,7 @@ void ChatMessagePart::slotUpdateBackground( const QPixmap &pixmap )
 		backgroundFile->unlink();
 		delete backgroundFile;
 	}
-	
+
 	backgroundFile = new KTempFile( QString::null, QString::fromLatin1( ".bmp" ) );
 	pixmap.save( backgroundFile->name(), "BMP" );
 
@@ -773,9 +790,9 @@ void ChatMessagePart::slotUpdateBackground( const QPixmap &pixmap )
 		executeScript( QString::fromLatin1( "document.body.background = \"%1\";" ).arg( backgroundFile->name() ) );
 		setJScriptEnabled( false ) ;
 	}
-	
+
 	bgChanged = false;
-	
+
 	if ( !scrollPressed )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
 }
@@ -783,6 +800,11 @@ void ChatMessagePart::slotUpdateBackground( const QPixmap &pixmap )
 void ChatMessagePart::slotCloseView( bool force )
 {
 	m_manager->view()->closeView( force );
+}
+
+void emitTooltipEvent( DOM::HTMLElement &element, QString &toolTip )
+{
+	emit tooltipEvent( element, toolTip );
 }
 
 #include "chatmessagepart.moc"

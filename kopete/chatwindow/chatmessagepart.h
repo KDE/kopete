@@ -38,6 +38,8 @@ namespace Kopete { class ChatSession; }
  */
 class ChatMessagePart : public KHTMLPart
 {
+	friend ChatMessagePart::ToolTip;
+
 	Q_OBJECT
 public:
 	ChatMessagePart( Kopete::ChatSession *manager, QWidget *parent, const char *name = 0 );
@@ -84,6 +86,16 @@ public slots:
 	 */
 	void appendMessage( Kopete::Message &message );
 
+	/**
+	 * Emits before the context menu is about to show
+	 */
+	void contextMenuEvent( DOM::HTMLElement &element, KPopupMenu *popupMenu );
+
+	/**
+	 * Emits before the tooltip is about to show
+	 */
+	void tooltipEvent( DOM::HTMLElement &element, QString &toolTip );
+
 private slots:
 	void slotOpenURLRequest( const KURL &url, const KParts::URLArgs &args );
 	void slotScrollView();
@@ -111,19 +123,19 @@ private slots:
 	void slotRightClick( const QString &, const QPoint &point );
 
 	void slotCopyURL();
-	
+
 	void slotCloseView( bool force = false );
 
 private:
 	Kopete::ChatSession *m_manager;
-	
-	unsigned long messageId; 
+
+	unsigned long messageId;
 	typedef QMap<unsigned long,Kopete::Message> MessageMap;
 	MessageMap messageMap;
-	
+
 	bool scrollPressed;
 	bool bgChanged;
-	
+
 	DOM::HTMLElement activeElement;
 
 	// FIXME: share
@@ -144,9 +156,14 @@ private:
 
 	Kopete::Contact *contactFromNode( const DOM::Node &n ) const;
 
+	/**
+	 * Emits before the tooltip is about to show
+	 */
+	void emitTooltipEvent( DOM:HTMLElement &element, QString &toolTipString );
+
 	class ToolTip;
 	friend class ToolTip;
-	
+
 	class Private;
 	Private *d;
 };

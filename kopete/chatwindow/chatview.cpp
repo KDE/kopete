@@ -60,17 +60,17 @@ ChatView::ChatView( Kopete::ChatSession *mgr, const char *name )
 	d->isActive = false;
 	d->visibleMembers = false;
 	d->sendInProgress = false;
-	
+
 	m_type = Kopete::Message::Chat;
 	m_mainWindow = 0L;
 	membersDock = 0L;
 	m_tabBar = 0L;
 	membersStatus = Smart;
 	m_tabState=Normal;
-	
+
 	//FIXME: don't widgets start off hidden anyway?
 	hide();
-	
+
 	//Create the view dock widget (KHTML Part), and set it to no docking (lock it in place)
 	viewDock = createDockWidget(QString::fromLatin1( "viewDock" ), QPixmap(),
 		0L,QString::fromLatin1("viewDock"), QString::fromLatin1(" "));
@@ -84,7 +84,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, const char *name )
 	editDock = createDockWidget( QString::fromLatin1( "editDock" ), QPixmap(),
 		0L, QString::fromLatin1("editDock"), QString::fromLatin1(" ") );
 	m_editPart = new ChatTextEditPart( mgr, editDock, "kopeterichtexteditpart" );
-	
+
 	// FIXME: is this used these days? it seems totally unnecessary
 	connect( editPart(), SIGNAL( toggleToolbar(bool)), this, SLOT(slotToggleRtfToolbar(bool)) );
 
@@ -94,7 +94,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, const char *name )
 	         this, SIGNAL( canSendChanged(bool) ) );
 	connect( editPart(), SIGNAL( typing(bool) ),
 	         this, SIGNAL( typing(bool) ) );
-	
+
 	//Make the edit area dockable for now
 	editDock->setWidget( editPart()->widget() );
 	editDock->setDockSite( KDockWidget::DockNone );
@@ -103,7 +103,7 @@ ChatView::ChatView( Kopete::ChatSession *mgr, const char *name )
 	//Set the view as the main widget
 	setMainDockWidget( viewDock );
 	setView(viewDock);
-	
+
 	//It is possible to drag and drop on this widget.
 	// I had to disable the acceptDrop in the khtml widget to be able to intercept theses events.
 	setAcceptDrops(true);
@@ -119,21 +119,21 @@ ChatView::ChatView( Kopete::ChatSession *mgr, const char *name )
 	         this, SLOT( slotContactRemoved(const Kopete::Contact*, const QString&, Kopete::Message::MessageFormat, bool) ) );
 	connect( mgr, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & , const Kopete::OnlineStatus &) ),
 	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
-	
+
 	// add contacts
 	slotContactAdded( mgr->myself(), true );
 	for ( QPtrListIterator<Kopete::Contact> it( mgr->members() ); it.current(); ++it )
 		slotContactAdded( *it, true );
-	
+
 	setFocusProxy( editPart()->widget() );
 	editPart()->widget()->setFocus();
 
 	// init actions
 	KStdAction::copy( this, SLOT(copy()), actionCollection() );
 	KStdAction::close( this, SLOT(closeView()),actionCollection() );
-	
+
 	setCaption( m_manager->displayName(), false );
-	
+
 	// restore docking positions
 	readOptions();
 
@@ -628,7 +628,7 @@ void ChatView::setCaption( const QString &text, bool modified )
 
 	//Turncate if needed
 	newCaption = KStringHandler::rsqueeze( d->captionText, 20 );
-	
+
 	//Call the original set caption
 	KDockMainWindow::setCaption( newCaption, false );
 
@@ -794,7 +794,7 @@ void ChatView::readOptions()
 		else if( membersDockPosition == KDockWidget::DockRight )
 			dockKey.append( QString::fromLatin1( ",membersDock" ) );
 	}
-	
+
 	dockKey.append( QString::fromLatin1( ",editDock:sepPos" ) );
 	//kdDebug(14000) << k_funcinfo << "reading splitterpos from key: " << dockKey << endl;
 	int splitterPos = config->readNumEntry( dockKey, 70 );
@@ -833,7 +833,7 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 		if(m_manager->mayInvite() && m_manager->protocol()->pluginId() == lst[0] && m_manager->account()->accountId() == lst[1])
 		{
 			QString contact=lst[2];
-						
+
 			bool found =false;
 			QPtrList<Kopete::Contact> cts=m_manager->members();
 			for ( QPtrListIterator<Kopete::Contact> it( cts ); it.current(); ++it )
@@ -844,7 +844,7 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 					break;
 				}
 			}
-		
+
 			if(!found && contact != m_manager->myself()->contactId())
 				event->accept();
 		}
@@ -875,7 +875,7 @@ void ChatView::dragEnterEvent ( QDragEnterEvent * event )
 		if ( contact && contact->canAcceptFiles() );
 			event->accept();
 	}
-	else 
+	else
 		KDockMainWindow::dragEnterEvent(event);
 }
 
@@ -887,7 +887,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 		if(m_manager->mayInvite() && m_manager->protocol()->pluginId() == lst[0] && m_manager->account()->accountId() == lst[1])
 		{
 			QString contact=lst[2];
-			
+
 			bool found =false;
 			QPtrList<Kopete::Contact> cts=m_manager->members();
 			for ( QPtrListIterator<Kopete::Contact> it( cts ); it.current(); ++it )
@@ -924,7 +924,7 @@ void ChatView::dropEvent ( QDropEvent * event )
 	{
 		Kopete::ContactPtrList members = m_manager->members();
 		Kopete::Contact *contact = members.first();
-		
+
 		if ( !contact || !contact->canAcceptFiles() || !QUriDrag::canDecode( event )  )
 		{
 			event->ignore();
@@ -951,6 +951,24 @@ void ChatView::dropEvent ( QDropEvent * event )
 	else
 		KDockMainWindow::dropEvent(event);
 
+}
+
+void ChatView::registerContextMenuHandler( QObject *target, const char* slot )
+{
+	connect( m_messagePart,
+		SIGNAL( contextMenuEvent( DOM::HTMLElement &, KPopupMenu * ) ),
+		target,
+		slot
+	);
+}
+
+void ChatView::registerTooltipHandler( QObject *target, const char* slot )
+{
+	connect( m_messagePart,
+		SIGNAL( tooltipEvent( DOM::HTMLElement &, QString & ) ),
+		target,
+		slot
+	);
 }
 
 #include "chatview.moc"

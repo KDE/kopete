@@ -57,7 +57,7 @@ class ChatView : public KDockMainWindow, public KopeteView
 public:
 	ChatView( Kopete::ChatSession *manager, const char *name = 0 );
 	~ChatView();
-	
+
 	ChatMembersListWidget *membersList() const { return m_membersList; }
 	ChatMessagePart *messagePart() const { return m_messagePart; }
 	ChatTextEditPart *editPart() const { return m_editPart; }
@@ -110,7 +110,7 @@ public:
 	 * Reimplemented from KopeteView
 	 */
 	virtual Kopete::Message currentMessage();
-	
+
 	/**
 	 * Sets the current message in the chat window
 	 * @param parent The new chat window
@@ -170,11 +170,17 @@ public:
 
 	/** Reimplemented from KopeteView **/
 	virtual KTextEdit *editWidget();
-	
+
 	/** Reimplemented from KopeteView **/
 	virtual QWidget *mainWidget();
-	
+
 	bool canSend();
+
+	/** Reimplimented from KopeteView **/
+	virtual void registerContextMenuHandler( QObject *target, const char* slot );
+
+	/** Reimplimented from KopeteView **/
+	virtual void registerTooltipHandler( QObject *target, const char* slot );
 
 public slots:
 	/**
@@ -193,7 +199,7 @@ public slots:
 	 * Initiates a paste action into the edit area of the chat view
 	 */
 	void paste();
-	
+
 	void nickComplete();
 
 	/**
@@ -290,7 +296,7 @@ private slots:
 	void slotPropertyChanged( Kopete::Contact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
 
 	/**
-	 * Called when a contact is added to the chat session. 
+	 * Called when a contact is added to the chat session.
 	 * Adds this contact to the typingMap and the contact list view
 	 * @param c The contact that joined the chat
 	 * @param suppress mean that no notifications are showed
@@ -324,7 +330,7 @@ private slots:
 	void slotMarkMessageRead();
 
 	void slotToggleRtfToolbar( bool enabled );
-	
+
 protected:
 	virtual void dragEnterEvent ( QDragEnterEvent * );
 	virtual void dropEvent ( QDropEvent * );
@@ -333,30 +339,30 @@ private:
 	// widget stuff
 	KopeteChatWindow *m_mainWindow;
 	KTabWidget *m_tabBar;
-	
+
 	KDockWidget *viewDock;
 	ChatMessagePart *m_messagePart;
-	
+
 	KDockWidget *membersDock;
 	ChatMembersListWidget *m_membersList;
-	
+
 	KDockWidget *editDock;
 	ChatTextEditPart *m_editPart;
-	
+
 	// the state of our tab
 	enum KopeteTabState { Normal, Highlighted, Changed, Typing, Message, Undefined };
 	KopeteTabState m_tabState;
-	
+
 	// position and visibility of the chat member list
 	KDockWidget::DockPosition membersDockPosition;
 	enum MembersListPolicy { Smart = 0, Visible = 1, Hidden = 2 };
 	MembersListPolicy membersStatus;
-	
+
 	// miscellany
 	QPtrDict<QTimer> m_remoteTypingMap;
 	QString unreadMessageFrom;
 	QString m_status;
-	
+
 	void setTabState( KopeteTabState state = Undefined );
 
 	/**
