@@ -25,7 +25,7 @@
 #include <kiconloader.h>
 #include <kstringhandler.h>
 
-#include <qapp.h>
+#include <qapplication.h>
 #include <qpixmap.h>
 #include <qpainter.h>
 #include <qptrlist.h>
