@@ -100,12 +100,6 @@ public:
 	{ return mIconLoader; }
 
 	/**
-	 * Use it to access Kopete's Main App window.
-	 */
-	KopeteWindow *mainWindow() const
-	{ return m_mainWindow; }
-
-	/**
 	 * Use it to access Kopete's Contact List.
 	 */
 	KopeteContactListView *contactList() const;

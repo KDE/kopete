@@ -74,7 +74,6 @@ Kopete::Kopete()
 void Kopete::initialize()
 {
 	mLibraryLoader = new LibraryLoader();
-	mIconLoader = KGlobal::iconLoader();
 
 	// TODO: move that to mainwindow!
 	mPref = new PreferencesDialog();
