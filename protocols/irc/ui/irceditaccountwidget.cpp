@@ -54,24 +54,24 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		quitMessage->setText( m_IRCAccount->defaultQuit() );
 
 		if(account()->rememberPassword()) mPassword->setText( m_IRCAccount->password() );
-		
+
 		QStringList cmds = m_IRCAccount->connectCommands();
 		for( QStringList::Iterator i = cmds.begin(); i != cmds.end(); ++i )
 			new QListViewItem( commandList, *i );
-			
+
 		const QMap< QString, QString > replies = m_IRCAccount->customCtcpReplies();
 		for( QMap< QString, QString >::ConstIterator it = replies.begin(); it != replies.end(); ++it )
 			new QListViewItem( ctcpList, it.key(), it.data() );
 	}
-	
+
 	connect( commandList, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
 		this, SLOT( slotContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
-		
+
 	connect( ctcpList, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
 		this, SLOT( slotContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
-		
+
 	connect( addButton, SIGNAL( clicked() ), this, SLOT( slotAddCommand() ) );
-	
+
 	connect( addReply, SIGNAL( clicked() ), this, SLOT( slotAddCtcp() ) );
 }
 
@@ -89,15 +89,21 @@ void IRCEditAccountWidget::slotContextMenu( KListView *, QListViewItem *item, co
 
 void IRCEditAccountWidget::slotAddCommand()
 {
+    if ( !commandEdit->text().isEmpty() )
+    {
 	new QListViewItem( commandList, commandEdit->text() );
 	commandEdit->clear();
+    }
 }
 
 void IRCEditAccountWidget::slotAddCtcp()
 {
+    if (  !newCTCP->text().isEmpty() && !newReply->text().isEmpty() )
+    {
 	new QListViewItem( ctcpList, newCTCP->text(), newReply->text() );
 	newCTCP->clear();
 	newReply->clear();
+    }
 }
 
 KopeteAccount *IRCEditAccountWidget::apply()
@@ -113,26 +119,26 @@ KopeteAccount *IRCEditAccountWidget::apply()
 		kdDebug(14120) << k_funcinfo << "Saving password '" << mPassword->text() << "' empty: " << mPassword->text().isEmpty() << " null: " <<  mPassword->text().isNull() << endl;
 		m_IRCAccount->setPassword( mPassword->text() );
 	}
-	
+
 	m_IRCAccount->setUserName( mUserName->text() );
 	m_IRCAccount->setDefaultPart( partMessage->text() );
 	m_IRCAccount->setDefaultQuit( quitMessage->text() );
 	m_IRCAccount->setAutoLogin( mAutoConnect->isChecked() );
 	m_IRCAccount->setAltNick( mAltNickname->text() );
-	
+
 	QStringList cmds;
 	for( QListViewItem *i = commandList->firstChild(); i; i = i->nextSibling() )
 		cmds.append( i->text(0) );
-	
+
 	QMap< QString, QString > replies;
 	for( QListViewItem *i = ctcpList->firstChild(); i; i = i->nextSibling() )
 		replies[ i->text(0) ] = i->text(1);
-	
+
 	m_IRCAccount->setCustomCtcpReplies( replies );
-	
-	
+
+
 	m_IRCAccount->setConnectCommands( cmds );
-	
+
 	return m_IRCAccount;
 }
 
@@ -146,12 +152,12 @@ bool IRCEditAccountWidget::validateData()
 	else
 	{
 		int error;
-		QPtrList<KAddressInfo> address = KExtendedSocket::lookup( 
+		QPtrList<KAddressInfo> address = KExtendedSocket::lookup(
 			mServer->text(), QString::number( mPort->value() ), 0, &error );
 		address.setAutoDelete(true);
 		if( !address.isEmpty() )
 			return true;
-		
+
 		KMessageBox::sorry(this, i18n("<qt>The server/port combination you entered is invalid. Please double-check your values.</qt>"), i18n("Kopete"));
 
 	}
