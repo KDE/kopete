@@ -33,7 +33,7 @@
 
 #include "gaducontactlist.h"
 
-#include <libgadu.h>
+#include "libgadu/libgadu.h"
 
 struct KGaduMessage {
 	QString		message;	// Unicode

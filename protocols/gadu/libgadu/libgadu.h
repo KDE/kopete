@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-#include <libgadu-config.h>
+#include "libgadu-config.h"
 #include <sys/types.h>
 #include <stdio.h>
 #include <stdarg.h>
