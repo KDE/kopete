@@ -93,7 +93,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	m_usedAccounts = config->readListEntry( "AccountsUsedLast" );
 	
 	// Populate the accounts list
-	QCheckListItem* accountLVI=0L;
+	QCheckListItem* accountLVI = 0;
 	QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
 	bool foundUsedAccount = false;
 	for(KopeteAccount *i=accounts.first() ; i; i=accounts.next() )
@@ -109,6 +109,8 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 		}
 		m_accountItems.insert(accountLVI,i);
 	}
+	protocolListView->setCurrentItem( protocolListView->firstChild() );
+	groupList->setCurrentItem( groupList->firstChild() );
 
 	if ( accounts.count() == 1 )
 	{
@@ -116,7 +118,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 		setAppropriate( selectService, false );
 	}
 
-	setNextEnabled( selectService, ( accounts.count() == 1 ) || foundUsedAccount );	
+	setNextEnabled( selectService, ( accounts.count() == 1 ) || foundUsedAccount );
 	setNextEnabled( selectAddressee, false );
 	setFinishEnabled( finis, true );
 
@@ -391,7 +393,11 @@ void AddContactWizard::showPage( QWidget *page )
 			slotLoadAddressees();
 		}
 	}
+
 	QWizard::showPage( page );
+
+	if ( page == finis )
+		finishButton()->setFocus();
 }
 
 void AddContactWizard::slotDataValid(AddContactPage *onPage, bool bOn)

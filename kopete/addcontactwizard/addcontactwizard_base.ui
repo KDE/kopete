@@ -562,142 +562,151 @@
             <cstring>selectGroup</cstring>
         </property>
         <attribute name="title">
-            <string>Select Display Name &amp; Group</string>
+            <string>Select Display Name and Group</string>
         </attribute>
-        <hbox>
+        <vbox>
             <property name="name">
                 <cstring>unnamed</cstring>
             </property>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>textLabel2</cstring>
+                </property>
+                <property name="text">
+                    <string>&lt;p&gt;&lt;h2&gt;Select Display Name and Group&lt;/h2&gt;&lt;/p&gt;</string>
+                </property>
+                <property name="buddy" stdset="0">
+                    <cstring>mDisplayName</cstring>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>textLabel1_4</cstring>
+                </property>
+                <property name="text">
+                    <string>Enter the contact's &amp;display name.  This is how the contact will appear in Kopete:</string>
+                </property>
+                <property name="buddy" stdset="0">
+                    <cstring>mDisplayName</cstring>
+                </property>
+            </widget>
+            <widget class="QLineEdit">
+                <property name="name">
+                    <cstring>mDisplayName</cstring>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>Leave this blank to use any display name set by the contact themself</string>
+                </property>
+            </widget>
+            <spacer>
+                <property name="name">
+                    <cstring>spacer14_2</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Vertical</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>65</height>
+                    </size>
+                </property>
+            </spacer>
+            <widget class="Line">
+                <property name="name">
+                    <cstring>line1</cstring>
+                </property>
+                <property name="frameShape">
+                    <enum>HLine</enum>
+                </property>
+                <property name="frameShadow">
+                    <enum>Sunken</enum>
+                </property>
+                <property name="orientation">
+                    <enum>Horizontal</enum>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel1_3</cstring>
+                </property>
+                <property name="text">
+                    <string>Select the contact list &amp;group(s) that this contact should belong to :</string>
+                </property>
+                <property name="alignment">
+                    <set>WordBreak|AlignVCenter</set>
+                </property>
+                <property name="buddy" stdset="0">
+                    <cstring>groupList</cstring>
+                </property>
+            </widget>
+            <widget class="KListView">
+                <column>
+                    <property name="text">
+                        <string>Groups</string>
+                    </property>
+                    <property name="clickable">
+                        <bool>false</bool>
+                    </property>
+                    <property name="resizable">
+                        <bool>true</bool>
+                    </property>
+                </column>
+                <property name="name">
+                    <cstring>groupList</cstring>
+                </property>
+                <property name="fullWidth">
+                    <bool>true</bool>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>A contact may be present in more than one group</string>
+                </property>
+            </widget>
             <widget class="QLayoutWidget">
                 <property name="name">
-                    <cstring>layout14</cstring>
+                    <cstring>layout21</cstring>
                 </property>
-                <vbox>
+                <hbox>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QLabel">
+                    <widget class="KPushButton">
                         <property name="name">
-                            <cstring>textLabel2</cstring>
+                            <cstring>addGroupButton</cstring>
                         </property>
                         <property name="text">
-                            <string>&lt;p&gt;&lt;h2&gt;Select Display Name and Group&lt;/h2&gt;&lt;/p&gt;
-&lt;p&gt;Enter the contact's display name.  This is how the contact will appear in Kopete:&lt;/p&gt;</string>
+                            <string>Create New G&amp;roup...</string>
                         </property>
-                    </widget>
-                    <widget class="QLineEdit">
-                        <property name="name">
-                            <cstring>mDisplayName</cstring>
+                        <property name="accel">
+                            <string>Alt+R</string>
                         </property>
                         <property name="toolTip" stdset="0">
-                            <string>Leave this blank to use any display name set by the contact themself</string>
+                            <string>Click here to create a new group</string>
                         </property>
                     </widget>
                     <spacer>
                         <property name="name">
-                            <cstring>spacer14_2</cstring>
+                            <cstring>Spacer6</cstring>
                         </property>
                         <property name="orientation">
-                            <enum>Vertical</enum>
+                            <enum>Horizontal</enum>
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>20</width>
-                                <height>28</height>
+                                <width>328</width>
+                                <height>16</height>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="Line">
-                        <property name="name">
-                            <cstring>line1</cstring>
-                        </property>
-                        <property name="frameShape">
-                            <enum>HLine</enum>
-                        </property>
-                        <property name="frameShadow">
-                            <enum>Sunken</enum>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                    </widget>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>TextLabel1_3</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&lt;p&gt;Select the group(s) that this contact should belong to:&lt;/p&gt;</string>
-                        </property>
-                        <property name="alignment">
-                            <set>WordBreak|AlignVCenter</set>
-                        </property>
-                    </widget>
-                    <widget class="KListView">
-                        <column>
-                            <property name="text">
-                                <string>Groups</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>false</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <property name="name">
-                            <cstring>groupList</cstring>
-                        </property>
-                        <property name="fullWidth">
-                            <bool>true</bool>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>A contact may be present in more than one group</string>
-                        </property>
-                    </widget>
-                    <widget class="QLayoutWidget">
-                        <property name="name">
-                            <cstring>layout21</cstring>
-                        </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="KPushButton">
-                                <property name="name">
-                                    <cstring>addGroupButton</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Create New &amp;Group...</string>
-                                </property>
-                                <property name="toolTip" stdset="0">
-                                    <string>Click here to create a new group</string>
-                                </property>
-                            </widget>
-                            <spacer>
-                                <property name="name">
-                                    <cstring>Spacer6</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>328</width>
-                                        <height>16</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </hbox>
-                    </widget>
-                </vbox>
+                </hbox>
             </widget>
-        </hbox>
+        </vbox>
     </widget>
     <widget class="QWidget">
         <property name="name">
@@ -706,97 +715,111 @@
         <attribute name="title">
             <string>Select Instant Messaging Accounts</string>
         </attribute>
-        <hbox>
+        <vbox>
             <property name="name">
                 <cstring>unnamed</cstring>
             </property>
-            <widget class="QLayoutWidget">
+            <widget class="QLabel">
                 <property name="name">
-                    <cstring>layout20</cstring>
+                    <cstring>TextLabel5</cstring>
                 </property>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>TextLabel5</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&lt;p&gt;&lt;h2&gt;Select IM Accounts&lt;/h2&gt;&lt;/p&gt;&lt;p&gt;Select the account(s) you would like to use for this contact from the list below.&lt;/p&gt;
-&lt;p&gt;&lt;i&gt;Note&lt;/i&gt;: If a messaging service is missing from the list, please make sure that it is enabled in the Kopete configuration window and that it supports adding new contacts.&lt;/p&gt;</string>
-                        </property>
-                        <property name="alignment">
-                            <set>WordBreak|AlignVCenter</set>
-                        </property>
-                    </widget>
-                    <widget class="KListView">
-                        <column>
-                            <property name="text">
-                                <string>Account</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property name="text">
-                                <string>Protocol</string>
-                            </property>
-                            <property name="clickable">
-                                <bool>true</bool>
-                            </property>
-                            <property name="resizable">
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <property name="name">
-                            <cstring>protocolListView</cstring>
-                        </property>
-                        <property name="fullWidth">
-                            <bool>false</bool>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>Select the Instant Messaging systems to message the contact.  If they use more than one IM system, select them all here</string>
-                        </property>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer15</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>18</height>
-                            </size>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>How do you want to message the contact?  If they use more than one Instant Messaging system, select them all here</string>
-                        </property>
-                    </spacer>
-                    <widget class="QLabel">
-                        <property name="name">
-                            <cstring>textLabel1_2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>You can always add more ways to message this contact later.</string>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>How do you want to message the contact?  If they use more than one Instant Messaging system, select them all here</string>
-                        </property>
-                    </widget>
-                </vbox>
+                <property name="text">
+                    <string>&lt;p&gt;&lt;h2&gt;Select Instant Messaging Accounts&lt;/h2&gt;&lt;/p&gt;</string>
+                </property>
+                <property name="alignment">
+                    <set>WordBreak|AlignVCenter</set>
+                </property>
+                <property name="buddy" stdset="0">
+                    <cstring>protocolListView</cstring>
+                </property>
             </widget>
-        </hbox>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>textLabel2_3</cstring>
+                </property>
+                <property name="text">
+                    <string>Select the &amp;account(s) you would like to use for this contact from the list below.</string>
+                </property>
+                <property name="buddy" stdset="0">
+                    <cstring>protocolListView</cstring>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>textLabel3</cstring>
+                </property>
+                <property name="text">
+                    <string>&lt;p&gt;&lt;i&gt;Note&lt;/i&gt;: If a messaging service is missing from the list, please make sure you have created an account for it in Kopete, and that it ready to add new contacts.&lt;/p&gt;</string>
+                </property>
+            </widget>
+            <widget class="KListView">
+                <column>
+                    <property name="text">
+                        <string>Account</string>
+                    </property>
+                    <property name="clickable">
+                        <bool>true</bool>
+                    </property>
+                    <property name="resizable">
+                        <bool>true</bool>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>Protocol</string>
+                    </property>
+                    <property name="clickable">
+                        <bool>true</bool>
+                    </property>
+                    <property name="resizable">
+                        <bool>true</bool>
+                    </property>
+                </column>
+                <property name="name">
+                    <cstring>protocolListView</cstring>
+                </property>
+                <property name="allColumnsShowFocus">
+                    <bool>true</bool>
+                </property>
+                <property name="fullWidth">
+                    <bool>false</bool>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>Select the Instant Messaging systems to message the contact.  If they use more than one IM system, select them all here</string>
+                </property>
+            </widget>
+            <spacer>
+                <property name="name">
+                    <cstring>spacer15</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Vertical</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>80</height>
+                    </size>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>How do you want to message the contact?  If they use more than one Instant Messaging system, select them all here</string>
+                </property>
+            </spacer>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>textLabel1_2</cstring>
+                </property>
+                <property name="text">
+                    <string>You can always add more ways to message this contact later.</string>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>How do you want to message the contact?  If they use more than one Instant Messaging system, select them all here</string>
+                </property>
+            </widget>
+        </vbox>
     </widget>
     <widget class="QWidget">
         <property name="name">
@@ -868,9 +891,18 @@
     </image>
 </images>
 <tabstops>
-    <tabstop>protocolListView</tabstop>
+    <tabstop>chkAddressee</tabstop>
+    <tabstop>addresseeListView</tabstop>
+    <tabstop>addAddresseeButton</tabstop>
+    <tabstop>mDisplayName</tabstop>
     <tabstop>groupList</tabstop>
     <tabstop>addGroupButton</tabstop>
+    <tabstop>protocolListView</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>klistview.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>klistview.h</includehint>
+</includehints>
 </UI>
