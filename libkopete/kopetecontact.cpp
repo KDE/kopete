@@ -323,8 +323,8 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 		int result=KMessageBox::No;
 		if( old->contacts().count()==1 )
 		{ //only one contact, including this one, that mean the contact will be empty efter the move
-			result=KMessageBox::questionYesNoCancel( 0, i18n("You are moving the contact %1 <%2> to the metacontact `%3`.\n"
-				"Do you want to remove the source metacontact ( %4 ) which is going to be empty?")
+			result=KMessageBox::questionYesNoCancel( 0, i18n("You are moving the contact `%1 <%2>' to `%3'.\n"
+				"`%4' will be empty. Delete it?")
 #if QT_VERSION < 0x030200
 					.arg(displayName()).arg(contactId()).arg(m ? m->displayName() : QString::null).arg(old->displayName())
 #else
