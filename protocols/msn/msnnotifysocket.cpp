@@ -20,6 +20,7 @@
 #include "msnprotocol.h"
 #include "msncontact.h"
 #include "msnpreferences.h"
+#include "msnidentity.h"
 
 #include <qregexp.h>
 
@@ -40,10 +41,10 @@
 #define KDE_IS_VERSION(x,y,z) 0
 #endif
 
-MSNNotifySocket::MSNNotifySocket( MSNProtocol *protocol, const QString &msnId )
-: MSNAuthSocket( msnId, protocol )
+MSNNotifySocket::MSNNotifySocket( MSNIdentity *identity, const QString &msnId )
+: MSNAuthSocket( msnId, identity )
 {
-	m_protocol = protocol;
+	m_identity = identity;
 	QObject::connect( this, SIGNAL( blockRead( const QString & ) ),
 		this, SLOT( slotReadMessage( const QString & ) ) );
 
@@ -185,7 +186,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	{
 		// handle, publicName, status
 
-		MSNContact *c = static_cast<MSNContact*>( m_protocol->contacts()[ data.section( ' ', 1, 1 ) ] );
+		MSNContact *c = static_cast<MSNContact*>( m_identity->contacts()[ data.section( ' ', 1, 1 ) ] );
 		if( c )
 		{
 			c->setMsnStatus( MSNProtocol::convertStatus( data.section( ' ', 0, 0 ) ) );
@@ -207,14 +208,14 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "FLN" )
 	{
-		MSNContact *c = static_cast<MSNContact*>( m_protocol->contacts()[ data.section( ' ', 0, 0 ) ] );
+		MSNContact *c = static_cast<MSNContact*>( m_identity->contacts()[ data.section( ' ', 0, 0 ) ] );
 		if( c )
 			c->setMsnStatus( MSNProtocol::FLN );
 	}
 	else if( cmd == "ILN" )
 	{
 		// handle, publicName, Status
-		MSNContact *c = static_cast<MSNContact*>( m_protocol->contacts()[ data.section( ' ', 1, 1 ) ] );
+		MSNContact *c = static_cast<MSNContact*>( m_identity->contacts()[ data.section( ' ', 1, 1 ) ] );
 		if( c )
 		{
 			c->setMsnStatus( MSNProtocol::convertStatus(data.section( ' ', 0, 0 )));
@@ -280,7 +281,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			emit publicNameChanged( unescape( data.section( ' ', 2, 2 ) ) );
 		else
 		{
-			MSNContact *c = static_cast<MSNContact*>( m_protocol->contacts()[ handle ] );
+			MSNContact *c = static_cast<MSNContact*>( m_identity->contacts()[ handle ] );
 			if( c )
 				c->setDisplayName( unescape( data.section( ' ', 2, 2 ) ) );
 		}
@@ -331,7 +332,7 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 	}
 	else if( cmd == "BPR" )
 	{
-		MSNContact *c = static_cast<MSNContact*>( m_protocol->contacts()[ data.section( ' ', 0, 0 ) ] );
+		MSNContact *c = static_cast<MSNContact*>( m_identity->contacts()[ data.section( ' ', 0, 0 ) ] );
 		if( c )
 		{
 			c->setInfo(data.section( ' ', 1, 1 ),unescape(data.section( ' ', 2, 2 )));

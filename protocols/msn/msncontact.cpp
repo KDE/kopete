@@ -35,24 +35,7 @@
 #include "msnmessagemanager.h"
 #include "msnnotifysocket.h"
 #include "msnprotocol.h"
-
-MSNContact::MSNContact( KopeteProtocol *proto, const QString &id,
-	const QString &displayName, KopeteMetaContact *parent  ) : KopeteContact( proto, id, parent )
-{
-	m_actionBlock = 0L;
-	m_actionCollection=0L;
-
-	m_status = MSNProtocol::UNK;
-
-//	m_deleted = false;
-	m_allowed = false;
-	m_blocked = false;
-	m_reversed = false;
-
-	setDisplayName( displayName );
-
-	setFileCapable(true);
-}
+#include "msnidentity.h"
 
 
 MSNContact::MSNContact( KopeteIdentity *identity, const QString &id,
@@ -82,10 +65,10 @@ KopeteMessageManager *MSNContact::manager( bool canCreate )
 	KopeteContactPtrList chatmembers;
 	chatmembers.append(this);
 
-	KopeteMessageManager *_manager = KopeteMessageManagerFactory::factory()->findKopeteMessageManager(  protocol()->myself(), chatmembers, protocol() );
+	KopeteMessageManager *_manager = KopeteMessageManagerFactory::factory()->findKopeteMessageManager(  identity()->myself(), chatmembers, protocol() );
 	MSNMessageManager *manager = dynamic_cast<MSNMessageManager*>( _manager );
 	if(!manager &&  canCreate)
-			manager = new MSNMessageManager( protocol(), protocol()->myself(), chatmembers );
+			manager = new MSNMessageManager( protocol(), identity()->myself(), chatmembers );
 	return manager;
 }
 
@@ -112,7 +95,7 @@ KActionCollection *MSNContact::customContextMenuActions()
 
 void MSNContact::slotBlockUser()
 {
-	MSNNotifySocket *notify = static_cast<MSNProtocol*>( protocol() )->notifySocket();
+	MSNNotifySocket *notify = static_cast<MSNIdentity*>( identity() )->notifySocket();
 	if( !notify )
 	{
 		KMessageBox::error( 0l,
@@ -156,7 +139,7 @@ void MSNContact::slotDeleteContact()
 {
 	kdDebug( 14140 ) << k_funcinfo << endl;
 
-	MSNNotifySocket *notify = static_cast<MSNProtocol*>( protocol() )->notifySocket();
+	MSNNotifySocket *notify = static_cast<MSNIdentity*>( identity() )->notifySocket();
 	if( notify )
 	{
 		if( m_serverGroups.isEmpty() || m_status == MSNProtocol::UNK )
@@ -481,7 +464,7 @@ void MSNContact::moveToGroup( KopeteGroup *from, KopeteGroup *to )
 		return;
 	}
 
-	MSNNotifySocket *notify = static_cast<MSNProtocol*>( protocol() )->notifySocket();
+	MSNNotifySocket *notify = static_cast<MSNIdentity*>( identity() )->notifySocket();
 	if( notify )
 	{
 		addToGroup( to );
@@ -508,7 +491,7 @@ void MSNContact::rename( const QString &newName )
 	if( newName == displayName() )
 		return;
 
-	MSNNotifySocket *notify = static_cast<MSNProtocol*>( protocol() )->notifySocket();
+	MSNNotifySocket *notify = static_cast<MSNIdentity*>( identity() )->notifySocket();
 	if( notify )
 	{
 		notify->changePublicName( newName, contactId() );
@@ -530,7 +513,7 @@ void MSNContact::addToGroup( KopeteGroup *group )
 	if( !group )
 		return;
 
-	MSNNotifySocket *notify = static_cast<MSNProtocol*>( protocol() )->notifySocket();
+	MSNNotifySocket *notify = static_cast<MSNIdentity*>( identity() )->notifySocket();
 	if( notify )
 	{
 		if( !group->pluginData( protocol() , "id" ).isEmpty() )
@@ -544,7 +527,7 @@ void MSNContact::addToGroup( KopeteGroup *group )
 		}
 		else
 		{
-			static_cast<MSNProtocol*>( protocol() )->addGroup( group->displayName(), contactId() );
+			static_cast<MSNIdentity*>( identity() )->addGroup( group->displayName(), contactId() );
 		}
 	}
 	else
@@ -563,7 +546,7 @@ void MSNContact::removeFromGroup( KopeteGroup *group )
 	if( !group )
 		return;
 
-	MSNNotifySocket *notify = static_cast<MSNProtocol*>( protocol() )->notifySocket();
+	MSNNotifySocket *notify = static_cast<MSNIdentity*>( identity() )->notifySocket();
 	if( notify )
 	{
 		if( m_serverGroups.count() == 1 )

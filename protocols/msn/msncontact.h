@@ -40,9 +40,6 @@ public:
 	MSNContact( KopeteIdentity *identity, const QString &id,
 		const QString &displayName, KopeteMetaContact *parent );
 
-	//obsolete
-	MSNContact( KopeteProtocol *protocol, const QString &id,
-		const QString &displayName, KopeteMetaContact *parent );
 	~MSNContact();
 
 	QString statusText() const;

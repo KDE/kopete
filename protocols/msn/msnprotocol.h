@@ -114,10 +114,7 @@ public:
 	virtual AddContactPage *createAddContactWidget( QWidget *parent );
 	virtual EditIdentityWidget *createEditIdentityWidget(KopeteIdentity *identity, QWidget *parent);
 	virtual KopeteIdentity *createNewIdentity(const QString &identityId);
-
-	bool addContactToMetaContact( const QString &contactId, const QString &displayName,
-		KopeteMetaContact *parentContact );
-
+	
 	void addGroup( const QString &groupName,
 		const QString &contactToAdd = QString::null );
 
@@ -145,20 +142,6 @@ public:
 	
 	MSNPreferences *mPrefs;  //FIXME: made this private
 
-public slots:
-
-	/**
-	 * Start a new chat session: the result is an XFR command, see above
-	 */
-	void slotStartChatSession( QString handle );
-	
-	
-	void slotContactAdded(QString handle, QString publicName, QString list,
-		uint serial, uint group );
-
-	void slotContactListed( QString handle, QString publicName, QString group, QString list );
-
-	
 private slots:
 
 	void slotSyncContactList();

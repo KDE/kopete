@@ -33,6 +33,7 @@
 #include "msnfiletransfersocket.h"
 #include "msnmessagemanager.h"
 #include "msnprotocol.h"
+#include "msnidentity.h"
 #include "msnswitchboardsocket.h"
 
 MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteContact *user,
@@ -108,28 +109,11 @@ void MSNMessageManager::createChat( const QString &handle,
 
 void MSNMessageManager::slotUpdateChatMember(const QString &handle, const QString &publicName, bool add)
 {
-	MSNContact *c = static_cast<MSNContact*>( protocol()->contacts()[ handle ] );
-	if( add && !c )
-	{
-		KopeteMetaContact *m = KopeteContactList::contactList()->findContact( protocol()->pluginId(), QString::null, handle );
-		if(m)
-		{
-			KopeteContact *kc=m->findContact( protocol()->pluginId(), QString::null, handle );
-			c=static_cast<MSNContact*>(kc);
-			kdDebug(14140) << "MSNMessageManager::slotUpdateChatMember : WARNING - KopeteContact was found, but not on the protocl"  << endl;
-		}
-		else
-		{
-			m=new KopeteMetaContact();
-			m->setTemporary(true);
-
-			c = new MSNContact( protocol(), handle, publicName, m );
-
-			m->addContact( c );
-			KopeteContactList::contactList()->addMetaContact(m);
-		}
-	}
-
+	if( add && !user()->identity()->contacts()[ handle ] )
+		user()->identity()->addContact( handle, publicName, 0L, QString::null, true);
+		
+	MSNContact *c = static_cast<MSNContact*>( user()->identity()->contacts()[ handle ] );
+		
 	if(add)
 	{
 		addContact(c);
@@ -179,7 +163,7 @@ void MSNMessageManager::slotMessageSent(KopeteMessage &message,KopeteMessageMana
 	}
 	else // There's no switchboard available, so we must create a new one!
 	{
-		static_cast<MSNProtocol*>( protocol() )->slotStartChatSession( message.to().first()->contactId() );
+		static_cast<MSNIdentity*>( user()->identity() )->slotStartChatSession( message.to().first()->contactId() );
 		m_messagesQueue.append(message);
 //		sendMessageQueue();
 		//m_msgQueued=new KopeteMessage(message);
@@ -224,7 +208,7 @@ void MSNMessageManager::slotInviteContact( KopeteContact *contact )
 	if( m_chatService )
 		m_chatService->slotInviteContact( contact->contactId() );
 	else
-		static_cast<MSNProtocol*>( protocol() )->slotStartChatSession( contact->contactId() );
+		static_cast<MSNIdentity*>( user()->identity() )->slotStartChatSession( contact->contactId() );
 }
 
 
@@ -246,7 +230,7 @@ void MSNMessageManager::slotInviteOtherContact()
 	if( m_chatService )
 		m_chatService->slotInviteContact( handle );
 	else
-		static_cast<MSNProtocol*>( protocol() )->slotStartChatSession( handle );
+		static_cast<MSNIdentity*>( user()->identity() )->slotStartChatSession( handle );
 }
 
 
@@ -284,7 +268,8 @@ void MSNMessageManager::slotAcknowledgement(unsigned int id, bool ack)
 
 void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg)
 {
-	MSNContact *c = static_cast<MSNContact*>( protocol()->contacts()[ handle ] );
+	//FIXME! a contact from another identity can send a file
+	MSNContact *c = static_cast<MSNContact*>( user()->identity()->contacts()[ handle ] );
 	if(!c)
 		return;
 

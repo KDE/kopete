@@ -23,6 +23,7 @@
 #include "msnprotocol.h"
 
 class MSNDispatchSocket;
+class MSNIdentity;
 
 /**
  * @author Olaf Lueg
@@ -32,7 +33,7 @@ class MSNNotifySocket : public MSNAuthSocket
 	Q_OBJECT
 
 public:
-	MSNNotifySocket( MSNProtocol *protocol, const QString &msnId );
+	MSNNotifySocket( MSNIdentity* identity, const QString &msnId );
 	~MSNNotifySocket();
 
 	void connect( const QString &password );
@@ -114,7 +115,7 @@ private slots:
 	void slotResetKeepAlive();
 
 private:
-	MSNProtocol *m_protocol;
+	MSNIdentity *m_identity;
 
 	unsigned int mailCount;
 	QString m_password;
