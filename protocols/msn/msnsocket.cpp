@@ -177,18 +177,7 @@ void MSNSocket::slotSocketError( int error )
 void MSNSocket::slotDataReceived()
 {
 	int avail = m_socket->bytesAvailable();
-	int toRead = avail;
-	if( avail == 0 )
-	{
-		kdDebug(14140) << "MSNSocket::slotDataReceived:\n"
-			"** WARNING ** bytesAvailable() returned 0!\n"
-			"If you are running KDE 3.0.0, please upgrade to a newer KDE\n"
-			"version. This fixes a KExtendedSocket bug always returning 0.\n"
-			"Trying to read 4KB blocks instead, but be prepared for problems!"
-			<< endl;
-		toRead = 4096;
-	}
-	else if ( avail == -1 )
+	if ( avail == -1 )
 	{
 		// error!
 		kdDebug(14140) << "MSNSocket::slotDataReceived: bytesAvailable() returned"
@@ -196,8 +185,8 @@ void MSNSocket::slotDataReceived()
 	}
 
 	// incoming data
-	char *buf = new char[ toRead ];
-	int ret = m_socket->readBlock( buf, toRead );
+	char *buf = new char[ avail ];
+	int ret = m_socket->readBlock( buf, avail );
 	if( ret < 0 )
 	{
 		kdDebug(14140) << "MSNSocket:slotDataReceived: WARNING: "
@@ -226,7 +215,7 @@ void MSNSocket::slotDataReceived()
 				<< "Read " << ret << " bytes into 4kb block." << endl;
 		}
 
-		kdDebug(14140) << "MSNSocket::slotDataReceived: Received: " << QString(QCString(buf,toRead)).stripWhiteSpace()  << endl;
+		kdDebug( 14140 ) << k_funcinfo << "Received: " << QString( QCString( buf, avail ) ).stripWhiteSpace() << endl;
 
 		m_buffer.add(buf,ret); // fill the buffer with the received data
 
