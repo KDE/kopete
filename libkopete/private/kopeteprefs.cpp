@@ -62,7 +62,7 @@ void KopetePrefs::load()
 	mChatWindowPolicy = config->readNumEntry("Chatwindow Policy", 0);
 	mTransparencyEnabled = config->readBoolEntry("ChatView Transparency Enabled", false);
 	mTransparencyValue = config->readNumEntry("ChatView Transparency Value", 50);
-	mNotifyAway = config->readBoolEntry("Notification Away", false);
+	mNotifyAway = config->readBoolEntry("Notification Away", true);
 	mRichText = config->readBoolEntry("RichText editor", false);
 
 	mTransparencyColor = config->readColorEntry("ChatView Transparency Tint Color", &Qt::white);
