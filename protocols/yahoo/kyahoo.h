@@ -231,7 +231,7 @@ signals:
 	void mailNotify( const QString &from, const QString &subject, int cnt);
 	
 	/**
-	 * emitted when Yahoo servers send us a system message
+	 * emitted when Yahoo servers send us a admin message
 	 */
 	void systemMessage( const QString &msg);
 	
