@@ -69,5 +69,5 @@ Porting from Kopete 0.9 to Kopete 0.10
 *) OnlineStatusIconCache has been replaced by OnlineStatusManager
 
 
-
+*) KopeteMessage  =>  Kopete::Message
 
