@@ -85,7 +85,7 @@ void MSNAuthSocket::parseCommand( const QString &cmd, uint id, const QString &da
 {
 	if ( cmd == "VER" )
 	{
-		sendCommand( "CVR", "0x0409 winnt 5.1 i386 MSNMSGR 6.0.0 MSMSGS " + m_msnId );
+		sendCommand( "CVR", "0x0409 winnt 5.1 i386 MSNMSGR 6.0.0602 MSMSGS " + m_msnId );
 /*
 		struct utsname utsBuf;
 		uname ( &utsBuf );
