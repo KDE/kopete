@@ -97,10 +97,8 @@ GaduRichTextFormat::convertToHtml( const QString& msg, unsigned int formats, voi
 			}
 			style += QString::fromLatin1(" color: rgb( %1, %2, %3 ); ").arg( r ).arg( g ).arg( b );
 
-			if ( !style.isEmpty() ) {
-				opened = true;
-				tmp += formatOpeningTag(QString::fromLatin1("span"), QString::fromLatin1("style=\"%1\"").arg( style ) );
-			}
+			tmp += formatOpeningTag(QString::fromLatin1("span"), QString::fromLatin1("style=\"%1\"").arg( style ) );
+			opened = true;
 
 		}
 
