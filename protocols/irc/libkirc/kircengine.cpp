@@ -71,17 +71,6 @@ Engine::Engine(QObject *parent, const char *name)
 	kdDebug(14120) << "Setting default engine codec, " << defaultCodec->name() << endl;
 
 	m_sock = 0L;
-
-	connectTimeout = 20000;
-	QString timeoutPath = locate( "config", "kioslaverc" );
-	if( !timeoutPath.isEmpty() )
-	{
-		KConfig config( timeoutPath );
-		connectTimeout = config.readNumEntry( "ConnectTimeout", 20 ) * 1000;
-	}
-
-	m_connectTimer = new QTimer( this );
-	connect( m_connectTimer, SIGNAL( timeout() ), this, SLOT( slotAuthFailed() ) );
 }
 
 Engine::~Engine()
@@ -154,12 +143,8 @@ void Engine::setStatus(Engine::Status status)
 
 		user(m_Username, 0, QString::fromLatin1("Kopete User"));
 		nick(m_Nickname);
-
-		//If we don't get a reply within xx seconds, give up
-		m_connectTimer->start(connectTimeout);
 		break;
 	case Connected:
-		m_connectTimer->stop();
 		// Do nothing.
 		break;
 	case Closing:
@@ -200,9 +185,6 @@ void Engine::connectToServer(const QString &host, Q_UINT16 port, const QString &
 	{
 		kdDebug(14120) << k_funcinfo << "Success!. Status: " << m_sock->socketStatus() << endl;
 		setStatus(Connecting);
-
-		//If we don't get a reply within 15 seconds, give up
-		m_connectTimer->start( connectTimeout );
 	}
 	else
 	{
@@ -340,15 +322,15 @@ void Engine::slotReadyRead()
 	// close the socket unexpectedly
 	bool parseSuccess;
 
-	if( m_sock->socketStatus() == KExtendedSocket::connected && m_sock->canReadLine())
+	if (m_sock->socketStatus() == KExtendedSocket::connected && m_sock->canReadLine())
 	{
 		Message msg = Message::parse(this, defaultCodec, &parseSuccess);
-		if(parseSuccess)
+		if (parseSuccess)
 		{
 			emit receivedMessage(msg);
 
 			KIRC::MessageRedirector *mr;
-			if( msg.isNumeric() )
+			if (msg.isNumeric())
 //				mr = m_numericCommands[ msg.command().toInt() ];
 				// we do this conversion because some dummy servers sends 1 instead of 001
 				// numbers are stored as "1" instead of "001" to make convertion faster (no 0 pading).

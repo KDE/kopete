@@ -177,6 +177,11 @@ void Engine::part(Message &msg)
 	emit incomingPartedChannel(msg.arg(0), msg.nickFromPrefix(), msg.suffix());
 }
 
+void Engine::pass(const QString &password)
+{
+	writeMessage("PASS", password);
+}
+
 void Engine::ping(Message &msg)
 {
 	writeMessage("PONG", msg.arg(0), msg.suffix());

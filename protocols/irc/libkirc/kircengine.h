@@ -39,7 +39,6 @@
 #include <qstring.h>
 #include <qstringlist.h>
 
-class QTimer;
 class QRegExp;
 
 namespace KIRC
@@ -230,6 +229,7 @@ public slots:
 	void nick(const QString &newNickname);
 	void notice(const QString &target, const QString &message);
 	void part(const QString &name, const QString &reason);
+	void pass(const QString &password);
 	void privmsg(const QString &contact, const QString &message);
 
 	/**
@@ -466,7 +466,6 @@ private:
 	bool m_ReqsPasswd;
 	bool m_FailedNickOnLogin;
 	bool m_useSSL;
-	int connectTimeout;
 
 	QString m_VersionString;
 	QString m_UserString;
@@ -481,7 +480,6 @@ private:
 	QMap<QString, QString> customCtcpMap;
 	QDict<QTextCodec> codecs;
 	QTextCodec *defaultCodec;
-	QTimer *m_connectTimer;
 
 	KExtendedSocket *m_sock;
 };

@@ -111,7 +111,6 @@ void Engine::numericReply_001(Message &msg)
 	 * although the MOTD comes *after* this.
 	 */
 	emit incomingConnectString(msg.suffix());
-	m_connectTimer->stop();
 
 	setStatus(Connected);
 }
@@ -452,7 +451,6 @@ void Engine::numericReply_433(Message &msg)
 		// This differs because the server won't send us a response back telling us our nick changed
 		// (since we aren't logged in).
 		m_FailedNickOnLogin = true;
-		m_connectTimer->stop();
 		emit incomingFailedNickOnLogin(msg.arg(1));
 	}
 	else
