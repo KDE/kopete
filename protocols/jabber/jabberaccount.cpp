@@ -154,12 +154,12 @@ KActionMenu *JabberAccount::actionMenu ()
 		"actionJabberDisconnect"));
 
 	m_actionMenu->popupMenu()->insertSeparator();
-	m_actionMenu->insert(new KAction (i18n ("Join Groupchat..."), "filenew", 0,
+	m_actionMenu->insert(new KAction (i18n ("Join Groupchat..."), "personal", 0,
 		this, SLOT (slotJoinNewChat ()), this, "actionJoinChat"));
 	m_actionMenu->popupMenu()->insertSeparator();
-	m_actionMenu->insert(new KAction (i18n ("Services..."), "filenew", 0,
+	m_actionMenu->insert(new KAction (i18n ("Services..."), "network", 0,
 		this, SLOT (slotGetServices ()), this, "actionJabberServices"));
-	m_actionMenu->insert(new KAction (i18n ("Send Raw Packet to Server..."), "filenew", 0,
+	m_actionMenu->insert(new KAction (i18n ("Send Raw Packet to Server..."), "mail_new", 0,
 		this, SLOT (slotSendRaw ()), this, "actionJabberSendRaw"));
 	m_actionMenu->insert(new KAction (i18n ("Edit User Info..."), "identity", 0,
 		this, SLOT (slotEditVCard ()), this, "actionEditVCard"));
@@ -904,7 +904,7 @@ void JabberAccount::slotSubscription (const Jabber::Jid & jid, const QString & t
 		Jabber::JT_Roster * task = new Jabber::JT_Roster (jabberClient->rootTask ());
 		switch (KMessageBox::warningYesNo (0L,
 								  i18n
-								  ("The Jabber user %1 removed %2's subscription to them." 
+								  ("The Jabber user %1 removed %2's subscription to them."
 								   "This account will no longer be able to view their online/offline status."
 								   "\nDo you want to delete the contact?").
 								  arg (jid.userHost (), 1).arg (accountId(), 2), i18n ("Notification")))
