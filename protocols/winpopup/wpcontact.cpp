@@ -87,7 +87,7 @@ KopeteMessageManager* WPContact::manager( bool )	// TODO: use the parameter as c
 		QPtrList<KopeteContact> singleContact;
 		singleContact.append(this);
 
-		m_manager = KopeteMessageManagerFactory::factory()->create( protocol()->myself(), singleContact, protocol() );
+		m_manager = KopeteMessageManagerFactory::factory()->create( account()->myself(), singleContact, protocol() );
 
 		connect(m_manager, SIGNAL(messageSent(KopeteMessage &, KopeteMessageManager *)), this, SLOT(slotSendMessage(KopeteMessage &)));
   		connect(m_manager, SIGNAL(messageSent(KopeteMessage &, KopeteMessageManager *)), m_manager, SLOT(appendMessage(KopeteMessage &)));
@@ -144,7 +144,7 @@ void WPContact::slotNewMessage(const QString &Body, const QDateTime &Arrival)
 	DEBUG(WPDMETHOD, "WPContact::slotNewMessage(" << Body << ", " << Arrival.toString() << ")");
 
 	QPtrList<KopeteContact> contactList;
-	contactList.append(protocol()->myself());
+	contactList.append(account()->myself());
 
 	QRegExp subj("^Subject: ([^\n]*)\n(.*)$");
 	KopeteMessage msg;
