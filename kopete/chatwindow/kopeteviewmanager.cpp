@@ -237,7 +237,10 @@ void KopeteViewManager::readMessages( KopeteMessageManager *manager, bool outgoi
 	{
 		++it;
 		if ( event->message().manager() == manager )
+		{
 			event->apply();
+			d->eventList.remove( event );
+		}
 	}
 }
 
@@ -248,17 +251,23 @@ void KopeteViewManager::slotEventDeleted( KopeteEvent *event )
 	if(!kmm)
 		return;
 	
-	if ( event->state()==KopeteEvent::Applied )
+	if ( event->state() == KopeteEvent::Applied )
 	{
 		readMessages( kmm, false );
 	}
 	else if ( event->state() == KopeteEvent::Ignored ) 
 	{
-		if ( kmm->view( false ) )
+		d->eventList.remove( event );
+		bool bAnotherWithThisManager = false;
+		for( QPtrListIterator<KopeteEvent> it( d->eventList ); it; ++it )
+		{
+			KopeteEvent *event = it.current();
+			if ( event->message().manager() == kmm )
+				bAnotherWithThisManager = true;
+		}
+		if ( !bAnotherWithThisManager && kmm->view( false ) )
 			kmm->view()->closeView( true );
 	}
-
-	d->eventList.remove( event );
 }
 
 void KopeteViewManager::nextEvent()
