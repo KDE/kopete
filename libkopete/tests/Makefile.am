@@ -6,9 +6,12 @@ LDADD = $(LIB_KIO)
 
 METASOURCES = AUTO
 
-check_PROGRAMS = kopeteemoticontest
+check_PROGRAMS = kopeteemoticontest kopetewallettest
 
 kopeteemoticontest_SOURCES = kopeteemoticontest.cpp
 kopeteemoticontest_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH)
 kopeteemoticontest_LDADD = ../libkopete.la
 
+kopetewallettest_SOURCES = kopetewallettest.cpp
+kopetewallettest_LDFLAGS = -no-undefined $(all_libraries) $(KDE_RPATH)
+kopetewallettest_LDADD = ../libkopete.la
