@@ -49,6 +49,7 @@ public:
 	static QCString cachedPass();
 	static void setCachedPass(const QCString &pass);
 	static bool passphraseHandling();
+	static const QRegExp isHTML;
 
 	CryptographyPlugin( QObject *parent, const char *name, const QStringList &args );
 	~CryptographyPlugin();

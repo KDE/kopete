@@ -33,6 +33,8 @@
 
 #include "kgpginterface.h"
 
+const QRegExp CryptographyPlugin::isHTML( QString::fromLatin1("(?![^<]+>)[^<>]+(?![^<]+>)") );
+
 typedef KGenericFactory<CryptographyPlugin> CryptographyPluginFactory;
 K_EXPORT_COMPONENT_FACTORY( kopete_cryptography, CryptographyPluginFactory( "kopete_cryptography" ) )
 
@@ -62,8 +64,6 @@ CryptographyPlugin::CryptographyPlugin( QObject *parent, const char *name, const
 	loadSettings();
 	connect(this, SIGNAL(settingsChanged()), this, SLOT( loadSettings() ) );
 }
-
-
 
 CryptographyPlugin::~CryptographyPlugin()
 {
@@ -131,11 +131,11 @@ bool CryptographyPlugin::passphraseHandling()
 
 void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 {
- 	QString body=msg.plainBody();
-	if(!body.startsWith("-----BEGIN PGP MESSAGE----"))
+ 	QString body = msg.plainBody();
+	if( !body.startsWith( QString::fromLatin1("-----BEGIN PGP MESSAGE----") ) )
 		return;
 
-	if(msg.direction() != KopeteMessage::Inbound)
+	if( msg.direction() != KopeteMessage::Inbound )
 	{
 		QString plainBody;
 		if ( m_cachedMessages.contains( body ) )
@@ -148,36 +148,54 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 			plainBody = KgpgInterface::KgpgDecryptText( body, mPrivateKeyID );
 		}
 
-		if(!plainBody.isEmpty())
+		if( !plainBody.isEmpty() )
 		{
-			//this is the same algoritm as in KopeteMessage::escapedBody();
-			QString escapedBody = QStyleSheet::escape( plainBody );
-			escapedBody.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) )
-				.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) )
-				.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
+			//Check if this is a RTF message before escaping it
+			if( !isHTML.exactMatch( plainBody ) )
+			{
+				plainBody = QStyleSheet::escape( plainBody );
+			
+				//this is the same algoritm as in KopeteMessage::escapedBody();
+				plainBody.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) )
+					.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) )
+					.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
+			}
 
-			msg.setBody("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FFFF\"><td><font size=\"-1\"><b>"+i18n("Outgoing Encrypted Message: ")+"</b></font></td></tr><tr bgcolor=\"#DDFFFF\"><td>"+escapedBody+" </td></tr></table>"
-				,KopeteMessage::RichText);
+			msg.setBody( QString::fromLatin1("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FFFF\"><td><font size=\"-1\"><b>")
+				+ i18n("Outgoing Encrypted Message: ")
+				+ QString::fromLatin1("</b></font></td></tr><tr bgcolor=\"#DDFFFF\"><td>")
+				+ plainBody
+				+ QString::fromLatin1(" </td></tr></table>")
+				, KopeteMessage::RichText );
 		}
 
 		//if there are too messages in cache, clear the cache
-		if(m_cachedMessages.count()>5)
+		if(m_cachedMessages.count() > 5)
 			m_cachedMessages.clear();
+		
 		return;
 	}
 
-	body=KgpgInterface::KgpgDecryptText(body, mPrivateKeyID);
+	body = KgpgInterface::KgpgDecryptText( body, mPrivateKeyID );
 
-	if(!body.isEmpty())
+	if( !body.isEmpty() )
 	{
-		//this is the same algoritm as in KopeteMessage::escapedBody();
-		QString escapedBody = QStyleSheet::escape( body );
-		escapedBody.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) )
-			.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) )
-			.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
+		//Check if this is a RTF message before escaping it
+		if( !isHTML.exactMatch( body ) )
+		{
+			//this is the same algoritm as in KopeteMessage::escapedBody();
+			body = QStyleSheet::escape( body );
+			body.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) )
+				.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) )
+				.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp; " ) );
+		}
 
-		body="<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FF41\"><td><font size=\"-1\"><b>"+i18n("Incoming Encrypted Message: ")+"</b></font></td></tr><tr bgcolor=\"#DDFFDD\"><td>"+ escapedBody  +" </td></tr></table>";
-		msg.setBody(body,KopeteMessage::RichText);
+		msg.setBody( QString::fromLatin1("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FF41\"><td><font size=\"-1\"><b>")
+			+ i18n("Incoming Encrypted Message: ") 
+			+ QString::fromLatin1("</b></font></td></tr><tr bgcolor=\"#DDFFDD\"><td>")
+			+ body 
+			+ QString::fromLatin1(" </td></tr></table>")
+			, KopeteMessage::RichText );
 	}
 
 }
