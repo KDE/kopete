@@ -19,8 +19,7 @@
 #include "kopeteprotocol.h"
 #include <qpixmap.h>
 #include <kdebug.h>
-
-//#include <kdebug.h>
+#include <qevent.h>
 
 KopeteProtocolStatusBarIcon::KopeteProtocolStatusBarIcon( KopeteProtocol *proto, QWidget *parent,
 	const char *name )

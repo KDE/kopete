@@ -19,6 +19,7 @@
 
 #include "icqadd.h"
 #include "icqaccount.h"
+#include <klistview.h>
 
 //#include <kopetecontactlist.h>
 

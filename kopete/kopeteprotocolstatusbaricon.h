@@ -18,11 +18,11 @@
 #ifndef KOPETEPROTOCOLSTATUSBARICON_H
 #define KOPETEPROTOCOLSTATUSBARICON_H
 
-#include <qevent.h>
 #include <qlabel.h>
 #include <qpoint.h>
 
 class KopeteProtocol;
+class QMouseEvent;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>

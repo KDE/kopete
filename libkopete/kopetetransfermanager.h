@@ -23,7 +23,6 @@
 #include <qstring.h>
 #include <qmap.h>
 
-#include <klistview.h>
 #include <kio/job.h>
 
 #include "kopetefiletransferui.h"
