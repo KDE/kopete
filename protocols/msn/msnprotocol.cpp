@@ -363,6 +363,7 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 	mIsConnected = status == MSNSocket::Connected;
 	if ( mIsConnected )
 	{
+		kopeteapp->sessionFactory()->cleanSessions(this);
 		// Sync public name when needed
 		if( m_publicNameSyncNeeded )
 		{
@@ -429,6 +430,14 @@ void MSNProtocol::slotOnlineStatusChanged( MSNSocket::OnlineStatus status )
 	}
 	else if( status == MSNSocket::Disconnected )
 	{
+
+		KopeteMessageManagerList protocol_sessions = kopeteapp->sessionFactory()->protocolSessions( this );
+		KopeteMessageManager *tmpKmm;
+		for ( tmpKmm = protocol_sessions.first(); tmpKmm ; tmpKmm = protocol_sessions.next() )
+        {
+			tmpKmm->slotSendEnabled(false);
+		}
+
 		QMap<QString, MSNContact*>::Iterator it = m_contacts.begin();
 		while( it != m_contacts.end() )
 		{
