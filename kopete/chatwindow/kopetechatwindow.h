@@ -136,7 +136,7 @@ private:
 
 	KToggleAction* membersLeft;
 	KToggleAction* membersRight;
-	KToggleAction* membersNone;
+	KToggleAction* toggleMembers;
 
 	KopeteEmoticonAction *actionSmileyMenu;
 	KActionMenu *actionActionMenu;
@@ -188,7 +188,7 @@ private slots:
 
 	void slotViewMembersLeft();
 	void slotViewMembersRight();
-	void slotViewMembersNone();
+	void slotToggleViewMembers();
 	const void slotEnableUpdateBg() { updateBg = true; }
 
 	void slotSetCaption( bool );

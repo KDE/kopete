@@ -407,9 +407,9 @@ void ChatView::createMembersList(void)
 		membersList->setAllColumnsShowFocus( true );
 		membersList->addColumn( QString::null, 18);
 		membersList->addColumn( i18n("Chat Members"), -1 );
-		membersList->header()->setResizeEnabled(false, 0);
 		membersList->setSorting( 0, true );
-
+		membersList->header()->setStretchEnabled( true, 1 );
+		membersList->header()->hide();
 		//Add the contacts that are in the message manager
 		KopeteContact *contact;
 		KopeteContactPtrList chatMembers = m_manager->members();
@@ -422,10 +422,11 @@ void ChatView::createMembersList(void)
 		membersDock->setWidget(membersList);
 
 		//Dock the chatmembers list. If this is a group chat, show it always initially
-		if( (m_manager->members()).count() > 1 && membersDockPosition == KDockWidget::DockNone)
-			placeMembersList( KDockWidget::DockRight );
-		else
-			placeMembersList( membersDockPosition );
+		// TODO: Respond to member list visibility hint here
+		if ( false )
+			visibleMembers = ( (m_manager->members()).count() > 1 );
+
+		placeMembersList( membersDockPosition );
 
 		//Connect the popup menu
 		connect( membersList, SIGNAL( contextMenu( KListView*, QListViewItem *, const QPoint &) ),
@@ -436,30 +437,52 @@ void ChatView::createMembersList(void)
 void ChatView::placeMembersList( KDockWidget::DockPosition dp )
 {
 	membersDockPosition = dp;
-	int dockWidth;
-	if( dp == KDockWidget::DockNone )
-	{
-		//Dock it to the desktop then hide it
-		membersDock->undock();
-  		membersDock->hide();
-	}
+	showMembersList( visibleMembers );
+	refreshView();
+}
+
+void ChatView::toggleMembersVisibility()
+{
+	bool newVisibility;
+	if ( visibleMembers )
+		newVisibility = false;
 	else
+		newVisibility = true;
+
+	showMembersList( newVisibility );
+	refreshView();
+}
+
+void ChatView::showMembersList( bool visible )
+{
+	if ( visible )
 	{
+		// look up the dock width
+		int dockWidth;
 		KGlobal::config()->setGroup( QString::fromLatin1("ChatViewDock") );
-		if( dp == KDockWidget::DockLeft )
+		if( membersDockPosition == KDockWidget::DockLeft )
 			dockWidth = KGlobal::config()->readNumEntry( QString::fromLatin1("membersDock,viewDock:sepPos"), 30);
 		else
 			dockWidth = KGlobal::config()->readNumEntry( QString::fromLatin1("viewDock,membersDock:sepPos"), 70);
 
-		//Make sure it is shown then place it wherever
+		// TODO: Why is it necessary to reset the dockings here?
+		// Make sure it is shown then place it wherever
 		membersDock->setEnableDocking( KDockWidget::DockLeft | KDockWidget::DockRight );
-		membersDock->manualDock( viewDock, dp, dockWidth );
+		membersDock->manualDock( viewDock, membersDockPosition, dockWidth );
 		membersDock->show();
 		membersDock->setEnableDocking( KDockWidget::DockNone );
+		visibleMembers = true;
 	}
-
-	refreshView();
+	else
+	{
+		// Dock it to the desktop then hide it
+		membersDock->undock();
+		membersDock->hide();
+		visibleMembers = false;
+	}
 }
+
+
 
 void ChatView::slotContactsContextMenu( KListView*, QListViewItem *item, const QPoint &point )
 {
@@ -868,7 +891,7 @@ void ChatView::saveOptions()
 	writeDockConfig ( config, QString::fromLatin1("ChatViewDock") );
 	config->setGroup( QString::fromLatin1("ChatViewDock") );
 	config->writeEntry( QString::fromLatin1("membersDockPosition"), membersDockPosition );
-
+	config->writeEntry( QString::fromLatin1("visibleMembers"), visibleMembers );
 	config->setGroup( QString::fromLatin1("ChatViewSettings") );
 	config->writeEntry ( QString::fromLatin1("BackgroundColor"), mBgColor );
 	config->writeEntry ( QString::fromLatin1("Font"), mFont );
@@ -894,6 +917,7 @@ void ChatView::readOptions()
 	editDock->setEnableDocking(KDockWidget::DockNone);
 	membersDockPosition = static_cast<KDockWidget::DockPosition>(
 		config->readNumEntry( QString::fromLatin1("membersDockPosition"), KDockWidget::DockNone ) );
+	visibleMembers = config->readBoolEntry( QString::fromLatin1("visibleMembers"), false );
 
 	config->setGroup( QString::fromLatin1("ChatViewSettings") );
 

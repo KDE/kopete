@@ -36,7 +36,7 @@
 				<text>&amp;Chat Members List</text>
 				<Action name="options_membersleft" />
 				<Action name="options_membersright" />
-				<Action name="options_membersnone" />
+				<Action name="options_togglemembers" />
 			</Menu>
 		</Menu>
 		<Merge/>

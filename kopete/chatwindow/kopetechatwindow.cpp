@@ -363,13 +363,13 @@ void KopeteChatWindow::initActions(void)
 
 	// END OF KDE < 3.1 SPECIFIC CODE
 
-	membersLeft = new KToggleAction( i18n( "Show to Left of Chat Area" ), QString::null, 0,
+	membersLeft = new KToggleAction( i18n( "Place Left of Chat Area" ), QString::null, 0,
 		this, SLOT( slotViewMembersLeft() ), coll, "options_membersleft" );
-	membersRight = new KToggleAction( i18n( "Show to Right of Chat Area" ), QString::null, 0,
+	membersRight = new KToggleAction( i18n( "Place Right of Chat Area" ), QString::null, 0,
 		this, SLOT( slotViewMembersRight() ), coll, "options_membersright" );
-	membersNone = new KToggleAction( i18n( "Hide" ), QString::null, 0,
-		this, SLOT( slotViewMembersNone() ), coll, "options_membersnone" );
-	membersNone->setChecked( true );
+	toggleMembers = new KToggleAction( i18n( "Show" ), QString::null, 0,
+		this, SLOT( slotToggleViewMembers() ), coll, "options_togglemembers" );
+	//toggleMembers->setChecked( true );
 
 	actionSmileyMenu = new KopeteEmoticonAction( i18n( "Add Smiley" ), QString::fromLatin1( "emoticon" ), coll, "format_smiley" );
 	actionSmileyMenu->setDelayed( false );
@@ -426,9 +426,12 @@ void KopeteChatWindow::updateMembersActions()
 	if( m_activeView )
 	{
 		const KDockWidget::DockPosition pos = m_activeView->membersListPosition();
+		bool visibleMembers = m_activeView->visibleMembersList();
 		membersLeft->setChecked( pos == KDockWidget::DockLeft  );
+		membersLeft->setEnabled( visibleMembers );
 		membersRight->setChecked( pos == KDockWidget::DockRight );
-		membersNone->setChecked( pos == KDockWidget::DockNone );
+		membersRight->setEnabled( visibleMembers );
+		toggleMembers->setChecked( visibleMembers );
 	}
 }
 
@@ -444,9 +447,9 @@ void KopeteChatWindow::slotViewMembersRight()
 	updateMembersActions();
 }
 
-void KopeteChatWindow::slotViewMembersNone()
+void KopeteChatWindow::slotToggleViewMembers()
 {
-	m_activeView->placeMembersList( KDockWidget::DockNone );
+	m_activeView->toggleMembersVisibility();
 	updateMembersActions();
 }
 

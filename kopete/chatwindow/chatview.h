@@ -126,12 +126,17 @@ public:
 	void setTabBar( KTabWidget *tabBar );
 
 	/**
-	 * Sets the placement of the members contact list.
+	 * Sets the placement of the chat members list.
 	 * DockLeft, DockRight, or DockNone.
 	 * @param dp The dock position of the list
 	 * @param width The % width the left hand widget should take up
 	 */
 	void placeMembersList( KDockWidget::DockPosition dp = KDockWidget::DockRight );
+
+	/**
+	 * Shows or hides the chat members list
+	 */
+	void toggleMembersVisibility();
 
 	/**
 	 * Returns the message currently in the edit area
@@ -150,6 +155,12 @@ public:
 	 * @return The position of the chat members list
 	 */
 	const KDockWidget::DockPosition membersListPosition()  { return membersDockPosition; }
+
+	/**
+	 * Returns whether or not the chat member list is visible
+	 * @return Is the chat member list visible?
+	 */
+	const bool visibleMembersList() { return visibleMembers; }
 
 	/**
 	 * Returns the HTML contents of the KHTML widget
@@ -413,7 +424,9 @@ private:
 	KAction *closeAction;
 	KAction *copyURLAction;
 
+	// These control the position and visibility of the chat member list
 	KDockWidget::DockPosition membersDockPosition;
+	bool visibleMembers;
 
 	KopeteChatWindow *m_mainWindow;
 
@@ -431,6 +444,11 @@ private:
 	 * Creates the members list widget
 	 */
 	void createMembersList();
+
+	/**
+	 * Shows or hides the members list
+	 */
+	void showMembersList( bool visible );
 
 	/**
 	 * Read in saved options, such as splitter positions
