@@ -54,8 +54,8 @@ public:
 	virtual void setAway (bool away, const QString & reason = QString::null);
 
 	/* Return the resource of the client */
-	const QString& resource () const;
-	const QString& server () const;
+	const QString resource () const;
+	const QString server () const;
 	const int port () const;
 
 	Jabber::Client *client();

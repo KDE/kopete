@@ -23,3 +23,6 @@ TODO for Jabber:
 - verify FIXMEs in JabberContact
 - save "auto connect" in account preferences
 - group chat needs a bit of rework
+- ignore presence information from other resources of myContact
+  (using Psi with the same account and going offline in Psi causes Kopete
+   to treat that information as if it went offline itself)

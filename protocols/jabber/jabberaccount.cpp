@@ -1140,14 +1140,14 @@ void JabberAccount::removeContact (const Jabber::RosterItem & item)
 	rosterTask->go (true);
 }
 
-const QString& JabberAccount::resource () const
+const QString JabberAccount::resource () const
 {
 
 	return pluginData (protocol (), "Resource");
 
 }
 
-const QString& JabberAccount::server () const
+const QString JabberAccount::server () const
 {
 
 	return pluginData (protocol (), QString::fromLatin1 ("Server"));
