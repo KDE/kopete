@@ -352,8 +352,25 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 						while( f < model.length() && !fin );
 					}
 					break;
+				case 'a': //action
+					if(d->direction != Action)
+					{
+						bool b=false;
+						bool fin;
+						do
+						{
+							fin=false;
+							f++;
+							QChar c2 = model[ f ];
+							if(c2=='a' && b)
+								fin=true;
+							b=(c2=='%');
+						}
+						while( f < model.length() && !fin );
+					}
+					break;
 				case 'e': //not internal (external)
-					if(d->direction == Internal)
+					if( (d->direction == Internal) || (d->direction == Action) )
 					{
 						bool b=false;
 						bool fin;

@@ -39,7 +39,7 @@ public:
 	 * Direction of a message. Inbound is from the chat partner, Outbound is
 	 * from the user.
 	 */
-	enum MessageDirection { Inbound, Outbound, Internal };
+	enum MessageDirection { Inbound, Outbound, Internal, Action };
 
 	/**
 	 * Format of the body
