@@ -92,7 +92,7 @@ void MSNSocket::disconnect()
 {
 	delete m_socket;
 	m_socket = 0L;
-	m_buffer = QString::null;
+	m_buffer = "";
 
 	kdDebug() << "MSNSocket::disconnect: Socket closed" << endl;
 	doneDisconnect();
@@ -198,11 +198,10 @@ void MSNSocket::slotDataReceived()
 		}
 
 		buf[ ret ] = '\0'; // Make it properly null-terminated
-		QString data = QString::fromUtf8( buf );
 		kdDebug() << "MSNSocket::slotDataReceived: Received '" <<
-			data << "'" << endl;
+			buf << "'" << endl;
 
-		m_buffer += data; // fill the buffer with the received data
+		m_buffer += buf; // fill the buffer with the received data
 		slotReadLine();
 	}
 
@@ -285,7 +284,7 @@ bool MSNSocket::pollReadBlock()
 	}
 
 	QString block;
-	block = m_buffer.left( m_waitBlockSize );
+	block = QString::fromUtf8(m_buffer.left( m_waitBlockSize ));
 	m_buffer = m_buffer.remove( 0, m_waitBlockSize );
 
 	kdDebug() << "MSNSocket::pollReadBlock: Successfully read block of size "
