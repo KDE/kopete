@@ -383,7 +383,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 			if(mailCount != 0)
 				answer = KMessageBox::questionYesNo( 0l, i18n( "<qt>You have %1 unread messages in your inbox.<br>Would you like to open your inbox now?</qt>" ).arg(mailCount), i18n( "MSN Plugin" ) );
-
+ 
 			if(answer==KMessageBox::Yes)
 				slotOpenInbox();
 		}
@@ -416,7 +416,7 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 	}
 	else if(msg.contains("text/x-msmsgsprofile"))
 	{
-		if( msnId().contains("@hotmail.com") )
+		if( msnId().contains("@hotmail.com") || msnId().contains("@msn.com"))
 		{
 			//Hotmail profile
 			if(msg.contains("MSPAuth:"))
