@@ -234,7 +234,7 @@ void KopeteViewManager::slotEventDeleted( KopeteEvent *event )
 		else if(event->state()==KopeteEvent::Ignored)
 		{
 			if(kmm->view(false))
-				kmm->view()->closeView();
+				kmm->view()->closeView(true);
 		}
 
 		d->eventMap.remove(kmm);
