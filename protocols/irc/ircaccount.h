@@ -86,8 +86,6 @@ public:
 	 */
 	void unregisterUser(const QString &name);
 
-	bool addContact( const QString &contact, const QString &displayName, KopeteMetaContact *m);
-
 	virtual KActionMenu *actionMenu();
 
 	virtual KopeteContact *myself() const { return (KopeteContact*)mMySelf; }
@@ -109,6 +107,7 @@ private slots:
 	void slotConnectionClosed();
 	void slotNewPrivMessage(const QString &originating, const QString &target, const QString &message);
 	void slotContactDestroyed(KopeteContact *);
+	void slotGoAway();
 	void slotJoinChannel();
 
 private:

@@ -77,7 +77,7 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	m_UserVoice = KopeteOnlineStatus( KopeteOnlineStatus::Online,  20, this, 2, "irc_voice",   QString::null,  i18n( "Online" ));
 	m_UserOnline = KopeteOnlineStatus( KopeteOnlineStatus::Online,  10, this, 0, QString::null,   i18n( "Go O&nline" ),  i18n( "Online" ));
 	m_UserOffline = KopeteOnlineStatus( KopeteOnlineStatus::Offline, 0, this, 3, QString::null, i18n( "Go O&ffline" ), i18n( "Offline" ));
-	m_UserAway = KopeteOnlineStatus( KopeteOnlineStatus::Away, 5, this, 3, QString::null, i18n( "Go &Away" ), i18n( "Away" ));
+	m_UserAway = KopeteOnlineStatus( KopeteOnlineStatus::Away, 5, this, 3, "irc_away", i18n( "Go &Away" ), i18n( "Away" ));
 	m_UserConnecting = KopeteOnlineStatus( KopeteOnlineStatus::Connecting, 1, this, 4, QString::null, i18n( "Connecting" ), i18n( "Connecting" ));
 
 	setStatusIcon( "irc_protocol_offline" );
@@ -230,7 +230,7 @@ void IRCProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
 	if( !accounts.isEmpty() )
 	{
-		IRCAccount *a = static_cast<IRCAccount*>( accounts[ serializedData[ "accountId" ] ] );
+		KopeteAccount *a = accounts[ serializedData[ "accountId" ] ];
 		if( a )
 			a->addContact( contactId, displayName, metaContact );
 		else

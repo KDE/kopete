@@ -48,9 +48,6 @@ IRCAccount::IRCAccount(const QString &accountId, const IRCProtocol *protocol) : 
 	mServer = serverInfo.section(':',0,0);
 	mPort = serverInfo.section(':',1).toUInt();
 
-	actionOnline = new KAction ( i18n("Online"), "", 0, this, SLOT(connect()), this );
-	actionOffline =  new KAction ( i18n("Offline"), "", 0, this, SLOT(disconnect()), this);
-
 	mEngine = new KIRC( mServer, mPort );
 	QString version=i18n("Kopete IRC Plugin %1 [http://kopete.kde.org]").arg(kapp->aboutData()->version());
 	mEngine->setVersionString( version  );
@@ -63,6 +60,10 @@ IRCAccount::IRCAccount(const QString &accountId, const IRCProtocol *protocol) : 
 	QObject::connect(mEngine, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
 
 	mMySelf = findUser( mNickName );
+
+	actionOnline = new KAction ( i18n("Online"), IRCProtocol::IRCUserOnline().iconFor( mMySelf ), 0, this, SLOT(connect()), this );
+	actionOffline =  new KAction ( i18n("Offline"), IRCProtocol::IRCUserOffline().iconFor( mMySelf ), 0, this, SLOT(disconnect()), this);
+	actionAway =  new KAction ( i18n("Away"), IRCProtocol::IRCUserAway().iconFor( mMySelf ), 0, this, SLOT(slotGoAway()), this);
 }
 
 IRCAccount::~IRCAccount()
@@ -84,7 +85,9 @@ KActionMenu *IRCAccount::actionMenu()
 	mActionMenu->setIconSet( QIconSet ( mMySelf->onlineStatus().iconFor( mMySelf ) ) );
 
 	mActionMenu->insert( actionOnline );
+	mActionMenu->insert( actionAway );
 	mActionMenu->insert( actionOffline );
+	mActionMenu->popupMenu()->insertSeparator();
 	mActionMenu->insert( new KAction ( i18n("Join channel"), "", 0, this, SLOT(slotJoinChannel()), mActionMenu ));
 
 	return mActionMenu;
@@ -103,60 +106,47 @@ void IRCAccount::slotNewPrivMessage(const QString &originating, const QString &,
 
 void IRCAccount::connect()
 {
-	mMySelf->setOnlineStatus( IRCProtocol::IRCUserConnecting() );
-	engine()->connectToServer( mMySelf->nickName() );
+	if( engine()->isLoggedIn() )
+	{
+		if( isAway() )
+			setAway( false );
+	}
+	else
+	{
+		mMySelf->setOnlineStatus( IRCProtocol::IRCUserConnecting() );
+		engine()->connectToServer( mMySelf->nickName() );
+	}
 }
 
 void IRCAccount::disconnect()
 {
- 	engine()->quitIRC("Kopete IRC [http://kopete.kde.org]");
+	engine()->quitIRC("Kopete IRC [http://kopete.kde.org]");
 }
 
 void IRCAccount::setAway( bool isAway, const QString &awayMessage )
 {
-	if( isAway )
-		mySelf()->setOnlineStatus( IRCProtocol::IRCUserAway() );
-	else
+	if( engine()->isLoggedIn() )
+	{
+		if( isAway )
+			mySelf()->setOnlineStatus( IRCProtocol::IRCUserAway() );
+		else
+			mySelf()->setOnlineStatus( IRCProtocol::IRCUserOnline() );
+		engine()->setAway( isAway, awayMessage );
+	}
+}
+
+void IRCAccount::slotGoAway()
+{
+	if( engine()->isLoggedIn() )
+	{
 		mySelf()->setOnlineStatus( IRCProtocol::IRCUserOnline() );
-	engine()->setAway( isAway, awayMessage );
+		engine()->setAway( true, QString::null );
+	}
 }
 
 bool IRCAccount::isConnected()
 {
 	return (mMySelf->onlineStatus().status() == KopeteOnlineStatus::Online);
-}
-
-bool IRCAccount::addContact( const QString &contact, const QString &displayName, KopeteMetaContact *m )
-{
-	IRCContact *c;
-
-	if( !m )
-	{
-		m = new KopeteMetaContact();
-		KopeteContactList::contactList()->addMetaContact(m);
-		m->setDisplayName( displayName );
-	}
-
-	if ( contact.startsWith( QString::fromLatin1("#") ) )
-		c = static_cast<IRCContact*>( findChannel(contact, m) );
-	else
-	{
-		engine()->addToNotifyList( contact );
-		c = static_cast<IRCContact*>( findUser(contact, m) );
-	}
-
-	if( c->metaContact() != m )
-	{
-		KopeteMetaContact *old = c->metaContact();
-		c->setMetaContact( m );
-		KopeteContactPtrList children = old->contacts();
-		if( children.isEmpty() )
-			KopeteContactList::contactList()->removeMetaContact( old );
-	}
-	else if( c->metaContact()->isTemporary() )
-		m->setTemporary(false);
-
-	return true;
 }
 
 IRCChannelContact *IRCAccount::findChannel(const QString &name, KopeteMetaContact *m  )
@@ -277,11 +267,37 @@ void IRCAccount::successfullyChangedNick(const QString &/*oldnick*/, const QStri
 }
 
 bool IRCAccount::addContactToMetaContact( const QString &contactId, const QString &displayName,
-	 KopeteMetaContact *parentContact )
+	 KopeteMetaContact *m )
 {
-	//TODO:
-	kdDebug(14120) << k_funcinfo << "TODO" << endl;
-	return false;
+	IRCContact *c;
+
+	if( !m )
+	{
+		m = new KopeteMetaContact();
+		KopeteContactList::contactList()->addMetaContact(m);
+		m->setDisplayName( displayName );
+	}
+
+	if ( contactId.startsWith( QString::fromLatin1("#") ) )
+		c = static_cast<IRCContact*>( findChannel(contactId, m) );
+	else
+	{
+		engine()->addToNotifyList( contactId );
+		c = static_cast<IRCContact*>( findUser(contactId, m) );
+	}
+
+	if( c->metaContact() != m )
+	{
+		KopeteMetaContact *old = c->metaContact();
+		c->setMetaContact( m );
+		KopeteContactPtrList children = old->contacts();
+		if( children.isEmpty() )
+			KopeteContactList::contactList()->removeMetaContact( old );
+	}
+	else if( c->metaContact()->isTemporary() )
+		m->setTemporary(false);
+
+	return true;
 }
 
 void IRCAccount::slotJoinChannel()
