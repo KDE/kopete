@@ -30,7 +30,7 @@
                 <cstring>advertiseNewMediaToBuddiesLabel</cstring>
             </property>
             <property name="text">
-                <string>&lt;b&gt;Share your musical taste&lt;/b&gt;</string>
+                <string>&lt;b&gt;Share Your Musical Taste&lt;/b&gt;</string>
             </property>
             <property name="alignment">
                 <set>AlignVCenter</set>

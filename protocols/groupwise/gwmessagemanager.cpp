@@ -68,7 +68,7 @@ GroupWiseChatSession::GroupWiseChatSession(const Kopete::Contact* user, Kopete::
 	m_secure = new KAction( i18n( "Security Status" ), "encrypted", KShortcut(), this, SLOT( slotShowSecurity() ), actionCollection(), "gwSecureChat" );
 	m_secure->setToolTip( i18n( "Conversation is secure" ) );
 	
-	m_logging = new KAction( i18n( " Archiving Status" ), "logchat", KShortcut(), this, SLOT( slotShowArchiving() ), actionCollection(), "gwLoggingChat" );
+	m_logging = new KAction( i18n( "Archiving Status" ), "logchat", KShortcut(), this, SLOT( slotShowArchiving() ), actionCollection(), "gwLoggingChat" );
 	updateArchiving();
 	
 	setXMLFile("gwchatui.rc");

@@ -57,7 +57,7 @@
                         <cstring>textLabel3</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;User ID:</string>
+                        <string>&amp;User ID</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>m_userIdOperation</cstring>
@@ -133,7 +133,7 @@
                         <cstring>textLabel2</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Last Name:</string>
+                        <string>&amp;Last name</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>m_lastNameOperation</cstring>
@@ -144,7 +144,7 @@
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;First Name</string>
+                        <string>&amp;First name</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>m_firstNameOperation</cstring>
@@ -155,7 +155,7 @@
                         <cstring>textLabel4</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Title:</string>
+                        <string>&amp;Title</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>m_titleOperation</cstring>
@@ -331,7 +331,7 @@
                         <bool>true</bool>
                     </property>
                     <property name="text">
-                        <string>Detai&amp;ls...</string>
+                        <string>Detai&amp;ls</string>
                     </property>
                 </widget>
                 <spacer>

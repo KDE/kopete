@@ -33,7 +33,7 @@
                     <cstring>TabPage</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Ask database</string>
+                    <string>Ask Database</string>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -44,7 +44,7 @@
                             <cstring>groupBox1</cstring>
                         </property>
                         <property name="title">
-                            <string>Date and time</string>
+                            <string>Date &amp;&amp; Time</string>
                         </property>
                         <grid>
                             <property name="name">
@@ -181,12 +181,12 @@
                                     <widget class="QComboBox">
                                         <item>
                                             <property name="text">
-                                                <string>Contact status at date and time</string>
+                                                <string>Contact Status at Date and Time</string>
                                             </property>
                                         </item>
                                         <item>
                                             <property name="text">
-                                                <string>Most used status at date</string>
+                                                <string>Most Used Status at Date</string>
                                             </property>
                                         </item>
                                         <property name="name">

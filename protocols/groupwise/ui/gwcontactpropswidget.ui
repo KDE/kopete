@@ -92,7 +92,7 @@
                         <cstring>textLabel11</cstring>
                     </property>
                     <property name="text">
-                        <string>Last Name:</string>
+                        <string>Last name:</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="1" column="1">
@@ -108,7 +108,7 @@
                         <cstring>lbl_displayName</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Display Name:</string>
+                        <string>&amp;Display name:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>m_displayName</cstring>
@@ -119,7 +119,7 @@
                         <cstring>textLabel10</cstring>
                     </property>
                     <property name="text">
-                        <string>First Name:</string>
+                        <string>First name:</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="0" column="2">
@@ -176,7 +176,7 @@
                 <cstring>textLabel15</cstring>
             </property>
             <property name="text">
-                <string>Additional Properties:</string>
+                <string>Additional properties:</string>
             </property>
         </widget>
         <widget class="QListView">

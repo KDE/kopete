@@ -21,7 +21,7 @@
                 <cstring>buttonGroup1</cstring>
             </property>
             <property name="title">
-                <string>Put bookmarks in a distinct subfolder for each contact</string>
+                <string>Put Bookmarks in Distinct Subfolder for Each Contact</string>
             </property>
             <vbox>
                 <property name="name">

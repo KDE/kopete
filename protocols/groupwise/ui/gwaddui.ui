@@ -48,7 +48,7 @@
                             <cstring>bg_addMethod</cstring>
                         </property>
                         <property name="title">
-                            <string>Add Using:</string>
+                            <string>Add Using</string>
                         </property>
                         <grid>
                             <property name="name">
