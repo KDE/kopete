@@ -703,14 +703,6 @@ void JabberAccount::setOnlineStatus( const Kopete::OnlineStatus& status  , const
 
 void JabberAccount::disconnect ( Kopete::Account::DisconnectReason reason )
 {
-	// FIXME: this ugly sequence is a libkopete requirement
-	disconnect ();
-	Kopete::Account::disconnected ( reason );
-
-}
-
-void JabberAccount::disconnect ()
-{
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "disconnect() called" << endl;
 
 	if (isConnected ())
@@ -734,6 +726,12 @@ void JabberAccount::disconnect ()
 	 */
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "Disconnected." << endl;
 
+	Kopete::Account::disconnected ( reason );
+}
+
+void JabberAccount::disconnect ()
+{
+	disconnect ( Manual );
 }
 
 void JabberAccount::slotConnect ()
