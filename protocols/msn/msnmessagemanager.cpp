@@ -614,7 +614,8 @@ void MSNChatSession::receivedTypingMsg( const QString &contactId, bool b )
 		}
 	}
 	m_newSession=false;
-	Kopete::ChatSession::receivedTypingMsg(c,b);
+	if(c)
+		Kopete::ChatSession::receivedTypingMsg(c,b);
 }
 
 #include "msnmessagemanager.moc"
