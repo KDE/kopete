@@ -1,4 +1,3 @@
-
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
 //
 // Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
@@ -624,7 +623,7 @@ GaduAccount::startNotify()
 	}
 
 	session_->notify( userlist, contacts().count() );
-  delete [] userlist;
+	delete [] userlist;
 }
 
 void
