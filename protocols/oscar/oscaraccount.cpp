@@ -540,10 +540,8 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 	{
 		// Contact existed in the list already, sync information
 
-		if(buddy->waitAuth()) {
+		if(buddy->waitAuth())
 			kdDebug(14150) << k_funcinfo << "setting WAITAUTH on '" << contact->displayName() << "'" << endl;
-			engine()->sendAddBuddylist(contact->contactName());
-		}
 
 		contact->setWaitAuth( buddy->waitAuth() );
 

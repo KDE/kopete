@@ -1096,6 +1096,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 {
 	inbuf.getByte(); //get fmt version
 	uint length = inbuf.getWord();
+	QStringList blmBuddies;
 
 	kdDebug(14150) << k_funcinfo <<
 		"RECV (SRV_REPLYROSTER) received contactlist of length " <<
@@ -1174,7 +1175,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 							/*kdDebug(14150) << k_funcinfo <<
 								"Contact has WAITAUTH set." << endl;*/
 							bud->setWaitAuth(true);
-							sendAddBuddylist(bud->screenname());
+							blmBuddies << bud->screenname();
 							break;
 						}
 
@@ -1333,6 +1334,9 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 
 	kdDebug(14150) << k_funcinfo <<
 		"Finished getting contact list, timestamp=" << timestamp << endl;
+
+	if (blmBuddies.size() > 0)
+		sendBuddylistAdd(blmBuddies);
 
 	sendSSIActivate(); // send CLI_ROSTERACK
 	emit gotConfig();
