@@ -161,8 +161,13 @@ public:
 	 *
 	 * This method is called by @ref deserialize() for each separate contact,
 	 * so you don't need to add your own hooks for multiple contacts in a single
-	 * meta contact yourself.
+	 * meta contact yourself. @p serializedData and @p addressBookData will be
+	 * the data the contact provided in KopeteContact::serialize.
+	 *
 	 * The default implementation does nothing.
+	 *
+	 * @return The contact created from the data
+	 * @sa KopeteContact::serialize
 	 */
 	virtual KopeteContact *deserializeContact( KopeteMetaContact *metaContact,
 		const QMap<QString, QString> &serializedData,

@@ -132,6 +132,8 @@ public:
 	 * marked with @ref KopetePlugin::addAddressBookField() with the
 	 * contact id as value. If no index field is available the QMap is
 	 * simply passed as an empty map.
+	 *
+	 * @sa KopeteProtocol::deserializeContact
 	 */
 	virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
 
