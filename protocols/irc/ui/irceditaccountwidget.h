@@ -38,7 +38,8 @@ class IRCEditAccountWidget : public IRCEditAccountBase, public KopeteEditAccount
 		virtual KopeteAccount *apply();
 
 	private slots:
-		void slotContextMenu( KListView*, QListViewItem*, const QPoint & );
+		void slotCommandContextMenu( KListView*, QListViewItem*, const QPoint & );
+		void slotCtcpContextMenu( KListView*, QListViewItem*, const QPoint & );
 		void slotAddCommand();
 		void slotAddCtcp();
 		void slotEditNetworks();

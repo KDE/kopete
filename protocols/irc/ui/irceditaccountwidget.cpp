@@ -89,10 +89,10 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 	}
 
 	connect( commandList, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
-		this, SLOT( slotContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
+		this, SLOT( slotCommandContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
 
 	connect( ctcpList, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ),
-		this, SLOT( slotContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
+		this, SLOT( slotCtcpContextMenu( KListView *, QListViewItem *, const QPoint & ) ) );
 
 	connect( addButton, SIGNAL( clicked() ), this, SLOT( slotAddCommand() ) );
 	connect( editButton, SIGNAL( clicked() ), this, SLOT(slotEditNetworks() ) );
@@ -140,10 +140,18 @@ void IRCEditAccountWidget::slotUpdateNetworkDescription( const QString &network 
 	);
 }
 
-void IRCEditAccountWidget::slotContextMenu( KListView *, QListViewItem *item, const QPoint &p )
+void IRCEditAccountWidget::slotCommandContextMenu( KListView *, QListViewItem *item, const QPoint &p )
 {
 	QPopupMenu popup;
 	popup.insertItem( i18n("Remove Command"), 1 );
+	if( popup.exec( p ) == 1 )
+		delete item;
+}
+
+void IRCEditAccountWidget::slotCtcpContextMenu( KListView *, QListViewItem *item, const QPoint &p )
+{
+	QPopupMenu popup;
+	popup.insertItem( i18n("Remove CTCP Reply"), 1 );
 	if( popup.exec( p ) == 1 )
 		delete item;
 }
