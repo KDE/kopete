@@ -52,7 +52,7 @@ int CoreProtocol::state()
 void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 {
 // store locally
-	qDebug( "CoreProtocol::addIncomingData()");
+	kdDebug(14180) << k_funcinfo << endl;
 	int oldsize = m_in.size();
 	m_in.resize( oldsize + incomingBytes.size() );
 	memcpy( m_in.data() + oldsize, incomingBytes.data(), incomingBytes.size() );
@@ -91,26 +91,26 @@ void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 }
 
 Transfer* CoreProtocol::incomingTransfer()
-{	
-	qDebug( "CoreProtocol::incomingTransfer()" );
+{
+	kdDebug(14180) << k_funcinfo << endl;	
 	if ( m_state == Available )
 	{
-		qDebug( " - got a transfer" );
+		kdDebug(14180) << k_funcinfo << " - got a transfer" << endl;
 		m_state = NoData;
 		return m_inTransfer;
 		m_inTransfer = 0;
 	}
 	else
 	{
-		qDebug( " - no milk today." );
+		kdDebug(14180) << k_funcinfo << " no milk today" << endl;
 		return 0;
 	}
 }
 
 void cp_dump( const QByteArray &bytes )
 {
-#ifdef OSCAR_COREPROTOCOL_DEBUG
-	qDebug( "contains: %i bytes", bytes.count() );
+#ifdef YAHOO_COREPROTOCOL_DEBUG
+	kdDebug(14180) << k_funcinfo << " contains " << bytes.count() << " bytes" << endl;
 	for ( uint i = 0; i < bytes.count(); ++i )
 	{
 		printf( "%02x ", bytes[ i ] );
@@ -165,7 +165,7 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		
 		if ( (char * ) ymsgStart.data() == "YMSG" )
 		{
-			qDebug( "CoreProtocol::wireToTransfer() - looks like a valid YMSG packet " );
+			kdDebug(14180) << k_funcinfo << " - looks like a valid YMSG packet" << endl;
 			/*
 			QByteArray packet = wire.duplicate( wire.data(), flapLength + 6 )
 			Transfer * t = m_YMSGProtocol->parse( packet, bytesParsed );
@@ -207,7 +207,7 @@ bool CoreProtocol::okToProceed()
 		if ( m_din->atEnd() )
 		{
 			m_state = NeedMore;
-			qDebug( "EventProtocol::okToProceed() - Server message ended prematurely!" );
+			kdDebug(14180) << k_funcinfo << " saved message prematurely" << endl;
 		}
 		else
 			return true;

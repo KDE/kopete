@@ -1,6 +1,7 @@
 //Licensed under the GNU General Public License
 
 #include "clientstream_test.h"
+#include <kdebug.h>
 #include "../ymsgtransfer.h"
 #include "../yahootypes.h"
 
@@ -31,13 +32,13 @@ void ClientStreamTest::slotDoTest()
 {
 	QString server = QString::fromLatin1("scs.msg.yahoo.com");
 	// connect to server
-	qDebug( "connecting to server ");
+	kdDebug(14180) << k_funcinfo << " connecting to server" << endl;
 	myTestObject->connectToServer( server, true ); // fine up to here...
 }
 
 void ClientStreamTest::slotConnected()
 {
-	qDebug( "connection is up");
+	kdDebug(14180) << k_funcinfo << " connection is up" << endl;
 	connected = true;
 	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceLogon);
 	t->setParam(1, "kopetetest");
