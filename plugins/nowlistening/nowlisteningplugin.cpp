@@ -3,9 +3,9 @@
 
     Kopete Now Listening To plugin
 
-    Copyright (c) 2002,2003 by Will Stephenson <will@stevello.free-online.co.uk>
+    Copyright (c) 2002,2003,2004 by Will Stephenson <will@stevello.free-online.co.uk>
 
-    Kopete    (c) 2002,2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002,2003,2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -35,6 +35,7 @@
 #include "nlnoatun.h"
 #include "nljuk.h"
 #include "nlamarok.h"
+#include "nlkaffeine.h"
 #include "nowlisteningguiclient.h"
 
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && defined HAVE_XMMS
@@ -82,6 +83,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 	m_mediaPlayer->append( new NLNoatun( m_client ) );
 	m_mediaPlayer->append( new NLJuk( m_client ) );
 	m_mediaPlayer->append( new NLAmaroK( m_client ) );
+	m_mediaPlayer->append( new NLKaffeine( m_client ) );
 
 #if defined Q_WS_X11 && !defined K_WS_QTONLY && HAVE_XMMS
 	m_mediaPlayer->append( new NLXmms() );
@@ -252,7 +254,7 @@ void NowListeningPlugin::advertiseToChat( KopeteMessageManager *theChat, QString
 	KopeteContactPtrList pl = theChat->members();
 
 	// get on with it
-	kdDebug(14307) << "NowListeningPlugin::advertiseNewTracks() - " <<
+	kdDebug(14307) << k_funcinfo <<
 		( pl.isEmpty() ? "has no " : "has " ) << "interested recipients: " << endl;
 	for ( pl.first(); pl.current(); pl.next() )
 		kdDebug(14307) << "NowListeningPlugin::advertiseNewTracks() " << pl.current()->displayName() << endl;

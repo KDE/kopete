@@ -1,9 +1,16 @@
 /*
-    nowlisteningconfig.h
+    nlkaffeine.h
+
+    Kopete Now Listening To plugin
+
 
     Copyright (c) 2002,2003,2004 by Will Stephenson <will@stevello.free-online.co.uk>
-    Copyright (c) 2003      by Matt Rogers <matt@matt.rogers.name>
+
     Kopete    (c) 2002,2003,2004 by the Kopete developers  <kopete-devel@kde.org>
+	
+	Purpose: 
+	This class abstracts the interface to Kaffeine by
+	implementing NLMediaPlayer
 
     *************************************************************************
     *                                                                       *
@@ -15,31 +22,19 @@
     *************************************************************************
 */
 
-#ifndef NOWLISTENINGCONFIG_H
-#define NOWLISTENINGCONFIG_H
+#ifndef NLKAFFEINE_H
+#define NLKAFFEINE_H
 
-#include <qstring.h>
+#include <dcopclient.h>
 
-class NowListeningConfig
+class NLKaffeine : public NLMediaPlayer
 {
-public:
-	NowListeningConfig();
-
-	void load();
-	void save();
-
-	QString header() const;
-	QString perTrack() const;
-	QString conjunction() const;
-
-	void setHeader(const QString& newHeader);
-	void setPerTrack(const QString& newPerTrack);
-	void setConjunction(const QString &newConjunction);
-
-private:
-	QString mHeader;
-	QString mPerTrack;
-	QString mConjunction;
+	public:
+		NLKaffeine( DCOPClient *client );
+		virtual void update();
+	protected:
+		DCOPClient *m_client;
 };
 
 #endif
+

@@ -3,9 +3,9 @@
 
     Kopete Now Listening To plugin
 
-    Copyright (c) 2002,2003 by Will Stephenson <will@stevello.free-online.co.uk>
+    Copyright (c) 2002,2003,2004 by Will Stephenson <will@stevello.free-online.co.uk>
 
-    Kopete    (c) 2002,2003 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002,2003,2004 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
