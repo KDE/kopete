@@ -91,6 +91,13 @@ class IRCContact : public KopeteContact
 
 		KopeteView *view();
 
+		/**
+		 * We serialise the contactId and the server group in 'contactId'
+		 * so that other IRC programs reading this from KAddressBook have a chance of figuring
+		 * which server the contact relates to
+		 */
+		virtual void serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData );
+
 	public slots:
 		void setCodec( const QTextCodec *codec );
 

@@ -317,5 +317,10 @@ KopeteView *IRCContact::view()
 		return manager()->view(false);
 	return 0L;
 }
+void IRCContact::serialize( QMap<QString, QString> &serializedData, QMap<QString, QString> &addressBookData )
+{
+	// write the 
+	addressBookData[ protocol()->addressBookIndexField() ] = ( contactId() + QChar(0xE120) + account()->accountId() );
+}
 
 #include "irccontact.moc"
