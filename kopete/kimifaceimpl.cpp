@@ -139,6 +139,7 @@ int KIMIfaceImpl::presenceStatus( const QString & uid )
 				p = 0;
 			break;
 			case KopeteOnlineStatus::Offline:
+			case KopeteOnlineStatus::Invisible:
 				p = 1;
 			break;
 			case KopeteOnlineStatus::Connecting:

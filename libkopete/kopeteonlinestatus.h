@@ -94,6 +94,12 @@ public:
 		 */
 		Connecting=2,
 		/**
+		 * State where you are online but none of your contacts can 
+		 * see that you're online. Useful for all the protocols that support
+		 * being invisible.
+		 */
+		Invisible=3,
+		/**
 		 * Refers to a state where you can be technically reached, but
 		 * for one reason or another it is often not useful to do so.
 		 * This can be because you really aren't behind the computer
@@ -101,13 +107,13 @@ public:
 		 * and don't want to get involved in messaging ('Busy' or 'Do
 		 * not Disturb' for example).
 		 */
-		Away=3,
+		Away=4,
 		/**
 		 * Refers to a true online state, i.e. you can be contacted by
 		 * others both technically and practically. This also applies
 		 * to e.g. ICQ's 'Free for Chat' status.
 		 */
-		Online=4
+		Online=5
 	};
 	// note than Unknown is first, because the metacontact algorithm to detect
 	// the metacontact status from the contact status starts from Unknown, and

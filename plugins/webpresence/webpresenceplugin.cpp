@@ -374,6 +374,7 @@ QString WebPresencePlugin::statusAsString( const KopeteOnlineStatus &newStatus )
 		status = "AWAY";
 		break;
 	case KopeteOnlineStatus::Offline:
+	case KopeteOnlineStatus::Invisible:
 		status = "OFFLINE";
 		break;
 	default:

@@ -75,7 +75,6 @@ KopeteOnlineStatus::KopeteOnlineStatus( OnlineStatus status )
 	{
 	case Online:
 		d->caption = d->description = i18n( "Online" );
-		// This might be problematic
 		break;
 	case Away:
 		d->caption = d->description = i18n( "Away" );
@@ -86,6 +85,9 @@ KopeteOnlineStatus::KopeteOnlineStatus( OnlineStatus status )
 		break;
 	case Connecting:
 		d->caption = d->description = i18n( "Connecting" );
+		break;
+	case Invisible:
+		d->caption = d->description = i18n( "Invisible" );
 		break;
 	case Offline:
 	default:
