@@ -78,12 +78,12 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteMessageManager *manager )
 {
 	bool windowCreated = false;
 	KopeteChatWindow *myWindow;
-	
+
 	//Take the first and the first? What else?
 	KopeteGroup *g = 0L;
 	KopeteContactPtrList members = manager->members();
 	KopeteMetaContact *m = members.first()->metaContact();
-	
+
 	//Don't do group by group for temporary contacts
 	if( !m->isTemporary() )
 	{
@@ -106,14 +106,14 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteMessageManager *manager )
 			else
 				windowCreated = true;
 			break;
-			
+
 		case GROUP_BY_METACONTACT: //Open chats in the same metacontact in the same window
 			if( mcMap.contains( m ) )
 				myWindow = mcMap[ m ];
 			else
 				windowCreated = true;
 			break;
-		
+
 		case GROUP_ALL: //Open all chats in the same window
 			if( windows.isEmpty() )
 				windowCreated = true;
@@ -122,7 +122,7 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteMessageManager *manager )
 				//Here we are finding the window with the most tabs and
 				//putting it there. Need this for the cases where config changes
 				//midstream
-				
+
 				int viewCount = -1;
 				for ( KopeteChatWindow *thisWindow = windows.first(); thisWindow; thisWindow = windows.next() )
 				{
@@ -134,7 +134,7 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteMessageManager *manager )
 				}
 			}
 			break;
-		
+
 		case NEW_WINDOW: //Open every chat in a new window
 		default:
 			windowCreated = true;
@@ -144,13 +144,13 @@ KopeteChatWindow *KopeteChatWindow::window( KopeteMessageManager *manager )
 	if( windowCreated )
 	{
 		myWindow = new KopeteChatWindow();
-		
+
 		if( !accountMap.contains( manager->account() ) )
 			accountMap.insert( manager->account(), myWindow );
-			
+
 		if( !mcMap.contains( m ) )
 			mcMap.insert( m, myWindow );
-		
+
 		if( g && !groupMap.contains( g ) )
 			groupMap.insert( g, myWindow );
 	}
@@ -241,6 +241,8 @@ KopeteChatWindow::~KopeteChatWindow()
 		backgroundFile->unlink();
 		delete backgroundFile;
 	}
+
+	delete anim;
 }
 
 bool KopeteChatWindow::eventFilter( QObject *o, QEvent *e )
@@ -441,7 +443,7 @@ void KopeteChatWindow::initActions(void)
 	animIcon = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::User);
 
 	// we can't set the tool bar as parent, if we do, it will be deleted when we configure toolbars
-	anim = new QLabel( QString::null, this ,"kde toolbar widget" );
+	anim = new QLabel( QString::null, 0L ,"kde toolbar widget" );
 	anim->setMargin(5);
 	anim->setPixmap( normalIcon );
 
