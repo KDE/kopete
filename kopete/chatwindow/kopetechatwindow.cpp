@@ -846,7 +846,7 @@ void KopeteChatWindow::setActiveView( QWidget *widget )
 
 	guiFactory()->addClient(view->msgManager());
 	createGUI( view->part() );
-
+	readOptions();
 	if( m_activeView )
 		m_activeView->setActive( false );
 
