@@ -29,62 +29,52 @@ class QSocketNotifier;
 
 class GaduSession : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    GaduSession( QObject *parent=0, const char* name=0 );
-    virtual ~GaduSession();
-    bool isConnected() const;
+	GaduSession( QObject *parent=0, const char* name=0 );
+	virtual ~GaduSession();
+	bool isConnected() const;
 
 public slots:
-    void login( const struct gg_login_params& p );
-    void login( uin_t uin, const QString& password,
-                int status=GG_STATUS_INVISIBLE , const QString& statusDescr="" );
-    void logoff();
-    int  notify( uin_t *userlist, int count );
-    int  addNotify( uin_t uin );
-    int  removeNotify( uin_t uin );
-    int  sendMessage( uin_t recipient, const QString& msg,
-                      int msgClass );
-    int  sendMessageCtcp( uin_t recipient, const QString& msg,
-                          int msgClass );
-    int  changeStatus( int status );
-    int  changeStatusDescription( int status, const QString& descr );
-    int  ping();
+	void login( const struct gg_login_params& p );
+	void login( uin_t uin, const QString& password,
+							int status=GG_STATUS_INVISIBLE , const QString& statusDescr="" );
+	void logoff();
+	int  notify( uin_t *userlist, int count );
+	int  addNotify( uin_t uin );
+	int  removeNotify( uin_t uin );
+	int  sendMessage( uin_t recipient, const QString& msg,
+										int msgClass );
+	int  sendMessageCtcp( uin_t recipient, const QString& msg,
+												int msgClass );
+	int  changeStatus( int status );
+	int  changeStatusDescription( int status, const QString& descr );
+	int  ping();
 
-    int  dccRequest( uin_t uin );
+	int  dccRequest( uin_t uin );
 
 signals:
-    void error( const QString& title, const QString& message );
-    void messageReceived( struct gg_event* );
-    void ackReceived( struct gg_event* );
-    void notify( struct gg_event* );
-    void notifyDescription( struct gg_event* );
-    void statusChanged( struct gg_event* );
-    void pong();
-    void connectionFailed( struct gg_event* );
-    void connectionSucceed( struct gg_event* );
-    void disconnect();
+	void error( const QString& title, const QString& message );
+	void messageReceived( struct gg_event* );
+	void ackReceived( struct gg_event* );
+	void notify( struct gg_event* );
+	void notifyDescription( struct gg_event* );
+	void statusChanged( struct gg_event* );
+	void pong();
+	void connectionFailed( struct gg_event* );
+	void connectionSucceed( struct gg_event* );
+	void disconnect();
 
 protected slots:
-    void enableNotifiers( int checkWhat );
-    void disableNotifiers();
-    void checkDescriptor();
+	void enableNotifiers( int checkWhat );
+	void disableNotifiers();
+	void checkDescriptor();
 
 private:
-    struct gg_session *session_;
-    QSocketNotifier   *read_;
-    QSocketNotifier   *write_;
+	struct gg_session *session_;
+	QSocketNotifier   *read_;
+	QSocketNotifier   *write_;
 };
 
 
 #endif
-
-/*
- * Local variables:
- * c-indentation-style: bsd
- * c-basic-offset: 4
- * indent-tabs-mode: nil
- * End:
- *
- * vim: set et ts=4 sts=4 sw=4:
- */
