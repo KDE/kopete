@@ -230,9 +230,9 @@ void GroupWiseAccount::setAway( bool away, const QString & reason )
 
 void GroupWiseAccount::connectWithPassword( const QString &password )
 {
-	if ( password.isEmpty () )
+	if ( password.isEmpty() )
 	{
-		disconnected ( Kopete::Account::Manual );
+		disconnect();
 		return;
 	}
 	bool sslPossible = QCA::isSupported(QCA::CAP_TLS);
@@ -346,13 +346,6 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	m_client->connectToServer( m_clientStream, dn, true );
 }
 
-void GroupWiseAccount::disconnected ( Kopete::Account::DisconnectReason reason )
-{
-	// FIXME: this ugly sequence is a libkopete requirement
-	disconnect();
-	Kopete::Account::disconnected( reason );
-}
-
 void GroupWiseAccount::setOnlineStatus( const Kopete::OnlineStatus& status, const QString &reason )
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
@@ -368,7 +361,7 @@ void GroupWiseAccount::setOnlineStatus( const Kopete::OnlineStatus& status, cons
 	else if ( status == protocol()->groupwiseOffline )
 	{
 		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << " DISCONNECTING" << endl;
-		disconnected( Kopete::Account::Manual );
+		disconnect();
 	}
 	// changing status
 	else if ( isConnected() )
@@ -411,14 +404,7 @@ void GroupWiseAccount::disconnect()
 	// in the process of connecting
 	myself()->setOnlineStatus( GroupWiseProtocol::protocol()->groupwiseOffline );
 
-	/* FIXME:
-	 * We should delete the XMPP::Client instance here,
-	 * but active timers in psi prevent us from doing so.
-	 * (in a failed connection attempt, these timers will
-	 * try to access an already deleted object).
-	 * Instead, the instance will lurk until the next
-	 * connection attempt.
-	 */
+	disconnected( Manual );
 	kdDebug(GROUPWISE_DEBUG_GLOBAL) << k_funcinfo << "Disconnected." << endl;
 }
 
@@ -532,7 +518,7 @@ void GroupWiseAccount::slotConnError()
 	KMessageBox::queuedMessageBox( Kopete::UI::Global::mainWidget(), KMessageBox::Sorry,
 				i18n( "Error shown when connecting failed", "Kopete was not able to connect to the GroupWise Messenger server for account '%1'.\nPlease check your server and port settings and try again." ).arg( accountId() ) , i18n ("Unable to connect '%1'").arg( accountId() ) );
 
-	disconnected ( Kopete::Account::Manual );
+	disconnect();
 }
 
 void GroupWiseAccount::slotConnConnected()

@@ -149,8 +149,7 @@ public slots:
 
 	/* Disconnects from the server. */
 	virtual void disconnect();
-	virtual void disconnected( Kopete::Account::DisconnectReason reason );
-	
+
 	/** Set the online status for the account. Reimplemented from Kopete::Account */
 	void setOnlineStatus( const Kopete::OnlineStatus& status , const QString &reason = QString::null);
 signals:
