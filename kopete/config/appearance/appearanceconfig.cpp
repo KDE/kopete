@@ -436,8 +436,7 @@ void AppearanceConfig::slotImportStyle()
 			}
 			else
 			{
-				KMessageBox::error(
-					this,
+				KMessageBox::queuedMessageBox( this, KMessageBox::Error,
 					i18n("\"%1\" is not a valid XSL document. Import canceled.")
 						.arg(chosenStyle.path()),
 					i18n("Invalid Style") );
@@ -445,8 +444,7 @@ void AppearanceConfig::slotImportStyle()
 		}
 		else
 		{
-			KMessageBox::error(
-				this,
+			KMessageBox::queuedMessageBox( this, KMessageBox::Error,
 				i18n("Could not import \"%1\". Check access " \
 					"permissions / network connection.")
 					.arg(chosenStyle.path()),
@@ -479,7 +477,7 @@ void AppearanceConfig::slotCopyStyle()
 	}
 	else
 	{
-		KMessageBox::error(this,
+		KMessageBox::queuedMessageBox( this, KMessageBox::Sorry,
 			i18n("Please select a style to copy."), i18n("No Style Selected") );
 	}
 	setChanged(true);
@@ -526,7 +524,7 @@ void AppearanceConfig::slotStyleSaved()
 	delete editedItem;
 
 	if( !KopeteXSL::isValid( fileSource ) )
-		KMessageBox::error( this, i18n("This is not a valid XSL document. Please double check your modifications."), i18n("Invalid Style") );
+		KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("This is not a valid XSL document. Please double check your modifications."), i18n("Invalid Style") );
 
 	if( !filePath.isNull() )
 	{
@@ -561,12 +559,12 @@ void AppearanceConfig::addStyle( const QString &styleName, const QString &xslStr
 		}
 		else
 		{
-			KMessageBox::error( this, i18n("Error saving file. Check access permissions to \"%1\".").arg( filePath ), i18n("Could Not Save") );
+			KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("Error saving file. Check access permissions to \"%1\".").arg( filePath ), i18n("Could Not Save") );
 		}
 	}
 	else
 	{
-		KMessageBox::error( this, i18n("A style named \"%1\" already exists. Please rename the style.").arg( styleName ), i18n("Could Not Save") );
+		KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n("A style named \"%1\" already exists. Please rename the style.").arg( styleName ), i18n("Could Not Save") );
 	}
 }
 

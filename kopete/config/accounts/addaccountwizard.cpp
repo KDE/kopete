@@ -175,7 +175,7 @@ void AddAccountWizard::next()
 				m_accountPage = m_proto->createEditAccountWidget( 0L, this );
 				if ( !m_accountPage )
 				{
-					KMessageBox::error( this,
+					KMessageBox::queuedMessageBox( this, KMessageBox::Error,
 						i18n( "The author of this protocol hasn't implemented adding of accounts." ),
 						i18n( "Error While Adding Account" ) );
 				}
@@ -189,7 +189,7 @@ void AddAccountWizard::next()
 			}
 			else
 			{
-				KMessageBox::error( this, i18n( "Impossible to load the protocol `%1'." ).arg( m_protocolItems[ lvi ]->name() ),
+				KMessageBox::queuedMessageBox( this, KMessageBox::Error, i18n( "Impossible to load the protocol `%1'." ).arg( m_protocolItems[ lvi ]->name() ),
 					i18n( "Error While Adding Account" ) );
 			}
 		}

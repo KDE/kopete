@@ -403,6 +403,7 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 		return;
 	}
 
+	// FIXME: KDE 3.3:  use gueuedMessageBox
 	KMessageBox::information( this,
 		i18n( "<qt>Closing the main window will keep Kopete running in the "
 		"system tray. Use 'Quit' from the 'File' menu to quit the application.</qt>" ),

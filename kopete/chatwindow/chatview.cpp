@@ -245,9 +245,9 @@ void ChatView::save()
 	}
 	else
 	{
-		KMessageBox::error( 0, //No parent
-			i18n("<qt>Could not open <b>%1</b> for writing.</qt>").arg(fileName), // Message
-			i18n("Error While Saving") ); //Caption
+		KMessageBox::queuedMessageBox( this, KMessageBox::Error,
+				i18n("<qt>Could not open <b>%1</b> for writing.</qt>").arg(fileName), // Message
+				i18n("Error While Saving") ); //Caption
 	}
 }
 

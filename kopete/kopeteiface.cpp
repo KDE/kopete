@@ -122,8 +122,9 @@ bool KopeteIface::addContact( const QString &protocolName, const QString &accoun
 
 	} else {
 		//This protocol is not loaded
-		KMessageBox::error( 0, i18n("An external application has attempted to add a contact using "
-				" the %1 protocol, which either does not exist or is not loaded.").arg( protocolName ),
+		KMessageBox::queuedMessageBox( 0L, KMessageBox::Error,
+				 i18n("An external application has attempted to add a contact using "
+				      " the %1 protocol, which either does not exist or is not loaded.").arg( protocolName ),
 				i18n("Missing Protocol"));
 
 		return false;
