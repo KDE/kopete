@@ -487,9 +487,15 @@ void YahooAccount::slotLoginResponse( int succ , const QString &url )
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 		return;
 	}
+	else if ( succ == YAHOO_LOGIN_UNAME )
+	{
+		errorMsg = i18n("Could not log into the Yahoo service. The username specified was invalid.");
+		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
+		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
+	}
 	else if ( succ == YAHOO_LOGIN_DUPL && m_lastDisconnectCode != 2 )
 	{
-		errorMsg = i18n("You have been logged out of the yahoo service, possibly due to a duplicate login.");
+		errorMsg = i18n("You have been logged out of the Yahoo service, possibly due to a duplicate login.");
 		KMessageBox::queuedMessageBox(Kopete::UI::Global::mainWidget(), KMessageBox::Error, errorMsg);
 		static_cast<YahooContact *>( myself() )->setOnlineStatus( m_protocol->Offline );
 		return;
