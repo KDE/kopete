@@ -20,14 +20,19 @@
 #include "kyahoo.h"
 
 // Kopete Includes
+#include <statusbaricon.h>
 
 // QT Includes
 #include <qregexp.h>
+#include <qsocketnotifier.h>
 
 // KDE Includes
 #include <kdebug.h>
+#include <kiconloader.h>
+
 #include "libyahoo2/yahoo2.h"
 #include "libyahoo2/yahoo2_callbacks.h"
+#include <iostream.h>
 
 /* Those gave me undefined reference errors */
 #define MAX_PREF_LEN 255
@@ -53,12 +58,32 @@ YahooSession* YahooSessionManager::login(const QString username, const QString p
 {
 	int id;
     YahooSession *session;
-	kdDebug() << "[YahooSessionManager::login] login!!!..." << endl;
+	kdDebug() << "[YahooSessionManager::login] login!!!..."<< endl;
 	id = yahoo_login( username.latin1() , password.latin1(), initial);
-    kdDebug() << "[YahooSessionManager::login] got id "<< id << " !, creating session" << endl;
+    kdDebug() << "[YahooSessionManager::login] got id "<< id << " !, creating session"<< endl;
 	session = new YahooSession( id, username, password, initial);
 	m_sessionsMap[id] = session;
+	m_fdMap[m_fd]=id;
+//	m_fd=0;
+	session->addHandler(m_fd);
 	return session;
+}
+
+bool YahooSessionManager::logout()
+{
+    QMap< int, YahooSession*>::iterator it;
+	for ( it=m_sessionsMap.begin(); it != m_sessionsMap.end(); it++)
+	{
+		it.data()->logOff();
+		delete it.data();
+		m_socketsMap[ socketDescriptor(it.key())]->close();
+		delete m_socketsMap[ socketDescriptor(it.key())];
+		m_sessionsMap.remove(it.key());
+		m_socketsMap.remove(socketDescriptor(it.key()));
+		kdDebug() << "[YahooSessionManager::logout] "<< it.key() << endl;      
+	}
+
+	return true;
 }
 
 YahooSession* YahooSessionManager::getSession(int id)
@@ -66,6 +91,9 @@ YahooSession* YahooSessionManager::getSession(int id)
 	return m_sessionsMap[id] ? m_sessionsMap[id] : 0L;
 }
 
+int YahooSessionManager::getSessionCount(){
+    return m_sessionsMap.count();
+}
 
 YahooSessionManager* YahooSessionManager::managerStatic_ = 0L;
 
@@ -83,16 +111,12 @@ YahooSession::YahooSession(int id, const QString username, const QString passwor
 	m_Password = password;
 	m_Status = initial;
 	m_connId = id;
+	QObject::connect ( this,SIGNAL(loginResponse(int,char*)),this,SLOT(loginResponseReceiver(int,char*)));
 }
 
 YahooSession::~YahooSession()
 {
-
-}
-
-int YahooSession::getFd()
-{
-
+	
 }
 
 int YahooSession::setLogLevel(enum yahoo_log_level level)
@@ -102,8 +126,8 @@ int YahooSession::setLogLevel(enum yahoo_log_level level)
 
 void YahooSession::logOff()
 {
+	kdDebug()<<"[YahooSession::logOff]"<<m_connId<<endl;
 	yahoo_logoff(m_connId);
-	/* FIX: remove from manager */
 }
 
 void YahooSession::refresh()
@@ -248,7 +272,55 @@ const char  * YahooSession::getProfile_url( void )
 	return yahoo_get_profile_url();
 }
 
+void YahooSession::loginResponseReceiver(int succ, char *url)
+{
+	char buff[1024];
 
+	kdDebug()<<"[YahooSession::loginResponseReceiver]"<<endl;
+	if (succ == YAHOO_LOGIN_OK)
+	{
+		m_Status = yahoo_current_status(m_connId);
+		kdDebug() << "logged in" << endl;
+		return;
+	}
+	else if(succ == YAHOO_LOGIN_PASSWD)
+	{
+		snprintf(buff, sizeof(buff), "Could not log into Yahoo service.  Please verify that your username and password are correctly typed.");
+	}
+	else if(succ == YAHOO_LOGIN_LOCK)
+	{
+		snprintf(buff, sizeof(buff), "Could not log into Yahoo service.  Your account has been locked.\nVisit %s to reactivate it.", url);
+	}
+	else if(succ == YAHOO_LOGIN_DUPL)
+	{
+		snprintf(buff, sizeof(buff), "You have been logged out of the yahoo service, possibly due to a duplicate login.");
+	}
+	m_Status = YAHOO_STATUS_OFFLINE;
+	kdDebug()<<buff<<endl;
+        //yahoo_logout();
+}
+
+void YahooSession::addHandler(int fd)
+{
+	kdDebug()<<"YahooSession::addHandler WHAT THE FUCK IS THIS!";
+	m_fd = fd;
+}
+
+void YahooSession::dataReceived()
+{
+	int ret=1;
+	/* FIXME!!!!! */
+    //int fd = (const_cast<KExtendedSocket*>(QObject::sender()))->fd();
+	int fd = YahooSessionManager::manager()->socketDescriptor( m_connId );
+
+	kdDebug() << "YahooSession::dataReceived" << fd << endl;
+	ret = yahoo_read_ready( m_connId , fd );
+
+	if ( ret == -1)
+		kdDebug() <<"Read Error (" << errno << ": " << strerror(errno) << endl;
+	else if ( ret == 0)
+		kdDebug() << "Server closed socket" << endl;
+}
 /* Callbacks implementation */
 
 extern "C" {
@@ -401,24 +473,28 @@ void YahooSessionManager::loginResponseReceiver( int id, int succ, char *url)
 
 void YahooSessionManager::gotIgnoreReceiver(int id, YList * igns)
 {
+    kdDebug() << "[YahooSessionManager::removeHandlerReceiver]1" << endl;
 	YahooSession *session = getSession(id);
 	emit session->gotIgnore(igns);
 }
 
 void YahooSessionManager::gotBuddiesReceiver(int id, YList * buds)
 {
+    kdDebug() << "[YahooSessionManager::removeHandlerReceiver]2" << endl;
 	YahooSession *session = getSession(id);
 	emit session->gotBuddies(buds);
 }
 
 void YahooSessionManager::gotIdentitiesReceiver(int id, YList *ids)
 {
+    kdDebug() << "[YahooSessionManager::removeHandlerReceiver]3" << endl;
 	YahooSession *session = getSession(id);
 	emit session->gotIdentities(ids);
 }
 
 void YahooSessionManager::statusChangedReceiver(int id, char *who, int stat, char *msg, int away)
 {
+    kdDebug() << "[YahooSessionManager::removeHandlerReceiver]4" << endl;
 	YahooSession *session = getSession(id);
 	emit session->statusChanged(who, stat, msg, away);
 }
@@ -426,6 +502,7 @@ void YahooSessionManager::statusChangedReceiver(int id, char *who, int stat, cha
 void YahooSessionManager::gotImReceiver(int id, char *who, char *msg, long tm, int stat)
 {
 	YahooSession *session = getSession(id);
+	kdDebug()<<"got IM"<<endl;
 	emit session->gotIm(who, msg, tm, stat);	
 }
 
@@ -492,40 +569,51 @@ void YahooSessionManager::gameNotifyReceiver(int id, char *who, int stat)
 
 void YahooSessionManager::mailNotifyReceiver(int id, char *from, char *subj, int cnt)
 {
+    kdDebug() << "[YahooSessionManager::removeHandlerReceiver]5" << endl;
 	YahooSession *session = getSession(id);
 	emit session->mailNotify(from, subj,cnt);	
 }
 
 void YahooSessionManager::systemMessageReceiver(int id, char *msg)
 {
+    kdDebug() << "[YahooSessionManager::removeHandlerReceiver]6" << endl;
 	YahooSession *session = getSession(id);
 	emit session->systemMessage(msg);	
 }
 
 void YahooSessionManager::errorReceiver(int id, char *err, int fatal)
 {
+    kdDebug() << "[YahooSessionManager::removeHandlerReceiver]7" << endl;
 	YahooSession *session = getSession(id);
 	emit session->error(err, fatal);	
 }
 
 int YahooSessionManager::logReceiver(char *fmt, ...)
 {
+    kdDebug() << "[YahooSessionManager::removeHandlerReceiver]8" << endl;
 	//emit session->	
 }
 
 void YahooSessionManager::addHandlerReceiver(int id, int fd, yahoo_input_condition cond)
 {
-    kdDebug() << "[YahooSessionManager::addHandlerReceiver]" << endl;
-	YahooSession *session = getSession(id);
-    if ( cond == YAHOO_INPUT_READ )
+	KExtendedSocket *_socket = m_socketsMap[fd];
+
+	m_idMap[fd] = id;
+	m_fdMap[id] = fd;
+
+    kdDebug() << "[YahooSessionManager::addHandlerReceiver]" <<id<<" "<<fd<< endl;
+
+    YahooSession *_session = m_sessionsMap[id];
+	if ( cond == YAHOO_INPUT_READ && _session )
 	{
-		yahoo_read_ready(id, fd);
+    	kdDebug() << "[YahooSessionManager::addHandlerReceiver] Socket connected to sessions data handler!";
+		_socket->enableRead(true);
+		connect (_socket,SIGNAL(readyRead()),_session,SLOT(dataReceived()));
 	}
 	else if ( cond == YAHOO_INPUT_WRITE )
 	{
-		yahoo_write_ready(id, fd);
+		// cachar que hacer al reves
     }
-	//emit session->addHandler(fd, cond);	
 }
 
 void YahooSessionManager::removeHandlerReceiver(int id, int fd)
@@ -540,6 +628,8 @@ int YahooSessionManager::hostConnectReceiver(char *host, int port)
 	kdDebug() << "[YahooSessionManager::hostConnectReceiver]" << endl;
     KExtendedSocket *_socket;
 	_socket = new KExtendedSocket( host, port );
+	m_socketsMap[_socket->fd()] =_socket;
+
 	if (! _socket->connect() )
 	{
 		kdDebug() << "[YahooSessionManager::hostConnectReceiver] Connected! fd "<< _socket->fd() << endl;

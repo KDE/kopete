@@ -79,8 +79,8 @@ public slots:
 	void slotNewContact(QString, QString, QString);
 						// XXX ?
 
-	// XXX void slotConnect();
-	// XXX void slotDisconnect();
+	//void slotConnect();
+	void slotGoOffline();
 
 signals:
 //	void protocolUnloading();	// Unload Protocol

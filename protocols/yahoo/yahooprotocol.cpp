@@ -236,6 +236,11 @@ void YahooProtocol::Connect()
 	else
 	{			// Nope, just your regular crack junky.
 		kdDebug() << "Yahoo plugin: Ignoring connect request (already connected)." <<endl;
+
+    }
+    if (session_) {
+      statusBarIcon->setPixmap(onlineIcon);
+      mIsConnected = true;
     }
 }
 
@@ -248,12 +253,17 @@ void YahooProtocol::Disconnect()
     if (isConnected()) {
 		DEBUG(YDINFO, "Attempting to disconnect from Yahoo server "
 			<< mServer);
+		if (YahooSessionManager::manager()->logout()){
+		 statusBarIcon->setPixmap(offlineIcon);
 		//m_engine->Disconnect();
+		mIsConnected = false;
+		}
     }
 	else {			// Again, what's with the crack? Sheez.
 		DEBUG(YDINFO,
 			"Ignoring disconnect request (not connected).");
     }
+    
 }
 
 
@@ -275,7 +285,7 @@ void YahooProtocol::setAway()
 bool YahooProtocol::isConnected() const
 {
 	DEBUG(YDMETHOD, "YahooProtocol::isConnected()");
-	return false; // XXX
+	return mIsConnected; // XXX
 }
 
 
@@ -300,8 +310,8 @@ QString YahooProtocol::protocolIcon() const
 AddContactPage *YahooProtocol::createAddContactWidget(QWidget * parent)
  {
 	DEBUG(YDMETHOD, "YahooProtocol::createAddContactWidget(<parent>)");
-
-	return NULL; // XXX
+	//return (new YahooAddContactPage(this,parent));
+	return 0L;
 }
 
 
@@ -348,6 +358,11 @@ void YahooProtocol::slotSettingsChanged()
 void YahooProtocol::slotConnected()
 {
 	kdDebug() << "Yahoo: WE ARE CONNECTED YAY!!!!!!" << endl;
+}
+
+void YahooProtocol::slotGoOffline()
+{
+	Disconnect();
 }
 
 // Add a contact to main window

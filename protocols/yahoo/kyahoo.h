@@ -20,6 +20,7 @@
 
 
 // Local Includes
+class StatusBarIcon;
 
 // Kopete Includes
 
@@ -28,6 +29,7 @@
 #include <kextendedsocket.h>
 #include <qstring.h>
 #include <qmap.h>
+#include <qpixmap.h>
 
 #include "libyahoo2/yahoo2.h"
 #include "libyahoo2/yahoo2_callbacks.h"
@@ -36,6 +38,7 @@
 
 class YahooSession;
 class KExtendedSocket;
+class QSocketNotifier;
 
 /* Yahoo Protocol Connection Manager */
 class YahooSessionManager : public QObject
@@ -45,9 +48,14 @@ public:
 	static YahooSessionManager *manager();
 	YahooSessionManager();
 	~YahooSessionManager();
-	YahooSession* login(const QString username, const QString password, int initial);	
-	YahooSession* getSession(int id);
 
+	int socketDescriptor( int session_id )
+	{ return m_fdMap[session_id] ? m_fdMap[session_id] : 0L ; };
+
+	YahooSession* login(const QString username, const QString password, int initial);	
+	bool logout();
+	YahooSession* getSession(int id);
+	int getSessionCount();
 	/* Receivers for libyahoo signals, resolve connection id and emit signal
 		for the correct session */
 	void loginResponseReceiver( int id, int succ, char *url);
@@ -75,11 +83,21 @@ public:
 	void addHandlerReceiver(int id, int fd, yahoo_input_condition cond);
 	void removeHandlerReceiver(int id, int fd);
 	int hostConnectReceiver(char *host, int port);
+	StatusBarIcon* statusBarIcon;
 	
 private:
+	/* id to session */
 	QMap< int, YahooSession*> m_sessionsMap;
+    /* fd to sockets */
 	QMap< int, KExtendedSocket *> m_socketsMap;
+	/* id to fd */
+	QMap< int,int> m_fdMap;
+	/* fd to id */
+	QMap< int,int> m_idMap;
+
 	static YahooSessionManager *managerStatic_;
+	int m_fd;
+	
 };
 
 // Yahoo Protocol Connection
@@ -93,7 +111,9 @@ public:
 	int Id()
 	{ return m_connId; };
 	
-	int getFd();
+	int socketDescriptor()
+	{ return m_fd; };
+
 	int setLogLevel(enum yahoo_log_level level);
 	void logOff();
 	void refresh();
@@ -124,7 +144,7 @@ public:
 	const YList * getIdentities();
 	const char  * getCookie( const char *which);
 	const char  * getProfile_url( void );
-
+	
 signals:
 
 	void loginResponse( int succ, char *url);
@@ -146,22 +166,51 @@ signals:
 	void mailNotify( char *from, char *subj, int cnt);
 	void systemMessage( char *msg);
 	void error( char *err, int fatal);
-	void addHandler( int fd, yahoo_input_condition cond);
 	void removeHandler( int fd);
 	void hostConnect(char *host, int port);
 
+	private slots:
+	void loginResponseReceiver( int succ, char *url);
+	void dataReceived();
 	private:
-
+	void addHandler(int fd);
 	YahooSession(int id, const QString username, const QString password, int initial);
 	QString m_Username, m_Password, m_Server; // User data
 	int m_Port;
 	int m_Status;
 	int m_connId;
-
+	int m_fd;	
 	QString m_BuddyListServer; // Buddy List server
 	int m_BuddyListPort;
 
 	static YahooSession* sessionStatic_;
+	
+	typedef struct {
+        int id;
+        char *label;
+	} yahoo_idlabel;
+
+
+
+	/*yahoo_idlabel yahoo_status_codes[] = {
+        {YAHOO_STATUS_AVAILABLE, "Available"},
+        {YAHOO_STATUS_BRB, "BRB"},
+        {YAHOO_STATUS_BUSY, "Busy"},
+        {YAHOO_STATUS_NOTATHOME, "Not Home"},
+        {YAHOO_STATUS_NOTATDESK, "Not at Desk"},
+        {YAHOO_STATUS_NOTINOFFICE, "Not in Office"},
+        {YAHOO_STATUS_ONPHONE, "On Phone"},
+        {YAHOO_STATUS_ONVACATION, "On Vacation"},
+        {YAHOO_STATUS_OUTTOLUNCH, "Out to Lunch"},
+        {YAHOO_STATUS_STEPPEDOUT, "Stepped Out"},
+        {YAHOO_STATUS_INVISIBLE, "Invisible"},
+        {YAHOO_STATUS_IDLE, "Idle"},
+        {YAHOO_STATUS_OFFLINE, "Offline"},
+        {YAHOO_STATUS_CUSTOM, "[Custom]"},
+        {YAHOO_STATUS_TYPING, "Typing"},
+        {0, NULL}
+	};
+*/
 
 };
 

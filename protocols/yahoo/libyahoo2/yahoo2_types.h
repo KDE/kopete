@@ -63,7 +63,7 @@ enum yahoo_error {
 	E_IGNORECONF = 12,
 	
 	/* conference */
-	E_CONFNOTAVAIL = 20,
+	E_CONFNOTAVAIL = 20
 };
 
 enum yahoo_log_level {

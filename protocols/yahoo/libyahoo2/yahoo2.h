@@ -22,6 +22,8 @@
 #ifndef YAHOO2_H
 #define YAHOO2_H
 
+#define HAVE_GLIB 0
+
 #ifdef __MINGW32__
 # include <winsock2.h>
 # define write(a,b,c) send(a,b,c,0)
