@@ -482,7 +482,7 @@ void AppearanceConfig::slotImportStyle()
 			else
 			{
 				KMessageBox::queuedMessageBox( this, KMessageBox::Error,
-					i18n( "'%1' is not a valid XSLT document. Import cancelled." ).arg( chosenStyle.path() ),
+					i18n( "'%1' is not a valid XSLT document. Import canceled." ).arg( chosenStyle.path() ),
 					i18n( "Invalid Style" ) );
 			}
 		}
