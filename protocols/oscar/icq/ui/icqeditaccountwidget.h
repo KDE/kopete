@@ -47,16 +47,21 @@ class ICQEditAccountWidget : public QWidget, public EditAccountWidget
 		void slotSend();
 		void slotModified();
 		void slotRecalcAge(QDate);
+		void slotCategory1Changed(int);
+		void slotCategory2Changed(int);
+		void slotCategory3Changed(int);
+		void slotCategory4Changed(int);
+		void slotOrganisation1Changed(int);
+		void slotOrganisation2Changed(int);
+		void slotOrganisation3Changed(int);
+		void slotAffiliation1Changed(int);
+		void slotAffiliation2Changed(int);
+		void slotAffiliation3Changed(int);
 
 	protected:
-		/*
-		 * The account we're editing
-		 */
 		KopeteAccount *mAccount;
-		/*
-		 * The Protocol we're in
-		 */
 		ICQProtocol *mProtocol;
+
 		/*
 		 * GUI parts
 		 */

@@ -1969,15 +1969,7 @@ void OscarSocket::parseSimpleIM(Buffer &inbuf, const UserInfo &u)
 						"emit receivedMessage(), contact='" << u.sn <<
 						"', message='" << message << "'" << endl;*/
 
-					if(isAutoResponse)
-					{
-						emit receivedMessage(u.sn, message, Away); // also displays message in chatwin
-						emit receivedAwayMessage(u.sn, message); // only sets contacts away message var
-					}
-					else
-					{
-						emit receivedMessage(u.sn, message, Normal);
-					}
+					parseMessage(u, message, isAutoResponse ? MSG_AUTO : MSG_NORM, 0);
 
 					msgBuf.clear();
 				}
@@ -2066,18 +2058,25 @@ void OscarSocket::parseServerIM(Buffer &inbuf, const UserInfo &u)
 		", type=" << msgtype <<
 		", flags=" << msgflags << endl;
 
-	WORD msgLength = tlv5.getLEWord(); // little endian for no sane reason!
-	char *msgText = tlv5.getBlock(msgLength);
+	char *msgText = tlv5.getLNTS();
 	QString message = QString::fromLatin1(msgText); // TODO: guess encoding (it's undefined)
 	delete [] msgText; // getBlock allocates memory, we HAVE to free it again!
 
+	parseMessage(u, message, msgtype, msgflags);
 
-	switch(msgtype)
+	kdDebug(14150) << k_funcinfo << "END" << endl;
+} // END parseServerIM()
+
+
+void OscarSocket::parseMessage(const UserInfo &u, const QString &message, const BYTE type, const BYTE /*flags*/)
+{
+	switch(type)
 	{
 		case MSG_AUTO:
 			kdDebug(14150) << k_funcinfo <<
 				"Got an automatic message: " << message << endl;
-			emit receivedMessage(u.sn, message, Away);
+			emit receivedAwayMessage(u.sn, message); // only sets contacts away message var
+			emit receivedMessage(u.sn, message, Away); // also displays message in chatwin
 			break;
 		case MSG_NORM:
 			kdDebug(14150) << k_funcinfo <<
@@ -2122,19 +2121,14 @@ void OscarSocket::parseServerIM(Buffer &inbuf, const UserInfo &u)
 			emit receivedMessage(u.sn, message, Normal);
 			break;
 	}
-
-	kdDebug(14150) << k_funcinfo << "END" << endl;
-} // END parseServerIM()
+}
 
 
-// parses the aim standard user info block
+// parses the standard user info block
 bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 {
-//	UserInfo u;
 	u.userclass=0;
 	u.evil=0;
-	//u.membersince = QDateTime();
-	//u.onlinesince = QDateTime();
 	u.idletime = 0;
 	u.sessionlen = 0;
 	u.localip = 0;
@@ -2337,7 +2331,7 @@ const DWORD OscarSocket::parseCapabilities(Buffer &inbuf)
 }
 
 
-// FIXME: Split up into type-1, type-2 and type-4 messaging
+// TODO: Split up into type-1, type-2 and type-4 messaging
 // currently we only do simple type-1
 void OscarSocket::sendIM(const QString &message, OscarContact *contact, bool isAuto)
 {

@@ -58,6 +58,8 @@ ICQUserInfo::ICQUserInfo(ICQContact *c, QWidget *parent, const char* name)
 	mMainWidget->rwBday->setDate(QDate());
 	mMainWidget->roBday->setText("");
 	mMainWidget->roUIN->setText(c->contactName());
+	mMainWidget->rwAlias->setText(c->displayName());
+
 	p->initUserinfoWidget(mMainWidget); // fill combos with values
 	p->setComboFromTable(mMainWidget->cmbEncoding, p->encodings(), c->encoding());
 
@@ -171,6 +173,29 @@ void ICQUserInfo::setReadonly()
 	mMainWidget->roWrkCountry->show();
 	mMainWidget->wrkHomepageEdit->hide();
 	mMainWidget->wrkHomepageLabel->show();
+
+	mMainWidget->intrCategoryCombo1->setEnabled(false);
+	mMainWidget->intrCategoryCombo2->setEnabled(false);
+	mMainWidget->intrCategoryCombo3->setEnabled(false);
+	mMainWidget->intrCategoryCombo4->setEnabled(false);
+	mMainWidget->intrDescText1->setReadOnly(true);
+	mMainWidget->intrDescText2->setReadOnly(true);
+	mMainWidget->intrDescText3->setReadOnly(true);
+	mMainWidget->intrDescText4->setReadOnly(true);
+
+	mMainWidget->bgrdCurrOrgCombo1->setEnabled(false);
+	mMainWidget->bgrdCurrOrgCombo3->setEnabled(false);
+	mMainWidget->bgrdCurrOrgCombo2->setEnabled(false);
+	mMainWidget->bgrdCurrOrgText2->setReadOnly(true);
+	mMainWidget->bgrdCurrOrgText3->setReadOnly(true);
+	mMainWidget->bgrdCurrOrgText1->setReadOnly(true);
+
+	mMainWidget->bgrdPastOrgCombo3->setEnabled(false);
+	mMainWidget->bgrdPastOrgCombo2->setEnabled(false);
+	mMainWidget->bgrdPastOrgCombo1->setEnabled(false);
+	mMainWidget->bgrdPastOrgText3->setReadOnly(true);
+	mMainWidget->bgrdPastOrgText2->setReadOnly(true);
+	mMainWidget->bgrdPastOrgText1->setReadOnly(true);
 }
 
 void ICQUserInfo::slotEmailClicked(const QString &email)

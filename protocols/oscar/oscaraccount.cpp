@@ -85,12 +85,12 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 		this, SLOT(slotError(QString, int)));
 
 	QObject::connect(
-		engine(), SIGNAL(receivedMessage(const QString &, QString &, OscarSocket::OscarMessageType)),
-		this, SLOT(slotReceivedMessage(const QString &, QString &, OscarSocket::OscarMessageType)));
+		engine(), SIGNAL(receivedMessage(const QString &, const QString &, OscarSocket::OscarMessageType)),
+		this, SLOT(slotReceivedMessage(const QString &, const QString &, OscarSocket::OscarMessageType)));
 
 	QObject::connect(
-		engine(), SIGNAL(receivedAwayMessage(const QString &, QString &)),
-		this, SLOT(slotReceivedAwayMessage(const QString &, QString &)));
+		engine(), SIGNAL(receivedAwayMessage(const QString &, const QString &)),
+		this, SLOT(slotReceivedAwayMessage(const QString &, const QString &)));
 
 	// Got Config (Buddy List)
 	QObject::connect(
@@ -118,7 +118,7 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 
 OscarAccount::~OscarAccount()
 {
-	kdDebug(14150) << k_funcinfo << "'" << accountId() << "' deleted" << endl;
+	//kdDebug(14150) << k_funcinfo << "'" << accountId() << "'" << endl;
 
 	OscarAccount::disconnect();
 
@@ -127,7 +127,7 @@ OscarAccount::~OscarAccount()
 	// Delete the backend
 	if (mEngine)
 	{
-		kdDebug(14150) << k_funcinfo << "'" << accountId() << "'; delayed deleting of mEngine" << endl;
+		//kdDebug(14150) << k_funcinfo << "'" << accountId() << "'; delayed deleting of mEngine" << endl;
 		mEngine->deleteLater();
 	}
 }
@@ -191,12 +191,13 @@ void OscarAccount::slotError(QString errmsg, int errorCode)
 	KMessageBox::error(qApp->mainWidget(), errmsg);
 }
 
-void OscarAccount::slotReceivedMessage(const QString &sender, QString &message, OscarSocket::OscarMessageType type)
+void OscarAccount::slotReceivedMessage(const QString &sender, const QString &incomingMessage, OscarSocket::OscarMessageType type)
 {
 	kdDebug(14150) << k_funcinfo << "account='" << accountId() <<
 		"', type=" << static_cast<int>(type) << ", sender='" << sender << "'" << endl;
 
 	OscarContact *contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
+	QString message = incomingMessage;
 
 	if(!contact && !mIgnoreUnknownContacts)
 	{
@@ -273,7 +274,7 @@ void OscarAccount::slotReceivedMessage(const QString &sender, QString &message, 
 	}
 }
 
-void OscarAccount::slotReceivedAwayMessage(const QString &sender, QString &message)
+void OscarAccount::slotReceivedAwayMessage(const QString &sender, const QString &message)
 {
 	kdDebug(14150) << k_funcinfo << "account='" << accountId() <<
 		", sender='" << sender << "'" << endl;

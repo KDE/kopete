@@ -732,8 +732,9 @@ class OscarSocket : public OscarConnection
 		*/
 		void parseServerIM(Buffer &inbuf, const UserInfo &u);
 
+		void parseMessage(const UserInfo &u, const QString &message, const BYTE type, const BYTE flags);
+
 		/** parses the aim standard user info block */
-		//UserInfo parseUserInfo(Buffer &inbuf);
 		bool parseUserInfo(Buffer &inbuf, UserInfo &u);
 
 		/*
@@ -908,9 +909,9 @@ class OscarSocket : public OscarConnection
 		 * @p message contains the message as received
 		 * @p type describes the message type, i.e. normal-msg, away-msg, sms-msg ...
 		 */
-		void receivedMessage(const QString &contact, QString &message, OscarSocket::OscarMessageType type);
+		void receivedMessage(const QString &contact, const QString &message, OscarSocket::OscarMessageType type);
 
-		void receivedAwayMessage(const QString &contact, QString &message);
+		void receivedAwayMessage(const QString &contact, const QString &message);
 
 		/*
 		 * The server has sent the key with which to encrypt the password

@@ -82,6 +82,12 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 	QObject::connect(
 		acc->engine(), SIGNAL(gotICQInfoItemList(const int, const ICQInfoItemList &, const ICQInfoItemList & )),
 		this, SLOT(slotUpdBackgroundUserInfo(const int, const ICQInfoItemList &, const ICQInfoItemList & ) ) );
+
+	if(name == displayName && account()->isConnected())
+	{
+		kdDebug(14200) << k_funcinfo << "ICQ Contact with no nickname, grabbing userinfo" << endl;
+		requestUserInfo();
+	}
 }
 
 ICQContact::~ICQContact()
@@ -177,9 +183,9 @@ KActionCollection *ICQContact::customContextMenuActions()
 
 	QString awTxt;
 	QString awIcn;
-	int status = onlineStatus().internalStatus();
+	unsigned int status = onlineStatus().internalStatus();
 	if (status >= 15)
-		status-=15; // get rid of invis addon
+		status -= 15; // get rid of invis addon
 	switch(status)
 	{
 		case OSCAR_FFC:
@@ -212,7 +218,7 @@ KActionCollection *ICQContact::customContextMenuActions()
 
 	actionRequestAuth->setEnabled(waitAuth() && isOnline());
 	actionSendAuth->setEnabled(isOnline());
-	actionReadAwayMessage->setEnabled(onlineStatus().status() == KopeteOnlineStatus::Away);
+	actionReadAwayMessage->setEnabled(status != OSCAR_OFFLINE && status != OSCAR_ONLINE);
 
 	actionCollection->insert(actionRequestAuth);
 	actionCollection->insert(actionSendAuth);
@@ -333,7 +339,7 @@ void ICQContact::slotCloseAwayMessageDialog()
 
 void ICQContact::requestUserInfo()
 {
-	kdDebug(14200) << k_funcinfo << "called" << endl;
+	//kdDebug(14200) << k_funcinfo << "called" << endl;
 	userinfoReplyCount = 0;
 	userinfoRequestSequence =
 		account()->engine()->sendReqInfo(contactName().toULong());
@@ -344,11 +350,13 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 	// compare reply's sequence with the one we sent with our last request
 	if(seq != userinfoRequestSequence)
 		return;
-
-// 	kdDebug(14200) << k_funcinfo << "called; seq=" << seq << ", last saved seq=" <<
-// 		userinfoRequestSequence << endl;
-
 	generalInfo = inf;
+
+	if(contactName() == displayName() && !generalInfo.nickName.isEmpty())
+	{
+		kdDebug(14200) << k_funcinfo << "setting new displayname for former UIN-only Contact" << endl;
+		setDisplayName(generalInfo.nickName);
+	}
 
 	userinfoReplyCount++;
 	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
@@ -360,12 +368,7 @@ void ICQContact::slotUpdWorkInfo(const int seq, const ICQWorkUserInfo &inf)
 	// compare reply's sequence with the one we sent with our last request
 	if(seq != userinfoRequestSequence)
 		return;
-
-// 	kdDebug(14200) << k_funcinfo << "called; seq=" << seq << ", last saved seq=" <<
-// 		userinfoRequestSequence << endl;
-
 	workInfo = inf;
-
 	userinfoReplyCount++;
 	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
 		emit updatedUserInfo();
@@ -376,12 +379,7 @@ void ICQContact::slotUpdMoreUserInfo(const int seq, const ICQMoreUserInfo &inf)
 	// compare reply's sequence with the one we sent with our last request
 	if(seq != userinfoRequestSequence)
 		return;
-
-// 	kdDebug(14200) << k_funcinfo << "called; seq=" << seq << ", last saved seq=" <<
-// 		userinfoRequestSequence << endl;
-
 	moreInfo = inf;
-
 	userinfoReplyCount++;
 	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
 		emit updatedUserInfo();
@@ -392,12 +390,7 @@ void ICQContact::slotUpdAboutUserInfo(const int seq, const QString &inf)
 	// compare reply's sequence with the one we sent with our last request
 	if(seq != userinfoRequestSequence)
 		return;
-
-//  	kdDebug(14200) << k_funcinfo << "called; seq=" << seq << ", last saved seq=" <<
-//  		userinfoRequestSequence << endl;
-
 	aboutInfo = inf;
-
 	userinfoReplyCount++;
 	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
 		emit updatedUserInfo();
@@ -408,12 +401,7 @@ void ICQContact::slotUpdEmailUserInfo(const int seq, const ICQMailList &inf)
 	// compare reply's sequence with the one we sent with our last request
 	if(seq != userinfoRequestSequence)
 		return;
-
-// 	kdDebug(14200) << k_funcinfo << "called; seq=" << seq << ", last saved seq=" <<
-// 		userinfoRequestSequence << endl;
-
 	emailInfo = inf;
-
 	userinfoReplyCount++;
 	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)
 		emit updatedUserInfo();

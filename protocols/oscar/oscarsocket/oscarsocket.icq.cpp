@@ -181,26 +181,18 @@ void OscarSocket::sendLoginICQ()
 // Parses all SNAC(0x15,3) Packets, these are only for ICQ!
 void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 {
-	QPtrList<TLV> tl = inbuf.getTLVList();
-	tl.setAutoDelete(true);
-	TLV *tlv = findTLV(tl,0x0001);
-	if (!tlv)
+	TLV tlv = inbuf.getTLV();
+	if (tlv.type != 1)
 	{
 		kdDebug(14150) << k_funcinfo <<  "Bad SNAC(21,3), no TLV(1) found!" << endl;
 		return;
 	}
 
-	Buffer fromicqsrv(tlv->data, tlv->length);
-
-//	kdDebug(14150) << "==========================================================" << endl;
-//	fromicqsrv.print();
-//	kdDebug(14150) << "==========================================================" << endl;
-
+	Buffer fromicqsrv(tlv.data, tlv.length);
 	WORD commandlength = fromicqsrv.getLEWord();
 	DWORD ourUIN = fromicqsrv.getLEDWord();
 	WORD subcmd = fromicqsrv.getLEWord();  // AKA 'data type' in the docs at iserverd1.khstu.ru
 	WORD sequence = fromicqsrv.getLEWord();
-
 
 	kdDebug(14150) << k_funcinfo <<
 		"commandlength=" << commandlength <<
@@ -211,32 +203,29 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 	{
 		case 0x0042: //SRV_DONEOFFLINEMSGS
 		{
-			/*kdDebug(14150) << k_funcinfo <<
-				"RECV (SRV_DONEOFFLINEMSG), last offline message" << endl;*/
 			sendAckOfflineMessages();
 			break;
 		}
 
 		case 0x0041: //SRV_OFFLINEMSG
 		{
-			/*kdDebug(14150) << k_funcinfo <<
-				"RECV (SRV_OFFLINEMSG), got an offline message" << endl;*/
 			QString uin = QString::number(fromicqsrv.getLEDWord());
 			/*WORD year =*/ fromicqsrv.getLEWord();
 			/*BYTE month =*/ fromicqsrv.getLEByte();
 			/*BYTE day =*/ fromicqsrv.getLEByte();
 			/*BYTE hour =*/ fromicqsrv.getLEByte();
 			/*BYTE minute =*/ fromicqsrv.getLEByte();
-			WORD type = fromicqsrv.getLEWord();
-			WORD msglen = fromicqsrv.getLEWord();
-			char *msg = fromicqsrv.getLEBlock(msglen); // Get the message
-			QString message = msg;
+			BYTE msgtype = fromicqsrv.getByte();
+			BYTE msgflags = fromicqsrv.getByte();
+
+			char *msg = fromicqsrv.getLELNTS(); // Get the message
+			QString message = QString::fromLocal8Bit(msg); // TODO: convert undefined encoding to QString
 			delete [] msg;
 
-			kdDebug(14150) << k_funcinfo << "Offline message from '" << uin <<
-				"' type=" << (type & 0xFF) << ", message='" << message << "'" << endl;
+			UserInfo u;
+			u.sn = uin;
 
-			emit receivedMessage(uin, message, Normal);
+			parseMessage(u, message, msgtype, msgflags);
 			break;
 		}
 
@@ -513,14 +502,8 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 				case 240:
 				{
 					kdDebug(14150) << k_funcinfo <<
-						"RECV (SRV_METAINTEREST)" << type << endl;
-// 					kdDebug(14151) << k_funcinfo <<
-// 						"*** Buffer of length: " << fromicqsrv.length() <<
-// 						" and result: " << result <<
-// 						" contains: " << fromicqsrv.toString() << endl;
-
+						"RECV (SRV_METAINTEREST)" << endl;
 					ICQInfoItemList interests = extractICQItemList( fromicqsrv );
-
 					emit gotICQInfoItemList( sequence, interests );
 					break;
 				}
@@ -528,17 +511,11 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 				case 250:
 				{
 					kdDebug(14150) << k_funcinfo <<
-						"RECV (SRV_METABACKGROUND)" << type << endl;
-// 					kdDebug(14151) << k_funcinfo <<
-// 						"*** Buffer of length: " << fromicqsrv.length() <<
-// 						" and result: " << result <<
-// 						" contains: " << fromicqsrv.toString() << endl;
-
+						"RECV (SRV_METABACKGROUND)" << endl;
 					// Get past affiliations
 					ICQInfoItemList past = extractICQItemList( fromicqsrv );
 					// Now get current organization memberships
 					ICQInfoItemList current = extractICQItemList( fromicqsrv );
-
 					// Tell anything that's interested
 					emit gotICQInfoItemList(sequence, current, past);
 					break;
@@ -596,24 +573,29 @@ void OscarSocket::parseSRV_FROMICQSRV(Buffer &inbuf)
 		}
 	} // END switch(subcmd)
 
-//	kdDebug(14150) << k_funcinfo << "deleting tlv data" << endl;
 	fromicqsrv.clear();
-	delete [] tlv->data;
-
-//	kdDebug(14150) << k_funcinfo << "END" << endl;
+	delete [] tlv.data;
 } // END OscarSocket::parseSRV_FROMICQSRV()
+
 
 ICQInfoItemList OscarSocket::extractICQItemList(Buffer& theBuffer)
 {
 	ICQInfoItemList theList;
-	//get the number of items to read
-	BYTE numItems = theBuffer.getLEByte();
-// 	kdDebug(14150) << k_funcinfo <<
-// 		numItems << " items received." << endl;
+
+	if(theBuffer.length() == 0)
+	{
+		kdDebug(14150) << k_funcinfo << "Nothing in buffer!" << endl;
+		return theList;
+	}
+
+	BYTE numItems = theBuffer.getLEByte(); //get the number of items to read
+	kdDebug(14150) << k_funcinfo <<
+		numItems << " items received." << endl;
+
 	if(numItems > 0)
 	{
-		WORD topic;				// Identifies the topic of the interest
-		char* tmptxt; 			// Description of the interest (raw)
+		WORD topic;  // Identifies the topic of the interest
+		char* tmptxt; // Description of the interest (raw)
 		for(unsigned int i = 0; i < numItems; i++)
 		{
 			topic = theBuffer.getLEWord();
@@ -622,11 +604,7 @@ ICQInfoItemList OscarSocket::extractICQItemList(Buffer& theBuffer)
 			ICQInfoItem thisItem;
 			thisItem.category = topic;
 			thisItem.description = QString::fromLocal8Bit(tmptxt); // TODO: encoding
-			/*kdDebug(14150) << k_funcinfo <<
-				"interest type:" << thisItem.category <<
-				", description=" << thisItem.description << endl;*/
 			theList.append(thisItem);
-
 			delete [] tmptxt;
 		}
 	}
@@ -742,10 +720,10 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 {
 	WORD ackStatus = P2P_ONLINE;
 	WORD ackFlags = 0x0000;
-	QString ackMessage = "";
+	QString ackMessage = QString::fromLatin1("");
 	bool sendAck = true;
 
-	kdDebug(14150) << k_funcinfo << "called" << endl;
+	kdDebug(14150) << k_funcinfo << "RECV TYPE-2 message" << endl;
 
 	if(mAccount->myself()->onlineStatus().internalStatus() == OSCAR_NA)
 		ackStatus = P2P_NA;
@@ -753,7 +731,6 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 		ackStatus  = P2P_AWAY;
 	else
 		ackStatus = P2P_ONLINE;
-
 
 	WORD unk = messageBuf.getLEWord(); // unknown
 	ack.addLEWord(unk);
@@ -765,56 +742,42 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 	ack.addString(unkblock,12);
 	delete [] unkblock;
 
-	/*kdDebug(14150) << k_funcinfo <<
-		"rest after 12 empty bytes:" << endl <<
-		"------------------------------------------------------" << endl <<
-		messageBuf.toString() << endl <<
-		"------------------------------------------------------" << endl;*/
-
 	BYTE msgType = messageBuf.getByte(); // message type
-	ack.addByte(msgType);
+	ack.addByte(msgType); // add to CLI_ACKMSG
 	BYTE msgFlags = messageBuf.getByte(); // message flags
-	ack.addByte(msgFlags);
+	ack.addByte(msgFlags); // add to CLI_ACKMSG
+
+	WORD status = messageBuf.getLEWord();
+	WORD priority = messageBuf.getLEWord();
 
 	kdDebug(14150) << k_funcinfo <<
 		"msgType=" << msgType <<
-		", msgFlags=" << msgFlags << endl;
-
-	WORD status = messageBuf.getLEWord();
-	kdDebug(14150) << k_funcinfo << "status=" << status << endl;
-
-	WORD priority = messageBuf.getLEWord();
-	kdDebug(14150) << k_funcinfo << "priority flag=" << priority << endl;
+		", msgFlags=" << msgFlags <<
+		", status=" << status <<
+		", priority=" << priority << endl;
 
 	char *messagetext = messageBuf.getLNTS();
 
 	switch(msgType)
 	{
-		case 0xE8:
-		case 0xE9:
-		case 0xEA:
-		case 0xEB:
-		case 0xEC:
+		case MSG_GET_AWAY:
+		case MSG_GET_OCC:
+		case MSG_GET_NA:
+		case MSG_GET_DND:
+		case MSG_GET_FFC:
 		{
-			// TODO: per contact away message
 			ackMessage = mAccount->awayMessage();
 			break;
 		}
 
-		case 0x0000: // auto
-		case 0x0001: // normal message
+		case MSG_AUTO:
+		case MSG_NORM:
+		case MSG_URL:
 		{
 			kdDebug(14150) << k_funcinfo << "RECV TYPE-2 IM, normal/auto message" << endl;
 
-			/*DWORD fgColor = */messageBuf.getLEDWord();
-			//kdDebug(14150) << k_funcinfo << "fgcolor=" << fgColor << endl;
-
+			/*DWORD fgColor =*/ messageBuf.getLEDWord();
 			/*DWORD bgColor =*/ messageBuf.getLEDWord();
-			//kdDebug(14150) << k_funcinfo << "bgcolor=" << bgColor << endl;
-
-			/*kdDebug(14150) << k_funcinfo <<
-				"messageBuf.length() after message and colors=" <<
-				messageBuf.length() << endl;*/
 
 			bool utf = false;
 			if(messageBuf.length() > 0)
@@ -822,8 +785,9 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 				DWORD guidlen = htonl(messageBuf.getDWord());
 				char *guid = messageBuf.getBlock(guidlen);
 				kdDebug(14150) << k_funcinfo <<
-					"type-2 guid='" << guid << "'" << endl;
-				if(QString::fromLatin1(guid)==QString::fromLatin1("{0946134E-4C7F-11D1-8222-444553540000}"))
+					"TYPE-2 guid='" << guid << "'" << endl;
+
+				if(QString::fromLatin1(guid) == QString::fromLatin1("{0946134E-4C7F-11D1-8222-444553540000}"))
 				{
 					kdDebug(14150) << k_funcinfo << "Peer announces message is UTF!" << endl;
 					utf = true;
@@ -840,11 +804,7 @@ void OscarSocket::parseAdvanceMessage(Buffer &messageBuf, UserInfo &user, Buffer
 				message = QString::fromLatin1(messagetext); // TODO: encoding
 
 			if(!message.isEmpty())
-			{
-				kdDebug(14150) << k_funcinfo << "emit gotIM(), contact='" <<
-					user.sn << "', message='" << message << "'" << endl;
-				emit receivedMessage(user.sn, message, Normal);
-			}
+				parseMessage(user, message, msgType, msgFlags);
 
 			kdDebug(14150) << k_funcinfo <<
 				"SEND ACKMSG, status=" << ackStatus <<

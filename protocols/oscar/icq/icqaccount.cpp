@@ -58,7 +58,6 @@ void ICQAccount::loaded()
 
 ICQAccount::~ICQAccount()
 {
-	kdDebug(14200) << k_funcinfo << "for '" << accountId() << "' deleted" << endl;
 }
 
 KActionMenu* ICQAccount::actionMenu()
@@ -363,8 +362,7 @@ OscarContact *ICQAccount::createNewContact(
 	/*kdDebug(14200) << k_funcinfo <<
 		"contactId='" << contactId <<
 		"', displayName='" << displayName << endl;*/
-
-	return new ICQContact(contactId,displayName,this,parentContact);
+	return new ICQContact(contactId, displayName, this, parentContact);
 }
 
 #include "icqaccount.moc"

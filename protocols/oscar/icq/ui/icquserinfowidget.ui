@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>ICQUserInfoWidget</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,12 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>525</width>
-            <height>499</height>
+            <width>538</width>
+            <height>496</height>
         </rect>
     </property>
     <property name="caption">
-        <string></string>
+        <string>ICQUserInfoWidget</string>
     </property>
     <vbox>
         <property name="name">
@@ -536,7 +536,7 @@
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>20</height>
+                                <height>8</height>
                             </size>
                         </property>
                     </spacer>
@@ -820,7 +820,7 @@
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>16</width>
+                                <width>20</width>
                                 <height>8</height>
                             </size>
                         </property>
@@ -1064,7 +1064,7 @@
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>16</width>
+                                <width>20</width>
                                 <height>8</height>
                             </size>
                         </property>
@@ -1102,10 +1102,26 @@
                         <property name="name">
                             <cstring>rwAboutUser</cstring>
                         </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>7</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>2</verstretch>
+                            </sizepolicy>
+                        </property>
                     </widget>
                     <widget class="QListBox" row="1" column="0">
                         <property name="name">
                             <cstring>lstEmails</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>7</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>1</verstretch>
+                            </sizepolicy>
                         </property>
                     </widget>
                 </grid>
@@ -1149,9 +1165,6 @@
                                 <property name="name">
                                     <cstring>intrDescText3</cstring>
                                 </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
                                 <property name="sizePolicy">
                                     <sizepolicy>
                                         <hsizetype>7</hsizetype>
@@ -1181,9 +1194,6 @@
                                 <property name="name">
                                     <cstring>intrDescText2</cstring>
                                 </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
                                 <property name="sizePolicy">
                                     <sizepolicy>
                                         <hsizetype>7</hsizetype>
@@ -1210,9 +1220,6 @@
                                 <property name="name">
                                     <cstring>intrDescText4</cstring>
                                 </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
                                 <property name="sizePolicy">
                                     <sizepolicy>
                                         <hsizetype>7</hsizetype>
@@ -1238,9 +1245,6 @@
                             <widget class="QLineEdit" row="1" column="1">
                                 <property name="name">
                                     <cstring>intrDescText1</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
                                 </property>
                                 <property name="sizePolicy">
                                     <sizepolicy>
@@ -1344,9 +1348,6 @@
                                 <property name="name">
                                     <cstring>bgrdCurrOrgText2</cstring>
                                 </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
                                 <property name="sizePolicy">
                                     <sizepolicy>
                                         <hsizetype>7</hsizetype>
@@ -1360,9 +1361,6 @@
                                 <property name="name">
                                     <cstring>bgrdCurrOrgText3</cstring>
                                 </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
                                 <property name="sizePolicy">
                                     <sizepolicy>
                                         <hsizetype>7</hsizetype>
@@ -1375,9 +1373,6 @@
                             <widget class="QLineEdit" row="1" column="1">
                                 <property name="name">
                                     <cstring>bgrdCurrOrgText1</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
                                 </property>
                                 <property name="sizePolicy">
                                     <sizepolicy>
@@ -1454,9 +1449,6 @@
                                 <property name="name">
                                     <cstring>bgrdPastOrgText3</cstring>
                                 </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
                                 <property name="sizePolicy">
                                     <sizepolicy>
                                         <hsizetype>7</hsizetype>
@@ -1470,9 +1462,6 @@
                                 <property name="name">
                                     <cstring>bgrdPastOrgText2</cstring>
                                 </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
                                 <property name="sizePolicy">
                                     <sizepolicy>
                                         <hsizetype>7</hsizetype>
@@ -1485,9 +1474,6 @@
                             <widget class="QLineEdit" row="1" column="1">
                                 <property name="name">
                                     <cstring>bgrdPastOrgText1</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
                                 </property>
                                 <property name="sizePolicy">
                                     <sizepolicy>
@@ -1568,7 +1554,7 @@
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>16</width>
+                                <width>20</width>
                                 <height>8</height>
                             </size>
                         </property>
@@ -1580,32 +1566,6 @@
 </widget>
 <customwidgets>
 </customwidgets>
-<connections>
-    <connection>
-        <sender>intrCategoryCombo1</sender>
-        <signal>activated(int)</signal>
-        <receiver>ICQUserInfoWidget</receiver>
-        <slot>slotCategory1Changed(int)</slot>
-    </connection>
-    <connection>
-        <sender>intrCategoryCombo2</sender>
-        <signal>activated(int)</signal>
-        <receiver>ICQUserInfoWidget</receiver>
-        <slot>slotCategory2Changed(int)</slot>
-    </connection>
-    <connection>
-        <sender>intrCategoryCombo3</sender>
-        <signal>activated(int)</signal>
-        <receiver>ICQUserInfoWidget</receiver>
-        <slot>slotCategory3Changed(int)</slot>
-    </connection>
-    <connection>
-        <sender>intrCategoryCombo4</sender>
-        <signal>activated(int)</signal>
-        <receiver>ICQUserInfoWidget</receiver>
-        <slot>slotCategory4Changed(int)</slot>
-    </connection>
-</connections>
 <tabstops>
     <tabstop>TabWidget2</tabstop>
     <tabstop>rwNickName</tabstop>
@@ -1677,18 +1637,6 @@
 <includes>
     <include location="local" impldecl="in implementation">icquserinfowidget.ui.h</include>
 </includes>
-<slots>
-    <slot>slotCategory1Changed( int i )</slot>
-    <slot>slotCategory2Changed( int i )</slot>
-    <slot>slotCategory3Changed( int i )</slot>
-    <slot>slotCategory4Changed( int i )</slot>
-    <slot>slotOrganisation1Changed( int i )</slot>
-    <slot>slotOrganisation2Changed( int i )</slot>
-    <slot>slotOrganisation3Changed( int i )</slot>
-    <slot>slotAffiliation1Changed( int i )</slot>
-    <slot>slotAffiliation2Changed( int i )</slot>
-    <slot>slotAffiliation3Changed( int i )</slot>
-</slots>
 <functions>
     <function access="private" specifier="non virtual">init()</function>
 </functions>

@@ -156,9 +156,9 @@ protected slots:
 	/*
 	 * Called when we've received an IM
 	 */
-	void slotReceivedMessage(const QString &sender, QString &message, OscarSocket::OscarMessageType type);
+	void slotReceivedMessage(const QString &sender, const QString &message, OscarSocket::OscarMessageType type);
 
-	void slotReceivedAwayMessage(const QString &sender, QString &message);
+	void slotReceivedAwayMessage(const QString &sender, const QString &message);
 
 	/*
 	 * Called when we get a request for a direct IM session with @sn

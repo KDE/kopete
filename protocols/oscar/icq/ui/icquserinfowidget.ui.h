@@ -125,91 +125,12 @@ void ICQUserInfoWidget::init()
 }
 
 
-void ICQUserInfoWidget::slotCategory1Changed( int i )
-{
-	if ( i == 0 )
-		intrDescText1->setEnabled( false );
-	else
-		intrDescText1->setEnabled( true );
-}
 
 
-void ICQUserInfoWidget::slotCategory2Changed( int i )
-{
-	if ( i == 0 )
-		intrDescText2->setEnabled( false );
-	else
-		intrDescText2->setEnabled( true );
-}
 
 
-void ICQUserInfoWidget::slotCategory3Changed( int i )
-{
-	if ( i == 0 )
-		intrDescText3->setEnabled( false );
-	else
-		intrDescText3->setEnabled( true );
-}
 
 
-void ICQUserInfoWidget::slotCategory4Changed( int i )
-{
-	if ( i == 0 )
-		intrDescText4->setEnabled( false );
-	else
-		intrDescText4->setEnabled( true );
-}
 
 
-void ICQUserInfoWidget::slotOrganisation1Changed( int i )
-{
-	if ( i == 0 )
-		bgrdCurrOrgText1->setEnabled( false );
-	else
-		bgrdCurrOrgText1->setEnabled( true );
-}
 
-
-void ICQUserInfoWidget::slotOrganisation2Changed( int i )
-{
-	if ( i == 0 )
-		bgrdCurrOrgText2->setEnabled( false );
-	else
-		bgrdCurrOrgText2->setEnabled( true );
-}
-
-
-void ICQUserInfoWidget::slotOrganisation3Changed( int i )
-{
-	if ( i == 0 )
-		bgrdCurrOrgText3->setEnabled( false );
-	else
-		bgrdCurrOrgText3->setEnabled( true );
-}
-
-
-void ICQUserInfoWidget::slotAffiliation1Changed( int i )
-{
-	if ( i == 0 )
-		bgrdPastOrgText1->setEnabled( false );
-	else
-		bgrdPastOrgText1->setEnabled( true );
-}
-
-
-void ICQUserInfoWidget::slotAffiliation2Changed( int i )
-{
-	if ( i == 0 )
-		bgrdPastOrgText2->setEnabled( false );
-	else
-		bgrdPastOrgText2->setEnabled( true );
-}
-
-
-void ICQUserInfoWidget::slotAffiliation3Changed( int i )
-{
-	if ( i == 0 )
-		bgrdPastOrgText3->setEnabled( false );
-	else
-		bgrdPastOrgText3->setEnabled( true );
-}

@@ -26,6 +26,7 @@
 #include <qpushbutton.h>
 
 #include <kdebug.h>
+#include <kdialog.h>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kjanuswidget.h>
@@ -192,12 +193,12 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		mUserInfoSettings->wrkHomepageEdit->setText(mAccount->pluginData(mProtocol, "WorkHomePage"));
 		// =========================================================================
 
-		QHBoxLayout *buttons = new QHBoxLayout(detLay);
-		buttons->addStretch(1);
+		QHBoxLayout *buttonLayout = new QHBoxLayout(detLay, KDialog::spacingHint(), "buttonLayout");
+		buttonLayout->addStretch(1);
 		QPushButton *fetch = new QPushButton(i18n("Fetch From Server"), det, "fetch");
-		buttons->addWidget(fetch);
+		buttonLayout->addWidget(fetch);
 		QPushButton *send = new QPushButton(i18n("Send to Server"), det, "send");
-		buttons->addWidget(send);
+		buttonLayout->addWidget(send);
 
 		fetch->setDisabled(!mAccount->isConnected());
 		send->setDisabled(!mAccount->isConnected());
@@ -212,6 +213,13 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 		kdDebug(14200) << k_funcinfo <<
 			"Called with no account object, setting defaults for server and port" << endl;
 		mAccountSettings->chkSavePassword->setChecked(true);
+
+		QTime current = QTime::currentTime(Qt::LocalTime);
+		QTime currentUTC = QTime::currentTime(Qt::UTC);
+		int diff = current.hour() - currentUTC.hour();
+		kdDebug(14200) << k_funcinfo << "diff from UTC=" << diff << endl;
+
+		mProtocol->setTZComboValue(mUserInfoSettings->rwTimezone, (diff*2));
 		slotSetDefaultServer();
 	}
 
@@ -229,6 +237,17 @@ ICQEditAccountWidget::ICQEditAccountWidget(ICQProtocol *protocol,
 	connect(mUserInfoSettings->prsEmailEdit, SIGNAL(textChanged(const QString &)), this, SLOT(slotModified()));
 	connect(mUserInfoSettings->rwBday, SIGNAL(changed(QDate)), this, SLOT(slotRecalcAge(QDate)));
 	connect(mUserInfoSettings->rwBday, SIGNAL(changed(QDate)), this, SLOT(slotModified()));
+
+	connect(mUserInfoSettings->intrCategoryCombo1, SIGNAL(activated(int)), this, SLOT(slotCategory1Changed(int)));
+	connect(mUserInfoSettings->intrCategoryCombo2, SIGNAL(activated(int)), this, SLOT(slotCategory2Changed(int)));
+	connect(mUserInfoSettings->intrCategoryCombo3, SIGNAL(activated(int)), this, SLOT(slotCategory3Changed(int)));
+	connect(mUserInfoSettings->intrCategoryCombo4, SIGNAL(activated(int)), this, SLOT(slotCategory4Changed(int)));
+	connect(mUserInfoSettings->bgrdCurrOrgCombo1, SIGNAL(activated(int)), this, SLOT(slotOrganisation1Changed(int)));
+	connect(mUserInfoSettings->bgrdCurrOrgCombo2, SIGNAL(activated(int)), this, SLOT(slotOrganisation2Changed(int)));
+	connect(mUserInfoSettings->bgrdCurrOrgCombo3, SIGNAL(activated(int)), this, SLOT(slotOrganisation3Changed(int)));
+	connect(mUserInfoSettings->bgrdPastOrgCombo1, SIGNAL(activated(int)), this, SLOT(slotAffiliation1Changed(int)));
+	connect(mUserInfoSettings->bgrdPastOrgCombo2, SIGNAL(activated(int)), this, SLOT(slotAffiliation2Changed(int)));
+	connect(mUserInfoSettings->bgrdPastOrgCombo3, SIGNAL(activated(int)), this, SLOT(slotAffiliation3Changed(int)));
 }
 
 KopeteAccount *ICQEditAccountWidget::apply()
@@ -407,21 +426,21 @@ void ICQEditAccountWidget::slotSend()
 	ICQWorkUserInfo workInfo;
 
 	generalInfo.uin=static_cast<ICQContact *>(mAccount->myself())->contactName().toULong();
-	generalInfo.nickName=mUserInfoSettings->rwNickName->text();
-	generalInfo.firstName=mUserInfoSettings->rwFirstName->text();
-	generalInfo.lastName=mUserInfoSettings->rwLastName->text();
-	generalInfo.eMail=mUserInfoSettings->prsEmailEdit->text();
-	generalInfo.city=mUserInfoSettings->prsCityEdit->text();
-	generalInfo.state=mUserInfoSettings->prsStateEdit->text();
-	generalInfo.phoneNumber=mUserInfoSettings->prsPhoneEdit->text();
-	generalInfo.faxNumber=mUserInfoSettings->prsFaxEdit->text();
-	generalInfo.street=mUserInfoSettings->prsAddressEdit->text();
-	generalInfo.cellularNumber=mUserInfoSettings->prsCellphoneEdit->text();
-	generalInfo.zip=mUserInfoSettings->prsZipcodeEdit->text();
-	generalInfo.countryCode=mProtocol->getCodeForCombo(mUserInfoSettings->rwPrsCountry, mProtocol->countries());
-	generalInfo.timezoneCode=mProtocol->getTZComboValue(mUserInfoSettings->rwTimezone);
-	generalInfo.publishEmail=false; // TODO
-	generalInfo.showOnWeb=false; // TODO
+	generalInfo.nickName = mUserInfoSettings->rwNickName->text();
+	generalInfo.firstName = mUserInfoSettings->rwFirstName->text();
+	generalInfo.lastName = mUserInfoSettings->rwLastName->text();
+	generalInfo.eMail = mUserInfoSettings->prsEmailEdit->text();
+	generalInfo.city = mUserInfoSettings->prsCityEdit->text();
+	generalInfo.state = mUserInfoSettings->prsStateEdit->text();
+	generalInfo.phoneNumber = mUserInfoSettings->prsPhoneEdit->text();
+	generalInfo.faxNumber = mUserInfoSettings->prsFaxEdit->text();
+	generalInfo.street = mUserInfoSettings->prsAddressEdit->text();
+	generalInfo.cellularNumber = mUserInfoSettings->prsCellphoneEdit->text();
+	generalInfo.zip = mUserInfoSettings->prsZipcodeEdit->text();
+	generalInfo.countryCode = mProtocol->getCodeForCombo(mUserInfoSettings->rwPrsCountry, mProtocol->countries());
+	generalInfo.timezoneCode = mProtocol->getTZComboValue(mUserInfoSettings->rwTimezone);
+	generalInfo.publishEmail = false; // TODO
+	generalInfo.showOnWeb = false; // TODO
 
 	//Work Info
 	workInfo.company = mUserInfoSettings->wrkNameEdit->text();
@@ -485,6 +504,66 @@ void ICQEditAccountWidget::slotRecalcAge(QDate bday)
 		kdDebug(14200) << k_funcinfo << "age calculated from birthday is " << age << endl;
 		mUserInfoSettings->rwAge->setValue(age);
 	}
+}
+
+void ICQEditAccountWidget::slotCategory1Changed(int i)
+{
+	mUserInfoSettings->intrDescText1->setEnabled(i != 0);
+	slotModified();
+}
+
+void ICQEditAccountWidget::slotCategory2Changed(int i)
+{
+	mUserInfoSettings->intrDescText2->setEnabled(i != 0);
+	slotModified();
+}
+
+void ICQEditAccountWidget::slotCategory3Changed(int i)
+{
+	mUserInfoSettings->intrDescText3->setEnabled(i != 0);
+	slotModified();
+}
+
+void ICQEditAccountWidget::slotCategory4Changed(int i)
+{
+	mUserInfoSettings->intrDescText4->setEnabled(i != 0);
+	slotModified();
+}
+
+void ICQEditAccountWidget::slotOrganisation1Changed(int i)
+{
+	mUserInfoSettings->bgrdCurrOrgText1->setEnabled(i != 0);
+	slotModified();
+}
+
+void ICQEditAccountWidget::slotOrganisation2Changed(int i)
+{
+	mUserInfoSettings->bgrdCurrOrgText2->setEnabled(i != 0);
+	slotModified();
+}
+
+void ICQEditAccountWidget::slotOrganisation3Changed(int i)
+{
+	mUserInfoSettings->bgrdCurrOrgText3->setEnabled(i != 0);
+	slotModified();
+}
+
+void ICQEditAccountWidget::slotAffiliation1Changed(int i)
+{
+	mUserInfoSettings->bgrdPastOrgText1->setEnabled(i != 0);
+	slotModified();
+}
+
+void ICQEditAccountWidget::slotAffiliation2Changed(int i)
+{
+	mUserInfoSettings->bgrdPastOrgText2->setEnabled(i != 0);
+	slotModified();
+}
+
+void ICQEditAccountWidget::slotAffiliation3Changed(int i)
+{
+	mUserInfoSettings->bgrdPastOrgText3->setEnabled(i != 0);
+	slotModified();
 }
 
 #include "icqeditaccountwidget.moc"
