@@ -28,6 +28,7 @@
 
 #include "smssendprovider.h"
 #include "smsprotocol.h"
+#include "smscontact.h"
 
 SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& prefixValue, KopeteAccount* account, QObject* parent, const char *name)
 	: QObject( parent, name ), m_account(account)
@@ -186,7 +187,7 @@ void SMSSendProvider::send(const KopeteMessage& msg)
 	m_msg = msg;
 
 	QString message = msg.plainBody();
-	QString nr = msg.to().first()->contactId();
+	QString nr = dynamic_cast<SMSContact *>(msg.to().first())->qualifiedNumber();
 
 	if (canSend = false)
 		return;
@@ -196,36 +197,37 @@ void SMSSendProvider::send(const KopeteMessage& msg)
 
 	KProcess* p = new KProcess;
 
+	kdWarning( 14160 ) << "Executing " << QString("%1/bin/smssend").arg(prefix) << " \"" << provider << "\" " << values.join("\" \"") << "\"" << endl;
+
 	*p << QString("%1/bin/smssend").arg(prefix) << provider << values;
 
-	output.clear();
+	output = "";
 	connect( p, SIGNAL(processExited(KProcess *)), this, SLOT(slotSendFinished(KProcess *)));
-	connect( p, SIGNAL(receivedStdout(KProcess*, char*, int)), this, SLOT(slotReceivedOutput(KProcess*, char*, int)));
-	connect( p, SIGNAL(receivedStderr(KProcess*, char*, int)), this, SLOT(slotReceivedOutput(KProcess*, char*, int)));
+	connect( p, SIGNAL(receivedStdout(KProcess *, char *, int)), this, SLOT(slotReceivedOutput(KProcess *, char *, int)));
+//	connect( p, SIGNAL(receivedStderr(KProcess *, char *, int)), this, SLOT(slotReceivedOutput(KProcess *, char *, int)));
 
 	bool ps = p->start(KProcess::NotifyOnExit, KProcess::AllOutput);
 
-	kdWarning( 14160 ) << k_funcinfo << "this = " << this << ", ps = " << ps << ", p = " << p << " (should be non-zero!!)" << endl;
-
 }
 
-void SMSSendProvider::slotSendFinished(KProcess* p)
+void SMSSendProvider::slotSendFinished(KProcess *p)
 {
 	kdWarning( 14160 ) << k_funcinfo << "this = " << this << ", es = " << p->exitStatus() << ", p = " << p << " (should be non-zero!!)" << endl;
 	if (p->exitStatus() == 0)
 		emit messageSent(m_msg);
 	else
-		emit messageNotSent(m_msg, output.join("\n"));
+		emit messageNotSent(m_msg, QString().setLatin1(output));
 
-	// TODO: is there a cleaner way of doing this?
-	delete p;
+	p->deleteLater();
 }
 
-void SMSSendProvider::slotReceivedOutput(KProcess*, char  *buffer, int  buflen)
+void SMSSendProvider::slotReceivedOutput(KProcess *, char *buffer, int buflen)
 {
-	QStringList lines = QStringList::split("\n", QString::fromLocal8Bit(buffer, buflen));
-	for (QStringList::Iterator it = lines.begin(); it != lines.end(); ++it)
-		output.append(*it);
+//	QStringList lines = QStringList::split("\n", QString::fromLocal8Bit(buffer, buflen));
+//	for (QStringList::Iterator it = lines.begin(); it != lines.end(); ++it)
+	for(int i = 0; i < buflen; i++)
+		output += buffer[i];
+	kdWarning( 14160 ) << k_funcinfo << " output now = " << output << endl;
 }
 
 int SMSSendProvider::maxSize()

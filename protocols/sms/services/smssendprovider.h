@@ -67,7 +67,7 @@ private:
 
 	QString provider;
 	QString prefix;
-	QStringList output;
+	QCString output;
 
 	KopeteAccount* m_account;
 

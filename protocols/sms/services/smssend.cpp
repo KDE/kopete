@@ -48,7 +48,7 @@ SMSSend::~SMSSend()
 void SMSSend::send(const KopeteMessage& msg)
 {
 	kdWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
-	QString provider = m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSSend").arg("ProviderName"));
+	QString provider = m_account->pluginData(SMSProtocol::protocol(), "SMSSend:ProviderName");
 
 	if (provider.length() < 1)
 	{
@@ -56,7 +56,7 @@ void SMSSend::send(const KopeteMessage& msg)
 		return;
 	}
 
-	QString prefix = m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg("SMSSend").arg("Prefix"));
+	QString prefix = m_account->pluginData(SMSProtocol::protocol(), "SMSSend:Prefix");
 	if (prefix.isNull())
 	{
 		KMessageBox::error(0L, i18n("No prefix set for SMSSend, please change it in the configuration dialog"), i18n("No Prefix"));
