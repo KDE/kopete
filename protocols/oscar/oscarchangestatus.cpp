@@ -8,53 +8,47 @@
     *************************************************************************
     *                                                                       *
     * This program is free software; you can redistribute it and/or modify  *
-    * it under the terms of the GNU General Public License as published by  *
+  o  * it under the terms of the GNU General Public License as published by  *
     * the Free Software Foundation; either version 2 of the License, or     *
     * (at your option) any later version.                                   *
     *                                                                       *
     *************************************************************************
 */
-
-#include <kglobal.h>
-#include <klocale.h>
-#include <kconfig.h>
-#include <qpushbutton.h>
+#include <klineedit.h>
 #include <kcombobox.h>
-#include <qlineedit.h>
+#include <klocale.h>
 #include "kopeteaway.h"
 #include "oscarchangestatus.h"
-#include "oscarchangestatus.moc"
 #include "oscarsocket.h"
 
-OscarChangeStatus::OscarChangeStatus(QWidget *parent, const char *name ) : OscarChangeStatusBase(parent,name)
+
+OscarChangeStatus::OscarChangeStatus(OscarSocket *engine,
+				QWidget *parent, const char *name )
+				: KopeteAwayDialog(parent, name)
 {
-	connect ( cmdCancel, SIGNAL(clicked()), this, SLOT(reject()) );
-	connect ( cmdOkay, SIGNAL(clicked()), this, SLOT(accept()) );
-
-	/* Set up the SingleShot away message */
-	lneSingleShot->setText("");
-
-	// Set up the combobox
-	QStringList titles = KopeteAway::getInstance()->getTitles(); // Get the titles
-	for(QStringList::iterator i = titles.begin(); i != titles.end(); i++){
-		cmbSavedMessages->insertItem((*i)); // Should be a QString item....
-	}
-
-	// Set as modal
-	setWFlags(Qt::WType_Modal);
+		// Pointer to the oscar engine
+		mEngine = engine;
+		// Set us as modal
+		setWFlags(Qt::WType_Modal);
+		// Set our caption (from KDialog)
+		setCaption(i18n("Select Away Message"));
+		
 }
 
-OscarChangeStatus::~OscarChangeStatus()
-{
+void OscarChangeStatus::slotOkayClicked(){
+		// Get the away message and set it
+		mEngine->sendAway(OSCAR_AWAY, getSelectedAwayMessage());
+		
+		// Close the dialog
+		close();
 }
 
-/** Gets a status message */
-QString OscarChangeStatus::getStatusMessage(void)
-{
-	if(lneSingleShot->text() != ""){
-		return lneSingleShot->text();
-	} else {
-		return KopeteAway::getInstance()->getMessage(cmbSavedMessages->currentText());
-	}
+#include "oscarchangestatus.moc"
 
-}
+/*
+ * Local variables:
+ * c-indentation-style: k&r
+ * c-basic-offset: 4
+ * indent-tabs-mode: t
+ * End:
+ */

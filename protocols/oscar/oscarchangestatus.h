@@ -19,22 +19,32 @@
 #define OSCARCHANGESTATUS_H
 
 #include <qwidget.h>
-#include <oscarchangestatusbase.h>
+#include <kopeteawaydialog.h>
+#include "oscarsocket.h"
 
 /**
- * The dialog that is dislpayed when we want to put up an away message
+ * The dialog that is dislpayed when we want
+ * to put up an away message
  * @author Tom Linsky <twl6@po.cwru.edu>
- * @author Chris TenHarmsel
+ * @author Chris TenHarmsel <tenharmsel@users.sourceforge.net>
  */
 
-class OscarChangeStatus : public OscarChangeStatusBase  {
+class OscarChangeStatus : public KopeteAwayDialog {
    Q_OBJECT
-public: 
-	OscarChangeStatus(QWidget *parent=0, const char *name=0);
-	~OscarChangeStatus();
-  /** Gets a status message */
-  QString getStatusMessage(void);
-
+	public: 
+	    OscarChangeStatus(OscarSocket *engine,
+							QWidget *parent=0, const char *name=0);
+	protected slots:
+			virtual void slotOkayClicked();
+	private:
+	    OscarSocket *mEngine;
 };
 
 #endif
+/*
+ * Local variables:
+ * c-indentation-style: k&r
+ * c-basic-offset: 4
+ * indent-tabs-mode: t
+ * End:
+ */
