@@ -323,10 +323,10 @@ void MSNSwitchBoardSocket::slotSendMsg( const KopeteMessage &msg )
 
 	kdDebug() << "MSNSwitchBoardSocket::slotSendMsg" << endl;
 
-	QCString head =
+	QString head =
 		"MIME-Version: 1.0\r\n"
 		"Content-Type: text/plain; charset=UTF-8\r\n"
-		"X-MMS-IM-Format: FN=MS%20Serif; EF=; "
+		"X-MMS-IM-Format: FN=MS%20Serif; EF=; ";
 
 	// Color support
 	if (msg.fg().isValid()) {
