@@ -109,6 +109,7 @@ void JabberEditAccountWidget::reopen ()
 	if(cbCustomServer->isChecked ())
 	{
 		mServer->setEnabled(true);
+		mPort->setEnabled(true);
 	}
 	else
 	{
@@ -205,13 +206,17 @@ void JabberEditAccountWidget::updateServerField ()
 	if(!cbCustomServer->isChecked())
 	{
 		QString newServer = mID->text().section("@", 1);
-
+		mPort->setValue(5222);
+		// check if ssl is enabled and set the port correctly
+		sslToggled(cbUseSSL->isChecked());
 		mServer->setText(newServer);
 		mServer->setEnabled(false);
+		mPort->setEnabled(false);
 	}
 	else
 	{
 		mServer->setEnabled(true);
+		mPort->setEnabled(true);
 	}
 
 }
