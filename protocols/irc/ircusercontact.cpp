@@ -263,27 +263,27 @@ void IRCUserContact::whoIsComplete()
 	if( m_protocol->commandInProgress() )
 	{
 		//User info
-		QString msg = i18n("%1 is (%2@%3): %4\n")
+		QString msg = i18n("%1 is (%2@%3): %4<br/>")
 			.arg(m_nickName)
 			.arg(mInfo.userName)
 			.arg(mInfo.hostName)
 			.arg(mInfo.realName);
 
 		if( mInfo.isIdentified )
-			msg += i18n("%1 is authenticated with NICKSERV\n").arg(m_nickName);
+			msg += i18n("%1 is authenticated with NICKSERV<br/>").arg(m_nickName);
 
 		if( mInfo.isOperator )
-			msg += i18n("%1 is an IRC operator\n").arg(m_nickName);
+			msg += i18n("%1 is an IRC operator<br/>").arg(m_nickName);
 
 		//Channels
 		msg += i18n("on channels %1\n").arg(mInfo.channels.join(" ; "));
 
 		//Server
-		msg += i18n("on IRC via server %1 ( %2 )\n").arg(mInfo.serverName).arg(mInfo.serverInfo);
+		msg += i18n("on IRC via server %1 ( %2 )<br/>").arg(mInfo.serverName).arg(mInfo.serverInfo);
 
 		//Idle
 		QString idleTime = formattedIdleTime();
-		msg += i18n("idle: %2\n").arg( idleTime.isEmpty() ? QString::number(0) : idleTime );
+		msg += i18n("idle: %2<br/>").arg( idleTime.isEmpty() ? QString::number(0) : idleTime );
 
 		//End
 		m_account->appendMessage(msg, IRCAccount::InfoReply );

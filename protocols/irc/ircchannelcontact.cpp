@@ -290,7 +290,7 @@ void IRCChannelContact::userPartedChannel(const QString &nickname,const QString 
 		KopeteContact *c = locateUser( nickname );
 		if ( c )
 		{
-			manager()->removeContact( c, reason );
+			manager()->removeContact( c, KopeteMessage::unescape(reason) );
 			if( c->metaContact()->isTemporary() && !static_cast<IRCContact*>(c)->isChatting( manager(false) ) )
 				c->deleteLater();
 		}

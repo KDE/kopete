@@ -477,6 +477,9 @@ void IRCAccount::slotDisconnected()
 	triedAltNick = false;
 	mySelf()->setOnlineStatus( m_protocol->m_UserStatusOffline );
 	m_contactManager->removeFromNotifyList( m_engine->nickName() );
+
+	if( !autoConnect.isNull() )
+		deleteLater();
 }
 
 void IRCAccount::disconnect()
