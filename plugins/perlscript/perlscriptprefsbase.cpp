@@ -1,33 +1,25 @@
-#include <klocale.h>
-/****************************************************************************
-** Form implementation generated from reading ui file './perlscriptprefsbase.ui'
-**
-** Created: Thu Jan 30 16:51:04 2003
-**      by: The User Interface Compiler ()
-**
-** WARNING! All changes made in this file will be lost!
-****************************************************************************/
-
 #include "perlscriptprefsbase.h"
 
-#include <qvariant.h>
-#include <klistview.h>
-#include <ktrader.h>
-#include <klibloader.h>
 #include <qhbox.h>
-#include <kpushbutton.h>
 #include <qheader.h>
 #include <qlayout.h>
 #include <qtooltip.h>
+#include <qvariant.h>
 #include <qwhatsthis.h>
-#include <kstdaction.h>
-#include <kactioncollection.h>
 
+#include <kactioncollection.h>
+#include <klibloader.h>
+#include <klistview.h>
+#include <klocale.h>
+#include <kpushbutton.h>
+#include <kstdaction.h>
 #include <ktexteditor/clipboardinterface.h>
-#include <ktexteditor/highlightinginterface.h>
 #include <ktexteditor/document.h>
+#include <ktexteditor/highlightinginterface.h>
 #include <ktexteditor/view.h>
-/* 
+#include <ktrader.h>
+
+/*
  *  Constructs a PerlScriptPrefsUI as a child of 'parent', with the 
  *  name 'name' and widget flags set to 'f'.
  */
@@ -62,7 +54,7 @@ PerlScriptPrefsUI::PerlScriptPrefsUI( QWidget* parent, const char* name, WFlags 
 	f->setFrameStyle( QFrame::WinPanel | QFrame::Sunken );
 	KTrader::OfferList offers = KTrader::self()->query( "KTextEditor/Document" );
 	KService::Ptr service = *offers.begin();
-	KLibFactory *factory = KLibLoader::self()->factory( service->library() );
+	KLibFactory *factory = KLibLoader::self()->factory( service->library().latin1() );
 	editDocument = static_cast<KTextEditor::Document *>( factory->create( f, 0, "KTextEditor::Document" ) );
 	editArea = editDocument->createView( f, 0 );
 	setHighlight();
