@@ -70,6 +70,10 @@ MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
 
 void MSNSwitchBoardSocket::connectToSwitchBoard(QString ID, QString address, QString auth)
 {
+	// we need these for the handshake later on (when we're connected)
+	m_ID = ID;
+	m_auth = auth;
+
 	QString server = address.left( address.find( ":" ) );
 	uint port = address.right( address.length() - address.findRev( ":" ) - 1 ).toUInt();
 
@@ -83,11 +87,6 @@ void MSNSwitchBoardSocket::connectToSwitchBoard(QString ID, QString address, QSt
 		this, SLOT( slotSocketClosed( ) ) );
 
 	connect( server, port );
-
-	// we need these for the handshake later on (when we're connected)
-	m_ID = ID;
-	m_auth = auth;
-
 }
 
 void MSNSwitchBoardSocket::handleError( uint code, uint id )
