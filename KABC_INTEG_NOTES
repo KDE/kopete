@@ -51,7 +51,7 @@ Implementation notes
 
 7) Deferred association accessed via MC properties dialog
 
-8) Don't remove the kabc fields, other IM clients might be using them.  (and the user might still want to have other data like the phone number)
+8) Don't remove the kabc fields, other IM clients might be using them.  (and the user might still want to have other data like the phone number) * See the kabc section
 
 Therefore we need an Association Dialog accessed in wizard and from the MC properties dialog.  Note, this name sucks, don't write any classes using it.
 
@@ -99,7 +99,7 @@ It would be usefull if KABC could remember what application writes an entry. so 
 
 Or like the language or the PGP public key
 
-
+It is too complex to store the phone number according to icq as well as the kabc phone number and every other protocol's idea of phone.  The fields would be of no use to any app other than the inserting program or else we would have to update the world.  We *should* have a facility to insert information obtained from protocols into the common kabc fields but this is a hard problem to solve neatly.
 
 
 KABC Participation modes
@@ -201,6 +201,8 @@ On receipt of the invitation, IM app needs to recognise the invite and relay it 
 Some problem:
   Each protocol does that in a different way.  The Game/Application  need to know some protocol specific stuff (the MSN application ID for example)
 
+  I was thinking about Atlantik, and other games that are protocol independent.  "Protocol games" are protocols' problems.
+
 
 
  'myself' integration
@@ -213,6 +215,7 @@ see also Bug 63297: "meta-contact" global(local) display nickname for all accoun
 
 Notes: some user might don't want to export their info the the server.
 
+Yes this would be cool.  I think we need a general UI to control the flow of contact information between kabc and kopete.  The myself issue is the same as the metacontacts issue.
 
 
 What about the API?
