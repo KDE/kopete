@@ -57,6 +57,7 @@ private:
 	int getImage(int, char *,int ,int ,int ,int ,int );
 
 	bool m_tookFirst;
+	bool m_wentAway;
 
 	int width;
 	int height;

@@ -109,6 +109,7 @@ MotionAwayPlugin::MotionAwayPlugin( QObject *parent, const char *name,
 
         /* We have the first image now */
 		m_tookFirst = true;
+		m_wentAway = false;
      
 		m_captureTimer->start( 1000 );
 		m_awayTimer->start( mPrefs->awayTimeout() * 60 * 1000 );
@@ -220,8 +221,10 @@ void MotionAwayPlugin::slotCapture()
             kdDebug() << "[MotionAway Plugin] : Motion Detected. [" << diffs << "] Reseting Timeout" << endl;
 
 			/* If we were away, now we are available again */
-			if ( mPrefs->goAvailable() && KopeteAway::globalAway() )
+			if ( mPrefs->goAvailable() && !KopeteAway::globalAway() && m_wentAway)
+			{
 				slotActivity();
+			}
 
 			/* We reset the away timer */
             m_awayTimer->stop();
@@ -247,14 +250,16 @@ void MotionAwayPlugin::slotCapture()
 void MotionAwayPlugin::slotActivity()
 {
 		kdDebug() << "[MotionAway Plugin] : User activity!, going available" << endl;
+		m_wentAway = false;
 		kopeteapp->slotSetAvailableAll();
 }
 
 void MotionAwayPlugin::slotTimeout()
 {
-	if ( !KopeteAway::globalAway() )
+	if ( !KopeteAway::globalAway() && ! m_wentAway )
 	{
 		kdDebug() << "[MotionAway Plugin] : Timeout and no user activity, going away" << endl;
+        m_wentAway = true;
 		kopeteapp->setAwayAll();
 	}
 }
