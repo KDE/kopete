@@ -165,7 +165,11 @@ AppearanceConfig::AppearanceConfig(QWidget *parent, const char* /*name*/, const 
 		this, SLOT(emitChanged()));
 
 	// don't enable the checkbox if XRender is not available
-	mPrfsContactList->mFadeVisibility->setEnabled( HAVE_XRENDER );
+	#ifdef HAVE_XRENDER
+	mPrfsContactList->mFadeVisibility->setEnabled(true);
+	#else
+	mPrfsContactList->mFadeVisibility->setEnabled(false);
+	#endif
 
 	mAppearanceTabCtl->addTab(mPrfsContactList, i18n("Contact List"));
 
