@@ -55,7 +55,7 @@ public:
 	virtual QString identityId() const;
 
 	GaduContactsList::ContactLine* contactDetails();
-	
+
 	// this one set's only:
 	// email, firstname, surname, phonenr, ignored, nickname
 	// uin is const for GaduContact, and displayname needs to be changed through metaContact
@@ -65,6 +65,8 @@ public:
 	void	setDescription( const QString& );
 
 	QString description() const;
+
+	static QString findBestContactName( const GaduContactsList::ContactLine* );
 
 	uin_t uin() const;
 
@@ -83,7 +85,7 @@ protected:
 
 private:
 	const uin_t		uin_;
-	
+
 	KopeteMessageManager*	msgManager_;
 	QString			description_;
 	QString			parentIdentity_;

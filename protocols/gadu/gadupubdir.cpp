@@ -22,6 +22,8 @@
 //
 
 #include "gadupubdir.h"
+#include "gadueditcontact.h"
+#include "gaducontactlist.h"
 
 #include <qpushbutton.h>
 #include <qtextedit.h>
@@ -56,14 +58,14 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* pare
 	initConnections();
 
 	kdDebug( 14100 ) << "search for Uin: " << searchFor << endl;
-	
+
 	mMainWidget->listFound->clear();
 	show();
 
 	if ( searchFor == 0 ) {
 		return;
 	}
-	
+
 	mMainWidget->pubsearch->raiseWidget( 1 );
 	mMainWidget->radioByUin->setChecked( true );
 
@@ -75,16 +77,16 @@ GaduPublicDir::GaduPublicDir( GaduAccount* account, int searchFor, QWidget* pare
 
 	// now it is time to switch to Right Page(tm)
 	fName	=  fSurname =  fNick = fCity = QString::null;
-	fUin		= searchFor;
-	fOnlyOnline= false;
+	fUin	= searchFor;
 	fGender	= fAgeFrom = fAgeTo = 0;
+	fOnlyOnline = false;
 
 	mAccount->pubDirSearch( fName, fSurname, fNick,
 				fUin, fCity, fGender, fAgeFrom, fAgeTo, fOnlyOnline );
 
 }
 
-void 
+void
 GaduPublicDir::createWidget()
 {
 	setCaption( i18n( "Gadu-Gadu Public Directory" ) );
@@ -102,40 +104,72 @@ GaduPublicDir::createWidget()
 	showButton( User1, false );
 	showButton( User3, false );
 	enableButton( User2, false );
-	
+
 	mMainWidget->radioByData->setChecked( true );
 
 	mAccount->pubDirSearchClose();
 
 }
 
-void 
+void
+GaduPublicDir::slotAddContact()
+{
+	GaduContactsList::ContactLine* cl = new GaduContactsList::ContactLine;
+	QListViewItem* item = mMainWidget->listFound->currentItem();
+
+	cl->ignored	= false;
+	cl->firstname	= item->text( 1 );
+	cl->uin		= item->text( 5 );
+	cl->nickname 	= item->text( 2 );
+
+	cl->surname	= fSurname;
+
+	GaduEditContact *ed = new GaduEditContact( mAccount, cl, this );
+}
+
+void
+GaduPublicDir::slotListSelected(  )
+{
+	QListViewItem* item = mMainWidget->listFound->currentItem();
+	if ( item ) {
+		enableButton( User3, true );
+	}
+	else {
+		enableButton( User3, false );
+	}
+}
+
+void
 GaduPublicDir::initConnections()
 {
 	connect( this, SIGNAL( user2Clicked() ), SLOT( slotSearch() ) );
 	connect( this, SIGNAL( user1Clicked() ), SLOT( slotNewSearch() ) );
+	connect( this, SIGNAL( user3Clicked() ), SLOT( slotAddContact() ) );
 
 	connect( mAccount, SIGNAL( pubDirSearchResult( const SearchResult& ) ),
 				SLOT( slotSearchResult( const SearchResult& ) ) );
 
 	connect( mMainWidget->nameS,		SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
-	connect( mMainWidget->surname,	SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
+	connect( mMainWidget->surname,		SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
 	connect( mMainWidget->nick,		SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
 	connect( mMainWidget->UIN,		SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
 	connect( mMainWidget->cityS,		SIGNAL( textChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
 	connect( mMainWidget->gender,		SIGNAL( activated( const QString &) ), SLOT( inputChanged( const QString & ) ) );
-	connect( mMainWidget->ageFrom,	SIGNAL( valueChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
+	connect( mMainWidget->ageFrom,		SIGNAL( valueChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
 	connect( mMainWidget->ageTo,		SIGNAL( valueChanged( const QString &) ), SLOT( inputChanged( const QString & ) ) );
 	connect( mMainWidget->radioByData,	SIGNAL( toggled( bool ) ), SLOT( inputChanged( bool ) ) );
+
+	connect( mMainWidget->listFound,	SIGNAL( selectionChanged () ), SLOT( slotListSelected() ) );
+
 }
 
-void 
+void
 GaduPublicDir::inputChanged( bool )
 {
 	inputChanged( QString::null );
 }
 
-void 
+void
 GaduPublicDir::inputChanged( const QString& )
 {
 	if ( validateData() == false ) {
@@ -146,17 +180,17 @@ GaduPublicDir::inputChanged( const QString& )
 	}
 }
 
-void 
+void
 GaduPublicDir::getData()
 {
-	fName	= mMainWidget->nameS->text();
+	fName		= mMainWidget->nameS->text();
 	fSurname	= mMainWidget->surname->text();
 	fNick		= mMainWidget->nick->text();
 	fUin		= mMainWidget->UIN->text().toInt();
-	fGender	= mMainWidget->gender->currentItem();
-	fOnlyOnline= mMainWidget->onlyOnline->isChecked();
+	fGender		= mMainWidget->gender->currentItem();
+	fOnlyOnline	= mMainWidget->onlyOnline->isChecked();
 	fAgeFrom	= mMainWidget->ageFrom->value();
-	fAgeTo	= mMainWidget->ageTo->value();
+	fAgeTo		= mMainWidget->ageTo->value();
 	fCity		= mMainWidget->cityS->text();
 }
 
@@ -164,11 +198,11 @@ GaduPublicDir::getData()
 #define CHECK_STRING(A) { if ( !A.isEmpty() ) { return true; } }
 #define CHECK_INT(A) { if ( A ) { return true; } }
 
-bool 
+bool
 GaduPublicDir::validateData()
 {
 	getData();
-    
+
 	if ( mMainWidget->radioByData->isChecked() ) {
 		CHECK_STRING( fCity );
 		CHECK_STRING( fName );
@@ -179,13 +213,14 @@ GaduPublicDir::validateData()
 		CHECK_INT( fAgeTo );
 	}
 	else {
+		fSurname = QString::null;
 		CHECK_INT( fUin );
 	}
 	return false;
 }
 
 // Move to GaduProtocol someday
-QPixmap 
+QPixmap
 GaduPublicDir::iconForStatus( uint status )
 {
 	QPixmap n;
@@ -196,7 +231,7 @@ GaduPublicDir::iconForStatus( uint status )
 	return n;
 }
 
-void 
+void
 GaduPublicDir::slotSearchResult( const SearchResult& result )
 {
 	QListView* list = mMainWidget->listFound;
@@ -228,11 +263,12 @@ GaduPublicDir::slotSearchResult( const SearchResult& result )
 	}
 
 	enableButton( User1, true );
+	enableButton( User3, false );
 	mMainWidget->pubsearch->setDisabled( false );
 
 }
 
-void 
+void
 GaduPublicDir::slotNewSearch()
 {
 	mMainWidget->pubsearch->raiseWidget( 0 );
@@ -246,7 +282,7 @@ GaduPublicDir::slotNewSearch()
  	mAccount->pubDirSearchClose();
 }
 
-void 
+void
 GaduPublicDir::slotSearch()
 {
 
@@ -280,11 +316,11 @@ GaduPublicDir::slotSearch()
 
 	if ( mMainWidget->radioByData->isChecked() ) {
 		mAccount->pubDirSearch( fName, fSurname, fNick,
-								0, fCity, fGender, fAgeFrom, fAgeTo, fOnlyOnline );
+					0, fCity, fGender, fAgeFrom, fAgeTo, fOnlyOnline );
 	}
 	else {
 		mAccount->pubDirSearch( empty, empty, empty,
-								fUin, empty, 0, 0, 0,  fOnlyOnline );
+					fUin, empty, 0, 0, 0,  fOnlyOnline );
 	}
 }
 

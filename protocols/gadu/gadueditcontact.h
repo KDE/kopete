@@ -25,34 +25,36 @@
 
 #include <kdialogbase.h>
 
-#include <qstring.h>
-#include <qwidget.h>
-
 #include "gaducontactlist.h"
 #include "gaduadd.h"
 
 class GaduAccount;
 class GaduAddUI;
 class QLabel;
+class QString;
+class QWidget;
 
 class GaduEditContact : public KDialogBase
 {
 	Q_OBJECT
 
 public:
-	GaduEditContact( GaduAccount*, GaduContact*, 
+	GaduEditContact( GaduAccount*, GaduContact*,
+		    QWidget* parent = 0, const char* name = 0 );
+	GaduEditContact( GaduAccount*,  GaduContactsList::ContactLine*,
 		    QWidget* parent = 0, const char* name = 0 );
 protected slots:
 	void slotApply();
 
 private:
 
+	void init();
 	void fillIn();
 
 	GaduAccount*	account_;
 	GaduContact*	contact_;
 	gaduAddUI*	ui_;
-	GaduContactsList::ContactLine* cl;
+	GaduContactsList::ContactLine* cl_;
 };
 
 #endif

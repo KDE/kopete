@@ -142,13 +142,13 @@ GaduContact::customContextMenuActions()
 {
 	QPtrList<KAction> *fakeCollection = new QPtrList<KAction>();
 	//show profile
-	KAction* actionShowProfile = new KAction( i18n("Show Profile") , "info", 0,  
+	KAction* actionShowProfile = new KAction( i18n("Show Profile") , "info", 0,
 						this, SLOT( slotShowPublicProfile() ),
 						this, "actionShowPublicProfile" );
 
 	fakeCollection->append( actionShowProfile );
-	
-	KAction* actionEditContact = new KAction( i18n("Edit...") , "edit", 0,  
+
+	KAction* actionEditContact = new KAction( i18n("Edit...") , "edit", 0,
 						this, SLOT( slotEditContact() ),
 						this, "actionEditContact" );
 
@@ -224,12 +224,12 @@ GaduContact::contactDetails()
 	cl->firstname	= property( "firstName" ).value().toString();
 	cl->surname	= property( "lastName" ).value().toString();
 	cl->nickname	= property( "nickName" ).value().toString();
-	
+
 	cl->email	= property( "emailAddress" ).value().toString();
 	cl->phonenr	= property( "privPhoneNum" ).value().toString();
-	
+
 	cl->ignored	= ( property( "ignored" ).value().toString() == "true" );
-	
+
 	cl->uin		= QString::number( uin_ );
 	cl->displayname	= metaContact()->displayName();
 
@@ -254,6 +254,53 @@ GaduContact::contactDetails()
 	return cl;
 }
 
+QString
+GaduContact::findBestContactName( const GaduContactsList::ContactLine* cl )
+{
+	QString name;
+
+	if ( cl == NULL ) {
+		return name;
+	}
+
+	if ( cl->uin.isEmpty() ) {
+		return name;
+	}
+
+	name = cl->uin;
+
+	if ( cl->displayname.length() ) {
+		name = cl->displayname;
+	}
+	else {
+		// no name either
+		if ( cl->nickname.isEmpty() ) {
+			// maybe we can use fistname + surname ?
+			if ( cl->firstname.isEmpty() && cl->surname.isEmpty() ) {
+				name = cl->uin;
+			}
+			// what a shame, i have to use UIN than :/
+			else {
+				if ( cl->firstname.isEmpty() ) {
+					name = cl->surname;
+				}
+				else {
+					if ( cl->surname.isEmpty() ) {
+						name = cl->firstname;
+					}
+					else {
+						name = cl->firstname + " " + cl->surname;
+					}
+				}
+			}
+		}
+		else {
+			name = cl->nickname;
+		}
+	}
+
+	return name;
+}
 
 void GaduContact::messageAck()
 {

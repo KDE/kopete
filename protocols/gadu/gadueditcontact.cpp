@@ -26,6 +26,7 @@
 
 #include <ktextedit.h>
 #include <klocale.h>
+#include <kdebug.h>
 
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
@@ -40,21 +41,43 @@ GaduEditContact::GaduEditContact( GaduAccount* account, GaduContact* contact,
 			 KDialogBase::Ok, true ), account_( account ), contact_( contact )
 {
 
-	if ( !contact || !account ) {
+	if ( !account ) {
 		return;
 	}
 
-	cl = contact->contactDetails();
-	if ( !cl ) {
+	if ( contact ) {
+		cl_ = contact->contactDetails();
+	}
+	else {
 		return;
 	}
 
+	init();
+}
+
+GaduEditContact::GaduEditContact( GaduAccount* account,  GaduContactsList::ContactLine* clin,
+		    QWidget* parent , const char* name  )
+: KDialogBase( parent, name, true, i18n( "Edit Contacts properties" ),
+			 KDialogBase::Ok | KDialogBase::Cancel,
+			 KDialogBase::Ok, true ), account_( account ), contact_( NULL )
+{
+
+	if ( !account ) {
+		return;
+	}
+	cl_ = clin;
+	init();
+}
+
+void
+GaduEditContact::init()
+{
 	ui_ = new gaduAddUI( this );
 	setMainWidget( ui_ );
-	
+
 	// fill values from cl into proper fields on widget
 	fillIn();
-	
+
 	show();
 	connect( this, SIGNAL( okClicked() ), SLOT( slotApply() ) );
 }
@@ -64,13 +87,13 @@ GaduEditContact::fillIn()
 {
 // grey it out, it shouldn't be editable
 	ui_->addEdit_->setDisabled( true );
-	ui_->addEdit_->setText( QString::number( contact_->uin() ) );
+	ui_->addEdit_->setText( cl_->uin );
 
-	ui_->fornameEdit_->setText( cl->firstname );
-	ui_->snameEdit_->setText( cl->surname );
-	ui_->nickEdit_->setText( cl->nickname );
-	ui_->emailEdit_->setText( cl->email );
-	ui_->telephoneEdit_->setText( cl->phonenr );
+	ui_->fornameEdit_->setText( cl_->firstname );
+	ui_->snameEdit_->setText( cl_->surname );
+	ui_->nickEdit_->setText( cl_->nickname );
+	ui_->emailEdit_->setText( cl_->email );
+	ui_->telephoneEdit_->setText( cl_->phonenr );
 //	ui_->notAFriend_;
 
 }
@@ -78,13 +101,27 @@ GaduEditContact::fillIn()
 void
 GaduEditContact::slotApply()
 {
-	cl->firstname = ui_->fornameEdit_->text();
-	cl->surname = ui_->snameEdit_->text();
-	cl->nickname = ui_->nickEdit_->text();
-	cl->email = ui_->emailEdit_->text();
-	cl->phonenr = ui_->telephoneEdit_->text();
+	cl_->firstname = ui_->fornameEdit_->text().stripWhiteSpace();
+	cl_->surname = ui_->snameEdit_->text().stripWhiteSpace();
+	cl_->nickname = ui_->nickEdit_->text().stripWhiteSpace();
+	cl_->email = ui_->emailEdit_->text().stripWhiteSpace();
+	cl_->phonenr = ui_->telephoneEdit_->text().stripWhiteSpace();
 
-	contact_->setContactDetails( cl );
+	if ( contact_ == NULL ) {
+		// contact doesn't exists yet, create it and set all the details
+		bool s = account_->addContact( cl_->uin, GaduContact::findBestContactName( cl_ ), 0L, KopeteAccount::DontChangeKABC, QString::null, false );
+		if ( s == false ) {
+			kdDebug(14100) << "There was a problem adding UIN "<< cl_->uin << "to users list" << endl;
+			return;
+		}
+		contact_ = static_cast<GaduContact*>( account_->contacts()[ cl_->uin ] );
+		if ( contact_ == NULL ) {
+ 			kdDebug(14100) << "oops, no KopeteContact in contacts()[] for some reason, for \"" << cl_->uin << "\"" << endl;
+			return;
+		}
+	}
+
+	contact_->setContactDetails( cl_ );
 }
 
 #include "gadueditcontact.moc"

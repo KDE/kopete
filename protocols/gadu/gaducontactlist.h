@@ -23,14 +23,15 @@
 #ifndef GADUCONTACTLIST_H
 #define GADUCONTACTLIST_H
 
-#include "qstring.h"
-#include "qvaluelist.h"
+#include <qvaluelist.h>
+
+class QString;
 
 class GaduContactsList
 {
 public:
 	struct ContactLine {
-	
+
 		QString displayname;
 		QString group;
 		QString uin;
@@ -41,7 +42,7 @@ public:
 		QString email;
 		bool 	ignored;
 	};
-	
+
 	GaduContactsList();
 	GaduContactsList( QString );
 	~GaduContactsList();

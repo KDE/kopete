@@ -41,6 +41,7 @@
 class GaduProtocol;
 class GaduAccount;
 class GaduPublicDirectory;
+class QListViewItem;
 
 class GaduPublicDir : public KDialogBase
 {
@@ -55,8 +56,11 @@ private slots:
 	void slotSearch();
 	void slotNewSearch();
 	void slotSearchResult( const SearchResult& result );
+	void slotAddContact();
 	void inputChanged( const QString& );
 	void inputChanged( bool );
+	void slotListSelected();
+
 
 private:
 	void getData();

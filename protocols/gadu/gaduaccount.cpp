@@ -100,7 +100,7 @@ GaduAccount::initActions()
 	listFromFileAction	= new KAction( i18n( "Import Contacts from file" ), "", 0,
 							this, SLOT( slotImportContactsFromFile() ), this, "actionListgetFile" );
 	friendsModeAction	= new KToggleAction( i18n( "Only for Friends" ), "", 0,
-							this, SLOT( slotFriendsMode() ), this, 
+							this, SLOT( slotFriendsMode() ), this,
 							"actionFriendsMode" );
 }
 
@@ -221,19 +221,19 @@ GaduAccount::actionMenu()
 	actionMenu_->insert( new KAction( i18n( "Set &Description" ),
 			"info",
 			0, this, SLOT( slotDescription() ), this, "actionGaduDescription" ) );
-	
+
 	actionMenu_->insert( friendsModeAction );
-	
+
 	actionMenu_->popupMenu()->insertSeparator();
 
 	actionMenu_->insert( searchAction );
-	
+
 	actionMenu_->popupMenu()->insertSeparator();
 
 	actionMenu_->insert( listputAction );
-	
+
 	actionMenu_->popupMenu()->insertSeparator();
-	
+
 	actionMenu_->insert( listToFileAction );
 	actionMenu_->insert( listFromFileAction );
 
@@ -660,7 +660,6 @@ GaduAccount::slotSessionDisconnect()
 	}
 }
 
-
 void
 GaduAccount::userlist( const QString& contactsListString )
 {
@@ -685,6 +684,8 @@ GaduAccount::userlist( const QString& contactsListString )
 			kdDebug(14100) << "UIN already exists in contacts "<< contactsList[i].uin << endl;
 		}
 		else {
+			contactName = GaduContact::findBestContactName( &contactsList[i] );
+			/*
 			if ( contactsList[i].displayname.length() ) {
 				contactName = contactsList[i].displayname;
 			}
@@ -714,7 +715,7 @@ GaduAccount::userlist( const QString& contactsListString )
 					contactName = contactsList[i].nickname;
 				}
 			}
-
+*/
 			bool s = addContact( contactsList[i].uin, contactName, 0L, KopeteAccount::DontChangeKABC, QString::null, false );
 			if ( s == false ) {
 				kdDebug(14100) << "There was a problem adding UIN "<< contactsList[i].uin << "to users list" << endl;
@@ -729,7 +730,7 @@ GaduAccount::userlist( const QString& contactsListString )
 
 		// update/add infor for contact
 		contact->setContactDetails( &contactsList[i] );
-		
+
 		if ( !( contactsList[i].group.isEmpty() ) ) {
 			// FIXME: libkopete bug i guess, by default contact goes to top level group
 			// if user desrired to see contact somewhere else, remove it from top level one

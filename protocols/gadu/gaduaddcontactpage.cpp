@@ -64,8 +64,8 @@ GaduAddContactPage::apply( KopeteAccount* a , KopeteMetaContact* mc )
 {
 	if ( canAdd_ ) {
 		if ( validateData() ) {
-			QString userid	= addUI_->addEdit_->text();
-			QString name	= addUI_->nickEdit_->text();
+			QString userid	= addUI_->addEdit_->text().stripWhiteSpace();
+			QString name	= addUI_->nickEdit_->text().stripWhiteSpace();
 			if ( a != account_ ) {
 				kdDebug(14100) << "Problem since accounts differ: " << a->accountId()
 								<< " , " << account_->accountId() << endl;
@@ -74,11 +74,11 @@ GaduAddContactPage::apply( KopeteAccount* a , KopeteMetaContact* mc )
 				return false;
 			}
 			GaduContact *contact = static_cast<GaduContact*>( a->contacts()[ userid ] );
-			
-			contact->setProperty( "emailAddress", addUI_->emailEdit_->text() );
-			contact->setProperty( "firstName", addUI_->fornameEdit_->text() );
-			contact->setProperty( "lastName", addUI_->snameEdit_->text() );
-			contact->setProperty( "privPhoneNum", addUI_->telephoneEdit_ ->text() );
+
+			contact->setProperty( "emailAddress", addUI_->emailEdit_->text().stripWhiteSpace() );
+			contact->setProperty( "firstName", addUI_->fornameEdit_->text().stripWhiteSpace() );
+			contact->setProperty( "lastName", addUI_->snameEdit_->text().stripWhiteSpace() );
+			contact->setProperty( "privPhoneNum", addUI_->telephoneEdit_ ->text().stripWhiteSpace() );
 			contact->setProperty( "ignored", i18n( "ignored" ), "false" );
 			contact->setProperty( "nickName", i18n( "nick name" ), name );
 		}

@@ -33,7 +33,7 @@ GaduContactsList::~GaduContactsList()
 }
 
 void
-GaduContactsList::addContact( ContactLine& cl ) 
+GaduContactsList::addContact( ContactLine& cl )
 {
 	cList.append( cl );
 }
@@ -52,7 +52,7 @@ GaduContactsList::addContact(
 )
 {
 	ContactLine cl;
-	
+
 	cl.displayname	= displayname;
 	cl.group	= group;
 	cl.uin		= uin;
@@ -62,7 +62,7 @@ GaduContactsList::addContact(
 	cl.phonenr	= phonenr;
 	cl.email	= email;
 	cl.ignored	= ignored;
-	
+
 	cList.append( cl );
 
 }

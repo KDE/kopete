@@ -24,6 +24,7 @@
 #define GADUADDCONTACTPAGE_H
 
 #include "addcontactpage.h"
+#include "gaducontactlist.h"
 #include <qwidget.h>
 
 class GaduAccount;
@@ -40,12 +41,13 @@ public:
 	virtual bool validateData();
 	virtual bool apply( KopeteAccount* , KopeteMetaContact * );
 
+
 private:
 	GaduAccount*	account_;
 	gaduAddUI*	addUI_;
 	QLabel*		noaddMsg1_;
 	QLabel*		noaddMsg2_;
-	bool			canAdd_;
+	bool		canAdd_;
 };
 
 #endif
