@@ -27,6 +27,7 @@
 #include <klocale.h>
 
 #include "pluginconfig.h"
+#include "kopeteprotocol.h"
 
 PluginListItem::PluginListItem(const bool _exclusive, bool _checked, const KopeteLibraryInfo &_info, QListView *_parent)
 	: QCheckListItem(_parent, _info.name, CheckBox)
@@ -141,6 +142,36 @@ PluginConfig::PluginConfig( QObject *_parent )
 	otherList = new PluginListView(this);
 	connect(otherList, SIGNAL(stateChange(PluginListItem *, bool)),
 		this, SLOT(stateChange(PluginListItem *, bool)));
+
+	connect( LibraryLoader::pluginLoader() , SIGNAL( pluginLoaded(KopetePlugin*) ) , this , SLOT(slotPluginLoaded(KopetePlugin*)));
+}
+
+void PluginConfig::slotPluginLoaded(KopetePlugin *pl)
+{
+	//maybe the plugin is loaded by the accountWizard, so we have to update our checkboxes
+	KopeteProtocol *prot=dynamic_cast<KopeteProtocol*>(pl);
+	if(!prot)
+		return;
+
+	QListViewItem * lvi = protocolList->firstChild();
+	while( lvi )
+	{
+		PluginListItem *item=dynamic_cast<PluginListItem*>(lvi);
+		if(item)
+		{
+			if(prot->displayName() == item->text(0))
+			{
+				item->setChecked(true);
+
+				QString specFile=item->info().specfile;
+				if( mDeleted.contains( specFile ) )
+					mDeleted.remove( specFile );
+				else if( !mAdded.contains( specFile ) )
+					mAdded.append( specFile );
+			}
+		}
+		lvi = lvi->nextSibling();
+	}
 }
 
 void PluginConfig::reopen()

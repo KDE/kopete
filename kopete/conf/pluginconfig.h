@@ -80,6 +80,7 @@ public:
 
 private slots:
 	void stateChange(PluginListItem *, bool);
+	void slotPluginLoaded(KopetePlugin *pl);
 
 private:
 	void addPlugin( const QString &specFile );
