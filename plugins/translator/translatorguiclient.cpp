@@ -34,89 +34,80 @@
 #include "translatorlanguages.h"
 
 TranslatorGUIClient::TranslatorGUIClient( KopeteMessageManager *parent, const char *name )
-: QObject( parent, name ) , KXMLGUIClient(parent)
+: QObject( parent, name ), KXMLGUIClient( parent )
 {
-	connect(TranslatorPlugin::plugin() , SIGNAL( destroyed(QObject*)) , this , SLOT(deleteLater()));
+	connect( TranslatorPlugin::plugin(), SIGNAL( destroyed( QObject * ) ), this, SLOT( deleteLater() ) );
 
-	m_manager=parent;
+	m_manager = parent;
 
-	//KAction *actionTranslate =
-	new KAction( i18n ("Translate"), "locale" , CTRL+Key_T , this, SLOT( slotTranslateChat() ), actionCollection(), "translateCurrentMessage" );
+	new KAction( i18n( "Translate" ), "locale", CTRL + Key_T, this, SLOT( slotTranslateChat() ), actionCollection(), "translateCurrentMessage" );
 
-	setXMLFile("translatorchatui.rc");
-
-
+	setXMLFile( "translatorchatui.rc" );
 }
 
 TranslatorGUIClient::~TranslatorGUIClient()
 {
-
 }
-
 
 void TranslatorGUIClient::slotTranslateChat()
 {
-	if(!m_manager->view())
+	if ( !m_manager->view() )
 		return;
 
-	//make sur the kmm will not be deleted when we perform such as actions
-	//m_manager->setCanBeDeleted( false );  //FIXME: what was the state before, we have to reset the previous state after
-
 	KopeteMessage msg = m_manager->view()->currentMessage();
-	QString body=msg.plainBody();
-	if(body.isEmpty())
+	QString body = msg.plainBody();
+	if ( body.isEmpty() )
 		return;
 
 	QString src_lang = TranslatorPlugin::plugin()->m_myLang;
 	QString dst_lang;
 
-	QPtrList<KopeteContact> list=m_manager->members();
+	QPtrList<KopeteContact> list = m_manager->members();
 	KopeteMetaContact *to = list.first()->metaContact();
-	dst_lang = to->pluginData( TranslatorPlugin::plugin() , "languageKey" );
-	if( dst_lang.isEmpty() || dst_lang == "null" )
+	dst_lang = to->pluginData( TranslatorPlugin::plugin(), "languageKey" );
+	if ( dst_lang.isEmpty() || dst_lang == "null" )
 	{
-		kdDebug(14308) << "TranslatorPlugin::slotTranslateChat :  Cannot determine dst Metacontact language (" << to->displayName() << ")" << endl;
+		kdDebug( 14308 ) << k_funcinfo << "Cannot determine dst Metacontact language (" << to->displayName() << ")" << endl;
 		return;
 	}
+
 	if ( src_lang == dst_lang )
 	{
-		kdDebug(14308) << "TranslatorPlugin::slotTranslateChat :  Src and Dst languages are the same" << endl;
+		kdDebug( 14308 ) << k_funcinfo << "Src and Dst languages are the same" << endl;
 		return;
 	}
 
-	/* We search for src_dst */
-
+	// We search for src_dst
 	QStringList s = TranslatorPlugin::plugin()->m_languages->supported( TranslatorPlugin::plugin()->m_service );
-	QStringList::ConstIterator i;
-
-	for ( i = s.begin(); i != s.end() ; ++i )
+	for ( QStringList::ConstIterator i = s.begin(); i != s.end() ; ++i )
 	{
 		if ( *i == src_lang + "_" + dst_lang )
 		{
-			TranslatorPlugin::plugin()->translateMessage( body , src_lang, dst_lang , this , SLOT(messageTranslated(const QVariant&)));
+			TranslatorPlugin::plugin()->translateMessage( body, src_lang, dst_lang, this, SLOT( messageTranslated( const QVariant & ) ) );
 			return;
 		}
 	}
-	kdDebug(14308) << "TranslatorPlugin::slotTranslateChat : "<< src_lang + "_" + dst_lang << " doesn't exists with service " << TranslatorPlugin::plugin()->m_service << endl;
+
+	kdDebug( 14308 ) << k_funcinfo << src_lang + "_" + dst_lang << " doesn't exists with service " << TranslatorPlugin::plugin()->m_service << endl;
 }
 
-void TranslatorGUIClient::messageTranslated(const QVariant& result)
+void TranslatorGUIClient::messageTranslated( const QVariant &result )
 {
-	QString translated=result.toString();
-	if(translated.isEmpty())
+	QString translated = result.toString();
+	if ( translated.isEmpty() )
 	{
-		kdDebug(14308) << "TranslatorPlugin::slotTranslateChat : empty string returned"  << endl;
+		kdDebug( 14308 ) << k_funcinfo << "Empty string returned"  << endl;
 		return;
 	}
+
 	//if the user close the window before the translation arrive, return
-	if(!m_manager->view())
+	if ( !m_manager->view() )
 		return;
 
 	KopeteMessage msg = m_manager->view()->currentMessage();
-	msg.setBody(translated);
-	m_manager->view()->setCurrentMessage(msg);
+	msg.setBody( translated );
+	m_manager->view()->setCurrentMessage( msg );
 }
-
 
 #include "translatorguiclient.moc"
 
