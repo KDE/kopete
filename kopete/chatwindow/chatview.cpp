@@ -781,31 +781,41 @@ void ChatView::slotMarkMessageRead()
 	unreadMessageFrom = QString::null;
 }
 
-void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus & /* newStatus */ , const KopeteOnlineStatus & /* oldstatus */)
+void ChatView::slotContactStatusChanged( KopeteContact *contact, const KopeteOnlineStatus &newStatus, const KopeteOnlineStatus & /* oldstatus */)
 {
-	if(KopetePrefs::prefs()->showEvents() && contact)
+	if ( contact && KopetePrefs::prefs()->showEvents() )
 	{
-		if( contact->metaContact() )
+		if ( contact->account() && contact == contact->account()->myself() )
 		{
-			sendInternalMessage( i18n( "%2 has changed their status to %1." )
+			//Seperate notification for the 'self' contact
+			if ( newStatus.status() != KopeteOnlineStatus::Connecting )
+			{
+				if ( newStatus.status() == KopeteOnlineStatus::Offline )
+					mainWindow()->setSendEnabled( false );
+				else
+					mainWindow()->setSendEnabled( true );
+
+				sendInternalMessage( i18n( "%2 has changed their status to %1." )
 #if QT_VERSION < 0x030200
 				.arg(contact->onlineStatus().description() ).arg( contact->metaContact()->displayName() )
 #else
 				.arg(contact->onlineStatus().description(), contact->metaContact()->displayName() )
 #endif
-			);
-		}
-		else
-		{
-			sendInternalMessage( i18n( "%2 has changed their status to %1." )
-#if QT_VERSION < 0x030200
-				.arg( contact->onlineStatus().description() ).arg( contact->displayName() )
-#else
-				.arg( contact->onlineStatus().description(), contact->displayName() )
-#endif
-			);
+				);
+			}
 		}
 	}
+	else
+	{
+		sendInternalMessage( i18n( "%2 has changed their status to %1." )
+#if QT_VERSION < 0x030200
+			.arg( contact->onlineStatus().description() ).arg( contact->displayName() )
+#else
+			.arg( contact->onlineStatus().description(), contact->displayName() )
+#endif
+			);
+	}
+
 
 	if(m_tabBar)
 	{
