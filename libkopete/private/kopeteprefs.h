@@ -76,6 +76,7 @@ public:
 	int interfacePreference() const { return mInterfacePreference; }
 	bool showTray() const { return mShowTray; }
 	bool notifyAway() const { return mNotifyAway; }
+	bool richText() const { return mRichText; }
 
 	int chatWindowPolicy() const { return mChatWindowPolicy; }
 	QString styleSheet() const { return mStyleSheet; }
@@ -114,6 +115,7 @@ public:
 	void setIdleContactColor(const QColor &);
 	void setShowTray(bool);
 	void setNotifyAway(bool);
+	void setRichText(bool);
 
 signals:
 	/**
@@ -175,6 +177,8 @@ private:
 	bool mNotifyAway;
 
 	int mChatWindowPolicy;
+
+	bool mRichText;
 	QString mStyleSheet;
 	QString mStyleContents;
 

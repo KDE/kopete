@@ -64,6 +64,7 @@ void KopetePrefs::load()
 	mTransparencyEnabled = config->readBoolEntry("ChatView Transparency Enabled", false);
 	mTransparencyValue = config->readNumEntry("ChatView Transparency Value", 50);
 	mNotifyAway = config->readBoolEntry("Notification Away", false);
+	mRichText = config->readBoolEntry("RichText editor", false);
 
 	mTransparencyColor = config->readColorEntry("ChatView Transparency Tint Color", &Qt::white);
 	mChatViewBufferSize = config->readNumEntry("ChatView BufferSize", 250);
@@ -89,7 +90,7 @@ void KopetePrefs::load()
 	mStyleSheet = config->readEntry("Stylesheet", locate("appdata",QString::fromLatin1("styles/Kopete.xsl") ) );
 	mStyleContents = fileContents( mStyleSheet );
 
-	config->setGroup("Appearance"); // FIXME, Why setgroup again? [mETz]
+	//config->setGroup("Appearance"); // Why setgroup again? [mETz]
 	mWindowAppearanceChanged = false;
 	mTransparencyChanged = false;
 }
@@ -127,6 +128,7 @@ void KopetePrefs::save()
 	config->writeEntry("Bg Color", mBgColor);
 	config->writeEntry("Link Color", mLinkColor);
 	config->writeEntry("Idle Contact Color", mIdleContactColor);
+	config->writeEntry("RichText editor", mRichText);
 
 	config->writeEntry("Interface Preference", mInterfacePreference);
 
@@ -328,6 +330,11 @@ QString KopetePrefs::fileContents( const QString &path )
 void KopetePrefs::setIdleContactColor(const QColor &value)
 {
 	mIdleContactColor = value;
+}
+
+void KopetePrefs::setRichText(bool value)
+{
+	mRichText=value;
 }
 
 #include "kopeteprefs.moc"
