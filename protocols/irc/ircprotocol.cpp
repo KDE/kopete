@@ -198,35 +198,35 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("kick"),
 		SLOT( slotKickCommand( const QString &, KopeteMessageManager*) ),
-		i18n("USAGE: /kick <nickname> [<reason>] - Kick someone from the channel (Requires operator status).")
+		i18n("USAGE: /kick <nickname> [<reason>] - Kick someone from the channel (requires operator status).")
 		, 1 );
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("ban"),
 		SLOT( slotBanCommand( const QString &, KopeteMessageManager*) ),
-		i18n("USAGE: /ban <mask> - Add someone to this channel's ban list. (Requires operator status)."),
+		i18n("USAGE: /ban <mask> - Add someone to this channel's ban list. (requires operator status)."),
 		1, 1 );
 
 	KopeteCommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("bannick"),
 		QString::fromLatin1("ban %1!*@*"),
-		i18n("USAGE: /bannick <nickname> - Add someone to this channel's ban list. Uses the hostmask nickname!*@* (Requires operator status)."), KopeteCommandHandler::SystemAlias, 1, 1 );
+		i18n("USAGE: /bannick <nickname> - Add someone to this channel's ban list. Uses the hostmask nickname!*@* (requires operator status)."), KopeteCommandHandler::SystemAlias, 1, 1 );
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("op"),
 		SLOT( slotOpCommand( const QString &, KopeteMessageManager*) ),
-		i18n("USAGE: /op <nickname 1> [<nickname 2> <...>] - Give channel operator status to someone (Requires operator status)."),
+		i18n("USAGE: /op <nickname 1> [<nickname 2> <...>] - Give channel operator status to someone (requires operator status)."),
 		1 );
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("deop"),
 		SLOT( slotDeopCommand( const QString &, KopeteMessageManager*) ),
-		i18n("USAGE: /deop <nickname> [<nickname 2> <...>]- Remove channel operator status from someone (Requires operator status)."), 1 );
+		i18n("USAGE: /deop <nickname> [<nickname 2> <...>]- Remove channel operator status from someone (requires operator status)."), 1 );
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("voice"),
 		SLOT( slotVoiceCommand( const QString &, KopeteMessageManager*) ),
-		i18n("USAGE: /voice <nickname> [<nickname 2> <...>]- Give channel voice status to someone (Requires operator status)."),
+		i18n("USAGE: /voice <nickname> [<nickname 2> <...>]- Give channel voice status to someone (requires operator status)."),
 		1);
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("devoice"),
 		SLOT( slotDevoiceCommand( const QString &, KopeteMessageManager*) ),
-		i18n("USAGE: /devoice <nickname> [<nickname 2> <...>]- Remove channel voice status from someone (Requires operator status)."), 1 );
+		i18n("USAGE: /devoice <nickname> [<nickname 2> <...>]- Remove channel voice status from someone (requires operator status)."), 1 );
 
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("quit"),
 		SLOT( slotQuitCommand( const QString &, KopeteMessageManager*) ),

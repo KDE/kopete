@@ -294,7 +294,7 @@ void IRCAccount::setNetwork( const QString &network )
 		Kopete::UI::Global::mainWidget(), KMessageBox::Error,
 		i18n("<qt>The network associated with this account, <b>%1</b>, no longer exists. Please"
 		" ensure that the account has a valid network. The account will not be enabled until you do so.</qt>").arg(network),
-		i18n("Problem loading %1").arg( accountId() ), 0 );
+		i18n("Problem Loading %1").arg( accountId() ), 0 );
 	}
 }
 
