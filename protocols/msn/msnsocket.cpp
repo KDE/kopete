@@ -491,12 +491,12 @@ QString MSNSocket::escape( const QString &str )
 	for	( int i = 0; i < old_length; i++ )
 	{
 		unsigned char character = str[i];
-		
-		 /*character == ' '  || character == '%' || character == '\t' 
+
+		 /*character == ' '  || character == '%' || character == '\t'
 			|| characters == '\n' || character == '\r'*/
 		/*	|| character == '<' || character == '>' ||  character == '\\'
-			|| character == '^' || character == '&' || character == '*'*/ 
-		
+			|| character == '^' || character == '&' || character == '*'*/
+
 		if( character <= 32 || character == '%' )
 		{
 			new_segment[ new_length++ ] = '%';
@@ -585,10 +585,10 @@ bool MSNSocket::accept( KServerSocket *server )
 
 	if ( !m_socket )
 	{
-		kdWarning( 14140 ) << k_funcinfo << "Socket not created.  Error nb" << server->error() << " : " << server->errorString() << endl;
+//		kdWarning( 14140 ) << k_funcinfo << "Socket not created.  Error nb" << server->error() << " : " << server->errorString() << endl;
 		return false;
 	}
-	
+
 	kdDebug( 14140 ) << k_funcinfo << "incoming conneciton accepted" << endl;
 
 	setOnlineStatus( Connecting );
