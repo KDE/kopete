@@ -26,6 +26,7 @@
 #include <qtooltip.h>
 #include <qfileinfo.h>
 
+#include <kapplication.h>
 #include <kcursor.h>
 #include <klocale.h>
 #include <kmenubar.h>
@@ -49,6 +50,7 @@
 #include "chatmessagepart.h"
 #include "chattexteditpart.h"
 #include "chatview.h"
+#include "kopeteapplication.h"
 #include "kopetechatwindow.h"
 #include "kopeteemoticonaction.h"
 #include "kopetegroup.h"
@@ -214,6 +216,7 @@ KopeteChatWindow::KopeteChatWindow( QWidget *parent, const char* name )
 	KGlobal::config()->setGroup( QString::fromLatin1("ChatWindowSettings") );
 	m_alwaysShowTabs = KGlobal::config()->readBoolEntry( QString::fromLatin1("AlwaysShowTabs"), false );
 //	kdDebug( 14010 ) << k_funcinfo << "Open Windows: " << windows.count() << endl;
+	kapp->ref();
 }
 
 KopeteChatWindow::~KopeteChatWindow()
@@ -261,6 +264,7 @@ KopeteChatWindow::~KopeteChatWindow()
 	}
 
 	delete anim;
+	kapp->deref();
 }
 
 void KopeteChatWindow::windowListChanged()
@@ -1030,13 +1034,8 @@ void KopeteChatWindow::slotSmileyActivated(const QString &sm)
 		m_activeView->addText( sm );
 }
 
-void KopeteChatWindow::closeEvent( QCloseEvent *e )
+bool KopeteChatWindow::queryClose()
 {
-//	kdDebug( 14010 ) << k_funcinfo << endl;
-
-	// FIXME: This should only check if it *can* close
-	// and not start closing if the close can be aborted halfway, it would
-	// leave us with half the chats open and half of them closed. - Martijn
 	bool canClose = true;
 
 //	kdDebug( 14010 ) << " Windows left open:" << endl;
@@ -1049,6 +1048,10 @@ void KopeteChatWindow::closeEvent( QCloseEvent *e )
 		// move out of the way before view is removed
 		++it;
 
+		// FIXME: This should only check if it *can* close
+		// and not start closing if the close can be aborted halfway, it would
+		// leave us with half the chats open and half of them closed. - Martijn
+
 		// if the view is closed, it is removed from chatViewList for us
 		if ( !view->closeView() )
 		{
@@ -1056,21 +1059,44 @@ void KopeteChatWindow::closeEvent( QCloseEvent *e )
 			canClose = false;
 		}
 	}
+	return canClose;
+}
 
-	if ( canClose )
+bool KopeteChatWindow::queryExit()
+{
+	KopeteApplication *app = static_cast<KopeteApplication *>( kapp );
+ 	if ( app->sessionSaving()
+		|| app->isShuttingDown() /* only set if KopeteApplication::quitKopete() or
+									KopeteApplication::commitData() called */
+		|| !KopetePrefs::prefs()->showTray() /* also close if our tray icon is hidden! */
+		|| !isShown() )
 	{
+		Kopete::PluginManager::self()->shutdown();
+		return true;
+	}
+	else 
+		return false;
+}
+
+void KopeteChatWindow::closeEvent( QCloseEvent * e )
+{
+	// if there's a system tray applet and we are not shutting down then just do what needs to be done if a
+	// window is closed.
+	KopeteApplication *app = static_cast<KopeteApplication *>( kapp );
+	if ( KopetePrefs::prefs()->showTray() && !app->isShuttingDown() && !app->sessionSaving() ) {
+		hide();
+/*		// BEGIN of code borrowed from KMainWindow::closeEvent
 		// Save settings if auto-save is enabled, and settings have changed
 		if ( settingsDirty() && autoSaveSettings() )
 			saveAutoSaveSettings();
-
-		e->accept();
-
-		// DO NOT call base class's closeEvent - see comment in KopeteApplication constructor for reason
+	
+		if ( queryClose() ) {
+			e->accept();
+		}
+		// END of code borrowed from KMainWindow::closeEvent*/
 	}
 	else
-	{
-		e->ignore();
-	}
+		KMainWindow::closeEvent( e );
 }
 
 void KopeteChatWindow::slotConfKeys()

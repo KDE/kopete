@@ -190,6 +190,8 @@ private:
 	void makeTrayToolTip();
 	void startAutoHideTimer();
 
+	virtual bool queryClose();
+	virtual bool queryExit();
 private:
 	int docked;
 	bool hidden;

@@ -67,9 +67,32 @@
 #include "kopeteuiglobal.h"
 #include "systemtray.h"
 
+/* KMainWindow is very broken from our point of view - it deref()'s the app
+ * when the last visible KMainWindow is destroyed. But when our main window is 
+ * hidden when it's in the tray,closing the last chatwindow would cause the app 
+ * to quit. - Richard
+ *
+ * Fortunately KMainWindow checks queryExit before deref()ing the Kapplication. 
+ * KopeteWindow reimplements queryExit() and only returns true if it is shutting down 
+ * (either because the user quit Kopete, or the session manager did).
+ *
+ * KopeteWindow and ChatWindows are closed by session management.
+ * App shutdown is not performed by the KopeteWindow but by KopeteApplication:
+ * 1) user quit - KopeteWindow::slotQuit() was called, calls KopeteApplication::quitKopete(),
+ *                which closes all chatwindows and the KopeteWindow.  The last window to close
+ *                shuts down the PluginManager in queryExit().  When the PluginManager has completed its
+ *                shutdown, the app is finally deref()ed, and the contactlist and accountmanager 
+ *                are saved.
+ *                and calling KApplication::quit()
+ * 2) session   - KopeteWindow and all chatwindows are closed by KApplication session management.
+ *     quit        Then the shutdown proceeds as above.
+ *
+ * queryClose() is honoured so group chats and chats receiving recent messages can interrupt 
+ * (session) quit.
+ */
 
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
-: KMainWindow( parent, name )
+: KMainWindow( parent, name, WType_TopLevel )
 {
 	// Applications should ensure that their StatusBar exists before calling createGUI()
 	// so that the StatusBar is always correctly positioned when KDE is configured to use
@@ -446,42 +469,64 @@ void KopeteWindow::slotGlobalAwayMessageSelect( const QString &awayReason )
 	Kopete::AccountManager::self()->setAwayAll( awayReason );
 }
 
+
+bool KopeteWindow::queryClose()
+{
+	KopeteApplication *app = static_cast<KopeteApplication *>( kapp );
+	if ( !app->sessionSaving()	// if we are just closing but not shutting down
+		&& !app->isShuttingDown()
+		&& KopetePrefs::prefs()->showTray()
+		&& isShown() )
+		// I would make this a KMessageBox::queuedMessageBox but there doesn't seem to be don'tShowAgain support for those
+		KMessageBox::information( this,
+								  i18n( "<qt>Closing the main window will keep Kopete running in the "
+								        "system tray. Use 'Quit' from the 'File' menu to quit the application.</qt>" ),
+								  i18n( "Docking in System Tray" ), "hideOnCloseInfo" );
+// 	else	// we are shutting down either user initiated or session management
+// 		Kopete::PluginManager::self()->shutdown();
+
+	return true;
+}
+
+bool KopeteWindow::queryExit()
+{
+	KopeteApplication *app = static_cast<KopeteApplication *>( kapp );
+ 	if ( app->sessionSaving()
+		|| app->isShuttingDown() /* only set if KopeteApplication::quitKopete() or
+									KopeteApplication::commitData() called */
+		|| !KopetePrefs::prefs()->showTray() /* also close if our tray icon is hidden! */
+		|| !isShown() )
+	{
+		kdDebug( 14000 ) << k_funcinfo << " shutting down plugin manager" << endl;
+		Kopete::PluginManager::self()->shutdown();
+		return true;
+	}
+	else 
+		return false;
+}
+
 void KopeteWindow::closeEvent( QCloseEvent *e )
 {
-	// Note that KSystemTray closes all windows when you select quit()
-	// from it. This means that closeEvent will be called twice on exit.
+	// if there's a system tray applet and we are not shutting down then just do what needs to be done if a
+	// window is closed.
 	KopeteApplication *app = static_cast<KopeteApplication *>( kapp );
-
-	// also close if our tray icon is hidden!
-	if( app->isShuttingDown() || !KopetePrefs::prefs()->showTray() || !isShown() )
-	{
-		// DO NOT call base class's closeEvent - see comment in KopeteApplication constructor for reason
+	if ( KopetePrefs::prefs()->showTray() && !app->isShuttingDown() && !app->sessionSaving() ) {
+		// BEGIN of code borrowed from KMainWindow::closeEvent
 		// Save settings if auto-save is enabled, and settings have changed
 		if ( settingsDirty() && autoSaveSettings() )
 			saveAutoSaveSettings();
-
-		e->accept();
-
-		//If we're not showing the tray, and they close the window (via the 'X' in the titlebar),
-		//workaround the fact that accepting the close event doesn't cause kopete to shutdown
-		if ( !app->isShuttingDown() )
-		{
-			queryExit();
-			slotQuit();
+	
+		if ( queryClose() ) {
+			e->accept();
 		}
-
-		//may never get called
-		return;
+		// END of code borrowed from KMainWindow::closeEvent
+		kdDebug( 14000 ) << k_funcinfo << "just closing because we have a system tray icon" << endl;
 	}
-
-	// FIXME: KDE 3.3:  use queuedMessageBox
-	KMessageBox::information( this,
-		i18n( "<qt>Closing the main window will keep Kopete running in the "
-		"system tray. Use 'Quit' from the 'File' menu to quit the application.</qt>" ),
-		i18n( "Docking in System Tray" ), "hideOnCloseInfo" );
-
-	hide();
-	e->ignore();
+	else
+	{
+		kdDebug( 14000 ) << k_funcinfo << "delegating to KMainWindow::closeEvent()" << endl;
+		KMainWindow::closeEvent( e );
+	}
 }
 
 void KopeteWindow::slotQuit()

@@ -101,7 +101,7 @@ PluginManager::PluginManager() : QObject( qApp ), d( new Private )
 PluginManager::~PluginManager()
 {
 	if ( d->shutdownMode != Private::DoneShutdown )
-		kdWarning( 14010 ) << k_funcinfo << "Destructing plugin manager without going through the shutdown process!" << endl << kdBacktrace() << endl;
+		kdWarning( 14010 ) << k_funcinfo << "Destructing plugin manager without going through the shutdown process! Backtrace is: " << endl << kdBacktrace() << endl;
 
 	// Quick cleanup of the remaining plugins, hope it helps
 	// Note that deleting it.data() causes slotPluginDestroyed to be called, which
@@ -160,7 +160,7 @@ KPluginInfo *PluginManager::pluginInfo( const Plugin *plugin ) const
 
 void PluginManager::shutdown()
 {
-	//kdDebug( 14010 ) << k_funcinfo << endl;
+	kdDebug( 14010 ) << k_funcinfo << kdBacktrace() << endl;
 	
 	d->shutdownMode = Private::ShuttingDown;
 	
@@ -200,6 +200,7 @@ void PluginManager::slotPluginReadyForUnload()
 	// FIXME: I don't buy the above argument. Add a Kopete::Plugin::emitReadyForUnload(void),
 	//        and make readyForUnload be passed a plugin. - Richard
 	Plugin *plugin = dynamic_cast<Plugin *>( const_cast<QObject *>( sender() ) );
+	kdDebug( 14010 ) << k_funcinfo << plugin->pluginId() << "ready for unload" << endl;
 	if ( !plugin )
 	{
 		kdWarning( 14010 ) << k_funcinfo << "Calling object is not a plugin!" << endl;

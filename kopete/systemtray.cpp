@@ -25,6 +25,7 @@
 
 #include <kwin.h>
 #include <kaboutdata.h>
+#include <kactioncollection.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kiconloader.h>
@@ -36,7 +37,7 @@
 #include "kopeteaccount.h"
 #include "kopeteaccountmanager.h"
 #include "kopetecontact.h"
-
+#include "kopetewindow.h"
 
 KopeteSystemTray* KopeteSystemTray::s_systemTray = 0L;
 
@@ -69,6 +70,18 @@ KopeteSystemTray::KopeteSystemTray(QWidget* parent, const char* name)
 		SIGNAL(accountOnlineStatusChanged(Kopete::Account *,
 		const Kopete::OnlineStatus &, const Kopete::OnlineStatus &)),
 	this, SLOT(slotReevaluateAccountStates()));
+
+	// the slot called by default by the quit action, KSystemTray::maybeQuit(),
+	// just closes the parent window, which is hard to distinguish in that window's closeEvent()
+	// from a click on the window's close widget
+	// in the quit case, we want to quit the application
+ 	// in the close widget click case, we only want to hide the parent window
+	// so instead, we make it call our general purpose quit slot on the window, which causes a window close and everything else we need
+	// KDE4 - app will have to listen for quitSelected instead
+	KAction *quit = actionCollection()->action( "file_quit" );
+	quit->disconnect();
+	KopeteWindow *myParent = static_cast<KopeteWindow *>( parent );
+    connect( quit, SIGNAL( activated() ), myParent, SLOT( slotQuit() ) );
 
 	//setPixmap(mKopeteIcon);
 	slotReevaluateAccountStates();

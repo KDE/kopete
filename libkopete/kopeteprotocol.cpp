@@ -96,6 +96,8 @@ void Protocol::slotAccountOnlineStatusChanged( Contact *self )
 {//slot connected in aboutToUnload
 	if ( !self || !self->account() || self->account()->isConnected())
 		return;
+	// some protocols change status several times during shutdown.  We should only call deleteLater() once
+	disconnect( self, 0, this, 0 );
 
 	connect( self->account(), SIGNAL(accountDestroyed(const Kopete::Account* )),
 		this, SLOT( slotAccountDestroyed( ) ) );
@@ -121,8 +123,6 @@ void Protocol::aboutToUnload()
 
 	d->unloading = true;
 
-	bool allDisconnected = true;
-
 	// Disconnect all accounts
 	QDict<Account> accounts = AccountManager::self()->accounts( this );
 	
@@ -139,8 +139,6 @@ void Protocol::aboutToUnload()
 				SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
 				this, SLOT( slotAccountOnlineStatusChanged( Kopete::Contact * ) ) );
 			it.current()->disconnect();
-
-			allDisconnected = false;
 		}
 		else
 		{
