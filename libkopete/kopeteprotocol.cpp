@@ -62,6 +62,19 @@ const QDict<KopeteContact>& KopeteProtocol::contacts()
 	return m_contacts;
 }
 
+QDict<KopeteContact> KopeteProtocol::contacts( KopeteMetaContact *mc )
+{
+	QDict<KopeteContact> result;
+
+	QDictIterator<KopeteContact> it( contacts() );
+	for ( ; it.current() ; ++it )
+	{
+		if( ( *it )->metaContact() == mc )
+			result.insert( ( *it )->contactId(), *it );
+	}
+	return result;
+}
+
 void KopeteProtocol::registerContact( KopeteContact *c )
 {
 	m_contacts.insert( c->contactId(), c );

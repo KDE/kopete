@@ -359,8 +359,6 @@ private:
 
 	KopeteMetaContact *m_metaContact;
 
-	/* Function to build the contextMenu */
-	void initActions();
 	/* Context Menu Entries */
 	KAction *actionSendMessage;
 	KAction *actionDeleteContact;

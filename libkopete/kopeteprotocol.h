@@ -101,6 +101,22 @@ public:
 	 */
 	const QDict<KopeteContact>& contacts();
 
+	/**
+	 * Retrieve the list of contacts for this protocol and the given meta
+	 * contact.
+	 *
+	 * The list is guaranteed to contain only contacts for this protocol,
+	 * and only for the specified meta contact, so you can safely use
+	 * static_cast to your own derived contact class if needed.
+	 *
+	 * Note that unlike the void method @ref contacts() this method doesn't
+	 * returns a reference to the dictionary, because the protocol has no
+	 * internal data structure to reference. This makes the method slower
+	 * than @ref contacts(). Generally you don't need to use this method
+	 * very often, so it shouldn't really matter in practice.
+	 */
+	QDict<KopeteContact> contacts( KopeteMetaContact *mc );
+
 public slots:
 	/**
 	 * Go online for this service.

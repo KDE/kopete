@@ -44,9 +44,6 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 {
 	m_contactId = contactId;
 
-	if( protocol )
-		protocol->registerContact( this );
-
 	m_metaContact = parent;
 	m_protocol = protocol;
 	m_cachedSize = 0;
@@ -55,24 +52,30 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	mFileCapable = false;
 	m_historyDialog = 0L;
 
-	connect(protocol, SIGNAL(unloading()), this, SLOT(slotProtocolUnloading()));
+	if( protocol )
+		protocol->registerContact( this );
 
-	/* Initialize the context Menu */
-	initActions();
+	connect( protocol, SIGNAL( unloading() ), SLOT( slotProtocolUnloading() ) );
+
+	// Initialize the context menu
+	actionSendMessage = KopeteStdAction::sendMessage( this,
+		SLOT( execute() ), this, "actionSendMessage" );
+	actionViewHistory = KopeteStdAction::viewHistory( this,
+		SLOT( slotViewHistory() ), this, "actionViewHistory" );
+	actionChangeMetaContact = KopeteStdAction::changeMetaContact( this,
+		SLOT( slotChangeMetaContact() ), this, "actionChangeMetaContact" );
+	actionDeleteContact = KopeteStdAction::deleteContact( this,
+		SLOT( slotDeleteContact() ), this, "actionDeleteContact" );
+	actionUserInfo = KopeteStdAction::contactInfo( this,
+		SLOT( slotUserInfo() ), this, "actionUserInfo" );
+	actionChangeAlias = KopeteStdAction::changeAlias( this,
+		SLOT( slotChangeDisplayName() ), this, "actionChangeAlias" );
+	actionSendFile = KopeteStdAction::sendFile( this,
+		SLOT( slotSendFile() ), this, "actionSendFile");
 }
 
 KopeteContact::~KopeteContact()
 {
-//	if(contextMenu != 0L)
-/*	delete contextMenu;
-	delete actionSendMessage;
-	delete actionDeleteContact;
-	delete actionChangeMetaContact;
-	delete actionViewHistory;
-	delete actionChangeAlias;
-	delete actionUserInfo;
-	delete actionSendFile;*/
-
 	emit( contactDestroyed( this ) );
 }
 
@@ -158,24 +161,6 @@ int KopeteContact::importance() const
 		return 0;
 
 	return 0;
-}
-
-void KopeteContact::initActions()
-{
-	actionSendMessage = KopeteStdAction::sendMessage( this,
-		SLOT( execute() ), this, "actionMessage" );
-	actionViewHistory = KopeteStdAction::viewHistory( this,
-		SLOT( slotViewHistory() ), this, "actionViewHistory" );
-	actionChangeMetaContact = KopeteStdAction::changeMetaContact( this,
-		SLOT( slotChangeMetaContact() ), this, "actionChangeMetaContact" );
-	actionDeleteContact = KopeteStdAction::deleteContact( this,
-		SLOT( slotDeleteContact() ), this, "actionDeleteContact" );
-	actionUserInfo = KopeteStdAction::contactInfo( this,
-		SLOT( slotUserInfo() ), this, "actionUserInfo" );
-	actionChangeAlias = KopeteStdAction::changeAlias( this,
-		SLOT( slotChangeDisplayName() ), this, "actionChangeAlias" );
-	actionSendFile = KopeteStdAction::sendFile( this,
-		SLOT( slotSendFile() ), this, "actionSendFile");
 }
 
 void KopeteContact::slotViewHistory()
