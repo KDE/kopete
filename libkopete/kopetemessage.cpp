@@ -257,14 +257,16 @@ QString KopeteMessage::escapedBody() const
 	{
 		QString parsedString = d->body;
 
+		parsedString = QStyleSheet::escape( parsedString );
+
 		//Replace carriage returns inside the text
 		parsedString.replace( QRegExp( QString::fromLatin1( "\n" ) ), QString::fromLatin1( "<br/>" ) );
 
 		//Replace a tab with 4 spaces
-		parsedString.replace( QRegExp( QString::fromLatin1( "\t" ) ), QString::fromLatin1( "    " ) );
+		parsedString.replace( QRegExp( QString::fromLatin1( "\t" ) ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
 
-		//Escape CDATA end tags
-		parsedString.replace( QRegExp( QString::fromLatin1("]]>") ), QString::fromLatin1("]] >") );
+		//Replace multiple spaces with &nbsp;
+		parsedString.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp;&nbsp;" ) );
 
 		return parsedString;
 	}
