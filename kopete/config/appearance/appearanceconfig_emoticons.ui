@@ -26,9 +26,6 @@
             <property name="text">
                 <string>&amp;Use emoticons</string>
             </property>
-            <property name="accel">
-                <string>Alt+U</string>
-            </property>
         </widget>
         <widget class="KListBox">
             <property name="name">

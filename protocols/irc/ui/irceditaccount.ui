@@ -398,9 +398,6 @@
                                 <property name="text">
                                     <string>Connect automatically at &amp;startup</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+S</string>
-                                </property>
                             </widget>
                             <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="3">
                                 <property name="name">
@@ -408,9 +405,6 @@
                                 </property>
                                 <property name="text">
                                     <string>&amp;Prefer SSL based connections</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+P</string>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="1" column="2" rowspan="1" colspan="3">
@@ -463,9 +457,6 @@
                                 </property>
                                 <property name="text">
                                     <string>&amp;Edit</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+E</string>
                                 </property>
                             </widget>
                             <spacer row="0" column="4">

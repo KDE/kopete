@@ -26,9 +26,6 @@
             <property name="text">
                 <string>Show the system tray &amp;icon</string>
             </property>
-            <property name="accel">
-                <string>Alt+I</string>
-            </property>
         </widget>
         <widget class="QCheckBox">
             <property name="name">
@@ -94,9 +91,6 @@
                     <property name="text">
                         <string>Con&amp;figure Sounds &amp;&amp; Events...</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+F</string>
-                    </property>
                 </widget>
                 <spacer row="3" column="1">
                     <property name="name">
@@ -135,9 +129,6 @@
                     <property name="text">
                         <string>Show as a t&amp;ree</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+R</string>
-                    </property>
                 </widget>
                 <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
                     <property name="name">
@@ -146,9 +137,6 @@
                     <property name="text">
                         <string>Sort by &amp;group</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+G</string>
-                    </property>
                 </widget>
                 <widget class="QPushButton" row="2" column="0">
                     <property name="name">
@@ -156,9 +144,6 @@
                     </property>
                     <property name="text">
                         <string>Edit Tooltips...</string>
-                    </property>
-                    <property name="accel">
-                        <string></string>
                     </property>
                 </widget>
                 <spacer row="2" column="1">

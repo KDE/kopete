@@ -321,9 +321,6 @@
                     <property name="text">
                         <string>Offline to contact when you set "&amp;Just for friends"</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+J</string>
-                    </property>
                     <property name="toolTip" stdset="0">
                         <string>Check if you want to exclude this contact from the "Just for friends" status mode.</string>
                     </property>
