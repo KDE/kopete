@@ -1,11 +1,11 @@
 /***************************************************************************
                           Kopete Instant Messenger
-						        kopete.cpp
+                                kopete.cpp
                              -------------------
-				(C) 2001-2002 by Duncan Mac-Vicar P. <duncan@kde.org>
- ***************************************************************************/
+                (C) 2001-2002 by Duncan Mac-Vicar P. <duncan@kde.org>
+ ***************************************************************************
 
-/***************************************************************************
+ ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -41,31 +41,31 @@ class Plugins;
 
 Kopete::Kopete(): KUniqueApplication(true, true, true)
 {
-    /*
-     * This is a workaround for a quite odd problem:
-     * When starting up kopete and the msn plugin gets loaded it can bring up
-     * a messagebox, in case the msg configuration is missing. This messagebox
-     * will result in a QApplication::enter_loop() call, an event loop is 
-     * created. At this point however the loop_level is 0, because this is all
-     * still inside the Kopete constructor, before the exec() call from main.
-     * When the messagebox is finished the loop_level will drop down to zero and
-     * QApplication thinks the application shuts down (this is usually the case
-     * when the loop_level goes down to zero) . So it emits aboutToQuit(), to
-     * which KApplication is connected and re-emits shutdown() , to which again
-     * KMainWindow (a KopeteWindow instance exists already) is connected. KMainWindow's
-     * shuttingDown() slot calls queryExit() which results in KopeteWindow::queryExit()
-     * calling unloadPlugins() . This of course is wrong and just shouldn't happen.
-     * The workaround is to simply delay the initialization of all this to a point
-     * where the loop_level is already > 0 . That is why I moved all the code from
-     * the constructor to the initialize() method and added this single-shot-timer
-     * setup. (Simon)
-     */
-    QTimer::singleShot( 0, this, SLOT( initialize() ) );
+	/*
+	 * This is a workaround for a quite odd problem:
+	 * When starting up kopete and the msn plugin gets loaded it can bring up
+	 * a messagebox, in case the msg configuration is missing. This messagebox
+	 * will result in a QApplication::enter_loop() call, an event loop is
+	 * created. At this point however the loop_level is 0, because this is all
+	 * still inside the Kopete constructor, before the exec() call from main.
+	 * When the messagebox is finished the loop_level will drop down to zero and
+	 * QApplication thinks the application shuts down (this is usually the case
+	 * when the loop_level goes down to zero) . So it emits aboutToQuit(), to
+	 * which KApplication is connected and re-emits shutdown() , to which again
+	 * KMainWindow (a KopeteWindow instance exists already) is connected. KMainWindow's
+	 * shuttingDown() slot calls queryExit() which results in KopeteWindow::queryExit()
+	 * calling unloadPlugins() . This of course is wrong and just shouldn't happen.
+	 * The workaround is to simply delay the initialization of all this to a point
+	 * where the loop_level is already > 0 . That is why I moved all the code from
+	 * the constructor to the initialize() method and added this single-shot-timer
+	 * setup. (Simon)
+	 */
+	QTimer::singleShot( 0, this, SLOT( initialize() ) );
 }
 
 void Kopete::initialize()
 {
-    initEmoticons();
+	initEmoticons();
 
 	mLibraryLoader = new LibraryLoader();
 	mIconLoader = KGlobal::iconLoader();
@@ -76,16 +76,18 @@ void Kopete::initialize()
 
 	mPluginsModule = new Plugins(this);
 
-	mainwindow = new KopeteWindow(0, "KopeteWindow");
-	setMainWidget(mainwindow);
+	m_mainWindow = new KopeteWindow( 0, "m_mainWindow" );
+	setMainWidget(m_mainWindow);
+	connect( m_mainWindow, SIGNAL( destroyed() ),
+				this, SLOT( slotMainWindowDestroyed() ) );
 
-	mAppearance = new AppearanceConfig(mainwindow);
+	mAppearance = new AppearanceConfig(m_mainWindow);
 	connect( mAppearance , SIGNAL(saved()), this, SIGNAL(signalSettingsChanged()));
 	mNotifier = new KopeteNotifier(this, "mNotifier");
 
 	KConfig *config=KGlobal::config();
 	config->setGroup("");
-	
+
 	// Ups! the user does not have plugins selected.
 	if (!config->hasKey("Modules"))
 	{
@@ -105,14 +107,9 @@ Kopete::~Kopete()
 	kdDebug() << "[Kopete] ~Kopete()" << endl;
 
 	delete mPref;
-//	delete mainwindow;
+	delete mLibraryLoader;
 
 	kdDebug() << "[Kopete] END ~Kopete()" << endl;
-}
-
-void Kopete::unloadPlugins(void)
-{
-	delete mLibraryLoader;
 }
 
 void Kopete::slotPreferences()
@@ -134,10 +131,10 @@ void Kopete::slotExit()
 void Kopete::slotConnectAll()
 {
 	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
-    for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
+	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
 		kdDebug() << "[Kopete] Connect All: " << (*i).name << endl;
-		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;				
+		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
 		IMProtocol *prot =  static_cast<IMProtocol*>(tmpprot);
 		if ( !(prot->isConnected()))
 		{
@@ -150,7 +147,7 @@ void Kopete::slotConnectAll()
 void Kopete::slotDisconnectAll()
 {
 	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
-    for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
+	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
 		kdDebug() << "[Kopete] Disconnect All: "<<(*i).name << endl;
 		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
@@ -169,7 +166,7 @@ void Kopete::slotDisconnectAll()
 void Kopete::slotSetAwayAll(void)
 {
 	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
-    for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
+	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
 		kdDebug() << "[Kopete] slotSetAwayAll() for plugin: " << (*i).name << endl;
 		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
@@ -188,7 +185,7 @@ void Kopete::slotSetAwayAll(void)
 void Kopete::slotSetAvailableAll(void)
 {
 	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
-    for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
+	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
 	{
 		kdDebug() << "[Kopete] slotSetAvailableAll() for plugin: " << (*i).name << endl;
 		Plugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
@@ -225,7 +222,7 @@ void Kopete::notifyEvent( KopeteEvent *event)
 void Kopete::cancelEvent( KopeteEvent *event)
 {
 	/* See KopeteNotifier and KopeteEvent class */
-	mNotifier->cancelEvent( event );	
+	mNotifier->cancelEvent( event );
 }
 
 
@@ -235,9 +232,9 @@ void Kopete::initEmoticons()
 {
 	KStandardDirs dir;
 	KConfig *config=KGlobal::config();
-    config->setGroup("Appearance");
-    mEmoticonTheme = config->readEntry("EmoticonTheme", "Default");
-	
+	config->setGroup("Appearance");
+	mEmoticonTheme = config->readEntry("EmoticonTheme", "Default");
+
 	/* Happy emoticons */
 	/* :-) */
 	mEmoticons.smile = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/smile.mng");
@@ -245,7 +242,7 @@ void Kopete::initEmoticons()
 		mEmoticons.smile = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/smile.png");
 	/* ;-) */
 	mEmoticons.wink = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/wink.mng");
-    if ( mEmoticons.wink.isNull() )
+	if ( mEmoticons.wink.isNull() )
 		mEmoticons.wink = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/wink.png");
 	/* :-P */
 	mEmoticons.tongue = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/tongue.mng");
@@ -255,21 +252,20 @@ void Kopete::initEmoticons()
 	mEmoticons.biggrin = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/bigrin.mng");
 	if ( mEmoticons.biggrin.isNull() )
 		mEmoticons.biggrin = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/biggrin.png");
-	
+
 	/* Sad emoticons */
 	mEmoticons.unhappy = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/unhappy.mng");
 	if ( mEmoticons.unhappy.isNull() )
 		mEmoticons.unhappy = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/unhappy.png");
-	
+
 	mEmoticons.cry = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/cry.mng");
-    if ( mEmoticons.cry.isNull() )
+	if ( mEmoticons.cry.isNull() )
 		mEmoticons.cry = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/cry.png");
-	
+
 	/* Surprise */
 	mEmoticons.oh = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/oh.mng");
-    if ( mEmoticons.oh.isNull() )
+	if ( mEmoticons.oh.isNull() )
 		mEmoticons.oh = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/oh.png");
-	
 }
 
 /** Parse emoticons in a string, returns html/qt rich text */
@@ -284,7 +280,7 @@ QString Kopete::parseEmoticons( QString message )
 	{
 		message = message.replace(QRegExp(";-\\)"),"<img src=\""+mEmoticons.wink+"\">");
 		message = message.replace(QRegExp(";\\)"),"<img src=\""+mEmoticons.wink+"\">");
-    }
+	}
 	if ( !mEmoticons.tongue.isNull() )
 	{
 		message = message.replace(QRegExp(":p"),"<img src=\""+mEmoticons.tongue+"\">");
@@ -301,18 +297,18 @@ QString Kopete::parseEmoticons( QString message )
 		message = message.replace(QRegExp(":>"),"<img src=\""+mEmoticons.biggrin+"\">");
 		message = message.replace(QRegExp(":->"),"<img src=\""+mEmoticons.biggrin+"\">");
 	}
-    if ( !mEmoticons.unhappy.isNull() )
+	if ( !mEmoticons.unhappy.isNull() )
 	{
 		message = message.replace(QRegExp(":-\\("),"<img src=\""+mEmoticons.unhappy+"\">");
 		message = message.replace(QRegExp(":\\("),"<img src=\""+mEmoticons.unhappy+"\">");
-    }
+	}
 	if ( !mEmoticons.cry.isNull() )
 	{
 		message = message.replace(QRegExp(":'-\\("),"<img src=\""+mEmoticons.cry+"\">");
 		message = message.replace(QRegExp(":'\\("),"<img src=\""+mEmoticons.cry+"\">");
 		message = message.replace(QRegExp(";-\\("),"<img src=\""+mEmoticons.cry+"\">");
 		message = message.replace(QRegExp(";\\("),"<img src=\""+mEmoticons.cry+"\">");
-    }
+	}
 	if ( !mEmoticons.oh.isNull() )
 	{
 		message = message.replace(QRegExp(":o"),"<img src=\""+mEmoticons.oh+"\">");
@@ -320,7 +316,7 @@ QString Kopete::parseEmoticons( QString message )
 		message = message.replace(QRegExp(":-o"),"<img src=\""+mEmoticons.oh+"\">");
 		message = message.replace(QRegExp(":-O"),"<img src=\""+mEmoticons.oh+"\">");
 	}
-	
+
 	return message;
 }
 
@@ -431,7 +427,7 @@ QString Kopete::parseHTML( QString message, bool parseURLs )
 						else if (text[idx+matchLen-1]==':')		// remove trailing colon
 							matchLen--;
 
-						result += 
+						result +=
 							QString::fromLatin1("<a href=\"")
 							+ text.mid(idx,matchLen)
 							+ QString::fromLatin1("\">")
@@ -491,7 +487,7 @@ QString Kopete::parseHTML( QString message, bool parseURLs )
 						else if (text[idx+matchLen-1]==':')   // remove trailing colon
 							matchLen--;
 
-						result += 
+						result +=
 							QString::fromLatin1("<a href=\"")
 							+ text.mid(idx,matchLen)
 							+ QString::fromLatin1("\">")
@@ -513,7 +509,7 @@ QString Kopete::parseHTML( QString message, bool parseURLs )
 						else if (text[idx+matchLen-1]==':')   // remove trailing colon
 						matchLen--;
 
-						result += 
+						result +=
 							QString::fromLatin1("<a href=\"ftp://")
 							+ text.mid(idx,matchLen)
 							+ QString::fromLatin1("\">")
@@ -598,3 +594,26 @@ QString Kopete::parseHTML( QString message, bool parseURLs )
 	}
 	return result;
 }
+
+ContactList* Kopete::contactList() const
+{
+	return m_mainWindow ? m_mainWindow->contactlist : 0L;
+}
+
+KStatusBar* Kopete::statusBar() const
+{
+	return m_mainWindow ? m_mainWindow->statusBar() : 0L;
+}
+
+KopeteSystemTray* Kopete::systemTray() const
+{
+	return m_mainWindow ? m_mainWindow->tray : 0L;
+}
+
+void Kopete::slotMainWindowDestroyed()
+{
+	m_mainWindow = 0L;
+}
+
+// vim: set noet ts=4 sts=4 sw=4:
+

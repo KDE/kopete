@@ -135,7 +135,6 @@ bool KopeteWindow::queryExit()
 {
 	kdDebug() << "[KopeteWindow] queryExit()" << endl;
 	saveOptions();
-	kopeteapp->unloadPlugins(); // workaround to hopefully quit gracefully
 	return true;
 }
 

@@ -4,9 +4,9 @@
     begin                : Wed Jan 2 2002
     copyright            : (C) 2002 by nbetcher
     email                : nbetcher@usinternet.com
- ***************************************************************************/
+ ***************************************************************************
 
-/***************************************************************************
+ ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -36,7 +36,9 @@ IRCProtocol::IRCProtocol(): QObject(0, "IRC"), IMProtocol()
 {
 	kdDebug() << "\nIRC Plugin Loading\n";
 	// Load all ICQ icons from KDE standard dirs
- 	initIcons();
+	setIcon( "irc_protocol_small" );
+
+	initIcons();
 	manager = new IRCServerManager();
 	kdDebug() << "IRC Protocol Plugin: Creating Status Bar icon\n";
 	statusBarIcon = new StatusBarIcon();
@@ -119,10 +121,14 @@ void IRCProtocol::init()
 bool IRCProtocol::unload()
 {
 	kdDebug() << "IRC Protocol: Unloading...\n";
-	kopeteapp->statusBar()->removeWidget(statusBarIcon);
-	delete statusBarIcon;
-	// heh!
-	return 1;
+
+	if( kopeteapp->statusBar() )
+	{
+		kopeteapp->statusBar()->removeWidget(statusBarIcon);
+		delete statusBarIcon;
+	}
+
+	return true;
 }
 
 ///////////////////////////////////////////////////
@@ -192,3 +198,6 @@ void IRCProtocol::initIcons()
 
 
 #include "ircprotocol.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:
+

@@ -114,11 +114,14 @@ void MSNProtocol::init()
 bool MSNProtocol::unload()
 {
 	kdDebug() << "MSN Protocol: Unloading...\n";
-	kopeteapp->statusBar()->removeWidget(statusBarIcon);
-	delete statusBarIcon;
-	// heh!
+	if( kopeteapp->statusBar() )
+	{
+		kopeteapp->statusBar()->removeWidget(statusBarIcon);
+		delete statusBarIcon;
+	}
+
 	emit protocolUnloading();
-	return 1;
+	return true;
 }
 
 ///////////////////////////////////////////////////

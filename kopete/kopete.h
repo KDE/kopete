@@ -1,11 +1,11 @@
 /***************************************************************************
                           Kopete Instant Messenger
-					             kopete.h
+                                 kopete.h
                              -------------------
-				(C) 2001-2002 by Duncan Mac-Vicar P. <duncan@kde.org>
- ***************************************************************************/
+                (C) 2001-2002 by Duncan Mac-Vicar P. <duncan@kde.org>
+ ***************************************************************************
 
-/***************************************************************************
+ ***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -67,8 +67,9 @@ struct KopeteEmoticons
 /** Kopete is the base class of the project */
 class Kopete : public KUniqueApplication
 {
-  Q_OBJECT
-  public:
+	Q_OBJECT
+	
+public:
 	Kopete();
 	~Kopete();
 
@@ -76,11 +77,10 @@ class Kopete : public KUniqueApplication
 	AppearanceConfig *appearance() const { return mAppearance; }
 	LibraryLoader *libraryLoader() const { return mLibraryLoader; }
 	KIconLoader *iconLoader() const { return mIconLoader; }
-	KopeteWindow *mainWindow() const { return mainwindow; }
-	ContactList *contactList() const { return mainwindow->contactlist; }
-	KStatusBar *statusBar() const { return mainwindow->statusBar(); }
-	KopeteSystemTray *systemTray() const { return mainwindow->tray; }
-	void unloadPlugins(void);
+	KopeteWindow *mainWindow() const { return m_mainWindow; }
+	ContactList *contactList() const;
+	KStatusBar *statusBar() const;
+	KopeteSystemTray *systemTray() const;
 
 	QString parseEmoticons(QString);
 	QString parseHTML( QString message, bool parseURLs = true );
@@ -89,11 +89,10 @@ class Kopete : public KUniqueApplication
 	void initEmoticons();
 
 private:
-
 	PreferencesDialog *mPref;
 	Plugins *mPluginsModule;
 
-	KopeteWindow *mainwindow;
+	KopeteWindow *m_mainWindow;
 	LibraryLoader *mLibraryLoader;
 	KIconLoader *mIconLoader;
 	KopeteEmoticons mEmoticons;
@@ -115,9 +114,13 @@ signals:
 	void signalSettingsChanged();
 
 private slots:
-    	void initialize();
+	void slotMainWindowDestroyed();
+	void initialize();
 };
 
 #define kopeteapp (static_cast<Kopete*>(kapp))
 
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:
+
