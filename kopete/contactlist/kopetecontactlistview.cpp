@@ -31,6 +31,7 @@
 #include <qstylesheet.h>
 #include <qtimer.h>
 #include <qtooltip.h>
+#include <qguardedptr.h>
 
 #include <kaction.h>
 #include <kapplication.h>
@@ -381,10 +382,14 @@ static QListViewItem *nextItem( QListViewItem *item )
 	return item->nextSibling();
 }
 
+
+
 KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name )
  : Kopete::UI::ListView::ListView( parent, name )
 {
 	d = new KopeteContactListViewPrivate;
+	m_undo=0L;
+	m_redo=0L;
 
 	mShowAsTree = KopetePrefs::prefs()->treeView();
 	if ( mShowAsTree )
@@ -431,6 +436,8 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 
 	connect( this, SIGNAL( dropped( QDropEvent *, QListViewItem *, QListViewItem * ) ),
 	         this, SLOT( slotDropped( QDropEvent *, QListViewItem *, QListViewItem * ) ) );
+			 
+	connect( &undoTimer, SIGNAL(timeout()) , this, SLOT (slotTimeout() ) );
 
 	addColumn( i18n( "Contacts" ), 0 );  //add an unique colums to add every contact
 	header()->hide(); // and hide the ugly header which show the single word  "Contacts"
@@ -449,6 +456,12 @@ KopeteContactListView::KopeteContactListView( QWidget *parent, const char *name 
 
 void KopeteContactListView::initActions( KActionCollection *ac )
 {
+	actionUndo = KStdAction::undo( this , SLOT( slotUndo() ) , ac );
+	actionRedo = KStdAction::redo( this , SLOT( slotRedo() ) , ac );
+	actionUndo->setEnabled(false);
+	actionRedo->setEnabled(false);
+
+
 	new KAction( i18n( "Create New Group..." ), 0, 0, this, SLOT( addGroup() ),
 		ac, "AddGroup" );
 
@@ -833,11 +846,21 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 					"addTemporaryWhenMoving" );
 
 				if( r == KMessageBox::Yes )
+				{
 					source_metaLVI->metaContact()->setTemporary( false, dest_groupLVI->group() );
+					
+					insertUndoItem( new UndoItem( UndoItem::MetaContactAdd , source_metaLVI->metaContact(),dest_groupLVI->group()  ) );
+				}
 			}
 			else
 			{
 				source_metaLVI->metaContact()->moveToGroup(source_metaLVI->group() , dest_groupLVI->group() );
+
+				insertUndoItem( new UndoItem( UndoItem::MetaContactCopy , source_metaLVI->metaContact() , dest_groupLVI->group() ) );
+				
+				UndoItem *u=new UndoItem( UndoItem::MetaContactRemove, source_metaLVI->metaContact(), source_metaLVI->group() );
+				u->isStep=false;
+				insertUndoItem(u);
 			}
 		}
 		else if(source_metaLVI  && !dest_metaLVI && !dest_groupLVI)
@@ -853,13 +876,23 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 					"addTemporaryWhenMoving" );
 
 				if ( r == KMessageBox::Yes )
+				{
 					source_metaLVI->metaContact()->setTemporary( false, KopeteGroup::topLevel() );
+
+					insertUndoItem( new UndoItem(UndoItem::MetaContactAdd, source_metaLVI->metaContact() ) );
+				}
 			}
 			else
 			{
 				/*kdDebug(14000) << "KopeteContactListView::slotDropped : moving the meta contact "
 					<< source_metaLVI->metaContact()->displayName() << " to top-level " << endl;*/
 				source_metaLVI->metaContact()->moveToGroup( source_metaLVI->group(), KopeteGroup::topLevel() );
+				
+				insertUndoItem( new UndoItem( UndoItem::MetaContactCopy , source_metaLVI->metaContact() , KopeteGroup::topLevel() ) );
+				
+				UndoItem *u=new UndoItem( UndoItem::MetaContactRemove, source_metaLVI->metaContact(), source_metaLVI->group() );
+				u->isStep=false;
+				insertUndoItem(u);
 			}
 		}
 		else if(source_contact && dest_metaLVI) //we are moving a contact to another metacontact
@@ -872,13 +905,30 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem *, QListVie
 					"addTemporaryWhenMoving" );
 
 				if( r == KMessageBox::Yes )
+				{
 					source_contact->setMetaContact(dest_metaLVI->metaContact());
+					
+					UndoItem *u=new UndoItem;
+					u->type=UndoItem::ContactAdd;
+					u->args << source_contact->protocol()->pluginId() << source_contact->account()->accountId() << source_contact->contactId();
+					insertUndoItem(u);
+				}
 			}
 			else
 			{
 				//kdDebug(14000) << "KopeteContactListView::slotDropped : moving the contact "
 				//	<< source_contact->contactId()	<< " to metacontact " <<
 				//	dest_metaLVI->metaContact()->displayName() << endl;
+				
+				
+				UndoItem *u=new UndoItem;
+				u->type=UndoItem::MetaContactChange;
+				u->metacontact=source_metaLVI->metaContact();
+				u->group=source_metaLVI->group();
+				u->args << source_contact->protocol()->pluginId() << source_contact->account()->accountId() << source_contact->contactId();
+				u->args << source_metaLVI->metaContact()->displayName();
+				insertUndoItem(u);
+				
 				source_contact->setMetaContact(dest_metaLVI->metaContact());
 			}
 		}
@@ -1331,12 +1381,21 @@ void KopeteContactListView::slotMoveToGroup()
 			i18n( "Kopete" ), KStdGuiItem::yes(), KStdGuiItem::no(),
 			"addTemporaryWhenMoving" ) == KMessageBox::Yes )
 		{
-			m->setTemporary(false,g);
-			m->moveToGroup( KopeteGroup::topLevel(), to );
+			m->setTemporary(false,to);
+			
+			insertUndoItem( new UndoItem( UndoItem::MetaContactAdd , m  ) );
 		}
 	}
 	else if( !m->groups().contains( to ) )
+	{
 		m->moveToGroup( g, to );
+		
+		insertUndoItem( new UndoItem( UndoItem::MetaContactCopy , m , to ) );
+				
+		UndoItem *u=new UndoItem( UndoItem::MetaContactRemove, m, g );
+		u->isStep=false;
+		insertUndoItem(u);
+	}
 
 	actionMove->setCurrentItem( -1 );
 }
@@ -1361,7 +1420,11 @@ void KopeteContactListView::slotCopyToGroup()
 		return;
 
 	if( !m->groups().contains( to ) )
+	{
 		m->addToGroup( to );
+	
+		insertUndoItem( new UndoItem( UndoItem::MetaContactCopy , m , to ) );
+	}
 
 	actionCopy->setCurrentItem( -1 );
 }
@@ -1377,6 +1440,8 @@ void KopeteContactListView::slotRemoveFromGroup()
 		return;
 
 	m->removeFromGroup( metaLVI->group() );
+	
+	insertUndoItem( new UndoItem( UndoItem::MetaContactRemove , m , metaLVI->group() ) );
 }
 
 void KopeteContactListView::slotRemove()
@@ -1581,16 +1646,302 @@ void KopeteContactListView::slotProperties()
 	}
 }
 
-void KopeteContactListView::slotItemRenamed( QListViewItem *item )
+void KopeteContactListView::slotItemRenamed( QListViewItem */*item*/ )
 {
-	KopeteMetaContactLVI *metaLVI = dynamic_cast<KopeteMetaContactLVI *>( item );
-	if ( metaLVI )
-		metaLVI->metaContact()->setDisplayName( metaLVI->text( 0 ) );
+	//everithing is now done in  KopeteMetaContactLVI::rename
+
+/*	KopeteMetaContactLVI *metaLVI = dynamic_cast<KopeteMetaContactLVI *>( item );
+	KopeteMetaContact *m= metaLVI ?  metaLVI->metaContact() : 0L ;
+	if ( m )
+	{
+		m->setDisplayName( metaLVI->text( 0 ) );
+	}
 	else
 	{
-		kdWarning( 14000 ) << k_funcinfo << "Unknown list view item '" << item
-		                   << "' renamed, ignoring item" << endl;
+		//group are handled differently in KopeteGroupViewItem
+	//	kdWarning( 14000 ) << k_funcinfo << "Unknown list view item '" << item
+	//	                   << "' renamed, ignoring item" << endl;
 	}
+	*/
+}
+
+void KopeteContactListView::insertUndoItem( KopeteContactListView::UndoItem *u)
+{
+	u->next=m_undo;
+	m_undo=u;
+	actionUndo->setEnabled(true);
+	while(m_redo)
+	{
+		UndoItem *i=m_redo->next;
+		delete m_redo;
+		m_redo=i;
+	}
+	actionRedo->setEnabled(false);
+	undoTimer.start(3*60*1000); //the user has 3 minutes to undo.
+}
+
+
+void KopeteContactListView::slotUndo()
+{
+	bool step = false;
+	while(m_undo && !step)
+	{
+		kdDebug( 14000 ) << k_funcinfo << m_undo->type << "    " << m_undo->args<< endl;
+		bool success=false;
+		switch (m_undo->type)
+		{
+		 case UndoItem::MetaContactAdd:
+		 {
+		 	KopeteMetaContact *m=m_undo->metacontact;
+			if(m)
+			{
+				m->setTemporary(true);
+				success=true;
+			}
+			break;
+		 }
+		 case UndoItem::MetaContactCopy:
+		 {
+		 	KopeteMetaContact *m=m_undo->metacontact;
+			KopeteGroup *to=m_undo->group;
+			if( m && to )
+			{
+				m->removeFromGroup( to );
+				success=true;
+			}
+			break;
+		 }
+		 case UndoItem::MetaContactRemove:
+		 {
+		 	KopeteMetaContact *m=m_undo->metacontact;
+			KopeteGroup *g=m_undo->group;
+			if( m && g )
+			{
+				m->addToGroup( g );
+				success=true;
+			}
+			break;
+		 }
+		 case UndoItem::MetaContactRename:
+		 {
+			KopeteMetaContact *m=m_undo->metacontact;
+			if( m )
+			{
+				const QString old=m->displayName();
+				if( m_undo->args[0].isEmpty() )
+					m->setTrackChildNameChanges(true);
+				else
+					m->setDisplayName( m_undo->args[0] );
+				m_undo->args[0]=old;
+				success=true;
+			}
+			break;
+		 }
+		 case UndoItem::GroupRename:
+		 {
+			if( m_undo->group  )
+			{
+				const QString old=m_undo->group->displayName();
+				m_undo->group->setDisplayName( m_undo->args[0] );
+				m_undo->args[0]=old;
+				success=true;
+			}
+			break;
+		 }
+		 case UndoItem::MetaContactChange:
+		 {
+		 	KopeteContact *c=0;
+			KopeteMetaContact *m0=KopeteContactList::contactList()->findContact(m_undo->args[0] , m_undo->args[1], m_undo->args[2] ) ;
+			if(m0)
+				c=m0->findContact(m_undo->args[0] , m_undo->args[1], m_undo->args[2] );
+			if(c)
+			{
+				success=true;
+				if(m_undo->metacontact)
+					c->setMetaContact(m_undo->metacontact);
+				else
+				{
+					KopeteMetaContact *m=new KopeteMetaContact;
+					m->addToGroup(m_undo->group);
+					m->setDisplayName(m_undo->args[3]);
+					c->setMetaContact(m);
+					KopeteContactList::contactList()->addMetaContact(m);
+				}
+				m_undo->metacontact=m0; //for the redo
+			}
+			break;
+		 }
+		 case UndoItem::ContactAdd:
+		 {
+			KopeteContact *c=0;
+			KopeteMetaContact *m0=KopeteContactList::contactList()->findContact(m_undo->args[0] , m_undo->args[1], m_undo->args[2] ) ;
+			if(m0)
+				c=m0->findContact(m_undo->args[0] , m_undo->args[1], m_undo->args[2] );
+			if(c)
+			{
+				success=true;
+				c->slotDeleteContact();
+				m_undo->metacontact=m0;
+			}
+			break;
+		 }
+		}
+		
+		kdDebug( 14000 ) << k_funcinfo << success << endl;
+		
+		if(success) //the undo item has been correctly performed
+		{
+			step=m_undo->isStep;
+			UndoItem *u=m_undo->next;
+			m_undo->next=m_redo;
+			m_redo=m_undo;
+			m_undo=u;
+		}
+		else //something has been corrupted, clear all undo items
+		{
+			while(m_undo) 
+			{
+				UndoItem *u=m_undo->next;
+				delete m_undo;
+				m_undo=u;
+			}
+		}
+	}
+	actionUndo->setEnabled(m_undo);
+	actionRedo->setEnabled(m_redo);
+	undoTimer.start(3*60*1000);
+}
+
+void KopeteContactListView::slotRedo()
+{
+	bool step = false;
+	while(m_redo && (!step || m_redo->isStep ))
+	{
+		kdDebug( 14000 ) << k_funcinfo << m_redo->type << "    " << m_redo->args<< endl;
+		bool success=false;
+		switch (m_redo->type)
+		{
+		 case UndoItem::MetaContactAdd:
+		 {
+		 	KopeteMetaContact *m=m_redo->metacontact;
+			if(m && m_redo->group)
+			{
+				m->setTemporary(false,m_redo->group);
+				success=true;
+			}
+			break;
+		 }
+		 case UndoItem::MetaContactCopy:
+		 {
+		 	KopeteMetaContact *m=m_redo->metacontact;
+			KopeteGroup *to=m_redo->group;
+			if( m && to )
+			{
+				m->addToGroup( to );
+				success=true;
+			}
+			break;
+		 }
+		 case UndoItem::MetaContactRemove:
+		 {
+		 	KopeteMetaContact *m=m_redo->metacontact;
+			KopeteGroup *g=m_redo->group;
+			if( m && g )
+			{
+				m->removeFromGroup( g );
+				success=true;
+			}
+			break;
+		 }
+		 case UndoItem::MetaContactRename:
+		 {
+			KopeteMetaContact *m=m_redo->metacontact;
+			if( m )
+			{
+				const QString old=m->displayName();
+				if( m_redo->args[0].isEmpty() )
+					m->setTrackChildNameChanges(true);
+				else
+					m->setDisplayName( m_redo->args[0] );
+				m_redo->args[0]=old;
+				success=true;
+			}
+			break;
+		 }
+		 case UndoItem::GroupRename:
+		 {
+			if( m_redo->group  )
+			{
+				const QString old=m_redo->group->displayName();
+				m_redo->group->setDisplayName( m_redo->args[0] );
+				m_redo->args[0]=old;
+				success=true;
+			}
+			break;
+		 }
+		 case UndoItem::MetaContactChange:
+		 {
+		 	KopeteContact *c=0;
+			KopeteMetaContact *m0=KopeteContactList::contactList()->findContact(m_redo->args[0] , m_redo->args[1], m_redo->args[2] ) ;
+			if(m0)
+				c=m0->findContact(m_redo->args[0] , m_redo->args[1], m_redo->args[2] );
+			if(c && m_redo->metacontact)
+			{
+				success=true;
+				c->setMetaContact(m_redo->metacontact);
+				m_redo->metacontact=m0;
+			}
+			break;
+		 }
+		 case UndoItem::ContactAdd:
+		 {
+			//impossible to add it back
+			break;
+		 }
+		}
+		
+		kdDebug( 14000 ) << k_funcinfo << success << endl;
+		
+		if(success) //the undo item has been correctly performed
+		{
+			step|=m_redo->isStep;
+			UndoItem *u=m_redo->next;
+			m_redo->next=m_undo;
+			m_undo=m_redo;
+			m_redo=u;
+		}
+		else //something has been corrupted, clear all undo items
+		{
+			while(m_redo) 
+			{
+				UndoItem *u=m_redo->next;
+				delete m_redo;
+				m_redo=u;
+			}
+		}
+	}
+	actionUndo->setEnabled(m_undo);
+	actionRedo->setEnabled(m_redo);
+	undoTimer.start(3*60*1000);
+}
+
+void KopeteContactListView::slotTimeout()
+{
+	undoTimer.stop();
+	while(m_undo) 
+	{
+		UndoItem *u=m_undo->next;
+		delete m_undo;
+		m_undo=u;
+	}
+	actionUndo->setEnabled(false);
+	while(m_redo)
+	{
+		UndoItem *i=m_redo->next;
+		delete m_redo;
+		m_redo=i;
+	}
+	actionRedo->setEnabled(false);
 }
 
 #include "kopetecontactlistview.moc"
