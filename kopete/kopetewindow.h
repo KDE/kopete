@@ -163,6 +163,8 @@ private:
 	void initSystray();
 	void loadOptions();
 	void saveOptions();
+	
+	void makeTrayToolTip();
 
 private:
 	int docked;

@@ -524,6 +524,8 @@ void KopeteWindow::slotAccountUnregistered( KopeteAccount *account)
 
 	m_accountStatusBarIcons.remove( account );
 	delete sbIcon;
+	
+	makeTrayToolTip();
 }
 
 void KopeteWindow::slotAccountStatusIconChanged()
@@ -573,7 +575,11 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 		//kdDebug( 14000 ) << k_funcinfo << "Using movie."  << endl;
 		i->setMovie( mv );
 	}
+	makeTrayToolTip();
+}
 
+void KopeteWindow::makeTrayToolTip()
+{	
 	//the tool-tip of the systemtray.
 	if(m_tray)
 	{
