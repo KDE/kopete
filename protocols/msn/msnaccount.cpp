@@ -1,10 +1,10 @@
 /*
     msnaccount.h - Manages a single MSN account
 
-    Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2004 by Olivier Goffart       <ogoffart@tiscalinet.be>
     Copyright (c) 2003      by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -523,21 +523,17 @@ void MSNAccount::setPublicName( const QString &publicName )
 void MSNAccount::slotGroupAdded( const QString& groupName, uint groupNumber )
 {
 	// We have pending groups that we need add a contact to
-	if ( tmp_addToNewGroup.count() > 0 )
+	if ( tmp_addToNewGroup.contains(groupName) )
 	{
-		for ( QValueList<QPair<QString, QString> >::Iterator it = tmp_addToNewGroup.begin(); it != tmp_addToNewGroup.end(); ++it )
+		QStringList list=tmp_addToNewGroup[groupName];
+		for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
 		{
-			if ( ( *it ).second == groupName )
-			{
-				QString contactId = ( *it ).first;
-				kdDebug( 14140 ) << k_funcinfo << "Adding to new group: " << contactId <<  endl;
-				notifySocket()->addContact( contactId, contacts()[ contactId ] ? contacts()[ contactId ]->displayName()
-					: contactId, groupNumber, MSNProtocol::FL );
-			}
+			QString contactId =*it;
+			kdDebug( 14140 ) << k_funcinfo << "Adding to new group: " << contactId <<  endl;
+			notifySocket()->addContact( contactId, contacts()[ contactId ] ? contacts()[ contactId ]->displayName()
+						: contactId, groupNumber, MSNProtocol::FL );
 		}
-
-		// FIXME: Although we check for groupName above we clear regardless of the outcome? : ) - Martijn
-		tmp_addToNewGroup.clear();
+		tmp_addToNewGroup.remove(groupName);
 	}
 
 	if ( m_groupList.contains( groupNumber ) )
@@ -577,20 +573,31 @@ void MSNAccount::slotGroupAdded( const QString& groupName, uint groupNumber )
 		{
 			// If we found a group with the same displayName but no plugin data
 			// use that instead. This group is only used if no exact match is
-			// found in the list.
+			// found in the list.  Note that only the group #0 can be the top-level
 			// FIXME: When adding a group in Kopete we already need to inform the
 			//        plugins about the KopeteGroup *, so they know which to use
 			//        and this code path can be removed ( or kept solely for people
 			//        who migrate from older versions ) - Martijn
-			if ( g->displayName() == groupName )
+			if ( g->displayName() == groupName && (groupNumber==0 || g->type()==KopeteGroup::Normal)  )
 				fallBack = g;
 		}
 	}
-
+	
 	if ( !fallBack )
 	{
-		fallBack = new KopeteGroup( groupName );
-		KopeteContactList::contactList()->addGroup( fallBack );
+		if( groupNumber==0  )
+		{	// The group #0 is an unremovable group. his default name is "~" ,
+			// but the official client rename it i18n("others contact") at the first
+			// connection.   
+			// In many case, the users don't use that group as a real group, or just as 
+			// a group to put all contact that are not sorted.  
+			fallBack = KopeteGroup::topLevel();
+		}
+		else
+		{
+			fallBack = new KopeteGroup( groupName );
+			KopeteContactList::contactList()->addGroup( fallBack );
+		}
 	}
 
 	fallBack->setPluginData( protocol(), accountId() + " id", QString::number( groupNumber ) );
@@ -625,11 +632,26 @@ void MSNAccount::slotGroupRemoved( uint group )
 
 void MSNAccount::addGroup( const QString &groupName, const QString& contactToAdd )
 {
-	if ( !contactToAdd.isNull() )
-		tmp_addToNewGroup << QPair<QString, QString>( contactToAdd, groupName );
-
+	if ( !contactToAdd.isNull()  )
+	{
+		if( tmp_addToNewGroup.contains(groupName) )
+		{
+			tmp_addToNewGroup[groupName].append(contactToAdd);
+			//A group with the same name is about to be added,
+			// we don't need to add a second group with the same name
+			kdDebug( 14140 ) << k_funcinfo << "no need to re-add " << groupName << " for " << contactToAdd  <<  endl;
+			return;
+		}
+		else
+		{
+			tmp_addToNewGroup.insert(groupName,QStringList(contactToAdd));
+			kdDebug( 14140 ) << k_funcinfo << "preparing to add " << groupName << " for " << contactToAdd  <<  endl;
+		}
+	}
+		
 	if ( m_notifySocket )
 		m_notifySocket->addGroup( groupName );
+
 }
 
 void MSNAccount::slotKopeteGroupRenamed( KopeteGroup *g )
@@ -1068,9 +1090,10 @@ bool MSNAccount::addContactToMetaContact( const QString &contactId, const QStrin
 				}
 				else
 				{
-					if ( !group->displayName().isEmpty() ) // not the top-level
-					{
+					if ( !group->displayName().isEmpty() && group->type() == KopeteGroup::Normal ) 
+					{  // not the top-level
 						// Create the group and add the contact
+						// FIXME: if for a reason or another the group can't be added, the contact will not be added.
 						addGroup( group->displayName(), contactId );
 						added = true;
 					}

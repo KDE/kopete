@@ -365,7 +365,7 @@ void MSNContact::syncGroups( )
 		}
 		else
 		{
-			if(!group->displayName().isEmpty()) //not the top-level
+			if(!group->displayName().isEmpty() && group->type() == KopeteGroup::Normal) //not the top-level
 			{
 				//Create the group and add the contact
 				static_cast<MSNAccount*>( account() )->addGroup( group->displayName(),contactId() );
