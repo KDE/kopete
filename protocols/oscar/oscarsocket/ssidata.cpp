@@ -21,12 +21,17 @@
 
 SSIData::SSIData()
 {
-	setAutoDelete(true);
+	mList.setAutoDelete(true);
 }
 
 SSIData::~SSIData()
 {
-	clear();
+	mList.clear();
+}
+
+QPtrList<SSI> SSIData::list() const
+{
+	return mList;
 }
 
 // ========================================================================================
@@ -44,10 +49,10 @@ SSI *SSIData::addContact(const QString &name, const QString &group, bool addingA
 
 	//find the largest bid (=contact id) in our group
 	unsigned short maxbid = 0;
-	for (SSI *i=first(); i; i = next())
+	for ( QPtrListIterator<SSI> it ( mList ); it.current(); ++it )
 	{
-		if ((newitem->gid == i->gid) && (i->bid > maxbid))
-			maxbid = i->bid;
+		if ((newitem->gid == it.current()->gid) && (it.current()->bid > maxbid))
+			maxbid = it.current()->bid;
 	}
 
 	newitem->bid = maxbid + 1;
@@ -65,8 +70,23 @@ SSI *SSIData::addContact(const QString &name, const QString &group, bool addingA
 		newitem->waitingAuth = true;
 	}
 
-	append(newitem);
+	mList.append(newitem);
 	return newitem;
+}
+
+void SSIData::addContact( SSI* newItem )
+{
+	mList.append( newItem );
+}
+
+bool SSIData::removeItem( SSI* item )
+{
+	return mList.remove( item );
+}
+
+void SSIData::clear()
+{
+	mList.clear();
 }
 
 // Finds the contact with given name and group... returns NULL if not found
@@ -79,16 +99,16 @@ SSI *SSIData::findContact(const QString &name, const QString &group)
 			", gr->gid= " << gr->gid <<
 			", gr->bid= " << gr->bid <<
 			", gr->type= " << gr->type << endl;
-		for (SSI *i=first(); i; i = next())
+		for (QPtrListIterator<SSI> it ( mList ); it.current(); ++it)
 		{
 			//if the ssi item has the right name, is a contact, and has the right group
 			/*kdDebug(14150) << k_funcinfo <<
-				"i->gid is " << i->gid << ", gr->gid is " << gr->gid << endl;*/
-			if ((i->name == name) && (i->type == ROSTER_CONTACT) && (i->gid == gr->gid))
+				"it.current()->gid is " << it.current()->gid << ", gr->gid is " << gr->gid << endl;*/
+			if ((it.current()->name == name) && (it.current()->type == ROSTER_CONTACT) && (it.current()->gid == gr->gid))
 			{
 				//we have found our contact
 				kdDebug(14150) << "Found contact " << name << " in SSI data" << endl;
-				return i;
+				return it.current();
 			}
 		}
 	}
@@ -101,16 +121,16 @@ SSI *SSIData::findContact(const QString &name, const QString &group)
 
 SSI *SSIData::findContact( const QString& name )
 {
-	for (SSI *i=first(); i; i = next())
+	for (QPtrListIterator<SSI> it ( mList ); it.current(); ++it)
 	{
 		//if the ssi item has the right name, is a contact, and has the right group
 		/*kdDebug(14150) << k_funcinfo <<
-			"i->gid is " << i->gid << ", gr->gid is " << gr->gid << endl;*/
-		if ((i->name == name) && (i->type == ROSTER_CONTACT))
+			"it.current()->gid is " << it.current()->gid << ", gr->gid is " << gr->gid << endl;*/
+		if ((it.current()->name == name) && (it.current()->type == ROSTER_CONTACT))
 		{
 			//we have found our contact
 			kdDebug(14150) << "Found contact " << name << " in SSI data" << endl;
-			return i;
+			return it.current();
 		}
 	}
 	
@@ -121,20 +141,20 @@ SSI *SSIData::findContact( const QString& name )
 
 SSI *SSIData::findGroup(const QString &name)
 {
-	for (SSI *i=first(); i; i = next())
+	for (QPtrListIterator<SSI> it ( mList ); it.current(); ++it)
 	{
-		if ((current()->name == name) && (current()->type == ROSTER_GROUP))
-			return current();
+		if ((it.current()->name == name) && (it.current()->type == ROSTER_GROUP))
+			return it.current();
 	}
 	return 0L;
 }
 
 SSI *SSIData::findGroup(const int groupId)
 {
-	for (SSI *i=first(); i; i = next())
+	for (QPtrListIterator<SSI> it ( mList ); it.current(); ++it)
 	{
-		if ((current()->bid == groupId) && (current()->type == ROSTER_GROUP))
-			return current();
+		if ((it.current()->bid == groupId) && (it.current()->type == ROSTER_GROUP))
+			return it.current();
 	}
 	return 0L;
 }
@@ -155,7 +175,7 @@ SSI *SSIData::addGroup(const QString &name)
 	newitem->tlvlength = 0;
 	newitem->tlvlist = 0L;
 
-	append(newitem);
+	mList.append(newitem);
 	return newitem;
 }
 
@@ -197,7 +217,7 @@ SSI *SSIData::addInvis(const QString &name)
 	newitem->tlvlength = 0;
 	newitem->waitingAuth = false;
 
-	append(newitem);
+	mList.append(newitem);
 
 	return newitem;
 }
@@ -206,7 +226,7 @@ bool SSIData::removeInvis(const QString &name)
 {
 	SSI *denyItem = findInvis(name);
 	if(denyItem != 0L)
-		remove(denyItem);
+		mList.remove(denyItem);
 
 	return (denyItem!=0L);
 }
@@ -214,10 +234,10 @@ bool SSIData::removeInvis(const QString &name)
 SSI *SSIData::findInvis(const QString &name)
 {
 	kdDebug(14150) << k_funcinfo << "Called for contact '" << name << "'" << endl;
-	for (SSI *i=first(); i; i = next())
+	for (QPtrListIterator<SSI> it ( mList ); it.current(); ++it)
 	{
-		if ((current()->name == name) && (current()->type == ROSTER_INVISIBLE))
-			return current();
+		if ((it.current()->name == name) && (it.current()->type == ROSTER_INVISIBLE))
+			return it.current();
 	}
 	return 0L;
 }
@@ -226,10 +246,10 @@ SSI *SSIData::findInvis(const QString &name)
 
 SSI *SSIData::findVisibilitySetting()
 {
-	for (SSI *i=first(); i; i = next())
+	for (QPtrListIterator<SSI> it ( mList ); it.current(); ++it)
 	{
-		if ((current()->name.isEmpty()) && (current()->type == ROSTER_VISIBILITY))
-			return current();
+		if ((it.current()->name.isEmpty()) && (it.current()->type == ROSTER_VISIBILITY))
+			return it.current();
 	}
 	return 0L;
 }
@@ -237,10 +257,10 @@ SSI *SSIData::findVisibilitySetting()
 unsigned short SSIData::maxContactId(const int groupId)
 {
 	unsigned short maxId = 0;
-	for (SSI *i=first(); i; i = next())
+	for (QPtrListIterator<SSI> it ( mList ); it.current(); ++it)
 	{
-		if ((groupId == i->gid) && (i->bid > maxId))
-			maxId = i->bid;
+		if ((groupId == it.current()->gid) && (it.current()->bid > maxId))
+			maxId = it.current()->bid;
 	}
 	return maxId;
 }
@@ -248,10 +268,10 @@ unsigned short SSIData::maxContactId(const int groupId)
 unsigned short SSIData::maxGroupId()
 {
 	unsigned short maxId = 0;
-	for (SSI *i=first(); i; i = next())
+	for (QPtrListIterator<SSI> it ( mList ); it.current(); ++it)
 	{
-		if (i->gid > maxId)
-			maxId = i->gid;
+		if (it.current()->gid > maxId)
+			maxId = it.current()->gid;
 	}
 	return maxId;
 }
@@ -273,11 +293,12 @@ bool SSIData::waitingAuth( SSI* item )
 
 void SSIData::print()
 {
-	for (SSI *i=first(); i; i = next())
+	
+	for (QPtrListIterator<SSI> it ( mList ); it.current(); ++it)
 	{
-		kdDebug(14150) << k_funcinfo << "name: " << i->name <<
-			", gid: " << i->gid << ", bid: " << i->bid <<
-			", type: " << i->type << ", tbslen: " << i->tlvlength << endl;
+		kdDebug(14150) << k_funcinfo << "name: " << it.current()->name <<
+			", gid: " << it.current()->gid << ", bid: " << it.current()->bid <<
+			", type: " << it.current()->type << ", tbslen: " << it.current()->tlvlength << endl;
 	}
 }
 

@@ -70,11 +70,17 @@ struct SSI
  * for more info
  */
 
-class SSIData : public QPtrList<SSI>
+class SSIData
 {
 	public:
 		SSIData();
 		~SSIData();
+
+		/**
+		 * Get the QPtrList
+		 */
+		QPtrList<SSI> list() const;
+			
 
 		/**
 		 * Adds a contact to the SSI data list
@@ -84,7 +90,11 @@ class SSIData : public QPtrList<SSI>
 		 */
 		SSI *addContact(const QString &name, const QString &group, bool addingAuthBuddy);
 		SSI *addContact(const int groupId, const int contactId, bool addingAuthBuddy);
-
+		
+		/**
+		 * Add an already constructed SSI to the list
+		 */
+		void addContact( SSI* newItem );
 		/**
 		 * Finds the contact with given name and group...
 		 * returns NULL if not found
@@ -97,6 +107,11 @@ class SSIData : public QPtrList<SSI>
 		 * \return NULL if not found
 		 */
 		SSI *findContact(const QString &name);
+
+		/**
+		 * Remove this SSI item from the list
+		 */
+		bool removeItem( SSI* item );
 
 		// ===============================================================================
 
@@ -167,9 +182,16 @@ class SSIData : public QPtrList<SSI>
 
 		SSI *findVisibilitySetting();
 
+		/**
+		 * Clears the SSI Data. Used on logout to keep the list from replicating
+		 */
+		void clear();
+
 	private:
 		unsigned short maxContactId(const int);
 		unsigned short maxGroupId();
+		
+		QPtrList<SSI> mList;
 };
 
 #endif

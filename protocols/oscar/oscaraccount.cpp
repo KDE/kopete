@@ -34,6 +34,7 @@
 #include <qregexp.h>
 #include <qstylesheet.h>
 #include <qtimer.h>
+#include <qptrlist.h>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -116,11 +117,6 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 	QObject::connect(
 		KopeteContactList::contactList(), SIGNAL(groupRemoved(KopeteGroup *)),
 		this, SLOT(slotKopeteGroupRemoved(KopeteGroup *)));
-
-	// This is for when the user decides to add a group in the contact list
-	QObject::connect(
-		KopeteContactList::contactList(), SIGNAL(groupAdded(KopeteGroup *)),
-		this, SLOT(slotGroupAdded(KopeteGroup *)));
 
 	// own status changed
 	QObject::connect(
@@ -384,23 +380,25 @@ void OscarAccount::slotGotServerBuddyList()
 	
 	//We're adding groups from the SSI data. We don't need to add them to the
 	//SSI in slotKopeteGroupAdded
-	QObject::disconnect(KopeteContactList::contactList(), SIGNAL(groupAdded(KopeteGroup *)),
-		this, SLOT(slotGroupAdded(KopeteGroup *)));
+	
 
-	QPtrListIterator<SSI> git( static_cast< (QPtrList<SSI>) >( engine()->ssiData() ) );
+	QPtrList<SSI> list = engine()->ssiData().list();
+	QPtrListIterator<SSI> git( list );
 	for ( ; git.current(); ++git )
 	{
 		kdDebug(14150) << "Looking at " << git.count() << " items" << endl;
 		if ( git.current()->type == 1 )
 		{ //active contact on SSI
-			
-			kdDebug(14150) << "Adding group '" << git.current()->name << "' to contact list" << endl;
-			addGroup( git.current()->name );
+			if ( !git.current()->name.isEmpty() )
+			{
+				kdDebug(14150) << "Adding group '" << git.current()->name << "' to contact list" << endl;
+				addGroup( git.current()->name );
+			}
 		}
 	}
 	
 	//groups are added. Add the contacts
-	QPtrListIterator<SSI> bit( engine()->ssiData() );
+	QPtrListIterator<SSI> bit( list );
 	for ( ; bit.current(); ++bit )
 	{
 		kdDebug(14150) << "Looking at " << bit.count() << " items" << endl;
@@ -429,7 +427,7 @@ void OscarAccount::slotLoggedIn()
 	d->passwordWrong = false;
 
 	// Only call sync if we received a list on connect, does not happen on @mac AIM-accounts
-	if ( engine()->ssiData().isEmpty() )
+	if ( engine()->ssiData().list().isEmpty() )
 	{
 		// FIXME: Use proper rate limiting rather than a fixed 2 second delay - Martijn
 		QTimer::singleShot( 2000, this, SLOT( slotDelayedListSync() ) );
@@ -577,8 +575,6 @@ void OscarAccount::setServerPort(int port)
 void OscarAccount::addGroup( const QString& groupName )
 {
 	KopeteGroup* group = KopeteContactList::contactList()->getGroup( groupName );
-	if ( !group ) //group was not found and group creation failed
-		return;
 }
 
 void OscarAccount::addOldContact( SSI* ssiItem, KopeteMetaContact* meta )
