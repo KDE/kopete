@@ -10,7 +10,6 @@ Comment[ja]=Kopete メッセンジャー
 Comment[pt]=Mensageiro Kopete
 Comment[pt_BR]=Mensageiro Kopete
 Comment[ru]=Программа обмена сообщениями Kopete
-Comment[sv]=Kopete Instant Messenger
 Comment[uk]=Програма обміну повідомленнями Kopete
 Comment[ven]=Murumiwa wa Kopete
 Comment[zh_CN]=Kopete 即时讯息
@@ -212,6 +211,12 @@ default_presentation=0
 
 [kopete_highlight]
 Name=Highlight
+Name[pt]=Seleccionado
+Name[pt_BR]=Seleccionado
+Name[sv]=Markera
 Comment=A message was highlighted because it contained your nickname
+Comment[pt]=Uma mensagem foi seleccionada porque continha a sua alcunha
+Comment[pt_BR]=Uma mensagem foi seleccionada porque continha a sua alcunha
+Comment[sv]=Ett meddelande markerades eftersom det innehöll ditt smeknamn
 default_sound=Kopete_Received.ogg
 default_presentation=1
