@@ -386,10 +386,6 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 {
 	XMPP::JT_Register * task = (XMPP::JT_Register *) sender ();
 
-	// FIXME: this is required because Iris crashes if we try
-	//        to disconnect here. Hopefully Justin can fix this.
-	QTimer::singleShot(0, this, SLOT(disconnect ()));
-
 	if (task->success ())
 	{
 		mMainWidget->lblStatusMessage->setText ( i18n ( "Registration successful." ) );
@@ -404,6 +400,10 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 		mParentWidget->mPort->setValue ( mMainWidget->sbPort->value () );
 		mParentWidget->cbUseSSL->setChecked ( mMainWidget->cbUseSSL->isChecked () );
 
+		// FIXME: this is required because Iris crashes if we try
+		//        to disconnect here. Hopefully Justin can fix this.
+		QTimer::singleShot(0, this, SLOT(disconnect ()));
+
 		slotDeleteDialog ();
 	}
 	else
@@ -412,6 +412,10 @@ void JabberRegisterAccount::slotRegisterUserDone ()
 		KMessageBox::information (Kopete::UI::Global::mainWidget (),
 								  i18n ("Unable to create account on the server. The Jabber ID probably already exists."),
 								  i18n ("Jabber Account Registration"));
+
+		// FIXME: this is required because Iris crashes if we try
+		//        to disconnect here. Hopefully Justin can fix this.
+		QTimer::singleShot(0, this, SLOT(disconnect ()));
 	}
 
 }
