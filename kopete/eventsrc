@@ -144,7 +144,7 @@ default_presentation=0
 
 [kopete_online]
 Name=Online
-Name[ca]=En línia
+Name[ca]=Connectat
 Name[es]=Conectado
 Name[et]=Võrgus
 Name[fi]=Yhteys auki
@@ -172,15 +172,20 @@ default_presentation=16
 
 [kopete_offline]
 Name=Offline
+Name[ca]=Desconnectat
+Name[da]=Gå offline
 Name[es]=Desconectar
 Name[et]=Võrgust ära
 Name[pt_BR]=Desconectado
 Name[sr]=Није на вези
 Name[sv]=Nerkopplad
 Comment=User goes offline
+Comment[ca]=L'usuari entra a connectat
+Comment[da]=Bruger går offline
 Comment[de]=Benutzer wechselt auf Offline
 Comment[es]=El usuario se desconecta
 Comment[et]=Kasutaja läks võrgust ära
+Comment[hu]=A felhasználó offline módba vált
 Comment[pt_BR]=O usuário fica desconectado
 Comment[sr]=Корисник се повезао
 Comment[sv]=Användaren kopplar ner
@@ -204,9 +209,12 @@ Name[sv]=Statusändring
 Name[tr]=Durum Değişimi
 Name[wa]=Candjmint di statut
 Comment=User changed his online status.
+Comment[ca]=L'usuari canvia el seu estat a connectat.
+Comment[da]=Bruger ændrede sin status på nettet.
 Comment[de]=Benutzer wechselt seinen Status.
 Comment[es]=El usuario cambió su estado de conexión.
 Comment[et]=Kasutaja muutis oma võrgusoleku staatust
+Comment[hu]=A felhasználó megváltoztatta online/offline állapotát
 Comment[pt_BR]=O usuário mudou o seu status de on-line.
 Comment[sr]=Корисник је променио свој статус на вези.
 Comment[sv]=Användaren ändrade uppkopplingsstatus.
