@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>689</width>
-            <height>580</height>
+            <height>528</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -794,26 +794,14 @@
                                 </property>
                                 <property name="sizePolicy">
                                     <sizepolicy>
-                                        <hsizetype>1</hsizetype>
-                                        <vsizetype>7</vsizetype>
+                                        <hsizetype>7</hsizetype>
+                                        <vsizetype>2</vsizetype>
                                         <horstretch>0</horstretch>
                                         <verstretch>0</verstretch>
                                     </sizepolicy>
                                 </property>
-                                <property name="minimumSize">
-                                    <size>
-                                        <width>0</width>
-                                        <height>58</height>
-                                    </size>
-                                </property>
-                                <property name="maximumSize">
-                                    <size>
-                                        <width>32767</width>
-                                        <height>120</height>
-                                    </size>
-                                </property>
                                 <property name="allColumnsShowFocus">
-                                    <bool>true</bool>
+                                    <bool>false</bool>
                                 </property>
                                 <property name="defaultRenameAction">
                                     <enum>Accept</enum>
@@ -954,22 +942,10 @@
                                 <property name="sizePolicy">
                                     <sizepolicy>
                                         <hsizetype>7</hsizetype>
-                                        <vsizetype>7</vsizetype>
+                                        <vsizetype>2</vsizetype>
                                         <horstretch>0</horstretch>
                                         <verstretch>0</verstretch>
                                     </sizepolicy>
-                                </property>
-                                <property name="minimumSize">
-                                    <size>
-                                        <width>0</width>
-                                        <height>58</height>
-                                    </size>
-                                </property>
-                                <property name="maximumSize">
-                                    <size>
-                                        <width>32767</width>
-                                        <height>120</height>
-                                    </size>
                                 </property>
                                 <property name="allColumnsShowFocus">
                                     <bool>true</bool>
