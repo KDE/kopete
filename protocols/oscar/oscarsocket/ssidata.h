@@ -76,7 +76,7 @@ class SSIData : public QPtrList<SSI>
 		SSIData();
 		~SSIData();
 
-		/*
+		/**
 		 * Adds a contact to the SSI data list
 		 * you will need to actually send the info in the
 		 * SSI returned by this method to change the Server
@@ -85,7 +85,7 @@ class SSIData : public QPtrList<SSI>
 		SSI *addContact(const QString &name, const QString &group, bool addingAuthBuddy);
 		SSI *addContact(const int groupId, const int contactId, bool addingAuthBuddy);
 
-		/*
+		/**
 		 * Finds the contact with given name and group...
 		 * returns NULL if not found
 		 */
@@ -100,7 +100,7 @@ class SSIData : public QPtrList<SSI>
 
 		// ===============================================================================
 
-		/*
+		/**
 		 * Adds a group to the local ssi data
 		 * you will need to actually send the info in the
 		 * SSI returned by this method to change the Server
@@ -108,16 +108,17 @@ class SSIData : public QPtrList<SSI>
 		 */
 		SSI *addGroup(const QString &name);
 
-		/*
+		/**
 		 * Find the group named name, and returns a pointer to it
 		 */
 		SSI *findGroup(const QString &name);
-		/*
-		 * Same asa above but searches for group by using its groupID
+		
+		/**
+		 * Same as above but searches for group by using its groupID
 		 */
 		SSI *findGroup(const int groupId);
 
-		/*
+		/**
 		 * Changes the name of a group in the local SSI data
 		 * You can use the SSI pointer returned by this
 		 * method to pass to the server to actually change
@@ -127,7 +128,8 @@ class SSIData : public QPtrList<SSI>
 
 		// ===============================================================================
 
-		/* Adds the given sn to the list of blocked sn's
+		/**
+		 * Adds the given sn to the list of blocked sn's
 		 * You can use the SSI pointer returned by this
 		 * method to pass to the server to actually change
 		 * the name on the SSI data
@@ -136,18 +138,29 @@ class SSIData : public QPtrList<SSI>
 
 		bool removeInvis(const QString &name);
 
-		/*
+		/**
 		 * Finds the given contact in the deny list...
 		 * returns NULL if not found
 		 */
 		SSI *findInvis(const QString &name);
 
 		// ===============================================================================
-
+		
+		/**
+		 * Set that we're waiting auth for a SSI Item
+		 * This does not indicate that the appropriate TLV will be added
+		 * in the TLV list for this item
+		 */
 		void setWaitingAuth( SSI* item, bool waiting );
 
+		/**
+		 * Get whether or not we're waiting auth.
+		 * This does not indicate that the appropriate TLV exists
+		 * in the TLV list for this item
+		 */
 		bool waitingAuth( SSI* item );
-		/*
+		
+		/**
 		 * Prints out the SSI data
 		 */
 		void print();
