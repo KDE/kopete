@@ -2178,7 +2178,7 @@ void OscarSocket::sendInfo(void)
 /** Sends the user's profile to the server */
 void OscarSocket::sendMyProfile(void)
 {
-  static const QString defencoding = "text/x-aolrtf; charset=\"us-ascii\"";
+  static const QString defencoding = "text/aolrtf; charset=\"us-ascii\"";
   Buffer outbuf;
   outbuf.addSnac(0x0002,0x0004,0x0000,0x00000004);
   outbuf.addTLV(0x0001,defencoding.length(),defencoding.latin1());

@@ -111,8 +111,10 @@ protected slots: // Protected slots
 private slots: // Private slots
 	/** Called when we have established a connection */
 	void slotConnected(void);
-  /** Called when the connection is closed */
-  void slotConnectionClosed(void);
+	/** Called when the connection is closed */
+	void slotConnectionClosed(void);
+	/** Called when a socket error occurs */
+	void slotError(int);
 
 private: //private attributes
 	/** The ICBM cookie used to authenticate */

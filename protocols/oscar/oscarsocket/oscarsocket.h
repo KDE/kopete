@@ -365,7 +365,7 @@ private: // Private attributes
   QString myUserProfile;
   /** Tells if we are connected to the server and ready to operate */
   bool isConnected;
-		
+
 signals: // Signals
   /** Called when an SSI acknowledgement is recieved */
   void SSIAck();

@@ -28,8 +28,9 @@ OscarConnection::OscarConnection(const QString &sn, const QString &connName,
 	mSN = sn;
 	mCookie.duplicate(cookie);
 
-  connect(this, SIGNAL(readyRead()), this, SLOT(slotRead()));
- 	connect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
+	connect(this, SIGNAL(readyRead()), this, SLOT(slotRead()));
+	connect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
+	connect(this, SIGNAL(error(int)), this, SLOT(slotError(int)));
 }
 
 OscarConnection::~OscarConnection()
@@ -43,18 +44,42 @@ OscarConnection::~OscarConnection()
 void OscarConnection::slotRead()
 {
 	kdDebug(14150) << "[OSCAR] OscarConnection: in slotRead(), " << bytesAvailable() << " bytes, name: " << mConnName << endl;
-  Buffer inbuf;
-  int len = bytesAvailable();
+	Buffer inbuf;
+	int len = bytesAvailable();
 	char *buf = new char[len];
 	readBlock(buf,len);
 	inbuf.setBuf(buf,len);
-  inbuf.print();
+	inbuf.print();
 
 	if(hasDebugDialog()){
 			debugDialog()->addMessageFromServer(inbuf.toString(),mConnName);
 	}
 
 	delete buf;
+}
+
+void OscarConnection::slotError(int errornum)
+{
+	switch(errornum)
+	{
+		case QSocket::ErrConnectionRefused:
+		{
+			kdDebug(14150) << "[OSCAR] OscarConnection: in slotError() and error is connection refused." << endl;
+			slotConnectionClosed();
+			break;
+		}
+		case QSocket::ErrHostNotFound:
+		{
+			kdDebug(14150) << "[OSCAR] OscarConnection: in slotError() and error is host not found." << endl;
+			slotConnectionClosed();
+			break;
+		}
+		case QSocket::ErrSocketRead:
+		{
+			kdDebug(14150) << "[OSCAR] OscarConnection: in slotError() and error is problem with reading socket. Problems may be present from here on out..." << endl;
+			break;
+		}
+	}
 }
 
 void OscarConnection::setDebugDialog(OscarDebugDialog *dialog)

@@ -36,6 +36,8 @@
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
+#include "kopetecontactlist.h"
+#include "kopetegroup.h"
 #include "oscarprotocol.h"
 #include "oscarsocket.h"
 #include "oscaruserinfo.h"
@@ -97,7 +99,9 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 		this, SLOT(slotTransferAccepted(KopeteTransfer *, const QString &)) );
 	QObject::connect( KopeteTransferManager::transferManager(), SIGNAL(refused(const KopeteFileTransferInfo &)),
 		this, SLOT(slotTransferDenied(const KopeteFileTransferInfo &)) );
-
+	// When the contact is being removed (whether from a group or not)
+	QObject::connect((KopeteContact *)(this), SIGNAL(contactDestroyed( KopeteContact *c )), this, SLOT(slotContactDestroyed( KopeteContact *c )));
+	QObject::connect(KopeteContactList::contactList(), SIGNAL(groupRemoved( KopeteGroup * )), this, SLOT(slotGroupRemoved( KopeteGroup * )));
 	initActions();
 
 	if ( !mListContact->alias().isEmpty() )
@@ -465,21 +469,27 @@ KActionCollection *OscarContact::customContextMenuActions(void)
 /** Method to delete a contact from the contact list */
 void OscarContact::slotDeleteContact(void)
 {
-	QString buddyName = (mListContact->alias().isEmpty() ? mName : mListContact->alias());
+	AIMGroup *group = mProtocol->buddyList()->findGroup(mListContact->groupID());
+	if (!group) return;
+	mProtocol->buddyList()->removeBuddy(mListContact);
+	mProtocol->engine->sendDelBuddy(mListContact->screenname(),group->name());
+	deleteLater();
+}
 
-	if (
-		KMessageBox::warningYesNo(
-			qApp->mainWidget(),
-			i18n("<qt>Are you sure you want to remove %1 from your contact list?</qt>").arg(buddyName),
-			i18n("Confirmation")
-			) == KMessageBox::Yes )
-	{
-		mProtocol->buddyList()->removeBuddy(mListContact);
-		AIMGroup *group = mProtocol->buddyList()->findGroup(mListContact->groupID());
-		if (group)
-			mProtocol->engine->sendDelBuddy(mListContact->screenname(),group->name());
-		deleteLater();
-	}
+void OscarContact::slotContactDestroyed( KopeteContact *c )
+{
+	slotDeleteContact();
+}
+
+void OscarContact::slotGroupRemoved( KopeteGroup *group )
+{
+	kdDebug(14150) << "[OscarContact] slotGroupRemoved() being called" << endl;
+	QString groupName=group->displayName();
+	AIMGroup *aGroup = mProtocol->buddyList()->findGroup(mListContact->groupID());
+	if (!aGroup) return;
+	if (aGroup->name() != groupName) return;
+	kdDebug(14150) << "[OscarContact] slotGroupRemoved() calling slotDeleteContact()" << endl;
+	slotDeleteContact();
 }
 
 void OscarContact::slotWarn()
