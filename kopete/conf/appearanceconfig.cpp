@@ -563,7 +563,7 @@ void AppearanceConfig::slotUpdatePreview()
 			KopeteMessage msgOut( myself, jack, i18n("Ok, this is an outgoing message"),KopeteMessage::Outbound );
 			KopeteMessage msgInt( jack, myself, i18n("This is an internal message"),KopeteMessage::Internal );
 			//KopeteMessage msgHigh( jack, myself, i18n("This is a highlighted message"),KopeteMessage::Inbound );
-			KopeteMessage msgAct( jack, myself, i18n("did an action"),KopeteMessage::Action );
+			KopeteMessage msgAct( jack, myself, i18n("performed an action"),KopeteMessage::Action );
 
 			preview->begin();
 			preview->write( QString::fromLatin1( "<html><head><style>body{font-family:%1;color:%2;}td{font-family:%3;color:%4;}.highlight{color:%5;background-color:%6}</style></head><body bgcolor=\"%7\" vlink=\"%8\" link=\"%9\">" )
@@ -582,7 +582,7 @@ void AppearanceConfig::slotUpdatePreview()
 			preview->write( KopeteXSL::xsltTransform( msgOut.asXML().toString(), model)  );
 			msgIn.setFg(QColor("DodgerBlue"));
 			msgIn.setBg(QColor("LightSteelBlue"));
-			msgIn.setBody( i18n("Here is another incomming, but colored message"));
+			msgIn.setBody( i18n("Here is an incoming colored message"));
 			preview->write( KopeteXSL::xsltTransform( msgIn.asXML().toString(), model ) );
 			preview->write( KopeteXSL::xsltTransform( msgInt.asXML().toString(), model ) );
 			preview->write( KopeteXSL::xsltTransform( msgAct.asXML().toString(), model ) );
