@@ -203,7 +203,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					msgText = msgText.left(88) + QString::fromLatin1("...");
 	
 				QString event;
-				QString body =i18n( "<qt>Incoming message from %1<br>\"%2\"</qt>" );;
+				QString body =i18n( "<qt>Incoming message from %1<br>\"%2\"</qt>" );
 	
 				switch( msg.importance() )
 				{
@@ -217,7 +217,7 @@ void KopeteViewManager::messageAppended( Kopete::Message &msg, Kopete::ChatSessi
 					default:
 						event = QString::fromLatin1( "kopete_contact_incoming" );
 				}
-				KNotifyClient::event(winId,  event, body.arg( msgFrom, msgText ), msg.from()->metaContact(),
+				KNotifyClient::event(winId,  event, body.arg( QStyleSheet::escape(msgFrom), QStyleSheet::escape(msgText) ), msg.from()->metaContact(),
 					i18n("View") , const_cast<Kopete::Contact*>(msg.from()) , SLOT(execute()) );
 			}
 		}
