@@ -948,15 +948,20 @@ void MSNAccount::slotStartChatSession( const QString& handle )
 //--------
 void MSNAccount::slotBlockContact( const QString& handle ) 
 {
-	if(m_allowList.contains(handle))
-		notifySocket()->removeContact( handle, 0, MSNProtocol::AL);
-	else if(!m_blockList.contains(handle))
-		notifySocket()->addContact( handle, handle, 0, MSNProtocol::BL );
+	if(m_notifySocket)
+	{
+		if(m_allowList.contains(handle))
+			m_notifySocket->removeContact( handle, 0, MSNProtocol::AL);
+		else if(!m_blockList.contains(handle))
+			m_notifySocket->addContact( handle, handle, 0, MSNProtocol::BL );
+	}
 }
 
 void MSNAccount::slotAddContact( const QString &userName , const QString &displayName)
 {
-	addContact( userName, displayName );
+	if(m_notifySocket)
+		m_notifySocket->addContact( userName, displayName, 0, MSNProtocol::FL );
+
 }
 //----------
 
