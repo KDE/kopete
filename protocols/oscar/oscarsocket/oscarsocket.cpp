@@ -409,10 +409,13 @@ void OscarSocket::slotRead(void)
 							parseSSIRights(inbuf);
 							break;
 						case 0x0006: //buddy list
-							parseSSIData(inbuf);
+							parseRosterData(inbuf);
 							break;
-						case 0x000e: //server ack
+						case 0x000e: //server ack for adding/changing roster items
 							parseSSIAck(inbuf);
+							break;
+						case 0x000f: //ack when contactlist timesamp/length matches those values sent
+							parseRosterOk(inbuf);
 							break;
 						default: //invalid subtype
 							kdDebug(14150) << k_funcinfo << "Unknown SNAC(" << s.family << ",|" << s.subtype << "|)" << endl;
@@ -1089,12 +1092,12 @@ void OscarSocket::sendBuddyListRequest(void)
 	Buffer outbuf;
 	outbuf.addSnac(0x0013,0x0005,0x0000,0x00000000);
 	outbuf.addDWord(0x00000000); // FIXME: contactlist timestamp
-	outbuf.addWord(0x0000); // FIXME: contactlist length, same as first Word I get in parseSSIData
+	outbuf.addWord(0x0000); // FIXME: contactlist length, same as first Word I get in parseRosterData
 	sendBuf(outbuf,0x02);
 }
 
 /** parses incoming ssi data */
-void OscarSocket::parseSSIData(Buffer &inbuf)
+void OscarSocket::parseRosterData(Buffer &inbuf)
 {
 	AIMBuddyList blist;
 
@@ -1288,6 +1291,29 @@ void OscarSocket::parseSSIData(Buffer &inbuf)
 
 	sendSSIActivate(); // send CLI_ROSTERACK
 	emit gotConfig(blist);
+
+	gotAllRights++;
+	if (gotAllRights==7)
+	{
+		kdDebug(14150) << k_funcinfo "gotAllRights==7" << endl;
+		sendInfo();
+	}
+}
+
+void OscarSocket::parseRosterOk(Buffer &inbuf)
+{
+	kdDebug(14150) << k_funcinfo << "RECV (SRV_REPLYROSTEROK) " \
+		"received ack for contactlist timestamp/size" << endl;
+
+	//TODO: REPLYROSTEROK can happen on login if timestamp and length are both zero
+	// That means the user has no serverside contactlist at all!
+	// I hope just going on with login works fine [mETz, 22.06.2003]
+
+	long timestamp = inbuf.getDWord();
+	int size = inbuf.getWord();
+
+	kdDebug(14150) << k_funcinfo << "acked list timestamp=" << timestamp <<
+	", list size=" << size << endl;
 
 	gotAllRights++;
 	if (gotAllRights==7)

@@ -423,37 +423,55 @@ class OscarSocket : public OscarConnection
 	void sendLoginAIM();
 	void sendLoginICQ();
 
-	/** Called when a cookie is received */
+	/*
+	 * Called when a cookie is received
+	 */
 	void connectToBos();
-	/** Sends the authorization cookie to the BOS server */
+	/*
+	 * Sends the authorization cookie to the BOS server
+	 */
 	void sendCookie();
-	/** Parses the rate info response */
+	/*
+	 * Parses the rate info response
+	 */
 	void parseRateInfoResponse(Buffer &inbuf);
-	/**
+	/*
 	* Tells the server we accept it's communist rate
 	* limits, even though I have no idea what they mean
 	*/
 	void sendRateAck();
-	/** Sends privacy flags to the server  */
+	/*
+	 * Sends privacy flags to the server
+	 */
 	void sendPrivacyFlags();
-	/** parse my user info */
+	/*
+	 * parse my user info
+	 */
 	void parseMyUserInfo(Buffer &inbuf);
-	/** finds a tlv of type typ in the list */
-	TLV * findTLV(QPtrList<TLV> &l, WORD typ);
-	/**
+	/*
+	 * finds a tlv of type @p typ in the list
+	 */
+	TLV *findTLV(QPtrList<TLV> &l, WORD typ);
+	/*
 	* Parse the server's authorization response
 	* (which hopefully contains the cookie)
 	*/
 	void parseAuthResponse(Buffer &inbuf);
-	/** The program does this when a key is received */
+	/*
+	 * The program does this when a key is received
+	 */
 	void parsePasswordKey(Buffer &inbuf);
-	/**
-	* tells the server that the client is
-	* ready to receive commands & stuff */
+	/*
+	 * tells the server that the client is
+	 * ready to receive commands & stuff
+	 */
 	void sendClientReady();
-	/** Sends versions so that we get proper rate info */
+	/*
+	 * Sends versions so that we get proper rate info
+	 */
 	void sendVersions(const WORD *families, const int len);
-	/**
+
+	/*
 	* Handles AOL's evil attempt to thwart 3rd
 	* party apps using Oscar.  It requests a
 	* segment and offset of aim.exe.  We can
@@ -461,15 +479,33 @@ class OscarSocket : public OscarConnection
 	* at Gaim
 	*/
 	void parseMemRequest(Buffer &inbuf);
-	/** parses incoming ssi data */
-	void parseSSIData(Buffer &inbuf);
-	/** Requests the user's SSI rights */
+
+	/*
+	 * parses incoming contactlist (roster) data
+	 */
+	void parseRosterData(Buffer &inbuf);
+
+	/*
+	 * parses incoming ack for current contactlist timestamp/length
+	 * @see sendBuddyListRequest() for data sent on CLI_CHECKROSTER
+	 */
+	void parseRosterOk(Buffer &inbuf);
+
+	/*
+	 * Requests the user's SSI rights
+	 */
 	void requestBOSRights();
-	/** Parses SSI rights data */
+	/*
+	 * Parses SSI rights data
+	 */
 	void parseBOSRights(Buffer &inbuf);
-	/** Parses the server ready response */
+	/*
+	 * Parses the server ready response
+	 */
 	void parseServerReady(Buffer &inbuf);
-	/** parses server version info */
+	/*
+	 * parses server version info
+	 */
 	void parseServerVersions(Buffer &inbuf);
 	/** Parses Message of the day */
 	void parseMessageOfTheDay(Buffer &inbuf);
