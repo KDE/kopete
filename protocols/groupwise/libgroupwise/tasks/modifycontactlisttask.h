@@ -19,6 +19,9 @@ This is the parent of all tasks that manipulate the contact list.  The server re
 
 @author SUSE AG
 */
+
+using namespace GroupWise;
+
 class ModifyContactListTask : public RequestTask
 {
 Q_OBJECT
@@ -26,6 +29,14 @@ public:
 	ModifyContactListTask(Task* parent);
 	~ModifyContactListTask();
 	bool take( Transfer * transfer );
+signals:
+	void gotFolderAdded( const FolderItem &);
+	void gotFolderDeleted( const FolderItem &  );
+	void gotContactAdded( const ContactItem & );
+	void gotContactDeleted( const ContactItem & );
+private:
+	void processFolderChange( Field::MultiField * container );
+	void processContactChange( Field::MultiField * container );
 };
 
 #endif

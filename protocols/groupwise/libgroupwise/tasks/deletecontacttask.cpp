@@ -25,7 +25,7 @@ void DeleteContactTask::contact( const int parentFolder, const int objectId )
 	Field::FieldList lst;
 	lst.append( new Field::SingleField( NM_A_SZ_PARENT_ID, 0, NMFIELD_TYPE_UTF8, QString::number( parentFolder ) ) );
 	// this is either a user Id or a DN
-	lst.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, QString::number( parentFolder ) ) );
+	lst.append( new Field::SingleField( NM_A_SZ_OBJECT_ID, 0, NMFIELD_TYPE_UTF8, QString::number( objectId ) ) );
 	createTransfer( "deletecontact", lst );
 }
 

@@ -27,6 +27,8 @@
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 
+#include "tasks/deletecontacttask.h"
+
 #include "client.h"
 #include "gwaccount.h"
 #include "ui/gwcontactproperties.h"
@@ -319,6 +321,30 @@ bool GroupWiseContact::hasCLObjectId( const int objectId ) const
 CLInstanceList GroupWiseContact::instances() const
 {
 	return m_instances;
+}
+
+void GroupWiseContact::slotDeleteContact()
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	// remove all the instances of this contact from the server's contact list
+	QValueListConstIterator< ContactListInstance > it = m_instances.begin();
+	const QValueListConstIterator< ContactListInstance > end = m_instances.end();
+	for ( ; it != end; ++it )
+	{
+		DeleteContactTask * dct = new DeleteContactTask( account()->client()->rootTask() );
+		dct->contact( (*it).parentId, (*it).objectId );
+		connect( dct, SIGNAL( gotContactDeleted( const ContactItem & ) ), SLOT( receiveContactDeleted( const ContactItem & ) ) );
+		dct->go();
+	}
+}
+
+void GroupWiseContact::receiveContactDeleted( const ContactItem & instance )
+{
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
+	removeCLInstance( instance.id );
+	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << contactId() << " now has " << m_instances.count() << " instances remaining." << endl;
+	if ( m_instances.count() == 0 )
+		deleteLater();
 }
 
 #include "gwcontact.moc"

@@ -149,6 +149,16 @@ public slots:
 	 * (in response to the relevant KopeteMessageManager signal)
 	 */
 	void sendMessage( KopeteMessage &message );
+	/**
+	 * Delete this contact on the server
+	 */
+	virtual void slotDeleteContact();
+	/**
+	 * Receive notification that an instance of this contact on the server was deleted
+	 * If all the instance of the contact are deleted, the contact will delete itself with deleteLater()
+	 */
+	void receiveContactDeleted( const ContactItem & );
+
 protected:
 	/**
 	 * Returns the KopeteMessageManager for the GroupWise conference with the supplied GUID, or creates a new one.

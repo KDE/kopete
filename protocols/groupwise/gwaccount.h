@@ -93,6 +93,8 @@ public:
 	GroupWiseProtocol * GroupWiseAccount::protocol();
 	/**
 	 * Utility access to the @ref Client which is the main interface exposed by libgroupwise.
+	 * Most protocol actions are carried out using the client's member functions but the possibility exists
+	 * to start Tasks directly on the client and respond directly to their signals.
 	 */
 	Client * client() const;
 	/** 
