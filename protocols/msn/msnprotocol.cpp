@@ -66,7 +66,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name, const QStringList &
 
 	addAddressBookField( "messaging/msn", KopetePlugin::MakeIndexField );
 
-	setRichTextCapabilities( KopeteProtocol::BaseFgColor | KopeteProtocol::BaseBgColor | KopeteProtocol::BaseFont );
+	setRichTextCapabilities( KopeteProtocol::BaseFgColor | KopeteProtocol::BaseFont );
 
 	// m_status = m_unknownStatus = UNK;
 }
