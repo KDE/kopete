@@ -632,6 +632,8 @@ QString KopeteContact::toolTip() const
 	QString tip;
 	QStringList shownProps = KopetePrefs::prefs()->toolTipContents();
 
+	kdDebug() << k_funcinfo << "Configured Tips: " << shownProps << endl;
+
 	// --------------------------------------------------------------------------
 	// Fixed part of tooltip
 
@@ -656,20 +658,22 @@ QString KopeteContact::toolTip() const
 		{
 			QString name = formattedName();
 			if(!name.isNull())
-				tip += i18n("<br>Name: formattedName", "<br>Name: %1").arg(name);
+				tip += i18n("<br><b>Name:</b>&nbsp;formattedName",
+					"<br><b>Name:</b>&nbsp;%1").arg(name);
 		}
 		else if ((*it) == QString::fromLatin1("FormattedIdleTime"))
 		{
 			QString time = formattedIdleTime();
 			if(!time.isNull())
-				tip += i18n("<br>Idle: formattedIdleTime", "<br>Idle: %1").arg(time);
+				tip += i18n("<br><b>Idle:</b>&nbsp;formattedIdleTime",
+					"<br>Idle:</b>&nbsp;%1").arg(time);
 		}
 		else
 		{
 			p = property(*it);
 			if(!p.isNull())
 			{
-				tip += i18n("<br>%2: %1")
+				tip += i18n("<br><b>%2:</b>&nbsp;%1")
 					.arg(p.value().toString())
 					.arg(p.label());
 			}

@@ -335,7 +335,7 @@ public:
 	 * if present.
 	 * Suitable for GUI display
 	 **/
-	QString formattedName() const;
+	virtual QString formattedName() const;
 
 	/**
 	 * Returns a formatted string of idleTime().
