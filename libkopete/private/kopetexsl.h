@@ -53,13 +53,6 @@ class KopeteXSL
 			QObject *target, const char* slotCompleted );
 
 		/**
-		 * Unescapes a string, removing XML entitiy references
-		 *
-		 * @param xml The string you want to unescape
-		 */
-		static QString unescape( const QString &xml );
-
-		/**
 		 * Check if a string is a valid XSL stylesheet
 		 *
 		 * @param xslString The string you want to check

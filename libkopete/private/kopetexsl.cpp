@@ -185,19 +185,3 @@ bool KopeteXSL::isValid( const QString &xslString )
 
 	return retVal;
 }
-
-
-QString KopeteXSL::unescape( const QString &xml )
-{
-	QString data = xml;
-
-	data.replace( QRegExp( QString::fromLatin1( "\"\"" ) ), QString::fromLatin1( "\"" ) );
-	data.replace( QRegExp( QString::fromLatin1( "&gt;" ) ), QString::fromLatin1( ">" ) );
-	data.replace( QRegExp( QString::fromLatin1( "&lt;" ) ), QString::fromLatin1( "<" ) );
-	data.replace( QRegExp( QString::fromLatin1( "&quot;" ) ), QString::fromLatin1( "\"" ) );
-	data.replace( QRegExp( QString::fromLatin1( "&amp;" ) ), QString::fromLatin1( "&" ) );
-
-	return data;
-}
-
-

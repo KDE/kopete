@@ -274,6 +274,19 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 	d->type = type;
 }
 
+QString KopeteMessage::unescape( const QString &xml )
+{
+	QString data = xml;
+
+	data.replace( QRegExp( QString::fromLatin1( "\"\"" ) ), QString::fromLatin1( "\"" ) );
+	data.replace( QRegExp( QString::fromLatin1( "&gt;" ) ), QString::fromLatin1( ">" ) );
+	data.replace( QRegExp( QString::fromLatin1( "&lt;" ) ), QString::fromLatin1( "<" ) );
+	data.replace( QRegExp( QString::fromLatin1( "&quot;" ) ), QString::fromLatin1( "\"" ) );
+	data.replace( QRegExp( QString::fromLatin1( "&amp;" ) ), QString::fromLatin1( "&" ) );
+
+	return data;
+}
+
 QString KopeteMessage::plainBody() const
 {
 	QDomElement bodyText = d->xmlDoc.elementsByTagName( QString::fromLatin1("body") ).item(0).toElement();
@@ -281,7 +294,7 @@ QString KopeteMessage::plainBody() const
 	if( d->format == PlainText )
 		return bodyText.text();
 	else
-		return KopeteXSL::unescape( bodyText.text() ).replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::fromLatin1( "" ) );
+		return unescape( bodyText.text() ).replace( QRegExp( QString::fromLatin1( "<[^>]*>" ) ), QString::fromLatin1( "" ) );
 }
 
 QString KopeteMessage::escapedBody() const

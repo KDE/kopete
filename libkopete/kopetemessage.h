@@ -255,6 +255,13 @@ public:
 
 	void setBgOverride( bool enable );
 
+	/**
+	* Unescapes a string, removing XML entitiy references
+	*
+	* @param xml The string you want to unescape
+	*/
+	static QString unescape( const QString &xml );
+
 private:
 	/**
 	 * Helper for constructors
