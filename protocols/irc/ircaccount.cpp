@@ -523,7 +523,6 @@ void IRCAccount::engineStatusChanged(KIRC::Engine::Status newStatus)
 		{
 			//Reset the host so re-connection will start over at first server
 			currentHost = 0;
-
 			m_contactManager->addToNotifyList( m_engine->nickName() );
 
 			Kopete::ChatSession *manager = myServer()->manager(Kopete::Contact::CanCreate);

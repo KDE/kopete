@@ -38,7 +38,7 @@ const QRegExp Entity::sm_userRegExp(QString::fromLatin1("^([^\\s,:!@]+)(?:(?:!([
  */
 const QRegExp Entity::sm_userStrictRegExp(QString::fromLatin1("^([^\\s,:!@]+)!([^\\s,:!@]+)@([^\\s,:!@]+)$"));
 
-const QRegExp Entity::sm_channelRegExp( QString::fromLatin1("^[#!+&][^\\s,:]+$") );
+const QRegExp Entity::sm_channelRegExp( QString::fromLatin1("^[#!+&][^\\s,]+$") );
 
 Entity::Entity(const QString &name, const Type type)
 	: QObject(0, "KIRC::Entity"),
