@@ -13,8 +13,8 @@
     * (at your option) any later version.                                   *
     *                                                                       *
     *************************************************************************
-*/ 
- 
+*/
+
 #ifndef OSCARCONTACT_H
 #define OSCARCONTACT_H
 
@@ -34,7 +34,7 @@ class OscarProtocol;
 
 class OscarContact : public KopeteContact  {
    Q_OBJECT
-public: 
+public:
 	OscarContact(const QString name, OscarProtocol *protocol,	KopeteMetaContact *parent);
 	~OscarContact();
 	/** Return the unique id that identifies a contact.  Id is required
@@ -109,3 +109,6 @@ private slots: // Private slots
 };
 
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:
+

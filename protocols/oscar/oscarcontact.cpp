@@ -13,34 +13,34 @@
     * (at your option) any later version.                                   *
     *                                                                       *
     *************************************************************************
-*/ 
+*/
 
 #include "oscarcontact.h"
-#include <qstylesheet.h>
+
+#include <qapplication.h>
 #include <qregexp.h>
+#include <qstylesheet.h>
 
 #include <kdebug.h>
-#include <kmessagebox.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 #include <kpopupmenu.h>
 
-#include "kopete.h"
-#include "kopetestdaction.h"
+#include "aim.h"
 #include "kopeteaway.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
-
+#include "kopetestdaction.h"
+#include "oscarprotocol.h"
 #include "oscarsocket.h"
 #include "oscaruserinfo.h"
-#include "oscarprotocol.h"
-#include "aim.h"
 
 OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 		KopeteMetaContact *parent) : KopeteContact(protocol, parent)
 {
 	kdDebug() << "[OscarContact] OscarContact(), name=" << name << endl;
-	
+
 	mName = name;
 	mProtocol = protocol;
 	mMsgManager = 0L;
@@ -186,14 +186,13 @@ void OscarContact::slotBuddyChanged(int buddyNum)
 
 //		actionSendMessage->setEnabled(false);
 //		actionInfo->setEnabled(false);
-		
+
 //		emit userStatusChanged(OSCAR_OFFLINE);
 //		emit statusChanged();
 		emit statusChanged( this, status() );
 		return;
 	}
-	
-	
+
 	// We can only send messages to online user
 //	actionSendMessage->setEnabled(mStatus != TAIM_OFFLINE);
 //	actionInfo->setEnabled(mStatus != TAIM_OFFLINE);
@@ -279,7 +278,7 @@ void OscarContact::slotUserInfo(void)
 {
 		TBuddy tmpBuddy;
 		int num = mProtocol->buddyList()->getNum(mName);
-		
+
 		if (mProtocol->buddyList()->get(&tmpBuddy, num) != -1){
 				if (!mProtocol->isConnected()){
 						KMessageBox::sorry(qApp->mainWidget(),
@@ -315,7 +314,7 @@ void OscarContact::slotIMReceived(QString message, QString sender, bool /*isAuto
 		tmpList.append(mProtocol->myself());
 		KopeteMessage msg( this, tmpList, message, KopeteMessage::Inbound, KopeteMessage::RichText);
 		msgManager()->appendMessage(msg);
-	
+
 		if ( mProtocol->isAway() ) // send our away message in fire-and-forget-mode :)
 		{
 				kdDebug() << "[OscarContact] slotIMReceived() while we are away, sending away-message to annoy buddy :)" << endl;
@@ -327,7 +326,7 @@ void OscarContact::slotSendMsg(const KopeteMessage& message, KopeteMessageManage
 {
 		if ( message.body().isEmpty() ) // no text, do nothing
 				return;
-		
+
 		TBuddy *tmpBuddy = mProtocol->buddyList()->getByNum(mProtocol->buddyList()->getNum(mName));
 
 		// Check to see if we're even online
@@ -362,10 +361,9 @@ void OscarContact::slotSendMsg(const KopeteMessage& message, KopeteMessageManage
 				msg.prepend ( QString("<HTML><BODY BGCOLOR=\"%1\">").arg(message.bg().name()) );
 		} else {
 				msg.prepend ( QString("<HTML><BODY>") );
-		}		
+		}
 		msg.append ( "</BODY></HTML>" );
-		
-		
+
 		mProtocol->engine->sendIM( msg, mName, false );
 
 		// Show the message we just sent in the chat window
@@ -471,7 +469,7 @@ KopeteMessage OscarContact::parseAIMHTML ( QString m )
 	KopeteMessage msg( this, tmpList, result, KopeteMessage::Inbound);
 
 	// We don't actually do anything in there yet, but we might eventually
-	
+
 	kdDebug() << "AIM Plugin: Parsed message: " << result << endl;
 	msg.setBody(result , KopeteMessage::RichText);
 	return msg;
@@ -485,22 +483,22 @@ QStringList OscarContact::removeTag ( QString &message, QString tag )
 	// regexp is NOT case-sensitive
 	int tagStart = message.find ( QRegExp(QString("<"+tag+"\\s+[^>]*>"),false) );
 	int tagStartEnd = message.find ( ">", tagStart+4, false );
-	
+
 	while((tagStart != -1 && tagStart != -1))
 	{
 		if ( tagStart != -1 && tagStartEnd != -1)
 		{
 			// we found a proper opening-tag
 			QString tagAttr = message.mid(tagStart, (tagStartEnd - tagStart));
-			
+
 			// Strip the <>'s
 			tagAttr.remove(0, 1);
 			tagAttr.remove(tagAttr.length(), 1);
-			
+
 			// Now grab the attributes
 			tagAttr = tagAttr.section(' ', 1);
 			attr += QStringList::split(' ', tagAttr);
-			
+
 			message.remove ( tagStart, tagStartEnd - tagStart + 1 ); // remove the opening-tag
 			// find last closing of TAG (NOT case-sensitive)
 			int tagEnd = message.findRev( QString("</"+tag+">"), -1, false );
@@ -521,13 +519,7 @@ void OscarContact::slotMoved(KopeteMetaContact * /*old */)
 		protocol(), SLOT (serialize(KopeteMetaContact*) ));
 }
 
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 4
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 
 #include "oscarcontact.moc"
+
