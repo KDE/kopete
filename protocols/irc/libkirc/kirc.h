@@ -1,9 +1,10 @@
 /*
     kirc.h - IRC Client
 
+    Copyright (c) 2003      by Michel Hermier <michel.hermier@wanadoo.fr>
     Copyright (c) 2002      by Nick Betcher <nbetcher@kde.org>
 
-    Kopete    (c) 2002      by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -18,61 +19,43 @@
 #ifndef KIRC_H
 #define KIRC_H
 
-#include <qsocket.h>
-#include "dcchandler.h"
+#include <qdict.h>
+#include <qregexp.h>
 #include <qstring.h>
 #include <qstringlist.h>
 
-class QHostAddress;
+#include <kextsock.h>
+#include <ksockaddr.h>
+
+#include "dcchandler.h"
+#include "kircmessage.h"
+
 class QTimer;
 class QRegExp;
 
-/**
-  *@author Nick Betcher <nbetcher@kde.org>
-  */
+class KIRCMethodFunctorCall;
 
-class KIRC : public QSocket {
-Q_OBJECT
+/**
+ * @author Nick Betcher <nbetcher@kde.org>
+ * @author Michel Hermier <michel.hermier@wanadoo.fr>
+ */
+class KIRC
+	: public KExtendedSocket
+{
+	Q_OBJECT
+
 public:
 	KIRC(const QString &host, const Q_UINT16 port);
 	~KIRC();
-	void connectToServer(const QString &);
-	void joinChannel(const QString &);
-	void messageContact(const QString &contact, const QString &message);
-	void actionContact(const QString &contact, const QString &message);
-	void setAway( bool isAway, const QString &awayMessage );
-	const QString &nickName() { return mNickname; };
-	const QString &host() { return mHost; };
-	Q_UINT16 port() { return mPort; }
-	const QString &password() { return mPasswd; }
-	bool isLoggedIn() { return loggedIn; };
-	void changeNickname(const QString &newNickname);
-	void partChannel(const QString &name, const QString &reason);
-	void quitIRC(const QString &reason);
-	void setVersionString( QString &versionString );
-	void setUserString( QString &userString );
-	void setSourceString( QString &sourceString );
-	void sendCtcpPing(const QString &target);
-	void sendCtcpVersion(const QString &target);
-	void setTopic(const QString &channel, const QString &topic);
-	void kickUser(const QString &user, const QString &channel, const QString &reason);
-	void whoisUser(const QString &user);
-	void requestDccConnect(const QString &, const QString &, unsigned int port, DCCClient::Type type);
-	void sendNotice(const QString &target, const QString &message);
-	void setPassword(const QString &passwd) { mPasswd = passwd; };
-	void changeMode( const QString &target, const QString &mode);
-	void addToNotifyList( const QString &nick );
-	void removeFromNotifyList( const QString &nick );
-	void list();
 
-enum UserClass
-{
-	Normal = 0,
-	Operator = 1,
-	Voiced = 2
-};
-private:
-	Q_LONG writeString(const QString &str);
+	const QString &host() { return m_Host; };
+	Q_UINT16 port() { return m_Port; }
+
+	const QString &nickName() { return m_Nickname; };
+	const QString &password() { return m_Passwd; }
+	void setPassword(const QString &passwd) { m_Passwd = passwd; };
+
+	bool isLoggedIn() { return m_LoggedIn; };
 
 private slots:
 	void slotHostFound();
@@ -81,24 +64,108 @@ private slots:
 	void slotReadyRead();
 	void slotError(int);
 	void quitTimeout();
-	void slotCheckOnline();
+	void slotCheckOnline(); // OBSOLETE: this simple code should be externalised: this code is replaced by isOn(QStringList)
 
+protected:
+	inline KIRCMessage writeString(const QString &str);
+
+	inline KIRCMessage writeMessage(const QString &command, const QStringList &args, const QString &suffix = QString::null);
+	inline KIRCMessage writeMessage(const char *command, const QStringList &args, const QString &suffix = QString::null)
+		{ return writeMessage(QString::fromLatin1(command), args, suffix); }
+
+	inline KIRCMessage writeMessage(const QString &command, const QString &args = QString::null, const QString &suffix = QString::null);
+	inline KIRCMessage writeMessage(const char *command, const QString &args = QString::null, const QString &suffix = QString::null)
+		{ return writeMessage(QString::fromLatin1(command), args, suffix); }
+
+	inline KIRCMessage writeCtcpMessage(const char *command, const QString &to /* prefix */, const QString &suffix,
+			const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
+			bool emitRepliedCtcp = true);
+
+	inline KIRCMessage writeCtcpQueryMessage(const QString &to /* prefix */, const QString &suffix,
+			const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
+			bool emitRepliedCtcp = true);
+	inline KIRCMessage writeCtcpQueryMessage(const QString &to /* prefix */, const QString &suffix,
+			const char *ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
+			bool emitRepliedCtcp = true)
+		{ return writeCtcpQueryMessage(to, suffix, QString::fromLatin1(ctcpCommand), ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
+
+	inline KIRCMessage writeCtcpReplyMessage(const QString &to /* prefix */, const QString &suffix,
+			const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
+			 bool emitRepliedCtcp = true);
+	inline KIRCMessage writeCtcpReplyMessage(const QString &to /* prefix */, const QString &suffix,
+			const char *ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
+			bool emitRepliedCtcp = true)
+		{ return writeCtcpReplyMessage(to, suffix, QString::fromLatin1(ctcpCommand), ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
+
+	inline KIRCMessage writeCtcpErrorMessage(const QString &to /*prefix*/,
+			const QString &ctcpLine, const char *errorMsg,
+			bool emitRepliedCtcp=true);
+
+	// FIXME: short term solution move me to the the KIRCEntity class
+	inline static QString getNickFromPrefix(const QString &prefix)
+		{ return prefix.section('!', 0, 0); }
+
+public slots:
+	void connectToServer(const QString &nickname=QString::null, const QString &host=QString::null, Q_UINT16 port=0);
+
+	void setVersionString(QString &versionString);
+	void setUserString(QString &userString);
+	void setSourceString(QString &sourceString);
+
+	void changeUser(const QString &newUsername, const QString &hostname, const QString &newRealname);
+	void changeUser(const QString &newUsername, Q_UINT8 mode, const QString &newRealname);
+	void changeNickname(const QString &newNickname);
+	void sendNotice(const QString &target, const QString &message);
+	void changeMode(const QString &target, const QString &mode);
+	void joinChannel(const QString &);
+	void messageContact(const QString &contact, const QString &message);
+	void setTopic(const QString &channel, const QString &topic);
+	void kickUser(const QString &user, const QString &channel, const QString &reason);
+	void partChannel(const QString &name, const QString &reason);
+	// void pingUser ??
+	void quitIRC(const QString &reason);
+
+	void requestDccConnect(const QString &, const QString &, unsigned int port, DCCClient::Type type);
+
+	/* IRC with numeric replies only */
+	void isOn(const QStringList &nickList); /* 303 */
+	void setAway(bool isAway, const QString &awayMessage); /* 301-305-306 */
+	void whoisUser(const QString &user); /* 311-312-313-317-318-319 */
+	void list(); /* 321-322-323 */
+
+	//OBSOLETE: use sendCtcpAction instead.
+	inline void actionContact(const QString &contact, const QString &message) { sendCtcpAction(contact, message); }
+
+	void sendCtcpAction(const QString &contact, const QString &message);
+	void sendCtcpPing(const QString &target);
+	void sendCtcpVersion(const QString &target);
+
+	void addToNotifyList(const QString &nick); // OBSOLETE: this simple code should be externalised
+	void removeFromNotifyList(const QString &nick); // OBSOLETE: this simple code should be externalised
 signals:
+	void connectionClosed(); // For QSocket Compatibility mode
+
 	void connecting();
+
+	void incomingNotice(const QString &originating, const QString &message);
+	void incomingTopicChange(const QString &, const QString &, const QString &); /* */
+	void successfulQuit();
+
+	void incomingMessage(const QString &originating, const QString &target, const QString &message);
+	void incomingPrivMessage(const QString &, const QString &, const QString &);
+
 	void incomingMotd(const QString &motd);
-	void incomingWelcome(const QString &welcome);
-	void incomingYourHost(const QString &hostInfo);
-	void connectedToServer(); // This is only on successful login. connected() is QSocket's signal if you want to tell when the TCP connection is ACK'ed
+	void incomingYourHost(const QString &);
 	void incomingHostCreated(const QString &info);
-	void incomingHostInfo(const QString &hostInfo);
-	void incomingUsersInfo(const QString &users);
+	void incomingHostInfo(const QString &servername, const QString &version, const QString &userModes, const QString &channelModes);
+	void incomingUsersInfo(const QString &userinfo);
+	void incomingYourHostInfo(const QString &servername, const QString &version, const QString &userModes, const QString &channelModes);
 	void incomingOnlineOps(const QString &ops);
 	void incomingUnknownConnections(const QString &unknown);
 	void incomingTotalChannels(const QString &amount);
 	void incomingHostedClients(const QString &);
 	void userJoinedChannel(const QString &user, const QString &channel);
 	void incomingNamesList(const QString &channel, const QStringList &nicknames);
-	void incomingMessage(const QString &originating, const QString &target, const QString &message);
 	void incomingEndOfNames(const QString &channel);
 	void incomingEndOfMotd();
 	void incomingStartOfMotd();
@@ -106,56 +173,166 @@ signals:
 	void incomingQuitIRC(const QString &user, const QString &reason);
 	void incomingAction(const QString &originating, const QString &target, const QString &message);
 	void incomingNickInUse(const QString &usingNick);
-	void successfullyChangedNick(const QString &, const QString &);
 	void incomingNickChange(const QString &, const QString &);
 	void incomingFailedNickOnLogin(const QString &);
-	void incomingTopicChange(const QString &, const QString &, const QString &);
-	void incomingExistingTopic(const QString &, const QString &);
-	void successfulQuit();
 	void incomingNoNickChan(const QString &);
 	void incomingWasNoNick(const QString &);
 	void incomingWhoIsUser(const QString &nickname, const QString &username, const QString &hostname, const QString &realname);
 	void incomingWhoIsServer(const QString &nickname, const QString &server, const QString &serverInfo);
 	void incomingWhoIsOperator(const QString &nickname);
-	void incomingWhoIsIdle(const QString &nickname, unsigned long seconds);
 	void incomingWhoIsChannels(const QString &nickname, const QString &channel);
 	void incomingUnknown(const QString &);
+	void incomingUnknownCtcp(const QString &);
 	void incomingPrivAction(const QString &, const QString &, const QString &);
-	void incomingPrivMessage(const QString &, const QString &, const QString &);
-	void repliedCtcp(const QString &type, const QString &target, const QString &messageSent);
-	void incomingCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
 	void incomingKick(const QString &, const QString &, const QString &, const QString &);
-	void incomingDccChatRequest(const QHostAddress &, unsigned int port, const QString &nickname, DCCClient &chatObject);
-	void incomingDccSendRequest(const QHostAddress &, unsigned int port, const QString &nickname, const QString &, unsigned int, DCCClient &chatObject);
 	void incomingEndOfWhois(const QString &nickname);
-	void incomingNotice(const QString &originating, const QString &message);
 	void incomingModeChange(const QString &nick, const QString &channel, const QString &mode);
-	void incomingChannelMode( const QString &channel, const QString &mode, const QString &params);
-	void incomingUserIsAway( const QString &nick, const QString &awayMessage );
-	void userOnline( const QString &nick );
-	void incomingListedChan( const QString &chan, uint users, const QString &topic );
+	void incomingChannelMode(const QString &channel, const QString &mode, const QString &params);
+	void incomingUserIsAway(const QString &nick, const QString &awayMessage);
+	void userOnline(const QString &nick);
+	void incomingListedChan(const QString &chan, uint users, const QString &topic);
 	void incomingEndOfList();
 
-private:
-	bool waitingFinishMotd;
-	bool loggedIn;
-	QString mNickname;
-	QString mHost;
-	bool failedNickOnLogin;
-	QString pendingNick;
-	bool attemptingQuit;
-	QString mVersionString;
-	QString mUserString;
-	QString mSourceString;
-	Q_UINT16 mPort;
-	QString mUsername;
-	QString mPasswd;
-	QStringList mNotifyList;
-	QTimer *mNotifyTimer;
-	const QRegExp *mRemoveLinefeeds;
+	void incomingWelcome(const QString &welcome); /* 001 */
+	/* This is only on successful login.
+	 * connected() is QSocket's signal if you want to tell when the TCP connection is ACK'ed
+	 */
+	void connectedToServer(); /* 001 */
+	void successfullyChangedNick(const QString &, const QString &); /* 001 */
+
+	void incomingWhoIsIdle(const QString &nickname, unsigned long seconds); /* 317 */
+	void incomingSignOnTime(const QString &nickname, unsigned long seconds); /* 317 */
+	void incomingExistingTopic(const QString &, const QString &); /* 332 */
+
+	void repliedCtcp(const QString &type, const QString &ctcpMessage);
+	void incomingCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
+
+	void incomingDccChatRequest(const QHostAddress &, Q_UINT16 port, const QString &nickname, DCCClient &chatObject);
+	void incomingDccSendRequest(const QHostAddress &, Q_UINT16 port, const QString &nickname, const QString &, unsigned int, DCCClient &chatObject);
+
+protected:
+	typedef bool ircMethod(const KIRCMessage &msg);
+	typedef bool (KIRC::*pIrcMethod)(const KIRCMessage &msg);
+
+	inline void addIrcMethod(QDict<KIRCMethodFunctorCall> &map, const char *str, KIRCMethodFunctorCall *method);
+
+	inline void addIrcMethod( QDict<KIRCMethodFunctorCall> &map,
+			const char *str,
+			pIrcMethod method,
+			int argsSize_min=-1, int argsSize_max=-1,
+			const char *helpMessage=0);
+
+	inline void addIrcMethod(const char *str, KIRCMethodFunctorCall *method) {
+			addIrcMethod(m_IrcMethods, str, method);
+		}
+
+	inline void addIrcMethod(const char *str,
+			pIrcMethod method,
+			int argsSize_min=-1, int argsSize_max=-1, const char *helpMessage=0) {
+			addIrcMethod(m_IrcMethods, str, method, argsSize_min, argsSize_max, helpMessage);
+		}
+
+	ircMethod nickChange;
+	ircMethod notice;
+	ircMethod joinChannel;
+	ircMethod modeChange;
+	ircMethod topicChange;
+	ircMethod privateMessage;
+	ircMethod kick;
+	ircMethod partChannel;
+	ircMethod ping;
+	ircMethod quitIRC;
+
+	ircMethod numericReply_001;
+	ircMethod numericReply_004;
+
+	ircMethod numericReply_250;
+	ircMethod numericReply_265; ircMethod numericReply_266;
+
+	ircMethod numericReply_303;
+	ircMethod numericReply_305; ircMethod numericReply_306;
+	ircMethod numericReply_311; ircMethod numericReply_312;
+	ircMethod numericReply_317;
+	ircMethod numericReply_319;
+	ircMethod numericReply_321; ircMethod numericReply_322;
+	ircMethod numericReply_323; ircMethod numericReply_324;
+	ircMethod numericReply_329;
+	ircMethod numericReply_331; ircMethod numericReply_332;
+	ircMethod numericReply_333;
+	ircMethod numericReply_353;
+
+	ircMethod numericReply_433;
+
+	inline void addCtcpQueryIrcMethod(const char *str, KIRCMethodFunctorCall *method) {
+		addIrcMethod(m_IrcCTCPQueryMethods, str, method);
+	}
+
+	inline void addCtcpQueryIrcMethod(
+			const char *str,
+			pIrcMethod method,
+			int argsSize_min=-1, int argsSize_max=-1,
+			const char *helpMessage=0) {
+		addIrcMethod(m_IrcCTCPQueryMethods, str, method, argsSize_min, argsSize_max, helpMessage);
+	}
+
+	ircMethod CtcpQuery_action;
+	ircMethod CtcpQuery_pingPong;
+	ircMethod CtcpQuery_version;
+	ircMethod CtcpQuery_userInfo;
+	ircMethod CtcpQuery_clientInfo;
+	ircMethod CtcpQuery_time;
+	ircMethod CtcpQuery_source;
+	ircMethod CtcpQuery_finger;
+	ircMethod CtcpQuery_dcc;
+
+	inline void addCtcpReplyIrcMethod(const char *str, KIRCMethodFunctorCall *method) {
+		addIrcMethod(m_IrcCTCPReplyMethods, str, method);
+	}
+
+	inline void addCtcpReplyIrcMethod(
+			const char *str,
+			pIrcMethod method,
+			int argsSize_min=-1, int argsSize_max=-1,
+			const char *helpMessage=0) {
+		addIrcMethod(m_IrcCTCPReplyMethods, str, method, argsSize_min, argsSize_max, helpMessage);
+	}
+
+	ircMethod CtcpReply_pingPong;
+	ircMethod CtcpReply_version;
+
+	bool invokeCtcpCommandOfMessage(const KIRCMessage &message, const QDict<KIRCMethodFunctorCall> &map);
+
+	static const QRegExp m_RemoveLinefeeds;
+
+	// put this in a QMap<QString, QVariant> ?
+	QString m_Host;
+	Q_UINT16 m_Port;
+
+	QString m_Username;
+	QString m_Realname;
+	QString m_Nickname;
+	QString m_Passwd;
+
+	QString m_VersionString;
+	QString m_UserString;
+	QString m_SourceString;
+
+//	bool m_WaitingFinishMotd; // Removed not significant
+	bool m_LoggedIn;
+	bool m_FailedNickOnLogin;
+	QString m_PendingNick;
+	bool m_AttemptingQuit;
+	QStringList m_NotifyList; // OBSOLETE: this simple code should be externalised
+	QTimer *m_NotifyTimer; // OBSOLETE: this simple code should be externalised
+
+	QDict<KIRCMethodFunctorCall> m_IrcMethods;
+
+	QDict<KIRCMethodFunctorCall> m_IrcCTCPQueryMethods;
+	QDict<KIRCMethodFunctorCall> m_IrcCTCPReplyMethods;
 };
 
-#endif
+#endif // KIRC_H
+
 /*
  * Local variables:
  * c-indentation-style: k&r
