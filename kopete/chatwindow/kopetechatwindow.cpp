@@ -184,9 +184,10 @@ KopeteChatWindow::KopeteChatWindow(QWidget *parent, const char* name) : KParts::
 
 	statusArea = new QHBox( vBox );
 	statusArea->setSizePolicy( QSizePolicy(QSizePolicy::Minimum , QSizePolicy::Minimum) );
+	statusArea->setMargin( 2 );
 
-	//Status label
 	m_status = new KSqueezedTextLabel( i18n("Ready."), statusArea );
+	m_status->setIndent( KDialog::marginHint() ); //marginHint == 4px
 	m_status->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Minimum ) );
 	QToolTip::add( m_status, m_status->text() );
 
