@@ -401,30 +401,7 @@ QString YahooSession::getProfile_url( void )
 
 void YahooSession::slotLoginResponseReceiver(int succ, char *url)
 {
-	char buff[1024];
-
 	kdDebug(14180)<< k_funcinfo <<endl;
-	if (succ == YAHOO_LOGIN_OK)
-	{
-		m_Status = yahoo_current_status(m_connId);
-		kdDebug(14180) << "logged in" << endl;
-		return;
-	}
-	else if(succ == YAHOO_LOGIN_PASSWD)
-	{
-		snprintf(buff, sizeof(buff), "Could not log into Yahoo service.  Please verify that your username and password are correctly typed.");
-	}
-	else if(succ == YAHOO_LOGIN_LOCK)
-	{
-		snprintf(buff, sizeof(buff), "Could not log into Yahoo service.  Your account has been locked.\nVisit %s to reactivate it.", url);
-	}
-	else if(succ == YAHOO_LOGIN_DUPL)
-	{
-		snprintf(buff, sizeof(buff), "You have been logged out of the yahoo service, possibly due to a duplicate login.");
-	}
-	m_Status = YAHOO_STATUS_OFFLINE;
-	kdDebug(14180)<<buff<<endl;
-        //yahoo_logout();
 }
 
 

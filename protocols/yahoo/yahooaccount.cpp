@@ -1,5 +1,5 @@
 /*
-    yahooaccount.h - Manages a single Yahoo account
+    yahooaccount.cpp - Manages a single Yahoo account
 
     Copyright (c) 2003 by Gav Wood               <gav@kde.org>
     Copyright (c) 2003 by Matt Rogers            <mattrogers@sbcglobal.net>
@@ -23,6 +23,8 @@
 #include <kdebug.h>
 #include <kaction.h>
 #include <kpopupmenu.h>
+#include <kmessagebox.h>
+#include <kapplication.h>
 
 // Kopete
 #include "kopetemessagemanager.h"
@@ -277,12 +279,41 @@ bool YahooAccount::addContactToMetaContact(const QString &contactId, const QStri
 void YahooAccount::slotLoginResponse( int succ , const QString &url )
 {
 	kdDebug(14180) << k_funcinfo << succ << ", " << url << ")]" << endl;
-	slotGotBuddies(yahooSession()->getLegacyBuddyList());
-	if(stateOnConnection)
-	{	m_session->setAway(yahoo_status(stateOnConnection), "", 0);
-		m_myself->setYahooStatus(YahooStatus::fromLibYahoo2(stateOnConnection));
-		stateOnConnection = 0;
+	QString errorMsg;
+	if (succ == YAHOO_LOGIN_OK)
+	{
+		slotGotBuddies(yahooSession()->getLegacyBuddyList());
+		if(stateOnConnection)
+		{
+			m_session->setAway(yahoo_status(stateOnConnection), "", 0);
+			m_myself->setYahooStatus(YahooStatus::fromLibYahoo2(stateOnConnection));
+			stateOnConnection = 0;
+		}
+		return;
 	}
+	else if(succ == YAHOO_LOGIN_PASSWD)
+	{
+		errorMsg = i18n("Could not log into Yahoo service.  Please verify that your username and password are correctly typed.");
+		KMessageBox::error(kapp->mainWidget(), errorMsg);
+		m_myself->setYahooStatus(YahooStatus::Offline);
+		return;
+	}
+	else if(succ == YAHOO_LOGIN_LOCK)
+	{
+		errorMsg = i18n("Could not log into Yahoo service.  Your account has been locked.\nVisit %1 to reactivate it.").arg(url);
+		KMessageBox::error(kapp->mainWidget(), errorMsg);
+		m_myself->setYahooStatus(YahooStatus::Offline);
+		return;
+	}
+	else if(succ == YAHOO_LOGIN_DUPL)
+	{
+		errorMsg = i18n("You have been logged out of the yahoo service, possibly due to a duplicate login.");
+		KMessageBox::error(kapp->mainWidget(), errorMsg);
+		m_myself->setYahooStatus(YahooStatus::Offline);
+		return;
+	}
+
+
 }
 
 void YahooAccount::slotGotBuddy( const QString &userid, const QString &alias, const QString &group )
