@@ -387,7 +387,7 @@ void JabberContact::syncGroups ()
 
 }
 
-void JabberContact::sendFile ( const KURL &sourceURL, const QString &fileName, uint fileSize )
+void JabberContact::sendFile ( const KURL &sourceURL, const QString &/*fileName*/, uint /*fileSize*/ )
 {
 	QString filePath;
 
@@ -507,6 +507,9 @@ void JabberContact::reevaluateStatus ()
 
 	kdDebug (JABBER_DEBUG_GLOBAL) << k_funcinfo << "New status for " << contactId () << " is " << status.description () << endl;
 	setOnlineStatus ( status );
+
+	// set away message property
+	!resource.status().status().isEmpty () ? setProperty ( "awayMessage", resource.status().status () ) : removeProperty ( "awayMessage " );
 
 }
 
