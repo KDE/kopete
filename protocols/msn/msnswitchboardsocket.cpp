@@ -165,12 +165,15 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint  id ,
 		// we need to know who's sending is the block...
 		m_msgHandle = data.section( ' ', 0, 0 );
 
+		/*//This is WRONG! the displayName is never updated on the switchboeardsocket
+		  //so we can't trust it.
+		  //that's why the official client does not uptade alaws the nickname immediatly.
 		if(m_account->contacts()[ m_msgHandle ])
 		{
 			QString displayName=data.section( ' ', 1, 1 );
 			if(m_account->contacts()[ m_msgHandle ]->displayName() != displayName)
 				m_account->contacts()[ m_msgHandle ]->rename(displayName);
-		}
+		}*/
 
 		readBlock(len.toUInt());
 	}

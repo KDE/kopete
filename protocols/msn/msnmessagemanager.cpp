@@ -114,6 +114,12 @@ void MSNMessageManager::slotUpdateChatMember(const QString &handle, const QStrin
 
 	MSNContact *c = static_cast<MSNContact*>( user()->account()->contacts()[ handle ] );
 
+	if( add && c->displayName() != publicName)
+	{
+		c->rename(publicName);
+	}
+
+
 	if(add)
 	{
 		addContact(c);
