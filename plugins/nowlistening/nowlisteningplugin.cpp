@@ -37,7 +37,7 @@
 //#include "nlamarok.h"
 #include "nowlisteningguiclient.h"
 
-#ifdef HAVE_XMMS
+#if defined Q_WS_X11 && !defined K_WS_QTONLY && defined HAVE_XMMS
 #include "nlxmms.h"
 #endif
 
@@ -83,7 +83,7 @@ NowListeningPlugin::NowListeningPlugin( QObject *parent, const char* name, const
 	m_mediaPlayer->append( new NLJuk( m_client ) );
 	//m_mediaPlayer->append( new NLAmaroK( m_client ) );
 
-#ifdef HAVE_XMMS
+#if defined Q_WS_X11 && !defined K_WS_QTONLY && HAVE_XMMS
 	m_mediaPlayer->append( new NLXmms() );
 #endif
 

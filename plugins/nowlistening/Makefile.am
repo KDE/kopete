@@ -1,6 +1,6 @@
 METASOURCES = AUTO
 
-AM_CPPFLAGS = $(KOPETE_INCLUDES) $(XMMS_INCLUDES) $(all_includes)
+AM_CPPFLAGS = $(KOPETE_INCLUDES) $(all_includes) $(XMMS_INCLUDES)
 
 kde_module_LTLIBRARIES = kopete_nowlistening.la kcm_kopete_nowlistening.la
 
