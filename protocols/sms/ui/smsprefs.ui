@@ -9,7 +9,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>334</width>
+            <width>507</width>
             <height>190</height>
         </rect>
     </property>
@@ -103,7 +103,10 @@
                     <property name="text">
                         <string>+44</string>
                     </property>
-                    <property name="inputMask">
+                    <property name="validChars">
+                        <string>1234567890+</string>
+                    </property>
+                    <property name="inputMask" stdset="0">
                         <string>+##; </string>
                     </property>
                 </widget>
@@ -161,4 +164,7 @@
     <include location="global" impldecl="in implementation">knuminput.h</include>
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>krestrictedline.h</includehint>
+</includehints>
 </UI>
