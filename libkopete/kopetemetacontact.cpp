@@ -175,12 +175,6 @@ void KopeteMetaContact::setTopLevel( bool b )
 KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
 	const QString &identityId, const QString &contactId )
 {
-	return findContact( protocolId, identityId, contactId, true );
-}
-
-KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
-	const QString &identityId, const QString &contactId, bool allowRecursion )
-{
 	//kdDebug() << "*** Num contacts: " << m_contacts.count() << endl;
 	QPtrListIterator<KopeteContact> it( m_contacts );
 	for( ; it.current(); ++it )
@@ -190,30 +184,7 @@ KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
 			return it.current();
 	}
 
-	// There is no active contact, but we may have cached plugin data
-	// from plugins that are not currently loaded
-	if( allowRecursion )
-	{
-		QMap<QString, QString>::ConstIterator it;
-		for( it = m_pluginData.begin(); it != m_pluginData.end(); ++it )
-		{
-			if( it.key() == protocolId )
-			{
-				QStringList strList = QStringList::split( "||", it.data() );
-				KopetePlugin *plugin = kopeteapp->libraryLoader()->searchByID(
-					it.key() );
-
-				if( plugin )
-					plugin->deserialize( this, strList );
-
-				// Recurse through what we have now, this time with recursion
-				// disabled to avoid endless loops
-				return findContact( protocolId, identityId, contactId, false );
-			}
-		}
-	}
-
-	// Contact really not found
+	// Contact not found
 	return 0L;
 }
 
