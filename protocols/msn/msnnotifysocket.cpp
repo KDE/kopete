@@ -379,12 +379,13 @@ void MSNNotifySocket::slotReadMessage( const QString &msg )
 
 		if(MSNPreferences::mailNotifications())
 		{
-			int answer=KMessageBox::questionYesNo( 0l, i18n( "<qt>You have %1 unread messages in your inbox.<br>Would you like to open your inbox now?</qt>" ).arg(mailCount), i18n( "MSN Plugin" ) );
+			int answer = KMessageBox::No;
+
+			if(mailCount != 0)
+				answer = KMessageBox::questionYesNo( 0l, i18n( "<qt>You have %1 unread messages in your inbox.<br>Would you like to open your inbox now?</qt>" ).arg(mailCount), i18n( "MSN Plugin" ) );
 
 			if(answer==KMessageBox::Yes)
-			{
 				slotOpenInbox();
-			}
 		}
 	}
 	else if(msg.contains("text/x-msmsgsactivemailnotification"))
