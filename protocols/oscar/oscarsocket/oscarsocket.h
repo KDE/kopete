@@ -433,6 +433,11 @@ class OscarSocket : public OscarConnection
 		virtual void sendAddBuddy(const QString &name, const QString &group);
 
 		/*
+		 * Adds a buddy to the BLM service (not permanent, local only)
+		 */
+		void OscarSocket::sendAddBuddylist(const QString &contactName);
+
+		/*
 		 * Changes a buddy's group on the server
 		 */
 		virtual void sendChangeBuddyGroup(const QString &buddyName,
@@ -472,6 +477,11 @@ class OscarSocket : public OscarConnection
 		 * Deletes a buddy from the server side buddy list
 		 */
 		virtual void sendDelBuddy(const QString &budName, const QString &budGroup);
+
+		/*
+		 * Dels a buddy from the BLM service (not permanent, local only)
+		 */
+		 void OscarSocket::sendDelBuddylist(const QString &contactName);
 
 		/*
 		 * Sends the server lots of information
@@ -862,6 +872,7 @@ class OscarSocket : public OscarConnection
 		* login with ALL our contactnames and when adding a new contact
 		*/
 		void sendBuddylistAdd(QStringList &contacts);
+		void sendBuddylistDel(QStringList &contacts);
 
 		// see oscarcaps.cpp
 		DWORD parseCap(char *cap);

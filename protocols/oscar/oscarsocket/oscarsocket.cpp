@@ -1181,6 +1181,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 							/*kdDebug(14150) << k_funcinfo <<
 								"Contact has WAITAUTH set." << endl;*/
 							bud->setWaitAuth(true);
+							sendAddBuddylist(bud->screenname());
 							break;
 						}
 
@@ -2930,6 +2931,20 @@ void OscarSocket::sendAddBuddy(const QString &contactName, const QString &groupN
 //	sendSSIAddModDel(group, 0x0009);
 }
 
+// Gets this user status through BLM service
+void OscarSocket::sendAddBuddylist(const QString &contactName)
+{
+	QStringList Buddy = contactName;
+	sendBuddylistAdd(Buddy);
+}
+
+void OscarSocket::sendDelBuddylist(const QString &contactName)
+{
+	QStringList Buddy = contactName;
+	sendBuddylistDel(Buddy);
+}
+
+
 // Changes the group a buddy is in on the server
 void OscarSocket::sendChangeBuddyGroup(const QString &buddyName,
 	const QString &oldGroup, const QString &newGroup)
@@ -4075,6 +4090,20 @@ void OscarSocket::sendBuddylistAdd(QStringList &contacts)
 	sendBuf(outbuf,0x02);
 }
 
+void OscarSocket::sendBuddylistDel(QStringList &contacts)
+{
+	kdDebug(14150) << k_funcinfo << "SEND CLI_DELCONTACT" << endl;
+
+	Buffer outbuf;
+	outbuf.addSnac(0x0003,0x0005,0x0000,0x00000000);
+	for(QStringList::Iterator it = contacts.begin(); it != contacts.end(); ++it)
+	{
+		QCString contact = (*it).latin1();
+		outbuf.addByte(contact.length());
+		outbuf.addString(contact, contact.length());
+	}
+	sendBuf(outbuf,0x02);
+}
 
 
 const QString OscarSocket::ServerToQString(const char* string, OscarContact *contact, bool isUtf8)

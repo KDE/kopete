@@ -540,8 +540,10 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 	{
 		// Contact existed in the list already, sync information
 
-		if(buddy->waitAuth())
+		if(buddy->waitAuth()) {
 			kdDebug(14150) << k_funcinfo << "setting WAITAUTH on '" << contact->displayName() << "'" << endl;
+			engine()->sendAddBuddylist(contact->contactName());
+		}
 
 		contact->setWaitAuth( buddy->waitAuth() );
 
@@ -626,6 +628,7 @@ void OscarAccount::slotGotSSIAck(WORD result)
 			engine()->sendAuthRequest( tocNormalize( buddyWaitingSSIAck.contact() ), reason );
 			engine()->setAddingAuthBuddy( true );
 			engine()->sendAddBuddy( tocNormalize( buddyWaitingSSIAck.contact() ), buddyWaitingSSIAck.group() );
+			engine()->sendAddBuddylist( tocNormalize( buddyWaitingSSIAck.contact() ) );
 			engine()->setAddingAuthBuddy( false );
 			break;
 	}
@@ -830,6 +833,10 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			// Create the contact, which adds it to the parent contact
 			if(!createNewContact(contactId, displayName, parentContact))
 				return false;
+
+			// Get user status through BLM if contact is temporary (ICQ only)
+			if ( engine()->isICQ() )
+				engine()->sendAddBuddylist(tocNormalize(contactId));
 
 			// Set it's initial status
 			// This requests the buddy's info from the server

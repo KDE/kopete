@@ -257,10 +257,14 @@ void OscarContact::slotDeleteContact()
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"Couldn't find serverside group for contact, cannot delete on server :(" << endl;
+		if ( mAccount->engine()->isICQ() )
+			mAccount->engine()->sendDelBuddylist(contactName());
 		return;
 	}
 	else
 	{
+		if (waitAuth())
+			mAccount->engine()->sendDelBuddylist(contactName());
 		mAccount->engine()->sendDelBuddy(contactName(), group->name());
 	}
 
@@ -598,6 +602,9 @@ void OscarContact::slotGotAuthReply(const QString &contact, const QString &reaso
 		reason << "' granted=" << granted << endl;
 
 	setWaitAuth(granted);
+
+	if (!waitAuth())
+		mAccount->engine()->sendDelBuddylist(tocNormalize(contact));
 
 	// FIXME: remove this method and handle auth in oscaraccount already!
 	/*
