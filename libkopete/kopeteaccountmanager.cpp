@@ -302,7 +302,9 @@ void KopeteAccountManager::slotPluginLoaded( KopetePlugin *plugin )
 
 		kdDebug( 14010 ) << k_funcinfo <<
 			"Creating account for '" << accountId << "'" << endl;
-		KopeteAccount *account = protocol->createNewAccount( accountId );
+		
+		KopeteAccount *account = 0L;
+		account = protocol->createNewAccount( accountId );
 		if ( !account )
 		{
 			kdWarning( 14010 ) << k_funcinfo <<
