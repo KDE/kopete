@@ -511,6 +511,9 @@ void MSNContact::setDisplayPicture(KTempFile *f)
 
 void MSNContact::setObject(const QString &obj)
 {
+	if(m_obj==obj)
+		return;
+
 	m_obj=obj;
 	delete m_displayPicture;
 	m_displayPicture=0;
