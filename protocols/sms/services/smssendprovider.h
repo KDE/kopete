@@ -1,13 +1,17 @@
 #ifndef SMSSENDPROVIDER_H
 #define SMSSENDPROVIDER_H
 
-#include "kopetemessage.h"
-#include "smssendarg.h"
-#include "smsaccount.h"
-
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qptrlist.h>
+#include <qlabel.h>
+#include <qvaluelist.h>
+
+#include <klineedit.h>
+
+#include "kopetemessage.h"
+
+#include "smsaccount.h"
 
 class KProcess;
 class KopeteAccount;
@@ -26,8 +30,9 @@ public:
 	const QString& name(int i);
 	const QString& value(int i);
 	const QString& description(int i);
+	const bool isHidden(int i);
 
-	void save(QPtrList<SMSSendArg>& args);
+	void save(QPtrList<KLineEdit>& args);
 	void send(const KopeteMessage& msg);
 
 	int maxSize();
@@ -38,6 +43,7 @@ private:
 	QStringList names;
 	QStringList descriptions;
 	QStringList values;
+	QValueList<bool> isHiddens;
 
 	int messagePos;
 	int telPos;
@@ -54,6 +60,7 @@ private:
 	bool canSend;
 signals:
 	void messageSent(const KopeteMessage& msg);
+	void messageNotSent(const KopeteMessage& msg, const QString &error);
 } ;
 
 #endif //SMSSENDPROVIDER_H

@@ -50,13 +50,18 @@ public slots:
 	virtual void slotUserInfo();
 	virtual void slotDeleteContact();
 	void slotSendMessage(KopeteMessage &msg);
+
+private slots:
+	void slotSendingSuccess(const KopeteMessage &msg);
+	void slotSendingFailure(const KopeteMessage &msg, const QString &error);
+
 signals:
 	void messageSuccess();
 
 private slots:
 	void userPrefs();
-	void messageSent(KopeteMessage&);
 	void slotMessageManagerDestroyed();
+
 
 private:
 	KActionCollection* m_actionCollection;

@@ -1,3 +1,6 @@
+#include <qlayout.h>
+#include <kdebug.h>
+
 #include "smsservice.h"
 
 SMSService::SMSService(KopeteAccount* account)

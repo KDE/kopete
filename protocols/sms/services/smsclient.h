@@ -20,7 +20,7 @@ public:
 	~SMSClient();
 
 	void send(const KopeteMessage& msg);
-	QWidget* configureWidget(QWidget* parent);
+	void setWidgetContainer(QWidget* parent, QGridLayout* container);
 
 	int maxSize();
 	const QString& description();
@@ -35,6 +35,8 @@ signals:
 	void messageSent(const KopeteMessage &);
 
 private:
+	QWidget* configureWidget(QWidget* parent);
+
 	SMSClientPrefsUI* prefWidget;
 	QStringList providers();
 	QStringList output;

@@ -15,6 +15,7 @@
 class KActionMenu;
 class SMSProtocol;
 class SMSContact;
+class KProcess;
 
 class SMSAccount : public KopeteAccount
 {

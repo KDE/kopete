@@ -1,10 +1,11 @@
-#include "smsuserpreferences.h"
-#include "smsuserprefs.h"
-#include "smscontact.h"
-
+#include <qlabel.h>
 
 #include <klocale.h>
 #include <klineedit.h>
+
+#include "smsuserpreferences.h"
+#include "smsuserprefs.h"
+#include "smscontact.h"
 
 SMSUserPreferences::SMSUserPreferences( SMSContact* contact )
 	: KDialogBase( 0L, "userPrefs", true, i18n("User Preferences"), Ok|Apply|Cancel, Ok, true )
@@ -14,6 +15,7 @@ SMSUserPreferences::SMSUserPreferences( SMSContact* contact )
 	userPrefs = new SMSUserPrefsUI( topWidget );
 
 	userPrefs->telNumber->setText(m_contact->phoneNumber());
+	userPrefs->title->setText(m_contact->displayName());
 }
 
 SMSUserPreferences::~SMSUserPreferences()

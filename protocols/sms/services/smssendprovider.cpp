@@ -1,19 +1,22 @@
-#include "smssendprovider.h"
-#include "smsprotocol.h"
-#include "kopeteaccount.h"
-
-#include <kprocess.h>
+#include <qvaluelist.h>
 #include <qlabel.h>
 #include <qfile.h>
+
+#include <kprocess.h>
 #include <klineedit.h>
 #include <kmessagebox.h>
 #include <kdebug.h>
 #include <klocale.h>
 
+#include "kopeteaccount.h"
+
+#include "smssendprovider.h"
+#include "smsprotocol.h"
+
 SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& prefixValue, KopeteAccount* account, QObject* parent, const char *name)
 	: QObject( parent, name ), m_account(account)
 {
-	kdWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be ok if zero!!)" << endl;
+	kdWarning( 14160 ) << k_funcinfo << "this = " << this << ", m_account = " << m_account << " (should be ok if zero!!)" << endl;
 
 	provider = providerName;
 	prefix = prefixValue;
@@ -37,6 +40,15 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 				QStringList options = QStringList::split(' ', args[0]);
 
 				names.append(options[0].replace(0,1,""));
+
+				bool hidden = false;
+				for(unsigned i = 1; i < options.count(); i++)
+					if(options[i] == "Hidden")
+					{	hidden = true;
+						break;
+					}
+				isHiddens.append(hidden);
+
 				descriptions.append(args[1]);
 				if (m_account)
 					values.append(m_account->pluginData(SMSProtocol::protocol(), QString("%1:%2").arg(group).arg(names[names.count()-1])));
@@ -82,7 +94,7 @@ SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& pre
 
 SMSSendProvider::~SMSSendProvider()
 {
-
+	kdWarning( 14160 ) << k_funcinfo << "this = " << this << endl;
 }
 
 void SMSSendProvider::setAccount(KopeteAccount *account)
@@ -108,7 +120,12 @@ const QString& SMSSendProvider::description(int i)
 	return descriptions[i];
 }
 
-void SMSSendProvider::save(QPtrList<SMSSendArg>& args)
+const bool SMSSendProvider::isHidden(int i)
+{
+	return isHiddens[i];
+}
+
+void SMSSendProvider::save(QPtrList<KLineEdit>& args)
 {
 	kdWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be non-zero!!)" << endl;
 	if (!m_account) return;		// prevent crash in worst case
@@ -117,8 +134,10 @@ void SMSSendProvider::save(QPtrList<SMSSendArg>& args)
 
 	for (unsigned i=0; i < args.count(); i++)
 	{
-		if (!args.at(i)->value->text().isEmpty())
-			m_account->setPluginData(SMSProtocol::protocol(), QString("%1:%2").arg(group).arg(args.at(i)->argName->text()), args.at(i)->value->text());
+		if (!args.at(i)->text().isEmpty())
+		{	values[i] = args.at(i)->text();
+			m_account->setPluginData(SMSProtocol::protocol(), QString("%1:%2").arg(group).arg(names[i]), values[i]);
+		}
 	}
 }
 
@@ -164,28 +183,26 @@ void SMSSendProvider::send(const KopeteMessage& msg)
 	*p << QString("%1/bin/smssend").arg(prefix) << provider << values;
 
 	output.clear();
-	connect( p, SIGNAL(processExited(KProcess *)), this, SLOT(slotSendFinished(KProcess*)));
-	connect( p, SIGNAL(receivedStdout(KProcess*, char*, int)),
-		this, SLOT(slotReceivedOutput(KProcess*, char*, int)));
-	connect( p, SIGNAL(receivedStderr(KProcess*, char*, int)),
-		this, SLOT(slotReceivedOutput(KProcess*, char*, int)));
+	connect( p, SIGNAL(processExited(KProcess *)), this, SLOT(slotSendFinished(KProcess *)));
+	connect( p, SIGNAL(receivedStdout(KProcess*, char*, int)), this, SLOT(slotReceivedOutput(KProcess*, char*, int)));
+	connect( p, SIGNAL(receivedStderr(KProcess*, char*, int)), this, SLOT(slotReceivedOutput(KProcess*, char*, int)));
 
-	p->start(KProcess::Block, KProcess::AllOutput);
+	bool ps = p->start(KProcess::NotifyOnExit, KProcess::AllOutput);
+
+	kdWarning( 14160 ) << k_funcinfo << "this = " << this << ", ps = " << ps << ", p = " << p << " (should be non-zero!!)" << endl;
+
 }
 
 void SMSSendProvider::slotSendFinished(KProcess* p)
 {
+	kdWarning( 14160 ) << k_funcinfo << "this = " << this << ", es = " << p->exitStatus() << ", p = " << p << " (should be non-zero!!)" << endl;
 	if (p->exitStatus() == 0)
-	{
-		KMessageBox::information(0L, i18n("Message sent"), output.join("\n"), i18n("Message Sent"));
-
 		emit messageSent(m_msg);
-	}
 	else
-	{
-		KMessageBox::detailedError(0L, i18n("Something went wrong when sending message."), output.join("\n"),
-				i18n("Could Not Send Message"));
-	}
+		emit messageNotSent(m_msg, output.join("\n"));
+
+	// TODO: is there a cleaner way of doing this?
+	delete p;
 }
 
 void SMSSendProvider::slotReceivedOutput(KProcess*, char  *buffer, int  buflen)

@@ -26,11 +26,28 @@ SMSContact::SMSContact( KopeteAccount* _account, const QString &phoneNumber,
 	const QString &displayName, KopeteMetaContact *parent )
 : KopeteContact( _account, phoneNumber, parent )
 {
+	kdWarning( 14160 ) << k_funcinfo << " this = " << this << ", phone = " << phoneNumber << endl;
 	setPhoneNumber( phoneNumber );
 	setDisplayName( displayName );
 	m_msgManager = 0L;
 
 	setOnlineStatus( SMSProtocol::protocol()->SMSUnknown );
+}
+
+void SMSContact::slotSendingSuccess(const KopeteMessage &msg)
+{
+//	KMessageBox::information(0L, i18n("Message sent"), output.join("\n"), i18n("Message Sent"));
+	manager()->messageSucceeded();
+	manager()->appendMessage((KopeteMessage &)msg);
+}
+
+void SMSContact::slotSendingFailure(const KopeteMessage &/*msg*/, const QString &error)
+{
+	KMessageBox::detailedError(0L, i18n("Something went wrong when sending message."), error,
+			i18n("Could Not Send Message"));
+//	manager()->messageFailed();
+	// TODO: swap for failed as above. show it anyway for now to allow closing of window.
+	manager()->messageSucceeded();
 }
 
 void SMSContact::serialize( QMap<QString, QString> &serializedData,
@@ -43,6 +60,7 @@ void SMSContact::serialize( QMap<QString, QString> &serializedData,
 
 KopeteMessageManager* SMSContact::manager( bool )
 {
+	kdWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
 	if ( m_msgManager )
 	{
 		return m_msgManager;
@@ -67,18 +85,24 @@ void SMSContact::slotMessageManagerDestroyed()
 
 void SMSContact::slotSendMessage(KopeteMessage &msg)
 {
+	kdWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
 	QString sName = account()->pluginData(protocol(), "ServiceName");
 
+	kdWarning( 14160 ) << "***" << endl;
 	SMSService* s = ServiceLoader::loadService( sName, account() );
 
+	kdWarning( 14160 ) << "***" << endl;
 	if ( s == 0L)
 		return;
 
-	connect ( s, SIGNAL(messageSent(const KopeteMessage&)),
-		this, SLOT(messageSent(KopeteMessage&)));
+	kdWarning( 14160 ) << "***" << endl;
+	connect (s, SIGNAL(messageSent(const KopeteMessage&)), this, SLOT(slotSendingSuccess(const KopeteMessage&)));
+	connect (s, SIGNAL(messageNotSent(const KopeteMessage&, const QString &)), this, SLOT(slotSendingFailure(const KopeteMessage&, const QString &)));
 
+	kdWarning( 14160 ) << "***" << endl;
 	int msgLength = msg.plainBody().length();
 
+	kdWarning( 14160 ) << "***" << endl;
 	if (s->maxSize() == -1)
 		s->send(msg);
 	else if (s->maxSize() < msgLength)
@@ -104,12 +128,9 @@ void SMSContact::slotSendMessage(KopeteMessage &msg)
 	else
 		s->send(msg);
 
-	delete s;
-}
+//	delete s;
 
-void SMSContact::messageSent(KopeteMessage& msg)
-{
-	manager()->appendMessage(msg);
+	kdWarning( 14160 ) << "<<<" << endl;
 }
 
 void SMSContact::slotUserInfo()
@@ -118,6 +139,7 @@ void SMSContact::slotUserInfo()
 
 void SMSContact::slotDeleteContact()
 {
+	kdWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
 	deleteLater();
 }
 

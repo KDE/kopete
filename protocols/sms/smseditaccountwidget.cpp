@@ -8,28 +8,31 @@
     *************************************************************************
 */
 
+#include <qvgroupbox.h>
+#include <qlayout.h>
+#include <qcombobox.h>
+#include <qpushbutton.h>
+#include <qlineedit.h>
+
+#include <klocale.h>
+#include <kmessagebox.h>
+
 #include "smseditaccountwidget.h"
 #include "smsprefs.h"
 #include "serviceloader.h"
 #include "smsprotocol.h"
 #include "smsaccount.h"
 
-#include <klocale.h>
-#include <qlayout.h>
-#include <qcombobox.h>
-#include <qpushbutton.h>
-#include <kmessagebox.h>
-#include <qlineedit.h>
-
-SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, KopeteAccount *account, QWidget *parent, const char *name)
+SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, KopeteAccount *account, QWidget *parent, const char */*name*/)
 	: QWidget(parent), EditAccountWidget(account)
 {
-	(new QVBoxLayout(this, QBoxLayout::Down))->setAutoAdd(true);
-
+	QVBoxLayout *l = new QVBoxLayout(this, QBoxLayout::Down);
 	preferencesDialog = new smsPrefsUI(this);
+	l->addWidget(preferencesDialog);
 
 	service = 0L;
 	configWidget = 0L;
+	middleFrameLayout = 0L;
 
 	m_account = account;
 	m_protocol = protocol;
@@ -38,7 +41,6 @@ SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, KopeteAccount 
 	if (m_account)
 	{
 		preferencesDialog->accountId->setText(m_account->accountId());
-
 		sName = m_account->pluginData(SMSProtocol::protocol(), "ServiceName");
 	}
 
@@ -63,7 +65,7 @@ SMSEditAccountWidget::SMSEditAccountWidget(SMSProtocol *protocol, KopeteAccount 
 
 SMSEditAccountWidget::~SMSEditAccountWidget()
 {
-	if (service != 0L)
+//	if (service != 0L)
 		delete service;
 }
 
@@ -91,21 +93,23 @@ KopeteAccount* SMSEditAccountWidget::apply()
 
 void SMSEditAccountWidget::setServicePreferences(const QString& serviceName)
 {
-	if (service != 0L)
+//	if (service != 0L)
 		delete service;
 
-	if (configWidget != 0L)
+//	if (configWidget != 0L)
 		delete configWidget;
 
 	service = ServiceLoader::loadService(serviceName, m_account);
 
-	if ( service == 0L)
+	if (service == 0L)
 		return;
 
 	connect (this, SIGNAL(saved()), service, SLOT(savePreferences()));
 
-	configWidget = service->configureWidget(this);
-	configWidget->show();
+//	if (middleFrameLayout != 0L)
+		delete middleFrameLayout;
+	middleFrameLayout = new QGridLayout(preferencesDialog->middleFrame, 1, 2, 0, 6, "middleFrameLayout");
+	service->setWidgetContainer(preferencesDialog->middleFrame, middleFrameLayout);
 }
 
 void SMSEditAccountWidget::showDescription()

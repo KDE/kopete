@@ -1,4 +1,5 @@
 #include <qcombobox.h>
+#include <qlayout.h>
 
 #include <klocale.h>
 #include <kurlrequester.h>
@@ -20,6 +21,16 @@ SMSClient::SMSClient(KopeteAccount* account)
 
 SMSClient::~SMSClient()
 {
+}
+
+void SMSClient::setWidgetContainer(QWidget* parent, QGridLayout* layout)
+{
+	kdWarning( 14160 ) << k_funcinfo << "ml: " << layout << ", " << "mp: " << parent << endl;
+	m_parent = parent;
+	m_layout = layout;
+	QWidget *configWidget = configureWidget(parent);
+	layout->addMultiCellWidget(configWidget, 0, 1, 0, 1);
+	configWidget->show();
 }
 
 void SMSClient::send(const KopeteMessage& msg)
@@ -48,13 +59,11 @@ void SMSClient::send(const KopeteMessage& msg)
 
 	*p << programName;
 	*p << provider + ":" + nr;
-    *p << message;
+	*p << message;
 
-	connect( p, SIGNAL(processExited(KProcess *)), this, SLOT(slotSendFinished(KProcess*)));
-	connect( p, SIGNAL(receivedStdout(KProcess*, char*, int)),
-		this, SLOT(slotReceivedOutput(KProcess*, char*, int)));
-	connect( p, SIGNAL(receivedStderr(KProcess*, char*, int)),
-		this, SLOT(slotReceivedOutput(KProcess*, char*, int)));
+	connect(p, SIGNAL(processExited(KProcess *)), this, SLOT(slotSendFinished(KProcess*)));
+	connect(p, SIGNAL(receivedStdout(KProcess*, char*, int)), this, SLOT(slotReceivedOutput(KProcess*, char*, int)));
+	connect(p, SIGNAL(receivedStderr(KProcess*, char*, int)), this, SLOT(slotReceivedOutput(KProcess*, char*, int)));
 
 	p->start(KProcess::Block, KProcess::AllOutput);
 }
@@ -132,16 +141,9 @@ void SMSClient::slotReceivedOutput(KProcess*, char  *buffer, int  buflen)
 void SMSClient::slotSendFinished(KProcess* p)
 {
 	if (p->exitStatus() == 0)
-	{
-		KMessageBox::information(0L, i18n("Message sent"), output.join("\n"), i18n("Message Sent"));
-
 		emit messageSent(m_msg);
-	}
 	else
-	{
-		KMessageBox::detailedError(0L, i18n("Something went wrong when sending message."), output.join("\n"),
-				i18n("Could Not Send Message"));
-	}
+		emit messageNotSent(m_msg, output.join("\n"));
 }
 
 int SMSClient::maxSize()

@@ -1,21 +1,26 @@
-#include "smssend.h"
-#include "smssendprefs.h"
-#include "smssendprovider.h"
-#include "smsprotocol.h"
-#include "kopeteaccount.h"
-
 #include <qcombobox.h>
 #include <qvgroupbox.h>
+#include <qlayout.h>
 #include <qlabel.h>
+#include <qtooltip.h>
+
 #include <klineedit.h>
 #include <klocale.h>
 #include <kurlrequester.h>
 #include <kmessagebox.h>
 #include <kdebug.h>
 
+#include "kopeteaccount.h"
+
+#include "smssend.h"
+#include "smssendprefs.h"
+#include "smssendprovider.h"
+#include "smsprotocol.h"
+
 SMSSend::SMSSend(KopeteAccount* account)
 	: SMSService(account)
 {
+	kdWarning( 14160 ) << k_funcinfo << " this = " << this << endl;
 	prefWidget = 0L;
 	m_provider = 0L;
 }
@@ -45,14 +50,22 @@ void SMSSend::send(const KopeteMessage& msg)
 	m_provider = new SMSSendProvider(provider, prefix, m_account, this);
 
 	connect( m_provider, SIGNAL(messageSent(const KopeteMessage &)), this, SIGNAL(messageSent(const KopeteMessage &)));
+	connect( m_provider, SIGNAL(messageNotSent(const KopeteMessage &, const QString &)), this, SIGNAL(messageNotSent(const KopeteMessage &, const QString &)));
 
 	m_provider->send(msg);
 }
 
-QWidget* SMSSend::configureWidget(QWidget* parent)
+void SMSSend::setWidgetContainer(QWidget* parent, QGridLayout* layout)
 {
-	if (prefWidget == 0L)
-		prefWidget = new SMSSendPrefsUI(parent);
+	kdWarning( 14160 ) << k_funcinfo << "ml: " << layout << ", " << "mp: " << parent << endl;
+	m_parent = parent;
+	m_layout = layout;
+
+	// could end up being deleted twice??
+	if (prefWidget != 0L)
+		delete prefWidget;
+	prefWidget = new SMSSendPrefsUI(parent);
+	layout->addMultiCellWidget(prefWidget, 0, 1, 0, 1);
 
 	prefWidget->program->setMode(KFile::Directory);
 
@@ -83,12 +96,10 @@ QWidget* SMSSend::configureWidget(QWidget* parent)
 
 	prefWidget->program->setURL(prefix);
 
-	loadProviders(prefix);
-
 	connect(prefWidget->provider, SIGNAL(activated(const QString &)),
 		this, SLOT(setOptions(const QString &)));
 
-	return prefWidget;
+	prefWidget->show();
 }
 
 void SMSSend::savePreferences()
@@ -151,9 +162,12 @@ void SMSSend::loadProviders(const QString &prefix)
 void SMSSend::setOptions(const QString& name)
 {
 	kdWarning( 14160 ) << k_funcinfo << "m_account = " << m_account << " (should be ok if zero!!)" << endl;
+	if(!prefWidget) return;			// sanity check
 
-	prefWidget->settingsBox->setTitle(name);
+	prefWidget->providerLabel->setText(i18n("%1 Settings").arg(name));
 
+	labels.setAutoDelete(true);
+	labels.clear();
 	args.setAutoDelete(true);
 	args.clear();
 
@@ -164,12 +178,20 @@ void SMSSend::setOptions(const QString& name)
 	{
 		if (!m_provider->name(i).isNull())
 		{
-			SMSSendArg* a = new SMSSendArg(prefWidget->settingsBox);
-			a->argName->setText(m_provider->name(i));
-			a->value->setText(m_provider->value(i));
-			a->description->setText(m_provider->description(i));
-			args.append(a);
-			a->show();
+			QLabel *l = new QLabel(m_parent);
+			l->setText("&" + m_provider->name(i) + ":");
+			QToolTip::add(l, m_provider->description(i));
+			m_layout->addWidget(l, i+2, 0);
+			KLineEdit *e = new KLineEdit(m_parent);
+			e->setText(m_provider->value(i));
+			m_layout->addWidget(e, i+2, 1);
+			args.append(e);
+			labels.append(l);
+			l->setBuddy(e);
+			if(m_provider->isHidden(i))
+				e->setEchoMode(QLineEdit::Password);
+			e->show();
+			l->show();
 		}
 	}
 }
@@ -190,7 +212,8 @@ int SMSSend::maxSize()
 	if (prefix.isNull())
 		prefix = "/usr";
 	// quick sanity check
-	if (!m_provider) return 0;
+	if (m_provider) delete m_provider;
+	m_provider = new SMSSendProvider(pName, prefix, m_account, this);
 	return m_provider->maxSize();
 }
 

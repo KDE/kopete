@@ -17,6 +17,7 @@ class SMSProtocol;
 class SMSService;
 class smsPrefsUI;
 class KopeteAccount;
+class QGridLayout;
 
 class SMSEditAccountWidget : public QWidget, public EditAccountWidget
 {
@@ -35,6 +36,7 @@ protected:
 	QWidget *configWidget;
 	SMSService *service;
 	SMSProtocol *m_protocol;
+	QGridLayout *middleFrameLayout;
 
 signals:
 	void saved();

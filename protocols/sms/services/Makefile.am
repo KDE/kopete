@@ -7,5 +7,5 @@ AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 noinst_LTLIBRARIES = libkopetesmsservices.la
 
 libkopetesmsservices_la_SOURCES = smssend.cpp smssendprefs.ui smssendprovider.cpp \
-	smsclient.cpp smsclientprefs.ui smssendarg.ui
+	smsclient.cpp smsclientprefs.ui
 

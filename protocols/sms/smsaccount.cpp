@@ -1,5 +1,8 @@
 #include <kaction.h>
 #include <kpopupmenu.h>
+#include <kprocess.h>
+#include <kdebug.h>
+#include <kmessagebox.h>
 
 #include "smsaccount.h"
 #include "smsprotocol.h"
@@ -30,7 +33,6 @@ void SMSAccount::connect()
 
 KActionMenu* SMSAccount::actionMenu()
 {
-	SMSProtocol *theProtocol = dynamic_cast<SMSProtocol *>(protocol());
 	KActionMenu *theActionMenu = new KActionMenu(accountId(), this);
 	theActionMenu->popupMenu()->insertTitle(m_myself->icon(), "SMS (" + accountId() + ")");
 
