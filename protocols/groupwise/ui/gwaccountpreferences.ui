@@ -105,7 +105,7 @@
                                     <string></string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
-                                    <string>Check to don't connect automatically.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
+                                    <string>Check to disable automatic connection.  If checked, you may connect to this account manually using the icon in the bottom of the main Kopete window</string>
                                 </property>
                             </widget>
                             <widget class="Line">

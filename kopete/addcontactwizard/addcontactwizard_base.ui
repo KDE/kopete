@@ -126,7 +126,7 @@
                     <bool>true</bool>
                 </property>
                 <property name="toolTip" stdset="0">
-                    <string>Check box this if you do not want to integrate other KDE applications with Kopete</string>
+                    <string>Check this box if you do not want to integrate other KDE applications with Kopete</string>
                 </property>
             </widget>
             <spacer row="5" column="1">
