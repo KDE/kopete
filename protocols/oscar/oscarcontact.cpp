@@ -81,6 +81,7 @@ OscarContact::OscarContact(const QString& name, const QString& displayName,
 	mInfo.sn = name;
 	mInfo.capabilities = 0;
 	mInfo.icqextstatus = ICQ_STATUS_OFFLINE;
+	mInfo.idletime = 0;
 
 	initSignals();
 }
@@ -393,14 +394,15 @@ void OscarContact::syncGroups()
 	if (!currentOscarGroup)
 	{
 		kdDebug(14150) << k_funcinfo <<
-			"Could not get current Oscar group for contact '" << displayName() <<
-			"'" << endl;
+			"Could not get current Oscar group for contact '" << displayName() << "'" << endl;
 		return;
 	}
 
+	/*
 	kdDebug(14150) << k_funcinfo <<
 		"Current OSCAR group id=" << mGroupId <<
 		", Current OSCAR group name='" << currentOscarGroup->name() << "'" << endl;
+	*/
 
 	// Compare the two names, to see if they're actually different
 	if (currentOscarGroup->name() != firstKopeteGroup->displayName())
@@ -534,13 +536,9 @@ void OscarContact::slotParseUserInfo(const UserInfo &u)
 	if(tocNormalize(u.sn) != contactName())
 		return;
 
-	if (mInfo.idletime != u.idletime)
+	if(mInfo.idletime != u.idletime)
 	{
-		setIdleTime(u.idletime*60);
-		/*if(mIdle > 0)
-			setIdleState(Idle);
-		else // we are not idling anymore
-			setIdleState(Active);*/
+		setIdleTime(u.idletime * 60);
 		if(u.idletime == 0)
 			emit idleStateChanged(this);
 	}
