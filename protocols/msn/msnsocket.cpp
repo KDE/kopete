@@ -295,7 +295,7 @@ bool MSNSocket::pollReadBlock()
 	else if( m_buffer.size() < m_waitBlockSize )
 	{
 		kdDebug() << "MSNSocket::pollReadBlock: Waiting for data. Received: "
-			<< QCString(m_buffer).length() << ", required: " << m_waitBlockSize << endl;
+			<< m_buffer.size() << ", required: " << m_waitBlockSize << endl;
 		return true;
 	}
 
