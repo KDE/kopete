@@ -86,6 +86,9 @@ private:
 
 	QMap<const KopeteMetaContact*, QString> m_keyMap;
 
+	//cache messages for showing
+	QMap<QString, QString> m_cachedMessages;
+
 	KActionCollection *m_collection;
 	KopeteMetaContact *m_currentMetaContact;
 };

@@ -138,8 +138,16 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 
 	if(msg.direction() != KopeteMessage::Inbound)
 	{
-		msg.setBody("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FFFF\"><td><font size=\"-1\"><b>"+i18n("Outgoing Encrypted Message")+"</b></font></td></tr><tr bgcolor=\"#DDFFFF\"><td>"+i18n("TODO: Show original Message")+"</td></tr></table>"
+		kdDebug() << "CryptographyPlugin::slotIncommingMessage: inbound messages" <<endl;
+		if(m_cachedMessages.contains(body))
+		{
+			msg.setBody("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FFFF\"><td><font size=\"-1\"><b>"+i18n("Outgoing Encrypted Message")+"</b></font></td></tr><tr bgcolor=\"#DDFFFF\"><td>"+QStyleSheet::escape(m_cachedMessages[body])+"</td></tr></table>"
 				,KopeteMessage::RichText);
+			m_cachedMessages.remove(body);
+		}
+		//if there are too messages in cache, clear the cache
+		if(m_cachedMessages.count()>10)
+			m_cachedMessages.clear();
 		return;
 	}
 
@@ -166,8 +174,8 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 		kdDebug() << "CryptographyPlugin::slotOutgoingMessage: no key selected for this contact" <<endl;
 		return;
 	}
-
-
+   QString original=msg.plainBody();
+	
 	/* Code From KGPG */
 
   //////////////////              encode from editor
@@ -186,9 +194,12 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 
 // if (selec==NULL) {KMessageBox::sorry(0,i18n("You have not choosen an encryption key..."));return;}
 
-	QString resultat=KgpgInterface::KgpgEncryptText(msg.plainBody(),m_keyMap[m],encryptOptions);
+	QString resultat=KgpgInterface::KgpgEncryptText(original,m_keyMap[m],encryptOptions);
 	if (resultat!="")
+	{
 		msg.setBody(resultat,KopeteMessage::PlainText);
+		m_cachedMessages.insert(resultat,original);
+	}
 }
 
 #include "popuppublic.h"
