@@ -180,21 +180,26 @@ public:
 	 * This will draw an overlay representing the online status
 	 * of the contact the KopeteOnlineStatus applies to
 	 * over the base icon.
+	 * A cache is employed to reduce CPU and memory usage.
 	 * @param contact is the contact the icon should apply to.
+	 * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
 	 */
-	QPixmap iconFor( const KopeteContact *contact ) const;
+	QPixmap iconFor( const KopeteContact *contact, int size = 16 ) const;
 
 	/**
 	 * Return a status icon generated for the given KopeteAccount
 	 * This will draw an overlay representing the online status
 	 * of the account the KopeteOnlineStatus applies to
 	 * over the base icon.
+	 * A cache is employed to reduce CPU and memory usage.
 	 * @param account is the account the icon should apply to.
+	 * @param size is the size we the icon should be scaled to - 16 is default and so costs nothing
 	 */
-	QPixmap iconFor( const KopeteAccount *account ) const;
+	QPixmap iconFor( const KopeteAccount *account, int size = 16 ) const;
 
 	/**
 	 * Returns the status icon for the protocol.
+	 * A cache is employed to reduce CPU and memory usage.
 	 */
 	QPixmap protocolIcon() const;
 
@@ -235,8 +240,8 @@ public:
 
 private:
 	KopeteOnlineStatusPrivate *d;
-	QPixmap cacheLookup( const QString& icon ) const;
-	QPixmap renderIcon( const QString& baseicon ) const;
+	QPixmap cacheLookup( const QString& icon, int size, bool idle = false ) const;
+	QPixmap renderIcon( const QString& baseicon, int size, bool idle = false ) const;
 };
 
 #endif

@@ -54,13 +54,8 @@ public:
 	bool fileCapable;
 	int conversations;
 
-
-	QPixmap cachedScaledIcon;
-	int cachedSize;
-
 	KopeteContact::IdleState idleState;
 	KopeteOnlineStatus onlineStatus;
-	KopeteOnlineStatus oldStatus;
 	KopeteAccount *account;
 
 	KopeteMetaContact *metaContact;
@@ -108,7 +103,7 @@ KopeteContact::KopeteContact( KopeteAccount *account,
 
 	d->metaContact = parent;
 	d->protocol = 0l;
-	d->cachedSize = 0;
+	//d->cachedSize = 0;
 	d->fileCapable = false;
 	d->conversations = 0;
 	d->historyDialog = 0L;
@@ -146,7 +141,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 
 	d->metaContact = parent;
 	d->protocol = protocol;
-	d->cachedSize = 0;
+	//d->cachedSize = 0;
 	d->fileCapable = false;
 	d->conversations = 0;
 	d->historyDialog = 0L;
@@ -218,26 +213,6 @@ void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status )
 	d->onlineStatus = status;
 
 	emit onlineStatusChanged( this, status );
-}
-
-QPixmap KopeteContact::scaledStatusIcon( int size )
-{
-	if ( !( d->onlineStatus == d->oldStatus ) || size != d->cachedSize )
-	{
-		QImage afScal = ( d->onlineStatus.iconFor( this ).convertToImage() ).smoothScale( size, size );
-		d->cachedScaledIcon = QPixmap( afScal );
-		d->oldStatus = d->onlineStatus;
-		d->cachedSize = size;
-	}
-
-	if ( d->idleState == Idle )
-	{
-		QPixmap tmp = d->cachedScaledIcon;
-		KIconEffect::semiTransparent( tmp );
-		return tmp;
-	}
-
-	return d->cachedScaledIcon;
 }
 
 void KopeteContact::slotViewHistory()

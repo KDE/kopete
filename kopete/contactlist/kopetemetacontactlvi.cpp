@@ -315,7 +315,7 @@ void KopeteMetaContactLVI::showContextMenu( const QPoint &point )
 		}
 		KPopupMenu *contactMenu = it.current()->popupMenu();
 		popup->insertChild( contactMenu );
-		popup->insertItem( c->scaledStatusIcon( 16 ),
+		popup->insertItem( c->onlineStatus().iconFor( c, 16 ),
 			i18n( "Format: 'displayName (id)'", "%2 (%1)" ).arg(
 			c->contactId() ).arg( c->displayName() ),
 			contactMenu );
@@ -574,7 +574,7 @@ void KopeteMetaContactLVI::paintCell( QPainter *p, const QColorGroup &cg,
 		QPtrListIterator<KopeteContact> it( contacts );
 		for( ; it.current(); ++it )
 		{
-			QPixmap icon = ( *it )->scaledStatusIcon( 12 );
+			QPixmap icon = ( *it )->onlineStatus().iconFor( *it, 12 );
 			p->drawPixmap( mc_x + pixelsWide + 4, height() - 16,
 				icon );
 			mc_x += 16;

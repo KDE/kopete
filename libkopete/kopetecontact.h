@@ -123,13 +123,6 @@ public:
 	void setOnlineStatus( const KopeteOnlineStatus &status );
 
 	/**
-	 * This method provides an scaled version of the status icon.
-	 * useful for metacontacts, and it uses a primitive cache so
-	 * we dont have to scale at every repaint, it asumes square.
-	 */
-	QPixmap scaledStatusIcon( int size );
-
-	/**
 	 * Return the unique id that identifies a contact. Id is required
 	 * to be unique per protocol and per account. Across those boundaries
 	 * ids may occur multiple times.

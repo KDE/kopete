@@ -196,8 +196,9 @@ KopeteProtocol* KopeteOnlineStatus::protocol() const
 	return d->protocol;
 }
 
-QPixmap KopeteOnlineStatus::iconFor( const KopeteContact *contact ) const
+QPixmap KopeteOnlineStatus::iconFor( const KopeteContact *contact, int size ) const
 {
+	// figure out what icon we should use for this contact
  	QString iconName;
 	if ( contact->icon().isNull() )
 	{
@@ -209,10 +210,11 @@ QPixmap KopeteOnlineStatus::iconFor( const KopeteContact *contact ) const
 	else
 		iconName = contact->icon();
 
-	return cacheLookup( iconName );
+	return cacheLookup( iconName, size, contact->idleState() == KopeteContact::Idle );
+
 }
 
-QPixmap KopeteOnlineStatus::iconFor( const KopeteAccount *account ) const
+QPixmap KopeteOnlineStatus::iconFor( const KopeteAccount *account, int size ) const
 {
 	//FIXME: support KopeteAccount having knowledge of a custom icon
 	QString iconName;
@@ -221,7 +223,7 @@ QPixmap KopeteOnlineStatus::iconFor( const KopeteAccount *account ) const
 	else
 		iconName = QString::fromLatin1( "unknown" );
 
-	return cacheLookup( iconName );
+	return cacheLookup( iconName, size );
 }
 
 QPixmap KopeteOnlineStatus::protocolIcon() const
@@ -232,22 +234,30 @@ QPixmap KopeteOnlineStatus::protocolIcon() const
 	else
 		iconName = QString::fromLatin1( "unknown" );
 
-	return cacheLookup( iconName );
+	return cacheLookup( iconName, 16 );
 }
 
-QPixmap KopeteOnlineStatus::cacheLookup( const QString& icon ) const
+QPixmap KopeteOnlineStatus::cacheLookup( const QString& icon, int size, bool idle ) const
 {
-	if ( d->iconCache.contains( icon ) )
-		return d->iconCache[ icon ];
+	// create a 'fingerprint' to use as a hash key
+	QString fingerprint = icon;
+
+	fingerprint.append( '/' ).append( size ).append( '/' ).append(
+			idle ? 'i' : 'a' );
+
+	// look it up in the cache
+	if ( d->iconCache.contains( fingerprint ) )
+		return d->iconCache[ fingerprint ];		// cache hit
 	else
 	{
-		QPixmap newIcon = renderIcon( icon );
-		d->iconCache.insert( icon, newIcon );
+		// cache miss
+		QPixmap newIcon = renderIcon( icon, size, idle );
+		d->iconCache.insert( fingerprint, newIcon );
 		return newIcon;
 	}
 }
 
-QPixmap KopeteOnlineStatus::renderIcon( const QString& baseIcon ) const
+QPixmap KopeteOnlineStatus::renderIcon( const QString& baseIcon, int size, bool idle ) const
 {
 	// create an icon suiting the status from the base icon
 	// use reasonable defaults if not provided or protocol not set
@@ -305,6 +315,18 @@ QPixmap KopeteOnlineStatus::renderIcon( const QString& baseIcon ) const
 			}
 			break;
 	}
+
+	// no need to scale if the icon is already of the required size (assuming height == width!)
+	if ( basis.width() != size )
+	{
+		QImage scaledImg = basis.convertToImage().smoothScale( size, size );
+		basis = QPixmap( scaledImg );
+	}
+
+	// if idle, apply effects
+	if ( idle )
+		KIconEffect::semiTransparent( basis );
+
 	return basis;
 }
 
