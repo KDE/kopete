@@ -1,10 +1,10 @@
-//Code from KGPG
+//File Imported from  KGPG  ( 2004 - 09 - 03 )
 
 /***************************************************************************
                           popuppublic.h  -  description
                              -------------------
     begin                : Sat Jun 29 2002
-    copyright            : (C) 2002 by
+    copyright            : (C) 2002 by Jean-Baptiste Mardelle
     email                : bj@altern.org
  ***************************************************************************/
 
@@ -19,54 +19,60 @@
 #ifndef POPUPPUBLIC_H
 #define POPUPPUBLIC_H
 
-#include <qdialog.h>
+#include <kdialogbase.h>
 
-class KListView;
-class QCheckBox;
-class QButtonGroup;
-class KConfig;
+//#include <kiconloader.h>
+#include <kshortcut.h>
+
+
 class QPushButton;
+class QCheckBox;
+class KListView;
+class QButtonGroup;
 class KProcIO;
 
-class popupPublic : public QDialog
-  {
-    Q_OBJECT
+class popupPublic : public KDialogBase //QDialog
+{
+        Q_OBJECT
 public:
 
-    popupPublic(QWidget *parent=0, const char *name=0,QString sfile="",bool filemode=false);
-    KListView *keysList;
-    QCheckBox *CBarmor,*CBuntrusted,*CBshred,*CBsymmetric,*CBhideid;
-    bool fmode,encryptToDefault,trusted;
-
-    QPixmap keyPair,keySingle;
-    QString seclist,defaultKey,defaultName;
-
+        popupPublic(QWidget *parent=0, const char *name=0,QString sfile="",bool filemode=false,KShortcut goDefaultKey=QKeySequence(CTRL+Qt::Key_Home));
+	~popupPublic();
+        KListView *keysList;
+        QCheckBox *CBarmor,*CBuntrusted,*CBshred,*CBsymmetric,*CBhideid;
+        bool fmode,trusted;
+        QPixmap keyPair,keySingle,keyGroup;
+        QString seclist;
+	QStringList untrustedList;
 
 private:
-    QPushButton *bouton0,*bouton1,*bouton2;
-    KConfig *config;
-	bool displayMailFirst,allowcustom;
-QButtonGroup *boutonboxoptions;
-	QString customOptions;
+        KConfig *config;
+        QButtonGroup *boutonboxoptions;
+        QString customOptions;
 
 private slots:
-void customOpts(const QString &);
-QString extractKeyName(QString fullName);
-void annule();
-void toggleOptions();
-void crypte();
-void precrypte();
-void slotprocread(KProcIO *);
-void slotpreselect();
-void refreshkeys();
-void refresh(bool state);
-void isSymetric(bool state);
-void sort();
-void enable();
+        void customOpts(const QString &);
+        void slotprocread(KProcIO *);
+        void slotpreselect();
+        void refreshkeys();
+        void refresh(bool state);
+        void isSymetric(bool state);
+        void sort();
+        void enable();
+	void slotGotoDefaultKey();
+	
+public slots:
+void slotAccept();
+void slotSetVisible();
 
+protected slots:
+virtual void slotOk();
+	
 signals:
-    void selectedKey(QString &,QString,bool,bool);
+        void selectedKey(QString & ,QString,bool,bool);
+	void keyListFilled();
 
-  };
+};
 
-#endif
+#endif // POPUPPUBLIC_H
+

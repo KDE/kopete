@@ -58,6 +58,7 @@ class KgpgInterface : public QObject {
 	 */
 	~KgpgInterface();
 	
+	static QString checkForUtf8(QString txt);
 
 	
     private slots:
