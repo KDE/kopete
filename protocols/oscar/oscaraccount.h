@@ -96,6 +96,12 @@ class OscarAccount : public KopeteAccount
 		void slotGoOffline();
 		/** Slot for telling this account to go away */
 		void slotGoAway();
+
+		void slotGoNA();
+		void slotGoOCC();
+		void slotGoDND();
+		void slotGoFFC();
+
 		/** Slot for editing our info */
 		void slotEditInfo();
 		/** Slot for showing the debug dialog */
@@ -175,51 +181,48 @@ class OscarAccount : public KopeteAccount
 
 	protected:
 		/** Flag for remembering the password */
-		bool m_rememberPassword;
+		bool mRememberPassword;
 
 		/** Our Internal buddy list (from the server) */
-		AIMBuddyList *m_internalBuddyList;
+		AIMBuddyList *mInternalBuddyList;
 
 		/** Our contact */
-		OscarContact *m_myself;
+		OscarContact *mMyself;
 
 		/** Our OSCAR socket object */
-		OscarSocket *m_engine;
+		OscarSocket *mEngine;
 
 		/** Our UserInfo */
-		UserInfo m_userInfo;
+		UserInfo mUserInfo;
 
 		/** Our action menu */
-		KActionMenu *m_actionMenu;
+		KActionMenu *mActionMenu;
 
-		/** Go online action */
-		KAction *m_actionGoOnline;
-
-		/** Go offline action */
-		KAction *m_actionGoOffline;
-
-		/** Go away action */
-		KAction *m_actionGoAway;
-
-		/** Edit user info */
-		KAction *m_actionEditInfo;
-
-		/** Show debug dialog action */
-		KAction *m_actionShowDebug;
+		/** actions from aboves action menu */
+		KAction *mActionGoOnline;
+		KAction *mActionGoOffline;
+		KAction *mActionGoAway;
+		KAction *mActionGoNA;
+		KAction *mActionGoDND;
+		KAction *mActionGoOccupied;
+		KAction *mActionGoFFC;
+		KAction *mActionEditInfo;
+		KAction *mActionShowDebug;
 
 		/** Our away dialog */
-		OscarChangeStatus *m_awayDialog;
+		OscarChangeStatus *mAwayDialog;
 
 		/** Our debug dialog */
-		OscarDebugDialog *m_debugDialog;
+		OscarDebugDialog *mDebugDialog;
 
 		/** Random new group number for the engine */
-		int m_randomNewGroupNum;
+		int mRandomNewGroupNum;
 
-		int m_randomNewBuddyNum;
+		int mRandomNewBuddyNum;
 
-		/** Idleness manager */
-		XAutoLock m_idleMgr;
+		/**Idleness manager */
+		// TODO: Why not have this in libkopete? [mETz]
+		XAutoLock mIdleMgr;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

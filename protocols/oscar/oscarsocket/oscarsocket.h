@@ -75,12 +75,13 @@ struct UserInfo
 #define OSCAR_ONLINE			1
 #define OSCAR_AWAY			2
 
-const unsigned short ICQ_STATUS_OFFLINE            = 0xFFFF;
-const unsigned short ICQ_STATUS_AWAY               = 0x0001;
-const unsigned short ICQ_STATUS_DND                = 0x0002;
-const unsigned short ICQ_STATUS_NA                 = 0x0004;
-const unsigned short ICQ_STATUS_OCCUPIED           = 0x0010;
-const unsigned short ICQ_STATUS_FREEFORCHAT        = 0x0020;
+const unsigned short ICQ_STATUS_ONLINE		= 0x0000;
+const unsigned short ICQ_STATUS_OFFLINE	= 0xFFFF;
+const unsigned short ICQ_STATUS_AWAY		= 0x0001;
+const unsigned short ICQ_STATUS_DND			= 0x0002;
+const unsigned short ICQ_STATUS_NA			= 0x0004;
+const unsigned short ICQ_STATUS_OCC			= 0x0010;
+const unsigned short ICQ_STATUS_FFC			= 0x0020;
 
 #define USERCLASS_TRIAL			0x0001
 #define USERCLASS_UNKNOWN2 	0x0002
@@ -104,7 +105,7 @@ class OscarSocket : public OscarConnection
 	~OscarSocket();
 
 	/** Sends an authorization request to the server */
-	void sendLoginRequest(void);
+	void sendLoginRequest();
 
 	/** encodes a password using md5, outputs to digest */
 	int encodePassword(unsigned char *digest);
@@ -116,13 +117,13 @@ class OscarSocket : public OscarConnection
 	/** Logs in the user! */
 	void doLogin(const QString &host, int port, const QString &s, const QString &password);
 	/** Gets the rate info from the server */
-	void sendRateInfoRequest(void);
+	void sendRateInfoRequest();
 	/** requests the current user's info */
-	void requestMyUserInfo(void);
+	void requestMyUserInfo();
 	/** Sets idle time */
 	void sendIdleTime(DWORD time);
 	/** requests ssi data from the server */
-	void sendBuddyListRequest(void);
+	void sendBuddyListRequest();
 	/** Sends message to dest */
 	void sendIM(const QString &message, const QString &dest, bool isAuto);
 	/** Requests sn's user info */
@@ -131,7 +132,7 @@ class OscarSocket : public OscarConnection
 	void sendAway(bool away, const QString &message=0L);
 	/** Sends someone a warning */
 	void sendWarning(const QString &target, bool isAnonymous);
-	/** Changes a user's password!!!!!! */
+	/** Changes a user's password (AIM Method) */
 	void sendChangePassword(const QString &newpw, const QString &oldpw);
 	/** Joins the given chat room */
 	void sendChatJoin(const QString &name, const int exchange);
@@ -155,13 +156,13 @@ class OscarSocket : public OscarConnection
 	/** Deletes a buddy from the server side buddy list */
 	virtual void sendDelBuddy(const QString &budName, const QString &budGroup);
 	/** Sends the server lots of  information about the currently logged in user */
-	void sendInfo(void);
+	void sendInfo();
 	/** Sends the user's profile to the server */
 	void sendMyProfile();
 	/** Sets the user's profile */
 	void setMyProfile(const QString &profile);
 	/** Returns the user's profile */
-	inline QString getMyProfile(void) const { return myUserProfile; };
+	inline QString getMyProfile() const { return myUserProfile; };
 	/** Blocks user sname */
 	void sendBlock(const QString &sname);
 	/** Removes the block on user sname */
@@ -181,18 +182,22 @@ class OscarSocket : public OscarConnection
 
 	/** send status (ICQ method) */
 	void sendStatus(unsigned long status);
+	/** send request for offline messages (ICQ method) */
+	void sendReqOfflineMessages();
+	/** send acknowledgment for offline messages (ICQ method) */
+	void sendAckOfflineMessages();
 
 	public slots:
 	/** This is called when a connection is established */
-	void OnConnect(void);
+	void OnConnect();
 	/** This function is called when there is data to be read */
-	virtual void slotRead(void);
+	virtual void slotRead();
 
 	private:
 	/** adds the flap version to the buffer */
 	void putFlapVer(Buffer &buf);
 	/** Reads a FLAP header from the input */
-	FLAP getFLAP(void);
+	FLAP getFLAP();
 	/** Sends the output buffer, and clears it */
 	void sendBuf(Buffer &buf, BYTE chan);
 
@@ -206,16 +211,16 @@ class OscarSocket : public OscarConnection
 	/** Called when a cookie is received */
 	void connectToBos();
 	/** Sends the authorization cookie to the BOS server */
-	void sendCookie(void);
+	void sendCookie();
 	/** Parses the rate info response */
 	void parseRateInfoResponse(Buffer &inbuf);
 	/**
 	* Tells the server we accept it's communist rate
 	* limits, even though I have no idea what they mean
 	*/
-	void sendRateAck(void);
+	void sendRateAck();
 	/** Sends privacy flags to the server  */
-	void sendPrivacyFlags(void);
+	void sendPrivacyFlags();
 	/** parse my user info */
 	void parseMyUserInfo(Buffer &inbuf);
 	/** finds a tlv of type typ in the list */
@@ -230,7 +235,7 @@ class OscarSocket : public OscarConnection
 	/**
 	* tells the server that the client is
 	* ready to receive commands & stuff */
-	void sendClientReady(void);
+	void sendClientReady();
 	/** Sends versions so that we get proper rate info */
 	void sendVersions(const WORD *families, const int len);
 	/**
@@ -244,7 +249,7 @@ class OscarSocket : public OscarConnection
 	/** parses incoming ssi data */
 	void parseSSIData(Buffer &inbuf);
 	/** Requests the user's SSI rights */
-	void requestBOSRights(void);
+	void requestBOSRights();
 	/** Parses SSI rights data */
 	void parseBOSRights(Buffer &inbuf);
 	/** Parses the server ready response */
@@ -254,15 +259,15 @@ class OscarSocket : public OscarConnection
 	/** Parses Message of the day */
 	void parseMessageOfTheDay(Buffer &inbuf);
 	/** Requests location rights */
-	void requestLocateRights(void);
+	void requestLocateRights();
 	/** Requests a bunch of information (permissions, rights, my user info, etc) from server */
-	void requestInfo(void);
+	void requestInfo();
 	/** adds a mask of the groups that you want to be able to see you to the buffer */
-	void sendGroupPermissionMask(void);
+	void sendGroupPermissionMask();
 	/** adds a request for buddy list rights to the buffer */
-	void requestBuddyRights(void);
+	void requestBuddyRights();
 	/** adds a request for msg rights to the buffer */
-	void requestMsgRights(void);
+	void requestMsgRights();
 	/** Parses the locate rights provided by the server */
 	void parseLocateRights(Buffer &inbuf);
 	/** Parses buddy list rights from the server */
@@ -274,7 +279,7 @@ class OscarSocket : public OscarConnection
 	/** parses the aim standard user info block */
 	UserInfo parseUserInfo(Buffer &inbuf);
 	/** Activates the SSI list on the server */
-	void sendSSIActivate(void);
+	void sendSSIActivate();
 	/** Parses the oncoming buddy server notification */
 	void parseBuddyChange(Buffer &);
 	/** Parses offgoing buddy message from server */
@@ -309,25 +314,25 @@ class OscarSocket : public OscarConnection
 	type == 2: accept  */
 	void sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType, const KFileItem *finfo=0L);
 	/** Sends a 0x0013,0x0002 (requests SSI rights information) */
-	void sendSSIRightsRequest(void);
+	void sendSSIRightsRequest();
 	/** Sends a 0x0013,0x0004 (requests SSI data?) */
-	void sendSSIRequest(void);
+	void sendSSIRequest();
 	/** Parses a 0x0013,0x0003 (SSI rights) from the server */
 	void parseSSIRights(Buffer &inbuf);
 	/** Sends parameters for ICBM messages */
-	void sendMsgParams(void);
+	void sendMsgParams();
 	/** Returns the appropriate server socket, based on the capability flag it is passed. */
 	OncomingSocket * serverSocket(DWORD capflag);
 
 	private slots:
 	/** Called when a connection has been closed */
-	void OnConnectionClosed(void);
+	void OnConnectionClosed();
 	/** Called when the server aknowledges the connection */
-	void OnConnAckReceived(void);
+	void OnConnAckReceived();
 	/** called when a conn ack is recieved for the BOS connection */
-	void OnBosConnAckReceived(void);
+	void OnBosConnAckReceived();
 	/** Called when the server is ready for normal commands */
-	void OnServerReady(void);
+	void OnServerReady();
 	/** Called on connection to bos server */
 	void OnBosConnect();
 	/** Called when a direct IM is received */
@@ -346,9 +351,9 @@ class OscarSocket : public OscarConnection
 
 	signals:
 	/** The server has sent the key with which to encrypt the password */
-	void keyReceived(void);
+	void keyReceived();
 	/** The bos server is ready to be sent commands */
-	void serverReady(void);
+	void serverReady();
 	/** A buddy has left */
 	void gotOffgoingBuddy(QString);
 	/** A buddy has arrived! */
@@ -428,7 +433,7 @@ class OscarSocket : public OscarConnection
 	/** emitted when a block is removed on a buddy */
 	void denyRemoved(QString);
 	/** Tells when the connection ack has been recieved on channel 1 */
-	void connAckReceived(void);
+	void connAckReceived();
 	/** emitted when a direct connection has been terminated */
 	void directIMConnectionClosed(QString name);
 };

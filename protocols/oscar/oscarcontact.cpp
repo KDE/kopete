@@ -53,19 +53,12 @@ OscarContact::OscarContact(const QString name, const QString displayName,
 	kdDebug(14150) << "[OscarContact] OscarContact(), name='" <<
 		name << "', displayName='" << displayName << "'"<< endl;
 
-	// Save the OscarAccount object using static_cast
 	if (!account)
-	{
 		kdDebug(14150) << "[OscarContact] Account pointer was null!" << endl;
-	}
 	else
-	{
-//		kdDebug(14150) << "[OscarContact] Casting account to OscarAccount" << endl;
 		mAccount = static_cast<OscarAccount*>(account);
-	}
 
-	// We store normalized names (lowercase no spaces)
-	mName = tocNormalize(name);
+	mName = tocNormalize(name); // We store normalized names (lowercase no spaces)
 	mMsgManager = 0L;
 //	kdDebug(14150) << "[OscarContact] Attempting to get the internal buddy list for this account" << endl;
 	mListContact = mAccount->internalBuddyList()->findBuddy(mName);
@@ -78,7 +71,7 @@ OscarContact::OscarContact(const QString name, const QString displayName,
 	if(mAccount->isICQ())
 		setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQOFFLINE));
 	else
-		setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE));
+		setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE));
 //	kdDebug(14150) << "[OscarContact] Status set to Offline" << endl;
 
 	// Sets our display name (from KopeteContact)
@@ -225,7 +218,8 @@ void OscarContact::slotMainStatusChanged(const KopeteOnlineStatus &newStatus)
 {
 //	kdDebug(14150) << k_funcinfo << "called, with status '" << newStatus.description() << "'" << endl;
 
-	if(newStatus == OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE))
+//	if(newStatus == OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE))
+	if(newStatus == KopeteOnlineStatus::Offline)
 	{
 		if(mAccount->isICQ())
 		{
@@ -236,8 +230,8 @@ void OscarContact::slotMainStatusChanged(const KopeteOnlineStatus &newStatus)
 		else
 		{
 			// Try to do this, otherwise no big deal
-			mListContact->setStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE));
-			setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE));
+			mListContact->setStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE));
+			setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE));
 		}
 	}
 }
@@ -283,8 +277,8 @@ void OscarContact::slotUpdateBuddy()
 		}
 		else
 		{
-			mListContact->setStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE) );
-			setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE) );
+			mListContact->setStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE) );
+			setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE) );
 		}
 	}
 }
@@ -303,18 +297,17 @@ void OscarContact::slotBuddyChanged(UserInfo u)
 			mListContact->setStatus(
 				OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQOFFLINE));
 		}
-		else if (u.icqextstatus & ICQ_STATUS_FREEFORCHAT)
+		else if (u.icqextstatus & ICQ_STATUS_FFC)
 		{
-			kdDebug(14150) << "ICQ_STATUS_FREEFORCHAT LIBICQ" << endl;
 			mListContact->setStatus(
-				OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQONLINE));
+				OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQFFC));
 		}
 		else if (u.icqextstatus & ICQ_STATUS_DND)
 		{
 			mListContact->setStatus(
 				OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQDND));
 		}
-		else if (u.icqextstatus & ICQ_STATUS_OCCUPIED)
+		else if (u.icqextstatus & ICQ_STATUS_OCC)
 		{
 			mListContact->setStatus(
 				OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQOCC));
@@ -329,7 +322,7 @@ void OscarContact::slotBuddyChanged(UserInfo u)
 			mListContact->setStatus(
 				OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQAWAY));
 		}
-		else // only online mode is left
+		else // only online mode is the only one left
 		{
 			mListContact->setStatus(
 				OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQONLINE));
@@ -340,7 +333,7 @@ void OscarContact::slotBuddyChanged(UserInfo u)
 		if ( u.userclass & USERCLASS_AWAY )
 		{
 			mListContact->setStatus(
-			OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AWAY));
+			OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMAWAY));
 		}
 		else
 		{
@@ -358,7 +351,7 @@ void OscarContact::slotBuddyChanged(UserInfo u)
 				kdDebug(14150) << k_funcinfo "USERCLASS & ACTIVEBUDDY" << endl;
 
 			mListContact->setStatus(
-				OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ONLINE));
+				OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMONLINE));
 		}
 	}
 
@@ -395,19 +388,13 @@ void OscarContact::slotTyping( bool typing )
 
 void OscarContact::slotOffgoingBuddy(QString sn)
 {
-	if(tocNormalize(sn)==tocNormalize(mName))
+	if(tocNormalize(sn)==tocNormalize(mName)) //if we are the contact that is offgoing
 	{
-		//if we are the contact that is offgoing
 		if(mAccount->isICQ())
-		{
-			mListContact->setStatus(
-				OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQOFFLINE));
-		}
+			mListContact->setStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQOFFLINE));
 		else
-		{
-			mListContact->setStatus(
-				OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE));
-		}
+			mListContact->setStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE));
+
 		slotUpdateBuddy();
 	}
 }
@@ -417,12 +404,14 @@ void OscarContact::slotUserInfo(void)
 	if (!mAccount->isConnected())
 	{
 		KMessageBox::sorry(qApp->mainWidget(),
-			i18n("<qt>Sorry, you must be connected to the AIM server to retrieve user information, but you will be allowed to continue if you	would like to change the user's nickname.</qt>"),
+			i18n(
+				"<qt>Sorry, you must be connected to the AIM server to retrieve user information, " \
+				"but you will be allowed to continue if you	would like to change the user's nickname.</qt>"),
 			i18n("You Must be Connected") );
 	}
 	else
 	{
-		if(mListContact->status()==OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE))
+		if(mListContact->status()==OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE))
 		{
 			KMessageBox::sorry( qApp->mainWidget(),
 				i18n( "<qt>Sorry, this user isn't online for you to view his/her information, "
@@ -512,8 +501,8 @@ void OscarContact::slotSendMsg(KopeteMessage& message, KopeteMessageManager *)
 
 	// Check to see if the person we're sending the message to is online
 	if((!mAccount->isICQ()) &&
-		(mListContact->status() == OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE)) ||
-		(onlineStatus() == OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE))
+		(mListContact->status()==OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE)) ||
+		(onlineStatus()==OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE))
 		)
 	{
 		KMessageBox::sorry(qApp->mainWidget(),
@@ -840,5 +829,4 @@ void OscarContact::rename(const QString &newNick)
 }
 
 #include "oscarcontact.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:

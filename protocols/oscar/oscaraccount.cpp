@@ -2,7 +2,6 @@
   oscaraccount.cpp  -  Oscar Account Class
 
   Copyright (c) 2002 by Tom Linsky <twl6@po.cwru.edu>
-
   Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
@@ -43,48 +42,48 @@
 OscarAccount::OscarAccount(KopeteProtocol *parent, QString accountID, const char *name)
 	: KopeteAccount(parent, accountID, name)
 {
-	m_engine = 0L;
+	mEngine = 0L;
 
 	initActions(); // Initialize our actions
 	initActionMenu(); // Create our action menu
 	initEngine(); // Initialize the backend
 
 	// Create the internal buddy list for this account
-	m_internalBuddyList = new AIMBuddyList();
+	mInternalBuddyList=new AIMBuddyList();
 
 	// Init the myself contact
-	m_myself = new OscarContact(accountId(), accountId(), this, 0L);
+	mMyself=new OscarContact(accountId(), accountId(), this, 0L);
 
 	// Instantiate the away dialog
-	m_awayDialog = new OscarChangeStatus(getEngine());
+	mAwayDialog=new OscarChangeStatus(getEngine());
 
 	// The debug dialog
-	m_debugDialog = new OscarDebugDialog();
-	getEngine()->setDebugDialog( m_debugDialog );
+	mDebugDialog=new OscarDebugDialog();
+	getEngine()->setDebugDialog(mDebugDialog);
 
 	initSignals(); // Initialize the signals and slots
 
 	// Set our random new numbers
-	m_randomNewBuddyNum = 0;
-	m_randomNewGroupNum = 0;
+	mRandomNewBuddyNum = 0;
+	mRandomNewGroupNum = 0;
 }
 
 OscarAccount::~OscarAccount()
 {
-	kdDebug( 14150 ) << k_funcinfo << "[" << accountId() << "] deleted, Disconnecting..." << endl;
+	kdDebug(14150) << k_funcinfo << "[" << accountId() << "] deleted, Disconnecting..." << endl;
 
 	disconnect();
 
 	// Delete the backend
-	if (m_engine)
+	if (mEngine)
 	{
-		delete m_engine;
-		m_engine = 0L;
+		delete mEngine;
+		mEngine = 0L;
 	}
 
-	delete m_awayDialog;
-	delete m_debugDialog;
-	delete m_myself;
+	delete mAwayDialog;
+	delete mDebugDialog;
+	delete mMyself;
 }
 
 void OscarAccount::connect()
@@ -113,10 +112,12 @@ void OscarAccount::connect()
 			QString port = pluginData(protocol(), "Port");
 
 			// Connect, need to normalize the name first
-			m_engine->doLogin( server, port.toInt(), tocNormalize(screenName), password );
+			mEngine->doLogin( server, port.toInt(), tocNormalize(screenName), password );
 
-			myself()->setOnlineStatus(
-			OscarProtocol::protocol()->getOnlineStatus( OscarProtocol::CONNECTING ));
+			if(isICQ())
+				myself()->setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQCONN));
+			else
+				myself()->setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMCONN));
 		}
 	}
 	else
@@ -130,7 +131,7 @@ void OscarAccount::disconnect()
 {
 	kdDebug(14150) << k_funcinfo << "accountID='" << accountId() << "'" << endl;
 
-	m_engine->doLogoff();
+	mEngine->doLogoff();
 
 	if (isICQ())
 	{
@@ -140,29 +141,29 @@ void OscarAccount::disconnect()
 	else
 	{
 		myself()->setOnlineStatus(
-			OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE));
+			OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE));
 	}
 }
 
-void OscarAccount::setAway( bool away, const QString &awayReason )
+void OscarAccount::setAway(bool away, const QString &awayReason)
 {
 	kdDebug(14150) << "[OscarAccount: " << accountId() << "] setAway()" << endl;
 
-	if( away )
-		m_engine->sendAway(true, awayReason);
+	if(away)
+		mEngine->sendAway(true, awayReason);
 	else
-		m_engine->sendAway(false, QString::null);
+		mEngine->sendAway(false, QString::null);
 }
 
 KopeteContact* OscarAccount::myself() const
 {
-	return m_myself;
+	return mMyself;
 }
 
 OscarSocket* OscarAccount::getEngine()
 {
 	// Return the oscar socket object we're using
-	return m_engine;
+	return mEngine;
 }
 
 
@@ -175,25 +176,35 @@ bool OscarAccount::isICQ()
 
 void OscarAccount::initActions()
 {
-	kdDebug(14150) << k_funcinfo << "for account '" << accountId() << "'" << endl;
+	if(isICQ())
+	{
+		kdDebug(14150) << k_funcinfo << "for ICQ account '" << accountId() << "'" << endl;
 
-	m_actionGoOnline = new KAction ( i18n("Online"), "oscar_online", 0,
-		this, SLOT(slotGoOnline()),
-		this, "actionGoOnline" );
+		mActionGoOnline	= new KAction(i18n("Online"), ICON_ICQ_ON, 0, this, SLOT(slotGoOnline()), this, "mActionGoOnline");
+		mActionGoOffline	= new KAction(i18n("Offline"), ICON_ICQ_OFF, 0, this, SLOT(slotGoOffline()), this, "mActionGoOffline");
+		mActionGoAway		= new KAction(i18n("Away"), ICON_ICQ_AW, 0, this, SLOT(slotGoAway()), this, "mActionGoAway");
+		// Now following: Enhanced ICQ states
+		mActionGoNA			= new KAction(i18n("Not Available"), ICON_ICQ_NA, 0, this, SLOT(slotGoNA()), this, "mActionGoNA");
+		mActionGoDND		= new KAction(i18n("Do Not Disturb"), ICON_ICQ_DND, 0, this, SLOT(slotGoDND()), this, "mActionGoDND");
+		mActionGoOccupied	= new KAction(i18n("Occupied"), ICON_ICQ_OCC, 0, this, SLOT(slotGoOCC()), this, "mActionGoOccupied");
+		mActionGoFFC		= new KAction(i18n("Free For Chat"), ICON_ICQ_FFC, 0, this, SLOT(slotGoFFC()), this, "mActionGoOccupied");
+		mActionEditInfo = 0L; // TODO: can't send/retrieve info yet so no menuitem
+	}
+	else
+	{
+		kdDebug(14150) << k_funcinfo << "for AIM account '" << accountId() << "'" << endl;
 
-	m_actionGoOffline = new KAction ( i18n("Offline"), "oscar_offline", 0,
-		this, SLOT(slotGoOffline()),
-		this, "actionGoOffline" );
+		mActionGoOnline	= new KAction(i18n("Online"), ICON_AIM_ON, 0, this, SLOT(slotGoOnline()), this, "mActionGoOnline");
+		mActionGoOffline	= new KAction(i18n("Offline"), ICON_AIM_OFF, 0, this, SLOT(slotGoOffline()), this, "mActionGoOffline");
+ 		mActionGoAway		= new KAction(i18n("Away"), ICON_AIM_AW, 0, this, SLOT(slotGoAway()), this, "mActionGoAway");
+		mActionGoNA			= 0L;
+		mActionGoDND		= 0L;
+		mActionGoOccupied	= 0L;
+		mActionGoFFC		= 0L;
+		mActionEditInfo	= KopeteStdAction::contactInfo(this, SLOT(slotEditInfo()), this, "mActionEditInfo");
+	}
 
-	m_actionGoAway = new KAction ( i18n("Away"), "oscar_away", 0,
-		this, SLOT(slotGoAway()),
-		this, "actionGoAway" );
-
-	m_actionEditInfo = KopeteStdAction::contactInfo(this,
-		SLOT(slotEditInfo()),
-		this, "actionInfo" );
-
-	m_actionShowDebug = new KAction( i18n("Show Debug"), "wizard", 0,
+	mActionShowDebug = new KAction( i18n("Show Debug"), "wizard", 0,
 		this, SLOT(slotShowDebugDialog()),
 		this, "actionShowDebug");
 }
@@ -207,23 +218,38 @@ void OscarAccount::initActionMenu()
 	else
 		icon="oscar_online";
 
-	m_actionMenu = new KActionMenu( accountId(), icon, this, "OscarAccount::m_actionMenu" );
-	m_actionMenu->insert( m_actionGoOnline );
-	m_actionMenu->insert( m_actionGoOffline );
-	m_actionMenu->insert( m_actionGoAway );
-	m_actionMenu->popupMenu()->insertSeparator();
-	m_actionMenu->insert( m_actionEditInfo );
-	m_actionMenu->popupMenu()->insertSeparator();
-	m_actionMenu->insert( m_actionShowDebug );
+	mActionMenu=new KActionMenu(accountId(), icon, this, "OscarAccount::mActionMenu");
+	mActionMenu->insert(mActionGoOnline); // always first
+
+	if(isICQ())
+	{
+		mActionMenu->insert(mActionGoFFC);
+		mActionMenu->insert(mActionGoAway);
+		mActionMenu->insert(mActionGoNA);
+		mActionMenu->insert(mActionGoDND);
+		mActionMenu->insert(mActionGoOccupied);
+	}
+	else
+	{
+		mActionMenu->insert(mActionGoAway);
+		mActionMenu->popupMenu()->insertSeparator();
+		mActionMenu->insert(mActionEditInfo); // TODO: add feature to ICQ as well
+	}
+
+	mActionMenu->insert(mActionGoOffline); // always last
+	mActionMenu->popupMenu()->insertSeparator();
+	mActionMenu->insert(mActionShowDebug);
 }
 
 void OscarAccount::initEngine()
 {
-	kdDebug( 14150 ) << k_funcinfo << "START; accountId="<< accountId() << endl;
+	kdDebug(14150) << k_funcinfo << "START; accountId="<< accountId() << endl;
+
 	QByteArray cook;
-	cook.duplicate("01234567",8);
-	m_engine = new OscarSocket(pluginData(protocol(), "server"), cook, this);
-	kdDebug( 14150 ) << k_funcinfo << "END; accountId=" << accountId() << endl;
+	cook.duplicate("01234567",8); // what is that for? [mETz]
+	mEngine = new OscarSocket(pluginData(protocol(), "server"), cook, this);
+
+	kdDebug(14150) << k_funcinfo << "END; accountId=" << accountId() << endl;
 }
 
 void OscarAccount::initSignals()
@@ -278,13 +304,13 @@ void OscarAccount::initSignals()
 		this, SLOT(slotGotDirectIMRequest(QString)));
 
 	// We have officially become idle
-	QObject::connect(&m_idleMgr,
+	QObject::connect(&mIdleMgr,
 		SIGNAL(timeout()),
 		this, SLOT(slotIdleTimeout()));
 
 	// We have officially become un-idle
 	QObject::connect(
-		&m_idleMgr, SIGNAL(activity()),
+		&mIdleMgr, SIGNAL(activity()),
 		this, SLOT(slotIdleActivity()));
 }
 
@@ -297,7 +323,7 @@ void OscarAccount::setUserProfile( QString profile )
 
 KActionMenu* OscarAccount::actionMenu()
 {
-	return m_actionMenu;
+	return mActionMenu;
 }
 
 void OscarAccount::slotGoOnline()
@@ -311,7 +337,7 @@ void OscarAccount::slotGoOnline()
 		kdDebug(14150) << "[OscarAccount: " << accountId() << "] slotGoOnline: was away, marking back" << endl;
 		setAway(false);
 	}
-//	else if(myself()->onlineStatus() == OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE))
+//	else if(myself()->onlineStatus() == OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE))
 	else if(myself()->onlineStatus().status() == KopeteOnlineStatus::Offline)
 	{ // If we're offline, connect
 		kdDebug(14150) << "[OscarAccount: " << accountId() << "] slotGoOnline: was offline, now connecting" << endl;
@@ -334,13 +360,72 @@ void OscarAccount::slotGoOffline()
 void OscarAccount::slotGoAway()
 {
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
-//	if(myself()->onlineStatus() == OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ONLINE))
-	if(myself()->onlineStatus().status() == KopeteOnlineStatus::Online)
+	if(isICQ())
 	{
-		// Show the dialog, which takes care of the
-		// setting of the away message
-		m_awayDialog->show();
+		kdDebug(14150) << k_funcinfo << "TODO: Make OSCARS away dialog work with icq as well!!!" << endl;
+		if(
+			(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
+			(myself()->onlineStatus().status() == KopeteOnlineStatus::Away) // Away could also be a different AWAY mode (like NA or OCC)
+			)
+		{
+			mEngine->sendStatus(ICQ_STATUS_AWAY);
+		}
 	}
+	else
+	{
+//		if(myself()->onlineStatus() == OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMONLINE))
+		if(myself()->onlineStatus().status() == KopeteOnlineStatus::Online)
+		{
+			// Show the dialog, which takes care of the
+			// setting of the away message
+			mAwayDialog->show();
+		}
+	}
+}
+
+
+void OscarAccount::slotGoNA()
+{
+	kdDebug(14150) << k_funcinfo << "Called" << endl;
+	// Away could also be a different AWAY mode (like NA or OCC)
+	if(
+		(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
+		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
+		)
+		mEngine->sendStatus(ICQ_STATUS_NA);
+}
+
+void OscarAccount::slotGoOCC()
+{
+	kdDebug(14150) << k_funcinfo << "Called" << endl;
+	// Away could also be a different AWAY mode (like NA or OCC)
+	if(
+		(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
+		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
+		)
+		mEngine->sendStatus(ICQ_STATUS_OCC);
+}
+
+void OscarAccount::slotGoFFC()
+{
+	kdDebug(14150) << k_funcinfo << "Called" << endl;
+	// Away could also be a different AWAY mode (like NA or OCC)
+	if(
+		(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
+		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
+		)
+		mEngine->sendStatus(ICQ_STATUS_FFC);
+}
+
+void OscarAccount::slotGoDND()
+{
+	kdDebug(14150) << k_funcinfo << "Called" << endl;
+	// Away could also be a different AWAY mode (like NA or OCC)
+	if(
+		(myself()->onlineStatus().status() == KopeteOnlineStatus::Online) ||
+		(myself()->onlineStatus().status() == KopeteOnlineStatus::Away)
+		)
+		mEngine->sendStatus(ICQ_STATUS_DND);
 }
 
 void OscarAccount::slotEditInfo()
@@ -356,8 +441,8 @@ void OscarAccount::slotEditInfo()
 
 void OscarAccount::slotShowDebugDialog()
 {
-	if(m_debugDialog)
-		m_debugDialog->show();
+	if(mDebugDialog)
+		mDebugDialog->show();
 }
 
 void OscarAccount::slotError(QString errmsg, int errorCode)
@@ -381,7 +466,10 @@ void OscarAccount::slotDisconnected()
 		<< "] slotDisconnected() and function info is: "
 		<< k_funcinfo << endl;
 
-	myself()->setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus( OscarProtocol::OFFLINE ));
+	if(isICQ())
+		myself()->setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQOFFLINE));
+	else
+		myself()->setOnlineStatus(OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE));
 }
 
 // Called when a group is added by adding a contact
@@ -392,11 +480,11 @@ void OscarAccount::slotGroupAdded(KopeteGroup *group)
 	QString groupName = group->displayName();
 
 	// See if we already have this group
-	AIMGroup *aGroup = m_internalBuddyList->findGroup(groupName);
+	AIMGroup *aGroup = mInternalBuddyList->findGroup(groupName);
 	if (!aGroup)
 	{
-		aGroup = m_internalBuddyList->addGroup(m_randomNewGroupNum, groupName);
-		m_randomNewGroupNum++;
+		aGroup = mInternalBuddyList->addGroup(mRandomNewGroupNum, groupName);
+		mRandomNewGroupNum++;
 		kdDebug(14150) << "[OscarAccount: " << accountId() << "] addGroup() being called" << endl;
 		if (isConnected())
 		{
@@ -433,7 +521,7 @@ void OscarAccount::slotGotIM(QString /*message*/, QString sender, bool /*isAuto*
 	// because I could not think of a good way to do this with
 	// AIM.
 
-	if (!m_internalBuddyList->findBuddy(sender))
+	if (!mInternalBuddyList->findBuddy(sender))
 	{
 		addContact(tocNormalize(sender), sender, 0L, QString::null, false); // last one should be true
 	}
@@ -445,7 +533,7 @@ void OscarAccount::slotGotServerBuddyList(AIMBuddyList &buddyList)
 	kdDebug(14150) << "[OscarAccount: " << accountId() << "] slotGotServerBuddyList()" << endl;
 
 	//save server side contact list
-	*m_internalBuddyList += buddyList;
+	*mInternalBuddyList += buddyList;
 	QValueList<AIMBuddy *> localList = buddyList.buddies().values();
 
 	for (QValueList<AIMBuddy *>::Iterator it=localList.begin(); it!=localList.end(); ++it)
@@ -496,7 +584,7 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 //		contact->setOnlineStatus( buddy->status() );
 
 		// Get the group this buddy belongs to
-		AIMGroup *aimGroup = m_internalBuddyList->findGroup(buddy->groupID());
+		AIMGroup *aimGroup = mInternalBuddyList->findGroup(buddy->groupID());
 
 		if (aimGroup)
 		{
@@ -545,15 +633,18 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 	*/
 
 	/* We're not even online or connecting (when getting server contacts), so don't bother */
-	if( (!myself()->isOnline()) && (myself()->onlineStatus() != OscarProtocol::protocol()->getOnlineStatus( OscarProtocol::CONNECTING )) )
+	if(
+		(!myself()->isOnline()) &&
+		(myself()->onlineStatus().status() != KopeteOnlineStatus::Offline)
+		)
 	{
-		kdDebug(14150) << k_funcinfo << "Can't add contact, we are offline" << endl;
+		kdDebug(14150) << k_funcinfo << "Can't add contact, we are offline!" << endl;
 		return false;
 	}
 
 	// Next check our internal list to see if we have this buddy
 	// already, findBuddy tocNormalizes the buddy name for us
-	AIMBuddy *internalBuddy = m_internalBuddyList->findBuddy(contactId);
+	AIMBuddy *internalBuddy = mInternalBuddyList->findBuddy(contactId);
 
 	if (internalBuddy) // We found the buddy internally
 	{
@@ -599,32 +690,32 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			}
 
 			// See if it exists in our internal group list already
-			AIMGroup *internalGroup = m_internalBuddyList->findGroup(groupName);
+			AIMGroup *internalGroup = mInternalBuddyList->findGroup(groupName);
 			if (!internalGroup) // If the group didn't exist
 			{
-				internalGroup = m_internalBuddyList->addGroup(m_randomNewGroupNum, groupName);
+				internalGroup = mInternalBuddyList->addGroup(mRandomNewGroupNum, groupName);
 				kdDebug(14150) << "created internal group for new contact" << endl;
 				// Add the group on the server list
 				getEngine()->sendAddGroup(internalGroup->name());
 			}
 
 			// Create a new internal buddy for this contact
-			AIMBuddy *newBuddy = new AIMBuddy(m_randomNewBuddyNum, internalGroup->ID(), contactId);
+			AIMBuddy *newBuddy = new AIMBuddy(mRandomNewBuddyNum, internalGroup->ID(), contactId);
 
 			// Check if it has an alias
 			if((displayName != QString::null) && (displayName != contactId))
 				newBuddy->setAlias(displayName);
 
 			// Add the buddy to the internal buddy list
-			m_internalBuddyList->addBuddy( newBuddy );
+			mInternalBuddyList->addBuddy( newBuddy );
 
 			// Add the buddy to the server's list, with the group,
 			// need to normalize the contact name
 			getEngine()->sendAddBuddy(tocNormalize(contactId), internalGroup->name());
 
 			// Increase these counters, I'm not sure what this does
-			m_randomNewGroupNum++;
-			m_randomNewBuddyNum++;
+			mRandomNewGroupNum++;
+			mRandomNewBuddyNum++;
 
 			// Create the actual OscarContact, which adds it to the metacontact
 			/*OscarContact *newContact = */new OscarContact(contactId, displayName, this, parentContact);
@@ -665,7 +756,7 @@ void OscarAccount::slotOurStatusChanged( const KopeteOnlineStatus &newStatus )
 // Called when we have been warned
 void OscarAccount::slotGotWarning(int newlevel, QString warner)
 {  //this is not a natural decrease in level
-	if (m_userInfo.evil < newlevel)
+	if (mUserInfo.evil < newlevel)
 	{
 		QString warnMessage;
 
@@ -679,7 +770,7 @@ void OscarAccount::slotGotWarning(int newlevel, QString warner)
 
 		KMessageBox::sorry(0L,message);
 	}
-	m_userInfo.evil = newlevel;
+	mUserInfo.evil = newlevel;
 }
 
 
@@ -707,7 +798,7 @@ void OscarAccount::slotGotDirectIMRequest(QString sn)
 
 void OscarAccount::slotGotMyUserInfo(UserInfo newInfo)
 {
-	m_userInfo = newInfo;
+	mUserInfo = newInfo;
 }
 
 void OscarAccount::slotIdleActivity()
@@ -730,17 +821,17 @@ void OscarAccount::slotIdleTimeout()
 
 int OscarAccount::randomNewBuddyNum()
 {
-	return m_randomNewBuddyNum++;
+	return mRandomNewBuddyNum++;
 }
 
 int OscarAccount::randomNewGroupNum()
 {
-	return m_randomNewGroupNum++;
+	return mRandomNewGroupNum++;
 }
 
 AIMBuddyList *OscarAccount::internalBuddyList()
 {
-	return m_internalBuddyList;
+	return mInternalBuddyList;
 }
 
 void OscarAccount::setServer( QString server )
@@ -755,5 +846,4 @@ void OscarAccount::setPort( int port )
 }
 
 #include "oscaraccount.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:

@@ -181,7 +181,10 @@ AIMBuddy::AIMBuddy(const int buddyID, const int groupID, const QString &screenNa
 	mGroupID = groupID;
 	mScreenName = screenName;
 	// By default set it's status to offline
-	mStatus = OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::OFFLINE);
+	if((screenName[0].isNumber()) && (screenName.length()>4))
+		mStatus = OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::ICQOFFLINE);
+	else
+		mStatus = OscarProtocol::protocol()->getOnlineStatus(OscarProtocol::AIMOFFLINE);
 }
 
 AIMBuddyCaps::AIMBuddyCaps()
@@ -207,3 +210,4 @@ AIMBuddyCaps::AIMBuddyCaps()
 }
 
 #include "aimbuddylist.moc"
+// vim: set noet ts=4 sts=4 sw=4:

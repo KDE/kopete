@@ -27,7 +27,6 @@
 OscarChangeStatus::OscarChangeStatus(OscarSocket *engine, QWidget *parent, const char *name)
 	: KopeteAwayDialog(parent, name)
 {
-
 	mEngine = engine; // Pointer to the oscar engine
 	setCaption(i18n("Select Away Message")); // Set our caption (from KDialog)
 }
