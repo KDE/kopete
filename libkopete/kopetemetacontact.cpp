@@ -210,7 +210,10 @@ bool KopeteMetaContact::isTopLevel()
 
 void KopeteMetaContact::setTopLevel( bool b )
 {
-	addToGroup(KopeteGroup::toplevel);
+	if(b)
+		addToGroup(KopeteGroup::toplevel);
+	else
+		removeFromGroup(KopeteGroup::toplevel);
 }
 
 KopeteContact *KopeteMetaContact::findContact( const QString &protocolId,
