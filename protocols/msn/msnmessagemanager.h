@@ -56,6 +56,8 @@ public slots:
 
 	void invitationDone( MSNInvitation*  );
 
+	void slotRequestPicture();
+
 private slots:
 	void slotMessageSent( KopeteMessage &message, KopeteMessageManager *kmm );
 	void slotMessageReceived( KopeteMessage &message );

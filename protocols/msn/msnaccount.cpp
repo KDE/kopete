@@ -315,7 +315,7 @@ void MSNAccount::slotDebugRawCommand()
 	if( result == QDialog::Accepted && m_notifySocket )
 	{
 		m_notifySocket->sendCommand( dlg->command(), dlg->params(),
-					dlg->addId(), dlg->msg().replace("\n","\r\n")  );
+					dlg->addId(), dlg->msg().replace("\n","\r\n").utf8()  );
 	}
 	delete dlg;
 #endif

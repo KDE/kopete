@@ -68,21 +68,6 @@ public:
 
 	OnlineStatus onlineStatus() { return m_onlineStatus; }
 
-	/**
-	 * Send an MSN command to the socket
-	 *
-	 * For debugging it's convenient to have this method public, but using
-	 * it outside this class is deprecated for any other use!
-	 *
-	 * The size of the body (if any) is automatically added to the argument
-	 * list and shouldn't be explicitly specified! This size is in bytes
-	 * instead of characters to reflect what actually goes over the wire.
-	 *
-	 * return the id
-	 */
-	int sendCommand( const QString &cmd, const QString &args = QString::null,
-		bool addId = true, const QString &body = QString::null );
-
 	/*
 	 * return the local ip.
 	 * Used for filetransfer
@@ -93,6 +78,23 @@ public slots:
 	void connect( const QString &server, uint port );
 	virtual void disconnect();
 
+
+	/**
+	 * Send an MSN command to the socket
+	 *
+	 * For debugging it's convenient to have this method public, but using
+	 * it outside this class is deprecated for any other use!
+	 *
+	 * The size of the body (if any) is automatically added to the argument
+	 * list and shouldn't be explicitly specified! This size is in bytes
+	 * instead of characters to reflect what actually goes over the wire.
+	 *
+	 * if the param binary is set to true, then, the body is send as a binary message
+	 *
+	 * return the id
+	 */
+	int sendCommand( const QString &cmd, const QString &args = QString::null,
+		bool addId = true, const QByteArray &body = QByteArray() , bool binary=false );
 
 signals:
 	/**
@@ -276,6 +278,4 @@ private:
 };
 
 #endif
-
-// vim: set noet ts=4 sts=4 sw=4:
 

@@ -31,6 +31,8 @@
 class KopeteMessage;
 class MSNAccount;
 
+class MSNP2P;
+
 /**
  * @author Olaf Lueg
  */
@@ -58,6 +60,9 @@ private:
 	QString m_ID;
 	QString m_auth;
 	QStringList m_chatMembers;
+
+
+	MSNP2P *m_p2p ;
 
 protected:
 	/**
@@ -92,6 +97,8 @@ public slots:
 	 * Notify the server that the user is typing a message
 	 */
 	void sendTypingMsg( bool isTyping );
+
+	void requestDisplayPicture();
 
 private slots:
 	void slotOnlineStatusChanged( MSNSocket::OnlineStatus status );

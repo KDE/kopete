@@ -30,6 +30,7 @@
 #include <kmessagebox.h>
 #include <kurl.h>
 
+
 MSNSocket::MSNSocket(QObject* parent)  : QObject (parent)
 {
 	m_onlineStatus = Disconnected;
@@ -195,7 +196,7 @@ void MSNSocket::slotDataReceived()
 	}
 
 	// incoming data
-	char *buf = new char[ toRead +1];
+	char *buf = new char[ toRead ];
 	int ret = m_socket->readBlock( buf, toRead );
 	if( ret < 0 )
 	{
@@ -225,8 +226,7 @@ void MSNSocket::slotDataReceived()
 				<< "Read " << ret << " bytes into 4kb block." << endl;
 		}
 
-		buf[ ret ] = '\0'; // Make it properly null-terminated for the following debug output
-		kdDebug(14140) << "MSNSocket::slotDataReceived: Received '" <<			buf << "'" << endl;
+		kdDebug(14140) << "MSNSocket::slotDataReceived: Received: " << QString(QCString(buf,toRead)).stripWhiteSpace()  << endl;
 
 		m_buffer.add(buf,ret); // fill the buffer with the received data
 
@@ -414,7 +414,7 @@ void MSNSocket::handleError( uint code, uint /*id*/ )
 }
 
 int MSNSocket::sendCommand( const QString &cmd, const QString &args,
-	bool addId, const QString &body )
+	bool addId, const QByteArray &body , bool binary)
 {
 	if(!m_socket)
 	{
@@ -431,18 +431,33 @@ int MSNSocket::sendCommand( const QString &cmd, const QString &args,
 
 	// Add length in bytes, not characters
 	if( !body.isEmpty() )
-		data += " " + QString::number( body.utf8().length() ).utf8();
+		data += " " + QString::number( body.size() - (binary?0:1) ).utf8();
 
 	data += "\r\n";
 
-	if( !body.isEmpty() )
-		data += body.utf8();
+	if(!binary)
+	{
+		if( !body.isEmpty() )
+			data += QCString(body);
 
-//	kdDebug(14140) << "MSNSocket::sendCommand: Sending command " << data << endl;
+	//	kdDebug(14140) << "MSNSocket::sendCommand: Sending command " << data << endl;
 
-	// the command will be sent in slotReadyWrite
-	m_sendQueue.append( data );
-	m_socket->enableWrite( true );
+		// the command will be sent in slotReadyWrite
+		m_sendQueue.append( data );
+		m_socket->enableWrite( true );
+	}
+	else
+	{
+		QByteArray data2(data.length() + body.size() );
+		for(unsigned int f=0; f< data.length(); f++)
+			data2[f]=data[f];
+		for(unsigned int f=0; f< body.size(); f++)
+			data2[data.length() + f]=body[f];
+
+		sendBytes( data2 ) ;
+
+		kdDebug(14140) << "MSNSocket::sendCommand : " << data2.data() <<endl;
+	}
 
 	if(addId)
 	{
@@ -457,7 +472,7 @@ void MSNSocket::slotReadyWrite()
 	if( !m_sendQueue.isEmpty() )
 	{
 		QValueList<QCString>::Iterator it = m_sendQueue.begin();
-		kdDebug(14140) << "MSNSocket::slotReadyWrite: Sending command " << *it << endl;
+		kdDebug(14140) << "MSNSocket::slotReadyWrite: Sending command " << QString(*it).stripWhiteSpace() << endl;
 		m_socket->writeBlock( *it, (*it).length() );
 		m_sendQueue.remove( it );
 		emit( commandSent() );
@@ -467,6 +482,8 @@ void MSNSocket::slotReadyWrite()
 		if( m_sendQueue.isEmpty() )
 			m_socket->enableWrite( false );
 	}
+	else
+		m_socket->enableWrite( false );
 }
 
 
@@ -642,5 +659,4 @@ QByteArray MSNSocket::Buffer::take( unsigned blockSize )
 
 #include "msnsocket.moc"
 
-// vim: set noet ts=4 sts=4 sw=4:
 

@@ -31,6 +31,10 @@
 #include <kapplication.h>
 #include <kaboutdata.h>
 
+// for the display picture
+#include "msnp2p.h"
+#include <msncontact.h>
+
 //kopete
 #include "msnaccount.h"
 #include "kopetemessage.h"
@@ -42,6 +46,7 @@ MSNSwitchBoardSocket::MSNSwitchBoardSocket( MSNAccount *account , QObject *paren
 : MSNSocket( parent )
 {
 	m_account = account;
+	m_p2p=0l;
 }
 
 MSNSwitchBoardSocket::~MSNSwitchBoardSocket()
@@ -293,9 +298,10 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 	}
 	else
 	{
-		kdDebug(14140) << "MSNSwitchBoardSocket::slotReadMessage: Unknown type '" << type << "' message: \n"<< msg <<endl;
+//		kdDebug(14140) << "MSNSwitchBoardSocket::slotReadMessage: Unknown type '" << type << "' message: \n"<< msg <<endl;
 	}
 }
+
 
 void MSNSwitchBoardSocket::sendTypingMsg( bool isTyping )
 {
@@ -367,7 +373,7 @@ int MSNSwitchBoardSocket::sendMsg( const KopeteMessage &msg )
 
 	head += msg.plainBody().replace(  "\n" , "\r\n" );
 
-	return sendCommand( "MSG", "A", true, head );
+	return sendCommand( "MSG", "A", true, head.utf8() );
 }
 
 void MSNSwitchBoardSocket::slotSocketClosed( )
@@ -420,6 +426,23 @@ void MSNSwitchBoardSocket::userLeftChat(const QString& handle , const QString &r
 	if(m_chatMembers.isEmpty())
 		disconnect();
 }
+
+void MSNSwitchBoardSocket::requestDisplayPicture()
+{
+	MSNContact *c=static_cast<MSNContact*>(m_account->contacts()[m_msgHandle]);
+	QString msnObject;
+	if(c)
+		msnObject= c->object().utf8();
+
+	m_p2p=new MSNP2P(this , "msnp2p protocol" );
+	QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
+	QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
+			this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
+
+	m_p2p->requestDisplayPicture( m_myHandle, m_msgHandle, msnObject);
+
+}
+
 
 
 // FIXME: This is nasty... replace with a regexp or so.

@@ -41,12 +41,6 @@
 
 #include <ctime>
 
-// Ugly hack to remain compatible with KDE 3.0 - We can't #ifdef out
-// preprocessor directives :(
-#ifndef KDE_IS_VERSION
-#define KDE_IS_VERSION(x,y,z) 0
-#endif
-
 MSNNotifySocket::MSNNotifySocket( MSNAccount *account, const QString& msnId )
 : MSNAuthSocket( msnId, account )
 {
@@ -225,19 +219,6 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			emit publicNameChanged( publicName );
 		}
 	}
-	else if( cmd == "NLN" )
-	{
-		// handle, publicName, status
-
-		MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ data.section( ' ', 1, 1 ) ] );
-		if( c )
-		{
-			c->setOnlineStatus( convertOnlineStatus( data.section( ' ', 0, 0 ) ) );
-			QString publicName = unescape( data.section( ' ', 2, 2 ) );
-			if( publicName != c->displayName())
-				changePublicName( publicName, c->contactId() );
-		}
-	}
 	else if( cmd == "LST" )
 	{
 		//The hanlde is used if we receive some BRP
@@ -247,22 +228,14 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 		emit contactList(  m_tmpLastHandle ,
 			unescape( data.section( ' ', 1, 1 ) ), data.section( ' ', 2, 2 ).toUInt(),
 			data.section( ' ', 3, 3 ) );
-
-
 	}
 	else if( cmd == "MSG" )
 	{
 		readBlock( data.section( ' ', 2, 2 ).toUInt() );
 	}
-	else if( cmd == "FLN" )
+	else if( cmd == "ILN" ||  cmd == "NLN" )
 	{
-		MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ data.section( ' ', 0, 0 ) ] );
-		if( c )
-			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
-	}
-	else if( cmd == "ILN" )
-	{
-		// handle, publicName, Status
+		// status handle publicName strangeNumber MSNOBJECT
 		MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ data.section( ' ', 1, 1 ) ] );
 		if( c )
 		{
@@ -270,7 +243,14 @@ void MSNNotifySocket::parseCommand( const QString &cmd, uint id,
 			QString publicName=unescape( data.section( ' ', 2, 2 ) );
 			if (publicName!=c->displayName())
 				changePublicName(publicName,c->contactId());
+			c->setObject( unescape(data.section( ' ', 4, 4 )) );
 		}
+	}
+	else if( cmd == "FLN" )
+	{
+		MSNContact *c = static_cast<MSNContact*>( m_account->contacts()[ data.section( ' ', 0, 0 ) ] );
+		if( c )
+			c->setOnlineStatus( MSNProtocol::protocol()->FLN );
 	}
 	else if( cmd == "XFR" )
 	{

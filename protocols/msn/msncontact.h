@@ -121,11 +121,12 @@ public:
 	 */
 	void setDontSync(bool b);
 
-
-
 	QString phoneHome();
 	QString phoneWork();
 	QString phoneMobile();
+
+	void setObject(const QString &obj) { m_obj=obj; }
+	QString object() const { return m_obj; }
 
 public slots:
 	virtual void slotUserInfo();
@@ -163,6 +164,8 @@ private:
 	QString m_phoneWork;
 	QString m_phoneMobile;
 	bool m_phone_mob;
+
+	QString m_obj; //the MSNObject
 };
 
 #endif

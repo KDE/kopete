@@ -61,6 +61,8 @@ MSNMessageManager::MSNMessageManager( KopeteProtocol *protocol, const KopeteCont
 	new KAction( i18n( "Send Raw C&ommand..." ), 0, this, SLOT( slotDebugRawCommand() ), actionCollection(), "msnDebugRawCommand" ) ;
 	#endif
 
+	MSNContact *c = static_cast<MSNContact*>( others.first() );
+	(new KAction( i18n( "Request display picture" ), "image", 0,  this, SLOT( slotRequestPicture() ), actionCollection(), "msnRequestDisplayPicture" ))->setEnabled(!c->object().isEmpty());
 
 	setXMLFile("msnchatui.rc");
 }
@@ -306,7 +308,7 @@ void MSNMessageManager::sendMessageQueue()
 	{
 		if(! (*it)->incoming() && (*it)->state()<MSNInvitation::Invited)
 		{
-			m_chatService->sendCommand( "MSG" , "N", true, (*it)->invitationHead() );
+			m_chatService->sendCommand( "MSG" , "N", true, (*it)->invitationHead().utf8() );
 			(*it)->setState(MSNInvitation::Invited);
 		}
 	}
@@ -314,6 +316,12 @@ void MSNMessageManager::sendMessageQueue()
 
 void MSNMessageManager::slotAcknowledgement(unsigned int id, bool ack)
 {
+	if(!m_messagesSent.contains(id))
+	{
+		return;  //this is maybe a ACK/NAK  for a non-messaging message
+	}
+
+
 	if(!ack)
 	{
 		KopeteMessage m=m_messagesSent[id];
@@ -428,7 +436,7 @@ void MSNMessageManager::initInvitation(MSNInvitation* invitation)
 
 	if(m_chatService)
 	{
-		m_chatService->sendCommand( "MSG" , "N", true, invitation->invitationHead() );
+		m_chatService->sendCommand( "MSG" , "N", true, invitation->invitationHead().utf8() );
 		invitation->setState(MSNInvitation::Invited);
 	}
 	else
@@ -436,6 +444,12 @@ void MSNMessageManager::initInvitation(MSNInvitation* invitation)
 		QPtrList<KopeteContact> mb=members();
 		static_cast<MSNAccount*>( account() )->slotStartChatSession( mb.first()->contactId() );
 	}
+}
+
+void MSNMessageManager::slotRequestPicture()
+{
+	if(m_chatService)
+		m_chatService->requestDisplayPicture();
 }
 
 void MSNMessageManager::slotDebugRawCommand()

@@ -55,6 +55,7 @@ MSNContact::MSNContact( KopeteAccount *account, const QString &id, const QString
 	setFileCapable( true );
 
 	setOnlineStatus( MSNProtocol::protocol()->UNK );
+
 }
 
 KopeteMessageManager *MSNContact::manager( bool canCreate )
@@ -492,6 +493,7 @@ void MSNContact::setDontSync(bool b)
 {
 	m_moving=b;
 }
+
 
 #include "msncontact.moc"
 
