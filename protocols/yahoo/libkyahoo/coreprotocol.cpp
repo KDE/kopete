@@ -167,8 +167,7 @@ int CoreProtocol::wireToTransfer( const QByteArray& wire )
 		if ( (wire[0] == 'Y') && (wire[1] == 'M') && (wire[2] == 'S') && (wire[3] == 'G'))
 		{
 			kdDebug(14180) << k_funcinfo << " - looks like a valid YMSG packet" << endl;
-			QByteArray packet = packet.duplicate(wire);
-			Transfer *t = m_YMSGProtocol->parse( packet, bytesParsed );
+			Transfer *t = m_YMSGProtocol->parse( wire, bytesParsed );
 			kdDebug(14180) << k_funcinfo << " - YMSG Protocol parsed " << bytesParsed << " bytes" << endl;
 			if ( t )
 			{

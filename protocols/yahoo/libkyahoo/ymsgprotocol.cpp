@@ -17,6 +17,8 @@
     *************************************************************************
 */
 
+#include <stdlib.h>
+
 #include <qcstring.h>
 #include <qdatastream.h>
 #include <qmap.h>
@@ -27,6 +29,8 @@
 #include "ymsgprotocol.h"
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
+
+using namespace Yahoo;
 
 YMSGProtocol::YMSGProtocol(QObject *parent, const char *name)
  : InputProtocolBase(parent, name)
@@ -81,19 +85,24 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 	
 	servicenum = yahoo_get16(packet.data() + pos);
 	pos += 2;
-	kdDebug(14180) << k_funcinfo << " - parsed packet service " << servicenum << endl;
 	
 	switch (servicenum)
 	{
 		// TODO add remamining services
 		case (Yahoo::ServiceAuth) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceAuth " << servicenum << endl;
 			service = Yahoo::ServiceAuth;
 		break;
+		case (Yahoo::ServiceAuthResp) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceAuthResp " << servicenum << endl;
+			service = Yahoo::ServiceAuthResp;
+		break;
 		case (Yahoo::ServiceVerify) :
+			kdDebug(14180) << k_funcinfo << " Parsed packet service -  This means ServiceVerify " << servicenum << endl;
 			service = Yahoo::ServiceVerify;
 		break;
 		default:
-			kdDebug(14180) << k_funcinfo << " - unknown service " << servicenum << endl;
+			kdDebug(14180) << k_funcinfo << "  Parsed packet service -  This means an unknown service " << servicenum << endl;
 			return 0L;
 		break;
 	}
@@ -116,57 +125,67 @@ Transfer* YMSGProtocol::parse( const QByteArray & packet, uint& bytes )
 	}
 	
 	sessionid = yahoo_get32(packet.data() + pos);
+	kdDebug(14180) << k_funcinfo << "  Parsed session id: " << (void *)sessionid << endl;
 	pos += 4;
 	
-	// parse data
-	int offset = 0;
-	int parsedDataPos = 0;
-	QString key;
-	
-	while ( offset < len )
-	{
-		if ((packet[pos+offset] == 0xc0) && (packet[pos+offset+1] == 0x80))
-		{
-			kdDebug(14180) << k_funcinfo << " found key [" << key << "]" << endl;
-			// jump the second delimiter
-			offset++;
-			QString value;
-			while (!(( (packet[pos+offset] == 0xc0) && (packet[pos+offset+1] == 0x80) )))
-			{
-				value += packet[pos+offset];
-				offset++;
-			}
-			kdDebug(14180) << k_funcinfo << " value [" << value << "]" << endl;
-			params[key] = value;
-			// back one so the if can find the next key
-			offset--;
-		}
-		else
-		{
-			key += packet[pos+offset];
-		}
-		offset++;
-	}
-	
-	// ok, parsed all data
-	pos += offset;
-	
+	kdDebug(14180) << k_funcinfo << " Setting incoming transfer basic information." << endl;
 	YMSGTransfer *t = new YMSGTransfer();
 	t->setService(service);
 	t->setId(sessionid);
 	t->setStatus(status);
 	
-	for (QMap<QString, QString>::ConstIterator it = params.begin(); it !=  params.end(); ++it) 
+	// taken almost as is from libyahoo ;-)
+	
+	char *data = packet.data();
+	while (pos + 1 < len + 20 /*header*/)
 	{
-		kdDebug(14180) << k_funcinfo << " setting packet key " << it.key() << endl;
-		t->setParam(it.key(), (*it));
+		char *key = 0L, *value = 0L;
+		int accept;
+		int x;
+		key = (char *) malloc(len + 1);
+		x = 0;
+		while (pos + 1 < len +20) {
+			if ((BYTE) data[pos] == (BYTE)0xc0 && (BYTE) data[pos + 1] == (BYTE)0x80)
+				break;
+			key[x++] = data[pos++];
+		}
+		key[x] = 0;
+		pos += 2;
+
+		accept = x;
+		/* if x is 0 there was no key, so don't accept it */
+		if (accept)
+			value = (char *) malloc(len - pos + 20 + 1);
+		
+		x = 0;
+		while (pos + 1 < len + 20 /* header */)
+		{
+			if ((BYTE) data[pos] == (BYTE) 0xc0 && (BYTE) data[pos + 1] == (BYTE) 0x80)
+				break;
+			if (accept)
+				value[x++] = data[pos++];
+		}
+		if (accept)
+			value[x] = 0;
+		pos += 2;
+		if (accept) 
+		{
+			kdDebug(14180) << k_funcinfo << " setting packet key [" << QString(key) << "] to " << QString(value) << endl;
+			t->setParam(QString(key), QString(value));
+			free(value);
+			free(key);
+		}
+		else
+		{
+			kdDebug(14180) << k_funcinfo << " key not accepted" << endl;
+		}
 	}
+
 	kdDebug(14180) << k_funcinfo << " Returning transfer" << endl;
 	// tell them we have parsed offset bytes
 	
 	bytes = pos;
 	return t;
 }
-
 
 #include "ymsgprotocol.moc"

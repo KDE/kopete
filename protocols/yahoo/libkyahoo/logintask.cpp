@@ -23,6 +23,10 @@
 #include "ymsgtransfer.h"
 #include "yahootypes.h"
 #include "client.h"
+extern "C"
+{
+#include "libyahoo.h"
+}
 
 LoginTask::LoginTask(Task* parent) : Task(parent)
 {
@@ -36,6 +40,21 @@ LoginTask::~LoginTask()
 
 bool LoginTask::take(Transfer* transfer)
 {
+	/*
+	  Yahoo login task has various stages
+	  
+	  1 .- Initial State
+	      1.1 .- OnGo is called
+	      1.2 .- SendVerify() - send a service verify ack
+	  2.- SentVerify
+	      2.1 - take(), get a useless transfer, sendAuth is called
+	  3.- SentAuth
+	      2.2 - take(), get a transfer with login and challenge string
+	            sendAuthResp is called.
+              2.3 - Need to decode and send a transfer back
+	  4.- SentAuthResp
+	*/
+	
 	switch (mState)
 	{
 		case (InitialState):
@@ -134,6 +153,45 @@ void LoginTask::sendAuthResp(Transfer* transfer)
 		return;
 	}
 	
+	QString sn = t->param("1");
+	QString seed = t->param("94");
+	QString version_s = t->param("13");
+	int version = version_s.toInt();
 	
-	
+	switch (version)
+	{
+		case 0:
+		kdDebug(14180) << k_funcinfo << " Version pre 0x0b "<< version_s << endl;	
+		break;
+		case 1:
+		kdDebug(14180) << k_funcinfo << " Version 0x0b "<< version_s << endl;
+		sendAuthResp_0x0b(sn, seed);
+		break;
+		default:
+		kdDebug(14180) << k_funcinfo << "Unknown quth version " << endl;
+	}	
+	mState = SentAuthResp;
+}
+
+void LoginTask::sendAuthResp_0x0b(const QString &sn, const QString &seed)
+{
+	kdDebug(14180) << k_funcinfo << " with seed " << seed << endl;
+	char *resp_6 = (char *) malloc(100);
+	char *resp_96 = (char *) malloc(100);
+	authresp_0x0b(sn.latin1(), seed.latin1(), (client()->password()).latin1(), resp_6, resp_96);
+	kdDebug(14180) << k_funcinfo << "resp_6: " << resp_6 << " resp_69: " << resp_96 << endl;
+	YMSGTransfer *t = new YMSGTransfer(Yahoo::ServiceAuthResp);
+	t->setParam("0", sn);
+	t->setParam("6", QString(resp_6));
+	t->setParam("96", QString(resp_96));
+	t->setParam("1", sn);
+	free(resp_6);
+	free(resp_96);
+	send(t);
+	setSuccess(true);
+}
+
+void LoginTask::sendAuthResp_pre_0x0b(const QString &sn, const QString &seed)
+{
+
 }

@@ -1,26 +1,26 @@
 /*
-    Kopete Yahoo Protocol
-    Copyright (c) 2004  Duncan Mac-Vicar Prett <duncan@kde.org>
-    
-    Based on code from: 
-    
-    YMSG Java API - http://jymsg9.sourceforge.net
-    Copyright (c) S.E.Morris (FISH) 2003-04
-    
-    libyahoo2 - http://libyahoo2.sf.net
-    Copyright (c) libyahoo2 Developers 
-    
-    Kopete (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
- 
-    *************************************************************************
-    *                                                                       *
-    * This library is free software; you can redistribute it and/or         *
-    * modify it under the terms of the GNU General Public                   *
-    * License as published by the Free Software Foundation; either          *
-    * version 2 of the License, or (at your option) any later version.      *
-    *                                                                       *
-    *************************************************************************
-*/
+ * gaim
+ *
+ * Some code copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
+ * libfaim code copyright 1998, 1999 Adam Fritzler <afritz@auk.cx>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
+
+#include "yahoo_fn.h"
 
 unsigned char table_0[256] = {
    0x5A, 0x41, 0x11, 0x77, 0x29, 0x9C, 0x31, 0xAD,
@@ -4090,18 +4090,6 @@ unsigned char table_187[32] = {
    0x19, 0x09, 0x05, 0x06, 0x0C, 0x1A, 0x14, 0x16,
    0x0E, 0x18, 0x03, 0x1C, 0x12, 0x11, 0x0D, 0x02 };
 
-#define IDENT  1 /* identify function */
-#define XOR    2 /* xor with arg1 */
-#define MULADD 3 /* multipy by arg1 then add arg2 */
-#define LOOKUP 4 /* lookup each byte in the table pointed to by arg1 */
-#define BITFLD 5 /* reorder bits according to table pointed to by arg1 */
-
-struct yahoo_fn
-{
-	int type; 
-	long arg1, arg2;
-};   
-   
 struct yahoo_fn yahoo_fntable[5][96] = 
    {{{ IDENT, 0, 0 },
      { IDENT, 0, 0 },
@@ -4583,4 +4571,50 @@ struct yahoo_fn yahoo_fntable[5][96] =
      { MULADD, 0x3D8B0CB5, 0x640D },
      { MULADD, 0x32865601, 0x4D43 },
      { BITFLD, (long)table_187, 0 }}};
-     
+
+#define A( x ) (( x ) & 0xFF )
+#define B( x ) (( x ) >> 8 & 0xFF )
+#define C( x ) (( x ) >> 16 & 0xFF )
+#define D( x ) (( x ) >> 24 & 0xFF )
+
+int yahoo_xfrm( int table, int depth, int seed )
+{
+   struct yahoo_fn *xfrm;
+   int i, j, z;
+   unsigned int n = seed;
+   unsigned char *arg;
+
+   for( i = 0; i < depth; i++ )
+   {
+      xfrm = &yahoo_fntable[table][n % 96];
+      switch( xfrm->type )
+      {
+      case IDENT:
+         return seed;
+      case XOR:
+         seed ^= xfrm->arg1;
+         break;
+      case MULADD:
+         seed = seed * xfrm->arg1 + xfrm->arg2;
+         break;
+      case LOOKUP:
+         arg = (unsigned char *)xfrm->arg1;
+         seed = arg[A( seed )] | arg[B( seed )] << 8 | arg[C( seed )] << 16
+            | arg[D( seed )] << 24;
+         break;
+      case BITFLD:
+         arg = (unsigned char *)xfrm->arg1;
+         for( j = 0, z = 0; j < 32; j++ )
+            z = ((( seed >> j ) & 1 ) << arg[j] ) | ( ~( 1 << arg[j] ) & z );
+         seed = z;
+         break;
+      }
+      if( depth - i == 1 )
+         return seed;
+      z = (((((( A( seed ) * 0x9E3779B1 ) ^ B( seed )) * 0x9E3779B1 )
+         ^ C( seed )) * 0x9E3779B1 ) ^ D( seed )) * 0x9E3779B1;
+      n = (((( z ^ ( z >> 8 )) >> 16 ) ^ z ) ^ ( z >> 8 )) & 0xFF;
+      seed *= 0x00010DCD;
+   }
+   return seed;
+}

@@ -65,7 +65,7 @@ namespace Yahoo
 		ServiceP2PFileXfer,
 		ServicePeerToPeer = 0x4F,	/* Checks if P2P possible */
 		ServiceWebcam,
-		ServiceAuthEsp = 0x54,
+		ServiceAuthResp = 0x54,
 		ServiceList,
 		ServiceAuth = 0x57,
 		ServiceAddBuddy = 0x83,

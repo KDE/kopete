@@ -35,6 +35,8 @@
 #include <stdlib.h>
 
 #include "md5.h"
+/* for MIN and MAX */
+#include "libyahoo.h"
 
 /* Define our magic string to mark salt for MD5 "encryption"
    replacement.  This is meant to be the same as for other MD5 based

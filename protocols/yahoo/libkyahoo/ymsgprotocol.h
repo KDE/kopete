@@ -39,7 +39,6 @@ public:
 	 * @return A pointer to an EventTransfer object if successfull, otherwise 0.  The caller is responsible for deleting this object.
 	 */
 	Transfer * parse( const QByteArray &, uint & bytes );
-
 };
 
 #endif

@@ -39,7 +39,8 @@ protected:
 	void sendVerify();
 	void sendAuth(Transfer* transfer);
 	void sendAuthResp(Transfer* transfer);
-	
+	void sendAuthResp_0x0b(const QString &sn, const QString &seed);
+	void sendAuthResp_pre_0x0b(const QString &sn, const QString &seed);
 	State mState;
 };
 
