@@ -32,6 +32,7 @@
 #include "kopeteaccountmanager.h"
 #include "irceditaccountwidget.h"
 #include "kopetecommandhandler.h"
+#include "kopeteview.h"
 #include "ksparser.h"
 
 typedef KGenericFactory<IRCProtocol> IRCProtocolFactory;
@@ -121,6 +122,14 @@ IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList &
 	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("devoice"),
 		SLOT( slotDevoiceCommand( const QString &, KopeteMessageManager*) ),
 		i18n("USAGE: /devoice <nickanme> - Remove channel voice status from someone (Requires operator status).") );
+		
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("quit"),
+		SLOT( slotQuitCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /quit [<reason>] - Disconnect from IRC, optionally leaving a message.") );
+		
+	KopeteCommandHandler::commandHandler()->registerCommand( this, QString::fromLatin1("part"),
+		SLOT( slotPartCommand( const QString &, KopeteMessageManager*) ),
+		i18n("USAGE: /part [<reason>] - Part from a channel, optionally leaving a message.") );
 		
 	KopeteCommandHandler::commandHandler()->registerAlias( this, QString::fromLatin1("j"),
 		QString::fromLatin1("join %1"),
@@ -285,6 +294,11 @@ void IRCProtocol::slotWhoisCommand( const QString &args, KopeteMessageManager *m
 	}
 }
 
+void IRCProtocol::slotQuitCommand( const QString &args, KopeteMessageManager *manager )
+{
+	static_cast<IRCAccount*>( manager->account() )->quit( args );
+}
+
 void IRCProtocol::slotNickCommand( const QString &args, KopeteMessageManager *manager )
 {
 	if( !args.isEmpty() )
@@ -338,6 +352,23 @@ void IRCProtocol::slotBanCommand( const QString &args, KopeteMessageManager *man
 		IRCChannelContact *chan = static_cast<IRCChannelContact*>( members.first() );
 		if( chan && chan->locateUser( argsList.front() ) )
 			chan->setMode( QString::fromLatin1("+b %1!*@*").arg( argsList.front() ) );
+	}
+}
+
+void IRCProtocol::slotPartCommand( const QString &args, KopeteMessageManager *manager )
+{
+	QStringList argsList = KopeteCommandHandler::parseArguments( args );
+	KopeteContactPtrList members = manager->members();
+	IRCChannelContact *chan = static_cast<IRCChannelContact*>( members.first() );
+	if( chan )
+	{
+		//TODO: Allow to store a default value for this in the account config
+		//and use it here if it exists
+		if( !args.isEmpty() )
+			static_cast<IRCAccount*>( manager->account() )->engine()->partChannel(chan->nickName(), args);
+		else
+			chan->part();
+		manager->view()->closeView();
 	}
 }
 

@@ -87,6 +87,8 @@ public slots:
 	 * @param mode The full text of the mode change you want performed
 	 */
 	void setMode( const QString &mode = QString::null );
+	
+	void part();
 
 protected slots:
 	void messageManagerDestroyed();
@@ -102,7 +104,6 @@ private slots:
 	void slotConnectedToServer();
 	void slotUserJoinedChannel(const QString &, const QString &);
 	void slotJoin();
-	void slotPart();
 	void slotUserPartedChannel(const QString &user, const QString &channel, const QString &reason);
 	void slotChannelTopic(const QString &channel, const QString &topic);
 	void slotTopicChanged(const QString &channel, const QString &nick, const QString &newtopic);

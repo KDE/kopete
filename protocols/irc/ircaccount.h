@@ -127,6 +127,8 @@ public slots:
 	virtual void connect();
 	virtual void disconnect();
 	
+	void quit( const QString &quitMessage = QString::null );
+	
 protected:
 	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName, KopeteMetaContact *parentContact ) ;
 

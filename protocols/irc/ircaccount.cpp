@@ -147,7 +147,19 @@ void IRCAccount::connect()
 
 void IRCAccount::disconnect()
 {
-	m_engine->quitIRC("Kopete IRC [http://kopete.kde.org]");
+	quit();
+}
+
+void IRCAccount::quit( const QString &quitMessage )
+{
+	kdDebug(14120) << "Quitting IRC: " << quitMessage << endl;
+
+	// TODO: Add a thing to save a custom quit message in the account wizard,
+	// and use that value here if set.
+	if( quitMessage.isNull() || quitMessage.isEmpty() )
+		m_engine->quitIRC(QString::fromLatin1("Kopete %1 : http://kopete.kde.org").arg(kapp->aboutData()->version()));
+	else
+		m_engine->quitIRC( quitMessage );
 }
 
 void IRCAccount::setAway( bool isAway, const QString &awayMessage )

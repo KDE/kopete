@@ -90,7 +90,7 @@ void IRCChannelContact::messageManagerDestroyed()
 	kdDebug(14120) << k_funcinfo << "for: " << m_nickName << endl;
 	if(manager(false))
 	{
-		slotPart();
+		part();
 		KopeteContactPtrList contacts = manager()->members();
 		// remove all the users on the channel
 		for( KopeteContact *c = contacts.first(); c; c = contacts.next() )
@@ -173,11 +173,11 @@ void IRCChannelContact::slotJoin()
 		execute();
 }
 
-void IRCChannelContact::slotPart()
+void IRCChannelContact::part()
 {
 	kdDebug(14120) << k_funcinfo << "Part channel:" << m_nickName << endl;
 	if( m_isConnected )
-		m_engine->partChannel(m_nickName, QString("Kopete %1 : http://kopete.kde.org").arg(kapp->aboutData()->version()));
+		m_engine->partChannel(m_nickName, QString::fromLatin1("Kopete %1 : http://kopete.kde.org").arg(kapp->aboutData()->version()));
 }
 
 void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString &channel)
@@ -396,7 +396,7 @@ KActionCollection *IRCChannelContact::customContextMenuActions()
 	// KAction stuff
 	mCustomActions = new KActionCollection(this);
 	actionJoin = new KAction(i18n("&Join"), 0, this, SLOT(slotJoin()), mCustomActions, "actionJoin");
-	actionPart = new KAction(i18n("&Part"), 0, this, SLOT(slotPart()), mCustomActions, "actionPart");
+	actionPart = new KAction(i18n("&Part"), 0, this, SLOT(part()), mCustomActions, "actionPart");
 	actionTopic = new KAction(i18n("Change &Topic..."), 0, this, SLOT(setTopic()), mCustomActions, "actionTopic");
 	actionModeMenu = new KActionMenu(i18n("Channel Modes"), 0, mCustomActions, "actionModeMenu");
 
