@@ -21,6 +21,7 @@
 #include <sys/utsname.h>
 
 #include <qdatetime.h>
+#include <qvalidator.h>
 #include <qvaluelist.h>
 #include <qvariant.h>
 
@@ -871,9 +872,11 @@ void GroupWiseAccount::slotMessageManagerDestroyed( QObject * obj )
 void GroupWiseAccount::slotSetAutoReply()
 {
 	bool ok;
+	QRegExp rx( ".*" );
+    QRegExpValidator validator( rx, this );
 	QString newAutoReply = KInputDialog::getText( i18n( "Enter Auto-Reply Message" ),
 			 i18n( "Please enter an Auto-Reply message that will be shown to users who message you while Away or Busy" ), m_autoReply,
-			 &ok, Kopete::UI::Global::mainWidget() );
+			 &ok, Kopete::UI::Global::mainWidget(), "autoreplymessagedlg", &validator );
 	if ( ok )
 		m_autoReply = newAutoReply;
 }
