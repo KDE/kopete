@@ -1116,10 +1116,10 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 		}
 		else // some client we could not detect using capabilities
 		{
-			kdDebug(14150) << k_funcinfo << "checking update times" << endl;
+			/*kdDebug(14150) << k_funcinfo << "checking update times" << endl;
 			kdDebug(14150) << k_funcinfo << u.lastInfoUpdateTime << endl;
 			kdDebug(14150) << k_funcinfo << u.lastExtStatusUpdateTime << endl;
-			kdDebug(14150) << k_funcinfo << u.lastExtInfoUpdateTime << endl;
+			kdDebug(14150) << k_funcinfo << u.lastExtInfoUpdateTime << endl;*/
 
 			clientMatched=true; // default case will set it to false again if we did not find anything
 			switch (u.lastInfoUpdateTime)
@@ -1138,6 +1138,27 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 							u.clientName=i18n("Miranda alpha");
 						else
 							u.clientName=i18n("Miranda");
+
+						DWORD version = (u.lastExtInfoUpdateTime & 0xFFFFFF);
+						BYTE major1 = ((version >> 24) & 0xFF);
+						BYTE major2 = ((version >> 16) & 0xFF);
+						BYTE minor1 = ((version >> 8) & 0xFF);
+						BYTE minor2 = (version & 0xFF);
+						if (minor2 > 0) // w.x.y.z
+						{
+							u.clientVersion.sprintf("%d.%d.%d.%d",
+								major1, major2, minor1, minor2);
+						}
+						else if (minor1 > 0)  // w.x.y
+						{
+							u.clientVersion.sprintf("%d.%d.%d",
+								major1, major2, minor1);
+						}
+						else // w.x
+						{
+							u.clientVersion.sprintf("%d.%d",
+								major1, major2);
+						}
 					}
 					break;
 				case 0xFFFFFF8FL:
@@ -1164,8 +1185,8 @@ bool OscarSocket::parseUserInfo(Buffer &inbuf, UserInfo &u)
 					break;
 				default:
 				{
-					kdDebug(14150) << k_funcinfo <<
-						"Could not detect client from update times" << endl;
+					/*kdDebug(14150) << k_funcinfo <<
+						"Could not detect client from update times" << endl;*/
 					clientMatched=false;
 				}
 			}

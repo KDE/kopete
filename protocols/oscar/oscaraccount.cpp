@@ -521,11 +521,11 @@ void OscarAccount::slotGotServerBuddyList()
 			c->setMetaContact(kmc);
 			kmc->setTemporary(true);
 			KopeteContactList::contactList()->addMetaContact( kmc );
-			
+
 			if (oldContact->contacts().isEmpty())
 			{
 				KopeteContactList::contactList()->removeMetaContact(oldContact);
-				delete oldContact; 
+				delete oldContact;
 			}
 		}
 	}*/
@@ -809,7 +809,8 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			QString groupName;
 			KopeteGroupList kopeteGroups = parentContact->groups(); //get the group list
 
-			if ( kopeteGroups.isEmpty() || kopeteGroups.first()->displayName() == "Top-Level" )
+			if (kopeteGroups.isEmpty() ||
+				kopeteGroups.first()->type() == KopeteGroup::TopLevel)
 			{
 				kdDebug(14150) << k_funcinfo << "Contact with no group. "
 					<< "Adding to group 'Buddies'" << endl;
