@@ -77,17 +77,17 @@ public:
 	 * @param timeStamp the time at which the event was received.
 	 * @param payload the remaining bytes describing the event
 	 */
-	EventTransfer( const Q_UINT32 eventType, QCString& source, QTime timeStamp, const QByteArray & payload );
+	EventTransfer( const Q_UINT32 eventType, const QString & source, QTime timeStamp, const QByteArray & payload );
 	~EventTransfer();
 	
 	TransferType type() { return Transfer::EventTransfer; }
 	QByteArray payload();
 	int event();
-	QCString source();
+	QString source();
 	QTime timeStamp();
 private:
 	int m_eventType;
-	QCString m_source;
+	QString m_source;
 	QTime m_timeStamp;
 	QByteArray m_payload;
 };
