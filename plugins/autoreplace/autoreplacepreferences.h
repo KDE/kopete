@@ -44,9 +44,10 @@ public:
 private slots:
 	//void slotSettingsDirty();
 	void slotAddCouple();
+	void slotEditCouple();
 	void slotRemoveCouple();
-	/* void slotEnableAdd();
-	void slotEnableRemove(); */
+	void slotEnableAddEdit( const QString & );
+	void slotSelectionChanged();
 
 protected slots:
 	virtual void slotWidgetModified();

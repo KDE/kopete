@@ -18,6 +18,7 @@
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qgroupbox.h>
+#include <qheader.h>
 #include <qlistview.h>
 
 #include <klocale.h>
@@ -43,16 +44,19 @@ AutoReplacePreferences::AutoReplacePreferences( QWidget *parent, const char * /*
 	// creates table columns (avoids new columns every time)
 	preferencesDialog->m_list->addColumn( i18n("Text" ) );
 	preferencesDialog->m_list->addColumn( i18n("Replacement" ) );
-
+	preferencesDialog->m_list->header()->setStretchEnabled( true , 1 );
+	
 	// connect SIGNALS/SLOTS
 	connect( preferencesDialog->m_add, SIGNAL(pressed()),
 		SLOT( slotAddCouple()) );
+	connect( preferencesDialog->m_edit, SIGNAL(pressed()),
+		SLOT( slotEditCouple()) );
 	connect( preferencesDialog->m_remove, SIGNAL(pressed()),
 		SLOT(slotRemoveCouple()) );
-	/* connect( preferencesDialog->m_list, SIGNAL(selectionChanged()),
-		SLOT(slotEnableRemove()) );
-	connect( preferencesDialog->m_value, SIGNAL(textChanged ( const QString & )),
-		SLOT( slotEnableAdd()) ); */
+	connect( preferencesDialog->m_list, SIGNAL(selectionChanged()),
+		SLOT(slotSelectionChanged()) );
+	connect( preferencesDialog->m_key, SIGNAL(textChanged ( const QString & )),
+		SLOT( slotEnableAddEdit( const QString & )) ); 
 
 	m_wordListChanged = false;
 
@@ -111,10 +115,12 @@ void AutoReplacePreferences::slotAddCouple()
 	QString v = preferencesDialog->m_value->text();
 	if ( !k.isEmpty() && !k.isNull() && !v.isEmpty() && !v.isNull() )
 	{
-		QListViewItem * lvi = new QListViewItem( preferencesDialog->m_list, k, v );
-		// clear k and v [only if added]
-		preferencesDialog->m_key->clear();
-		preferencesDialog->m_value->clear();
+		QListViewItem * lvi;
+		QListViewItem * oldLvi = 0;
+		// see if we are replacing an existing entry
+		if ( ( oldLvi = preferencesDialog->m_list->findItem( k, 0 ) ) )
+			delete oldLvi;
+		lvi = new QListViewItem( preferencesDialog->m_list, k, v );
 		// Triggers a size, geometry and content update
 		// during the next iteration of the event loop
 		preferencesDialog->m_list->triggerUpdate();
@@ -124,6 +130,22 @@ void AutoReplacePreferences::slotAddCouple()
 
 	m_wordListChanged = true;
 	slotWidgetModified();
+}
+
+// edit the selected item
+void AutoReplacePreferences::slotEditCouple()
+{
+	QString k = preferencesDialog->m_key->text();
+	QString v = preferencesDialog->m_value->text();
+	QListViewItem * lvi;
+	if ( ( lvi = preferencesDialog->m_list->selectedItem() ) && !k.isEmpty() && !k.isNull() && !v.isEmpty() && !v.isNull() )
+	{
+		lvi->setText( 0, k );
+		lvi->setText( 1, v );
+		preferencesDialog->m_list->triggerUpdate();
+		m_wordListChanged = true;
+		slotWidgetModified();
+	}
 }
 
 // Returns a pointer to the selected item if the list view is in
@@ -136,17 +158,30 @@ void AutoReplacePreferences::slotRemoveCouple()
 	slotWidgetModified();
 }
 
-/*
-void AutoReplacePreferences::slotEnableAdd()
+void AutoReplacePreferences::slotEnableAddEdit( const QString & keyText )
 {
-	//preferencesDialog->m_add
+	preferencesDialog->m_add->setEnabled( !keyText.isEmpty() );
+	preferencesDialog->m_edit->setEnabled( !keyText.isEmpty() && preferencesDialog->m_list->selectedItem() );
 }
 
-void AutoReplacePreferences::slotEnableRemove()
+void AutoReplacePreferences::slotSelectionChanged()
 {
-	preferencesDialog->m_remove->setEnabled( true );
+	QListViewItem *selection = 0;
+	if ( ( selection = preferencesDialog->m_list->selectedItem() ) )
+	{
+		// enable the remove button
+		preferencesDialog->m_remove->setEnabled( true );
+		// put the selection contents into the text entry widgets so they can be edited
+		preferencesDialog->m_key->setText( selection->text( 0 ) );
+		preferencesDialog->m_value->setText( selection->text( 1 ) );
+	}
+	else
+	{
+		preferencesDialog->m_remove->setEnabled( false );
+		preferencesDialog->m_key->clear();
+		preferencesDialog->m_value->clear();
+	}
 }
-*/
 
 void AutoReplacePreferences::slotWidgetModified()
 {
