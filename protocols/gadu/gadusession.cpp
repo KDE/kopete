@@ -540,6 +540,13 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactsList , const QStrin
 
 		cl = NULL;
 	}
+	
+	// happends only when last contact was without UIN, and was at the end of list...
+	// rather rare, but don't leak please :-)
+	if ( cl ) {
+		delete cl;
+	}
+	
 	return true;
 }
 
