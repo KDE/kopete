@@ -174,7 +174,7 @@ GroupWiseContact * GroupWiseAccount::contactForDN( const QString & dn )
 	for( ; it.current(); ++it )
 	{
 		GroupWiseContact * candidate = static_cast<GroupWiseContact*>( it.current() );
-		if ( candidate->dn() == dn )
+		if ( candidate && candidate->dn() == dn )
 			return candidate;
 	}
 	// we might have just added the contact with a user ID, try the first section of the dotted dn
