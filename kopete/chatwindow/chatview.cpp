@@ -1,10 +1,10 @@
 /*
     chatview.cpp - Chat View
 
-    Copyright (c) 2002      by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2002-2004 by Olivier Goffart       <ogoffart@tiscalinet.be>
     Copyright (c) 2002-2003 by Martijn Klingens      <klingens@kde.org>
 
-    Kopete    (c) 2002-2003 by the Kopete developers <kopete-devel@kde.org>
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -57,6 +57,34 @@
 #include "kopeteglobal.h"
 
 #include <ktabwidget.h>
+
+
+//From  kdelibs/khtml/misc/htmltags.h
+//  used in ChatView::copy()
+#define ID_BLOCKQUOTE 12
+#define ID_BR 14
+#define ID_DD 22
+#define ID_DIV 26
+#define ID_DL 27
+#define ID_DT 28
+#define ID_H1 36
+#define ID_H2 37
+#define ID_H3 38
+#define ID_H4 39
+#define ID_H5 40
+#define ID_H6 41
+#define ID_HR 43
+#define ID_IMG 48
+#define ID_LI 57
+#define ID_OL 69
+#define ID_P 72
+#define ID_PRE 75
+#define ID_TD 90
+#define ID_TH 93
+#define ID_TR 96
+#define ID_TT 97
+#define ID_UL 99
+
 
 class KopeteChatViewPrivate
 {
@@ -1574,8 +1602,130 @@ void ChatView::copy()
 {
 	if ( chatView->hasSelection() )
 	{
-		QApplication::clipboard()->setText( chatView->selectedText(), QClipboard::Clipboard );
-		QApplication::clipboard()->setText( chatView->selectedText(), QClipboard::Selection );
+		/*
+		 * The objectif of this function is to keep the text of emoticons (of or latex image) when copying.
+		 *   see Bug 61676 
+		 * It could be done in a single line if  RangeImpl::toHTML  was implemented (see the #if 0 bellow)
+		 * But since it doesn't work, i have to handle it myself with KHTML some internals.
+		 * I copied a big part of the code bellow from KHTMLPart::selectedText.  only a bit modified to add the img's title
+		 */
+	
+		QString text;
+		
+		#if 0 //This doesn't work because   RangeImpl::toHTML   is not yet implemented
+		text=KopeteMessage::unescape( chatView->selection().toHTML().string() );
+		#endif  
+
+		DOM::Node startNode, endNode;
+		long startOffset, endOffset;
+		chatView->selection(startNode, startOffset,  endNode, endOffset);
+		
+		//BEGIN: copied from KHTMLPart::selectedText
+			
+		bool hasNewLine = true;
+		DOM::Node n = startNode;
+		while(!n.isNull()) 
+		{
+			if(n.nodeType() == DOM::Node::TEXT_NODE /*&& n.handle()->renderer()*/) 
+			{
+				QString str = n.nodeValue().string();
+				hasNewLine = false;
+				if(n == startNode && n == endNode)
+					text = str.mid(startOffset, endOffset - startOffset);
+				else if(n == startNode)
+					text = str.mid(startOffset);
+				else if(n == endNode)
+					text += str.left(endOffset);
+				else
+					text += str;
+			}
+			else
+			{ // This is our simple HTML -> ASCII transformation:
+				unsigned short id = n.elementId();
+				switch(id)
+				{
+				case ID_IMG: //here is the main difference with KHTMLView::selectedText
+				{
+					DOM::HTMLElement e = n;
+					if( !e.isNull() && e.hasAttribute( "title" ) )
+						text+=e.getAttribute( "title" ).string();
+					break;
+				}
+				case ID_BR:
+					text += "\n";
+					hasNewLine = true;
+					break;
+				case ID_TD:  case ID_TH:  case ID_HR:
+				case ID_OL:  case ID_UL:  case ID_LI:
+				case ID_DD:  case ID_DL:  case ID_DT:
+				case ID_PRE: case ID_BLOCKQUOTE: case ID_DIV:
+					if (!hasNewLine)
+						text += "\n";
+					hasNewLine = true;
+					break;
+				case ID_P:   case ID_TR:
+				case ID_H1:  case ID_H2:  case ID_H3:
+				case ID_H4:  case ID_H5:  case ID_H6:
+					if (!hasNewLine)
+						text += "\n";
+					text += "\n";
+					hasNewLine = true;
+					break;
+				}
+			}
+			if(n == endNode)
+				break;
+			DOM::Node next = n.firstChild();
+			if(next.isNull())
+				next = n.nextSibling();
+			while( next.isNull() && !n.parentNode().isNull() ) 
+			{
+				n = n.parentNode();
+				next = n.nextSibling();
+				unsigned short id = n.elementId();
+				switch(id) 
+				{
+				case ID_TD:  case ID_TH:  case ID_HR:
+				case ID_OL:  case ID_UL:  case ID_LI:
+				case ID_DD:  case ID_DL:  case ID_DT:
+				case ID_PRE: case ID_BLOCKQUOTE:  case ID_DIV:
+					if (!hasNewLine)
+						text += "\n";
+					hasNewLine = true;
+					break;
+				case ID_P:   case ID_TR:
+				case ID_H1:  case ID_H2:  case ID_H3:
+				case ID_H4:  case ID_H5:  case ID_H6:
+					if (!hasNewLine)
+						text += "\n";
+					text += "\n";
+					hasNewLine = true;
+					break;
+				}
+			}
+			n = next;
+		}
+		
+		if(text.isEmpty())
+			return;
+		
+		int start = 0;
+		int end = text.length();
+		
+		// Strip leading LFs
+		while ((start < end) && (text[start] == '\n'))
+			start++;
+		
+		// Strip excessive trailing LFs
+		while ((start < (end-1)) && (text[end-1] == '\n') && (text[end-2] == '\n'))
+			end--;
+		
+		text=text.mid(start, end-start);
+		
+		//END: copied from KHTMLPart::selectedText
+	
+		QApplication::clipboard()->setText( text, QClipboard::Clipboard );
+		QApplication::clipboard()->setText( text, QClipboard::Selection );
 	}
 	else
 		m_edit->copy();
