@@ -192,7 +192,7 @@ void KopeteWindow::initActions()
 	actionShowOffliners->setCheckedState(i18n("Hide Offline &Users"));
 	actionShowEmptyGroups->setCheckedState(i18n("Hide Empty &Groups"));
 #endif
-	
+
 	// quick search bar
 	QHBox *quickSearchContainer = new QHBox( 0, "kde toolbar widget" );
 	QLabel *searchLabel = new QLabel( i18n("Se&arch:"), quickSearchContainer, "kde toolbar widget" );
@@ -207,7 +207,7 @@ void KopeteWindow::initActions()
 		0, searchBar, SLOT( clear() ), actionCollection(), "quicksearch_reset" );
 	resetQuickSearch->setWhatsThis( i18n( "Reset Quick Search\n"
 		"Resets the quick search so that all contacts and groups are shown again." ) );
-	
+
 	// sync actions, config and prefs-dialog
 	connect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
 	slotConfigChanged();
@@ -308,7 +308,7 @@ void KopeteWindow::saveOptions()
 
 	toolBar("mainToolBar")->saveSettings ( config, "ToolBar Settings" );
 	toolBar("quickSearchBar")->saveSettings( config, "QuickSearchBar Settings" );
-	
+
 	saveMainWindowSettings( config, "General Options" );
 
 	config->setGroup("General Options");
@@ -350,7 +350,7 @@ void KopeteWindow::showStatusbar()
 void KopeteWindow::slotToggleShowOffliners()
 {
 	KopetePrefs *p = KopetePrefs::prefs();
-	p->setShowOffline ( actionShowOffliners->isChecked() );
+	p->setShowOffline ( !actionShowOffliners->isChecked() );
 
 	disconnect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
 	p->save();
@@ -609,7 +609,7 @@ void KopeteWindow::makeTrayToolTip()
 	if(m_tray)
 	{
 		QToolTip::remove(m_tray);
-			
+
 		QString tt = QString::fromLatin1("<qt>");
 		QPtrList<Kopete::Account> accounts = Kopete::AccountManager::self()->accounts();
 		for(Kopete::Account *a = accounts.first(); a; a = accounts.next())
