@@ -1,0 +1,6 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="kopete_nowlistening" version="1">
+	<Menu name="contact_popup">
+		<Action name="m_actionWantsAdvert"/>
+  	</Menu>
+</kpartgui>

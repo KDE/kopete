@@ -50,23 +50,23 @@ void NLKscd::update()
 		{
 			// we're talking to a KsCD without the playing() method
 			m_playing = true;
-			kdDebug(14307) << "NLKscd::update() - KsCD without playing()"
-				<< endl;
+//			kdDebug(14307) << "NLKscd::update() - KsCD without playing()"
+//				<< endl;
 		}
 		else
 		{
 			QDataStream reply( replyData, IO_ReadOnly );
 			if ( replyType == "bool" ) {
 				reply >> m_playing;
-				kdDebug(14307) << "NLKscd::update() - KsCD is " <<
-					( m_playing ? "" : "not " ) << "playing!" << endl;
+//				kdDebug(14307) << "NLKscd::update() - KsCD is " <<
+//					( m_playing ? "" : "not " ) << "playing!" << endl;
 			}
 		}
 		// poll it for its current artist and album
 		// 'data' here is an unused input parameter
 		if ( !m_client->call( "kscd", "CDPlayer",
 					"trackList()", data, replyType, replyData ) )
-			kdDebug(14307 ) <<  "NLKscd::update() DCOP error" 
+			kdDebug(14307 ) <<  "NLKscd::update() DCOP error"
 				<< endl;
 		else {
 			QDataStream reply( replyData, IO_ReadOnly );
@@ -76,8 +76,8 @@ void NLKscd::update()
 				QString artistAlbum = result.first();
 				m_artist = artistAlbum.section( '/', 0, 0 ).left( artistAlbum.length() - 1 ).stripWhiteSpace();
 				m_album = artistAlbum.section( '/', 1, 1 ).right( artistAlbum.length() - 1 ).stripWhiteSpace();
-				//kdDebug(14307) << "NLKscd::update() artist:" << m_artist <<
-				//	" album:" << m_album << endl;
+//				kdDebug(14307) << "NLKscd::update() artist:" << m_artist <<
+//					" album:" << m_album << endl;
 			} else
 				kdDebug(14307) << "NLKscd::update() trackList returned unexpected reply type!"
 					<< endl;
@@ -104,12 +104,12 @@ void NLKscd::update()
 		}
 		else
 			m_newTrack = false;
-		kdDebug(14307) << "NLKscd::update() - found kscd - " 
-			<< m_track << endl;
+//		kdDebug(14307) << "NLKscd::update() - found kscd - "
+//			<< m_track << endl;
 
 	}
 	else
-		kdDebug(14307) << "NLKscd::update() - kscd not found" << endl;
+//		kdDebug(14307) << "NLKscd::update() - kscd not found" << endl;
 }
 
 // vim: set noet ts=4 sts=4 sw=4:

@@ -34,10 +34,7 @@ NowListeningPreferences::NowListeningPreferences( const QString &pixmap, QObject
 	preferencesDialog = new NowListeningPrefsUI( this );
 
 	KGlobal::config()->setGroup( "Now Listening Plugin" );
-	preferencesDialog->m_freq->setValue(
-			KGlobal::config()->readNumEntry( "PollFrequency", 90 )
-			);
-	preferencesDialog->m_header->setText( 
+	preferencesDialog->m_header->setText(
 			KGlobal::config()->readEntry( "Header",
 				i18n( "Now Listening To: " ) )
 			 );
@@ -53,11 +50,6 @@ NowListeningPreferences::NowListeningPreferences( const QString &pixmap, QObject
 
 NowListeningPreferences::~NowListeningPreferences( )
 {
-}
-
-int NowListeningPreferences::pollFrequency() const
-{
-	return preferencesDialog->m_freq->value(); 
 }
 
 QString NowListeningPreferences::header() const
@@ -79,11 +71,9 @@ void NowListeningPreferences::save()
 {
 		KConfig *config=KGlobal::config();
 		config->setGroup( "Now Listening Plugin" );
-		config->writeEntry( "PollFrequency", 
-				preferencesDialog->m_freq->value() );
 		config->writeEntry( "Header", 
 				preferencesDialog->m_header->text() );
-		config->writeEntry( "PerTrack", 
+		config->writeEntry( "PerTrack",
 				preferencesDialog->m_perTrack->text() );
 		config->writeEntry( "Conjunction", 
 				preferencesDialog->m_conjunction->text() );

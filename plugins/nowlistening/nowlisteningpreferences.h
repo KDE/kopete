@@ -35,8 +35,6 @@ public:
 	NowListeningPreferences(const QString &pixmap,QObject *parent=0);
 	virtual ~NowListeningPreferences();
 	virtual void save();
-
-	int pollFrequency() const;
 	QString header() const;
 	QString perTrack() const;
 	QString conjunction() const;

@@ -20,6 +20,7 @@
     *                                                                       *
     *************************************************************************
 */
+#include "config.h"
 
 #ifdef HAVE_XMMS
 
@@ -62,10 +63,10 @@ void NLXmms::update()
 		}
 		else
 			m_newTrack = false;
-		kdDebug(14307) << "NLXmms::update() - found xmms - " << m_track << endl;
+		kdDebug(14307) << k_funcinfo << " - found xmms - " << m_track << endl;
 	}
 	else
-		kdDebug(14307) << "NLXmms::update() - xmms not found" << endl;
+		kdDebug(14307) << k_funcinfo << " - xmms not found" << endl;
 }
 
 #endif 

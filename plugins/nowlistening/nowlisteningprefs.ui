@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>NowListeningPrefsUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -25,92 +25,6 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lookForNewMediaLabel</cstring>
-            </property>
-            <property name="text">
-                <string>&lt;b&gt;Look for new media&lt;/b&gt;</string>
-            </property>
-        </widget>
-        <widget class="QFrame">
-            <property name="name">
-                <cstring>lookForNewMediaHLine</cstring>
-            </property>
-            <property name="frameShape">
-                <enum>HLine</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
-            </property>
-        </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>m_freqLayout</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>m_freqLabel</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Chec&amp;k every: </string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_freq</cstring>
-                    </property>
-                </widget>
-                <widget class="QSpinBox">
-                    <property name="name">
-                        <cstring>m_freq</cstring>
-                    </property>
-                    <property name="suffix">
-                        <string> seconds</string>
-                    </property>
-                    <property name="buttonSymbols">
-                        <enum>UpDownArrows</enum>
-                    </property>
-                    <property name="maxValue">
-                        <number>3600</number>
-                    </property>
-                    <property name="minValue">
-                        <number>5</number>
-                    </property>
-                    <property name="lineStep">
-                        <number>5</number>
-                    </property>
-                    <property name="value">
-                        <number>180</number>
-                    </property>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>m_freqSpacer</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>71</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                </spacer>
-            </hbox>
-        </widget>
         <spacer>
             <property name="name">
                 <cstring>lookForNewMediaSpacer</cstring>

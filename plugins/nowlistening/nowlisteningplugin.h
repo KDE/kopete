@@ -38,32 +38,26 @@ class NLMediaPlayer;
 class NowListeningPlugin : public KopetePlugin
 {
 	Q_OBJECT
+
+friend class NowListeningGUIClient;
+
 	public:
 		NowListeningPlugin(  QObject *parent, const char *name, const QStringList &args );
 		virtual ~NowListeningPlugin();
-		virtual KActionCollection *customContextMenuActions( KopeteMetaContact* );
-		virtual KActionCollection *customChatActions( KopeteMessageManager* );
+		static NowListeningPlugin* plugin();
 
 	public slots:
-		/**
-		 * Apply updated settings from preferences instance
-		 */
-		void slotSettingsChanged();
 		/**
 		 * Perform any string substitution needed on outgoing messages
 		 */
 		void slotOutgoingMessage( KopeteMessage& msg );
-	
+
 	protected:
 		/** 
 		 * Constructs a string containing the track information for all
 		 * players
 		 */
 		QString allPlayerAdvert() const;
-		/**
-		 * Constructs a string containing any changes to the media being played
-		 */
-		QString changesOnlyAdvert() const;
 		/**  
 		 * Creates the string for a single player
 		 * @p player - the media player we're using
@@ -75,28 +69,18 @@ class NowListeningPlugin : public KopetePlugin
 		 * Sends a message to a single chat
 		 */
 		void advertiseToChat( KopeteMessageManager* theChat, QString message );
-	
+
 	protected slots:
 		/**
-		 * called to change whether a contact should receive adverts
+		 * Reacts to a new chat starting and adds actions to its GUI
 		 */
-		void slotContactWantsToggled();
-		/**
-		 * called to reactively send an advert
-		 */
-		void slotAdvertToCurrentChat();
-		/** 
-		 * informs all active chats of any changes since last
-		 */
-		void slotChangesToAllChats();
-	
+		void slotNewKMM( KopeteMessageManager* );
+
 	private:
 		// used to access the GUI settings
 		NowListeningPreferences *m_prefs;
 		// abstracted media player interfaces
 		QPtrList<NLMediaPlayer> *m_mediaPlayer;
-		// Triggers slotChangesToAllChats
-		QTimer *m_pollTimer;
 		// Needed for DCOP interprocess communication
 		DCOPClient *m_client;
 		// Support GUI actions
@@ -104,6 +88,9 @@ class NowListeningPlugin : public KopetePlugin
 		KopeteMessageManager *m_currentMessageManager;
 		KToggleAction *m_actionWantsAdvert;
 		KopeteMetaContact *m_currentMetaContact;
+
+		static NowListeningPlugin* pluginStatic_;
+
 };
 
 #endif
