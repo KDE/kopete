@@ -131,6 +131,7 @@ namespace Global
 			 * @return a map of all registered ContactPropertyTmpl object
 			 */
 			const ContactPropertyTmpl::Map &templateMap() const;
+
 			/**
 			 * return true if a template with key @p key is already registered,
 			 * false otherwise

@@ -119,7 +119,7 @@ public:
 	 * @brief Serialize the contact for storage in the contact list.
 	 *
 	 * The provided serializedData contain the contact id in the field
-	 * "contactId". If you don't like this, or don't want to 
+	 * "contactId". If you don't like this, or don't want to
 	 * store these fields at all,
 	 * you are free to remove them from the list.
 	 *
@@ -155,9 +155,8 @@ public:
 	/**
 	 * \brief Get the current display name
 	 * @return The display name
-	 * @deprecated  Use the nickname property instead
 	 */
-	QString displayName() const  KDE_DEPRECATED;
+	QString displayName() const;
 
 	/**
 	 * @brief Get the online status of the contact
@@ -239,8 +238,8 @@ public:
 
 	/**
 	 * \brief Get whether or not this contact is capable of file transfers
-	 * 
-	 * 
+	 *
+	 *
 	 * \see setFileCapable()
 	 * \return true if the protocol for this contact is capable of file transfers
 	 * \return false if the protocol for this contact is not capable of file transfers
@@ -255,7 +254,7 @@ public:
 	void setFileCapable( bool filecap );
 
 	/**
-	 * \brief Get whether or not this contact can accept file transfers 
+	 * \brief Get whether or not this contact can accept file transfers
 	 *
 	 * This function checks to make sure that the contact is online as well as
 	 * capable of sending files.
@@ -276,7 +275,7 @@ public:
 	 * The default implementation calls @ref setDisplayName() immediately.
 	 */
 	virtual void rename( const QString &newName );
-	
+
 
 	/**
 	 * Returns the primary message manager affiliated with this contact
@@ -328,7 +327,7 @@ public:
 	 *
 	 * If you don't know the type of the returned QVariant, you will need
 	 * to check for it.
-	 * \return the value of the property 
+	 * \return the value of the property
 	 **/
 	const Kopete::ContactProperty &property(const QString &key) const;
 	const Kopete::ContactProperty &property(const Kopete::ContactPropertyTmpl &tmpl) const;
@@ -452,9 +451,8 @@ protected:
 	 * Sets the display name, for the contact.
 	 * this is what is shown in the contact list.
 	 * @param name Then new display name
-	 * @deprecated uses the nickname property.
 	 */
-	void setDisplayName( const QString &name )  KDE_DEPRECATED;
+	void setDisplayName( const QString &name );
 
 private slots:
 
