@@ -27,6 +27,7 @@ class QString;
 class QPixmap;
 
 class KopeteEvent;
+class KopeteMetaContact;
 
 /**
  * This class abstracts a generic contact/buddie.
@@ -49,6 +50,11 @@ public:
 	 * FIXME: When all plugins support this, make this pure virtual!
 	 */
 	bool isOnline() const { return status() != Offline; }
+
+	/**
+	 * The meta contact this contact is contained in
+	 */
+	KopeteMetaContact *metaContact() const { return m_metaContact; }
 
 	/**
 	 * The groups in which the user is physically located.
@@ -82,11 +88,11 @@ public:
 	 */
 	virtual void moveToGroup( const QString &from, const QString &to );
 
-		/**
-		* Usually a contact is owned by a protocol plugin
-		**/
-		KopeteContact(QObject *parent);
-		~KopeteContact();
+	/**
+	 * Create new contact. Supply the parent meta contact!
+	 */
+	KopeteContact( KopeteMetaContact *parent );
+	~KopeteContact();
 
 		/**
 		* set name of an KopeteContact
@@ -219,5 +225,11 @@ signals:
 		QPixmap m_cachedScaledIcon;
 		int m_cachedSize;
 		ContactStatus m_cachedOldStatus;
+
+		KopeteMetaContact *m_metaContact;
 };
+
 #endif
+
+// vim: set noet ts=4 sts=4 sw=4:
+

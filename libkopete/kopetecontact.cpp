@@ -1,10 +1,10 @@
 /*
     kopetecontact.cpp - Kopete Contact
 
-	Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-	Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
 
-	Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
+    Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
     *                                                                       *
@@ -17,6 +17,7 @@
 */
 
 #include "kopetecontact.h"
+#include "kopetemetacontact.h"
 #include "kopete.h"
 
 #include <qtimer.h>
@@ -26,10 +27,12 @@
 #include <kdebug.h>
 #include <klocale.h>
 
-KopeteContact::KopeteContact(QObject *parent)
-	: QObject(parent)
+KopeteContact::KopeteContact( KopeteMetaContact *parent )
+	: QObject( parent )
 {
 	connect(this, SIGNAL(incomingEvent(KopeteEvent *)), kopeteapp, SLOT(notifyEvent(KopeteEvent *)));
+
+	m_metaContact = parent;
 }
 
 KopeteContact::~KopeteContact()

@@ -1,8 +1,8 @@
 /*
     kopeteprotocol.h - Kopete Protocol
 
-	Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-	Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
+    Copyright (c) 2002 by Martijn Klingens       <klingens@kde.org>
 
     Kopete    (c) 2002 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -36,7 +36,7 @@ class KopeteProtocol : public Plugin
 public:
 	KopeteProtocol(QObject *parent = 0L, const char *name = 0L);
 	virtual ~KopeteProtocol();
-   
+
 	/**
 	 * Protocol API. Must be reimplemented
 	 */
@@ -45,8 +45,11 @@ public:
 	virtual void Connect()=0;
 	virtual void Disconnect()=0;
 	virtual bool isConnected() const = 0;
-	 /* This will be called when Kopete read the contact list, implement it */
-    virtual KopeteContact* createContact( KopeteMetaContact *parent, const QString &Id, const QString &serializedData ) = 0;
+
+	/**
+	 * This will be called when Kopete read the contact list, implement it
+	 */
+	virtual KopeteContact* createContact( KopeteMetaContact *parent, const QString &serializedData ) = 0;
 
 	// this will be called if main-kopete wants
 	// the plugin to set the user's mode to away or something similar

@@ -38,7 +38,7 @@ class MSNContact : public KopeteContact
 
 public:
 	MSNContact( const QString &msnId, const QString &nickname,
-				const QString &group, QObject *parent = 0L );
+				const QString &group, KopeteMetaContact *parent );
 
 	void initContact( const QString &msnId, const QString &nickname,
 						const QString &group );

@@ -106,8 +106,10 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 			emptyText, emptyCaption );
 	}
 
-	m_myself = new KopeteContact(this);
-	m_myself->setName( cfg->readEntry( "Nick", "" ) );
+	// FIXME: Is 'self' supposed to be a KopeteMetaContact? I guess so.
+	// Fix that. - Martijn
+	m_myself = new MSNContact( cfg->readEntry( "UserID", "" ),
+		cfg->readEntry( "Nick", "" ), "", 0L );
 
 	if ( cfg->readBoolEntry( "AutoConnect", "0" ) )
 		Connect();
@@ -260,12 +262,19 @@ bool MSNProtocol::isAway(void) const
 	}
 }
 
-KopeteContact* MSNProtocol::createContact( KopeteMetaContact *parent, const QString &Id, const QString &serializedData )
+KopeteContact* MSNProtocol::createContact( KopeteMetaContact *parent, const QString &serializedData )
 {
-	MSNContact *c = new MSNContact( Id, "FixMe", QString::null, parent );
-	return c;
+	// FIXME: serializedData contains much more than just the passport and
+	// the nickname, but for now it hopefully suffices.
+
+	// FIXME: more error-proof deserialize would be useful :)
+	QStringList data = QStringList::split( ' ', serializedData );
+	QString passport = data[ 0 ].replace( QRegExp( "%20" ), " " );
+	QString nickname = data[ 1 ].replace( QRegExp( "%20" ), " " );
+	QString groups   = data[ 2 ].replace( QRegExp( "%20" ), " " );
+
+	return new MSNContact( passport, nickname, QString::null, parent );
 }
-	
 
 /** Get myself */
 KopeteContact* MSNProtocol::myself() const
@@ -909,6 +918,7 @@ void MSNProtocol::slotContactRemoved( QString handle, QString list,
 void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 	QString list, uint serial, uint group )
 {
+	// FIXME: Why is this method commented out??????
     /*
 	m_serial = serial;
 

@@ -120,46 +120,48 @@ void KopeteContactList::loadXML()
 
 		if ( ! elementl1.isNull())
 		{
-			/* We have found a metacontact person */
+			// We have found a metacontact person
 			if ( elementl1.tagName() == "person" )
 			{
 				QString person_name = elementl1.attribute("name", "No Name");
 				kdDebug() << "XML Reader: New Person " << person_name << endl;
 				KopeteMetaContact *mc = new KopeteMetaContact();
 				mc->setDisplayName(person_name);
-				
-				/* Now we have to find all contacts and metadata for this person */
+
+				// Now we have to find all contacts and metadata for this person
 				QDomNode nodel2;
 				nodel2 = nodel1.firstChild();
 
-    			while ( ! nodel2.isNull() )
+				while ( !nodel2.isNull() )
 				{
-                    /* We try to convert it to an element */
+					// try to convert it to an element
 					QDomElement elementl2 = nodel2.toElement();
 
-                    /* Was it an element ? */
-					if ( ! elementl2.isNull())
+					// Was it an element ?
+					if( !elementl2.isNull())
 					{
-            			/* We have found a plugin contact */
-						if ( elementl2.tagName() == "contact" )
+						// We have found a plugin contact
+						if( elementl2.tagName() == "contact" )
 						{
 							QString contactid = elementl2.attribute("id", "Help!");
 							QString protocol = elementl2.attribute("protocol", "Unknown");
 							QString serializedData = elementl2.attribute("data", "none");
-							kdDebug() << "XML Reader: \tNew Contact ID:" << contactid << " Protocol: " << protocol << " Data: " << serializedData << endl;
-							Plugin *tmpprot = kopeteapp->libraryLoader()->searchByID(protocol);
-							if (tmpprot)
+							kdDebug() << "XML Reader: \tNew Contact ID:"
+								<< contactid << " Protocol: " << protocol
+								<< " Data: " << serializedData << endl;
+							KopeteProtocol *proto = dynamic_cast<KopeteProtocol*>(
+								kopeteapp->libraryLoader()->searchByID( protocol ) );
+							if( proto )
 							{
-								KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>(tmpprot);
-								KopeteContact *c = prot->createContact(mc, contactid, serializedData);
-								// FIXME
-								c->setId(contactid);
-								c->setProtocol(protocol);	
-								mc->addContact(c);
+								KopeteContact *c = proto->createContact( mc, serializedData );
+
+								// FIXME: provide these values in a sane way.
+								c->setId( contactid );
+								c->setProtocol( protocol );
+								mc->addContact( c );
 							}
 							else
 								kdDebug() << "Protocol " << protocol << " could not be found!" << endl;
-
 						}
 						if ( elementl2.tagName() == "metadata" )
 						{

@@ -27,7 +27,7 @@
 
 // Constructor for no-groups
 MSNContact::MSNContact( const QString &msnId, const QString &nickname,
-	const QString &group, QObject *parent )
+	const QString &group, KopeteMetaContact *parent )
 	: KopeteContact( parent )
 {
 	initContact( msnId, nickname, group );
