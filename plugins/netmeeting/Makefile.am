@@ -6,7 +6,7 @@ kde_module_LTLIBRARIES = kopete_netmeeting.la
 
 kopete_netmeeting_la_SOURCES     = netmeetingplugin.cpp netmeetinginvitation.cpp netmeetingguiclient.cpp
 kopete_netmeeting_la_LDFLAGS     = -module -no-undefined $(KDE_PLUGIN)
-kopete_netmeeting_la_LIBADD      = $(top_builddir)/kopete/libkopete/libkopete.la $(top_builddir)/kopete/protocols/msn/libkopete_msn.la
+kopete_netmeeting_la_LIBADD      = $(top_builddir)/kopete/libkopete/libkopete.la $(top_builddir)/kopete/protocols/msn/libkopete_msn_shared.la
 
 service_DATA = netmeeting.desktop
 servicedir = $(kde_servicesdir)
