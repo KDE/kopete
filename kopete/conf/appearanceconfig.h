@@ -27,6 +27,7 @@ class KTabCtl;
 class KListBox;
 class QVGroupBox;
 class QVButtonGroup;
+class QHButtonGroup;
 class QRadioButton;
 class QCheckBox;
 class QFrame;
@@ -73,7 +74,14 @@ private:
 	QCheckBox *mSoundIfAwayChk;
 	QCheckBox *mUseEmoticonsChk;
 	QPushButton *configSound;
+	QCheckBox* cb_RaiseMsgWindowChk;
+	QCheckBox* cb_ShowEventsChk;
 	
+	QHButtonGroup* ButtonGroup1;
+	QRadioButton* cb_Enter;
+	QRadioButton* cb_CtrlEnter;
+	QRadioButton* cb_ShiftEnter;
+    
 	QVButtonGroup *chatWindowGroup;
 	QRadioButton *mNewWindow;
 	QRadioButton *mTabWindow;
@@ -98,6 +106,8 @@ private:
 	QFrame* mChatWindowTab;
 	AppearanceConfig_ChatWindow *mPrfsChatWindow;
 
+	QFrame* mChatAppearanceTab;
+	
 	bool mQueueChanged;
 	KProcess *kcm;
 };

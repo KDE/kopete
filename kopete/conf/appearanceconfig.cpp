@@ -26,6 +26,7 @@
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qvbuttongroup.h>
+#include <qhbuttongroup.h>
 #include <qstringlist.h>
 #include <qtextedit.h>
 #include <qvgroupbox.h>
@@ -77,14 +78,7 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	mSoundIfAwayChk		= new QCheckBox ( i18n("Play sounds if away"), notifyGroupBox );
 	configSound		= new QPushButton( i18n("C&onfigure Sounds..."), notifyGroupBox );
 	generalLayout->addWidget( notifyGroupBox );
-	
-	chatWindowGroup = new QVButtonGroup( i18n("Chat Window Appearance"), mGeneralTab, "chatWindowGroup");
-	chatWindowGroup->setExclusive( true );
-	mNewWindow = new QRadioButton( i18n("Open all messages in a new chat window"), chatWindowGroup);
-	mTabProtocolWindow = new QRadioButton( i18n("Group messages from the same protocol in the same chat window"), chatWindowGroup);
-	mTabWindow = new QRadioButton( i18n("Group all messages in the same chat window"), chatWindowGroup);
-	generalLayout->addWidget( chatWindowGroup );
-	
+		
 	generalLayout->addStretch();
 
 		
@@ -125,7 +119,7 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	mAppearanceTab->addTab( mContactListTab, i18n("Contact &List") );
 	/* ============================================================== */
 
-
+	
 	/* ============================================================== */
 	mEmoticonsTab = new QFrame(mAppearanceTab);
 	(new QVBoxLayout(mEmoticonsTab, KDialog::marginHint(), KDialog::spacingHint()))->setAutoAdd(true);
@@ -137,8 +131,37 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 
 	mAppearanceTab->addTab( mEmoticonsTab, i18n( "&Emoticons" ) );
 
+	/* ============================================================== */
+	mChatAppearanceTab = new QFrame(mAppearanceTab);
+	generalLayout = new QVBoxLayout ( mChatAppearanceTab, KDialog::marginHint(), KDialog::spacingHint(), "generalLayout" );
+	
+	cb_RaiseMsgWindowChk = new QCheckBox( i18n( "&Raise window on new messages" ), mChatAppearanceTab, "cb_RaiseMsgWindowChk" );
+	generalLayout->addWidget( cb_RaiseMsgWindowChk );
+
+	cb_ShowEventsChk = new QCheckBox( i18n("&Show events in chat window"), mChatAppearanceTab, "cb_ShowEventsChk" );
+	generalLayout->addWidget( cb_ShowEventsChk );
+	
+	ButtonGroup1 = new QHButtonGroup( i18n("Send Message With"), mChatAppearanceTab, "ButtonGroup1");
+	ButtonGroup1->setExclusive( true );
+	cb_Enter = new QRadioButton( i18n("Enter"), ButtonGroup1);
+	cb_CtrlEnter = new QRadioButton( i18n("Ctrl+Enter"), ButtonGroup1);
+	cb_ShiftEnter = new QRadioButton( i18n("Shift+Enter"), ButtonGroup1);
+	generalLayout->addWidget( ButtonGroup1 );
+	
+	chatWindowGroup = new QVButtonGroup( i18n("Chat Grouping Policy"), mChatAppearanceTab, "chatWindowGroup");
+	chatWindowGroup->setExclusive( true );
+	mNewWindow = new QRadioButton( i18n("Open all messages in a new chat window"), chatWindowGroup);
+	mTabProtocolWindow = new QRadioButton( i18n("Group messages from the same protocol in the same chat window"), chatWindowGroup);
+	mTabWindow = new QRadioButton( i18n("Group all messages in the same chat window"), chatWindowGroup);
+	generalLayout->addWidget( chatWindowGroup );
+	
+	generalLayout->addStretch();
+	
+	mAppearanceTab->addTab( mChatAppearanceTab, i18n("Chat &Window") );
+	/* ============================================================== */
+	
 	mPrfsChatWindow = new AppearanceConfig_ChatWindow(mAppearanceTab);
-	mAppearanceTab->addTab( mPrfsChatWindow, i18n("Chat &Window") );
+	mAppearanceTab->addTab( mPrfsChatWindow, i18n("Chat &Appearance") );
 	connect( mPrfsChatWindow->cb_Kind, SIGNAL( activated(int) ), this, SLOT( slotSelectKind(int) ) );
 
 	reopen();
@@ -178,14 +201,14 @@ void AppearanceConfig::save()
 	#if KDE_VERSION >= 306
 	p->setNotifyOnline ( mNotifyOnlineUsers->isChecked() );
 	#endif
-	p->setRaiseMsgWindow( mPrfsChatWindow->cb_RaiseMsgWindowChk->isChecked() );
-	p->setShowEvents( mPrfsChatWindow->cb_ShowEventsChk->isChecked() );
+	p->setRaiseMsgWindow( cb_RaiseMsgWindowChk->isChecked() );
+	p->setShowEvents( cb_ShowEventsChk->isChecked() );
 
 	p->setKindMessagesHtml ( mPrfsChatWindow->mle_codehtml->text() );
 	
-	p->setSendMessageEnter(mPrfsChatWindow->cb_Enter->isChecked());
-	p->setSendMessageCtrlEnter(mPrfsChatWindow->cb_CtrlEnter->isChecked());
-	p->setSendMessageShiftEnter(mPrfsChatWindow->cb_ShiftEnter->isChecked());
+	p->setSendMessageEnter(cb_Enter->isChecked());
+	p->setSendMessageCtrlEnter(cb_CtrlEnter->isChecked());
+	p->setSendMessageShiftEnter(cb_ShiftEnter->isChecked());
 
 	disconnect ( KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()) );
 	kdDebug(14000) << "[AppearanceConfig] calling KopetePrefs::save()" << endl;
@@ -260,14 +283,14 @@ void AppearanceConfig::reopen()
 	mBalloonNotifyChk->setChecked ( p->balloonNotify() );
 	mSoundNotifyChk->setChecked ( p->soundNotify() );
 	mBeepNotifyChk->setChecked ( p->beepNotify() );
-	mPrfsChatWindow->cb_RaiseMsgWindowChk->setChecked( p->raiseMsgWindow() );
-	mPrfsChatWindow->cb_ShowEventsChk->setChecked( p->showEvents() );
+	cb_RaiseMsgWindowChk->setChecked( p->raiseMsgWindow() );
+	cb_ShowEventsChk->setChecked( p->showEvents() );
 
 	mPrfsChatWindow->mle_codehtml->setText( p->kindMessagesHtml() );
 
-	mPrfsChatWindow->cb_Enter->setChecked(p->sendMessageEnter());
-	mPrfsChatWindow->cb_CtrlEnter->setChecked(p->sendMessageCtrlEnter());
-	mPrfsChatWindow->cb_ShiftEnter->setChecked(p->sendMessageShiftEnter());
+	cb_Enter->setChecked(p->sendMessageEnter());
+	cb_CtrlEnter->setChecked(p->sendMessageCtrlEnter());
+	cb_ShiftEnter->setChecked(p->sendMessageShiftEnter());
 }
 
 void AppearanceConfig::slotConfigSound()
