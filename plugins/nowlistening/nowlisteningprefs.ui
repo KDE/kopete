@@ -9,13 +9,13 @@
             <x>0</x>
             <y>0</y>
             <width>607</width>
-            <height>362</height>
+            <height>364</height>
         </rect>
     </property>
     <property name="caption">
         <string>Now Listening</string>
     </property>
-    <vbox>
+    <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
@@ -25,24 +25,7 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <spacer>
-            <property name="name">
-                <cstring>lookForNewMediaSpacer</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Fixed</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>1</width>
-                    <height>16</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QLabel">
+        <widget class="QLabel" row="0" column="0">
             <property name="name">
                 <cstring>advertiseNewMediaToBuddiesLabel</cstring>
             </property>
@@ -50,7 +33,7 @@
                 <string>&lt;b&gt;Advertise New Media to Buddies&lt;/b&gt;</string>
             </property>
         </widget>
-        <widget class="QFrame">
+        <widget class="QFrame" row="1" column="0">
             <property name="name">
                 <cstring>advertiseNewMediaToBuddiesHLine</cstring>
             </property>
@@ -61,7 +44,7 @@
                 <enum>Sunken</enum>
             </property>
         </widget>
-        <widget class="QLabel">
+        <widget class="QLabel" row="2" column="0">
             <property name="name">
                 <cstring>useThisMessageLabel</cstring>
             </property>
@@ -69,7 +52,7 @@
                 <string>Use this message when advertising:</string>
             </property>
         </widget>
-        <widget class="QLabel">
+        <widget class="QLabel" row="3" column="0">
             <property name="name">
                 <cstring>helperLabel</cstring>
             </property>
@@ -78,7 +61,7 @@
 Expressions in brackets depend on a substitution being made.</string>
             </property>
         </widget>
-        <widget class="QLayoutWidget">
+        <widget class="QLayoutWidget" row="4" column="0">
             <property name="name">
                 <cstring>Layout9</cstring>
             </property>
@@ -157,7 +140,7 @@ Expressions in brackets depend on a substitution being made.</string>
                 </widget>
             </grid>
         </widget>
-        <spacer>
+        <spacer row="5" column="0">
             <property name="name">
                 <cstring>nowListeningSpacer</cstring>
             </property>
@@ -169,12 +152,12 @@ Expressions in brackets depend on a substitution being made.</string>
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>0</width>
-                    <height>18</height>
+                    <width>16</width>
+                    <height>141</height>
                 </size>
             </property>
         </spacer>
-    </vbox>
+    </grid>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
