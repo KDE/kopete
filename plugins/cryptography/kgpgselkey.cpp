@@ -57,7 +57,6 @@
 
 #include <kurl.h>
 #include <ktempfile.h>
-#include <kstatusbar.h>
 #include <ktoolbar.h>
 #include <klineedit.h>
 #include <klistview.h>
