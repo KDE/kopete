@@ -281,3 +281,4 @@ void OscarDirectConnection::sendODC2Block(const QString &message, WORD typingnot
 
   writeBlock(outbuf.getBuf(),outbuf.getLength());
 }
+#include "oscardirectconnection.moc"
