@@ -160,13 +160,16 @@ void KopeteMessage::setBody( const QString &body, MessageFormat f )
 		theBody.replace( QRegExp( QString::fromLatin1(".*<body.*>\\s+(.*)\\s+</body>.*") ), QString::fromLatin1("\\1") );
 
 		//Strip <p> tags
-		theBody.replace( QRegExp( QString::fromLatin1("<p>") ), QString::null );
+		theBody.replace( QString::fromLatin1("<p>"), QString::null );
 
-		//Replace </p> with a <br/> if text follows it
-		theBody.replace( QRegExp( QString::fromLatin1("</p>(.+)") ), QString::fromLatin1("<br/>\\1") );
+		//Replace </p> with a <br/>
+		theBody.replace( QString::fromLatin1("</p>"), QString::fromLatin1("<br/>") );
 
-		//Remove trailing </p>
-		theBody.replace( QRegExp( QString::fromLatin1("</p>") ), QString::null );
+		//Remove trailing </br>
+		if ( theBody.endsWith( QString::fromLatin1("<br/>") ) )
+			theBody.truncate( theBody.length() - 5 );
+
+		theBody.remove( QString::fromLatin1("\n") );
 	}
 
 	bodyNode.setData( theBody );
@@ -256,13 +259,15 @@ void KopeteMessage::init( const QDateTime &timeStamp, const KopeteContact *from,
 		theBody.replace( QRegExp( QString::fromLatin1(".*<body.*>\\s+(.*)\\s+</body>.*") ), QString::fromLatin1("\\1") );
 
 		//Strip <p> tags
-		theBody.replace( QRegExp( QString::fromLatin1("<p>") ), QString::null );
+		theBody.replace( QString::fromLatin1("<p>"), QString::null );
 
-		//Replace </p> with a <br/> if text follows it
-		theBody.replace( QRegExp( QString::fromLatin1("</p>(.+)") ), QString::fromLatin1("<br/>\\1") );
+		//Replace </p> with a <br/>
+		theBody.replace( QString::fromLatin1("</p>") , QString::fromLatin1("<br/>") );
 
-		//Remove trailing </p>
-		theBody.replace( QRegExp( QString::fromLatin1("</p>") ), QString::null );
+		//Remove trailing <br/>
+		if ( theBody.endsWith( QString::fromLatin1("<br/>") ) )
+			theBody.truncate( theBody.length() - 5 );
+		theBody.remove(  QString::fromLatin1("\n") );
 	}
 
 	QDomElement bodyNode = d->xmlDoc.createElement( QString::fromLatin1("body") );
@@ -281,12 +286,12 @@ QString KopeteMessage::unescape( const QString &xml )
 	QString data = xml;
 
 	//Can someone (Jason?) explain to me why unescaping "" to " ?? thanks - Olivier
-	data.replace( QRegExp( QString::fromLatin1( "\"\"" ) ), QString::fromLatin1( "\"" ) );
-	data.replace( QRegExp( QString::fromLatin1( "&gt;" ) ), QString::fromLatin1( ">" ) );
-	data.replace( QRegExp( QString::fromLatin1( "&lt;" ) ), QString::fromLatin1( "<" ) );
-	data.replace( QRegExp( QString::fromLatin1( "&quot;" ) ), QString::fromLatin1( "\"" ) );
-	data.replace( QRegExp( QString::fromLatin1( "&nbsp;" ) ), QString::fromLatin1( " " ) );
-	data.replace( QRegExp( QString::fromLatin1( "&amp;" ) ), QString::fromLatin1( "&" ) );
+	data.replace( QString::fromLatin1( "\"\"" ), QString::fromLatin1( "\"" ) );
+	data.replace( QString::fromLatin1( "&gt;" ), QString::fromLatin1( ">" ) );
+	data.replace( QString::fromLatin1( "&lt;" ), QString::fromLatin1( "<" ) );
+	data.replace( QString::fromLatin1( "&quot;" ), QString::fromLatin1( "\"" ) );
+	data.replace( QString::fromLatin1( "&nbsp;" ), QString::fromLatin1( " " ) );
+	data.replace( QString::fromLatin1( "&amp;" ), QString::fromLatin1( "&" ) );
 
 	return data;
 }
@@ -316,10 +321,10 @@ QString KopeteMessage::escapedBody() const
 	{
 		escapedBody = QStyleSheet::escape( escapedBody );
  		//Replace carriage returns inside the text
-		escapedBody.replace( QRegExp( QString::fromLatin1( "\n" ) ), QString::fromLatin1( "<br/>" ) );
+		escapedBody.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "<br/>" ) );
 
 		//Replace a tab with 4 spaces
-		escapedBody.replace( QRegExp( QString::fromLatin1( "\t" ) ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
+		escapedBody.replace( QString::fromLatin1( "\t" ), QString::fromLatin1( "&nbsp;&nbsp;&nbsp;&nbsp;" ) );
 
 		//Replace multiple spaces with &nbsp;
 		escapedBody.replace( QRegExp( QString::fromLatin1( "\\s\\s" ) ), QString::fromLatin1( "&nbsp;&nbsp;" ) );
