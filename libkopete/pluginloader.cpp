@@ -70,7 +70,7 @@ LibraryLoader::~LibraryLoader()
 	QDictIterator<KopetePlugin> i( mLibHash );
 	for( ; i.current(); ++i )
 	{
-		if( getInfo( i.currentKey() ).type != "protocol" );
+		if( getInfo( i.currentKey() ).type != "protocol" )
 			remove( i.current() );
 	}
 
