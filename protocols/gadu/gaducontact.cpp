@@ -182,6 +182,7 @@ GaduContact::serialize( QMap<QString, QString>& serializedData, QMap<QString, QS
 	serializedData[ "SecondName" ]	= property( "lastName" ).value().toString();
 	serializedData[ "telephone" ]	= property( "privPhoneNum" ).value().toString();
 	serializedData[ "ignored" ]	= property( "ignored" ).value().toString();
+	serializedData[ "nickname" ]	= property( "nickName" ).value().toString();
 }
 
 contactLine*
@@ -194,7 +195,7 @@ GaduContact::contactDetails()
 
 	cl->firstname	= property( "firstName" ).value().toString();
 	cl->surname	= property( "lastName" ).value().toString();
-	cl->nickname	= contactId();
+	cl->nickname	= property( "nickName" ).value().toString();
 	
 	cl->email	= property( "emailAddress" ).value().toString();
 	cl->phonenr	= property( "privPhoneNum" ).value().toString();

@@ -215,6 +215,7 @@ GaduAccount::actionMenu()
 
 	actionMenu_->insert( listputAction );
 	actionMenu_->insert( searchAction );
+	actionMenu_->popupMenu()->insertSeparator();
 	actionMenu_->insert( listToFileAction );
 	actionMenu_->insert( listFromFileAction );
 	
@@ -684,9 +685,7 @@ GaduAccount::userlist( const QString& contactsListString )
 			if ( (*contactLine)->displayname.length() ) {
 				contactName = (*contactLine)->displayname;
 			}
-
-			// if there is no nickname
-			if ( (*contactLine)->displayname.isNull() ) {
+			else {
 				// no name either
 				if ( (*contactLine)->nickname.isNull() ) {
 					// maybe we can use fistname + surname ?
@@ -712,9 +711,6 @@ GaduAccount::userlist( const QString& contactsListString )
 					contactName = (*contactLine)->nickname;
 				}
 			}
-			else {
-				contactName = (*contactLine)->displayname;
-			}
 
 			bool s = addContact( (*contactLine)->uin, contactName, 0L, KopeteAccount::DontChangeKABC, QString::null, false );
 			if ( s == false ) {
@@ -735,16 +731,7 @@ GaduAccount::userlist( const QString& contactsListString )
 		contact->setProperty( "lastName", (*contactLine)->surname );
 		contact->setProperty( "privPhoneNum", (*contactLine)->phonenr );
 		contact->setProperty( "ignored", i18n( "ignored" ), (*contactLine)->ignored ? "true" : "false" );
-		if ( (*contactLine)->displayname.isEmpty() ) {
-			if ( contact->contactId().isEmpty() ) {
-				kdDebug(14100) << (*contactLine)->uin << "nick name: " << contactName << endl;
-				contact->rename( contactName );
-			}
-		}
-		else {
-		
-		}
-		
+		contact->setProperty( "nickName", i18n( "nick name" ), (*contactLine)->nickname );
 
 		if ( !( (*contactLine)->group.isEmpty() ) ) {
 			// FIXME: libkopete bug i guess, by default contact goes to top level group

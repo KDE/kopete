@@ -553,7 +553,7 @@ GaduSession::stringToContacts( gaduContactsList& gaducontactsList , const QStrin
 		}
 		
 
-//each line ((firstname);(secondname);(displayname);(nickname);(tel);(group);(uin);
+//each line ((firstname);(secondname);(nickname);(displayname);(tel);(group);(uin);
 
 		stringIterator = strList.begin();
 
