@@ -170,6 +170,21 @@ void parseKey( const QString &group, const QString &key, const QString &value, c
 	}
 }
 
+void flushData()
+{
+
+	qcout << "[Account_" << protocol << "_" << accountId << "]" << endl;
+	qcout << "Protocol=" << protocol << endl;
+	qcout << "AccountId=" << accountId << endl;
+	qcout << "Password=" << cryptStr( password ) << endl;
+	qcout << "AutoConnect=" << autoConnect << endl;
+
+	QMap<QString, QString>::ConstIterator it;
+	for ( it = pluginData.begin(); it != pluginData.end(); ++it )
+		qcout << "PluginData_" << protocol << "_" << it.key() << "=" << it.data() << endl;
+
+}
+
 int main()
 {
 	qcin.setEncoding( QTextStream::UnicodeUTF8 );
@@ -197,16 +212,7 @@ int main()
 			{
 				// ... but we were already working on a group, so finish what
 				// we were doing - flush existing group first
-				qcout << "[Account_" << protocol << "_" << accountId << "]" << endl;
-				qcout << "Protocol=" << protocol << endl;
-				qcout << "AccountId=" << accountId << endl;
-				qcout << "Password=" << cryptStr( password ) << endl;
-				qcout << "AutoConnect=" << autoConnect << endl;
-
-				QMap<QString, QString>::ConstIterator it;
-				for ( it = pluginData.begin(); it != pluginData.end(); ++it )
-					qcout << "PluginData_" << protocol << "_" << it.key() << "=" << it.data() << endl;
-
+				flushData ();
 				needFlush = false;
 			}
 
@@ -223,6 +229,9 @@ int main()
 			qcerr << "** Unknown input line: " << line << endl;
 		}
 	}
+
+	if ( needFlush )
+		flushData ();
 
 	return 0;
 }
