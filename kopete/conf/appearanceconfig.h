@@ -52,12 +52,13 @@ public slots:
 	void slotSelectKind(int k);
 
 private slots:
-	void slotConfigSound(void);
-	void slotSoundChanged(void);
+	void slotConfigSound();
+	void slotSoundChanged();
 	void slotUseEmoticonsChanged(bool);
-	void slotConfigChanged(void);
+	void slotConfigChanged();
 	void slotTransparencyChanged(bool);
 	void slotUpdatePreview();
+	void slotShowTrayChanged();
 
 private:
 	KTabCtl* mAppearanceTabCtl; // The TabWidget

@@ -26,6 +26,8 @@
 
 #include <kdebug.h>
 #include <klocale.h>
+#include <kiconloader.h>
+#include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <knotifyclient.h>
 
@@ -92,13 +94,11 @@ void KopeteMetaContact::addContact( KopeteContact *c )
 		{
 //			kdDebug(14010) << "[KopeteMetaContact] addContact(); disabling trackChildNameChanges,"
 //			" more than ONE Contact in MetaContact" << endl;
-			m_trackChildNameChanges=false;
+			m_trackChildNameChanges = false;
 		}
 
-	/*	for( QStringList::ConstIterator it = groups.begin(); it != groups.end(); ++it )
-		{
-			addToGroup(*it);
-		}*/
+		/* for( QStringList::ConstIterator it = groups.begin(); it != groups.end(); ++it )
+			addToGroup(*it); */
 		emit contactAdded(c);
 	}
 
@@ -436,24 +436,30 @@ void KopeteMetaContact::slotContactStatusChanged( KopeteContact * c,
 	emit contactStatusChanged(c,s);
 	OnlineStatus m = m_onlineStatus;
 	updateOnlineStatus();
+
 	if ( (m_onlineStatus != m) && (m_onlineStatus==Online) && (KopetePrefs::prefs()->soundNotify()) )
 	{
+		KopetePrefs *pref = KopetePrefs::prefs();
 		#if KDE_VERSION >= 306
-		if ( KopetePrefs::prefs()->notifyOnline() )
+		if ( pref->notifyOnline() && pref->showTray() )
 		{
-			KPassivePopup::message( i18n( "%2 is now %1!" ).arg(
-				statusString() ).arg( displayName() ),
+			KPassivePopup::message(
+				i18n( "%2 is now %1!" ).arg(statusString()).arg(displayName()),
+				QString(),
+/*				QPixmap(KGlobal::iconLoader()->locate("appdata",QString::fromLatin1("pics/")+statusIcon()+QString::fromLatin1(".png"))),*/
+				QPixmap( KGlobal::iconLoader()->iconPath(statusIcon(), KIcon::Small) ),
 				KopeteSystemTray::systemTray() );
 		}
 		#endif
 
-		KopeteProtocol* p = dynamic_cast<KopeteProtocol*>(c->protocol());
-		if (!p)
+		KopeteProtocol* proto = dynamic_cast<KopeteProtocol*>(c->protocol());
+		if (!proto)
 		{
-			kdDebug(14010) <<"[KopeteMetaContact] slotContactStatusChanged(); KopeteContact is not from a valid Protocol" <<endl;
+			kdDebug(14010) << k_funcinfo << "KopeteContact is not from a valid Protocol" <<endl;
 			return;
 		}
-		if ( !p->isAway() || KopetePrefs::prefs()->soundIfAway() )
+
+		if ( !proto->isAway() || pref->soundIfAway() )
 		{
 			KNotifyClient::event( QString::fromLatin1( "kopete_online" ), i18n( "%2 is now %1!" ).arg(
 				statusString() ).arg( displayName() ) );

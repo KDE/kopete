@@ -55,7 +55,7 @@
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 : KMainWindow( parent, name )
 {
-//	kdDebug(14000) << "[KopeteWindow] KopeteWindow()" << endl;
+//	kdDebug(14000) << k_funcinfo << "called." << endl;
 
 	// Applications should ensure that their StatusBar exists before calling createGUI()
 	// so that the StatusBar is always correctly positioned when KDE is configured to use
@@ -71,11 +71,12 @@ KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 	/* -------------------------------------------------------------------------------- */
 
 	loadOptions();
-
-	// for now systemtray is also always shown
-	// TODO: make the configurable
-	tray->show();
-
+/*
+	if ( KopetePrefs::prefs()->showTray())
+		tray->show();
+	else
+		tray->hide(); // for users without kicker or a similar docking app
+*/
 	// Trap all loaded plugins, so we can add their status bar icons accordingly
 	connect( LibraryLoader::pluginLoader(),
 		SIGNAL( pluginLoaded( KopetePlugin * ) ),
@@ -229,9 +230,9 @@ void KopeteWindow::loadOptions(void)
 	}
 	else
 	{
-		KConfig *config = KGlobal::config();
-		config->setGroup("Appearance");
-		if ( !config->readBoolEntry("StartDocked", false) )
+		KopetePrefs *p = KopetePrefs::prefs();
+		// with no systray-icon we force calling show()
+		if ( !p->startDocked() || !p->showTray() )
 			show();
 	}
 
@@ -278,25 +279,22 @@ void KopeteWindow::showToolbar(void)
 
 void KopeteWindow::showMenubar(void)
 {
-        if( menubarAction->isChecked() )
-                menuBar()->show();
-        else
-                menuBar()->hide();
+	if( menubarAction->isChecked() )
+		menuBar()->show();
+	else
+		menuBar()->hide();
 }
 
 void KopeteWindow::showStatusbar(void)
 {
-        if( statusbarAction->isChecked() )
-                statusBar()->show();
-        else
-                statusBar()->hide();
+	if( statusbarAction->isChecked() )
+		statusBar()->show();
+	else
+		statusBar()->hide();
 }
 
 void KopeteWindow::slotToggleShowOffliners ( void )
 {
-//	kdDebug(14000) << "[KopeteWindow] slotToggleShowOffliners()" << endl;
-//	kdDebug(14000) << "[KopeteWindow] show offliners KAction is " << actionShowOffliners->isChecked() << endl;
-
 	KopetePrefs *p = KopetePrefs::prefs();
 	p->setShowOffline ( actionShowOffliners->isChecked() );
 
@@ -307,10 +305,12 @@ void KopeteWindow::slotToggleShowOffliners ( void )
 
 void KopeteWindow::slotConfigChanged()
 {
-//	kdDebug(14000) << "[KopeteWindow] slotConfigChanged()" << endl;
-//	kdDebug(14000) << "[KopeteWindow] show offliners is " << KopetePrefs::prefs()->showOffline() << endl;
+	KopetePrefs *pref = KopetePrefs::prefs();
 
-	actionShowOffliners->setChecked( KopetePrefs::prefs()->showOffline() );
+	if( isHidden() && !pref->showTray()) // user disabled systray while kopete is hidden, show it!
+		show();
+
+	actionShowOffliners->setChecked( pref->showOffline() );
 }
 
 
@@ -339,13 +339,16 @@ void KopeteWindow::slotGlobalAwayMessageSelect(){
 	m_awayMessageDialog->show();
 }
 
-
-
 void KopeteWindow::closeEvent( QCloseEvent *e )
 {
+	kdDebug(14000) << k_funcinfo << "called." << endl;
+
 	Kopete *kopeteapp = static_cast<Kopete*>(kapp);
-	if (!kopeteapp) return;
-	if(kopeteapp->isShuttingDown())
+	if (!kopeteapp)
+		return;
+
+	// also close if our tray icon is hidden!
+	if(kopeteapp->isShuttingDown() || !KopetePrefs::prefs()->showTray() )
 	{
 		KMainWindow::closeEvent( e );
 		return;
@@ -366,7 +369,7 @@ void KopeteWindow::closeEvent( QCloseEvent *e )
 
 void KopeteWindow::slotQuit()
 {
-	kdDebug(14000) << "KopeteWindow::slotQuit()" << endl;
+	kdDebug(14000) << k_funcinfo << "called." << endl;
 	qApp->quit();
 }
 
@@ -485,6 +488,4 @@ void KopeteWindow::showAddContactDialog()
 }
 
 #include "kopetewindow.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
-

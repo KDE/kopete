@@ -80,6 +80,7 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	mPrfsGeneral = new AppearanceConfig_General(mAppearanceTabCtl);
 	connect(mPrfsGeneral->configSound, SIGNAL(clicked()), this, SLOT(slotConfigSound()));
 	connect(mPrfsGeneral->mSoundNotifyChk, SIGNAL(clicked()), this, SLOT(slotSoundChanged()));
+	connect(mPrfsGeneral->mShowTrayChk, SIGNAL(clicked()), this, SLOT(slotShowTrayChanged()));
 	mAppearanceTabCtl->addTab( mPrfsGeneral, i18n("&General") );
 
 	// "Contact List" TAB ========================================================
@@ -129,6 +130,7 @@ AppearanceConfig::AppearanceConfig(QWidget * parent) :
 	reopen(); // load settings from config
 	slotSoundChanged(); //Disable Button if no checkboxes selected
 	slotTransparencyChanged(mPrfsChatWindow->mTransparencyEnabled->isChecked());
+	slotShowTrayChanged();
 
 	// sync actions, config and prefs-dialog
 	connect(KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()));
@@ -144,6 +146,7 @@ void AppearanceConfig::save()
 	KopetePrefs *p = KopetePrefs::prefs();
 
 	// "General" TAB
+	p->setShowTray( mPrfsGeneral->mShowTrayChk->isChecked() );
 	p->setStartDocked ( mPrfsGeneral->mStartDockedChk->isChecked() );
 	p->setUseQueue ( mPrfsGeneral->mUseQueueChk->isChecked() );
 	p->setTrayflashNotify ( mPrfsGeneral->mTrayflashNotifyChk->isChecked() );
@@ -181,15 +184,13 @@ void AppearanceConfig::save()
 // 	p->setCTransparencyValue( mPrfsChatWindow->mCTransparencyValue->value() );
 	p->setBgOverride( mPrfsChatWindow->mTransparencyBgOverride->isChecked() );
 
-
 	// disconnect or else we will end up in an endless loop
 	disconnect(KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()));
-//	kdDebug(14000) << "[AppearanceConfig] calling KopetePrefs::save()" << endl;
 	p->save();
 	connect(KopetePrefs::prefs(), SIGNAL(saved()), this, SLOT(slotConfigChanged()));
 }
 
-void AppearanceConfig::slotConfigChanged(void)
+void AppearanceConfig::slotConfigChanged()
 {
 //	kdDebug(14000) << k_funcinfo << "calling reopen() now..." << endl;
 	reopen(); // I am lazy :P
@@ -197,10 +198,11 @@ void AppearanceConfig::slotConfigChanged(void)
 
 void AppearanceConfig::reopen()
 {
-//	kdDebug(14000) << k_funcinfo "called" << endl;
+//	kdDebug(14000) << k_funcinfo << "called" << endl;
 	KopetePrefs *p = KopetePrefs::prefs();
 
 	// "General" TAB
+	mPrfsGeneral->mShowTrayChk->setChecked( p->showTray() );
 	mPrfsGeneral->mStartDockedChk->setChecked( p->startDocked() );
 	mPrfsGeneral->mUseQueueChk->setChecked( p->useQueue() );
 	mPrfsGeneral->mTrayflashNotifyChk->setChecked ( p->trayflashNotify() );
@@ -286,10 +288,7 @@ void AppearanceConfig::slotConfigSound()
 
 void AppearanceConfig::slotSoundChanged()
 {
-	if ( mPrfsGeneral->mSoundNotifyChk->isChecked() )
-		mPrfsGeneral->configSound->setEnabled(true);
-	else
-		mPrfsGeneral->configSound->setEnabled(false);
+	mPrfsGeneral->configSound->setEnabled( mPrfsGeneral->mSoundNotifyChk->isChecked() );
 }
 
 void AppearanceConfig::slotUseEmoticonsChanged ( bool checked )
@@ -302,6 +301,15 @@ void AppearanceConfig::slotTransparencyChanged ( bool checked )
 	mPrfsChatWindow->mTransparencyTintColor->setEnabled( checked );
 	mPrfsChatWindow->mTransparencyValue->setEnabled( checked );
 	mPrfsChatWindow->mTransparencyBgOverride->setEnabled( checked );
+}
+
+void AppearanceConfig::slotShowTrayChanged()
+{
+	bool check = mPrfsGeneral->mShowTrayChk->isChecked();
+
+	mPrfsGeneral->mStartDockedChk->setEnabled(check);
+	mPrfsGeneral->mTrayflashNotifyChk->setEnabled(check);
+	mPrfsGeneral->mBalloonNotifyChk->setEnabled(check);
 }
 
 void AppearanceConfig::slotSelectKind(int k)
@@ -361,6 +369,4 @@ void AppearanceConfig::slotUpdatePreview()
 }
 
 #include "appearanceconfig.moc"
-
 // vim: set noet ts=4 sts=4 sw=4:
-

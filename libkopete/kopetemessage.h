@@ -269,10 +269,6 @@ public:
 
 #endif
 
-
-
-
-
 /*
  * Local variables:
  * c-indentation-style: k&r
@@ -281,4 +277,3 @@ public:
  * End:
  */
 // vim: set noet ts=4 sts=4 sw=4:
-

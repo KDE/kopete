@@ -18,6 +18,7 @@
 #include <qregexp.h>
 #include <kdebug.h>
 #include <kglobal.h>
+#include <kstandarddirs.h>
 #include <klocale.h>
 
 #include "kopetemessage.h"
@@ -324,15 +325,27 @@ QString KopeteMessage::transformMessage( const QString &model ) const
 					break;
 
 				case 't': //insert the 'to' displayName
+				{
 					if (to().first()->metaContact())
 						message.append( QStyleSheet::escape(to().first()->metaContact()->displayName()) );
 					else
 						message.append( QStyleSheet::escape(to().first()->displayName()) );
 					break;
+				}
+
+				case 'I': //insert the statusicon path
+				{
+					QString icoPath = locate("appdata",QString::fromLatin1("pics/")+mFrom->statusIcon()+QString::fromLatin1(".png"));
+					if (!icoPath.isNull())
+						message.append( QStyleSheet::escape(icoPath) );
+					break;
+				}
 
 				default:
+				{
 					message += c;
 					break;
+				}
 			}
 		}
 		f++;
