@@ -22,6 +22,7 @@
 #include "libkirc/kirctransfer.h"
 #include "libkirc/kirctransferhandler.h"
 
+#include "kopetemetacontact.h"
 #include "irccontact.h"
 #include "irccontactmanager.h"
 
@@ -69,7 +70,7 @@ void IRCTransferHandler::transferCreated(KIRCTransfer *t)
 	case KIRCTransfer::FileOutgoing:
 		{
 			KopeteTransfer *kt = KopeteTransferManager::transferManager()->addTransfer(
-				contact, fileName, fileSize, contact->displayName(),
+				contact, fileName, fileSize, contact->metaContact()->displayName(),
 				KopeteFileTransferInfo::Outgoing);
 			connectKopeteTransfer(kt, t);
 		}

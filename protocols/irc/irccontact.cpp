@@ -23,7 +23,8 @@
 #include <qtextcodec.h>
 
 #include "ircaccount.h"
-
+#include "kopeteglobal.h"
+#include "kopeteuiglobal.h"
 #include "kopetemetacontact.h"
 #include "kopeteview.h"
 #include "ircusercontact.h"
@@ -39,7 +40,7 @@ IRCContact::IRCContact(IRCContactManager *contactManager, const QString &nick, K
 	  m_msgManager(0L)
 {
 	// Contact list display name
-	setDisplayName(m_nickName);
+	setProperty( Kopete::Global::Properties::self()->nickName(), m_nickName );
 
 	// IRCContactManager stuff
 	QObject::connect(contactManager, SIGNAL(privateMessage(IRCContact *, IRCContact *, const QString &)),
@@ -151,6 +152,12 @@ void IRCContact::slotUserDisconnected(const QString &user, const QString &reason
 	}
 }
 
+void IRCContact::setNickName( const QString &nickname )
+{
+	m_nickName = nickname;
+	setProperty( Kopete::Global::Properties::self()->nickName(), nickname);
+}
+
 void IRCContact::slotNewNickChange(const QString &oldnickname, const QString &newnickname)
 {
 	//kdDebug(14120) << k_funcinfo << oldnickname << " >> " << newnickname << ", " << m_nickName << endl;
@@ -159,8 +166,6 @@ void IRCContact::slotNewNickChange(const QString &oldnickname, const QString &ne
 	if( user )
 	{
 		user->setNickName( newnickname );
-		//If tracking name changes....
-		user->setDisplayName( newnickname );
 
 		//If the user is in our contact list, then change the notify list nickname
 		if( !user->metaContact()->isTemporary() )

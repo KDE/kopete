@@ -195,7 +195,7 @@ void ChannelList::checkSearchResult( const QString &channel, uint users, const Q
 		( mSearch.isEmpty() || channel.contains( mSearch, false ) || topic.contains( mSearch, false ) )
 	)
 	{
-		ChannelListItem *i = new ChannelListItem( mChannelList, channel, QString::number(users), topic );
+		new ChannelListItem( mChannelList, channel, QString::number(users), topic );
 	}
 }
 

@@ -70,7 +70,7 @@ class ChannelList : public QWidget
 		KIRC *m_engine;
 		bool mSearching;
 		QString mSearch;
-		int mUsers;
+		uint mUsers;
 		QMap< QString, QPair< uint, QString > > channelCache;
 		QMap< QString, QPair< uint, QString > >::const_iterator cacheIterator;
 };
