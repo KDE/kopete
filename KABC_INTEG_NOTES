@@ -20,21 +20,18 @@ Use cases
 
 4)  An existing Kopete config is present and we upgrade to a version of Kopete supporting kabc.
 
-5)  After abandoning Kopete, users start using a different KDE IM client, and would like to use the IM address details stored in the KDE address book.
+5a)  After abandoning Kopete, users start using a different KDE IM client, and would like to use the IM address details stored in the KDE address book.
+
+5b)  The user used another KDE IM Client.  But he discover Kopete which is finaly the best, so he decide to use it, and he would like to use information already existing in KABC
 
 6)  Protocols may deliver contact data that users may want to aggregate into the kabc entry.
 
-<<<<<<< KABC_INTEG_NOTES
 7)  A contact adds a new IM account, either the user decides to add the new account to the MC manually, or the contact messages the user first, we get a temporary contact Kopete side, add them to the MC.
 
 8) The user no longer wishes to have a particular contact (or even metacontact) in Kopete, and deletes the object.
 
 9) A contact changes accounts (msn:foo@uncool.org -> foo@cool.org).  This is the same as 7) then 8).
 
-=======
-7)  The user used another KDE IM Client.  But he discover Kopete which is finaly the best, so he decide to use it, and he would like to use information already existing in KABC
-
->>>>>>> 1.2
 Side Issues
 -----------
 
@@ -58,11 +55,8 @@ Possible ACW order including kabc
 
 Olivier: I think a step (the first?) should be to ask a displayname for the metacontact.
 
-
-
-wow wow wow...  this make a big ACW, in regard of this bug report:
+wow wow wow...  this make a big ACW, but a quick add feature would still be desired by people like this:
 Bug 53062: Adding contacts more quickly
-
 
 Fields to put in kabc
 ~~~~~~~~~~~~~~~~~~~~~
@@ -74,17 +68,10 @@ include UID from related kabc entry
 In kabc
 Something like X-MESSAGING-MSN:bob@hotmail.com for each protocol account that contact uses.
 
-<<<<<<< KABC_INTEG_NOTES
+We should keep the extra stuff in kabc to a minimum.  We can store nicknames in contactlist.xml.
+
 KABC Participation modes
 ------------------------
-=======
-
-do we need to insert nicknames? or other?
-
-
-KABC Participation
-------------------
->>>>>>> 1.2
 
 Participation in the relation can be optional or mandatory.
 
@@ -132,8 +119,7 @@ Against
 .) User has control of address book, this removes that control.
 .) Synthetic entries may be duplicates of existing user added entries and user will have to reassociate MCs with correct entries and throw out the synthetic entries.
 .) Hybrid approach may be too complex for user to comprehend.
-
-How slow this will be to add hundred of contacts when syncing the contactlist for the first time?
+.) this will be slow to add hundred of contacts when syncing the contactlist for the first time
 
 KDE PIM Apps' use of Kopete
 --------------------------
