@@ -279,7 +279,7 @@ void KopeteMetaContact::startChat()
 	if( !c )
 	{
 		KMessageBox::error( qApp->mainWidget(),
-			i18n( "This user is not reachable at the moment. Please"
+			i18n( "This user is not reachable at the moment. Please "
 				"try a protocol that supports offline sending, or wait "
 				"until this user goes online." ),
 			i18n( "User is not reachable - Kopete" ) );
