@@ -182,7 +182,7 @@ KActionMenu* MSNAccount::actionMenu()
 	return m_actionMenu;
 }
 
-MSNNotifySocket *MSNAccount::notifySocket()
+MSNNotifySocket *MSNAccount::notifySocket() const
 {
 	return m_notifySocket;
 }
@@ -1014,7 +1014,7 @@ bool MSNAccount::addContactToMetaContact( const QString &contactId, const QStrin
 	return false;
 }
 
-bool MSNAccount::isHotmail()
+bool MSNAccount::isHotmail() const
 {
 	if(!m_openInboxAction)
 		return false;

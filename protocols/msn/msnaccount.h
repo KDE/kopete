@@ -57,7 +57,7 @@ public:
 	 */
 	void setPublicName( const QString &name );
 
-	MSNNotifySocket *notifySocket();
+	MSNNotifySocket *notifySocket() const;
 
 	// FIXME: Make generic - Martijn
 	void setOnlineStatus( const KopeteOnlineStatus &status );
@@ -69,7 +69,7 @@ public:
 	/**
 	 * return true if we are able to send mail, or to open hotmail inbox
 	 */
-	bool isHotmail();
+	bool isHotmail() const;
 
 public slots:
 	virtual void connect() ;
