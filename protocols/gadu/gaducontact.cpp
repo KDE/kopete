@@ -140,8 +140,9 @@ GaduContact::customContextMenuActions()
 {
 	QPtrList<KAction> *fakeCollection = new QPtrList<KAction>();
 	//show profile
-	KAction* actionShowProfile = new KAction( i18n("Show Profile") , "info", 0,  this, SLOT( slotShowPublicProfile() ),
-										this, "actionShowPublicProfile" );
+	KAction* actionShowProfile = new KAction( i18n("Show Profile") , "info", 0,  
+						this, SLOT( slotShowPublicProfile() ),
+						this, "actionShowPublicProfile" );
 
 	fakeCollection->append( actionShowProfile );
 
