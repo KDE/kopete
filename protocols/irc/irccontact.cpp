@@ -166,22 +166,25 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 
 void IRCContact::slotUserDisconnected( const QString &user, const QString &reason)
 {
-	QString nickname = user.section('!', 0, 0);
-	KopeteContact *c = locateUser( nickname );
-	if ( c )
+	if( isConnected )
 	{
-		KopeteMessage msg(c, mContact, i18n("User %1 has quit (\"%2\")").arg(nickname).arg(reason), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-		manager()->appendMessage(msg);
-		manager()->removeContact( c, true );
-		c->setOnlineStatus( KopeteContact::Offline );
-		mIdentity->unregisterUser( nickname );
+		QString nickname = user.section('!', 0, 0);
+		KopeteContact *c = locateUser( nickname );
+		if ( c )
+		{
+			KopeteMessage msg(c, mContact, i18n("User %1 has quit (\"%2\")").arg(nickname).arg(reason), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+			manager()->appendMessage(msg);
+			manager()->removeContact( c, true );
+			c->setOnlineStatus( KopeteContact::Offline );
+			mIdentity->unregisterUser( nickname );
+		}
 	}
 }
 
 void IRCContact::slotNewMessage(const QString &originating, const QString &target, const QString &message)
 {
 	//kdDebug(14120) << k_funcinfo << "originating is " << originating << " target is " << target << endl;
-	if ( target.lower() == mNickName.lower() )
+	if ( isConnected && target.lower() == mNickName.lower() )
 	{
 		QString nickname = originating.section('!', 0, 0);
 		KopeteContact *user = locateUser( nickname );
@@ -197,7 +200,7 @@ void IRCContact::slotNewMessage(const QString &originating, const QString &targe
 void IRCContact::slotNewAction(const QString &originating, const QString &target, const QString &message)
 {
 	//kdDebug(14120) << k_funcinfo << "originating is " << originating << " target is " << target << endl;
-	if ( target.lower() == mNickName.lower())
+	if ( isConnected && target.lower() == mNickName.lower())
 	{
 		QString nickname = originating.section('!', 0, 0);
 		KopeteContact *user = locateUser( nickname );
@@ -231,7 +234,7 @@ void IRCContact::slotNewWhoIsUser(const QString &nickname, const QString &userna
 
 void IRCContact::slotNewWhoIsServer(const QString &nickname, const QString &servername, const QString &serverinfo)
 {
-	if( mWhoisMap.contains(nickname) )
+	if( isConnected && mWhoisMap.contains(nickname) )
 	{
 		mWhoisMap[nickname]->serverName = servername;
 		mWhoisMap[nickname]->serverInfo = serverinfo;
@@ -240,25 +243,25 @@ void IRCContact::slotNewWhoIsServer(const QString &nickname, const QString &serv
 
 void IRCContact::slotNewWhoIsIdle(const QString &nickname, unsigned long idle)
 {
-	if( mWhoisMap.contains(nickname) )
+	if( isConnected && mWhoisMap.contains(nickname) )
 		mWhoisMap[nickname]->idle = idle;
 }
 
 void IRCContact::slotNewWhoIsOperator(const QString &nickname)
 {
-	if( mWhoisMap.contains(nickname) )
+	if( isConnected && mWhoisMap.contains(nickname) )
 		mWhoisMap[nickname]->isOperator = true;
 }
 
 void IRCContact::slotNewWhoIsChannels(const QString &nickname, const QString &channel)
 {
-	if( mWhoisMap.contains(nickname) )
+	if( isConnected && mWhoisMap.contains(nickname) )
 		mWhoisMap[nickname]->channels.append( channel );
 }
 
 void IRCContact::slotWhoIsComplete(const QString &nickname)
 {
-	if( mWhoisMap.contains(nickname) )
+	if( isConnected && mWhoisMap.contains(nickname) )
 	{
 		whoIsInfo *w = mWhoisMap[nickname];
 		KopeteMessage msg;
@@ -314,7 +317,7 @@ void IRCContact::slotNewNickChange( const QString &oldnickname, const QString &n
 void IRCContact::slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived)
 {
 	//kdDebug(14120) << k_funcinfo << target << endl;
-	if( target == mNickName )
+	if( isConnected && target == mNickName )
 	{
 		KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
 		if( activeView )
@@ -350,11 +353,14 @@ void IRCContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 KopeteContact *IRCContact::locateUser( const QString &nick )
 {
 	//kdDebug(14120) << k_funcinfo << "Find nick " << nick << endl;
-	KopeteContactPtrList mMembers = manager()->members();
-	for( KopeteContact *it = mMembers.first(); it; it = mMembers.next() )
+	if( isConnected )
 	{
-		if( static_cast<IRCContact*>(it)->nickName() == nick )
-			return it;
+		KopeteContactPtrList mMembers = manager()->members();
+		for( KopeteContact *it = mMembers.first(); it; it = mMembers.next() )
+		{
+			if( static_cast<IRCContact*>(it)->nickName() == nick )
+				return it;
+		}
 	}
 
 	return 0L;

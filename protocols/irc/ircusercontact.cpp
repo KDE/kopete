@@ -65,6 +65,8 @@ IRCUserContact::IRCUserContact(IRCIdentity *identity, const QString &nickname, K
 	QObject::connect(identity->engine(), SIGNAL(incomingModeChange(const QString&, const QString&, const QString&)), this, SLOT(slotIncomingModeChange(const QString&,const QString&, const QString&)));
 	QObject::connect(identity->engine(), SIGNAL(incomingPrivMessage(const QString &, const QString &, const QString &)), this, SLOT(slotNewPrivMessage(const QString &, const QString &, const QString &)));
 	QObject::connect(identity->engine(), SIGNAL(userOnline( const QString & )), this, SLOT(slotUserOnline(const QString &)));
+
+	isConnected = false;
 }
 
 IRCUserContact::~IRCUserContact()
@@ -91,6 +93,7 @@ void IRCUserContact::slotMessageManagerDestroyed()
 {
 	mIdentity->unregisterUser( mNickName );
 	mMsgManager = 0L;
+	isConnected = false;
 }
 
 void IRCUserContact::slotUserOnline( const QString &nick )
@@ -121,7 +124,7 @@ QString IRCUserContact::statusIcon() const
 void IRCUserContact::slotNewPrivMessage(const QString &originating, const QString &, const QString &message)
 {
 	//kdDebug(14120) << k_funcinfo << "o:" << originating << "; t:" << target << endl;
-	if (originating.section('!',0,0).lower() == mNickName.lower())
+	if ( originating.section('!',0,0).lower() == mNickName.lower() )
 	{
 		KopeteMessage msg( (KopeteContact*)this, mMyself, message, KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat );
 		msg.setBody( mParser->parse( msg.escapedBody() ), KopeteMessage::RichText );

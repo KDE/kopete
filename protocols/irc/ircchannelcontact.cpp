@@ -29,6 +29,7 @@
 #include <qsocket.h>
 #include <kdebug.h>
 #include <klineeditdlg.h>
+#include <qapplication.h>
 
 IRCChannelContact::IRCChannelContact(IRCIdentity *identity, const QString &channel, KopeteMetaContact *metac) :
 		IRCContact( identity, channel, metac )
@@ -147,7 +148,11 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QStringList 
 			user->setUserclass( mNickName, userclass );
 			user->setOnlineStatus( KopeteContact::Online );
 			user->addChannel( mNickName );
-			manager()->addContact( static_cast<KopeteContact*>(user), true );
+
+			//Post the event so we don't block the UI
+			ContactAddedEvent *ce = new ContactAddedEvent( static_cast<KopeteContact*>(user) );
+			QApplication::postEvent( manager(), ce );
+			//manager()->addContact( static_cast<KopeteContact*>(user), true );
 		}
 	}
 }
@@ -177,7 +182,7 @@ void IRCChannelContact::slotPart()
 
 void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString &channel)
 {
-	if( isConnected && channel.lower() == mNickName.lower() )
+	if( isConnected && (channel.lower() == mNickName.lower()) )
 	{
 		QString nickname = user.section('!', 0, 0);
 		if ( nickname.lower() == mEngine->nickName().lower() )

@@ -99,6 +99,7 @@ void KIRC::slotReadyRead()
 	while (canReadLine() == true)
 	{
 		QCString rawline = readLine().latin1();
+		kdDebug(14120) << rawline << endl;
 		QString line;
 		QTextCodec *codec = QTextCodec::codecForContent(rawline.data(), rawline.length());
 		if (codec)
