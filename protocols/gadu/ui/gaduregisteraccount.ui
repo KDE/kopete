@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>368</width>
-            <height>307</height>
+            <width>315</width>
+            <height>275</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -28,8 +28,8 @@
     </property>
     <property name="maximumSize">
         <size>
-            <width>500</width>
-            <height>500</height>
+            <width>32767</width>
+            <height>32767</height>
         </size>
     </property>
     <property name="baseSize">
@@ -44,133 +44,177 @@
     <property name="modal">
         <bool>false</bool>
     </property>
-    <grid>
+    <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QFrame" row="0" column="0">
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>frame3</cstring>
+                <cstring>layout10</cstring>
             </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>0</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="frameShape">
-                <enum>LineEditPanel</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Raised</enum>
-            </property>
-            <grid>
+            <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLayoutWidget" row="0" column="0" rowspan="1" colspan="3">
+                <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>layout10</cstring>
+                        <cstring>layout6</cstring>
                     </property>
-                    <hbox>
+                    <vbox>
                         <property name="name">
                             <cstring>unnamed</cstring>
                         </property>
-                        <widget class="QLayoutWidget">
+                        <widget class="QLabel">
                             <property name="name">
-                                <cstring>layout6</cstring>
+                                <cstring>textLabel2</cstring>
                             </property>
-                            <vbox>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <widget class="QLabel">
-                                    <property name="name">
-                                        <cstring>textLabel2</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string>E-mail:</string>
-                                    </property>
-                                    <property name="buddy" stdset="0">
-                                        <cstring>kLineEdit1_2</cstring>
-                                    </property>
-                                </widget>
-                                <widget class="QLabel">
-                                    <property name="name">
-                                        <cstring>textLabel2_3</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string>Password:</string>
-                                    </property>
-                                    <property name="buddy" stdset="0">
-                                        <cstring>kLineEdit1_2</cstring>
-                                    </property>
-                                </widget>
-                                <widget class="QLabel">
-                                    <property name="name">
-                                        <cstring>textLabel1_2</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string>Repeat password:</string>
-                                    </property>
-                                </widget>
-                            </vbox>
+                            <property name="text">
+                                <string>E-mail:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>kLineEdit1_2</cstring>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Your E-mail address.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The E-mail address you would like to use to register this account.</string>
+                            </property>
                         </widget>
-                        <widget class="QLayoutWidget">
+                        <widget class="QLabel">
                             <property name="name">
-                                <cstring>layout4</cstring>
+                                <cstring>textLabel2_3</cstring>
                             </property>
-                            <vbox>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <widget class="KLineEdit">
-                                    <property name="name">
-                                        <cstring>emailArea</cstring>
-                                    </property>
-                                    <property name="echoMode">
-                                        <enum>Password</enum>
-                                    </property>
-                                </widget>
-                                <widget class="KLineEdit">
-                                    <property name="name">
-                                        <cstring>password1</cstring>
-                                    </property>
-                                    <property name="maxLength">
-                                        <number>256</number>
-                                    </property>
-                                    <property name="edited">
-                                        <bool>true</bool>
-                                    </property>
-                                    <property name="dragEnabled">
-                                        <bool>false</bool>
-                                    </property>
-                                </widget>
-                                <widget class="KLineEdit">
-                                    <property name="name">
-                                        <cstring>password2</cstring>
-                                    </property>
-                                    <property name="echoMode">
-                                        <enum>Password</enum>
-                                    </property>
-                                </widget>
-                            </vbox>
+                            <property name="text">
+                                <string>Password:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>kLineEdit1_2</cstring>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The possword you would like to use.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The possword you would like to use for this account.</string>
+                            </property>
                         </widget>
-                    </hbox>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel1_2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Repeat password:</string>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>A confirmation of the possword you would like to use.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>A confirmation of the possword you would like to use for this account.</string>
+                            </property>
+                        </widget>
+                    </vbox>
                 </widget>
-                <widget class="QLabel" row="1" column="0" rowspan="1" colspan="3">
+                <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>textLabel1</cstring>
+                        <cstring>layout4</cstring>
                     </property>
-                    <property name="text">
-                        <string>&lt;p align="center"&gt;Type in token from picture below in text area. 
-This is required to register new account.
-&lt;/p&gt;</string>
-                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="KLineEdit">
+                            <property name="name">
+                                <cstring>emailArea</cstring>
+                            </property>
+                            <property name="echoMode">
+                                <enum>Password</enum>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Your E-mail address.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The E-mail address you would like to use to register this account.</string>
+                            </property>
+                        </widget>
+                        <widget class="KLineEdit">
+                            <property name="name">
+                                <cstring>password1</cstring>
+                            </property>
+                            <property name="maxLength">
+                                <number>256</number>
+                            </property>
+                            <property name="edited">
+                                <bool>true</bool>
+                            </property>
+                            <property name="dragEnabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The possword you would like to use.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The possword you would like to use for this account.</string>
+                            </property>
+                        </widget>
+                        <widget class="KLineEdit">
+                            <property name="name">
+                                <cstring>password2</cstring>
+                            </property>
+                            <property name="echoMode">
+                                <enum>Password</enum>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>A confirmation of the possword you would like to use.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>A confirmation of the possword you would like to use for this account.</string>
+                            </property>
+                        </widget>
+                    </vbox>
                 </widget>
-                <widget class="QLayoutWidget" row="2" column="1">
+            </hbox>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>&lt;p align="center"&gt;&lt;i&gt;Type in token from picture below in text area. 
+This is required to register new account.&lt;/i&gt;&lt;/p&gt;</string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout277</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer3</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>30</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QLayoutWidget">
                     <property name="name">
                         <cstring>layout12</cstring>
                     </property>
@@ -226,10 +270,16 @@ This is required to register new account.
                             <property name="name">
                                 <cstring>textToken</cstring>
                             </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The text from the picture above.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The text from the picture above.  This is used to prevent abusive automated registration scripts.</string>
+                            </property>
                         </widget>
                     </vbox>
                 </widget>
-                <spacer row="2" column="2">
+                <spacer>
                     <property name="name">
                         <cstring>spacer4</cstring>
                     </property>
@@ -246,43 +296,26 @@ This is required to register new account.
                         </size>
                     </property>
                 </spacer>
-                <spacer row="2" column="0">
-                    <property name="name">
-                        <cstring>spacer3</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>30</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <spacer row="3" column="1">
-                    <property name="name">
-                        <cstring>spacer5</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-            </grid>
+            </hbox>
         </widget>
-    </grid>
+        <spacer>
+            <property name="name">
+                <cstring>spacer5</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
