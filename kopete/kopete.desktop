@@ -1,8 +1,7 @@
 [Desktop Entry]
-Name=kopete
-Comment=Kopete, The KDE InstantMessenger
-Name[de]=Kopete
-Comment[de]=Kopete, der KDE InstantMessenger
+Name=Kopete
+Comment=Kopete, The KDE Instant Messenger
+Comment[da]=Kopete, KDE InstantMessenger
 Exec=kopete %i %m -caption "%c"
 Type=Application
 Terminal=0
