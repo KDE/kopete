@@ -101,6 +101,7 @@ signals:
 protected slots:
 	void cancelUnreadMessageEvent();
     void chatWindowClosing();
+	void messageSentFromWindow( const QString &message);
 private:
 	/**
 	 * Create a message manager. This constructor is private, because the
@@ -111,7 +112,7 @@ private:
 		QString logFile = QString::null, QObject *parent = 0, const char *name = 0 );
 
 	KopeteContactList mContactList;
-	KopeteContact *mUser;
+	const KopeteContact *mUser;
 	KopeteChatWindow *mChatWindow;
 	KopeteEvent *mUnreadMessageEvent;
 	KopeteMessageList mMessageQueue;

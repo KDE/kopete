@@ -33,7 +33,6 @@ KopeteMessageManager *KopeteMessageManagerFactory::create(
 	const KopeteContact *user, KopeteContactList &contacts,
 	QString logFile )
 {
-
 	bool createNewSession = false;
 	KopeteMessageManager *tmp;
 	for ( tmp = mSessionList.first(); tmp ; tmp = mSessionList.next() )
@@ -49,6 +48,7 @@ KopeteMessageManager *KopeteMessageManagerFactory::create(
 				{
 					kdDebug() << "[KopeteMessageManagerFactory] create() Oops, contact not found! new session needed!" << endl;	
 					createNewSession = true;
+					break;
 				}
 			}
 			if ( createNewSession == false )
@@ -62,6 +62,7 @@ KopeteMessageManager *KopeteMessageManagerFactory::create(
 			kdDebug() << "[KopeteMessageManagerFactory] User doesnt match, trying next session" << endl;	
 		}
 	}
+	
 	KopeteMessageManager *session = new KopeteMessageManager ( user, contacts , logFile);
 	connect( session, SIGNAL(dying(KopeteMessageManager*)), this, SLOT(slotRemoveSession(KopeteMessageManager*)));
 	(mSessionList).append(session);

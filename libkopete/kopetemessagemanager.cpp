@@ -10,7 +10,7 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user , KopeteCo
 {
 
 	mContactList = others;
-	mUser = mUser;
+	mUser = user;
 	mChatWindow = 0L;
 	mUnreadMessageEvent = 0L;
 	mReadMode = Queued;
@@ -64,6 +64,7 @@ void KopeteMessageManager::readMessages()
 		/* When the window is shown, we have to delete tjis contact event */
 		kdDebug() << "[KopeteMessageManager] Connecting message box shown() to event killer" << endl;
 		connect ( mChatWindow, SIGNAL(shown()), this, SLOT(cancelUnreadMessageEvent()) );
+		connect ( mChatWindow, SIGNAL(messageSent(const QString &)), this, SLOT(messageSentFromWindow(const QString &)) );
 		connect ( mChatWindow, SIGNAL(destroyed()), this, SLOT(chatWindowClosing()) );
 	}
 	
@@ -74,6 +75,13 @@ void KopeteMessageManager::readMessages()
 	}
 	mChatWindow->show();	// show message window again
 	
+}
+
+void KopeteMessageManager::messageSentFromWindow(const QString &message)
+{
+	QString body = message;
+	KopeteMessage tmpmessage( mUser->name() , (mContactList.first())->name(), body , KopeteMessage::Outbound);
+	emit messageSent (tmpmessage);
 }
 
 void KopeteMessageManager::chatWindowClosing()
