@@ -28,7 +28,6 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kstringhandler.h>
-#include <ktempfile.h>
 #include <kmdcodec.h>
 
 #include "kopetemessage.h"
@@ -64,7 +63,6 @@ public:
 	bool rtfOverride;
 	QDateTime timeStamp;
 	QFont font;
-	KTempFile photoFile;
 
 	QColor fgColor;
 	QColor bgColor;
