@@ -23,18 +23,16 @@ fi
 ac_save_LIBS="$LIBS"
 ac_save_CXXFLAGS="$CXXFLAGS"
 LIBS="$LIBGG_LIBS -lgadu $LIBPTHREAD"
-CXXFLAGS="$CXXFLAGS $LIBGG_INCLUDES"
+CFLAGS="$CFLAGS $LIBGG_INCLUDES"
 AC_MSG_CHECKING([for libgadu >= 1.0])
 	AC_TRY_RUN(
 	[
 	#include <libgadu.h>
 	#include <stdio.h>
-	#ifndef __GG_LIBGADU_HAVE_PTHREAD
-	#error "libgadu needs pthread support, in order to work with gadu"
-	#endif
 	
 	int main()
 	{
+#ifdef __GG_LIBGADU_HAVE_PTHREAD
 		int bar;
 		bar = (int) strlen((char *)gg_libgadu_version());
 		if (bar == 8)
@@ -55,6 +53,7 @@ AC_MSG_CHECKING([for libgadu >= 1.0])
 				return 0;
 			}
 		}
+#endif
 	return 1;
 	}
 	], [
