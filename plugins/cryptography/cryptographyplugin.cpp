@@ -133,7 +133,7 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 	if(msg.direction() != KopeteMessage::Inbound)
 		return;
 	QString body=msg.plainBody();
-	if(!body.startsWith("-----BEGIN Cryptography MESSAGE----"))
+	if(!body.startsWith("-----BEGIN PGP MESSAGE----"))
 		return;
 
 	body=KgpgInterface::KgpgDecryptText(body, m_prefs->privateKey());
