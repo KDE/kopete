@@ -45,6 +45,8 @@ MSNContact::MSNContact(QString userid, const QString name, MSNProtocol *protocol
 	mUserID = userid;
 	hasLocalGroup = false;
 
+	historyDialog = 0L;
+
 	initContact(userid, name, protocol);
 }
 
@@ -57,6 +59,8 @@ MSNContact::MSNContact(QListViewItem *parent, QString userid, const QString name
 	mUserID = userid;
 	hasLocalGroup = true;
 	parentGroup = parent;
+
+	historyDialog = 0L;
 
 	initContact(userid, name, protocol);
 }
@@ -141,7 +145,7 @@ void MSNContact::initActions()
 	actionRemove			= new KAction ( i18n("Delete contact"), "edittrash", 0, this, SLOT(slotRemoveThisUser()), this, "actionDelete" );
 	actionContactCopy		= new KListAction ( i18n("Copy contact"), "editcopy", 0, this, SLOT(slotCopyThisUser()), this, "actionCopy" );
 	actionContactMove		= new KListAction ( i18n("Move contact"), "editcut", 0, this, SLOT(slotMoveThisUser()), this, "actionMove" );
-	actionHistory			= new KAction ( i18n("View History"), "history", 0, this, SLOT(slotHistory()), this, "actionDelete" );
+	actionHistory			= new KAction ( i18n("View History"), "history", 0, this, SLOT(slotViewHistory()), this, "actionHistory" );
 }
 
 void MSNContact::rightButtonPressed(const QPoint &point)
@@ -154,11 +158,13 @@ void MSNContact::rightButtonPressed(const QPoint &point)
 	popup = new KPopupMenu();
 	popup->insertTitle(mUserID);
 	actionChat->plug( popup );
+	popup->insertSeparator();
+	actionHistory->plug( popup );
+	popup->insertSeparator();
 	actionRemoveFromGroup->plug( popup );
 	actionRemove->plug( popup );
 	actionContactCopy->plug( popup );
 	actionContactMove->plug( popup );
-	actionHistory->plug( popup );
 	popup->popup(QCursor::pos());
 }
 
@@ -200,11 +206,6 @@ void MSNContact::slotCopyThisUser()
 	QString newgroup;
 	newgroup = actionContactCopy->currentText();
 	mProtocol->engine->contactCopy( mUserID, newgroup);
-}
-
-void MSNContact::slotHistory()
-{
-
 }
 
 void MSNContact::slotContactRemoved(QString handle, QString group)
@@ -361,5 +362,38 @@ void MSNContact::slotReadSettings(void)
 	else if ( kopeteapp->appearance()->showOffline() && mStatus == FLN  )
 	{	// show offliners if wanted
 		setHidden(false);
+	}
+}
+
+
+void MSNContact::slotViewHistory()
+{
+	kdDebug() << "MSN Plugin: slotViewHistory()" << endl;
+
+	if (historyDialog != 0L)
+	{
+		historyDialog->raise();
+	}
+	else
+	{
+		historyDialog = new KopeteHistoryDialog(QString("kopete/msn_logs/%1.log").arg(mUserID), mName, 0, "ICQHistoryDialog");
+
+		connect ( historyDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()) );
+		connect ( historyDialog, SIGNAL(destroyed()), this, SLOT(slotHistoryDialogClosing()) );
+	}
+}
+
+void MSNContact::slotCloseHistoryDialog()
+{
+	kdDebug() << "MSN Plugin: slotCoseHistoryDialog()" << endl;
+	delete historyDialog;
+}
+
+void MSNContact::slotHistoryDialogClosing()
+{
+	kdDebug() << "MSN Plugin: slotHistoryDialogClosing()" << endl;
+	if (historyDialog != 0L)
+	{
+		historyDialog = 0L;
 	}
 }

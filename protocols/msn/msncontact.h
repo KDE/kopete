@@ -20,6 +20,7 @@
 
 #include "imcontact.h"
 #include "msnprotocol.h"
+#include "historydialog.h"
 #include <kmsnchatservice.h>
 
 #include <kopete.h>
@@ -71,7 +72,6 @@ class MSNContact : public IMContact
 		void slotCopyThisUser();
 		void slotMoveThisUser();
 		void slotRemoveFromGroup();
-		void slotHistory();
 		
 		void slotUpdateContact (QString, uint);
 		// We have to delete the contact if MSN disconenct
@@ -81,6 +81,11 @@ class MSNContact : public IMContact
 //		void slotFlashIcon ( void );
 		void slotReadSettings ( void );
 
+		void slotHistoryDialogClosing();
+		void slotCloseHistoryDialog();
+		void slotViewHistory();
+
+
 	private:
 		void initActions();
 
@@ -88,6 +93,7 @@ class MSNContact : public IMContact
 		uint mStatus;
 		bool isMessageIcon;
 		MSNProtocol *mProtocol;
+		KopeteHistoryDialog *historyDialog;
 		QValueStack<MSNMessageStruct> *messageQueue;
 		QTimer *messageTimer;
 		KPopupMenu *popup;
