@@ -95,15 +95,6 @@ public:
 	 */
 	virtual KopeteContact* myself() const=0;
 
-signals:
-	/**
-	 * The status icon changed. See also @ref setStatusIcon().
-	 * This signal is only emitted if the new icon is different from
-	 * the previous icon.
-	 */
-	void statusIconChanged( KopeteProtocol *protocol, const QString &icon );
-
-protected:
 	/**
 	 * Retrieve the list of contacts for this protocol
 	 *
@@ -112,6 +103,14 @@ protected:
 	 * if needed.
 	 */
 	const QDict<KopeteContact>& contacts();
+
+signals:
+	/**
+	 * The status icon changed. See also @ref setStatusIcon().
+	 * This signal is only emitted if the new icon is different from
+	 * the previous icon.
+	 */
+	void statusIconChanged( KopeteProtocol *protocol, const QString &icon );
 
 private slots:
 	/**
