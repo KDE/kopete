@@ -124,33 +124,33 @@ static const struct
 
 
 // TODO: replace this by some i18n() compatible method
-static const char *msgerrreason[] =
+static const QString msgerrreason[] =
 {
-	"Invalid error",
-	"Invalid SNAC",
-	"Rate to host",
-	"Rate to client",
-	"Not logged in",
-	"Service unavailable",
-	"Service not defined",
-	"Obsolete SNAC",
-	"Not supported by host",
-	"Not supported by client",
-	"Refused by client",
-	"Reply too big",
-	"Responses lost",
-	"Request denied",
-	"Busted SNAC payload",
-	"Insufficient rights",
-	"In local permit/deny",
-	"Too evil (sender)",
-	"Too evil (receiver)",
-	"User temporarily unavailable",
-	"No match",
-	"List overflow",
-	"Request ambiguous",
-	"Queue full",
-	"Not while on AOL"
+	I18N_NOOP("Invalid error"),
+	I18N_NOOP("Invalid SNAC"),
+	I18N_NOOP("Rate to host"),
+	I18N_NOOP("Rate to client"),
+	I18N_NOOP("Not logged in"),
+	I18N_NOOP("Service unavailable"),
+	I18N_NOOP("Service not defined"),
+	I18N_NOOP("Obsolete SNAC"),
+	I18N_NOOP("Not supported by host"),
+	I18N_NOOP("Not supported by client"),
+	I18N_NOOP("Refused by client"),
+	I18N_NOOP("Reply too big"),
+	I18N_NOOP("Responses lost"),
+	I18N_NOOP("Request denied"),
+	I18N_NOOP("Busted SNAC payload"),
+	I18N_NOOP("Insufficient rights"),
+	I18N_NOOP("In local permit/deny"),
+	I18N_NOOP("Too evil (sender)"),
+	I18N_NOOP("Too evil (receiver)"),
+	I18N_NOOP("User temporarily unavailable"),
+	I18N_NOOP("No match"),
+	I18N_NOOP("List overflow"),
+	I18N_NOOP("Request ambiguous"),
+	I18N_NOOP("Queue full"),
+	I18N_NOOP("Not while on AOL")
 };
 
 static const int msgerrreasonlen = 25;
@@ -217,8 +217,8 @@ void OscarSocket::slotRead(void)
 
 		inbuf.print();
 
-		return;
 		delete buf;
+		return;
 	}
 
 	if (bytesAvailable() < fl.length)
@@ -2002,8 +2002,8 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 		outbuf.addWord(0x0004);
 		outbuf.addWord(0x0000);
 	}
-// 	outbuf.addWord(0x0006);
-// 	outbuf.addWord(0x0000); // always empty TLV(6)
+	outbuf.addWord(0x0006);
+	outbuf.addWord(0x0000); // always empty TLV(6)
 
 	sendBuf(outbuf,0x02);
 }
