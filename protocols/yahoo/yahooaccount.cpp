@@ -170,7 +170,8 @@ void YahooAccount::disconnect()
 void YahooAccount::setAway(bool status, const QString &awayMessage)
 {
 	kdDebug(14180) << "YahooAccount::setAway(" << status << ", " << awayMessage << ")" << endl;
-	slotGoStatus(status ? 2 : 0);   // or SteppedOut?
+	// or SteppedOut?
+	slotGoStatus(status ? 2 : 0);
 }
 
 void YahooAccount::slotConnected()
