@@ -65,6 +65,7 @@ YahooAccount::YahooAccount(YahooProtocol *parent, const QString& accountId, cons
 	stateOnConnection = 0;
 	theAwayDialog = new YahooAwayDialog( this );
 	m_protocol = parent;
+	m_session = 0;
 	m_lastDisconnectCode = 0;
 	m_currentMailCount = 0;
 
