@@ -147,7 +147,9 @@ void MSNMessageManager::slotUserJoined( const QString &handle, const QString &pu
 	if(!m_messagesQueue.empty() || !m_invitations.isEmpty())
 		sendMessageQueue();
 
-	if(!c->object().isEmpty() && !c->displayPicture())
+	KConfig *config = KGlobal::config();
+	config->setGroup( "MSN" );
+	if ( config->readBoolEntry( "AutoDownloadPicture", true ) && !c->object().isEmpty() && !c->displayPicture())
 		slotRequestPicture();
 }
 
@@ -487,7 +489,12 @@ void MSNMessageManager::slotDisplayPictureChanged()
 		if( c->displayPicture() )
 			m_image->setPixmap(c->displayPicture()->name());
 		else
-			slotRequestPicture();
+		{
+			KConfig *config = KGlobal::config();
+			config->setGroup( "MSN" );
+			if ( config->readBoolEntry( "AutoDownloadPicture", true ) && !c->object().isEmpty() ) 
+				slotRequestPicture();
+		}
 	}
 }
 

@@ -3,6 +3,7 @@
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -22,6 +23,7 @@
 #include <qlayout.h>
 
 #include <kconfig.h>
+#include <kautoconfig.h>
 #include <kdebug.h>
 #include <kgenericfactory.h>
 #include <kglobal.h>
@@ -40,49 +42,37 @@ MSNPreferences::MSNPreferences( QWidget *parent, const char * /* name */, const 
 : KCModule( MSNProtocolConfigFactory::instance(), parent, args )
 {
 	( new QVBoxLayout( this ) )->setAutoAdd( true );
-	m_preferencesDialog = new msnPrefsUI( this );
-	load();
 
-	connect( m_preferencesDialog->mSendAwayMessages, SIGNAL( toggled( bool ) ),
-		this, SLOT( slotSettingsDirty() ) );
-	connect( m_preferencesDialog->mNotifyNewChat, SIGNAL( toggled( bool ) ),
-		this, SLOT( slotSettingsDirty() ) );
-	connect( m_preferencesDialog->mAwayMessageSeconds, SIGNAL( valueChanged( int ) ),
-		this, SLOT( slotSettingsDirty() ) );
+	kautoconfig = new KAutoConfig(KGlobal::config(), this, "kautoconfig");
+	connect(kautoconfig, SIGNAL(widgetModified()), SLOT(slotSettingsDirty()));
+	connect(kautoconfig, SIGNAL(settingsChanged()), SLOT(slotSettingsDirty()));
+    kautoconfig->addWidget( new msnPrefsUI( this ) , "MSN");
+
+	load();
 }
 
 void MSNPreferences::load()
 {
-	KConfig *config = KGlobal::config();
-	config->setGroup( "MSN" );
-
-	m_preferencesDialog->mNotifyNewChat->setChecked( config->readBoolEntry( "NotifyNewChat", false ) );
-	m_preferencesDialog->mSendAwayMessages->setChecked( config->readBoolEntry( "SendAwayMessages", true ) );
-	m_preferencesDialog->mAwayMessageSeconds->setValue( config->readNumEntry( "AwayMessagesSeconds", 90 ) );
-	m_preferencesDialog->mAwayMessageSeconds->setEnabled( m_preferencesDialog->mSendAwayMessages->isChecked() );
-
-	setChanged( false );
+	kautoconfig->retrieveSettings(true);
 }
 
 void MSNPreferences::save()
 {
-	KConfig *config = KGlobal::config();
-	config->setGroup( "MSN" );
-
-	config->writeEntry( "NotifyNewChat", m_preferencesDialog->mNotifyNewChat->isChecked() );
-	config->writeEntry( "SendAwayMessages", m_preferencesDialog->mSendAwayMessages->isChecked() );
-	config->writeEntry( "AwayMessagesSeconds", m_preferencesDialog->mAwayMessageSeconds->value() );
-
+	kautoconfig->saveSettings();
 	setChanged( false );
 }
 
+void MSNPreferences::defaults ()
+{
+	kautoconfig->resetSettings();
+}
+
+
 void MSNPreferences::slotSettingsDirty()
 {
-	m_preferencesDialog->mAwayMessageSeconds->setEnabled( m_preferencesDialog->mSendAwayMessages->isChecked() );
-
 	// Just mark settings dirty, even if the user undoes his changes,
 	// because KPrefs will handle it in the near future.
-	setChanged( true );
+	setChanged( kautoconfig->hasChanged() );
 }
 
 #include "msnpreferences.moc"

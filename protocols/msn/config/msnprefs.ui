@@ -9,9 +9,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>732</width>
-            <height>639</height>
+            <width>522</width>
+            <height>347</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>msnPrefsUI</string>
     </property>
     <vbox>
         <property name="name">
@@ -51,10 +54,21 @@
         </widget>
         <widget class="QCheckBox">
             <property name="name">
-                <cstring>mNotifyNewChat</cstring>
+                <cstring>NotifyNewChat</cstring>
             </property>
             <property name="text">
                 <string>&amp;Show me when someone open a chat</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>AutoDownloadPicture</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Automaticaly download the display picture if possible</string>
+            </property>
+            <property name="checked">
+                <bool>true</bool>
             </property>
         </widget>
         <widget class="QLabel">
@@ -99,7 +113,7 @@
         </widget>
         <widget class="QCheckBox">
             <property name="name">
-                <cstring>mSendAwayMessages</cstring>
+                <cstring>SendAwayMessages</cstring>
             </property>
             <property name="sizePolicy">
                 <sizepolicy>
@@ -111,6 +125,9 @@
             </property>
             <property name="text">
                 <string>Send &amp;away messages</string>
+            </property>
+            <property name="checked">
+                <bool>true</bool>
             </property>
         </widget>
         <widget class="QLayoutWidget">
@@ -131,7 +148,13 @@
                 </widget>
                 <widget class="KIntNumInput">
                     <property name="name">
-                        <cstring>mAwayMessageSeconds</cstring>
+                        <cstring>AwayMessageSeconds</cstring>
+                    </property>
+                    <property name="value">
+                        <number>90</number>
+                    </property>
+                    <property name="minValue">
+                        <number>1</number>
                     </property>
                 </widget>
                 <widget class="QLabel">
@@ -143,14 +166,6 @@
                     </property>
                 </widget>
             </hbox>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>TextLabel1_3_3_2</cstring>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
         </widget>
         <spacer>
             <property name="name">
@@ -165,7 +180,7 @@
             <property name="sizeHint">
                 <size>
                     <width>21</width>
-                    <height>350</height>
+                    <height>70</height>
                 </size>
             </property>
         </spacer>
@@ -173,9 +188,9 @@
 </widget>
 <connections>
     <connection>
-        <sender>mSendAwayMessages</sender>
+        <sender>SendAwayMessages</sender>
         <signal>toggled(bool)</signal>
-        <receiver>mAwayMessageSeconds</receiver>
+        <receiver>AwayMessageSeconds</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>

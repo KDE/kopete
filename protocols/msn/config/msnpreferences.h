@@ -3,6 +3,7 @@
 
     Copyright (c) 2002      by Duncan Mac-Vicar Prett <duncan@kde.org>
     Copyright (c) 2002-2003 by Martijn Klingens       <klingens@kde.org>
+    Copyright (c) 2002-2003 by Olivier Goffart        <ogoffart@tiscalinet.be>
 
     Kopete    (c) 2002-2003 by the Kopete developers  <kopete-devel@kde.org>
 
@@ -22,10 +23,12 @@
 #include "kcmodule.h"
 
 class msnPrefsUI;
+class KAutoConfig;
 
 /**
  * @author Duncan Mac-Vicar Prett
  * @author Martijn Klingens
+ * @author Olivier Goffart
  */
 class MSNPreferences : public KCModule
 {
@@ -36,12 +39,13 @@ public:
 
 	virtual void save();
 	virtual void load();
+	virtual void defaults();
 
 private slots:
 	void slotSettingsDirty();
 
 private:
-	msnPrefsUI *m_preferencesDialog;
+	KAutoConfig *kautoconfig;
 };
 
 #endif
