@@ -37,7 +37,7 @@ class KopeteTabWidget : public QTabWidget
 		* @param tab The tab widget to change the text color of
 		* @param color The color to set the label
 		*/
-		void setLabelTextColor( QWidget *tab, const QColor &color ) const;
+		void setTabColor( QWidget *tab, const QColor &color ) const;
 
 	signals:
 		/**

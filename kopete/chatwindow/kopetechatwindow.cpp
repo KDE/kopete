@@ -45,12 +45,22 @@
 
 #include "kopetechatwindow.h"
 #include "kopetemessagemanager.h"
-#include "kopetetabwidget.h"
 #include "kopeteviewmanager.h"
 #include "chatview.h"
 
 //#include "emoticonselector.h"
 #include "kopeteemoticonaction.h"
+
+#if KDE_IS_VERSION(3,1,90)
+	#include <ktabwidget.h>
+#else
+	#include "kopetetabwidget.cpp"
+#endif
+
+#if QT_VERSION >= 0x030200
+	#include <qtoolbutton.h>
+#endif
+
 
 typedef QMap<KopeteAccount*,KopeteChatWindow*> AccountMap;
 typedef QPtrList<KopeteChatWindow> WindowList;
@@ -520,8 +530,23 @@ void KopeteChatWindow::createTabBar()
 {
 	if( !m_tabBar )
 	{
-		m_tabBar = new KopeteTabWidget( mainArea );
+		m_tabBar = new KTabWidget( mainArea );
 		m_tabBar->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+		#if KDE_IS_VERSION(3,1,90)
+			m_tabBar->setHoverCloseButton(true);
+			m_tabBar->setTabReorderingEnabled(true);
+			connect( m_tabBar, SIGNAL( closeRequest( QWidget* )), this, SLOT( slotCloseChat( QWidget* ) ) );
+		#endif
+		
+		#if QT_VERSION >= 0x030200
+			QToolButton* m_rightWidget = new QToolButton( m_tabBar );
+			connect( m_rightWidget, SIGNAL( clicked() ), this, SLOT( slotChatClosed() ) );
+			m_rightWidget->setIconSet( SmallIcon( "tab_remove" ) );
+			m_rightWidget->adjustSize();
+			QToolTip::add( m_rightWidget, i18n("Close the current tab"));
+			m_tabBar->setCornerWidget( m_rightWidget, QWidget::TopRight );
+		#endif
+		
 		mainLayout->addWidget( m_tabBar );
 		m_tabBar->show();
 		connect ( m_tabBar, SIGNAL(currentChanged(QWidget *)), this, SLOT(setActiveView(QWidget *)) );
@@ -537,6 +562,11 @@ void KopeteChatWindow::createTabBar()
 		int tabPosition = KGlobal::config()->readNumEntry( QString::fromLatin1("Tab Placement") , 0 );
 		slotPlaceTabs( tabPosition );
 	}
+}
+
+void KopeteChatWindow::slotCloseChat( QWidget *chatView )
+{
+	static_cast<ChatView*>( chatView )->closeView();
 }
 
 void KopeteChatWindow::addTab( ChatView *view )

@@ -52,8 +52,13 @@
 #include "kopetepluginmanager.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
-#include "kopetetabwidget.h"
 #include "kopetexsl.h"
+
+#if KDE_IS_VERSION(3,1,90)
+	#include <ktabwidget.h>
+#else
+	#include "kopetetabwidget.cpp"
+#endif
 
 ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	 : KDockMainWindow( 0L, name, 0L ), KopeteView( mgr ), editpart(0)
@@ -350,31 +355,31 @@ void ChatView::setTabState( KopeteTabState newState  )
 	else if( newState != Typing &&  (  newState!=Changed || (m_tabState != Message && m_tabState != Highlighted) ) && ( newState != Message ||  m_tabState != Highlighted ) )
 		m_tabState = newState;
 
-	newState=m_remoteTypingMap.isEmpty() ? m_tabState : Typing ;
+	newState = m_remoteTypingMap.isEmpty() ? m_tabState : Typing ;
 
 	if( m_tabBar )
 	{
 		switch( newState )
 		{
 			case Highlighted:
-				m_tabBar->setLabelTextColor( this, Qt::blue );
+				m_tabBar->setTabColor( this, Qt::blue );
 				break;
 
 			case Message:
-				m_tabBar->setLabelTextColor( this, Qt::red );
+				m_tabBar->setTabColor( this, Qt::red );
 				break;
 
 			case Changed:
-				m_tabBar->setLabelTextColor( this, Qt::darkRed );
+				m_tabBar->setTabColor( this, Qt::darkRed );
 				break;
 
 			case Typing:
-				m_tabBar->setLabelTextColor( this, Qt::darkGreen );
+				m_tabBar->setTabColor( this, Qt::darkGreen );
 				break;
 
 			case Normal:
 			default:
-				m_tabBar->setLabelTextColor( this, KGlobalSettings::textColor() );
+				m_tabBar->setTabColor( this, KGlobalSettings::textColor() );
 				break;
 		}
 	}
@@ -1188,7 +1193,7 @@ void ChatView::setActive( bool value )
 	}
 }
 
-void ChatView::setTabBar( KopeteTabWidget *tabBar )
+void ChatView::setTabBar( KTabWidget *tabBar )
 {
 	m_tabBar = tabBar;
 }

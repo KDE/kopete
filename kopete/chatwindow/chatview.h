@@ -38,8 +38,14 @@ class KHTMLPart;
 class KHTMLView;
 class KRootPixmap;
 
+#include <kdeversion.h>
+#if KDE_IS_VERSION(3,1,90)
+#else
+	#define KTabWidget KopeteTabWidget
+#endif
+
 class KopeteChatWindow;
-class KopeteTabWidget;
+class KTabWidget;
 class KopeteMessageManager;
 class KCompletion;
 class KURL;
@@ -123,7 +129,7 @@ public:
 	 */
 	virtual void setCurrentMessage( const KopeteMessage &newMessage );
 
-	void setTabBar( KopeteTabWidget *tabBar );
+	void setTabBar( KTabWidget *tabBar );
 
 	/**
 	 * Sets the placement of the chat members list.
@@ -414,7 +420,7 @@ private:
 	KDockWidget *viewDock;
 	KDockWidget *membersDock;
 	KDockWidget *editDock;
-	KopeteTabWidget *m_tabBar;
+	KTabWidget *m_tabBar;
 	KParts::Part *editpart;
 
 	KAction *copyAction;
@@ -437,7 +443,7 @@ private:
 	 */
 	QString m_captionText;
 
-	void setTabState( KopeteTabState state=Undefined);
+	void setTabState( KopeteTabState state = Undefined);
 
 	/**
 	 * Creates the members list widget

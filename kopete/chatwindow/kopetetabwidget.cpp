@@ -29,7 +29,7 @@ KopeteTabWidget::KopeteTabWidget( QWidget *parent ) : QTabWidget( parent )
 	setTabBar( static_cast<QTabBar*>( new KopeteTabBar( this ) ) );
 }
 
-void KopeteTabWidget::setLabelTextColor( QWidget *w, const QColor &color ) const
+void KopeteTabWidget::setTabColor( QWidget *w, const QColor &color ) const
 {
 	int tabIndex = indexOf( w );
 	static_cast<KopeteTabBar*>( tabBar() )->setLabelTextColor( tabIndex, color );

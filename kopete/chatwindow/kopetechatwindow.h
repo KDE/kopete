@@ -18,6 +18,11 @@
 #ifndef KOPETECHATWINDOW_H
 #define KOPETECHATWINDOW_H
 
+#if KDE_IS_VERSION(3,1,90)
+#else
+	#define KTabWidget KopeteTabWidget
+#endif
+
 #include <kparts/mainwindow.h>
 #include <qmovie.h>
 #include "kopetecontact.h"
@@ -37,7 +42,7 @@ class KPushButton;
 class QVBox;
 class QVBoxLayout;
 class QFrame;
-class KopeteTabWidget;
+class KTabWidget;
 class QLabel;
 class KopeteEmoticonAction;
 class KopeteView;
@@ -113,7 +118,7 @@ private:
 	bool tabsEnabled;
 	const KopeteContact *m_us;
 	bool updateBg;
-	KopeteTabWidget *m_tabBar;
+	KTabWidget *m_tabBar;
 	KSqueezedTextLabel *m_status;
 	KPushButton* m_button_send;
 	QVBox *vBox;
@@ -198,6 +203,7 @@ private slots:
 	void slotTabContextMenu( QWidget*, const QPoint & );
 	void slotStopAnimation( ChatView* );
 	void slotNickComplete();
+	void slotCloseChat( QWidget* );
 
 protected:
 	virtual void closeEvent( QCloseEvent *e );
