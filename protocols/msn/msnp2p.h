@@ -98,6 +98,11 @@ public slots:
 	 * Abort the current transfer.
 	 */
 	void abortCurrentTransfer();
+	
+	/**
+	 * Send the following image
+	 */
+	void sendImage( const QString &fileName);
 
 private:
 	//for the display image
@@ -120,6 +125,7 @@ private:
 	Kopete::Transfer *m_kopeteTransfer;
 	
 	QString fullContentMessage;  //used for typewrited images messages
+	QByteArray m_imageToSend;
 };
 
 #endif

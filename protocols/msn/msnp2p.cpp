@@ -223,6 +223,7 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 						
 						
 						m_totalDataSize=  m_Sfile->size();
+						m_offset=0;
 	
 						QTimer::singleShot( 10, this, SLOT(slotSendData()) ); //Go for upload
 					}
@@ -322,16 +323,17 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 	
 				if(dataOffset ==0)
 					fullContentMessage=QString::null;
-
-				//the data is utf-16
-				QTextCodec *codec = QTextCodec::codecForName("ISO-10646-UCS-2");
-				if(!codec)
-					return; //abort();
+					
 				
 				/*
 				 * The following line doesn't works, because, wihtout reason i understand, the string contains some \0 
 				 * (\0\0 in utf-16)  between the   Content-Type:   and the Base64:
-				 fullContentMessage += codec->toUnicode(msg.data()+startBinHeader+48-1 , dataMessageSize) ;
+				
+				QTextCodec *codec = QTextCodec::codecForName("ISO-10646-UCS-2");
+				if(!codec)
+					return; //abort();
+				fullContentMessage += codec->toUnicode(msg.data()+startBinHeader+48-1 , dataMessageSize) 
+				
 				
 				 * Quick hack to parse utf-16 and remove \0\0 :
 				 * The message shouldn't contains non ASCII char  (it's base64)  so i think i could do like that.
@@ -348,17 +350,36 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 				//the message may be splitted
 				if(dataOffset+dataMessageSize >= totalSize) 
 				{ //whe have the whole
-					QRegExp rx("base64:([a-zA-Z0-9+\\-.*/!]*)");
+				
+					kdDebug(14141) << k_funcinfo <<"Analyse the image message: " << fullContentMessage <<  endl;
+				
+					QString ext;
+					QRegExp rx("Content-Type: ([a-zA-Z0-9/]*)");
+					if( rx.search( fullContentMessage ) != -1 )
+					{
+						QString contentType=rx.cap(1);
+						if(contentType=="image/gif")
+							ext=".gif";
+						else if(contentType=="image/png")
+							ext=".png";
+						else 
+						{
+							kdWarning(14140) << k_funcinfo << contentType << " is not recognized.  A MSN message is not displayed" <<  endl;
+							return;
+						}
+					}
+					else
+						return;
+					
+					rx=QRegExp("base64:([a-zA-Z0-9+\\-.*/!]*)");
 					if( rx.search( fullContentMessage ) != -1 )
 					{
 						QString base64=rx.cap(1);
-						kdDebug(14140) << k_funcinfo << "foud64:  "  << base64 <<  endl;
 					
 						QByteArray image;
 						KCodecs::base64Decode( base64.utf8() , image );
 						
-						
-						KTempFile *imageFile=new KTempFile( locateLocal( "tmp", "msntypewrite-" ), ".gif" );
+						KTempFile *imageFile=new KTempFile( locateLocal( "tmp", "msntypewrite-" ), ext );
 						imageFile->setAutoDelete(true);
 						imageFile->file()->writeBlock( image.data() , image.size() );
 						imageFile->file()->close();
@@ -373,7 +394,6 @@ void MSNP2P::slotReadMessage( const QByteArray &msg )
 	{
 		kdDebug(14140) << "MSNSwitchBoardSocket::slotReadMessage: Unknown type '" << type << endl;
 	}
-
 }
 
 
@@ -464,7 +484,7 @@ void MSNP2P::makeMSNSLPMessage( MessageType type, QString content )
 
 void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 {
-	bool transferStarted=( m_Rfile || m_Sfile );  //we are stransfering binary is any of the file exists
+	bool transferStarted=( m_Rfile || m_Sfile );  //we are stransfering binary if any of the file exists
 	
 	QCString messageHeader=QString(
 				"MIME-Version: 1.0\r\n"
@@ -482,7 +502,7 @@ void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 
 	
 	//SessionID
-	unsigned long int sessionID=transferStarted ? m_sessionId : 0;
+	unsigned long int sessionID=(transferStarted || m_imageToSend.size()>0) ? m_sessionId : 0;
 	binHeader[0]=(char)(sessionID%256);
 	binHeader[1]=(char)((unsigned long int)(sessionID/256)%256);
 	binHeader[2]=(char)((unsigned long int)(sessionID/(256*256))%256);
@@ -553,6 +573,10 @@ void MSNP2P::sendP2PMessage(const QByteArray &dataMessage)
 	if(transferStarted)
 	{ //then, the footer ends with \1  (only for display pictures)
 		data[messageHeader.length()+binHeader.size() + dataMessage.size()  +3 ]='\1';
+	}
+	else if(m_imageToSend.size()>0)
+	{ //then, the footer ends with \3  (for sending images)
+		data[messageHeader.length()+binHeader.size() + dataMessage.size()  +3 ]='\3';
 	}
 
 	//send the message
@@ -644,11 +668,20 @@ void MSNP2P::sendP2PAck( const char* originalHeader )
 
 void MSNP2P::slotSendData()
 {
-	if(!m_Sfile)
-		return;
-
-	char data[1200];
-	int bytesRead = m_Sfile->readBlock( data,1200 );
+	char ptr[1200];
+	char *data;
+	int bytesRead =0;
+	if(m_Sfile)
+	{
+		bytesRead=m_Sfile->readBlock( ptr,1200 );
+		data=ptr;
+	}
+	else if(m_imageToSend.size()>0)
+	{
+		data=m_imageToSend.data()+m_offset;
+		bytesRead=QMIN(1200, m_imageToSend.size()-m_offset);
+	}
+	else return;
 
 	QByteArray dataBA(bytesRead);
 	for (  int f = 0; f < bytesRead; f++ )
@@ -664,6 +697,7 @@ void MSNP2P::slotSendData()
 		delete m_Sfile;
 		m_Sfile=0L;
 		m_sessionId=0;
+		m_imageToSend=QByteArray();
 	}
 	else
 		QTimer::singleShot( 10, this, SLOT(slotSendData()) );
@@ -732,6 +766,45 @@ void MSNP2P::slotKopeteTransferDestroyed()
 {
 	m_kopeteTransfer=0L;
 	kdDebug(14140) << k_funcinfo << endl;
+}
+
+void MSNP2P::sendImage(const QString& fileName)
+{
+	kdDebug(14140) << k_funcinfo << fileName <<endl;
+
+	QFile pictFile( fileName );
+	if(!pictFile.open(IO_ReadOnly))
+	{
+		kdWarning(14140) << k_funcinfo << "impossible to open " <<fileName <<endl;
+		return;
+	}
+	
+	QByteArray ar=KCodecs::base64Encode(pictFile.readAll());
+	
+	QString header="MIME-Version: 1.0\r\n"
+					"Content-Type: image/gif\r\n"
+					"\r\n\1"  //\1 will be replaced by \0 later
+					"base64:";
+
+	int s=(header.length()+ar.size()) *2;
+
+	QByteArray toSend(s);
+	toSend.fill(0);
+	for(unsigned int f=0;f<header.length();f++)
+	{
+		if(header[f] != '\1')
+			toSend[2*f]=header[f].latin1();
+	}
+	for(unsigned int f=0;f<ar.size();f++)
+	{
+		toSend[(header.length()+f)*2]=ar[f];
+	}
+	m_imageToSend=toSend;
+	m_offset=0;
+	m_sessionId=0x40;
+	m_totalDataSize= m_imageToSend.size();
+
+	QTimer::singleShot( 10, this, SLOT(slotSendData()) ); //Go for upload
 }
 
 #include "msnp2p.moc"

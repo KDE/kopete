@@ -420,6 +420,26 @@ int MSNSwitchBoardSocket::sendMsg( const Kopete::Message &msg )
 //		m_messagesQueue.append(msg);
 		return -1;
 	}
+	
+	if( msg.format() & Kopete::Message::RichText )
+	{
+		QRegExp rx("^\\s*<img src=\"([^>\"]+)\"[^>]*>\\s*$");
+		if(rx.search(msg.escapedBody()) != -1)
+		{
+			if(!m_p2p)
+			{
+				m_p2p=new MSNP2P(this , "msnp2p protocol" );
+				QObject::connect( this, SIGNAL( blockRead( const QByteArray & ) ),    m_p2p, SLOT(slotReadMessage( const QByteArray & ) ) );
+				QObject::connect( m_p2p, SIGNAL( sendCommand( const QString &, const QString &, bool , const QByteArray & , bool ) )  ,
+						this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
+				QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile *, const QString& ) ) , this , SLOT(slotEmoticonReceived( KTempFile *, const QString& ) ) ) ;
+			}
+			
+			m_p2p->sendImage(rx.cap(1));
+			
+			return -3;
+		}
+	}
 
 	// User-Agent is not a official flag, but GAIM has it
 	QString head =
@@ -579,7 +599,8 @@ void MSNSwitchBoardSocket::requestDisplayPicture()
 				this , SLOT(sendCommand( const QString &, const QString &, bool , const QByteArray & , bool )));
 		QObject::connect( m_p2p, SIGNAL( fileReceived( KTempFile *, const QString& ) ) , this , SLOT(slotEmoticonReceived( KTempFile *, const QString& ) ) ) ;
 	}
-
+	
+	
 	m_p2p->requestDisplayPicture( m_myHandle, m_msgHandle, c->object());
 }
 

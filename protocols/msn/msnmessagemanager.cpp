@@ -219,6 +219,11 @@ void MSNMessageManager::slotMessageSent(Kopete::Message &message,Kopete::Message
 			//FIXME:  tell the what window the message has been processed. but we havent't sent it 
 			messageSucceeded();  //that should stop the blonking icon.
 		}
+		else if( id == -3) //the message has been sent as an immge
+		{
+			appendMessage(message); 
+			messageSucceeded();
+		}
 		else
 		{
 			m_messagesSent.insert( id, message );
