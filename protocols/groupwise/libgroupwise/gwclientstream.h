@@ -79,10 +79,8 @@ public:
 	};
 
 	ClientStream(Connector *conn, TLSHandler *tlsHandler=0, QObject *parent=0);
-	ClientStream(const QString &host, const QString &defRealm, ByteStream *bs, QCA::TLS *tls=0, QObject *parent=0); // server
 	~ClientStream();
 
-/*#	Jid jid() const;	// novell DN*/
 	void connectToServer(const NovellDN &id, bool auth=true);
 	void accept(); // server
 	bool isActive() const;
@@ -94,29 +92,10 @@ public:
 	void setRealm(const QString &s);
 	void continueAfterParams();
 
-	// SASL information
-// 	QString saslMechanism() const;
-// 	int saslSSF() const;
-
-	// bindingvoid ClientStream::setUsername(const QString &s)
-// {
-// 	if(d->sasl)
-// 		d->sasl->setUsername(s);
-// }
-
-
 	// security options (old protocol only uses the first !)
 	void setAllowPlain(bool);
 	void setRequireMutualAuth(bool);
-// 	void setSSFRange(int low, int high);
-// 	void setOldOnly(bool);
-// 	void setSASLMechanism(const QString &s);
 	void setLocalAddr(const QHostAddress &addr, Q_UINT16 port);
-
-	// reimplemented
-// #	QDomDocument & doc() const; // jabber specific
-// #	QString baseNS() const;		// "
-// #	bool old() const;			// no idea?
 
 	void close();
 	
@@ -176,13 +155,6 @@ private slots:
 	void ss_tlsClosed();
 	void ss_error(int);
 
-// 	void sasl_clientFirstStep(const QString &mech, const QByteArray *clientInit);
-// 	void sasl_nextStep(const QByteArray &stepData);
-// 	void sasl_needParams(bool user, bool authzid, bool pass, bool realm);
-// 	void sasl_authCheck(const QString &user, const QString &authzid);
-// 	void sasl_authenticated();
-// 	void sasl_error(int);
-
 	void doNoop();
 	void doReadyRead();
 
@@ -192,7 +164,6 @@ private:
 
 	void reset(bool all=false);
 	void processNext();
-/*	int convertedSASLCond() const;*/
 	bool handleNeed();
 	void handleError();
 	void srvProcessNext();

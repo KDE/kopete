@@ -28,7 +28,7 @@ bool ConnectionTask::take( Transfer * transfer )
 	if ( forMe( transfer, incomingEvent ) )
 	{
 		qDebug( "Got a connection event:" );
-		switch ( incomingEvent->event() )
+		switch ( incomingEvent->eventType() )
 		{
 			case GroupWise::UserDisconnect:
 				emit connectedElsewhere();

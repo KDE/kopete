@@ -26,19 +26,8 @@ bool StatusTask::take( Transfer * transfer )
 	if ( forMe( transfer, event ) )
 	{
 		qDebug( "Got a status change!" );
-		QDataStream din( event->payload(), IO_ReadOnly);
-		din.setByteOrder( QDataStream::LittleEndian );
-		Q_UINT16 status;
-		din >> status;
-		QString statusText;
-		uint val;
-		char* rawData;
-		din.readBytes( rawData, val );
-		if ( val ) // val is 0 if there is no status text
-			statusText = QString::fromUtf8( rawData, val );
-		qDebug( "%s changed status to %i, message: %s", event->source().ascii(), status, statusText.ascii() );
-		// HACK: check with mike about case sensitivity.
-		emit gotStatus( event->source().lower(), status, statusText );
+		qDebug( "%s changed status to %i, message: %s", event->source().ascii(), event->status(), event->statusText().ascii() );
+		emit gotStatus( event->source().lower(), event->status(), event->statusText() );
 		return true;
 	}
 	else

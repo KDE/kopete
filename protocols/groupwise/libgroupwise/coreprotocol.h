@@ -7,6 +7,7 @@
 
 #include "gwfield.h"
 
+class EventProtocol;
 class Transfer;
 class Request;
 
@@ -165,22 +166,16 @@ protected:
 	 */
 	bool safeReadBytes( QCString & data, uint & len );
 	/**
-	 * Convert incoming wire data into a transfer object and queue
-	 * 
+	 * Convert incoming wire data into a Transfer object and queue it
+	 * @return number of bytes from the input that were parsed into a Transfer
 	 */ 
-	bool wireToTransfer( const QByteArray& wire );
+	int wireToTransfer( const QByteArray& wire );
 	/**
 	 * Convert fields to a wire representation.  Emits outgoingData as each field is written.
 	 * Calls itself recursively to process nested fields, hence
 	 * @param depth Current depth of recursion.  Don't use this parameter yourself!
 	 */
 	void fieldsToWire( Field::FieldList fields, int depth = 0 );
-	/**
-	 * Read in an event
-	 * @param wire The raw data received from the wire
-	 * @param bytesRead The number of bytes that have already been read from wire using m_din.  Needed to find the correct size of the payload to pass up to the event handlers.
-	 */
-	bool readEvent( const QByteArray& wire, int bytesRead = 0 );
 	/**
 	 * Read in a response
 	 */
@@ -194,7 +189,7 @@ protected:
 	 */
 	QChar encode_method( Q_UINT8 method );
 private:
-	QByteArray m_in;
+	QByteArray m_in;	// buffer containing unprocessed bytes we received
 	QDataStream* m_din; // contains the packet currently being parsed
 	int m_error;
 	Transfer* m_inTransfer; // the transfer that is being received
@@ -203,7 +198,7 @@ private:
 	// fields from a packet being parsed, before it has been completely received
 	//QValueStack<Field::FieldList> m_collatingFields;
 	Field::FieldList m_collatingFields;
-	int m_collatingEvent; // the event code of an event that is in the process of being collated
+	EventProtocol* m_eventProtocol;
 };
 
 #endif

@@ -1,16 +1,17 @@
 // url_escape_string taken directly from gaim
 
 #include <string.h>
-#include <iostream.h>
+#include <iostream>
 
 #include <qdatastream.h>
+#include <qdatetime.h>
 #include <qtextstream.h>
 
-#include <qdatetime.h>
 
 #include <kdebug.h>
 #include <kurl.h>
 
+#include "eventprotocol.h"
 #include "eventtransfer.h"
 #include "gwerror.h"
 #include "gwfield.h"
@@ -80,8 +81,7 @@ url_escape_string( const char *src)
 
 CoreProtocol::CoreProtocol() : QObject()
 {
-	// debug
-	// connect( this, SIGNAL( outgoingData( const QCString & )), SLOT( slotOutgoingData( const QCString & ) ) );
+	m_eventProtocol = new EventProtocol( this, "eventprotocol" );
 }
 
 CoreProtocol::~CoreProtocol() 
@@ -96,18 +96,35 @@ int CoreProtocol::state()
 void CoreProtocol::addIncomingData( const QByteArray & incomingBytes )
 {
 // store locally
+	qDebug( "CoreProtocol::addIncomingData()");
 	int oldsize = m_in.size();
 	m_in.resize( oldsize + incomingBytes.size() );
 	memcpy( m_in.data() + oldsize, incomingBytes.data(), incomingBytes.size() );
 	m_state = Available;
-	// convert to a Transfer
-	if ( wireToTransfer( m_in ) )  // if we've received or assembled a complete message, we can discard this now
+	// convert every event in the chunk to a Transfer, signalling it back to the clientstream
+	
+	int parsedBytes = 0;
+	int transferCount = 0;
+	// while there is data left in the input buffer, and we are able to parse something out of it
+	while ( m_in.size() && ( parsedBytes = wireToTransfer( m_in ) ) )
 	{
-		qDebug( "CoreProtocol::addIncomingData() - transfer converted (and handled?)" );
-		m_in = QByteArray();
+		transferCount++;
+		qDebug( "CoreProtocol::addIncomingData() - transfer #%i in chunk converted", transferCount);
+		int size =  m_in.size();
+		if ( parsedBytes < size )
+		{
+			qDebug( " - more data in chunk!" );
+			// copy the unparsed bytes into a new qbytearray and replace m_in with that
+			QByteArray remainder( size - parsedBytes );
+			memcpy( remainder.data(), m_in.data() + parsedBytes, remainder.size() );
+			m_in = remainder;
+		}
+		else
+			m_in.truncate( 0 );
 	}
-	else
-		qDebug( "CoreProtocol::addIncomingData() - transfer was incomplete, waiting for more..." );
+	if ( m_state == NeedMore )
+		qDebug( " - message was incomplete, waiting for more..." );
+	qDebug( " - done processing chunk" );
 }
 
 Transfer* CoreProtocol::incomingTransfer()
@@ -188,7 +205,7 @@ bool CoreProtocol::safeReadBytes( QCString & data, uint & len )
 		// so look for that in the last position instead of \0
 		if ( (Q_UINT8)( * ( temp.data() + ( temp.length() - 1 ) ) ) == 0xFF )
 		{
-			cout << "CoreProtocol::safeReadBytes() - string broke, giving up" << endl;
+			qDebug( "CoreProtocol::safeReadBytes() - string broke, giving up" );
 			m_state = NeedMore;
 			return false;
 		}
@@ -200,13 +217,13 @@ bool CoreProtocol::safeReadBytes( QCString & data, uint & len )
 
 void CoreProtocol::outgoingTransfer( Request* outgoing )
 {
-	cout << "CoreProtocol::outgoingTransfer()" << endl;
+	qDebug( "CoreProtocol::outgoingTransfer()" );
 	// Convert the outgoing data into wire format
 	Request * request = dynamic_cast<Request *>( outgoing );
 	Field::FieldList fields = request->fields();
 	if ( fields.isEmpty() )
 	{
-		cout << " CoreProtocol::outgoingTransfer: Transfer contained no fields, it must be a ping." << endl;
+		qDebug( " CoreProtocol::outgoingTransfer: Transfer contained no fields, it must be a ping.");
 /*		m_error = NMERR_BAD_PARM;
 		return;*/
 	}
@@ -258,7 +275,7 @@ void CoreProtocol::outgoingTransfer( Request* outgoing )
 
 void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 {
-	cout << "CoreProtocol::fieldsToWire" << endl;
+	qDebug( "CoreProtocol::fieldsToWire()");
 	int subFieldCount = 0;
 	
 	// TODO: consider constructing this as a QStringList and then join()ing it.
@@ -337,7 +354,7 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 								+ GW_URLVAR_VAL + (const char *)valString 
 								+ GW_URLVAR_TYPE + typeString;
 								
-		cout << "CoreProtocol::fieldsToWire - outgoing data: " << outgoing.data() << endl;
+		qDebug( "CoreProtocol::fieldsToWire - outgoing data: %s", outgoing.data() );
 		dout.writeRawBytes( outgoing.data(), outgoing.length() );
 		// write what we have so far, we may be calling this function recursively
 		//kdDebug( 14999 ) << k_funcinfo << "writing \'" << bout << "\'" << endl;
@@ -361,77 +378,62 @@ void CoreProtocol::fieldsToWire( Field::FieldList fields, int depth )
 		dout.setByteOrder( QDataStream::LittleEndian );
 		dout.writeRawBytes( "\r\n", 2 );
 		emit outgoingData( bytesOut );
-		cout << "CoreProtocol::fieldsToWire - request completed" << endl;
+		qDebug( "CoreProtocol::fieldsToWire - request completed" );
 	}
 	//cout << " - method done" << endl;
 }
 
-bool CoreProtocol::wireToTransfer( const QByteArray& wire )
+int CoreProtocol::wireToTransfer( const QByteArray& wire )
 {
 	// processing incoming data and reassembling it into transfers
 	// may be an event or a response
-	bool ok = true;
+	int bytesParsed = 0;
 	m_din = new QDataStream( wire, IO_ReadOnly );
 	m_din->setByteOrder( QDataStream::LittleEndian );
 	
-	// does protocol state indicate we are partially through reading an Event?
-	// if so, call readEvent which will create an EventTransfer out of the event code already received 
-	// and the event data that is on the wire
-	// otherwise, examine the data to see what it is
-	// look at first four bytes
+	// look at first four bytes and decide what to do with the chunk
 	Q_UINT32 val;
-
-	ok = okToProceed();
-	if ( ok )
+	if ( okToProceed() )
 	{
 		*m_din >> val;
 
-		// is 'HTTP' -> response
+		// if is 'HTTP', it's a Response
 		if ( qstrncmp( (const char *)&val, "HTTP", strlen( "HTTP" ) ) == 0 )
 		{
-			cout << "CoreProtocol::wireToTransfer() - looks like a RESPONSE " << endl;
-			if ( ( ok = readResponse() ) )
+			bytesParsed = wire.size(); //TEMPORARY SO appendIncoming doesn't choke, fix ResponseProtocol to return bytes parsed
+			qDebug( "CoreProtocol::wireToTransfer() - looks like a RESPONSE " );
+			if ( readResponse() )
 			{
-				cout << "CoreProtocol::wireToTransfer() - got a RESPONSE " << endl;
+				qDebug( "CoreProtocol::wireToTransfer() - got a RESPONSE " );
 				m_state = Available;
 				emit incomingData();
 			}
+			else
+				bytesParsed = 0;
 		}
-		else	
-		{	// otherwise -> event code, store it and await the rest of the event
-			qDebug( "CoreProtocol::wireToTransfer() - looks like an EVENT: %i\n", val );
-			m_collatingEvent = val;
-			if ( ( ok = readEvent( wire, sizeof( Q_UINT32 ) ) ) )
+		else // otherwise -> Event code
+		{	
+			qDebug( "CoreProtocol::wireToTransfer() - looks like an EVENT: %i, length %i", val, wire.size() );
+			EventTransfer * t;
+			bytesParsed = m_eventProtocol->parse( wire, t );
+			if ( t )
 			{
-				qDebug( "CoreProtocol::wireToTransfer() - got an EVENT: %i\n", val );
+				m_inTransfer = t;
+				qDebug( "CoreProtocol::wireToTransfer() - got an EVENT: %i, parsed: %i", val, bytesParsed );
 				m_state = Available;
 				emit incomingData();
+			}
+			else
+			{
+				qDebug( "CoreProtocol::wireToTransfer() - EventProtocol was unable to parse it" );
+				bytesParsed = 0;
 			}
 		}
 	}
 	delete m_din;
-	return ok;
+	return bytesParsed;
 }
 
-bool CoreProtocol::readEvent( const QByteArray& wire, int bytesRead )
-{
-	// wire == m_din at this point
-	qDebug( "Reading event of type %i", m_collatingEvent );
-	QString source;
-	Q_UINT32 len;
-	QCString rawData;
-	if ( !safeReadBytes( rawData, len ) )
-		return false;
-	source = QString::fromUtf8( rawData.data(), len );
-	bytesRead = bytesRead + sizeof( Q_UINT32 ) + len;
-	// now create an event object, passing it the wire data minus the source we just read
-	QByteArray remainder( wire.size() - bytesRead );
-	memcpy( remainder.data(), wire.data() + bytesRead, wire.size() - bytesRead );
-	//HACK: lowercased DN
-	m_inTransfer = new EventTransfer( m_collatingEvent, source.lower(), QDateTime::currentDateTime(), remainder );
-	m_collatingEvent = 0;
-	return true;
-}
 
 bool CoreProtocol::readResponse()
 {
@@ -446,7 +448,7 @@ bool CoreProtocol::readResponse()
 	int rtnCode;
 	int packetState = -1;
 	rtnCode = rtnField.toInt( &ok );
-	cout << "CoreProtocol::readResponse() got HTTP return code " << rtnCode << endl;
+	qDebug( "CoreProtocol::readResponse() got HTTP return code " );
 	// read rest of header
 	QStringList headerRest;
 	QCString line;
@@ -456,27 +458,27 @@ bool CoreProtocol::readResponse()
 		if ( !readGroupWiseLine( line ) )
 			return false;
 		headerRest.append( line );
-		cout << "- read header line " << safetyCheck << " (" << line.length() <<"):" << line.data();
+		qDebug( "- read header line %i - (%i) : %s", safetyCheck, line.length(), line.data() );
 		safetyCheck++;
 	}
-	cout << "CoreProtocol::readResponse() header finished" << endl;
+	qDebug( "CoreProtocol::readResponse() header finished" );
 	// if it's a redirect, set flag
 	if ( ok && rtnCode == 301 )
 	{	
-		cout << "- server redirect " << rtnCode << endl;
+		qDebug( "- server redirect " );
 		packetState = ServerRedirect;
 		return false;
 	}
 	// other header processing ( 500! )
 	if ( ok && rtnCode == 500 )
 	{
-		cout << "- server error" << rtnCode << endl;
+		qDebug( "- server error %i", rtnCode );
 		packetState = ServerError;
 		return false;
 	}
 	if ( m_din->atEnd() )
 	{
-		cout << "- no fields" << endl;
+		qDebug( "- no fields" );
 		packetState = ProtocolError;
 		return false;
 	}
@@ -536,14 +538,14 @@ bool CoreProtocol::readFields( int fieldCount, Field::FieldList * list )
 	// so when we're done reading it, add it to the MultiList element
 	// that is the last element in the top list in m_collatingFields.
 	// if we find the beginning of a new nested list, push the current list onto m_collatingFields
-	cout << "CoreProtocol::readFields()" << endl;
+	qDebug( "CoreProtocol::readFields()" );
 	if ( fieldCount > 0 )
-		cout << " reading " << fieldCount << "fields" << endl;
+		qDebug( "reading %i fields", fieldCount );
 	Field::FieldList currentList;
 	int safetyCheck = 0;
 	while ( fieldCount != 0 && safetyCheck++ < 1000 )  // prevents bad input data from ruining our day
 	{
-		cout << fieldCount << " fields left to read" << endl;
+		qDebug( "%i fields left to read", fieldCount );
 		// the field being read
 		// read field
 		Q_UINT8 type, method;
@@ -556,7 +558,7 @@ bool CoreProtocol::readFields( int fieldCount, Field::FieldList * list )
 		// if type is 0 SOMETHING_INVALID, we're at the end of the fields
 		if ( type == 0 ) /*&& m_din->atEnd() )*/
 		{
-			cout << "- end of field list" << endl;
+			qDebug( "- end of field list" );
 /*			*m_din >> type;
 			printf( "next byte is %02x", type );
 			*m_din >> type;
@@ -628,7 +630,7 @@ bool CoreProtocol::readFields( int fieldCount, Field::FieldList * list )
 	// if fieldCount == 0, we've just read a whole nested list, so add this list to the last element in 'list'
 	if ( fieldCount == 0 && list )
 	{
-		cout << "- finished reading nested list" << endl;
+		qDebug( "- finished reading nested list" );
 		Field::MultiField * m = dynamic_cast<Field::MultiField*>( list->last() );
 		m->setFields( currentList );
 	}
@@ -636,7 +638,7 @@ bool CoreProtocol::readFields( int fieldCount, Field::FieldList * list )
 	// if fieldCount == -1; we're done reading the top level fieldlist, so store it.
 	if ( fieldCount == -1 )
 	{
-		cout << "- finished reading ALL FIELDS!" << endl;
+		qDebug( "- finished reading ALL FIELDS!" );
 		m_collatingFields = currentList;
 	}
 	return true;
@@ -710,7 +712,7 @@ QChar CoreProtocol::encode_method( Q_UINT8 method )
 
 void CoreProtocol::slotOutgoingData( const QCString &out )
 {
-	cout << out.data() << endl;
+	qDebug( "%s", out.data() );
 }
 
 #include "coreprotocol.moc"

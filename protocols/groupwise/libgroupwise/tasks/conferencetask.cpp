@@ -52,23 +52,14 @@ bool ConferenceTask::take( Transfer * transfer )
 	if ( forMe( transfer, incomingEvent ) )
 	{
 		qDebug( "Got a conference event:" );
-		QDataStream din( incomingEvent->payload(), IO_ReadOnly);
-		din.setByteOrder( QDataStream::LittleEndian );
-		
 		ConferenceEvent event;
-		event.type = (GroupWise::Event)incomingEvent->event();
+		event.type = (GroupWise::Event)( incomingEvent->eventType() );
 		event.timeStamp = incomingEvent->timeStamp();
 		event.user = incomingEvent->source();
 		event.flags = 0;
-		// read the conference guid
-		uint val;
-		char* rawData;
-		din.readBytes( rawData, val );
-		if ( val ) // val is 0 if there is no status text
-			event.guid = QString::fromUtf8( rawData, val );
-		//else 
-			// set error protocolError
-
+		Q_ASSERT( incomingEvent->hasGuid() );
+		event.guid = incomingEvent->guid();
+		
 		switch ( event.type )
 		{
 			case GroupWise::ConferenceClosed:
@@ -76,19 +67,23 @@ bool ConferenceTask::take( Transfer * transfer )
 				emit closed( event );
 				break;
 			case GroupWise::ConferenceJoined:
-				event.flags = readFlags( din );
+				Q_ASSERT( incomingEvent->hasFlags() );
+				event.flags = incomingEvent->flags();
 				qDebug( "ConferenceJoined" );
 				if ( !queueWhileAwaitingData( event ) )
 					emit joined( event );
 				break;
 			case GroupWise::ConferenceLeft:
-				event.flags = readFlags( din );
+				Q_ASSERT( incomingEvent->hasFlags() );
+				event.flags = incomingEvent->flags();
 				qDebug( "ConferenceLeft" );
 				emit left( event );
 				break;
 			case GroupWise::ReceiveMessage:
-				event.flags = readFlags( din );
-				event.message = readMessage( din );
+				Q_ASSERT( incomingEvent->hasFlags() );
+				event.flags = incomingEvent->flags();
+				Q_ASSERT( incomingEvent->hasMessage() );
+				event.message = incomingEvent->message();
 				qDebug( "ReceiveMessage" );
 				qDebug( "message: %s\n", event.message.ascii() );
 				if ( !queueWhileAwaitingData( event ) )
@@ -103,7 +98,8 @@ bool ConferenceTask::take( Transfer * transfer )
 				emit notTyping( event );
 				break;
 			case GroupWise::ConferenceInvite:
-				event.message = readMessage( din );
+				Q_ASSERT( incomingEvent->hasMessage() );
+				event.message = incomingEvent->message();
 				qDebug( "ConferenceInvite" );
 				qDebug( "message: %s\n", event.message.ascii() );
 				if ( !queueWhileAwaitingData( event ) )
@@ -119,52 +115,22 @@ bool ConferenceTask::take( Transfer * transfer )
 				emit invitationDeclined( event );
 				break;
 			case GroupWise::ReceiveAutoReply:
-				event.flags = readFlags( din );
-				event.message = readMessage( din );
+				Q_ASSERT( incomingEvent->hasFlags() );
+				event.flags = incomingEvent->flags();
+				Q_ASSERT( incomingEvent->hasMessage() );
+				event.message = incomingEvent->message();
 				qDebug( "ReceiveAutoReply" );
 				qDebug( "message: %s\n", event.message.ascii() );
 				emit autoReply( event );
 				break;
 			default:
-				qDebug( "WARNING: didn't handle registered event %i, on conference %s\n", incomingEvent->event(), event.guid.ascii() );
+				qDebug( "WARNING: didn't handle registered event %i, on conference %s\n", incomingEvent->eventType(), event.guid.ascii() );
 		}
 		dumpConferenceEvent( event );
 
 		return true;
 	}
 	return false;
-}
-
-void ConferenceTask::handleEvent( GroupWise::ConferenceEvent & event )
-{
-}
-
-Q_UINT32 ConferenceTask::readFlags( QDataStream & din )
-{
-	Q_UINT32 flags;
-	if ( din.atEnd() )
-	{
-		setError( GroupWise::Protocol );
-		return 0;
-	}
-	else
-	{
-		din >> flags;
-		return flags;
-	}
-}
-
-QString ConferenceTask::readMessage( QDataStream & din )
-{
-	QString message;
-	uint val;
-	char* rawData;
-	din.readBytes( rawData, val );
-	if ( val ) // val is 0 if there is no status text
-		message = QString::fromUtf8( rawData, val );
-	 else
-		setError( GroupWise::Protocol );
-	return message;
 }
 
 void ConferenceTask::slotReceiveUserDetails( const GroupWise::ContactDetails & details )
@@ -204,7 +170,7 @@ void ConferenceTask::slotReceiveUserDetails( const GroupWise::ContactDetails & d
 					qDebug( "Queued an event while waiting for more data, but didn't write a handler for the dequeue!" );
 			}
 			m_pendingEvents.remove( current );
-			qDebug( "Event handled - now %u pending events", m_pendingEvents.count() );
+			qDebug( "Event handled - now %u pending events", (uint)m_pendingEvents.count() );
 		}
 	}
 }

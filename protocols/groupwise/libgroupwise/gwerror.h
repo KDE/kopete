@@ -59,7 +59,7 @@ namespace GroupWise
 						UserNotTyping			= 113,
 						UserDisconnect			= 114,
 						ServerDisconnect		= 115,
-						ConverenceRename		= 116,
+						ConferenceRename		= 116,
 						ConferenceInvite		= 117,
 						ConferenceInviteNotify	= 118,
 						ConferenceReject		= 119,

@@ -48,11 +48,6 @@ protected:
 	Q_UINT32 readFlags( QDataStream & din );
 	QString readMessage( QDataStream & din );
 	/**
-	 * Handles an event, queuing it if necessary
-	 * emits the appropriate signal based on the event type
-	 */
-	void handleEvent( ConferenceEvent & event );
-	/**
 	 * Checks to see if we need more data from the client before we can propagate this event
 	 * and queues the event if so
 	 * @return whether the event was queued pending more data
