@@ -76,6 +76,8 @@ public:
 	 */
 	void cleanSessions( KopeteProtocol *);
 
+	void removeSession( KopeteMessageManager *session );
+
 signals:
 	/**
 	 * This signal is emitted whenever a message
@@ -93,9 +95,6 @@ signals:
 	 * message that is being sent.
 	 */
 	void aboutToSend( KopeteMessage& message );
-
-protected slots:
-	void slotRemoveSession( KopeteMessageManager *session );
 
 private:
 	KopeteMessageManagerFactory( QObject* parent = 0, const char* name = 0 );

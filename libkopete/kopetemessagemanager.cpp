@@ -31,6 +31,7 @@
 #include "kopeteevent.h"
 #include "kopetemessagelog.h"
 #include "kopetemessagemanager.h"
+#include "kopetemessagemanagerfactory.h"
 #include "kopetenotifier.h"
 #include "kopeteprefs.h"
 #include "kopeteprotocol.h"
@@ -105,6 +106,7 @@ KopeteMessageManager::~KopeteMessageManager()
 {
 	kdDebug(14010) << k_funcinfo << endl;
 	d->mCanBeDeleted = false; //prevent double deletion
+	KopeteMessageManagerFactory::factory()->removeSession( this );
 	emit dying(d->mView);
 	delete d;
 }
