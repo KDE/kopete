@@ -14,7 +14,7 @@
     *************************************************************************
 */
 
-#include <qapplication.h>
+#include <kapplication.h>
 #include <qstringlist.h>
 #include <qregexp.h>
 #include <qptrlist.h>
@@ -166,30 +166,40 @@ void KopeteCommandHandler::slotExecCommand( const QString &args, KopeteMessageMa
 {
 	if( !args.isEmpty() )
 	{
-		QStringList argsList = parseArguments( args );
+		KProcess *proc = 0L;
 		#if KDE_VERSION > 0x030190
-			KProcess *proc = new KProcess(manager);
+			if( kapp->authorized("shell_access") )
+				proc = new KProcess(manager);
 		#else
-			KProcess *proc = new KProcess();
+			proc = new KProcess();
 			connect( manager , SIGNAL (destroyed() ) , proc , SLOT(deleteLater()));
 		#endif
-
-		*proc << QString::fromLatin1("sh") << QString::fromLatin1("-c");
-
-		if( argsList.front() == QString::fromLatin1("-o") )
+		if( proc )
 		{
-			p->processMap.insert( proc, ManagerPair(manager, KopeteMessage::Outbound) );
-			*proc << args.section(QRegExp(QString::fromLatin1("\\s+")), 1);
+			*proc << QString::fromLatin1("sh") << QString::fromLatin1("-c");
+
+			QStringList argsList = parseArguments( args );
+			if( argsList.front() == QString::fromLatin1("-o") )
+			{
+				p->processMap.insert( proc, ManagerPair(manager, KopeteMessage::Outbound) );
+				*proc << args.section(QRegExp(QString::fromLatin1("\\s+")), 1);
+			}
+			else
+			{
+				p->processMap.insert( proc, ManagerPair(manager, KopeteMessage::Internal) );
+				*proc << args;
+			}
+
+			connect(proc, SIGNAL(receivedStdout(KProcess *, char *, int)), this, SLOT(slotExecReturnedData(KProcess *, char *, int)));
+			connect(proc, SIGNAL(receivedStderr(KProcess *, char *, int)), this, SLOT(slotExecReturnedData(KProcess *, char *, int)));
+			proc->start( KProcess::NotifyOnExit, KProcess::AllOutput );
 		}
 		else
 		{
-			p->processMap.insert( proc, ManagerPair(manager, KopeteMessage::Internal) );
-			*proc << args;
+			KopeteMessage msg(manager->user(), manager->members(), i18n("ERROR: Shell access has been restricted on your system. The /exec command will not function."),
+				KopeteMessage::Internal, KopeteMessage::PlainText);
+			manager->sendMessage( msg );
 		}
-
-		connect(proc, SIGNAL(receivedStdout(KProcess *, char *, int)), this, SLOT(slotExecReturnedData(KProcess *, char *, int)));
-		connect(proc, SIGNAL(receivedStderr(KProcess *, char *, int)), this, SLOT(slotExecReturnedData(KProcess *, char *, int)));
-		proc->start( KProcess::NotifyOnExit, KProcess::AllOutput );
 	}
 }
 
