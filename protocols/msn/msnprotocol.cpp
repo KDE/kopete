@@ -24,6 +24,7 @@
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 
+#include "kmsnchatservice.h"
 #include "kmsnservice.h"
 #include "kopete.h"
 #include "msnaddcontactpage.h"

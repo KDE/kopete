@@ -1,41 +1,35 @@
-/***************************************************************************
-                          msncontact.h  -  MSN Contact
-                             -------------------
-    begin                : Thu Jan 24 2002
-    copyright            : (C) 2002 by Duncan Mac-Vicar Prett
-    email                : duncan@kde.org
- ***************************************************************************/
+/*
+    msncontact.h - MSN Contact
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+    Copyright (c) 2002 Duncan Mac-Vicar Prett <duncan@kde.org>
+              (c) 2002 Ryan Cumming           <bodnar42@phalynx.dhs.org>
+              (c) 2002 Martijn Klingens       <klingens@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
 
 #ifndef MSNCONTACT_H
 #define MSNCONTACT_H
 
 #include "kopetecontact.h"
-#include "msnprotocol.h"
-#include "historydialog.h"
-#include <kmsnchatservice.h>
 
-#include <kopete.h>
-#include <contactlist.h>
-
-#include <qvaluestack.h>
-
-
-class QTimer;
-class QPixmap;
 class QListView;
 class QListViewItem;
-class KPopupMenu;
+class QPixmap;
+class QTimer;
+
 class KAction;
 class KListAction;
+class KPopupMenu;
+
+class KopeteHistoryDialog;
 
 /* Not usefull yet */
 struct MSNMessageStruct
