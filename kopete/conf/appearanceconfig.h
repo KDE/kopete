@@ -2,7 +2,6 @@
     appearanceconfig.h  -  Kopete Look Feel Config
 
     Copyright (c) 2001-2002 by Duncan Mac-Vicar Prett <duncan@kde.org>
-
     Kopete    (c) 2002      by the Kopete developers  <kopete-devel@kde.org>
 
     *************************************************************************
@@ -20,23 +19,15 @@
 
 #include "configmodule.h"
 
-#include <kdeversion.h>
-
-class KTabCtl;
-
-class KListBox;
-class QVGroupBox;
-class QVButtonGroup;
-class QHButtonGroup;
-class QRadioButton;
-class QCheckBox;
 class QFrame;
-class QGroupBox;
-class QPushButton;
-class KColorCombo;
-class QSlider;
+class KTabCtl;
+class QCheckBox;
+class KListBox;
 
+class AppearanceConfig_General;
 class AppearanceConfig_ChatWindow;
+class AppearanceConfig_ChatAppearance;
+class AppearanceConfig_Contactlist;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
@@ -60,73 +51,22 @@ private slots:
 	void slotSoundChanged(void);
 	void slotUseEmoticonsChanged(bool);
 	void slotConfigChanged(void);
-	void slotTransparancyChanged(bool);
-	void slotCTransparancyChanged(bool);
+	void slotTransparencyChanged(bool);
 
 private:
-	KTabCtl* mAppearanceTab;
+	KTabCtl* mAppearanceTabCtl; // The TabWidget
 
-	// Widgets for General TAB
-	QFrame* mGeneralTab;
-	QCheckBox *mStartDockedChk;
-	QCheckBox *mUseQueueChk;
-	QVGroupBox *notifyGroupBox;
-	QCheckBox *mBalloonNotifyChk;
-	QCheckBox *mBeepNotifyChk;
-	QCheckBox *mTrayflashNotifyChk;
-	QCheckBox *mSoundNotifyChk;
-	QCheckBox *mSoundIfAwayChk;
-	QCheckBox *mUseEmoticonsChk;
-	QPushButton *configSound;
-	QCheckBox* cb_RaiseMsgWindowChk;
-	QCheckBox* cb_ShowEventsChk;
-	
-	QHButtonGroup* ButtonGroup1;
-	QRadioButton* cb_Enter;
-	QRadioButton* cb_CtrlEnter;
-	QRadioButton* cb_ShiftEnter;
-    
-	QVButtonGroup *chatWindowGroup;
-	QRadioButton *mNewWindow;
-	QRadioButton *mTabWindow;
-	QRadioButton *mTabProtocolWindow;
-
-	// Widgets for Contactlist TAB
-	QFrame* mContactListTab;
-	QCheckBox *mShowOfflineUsers;
-	#if KDE_VERSION >= 306
-	QCheckBox *mNotifyOnlineUsers;
-	#endif
-	QCheckBox *mTreeContactList;
-	QCheckBox *mSortByGroup;
-	QCheckBox *mHideMetaContacts;
-	QCheckBox *mGreyIdleMetaContacts;
-
-	QVGroupBox *mTransparancyGroupBox;
-	KColorCombo *mTransparancyColor;
-	QCheckBox *mTransparancyEnabled;
-	QSlider *mTransparancyValue;
-	QCheckBox *mBgOverride;
-	
-	QVGroupBox *mCTransparancyGroupBox;
-	KColorCombo *mCTransparancyColor;
-	QCheckBox *mCTransparancyEnabled;
-	QSlider *mCTransparancyValue;
-	
 	// Widgets for Emoticon TAB
 	QFrame* mEmoticonsTab;
+	QCheckBox *mUseEmoticonsChk;
 	KListBox *icon_theme_list;
 
-	// Widgets for the Chat Window TAB
-	QFrame* mChatWindowTab;
+	// All other TABs have their own ui-file
+	AppearanceConfig_General *mPrfsGeneral;
+	AppearanceConfig_Contactlist *mPrfsContactlist;
+	AppearanceConfig_ChatAppearance *mPrfsChatAppearance;
 	AppearanceConfig_ChatWindow *mPrfsChatWindow;
-
-	QFrame* mChatAppearanceTab;
-	
-	bool mQueueChanged;
 };
-
 #endif
 
 // vim: set noet ts=4 sts=4 sw=4:
-

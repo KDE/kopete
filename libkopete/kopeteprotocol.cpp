@@ -88,7 +88,7 @@ void KopeteProtocol::registerContact( KopeteContact *c )
 
 void KopeteProtocol::slotKopeteContactDestroyed( KopeteContact *c )
 {
-	kdDebug(14010) << "KopeteProtocol::slotKopeteContactDestroyed: " << c->contactId() << endl;
+//	kdDebug(14010) << "KopeteProtocol::slotKopeteContactDestroyed: " << c->contactId() << endl;
 	m_contacts.remove( c->contactId() );
 }
 

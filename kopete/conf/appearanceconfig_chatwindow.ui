@@ -8,124 +8,282 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>317</width>
-            <height>395</height>
+            <width>446</width>
+            <height>471</height>
         </rect>
     </property>
     <property name="caption">
-        <string>Form1</string>
+        <string>Chat Window</string>
     </property>
-    <hbox>
+    <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <property name="margin">
-            <number>11</number>
-        </property>
-        <property name="spacing">
-            <number>6</number>
-        </property>
-        <widget class="QLayoutWidget">
+        <widget class="QCheckBox">
             <property name="name">
-                <cstring>Layout1</cstring>
+                <cstring>cb_RaiseMsgWindowChk</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Raise Window/Tab on new messages</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>cb_ShowEventsChk</cstring>
+            </property>
+            <property name="text">
+                <string>Show e&amp;vents in chat window</string>
+            </property>
+        </widget>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>buttonGroup1</cstring>
+            </property>
+            <property name="title">
+                <string>Send Message With</string>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>cb_Enter</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Enter</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>cb_CtrlEnter</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Ctrl+Enter</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>cb_ShiftEnter</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Shift+Enter</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>chatWindowGroup</cstring>
+            </property>
+            <property name="title">
+                <string>Chat Grouping Policy</string>
             </property>
             <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QGroupBox">
+                <widget class="QRadioButton">
                     <property name="name">
-                        <cstring>GroupBox2</cstring>
+                        <cstring>mNewWindow</cstring>
                     </property>
-                    <property name="title">
-                        <string>Chat Appearance </string>
+                    <property name="text">
+                        <string>Open all messages in a new chat window</string>
                     </property>
-                    <grid>
+                    <property name="whatsThis" stdset="0">
+                        <string>Every chat has its own window.</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>mTabProtocolWindow</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Group messages from the same protocol in the same chat window</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>All chats using one protocol are grouped into one window by using tabs.</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>mTabWindow</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Group all messages in the same chat window</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>All chats get grouped into one window by using tabs.</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>mTransparencyGroupBox</cstring>
+            </property>
+            <property name="title">
+                <string>Translucency</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>mTransparencyEnabled</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Enable &amp;Translucency</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>mTransparencyBgOverride</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Don't show user specified background color</string>
+                    </property>
+                </widget>
+                <widget class="KColorCombo" row="2" column="1">
+                    <property name="name">
+                        <cstring>mTransparencyTintColor</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Tint Color:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>mTransparencyTintColor</cstring>
+                    </property>
+                </widget>
+                <widget class="QSlider" row="3" column="1">
+                    <property name="name">
+                        <cstring>mTransparencyValue</cstring>
+                    </property>
+                    <property name="maxValue">
+                        <number>100</number>
+                    </property>
+                    <property name="lineStep">
+                        <number>1</number>
+                    </property>
+                    <property name="pageStep">
+                        <number>5</number>
+                    </property>
+                    <property name="value">
+                        <number>50</number>
+                    </property>
+                    <property name="tracking">
+                        <bool>true</bool>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="tickmarks">
+                        <enum>Right</enum>
+                    </property>
+                    <property name="tickInterval">
+                        <number>10</number>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget" row="4" column="1">
+                    <property name="name">
+                        <cstring>layout1</cstring>
+                    </property>
+                    <hbox>
                         <property name="name">
                             <cstring>unnamed</cstring>
                         </property>
                         <property name="margin">
-                            <number>11</number>
+                            <number>0</number>
                         </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <widget class="KTextBrowser" row="3" column="0" rowspan="1" colspan="2">
+                        <widget class="QLabel">
                             <property name="name">
-                                <cstring>preview</cstring>
-                            </property>
-                        </widget>
-                        <widget class="QComboBox" row="0" column="1">
-                            <item>
-                                <property name="text">
-                                    <string>Personalised</string>
-                                </property>
-                            </item>
-                            <item>
-                                <property name="text">
-                                    <string>Kopete Default</string>
-                                </property>
-                            </item>
-                            <item>
-                                <property name="text">
-                                    <string>Windows Messenger</string>
-                                </property>
-                            </item>
-                            <item>
-                                <property name="text">
-                                    <string>IRC</string>
-                                </property>
-                            </item>
-                            <property name="name">
-                                <cstring>cb_Kind</cstring>
-                            </property>
-                        </widget>
-                        <widget class="QTextEdit" row="1" column="0" rowspan="1" colspan="2">
-                            <property name="name">
-                                <cstring>mle_codehtml</cstring>
-                            </property>
-                            <property name="textFormat">
-                                <enum>PlainText</enum>
-                            </property>
-                        </widget>
-                        <widget class="QLabel" row="0" column="0">
-                            <property name="name">
-                                <cstring>TextLabel1</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>1</hsizetype>
-                                    <vsizetype>5</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
+                                <cstring>txt100percent</cstring>
                             </property>
                             <property name="text">
-                                <string>Kind:</string>
+                                <string>100%</string>
+                            </property>
+                            <property name="alignment">
+                                <set>AlignVCenter|AlignLeft</set>
                             </property>
                         </widget>
-                        <widget class="QLabel" row="2" column="0">
+                        <widget class="QLabel">
                             <property name="name">
-                                <cstring>previewLabel</cstring>
+                                <cstring>txt50percent</cstring>
                             </property>
                             <property name="text">
-                                <string>Preview:</string>
+                                <string>50%</string>
+                            </property>
+                            <property name="alignment">
+                                <set>AlignCenter</set>
                             </property>
                         </widget>
-                    </grid>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>txt0percent</cstring>
+                            </property>
+                            <property name="text">
+                                <string>0%</string>
+                            </property>
+                            <property name="alignment">
+                                <set>AlignVCenter|AlignRight</set>
+                            </property>
+                        </widget>
+                    </hbox>
                 </widget>
-            </vbox>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>textLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Translucency:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>mTransparencyValue</cstring>
+                    </property>
+                </widget>
+            </grid>
         </widget>
-    </hbox>
+        <spacer>
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>51</height>
+                </size>
+            </property>
+        </spacer>
+    </vbox>
 </widget>
+<tabstops>
+    <tabstop>cb_RaiseMsgWindowChk</tabstop>
+    <tabstop>cb_ShowEventsChk</tabstop>
+    <tabstop>cb_Enter</tabstop>
+    <tabstop>cb_CtrlEnter</tabstop>
+    <tabstop>cb_ShiftEnter</tabstop>
+    <tabstop>mNewWindow</tabstop>
+    <tabstop>mTabProtocolWindow</tabstop>
+    <tabstop>mTabWindow</tabstop>
+    <tabstop>mTransparencyEnabled</tabstop>
+    <tabstop>mTransparencyBgOverride</tabstop>
+    <tabstop>mTransparencyTintColor</tabstop>
+    <tabstop>mTransparencyValue</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>ktextbrowser.h</includehint>
+    <includehint>kcolorcombo.h</includehint>
 </includehints>
 </UI>
