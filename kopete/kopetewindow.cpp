@@ -168,9 +168,8 @@ void KopeteWindow::initActions()
 
 	KStdAction::quit(this, SLOT(slotQuit()), actionCollection());
 
-//	toolbarAction = KStdAction::showToolbar(this, SLOT(showToolbar()), actionCollection(), "settings_showtoolbar" );
-	menubarAction = KStdAction::showMenubar(this, SLOT(showMenubar()), actionCollection(), "settings_showmenubar" );
 	setStandardToolBarMenuEnabled(true);
+	menubarAction = KStdAction::showMenubar(this, SLOT(showMenubar()), actionCollection(), "settings_showmenubar" );
 	statusbarAction = KStdAction::showStatusbar(this, SLOT(showStatusbar()), actionCollection(), "settings_showstatusbar");
 
 	KStdAction::keyBindings( this, SLOT( slotConfKeys() ), actionCollection(), "settings_keys" );
@@ -225,21 +224,21 @@ void KopeteWindow::slotShowHide()
 
 void KopeteWindow::initSystray()
 {
-	tray = KopeteSystemTray::systemTray( this, "KopeteSystemTray" );
-	KPopupMenu *tm = tray->contextMenu();
+	m_tray = KopeteSystemTray::systemTray( this, "KopeteSystemTray" );
+	KPopupMenu *tm = m_tray->contextMenu();
 
 	// NOTE: This is in reverse order because we insert
 	// at the top of the menu, not at bottom!
-	actionAddContact->plug( tm,1 );
-	actionPrefs->plug(tm,1);
-	tm->insertSeparator(1);
-	actionAwayMenu->plug( tm,1 );
-	actionConnectionMenu->plug ( tm,1 );
-	tm->insertSeparator(1);
+	actionAddContact->plug( tm, 1 );
+	actionPrefs->plug( tm, 1 );
+	tm->insertSeparator( 1 );
+	actionAwayMenu->plug( tm, 1 );
+	actionConnectionMenu->plug ( tm, 1 );
+	tm->insertSeparator( 1 );
 
-	QObject::connect( tray, SIGNAL( aboutToShowMenu( KPopupMenu * ) ),
+	QObject::connect( m_tray, SIGNAL( aboutToShowMenu( KPopupMenu * ) ),
 		this, SLOT( slotTrayAboutToShowMenu( KPopupMenu * ) ) );
-	QObject::connect( tray, SIGNAL( quitSelected() ), this, SLOT( slotQuit() ) );
+	QObject::connect( m_tray, SIGNAL( quitSelected() ), this, SLOT( slotQuit() ) );
 }
 
 KopeteWindow::~KopeteWindow()
@@ -265,15 +264,10 @@ void KopeteWindow::loadOptions()
 	move(pos);
 
 	QSize size = config->readSizeEntry("Geometry");
-	if(size.isEmpty())
-	{
-		// Default size
+	if(size.isEmpty()) // Default size
 		resize( QSize(220, 350) );
-	}
 	else
-	{
 		resize(size);
-	}
 
 	KopetePrefs *p = KopetePrefs::prefs();
 	QString tmp = config->readEntry("State", "Shown");
@@ -288,7 +282,6 @@ void KopeteWindow::loadOptions()
 	else if ( !p->startDocked() || !p->showTray() )
 		show();
 
-//	toolbarAction->setChecked( !toolBar("mainToolBar")->isHidden() );
 	menubarAction->setChecked( !menuBar()->isHidden() );
 	statusbarAction->setChecked( !statusBar()->isHidden() );
 }
@@ -321,14 +314,6 @@ void KopeteWindow::saveOptions()
 
 	config->sync();
 }
-
-/*void KopeteWindow::showToolbar()
-{
-	if( toolbarAction->isChecked() )
-		toolBar("mainToolBar")->show();
-	else
-		toolBar("mainToolBar")->hide();
-}*/
 
 void KopeteWindow::showMenubar()
 {
@@ -391,7 +376,7 @@ void KopeteWindow::slotConfigurePlugins()
 	m_pluginConfig->raise();
 
 	#if KDE_IS_VERSION( 3, 1, 90 )
-                KWin::activateWindow( m_pluginConfig->winId() );
+		KWin::activateWindow( m_pluginConfig->winId() );
 	#endif
 }
 
@@ -491,16 +476,16 @@ void KopeteWindow::slotAccountRegistered( KopeteAccount *account )
 	connect( sbIcon, SIGNAL( rightClicked( KopeteAccount *, const QPoint & ) ),
 		SLOT( slotAccountStatusIconRightClicked( KopeteAccount *,
 		const QPoint & ) ) );
-	// Wanted by pmax, not sure if we should leave both in
+	// FIXME: Wanted by pmax, not sure if we should leave both in
 	// it'll confuse users if we take out the RMB function
 	connect( sbIcon, SIGNAL( leftClicked( KopeteAccount *, const QPoint & ) ),
 		SLOT( slotAccountStatusIconRightClicked( KopeteAccount *,
 		const QPoint & ) ) );
 
-	// this should be placed in the contactlistview insteads of, but i am lazy to redo a new slot
+	// this should be placed in contactlistview, but i am lazy to redo a new slot
 	contactlist->actionAddContact->insert(new KAction( account->accountId() ,
-		account->accountIcon() , 0 ,
-		contactlist , SLOT( slotAddContact() ) , account));
+		account->accountIcon(), 0 ,
+		contactlist, SLOT( slotAddContact() ), account));
 
 	m_accountStatusBarIcons.insert( account, sbIcon );
 	slotAccountStatusIconChanged( account->myself() );
@@ -542,11 +527,9 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 	if( !i )
 		return;
 
-
 	// Adds tooltip for each status icon,
 	// useful in case you have many accounts
 	// over one protocol
-
 	QToolTip::remove( i );
 	QToolTip::add( i, contact->toolTip() );
 
@@ -555,11 +538,10 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 	KIconLoader *loader = KGlobal::instance()->iconLoader();
 
 #if KDE_IS_VERSION(3, 1, 90)
-	QMovie mv = loader->loadMovie( status.overlayIcon(),
+	QMovie mv = loader->loadMovie( status.overlayIcon(), KIcon::Small );
 #else
-	QMovie mv = KopeteCompat::loadMovie( status.overlayIcon(),
+	QMovie mv = KopeteCompat::loadMovie( status.overlayIcon(), KIcon::Small );
 #endif
-		 KIcon::Small);
 
 	if ( mv.isNull() )
 	{
@@ -613,14 +595,12 @@ void KopeteWindow::slotAccountStatusIconRightClicked( KopeteAccount *account, co
 
 void KopeteWindow::slotTrayAboutToShowMenu( KPopupMenu * popup )
 {
-	//KPopupMenu *popup=tray->contextMenu();
-
 	QPtrList<KopeteAccount>  accounts = KopeteAccountManager::manager()->accounts();
 	for(KopeteAccount *a=accounts.first() ; a; a=accounts.next() )
 	{
 		KActionMenu *menu = a->actionMenu();
 		if( menu )
-			menu->plug(popup , 1 );
+			menu->plug(popup, 1 );
 
 		connect(popup , SIGNAL(aboutToHide()) , menu , SLOT(deleteLater()));
 	}
@@ -642,6 +622,7 @@ void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto, co
 void KopeteWindow::slotSaveContactList()
 {
 	KopeteContactList::contactList()->save();
+	// FIXME: UGLY!
 	KMessageBox::information(this, i18n("Contact list saved."), i18n("Contact List Saved"));
 }
 
@@ -653,8 +634,6 @@ void KopeteWindow::showAddContactDialog()
 void KopeteWindow::slotSettingsChanged()
 {
 	// Account colouring may have changed, so tell our status bar to redraw
-//	kdDebug(14000) << k_funcinfo << endl;
-
 	QMap<KPluginInfo *, KopetePlugin *> plugins = KopetePluginManager::self()->loadedPlugins( "Protocols" );
 	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
 	for ( it = plugins.begin(); it != plugins.end(); ++it )
@@ -670,7 +649,5 @@ void KopeteWindow::slotSettingsChanged()
 		}
 	}
 }
-
 #include "kopetewindow.moc"
 // vim: set noet ts=4 sts=4 sw=4:
-

@@ -25,8 +25,6 @@
 #include <kmainwindow.h>
 
 class QHBox;
-class QLabel;
-class QListViewItem;
 
 class KAction;
 class KActionMenu;
@@ -35,17 +33,11 @@ class KGlobalAccel;
 class KSelectAction;
 class KToggleAction;
 
-namespace KSettings
-{
-	class Dialog;
-}
-
 class KopeteAccount;
 class KopeteAccountStatusBarIcon;
 class KopeteContact;
 class KopeteContactListView;
 class KopeteAwayAction;
-class KopeteOnlineStatus;
 class KopetePlugin;
 class KopetePluginConfig;
 class KopeteProtocol;
@@ -67,7 +59,6 @@ protected:
 	virtual bool queryExit();
 
 private slots:
-//	void showToolbar();
 	void showMenubar();
 	void showStatusbar();
 	void slotToggleShowOffliners();
@@ -75,7 +66,7 @@ private slots:
 	void slotConfigChanged();
 	void slotConfKeys();
 	void slotConfToolbar();
-    	void slotUpdateToolbar();
+	void slotUpdateToolbar();
 	/**
 	 * This slot will show an away dialog and then
 	 * set all the protocols to away
@@ -161,18 +152,13 @@ public:
 	KAction* actionPrefs;
 	KAction* actionQuit;
 	KAction* actionSave;
-//	KToggleAction *toolbarAction;
 	KToggleAction *menubarAction;
 	KToggleAction *statusbarAction;
 	KToggleAction *actionShowOffliners;
 	KToggleAction *actionShowEmptyGroups;
-//	KAction *actionShowTransfers;
 	KGlobalAccel *globalAccel;
 
-	KopeteSystemTray *tray;
-
 private slots:
-//	void slotAddAccount();
 	void slotSaveContactList();
 	void slotConfigurePlugins();
 	void slotConfGlobalKeys();
@@ -185,11 +171,13 @@ private:
 	void loadOptions();
 	void saveOptions();
 
+private:
 	int docked;
 	bool hidden;
 	int deskRight;
 	QPoint position;
 	QHBox *m_statusBarWidget;
+	KopeteSystemTray *m_tray;
 
 	KopetePluginConfig *m_pluginConfig;
 
@@ -201,8 +189,5 @@ private:
 	 */
 	QPtrDict<QObject> m_accountStatusBarIcons;
 };
-
 #endif
-
 // vim: set noet ts=4 sts=4 sw=4:
-
