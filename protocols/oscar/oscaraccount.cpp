@@ -416,7 +416,7 @@ void OscarAccount::slotGotServerBuddyList()
 
 			engine()->ssiData().print();
 
-			OscarContact* contact = static_cast<OscarContact*> (contacts()[bit.current()->name]);
+			OscarContact* contact = static_cast<OscarContact*> (contacts()[tocNormalize(bit.current()->name)]);
 			if ( !contact )
 			{
 				kdDebug(14150) << "Adding contact '" << bit.current()->name << "' to contact list" << endl;

@@ -99,7 +99,7 @@ void OscarConnection::slotConnectionClosed()
 	kdDebug(14150) << k_funcinfo << "connection with '" <<
 		connectionName() << "' lost." << endl;
 
-	emit protocolError(QString("Connection with %1 lost").arg(mSocket->host()), 0);
+	emit protocolError(QString("Connection with %1 lost").arg(mSocket->host()), 1);
 	emit connectionClosed(connectionName());
 }
 

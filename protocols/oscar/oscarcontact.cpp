@@ -340,6 +340,7 @@ void OscarContact::syncGroups()
 		return;
 	}
 
+	QString oldGroupName = mAccount->engine()->ssiData().findGroup( 
 	// Oscar only supports one group per contact, so just get the first one
 	KopeteGroup *firstKopeteGroup = groups.first();
 	if(!firstKopeteGroup)
@@ -347,31 +348,31 @@ void OscarContact::syncGroups()
 		kdDebug(14150) << k_funcinfo << "Could not get kopete group" << endl;
 		return;
 	}
+
+	if ( !engine()->ssiData().findGroup( firstKopeteGroup->displayName() ) )
+	{
+		//We don't have the group in SSI yet. Add it.
+		kdDebug(14150) << "Adding missing group " << firstKopeteGroup->displayName() << endl;
+		mAccount->engine()->sendAddGroup( firstKopeteGroup->displayName() );
+	}
+
+	/*
+	* temporary contact's have their display name set to what the contactID would be
+	* so if it's a temporary contact, it's not on SSI
+	*
+	* Another possibility is moving a buddy in the blm, but in that case, we don't need
+        * to move him on BLM or SSI or anywhere, since BLM doesn't keep track of groups.
+	* 
+	*/
+	if ( !engine()->ssiData().findContact( displayName() && metacontact()->isTemporary() )
+	{ /*contact not in SSI and is temporary. add to SSI
+	   the group should be created already in this case */
+		kdDebug(14150) << k_funcinfo << "Contact '" << displayName() << "' appears"
+			<< "to be temporary. Adding to SSI" << endl;
+		mAccount->engine()->sendAddBuddy( displayName(), firstKopeteGroup->displayName(), false );
+	}
+
 /*
-	if(!newOscarGroup)
-	{
-		// This is a new group, it doesn't exist on the server yet
-		kdDebug(14150) << k_funcinfo
-			<< ": New group did not exist on server, "
-			<< "asking server to create it first"
-			<< endl;
-		// Ask the server to create the group
-		mGroupId = mAccount->engine()->sendAddGroup(firstKopeteGroup->displayName());
-	}
-	else
-		mGroupId = newOscarGroup->ID();
-
-	//kdDebug(14150) << k_funcinfo << "New mGroupId: " << mGroupId << endl;
-
-	if (!currentOscarGroup)
-	{
-		// Contact is not on the SSI
-		kdDebug(14150) << k_funcinfo <<
-			"Could not get current Oscar group for contact '" << displayName() << "'. Adding contact to the SSI." << endl;
-		mAccount->engine()->sendAddBuddy(contactName(), firstKopeteGroup->displayName(), false);
-		return;
-	}
-
 	if (currentOscarGroup->name() != firstKopeteGroup->displayName())
 	{
 		// The group has changed, so ask the engine to change
