@@ -417,6 +417,7 @@ void KopeteMetaContactLVI::slotConfigChanged()
 {
 	updateVisibility();
 	slotIdleStateChanged();
+	updateContactIcons();
 }
 
 void KopeteMetaContactLVI::updateVisibility()
@@ -431,6 +432,11 @@ void KopeteMetaContactLVI::updateVisibility()
 
 void KopeteMetaContactLVI::updateContactIcons()
 {
+	KGlobal::config()->setGroup( QString::fromLatin1("ContactList") );
+	bool bHideOffline = KGlobal::config()->readBoolEntry( QString::fromLatin1("HideOfflineContacts"), false );
+	if ( KopetePrefs::prefs()->showOffline() )
+		bHideOffline = false;
+
 	while ( d->contactIconBox->components() )
 		delete d->contactIconBox->component( 0 );
 
@@ -440,8 +446,9 @@ void KopeteMetaContactLVI::updateContactIcons()
 	for ( ; it.current(); ++it )
 	{
 		ListView::ImageComponent *icon = new ListView::ImageComponent( d->contactIconBox );
-		QPixmap image = ( *it )->onlineStatus().iconFor( *it, 12 );
-		icon->setPixmap( image );
+		QPixmap image = (*it)->onlineStatus().iconFor( *it, 12 );
+		if ( !bHideOffline || (*it)->onlineStatus().status() != KopeteOnlineStatus::Offline )
+			icon->setPixmap( image );
 	}
 }
 
