@@ -129,9 +129,19 @@ void MSNContact::slotUserInfo()
 	info->m_phm->setText(m_phoneMobile);
 	info->m_reversed->setChecked(m_reversed);
 
+	connect( info->m_reversed, SIGNAL(toggled(bool)) , this, SLOT(slotUserInfoDialogReversedToggled()));
+
 	infoDialog->setMainWidget(info);
 	infoDialog->setCaption(displayName());
 	infoDialog->show();
+}
+
+void MSNContact::slotUserInfoDialogReversedToggled()
+{
+	//workaround to make this checkboxe readonly
+	const QCheckBox *cb=dynamic_cast<const QCheckBox*>(sender());
+	if(cb && cb->isChecked()!=m_reversed)
+		const_cast<QCheckBox*>(cb)->setChecked(m_reversed);
 }
 
 void MSNContact::slotDeleteContact()

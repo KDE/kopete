@@ -142,6 +142,11 @@ private slots:
 	void slotShowProfile();
 	void slotSendMail();
 
+	/**
+	 * Workaround to make this checkboxe readonly
+	 */
+	void slotUserInfoDialogReversedToggled();
+
 private:
 	QMap<uint, KopeteGroup *> m_serverGroups;
 
