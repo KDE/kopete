@@ -846,6 +846,7 @@ void MSNAccount::slotContactAdded( const QString& handle, const QString& publicN
 		bool new_contact = false;
 		if ( !contacts()[ handle ] )
 		{
+			// FIXME: findContact() only works if the account id is an existing account - see KopeteAccountManager::findAccount() for the reason
 			KopeteMetaContact *m = KopeteContactList::contactList()->findContact( protocol()->pluginId(), QString::null, handle );
 			if ( m )
 			{
