@@ -43,30 +43,29 @@
 #include "kopeteprotocol.h"
 #include "tabcompleter.h"
 
-IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port, bool joinOnConnect, IRCServerContact *contact, KopeteMetaContact *parent, KopeteProtocol *protocol)
-	: KopeteContact(protocol, QString(target+"@"+server).lower(), parent),
-	  m_pActionCollection(new KActionCollection(this, "IRCActionCollection"))
+IRCContact::IRCContact( const QString &server, const QString &target, unsigned int port, bool joinOnConnect,
+	IRCServerContact *contact, KopeteMetaContact *parent, KopeteProtocol *protocol )
+: KopeteContact( protocol, QString( target + "@" + server ).lower(), parent )
 {
-	contactOnList = false;
-
-	init(server, port,target,contact,joinOnConnect);
+	init( server, port, target, contact, joinOnConnect );
 }
 
-IRCContact::IRCContact(const QString &server, const QString &target, unsigned int port,
-		       IRCServerContact *contact, const QStringList /*pendingMessage*/,
-		       KopeteMetaContact *parent, KopeteProtocol *protocol)
-	: KopeteContact(protocol, QString(target+"@"+server).lower(), parent),
-	  m_pActionCollection(new KActionCollection(this, "IRCActionCollection"))
+IRCContact::IRCContact( const QString &server, const QString &target, unsigned int port, IRCServerContact *contact,
+	const QStringList /*pendingMessage*/, KopeteMetaContact *parent, KopeteProtocol *protocol )
+: KopeteContact( protocol, QString( target + "@" + server ).lower(), parent )
 {
 	contactOnList = false;
 
-	init(server,  port,target,contact,true);
+	init( server, port, target, contact, true );
 
 	//TODO: show pending messages
 }
 
 bool IRCContact::init(const QString &server, unsigned int port,const QString &target, IRCServerContact *contact,bool joinOnConnect)
 {
+	m_pActionCollection = new KActionCollection( this, "IRCActionCollection" );
+	contactOnList = false;
+
 	m_engine = contact->engine();
 	m_requestedQuit = false;
 	added = false;
