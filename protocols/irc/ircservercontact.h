@@ -81,9 +81,9 @@ private slots:
 	void incomingDccSendRequest(const QHostAddress &, unsigned int port, const QString &nickname, const QString &, unsigned int, DCCClient &chatObject);
 public slots:
 	void slotQuitServer();
-	void connectNow();
-	void promptChannelJoin();
-	void disconnectNow();
+	void slotConnectNow();
+	void slotPromptChannelJoin();
+	void slotDisconnectNow();
 signals:
 	void serverQuit();
 	void connecting();

@@ -55,17 +55,12 @@ IRCServerContact::IRCServerContact(const QString &server, const QString &nicknam
 
 	init();
 
-	mWindow->show();
 	mConsoleView->show();
 
 	if (connectNow == true)
 	{
-		// GCC didn't like me calling connectNow(), not sure why
-		mWindow->mToolBar->removeItem(1);
-		mWindow->mToolBar->insertButton("connect_creating", 1, SIGNAL(clicked()), this, SLOT(disconnectNow()));
-		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname);
-	} else {
-		mWindow->hide();
+		mWindow->show();
+		slotConnectNow();
 	}
 }
 
@@ -123,13 +118,13 @@ void IRCServerContact::init()
 	QObject::connect(engine, SIGNAL(connectedToServer()), this, SLOT(updateToolbar()));
 }
 
-void IRCServerContact::connectNow()
+void IRCServerContact::slotConnectNow()
 {
 	if (mWindow == 0)
 	{
 		mWindow = new IRCChatWindow(mServer, this);
 		QObject::connect(mWindow, SIGNAL(windowClosing()), this, SLOT(slotQuitServer()));
-		mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
+		mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(slotConnectNow()));
 
 		mTabView = new QVBox(mWindow->mTabWidget);
 		mConsoleView = new IRCConsoleView(mServer, engine, this, mTabView);
@@ -147,7 +142,7 @@ void IRCServerContact::connectNow()
 		return;
 	}
 	mWindow->mToolBar->removeItem(1);
-	mWindow->mToolBar->insertButton("connect_creating", 1, SIGNAL(clicked()), this, SLOT(disconnectNow()));
+	mWindow->mToolBar->insertButton("connect_creating", 1, SIGNAL(clicked()), this, SLOT(slotDisconnectNow()));
 	if (engine->isLoggedIn() == false && engine->state() == QSocket::Idle)
 	{
 		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname);
@@ -158,7 +153,7 @@ void IRCServerContact::connectNow()
 	}
 }
 
-void IRCServerContact::disconnectNow()
+void IRCServerContact::slotDisconnectNow()
 {
 	mWindow->mToolBar->removeItem(1);
 	mWindow->mToolBar->insertButton("stop", 1, SIGNAL(clicked()), this, SLOT(forceDisconnect()));
@@ -314,22 +309,7 @@ void IRCServerContact::forceDisconnect()
 	engine->close();
 	slotQuitServer();
 	mWindow->mToolBar->removeItem(1);
-	mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
-}
-
-void IRCServerContact::promptChannelJoin()
-{
-	bool okay = false;
-	QString target = QInputDialog::getText(i18n("Enter the channel to join..."), i18n("<qt>What channel would you like to join?</qt>"), QLineEdit::Normal, QString::null, &okay, mWindow);
-	if (okay == true && target.isEmpty() == false)
-	{
-		if (target[0] == '#' || target[0] == '!' || target[0] == '&')
-		{
-			(void) new IRCContact(mServer, target, 6667, true, this);
-		} else {
-			KMessageBox::sorry(mWindow, i18n("<qt>Sorry, you entered an invalid response. Channels are required to begin with a '#', '!', or a '&' by IRC. Please try again.</qt>"), i18n("Invalid Response"));
-		}
-	}
+	mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(slotConnectNow()));
 }
 
 void IRCServerContact::slotQuitServer()
@@ -343,7 +323,7 @@ void IRCServerContact::slotQuitServer()
 		if (closing == false)
 		{
 			mWindow->mToolBar->removeItem(1);
-			mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(connectNow()));
+			mWindow->mToolBar->insertButton("connect_no", 1, SIGNAL(clicked()), this, SLOT(slotConnectNow()));
 		} else {
 			if (mWindow != 0)
 			{
@@ -366,7 +346,7 @@ void IRCServerContact::slotServerHasQuit()
 void IRCServerContact::updateToolbar()
 {
 	mWindow->mToolBar->removeItem(1);
-	mWindow->mToolBar->insertButton("connect_established", 1, SIGNAL(clicked()), this, SLOT(disconnectNow()));
+	mWindow->mToolBar->insertButton("connect_established", 1, SIGNAL(clicked()), this, SLOT(slotDisconnectNow()));
 }
 
 bool IRCServerContact::parentClosing()

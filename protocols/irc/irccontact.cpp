@@ -336,7 +336,7 @@ void IRCContact::slotOpenConnect()
 	{
 		QObject::disconnect(mContact->engine, SIGNAL(connectedToServer()), this, SLOT(joinNow()));
 		QObject::connect(mContact->engine, SIGNAL(connectedToServer()), this, SLOT(joinNow()));
-		mContact->connectNow();
+		mContact->slotConnectNow();
 		mContact->mWindow->show();
 	} else {
 		slotOpen();
