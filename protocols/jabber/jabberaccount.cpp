@@ -680,6 +680,20 @@ void JabberAccount::subscribed (const Jabber::Jid & jid)
 	task->go (true);
 }
 
+void JabberAccount::unsubscribed (const Jabber::Jid & jid)
+{
+	if (!isConnected ())
+	{
+		errorConnectFirst ();
+		return;
+	}
+
+	Jabber::JT_Presence * task = new Jabber::JT_Presence (jabberClient->rootTask ());
+
+	task->sub (jid, "unsubscribed");
+	task->go (true);
+}
+
 void JabberAccount::sendPresenceToNode (const KopeteOnlineStatus & pres, const QString & userID)
 {
 
