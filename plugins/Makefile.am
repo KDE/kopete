@@ -4,4 +4,4 @@ endif
 
 SUBDIRS = latex autoreplace history contactnotes cryptography\
 	connectionstatus translator nowlistening webpresence texteffect\
-	highlight alias $(MOTIONAUTOAWAY_SUBDIR) netmeeting
+	highlight alias $(MOTIONAUTOAWAY_SUBDIR) netmeeting addbookmarks
