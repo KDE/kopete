@@ -250,16 +250,20 @@ KopeteMetaLVIProps::KopeteMetaLVIProps(KopeteMetaContactLVI *lvi, QWidget *paren
 		KABC::AddressBook *ab = KABC::StdAddressBook::self();
 		KABC::StdAddressBook::setAutomaticSave( false );
 		KABC::Addressee a = ab->findByUid( kabcUid );
-		mainWidget->edtAddressee->setText( a.realName() );
-		mainWidget->btnSelectAddressee->setEnabled( true );
-		mainWidget->btnMerge->setEnabled( true );
-		mainWidget->edtAddressee->setEnabled( true );
-		mainWidget->lblAddressee->setEnabled( true );
-		mainWidget->chkHasAddressbookEntry->setChecked( true );
-		mExport = new KopeteAddressBookExport( this, item->metaContact() );
-		
-		mSound = a.sound();
-		mFromKABC->setEnabled( !( mSound.isIntern() || mSound.url().isEmpty() ) );
+
+		if(!a.isEmpty())
+		{
+			mainWidget->edtAddressee->setText( a.realName() );
+			mainWidget->btnSelectAddressee->setEnabled( true );
+			mainWidget->btnMerge->setEnabled( true );
+			mainWidget->edtAddressee->setEnabled( true );
+			mainWidget->lblAddressee->setEnabled( true );
+			mainWidget->chkHasAddressbookEntry->setChecked( true );
+			mExport = new KopeteAddressBookExport( this, item->metaContact() );
+			
+			mSound = a.sound();
+			mFromKABC->setEnabled( !( mSound.isIntern() || mSound.url().isEmpty() ) );
+		}
 	}
 	
 	connect( this, SIGNAL(okClicked()), this, SLOT( slotOkClicked() ) );

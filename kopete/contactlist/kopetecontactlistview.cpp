@@ -1275,10 +1275,17 @@ void KopeteContactListView::updateActionsForSelection(
 	QPtrList<Kopete::MetaContact> contacts, QPtrList<Kopete::Group> groups )
 {
 	bool singleContactSelected = groups.isEmpty() && contacts.count() == 1;
+	bool inkabc=false;
+	if(singleContactSelected)
+	{
+		QString kabcid=contacts.first()->metaContactId();
+		inkabc= !kabcid.isEmpty() && !kabcid.contains(":");
+	}
+	
 	actionSendFile->setEnabled( singleContactSelected && contacts.first()->canAcceptFiles());
 	actionAddContact->setEnabled( singleContactSelected && !contacts.first()->isTemporary());
-	actionSendEmail->setEnabled( singleContactSelected && !contacts.first()->metaContactId().isEmpty() );
-	actionSyncKABC->setEnabled( singleContactSelected && !contacts.first()->metaContactId().isEmpty() );
+	actionSendEmail->setEnabled( inkabc );
+	actionSyncKABC->setEnabled( inkabc );
 
 	if( singleContactSelected )
 	{
