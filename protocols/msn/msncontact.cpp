@@ -57,7 +57,11 @@ MSNContact::MSNContact( KopeteAccount *account, const QString &id, const QString
 
 	setFileCapable( true );
 
-	setOnlineStatus( MSNProtocol::protocol()->UNK );
+	//When we are not connected, it's certenly because we load the contactlist. so we set the initial status to offline.
+	//  we set offline dirrectly because modifiing the status after is too slow. (notification, contactlist updating,....)
+	//When we are connected, it can be because the user add a contact with the wizzard, and it can be because we are creating a temporary contact.
+	// if it's aded by the wizzard, the status will be set immediatly after.  if it's a temporary contact, better to set the unknown status.
+	setOnlineStatus( (parent && parent->isTemporary())? MSNProtocol::protocol()->UNK : MSNProtocol::protocol()->FLN );
 
 }
 

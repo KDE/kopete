@@ -75,7 +75,7 @@ void MSNProtocol::deserializeContact( KopeteMetaContact *metaContact, const QMap
 
 	// Create MSN contact
 	MSNContact *c = new MSNContact( account, contactId, displayName, metaContact );
-	c->setOnlineStatus( FLN );
+
 	for( QStringList::Iterator it = groups.begin() ; it != groups.end(); ++it )
 		c->contactAddedToGroup( ( *it ).toUInt(), 0L  /* FIXME - m_groupList[ ( *it ).toUInt() ]*/ );
 
