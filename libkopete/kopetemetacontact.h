@@ -205,6 +205,9 @@ signals:
 	 */
 	void addedToGroup( KopeteMetaContact *contact, const QString &to );
 
+
+	void contactAdded (KopeteContact *) ;
+
 private slots:
 	/**
 	 * One of the child contact's online status changed

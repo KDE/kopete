@@ -42,6 +42,7 @@ class KopeteStdAction
 		static KListAction *copyContact( const QObject *recvr,
 			const char *slot, QObject* parent, const char *name = 0 );
 		static KAction *deleteContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
+		static KListAction *addContact(const QObject *recvr, const char *slot, QObject* parent, const char *name = 0);
 };
 
 // Fuckin' moc will only see signals/slots if they're defined in the .h

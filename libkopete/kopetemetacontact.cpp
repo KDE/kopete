@@ -81,6 +81,7 @@ void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups 
 		{
 			addToGroup(*it);
 		}
+		emit contactAdded(c);
 
 	}
 }

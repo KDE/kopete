@@ -17,12 +17,16 @@
 
 #include <kaction.h>
 #include <klocale.h>
+#include <kdebug.h>
 
 #include "kopete.h"
 #include "kopetestdaction.h"
 #include "kopetecontactlist.h"
-#include "kopetestdaction.moc"
 #include "kopetecontactlistview.h"
+#include "kopeteprotocol.h"
+#include "pluginloader.h"
+
+
 
 /** KopeteGroupList **/
 KopeteGroupList::KopeteGroupList(const QString& text, const QString& pix, const KShortcut& cut, const QObject* receiver, const char* slot, QObject* parent, const char* name)
@@ -47,55 +51,75 @@ void KopeteGroupList::slotUpdateList()
 KAction* KopeteStdAction::chat( const QObject *recvr, const char *slot,
 	QObject* parent, const char *name )
 {
-	return new KAction( "Start &Chat...", "mail_generic", 0, recvr, slot, parent,
+	return new KAction( i18n("Start &Chat..."), "mail_generic", 0, recvr, slot, parent,
 		name );
 }
 
 KAction* KopeteStdAction::sendMessage(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction( "&Send Message...", "mail_generic", 0, recvr, slot,
+	return new KAction( i18n("&Send Message..."), "mail_generic", 0, recvr, slot,
 		parent, name );
 }
 
 KAction* KopeteStdAction::contactInfo(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction( "User &Info...", "identity", 0, recvr, slot, parent,
+	return new KAction( i18n("User &Info..."), "identity", 0, recvr, slot, parent,
 		name );
 }
 
 KAction* KopeteStdAction::viewHistory(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction( "View &History...", "history", 0, recvr, slot, parent,
+	return new KAction( i18n("View &History..."), "history", 0, recvr, slot, parent,
 		name );
 }
 
 KAction* KopeteStdAction::addGroup(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction( "&Add Group...", "folder", 0, recvr, slot, parent,
+	return new KAction( i18n("&Add Group..."), "folder", 0, recvr, slot, parent,
 		name );
 }
 
 KListAction *KopeteStdAction::moveContact(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KopeteGroupList( "&Move Contact", "editcut", 0, recvr, slot,
+	return new KopeteGroupList( i18n("&Move Contact"), "editcut", 0, recvr, slot,
 		parent, name );
 }
 
 KListAction *KopeteStdAction::copyContact( const QObject *recvr,
 	const char *slot, QObject* parent, const char *name )
 {
-	return new KopeteGroupList( "Cop&y Contact", "editcopy", 0, recvr, slot,
+	return new KopeteGroupList( i18n("Cop&y Contact"), "editcopy", 0, recvr, slot,
 		parent, name );
 }
 
 KAction* KopeteStdAction::deleteContact(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction( "&Delete Contact...", "edittrash", 0, recvr, slot,
+	return new KAction( i18n("&Delete Contact..."), "edittrash", 0, recvr, slot,
 		parent, name );
 }
 
+KListAction *KopeteStdAction::addContact(const QObject *recvr, const char *slot, QObject* parent, const char *name)
+{
+   KListAction *a=new KListAction(  i18n("&Add Contact"), "bookmark_add", 0, recvr, slot, parent, name );
+   QStringList protocolList;
+
+	QValueList<KopeteLibraryInfo> l = kopeteapp->libraryLoader()->loaded();
+	for (QValueList<KopeteLibraryInfo>::Iterator i = l.begin(); i != l.end(); ++i)
+	{
+		KopetePlugin *tmpprot = (kopeteapp->libraryLoader())->mLibHash[(*i).specfile]->plugin;
+		KopeteProtocol *prot =  dynamic_cast<KopeteProtocol*>( tmpprot );
+		if (prot)
+		{
+			protocolList.append((*i).name);
+		}
+	}
+
+	a->setItems( protocolList );
+	return a;
+}
 
 
+#include "kopetestdaction.moc"
 /*
  * Local variables:
  * c-indentation-style: k&r
