@@ -229,15 +229,16 @@ public:
 		return 100000;
 	}
 };
-// FIXME: might crash on exit. use a KStaticDeleter
-static TempFactory theTempFactory;
 
 Kopete::MessageHandlerChain::Ptr Kopete::MessageManager::chainForDirection( Kopete::Message::MessageDirection dir )
 {
 	if( dir < 0 || dir > 2)
 		kdFatal(14000) << k_funcinfo << "invalid message direction " << dir << endl;
 	if( !d->chains[dir] )
+	{
+		TempFactory theTempFactory;
 		d->chains[dir] = Kopete::MessageHandlerChain::create( this, dir );
+	}
 	return d->chains[dir];
 }
 
