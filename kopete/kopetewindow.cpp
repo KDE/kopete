@@ -34,7 +34,6 @@
 #include <kedittoolbar.h>
 #include <kmenubar.h>
 #include <kstatusbar.h>
-#include <kwin.h>
 
 #include "addcontactwizard.h"
 #include "kopeteballoon.h"
@@ -55,7 +54,6 @@
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 : KMainWindow( parent, name )
 {
-	KWin::setState(winId(), NET::SkipTaskbar);
 	kdDebug(14000) << "[KopeteWindow] KopeteWindow()" << endl;
 
 	// Applications should ensure that their StatusBar exists before calling createGUI()
