@@ -137,17 +137,7 @@ void SMSContact::slotDeleteContact()
 
 KopeteContact::ContactStatus SMSContact::status() const
 {
-	return Online;
-}
-
-QString SMSContact::statusText() const
-{
-	return i18n("Online");
-}
-
-QString SMSContact::statusIcon() const
-{
-	return "";
+	return Unknown;
 }
 
 int SMSContact::importance() const

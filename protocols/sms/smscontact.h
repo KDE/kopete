@@ -38,8 +38,6 @@ public:
 	virtual QString id() const;
 
 	ContactStatus status() const;
-	QString statusText() const;
-	QString statusIcon() const;
 	int importance() const;
 
 	QString smsId() const;

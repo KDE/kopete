@@ -73,7 +73,7 @@ void SMSPreferences::save()
 	config->writeEntry("ServiceName", preferencesDialog->serviceName->currentText());
 	config->sync();
 
-	if ( service != 0L )
+	if ( service != 0L && configWidget != 0L )
 		service->savePreferences();
 	
 	emit saved();

@@ -7,6 +7,9 @@
 class SMSService
 {
 public:
+	SMSService();
+	virtual ~SMSService();
+
 	virtual bool send(QString nr, QString message) = 0;
 	virtual QWidget* configureWidget(QWidget* parent) = 0;
 	virtual void savePreferences() = 0;
