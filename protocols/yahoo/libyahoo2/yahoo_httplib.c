@@ -122,7 +122,7 @@ char *yahoo_urlencode(const char *instr)
 	}
 	str[bpos]='\0';
 
-	//free extra alloc'ed mem.
+	/*free extra alloc'ed mem.*/
 	len = strlen(str);
 	str = g_renew(char, str, len+1);
 
@@ -158,7 +158,7 @@ char *yahoo_urldecode(const char *instr)
 	}
 	str[bpos]='\0';
 
-	//free extra alloc'ed mem.
+	/*free extra alloc'ed mem.*/
 	len = strlen(str);
 	str = g_renew(char, str, len+1);
 

@@ -127,12 +127,12 @@ static guint32 last_id=0;
 
 extern char *yahoo_crypt(char *, char *);
 
-//#define DEBUG 1
+/* #define DEBUG 1 */
 
 #ifdef DEBUG
 #define debug_printf printf
 #else
-static void debug_printf(char *fmt, ...)
+static void debug_printf(char */*fmt*/, ...)
 {
 }
 #endif
@@ -329,7 +329,6 @@ static void yahoo_dump_unhandled(struct yahoo_packet *pkt)
 		l = l->next;
 	}
 }
-
 
 static void yahoo_packet_dump(guchar *data, int len)
 {
@@ -625,7 +624,7 @@ static void yahoo_process_conference(struct yahoo_data *yd, struct yahoo_packet 
 		if (pair->key == 50)
 			host = pair->value;
 		
-		if (pair->key == 52) {		// invite
+		if (pair->key == 52) {		/* invite */
 			who = pair->value;
 			if(members) {
 				members = (char **)realloc(members, sizeof(char *) * (nmembers + 2));
@@ -635,26 +634,26 @@ static void yahoo_process_conference(struct yahoo_data *yd, struct yahoo_packet 
 			members[nmembers++] = strdup(who);
 			members[nmembers] = NULL;
 		}
-		if (pair->key == 53)		// logon
+		if (pair->key == 53)		/* logon */
 			who = pair->value;
-		if (pair->key == 54)		// decline
+		if (pair->key == 54)		/* decline */
 			who = pair->value;
-		if (pair->key == 56)		// logoff
+		if (pair->key == 56)		/* logoff */
 			who = pair->value;
 
 		if (pair->key == 57)
 			room = pair->value;
 
-		if (pair->key == 58)		// join message
+		if (pair->key == 58)		/* join message */
 			msg = pair->value;
-		if (pair->key == 14)		// decline/conf message
+		if (pair->key == 14)		/* decline/conf message */
 			msg = pair->value;
 
 		if (pair->key == 13)
 			;
-		if (pair->key == 1)		// my id
+		if (pair->key == 1)		/* my id */
 			id = pair->value;
-		if (pair->key == 3)		// message sender
+		if (pair->key == 3)		/* message sender */
 			who = pair->value;
 
 		l = l->next;
@@ -672,7 +671,7 @@ static void yahoo_process_conference(struct yahoo_data *yd, struct yahoo_packet 
 		members[nmembers++] = strdup(host);
 		members[nmembers] = NULL;
 	}
-	// invite, decline, join, left, message -> status == 1
+	/* invite, decline, join, left, message -> status == 1 */
 
 	switch(pkt->service) {
 	case YAHOO_SERVICE_CONFINVITE:
@@ -713,7 +712,7 @@ static void yahoo_process_message(struct yahoo_data *yd, struct yahoo_packet *pk
 			msg = pair->value;
 		else if (pair->key == 15)
 			tm = strtol(pair->value, NULL, 10);
-		else if (pair->key == 16)	// system message
+		else if (pair->key == 16)	/* system message */
 			msg = pair->value;
 		else
 			fprintf(stderr, "yahoo_process_message: status: %d, key: %d, value: %s\n",
@@ -726,7 +725,7 @@ static void yahoo_process_message(struct yahoo_data *yd, struct yahoo_packet *pk
 	} else if (pkt->status <= 1 || pkt->status == 5) {
 		char *m;
 		int i, j;
-		//strip_linefeed(msg);
+		/*strip_linefeed(msg);*/
 		m = msg;
 		for (i = 0, j = 0; m[i]; i++) {
 			if (m[i] == 033) {

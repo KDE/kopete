@@ -8,4 +8,4 @@ libyahoo2_la_SOURCES = libyahoo2.c crypt.c md5.c yahoo_connections.c \
 	yahoo_httplib.c
 
 libyahoo2_la_LIBADD = $(GLIB_LIBADD)
-libyahoo2_la_LDFLAGS = -no-undefined $(GLIB_LDFLAGS) $(all_libraries)
+libyahoo2_la_LDFLAGS = -no-undefined $(all_libraries)
