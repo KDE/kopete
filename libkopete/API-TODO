@@ -7,6 +7,11 @@ send button.
 KopeteMessage should be reorganised to use QDomDocument to store its
 contents.
 
+Add to KopeteMetaContact a statusPixmap() function to return the pixmap
+associated with its name. Take implementation from KopeteMetaContactLVI.
+Use this function in the Kopete::MimeSourceFactory so we get MCs being
+grayed if they're idle in tooltips too.
+
 Some sort of async message processing API needs to be designed and implemented
 Richard's proposal: (email questions to the list or to kde@metafoo.co.uk)
 - how do we order the various message filters available properly?
