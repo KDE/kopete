@@ -82,6 +82,8 @@ Kopete::Kopete()
 
 Kopete::~Kopete()
 {
+	kdDebug( 14000 ) << k_funcinfo << endl;
+
 	KopeteContactList::contactList()->save();
 	KopeteAccountManager::manager()->save();
 	delete m_mainWindow;
@@ -237,10 +239,9 @@ void Kopete::quitKopete()
 	m_isShuttingDown = true;
 	if ( m_mainWindow )
 	{
-		m_mainWindow->close();
-		m_mainWindow = 0L;
+		//m_mainWindow->close();
+		KopetePluginManager::self()->shutdown();
 	}
-	//quit();
 }
 
 void Kopete::commitData( QSessionManager &sm )

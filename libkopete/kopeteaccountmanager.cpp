@@ -222,7 +222,7 @@ void KopeteAccountManager::unregisterAccount( KopeteAccount *account )
 
 void KopeteAccountManager::save()
 {
-	kdDebug( 14010 ) << k_funcinfo << endl << kdBacktrace() << endl;
+	kdDebug( 14010 ) << k_funcinfo << endl;
 
 	KConfig *config = KGlobal::config();
 	QPtrListIterator<KopeteAccount> it( m_accounts );

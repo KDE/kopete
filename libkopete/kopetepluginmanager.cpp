@@ -45,9 +45,13 @@ public:
 	// a plugin
 	QMap<KPluginInfo *, KopetePlugin *> loadedPlugins;
 
-	// * The list of all address book keys used by each plugin
+	// The list of all address book keys used by each plugin
 	QMap<KopetePlugin *, QStringList> addressBookFields;
 
+	// When true we're shutting down and we should deref() the application
+	// if all plugins are gone
+	enum ShutdownMode { Running, ShuttingDown, DoneShutdown };
+	ShutdownMode shutdownMode;
 };
 
 // Put the static deleter in its anonymous namespace
@@ -77,6 +81,7 @@ KopetePluginManager::KopetePluginManager()
 	// robust if they are still doing processing.
 	kapp->ref();
 	connect( kapp, SIGNAL( lastWindowClosed() ), this, SLOT( unloadAllPlugins() ) );
+	d->shutdownMode = KopetePluginManagerPrivate::Running;
 
 	KSettings::Dispatcher::self()->registerInstance( KGlobal::instance(), this, SLOT( loadAllPlugins() ) );
 
@@ -85,6 +90,9 @@ KopetePluginManager::KopetePluginManager()
 
 KopetePluginManager::~KopetePluginManager()
 {
+	if ( d->shutdownMode != KopetePluginManagerPrivate::DoneShutdown )
+		kdWarning( 14010 ) << k_funcinfo << "Destructing plugin manager without going through the shutdown process!" << endl << kdBacktrace() << endl;
+
 	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
 
 	// Remove non-protocol plugins first
@@ -148,16 +156,55 @@ QMap<KPluginInfo *, KopetePlugin *> KopetePluginManager::loadedPlugins( const QS
 	return result;
 }
 
-void KopetePluginManager::unloadAllPlugins()
+void KopetePluginManager::shutdown()
 {
 	kdDebug( 14010 ) << k_funcinfo << endl;
 
-	QTimer::singleShot( 0, this, SLOT( slotUnloadAllPluginsTimeout() ) );
+	d->shutdownMode = KopetePluginManagerPrivate::ShuttingDown;
+
+	// Ask all plugins to unload
+	QMap<KPluginInfo *, KopetePlugin *>::ConstIterator it;
+	for( it = d->loadedPlugins.begin(); it != d->loadedPlugins.end(); /* EMPTY */ )
+	{
+		// Remove causes the iterator to become invalid, so pre-increment first
+		QMap<KPluginInfo *, KopetePlugin *>::ConstIterator nextIt( it );
+		++nextIt;
+		connect( it.data(), SIGNAL( readyForUnload() ), this, SLOT( slotPluginReadyForUnload() ) );
+		it.data()->aboutToUnload();
+		it = nextIt;
+	}
+
+	QTimer::singleShot( 3000, this, SLOT( slotUnloadAllPluginsTimeout() ) );
+}
+
+void KopetePluginManager::slotPluginReadyForUnload()
+{
+	// Using QObject::sender() is on purpose here, because otherwise all
+	// plugins would have to pass 'this' as parameter, which makes the API
+	// less clean for plugin authors
+	KopetePlugin *plugin = dynamic_cast<KopetePlugin *>( const_cast<QObject *>( sender() ) );
+	if ( !plugin )
+	{
+		kdWarning( 14010 ) << k_funcinfo << "Calling object is not a plugin!" << endl;
+		return;
+	}
+
+	plugin->deleteLater();
 }
 
 void KopetePluginManager::slotUnloadAllPluginsTimeout()
 {
+	kdWarning( 14010 ) << k_funcinfo << "Some plugins didn't shutdown in time!" << endl
+		<< "Forcing Kopete shutdown now." << endl;
+
+	slotUnloadAllPluginsDone();
+}
+
+void KopetePluginManager::slotUnloadAllPluginsDone()
+{
 	kdDebug( 14010 ) << k_funcinfo << endl;
+
+	d->shutdownMode = KopetePluginManagerPrivate::DoneShutdown;
 
 	kapp->deref();
 }
@@ -313,8 +360,15 @@ void KopetePluginManager::slotPluginDestroyed( QObject *plugin )
 		if ( it.data() == plugin )
 		{
 			d->loadedPlugins.erase( it );
-			return;
+			break;
 		}
+	}
+
+	if ( d->shutdownMode == KopetePluginManagerPrivate::ShuttingDown && d->loadedPlugins.isEmpty() )
+	{
+		// Use a timer to make sure any pending deleteLater() calls have
+		// been handled first
+		QTimer::singleShot( 0, this, SLOT( slotUnloadAllPluginsDone() ) );
 	}
 }
 

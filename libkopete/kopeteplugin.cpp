@@ -84,6 +84,12 @@ KActionCollection *KopetePlugin::customChatWindowPopupActions( const KopeteMessa
 	return 0L;
 }
 
+void KopetePlugin::aboutToUnload()
+{
+	// Just make the unload synchronous by default
+	emit readyForUnload();
+}
+
 #include "kopeteplugin.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

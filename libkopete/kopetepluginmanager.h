@@ -117,6 +117,18 @@ public:
 	 */
 	QString pluginIcon( const KopetePlugin *plugin ) const;
 
+	/**
+	 * Shuts down the plugin manager on Kopete shutdown, but first
+	 * unloads all plugins asynchronously.
+	 *
+	 * After 3 seconds all plugins should be removed; what's still left
+	 * by then is unloaded through a hard delete instead.
+	 *
+	 * Note that this call also derefs the plugin manager from the event
+	 * loop, so do NOT call this method when not terminating Kopete!
+	 */
+	void shutdown();
+
 public slots:
 	/**
 	 * @brief Load a single plugin by plugin name. Returns an existing plugin
@@ -152,17 +164,15 @@ private slots:
 	void slotUnloadAllPluginsTimeout();
 
 	/**
-	 * Unload all plugins on Kopete quit. This slot is called when the
-	 * main window is closed in Kopete::quitKopete() to asynchronously
-	 * unload plugins.
-	 *
-	 * After 3 seconds all plugins should be removed; what's still left
-	 * by then is unloaded through a hard delete instead.
-	 *
-	 * Note that this call also derefs the plugin manager from the event
-	 * loop, so do NOT call this method when not terminating Kopete!
+	 * Common entry point to deref() the KApplication. Used both by the clean
+	 * shutdown and the timeout condition of slotUnloadAllPluginsTimeout()
 	 */
-	void unloadAllPlugins();
+	void slotUnloadAllPluginsDone();
+
+	/**
+	 * Emitted by a KopetePlugin when it's ready for unload
+	 */
+	void slotPluginReadyForUnload();
 
 private:
 	KopetePluginManager();

@@ -115,12 +115,31 @@ public:
 	 */
 	QString displayName() const;
 
+	/**
+	 * @brief Prepare for unloading a plugin
+	 *
+	 * When unloading a plugin the plugin manager first calls aboutToUnload()
+	 * to indicate the pending unload. Some plugins need time to shutdown
+	 * asynchronously and thus can't be simply deleted in the destructor.
+	 *
+	 * The default implementation immediately emits the readyForUnload() signal,
+	 * which basically makes the shutdown immediate and synchronous. If you need
+	 * more time you can reimplement this method and fire the signal whenever
+	 * you're ready.
+	 */
+	virtual void aboutToUnload();
+
 signals:
 	/**
 	 * Notify that the settings of a plugin were changed.
 	 * These changes are passed on from the new KCDialog code in kdelibs/kutils.
 	 */
 	void settingsChanged();
+
+	/**
+	 * Indicate when we're ready for unload. See aboutToUnload()
+	 */
+	void readyForUnload();
 
 public slots:
 	/**
