@@ -1126,6 +1126,7 @@ void KopeteChatWindow::slotConfKeys()
 		while( (c = it.current()) != 0 )
 		{
 			dlg.insert( c->actionCollection() , i18n("Plugin Actions") );
+			++it;
 		}
 
 		if( m_activeView->part() )
