@@ -22,7 +22,7 @@
                 <cstring>TextLabel1</cstring>
             </property>
             <property name="text">
-                <string>Your PGP key:</string>
+                <string>Your private PGP key:</string>
             </property>
         </widget>
         <widget class="QPushButton" row="0" column="2">
