@@ -26,16 +26,10 @@
 #include "msncontact.h"
 #include "msnprotocol.h"
 
-// Constructor for no-groups
-MSNContact::MSNContact( QString &protocolId, const QString &msnId, const QString &displayName,
-	const QString &group, KopeteMetaContact *parent )
-	: KopeteContact( protocolId, parent )
-{
-	initContact( msnId, displayName, group );
-}
-
-void MSNContact::initContact( const QString &msnId, const QString &displayName,
-	const QString &group )
+MSNContact::MSNContact( QString &protocolId, const QString &msnId,
+	const QString &displayName, const QString &group,
+	KopeteMetaContact *parent )
+: KopeteContact( protocolId, parent )
 {
 	m_actionRemove = 0L;
 	m_actionRemoveFromGroup = 0L;

@@ -284,34 +284,25 @@ bool MSNProtocol::serialize( KopeteMetaContact *metaContact,
 void MSNProtocol::deserialize( KopeteMetaContact *metaContact,
 	const QStringList &strList )
 {
-    QString protocolId = this->id();
+	kdDebug() << "MSNProtocol::deserialize: " << metaContact->displayName()
+		<< ", [ " << strList.join( ", " ) << " ]" << endl;
 
-	QString passport, displayName;
-	QStringList groups;
-	int numContacts = strList.size() / 3;
-	int idx = 0;
-	while( numContacts ) {
-		for( int i = 0; i < 3; ++i,++idx ) {
-			switch( i ) {
-			case 0:
-				passport = strList[idx];
-				break;
-			case 1:
-				displayName = strList[idx];
-				break;
-			case 2:
-				QStringList groups = QStringList::split( ",", strList[idx] );
-				break;
-			}
-		}
-		--numContacts;
+	QString protocolId = this->id();
+
+	uint idx = 0;
+	while( idx < strList.size() )
+	{
+		QString passport    = strList[ idx ];
+		QString displayName = strList[ idx + 1 ];
+		QStringList groups  = QStringList::split( ",", strList[ idx + 2 ] );
+
 		kdDebug() << "new MSNContact( " << protocolId << ", " << passport
 			<< ", " << displayName << ", " << groups.first()
 			<< ", " << metaContact->displayName() << endl;
 
 		// Create MSN contact
 		// FIXME: I think this should go in a single method, as it is
-		// duplicated everywhere now
+		// duplicated everywhere now - Martijn
 		MSNContact *c = new MSNContact( protocolId, passport, displayName,
 			groups.first(), metaContact );
 		connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
@@ -328,6 +319,8 @@ void MSNProtocol::deserialize( KopeteMetaContact *metaContact,
 
 		// FIXME: Try to remove this
 		m_contacts.insert( c->msnId(), c );
+
+		idx += 3;
 	}
 }
 

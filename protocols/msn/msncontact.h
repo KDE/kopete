@@ -37,11 +37,10 @@ class MSNContact : public KopeteContact
 	Q_OBJECT
 
 public:
-	MSNContact( QString &protocolId,const QString &msnId, const QString &displayName,
-				const QString &group, KopeteMetaContact *parent );
+	MSNContact( QString &protocolId, const QString &msnId,
+		const QString &displayName, const QString &group,
+		KopeteMetaContact *parent );
 
-	void initContact( const QString &msnId, const QString &displayName,
-						const QString &group );
 	virtual void showContextMenu( const QPoint&, const QString& group );
 	virtual void execute();
 
