@@ -364,6 +364,7 @@ void AppearanceConfig::slotChangeFont()
 	KopetePrefs::prefs()->setFontFace( mFont );
 	mPrfsChatAppearance->fontFace->setFont( mFont );
 	mPrfsChatAppearance->fontFace->setText( mFont.family() );
+	currentStyle=QString::null; //force to update preview;
 	slotUpdatePreview();
 }
 
@@ -387,6 +388,7 @@ void AppearanceConfig::slotAddStyle()
 	styleEditor->show();
 	connect( styleEditor->buttonOk, SIGNAL(clicked()), this, SLOT(slotStyleSaved()) );
 	connect( styleEditor->buttonCancel, SIGNAL(clicked()), styleEditor, SLOT(deleteLater()) );
+	currentStyle=QString::null; //force to update preview;
 }
 
 void AppearanceConfig::updateHighlight()
@@ -416,7 +418,6 @@ void AppearanceConfig::slotStyleSelected()
 		mPrfsChatAppearance->editButton->setEnabled( false );
 		mPrfsChatAppearance->deleteButton->setEnabled( false );
 	}
-
 	slotUpdatePreview();
 }
 
@@ -565,7 +566,7 @@ void AppearanceConfig::slotUpdatePreview()
 			KopeteMessage msgIn( cFrom, toList, QString::fromLatin1("This is an incoming message"),KopeteMessage::Inbound );
 			KopeteMessage msgOut( cFrom, toList, QString::fromLatin1("This is an outgoing message"),KopeteMessage::Outbound );
 			KopeteMessage msgInt( cFrom, toList, QString::fromLatin1("This is an internal message"),KopeteMessage::Internal );
-			KopeteMessage msgHigh( cFrom, toList, QString::fromLatin1("This is a highlighted message"),KopeteMessage::Inbound );
+			//KopeteMessage msgHigh( cFrom, toList, QString::fromLatin1("This is a highlighted message"),KopeteMessage::Inbound );
 			KopeteMessage msgAct( cFrom, toList, QString::fromLatin1("This is an action message"),KopeteMessage::Action );
 
 			preview->begin();
@@ -580,16 +581,18 @@ void AppearanceConfig::slotUpdatePreview()
 				.arg( mPrfsChatAppearance->linkColor->color().name() )
 				.arg( mPrfsChatAppearance->linkColor->color().name() ) );
 
-			preview->write( KopeteXSL::xsltTransform( msgIn.asXML().toString(), model )) ;
-			msgIn.setFg(Qt::red);
-			msgIn.setBg(Qt::blue);
+			//parsing a XSLT message is incredibly slow! that's why i commented out some preview messages
+
+			//preview->write( KopeteXSL::xsltTransform( msgIn.asXML().toString(), model )) ;
+			msgIn.setFg(QColor("DodgerBlue"));
+			msgIn.setBg(QColor("LightSteelBlue"));
 			msgIn.setBody( QString::fromLatin1("This is a colored incoming message (random color)") );
 			preview->write( KopeteXSL::xsltTransform( msgIn.asXML().toString(), model ) );
 			preview->write( KopeteXSL::xsltTransform( msgOut.asXML().toString(), model)  );
 			preview->write( KopeteXSL::xsltTransform( msgInt.asXML().toString(), model ) );
 			preview->write( KopeteXSL::xsltTransform( msgAct.asXML().toString(), model ) );
-			msgHigh.setImportance( KopeteMessage::Highlight );
-			preview->write( KopeteXSL::xsltTransform( msgHigh.asXML().toString(), model )) ;
+			//msgHigh.setImportance( KopeteMessage::Highlight );
+			//preview->write( KopeteXSL::xsltTransform( msgHigh.asXML().toString(), model )) ;
 
 			preview->write( QString::fromLatin1( "</body></html>" ) );
 			preview->end();

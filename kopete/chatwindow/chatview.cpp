@@ -943,10 +943,17 @@ const QString ChatView::styleHTML() const
 		.arg( p->fontFace().pointSize() )
 		.arg( p->textColor().name() )
 		.arg( p->linkColor().name() )
-		.arg( p->linkColor().name() )
-	+ QString::fromLatin1( ".highlight{color:%1;background-color:%2}" )
-		.arg( p->highlightForeground().name() )
-		.arg( p->highlightBackground().name() );
+		.arg( p->linkColor().name() );
+
+	//JASON, VA TE FAIRE FOUTRE AVEC TON *default* HIGHLIGHT!
+	// that broke my highlight plugin
+	// if the user has not Spetialy specified that it you theses 'putaint de' default color, WE DON'T USE THEM
+	if(p->highlightEnabled())
+	{
+		style += QString::fromLatin1( ".highlight{color:%1;background-color:%2}" )
+			.arg( p->highlightForeground().name() )
+			.arg( p->highlightBackground().name() );
+	}
 
 	return style;
 }

@@ -27,9 +27,15 @@
 		<xsl:choose>
 		<xsl:when test="@direction='3'">
 			<span style="color:darkgreen">
-				<span class="KopeteDisplayName"><xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/></span> <xsl:value-of disable-output-escaping="yes" select="body"/>
+				* <span class="KopeteDisplayName"><xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/> </span> <xsl:text> </xsl:text> <xsl:value-of disable-output-escaping="yes" select="body"/>
 			</span>
 		</xsl:when>
+		<xsl:when test="@direction='2'">
+			<span style="color:darkviolet;font-weight:bold;">
+				<xsl:value-of disable-output-escaping="yes" select="body"/>
+			</span>
+		</xsl:when>
+
 		<xsl:otherwise>
 			<xsl:value-of disable-output-escaping="yes" select="body"/>
 		</xsl:otherwise>
