@@ -78,7 +78,6 @@ Client::Client(QObject *par)
 
 Client::~Client()
 {
-	close();
 	delete d->root;
 	delete d->requestFactory;
 	delete d->userDetailsMgr;
@@ -149,7 +148,7 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 
 void Client::close()
 {
-	qDebug( "TODO: close()" );
+	qDebug( "Client::close()" );
 	if(d->stream) {
 		if(d->active) {
 /*			for(QValueList<GroupChat>::Iterator it = d->groupChatList.begin(); it != d->groupChatList.end(); it++) {

@@ -113,7 +113,7 @@ void KNetworkByteStream::slotConnectionClosed ()
 	if ( mClosing )
 	{
 		kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << "..by ourselves!" << endl;
-		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "socket error is " << socket()->errorString( socket()->error() ) << endl;
+		kdDebug( GROUPWISE_DEBUG_GLOBAL ) << "socket error is \"" << socket()->errorString( socket()->error() ) << "\"" << endl;
 		emit connectionClosed ();
 	}
 	else

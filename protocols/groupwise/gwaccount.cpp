@@ -398,10 +398,10 @@ void GroupWiseAccount::disconnect()
 
 void GroupWiseAccount::cleanup()
 {
+	delete m_client;
 	delete m_clientStream;
 	delete m_QCATLS;
 	delete m_connector;
-	delete m_client;
 	
 	m_connector = 0;
 	m_QCATLS = 0;
@@ -432,7 +432,10 @@ void GroupWiseAccount::createConference( const int clientId, const QStringList& 
 {
 	kdDebug ( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << endl;
 	// TODO: remove this it prevents sending a list of participants with the createconf
-	m_client->createConference( clientId , invitees );
+	if( isConnected () )
+	{
+		m_client->createConference( clientId , invitees );
+	}
 }
 
 void GroupWiseAccount::sendInvitation( const GroupWise::ConferenceGuid & guid, const QString & dn, const QString & message )
@@ -441,7 +444,10 @@ void GroupWiseAccount::sendInvitation( const GroupWise::ConferenceGuid & guid, c
 	GroupWise::OutgoingMessage msg;
 	msg.guid = guid;
 	msg.message = message;
-	m_client->sendInvitation( guid, dn, msg );
+	if( isConnected () )
+	{
+		m_client->sendInvitation( guid, dn, msg );
+	}
 }
 
 void GroupWiseAccount::slotGoOnline()
@@ -846,7 +852,7 @@ GroupWiseContact * GroupWiseAccount::createTemporaryContact( const QString & dn 
 		c->updateDetails( details );
 		KopeteContactList::contactList()->addMetaContact( metaContact );
 		// the contact details probably don't contain status - but we can ask for it
-		if ( details.status == GroupWise::Invalid )
+		if ( details.status == GroupWise::Invalid && isConnected() )
 			m_client->requestStatus( details.dn );
 	}
 	else
@@ -893,7 +899,10 @@ void GroupWiseAccount::sendMessage( const GroupWise::ConferenceGuid &guid, const
 	for ( KopeteContact * contact = addressees.first(); contact; contact = addressees.next() )
 		addresseeDNs.append( static_cast< GroupWiseContact* >( contact )->dn() );
 	// send the message 
-	m_client->sendMessage( addresseeDNs, outMsg );
+	if( isConnected () )
+	{
+		m_client->sendMessage( addresseeDNs, outMsg );
+	}
 }
 
 bool GroupWiseAccount::addContactToMetaContact( const QString& contactId, const QString& displayName, KopeteMetaContact* parentContact )
@@ -1100,7 +1109,10 @@ void GroupWiseAccount::slotLeavingConference( GroupWiseMessageManager * mgr )
 {
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "unregistering message manager:" << mgr->guid()<< endl;
 	// leave the conference
-	m_client->leaveConference( mgr->guid() );
+	if( isConnected () )
+	{
+		m_client->leaveConference( mgr->guid() );
+	}	
 	m_managers.remove( mgr );
 	kdDebug( GROUPWISE_DEBUG_GLOBAL ) << k_funcinfo << "m_managers now contains:" << m_managers.count() << " managers" << endl;
 }
