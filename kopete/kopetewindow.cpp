@@ -564,7 +564,7 @@ void KopeteWindow::slotAccountStatusIconChanged( KopeteContact *contact )
 	KIconLoader *loader = KGlobal::instance()->iconLoader();
 
 	QMovie mv = loader->loadMovie( status.overlayIcon(),
-		 KIcon::User);
+		 KIcon::Small);
 
 	if ( mv.isNull() )
 	{

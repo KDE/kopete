@@ -1,5 +1,5 @@
 METASOURCES = AUTO
-SUBDIRS = ui pixmaps icons libxmpp
+SUBDIRS = ui icons libxmpp
 AM_CPPFLAGS = $(KOPETE_INCLUDES) \
 	-I$(srcdir)/libxmpp/xmpp/src \
 	-I$(srcdir)/ui \

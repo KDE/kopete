@@ -1,4 +1,4 @@
-SUBDIRS = oscarsocket . icq aim icons pics
+SUBDIRS = oscarsocket . icq aim icons
 METASOURCES = AUTO
 AM_CPPFLAGS = -I./ui -I$(srcdir)/ui \
 	-I./oscarsocket -I$(srcdir)/oscarsocket \

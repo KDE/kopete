@@ -1,6 +1,6 @@
 METASOURCES = AUTO
 
-SUBDIRS = ui pixmaps icons libkirc
+SUBDIRS = ui icons libkirc
 AM_CPPFLAGS = -I$(srcdir)/ui $(KOPETE_INCLUDES) \
 		-I./ui \
 		-I$(srcdir)/libkirc \

@@ -1,5 +1,5 @@
 METASOURCES = AUTO
-SUBDIRS = ui . pixmaps icons config
+SUBDIRS = ui . icons config
 AM_CPPFLAGS = -I$(srcdir)/ui \
 	-I./ui \
 	$(KOPETE_INCLUDES) \

@@ -113,7 +113,7 @@ void KopeteSystemTray::contextMenuAboutToShow( KPopupMenu *me )
 
 void KopeteSystemTray::startBlink( const QString &icon )
 {
-	startBlink( KGlobal::iconLoader()->loadIcon( icon , KIcon::User ) );
+	startBlink( KGlobal::iconLoader()->loadIcon( icon , KIcon::Panel ) );
 }
 
 void KopeteSystemTray::startBlink( const QPixmap &icon )
@@ -144,7 +144,7 @@ void KopeteSystemTray::startBlink( const QMovie &icon )
 void KopeteSystemTray::startBlink()
 {
 	if( mMovie.isNull() )
-		mMovie = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::User );
+		mMovie = KGlobal::iconLoader()->loadMovie( QString::fromLatin1( "newmessage" ), KIcon::Panel );
 	startBlink( mMovie );
 }
 
