@@ -34,12 +34,13 @@
 #include "kopetecommandhandler.h"
 #include "ksparser.h"
 
-K_EXPORT_COMPONENT_FACTORY( kopete_irc, KGenericFactory<IRCProtocol> );
+typedef KGenericFactory<IRCProtocol> IRCProtocolFactory;
+K_EXPORT_COMPONENT_FACTORY( kopete_irc, IRCProtocolFactory );
 
 IRCProtocol *IRCProtocol::s_protocol = 0L;
 
 IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
-: KopeteProtocol( KGlobal::instance(), parent, name ),
+: KopeteProtocol( IRCProtocolFactory::instance(), parent, name ),
 
 	m_ServerStatusOnline(KopeteOnlineStatus::Online,	90, this, 21, "irc_server",	i18n("Go O&nline"),	i18n("Online")),
 	m_ServerStatusOffline(KopeteOnlineStatus::Offline,	80, this, 20, "irc_server",	i18n("Go O&ffline"),	i18n("Offline")),

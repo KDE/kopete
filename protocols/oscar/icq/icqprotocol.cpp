@@ -39,13 +39,14 @@
 
 //#include "oscarpreferences.h" // TODO: remove this
 
+typedef KGenericFactory<ICQProtocol> ICQProtocolFactory;
 
-K_EXPORT_COMPONENT_FACTORY( kopete_icq, KGenericFactory<ICQProtocol> );
+K_EXPORT_COMPONENT_FACTORY( kopete_icq, ICQProtocolFactory );
 
 ICQProtocol* ICQProtocol::protocolStatic_ = 0L;
 
 ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
-: KopeteProtocol( KGlobal::instance(), parent, name ),
+: KopeteProtocol( ICQProtocolFactory::instance(), parent, name ),
 	statusOnline(KopeteOnlineStatus::Online, 1, this, OSCAR_ONLINE, QString::null , i18n("Online"), i18n("Online")),
 	statusFFC(KopeteOnlineStatus::Online, 2, this, OSCAR_FFC, "icq_ffc", i18n("&Free for Chat"), i18n("Free For Chat")),
 	statusOffline(KopeteOnlineStatus::Offline, 1, this, OSCAR_OFFLINE, QString::null, i18n("Offline"), i18n("Offline")),

@@ -64,10 +64,12 @@
 
 JabberProtocol *JabberProtocol::protocolInstance = 0;
 
-K_EXPORT_COMPONENT_FACTORY (kopete_jabber, KGenericFactory < JabberProtocol >);
+typedef KGenericFactory<JabberProtocol> JabberProtocolFactory;
+
+K_EXPORT_COMPONENT_FACTORY( kopete_jabber, JabberProtocolFactory );
 
 JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStringList &)
-: KopeteProtocol( KGlobal::instance(), parent, name ),
+: KopeteProtocol( JabberProtocolFactory::instance(), parent, name ),
 	JabberKOSOnline(KopeteOnlineStatus::Online,         25, this, 0, QString::null,       i18n ("Go O&nline"), i18n ("Online")),
 	JabberKOSChatty(KopeteOnlineStatus::Online,         20, this, 1, "jabber_chatty",     i18n ("Set F&ree to Chat"), i18n ("Free to Chat")),
 	JabberKOSAway(KopeteOnlineStatus::Away,             25, this, 2, "jabber_away",       i18n ("Set A&way"), i18n ("Away")),
