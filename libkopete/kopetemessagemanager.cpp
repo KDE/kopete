@@ -2,6 +2,8 @@
 #include "kopetemessagemanager.h"
 #include "kopetechatwindow.h"
 #include "kopeteevent.h"
+#include "kopete.h"
+
 #include "messagelog.h"
 #include <kdebug.h>
 
@@ -119,9 +121,11 @@ void KopeteMessageManager::appendMessage( const KopeteMessage &msg )
 		mLogger->append( msg );
 	}
 
-	if ( mUnreadMessageEvent == 0L )
+	/* We dont need an event if it already exits or if we are in popup mode */
+	if ( (mUnreadMessageEvent == 0L) && ( mReadMode != Popup) )
 	{
 		mUnreadMessageEvent = new KopeteEvent( msg.from(), "newmsg", this, SLOT(readMessages()));
+		kopeteapp->notifyEvent( mUnreadMessageEvent );
 	}
 
 	if (mReadMode == Popup)
