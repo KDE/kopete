@@ -38,6 +38,7 @@
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
 #include "kopetepluginmanager.h"
+#include "kopetegroup.h"
 
 #define EMAIL_WINDOW 0
 #define CHAT_WINDOW 1

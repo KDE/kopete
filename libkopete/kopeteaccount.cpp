@@ -34,6 +34,7 @@
 #include "kopetepassworddialog.h"
 #include "kopeteprotocol.h"
 #include "kopetepluginmanager.h"
+#include "kopetegroup.h"
 
 #if KDE_IS_VERSION( 3, 1, 90 )
 // KMessageBox is only used in the KWallet code path
@@ -158,7 +159,7 @@ void KopeteAccount::writeConfig( const QString &configGroupName )
 		config->writeEntry( "Password", cryptStr( d->password ) );
 	else
 		config->deleteEntry( "Password" );
-	
+
 	config->writeEntry( "RememberPassword", d->rememberPassword );
 	config->writeEntry( "AutoConnect", d->autologin );
 
@@ -473,7 +474,7 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 			parentContact->updateKABC();
 		}
 		else
-			kdDebug( 14010 ) << k_funcinfo << " leaving KABC" << endl;	
+			kdDebug( 14010 ) << k_funcinfo << " leaving KABC" << endl;
 		return true;
 	}
 	else
@@ -486,12 +487,12 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 				parentContact->updateKABC();
 			}
 			else
-				kdDebug( 14010 ) << k_funcinfo << " leaving KABC" << endl;	
+				kdDebug( 14010 ) << k_funcinfo << " leaving KABC" << endl;
 			return true;
 		}
 		else
 			return false;
-		
+
 	}
 }
 

@@ -24,6 +24,7 @@
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
 #include "kopeteawaydialog.h"
+#include "kopetegroup.h"
 
 #include <assert.h>
 

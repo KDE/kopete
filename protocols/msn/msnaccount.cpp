@@ -35,6 +35,7 @@
 #include "msnmessagemanager.h"
 #include "newuserimpl.h"
 #include "kopetecontactlist.h"
+#include "kopetegroup.h"
 #include "kopetemetacontact.h"
 
 

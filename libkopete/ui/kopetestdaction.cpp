@@ -29,6 +29,7 @@
 #include <kstdguiitem.h>
 
 #include "kopetecontactlist.h"
+#include "kopetegroup.h"
 
 KopeteGroupListAction::KopeteGroupListAction( const QString &text, const QString &pix, const KShortcut &cut, const QObject *receiver,
 	const char *slot, QObject *parent, const char *name )

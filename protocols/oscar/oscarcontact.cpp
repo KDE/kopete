@@ -35,6 +35,7 @@
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 #include "kopetecontactlist.h"
+#include "kopetegroup.h"
 
 #include "aim.h"
 #include "oscarsocket.h"

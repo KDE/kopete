@@ -27,6 +27,7 @@
 #include "kopetepluginmanager.h"
 #include "kopeteprotocol.h"
 #include "kopeteaway.h"
+#include "kopetecontact.h"
 
 
 KopeteIface::KopeteIface() : DCOPObject( "KopeteIface" )
@@ -35,7 +36,7 @@ KopeteIface::KopeteIface() : DCOPObject( "KopeteIface" )
 	KConfig *config = KGlobal::config();
 	config->setGroup("AutoAway");
 
-	if (config->readBoolEntry("UseAutoAway", true))
+KopeteGroup::GroupType	if (config->readBoolEntry("UseAutoAway", true))
 		connectDCOPSignal("kdesktop", "KScreensaverIface", "KDE_start_screensaver()", "setAutoAway()", false);
 	else
 		disconnectDCOPSignal("kdesktop", "KScreensaverIface", "KDE_start_screensaver()", "setAutoAway()");

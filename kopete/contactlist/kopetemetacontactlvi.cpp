@@ -50,6 +50,7 @@
 #include "kopeteaccount.h"
 #include "kopeteprefs.h"
 #include "systemtray.h"
+#include "kopetegroup.h"
 
 #include <kdeversion.h>
 
