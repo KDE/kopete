@@ -662,14 +662,6 @@ void JabberProtocol::slotError(const Jabber::StreamError &error)
 	disconnect();
 }
 
-bool JabberProtocol::isConnected() const
-{
-	if(!jabberClient)
-		return false;
-
-	return(jabberClient->isAuthenticated());
-}
-
 /*
  * Set presence (usually called by dialog widget)
  */
@@ -729,11 +721,6 @@ void JabberProtocol::setAvailable(void)
 KopeteContact* JabberProtocol::myself() const
 {
 	return myContact;
-}
-
-bool JabberProtocol::isAway(void) const
-{
-	return myContact->onlineStatus().status() == KopeteOnlineStatus::Away;
 }
 
 void JabberProtocol::deserializeContact( KopeteMetaContact *metaContact,

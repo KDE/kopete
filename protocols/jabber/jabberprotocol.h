@@ -102,17 +102,6 @@ public:
 	void setAvailable();
 
 	/**
-	 * Return connection status
-	 */
-	bool isConnected() const;
-
-
-	/**
-	 * Determine away status
-	 */
-	bool isAway() const;
-
-	/**
 	 * Are we able to relay messages to offline users?
 	 */
 	bool canSendOffline() const;

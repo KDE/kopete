@@ -58,10 +58,8 @@ public:
     // {
     void init();
 
-    bool isConnected() const;
     void setAway();
     void setAvailable();
-    bool isAway() const ;
 
     AddContactPage *createAddContactWidget( QWidget *parent );
     bool canSendOffline() const { return true; }

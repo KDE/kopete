@@ -121,9 +121,6 @@ public:
 	AddContactPage *createAddContactWidget(QWidget *parent) { return new WPAddContact(this, parent); }	// Return "add contact" dialog
 	KopeteContact *myself() const {	return (KopeteContact *)theMyself; } 					// Return the user's contact object
 
-	bool isConnected() const { return online; }		// Return true if connected
-	bool isAway() const { return !available; }		// Return true if away
-
 public slots:
 	void connect();						// Connect to server
 	void disconnect();					// Disconnect from server

@@ -42,7 +42,6 @@ public:
 	KopeteProtocol( QObject *parent = 0L, const char *name = 0L );
 	virtual ~KopeteProtocol();
 
-
 	/**
 	 * Protocol API. Must be reimplemented
 	 */
@@ -70,8 +69,7 @@ public:
 	 * are supported too, and tried first
 	 */
 	QString statusIcon() const;
-	
-	
+
 	/**
 	 * Return whether the protocol supports offline messages.
 	 * FIXME: Make pure virtual, or define protected method
@@ -86,9 +84,6 @@ public:
 	 * too.
 	 */
 	virtual KActionMenu* protocolActions();
-
-	
-
 
 	/**
 	 * Retrieve the list of contacts for this protocol
@@ -146,18 +141,16 @@ public:
 	 */
 	virtual void deserializeContact( KopeteMetaContact *metaContact, const QMap<QString, QString> &serializedData,
 		const QMap<QString, QString> &addressBookData );
-		
-		
-		
+
 	/** OBSOLETE **/
 	virtual KopeteContact* myself() const;
-	virtual bool isConnected() const  { return false; }
+	bool isConnected() const;
 	virtual void setAway() {}
 	virtual void setAvailable() {}
-	virtual bool isAway() const { return false; }
+	bool isAway() const;
 	/** OBSOLETE **/
 	void setStatusIcon( const QString &icon );
-	
+
 	/**
 	 * @internal
 	 * Register a new KopeteContact with the protocol.
@@ -167,20 +160,18 @@ public:
 	 */
 	void registerContact( KopeteContact *c );
 
-
 public slots:
 	/** OBSOLETE **/	
 	virtual void connect() {};
 	virtual void disconnect() {};
 	bool addContact( const QString &contactId, const QString &displayName = QString::null,
 		KopeteMetaContact *parentContact = 0L, const QString &groupName = QString::null, bool isTemporary = false);
-		
+
 	/**
 	 * A meta contact is about to save.
 	 * Call serialize() for all contained contacts for this protocol.
 	 */
 	void slotMetaContactAboutToSave( KopeteMetaContact *metaContact );
-
 
 signals:
 	/**
@@ -195,7 +186,7 @@ private slots:
 	 * Track the deletion of a KopeteContact and cleanup
 	 */
 	void slotKopeteContactDestroyed( KopeteContact * );
-	
+
 	void slotRefreshStatusIcon();
 	void slotIdentityAdded();
 

@@ -47,8 +47,6 @@ public:
 		const QMap<QString, QString> &serializedData, const QMap<QString, QString> &addressBookData );
 
 	virtual AddContactPage *createAddContactWidget( QWidget *parent );
-	virtual bool isConnected() const;
-	virtual bool isAway() const;
 
 	SMSContact* addContact( const QString& nr , const QString& name, KopeteMetaContact *m=0L);
 

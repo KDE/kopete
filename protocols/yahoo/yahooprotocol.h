@@ -74,9 +74,6 @@ public slots:
 	void setAvailable();	// Set user Available
 	void setAway();			// Set user away
 
-	bool isConnected() const;	// Return true if connected
-	bool isAway() const;		// Return true if away
-
 	AddContactPage *createAddContactWidget(QWidget * parent); // Return "add contact" dialog
 
 	void slotSettingsChanged(void);

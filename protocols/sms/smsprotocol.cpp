@@ -57,16 +57,6 @@ void SMSProtocol::disconnect()
 	// FIXME: Set all contacts to SMSOffline here
 }
 
-bool SMSProtocol::isConnected() const
-{
-	return m_mySelf->onlineStatus() == SMSOnline;
-}
-
-bool SMSProtocol::isAway() const
-{
-	return false;
-}
-
 KopeteContact* SMSProtocol::myself() const
 {
 	return m_mySelf;

@@ -172,12 +172,6 @@ GaduProtocol::disconnect()
     slotGoOffline();
 }
 
-bool
-GaduProtocol::isConnected() const
-{
-    return session_->isConnected();
-}
-
 void
 GaduProtocol::setAway()
 {
@@ -188,12 +182,6 @@ void
 GaduProtocol::setAvailable()
 {
     slotGoOnline();
-}
-
-bool
-GaduProtocol::isAway(void) const
-{
-    return myself_->onlineStatus().status() == KopeteOnlineStatus::Away;
 }
 
 AddContactPage*

@@ -52,7 +52,6 @@ QString KopeteProtocol::statusIcon() const
 	return m_statusIcon;
 }
 
-
 KActionMenu* KopeteProtocol::protocolActions()
 {
 	delete m_menu;
@@ -353,7 +352,6 @@ KopeteContact* KopeteProtocol::myself() const
 	return 0L;
 }
 
-
 void KopeteProtocol::setStatusIcon( const QString &icon )
 {
 	if( icon != m_statusIcon )
@@ -361,6 +359,16 @@ void KopeteProtocol::setStatusIcon( const QString &icon )
 		m_statusIcon = icon;
 		emit( statusIconChanged( this, icon ) );
 	}
+}
+
+bool KopeteProtocol::isConnected() const
+{
+    return myself()->onlineStatus().status() != KopeteOnlineStatus::Offline;
+}
+
+bool KopeteProtocol::isAway() const
+{
+    return myself()->onlineStatus().status() == KopeteOnlineStatus::Away;
 }
 
 #include "kopeteprotocol.moc"

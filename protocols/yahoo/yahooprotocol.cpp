@@ -236,19 +236,6 @@ void YahooProtocol::setAway()
 	kdDebug(14180) << "YahooProtocol::setAway()" << endl;
 }
 
-bool YahooProtocol::isConnected() const
-{
-	kdDebug(14180) << "YahooProtocol::isConnected()" << endl;
-	return m_isConnected; // XXX
-}
-
-bool YahooProtocol::isAway() const
-{
-	kdDebug(14180) << "YahooProtocol::isAway()" << endl;
-
-	return false; // XXX
-}
-
 AddContactPage *YahooProtocol::createAddContactWidget( QWidget * parent )
 {
 	kdDebug(14180) << "YahooProtocol::createAddContactWidget(<parent>)" << endl;
