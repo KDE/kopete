@@ -13,7 +13,7 @@ libkopeteui_la_SOURCES = configmodule.cpp kopetewindow.cpp \
 	preferencesdialog.cpp kopetecontactlistview.cpp pluginmodule.cpp \
 	statusbaricon.cpp addwizard.ui addwizardimpl.cpp protocolboxitem.cpp \
 	addcontactpage.cpp systemtray.cpp chatview.cpp appearanceconfig.cpp \
-	balloonbase.cpp kopeteballoon.cpp \
+	kopeteballoonbase.cpp kopeteballoon.cpp \
 	kopetehistorydialog.cpp kopetechatwindow.cpp \
 	kopetecontactviewitem.cpp kopetestdaction.cpp \
 	kopetehistorywidget.cpp kopeteemailwindow.cpp emailwindow.ui \
