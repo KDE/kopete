@@ -1,7 +1,7 @@
 #include <qwidget.h>
-#include "kopetewindow.h"
+#include <kopetewindow.h>
 #include <qlayout.h>
-#include "../kopete.h"
+#include <kopete.h>
 
 KopeteWindow::KopeteWindow(QWidget *parent, const char *name ): KMainWindow(parent,name)
 {

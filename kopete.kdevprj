@@ -447,7 +447,7 @@ install_location=
 type=HEADER
 
 [kopete/library/ui/Makefile.am]
-files=kopete/library/ui/aboutplugins.cpp,kopete/library/ui/aboutplugins.h,kopete/library/ui/configmodule.cpp,kopete/library/ui/configmodule.h,kopete/library/ui/kopetewindow.cpp,kopete/library/ui/kopetewindow.h,kopete/library/ui/preferencesdialog.cpp,kopete/library/ui/preferencesdialog.h,kopete/library/ui/connectionlabel.cpp,kopete/library/ui/connectionlabel.h,kopete/library/ui/pluginmodule.cpp,kopete/library/ui/pluginmodule.h,kopete/library/ui/kopetelistview.h,kopete/library/ui/statusbaricon.cpp,kopete/library/ui/statusbaricon.h,kopete/library/ui/addwizardimpl.cpp,kopete/library/ui/addwizardimpl.h,kopete/library/ui/protocolboxitem.cpp,kopete/library/ui/protocolboxitem.h
+files=kopete/library/ui/aboutplugins.cpp,kopete/library/ui/aboutplugins.h,kopete/library/ui/configmodule.cpp,kopete/library/ui/configmodule.h,kopete/library/ui/kopetewindow.cpp,kopete/library/ui/kopetewindow.h,kopete/library/ui/preferencesdialog.cpp,kopete/library/ui/preferencesdialog.h,kopete/library/ui/connectionlabel.cpp,kopete/library/ui/connectionlabel.h,kopete/library/ui/pluginmodule.cpp,kopete/library/ui/pluginmodule.h,kopete/library/ui/kopetelistview.h,kopete/library/ui/statusbaricon.cpp,kopete/library/ui/statusbaricon.h,kopete/library/ui/addwizardimpl.cpp,kopete/library/ui/addwizardimpl.h,kopete/library/ui/protocolboxitem.cpp,kopete/library/ui/protocolboxitem.h,kopete/library/ui/addcontactpage.cpp,kopete/library/ui/addcontactpage.h
 sub_dirs=
 type=static_library
 
@@ -458,6 +458,18 @@ install_location=
 type=SOURCE
 
 [kopete/library/ui/aboutplugins.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kopete/library/ui/addcontactpage.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/library/ui/addcontactpage.h]
 dist=true
 install=false
 install_location=
@@ -613,9 +625,21 @@ sub_dirs=icq,msn,
 type=normal
 
 [kopete/protocols/icq/Makefile.am]
-files=kopete/protocols/icq/icqprotocol.cpp,kopete/protocols/icq/icqprotocol.h,kopete/protocols/icq/icqpreferences.cpp,kopete/protocols/icq/icqpreferences.h,kopete/protocols/icq/protocol.cpp
+files=kopete/protocols/icq/icqprotocol.cpp,kopete/protocols/icq/icqprotocol.h,kopete/protocols/icq/icqpreferences.cpp,kopete/protocols/icq/icqpreferences.h,kopete/protocols/icq/protocol.cpp,kopete/protocols/icq/icqaddcontactpage.cpp,kopete/protocols/icq/icqaddcontactpage.h
 sub_dirs=kxengine,
 type=static_library
+
+[kopete/protocols/icq/icqaddcontactpage.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kopete/protocols/icq/icqaddcontactpage.h]
+dist=true
+install=false
+install_location=
+type=HEADER
 
 [kopete/protocols/icq/icqpreferences.cpp]
 dist=true

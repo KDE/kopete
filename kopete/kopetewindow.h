@@ -4,8 +4,8 @@
 #include <qwidget.h>
 #include <kmainwindow.h>
 #include <kaction.h>
-#include "contactlist.h"
-#include "connectionlabel.h"
+#include <contactlist.h>
+#include <connectionlabel.h>
 
 class QLabel;
 
