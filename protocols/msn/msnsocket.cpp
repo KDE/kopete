@@ -183,6 +183,7 @@ void MSNSocket::slotDataReceived()
 	{
 		// error!
 		kdWarning( 14140 ) << "MSNSocket::slotDataReceived: bytesAvailable() returned -1. Are we disconnected?" << endl;
+		return;
 	}
 
 	// incoming data
