@@ -207,7 +207,6 @@ ChatView::~ChatView()
 	delete d;
 }
 
-//FIXME: Activate bool no longer needed due to setActiveWindow not being allowed
 void ChatView::raise(bool activate)
 {
 	//this shouldn't change the focus. When the window is reased when a new mesage arrive
@@ -235,10 +234,12 @@ void ChatView::raise(bool activate)
 	
 	Redirect any bugs relating to the widnow now not grabbing focus on clicking a contact to KWin.
 		- Jason K
-
-	if(activate)
-		m_mainWindow->setActiveWindow();  //this set the focus to the window
 	*/
+	
+	//Will not activate window if user was typing
+	if(activate)
+		KWin::activateWindow( m_mainWindow->winId() );
+
 }
 
 void ChatView::slotScrollingTo( int /*x*/, int y)
