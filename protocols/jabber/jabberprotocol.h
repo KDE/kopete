@@ -26,9 +26,11 @@
 #include <qmovie.h>
 #include <kaction.h>
 #include <kpopupmenu.h>
-#include <psi/client.h>
-#include <psi/types.h>
-#include <psi/jid.h>
+
+#include "client.h"
+#include "types.h"
+#include "jid.h"
+
 #include "kopetecontact.h"
 #include "kopetemetacontact.h"
 #include "addcontactpage.h"

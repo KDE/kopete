@@ -24,8 +24,8 @@
 #include <qlineedit.h>
 #include <qtable.h>
 
-#include <psi/types.h>
-#include <psi/tasks.h>
+#include "types.h"
+#include "tasks.h"
 
 #include "jabbercontact.h"
 #include "jabberprotocol.h"

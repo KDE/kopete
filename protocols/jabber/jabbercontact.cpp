@@ -29,8 +29,8 @@
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 
-#include <psi/tasks.h>
-#include <psi/types.h>
+#include "tasks.h"
+#include "types.h"
 
 #include "dlgjabbervcard.h"
 #include "dlgjabberrename.h"

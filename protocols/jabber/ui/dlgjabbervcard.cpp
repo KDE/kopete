@@ -26,9 +26,9 @@
 #include <klocale.h>
 #include <kurllabel.h>
 
-#include <psi/tasks.h>
-#include <psi/types.h>
-#include <psi/vcard.h>
+#include "tasks.h"
+#include "types.h"
+#include "vcard.h"
 
 #include "dlgjabbervcard.h"
 

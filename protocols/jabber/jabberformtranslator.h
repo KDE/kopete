@@ -21,8 +21,8 @@
 #include <qwidget.h>
 #include <qlayout.h>
 
-#include <psi/types.h>
-#include <psi/tasks.h>
+#include "types.h"
+#include "tasks.h"
 
 /**
   *@author Kopete developers

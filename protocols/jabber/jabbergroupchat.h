@@ -18,7 +18,7 @@
 #ifndef JABBERGROUPCHAT_H
 #define JABBERGROUPCHAT_H
 
-#include <psi/types.h>
+#include "types.h"
 #include "jabbercontact.h"
 
 /**

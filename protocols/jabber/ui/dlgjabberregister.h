@@ -23,8 +23,8 @@
 #include <qgroupbox.h>
 #include <qlabel.h>
 
-#include <psi/types.h>
-#include <psi/tasks.h>
+#include "types.h"
+#include "tasks.h"
 
 #include "dlgregister.h"
 #include "jabberformtranslator.h"

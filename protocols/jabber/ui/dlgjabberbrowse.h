@@ -20,8 +20,8 @@
 
 #include <qwidget.h>
 
-#include <psi/types.h>
-#include <psi/tasks.h>
+#include "types.h"
+#include "tasks.h"
 
 #include "jabberformtranslator.h"
 #include "dlgbrowse.h"

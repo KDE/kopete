@@ -24,8 +24,8 @@
 #include <kmessagebox.h>
 #include <klocale.h>
  
-#include <psi/types.h>
-#include <psi/tasks.h>
+#include "types.h"
+#include "tasks.h"
 
 #include "jabberprotocol.h"
 #include "jabberformtranslator.h"

@@ -1,10 +1,11 @@
 METASOURCES = AUTO
-SUBDIRS = ui pixmaps
+SUBDIRS = ui pixmaps psi
 AM_CPPFLAGS = -I$(srcdir)/../../libkopete \
 	-I$(srcdir)/../../libkopete/ui \
 	-I../../libkopete/ui \
 	-I$(srcdir)/ui \
 	-Iui \
+	-Ipsi/libpsi/src \
 	$(all_includes)
 
 kde_module_LTLIBRARIES = kopete_jabber.la
@@ -15,7 +16,7 @@ kopete_jabber_la_SOURCES = jabberprotocol.cpp jabberresource.cpp jabbercontact.c
 kopete_jabber_la_LDFLAGS = -no-undefined -module $(KDE_PLUGIN)
 kopete_jabber_la_LIBADD  = ../../libkopete/libkopete.la \
 	ui/libkopetejabberui.la \
-	-lpsi
+	psi/libpsi/src/libpsi.la
 
 data_DATA = jabber.desktop
 datadir = $(kde_datadir)/kopete

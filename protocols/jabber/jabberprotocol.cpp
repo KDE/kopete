@@ -32,11 +32,11 @@
 #include <qpixmap.h>
 #include <qstringlist.h>
 
-#include <psi/client.h>
-#include <psi/stream.h>
-#include <psi/tasks.h>
-#include <psi/types.h>
-#include <psi/vcard.h>
+#include "client.h"
+#include "stream.h"
+#include "tasks.h"
+#include "types.h"
+#include "vcard.h"
 
 #include <sys/utsname.h>
 

@@ -20,7 +20,7 @@
 #define DLGJABBERSENDRAW_H
 
 #include <qwidget.h>
-#include <psi/client.h>
+#include "client.h"
 #include "dlgsendraw.h"
 
 

@@ -19,8 +19,8 @@
 #define DLGJABBERVCARD_H
 
 #include <qdom.h>
-#include <psi/types.h>
-#include <psi/vcard.h>
+#include "types.h"
+#include "vcard.h"
 #include "dlgvcard.h"
 
 class QDomElement;
