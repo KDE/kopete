@@ -114,7 +114,7 @@ public slots:
 	void execute();
 
 	void slotViewHistory();
-	void slotDeleteContact() { delete this; }
+	void slotDeleteContact() { deleteLater(); }
 	void slotUserInfo() { /* show user info? */ }
 
 signals:

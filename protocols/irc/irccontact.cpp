@@ -329,7 +329,7 @@ void IRCContact::slotDeleteContact()
 			queryView = 0L;
 			chatView = 0L;
 		}
-		delete this;
+		deleteLater();
 	}
 }
 

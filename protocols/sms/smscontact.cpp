@@ -125,8 +125,7 @@ void SMSContact::slotUserInfo()
 
 void SMSContact::slotDeleteContact()
 {
-	delete this;
-	return;
+	deleteLater();
 }
 
 KopeteContact::ContactStatus SMSContact::status() const

@@ -429,7 +429,7 @@ void OscarContact::slotDeleteContact(void)
 	{
 		mProtocol->buddyList()->del(tocNormalize(mName));
 		mProtocol->engine->sendDelBuddy(tmpBuddy.name,mProtocol->buddyList()->getNameGroup(tmpBuddy.group));
-		delete this;
+		deleteLater();
 	}
 }
 
