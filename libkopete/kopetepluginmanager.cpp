@@ -206,7 +206,7 @@ void KopetePluginManager::loadAllPlugins()
 		if ( key.endsWith( QString::fromLatin1( "Enabled" ) ) )
 		{
 			key.setLength( key.length() - 7 );
-//			kdDebug() << k_funcinfo << "Set " << key << " to " << it.data() << endl;
+			//kdDebug() << k_funcinfo << "Set " << key << " to " << it.data() << endl;
 
 			if ( it.data() == QString::fromLatin1( "true" ) )
 			{
@@ -241,17 +241,7 @@ KopetePlugin *KopetePluginManager::loadPlugin( const QString &spec_ )
 
 	kdDebug( 14010 ) << k_funcinfo << spec << endl;
 
-	KPluginInfo *info = 0L;
-	QValueList<KPluginInfo *>::ConstIterator it;
-	for ( it = d->plugins.begin(); it != d->plugins.end(); ++it )
-	{
-		if ( ( *it )->pluginName() == spec )
-		{
-			info = *it;
-			break;
-		}
-	}
-
+	KPluginInfo *info = infoForPluginId( spec );
 	if ( !info )
 	{
 		kdWarning( 14010 ) << k_funcinfo << "Unable to find a plugin named '" << spec << "'!" << endl;
@@ -374,17 +364,7 @@ KopetePlugin* KopetePluginManager::plugin( const QString &_pluginId ) const
 		pluginId = QString::fromLatin1( "kopete_" ) + _pluginId.lower().remove( QString::fromLatin1( "protocol" ) );
 	// End hack
 
-	KPluginInfo *info = 0L;
-	QValueList<KPluginInfo *>::ConstIterator it;
-	for ( it = d->plugins.begin(); it != d->plugins.end(); ++it )
-	{
-		if ( ( *it )->pluginName() == pluginId )
-		{
-			info = *it;
-			break;
-		}
-	}
-
+	KPluginInfo *info = infoForPluginId( pluginId );
 	if ( !info )
 		return 0L;
 
@@ -428,6 +408,37 @@ QString KopetePluginManager::pluginIcon( const KopetePlugin *plugin ) const
 	}
 
 	return QString::fromLatin1( "Unknown" );
+}
+
+KPluginInfo * KopetePluginManager::infoForPluginId( const QString &pluginId ) const
+{
+	QValueList<KPluginInfo *>::ConstIterator it;
+	for ( it = d->plugins.begin(); it != d->plugins.end(); ++it )
+	{
+		if ( ( *it )->pluginName() == pluginId )
+			return *it;
+	}
+
+	return 0L;
+}
+
+bool KopetePluginManager::setPluginEnabled( const QString &_pluginId, bool enabled /* = true */ )
+{
+	QString pluginId = _pluginId;
+
+	KConfig *config = KGlobal::config();
+	config->setGroup( "Plugins" );
+
+	if ( !pluginId.startsWith( QString::fromLatin1( "kopete_" ) ) )
+		pluginId.prepend( QString::fromLatin1( "kopete_" ) );
+
+	if ( !infoForPluginId( pluginId ) )
+		return false;
+
+	config->writeEntry( pluginId + QString::fromLatin1( "Enabled" ), enabled );
+	config->sync();
+
+	return true;
 }
 
 #include "kopetepluginmanager.moc"

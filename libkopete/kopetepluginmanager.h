@@ -129,6 +129,22 @@ public:
 	 */
 	void shutdown();
 
+	/**
+	 * Enable a plugin.
+	 *
+	 * This marks a plugin as enabled in the config file, so loadAll()
+	 * can pick it up later.
+	 *
+	 * This method does not actually load a plugin, it only edits the
+	 * config file.
+	 *
+	 * @param name is the name of the plugin as it is listed in the .desktop
+	 * file in the X-KDE-Library field.
+	 *
+	 * Returns false when no appropriate plugin can be found.
+	 */
+	bool setPluginEnabled( const QString &name, bool enabled = true );
+
 public slots:
 	/**
 	 * @brief Load a single plugin by plugin name. Returns an existing plugin
@@ -175,6 +191,15 @@ private slots:
 	void slotPluginReadyForUnload();
 
 private:
+	/**
+	 * @internal
+	 *
+	 * Find the KPluginInfo structure by key. Reduces some code duplication.
+	 *
+	 * Returns a null pointer when no plugin info is found.
+	 */
+	KPluginInfo * infoForPluginId( const QString &pluginId ) const;
+
 	KopetePluginManager();
 
 	static KopetePluginManager *s_self;

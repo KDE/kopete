@@ -113,13 +113,7 @@ void Kopete::slotLoadPlugins()
 	{
 		showConfigDialog = false;
 		for ( int i = 0; i < args->count(); i++ )
-		{
-			QString argument = args->arg( i );
-			if ( !argument.startsWith( "kopete_" ) )
-				argument.prepend( "kopete_" );
-
-			config->writeEntry( argument + "Enabled", true );
-		}
+			KopetePluginManager::self()->setPluginEnabled( args->arg( i ), true );
 	}
 
 	// Prevent plugins from loading? (--disable=foo,bar)
@@ -127,11 +121,7 @@ void Kopete::slotLoadPlugins()
 	for ( QStringList::ConstIterator it = disableArgs.begin(); it != disableArgs.end(); ++it )
 	{
 		showConfigDialog = false;
-		QString argument = *it;
-		if ( !argument.startsWith( "kopete_" ) )
-			argument.prepend( "kopete_" );
-
-		config->writeEntry( argument + "Enabled", false );
+		KopetePluginManager::self()->setPluginEnabled( *it, true );
 	}
 
 	// Load some plugins exclusively? (--load-plugins=foo,bar)
@@ -141,13 +131,7 @@ void Kopete::slotLoadPlugins()
 		showConfigDialog = false;
 		QStringList plugins = QStringList::split( ',', args->getOption( "load-plugins" ) );
 		for ( QStringList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it )
-		{
-			QString argument = *it;
-			if ( !argument.startsWith( "kopete_" ) )
-				argument.prepend( "kopete_" );
-
-			config->writeEntry( argument + "Enabled", true );
-		}
+			KopetePluginManager::self()->setPluginEnabled( *it, true );
 	}
 
 	// Disable plugins altogether? (--noplugins)
