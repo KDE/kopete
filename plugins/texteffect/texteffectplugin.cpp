@@ -76,7 +76,7 @@ void TextEffectPlugin::slotOutgoingMessage( KopeteMessage& msg )
 
 		for(unsigned int f=0;f<original.length();f++)
 		{
-			char x=original[f].latin1();
+			QChar x=original[f];
 			if(f==0 || m_config->colorChar() || (m_config->colorWords() && x==' ' ))
 			{
 				if(f!=0)
@@ -93,7 +93,7 @@ void TextEffectPlugin::slotOutgoingMessage( KopeteMessage& msg )
 				}
 				resultat+="\">";
 			}
-			switch (x)
+			switch (x.latin1())
 			{
 				case '>':
 					resultat+="&gt;";
@@ -158,8 +158,7 @@ void TextEffectPlugin::slotOutgoingMessage( KopeteMessage& msg )
 				default:
 					if(m_config->waves())
 					{
-						QString q=QString(QChar(x));
-						resultat+= wavein ? q.lower() : q.upper();
+						resultat+= wavein ? x.lower() : x.upper();
 						wavein=!wavein;
 					}
 					else
