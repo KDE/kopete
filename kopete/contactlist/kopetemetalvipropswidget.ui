@@ -399,7 +399,7 @@
                             <cstring>grpIcons</cstring>
                         </property>
                         <property name="title">
-                            <string>Group Icons</string>
+                            <string>Icons</string>
                         </property>
                         <grid>
                             <property name="name">
