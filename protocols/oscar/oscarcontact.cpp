@@ -52,7 +52,7 @@ OscarContact::OscarContact(const QString name, OscarProtocol *protocol,
 	mIdle = 0;
 	mLastAutoResponseTime = 0;
 	setFileCapable(true);
-	mStatus = OSCAR_OFFLINE;
+	mStatus = -1; //OSCAR_OFFLINE;
 
 	// Buddy Changed
 	QObject::connect(mProtocol->engine, SIGNAL(gotBuddyChange(UserInfo)),
