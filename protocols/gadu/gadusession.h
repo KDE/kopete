@@ -23,7 +23,6 @@
 
 #include <qvaluelist.h>
 #include <qptrlist.h>
-#include <qhostaddress.h>
 #include <qobject.h>
 #include <qstring.h>
 
@@ -118,8 +117,6 @@ private:
 	struct gg_session *session_;
 	QSocketNotifier		*read_;
 	QSocketNotifier		*write_;
-	int	 currentServer_;
-	QValueList<QHostAddress> servers_;
 	gg_login_params params_;
 	int searchSeqNr_;
 

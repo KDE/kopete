@@ -41,20 +41,9 @@
 #include <errno.h>
 #include <string.h>
 
-const int NUM_SERVERS = 7;
-const char* const gg_servers_ip[NUM_SERVERS] = {"217.17.41.82", "217.17.41.83",
-						"217.17.41.84", "217.17.41.85",
-						"217.17.41.86", "217.17.41.87",
-						"217.17.41.88"};
-
 GaduSession::GaduSession( QObject *parent, const char* name )
-	: QObject( parent, name ), session_(0), currentServer_(-1), searchSeqNr_(0)
+	: QObject( parent, name ), session_(0), searchSeqNr_(0)
 {
-	QHostAddress ip;
-	for ( int i = 0; i < NUM_SERVERS; i++ ) {
-		ip.setAddress( QString( gg_servers_ip[i] ) );
-		servers_.append( ip );
-	}
 }
 
 GaduSession::~GaduSession()
@@ -84,18 +73,10 @@ GaduSession::login( struct gg_login_params& p )
 {
 	if ( !isConnected() ) {
 	    kdDebug()<<"Login"<<endl;
-		if ( currentServer_++ != -1 ) {
-			p.server_addr = htonl( servers_[ currentServer_ ].ip4Addr() );
-			p.server_port = 8074;
-		}
 		if ( !(session_ = gg_login( &p ))) {
 			gg_free_session( session_ );
 			session_ = 0;
-			if ( currentServer_ == NUM_SERVERS ) {
-				currentServer_ = -1;
-				emit connectionFailed( 0L );
-			} else
-				login( params_ );
+			emit connectionFailed( 0L );
 			return;
 		}
 		read_ = new QSocketNotifier( session_->fd, QSocketNotifier::Read, this );
@@ -142,7 +123,6 @@ GaduSession::login( uin_t uin, const QString& password,
 	params_.password = const_cast<char*>( password.latin1() );
 	params_.status = status;
 	params_.status_descr = statusDescr.local8Bit().data();
-	params_.client_version = const_cast<char*>( GG_DEFAULT_CLIENT_VERSION );
 	params_.async = 1;
 	login( params_ );
 }
@@ -460,11 +440,7 @@ GaduSession::checkDescriptor()
 		delete write_;
 		read_ = 0;
 		write_ = 0;
-		if ( currentServer_ == NUM_SERVERS ) {
-			currentServer_ = -1;
-			emit connectionFailed( e );
-		} else
-			login( params_ );
+		emit connectionFailed( e );
 		break;
 	case GG_EVENT_DISCONNECT:
 		if ( session_ ) {
