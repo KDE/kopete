@@ -291,7 +291,7 @@
                     <property name="sizeHint">
                         <size>
                             <width>21</width>
-                            <height>60</height>
+                            <height>104</height>
                         </size>
                     </property>
                     <property name="geometry">
@@ -305,7 +305,7 @@
                 </spacer>
                 <widget class="QGroupBox">
                     <property name="name">
-                        <cstring>groupBox40</cstring>
+                        <cstring>global_settings_page</cstring>
                     </property>
                     <property name="geometry">
                         <rect>
