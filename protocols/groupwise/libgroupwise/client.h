@@ -224,7 +224,7 @@ fd		 * @param password
 		/**
 		 * We've just got the user's own details from the server.
 		 */
-		void accountDetailsReceived( const ContactDetails & );
+		void accountDetailsReceived( const GroupWise::ContactDetails & );
 		/** 
 		 * We've just found out about a folder from the server.
 		 */
@@ -236,7 +236,7 @@ fd		 * @param password
 		/** 
 		 * We've just received a contact's metadata from the server.
 		 */
-		void contactUserDetailsReceived( const ContactDetails & );
+		void contactUserDetailsReceived( const GroupWise::ContactDetails & );
 		/** 
 		 * A remote contact changed status
 		 */
@@ -304,7 +304,7 @@ fd		 * @param password
 		/**
 		 * We received a temporary contact related to a conference 
 		 */
-		void tempContactReceived( const ContactDetails & );
+		void tempContactReceived( const GroupWise::ContactDetails & );
 		/** CONTACT LIST MANAGEMENT EVENTS */
 		/** TBD! */
 	protected:

@@ -104,8 +104,8 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 	
 	LoginTask * login = new LoginTask( d->root );
 	
-	connect( login, SIGNAL( gotMyself( const ContactDetails &  ) ), 
-			this, SIGNAL( accountDetailsReceived( const ContactDetails & ) ) );
+	connect( login, SIGNAL( gotMyself( const GroupWise::ContactDetails &  ) ), 
+			this, SIGNAL( accountDetailsReceived( const GroupWise::ContactDetails & ) ) );
 			
 	connect( login, SIGNAL( gotFolder( const FolderItem & ) ), 
 			this, SIGNAL( folderReceived( const FolderItem & ) ) );
@@ -113,8 +113,8 @@ void Client::start( const QString &host, const uint port, const QString &userId,
 	connect( login, SIGNAL( gotContact( const ContactItem &  ) ), 
 			this, SIGNAL( contactReceived( const ContactItem &  ) ) );
 			
-	connect( login, SIGNAL( gotContactUserDetails( const ContactDetails & ) ), 
-			this, SIGNAL( contactUserDetailsReceived( const ContactDetails & ) ) ) ;
+	connect( login, SIGNAL( gotContactUserDetails( const GroupWise::ContactDetails & ) ), 
+			this, SIGNAL( contactUserDetailsReceived( const GroupWise::ContactDetails & ) ) ) ;
 
 	connect( login, SIGNAL( gotPrivacySettings( bool, bool, const QStringList &, const QStringList & ) ),
 			privacyManager(), SLOT( slotGotPrivacySettings( bool, bool, const QStringList &, const QStringList & ) ) );
@@ -235,8 +235,8 @@ void Client::requestDetails( const QStringList & userDNs )
 {
 	GetDetailsTask * gdt = new GetDetailsTask( d->root );
 	gdt->userDNs( userDNs );
-	connect( gdt, SIGNAL( gotContactUserDetails( const ContactDetails & ) ),
-			this, SIGNAL( contactUserDetailsReceived( const ContactDetails & ) ) );
+	connect( gdt, SIGNAL( gotContactUserDetails( const GroupWise::ContactDetails & ) ),
+			this, SIGNAL( contactUserDetailsReceived( const GroupWise::ContactDetails & ) ) );
 	gdt->go( true );
 }
 

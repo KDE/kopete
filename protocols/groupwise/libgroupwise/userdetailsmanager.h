@@ -24,6 +24,7 @@ Several client event handling processes require that a contact's details are ava
 
 @author SUSE AG
 */
+
 class UserDetailsManager : public QObject
 {
 Q_OBJECT
@@ -46,7 +47,7 @@ public:
 	 * Add a ContactDetails object to our cache.
 	 * This SHOULD be called when receiving details in contactlist receive and manipulation, to prevent unnecessary additional requests.
 	 */
-	void addDetails( const ContactDetails & details );
+	void addDetails( const GroupWise::ContactDetails & details );
 	/**
 	 * Remove a contact from the list of known DNs.  This MUST be performed when a client removes a DN from its local contact list,
 	 * otherwise new events from this DN will not receive user details.

@@ -86,7 +86,7 @@ public:
 	/**
 	 * Update the contact's status and metadata from the supplied fields
 	 */
-	void updateDetails( const ContactDetails & details );
+	void updateDetails( const GroupWise::ContactDetails & details );
 	
 	virtual bool isReachable();
 	/**

@@ -72,7 +72,7 @@ void FieldList::dump( bool recursive, int offset )
 {
 	const FieldListIterator myEnd = end();
 	if ( !offset )
-		qDebug( "FieldList::dump() %s", ( recursive ? ", recursively" : ", non-recursive" ) );
+		qDebug( "FieldList::dump()%s", ( recursive ? ", recursively" : ", non-recursive" ) );
 	for( FieldListIterator it = begin(); it != myEnd; ++it )
 	{
 		for ( int i = 0; i < offset; i ++ )

@@ -24,12 +24,12 @@ ModifyContactListTask::~ModifyContactListTask()
 
 bool ModifyContactListTask::take( Transfer * transfer )
 {
-	qDebug( "ModifyContactListTask::take()" );
 	if ( !forMe( transfer ) )
 		return false;
 	Response * response = dynamic_cast<Response *>( transfer );
 	if ( !response )
 		return false;
+	qDebug( "ModifyContactListTask::take()" );
 
 	// scan the contact list received
 	// emit each add and delete as a signal

@@ -144,7 +144,7 @@ bool ResponseProtocol::readFields( int fieldCount, Field::FieldList * list )
 	Field::FieldList currentList;
 	while ( fieldCount != 0 )  // prevents bad input data from ruining our day
 	{
-		qDebug( "%i fields left to read", fieldCount );
+		// qDebug( "%i fields left to read", fieldCount );
 		// the field being read
 		// read field
 		Q_UINT8 type, method;

@@ -184,7 +184,7 @@ protected slots:
 	 * or in response to an explicity query.  This is necessary to handle some events from the server.  
 	 * These events are queued in the account until the data arrives and then we handle the event.
 	 */
-	void receiveContactUserDetails( const ContactDetails & );
+	void receiveContactUserDetails( const GroupWise::ContactDetails & );
 	/**
 	 * Called after we create a contact on the server 
 	 */
@@ -250,7 +250,7 @@ protected slots:
 	/**
 	 * Update the local user's metadata
 	 */
-	void receiveAccountDetails( const ContactDetails & details );
+	void receiveAccountDetails( const GroupWise::ContactDetails & details );
 	/**
 	 * The TLS handshake has happened, check the result
 	 */

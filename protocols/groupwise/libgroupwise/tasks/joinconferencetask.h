@@ -14,11 +14,14 @@
 
 #include "requesttask.h"
 
+using namespace GroupWise;
+
 /**
 Sends Join Conference messages when the user accepts an invitation
 
 @author SUSE AG
 */
+
 class JoinConferenceTask : public RequestTask
 {
 Q_OBJECT
@@ -31,8 +34,6 @@ public:
 	QString guid() const;
 public slots:
 	void slotReceiveUserDetails( const GroupWise::ContactDetails & details );
-signals:
-	void temporaryContact( const GroupWise::ContactDetails & );
 private:
 	QString m_guid;
 	QStringList m_participants;

@@ -119,6 +119,7 @@ private:
 	// labels showing secure and logging status
 	KAction *m_secure;
 	KAction *m_logging;
+	bool m_currentlyTyping;
 };
 
 #endif

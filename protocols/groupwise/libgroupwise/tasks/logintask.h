@@ -42,10 +42,10 @@ protected:
 	QStringList readPrivacyItems( const QCString & tag, Field::FieldList & fields );
 
 signals:
-	void gotMyself( const ContactDetails & );
+	void gotMyself( const GroupWise::ContactDetails & );
 	void gotFolder( const FolderItem & );
 	void gotContact( const ContactItem & );
-	void gotContactUserDetails( const ContactDetails & );
+	void gotContactUserDetails( const GroupWise::ContactDetails & );
 	void gotPrivacySettings( bool locked, bool defaultDeny, const QStringList & allowList, const QStringList & denyList );
 };
 

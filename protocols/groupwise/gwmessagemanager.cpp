@@ -181,8 +181,8 @@ void GroupWiseMessageManager::slotSendTypingNotification( bool typing )
 {
 	// only send a notification if we've got a conference going and we are not Appear Offline
 	if ( !m_guid.isEmpty() &&
-		  ( account()->myself()->onlineStatus() != ( static_cast<GroupWiseProtocol *>( protocol() ) )->groupwiseAppearOffline ) )
-		account()->client()->sendTyping( guid(), typing );
+		  ( account()->myself()->onlineStatus() != GroupWiseProtocol::protocol()->groupwiseAppearOffline ) )
+				account()->client()->sendTyping( guid(), typing );
 }
 
 void GroupWiseMessageManager::slotMessageSent( KopeteMessage & message, KopeteMessageManager * )

@@ -64,7 +64,7 @@ bool InputProtocolBase::safeReadBytes( QCString & data, uint & len )
 	m_bytes += sizeof( Q_UINT32 );
 	if ( val > NMFIELD_MAX_STR_LENGTH )
 		return false;
-	qDebug( "EventProtocol::safeReadBytes() - expecting %i bytes", val );
+	//qDebug( "EventProtocol::safeReadBytes() - expecting %i bytes", val );
 	QCString temp( val );
 	if ( val != 0 )
 	{
@@ -79,7 +79,7 @@ bool InputProtocolBase::safeReadBytes( QCString & data, uint & len )
 		// if ( (Q_UINT8)( * ( temp.data() + ( temp.length() - 1 ) ) ) == 0xFF )
 		if ( temp.length() < ( val -1 ) )
 		{
-			qDebug( "EventProtocol::safeReadBytes() - string broke, giving up, only got: %i bytes",  temp.length() );
+			qDebug( "EventProtocol::safeReadBytes() - string broke, giving up, only got: %i bytes out of %i",  temp.length(), val );
 			m_state = NeedMore;
 			return false;
 		}

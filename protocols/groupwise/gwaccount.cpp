@@ -259,7 +259,7 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	// contact listed
 	QObject::connect( m_client, SIGNAL( contactReceived( const ContactItem & ) ), SLOT( receiveContact( const ContactItem & ) ) );
 	// contact details listed
-	QObject::connect( m_client, SIGNAL( contactUserDetailsReceived( const ContactDetails & ) ), SLOT( receiveContactUserDetails( const ContactDetails & ) ) );
+	QObject::connect( m_client, SIGNAL( contactUserDetailsReceived( const GroupWise::ContactDetails & ) ), SLOT( receiveContactUserDetails( const GroupWise::ContactDetails & ) ) );
 	// contact status changed
 	QObject::connect( m_client, SIGNAL( statusReceived( const QString &, Q_UINT16, const QString & ) ), SLOT( receiveStatus( const QString &, Q_UINT16 , const QString & ) ) );
 	// incoming message
@@ -285,7 +285,7 @@ void GroupWiseAccount::connectWithPassword( const QString &password )
 	QObject::connect( m_client, SIGNAL( contactNotTyping( const ConferenceEvent & ) ), 
 								SIGNAL( contactNotTyping( const ConferenceEvent & ) ) );
 	// misc
-	QObject::connect( m_client, SIGNAL( accountDetailsReceived( const ContactDetails &) ), SLOT( receiveAccountDetails( const ContactDetails & ) ) );
+	QObject::connect( m_client, SIGNAL( accountDetailsReceived( const GroupWise::ContactDetails &) ), SLOT( receiveAccountDetails( const GroupWise::ContactDetails & ) ) );
 	QObject::connect( m_client, SIGNAL( connectedElsewhere() ), SLOT( slotConnectedElsewhere() ) );
 	// privacy - contacts can't connect directly to this signal because myself() is initialised before m_client
 	QObject::connect( m_client->privacyManager(), SIGNAL( privacyChanged( const QString &, bool ) ), SIGNAL( privacyChanged( const QString &, bool ) ) );
