@@ -210,7 +210,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			color = parseFontAttr(fontInfo, "CO");
 
 			// FIXME: this is so BAAAAAAAAAAAAD :(
-			if (!color.isEmpty())
+			if (!color.isEmpty() && color.toInt(0,16)!=0)
 			{
 				if ( color.length() == 2) // only #RR (red color) given
 					fontColor.setRgb(
@@ -233,13 +233,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 				}
 			}
 
-			// FIXME: The below regexps do work, but are quite ugly.
-			// Reason is that a \1 inside the replacement string is
-			// not possible.
-			// When importing kopete into kdenetwork, convert this to
-			// KRegExp3 from libkdenetwork, which does exactly this.
-			fontName = fontInfo.replace( QRegExp( ".*FN=" ), "" ).replace(
-				QRegExp( ";.*" ), "" ).replace( QRegExp( "%20" ), " " );
+			fontName = parseFontAttr(fontInfo, "FN").replace( QRegExp( "%20" ), " " );
 
 			// Some clients like Trillian and Kopete itself send a font
 			// name of 'MS Serif' since MS changed the server to
@@ -249,22 +243,16 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			// Handle 'MS Serif' and 'MS Sans Serif' as an empty font name
 			if( !fontName.isEmpty() && fontName != "MS Serif" && fontName != "MS Sans Serif" )
 			{
-				kdDebug(14140) << "MSNSwitchBoardService::slotReadMessage: "
-					<< "Font: '" << fontName << "'" << endl;
+				QString ef=parseFontAttr( fontInfo, "EF" );
 
 				font = QFont( fontName,
 					parseFontAttr( fontInfo, "PF" ).toInt(), // font size
-					parseFontAttr( fontInfo, "EF" ).contains( 'B' ) ? QFont::Bold : QFont::Normal,
-					parseFontAttr( fontInfo, "EF" ).contains( 'I' ) ? true : false );
+					ef.contains( 'B' ) ? QFont::Bold : QFont::Normal,
+					ef.contains( 'I' ) );
+				font.setUnderline(ef.contains( 'U' ));
+				font.setStrikeOut(ef.contains( 'S' ));
 			}
 		}
-
-		/*kdDebug(14140) << "MSNSwitchBoardService::slotReadMessage: Message: " <<
-			endl << msg.right( msg.length() - msg.find("\r\n\r\n") - 4) <<
-			endl;
-
-		kdDebug(14140) << "MSNSwitchBoardService::slotReadMessage: User handle: "
-			<< m_msgHandle << endl;*/
 
 		QPtrList<KopeteContact> others;
 		others.append( m_account->myself() );
