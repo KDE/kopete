@@ -18,6 +18,8 @@
     *************************************************************************
 */
 
+#include "pluginloader.h"
+
 #include <qapplication.h>
 #include <qdir.h>
 #include <qfile.h>
@@ -26,15 +28,21 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <knotifyclient.h>
+#include <kparts/componentfactory.h>
 #include <ksimpleconfig.h>
+#include <kstaticdeleter.h>
 #include <kstddirs.h>
 #include <kurl.h>
-#include <kparts/componentfactory.h>
 
 #include "kopeteplugin.h"
-#include "pluginloader.h"
 
 class KopeteLibraryInfo;
+
+// Put the static deleter in its anonymous namespace
+namespace
+{
+	KStaticDeleter<LibraryLoader> sd;
+}
 
 bool operator ==(const KopeteLibraryInfo &a, const KopeteLibraryInfo &b)
 {
@@ -47,7 +55,7 @@ LibraryLoader* LibraryLoader::s_pluginLoader = 0L;
 LibraryLoader* LibraryLoader::pluginLoader()
 {
 	if( !s_pluginLoader )
-		s_pluginLoader = new LibraryLoader();
+		sd.setObject( s_pluginLoader, new LibraryLoader() );
 
 	return s_pluginLoader;
 }
@@ -326,13 +334,18 @@ void LibraryLoader::removeNow(const QString &spec)
 	}
 
 	PluginLibrary *lib=mLibHash[spec];
-
 	if (!lib)
 		return;
 
 	// Added by Duncan 20/01/2002
 	// We need to call unload function for the plugin
 	lib->plugin->unload();
+
+	// Some plugins delete themselves on unload, so 'lib' can be a dangling
+	// pointer here. Refetch before continuing
+	lib=mLibHash[ spec ];
+	if( !lib )
+		return;
 
 	delete lib->plugin;
 	lib->plugin=0;
@@ -366,8 +379,10 @@ void LibraryLoader::slotPluginDestroyed( QObject *o )
 	{
 		if( it.current()->plugin == o )
 		{
+			it.current()->library->unload();
 			delete it.current();
 			mLibHash.remove( it.currentKey() );
+
 			break;
 		}
 	}
