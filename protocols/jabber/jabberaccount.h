@@ -240,9 +240,6 @@ private slots:
 	/* Someone on our contact list revoked their authorization. */
 	void slotContactDeleted (const RosterItem &);
 
-	/* Updates the configuration data. */
-	void slotSettingsChanged (void);
-
 	/* Someone on our contact list had (another) resource come online. */
 	void slotResourceAvailable (const Jid &, const Resource &);
 

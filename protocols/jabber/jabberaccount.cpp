@@ -935,11 +935,6 @@ void JabberAccount::slotContactUpdated (const Jabber::RosterItem & item)
 	static_cast < JabberContact * >(contacts ()[item.jid ().userHost ()])->slotUpdateContact (item);
 }
 
-void JabberAccount::slotSettingsChanged ()
-{
-
-}
-
 void JabberAccount::slotReceivedMessage (const Jabber::Message & message)
 {
 	QString userHost;

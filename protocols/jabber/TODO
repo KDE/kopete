@@ -13,9 +13,6 @@ TODO for Jabber:
 - fix server browsing
 - make warning about changed preferences while being online work again
   (JabberPreferences::save())
-- fix initial presence notification (is set to offline - myContact problem?)
-- fix initial presence setting
-- dlgjabberservices.cpp: prepopulate the server field in the ctor, slotQuery()
 - when starting with an empty account, either display preferences or delete the code
   that checks for it (jabberaccount.cpp:235 JabberAccount::connect())
 - in JabberAccount::disconnect(), the iteration about the contacts to set the offline should be obsolete and incorrect
