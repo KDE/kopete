@@ -45,21 +45,22 @@ public:
 		Offline=0x01,
 		Online=0x02,
 		Away=0x04,
-		Iddle=0x10, /** Status used for auto away  */
+		Idle=0x10, /** Status used for auto away  */
 		Busy=0x20,
 		Invisible=0x40
 	};
 	
 	/**
 	 * You need to register each status an account can be.
-	 * Registered status will appears in the account menu.
+	 * Registered statuses will appear in the account menu.
 	 * The Protocol constructor is a good place to call this function
 	 *
-	 * You can set the status in the predefined categories.  Idealy, each categories should own one status.
-	 * A status may be in serveral, or in none categories
+	 * You can set the status to be in the predefined categories.
+	 * Ideally, each category should own one status.
+	 * A status may be in several categories, or in none.
 	 *
 	 * @param status The status to register
-	 * @param caption The caption that will appears in menus (e.g. "Set &Away")
+	 * @param caption The caption that will appear in menus (e.g. "Set &Away")
 	 * @param categories A bitflag of @ref Categories
 	 */
 	void registerOnlineStatus(const OnlineStatus& status, const QString &caption, unsigned int categories=0x00 );
