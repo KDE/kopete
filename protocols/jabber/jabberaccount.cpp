@@ -364,7 +364,9 @@ void JabberAccount::connect ()
 	setPresence(protocol()->JabberKOSConnecting, "");
 
 	//jabberClientStream->connectToServer ( XMPP::Jid(accountId() + QString("/") + pluginData( protocol (), "Resource")) );
-	jabberClient->connectToServer (jabberClientStream, XMPP::Jid(accountId() + QString("/") + pluginData( protocol (), "Resource")));
+	jabberClient->connectToServer (jabberClientStream,
+				       XMPP::Jid(accountId() + QString("/") + pluginData( protocol (), "Resource")),
+				       !registerFlag);
 
 }
 
