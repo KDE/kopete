@@ -33,7 +33,7 @@ class KopeteAwayDialogPrivate;
  * one that is not saved and will be lost the next time
  * they restart the application.
  *
- * Individual Protocols should subclass this class for protocol
+ * Individual protocols should subclass this class for protocol
  * specific Away Message choosers (in the case that the user
  * wants to set only one protocol away).  There are methods for
  * getting the message that the user selected, as well as a
@@ -71,13 +71,14 @@ protected:
 	KopeteAway *awayInstance;
 
 	/**
-	 * Gets the away message the user last
-	 * selected.
+	 * \brief Gets the last selected away message
 	 * @return An away message
 	 */
 	QString getSelectedAwayMessage();
 
 	/**
+	 * \brief Sets the user away
+	 * 
 	 * This method is called when the user clicks
 	 * OK in the GUI, signalling that they wish
 	 * to set the away message that they have chosen.
@@ -95,6 +96,8 @@ protected:
 	virtual void setAway( int awayType ) = 0;
 
 	/**
+	 * \brief Called when "Cancel" is clicked
+	 *
 	 * This method is called when the user clicks
 	 * Cancel in the GUI, signalling that they
 	 * canceled their request to mark themselves as
@@ -110,11 +113,13 @@ protected:
 
 public slots:
 	/**
-	 * Shows the dialog
+	 * \brief Shows the dialog
 	 */
 	virtual void show();
 
 	/**
+	 * \brief Shows the dialog
+	 *
 	 * Shows the away dialog, but maintains a "state"
 	 * so you can specify if you're setting away,
 	 * do not disturb, gone, etc for protocols that
@@ -150,8 +155,7 @@ protected slots:
 
 private slots:
 	/**
-	 * This is called when the user selects an
-	 * entry from the combo box
+	 * \brief An entry was selected from the combo box
 	 */
 	void slotComboBoxSelection( int index );
 

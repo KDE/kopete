@@ -30,7 +30,7 @@
  * @class KopeteAwayAction kopeteawayaction.h
  *
  * KopeteAwayAction is a KAction that lets you select an away message
- * from the list of predefined away messages, or enter custom one.
+ * from the list of predefined away messages, or enter a custom one.
  *
  * @author Jason Keirstead   <jason@keirstead.org>
  */

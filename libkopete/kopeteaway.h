@@ -40,12 +40,12 @@ class KopeteGlobalAwayDialog;
  * KopeteAway is a singleton class that manages away messages
  * for Kopete. It stores a global away message, as well as
  * a list of user defined away messages.
- * This class is used by KopeteAwayDialog, which gets it's
- * list of user-defined away messages from this.  Protocol
+ * This class is used by KopeteAwayDialog, which gets its
+ * list of user-defined away messages from here.  Protocol
  * plugins' individual away dialogs should also get away
  * messages from this object.
  *
- * It also handle global Idle Time, and all auto away stuff
+ * It also handles global idle time and all the auto away stuff
  *
  * @author Hendrik vom Lehn <hvl@linux-4-ever.de>
  * @author Chris TenHarmsel <tenharmsel@users.sourceforge.net>
@@ -61,8 +61,8 @@ friend class KopeteAwayDialog;
 public:
 
 	/**
-	 * @brief Method to get the single instance of KopeteAway
-	 * @return KopeteAway instance pointer
+	 * @brief Gets the single instance of KopeteAway
+	 * @return A KopeteAway instance pointer
 	 */
 	static KopeteAway *getInstance();
 
@@ -73,9 +73,9 @@ public:
 	static QString message();
 
 	/**
-	 * This method sets the global away message,
-	 * it does not set you away, just sets the message.
-	 * @brief Sets the global away message
+	 * @brief Sets the global away message.
+	 *
+	 * It does not set you away, just sets the message.
 	 * @param message The message you want to set
 	 */
 	void setGlobalAwayMessage(const QString &message);
@@ -100,7 +100,7 @@ public:
 	void save();
 
 	/**
-	 * @brief Function to get the titles of user defined away messages
+	 * @brief Get the titles of the user defined away messages
 	 * @return List of away message titles
 	 *
 	 * This function can be used to retrieve a QStringList of the away message titles,
@@ -110,7 +110,7 @@ public:
 	QStringList getTitles();
 
 	/**
-	 * @brief Function to get an away message
+	 * @brief Get an away message
 	 * @return The away message corresponding to the title
 	 * @param title Title of the away message to retrieve
 	 *
@@ -123,8 +123,8 @@ public:
 	  * @brief Adds an away message
 	  * @param title The away message title
 	  * @param message The away message
-	  * @return true if away message was successfully added
-	  * @return false if away message was not added (already exists)
+	  * @return true if the away message was successfully added
+	  * @return false if the away message was not added 
 	  *
 	  * This function will add an away message with the given title to the list of user defined
 	  * away messages.  If the title conflicts with an already defined away message, nothing
@@ -153,7 +153,7 @@ public:
 	 * @return true if message was successfully updated
 	 * @return false if message was not successfully update (message does not exist)
 	 *
-	 * This function will update an existing message and replace it's text with the
+	 * This function will update an existing message and replace its text with the
 	 * text specified.
 	 */
 	bool updateMessage(const QString &title, const QString &message);
@@ -187,6 +187,8 @@ public slots:
 	void setActivity();
 
 	/**
+	 * @brief Go in to auto away mode
+	 *
 	 * Use this method if you want to go in the autoaway mode.
 	 * This will go autoaway even if the idle time is not yet reached. (and even if the user
 	 * did not selected to go autoaway automaticaly)
@@ -198,7 +200,7 @@ signals:
 	/**
 	 * @brief Activity was detected
 	 *
-	 * this signal is emit when activity has been discover after being autoAway.
+	 * This signal is emitted when activity has been discovered after being set away automatically.
 	 */
 	void activity();
 	
