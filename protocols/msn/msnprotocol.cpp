@@ -896,6 +896,7 @@ void MSNProtocol::slotContactListed( QString handle, QString publicName, QString
 		else
 		{
 			metaContact = new KopeteMetaContact();
+			KopeteContactList::contactList()->addMetaContact( metaContact );
 
 			MSNContact *msnContact = new MSNContact( this, handle, publicName, metaContact );
 			msnContact->setMsnStatus( FLN );
@@ -907,8 +908,6 @@ void MSNProtocol::slotContactListed( QString handle, QString publicName, QString
 				msnContact->contactAddedToGroup( groupNumber, m_groupList[ groupNumber ] );
 				metaContact->addToGroup( m_groupList[ groupNumber ] );
 			}
-			metaContact->addContact( msnContact );
-			KopeteContactList::contactList()->addMetaContact( metaContact );
 		}
 	}
 	else if( list == "BL" )
@@ -1032,7 +1031,6 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 					m->addToGroup(m_groupList[group]);
 					KopeteContactList::contactList()->addMetaContact(m);
 				}
-				m->addContact( c);
 				c->setMsnStatus(FLN);
 
 				m_addWizard_metaContact=0L;
@@ -1150,7 +1148,6 @@ void MSNProtocol::slotCreateChat( QString ID, QString address, QString auth,
 
 			MSNContact *msnContact = new MSNContact( this, handle, publicName, m );
 
-			m->addContact( msnContact);
 			KopeteContactList::contactList()->addMetaContact(m);
 		}
 	}
