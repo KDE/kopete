@@ -110,7 +110,7 @@ IRCProtocol::~IRCProtocol()
 
 void IRCProtocol::slotMessageFilter( KopeteMessage &msg )
 {
-	if( msg.from()->protocol()->inherits("IRCProtocol") )
+	if( msg.from()->protocol() == this )
 	{
 		kdDebug(14120) << k_funcinfo << endl;
 		QString messageText = msg.escapedBody();

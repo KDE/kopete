@@ -109,15 +109,18 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 			else if( command == QString::fromLatin1("me") && commandCount > 1 )
 				mEngine->actionContact( displayName(), commandArgs );
 
-			else if( command == QString::fromLatin1("topic") && inherits("IRCChannelContact") )
+			else if( command == QString::fromLatin1("topic") )
 			{
 				IRCChannelContact *chan = static_cast<IRCChannelContact*>( this );
-				if( commandCount > 1 )
-					chan->setTopic( commandArgs );
-				else
+				if(chan)
 				{
-					KopeteMessage msg((KopeteContact*)this, mMyself, i18n("Topic for %1 is %2").arg(mNickName).arg(chan->topic()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-					manager()->appendMessage(msg);
+					if( commandCount > 1 )
+						chan->setTopic( commandArgs );
+					else
+					{
+						KopeteMessage msg(this, mMyself, i18n("Topic for %1 is %2").arg(mNickName).arg(chan->topic()), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
+						manager()->appendMessage(msg);
+					}
 				}
 			}
 			else if( command == QString::fromLatin1("mode") && commandCount > 2 )
@@ -220,6 +223,7 @@ void IRCContact::slotExecFinished()
 
 void IRCContact::slotConnectionClosed()
 {
+	//FIXME: why not reimplement this slot in every custom IRCContacts, looks bette (Olivier)
 	if( inherits("IRCChannelContact") )
 		setOnlineStatus( IRCProtocol::IRCChannelOffline() );
 	else

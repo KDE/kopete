@@ -169,10 +169,9 @@ void SpellCheckPlugin::slotMisspelling( const QString &originalword, const QStri
 	if( manualCheckInProgress )
 	{
 		KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
-		if( activeView->editWidget()->inherits("QTextEdit") )
+		if( QTextEdit *t = dynamic_cast<QTextEdit*>( activeView->editWidget() ) )
 		{
 			//Select the misspelled text
-			QTextEdit *t = dynamic_cast<QTextEdit*>( activeView->editWidget() );
 			t->setSelection( 0, pos, 0, pos + originalword.length() );
 		}
 	}

@@ -155,6 +155,7 @@ void IRCUserContact::slotBanUserDomain()
 
 void IRCUserContact::slotKick()
 {
+	//FIXME: Eh! what is this UGLY thing!
 	KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
 	if( activeView && activeView->msgManager()->user()->inherits("IRCUserContact") )
 	{
@@ -165,6 +166,7 @@ void IRCUserContact::slotKick()
 
 void IRCUserContact::contactMode( const QString &mode )
 {
+	//FIXME: Eh! what is this UGLY thing!
 	KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
 	if( activeView && activeView->msgManager()->user()->inherits("IRCUserContact") )
 	{
