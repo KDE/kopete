@@ -258,7 +258,7 @@ void KopeteMessageManager::appendMessage( KopeteMessage &msg )
 
 void KopeteMessageManager::addContact( const KopeteContact *c, bool suppress )
 {
-	kdDebug( 14010 ) << k_funcinfo << endl;
+	//kdDebug( 14010 ) << k_funcinfo << endl;
 	if ( d->mContactList.contains( c ) )
 	{
 		kdDebug( 14010 ) << k_funcinfo << "Contact already exists" <<endl;
