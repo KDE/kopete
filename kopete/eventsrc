@@ -1,30 +1,85 @@
 [!Global!]
 IconName=kopete
 Comment=Kopete Messenger
-Comment[he]=תוכנית המסרים המיידיים Kopete
+Comment[de]=Kopete-Nachrichten
+Comment[es]=Mensajero Kopete
+Comment[ja]=Kopete メッセンジャー
+Comment[lt]=Kopete žinučių siuntėjas
+Comment[pt]=Mensageiro Kopete
 Comment[pt_BR]=Mensageiro Kopete
-Comment[sv]=Kopete Instant Messenger
+Comment[sk]=Správy Kopete
+Comment[sv]=Kopete-meddelande
+Comment[uk]=Програма обміну повідомленнями Kopete
 
 [kopete_event]
 Name=Event
+Name[de]=Ereignis
+Name[eo]=Evento
+Name[es]=Evento
+Name[it]=Evento
+Name[ja]=イベント
+Name[lt]=Įvykis
+Name[pt]=Evento
+Name[pt_BR]=Evento
+Name[sk]=Udalosť
+Name[sv]=Händelse
+Name[uk]=Подія
 Comment=Sound Notification for Kopete Events
-Comment[da]=Lydbesked for Kopete-begivenheder
-Comment[he]=הודעות צליל לאירועים של Kopete
-Comment[hr]=Zvučne obavijesti za Kopte događaje
-Comment[pt_BR]=Notificação de Som para eventos Kopete
+Comment[de]=Sound-Signale für Kopete-Ereignisse
+Comment[es]=Notificación de sonido para eventos de Kopete
+Comment[ja]=Kopeteイベントのサウンド通知
+Comment[lt]=Garsiniai pranešimai apie Kopete įvykius
+Comment[pt]=Notificação de Som para os Eventos do Kopete
+Comment[pt_BR]=Notificação de Som para os Eventos do Kopete
+Comment[sk]=Zvukové upozornenie pre udalosti Kopete
 Comment[sv]=Ljudunderrättelse för händelser i Kopete
+Comment[uk]=Звукрве сповіщення про події у Kopete
 default_sound=kopete_event.wav
 default_presentation=1
 
 [kopete_incoming]
 Name=Incoming
+Name[de]=Eingang
+Name[es]=Entrada
+Name[lt]=Įeinantys
+Name[pt]=Recebido
+Name[pt_BR]=Recebido
+Name[sk]=Prijatá
+Name[sv]=Inkommande
+Name[uk]=Вхідна
 Comment=Incoming message arrives
+Comment[de]=Eingehende Nachrichten
+Comment[es]=LLega mensaje entrante
+Comment[ja]=Incomingメッセージが到着しました
+Comment[lt]=Atėjo žinutė
+Comment[pt]=Mensagem recebida
+Comment[pt_BR]=Mensagem recebida
+Comment[sk]=Prišla nová správa
+Comment[sv]=Inkommande meddelande anländer
+Comment[uk]=Прийнято повідомлення
 default_sound=kopete_incoming.wav
 default_presentation=0
 
 [kopete_outgoing]
 Name=Outgoing
+Name[de]=Ausgang
+Name[es]=Salida
+Name[lt]=Išeinantys
+Name[pt]=Enviado
+Name[pt_BR]=Enviado
+Name[sk]=Odoslaná
+Name[sv]=Utgående
+Name[uk]=Вихідна
 Comment=Outgoing message is sent
+Comment[de]=Nachricht wird versendet
+Comment[es]=Mensaje saliente es enviado
+Comment[ja]=Outgoingメッセージが送信されました
+Comment[lt]=Išsiųsta žinutė
+Comment[pt]=A mensagem foi enviada
+Comment[pt_BR]=A mensagem foi enviada
+Comment[sk]=Odoslaná správa
+Comment[sv]=Utgående meddelande har skickats
+Comment[uk]=Повідомлення відіслано
 default_sound=kopete_outgoing.wav
 default_presentation=0
 
