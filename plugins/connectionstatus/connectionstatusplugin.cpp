@@ -21,7 +21,6 @@
 #include <kprocess.h>
 
 #include "connectionstatusplugin.h"
-#include "connectionstatuspreferences.h"
 #include "kopete.h"
 
 K_EXPORT_COMPONENT_FACTORY(kopete_connectionstatus, KGenericFactory<ConnectionStatusPlugin>);
@@ -30,8 +29,6 @@ ConnectionStatusPlugin::ConnectionStatusPlugin(QObject *parent, const char *name
 	const QStringList& /* args */ )
 : KopetePlugin(parent, name)
 {
-	m_ConnectionStatusPrefs = new ConnectionStatusPreferences("kppp", this );
-
 	kdDebug() << "ConnectionStatusPlugin::ConnectionStatusPlugin()" << endl;
 	qtTimer = new QTimer();
 	connect(qtTimer, SIGNAL(timeout()), this,
@@ -45,7 +42,6 @@ ConnectionStatusPlugin::~ConnectionStatusPlugin()
 {
 	kdDebug() << "ConnectionStatusPlugin::~ConnectionStatusPlugin()" << endl;
 	delete qtTimer;
-	delete m_ConnectionStatusPrefs;
 }
 
 void ConnectionStatusPlugin::init()
@@ -58,24 +54,13 @@ bool ConnectionStatusPlugin::unload()
 
 void ConnectionStatusPlugin::slotCheckStatus()
 {
-	/* Use KProcess to run ifconfig. We'll then parse the output of *
-	* ifconfig in slotProcessStdout() to see if it mentions the     *
-	* relevant network interface. If so, we're connected, if not, we're*
-	* offline * */
+	/* Use KProcess to run netstat -rn. We'll then parse the output of 
+	* netstat -r in slotProcessStdout() to see if it mentions the     
+	* default gateway. If so, we're connected, if not, we're offline */
 	
-	if (m_ConnectionStatusPrefs->interface() == i18n("Modem"))
-	{
-		m_qsInterface = "ppp0";
-	}
-	else
-	if (m_ConnectionStatusPrefs->interface() == i18n("Broadband or LAN"))
-	{
-		m_qsInterface = "eth0";
-	}
 	kdDebug() << "ConnectionStatusPlugin::checkStatus()" << endl;
-	kdDebug() << "Using interface: " << m_qsInterface << endl;
 	KProcess *kpIfconfig = new KProcess;
-	*kpIfconfig << "/sbin/ifconfig";
+	*kpIfconfig << "netstat" << "-r";
 	kpIfconfig->start(KProcess::DontCare, KProcess::Stdout);
 	connect(kpIfconfig, SIGNAL(receivedStdout(KProcess *, char *, int)),
 		this, SLOT(slotProcessStdout(KProcess *, char *, int)));
@@ -83,9 +68,11 @@ void ConnectionStatusPlugin::slotCheckStatus()
 
 void ConnectionStatusPlugin::slotProcessStdout(KProcess *, char *buffer, int buflen)
 {
+	// Look for a default gateway
+	kdDebug() << "ConnectionStatusPlugin::slotProcessStdout()" << endl;
 	QString qsBuffer = QString::fromLatin1(buffer, buflen);
 	//kdDebug() << qsBuffer << endl;
-	setConnectedStatus(qsBuffer.contains(m_qsInterface));
+	setConnectedStatus(qsBuffer.contains("default"));
 }
 
 void ConnectionStatusPlugin::setConnectedStatus(bool connected)
@@ -98,7 +85,7 @@ void ConnectionStatusPlugin::setConnectedStatus(bool connected)
 	* keep calling slotConnectAll() or slotDisconnectAll() constantly.
 	*/
 	
-	kdDebug() << "Entering ifs" << endl;
+	kdDebug() << "ConnectionStatusPlugin::setConnectedStatus()" << endl;
 	
 	if (connected && !m_boolPluginConnected) // the machine is connected and plugin thinks we're disconnected
 	{

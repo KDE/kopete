@@ -20,7 +20,6 @@
 
 #include "kopeteplugin.h"
 
-class ConnectionStatusPreferences;
 class QTimer;
 class KProcess;
 
@@ -43,7 +42,6 @@ private slots:
 
 private:
 	QTimer *qtTimer;
-	ConnectionStatusPreferences *m_ConnectionStatusPrefs;
 	void setConnectedStatus(bool);
 	bool m_boolPluginConnected;
 	QString m_qsInterface;
