@@ -27,6 +27,9 @@
 #include <kdialogbase.h>
 #include <kabc/addressbook.h>
 
+#include <kdemacros.h>
+#include "kopete_export.h"
+
 #include "addressbookselectorwidget_base.h"
 
 namespace KABC {
@@ -34,7 +37,7 @@ namespace KABC {
 		class Addressee;
 }
 
-class AddressBookSelectorWidget : public AddressBookSelectorWidget_Base
+class KOPETE_EXPORT AddressBookSelectorWidget : public AddressBookSelectorWidget_Base
 {
 	Q_OBJECT
 public:
