@@ -43,7 +43,6 @@
 #include "kopeteview.h"
 #include "kopetemetacontact.h"
 
-
 //For the moving to another metacontact dialog
 #include <qlabel.h>
 #include <qstylesheet.h>
@@ -82,7 +81,8 @@ public:
 	Kopete::ContactProperty::Map properties;
 };
 
-KopeteContact::KopeteContact( KopeteAccount *account, const QString &contactId, KopeteMetaContact *parent, const QString &icon )
+KopeteContact::KopeteContact( KopeteAccount *account, const QString &contactId,
+	KopeteMetaContact *parent, const QString &icon )
 	: QObject( parent )
 {
 	d = new KopeteContactPrivate;
@@ -119,16 +119,6 @@ KopeteContact::~KopeteContact()
 	d->metaContact = 0L;
 	delete d;
 }
-
-/*void KopeteContact::setConversations( int value ) const
-{
-	d->conversations = value;
-}
-
-const int KopeteContact::conversations() const
-{
-	return d->conversations;
-}*/
 
 void KopeteContact::rename( const QString &name )
 {
@@ -170,22 +160,22 @@ void KopeteContact::setOnlineStatus( const KopeteOnlineStatus &status )
 	if( oldStatus.status() == KopeteOnlineStatus::Offline &&
 		status.status() != KopeteOnlineStatus::Offline )
 	{
-		setProperty(globalProps->onlineSince(), QDateTime::currentDateTime());
-		kdDebug(14010) << k_funcinfo << "REMOVING lastSeen property for " <<
-			d->displayName << endl;
-		removeProperty(globalProps->lastSeen());
+		setProperty( globalProps->onlineSince(), QDateTime::currentDateTime() );
+		/*kdDebug(14010) << k_funcinfo << "REMOVING lastSeen property for " <<
+			d->displayName << endl;*/
+		removeProperty( globalProps->lastSeen() );
 	}
 	else if( oldStatus.status() != KopeteOnlineStatus::Offline &&
 		oldStatus.status() != KopeteOnlineStatus::Unknown &&
 		status.status() == KopeteOnlineStatus::Offline ) // Contact went back offline
 	{
-		removeProperty(globalProps->onlineSince());
-		kdDebug(14010) << k_funcinfo << "SETTING lastSeen property for " <<
-			d->displayName << endl;
-		setProperty(globalProps->lastSeen(), QDateTime::currentDateTime());
+		removeProperty( globalProps->onlineSince() );
+		/*kdDebug(14010) << k_funcinfo << "SETTING lastSeen property for " <<
+			d->displayName << endl;*/
+		setProperty( globalProps->lastSeen(), QDateTime::currentDateTime() );
 	}
 
-	emit onlineStatusChanged(this, status, oldStatus);
+	emit onlineStatusChanged( this, status, oldStatus );
 }
 
 void KopeteContact::sendFile( const KURL &, const QString &, uint )

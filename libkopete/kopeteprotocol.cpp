@@ -34,17 +34,20 @@ class KopeteProtocolPrivate
 public:
 	bool unloading;
 	int capabilities;
-	/* make sure we always have a lastSeen property as long as a
-	 * protocol is loaded
+	/*
+	 * Make sure we always have a lastSeen and a fullname property as long as
+	 * a protocol is loaded
 	 */
-	Kopete::ContactPropertyTmpl propLastSeen;
+	Kopete::ContactPropertyTmpl mStickLastSeen;
+	Kopete::ContactPropertyTmpl mStickFullName;
 };
 
 KopeteProtocol::KopeteProtocol( KInstance *instance, QObject *parent, const char *name )
 : KopetePlugin( instance, parent, name )
 {
 	d = new KopeteProtocolPrivate;
-	d->propLastSeen = Kopete::Global::Properties::self()->lastSeen();
+	d->mStickLastSeen = Kopete::Global::Properties::self()->lastSeen();
+	d->mStickFullName = Kopete::Global::Properties::self()->fullName();
 	d->unloading = false;
 	d->capabilities = 0;
 }
@@ -302,7 +305,8 @@ void KopeteProtocol::aboutToUnload()
 	{
 		if ( it.current()->myself() && it.current()->myself()->isOnline() )
 		{
-			kdDebug( 14010 ) << k_funcinfo << it.current()->accountId() << " is still connected, disconnecting..." << endl;
+			kdDebug( 14010 ) << k_funcinfo << it.current()->accountId() <<
+				" is still connected, disconnecting..." << endl;
 
 			QObject::connect( it.current()->myself(),
 				SIGNAL( onlineStatusChanged( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
@@ -314,9 +318,11 @@ void KopeteProtocol::aboutToUnload()
 		else
 		{
 			// Remove account, it's already disconnected
-			kdDebug( 14010 ) << k_funcinfo << it.current()->accountId() << " is already disconnected, deleting..." << endl;
+			kdDebug( 14010 ) << k_funcinfo << it.current()->accountId() <<
+				" is already disconnected, deleting..." << endl;
 
-			connect( it.current(), SIGNAL( destroyed( QObject * ) ), this, SLOT( slotAccountDestroyed( QObject * ) ) );
+			QObject::connect( it.current(), SIGNAL( destroyed( QObject * ) ),
+				this, SLOT( slotAccountDestroyed( QObject * ) ) );
 			it.current()->deleteLater();
 		}
 	}

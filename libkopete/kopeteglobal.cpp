@@ -35,6 +35,12 @@ namespace Kopete
 namespace Global
 {
 
+class PropertiesPrivate
+{
+	public:
+		ContactPropertyTmpl::Map mTemplates;
+};
+
 Properties *Properties::mSelf = 0L;
 
 Properties *Properties::self()
@@ -50,21 +56,22 @@ Properties *Properties::self()
 Properties::Properties()
 {
 	kdDebug(14000) << k_funcinfo << endl;
+	d = new PropertiesPrivate();
 }
 
 Properties::~Properties()
 {
 	kdDebug(14000) << k_funcinfo << endl;
+	delete d;
 }
 
 const ContactPropertyTmpl &Properties::tmpl(const QString &key) const
 {
-
-	if(mTemplates.contains(key))
+	if(d->mTemplates.contains(key))
 	{
 		/*kdDebug(14000) << k_funcinfo <<
 			"Found template for key = '" << key << "'" << endl;*/
-		return mTemplates[key];
+		return d->mTemplates[key];
 	}
 	else
 		return ContactPropertyTmpl::null;
@@ -73,7 +80,7 @@ const ContactPropertyTmpl &Properties::tmpl(const QString &key) const
 bool Properties::registerTemplate(const QString &key,
 	const ContactPropertyTmpl &tmpl)
 {
-	if(mTemplates.contains(key))
+	if(d->mTemplates.contains(key))
 	{
 		kdDebug(14000) << k_funcinfo <<
 			"Called for EXISTING key = '" << key << "'" << endl;
@@ -81,7 +88,7 @@ bool Properties::registerTemplate(const QString &key,
 	}
 	else
 	{
-		mTemplates.insert(key, tmpl);
+		d->mTemplates.insert(key, tmpl);
 		return true;
 	}
 }
@@ -89,12 +96,12 @@ bool Properties::registerTemplate(const QString &key,
 void Properties::unregisterTemplate(const QString &key)
 {
 	kdDebug(14000) << k_funcinfo << "called for key: '" << key << "'" << endl;
-	mTemplates.remove(key);
+	d->mTemplates.remove(key);
 }
 
 bool Properties::isRegistered(const QString &key)
 {
-	return mTemplates.contains(key);
+	return d->mTemplates.contains(key);
 }
 
 const ContactPropertyTmpl &Properties::fullName() const
@@ -163,7 +170,6 @@ const ContactPropertyTmpl &Properties::workMobilePhone() const
 		i18n("Work Mobile Phone"), QString::null, true);
 }
 
-
 const ContactPropertyTmpl &Properties::emailAddress() const
 {
 	return createProp(QString::fromLatin1("emailAddress"),
@@ -176,7 +182,7 @@ const ContactPropertyTmpl &Properties::createProp(const QString &key,
 	/*kdDebug(14000) << k_funcinfo <<
 		"key = " << key  << ", label = " << label << endl;*/
 
-	if(!mTemplates.contains(key))
+	if(!d->mTemplates.contains(key))
 	{
 		kdDebug(14000) << k_funcinfo <<
 			"CREATING NEW ContactPropertyTmpl WITH key = " << key  <<
@@ -188,10 +194,12 @@ const ContactPropertyTmpl &Properties::createProp(const QString &key,
 
 const ContactPropertyTmpl::Map &Properties::templateMap() const
 {
-	return mTemplates;
+	return d->mTemplates;
 }
 
+
 // -----------------------------------------------------------------------------
+
 
 void installEmoticonTheme(const QString &archiveName)
 {

@@ -49,6 +49,7 @@ namespace Global
 	 * objects for all the properties he wants to set for a KopeteContact,
 	 * everything else is handled behind the scenes.
 	 **/
+	class PropertiesPrivate;
 	class Properties
 	{
 		friend class ContactPropertyTmpl;
@@ -143,14 +144,8 @@ namespace Global
 				bool persistent = false) const;
 
 		private:
-			ContactPropertyTmpl::Map mTemplates;
-			ContactPropertyTmpl mFullName;
-			ContactPropertyTmpl mIdleTime;
-			ContactPropertyTmpl mOnlineSince;
-			ContactPropertyTmpl mLastSeen;
-			ContactPropertyTmpl mAwayMessage;
-
 			static Properties *mSelf;
+			PropertiesPrivate *d;
 	}; // END class Properties
 
 } // Global
