@@ -232,11 +232,12 @@ GaduProtocol::addContact( const QString& uin, const QString& nick,
             //TODO: make this better
             m = new KopeteMetaContact();
             if ( !group.isEmpty() )
-                m->moveToGroup( QString::null, group );
+                m->addToGroup( group );
             KopeteContactList::contactList()->addMetaContact(m);
         }
-    } else
+    } else {
         m = parent;
+    }
 
     KopeteContact *c = m->findContact( this->id(), QString::number( userUin_ ) , uin );
 
@@ -252,7 +253,7 @@ GaduProtocol::addContact( const QString& uin, const QString& nick,
         GaduContact *contact = new GaduContact( this->id(), uinNumber,
                                                 nick, m );
         contact->setParentIdentity( QString::number( userUin_ ) );
-        m->addContact( contact, group );
+        m->addContact( contact );
         contactsMap_.insert( uinNumber, contact );
         addNotify( uinNumber );
     }
@@ -279,7 +280,8 @@ GaduProtocol::slotIconRightClicked( const QPoint& /*p*/ )
     popup->popup( QCursor::pos() );
 }
 
-void GaduProtocol::settingsChanged()
+void
+GaduProtocol::settingsChanged()
 {
     userUin_ = prefs_->uin();
     password_ = prefs_->password();
@@ -569,7 +571,6 @@ GaduProtocol::serialize( KopeteMetaContact *metaContact,
     bool done = false;
     for( c = metaContact->contacts().first(); c ; c = metaContact->contacts().next() ) {
         if ( c->protocol() == this->id() ) {
-            kdDebug() << "*** Do it!" << endl;
             GaduContact *g = static_cast<GaduContact*>(c);
             strList << g->name();
             done = true;
@@ -590,6 +591,7 @@ GaduProtocol::deserialize( KopeteMetaContact *metaContact,
     int idx = 0;
     QStringList uins = QStringList::split( "\n",
                                            metaContact->addressBookField( this, "messaging/gadu" ) );
+
     while( numContacts-- ) {
         nick = strList[ idx ];
         uin = uins[ idx++ ];
