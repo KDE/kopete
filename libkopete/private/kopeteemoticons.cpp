@@ -211,7 +211,7 @@ QString KopeteEmoticons::parseEmoticons( QString message )
 	QString imgPath;
 	for ( QStringList::Iterator it = emoticons.begin(); it != emoticons.end(); ++it )
 	{
-		QString em = QRegExp::escape(*it);
+		QString em = QRegExp::escape( QStyleSheet::escape(*it) );
 
 		if( message.contains(QRegExp( QString::fromLatin1( "(^|[\\W\\s])(%1)([\\W\\s]|$)" ).arg(em) )) )
 		{
