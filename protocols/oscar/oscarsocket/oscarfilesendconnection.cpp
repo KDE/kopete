@@ -64,20 +64,20 @@ void OscarFileSendConnection::slotRead()
 		else if ( hdr.channel == 0x0204 ) //the peer has confirmed that the file is sent
 		{
 			emit transferComplete(connectionName());
-			close();
+			socket()->close();
 			emit connectionClosed(connectionName());
 		}
 	}
 	else //this is part of the file!
 	{
 		int bytesToRead;
-		if(bytesAvailable() < mFileSize)
-			bytesToRead = bytesAvailable();
+		if(socket()->bytesAvailable() < mFileSize)
+			bytesToRead = socket()->bytesAvailable();
 		else
 			bytesToRead = mFileSize - mBytesTransferred;
 
 		char *data = new char[bytesToRead];
-		mBytesTransferred += readBlock(data, bytesToRead);
+		mBytesTransferred += socket()->readBlock(data, bytesToRead);
 		mBuffer.addString(data, bytesToRead);
 
 		emit percentComplete(100 * mBytesTransferred / mFileSize);
@@ -91,8 +91,6 @@ void OscarFileSendConnection::slotRead()
 			kdDebug(14150) << "[OscarFileSendConnection] Sending read confirm.  filesize: " << mFileSize << ", bytes transferred: " << mBytesTransferred << endl;
 			sendReadConfirm();
 		}
-		if(bytesAvailable())
-			emit readyRead();
 	}
 }
 
@@ -102,18 +100,18 @@ OFT2 OscarFileSendConnection::getOFT2()
 	int theword, theword2;
 	int start;
 	//the ODC2 start byte
-	if (((start = getch()) == 0x4f) &&
-		((start = getch()) == 0x46) &&
-		((start = getch()) == 0x54) &&
-		((start = getch()) == 0x32))
+	if (((start = socket()->getch()) == 0x4f) &&
+		((start = socket()->getch()) == 0x46) &&
+		((start = socket()->getch()) == 0x54) &&
+		((start = socket()->getch()) == 0x32))
 	{
 		//get the header length
-		if ((theword = getch()) == -1)
+		if ((theword = socket()->getch()) == -1)
 		{
 			kdDebug(14150) << "[OSCAR] Error reading length, byte 1: nothing to be read" << endl;
 			oft.headerlen = 0x00;
 		}
-		else if((theword2 = getch()) == -1)
+		else if((theword2 = socket()->getch()) == -1)
 		{
 			kdDebug(14150) << "[OSCAR] Error reading data field length, byte 2: nothing to be read" << endl;
 			oft.headerlen = 0x00;
@@ -125,7 +123,7 @@ OFT2 OscarFileSendConnection::getOFT2()
 
 		//convert header to a buffer
 		char *buf = new char[oft.headerlen-6];  // the -6 is there because we have already read 6 bytes
-		readBlock(buf,oft.headerlen-6);
+		socket()->readBlock(buf,oft.headerlen-6);
 		Buffer inbuf;
 		inbuf.setBuf(buf,oft.headerlen-6);
 
@@ -231,13 +229,7 @@ void OscarFileSendConnection::sendOFT2Block(const OFT2 &oft, const Buffer &/*dat
 #ifdef OSCAR_PACKETLOG
 		kdDebug(14150) << "=== OUTPUT ===" << outbuf.toString();
 #endif
-	writeBlock(outbuf.buffer(), outbuf.length());
-}
-
-void OscarFileSendConnection::setSocket(int socket)
-{
-	OscarConnection::setSocket(socket);
-	//sendFileSendRequest();
+	socket()->writeBlock(outbuf.buffer(), outbuf.length());
 }
 
 void OscarFileSendConnection::sendFileSendRequest(void)
@@ -402,7 +394,7 @@ void OscarFileSendConnection::slotKIOResult(KIO::Job *job)
 void OscarFileSendConnection::slotKIOData(KIO::Job * /* job */, const QByteArray &data)
 {
 	//kdDebug(14150) << "[OscarFileSendConnection] got data " << ((KIO::SimpleJob *)(job))->url().fileName() << ", size " << data.size() << endl;
-	writeBlock(data.data(),data.size());
+	socket()->writeBlock(data.data(),data.size());
 }
 
 void OscarFileSendConnection::slotKIODataReq(KIO::Job *job, QByteArray &data)

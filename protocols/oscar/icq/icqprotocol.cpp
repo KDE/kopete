@@ -27,6 +27,7 @@
 #include <qspinbox.h>
 #include <qtextedit.h>
 #include <qlistbox.h>
+#include <qhostaddress.h>
 
 #include <kdatewidget.h>
 #include <klineedit.h>

@@ -19,10 +19,11 @@
 #define ONCOMINGSOCKET_H
 
 #include <qwidget.h>
-#include <qserversocket.h>
 #include <qptrlist.h>
 
 #include <kfileitem.h>
+
+class KExtendedSocket;
 
 struct DirectInfo { //info used for keeping track of direct connections
 	QByteArray cookie;
@@ -44,16 +45,16 @@ struct DirectInfo { //info used for keeping track of direct connections
 class OscarConnection;
 class OscarSocket;
 
-class OncomingSocket : public QServerSocket
+class OncomingSocket : public QObject
 {
-		Q_OBJECT
+	Q_OBJECT
 	public:
 		OncomingSocket(QObject *parent=0, const char *name=0);
-		OncomingSocket(OscarSocket *server, const QHostAddress &address, OscarConnection::ConnectionType type, Q_UINT16 port=DIRECTIM_PORT,
+		OncomingSocket(OscarSocket *server, const QString &address, OscarConnection::ConnectionType type, Q_UINT16 port=DIRECTIM_PORT,
 			int backlog=5, QObject *parent=0, const char *name=0);
 		~OncomingSocket();
 	/** Called when someone connects to the serversocket */
-	virtual void newConnection( int socket );
+	void newConnection();
 	/** Finds the connection with cookie @cookie and returns a pointer to it.
 				If no such connection is found, return NULL */
 	OscarConnection * findConnection(const QByteArray &cookie);
@@ -70,6 +71,8 @@ class OncomingSocket : public QServerSocket
 	void addFileInfo(const QString &sn, KFileItem *finfo);
 	/** Gets the cookie associated with the pending connection for @sn, stores it in cook */
 	bool getPendingCookie(const QString &sn, QByteArray &cook);
+	/** Get the socket associated with this connection */
+	KExtendedSocket* socket() const { return mSocket; }
 
 	private:
 		/** A list of all connections */
@@ -79,6 +82,7 @@ class OncomingSocket : public QServerSocket
 		/** The type of objects to be created */
 		OscarConnection::ConnectionType mType;
 		OscarSocket *mServer;
+		KExtendedSocket *mSocket;
 
 	public slots:
 		/** Called when a connection is ready */
@@ -94,3 +98,4 @@ class OncomingSocket : public QServerSocket
 };
 
 #endif
+// vim: set noet ts=4 sts=4 sw=4:

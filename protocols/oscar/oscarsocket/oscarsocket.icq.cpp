@@ -648,17 +648,17 @@ void OscarSocket::sendICQStatus(unsigned long status)
 
 void OscarSocket::fillDirectInfo(Buffer &directInfo)
 {
-	kdDebug(14150) << k_funcinfo << "IP=" << mDirectIMMgr->address().toString() <<
-		", Port=" << mDirectIMMgr->port() << endl;
+	kdDebug(14150) << k_funcinfo << "IP=" << mDirectIMMgr->socket()->host() <<
+		", Port=" << mDirectIMMgr->socket()->port() << endl;
 
 	directInfo.addWord(0x000C); // TLV(12)
 	directInfo.addWord(0x0025); // length 25
 
 	if(mDirectIMMgr)
 	{
-		directInfo.addDWord(mDirectIMMgr->address().ip4Addr()); // IP
+		directInfo.addDWord(setIPv4Address(mDirectIMMgr->socket()->host())); // IP
 		directInfo.addWord(0x0000);
-		directInfo.addWord(mDirectIMMgr->port()); // Port
+		directInfo.addWord(mDirectIMMgr->socket()->port().toUShort()); // Port
 	}
 	else
 	{

@@ -15,11 +15,11 @@
 */
 
 #include "oscarconnection.h"
+#include <qobject.h>
 #include <kdebug.h>
 
 OscarConnection::OscarConnection(const QString &sn, const QString &connName,
 	ConnectionType type, const QByteArray &cookie, QObject *parent, const char *name)
-	: QSocket(parent, name)
 {
 //	kdDebug(14150) << k_funcinfo <<  "called, sn='" << sn << "' connName='" << connName << "'" << endl;
 
@@ -27,10 +27,11 @@ OscarConnection::OscarConnection(const QString &sn, const QString &connName,
 	mConnType = type;
 	mSN = sn;
 	mCookie.duplicate(cookie);
+	mSocket = new KExtendedSocket();
+	mSocket->setSocketFlags(KExtendedSocket::inetSocket);
 
-	connect(this, SIGNAL(readyRead()), this, SLOT(slotRead()));
-	connect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
-	connect(this, SIGNAL(error(int)), this, SLOT(slotError(int)));
+	connect(mSocket, SIGNAL(connectionSuccess()), this, SLOT(slotConnected()));
+	connect(mSocket, SIGNAL(connectionFailed(int)), this, SLOT(slotError(int)));
 }
 
 OscarConnection::~OscarConnection()
@@ -45,13 +46,13 @@ OscarConnection::~OscarConnection()
  */
 void OscarConnection::slotRead()
 {
-	kdDebug(14150) << k_funcinfo << bytesAvailable() <<
+	kdDebug(14150) << k_funcinfo << mSocket->bytesAvailable() <<
 		" bytes, connection name='" << mConnName << "'" << endl;
 
 	Buffer inbuf;
-	int len = bytesAvailable();
+	int len = mSocket->bytesAvailable();
 	char *buf = new char[len];
-	readBlock(buf,len);
+	mSocket->readBlock(buf,len);
 	inbuf.setBuf(buf,len);
 //	inbuf.print();
 	delete buf;
@@ -59,27 +60,8 @@ void OscarConnection::slotRead()
 
 void OscarConnection::slotError(int errornum)
 {
-	switch(errornum)
-	{
-		case QSocket::ErrConnectionRefused:
-		{
-			kdDebug(14150) << k_funcinfo << "Connection refused." << endl;
-			slotConnectionClosed();
-			break;
-		}
-		case QSocket::ErrHostNotFound:
-		{
-			kdDebug(14150) << k_funcinfo << "Host not found." << endl;
-			slotConnectionClosed();
-			break;
-		}
-		case QSocket::ErrSocketRead:
-		{
-			kdDebug(14150) << k_funcinfo << "Problem with reading socket." <<
-				" Problems may be present from here on out..." << endl;
-			break;
-		}
-	}
+	kdDebug(14150) << k_funcinfo << mSocket->strError(mSocket->status(), errornum) << endl;
+	slotConnectionClosed();
 }
 
 void OscarConnection::setSN(const QString &newSN)
@@ -99,9 +81,13 @@ void OscarConnection::sendTypingNotify(TypingNotify /*notifyType*/)
 /** Called when we have established a connection */
 void OscarConnection::slotConnected()
 {
-	kdDebug(14150) << k_funcinfo <<
-		"We are connected to '" <<
-		connectionName() << "'" << endl;
+	kdDebug(14150) << k_funcinfo << "Connected" << endl;
+
+	mSocket->enableRead(true);
+	mSocket->enableWrite(true);
+	mSocket->setBufferSize(-1);
+	connect(mSocket, SIGNAL(readyRead()), this, SLOT(slotRead()));
+
 
 	// Announce that we are ready for use, if it's not the server socket
 	if(mConnType != Server)
@@ -114,7 +100,7 @@ void OscarConnection::slotConnectionClosed()
 	kdDebug(14150) << k_funcinfo << "connection with '" <<
 		connectionName() << "' lost." << endl;
 
-	emit protocolError(QString("Connection with %1 lost").arg(peerName()), 0);
+	emit protocolError(QString("Connection with %1 lost").arg(mSocket->host()), 0);
 	emit connectionClosed(connectionName());
 }
 
@@ -123,13 +109,6 @@ void OscarConnection::sendFileSendRequest()
 {
 	kdDebug(14150) << k_funcinfo <<
 		"Not implemented in this object! " << endl;
-}
-
-/** Sets the socket to use socket, state() to connected, and emit connected() */
-void OscarConnection::setSocket(int socket)
-{
-	QSocket::setSocket(socket);
-	emit connected();
 }
 
 #include "oscarconnection.moc"

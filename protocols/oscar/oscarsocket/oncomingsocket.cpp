@@ -24,22 +24,24 @@
 #include "aim.h"
 
 OncomingSocket::OncomingSocket(QObject *parent, const char *name )
-: QServerSocket(0, 5, parent, name)
 {
 }
 
-OncomingSocket::OncomingSocket(OscarSocket *server, const QHostAddress &address,
+OncomingSocket::OncomingSocket(OscarSocket *server, const QString &address,
 	OscarConnection::ConnectionType type,
 	Q_UINT16 port,
 	int backlog,
 	QObject *parent,
 	const char *name)
-	: QServerSocket(address, port, backlog, parent, name)
 {
 	mType = type;
 	mServer = server;
 	mConns.setAutoDelete(TRUE);
 	mPendingConnections.setAutoDelete(TRUE);
+	mSocket = new KExtendedSocket();
+	mSocket->setSocketFlags( KExtendedSocket::inetSocket | KExtendedSocket::passiveSocket);
+	mSocket->setHost(address);
+	mSocket->setPort(port);
 }
 
 OncomingSocket::~OncomingSocket()
@@ -52,12 +54,14 @@ OncomingSocket::~OncomingSocket()
 	}
 
 	mPendingConnections.clear();
+	delete mSocket;
 }
 
 // Called when someone connects to the server socket
-void OncomingSocket::newConnection(int socket)
+
+void OncomingSocket::newConnection()
 {
-	kdDebug(14150) << k_funcinfo << "Called! Socket=" << socket << endl;
+	kdDebug(14150) << k_funcinfo << "Called!" << endl;
 
 	for (DirectInfo *tmp=mPendingConnections.first(); tmp; tmp = mPendingConnections.next())
 	{
@@ -72,13 +76,15 @@ void OncomingSocket::newConnection(int socket)
 	}
 	OscarConnection *newsock = createAppropriateType(tmp);
 	setupConnection(newsock);
-	newsock->setSocket(socket);
+	KExtendedSocket *s = newsock->socket();
+	mSocket->accept(s);
 
 	// The line below needs to be here if one person is behind a firewall, because
 	// AIM clients will try to reverse the connection if that is the case
 	// if ( tmp->type == DirectInfo::Incoming ) && mType == OscarConnection::SendFile )
 	newsock->sendFileSendRequest();
 }
+
 
 /** Finds the connection with cookie @cookie and returns a pointer to it.
 		If no such connection is found, return NULL */
@@ -212,7 +218,9 @@ OscarConnection *OncomingSocket::establishOutgoingConnection(const QString &sn)
 			OscarConnection *s = createAppropriateType(tmp);
 			setupConnection(s);
 			kdDebug(14150) << k_funcinfo << "Connecting to " << tmp->host << ":" << tmp->port << endl;
-			s->connectToHost(tmp->host,tmp->port);
+			s->socket()->setHost(tmp->host);
+			s->socket()->setPort(tmp->port);
+			s->socket()->connect();
 			return s;
 		}
 	}

@@ -40,18 +40,13 @@ void OscarDirectConnection::slotRead()
 	char *buf = new char[fl.length];
 	Buffer inbuf;
 
-	if (bytesAvailable() < fl.length)
+	if (socket()->bytesAvailable() < fl.length)
 	{
-		while (waitForMore(500) < fl.length)
+		while (socket()->waitForMore(500) < fl.length)
 			kdDebug(14150) << k_funcinfo << "Not enough data read yet... waiting" << endl;
 	}
 
-	int bytesread = readBlock(buf,fl.length);
-	if (bytesAvailable())
-	{
-		emit readyRead(); //there is another packet waiting to be read
-	}
-
+	int bytesread = socket()->readBlock(buf,fl.length);
 	inbuf.setBuf(buf, bytesread);
 	QString screenName = QString::fromLatin1(fl.sn);
 
@@ -83,20 +78,20 @@ ODC2 OscarDirectConnection::getODC2(void)
 
 	//the ODC2 start byte
 	if (
-		((start = getch()) == 0x4f) &&
-		((start = getch()) == 0x44) &&
-		((start = getch()) == 0x43) &&
-		((start = getch()) == 0x32)
+		((start = socket()->getch()) == 0x4f) &&
+		((start = socket()->getch()) == 0x44) &&
+		((start = socket()->getch()) == 0x43) &&
+		((start = socket()->getch()) == 0x32)
 		)
 	{
 		//get the header length
-		if ((theword = getch()) == -1)
+		if ((theword = socket()->getch()) == -1)
 		{
 			kdDebug(14150) << k_funcinfo <<
 				"Error reading length, byte 1: nothing to be read" << endl;
 			odc.headerLength = 0x00;
 		}
-		else if((theword2 = getch()) == -1)
+		else if((theword2 = socket()->getch()) == -1)
 		{
 			kdDebug(14150) << k_funcinfo <<
 				"Error reading data field length, byte 2: nothing to be read" << endl;
@@ -109,7 +104,7 @@ ODC2 OscarDirectConnection::getODC2(void)
 
 		//convert header to a buffer
 		char *buf = new char[odc.headerLength-6];  // the -6 is there because we have already read 6 bytes
-		readBlock(buf,odc.headerLength-6);
+		socket()->readBlock(buf,odc.headerLength-6);
 		Buffer inbuf;
 		inbuf.setBuf(buf,odc.headerLength-6);
 
@@ -230,7 +225,7 @@ void OscarDirectConnection::sendODC2Block(const QString &message, WORD typingnot
 		kdDebug(14150) << "=== OUTPUT ===" << outbuf.toString();
 #endif
 
-	writeBlock(outbuf.buffer(), outbuf.length());
+	socket()->writeBlock(outbuf.buffer(), outbuf.length());
 }
 
 void OscarDirectConnection::parseMessage(Buffer &inbuf)

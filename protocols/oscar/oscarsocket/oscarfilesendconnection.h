@@ -68,11 +68,7 @@ class OscarFileSendConnection : public OscarConnection
 
 		/** Sends out an OFT2 block to the peer, using the specified header and buffer data */
 		void sendOFT2Block(const OFT2 &oft, const Buffer &data, bool nullCookie);
-		/**
-		 * Calls OscarConnection::setSocket
-		 * sends file send request header
-		 */
-		virtual void setSocket( int socket );
+
 		/** Sends request to the client telling he/she that we want to send this file */
 		virtual void sendFileSendRequest(void);
 
@@ -88,7 +84,7 @@ class OscarFileSendConnection : public OscarConnection
 
 	protected slots:
 		/** Called when there is data to be read */
-			virtual void slotRead(void);
+		virtual void slotRead(void);
 
 	private: // Private members
 		/** Information on the file we are going to transfer */

@@ -17,15 +17,17 @@
 #ifndef OSCARCONNECTION_H
 #define OSCARCONNECTION_H
 
-#include <qsocket.h>
 #include "buffer.h"
+#include <qobject.h>
+#include <kextsock.h>
+
 
 /**Implementation of a base oscar connection.
   *No login functions, just basic direct Oscar connection functionality.
   *@author Tom Linsky
   */
 
-class OscarConnection : public QSocket
+class OscarConnection : public QObject
 {
 	Q_OBJECT
 
@@ -54,11 +56,11 @@ class OscarConnection : public QSocket
 		/** Sets the currently logged in user's screen name */
 		void setSN(const QString &newSN);
 
+		/** Gets the current socket **/
+		KExtendedSocket* socket() const { return mSocket; };
+
 		/** Gets the message cookie */
 		inline const QByteArray &cookie() const { return mCookie; };
-
-		/** Sets the socket to use socket, state() to connected, and emit connected() */
-		virtual void setSocket( int socket );
 
 		// virtual functions to be overloaded by child classes
 
@@ -149,6 +151,8 @@ class OscarConnection : public QSocket
 		int mPort;
 		/** The user's screen name */
 		QString mSN;
+		/** The socket */
+		KExtendedSocket *mSocket;
 };
 #endif
 // vim: set noet ts=4 sts=4 sw=4:

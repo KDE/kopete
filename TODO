@@ -51,20 +51,6 @@ For 0.7
 	  to massive contactlist crappyness caused by above mentioned classes)
 
 For 1.0/kdenetwork:
-	- switch from QSocket to KExtendedSocket,
-	  this means rewriting most of oscarsocket
-	  The biggest problem I see so far is OscarConnection::setSocket(int socket)
-	  because you cannot assign a new socket to a KExtendedSocket AFAICS (I don't
-	  like this idea anyway)
-	  Also I don't think we need an OscarConnection base class for outgoing
-	  connections, we could handle FileConnections, DirectConnections and
-	  normal connections by casting, there aren't many areas where one could have
-	  a choice of connection type anyway (only thing I see so far is sending an
-	  IM, it can be either through-server or through direct connection.
-
-	- don't inherit from a socket class but base our classes on QObject and
-	  have a socket() function instead if socket-access is needed.
-
 	- get rid of AIMContactList, AIMBuddy (almost gone already) and AIMGroup.
 
 	- Maybe base Buffer class on something like QDataStream (if possible),

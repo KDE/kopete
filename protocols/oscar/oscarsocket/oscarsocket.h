@@ -31,6 +31,7 @@
 class KFileItem;
 class OscarAccount;
 class QTimer;
+class KExtendedSocket;
 
 struct FLAP
 {
@@ -309,6 +310,13 @@ class OscarSocket : public OscarConnection
 
 		~OscarSocket();
 
+		/**
+		 * A reimplementation of QHostAddress::setAddress to convert
+		 * a QString to an ipv4 address for certain functions that
+		 * required QHostAddress::setAddress in the past
+		 */
+		DWORD setIPv4Address(const QString &address);
+
 		bool isICQ() { return mIsICQ; }
 
 		/*
@@ -365,18 +373,25 @@ class OscarSocket : public OscarConnection
 		 * Sends message to dest
 		 */
 		void sendIM(const QString &message, const UserInfo &uInfo, bool isAuto);
+
 		/** Requests sn's user info */
 		void sendUserProfileRequest(const QString &sn);
+
 		/** Sends someone a warning */
 		void sendWarning(const QString &target, bool isAnonymous);
+
 		/** Changes a user's password (AIM Method) */
 		void sendChangePassword(const QString &newpw, const QString &oldpw);
+
 		/** Joins the given chat room */
 		void sendChatJoin(const QString &name, const int exchange);
+
 		/** Sends a request for direct IM */
 		void sendDirectIMRequest(const QString &sn);
+
 		/** Sends a direct IM denial */
 		void sendDirectIMDeny(const QString &sn);
+
 		/** Sends a direct IM accept */
 		void sendDirectIMAccept(const QString &sn);
 
@@ -468,6 +483,7 @@ class OscarSocket : public OscarConnection
 
 		/** Blocks user sname */
 		void sendBlock(const QString &sname);
+
 		/** Removes the block on user sname */
 		void sendRemoveBlock(const QString &sname);
 
@@ -497,6 +513,7 @@ class OscarSocket : public OscarConnection
 		* start a contact search by providing an UIN, ICQ SPECIFIC
 		*/
 		void sendCLI_SEARCHBYUIN(const unsigned long uin);
+
 		/*
 		 * same but more evil than you can imagine ;)
 		 */
@@ -531,6 +548,11 @@ class OscarSocket : public OscarConnection
 
 		void sendCLI_METASETWORK(const ICQWorkUserInfo &i);
 
+		/*
+		 * sends the work info for the uin owner to icq
+		 */
+		void sendCLI_METASETWORK(ICQWorkUserInfo &i);
+
 		void sendCLI_METASETSECURITY(bool requireauth, bool webaware, BYTE direct);
 
 		void sendAuthRequest(const QString &contact, const QString &reason);
@@ -545,8 +567,10 @@ class OscarSocket : public OscarConnection
 	private:
 	/** adds the flap version to the buffer */
 	void putFlapVer(Buffer &buf);
+
 	/** Reads a FLAP header from the input */
 	FLAP getFLAP();
+
 	/** Sends the output buffer, and clears it */
 	void sendBuf(Buffer &buf, BYTE chan);
 
@@ -641,22 +665,31 @@ class OscarSocket : public OscarConnection
 	 * parses server version info
 	 */
 	void parseServerVersions(Buffer &inbuf);
+
 	/** Parses Message of the day */
 	void parseMessageOfTheDay(Buffer &inbuf);
+
 	/** Requests location rights */
 	void requestLocateRights();
+
 	/** Requests a bunch of information (permissions, rights, my user info, etc) from server */
 	void requestInfo();
+
 	/** adds a mask of the groups that you want to be able to see you to the buffer */
 	void sendGroupPermissionMask();
+
 	/** adds a request for buddy list rights to the buffer */
 	void requestBuddyRights();
+
 	/** adds a request for msg rights to the buffer */
 	void requestMsgRights();
+
 	/** Parses the locate rights provided by the server */
 	void parseLocateRights(Buffer &inbuf);
+
 	/** Parses buddy list rights from the server */
 	void parseBuddyRights(Buffer &inbuf);
+
 	/** Parses msg rights info from server */
 	void parseMsgRights(Buffer &inbuf);
 
@@ -688,10 +721,13 @@ class OscarSocket : public OscarConnection
 
 	/** Activates the SSI list on the server */
 	void sendSSIActivate();
+
 	/** Parses the oncoming buddy server notification */
 	void parseUserOnline(Buffer &);
+
 	/** Parses offgoing buddy message from server */
 	void parseUserOffline(Buffer &);
+
 	/** Parses someone's user info */
 	void parseUserProfile(Buffer &);
 	/*
@@ -699,8 +735,10 @@ class OscarSocket : public OscarConnection
 	 * TODO: unused
 	 */
 //	void parseRedirect(Buffer &);
+
 	/** Parses a message ack from the server */
 	void parseMsgAck(Buffer &);
+
 	/** Parses a minityping notification from server */
 	void parseMiniTypeNotify(Buffer &);
 
@@ -709,29 +747,40 @@ class OscarSocket : public OscarConnection
 
 	/** Parses a rate change */
 	void parseRateChange(Buffer &inbuf);
+
 	/** Sends SSI add, modify, or delete request to reuse code */
 	void sendSSIAddModDel(SSI *item, WORD request_type);
+
 	/** Parses the SSI acknowledgement */
 	void parseSSIAck(Buffer &inbuf);
+
 	/** Parses a warning notification */
 	void parseWarningNotify(Buffer &inbuf);
+
 	/** Parses a message sending error */
 	void parseError(WORD family, Buffer &inbuf);
+
 	/** Parses a missed message notification */
 	void parseMissedMessage(Buffer &inbuf);
+
 	/** Request, deny, or accept a rendezvous session with someone
 	type == 0: request
 	type == 1: deny
 	type == 2: accept  */
 	void sendRendezvous(const QString &sn, WORD type, DWORD rendezvousType, const KFileItem *finfo=0L);
+
 	/** Sends a 0x0013,0x0002 (requests SSI rights information) */
 	void sendSSIRightsRequest();
+
 	/** Sends a 0x0013,0x0004 (requests SSI data?) */
 	void sendSSIRequest();
+
 	/** Parses a 0x0013,0x0003 (SSI rights) from the server */
 	void parseSSIRights(Buffer &inbuf);
+
 	/** Sends parameters for ICBM messages */
 	void sendMsgParams();
+
 	/** Returns the appropriate server socket, based on the capability flag it is passed. */
 	OncomingSocket * serverSocket(DWORD capflag);
 
@@ -781,6 +830,13 @@ class OscarSocket : public OscarConnection
 	void slotKeepaliveTimer();
 
 	signals:
+
+	/**
+	 * Emitted when there is more information to read from the socket
+	 * This is only used in slotRead() since I haven't found a way to
+	 * emit socket()->readyRead directly yet. (Matt)
+	 */
+	 void moreToRead();
 
 	/*
 	 * emitted when any kind of Instant Message was received
@@ -923,7 +979,7 @@ class OscarSocket : public OscarConnection
 		/** SSI server stored data */
 		SSIData ssiData;
 		/** Socket for direct connections */
-		QSocket * connsock;
+		KExtendedSocket * connsock;
 		// Tells if we are connected to the server and ready to operate
 		bool isLoggedIn;
 
