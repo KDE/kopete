@@ -1,7 +1,7 @@
 /*
     kopeteaccount.cpp - Kopete Account
 
-    Copyright (c) 2003      by Olivier Goffart       <ogoffart@tiscalinet.be>
+    Copyright (c) 2003-2004 by Olivier Goffart       <ogoffart@tiscalinet.be>
     Copyright (c) 2003-2004 by Martijn Klingens      <klingens@kde.org>
     Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
     Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
@@ -127,6 +127,7 @@ const QColor KopeteAccount::color() const
 void KopeteAccount::setColor( const QColor &color )
 {
 	d->color = color;
+	emit colorChanged( color );
 }
 
 void KopeteAccount::setPriority( uint priority )

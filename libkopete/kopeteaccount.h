@@ -380,6 +380,11 @@ signals:
 	 * The accountId should be constant, see @ref KopeteAccount::setAccountId()
 	 */
 	void accountIdChanged();
+	
+	/**
+	 * The color of the account has been changed
+	 */
+	void colorChanged( const QColor & );
 
 protected slots:
 	/**
