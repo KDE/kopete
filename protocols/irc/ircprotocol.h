@@ -63,8 +63,11 @@ public:
 
 	static IRCProtocol *protocol();
 
-	const KopeteOnlineStatus IRCOnline;
-	const KopeteOnlineStatus IRCOffline;
+	static KopeteOnlineStatus IRCChannelOnline() { return m_ChannelOnline; };
+	static KopeteOnlineStatus IRCUserOnline() { return m_UserOnline;; };
+	static KopeteOnlineStatus IRCChannelOffline() { return m_ChannelOffline; };
+	static KopeteOnlineStatus IRCUserOffline() { return m_UserOffline; };
+
 
 private:
 	/** FIXME: Do something with this when Identity support is added!!!!!!!! */
@@ -73,6 +76,12 @@ private:
 	QMap<QString,IRCIdentity*> mIdentityMap;
 
 	static IRCProtocol *s_protocol;
+
+	static KopeteOnlineStatus m_ChannelOnline;
+	static KopeteOnlineStatus m_ChannelOffline;
+	static KopeteOnlineStatus m_UserOnline;
+	static KopeteOnlineStatus m_UserOffline;
+
 };
 
 #endif

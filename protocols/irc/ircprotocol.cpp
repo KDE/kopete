@@ -48,15 +48,24 @@ K_EXPORT_COMPONENT_FACTORY( kopete_irc, KGenericFactory<IRCProtocol> );
 
 IRCProtocol *IRCProtocol::s_protocol = 0L;
 
+KopeteOnlineStatus IRCProtocol::m_ChannelOnline;
+KopeteOnlineStatus IRCProtocol::m_ChannelOffline;
+KopeteOnlineStatus IRCProtocol::m_UserOnline;
+KopeteOnlineStatus IRCProtocol::m_UserOffline;
+
 IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
-: KopeteProtocol( parent, name ),
-	IRCOnline(  KopeteOnlineStatus::Online,  25, this, 0, "irc_protocol_small",   i18n( "Go O&nline" ),  i18n( "Online" ) ),
-	IRCOffline( KopeteOnlineStatus::Offline, 25, this, 1, "irc_protocol_offline", i18n( "Go O&ffline" ), i18n( "Offline" ) )
+: KopeteProtocol( parent, name )
 {
 	s_protocol = this;
 
 	kdDebug(14120) << k_funcinfo << endl;
 	// Load all ICQ icons from KDE standard dirs
+
+	m_ChannelOnline = KopeteOnlineStatus( KopeteOnlineStatus::Online,  25, this, 0, "irc_protocol_small",   i18n( "Go O&nline" ),  i18n( "Online" ));
+	m_ChannelOffline = KopeteOnlineStatus( KopeteOnlineStatus::Offline, 25, this, 1, "irc_protocol_offline", i18n( "Go O&ffline" ), i18n( "Offline" ));
+
+	m_UserOnline = KopeteOnlineStatus( KopeteOnlineStatus::Online,  25, this, 0, "irc_normal",   i18n( "Go O&nline" ),  i18n( "Online" ));
+	m_UserOffline = KopeteOnlineStatus( KopeteOnlineStatus::Offline, 25, this, 1, "irc_offline", i18n( "Go O&ffline" ), i18n( "Offline" ));
 
 	setStatusIcon( "irc_protocol_offline" );
 

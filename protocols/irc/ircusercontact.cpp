@@ -97,14 +97,14 @@ void IRCUserContact::slotUserOnline( const QString &nick )
 {
 	if( nick.lower() == mNickName.lower() )
 	{
-		setOnlineStatus( IRCProtocol::protocol()->IRCOnline );
+		setOnlineStatus( IRCProtocol::IRCUserOnline() );
 		mOnlineTimer->start( 90000, true );
 	}
 }
 
 void IRCUserContact::slotUserOffline()
 {
-	setOnlineStatus( IRCProtocol::protocol()->IRCOffline );
+	setOnlineStatus( IRCProtocol::IRCUserOffline() );
 }
 
 void IRCUserContact::slotNewPrivMessage(const QString &originating, const QString &, const QString &message)

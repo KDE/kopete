@@ -111,7 +111,7 @@ void IRCChannelContact::slotMessageManagerDestroyed()
 
 void IRCChannelContact::slotConnectedToServer()
 {
-	setOnlineStatus( IRCProtocol::protocol()->IRCOnline );
+	setOnlineStatus( IRCProtocol::IRCChannelOnline() );
 }
 
 void IRCChannelContact::slotNamesList(const QString &channel, const QStringList &nicknames)
@@ -142,7 +142,7 @@ void IRCChannelContact::slotNamesList(const QString &channel, const QStringList 
 
 			IRCUserContact *user = mIdentity->findUser( *it );
 			user->setUserclass( mNickName, userclass );
-			user->setOnlineStatus( IRCProtocol::protocol()->IRCOnline );
+			user->setOnlineStatus( IRCProtocol::IRCUserOnline() );
 			user->addChannel( mNickName );
 
 			//Post the event so we don't block the UI
@@ -196,7 +196,7 @@ void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString
 		else
 		{
 			IRCUserContact *contact = mIdentity->findUser( nickname );
-			contact->setOnlineStatus( IRCProtocol::protocol()->IRCOnline );
+			contact->setOnlineStatus( IRCProtocol::IRCUserOnline() );
 			contact->addChannel( mNickName );
 			manager()->addContact((KopeteContact *)contact, true);
 

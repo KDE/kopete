@@ -75,18 +75,13 @@ IRCContact::IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaCon
 	QObject::connect(mEngine, SIGNAL(incomingNickChange(const QString &, const QString &)), this, SLOT( slotNewNickChange(const QString&, const QString&)));
 	QObject::connect(mEngine, SIGNAL(incomingQuitIRC(const QString &, const QString &)), this, SLOT( slotUserDisconnected(const QString&, const QString&)));
 	QObject::connect(mEngine, SIGNAL(incomingCtcpReply(const QString &, const QString &, const QString &)), this, SLOT( slotNewCtcpReply(const QString&, const QString &, const QString &)));
-	QObject::connect(mEngine, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
+	QObject::connect(mEngine, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()) );
 	isConnected = false;
 }
 
 IRCContact::~IRCContact()
 {
 	delete mParser;
-}
-
-void IRCContact::slotConnectionClosed()
-{
-	setOnlineStatus( IRCProtocol::protocol()->IRCOffline );
 }
 
 bool IRCContact::processMessage( const KopeteMessage &msg )
@@ -165,6 +160,14 @@ bool IRCContact::processMessage( const KopeteMessage &msg )
 	return true;
 }
 
+void IRCContact::slotConnectionClosed()
+{
+	if( inherits("IRCChannelContact") )
+		setOnlineStatus( IRCProtocol::IRCChannelOffline() );
+	else
+		setOnlineStatus( IRCProtocol::IRCUserOffline() );
+}
+
 void IRCContact::slotUserDisconnected( const QString &user, const QString &reason)
 {
 	if( isConnected )
@@ -176,7 +179,7 @@ void IRCContact::slotUserDisconnected( const QString &user, const QString &reaso
 			KopeteMessage msg(c, mContact, i18n("User %1 has quit (\"%2\")").arg(nickname).arg(reason), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
 			manager()->appendMessage(msg);
 			manager()->removeContact( c, true );
-			c->setOnlineStatus( IRCProtocol::protocol()->IRCOffline );
+			c->setOnlineStatus( IRCProtocol::IRCUserOffline() );
 			mIdentity->unregisterUser( nickname );
 		}
 	}
