@@ -813,7 +813,7 @@ void KopeteContactList::removeMetaContact(KopeteMetaContact *m)
 
 	emit metaContactDeleted( m );
 	m_contacts.remove( m );
-	delete m;
+	m->deleteLater();
 }
 
 QPtrList<KopeteMetaContact> KopeteContactList::metaContacts() const

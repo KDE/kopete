@@ -28,6 +28,7 @@
 #include <klistview.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
+#include <kmessagebox.h>
 
 #include "kopetecontactlist.h"
 #include "kopeteprefs.h"
@@ -309,26 +310,49 @@ void KopeteContact::slotMoveDialogOkClicked()
 	}
 	KopeteMetaContact *old = d->metaContact;
 	setMetaContact( mc );
-	KopeteContactPtrList children = old->contacts();
-	if( children.isEmpty() )
-		KopeteContactList::contactList()->removeMetaContact( old );
 }
 
 void KopeteContact::setMetaContact( KopeteMetaContact *m )
 {
 	KopeteMetaContact *old = d->metaContact;
+	if(old==m) //that make no sens
+		return;
 
 	if( old )
 	{
-		d->metaContact->removeContact( this );
+		int result=KMessageBox::No;
+		if( old->contacts().count()==1 )
+		{ //only one contact, including this one, that mean the contact will be empty efter the move
+			result=KMessageBox::questionYesNoCancel( 0, i18n("You are moving the contact %1 <%2> to the metacontact `%3`.\n"
+				"Do you want to remove the source metacontact ( %4 ) which is going to be empty?")
+#if QT_VERSION < 0x030200
+					.arg(displayName()).arg(contactId()).arg(m ? m->displayName() : QString::null).arg(old->displayName())
+#else
+					.arg(displayName(), contactId(), m ? m->displayName() : QString::null, old->displayName())
+#endif
+				, i18n("Move contact - Kopete"), i18n("&Delete") , i18n("&Keep") , QString::fromLatin1("delete_old_contact_when_move") );
+
+			if(result==KMessageBox::Cancel)
+				return;
+		}
+
+		old->removeContact( this );
 		disconnect( old, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
 			protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
 
-		if( !old->contacts().isEmpty() )
-			protocol()->slotMetaContactAboutToSave( old );
-
 		// Reparent the contact
 		old->removeChild( this );
+
+		if(result==KMessageBox::Yes)
+		{
+			//remove the old metacontact.  (this delete the MC)
+			KopeteContactList::contactList()->removeMetaContact(old);
+		}
+		else
+		{	//remove cached data for this protocol wich will not be removed since we disconnected
+			protocol()->slotMetaContactAboutToSave( old );
+		}
+
 	}
 
 	d->metaContact = m;

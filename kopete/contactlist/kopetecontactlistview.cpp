@@ -900,8 +900,6 @@ void KopeteContactListView::slotDropped(QDropEvent *e, QListViewItem */*parent*/
 		{
 //			kdDebug(14000) << "KopeteContactListView::slotDropped : moving the contact " << source_contact->contactId()	<< " to metacontact " << dest_metaLVI->metaContact()->displayName() <<	endl;
 			source_contact->setMetaContact(dest_metaLVI->metaContact());
-			if( source_metaLVI->metaContact()->contacts().isEmpty() )
-				KopeteContactList::contactList()->removeMetaContact(source_metaLVI->metaContact()); //delete the metacontact if it is empty
 		}
 	}
 
