@@ -3,6 +3,7 @@ Address book integration notes 26/08/03
 Use cases
 
 1) Add new metacontact + contacts using Add Contact Wizard
+	Decide whether to associate or not if using mandatory association.
     a) Matching addressbook entry already exists
 	- Need to choose kabc entry in ACW?
 
@@ -23,8 +24,17 @@ Use cases
 
 6)  Protocols may deliver contact data that users may want to aggregate into the kabc entry.
 
+<<<<<<< KABC_INTEG_NOTES
+7)  A contact adds a new IM account, either the user decides to add the new account to the MC manually, or the contact messages the user first, we get a temporary contact Kopete side, add them to the MC.
+
+8) The user no longer wishes to have a particular contact (or even metacontact) in Kopete, and deletes the object.
+
+9) A contact changes accounts (msn:foo@uncool.org -> foo@cool.org).  This is the same as 7) then 8).
+
+=======
 7)  The user used another KDE IM Client.  But he discover Kopete which is finaly the best, so he decide to use it, and he would like to use information already existing in KABC
 
+>>>>>>> 1.2
 Side Issues
 -----------
 
@@ -62,13 +72,19 @@ In Kopete contact list:
 include UID from related kabc entry
 
 In kabc
+Something like X-MESSAGING-MSN:bob@hotmail.com for each protocol account that contact uses.
 
+<<<<<<< KABC_INTEG_NOTES
+KABC Participation modes
+------------------------
+=======
 
 do we need to insert nicknames? or other?
 
 
 KABC Participation
 ------------------
+>>>>>>> 1.2
 
 Participation in the relation can be optional or mandatory.
 
@@ -109,22 +125,30 @@ Hybrid 1-2
 
 For
 ~~~
-Can integrate with kabc contacts without disturbing user
+.) Can integrate with kabc contacts without disturbing user
 
 Against
 ~~~~~~~
-User has control of address book, this removes that control.
-Synthetic entries may be duplicates of existing user added entries and user will have to reassociate MCs with correct entries and throw out the synthetic entries.
-Hybrid approach may be too complex for user to comprehend.
+.) User has control of address book, this removes that control.
+.) Synthetic entries may be duplicates of existing user added entries and user will have to reassociate MCs with correct entries and throw out the synthetic entries.
+.) Hybrid approach may be too complex for user to comprehend.
 
 How slow this will be to add hundred of contacts when syncing the contactlist for the first time?
 
+KDE PIM Apps' use of Kopete
+--------------------------
 
+Use cases
 
+1) Email client or contact management app displays email sender's IM status if known.  
 
+2) Email client or contact management app wants to use Kopete as transport for something (vCard?).
 
- Usage of kopete information by others applications
-=====================================================
+Notes
+
+Client would need to identify addressbook entries that are IM contactable, and obtain status information from an IM app or library.
+
+David Faure says it's possible to do loose lazy binding to the app responsible for providing status information as in 1).  Something to do with KTrader and DCOP.  We would need some DCOP to return status info to the client from the IM app.
 
 Showing the IM status of a contact in KMail, in KAdressBook....
 A "reply-by-IM" action in KMail
@@ -138,19 +162,23 @@ But how to use such as information available only at runtime, like the Status.
    --the problem is that the status can not be reseted to offline if kopete crashed
 
 2) KMail could contact Kopete via DCop
-   --too bad if i want to use another IM Client
+   --too bad if i want to use another IM Client?
 
+3) add an interface in kabc (or other) which could contact Kopete, or the IM which is actualy running.  This is in effect what dfaure suggested above.
 
-3) add an interface in kabc (or other) which could contact Kopete, or the IM which is actualy running
+KDE Games/Desktop sharing use of Kopete
+---------------------------------------
+Use cases
 
+1) Program wants to use Kopete as transport for game/desktop sharing invitation.
 
+Notes
 
+As above, client must identify IM contactable addressbook entries, obtain status information and get the IM app to send the invite (inline/file transfer).  Some protocols may not support file transfer though.  Do we need a capabilities interface on the IM apps, or just use the lowest common denominator?  
 
+On receipt of the invitation, IM app needs to recognise the invite and relay it to the recipient (similar lazy loose binding?).  In Kopete we could do this in a plugin, quite neatly.
 
-
-
-
- What about the API?
+What about the API?
 =====================
 
  In KABC
@@ -166,17 +194,20 @@ We can even add the possibility to have several entries for one field (StringLis
 
 Theses key could be stendardized (freedesktop.org ?)
 
-
  In Kopete:
 ------------
 
 I think we will need to vhange the xml format of the contactlist, and the whole pluginData thing.
 
 The idea is to have the same fields in Kopete than in KABC.
+Gof: This was not our idea, we intend not to pollute the KABC with any more extra fields than necessary.  Kopete's info may not be useful to other IM apps (Will)
 
 so for example, the pgp plugin will request the public key:
 metacontact->data("application/pgp-public-key");
-if the contact is in KABC, then libkopete will request info from kabc. Else, it will take the data stored internaly in the contactlist.xml
+
+if the contact is in KABC, then libkopete will request info from kabc. Else, it will take the data stored internaly in the contactlist.xml (Gof)
+
+This is a good question.  I think since we have the constraint that we have to keep kabc clean, this is the way to do it. (Will)
 
 for contacts same things.
 Anyway? what if we have several contact in one metacontact.
@@ -185,10 +216,6 @@ for example:
 messenging/msn         =>   xxx@msn.com ; yyy@msn.com   (it's a StringList)
 messenging/nickname    =>    Mr. X ; Mr. Y
 
-that looks fine, but how to make sure than Mr. X is for xxx@msn.com, imagine if we have icq contact, or other?
+that looks fine, but how to make sure than Mr. X is for xxx@msn.com, imagine if we have icq contact, or other? (Gof)
 
-
-
-
-
-
+We should never store nicknames in kabc.  The metacontact name should be taken from the kabc formatted name (Will)
