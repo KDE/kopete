@@ -78,7 +78,7 @@ dlgJabberServices::dlgJabberServices (JabberAccount *account, QWidget *parent, c
 void dlgJabberServices::slotSetSelection (int row, int, int, const QPoint &)
 {
 
-	if(serviceTask && (row <= serviceTask->agents().count()))
+	if(serviceTask && (uint(row) <= serviceTask->agents().count()))
 	{
 		tblServices->clearSelection (true);
 		tblServices->addSelection (QTableSelection (row, 0, row, 1));
