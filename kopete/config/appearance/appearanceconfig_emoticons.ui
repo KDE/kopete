@@ -12,9 +12,6 @@
             <height>389</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>AppearanceConfig_Emoticons</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -25,9 +22,6 @@
             </property>
             <property name="text">
                 <string>&amp;Use emoticons</string>
-            </property>
-            <property name="accel">
-                <string>Alt+U</string>
             </property>
         </widget>
         <widget class="KListBox">
@@ -80,9 +74,6 @@
                     <property name="text">
                         <string>&amp;Get New Themes...</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+G</string>
-                    </property>
                 </widget>
                 <widget class="QPushButton">
                     <property name="name">
@@ -90,9 +81,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Install Theme File...</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+I</string>
                     </property>
                 </widget>
                 <widget class="QPushButton">

@@ -112,9 +112,6 @@
                             <property name="text">
                                 <string>&amp;Get New...</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+G</string>
-                            </property>
                             <property name="toolTip" stdset="0">
                                 <string>Get new Chat Window styles over the Internet</string>
                             </property>
@@ -126,9 +123,6 @@
                             <property name="text">
                                 <string>&amp;Add...</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+A</string>
-                            </property>
                         </widget>
                         <widget class="KPushButton">
                             <property name="name">
@@ -136,9 +130,6 @@
                             </property>
                             <property name="text">
                                 <string>&amp;Import...</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+I</string>
                             </property>
                         </widget>
                         <widget class="KPushButton">
@@ -148,9 +139,6 @@
                             <property name="text">
                                 <string>Cop&amp;y...</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+Y</string>
-                            </property>
                         </widget>
                         <widget class="KPushButton">
                             <property name="name">
@@ -159,9 +147,6 @@
                             <property name="text">
                                 <string>&amp;Edit...</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+E</string>
-                            </property>
                         </widget>
                         <widget class="KPushButton">
                             <property name="name">
@@ -169,9 +154,6 @@
                             </property>
                             <property name="text">
                                 <string>&amp;Delete</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+D</string>
                             </property>
                         </widget>
                     </hbox>
