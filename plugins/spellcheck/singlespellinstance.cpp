@@ -28,6 +28,31 @@
 #include "spellcheckpreferences.h"
 #include "spellcheckplugin.h"
 
+SpellingHighlighter::SpellingHighlighter( ReplacementMap *replacements, QTextEdit *textEdit) : QSyntaxHighlighter ( textEdit )
+{
+	mReplacements = replacements;
+}
+
+int SpellingHighlighter::highlightParagraph( const QString & text, int )
+{
+	QColor highlightColor;
+	if( textEdit()->paletteForegroundColor().red() < 250 )
+		highlightColor = Qt::red;
+	else
+		highlightColor = Qt::blue;
+
+	int stringPos = 0;
+	for( ReplacementMap::Iterator it = mReplacements->begin(); it != mReplacements->end(); ++it )
+	{
+		while( ( stringPos = text.find( QRegExp( QString::fromLatin1("[\\s\\W](%1)[\\s\\W]").arg(it.key()) ), stringPos + 1 ) ) > -1 )
+		{
+			setFormat( stringPos + 1, it.key().length(), highlightColor );
+		}
+	}
+
+	return 0;
+}
+
 SingleSpellInstance::SingleSpellInstance( SpellCheckPlugin *plugin, KopeteView *myView ) : QObject( 0L )
 {
 	mView = myView;
@@ -37,6 +62,7 @@ SingleSpellInstance::SingleSpellInstance( SpellCheckPlugin *plugin, KopeteView *
 	t = static_cast<QTextEdit*>( mView->editWidget() );
 	t->installEventFilter( this );
 	t->viewport()->installEventFilter( this );
+	mHighlightEngine = new SpellingHighlighter( &mReplacements, t );
 
 	//Define our word seperator regexp
 	//We can't use \b because QT barfs when trying to split on it
@@ -49,6 +75,7 @@ SingleSpellInstance::~SingleSpellInstance()
 {
 	kdDebug() << k_funcinfo << "Destroying single speller instance" << endl;
 	mPlugin->singleSpellers.remove( this );
+	delete mHighlightEngine;
 }
 
 void SingleSpellInstance::slotViewDestroyed()
@@ -56,56 +83,15 @@ void SingleSpellInstance::slotViewDestroyed()
 	delete this;
 }
 
-void SingleSpellInstance::slotUpdateTextEdit()
-{
-	QString plainTextContents = t->text();
-
-	//Save the selection and cursor positions
-	int parIdx = 1, txtIdx = 1;
-	int selParFrom = 1, selTxtFrom = 1, selParTo = 1, selTxtTo = 1;
-	t->getSelection(&selParFrom, &selTxtFrom, &selParTo, &selTxtTo);
-	t->getCursorPosition(&parIdx, &txtIdx);
-
-	//Don't use red if the current color is too red
-	QString highlightColor;
-	if( t->paletteForegroundColor().red() < 250 )
-		highlightColor = QString::fromLatin1("red");
-	else
-		highlightColor = QString::fromLatin1("blue");
-
-	QStringList words = QStringList::split( mBound, plainTextContents );
-	if( words.count() > 0 )
-	{
-		for( QStringList::Iterator it = words.begin(); it != words.end(); ++it )
-		{
-			if( mReplacements.contains(*it) )
-			{
-				plainTextContents.replace( QRegExp( QString::fromLatin1("\\b(%1)\\b").arg( *it ) ),
-					QString::fromLatin1("<font color=\"" + highlightColor + "\">") + *it +
-					QString::fromLatin1("</font>") );
-			}
-		}
-	}
-
-	//Update the highlighting
-	t->setTextFormat( QTextEdit::RichText );
-	t->setText( plainTextContents );
-	t->setTextFormat( QTextEdit::PlainText );
-
-	//Restore the selection and cursor positions
-	t->setCursorPosition( parIdx, txtIdx );
-	if( selParFrom > -1 )
-		t->setSelection( selParFrom, selTxtFrom, selParTo, selTxtTo );
-}
-
 void SingleSpellInstance::misspelling( const QString &originalword, const QStringList &suggestions, unsigned int )
 {
 	//kdDebug() << k_funcinfo << originalword << "IS MISSPELLED!" << endl;
 
 	if( !mReplacements.contains( originalword ) )
+	{
 		mReplacements[originalword] = suggestions;
-
-	slotUpdateTextEdit();
+		mHighlightEngine->rehighlight();
+	}
 }
 
 bool SingleSpellInstance::eventFilter(QObject *o, QEvent *e)
@@ -117,15 +103,7 @@ bool SingleSpellInstance::eventFilter(QObject *o, QEvent *e)
 		//Keypress event, to do the actual checking
 		case QEvent::KeyPress:
 		{
-			QKeyEvent *event = (QKeyEvent*) e;
-
-			//Only spellcheck when we hit a word delimiter
-			if( !QChar( event->ascii() ).isLetterOrNumber() )
-				mPlugin->speller()->check( t->text(), false );
-
-			//Update highlighting
-			slotUpdateTextEdit();
-
+			mPlugin->speller()->check( t->text(), false );
 			break;
 		}
 
@@ -190,8 +168,6 @@ bool SingleSpellInstance::eventFilter(QObject *o, QEvent *e)
 							txtIdx += newContents.length() - txtContents.length();
 						t->setCursorPosition(parIdx, txtIdx);
 
-						//Update highlighting
-						slotUpdateTextEdit();
 					}
 
 					//Cancel original event

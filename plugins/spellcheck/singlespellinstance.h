@@ -23,6 +23,7 @@
 #include <qmap.h>
 #include <qstringlist.h>
 #include <qregexp.h>
+#include <qsyntaxhighlighter.h>
 
 class KSpell;
 class KopeteView;
@@ -30,6 +31,15 @@ class QTextEdit;
 class SpellCheckPlugin;
 
 typedef QMap<QString,QStringList> ReplacementMap;
+
+class SpellingHighlighter : public QSyntaxHighlighter
+{
+	public:
+		SpellingHighlighter( ReplacementMap *replacements, QTextEdit *textEdit);
+		virtual int highlightParagraph( const QString & text, int );
+	private:
+		ReplacementMap *mReplacements;
+};
 
 class SingleSpellInstance : public QObject
 {
@@ -45,12 +55,12 @@ class SingleSpellInstance : public QObject
 		QRegExp mBound;
 		ReplacementMap mReplacements;
 		SpellCheckPlugin *mPlugin;
+		SpellingHighlighter *mHighlightEngine;
 
 	public slots:
 		void misspelling( const QString &, const QStringList &, unsigned int );
 		
 	private slots:
-		void slotUpdateTextEdit();
 		void slotViewDestroyed();
 
 	protected:
