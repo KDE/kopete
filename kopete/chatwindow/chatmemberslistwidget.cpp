@@ -1,0 +1,191 @@
+/*
+    chatmemberslistwidget.cpp - Chat Members List Widget
+
+    Copyright (c) 2004      by Richard Smith         <kde@metafoo.co.uk>
+
+    Kopete    (c) 2002-2004 by the Kopete developers <kopete-devel@kde.org>
+
+    *************************************************************************
+    *                                                                       *
+    * This program is free software; you can redistribute it and/or modify  *
+    * it under the terms of the GNU General Public License as published by  *
+    * the Free Software Foundation; either version 2 of the License, or     *
+    * (at your option) any later version.                                   *
+    *                                                                       *
+    *************************************************************************
+*/
+
+#include "chatmemberslistwidget.h"
+
+#include "kopetemessagemanager.h"
+#include "kopetecontact.h"
+#include "kopeteonlinestatus.h"
+#include "kopeteglobal.h"
+
+#include <kdebug.h>
+#include <kpopupmenu.h>
+
+#include <qheader.h>
+#include <qtooltip.h>
+
+// BEGIN ChatMembersListWidget::ToolTip
+
+class ChatMembersListWidget::ToolTip : public QToolTip
+{
+public:
+	ToolTip( KListView *parent )
+		: QToolTip( parent->viewport() ), m_listView ( parent )
+	{
+	}
+	
+	void maybeTip( const QPoint &pos )
+	{
+		if( QListViewItem *item = m_listView->itemAt( pos ) )
+		{
+			QRect itemRect = m_listView->itemRect( item );
+			if( itemRect.contains( pos ) )
+				tip( itemRect, static_cast<ContactItem*>( item )->contact()->toolTip() );
+		}
+	}
+	
+private:
+	KListView *m_listView;
+};
+
+// END ChatMembersListWidget::ToolTip
+
+
+// BEGIN ChatMembersListWidget::ContactItem
+
+ChatMembersListWidget::ContactItem::ContactItem( ChatMembersListWidget *parent, Kopete::Contact *contact )
+	: KListViewItem( parent ), m_contact( contact )
+{
+	QString nick = m_contact->property(Kopete::Global::Properties::self()->nickName().key()).value().toString();
+	if ( nick.isEmpty() )
+		nick = m_contact->contactId();
+	setText( 0, nick );
+	
+	connect( m_contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
+	         this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+	
+	setStatus( parent->session()->contactOnlineStatus(m_contact) );
+	reposition();
+}
+
+void ChatMembersListWidget::ContactItem::slotPropertyChanged( Kopete::Contact*,
+	const QString &key, const QVariant&, const QVariant &newValue  )
+{
+	if ( key == Kopete::Global::Properties::self()->nickName().key() )
+	{
+		setText( 0, newValue.toString() );
+		reposition();
+	}
+}
+
+void ChatMembersListWidget::ContactItem::setStatus( const Kopete::OnlineStatus &status )
+{
+	setPixmap( 0, status.iconFor( m_contact ) );
+	reposition();
+}
+
+void ChatMembersListWidget::ContactItem::reposition()
+{
+	// Qt's listview sorting is pathetic - it's impossible to reposition a single item
+	// when its key changes, without re-sorting the whole list. Plus, the whole list gets
+	// re-sorted whenever an item is added/removed. So, we do manual sorting.
+	// In particular, this makes adding N items O(N^2) not O(N^2 log N).
+	QListViewItem *after = 0;
+	for ( QListViewItem *it = KListViewItem::listView()->firstChild(); it; it = it->nextSibling() )
+	{
+		if ( ChatMembersListWidget::ContactItem *item = dynamic_cast<ChatMembersListWidget::ContactItem*>(it) )
+		{
+			int theirWeight = item->m_contact->onlineStatus().weight();
+			int ourWeight = m_contact->onlineStatus().weight();
+			if ( theirWeight < ourWeight ||
+			     (theirWeight == ourWeight && item->text(0).lower().localeAwareCompare( text(0).lower() ) > 0 ) )
+			{
+				break;
+			}
+		}
+		after = it;
+	}
+	static_cast<KListView*>(KListViewItem::listView())->moveItem( this, 0, after );
+}
+
+// END ChatMembersListWidget::ContactItem
+
+
+// BEGIN ChatMembersListWidget
+
+ChatMembersListWidget::ChatMembersListWidget( Kopete::ChatSession *session, QWidget *parent, const char *name )
+	 : KListView( parent, name ), m_session( session )
+{
+	// use our own custom tooltips
+	setShowToolTips( false );
+	new ToolTip( this );
+	
+	// set up display: no header
+	setAllColumnsShowFocus( true );
+	addColumn( QString::null, -1 );
+	header()->setStretchEnabled( true, 0 );
+	header()->hide();
+	
+	// list is sorted by us, not by Qt
+	setSorting( -1 );
+	
+	// add chat members
+	slotContactAdded( session->user() );
+	for ( QPtrListIterator<Kopete::Contact> it( session->members() ); it.current(); ++it )
+		slotContactAdded( *it );
+	
+	connect( this, SIGNAL( contextMenu( KListView*, QListViewItem *, const QPoint &) ),
+	         SLOT( slotContextMenu(KListView*, QListViewItem *, const QPoint & ) ) );
+	connect( this, SIGNAL( executed( QListViewItem* ) ),
+	         SLOT( slotExecute( QListViewItem * ) ) );
+	
+	connect( session, SIGNAL( contactAdded(const Kopete::Contact*, bool) ),
+	         this, SLOT( slotContactAdded(const Kopete::Contact*) ) );
+	connect( session, SIGNAL( contactRemoved(const Kopete::Contact*, const QString&, Kopete::Message::MessageFormat, bool) ),
+	         this, SLOT( slotContactRemoved(const Kopete::Contact*) ) );
+	connect( session, SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & , const Kopete::OnlineStatus &) ),
+	         this, SLOT( slotContactStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus & ) ) );
+}
+
+void ChatMembersListWidget::slotContextMenu( KListView*, QListViewItem *item, const QPoint &point )
+{
+	if ( ContactItem *contactItem = dynamic_cast<ContactItem*>(item) )
+	{
+		KPopupMenu *p = contactItem->contact()->popupMenu( session() );
+		connect( p, SIGNAL( aboutToHide() ), p, SLOT( deleteLater() ) );
+		p->popup( point );
+	}
+}
+
+void ChatMembersListWidget::slotContactAdded( const Kopete::Contact *contact )
+{
+	if ( !m_members.contains( contact ) )
+		m_members.insert( contact, new ContactItem( this, const_cast<Kopete::Contact*>( contact ) ) );
+}
+
+void ChatMembersListWidget::slotContactRemoved( const Kopete::Contact *contact )
+{
+	kdDebug(14000) << k_funcinfo << endl;
+	if ( m_members.contains( contact ) && contact != session()->user() )
+	{
+		delete m_members[ contact ];
+		m_members.remove( contact );
+	}
+}
+
+void ChatMembersListWidget::slotContactStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status )
+{
+	if ( m_members.contains( contact ) )
+		m_members[contact]->setStatus( status );
+}
+
+// END ChatMembersListWidget
+
+#include "chatmemberslistwidget.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:
+

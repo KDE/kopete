@@ -47,6 +47,7 @@
 #include <kwin.h>
 #include <kurldrag.h>
 
+#include "chatmemberslistwidget.h"
 #include "kopetechatwindow.h"
 #include "krichtexteditpart.cpp"
 #include "kopetemessagemanager.h"
@@ -104,37 +105,6 @@ class KopeteChatViewPrivate
 		bool sendInProgress;
 		bool visibleMembers;
 };
-
-class ChatViewMembersTip : public QToolTip
-{
-	public:
-		ChatViewMembersTip( KListView *parent );
-		void maybeTip( const QPoint &pos );
-
-	private:
-		KListView *m_listView;
-};
-
-ChatViewMembersTip::ChatViewMembersTip( KListView *parent ) : QToolTip( parent->viewport() )
-{
-	m_listView = parent;
-}
-
-void ChatViewMembersTip::maybeTip( const QPoint &pos )
-{
-	if( !m_listView )
-		return;
-
-	QListViewItem *item = m_listView->itemAt( pos );
-	if( !item )
-		return;
-
-	QRect itemRect = m_listView->itemRect( item );
-	if( itemRect.contains( pos ) )
-	{
-		tip( itemRect, static_cast<KopeteContactLVI*>( item )->contact()->toolTip() );
-	}
-}
 
 class KopeteChatViewTip : public QToolTip
 {
@@ -551,7 +521,7 @@ void ChatView::setTabState( KopeteTabState newState )
 	}
 
 	if( newState != Typing )
-		setStatusText( i18n( "One person in the chat", "%n people in the chat", memberContactMap.count() ) );
+		setStatusText( i18n( "One person in the chat", "%n people in the chat", m_manager->members().count() ) );
 }
 
 void ChatView::setMainWindow( KopeteChatWindow* parent )
@@ -573,19 +543,7 @@ void ChatView::createMembersList()
 		//Create the chat members list
 		membersDock = createDockWidget( QString::fromLatin1( "membersDock" ), QPixmap(), 0L,
 			QString::fromLatin1( "membersDock" ), QString::fromLatin1( " " ) );
-		membersList = new KListView( this, "membersList" );
-		membersList->setShowToolTips( false );
-		new ChatViewMembersTip( membersList );
-		membersList->setAllColumnsShowFocus( true );
-		membersList->addColumn( i18n("Chat Members"), -1 );
-		membersList->setSorting( -1 ); // list is sorted by us, not by Qt
-		membersList->header()->setStretchEnabled( true, 0 );
-		membersList->header()->hide();
-
-		for ( QPtrListIterator<Kopete::Contact> it( m_manager->members() ); it.current(); ++it )
-			slotContactAdded( (*it), true );
-
-		slotContactAdded( m_manager->user(), true);
+		membersList = new ChatMembersListWidget( m_manager, this, "membersList" );
 
 		membersDock->setWidget( membersList );
 
@@ -605,15 +563,11 @@ void ChatView::createMembersList()
 		}
 
 		if( membersStatus == Smart )
-			d->visibleMembers = ( memberContactMap.count() > 2 );
+			d->visibleMembers = ( m_manager->members().count() > 2 );
 		else
 			d->visibleMembers = ( membersStatus == Visible );
 
 		placeMembersList( membersDockPosition );
-
-		//Connect the popup menu
-		connect( membersList, SIGNAL( contextMenu( KListView*, QListViewItem *, const QPoint &) ),
-			SLOT( slotContactsContextMenu(KListView*, QListViewItem *, const QPoint & ) ) );
 	}
 }
 
@@ -678,17 +632,6 @@ void ChatView::placeMembersList( KDockWidget::DockPosition dp )
 		m_mainWindow->updateMembersActions();
 
 	refreshView();
-}
-
-void ChatView::slotContactsContextMenu( KListView*, QListViewItem *item, const QPoint &point )
-{
-	KopeteContactLVI *contactLVI = dynamic_cast<KopeteContactLVI*>( item );
-	if ( contactLVI )
-	{
-		KPopupMenu *p = const_cast<Kopete::Contact*> ( contactLVI->contact() )->popupMenu( m_manager );
-		connect( p, SIGNAL( aboutToHide() ), p, SLOT( deleteLater() ) );
-		p->popup( point );
-	}
 }
 
 void ChatView::remoteTyping( const Kopete::Contact *contact, bool isTyping )
@@ -855,29 +798,24 @@ void ChatView::slotPropertyChanged( Kopete::Contact*, const QString &key,
 	}
 }
 
-void ChatView::slotContactAdded(const Kopete::Contact *contact , bool surpress)
+void ChatView::slotContactAdded(const Kopete::Contact *contact, bool suppress)
 {
-	if ( !memberContactMap.contains( contact ) )
+	QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
+	connect( contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
+		this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
+
+	mComplete->addItem( contactName );
+
+	if( !suppress && m_manager->members().count() > 1 )
+		sendInternalMessage(  i18n("%1 has joined the chat.").arg(contactName) );
+
+	if( membersStatus == Smart && membersDock )
 	{
-		QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
-		connect( contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-			this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
-
-		mComplete->addItem( contactName );
-
-		if( !surpress && memberContactMap.count() > 1 )
-			sendInternalMessage(  i18n("%1 has joined the chat.").arg(contactName) );
-
-		memberContactMap.insert(contact, new KopeteContactLVI( this, contact, membersList ) );
-
-		if( membersStatus == Smart && membersDock )
+		bool shouldShowMembers = ( m_manager->members().count() > 2 );
+		if( shouldShowMembers != d->visibleMembers )
 		{
-			bool currStatus = ( memberContactMap.count() > 2 );
-			if( currStatus != d->visibleMembers )
-			{
-				d->visibleMembers = currStatus;
-				placeMembersList( membersDockPosition );
-			}
+			d->visibleMembers = shouldShowMembers;
+			placeMembersList( membersDockPosition );
 		}
 	}
 
@@ -888,15 +826,12 @@ void ChatView::slotContactAdded(const Kopete::Contact *contact , bool surpress)
 void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString &reason, Kopete::Message::MessageFormat format, bool suppressNotification )
 {
 	kdDebug(14000) << k_funcinfo << endl;
-	if ( memberContactMap.contains( contact ) && contact != m_manager->user() )
+	if ( contact != m_manager->user() )
 	{
 		m_remoteTypingMap.remove( const_cast<Kopete::Contact *>( contact ) );
 
 		QString contactName = contact->property(Kopete::Global::Properties::self()->nickName()).value().toString();
 		mComplete->removeItem( contactName );
-
-		delete memberContactMap[ contact ];
-		memberContactMap.remove( contact );
 
 		// When the last person leaves, don't disconnect the signals, since we're in a one-to-one chat
 		if ( m_manager->members().count() > 0 )
@@ -910,10 +845,7 @@ void ChatView::slotContactRemoved( const Kopete::Contact *contact, const QString
 			if ( reason.isEmpty() )
 				sendInternalMessage( i18n( "%1 has left the chat." ).arg( contactName ), format ) ;
 			else
-			{
-				sendInternalMessage( i18n( "%1 has left the chat (%2)." ).
-						arg( contactName, reason ), format);
-			}
+				sendInternalMessage( i18n( "%1 has left the chat (%2)." ).arg( contactName, reason ), format);
 		}
 	}
 
@@ -2024,84 +1956,6 @@ void ChatView::dropEvent ( QDropEvent * event )
 	else
 		KDockMainWindow::dropEvent(event);
 
-}
-
-//-------------------------------------------------------------------------------------------------------
-//-- class KopeteContactLVI --
-
-KopeteContactLVI::KopeteContactLVI( KopeteView *view, const Kopete::Contact *contact, KListView *parent ) : KListViewItem( parent )
-{
-	m_contact = const_cast<Kopete::Contact*> ( contact );
-	m_parentView = parent;
-	m_view = view;
-
-	QString nick = m_contact->property(Kopete::Global::Properties::self()->nickName().key()).value().toString();
-	setText( 0, /*QString::fromLatin1( " " ) +*/ (nick.isEmpty() ? m_contact->contactId() : nick) );
-	connect( m_contact, SIGNAL( propertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ),
-			this, SLOT( slotPropertyChanged( Kopete::Contact *, const QString &, const QVariant &, const QVariant & ) ) ) ;
-
-	connect( m_contact, SIGNAL( destroyed() ), this, SLOT( deleteLater() ) );
-
-	connect( view->msgManager(), SIGNAL( onlineStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ),
-		this, SLOT( slotStatusChanged( Kopete::Contact *, const Kopete::OnlineStatus &, const Kopete::OnlineStatus & ) ) );
-
-	connect( m_parentView, SIGNAL( executed( QListViewItem* ) ),
-		this, SLOT( slotExecute( QListViewItem * ) ) );
-
-	slotStatusChanged( m_contact, view->msgManager()->contactOnlineStatus(m_contact),
-		view->msgManager()->contactOnlineStatus(m_contact) );
-	
-	reposition();
-}
-
-void KopeteContactLVI::slotPropertyChanged( Kopete::Contact*, const QString &key,
-		const QVariant&, const QVariant &newValue  )
-{
-	if ( key == Kopete::Global::Properties::self()->nickName().key() )
-	{
-		setText( 0, /*QString::fromLatin1( " " ) +*/ newValue.toString() );
-		reposition();
-	}
-}
-
-void KopeteContactLVI::slotStatusChanged( Kopete::Contact *contact, const Kopete::OnlineStatus &status,
-	const Kopete::OnlineStatus & )
-{
-	if ( contact == m_contact )
-	{
-		setPixmap( 0, status.iconFor( m_contact ) );
-		reposition();
-	}
-}
-
-void KopeteContactLVI::slotExecute( QListViewItem *item )
-{
-	if( static_cast<QListViewItem*>( this ) == item )
-		m_contact->execute();
-}
-
-void KopeteContactLVI::reposition()
-{
-	// Qt's listview sorting is pathetic - it's impossible to reposition a single item
-	// when its key changes, without re-sorting the whole list. Plus, the whole list gets
-	// re-sorted whenever an item is added/removed. So, we do manual sorting.
-	// In particular, this makes adding N items O(N^2) not O(N^2 log N).
-	QListViewItem *after = 0;
-	for ( QListViewItem *it = m_parentView->firstChild(); it; it = it->nextSibling() )
-	{
-		if ( KopeteContactLVI *item = dynamic_cast<KopeteContactLVI*>(it) )
-		{
-			int theirWeight = item->m_contact->onlineStatus().weight();
-			int ourWeight = m_contact->onlineStatus().weight();
-			if ( theirWeight < ourWeight ||
-			     (theirWeight == ourWeight && item->text(0).lower().localeAwareCompare( text(0).lower() ) > 0 ) )
-			{
-				break;
-			}
-		}
-		after = it;
-	}
-	m_parentView->moveItem( this, 0, after );
 }
 
 #include "chatview.moc"

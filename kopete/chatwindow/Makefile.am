@@ -4,7 +4,7 @@ METASOURCES = AUTO
 AM_CPPFLAGS = $(KOPETE_INCLUDES) $(KOPETE_COMPAT_INCLUDES) -I$(top_srcdir)/kopete/libkopete/private    $(all_includes)
 
 kopete_chatwindow_la_SOURCES = kopeteviewmanager.cpp kopeteemailwindow.cpp \
-	kopetechatwindow.cpp chatview.cpp \
+	kopetechatwindow.cpp chatview.cpp chatmemberslistwidget.cpp \
 	emoticonselector.cpp \
 	kopeteemoticonaction.cpp
 

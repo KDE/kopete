@@ -47,6 +47,8 @@ class KURL;
 
 class KopeteChatViewPrivate;
 
+class ChatMembersListWidget;
+
 using namespace DOM;
 
 namespace Kopete
@@ -56,26 +58,6 @@ typedef QPtrList<Contact> ContactPtrList;
 }
 
 namespace KParts { struct URLArgs; class Part; }
-
-class KopeteContactLVI : public QObject, public KListViewItem
-{
-	Q_OBJECT
-
-public:
-	KopeteContactLVI( KopeteView *view, const Kopete::Contact *contact, KListView *parent );
-	const Kopete::Contact *contact() const { return m_contact; }
-
-private:
-	Kopete::Contact *m_contact;
-	KListView *m_parentView;
-	KopeteView *m_view;
-	void reposition();
-
-private slots:
-	void slotPropertyChanged( Kopete::Contact *contact, const QString &key, const QVariant &oldValue, const QVariant &newValue  );
-	void slotStatusChanged( Kopete::Contact *c, const Kopete::OnlineStatus &status, const Kopete::OnlineStatus & );
-	void slotExecute( QListViewItem* );
-};
 
 /**
  * @author Olivier Goffart
@@ -352,7 +334,6 @@ signals:
 
 private slots:
 	void slotOpenURLRequest( const KURL &url, const KParts::URLArgs &args );
-	void slotContactsContextMenu( KListView*, QListViewItem *item, const QPoint &point );
 	void slotRepeatTimer();
 	void slotRemoteTypingTimeout();
 	void slotScrollView();
@@ -365,7 +346,7 @@ private slots:
 	 * @param c The contact that joined the chat
 	 * @param suppress mean that no notifications are showed
 	 */
-	void slotContactAdded( const Kopete::Contact *c, bool surpress );
+	void slotContactAdded( const Kopete::Contact *c, bool suppress );
 
 	/**
 	 * Called when a contact is removed from the KMM instance (A person left the chat).
@@ -442,9 +423,8 @@ private:
 	int historyPos;
 	bool bgChanged;
 	QString unreadMessageFrom;
-	QMap<const Kopete::Contact*, KopeteContactLVI*> memberContactMap;
 	KTextEdit* m_edit;
-	KListView *membersList; //move to d-pointer
+	ChatMembersListWidget *membersList; //move to d-pointer
 	
 	unsigned long messageId; 
 	QString m_lastMatch;
