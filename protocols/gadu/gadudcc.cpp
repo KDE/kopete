@@ -171,7 +171,7 @@ GaduDCC::listeingPort()
 	if ( dccServer ) {
 		return dccServer->listeingPort();
 	}
-	return false;
+	return 0;
 }
 
 #include "gadudcc.moc"

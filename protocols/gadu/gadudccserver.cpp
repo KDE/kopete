@@ -47,7 +47,6 @@ GaduDCCServer::GaduDCCServer( QHostAddress* dccIp, unsigned int port )
 	}
 
 	// don't care about UIN at that point
-	// FIXME: use port from configuration
 	dccSock = gg_dcc_socket_create( (unsigned int)-1, port );
 
 	if ( dccSock == NULL ){
