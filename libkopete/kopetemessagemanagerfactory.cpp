@@ -167,7 +167,7 @@ void KopeteMessageManagerFactory::cleanSessions( KopeteProtocol *protocol )
 	{
 		if ( it.current()->protocol() == protocol )
 		{
-			kdDebug( 14010 ) << k_funcinfo << "Unloading KMM " << it.current()->user()->displayName() << endl;
+//			kdDebug( 14010 ) << k_funcinfo << "Unloading KMM " << it.current()->user()->displayName() << endl;
 			mSessionDict.remove( it.current()->mmId() );
 			delete it.current();
 		}

@@ -39,6 +39,8 @@ KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
 
 KopeteProtocol::~KopeteProtocol()
 {
+	KopeteMessageManagerFactory::factory()->cleanSessions(this);
+
 	// Remove all active accounts
 	QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( this );
 	for( QDictIterator<KopeteAccount> it( accounts ); it.current() ; ++it )
@@ -49,8 +51,6 @@ KopeteProtocol::~KopeteProtocol()
 	// FIXME: Remove this when all plugins are ported - Martijn
 	while ( !m_contacts.isEmpty() )
 		delete *QDictIterator<KopeteContact>( m_contacts );
-
-	KopeteMessageManagerFactory::factory()->cleanSessions(this);
 }
 
 QString KopeteProtocol::statusIcon() const
