@@ -371,7 +371,7 @@ void OscarContact::syncGroups()
 		return;
 	}
 
-	kdDebug(14150) << k_funcinfo << ": Getting current oscar group for: " << mListContact->groupID() << endl;
+	kdDebug(14150) << k_funcinfo << ": Getting current oscar group " << mListContact->groupID() << " ... " << endl;
 	// Get the current (oscar) group that this contact belongs to on the server
 	AIMGroup *currentOscarGroup =
 		mAccount->internalBuddyList()->findGroup(mListContact->groupID());
