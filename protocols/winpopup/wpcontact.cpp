@@ -37,11 +37,12 @@
 // KDE Includes
 #include <kconfig.h>
 
-WPContact::WPContact(const QString &userID, const QString &displayName(), const QString &group, WPProtocol *protocol) : KopeteContact(protocol)
+WPContact::WPContact( const QString &userID, const QString &displayName, const QString &group, WPProtocol *protocol, KopeteMetaContact *parent )
+: KopeteContact( protocol->id(), parent )
 {
-	DEBUG(WPDMETHOD, "WPContact::WPContact(" << userID << ", " << displayName() << ", " << group << ", <protocol>)");
+	DEBUG(WPDMETHOD, "WPContact::WPContact(" << userID << ", " << displayName << ", " << group << ", <protocol>)");
 
-	setDisplayName(displayName().isNull() ? userID : name);
+	setDisplayName(displayName.isNull() ? userID : displayName);
 	mProtocol = protocol;
 	mGroup = group;
 	mUserID = userID;
@@ -126,7 +127,7 @@ void WPContact::showContextMenu(QPoint position, QString group)
 	actionHistory->plug(popup);
 	popup->insertSeparator();
 
-//	actionRedisplayName()->plug(popup);
+//	actionRename->plug(popup);
 //	actionContactMove->plug(popup);
 	actionRemoveFromGroup->plug(popup);
 	actionRemove->plug(popup);
@@ -144,30 +145,30 @@ void WPContact::slotUpdateContact(QString handle, int status)
     emit statusChanged();
 }
 
-void WPContact::slotRedisplayName()Contact()
+void WPContact::slotRenameContact()
 {
-	DEBUG(WPDMETHOD, "WPContact::slotRedisplayName()Contact()");
+	DEBUG(WPDMETHOD, "WPContact::slotRenameContact()");
 
 /*	kdDebug() << "WP contact: Renaming contact." << endl;
-    dlgRedisplayName() = new dlgWPRename;
-    dlgRedisplayName()->lblUserID->setText(userID());
-    dlgRedisplayName()->leNickname->setText(name());
-    connect(dlgRedisplayName()->btnRename, SIGNAL(clicked()), this,
-	    SLOT(slotDoRedisplayName()Contact()));
-    dlgRedisplayName()->show();
+    dlgRename = new dlgWPRename;
+    dlgRename->lblUserID->setText(userID());
+    dlgRename->leNickname->setText(displayName());
+    connect(dlgRename->btnRename, SIGNAL(clicked()), this,
+	    SLOT(slotDoRenameContact()));
+    dlgRename->show();
 */
 }
 
-void WPContact::slotDoRedisplayName()Contact()
+void WPContact::slotDoRenameContact()
 {
-	DEBUG(WPDMETHOD, "WPContact::slotDoRedisplayName()Contact()");
-/*	QString displayName() = dlgRename->leNickname->text();
-	if (displayName() == QString("")) { hasLocalName = false; name = mUserID; }
+	DEBUG(WPDMETHOD, "WPContact::slotDoRenameContact()");
+/*	QString name = dlgRename->leNickname->text();
+	if ( name.isEmpty() ) { hasLocalName = false; name = mUserID; }
 	else { hasLocalName = true; }
-	setDisplayName(displayName());
+	setDisplayName( name );
 
-	delete dlgRedisplayName();
-	mProtocol->redisplayName()Contact(userID(), hasLocalName ? name : QString(""), hasLocalGroup ? mGroup : QString(""));
+	delete dlgRename;
+	mProtocol->renameContact(userID(), hasLocalName ? name : QString(""), hasLocalGroup ? mGroup : QString(""));
 */
 }
 
@@ -285,7 +286,7 @@ void WPContact::slotViewHistory()
 {
 	if(!historyDialog)
 	{
-		historyDialog = new KopeteHistoryDialog(QString("wp_logs/%1.log").arg(mUserID), displayName()(), true, 50, 0, "WPHistoryDialog");
+		historyDialog = new KopeteHistoryDialog(QString("wp_logs/%1.log").arg(mUserID), displayName(), true, 50, 0, "WPHistoryDialog");
 		connect(historyDialog, SIGNAL(closing()), this, SLOT(slotCloseHistoryDialog()));
 	}
 }
@@ -311,6 +312,16 @@ void WPContact::slotSendMsgKCW(const KopeteMessage& message)
 	DEBUG(WPDMETHOD, "WPContact::slotSendMsg(<message>)");
 	mProtocol->slotSendMessage(message.body(), dynamic_cast<WPContact *>(message.to().first())->userID());
 	msgManagerKCW()->appendMessage(message);
+}
+
+QString WPContact::id() const
+{
+	return mUserID;
+}
+
+QString WPContact::data() const
+{
+	return mUserID;
 }
 
 #include "wpcontact.moc"

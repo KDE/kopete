@@ -22,13 +22,13 @@
 #include "wpprotocol.h"
 
 // Kopete Includes
-#include <kopetecontact.h>
-#include <kopete.h>
-#include <contactlist.h>
-#include <kopetemessagemanagerfactory.h>
-#include <kopetemessagemanager.h>
-#include <kopetehistorydialog.h>
-#include <kopetemessage.h>
+#include "kopetecontact.h"
+#include "kopete.h"
+#include "kopetecontactlist.h"
+#include "kopetemessagemanagerfactory.h"
+#include "kopetemessagemanager.h"
+#include "kopetehistorydialog.h"
+#include "kopetemessage.h"
 
 // Qt Includes
 #include <qvaluestack.h>
@@ -48,6 +48,7 @@ class QListViewItem;
 class KPopupMenu;
 class KAction;
 class KListAction;
+class KopeteMetaContact;
 
 class WPProtocol;
 
@@ -79,7 +80,7 @@ private:
 	void initActions();
 
 public:
-	WPContact(const QString &userID, const QString &name, const QString &group, WPProtocol *protocol);
+	WPContact(const QString &userID, const QString &name, const QString &group, WPProtocol *protocol, KopeteMetaContact *parent );
 
 	ContactStatus status() const;
 	QString statusText() const;
@@ -92,6 +93,9 @@ public:
 	QString userID() const { return mUserID; }
 
 	virtual void showContextMenu(QPoint, QString);
+
+	virtual QString id() const;
+	virtual QString data() const;
 
 public slots:
 	void slotNewMessage(const QString &Body, const QDateTime &Arrival);

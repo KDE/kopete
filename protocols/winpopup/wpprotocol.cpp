@@ -28,6 +28,7 @@
 
 // Kopete Includes
 #include "kopete.h"
+#include "kopetemetacontact.h"
 #include "statusbaricon.h"
 
 // QT Includes
@@ -117,7 +118,8 @@ WPProtocol::WPProtocol(QObject *parent, QString name, QStringList) : KopeteProto
 	// Call slotSettingsChanged() to get it all registered.
 	slotSettingsChanged();
 
-	theMyself = new WPContact("HWARANG", QString::null, "", this);		// XXX: Should be from config file!!!
+	// FIXME: I guess 'myself' should be a metacontact as well...
+	theMyself = new WPContact("HWARANG", QString::null, "", this, 0L);		// XXX: Should be from config file!!!
 	connect(theInterface, SIGNAL(newMessage(const QString &, const QDateTime &, const QString &)), this, SLOT(slotGotNewMessage(const QString &, const QDateTime &, const QString &)));
 }
 
@@ -301,9 +303,28 @@ void WPProtocol::slotNewContact(const QString &userID, const QString &name, cons
 	if(contactList[userID]) return;
 	QString realGroup = group == "" ? i18n("Unknown") : group;
 
-	WPContact *ourContact = new WPContact(userID, name, realGroup, this);
-	contactList[userID] = ourContact;
-	kopeteapp->contactList()->addContact(ourContact, realGroup);
+	KopeteContactList *l = KopeteContactList::contactList();
+	KopeteMetaContact *m = l->findContact( userID );
+	KopeteContact *c = m->findContact( userID );
+
+	if( c )
+	{
+		// Existing contact, update data
+		// FIXME: TODO!
+		kdDebug() << "WPProtocol::slotNewContact: Not implemented: "
+			<< "Meta contact already contains contact " << userID
+			<< "???" << endl;
+	}
+	else
+	{
+		QString protocol = this->id();
+		// New contact
+		WPContact *ourContact = new WPContact( userID, name, realGroup, this, m );
+		m->addContact( ourContact, realGroup );
+
+		contactList[userID] = ourContact;
+		kopeteapp->contactList()->addContact(ourContact, realGroup);
+	}
 }
 
 // Private initIcons
@@ -390,9 +411,24 @@ void WPProtocol::installSamba()
 	KApplication::kdeinitExecWait("kdesu", args);
 }
 
+KopeteContact* WPProtocol::createContact( KopeteMetaContact *parent,
+	const QString &serializedData )
+{
+	// FIXME: serializedData contains much more than just the screen name,
+	// but for now it hopefully suffices.
+
+	// FIXME: more error-proof deserialize would be useful :)
+	QStringList data = QStringList::split( ' ', serializedData );
+	QString userId   = data[ 0 ].replace( QRegExp( "%20" ), " " );
+	QString name     = data[ 1 ].replace( QRegExp( "%20" ), " " );
+	QString group    = data[ 2 ].replace( QRegExp( "%20" ), " " );
+
+	return new WPContact( userId, name, group, this, parent );
+}
+
 #include "wpprotocol.moc"
 
-
+// vim: set ts=4 sts=4 sw=4 noet:
 
 /*
  * Local variables:

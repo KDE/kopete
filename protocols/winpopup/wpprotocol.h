@@ -79,6 +79,12 @@ public:
 
 	static const WPProtocol *protocol();
 
+	/**
+	 * Reimplemented pure virtual from KopeteProtocol
+	 */
+	virtual KopeteContact* createContact( KopeteMetaContact *parent,
+		const QString &serializedData );
+
 public slots:
 	void Connect();			// Connect to server
 	void Disconnect();		// Disconnect from server
