@@ -522,23 +522,28 @@ void JabberProtocol::deserialize(KopeteMetaContact *contact, const QStringList &
 
 	kdDebug() << "[JabberProtocol] Deserializing data for metacontact " << contact->displayName() << endl;
 
-	QString identityId = data[0];
-	QString userId = data[1];
-	QString displayName = data[2];
-	QStringList groups;
+	for(unsigned i = 0; i < data.count(); i += 4)
+	{
+		QString identityId = data[i + 0];
+		QString userId = data[i + 1];
+		QString displayName = data[i + 2];
+		QStringList groups;
 
-	// make sure that we don't segfault if no groups are supplied
-	if(data.count() >= 4)
-		QStringList groups = QStringList::split(",", data[3]);
+		// make sure that we don't segfault if no groups are supplied
+		if((data.count() - i) >= 4)
+			QStringList groups = QStringList::split(",", data[i + 3]);
 
-	JabberContact *jc = new JabberContact(userId, displayName, groups, this, contact, identityId);
+		kdDebug() << "[JabberProtocol] Deserialized subcontact " << userId << endl;
+			
+		JabberContact *jc = new JabberContact(userId, displayName, groups, this, contact, identityId);
 	
-	metaContactMap.insert(jc, contact);
-	contactMap.insert(userId, jc);
+		metaContactMap.insert(jc, contact);
+		contactMap.insert(userId, jc);
 	
-	connect(jc, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact*)));
+		connect(jc, SIGNAL(contactDestroyed(KopeteContact *)), this, SLOT(slotContactDestroyed(KopeteContact*)));
 	
-	contact->addContact(jc, jc->groups());
+		contact->addContact(jc, jc->groups());
+	}
 
 }
 
@@ -1135,8 +1140,10 @@ void JabberProtocol::slotRetrieveVCard(const Jabber::Jid &jid)
 void JabberProtocol::slotGotVCard()
 {
 	Jabber::JT_VCard *vCard = (Jabber::JT_VCard *) sender();
+
+	kdDebug() << "[JabberProtocol] slotGotVCard() success: " << vCard->success() << ", jid: " << vCard->jid().userHost() << ", myjid: " << myContact->userId() << ", incomplete: " << vCard->vcard().isIncomplete() << endl;
 	
-	if (!(vCard->success() && !vCard->vcard().isIncomplete()))
+	if (!vCard->success() || (vCard->vcard().isIncomplete()) && (vCard->jid().userHost() != myContact->userId()))
 	{
 		// unsuccessful, or incomplete
 		KMessageBox::error(kopeteapp->mainWindow(), i18n("Unable to retrieve vCard for %1").arg(vCard->jid().userHost()));
