@@ -222,7 +222,7 @@ KActionCollection *JabberContact::customContextMenuActions()
 
 	// if the contact is online,
 	// display the resources we have for it
-	if (status() != Offline)
+	if (onlineStatus() != Offline)
 	{
 		QStringList items;
 		int activeItem = 0;
@@ -291,7 +291,7 @@ void JabberContact::slotUpdatePresence(const JabberProtocol::Presence newStatus,
 			dbgString += "STATUS_CHATTY";
 			break;
 		case JabberProtocol::STATUS_AWAY:
-			 dbgString += "STATUS_AWAY";
+			dbgString += "STATUS_AWAY";
 			break;
 		case JabberProtocol::STATUS_XA:
 			dbgString += "STATUS_XA";
@@ -311,8 +311,31 @@ void JabberContact::slotUpdatePresence(const JabberProtocol::Presence newStatus,
 	awayReason = reason;
 	presence = newStatus;
 
-	emit statusChanged(this, status());
+	setOnlineStatus( convertPresenceToStatus( presence ) );
+}
 
+KopeteContact::OnlineStatus JabberContact::convertPresenceToStatus( JabberProtocol::Presence status )
+{
+	OnlineStatus kcStatus = Unknown;
+
+	switch(status)
+	{
+		case JabberProtocol::STATUS_ONLINE:
+		case JabberProtocol::STATUS_CHATTY:
+			kcStatus = Online;
+			break;
+		case JabberProtocol::STATUS_AWAY:
+		case JabberProtocol::STATUS_XA:
+		case JabberProtocol::STATUS_DND:
+			kcStatus = Away;
+			break;
+		case JabberProtocol::STATUS_INVISIBLE:
+		case JabberProtocol::STATUS_OFFLINE:
+			kcStatus = Offline;
+			break;
+	}
+
+	return kcStatus;
 }
 
 void JabberContact::slotUpdateContact(const Jabber::RosterItem &item)
@@ -324,7 +347,7 @@ void JabberContact::slotUpdateContact(const Jabber::RosterItem &item)
 	if(!item.name().isEmpty() && !item.name().isNull())
 		setDisplayName(item.name());
 
-	emit statusChanged(this, status());
+	setOnlineStatus( convertPresenceToStatus( presence ) );
 
 }
 
@@ -363,35 +386,6 @@ void JabberContact::slotDoRenameContact(const QString &nickname)
 	// and thus our changes did not make it to the server
 	// yet)
 	setDisplayName(name);
-
-}
-
-JabberContact::ContactStatus JabberContact::status() const
-{
-	JabberContact::ContactStatus retval;
-
-	if(!protocol->isConnected())
-		return Offline;
-
-	switch(presence)
-	{
-		case JabberProtocol::STATUS_ONLINE:
-		case JabberProtocol::STATUS_CHATTY:
-			retval = Online;
-			break;
-
-		case JabberProtocol::STATUS_AWAY:
-		case JabberProtocol::STATUS_XA:
-		case JabberProtocol::STATUS_DND:
-			retval = Away;
-			break;
-
-		default:
-			retval = Offline;
-			break;
-	}
-
-	return retval;
 
 }
 

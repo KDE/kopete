@@ -744,7 +744,7 @@ KopeteContact* JabberProtocol::myself() const
 
 bool JabberProtocol::isAway(void) const
 {
-	return (myContact->status() != JabberContact::Online);
+	return (myContact->onlineStatus() != KopeteContact::Online);
 }
 
 void JabberProtocol::deserializeContact( KopeteMetaContact *metaContact,

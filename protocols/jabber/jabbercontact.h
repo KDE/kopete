@@ -71,11 +71,6 @@ public:
 	virtual void moveToGroup( KopeteGroup * , KopeteGroup * );
 
 	/**
-	 * Return contact's status
-	 */
-	virtual ContactStatus status() const;
-
-	/**
 	 * Return contact's status in textual form
 	 */
 	virtual QString statusText() const;
@@ -254,6 +249,11 @@ private:
 	 * Convert KopeteMessage to Jabber::Message
 	 */
 	void km2jm(const KopeteMessage &km, Jabber::Message &jm);
+
+	/**
+	 * Convert Jabber presence to KopeteContact's idea of status
+	 */
+	OnlineStatus convertPresenceToStatus ( JabberProtocol::Presence status );
 
 	/**
 	 * Protocol identity (user ID) that this
