@@ -24,7 +24,7 @@
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <kopetenotifydialog.h>
+#include <knotifydialog.h>
 #include <kpushbutton.h>
 
 #include "kopeteprefs.h"
@@ -137,7 +137,7 @@ void BehaviorConfig::reopen()
 
 void BehaviorConfig::slotConfigSound()
 {
-	KopeteNotifyDialog::configure(this);
+	KNotifyDialog::configure( this );
 }
 
 void BehaviorConfig::slotShowTrayChanged(bool check)

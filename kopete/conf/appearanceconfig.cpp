@@ -35,7 +35,6 @@
 #include <khtml_part.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kopetenotifydialog.h>
 #include <kio/netaccess.h>
 #include <kstandarddirs.h>
 #include <kurlrequesterdlg.h>
