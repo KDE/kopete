@@ -87,8 +87,6 @@ Account::Account( Protocol *parent, const QString &accountId, const char *name )
 
 Account::~Account()
 {
-	emit accountDestroyed(this);
-
 	// Delete all registered child contacts first
 	while ( !d->contacts.isEmpty() )
 		delete *QDictIterator<Contact>( d->contacts );
