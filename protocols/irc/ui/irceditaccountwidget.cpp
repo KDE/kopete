@@ -36,6 +36,7 @@
 
 #include "kirc.h"
 #include "ircaccount.h"
+#include "ircusercontact.h"
 #include "ircprotocol.h"
 #include "irceditaccountwidget.h"
 
@@ -49,8 +50,8 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 
 	if( m_IRCAccount )
 	{
-		QString nickName = m_IRCAccount->accountId().section( '@', 0, 0);
-		QString serverInfo = m_IRCAccount->accountId().section( '@', 1);
+		QString nickName = m_IRCAccount->mySelf()->nickName();
+		QString serverInfo = m_IRCAccount->accountId();
 
 		mNickName->setText( nickName );
 
@@ -60,6 +61,10 @@ IRCEditAccountWidget::IRCEditAccountWidget(IRCProtocol *proto, IRCAccount *ident
 		quitMessage->setText( m_IRCAccount->defaultQuit() );
 		if( m_IRCAccount->codec() )
 			currentCodec = m_IRCAccount->codec()->mibEnum();
+
+// 		mPass->load ( &m_IRCAccount->password() );
+// 
+// 		cbUseSSL->setChecked (account()->pluginData (m_protocol, "UseSSL") == QString::fromLatin1("true"));
 
 		//if(account()->rememberPassword()) mPassword->setText( m_IRCAccount->password() );
 
@@ -116,13 +121,21 @@ void IRCEditAccountWidget::slotUpdateNetworks()
 	network->clear();
 
 	uint i = 0;
+	QStringList keys;
 	for( QDictIterator<IRCNetwork> it( IRCProtocol::protocol()->networks() ); it.current(); ++it )
+		keys.append( it.currentKey() );
+
+	keys.sort();
+
+	QStringList::Iterator end = keys.end();
+	for( QStringList::Iterator it = keys.begin(); it != end; ++it )
 	{
-		network->insertItem( it.current()->name );
-		if( m_IRCAccount && m_IRCAccount->networkName() == it.current()->name )
+		IRCNetwork * current = IRCProtocol::protocol()->networks()[*it];
+		network->insertItem( current->name );
+		if( m_IRCAccount && m_IRCAccount->networkName() == current->name )
 		{
 			network->setCurrentItem( i );
-			description->setText( it.current()->description );
+			description->setText( current->description );
 		}
 		++i;
 	}
@@ -199,17 +212,26 @@ KopeteAccount *IRCEditAccountWidget::apply()
 	{
 		m_IRCAccount = new IRCAccount( mProtocol, generateAccountId(networkName) );
 
-		m_IRCAccount->setNickName( nickName );
 		m_IRCAccount->setNetwork( networkName );
-		m_IRCAccount->setUserName( mUserName->text() );
-		m_IRCAccount->setDefaultPart( partMessage->text() );
-		m_IRCAccount->setDefaultQuit( quitMessage->text() );
-		m_IRCAccount->setAutoLogin( autoConnect->isChecked() );
-		m_IRCAccount->setAltNick( mAltNickname->text() );
 
 		m_IRCAccount->loaded();
 	}
 
+//	mPass->save( &m_IRCAccount->password() );
+
+	m_IRCAccount->setNickName( nickName );
+	m_IRCAccount->setUserName( mUserName->text() );
+	m_IRCAccount->setAltNick( mAltNickname->text() );
+	m_IRCAccount->setDefaultPart( partMessage->text() );
+	m_IRCAccount->setDefaultQuit( quitMessage->text() );
+	// Doesn't work
+	//m_IRCAccount->setAutoLogin( autoConnect->isChecked() );
+	// what about?:
+	// password - No time to sort out the password handling or move to KopetePasswordedAccount before 3.3 
+	// remember password cb - disabling the UI for this.
+	// prefer SSL
+	// default charset
+	
 	QStringList cmds;
 	for( QListViewItem *i = commandList->firstChild(); i; i = i->nextSibling() )
 		cmds.append( i->text(0) );
