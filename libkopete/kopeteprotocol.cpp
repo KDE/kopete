@@ -197,7 +197,7 @@ void KopeteProtocol::deserialize( KopeteMetaContact *metaContact, const QMap<QSt
 		serializedDataIterators[ it.key() ] = serializedData[ it.key() ].begin();
 	}
 
-	uint count = serializedData.begin().data().count();
+	uint count = serializedData[QString::fromLatin1("contactId")].count();
 
 	// Prepare the independent entries to pass to the plugin's implementation
 	for( uint i = 0; i < count ; i++ )
