@@ -39,7 +39,7 @@
 
 typedef KGenericFactory<GaduProtocol> GaduProtocolFactory;
 
-K_EXPORT_COMPONENT_FACTORY( kopete_gadu, KGenericFactory<GaduProtocol>( "kopete_gadu" )  );
+K_EXPORT_COMPONENT_FACTORY( kopete_gadu, KGenericFactory<GaduProtocol>( "kopete_gadu" )  )
 
 GaduProtocol* GaduProtocol::protocolStatic_ = 0L;
 

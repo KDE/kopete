@@ -37,7 +37,7 @@
 #include "ksparser.h"
 
 typedef KGenericFactory<IRCProtocol> IRCProtocolFactory;
-K_EXPORT_COMPONENT_FACTORY( kopete_irc, IRCProtocolFactory( "kopete_irc" )  );
+K_EXPORT_COMPONENT_FACTORY( kopete_irc, IRCProtocolFactory( "kopete_irc" )  )
 
 static QRegExp isChannelRegex( QString::fromLatin1("^[#!+&][^\\s,:]+$") );
 
