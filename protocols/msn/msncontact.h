@@ -79,7 +79,11 @@ public:
 	/**
 	 * The groups in which the user is located on the server.
 	 */
-	const QMap<uint, KopeteGroup *> & serverGroups() const;
+	const QMap<uint, KopeteGroup *>  serverGroups() const;
+	/**
+	 * clear that map
+	 */
+	void clearServerGroups();
 
 	virtual bool isReachable();
 

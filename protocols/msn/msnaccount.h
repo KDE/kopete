@@ -193,13 +193,13 @@ private:
 	QString m_msgHandle;
 
 	bool m_badpassword;
-
+	
 public: //FIXME: should be private
 	QMap<unsigned int, KopeteGroup*> m_groupList;
 
 	void addGroup( const QString &groupName, const QString &contactToAdd = QString::null );
 
-private:
+private:	
 	// server data
 	QStringList m_allowList;
 	QStringList m_blockList;
@@ -211,6 +211,12 @@ private:
 	QString m_awayReason;
 
 	QString m_pictureObj; //a cache of the <msnobj>
+
+
+	
+	//this is the translation between old to new groups id when syncing from server.
+	QMap<unsigned int, KopeteGroup*> m_oldGroupList;
+
 };
 
 #endif

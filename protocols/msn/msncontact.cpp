@@ -316,10 +316,15 @@ QString MSNContact::phoneWork(){ return m_phoneWork ;}
 QString MSNContact::phoneMobile(){ return m_phoneMobile ;}
 
 
-const QMap<uint, KopeteGroup*> & MSNContact::serverGroups() const
+const QMap<uint, KopeteGroup*>  MSNContact::serverGroups() const
 {
 	return m_serverGroups;
 }
+void MSNContact::clearServerGroups() 
+{
+	m_serverGroups.clear();
+}
+
 
 void MSNContact::syncGroups( )
 {
@@ -334,7 +339,7 @@ void MSNContact::syncGroups( )
 		// FIXME: if this method is called a seconds times, that mean change can be
 		//        done in the contactlist. we should found a way to recall this
 		//        method later. (a QTimer?)
-		kdDebug( 14140 ) << k_funcinfo << " This contact is already moving. Abort sync " << endl;
+		kdDebug( 14140 ) << k_funcinfo << " This contact is already moving. Abort sync    id: " << contactId() << endl;
 		return;
 	}
 
@@ -349,7 +354,7 @@ void MSNContact::syncGroups( )
 
 	unsigned int count=m_serverGroups.count();
 
-	//STEP ONE : add the contact to ever kopetegroups where the MC is
+	//STEP ONE : add the contact to every kopetegroups where the MC is
 	QPtrList<KopeteGroup> groupList = metaContact()->groups();
 	for ( KopeteGroup *group = groupList.first(); group; group = groupList.next() )
 	{
@@ -357,26 +362,23 @@ void MSNContact::syncGroups( )
 		if( !group->pluginData( protocol() , account()->accountId() + " id" ).isEmpty() )
 		{
 			int Gid=group->pluginData( protocol(), account()->accountId() + " id" ).toUInt();
-			if( !static_cast<MSNAccount*>( account() )->m_groupList.contains(Gid) )
+			if( !static_cast<MSNAccount*>( account() )->m_groupList.contains(Gid) ) 
 			{ // ohoh!   something is corrupted on the contactlist.xml
 			  // anyway, we never should add a contact to an unexisting group on the server.
+			  //     This shouln't be possible anymore  2004-06-10 -Olivier
 
 				//repair the problem
 				group->setPluginData( protocol() , account()->accountId() + " id" , QString::null);
 				group->setPluginData( protocol() , account()->accountId() + " displayName" , QString::null);
-				kdDebug( 14140 ) << k_funcinfo << " Group " << group->displayName() << " marked with id #" <<Gid << " does not seems to be anymore on the server" << endl;
+				kdWarning( 14140 ) << k_funcinfo << " Group " << group->displayName() << " marked with id #" <<Gid << " does not seems to be anymore on the server" << endl;
 
 				if(!group->displayName().isEmpty() && group->type() == KopeteGroup::Normal) //not the top-level
 				{
 					//Create the group and add the contact
 					static_cast<MSNAccount*>( account() )->addGroup( group->displayName(),contactId() );
-
-					//WARNING: if contact is not correctly added (because the group was not aded corrdctly for hinstance),
-					// if we increment the count, the contact can be deleted from the old group, and be lost :-(
 					count++;
 					m_moving=true;
 				}
-
 			}
 			else if( !m_serverGroups.contains(Gid) )
 			{
@@ -411,7 +413,6 @@ void MSNContact::syncGroups( )
 		{ // ohoh!   something is corrupted on the contactlist.xml
 		  // anyway, we never should add a contact to an unexisting group on the server.
 
-			
 			//repair the problem ...     //contactRemovedFromGroup( it.key() );
 			//         ... later  (we  can't remove it from the map now )
 			removinglist.append(it.key());
@@ -427,9 +428,9 @@ void MSNContact::syncGroups( )
 			group=static_cast<MSNAccount*>( account() )->m_groupList[it.key()];
 		if( !metaContact()->groups().contains(group) )
 		{
+			m_moving=true;
 			notify->removeContact( contactId(), it.key(), MSNProtocol::FL );
 			count--;
-			m_moving=true;
 		}
 	}
 	
