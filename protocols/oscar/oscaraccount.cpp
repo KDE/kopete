@@ -234,7 +234,7 @@ void OscarAccount::slotError(QString errmsg, int errorCode)
 
 	// 1 = username unknown to server
 	// 5 = wrong password
-	if (errorCode == 1 || errorCode == 5)
+	if (errorCode == 1 || errorCode == 5 || errorCode == 24)
 		OscarAccount::disconnect();
 
 	KMessageBox::queuedMessageBox(0, KMessageBox::Error, errmsg,
