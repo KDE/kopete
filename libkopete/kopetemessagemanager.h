@@ -28,6 +28,7 @@ class KopeteMessage;
 class KopeteMessageManager;
 class QObject;
 class KopeteChatWindow;
+class KopeteEvent;
 
 
 typedef QPtrList<KopeteContact>        KopeteContactList;
@@ -64,6 +65,17 @@ public:
 	void removeContact( const KopeteContact *c );
 
 	/**
+	 * Set Reading mode
+	 */
+	void setReadMode( int mode );
+
+	/**
+	 * Get Current Reading mode
+	 */
+	int readMode() { return mReadMode; };
+
+
+	/**
 	 *	Read Messages
 	 */
 	void readMessages();
@@ -91,7 +103,9 @@ private:
 
 	KopeteContactList mContactList;
 	KopeteChatWindow *mChatWindow;
+	KopeteEvent *mUnreadMessageEvent;
 	KopeteMessageList mMessageQueue;
+	int mReadMode;
 };
 
 #endif
