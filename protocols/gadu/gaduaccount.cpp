@@ -167,12 +167,7 @@ GaduAccount::actionMenu()
 
 	actionMenu_->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ), i18n( "%1 <%2> " ).
 
-#if QT_VERSION < 0x030200
-	arg( myself()->displayName() ).arg( accountId() ) );
-#else
 	arg( myself()->displayName(), accountId() ) );
-#endif
-
 	if ( session_->isConnected() ) {
 		searchAction->setEnabled( TRUE );
 		listputAction->setEnabled( TRUE );
