@@ -64,11 +64,11 @@ public:
 	QString nickname() const;
 
 	/**
-	 * The group in which the user is located. Actually a user can be in
-	 * multiple groups with MSN, but that can be done later. For now keep
-	 * the abstraction of a single user per group
+	 * The groups in which the user is located.
+	 * Not the whole API supports multi-group membership yet, be careful
+	 * relying on this for now!
 	 */
-	QString group() const;
+	QStringList groups() const;
 
 public slots:
 	void slotContactRemoved( QString, QString );
@@ -95,7 +95,7 @@ private slots:
 private:
 	QString m_msnId;
 	QString m_nickname;
-	QString m_group;
+	QStringList m_groups;
 	bool hasLocalGroup;
 
 	uint mStatus;

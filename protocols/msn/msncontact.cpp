@@ -50,7 +50,7 @@ void MSNContact::initContact( const QString &msnId, const QString &nickname,
 	m_protocol = protocol;
 	m_msnId = msnId;
 	m_nickname = nickname;
-	m_group =  group;
+	m_groups = group;
 	hasLocalGroup = false;
 
 	// We connect this signal so that we can tell when a user's status changes
@@ -139,30 +139,38 @@ void MSNContact::slotChatThisUser()
 
 void MSNContact::slotRemoveThisUser()
 {
-	m_protocol->removeContact( m_msnId );
+	m_protocol->removeContact( this );
 	delete this;
 }
 
 void MSNContact::slotRemoveFromGroup()
 {
-	m_protocol->removeFromGroup( m_msnId, m_group );
+	// FIXME: This slot needs to know to remove from WHICH group!
+	// for now, remove from the first group...
+	m_protocol->removeFromGroup( this, m_groups.first() );
 }
 
 void MSNContact::slotMoveThisUser()
 {
+	// FIXME: originating group should also be provided!
 	if( m_actionMove )
-		m_protocol->moveContact( this, m_actionMove->currentText() );
+	{
+		m_protocol->moveContact( this, m_groups.first(),
+			m_actionMove->currentText() );
+	}
 }
 
 void MSNContact::slotCopyThisUser()
 {
 	if( m_actionCopy )
-		m_protocol->copyContact( m_msnId, m_actionCopy->currentText() );
+		m_protocol->copyContact( this, m_actionCopy->currentText() );
 }
 
-void MSNContact::slotContactRemoved(QString handle, QString group)
+void MSNContact::slotContactRemoved( QString handle, QString group )
 {
-	if ( (handle == m_msnId) && ( group == m_group ) )
+	// FIXME: Likely the 'delete this' is only ok if the group list
+	// is empty, and maybe even that is wrong!
+	if ( ( handle == m_msnId ) && ( m_groups.contains( group ) ) )
 	{
 		delete this;
 	}
@@ -400,9 +408,9 @@ QString MSNContact::nickname() const
 	return m_nickname;
 }
 
-QString MSNContact::group() const
+QStringList MSNContact::groups() const
 {
-	return m_group;
+	return m_groups;
 }
 
 #include "msncontact.moc"

@@ -66,10 +66,11 @@ public:
 	virtual bool isAway() const;
 
 	void addContact( const QString &userID ) const;
-	void removeContact( const QString &userID ) const;
-	void removeFromGroup( const QString &userID, const QString &group ) const;
-	void moveContact( const MSNContact *c, const QString &newGroup ) const;
-	void copyContact( const QString &userID, const QString &newGroup ) const;
+	void removeContact( const MSNContact *c ) const;
+	void removeFromGroup( const MSNContact *c, const QString &group ) const;
+	void moveContact( const MSNContact *c, const QString &oldGroup,
+		const QString &newGroup ) const;
+	void copyContact( const MSNContact *c, const QString &newGroup ) const;
 
 	int contactStatus( const QString &handle ) const;
 	QString publicName( const QString &handle ) const;

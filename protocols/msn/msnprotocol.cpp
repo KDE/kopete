@@ -584,27 +584,27 @@ void MSNProtocol::addContact( const QString &userID ) const
 	m_msnService->contactAdd( userID );
 }
 
-void MSNProtocol::removeContact( const QString &userID ) const
+void MSNProtocol::removeContact( const MSNContact *c ) const
 {
-	m_msnService->contactDelete( userID );
+	m_msnService->contactDelete( c );
 }
 
-void MSNProtocol::removeFromGroup( const QString &userID,
+void MSNProtocol::removeFromGroup( const MSNContact *c,
 	const QString &group ) const
 {
-	m_msnService->contactRemove( userID, group );
+	m_msnService->contactRemove( c, group );
 }
 
 void MSNProtocol::moveContact( const MSNContact *c,
-	const QString &newGroup ) const
+	const QString &oldGroup, const QString &newGroup ) const
 {
-	m_msnService->contactMove( c, newGroup);
+	m_msnService->contactMove( c, oldGroup, newGroup );
 }
 
-void MSNProtocol::copyContact( const QString &userID,
+void MSNProtocol::copyContact( const MSNContact *c,
 	const QString &newGroup ) const
 {
-	m_msnService->contactCopy( userID, newGroup);
+	m_msnService->contactCopy( c, newGroup);
 }
 
 QStringList MSNProtocol::groups() const
