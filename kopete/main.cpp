@@ -21,9 +21,9 @@
 #include "kopete.h"
 
 static const char *description =
-	I18N_NOOP("Kopete");
+	I18N_NOOP("Kopete, the KDE Messenger");
 // INSERT A DESCRIPTION FOR YOUR APPLICATION HERE
-	
+static const char *version="0.0.1";	
 	
 static KCmdLineOptions options[] =
 {
@@ -35,9 +35,10 @@ int main(int argc, char *argv[])
 {
 
   KAboutData aboutData( "kopete", I18N_NOOP("Kopete"),
-    VERSION, description, KAboutData::License_GPL,
+    version, description, KAboutData::License_GPL,
     "(c) 2001, Duncan Mac-Vicar Prett", 0, 0, "duncan@puc.cl");
-  aboutData.addAuthor("Duncan Mac-Vicar Prett",0, "duncan@puc.cl");
+  aboutData.addAuthor("Duncan Mac-Vicar Prett","Author, core developer", "duncan@puc.cl","http://www.mac-vicar.com");
+  aboutData.addAuthor ("Nick Betcher", "core developer","nbetcher@usinternet.com", "http://www.kdedevelopers.net" );
   KCmdLineArgs::init( argc, argv, &aboutData );
   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
