@@ -1514,13 +1514,14 @@ void OscarSocket::sendIM(const QString &message, const QString &dest, bool isAut
 	OscarConnection *dc = mDirectIMMgr->findConnection(dest);
 	if (dc)
 	{
+		kdDebug(14150) << k_funcinfo << "Sending direct IM " << message << " to " << dest << endl;
 		dc->sendIM(message,isAuto);
 		return;
 	}
-    kdDebug(14150) << "[OSCAR] Sending " << message << " to " << dest << endl;
-    static const char deffeatures[] = {
-	0x01, 0x01, 0x01, 0x02
-    };
+  kdDebug(14150) << "[OSCAR] Sending " << message << " to " << dest << endl;
+  static const char deffeatures[] = {
+		0x01, 0x01, 0x01, 0x02
+  };
     Buffer outbuf;
     outbuf.addSnac(0x0004,0x0006,0x0000,0x00000000);
     //generate random message cookie
@@ -2424,7 +2425,7 @@ void OscarSocket::sendFileSendDeny(const QString &sn)
 /** Called when a file transfer begins */
 void OscarSocket::OnFileTransferBegun(OscarConnection *con, const QString& file, const unsigned long size, const QString &recipient)
 {
-	kdDebug() << k_funcinfo << "emitting transferBegun()" << endl;
+	kdDebug(14150) << k_funcinfo << "emitting transferBegun()" << endl;
 	emit transferBegun(con, file, size, recipient);
 }
 

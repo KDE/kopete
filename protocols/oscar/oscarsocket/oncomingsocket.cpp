@@ -97,8 +97,9 @@ OscarConnection * OncomingSocket::findConnection(const QString &name)
 	kdDebug(14150) << "[OncomingSocket] there are " << mConns.count() << " connections." << endl;
 	for (tmp = mConns.first(); tmp; tmp = mConns.next())
 	{
-		if ( tmp->connectionName().compare(tocNormalize(name)) )
+		if ( !tmp->connectionName().compare(tocNormalize(name)) )
 		{
+			kdDebug(14150) << k_funcinfo << tmp->connectionName() << " matches dest sn " << tocNormalize( name ) << endl;
 			return tmp;
 		}
 	}
