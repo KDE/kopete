@@ -37,7 +37,7 @@ GaduAccount::GaduAccount( KopeteProtocol* parent, const QString& accountID,const
 	initActions();
 	initConnections();
 
-	setAutoLogin( KGlobal::config()->readBoolEntry("AutoConnect", false) );
+//	setAutoLogin( KGlobal::config()->readBoolEntry("AutoConnect", false) );
 }
 
 void
