@@ -74,6 +74,11 @@ const QDomElement KopeteGroup::toXML()
 	displayName.appendChild( group.createTextNode(QStyleSheet::escape( d->displayName )) );
 	group.documentElement().appendChild( displayName );
 
+	// Store other plugin data
+	QValueList<QDomElement> pluginData = KopetePluginDataObject::toXML();
+	for( QValueList<QDomElement>::Iterator it = pluginData.begin(); it != pluginData.end(); ++it )
+		group.documentElement().appendChild( group.importNode( *it, true ) );
+
 	return group.documentElement();
 }
 
