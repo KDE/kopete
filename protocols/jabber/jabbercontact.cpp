@@ -56,18 +56,35 @@ JabberContact::JabberContact (const XMPP::RosterItem &rosterItem, JabberAccount 
 	 * not available during startup, so we need to read
 	 * them later - this also serves as a random update
 	 * feature)
+	 * Note: The only time account->myself() could be a
+	 * NULL pointer is if this contact here is the myself()
+	 * instance itself. Since in that case we wouldn't
+	 * get updates at all, we need to treat that as a
+	 * special case.
 	 */
-	connect ( account->myself (), SIGNAL ( onlineStatusChanged ( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
-			  this, SLOT ( slotCheckVCard () ) );
 
-	/*
-	 * Trigger update once if we're already connected for contacts
-	 * that are being added while we are online.
-	 */
-	if ( ( account->myself() != 0)
-		&& ( ( account->myself()->onlineStatus().status () == KopeteOnlineStatus::Online ) ||
-		 ( account->myself()->onlineStatus().status () == KopeteOnlineStatus::Away ) ) )
-		slotCheckVCard ();
+	mVCardUpdateInProgress = false;
+
+	if ( !account->myself () )
+	{
+		connect ( this,
+				  SIGNAL ( onlineStatusChanged ( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
+				  this, SLOT ( slotCheckVCard () ) );
+	}
+	else
+	{
+		connect ( account->myself (),
+				  SIGNAL ( onlineStatusChanged ( KopeteContact *, const KopeteOnlineStatus &, const KopeteOnlineStatus & ) ),
+				  this, SLOT ( slotCheckVCard () ) );
+
+		/*
+		 * Trigger update once if we're already connected for contacts
+		 * that are being added while we are online.
+		 */
+		if ( ( account->myself()->onlineStatus().status () == KopeteOnlineStatus::Online ) ||
+			 ( account->myself()->onlineStatus().status () == KopeteOnlineStatus::Away ) )
+			slotCheckVCard ();
+	}
 
 }
 
@@ -267,21 +284,22 @@ void JabberContact::slotCheckVCard ()
 
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Cached vCard data for " << contactId () << " from " << cacheDate.toString () << endl;
 
-	if ( cacheDate.addDays ( 1 ) < QDateTime::currentDateTime () )
+	if ( !mVCardUpdateInProgress && ( cacheDate.addDays ( 1 ) < QDateTime::currentDateTime () ) )
 	{
 		kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Scheduling update." << endl;
 
+		mVCardUpdateInProgress = true;
+
 		// current data is older than 24 hours, request a new one
 		QTimer::singleShot ( account()->getPenaltyTime () * 1000, this, SLOT ( slotGetTimedVCard () ) );
-
-		// make sure that no more requests will be started while we are waiting for this vCard
-		setProperty ( protocol()->propVCardCacheTimeStamp, QDateTime::currentDateTime().toString ( Qt::ISODate ) );
 	}
 
 }
 
 void JabberContact::slotGetTimedVCard ()
 {
+
+	mVCardUpdateInProgress = false;
 
 	// check if we are connected
 	if ( ( account()->myself()->onlineStatus().status () != KopeteOnlineStatus::Online ) &&
@@ -292,6 +310,8 @@ void JabberContact::slotGetTimedVCard ()
 	}
 
 	kdDebug ( JABBER_DEBUG_GLOBAL ) << k_funcinfo << "Requesting vCard for " << contactId () << " from update timer." << endl;
+
+	mVCardUpdateInProgress = true;
 
 	// request vCard
 	XMPP::JT_VCard *task = new XMPP::JT_VCard ( account()->client()->rootTask () );
@@ -306,6 +326,14 @@ void JabberContact::slotGotVCard ()
 {
 
 	XMPP::JT_VCard * vCard = (XMPP::JT_VCard *) sender ();
+
+	// update timestamp of last vCard retrieval
+	if ( metaContact() && !metaContact()->isTemporary () )
+	{
+		setProperty ( protocol()->propVCardCacheTimeStamp, QDateTime::currentDateTime().toString ( Qt::ISODate ) );
+	}
+
+	mVCardUpdateInProgress = false;
 
 	if ( !vCard->success() )
 	{

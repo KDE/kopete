@@ -190,6 +190,12 @@ private:
 	 */
 	QPtrList<JabberMessageManager> mManagers;
 
+	/**
+	 * Indicates whether the vCard is currently
+	 * being updated or not.
+	 */
+	bool mVCardUpdateInProgress;
+
 };
 
 #endif
