@@ -81,6 +81,17 @@ signals:
 
 protected:
 	/**
+	 * Convenience method: escape spaces with '%20' for use in the protocol.
+	 * Doesn't escape any other sequence.
+	 */
+	QString escape( const QString &str );
+
+	/**
+	 * And the other way round...
+	 */
+	QString unescape( const QString &str );
+
+	/**
 	 * Send an MSN command to the socket
 	 */
 	void sendCommand( const QString &cmd, const QString &args = QString::null,

@@ -19,8 +19,6 @@
 #include "msndispatchsocket.h"
 #include "msnprotocol.h"
 
-#include <qregexp.h>
-
 #include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -87,13 +85,7 @@ void KMSNServiceSocket::handleError( uint code, uint id )
 void KMSNServiceSocket::parseCommand( const QString &cmd, uint id,
 	const QString &data )
 {
-	if( cmd == "XFR" )
-	{
-		// Address, AuthInfo
-		emit startChat( data.section( ' ', 1, 1 ),
-			data.section( ' ', 3, 3 ) );
-	}
-	else if( cmd == "USR" )
+	if( cmd == "USR" )
 	{
 		if( data.section( ' ', 1, 1 ) == "S" )
 		{
@@ -112,8 +104,7 @@ void KMSNServiceSocket::parseCommand( const QString &cmd, uint id,
 
 			// this is our current user and friendly name
 			// do some nice things with it  :-)
-			QString publicName = data.section( ' ', 2, 2 ).replace(
-				QRegExp( "%20" ), " " );
+			QString publicName = unescape( data.section( ' ', 2, 2 ) );
 			emit publicNameChanged( msnId(), publicName );
 		}
 	}
@@ -121,15 +112,14 @@ void KMSNServiceSocket::parseCommand( const QString &cmd, uint id,
 	{
 		// handle, publicName, status
 		emit contactStatusChanged( data.section( ' ', 1, 1 ),
-			data.section( ' ', 2, 2 ).replace( QRegExp( "%20" ), " " ),
-			data.section( ' ', 0, 0 ) );
+			unescape( data.section( ' ', 2, 2 ) ), data.section( ' ', 0, 0 ) );
 	}
 	else if( cmd == "LST" )
 	{
 		// handle, publicName, group, list
 		emit contactList( data.section( ' ', 4, 4 ),
-			data.section( ' ', 5, 5 ).replace( QRegExp( "%20" ), " " ),
-			data.section( ' ', 6, 6 ), data.section( ' ', 0, 0 ) );
+			unescape( data.section( ' ', 5, 5 ) ), data.section( ' ', 6, 6 ),
+			data.section( ' ', 0, 0 ) );
 	}
 	else if( cmd == "MSG" )
 	{
@@ -143,8 +133,7 @@ void KMSNServiceSocket::parseCommand( const QString &cmd, uint id,
 	{
 		// handle, publicName, Status
 		emit contactStatus( data.section( ' ', 1, 1 ),
-			data.section( ' ', 2, 2 ).replace( QRegExp( "%20" ), " " ),
-			data.section( ' ', 0, 0 ) );
+			unescape( data.section( ' ', 2, 2 ) ), data.section( ' ', 0, 0 ) );
 	}
 	else if( cmd == "GTC" )
 	{
@@ -154,13 +143,18 @@ void KMSNServiceSocket::parseCommand( const QString &cmd, uint id,
 	{
 		kdDebug() << "BLP: is not implemented!" << endl;
 	}
+	else if( cmd == "XFR" )
+	{
+		// Address, AuthInfo
+		emit startChat( data.section( ' ', 1, 1 ), data.section( ' ', 3, 3 ) );
+	}
 	else if( cmd == "RNG" )
 	{
 		// SessionID, Address, AuthInfo, handle, publicName
 		emit invitedToChat( QString::number( id ),
 			data.section( ' ', 0, 0 ), data.section( ' ', 2, 2 ),
 			data.section( ' ', 3, 3 ),
-			data.section( ' ', 4, 4 ).replace( QRegExp( "%20" ), " " ) );
+			unescape( data.section( ' ', 4, 4 ) ) );
 	}
 	else if( cmd == "ADD" )
 	{
@@ -172,7 +166,7 @@ void KMSNServiceSocket::parseCommand( const QString &cmd, uint id,
 
 		// handle, publicName, List, serial , group
 		emit contactAdded( data.section( ' ', 2, 2 ),
-			data.section( ' ', 2, 2 ).replace( QRegExp( "%20" ), " " ),
+			unescape( data.section( ' ', 2, 2 ) ),
 			data.section( ' ', 0, 0 ), data.section( ' ', 1, 1 ).toUInt(),
 			group );
 	}
@@ -207,7 +201,7 @@ void KMSNServiceSocket::parseCommand( const QString &cmd, uint id,
 	else if( cmd == "REA" )
 	{
 		emit publicNameChanged( data.section( ' ', 1, 1 ),
-			data.section( ' ', 2, 2 ).replace( QRegExp( "%20" ), " " ) );
+			unescape( data.section( ' ', 2, 2 ) ) );
 	}
 	else if( cmd == "LSG" )
 	{
@@ -221,22 +215,22 @@ void KMSNServiceSocket::parseCommand( const QString &cmd, uint id,
 		else
 		{*/
 			// groupName, group
-			emit groupName( data.section( ' ', 4, 4 ).replace(
-				QRegExp( "%20" )," " ), data.section( ' ', 3, 3 ).toUInt() );
+			emit groupName( unescape( data.section( ' ', 4, 4 ) ),
+				data.section( ' ', 3, 3 ).toUInt() );
 //		}
 	}
 	else if( cmd == "ADG" )
 	{
 		// groupName, serial, group
-		emit groupAdded( data.section( ' ', 1, 1 ).replace(
-			QRegExp( "%20" ), " " ), data.section( ' ', 0, 0 ).toUInt(),
+		emit groupAdded( unescape( data.section( ' ', 1, 1 ) ),
+			data.section( ' ', 0, 0 ).toUInt(),
 			data.section( ' ', 2, 2 ).toUInt() );
 	}
 	else if( cmd == "REG" )
 	{
 		// groupName, serial, group
-		emit groupRenamed( data.section( ' ', 2, 2 ).replace(
-			QRegExp( "%20" ), " " ), data.section( ' ', 0, 0 ).toUInt(),
+		emit groupRenamed( unescape( data.section( ' ', 2, 2 ) ),
+			data.section( ' ', 0, 0 ).toUInt(),
 			data.section( ' ', 1, 1 ).toUInt() );
 	}
 	else if( cmd == "RMG" )
@@ -247,9 +241,7 @@ void KMSNServiceSocket::parseCommand( const QString &cmd, uint id,
 	else if( cmd  == "CHL" )
 	{
 		kdDebug() << "Sending final Authentication" << endl;
-		KMD5 context(
-			data.section( ' ', 0, 0 ).replace( QRegExp( "\r\n" ), "" ) +
-			"Q1P7W2E4J9R8U3S5" );
+		KMD5 context( data.section( ' ', 0, 0 ) + "Q1P7W2E4J9R8U3S5" );
 		sendCommand( "QRY", "msmsgs@msnmsgr.com 32\r\n" +
 			context.hexDigest(), false );
 	}
@@ -310,14 +302,14 @@ void KMSNServiceSocket::slotReadMessage( const QString &msg )
 void KMSNServiceSocket::addGroup(QString groupName)
 {
 	// escape spaces
-	sendCommand( "ADG", groupName.replace( QRegExp( " " ), "%20" ) + " 0" );
+	sendCommand( "ADG", escape( groupName ) + " 0" );
 }
 
 void KMSNServiceSocket::renameGroup( QString groupName, uint group )
 {
 	// escape spaces
 	sendCommand( "REG", QString::number( group ) + " " +
-		groupName.replace( QRegExp( " " ), "%20" ) + " 0" );
+		escape( groupName ) + " 0" );
 }
 
 void KMSNServiceSocket::removeGroup( uint group )
@@ -335,12 +327,11 @@ void KMSNServiceSocket::addContact( const QString &handle,
 		args = "FL " + handle + " " + handle + " " + QString::number( group );
 		break;
 	case MSNProtocol::AL:
-		args = "AL " + handle + " " +
-			publicName.replace( QRegExp( " " ), "%20" );
+		args = "AL " + handle + " " + escape( publicName );
 		break;
 	case MSNProtocol::BL:
 		args = "BL " + handle + " " +
-			publicName.replace( QRegExp( " " ), "%20" );
+			escape( publicName );
 		break;
 	default:
 		kdDebug() << "KMSNServiceSocket::addContact: WARNING! Unknown list " <<
@@ -381,7 +372,7 @@ void KMSNServiceSocket::setStatus( int status )
 void KMSNServiceSocket::changePublicName( const QString &publicName )
 {
 	QString pn = publicName;
-	sendCommand( "REA", msnId() + " " + pn.replace( QRegExp( " " ), "%20" ) );
+	sendCommand( "REA", msnId() + " " + escape( pn ) );
 }
 
 void KMSNServiceSocket::createChatSession()

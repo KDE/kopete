@@ -312,6 +312,16 @@ void MSNSocket::sendCommand( const QString &cmd, const QString &args,
 	m_id++;
 }
 
+QString MSNSocket::escape( const QString &str )
+{
+	return QString( str ).replace( QRegExp( " " ), "%20" );
+}
+
+QString MSNSocket::unescape( const QString &str )
+{
+	return QString( str ).replace( QRegExp( "%20" ), " " );
+}
+
 #include "msnsocket.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
