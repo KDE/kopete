@@ -57,6 +57,9 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 	d->isEmpty= others.isEmpty();
 	d->mCanBeDeleted = false;
 
+	for( KopeteContact *c = others.first(); c; c = others.next() )
+		c->setConversations( c->conversations() + 1 );
+
 	// Replace '.', '/' and '~' in the user id with '-' to avoid possible
 	// directory traversal, although appending '.log' and the rest of the
 	// code should really make overwriting files possible anyway.
@@ -74,6 +77,10 @@ KopeteMessageManager::KopeteMessageManager( const KopeteContact *user,
 KopeteMessageManager::~KopeteMessageManager()
 {
 	kdDebug(14010) << k_funcinfo << endl;
+
+	for( KopeteContact *c = d->mContactList.first(); c; c = d->mContactList.next() )
+		c->setConversations( c->conversations() - 1 );
+
 	if (!d) return;
 	d->mCanBeDeleted = false; //prevent double deletion
 	KopeteMessageManagerFactory::factory()->removeSession( this );
@@ -223,6 +230,7 @@ void KopeteMessageManager::addContact( const KopeteContact *c, bool surpress )
 			d->mContactList.append(c);
 			emit contactAdded(c, surpress);
 		}
+		c->setConversations( c->conversations() + 1 );
 	}
 	d->isEmpty=false;
 }
@@ -241,6 +249,7 @@ void KopeteMessageManager::removeContact( const KopeteContact *c, bool surpress 
 	{
 		d->mContactList.remove( c );
 		disconnect (c, SIGNAL(displayNameChanged(const QString &)), this, SIGNAL(contactDisplayNameChanged(const QString &)));
+		c->setConversations( c->conversations() - 1 );
 	}
 	emit contactRemoved(c, surpress);
 }

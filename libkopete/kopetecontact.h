@@ -325,6 +325,10 @@ public:
 	 */
 	virtual KopeteMessageManager * manager( bool canCreate = false );
 
+	const int conversations() const;
+
+	void setConversations( int ) const;
+
 public slots:
 	/**
 	 * This should typically pop up a KopeteChatWindow

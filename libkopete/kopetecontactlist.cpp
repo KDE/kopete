@@ -821,10 +821,19 @@ KopeteGroupList KopeteContactList::groups() const
 
 void KopeteContactList::removeMetaContact(KopeteMetaContact *m)
 {
-	for(KopeteContact *c = m->contacts().first(); c ; c = m->contacts().next() )
+	KopeteContactPtrList children = m->contacts();
+	for( KopeteContact *c = children.first(); c; c = children.next() )
 	{
-		c->slotDeleteContact();
+		if( c->conversations() > 0 )
+		{
+			KopeteMetaContact *m = new KopeteMetaContact();
+			m->setTemporary( true );
+			c->setMetaContact( m );
+		}
+		else
+			c->slotDeleteContact();
 	}
+
 	emit metaContactDeleted( m );
 	m_contacts.remove( m );
 	delete m;

@@ -49,6 +49,7 @@ public:
 	KopeteHistoryDialog *historyDialog;
 	QString displayName;
 	bool fileCapable;
+	int conversations;
 	KopeteProtocol *protocol;
 
 	QPixmap cachedScaledIcon;
@@ -102,6 +103,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	d->cachedOldImportance = 0;
 	d->contextMenu = 0L;
 	d->fileCapable = false;
+	d->conversations = 0;
 	d->historyDialog = 0L;
 	d->idleState = Unspecified;
 	d->displayName = contactId;
@@ -121,7 +123,7 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	d->actionChangeAlias = KopeteStdAction::changeAlias( this, SLOT( slotChangeDisplayName() ), this, "actionChangeAlias" );
 	d->actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT( slotDeleteContact() ), this, "actionDeleteContact" );
 	d->actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( slotChangeMetaContact() ), this, "actionChangeMetaContact" );
-	d->actionAddContact = KopeteStdAction::addContact( this, SLOT( slotAddContact() ), this, "actionAddContact" );
+	d->actionAddContact = new KAction( i18n("&Add Contact"), QString::fromLatin1( "bookmark_add" ),0, this, SLOT( slotAddContact() ), this, "actionAddContact" );
 
 	// Need to check this because myself() has no parent
 	if( parent )
@@ -143,6 +145,16 @@ KopeteContact::~KopeteContact()
 void KopeteContact::slotProtocolUnloading()
 {
 	delete this;
+}
+
+void KopeteContact::setConversations( int value ) const
+{
+	d->conversations = value;
+}
+
+const int KopeteContact::conversations() const
+{
+	return d->conversations;
 }
 
 QString KopeteContact::identityId() const
@@ -274,7 +286,10 @@ void KopeteContact::sendFile( const KURL & /* sourceURL */, const QString & /* f
 void KopeteContact::slotAddContact()
 {
 	if( metaContact() )
+	{
 		metaContact()->setTemporary( false );
+		KopeteContactList::contactList()->addMetaContact( metaContact() );
+	}
 }
 
 KPopupMenu* KopeteContact::createContextMenu()
@@ -388,13 +403,21 @@ void KopeteContact::slotMoveDialogOkClicked()
 		kdDebug( 14010 ) << "KopeteContact::slotMoveDialogOkClicked : metaContact not found, will create a new one" << endl;
 		return;
 	}
+	KopeteMetaContact *old = d->metaContact;
 	setMetaContact( mc );
+	KopeteContactPtrList children = old->contacts();
+	if( children.isEmpty() )
+		KopeteContactList::contactList()->removeMetaContact( old );
 }
 
 void KopeteContact::setMetaContact( KopeteMetaContact *m )
 {
+	kdDebug( 14010 ) << k_funcinfo << endl;
+
 	KopeteMetaContact *old = d->metaContact;
-	KopeteGroupList newGroups = m->groups();
+	KopeteGroupList newGroups;
+	if( m )
+		newGroups = m->groups();
 
 	if( old )
 	{
@@ -409,35 +432,29 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 				removeFromGroup( group );
 		}
 
-		if( old->contacts().isEmpty() )
-		{
-			//Delete an empty MC after a move
-			KopeteContactList::contactList()->removeMetaContact( old );
-		}
+		if( !old->contacts().isEmpty() )
+			protocol()->slotMetaContactAboutToSave( old );
 	}
-
-	m->addContact( this );
 
 	// Reparent the contact
 	d->metaContact->removeChild( this );
-	m->insertChild( this );
 	d->metaContact = m;
 
-	// Reconnect signals to the new meta contact
+	if( m )
+	{
+		m->addContact( this );
+		m->insertChild( this );
 
-	connect( d->metaContact, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
+		connect( d->metaContact, SIGNAL( aboutToSave( KopeteMetaContact * ) ),
 		protocol(), SLOT( slotMetaContactAboutToSave( KopeteMetaContact * ) ) );
 
-	// Sync groups
-	for( KopeteGroup *group = newGroups.first(); group; group = newGroups.next() )
-	{
-		if( !groups().contains( group ) )
-			addToGroup( group );
+		// Sync groups
+		for( KopeteGroup *group = newGroups.first(); group; group = newGroups.next() )
+		{
+			if( !groups().contains( group ) )
+				addToGroup( group );
+		}
 	}
-
-	//the aboutToSave signal is disconnected from "old", but it still contains
-	//cached data in it, then, i serialize the old contact for removing old data
-	protocol()->slotMetaContactAboutToSave( old );
 }
 
 MetaContactListViewItem::MetaContactListViewItem( KopeteMetaContact *m, QListView *p )
