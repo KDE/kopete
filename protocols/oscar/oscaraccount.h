@@ -182,7 +182,23 @@ protected:
 
 private:
 	OscarAccountPrivate *d;
+	friend class ConnectTask; // for passwordPrompt
+};
 
+class KDE_EXPORT ConnectTask : public QObject
+{
+	Q_OBJECT
+	
+public:
+	ConnectTask( OscarAccount *account, unsigned long status, const QString &awayMessage );
+	
+public slots:
+	void passwordRetrieved( const QString &password );
+	
+private:
+	OscarAccount *m_account;
+	unsigned long m_status;
+	QString m_awayMessage;
 };
 
 #endif

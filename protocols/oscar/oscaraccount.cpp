@@ -753,5 +753,20 @@ void OscarAccount::setOnlineStatus( const Kopete::OnlineStatus & status , const 
 	setStatus( status.internalStatus() , reason );
 }
 
+ConnectTask::ConnectTask( OscarAccount *account, unsigned long status, const QString &awayMessage )
+	: QObject(account), m_account(account), m_status(status), m_awayMessage(awayMessage)
+{
+	QString prompt = m_account->passwordPrompt();
+	Kopete::Password::PasswordSource src = m_account->password().isWrong() ? Kopete::Password::FromUser : Kopete::Password::FromConfigOrUser;
+	m_account->password().request( this, SLOT( passwordRetrieved(const QString &) ), m_account->accountIcon( Kopete::Password::preferredImageSize() ), prompt, src );
+}
+
+void ConnectTask::passwordRetrieved( const QString &password )
+{
+	if ( !password.isEmpty() )
+		m_account->setStatus( m_status, m_awayMessage );
+	delete this;
+}
+
 #include "oscaraccount.moc"
 // vim: set noet ts=4 sts=4 sw=4:

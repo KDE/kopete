@@ -208,9 +208,7 @@ void ICQAccount::setStatus(const unsigned long status,
 		QString pass = password().cachedValue();
 		if (pass.isEmpty())
 		{
-			slotError(i18n("Kopete is unable to attempt to sign-on to the " \
-				"ICQ network because no password was specified in the " \
-				"preferences."), 0, false);
+			new ConnectTask( this, status, awayMessage );
 		}
 		else
 		{

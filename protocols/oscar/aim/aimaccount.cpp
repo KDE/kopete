@@ -231,9 +231,7 @@ void AIMAccount::connect(const unsigned long status, const QString &awMessage)
 		QString _password = password().cachedValue();
 		if (_password.isEmpty())
 		{
-			slotError(i18n("Kopete is unable to attempt to sign-on to the " \
-				"AIM network because no password was specified in the " \
-				"preferences."), 0, false);
+			new ConnectTask( this, status, awMessage );
 		}
 		else
 		{
