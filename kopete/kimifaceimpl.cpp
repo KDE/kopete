@@ -103,13 +103,13 @@ bool KIMIfaceImpl::isPresent( const QString & uid )
 {
 	KopeteMetaContact *mc;
 	mc = KopeteContactList::contactList()->metaContact( uid );
-	
+
 	return ( mc != 0 );
 }
 
 int KIMIfaceImpl::presenceStatus( const QString & uid )
 {
-	int p;
+	int p = -1;
 	KopeteMetaContact *m = KopeteContactList::contactList()->metaContact( uid );
 	if ( m )
 	{
@@ -117,7 +117,7 @@ int KIMIfaceImpl::presenceStatus( const QString & uid )
 		switch ( status.status() )
 		{
 			case KopeteOnlineStatus::Unknown:
-				p = 0;	
+				p = 0;
 			break;
 			case KopeteOnlineStatus::Offline:
 				p = 1;
@@ -132,10 +132,6 @@ int KIMIfaceImpl::presenceStatus( const QString & uid )
 				p = 4;
 			break;
 		}
-	}
-	else
-	{
-		p = -1;
 	}
 	return p;
 }
@@ -160,10 +156,10 @@ bool KIMIfaceImpl::canReceiveFiles( const QString & uid )
 {
 	KopeteMetaContact *mc;
 	mc = KopeteContactList::contactList()->metaContact( uid );
-	
+
 	if ( mc )
 		return mc->canAcceptFiles();
-	else 
+	else
 		return false;
 }
 
@@ -171,7 +167,7 @@ bool KIMIfaceImpl::canRespond( const QString & uid )
 {
 	KopeteMetaContact *mc;
 	mc = KopeteContactList::contactList()->metaContact( uid );
-	
+
 	if ( mc )
 	{
 		QPtrList<KopeteContact> list = mc->contacts();
@@ -198,17 +194,21 @@ QString KIMIfaceImpl::locate( const QString & contactId, const QString & protoco
 
 KopeteMetaContact * KIMIfaceImpl::locateProtocolContact( const QString & contactId, const QString & protocolId )
 {
-	KopeteMetaContact *mc;
+	KopeteMetaContact *mc = 0;
 	// find a matching protocol
 	KopeteProtocol *protocol = dynamic_cast<KopeteProtocol*>( KopetePluginManager::self()->plugin( protocolId ) );
-	
+
 	if ( protocol )
 	{
 		// find its accounts
 		QDict<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts( protocol );
 		QDictIterator<KopeteAccount> it( accounts );
 		for( ; it.current(); ++it )
+		{
 			mc = KopeteContactList::contactList()->findContact( protocolId, it.currentKey(), contactId  );
+			if (mc)
+				break;
+		}
 	}
 	return mc;
 }
@@ -227,7 +227,7 @@ QString KIMIfaceImpl::context( const QString & uid )
 	// TODO: support context
 	// shush warning
 	QString myUid = uid;
-	
+
 	return QString( "Home" );
 }
 
@@ -237,7 +237,7 @@ QStringList KIMIfaceImpl::protocols()
 	QStringList protocolList;
 	for ( QValueList<KPluginInfo *>::Iterator it = protocols.begin(); it != protocols.end(); ++it )
 		protocolList.append( (*it)->name() );
-	
+
 	return protocolList;
 }
 
@@ -275,7 +275,7 @@ bool KIMIfaceImpl::addContact( const QString &protocolId, const QString &contact
 {
 	// find a matching protocol
 	KopeteProtocol *protocol = dynamic_cast<KopeteProtocol*>( KopetePluginManager::self()->plugin( protocolId ) );
-	
+
 	if ( protocol )
 	{
 		// find its accounts
@@ -305,6 +305,6 @@ void KIMIfaceImpl::slotContactStatusChanged( KopeteMetaContact *mc )
 		QByteArray params;
 		QDataStream stream(params, IO_WriteOnly);
 		stream << mc->metaContactId();
-		kapp->dcopClient()->emitDCOPSignal( "contactStatusChanged(QString)", params ); 
+		kapp->dcopClient()->emitDCOPSignal( "contactStatusChanged(QString)", params );
 	}
 }
