@@ -328,13 +328,13 @@ void IRCContact::slotNewNickChange( const QString &oldnickname, const QString &n
 void IRCContact::slotNewCtcpReply(const QString &type, const QString &target, const QString &messageReceived)
 {
 	//kdDebug(14120) << k_funcinfo << target << endl;
-	if( isConnected && target == mNickName )
+	if( isConnected )
 	{
-		KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
-		if( activeView )
+		KopeteView *myView = KopeteViewManager::viewManager()->view( manager(), true);
+		if( myView == KopeteViewManager::viewManager()->activeView() )
 		{
 			KopeteMessage msg((KopeteContact *)this, mContact, i18n("CTCP %1 REPLY: %2").arg(type).arg(messageReceived), KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat);
-			activeView->msgManager()->appendMessage(msg);
+			manager()->appendMessage(msg);
 		}
 	}
 }
