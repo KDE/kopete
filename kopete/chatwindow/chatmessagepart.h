@@ -97,12 +97,12 @@ signals:
 	/**
 	 * Emits before the context menu is about to show
 	 */
-	void contextMenuEvent( Kopete::Message &message, const QString &textUnderMouse, KPopupMenu *popupMenu );
+	void contextMenuEvent(  const QString &textUnderMouse, KPopupMenu *popupMenu );
 
 	/**
 	 * Emits before the tooltip is about to show
 	 */
-	void tooltipEvent( Kopete::Message &message, const QString &textUnderMouse, QString &toolTip );
+	void tooltipEvent(  const QString &textUnderMouse, QString &toolTip );
 
 private slots:
 	void slotOpenURLRequest( const KURL &url, const KParts::URLArgs &args );
@@ -170,7 +170,7 @@ private:
 	/**
 	 * Emits before the tooltip is about to show
 	 */
-	void emitTooltipEvent( Kopete::Message &message, const QString &textUnderMouse, QString &toolTipString );
+	void emitTooltipEvent(  const QString &textUnderMouse, QString &toolTipString );
 
 	/**
 	 * Returns the text currently under the mouse

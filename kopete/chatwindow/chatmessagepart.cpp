@@ -134,12 +134,7 @@ public:
 		}
 		else
 		{
-			//Get plugin specified tooltips
-			while ( !node.isNull() && ( node.nodeType() == DOM::Node::TEXT_NODE || ((DOM::HTMLElement)node).className() != "KopeteMessage" ) )
-			node = node.parentNode();
-
-			Kopete::Message &currentMessage = m_chat->messageMap[ ((DOM::HTMLElement)node).id().toInt() ];
-			m_chat->emitTooltipEvent( currentMessage, m_chat->textUnderMouse(), toolTipText );
+			m_chat->emitTooltipEvent( m_chat->textUnderMouse(), toolTipText );
 
 			if( toolTipText.isEmpty() )
 			{
@@ -589,12 +584,7 @@ void ChatMessagePart::slotRightClick( const QString &, const QPoint &point )
 	}
 
 	//Emit for plugin hooks
-	DOM::HTMLElement messageElement = activeElement;
-	while ( !messageElement.isNull() && messageElement.className() != "KopeteMessage" )
-	    messageElement = messageElement.parentNode();
-	Kopete::Message &currentMessage = messageMap[ messageElement.id().toInt() ];
-
-	emit contextMenuEvent( currentMessage, textUnderMouse(), chatWindowPopup );
+	emit contextMenuEvent( textUnderMouse(), chatWindowPopup );
 
 	chatWindowPopup->popup( point );
 }
@@ -902,9 +892,9 @@ void ChatMessagePart::slotCloseView( bool force )
 	m_manager->view()->closeView( force );
 }
 
-void ChatMessagePart::emitTooltipEvent( Kopete::Message &message, const QString &textUnderMouse, QString &toolTip )
+void ChatMessagePart::emitTooltipEvent(  const QString &textUnderMouse, QString &toolTip )
 {
-	emit tooltipEvent( message, textUnderMouse, toolTip );
+	emit tooltipEvent(  textUnderMouse, toolTip );
 }
 
 #include "chatmessagepart.moc"
