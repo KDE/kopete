@@ -244,13 +244,6 @@ public:
 	 void moveToMetaContact(KopeteMetaContact *m);
 
 	 /**
-	  * Add this contact to the contact-list if this is a temporary contact.
-	  * If the protocol has a contact-list server-side, it is needed to derive this fontction.
-	  * TODO: Write a better description of this, this doc doesn't make sense
-	  */
-	 virtual void addThisTemporaryContact(KopeteGroup *group=0l);
-
-	 /**
 	  * Returns whether or not this contact is capable of file transfers or not
 	  */
 	 bool isFileCapable() const { return mFileCapable; }

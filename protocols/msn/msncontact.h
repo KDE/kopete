@@ -100,8 +100,6 @@ public:
 	MSNProtocol::Status msnStatus() const;
 	void setMsnStatus( MSNProtocol::Status status );
 
-	virtual void addThisTemporaryContact(KopeteGroup *group=0l);
-
 	virtual bool isReachable() { return true; };
 
 	virtual KActionCollection *customContextMenuActions();

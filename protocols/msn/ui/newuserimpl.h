@@ -37,7 +37,7 @@ public slots: // Public slots
   void slotClose();
 signals: // Signals
   /**  */
-  void addUser(QString );
+  void addUser( const QString &);
   void blockUser(QString);
 };
 

@@ -202,44 +202,24 @@ GaduProtocol::myself() const
     return myself_;
 }
 
-void
-GaduProtocol::addContact( const QString& uin, const QString& nick,
-                          KopeteMetaContact* parent, const QString& group )
+bool GaduProtocol::addContactToMetaContact( const QString &contactId, const QString &displayName,
+	KopeteMetaContact* parentContact )
 {
-	KopeteMetaContact *m=0l;
+	uin_t uinNumber = contactId.toUInt();
 
-	if ( !parent )
-	{
-		m = KopeteContactList::contactList()->findContact( this->pluginId(),  QString::number( userUin_ ), uin );
-		if( !m )
-		{
-			m = new KopeteMetaContact();
-			m->addToGroup(KopeteContactList::contactList()->getGroup(group));
-			KopeteContactList::contactList()->addMetaContact(m);
-		}
-	}
+	QString uins;
+	if ( parentContact->addressBookField( this, "messaging/gadu" ).isEmpty() )
+		uins = contactId;
 	else
-		m = parent;
+		uins = parentContact->addressBookField( this, "messaging/gadu" ) + "\n" + contactId;
 
-
-    KopeteContact *c = m->findContact( this->pluginId(), QString::number( userUin_ ) , uin );
-
-    if( !c ) {
-        uin_t uinNumber = uin.toUInt();
-        QString uins;
-        if ( m->addressBookField( this, "messaging/gadu" ).isEmpty() )
-            uins = uin;
-        else
-            uins = m->addressBookField( this, "messaging/gadu" )
-                   + "\n" + uin;
-        m->setAddressBookField( this, "messaging/gadu", uins );
-        GaduContact *contact = new GaduContact( this->pluginId(), uinNumber,
-                                                nick, m );
-        contact->setParentIdentity( QString::number( userUin_ ) );
-        m->addContact( contact );
-        contactsMap_.insert( uinNumber, contact );
-        addNotify( uinNumber );
-    }
+	parentContact->setAddressBookField( this, "messaging/gadu", uins );
+	GaduContact *newContact = new GaduContact( this->pluginId(), uinNumber, displayName, parentContact );
+	newContact->setParentIdentity( QString::number( userUin_ ) );
+	contactsMap_.insert( uinNumber, newContact );
+	addNotify( uinNumber );
+	
+	return true;
 }
 
 void

@@ -60,10 +60,10 @@ void KopeteIface::sendFile(const QString &displayName, const KURL &sourceURL,
 }
 
 
-bool KopeteIface::addContact( const QString &protocolName, const QString &userId,
-		const QString &nickName )
+bool KopeteIface::addContact( const QString &protocolName, const QString &contactId,
+	const QString &displayName, const QString &groupName )
 {
-	return KopeteContactList::contactList()->addContact( protocolName, userId, nickName );
+	return KopeteContactList::contactList()->dcopAddContact( protocolName, contactId, displayName, 0L, groupName );
 }
 /*
  * Local variables:

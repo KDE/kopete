@@ -37,10 +37,8 @@ class YahooContact : public KopeteContact
 {
 	Q_OBJECT public:
 
-	YahooContact(QString userID, QString fullName, QString group, YahooProtocol *protocol, KopeteMetaContact *metaContact);
+	YahooContact(QString userID, QString fullName, YahooProtocol *protocol, KopeteMetaContact *metaContact);
 	~YahooContact();
-	
-	const QString &group();
 
 	virtual bool isOnline() const;
 	virtual bool isReachable();
@@ -50,7 +48,6 @@ class YahooContact : public KopeteContact
 	virtual QString statusIcon() const;
 	virtual int importance() const;
 	virtual KActionCollection *customContextMenuActions();
-	virtual void addThisTemporaryContact(KopeteGroup *group = 0L);
 	
 	void setYahooStatus( YahooStatus::Status , const QString &, int  );
 	
@@ -69,7 +66,7 @@ public slots:
 	/* User id, full name, group, status code, and status description */
 	QString mUserID;
 	QString mFullName;
-	QString mGroup;
+
 	YahooStatus mStatus;
 
 private slots: // Private slots

@@ -37,8 +37,7 @@
 #include "msnprotocol.h"
 
 MSNContact::MSNContact( KopeteProtocol *proto, const QString &id,
-	const QString &displayName, KopeteMetaContact *parent )
-: KopeteContact( proto, id, parent )
+	const QString &displayName, KopeteMetaContact *parent ) : KopeteContact( proto, id, parent )
 {
 	m_actionBlock = 0L;
 	m_actionCollection=0L;
@@ -57,8 +56,11 @@ MSNContact::MSNContact( KopeteProtocol *proto, const QString &id,
 		this, SLOT (slotMoved(KopeteMetaContact*) ));
 	setDisplayName( displayName );
 
+	kdDebug() << "Checking if we are under a metacontact..." <<endl;
+		
 	if( metaContact() )
 	{
+		kdDebug() << "Yes we are!!!" <<endl;
 		connect ( metaContact(),
 			SIGNAL( movedToGroup( KopeteGroup *, KopeteGroup * , KopeteMetaContact * ) ),
 			this, SLOT( moveToGroup( KopeteGroup *, KopeteGroup * ) ) );
@@ -569,14 +571,6 @@ void MSNContact::slotAddedToGroup(unsigned int group)
 void MSNContact::slotRemovedFromGroup(unsigned int group)
 {
 	m_groups.remove(group);
-}
-
-void MSNContact::addThisTemporaryContact(KopeteGroup* group)
-{
-	if(!group || group->displayName().isNull() || group->type() != KopeteGroup::Classic)
-		static_cast<MSNProtocol*>( protocol() )->addContact( contactId() );
-	else
-		addToGroup(  group );
 }
 
 void MSNContact::slotMoved(KopeteMetaContact* from)

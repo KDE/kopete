@@ -72,9 +72,9 @@ public:
     virtual KActionMenu* protocolActions();
     // }
     //!Plugin reimplementation
-
-    void addContact( const QString& uin, const QString &nick,
-                     KopeteMetaContact* parent = 0L, const QString& group = QString::null );
+    bool addContactToMetaContact( const QString &contactId, const QString &displayName,
+	KopeteMetaContact *parentContact );
+    
     void removeContact( const GaduContact *c );
 public slots:
     virtual void connect();

@@ -680,7 +680,6 @@ void JabberProtocol::deserialize(KopeteMetaContact *contact, const QStringList &
 		QObject::connect(jc, SIGNAL(chatUser(JabberContact *)), this, SLOT(slotChatUser(JabberContact *)));
 		QObject::connect(jc, SIGNAL(emailUser(JabberContact *)), this, SLOT(slotEmailUser(JabberContact *)));
 
-		contact->addContact(jc);
 	}
 }
 
@@ -916,14 +915,11 @@ JabberContact *JabberProtocol::createContact(const QString &jid, const QString &
 	QObject::connect(jc, SIGNAL(chatUser(JabberContact *)), this, SLOT(slotChatUser(JabberContact *)));
 	QObject::connect(jc, SIGNAL(emailUser(JabberContact *)), this, SLOT(slotEmailUser(JabberContact *)));
 
-	metaContact->addContact(jc );
-
 	contactMap.insert(jid, jc);
 
 	metaContactMap.insert(jc, metaContact);
 
 	return jc;
-
 }
 
 

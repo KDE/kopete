@@ -57,7 +57,9 @@ public:
 	~YahooProtocol();	// Destructor
 
 	KopeteContact* myself() const;
-	void addContact(QString);
+	
+	bool addContactToMetaContact(const QString &contactId, const QString &displayName,
+		KopeteMetaContact *parentContact);
 
 	virtual KActionMenu* protocolActions();
 	YahooContact *contact( const QString &id );
@@ -72,16 +74,13 @@ public slots:
 	bool isConnected() const;	// Return true if connected
 	bool isAway() const;		// Return true if away
 
-	AddContactPage *createAddContactWidget(QWidget * parent);
-									// Return "add contact" dialog
+	AddContactPage *createAddContactWidget(QWidget * parent); // Return "add contact" dialog
 
 	void slotSettingsChanged(void);
 						// Callback when settings changed
 	//void slotConnect();
 	void slotGoOffline();
-	
-	void addContact(const QString &userid, const QString &alias, const QString &group, KopeteMetaContact *metaContact);
-	
+
 	void slotLoginResponse( int succ, const QString &url);
 	void slotGotBuddies(YList * buds);
 	void slotGotBuddy(const QString &userid, const QString &alias, const QString &group);

@@ -289,8 +289,6 @@ void MSNProtocol::deserialize( KopeteMetaContact *metaContact,
 		for(QStringList::Iterator it = groups.begin() ; it != groups.end(); ++it )
 			c->slotAddedToGroup(  (*it).toUInt()  );
 
-		metaContact->addContact( c);
-
 		idx += 3;
 	}
 }
@@ -634,12 +632,6 @@ void MSNProtocol::slotStatusChanged( QString status )
 	}
 }
 
-
-void MSNProtocol::slotAddContact( QString handle )
-{
-	addContact( handle );
-}
-
 void MSNProtocol::slotBlockContact( QString handle ) const
 {
 	if(m_allowList.contains(handle))
@@ -648,47 +640,47 @@ void MSNProtocol::slotBlockContact( QString handle ) const
 		m_notifySocket->addContact( handle, handle, 0, BL );
 }
 
-void MSNProtocol::addContact( const QString &userID , KopeteMetaContact *m,
-	const QString & /* group */ )
+bool MSNProtocol::addContactToMetaContact( const QString &contactId, const QString &displayName,
+		KopeteMetaContact *parentContact )
 {
 	if( isConnected() )
 	{
-		m_addWizard_metaContact=m;
-
-		if(m && !m->groups().isEmpty())
+		if( !parentContact->isTemporary() )
 		{
-			QPtrList<KopeteGroup> gprs=m->groups();
-			for ( KopeteGroup *g=gprs.first(); g; g = gprs.next() )
+			//This is a normal contact. Get all the groups this MetaContact is in
+			QPtrList<KopeteGroup> groupList = parentContact->groups();
+			if( !groupList.isEmpty() )
 			{
-				QStringList strL=g->pluginData(this);
-				if(strL.count()>=1)
+				for ( KopeteGroup *group = groupList.first(); group; group = groupList.next() )
 				{
-					m_notifySocket->addContact( userID, userID, strL.first().toUInt(), FL );
+					//For each group, ensure it is on the MSN server
+					QStringList strList = group->pluginData( this );
+					if( strList.count() >= 1 ) {
+						//Add the contact to the group on the server
+						m_notifySocket->addContact( contactId, displayName, strList.first().toUInt(), FL );
+					} else {
+						//Create the group and add the contact
+						tmp_addToNewGroup << QPair<QString,QString>( contactId, group->displayName() );
+						addGroup( group->displayName() );
+					}
 				}
-				else
-				{
-					tmp_addToNewGroup << QPair<QString,QString>(userID,g->displayName());
-					addGroup(g->displayName());
-				}
+			} else {
+				kdDebug() << "[MSNProtocol::addContactToMetaContact() This MetaContact isn't in a group!" << endl;
 			}
+			//TODO: Find out if this contact was reallt added or not!
+			return true;
+		} else {
+			//This is a temporary contact. (a person who messaged us but is not on our conntact list.
+			//We don't want to create it on the server.Just create the local contact object and add it
+			MSNContact *newContact = new MSNContact( this, contactId, contactId, parentContact );
+			return (newContact != 0L);
 		}
-		else
-		{
-			m_notifySocket->addContact( userID, userID, 0, FL );
-		  //TODO:
-		  /*if(!group.isNull())
-		  {
-			int g = groupNumber( group );
-			if(g==-1) {
-				tmp_addToNewGroup << QPair<QString,QString>(userID,group);
-				addGroup(group);
-			}
-			else {
-				m_notifySocket->addContact( userID, userID, g, FL );
-		  }*/
-		}
+	} else {
+		//We aren't connected! Can't add a contact
+		return false;
 	}
 }
+
 
 
 /*QStringList MSNProtocol::groups() const
@@ -974,7 +966,7 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 
 			NewUserImpl *authDlg = new NewUserImpl(0);
 			authDlg->setHandle(handle, publicName);
-			QObject::connect( authDlg, SIGNAL(addUser( QString )), this, SLOT(slotAddContact( QString )));
+			QObject::connect( authDlg, SIGNAL(addUser( const QString & )), this, SLOT(slotAddTemporaryContact( const QString & )));
 			QObject::connect( authDlg, SIGNAL(blockUser( QString )), this, SLOT(slotBlockContact( QString )));
 			authDlg->show();
 		}
@@ -1119,7 +1111,7 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 		{
 			NewUserImpl *authDlg = new NewUserImpl(0);
 			authDlg->setHandle(handle, publicName);
-			QObject::connect( authDlg, SIGNAL(addUser( QString )), this, SLOT(slotAddContact( QString )));
+			QObject::connect( authDlg, SIGNAL(addUser( const QString & )), this, SLOT(slotAddTemporaryContact( const QString & )));
 			QObject::connect( authDlg, SIGNAL(blockUser( QString )), this, SLOT(slotBlockContact( QString )));
 			authDlg->show();
 		}
@@ -1128,6 +1120,12 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 			static_cast<MSNContact *>( contacts()[ handle ] )->setReversed( true );
 		}
 	}
+}
+
+void MSNProtocol::slotAddTemporaryContact( const QString &userName )
+{
+	kdDebug() << "[MSNProtocol] slotAddTemporaryContact() for " << userName << endl;
+	addContact( userName, QString::null, 0L, QString::null, true);
 }
 
 void MSNProtocol::slotPublicNameChanged( QString publicName)

@@ -35,7 +35,7 @@ MSNAddContactPage::~MSNAddContactPage()
 {
 }
 
-void MSNAddContactPage::slotFinish(KopeteMetaContact *m)
+void MSNAddContactPage::slotFinish(KopeteMetaContact *parentContact)
 {
 	if ( canadd )
 	{
@@ -48,7 +48,7 @@ void MSNAddContactPage::slotFinish(KopeteMetaContact *m)
 		}
 		*/
 		QString userid = msndata->addID->text();
-		plugin->addContact( userid , m );
+		plugin->addContactToMetaContact( userid , userid, parentContact );
 	}
 	else
 	{

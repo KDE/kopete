@@ -157,8 +157,8 @@ public:
 	 * @param nickName The nickname of the contact (may equal userId for some protocols
 	 * @return Weather or not the contact was added sucessfully
 	 */
-	bool addContact( const QString &protocolName, const QString &userId,
-		const QString &nickName );
+	bool dcopAddContact( const QString &protocolName, const QString &contactId, const QString &displayName,
+		KopeteMetaContact *parentContact = 0L, const QString &groupName = QString::null, bool isTemporary = false );
 
 public slots:
 //	void slotRemovedFromGroup( KopeteMetaContact *mc, const QString &from );

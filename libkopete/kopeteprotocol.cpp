@@ -17,9 +17,9 @@
 */
 
 #include "kopeteprotocol.h"
-
+#include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
-
+#include "kopetegroup.h"
 #include <kdebug.h>
 
 KopeteProtocol::KopeteProtocol(QObject *parent, const char *name)
@@ -88,10 +88,57 @@ void KopeteProtocol::slotKopeteContactDestroyed( KopeteContact *c )
 	m_contacts.remove( c->contactId() );
 }
 
-KopeteContact* KopeteProtocol::addContact( const QString &, const QString & )
+bool KopeteProtocol::addContact( const QString &contactId, const QString &displayName, 
+	KopeteMetaContact *parentContact, const QString &groupName, bool isTemporary )
+{	
+	kdDebug() << "[KopeteProtocol] addMetaContact() contactId:" << contactId << "; displayName: " << displayName
+		<< "; groupName: " << groupName  << endl;
+
+	//If this is a temporary contact, use the temporary group
+	KopeteGroup *parentGroup;
+	isTemporary ? parentGroup = KopeteGroup::temporary : parentGroup = KopeteContactList::contactList()->getGroup( groupName );
+
+	if( parentContact )
+	{
+		//If we are given a MetaContact to add to that is marked as temporary. but 
+		//this contact is not temporary, then change the metacontact to non-temporary
+		if( parentContact->isTemporary() && !isTemporary )
+			parentContact->setTemporary( false, parentGroup );
+		else
+			parentContact->addToGroup( parentGroup );
+
+	} else {
+		//Check if this MetaContact exists
+		parentContact = KopeteContactList::contactList()->findContact( pluginId(), QString::null, contactId );
+		if( !parentContact )
+		{
+			//Create a new MetaContact
+			parentContact = new KopeteMetaContact();
+			parentContact->setDisplayName( displayName );
+			KopeteContactList::contactList()->addMetaContact( parentContact );
+		
+			//Set it as a temporary contact if requested
+			if( isTemporary )
+				parentContact->setTemporary(true);
+		}
+		
+		//Add the MetaContact to the correct group
+		if( !isTemporary )
+			parentContact->addToGroup( parentGroup );
+	}
+
+	//We should now have a parentContact.
+	//Call the protocols function to add the contact to this parent
+	if( parentContact )
+		return addContactToMetaContact( contactId, displayName, parentContact );
+	else
+		return false;
+}
+
+bool KopeteProtocol::addContactToMetaContact( const QString &, const QString &, KopeteMetaContact *)
 {
-	kdDebug() << "[KopeteContact] This protocol hasn't implemented addContact yet!" << endl;
-	return 0L;
+	kdDebug() << "[KopeteProtocol] addContactToMetaContact() Not Implemented!!!" << endl;
+	return false;
 }
 
 #include "kopeteprotocol.moc"

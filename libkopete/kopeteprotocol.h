@@ -20,6 +20,7 @@
 #define KOPETEPROTOCOL_H
 
 #include "kopeteplugin.h"
+#include "kopetemetacontact.h"
 
 #include <qdict.h>
 
@@ -118,13 +119,15 @@ public:
 	QDict<KopeteContact> contacts( KopeteMetaContact *mc );
 
 	/**
-	 * Adds a contact to this protocol with the specified user ID and nickname
+	 * Adds a contact to an existing MetaContact. Also performs any server-related
+	 * functions. *MUST* be implemented in each protocol
 	 * 
-	 * @param userId The unique ID for this protocol
-	 * @param nickName The nickname of the contact (may equal userId for some protocols
-	 * @return Pointer to the KopeteContact object which was added
+	 * @param contactId The unique ID for this protocol
+	 * @param displayName The displayname of the contact (may equal userId for some protocols
+	 * @param parentContact The metacontact to add this contact to
 	 */
-	virtual KopeteContact* addContact( const QString &userId, const QString &nickName );
+	virtual bool addContactToMetaContact( const QString &contactId, const QString &displayName,
+		 KopeteMetaContact *parentContact );
 
 public slots:
 	/**
@@ -138,6 +141,19 @@ public slots:
 	 * This is a slot, so it can be called directly from e.g. a KAction.
 	 */
 	virtual void disconnect() = 0;
+	
+	/**
+	 * Adds a contact to this protocol with the specified details
+	 * 
+	 * @param contactId The unique ID for this protocol
+	 * @param displayName The displayname of the contact (may equal userId for some protocols
+	 * @param parentContact The metacontact to add this contact to
+	 * @param groupName The name of the group to add the contact to
+	 * @param isTemporary If this is a temporary contact
+	 * @return Pointer to the KopeteContact object which was added
+	 */
+	bool addContact( const QString &contactId, const QString &displayName = QString::null,
+		KopeteMetaContact *parentContact = 0L, const QString &groupName = QString::null, bool isTemporary = false);
 
 signals:
 	/**

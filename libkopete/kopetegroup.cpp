@@ -18,12 +18,13 @@
 #include "kopetegroup.h"
 #include "kopetecontactlist.h"
 #include "kopeteplugin.h"
+#include <klocale.h>
 #include <qdom.h>
 #include <qstylesheet.h>
 #include <qregexp.h>
 
-KopeteGroup* KopeteGroup::toplevel=new KopeteGroup(QString::null , KopeteGroup::TopLevel);
-KopeteGroup* KopeteGroup::temporary=new KopeteGroup("temporaryGroup",KopeteGroup::Temporary);
+KopeteGroup* KopeteGroup::toplevel = new KopeteGroup(QString::null , KopeteGroup::TopLevel);
+KopeteGroup* KopeteGroup::temporary = new KopeteGroup(i18n("Not in your contact list"),KopeteGroup::Temporary);
 
 KopeteGroupList::KopeteGroupList(){}
 KopeteGroupList::~KopeteGroupList(){}

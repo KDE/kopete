@@ -29,16 +29,14 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 
-YahooContact::YahooContact(QString userID, QString fullName, QString group,
+YahooContact::YahooContact(QString userID, QString fullName,
 			     YahooProtocol *protocol, KopeteMetaContact *metaContact)
 :  KopeteContact( protocol, userID, metaContact)
 {
-	kdDebug() << "YahooContact::YahooContact("<< userID << ", " << fullName <<
-			", " << group << ", <protocol>)" ;
+	kdDebug() << "YahooContact::YahooContact("<< userID << ", " << fullName << ")" << endl;
 
 	mUserID = userID;
 	mFullName = fullName;
-	mGroup = group;
 
 	mStatus.setStatus(YahooStatus::Offline);
 
@@ -64,12 +62,6 @@ KopeteContact::ContactStatus YahooContact::status() const
 	kdDebug() << "YahooContact::status()" << endl;
 	return mStatus.translate();
 }
-
-const QString& YahooContact::group()
-{
-	return mGroup;
-}
-
 
 // Return status text
 QString YahooContact::statusText() const
@@ -142,11 +134,6 @@ KActionCollection *YahooContact::customContextMenuActions()
 {
 	kdDebug() << "[YahooContact::customContextMenuActions()]" << endl;
 	return 0L;
-}
-
-void YahooContact::addThisTemporaryContact(KopeteGroup *group)
-{
-	kdDebug() << "[addThisTemporaryContact]" << endl;
 }
 
 void YahooContact::execute()

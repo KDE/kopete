@@ -115,7 +115,7 @@ void YahooProtocol::serialize( KopeteMetaContact *metaContact )
 				continue;
 			}
 
-			strList << g->displayName() << g->group();
+			strList << g->displayName();
 			metaContact->setAddressBookField( YahooProtocol::protocol(), "messaging/yahoo" , g->contactId() );
 		}
 	}
@@ -158,7 +158,7 @@ void YahooProtocol::deserialize( KopeteMetaContact *metaContact, const QStringLi
 		return;
 	}
 
-	addContact(userid, alias, group,metaContact);
+	this->addContact(userid, alias, metaContact, group);
 }
 
 QStringList YahooProtocol::addressBookFields() const
@@ -384,7 +384,7 @@ void YahooProtocol::slotGotBuddies(YList * buds)
 void YahooProtocol::slotGotBuddy(const QString &userid, const QString &alias, const QString &group)
 {
 	kdDebug() << "[YahooProtocol::slotGotBuddy]" << endl;
-	addContact(userid, alias, group, 0L);
+	this->addContact(userid, alias, 0L, group);
 }
 
 YahooContact *YahooProtocol::contact( const QString &id )
@@ -392,49 +392,22 @@ YahooContact *YahooProtocol::contact( const QString &id )
 	return static_cast<YahooContact *>( contacts()[ id ] );
 }
 
-void YahooProtocol::addContact(const QString &userid, const QString &alias, const QString &group, KopeteMetaContact *metaContact)
+bool YahooProtocol::addContactToMetaContact(const QString &contactId, const QString &displayName, 
+	KopeteMetaContact *parentContact )
 {
-	kdDebug() << "[YahooProtocol::addContact]" << endl;
+	kdDebug() << "[YahooProtocol::addContactToMetaContact] contactId: " << contactId << endl;
 
-	if ( ! contact(userid) )
+	if( !contact( contactId ) )
 	{
-		kdDebug() << "[YahooProtocol::addContact] Got new buddy " << userid << endl;
-
-		if ( metaContact )
-		{
-			/* Ok they are forcing us to use this metacontact */
-
-		}
-		else
-		{
-			/* They didn't provide us a metaContact, we will try to get one */
-			metaContact = KopeteContactList::contactList()->findContact( pluginId(), QString::null, userid );
-
-			if ( metaContact )
-			{
-				/* Ok there was a metacontact containing us */
-			}
-			else
-			{
-				metaContact = new KopeteMetaContact();
-
-				if ( alias != QString::null )
-					metaContact->setDisplayName( alias );
-				else
-					metaContact->setDisplayName( userid );
-			}
-		}
-
-		/* Ok lets create the contact now */
-		YahooContact *contact = new YahooContact( userid, alias, group, this, metaContact);
-		metaContact->addContact(contact);
-		KopeteContactList::contactList()->addMetaContact(metaContact);
-	}
-	else
-	{
-		kdDebug() << "[YahooProtocol::addContact] Buddy already exists" << endl;
+		//No server side stuff for this protocol yet, just create the guy and go
+		YahooContact *newContact = new YahooContact( contactId, displayName, this, parentContact);
+	
+		return (newContact != 0L);
+	} else {
+		kdDebug() << "[YahooProtocol::addContact] Contact already exists" << endl;
 	}
 }
+
 
 void YahooProtocol::slotGotIgnore( YList * igns)
 {

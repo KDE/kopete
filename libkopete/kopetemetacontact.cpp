@@ -733,11 +733,10 @@ bool KopeteMetaContact::isTemporary() const
 {
 	return m_temporary;
 }
-void KopeteMetaContact::setTemporary( bool b , KopeteGroup *group )
+void KopeteMetaContact::setTemporary( bool isTemporary, KopeteGroup *group )
 {
-	m_temporary=b;
-	KopeteGroup *temporaryGroup=KopeteGroup::temporary;
-
+	m_temporary = isTemporary;
+	KopeteGroup *temporaryGroup = KopeteGroup::temporary;
 	if(m_temporary)
 	{
 		addToGroup (temporaryGroup);
@@ -749,7 +748,7 @@ void KopeteMetaContact::setTemporary( bool b , KopeteGroup *group )
 		}
 	}
 	else
-		moveToGroup(temporaryGroup,group);
+		moveToGroup(temporaryGroup, group);
 }
 
 bool KopeteMetaContact::isDirty() const

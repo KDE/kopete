@@ -398,8 +398,8 @@ void KopeteContactList::removeGroup( KopeteGroup *g)
 	delete g;
 }
 
-bool KopeteContactList::addContact( const QString &protocolName, const QString &userId,
-		const QString &nickName )
+bool KopeteContactList::dcopAddContact( const QString &protocolName, const QString &contactId,
+	const QString &displayName, KopeteMetaContact *parentContact, const QString &groupName, bool isTemporary )
 {
 	//Get the protocol instance
 	KopeteProtocol *myProtocol = (KopeteProtocol*) LibraryLoader::pluginLoader()->searchByName( protocolName );
@@ -409,10 +409,10 @@ bool KopeteContactList::addContact( const QString &protocolName, const QString &
 		QString contactName;
 		
 		//If the nickName isn't specified we need to display the userId in the prompt
-		if( nickName.isEmpty() || nickName.isNull() )
-			contactName = userId;
+		if( displayName.isEmpty() || displayName.isNull() )
+			contactName = contactId;
 		else
-			contactName = nickName;
+			contactName = displayName;
 		
 		//Confirm with the user before we add the contact
 		if( KMessageBox::questionYesNo( 0, i18n("An external application is attempting to add the "
@@ -420,7 +420,7 @@ bool KopeteContactList::addContact( const QString &protocolName, const QString &
 				).arg(protocolName).arg(contactName), i18n("Allow contact?")) == 3) // Yes == 3
 		{
 			//User said Yes
-			myProtocol->addContact( userId, nickName );
+			myProtocol->addContact( contactId, displayName, parentContact, groupName, isTemporary );
 			return true;
 		} else {
 			//User said No
@@ -439,16 +439,19 @@ bool KopeteContactList::addContact( const QString &protocolName, const QString &
 
 KopeteGroup * KopeteContactList::getGroup(const QString& displayName, KopeteGroup::GroupType type)
 {
-	KopeteGroup *g;;
-	for ( g = m_groupList.first(); g; g = m_groupList.next() )
+	if( type == KopeteGroup::Temporary )
+		return KopeteGroup::temporary;
+	
+	KopeteGroup *groupIterator;;
+	for ( groupIterator = m_groupList.first(); groupIterator; groupIterator = m_groupList.next() )
 	{
-		if(g->type() == type && g->displayName()==displayName)
-			return g;
+		if( groupIterator->type() == type && groupIterator->displayName() == displayName )
+			return groupIterator;
 	}
 
-	KopeteGroup *rep=new KopeteGroup(displayName,type);
-	addGroup(rep);
-	return  rep;
+	KopeteGroup *newGroup = new KopeteGroup( displayName, type );
+	addGroup( newGroup );
+	return  newGroup;
 }
 
 #include "kopetecontactlist.moc"

@@ -40,8 +40,7 @@
 #include "kopetestdaction.h"
 
 KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId,
-	KopeteMetaContact *parent )
-: QObject( parent )
+	KopeteMetaContact *parent ) : QObject( parent )
 {
 	m_contactId = contactId;
 
@@ -74,6 +73,10 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 		SLOT( slotChangeDisplayName() ), this, "actionChangeAlias" );
 	actionSendFile = KopeteStdAction::sendFile( this,
 		SLOT( sendFile() ), this, "actionSendFile");
+		
+	//Need to check this because ourself has no parent
+	if( parent )
+		parent->addContact( this );
 }
 
 KopeteContact::~KopeteContact()
@@ -257,12 +260,6 @@ void KopeteContact::slotChangeDisplayName(){
 	if(okClicked){
 		setDisplayName( newName );
 	}
-}
-
-void KopeteContact::addThisTemporaryContact(KopeteGroup *group)
-{
-	if(m_metaContact->isTemporary())
-		m_metaContact->setTemporary(false,group);
 }
 
 void KopeteContact::slotChangeMetaContact()

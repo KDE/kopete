@@ -123,8 +123,8 @@ public:
 	virtual void setAvailable();
 	virtual bool isAway() const;
 
-	void addContact( const QString &userID, KopeteMetaContact *mc = 0L,
-		const QString &group = QString::null );
+	bool addContactToMetaContact( const QString &contactId, const QString &displayName,
+		KopeteMetaContact *parentContact );
 
 	void addGroup( const QString &groupName,
 		const QString &contactToAdd = QString::null );
@@ -176,8 +176,6 @@ private slots:
 	 */
 	void slotPublicNameChanged(QString publicName);
 
-	// Add a Contact
-	void slotAddContact( QString );
 	// Block a Contact
 	void slotBlockContact( QString passport ) const;
 
@@ -198,7 +196,7 @@ private slots:
 
 	void slotOpenInbox();
 
-
+	void slotAddTemporaryContact( const QString &userName );
 	/**
 	 * A kopetegroup is renamed, just call renameGroup
 	 **/
