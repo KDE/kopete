@@ -3,27 +3,33 @@ Duncan Mac-Vicar Prett <duncan@kde.org>
 http://kopete.kde.org
 ----------------------------------------------------------------------
 
-Kopete is a IM client being designed to be modular and plugin based.
+Kopete is an Instant Messaging client being designed to be modular and
+plugin based.
 
 It requires the KDE Desktop, version 3 or higher.
 
-Currently, the  supported protocol plugins are MSN, ICQ, AIM, Gadu, IRC and
-Jabber. Yahoo! support is currently under development and expected
-to stabilise soon.
+Kopete ships with a lot of protocol plugins, most of which are actively
+supported. The MSN, ICQ, AIM, Jabber and IRC plugins have seen numerous
+enhancements and bugfixes since the last release and should bring your
+Kopete experience to a whole new level.
 
-The Kopete developers can be contacted on our mailing list,
+Additionally there are some new plugins, but not all of them are considered
+fully usable yet. The Gadu-Gadu plugin is complete and supported. WinPopup
+should be complete, but is not yet supported in this release. The Yahoo
+plugin and the new Oscar plugin (which is scheduled to replace both the ICQ
+and AIM plugins) are under development and not ready for general use yet.
+
+As always, bug reports and patches are welcome, but especially for the new
+'unsupported' plugins we'd like you to check the current development version
+of Kopete in KDE CVS before filing bug reports or submitting patches. The
+code is simply too much subject to change for these plugins.
+
+The Kopete team consists now of several active developers, working on the
+various plugins and the core API. However, Kopete wouldn't be in the shape
+in which it is now without the various contributions from KDE developers
+all over the world and the high-quality bug reports from active users.
+Thanks to all of you for your support and your interest in Kopete!
+
+The Kopete main developers can be contacted on our mailing list,
 kopete-devel@kde.org.
 
-Enjoy!
-
-Kopete core team:
-Duncan Mac-Vicar P.
-Nick Betcher
-
-Kopete developers:
-Ryan Cumming
-Martijn Klingens
-Stefan Gehen
-Richard Stellingwerff
-Daniel Stone
-Olivier Goffart
