@@ -71,7 +71,7 @@ JabberProtocol::JabberProtocol (QObject * parent, const char *name, const QStrin
 	JabberKOSXA(KopeteOnlineStatus::Away,               70, this, 3, "jabber_away",       i18n ("Set E&xtended Away"), i18n ("Extended Away")),
 	JabberKOSDND(KopeteOnlineStatus::Away,              60, this, 4, "jabber_na",         i18n ("Set &Do not Disturb"), i18n ("Do not Disturb")),
 	JabberKOSOffline(KopeteOnlineStatus::Offline,       50, this, 5, QString::null,       i18n ("Go O&ffline"), i18n ("Offline")),
-	JabberKOSInvisible(KopeteOnlineStatus::Online,      40, this, 6, "jabber_invisible",    i18n ("Set I&nvisible"), i18n ("Invisible")),
+	JabberKOSInvisible(KopeteOnlineStatus::Invisible,   40, this, 6, "jabber_invisible",    i18n ("Set I&nvisible"), i18n ("Invisible")),
 	JabberKOSConnecting(KopeteOnlineStatus::Connecting, 30, this, 7, "jabber_connecting", i18n ("FIXME: You should not see this"), i18n("Connecting")),
 	awayMessage(Kopete::Global::Properties::self()->awayMessage())
 {
