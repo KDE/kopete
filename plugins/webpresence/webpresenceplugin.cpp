@@ -160,27 +160,22 @@ KTempFile* WebPresencePlugin::generateFile()
 
 	// insert the list of the contact's protocols
 	output += h.openTag( "protocols" );
-	
+
 	for ( KopeteProtocol *p = protocols.first();
 			p; p = protocols.next() )
 	{
 		KopeteContact* me = p->myself();
-		
-		// save ourselves if the protocol hasn't initialised the local user's
-		// contact
-		if ( me == 0L )
-			break;
-			
+
 		output += h.openTag( "protocol" );
 
 		output += h.oneLineTag( "protoname", p->pluginId() );
 
-		output += h.oneLineTag( "protostatus", 
+		output += h.oneLineTag( "protostatus",
 				( me )
 				? statusAsString( me->status() )
 				: notKnown );
-		
-		if (  m_prefs->showAddresses() )
+
+		if ( m_prefs->showAddresses() )
 			output += h.oneLineTag( "protoaddress",
 					( me )
 					? me->contactId().latin1()
