@@ -21,6 +21,7 @@
 
 class KopeteMessageManager;
 class HistoryLogger;
+class KAction;
 
 /**
  *@author Olivier Goffart
@@ -43,8 +44,12 @@ private:
 	HistoryLogger *m_logger;
 	KopeteMessageManager *m_manager;
 	bool m_autoChatWindow;
-	int m_nbAutoChatWindow;
-	int m_nbChatWindow;
+	//int m_nbAutoChatWindow;
+	unsigned int m_nbChatWindow;
+
+	KAction *actionPrev;
+	KAction *actionNext;
+	KAction *actionLast;
 };
 
 #endif

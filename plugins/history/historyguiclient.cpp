@@ -36,19 +36,24 @@ HistoryGUIClient::HistoryGUIClient(KopeteMessageManager *parent , const char *na
 	QPtrList<KopeteContact> mb=m_manager->members();
 	m_logger=new HistoryLogger( mb.first() , this );
 
-	new KAction( i18n("History Last" ), QString::fromLatin1( "finish" ), 0, this, SLOT(slotLast()), actionCollection() , "historyLast" );
-	new KAction( i18n("History Previous" ), QString::fromLatin1( "back" ), ALT+SHIFT+Key_Left, this, SLOT(slotPrevious()), actionCollection() , "historyPrevious" );
-	new KAction( i18n("History Next" ), QString::fromLatin1( "forward" ), ALT+SHIFT+Key_Right, this, SLOT(slotNext()), actionCollection() , "historyNext");
+	actionLast=new KAction( i18n("History Last" ), QString::fromLatin1( "finish" ), 0, this, SLOT(slotLast()), actionCollection() , "historyLast" );
+	actionPrev=new KAction( i18n("History Previous" ), QString::fromLatin1( "back" ), ALT+SHIFT+Key_Left, this, SLOT(slotPrevious()), actionCollection() , "historyPrevious" );
+	actionNext=new KAction( i18n("History Next" ), QString::fromLatin1( "forward" ), ALT+SHIFT+Key_Right, this, SLOT(slotNext()), actionCollection() , "historyNext");
 
 	//it should be nice to use these std actions, but the shurtcut make conflict with the actual change tab shortcut  ( SHIFT +  left/right)
 	//KStdAction::back( this, SLOT(slotPrevious()), actionCollection() , "historyPrevious" );
 	//KStdAction::forward( this, SLOT(slotNext()), actionCollection() , "historyNext" );
 
+	/** we are generaly at last when begining */
+	actionPrev->setEnabled(true);
+	actionNext->setEnabled(false);
+	actionLast->setEnabled(false);
+
 	setXMLFile("historychatui.rc");
 
 	KGlobal::config()->setGroup("History Plugin");
 	m_autoChatWindow=KGlobal::config()->readBoolEntry("Auto chatwindow" , false );
-	m_nbAutoChatWindow=KGlobal::config()->readNumEntry( "Number Auto chatwindow" , 7) ;
+	//m_nbAutoChatWindow=KGlobal::config()->readNumEntry( "Number Auto chatwindow" , 7) ;
 	m_nbChatWindow=KGlobal::config()->readNumEntry( "Number ChatWindow", 20) ;
 }
 
@@ -60,66 +65,45 @@ HistoryGUIClient::~HistoryGUIClient()
 
 void HistoryGUIClient::slotPrevious()
 {
-	QPtrList<KopeteContact> mb=m_manager->members();
-	/*if(!m_loggers.contains(m_currentMessageManager))
-	{
-		m_loggers.insert(m_currentMessageManager , new HistoryLogger(mb.first() , m_prefs->historyColor(), this));
-		connect( m_currentMessageManager , SIGNAL(closing(KopeteMessageManager*)) , this , SLOT(slotKMMClosed(KopeteMessageManager*)));
-	}*/
-
 	KopeteView *m_currentView=m_manager->view(true);
 	m_currentView->clear();
-	//HistoryLogger *l=m_loggers[m_currentMessageManager];
-	m_currentView->appendMessages( m_logger->readMessages(m_nbChatWindow , mb.first() /*FIXME*/ , HistoryLogger::AntiChronological , true));
-//	int pos=l->currentPos();
-//	if(pos==-1)
-//		pos=l->totalMessages();
-//	connect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
-	//l->readLog(pos-m_prefs->nbChatwindow() , m_prefs->nbChatwindow());
-//	disconnect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
 
+	QPtrList<KopeteContact> mb=m_manager->members();
+	QValueList<KopeteMessage> msgs= m_logger->readMessages(m_nbChatWindow , mb.first() /*FIXME*/ , HistoryLogger::AntiChronological , true);
+	actionPrev->setEnabled(msgs.count() == m_nbChatWindow);
+	actionNext->setEnabled(true);
+	actionLast->setEnabled(true);
 
+	m_currentView->appendMessages( msgs );
 }
 
 void HistoryGUIClient::slotLast()
 {
-	QPtrList<KopeteContact> mb=m_manager->members();
-	/*if(!m_loggers.contains(m_currentMessageManager))
-	{
-		m_loggers.insert(m_currentMessageManager , new HistoryLogger(mb.first() , m_prefs->historyColor(), this));
-		connect( m_currentMessageManager , SIGNAL(closing(KopeteMessageManager*)) , this , SLOT(slotKMMClosed(KopeteMessageManager*)));
-	}*/
 
 	KopeteView *m_currentView=m_manager->view(true);
 	m_currentView->clear();
-	//HistoryLogger *l=m_loggers[m_currentMessageManager];
+
+	QPtrList<KopeteContact> mb=m_manager->members();
 	m_logger->setPositionToLast();
-	m_currentView->appendMessages( m_logger->readMessages(m_nbChatWindow , mb.first() /*FIXME*/ , HistoryLogger::AntiChronological , true ));
-/*
-	int pos=l->totalMessages();
-	connect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
-	l->readLog(pos-m_prefs->nbChatwindow() , m_prefs->nbChatwindow());
-	disconnect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));*/
+	QValueList<KopeteMessage> msgs= m_logger->readMessages(m_nbChatWindow , mb.first() /*FIXME*/ , HistoryLogger::AntiChronological , true);
+	actionPrev->setEnabled(true);
+	actionNext->setEnabled(false);
+	actionLast->setEnabled(false);
+
+	m_currentView->appendMessages( msgs );
 }
 void HistoryGUIClient::slotNext()
 {
-	QPtrList<KopeteContact> mb=m_manager->members();
-	/*if(!m_loggers.contains(m_currentMessageManager))
-	{
-		m_loggers.insert(m_currentMessageManager , new HistoryLogger(mb.first() , m_prefs->historyColor(), this));
-		connect( m_currentMessageManager , SIGNAL(closing(KopeteMessageManager*)) , this , SLOT(slotKMMClosed(KopeteMessageManager*)));
-	}*/
 	KopeteView *m_currentView=m_manager->view(true);
 	m_currentView->clear();
-	//HistoryLogger *l=m_loggers[m_currentMessageManager];
-	m_currentView->appendMessages( m_logger->readMessages(m_nbChatWindow , mb.first() /*FIXME*/ , HistoryLogger::Chronological , false));
-	/*
-	int pos=l->currentPos();
-	if(pos==-1)
-		pos=l->totalMessages();
-	connect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
-	l->readLog(pos+m_prefs->nbChatwindow() , m_prefs->nbChatwindow());
-	disconnect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));*/
+
+	QPtrList<KopeteContact> mb=m_manager->members();
+	QValueList<KopeteMessage> msgs= m_logger->readMessages(m_nbChatWindow , mb.first() /*FIXME*/ , HistoryLogger::Chronological , false);
+	actionPrev->setEnabled(true);
+	actionNext->setEnabled(msgs.count() == m_nbChatWindow);
+	actionLast->setEnabled(msgs.count() == m_nbChatWindow);
+
+	m_currentView->appendMessages( msgs );
 }
 
 #include "historyguiclient.moc"

@@ -23,6 +23,8 @@
 
 #include "kopeteplugin.h"
 
+#include "kopetemessage.h"
+
 class KopeteMessage;
 class KopeteView;
 class KActionCollection;
@@ -61,11 +63,10 @@ private slots:
 	void slotKMMClosed( KopeteMessageManager* );
 
 private:
-	KActionCollection *m_collection;
-	KopeteMessageManager *m_currentMessageManager;
-	KopeteView *m_currentView;
 	QMap<KopeteMessageManager*,HistoryGUIClient*> m_loggers;
 	HistoryPreferences *m_prefs;
+
+	KopeteMessage m_lastmessage;
 };
 
 #endif

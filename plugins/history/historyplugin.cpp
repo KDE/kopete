@@ -38,7 +38,6 @@ K_EXPORT_COMPONENT_FACTORY( kopete_history, KGenericFactory<HistoryPlugin> );
 HistoryPlugin::HistoryPlugin( QObject *parent, const char *name, const QStringList &/*args*/ )
 		: KopetePlugin( parent, name )
 {
-	m_collection=0L;
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( aboutToDisplay( KopeteMessage & ) ), this, SLOT( slotMessageDisplayed( KopeteMessage & ) ) );
 	connect( KopeteMessageManagerFactory::factory(), SIGNAL( viewCreated( KopeteView* ) ), this, SLOT( slotViewCreated( KopeteView* ) ) );
 
@@ -98,6 +97,7 @@ void HistoryPlugin::slotMessageDisplayed(KopeteMessage &m)
 		l->appendMessage(m);
 
 
+	m_lastmessage=m;
 
 ///////////////////////////  SAVE TO KOPETE 0.6 LOGS ////REMOVE!!!!!!!
 /*
@@ -214,21 +214,19 @@ void HistoryPlugin::slotViewCreated( KopeteView* v )
 
 	if(!m_loggers.contains(m_currentMessageManager))
 	{
-		//QPtrList<KopeteContact> mb=m.manager()->members();
-		//m_loggers.insert(m.manager() , new HistoryLogger(mb.first() , m_prefs->historyColor() ,  this));
 		m_loggers.insert(m_currentMessageManager , new HistoryGUIClient( m_currentMessageManager ) );
 		connect( m_currentMessageManager , SIGNAL(closing(KopeteMessageManager*)) , this , SLOT(slotKMMClosed(KopeteMessageManager*)));
 	}
 
 	HistoryLogger *l=m_loggers[m_currentMessageManager]->logger();
 	l->setPositionToLast();
-	m_currentView->appendMessages( l->readMessages(m_prefs->nbAutoChatwindow() , mb.first() /*FIXME*/ , HistoryLogger::AntiChronological , true ));
+	QValueList<KopeteMessage> msgs= l->readMessages(m_prefs->nbAutoChatwindow() , mb.first() /*FIXME*/ , HistoryLogger::AntiChronological , true );
 
-	/*
-	connect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
-	l->readLog(l->totalMessages()-m_prefs->nbAutoChatwindow() , m_prefs->nbAutoChatwindow());
-	disconnect(l, SIGNAL( addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ) , this , SLOT (addMessage( KopeteMessage::MessageDirection , QString , QString , QString  ) ));
-*/
+	// make sure the last message is not the one which will be appened right after the view is created (and which has just been logged in)
+	if(msgs.last().plainBody() == m_lastmessage.plainBody() &&  m_lastmessage.manager() == m_currentMessageManager)
+		msgs.remove(msgs.fromLast());
+
+	m_currentView->appendMessages( msgs );
 }
 
 void HistoryPlugin::slotKMMClosed( KopeteMessageManager* kmm)
