@@ -29,7 +29,10 @@ AC_MSG_CHECKING([for libgadu >= 1.0])
 	[
 	#include <libgadu.h>
 	#include <stdio.h>
-
+	#ifndef __GG_LIBGADU_HAVE_PTHREAD
+	#error "libgadu needs pthread support, in order to work with gadu"
+	#endif
+	
 	int main()
 	{
 		int bar;
