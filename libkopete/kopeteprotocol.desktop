@@ -3,12 +3,10 @@ Encoding=UTF-8
 Type=ServiceType
 X-KDE-ServiceType=Kopete/Protocol
 X-KDE-Derived=Kopete/Plugin
-Comment=A Kopete Protocol Plugin
-Comment[es]=Plugin de protocolo para Kopete
-Comment[fr]=Un module protocole de Kopete
-Comment[pt]=Um 'Plugin' de Protocolo do Kopete
-Comment[pt_BR]=Um 'Plugin' de Protocolo do Kopete
-Comment[sv]=Protokollinsticksprogram för Kopete
+Comment=Kopete Protocol Plugin
+Comment[ca]=Un connector de protocol per a Kopete
+Comment[da]=En Kopete-protokol-plugin
+Comment[sr]=Kopete-ов додатак за протокол
 
 [PropertyDef::X-Kopete-Messaging-Protocol]
 Type=QString
