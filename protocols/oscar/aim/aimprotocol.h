@@ -19,6 +19,7 @@
 #define AIMPROTOCOL_H
 
 #include "kopeteprotocol.h"
+#include "kopetecontactproperty.h"
 
 #include <qmap.h>
 
@@ -59,6 +60,8 @@ class AIMProtocol : public KopeteProtocol
 		const KopeteOnlineStatus statusOffline;
 		const KopeteOnlineStatus statusAway;
 		const KopeteOnlineStatus statusConnecting;
+
+		const Kopete::ContactPropertyTmpl awayMessage;
 
 	private:
 		/** The active instance of oscarprotocol */

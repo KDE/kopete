@@ -75,23 +75,23 @@ KActionMenu* ICQAccount::actionMenu()
 		this, SLOT(slotGoOffline()), this, "ICQAccount::mActionOffline");
 
 	KopeteAwayAction* mActionAway = new KopeteAwayAction(p->statusAway.caption(),
-		p->statusAway.iconFor(this), 0, 
+		p->statusAway.iconFor(this), 0,
 		this, SLOT(slotGoAway( const QString & )), this, "ICQAccount::mActionAway" );
-	
+
 	KopeteAwayAction* mActionNA = new KopeteAwayAction(p->statusNA.caption(),
-		p->statusNA.iconFor(this), 0, 
+		p->statusNA.iconFor(this), 0,
 		this, SLOT(slotGoNA( const QString & )), this, "ICQAccount::mActionNA" );
 
 	KopeteAwayAction* mActionDND = new KopeteAwayAction(p->statusDND.caption(),
-		p->statusDND.iconFor(this), 0, 
+		p->statusDND.iconFor(this), 0,
 		this, SLOT(slotGoDND( const QString & )), this, "ICQAccount::mActionDND" );
 
 	KopeteAwayAction* mActionOCC = new KopeteAwayAction(p->statusOCC.caption(),
-		p->statusOCC.iconFor(this), 0, 
+		p->statusOCC.iconFor(this), 0,
 		this, SLOT(slotGoOCC( const QString & )), this, "ICQAccount::mActionOCC" );
 
 	KopeteAwayAction* mActionFFC = new KopeteAwayAction(p->statusFFC.caption(),
-		p->statusFFC.iconFor(this), 0, 
+		p->statusFFC.iconFor(this), 0,
 		this, SLOT(slotGoFFC( const QString & )), this, "ICQAccount::mActionFCC" );
 
 	KToggleAction* mActionInvisible = new KToggleAction(i18n("Invisible"),
@@ -282,8 +282,7 @@ void ICQAccount::setStatus(const unsigned long status,
 		", old status=" << mStatus << endl;
 
 	mStatus = status;
-	if(!awayMessage.isNull())
-		setAwayMessage(awayMessage);
+	setAwayMessage(awayMessage);
 
 	unsigned long outgoingStatus = fullStatus(status);
 	if (isConnected())

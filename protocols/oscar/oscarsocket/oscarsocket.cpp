@@ -474,7 +474,7 @@ void OscarSocket::slotRead()
 					switch(s.subtype)
 					{
 						case 0x0001: //registration refused!
-							emit protocolError(i18n("Registration refused."), 0);
+							emit protocolError(i18n("Registration refused. Check your user name and password and try again"), 0);
 							break;
 						case 0x0003: //authorization response (and hash) is being sent
 							parseAuthResponse(inbuf);

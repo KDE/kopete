@@ -1,9 +1,9 @@
 /*
   icqontact.cpp  -  Oscar Protocol Plugin
 
-  Copyright (c) 2003 by Stefan Gehn  <metz AT gehn.net>
-  Copyright (c) 2003 by Olivier Goffart
-  Kopete    (c) 2003 by the Kopete developers  <kopete-devel@kde.org>
+  Copyright (c) 2003      by Stefan Gehn  <metz AT gehn.net>
+  Copyright (c) 2003      by Olivier Goffart
+  Kopete    (c) 2003-2004 by the Kopete developers  <kopete-devel@kde.org>
 
   *************************************************************************
   *                                                                       *
@@ -83,18 +83,17 @@ ICQContact::ICQContact(const QString name, const QString displayName,
 	QObject::connect(
 		acc->engine(), SIGNAL(gotICQInfoItemList(const int, const ICQInfoItemList &, const ICQInfoItemList & )),
 		this, SLOT(slotUpdBackgroundUserInfo(const int, const ICQInfoItemList &, const ICQInfoItemList & ) ) );
-		
+
 	QObject::connect(
 		acc->engine(), SIGNAL( gotICQShortInfo(const int, const ICQSearchResult& ) ),
 		this, SLOT( slotUpdShortInfo( const int, const ICQSearchResult& ) ) );
 
-	
+
 	if(name == displayName && account()->isConnected())
 	{
 		kdDebug(14200) << k_funcinfo << "ICQ Contact with no nickname, grabbing userinfo" << endl;
 		requestShortInfo();
 	}
-	
 
 	actionReadAwayMessage = 0L;
 }
@@ -120,24 +119,34 @@ void ICQContact::slotContactChanged(const UserInfo &u)
 
 	unsigned int newStatus = 0;
 	mInvisible = (u.icqextstatus & ICQ_STATUS_IS_INVIS);
-	if (u.icqextstatus & ICQ_STATUS_IS_FFC)			newStatus = OSCAR_FFC;
-	else if (u.icqextstatus & ICQ_STATUS_IS_DND)	newStatus = OSCAR_DND;
-	else if (u.icqextstatus & ICQ_STATUS_IS_OCC)	newStatus = OSCAR_OCC;
-	else if (u.icqextstatus & ICQ_STATUS_IS_NA)		newStatus = OSCAR_NA;
-	else if (u.icqextstatus & ICQ_STATUS_IS_AWAY)	newStatus = OSCAR_AWAY;
-	else											newStatus = OSCAR_ONLINE;
 
-	if((this != account()->myself()) &&
-	   (newStatus != onlineStatus().internalStatus()) &&
-	   (newStatus != OSCAR_ONLINE) &&
-	   (account()->myself()->onlineStatus().status() != KopeteOnlineStatus::Connecting))
-	{
-		// TODO: Add queues for away message requests
-		mAccount->engine()->requestAwayMessage(this);
-	}
+	if (u.icqextstatus & ICQ_STATUS_IS_FFC)
+		newStatus = OSCAR_FFC;
+	else if (u.icqextstatus & ICQ_STATUS_IS_DND)
+		newStatus = OSCAR_DND;
+	else if (u.icqextstatus & ICQ_STATUS_IS_OCC)
+		newStatus = OSCAR_OCC;
+	else if (u.icqextstatus & ICQ_STATUS_IS_NA)
+		newStatus = OSCAR_NA;
+	else if (u.icqextstatus & ICQ_STATUS_IS_AWAY)
+		newStatus = OSCAR_AWAY;
 	else
+		newStatus = OSCAR_ONLINE;
+
+	if (this != account()->myself())
 	{
-		removeProperty("awayMessage"); // unset awayMessage
+		if(newStatus != onlineStatus().internalStatus())
+		{
+			if(newStatus != OSCAR_ONLINE) // if user changed to some state other than online
+			{
+				// TODO: Add queues for away message requests
+				mAccount->engine()->requestAwayMessage(this);
+			}
+			else // user changed to "Online" status and has no away message anymore
+			{
+				removeProperty(mProtocol->awayMessage);
+			}
+		}
 	}
 
 	setStatus(newStatus);
@@ -361,6 +370,19 @@ void ICQContact::slotCloseAwayMessageDialog()
 	awayMessageDialog = 0L;
 }
 
+const QString ICQContact::awayMessage()
+{
+	kdDebug(14150) << k_funcinfo <<  property(mProtocol->awayMessage).value().toString() << endl;
+	return property(mProtocol->awayMessage).value().toString();
+}
+
+void ICQContact::setAwayMessage(const QString &message)
+{
+	/*kdDebug(14150) << k_funcinfo <<
+		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;*/
+	setProperty(mProtocol->awayMessage, message);
+	emit awayMessageChanged();
+}
 
 void ICQContact::requestUserInfo()
 {
@@ -374,7 +396,7 @@ void ICQContact::requestShortInfo()
 {
 	//kdDebug(14200) << k_funcinfo << "called" << endl;
 	userinfoReplyCount = 0;
-	userinfoRequestSequence = 
+	userinfoRequestSequence =
 		account()->engine()->sendShortInfoReq( contactName().toULong() );
 }
 
@@ -386,15 +408,16 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 	generalInfo = inf;
 
 	if(!generalInfo.firstName.isEmpty())
-		setProperty("firstName", generalInfo.firstName);
+		setProperty(mProtocol->firstName, generalInfo.firstName);
 	else
-		removeProperty("firstName");
+		removeProperty(mProtocol->firstName);
 
 	if(!generalInfo.lastName.isEmpty())
-		setProperty("lastName", generalInfo.lastName);
+		setProperty(mProtocol->lastName, generalInfo.lastName);
 	else
-		removeProperty("lastName");
+		removeProperty(mProtocol->lastName);
 
+	/*
 	if(!generalInfo.eMail.isEmpty())
 		setProperty("emailAddress", generalInfo.eMail);
 	else
@@ -414,6 +437,7 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 		setProperty("privMobileNum", generalInfo.cellularNumber);
 	else
 		removeProperty("privMobileNum");
+	*/
 
 	if(contactName() == displayName() && !generalInfo.nickName.isEmpty())
 	{
@@ -427,7 +451,7 @@ void ICQContact::slotUpdGeneralInfo(const int seq, const ICQGeneralUserInfo &inf
 }
 
 
-//FIXME: Share the code for first and last name and email address with 
+//FIXME: Share the code for first and last name and email address with
 // the above function some how
 void ICQContact::slotUpdShortInfo(const int seq, const ICQSearchResult &inf)
 {
@@ -435,22 +459,22 @@ void ICQContact::slotUpdShortInfo(const int seq, const ICQSearchResult &inf)
 	if(seq != userinfoRequestSequence)
 		return;
 	shortInfo = inf;
-	
+
 	if(!shortInfo.firstName.isEmpty())
-		setProperty("firstName", shortInfo.firstName);
+		setProperty(mProtocol->firstName, shortInfo.firstName);
 	else
-		removeProperty("firstName");
+		removeProperty(mProtocol->firstName);
 
 	if(!shortInfo.lastName.isEmpty())
-		setProperty("lastName", shortInfo.lastName);
+		setProperty(mProtocol->lastName, shortInfo.lastName);
 	else
-		removeProperty("lastName");
+		removeProperty(mProtocol->lastName);
 
-	if(!shortInfo.eMail.isEmpty())
+/*	if(!shortInfo.eMail.isEmpty())
 		setProperty("emailAddress", shortInfo.eMail);
 	else
-		removeProperty("emailAddress");
-		
+		removeProperty("emailAddress");*/
+
 	if ( contactName() == displayName() && !shortInfo.nickName.isEmpty() )
 	{
 		kdDebug(14200) << k_funcinfo << "setting new displayname for former UIN-only Contact" << endl;
@@ -468,6 +492,7 @@ void ICQContact::slotUpdWorkInfo(const int seq, const ICQWorkUserInfo &inf)
 		return;
 	workInfo = inf;
 
+	/*
 	if(!workInfo.phone.isEmpty())
 		setProperty("workPhoneNum", i18n("Work Phone Number"), workInfo.phone);
 	else
@@ -477,6 +502,7 @@ void ICQContact::slotUpdWorkInfo(const int seq, const ICQWorkUserInfo &inf)
 		setProperty("workFaxNum", i18n("Work Fax Number"), workInfo.fax);
 	else
 		removeProperty("workFaxNum");
+	*/
 
 	userinfoReplyCount++;
 	if (userinfoReplyCount >= SUPPORTED_INFO_ITEMS)

@@ -192,8 +192,7 @@ void AIMAccount::setStatus(const unsigned long status,
 		", old status=" << mStatus << endl;
 	mStatus = status;
 
-	if(!awayMessage.isNull())
-		setAwayMessage(awayMessage);
+	setAwayMessage(awayMessage);
 
 	if (isConnected())
 		engine()->sendAIMAway((status==OSCAR_AWAY), awayMessage);

@@ -767,12 +767,12 @@ void OscarAccount::slotOurStatusChanged(const unsigned int newStatus)
 
 void OscarAccount::setAwayMessage(const QString &msg)
 {
-	d->awayMessage = msg;
+	static_cast<OscarContact *>(myself())->setAwayMessage(msg);
 }
 
-const QString &OscarAccount::awayMessage()
+const QString OscarAccount::awayMessage()
 {
-	return d->awayMessage;
+	return (static_cast<OscarContact *>(myself())->awayMessage());
 }
 
 bool OscarAccount::ignoreUnknownContacts() const

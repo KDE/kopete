@@ -25,8 +25,8 @@
 #include "aimeditaccountwidget.h"
 
 #include "kopeteaccountmanager.h"
+#include "kopeteglobal.h"
 #include "aimcontact.h"
-//#include "oscarpreferences.h"
 
 typedef KGenericFactory<AIMProtocol> AIMProtocolFactory;
 
@@ -39,7 +39,8 @@ AIMProtocol::AIMProtocol(QObject *parent, const char *name, const QStringList &)
 	statusOnline(KopeteOnlineStatus::Online, 1, this, OSCAR_ONLINE, QString::null, i18n("Online"), i18n("Online")),
 	statusOffline(KopeteOnlineStatus::Offline, 1, this, OSCAR_OFFLINE, QString::null, i18n("Offline"), i18n("Offline")),
 	statusAway(KopeteOnlineStatus::Away, 1, this, OSCAR_AWAY, "aim_away", i18n("Away"), i18n("Away")),
-	statusConnecting(KopeteOnlineStatus::Connecting, 99, this, OSCAR_CONNECTING, "aim_connecting", i18n("Connecting..."), i18n("Connecting..."))
+	statusConnecting(KopeteOnlineStatus::Connecting, 99, this, OSCAR_CONNECTING, "aim_connecting", i18n("Connecting..."), i18n("Connecting...")),
+	awayMessage(Kopete::Global::Properties::self()->awayMessage())
 {
 	if (protocolStatic_)
 		kdDebug(14190) << k_funcinfo << "AIM plugin already initialized" << endl;

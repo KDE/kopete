@@ -20,6 +20,7 @@
 #include "icqaddcontactpage.h"
 #include "icqeditaccountwidget.h"
 #include "icquserinfowidget.h"
+#include "kopeteglobal.h"
 
 #include <netinet/in.h> // for ntohl()
 
@@ -55,8 +56,10 @@ ICQProtocol::ICQProtocol(QObject *parent, const char *name, const QStringList&)
 	statusDND(KopeteOnlineStatus::Away, 2, this, OSCAR_DND, "icq_dnd", i18n("&Do Not Disturb"), i18n("Do not Disturb")),
 	statusNA(KopeteOnlineStatus::Away, 3, this, OSCAR_NA, "icq_na", i18n("Not A&vailable"), i18n("Not Available")),
 	statusOCC(KopeteOnlineStatus::Away, 4, this, OSCAR_OCC,"icq_occupied" , i18n("O&ccupied"), i18n("Occupied")),
-	statusConnecting(KopeteOnlineStatus::Connecting, 99, this, OSCAR_CONNECTING, "icq_connecting", i18n("Connecting..."), i18n("Connecting..."))
-
+	statusConnecting(KopeteOnlineStatus::Connecting, 99, this, OSCAR_CONNECTING, "icq_connecting", i18n("Connecting..."), i18n("Connecting...")),
+	firstName(Kopete::Global::Properties::self()->firstName()),
+	lastName(Kopete::Global::Properties::self()->lastName()),
+	awayMessage(Kopete::Global::Properties::self()->awayMessage())
 {
 	if (protocolStatic_)
 		kdDebug(14200) << k_funcinfo << "ICQ plugin already initialized" << endl;
@@ -83,8 +86,8 @@ ICQProtocol::~ICQProtocol()
 void ICQProtocol::initGenders()
 {
 	mGenders.insert(0, "");
-	mGenders.insert(2, i18n("Female"));
-	mGenders.insert(1, i18n("Male"));
+	mGenders.insert(1, i18n("Female"));
+	mGenders.insert(2, i18n("Male"));
 }
 
 void ICQProtocol::initCountries()
@@ -92,7 +95,7 @@ void ICQProtocol::initCountries()
 	mCountries.insert(0, ""); // unspecified
 	//Shut the translators up (bug 77828)
 	KLocale kl(QString::fromLatin1("kopete"));
-	
+
 	mCountries.insert(93, kl.twoAlphaToCountryName("af"));
 	mCountries.insert(355, kl.twoAlphaToCountryName("al"));
 	mCountries.insert(213, kl.twoAlphaToCountryName("dz"));
@@ -166,7 +169,7 @@ void ICQProtocol::initCountries()
 	mCountries.insert(679, kl.twoAlphaToCountryName("fj"));
 	mCountries.insert(358, kl.twoAlphaToCountryName("fi"));
 	mCountries.insert(33, kl.twoAlphaToCountryName("fr"));
-	mCountries.insert(5901, i18n("French Antilles")); 
+	mCountries.insert(5901, i18n("French Antilles"));
 	mCountries.insert(594, kl.twoAlphaToCountryName("gf"));
 	mCountries.insert(689, kl.twoAlphaToCountryName("pf"));
 	mCountries.insert(241, kl.twoAlphaToCountryName("ga"));
@@ -249,7 +252,7 @@ void ICQProtocol::initCountries()
 	mCountries.insert(977, kl.twoAlphaToCountryName("np"));
 	mCountries.insert(599, kl.twoAlphaToCountryName("an"));
 	mCountries.insert(31, kl.twoAlphaToCountryName("nl"));
-	mCountries.insert(114, i18n("Nevis")); 
+	mCountries.insert(114, i18n("Nevis"));
 	mCountries.insert(687, kl.twoAlphaToCountryName("nc"));
 	mCountries.insert(64, kl.twoAlphaToCountryName("nz"));
 	mCountries.insert(505, kl.twoAlphaToCountryName("ni"));
@@ -271,13 +274,13 @@ void ICQProtocol::initCountries()
 	mCountries.insert(121, kl.twoAlphaToCountryName("pr"));
 	mCountries.insert(974, kl.twoAlphaToCountryName("qa"));
 	mCountries.insert(389, kl.twoAlphaToCountryName("mk"));
-	mCountries.insert(262, i18n("Reunion Island")); 
+	mCountries.insert(262, i18n("Reunion Island"));
 	mCountries.insert(40, kl.twoAlphaToCountryName("ro"));
-	mCountries.insert(6701, i18n("Rota Island")); 
+	mCountries.insert(6701, i18n("Rota Island"));
 	mCountries.insert(7, kl.twoAlphaToCountryName("ru"));
 	mCountries.insert(250, kl.twoAlphaToCountryName("rw"));
 	mCountries.insert(122, kl.twoAlphaToCountryName("lc"));
-	mCountries.insert(670, i18n("Ivory Coast")); 
+	mCountries.insert(670, i18n("Ivory Coast"));
 	mCountries.insert(378, kl.twoAlphaToCountryName("sm"));
 	mCountries.insert(239, kl.twoAlphaToCountryName("st"));
 	mCountries.insert(966, kl.twoAlphaToCountryName("sa"));
@@ -306,7 +309,7 @@ void ICQProtocol::initCountries()
 	mCountries.insert(708, kl.twoAlphaToCountryName("tj"));
 	mCountries.insert(255, kl.twoAlphaToCountryName("tz"));
 	mCountries.insert(66, kl.twoAlphaToCountryName("th"));
-	mCountries.insert(6702, i18n("Tinian Island")); 
+	mCountries.insert(6702, i18n("Tinian Island"));
 	mCountries.insert(228, kl.twoAlphaToCountryName("tg"));
 	mCountries.insert(690, kl.twoAlphaToCountryName("tk"));
 	mCountries.insert(676, kl.twoAlphaToCountryName("to"));

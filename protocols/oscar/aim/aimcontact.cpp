@@ -84,7 +84,7 @@ void AIMContact::slotGotProfile(const UserInfo &user, const QString &profile, co
 		return;
 	kdDebug(14200) << k_funcinfo << "Called for contact '" << displayName() << "'" << endl;
 	mUserProfile = profile;
-	mAwayMessage = away;
+	setAwayMessage(away);
 	emit updatedProfile();
 }
 
@@ -478,4 +478,18 @@ void AIMContact::slotWarn()
 	else if (result == KMessageBox::No)
 		mAccount->engine()->sendWarning(contactName(), false);
 }
+
+const QString AIMContact::awayMessage()
+{
+	return property(mProtocol->awayMessage).value().toString();
+}
+
+void AIMContact::setAwayMessage(const QString &message)
+{
+	/*kdDebug(14150) << k_funcinfo <<
+		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;*/
+	setProperty(mProtocol->awayMessage, message);
+	emit awayMessageChanged();
+}
+
 #include "aimcontact.moc"

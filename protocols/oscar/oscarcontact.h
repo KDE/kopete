@@ -104,8 +104,8 @@ class OscarContact : public KopeteContact
 		const int groupId();
 		void setGroupId(const int);
 
-		const QString awayMessage();
-		void setAwayMessage(const QString &message);
+		virtual const QString awayMessage() = 0;
+		virtual void setAwayMessage(const QString &message) = 0;
 
 	signals:
 		void awayMessageChanged();
