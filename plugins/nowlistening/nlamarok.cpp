@@ -37,15 +37,26 @@ NLAmaroK::NLAmaroK( DCOPClient *client ) : NLMediaPlayer()
 void NLAmaroK::update()
 {
 	m_playing = false;
+	m_newTrack = false;
 	QString newTrack;
+	QByteArray data, replyData;
+	QCString replyType;
+	QString result;
 
 	// see if AmaroK is  registered with DCOP
-	if ( m_client->isApplicationRegistered( "amarok" ) )
+	if ( !m_client->isApplicationRegistered( "amarok" ) )
 	{
-		// see if it's playing
-		QByteArray data, replyData;
-		QCString replyType;
-		QString result;
+		kdDebug ( 14307 ) << "AmaroK is not running!\n" << endl;
+		return;
+	}
+
+	// see if it's playing
+	// use status() call first, if not supported (amaroK 1.0 or earlier), use isPlaying
+	
+	if ( !m_client->call( "amarok", "player", "status()", data,
+	      replyType, replyData ) )
+	{
+		kdDebug( 14307 ) << k_funcinfo << " DCOP status() returned error, falling back to isPlaying()." << endl;
 		if ( !m_client->call( "amarok", "player", "isPlaying()", data,
 					replyType, replyData ) )
 		{
@@ -58,44 +69,57 @@ void NLAmaroK::update()
 				reply >> m_playing;
 			}
 		}
-
-		if ( m_client->call( "amarok", "player", "title()", data,
-					replyType, replyData ) )
-		{
-			QDataStream reply( replyData, IO_ReadOnly );
-
-			if ( replyType == "QString" ) {
-				reply >> newTrack;
-			}
-		}
-		if ( newTrack != m_track )
-		{
-			m_newTrack = true;
-			m_track = newTrack;
-		}
-		else
-			m_newTrack = false;
-
-		if ( m_client->call( "amarok", "player", "album()", data,
-					replyType, replyData ) )
-		{
-			QDataStream reply( replyData, IO_ReadOnly );
-
-			if ( replyType == "QString" ) {
-				reply >> m_album;
-			}
-		}
-		if ( m_client->call( "amarok", "player", "artist()", data,
-					replyType, replyData ) )
-		{
-			QDataStream reply( replyData, IO_ReadOnly );
-
-			if ( replyType == "QString" ) {
-				reply >> m_artist;
-			}
-		}
 	}
 	else
-		kdDebug ( 14307 ) << "AmaroK is not running!\n" << endl;
+	{
+		int status = 0;
+
+		QDataStream reply( replyData, IO_ReadOnly );
+		if ( replyType == "int" ) {
+			reply >> status;
+			kdDebug( 14307 ) << k_funcinfo << "Amarok status()=" << status << endl;
+		}
+
+		if ( status ) 
+		{
+			m_playing = true;
+		}
+	}
+
+	if ( m_client->call( "amarok", "player", "title()", data,
+				replyType, replyData ) )
+	{
+		QDataStream reply( replyData, IO_ReadOnly );
+
+		if ( replyType == "QString" ) {
+			reply >> newTrack;
+		}
+	}
+
+	if ( newTrack != m_track )
+	{
+		m_newTrack = true;
+		m_track = newTrack;
+	}
+
+	if ( m_client->call( "amarok", "player", "album()", data,
+				replyType, replyData ) )
+	{
+		QDataStream reply( replyData, IO_ReadOnly );
+
+		if ( replyType == "QString" ) {
+			reply >> m_album;
+		}
+	}
+
+	if ( m_client->call( "amarok", "player", "artist()", data,
+				replyType, replyData ) )
+	{
+		QDataStream reply( replyData, IO_ReadOnly );
+
+		if ( replyType == "QString" ) {
+			reply >> m_artist;
+		}
+	}
 }
 
