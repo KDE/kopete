@@ -28,6 +28,7 @@
 
 #include <kopeteaccountmanager.h>
 #include <kopetemetacontact.h>
+#include <kopetecontactlist.h>
 #include <kopeteview.h>
 
 #include <kconfig.h>
@@ -61,6 +62,9 @@ IRCContactManager::IRCContactManager(const QString &nickName, IRCAccount *accoun
 
 	QObject::connect(account->engine(), SIGNAL(incomingUserOnline(const QString &)),
 			this, SLOT( slotIsonRecieved()));
+
+	QObject::connect(Kopete::ContactList::self(), SIGNAL(metaContactAdded( Kopete::MetaContact * )),
+			this, SLOT( slotContactAdded( Kopete::MetaContact* )));
 
 	socketTimeout = 15000;
 	QString timeoutPath = locate( "config", "kioslaverc" );
@@ -106,6 +110,35 @@ void IRCContactManager::unregister(Kopete::Contact *contact)
 {
 	unregisterChannel(contact, true);
 	unregisterUser(contact, true);
+}
+
+QValueList<IRCChannelContact*> IRCContactManager::findChannelsByMember( IRCUserContact *contact )
+{
+	QValueList<IRCChannelContact*> retVal;
+	for( QDictIterator<IRCChannelContact> it(m_channels); it.current(); ++it )
+	{
+		if( it.current()->manager(Kopete::Contact::CannotCreate) )
+		{
+			if( contact == m_mySelf )
+				retVal.push_back( it.current() );
+			else
+			{
+				bool c = true;
+
+				Kopete::ContactPtrList members = it.current()->manager()->members();
+				for( QPtrListIterator<Kopete::Contact> it2( members ); c && it2.current(); ++it2 )
+				{
+					if( it2.current() == contact )
+					{
+						retVal.push_back( it.current() );
+						c = false;
+					}
+				}
+			}
+		}
+	}
+
+	return retVal;
 }
 
 IRCChannelContact *IRCContactManager::findChannel(const QString &name, Kopete::MetaContact *m)
@@ -211,6 +244,17 @@ void IRCContactManager::unregisterUser(Kopete::Contact *contact, bool force )
 		user->metaContact()->isTemporary() ) )
 	{
 		m_users.remove( user->nickName() );
+	}
+}
+
+void IRCContactManager::slotContactAdded( Kopete::MetaContact *contact )
+{
+	for( QPtrListIterator<Kopete::Contact> it( contact->contacts() ); it.current(); ++it )
+	{
+		if( it.current()->account() == m_account )
+		{
+			addToNotifyList( static_cast<IRCContact*>( it.current() )->nickName() );
+		}
 	}
 }
 

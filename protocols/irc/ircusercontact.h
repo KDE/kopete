@@ -21,6 +21,7 @@
 
 #include "kopetemessagemanagerfactory.h"
 #include "irccontact.h"
+#include "kopeteonlinestatus.h"
 
 class QTimer;
 
@@ -116,6 +117,8 @@ private slots:
 	void slotIncomingModeChange(const QString &nick, const QString &channel, const QString &mode);
 
 private:
+	void setManagerStatus(IRCChannelContact *channel, int statusAdjustment );
+
 	KActionMenu *actionModeMenu;
 	KActionMenu *actionCtcpMenu;
 	KAction *actionKick;

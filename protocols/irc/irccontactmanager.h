@@ -73,6 +73,8 @@ class IRCContactManager
 		IRCContact *findContact(const QString &nick, Kopete::MetaContact *m=0);
 		IRCContact *existContact( const QString &id ) const;
 
+		QValueList<IRCChannelContact*> findChannelsByMember( IRCUserContact *contact );
+
 		static IRCContact *existContact(const KIRC::Engine *engine, const QString &nick);
 
 	public slots:
@@ -93,6 +95,7 @@ class IRCContactManager
 		void slotIsonRecieved();
 		void slotIsonTimeout();
 		void slotNewNickChange(const QString &oldnick, const QString &newnick);
+		void slotContactAdded( Kopete::MetaContact *contact );
 
 	private:
 		QDict<IRCChannelContact> m_channels;

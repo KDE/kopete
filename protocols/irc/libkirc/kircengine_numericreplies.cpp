@@ -50,9 +50,9 @@ void Engine::bindNumericReplies()
 
 	bind(301, this, SLOT(numericReply_301(KIRC::Message &)), 2, 2); // incomingUserIsAway
 	bind(303, this, SLOT(numericReply_303(KIRC::Message &)), 1, 1); // incomingUserOnline
-//	bind(305, Engine::IgnoreMethod );
-//	bind(306, Engine::IgnoreMethod );
-//	bind(307, this, SLOT(numericReply_307(KIRC::Message &)), 2, 2); // incomingWhoIsIdentified
+	bind(305, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 ); // You are no longer marked as away
+	bind(306, this, SLOT(ignoreMessage(KIRC::Message&)), 0, 0 ); // You are marked as away
+	bind(307, this, SLOT(dumpSuffix(KIRC::Message&)),0,0); // Who Knows?
 	bind(311, this, SLOT(numericReply_311(KIRC::Message &)), 5, 5);
 	bind(312, this, SLOT(numericReply_312(KIRC::Message &)), 3, 3);
 //	bind(313, this, SLOT(numericReply_313(KIRC::Message &)), 2, 2); // incomingWhoIsOperator
@@ -64,7 +64,7 @@ void Engine::bindNumericReplies()
 	bind(320, this, SLOT(numericReply_320(KIRC::Message &)), 2, 2); // incomingWhoIsIdentified
 //	bind(321, Engine::IgnoreMethod );
 	bind(322, this, SLOT(numericReply_322(KIRC::Message &)), 3, 3);
-//	bind(323, this, SLOT(numericReply_323(KIRC::Message &)), 1, 1); // incomingEndOfList
+	bind(323, this, SLOT(numericReply_323(KIRC::Message &)), 1, 1); // incomingEndOfList
 	bind(324, this, SLOT(numericReply_324(KIRC::Message &)), 2, 4);
 	bind(328, this, SLOT(numericReply_328(KIRC::Message &)), 2, 2);
 	bind(329, this, SLOT(numericReply_329(KIRC::Message &)), 3, 3);
@@ -89,7 +89,18 @@ void Engine::bindNumericReplies()
 	bind(473, this, SLOT(numericReply_473(KIRC::Message &)), 2, 2);
 	bind(474, this, SLOT(numericReply_474(KIRC::Message &)), 2, 2);
 	bind(475, this, SLOT(numericReply_475(KIRC::Message &)), 2, 2);
-//	bind(477, this, SLOT(numericReply_477(KIRC::Message &)), 2, 2);
+
+	//Freenode seems to use this for a non-RFC compliant purpose, as does Unreal
+	bind(477, this, SLOT(dumpSuffix(KIRC::Message&)),0,0);
+}
+
+/*
+ * Use this for numeric codes that have multiple definitions, so we can't know what they are.
+ * Dumps the message suffix to the screen
+ */
+void Engine::dumpSuffix(KIRC::Message &msg)
+{
+	emit incomingUnknown(msg.suffix());
 }
 
 /* 001: "Welcome to the Internet Relay Network <nick>!<user>@<host>"
@@ -347,9 +358,10 @@ void Engine::numericReply_322(Message &msg)
 /* 323: ":End of LIST"
  * End of the LIST command.
  */
-// void Engine::numericReply_323(Message &)
-// {
-// }
+void Engine::numericReply_323(Message &)
+{
+	emit incomingEndOfList();
+}
 
 /* 324: "<channel> <mode> <mode params>"
  */

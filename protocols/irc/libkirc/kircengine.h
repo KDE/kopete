@@ -366,6 +366,8 @@ private slots:
 
 	inline void ignoreMessage(KIRC::Message &){}
 
+	void dumpSuffix(KIRC::Message &);
+
 	void error(KIRC::Message &msg);
 	void join(KIRC::Message &msg);
 	void kick(KIRC::Message &msg);
@@ -408,6 +410,7 @@ private slots:
 	void numericReply_319(KIRC::Message &msg);
 	void numericReply_320(KIRC::Message &msg);
 	void numericReply_322(KIRC::Message &msg);
+	void numericReply_323(KIRC::Message &msg);
 	void numericReply_324(KIRC::Message &msg);
 	void numericReply_328(KIRC::Message &msg);
 	void numericReply_329(KIRC::Message &msg);

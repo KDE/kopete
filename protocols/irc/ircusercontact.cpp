@@ -60,33 +60,71 @@ IRCUserContact::IRCUserContact(IRCContactManager *contactManager, const QString 
 
 void IRCUserContact::updateStatus()
 {
+        Kopete::OnlineStatus newStatus;
+
 	switch (kircEngine()->status())
 	{
-	case KIRC::Engine::Idle:
-		setOnlineStatus(m_protocol->m_UserStatusOffline);
-		break;
+		case KIRC::Engine::Idle:
+			newStatus = m_protocol->m_UserStatusOffline;
+			break;
 
-	case KIRC::Engine::Connecting:
-	case KIRC::Engine::Authentifying:
-		if (this == ircAccount()->mySelf())
-			setOnlineStatus(m_protocol->m_UserStatusConnecting);
-		else
-			setOnlineStatus(m_protocol->m_UserStatusOffline);
-		break;
+		case KIRC::Engine::Connecting:
+		case KIRC::Engine::Authentifying:
+			if (this == ircAccount()->mySelf())
+				newStatus = m_protocol->m_UserStatusConnecting;
+			else
+				newStatus = m_protocol->m_UserStatusOffline;
+			break;
 
-	case KIRC::Engine::Connected:
-	case KIRC::Engine::Closing:
-		if (m_isAway)
-			setOnlineStatus(m_protocol->m_UserStatusAway);
-		else if (m_isOnline)
-			setOnlineStatus(m_protocol->m_UserStatusOnline);
-//		else
-//			setOnlineStatus(m_protocol->m_UserStatusOffline);
-		break;
+		case KIRC::Engine::Connected:
+		case KIRC::Engine::Closing:
+			if (m_isAway)
+				newStatus = m_protocol->m_UserStatusAway;
+			else if (m_isOnline)
+				newStatus = m_protocol->m_UserStatusOnline;
+			break;
 
-	default:
-		setOnlineStatus(m_protocol->m_StatusUnknown);
+		default:
+			newStatus = m_protocol->m_StatusUnknown;
 	}
+
+	// This may not be created yet ( for myself() on startup )
+	if( ircAccount()->contactManager() )
+	{
+		QValueList<IRCChannelContact*> channels = ircAccount()->contactManager()->findChannelsByMember(this);
+
+		for( QValueList<IRCChannelContact*>::iterator it = channels.begin(); it != channels.end(); ++it )
+		{
+			IRCChannelContact *channel = *it;
+			Kopete::OnlineStatus currentStatus = channel->manager()->contactOnlineStatus(this);
+
+			if( currentStatus.internalStatus() > IRCProtocol::Online )
+			{
+				if( !(currentStatus.internalStatus() & IRCProtocol::Away) && newStatus == m_protocol->m_UserStatusAway )
+				{
+					channel->manager()->setContactOnlineStatus(
+						this, m_protocol->statusLookup(
+							(IRCProtocol::IRCStatus)(currentStatus.internalStatus()+IRCProtocol::Away)
+						)
+					);
+				}
+				else if( (currentStatus.internalStatus() & IRCProtocol::Away) && newStatus == m_protocol->m_UserStatusOnline )
+				{
+					channel->manager()->setContactOnlineStatus(
+						this, m_protocol->statusLookup(
+							(IRCProtocol::IRCStatus)(currentStatus.internalStatus()-IRCProtocol::Away)
+						)
+					);
+				}
+				else if( newStatus.internalStatus() < IRCProtocol::Away )
+				{
+					channel->manager()->setContactOnlineStatus( this, newStatus );
+				}
+			}
+		}
+	}
+
+	setOnlineStatus( newStatus );
 }
 
 void IRCUserContact::sendFile(const KURL &sourceURL, const QString&, unsigned int)
@@ -456,15 +494,25 @@ void IRCUserContact::slotIncomingModeChange( const QString &channel, const QStri
 		{
 			QString modeChange = mode.section(' ', 0, 0);
 			if(modeChange == QString::fromLatin1("+o"))
-				chan->manager()->setContactOnlineStatus( this, m_protocol->m_UserStatusOp );
+				setManagerStatus( chan, m_protocol->m_UserStatusOp.internalStatus() );
 			else if(modeChange == QString::fromLatin1("-o"))
-				chan->manager()->setContactOnlineStatus( this, m_protocol->m_UserStatusOnline );
+				setManagerStatus( chan, -m_protocol->m_UserStatusOp.internalStatus() );
 			else if(modeChange == QString::fromLatin1("+v"))
-				chan->manager()->setContactOnlineStatus( this, m_protocol->m_UserStatusVoice );
+				setManagerStatus( chan, m_protocol->m_UserStatusVoice.internalStatus() );
 			else if(modeChange == QString::fromLatin1("-v"))
-				chan->manager()->setContactOnlineStatus( this, m_protocol->m_UserStatusOnline );
+				setManagerStatus( chan, -m_protocol->m_UserStatusVoice.internalStatus() );
 		}
 	}
+}
+
+void IRCUserContact::setManagerStatus(IRCChannelContact *channel, int statusAdjustment)
+{
+	Kopete::OnlineStatus currentStatus = channel->manager()->contactOnlineStatus(this);
+	Kopete::OnlineStatus newStatus = m_protocol->statusLookup(
+		(IRCProtocol::IRCStatus)(currentStatus.internalStatus() + statusAdjustment)
+	);
+
+	channel->manager()->setContactOnlineStatus(this, newStatus);
 }
 
 void IRCUserContact::privateMessage(IRCContact *from, IRCContact *to, const QString &message)

@@ -66,6 +66,21 @@ class IRCProtocol : public Kopete::Protocol
 	Q_OBJECT
 
 public:
+	enum IRCStatus
+	{
+		Offline = 1,
+		Connecting = 2,
+		Away = 4,
+		Online = 8,
+		Voiced = 16,
+		Operator = 32,
+		ServerOperator = 1024,
+		OfflineChannel = 4096,
+		OnlineChannel = 8192,
+		OfflineServer = 16384,
+		OnlineServer = 32768
+	};
+
 	IRCProtocol( QObject *parent, const char *name, const QStringList &args );
 	~IRCProtocol();
 
@@ -86,12 +101,16 @@ public:
 
 	static IRCProtocol *protocol();
 
+	const Kopete::OnlineStatus statusLookup( IRCStatus status ) const;
+
 	const Kopete::OnlineStatus m_ServerStatusOnline;
 	const Kopete::OnlineStatus m_ServerStatusOffline;
 
 	const Kopete::OnlineStatus m_ChannelStatusOnline;
 	const Kopete::OnlineStatus m_ChannelStatusOffline;
 
+	const Kopete::OnlineStatus m_UserStatusOpVoice;
+	const Kopete::OnlineStatus m_UserStatusOpVoiceAway;
 	const Kopete::OnlineStatus m_UserStatusOp;
 	const Kopete::OnlineStatus m_UserStatusOpAway;
 	const Kopete::OnlineStatus m_UserStatusVoice;

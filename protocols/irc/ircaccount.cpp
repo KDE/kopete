@@ -94,7 +94,7 @@ const QString IRCAccount::CONFIG_USERNAME = QString::fromLatin1("UserName");
 const QString IRCAccount::CONFIG_REALNAME = QString::fromLatin1("RealName");
 
 IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QString &autoChan )
-	: Kopete::PasswordedAccount(protocol, accountId), autoConnect( autoChan )
+	: Kopete::PasswordedAccount(protocol, accountId, 0, true), autoConnect( autoChan )
 {
 	m_manager = 0L;
 	m_channelList = 0L;
@@ -136,7 +136,7 @@ IRCAccount::IRCAccount(IRCProtocol *protocol, const QString &accountId, const QS
 	QObject::connect(m_engine, SIGNAL(incomingServerLoadTooHigh()),
 		this, SLOT(slotServerBusy()));
 
-	QObject::connect(m_engine, SIGNAL(incomingNoSuchNicknanme(const QString &)),
+	QObject::connect(m_engine, SIGNAL(incomingNoSuchNickname(const QString &)),
 			 this, SLOT(slotNoSuchNickname(const QString &)));
 
 	mAwayAction = new Kopete::AwayAction ( i18n("Set Away"),

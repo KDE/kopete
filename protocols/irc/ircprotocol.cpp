@@ -107,20 +107,22 @@ void IRCProtocolHandler::handleURL( const KURL &url ) const
 IRCProtocol::IRCProtocol( QObject *parent, const char *name, const QStringList & /* args */ )
 : Kopete::Protocol( IRCProtocolFactory::instance(), parent, name ),
 
-	m_ServerStatusOnline(Kopete::OnlineStatus::Online, 90, this, 21, QString::null, i18n("Online")),
-	m_ServerStatusOffline(Kopete::OnlineStatus::Offline, 80, this, 20, QString::null, i18n("Offline")),
+	m_ServerStatusOnline(Kopete::OnlineStatus::Online, 100, this, OnlineServer, QString::null, i18n("Online")),
+	m_ServerStatusOffline(Kopete::OnlineStatus::Offline, 90, this, OfflineServer, QString::null, i18n("Offline")),
 
-	m_ChannelStatusOnline(Kopete::OnlineStatus::Online, 70, this, 11, QString::null, i18n("Online")),
-	m_ChannelStatusOffline(Kopete::OnlineStatus::Offline, 60, this, 10, QString::null, i18n("Offline")),
+	m_ChannelStatusOnline(Kopete::OnlineStatus::Online, 80, this, OnlineChannel, QString::null, i18n("Online")),
+	m_ChannelStatusOffline(Kopete::OnlineStatus::Offline, 70, this, OfflineChannel, QString::null, i18n("Offline")),
 
-	m_UserStatusOp(Kopete::OnlineStatus::Online, 50, this, 5, "irc_op", i18n("Op")),
-	m_UserStatusOpAway(Kopete::OnlineStatus::Away, 50, this, 5, "irc_away", i18n("Away")),
-	m_UserStatusVoice(Kopete::OnlineStatus::Online, 40, this, 4, "irc_voice", i18n("Voice")),
-	m_UserStatusVoiceAway(Kopete::OnlineStatus::Away, 40, this, 4, "irc_away",  i18n("Away")),
-	m_UserStatusOnline(Kopete::OnlineStatus::Online, 30, this, 3, QString::null, i18n("Online"), i18n("Online"), Kopete::OnlineStatusManager::Online),
-	m_UserStatusAway(Kopete::OnlineStatus::Away, 20, this, 2, "irc_away", i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away),
-	m_UserStatusConnecting(Kopete::OnlineStatus::Connecting, 10, this, 1, "irc_connecting", i18n("Connecting")),
-	m_UserStatusOffline(Kopete::OnlineStatus::Offline, 0, this, 0, QString::null, i18n("Offline"), i18n("Offline"), Kopete::OnlineStatusManager::Offline),
+	m_UserStatusOpVoice(Kopete::OnlineStatus::Online, 60, this, Operator | Voiced, "irc_op", i18n("Op")),
+	m_UserStatusOpVoiceAway(Kopete::OnlineStatus::Away, 55, this, Operator | Voiced | Away, "irc_away", i18n("Away")),
+	m_UserStatusOp(Kopete::OnlineStatus::Online, 50, this, Operator, "irc_op", i18n("Op")),
+	m_UserStatusOpAway(Kopete::OnlineStatus::Away, 45, this, Operator | Away, "irc_away", i18n("Away")),
+	m_UserStatusVoice(Kopete::OnlineStatus::Online, 30, this, Voiced, "irc_voice", i18n("Voice")),
+	m_UserStatusVoiceAway(Kopete::OnlineStatus::Away, 35, this, Voiced | Away, "irc_away",  i18n("Away")),
+	m_UserStatusOnline(Kopete::OnlineStatus::Online, 25, this, Online, QString::null, i18n("Online"), i18n("Online"), Kopete::OnlineStatusManager::Online),
+	m_UserStatusAway(Kopete::OnlineStatus::Away, 2, this, Away, "irc_away", i18n("Away"), i18n("Away"), Kopete::OnlineStatusManager::Away),
+	m_UserStatusConnecting(Kopete::OnlineStatus::Connecting, 1, this, Connecting, "irc_connecting", i18n("Connecting")),
+	m_UserStatusOffline(Kopete::OnlineStatus::Offline, 0, this, Offline, QString::null, i18n("Offline"), i18n("Offline"), Kopete::OnlineStatusManager::Offline),
 
 	m_StatusUnknown(Kopete::OnlineStatus::Unknown, 999, this, 999, "status_unknown", i18n("Status not available")),
 
@@ -287,6 +289,52 @@ IRCProtocol * IRCProtocol::protocol()
 IRCProtocol::~IRCProtocol()
 {
 	delete m_protocolHandler;
+}
+
+const Kopete::OnlineStatus IRCProtocol::statusLookup( IRCStatus status ) const
+{
+	kdDebug(14120) << k_funcinfo << "Looking up status for " << status << endl;
+
+	switch( status )
+	{
+		case Offline:
+			return m_UserStatusOffline;
+		case Connecting:
+			return m_UserStatusConnecting;
+		case Online:
+			return m_UserStatusOnline;
+		case Away:
+		case Online | Away:
+			return m_UserStatusAway;
+		case Voiced:
+		case Online | Voiced:
+			return m_UserStatusVoice;
+		case Away | Voiced:
+		case Online | Away | Voiced:
+			return m_UserStatusVoiceAway;
+		case Operator:
+		case Online | Operator:
+			return m_UserStatusOp;
+		case Away | Operator:
+		case Online | Away | Operator:
+			return m_UserStatusOpAway;
+		case Operator | Voiced:
+		case Online | Operator | Voiced:
+			return m_UserStatusOpVoice;
+		case Operator | Voiced | Away:
+		case Online | Operator | Voiced | Away:
+		 	return m_UserStatusOpVoiceAway;
+		case OnlineServer:
+			return m_ServerStatusOnline;
+		case OfflineServer:
+			return m_ServerStatusOffline;
+		case OnlineChannel:
+			return m_ChannelStatusOnline;
+		case OfflineChannel:
+			return m_ChannelStatusOffline;
+		default:
+			return m_StatusUnknown;
+	}
 }
 
 void IRCProtocol::slotViewCreated( KopeteView *view )
