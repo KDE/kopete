@@ -19,7 +19,6 @@
 #include <libxml/xmlIO.h>
 #include <libxml/parser.h>
 
-#include <qtimer.h>
 #include <kdebug.h>
 #include <kopetexsl.h>
 #include <qregexp.h>
@@ -160,8 +159,7 @@ void KopeteXSLThread::run()
 	emit( complete( m_resultString ) );
 	emit( documentComplete( m_result ) );
 
-	//Delete ourselves
-	QTimer::singleShot( 500, this, SLOT( deleteLater() ) );
+	deleteLater();
 }
 
 void KopeteXSL::unescape( QString &xml )
