@@ -1,7 +1,7 @@
 //
-//
 // Copyright (C) 2003	 Grzegorz Jaskiewicz <gj at pointblue.com.pl>
 //
+// gadupubdir.h
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -19,9 +19,9 @@
 // 02111-1307, USA.
 //
 
-
 #ifndef GADUPUBDIR_H
 #define GADUPUBDIR_H
+
 
 #include "gaduaccount.h"
 #include "gaduprotocol.h"
@@ -43,39 +43,35 @@ class GaduPublicDirectory;
 
 class GaduPublicDir : public KDialogBase
 {
-	Q_OBJECT
+Q_OBJECT
 
-	public:
-		GaduPublicDir(GaduAccount *,
-			QWidget *parent = 0, const char* name = "GaduPublicDir");
-		QPixmap iconForStatus( uint status );
-		
-	
-	private slots:
-		void slotSearch();
-		void slotNewSearch();
-		void slotSearchResult( const searchResult &result );
+public:
+	GaduPublicDir( GaduAccount* , QWidget *parent = 0, const char* name = "GaduPublicDir" );
+	QPixmap iconForStatus( uint status );
 
-	private:
+private slots:
+	void slotSearch();
+	void slotNewSearch();
+	void slotSearchResult( const searchResult& result );
 
-		void getData();
-		bool validateData();
+private:
+	void getData();
+	bool validateData();
 
-		GaduProtocol *p;
-		GaduAccount *mAccount;
-		GaduContact *mContact;
-		GaduPublicDirectory *mMainWidget;
-	
-	// form data
+	GaduProtocol*		p;
+	GaduAccount*		mAccount;
+	GaduContact*		mContact;
+	GaduPublicDirectory*	mMainWidget;
 
-		QString fName;
-		QString fSurname;
-		QString fNick;
-		QString fCity;
-		int	fUin;
-		int	fGender;
-		bool 	fOnlyOnline;
-		int	fAgeFrom;
-		int	fAgeTo;
+// form data
+	QString	fName;
+	QString	fSurname;
+	QString	fNick;
+	QString	fCity;
+	int		fUin;
+	int		fGender;
+	bool		fOnlyOnline;
+	int		fAgeFrom;
+	int		fAgeTo;
 };
 #endif

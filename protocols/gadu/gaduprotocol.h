@@ -1,26 +1,29 @@
 // -*- Mode: c++-mode; c-basic-offset: 2; indent-tabs-mode: t; tab-width: 2; -*-
-//////////////////////////////////////////////////////////////////////////////
-// gaduprotocol.h																														//
-//																																					//
-// Copyright (C)	2002-2003	 Zack Rusin <zack@kde.org>											//
-//																																					//
-// This program is free software; you can redistribute it and/or						//
-// modify it under the terms of the GNU General Public License							//
-// as published by the Free Software Foundation; either version 2						//
-// of the License, or (at your option) any later version.										//
-//																																					//
-// This program is distributed in the hope that it will be useful,					//
-// but WITHOUT ANY WARRANTY; without even the implied warranty of						//
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the						//
-// GNU General Public License for more details.															//
-//																																					//
-// You should have received a copy of the GNU General Public License				//
-// along with this program; if not, write to the Free Software							//
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA								//
-// 02111-1307, USA.																													//
-//////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2003 Grzegorz Jaskiewicz 	<gj at pointblue.com.pl>
+// Copyright (C) 2002-2003 Zack Rusin 	<zack@kde.org>
+//
+// gaduprotocol.cpp
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+// 02111-1307, USA.
+
 #ifndef GADUPROTOCOL_H
 #define GADUPROTOCOL_H
+
+#include <libgadu.h>
 
 #include <qmap.h>
 #include <qptrlist.h>
@@ -28,8 +31,6 @@
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qpoint.h>
-
-#include <libgadu.h>
 
 #include "kopeteprotocol.h"
 #include "kopeteonlinestatus.h"
@@ -54,22 +55,23 @@ class GaduPreferences;
 class GaduProtocol : public KopeteProtocol
 {
 	Q_OBJECT
+
 public:
-	GaduProtocol( QObject *parent, const char *name, const QStringList &str);
+	GaduProtocol( QObject* parent, const char* name, const QStringList& str);
 	~GaduProtocol();
 
 	static GaduProtocol *protocol();
 
 	// Plugin reimplementation
 	// {
-	AddContactPage* createAddContactWidget( QWidget *parent, KopeteAccount* account );
+	AddContactPage* createAddContactWidget( QWidget* parent, KopeteAccount* account );
 	KopeteAccount* createNewAccount( const QString& accountId );
-	EditAccountWidget *createEditAccountWidget( KopeteAccount *account, QWidget *parent );
+	EditAccountWidget *createEditAccountWidget( KopeteAccount* account, QWidget* parent );
 	bool canSendOffline() const { return true; }
 
-	virtual void deserializeContact( KopeteMetaContact *metaContact,
-																	 const QMap<QString, QString> &serializedData,
-																	 const QMap<QString, QString> &addressBookData );
+	virtual void deserializeContact( KopeteMetaContact* metaContact,
+						 const QMap<QString, QString>& serializedData,
+						 const QMap<QString, QString>& addressBookData );
 	// }
 	//!Plugin reimplementation
 
@@ -82,9 +84,9 @@ private slots:
 	void settingsChanged();
 
 private:
-	static GaduProtocol* protocolStatic_;
-
-	GaduPreferences			*prefs_;
+	static GaduProtocol*	protocolStatic_;
+	GaduAccount*		defaultAccount_;
+	GaduPreferences*	prefs_;
 
 	const KopeteOnlineStatus gaduStatusOffline_;
 	const KopeteOnlineStatus gaduStatusOfflineDescr_;
@@ -96,7 +98,6 @@ private:
 	const KopeteOnlineStatus gaduStatusAvailDescr_;
 	const KopeteOnlineStatus gaduConnecting_;
 
-	GaduAccount *defaultAccount_;
 };
 
 
