@@ -55,7 +55,7 @@
 
 // uncomment this to transform all messages every time, for styles where
 // messages aren't processed independently (eg, Adium) to work.
-//#define TRANSFORM_ALL_MESSAGES
+#define TRANSFORM_ALL_MESSAGES
 
 //From  kdelibs/khtml/misc/htmltags.h
 //  used in ChatMessagePart::copy()
@@ -92,6 +92,12 @@ public:
 	bool bgOverride;
 	bool fgOverride;
 	bool rtfOverride;
+#ifdef TRANSFORM_ALL_MESSAGES
+	/**
+	 * we want to render several messages in one pass if several message are apended at the same time.
+	 */
+	QTimer refreshtimer;
+#endif	
 };
 
 class ChatMessagePart::ToolTip : public QToolTip
@@ -186,6 +192,11 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	connect( view(), SIGNAL(contentsMoving(int,int)),
 	         this, SLOT(slotScrollingTo(int,int)) );
 
+#ifdef TRANSFORM_ALL_MESSAGES
+	connect( &d->refreshtimer , SIGNAL(timeout()) , this, SLOT(slotRefreshNodes()));
+#endif
+	
+
 	//initActions
 	//FIXME: conflicts with the editor's copy action
 	copyAction = KStdAction::copy( this, SLOT(copy()), actionCollection() );
@@ -198,7 +209,7 @@ ChatMessagePart::ChatMessagePart( Kopete::ChatSession *mgr, QWidget *parent, con
 	readOverrides();
 
 	slotTransparencyChanged();
-}
+	}
 
 ChatMessagePart::~ChatMessagePart()
 {
@@ -320,12 +331,12 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 	
 	// transform all messages every time. needed for Adium style.
 #ifdef TRANSFORM_ALL_MESSAGES
-	slotRefreshNodes();
+	d->refreshtimer.start(50,true); //let 50ms delay in the case several message are appended in the same time.
 	return;
-#endif
-	
+#else
+
 	uint bufferLen = (uint)KopetePrefs::prefs()->chatViewBufferSize();
-	
+
 	message.setBgOverride( d->bgOverride );
 	message.setFgOverride( d->fgOverride );
 	message.setRtfOverride( d->rtfOverride );
@@ -349,6 +360,7 @@ void ChatMessagePart::appendMessage( Kopete::Message &message )
 
 	if ( !scrollPressed )
 		QTimer::singleShot( 1, this, SLOT( slotScrollView() ) );
+#endif
 }
 
 const QString ChatMessagePart::addNickLinks( const QString &html ) const
