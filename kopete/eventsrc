@@ -1,9 +1,12 @@
 [!Global!]
 IconName=kopete
 Comment=Kopete Messenger
+Comment[sv]=Kopete Instant Messenger
 
 [kopete_event]
 Name=message_all
+Name[sv]=Alla meddelanden
 Comment=Sound Notification for Kopete Events
+Comment[sv]=Ljudunderrättelse för händelser i Kopete
 default_sound=kopete_event.wav
 default_presentation=1
