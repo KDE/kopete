@@ -165,29 +165,23 @@ void
 GaduRegisterAccount::registrationError(  const QString& title,  const QString& what )
 {
 	updateStatus( i18n( "Registration failed: %1" ).arg( what ) );
-	KMessageBox::sorry( this, what, title );
+	KMessageBox::sorry( this, "Registration was unsucessful, please try again.", title );
 
 	disconnect( this, SLOT( displayToken( QPixmap, QString ) ) );
 	disconnect( this, SLOT( registrationDone(  const QString&,  const QString& ) ) );
 	disconnect( this, SLOT( registrationError(  const QString&,  const QString& ) ) );
 	disconnect( this, SLOT( updateStatus( const QString ) ) );
 
-// it is set to deleteLater, in case of error
-	cRegister = NULL;
 	ui->valueVerificationSequence->setDisabled( true );
 	ui->valueVerificationSequence->setText( "" );
 	enableButton( User1, false );
 	updateStatus( "" );
 
-	cRegister = new RegisterCommand( this );
+	// emit UIN 0, to enable 'register new account' button again in dialog below
+	emit registeredNumber( 0, QString( "" ) );
 
-	connect( cRegister, SIGNAL( tokenRecieved( QPixmap, QString ) ), SLOT( displayToken( QPixmap, QString ) ) );
-	connect( cRegister, SIGNAL( done(  const QString&,  const QString& ) ), SLOT( registrationDone(  const QString&,  const QString& ) ) );
-	connect( cRegister, SIGNAL( error(  const QString&,  const QString& ) ), SLOT( registrationError(  const QString&,  const QString& ) ) );
-	connect( cRegister, SIGNAL( operationStatus( const QString ) ), SLOT( updateStatus( const QString ) ) );
-
-	updateStatus( i18n( "Retrieving token" ) );
-	cRegister->requestToken();
+	slotClose();
+	deleteLater();
 }
 
 void

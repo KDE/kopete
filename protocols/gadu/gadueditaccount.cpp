@@ -74,7 +74,7 @@ GaduEditAccount::GaduEditAccount( GaduProtocol* proto, Kopete::Account* ident, Q
 	QObject::connect( registerNew, SIGNAL( clicked( ) ), SLOT( registerNewAccount( ) ) );
 }
 
-void 
+void
 GaduEditAccount::registerNewAccount()
 {
 	registerNew->setDisabled( true );
@@ -87,20 +87,26 @@ GaduEditAccount::registerNewAccount()
 	registerNew->setDisabled( false );
 }
 
-void 
+void
 GaduEditAccount::registrationFailed()
 {
 	KMessageBox::sorry( this, i18n( "<b>Registration FAILED.</b>" ), i18n( "Gadu-Gadu" ) );
 }
 
-void 
-GaduEditAccount::newUin( unsigned int uni, QString password )
+void
+GaduEditAccount::newUin( unsigned int uin, QString password )
 {
-	loginEdit_->setText( QString::number( uni ) );
-	passwordWidget_->setPassword( password );
+	if ( uin ) {
+		loginEdit_->setText( QString::number( uin ) );
+		passwordWidget_->setPassword( password );
+	}
+	else {
+		// registration failed, enable button again
+		registerNew->setDisabled( false );
+	}
 }
 
-bool 
+bool
 GaduEditAccount::validateData()
 {
 
