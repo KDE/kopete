@@ -421,7 +421,7 @@ void JabberAccount::slotCSAuthenticated ()
 
 	/* start the client operation */
 	XMPP::Jid jid(accountId());
-	jabberClient->start ( jid.domain(), jid.node(), password(), jid.resource() );
+	jabberClient->start ( jid.domain(), jid.node(), password(), pluginData( protocol (), "Resource") );
 
 	/* Request roster. */
 	jabberClient->rosterRequest ();
