@@ -85,7 +85,7 @@ AddContactPage *SMSProtocol::createAddContactWidget(QWidget *parent)
 	return (new SMSAddContactPage(this,parent));
 }
 
-SMSContact* SMSProtocol::addContact( const QString nr , const QString name, KopeteMetaContact *m)
+SMSContact* SMSProtocol::addContact( const QString& nr , const QString& name, KopeteMetaContact *m)
 {
 	SMSContact* c = new SMSContact(protocol(), nr, name, m);
 	m->addContact(c);

@@ -15,15 +15,15 @@ class SMSSendProvider : public QObject
 {
 	Q_OBJECT
 public:
-	SMSSendProvider(QString providerName, QString prefixValue, SMSContact* contact, QObject* parent = 0, const char* name = 0);
+	SMSSendProvider(const QString& providerName, const QString& prefixValue, SMSContact* contact, QObject* parent = 0, const char* name = 0);
 	~SMSSendProvider();
 
 	int count();
-	QString name(int i);
-	QString value(int i);
-	QString description(int i);
+	const QString& name(int i);
+	const QString& value(int i);
+	const QString& description(int i);
 
-	void save(QPtrList<SMSSendArg> args);
+	void save(QPtrList<SMSSendArg>& args);
 	void send(const KopeteMessage& msg);
 
 	int maxSize();

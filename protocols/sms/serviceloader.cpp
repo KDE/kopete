@@ -4,7 +4,7 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 
-SMSService* ServiceLoader::loadService(QString name, SMSContact* contact)
+SMSService* ServiceLoader::loadService(const QString& name, SMSContact* contact)
 {
 	SMSService* s;
 	if (name == "SMSSend")

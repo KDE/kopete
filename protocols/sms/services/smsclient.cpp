@@ -135,9 +135,11 @@ int SMSClient::maxSize()
 	return 160;
 }
 
-QString SMSClient::description()
+const QString& SMSClient::description()
 {
-	return i18n("SMSClient is a program for sending SMS with the modem. The program can be found on http://www.smsclient.org");
+	QString url = "http://www.smsclient.org";
+	m_description = i18n("<qt>SMSClient is a program for sending SMS with the modem. The program can be found on <a href=\"%1\">%1</a></qt>").arg(url).arg(url);
+	return m_description;
 }
 
 #include "smsclient.moc"

@@ -23,7 +23,7 @@ public:
 	QWidget* configureWidget(QWidget* parent);
 
 	int maxSize();
-	QString description();
+	const QString& description();
 
 public slots:
 	void savePreferences();
@@ -40,6 +40,8 @@ private:
 	QStringList output;
 
 	KopeteMessage m_msg;
+
+	QString m_description;
 } ;
 
 #endif //SMSCLIENT_H

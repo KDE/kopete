@@ -40,7 +40,6 @@ public:
 	static SMSProtocol *protocol();
 
 	bool unload();
-	typedef QMap<QString, SMSContact*> ContactList;
 
 	virtual void deserialize( KopeteMetaContact *metaContact,
 		const QStringList &strList );
@@ -54,7 +53,7 @@ public:
 	virtual void setAvailable();
 	virtual bool isAway() const;
 
-	SMSContact* addContact( const QString nr , const QString name, KopeteMetaContact *m=0L);
+	SMSContact* addContact( const QString& nr , const QString& name, KopeteMetaContact *m=0L);
 
 	KopeteContact *myself() const;
 

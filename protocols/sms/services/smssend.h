@@ -20,20 +20,21 @@ public:
 	QWidget* configureWidget(QWidget* parent);
 
 	int maxSize();
-	QString description();
+	const QString& description();
 
 public slots:
 	void savePreferences();
 
 private slots:
 	void setOptions(const QString& name);
+	void loadProviders(const QString& prefix);
 signals:
 	void messageSent(const KopeteMessage&);
 
 private:
 	SMSSendPrefsUI* prefWidget;
 	QPtrList<SMSSendArg> args;
-	QStringList providers();
+	QString m_description;
 } ;
 
 #endif //SMSSEND_H

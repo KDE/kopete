@@ -11,13 +11,14 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 
-SMSSendProvider::SMSSendProvider(QString providerName, QString prefixValue, SMSContact* contact, QObject* parent, const char *name)
+SMSSendProvider::SMSSendProvider(const QString& providerName, const QString& prefixValue, SMSContact* contact, QObject* parent, const char *name)
 	: QObject( parent, name )
 {
 
 	provider = providerName;
 	prefix = prefixValue;
 	m_contact = contact;
+	m_maxSize = 160;
 
 	messagePos = -1;
 	telPos = -1;
@@ -68,19 +69,9 @@ SMSSendProvider::SMSSendProvider(QString providerName, QString prefixValue, SMSC
 	}
 	f.close();
 
-	if ( messagePos == -1 )
+	if ( messagePos == -1 || telPos == -1 )
 	{
 		canSend = false;
-		KMessageBox::error(0L, i18n("Could not determine which argument which should contain the message"),
-			i18n("Could not send message"));
-		return;
-	}
-	if ( telPos == -1 )
-	{
-		canSend = false;
-
-		KMessageBox::error(0L, i18n("Could not determine which argument which should contain the number"),
-			i18n("Could not send message"));
 		return;
 	}
 
@@ -92,7 +83,7 @@ SMSSendProvider::~SMSSendProvider()
 
 }
 
-QString SMSSendProvider::name(int i)
+const QString& SMSSendProvider::name(int i)
 {
 	if ( telPos == i || messagePos == i)
 		return QString::null;
@@ -100,17 +91,17 @@ QString SMSSendProvider::name(int i)
 		return names[i];
 }
 
-QString SMSSendProvider::value(int i)
+const QString& SMSSendProvider::value(int i)
 {
 	return values[i];
 }
 
-QString SMSSendProvider::description(int i)
+const QString& SMSSendProvider::description(int i)
 {
 	return descriptions[i];
 }
 
-void SMSSendProvider::save(QPtrList<SMSSendArg> args)
+void SMSSendProvider::save(QPtrList<SMSSendArg>& args)
 {
 	QString group = QString("SMSSend-%1").arg(provider);
 
@@ -130,6 +121,25 @@ int SMSSendProvider::count()
 
 void SMSSendProvider::send(const KopeteMessage& msg)
 {
+	if ( canSend == false )
+	{
+		if ( messagePos == -1 )
+		{
+			canSend = false;
+			KMessageBox::error(0L, i18n("Could not determine which argument which should contain the message"),
+				i18n("Could not send message"));
+			return;
+		}
+		if ( telPos == -1 )
+		{
+			canSend = false;
+
+			KMessageBox::error(0L, i18n("Could not determine which argument which should contain the number"),
+				i18n("Could not send message"));
+			return;
+		}
+	}
+
 	m_msg = msg;
 
 	QString message = msg.plainBody();

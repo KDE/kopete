@@ -30,7 +30,7 @@ void SMSSend::send(const KopeteMessage& msg)
 {
 	QString provider = SMSGlobal::readConfig("SMSSend", "ProviderName", m_contact);
 
-	if (provider == QString::null)
+	if (provider.length() < 1)
 	{
 		KMessageBox::error(0L, i18n("No provider configured"), i18n("Could not send message"));
 		return;
@@ -56,24 +56,16 @@ QWidget* SMSSend::configureWidget(QWidget* parent)
 	QString prefix = SMSGlobal::readConfig("SMSSend", "Prefix", m_contact);
 	if (prefix == QString::null)
 		prefix = "/usr";
+	
+	connect (prefWidget->program, SIGNAL(textChanged(const QString &)),
+		this, SLOT(loadProviders(const QString&)));
 
 	prefWidget->program->setURL(prefix);
 	
-	prefWidget->provider->insertStringList(providers());
+	loadProviders(prefix);
 
 	connect(prefWidget->provider, SIGNAL(activated(const QString &)),
 		this, SLOT(setOptions(const QString &)));
-	
-	QString pName = SMSGlobal::readConfig("SMSSend", "ProviderName", m_contact);
-	for (int i=0; i < prefWidget->provider->count(); i++)
-	{
-		if (prefWidget->provider->text(i) == pName)
-		{
-			prefWidget->provider->setCurrentItem(i);
-			setOptions(pName);
-			break;
-		}
-	}
 	
 	return prefWidget;
 }
@@ -90,19 +82,47 @@ void SMSSend::savePreferences()
 	}
 }
 
-QStringList SMSSend::providers()
+void SMSSend::loadProviders(const QString &prefix)
 {
 	QStringList p;
 
-	QDir d = QDir::homeDirPath()+"/.smssend/";
+	prefWidget->provider->clear();
+
+	QDir d(prefix + "/share/smssend");
+	if (!d.exists())
+	{
+		setOptions(QString::null);
+		return;
+	}
+
 	p = d.entryList("*.sms");
-		d.setPath(QString("%1/share/smssend/").arg(prefWidget->program->url()));
-	p += d.entryList("*.sms");
+
+	d = QDir::homeDirPath()+"/.smssend/";
+
+	QStringList tmp(d.entryList("*.sms"));
+
+	for (QStringList::Iterator it = tmp.begin(); it != tmp.end(); ++it)
+		p.prepend(*it);
 
 	for (QStringList::iterator it = p.begin(); it != p.end(); ++it)
 		(*it).truncate((*it).length()-4);
 
-	return p;
+	prefWidget->provider->insertStringList(p);
+
+	QString pName = SMSGlobal::readConfig("SMSSend", "ProviderName", m_contact);
+	bool found=false;
+	for (int i=0; i < prefWidget->provider->count(); i++)
+	{
+		if (prefWidget->provider->text(i) == pName)
+		{
+			found=true;
+			prefWidget->provider->setCurrentItem(i);
+			setOptions(pName);
+			break;
+		}
+	}
+	if (!found)
+		setOptions(prefWidget->provider->currentText());
 }
 
 void SMSSend::setOptions(const QString& name)
@@ -131,6 +151,8 @@ void SMSSend::setOptions(const QString& name)
 int SMSSend::maxSize()
 {
 	QString pName = SMSGlobal::readConfig("SMSSend", "ProviderName", m_contact);
+	if (pName.length() < 1)
+		return 160;
 	QString prefix = SMSGlobal::readConfig("SMSSend", "Prefix", m_contact);
 	if (prefix == QString::null)
 		prefix = "/usr";
@@ -138,9 +160,11 @@ int SMSSend::maxSize()
 	return s->maxSize();
 }
 
-QString SMSSend::description()
+const QString& SMSSend::description()
 {
-	return i18n("SMSSend is a program for sending SMS through gateways on the web. It can be found on http://zekiller.skytech.org/smssend_en.php");
+	QString url = "http://zekiller.skytech.org/smssend_en.php";
+	m_description = i18n("<qt>SMSSend is a program for sending SMS through gateways on the web. It can be found on <a href=\"%1\">%2</a></qt>").arg(url).arg(url);
+	return m_description;
 }
 
 
