@@ -108,9 +108,20 @@ public:
 	// methods of AIMBuddyList used outside the account, so having them
 	// proxied here helps in getting rid of AIMBuddyList in the future
 	/**
+	 * The contact list to use.
+	 * Currently OSCAR uses a login contact list and an internal contact
+	 * list. While the two should be merged in the future it's for now
+	 * easier to keep both of them and use the enum to specify the list
+	 * to use.
+	 * When operating on the login list it will be created if it doesn't
+	 * exist yet, as it's demand created in slotGotServerBuddyList
+	 */
+	enum OscarContactList { InternalContactList, LoginContactList };
+
+	/**
 	 * Adds a buddy to the buddy list
 	 */
-	void addBuddy( AIMBuddy *buddy );
+	void addBuddy( AIMBuddy *buddy, OscarContactList list = InternalContactList );
 
 	/**
 	 * Removes a buddy from the buddy list
@@ -125,13 +136,22 @@ public:
 	/**
 	 * Finds a group and returns it. Uses GID
 	 */
-	AIMGroup * findGroup( int groupId );
+	AIMGroup * findGroup( int groupId, OscarContactList list = InternalContactList );
 
 	/**
 	 * Finds a group by name
 	 */
 	AIMGroup * findGroup( const QString &name );
 
+	/**
+	 * Adds a buddy to the deny list
+	 */
+	void addBuddyDeny( AIMBuddy *buddy, OscarContactList list = InternalContactList );
+
+	/**
+	 * Adds a group to the contact list and returns the new group
+	 */
+	AIMGroup *addGroup( int id, const QString &name = QString::null, OscarContactList list = InternalContactList );
 	// -- END PROXIED METHODS --------------------------------------------
 
 public slots:
@@ -166,7 +186,7 @@ protected slots:
 	 * The parameter is a qmap with the contact names as keys
 	 * the value is another map with keys "name", "group"
 	 */
-	void slotGotServerBuddyList(AIMBuddyList& buddyList);
+	void slotGotServerBuddyList();
 
 	/*
 	 * Called when we've received an IM

@@ -93,8 +93,8 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 
 	// Got Config (Buddy List)
 	QObject::connect(
-		engine(), SIGNAL(gotConfig(AIMBuddyList &)),
-		this, SLOT(slotGotServerBuddyList(AIMBuddyList &)));
+		engine(), SIGNAL(gotConfig()),
+		this, SLOT(slotGotServerBuddyList()));
 
 	// Got direct IM request
 	QObject::connect(
@@ -320,7 +320,7 @@ void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
 	}
 }
 
-void OscarAccount::slotGotServerBuddyList(AIMBuddyList &buddyList)
+void OscarAccount::slotGotServerBuddyList()
 {
 	kdDebug(14150) << k_funcinfo << "account='" << accountId() << "'" << endl;
 /*
@@ -332,12 +332,11 @@ void OscarAccount::slotGotServerBuddyList(AIMBuddyList &buddyList)
 		qDebug("-- Server: %s, id: %i, groupId: %i", (*it)->screenname().latin1(), (*it)->ID(), (*it)->groupID());
 */
 
-	//save server side contact list
-	mLoginContactlist = new AIMBuddyList(this, "mLoginContactlist");
-	*mLoginContactlist += buddyList;
+	if ( !mLoginContactlist )
+		return;
 
-	*mInternalBuddyList += buddyList;
-	QValueList<AIMBuddy *> localList = buddyList.buddies().values();
+	*mInternalBuddyList += *mLoginContactlist;
+	QValueList<AIMBuddy *> localList = mLoginContactlist->buddies().values();
 
 	for (QValueList<AIMBuddy *>::Iterator it=localList.begin(); it!=localList.end(); ++it)
 	{
@@ -345,7 +344,7 @@ void OscarAccount::slotGotServerBuddyList(AIMBuddyList &buddyList)
 			addServerContact((*it)); // Add the server contact to Kopete list
 	}
 	// old locaton
-//	syncLocalWithServerBuddyList( buddyList );
+	//syncLocalWithServerBuddyList( *mLoginContactlist );
 }
 
 void OscarAccount::slotLoggedIn()
@@ -852,9 +851,18 @@ const QString &OscarAccount::awayMessage()
 	return mAwayMessage;
 }
 
-void OscarAccount::addBuddy( AIMBuddy *buddy )
+void OscarAccount::addBuddy( AIMBuddy *buddy, OscarAccount::OscarContactList list )
 {
-	mInternalBuddyList->addBuddy( buddy );
+	if ( list == InternalContactList )
+	{
+		if ( !mLoginContactlist )
+			mLoginContactlist = new AIMBuddyList( this, "mLoginContactlist" );
+		mLoginContactlist->addBuddy( buddy );
+	}
+	else
+	{
+		mInternalBuddyList->addBuddy( buddy );
+	}
 }
 
 void OscarAccount::removeBuddy( AIMBuddy *buddy )
@@ -867,14 +875,51 @@ AIMBuddy * OscarAccount::findBuddy( const QString &screenName )
 	return mInternalBuddyList->findBuddy( screenName );
 }
 
-AIMGroup * OscarAccount::findGroup( int groupId )
+AIMGroup * OscarAccount::findGroup( int groupId, OscarAccount::OscarContactList list )
 {
-	return mInternalBuddyList->findGroup( groupId );
+	if ( list == InternalContactList )
+	{
+		if ( !mLoginContactlist )
+			mLoginContactlist = new AIMBuddyList( this, "mLoginContactlist" );
+		return mLoginContactlist->findGroup( groupId );
+	}
+	else
+	{
+		return mInternalBuddyList->findGroup( groupId );
+	}
 }
 
 AIMGroup * OscarAccount::findGroup( const QString &name )
 {
 	return mInternalBuddyList->findGroup( name );
+}
+
+AIMGroup * OscarAccount::addGroup( int id, const QString &name, OscarContactList list )
+{
+	if ( list == InternalContactList )
+	{
+		if ( !mLoginContactlist )
+			mLoginContactlist = new AIMBuddyList( this, "mLoginContactlist" );
+		return mLoginContactlist->addGroup( id, name );
+	}
+	else
+	{
+		return mInternalBuddyList->addGroup( id, name );
+	}
+}
+
+void OscarAccount::addBuddyDeny( AIMBuddy *buddy, OscarContactList list )
+{
+	if ( list == InternalContactList )
+	{
+		if ( !mLoginContactlist )
+			mLoginContactlist = new AIMBuddyList( this, "mLoginContactlist" );
+		mLoginContactlist->addBuddyDeny( buddy );
+	}
+	else
+	{
+		mInternalBuddyList->addBuddyDeny( buddy );
+	}
 }
 
 #include "oscaraccount.moc"

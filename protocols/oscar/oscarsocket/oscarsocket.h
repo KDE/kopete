@@ -30,7 +30,6 @@
 #include <qdatetime.h>
 
 //class KFileItem;
-class AIMBuddyList;
 class AIMBuddy;
 class OscarAccount;
 class OscarContact;
@@ -958,7 +957,7 @@ class OscarSocket : public OscarConnection
 		/*
 		 * A buddy list has been received
 		 */
-		void gotConfig(AIMBuddyList &);
+		void gotConfig();
 		/*
 		 * emitted when we have received an ack from the server
 		 */

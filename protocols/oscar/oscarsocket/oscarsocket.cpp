@@ -31,7 +31,8 @@
 #include <kdebug.h>
 #include <kextsock.h>
 
-#include "aimbuddylist.h"
+#include "aimbuddy.h"
+#include "aimgroup.h"
 
 // ---------------------------------------------------------------------------------------
 
@@ -1098,8 +1099,6 @@ void OscarSocket::sendRosterRequest()
 
 void OscarSocket::parseRosterData(Buffer &inbuf)
 {
-	AIMBuddyList blist;
-
 	inbuf.getByte(); //get fmt version
 	uint length = inbuf.getWord();
 
@@ -1142,7 +1141,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 				// In case we already know that contact
 				OscarContact *contact = static_cast<OscarContact*>(mAccount->contacts()[ssi->name]);
 
-				AIMGroup *group = blist.findGroup(ssi->gid);
+				AIMGroup *group = mAccount->findGroup( ssi->gid, OscarAccount::LoginContactList );
 				QString groupName = "\"Group not found\"";
 				if (group)
 					groupName = group->name();
@@ -1220,7 +1219,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 				} // END for()
 
 				lst.clear();
-				blist.addBuddy(bud);
+				mAccount->addBuddy( bud, OscarAccount::LoginContactList );
 				break;
 			}
 
@@ -1242,7 +1241,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 				{
 					kdDebug(14150) << k_funcinfo << "Adding Group " <<
 						ssi->gid << " (" <<  ssi->name << ")" << endl;
-					blist.addGroup(ssi->gid, ssi->name);
+					mAccount->addGroup( ssi->gid, ssi->name, OscarAccount::LoginContactList );
 				}
 				break;
 			}
@@ -1260,7 +1259,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 				bud = new AIMBuddy(ssi->bid, ssi->gid, ssi->name);
 				kdDebug(14150) << k_funcinfo << "Adding Contact '" << ssi->name <<
 					"' to INVISIBLE/DENY list." << endl;
-				blist.addBuddyDeny(bud);
+				mAccount->addBuddyDeny( bud,OscarAccount::LoginContactList );
 				emit denyAdded(ssi->name);
 				break;
 			}
@@ -1331,7 +1330,7 @@ void OscarSocket::parseRosterData(Buffer &inbuf)
 		"Finished getting contact list, timestamp=" << timestamp << endl;
 
 	sendSSIActivate(); // send CLI_ROSTERACK
-	emit gotConfig(blist);
+	emit gotConfig();
 
 	gotAllRights++;
 	if (gotAllRights==7)
