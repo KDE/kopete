@@ -205,7 +205,7 @@ void AddContactWizard::slotAddGroupClicked()
 		i18n( "Please enter the name for the new group:" )
 		);
 	if ( !groupName.isNull() )
-		new QCheckListItem( groupList, groupName, QCheckListItem::CheckBox );
+		( new QCheckListItem( groupList, groupName, QCheckListItem::CheckBox ) )->setOn( true );
 }
 
 void AddContactWizard::slotProtocolListClicked( QListViewItem *)
