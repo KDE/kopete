@@ -97,7 +97,7 @@ signals:
 	 * After this the normal line-based reads go on again
 	 */
 	void blockRead( const QString &block );
-  void blockRead( const QByteArray &block );
+	void blockRead( const QByteArray &block );
 
 	/**
 	 * The online status has changed
@@ -167,21 +167,20 @@ protected:
 	virtual void parseCommand( const QString &cmd, uint id,
 		const QString &data ) = 0;
 
-  /** Used in MSNFileTransferSocket */
-	virtual void bytesReceived(const QByteArray &);
-	bool accept(KExtendedSocket *);
-	void sendBytes(const QByteArray &data);
+	/**
+	 * Used in MSNFileTransferSocket
+	 */
+	virtual void bytesReceived( const QByteArray & );
+	bool accept( KExtendedSocket * );
+	void sendBytes( const QByteArray &data );
 
-    
 	const QString &server() { return m_server; }
 	uint port() { return m_port; }
 
- 	/**
+	/**
 	 * The last confirmed ID by the server
 	 */
 	//uint m_lastId;
-
-  
 
 private slots:
 	void slotDataReceived();
@@ -205,7 +204,7 @@ private slots:
 	 * Check if new lines of data are available and process the first line
 	 */
 	void slotReadLine();
-	
+
 	void slotSocketClosed( int state );
 
 private:
@@ -222,7 +221,6 @@ private:
 	 * for each subsequent message sent.
 	 */
 	uint m_id;
-
 
 	/**
 	 * Queue of pending commands (should be mostly empty, but is needed to
@@ -253,28 +251,19 @@ private:
 	 */
 	uint m_waitBlockSize;
 
-  class Buffer : public QByteArray
-  {
-      public:
-        Buffer(unsigned int sz=0);
-        ~Buffer();
-        void add(char *str,unsigned int size);
-        QByteArray take(unsigned int size);
-      
-  };
-  Buffer m_buffer;
+	class Buffer : public QByteArray
+	{
+	public:
+		Buffer( unsigned size = 0 );
+		~Buffer();
+		void add( char *str, unsigned size );
+		QByteArray take( unsigned size );
+	};
+
+	Buffer m_buffer;
 };
 
 #endif
 
-
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 

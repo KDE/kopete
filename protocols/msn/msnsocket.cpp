@@ -29,7 +29,6 @@
 #include <kmessagebox.h>
 #include <kurl.h>
 
-
 MSNSocket::MSNSocket(QObject* parent)  : QObject (parent)
 {
 	m_onlineStatus = Disconnected;
@@ -151,7 +150,6 @@ void MSNSocket::slotSocketError( int error )
 	delete m_socket;
 	m_socket = 0L;
 
-
 	emit connectionFailed();
 	emit socketClosed(-1); //like the socket is closed
 }
@@ -210,9 +208,8 @@ void MSNSocket::slotDataReceived()
 
 //		buf[ ret ] = '\0'; // Make it properly null-terminated
 //		kdDebug() << "MSNSocket::slotDataReceived: Received '" <<			buf << "'" << endl;
-    
-		m_buffer.add(buf,ret); // fill the buffer with the received data
 
+		m_buffer.add(buf,ret); // fill the buffer with the received data
 
 		slotReadLine();
 	}
@@ -268,7 +265,7 @@ void MSNSocket::slotReadLine()
 			QString command = QString::fromUtf8(m_buffer.take(index+2), index);
 			command.replace( QRegExp( "\r\n" ), "" );
 			kdDebug() << "MSNSocket::slotReadLine: " << command << endl;
-			
+
 			parseLine(command);
 			//WARNING: since here, this can be deleted (when disconnecitng)
 		}
@@ -505,7 +502,7 @@ bool MSNSocket::accept(KExtendedSocket *server)
 	//Because currently only MSNFileTransferSocket use this method, i connect dirrectly to a MSNFileTRansferSocket slot
 	//this code should be changed when we will implement other invitations
 	QObject::connect( m_socket, SIGNAL( readyWrite () ),
-		this, SLOT( slotReadyWrite() ) );  
+		this, SLOT( slotReadyWrite() ) );
 
 	m_socket->setSocketFlags( KExtendedSocket::anySocket | KExtendedSocket::inputBufferedSocket | KExtendedSocket::outputBufferedSocket );
 
@@ -518,7 +515,7 @@ QString MSNSocket::getLocalIP()
 	if(!m_socket)
 		return QString::null;
 
-	const KSocketAddress *address= m_socket->localAddress(); 
+	const KSocketAddress *address= m_socket->localAddress();
 	if ( !address  )
 	{
 		kdDebug() << "MSNFileTransferSocket::getLocalIP: ip not found" <<endl;
@@ -575,16 +572,7 @@ QByteArray MSNSocket::Buffer::take(unsigned int sz)
 	return rep;
 }
 
-
 #include "msnsocket.moc"
 
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 
