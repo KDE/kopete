@@ -80,7 +80,7 @@ KgpgSelKey::KgpgSelKey(QWidget *parent, const char *name,bool showlocal):KDialog
       const QString trust=tst.section(':',1,1);
       QString val=tst.section(':',6,6);
       QString id=QString("0x"+tst.section(':',4,4).right(8));
-      if (val=="")
+      if (val.isEmpty())
         val=i18n("Unlimited");
       QString tr;
       switch( trust[0] )
