@@ -10,7 +10,6 @@ styles_DATA = \
 	Kopete.xsl \
 	Minimal.xsl \
 	MSN.xsl \
-	Adium_JS.xsl \
 	XChat.xsl
 
 stylesdir = $(kde_datadir)/kopete/styles
