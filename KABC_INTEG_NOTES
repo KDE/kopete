@@ -1,0 +1,99 @@
+Address book integration notes 26/08/03
+
+Use cases
+
+1) Add new metacontact + contacts using Add Contact Wizard
+    a) Matching addressbook entry already exists
+	- Need to choose kabc entry in ACW?
+
+	b) No matching entry exists
+	- Need to add new one
+
+2) Someone adds you - protocol notifies and creates (temporary?) MC.
+	(Martijn says this becomes the same as 1) when the MC is made permanent)
+
+3)  All new Kopete (first run / no existing configs or contactlist)
+	Add accounts
+	Server Side Contact List (SSCL) fetched, lots of permanent contacts are created.
+*)  Consider if 2 accounts are added and there are contacts from different accounts such that they represent the same person.  They belong in the same MC.  MC merging should take place prior to kabc association.
+
+4)  An existing Kopete config is present and we upgrade to a version of Kopete supporting kabc.
+
+5)  After abandoning Kopete, users start using a different KDE IM client, and would like to use the IM address details stored in the KDE address book.
+
+6)  Protocols may deliver contact data that users may want to aggregate into the kabc entry.
+
+Side Issues
+-----------
+
+It's not possible to add >1 contact per protocol using the ACW.  Martijn: >1 contact per MC is for power users, they can add extra contacts using the MC's context menu.
+
+Possible ACW order including kabc
+---------------------------------
+1) Welcome :P
+2) Choose protocol
+3) Fill in protocol details
+4) Select kabc contact from list | create new | create none
+
+( 4) could come after the welcome but this might be too different for users to swallow... Will)
+
+Fields to put in kabc
+~~~~~~~~~~~~~~~~~~~~~
+Relation between kabc entries and kopete metacontacts could be 1:1 or 1:many.  1:1 is neatest.
+
+In Kopete contact list:
+include UID from related kabc entry
+
+In kabc
+
+
+KABC Participation
+------------------
+
+Participation in the relation can be optional or mandatory.
+
+Optional
+~~~~~~~~
+Scenario 1:
+1) New Kopete install or account
+2) Ask 'New contacts added, associate with KDE Address book?'
+3) Yes: Pop up association dialog
+   No:  Do nothing
+
+Scenario 2:
+1) New Kopete install or account
+2) Do nothing
+3) Deferreed association - user performs associate when they want to
+
+For/In Favour
+~~~~~~~~~~~~~
+.) easier to code
+.) easier migration
+.) doesn't disturb people who don't want it
+.) unobtrusive
+
+Against
+~~~~~~~
+.) less consistent
+.) may confuse user?
+
+Mandatory 
+~~~~~~~~~
+Scenario 1
+1) When fetching SSCL, automatically create synthetic kabc entries.
+Scenario 2
+1) Fetch SSCL, ask user to create kabc entry normally.
+Hybrid 1-2
+1) Fetch SSCL
+2) Match SS contacts with kabc entries and associate automatically.  Unmatched contacts are associated with synthetic kabc entries.
+
+For
+~~~
+Can integrate with kabc contacts without disturbing user
+
+Against
+~~~~~~~
+User has control of address book, this removes that control.
+Synthetic entries may be duplicates of existing user added entries and user will have to reassociate MCs with correct entries and throw out the synthetic entries.
+Hybrid approach may be too complex for user to comprehend.
+
