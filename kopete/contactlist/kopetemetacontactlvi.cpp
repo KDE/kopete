@@ -115,6 +115,8 @@ public:
 	std::auto_ptr<ListView::ToolTipSource> toolTipSource;
 	int iconSize;
 	int currentMode;
+
+	QPtrList<KopeteEvent> events;
 };
 
 class ContactComponent : public ListView::ImageComponent
@@ -231,7 +233,6 @@ void KopeteMetaContactLVI::initLVI()
 	mBlinkTimer = new QTimer( this, "mBlinkTimer" );
 	connect( mBlinkTimer, SIGNAL( timeout() ), SLOT( slotBlink() ) );
 	mIsBlinkIcon = false;
-	m_event = 0L;
 
 	//if ( !mBlinkIcon )
 	//	mBlinkIcon = new QPixmap( KGlobal::iconLoader()->loadIcon( QString::fromLatin1( "newmsg" ), KIcon::Small ) );
@@ -424,8 +425,8 @@ void KopeteMetaContactLVI::slotUpdateMetaContact()
 
 void KopeteMetaContactLVI::execute() const
 {
-	if ( m_event )
-		m_event->apply();
+	if ( d->events.first() )
+		d->events.first()->apply();
 	else
 		m_metaContact->execute();
 }
@@ -637,7 +638,7 @@ void KopeteMetaContactLVI::setDisplayMode( int mode )
 
 void KopeteMetaContactLVI::updateVisibility()
 {
-	if ( KopetePrefs::prefs()->showOffline() || m_event  )
+	if ( KopetePrefs::prefs()->showOffline() || !d->events.isEmpty()  )
 		setTargetVisibility( true );
 	else if ( !m_metaContact->isOnline() && !mBlinkTimer->isActive() )
 		setTargetVisibility( false );
@@ -817,16 +818,10 @@ void KopeteMetaContactLVI::slotIdleStateChanged( KopeteContact *c )
 
 void KopeteMetaContactLVI::catchEvent( KopeteEvent *event )
 {
-	if ( m_event )
-	{
-		//ignore the new event.
-		return;
-		//TODO: add a queue
-	}
+	d->events.append( event );
 
-	m_event = event;
 	connect( event, SIGNAL( done( KopeteEvent* ) ),
-		this, SLOT( slotEventDone( KopeteEvent * ) ) );
+	         this, SLOT( slotEventDone( KopeteEvent * ) ) );
 
 	if ( mBlinkTimer->isActive() )
 		mBlinkTimer->stop();
@@ -841,10 +836,11 @@ void KopeteMetaContactLVI::catchEvent( KopeteEvent *event )
 
 void KopeteMetaContactLVI::slotBlink()
 {
+	bool haveEvent = !d->events.isEmpty();
 	if ( mIsBlinkIcon )
 	{
 		d->metaContactIcon->setPixmap( SmallIcon( m_metaContact->statusIcon(), d->iconSize ) );
-		if ( !m_event && m_blinkLeft <= 0 )
+		if ( !haveEvent && m_blinkLeft <= 0 )
 		{
 			mBlinkTimer->stop();
 			m_oldStatusIcon = m_metaContact->statusIcon();
@@ -853,7 +849,7 @@ void KopeteMetaContactLVI::slotBlink()
 	}
 	else
 	{
-		if ( m_event )
+		if ( haveEvent )
 		{
 			d->metaContactIcon->setPixmap( SmallIcon( "newmsg", d->iconSize ) );
 		}
@@ -867,19 +863,23 @@ void KopeteMetaContactLVI::slotBlink()
 	mIsBlinkIcon = !mIsBlinkIcon;
 }
 
-void KopeteMetaContactLVI::slotEventDone( KopeteEvent * /* event */ )
+void KopeteMetaContactLVI::slotEventDone( KopeteEvent *event )
 {
-	m_event = 0L;
-	if ( mBlinkTimer->isActive() )
-	{
-		mBlinkTimer->stop();
-		//If the contact gone offline while the timer was actif,
-		//the visibility has not been correctly updated. so do it now
-		updateVisibility();
-	}
+	d->events.remove( event );
 
-	d->metaContactIcon->setPixmap( SmallIcon( m_metaContact->statusIcon(), d->iconSize ) );
-	mIsBlinkIcon = false;
+	if ( d->events.isEmpty() )
+	{
+		if ( mBlinkTimer->isActive() )
+		{
+			mBlinkTimer->stop();
+			//If the contact gone offline while the timer was actif,
+			//the visibility has not been correctly updated. so do it now
+			updateVisibility();
+		}
+	
+		d->metaContactIcon->setPixmap( SmallIcon( m_metaContact->statusIcon(), d->iconSize ) );
+		mIsBlinkIcon = false;
+	}
 }
 
 QString KopeteMetaContactLVI::text( int column ) const

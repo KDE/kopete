@@ -169,7 +169,6 @@ private:
 	KopeteOnlineStatus m_oldStatus;
 	QString m_oldStatusIcon;
 
-	KopeteEvent *m_event;
 	QTimer *mBlinkTimer;
 
 	QPtrDict<KopeteAccount> m_addContactActions;
