@@ -249,7 +249,7 @@ JabberContactPool *JabberAccount::contactPool ()
 
 }
 
-bool JabberAccount::addContactToMetaContact (const QString & contactId, const QString & displayName, KopeteMetaContact * metaContact)
+bool JabberAccount::addContactToMetaContact (const QString & contactId, const QString &/*displayName*/, KopeteMetaContact * metaContact)
 {
 
 	// collect all group names
@@ -260,7 +260,7 @@ bool JabberAccount::addContactToMetaContact (const QString & contactId, const QS
 
 	XMPP::Jid jid ( contactId );
 	XMPP::RosterItem item ( jid );
-	item.setName ( displayName );
+	item.setName ( metaContact->displayName () );			// FIXME: this is a workaround for a libkopete bug (displayName equals contactId)
 	item.setGroups ( groupNames );
 
 	// this contact will be created with the "dirty" flag set
