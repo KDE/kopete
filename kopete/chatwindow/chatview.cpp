@@ -694,6 +694,8 @@ void ChatView::messageReceived(KopeteMessage &message)
 		{
 			case KopeteMessage::Highlight:
 				setTabState( Highlighted );
+				KWin::setState( m_mainWindow->winId(), NET::DemandsAttention );
+				break;
 			case KopeteMessage::Normal:
 				if(m.direction() == KopeteMessage::Inbound || m.direction() == KopeteMessage::Action)
 				{

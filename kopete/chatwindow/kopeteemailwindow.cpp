@@ -421,6 +421,7 @@ void KopeteEmailWindow::messageReceived(KopeteMessage &message)
 
 		d->unreadMessageFrom = message.from()->displayName();
 		QTimer::singleShot( 1000, this, SLOT(slotMarkMessageRead()) );
+		KWin::setState( winId(), NET::DemandsAttention );
 	}
 }
 
