@@ -12,7 +12,6 @@ bin_PROGRAMS = kopete
 kopete_SOURCES = dummy.cpp
 kopete_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 kopete_LDADD = libkopetemain.la
-CXXFLAGS = -g -O2 -Wall
 METASOURCES = AUTO
 
 CLEANFILES = dummy.cpp
