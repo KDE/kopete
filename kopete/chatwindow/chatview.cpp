@@ -141,7 +141,7 @@ ChatView::ChatView( KopeteMessageManager *mgr, const char *name )
 	connect( m_edit, SIGNAL( textChanged()), this, SLOT( slotTextChanged() ) );
 	connect( KopetePrefs::prefs(), SIGNAL(transparancyChanged()), this, SLOT( slotTransparancyChanged() ) );
 	connect( KopetePrefs::prefs(), SIGNAL(messageAppearanceChanged()), this, SLOT( slotRefreshNodes() ) );
-
+	connect( KopetePrefs::prefs(), SIGNAL(windowAppearanceChanged()), this, SLOT( slotRefreshView() ) );
 
 	// Timers for typing notifications
 	m_typingRepeatTimer = new QTimer;
@@ -358,7 +358,7 @@ void ChatView::setTabState( KopeteTabState newState = Undefined )
 
 			case Changed:
 				if( m_tabState != Highlighted && m_tabState != Message  )
-					m_tabBar->setLabelTextColor( this, Qt::magenta );
+					m_tabBar->setLabelTextColor( this, Qt::darkRed );
 				break;
 
 			case Typing:
@@ -896,16 +896,21 @@ void ChatView::addChatMessage( KopeteMessage &m )
 
 void ChatView::slotRefreshNodes()
 {
-	HTMLElement styleElement = chatView->document().documentElement().firstChild().firstChild();
-	styleElement.setInnerText( styleHTML() );
-
 	HTMLBodyElement bodyElement = chatView->htmlDocument().body();
-	bodyElement.setBgColor( KopetePrefs::prefs()->bgColor().name() );
 
 	QString xmlString;
 	for( QValueList<KopeteMessage>::Iterator it = messageList.begin(); it != messageList.end(); ++it)
 		xmlString += (*it).asXML().toString();
 	KopeteXSL::xsltTransformAsync( QString::fromLatin1("<document>") + xmlString + QString::fromLatin1("</document>"), KopetePrefs::prefs()->styleContents(), this, SLOT(slotTransformComplete( const QVariant &)) );
+}
+
+void ChatView::slotRefreshView()
+{
+	HTMLElement styleElement = chatView->document().documentElement().firstChild().firstChild();
+	styleElement.setInnerText( styleHTML() );
+
+	HTMLBodyElement bodyElement = chatView->htmlDocument().body();
+	bodyElement.setBgColor( KopetePrefs::prefs()->bgColor().name() );
 }
 
 void ChatView::slotTransformComplete( const QVariant &result )

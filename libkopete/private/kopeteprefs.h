@@ -118,6 +118,7 @@ signals:
 	 * Emitted when config gets saved by save()
 	 */
 	void saved();
+	void windowAppearanceChanged();
 	void messageAppearanceChanged();
 	void transparancyChanged();
 
@@ -162,7 +163,7 @@ private:
 	bool mBgOverride;
 	bool mShowTray;
 	bool mTransparancyChanged;
-	bool mAppearanceChanged;
+	bool mWindowAppearanceChanged;
 
 	int mChatWindowPolicy;
 	QString mStyleSheet;

@@ -335,6 +335,8 @@ private slots:
 
 	void slotRefreshNodes();
 
+	void slotRefreshView();
+
 	void slotTransformComplete( const QVariant &result );
 
 	void slotRightClick( const QString &, const QPoint &point );

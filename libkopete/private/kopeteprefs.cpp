@@ -149,6 +149,10 @@ void KopetePrefs::save()
 	if( mTransparancyChanged )
 		emit( transparancyChanged() );
 
+	if( mWindowAppearanceChanged )
+		emit( windowAppearanceChanged() );
+
+	mWindowAppearanceChanged = false;
 	mTransparancyChanged = false;
 }
 
@@ -220,7 +224,7 @@ void KopetePrefs::setSoundIfAway(bool value)
 
 void KopetePrefs::setStyleSheet(const QString &value)
 {
-	if( mAppearanceChanged || mStyleSheet != value )
+	if( mStyleSheet != value )
 	{
 		mStyleSheet = value;
 		mStyleContents = fileContents( mStyleSheet );
@@ -230,25 +234,25 @@ void KopetePrefs::setStyleSheet(const QString &value)
 
 void KopetePrefs::setFontFace( const QFont &value )
 {
-	mAppearanceChanged = mAppearanceChanged || !(value == mFontFace);
+	mWindowAppearanceChanged = mWindowAppearanceChanged || !(value == mFontFace);
 	mFontFace = value;
 }
 
 void KopetePrefs::setTextColor( const QColor &value )
 {
-	mAppearanceChanged = mAppearanceChanged || !(value == mTextColor);
+	mWindowAppearanceChanged = mWindowAppearanceChanged || !(value == mTextColor);
 	mTextColor = value;
 }
 
 void KopetePrefs::setBgColor( const QColor &value )
 {
-	mAppearanceChanged = mAppearanceChanged || !(value == mBgColor);
+	mWindowAppearanceChanged = mWindowAppearanceChanged || !(value == mBgColor);
 	mBgColor = value;
 }
 
 void KopetePrefs::setLinkColor( const QColor &value )
 {
-	mAppearanceChanged = mAppearanceChanged || !(value == mLinkColor);
+	mWindowAppearanceChanged = mWindowAppearanceChanged || !(value == mLinkColor);
 	mLinkColor = value;
 }
 
@@ -281,31 +285,31 @@ void KopetePrefs::setChatViewBufferSize(const int value)
 
 void KopetePrefs::setHighlightBackground(const QColor &value)
 {
-	mAppearanceChanged = mAppearanceChanged || !(value == mHighlightBackground);
+	mWindowAppearanceChanged = mWindowAppearanceChanged || !(value == mHighlightBackground);
 	mHighlightBackground = value;
 }
 
 void KopetePrefs::setHighlightForeground(const QColor &value)
 {
-	mAppearanceChanged = mAppearanceChanged || !(value == mHighlightForeground);
+	mWindowAppearanceChanged = mWindowAppearanceChanged || !(value == mHighlightForeground);
 	mHighlightForeground = value;
 }
 
 void KopetePrefs::setHighlightEnabled(bool value)
 {
-	mAppearanceChanged = mAppearanceChanged || !(value == mHighlightEnabled);
+	mWindowAppearanceChanged = mWindowAppearanceChanged || !(value == mHighlightEnabled);
 	mHighlightEnabled = value;
 }
 
 void KopetePrefs::setTransparencyValue(int value)
 {
-	mTransparancyChanged = mTransparancyChanged || !(value == mTransparencyValue);
+	mWindowAppearanceChanged = mWindowAppearanceChanged || !(value == mTransparencyValue);
 	mTransparencyValue = value;
 }
 
 void KopetePrefs::setBgOverride(bool value)
 {
-	mAppearanceChanged = mAppearanceChanged || !(value == mBgOverride);
+	mWindowAppearanceChanged = mWindowAppearanceChanged || !(value == mBgOverride);
 	mBgOverride = value;
 }
 
