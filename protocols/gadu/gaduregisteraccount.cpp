@@ -133,7 +133,7 @@ GaduRegisterAccount::registrationDone(  const QString& /*title*/,  const QString
 	ui->emailArea->setDisabled( true );
 	ui->submitData->setDisabled( true );
 	emit registeredNumber( cRegister->newUin(), ui->password1->text() );
-	updateStatus( i18n( "Your UNI is %1" ).arg(QString::number( cRegister->newUin() )  ) );
+	updateStatus( i18n( "Your UIN is %1" ).arg(QString::number( cRegister->newUin() )  ) );
 	enableButton( Ok, true );
 }
 
