@@ -231,9 +231,16 @@ void KopeteMetaLVIProps::slotHasAddressbookEntryToggled( bool on )
 void KopeteMetaLVIProps::slotSelectAddresseeClicked()
 {
 	 KABC::Addressee a = KABC::AddresseeDialog::getAddressee(this);
-	 // set the lineedit to the Addressee's name
-	 mainWidget->edtAddressee->setText( a.realName() );
-	 // set/update the MC's addressee uin field
-	 item->metaContact()->setMetaContactId( a.uid() );
+	 if ( a.isEmpty() )
+	 {
+	 	mainWidget->edtAddressee->setText( QString::null ) ;
+	 }
+	 else
+	 {
+		// set the lineedit to the Addressee's name
+		mainWidget->edtAddressee->setText( a.realName() );
+		// set/update the MC's addressee uin field
+		item->metaContact()->setMetaContactId( a.uid() );
+	 }
 }
 #include "kopetelviprops.moc"
