@@ -252,6 +252,11 @@ redo:
 							fg.setRgb(tmp.mid(4,2).toInt(0, 16), tmp.mid(2,2).toInt(0,16), tmp.mid(0,2).toInt(0,16));
 					}
 
+					// FIXME: The below regexps do work, but are quite ugly.
+					// Reason is that a \1 inside the replacement string is
+					// not possible.
+					// When importing kopete into kdenetwork, convert this to
+					// KRegExp3 from libkdenetwork, which does exactly this.
 					QString fontName = fontinfo.replace(
 						QRegExp( ".*(FN=" ), "" ).replace(
 						QRegExp( ";.*" ), "" ).replace( QRegExp( "%20" ), " " );
