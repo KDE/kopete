@@ -428,7 +428,7 @@ void KopetePrefs::setHighlightEnabled(bool value)
 
 void KopetePrefs::setTransparencyValue(int value)
 {
-	if( value != mTransparencyValue ) mWindowAppearanceChanged = true;
+	if( value != mTransparencyValue ) mTransparencyChanged = true;
 	mTransparencyValue = value;
 }
 
