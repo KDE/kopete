@@ -54,6 +54,7 @@ JabberProtocol::JabberProtocol(): QObject(0, "JabberProtocol"), KopeteProtocol()
 
 		KMessageBox::error(kopeteapp->mainWindow(), emptyText, emptyCaption);
 	}
+  mIsConnected = false;
 	/** Autoconnect if is selected in config */
 	if (KGlobal::config()->readBoolEntry("AutoConnect", "0")) {
 		Connect();
@@ -133,7 +134,12 @@ void JabberProtocol::setAvailable(void) {
 }
 
 bool JabberProtocol::isAway(void) const {
-  return (protocol->getStatus() == "away" || protocol->getStatus() == "xa" || protocol->getStatus() == "dnd");
+  if (isConnected()) {
+    return (protocol->getStatus() == "away" || protocol->getStatus() == "xa" || protocol->getStatus() == "dnd");
+  }
+  else {
+    return false;
+  }
 }
 
 QString JabberProtocol::protocolIcon() const {
