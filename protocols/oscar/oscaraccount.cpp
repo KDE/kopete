@@ -37,27 +37,84 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 
+class OscarAccountPrivate
+{
+public:
+	/*
+	 * Our Internal buddy list (from the server)
+	 */
+	AIMBuddyList *internalBuddyList;
+
+	AIMBuddyList *loginContactlist;
+
+    /**
+	 * Server-side AIMBuddies that do not have KopeteContacts yet for the reason that
+	 * their group has not yet been sent from the server
+	 * See aimbuddylist.h under 'signals:' for an explanation of this.
+	 * This is 'the queue'
+	 */
+	QPtrList<AIMBuddy> groupQueue;
+
+	/*
+	 * Our OSCAR socket object
+	 */
+	OscarSocket *engine;
+
+	/*
+	 * Random new group/contact number for the engine
+	 */
+	int randomNewGroupNum;
+	int randomNewBuddyNum;
+
+	/*
+	 * This flag is used internally to keep track
+	 * of if we're idle or not
+	 */
+	bool isIdle;
+
+	/*
+	 * Last idle time in seconds we sent to the server
+	 */
+	int lastIdleValue;
+
+	/*
+	 * anti SPAM feature :)
+	 */
+	bool ignoreUnknownContacts;
+
+	/*
+	 * This is our idle timer, it is used internally
+	 * to represent idle times and report them to
+	 * the server
+	 */
+	QTimer *idleTimer;
+
+	QString awayMessage;
+};
+
 OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, const char *name, bool isICQ)
-	: KopeteAccount(parent, accountID, name)
+: KopeteAccount( parent, accountID, name )
 {
 	kdDebug(14150) << k_funcinfo << " accountID='" << accountID <<
 		"', isICQ=" << isICQ << endl;
 
-	mEngine = 0L;
+	d = new OscarAccountPrivate;
+
+	d->engine = 0L;
 	// Set our random new numbers
-	mRandomNewBuddyNum = 0;
-	mRandomNewGroupNum = 0;
-	mIgnoreUnknownContacts = false;
-	mAreIdle = false;
-	lastIdleValue = 0;
-	mAwayMessage = "";
+	d->randomNewBuddyNum = 0;
+	d->randomNewGroupNum = 0;
+	d->ignoreUnknownContacts = false;
+	d->isIdle = false;
+	d->lastIdleValue = 0;
+	d->awayMessage = "";
 
 	initEngine(isICQ); // Initialize the backend
 
 	// Create the internal buddy list for this account
 	// TODO: make this an internal list of KopeteGroup and Kopete-/OscarContact
-	mInternalBuddyList = new AIMBuddyList(this, "mInternalBuddyList");
-	mLoginContactlist = 0L;
+	d->internalBuddyList = new AIMBuddyList(this, "d->internalBuddyList");
+	d->loginContactlist = 0L;
 
 	// Contact list signals for group management events
 	QObject::connect(
@@ -101,18 +158,18 @@ OscarAccount::OscarAccount(KopeteProtocol *parent, const QString &accountID, con
 		engine(), SIGNAL(gotDirectIMRequest(QString)),
 		this, SLOT(slotGotDirectIMRequest(QString)));
 
-	mIdleTimer = new QTimer(this, "OscarIdleTimer");
+	d->idleTimer = new QTimer(this, "OscarIdleTimer");
 	QObject::connect(
-		mIdleTimer, SIGNAL(timeout()),
+		d->idleTimer, SIGNAL(timeout()),
 		this, SLOT(slotIdleTimeout()));
 
 	// Got a new server-side group, try and add any queued
 	// buddies to our Kopete contact list
 	QObject::connect(
-		mInternalBuddyList, SIGNAL(groupAdded(AIMGroup *)),
+		d->internalBuddyList, SIGNAL(groupAdded(AIMGroup *)),
 		this, SLOT(slotReTryServerContacts()));
 
-	QObject::connect(mEngine, SIGNAL(loggedIn()), this, SLOT(slotLoggedIn()));
+	QObject::connect(d->engine, SIGNAL(loggedIn()), this, SLOT(slotLoggedIn()));
 }
 
 OscarAccount::~OscarAccount()
@@ -122,23 +179,25 @@ OscarAccount::~OscarAccount()
 	OscarAccount::disconnect();
 
 	// Delete the backend
-	if (mEngine)
+	if (d->engine)
 	{
-		//kdDebug(14150) << k_funcinfo << "'" << accountId() << "'; delayed deleting of mEngine" << endl;
-		mEngine->deleteLater();
+		//kdDebug(14150) << k_funcinfo << "'" << accountId() << "'; delayed deleting of d->engine" << endl;
+		d->engine->deleteLater();
 	}
+
+	delete d;
 }
 
 OscarSocket* OscarAccount::engine() const
 {
-	assert(mEngine);
-	return mEngine;
+	assert(d->engine);
+	return d->engine;
 }
 
 void OscarAccount::disconnect()
 {
 	kdDebug(14150) << k_funcinfo << "accountId='" << accountId() << "'" << endl;
-	mEngine->doLogoff();
+	d->engine->doLogoff();
 }
 
 void OscarAccount::initEngine(bool icq)
@@ -147,8 +206,8 @@ void OscarAccount::initEngine(bool icq)
 
 	QByteArray cook;
 	cook.duplicate("01234567",8);
-	mEngine = new OscarSocket(pluginData(protocol(),"Server"), cook,
-		this, this, "mEngine", icq);
+	d->engine = new OscarSocket(pluginData(protocol(),"Server"), cook,
+		this, this, "d->engine", icq);
 }
 
 void OscarAccount::slotGoOffline()
@@ -179,7 +238,7 @@ void OscarAccount::slotReceivedMessage(const QString &sender, OscarMessage &inco
 	OscarContact *contact = static_cast<OscarContact*>(contacts()[tocNormalize(sender)]);
 	QString text = incomingMessage.text();
 
-	if(!contact && !mIgnoreUnknownContacts)
+	if(!contact && !d->ignoreUnknownContacts)
 	{
 		//basically, all this does is add the person to your buddy list
 		// TODO: Right now this has no support for "temporary" buddies
@@ -274,11 +333,11 @@ void OscarAccount::slotGroupAdded(KopeteGroup *group)
 	}
 
 	// See if we already have this group
-	AIMGroup *aGroup = mInternalBuddyList->findGroup(groupName);
+	AIMGroup *aGroup = d->internalBuddyList->findGroup(groupName);
 	if (!aGroup)
 	{
-		aGroup = mInternalBuddyList->addGroup(mRandomNewGroupNum, groupName);
-		mRandomNewGroupNum++;
+		aGroup = d->internalBuddyList->addGroup(d->randomNewGroupNum, groupName);
+		d->randomNewGroupNum++;
 		kdDebug(14150) << k_funcinfo <<
 			"'" << accountId() << "' addGroup() being called" << endl;
 		if (isConnected())
@@ -311,12 +370,12 @@ void OscarAccount::slotKopeteGroupRemoved(KopeteGroup *group)
 		return;
 	}
 
-	AIMGroup *aGroup = mInternalBuddyList->findGroup(groupName);
+	AIMGroup *aGroup = d->internalBuddyList->findGroup(groupName);
 	if (aGroup)
 	{
 		engine()->sendDelGroup(groupName);
 		// and remove the group from our AIMBuddyList
-		mInternalBuddyList->removeGroup( aGroup->ID() );
+		d->internalBuddyList->removeGroup( aGroup->ID() );
 	}
 }
 
@@ -324,7 +383,7 @@ void OscarAccount::slotGotServerBuddyList()
 {
 	kdDebug(14150) << k_funcinfo << "account='" << accountId() << "'" << endl;
 /*
-	QValueList<AIMBuddy *> ll = mInternalBuddyList->buddies().values();
+	QValueList<AIMBuddy *> ll = d->internalBuddyList->buddies().values();
 	QValueList<AIMBuddy *> sl = buddyList.buddies().values();
 	for (QValueList<AIMBuddy *>::Iterator it=ll.begin(); it!=ll.end(); ++it)
 		qDebug("-- Local: %s, id: %i, groupId: %i", (*it)->screenname().latin1(), (*it)->ID(), (*it)->groupID());
@@ -332,11 +391,11 @@ void OscarAccount::slotGotServerBuddyList()
 		qDebug("-- Server: %s, id: %i, groupId: %i", (*it)->screenname().latin1(), (*it)->ID(), (*it)->groupID());
 */
 
-	if ( !mLoginContactlist )
+	if ( !d->loginContactlist )
 		return;
 
-	*mInternalBuddyList += *mLoginContactlist;
-	QValueList<AIMBuddy *> localList = mLoginContactlist->buddies().values();
+	*d->internalBuddyList += *d->loginContactlist;
+	QValueList<AIMBuddy *> localList = d->loginContactlist->buddies().values();
 
 	for (QValueList<AIMBuddy *>::Iterator it=localList.begin(); it!=localList.end(); ++it)
 	{
@@ -352,10 +411,10 @@ void OscarAccount::slotLoggedIn()
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
 
 	// Only call sync if we received a list on connect, does not happen on @mac AIM-accounts
-	if (mLoginContactlist)
+	if (d->loginContactlist)
 		QTimer::singleShot(2000, this, SLOT(slotDelayedListSync()));
 
-	mIdleTimer->start(10 * 1000);
+	d->idleTimer->start(10 * 1000);
 }
 
 void OscarAccount::slotDelayedListSync()
@@ -363,8 +422,8 @@ void OscarAccount::slotDelayedListSync()
 	kdDebug(14150) << k_funcinfo << "Called" << endl;
 
 	syncLocalWithServerBuddyList ();
-	delete mLoginContactlist;
-	mLoginContactlist = 0L;
+	delete d->loginContactlist;
+	d->loginContactlist = 0L;
 }
 
 //
@@ -386,7 +445,7 @@ void OscarAccount::syncLocalWithServerBuddyList()
 		QString contactId = static_cast<OscarContact*>( it.current() )->contactName();
 		QString displayName = static_cast<OscarContact*>( it.current() )->displayName();
 
-		AIMBuddy *buddy = mLoginContactlist->findBuddy( contactId );
+		AIMBuddy *buddy = d->loginContactlist->findBuddy( contactId );
 
 		if(!buddy && it.current() != myself())
 		{
@@ -399,14 +458,14 @@ void OscarAccount::syncLocalWithServerBuddyList()
 
 			// Create a new internal buddy for this contact
 			AIMBuddy *newBuddy =
-				new AIMBuddy(mRandomNewBuddyNum++, group->ID(), tocNormalize(contactId));
+				new AIMBuddy(d->randomNewBuddyNum++, group->ID(), tocNormalize(contactId));
 
 			// Check if it has an alias
 			if((displayName != QString::null) && (displayName != contactId))
 				newBuddy->setAlias(displayName);
 
 			// Add the buddy to the internal buddy list
-			mInternalBuddyList->addBuddy( newBuddy );
+			d->internalBuddyList->addBuddy( newBuddy );
 
 			// Add the buddy to the server's list, with the group,
 			// need to normalize the contact name
@@ -422,15 +481,15 @@ AIMGroup * OscarAccount::findOrCreateGroup( const QString& localGroup )
 {
 	QString groupName = localGroup.isEmpty() ? QString::fromLatin1("Buddies") : localGroup;
 	// See if it exists in our internal group list already
-	AIMGroup *internalGroup = mInternalBuddyList->findGroup( groupName );
+	AIMGroup *internalGroup = d->internalBuddyList->findGroup( groupName );
 
 	// If the group didn't exist, take it from the local list
 	if (!internalGroup)
 	{
 		kdDebug(14150) << k_funcinfo << "Group doesn't exist on server list, create it:" << groupName << endl;
-		internalGroup = mInternalBuddyList->findGroup( groupName );
+		internalGroup = d->internalBuddyList->findGroup( groupName );
 		if(!internalGroup)
-			internalGroup = mInternalBuddyList->addGroup(mRandomNewGroupNum++, groupName);
+			internalGroup = d->internalBuddyList->addGroup(d->randomNewGroupNum++, groupName);
 
 		// Add the group on the server list
 		if(internalGroup)
@@ -482,7 +541,7 @@ void OscarAccount::addServerContact(AIMBuddy *buddy)
 		kdDebug(14150) << k_funcinfo << "Adding new contact from Serverside List to Kopete" << endl;
 
 		// Get the group this buddy belongs to
-		AIMGroup *aimGroup = mInternalBuddyList->findGroup(buddy->groupID());
+		AIMGroup *aimGroup = d->internalBuddyList->findGroup(buddy->groupID());
 		if (aimGroup)
 		{
 			kdDebug(14150) << k_funcinfo << "Found its group on server, groupname=" <<
@@ -538,38 +597,38 @@ void OscarAccount::slotIdleTimeout()
 	// not doing anything for more than 5 mins and still not idle
 	if(idletime >= 5*60)
 	{
-		if (idletime >= lastIdleValue + 60)
+		if (idletime >= d->lastIdleValue + 60)
 		{
 			/*kdDebug(14150) << k_funcinfo <<
 				"sending idle time to server, idletime=" << idletime << endl;*/
 			engine()->sendIdleTime(idletime);
-			lastIdleValue = idletime;
+			d->lastIdleValue = idletime;
 
 			// Set the idle flag
-			mAreIdle = true;
+			d->isIdle = true;
 		}
 	}
 	else
 	{
-		if (mAreIdle)
+		if (d->isIdle)
 		{ // If we _are_ idle, change it
 			/*kdDebug(14150) << k_funcinfo <<
 				"system change to ACTIVE, setting idle time with server to 0" << endl;*/
 			engine()->sendIdleTime(0);
-			mAreIdle = false;
-			lastIdleValue = 0;
+			d->isIdle = false;
+			d->lastIdleValue = 0;
 		}
 	}
 }
 
 int OscarAccount::randomNewBuddyNum()
 {
-	return mRandomNewBuddyNum++;
+	return d->randomNewBuddyNum++;
 }
 
 int OscarAccount::randomNewGroupNum()
 {
-	return mRandomNewGroupNum++;
+	return d->randomNewGroupNum++;
 }
 
 void OscarAccount::setServerAddress(const QString &server)
@@ -623,7 +682,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 
 	// Next check our internal list to see if we have this buddy
 	// already, findBuddy tocNormalizes the buddy name for us
-	AIMBuddy *internalBuddy = mInternalBuddyList->findBuddy(contactId);
+	AIMBuddy *internalBuddy = d->internalBuddyList->findBuddy(contactId);
 
 	if (internalBuddy) // We found the buddy internally
 	{
@@ -685,13 +744,13 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			}
 
 			// See if it exists in our internal group list already
-			AIMGroup *internalGroup = mInternalBuddyList->findGroup(groupName);
+			AIMGroup *internalGroup = d->internalBuddyList->findGroup(groupName);
 
 			// If the group didn't exist
 			if (!internalGroup)
 			{
 				internalGroup =
-					mInternalBuddyList->addGroup(mRandomNewGroupNum, groupName);
+					d->internalBuddyList->addGroup(d->randomNewGroupNum, groupName);
 				kdDebug(14150) << "created internal group for new contact" << endl;
 				// Add the group on the server list
 				engine()->sendAddGroup(internalGroup->name());
@@ -699,7 +758,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 
 			// Create a new internal buddy for this contact
 			AIMBuddy *newBuddy =
-				new AIMBuddy(mRandomNewBuddyNum,
+				new AIMBuddy(d->randomNewBuddyNum,
 							 internalGroup->ID(), contactId);
 
 			// Check if it has an alias
@@ -707,7 +766,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 				newBuddy->setAlias(displayName);
 
 			// Add the buddy to the internal buddy list
-			mInternalBuddyList->addBuddy( newBuddy );
+			d->internalBuddyList->addBuddy( newBuddy );
 
 			// Add the buddy to the server's list, with the group,
 			// need to normalize the contact name
@@ -715,8 +774,8 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 									  internalGroup->name());
 
 			// Increase these counters, I'm not sure what this does
-			mRandomNewGroupNum++;
-			mRandomNewBuddyNum++;
+			d->randomNewGroupNum++;
+			d->randomNewBuddyNum++;
 
 			// Create the actual contact, which adds it to the metacontact
 			return(createNewContact(contactId, displayName, parentContact));
@@ -734,7 +793,7 @@ bool OscarAccount::addContactToMetaContact(const QString &contactId,
 			// I'm not sure what it does if they're offline, but there
 			// is code in oscarcontact to handle the signal from
 			// the engine that this causes
-			//if(!mEngine->isICQ())
+			//if(!d->engine->isICQ())
 			{
 				kdDebug(14150) << k_funcinfo <<
 					"Requesting user info for '" << contactId << "'" << endl;
@@ -752,22 +811,22 @@ void OscarAccount::slotOurStatusChanged(const unsigned int newStatus)
 	static_cast<OscarContact *>( myself() )->setStatus(newStatus);
 
 	if(newStatus == OSCAR_OFFLINE)
-		mIdleTimer->stop();
+		d->idleTimer->stop();
 }
 
 void OscarAccount::slotReTryServerContacts()
 {
-	kdDebug(14150) << k_funcinfo << "==================== Called, mGroupQueue.count()=" <<
-		mGroupQueue.count() << endl;
+	kdDebug(14150) << k_funcinfo << "==================== Called, d->groupQueue.count()=" <<
+		d->groupQueue.count() << endl;
 
 	// Process the queue
 	int i = 0;
-	for (AIMBuddy *it = mGroupQueue.at(i); it != 0L; it = mGroupQueue.at( ++i ))
+	for (AIMBuddy *it = d->groupQueue.at(i); it != 0L; it = d->groupQueue.at( ++i ))
 	{
 		// Success, group now exists, add contact
-		if (mInternalBuddyList->findGroup(it->groupID()))
+		if (d->internalBuddyList->findGroup(it->groupID()))
 		{
-			mGroupQueue.remove(i);
+			d->groupQueue.remove(i);
 			addOldContact(it);
 		}
 	}
@@ -778,18 +837,18 @@ void OscarAccount::addOldContact(AIMBuddy *bud,KopeteMetaContact *meta)
 {
 	bool temporary = false;
 
-	AIMGroup *group = mInternalBuddyList->findGroup(bud->groupID());
+	AIMGroup *group = d->internalBuddyList->findGroup(bud->groupID());
 	if (!group && bud)
 	{
 		kdDebug(14150) << k_funcinfo <<
 			"Adding AIMBuddy '" << bud->ID() << "' to groupQueue " <<
 			"to check later once we know about the group." << endl;
-		mGroupQueue.append(bud);
+		d->groupQueue.append(bud);
 		return;
 	}
 
-	mInternalBuddyList->addBuddy(bud);
-	if(!mInternalBuddyList->findBuddy(bud->screenname()) ) return;
+	d->internalBuddyList->addBuddy(bud);
+	if(!d->internalBuddyList->findBuddy(bud->screenname()) ) return;
 
 	if (group->name().isNull())
 		temporary = true;
@@ -841,68 +900,68 @@ void OscarAccount::addOldContact(AIMBuddy *bud,KopeteMetaContact *meta)
 
 void OscarAccount::setAwayMessage(const QString &msg)
 {
-	mAwayMessage = msg;
+	d->awayMessage = msg;
 }
 
 const QString &OscarAccount::awayMessage()
 {
-	return mAwayMessage;
+	return d->awayMessage;
 }
 
 void OscarAccount::addBuddy( AIMBuddy *buddy, OscarAccount::OscarContactList list )
 {
 	if ( list == InternalContactList )
 	{
-		if ( !mLoginContactlist )
-			mLoginContactlist = new AIMBuddyList( this, "mLoginContactlist" );
-		mLoginContactlist->addBuddy( buddy );
+		if ( !d->loginContactlist )
+			d->loginContactlist = new AIMBuddyList( this, "d->loginContactlist" );
+		d->loginContactlist->addBuddy( buddy );
 	}
 	else
 	{
-		mInternalBuddyList->addBuddy( buddy );
+		d->internalBuddyList->addBuddy( buddy );
 	}
 }
 
 void OscarAccount::removeBuddy( AIMBuddy *buddy )
 {
-	mInternalBuddyList->removeBuddy( buddy );
+	d->internalBuddyList->removeBuddy( buddy );
 }
 
 AIMBuddy * OscarAccount::findBuddy( const QString &screenName )
 {
-	return mInternalBuddyList->findBuddy( screenName );
+	return d->internalBuddyList->findBuddy( screenName );
 }
 
 AIMGroup * OscarAccount::findGroup( int groupId, OscarAccount::OscarContactList list )
 {
 	if ( list == InternalContactList )
 	{
-		if ( !mLoginContactlist )
-			mLoginContactlist = new AIMBuddyList( this, "mLoginContactlist" );
-		return mLoginContactlist->findGroup( groupId );
+		if ( !d->loginContactlist )
+			d->loginContactlist = new AIMBuddyList( this, "d->loginContactlist" );
+		return d->loginContactlist->findGroup( groupId );
 	}
 	else
 	{
-		return mInternalBuddyList->findGroup( groupId );
+		return d->internalBuddyList->findGroup( groupId );
 	}
 }
 
 AIMGroup * OscarAccount::findGroup( const QString &name )
 {
-	return mInternalBuddyList->findGroup( name );
+	return d->internalBuddyList->findGroup( name );
 }
 
 AIMGroup * OscarAccount::addGroup( int id, const QString &name, OscarContactList list )
 {
 	if ( list == InternalContactList )
 	{
-		if ( !mLoginContactlist )
-			mLoginContactlist = new AIMBuddyList( this, "mLoginContactlist" );
-		return mLoginContactlist->addGroup( id, name );
+		if ( !d->loginContactlist )
+			d->loginContactlist = new AIMBuddyList( this, "d->loginContactlist" );
+		return d->loginContactlist->addGroup( id, name );
 	}
 	else
 	{
-		return mInternalBuddyList->addGroup( id, name );
+		return d->internalBuddyList->addGroup( id, name );
 	}
 }
 
@@ -910,14 +969,24 @@ void OscarAccount::addBuddyDeny( AIMBuddy *buddy, OscarContactList list )
 {
 	if ( list == InternalContactList )
 	{
-		if ( !mLoginContactlist )
-			mLoginContactlist = new AIMBuddyList( this, "mLoginContactlist" );
-		mLoginContactlist->addBuddyDeny( buddy );
+		if ( !d->loginContactlist )
+			d->loginContactlist = new AIMBuddyList( this, "d->loginContactlist" );
+		d->loginContactlist->addBuddyDeny( buddy );
 	}
 	else
 	{
-		mInternalBuddyList->addBuddyDeny( buddy );
+		d->internalBuddyList->addBuddyDeny( buddy );
 	}
+}
+
+bool OscarAccount::ignoreUnknownContacts() const
+{
+	return d->ignoreUnknownContacts;
+}
+
+void OscarAccount::setIgnoreUnknownContacts( bool b )
+{
+	d->ignoreUnknownContacts = b;
 }
 
 #include "oscaraccount.moc"

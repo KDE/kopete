@@ -36,6 +36,8 @@ class OscarSocket;
 class AIMBuddy;
 class AIMGroup;
 
+class OscarAccountPrivate;
+
 class OscarAccount : public KopeteAccount
 {
 	Q_OBJECT
@@ -62,7 +64,7 @@ public:
 	/*
 	 * Accessor method for our engine object
 	 */
-	virtual OscarSocket* engine() const;
+	OscarSocket* engine() const;
 
 	/*
 	 * Accessor method for the action menu
@@ -89,8 +91,8 @@ public:
 	 */
 	void setServerAddress(const QString &server);
 
-	bool ignoreUnknownContacts() const { return mIgnoreUnknownContacts; }
-	void setIgnoreUnknownContacts(bool b) { mIgnoreUnknownContacts = b; }
+	bool ignoreUnknownContacts() const;
+	void setIgnoreUnknownContacts( bool b );
 
 	void setAwayMessage(const QString&);
 	const QString &awayMessage();
@@ -258,60 +260,14 @@ protected:
 	 */
 	void addOldContact(AIMBuddy *bud, KopeteMetaContact *meta=0l);
 
-protected:
 	void syncLocalWithServerBuddyList();
 	AIMGroup * findOrCreateGroup( const QString& localGroup );
 
-protected:
-	/*
-	 * Our Internal buddy list (from the server)
-	 */
-	AIMBuddyList *mInternalBuddyList;
-
-	AIMBuddyList *mLoginContactlist;
-
-    /**
-	 * Server-side AIMBuddies that do not have KopeteContacts yet for the reason that
-	 * their group has not yet been sent from the server
-	 * See aimbuddylist.h under 'signals:' for an explanation of this.
-	 * This is 'the queue'
-	 */
-	QPtrList<AIMBuddy> mGroupQueue;
-
-	/*
-	 * Our OSCAR socket object
-	 */
-	OscarSocket *mEngine;
-
-	/*
-	 * Random new group/contact number for the engine
-	 */
-	int mRandomNewGroupNum;
-	int mRandomNewBuddyNum;
-
-	/*
-	 * This flag is used internally to keep track
-	 * of if we're idle or not
-	 */
-	bool mAreIdle;
-	/*
-	 * Last idle time in seconds we sent to the server
-	 */
-	int lastIdleValue;
-
-	/*
-	 * anti SPAM feature :)
-	 */
-	bool mIgnoreUnknownContacts;
-
-	/*
-	 * This is our idle timer, it is used internally
-	 * to represent idle times and report them to
-	 * the server
-	 */
-	QTimer *mIdleTimer;
-
-	QString mAwayMessage;
+private:
+	OscarAccountPrivate *d;
 };
+
 #endif
+
 // vim: set noet ts=4 sts=4 sw=4:
+

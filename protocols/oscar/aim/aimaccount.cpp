@@ -262,7 +262,7 @@ void AIMAccount::connect(const unsigned long status, const QString &awMessage)
 				": Logging in as " << screenName << endl;
 
 			// Connect, need to normalize the name first
-			mEngine->doLogin(
+			engine()->doLogin(
 				server,
 				port.toInt(),
 				screenName,
