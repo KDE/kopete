@@ -113,7 +113,7 @@ void IRCUserContact::incomingUserIsAway(const QString &reason )
 	{
 		KopeteMessage msg( (KopeteContact*)MYACCOUNT->myServer(), mMyself,
 			i18n("%1 is away (%2)").arg( m_nickName ).arg( reason ),
-			KopeteMessage::Internal, KopeteMessage::PlainText, KopeteMessage::Chat );
+			KopeteMessage::Internal, KopeteMessage::RichText, KopeteMessage::Chat );
 		manager()->appendMessage(msg);
 	}
 }

@@ -145,7 +145,7 @@ void IRCContact::slotUserDisconnected(const QString &user, const QString &reason
 		KopeteContact *c = locateUser( nickname );
 		if ( c )
 		{
-			manager()->removeContact( c, i18n("Quit: \"%1\" ").arg(reason) );
+			manager()->removeContact( c, i18n("Quit: \"%1\" ").arg(reason), KopeteMessage::RichText );
 			c->setOnlineStatus( m_protocol->m_UserStatusOffline );
 		}
 	}
