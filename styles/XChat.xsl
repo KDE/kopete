@@ -15,7 +15,7 @@
 		-<font color="cyan">--</font>
 	</xsl:when>
 	<xsl:when test="@direction='3'"><!--action message-->
-		<span class="KopeteDisplayName"><xsl:value-of select="from/contact/@metaContactDisplayName"/></span><xsl:text disable-output-escaping="yes">&#160;</xsl:text>
+		<span class="KopeteDisplayName"><xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/></span><xsl:text disable-output-escaping="yes">&#160;</xsl:text>
 	</xsl:when>
 	<xsl:otherwise>
 		<font color="blue">&lt;</font>
@@ -30,7 +30,7 @@
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:attribute>
-			<span class="KopeteDisplayName"><xsl:value-of select="from/contact/@metaContactDisplayName"/></span>
+			<span class="KopeteDisplayName"><xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/></span>
 		</font>
 		<font color="blue">&gt; </font>
 	</xsl:otherwise>

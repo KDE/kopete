@@ -5,7 +5,7 @@
 <div style="padding-bottom:10px;" class="KopeteMessage"><xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
 	<xsl:if test="@direction &lt; 2">
 		<div style="color:lightgray">
-			(<xsl:value-of select="@time"/>) <span class="KopeteDisplayName"><xsl:value-of select="from/contact/@metaContactDisplayName"/></span> says:
+			(<xsl:value-of select="@time"/>) <span class="KopeteDisplayName"><xsl:value-of disable-output-escaping="yes" select="from/contact/@metaContactDisplayName"/></span> says:
 		</div>
 		<xsl:text disable-output-escaping="yes">&#160;&#160;&#160;&#160;</xsl:text>
 	</xsl:if>
