@@ -631,7 +631,7 @@ void OscarContact::slotGotAuthReply(const QString &contact, const QString &reaso
 //void OscarContact::receivedIM(OscarSocket::OscarMessageType type, const OscarMessage &msg)
 void OscarContact::receivedIM(KopeteMessage &msg)
 {
-	kdDebug(14190) << k_funcinfo << "called" << endl;
+	//kdDebug(14190) << k_funcinfo << "called" << endl;
 	// Tell the message manager that the buddy is done typing
 	manager()->receivedTypingMsg(this, false);
 
@@ -704,7 +704,7 @@ void OscarContact::setEncoding(const unsigned int mib)
 
 const int OscarContact::groupId()
 {
-	kdDebug(14150) << k_funcinfo << "returning" << mGroupId << endl;
+	//kdDebug(14150) << k_funcinfo << "returning" << mGroupId << endl;
 	return mGroupId;
 }
 
@@ -717,20 +717,20 @@ void OscarContact::setGroupId(const int newgid)
 	}
 }
 
-const QString &OscarContact::awayMessage()
+const QString OscarContact::awayMessage()
 {
-	return mAwayMessage;
+	QVariant v = property("awayMessage").value();
+	if(v.isNull())
+		return QString::null;
+	else
+		return v.toString();
 }
 
 void OscarContact::setAwayMessage(const QString &message)
 {
-	kdDebug(14150) << k_funcinfo <<
-		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;
-
-	mAwayMessage = message;
-	//setOnlineStatus(onlineStatus(), message);
-	setStatusDescription(message);
-
+	/*kdDebug(14150) << k_funcinfo <<
+		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;*/
+	setProperty("awayMessage", i18n("Away Message"), message);
 	emit awayMessageChanged();
 }
 

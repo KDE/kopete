@@ -105,7 +105,7 @@ class OscarContact : public KopeteContact
 		const int groupId();
 		void setGroupId(const int);
 
-		const QString &awayMessage();
+		const QString awayMessage();
 		void setAwayMessage(const QString &message);
 
 	signals:
@@ -221,8 +221,6 @@ class OscarContact : public KopeteContact
 
 		int mEncoding;
 		int mGroupId;
-
-		QString mAwayMessage;
 };
 
 #endif
