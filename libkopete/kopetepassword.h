@@ -38,8 +38,7 @@ public:
 	/**
 	 * Create a new KopetePassword object.
 	 *
-	 * @param configGroup The configuration group to save passwords in
-	 *        if using KConfig
+	 * @param configGroup The configuration group to save passwords in.
 	 */
 	KopetePassword(const QString &configGroup, const char *name = 0);
 	~KopetePassword();
