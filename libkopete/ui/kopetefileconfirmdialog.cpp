@@ -29,8 +29,8 @@
 #include "kopetemetacontact.h"
 
 KopeteFileConfirmDialog::KopeteFileConfirmDialog(const KopeteFileTransferInfo &info,const QString& description,QWidget *parent, const char *name )
-	: KDialogBase(parent,name, true, i18n("A User Would Like to Send You a File") , KDialogBase::User1|KDialogBase::User2, KDialogBase::User1, true, i18n("&Accept"), i18n("&Refuse")),
-	  m_info( info )
+: KDialogBase( parent, name, true, i18n( "A User Would Like to Send You a File" ),
+	KDialogBase::User1 | KDialogBase::User2, KDialogBase::User1, true, i18n( "&Accept" ), i18n( "&Refuse" ) ), m_info( info )
 {
 	setWFlags( WDestructiveClose );
 	m_emited=false;
@@ -54,7 +54,7 @@ KopeteFileConfirmDialog::~KopeteFileConfirmDialog()
 
 void KopeteFileConfirmDialog::slotBrowsePressed()
 {
-	QString saveFileName = KFileDialog::getSaveFileName( m_view->m_saveto->text(), QString::fromLatin1( "*" ), 0L , i18n( "Kopete File Transfer" ) );
+	QString saveFileName = KFileDialog::getSaveFileName( m_view->m_saveto->text(), QString::fromLatin1( "*" ), 0L , i18n( "File Transfer" ) );
 	if ( !saveFileName.isNull())
 	{
 		m_view->m_saveto->setText(saveFileName);

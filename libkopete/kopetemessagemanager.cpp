@@ -351,8 +351,8 @@ KopeteView* KopeteMessageManager::view( bool canCreate, KopeteMessage::MessageTy
 		else
 		{
 			KMessageBox::queuedMessageBox( qApp->mainWidget(), KMessageBox::Error,
-				i18n( "<qt>An error has occurred when creating a new chat window. The chat window has not been created.</qt>" ),
-				i18n( "Error while creating the chat window - Kopete" ) );
+				i18n( "<qt>An error has occurred while creating a new chat window. The chat window has not been created.</qt>" ),
+				i18n( "Error while creating the chat window" ) );
 		}
 	}
 	return d->view;

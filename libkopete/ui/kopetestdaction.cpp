@@ -110,17 +110,17 @@ KAction* KopeteStdAction::preferences( KActionCollection *parent, const char *na
 
 KAction* KopeteStdAction::chat( const QObject *recvr, const char *slot, QObject* parent, const char *name )
 {
-	return new KAction( i18n( "Start &Chat" ), QString::fromLatin1( "mail_generic" ), 0, recvr, slot, parent, name );
+	return new KAction( i18n( "Start &Chat..." ), QString::fromLatin1( "mail_generic" ), 0, recvr, slot, parent, name );
 }
 
 KAction* KopeteStdAction::sendMessage(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction( i18n( "&Send Message" ), QString::fromLatin1( "mail_generic" ), 0, recvr, slot, parent, name );
+	return new KAction( i18n( "&Send Message..." ), QString::fromLatin1( "mail_generic" ), 0, recvr, slot, parent, name );
 }
 
 KAction* KopeteStdAction::contactInfo(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction( i18n( "User &Info" ), QString::fromLatin1( "messagebox_info" ), 0, recvr, slot, parent, name );
+	return new KAction( i18n( "User &Info..." ), QString::fromLatin1( "messagebox_info" ), 0, recvr, slot, parent, name );
 }
 
 KAction* KopeteStdAction::sendFile(const QObject *recvr, const char *slot, QObject* parent, const char *name)
@@ -130,12 +130,12 @@ KAction* KopeteStdAction::sendFile(const QObject *recvr, const char *slot, QObje
 
 KAction* KopeteStdAction::viewHistory(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction( i18n("View &History" ), QString::fromLatin1( "history" ), 0, recvr, slot, parent, name );
+	return new KAction( i18n("View &History..." ), QString::fromLatin1( "history" ), 0, recvr, slot, parent, name );
 }
 
 KAction* KopeteStdAction::addGroup(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction( i18n( "&Create Group" ), QString::fromLatin1( "folder" ), 0, recvr, slot, parent,
+	return new KAction( i18n( "&Create Group..." ), QString::fromLatin1( "folder" ), 0, recvr, slot, parent,
 		name );
 }
 
@@ -156,7 +156,7 @@ KListAction *KopeteStdAction::copyContact( const QObject *recvr, const char *slo
 
 KAction* KopeteStdAction::deleteContact(const QObject *recvr, const char *slot, QObject* parent, const char *name)
 {
-	return new KAction( i18n( "&Delete Contact" ), QString::fromLatin1( "edittrash" ), 0, recvr, slot, parent, name );
+	return new KAction( i18n( "&Delete Contact..." ), QString::fromLatin1( "edittrash" ), 0, recvr, slot, parent, name );
 }
 
 KAction* KopeteStdAction::changeAlias(const QObject *recvr, const char *slot, QObject* parent, const char *name)

@@ -142,14 +142,14 @@ KopeteAway::KopeteAway() : QObject( kapp , "KopeteAway")
 		/* There are no away messages, so we'll create a default one */
 		/* Create an away message */
 		KopeteAwayMessage temp;
-		temp.title = i18n("Busy");
-		temp.message = i18n("Sorry, I'm busy right now");
+		temp.title = i18n( "Busy" );
+		temp.message = i18n( "Sorry, I'm busy right now" );
 
 		/* Add it to the vector */
 		d->awayMessageList.append(temp);
 
-		temp.title = i18n("Gone");
-		temp.message = i18n("I'm gone right now, but I'll be back later");
+		temp.title = i18n( "Gone" );
+		temp.message = i18n( "I'm gone right now, but I'll be back later" );
 		d->awayMessageList.append(temp);
 
 		/* Save this list to disk */

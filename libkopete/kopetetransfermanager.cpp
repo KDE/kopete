@@ -143,19 +143,19 @@ void KopeteTransfer::setError(KopeteTransferError kopeteError)
 	switch (kopeteError)
 	{
 		case CanceledLocal:
-			errorText = i18n("Aborted");
+			errorText = i18n( "Aborted" );
 			error = KIO::ERR_USER_CANCELED;
 			break;
 		case CanceledRemote:
-			errorText = i18n("Remote user aborted");
+			errorText = i18n( "The remote user aborted" );
 			error = KIO::ERR_ABORTED;
 			break;
 		case Timeout:
-			errorText = i18n("Connection timed out");
+			errorText = i18n( "Connection timed out" );
 			error = KIO::ERR_CONNECTION_BROKEN;
 			break;
 		default:
-			errorText = i18n("Unknown error occurred");
+			errorText = i18n( "An unknown error occurred" );
 			error = KIO::ERR_UNKNOWN;
 			break;
 	}
@@ -286,8 +286,8 @@ void KopeteTransferManager::sendFile( const KURL &file, const QString &fname, un
 		if( mustBeLocal && !url.isLocalFile() )
 		{
 			KMessageBox::queuedMessageBox( 0L, KMessageBox::Sorry,
-				i18n("Sorry, sending files which aren't stored locally is not yet supported by "
-				     "this protocol. You will have to copy this file to your computer before you can send it.") );
+				i18n( "Sorry, sending files which aren't stored locally is not yet supported by this protocol.\n"
+				"Please copy this file to your computer and try again." ) );
 		}
 		else
 		{

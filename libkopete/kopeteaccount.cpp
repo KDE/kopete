@@ -255,7 +255,7 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 			return d->password;
 	}
 
-	KDialogBase *passwdDialog = new KDialogBase( qApp->mainWidget(), "passwdDialog", true, i18n( "Password Needed" ),
+	KDialogBase *passwdDialog = new KDialogBase( qApp->mainWidget(), "passwdDialog", true, i18n( "Password Required" ),
 		KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok, true );
 
 	KopetePasswordDialog *view = new KopetePasswordDialog( passwdDialog );
@@ -270,7 +270,7 @@ QString KopeteAccount::password( bool error, bool *ok, unsigned int maxLength )
 	}
 	else
 	{
-		view->m_text->setText( i18n( "Please enter password for %1" ).arg( protocol()->displayName() ) );
+		view->m_text->setText( i18n( "Please enter your password for %1" ).arg( protocol()->displayName() ) );
 	}
 
 	passwdDialog->setMainWidget( view );
@@ -340,7 +340,7 @@ void KopeteAccount::setPassword( const QString &pass )
 		if ( KMessageBox::warningContinueCancel( qApp->mainWidget(),
 			i18n( "<qt>Kopete is unable to save your password securely in your wallet!<br>"
 			"Do you want to want to save the password in the <b>unsafe</b> configuration file instead?</qt>" ),
-			i18n( "Unable to store secure password - Kopete" ),
+			i18n( "Unable to store secure password" ),
 			KGuiItem( i18n( "Store &Unsafe" ), QString::fromLatin1( "unlock" ) ),
 			QString::fromLatin1( "KWalletFallbackToKConfig" ) ) != KMessageBox::Continue )
 		{

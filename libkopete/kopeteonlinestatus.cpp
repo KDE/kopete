@@ -84,7 +84,7 @@ KopeteOnlineStatus::KopeteOnlineStatus( OnlineStatus status )
 		d->caption = d->description = i18n( "Away" );
 		break;
 	case Unknown:
-		d->caption = d->description = i18n( "Status not available" );
+		d->caption = d->description = i18n( "(Status not available)" );
 		d->overlayIcon = "status_unknown";
 		break;
 	case Connecting:

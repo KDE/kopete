@@ -214,7 +214,8 @@ KPopupMenu* KopeteContact::popupMenu( KopeteMessageManager *manager )
 	d->actionChangeAlias = KopeteStdAction::changeAlias( this, SLOT( slotChangeDisplayName() ), menu, "actionChangeAlias" );
 	d->actionDeleteContact = KopeteStdAction::deleteContact( this, SLOT( slotDeleteContact() ), menu, "actionDeleteContact" );
 	d->actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( slotChangeMetaContact() ), menu, "actionChangeMetaContact" );
-	d->actionAddContact = new KAction( i18n("&Add Contact"), QString::fromLatin1( "bookmark_add" ),0, this, SLOT( slotAddContact() ), menu, "actionAddContact" );
+	d->actionAddContact = new KAction( i18n( "&Add Contact..." ), QString::fromLatin1( "bookmark_add" ), 0,
+		this, SLOT( slotAddContact() ), menu, "actionAddContact" );
 
 	bool reach = isReachable() && d->account->isConnected(); // save calling a method several times
 	d->actionChat->setEnabled( reach );
@@ -285,12 +286,11 @@ KPopupMenu* KopeteContact::popupMenu( KopeteMessageManager *manager )
 
 void KopeteContact::slotChangeDisplayName()
 {
+	QString newName =
 #if KDE_IS_VERSION( 3, 1, 90 )
-	QString newName = KInputDialog::getText( i18n( "Change Alias" ), i18n( "New alias for %1:" ).arg( contactId() ),
-		displayName());
+		KInputDialog::getText( i18n( "Change Alias" ), i18n( "New alias for %1:" ).arg( contactId() ), displayName());
 #else
-	QString newName = KLineEditDlg::getText( i18n( "Change Alias" ), i18n( "New alias for %1:" ).arg( contactId() ),
-		displayName());
+		KLineEditDlg::getText( i18n( "Change Alias" ), i18n( "New alias for %1:" ).arg( contactId() ), displayName());
 #endif
 
 	if( !newName.isNull() )
@@ -304,7 +304,7 @@ void KopeteContact::slotChangeMetaContact()
 
 	QVBox *w = new QVBox( moveDialog );
 	w->setSpacing( 8 );
-	new QLabel( i18n( "Choose the meta contact into which you want to move this contact." ), w );
+	new QLabel( i18n( "Select the meta contact to which you want to move this contact" ), w );
 	KListView *selectMetaContactListBox = new KListView ( w, "selectMetaContactListBox" );
 	selectMetaContactListBox->addColumn( i18n( "Display Name" ) );
 	selectMetaContactListBox->addColumn( i18n( "Contact IDs" ) );
@@ -332,8 +332,9 @@ void KopeteContact::slotChangeMetaContact()
 
 	selectMetaContactListBox->sort();
 
-	QCheckBox *chkCreateNew=new QCheckBox(i18n( "Or create a new empty metacontact to contains it" ), w );
-	QWhatsThis::add( chkCreateNew , i18n( "If you select this option, a new metacontact will be created at top-level with the name of this contact. And the contact will be moved on it." ) );
+	QCheckBox *chkCreateNew = new QCheckBox( i18n( "Create a new metacontact for this contact" ), w );
+	QWhatsThis::add( chkCreateNew , i18n( "If you select this option, a new metacontact will be created in the top-level group "
+		"with the name of this contact and the contact will be moved to it." ) );
 	QObject::connect( chkCreateNew , SIGNAL( toggled(bool) ) ,  selectMetaContactListBox , SLOT ( setDisabled(bool) ) ) ;
 
 	moveDialog->setMainWidget( w );
@@ -365,14 +366,14 @@ void KopeteContact::setMetaContact( KopeteMetaContact *m )
 		int result=KMessageBox::No;
 		if( old->contacts().count()==1 )
 		{ //only one contact, including this one, that mean the contact will be empty efter the move
-			result=KMessageBox::questionYesNoCancel( 0, i18n("You are moving the contact `%1 <%2>' to `%3'.\n"
-				"`%4' will be empty. Delete it?")
+			result = KMessageBox::questionYesNoCancel( 0, i18n( "You are moving the contact `%1 <%2>' to `%3'.\n"
+				"`%4' will be empty afterwards. Do you want to delete this contact?" )
 #if QT_VERSION < 0x030200
 					.arg(displayName()).arg(contactId()).arg(m ? m->displayName() : QString::null).arg(old->displayName())
 #else
 					.arg(displayName(), contactId(), m ? m->displayName() : QString::null, old->displayName())
 #endif
-				, i18n("Move Contact"), i18n("&Delete") , i18n("&Keep") , QString::fromLatin1("delete_old_contact_when_move") );
+				, i18n( "Move Contact" ), i18n( "&Delete" ) , i18n( "&Keep" ) , QString::fromLatin1("delete_old_contact_when_move") );
 
 			if(result==KMessageBox::Cancel)
 				return;

@@ -48,7 +48,7 @@ void KopeteAwayAction::slotAwayChanged()
 {
 	QStringList awayTitles = KopeteAway::getInstance()->getTitles();
 	reasonCount = awayTitles.count();
-	awayTitles.append( i18n("Custom Message...") );
+	awayTitles.append( i18n( "Custom Message..." ) );
 	setItems( awayTitles );
 	setCurrentItem( -1 );
 }

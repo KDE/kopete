@@ -106,16 +106,16 @@ static bool notifyByMessagebox(const QString &text, int level, const KGuiItem &a
 		switch( level ) {
 		default:
 		case KNotifyClient::Notification:
-			result=KMessageBox::questionYesNo(0, text, i18n("Notification"), action, KStdGuiItem::cancel() , QString::null, false );
+			result = KMessageBox::questionYesNo(0, text, i18n( "Notification" ), action, KStdGuiItem::cancel(), QString::null, false );
 			break;
 		case KNotifyClient::Warning:
-			result=KMessageBox::warningYesNo( 0, text, i18n("Warning"), action, KStdGuiItem::cancel() , QString::null, false );
+			result = KMessageBox::warningYesNo( 0, text, i18n( "Warning" ), action, KStdGuiItem::cancel(), QString::null, false );
 			break;
 		case KNotifyClient::Error:
-			result=KMessageBox::warningYesNo( 0, text, i18n("Error"), action, KStdGuiItem::cancel() , QString::null, false );
+			result = KMessageBox::warningYesNo( 0, text, i18n( "Error" ), action, KStdGuiItem::cancel(), QString::null, false );
 			break;
 		case KNotifyClient::Catastrophe:
-			result=KMessageBox::warningYesNo( 0, text, i18n("Catastrophe!"), action, KStdGuiItem::cancel() , QString::null, false );
+			result = KMessageBox::warningYesNo( 0, text, i18n( "Fatal" ), action, KStdGuiItem::cancel(), QString::null, false );
 			break;
 	}
 	if(result==KMessageBox::Yes)

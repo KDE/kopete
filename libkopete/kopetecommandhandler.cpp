@@ -53,32 +53,34 @@ KopeteCommandHandler::KopeteCommandHandler() : QObject( qApp )
 	p->pluginCommands.insert( this, mCommands );
 
 	registerCommand( this, QString::fromLatin1("help"), SLOT( slotHelpCommand( const QString &, KopeteMessageManager * ) ),
-		i18n("USAGE: /help [<command>] - Used to list available commands, or show help for a specified command.") );
+		i18n( "USAGE: /help [<command>] - Used to list available commands, or show help for a specified command." ) );
 
 	registerCommand( this, QString::fromLatin1("close"), SLOT( slotCloseCommand( const QString &, KopeteMessageManager * ) ),
-		i18n("USAGE: /close - Closes the current view.") );
+		i18n( "USAGE: /close - Closes the current view." ) );
 
+	// FIXME: What's the difference with /close? The help doesn't explain it - Martijn
 	registerCommand( this, QString::fromLatin1("part"), SLOT( slotPartCommand( const QString &, KopeteMessageManager * ) ),
-		i18n("USAGE: /part - Closes the current view.") );
+		i18n( "USAGE: /part - Closes the current view." ) );
 
 	registerCommand( this, QString::fromLatin1("clear"), SLOT( slotClearCommand( const QString &, KopeteMessageManager * ) ),
-		i18n("USAGE: /clear - Clears the active view's chat buffer.") );
+		i18n( "USAGE: /clear - Clears the active view's chat buffer." ) );
 
-	/*registerCommand( this, QString::fromLatin1("me"), SLOT( slotMeCommand( const QString &, KopeteMessageManager * ) ),
-		i18n("USAGE: /me <text> - Formats message as in \"<nickname> went to the store\".") );*/
+	//registerCommand( this, QString::fromLatin1("me"), SLOT( slotMeCommand( const QString &, KopeteMessageManager * ) ),
+	//	i18n( "USAGE: /me <text> - Formats message as in '<nickname> went to the store'." ) );
 
 	registerCommand( this, QString::fromLatin1("away"), SLOT( slotAwayCommand( const QString &, KopeteMessageManager * ) ),
-		i18n("USAGE: /away [<reason>] - Sets you away/back in the current account only.") );
+		i18n( "USAGE: /away [<reason>] - Marks you as away/back for the current account only." ) );
 
 	registerCommand( this, QString::fromLatin1("awayall"), SLOT( slotAwayAllCommand( const QString &, KopeteMessageManager * ) ),
-		i18n("USAGE: /awayall [<reason>] - Sets you away/back in all accounts.") );
+		i18n( "USAGE: /awayall [<reason>] - Marks you as away/back for all accounts." ) );
 		
 	registerCommand( this, QString::fromLatin1("say"), SLOT( slotSayCommand( const QString &, KopeteMessageManager * ) ),
-		i18n("USAGE: /say <text> - Say text in this chat.") );
+		i18n( "USAGE: /say <text> - Say text in this chat. This is the same as just typing a message, but is very "
+			"useful for scripts." ) );
 
 	registerCommand( this, QString::fromLatin1("exec"), SLOT( slotExecCommand( const QString &, KopeteMessageManager * ) ),
-		i18n("USAGE: /exec [-o] <command> - Executes the specified command and displays output in the chat buffer. If"
-		" -o is specified, the output is sent to all members of the chat.") );
+		i18n( "USAGE: /exec [-o] <command> - Executes the specified command and displays the output in the chat buffer. "
+		"If -o is specified, the output is sent to all members of the chat.") );
 
 	connect( KopetePluginManager::self(), SIGNAL( pluginLoaded( KopetePlugin*) ), this, SLOT(slotPluginLoaded(KopetePlugin*)) );
 }
@@ -164,7 +166,7 @@ void KopeteCommandHandler::slotHelpCommand( const QString &args, KopeteMessageMa
 	if( args.isEmpty() )
 	{
 		int commandCount = 0;
-		output = i18n("Available Commands:\n");
+		output = i18n( "Available Commands:\n" );
 
 		CommandList mCommands = commands( manager->user()->protocol() );
 		QDictIterator<KopeteCommand> it( mCommands );
@@ -177,7 +179,7 @@ void KopeteCommandHandler::slotHelpCommand( const QString &args, KopeteMessageMa
 				output.append( '\n' );
 			}
 		}
-		output.append( i18n("\nType /help <command> for more information.") );
+		output.append( i18n( "\nType /help <command> for more information." ) );
 	}
 	else
 	{
@@ -186,7 +188,7 @@ void KopeteCommandHandler::slotHelpCommand( const QString &args, KopeteMessageMa
 		if( c && !c->help().isNull() )
 			output = c->help();
 		else
-			output = i18n("%1 has no help available.").arg( command );
+			output = i18n("There is no help available for '%1'.").arg( command );
 	}
 
 	KopeteMessage msg(manager->user(), manager->members(), output, KopeteMessage::Internal, KopeteMessage::PlainText);
@@ -234,8 +236,9 @@ void KopeteCommandHandler::slotExecCommand( const QString &args, KopeteMessageMa
 		}
 		else
 		{
-			KopeteMessage msg(manager->user(), manager->members(), i18n("ERROR: Shell access has been restricted on your system. The /exec command will not function."),
-				KopeteMessage::Internal, KopeteMessage::PlainText);
+			KopeteMessage msg(manager->user(), manager->members(),
+				i18n( "ERROR: Shell access has been restricted on your system. The /exec command will not function." ),
+				KopeteMessage::Internal, KopeteMessage::PlainText );
 			manager->sendMessage( msg );
 		}
 	}
@@ -396,3 +399,6 @@ void KopeteCommandHandler::slotPluginDestroyed( QObject *plugin )
 }
 
 #include "kopetecommandhandler.moc"
+
+// vim: set noet ts=4 sts=4 sw=4:
+

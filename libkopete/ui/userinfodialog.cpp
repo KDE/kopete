@@ -58,9 +58,7 @@ struct UserInfoDialog::UserInfoDialogPrivate {
 };
 
 UserInfoDialog::UserInfoDialog( const QString& descr )
-	: KDialogBase( kapp->mainWidget(), "userinfodialog",
-								 true, i18n("User Info - ") + descr,
-								 KDialogBase::Ok )
+: KDialogBase( kapp->mainWidget(), "userinfodialog", true, i18n( "User Info for %1" ).arg( descr ), KDialogBase::Ok )
 {
 	d = new UserInfoDialogPrivate;
 	d->page = new QWidget( this );
@@ -210,7 +208,7 @@ void UserInfoDialog::fillWidgets()
 	}
 
 	if ( !d->id.isEmpty() ) {
-		d->topLayout->addWidget( addLabelEdit( i18n("ID:"), d->id, d->idEdit ) );
+		d->topLayout->addWidget( addLabelEdit( i18n("Contact ID:"), d->id, d->idEdit ) );
 	}
 
 	if ( !d->status.isEmpty() ) {
