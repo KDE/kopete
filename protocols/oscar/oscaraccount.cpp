@@ -223,13 +223,17 @@ void OscarAccount::slotError(QString errmsg, int errorCode)
 	if (errorCode == 1 || errorCode == 5 || errorCode == 24)
 		OscarAccount::disconnect();
 
-	KMessageBox::queuedMessageBox(0, KMessageBox::Error, errmsg,
-		i18n("Connection Lost - ICQ Plugin"), KMessageBox::Notify);
-
-	if (errorCode == 5)
+	// suppress error dialog for password-was-wrong error, since we're about
+	// to pop up a password dialog saying the same thing when we try to reconenct
+	if (errorCode != 5)
+	{
+		KMessageBox::queuedMessageBox(0, KMessageBox::Error, errmsg,
+		                     i18n("Connection Lost - ICQ Plugin"), KMessageBox::Notify);
+	}
+	else
 	{
 		d->passwordWrong = true;
-		connect();
+		QTimer::singleShot( 0, this, SLOT( connect() ) );
 	}
 }
 
