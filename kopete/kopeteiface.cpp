@@ -226,6 +226,13 @@ void KopeteIface::disconnect(const QString &protocolId, const QString &accountId
 	}
 }
 
+void KopeteIface::setNickName( const QString &protocolId, const QString &accountId, const QString &newDisplayName )
+{
+	Kopete::Account *a = Kopete::AccountManager::self()->findAccount( protocolId, accountId );
+	if( a )
+		a->myself()->setDisplayName( newDisplayName );
+}
+
 void KopeteIface::connectAll()
 {
 	Kopete::AccountManager::self()->connectAll();
