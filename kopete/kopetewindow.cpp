@@ -54,7 +54,7 @@
 #include "systemtray.h"
 #include "kopeteaccountstatusbaricon.h"
 #include "kopeteprotocolstatusbaricon.h"
-#include <kconfiguredialog.h>
+
 
 KopeteWindow::KopeteWindow( QWidget *parent, const char *name )
 : KMainWindow( parent, name )
@@ -660,7 +660,7 @@ void KopeteWindow::slotProtocolStatusIconRightClicked( KopeteProtocol *proto,
 void KopeteWindow::slotShowPreferencesDialog()
 {
 	if ( !m_configDialog )
-		m_configDialog = new KConfigureDialog( KConfigureDialog::Static, this );
+		m_configDialog = new KSettings::Dialog( KSettings::Dialog::Static, this );
 	m_configDialog->show();
 }
 

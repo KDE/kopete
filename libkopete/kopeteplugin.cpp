@@ -18,13 +18,13 @@
 #include "kopeteplugin.h"
 #include "pluginloader.h"
 
-#include <kcddispatcher.h>
+#include <ksettings/dispatcher.h>
 
 KopetePlugin::KopetePlugin( KInstance *instance, QObject *parent, const char *name )
 : QObject( parent, name )
 {
 	setInstance( instance );
-	KCDDispatcher::self()->registerInstance( instance, this, SIGNAL( settingsChanged() ) );
+	KSettings::Dispatcher::self()->registerInstance( instance, this, SIGNAL( settingsChanged() ) );
 }
 
 KopetePlugin::~KopetePlugin()

@@ -24,13 +24,15 @@
 
 #include <kmainwindow.h>
 
+#include <ksettings/dialog.h>
+
 class QHBox;
 class QLabel;
 class QListViewItem;
 
 class KAction;
 class KActionMenu;
-class KConfigureDialog;
+class KSettings::Dialog;
 class KGlobalAccel;
 class KSelectAction;
 class KToggleAction;
@@ -180,7 +182,7 @@ private:
 	void loadOptions();
 	void saveOptions();
 
-	KConfigureDialog *m_configDialog;
+	KSettings::Dialog *m_configDialog;
 	int docked;
 	bool hidden;
 	int deskRight;
