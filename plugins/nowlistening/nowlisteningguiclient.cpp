@@ -34,7 +34,7 @@ NowListeningGUIClient::NowListeningGUIClient( KopeteMessageManager *parent )
 		: QObject(parent) , KXMLGUIClient(parent)
 {
 	m_msgManager = parent;
-	KAction *actionSendAdvert = new KAction( i18n("Send Media Info"), 0, this,
+	new KAction( i18n( "Send Media Info" ), 0, this,
 			SLOT( slotAdvertToCurrentChat() ), actionCollection(), "actionSendAdvert" );
 	setXMLFile("nowlisteningchatui.rc");
 }
