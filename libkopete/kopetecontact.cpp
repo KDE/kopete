@@ -39,8 +39,8 @@
 #include "kopeteprotocol.h"
 #include "kopetestdaction.h"
 
-KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId,
-	KopeteMetaContact *parent ) : QObject( parent )
+KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId, KopeteMetaContact *parent )
+: QObject( parent )
 {
 	kdDebug() << "KopeteContact::KopeteContact: Creating contact with id " << contactId << endl;
 
@@ -55,11 +55,12 @@ KopeteContact::KopeteContact( KopeteProtocol *protocol, const QString &contactId
 	m_historyDialog = 0L;
 	m_idleState = Unspecified;
 	m_displayName = contactId;
-	
-	if( protocol )
-		protocol->registerContact( this );
 
-	connect( protocol, SIGNAL( unloading() ), SLOT( slotProtocolUnloading() ) );
+	if( protocol )
+	{
+		protocol->registerContact( this );
+		connect( protocol, SIGNAL( unloading() ), SLOT( slotProtocolUnloading() ) );
+	}
 
 	// Initialize the context menu
 	actionSendMessage = KopeteStdAction::sendMessage( this,
@@ -196,13 +197,11 @@ void KopeteContact::slotViewHistory()
 	}
 	else
 	{
-		
 		m_historyDialog = new KopeteHistoryDialog(this,
 			true, 50, qApp->mainWidget(), "KopeteHistoryDialog" );
-		
+
 		connect ( m_historyDialog, SIGNAL( destroyed()),
 			this, SLOT( slotHistoryDialogDestroyed() ) );
- 
 	}
 }
 
