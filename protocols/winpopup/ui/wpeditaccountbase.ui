@@ -79,6 +79,9 @@
             <property name="text">
                 <string>Note: This must be set to this machine's host name to receive messages.</string>
             </property>
+            <property name="alignment">
+                <set>WordBreak|AlignVCenter</set>
+            </property>
         </widget>
         <widget class="QLayoutWidget">
             <property name="name">
