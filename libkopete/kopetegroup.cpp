@@ -24,7 +24,7 @@
 
 #include <klocale.h>
 
-KopeteGroup* KopeteGroup::toplevel = new KopeteGroup(QString::null , KopeteGroup::TopLevel);
+KopeteGroup* KopeteGroup::toplevel = new KopeteGroup(QString::fromLatin1("Default"), KopeteGroup::TopLevel);
 KopeteGroup* KopeteGroup::temporary = new KopeteGroup(i18n("Not in your contact list"),KopeteGroup::Temporary);
 
 struct KopeteGroupPrivate
@@ -81,9 +81,9 @@ const QDomElement KopeteGroup::toXML()
 	if( d->type == Temporary )
 		type = QString::fromLatin1( "temporary" );
 	else if( d->type == TopLevel )
-		type += QString::fromLatin1( "top-level" );
+		type = QString::fromLatin1( "top-level" );
 	else
-		type += QString::fromLatin1( "standard" );
+		type = QString::fromLatin1( "standard" ); // == Classic
 
 	group.documentElement().setAttribute( QString::fromLatin1("type"), type );
 	group.documentElement().setAttribute( QString::fromLatin1("view"), QString::fromLatin1( d->expanded ? "expanded" : "collapsed" )  );
@@ -160,6 +160,16 @@ bool KopeteGroup::fromXML( const QDomElement& data )
 
 		groupData = groupData.nextSibling();
 	}
+
+	// sanity checks. We must not have groups without a displayname. "Classic" should never happen.
+	// Should "Default" be i18n()ed as well?
+	if ( d->displayName.isEmpty() )
+	{
+		d->displayName = (d->type == Temporary) ? i18n("Not in your contact list") : 
+							(d->type == TopLevel) ? QString::fromLatin1("Default") :
+										QString::fromLatin1("Classic");
+	}
+
 //	return true;
 	return (d->type==Classic);
 	//FIXME: this workaroud allow to save data for the top-level group
