@@ -81,7 +81,7 @@ void YahooContact::syncToServer()
 	}
 }
 
-void YahooContact::sync(unsigned int)
+void YahooContact::sync(unsigned int flags)
 {
 	if ( !m_account->isConnected() )
 		return;
@@ -97,8 +97,12 @@ void YahooContact::sync(unsigned int)
 	else
 	{
 		QString newGroup = metaContact()->groups().first()->displayName();
-		m_account->yahooSession()->changeBuddyGroup( contactId(), m_groupName, newGroup );
-		m_groupName = newGroup;
+		if ( flags == Kopete::Contact::DisplayNameChanged)
+		{
+			kdDebug(14180) << k_funcinfo << "contact changed groups. moving on server" << endl;
+			m_account->yahooSession()->changeBuddyGroup( contactId(), m_groupName, newGroup );
+			m_groupName = newGroup;
+		}
 	}
 }
 
@@ -200,4 +204,5 @@ void YahooContact::deleteContact()
 #include "yahoocontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
+//kate: space-indent off; replace-tabs off; indent-mode csands;
 

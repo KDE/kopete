@@ -62,7 +62,7 @@ public slots:
 	 */
 	void syncToServer();
 
-	void sync(unsigned int);
+	void sync(unsigned int flags);
 
 private slots:
 	void slotChatSessionDestroyed();
