@@ -14,7 +14,7 @@ if [ -z "$1" ]
 then
     echo "Sync compat/ with the files from kdelibs HEAD."
     echo
-    echo "Usage: $0 [--check] path-to-kdelibs-sources"
+    echo "Usage: $0 path-to-kdelibs-sources"
     exit 1
 fi
 
@@ -32,6 +32,7 @@ KDE_CORE=""
 KDE_UI=""
 K_UTILS=""
 K_SETTINGS=""
+KIO=""
 NOT_FOUND=""
 IGNORE_FILES='(Makefile|\.diff$|\.patch$|CVS|README$|\.cvsignore$|sync.sh$|dummy.cpp$)'
 
@@ -50,6 +51,9 @@ do
     elif [ -e "$DIR/kdeui/$FILE" ]
     then
         KDE_UI="$KDE_UI $FILE"
+    elif [ -e "$DIR/kio/$FILE" ]
+    then
+        KIO="$KIO $FILE"
     else
         NOT_FOUND="$NOT_FOUND $FILE"
     fi
@@ -64,6 +68,11 @@ if [ -n "$KDE_UI" ]
 then
     echo "* $DIR/kdeui:"
     echo "    $KDE_UI"
+fi
+if [ -n "$KIO" ]
+then
+    echo "* $DIR/kio:"
+    echo "    $KIO"
 fi
 if [ -n "$K_UTILS" ]
 then
@@ -110,6 +119,9 @@ do
     elif [ -e "$DIR/kdeui/$FILE" ]
     then
         FILE="$DIR/kdeui/$FILE"
+    elif [ -e "$DIR/kio/$FILE" ]
+    then
+        FILE="$DIR/kio/$FILE"
     else
         continue
     fi
