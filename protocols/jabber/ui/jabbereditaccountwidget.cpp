@@ -39,10 +39,6 @@ JabberEditAccountWidget::JabberEditAccountWidget(JabberProtocol *proto, JabberAc
 {
   m_protocol = proto;
 
-  kdDebug(14180) << "Jabber Protocol: " << m_protocol << endl;
-
-  account = m_account;
-
   connect (mID, SIGNAL(textChanged(const QString &)), this, SLOT(configChanged()));
   connect (mPass, SIGNAL(textChanged(const QString &)), this, SLOT(configChanged()));
   connect (mResource, SIGNAL(textChanged(const QString &)), this, SLOT(configChanged()));
@@ -66,12 +62,10 @@ JabberEditAccountWidget::JabberEditAccountWidget(JabberProtocol *proto, JabberAc
 
   connect (btnRegister, SIGNAL(clicked()), this, SLOT(registerClicked()));
   connect (chkUseSSL, SIGNAL(toggled(bool)), this, SLOT(sslToggled(bool)));
-  connect (chkRemPass, SIGNAL(toggled(bool)), this, SLOT(remPassToggled(bool)));
 
   if (m_account) {
   	this->reopen();
   }
-
 }
 
 JabberEditAccountWidget::~JabberEditAccountWidget()
@@ -90,9 +84,11 @@ void JabberEditAccountWidget::reopen() {
 	// !!! First set the checkbox, THEN the port
 	// if done the other way round: checking the checkbox triggers +/- 1 for the port-value
 	// ( see dlgJabberPrefs::sslToggled() )
-	chkUseSSL->setChecked(m_account->pluginData(m_protocol, "UseSSL"));
+	if (m_account->pluginData(m_protocol, "UseSSL") == "true")
+		chkUseSSL->setChecked(true);
 
-	chkRemPass->setChecked(m_account->pluginData(m_protocol,"RemPass"));
+	if (m_account->pluginData(m_protocol,"RemPass") == "true")
+		chkRemPass->setChecked(true);
 
 	mPort->setValue(m_account->pluginData(m_protocol, "Port").toInt());
 	// END Order Important =====
@@ -118,7 +114,9 @@ void JabberEditAccountWidget::reopen() {
 	leProxyUser->setText(m_account->pluginData(m_protocol, "ProxyUser"));
 	leProxyPass->setText(m_account->pluginData(m_protocol, "ProxyPass"));
 	mAutoConnect->setChecked(m_account->pluginData(m_protocol, "AutoConnect"));
-	mLogAll->setChecked(m_account->pluginData(m_protocol, "LogAll"));
+
+	if (m_account->pluginData(m_protocol, "LogAll") == "true")
+		mLogAll->setChecked(true);
 }
 
 KopeteAccount *JabberEditAccountWidget::apply()
@@ -132,7 +130,7 @@ KopeteAccount *JabberEditAccountWidget::apply()
 	}
 
 	this->writeConfig();
-	return account;
+	return m_account;
 }
 
 
@@ -143,13 +141,17 @@ void JabberEditAccountWidget::writeConfig() {
 
 	if (chkUseSSL->isChecked())
 		m_account->setPluginData(m_protocol, "UseSSL", "true");
-	else
+	else 
 		m_account->setPluginData(m_protocol, "UseSSL", "false");
 
-	if (chkRemPass->isChecked())
+	if (chkRemPass->isChecked()) {
 		m_account->setPluginData(m_protocol, "RemPass", "true");
-	else 
+      		m_account->setPassword(mPass->text());
+	}
+	else {
 		m_account->setPluginData(m_protocol, "RemPass", "false");
+      		m_account->setPassword(NULL); 
+	}
 
 	if (mLogAll->isChecked())
 		m_account->setPluginData(m_protocol, "LogAll", "true");
@@ -216,15 +218,13 @@ void JabberEditAccountWidget::registerClicked()
 {
 	if (!m_account) {
 		m_account = new JabberAccount(m_protocol, mID->text());
-		account = m_account;
 	}
 	else {
 		m_account->setAccountId(mID->text());
-		account = m_account;
 	}
 	
 	this->writeConfig();
-	account->registerUser();
+	static_cast<JabberAccount*>(m_account)->registerUser();
 }
 
 void JabberEditAccountWidget::sslToggled(bool value)
@@ -235,13 +235,6 @@ void JabberEditAccountWidget::sslToggled(bool value)
       	mPort->stepDown(); 
 }
 
-void JabberEditAccountWidget::remPassToggled(bool value)
-{
-      if (value)
-      	m_account->setPassword(mPass->text());
-      else
-      	m_account->setPassword(NULL); 
-}
 
 #include "jabbereditaccountwidget.moc"
 

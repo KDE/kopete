@@ -50,12 +50,10 @@ class JabberEditAccountWidget : public DlgPreferences, public EditAccountWidget
 		void writeConfig();
 		JabberProtocol *m_protocol;
                 DlgPreferences *jabData;
-                JabberAccount *account;
 
 	public slots:
 	        virtual void registerClicked();
 	        virtual void sslToggled(bool);
-		virtual void remPassToggled(bool value);
 
         private slots:
                 void configChanged();

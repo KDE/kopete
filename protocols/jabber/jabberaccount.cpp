@@ -170,7 +170,7 @@ void JabberAccount::initActions() {
     actionStatusMenu = new KActionMenu("Jabber", this);
 
     // will be overwritten in slotSettingsChanged to contain the active JID
-    menuTitleId = actionStatusMenu->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ), "Jabber", 1);
+    menuTitleId = actionStatusMenu->popupMenu()->insertTitle( myself()->onlineStatus().iconFor( myself() ), accountId(), 1);
 
     actionStatusMenu->insert(actionGoOnline);
     actionStatusMenu->insert(actionGoChatty);
@@ -244,6 +244,8 @@ i18n("Error")); }
 
 void JabberAccount::connect() { 
 kdDebug(JABBER_DEBUG_GLOBAL) << "[JabberAccount] connect()" << endl;
+
+    this->loaded();
 
     /* Don't do anything if we are already connected. */
     if (isConnected()) return;
@@ -1115,7 +1117,7 @@ void JabberAccount::slotContactUpdated(const Jabber::RosterItem & item) {
 
 void JabberAccount::slotSettingsChanged() {
     /* Set the title to the current account. */
-    actionStatusMenu->popupMenu()->changeTitle(menuTitleId, userID);
+    actionStatusMenu->popupMenu()->changeTitle(menuTitleId, accountId());
 
 }
 
