@@ -14,7 +14,7 @@
 	* (at your option) any later version.                                   *
 	*                                                                       *
 	*************************************************************************
-	*/
+*/
 
 #ifndef __kopeteaccountmanager_h__
 #define __kopeteaccountmanager_h__
@@ -30,13 +30,14 @@ class KopetePlugin;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
+ * @author Olivier Goffart <ogoffart@tiscalinet.be>
  *
  * KopeteAccountManager manages all defined accounts in Kopete. You can
  * query them, and globally set them all online or offline from here.
  */
 class KopeteAccountManager : public QObject
 {
-		Q_OBJECT
+	Q_OBJECT
 
 public:
 	/**
@@ -46,12 +47,12 @@ public:
 	 * create one for you.
 	 */
 	static KopeteAccountManager* manager();
-		
+
 	~KopeteAccountManager();
-	
+
 	/**
 	 * @internal
-	 * Register the account. 
+	 * Register the account.
 	 * To be called ONLY from KopeteContact, not from any other class!
 	 * (Not even a derived class).
 	 */
@@ -60,17 +61,17 @@ public:
 	/**
 	 * Retrieve the list of accounts
 	 */
-	const QPtrList<KopeteAccount>& accounts() const;
-	
+	const QPtrList<KopeteAccount> & accounts() const;
+
 	/**
-	 * Retrieve a QDict of accounts for the given protocol 
+	 * Retrieve a QDict of accounts for the given protocol
 	 *
-	 * The list is guaranteed to contain only contacts for the specified
+	 * The list is guaranteed to contain only accounts for the specified
 	 * protocol
 	 */
-	QDict<KopeteAccount> accounts(const KopeteProtocol *p);
+	QDict<KopeteAccount> accounts( const KopeteProtocol *p );
 
-	KopeteAccount* findAccount(const QString& protocolId, const QString& accountId);
+	KopeteAccount* findAccount( const QString &protocolId, const QString &accountId );
 
 public slots:
 	/**
@@ -83,7 +84,7 @@ public slots:
 	 * This is a slot, so you can connect directly to it from e.g. a KAction.
 	 */
 	void connectAll();
-		
+
 	/**
 	 * Disconnect all accounts at once.
 	 * This is a slot, so you can connect directly to it from e.g. a KAction.
@@ -95,26 +96,27 @@ public slots:
 	 * This is a slot, so you can connect directly to it from e.g. a KAction.
 	 */
 	void setAwayAll();
-	
+
 	/**
 	 * Remove the away status from all accounts at once.
 	 * This is a slot, so you can connect directly to it from e.g. a KAction.
 	 */
 	void setAvailableAll();
-		
+
 	/**
 	 * save to accounts.xml
 	 */
 	void save();
+
 	/**
 	 * load accounts.xml
 	 */
 	void load();
 
 private:
-		/**
-		 * Private constructor, because we're a singleton
-		 */
+	/**
+	 * Private constructor, because we're a singleton
+	 */
 	KopeteAccountManager();
 	static KopeteAccountManager *s_manager;
 
@@ -122,19 +124,11 @@ private:
 	QDomDocument m_accountList;
 
 private slots:
-	void slotAccountDestroyed(KopeteAccount* );
-	void loadProtocol(KopetePlugin* );
-	
+	void slotAccountDestroyed( KopeteAccount * );
+	void loadProtocol( KopetePlugin * );
 };
 
 #endif
-/*
- * Local variables:
- * mode: c++
- * c-indentation-style: k&r
- * c-basic-offset: 4
- * indent-tabs-mode: t
- * End:
- */
+
 // vim: set noet ts=4 sts=4 sw=4:
 
