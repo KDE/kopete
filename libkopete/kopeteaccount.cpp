@@ -362,7 +362,7 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 	{
 		//Create a new MetaContact
 		parentContact = new KopeteMetaContact();
-		parentContact->setDisplayName( displayName );
+		//parentContact->setDisplayName( displayName );
 
 		//Set it as a temporary contact if requested
 		if ( isTemporary )
