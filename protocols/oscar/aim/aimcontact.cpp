@@ -65,7 +65,7 @@ AIMContact::~AIMContact()
 
 void AIMContact::setOwnProfile(const QString &profile)
 {
-	kdDebug(14200) << k_funcinfo << "Called." << endl;
+	kdDebug(14190) << k_funcinfo << "Called." << endl;
 	if(this == account()->myself())
 	{
 		mUserProfile = profile;
@@ -78,12 +78,12 @@ void AIMContact::slotGotProfile(const UserInfo &user, const QString &profile, co
 {
 	if(tocNormalize(user.sn) != contactName())
 		return;
-	kdDebug(14200) << k_funcinfo << "Called for contact '" << displayName() << "'" << endl;
+	kdDebug(14190) << k_funcinfo << "Called for contact '" << displayName() << "'" << endl;
 	mUserProfile = profile;
 	setAwayMessage(away);
 	if ( metaContact()->isTemporary() && onlineStatus().internalStatus() == OSCAR_OFFLINE && user.onlinesince.isValid() )
 	{
-		kdDebug(14150) << k_funcinfo << "Attempting to set status to online for temp contact" << endl;
+		kdDebug(14190) << k_funcinfo << "Attempting to set status to online for temp contact" << endl;
 		setStatus(OSCAR_ONLINE);
 	}
 
@@ -336,8 +336,8 @@ const QString AIMContact::awayMessage()
 
 void AIMContact::setAwayMessage(const QString &message)
 {
-	/*kdDebug(14150) << k_funcinfo <<
-		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;*/
+	kdDebug(14190) << k_funcinfo <<
+		"Called for '" << displayName() << "', away msg='" << message << "'" << endl;
 	QString filteredMessage = message;
 	filteredMessage.replace(
 		QRegExp(QString::fromLatin1("<[hH][tT][mM][lL].*>(.*)</[hH][tT][mM][lL]>")),
@@ -348,7 +348,7 @@ void AIMContact::setAwayMessage(const QString &message)
 	filteredMessage.replace(
 		QRegExp(QString::fromLatin1("<[fF][oO][nN][tT].*>(.*)</[fF][oO][nN][tT]>")),
 		QString::fromLatin1("\\1") );
-	setProperty(mProtocol->awayMessage, message);
+	setProperty(mProtocol->awayMessage, filteredMessage);
 	emit awayMessageChanged();
 }
 
