@@ -406,7 +406,7 @@ bool KopeteAccount::addContact( const QString &contactId, const QString &display
 	KopeteGroup *parentGroup = 0L;
 	//If this is a temporary contact, use the temporary group
 	if ( !groupName.isNull() )
-		parentGroup = isTemporary ? KopeteGroup::temporary : KopeteContactList::contactList()->getGroup( groupName );
+		parentGroup = isTemporary ? KopeteGroup::temporary() : KopeteContactList::contactList()->getGroup( groupName );
 
 	if(!parentGroup && parentContact)
 		parentGroup=parentContact->groups().first();
