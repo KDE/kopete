@@ -493,6 +493,7 @@ void IRCAccount::connectWithPassword(const QString &password)
 
 				IRCHost *host = hosts[ currentHost++ ];
 				kdDebug( 0 ) << k_funcinfo << "connecting to " << host->host << ", SSL= " << host->ssl << endl;
+				m_engine->setPassword(password);
 				m_engine->connectToServer( host->host, host->port, mNickName, host->ssl );
 			}
 		}
