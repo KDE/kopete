@@ -28,6 +28,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kdeversion.h>
 
 #include "kopetecontactlist.h"
 #include "kopeteaccountmanager.h"
@@ -823,13 +824,15 @@ void KopeteMetaContact::slotUpdateKABC()
 				kdWarning( 14010 ) << "WARNING: Resource is locked by other application!" << endl;
 			else 
 			{
-				if ( !ab->save( ticket ) ) 
+				if ( !ab->save( ticket ) )
 					kdWarning( 14010 ) << "ERROR: Saving failed!" << endl;
+#if KDE_IS_VERSION (3,1,90)
 				ab->releaseSaveTicket( ticket );
+#endif
 			}
 			kdDebug( 14010 ) << k_funcinfo << "Finished writing KABC for " << displayName() << endl;
 		}
-	}	
+	}
 }
 
 QPtrList<KopeteContact> KopeteMetaContact::contacts() const
