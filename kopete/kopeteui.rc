@@ -5,9 +5,10 @@
 			<Action name="Disconnect"/>
 			<Action name="AddContact"/>
 			<Separator/>
-			<Action name="Preferences"/>
-			<Separator/>
                         <Action name="Quit"/>
+		</Menu>
+		<Menu name="settings">
+			<Action name="Preferences"/>
 		</Menu>
 	</MenuBar>
 	<ToolBar fullWidth="true" name="mainToolBar">
