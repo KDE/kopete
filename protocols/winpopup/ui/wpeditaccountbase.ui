@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>WPEditAccountBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>462</width>
-            <height>508</height>
+            <height>512</height>
         </rect>
     </property>
     <property name="caption">
@@ -20,151 +20,201 @@
             <cstring>unnamed</cstring>
         </property>
         <property name="margin">
-            <number>6</number>
+            <number>0</number>
         </property>
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QGroupBox">
+        <widget class="QLabel">
             <property name="name">
-                <cstring>groupBox27</cstring>
+                <cstring>textLabel2</cstring>
             </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>3</hsizetype>
-                    <vsizetype>1</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="title">
+            <property name="text">
                 <string>Account Information</string>
             </property>
-            <vbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>layout1</cstring>
-                    </property>
-                    <grid>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QLineEdit" row="0" column="1">
-                            <property name="name">
-                                <cstring>mHostName</cstring>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>The hostname you would like to use to send WinPopup messages as.</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>The hostname you would like to use to send WinPopup messages as.  Note that this does not have to be the actual hostname of the machine to send messages, but it does to recieve them.</string>
-                            </property>
-                        </widget>
-                        <widget class="QLabel" row="0" column="0">
-                            <property name="name">
-                                <cstring>label1</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Com&amp;puter hostname:</string>
-                            </property>
-                            <property name="buddy" stdset="0">
-                                <cstring>mHostName</cstring>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>The hostname you would like to use to send WinPopup messages as.</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>The hostname you would like to use to send WinPopup messages as.  Note that this does not have to be the actual hostname of the machine to send messages, but it does to recieve them.</string>
-                            </property>
-                        </widget>
-                    </grid>
-                </widget>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>layout8</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <spacer>
-                            <property name="name">
-                                <cstring>spacer2</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>411</width>
-                                    <height>23</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget class="KPushButton">
-                            <property name="name">
-                                <cstring>doInstallSamba</cstring>
-                            </property>
-                            <property name="text">
-                                <string>&amp;Install Into Samba</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+I</string>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Install support into Samba to enable this service.</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Install support into Samba to enable this service.</string>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-            </vbox>
         </widget>
-        <widget class="QGroupBox">
+        <widget class="Line">
             <property name="name">
-                <cstring>groupBox28</cstring>
+                <cstring>line3</cstring>
             </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>3</hsizetype>
-                    <vsizetype>1</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
+            <property name="frameShape">
+                <enum>HLine</enum>
             </property>
-            <property name="title">
-                <string>Connection Preferences</string>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
             </property>
-            <vbox>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout1</cstring>
+            </property>
+            <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QCheckBox">
+                <widget class="QLineEdit" row="0" column="1">
                     <property name="name">
-                        <cstring>mAutoConnect</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Connect automatically at &amp;startup</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
+                        <cstring>mHostName</cstring>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Check to connect automatically when Kopete is started.</string>
+                        <string>The hostname you would like to use to send WinPopup messages as.</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
+                        <string>The hostname you would like to use to send WinPopup messages as.  Note that this does not have to be the actual hostname of the machine to send messages, but it does to recieve them.</string>
                     </property>
                 </widget>
-            </vbox>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>label1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Com&amp;puter hostname:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>mHostName</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The hostname you would like to use to send WinPopup messages as.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The hostname you would like to use to send WinPopup messages as.  Note that this does not have to be the actual hostname of the machine to send messages, but it does to recieve them.</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout8</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>411</width>
+                            <height>23</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="KPushButton">
+                    <property name="name">
+                        <cstring>doInstallSamba</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Install Into Samba</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+I</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Install support into Samba to enable this service.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Install support into Samba to enable this service.</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer18</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Fixed</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Connection Preferences</string>
+            </property>
+        </widget>
+        <widget class="Line">
+            <property name="name">
+                <cstring>line1</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>mAutoConnect</cstring>
+            </property>
+            <property name="text">
+                <string>Connect automatically at &amp;startup</string>
+            </property>
+            <property name="accel">
+                <string>Alt+S</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Check to connect automatically when Kopete is started.</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
+            </property>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer18_2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Fixed</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="Line">
+            <property name="name">
+                <cstring>line26</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
         </widget>
         <widget class="QLabel">
             <property name="name">

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>smsAddUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>277</width>
-            <height>317</height>
+            <width>397</width>
+            <height>347</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -20,6 +20,9 @@
             <verstretch>0</verstretch>
         </sizepolicy>
     </property>
+    <property name="caption">
+        <string>smsAddUI</string>
+    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -27,47 +30,94 @@
         <property name="margin">
             <number>0</number>
         </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
         <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>layout9</cstring>
+                <cstring>layout35</cstring>
             </property>
-            <grid>
+            <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel" row="0" column="0">
+                <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>textLabel1</cstring>
+                        <cstring>layout33</cstring>
                     </property>
-                    <property name="text">
-                        <string>&amp;Telephone number:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>addNr</cstring>
-                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel1</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Telephone number:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>addNr</cstring>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The telephone number of the contact you would like to add.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The telephone number of the contact you would like to add.  This should be a number with SMS service available.</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel1_2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Contact na&amp;me:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>addName</cstring>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>A unique name for this SMS account.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>A unique name for this SMS account.</string>
+                            </property>
+                        </widget>
+                    </vbox>
                 </widget>
-                <widget class="QLabel" row="1" column="0">
+                <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>textLabel1_2</cstring>
+                        <cstring>layout34</cstring>
                     </property>
-                    <property name="text">
-                        <string>&amp;Contact name:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>addName</cstring>
-                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLineEdit">
+                            <property name="name">
+                                <cstring>addNr</cstring>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>The telephone number of the contact you would like to add.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>The telephone number of the contact you would like to add.  This should be a number with SMS service available.</string>
+                            </property>
+                        </widget>
+                        <widget class="QLineEdit">
+                            <property name="name">
+                                <cstring>addName</cstring>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>A unique name for this SMS account.</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>A unique name for this SMS account.</string>
+                            </property>
+                        </widget>
+                    </vbox>
                 </widget>
-                <widget class="QLineEdit" row="1" column="1">
-                    <property name="name">
-                        <cstring>addName</cstring>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="0" column="1">
-                    <property name="name">
-                        <cstring>addNr</cstring>
-                    </property>
-                </widget>
-            </grid>
+            </hbox>
         </widget>
         <spacer>
             <property name="name">
@@ -82,7 +132,7 @@
             <property name="sizeHint">
                 <size>
                     <width>31</width>
-                    <height>160</height>
+                    <height>170</height>
                 </size>
             </property>
         </spacer>

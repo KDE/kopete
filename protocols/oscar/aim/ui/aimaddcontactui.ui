@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>aimAddContactUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,9 +8,12 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>455</width>
-            <height>131</height>
+            <width>397</width>
+            <height>348</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>aimAddContactUI</string>
     </property>
     <vbox>
         <property name="name">
@@ -19,42 +22,78 @@
         <property name="margin">
             <number>0</number>
         </property>
-        <widget class="QGroupBox">
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>GroupBox1</cstring>
+                <cstring>layout26</cstring>
             </property>
-            <property name="title">
-                <string>Contact Information</string>
-            </property>
-            <property name="layoutMargin" stdset="0">
-            </property>
-            <property name="layoutSpacing" stdset="0">
-            </property>
-            <grid>
+            <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLineEdit" row="0" column="1">
-                    <property name="name">
-                        <cstring>addSN</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
+                <widget class="QLabel">
                     <property name="name">
                         <cstring>TextLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>AIM screen name:</string>
+                        <string>&amp;AIM screen name:</string>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignTop</set>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>addSN</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The screen name of the AIM account you would like to add.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The screen name of the AIM account you would like to add.  This should be in the form of an alphanumeric string (spaces allowed, not case sensitive).</string>
                     </property>
                 </widget>
-            </grid>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>addSN</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The screen name of the AIM account you would like to add.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The screen name of the AIM account you would like to add.  This should be in the form of an alphanumeric string (spaces allowed, not case sensitive).</string>
+                    </property>
+                </widget>
+            </hbox>
         </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel3</cstring>
+            </property>
+            <property name="text">
+                <string>&lt;i&gt;(for example: joe8752)&lt;/i&gt;</string>
+            </property>
+            <property name="alignment">
+                <set>AlignVCenter|AlignRight</set>
+            </property>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer15</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>140</height>
+                </size>
+            </property>
+        </spacer>
     </vbox>
 </widget>
 <tabstops>

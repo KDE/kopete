@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>IRCEditAccountBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>462</width>
-            <height>508</height>
+            <height>512</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -25,210 +25,103 @@
             <cstring>unnamed</cstring>
         </property>
         <property name="margin">
-            <number>6</number>
+            <number>0</number>
         </property>
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QGroupBox">
+        <widget class="QLabel">
             <property name="name">
-                <cstring>groupBox31</cstring>
+                <cstring>textLabel2</cstring>
             </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>3</hsizetype>
-                    <vsizetype>1</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="title">
+            <property name="text">
                 <string>Account Information</string>
             </property>
-            <vbox>
+        </widget>
+        <widget class="Line">
+            <property name="name">
+                <cstring>line3</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout142</cstring>
+            </property>
+            <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
                 <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>layout142</cstring>
+                        <cstring>layout139</cstring>
                     </property>
-                    <hbox>
+                    <vbox>
                         <property name="name">
                             <cstring>unnamed</cstring>
                         </property>
-                        <widget class="QLayoutWidget">
+                        <widget class="QLabel">
                             <property name="name">
-                                <cstring>layout139</cstring>
+                                <cstring>textLabel4</cstring>
                             </property>
-                            <vbox>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <widget class="QLabel">
-                                    <property name="name">
-                                        <cstring>textLabel4</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string>N&amp;ickname:</string>
-                                    </property>
-                                    <property name="buddy" stdset="0">
-                                        <cstring>mNickName</cstring>
-                                    </property>
-                                </widget>
-                                <widget class="QLabel">
-                                    <property name="name">
-                                        <cstring>textLabel5</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string>&amp;Username:</string>
-                                    </property>
-                                    <property name="buddy" stdset="0">
-                                        <cstring>mUserName</cstring>
-                                    </property>
-                                </widget>
-                            </vbox>
+                            <property name="text">
+                                <string>N&amp;ickname:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>mNickName</cstring>
+                            </property>
                         </widget>
-                        <widget class="QLayoutWidget">
+                        <widget class="QLabel">
                             <property name="name">
-                                <cstring>layout135</cstring>
+                                <cstring>textLabel5</cstring>
                             </property>
-                            <vbox>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <widget class="QLineEdit">
-                                    <property name="name">
-                                        <cstring>mNickName</cstring>
-                                    </property>
-                                    <property name="sizePolicy">
-                                        <sizepolicy>
-                                            <hsizetype>7</hsizetype>
-                                            <vsizetype>0</vsizetype>
-                                            <horstretch>0</horstretch>
-                                            <verstretch>0</verstretch>
-                                        </sizepolicy>
-                                    </property>
-                                    <property name="toolTip" stdset="0">
-                                        <string>The alias you would like to use on IRC.</string>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>The alias you would like to use on IRC.  You may change this once online with the /nick command.</string>
-                                    </property>
-                                </widget>
-                                <widget class="QLineEdit">
-                                    <property name="name">
-                                        <cstring>mUserName</cstring>
-                                    </property>
-                                    <property name="sizePolicy">
-                                        <sizepolicy>
-                                            <hsizetype>7</hsizetype>
-                                            <vsizetype>0</vsizetype>
-                                            <horstretch>0</horstretch>
-                                            <verstretch>0</verstretch>
-                                        </sizepolicy>
-                                    </property>
-                                    <property name="echoMode">
-                                        <enum>Normal</enum>
-                                    </property>
-                                    <property name="toolTip" stdset="0">
-                                        <string>The username you would prefer to use on IRC.</string>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>The username you would prefer to use on IRC.  Leave blank to use your system account name.</string>
-                                    </property>
-                                </widget>
-                            </vbox>
+                            <property name="text">
+                                <string>&amp;Username:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>mUserName</cstring>
+                            </property>
                         </widget>
-                    </hbox>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>mRememberPassword</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>3</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="text">
-                        <string>Remember &amp;password</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+P</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Check to save your password.</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
-                    </property>
+                    </vbox>
                 </widget>
                 <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>layout34</cstring>
+                        <cstring>layout135</cstring>
                     </property>
-                    <hbox>
+                    <vbox>
                         <property name="name">
                             <cstring>unnamed</cstring>
                         </property>
-                        <spacer>
+                        <widget class="QLineEdit">
                             <property name="name">
-                                <cstring>spacer69</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Fixed</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>17</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>textLabel1</cstring>
+                                <cstring>mNickName</cstring>
                             </property>
                             <property name="sizePolicy">
                                 <sizepolicy>
-                                    <hsizetype>0</hsizetype>
+                                    <hsizetype>7</hsizetype>
                                     <vsizetype>0</vsizetype>
                                     <horstretch>0</horstretch>
                                     <verstretch>0</verstretch>
                                 </sizepolicy>
                             </property>
-                            <property name="frameShape">
-                                <enum>NoFrame</enum>
-                            </property>
-                            <property name="frameShadow">
-                                <enum>Plain</enum>
-                            </property>
-                            <property name="text">
-                                <string>Server Pass&amp;word:</string>
-                            </property>
-                            <property name="buddy" stdset="0">
-                                <cstring>mPassword</cstring>
-                            </property>
                             <property name="toolTip" stdset="0">
-                                <string>If the IRC server requires a password, you may enter it here.</string>
+                                <string>The alias you would like to use on IRC.</string>
                             </property>
                             <property name="whatsThis" stdset="0">
-                                <string>If the IRC server requires a password, you may enter it here.  Normally, you may leave this field blank.</string>
+                                <string>The alias you would like to use on IRC.  You may change this once online with the /nick command.</string>
                             </property>
                         </widget>
                         <widget class="QLineEdit">
                             <property name="name">
-                                <cstring>mPassword</cstring>
+                                <cstring>mUserName</cstring>
                             </property>
                             <property name="sizePolicy">
                                 <sizepolicy>
@@ -239,64 +132,200 @@
                                 </sizepolicy>
                             </property>
                             <property name="echoMode">
-                                <enum>Password</enum>
+                                <enum>Normal</enum>
                             </property>
                             <property name="toolTip" stdset="0">
-                                <string>If the IRC server requires a password, you may enter it here.</string>
+                                <string>The username you would prefer to use on IRC.</string>
                             </property>
                             <property name="whatsThis" stdset="0">
-                                <string>If the IRC server requires a password, you may enter it here.  Normally, you may leave this field blank.</string>
+                                <string>The username you would prefer to use on IRC.  Leave blank to use your system account name.</string>
                             </property>
                         </widget>
-                    </hbox>
+                    </vbox>
                 </widget>
-            </vbox>
+            </hbox>
         </widget>
-        <widget class="QGroupBox">
+        <widget class="QCheckBox">
             <property name="name">
-                <cstring>groupBox32</cstring>
+                <cstring>mRememberPassword</cstring>
             </property>
             <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>3</hsizetype>
-                    <vsizetype>1</vsizetype>
+                    <vsizetype>0</vsizetype>
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property name="title">
-                <string>Connection Preferences</string>
+            <property name="text">
+                <string>Remember &amp;password</string>
             </property>
-            <grid>
+            <property name="accel">
+                <string>Alt+P</string>
+            </property>
+            <property name="checked">
+                <bool>true</bool>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Check to save your password.</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Check to save your password.  Otherwise, you will be prompted each time you try to connect to this account.</string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout34</cstring>
+            </property>
+            <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
+                <spacer>
                     <property name="name">
-                        <cstring>mAutoConnect</cstring>
+                        <cstring>spacer69</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Fixed</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>17</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
-                            <hsizetype>3</hsizetype>
+                            <hsizetype>0</hsizetype>
                             <vsizetype>0</vsizetype>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property name="text">
-                        <string>Connect automatically at &amp;startup</string>
+                    <property name="frameShape">
+                        <enum>NoFrame</enum>
                     </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
+                    <property name="frameShadow">
+                        <enum>Plain</enum>
+                    </property>
+                    <property name="text">
+                        <string>Server Pass&amp;word:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>mPassword</cstring>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Check to connect automatically when Kopete is started.</string>
+                        <string>If the IRC server requires a password, you may enter it here.</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
+                        <string>If the IRC server requires a password, you may enter it here.  Normally, you may leave this field blank.</string>
                     </property>
                 </widget>
-                <widget class="QLayoutWidget" row="1" column="0">
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>mPassword</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="echoMode">
+                        <enum>Password</enum>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>If the IRC server requires a password, you may enter it here.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>If the IRC server requires a password, you may enter it here.  Normally, you may leave this field blank.</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer18</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Fixed</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel1_2</cstring>
+            </property>
+            <property name="text">
+                <string>Connection Preferences</string>
+            </property>
+        </widget>
+        <widget class="Line">
+            <property name="name">
+                <cstring>line1</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+        </widget>
+        <widget class="QCheckBox">
+            <property name="name">
+                <cstring>mAutoConnect</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>3</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>Connect automatically at &amp;startup</string>
+            </property>
+            <property name="accel">
+                <string>Alt+S</string>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Check to connect automatically when Kopete is started.</string>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Check to connect automatically when Kopete is started.  If not checked, you may connect to this account manually using the icon in the bottom of the main Kopete window.</string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout111</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLayoutWidget">
                     <property name="name">
                         <cstring>layout35</cstring>
                     </property>
@@ -353,7 +382,7 @@
                         </widget>
                     </hbox>
                 </widget>
-                <widget class="QLayoutWidget" row="1" column="1">
+                <widget class="QLayoutWidget">
                     <property name="name">
                         <cstring>layout12</cstring>
                     </property>
@@ -416,7 +445,38 @@
                         </widget>
                     </hbox>
                 </widget>
-            </grid>
+            </hbox>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer18_2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Fixed</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="Line">
+            <property name="name">
+                <cstring>line26</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
         </widget>
         <widget class="QLabel">
             <property name="name">

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>YahooAddContactBase</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>379</width>
-            <height>281</height>
+            <width>396</width>
+            <height>345</height>
         </rect>
     </property>
     <property name="caption">
@@ -19,65 +19,72 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QGroupBox">
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>groupBox1</cstring>
+                <cstring>layout53</cstring>
             </property>
-            <property name="title">
-                <string>Contact Details</string>
-            </property>
-            <grid>
+            <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel" row="0" column="0">
+                <widget class="QLabel">
                     <property name="name">
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Yahoo ID:</string>
+                        <string>&amp;Yahoo username:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>contactID</cstring>
                     </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The account name of the Yahoo account you would like to add.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The account name of the Yahoo account you would like to add.  This should be in the form of an alphanumeric string (no spaces).</string>
+                    </property>
                 </widget>
-                <widget class="KLineEdit" row="0" column="1">
+                <widget class="QLineEdit">
                     <property name="name">
                         <cstring>contactID</cstring>
                     </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
+                    <property name="toolTip" stdset="0">
+                        <string>The account name of the Yahoo account you would like to add.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The account name of the Yahoo account you would like to add.  This should be in the form of an alphanumeric string (no spaces).</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>textLabel2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>For example: &lt;b&gt;joebloggs68&lt;/b&gt;</string>
-                    </property>
-                </widget>
-            </grid>
+            </hbox>
         </widget>
-        <widget class="QGroupBox">
+        <widget class="QLabel">
             <property name="name">
-                <cstring>groupBox1_2</cstring>
+                <cstring>textLabel3_2</cstring>
             </property>
-            <property name="title">
-                <string>Viewing Preferences</string>
+            <property name="text">
+                <string>&lt;i&gt;(for example: joe8752)&lt;/i&gt;</string>
             </property>
-            <grid>
+            <property name="alignment">
+                <set>AlignVCenter|AlignRight</set>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout54</cstring>
+            </property>
+            <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel" row="0" column="0">
+                <widget class="QLabel">
                     <property name="name">
-                        <cstring>textLabel1_2</cstring>
+                        <cstring>textLabel4</cstring>
                     </property>
                     <property name="text">
                         <string>&amp;Display name:</string>
@@ -85,29 +92,25 @@
                     <property name="buddy" stdset="0">
                         <cstring>displayName</cstring>
                     </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The alias you would like this account to be shown as.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The alias you would like this account to be shown as.  This will be shown instead of the Yahoo username.</string>
+                    </property>
                 </widget>
-                <widget class="KLineEdit" row="0" column="1">
+                <widget class="QLineEdit">
                     <property name="name">
                         <cstring>displayName</cstring>
                     </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
+                    <property name="toolTip" stdset="0">
+                        <string>The alias you would like this account to be shown as.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The alias you would like this account to be shown as.  This will be shown instead of the Yahoo username.</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>textLabel2_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>For example: &lt;b&gt;Joe Bloggs&lt;/b&gt;</string>
-                    </property>
-                </widget>
-            </grid>
+            </hbox>
         </widget>
         <spacer>
             <property name="name">
@@ -122,15 +125,11 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>100</height>
+                    <height>80</height>
                 </size>
             </property>
         </spacer>
     </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>klineedit.h</includehint>
-    <includehint>klineedit.h</includehint>
-</includehints>
 </UI>

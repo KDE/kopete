@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>dlgAddContact</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>376</width>
-            <height>93</height>
+            <width>398</width>
+            <height>345</height>
         </rect>
     </property>
     <property name="caption">
@@ -25,46 +25,75 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QGroupBox">
+        <widget class="QLayoutWidget">
             <property name="name">
-                <cstring>contactInformationBox</cstring>
+                <cstring>layout24</cstring>
             </property>
-            <property name="title">
-                <string>Contact Information</string>
-            </property>
-            <grid>
+            <hbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>helpLabel</cstring>
-                    </property>
-                    <property name="text">
-                        <string>(for example fooishbar@jabber.org)</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
+                <widget class="QLabel">
                     <property name="name">
                         <cstring>lblID</cstring>
                     </property>
                     <property name="text">
-                        <string>Jabber ID:</string>
+                        <string>&amp;Jabber ID:</string>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignTop</set>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>addID</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The Jabber ID for the account you would like to add.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The Jabber ID for the account you would like to add.  Note that this must include the username and the domain (like an E-mail address), as there are many Jabber servers.</string>
                     </property>
                 </widget>
-                <widget class="KLineEdit" row="0" column="1">
+                <widget class="KLineEdit">
                     <property name="name">
                         <cstring>addID</cstring>
                     </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The Jabber ID for the account you would like to add.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The Jabber ID for the account you would like to add.  Note that this must include the username and the domain (like an E-mail address), as there are many Jabber servers.</string>
+                    </property>
                 </widget>
-            </grid>
+            </hbox>
         </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>&lt;i&gt;(for example: joe@jabber.org)&lt;/i&gt;</string>
+            </property>
+            <property name="alignment">
+                <set>AlignVCenter|AlignRight</set>
+            </property>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer14</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>190</height>
+                </size>
+            </property>
+        </spacer>
     </vbox>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>

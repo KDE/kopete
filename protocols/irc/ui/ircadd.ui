@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>ircAddUI</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,108 +8,239 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>504</width>
-            <height>336</height>
+            <width>389</width>
+            <height>344</height>
         </rect>
     </property>
-    <grid>
+    <property name="caption">
+        <string>ircAddUI</string>
+    </property>
+    <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
         <property name="margin">
-            <number>11</number>
+            <number>0</number>
         </property>
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QListView" row="2" column="0" rowspan="1" colspan="3">
-            <column>
-                <property name="text">
-                    <string>Channel</string>
-                </property>
-                <property name="clickable">
-                    <bool>true</bool>
-                </property>
-                <property name="resizable">
-                    <bool>true</bool>
-                </property>
-            </column>
-            <column>
-                <property name="text">
-                    <string>Users</string>
-                </property>
-                <property name="clickable">
-                    <bool>true</bool>
-                </property>
-                <property name="resizable">
-                    <bool>false</bool>
-                </property>
-            </column>
-            <column>
-                <property name="text">
-                    <string>Topic</string>
-                </property>
-                <property name="clickable">
-                    <bool>true</bool>
-                </property>
-                <property name="resizable">
-                    <bool>true</bool>
-                </property>
-            </column>
+        <widget class="QTabWidget">
             <property name="name">
-                <cstring>searchResults</cstring>
+                <cstring>tabWidget3</cstring>
             </property>
-            <property name="allColumnsShowFocus">
-                <bool>true</bool>
-            </property>
-            <property name="showSortIndicator">
-                <bool>true</bool>
-            </property>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>&amp;Add Account</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
+                        <number>6</number>
+                    </property>
+                    <property name="spacing">
+                        <number>6</number>
+                    </property>
+                    <widget class="QLayoutWidget">
+                        <property name="name">
+                            <cstring>layout70</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>TextLabel1</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>N&amp;ickname/channel to add:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>addID</cstring>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>The name of the IRC contact or channel you would like to add.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>The name of the IRC contact or channel you would like to add.  You may type simply the text of a person's nickname, or you may type a channel name, preceeded by a pound sign ('#').</string>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit">
+                                <property name="name">
+                                    <cstring>addID</cstring>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>The name of the IRC contact or channel you would like to add.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>The name of the IRC contact or channel you would like to add.  You may type simply the text of a person's nickname, or you may type a channel name, preceeded by a pound sign ('#')</string>
+                                </property>
+                            </widget>
+                        </hbox>
+                    </widget>
+                    <widget class="QLabel">
+                        <property name="name">
+                            <cstring>textLabel3</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&lt;i&gt;(for example: joe_bob or #somechannel)&lt;/i&gt;</string>
+                        </property>
+                        <property name="alignment">
+                            <set>AlignVCenter|AlignRight</set>
+                        </property>
+                    </widget>
+                    <spacer>
+                        <property name="name">
+                            <cstring>spacer25</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>110</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </vbox>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>&amp;Search</string>
+                </attribute>
+                <vbox>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
+                        <number>6</number>
+                    </property>
+                    <property name="spacing">
+                        <number>6</number>
+                    </property>
+                    <widget class="QLayoutWidget">
+                        <property name="name">
+                            <cstring>layout72</cstring>
+                        </property>
+                        <hbox>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QLabel">
+                                <property name="name">
+                                    <cstring>textLabel1</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Search channels &amp;for:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>searchText</cstring>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>You may search for channels on the IRC server for a text string entered here.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>You may search for channels on the IRC server for a text string entered here.  For instance, you may type 'linux' to find channels that have something to do with linux.</string>
+                                </property>
+                            </widget>
+                            <widget class="QLineEdit">
+                                <property name="name">
+                                    <cstring>searchText</cstring>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>You may search for channels on the IRC server for a text string entered here.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>You may search for channels on the IRC server for a text string entered here.  For instance, you may type 'linux' to find channels that have something to do with linux.</string>
+                                </property>
+                            </widget>
+                            <widget class="QPushButton">
+                                <property name="name">
+                                    <cstring>searchButton</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>S&amp;earch</string>
+                                </property>
+                                <property name="accel">
+                                    <string>Alt+E</string>
+                                </property>
+                                <property name="toolTip" stdset="0">
+                                    <string>Perform a channel search.</string>
+                                </property>
+                                <property name="whatsThis" stdset="0">
+                                    <string>Perform a channel search.  Please be patient, as this can be slow depending on the number of channels on the server.</string>
+                                </property>
+                            </widget>
+                        </hbox>
+                    </widget>
+                    <widget class="QListView">
+                        <column>
+                            <property name="text">
+                                <string>Channel</string>
+                            </property>
+                            <property name="clickable">
+                                <bool>true</bool>
+                            </property>
+                            <property name="resizable">
+                                <bool>true</bool>
+                            </property>
+                        </column>
+                        <column>
+                            <property name="text">
+                                <string>Users</string>
+                            </property>
+                            <property name="clickable">
+                                <bool>true</bool>
+                            </property>
+                            <property name="resizable">
+                                <bool>false</bool>
+                            </property>
+                        </column>
+                        <column>
+                            <property name="text">
+                                <string>Topic</string>
+                            </property>
+                            <property name="clickable">
+                                <bool>true</bool>
+                            </property>
+                            <property name="resizable">
+                                <bool>true</bool>
+                            </property>
+                        </column>
+                        <property name="name">
+                            <cstring>searchResults</cstring>
+                        </property>
+                        <property name="allColumnsShowFocus">
+                            <bool>true</bool>
+                        </property>
+                        <property name="showSortIndicator">
+                            <bool>true</bool>
+                        </property>
+                    </widget>
+                </vbox>
+            </widget>
         </widget>
-        <widget class="QPushButton" row="1" column="2">
-            <property name="name">
-                <cstring>searchButton</cstring>
-            </property>
-            <property name="text">
-                <string>Search</string>
-            </property>
-        </widget>
-        <widget class="QLabel" row="1" column="0">
-            <property name="name">
-                <cstring>textLabel1</cstring>
-            </property>
-            <property name="text">
-                <string>Search channels for:</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="1" column="1">
-            <property name="name">
-                <cstring>searchText</cstring>
-            </property>
-        </widget>
-        <widget class="QLabel" row="0" column="0">
-            <property name="name">
-                <cstring>TextLabel1</cstring>
-            </property>
-            <property name="text">
-                <string>Channel or nickname:</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>addID</cstring>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>For example, #kopete or SomeNickname</string>
-            </property>
-        </widget>
-    </grid>
+    </vbox>
 </widget>
 <tabstops>
     <tabstop>addID</tabstop>
+    <tabstop>tabWidget3</tabstop>
+    <tabstop>searchText</tabstop>
+    <tabstop>searchButton</tabstop>
+    <tabstop>searchResults</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>qwidget.h</includehint>
-</includehints>
 </UI>

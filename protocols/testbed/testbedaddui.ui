@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>TestbedAddUI</class>
 <widget class="QDialog">
     <property name="name">
@@ -8,13 +8,22 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>257</width>
-            <height>299</height>
+            <width>406</width>
+            <height>343</height>
         </rect>
+    </property>
+    <property name="caption">
+        <string>TestbedAddUI</string>
     </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <property name="spacing">
+            <number>0</number>
         </property>
         <widget class="QLayoutWidget">
             <property name="name">
@@ -29,15 +38,27 @@
                         <cstring>textLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Unique name:</string>
+                        <string>&amp;Account name:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>m_uniqueName</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The account name of the account you would like to add.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The account name of the account you would like to add.</string>
                     </property>
                 </widget>
                 <widget class="QLineEdit">
                     <property name="name">
                         <cstring>m_uniqueName</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The account name of the account you would like to add.</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The account name of the account you would like to add.</string>
                     </property>
                 </widget>
             </hbox>
@@ -49,25 +70,31 @@
             <property name="title">
                 <string>Contact Type</string>
             </property>
-            <widget class="QRadioButton">
+            <vbox>
                 <property name="name">
-                    <cstring>m_rbEcho</cstring>
+                    <cstring>unnamed</cstring>
                 </property>
-                <property name="geometry">
-                    <rect>
-                        <x>20</x>
-                        <y>20</y>
-                        <width>100</width>
-                        <height>22</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>&amp;Echo</string>
-                </property>
-                <property name="checked">
-                    <bool>true</bool>
-                </property>
-            </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>m_rbEcho</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Echo</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+E</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Hey look!  Only one option.  Could you please make this a dropdown and add Null?</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Hey look!  Only one option.  Could you please make this a dropdown and add Null?</string>
+                    </property>
+                </widget>
+            </vbox>
         </widget>
         <spacer>
             <property name="name">
@@ -82,7 +109,7 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>61</height>
+                    <height>100</height>
                 </size>
             </property>
         </spacer>
