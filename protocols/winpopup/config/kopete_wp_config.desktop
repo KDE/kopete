@@ -12,4 +12,8 @@ X-KDE-ParentApp=kopete_wp
 X-KDE-ParentComponents=kopete_wp
 
 Name=WinPopup Plugin
+Name[ca]=Connector WinPopup
+Name[da]=WinPopup-plugin
+Name[es]=Plugin de WinPopup
 Comment=Microsoft "WinPopup" Window Messenger
+Comment[ca]=Missatger de finestra "WinPopup" de Microsoft

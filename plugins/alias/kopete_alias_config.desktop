@@ -11,5 +11,9 @@ X-KDE-ParentApp=kopete_alias
 X-KDE-ParentComponents=kopete_alias
 
 Name=Alias
+Name[ca]=Àlies
 Comment=Adds custom aliases for commands
+Comment[ca]=Afegeix àlies personalitzats als vostres comandaments
+Comment[da]=Tilføj personlig alias for kommandoer
+Comment[es]=Añade alias personales a los comandos
 

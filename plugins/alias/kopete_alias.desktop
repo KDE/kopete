@@ -15,5 +15,9 @@ X-KDE-PluginInfo-Depends=
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=Alias
+Name[ca]=Àlies
 Comment=Adds custom aliases for commands
+Comment[ca]=Afegeix àlies personalitzats als vostres comandaments
+Comment[da]=Tilføj personlig alias for kommandoer
+Comment[es]=Añade alias personales a los comandos
 
