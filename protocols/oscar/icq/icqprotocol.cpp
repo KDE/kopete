@@ -83,8 +83,8 @@ ICQProtocol::~ICQProtocol()
 void ICQProtocol::initGenders()
 {
 	mGenders.insert(0, "");
-	mGenders.insert(1, i18n("Female"));
-	mGenders.insert(2, i18n("Male"));
+	mGenders.insert(2, i18n("Female"));
+	mGenders.insert(1, i18n("Male"));
 }
 
 void ICQProtocol::initCountries()
