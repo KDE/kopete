@@ -88,7 +88,7 @@ void IRCContactManager::slotNewAction(const QString &originating, const QString 
 
 void IRCContactManager::slotNewPrivAction(const QString &originating, const QString &user, const QString &message)
 {
-	//kdDebug(14120) << k_funcinfo << "o:" << originating << "; t:" << target << endl;
+	kdDebug(14120) << k_funcinfo << "o:" << originating << "; u:" << user << endl;
 	IRCContact *from = findUser(originating.section('!', 0, 0));
 	IRCUserContact *to = findUser(user);
 	emit action(from, to, message);

@@ -51,27 +51,27 @@ void IRCUserContact::updateStatus()
 	KIRC::EngineStatus status = m_engine->status();
 	switch( status )
 	{
-	case KIRC::Disconnected:
-		setOnlineStatus(m_protocol->m_UserStatusOffline);
-		break;
-	case KIRC::Connecting:
-	case KIRC::Authentifying:
-		if(this == m_account->mySelf())
-			setOnlineStatus(m_protocol->m_UserStatusConnecting);
-		else
+		case KIRC::Disconnected:
 			setOnlineStatus(m_protocol->m_UserStatusOffline);
-		break;
-	case KIRC::Connected:
-	case KIRC::Closing:
-		if( m_isAway )
-			setOnlineStatus(m_protocol->m_UserStatusAway);
-		else if( m_isOnline )
-			setOnlineStatus(m_protocol->m_UserStatusOnline);
-		else
-			setOnlineStatus(m_protocol->m_UserStatusOffline);
-		break;
-	default:
-		setOnlineStatus(m_protocol->m_StatusUnknown);
+			break;
+		case KIRC::Connecting:
+		case KIRC::Authentifying:
+			if(this == m_account->mySelf())
+				setOnlineStatus(m_protocol->m_UserStatusConnecting);
+			else
+				setOnlineStatus(m_protocol->m_UserStatusOffline);
+			break;
+		case KIRC::Connected:
+		case KIRC::Closing:
+			if( m_isAway )
+				setOnlineStatus(m_protocol->m_UserStatusAway);
+			else if( m_isOnline )
+				setOnlineStatus(m_protocol->m_UserStatusOnline);
+			else
+				setOnlineStatus(m_protocol->m_UserStatusOffline);
+			break;
+		default:
+			setOnlineStatus(m_protocol->m_StatusUnknown);
 	}
 }
 
@@ -261,19 +261,18 @@ void IRCUserContact::privateMessage(IRCContact *from, IRCContact *to, const QStr
 
 void IRCUserContact::action(IRCContact *from, IRCContact *to, const QString &action)
 {
-	if(to == this)
+	//Either this is from me to a guy, or from a guy to me. Either way its a PM
+	if( to == this && from == m_account->mySelf() )
 	{
-		if(to==account()->myself())
-		{
-			KopeteMessage msg(from, from->manager()->members(), action, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat);
-			msg.setBody( KSParser::parse( msg.escapedBody() ), KopeteMessage::RichText );
-			from->appendMessage(msg);
-		}
-		else
-		{
-			kdDebug(14120) << "IRC Server error: Received an action message for " << to->nickName() << ":" << action << endl;
-			// emit/call something on main ircservercontact
-		}
+		KopeteMessage msg(from, to->manager()->members(), action, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat);
+		msg.setBody( KSParser::parse( msg.escapedBody() ), KopeteMessage::RichText );
+		to->manager()->appendMessage(msg);
+	}
+	else if( from == this && to == m_account->mySelf() )
+	{
+		KopeteMessage msg(from, from->manager()->members(), action, KopeteMessage::Action, KopeteMessage::PlainText, KopeteMessage::Chat);
+		msg.setBody( KSParser::parse( msg.escapedBody() ), KopeteMessage::RichText );
+		from->manager()->appendMessage(msg);
 	}
 }
 
