@@ -24,8 +24,10 @@
 #include <qdict.h>
 
 class KopeteAccount;
-class KopeteProtocol;
 class KopetePlugin;
+class KopeteProtocol;
+
+class KopeteAccountManagerPrivate;
 
 /**
  * @author Martijn Klingens <klingens@kde.org>
@@ -83,20 +85,18 @@ public:
 	 */
 	QColor guessColor( KopeteProtocol *protocol );
 
-
 	/**
-	 * The dirrection to move. used by @ref KopeteAccountManager::moveAccount
+	 * The dirrection to move. Used by @ref KopeteAccountManager::moveAccount
 	 */
-	enum moveDirrection { Up , Down } ;
-
+	// FIXME: Make this MoveUp, MoveDown - Martijn
+	enum MoveDirection { Up, Down };
 
 	/**
 	 * Move the account up or down in the priority order.
 	 * @param account is the account to move
 	 * @param dirrection can be KopeteAccountManager::Up or KopeteAccountManager::Down
 	 */
-	void moveAccount(KopeteAccount *account , moveDirrection dirrection);
-
+	void moveAccount( KopeteAccount *account, MoveDirection direction );
 
 public slots:
 	/**
@@ -149,7 +149,7 @@ signals:
 	/**
 	 * An account has been unregistered
 	 */
-	void accountUnregistered(KopeteAccount *a);
+	void accountUnregistered( KopeteAccount *account );
 
 private:
 	/**
@@ -161,7 +161,6 @@ private:
 	 * @internal
 	 * Register the account.
 	 * To be called ONLY from KopeteContact, not from any other class!
-	 * (Not even a derived class).
 	 */
 	void registerAccount( KopeteAccount *account );
 
@@ -172,21 +171,17 @@ private:
 	 */
 	void notifyAccountReady( KopeteAccount *account );
 
-
 	/**
 	 * @internal
 	 * Unregister the account.
 	 * To be called ONLY from KopeteContact, not from any other class!
-	 * (Not even a derived class).
 	 */
 	void unregisterAccount( KopeteAccount *account );
 
-	static KopeteAccountManager *s_manager;
-
-	QPtrList<KopeteAccount> m_accounts;
-
 private slots:
 	void slotPluginLoaded( KopetePlugin *plugin );
+
+	KopeteAccountManagerPrivate *d;
 };
 
 #endif
