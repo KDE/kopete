@@ -60,6 +60,11 @@ bool LoginTask::take( Transfer * transfer )
 	// CREATE CONTACT LIST
 	// locate contact list
 	Field::MultiField * contactList = loginResponseFields.findMultiField( NM_A_FA_CONTACT_LIST );
+	if ( !contactList )
+	{
+		setError( Protocol );
+		return true;
+	}
 	Field::FieldList contactListFields = contactList->fields();
 	Field::MultiField * container;
 	// read folders

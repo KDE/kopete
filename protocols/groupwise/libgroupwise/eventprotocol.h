@@ -12,8 +12,7 @@
 #ifndef GW_EVENTPROTOCOL_H
 #define GW_EVENTPROTOCOL_H
 
-#include <qcstring.h>
-#include <qobject.h>
+#include "inputprotocolbase.h"
 
 class EventTransfer;
 /**
@@ -91,12 +90,10 @@ class EventTransfer;
 	Therefore we have GUID, FLAGS, MESSAGE, STATUS, STATUSTEXT.  All transfers have TYPE and SOURCE, and a TIMESTAMP is added on receipt.
 */
 
-class EventProtocol : public QObject
+class EventProtocol : public InputProtocolBase
 {
 Q_OBJECT
 public:
-	// 
-	enum EventProtocolState { Success, NeedMore, OutOfSync, ProtocolError };
     EventProtocol(QObject *parent = 0, const char *name = 0);
     ~EventProtocol();
 	/** 
@@ -106,35 +103,12 @@ public:
 	 * @param bytes An integer used to return the number of bytes read.
 	 * @return A pointer to an EventTransfer object if successfull, otherwise 0.  The caller is responsible for deleting this object.
 	 */
-	EventTransfer * parse( const QByteArray &, uint & bytes );
-	/**
-	 * Returns a value describing the state of the object.  
-	 * If the object is given data to parse that does not begin with a recognised event code, 
-	 * it will become OutOfSync, to indicate that the input data probably contains leftover data not processed during a previous parse.
-	 */
-	uint state() const;
+	Transfer * parse( const QByteArray &, uint & bytes );
 protected:
 	/**
 	 * Reads a conference's flags
 	 */
 	bool readFlags( Q_UINT32 &flags);
-	/**
-	 * Reads an arbitrary string
-	 */
-	bool readString( QString &message );
-	/**
-	 * Check that there is data to read, and set the protocol's state if there isn't any.
-	 */
-	bool okToProceed();
-	/** 
-	 * read a Q_UINT32 giving the number of following bytes, then a string of that length
-	 * @return false if the string was broken or there was no data available at all
-	 */
-	bool safeReadBytes( QCString & data, uint & len );
-private:
-	int m_state;
-	uint m_bytes;
-	QDataStream * m_din;
 };
 
 #endif

@@ -8,8 +8,9 @@
 #include "gwfield.h"
 
 class EventProtocol;
-class Transfer;
+class ResponseProtocol;
 class Request;
+class Transfer;
 
 /**
  * This class handles transforming data between structured high level messages and encoded bytes that are sent
@@ -95,16 +96,8 @@ class CoreProtocol : public QObject
 {
 Q_OBJECT
 public:
-	/**
-	 * Describes the current state of the protocol
-	 */
-	enum State { NeedMore, Available, ServerError, ServerRedirect, ReadingEvent, NoData };
-	
-	/**
-	 * Describes the parsing of the last received packet 
-	 */
-	enum PacketState { FieldsRead, ProtocolError };
-	
+	enum State { NeedMore, Available, NoData };
+
 	CoreProtocol();
 	
 	virtual ~CoreProtocol();
@@ -157,15 +150,6 @@ protected:
 	 */
 	bool okToProceed();
 	/**
-	 * read a line ending in \r\n, including the \r\n
-	 */
-	bool readGroupWiseLine( QCString & );
-	/** 
-	 * read a Q_UINT32 giving the number of following bytes, then a string of that length
-	 * @return false if the string was broken or there was no data available at all
-	 */
-	bool safeReadBytes( QCString & data, uint & len );
-	/**
 	 * Convert incoming wire data into a Transfer object and queue it
 	 * @return number of bytes from the input that were parsed into a Transfer
 	 */ 
@@ -177,14 +161,6 @@ protected:
 	 */
 	void fieldsToWire( Field::FieldList fields, int depth = 0 );
 	/**
-	 * Read in a response
-	 */
-	bool readResponse();
-	/** 
-	 * Parse received fields and store in m_collatingFields
-	 */
-	bool readFields( int fieldCount, Field::FieldList * list = 0 );
-	/**
 	 * encodes a method number (usually supplied as a #defined symbol) to a char
 	 */
 	QChar encode_method( Q_UINT8 method );
@@ -194,11 +170,8 @@ private:
 	int m_error;
 	Transfer* m_inTransfer; // the transfer that is being received
 	int m_state;		// represents the protocol's overall state
-	int m_packetState;	// represents the state of the parsing of the last incoming data received
-	// fields from a packet being parsed, before it has been completely received
-	//QValueStack<Field::FieldList> m_collatingFields;
-	Field::FieldList m_collatingFields;
 	EventProtocol* m_eventProtocol;
+	ResponseProtocol * m_responseProtocol;
 };
 
 #endif

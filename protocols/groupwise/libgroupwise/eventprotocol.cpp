@@ -18,7 +18,7 @@
 using namespace GroupWise;
 
 EventProtocol::EventProtocol(QObject *parent, const char *name)
- : QObject(parent, name)
+ : InputProtocolBase(parent, name)
 {
 }
 
@@ -26,7 +26,7 @@ EventProtocol::~EventProtocol()
 {
 }
 
-EventTransfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
+Transfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 {
 	m_bytes = 0;
 	m_din = new QDataStream( wire, IO_ReadOnly );
@@ -37,7 +37,7 @@ EventTransfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 		return 0;
 	// read the event type
 	*m_din >> type;
-	m_bytes += sizeof( Q_UINT32 );	
+	m_bytes += sizeof( Q_UINT32 );
 	
 	qDebug( "EventProtocol::parse() Reading event of type %i", type );
 	if ( type > Stop )
@@ -143,11 +143,6 @@ EventTransfer * EventProtocol::parse( const QByteArray & wire, uint& bytes )
 	return tentative;
 }
 
-uint EventProtocol::state() const
-{
-	return m_state;
-}
-
 bool EventProtocol::readFlags( Q_UINT32 &flags)
 {
 	if ( okToProceed() )
@@ -159,63 +154,5 @@ bool EventProtocol::readFlags( Q_UINT32 &flags)
 	return false;
 }
 
-
-bool EventProtocol::readString( QString &message )
-{
-	uint len;
-	QCString rawData;
-	if ( !safeReadBytes( rawData, len ) )
-		return false;
-	message = QString::fromUtf8( rawData.data(), len );
-	return true;
-}
-
-
-bool EventProtocol::okToProceed()
-{
-	if ( m_din )
-	{
-		if ( m_din->atEnd() )
-		{
-			m_state = NeedMore;
-			qDebug( "EventProtocol::okToProceed() - Server message ended prematurely!" );
-		}
-		else
-			return true;
-	}
-	return false;
-}
-
-bool EventProtocol::safeReadBytes( QCString & data, uint & len )
-{
-	// read the length of the bytes
-	Q_UINT32 val;
-	if ( !okToProceed() )
-		return false;
-	*m_din >> val;
-	m_bytes += sizeof( Q_UINT32 );
-	
-	QCString temp( val );
-	if ( val != 0 )
-	{
-		if ( !okToProceed() )
-			return false;
-		// if the server splits packets here we are in trouble,
-		// as there is no way to see how much data was actually read
-		m_din->readRawBytes( temp.data(), val );
-		// the rest of the string will be filled with FF,
-		// so look for that in the last position instead of \0
-		if ( (Q_UINT8)( * ( temp.data() + ( temp.length() - 1 ) ) ) == 0xFF )
-		{
-			qDebug( "EventProtocol::safeReadBytes() - string broke, giving up" );
-			m_state = NeedMore;
-			return false;
-		}
-	}
-	data = temp;
-	len = val;
-	m_bytes += val;
-	return true;
-}
 
 #include "eventprotocol.moc"
