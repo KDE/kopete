@@ -28,6 +28,7 @@ class KopeteMessageManager;
 class KopeteMetaContact;
 class IRCIdentity;
 class KopeteMessage;
+class KSParser;
 
 struct whoIsInfo;
 
@@ -37,6 +38,7 @@ class IRCContact : public KopeteContact
 	
 	public:
 		IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaContact *metac);
+		~IRCContact();
 
 		// Checks a message for server commands
 		bool processMessage( const KopeteMessage & );
@@ -78,6 +80,7 @@ class IRCContact : public KopeteContact
 		KopeteMessageManager *mMsgManager;
 		IRCIdentity *mIdentity;
 		QString mNickName;
+		KSParser *mParser;
 
 
 };

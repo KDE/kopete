@@ -24,6 +24,7 @@
 #include "ircidentity.h"
 
 #include "kirc.h"
+#include "ksparser.h"
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
@@ -51,6 +52,7 @@ IRCContact::IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaCon
 	mMetaContact = metac;
 	mMsgManager = 0L;
 	mNickName = nick;
+	mParser = new KSParser();
 
 	// KopeteMessageManagerFactory stuff
 	mContact.append((KopeteContact *)this);
@@ -69,6 +71,11 @@ IRCContact::IRCContact(IRCIdentity *identity, const QString &nick, KopeteMetaCon
 	QObject::connect(mEngine, SIGNAL(incomingNickChange(const QString &, const QString &)), this, SLOT( slotNewNickChange(const QString&, const QString&)));
 	QObject::connect(mEngine, SIGNAL(incomingQuitIRC(const QString &, const QString &)), this, SLOT( slotUserDisconnected(const QString&, const QString&)));
 	QObject::connect(mEngine, SIGNAL(incomingCtcpReply(const QString &, const QString &, const QString &)), this, SLOT( slotNewCtcpReply(const QString&, const QString &, const QString &)));
+}
+
+IRCContact::~IRCContact()
+{
+	delete mParser;
 }
 
 KopeteMessageManager* IRCContact::manager(bool)
@@ -174,6 +181,7 @@ void IRCContact::slotNewMessage(const QString &originating, const QString &targe
 		if ( user )
 		{
 			KopeteMessage msg( user, mContact, message, KopeteMessage::Inbound );
+			msg.setBody( mParser->parse( msg.escapedBody() ), KopeteMessage::RichText );
 			manager()->appendMessage(msg);
 		}
 	}

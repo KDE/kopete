@@ -23,6 +23,7 @@ email                : nbetcher@kde.org
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
 #include "kopetestdaction.h"
+#include "../kopete/kopete.h"
 
 #include <klocale.h>
 #include <qsocket.h>
@@ -127,7 +128,7 @@ void IRCChannelContact::slotJoin()
 
 void IRCChannelContact::slotPart()
 {
-	mEngine->partChannel(mNickName, QString("Kopete 2.0: http://kopete.kde.org"));
+	mEngine->partChannel(mNickName, QString("Kopete %1 : http://kopete.kde.org").arg(KOPETE_VERSION) );
 }
 
 void IRCChannelContact::slotUserJoinedChannel(const QString &user, const QString &channel)

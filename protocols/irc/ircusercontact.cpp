@@ -21,6 +21,7 @@
 #include "kopeteviewmanager.h"
 
 #include "kirc.h"
+#include "ksparser.h"
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -79,6 +80,7 @@ void IRCUserContact::slotNewPrivMessage(const QString &originating, const QStrin
 	if (originating.section('!',0,0).lower() == mNickName.lower())
 	{
 		KopeteMessage msg( (KopeteContact*)this, mMyself, message, KopeteMessage::Inbound );
+		msg.setBody( mParser->parse( msg.escapedBody() ), KopeteMessage::RichText );
 		manager()->appendMessage(msg);
 	}
 }
@@ -90,7 +92,7 @@ void IRCUserContact::slotWhois()
 
 const QString IRCUserContact::caption() const
 {
-	return i18n("Dialog with %1 @ %2").arg(mNickName).arg(mEngine->host());
+	return i18n("%1 @ %2").arg(mNickName).arg(mEngine->host());
 }
 
 void IRCUserContact::slotOp()
@@ -118,7 +120,6 @@ void IRCUserContact::contactMode( const QString &mode )
 	KopeteView *activeView = KopeteViewManager::viewManager()->activeView();
 	if( activeView && activeView->msgManager()->user()->inherits("IRCContact") )
 	{
-		kdDebug(14120) << k_funcinfo << "View is an IRC view" << endl;
 		if( activeView->msgManager()->displayName().startsWith( QString::fromLatin1("#") ) )
 		{
 			QString channelName = activeView->msgManager()->displayName().section(' ', 0, 0);
