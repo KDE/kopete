@@ -37,7 +37,6 @@
 #include <kapplication.h>
 #include <kaboutdata.h>
 
-#include "../kopete/kopete.h"
 #include "kopetecontact.h"
 #include "kopetecontactlist.h"
 #include "kopetemetacontact.h"
