@@ -331,7 +331,7 @@ void IRCContact::slotOpenConnect()
 	}
 }
 
-void IRCContact::showContextMenu(QPoint point)
+void IRCContact::showContextMenu(QPoint point, QString /*group*/)
 {
 	popup = new KPopupMenu();
 	popup->insertTitle(mTarget);

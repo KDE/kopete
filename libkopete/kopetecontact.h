@@ -92,8 +92,11 @@ class KopeteContact : public QObject
 		virtual void execute() {}
 		/**
 		* Show a context menu of actions pertaining to this contact
+		* I hate having the group parameter, but its used for when
+		* a contact can be in multiple groups and you have to move
+		* a specific instance from one group to another.
 		**/
-		virtual void showContextMenu(QPoint) {}
+		virtual void showContextMenu(QPoint, QString) {}
 
 	signals:
 		/**

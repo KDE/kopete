@@ -30,8 +30,8 @@ JabberContact::JabberContact(QString userid, QString name, QString group, Jabber
 	mUserID = userid;
 	hasLocalGroup = false;
 
-  connect (protocol, SIGNAL(contactUpdated(QString, QString, QString, QString)), this, SLOT(slotUpdateContact(QString, QString, QString, QString)));
-  connect (protocol, SIGNAL(nukeContacts(bool)), this, SLOT(slotDeleteMySelf(bool)));
+	connect (protocol, SIGNAL(contactUpdated(QString, QString, QString, QString)), this, SLOT(slotUpdateContact(QString, QString, QString, QString)));
+	connect (protocol, SIGNAL(nukeContacts(bool)), this, SLOT(slotDeleteMySelf(bool)));
 
 	initContact(userid, name);
 }
@@ -54,14 +54,14 @@ void JabberContact::initActions() {
   actionRename      = new KAction(i18n("Rename Contact"), "editrename", 0, this, SLOT(slotRenameContact()), this, "actionRename");
 }
 
-void JabberContact::showContextMenu(QPoint point) {
+void JabberContact::showContextMenu(QPoint point, QString /*group*/) {
 	popup = new KPopupMenu();
 	popup->insertTitle(mUserID + " (" + mResource + ")");
 	actionChat->plug(popup);
 	popup->insertSeparator();
 	actionHistory->plug(popup);
 	popup->insertSeparator();
-  actionRename->plug(popup);
+	actionRename->plug(popup);
 	actionContactMove->plug(popup);
 	actionContactCopy->plug(popup);
 	actionRemoveFromGroup->plug(popup);
@@ -73,28 +73,28 @@ void JabberContact::slotUpdateContact (QString handle, QString resource, QString
 	if (handle != mUserID)
 		return;
 
-  kdDebug() << "Jabber plugin: Contact - updating " << handle << " to " << status << "." << endl;
+	kdDebug() << "Jabber plugin: Contact - updating " << handle << " to " << status << "." << endl;
 
-  if (status != QString("")) { mStatus = status; kdDebug() << "Jabber plugin: Updating status." << endl; }
-  if (resource != QString("")) { mResource = resource; }
-  if (reason != QString("")) { mReason = reason; }
-  emit statusChanged();
+	if (status != QString("")) { mStatus = status; kdDebug() << "Jabber plugin: Updating status." << endl; }
+	if (resource != QString("")) { mResource = resource; }
+	if (reason != QString("")) { mReason = reason; }
+	emit statusChanged();
 }
 
 void JabberContact::slotRenameContact() {
-  kdDebug() << "Jabber plugin: Renaming contact." << endl;
-  dlgRename = new dlgJabberRename;
-  dlgRename->lblUserID->setText(mUserID);
-  dlgRename->leNickname->setText(mName);
-  connect(dlgRename->btnRename, SIGNAL(clicked()), this, SLOT(slotDoRenameContact()));
-  dlgRename->show();
+	kdDebug() << "Jabber plugin: Renaming contact." << endl;
+	dlgRename = new dlgJabberRename;
+	dlgRename->lblUserID->setText(mUserID);
+	dlgRename->leNickname->setText(mName);
+	connect(dlgRename->btnRename, SIGNAL(clicked()), this, SLOT(slotDoRenameContact()));
+	dlgRename->show();
 }
 
 void JabberContact::slotDoRenameContact() {
-  mName = dlgRename->leNickname->text();
-  setName(mName);
-  delete dlgRename;
-  mProtocol->renameContact(mUserID, mName);
+	mName = dlgRename->leNickname->text();
+	setName(mName);
+	delete dlgRename;
+	mProtocol->renameContact(mUserID, mName);
 }
 
 void JabberContact::slotDeleteMySelf(bool connected) {
@@ -104,30 +104,30 @@ void JabberContact::slotDeleteMySelf(bool connected) {
 
 
 JabberContact::ContactStatus JabberContact::status() const {
-  if (mStatus == QString("Online")) { return Online; }
-  if (mStatus == QString("away") || mStatus == QString("xa") || mStatus == QString("dnd")) { return Away; }
-  else { return Offline; }
+	if (mStatus == QString("Online")) { return Online; }
+	if (mStatus == QString("away") || mStatus == QString("xa") || mStatus == QString("dnd")) { return Away; }
+	else { return Offline; }
 }
 
 QString JabberContact::statusText() const {
-  return mStatus + " (" + mReason + ")";
+	return mStatus + " (" + mReason + ")";
 }
 
 QString JabberContact::statusIcon() const {
 	if (mStatus == QString("online")) { return "jabber_online"; }
-  if (mStatus == QString("away") || mStatus == QString("xa")) { return "jabber_away"; }
-  if (mStatus == QString("dnd")) { return "jabber_na"; }
-  return "jabber_offline";
+	if (mStatus == QString("away") || mStatus == QString("xa")) { return "jabber_away"; }
+	if (mStatus == QString("dnd")) { return "jabber_na"; }
+	return "jabber_offline";
 }
 
 void JabberContact::slotRemoveThisUser() {
-  mProtocol->removeUser(mUserID);
-  delete this;
+	mProtocol->removeUser(mUserID);
+	delete this;
 }
 
 void JabberContact::slotMoveThisUser() {
-  mProtocol->moveUser(mUserID, actionContactMove->currentText(), mName, this);
-  mGroup = actionContactMove->currentText();
+	mProtocol->moveUser(mUserID, actionContactMove->currentText(), mName, this);
+	mGroup = actionContactMove->currentText();
 }
 
 #include "jabbercontact.moc"

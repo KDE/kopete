@@ -47,33 +47,33 @@ class JabberContact : public KopeteContact
 		JabberContact (QString userid, QString name, QString group, JabberProtocol *protocol);
 		
 		void initContact (QString userid, QString name);
-		virtual void showContextMenu (QPoint);
+		virtual void showContextMenu (QPoint, QString);
 
 		QString mUserID;
 		QString mName;
-    QString mResource;
+		QString mResource;
 		bool hasLocalGroup;
 
 		ContactStatus status() const;
 		QString statusText() const;
 		QString statusIcon() const;
-    void setResource(QString);
+		void setResource(QString);
 
 	public slots:
 	private slots:
 		void slotUpdateContact (QString, QString, QString, QString);
 		void slotDeleteMySelf (bool);
-    void slotRemoveThisUser();
-    void slotRenameContact();
-    void slotDoRenameContact();
-    void slotMoveThisUser();
+		void slotRemoveThisUser();
+		void slotRenameContact();
+		void slotDoRenameContact();
+		void slotMoveThisUser();
 
 	private:
 		void initActions();
 
 		QString mGroup;
 		QString mStatus;
-    QString mReason;
+		QString mReason;
 		JabberProtocol *mProtocol;
 		KPopupMenu *popup;
 		KAction* actionRemove;
@@ -81,13 +81,13 @@ class JabberContact : public KopeteContact
 		KAction* actionChat;
 		KAction* actionInfo;
 		KAction* actionHistory;
-    KAction* actionRename;
+		KAction* actionRename;
 		KListAction *actionContactMove;
 		KListAction *actionContactCopy;
-    dlgJabberRename *dlgRename;
+		dlgJabberRename *dlgRename;
 
 	signals:
-    void statusChanged();
+		void statusChanged();
 };
 
 #endif
