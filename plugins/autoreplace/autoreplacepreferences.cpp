@@ -23,11 +23,11 @@
 #include <klocale.h>
 #include <klineedit.h>
 #include <kglobal.h>
+#include <kgenericfactory.h>
 
 #include "autoreplaceprefs.h"
 #include "autoreplacepreferences.h"
 #include "autoreplaceconfig.h"
-#include <kgenericfactory.h>
 
 typedef KGenericFactory<AutoReplacePreferences> AutoReplacePreferencesFactory;
 
@@ -109,7 +109,7 @@ void AutoReplacePreferences::save()
 	// save all config to kopeterc
 	m_config->save();
 
-	setChanged( false );
+	setChanged( false ); 
 }
 
 // read m_key m_value, create a QListViewItem
@@ -129,6 +129,8 @@ void AutoReplacePreferences::slotAddCouple()
 		// select last added
 		preferencesDialog->m_list->setSelected(lvi, true);
 	}
+	
+	setChanged( true );
 }
 
 // Returns a pointer to the selected item if the list view is in
@@ -138,6 +140,8 @@ void AutoReplacePreferences::slotRemoveCouple()
 	QListViewItem * lvi = preferencesDialog->m_list->selectedItem();
 	if( lvi )
 		delete lvi;
+	
+	setChanged( true );	
 }
 
 /*
