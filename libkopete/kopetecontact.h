@@ -470,6 +470,16 @@ private slots:
 	 * slot called when the action "delete" is called.
 	 */
 	void slotDelete();
+	
+	/**
+	 * slot called when the action "block" is called.
+	 */
+	void slotBlock();
+	
+	/**
+	 * slot called when the action "unblock" is called.
+	 */
+	void slotUnblock();
 
 signals:
 	/**

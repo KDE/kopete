@@ -67,6 +67,7 @@ public:
 	KAction *actionUserInfo;
 	KAction *actionSendFile;
 	KAction *actionAddContact;
+	KAction *actionBlock;
 
 	QString contactId;
 	QString icon;
@@ -221,6 +222,7 @@ KPopupMenu* Kopete::Contact::popupMenu( Kopete::MessageManager *manager )
 	d->actionChangeMetaContact = KopeteStdAction::changeMetaContact( this, SLOT( slotChangeMetaContact() ), menu, "actionChangeMetaContact" );
 	d->actionAddContact = new KAction( i18n( "&Add to Your Contact List" ), QString::fromLatin1( "bookmark_add" ), 0,
 		this, SLOT( slotAddContact() ), menu, "actionAddContact" );
+	d->actionBlock = account()->isBlocked( d->contactId ) ? KopeteStdAction::unblockContact( this, SLOT( slotUnblock() ), menu, "actionUnblockContact" ) : KopeteStdAction::blockContact( this, SLOT( slotBlock() ), menu, "actionBlockContact" );
 
 	// FIXME: After KDE 3.2 we should make isReachable do the isConnected call so it can be removed here - Martijn
 	bool reach = isReachable() && d->account->isConnected(); // save calling a method several times
@@ -271,6 +273,7 @@ KPopupMenu* Kopete::Contact::popupMenu( Kopete::MessageManager *manager )
 		d->actionChangeMetaContact->plug( menu );
 
 	d->actionUserInfo->plug( menu );
+	d->actionBlock->plug( menu );
 
 	if( metaContact() && !metaContact()->isTemporary() )
 	{
@@ -854,6 +857,16 @@ QString Kopete::Contact::formattedIdleTime() const
 		}
 	}
 	return ret;
+}
+
+void Kopete::Contact::slotBlock()
+{
+	account()->block( d->contactId );
+}
+
+void Kopete::Contact::slotUnblock()
+{
+	account()->unblock( d->contactId );
 }
 
 #include "kopetecontact.moc"

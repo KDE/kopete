@@ -157,6 +157,16 @@ KAction * KopeteStdAction::changeAlias( const QObject *recvr, const char *slot, 
 	return new KAction( i18n( "Change A&lias..." ), QString::fromLatin1( "signature" ), 0, recvr, slot, parent, name );
 }
 
+KAction * KopeteStdAction::blockContact( const QObject *recvr, const char *slot, QObject* parent, const char *name )
+{
+	return new KAction( i18n( "&Block Contact" ), QString::fromLatin1( "player_pause" ), 0, recvr, slot, parent, name );
+}
+
+KAction * KopeteStdAction::unblockContact( const QObject *recvr, const char *slot, QObject* parent, const char *name )
+{
+	return new KAction( i18n( "Un&block Contact" ), QString::fromLatin1( "player_play" ), 0, recvr, slot, parent, name );
+}
+
 #include "kopetestdaction.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

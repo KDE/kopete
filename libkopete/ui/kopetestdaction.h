@@ -84,6 +84,16 @@ public:
 	 */
 	static KAction *changeAlias(const QObject *recvr, const char *slot,
 		QObject* parent, const char *name = 0);
+	/**
+	 * Standard action to block a contact
+	 */
+	static KAction *blockContact(const QObject *recvr, const char *slot, 
+		QObject* parent, const char *name = 0);
+	/**
+	 * Standard action to unblock a contact
+	 */
+	static KAction *unblockContact(const QObject *recvr, const char *slot, 
+		QObject* parent, const char *name = 0);
 
 	/**
 	 * Return an action to change the Kopete preferences.
