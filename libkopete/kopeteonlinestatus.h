@@ -115,7 +115,8 @@ public:
 	 * This status is usually a lot more fine-grained than the status as used
 	 * by libkopete and should be unique per protocol.
 	 * @param overlayIcon is a string returning the name of the status icon to be
-	 * used by the KDE icon loader.
+	 * used by the KDE icon loader. (Online and Offline don't have icon to overlay
+	 * so you should QString::null as icon string)
 	 * @param caption is the description of the status in menus and on buttons.
 	 * @param description is a description in e.g. tooltips.
 	 */
