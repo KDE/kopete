@@ -8,7 +8,6 @@
 
 #include "gadusession.h"
 
-
 GaduSession::GaduSession( QObject *parent, const char* name )
     : QObject( parent, name )
 {
@@ -57,12 +56,8 @@ GaduSession::login( const struct gg_login_params& p )
         write_->setEnabled( false );
         QObject::connect( write_, SIGNAL(activated(int)),
                           SLOT(checkDescriptor()) );
-        if( session_->check & GG_CHECK_READ ) {
-            read_->setEnabled( true );
-        }
-        if( session_->check & GG_CHECK_WRITE ) {
-            write_->setEnabled( true );
-        }
+
+        enableNotifiers( session_->check );
     }
 }
 
@@ -94,7 +89,7 @@ GaduSession::login( uin_t uin, const QString& password,
 
     memset( &p, 0, sizeof(p) );
     p.uin = uin;
-    p.password = password.local8Bit().data();
+    p.password = const_cast<char*>( password.latin1() );
     p.status = status;
     p.status_descr = statusDescr.local8Bit().data();
     p.async = 1;
@@ -230,7 +225,6 @@ GaduSession::checkDescriptor()
 
     struct gg_event *e;
 
-
     if (!(e = gg_watch_fd(session_))) {
         emit error( i18n("Connection broken!"),
                     i18n(strerror(errno)) );
@@ -243,6 +237,7 @@ GaduSession::checkDescriptor()
         emit disconnect();
         return;
     }
+
     switch( e->type ) {
     case GG_EVENT_MSG:
         emit messageReceived( e );
