@@ -256,17 +256,7 @@ bool LibraryLoader::remove( KopetePlugin *p )
 	// Added by Duncan 20/01/2002
 	// We need to call unload function for the plugin
 	p->unload();
-
 	delete p;
-	QDictIterator<KopetePlugin> i( mLibHash );
-	for( ; i.current(); ++i )
-	{
-		if( i.current() == p )
-		{
-			mLibHash.remove( i.currentKey() );
-			return true;
-		}
-	}
 
 	return false;
 }
@@ -276,13 +266,10 @@ void LibraryLoader::slotPluginDestroyed( QObject *o )
 	m_addressBookFields.remove( static_cast<KopetePlugin *>( o ) );
 
 	QDictIterator<KopetePlugin> it( mLibHash );
-	for( ; it.current(); ++it )
+	for( ; it.current() && it.current() == o; ++it )
 	{
-		if( it.current() == o )
-		{
-			mLibHash.remove( it.currentKey() );
-			break;
-		}
+		mLibHash.remove( it.currentKey() );
+		break;
 	}
 
 	// FIXME: Most likely most data structures here leak and are bound
