@@ -257,9 +257,9 @@ redo:
 
 					// FIXME: THIS IS UGLY!!!!!!!!!!!!!!!!!!!!!!
 					KopeteContactList others;
-					others.append( MSNProtocol::protocol()->contacts()[ handle ] );
+					others.append( MSNProtocol::protocol()->myself() );
 					KopeteMessage msg(
-						MSNProtocol::protocol()->myself(), others, miss,
+						MSNProtocol::protocol()->contacts()[ handle ] , others, miss,
 						KopeteMessage::Inbound );
 					msg.setFg( fg );
 					msg.setFont( font );
