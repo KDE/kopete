@@ -130,10 +130,10 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 		{
 			plainBody = KgpgInterface::KgpgDecryptText( body, m_prefs->privateKey() );
 		}
-		
+
 		if(!plainBody.isEmpty())
 		{
-			msg.setBody("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FFFF\"><td><font size=\"-1\"><b>"+i18n("Outgoing Encrypted Message")+"</b></font></td></tr><tr bgcolor=\"#DDFFFF\"><td>"+QStyleSheet::escape(plainBody)+"</td></tr></table>"
+			msg.setBody("<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FFFF\"><td><font size=\"-1\"><b>"+i18n("Outgoing Encrypted Message")+"</b></font></td></tr><tr bgcolor=\"#DDFFFF\"><td>"+QStyleSheet::escape(plainBody).replace("\n", "<br/>")+"</td></tr></table>"
 				,KopeteMessage::RichText);
 		}
 
@@ -147,7 +147,7 @@ void CryptographyPlugin::slotIncomingMessage( KopeteMessage& msg )
 
 	if(!body.isEmpty())
 	{
-		body="<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FF41\"><td><font size=\"-1\"><b>"+i18n("Incoming Encrypted Message")+"</b></font></td></tr><tr bgcolor=\"#DDFFDD\"><td>"+QStyleSheet::escape(body)+"</td></tr></table>";
+		body="<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr bgcolor=\"#41FF41\"><td><font size=\"-1\"><b>"+i18n("Incoming Encrypted Message")+"</b></font></td></tr><tr bgcolor=\"#DDFFDD\"><td>"+QStyleSheet::escape(body).replace("\n", "<br/>")  +"</td></tr></table>";
 		msg.setBody(body,KopeteMessage::RichText);
 	}
 
