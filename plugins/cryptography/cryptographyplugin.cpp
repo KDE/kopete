@@ -165,7 +165,9 @@ void CryptographyPlugin::slotOutgoingMessage( KopeteMessage& msg )
 	QPtrList<KopeteContact> contactlist = msg.to();
 	for( KopeteContact *c = contactlist.first(); c; c = contactlist.next() )
 	{
-		QString tmpKey = c->metaContact()->pluginData( this, "gpgKey" );
+		QString tmpKey;
+		if( c->metaContact() )
+			tmpKey = c->metaContact()->pluginData( this, "gpgKey" );
 		if( tmpKey.isEmpty() )
 		{
 			kdDebug( 14303 ) << "CryptographyPlugin::slotOutgoingMessage: no key selected for one contact" <<endl;
