@@ -18,6 +18,10 @@
 
 #include "kopetemetacontact.h"
 
+#include <qdom.h>
+#include <qptrlist.h>
+#include <qstylesheet.h>
+
 #include <kdebug.h>
 #include <klocale.h>
 
@@ -25,6 +29,8 @@
 #include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
 #include "kopetemetacontactlvi.h"
+#include "plugin.h"
+#include "pluginloader.h"
 
 // FIXME: Add parent!!
 KopeteMetaContact::KopeteMetaContact()
@@ -109,26 +115,17 @@ void KopeteMetaContact::addContact( KopeteContact *c, const QStringList &groups 
 
 KopeteContact *KopeteMetaContact::findContact( const QString &protocolId, const QString &contactId )
 {
+	//kdDebug() << "*** Num contacts: " << m_contacts.count() << endl;
 	QPtrListIterator<KopeteContact> it( m_contacts );
 	for( ; it.current(); ++it )
 	{
+		//kdDebug() << "*** Trying " << it.current()->id() << ", proto " << it.current()->protocol() << endl;
 		if( (it.current()->id() == contactId ) && (it.current()->protocol() == protocolId ))
 			return it.current();
 	}
 
 	// Contact not found
 	return 0L;
-}
-
-void KopeteMetaContact::addData( QString &pluginId, QString &key, QString &value )
-{
-	//m_metadata.insert( QPair( pluginId, key) , value);
-	m_metadata[ qMakePair( pluginId, key) ] = value;
-}
-
-QString KopeteMetaContact::data( QString &pluginId, QString &key)
-{
-	return m_metadata[ qMakePair( pluginId, key) ];
 }
 
 void KopeteMetaContact::sendMessage()
@@ -355,46 +352,118 @@ QString KopeteMetaContact::toXML()
 {
 	QString xml;
 
-	xml = "<person";
+	xml += "  <meta-contact id=\"TODO: KABC ID\">\n"
+	       "    <display-name>" +
+	       QStyleSheet::escape( m_displayName ) +
+	       "</display-name>\n";
 
-	if ( ! m_displayName.isNull() )
+		/* We include all groups in the XML */
+	if ( !m_groups.isEmpty() ) {
+		xml += "    <groups>\n";
+		for( QStringList::ConstIterator it = m_groups.begin(); it != m_groups.end(); ++it )
 	{
-		xml = xml + " name=\"" + m_displayName + "\"";
+			if ( !(*it).isEmpty() )
+				xml += "      <group>" + QStyleSheet::escape( *it ) +
+				       "</group>\n";
+			else
+				xml += "      <group>" + QStyleSheet::escape( i18n("Unknown") ) +
+				       "</group>\n";
+		}
+		xml += "    </groups>\n";
 	}
 
-	xml = xml + ">\n";
-
-	/* We include all contacts in the XML */
-	QPtrListIterator<KopeteContact> it( m_contacts );
-	for( ; it.current(); ++it )
-	{
-		xml = xml + "\t" + (it.current())->toXML() + "\n";
+	for( AddressBookFields::Iterator adrIt = m_addressBook.begin(); adrIt != m_addressBook.end(); ++adrIt ) {
+			xml += "    <address-book-field id=\"" + adrIt.key() + "\">";
+			xml += adrIt.data();
+			xml += "</address-book-field>\n";
 	}
 
-	// FIXME: KopeteMetaContact::toXML() Metadata is ignored
-
-	/* We include all groups in the XML */
-	for( QStringList::ConstIterator it = m_groups.begin(); it != m_groups.end(); ++it )
+	QPtrList<Plugin> ps = kopeteapp->libraryLoader()->plugins();
+	for( Plugin *p = ps.first() ; p != 0L; p = ps.next() )
 	{
-		QString group = *it;
-		xml = xml + "\t<group name=\"" + group + "\"/>\n";
+		//++pluginIt;
+		QStringList strList;
+		if ( p->serialize( this, strList ) && !strList.empty() ) {
+			QString data = strList.join( "||" );
+			kdDebug()<<"### Data = "<< data <<endl;
+			xml += "    <plugin-data plugin-id=\"" +
+			       QString( p->id() ) + "\">" +
+			       data  + "</plugin-data>\n";
+	}
 	}
 
-	xml = xml + "</person>";
+	xml += "  </meta-contact>\n";
+
 	return xml;
 }
 
-QString KopeteMetaContact::addressBookField( Plugin * /* p */,
-	const QString & /* key */ ) const
+bool KopeteMetaContact::fromXML( const QDomNode& cnode )
 {
-	// FIXME: IMPLEMENT!!!
+	QDomNode contactNode = cnode;
+	while( !contactNode.isNull() )
+	{
+		QDomElement contactElement = contactNode.toElement();
+		if( !contactElement.isNull() )
+		{
+			if( contactElement.tagName() == "display-name" )
+			{
+				if ( contactElement.text().isEmpty() )
+					return false;
+				m_displayName = contactElement.text();
+			}
+			else if( contactElement.tagName() == "groups" )
+			{
+				QDomNode group = contactElement.firstChild();
+				while( !group.isNull() ) {
+					m_groups << group.toElement().text();
+					group = group.nextSibling();
+				}
+	}
+			else if( contactElement.tagName() ==
+				 "address-book-field" )
+			{
+				QString id = contactElement.attribute( "id", QString::null );
+				QString val = contactElement.text();
+				m_addressBook.insert( id, val );
+
+			}
+			else if( contactElement.tagName() == "plugin-data" )
+			{
+				QString pluginId = contactElement.attribute(
+					"plugin-id", QString::null );
+				QStringList strList = QStringList::split( "||", contactElement.text() );
+				Plugin *plugin = kopeteapp->libraryLoader()->searchByID( pluginId );
+				plugin->deserialize( this, strList );
+			}
+
+		}
+		contactNode = contactNode.nextSibling();
+	}
+	return true;
+}
+
+QString KopeteMetaContact::addressBookField( Plugin * p,
+	const QString & key ) const
+{
+	if ( p->addressBookFields().contains( key ) ) {
+		if ( m_addressBook.contains( key ) ) {
+			return m_addressBook[ key ];
+		} else
+			return QString::null;
+	} else
 	return QString::null;
 }
 
-void KopeteMetaContact::setAddressBookField( Plugin * /* p */,
-	const QString & /* key */, const QString & /* value */ )
+void KopeteMetaContact::setAddressBookField( Plugin * p ,
+	const QString & key, const QString & value )
 {
-	// FIXME: IMPLEMENT!!!
+	if ( p->addressBookFields().contains( key ) )
+		m_addressBook.insert( key, value );
+}
+
+KopeteMetaContact::AddressBookFields KopeteMetaContact::addressBookFields() const
+{
+	return m_addressBook;
 }
 
 #include "kopetemetacontact.moc"

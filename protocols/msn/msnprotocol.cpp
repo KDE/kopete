@@ -271,20 +271,78 @@ bool MSNProtocol::isAway(void) const
 
 KopeteContact* MSNProtocol::createContact( KopeteMetaContact *parent, const QString &serializedData )
 {
-    QString protocolId = this->id();
-	// FIXME: serializedData contains much more than just the passport and
-	// the display name, but for now it hopefully suffices.
-
-	// FIXME: more error-proof deserialize would be useful :)
-	QStringList data    = QStringList::split( ' ', serializedData );
-	QString passport    = data[ 0 ].replace( QRegExp( "%20" ), " " );
-	QString displayName = data[ 1 ].replace( QRegExp( "%20" ), " " );
-	QString groups      = data[ 2 ].replace( QRegExp( "%20" ), " " );
-
-	return new MSNContact( protocolId, passport, displayName, QString::null, parent );
+	// FIXME: remove this method!
+	return 0L;
 }
 
-/** Get myself */
+bool MSNProtocol::serialize( KopeteMetaContact *metaContact,
+			     QStringList &stream ) const
+{
+	//kdDebug() << "MSNProtocol::serialize " << metaContact->displayName()
+	//<< endl;
+	MSNContact *c = m_metaContacts.find( metaContact );
+
+	if( c )
+	{
+		stream << c->id() << c->displayName() << c->groups().join( "," );
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void MSNProtocol::deserialize( KopeteMetaContact *metaContact,
+	const QStringList &strList )
+{
+    QString protocolId = this->id();
+
+	QString passport, displayName;
+	QStringList groups;
+	int numContacts = strList.size() / 3;
+	int idx = 0;
+	while( numContacts ) {
+		for( int i = 0; i < 3; ++i,++idx ) {
+			switch( i ) {
+			case 0:
+				passport = strList[idx];
+				break;
+			case 1:
+				displayName = strList[idx];
+				break;
+			case 2:
+				QStringList groups = QStringList::split( ",", strList[idx] );
+				break;
+			}
+		}
+		--numContacts;
+		kdDebug() << "new MSNContact( " << protocolId << ", " << passport
+			<< ", " << displayName << ", " << groups.first()
+			<< ", " << metaContact->displayName() << endl;
+
+		// Create MSN contact
+		// FIXME: I think this should go in a single method, as it is
+		// duplicated everywhere now
+		MSNContact *c = new MSNContact( protocolId, passport, displayName,
+			groups.first(), metaContact );
+		connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
+			SLOT( slotContactDestroyed( KopeteContact * ) ) );
+		m_metaContacts.insert( metaContact, c );
+
+		QStringList::Iterator it = groups.begin();
+		if( it != groups.end() )
+			++it; // Skip the first item as it was passed to the ctor already
+		for( ; it != groups.end(); ++it )
+			c->addToGroup( groupName( (*it).toUInt() ) );
+
+		metaContact->addContact( c, c->groups() );
+
+		// FIXME: Try to remove this
+		m_contacts.insert( c->msnId(), c );
+	}
+}
+
 KopeteContact* MSNProtocol::myself() const
 {
 	return m_myself;
@@ -819,8 +877,8 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 	if( list == "FL" )
 	{
 		KopeteContactList *l = KopeteContactList::contactList();
-		KopeteMetaContact *m = l->findContact( handle , this->id() );
-		KopeteContact *c = m->findContact( handle,this->id() );
+		KopeteMetaContact *m = l->findContact( id(), handle );
+		KopeteContact *c = m->findContact( id(), handle );
 
 		if( c )
 		{
@@ -833,9 +891,13 @@ void MSNProtocol::slotContactList( QString handle, QString publicName,
 		else
 		{
 			QString protocolid = this->id();
-			// New contact
-			MSNContact *msnContact = new MSNContact( protocolid, handle, publicName,
-				QString::null, m );
+
+			MSNContact *msnContact = new MSNContact( protocolid, handle,
+				publicName, QString::null, m );
+			connect( msnContact, SIGNAL( contactDestroyed( KopeteContact * ) ),
+				SLOT( slotContactDestroyed( KopeteContact * ) ) );
+			m_metaContacts.insert( m, msnContact );
+
 			for( QStringList::Iterator it = groups.begin();
 				it != groups.end(); ++it )
 			{
@@ -955,8 +1017,8 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 		if( list == "FL" )
 		{
 			KopeteContactList *l = KopeteContactList::contactList();
-			KopeteMetaContact *m = l->findContact( handle ,this->id());
-			KopeteContact *c = m->findContact( handle, this->id() );
+			KopeteMetaContact *m = l->findContact( this->id(), handle );
+			KopeteContact *c = m->findContact( this->id(), handle );
 
 			if( c )
 			{
@@ -969,8 +1031,12 @@ void MSNProtocol::slotContactAdded( QString handle, QString publicName,
 			else
 			{
                 QString protocol = this->id();
-				// New contact
-				MSNContact *c = new MSNContact( protocol, handle, publicName, gn, m );
+
+				MSNContact *c = new MSNContact( protocol, handle, publicName,
+					gn, m );
+				connect( c, SIGNAL( contactDestroyed( KopeteContact * ) ),
+					SLOT( slotContactDestroyed( KopeteContact * ) ) );
+				m_metaContacts.insert( m, c );
 				m->addContact( c, gn );
 
 				// FIXME: Try to remove this
@@ -1264,6 +1330,10 @@ void MSNProtocol::slotSwitchBoardClosed( MSNSwitchBoardSocket *switchboard)
 	}
 }
 
+void MSNProtocol::slotContactDestroyed( KopeteContact *c )
+{
+	m_metaContacts.remove( c->metaContact() );
+}
 
 #include "msnprotocol.moc"
 
@@ -1275,6 +1345,7 @@ void MSNProtocol::slotSwitchBoardClosed( MSNSwitchBoardSocket *switchboard)
  * c-basic-offset: 8
  * indent-tabs-mode: t
  * End:
+ *
+ * vim: set noet ts=4 sts=4 sw=4:
  */
-// vim: set noet ts=4 sts=4 sw=4:
 

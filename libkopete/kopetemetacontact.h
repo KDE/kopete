@@ -23,7 +23,6 @@
 #include <qptrlist.h>
 #include <qstringlist.h>
 #include <qmap.h>
-#include <qpair.h>
 
 #include "kopetecontact.h"
 
@@ -31,7 +30,7 @@ class QStringList;
 
 class KopetePlugin;
 class Plugin;
-
+class QDomNode;
 /**
  * @author Martijn Klingens <klingens@kde.org>
  */
@@ -40,6 +39,9 @@ class KopeteMetaContact : public QObject
 	Q_OBJECT
 
 public:
+	//          <PluginID, Value   >
+	typedef QMap< QString, QString > AddressBookFields;
+
 	KopeteMetaContact();
 	~KopeteMetaContact();
 
@@ -53,15 +55,6 @@ public:
 	 */
 	void addContact( KopeteContact *c, const QStringList &groups );
 	
-	/**
-	 * Add metadata to the meta contact
-	 */
-	void addData( QString &pluginId, QString &key, QString &value );
-	/**
-	 * Get metadata to the meta contact
-	 */
-	QString data( QString &pluginId, QString &key);
-
 	/**
 	 * Find the KopeteContact to a given contact. If contact
 	 * is not found, a null pointer is returned.
@@ -124,6 +117,14 @@ public:
 	 */
 	QString toXML();
 
+	/**
+	 * Creates a metacontact from XML
+	 * Return value of false indicated that
+	 * creation failed and this contact should be
+	 * discarded.
+	 */
+	bool fromXML( const QDomNode& cnode );
+
 public slots:
 	/**
 	 * Contact another user.
@@ -166,6 +167,12 @@ public slots:
 	QString addressBookField( Plugin *p, const QString &key ) const;
 	void setAddressBookField( Plugin *p, const QString &key,
 		const QString &value );
+	/**
+	 * Return a copy of all address book fields exported by this
+	 * meta contact
+	 */
+	AddressBookFields addressBookFields() const;
+
 
 signals:
 	/**
@@ -225,12 +232,7 @@ private:
 
 	QStringList m_groups;
 
-
-	/**
-	 * Plugins can set whatever metadata and associate it with a metacontact
-	 * This is just a hash ( pluginid, key ) -> value
-	 */
-	QMap<QPair<QString, QString>, QString> m_metadata;
+	AddressBookFields m_addressBook;
 	
 };
 

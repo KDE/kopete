@@ -43,6 +43,7 @@ KopeteContact::KopeteContact( const QString &protocolId, KopeteMetaContact *pare
 
 KopeteContact::~KopeteContact()
 {
+	emit( contactDestroyed( this ) );
 }
 
 void KopeteContact::setDisplayName( const QString &name )

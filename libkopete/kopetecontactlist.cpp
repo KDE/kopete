@@ -16,23 +16,24 @@
     *************************************************************************
 */
 
-#include "kopetecontactlistview.h"
 #include "kopetecontactlist.h"
 
+#include "kopete.h"
+#include "kopetecontactlistview.h"
 #include "kopetemetacontact.h"
 #include "kopetemetacontactlvi.h"
-
-#include "kopete.h"
-#include "pluginloader.h"
 #include "kopeteprotocol.h"
-#include "plugin.h"
+#include "pluginloader.h"
 
-#include <kglobal.h>
-#include <kstandarddirs.h>
+#include <qptrlist.h>
+#include <qstringlist.h>
+#include <qstylesheet.h>
+
+#include <klocale.h>
 #include <kapplication.h>
 #include <kdebug.h>
-#include <qstringlist.h>
-#include <qdatastream.h>
+#include <kglobal.h>
+#include <kstandarddirs.h>
 
 KopeteContactList *KopeteContactList::s_contactList = 0L;
 
@@ -53,18 +54,18 @@ KopeteContactList::~KopeteContactList()
 {
 }
 
-KopeteMetaContact *KopeteContactList::findContact( const QString &contactId, const QString &protocolId )
+KopeteMetaContact *KopeteContactList::findContact( const QString &protocolId, const QString &contactId )
 {
+	//kdDebug() << "*** Looking for contact " << contactId << ", proto " << protocolId << endl;
 	QPtrListIterator<KopeteMetaContact> it( m_contacts );
 	for( ; it.current(); ++it )
-	{
-		QPtrListIterator<KopeteContact> contactIt( it.current()->contacts() );
-		for( ; contactIt.current(); ++contactIt )
 		{
-			if( (contactIt.current()->id() == contactId) && (contactIt.current()->protocol() == protocolId))
+		//kdDebug() << "*** Iterating " << it.current()->displayName() << endl;
+		KopeteContact *c = it.current()->findContact( protocolId, contactId );
+		if( c )
 				return it.current();
 		}
-	}
+	//kdDebug() << "*** Not found!" << endl;
 
 	// Contact not found, create a new meta contact
 	KopeteMetaContact *mc = new KopeteMetaContact();
@@ -106,150 +107,84 @@ void KopeteContactList::addMetaContact( KopeteMetaContact *mc )
 
 void KopeteContactList::loadXML()
 {
-    /*
-		Current XML file format:
+	QDomDocument contactList( "messaging-contact-list" );
 
-		<list>
-			<person name="Duncan" kabid="i38474">
-				<data pluginid="PluginID1">serialized plugin data</data>
-				<data pluginid="PluginID2">serialized plugin data</data>
-				<data pluginid="PluginID3">serialized plugin data</data>
-				<group name="Friends">
-				<group name="KDE geeks">
-			</person>
-			<person>
-				...
-			</person>
-		</list>
+	QString filename = locateLocal( "appdata", "contactlist.xml" );
 
-		Groups can be 0..N
-		Groups are created on demand.
-
-		Please contact duncan@kde.org if you hace comments about the format.
-
-		NEWS:
-		- 08/08/2002: Modified to fit Zack & Martijn new APIs        	
-	*/
-
-	QString xml_filename;
-
-	QDomDocument domdoc("ContactList");
-
-	xml_filename = locateLocal("data","kopete/contacts.xml");
-
-    /* No contacts */
-	if ( xml_filename.isNull() )
+	if( filename.isEmpty() )
 		return ;
 
-	QFile xml_file(xml_filename);
-	xml_file.open(IO_ReadWrite);
-	domdoc.setContent(&xml_file);
+	QFile contactListFile( filename );
+	contactListFile.open( IO_ReadOnly );
+	contactList.setContent( &contactListFile );
 
-	QDomElement list = domdoc.documentElement();
-
-	QDomNode nodel1;
-	nodel1 = list.firstChild();
-
-	while ( ! nodel1.isNull() )
+	QDomElement list = contactList.documentElement();
+	QDomNode node = list.firstChild();
+	while( !node.isNull() )
 	{
-		QDomElement elementl1 = nodel1.toElement();
-
-		if ( ! elementl1.isNull())
+		QDomElement element = node.toElement();
+		if( !element.isNull() )
 		{
-			/* We have found a metacontact person  */
-			if ( elementl1.tagName() == "person" )
+			if( element.tagName() == "meta-contact" )
 			{
-				QString person_name = elementl1.attribute("name", "No Name");
-				kdDebug() << "XML Reader: New Person " << person_name << endl;
-				KopeteMetaContact *mc = new KopeteMetaContact();
-				mc->setDisplayName(person_name);
-
-				/* Now we have to find all data for this person */
-				QDomNode nodel2;
-				nodel2 = nodel1.firstChild();
-
-				while ( !nodel2.isNull() )
-				{
-					/* try to convert it to an element  */
-					QDomElement elementl2 = nodel2.toElement();
-
-					/* Was it an element ?  */
-					if( !elementl2.isNull())
-					{
-						/* We have found a plugin data (may be contacts?)
-						<data ...*/
-				
-						if( elementl2.tagName() == "data" )
-						{
-                            /* <data pluginid="PluginID2" ... */
-							QString pluginId = elementl2.attribute("pluginid", "Unknown");
-                            /* <data pluginid="PluginID2">serialized plugin data ... */
-							QString serializedData = elementl2.text();
-
-							//kdDebug() << "XML Reader: Protocol: " << pluginId << " Data: " << serializedData << endl;
-
-                            QDataStream datastream;
-							datastream << serializedData;
-							
-							Plugin *pl = kopeteapp->libraryLoader()->searchByID(pluginId);
-
-                            // hint: Remember, plugins can set contacts nick using metacontacts one if they want
-							pl->deserialize( mc, datastream );
-
-					
+				//TODO: id isn't used
+				QString id = element.attribute( "id", QString::null );
+				KopeteMetaContact *metaContact = new KopeteMetaContact();
+				QDomNode contactNode = node.firstChild();
+				if ( !metaContact->fromXML( contactNode ) ) {
+					delete metaContact;
+					metaContact = 0;
+				} else
+					KopeteContactList::contactList()->addMetaContact( metaContact );
 						}
-
-						if ( elementl2.tagName() == "group" )
+			else
 						{
-                            QString groupname = elementl2.attribute("name", "Ups");
-                            kdDebug() << "Group: "<< groupname << endl;
-							mc->addToGroup(groupname);
-						}
-					}
-
-					/* We go for the next data, group etc */
-					nodel2 = nodel2.nextSibling();
+				kdDebug() << "KopeteContactList::loadXML: Warning: "
+					  << "Unknown element '" << element.tagName()
+					  << "' in contact list!" << endl;
 				}
 
-            	/* We add the metacontact */
-				KopeteContactList::contactList()->addMetaContact( mc );
 			}
+		node = node.nextSibling();
 		}
-		nodel1 = nodel1.nextSibling();
-	}
 
-	/* All ok! */
-	xml_file.close();
+	contactListFile.close();
 }
 
 void KopeteContactList::saveXML()
 {
-	QString xml_filename = locateLocal("data","kopete/contacts.xml");
-	QFile xml_file( xml_filename );
-
-	xml_file.open(IO_ReadWrite | IO_Append);
-	QTextStream stream(&xml_file);
-
-	stream.setEncoding(QTextStream::UnicodeUTF8);
+	QString contactListFileName = locateLocal( "appdata", "contactlist.xml" );
+	QFile contactListFile( contactListFileName );
+	if( contactListFile.open( IO_WriteOnly ) )
+	{
+		QTextStream stream( &contactListFile );
+		stream.setEncoding( QTextStream::UnicodeUTF8 );
 	
 	stream << toXML();
 
-	stream.device()->flush();
-	xml_file.close();
+		contactListFile.close();
+	}
+	else
+	{
+		kdDebug() << "WARNING: Couldn't open contact list file "
+			<< contactListFileName << ". Contact list not saved." << endl;
+	}
 }
 
 QString KopeteContactList::toXML()
 {
-	QString xml;
+	QString xml = "<?xml version=\"1.0\"?>\n"
+		"<messaging-contact-list>\n";
 
-	xml = "<list>\n";
-
-	QPtrListIterator<KopeteMetaContact> it( m_contacts );
-	for( ; it.current(); ++it )
+	QPtrListIterator<KopeteMetaContact> metaContactIt( m_contacts );
+	for( ; metaContactIt.current(); ++metaContactIt )
 	{
-		xml = xml + "\t" + (it.current())->toXML() + "\n";	
+		kdDebug() << "KopeteContactList::toXML: Saving meta contact "
+			<< ( *metaContactIt )->displayName() << endl;
+		xml +=  ( *metaContactIt)->toXML();
 	}
-	xml = xml + "</list>";
+
+	xml += "</messaging-contact-list>\n";
 
     return xml;
 }
@@ -319,8 +254,8 @@ QStringList KopeteContactList::groups() const
 
 		for( QStringList::ConstIterator it = thisgroups.begin(); it != thisgroups.end(); ++it )
 		{
-            QString groupname = (*it);
 			 /* We add the group only if it is not already there */
+			QString groupname = (*it);
             if ( ! groups.contains( groupname ) && !groupname.isNull() )
 			{
                 kdDebug() << "[AddContactWizard] Adding group [" << groupname << "]" <<endl;

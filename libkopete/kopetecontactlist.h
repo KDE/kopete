@@ -53,7 +53,7 @@ public:
 	 *       with server-side contact lists ( MSN, Jabber, etc. ) may detect
 	 *       new contacts having been added upon reconnect.
 	 */
-	KopeteMetaContact *findContact( const QString &contactId,const QString &protocolId );
+	KopeteMetaContact *findContact( const QString &protocolId, const QString &contactId );
 
 	/**
 	 * Return all meta contacts
@@ -84,6 +84,7 @@ public:
 	 * FIXME: Use a better way, without exposing the XML backend, though.
 	 */
 	void load() { loadXML(); }
+	void save() { saveXML(); }
 
 	/**
 	 * Return all available groups

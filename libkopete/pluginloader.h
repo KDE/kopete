@@ -50,9 +50,7 @@ class Plugin;
 
 /**
  * @author Duncan Mac-Vicar P. <duncan@kde.org>
- *
  */
-
 class LibraryLoader : public QObject
 {
 	Q_OBJECT
@@ -105,7 +103,7 @@ public:
 	 * (when required by another noatun-plugin)
 	**/
 	KopeteLibraryInfo getInfo(const QString &spec) const;
-	QList<Plugin> plugins() const;
+	QPtrList<Plugin> plugins() const;
 
 	/**
 	 * Return all registered address book fields for a given plugin.

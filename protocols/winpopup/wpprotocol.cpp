@@ -309,8 +309,8 @@ void WPProtocol::slotNewContact(const QString &userID, const QString &name, cons
 	QString realGroup = group == "" ? i18n("Unknown") : group;
 
 	KopeteContactList *l = KopeteContactList::contactList();
-	KopeteMetaContact *m = l->findContact( userID, this->id() );
-	KopeteContact *c = m->findContact( userID, this->id() );
+	KopeteMetaContact *m = l->findContact( this->id(), userID );
+	KopeteContact *c = m->findContact( this->id(), userID );
 
 	if( c )
 	{

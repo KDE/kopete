@@ -31,6 +31,7 @@
 #include "kopete.h"
 #include "kopeteballoon.h"
 #include "kopetecontact.h"
+#include "kopetecontactlist.h"
 #include "kopetecontactlistview.h"
 #include "systemtray.h"
 
@@ -147,6 +148,7 @@ bool KopeteWindow::queryExit()
 {
 	kdDebug() << "[KopeteWindow] queryExit()" << endl;
 	saveOptions();
+	KopeteContactList::contactList()->save();
 	return true;
 }
 

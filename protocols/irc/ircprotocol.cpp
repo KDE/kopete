@@ -134,8 +134,8 @@ void IRCProtocol::addContact( const QString &groupName, const QString &server, c
 	IRCServerContact *serverContact = m_serverManager->findServer(serverAndNick);
 
 	KopeteContactList *l = KopeteContactList::contactList();
-	KopeteMetaContact *m = l->findContact( serverAndNick,this->id() );
-	KopeteContact *c = m->findContact( serverAndNick , this->id());
+	KopeteMetaContact *m = l->findContact( this->id(), serverAndNick );
+	KopeteContact *c = m->findContact( this->id(), serverAndNick );
 	if( c )
 	{
 		// Existing contact, update data

@@ -85,11 +85,13 @@ QValueList<KopeteLibraryInfo> LibraryLoader::available() const
 	return items;
 }
 
-QList<Plugin> LibraryLoader::plugins() const
+QPtrList<Plugin> LibraryLoader::plugins() const
 {
-	QList<Plugin> list;
-	for (QDictIterator<LibraryLoader::PluginLibrary> i(mLibHash); i.current(); ++i)
-		list.append(i.current()->plugin);
+	QPtrList<Plugin> list;
+	QDictIterator<LibraryLoader::PluginLibrary> i( mLibHash );
+	for( ; i.current(); ++i )
+		list.append( i.current()->plugin );
+
 	return list;
 }
 

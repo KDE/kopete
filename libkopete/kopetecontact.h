@@ -218,6 +218,13 @@ signals:
 	 */
 	void incomingEvent(KopeteEvent *);
 
+	/**
+	 * The contact is about to be destroyed.
+	 * Called when entering the destructor. Useful for cleanup, since
+	 * metaContact() is still accessible at this point.
+	 */
+	void contactDestroyed( KopeteContact *c );
+
 private:
 	QString m_displayName;
 	QString m_protocolId;

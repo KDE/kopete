@@ -122,6 +122,12 @@ public:
 
 	// KopeteProtocol reimplementation
 	virtual KopeteContact* createContact( KopeteMetaContact *parent, const QString &serializedData );
+
+	virtual bool serialize( KopeteMetaContact *metaContact,
+				QStringList &strList ) const;
+	virtual void deserialize( KopeteMetaContact *metaContact,
+				  const QStringList &strList );
+
 	virtual QString protocolIcon() const;
 	virtual AddContactPage *createAddContactWidget( QWidget *parent );
 	virtual void Connect();
@@ -233,11 +239,15 @@ private slots:
 	/**
 	 * Contact was removed from the list
 	 */
-	void slotContactRemoved(QString handle, QString list, uint serial, uint group );
-	void slotContactStatus( QString handle, QString publicName, QString status );
-	void slotContactAdded(QString handle, QString publicName, QString list, uint serial, uint group );
+	void slotContactRemoved(QString handle, QString list, uint serial,
+		uint group );
+	void slotContactStatus( QString handle, QString publicName,
+		QString status );
+	void slotContactAdded(QString handle, QString publicName, QString list,
+		uint serial, uint group );
 
-	void slotContactList(QString handle, QString publicName, QString group, QString list );
+	void slotContactList(QString handle, QString publicName, QString group,
+		QString list );
 	void slotContactStatusChanged( const QString &msnId,
 		const QString &publicName, MSNProtocol::Status status );
 	void slotStatusChanged( QString status );
@@ -284,6 +294,11 @@ private slots:
 	 * The SwitchBoard socket was closed, so we remove it from the list.
 	 */
 	 void slotSwitchBoardClosed( MSNSwitchBoardSocket *switchboard );
+
+	/**
+	 * An MSN contact got deleted. Clean up the necessary data
+	 */
+	void slotContactDestroyed( KopeteContact *c );
 
 private:
 	/**
@@ -351,6 +366,11 @@ private:
 	MSNIdentity *m_identity;
 	QPtrDict<MSNSwitchBoardSocket> m_switchBoardSockets;
 
+	/**
+	 * Mapping of meta contacts to MSN contacts
+	 */
+	QPtrDict<MSNContact> m_metaContacts;
+
 	QStringList m_allowList;
 	QStringList m_blockList;
 };
@@ -365,6 +385,7 @@ private:
  * c-basic-offset: 8
  * indent-tabs-mode: t
  * End:
+ *
+ * vim: set noet ts=4 sts=4 sw=4:
  */
-// vim: set noet ts=4 sts=4 sw=4:
 
