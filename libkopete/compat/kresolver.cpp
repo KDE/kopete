@@ -877,7 +877,7 @@ QCString KResolver::domainToAscii(const QString& unicodeDomain)
 
   // 4) for each label, apply ToASCII
   QStringList::Iterator it = input.begin();
-  for ( ; it != input.end(); it++)
+  for ( ; it != input.end(); ++it)
     {
       QCString cs = ToASCII(*it);
       if (cs.isNull())

@@ -140,7 +140,7 @@ Kopete::Away::Away() : QObject( kapp , "Kopete::Away")
 	if(config->hasKey("Titles"))
 	{
 		QStringList titles = config->readListEntry("Titles");  // Get the titles
-		for(QStringList::iterator i = titles.begin(); i != titles.end(); i++)
+		for(QStringList::iterator i = titles.begin(); i != titles.end(); ++i)
 		{
 			d->awayMessageList.append( config->readEntry(*i) ); // And add it to the list
 		}
