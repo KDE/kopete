@@ -27,6 +27,8 @@ public slots:
 
 private slots:
 	void setOptions(const QString& name);
+signals:
+	void messageSent(const KopeteMessage&);
 
 private:
 	SMSSendPrefsUI* prefWidget;
