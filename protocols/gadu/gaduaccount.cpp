@@ -39,12 +39,16 @@
 #include <kpopupmenu.h>
 #include <kmessagebox.h>
 #include <knotifyclient.h>
+#include <ktempfile.h>
+#include <kio/netaccess.h>
 
 #include <qapplication.h>
 #include <qdialog.h>
 #include <qtimer.h>
 #include <qtextcodec.h>
 #include <qptrlist.h>
+#include <qtextstream.h>
+#include <qtextcodec.h>
 
 #include <netinet/in.h>
 
@@ -167,7 +171,15 @@ GaduAccount::actionMenu()
 		searchAction->setEnabled( FALSE );
 		listputAction->setEnabled( FALSE );
 	}
-
+	kdDebug( 14100 ) << "nr of contacts - " << contacts().count() <<endl ;
+	
+	if ( contacts().count() > 1 ) {
+		listToFileAction->setEnabled( TRUE );
+	}
+	else {
+		listToFileAction->setEnabled( FALSE );
+	}
+	
 	actionMenu_->insert( new KAction( i18n( "Go O&nline" ),
 			GaduProtocol::protocol()->convertStatus( GG_STATUS_AVAIL ).iconFor( this ),
 			0, this, SLOT( slotGoOnline() ), this, "actionGaduConnect" ) );
@@ -188,8 +200,8 @@ GaduAccount::actionMenu()
 
 	actionMenu_->insert( listputAction );
 	actionMenu_->insert( searchAction );
-//	actionMenu_->insert( listToFileAction );
-
+	actionMenu_->insert( listToFileAction );
+	
 	return actionMenu_;
 }
 
@@ -706,8 +718,15 @@ GaduAccount::userlist( const QString& contactsListString )
 		contact->setProperty( "lastName", (*contactLine)->surname );
 		contact->setProperty( "privPhoneNum", (*contactLine)->phonenr );
 		contact->setProperty( "ignored", i18n( "ignored" ), (*contactLine)->ignored ? "true" : "false" );
-		kdDebug(14100) << (*contactLine)->uin << "nick name: " << (*contactLine)->nickname << endl;
-		contact->rename( (*contactLine)->displayname );
+		if ( (*contactLine)->displayname.isEmpty() ) {
+			if ( contact->contactId().isEmpty() ) {
+				kdDebug(14100) << (*contactLine)->uin << "nick name: " << contactName << endl;
+				contact->rename( contactName );
+			}
+		}
+		else {
+		
+		}
 		
 
 		if ( !( (*contactLine)->group.isEmpty() ) ) {
@@ -737,13 +756,45 @@ GaduAccount::userListExportDone()
 void
 GaduAccount::slotExportContactsListToFile()
 {
+	KTempFile tempFile;
 	
 	saveListDialog = new KFileDialog( "::kopete-gadu" + accountId(), QString::null, 
-					(QWidget *)NULL, "gadu-list-save", false ); 
+					Kopete::UI::Global::mainWidget(), "gadu-list-save", false ); 
 	saveListDialog->setCaption( i18n(" Save Contacts list for account %1 as ...").arg( myself()->displayName() ) );
-	QString list = session_->contactsToString( userlist() );
-	saveListDialog->show();
-	kdDebug( 14100 ) << "user list :-): -----------------\n" << list << "\n-----------------------" << endl;
+	
+	if ( saveListDialog->exec() == QDialog::Accepted ) {
+		
+		QTextCodec* textcodec = QTextCodec::codecForName( "CP1250" );
+		QCString list = textcodec->fromUnicode( session_->contactsToString( userlist() ) );
+		//for( int i=0; i< strlen( dupa ) ; i++ ){
+		//	kdDebug(14100) << 
+		//}
+		
+		kdDebug( 14100 ) << "user list :-): -----------------\n" 
+				 << list << "\n-----------------------" << endl;
+		if ( tempFile.status() ) {
+			// say cheese, can't create file.....			
+			error( i18n( "Unable to create temporary file" ), i18n( "Save Contacts list failed" ) );
+		}
+		else {
+			QTextStream* tempStream = tempFile.textStream();
+			(*tempStream) << list.data();
+			tempFile.close();
+			
+			bool res = KIO::NetAccess::upload( 
+								tempFile.name() , 
+								saveListDialog->selectedURL() , 
+								Kopete::UI::Global::mainWidget() 
+								);
+			if ( !res ) {
+				// say it failed
+				error( KIO::NetAccess::lastErrorString(), i18n( "Save Contacts list failed" ) );
+			}
+		}
+
+	}
+	delete saveListDialog;
+	saveListDialog = NULL;
 }
 
 void
