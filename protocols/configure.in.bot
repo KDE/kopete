@@ -1,0 +1,9 @@
+if test -n "$include_jabber_FALSE"; then
+  echo ""
+  echo "You're missing libidn(-dev). The Kopete Jabber plugin has been"
+  echo "excluded from compilation."
+  echo ""
+  all_tests=bad
+fi
+
+ 
