@@ -19,5 +19,6 @@ servicedir = $(kde_servicesdir)
 
 kcm_DATA = kopete_motionaway_config.desktop
 kcmdir = $(kde_servicesdir)/kconfiguredialog
+kde_kcfg_DATA = motionawayconfig.kcfg
 
 
