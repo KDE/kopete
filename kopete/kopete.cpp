@@ -42,8 +42,6 @@ class Plugins;
 
 Kopete::Kopete(): KUniqueApplication(true, true, true)
 {
-	//plugins = new PluginManager;
-	allConnected = false;
     initEmoticons();
 
 	mLibraryLoader = new LibraryLoader();
@@ -60,6 +58,7 @@ Kopete::Kopete(): KUniqueApplication(true, true, true)
 
 	KConfig *config=KGlobal::config();
 	config->setGroup("");
+	
 	/* Ups! the user dont have plugins selected. */
 	if (!config->hasKey("Modules"))
 	{
@@ -81,20 +80,11 @@ Kopete::~Kopete()
 	delete mPref;
 	delete mLibraryLoader;
 
-/*
-	kdDebug() << "~Kopete(), deleting tray" << endl;
-	delete tray;
-	}
-*/
-
 	kdDebug() << "~Kopete(), deleting mainwindow" << endl;
 	delete mainwindow;
 
-	// Only use this if cant find crash cause :-)
-	//KCrash::setCrashHandler(Kopete::cleverKCrashHack);
 	kdDebug() << "END OF Kopete::~Kopete()" << endl;
 }
-
 
 void Kopete::slotPreferences()
 {
@@ -102,77 +92,10 @@ void Kopete::slotPreferences()
 	mPref->raise();
 }
 
-
-/** No descriptions */
 void Kopete::slotExit()
 {
 	kdDebug() << "Kopete::slotExit()" << endl;
 	quit();
-}
-
-
-/** No descriptions */
-void Kopete::readOptions()
-{
-	kdDebug() << "Kopete::readOptions()" << endl;
-/*
-	KConfig *config = KGlobal::config();
-	config->setGroup("General");
-	visible = config->readBoolEntry("Visible",true);
-	QSize size          = config->readSizeEntry("Geometry");
-	config->readBoolEntry("Idle Detection",false);
-	config->readNumEntry("MaxIdle",15);
-
-  if(!size.isEmpty())
-  {
-    resize(size);
-  }
-  QPoint pos=config->readPointEntry("Position");
-  if(!pos.isNull())
-  {
-    move(pos);
-  }
-  config->setGroup("ICQ");
-  QString icqNick = config->readEntry( "icqNick" );
-  QString icqUIN = config->readEntry( "icqUIN" );
-	QString icqPass = config->readEntry( "icqPass" );
-	config->setGroup("MSN");
-  QString msnNick = config->readEntry( "msnNick" );
-  QString msnID = config->readEntry( "msnID" );
-	QString msnPass = config->readEntry( "msnPass" );
-
-	autoConnect=-1;
-  if ( profiles.count() == 0 )
-    slotSettings();
-  else
-  {
-    //Construct menu...
-    for ( int i = 0 ; i < profiles.count() ; i++ )
-    {
-      KAction *tmpaction = new KMsnAction( profiles[i] , //Name
-                                        0           , //Accel
-                                        this        , //Receiver
-                                        SLOT(slotConnector( int ) ),
-                                        actionCollection(),//Parent (not sure...)
-                                        profiles[i] , //Internal name
-                                        i );          //ID, needed for connecting
-      //Add actions to the submenu
-      fileConnector->insert( tmpaction );
-      //And add them to our list...
-      actions.append( tmpaction );
-      //.. and make sure that they're deleted when we delete them
-      actions.setAutoDelete( true );
-
-      if (autoStr == profiles[i])
-	autoConnect=i;
-    }
-  }
-*/
-}
-
-/** No descriptions */
-void Kopete::saveOptions()
-{
 }
 
 /** Connect all loaded protocol plugins */
@@ -214,45 +137,25 @@ void Kopete::slotAddContact()
 	tmpdialog->show();
 }
 
-/** No descriptions */
+/** Set a meta-away in all protocol plugins */
 void Kopete::slotSetAway()
 {
 }
 
-/** No descriptions */
-void Kopete::initPlugins()
-{
-}
-
-/** No descriptions */
+/** Load all plugins */
 void Kopete::loadPlugins()
 {
 	mLibraryLoader->loadAll();
 }
 
-/*
-void Kopete::cleverKCrashHack(int)
-{
-	// do nothing
-
-	// Understand that the KDE libraries have a memory leak, and
-	// the playlist cannot be unloaded without causing a crash
-	// in QApplication::windowMapper() or something similar.
-	// this is just to prevent the KCrash window from appearing
-	// and bugging the user regularly
-
-	// someone fix the libraries.
-	kdDebug() << "Crashed.\n" << endl;
-	_exit(255);
-}
-*/
-
+/** init the emoticons */
 void Kopete::initEmoticons()
 {
 	KStandardDirs dir;
 	KConfig *config=KGlobal::config();
     config->setGroup("Appearance");
     mEmoticonTheme = config->readEntry("EmoticonTheme", "Default");
+	
 	/* Happy emoticons */
 	/* :-) */
 	mEmoticons.smile = dir.findResource("data","kopete/pics/emoticons/" + mEmoticonTheme + "/smile.mng");
@@ -287,6 +190,7 @@ void Kopete::initEmoticons()
 	
 }
 
+/** Parse emoticons in a string, returns html/qt rich text */
 QString Kopete::parseEmoticons( QString message )
 {
 	if ( !mEmoticons.smile.isNull() )
@@ -334,7 +238,6 @@ QString Kopete::parseEmoticons( QString message )
 		message = message.replace(QRegExp(":-o"),"<img src=\""+mEmoticons.oh+"\">");
 		message = message.replace(QRegExp(":-O"),"<img src=\""+mEmoticons.oh+"\">");
 	}
-	#warning "TODO: Sleep emoticon parsing pending"
 	
 	return message;
 }

@@ -77,25 +77,12 @@ class Kopete : public KUniqueApplication
 	KStatusBar *statusBar() const { return mainwindow->statusBar(); };
 	KopeteSystemTray *systemTray() const {return mainwindow->tray; };
 
-	/** No descriptions */
-	void saveOptions();
-	/** No descriptions */
-	void readOptions();
-	/** No descriptions */
-	void initPlugins();
-	/** No descriptions */
-	void initEmoticons();
 	QString parseEmoticons(QString);
 	QString parseHTML(QString);
-//	QString parseURL(QString);
-
-	/*
-	 * is true if all plugins are connected to their servers
-	 * currently unused !!!
-	 */
-	bool allConnected;
+	void initEmoticons();
 
 private:
+
 	PreferencesDialog *mPref;
 	Plugins *mPluginsModule;
 
@@ -106,8 +93,6 @@ private:
 	AppearanceConfig *mAppearance;
 	QString mEmoticonTheme;
 
-	#warning "Remember to remove cleverCrashHack completely"
-	//static void cleverKCrashHack(int);
 	void loadPlugins();
 
 public slots:
