@@ -143,17 +143,19 @@ void IRCServerContact::engineInternalError(KIRC::EngineError engineError, const 
 	appendMessage(msg);
 }
 
+//	FIXME: Correct the CTCP command handling.
 void IRCServerContact::engineSentMessage(const KIRCMessage &ircmsg)
 {
 	KopeteMessage msg(m_account->myself(), manager()->members(), QString(ircmsg.raw()), KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat);
-	msg.setBody(KSParser::parse(msg.escapedBody().stripWhiteSpace()), KopeteMessage::RichText);
+	msg.setBody(KSParser::parse(msg.escapedBody().stripWhiteSpace().replace('\01','|')), KopeteMessage::RichText);
 	appendMessage(msg);
 }
 
+//	FIXME: Correct the CTCP command handling.
 void IRCServerContact::engineReceivedMessage(const KIRCMessage &ircmsg)
 {
 	KopeteMessage msg(this, manager()->members(), QString(ircmsg.raw()), KopeteMessage::Inbound, KopeteMessage::PlainText, KopeteMessage::Chat);
-	msg.setBody(KSParser::parse(msg.escapedBody().stripWhiteSpace()), KopeteMessage::RichText);
+	msg.setBody(KSParser::parse(msg.escapedBody().stripWhiteSpace().replace('\01','|')), KopeteMessage::RichText);
 	appendMessage(msg);
 }
 
