@@ -220,7 +220,7 @@
                 </sizepolicy>
             </property>
             <property name="text">
-                <string>&amp;Log Conversations</string>
+                <string>&amp;Log conversations</string>
             </property>
         </widget>
         <spacer>

@@ -69,7 +69,7 @@
                         <cstring>textLabel2</cstring>
                     </property>
                     <property name="text">
-                        <string>Manual Spell Check Shortcut Key:</string>
+                        <string>Manual spell check shortcut key:</string>
                     </property>
                 </widget>
                 <widget class="QFrame" row="1" column="2">

@@ -112,7 +112,7 @@ PluginConfig::PluginConfig( QObject *_parent )
 	QFrame *protocolTab = new QFrame( tabControl );
 	( new QVBoxLayout( protocolTab, KDialog::marginHint(),
 		KDialog::spacingHint() ) )->setAutoAdd( true );
-	( void ) new QLabel( i18n( "<b>Select The Protocols You Would Like Loaded:</b>" ),
+	( void ) new QLabel( i18n( "Select the protocols you would like loaded:" ),
 		protocolTab );
 
 	protocolList = new PluginListView( protocolTab );
@@ -123,7 +123,7 @@ PluginConfig::PluginConfig( QObject *_parent )
 	QFrame *otherTab = new QFrame(tabControl);
 	( new QVBoxLayout( otherTab, KDialog::marginHint(),
 		KDialog::spacingHint() ) )->setAutoAdd( true );
-	( void ) new QLabel( i18n( "<b>Select The Plugins You Would Like Loaded:</b>" ), otherTab );
+	( void ) new QLabel( i18n( "Select the plugins you would like loaded:" ), otherTab );
 
 	otherList = new PluginListView( otherTab );
 	connect(otherList, SIGNAL(stateChange(PluginListItem *, bool)), this, SLOT(stateChange(PluginListItem *, bool)));

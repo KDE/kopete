@@ -13,7 +13,7 @@
         </rect>
     </property>
     <property name="caption">
-        <string>Edit A WinPopup Account</string>
+        <string>Edit WinPopup Account</string>
     </property>
     <vbox>
         <property name="name">
@@ -61,7 +61,7 @@
                         <cstring>label1</cstring>
                     </property>
                     <property name="text">
-                        <string>Your Computer's Network Name:</string>
+                        <string>Your computer's network name:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>mScreenName</cstring>

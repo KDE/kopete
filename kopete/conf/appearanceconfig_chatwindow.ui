@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>485</width>
+            <width>566</width>
             <height>541</height>
         </rect>
     </property>
@@ -51,7 +51,7 @@
                         <cstring>mSingleShot</cstring>
                     </property>
                     <property name="text">
-                        <string>Single-shot window ( Jabber Email / Old ICQ Style )</string>
+                        <string>Single-shot window (Jabber email/Old ICQ style)</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton">
@@ -59,7 +59,7 @@
                         <cstring>mChatWindow</cstring>
                     </property>
                     <property name="text">
-                        <string>Chat Window ( Jabber Chat / MSN / New ICQ Style )</string>
+                        <string>Chat window (Jabber chat/MSN/New ICQ style)</string>
                     </property>
                 </widget>
             </vbox>
@@ -254,7 +254,7 @@
                         <cstring>txtChatViewBufferSize</cstring>
                     </property>
                     <property name="text">
-                        <string>Maximum Chatwindow Lines:</string>
+                        <string>Maximum chatwindow lines:</string>
                     </property>
                 </widget>
                 <widget class="QSpinBox">

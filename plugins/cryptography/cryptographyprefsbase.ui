@@ -57,7 +57,7 @@
                 <cstring>m_cache</cstring>
             </property>
             <property name="title">
-                <string>Cache passphrase</string>
+                <string>Cache Passphrase</string>
             </property>
             <grid>
                 <property name="name">

@@ -30,7 +30,7 @@
                 <cstring>TextLabel1</cstring>
             </property>
             <property name="text">
-                <string>Channel or Nickname:</string>
+                <string>Channel or nickname:</string>
             </property>
         </widget>
         <widget class="QLineEdit" row="0" column="1">

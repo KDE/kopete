@@ -13,7 +13,7 @@
         </rect>
     </property>
     <property name="caption">
-        <string>Edit A Yahoo Account</string>
+        <string>Edit Yahoo Account</string>
     </property>
     <vbox>
         <property name="name">
@@ -69,7 +69,7 @@
                         <cstring>label2</cstring>
                     </property>
                     <property name="text">
-                        <string>Your &amp;Password:</string>
+                        <string>Your &amp;password:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>mPassword</cstring>
@@ -80,7 +80,7 @@
                         <cstring>label1</cstring>
                     </property>
                     <property name="text">
-                        <string>Your Yahoo Screen &amp;Name:</string>
+                        <string>Your Yahoo screen &amp;name:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>mScreenName</cstring>
@@ -163,7 +163,7 @@
                 <cstring>mRememberPassword</cstring>
             </property>
             <property name="text">
-                <string>&amp;Remember Password</string>
+                <string>&amp;Remember password</string>
             </property>
         </widget>
         <spacer>

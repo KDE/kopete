@@ -9,7 +9,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>397</width>
+            <width>426</width>
             <height>387</height>
         </rect>
     </property>
@@ -67,7 +67,7 @@
                         <cstring>TextLabel3_2</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Initial Search Host:</string>
+                        <string>&amp;Initial search host:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>mInitialSearchHost</cstring>
@@ -83,7 +83,7 @@
                         <cstring>TextLabel2_2</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Path To 'smbclient' Executable:</string>
+                        <string>&amp;Path to 'smbclient' executable:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>mSMBClientPath</cstring>
@@ -208,7 +208,7 @@
                         <cstring>TextLabel1_4</cstring>
                     </property>
                     <property name="text">
-                        <string>Message Check Frequency:</string>
+                        <string>Message check frequency:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>mMessageCheckFrequency</cstring>
@@ -219,7 +219,7 @@
                         <cstring>TextLabel1_4_2</cstring>
                     </property>
                     <property name="text">
-                        <string>Host Check Frequency:</string>
+                        <string>Host check frequency:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>mHostCheckFrequency</cstring>
@@ -260,8 +260,6 @@
         </spacer>
     </vbox>
 </widget>
-<connections>
-</connections>
 <includes>
     <include location="local" impldecl="in implementation">wppreferences.h</include>
     <include location="local" impldecl="in implementation">wppreferencesbase.ui.h</include>

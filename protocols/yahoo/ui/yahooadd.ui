@@ -24,7 +24,7 @@
                 <cstring>groupBox1</cstring>
             </property>
             <property name="title">
-                <string>Contact details</string>
+                <string>Contact Details</string>
             </property>
             <grid>
                 <property name="name">
@@ -69,7 +69,7 @@
                 <cstring>groupBox1_2</cstring>
             </property>
             <property name="title">
-                <string>Viewing preferences</string>
+                <string>Viewing Preferences</string>
             </property>
             <grid>
                 <property name="name">
@@ -80,7 +80,7 @@
                         <cstring>textLabel1_2</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Display Name:</string>
+                        <string>&amp;Display name:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>displayName</cstring>

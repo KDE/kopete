@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>369</width>
+            <width>386</width>
             <height>237</height>
         </rect>
     </property>
@@ -66,7 +66,7 @@
                         <cstring>TextLabel1_2</cstring>
                     </property>
                     <property name="text">
-                        <string>Computer &amp;Workgroup/Domain:</string>
+                        <string>Computer &amp;workgroup/domain:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>HostGroup</cstring>
@@ -85,7 +85,7 @@
                         <cstring>TextLabel2_2</cstring>
                     </property>
                     <property name="text">
-                        <string>Computer &amp;Name:</string>
+                        <string>Computer &amp;name:</string>
                     </property>
                     <property name="buddy" stdset="0">
                         <cstring>HostName</cstring>
