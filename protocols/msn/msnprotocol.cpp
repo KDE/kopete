@@ -454,10 +454,16 @@ void MSNProtocol::slotGoOffline()
 	{
 		Disconnect();
 	}
+	// disconnect while trying to connect. Anyone know a better way? (remenic)
+	else
+	{
+		engine->cancelConnect();
+		statusBarIcon->setPixmap(offlineIcon);
+	}
 }
 void MSNProtocol::slotGoAway()
 {
-	kdDebug() << "MSN Plugin: Going Away" << endl;	
+	kdDebug() << "MSN Plugin: Going Away" << endl;
 	if (!isConnected() )
 	{
 		Connect();
