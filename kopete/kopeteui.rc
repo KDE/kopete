@@ -32,19 +32,17 @@
 		</Menu>
 		<Menu name="settings">
 			<text>&amp;Settings</text>
-			<Action name="settings_showmenubar" />
-			<Merge name="StandardToolBarMenuHandler" />
-			<Action name="settings_showstatusbar" />
-			<Separator lineSeparator="true" />
-			<Action name="settings_show_offliners" />
-			<Action name="settings_show_empty_groups" />
-			<Separator lineSeparator="true" />
-			<Action name="settings_keys" />
-			<Action name="settings_global" />
-			<Action name="settings_notifications" />
-			<Action name="settings_toolbars" />
-			<Action name="settings_plugins"/>
-			<Action name="settings_prefs" />
+			<Action name="settings_showmenubar" append="show_merge"/>
+			<Merge name="StandardToolBarMenuHandler" append="show_merge"/>
+			<Action name="settings_showstatusbar" append="show_merge"/>
+                        <Action name="settings_show_offliners" append="show_merge"/>
+                        <Action name="settings_show_empty_groups" append="show_merge"/>
+                        <Action name="settings_plugins" append="configure_merge"/>
+                        <Action name="settings_notifications" append="configure_merge"/>
+                        <Action name="settings_global" append="configure_merge"/>
+                        <Action name="settings_keys" append="configure_merge"/>
+                        <Action name="settings_toolbars" append="configure_merge"/>
+                        <Action name="settings_prefs" append="configure_merge"/>
 		</Menu>
 	</MenuBar>
 

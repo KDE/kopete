@@ -38,7 +38,7 @@
 				<Action name="options_togglemembers" />
 			</Menu>
 			<Action append="show_merge" name="options_styles"/>
-			<Action name="settings_prefs" />
+			<Action append="configure_merge" name="settings_prefs" />
 		</Menu>
 		<Merge/>
 	</MenuBar>
