@@ -203,15 +203,6 @@ GaduPublicDir::slotSearchResult( const SearchResult& result )
 
 	kdDebug(14100) << "searchResults(" << result.count() <<")" << endl;
 
-	// if not found anything, obviously we don't want to search for more
-	// if we are looking just for one UIN, don't allow search more - it is pointless
-
-	if ( result.count() && fUin==0 ) {
-		enableButton( User2, true );
-	}
-
-	enableButton( User1, true );
-
 	QListViewItem* sl;
 
 	SearchResult::const_iterator r;
@@ -228,6 +219,17 @@ GaduPublicDir::slotSearchResult( const SearchResult& result )
 						);
 		sl->setPixmap( 0, iconForStatus( (*r).status ) );
 	}
+
+	// if not found anything, obviously we don't want to search for more
+	// if we are looking just for one UIN, don't allow search more - it is pointless
+
+	if ( result.count() && fUin==0 ) {
+		enableButton( User2, true );
+	}
+
+	enableButton( User1, true );
+	mMainWidget->pubsearch->setDisabled( false );
+
 }
 
 void 
@@ -269,7 +271,7 @@ GaduPublicDir::slotSearch()
 		kdDebug(14100) << "search more... " << endl;
 		// Search for more
 	}
-
+	mMainWidget->pubsearch->setDisabled( true );
 	setButtonText( User2, i18n( "Search &More..." ) );
 	showButton( User3, true );
 	showButton( User1, true );
