@@ -41,6 +41,8 @@ public:
 private:
 	AccountConfigBase *m_view;
 	QMap <QListViewItem*,KopeteAccount*> m_accountItems;
+	KopeteAccount *previousAccount;
+
 
 private slots:
 	void slotRemoveAccount();

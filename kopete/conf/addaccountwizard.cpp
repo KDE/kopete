@@ -15,16 +15,21 @@
     *************************************************************************
 */
 
+#include <qcheckbox.h>
+#include <klistview.h>
 
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <kdebug.h>
+#include <kcolorbutton.h>
 
 #include "addaccountwizard.h"
 #include "kopeteprotocol.h"
 #include "pluginloader.h"
 #include "editaccountwidget.h"
+#include "kopeteaccountmanager.h"
+#include "kopeteaccount.h"
 
 AddAccountWizard::AddAccountWizard( QWidget *parent, const char *name, bool modale )
 : AddAccountWizard_Base( parent, name, modale )
@@ -73,7 +78,9 @@ void AddAccountWizard::slotProtocolListClicked( QListViewItem *)
 
 void AddAccountWizard::accept()
 {
-	accountPage->apply();
+	KopeteAccount *a=accountPage->apply();
+	if(a)
+		a->setColor( mUseColor->isChecked() ? mColorButton->color() : QColor() );
 	deleteLater();
 }
 
@@ -104,8 +111,16 @@ void AddAccountWizard::next()
 		}
 		return;
 	}
-	else if( indexOf( currentPage() ) == 2 && !accountPage->validateData() )
+	else if( indexOf( currentPage() ) == 2 )
+	{
+		if( !accountPage->validateData() )
 			return;
+
+		QColor col=KopeteAccountManager::manager()->guessColor( m_protocolItems[protocolListView->selectedItem()] );
+		mColorButton->setColor(col );
+		mUseColor->setChecked(col.isValid());
+		QWizard::next();
+	}
 	else
 		QWizard::next();
 }

@@ -16,11 +16,14 @@
 #include "accountconfig.h"
 
 #include <qpushbutton.h>
+#include <qcheckbox.h>
 #include <qlayout.h>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <kdialogbase.h>
+#include <klistview.h>
+#include <kcolorbutton.h>
 
 #include "kopeteprotocol.h"
 #include "kopeteaccount.h"
@@ -32,6 +35,8 @@
 AccountConfig::AccountConfig(QWidget * parent) :
 	ConfigModule (i18n("Accounts"),i18n("Here You Can Manage Your Accounts"),"personal", parent )
 {
+	previousAccount = 0L;
+
 	QVBoxLayout *topLayout = new QVBoxLayout(this);
 	m_view=new AccountConfigBase(this, "AccountConfig::m_view");
 	topLayout->add(m_view);
@@ -54,9 +59,6 @@ AccountConfig::AccountConfig(QWidget * parent) :
 		this, SLOT( slotAccountUp()));
 	connect(m_view->mButtonDown, SIGNAL(clicked()),
 		this, SLOT( slotAccountDown()));
-
-	slotItemSelected();
-//	m_addwizard=0L;
 }
 
 AccountConfig::~AccountConfig()
@@ -65,6 +67,9 @@ AccountConfig::~AccountConfig()
 
 void AccountConfig::save()
 {
+	if(previousAccount)
+		previousAccount->setColor( m_view->mUseColor->isChecked() ? m_view->mColorButton->color() : QColor() );
+
 	KopeteAccountManager::manager()->save();
 }
 
@@ -84,6 +89,8 @@ void AccountConfig::reopen()
 		lvi->setText(1, i->accountId());
 		m_accountItems.insert(lvi,i);
 	}
+
+	slotItemSelected();
 }
 
 void AccountConfig::slotItemSelected()
@@ -102,6 +109,24 @@ void AccountConfig::slotItemSelected()
 	{
 		m_view->mButtonUp->setEnabled( itemSelected );
 		m_view->mButtonDown->setEnabled( itemSelected );
+	}
+
+	//we shouldn't realy save data before apply :-s
+	if(previousAccount)
+		previousAccount->setColor( m_view->mUseColor->isChecked() ? m_view->mColorButton->color() : QColor() );
+
+	KopeteAccount *a=m_accountItems[itemSelected];
+	previousAccount=a;
+	if(a)
+	{
+		m_view->mUseColor->setEnabled(true);
+		m_view->mColorButton->setColor(a->color());
+		m_view->mUseColor->setChecked(a->color().isValid());
+	}
+	else
+	{
+		m_view->mUseColor->setEnabled(false);
+		m_view->mColorButton->setEnabled(false);
 	}
 }
 

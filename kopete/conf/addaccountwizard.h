@@ -16,15 +16,13 @@
 #ifndef ADDACCOUNTWIZARD_H
 #define ADDACCOUNTWIZARD_H
 
-#include <qptrlist.h>
-#include <qvaluelist.h>
 #include <qmap.h>
-#include <klistview.h>
 
 #include "addaccountwizard_base.h"
 
 class EditAccountWidget;
 class KopeteProtocol;
+class QListViewItem;
 
 /**
  * @author  Olivier Goffart <ogoffart@tiscalinet.be>
