@@ -24,3 +24,9 @@ TODO for Jabber:
   groups to the serialized data
 - group() does not seem to work with JabberContact serialization
 - "Re(send) authorization to" and "Rerequest athorization from" like in PSI client by robertgogolok at gmx.de (gogo@myjabber.net)
+- seemingly Jabber supports multiple groups per contact (Gabber does support
+  this at least). Implement it! (JabberContact::group needs to be a QStringList
+  etc)
+- BUG: make sure that unsubscriptions from other users actually update the roster!
+- find out about Jabber server-side filtering components and if they can be
+  integrated into the Kopete filtering API
