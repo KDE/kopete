@@ -1,7 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=ServiceType
-Version=1000792
 X-KDE-ServiceType=Kopete/Plugin
 X-KDE-Derived=KPluginInfo
 Comment=Kopete Plugin
@@ -22,4 +21,7 @@ Comment[sv]=Insticksprogram för Kopete
 Comment[tr]=Kopete Eklentisi
 Comment[wa]=Tchôke-divins po Kopete
 Comment[xx]=xxKopete Pluginxx
+
+[PropertyDef::X-Kopete-PluginVersion]
+Type=integer
 

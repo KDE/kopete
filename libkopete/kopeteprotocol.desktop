@@ -1,7 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=ServiceType
-Version=1000792
 X-KDE-ServiceType=Kopete/Protocol
 X-KDE-Derived=Kopete/Plugin
 Comment=Kopete Protocol Plugin
