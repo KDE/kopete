@@ -52,9 +52,8 @@ KopeteRichTextEditPart::KopeteRichTextEditPart( QWidget *parent, const char *nam
 		setXMLFile( "kopeterichtexteditpartfull.rc" );
 	}
 
-	#if KDE_IS_VERSION( 3, 1, 90 )
-		editor->setCheckSpellingEnabled( false );
-	#endif
+	// Spellchecking disabled when using rich text because the text we were getting from widget was coloured HTML!
+	editor->setCheckSpellingEnabled( !supportsRichText );
 }
 
 void KopeteRichTextEditPart::createActions()
