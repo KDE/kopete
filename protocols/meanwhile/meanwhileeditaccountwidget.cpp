@@ -95,28 +95,28 @@ bool MeanwhileEditAccountWidget::validateData()
     {
         KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
             i18n("<qt>You must enter a valid screen name.</qt>"), 
-            i18n("Meanwhile plugin"));
+            i18n("Meanwhile Plugin"));
         return false;
     }
     if( !mPasswordWidget->validate() )
     {
         KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
             i18n("<qt>You must deselect password remembering or enter a valid password.</qt>"), 
-            i18n("Meanwhile plugin"));
+            i18n("Meanwhile Plugin"));
         return false;
     }
     if (mServerName->text().isEmpty())
     {
         KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
             i18n("<qt>You must enter the server's hostname/ip address.</qt>"), 
-            i18n("Meanwhile plugin"));
+            i18n("Meanwhile Plugin"));
         return false;
     }
     if (mServerPort->text() == 0)
     {
         KMessageBox::queuedMessageBox(this, KMessageBox::Sorry,
             i18n("<qt>0 is not a valid port number.</qt>"), 
-            i18n("Meanwhile plugin"));
+            i18n("Meanwhile Plugin"));
         return false;
     }
     return true;

@@ -177,7 +177,7 @@ void GroupWisePrivacyDialog::slotAddClicked()
 	if ( !m_searchDlg )
 	{
 		m_searchDlg = new KDialogBase( this, "invitesearchdialog", false, 
-				i18n( "Search for contact to invite" ),
+				i18n( "Search for Contact to Invite" ),
 				KDialogBase::Ok|KDialogBase::Cancel|KDialogBase::User1, 
 				KDialogBase::User1, true, KGuiItem( i18n( "&Search" ) ) );
 		m_search = new GroupWiseSearch( m_account, QListView::Multi, false, m_searchDlg, "privacysearchwidget" );

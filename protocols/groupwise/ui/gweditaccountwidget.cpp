@@ -97,7 +97,7 @@ Kopete::Account* GroupWiseEditAccountWidget::apply()
 	{
 		KMessageBox::information(this,
 					i18n("The changes you just made will take effect next time you log in with GroupWise."),
-					i18n("GroupWise settings changed while signed in"));
+					i18n("GroupWise Settings Changed While Signed In"));
 	}
 
 	writeConfig();

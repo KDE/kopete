@@ -84,7 +84,7 @@ void KopeteFileConfirmDialog::slotUser2()
 		if(QFile(m_view->m_saveto->text()).exists())
 		{
 			int ret=KMessageBox::warningContinueCancel(this,  i18n("The file '%1' already exists.\nDo you want to overwrite it ?").arg(m_view->m_saveto->text()) ,
-					 i18n("Overwrite File - Kopete") , KStdGuiItem::save());
+					 i18n("Overwrite File") , KStdGuiItem::save());
 			if(ret==KMessageBox::Cancel)
 				return;
 		}

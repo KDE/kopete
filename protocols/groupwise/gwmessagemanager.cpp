@@ -336,7 +336,7 @@ void GroupWiseChatSession::slotInviteContact( Kopete::Contact * contact )
 		QRegExp rx( ".*" );
 		QRegExpValidator validator( rx, this );
 		QString inviteMessage = KInputDialog::getText( i18n( "Enter Invitation Message" ),
-				i18n( "Enter the reason for the invitation, or leave blank for no reason" ), QString(),
+		    i18n( "Enter the reason for the invitation, or leave blank for no reason:" ), QString(),
 				&ok, w ? w : Kopete::UI::Global::mainWidget(), "invitemessagedlg", &validator );
 		if ( ok )
 		{	
@@ -384,7 +384,7 @@ void GroupWiseChatSession::slotSearchedForUsers()
 		QRegExp rx( ".*" );
 		QRegExpValidator validator( rx, this );
 		QString inviteMessage = KInputDialog::getText( i18n( "Enter Invitation Message" ),
-				i18n( "Enter the reason for the invitation, or leave blank for no reason" ), QString(),
+		    i18n( "Enter the reason for the invitation, or leave blank for no reason:" ), QString(),
 				&ok, w , "invitemessagedlg", &validator );
 		if ( ok )
 		{	
