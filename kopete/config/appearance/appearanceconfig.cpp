@@ -30,7 +30,7 @@
 #include <kcolorcombo.h>
 #include <kcolorbutton.h>
 #include <kdebug.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <khtmlview.h>
 #include <khtml_part.h>
 #include <klocale.h>
@@ -445,7 +445,7 @@ void AppearanceConfig::slotCopyStyle()
 		bool okPressed;
 		if( okPressed )
 		{
-			QString styleName = KLineEditDlg::getText(
+			QString styleName = KInputDialog::getText(
 				i18n("New Style Name"),
 				i18n("Enter the name of the new style:"),
 				QString::null, &okPressed, 0L );

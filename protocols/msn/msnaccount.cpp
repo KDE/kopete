@@ -21,7 +21,7 @@
 #include <kaction.h>
 #include <kconfig.h>
 #include <kdebug.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <kstandarddirs.h>
@@ -305,7 +305,7 @@ void MSNAccount::slotStartChat()
 	}
 
 	bool ok;
-	QString handle = KLineEditDlg::getText( i18n( "Start Chat - MSN Plugin" ),
+	QString handle = KInputDialog::getText( i18n( "Start Chat - MSN Plugin" ),
 		i18n( "Please enter the email address of the person with whom you want to chat:" ),
 		QString::null, &ok ).lower();
 	if ( ok )
@@ -344,7 +344,7 @@ void MSNAccount::slotDebugRawCommand()
 void MSNAccount::slotChangePublicName()
 {
 	bool ok;
-	QString name = KLineEditDlg::getText( i18n( "Change Nickname - MSN Plugin" ),
+	QString name = KInputDialog::getText( i18n( "Change Nickname - MSN Plugin" ),
 		i18n( "Enter the new public name by which you want to be visible to your friends on MSN:" ),
 		m_myself->displayName(), &ok );
 

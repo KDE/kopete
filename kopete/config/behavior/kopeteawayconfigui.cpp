@@ -22,7 +22,7 @@
 #include <qspinbox.h>
 #include <qcheckbox.h>
 
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpushbutton.h>
@@ -42,7 +42,7 @@ KopeteAwayConfigUI::KopeteAwayConfigUI(QWidget *parent) :
 void KopeteAwayConfigUI::newButtonClicked()
 {
 	bool createNewTitle = false;
-	QString newTitle = KLineEditDlg::getText(
+	QString newTitle = KInputDialog::getText(
 		i18n("New Away Message"),
 		i18n("Enter away message title:"),
 		i18n("Title"), &createNewTitle, this);

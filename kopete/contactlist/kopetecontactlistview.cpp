@@ -32,7 +32,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kiconloader.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <klocale.h>
 #include <kmainwindow.h>
 #include <kmessagebox.h>
@@ -131,10 +131,10 @@ void KopeteContactListViewToolTip::maybeTip( const QPoint &pos )
 
 			if ( contact->idleTime() != 0 )
 				toolTip += i18n( "<br>Idle: %1'%2" ).arg( contact->idleTime() / 60 ).arg( contact->idleTime() % 60 );
-				
+
 			if ( !contact->statusDescription().isNull() )
 				toolTip += i18n( "<br><blockquote>%1</blockquote>" ).arg( contact->statusDescription() );
-				
+
 		}
 		else
 		{
@@ -646,7 +646,7 @@ KopeteGroupViewItem *KopeteContactListView::getGroup( KopeteGroup *Kgroup , bool
 void KopeteContactListView::addGroup()
 {
 	bool ok;
-	QString groupName = KLineEditDlg::getText(
+	QString groupName = KInputDialog::getText(
 		i18n( "New Group" ),
 		i18n( "Please enter the name for the new group:" ),
 		QString::null, &ok );
@@ -1688,7 +1688,7 @@ void KopeteContactListView::slotRename()
 		KopeteGroup* group=KopeteContactList::contactList()->selectedGroups().first();
 
 		bool ok;
-		QString newname = KLineEditDlg::getText(
+		QString newname = KInputDialog::getText(
 			i18n( "Rename Group" ),
 			i18n( "Please enter the new name for the group '%1':" ).arg(group->displayName()),
 			group->displayName(), &ok );

@@ -24,7 +24,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 //#include <kfiledialog.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
@@ -581,7 +581,7 @@ void OscarContact::slotRequestAuth()
 	kdDebug(14150) << k_funcinfo << "Called for '" << displayName() << "'" << endl;
 	bool ok = false;
 
-	QString reason = KLineEditDlg::getText(
+	QString reason = KInputDialog::getText(
 		i18n("Request Authorization"),
 		i18n("Reason for requesting authorization"),
 		QString::null,
@@ -601,7 +601,7 @@ void OscarContact::slotSendAuth()
 
 	// TODO: custom dialog also allowing a refusal
 
-	QString reason = KLineEditDlg::getText(
+	QString reason = KInputDialog::getText(
 		i18n("Grant Authorization"),
 		i18n("Reason for granting authorization"),
 		QString::null,

@@ -43,7 +43,7 @@
 #include <qcheckbox.h>
 #include <klocale.h>
 #include <kiconloader.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <kpushbutton.h>
 #include <kdebug.h>
 #include <klistview.h>
@@ -88,9 +88,9 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	// Populate the addressee list
 	// This could be slow - is there a better way of doing it (progressive loading?)
 	loadAddressees();
-	
-	
-	
+
+
+
 	if ( accounts.count() == 1 )
 	{
 		accountLVI->setOn( true );
@@ -100,7 +100,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 	setNextEnabled( selectAddressee, false );
 	setNextEnabled(selectService, (accounts.count() == 1));
 	setFinishEnabled(finis, true);
-	
+
 	// FIXME: steal/add a create addressee widget
 	addAddresseeButton->setEnabled( false );
 	// Addressee validation connections
@@ -116,7 +116,7 @@ AddContactWizard::AddContactWizard( QWidget *parent, const char *name )
 
 	// Group manipulation connection
 	connect( addGroupButton, SIGNAL(clicked()) , SLOT(slotAddGroupClicked()) );
-	
+
 	// Account choice validation connections
 	connect( protocolListView, SIGNAL(clicked(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
 	connect( protocolListView, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(slotProtocolListClicked(QListViewItem *)));
@@ -133,7 +133,7 @@ void AddContactWizard::loadAddressees()
 	KABC::AddressBook* ab = KABC::StdAddressBook::self();
 	KABC::AddressBook::Iterator it;
 	for( it = ab->begin(); it != ab->end(); ++it )
-		KABC::AddresseeItem *item = new KABC::AddresseeItem( addresseeListView, (*it) ); 
+		KABC::AddresseeItem *item = new KABC::AddresseeItem( addresseeListView, (*it) );
 }
 
 void AddContactWizard::slotAddAddresseeClicked()
@@ -166,7 +166,7 @@ void AddContactWizard::slotAddresseeListClicked( QListViewItem *addressee )
 void AddContactWizard::slotAddGroupClicked()
 {
 	bool ok;
-	QString groupName = KLineEditDlg::getText(
+	QString groupName = KInputDialog::getText(
 		i18n( "New Group" ),
 		i18n( "Please enter the name for the new group:" ),
 		QString::null, &ok );
@@ -196,20 +196,20 @@ void AddContactWizard::slotProtocolListClicked( QListViewItem *)
 void AddContactWizard::accept()
 {
 	KopeteMetaContact *m = new KopeteMetaContact();
-	
+
 	// set the display name if required
 	if ( !mDisplayName->text().isEmpty() )
 	{
 		m->setTrackChildNameChanges( false );
 		m->setDisplayName( mDisplayName->text() );
 	}
-	
+
 	// set the KABC uid in the metacontact
 	KABC::AddresseeItem* i = 0L;
 	i = static_cast<KABC::AddresseeItem *>( addresseeListView->selectedItem() );
 	if ( addresseeListView->isEnabled() && i )
 		m->setMetaContactId( i->addressee().uid() );
-	
+
 	// set the metacontact's groups
 	bool topLevel = true;
 	for (QListViewItemIterator it(groupList); it.current(); ++it)
@@ -224,14 +224,14 @@ void AddContactWizard::accept()
 	m->setTopLevel(topLevel);
 
 	bool ok=false;
-	
+
 	// get each protocol's contact
 	QMap <KopeteAccount*,AddContactPage*>::Iterator it;
-	for ( it = protocolPages.begin(); it != protocolPages.end(); ++it ) 
+	for ( it = protocolPages.begin(); it != protocolPages.end(); ++it )
 	{
-		ok |= it.data()->apply(it.key(),m); 
+		ok |= it.data()->apply(it.key(),m);
 	}
-	
+
 	// add it to the contact list
 	if(ok)
 		KopeteContactList::contactList()->addMetaContact(m);
@@ -249,11 +249,11 @@ void AddContactWizard::next()
 		(currentPage() == intro && !appropriate( selectService )))
 	{
 		QMap <KopeteAccount*,AddContactPage*>::Iterator it;
-		for ( it = protocolPages.begin(); it != protocolPages.end(); ++it ) 
+		for ( it = protocolPages.begin(); it != protocolPages.end(); ++it )
 		{
 			delete it.data();
 		}
-		protocolPages.clear();          
+		protocolPages.clear();
 
 		// We don't keep track of this pointer because it gets deleted when the wizard does (which is what we want)
 		for (QListViewItemIterator it(protocolListView); it.current(); ++it)
@@ -278,20 +278,20 @@ void AddContactWizard::next()
 		QWizard::next();
 		return;
 	}
-	
-	// If we're not on any account specific pages, 
+
+	// If we're not on any account specific pages,
 	// we must be on an add account page, so make sure it validates
 	if (currentPage() != intro &&
 		currentPage() != selectAddressee &&
-		currentPage() != selectService && 
-		currentPage() != selectGroup && 
+		currentPage() != selectService &&
+		currentPage() != selectGroup &&
 		currentPage() != finis)
 	{
 		AddContactPage *ePage = dynamic_cast<AddContactPage *>(currentPage());
 		if (!ePage || !ePage->validateData())
 			return;
 	}
-	
+
 	QWizard::next();
 }
 
@@ -299,11 +299,11 @@ void AddContactWizard::showPage( QWidget *page )
 {
 	if ( page == selectGroup )
 	{
-		if ( addresseeListView->isEnabled() ) 
+		if ( addresseeListView->isEnabled() )
 		{
-			if ( KABC::AddresseeItem* i = static_cast<KABC::AddresseeItem *>( addresseeListView->selectedItem() ) ) 
+			if ( KABC::AddresseeItem* i = static_cast<KABC::AddresseeItem *>( addresseeListView->selectedItem() ) )
 				mDisplayName->setText( i->addressee().realName() );
-			else 
+			else
 				mDisplayName->setText( QString::null );
 		}
 	}

@@ -26,7 +26,7 @@
 #include <kpopupmenu.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <kiconeffect.h>
 #include <kpassivepopup.h>
 #include "kopetenotifyclient.h"
@@ -328,7 +328,7 @@ void KopeteMetaContactLVI::slotAddToNewGroup()
 		return;
 
 	bool ok;
-	QString groupName = KLineEditDlg::getText(
+	QString groupName = KInputDialog::getText(
 		i18n( "New Group" ),
 		i18n( "Please enter the name for the new group:" ),
 		QString::null, &ok );

@@ -22,7 +22,7 @@
 #include <qapplication.h>
 
 #include <kdebug.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
 #include <kmessagebox.h>
@@ -273,7 +273,7 @@ KPopupMenu* KopeteContact::popupMenu()
 
 void KopeteContact::slotChangeDisplayName(){
 	bool okClicked;
-	QString newName = KLineEditDlg::getText( i18n( "Change Alias" ), i18n( "New alias for %1:" ).arg( contactId() ),
+	QString newName = KInputDialog::getText( i18n( "Change Alias" ), i18n( "New alias for %1:" ).arg( contactId() ),
 		displayName(), &okClicked );
 
 	if( okClicked )

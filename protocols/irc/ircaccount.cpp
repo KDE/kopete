@@ -18,7 +18,7 @@
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kdebug.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 
@@ -231,7 +231,7 @@ void IRCAccount::slotJoinChannel()
 	if(!isConnected())
 		return;
 
-	QString chan = KLineEditDlg::getText( i18n( "IRC Plugin" ),
+	QString chan = KInputDialog::getText( i18n( "IRC Plugin" ),
 		i18n( "Please enter name of the channel you want to join:" ), QString::null);
 	if( !chan.isNull() )
 	{

@@ -18,7 +18,7 @@
 #include <qtimer.h>
 
 #include <kdebug.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <kapplication.h>
 #include <kaboutdata.h>
 
@@ -225,7 +225,7 @@ void IRCChannelContact::setTopic(const QString &topic)
 		bool okPressed = true;
 		QString newTopic = topic;
 		if( newTopic.isNull() )
-			newTopic = KLineEditDlg::getText( i18n("New Topic"), i18n("Enter the new topic:"), mTopic, &okPressed, 0L );
+			newTopic = KInputDialog::getText( i18n("New Topic"), i18n("Enter the new topic:"), mTopic, &okPressed, 0L );
 
 		if( okPressed )
 		{

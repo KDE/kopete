@@ -17,7 +17,7 @@
 
 
 #include <kdebug.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
@@ -288,7 +288,7 @@ void MSNMessageManager::slotInviteContact( KopeteContact *contact )
 void MSNMessageManager::slotInviteOtherContact()
 {
 	bool ok;
-	QString handle = KLineEditDlg::getText(i18n( "MSN Plugin" ),
+	QString handle = KInputDialog::getText(i18n( "MSN Plugin" ),
 			i18n( "Please enter the email address of the person you want to invite:" ),
 			QString::null, &ok );
 	if( !ok )
@@ -492,7 +492,7 @@ void MSNMessageManager::slotDisplayPictureChanged()
 		{
 			KConfig *config = KGlobal::config();
 			config->setGroup( "MSN" );
-			if ( config->readBoolEntry( "AutoDownloadPicture", true ) && !c->object().isEmpty() ) 
+			if ( config->readBoolEntry( "AutoDownloadPicture", true ) && !c->object().isEmpty() )
 				slotRequestPicture();
 		}
 	}
