@@ -42,7 +42,7 @@ KopeteTransfer::KopeteTransfer( KopeteFileTransferInfo *kfti, QObject *parent, c
 	  QListViewItem(kopeteapp->transferManager()->mListView)
 {
 	if (!kfti)
-		delete this;
+		kfti = new KopeteFileTransferInfo(0L, QString("Unknown"), 0, QString("Unknown"), 0); // icky
 	mInfo = kfti;
 	setText(0, kfti->file());
 	setText(1, kfti->recipient());
