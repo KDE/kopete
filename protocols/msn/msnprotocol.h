@@ -18,6 +18,7 @@
 #ifndef MSNPROTOCOL_H
 #define MSNPROTOCOL_H
 
+#include <qmap.h>
 #include <qmovie.h>
 #include <qpixmap.h>
 #include <qptrlist.h>
@@ -54,6 +55,16 @@ public:
 
 	static const MSNProtocol *protocol();
 
+
+	/**
+	 * Get group by number and vice versa.
+	 * Returns -1 resp QString::null if the search term was not found
+	 *
+	 * FIXME: Probably make private when KMSNService is completely ported
+	 */
+	int groupNumber( const QString &groupName ) const;
+	QString groupName( uint number ) const;
+
 	// Plugin reimplementation
 	void init();
 	bool unload();
@@ -83,12 +94,15 @@ public:
 	virtual bool isAway() const;
 
 	void addContact( const QString &userID ) const;
-	void addGroup( const QString &groupName );
 	void removeContact( const MSNContact *c ) const;
 	void removeFromGroup( const MSNContact *c, const QString &group ) const;
 	void moveContact( const MSNContact *c, const QString &oldGroup,
 		const QString &newGroup ) const;
 	void copyContact( const MSNContact *c, const QString &newGroup ) const;
+
+	void addGroup( const QString &groupName );
+	void renameGroup( const QString &oldGroup, const QString &newGroup );
+	void removeGroup( const QString &groupName );
 
 	int contactStatus( const QString &handle ) const;
 	QString publicName( const QString &handle ) const;
@@ -145,6 +159,26 @@ signals:
 	void contactRemoved( QString handle, QString groupName );
 	void connectedToService( bool connected );
 
+private slots:
+	/**
+	 * The group has successful renamed
+	 * groupName: is new new group name
+	 * search the old groupName in the groupList with (uint group)
+	 */
+	void slotGroupRenamed( QString groupName, uint serial, uint group );
+	/**
+	 * A new group was created on the server
+	 */
+	void slotGroupAdded( QString groupName, uint serial, uint group );
+	/**
+	 * Group was removed from the list
+	 */
+	void slotGroupRemoved( uint serial, uint group );
+	/**
+	 * Group name received during an LSG ( 'list groups' ) command
+	 */
+	void slotGroupListed( QString groupName, uint group );
+
 private:
 	void initIcons();
 	void initActions();
@@ -196,6 +230,8 @@ private:
 	QLabel *mEmptyMsg;
 //	QList<MSNContactStruct> contactList;
 //	QList<MSNGroupStruct> groupList;
+
+	QMap<uint, QString> m_groupList;
 
 	static const MSNProtocol *s_protocol;
 };

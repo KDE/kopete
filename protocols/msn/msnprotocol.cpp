@@ -73,6 +73,17 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 	kdDebug() << "MSN Protocol Plugin: Creating MSN Engine\n";
 	m_msnService = new KMSNService;
 
+	// Connect to the signals from the serviceSocket, which is possible now
+	// the service has created the socket for us.
+	connect( serviceSocket(), SIGNAL( groupAdded( QString, uint,uint ) ),
+		this, SLOT( slotGroupAdded( QString, uint, uint ) ) );
+	connect( serviceSocket(), SIGNAL( groupRenamed( QString, uint, uint ) ),
+		this, SLOT( slotGroupRenamed( QString, uint, uint ) ) );
+	connect( serviceSocket(), SIGNAL( groupName( QString, uint ) ),
+		this, SLOT( slotGroupListed( QString, uint ) ) );
+	connect( serviceSocket(), SIGNAL(groupRemoved( uint, uint ) ),
+		this, SLOT( slotGroupRemoved( uint, uint ) ) );
+
 	connect( m_msnService, SIGNAL( connectingToService() ),
 				this, SLOT( slotConnecting() ) );
 	connect( m_msnService, SIGNAL( connectedToService( bool ) ),
@@ -112,6 +123,8 @@ MSNProtocol::MSNProtocol(): QObject(0, "MSNProtocol"), KopeteProtocol()
 
 MSNProtocol::~MSNProtocol()
 {
+	m_groupList.clear();
+
 	s_protocol = 0L;
 }
 
@@ -299,16 +312,17 @@ void MSNProtocol::slotConnected()
 	mIsConnected = true;
 	MSNContact *tmpcontact;
 
-	QStringList groups, contacts;
+	QStringList contacts;
 	QString group, publicname, userid;
 	uint status = 0;
 	// First, we change status bar icon
 	statusBarIcon->setPixmap(onlineIcon);
+
 	// We get the group list
-	groups = m_msnService->getGroups();
-	for ( QStringList::Iterator it = groups.begin(); it != groups.end(); ++it )
+	QMap<uint, QString>::Iterator it;
+	for( it = m_groupList.begin(); it != m_groupList.end(); ++it )
 	{
-		kdDebug() << "MSN Plugin: Searching contacts for group: [ " << (*it).latin1() << " ]" <<endl;
+		kdDebug() << "MSN Plugin: Searching contacts for group: [ " << *it << " ]" <<endl;
 
 		// We get the contacts for this group
 		contacts = m_msnService->getContacts( (*it).latin1() );
@@ -332,7 +346,7 @@ void MSNProtocol::slotConnected()
 	// FIXME: is there any way to do a faster sync of msn groups?
 	/* Now we sync local groups that dont exist in server */
 	QStringList localgroups = (kopeteapp->contactList()->groups()) ;
-	QStringList servergroups = m_msnService->getGroups();
+	QStringList servergroups = groups();
 	QString localgroup;
 	QString remotegroup;
 	int exists;
@@ -421,6 +435,7 @@ void MSNProtocol::slotMessageDialogClosing(QString handle)
 
 void MSNProtocol::slotDisconnected()
 {
+	m_groupList.clear();
 	mIsConnected = false;
 	statusBarIcon->setPixmap(offlineIcon);
 }
@@ -616,7 +631,13 @@ void MSNProtocol::copyContact( const MSNContact *c,
 
 QStringList MSNProtocol::groups() const
 {
-	return m_msnService->getGroups();
+	QStringList result;
+	QMap<uint, QString>::ConstIterator it;
+	for( it = m_groupList.begin(); it != m_groupList.end(); ++it )
+		result.append( *it );
+
+	kdDebug() << "MSNProtocol::groups(): " << result.join(", " ) << endl;
+	return result;
 }
 
 int MSNProtocol::contactStatus( const QString &handle ) const
@@ -641,10 +662,90 @@ KMSNServiceSocket* MSNProtocol::serviceSocket() const
 	return KMSNServiceSocket::kmsnServiceSocket();
 }
 
+int MSNProtocol::groupNumber( const QString &group ) const
+{
+	QMap<uint, QString>::ConstIterator it;
+	for( it = m_groupList.begin(); it != m_groupList.end(); ++it )
+	{
+		if( *it == group )
+			return it.key();
+	}
+	return -1;
+}
+
+QString MSNProtocol::groupName( uint num ) const
+{
+	if( m_groupList.contains( num ) )
+		return m_groupList[ num ];
+	else
+		return QString::null;
+}
+
+void MSNProtocol::slotGroupListed( QString groupName, uint group )
+{
+	if( !m_groupList.contains( group ) )
+	{
+		kdDebug() << "MSNProtocol::slotGroupListed: Appending group " << group
+			<< ", with name " << groupName << endl;
+		m_groupList.insert( group, groupName );
+	}
+}
+
+void MSNProtocol::slotGroupAdded( QString groupName, uint /* serial */,
+	uint group )
+{
+	if( !m_groupList.contains( group ) )
+	{
+		kdDebug() << "MSNProtocol::slotGroupAdded: Appending group " << group
+			<< ", with name " << groupName << endl;
+		m_groupList.insert( group, groupName );
+	}
+}
+
+void MSNProtocol::slotGroupRenamed( QString groupName, uint serial, uint group )
+{
+	if( m_groupList.contains( group ) )
+	{
+		// each contact has a groupList, so change it
+		for( MSNContact *c = m_msnService->contactList().first(); c;
+			c = m_msnService->contactList().next() )
+		{
+			if( c->groups().contains( m_groupList[ group ] ) )
+			{
+				c->removeFromGroup( m_groupList[ group ] );
+				c->addToGroup( groupName );
+			}
+		}
+
+		m_groupList[ group ] = groupName;
+	}
+}
+
+void MSNProtocol::slotGroupRemoved( uint /* serial */, uint group )
+{
+	if( m_groupList.contains( group ) )
+		m_groupList.remove( group );
+}
+
 void MSNProtocol::addGroup( const QString &groupName )
 {
 	if( !( groups().contains( groupName ) ) )
 		serviceSocket()->addGroup( groupName );
+}
+
+void MSNProtocol::renameGroup( const QString &oldGroup,
+	const QString &newGroup )
+{
+	int g = groupNumber( oldGroup );
+	if( g != -1 )
+		serviceSocket()->renameGroup( newGroup, g );
+}
+
+void MSNProtocol::removeGroup( const QString &name )
+{
+	int g = groupNumber( name );
+	if( g != -1 )
+		serviceSocket()->removeGroup( g );
 }
 
 #include "msnprotocol.moc"

@@ -77,6 +77,7 @@ void KMSNServiceSocket::kill()
 	
 	isConnected = false;
 	delete socket;
+	socket = 0L;
 }
 
 void KMSNServiceSocket::closeService()
