@@ -1,6 +1,6 @@
 <!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>GroupWiseAddUI</class>
-<widget class="QDialog">
+<widget class="QWidget">
     <property name="name">
         <cstring>GroupWiseAddUI</cstring>
     </property>
