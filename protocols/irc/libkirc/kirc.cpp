@@ -297,12 +297,13 @@ KIRCMessage KIRC::writeRawMessage(const QString &rawMsg, bool mustBeConnected)
 {
 	if(canSend(mustBeConnected))
 	{
-		KIRCMessage ircmsg = KIRCMessage::writeRawMessage(this, rawMsg, defaultCodec);
+		KIRCMessage ircmsg = KIRCMessage::writeRawMessage(this, defaultCodec, rawMsg);
 		emit sentMessage(ircmsg);
 		return ircmsg;
 	}
 
-	kdDebug(14120) << "Must be connected error:" << rawMsg << endl;
+//	kdDebug(14120) << "Must be connected error:" << rawMsg << endl;
+	kdDebug(14120) << k_funcinfo << "Must be connected error:" << rawMsg << endl;
 
 	return KIRCMessage();
 }
@@ -313,37 +314,41 @@ KIRCMessage KIRC::writeMessage(const QString &msg, bool mustBeConnected)
 {
 	if(canSend(mustBeConnected))
 	{
-		KIRCMessage ircmsg = KIRCMessage::writeMessage(this, msg, defaultCodec);
+		KIRCMessage ircmsg = KIRCMessage::writeMessage(this, defaultCodec, msg);
 		emit sentMessage(ircmsg);
 		return ircmsg;
 	}
 
-	kdDebug(14120) << "Must be connected error:" << msg << endl;
+//	kdDebug(14120) << "Must be connected error:" << msg << endl;
+	kdDebug(14120) << k_funcinfo << "Must be connected error:" << msg << endl;
 
 	return KIRCMessage();
 }
 
-KIRCMessage KIRC::writeMessage(const QString &command, const QString &arg, const QString &suffix, bool mustBeConnected)
+KIRCMessage KIRC::writeMessage(const QString &command, const QStringList &args, const QString &suffix, bool mustBeConnected)
 {
 	if(canSend(mustBeConnected))
 	{
-		KIRCMessage ircmsg = KIRCMessage::writeMessage(this, command, arg, suffix, codecForNick( arg ) );
+		KIRCMessage ircmsg = KIRCMessage::writeMessage(this, defaultCodec,
+			command, args, suffix );
 		emit sentMessage(ircmsg);
 		return ircmsg;
 	}
 
-	kdDebug(14120) << "Must be connected error:" << command << arg << suffix << endl;
+//	kdDebug(14120) << "Must be connected error:" << command << args.join(' ') << suffix << endl;
+	kdDebug(14120) << k_funcinfo << "Must be connected error:" << command << args.join(" ") << suffix << endl;
 
 	return KIRCMessage();
 }
 
 KIRCMessage KIRC::writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
-		const QString &ctcpCommand, const QString &ctcpArg, const QString &ctcpSuffix, bool emitRepliedCtcp)
+		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix, bool emitRepliedCtcp)
 {
 	QString nick =  KIRCMessage::nickFromPrefix(to);
 
-	KIRCMessage msg = KIRCMessage::writeCtcpMessage(this, command, nick, suffix, ctcpCommand,
-		codecForNick( nick ), ctcpArg, ctcpSuffix );
+	KIRCMessage msg = KIRCMessage::writeCtcpMessage(this, codecForNick( nick ),
+		command, nick, suffix,
+		ctcpCommand, ctcpArgs, ctcpSuffix );
 
 	emit sentMessage(msg);
 

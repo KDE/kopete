@@ -178,25 +178,25 @@ public:
 
 	KIRCMessage writeMessage(const QString &message, bool mustBeConnected = true);
 
-	KIRCMessage writeMessage( const QString &command, const QString &arg,
-		const QString &suffix = QString::null, bool mustBeConnected = true );
+	KIRCMessage writeMessage( const QString &command, const QStringList &args, const QString &suffix = QString::null,
+		bool mustBeConnected = true );
 
 	KIRCMessage writeCtcpMessage(const QString &command, const QString &to, const QString &suffix,
-			const QString &ctcpCommand, const QString &ctcpArgs, const QString &ctcpSuffix = QString::null,
-			bool emitRepliedCtcp = true);
+		const QString &ctcpCommand, const QStringList &ctcpArgs, const QString &ctcpSuffix = QString::null,
+		bool emitRepliedCtcp = true);
 
 	inline KIRCMessage writeCtcpQueryMessage(const QString &to, const QString &suffix,
-			const QString &ctcpCommand, const QString &ctcpArg = QString::null,
-			const QString &ctcpSuffix = QString::null, bool emitRepliedCtcp = true)
-		{ return writeCtcpMessage("PRIVMSG", to, suffix, ctcpCommand, ctcpArg, ctcpSuffix, emitRepliedCtcp); }
+		const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
+		bool emitRepliedCtcp = true)
+		{ return writeCtcpMessage("PRIVMSG", to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
 
 	inline KIRCMessage writeCtcpReplyMessage(const QString &to, const QString &suffix,
-			const QString &ctcpCommand, const QString &ctcpArg = QString::null,
-			const QString &ctcpSuffix = QString::null, bool emitRepliedCtcp = true)
-		{ return writeCtcpMessage("NOTICE", to, suffix, ctcpCommand, ctcpArg, ctcpSuffix, emitRepliedCtcp); }
+		const QString &ctcpCommand, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null,
+		bool emitRepliedCtcp = true)
+		{ return writeCtcpMessage("NOTICE", to, suffix, ctcpCommand, ctcpArgs, ctcpSuffix, emitRepliedCtcp); }
 
-	inline KIRCMessage writeCtcpErrorMessage(const QString &to, const QString &ctcpLine,
-			const QString &errorMsg, bool emitRepliedCtcp=true)
+	inline KIRCMessage writeCtcpErrorMessage(const QString &to, const QString &ctcpLine, const QString &errorMsg,
+		bool emitRepliedCtcp=true)
 		{ return writeCtcpReplyMessage(to, QString::null, "ERRMSG", ctcpLine, errorMsg, emitRepliedCtcp); }
 
 public slots:
@@ -306,13 +306,13 @@ private:
 	bool invokeCtcpCommandOfMessage(const KIRCMessage &message, const QDict<KIRCMethodFunctorCall> &map);
 
 	//Joins a bunch of strings with " "
-	inline static const QString join( const QString &arg1, const QString &arg2 = QString::null,
+	inline static const QStringList join( const QString &arg1, const QString &arg2 = QString::null,
 		const QString &arg3 = QString::null, const QString &arg4 = QString::null,
 		const QString &arg5 = QString::null )
 	{
-		QStringList ret( arg1 );
-		ret << arg2 << arg3 << arg4 << arg5;
-		return ret.join( QChar(' ') ).stripWhiteSpace();
+		return QStringList( arg1 )<< arg2 << arg3 << arg4 << arg5;
+//		ret << arg2 << arg3 << arg4 << arg5;
+//		return ret.join( QChar(' ') ).stripWhiteSpace();
 	}
 
 	typedef bool ircMethod(const KIRCMessage &msg);

@@ -40,16 +40,16 @@ public:
 
 	~KIRCMessage();
 
-	static KIRCMessage writeRawMessage(KIRC *engine, const QString &str, const QTextCodec *codec);
+	static KIRCMessage writeRawMessage(KIRC *engine, const QTextCodec *codec, const QString &str);
 
-	static KIRCMessage writeMessage(KIRC *engine, const QString &str, const QTextCodec *codec);
+	static KIRCMessage writeMessage(KIRC *engine, const QTextCodec *codec, const QString &str);
 
-	static KIRCMessage writeMessage(KIRC *engine, const QString &command, const QString &arg,
-		const QString &suffix, const QTextCodec *codec);
+	static KIRCMessage writeMessage(KIRC *engine, const QTextCodec *codec,
+		const QString &command, const QStringList &args, const QString &suffix);
 
-	static KIRCMessage writeCtcpMessage(KIRC *engine, const QString &command, const QString &to,
-		const QString &suffix, const QString &ctcpMessage, const QTextCodec *codec,
-		const QString &ctcpArg = QString::null, const QString &ctcpSuffix = QString::null );
+	static KIRCMessage writeCtcpMessage(KIRC *engine, const QTextCodec *codec,
+		const QString &command, const QString &to, const QString &suffix,
+		const QString &ctcpMessage, const QStringList &ctcpArgs = QStringList(), const QString &ctcpSuffix = QString::null );
 
 	// FIXME: short term solution move me to the the KIRCEntity class
 	inline static const QString nickFromPrefix(const QString &prefix)
