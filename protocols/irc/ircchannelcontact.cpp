@@ -174,11 +174,15 @@ KopeteMessageManager* IRCChannelContact::manager(bool)
 {
 	if (!mMsgManager)
 	{
+		kdDebug(14120) << k_funcinfo << "Creating new KMM" << endl;
+
 		KopeteContactPtrList initialContact;
 		initialContact.append((KopeteContact *)mIdentity->mySelf());
 		mMsgManager = KopeteMessageManagerFactory::factory()->create( (KopeteContact *)mIdentity->mySelf(), initialContact, (KopeteProtocol *)mIdentity->protocol());
 		QObject::connect( mMsgManager, SIGNAL(messageSent(KopeteMessage&, KopeteMessageManager *)), this, SLOT(slotSendMsg(KopeteMessage&, KopeteMessageManager *)));
 		QObject::connect( mMsgManager, SIGNAL(destroyed()), this, SLOT(slotMessageManagerDestroyed()));
+		if( mEngine->isLoggedIn() )
+			mEngine->joinChannel(mChannelName);
 	}
 	return mMsgManager;
 }
@@ -190,8 +194,16 @@ void IRCChannelContact::slotMessageManagerDestroyed()
 
 void IRCChannelContact::slotSendMsg(KopeteMessage &message, KopeteMessageManager *)
 {
-	mEngine->messageContact(mChannelName, message.plainBody());
-	manager()->appendMessage(message);
+	if( onlineStatus() != KopeteContact::Online )
+		mEngine->joinChannel(mChannelName);
+
+	if( mIdentity->processMessage( message ) )
+	{
+		// If the above was false, there was a server command
+		mEngine->messageContact(mChannelName, message.plainBody());
+		manager()->appendMessage(message);
+	}
+	
 	manager()->messageSucceeded();
 }
 
