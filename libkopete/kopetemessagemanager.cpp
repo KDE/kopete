@@ -675,6 +675,16 @@ KopeteMessage KopeteMessageManager::currentMessage()
 	return KopeteMessage();
 }
 
+void KopeteMessageManager::setCurrentMessage(const KopeteMessage &message)
+{
+	if (d->mWidget == ChatWindow)
+	{
+		if (d->mView)
+			return d->mView->setCurrentMessage(message);
+	}
+
+}
+
 #include "kopetemessagemanager.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:

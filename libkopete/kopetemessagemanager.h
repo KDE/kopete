@@ -41,6 +41,7 @@ typedef QMap<KopeteProtocol*,KopeteChatWindow*> ChatWindowMap;
 typedef QPtrList<KopeteContact>        KopeteContactPtrList;
 typedef QValueList<KopeteMessage>        KopeteMessageList;
 typedef QPtrList<KopeteMessageManager> KopeteMessageManagerList;
+
 struct  KMMPrivate;
 
 class KopeteMessageManager : public QObject
@@ -117,6 +118,8 @@ public:
 	virtual const QString chatName();
 	
 	void setChatView( Kopete::ChatView *newView );
+	
+	void setCurrentMessage( const KopeteMessage &message );
 
 signals:
 	/**
