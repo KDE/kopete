@@ -57,6 +57,7 @@ public:
 public slots:
 	virtual void slotUserInfo();
 	virtual void slotSendFile();
+	virtual void slotDeleteContact();
 
 	/**
 	 * Must be called after the contact list has been received

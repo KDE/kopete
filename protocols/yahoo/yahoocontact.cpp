@@ -192,6 +192,12 @@ void YahooContact::slotSendFile()
 	kdDebug(14180) << k_funcinfo << endl;
 }
 
+void YahooContact::slotDeleteContact()
+{
+	kdDebug(14180) << k_funcinfo << endl;
+	//my ugliest hack yet. how many levels of indirection do I want? ;)
+	m_account->yahooSession()->removeBuddy(m_userId, metaContact()->groups().getFirst()->displayName());
+}
 #include "yahoocontact.moc"
 
 // vim: set noet ts=4 sts=4 sw=4:
