@@ -175,7 +175,7 @@ GaduSession::login( KGaduLoginParams* loginp )
 	params_.client_addr	= loginp->client_addr;
 	params_.client_port	= loginp->client_port;
 
-	kdDebug(14100) << "LOGIN IP: " << loginp->client_addr << " loginp->uin" << endl;
+	kdDebug(14100) << "LOGIN IP: " << loginp->client_addr << endl;
 
 	if ( loginp->useTls ) {
 		params_.server_port = GG_HTTPS_PORT;

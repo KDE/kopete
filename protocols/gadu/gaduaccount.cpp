@@ -85,9 +85,8 @@ public:
 	bool		forFriends;
 
 	KConfigGroup*	config;
-	QPtrList<GaduCommand>		commandList_;
-	Kopete::OnlineStatus		status_;
-	QValueList<QHostAddress>	servers_;
+	Kopete::OnlineStatus		status;
+	QValueList<unsigned int>	servers;
 	KGaduLoginParams		loginInfo;
 };
 
@@ -120,12 +119,13 @@ static const char* const servers_ip[ NUM_SERVERS ] = {
 
 	setMyself( new GaduContact(  accountId().toInt(), accountId(), this, new Kopete::MetaContact() ) );
 
-	p->status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
+	p->status = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
 	p->lastDescription = QString::null;
 
 	for ( int i = 0; i < NUM_SERVERS; i++ ) {
 		ip.setAddress( QString( servers_ip[i] ) );
-		p->servers_.append( ip );
+		p->servers.append( htonl( ip.toIPv4Address() ) );
+		kdDebug( 14100 ) << "adding IP: " <<  p->servers[ i ] << " to cache" << endl;
 	}
 	p->currentServer = -1;
 	p->serverIP = 0;
@@ -385,14 +385,14 @@ GaduAccount::changeStatus( const Kopete::OnlineStatus& status, const QString& de
 			dccOn();
 			p->serverIP = 0;
 			p->currentServer = -1;
-			p->status_ = status;
+			p->status = status;
 			kdDebug(14100) << "#### Connecting..., tls option "<< (int)useTls() << " " << endl;
 			p->lastDescription = descr;
 			slotLogin( status.internalStatus(), descr );
 			return;
 		}
 		else {
-			p->status_ = status;
+			p->status = status;
 			if ( descr.isEmpty() ) {
 				if ( p->session_->changeStatus( status.internalStatus(), p->forFriends ) != 0 )
 					return;
@@ -432,6 +432,7 @@ GaduAccount::slotLogin( int status, const QString& dscr )
 			p->loginInfo.status		= status;
 			p->loginInfo.statusDescr	= dscr;
 			p->loginInfo.forFriends		= p->forFriends;
+			p->loginInfo.server		= p->serverIP;
 			if ( dccEnabled() ) {
 				p->loginInfo.client_addr	= gg_dcc_ip;
 				p->loginInfo.client_port	= gg_dcc_port;
@@ -451,9 +452,9 @@ GaduAccount::slotLogin( int status, const QString& dscr )
 void
 GaduAccount::slotLogoff()
 {
-	if ( p->session_->isConnected() || p->status_ == GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING )) {
-		p->status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
-		changeStatus( p->status_ );
+	if ( p->session_->isConnected() || p->status == GaduProtocol::protocol()->convertStatus( GG_STATUS_CONNECTING )) {
+		p->status = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
+		changeStatus( p->status );
 		p->session_->logoff();
 		dccOff();
 	}
@@ -622,8 +623,8 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 		case GG_FAILURE_PASSWORD:
 			password().setWrong();
 			// user pressed CANCEL
-			p->status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
-			myself()->setOnlineStatus( p->status_ );
+			p->status = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
+			myself()->setOnlineStatus( p->status );
 			disconnected( BadPassword );
 			return;
 		default:
@@ -642,10 +643,11 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 				if ( p->currentServer == NUM_SERVERS-1 ) {
 					p->serverIP = 0;
 					p->currentServer = -1;
+					kdDebug(14100) << "trying : " << "IP from hub " << endl;
 				}
 				else {
-					p->serverIP = htonl( p->servers_[ ++p->currentServer ].ip4Addr() );
-					kdDebug(14100) << "trying : " << p->currentServer << endl;
+					p->serverIP = p->servers[ ++p->currentServer ];
+					kdDebug(14100) << "trying : " << p->currentServer << " IP " << p->serverIP << endl;
 					tryReconnect = true;
 				}
 			}
@@ -653,13 +655,13 @@ GaduAccount::connectionFailed( gg_failure_t failure )
 	}
 
 	if ( tryReconnect ) {
-			slotLogin( p->status_.internalStatus() , p->lastDescription );
+			slotLogin( p->status.internalStatus() , p->lastDescription );
 	}
 	else {
 		error( i18n( "unable to connect to the Gadu-Gadu server(\"%1\")." ).arg( GaduSession::failureDescription( failure ) ),
 				i18n( "Connection Error" ) );
-		p->status_ = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
-		myself()->setOnlineStatus( p->status_ );
+		p->status = GaduProtocol::protocol()->convertStatus( GG_STATUS_NOT_AVAIL );
+		myself()->setOnlineStatus( p->status );
 		disconnected( InvalidHost );
 	}
 }
@@ -694,7 +696,6 @@ GaduAccount::slotIncomingDcc( unsigned int UIN )
 {
 	GaduContact* contact;
 	GaduDCCTransaction* trans;
-	gg_dcc* dcc;
 
 	if ( !UIN ) {
 		return;
@@ -724,8 +725,8 @@ void
 GaduAccount::connectionSucceed( )
 {
 	kdDebug(14100) << "#### Gadu-Gadu connected! " << endl;
-	p->status_ =  GaduProtocol::protocol()->convertStatus( p->session_->status() );
-	myself()->setOnlineStatus( p->status_ );
+	p->status =  GaduProtocol::protocol()->convertStatus( p->session_->status() );
+	myself()->setOnlineStatus( p->status );
 	myself()->setProperty( GaduProtocol::protocol()->propAwayMessage, p->lastDescription );
 	startNotify();
 
@@ -840,7 +841,7 @@ GaduAccount::slotFriendsMode()
 	p->forFriends = !p->forFriends;
 	kdDebug( 14100 ) << "for friends mode: " << p->forFriends << " desc" << p->lastDescription << endl;
 	// now change status, it will changing it with p->forFriends flag
-	changeStatus( p->status_, p->lastDescription );
+	changeStatus( p->status, p->lastDescription );
 
 }
 
