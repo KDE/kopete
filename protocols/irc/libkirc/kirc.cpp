@@ -21,6 +21,7 @@
 #include <kdebug.h>
 #include <qregexp.h>
 #include <sys/time.h>
+#include <qdatetime.h>
 
 KIRC::KIRC()
 	: QSocket()
@@ -71,6 +72,7 @@ void KIRC::slotReadyRead()
 			kdDebug() << "IRC Plugin: userJoinedChannel emitting" << endl;
 			QString channel = line.mid((line.findRev(':')+1), (line.length()-1));
 			emit userJoinedChannel(line.mid(1, (commandIndex-1)), channel);
+			return;
 		}
 		else if (command == QString("PRIVMSG"))
 		{
@@ -91,14 +93,9 @@ void KIRC::slotReadyRead()
 				QString special = message.section(' ', 0, 0);
 				if (special.lower() == "ping")
 				{
-					timeval time;
-					if (gettimeofday(&time, 0) == 0)
-					{
-						QString time_reply = QString("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
-						QString reply = QString("NOTICE %1 :%2PING %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(time_reply).arg(QChar(0x01)).arg("\r\n");
-						writeBlock(reply.latin1(), reply.length());
-						emit repliedCtcp("PING", originating.section('!', 0, 0), time_reply);
-					}
+					QString reply = QString("NOTICE %1 :%2PING %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(message.section(' ', 1, 1)).arg(QChar(0x01)).arg("\r\n");
+					writeBlock(reply.latin1(), reply.length());
+					emit repliedCtcp("PING", originating.section('!', 0, 0), message.section(' ', 1, 1));
 					return;
 				} else if (special.lower() == "version")
 				{
@@ -107,21 +104,62 @@ void KIRC::slotReadyRead()
 					if (mVersionString.isEmpty())
 					{
 						// Don't edit this!
-						mVersionString = "Anonymous client using the KIRC engine";
+						mVersionString = "Anonymous client using the KIRC engine.";
 					}
 					QString reply = QString("NOTICE %1 :%2VERSION %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(mVersionString).arg(QChar(0x01)).arg("\r\n");
 					writeBlock(reply.latin1(), reply.length());
 					emit repliedCtcp("VERSION", originating.section('!', 0, 0), mVersionString);
 					return;
-				}
-				message = message.section(' ', 1);
-				if (target[0] == '#' || target[0] == '!' || target[0] == '&')
+				} else if (special.lower() == "userinfo")
 				{
-					emit incomingAction(originating, target, message);
-				} else {
-					emit incomingPrivAction(originating, target, message);
+					mUserString.replace(QRegExp("[\\r\\n]*$"), "");
+					if (mUserString.isEmpty())
+					{
+						mUserString = "Response not supplied by user.";
+					}
+					QString reply = QString("NOTICE %1 :%2USERINFO %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(mUserString).arg(QChar(0x01)).arg("\r\n");
+					writeBlock(reply.latin1(), reply.length());
+					emit repliedCtcp("USERINFO", originating.section('!', 0, 0), mUserString);
+					return;
+				} else if (special.lower() == "clientinfo")
+				{
+					QString response = "The following commands are supported, but without sub-command help: VERSION, CLIENTINFO, USERINFO, TIME, SOURCE, PING, ACTION.";
+					QString reply = QString("NOTICE %1 :%2CLIENTINFO %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(response).arg(QChar(0x01)).arg("\r\n");
+					writeBlock(reply.latin1(), reply.length());
+					emit repliedCtcp("CLIENTINFO", originating.section('!', 0, 0), response);
+					return;
+				} else if (special.lower() == "time")
+				{
+					QString dateTime = QDateTime::currentDateTime().toString();
+					QString reply = QString("NOTICE %1 :%2TIME %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(dateTime).arg(QChar(0x01)).arg("\r\n");
+					writeBlock(reply.latin1(), reply.length());
+					emit repliedCtcp("TIME", originating.section('!', 0, 0), dateTime);
+					return;
+				} else if (special.lower() == "source")
+				{
+					mSourceString.replace(QRegExp("[\\r\\n]*$"), "");
+					if (mSourceString.isEmpty())
+					{
+						mSourceString = "Unknown client, known source.";
+					}
+					QString reply = QString("NOTICE %1 :%2SOURCE %3%4%5").arg(originating.section('!', 0, 0)).arg(QChar(0x01)).arg(mSourceString).arg(QChar(0x01)).arg("\r\n");
+					writeBlock(reply.latin1(), reply.length());
+					emit repliedCtcp("TIME", originating.section('!', 0, 0), mSourceString);
+					return;
+				} else if (special.lower() == "finger")
+				{
+					// Not implemented yet
+				} else if (special.lower() == "action")
+				{
+					message = message.section(' ', 1);
+					if (target[0] == '#' || target[0] == '!' || target[0] == '&')
+					{
+						emit incomingAction(originating, target, message);
+					} else {
+						emit incomingPrivAction(originating, target, message);
+					}
+					return;
 				}
-				return;
 			}
 			if (target[0] == '#' || target[0] == '!' || target[0] == '&')
 			{
@@ -129,8 +167,54 @@ void KIRC::slotReadyRead()
 			} else {
 				emit incomingPrivMessage(originating, target, message);
 			}
-		}
-		else if (command == QString("PART"))
+			return;
+		} else if (command == "NOTICE")
+		{
+			QString originating = line.section(' ', 0, 0);
+			originating.remove(0, 1);
+			QString message = line.section(' ', 3);
+			message.remove(0,1);
+			if (QChar(message[0]).unicode() == 1 && (QChar(message[(message.length() -1)])).unicode() == 1)
+			{
+				// Fun!
+				message = message.remove(0, 1);
+				message = message.remove((message.length() -1), 1);
+				QString special = message.section(' ', 0, 0);
+				if (special.lower() == "ping")
+				{
+					QString epoch = message.section(' ', 1, 1);
+					timeval time;
+					if (gettimeofday(&time, 0) == 0)
+					{
+						QString timeReply = QString("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
+						double newTime = timeReply.toDouble();
+						if (!epoch.isEmpty())
+						{
+							double oldTime = epoch.toDouble();
+							double difference = newTime - oldTime;
+							QString diffString;
+							if (difference < 1)
+							{
+								diffString = QString::number(difference);
+								diffString.remove((diffString.find('.') -1), 2);
+								diffString.truncate(3);
+								diffString.append("msecs");
+							} else {
+								diffString = QString::number(difference);
+								QString seconds = diffString.section('.', 0, 0);
+								QString millSec = diffString.section('.', 1, 1);
+								millSec.remove(millSec.find('.'), 1);
+								millSec.truncate(3);
+								diffString = QString("%1 secs %2 msecs").arg(seconds).arg(millSec);
+							}
+							emit incomingCtcpReply("PING", originating.section('!', 0, 0), diffString);
+						}
+					}
+					return;
+				}
+			}
+			return;
+		} else if (command == QString("PART"))
 		{
 			/*
 			This signal emits when a user parts a channel
@@ -142,6 +226,7 @@ void KIRC::slotReadyRead()
 			QString message = line.section(' ', 3);
 			message = message.remove(0, 1);
 			emit incomingPartedChannel(originating, target, message);
+			return;
 		}
 		else if (command == QString("QUIT"))
 		{
@@ -154,6 +239,7 @@ void KIRC::slotReadyRead()
 			QString message = line.section(' ', 2);
 			message = message.remove(0, 1);
 			emit incomingQuitIRC(originating, message);
+			return;
 		}
 		else if (command == QString("NICK"))
 		{
@@ -171,6 +257,7 @@ void KIRC::slotReadyRead()
 				return;
 			}
 			emit incomingNickChange(oldNick, newNick);
+			return;
 		}
 		else if (command == QString("TOPIC"))
 		{
@@ -183,6 +270,7 @@ void KIRC::slotReadyRead()
 			QString changer = line.section('!', 0, 0);
 			changer = changer.remove(0,1);
 			emit incomingTopicChange(channel, changer, newTopic);
+			return;
 		}
 		else if (number.contains(QRegExp("^\\d\\d\\d$")))
 		{
@@ -440,6 +528,7 @@ void KIRC::slotReadyRead()
 
 			statement.append( "\r\n");
 			writeBlock(statement.data(), statement.length() );
+			return;
 		}
 	}
 }
@@ -470,6 +559,24 @@ void KIRC::quitIRC(const QString &reason)
 		statement.append(reason.local8Bit());
 		statement.append("\r\n");
 		writeBlock(statement.data(), statement.length());
+	}
+}
+
+void KIRC::sendCtcpPing(const QString &target)
+{
+	timeval time;
+	if (gettimeofday(&time, 0) == 0)
+	{
+		QString timeReply = QString("%1.%2").arg(time.tv_sec).arg(time.tv_usec);
+		QString statement = "PRIVMSG ";
+		statement.append(target);
+		statement.append(" :");
+		statement.append(0x01);
+		statement.append("PING ");
+		statement.append(timeReply);
+		statement.append(0x01);
+		statement.append("\r\n");
+		writeBlock(statement.local8Bit(), statement.length());
 	}
 }
 
@@ -574,9 +681,8 @@ void KIRC::slotConnected()
 	writeBlock(ident.latin1(), ident.length());
 }
 
-void KIRC::connectToServer(const QString host, Q_UINT16 port, const QString username, const QString nickname, const QString versionString)
+void KIRC::connectToServer(const QString host, Q_UINT16 port, const QString username, const QString nickname)
 {
-	mVersionString = versionString;
 	mUsername = username;
 	mNickname = nickname;
 	mHost = host;

@@ -55,7 +55,7 @@ IRCServerContact::IRCServerContact(const QString &server, const QString &nicknam
 		// GCC didn't like me calling connectNow(), not sure why
 		mWindow->mToolBar->removeItem(1);
 		mWindow->mToolBar->insertButton("connect_creating", 1, SIGNAL(clicked()), this, SLOT(disconnectNow()));
-		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname, "Kopete IRC 1.0");
+		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname);
 	} else {
 		mWindow->hide();
 	}
@@ -92,6 +92,9 @@ void IRCServerContact::init()
 	tryingQuit = false;
 	closing = false;
 	engine = new KIRC();
+	engine->setVersionString("Kopete IRC 1.0");
+// 	engine->setUserString(""); Pull this from a KConfig entry which is set in the preferences!
+	engine->setSourceString("Kopete IRC Plugin 1.0 http://www.kdedevelopers.net/kopete");
 	mQuitMessage = "Using Kopete IRC Plugin";
 	QObject::connect(engine, SIGNAL(incomingFailedNickOnLogin(const QString &)), this, SLOT(nickInUseOnLogin(const QString &)));
 	QObject::connect(engine, SIGNAL(successfullyChangedNick(const QString &, const QString &)), this, SLOT(slotChangedNick(const QString &, const QString &)));
@@ -140,11 +143,11 @@ void IRCServerContact::connectNow()
 	mWindow->mToolBar->insertButton("connect_creating", 1, SIGNAL(clicked()), this, SLOT(disconnectNow()));
 	if (engine->isLoggedIn() == false && engine->state() == QSocket::Idle)
 	{
-		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname, "Kopete IRC 1.0");
+		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname);
 	} else {
 		engine->close();
 		slotQuitServer();
-		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname, "Kopete IRC 1.0");
+		engine->connectToServer(mServer, 6667, QString("kopeteuser"), mNickname);
 	}
 }
 

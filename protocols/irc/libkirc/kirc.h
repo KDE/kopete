@@ -32,7 +32,7 @@ Q_OBJECT
 public:
 	KIRC();
 	~KIRC();
-	void connectToServer(const QString host, Q_UINT16 port, const QString, const QString, const QString versionString);
+	void connectToServer(const QString host, Q_UINT16 port, const QString, const QString);
 	void joinChannel(const QCString &);
 	void messageContact(const QCString &contact, const QCString &message);
 	void actionContact(const QString &contact, const QString &message);
@@ -44,6 +44,9 @@ public:
 	void partChannel(const QCString &name, const QString &reason);
 	void quitIRC(const QString &reason);
 	void setVersionString(const QString &newString) { mVersionString = newString; };
+	void setUserString(const QString &userString) { mUserString = userString; };
+	void setSourceString(const QString &sourceString) { mSourceString = sourceString; };
+	void sendCtcpPing(const QString &target);
 	void setTopic(const QString &channel, const QString &topic);
 enum UserClass
 {
@@ -95,6 +98,7 @@ signals:
 	void incomingPrivAction(const QString &, const QString &, const QString &);
 	void incomingPrivMessage(const QString &, const QString &, const QString &);
 	void repliedCtcp(const QString &type, const QString &target, const QString &messageSent);
+	void incomingCtcpReply(const QString &type, const QString &target, const QString &messageReceived);
 private:
 	bool waitingFinishMotd;
 	bool loggedIn;
@@ -105,6 +109,8 @@ private:
 	QString pendingNick;
 	bool attemptingQuit;
 	QString mVersionString;
+	QString mUserString;
+	QString mSourceString;
 };
 
 #endif
