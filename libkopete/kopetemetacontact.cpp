@@ -302,16 +302,15 @@ KopeteContact *KopeteMetaContact::preferredContact()
 	*/
 
 	KopeteContact *contact = 0L;
-	int index=0;
 
-	QPtrList<KopeteAccount> accounts=KopeteAccountManager::manager()->accounts();
+	QPtrList<KopeteAccount> accounts = KopeteAccountManager::manager()->accounts();
 	for( QPtrListIterator<KopeteContact> it( d->contacts ) ; it.current(); ++it )
 	{
 		if( ( *it )->isReachable() && ( !contact || ( *it )->onlineStatus() > contact->onlineStatus()  ||
-				( (*it)->account() && (*it)->onlineStatus() == contact->onlineStatus() && index > accounts.findRef((*it)->account()) ) ) )
+				( (*it)->account() && (*it)->onlineStatus() == contact->onlineStatus() &&
+				(*it)->account()->priority() > (*it)->account()->priority() ) ) )
 		{
 			contact = *it;
-			index=accounts.findRef((*it)->account()) ;
 		}
 	}
 

@@ -42,16 +42,6 @@ class KopeteAccountLVI : public KListViewItem
 	public:
 		KopeteAccountLVI( KopeteAccount *a, KListView *p ) : KListViewItem( p ){  m_account = a; }
 		KopeteAccount *account() { return m_account; }
-		int compare( QListViewItem *i, int, bool ) const
-		{
-			KopeteAccountLVI *it = static_cast<KopeteAccountLVI*>( i );
-			if( it->account()->priority() == m_account->priority() )
-			 	return 0;
-			else if( it->account()->priority() > m_account->priority() )
-				return -1;
-			else
-				return 1;
-		}
 
 	private:
 		KopeteAccount *m_account;
@@ -79,6 +69,8 @@ KopeteAccountConfig::KopeteAccountConfig( QWidget *parent, const char * /* name 
 	connect( m_view->mButtonDown,   SIGNAL( clicked() ), this, SLOT( slotAccountDown() ) );
 	connect( m_view->mAccountList,  SIGNAL( selectionChanged() ), this, SLOT( slotItemSelected() ) );
 	connect( m_view->mAccountList,  SIGNAL( doubleClicked( QListViewItem * ) ), this, SLOT( slotEditAccount() ) );
+
+	m_view->mAccountList->setSorting(-1);
 
 	setButtons( Help );
 	load();
@@ -117,9 +109,6 @@ void KopeteAccountConfig::load()
 		lvi->setPixmap( 0, i->accountIcon() );
 		lvi->setText( 1, i->accountId() );
 	}
-
-	m_view->mAccountList->sort();
-	m_view->mAccountList->setSorting(-1);
 
 	slotItemSelected();
 }

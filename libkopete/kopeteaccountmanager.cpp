@@ -33,15 +33,19 @@
 
 class KopeteAccountPtrList : public QPtrList<KopeteAccount>
 {
-	int compareItems(  KopeteAccount *a, KopeteAccount *b )
-	{
-		if( a->priority() == b ->priority() )
-			return 0;
-		else if( a->priority() < b->priority() )
-			return -1;
-		else
-			return 1;
-	}
+	protected:
+		int compareItems( KopeteAccountPtrList::Item a, KopeteAccountPtrList::Item b )
+		{
+			uint priority1 = static_cast<KopeteAccount*>(a)->priority();
+			uint priority2 = static_cast<KopeteAccount*>(b)->priority();
+
+			if( priority1 == priority2 )
+				return 0;
+			else if( priority1 > priority2 )
+				return -1;
+			else
+				return 1;
+		}
 };
 
 class KopeteAccountManagerPrivate
