@@ -43,7 +43,6 @@ class KopeteMessageManager;
 class MSNContact;
 class MSNIdentity;
 class MSNPreferences;
-class StatusBarIcon;
 
 /**
  * @author duncan
@@ -178,6 +177,8 @@ public:
 	 */
 	int groupNumber( const QString &groupName ) const;
 
+	virtual KActionMenu* protocolActions();
+
 signals:
 //	void protocolUnloading();
 
@@ -205,8 +206,6 @@ private slots:
 	void slotBlockContact( QString passport ) const;
 
 	void slotSyncContactList();
-
-	void slotIconRightClicked( const QPoint& );
 
 	void slotNotifySocketStatusChanged( MSNSocket::OnlineStatus );
 
@@ -299,28 +298,20 @@ private slots:
 	void slotContactDestroyed( KopeteContact *c );
 
 	void slotPreferencesSaved();
-private:
 
+private:
 	/**
 	 * Add contact to contact list and maintain a list of currently active
 	 * contacts. This way MSNContact doesn't need to do 'delete this' every
 	 * time, which is very dangerous
 	 */
-
-
 	void initIcons();
 	void initActions();
 
 	bool mIsConnected;
 
-	StatusBarIcon *statusBarIcon;
-
 	MSNPreferences *mPrefs;
 
-	QPixmap onlineIcon;
-	QPixmap offlineIcon;
-	QPixmap awayIcon;
-	QPixmap naIcon;
 	QMovie connectingIcon;
 
 	// Actions we use
@@ -378,7 +369,6 @@ private:
 	QStringList m_blockList;
 
 	QValueList< QPair<QString,QString> > tmp_addToNewGroup;
-
 };
 
 #endif

@@ -29,7 +29,6 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
-//#include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 #include <kstatusbar.h>
 
@@ -38,6 +37,8 @@
 #include "kopetemessagemanager.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
+#include "systemtray.h"
+
 #include "msnaddcontactpage.h"
 #include "msncontact.h"
 #include "msndebugrawcmddlg.h"
@@ -47,8 +48,6 @@
 #include "msnprotocol.h"
 #include "msnmessagemanager.h"
 #include "newuserimpl.h"
-#include "statusbaricon.h"
-#include "systemtray.h"
 
 K_EXPORT_COMPONENT_FACTORY( kopete_msn, KGenericFactory<MSNProtocol> );
 
@@ -81,8 +80,6 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 	connect( mPrefs, SIGNAL(saved()) , this , SLOT ( slotPreferencesSaved() ));
 	slotPreferencesSaved();
 
-	statusBarIcon = new StatusBarIcon();
-
 	m_publicNameSyncMode = SyncFromServer;
 	m_publicNameSyncNeeded = false;
 
@@ -91,8 +88,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 
 	initActions();
 
-	QObject::connect(statusBarIcon, SIGNAL(rightClicked(const QPoint&)), this, SLOT(slotIconRightClicked(const QPoint&)));
-	statusBarIcon->setPixmap( offlineIcon );
+	setStatusIcon( "msn_offline" );
 
 	// FIXME: I think we should add a global self metaContact (Olivier)
 	m_myself = new MSNContact( m_msnId,m_publicName, "", 0L );
@@ -138,13 +134,7 @@ bool MSNProtocol::unload()
 
 	Disconnect();
 
-	if( kopeteapp->statusBar() )
-	{
-		kopeteapp->statusBar()->removeWidget(statusBarIcon);
-		delete statusBarIcon;
-	}
-
-  	m_groupList.clear();
+	m_groupList.clear();
 	m_allowList.clear();
 	m_blockList.clear();
 
@@ -230,7 +220,7 @@ void MSNProtocol::Connect()
 
 	m_notifySocket->setStatus( m_connectstatus );
 	m_notifySocket->connect( m_password );
-	statusBarIcon->setMovie( connectingIcon );
+	setStatusIcon( "msn_connecting" );
 	m_openInboxAction->setEnabled(false);
 }
 
@@ -366,15 +356,6 @@ AddContactPage *MSNProtocol::createAddContactWidget(QWidget *parent)
  */
 void MSNProtocol::initIcons()
 {
-	KIconLoader *loader = KGlobal::iconLoader();
-	KStandardDirs dir;
-
-	onlineIcon = QPixmap(loader->loadIcon("msn_online", KIcon::User));
-	offlineIcon = QPixmap(loader->loadIcon("msn_offline", KIcon::User));
-	awayIcon = QPixmap(loader->loadIcon("msn_away", KIcon::User));
-	naIcon = QPixmap(loader->loadIcon("msn_na", KIcon::User));
-	kdDebug() << "MSN Plugin: Loading animation " << loader->moviePath("msn_connecting", KIcon::User) << endl;
-	connectingIcon = QMovie(dir.findResource("data","kopete/pics/msn_connecting.mng"));
 }
 
 void MSNProtocol::slotOpenInbox()
@@ -410,7 +391,7 @@ void MSNProtocol::initActions()
 		this, SLOT( slotDebugRawCommand() ), this, "m_debugRawCommand" );
 
 	m_menuTitleId = actionStatusMenu->popupMenu()->insertTitle(
-		*( statusBarIcon->pixmap() ),
+		SmallIcon( statusIcon() ),
 		i18n( "%1 (%2)" ).arg( m_publicName ).arg( m_msnId ) );
 
 	actionStatusMenu->insert( actionGoOnline );
@@ -438,9 +419,9 @@ void MSNProtocol::initActions()
 	actionStatusMenu->plug( kopeteapp->systemTray()->contextMenu(), 1 );
 }
 
-void MSNProtocol::slotIconRightClicked( const QPoint& /* point */ )
+KActionMenu* MSNProtocol::protocolActions()
 {
-	actionStatusMenu->popup( QCursor::pos() );
+	return actionStatusMenu;
 }
 
 /** NOTE: CALL THIS ONLY BEING CONNECTED */
@@ -578,7 +559,7 @@ void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status 
 		QStringList contacts;
 		QString group, publicname, userid;
 
-		statusBarIcon->setPixmap( onlineIcon );
+		setStatusIcon( "msn_online" );
 
 		// FIXME: is there any way to do a faster sync of msn groups?
 		/* Now we sync local groups that don't exist on server */
@@ -657,7 +638,7 @@ void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status 
 		m_groupList.clear();
 
 		mIsConnected = false;
-		statusBarIcon->setPixmap(offlineIcon);
+		setStatusIcon( "msn_offline" );
 		m_openInboxAction->setEnabled(false);
 
 		m_status = FLN;
@@ -689,29 +670,21 @@ void MSNProtocol::slotStatusChanged( QString status )
 	switch( m_status )
 	{
 		case NLN:
-			statusBarIcon->setPixmap(onlineIcon);
+			setStatusIcon( "msn_online" );
 			break;
 		case AWY:
-			statusBarIcon->setPixmap(awayIcon);
+		case IDL:
+		case BRB:
+		case LUN:
+			setStatusIcon( "msn_away" );
 			break;
 		case BSY:
-			statusBarIcon->setPixmap(naIcon);
-			break;
-		case IDL:
-			statusBarIcon->setPixmap(awayIcon);
-			break;
 		case PHN:
-			statusBarIcon->setPixmap(naIcon);
-			break;
-		case BRB:
-			statusBarIcon->setPixmap(awayIcon);
-			break;
-		case LUN:
-			statusBarIcon->setPixmap(awayIcon);
+			setStatusIcon( "msn_na" );
 			break;
 		case FLN:
 		default:
-			statusBarIcon->setPixmap(offlineIcon);
+			setStatusIcon( "msn_offline" );
 			break;
 	}
 }
@@ -1205,7 +1178,7 @@ void MSNProtocol::slotPublicNameChanged( QString publicName)
 			m_myself->setDisplayName(publicName);
 
 			actionStatusMenu->popupMenu()->changeTitle( m_menuTitleId,
-				*( statusBarIcon->pixmap() ), QString( m_publicName+" ("+ m_msnId +")" ));
+				SmallIcon( statusIcon() ), QString( m_publicName+" ("+ m_msnId +")" ));
 
 			// Also sync the config file
 			mPrefs->setPublicName(m_publicName);
@@ -1402,7 +1375,7 @@ void MSNProtocol::slotNotifySocketClosed( int /*state*/ )
 	delete m_notifySocket;
 	m_notifySocket=0l;
 	mIsConnected = false;
-	statusBarIcon->setPixmap(offlineIcon);
+	setStatusIcon( "msn_offline" );
 	m_openInboxAction->setEnabled(false);
 	kdDebug() << "MSNProtocol::slotNotifySocketClosed - done" << endl;
 }
