@@ -15,29 +15,25 @@
  *                                                                         *
  ***************************************************************************/
 
-
-
 #include "msnfiletransfersocket.h"
 
-#include "msnprotocol.h"
-#include "kopete.h"
-#include "kopetetransfermanager.h"
-// kde
-#include <klocale.h>
-#include <kdebug.h>
-#include <kmessagebox.h>
-#include <kfiledialog.h>
-#include <kextendedsocket.h>
-#include <ksockaddr.h>
+#include <math.h>
+
 //qt
 #include <qfile.h>
 #include <qregexp.h>
 #include <qtimer.h>
 
+// kde
+#include <kdebug.h>
+#include <kextendedsocket.h>
+#include <kfiledialog.h>
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <ksockaddr.h>
 
-#include <math.h>
-
-
+#include "kopetetransfermanager.h"
+#include "msnprotocol.h"
 
 MSNFileTransferSocket::MSNFileTransferSocket(bool incomming, QObject* parent) : MSNSocket(parent)
 {

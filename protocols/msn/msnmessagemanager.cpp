@@ -23,7 +23,6 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 
-#include "kopete.h"
 #include "kopetecontactlist.h"
 #include "kopetemessagemanagerfactory.h"
 #include "kopetemetacontact.h"
@@ -49,11 +48,11 @@ MSNMessageManager::MSNMessageManager( const KopeteContact *user,
 		KopeteMessageManager* ) ),
 		this, SLOT( slotMessageSent( const KopeteMessage&,
 		KopeteMessageManager* ) ) );
-	connect( kopeteapp->transferManager(),
+	connect( KopeteTransferManager::transferManager(),
 		SIGNAL( accepted( KopeteTransfer *, const QString& ) ),
 		this,
 		SLOT( slotFileTransferAccepted( KopeteTransfer *, const QString& ) ) );
-	connect( kopeteapp->transferManager(),
+	connect( KopeteTransferManager::transferManager(),
 		SIGNAL( refused( const KopeteFileTransferInfo & ) ),
 		this,
 		SLOT( slotFileTransferRefused( const KopeteFileTransferInfo & ) ) );
@@ -385,7 +384,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 				unsigned long int auth = (rand()%(999999))+1;
 				MFTS->setAuthCookie(QString::number(auth));
 
-				MFTS->setKopeteTransfer(kopeteapp->transferManager()->addTransfer(c, MFTS->fileName(), MFTS->size(),  c->displayName(), KopeteFileTransferInfo::Outgoing));
+				MFTS->setKopeteTransfer(KopeteTransferManager::transferManager()->addTransfer(c, MFTS->fileName(), MFTS->size(),  c->displayName(), KopeteFileTransferInfo::Outgoing));
 
 				QCString message=QString(
 						"MIME-Version: 1.0\r\n"
@@ -438,7 +437,7 @@ void MSNMessageManager::slotInvitation(const QString &handle, const QString &msg
 			MFTS->setCookie(cookie);
 			connect(MFTS, SIGNAL( done(MSNFileTransferSocket*) ) , this , SLOT( slotFileTransferDone(MSNFileTransferSocket*) ));
 			m_invitations.insert( cookie  , MFTS);
-			kopeteapp->transferManager()->askIncommingTransfer(c , filename,  filesize, QString::null, MFTS );
+			KopeteTransferManager::transferManager()->askIncommingTransfer(c , filename,  filesize, QString::null, MFTS );
 		}
 		else
 		{

@@ -108,7 +108,7 @@ MSNProtocol::MSNProtocol( QObject *parent, const char *name,
 			"cgi-bin/register/en/default.asp\">here</a>.</qt>" );
 		QString emptyCaption = i18n( "MSN Not Configured Yet" );
 
-		KMessageBox::information( kopeteapp->mainWindow(),
+		KMessageBox::information( qApp->mainWidget(),
 			emptyText, emptyCaption, QString::null,
 			KMessageBox::AllowLink );
 	}
@@ -597,7 +597,7 @@ void MSNProtocol::slotNotifySocketStatusChanged( MSNSocket::OnlineStatus status 
 						"the group %1 doesn't exist in MSN server group list, if you want to move" \
 						" a MSN contact to this group you need to add it to MSN server, do you want" \
 						" to add this group to the server group list?" ).arg(localgroup);
-					useranswer = KMessageBox::warningYesNo (kopeteapp->mainWindow(), notexistsMsg , i18n("New Local Group Found") );
+					useranswer = KMessageBox::warningYesNo ( qApp->mainWidget(), notexistsMsg , i18n("New Local Group Found") );
 					*/
 					addGroup( localgroup );
 				}
@@ -1370,7 +1370,7 @@ void MSNProtocol::slotNotifySocketClosed( int /*state*/ )
 	//FIXME: Kopete crash when i show this message box...
 /*	if ( state == 0x10 ) // connection died unexpectedly
 	{
-		KMessageBox::error( kopeteapp->mainWindow(), i18n( "Connection with the MSN server was lost unexpectedly.\nIf you are unable to reconnect, please try again later." ), i18n( "Connection lost - MSN Plugin - Kopete" ) );
+		KMessageBox::error( qApp->mainWidget(), i18n( "Connection with the MSN server was lost unexpectedly.\nIf you are unable to reconnect, please try again later." ), i18n( "Connection lost - MSN Plugin - Kopete" ) );
 	}*/
 	//m_notifySocket->deleteLater();
 	delete m_notifySocket;

@@ -17,23 +17,25 @@
 
 
 #include "msnswitchboardsocket.h"
-#include "msnprotocol.h"
-#include "msncontact.h"
-#include "kopete.h"
+
 #include <time.h>
+
 // qt
 #include <qdatetime.h>
 #include <qfont.h>
 #include <qcolor.h>
 #include <qstylesheet.h>
+
 // kde
-#include <klocale.h>
-#include <kglobal.h>
 #include <kdebug.h>
-#include <kmessagebox.h>
 #include <kfiledialog.h>
+#include <kglobal.h>
+#include <klocale.h>
+#include <kmessagebox.h>
 
-
+#include "kopetemessage.h"
+#include "msncontact.h"
+#include "msnprotocol.h"
 
 MSNSwitchBoardSocket::MSNSwitchBoardSocket() : MSNSocket( MSNProtocol::protocol() )
 {
@@ -131,7 +133,7 @@ void MSNSwitchBoardSocket::parseCommand( const QString &cmd, uint  id ,
 	else if( cmd == "IRO" )
 	{
 		// we have joined a multi chat session- this are the users in this chat
-		QString handle = data.section( ' ', 2, 2 );  
+		QString handle = data.section( ' ', 2, 2 );
 		if( !m_chatMembers.contains( handle ) )
 			m_chatMembers.append( handle );
 
@@ -183,11 +185,11 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 			// missing:	-a signal when the transfer is aborted
 			//         	-a flag to precies if it is an outgoing or an incomming transfer
 			// I would like set the size later in the MSNFileTransferSocket.  (current size is set to 0)
-			MFTS->setKopeteTransfer(kopeteapp->transferManager()->addTransfer(MSNProtocol::protocol()->contact(m_msgHandle)->metaContact(),
+			MFTS->setKopeteTransfer( KopeteTransferManager::transferManager()->addTransfer(MSNProtocol::protocol()->contact(m_msgHandle)->metaContact(),
 				m_filetransferName, 0,  MSNProtocol::protocol()->contact(m_msgHandle)->displayName()));
 			MFTS->connect(ip_adress, port.toUInt());
 		}
-		else  if( msg.contains("Application-File:") )  //not "Application-Name: File Transfer" because the File Transfer label is sometimes translate 
+		else  if( msg.contains("Application-File:") )  //not "Application-Name: File Transfer" because the File Transfer label is sometimes translate
 		{
 			QString cookie = msg.right( msg.length() - msg.find( "Invitation-Cookie:" ) - 19 );
 			cookie.truncate( cookie.find("\r\n") );
@@ -243,7 +245,7 @@ void MSNSwitchBoardSocket::slotReadMessage( const QString &msg )
 				QCString args = QString( "N" ).utf8();
 				sendCommand( command , args, true, message );
 			}
-//			m_lastId++;  
+//			m_lastId++;
 		}
 		*/
 	}
@@ -357,7 +359,7 @@ void MSNSwitchBoardSocket::slotTypingMsg()
 	// Length is appended by sendCommand()
 	QString args = "U";
 	sendCommand( "MSG", args, true, message );
-//	m_lastId++;  
+//	m_lastId++;
 }
 
 // this Invites an Contact
@@ -397,12 +399,12 @@ int MSNSwitchBoardSocket::sendMsg( const KopeteMessage &msg )
 
 	head += msg.plainBody().replace( QRegExp( "\n" ), "\r\n" );
 	QString args = "A";
-	
+
 	return sendCommand( "MSG", args, true, head );
-   
+
 	/*KopeteMessage msg2=msg;
 	msg2.setBg(QColor()); // BGColor is not send, don't show it on chatwindow
-	emit msgReceived( msg2);    
+	emit msgReceived( msg2);
 	// send the own msg to chat window*/
 }
 
@@ -483,14 +485,5 @@ QString MSNSwitchBoardSocket::parseFontAttr(QString str, QString attr)
 
 #include "msnswitchboardsocket.moc"
 
-
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: t
- * End:
- */
 // vim: set noet ts=4 sts=4 sw=4:
 
